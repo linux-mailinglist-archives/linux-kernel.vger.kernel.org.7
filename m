@@ -1,176 +1,170 @@
-Return-Path: <linux-kernel+bounces-788507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 677A7B3857D
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 16:53:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 34A79B38578
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 16:52:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7261518846E1
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 14:54:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F66E1881C96
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 14:52:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E2E121884A;
-	Wed, 27 Aug 2025 14:53:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50E7921CA13;
+	Wed, 27 Aug 2025 14:52:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Iwj9kzNV"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="lFrIB6/z"
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3891918A6AD
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 14:53:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 075C71C5F1B
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 14:52:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756306414; cv=none; b=EB2fjhJGo7yMz/DuVVSCE9dyvbu/o9ceeHh+cof8OkNV5wtK0J7ETwyOmbO2Z8xZiceLPKuP2ECt7hWUZK/Y2HrqqQgYHnOFSTFccjrdKqoD7wtEvR662fnSeEEsLVuz14+wSg8ATcfdMvR9jqe0+eW5okKDaZ8jdng0xEkjrGw=
+	t=1756306343; cv=none; b=tSR4ffr8K42+IXa3w9Wvntil6V31zKtygjvk1RPdIDYaSIxDH7ljQxTMsjZa0EtgGRzWzxSabUZytPuZ6kYmYRVsgwxGWnDTZzdDx/1z7lFxZuyvXSiSTdmIEsKNWDU4vBc7+bT4ibq3llmKAdh0U8AElMtPfHCoa8agT6k3BgM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756306414; c=relaxed/simple;
-	bh=5wWMon+YJHxehhx1gUsMtqdFdwkx9U+Zs0qGaUzdB0I=;
+	s=arc-20240116; t=1756306343; c=relaxed/simple;
+	bh=ThVMa0VjSVebwOgOVvao7s4xw6N5DyuHLHJOViqjIao=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aKxWZq6xvNx2Gjc1u+n9EkehqM4rrO84SW1KhYTgX3Y7TMrW5OgCvyyMpvasutKfmWYnjaY7oi71FNFkB4yOaLjflW3pGAwtbcTZeFtNk48hJ1lwc3WLI0lSXVvpQl/9YphutXnXn/id6qTbCNuKtOK6VSo/XnZFZ357bqHgIfs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Iwj9kzNV; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756306411;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kacv6oiGFz+GTTgK1BtohD0+Ldc6xRCNyYD9wji9qUw=;
-	b=Iwj9kzNV1gjzHpuhyCXWwrROAi5EGKtiTEcSy6XXPX09NnxsUZSBdRBQ9CusT3jvB4IxOE
-	DjCkBTyn8A4oqlyrjPs429dgP9Iwi79wvM5wmJ4xiIBCHCl5fmmM5bN8FVBbgKI3TK/QOo
-	FdB32YniI/a8TW3sHAM+W0Vt/sydGpo=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-308-9_A6r84mP3izRvNMrq1Siw-1; Wed,
- 27 Aug 2025 10:53:29 -0400
-X-MC-Unique: 9_A6r84mP3izRvNMrq1Siw-1
-X-Mimecast-MFC-AGG-ID: 9_A6r84mP3izRvNMrq1Siw_1756306407
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D7CCA180034B;
-	Wed, 27 Aug 2025 14:53:26 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.82])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 5AA031800446;
-	Wed, 27 Aug 2025 14:53:21 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Wed, 27 Aug 2025 16:52:06 +0200 (CEST)
-Date: Wed, 27 Aug 2025 16:51:59 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-Cc: "debug@rivosinc.com" <debug@rivosinc.com>,
-	"mingo@kernel.org" <mingo@kernel.org>,
-	"bp@alien8.de" <bp@alien8.de>,
-	"broonie@kernel.org" <broonie@kernel.org>,
-	"peterz@infradead.org" <peterz@infradead.org>,
-	"hpa@zytor.com" <hpa@zytor.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"tglx@linutronix.de" <tglx@linutronix.de>,
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-	"Mehta, Sohil" <sohil.mehta@intel.com>,
-	"x86@kernel.org" <x86@kernel.org>
-Subject: Re: [PATCH v2 0/5] x86/fpu: don't abuse x86_task_fpu(PF_USER_WORKER)
- in .regset_get() paths
-Message-ID: <20250827145159.GA9844@redhat.com>
-References: <20250822153603.GA27103@redhat.com>
- <064735211c874bf79bfdf6d22a33b5ae5b76386c.camel@intel.com>
- <20250822192101.GA31721@redhat.com>
- <b483759593fb83ec977c318d02ea1865f4052eb7.camel@intel.com>
- <20250825134706.GA27431@redhat.com>
- <2491b7c6ce97bc9f16549a5dfd15e41edf17d218.camel@intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=C8N6xn2RAS35XpZBiw1dfVg7EcgGKTLBWxM1/l3JFeqLcTTgeSUZ23+2HteS7ZHYSnmbNiGLd6YUwfIUIBoexODLjivZgqsbpN2w8i9u+erA6/KDkqSTWNSUVgAnssojLYa/+0j1zjGokiiKUnQHF3nFcipCUax3Wan/DGX8u3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=lFrIB6/z; arc=none smtp.client-ip=209.85.160.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4b2979628f9so75921561cf.2
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 07:52:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rowland.harvard.edu; s=google; t=1756306341; x=1756911141; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=DzCFdrHjD97smBgVN53iARzVNKgmIKQSQPUy52DLyR8=;
+        b=lFrIB6/zV+TnWJS9GUJpgCVnlT0jdVkV4uZ+g1dxzysM0uYvDcbLUtI8Otj8gOInNw
+         wdjEcMax2I7lfVzuniO2409gjlQmgtD1ceSXoUoIErq1CDpSOFuGBVHFbPoLHHdM3dhi
+         TntyKwtuB3aGWxQ4v9ZTUx32bIgQfemFmBp64BAMnZj95zKsJrkB75V2bDek4lYA1es9
+         kay9Pv+55F5393svhQilKbZDN9bMy7E9F7XH6wf6HWMYvN9PqfBARv4vlVUhQ/Okuzlk
+         DtvZ152suTrL2FXbM4GwComywuSdfVPpe2R9y2fcUXdcf+ky30qv1M49NLs5TKlj8j3h
+         aaIg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756306341; x=1756911141;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DzCFdrHjD97smBgVN53iARzVNKgmIKQSQPUy52DLyR8=;
+        b=vNqtNAWPIq8CIwQjji+v7Ec6Q23sHSDPr6pZchTkHjvVPyIyHOQPphU2pUjFgOwb5I
+         i1ybDHYUyUfHIgc8CWdJyrJm8F1YPu2Ia+4PaDD8vgmiGv4/iJcucmhv7/3Bc31VM8/X
+         cKh5V3atujdXmDjaZYSJj/ku5wiqs2gbv9/k5E3vQi5adB/w7XOBwpBmXquBDLzagfUu
+         7ffgVUiUJrnd+m1DupJ8DFnOCxAokGbHodZUqVqetQ1kvqpcYYGzvcPjfiJbW+15sot/
+         AVaVGLc4jAtNXcOsJx7FPAcPslNu/VJVLLAUjOsYv7kzK1ZgsC8fBSNCvj5RP1EJZlSj
+         VFhw==
+X-Forwarded-Encrypted: i=1; AJvYcCVOzFh71frGkUVouEzwsCA/gQ6nzKOB+oRAhu+2uCoaRyGvhh6GsqxCqw0Y2MBhmsE/s4kzt//y5d1AWpo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6L+IEKfrLd06XcBX9jk4MC/zFw8Q4OBH0wRU/U5I/UK8yERbK
+	4knNaEkwhsql6t0YFgPM7zosaFxGnjAEjgCnAJLlw8izVt0WFXWFvVfCVFdKVjqz7g==
+X-Gm-Gg: ASbGncvlhmxQVLXg2j313O2PvC8E/ni9wtGzGF7luP88uz742rURYs3VQ0V0R5YM1XX
+	HTR49zsKN6/8QL61XE/t3Iz3u2BHUGLvQ5ccPgVXaa0Ip922r3n/lRBUg33AuApbGv28JtQKozM
+	jQSwMOhEccA34l6D1p14wsklwNrsqkSvyw2j+ZgwvI0wgKBzSprJ0KaIWSalrhGLx/IerNGX3W5
+	XmkcurzUAfMuscCWsAWrAMZgMajXATiTyUE58ji6hoV2GlPOFPgkJx5cgPbEjRgK/JCxVxTa9DI
+	+V4EWr1QsxhhGAjpHUs2jhAfwQW/+To4W3dKOeppPVfeNtKTvTGRHetK2TcpoGI0NldcrwQ+fpc
+	VOfG43k4QpzFM/HKd1bAZx9XzwlFhpo3ktm526tvy/XaGEjW7NoVnJd/nyA==
+X-Google-Smtp-Source: AGHT+IGI69TxmEa7cNmRHXE8TQb0IknN+13n0MWxeBuaynrVToE2H9keJBWKDhweukHWinjWveqfuQ==
+X-Received: by 2002:a05:622a:1390:b0:4a9:7a4e:7e93 with SMTP id d75a77b69052e-4b2aaa5618emr235523941cf.8.1756306340567;
+        Wed, 27 Aug 2025 07:52:20 -0700 (PDT)
+Received: from rowland.harvard.edu ([140.247.181.15])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7ebf41772d8sm872657985a.64.2025.08.27.07.52.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 Aug 2025 07:52:20 -0700 (PDT)
+Date: Wed, 27 Aug 2025 10:52:17 -0400
+From: Alan Stern <stern@rowland.harvard.edu>
+To: ryan zhou <ryanzhou54@gmail.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Roy Luo <royluo@google.com>, Thinh.Nguyen@synopsys.com,
+	gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+Subject: Re: [PATCH] drvier: usb: dwc3: Fix runtime PM trying to activate
+ child device xxx.dwc3 but parent is not active
+Message-ID: <5d692b81-6f58-4e86-9cb0-ede69a09d799@rowland.harvard.edu>
+References: <20250826150826.11096-1-ryanzhou54@gmail.com>
+ <CA+zupgwnbt=5Oh28Chco=YNt9WwKzi2J+0hQ04nqyZG_7WUAYg@mail.gmail.com>
+ <CAPwe5RMpdG1ziRAwDhqkxuzHX0x=SdFQRFUbPCVuir1OgE90YQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <2491b7c6ce97bc9f16549a5dfd15e41edf17d218.camel@intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+In-Reply-To: <CAPwe5RMpdG1ziRAwDhqkxuzHX0x=SdFQRFUbPCVuir1OgE90YQ@mail.gmail.com>
 
-On 08/27, Edgecombe, Rick P wrote:
->
-> On Mon, 2025-08-25 at 15:47 +0200, Oleg Nesterov wrote:
+Ryan:
+
+You should present your questions to the maintainer of the kernel's 
+Power Management subsystem, Rafael Wysocki (added to the To: list for 
+this email).
+
+Alan Stern
+
+On Wed, Aug 27, 2025 at 10:09:10PM +0800, ryan zhou wrote:
+> Hi Roy,
+> Thank you for reviewing my patch.
 > >
-> > So. Sorry if it wasn't clear, this series is not a bug fix or something like this.
-> > This starts the cleanups I was thinking about year ago, see
+> > Wouldn't the parent glue dev already resume before resuming the child dwc3?
 > >
-> > 	https://lore.kernel.org/all/20240606120038.GB22450@redhat.com/
+> No, in the following case, the parent device will not be reviewed
+> before resuming the child device.
+> Taking the 'imx8mp-dwc3' driver as an example.
+> Step 1.usb disconnect trigger: the child device dwc3 enter runtime
+> suspend state firstly, followed by
+> the parent device imx8mp-dwc3 enters runtime suspend
+> flow:dwc3_runtime_suspend->dwc3_imx8mp_runtime_suspend
+> Step2.system deep trigger:consistent with the runtime suspend flow,
+> child enters pm suspend and followed
+> by parent
+> flow: dwc3_pm_suspend->dwc3_imx8mp_pm_suspend
+> Step3: After dwc3_pm_suspend, and before dwc3_imx8mp_pm_suspend, a
+> task terminated the system suspend process
+> . The system will resume from the checkpoint, and resume devices in
+> the suspended state in the reverse
+> of pm suspend, but excluding the parent device imx8mp-dwc3 since it
+> did not execute the suspend process.
+> 
 > >
-> > Then later we can probably make more changes so that the kernel threads
-> > (PF_KTHREADs and PF_USER_WORKERs) will run without "struct fpu" attached
-> > to task_struct, so that x86_task_fpu() should return NULL regardless of
-> > CONFIG_X86_DEBUG_FPU.
->
-> To save space?
-
-Yes. And to make the fact that kernel threads never use (do not really have)
-FPU state more clear.
-
-> > But even the WARN_ON_ONCE(task->flags & (PF_KTHREAD|PF_USER_WORKER)) in
-> > x86_task_fpu() makes sense to me.
+> >Why would 'runtime PM trying to activate child device xxx.dwc3 but parent is not active' happen in the first place?
 > >
-> > Say, switch_fpu() has no reason to check "PF_KTHREAD | PF_USER_WORKER",
-> > this check should die.�
+> Following the above analysis, dwc3_resume calls
+> pm_runtime_set_active(dev), it checks the
+> parent.power->runtime_status is not RPM_ACTIVE and outputs the error log.
+> 
 > >
->
-> Digging through git, the reason for the PF_USER_WORKER check in switch_fpu() was
-> originally: "more of a cosmetic thing that was found while debugging and issue
-> and pondering why the FPU flag is set on these threads."
-
-Whatever reasons we had, they're gone. We can rely on TIF_NEED_FPU_LOAD.
-I'll send a coupld of patches tomorrow.
-
-> So a goal could be to make the code make more sense? If that is a reason, then I
-> have some concerns with it. The simpler code would need to somehow work with
-> that (I think...) user workers should still have a PKRU value. So then does
-> ptrace need branching logic for xstateregs_get/set() with a struct fpu and
-> without? If so, is that ultimately simpler?
-
-Sorry, I don't understand... In particular, I don't understand again how
-this connects to PKRU. __switch_to()->x86_pkru_load() doesn't depend on
-switch_fpu() ?
-
-> > But if something goes wrong, it would be nice to
-> > have a warning for io threads as well.
->
-> I guess I question whether it really makes sense to add a special case for
-> PF_USER_WORKER, including the existing logic. But I'm still trying to piece
-> together a clearly stated benefit.
-
-Again, I don't understand... To me, currently arch/x86/kernel/fpu/regset.c
-adds a special case for PF_USER_WORKER, this series tries to remove it (but
-we need a bit more of simple changes).
-
-> > That said... Could you explain why do you dislike 4/5 ?
->
-> As I said, shstk_alloc_thread_stack() shouldn't clear ARCH_SHSTK_SHSTK because
-> the function is about shadow stack allocation.
-
-OK, then how/where we can clear this flag if we avoid the pointless shadow stack
-allocation for PF_USER_WORKER?
-
-> It also doesn't make sense to
-> clear ARCH_SHSTK_SHSTK for user workers.
-
-Why?
-
-> I think Dave also questioned whether a rare extra shadow stack is really a
-> problem.
-
-Sure, it is not really a problem. In that it is not a bug. But why we can't
-avoid the pointless shadow stack / ARCH_SHSTK_SHSTK for user workers ? 4/5
-doesn't complicate this code.
-
-Plus, again, the current code is not consistent. fpu_clone() won't do
-update_fpu_shstk() in this case. Not a bug too, but imo deserves a cleanup.
-
-Oleg.
-
+> >What is the glue driver that's being used here? Knowing what's being done in the glue driver pm callbacks
+> >would help in understanding the issue.
+> >
+> Refer to the driver 'dwc3-imx8mp.c' please, maybe you could help me
+> find a better solution.
+> 
+> 
+> Thanks,
+> ryan
+> 
+> Roy Luo <royluo@google.com> 于2025年8月27日周三 02:38写道：
+> >
+> > On Tue, Aug 26, 2025 at 8:12 AM Ryan Zhou <ryanzhou54@gmail.com> wrote:
+> > >
+> > > Issue description:
+> > > The parent device dwc3_glue has runtime PM enabled and is in the
+> > > runtime suspended state. The system enters the deep sleep process
+> > > but is interrupted by another task. When resuming dwc3,
+> > > console outputs the log 'runtime PM trying to activate child device
+> > > xxx.dwc3 but parent is not active'.
+> > >
+> >
+> > Wouldn't the parent glue dev already resume before resuming the child dwc3?
+> > Why would 'runtime PM trying to activate child device xxx.dwc3 but parent is
+> > not active' happen in the first place?
+> > What is the glue driver that's being used here? Knowing what's being done in
+> > the glue driver pm callbacks would help in understanding the issue.
+> >
+> > Regards,
+> > Roy
+> 
 
