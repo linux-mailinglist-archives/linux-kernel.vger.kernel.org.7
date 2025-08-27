@@ -1,160 +1,164 @@
-Return-Path: <linux-kernel+bounces-788078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C324BB37F81
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 12:08:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CE18B37F83
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 12:09:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00ECA189710C
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 10:08:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 81C79189FF75
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 10:10:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37CD730F926;
-	Wed, 27 Aug 2025 10:08:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFB0030F926;
+	Wed, 27 Aug 2025 10:09:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="H4jpo4EL"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XY0Z3EH5"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C76042AE90
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 10:08:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 571EB28312E
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 10:09:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756289294; cv=none; b=Lxpe14iP9yuhHAmB3XrWUh+RtuVmxZfqZY8arBXSFZ9HXwTpnt+IlxI4NrM7aEQoFNUVxwXiBFOteeKP/N068D6W24H3dB23RROrKwxGB/otS5NUtNr/q+9lLM8gUsAQLNYKIfPEKTMA5D+ojt910CUHaR7rAgSQ3WIlTcLAgmI=
+	t=1756289384; cv=none; b=U4qM2oQbW0B4cLGu7oCf5ED+2wOFOljQL3w1gAHD/p96HZPgGny9P/ChqfxiZqVHJ6pnLooLl9vPM8whrTU/BBjKVDP9H/qc/Jp9hkm7xLKYlPER9gJlWmf/OhKK6bqX9t0HTXujm0GOj2b20XkPzMucSxvyL7SLh7F//niUQHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756289294; c=relaxed/simple;
-	bh=8g3LHa5yiSyBWmJY+w12ha7ZYg8HBqxyOXjkVHt3Hjk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eTw3uqtI8jWn1qE9WOjbZNJ9hKxCPsnkXNi4AxaxDtUEohB+CJvuyXvj9fWvd/x6kIUFBs3LJhhiWQv9H4AmWIL/SijOr7OPmSy7T1Of+QBPuklLH6u+RlGlekdSQ7rksmhLQ2Ml54s4AvmbLzJks98rN/unmBOzUjf2/j7RSpY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=H4jpo4EL; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-45a1b05ac1eso35249485e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 03:08:11 -0700 (PDT)
+	s=arc-20240116; t=1756289384; c=relaxed/simple;
+	bh=J0lkcTHUid3XxD8U8mPToo1lJJyfeJ5m6rE6h09yz5g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VUZA4gGY2weYkbjWsREfZO/UN2WlMPlgNlkZcqZv8dch30SUVOYNI7QTrhHI1b4EMZccH3cp8YeaL9OsEgftEK5SMx+j/7n2WsHesPQjLRLzyjji52cb8bGhUAc6y1wqSn6Yuj/RUNlogiSoX7WQsofyYHDaV6Bb91w4IlP3iFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XY0Z3EH5; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-45a1b0d231eso40062065e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 03:09:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1756289290; x=1756894090; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=sXT1+ZhdRYw9on7KamKzgM97PHmPN2Js9ftnngLmHdk=;
-        b=H4jpo4EL7kk6LEWUqFMScxle4zwI69VcgnH46ZMXJB7eNq+Va49svbP0jZj8+nyzwr
-         az/9ydptZTu+QdaizMQjp/7NSB4liuHO+EmGQ6wM4DYELZPCNbXqYQ6oS38NCy5AnA1K
-         L5UUK5X16um+VqeKGWwEzHL3AS9DqXBpmKvQ0bSFdNSoqXSFLflYUN7zXZLDtNk3nvt5
-         rG4oEZaBD+DvB/uS3VqINCfPIN5r/bs+1nWfwIAVUrEL9jm+RguF9YQCV4O08hpAB3yV
-         PtF3x4xV2eS1HqAsVZRvYCroIN8RGgNJ/Gf0OeVCuF3fTtN8VajuOoDHkrd6ZvnLDMc8
-         mpxQ==
+        d=linaro.org; s=google; t=1756289380; x=1756894180; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=VPJo3DFYnaR9E2CWsARN7ky89otQMe3GktK/razN7cg=;
+        b=XY0Z3EH54LMVqJ3elk1tZwb9GedNQAzDTTqZ+CDMo7DDlLEHVpp2uFfC8sE4PjzoyJ
+         5O4xsIXIz6m8nkFru7QlaFAYiDFMEEHCScwFQucOcmJVBeHu5N1p+AMIz+5NhEht0ITB
+         CjbGPHgHHSibBuzqQFVZK1xeUaDRJ3SdWvmCRk2eTu7Tf73fubVh79V8RKsYqgra52NW
+         5udkCM94l+JsSwMygrwfpJ5CorHJnj72VpOmDGe1+JT2DvGZG7Qn7MdyGv1HTw1XF/kI
+         8uL4EXd85qdW8Pe5tapE8cVVGBJOKFOCm4yuAYnOGYoYZC8rWSAPPpbX9w932eZNvZI2
+         9L2w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756289290; x=1756894090;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=sXT1+ZhdRYw9on7KamKzgM97PHmPN2Js9ftnngLmHdk=;
-        b=jDES8o35Ffwsy0KjwVdh8CrGTDLx77Lxzi3hh6wvgdH6itcWYxG1+6gUnDZ8typQLD
-         hOYCHmy/cLYQq8iS6VCMY3Q+eS1YYcbwS02JvhWD/xbyQXOYE3hRF8K7Lz9keaXUShMu
-         cIPhP809WLaRWFfc1A5g0IZDRUdv3A6TFuT9OqNKEP2yS5QTYYw8OHVtccfBl72CkHaG
-         JYiHShnRvuucKowcLvXXr9/IUviU9RMyeTK3bK6UmLJdHBAWBWweLvhB7RcGnhnfGrfd
-         wraqm6sU69ci7wEHNiGXvkduHDIb4tcW8FU834FYDHjTVYxadDCCEky2Qkp1X4qaw1Na
-         Nklw==
-X-Forwarded-Encrypted: i=1; AJvYcCUegMF2FiYZ4csEbla4abgisEl9fUyVcP1/aDVxzAIFdyiF+fAYOjP4pczUpyWA9LGsGYPuRCi6cXUY+VM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxvZt3TfCO5WjH5VW2EmtCoPWHkxhEdxI//bI8Nm10aig2sqboh
-	QtH/+dKeiOYsUvKLGvAsHKDAtuHO/xZLnY+fotrkmdAhDnVgarSYaoFIUbMKeS0b6oM=
-X-Gm-Gg: ASbGncu0FfjT+h6JLE25RZvt2vC+fWhvWwY09lcT2aAW9iWvzBZrYezMTiyjd7VfRQ9
-	hTXm66tIlD/n9kll2SM5IxcorJi6hIQXbI3SM/FcH0r7+5IgQbT1QYz8gKvb5xDlcAzJ/IrXq6Q
-	EX4KkfSuW7yVKfIOKjP4GEHYbWJbH7XTIa9SACQt6V2OZghydWuiR0bZwW+YXxFH8fg5yPN2/Y2
-	PIDLv5d0aj5OsYzESL2mlMLgWYftCK21s0fiFQx9PBoL1wREm3VbofdvtLiGnP4L82dR1QVUiqZ
-	Ok6D5h641owMkUisu1wVd5aHiSEoR4CfM6bgFA/UwVohzlJDifWL1McQfLMPsTf/iq4+PPPMJCq
-	MGeKSXJxgOtl3JMQ2FOuDRqEouGDsfJ4rBziUiulZZ6Ue50GA0CxQDzKuflXQ/XyeCD+VolPN60
-	mHtq4Lze8/Z6FMZl3t
-X-Google-Smtp-Source: AGHT+IGhD1atCfo4ZwImu6PpxS5A/Aon596DElxCkBAX5H/h4QkS48jyqdKtBal8nCISAnOuiKWemg==
-X-Received: by 2002:a05:600c:1c87:b0:456:173c:8a53 with SMTP id 5b1f17b1804b1-45b5179cdd5mr133811985e9.2.1756289289948;
-        Wed, 27 Aug 2025 03:08:09 -0700 (PDT)
-Received: from claudiu-TUXEDO-InfinityBook-Pro-AMD-Gen9.. ([2a02:2f04:6103:4200:a5a4:15e6:5b6a:a96])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b723a1ff9sm16471855e9.22.2025.08.27.03.08.08
+        d=1e100.net; s=20230601; t=1756289381; x=1756894181;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VPJo3DFYnaR9E2CWsARN7ky89otQMe3GktK/razN7cg=;
+        b=DejG5KHtTGpeuZBQerwoYj6Wug82wc/6mOgdRhYnRyN/sKLSvs5XxJ+qYQHPV9+NBF
+         wdK5gxAiLwTMMAjuQgXuUp7sMunkaRxgo5IAB7FZw8nzEn7Weiq+xh6/Uznh7ec0J1Q2
+         Ih2+LdN27ajViczNxzyczX+sWH/AVaF0DF6M8u9A577keZc2+BqVScZiFvZQmtzEQbCk
+         Ur3jAfemJV6I/tsY241QJ88C9urv4Uj8Nlht6x3RiMT2MNUpI1aK28LRz9pO5oiwBCn7
+         K9Nhm/VFJKnTsk11ETGIO+UVLgqhOh+sxORZyUJcf+wQxZV6r9jxAdjq/4SA5GDNNbK1
+         s8Qg==
+X-Forwarded-Encrypted: i=1; AJvYcCUQ49+xtdC3Uer2BNdzfIH1nTkVNQrjPZNh6/VKRw5kAKOi/gHq2kz5sp/di1Bg2z19ML8MvvbxEKJQlhg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwywQ/YyYwxRUmieCan50Pupjxvs6Dy06b9OSA2YOLfR/TKJG/O
+	Xv/ipoAA4u/bnA7iFeRi/o/6K4gbDGQmTvTGXuk4zKFN3CLK52FX9ZOgwQAxBAyYLcU=
+X-Gm-Gg: ASbGnctdpSXQKV81FQNoowvNDcwEZ0XbqsFxdF7ilzg3SijgE7ni+LcMWPjTdXuqEdb
+	sooA3XLl+YVy3qBIhERPGMxzxMbqLe6YOVhIJUUQU4VO9p4N7h2fN7muA9vj4s4EFkPuphEuHGM
+	NMl1pNwAu3Tui145VTqXlp8q+Q6JNfSkSnxCRVChMVYuRzA4tURVr4BIRot9Om8Q6ImKkqROWW7
+	bjT9VnSe7cCSvotxfKnYNIIYqGznpUllU6rA39VAIP7CHkgBqgj8qaimdoNmFJDuZQ6YcRPWMed
+	ZJ69SET5LycQ9okvDPUK63uE/xHGRrcFKOD1jgjXuAAzFI/o9mFTSv/YaYzi6qIE+rm3pV10el4
+	j4Ia653WPgKhtrVdsiHj9WObbR8A=
+X-Google-Smtp-Source: AGHT+IG7OpLH6k3HwvLOeBkdHsqBfZQ/AFfCGLhvEb/bBCKCAM3IYfHng/H18tROilNBSKqh4ga5LA==
+X-Received: by 2002:a05:600c:4715:b0:45b:47e1:f5fb with SMTP id 5b1f17b1804b1-45b517d8ffamr156139455e9.36.1756289379317;
+        Wed, 27 Aug 2025 03:09:39 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3cbd534656asm5268714f8f.66.2025.08.27.03.09.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Aug 2025 03:08:09 -0700 (PDT)
-From: Claudiu <claudiu.beznea@tuxon.dev>
-X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
-To: maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	claudiu.beznea.uj@bp.renesas.com,
-	saravanak@google.com,
-	treding@nvidia.com,
-	ulf.hansson@linaro.org
-Cc: claudiu.beznea@tuxon.dev,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] drm: display: Drop dev_pm_domain_detach() call
-Date: Wed, 27 Aug 2025 13:08:04 +0300
-Message-ID: <20250827100804.926672-1-claudiu.beznea.uj@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
+        Wed, 27 Aug 2025 03:09:38 -0700 (PDT)
+Date: Wed, 27 Aug 2025 13:09:35 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Osama Abdelkader <osama.abdelkader@gmail.com>
+Cc: gregkh@linuxfoundation.org, dpenkler@gmail.com,
+	matchstick@neverthere.org, arnd@arndb.de,
+	linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev
+Subject: Re: [PATCH] staging: gpib: simplify and fix get_data_lines
+Message-ID: <aK7ZX3rlcS6ObWvE@stanley.mountain>
+References: <20250826220502.210485-1-osama.abdelkader@gmail.com>
+ <aK6wlcLBN1HclMpl@stanley.mountain>
+ <aK68qXqStIwBrejF@stanley.mountain>
+ <f3ab3c2d-2056-4802-aa73-2b0db4c7fc30@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f3ab3c2d-2056-4802-aa73-2b0db4c7fc30@gmail.com>
 
-From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+On Wed, Aug 27, 2025 at 11:28:36AM +0200, Osama Abdelkader wrote:
+> We can change the return type to int and propagate the error, so:
+> 
+> static int get_data_lines(u8 *out)
+> 
+> {
+> 
+> 	int val, i;
+> 
+> 	u8 ret = 0;
+> 
+> 	struct gpio_desc *lines[8] = { D01, D02, D03, D04, D05, D06, D07, D08 };
+> 	for (i = 0; i < 8; i++) { 		val = gpiod_get_value(lines[i]);
+> 
+> 		if (val < 0)
+> 
+> 			return val; // propagate error
+> 
+> 		ret |= (val & 1) << i;
+> 
+> 	}
+> 
+> 	*out = ~ret; 	return 0;
+> 
+> }
+> 
+> Then in the caller:
+> 
+> u8 data;
+> if (!get_data_lines(&data))
+> 
+> 	priv->rbuf[priv->count++] = data;
+> 
+> or we print the error here, What do you think?
+> 
 
-Starting with commit f99508074e78 ("PM: domains: Detach on
-device_unbind_cleanup()"), there is no longer a need to call
-dev_pm_domain_detach() in the bus remove function. The
-device_unbind_cleanup() function now handles this to avoid
-invoking devres cleanup handlers while the PM domain is
-powered off, which could otherwise lead to failures as
-described in the above-mentioned commit.
+Printing the error closer to where the error occured is better.
 
-Drop the explicit dev_pm_domain_detach() call and rely instead
-on the flags passed to dev_pm_domain_attach() to power off the
-domain.
+How would we handle the error correctly?  Sometimes it's easy
+because it's if we continue then we will crash and almost anything is
+better than crashing.  But here if we return a 1 or 0, what's the
+worst that can happen?  We can't know without testing.  Adding new
+error checking often breaks stuff.  I've done it before where you
+have code like:
 
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
----
- drivers/gpu/drm/display/drm_dp_aux_bus.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+	ret = frob();
+	if (ret)
+		return ret;
 
-diff --git a/drivers/gpu/drm/display/drm_dp_aux_bus.c b/drivers/gpu/drm/display/drm_dp_aux_bus.c
-index 2d279e82922f..191664900ac7 100644
---- a/drivers/gpu/drm/display/drm_dp_aux_bus.c
-+++ b/drivers/gpu/drm/display/drm_dp_aux_bus.c
-@@ -58,13 +58,14 @@ static int dp_aux_ep_probe(struct device *dev)
- 		container_of(aux_ep, struct dp_aux_ep_device_with_data, aux_ep);
- 	int ret;
- 
--	ret = dev_pm_domain_attach(dev, PD_FLAG_ATTACH_POWER_ON);
-+	ret = dev_pm_domain_attach(dev, PD_FLAG_ATTACH_POWER_ON |
-+					PD_FLAG_DETACH_POWER_OFF);
- 	if (ret)
- 		return dev_err_probe(dev, ret, "Failed to attach to PM Domain\n");
- 
- 	ret = aux_ep_drv->probe(aux_ep);
- 	if (ret)
--		goto err_attached;
-+		return ret;
- 
- 	if (aux_ep_with_data->done_probing) {
- 		ret = aux_ep_with_data->done_probing(aux_ep->aux);
-@@ -88,8 +89,6 @@ static int dp_aux_ep_probe(struct device *dev)
- err_probed:
- 	if (aux_ep_drv->remove)
- 		aux_ep_drv->remove(aux_ep);
--err_attached:
--	dev_pm_domain_detach(dev, true);
- 
- 	return ret;
- }
-@@ -107,7 +106,6 @@ static void dp_aux_ep_remove(struct device *dev)
- 
- 	if (aux_ep_drv->remove)
- 		aux_ep_drv->remove(aux_ep);
--	dev_pm_domain_detach(dev, true);
- }
- 
- /**
--- 
-2.43.0
+	frob();  // <-- here
+	if (ret)
+		return ret;
+
+And obviously the original author left off the "ret = " part on the
+second call.  So I don't feel bad about that I added that, but in
+practice the second frob() always fails and I can't test it so now
+people's driver doesn't load.
+
+So adding error handling is a bit risky unless you have a way to test
+this code.  Just printing an error and continuing as best we can is
+safer.  People will let us know if the error ever happens.
+
+Let's not over complicate it for an error which will likely never
+happen.  We can just print an error and leave the bit as zero.
+
+regards,
+dan carpenter
 
 
