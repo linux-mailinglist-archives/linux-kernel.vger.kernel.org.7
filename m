@@ -1,136 +1,138 @@
-Return-Path: <linux-kernel+bounces-787450-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62837B3765D
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 02:58:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2EB7B3765F
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 02:59:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6113A1B65395
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 00:58:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B0CE17BF6B
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 00:59:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 716A41DED52;
-	Wed, 27 Aug 2025 00:58:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GNh3EhjC"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 390BF1DED52;
+	Wed, 27 Aug 2025 00:59:16 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91BDD1D63DF
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 00:58:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24992156C6A;
+	Wed, 27 Aug 2025 00:59:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756256307; cv=none; b=SFt8udV49+WjzVqRm2f3PcT5UB0BtsC9QVflFKq9Rqbnau+gJh1GseddJ/4MEiXqQzGho5SSJ5gcIjN+Ez6ik0nySNiV15j0tGTLUDz9sAyJ6F/UFnPjLGhCX7d+j6lKulO8+cC0PINWZlt5q8UCoDpbTQbDgBqd3fwUqismL64=
+	t=1756256355; cv=none; b=g2n8+e1P+9Y7wBi7mT1FQ5G4KW0G/ycV07wxnjO+U7jAdcdAW66HO8O6bFTyMM6G+SN8gFp2mo0SpQvlGz7z5AtFG8g/B7icEYGrszkz6IsKhRMk9GVGrk+JRCR1W3GqOiy4KwghcBDg9eSgcCqMOsSVko4y6icB3xyRq2o+QXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756256307; c=relaxed/simple;
-	bh=pJcb+Fht6vB+reX+TqG9R4aKlunq8AvYtB6xYR2vnQw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LfqbQY3DJETfdRofKXQxfpsmYym/kOJ3On2o7t6dr1DYc9xQuPRpqkHgTLGnXmmXeGh8FtaiZ0ULyhdJ41XvSSN/vTcgc6k6DMQEVlAz5HvQdiHFqPliaZZ5aSPq8yVjgNh1B2urKo7pTRIMLMqUioO3DBeM4j1R9QDX2Q8wauc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GNh3EhjC; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756256303;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=W9Vds8El0nHCfAOchscouR6LADiC3NFwfPcPYTHIEQ4=;
-	b=GNh3EhjCbepf2VLHaBfbfEdtJka/gJuoiytdOAhCRt7ytvIK0FX/ie60mWQ5eyzBlYz1dq
-	nPaFcd+OjV8koJ9RhkQTgjMvfk6yN21M5PZz6/sxRb1MSfvcdhtK8YDgoN0VZnVX2D/lyq
-	7Te0PBN4mDwQ1AtKTfTHiWn0kwvLX+8=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-482-2asWDuvsMGqG5usYVPu2Zg-1; Tue,
- 26 Aug 2025 20:58:21 -0400
-X-MC-Unique: 2asWDuvsMGqG5usYVPu2Zg-1
-X-Mimecast-MFC-AGG-ID: 2asWDuvsMGqG5usYVPu2Zg_1756256300
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CCEB919560B2;
-	Wed, 27 Aug 2025 00:58:19 +0000 (UTC)
-Received: from fedora (unknown [10.72.116.24])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 23BC519560AB;
-	Wed, 27 Aug 2025 00:58:12 +0000 (UTC)
-Date: Wed, 27 Aug 2025 08:58:07 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: linan666@huaweicloud.com
-Cc: axboe@kernel.dk, jianchao.w.wang@oracle.com,
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-	yukuai3@huawei.com, yangerkun@huawei.com, yi.zhang@huawei.com
-Subject: Re: [PATCH] blk-mq: check kobject state_in_sysfs before deleting in
- blk_mq_unregister_hctx
-Message-ID: <aK5YH4Jbt3ZNngwR@fedora>
-References: <20250826084854.1030545-1-linan666@huaweicloud.com>
+	s=arc-20240116; t=1756256355; c=relaxed/simple;
+	bh=49YFuWQSKPurdI7SV0FkI4mPD+q0UjdDF2L+7622798=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=rzHiMxCxzHm777arKsKtQEQGejUxtFif91swIp6/WjyEKbBI2Sd7JbPvU2YtiVYxu7/wlXIUP9g5IhrY+n6mlshDMDHo85jakO/nQUR/2UAvTP6Wd/8ivBXyTUfrR7+dmT0LwuyhoGC9RjOkTUoQcSAtkWQaxzrRnBJg/GQXdKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4cBR4b31DHzKHMdX;
+	Wed, 27 Aug 2025 08:59:11 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.252])
+	by mail.maildlp.com (Postfix) with ESMTP id 1366C1A0D6E;
+	Wed, 27 Aug 2025 08:59:11 +0800 (CST)
+Received: from [10.67.109.79] (unknown [10.67.109.79])
+	by APP3 (Coremail) with SMTP id _Ch0CgDHYGheWK5obWylAQ--.31176S2;
+	Wed, 27 Aug 2025 08:59:10 +0800 (CST)
+Message-ID: <50e7e538-3f97-4db7-accf-635f3c0daff9@huaweicloud.com>
+Date: Wed, 27 Aug 2025 08:59:10 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250826084854.1030545-1-linan666@huaweicloud.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH cgroup/for-next 1/3] cgroup: remove redundancy online_cnt
+From: Chen Ridong <chenridong@huaweicloud.com>
+To: tj@kernel.org, hannes@cmpxchg.org, mkoutny@suse.com
+Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+ lujialin4@huawei.com, chenridong@huawei.com
+References: <20250826034022.1736249-1-chenridong@huaweicloud.com>
+ <20250826034022.1736249-2-chenridong@huaweicloud.com>
+Content-Language: en-US
+In-Reply-To: <20250826034022.1736249-2-chenridong@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:_Ch0CgDHYGheWK5obWylAQ--.31176S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7ur17GF1Uur48Kr13AF17trb_yoW8Aw4UpF
+	s5Z343ta1rGryrGFyFv3yjqFyF9Fnag348K3yxKa9YqFW3t3W7ta17AFyUJF1rJrs3Zrnx
+	AF4Yvr9xCw4ayFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUyGb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAK
+	I48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
+	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xII
+	jxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw2
+	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x02
+	67AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IUbiF4tUUUUU==
+X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
-On Tue, Aug 26, 2025 at 04:48:54PM +0800, linan666@huaweicloud.com wrote:
-> From: Li Nan <linan122@huawei.com>
-> 
-> In __blk_mq_update_nr_hw_queues() the return value of
-> blk_mq_sysfs_register_hctxs() is not checked. If sysfs creation for hctx
 
-Looks we should check its return value and handle the failure in both
-the call site and blk_mq_sysfs_register_hctxs().
 
-> fails, later changing the number of hw_queues or removing disk will
-> trigger the following warning:
-> 
->   kernfs: can not remove 'nr_tags', no directory
->   WARNING: CPU: 2 PID: 637 at fs/kernfs/dir.c:1707 kernfs_remove_by_name_ns+0x13f/0x160
->   Call Trace:
->    remove_files.isra.1+0x38/0xb0
->    sysfs_remove_group+0x4d/0x100
->    sysfs_remove_groups+0x31/0x60
->    __kobject_del+0x23/0xf0
->    kobject_del+0x17/0x40
->    blk_mq_unregister_hctx+0x5d/0x80
->    blk_mq_sysfs_unregister_hctxs+0x94/0xd0
->    blk_mq_update_nr_hw_queues+0x124/0x760
->    nullb_update_nr_hw_queues+0x71/0xf0 [null_blk]
->    nullb_device_submit_queues_store+0x92/0x120 [null_blk]
-> 
-> kobjct_del() was called unconditionally even if sysfs creation failed.
-> Fix it by checkig the kobject creation statusbefore deleting it.
-> 
-> Fixes: 477e19dedc9d ("blk-mq: adjust debugfs and sysfs register when updating nr_hw_queues")
-> Signed-off-by: Li Nan <linan122@huawei.com>
-> ---
->  block/blk-mq-sysfs.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/block/blk-mq-sysfs.c b/block/blk-mq-sysfs.c
-> index 24656980f443..5c399ac562ea 100644
-> --- a/block/blk-mq-sysfs.c
-> +++ b/block/blk-mq-sysfs.c
-> @@ -150,9 +150,11 @@ static void blk_mq_unregister_hctx(struct blk_mq_hw_ctx *hctx)
->  		return;
+On 2025/8/26 11:40, Chen Ridong wrote:
+
+> @@ -5949,7 +5944,7 @@ static void css_killed_work_fn(struct work_struct *work)
+>  		css_put(css);
+>  		/* @css can't go away while we're holding cgroup_mutex */
+>  		css = css->parent;
+> -	} while (css && atomic_dec_and_test(&css->online_cnt));
+> +	} while (css && css_is_dying(css) && !css->nr_descendants);
 >  
->  	hctx_for_each_ctx(hctx, ctx, i)
-> -		kobject_del(&ctx->kobj);
-> +		if (ctx->kobj.state_in_sysfs)
-> +			kobject_del(&ctx->kobj);
+>  	cgroup_unlock();
+>  }
+> @@ -5960,7 +5955,7 @@ static void css_killed_ref_fn(struct percpu_ref *ref)
+>  	struct cgroup_subsys_state *css =
+>  		container_of(ref, struct cgroup_subsys_state, refcnt);
 >  
-> -	kobject_del(&hctx->kobj);
-> +	if (hctx->kobj.state_in_sysfs)
-> +		kobject_del(&hctx->kobj);
+> -	if (atomic_dec_and_test(&css->online_cnt)) {
+> +	if (!css->nr_descendants) {
+>  		INIT_WORK(&css->destroy_work, css_killed_work_fn);
+>  		queue_work(cgroup_offline_wq, &css->destroy_work);
+>  	}
 
-It is bad to use kobject internal state in block layer.
+Hi Michal,
 
+Thank you point out the data race issue, Can I modify the code just like:
 
-Thanks,
-Ming
+@@ -5944,12 +5939,13 @@ static void css_killed_work_fn(struct work_struct *work)
+
+        cgroup_lock();
+
+-       do {
++       /* The CSS can only be taken offline when it has no living descendants. */
++       while (css && css_is_dying(css) && !css->nr_descendants) {
+                offline_css(css);
+                css_put(css);
+                /* @css can't go away while we're holding cgroup_mutex */
+                css = css->parent;
+-       } while (css && atomic_dec_and_test(&css->online_cnt));
++       }
+
+        cgroup_unlock();
+ }
+@@ -5960,10 +5956,9 @@ static void css_killed_ref_fn(struct percpu_ref *ref)
+        struct cgroup_subsys_state *css =
+                container_of(ref, struct cgroup_subsys_state, refcnt);
+
+-       if (atomic_dec_and_test(&css->online_cnt)) {
+-               INIT_WORK(&css->destroy_work, css_killed_work_fn);
+-               queue_work(cgroup_offline_wq, &css->destroy_work);
+-       }
++       INIT_WORK(&css->destroy_work, css_killed_work_fn);
++       queue_work(cgroup_offline_wq, &css->destroy_work);
++
+ }
+
+-- 
+Best regards,
+Ridong
 
 
