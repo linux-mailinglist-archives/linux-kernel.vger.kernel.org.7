@@ -1,138 +1,172 @@
-Return-Path: <linux-kernel+bounces-787723-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787724-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE85CB37A45
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 08:23:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1704B37A4A
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 08:24:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63A8A721A5A
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 06:23:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D59C2083E9
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 06:24:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D92C22DA75A;
-	Wed, 27 Aug 2025 06:23:24 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBF6D2E1745;
+	Wed, 27 Aug 2025 06:24:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Y9hRrN/A"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D8A6EADC;
-	Wed, 27 Aug 2025 06:23:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CE612D5C6A
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 06:24:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756275804; cv=none; b=YnUjDSBzILKqESiEp035FdlLbH9PHVRwMrJIWW6EMmg2HKBxPpMHas79HDxbGvUyenbbUWizv57dOXlGYbuffREr2i06HtRbgb9Qmz2Uj0/aiKGgczQNVgwYLsw6Ig8itEQh6BS19RU2TEesDQ3Mppw9h222kiFhnJVhSAB3zRY=
+	t=1756275889; cv=none; b=qAUwmUoXhYXX99S1IdGdS/Lh+66FYRVtu356P+v5rUV+HZMm/PVpUcXU94c4t8U3Pzwdi7yC3aiV+Ek/GeEBd1LDoAQsKby+l3z+0LCufH1kUlfRlP+OnIGun7GRgJz7/42PTU0JfuXmBOC+N7VUl/SoPK65jgUiJugDLP8BbyY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756275804; c=relaxed/simple;
-	bh=Ke8lXNIdOXkz+jWlK0W2U+rUKizzpn/yCf4X+98NMpU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FdZjZuVyQSDMaxsTlCgWG/NuGXNoNM/JDMg5Htwk59SGYRZW4Q1k+vzOTBAVNVWxb8i6YAaODzrVrb4Zeq+tbACuHov5qGDy1v/IyFWRTKtUrCGVH6hlVvnX60LSnaMA6E1KGk4meYX45oUdosc9SoUaxLX6DOShAc3rJtSj/zg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4cBZGb6JV9zKHNVw;
-	Wed, 27 Aug 2025 14:23:19 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id 85E071A0902;
-	Wed, 27 Aug 2025 14:23:19 +0800 (CST)
-Received: from [10.67.109.79] (unknown [10.67.109.79])
-	by APP2 (Coremail) with SMTP id Syh0CgDH75ZWpK5o_ivCAQ--.56900S2;
-	Wed, 27 Aug 2025 14:23:19 +0800 (CST)
-Message-ID: <2b574bb7-0192-4a91-8925-bd4c6cc8a407@huaweicloud.com>
-Date: Wed, 27 Aug 2025 14:23:17 +0800
+	s=arc-20240116; t=1756275889; c=relaxed/simple;
+	bh=EtUNz7kErHkJEDA3qLyWBB/J5HXF/UDPj4Bc0vPU/vU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=NMA5N1AfNhHeYmoJaiXQdRuhIpE4Jc8PYiY9npkz1i9FQsAkfSXKaIQX0ePu3H0Rq5VYlm0Gnz4tocD5x2DrvAho6BsZ7ST7KQOatqqzHp19n7C43kyxkWDX7lSuZE3Y+itGEBCZzZD+FuqXOX5BgW8jZZP8zXmF9BMrUkhQmhw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=Y9hRrN/A; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from mail.ideasonboard.com (unknown [223.190.80.94])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 318F2300E;
+	Wed, 27 Aug 2025 08:23:40 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1756275820;
+	bh=EtUNz7kErHkJEDA3qLyWBB/J5HXF/UDPj4Bc0vPU/vU=;
+	h=From:Subject:Date:To:Cc:From;
+	b=Y9hRrN/AKtDl5FZ5vwsQ+OV1MC9UrM3yz52y3qSRYCLtU9MFf0cCSbUqfzbXYBOsy
+	 dZtMdfpL2ko0sm+XS8YOh5wBIN2slpZichZ04NptBDQhPFLhg8unX7ryRSf9IF5/ve
+	 0U0AB1/n4BJSPIMzrERc9dtflTuePoRgRO7Nokkc=
+From: Jai Luthra <jai.luthra@ideasonboard.com>
+Subject: [PATCH 0/5] staging: Destage VCHIQ interface and MMAL
+Date: Wed, 27 Aug 2025 11:54:07 +0530
+Message-Id: <20250827-vchiq-destage-v1-0-5052a0d81c42@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -next v5 3/3] cpuset: add helpers for cpus read and
- cpuset_mutex locks
-To: Waiman Long <llong@redhat.com>, =?UTF-8?Q?Michal_Koutn=C3=BD?=
- <mkoutny@suse.com>
-Cc: tj@kernel.org, hannes@cmpxchg.org, cgroups@vger.kernel.org,
- linux-kernel@vger.kernel.org, lujialin4@huawei.com, chenridong@huawei.com
-References: <20250825032352.1703602-1-chenridong@huaweicloud.com>
- <20250825032352.1703602-4-chenridong@huaweicloud.com>
- <luegqrbloxpshm6niwre2ys3onurhttd5i3dudxbh4xzszo6bo@vqqxdtgrxxsm>
- <312f3e07-0eb9-4bdf-b5bd-24c84ef5fcc1@redhat.com>
-Content-Language: en-US
-From: Chen Ridong <chenridong@huaweicloud.com>
-In-Reply-To: <312f3e07-0eb9-4bdf-b5bd-24c84ef5fcc1@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:Syh0CgDH75ZWpK5o_ivCAQ--.56900S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7tF17XryDtw18CFWDur1Utrb_yoW8Zr4xpF
-	1jgFyUtF1jvF4fuwn7Za4rXw18tw1xKFWDJF97Jw18ZF9rtFW2vryxKanxuw1Fqr1xC3ya
-	va4qgws2934DAFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUyGb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAK
-	I48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
-	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xII
-	jxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw2
-	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x02
-	67AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1veHDUUUUU==
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAIekrmgC/x2MQQqAIBAAvxJ7TlDDrL4SHUS33IuVhgTi35OOw
+ zBTIGEkTLB0BSJmSnSGBqLvwHoTDmTkGoPkUvFJapatp5s5TI9pcpgdChy1UtpBa66IO73/b91
+ q/QBX3Sv+XwAAAA==
+X-Change-ID: 20250827-vchiq-destage-39de1e67557d
+To: Florian Fainelli <florian.fainelli@broadcom.com>, 
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>
+Cc: linux-rpi-kernel@lists.infradead.org, 
+ linux-arm-kernel@lists.infradead.org, linux-staging@lists.linux.dev, 
+ linux-kernel@vger.kernel.org, kernel-list@raspberrypi.com, 
+ Stefan Wahren <wahrenst@gmx.net>, 
+ Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Jai Luthra <jai.luthra@ideasonboard.com>, 
+ Umang Jain <umang.jain@ideasonboard.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3934;
+ i=jai.luthra@ideasonboard.com; h=from:subject:message-id;
+ bh=EtUNz7kErHkJEDA3qLyWBB/J5HXF/UDPj4Bc0vPU/vU=;
+ b=owEBbQKS/ZANAwAKAUPekfkkmnFFAcsmYgBorqSWMz/LstFox1XD8YJZ2iNfr3r6C2FjT8GwI
+ 3WLJG3SI/6JAjMEAAEKAB0WIQRN4NgY5dV16NRar8VD3pH5JJpxRQUCaK6klgAKCRBD3pH5JJpx
+ RWpJD/9bobUpaIVvLFGyCTlDcB6FLJPOluThmgC/UewvxRBlhJ1Mq3MF0GT6OVS4r4ORGrpY45/
+ 2EbxmdPy7t4+73z3KzAaqK8Wq0s+tmEfJ200RO9rZx+P7rqXrrqhH8DX0x+NjDXLsm6r6Zo+q5o
+ 6SBai6Rb0EnLMuJ1q1Co1IazZwauc4DWOqlJZHWdu+GmczGWSQndYdaerqJ0rTVAqr29Ng+YoJs
+ 8y2nL65v2aguMoEDh0uOFQva2EWjLXuAElWOfpeEf+0wd7BGgosVM9ZinmLfEZQ+RhNAFRV3Exv
+ NvkoKqIMAHKb2pEPjNFPd4vQdPAiQ2od/N6KfL6EsVJp3REdWGsPweYdNKVgV/Tb8jsLPQ0eD3t
+ YntewlTgeNe+qIh9gAGGzpGzKDUTcyhvOQBvWijLGJ5OGn5AldhQINGqZhQpJjUEyEBxLEzih/r
+ h82tvYrF7jWDe+FebM40hhYQY1+kKIkJ9+LU3FeyuOUsYgFLaAVTdEfqjQOpQ2kCu1ZjRBiSern
+ 4O8p4xoCNxoSpI0PNL+4vgsxnUqddtCW+0L9+Hu6+az/7udmfjWPm8rLT1panFsGXrpjRICBX+z
+ I5TeyQxS9kebMzK/2z+tYIDyS3FmEPTYQPS+gq+AxQMvqHodwTw3iSnsFNJkhfoBbvE0HtE3Z6T
+ VF92mV36iJv3t2Q==
+X-Developer-Key: i=jai.luthra@ideasonboard.com; a=openpgp;
+ fpr=4DE0D818E5D575E8D45AAFC543DE91F9249A7145
 
+Hi,
 
+The goal of this series is to begin the destaging and upstreaming
+process for various Raspberry Pi peripherals that currently interact
+with the firmware using the VCHIQ interface present in the staging tree.
 
-On 2025/8/26 22:43, Waiman Long wrote:
-> 
-> On 8/26/25 10:23 AM, Michal Koutný wrote:
->> (I wrote this yesterday before merging but I'm still sending it to give
->> my opinion ;-))
->>
->> On Mon, Aug 25, 2025 at 03:23:52AM +0000, Chen Ridong <chenridong@huaweicloud.com> wrote:
->>> From: Chen Ridong <chenridong@huawei.com>
->>>
->>> cpuset: add helpers for cpus_read_lock and cpuset_mutex locks.
->>>
->>> Replace repetitive locking patterns with new helpers:
->>> - cpuset_full_lock()
->>> - cpuset_full_unlock()
->> I don't see many precedents elsewhere in the kernel for such naming
->> (like _lock and _full_lock()). Wouldn't it be more illustrative to have
->> cpuset_read_lock() and cpuset_write_lock()? (As I'm looking at current
->> users and your accompanying comments which could be substituted with
->> the more conventional naming.)
-> Good naming is always an issue. Using cpuset_read_lock/cpuset_write_lock will be more confusing as
-> the current locking scheme is exclusive.
->> (Also if you decide going this direction, please mention commit
->> 111cd11bbc548 ("sched/cpuset: Bring back cpuset_mutex") in the message
->> so that it doesn't tempt to do further changes.)
->>
->>
->>> This makes the code cleaner and ensures consistent lock ordering.
->> Lock guards anyone? (When you're touching this and seeking clean code.)
-> 
-> Yes, I guess we can use lock guards here. You are welcome to send a patch to do that.
-> 
+While destaging the interface to drivers/platform/broadcom, also move
+the VCHIQ memory abstraction layer (MMAL) driver. Secondly, drop the
+bcm2835-camera driver, as the bcm2835-unicam driver using V4L2 framework
+is the recommended way to capture from CSI sensors on this platform.
 
-I attempted to define the cpuset_full_lock() macro, but the initial implementation was inconsistent
-with our coding conventions.
-Initial version:
+The bcm2835-audio driver is left as-is in the staging tree, as I am not
+an expert on ALSA. Volunteers are welcome :)
 
-#define cpuset_full_lock() \
-  guard(cpus_read_lock)(); \
-  guard(mutex)(&cpuset_mutex);
+In (a) subsequent series, I will upstream the following components that
+use VCHIQ interface:
+- vc-sm-cma driver
+- bcm2835-isp driver
 
-It was suggested to use a do-while construct for proper scoping. but it could not work if we define as:
+Thanks,
+	Jai
 
-#define cpuset_full_lock() \
- do { 			   \
-  guard(cpus_read_lock)(); \
-  guard(mutex)(&cpuset_mutex); \
- } while(0)
+Signed-off-by: Jai Luthra <jai.luthra@ideasonboard.com>
+---
+Jai Luthra (4):
+      staging: vc04_services: Cleanup formatting TODO entry
+      platform/broadcom: Destage VCHIQ interface
+      media: staging: Drop bcm2835-camera driver
+      platform/broadcom: Destage VCHIQ MMAL driver
 
-So I sent this patch version.
+Umang Jain (1):
+      include: linux: Destage VCHIQ interface headers
 
--- 
+ MAINTAINERS                                        |    2 +
+ drivers/platform/Kconfig                           |    2 +
+ drivers/platform/Makefile                          |    1 +
+ drivers/platform/broadcom/Kconfig                  |   39 +
+ drivers/platform/broadcom/Makefile                 |   15 +
+ .../broadcom/vchiq-interface}/TESTING              |    0
+ .../broadcom/vchiq-interface}/TODO                 |    6 -
+ .../broadcom/vchiq-interface}/vchiq_arm.c          |    9 +-
+ .../broadcom/vchiq-interface}/vchiq_bus.c          |    4 +-
+ .../broadcom/vchiq-interface}/vchiq_core.c         |    4 +-
+ .../broadcom/vchiq-interface}/vchiq_debugfs.c      |    6 +-
+ .../broadcom/vchiq-interface}/vchiq_dev.c          |    7 +-
+ .../broadcom/vchiq-interface}/vchiq_ioctl.h        |    3 +-
+ .../broadcom}/vchiq-mmal/Kconfig                   |    0
+ .../broadcom}/vchiq-mmal/Makefile                  |    0
+ .../broadcom}/vchiq-mmal/mmal-common.h             |    0
+ .../broadcom}/vchiq-mmal/mmal-encodings.h          |    0
+ .../broadcom}/vchiq-mmal/mmal-msg-common.h         |    0
+ .../broadcom}/vchiq-mmal/mmal-msg-format.h         |    0
+ .../broadcom}/vchiq-mmal/mmal-msg-port.h           |    0
+ .../broadcom}/vchiq-mmal/mmal-msg.h                |    0
+ .../broadcom}/vchiq-mmal/mmal-parameters.h         |    0
+ .../broadcom}/vchiq-mmal/mmal-vchiq.c              |    5 +-
+ .../broadcom}/vchiq-mmal/mmal-vchiq.h              |    0
+ drivers/staging/vc04_services/Kconfig              |   39 -
+ drivers/staging/vc04_services/Makefile             |   14 -
+ .../vc04_services/bcm2835-audio/bcm2835-vchiq.c    |    5 +-
+ .../staging/vc04_services/bcm2835-audio/bcm2835.c  |    3 +-
+ .../staging/vc04_services/bcm2835-audio/bcm2835.h  |    3 +-
+ .../staging/vc04_services/bcm2835-camera/Kconfig   |   13 -
+ .../staging/vc04_services/bcm2835-camera/Makefile  |    6 -
+ drivers/staging/vc04_services/bcm2835-camera/TODO  |   17 -
+ .../vc04_services/bcm2835-camera/bcm2835-camera.c  | 2011 --------------------
+ .../vc04_services/bcm2835-camera/bcm2835-camera.h  |  142 --
+ .../vc04_services/bcm2835-camera/controls.c        | 1399 --------------
+ .../raspberrypi => include/linux/vchiq}/vchiq.h    |    0
+ .../vchiq_arm => include/linux/vchiq}/vchiq_arm.h  |    0
+ .../vchiq_arm => include/linux/vchiq}/vchiq_bus.h  |    0
+ .../vchiq_arm => include/linux/vchiq}/vchiq_cfg.h  |    0
+ .../vchiq_arm => include/linux/vchiq}/vchiq_core.h |    2 +-
+ .../linux/vchiq}/vchiq_debugfs.h                   |    0
+ 41 files changed, 86 insertions(+), 3671 deletions(-)
+---
+base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+change-id: 20250827-vchiq-destage-39de1e67557d
+
 Best regards,
-Ridong
+-- 
+Jai Luthra <jai.luthra@ideasonboard.com>
 
 
