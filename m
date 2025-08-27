@@ -1,130 +1,120 @@
-Return-Path: <linux-kernel+bounces-787990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DAE0B37E80
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 11:13:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBADBB37E87
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 11:14:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 301BC7A315B
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 09:12:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ABAE9203938
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 09:14:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8713832142B;
-	Wed, 27 Aug 2025 09:13:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABFB7342CB4;
+	Wed, 27 Aug 2025 09:14:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="vOKlHufA"
-Received: from omta40.uswest2.a.cloudfilter.net (omta40.uswest2.a.cloudfilter.net [35.89.44.39])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="RcjkirYZ"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 059E7338F3D
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 09:13:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.39
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 391A0274B41;
+	Wed, 27 Aug 2025 09:14:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756286014; cv=none; b=PB56wKxh5TvKX/jFitJJ0DpU9opa1EafqKwUfB4CuRhKct5M74cmtQ8BGPIiJmmVua612etgYt7DhP5qnktyC933P64ilXbqUuDkH5N0XiX/HmEJYPdO/eJMoYVE/WWt4g3aQCA/6DOroRHKEQ+M4JPVxEZtayRTKR0hUI+/JXY=
+	t=1756286055; cv=none; b=E/Oe571pU4GxkXdK7DMu2FwCKxZpIdEGUrQJjYwgSicS46HlEZ5PzYH5rvWXLw6wLq6jRVTijemud8CXZXE4OK1gQU00HGTU3TpQD9UzW19i8QJsymktZ6Sxfh+2jx5nJQ+eMYWvnd9KH3Zno90erwLqsbhhiV/7iXmimFJIRBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756286014; c=relaxed/simple;
-	bh=VCaK1nx0t2j3rr3ka1B/z0pnxOsJZRFoIa4IAEBrvGc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LiTf8eQbGw0KGpEqcD/rcXkddtDQsp5Kn2mboDyRbUeezI3dijCyHb7XVzWbBuKUy8cpR7Scu+Q7X4BF0yRtiH4Abg7tIX7owK4o3Qo+AGPhHLH34ucliVZQA3gwqw5jMFsLL60bPda6F+X2NXmdap/P8yb1sJvXfLwAdX49SAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=vOKlHufA; arc=none smtp.client-ip=35.89.44.39
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
-Received: from eig-obgw-6007b.ext.cloudfilter.net ([10.0.30.166])
-	by cmsmtp with ESMTPS
-	id rAwKuXXhZdztXrCDku6duE; Wed, 27 Aug 2025 09:13:32 +0000
-Received: from box5620.bluehost.com ([162.241.219.59])
-	by cmsmtp with ESMTPS
-	id rCDjuvcbvpO1ZrCDjurNyH; Wed, 27 Aug 2025 09:13:31 +0000
-X-Authority-Analysis: v=2.4 cv=N8opF39B c=1 sm=1 tr=0 ts=68aecc3b
- a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
- a=HaFmDPmJAAAA:8 a=YEHoC-VGhiYLYAQQwFQA:9 a=QEXdDO2ut3YA:10
- a=nmWuMzfKamIsx3l42hEX:22 a=Wh1V8bzkS9CpCxOpQUxp:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
-	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=5f6lODDn8B9cgeT7CvBFWOWnpQJbwtJfiL3LPnz/BRk=; b=vOKlHufAgyKn0LGdRtEM8+uoN9
-	pzf3YPVTNlF344/Jeu/3eqvgCjkfrJRcnG59gBdxn939rdy81FKW30aMTs60lcw9ib0uAhmY9Qw5a
-	Cj528yJOD1jX7O2kuJSUZrWxS0ET5MzfLt1QZb5dCTiYSfzyA/AEdxJeW3LMjXVaTfQRfoZipSY21
-	k3jAh2xjRwFBGa1VGWJbRuYoH8vvPv91dXzOjejzrbqKGjWXkZhamEvIVzO1IgsAc5OwybE8QZ5MI
-	EbKc2ch59NkUga8/IdqmVVX/6tFo1TszhHRTt/UDl0XJXSYoiz2eAEAJ7KEwcIM8VLoSoNuc2adnL
-	tW+fzwFw==;
-Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:36040 helo=[10.0.1.116])
-	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.98.1)
-	(envelope-from <re@w6rz.net>)
-	id 1urCDi-00000004Cou-2Jb8;
-	Wed, 27 Aug 2025 03:13:30 -0600
-Message-ID: <adbc131a-9df3-4409-9cb4-25699c6f8afb@w6rz.net>
-Date: Wed, 27 Aug 2025 02:13:28 -0700
+	s=arc-20240116; t=1756286055; c=relaxed/simple;
+	bh=/yIf+mskkqkfN8f2LgY5oDpq+Ffb7eNyUGB/AAvVog4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RxtIuZfZCwL/7GyZCFS7FWbnuf9V/qb7/to81Y8KAY7VoIJKrDgGAOTFpXoKkK48m5cAGhrFezzZHySo2hOEgqLq5GmgCQCSKmS2q+K9E3s3wrW5LfBSX5PB5QwyjTUwlXFNZ3CKjudy34K1EcMA8dR641qpIblv5Oerz1Ujtpg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=RcjkirYZ; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=8EDTmutXv6cpnKMhKY9aCrRhZQN/VIppbHjVD097H+Y=; b=RcjkirYZ4jlG0KuHggzlLh7fXY
+	otW2retBA8Q5OAma3JuQet9AWItJwUwa9wRAod6SP3CZfKf8fGL9qAQZskXdyPD4xKJQ+3EG2eCie
+	YXeqnSPyODYhfSbXGZu6zIb/RwLuhtCP3lEK1e2DyP/xYDTt4PjgfUuodBLQuefxwDbf76dJM/jzA
+	MC3cm1GfSElU3HRGwp6HWlc0O8lI8PoY5Cd2if7J6Ajhj2vxZRwcf1Gsuxr9d5Fs8pt5cVWY2Xcn3
+	M1RoPqfSOCtexQBur+wvKH2GPDYRJAxGd8k0b2cHS7fK/2sRzfBPr9RJDBS36KEbSgrainWf4guio
+	fw+A7mtQ==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:34142)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1urCEE-000000000H8-2VQc;
+	Wed, 27 Aug 2025 10:14:02 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1urCEB-0000000024b-1cng;
+	Wed, 27 Aug 2025 10:13:59 +0100
+Date: Wed, 27 Aug 2025 10:13:59 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Alexander Wilhelm <alexander.wilhelm@westermo.com>
+Cc: Vladimir Oltean <vladimir.oltean@nxp.com>, Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: Aquantia PHY in OCSGMII mode?
+Message-ID: <aK7MV2TrkVKwOEpr@shell.armlinux.org.uk>
+References: <20250804160234.dp3mgvtigo3txxvc@skbuf>
+ <aJG5/d8OgVPsXmvx@FUE-ALEWI-WINX>
+ <20250805102056.qg3rbgr7gxjsl3jd@skbuf>
+ <aJH8n0zheqB8tWzb@FUE-ALEWI-WINX>
+ <20250806145856.kyxognjnm4fnh4m6@skbuf>
+ <aK6eSEOGhKAcPzBq@FUE-ALEWI-WINX>
+ <20250827073120.6i4wbuimecdplpha@skbuf>
+ <aK7Ep7Khdw58hyA0@FUE-ALEWI-WINX>
+ <aK7GNVi8ED0YiWau@shell.armlinux.org.uk>
+ <aK7J7kOltB/IiYUd@FUE-ALEWI-WINX>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.6 000/587] 6.6.103-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
- achill@achill.org
-References: <20250826110952.942403671@linuxfoundation.org>
-Content-Language: en-US
-From: Ron Economos <re@w6rz.net>
-In-Reply-To: <20250826110952.942403671@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - box5620.bluehost.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - w6rz.net
-X-BWhitelist: no
-X-Source-IP: 73.223.253.157
-X-Source-L: No
-X-Exim-ID: 1urCDi-00000004Cou-2Jb8
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.116]) [73.223.253.157]:36040
-X-Source-Auth: re@w6rz.net
-X-Email-Count: 37
-X-Org: HG=bhshared;ORG=bluehost;
-X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfKZwlqX2L6V6+NEak+RxQTQSqRk8ud0Bf9kAun9quScqg8UBSLy300sKK18RSAGOyO0oIqoPRBFUU3b62sypRkXhfqdUZ0Z1Py0XbLxm1axPglcmjRk7
- 0+yzH83lV6BQ5WwlCxxOoJhRmwJJ5Oao3PJNK4nfX6ns6y8JJP0WFwc4hhUlSimtX4+zJndZSjc84IMwSRQ1OUCC7YeH86/ZKcU=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aK7J7kOltB/IiYUd@FUE-ALEWI-WINX>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On 8/26/25 04:02, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.6.103 release.
-> There are 587 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Thu, 28 Aug 2025 11:08:24 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.103-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+On Wed, Aug 27, 2025 at 11:03:42AM +0200, Alexander Wilhelm wrote:
+> Am Wed, Aug 27, 2025 at 09:47:49AM +0100 schrieb Russell King (Oracle):
+> > On Wed, Aug 27, 2025 at 10:41:11AM +0200, Alexander Wilhelm wrote:
+> > > Set to 100M:
+> > > 
+> > >     fsl_dpaa_mac: [DEBUG] <memac_link_down> called
+> > >     fsl_dpaa_mac: [DEBUG] <memac_link_up> called
+> > >     fsl_dpaa_mac: [DEBUG] * mode: 0
+> > >     fsl_dpaa_mac: [DEBUG] * phy_mode(interface): 2500base-x
+> > >     fsl_dpaa_mac: [DEBUG] * memac_if_mode: 00000002 (IF_MODE_GMII)
+> > >     fsl_dpaa_mac: [DEBUG] * speed: 2500
+> > >     fsl_dpaa_mac: [DEBUG] * duplex: 1
+> > >     fsl_dpaa_mac: [DEBUG] * tx_pause: 1
+> > >     fsl_dpaa_mac: [DEBUG] * rx_pause: 1
+> > 
+> > So the PHY reported that it's using 2500base-X ("OCSGMII") for 100M,
+> > which means 0x31b 3 LSBs are 4. Your hardware engineer appears to be
+> > incorrect in his statement.
+> 
+> I asked the hardware engineer again. The point is that the MAC does not set
+> SGMII for 100M. It still uses 2500base-x but with 10x paket repetition.
 
-Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
+No one uses symbol repetition when in 2500base-x mode. Nothing supports
+it. Every device datasheet I've read states clearly that symbol
+repetition is unsupported when operating at 2.5Gbps.
 
-Tested-by: Ron Economos <re@w6rz.net>
+Also think about what this means. If the link is operating at 2.5Gbps
+with a 10x symbol repetition, that means the link would be passing
+250Mbps. That's not compatible with _anything_.
 
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
