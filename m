@@ -1,225 +1,136 @@
-Return-Path: <linux-kernel+bounces-787808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787810-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55E61B37B65
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 09:22:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26C87B37B7B
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 09:22:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 521431BA055E
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 07:22:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D7EB367502
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 07:22:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF2173164BC;
-	Wed, 27 Aug 2025 07:22:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41C61318130;
+	Wed, 27 Aug 2025 07:22:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="W9Gz5mtc"
-Received: from smtpbgsg1.qq.com (smtpbgsg1.qq.com [54.254.200.92])
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="paqG0/bt"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAE731EA7CF;
-	Wed, 27 Aug 2025 07:21:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBC001E8342;
+	Wed, 27 Aug 2025 07:22:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756279321; cv=none; b=CS+jNPs1maTG43rq5SYqmXOvLJGlrcvFdRVWYTWphdStY4nV8Cg8EzH3KV6Z2TeYYII1tzu3dfVvzsYK06vtw8ogPqEH8qFTEzPdysSFk/PH8XgC069vt0nsU019ksHh/wgcAhqHAiocctFaG8fypYu+nJ+rZVPdoZ1EPckTxR8=
+	t=1756279358; cv=none; b=uGX6ynxlyr209styAtdI7XkVGo0MJQu61yorK1jiI370xH7YKODeAdEBqCM3Cgwm14GuecTlmjJxqdkSIqpNWY7/1LKwnPezT7bub5G5fcULgHtusopYsXEyMEDsLMLtkeWkkmRjxEARVlro9OXCl+8ny7xve3LSZhr+9dMbAhM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756279321; c=relaxed/simple;
-	bh=dlo/9J6rhts2KG0F4PfNSCNpj/HjCVBE3juBwL0eg0w=;
+	s=arc-20240116; t=1756279358; c=relaxed/simple;
+	bh=G+hmXrHggGQu/DFm2iaN9YOAsgDAVtUlcX4wbDIaTAM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gzEicG0qVkZM9u1KZOkW1t76rzmxZyjfxdyG3CC2B2B02jEhpg/8K5p2QktgdMtJGHgtVPID93JyBSdA6W91VfagBaiEvIskIpIA3/yX+z42WS+0eniQygkTQRaCRCg/jU0i7DD2whz2tHhF1o8z7C3T4ugaH4dREUNb+E2cEC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=W9Gz5mtc; arc=none smtp.client-ip=54.254.200.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1756279303;
-	bh=E49A0qgUBTyj8XWDCdM/eYAU15Zj10Ql4fzxbPmX3Ss=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=W9Gz5mtcMHZmhNqSl8hkrsFZb3oDxRfOReKO5NiABMVAJRzfd4/u/USyiJ1lJRJ2A
-	 oenxKXtK9adCyBVq6JPabMi+TI4KitBrxzRuG0bfDJxKwyb5EK7JysjenUyksGFK+p
-	 +a3atBM8BYpzYWUlAVdN8rFl+omkAHnvl0151ctk=
-X-QQ-mid: zesmtpip2t1756279294tad99e06a
-X-QQ-Originating-IP: 2Cx51Oqqsvj0SfpaTDErqPLoI4bIH6fgC2p7DJ10Xuc=
-Received: from uos-PC ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Wed, 27 Aug 2025 15:21:33 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 12414129326743720862
-EX-QQ-RecipientCnt: 6
-From: Morduan Zang <zhangdandan@uniontech.com>
-To: dmitry.torokhov@gmail.com
-Cc: linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	liziyao@uniontech.com,
-	WangYuli <wangyuli@uniontech.com>,
-	Morduan Zang <zhangdandan@uniontech.com>
-Subject: [PATCH 2/2 v2] selftests: input: Add tracepoint testing script
-Date: Wed, 27 Aug 2025 15:21:23 +0800
-Message-ID: <1B705FD25232CA91+20250827072125.139887-2-zhangdandan@uniontech.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250827072125.139887-1-zhangdandan@uniontech.com>
-References: <20250827072125.139887-1-zhangdandan@uniontech.com>
+	 MIME-Version:Content-Type; b=gT2CqTUhQB7mj9sfaXFwIqSImjC1VU/VzP0rnOvm3DTWKqtxp8Byk6M8sWACmQlywhIFkHa6R8p9KG44WEQdPBJXlygFB1DZoBjko89DgTF2fdBCWOelIACLgR/5q6biqt8q/UaQx+c2p6gW6QPGpDIYgxofYUqjsHaFq4fQ8ZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=paqG0/bt; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
+	bh=G+hmXrHggGQu/DFm2iaN9YOAsgDAVtUlcX4wbDIaTAM=; b=paqG0/btPjpriUue1ZLq40xLBd
+	GBgOWrFL05XOmF286hGkQVhrhfZqZimImLzlqfvnvVlVMHo57pYqqanZe5p+RWyExLLfK8pM6Q5Cq
+	xdTc0nJjioWVaXjKpM6xHGG33hNdJlVOqRRL+S4OzGg7IrzrmTrdXDfSV/OniMWb8NfMr7hViTPqT
+	qh4CArG3EfgYiwDGIxDxzDICg/hr95MIGKc/d2Fy1Rh+nq9Okcnz7bP4oClR/Liyw76jtlNxiWYgk
+	upeAZRYX6mfLnf/YA7pnADtT8ZXvkmab4GGfHfUpjyupzxU/QmqBCPG9/xLHsUBttuD7WbfOzPmK7
+	upjPzyNA==;
+Received: from [213.244.170.152] (helo=phil.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1urATt-00078I-85; Wed, 27 Aug 2025 09:22:05 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: Yury Norov <yury.norov@gmail.com>,
+ Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+ Jaehoon Chung <jh80.chung@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>,
+ Shreeya Patel <shreeya.patel@collabora.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Sandy Huang <hjc@rock-chips.com>,
+ Andy Yan <andy.yan@rock-chips.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
+ Nicolas Frattaroli <frattaroli.nicolas@gmail.com>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Shawn Lin <shawn.lin@rock-chips.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ Krzysztof =?UTF-8?B?V2lsY3p5xYRza2k=?= <kwilczynski@kernel.org>,
+ Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>,
+ Bjorn Helgaas <bhelgaas@google.com>, Chanwoo Choi <cw00.choi@samsung.com>,
+ MyungJoo Ham <myungjoo.ham@samsung.com>,
+ Kyungmin Park <kyungmin.park@samsung.com>, Qin Jian <qinjian@cqplus1.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+ Nathan Chancellor <nathan@kernel.org>,
+ Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+ Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
+ Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Cc: kernel@collabora.com, linux-kernel@vger.kernel.org,
+ linux-mmc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-media@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-phy@lists.infradead.org,
+ linux-sound@vger.kernel.org, netdev@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com, linux-pci@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-clk@vger.kernel.org, llvm@lists.linux.dev,
+ Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Subject:
+ Re: [PATCH v3 07/20] drm/rockchip: dsi: switch to FIELD_PREP_WM16* macros
+Date: Wed, 27 Aug 2025 09:22:04 +0200
+Message-ID: <4886676.atdPhlSkOF@phil>
+In-Reply-To: <20250825-byeword-update-v3-7-947b841cdb29@collabora.com>
+References:
+ <20250825-byeword-update-v3-0-947b841cdb29@collabora.com>
+ <20250825-byeword-update-v3-7-947b841cdb29@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz6b-0
-X-QQ-XMAILINFO: OcIiaahx2ZjKJoN50pxxtfisxaMxKUqP88QaHsG23uanRVzGmQS7Kmcg
-	GXfkskc0tKOqHg/4Y2JrIsfcAWcQgpDDyGYPdYJlu7xlfNDczzYI+8MVYlbBnEf1lFG/tMB
-	qVWCMxX9m6eG09pSO0KSyaEQmzPElQJdDOsyZ9Nzxp+jVyAEpTrxVuc+ZpmP0x0DfouQPdT
-	JAqxmjlZaneXorErRHy5hv4qIMkbmHN2XMeUivyZNH+BrDNITaGCoNwXuJBJ3PWd3SCdgHS
-	1/W5/WykBc2p/9nTZS8C1OaBnuQz+KqvweZqvqHAq8uVLFh+BbFTObE2kyoxVMbGtgZ7oNz
-	w5gOI8Rs01gvhc+u+Mt5Ll5dikzt7GCq5TaC4cn/ItqFH8EIwxiYe2nztygr/Ppl7kI42T7
-	+KtIPJaQAZRBH3It7Sk5YjcJlStyN85oQT/NInAy84gwADVe3Qb/Kn3+yndsq2JVuVv+yzG
-	xLouZBcF4tMyuLctjZImE0Lh+rvhvQO/6XRoBVjIHDsVLV5GUCut83rTTjOgbzDETyFDx6W
-	13Bc4XvNdimJdaAUonGjPIws1StYU0A2vka0HgQ91xL0gPCIsFLnQ7g2cFn0h+5Rff96/P0
-	nx6kK6GW4dlQ5rA5RcaNIYPOWDaV9g2PRyHyKT6FR3ZSdEfE8+X7jjF7Q2lejq8wG30wr64
-	WeRHSxanzHXfrD5CtFjJD+NEI5PoDXV4KcFWk/SRNacnNKwCtRd14czk9wXE0mqdi6hLpB2
-	7Z4oZ3+R/l2KOENTzcWVAhSi2nHkJnHybfxxwm8CiNSGZvCBowv77V9iEnWQ4ZYfcJSrDCf
-	ZtWAxtsAmUC7yspb1nA5wgmPM4ZrVskhy4knzhrT6uYwuuzV1NpDxxgCbt5NuPbj/HYSWaV
-	zbatRC8fBwdWt5uNzSnWjoJZUjcA15uyhlhnSl9Ztudif98EQIgnWbJew8RRsydSO7gcsfW
-	O1GM1Bo4Pp7elG3rR6RIJ/1dRtHLhURWqQkZK1kG5FeRvSf76Rol9FvXzeHBdtrMLQQl2P3
-	1EbkKUWTwnnafvyFmBTSRuksDoW2Jc39yHpBOKYwIIo/YKr1wBTDzRA3ThuFq8z3t7DFNCQ
-	QfGc/3uw0XHSa0XSq/YC9iCj4/ur0/JzJDrM0l0WcdpEiJgYSiWmYeoUgRBv4gciXFGTysY
-	PctsqjTWkFos0IW4Ltmgqe+G5fRjC7CS12Lpp3cgHL84860=
-X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
-X-QQ-RECHKSPAM: 0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-From: WangYuli <wangyuli@uniontech.com>
+Am Montag, 25. August 2025, 10:28:27 Mitteleurop=C3=A4ische Sommerzeit schr=
+ieb Nicolas Frattaroli:
+> The era of hand-rolled HIWORD_UPDATE macros is over, at least for those
+> drivers that use constant masks.
+>=20
+> Remove this driver's HIWORD_UPDATE macro, and replace instances of it
+> with either FIELD_PREP_WM16 or FIELD_PREP_WM16_CONST, depending on
+> whether they're in an initializer. This gives us better error checking,
+> which already saved me some trouble during this refactor.
+>=20
+> The driver's HIWORD_UPDATE macro doesn't shift up the value, but expects
+> a pre-shifted value. Meanwhile, FIELD_PREP_WM16 and
+> FIELD_PREP_WM16_CONST will shift the value for us, based on the given
+> mask. So a few things that used to be a HIWORD_UPDATE(VERY_LONG_FOO,
+> VERY_LONG_FOO) are now a somewhat more pleasant
+> FIELD_PREP_WM16(VERY_LONG_FOO, 1).
+>=20
+> There are some non-trivial refactors here. A few literals needed a UL
+> suffix added to stop them from unintentionally overflowing as a signed
+> long. To make sure all of these cases are caught, and not just the ones
+> where the FIELD_PREP_WM16* macros use such a value as a mask, just mark
+> every literal that's used as a mask as unsigned.
+>=20
+> Non-contiguous masks also have to be split into multiple
+> FIELD_PREP_WM16* instances, as the macro's checks and shifting logic
+> rely on contiguous masks.
+>=20
+> This is compile-tested only.
+>=20
+> Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
 
-Add a test script for the input subsystem tracepoints.
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
 
-The script provides:
- - Automatic detection of available input tracepoints
- - Privilege and filesystem mount validation
- - Interactive testing with real-time trace monitoring
- - Support for both batch and live trace analysis
-
-The script enables easy validation and demonstration of the input
-tracepoint functionality, making it easier for developers to verify
-the implementation and understand the tracepoint capabilities.
-
-Usage:
-  sudo ./tools/testing/selftests/input/test_input_tracepoints.sh
-
-Signed-off-by: WangYuli <wangyuli@uniontech.com>
-Signed-off-by: Morduan Zang <zhangdandan@uniontech.com>
----
- MAINTAINERS                                   |  2 +
- .../selftests/input/test_input_tracepoints.sh | 78 +++++++++++++++++++
- 2 files changed, 80 insertions(+)
- create mode 100755 tools/testing/selftests/input/test_input_tracepoints.sh
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 4dfa2d60faa0..f6e5da714ba9 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -12099,6 +12099,7 @@ F:	include/uapi/linux/input-event-codes.h
- F:	include/uapi/linux/input.h
- F:	include/uapi/linux/serio.h
- F:	include/uapi/linux/uinput.h
-+F:	tools/testing/selftests/input/
- 
- INPUT MULTITOUCH (MT) PROTOCOL
- M:	Henrik Rydberg <rydberg@bitmath.org>
-@@ -25568,6 +25569,7 @@ F:	kernel/trace/
- F:	kernel/tracepoint.c
- F:	scripts/tracing/
- F:	tools/testing/selftests/ftrace/
-+F:	tools/testing/selftests/input/test_input_tracepoints.sh
- 
- TRACING MMIO ACCESSES (MMIOTRACE)
- M:	Steven Rostedt <rostedt@goodmis.org>
-diff --git a/tools/testing/selftests/input/test_input_tracepoints.sh b/tools/testing/selftests/input/test_input_tracepoints.sh
-new file mode 100755
-index 000000000000..6ade2619b62d
---- /dev/null
-+++ b/tools/testing/selftests/input/test_input_tracepoints.sh
-@@ -0,0 +1,78 @@
-+#!/bin/bash
-+# SPDX-License-Identifier: GPL-2.0-or-later
-+
-+###############################################################################
-+#
-+# Input subsystem tracepoint testing script
-+#
-+# AUTHOR
-+#      WangYuli <wangyuli@uniontech.com>
-+#
-+###############################################################################
-+
-+DEBUGFS_PATH="/sys/kernel/debug/tracing"
-+INPUT_EVENTS_PATH="${DEBUGFS_PATH}/events/input"
-+
-+# Check if we have sufficient privileges
-+if [ ! -w "$DEBUGFS_PATH" ]; then
-+    echo "Error: Root privileges required to access tracing system"
-+    echo "Please run: sudo $0"
-+    exit 1
-+fi
-+
-+# Check if debugfs is mounted
-+if [ ! -d "$DEBUGFS_PATH" ]; then
-+    echo "Error: debugfs is not mounted"
-+    echo "Please run: mount -t debugfs none /sys/kernel/debug"
-+    exit 1
-+fi
-+
-+# Check if input tracepoints exist
-+if [ ! -d "$INPUT_EVENTS_PATH" ]; then
-+    echo "Error: input tracepoints not found, kernel may need to be recompiled"
-+    exit 1
-+fi
-+
-+echo "=== Input Subsystem Tracepoint Test ==="
-+echo
-+
-+# Clear existing trace buffer
-+echo > "${DEBUGFS_PATH}/trace"
-+
-+# List available input tracepoints
-+echo "Available Input Tracepoints:"
-+for event in "${INPUT_EVENTS_PATH}"/*; do
-+    if [ -d "$event" ]; then
-+        event_name=$(basename "$event")
-+        echo "  - $event_name"
-+    fi
-+done
-+echo
-+
-+# Enable all input tracepoints
-+echo "Enabling all input tracepoints..."
-+echo 1 > "${INPUT_EVENTS_PATH}/enable"
-+
-+if [ $? -eq 0 ]; then
-+    echo "✓ Successfully enabled input tracepoints"
-+else
-+    echo "✗ Failed to enable input tracepoints"
-+    exit 1
-+fi
-+
-+echo
-+echo "Please perform some operations in another terminal (keyboard input, mouse movement, etc.)"
-+echo "or plug/unplug USB devices, then come back to view the results..."
-+echo
-+echo "Press any key to continue viewing trace output (press Ctrl+C to exit)..."
-+read -n 1
-+
-+echo
-+echo "=== Trace Output ==="
-+echo "(Last 100 lines)"
-+tail -n 100 "${DEBUGFS_PATH}/trace"
-+
-+echo
-+echo "=== Real-time Trace Output ==="
-+echo "(Press Ctrl+C to stop)"
-+cat "${DEBUGFS_PATH}/trace_pipe"
--- 
-2.50.1
 
 
