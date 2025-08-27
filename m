@@ -1,235 +1,233 @@
-Return-Path: <linux-kernel+bounces-788850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B956CB38B02
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 22:35:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86BADB38AFE
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 22:35:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 555613BF461
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 20:35:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 51336368817
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 20:35:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 408BF2F3638;
-	Wed, 27 Aug 2025 20:35:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD4C12F3638;
+	Wed, 27 Aug 2025 20:35:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20230601.gappssmtp.com header.i=@amacapital-net.20230601.gappssmtp.com header.b="GJalcVct"
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Z6r/eh33"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2065.outbound.protection.outlook.com [40.107.92.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E39F2F39DA
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 20:35:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756326929; cv=none; b=OYI+aOjlY2I7ciTQOTnAvoy85/4G38Hx6KjzDAh8yi6pOJ6BpPReCBnn7097EoSMCRokyFMN28/35ujXVp9njG3Cug+cJG1m2a/MWbXYjDC2DR695uwye8yOxx45aEiF6BxrBYOlZw6hxTzTbtvyV7ILcnOVGUFKrvKTL1ahl08=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756326929; c=relaxed/simple;
-	bh=p6ZnKcI6F1mAg5pkdsDn0kIOGkIWEzaMWKJgn7QqNeU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=C6xkDd2mT3onRcFIZ5xwmn7HZq2PBf8TYtXAgC6vU6CltQGuQa13/lulA2heZJZa2GMi8ud6er0c138JqLHr7aHfPn3wrFL9KWXw/XRLS1x+Ig0A/ulRZEFE5h5Tv6PWsG1zlPXTzeFCKJj3bvsrtod9HtF140swnJNq1Jw2UaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net; spf=pass smtp.mailfrom=amacapital.net; dkim=pass (2048-bit key) header.d=amacapital-net.20230601.gappssmtp.com header.i=@amacapital-net.20230601.gappssmtp.com header.b=GJalcVct; arc=none smtp.client-ip=209.85.208.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amacapital.net
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-3364e945ce7so2315761fa.1
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 13:35:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20230601.gappssmtp.com; s=20230601; t=1756326925; x=1756931725; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Wl0ljXkPyLBoAJTX9TjDS8ZEVo6BAT27dTBeN90CXWg=;
-        b=GJalcVct1ylww4R06bAl1a/YAkEtNyGc/ApXVXzRUqrz0sigmC8ZNhV/T7KYq1MxEV
-         fuEGCNtGIuRSX8GnpWnIq9hJ30M6m1ekxmwHqof1Jjz7jADsVFmlS4oTd0nlzZ6j0PVt
-         QrZwp0Ypi3RX9o/0HCFgroQPTM/K9NCOOyjL+aN2l1Dc5r+ZGI2UW5OVJ9/jbcVVFLwa
-         +Vb5Q9zDwglekmx/8z7aN719XO79/0FXhF3gT9MYCJpyuMBDI2SIeFQ2PtDVVIxvHpN8
-         ijCb5Lx7q67MG8jt+zxONJ5o9Kla1DK+jezTp00pnbh3+A060Z+2pmPyKi1L1wXPQ8zq
-         TJTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756326925; x=1756931725;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Wl0ljXkPyLBoAJTX9TjDS8ZEVo6BAT27dTBeN90CXWg=;
-        b=EBxqPefKZA+de6T13uzsm59sQeBoihJX47xElkunAVaUXJZHMbIwiocHdwXWJ1YyR2
-         wktzTGMz0+wh36Ab/f1hGGdSvuWtOlok4JMN1L6qbXke8b/TNfTbZrKW4b8+qxt8+O7g
-         hRMteMyTKAEVRcY/TJqz6+1aIuBbEJxXCg6m8vVrRjcjHrdjvq+2T0JYTJNWSh/BGTGK
-         4y919qn3Pulte/4pp6UM0BU5Nu2dQanHo1otlHZbG31a6xI5u+hPdE+MM+D7+v/C1aY2
-         9QkmmrxRoOSJi1KCCQrAoiT68DuxpQIW1QTmdN9CZga5CTlKY3YZ1z3ClZug/MYJeouz
-         Wusg==
-X-Forwarded-Encrypted: i=1; AJvYcCVxpZVXjvBJ7Bj57+cxS1pd+VT5E8CMv/ArKaHl5wAB4eoMRamQ1Mm1T5D+qqbrSvPcv4ei5/QcQwHgZak=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyn+R6BOlb/3ZlOXhEye2sCvcDt8yH/DWZ1bivrl/r5i/KB86T5
-	OYgRD7M3DIWnWvHhPKs4awTVvtOBcw4zzhvt0Z1kCHlpMseaA2e5iTgsB9x6QNixGGbehpf6k35
-	O/wB0Wa3aYaH4+m40rc8vUJlI114vCH314+ex79qF
-X-Gm-Gg: ASbGncudZK8gUXN2EO2qOtMn27sCl/CSu493Qlmn6TV+hZxl07JXkv9vvagh/WM41f4
-	OLMaVBJkL0ScfrWSiFeinXbZkFE+JRXuRMaiGhl2PGX7PHU7LJ7IyiCc8+2vPxGVen1hcwPWeaB
-	OTviim1zseI4cZHF6x9zvHjPUKTUgIh388i2pHr0iSyqAL1PHOqYDwh3nJB3+3ytALS2/r868o5
-	cpvBEDrZGnI9klF1vc=
-X-Google-Smtp-Source: AGHT+IGjsa20oKobGhO2nM0A+5O9r9SpySfPXdDwEkZvs/Q/UX/cGwHkgk6K1CRbBEum5T5gJOenn7JtwIEd8EnKFq0=
-X-Received: by 2002:a05:651c:41cf:b0:335:4d0e:9493 with SMTP id
- 38308e7fff4ca-33650f997d5mr58918271fa.28.1756326925222; Wed, 27 Aug 2025
- 13:35:25 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43074F4F1
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 20:35:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.65
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756326923; cv=fail; b=XoTONFG9Ty2aVDVnBGtRmvKPTKh+r4ylgSrTe0CaYYvpZwOYVb8AJ57Zjz4XLN1J/DDJPuo6onfmias6tx0GFVo/87Shcwjj2tz0BLbOGr/pEHzNH4dkRyAb7C1BfgzvABPvWLvflf+C9r8dk9Ok0TFHbyCLcj3wzt4x8hUQIkM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756326923; c=relaxed/simple;
+	bh=O2yS7Z/rljPxopRwoOcY6WFUp+0I5t2pGX5id7el/5A=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=PCCLiQJo31CC0KmqA7ndLfodiNAv7vZqUHBFIypTG4hr7ystC0STww7nGnF1zpBhBvAuIOBRLSGiHWGJfjgDMM1sg+IyxHjry3/1c+v1XsDRaOOpuY5nE3WmHneGswjTs7HGIGlR+3o5EyeWcg2N3hRk7X9WIbgZcv4+YU70AfI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Z6r/eh33; arc=fail smtp.client-ip=40.107.92.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=JKJgX1HdVBDNL0Rx0ZMBHDsHUZjg6qqpzEnq6jC6mkhQpmeFQhLujVHM7ufoAAPsxBl0y+DXGmAWCzmFSMhCpGlnca8vj3j86LZzsaNeb62qQ06W+dDjoqYWlwFyODKiiI3WsU5Hz+nCh3M/RPJJO/ZgBpT5qftHPQZV0MVfLSjVtba0xFYs1ctLl14AeapWMRoxhxiV0+DAX+BdMggKlhrTkvV7Vg4Rg2C8QEamezQ3lPO1FcDWZh44SCMFJXf0D5coOhtA1B250YkJwpo3t9vY8H5zLrclnsHm4POBslGbVnDmdH9ARaiGGrA27CGhLoy52KSS4MB5Va2Xv+gdDA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=iGBSGicHbflGhsd3etAVsVuEYiddXi0FlEk3/ZxRfKs=;
+ b=YyIlR+J6JEZZZMN5JWjtysI8dnXlkcX5UWq+P8arLF/+7z+5uvof1QwYjylKMAVhzIfXfBQOse1pPtU/H74Gy5R6HstQD3mszC6vCIuqwFlUJee1bg8Y5XTEzHkYnfzfioGnwBI0Os7nK+KhO3FsxZFno3uwpkASiF7GD5uwW0x0pcTvG4Y3/qIXXP5Xj5cmA3CcMjMnlRN3f8qokOueBtIJcL5hSex6OW++ZbZRnEFEk9EnlRndjIf+8jq7ytmNiEONMzd8kyx2urvTA0LdMJ2RDfn7y4MaHc6edGrE3ihryBg4e2zH4kJ2h4elRGuP2kSW+HpU/RVZWcAH3F8XIQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=iGBSGicHbflGhsd3etAVsVuEYiddXi0FlEk3/ZxRfKs=;
+ b=Z6r/eh33w8RJOV0GFR+302lZXLRM8aZZ+qyCD8iCtmWJHS5fWNdju1YzadILyEfDk2JcIO2McDLec8/0HEwMe1JTEoVdvn8RGC++Pu3UV8B8hZcrQOtzVpuBFWNC1lIbnxRuqvBvRJsF92x/+cIoFdJx1BisJRg/Q4CGqJwMCc2v5DXL9vzOOYYFEWDTnM1WnoCrgIm1fhdJ3/2Hvy3NdBUu1RECwGUxMZy8iWUye6XftFKX5795BimwwM9Fp0fr2F+02jO85CF679lPeRJH7RHPLSbpJ9kepzgg3D2nOl+yhgF1yDQmkrsJH7GOSJ+2C/TrtZEc09ScRGih7k6/ZA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from LV2PR12MB5968.namprd12.prod.outlook.com (2603:10b6:408:14f::7)
+ by PH0PR12MB8800.namprd12.prod.outlook.com (2603:10b6:510:26f::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.20; Wed, 27 Aug
+ 2025 20:35:19 +0000
+Received: from LV2PR12MB5968.namprd12.prod.outlook.com
+ ([fe80::e6dd:1206:6677:f9c4]) by LV2PR12MB5968.namprd12.prod.outlook.com
+ ([fe80::e6dd:1206:6677:f9c4%6]) with mapi id 15.20.9073.010; Wed, 27 Aug 2025
+ 20:35:18 +0000
+Message-ID: <b95522a8-3d92-47dd-a130-b0a85ea841e9@nvidia.com>
+Date: Wed, 27 Aug 2025 13:35:15 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 05/10] gpu: nova-core: gsp: Add GSP command queue handling
+To: Alistair Popple <apopple@nvidia.com>, dri-devel@lists.freedesktop.org,
+ dakr@kernel.org, acourbot@nvidia.com
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+ =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Joel Fernandes <joelagnelf@nvidia.com>, Timur Tabi <ttabi@nvidia.com>,
+ linux-kernel@vger.kernel.org, nouveau@lists.freedesktop.org
+References: <20250827082015.959430-1-apopple@nvidia.com>
+ <20250827082015.959430-6-apopple@nvidia.com>
+Content-Language: en-US
+From: John Hubbard <jhubbard@nvidia.com>
+In-Reply-To: <20250827082015.959430-6-apopple@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BY1P220CA0001.NAMP220.PROD.OUTLOOK.COM
+ (2603:10b6:a03:59d::14) To LV2PR12MB5968.namprd12.prod.outlook.com
+ (2603:10b6:408:14f::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250822170800.2116980-1-mic@digikod.net> <20250826-skorpion-magma-141496988fdc@brauner>
- <20250826.aig5aiShunga@digikod.net> <20250826123041.GB1603531@mit.edu>
- <20250826.iewie7Et5aiw@digikod.net> <CALCETrW=V9vst_ho2Q4sQUJ5uZECY5h7TnF==sG4JWq8PsWb8Q@mail.gmail.com>
- <20250827.Fuo1Iel1pa7i@digikod.net>
-In-Reply-To: <20250827.Fuo1Iel1pa7i@digikod.net>
-From: Andy Lutomirski <luto@amacapital.net>
-Date: Wed, 27 Aug 2025 13:35:13 -0700
-X-Gm-Features: Ac12FXyp51op4OQBdoTDCrgv2p90HecB5l5_GBOrhFfKRX5VCL-77MvuK466l-o
-Message-ID: <CALCETrVDJYK+vWOe+-NACAqQ9i4nhCz-7rMMdkRuxexgnpzZow@mail.gmail.com>
-Subject: Re: [RFC PATCH v1 0/2] Add O_DENY_WRITE (complement AT_EXECVE_CHECK)
-To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc: Andy Lutomirski <luto@kernel.org>, "Theodore Ts'o" <tytso@mit.edu>, 
-	Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, 
-	Kees Cook <keescook@chromium.org>, Paul Moore <paul@paul-moore.com>, 
-	Serge Hallyn <serge@hallyn.com>, Arnd Bergmann <arnd@arndb.de>, 
-	Christian Heimes <christian@python.org>, Dmitry Vyukov <dvyukov@google.com>, 
-	Elliott Hughes <enh@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
-	Florian Weimer <fweimer@redhat.com>, Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Jordan R Abrahams <ajordanr@google.com>, 
-	Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, Luca Boccassi <bluca@debian.org>, 
-	Matt Bobrowski <mattbobrowski@google.com>, Miklos Szeredi <mszeredi@redhat.com>, 
-	Mimi Zohar <zohar@linux.ibm.com>, 
-	Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>, Robert Waite <rowait@microsoft.com>, 
-	Roberto Sassu <roberto.sassu@huawei.com>, Scott Shell <scottsh@microsoft.com>, 
-	Steve Dower <steve.dower@python.org>, Steve Grubb <sgrubb@redhat.com>, 
-	kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV2PR12MB5968:EE_|PH0PR12MB8800:EE_
+X-MS-Office365-Filtering-Correlation-Id: fc285a2d-1252-4139-75e6-08dde5a93c6e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?UzcybVRYSXBublNVUVdSem1XU25OSzVCTHF5ellFMVE3a2dPdmxiSkRTTXVj?=
+ =?utf-8?B?MFI0UThsSGY1eFJMK3RFbTJxTUFDZjdPNHZDSkdTNWp0cjlYOUJrZkRRZXI1?=
+ =?utf-8?B?RHlQVXNKNlJFam0yeHJ1emo1SmJrcnVvVUw5NjlDZWsyaHJmN3NKYlA1TS9J?=
+ =?utf-8?B?YXVPNFJIOEtEQUlNWTI4TjJUa0E4cFQwQWh0QW4xNUVzOWVzRjRhOFZwTU5D?=
+ =?utf-8?B?UGhPZkszWjkvZWxoeTN2Z0t0TlpZOFpIaXcvNThqLzJjNXdlWmRnMDJiY2dG?=
+ =?utf-8?B?S3M5TGZDT2tLRk1UQW4yNnU4a1FhY2FOSEJnTzZ1QW5XTjN5MVBrV2J5bTFS?=
+ =?utf-8?B?VkhkSzZmbjFTdHQrcDdmN0sydzZJMmRmcXM4d1BDaCs2Z3JnaEZLdGdvZHlS?=
+ =?utf-8?B?eU5STXJqZ3RZRVMyNVl0eEEyZkhRbTd1UnpzWVV4b2kwNFZ4blE2WVJjdmVW?=
+ =?utf-8?B?ZjVIYnBXSXpPbWxHaEpRdGVqR3dLOVowc2RSalhqRXVmWEZ6V21RaEgrbVZT?=
+ =?utf-8?B?S3NNa1RJZGhWL0dzRHpwVXFsOTRLTmFZZjhYSTFWRVFNMWtxVDU4N0FjRlZG?=
+ =?utf-8?B?bjZvK3daYm9GbFhLOENpMVRmcHczRXA4VXB6ajZZbDQreWRabGdQY0FwSHR5?=
+ =?utf-8?B?dmtWTWQvRVcxallJbk5HWVRaSlF4VXhINUZ4UmxMcHRjV0lKRFNuczFZSnZw?=
+ =?utf-8?B?V1NtaThuYjcxdmtnYnFSbk5XaHQrVnBqbGxkZFcveGNpUnRrYUFsZzMyNVFH?=
+ =?utf-8?B?WmdBZTV5ZWZ6c2xKRit2bGUrNVlKWVk2OGdVZVFpTERENW8xS0xHM1NUbE9I?=
+ =?utf-8?B?NXg5azU3YWJiMkNpUjJNQzM2cE5HWnJaK2w4SWZXamNYZ2ZWb0VWbDBKZlJv?=
+ =?utf-8?B?cmpDOE1kSUZuYzQyU090NzA2MVVHR2RKQW5BVDI2WmpIR04velNFcmdWcG5i?=
+ =?utf-8?B?Tnd3ZUVRY1ZMeWx3U1hCUS8va0ozZTFRdmlhang5emVCL3ZxeEcyODMzWDN1?=
+ =?utf-8?B?Nm5MOXkyVzRCbEpONnNXU24rbW1LSlpRaTQ1SmszK2VFek0zenJSTk5pMktW?=
+ =?utf-8?B?bHJTa256cW9lNWxlamtmSGp5OVJUOXozMU84RGgyd3QwVWd6WE1ZM2NtbzU2?=
+ =?utf-8?B?Qm91L2ozVHRFY2hYaDFtMHl0MHU5YlQyNm5SczBJL3NtSWthb3RNNFpSeit1?=
+ =?utf-8?B?b05NQlo0RUZibm1GVDZGcGxQaDZ3VWNVNFVXMTJnOWJsK2dtRHp5WE1YSFpJ?=
+ =?utf-8?B?MzRsYkxmbFJrRFd1MVJGT2UwamdiWkVnY0VTQVQwQnBDc2NxaUIrWHN4SXlj?=
+ =?utf-8?B?VEtSMVUxQlpwVU4vanBLNEUxMkp3ai9lWSsza2kwdHg0ZzBlc3oyWVQvVjFU?=
+ =?utf-8?B?dVF1dXdqNkZaNzJnYmVTOGhrak40L3dabzNlSG9KUWo1UDVMM3AwajhtQUJy?=
+ =?utf-8?B?SmF6NW1vbTFrallmS0h1VFdtcnkrMFVkYW5FaTNhbmIyOTNTSWxjRW10WGJ3?=
+ =?utf-8?B?ZXVzRUR3RlVVYjJzT2w3WGdKakNhMjZFQm15QnNvZXd5MVFFVlVhY2xndVpB?=
+ =?utf-8?B?YVFad1c0aC9FTm5TUHUzbStxalgrWU15WGdGMDRmOXpuYkdJSlpHSVlWcXdQ?=
+ =?utf-8?B?TEl0VlBuU29UdWZHc2F0YUg0YXp4MjFuNGdicFVrZm12eW51UnhkYUd4V1h1?=
+ =?utf-8?B?MGpzTlFjelp5bmExVFh2dk5rZFdQUmJGRkhVTEM3cDBTNUVaTnp3alJGQTNI?=
+ =?utf-8?B?eGNtbk54bDFVSzFNMGNtemNUbHAyK0R5ZXJVTXB2elMxT29XWUVPdmltY1FP?=
+ =?utf-8?B?KzVST04vOVdqT1dVM3NZV1pHbjN1ZHR6MXd0a3V3T21WdmdPdFZwSW51MGVZ?=
+ =?utf-8?B?ZUo2TkluQVBpMXA5Y05lMHpOeU5aS2lvV256SkU3UThyL0E9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV2PR12MB5968.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Vi9NV0NrTzB2UmQ1N243Y3BKY3pUVmpyMHlMRnJ3V21hdmdCWnczOVFOL0lh?=
+ =?utf-8?B?Y0krT2V3cTNpdHpQMEk1QjhiOXhjSS9TZXR6WmYyT2FpTVExN0xrWGI0b3ZL?=
+ =?utf-8?B?T3h1SUl4UWpNZXB2bzVDdmJXakdqbkhQenY4NGZQY0g5VDVOZDZQUXZnNGk5?=
+ =?utf-8?B?bmVjYkhWbHZSR0k5aWtKc05ZQ1NLRjZrV0liRUw4d0NtTjFjZnZkb0ZKY25N?=
+ =?utf-8?B?OXNBUzJhaUY1WEU1UUc2ai9Hd25SVlpJRExXNndhdFlEei9XWHFzUEYxQXY2?=
+ =?utf-8?B?bnNoOTB6RENodWtLaEVmc0tXR2p4U0orWDQyWkw5RlNtOWZxMndnV1BTTCtZ?=
+ =?utf-8?B?clF2cDdSRThDRE03d3IyVUpDc2RyUHR4b2FvejdKd2l3alBZWlhPWmJOYVB4?=
+ =?utf-8?B?b2MzYXJZaGkxWm9YbTdKMENNUThoeXJ5K3o3WTBlYWxBWGlabTQwV3JXbUZy?=
+ =?utf-8?B?RmdKMklBcStiaGg3N09BczZZTmhRQmtPZGlVdzFyME91bEM0d2pNemUyV2gv?=
+ =?utf-8?B?cnRQM2xhNDFGSnY0OEtTQU5WazM4Z3V1c29XMWxBZHN0Q0sycThEZFkzRHJ2?=
+ =?utf-8?B?SEhva0ZyS1pBMDYwODNOeDVJaVlOT2p1NjNtUGlpT056LzlINkV1dEMvWHBi?=
+ =?utf-8?B?QVM2RENWMzZtd3BOdkRwQmlCVm83d0Y5OVJLWmdGZVZ5OElKN2V3QW1hL3Ji?=
+ =?utf-8?B?Y1pxTjAvTGlsWC9EQmgyL21XRTlKV3UxMjFzdG8xZWp4aHpxUXdsKzVGSi9W?=
+ =?utf-8?B?VkZ1ZWprQUFaWTU2T0NMYklwMEpFVzFOcHRZNGs4WU5mSnR6Z2RBNFRwZld5?=
+ =?utf-8?B?R1V6VC9TNGgvWm1uYnRjdUtQSmlPNkNLcGFNMzQxdjBzYmF0RXZ0OFowTUFT?=
+ =?utf-8?B?UjFKeUlURFRKZkVlRWtCaVE3cE1oZy90dW1iN1hyeWNOcGdSQSt5VXNsOEI2?=
+ =?utf-8?B?M01zV2ltWG1IcWlIRi9pQm1Nc2JSZVBDR1lQKy9vTm1OclVhc0hpY2lJemxK?=
+ =?utf-8?B?KzZkbDd4M1VtM1B1cDE1dEMzZFR0YmwrMlg3Q0dkeVhUQ29kbW0rbVlLKzJR?=
+ =?utf-8?B?ZnpqdmV1Y1R4UEhveURVYnFrelp5Zk1HUWxYejZIMHpOVDVsUGlzdS9pMFg3?=
+ =?utf-8?B?cWJvblBkWlV2aGoyS0dOa1EzbVhyNTNwaS9sQjN6WitIZ0UvK0JVVHF5N29J?=
+ =?utf-8?B?bTEzU2JwWDBlRUVDWlJHdi83bjU5SzAzTC95djN1MGFrM2p4KzhzbU9yZm5y?=
+ =?utf-8?B?YmtBbGh1MnBQdHBHaEZyMGJZSGJVRmtSeElKMjJIVGpZekJkN09zbVdreWxi?=
+ =?utf-8?B?elVtWkxUYkJXYlUzblNXcmdrdk1vSEJZOGlvZFJBSXNUVUZJOTFUM2RvS01r?=
+ =?utf-8?B?ZlJ0VEVkQlZJbFhZSGpLTUg2Q25YQWtxN0ptczJDcFVxRVArWHB2RU9nRkFY?=
+ =?utf-8?B?V2NsOTNRZE1zUjBZV1JVUkNHK3JDdjVxdk1SQ1c4cGVQcDlhVDdqR0JKRU1r?=
+ =?utf-8?B?QzBtV3dNdm5mbW8xVVlNWnZUQVFDdW5ueEpBQlhCTnZKZGhQcm93SThhOHBv?=
+ =?utf-8?B?NHNuR1ZJcHRqQWs1eDI3K25VUTJFYmlLSi94eld4eS9NTkQ1dEEvUUdJVlMx?=
+ =?utf-8?B?TWZUTTExL0Y1TXhkZjN1WlBTZ2Rob05HOXYzNTBDQlp4VXA4dnFlZXhnZEc5?=
+ =?utf-8?B?V3FNRkhSQlhod3pkcXg5TUZNK25NejhxRkFTVEx1VGZ1NzkxVjhxZ0VZaXo2?=
+ =?utf-8?B?aUM3T0F3Z256RE92TUQ2ZGlYZUJzVVROZ0xqWmEzOTdaT0ZuV3ZYcXZKSjNn?=
+ =?utf-8?B?SkVkS0RaV3dza243bXA0N0U5RlU1dnNGaFdpOEdtSHZBTDBhUXpoNjArL3B6?=
+ =?utf-8?B?UkhYMVFlaEdzM3hhSTZwbDdtU25VUFkyZityU01NNjg4WlE2RDNSeUdNNXB2?=
+ =?utf-8?B?U2I2bWhaK3lLUE1sWTRteHEyQzJlL0RhNit5K3pOVHFrb3VBMlRTdWlPTnpM?=
+ =?utf-8?B?NGt6MkZSSHJ5S0dVemdvUTQ2SzhURnd0UE9qRkdsVU9CY0VmZFlQZVl1YW9R?=
+ =?utf-8?B?czZSWG9PbUlTY2NkK2ZjdlMzSnZ3MG5KTGhMUDNmeFVpZkdRejlsQUlkWXZh?=
+ =?utf-8?Q?kwKmfVNlw7+4DbqOvb17XC0Nm?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fc285a2d-1252-4139-75e6-08dde5a93c6e
+X-MS-Exchange-CrossTenant-AuthSource: LV2PR12MB5968.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2025 20:35:18.4930
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: GYO5ZPnFMcP+C7mcivGcViQQ9E0vWDO/ENedEjyOGGzg+kkejzWtlqI0qaHciYJcFnSY2Uf0tttsqxy3KVpEWQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB8800
 
-On Wed, Aug 27, 2025 at 12:07=E2=80=AFPM Micka=C3=ABl Sala=C3=BCn <mic@digi=
-kod.net> wrote:
->
-> On Wed, Aug 27, 2025 at 10:35:28AM -0700, Andy Lutomirski wrote:
-> > On Tue, Aug 26, 2025 at 10:47=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@=
-digikod.net> wrote:
-> > >
-> > > On Tue, Aug 26, 2025 at 08:30:41AM -0400, Theodore Ts'o wrote:
-> > > > Is there a single, unified design and requirements document that
-> > > > describes the threat model, and what you are trying to achieve with
-> > > > AT_EXECVE_CHECK and O_DENY_WRITE?  I've been looking at the cover
-> > > > letters for AT_EXECVE_CHECK and O_DENY_WRITE, and the documentation
-> > > > that has landed for AT_EXECVE_CHECK and it really doesn't describe
-> > > > what *are* the checks that AT_EXECVE_CHECK is trying to achieve:
-> > > >
-> > > >    "The AT_EXECVE_CHECK execveat(2) flag, and the
-> > > >    SECBIT_EXEC_RESTRICT_FILE and SECBIT_EXEC_DENY_INTERACTIVE
-> > > >    securebits are intended for script interpreters and dynamic link=
-ers
-> > > >    to enforce a consistent execution security policy handled by the
-> > > >    kernel."
-> > >
-> > > From the documentation:
-> > >
-> > >   Passing the AT_EXECVE_CHECK flag to execveat(2) only performs a che=
-ck
-> > >   on a regular file and returns 0 if execution of this file would be
-> > >   allowed, ignoring the file format and then the related interpreter
-> > >   dependencies (e.g. ELF libraries, script=E2=80=99s shebang).
-> > >
-> > > >
-> > > > Um, what security policy?
-> > >
-> > > Whether the file is allowed to be executed.  This includes file
-> > > permission, mount point option, ACL, LSM policies...
-> >
-> > This needs *waaaaay* more detail for any sort of useful evaluation.
-> > Is an actual credible security policy rolling dice?  Asking ChatGPT?
-> > Looking at security labels?  Does it care who can write to the file,
-> > or who owns the file, or what the file's hash is, or what filesystem
-> > it's on, or where it came from?  Does it dynamically inspect the
-> > contents?  Is it controlled by an unprivileged process?
->
-> AT_EXECVE_CHECK only does the same checks as done by other execveat(2)
-> calls, but without actually executing the file/fd.
->
+On 8/27/25 1:20 AM, Alistair Popple wrote:
+...
 
-okay... but see below.
+Hi Alistair,
 
-> >
-> > I can easily come up with security policies for which DENYWRITE is
-> > completely useless.  I can come up with convoluted and
-> > not-really-credible policies where DENYWRITE is important, but I'm
-> > honestly not sure that those policies are actually useful.  I'm
-> > honestly a bit concerned that AT_EXECVE_CHECK is fundamentally busted
-> > because it should have been parametrized by *what format is expected*
-> > -- it might be possible to bypass a policy by executing a perfectly
-> > fine Python script using bash, for example.
->
-> There have been a lot of bikesheding for the AT_EXECVE_CHECK patch
-> series, and a lot of discussions too (you where part of them).  We ended
-> up with this design, which is simple and follows the kernel semantic
-> (requested by Linus).
+Not a real review yet, but one thing I noticed on a quick first pass:
 
-I recall this.  That doesn't mean I totally love AT_EXECVE_CHECK.  And
-it especially doesn't mean that I believe that it usefully does
-something that justifies anything like DENYWRITE.
+> +    pub(crate) fn send_cmd_to_gsp(cmd: GspQueueCommand<'_>, bar: &Bar0) -> Result {
+> +        // Find the start of the message. We could also re-read the HW pointer.
+> +        // SAFETY: The command was previously allocated and initialised on the
+> +        // queue and is therefore not-NULL and aligned.
+> +        let slice_1: &[u8] = unsafe {
+> +            core::slice::from_raw_parts(
+> +                ptr::from_ref(cmd.msg_header).cast::<u8>(),
+> +                size_of::<GspMsgHeader>() + size_of::<GspRpcHeader>() + cmd.slice_1.len(),
+> +            )
+> +        };
+> +
+> +        dev_info!(
+> +            &cmd.cmdq.dev,
+> +            "GSP RPC: send: seq# {}, function=0x{:x} ({}), length=0x{:x}\n",
+> +            cmd.cmdq.seq - 1,
+> +            cmd.rpc_header.function,
+> +            decode_gsp_function(cmd.rpc_header.function),
+> +            cmd.rpc_header.length,
+> +        );
 
->
-> >
-> > I genuinely have not come up with a security policy that I believe
-> > makes sense that needs AT_EXECVE_CHECK and DENYWRITE.  I'm not saying
-> > that such a policy does not exist -- I'm saying that I have not
-> > thought of such a thing after a few minutes of thought and reading
-> > these threads.
->
-> A simple use case is for systems that wants to enforce a
-> write-xor-execute policy e.g., thanks to mount point options.
+Let's please make this (and the corresponding receive) a dev_dbg!().
+Otherwise the driver is too chatty at INFO log levels.
 
-Sure, but I'm contemplating DENYWRITE, and this thread is about
-DENYWRITE.  If the kernel is enforcing W^X, then there are really two
-almost unrelated things going on:
+I suspect that I'm to blame here, because I recall pretty-ing up the
+output of these, and I probably set dev_info!() at the same time. doh!
 
-1. LSM policy that enforces W^X for memory mappings.  This is to
-enforce that applications don't do nasty things like having executable
-stacks, and it's a mess because no one has really figured out how JITs
-are supposed to work in this world.  It has almost nothing to do with
-execve except incidentally.
+...
+> +        // Log RPC receive with message type decoding
+> +        dev_info!(
+> +            self.dev,
+> +            "GSP RPC: receive: seq# {}, function=0x{:x} ({}), length=0x{:x}\n",
+> +            rpc_header.sequence,
+> +            rpc_header.function,
+> +            decode_gsp_function(rpc_header.function),
+> +            rpc_header.length,
+> +        );
 
-2. LSM policy that enforces that someone doesn't execve (or similar)
-something that *that user* can write.  Or that non-root can write.  Or
-that anyone at all can write, etc.
+Here also: please use dev_dbg!() for this one.
 
-I think, but I'm not sure, that you're talking about #2.  So maybe
-there's a policy that says that one may only exec things that are on
-an fs with the 'exec' mount option.  Or maybe there's a policy that
-says that one may only exec things that are on a readonly fs.  In
-these specific cases, I believe in AT_EXECVE_CHECK.  *But* I don't
-believe in DENYWRITE: in the 'exec' case, if an fs has the exec option
-set, that doesn't change if the file is subsequently modified.  And if
-an fs is readonly, then the file is quite unlikely to be modified at
-all and will certainly not be modified via the mount through which
-it's being executed.  And you don't need DENYWRITE.
 
-So I think my question still stands: is there a credible security
-policy *that actually benefits from DENYWRITE*?  If so, can you give
-an example?
+thanks,
+-- 
+John Hubbard
 
-> >
-> > Seriously, consider all the unending recent attacks on LLMs an
-> > inspiration.  The implications of viewing an image, downscaling the
-> > image, possibly interpreting the image as something containing text,
-> > possibly following instructions in a given language contained in the
-> > image, etc are all wildly different.  A mechanism for asking for
-> > general permission to "consume this image" is COMPLETELY MISSING THE
-> > POINT.  (Never mind that the current crop of LLMs seem entirely
-> > incapable of constraining their own use of some piece of input, but
-> > that's a different issue and is besides the point here.)
->
-> You're asking about what should we consider executable.  This is a good
-> question, but AT_EXECVE_CHECK is there to answer another question: would
-> the kernel execute it or not?
->
-
-That's a sort of odd way of putting it.  The kernel won't execute it
-because the kernel doesn't know how to :)  But I think I understand
-what you're saying.
 
