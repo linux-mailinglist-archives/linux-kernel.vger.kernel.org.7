@@ -1,285 +1,130 @@
-Return-Path: <linux-kernel+bounces-788001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69A74B37EA4
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 11:19:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 71F89B37EA5
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 11:21:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E086687A8E
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 09:19:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 180BF5E82B9
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 09:21:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CFCF342C81;
-	Wed, 27 Aug 2025 09:19:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAD2C3431F5;
+	Wed, 27 Aug 2025 09:21:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XVuqSURM"
-Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="s//95xHf"
+Received: from omta36.uswest2.a.cloudfilter.net (omta36.uswest2.a.cloudfilter.net [35.89.44.35])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C30F29A9C9
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 09:19:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06CC03431E7
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 09:21:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756286365; cv=none; b=QZDAcm8SIMCNiGz8gkxO01XrVn8uiU4PTpf+fEWNbTPJZV4nuU+roZAQSbZaoE4TDD0n0HONFpc04MmuHLXalf3wQ1UJnmmZM3TnZGD05KRsCfYW1npegA7BX8+MsIPi6YwYLqKenlBsdKY/IW0+aYxhU/4wQn56n/YqyJO1H7I=
+	t=1756286489; cv=none; b=tcqNH30L1GdaojdLX4exisHzhFXwZZttwFPBxjAwskaRjw1/cIBeRSs/C26F8P7MFEd7hcxn3FxPsgsABpKYwJgA/frKGCl8dYctBsAyU7KUm2vyWYoU0bzOhCs5WlpKuRv1ffl3rAWZoFL4SGG/eCzQ9Gxv7/t3MqxWJT+DuH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756286365; c=relaxed/simple;
-	bh=ST7Wxgfln22XFCCAyDOOJmi3XyDqdq9JV2DBdDFoT5Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CroHMbpXSlImrDwCgwl0hnHYGloToZ+nVPQC9SKk36lra/z+THci2x6gyvJzldXSJ6E78OV2G0uOMYHBfQI9o1picgAGN5c0+3ssoglOtS+rR3/wH6HAvvF3P3RNs6m8rrJprtQizD/L102u3jBatw3c/5l7csMHNdTBepApBa0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XVuqSURM; arc=none smtp.client-ip=209.85.219.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-70a9f555f6eso9722406d6.3
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 02:19:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756286362; x=1756891162; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OAGP6+v0aqIanlLZq8tKQXuL2ZD/uNz3eVRe0XnECB4=;
-        b=XVuqSURMeBPIPDWj10l++pRi+jZ6HFgHDmH2P54rWIL34RJmIwHNwwwd8GHAEyOKn4
-         EO312slC9L0WAusF19t/xujQzUx2DBQONmsLzsp1Y6BsJWCKMehIz5kadMySq/NPjqhG
-         4YxuEYX1o0u5lwg5fE9swwuM1mK2PBLey7tvuTm4sEL90/eJMID0B2tBoDG0Ol7TG8pF
-         NzM2lvpXsi6Hn71nhKfHmm0OgYbinq7uxsz0ltRjiq/PIohDL/xZGKCp0Ady6ISwVc61
-         U4YJUR9TJpQuh1YCvIURGcng1aZ2Mlcg0O18M3z1v0jZV+F7L2ZohOdOkqeU+zzNFvfH
-         xQcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756286362; x=1756891162;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OAGP6+v0aqIanlLZq8tKQXuL2ZD/uNz3eVRe0XnECB4=;
-        b=GFU6y9HfwpNsdo9L6kBPpZfmBVKKZEISVsAo/1qULcri9YlPwHlz70KfbOuPA57xWo
-         pP+tSlTnpGXdSJZ9wIDNCQ/BW3DZaPXBShrdA+Ou1S/N+xGYwRQ46c0wEud60aBfyUgh
-         /F2RUZub1jPGH/1eJ1QSiyALMCn4f4MtheoDoMs4LIB+gsrRFsITHFKCvMMP3I9jD+Zg
-         3LxmNnCAr/+F8nLpyT4tN2enkKCxenjDg5OhM7on4AcQdtDJxYwgQYFTr6Gv9sipPliO
-         rdYFVDe4stP5xwfpBbBlxTWa0ZSH8kKlFMJKJlmdXQ9TkoLvP23VQHquULUGWDPUSJfR
-         l31A==
-X-Forwarded-Encrypted: i=1; AJvYcCXL07TrBVOmpQxUL/MJ/++BfBWk/ZuJeXu0AJSvVKJiCU7Ek9Cgbfxt4F4bOVYUbc9w/CHnBytaFTMQnZ8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZA5nYs3UI7lvWztDKhOF/Ti1XNYkI3+b8PVyb2+jpwoLehRIs
-	JvQ73A+pG2EotysOabfqg7+BEQKodgSN6O/RVNkYT66AyomafgscCZ5a1ea07NwejMdgwp6LSEg
-	+x0Khn0XFfzhRb+4sjYJ9FDnMVthg/flaLCMAfI+J9Q==
-X-Gm-Gg: ASbGncuMMKE2wQj2ZfBZkEWfxZBKgu3//nQCxPiqzXZc/HllVI1U++SufN4YqQU5I1o
-	jTRJlG9P7numjp66KP3BiVZ5VdjofRXmQX1qG436bw1nte4AsRqQJZ0hG2wXg/Wbre0wId/2jXE
-	YEgcJUgX/C57x8RQMd2FgEXS33ra7+HPDztVOyQK94Td1MZEjodSX91wZpSUKqIhHcfcEtMaGx5
-	9oD/wyhwUTr/ciS
-X-Google-Smtp-Source: AGHT+IHARRnT1N4zqcCAz12YmvIGWvJHCpnJD8j+bxZUx4ZcX/IZT9D91YgboaHgNiZKqhdNCbez3TH1xfppau7fRw4=
-X-Received: by 2002:ad4:5948:0:b0:70d:e0c9:9a01 with SMTP id
- 6a1803df08f44-70de0c99baamr14228436d6.7.1756286362306; Wed, 27 Aug 2025
- 02:19:22 -0700 (PDT)
+	s=arc-20240116; t=1756286489; c=relaxed/simple;
+	bh=8zinUOrBrdyPH0vtqYLCRXPg4x28SnjVLitLEeTBDdI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=d6j9dRctFiYn9F5RO4GC5MBfX9Mjv4isXHyQYyIsvm2d9OsN+wEBMCtrf5ZRaYiY6J9JyM16HEHSDgX/UIzurtSpxEilhhKOJOxMqgmaIzIO1PDu/f2zgkyP5VevwatoF8Mi9ktu/ts5EO5FYKX1VuHqBFyAsEbLPxCN51hLy9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=s//95xHf; arc=none smtp.client-ip=35.89.44.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
+Received: from eig-obgw-6002b.ext.cloudfilter.net ([10.0.30.203])
+	by cmsmtp with ESMTPS
+	id rANpuavLozNRxrCLOu4XZg; Wed, 27 Aug 2025 09:21:26 +0000
+Received: from box5620.bluehost.com ([162.241.219.59])
+	by cmsmtp with ESMTPS
+	id rCLOuH8hf1ar9rCLOu2vx0; Wed, 27 Aug 2025 09:21:26 +0000
+X-Authority-Analysis: v=2.4 cv=RtrFLDmK c=1 sm=1 tr=0 ts=68aece16
+ a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
+ a=HaFmDPmJAAAA:8 a=uh_HjuOCLM2ixMC6b1IA:9 a=QEXdDO2ut3YA:10
+ a=nmWuMzfKamIsx3l42hEX:22 a=Wh1V8bzkS9CpCxOpQUxp:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
+	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=5SB1wmBLc5smMfA0sMTPBTrAKW/zbSAR8HWXn/kwUbE=; b=s//95xHfiEtsO8lf/BrA4XLQom
+	WAfAEcsXNIflPaoIgCPFYBlovhYl87Yah3HUyDhVioGKixnigriJ2MCg+v2pwi04aR4zKSZsS7pK1
+	EEeJfODRFna511TAAzBflqg99qgYPblxMWEQdOE3+2Xw+ndDXkYLa23MITFgL/fpibfuRLqQ3JvdQ
+	6LHaVOEby3h3AkteyssH8gfcFXsER6AYPBlBFBHU4DkRdEYiOudourzm3i3pHPSxj5iNw8dvjqCZm
+	XaRESlHbafkuFNZ4AbYszH1NNK+VXG8+H66UNjFNSAkzoryqGoO4jyemr6bFYdQXiowzYJSzbgyAS
+	Tue4RZaw==;
+Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:38758 helo=[10.0.1.116])
+	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.98.1)
+	(envelope-from <re@w6rz.net>)
+	id 1urCLN-00000004Gr0-1IzB;
+	Wed, 27 Aug 2025 03:21:25 -0600
+Message-ID: <d07c6235-3f13-4318-823c-ce0ea3b0cbe9@w6rz.net>
+Date: Wed, 27 Aug 2025 02:21:23 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250826110905.607690791@linuxfoundation.org> <ed898a83-48d1-4cce-87b4-b67ee4fdc047@nvidia.com>
- <2025082705-ascent-parted-b05d@gregkh>
-In-Reply-To: <2025082705-ascent-parted-b05d@gregkh>
-From: Anders Roxell <anders.roxell@linaro.org>
-Date: Wed, 27 Aug 2025 11:19:11 +0200
-X-Gm-Features: Ac12FXzRXKM8eGbos3kIG0i0GrqtW_2Q-_DCFT9bd-DpOvEWNa60MKUm0GzYmCg
-Message-ID: <CADYN=9JXM14H+N-08GWxs1xigRKHfy_SrCCJGnhuGyDXgGycVg@mail.gmail.com>
-Subject: Re: [PATCH 5.4 000/403] 5.4.297-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Jon Hunter <jonathanh@nvidia.com>, stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net, 
-	rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org, 
-	achill@achill.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.1 000/482] 6.1.149-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
+ achill@achill.org
+References: <20250826110930.769259449@linuxfoundation.org>
+Content-Language: en-US
+From: Ron Economos <re@w6rz.net>
+In-Reply-To: <20250826110930.769259449@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - box5620.bluehost.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - w6rz.net
+X-BWhitelist: no
+X-Source-IP: 73.223.253.157
+X-Source-L: No
+X-Exim-ID: 1urCLN-00000004Gr0-1IzB
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.116]) [73.223.253.157]:38758
+X-Source-Auth: re@w6rz.net
+X-Email-Count: 57
+X-Org: HG=bhshared;ORG=bluehost;
+X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfFHIHdUfq6skJeq0fsF770IaCO5SMBzPFb4pnpWfyEsBg97J4U+S3mF/6ADfiHl3/IQ+K2yBm2dvnkyju+ZkJmaucQWqZksXOoN0uXPBwC5ZUNwoUERd
+ 1rNwaejtTcp6r3KA/8rqpf8JyalkNkE+daJ9Z8H/YlR7gxxd8BM63IU1rLTRjUa2HVjZHQH5h9MLrVpGNU6j2BerqVmVvb0RCis=
 
-On Wed, 27 Aug 2025 at 09:36, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
+On 8/26/25 04:04, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.1.149 release.
+> There are 482 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 >
-> On Tue, Aug 26, 2025 at 03:46:37PM +0100, Jon Hunter wrote:
-> > Hi Greg,
-> >
-> > On 26/08/2025 12:05, Greg Kroah-Hartman wrote:
-> > > This is the start of the stable review cycle for the 5.4.297 release.
-> > > There are 403 patches in this series, all will be posted as a respons=
-e
-> > > to this one.  If anyone has any issues with these being applied, plea=
-se
-> > > let me know.
-> > >
-> > > Responses should be made by Thu, 28 Aug 2025 11:08:17 +0000.
-> > > Anything received after that time might be too late.
-> > >
-> > > The whole patch series can be found in one patch at:
-> > >     https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-=
-5.4.297-rc1.gz
-> > > or in the git tree and branch at:
-> > >     git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-5.4.y
-> > > and the diffstat can be found below.
-> > >
-> > > thanks,
-> > >
-> > > greg k-h
-> > >
-> > > -------------
-> > > Pseudo-Shortlog of commits:
-> >
-> > ...
-> > > Prashant Malani <pmalani@google.com>
-> > >      cpufreq: CPPC: Mark driver with NEED_UPDATE_LIMITS flag
-> >
-> >
-> > The above commit is causing the following build failure ...
-> >
-> >  drivers/cpufreq/cppc_cpufreq.c:410:40: error: =E2=80=98CPUFREQ_NEED_UP=
-DATE_LIMITS=E2=80=99 undeclared here (not in a function)
-> >   410 |         .flags =3D CPUFREQ_CONST_LOOPS | CPUFREQ_NEED_UPDATE_LI=
-MITS,
-> >       |                                        ^~~~~~~~~~~~~~~~~~~~~~~~=
-~~
-> >  make[2]: *** [scripts/Makefile.build:262: drivers/cpufreq/cppc_cpufreq=
-.o] Error 1
-> >
-> >
-> > This is seen with ARM64 but I am guessing will be seen for
-> > other targets too.
+> Responses should be made by Thu, 28 Aug 2025 11:08:22 +0000.
+> Anything received after that time might be too late.
 >
-> Thanks, somehow this missed my build tests.  I've dropped it from the
-> tree now and will push out a -rc2.
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.149-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-[for the record]
+Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
 
-We also see the following build regression on ARM64 with gcc-12 and clang-2=
-0.
+Tested-by: Ron Economos <re@w6rz.net>
 
-Validation is in progress for RC2.
-
-
-Build Regression: 5.4.297-rc1 arm64 use of undeclared identifier
-CPUFREQ_NEED_UPDATE_LIMITS
-
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-
-
-## Build
-* kernel: 5.4.297-rc1
-* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
-rc.git
-* git commit: 8387e34ec6fea83fa8bf03ffa1c8c0144d801c14
-* git describe: v5.4.296-404-g8387e34ec6fe
-* test details:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-5.4.y/build/v5.4.2=
-96-404-g8387e34ec6fe
-
-## Test Regressions (compared to v5.4.295-145-g6d1abaaa322e)
-* arm64, build
-  - clang-20-defconfig
-  - clang-20-defconfig-00b6e174
-  - clang-20-lkftconfig
-  - clang-20-lkftconfig-no-kselftest-frag
-  - clang-nightly-defconfig
-  - clang-nightly-defconfig-00b6e174
-  - clang-nightly-lkftconfig
-  - gcc-12-lkftconfig
-
-/builds/linux/drivers/cpufreq/cppc_cpufreq.c:410:33: error: use of
-undeclared identifier 'CPUFREQ_NEED_UPDATE_LIMITS'
-  410 |         .flags =3D CPUFREQ_CONST_LOOPS | CPUFREQ_NEED_UPDATE_LIMITS=
-,
-      |                                        ^
-1 error generated.
-make[3]: *** [/builds/linux/scripts/Makefile.build:262:
-drivers/cpufreq/cppc_cpufreq.o] Error 1
-
-
-log file: https://qa-reports.linaro.org/api/testruns/29678460/log_file/
-Build detailes:
-https://regressions.linaro.org/lkft/linux-stable-rc-linux-5.4.y/v5.4.296-40=
-4-g8387e34ec6fe/build/clang-20-lkftconfig/
-
-
-## Metric Regressions (compared to v5.4.295-145-g6d1abaaa322e)
-
-## Test Fixes (compared to v5.4.295-145-g6d1abaaa322e)
-
-## Metric Fixes (compared to v5.4.295-145-g6d1abaaa322e)
-
-## Test result summary
-total: 22051, pass: 15817, fail: 1724, skip: 4433, xfail: 77
-
-## Build Summary
-* arc: 5 total, 5 passed, 0 failed
-* arm: 131 total, 131 passed, 0 failed
-* arm64: 31 total, 8 passed, 23 failed
-* i386: 18 total, 13 passed, 5 failed
-* mips: 25 total, 25 passed, 0 failed
-* parisc: 3 total, 0 passed, 3 failed
-* powerpc: 26 total, 26 passed, 0 failed
-* riscv: 9 total, 3 passed, 6 failed
-* s390: 6 total, 6 passed, 0 failed
-* sh: 10 total, 10 passed, 0 failed
-* sparc: 6 total, 6 passed, 0 failed
-* x86_64: 27 total, 27 passed, 0 failed
-
-## Test suites summary
-* boot
-* kselftest-breakpoints
-* kselftest-capabilities
-* kselftest-clone3
-* kselftest-core
-* kselftest-cpu-hotplug
-* kselftest-exec
-* kselftest-fpu
-* kselftest-futex
-* kselftest-intel_pstate
-* kselftest-kcmp
-* kselftest-membarrier
-* kselftest-mincore
-* kselftest-mqueue
-* kselftest-openat2
-* kselftest-ptrace
-* kselftest-rseq
-* kselftest-rtc
-* kselftest-sigaltstack
-* kselftest-size
-* kselftest-timers
-* kselftest-tmpfs
-* kselftest-tpm2
-* kselftest-user_events
-* kselftest-vDSO
-* kselftest-x86
-* kunit
-* lava
-* libhugetlbfs
-* log-parser-build-clang
-* log-parser-build-gcc
-* log-parser-test
-* ltp-capability
-* ltp-commands
-* ltp-containers
-* ltp-controllers
-* ltp-cpuhotplug
-* ltp-crypto
-* ltp-cve
-* ltp-dio
-* ltp-fcntl-locktests
-* ltp-fs
-* ltp-fs_bind
-* ltp-fs_perms_simple
-* ltp-hugetlb
-* ltp-math
-* ltp-mm
-* ltp-nptl
-* ltp-pty
-* ltp-sched
-* ltp-smoke
-* ltp-syscalls
-* ltp-tracing
-* perf
-* rcutorture
-
---
-Linaro LKFT
-https://lkft.linaro.org
 
