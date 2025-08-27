@@ -1,86 +1,44 @@
-Return-Path: <linux-kernel+bounces-788248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9446FB381CC
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 13:56:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71343B381D4
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 13:59:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4BCFD2061D4
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 11:56:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D0821BA574E
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 11:59:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECB4A2F83B1;
-	Wed, 27 Aug 2025 11:56:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Wx5o7ttt"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24D812FF64E;
+	Wed, 27 Aug 2025 11:59:04 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B98952F0C66
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 11:56:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1668220B7EE
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 11:59:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756295779; cv=none; b=aEima4k7ORhRk+okfku+qYHswY9sM9g1eV0vMmnzjLxomG3W1Rwst6mF9N7k1OFRfBdQj46vM0iZBygDYp0gPTZTD04y428jSJnRn4arc5gX+vBUTQBwe7fgHbWdPDtrczOhg4e4bx+kbb12vmEF/qEtoGXVUxxTSYlN2jRLT44=
+	t=1756295943; cv=none; b=cRt91FmOzaIC4J473qkc6drcsC+QjVmrsEyCXTZWlmkzzJeIa9oQYgvKv1AFigmo4f5IAoxFOddyw7cvCnJ5R7SKD0vCm584qIaAQ3TF28qvfMxgPw9ASVj55fr1ztF9VKeh3t8uneLqeJlzL1j3bUSIAhpKDKboCMy7WmKUxzs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756295779; c=relaxed/simple;
-	bh=qWNuJq1pI1gUfa8dF93j+5XqoglzDjHXlUFmD/BAW/g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Rv07fp878IguGgnL5DY7WyEd1BsM0cZOgg5l7m9Nh0SG7LZRjmJQ948k74sJd/mVky/QwlQiETv0Q0iV1ePobYDTZuLLMObHDuWbyV+Yd/jgmnHpedrVQsH+hTiEoQZTFnH8SFUJ4H6iJ4j+ihif+tcxPEuWkv9vducrpsyT65o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Wx5o7ttt; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756295776;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=UcP+MKIMKTIXme29nP4iQa3HplkH4GbIfVhPmf/w8b4=;
-	b=Wx5o7ttt0tnBE5qCgHCWUMS3bD3hOqWmkbUcayrQlqqcsFHXB/3l/wNT8rUELLpbEXSank
-	NnOEikjS2mJ8HML4mPJfzMV4WE4+yAJYw56tacBL8cx9CXmKJWs/cbrE44H3w2J2EltnkJ
-	snn4+gwogqdUxi5WAzqMn7gq6xTz/lo=
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
- [209.85.219.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-533-BMnZbrdSPJynBh2Q9leoCg-1; Wed, 27 Aug 2025 07:56:15 -0400
-X-MC-Unique: BMnZbrdSPJynBh2Q9leoCg-1
-X-Mimecast-MFC-AGG-ID: BMnZbrdSPJynBh2Q9leoCg_1756295774
-Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-70ddd80d02fso9987586d6.1
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 04:56:14 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756295774; x=1756900574;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UcP+MKIMKTIXme29nP4iQa3HplkH4GbIfVhPmf/w8b4=;
-        b=RPt/MJNBh353ZgJqe3CiKUf3I0mlvlJQ28s7twFQDQxkWCv3IGNFvqMhCThgVPyeJX
-         7BVQA2kC5UaqZN6ZQql2x3o1F+I1NcbnYt2OW0d1ijob4q/4227yw45X6j6PijYtobOi
-         IkPE9/siZ0/4CkLPCBAZaZkKl1BGvl3WV+mdd++O4qB1O2OC9uddAmy6ZvQACKRzxW1p
-         4V9ZLP2Dsg3NvjpRVxWW9XClpIyu0LunWAxHz8zFUPSjYjPDwURWyrXLJAEIdUtMf1hB
-         /ukvWwztvR33oGjNhbg8CmQ0VunCNVCd2c1mQuJlWyLKvA56ISRDXu1RBEgOOKkv6ZeH
-         QEUA==
-X-Forwarded-Encrypted: i=1; AJvYcCU1v7aBTN3NcTN7RehEY3W/dRPI49v1HsRVW6IYDA1PvUiWRW/hlcun+vvoHLj0557NxlVQt9w3ozjCXvc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxbkQ+XSkkNQYFd764E6S4OTirw/suche1215kjPHN/PBmWEdyV
-	kpi00lT9SSc0/mZ1n+i3ykMWI/N36McuCjRgOMMjG1rog31Pmdkk101+mfak759Dpcm8afzUR1s
-	jYfLmL8EMwX32M4WM7cfvAB6co7yRuEG94H7ElXM4vvEHrHwzGhBEJRPxuwfQ3LRQFg==
-X-Gm-Gg: ASbGncsLexyPfYyDiAt5b634ym3bY82WxCM6WqRXmsmjZrLVNq0Egbu40gCcXqStFHr
-	h3nWkd9VSma9TaOAKwA7R3r0RRcwIKwjWod9CAIqX0yGxn+IgkVR4pif1rzedBkhyojavC+z75E
-	rVcpk5PPo0w3K9AiZCKB+eIWRTb0vMYH+H3i5iDhReDDutXeCl1xgLMGZGRu6g34lIGcw9GRQRd
-	8JtCA4UobImO5T3Du749O7te0f6/AyLalU0GHhOwh9Wdnlq/jIZDg/yC3Y76kCs8PKVPLJ1OMbs
-	+CgFSrlbsi1XJQlsR0/FFZsP2VnOzuoW9a7kWcTRcDXoKSRqtCje0CiIKtMKnQ==
-X-Received: by 2002:a05:6214:1d09:b0:70d:b0d3:e50c with SMTP id 6a1803df08f44-70db0d3f0b8mr164309576d6.3.1756295773992;
-        Wed, 27 Aug 2025 04:56:13 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGP+7/f9Dza6Dboh0+crUGjlYh2k6wyTyltwaqvnIJ5dLoNHOMhcL4Qv2lqiKTxRR93kuSh9A==
-X-Received: by 2002:a05:6214:1d09:b0:70d:b0d3:e50c with SMTP id 6a1803df08f44-70db0d3f0b8mr164309146d6.3.1756295773424;
-        Wed, 27 Aug 2025 04:56:13 -0700 (PDT)
-Received: from [10.32.64.156] (nat-pool-muc-t.redhat.com. [149.14.88.26])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-70da717df65sm81671596d6.30.2025.08.27.04.56.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Aug 2025 04:56:12 -0700 (PDT)
-Message-ID: <11a5d391-3a13-4376-98f1-34b529d3c583@redhat.com>
-Date: Wed, 27 Aug 2025 13:56:09 +0200
+	s=arc-20240116; t=1756295943; c=relaxed/simple;
+	bh=16tYvK3rpzPL+saplICJnVC9VoAju1VHDZ/3P7/sRsc=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=gCeKRNgFLrvKhgsfAkog5c95aA3KtD4cjC6wZYolwYJF7bYqUABQiR9cuZNXqtC1sKY/w7mbqdDGo/eh4z0MS1Dw06fzPKJR0Lr3Vwuziaq3O032hA/Qbm7GmoLk95wMDEXW44//f4JyzO3qzI2VmGZWyewSCYiIjxCLaXtirNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cBjjw0NpfzYQvpC
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 19:59:00 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.252])
+	by mail.maildlp.com (Postfix) with ESMTP id 92A2F1A1552
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 19:58:58 +0800 (CST)
+Received: from [10.67.110.36] (unknown [10.67.110.36])
+	by APP3 (Coremail) with SMTP id _Ch0CgCHImr_8q5osVvZAQ--.64278S2;
+	Wed, 27 Aug 2025 19:58:56 +0800 (CST)
+Message-ID: <6d353178-43f4-4b1b-b28b-f2e6c534a886@huaweicloud.com>
+Date: Wed, 27 Aug 2025 19:58:55 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,95 +46,132 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] huge_mm.h: is_huge_zero_folio(NULL) should return
- false
-To: Max Kellermann <max.kellermann@ionos.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, lorenzo.stoakes@oracle.com,
- ziy@nvidia.com, baolin.wang@linux.alibaba.com, Liam.Howlett@oracle.com,
- npache@redhat.com, ryan.roberts@arm.com, dev.jain@arm.com,
- baohua@kernel.org, shikemeng@huaweicloud.com, kasong@tencent.com,
- nphamcs@gmail.com, bhe@redhat.com, chrisl@kernel.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-References: <20250826231626.218675-1-max.kellermann@ionos.com>
- <20250826185515.7fbe1821713195b170ac1b31@linux-foundation.org>
- <CAKPOu+9wz9g0VuYDPiNDYdaGG-gdK86h1gGSCmVPsC2a5f-GPA@mail.gmail.com>
- <e5783c3d-7eeb-41d9-9fe7-730155f9bf17@redhat.com>
- <CAKPOu+_8_gfko=Sh-YKpbgcMy0aJB=m9yrC5JJKEZm=yeYPOgA@mail.gmail.com>
-From: David Hildenbrand <david@redhat.com>
+Subject: Re: [PATCH -next] x86: Prevent KASAN false positive warnings in
+ __show_regs()
+From: Tengda Wu <wutengda@huaweicloud.com>
+To: Dave Hansen <dave.hansen@intel.com>,
+ Alexander Potapenko <glider@google.com>
+Cc: Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Andrey Konovalov
+ <andreyknvl@gmail.com>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>, Dmitry Vyukov
+ <dvyukov@google.com>, Ingo Molnar <mingo@redhat.com>,
+ linux-kernel@vger.kernel.org, x86@kernel.org
+References: <20250818130715.2904264-1-wutengda@huaweicloud.com>
+ <1ede0349-320e-493e-a3fe-bc72efa4fd44@intel.com>
+ <ebaaa130-0041-4871-8352-d33e285147ac@huaweicloud.com>
 Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <CAKPOu+_8_gfko=Sh-YKpbgcMy0aJB=m9yrC5JJKEZm=yeYPOgA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <ebaaa130-0041-4871-8352-d33e285147ac@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:_Ch0CgCHImr_8q5osVvZAQ--.64278S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxJFWUXw1kXw1kXr4UJw18Xwb_yoWrAF1xpF
+	Z8ta9avF45t34ftF42v3WxXr98GwsrJryvkrn3Gr15C3W7Zr1rJ3y5KF1YvF1fGryUCa47
+	Jayjq34Dur93Ca7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
+	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
+	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUF1
+	v3UUUUU
+X-CM-SenderInfo: pzxwv0hjgdqx5xdzvxpfor3voofrz/
 
-On 27.08.25 12:13, Max Kellermann wrote:
-> On Wed, Aug 27, 2025 at 11:36 AM David Hildenbrand <david@redhat.com> wrote:
->> Why should it be allowed to pass in garbage (folio == NULL) into a
->> function that operates on valid folios?
+
+On 2025/8/21 11:13, Tengda Wu wrote:
 > 
-> This patch isn't about the function parameter but about the global
-> variable being NULL.
-> (Don't mix up with my other patch.)
+> 
+> On 2025/8/21 5:36, Dave Hansen wrote:
+>> On 8/18/25 06:07, Tengda Wu wrote:
+>>> When process A accesses process B's `regs` from stack memory through
+>>> __show_regs(), the stack of process B keeps changing during runtime.
+>>> This causes false positives like "stack out-of-bounds" [1] or
+>>> "out-of-bounds" [2] warnings when reading `regs` contents.
+>>
+>> Could you explain a little bit more how you know that these are false
+>> positives?
+> 
+> Thanks for the question. We believe this is a false positive caused by a
+> race condition during asynchronous stack tracing of a running process:
+> 
+> Process A (stack trace all processes)         Process B (running)
+> 1. echo t > /proc/sysrq-trigger
+> 
+> show_trace_log_lvl
+>   regs = unwind_get_entry_regs()
+>   show_regs_if_on_stack(regs)
+>                                               2. The stack data pointed by
+>                                                  `regs` keeps changing, and
+>                                                  so are the markings in its
+>                                                  KASAN shadow region.
+>     __show_regs(regs)
+>       regs->ax, regs->bx, ...
+>         3. hit KASAN redzones, OOB
+> 
+> When process A stacks process B without suspending it, the continuous
+> changes in process B's stack (and corresponding KASAN shadow markings)
+> may cause process A to hit KASAN redzones when accessing obsolete `regs`
+> addresses, resulting in false positive reports.
+> 
+> A sample error log for this scenario is shown below:
+> 
+> [332706.551830] task:cat             state:R  running task     stack:0     pid:3983623 ppid:3977902 flags:0x00004002
+> [332706.551847] Call Trace:
+> [332706.551853]  <TASK>
+> [332706.551860]  __schedule+0x809/0x1050
+> [332706.551873]  ? __pfx___schedule+0x10/0x10
+> [332706.551885]  ? __stack_depot_save+0x34/0x340
+> [332706.551899]  schedule+0x82/0x160
+> [332706.551911]  io_schedule+0x68/0xa0
+> [332706.551923]  __folio_lock_killable+0x1db/0x410
+> [332706.551940]  ? __pfx___folio_lock_killable+0x10/0x10
+> [332706.551955]  ? __pfx_wake_page_function+0x10/0x10
+> [332706.551969]  ? __filemap_get_folio+0x4b/0x3d0
+> [332706.551982]  filemap_fault+0x67a/0xbd0
+> [332706.551996]  ? __pfx_filemap_fault+0x10/0x10
+> [332706.552008]  ? policy_node+0x8a/0xa0
+> [332706.552021]  ? __mod_node_page_state+0x23/0xf0
+> [332706.552035]  __do_fault+0x6d/0x340
+> [332706.552048]  do_cow_fault+0xdd/0x300
+> [332706.552061]  do_fault+0x141/0x1e0
+> [332706.552074]  __handle_mm_fault+0x839/0xa70
+> [332706.552089]  ? __pfx___handle_mm_fault+0x10/0x10
+> [332706.552105]  ? find_vma+0x6a/0x90
+> [332706.552117]  handle_mm_fault+0x27d/0x470
+> [332706.552132]  exc_page_fault+0x336/0x6d0
+> [332706.552145]  asm_exc_page_fault+0x22/0x30
+> [332706.552157] RIP: 0010:rep_stos_alternative+0x40/0x80                                         --- (1)
+> [332706.552173] Code: Unable to access opcode bytes at 0x7ffe929c4fd6.                           --- (2)
+> [332706.552181] RSP: 3fa6:ffff88ba5e554200 EFLAGS: ffffffff9d50c0e0 ORIG_RAX: ffff88ba5e554200   --- (3)
+> [332706.552195] ==================================================================
+> [332706.552324] BUG: KASAN: out-of-bounds in __show_regs+0x4b/0x340                              --- (4)
+> [332706.552433] Read of size 8 at addr ffff88d24999fb20 by task sysrq_t_test.sh/3977032
+> 
+> We focus on logs (1) to (4):
+>  * Log (1) shows the current regs->ip (a kernel-mode address);
+>  * Log (2) displays regs->ip - PROLOGUE_SIZE, which deviates significantly
+>    from kernel-mode addresses, indicating regs->ip has changed.
+>  * Log (3) then reveals anomalous values in regs->{ss,sp,flags}.
+>  * Finally, Log (4) reports a KASAN OOB error when accessing regs->bx.
+> 
+> Stack tracing a running task cannot guarantee the accuracy of the printed
+> regs values, but accessing regs addresses does not cause kernel instability.
+> Similar cases have been consistently handled this way in the past. [1][2]
+> We therefore consider this a KASAN false positive.
+> 
+> [1] https://lore.kernel.org/all/20220915150417.722975-40-glider@google.com/T/#u
+> [2] https://lore.kernel.org/all/5f6e80c4b0c7f7f0b6211900847a247cdaad753c.1479398226.git.jpoimboe@redhat.com/T/#u
 
-Huh?
+Gentle ping. 
+Any comment or suggestion is appreciated.
 
-"Calling is_huge_zero_folio(NULL) should not be legal - it makes no
-sense, and a different (theoretical) implementation may dereference
-the pointer."
-
-And then
-
-"But currently, lacking any explicit documentation, this
-call is legal."
-
-No. It isn't. It never was.
-
--- 
-Cheers
-
-David / dhildenb
+Thanks,
+Tengda
 
 
