@@ -1,126 +1,283 @@
-Return-Path: <linux-kernel+bounces-788700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C0B9B388E1
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 19:48:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DA61B388E2
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 19:49:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4F8A5E739E
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 17:48:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 82F63463385
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 17:49:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE569277C95;
-	Wed, 27 Aug 2025 17:48:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C85F619E82A;
+	Wed, 27 Aug 2025 17:48:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sarinay.com header.i=@sarinay.com header.b="rK1g6VF3"
-Received: from natrix.sarinay.com (natrix.sarinay.com [159.100.251.32])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eRrdvWoL"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A13E8273F9;
-	Wed, 27 Aug 2025 17:48:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.100.251.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA085273F9
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 17:48:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756316924; cv=none; b=suX3QOlu3SXK57hrPuu7Dsn7WgEp1Z/X/7Cq4BmOV9GdYgWB+0aFijP3qBfXCb5bHSje7NcW8Pih8kapWH1N+tfNHPNXP/zfl1Fv2bo4rxOlTLDFY5fqRTP0Nhw5p3hnXmCxRj6dTQcao5+kmDI7Gj0V/LoyI2ILbC/CdNhFUKo=
+	t=1756316933; cv=none; b=EMkpazl00j5mx+ZpFbepaL4HcMxjmcI1kQEltdzaJ5kpaJz5wT9aQaEgvAQgEsKMmUE4JuUM8TkDvCHjWGa7SWNYRLL1pFrhpiWcOp0lTUKyDL4irIROHZN6JGpvT3F4a/DMlYI6aLhiyL1F4Nt93q8ZbTPpJ+zhA4jQZF1IrEU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756316924; c=relaxed/simple;
-	bh=MzK6hjdsHzWjAx0dhXNnuYZv03t2+HCtYmmUM0F3X1k=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=muxYhCGg6uSvejWWs9JTFhUJxss9XujMf7Hd9yqQQzXtkxvFcAeS77OSMivHn64iSlNmb+nQGvRc9OzjnJyfvOTedEy1Oy+3KC+eQojJJIxr0Lw5r7G1mJXuGi/TdVOu1A1WA86MCQUJLoHBx5RZn8wcJOmaXH0RY2P+Cee+UlI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sarinay.com; spf=pass smtp.mailfrom=sarinay.com; dkim=pass (2048-bit key) header.d=sarinay.com header.i=@sarinay.com header.b=rK1g6VF3; arc=none smtp.client-ip=159.100.251.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sarinay.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sarinay.com
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=sarinay.com; s=2023;
-	t=1756316914; bh=MzK6hjdsHzWjAx0dhXNnuYZv03t2+HCtYmmUM0F3X1k=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References;
-	b=rK1g6VF3F6SHGb6Mw5MO2zxHiD+vSdYorLiUxui14xmqBfvavHfON18EOHDwH7eK4
-	 2APagwjRbYXXU36tMraF4EdnCfuarLDOBZCmLe1otjpfkkWkLHGAkkbR9DY0Ip9ZzO
-	 LdnD3Wr7CuB42V6fRDfZyGXiiBVUpv7UX9l4aoCHU78AwzeCplA1vkSPZsPfvRnjhr
-	 6ljxad2sVMzzHfmAwHxfVagxrDanQVbTMq9zjFSw30oYx7oR/EStxUAb3/iNqrTArN
-	 me+FdB04stmFNylNSWwCaYMxY/Czjc9mrMw+lauQcbfyUYbuT1Q80Me1Hd6bZk4SUz
-	 +moY/6A88gVmg==
-Message-ID: <518333811aeda4dc42445efd6d9cee6cc580145a.camel@sarinay.com>
-Subject: Re: [PATCH net-next v2] net: nfc: nci: Turn data timeout into a
- module parameter and increase the default
-From: Juraj =?UTF-8?Q?=C5=A0arinay?= <juraj@sarinay.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>, netdev@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, davem@davemloft.net, edumazet@google.com, 
-	kuba@kernel.org, pabeni@redhat.com, mingo@kernel.org, horms@kernel.org, 
-	tglx@linutronix.de
-Date: Wed, 27 Aug 2025 19:48:33 +0200
-In-Reply-To: <c0c14ec0-f582-4e26-bc7e-35a26a7ff1ce@kernel.org>
-References: <20250825234354.855755-1-juraj@sarinay.com>
-	 <c0c14ec0-f582-4e26-bc7e-35a26a7ff1ce@kernel.org>
-Autocrypt: addr=juraj@sarinay.com; prefer-encrypt=mutual;
- keydata=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
- oiRvevraR4S+FMeNg+HrhPNNRy45eF4M2RQ==
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1756316933; c=relaxed/simple;
+	bh=jUFz9jruHYXkyKMr2r0i+WWI9/MTQ7vAdaDz5a2Ztwo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gU7sQL0oLi7PMTMlEvbEhhRn9Zw3nuY4JyKH4WTqg18HDXBSJ4MUplTo4BmYAY06p7pDR2A5tAqkofwq13U1IppG59KPDanHMy/iA3IMRwye00cMYnKz8sFeFS5AwQVhQGGf+DHU32uJHcREjuysiYvb2GwyGEOFNf5FulOAzJc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eRrdvWoL; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756316929;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CY1ybBNELINlBW46BpY0I29Oa4pllqZv5dG3GvoWIX0=;
+	b=eRrdvWoL+rCV1KYexrjmo6O7CX757ZvK2jepCPLmwJIglm5rN2FJEiX9Jui72pvgm4xrqh
+	ceZA8w+d6L4ARocw52LcXOGZO48u494C/RzOwpNx2ywDKHEniKYeQNfyBWfZtfz9HvWApT
+	TlfhlG/AbsTVv6rQbxq4RfZG69cd7NE=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-339-jQMARTUAN46urj9FdaLopg-1; Wed,
+ 27 Aug 2025 13:48:48 -0400
+X-MC-Unique: jQMARTUAN46urj9FdaLopg-1
+X-Mimecast-MFC-AGG-ID: jQMARTUAN46urj9FdaLopg_1756316925
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 634BD19560B5;
+	Wed, 27 Aug 2025 17:48:44 +0000 (UTC)
+Received: from bfoster (unknown [10.22.80.41])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A795C30001A6;
+	Wed, 27 Aug 2025 17:48:40 +0000 (UTC)
+Date: Wed, 27 Aug 2025 13:52:37 -0400
+From: Brian Foster <bfoster@redhat.com>
+To: Jan Kara <jack@suse.cz>
+Cc: Ritesh Harjani <ritesh.list@gmail.com>, Keith Busch <kbusch@kernel.org>,
+	Keith Busch <kbusch@meta.com>, linux-block@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-ext4@vger.kernel.org, snitzer@kernel.org, axboe@kernel.dk,
+	dw@davidwei.uk, brauner@kernel.org, hch@lst.de,
+	martin.petersen@oracle.com, djwong@kernel.org,
+	linux-xfs@vger.kernel.org, viro@zeniv.linux.org.uk,
+	Jan Kara <jack@suse.com>
+Subject: Re: [PATCHv3 0/8] direct-io: even more flexible io vectors
+Message-ID: <aK9F5euA3kQdGaMi@bfoster>
+References: <20250819164922.640964-1-kbusch@meta.com>
+ <87a53ra3mb.fsf@gmail.com>
+ <g35u5ugmyldqao7evqfeb3hfcbn3xddvpssawttqzljpigy7u4@k3hehh3grecq>
+ <aKx485EMthHfBWef@kbusch-mbp>
+ <87cy8ir835.fsf@gmail.com>
+ <ua7ib34kk5s6yfthqkgy3m2pnbk33a34g7prezmwl7hfwv6lwq@fljhjaogd6gq>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ua7ib34kk5s6yfthqkgy3m2pnbk33a34g7prezmwl7hfwv6lwq@fljhjaogd6gq>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Wed, 2025-08-27 at 15:29 +0200, Krzysztof Kozlowski wrote:
+On Wed, Aug 27, 2025 at 05:20:53PM +0200, Jan Kara wrote:
+> On Tue 26-08-25 10:29:58, Ritesh Harjani wrote:
+> > Keith Busch <kbusch@kernel.org> writes:
+> > 
+> > > On Mon, Aug 25, 2025 at 02:07:15PM +0200, Jan Kara wrote:
+> > >> On Fri 22-08-25 18:57:08, Ritesh Harjani wrote:
+> > >> > Keith Busch <kbusch@meta.com> writes:
+> > >> > >
+> > >> > >   - EXT4 falls back to buffered io for writes but not for reads.
+> > >> > 
+> > >> > ++linux-ext4 to get any historical context behind why the difference of
+> > >> > behaviour in reads v/s writes for EXT4 DIO. 
+> > >> 
+> > >> Hum, how did you test? Because in the basic testing I did (with vanilla
+> > >> kernel) I get EINVAL when doing unaligned DIO write in ext4... We should be
+> > >> falling back to buffered IO only if the underlying file itself does not
+> > >> support any kind of direct IO.
+> > >
+> > > Simple test case (dio-offset-test.c) below.
+> > >
+> > > I also ran this on vanilla kernel and got these results:
+> > >
+> > >   # mkfs.ext4 /dev/vda
+> > >   # mount /dev/vda /mnt/ext4/
+> > >   # make dio-offset-test
+> > >   # ./dio-offset-test /mnt/ext4/foobar
+> > >   write: Success
+> > >   read: Invalid argument
+> > >
+> > > I tracked the "write: Success" down to ext4's handling for the "special"
+> > > -ENOTBLK error after ext4_want_directio_fallback() returns "true".
+> > >
+> > 
+> > Right. Ext4 has fallback only for dio writes but not for DIO reads... 
+> > 
+> > buffered
+> > static inline bool ext4_want_directio_fallback(unsigned flags, ssize_t written)
+> > {
+> > 	/* must be a directio to fall back to buffered */
+> > 	if ((flags & (IOMAP_WRITE | IOMAP_DIRECT)) !=
+> > 		    (IOMAP_WRITE | IOMAP_DIRECT))
+> > 		return false;
+> > 
+> >     ...
+> > }
+> > 
+> > So basically the path is ext4_file_[read|write]_iter() -> iomap_dio_rw
+> >     -> iomap_dio_bio_iter() -> return -EINVAL. i.e. from...
+> > 
+> > 
+> > 	if ((pos | length) & (bdev_logical_block_size(iomap->bdev) - 1) ||
+> > 	    !bdev_iter_is_aligned(iomap->bdev, dio->submit.iter))
+> > 		return -EINVAL;
+> > 
+> > EXT4 then fallsback to buffered-io only for writes, but not for reads. 
+> 
+> Right. And the fallback for writes was actually inadvertedly "added" by
+> commit bc264fea0f6f "iomap: support incremental iomap_iter advances". That
+> changed the error handling logic. Previously if iomap_dio_bio_iter()
+> returned EINVAL, it got propagated to userspace regardless of what
+> ->iomap_end() returned. After this commit if ->iomap_end() returns error
+> (which is ENOTBLK in ext4 case), it gets propagated to userspace instead of
+> the error returned by iomap_dio_bio_iter().
+> 
 
-> CardOS is the software running on the NFC card, right?=C2=A0
+Ah, so IIUC you're referring to the change in iomap_iter() where the
+iomap_end() error code was returned "if (ret < 0 && !iter->processed)",
+where iter->processed held a potential error code from the iterator.
+That was changed to !advanced, which filters out the processed < 0 case
+and allows the error to return from iomap_end here rather than from
+iter->processed a few lines down.
 
-Yes it is. I may have been too specific, all I am saying is that I made
-some measurements.
+There were further changes to eliminate the advance from iomap_iter()
+case (and rename processed -> status), so I suppose we could consider
+changing that to something like:
 
-> If so, why would this be Linux kernel module param? Kernel runtime setup =
-is really
-> independent of what NFC card people will use.
+	if (ret < 0 && !advanced && !iter->status)
+		return ret;
 
-I suggested a tunable timeout because I am not sure what the new
-universal upper bound should be. It may depend on the NFC card one is
-communicating with. I have since learned that module parameters are
-strongly discouraged (within netdev at least).
+... which I think would restore original error behavior. But I agree
+it's not totally clear which is preferable. Certainly the change in
+behavior was not intentional so thanks for the analysis. I'd have to
+stare at the code and think (and test) some more to form an opinion on
+whether it's worth changing. Meanwhile it looks like you have a
+reasonable enough workaround..
 
-> I think this should be unconditionally raised
+Brian
 
-I am fine with that, but would argue for an even more generous timeout.
-Five seconds, say? One can always set a shorter SO_RCVTIMEO from user
-space if needed.
+> Now both the old and new behavior make some sense so I won't argue that the
+> new iomap_iter() behavior is wrong. But I think we should change ext4 back
+> to the old behavior of failing unaligned dio writes instead of them falling
+> back to buffered IO. I think something like the attached patch should do
+> the trick - it makes unaligned dio writes fail again while writes to holes
+> of indirect-block mapped files still correctly fall back to buffered IO.
+> Once fstests run completes, I'll do a proper submission...
+> 
+> 
+> 								Honza
+> -- 
+> Jan Kara <jack@suse.com>
+> SUSE Labs, CR
 
-Ideally, the kernel would also honor a longer SO_RCVTIMEO and treat
-NCI_DATA_TIMEOUT as a default rather than a rigid limit, completely
-obviating my subjective need for a parameter. I have not explored the
-idea further, given that a somewhat higher value of NCI_DATA_TIMEOUT
-solves most problems.
+> From ce6da00a09647a03013c3f420c2e7ef7489c3de8 Mon Sep 17 00:00:00 2001
+> From: Jan Kara <jack@suse.cz>
+> Date: Wed, 27 Aug 2025 14:55:19 +0200
+> Subject: [PATCH] ext4: Fail unaligned direct IO write with EINVAL
+> 
+> Commit bc264fea0f6f ("iomap: support incremental iomap_iter advances")
+> changed the error handling logic in iomap_iter(). Previously any error
+> from iomap_dio_bio_iter() got propagated to userspace, after this commit
+> if ->iomap_end returns error, it gets propagated to userspace instead of
+> an error from iomap_dio_bio_iter(). This results in unaligned writes to
+> ext4 to silently fallback to buffered IO instead of erroring out.
+> 
+> Now returning ENOTBLK for DIO writes from ext4_iomap_end() seems
+> unnecessary these days. It is enough to return ENOTBLK from
+> ext4_iomap_begin() when we don't support DIO write for that particular
+> file offset (due to hole).
+> 
+> Fixes: bc264fea0f6f ("iomap: support incremental iomap_iter advances")
+> Signed-off-by: Jan Kara <jack@suse.cz>
+> ---
+>  fs/ext4/file.c  |  2 --
+>  fs/ext4/inode.c | 35 -----------------------------------
+>  2 files changed, 37 deletions(-)
+> 
+> diff --git a/fs/ext4/file.c b/fs/ext4/file.c
+> index 93240e35ee36..cf39f57d21e9 100644
+> --- a/fs/ext4/file.c
+> +++ b/fs/ext4/file.c
+> @@ -579,8 +579,6 @@ static ssize_t ext4_dio_write_iter(struct kiocb *iocb, struct iov_iter *from)
+>  		iomap_ops = &ext4_iomap_overwrite_ops;
+>  	ret = iomap_dio_rw(iocb, from, iomap_ops, &ext4_dio_write_ops,
+>  			   dio_flags, NULL, 0);
+> -	if (ret == -ENOTBLK)
+> -		ret = 0;
+>  	if (extend) {
+>  		/*
+>  		 * We always perform extending DIO write synchronously so by
+> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> index 5b7a15db4953..c3b23c90fd11 100644
+> --- a/fs/ext4/inode.c
+> +++ b/fs/ext4/inode.c
+> @@ -3872,47 +3872,12 @@ static int ext4_iomap_overwrite_begin(struct inode *inode, loff_t offset,
+>  	return ret;
+>  }
+>  
+> -static inline bool ext4_want_directio_fallback(unsigned flags, ssize_t written)
+> -{
+> -	/* must be a directio to fall back to buffered */
+> -	if ((flags & (IOMAP_WRITE | IOMAP_DIRECT)) !=
+> -		    (IOMAP_WRITE | IOMAP_DIRECT))
+> -		return false;
+> -
+> -	/* atomic writes are all-or-nothing */
+> -	if (flags & IOMAP_ATOMIC)
+> -		return false;
+> -
+> -	/* can only try again if we wrote nothing */
+> -	return written == 0;
+> -}
+> -
+> -static int ext4_iomap_end(struct inode *inode, loff_t offset, loff_t length,
+> -			  ssize_t written, unsigned flags, struct iomap *iomap)
+> -{
+> -	/*
+> -	 * Check to see whether an error occurred while writing out the data to
+> -	 * the allocated blocks. If so, return the magic error code for
+> -	 * non-atomic write so that we fallback to buffered I/O and attempt to
+> -	 * complete the remainder of the I/O.
+> -	 * For non-atomic writes, any blocks that may have been
+> -	 * allocated in preparation for the direct I/O will be reused during
+> -	 * buffered I/O. For atomic write, we never fallback to buffered-io.
+> -	 */
+> -	if (ext4_want_directio_fallback(flags, written))
+> -		return -ENOTBLK;
+> -
+> -	return 0;
+> -}
+> -
+>  const struct iomap_ops ext4_iomap_ops = {
+>  	.iomap_begin		= ext4_iomap_begin,
+> -	.iomap_end		= ext4_iomap_end,
+>  };
+>  
+>  const struct iomap_ops ext4_iomap_overwrite_ops = {
+>  	.iomap_begin		= ext4_iomap_overwrite_begin,
+> -	.iomap_end		= ext4_iomap_end,
+>  };
+>  
+>  static int ext4_iomap_begin_report(struct inode *inode, loff_t offset,
+> -- 
+> 2.43.0
+> 
 
-Best,
-Juraj
 
