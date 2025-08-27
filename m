@@ -1,214 +1,228 @@
-Return-Path: <linux-kernel+bounces-787994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787996-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BB9AB37E8F
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 11:17:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76D1CB37E92
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 11:17:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61E57189F9C0
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 09:17:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D90C18994F1
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 09:18:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95053340DA4;
-	Wed, 27 Aug 2025 09:17:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53F94343D80;
+	Wed, 27 Aug 2025 09:17:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Asr76mip"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="D6NvnX7f"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1B912773C3;
-	Wed, 27 Aug 2025 09:17:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 887E2343D63
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 09:17:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756286245; cv=none; b=aFOLnfHqdSCh2bxitUpnUFZN1zoYrs7+1toiPAkZd7RV7G5BMD/dwyn6z1YyjoVgKjIA66VD/U0d4veHRIxfui/FJ++wAzn7iWeHiBQu08PRRm1oC7R4CFTe/oQAiyn3EusF/9ciFgNZiLYOwzuBt28IgNDbM9FHvTITRDp7vog=
+	t=1756286251; cv=none; b=ZIyfsdZXWfM4NHjhAgvt7tzhb2cgOD/7JdCoz5RvFo4PrJjAo9552U2iP5byCyB+5d9UPCwdUWj46E60i2QbOxYqJSVgFjVYwQZqNUcWDfRBRrqxMORhFFh0hFYl6Q+yXh5QGEGmY3N3cpMBcMS2diUY0OHYwCnu2+SiMtDO6GI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756286245; c=relaxed/simple;
-	bh=TYyx1Z0CNHtXF1OQjZhKtuBTijXSsUPz57zuUcrMcvA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ENgBGOkmcO0o0kjC0UZsmZOQqEimMJsAhnOvg9mt2Fd8cQstDz5BlzwzBrr6Ozfr3MbO/0Fxd3yGESus0vlmhkeP8SkYklGalYYvSRNtvSTxl/P6nm2KDhi2C32rN/DQNUkujkXM0EMfoPs70Ns8PhO98CR0vEzUi74ficW6/1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Asr76mip; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BDF9CC113CF;
-	Wed, 27 Aug 2025 09:17:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756286245;
-	bh=TYyx1Z0CNHtXF1OQjZhKtuBTijXSsUPz57zuUcrMcvA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Asr76mipEwGUVqlmQiWISvswLcwClR12ZwT7goxVWatoDn6RaUI2EvuUir5jc4ZOi
-	 pVDBodH6b4RdBDcKYhF67601faqJKFIAxT67Cxr3XoilZRyOGuzwSiJCliOImN6FsS
-	 rzgVonSjgUP8MpttBxXseKia9cgXo1F9rahoREOdV+aOuz5ErDQ6UrSbm2vu+DW/ec
-	 HQILjuNSczallNk3E/hbN4yRaikm3kKbSfg9TdZ0x3bd+sgT74seFE3ZlhaO2+1a7m
-	 IzWg9Fq72BffVaWAWAojuDMDfWxejd/55/E1KCU3yz6FoR7zjEielbez8xD/voiFAv
-	 hWN5o7P5m8lQQ==
-Date: Wed, 27 Aug 2025 11:17:22 +0200
-From: Amit Shah <amit@kernel.org>
-To: Sean Christopherson <seanjc@google.com>
-Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, x86@kernel.org,
-	linux-doc@vger.kernel.org, amit.shah@amd.com,
-	thomas.lendacky@amd.com, bp@alien8.de, tglx@linutronix.de,
-	peterz@infradead.org, jpoimboe@kernel.org,
-	pawan.kumar.gupta@linux.intel.com, corbet@lwn.net, mingo@redhat.com,
-	dave.hansen@linux.intel.com, hpa@zytor.com, pbonzini@redhat.com,
-	daniel.sneddon@linux.intel.com, kai.huang@intel.com,
-	sandipan.das@amd.com, boris.ostrovsky@oracle.com,
-	Babu.Moger@amd.com, david.kaplan@amd.com, dwmw@amazon.co.uk,
-	andrew.cooper3@citrix.com
-Subject: Re: [PATCH v5 1/1] x86: kvm: svm: set up ERAPS support for guests
-Message-ID: <aK7NIk1ArgQaDPHp@mun-amitshah-l>
-References: <20250515152621.50648-1-amit@kernel.org>
- <20250515152621.50648-2-amit@kernel.org>
- <aKYBeIokyVC8AKHe@google.com>
+	s=arc-20240116; t=1756286251; c=relaxed/simple;
+	bh=3TDravvIGkQGSnUlWMkvFFKCrY6S76fdgudXC4G2nrc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jC2F/dV2T34FMOrYXTGu5T7M/+mptVsVDSg9Ten5nBwnCVfBCIl+H/dho4BwjzxdJBXmXiW7NOgM4iNLhysMGY8gFl3ZrtT7uPjz5oBN0f4cD0k8k2Ml4N+WnES9/XbQ/4Yc8NmAqdU32fB7NlIygncRqfeI+c2bMeZAOT2kMBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=D6NvnX7f; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3c6ae25978bso3337930f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 02:17:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1756286248; x=1756891048; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=8LoLKtox6RZvVwzEkSmrYfJeFK5b2yBrCHAYLgeBH+8=;
+        b=D6NvnX7fRQcHg5dTKHK2eBBYiYnvIwWmkH6IRDnSoQi28OjhGiECZ8i7XnbT/O1CTt
+         dfiyeBR3YpeSkVh3HqCzWqGSifzuq4qHHyBNAsscjFrx+Y6YQC+zOuFRRjv01eAKmZ83
+         XwCwYE9BzN6DT30httDOPPb43SV0IC+YN/luAMdsfkn7h4NDVehP3ecbFffQaz/jm4hY
+         LQRhSfa7xBakf49+XdGygRc4gwWoOCLJy5xHNFpUp84rhxpJxCJRew7AS/80C4NNiJZ6
+         a53uFYn5v5gqbDRq49C3ZsU5Bf6xi/cxTbp692PGVkrV5VN8ut3qQBIUuLCar7usx0HK
+         YmVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756286248; x=1756891048;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8LoLKtox6RZvVwzEkSmrYfJeFK5b2yBrCHAYLgeBH+8=;
+        b=M3Q/xPp3IyXbxcvVxaoOYxTZM4SwpIbRzpAo+3D7ZFwkXHkZp3oUKCmlSptly1PM2j
+         tX+ecsLhNfIMhGx13NO/01vJi8kP58Qg6EJ/m4U0BXHsB6VC7tccQhx7BgFLcNZ5QqoC
+         nriWZa2380UtiL43NhFjRF5GFvCyCWOiPaXqgpQnx6rEszOgqUhmYjMNto0RhR/28AhN
+         DEL8OBLcesaAIBEwXQsvnzbn28zKhgkCJwnGUe85pETPqUxtypRzjw3NJ91H7CC4vgw0
+         ztyxJJJ45Sw8gee1FMcRFq2sw+zg5qolX4a3MCA10xc9tOQk24el95GsfGquYkEtMkCb
+         +Oiw==
+X-Forwarded-Encrypted: i=1; AJvYcCVh8eow+UlA/4DuhLB4GFenbofrcz87GyDLjl+Y5zZ/+3y6xDOddspDgUHf8K00pHmrq5p5DgcJhwo08Qk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzhesffnL4OmtsID2uD3ZgjRQDMISfhBVUcFpzfyggrllIWJk/B
+	vVaQ5wHCKLXw8HNZyKUkHrcQ9pMFo05K8Mpq7XqAT3QZHMczmohNz8ULwhMitw9saw0=
+X-Gm-Gg: ASbGnct04PI4wEXWt6wWaQOxUAD6BjXm+JSmlOPP2bCyL++72AfU0VE7m7lTw8Y+HXg
+	HEIrqu3DMn6j6QO/Ad5q+Ax6Lf6Jh99QVzbnL2r3HPiYQL9iZAp3W2H7JqRwUdvaC34I9glPSc9
+	TX6+IyYcRGr8R6c4aWATioSVWwetYOGrX20+AxrKFNQqrlMlSB6kwUJk6/OMx77zskxqNGDcDRt
+	rlB6HsXkrRL8ew1C8toe3jMPwk5xMmm2GdMPdOxw4s6CBUfwvogvIjcv0OgkhSVgWXTDRCQccfA
+	NCNauiuWry/I5p7Hy9NiqZvWe7aRBPNUJV/yYN3fnbUjZGDrqUdCVWWxjzWqO/9t45E4dKNiTmT
+	gah4WsiTY8IXaAuUVXJbMxq1wt2/xFix0X+tCEQj77p9MByjD
+X-Google-Smtp-Source: AGHT+IEn2+Mqlva4eTiz/U9+4k0MFWsfnMZ4oB+8ctPeoze1Xi/Byz7VnuLxX/51r0/UZh1J91oxOg==
+X-Received: by 2002:a05:6000:200f:b0:3c9:5df6:de3f with SMTP id ffacd0b85a97d-3c95df6e14fmr8753713f8f.24.1756286247700;
+        Wed, 27 Aug 2025 02:17:27 -0700 (PDT)
+Received: from [192.168.1.3] ([185.48.76.109])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3cc18f762b1sm3948817f8f.65.2025.08.27.02.17.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 27 Aug 2025 02:17:27 -0700 (PDT)
+Message-ID: <b1f79a26-97e1-40f4-b076-51d5c2abe736@linaro.org>
+Date: Wed, 27 Aug 2025 10:17:26 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aKYBeIokyVC8AKHe@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/3] coresight: tpda: add sysfs node to flush specific
+ port
+To: Jie Gan <jie.gan@oss.qualcomm.com>
+Cc: coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach
+ <mike.leach@linaro.org>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Tingwei Zhang <tingwei.zhang@oss.qualcomm.com>
+References: <20250827042042.6786-1-jie.gan@oss.qualcomm.com>
+ <20250827042042.6786-4-jie.gan@oss.qualcomm.com>
+Content-Language: en-US
+From: James Clark <james.clark@linaro.org>
+In-Reply-To: <20250827042042.6786-4-jie.gan@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On (Wed) 20 Aug 2025 [10:10:16], Sean Christopherson wrote:
-> On Thu, May 15, 2025, Amit Shah wrote:
 
-[...]
 
-> > For guests to observe and use this feature, 
+On 27/08/2025 5:20 am, Jie Gan wrote:
+> From: Tao Zhang <tao.zhang@oss.qualcomm.com>
 > 
-> Guests don't necessarily "use" this feature.  It's something that's enabled by
-> KVM and affects harware behavior regardless of whether or not the guest is even
-> aware ERAPS is a thing.
-
-OK wording it is tricky.  "use" in the sense of for the entire RSB to be
-utilized within guest context.  Not "use" as in guest needs enablement or
-needs to do anything special.
-
-"For the extended size to also be utilized when the CPU is in guest context,
-the hypervisor needs to..." ?
-
-> > the hypervisor needs to expose the CPUID bit, and also set a VMCB bit.
-> > Without one or both of those, 
+> Setting bit i in the TPDA_FLUSH_CR register initiates a flush request
+> for port i, forcing the data to synchronize and be transmitted to the
+> sink device.
 > 
-> No?  If there's no enabling for bare metal usage, I don't see how emulation of
-> CPUID can possibly impact usage of RAP size.  The only thing that matters is the
-> VMCB bit.  And nothing in this patch queries guest CPUID.
-
-True.
-
-> Observing ERAPS _might_ cause the guest to forego certain mitigations, but KVM
-> has zero visibility into whether or not such mitigations exist, if the guest will
-> care about ERAPS, etc.
-
-Sure, there's nothing guest-specific about this; any OS, when it detects
-ERAPS, may or may not want to adapt to its existence.  (As it turns out, for
-Linux, no adaptation is necessary.)
-
-> > guests continue to use the older default RSB size and behaviour for backwards
-> > compatibility.  This means the hardware RSB size is limited to 32 entries for
-> > guests that do not have this feature exposed to them.
-
-[...]
-
-> > 2. Hosts that disable NPT: the ERAPS feature also flushes the RSB
-> >    entries when the CR3 is updated.  When using shadow paging, CR3
-> >    updates within the guest do not update the CPU's CR3 register.
+> Signed-off-by: Tao Zhang <tao.zhang@oss.qualcomm.com>
+> Co-developed-by: Jie Gan <jie.gan@oss.qualcomm.com>
+> Signed-off-by: Jie Gan <jie.gan@oss.qualcomm.com>
+> ---
+>   .../testing/sysfs-bus-coresight-devices-tpda  |  7 ++++
+>   drivers/hwtracing/coresight/coresight-tpda.c  | 42 +++++++++++++++++++
+>   drivers/hwtracing/coresight/coresight-tpda.h  |  2 +
+>   3 files changed, 51 insertions(+)
 > 
-> Yes they do, just indirectly.  KVM changes the effective CR3 in reaction to the
-> guest's new CR3.  If hardware doesn't flush in that situation, then it's trivially
-> easy to set ERAP_CONTROL_FLUSH_RAP on writes to CR3.
+> diff --git a/Documentation/ABI/testing/sysfs-bus-coresight-devices-tpda b/Documentation/ABI/testing/sysfs-bus-coresight-devices-tpda
+> index fb651aebeb31..2cf2dcfc13c8 100644
+> --- a/Documentation/ABI/testing/sysfs-bus-coresight-devices-tpda
+> +++ b/Documentation/ABI/testing/sysfs-bus-coresight-devices-tpda
+> @@ -41,3 +41,10 @@ Contact:	Jinlong Mao <jinlong.mao@oss.qualcomm.com>, Tao Zhang <tao.zhang@oss.qu
+>   Description:
+>   		(RW) Configure the CMB/MCMB channel mode for all enabled ports.
+>   		Value 0 means raw channel mapping mode. Value 1 means channel pair marking mode.
+> +
+> +What:		/sys/bus/coresight/devices/<tpda-name>/port_flush_req
+> +Date:		August 2025
+> +KernelVersion:	6.17
+> +Contact:	Jinlong Mao <jinlong.mao@oss.qualcomm.com>, Tao Zhang <tao.zhang@oss.qualcomm.com>, Jie Gan <jie.gan@oss.qualcomm.com>
+> +Description:
+> +		(RW) Configure the bit i to requests a flush operation of port i on the TPDA.
+> diff --git a/drivers/hwtracing/coresight/coresight-tpda.c b/drivers/hwtracing/coresight/coresight-tpda.c
+> index 430f76c559f2..8b1fe128881d 100644
+> --- a/drivers/hwtracing/coresight/coresight-tpda.c
+> +++ b/drivers/hwtracing/coresight/coresight-tpda.c
+> @@ -487,6 +487,47 @@ static ssize_t cmbchan_mode_store(struct device *dev,
+>   }
+>   static DEVICE_ATTR_RW(cmbchan_mode);
+>   
+> +static ssize_t port_flush_req_show(struct device *dev,
+> +				   struct device_attribute *attr,
+> +				   char *buf)
+> +{
+> +	struct tpda_drvdata *drvdata = dev_get_drvdata(dev->parent);
+> +	unsigned long val;
+> +
+> +	if (!drvdata->csdev->refcnt)
+> +		return -EINVAL;
+> +
+> +	guard(spinlock)(&drvdata->spinlock);
+> +	CS_UNLOCK(drvdata->base);
+> +	val = readl_relaxed(drvdata->base + TPDA_FLUSH_CR);
+> +	CS_LOCK(drvdata->base);
+> +	return sysfs_emit(buf, "%lx\n", val);
 
-Yea, that's right - since it doesn't happen in-guest (i.e. there's an exit
-instead), it needs KVM to set that bit.
+Still missing the 0x prefix
 
-[...]
+> +}
+> +
+> +static ssize_t port_flush_req_store(struct device *dev,
+> +				    struct device_attribute *attr,
+> +				    const char *buf,
+> +				    size_t size)
+> +{
+> +	struct tpda_drvdata *drvdata = dev_get_drvdata(dev->parent);
+> +	unsigned long val;
+> +
+> +	if (kstrtoul(buf, 0, &val))
+> +		return -EINVAL;
+> +
+> +	if (!drvdata->csdev->refcnt || !val)
+> +		return -EINVAL;
+> +
+> +	val |= FIELD_PREP(TPDA_MAX_INPORTS_MASK, val);
 
-> > @@ -3482,6 +3485,7 @@ static void dump_vmcb(struct kvm_vcpu *vcpu)
-> >  	pr_err("%-20s%016llx\n", "tsc_offset:", control->tsc_offset);
-> >  	pr_err("%-20s%d\n", "asid:", control->asid);
-> >  	pr_err("%-20s%d\n", "tlb_ctl:", control->tlb_ctl);
-> > +	pr_err("%-20s%d\n", "erap_ctl:", control->erap_ctl);
-> >  	pr_err("%-20s%08x\n", "int_ctl:", control->int_ctl);
-> >  	pr_err("%-20s%08x\n", "int_vector:", control->int_vector);
-> >  	pr_err("%-20s%08x\n", "int_state:", control->int_state);
-> > @@ -3663,6 +3667,11 @@ static int svm_handle_exit(struct kvm_vcpu *vcpu, fastpath_t exit_fastpath)
-> >  
-> >  		trace_kvm_nested_vmexit(vcpu, KVM_ISA_SVM);
-> >  
-> > +		if (vmcb_is_extended_rap(svm->vmcb01.ptr)) {
-> > +			vmcb_set_flush_guest_rap(svm->vmcb01.ptr);
-> > +			vmcb_clr_flush_guest_rap(svm->nested.vmcb02.ptr);
-> > +		}
-> > +
-> >  		vmexit = nested_svm_exit_special(svm);
-> >  
-> >  		if (vmexit == NESTED_EXIT_CONTINUE)
-> > @@ -3670,6 +3679,11 @@ static int svm_handle_exit(struct kvm_vcpu *vcpu, fastpath_t exit_fastpath)
-> >  
-> >  		if (vmexit == NESTED_EXIT_DONE)
-> >  			return 1;
-> > +	} else {
-> > +		if (vmcb_is_extended_rap(svm->vmcb01.ptr) && svm->nested.initialized) {
-> > +			vmcb_set_flush_guest_rap(svm->nested.vmcb02.ptr);
-> > +			vmcb_clr_flush_guest_rap(svm->vmcb01.ptr);
-> > +		}
-> 
-> Handling this in the common exit path is confusing, inefficient, and lacking.
+Using FIELD_PREP() now that it's the full width of the register makes 
+less sense. Especially when there is no corresponding FIELD_FIT() check, 
+  which is fine because everything always fits. But if you didn't know 
+the mask was the full width you'd wonder if the check is missing.
 
-Heh, I agree.  I toyed with doing this just before VMRUN.  But I can't recall
-why I disliked that more.
+I would just write val directly to TPDA_FLUSH_CR so it's simpler.
 
-> Assuming hardware doesn't automatically clear ERAP_CONTROL_FLUSH_RAP, then KVM
+It should also have been val = FIELD_PREP(...)
 
-That's right - it doesn't.
-
-> should clear the flag after _any_ exit, not just exits that reach this point,
-> e.g. if KVM stays in the fast path.
-
-(or just before VMRUN).  Right.
-
-> And IIUC, ERAP_CONTROL_FLUSH_RAP needs to be done on _every_ nested transition,
-> not just those that occur in direct response to a hardware #VMEXIT. So, hook
-> nested_vmcb02_prepare_control() for nested VMRUN and nested_svm_vmexit() for
-> nested #VMEXIT.
-
-Does sound better.  I think the case I wanted to preserve in this complex
-logic was if we have a L2->exit->L2 transition, I didn't want to set the FLUSH
-bit.
-
-> Side topic, the changelog should call out that KVM deliberately ignores guest
-> CPUID, and instead unconditionally enables the full size RAP when ERAPS is
-> supported.  I.e. KVM _could_ check guest_cpu_cap_has() instead of kvm_cpu_cap_has()
-> in all locations, to avoid having to flush the RAP on nested transitions when
-> ERAPS isn't enumerated to the guest, but presumably using the full size RAP is
-> better for overall performance.
-
-Yea.
-
-> The changelog should also call out that if the full size RAP is enabled, then
-> it's KVM's responsibility to flush the RAP on nested transitions irrespective
-> of whether or not ERAPS is advertised to the guest.  Because if ERAPS isn't
-> advertised, the the guest's mitigations will likely be insufficient.
-
-You mean the L2 guest?  ACK on the update.
-
-> With the caveat that I'm taking a wild guess on the !npt behavior, something
-> like this?
-
-[...]
-
-> +#define ERAP_CONTROL_FULL_SIZE_RAP BIT(0)
-> +#define ERAP_CONTROL_FLUSH_RAP BIT(1)
-
-Oh I def prefer to keep the APM-specified names.
-
-[...]
-
-Patch looks good!
-
-I'll test it a bit and repost.
-
-Thanks,
-
-		Amit
+> +	guard(spinlock)(&drvdata->spinlock);
+> +	CS_UNLOCK(drvdata->base);
+> +	writel_relaxed(val, drvdata->base + TPDA_FLUSH_CR);
+> +	CS_LOCK(drvdata->base);
+> +
+> +	return size;
+> +}
+> +static DEVICE_ATTR_RW(port_flush_req);
+> +
+>   static struct attribute *tpda_attrs[] = {
+>   	&dev_attr_trig_async_enable.attr,
+>   	&dev_attr_trig_flag_ts_enable.attr,
+> @@ -494,6 +535,7 @@ static struct attribute *tpda_attrs[] = {
+>   	&dev_attr_freq_ts_enable.attr,
+>   	&dev_attr_global_flush_req.attr,
+>   	&dev_attr_cmbchan_mode.attr,
+> +	&dev_attr_port_flush_req.attr,
+>   	NULL,
+>   };
+>   
+> diff --git a/drivers/hwtracing/coresight/coresight-tpda.h b/drivers/hwtracing/coresight/coresight-tpda.h
+> index 8e1b66115ad1..56d3ad293e46 100644
+> --- a/drivers/hwtracing/coresight/coresight-tpda.h
+> +++ b/drivers/hwtracing/coresight/coresight-tpda.h
+> @@ -10,6 +10,7 @@
+>   #define TPDA_Pn_CR(n)		(0x004 + (n * 4))
+>   #define TPDA_FPID_CR		(0x084)
+>   #define TPDA_SYNCR		(0x08C)
+> +#define TPDA_FLUSH_CR		(0x090)
+>   
+>   /* Cross trigger FREQ packets timestamp bit */
+>   #define TPDA_CR_FREQTS		BIT(2)
+> @@ -35,6 +36,7 @@
+>   #define TPDA_SYNCR_MAX_COUNTER_VAL	(0xFFF)
+>   
+>   #define TPDA_MAX_INPORTS	32
+> +#define TPDA_MAX_INPORTS_MASK	GENMASK(31, 0)
+>   
+>   /* Bits 6 ~ 12 is for atid value */
+>   #define TPDA_CR_ATID		GENMASK(12, 6)
 
 
