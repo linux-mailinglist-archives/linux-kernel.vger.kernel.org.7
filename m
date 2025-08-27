@@ -1,218 +1,234 @@
-Return-Path: <linux-kernel+bounces-787739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787740-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B492BB37A6F
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 08:34:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15B0BB37A76
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 08:34:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CEDD01B240B1
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 06:34:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38F956884FD
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 06:34:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C5582EA746;
-	Wed, 27 Aug 2025 06:34:17 +0000 (UTC)
-Received: from smtpbgau1.qq.com (smtpbgau1.qq.com [54.206.16.166])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD4E42F3C15;
+	Wed, 27 Aug 2025 06:34:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a9JgtiBX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94AF61EEF9;
-	Wed, 27 Aug 2025 06:34:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.16.166
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB6C92F39B7;
+	Wed, 27 Aug 2025 06:34:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756276456; cv=none; b=p+Brz3ewcVSJIggBUT5OKFH0/2Ag8FzezdwrfDcFRurq2nd8JLwzRXzBiMgzS/3yZAd1tbEd1rhe8KwMtYHnEdZzZu0wLr7CSr4QGiOCtfbVqxPvBmrkr4IIdUNsBvwz/vQcEETyy5teiNctF8TNDITRW3bp8DgNwRZu4ssPIRs=
+	t=1756276471; cv=none; b=jpMYfOVmlK3ribHqWFEdwUXaGVFSmQH4tqD3EYfWi79Gtqwf1r6XlrWtu7olDWsPZMOANKeExhgYGXj3jUBqBv8JhDdctd5i7vrul6cXJfKpaNbmhdQft2zxj4rCeZOLQXuoSsgNiKFY+DB2RH94JKlISSh0Fy1v4m7AlamhRBM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756276456; c=relaxed/simple;
-	bh=08Bdfu7Abb5AyaLDYLBrHXSveiS/oZksGtOGJHCmkk8=;
+	s=arc-20240116; t=1756276471; c=relaxed/simple;
+	bh=dOTckYvVImYjZpxv/z1LSXxh9jwhCh1JDe2QIDn/QlQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mrGRfuhoKo4vJLF0FmwHwJO+knwalCR7XF23flEIkRL6i0RLFX9aVtvNcd17ycmYhL+pWc/mQD5bqv6Mcneece8OMg516TO9bHcW80HL3vK0kO1jYimhxuqZNGGtQSIjsOHyWq8/jB2HCRBRHxfiEu0eenKZ0xatPs0mz3TnCr0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com; spf=pass smtp.mailfrom=mucse.com; arc=none smtp.client-ip=54.206.16.166
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mucse.com
-X-QQ-mid: zesmtpgz3t1756276443te96eac14
-X-QQ-Originating-IP: z93O1aUXQO9wJtNI9JgSSX/YEPfi2+9tuQMK75xB46U=
-Received: from localhost ( [203.174.112.180])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Wed, 27 Aug 2025 14:34:01 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 17250008978444675294
-Date: Wed, 27 Aug 2025 14:34:01 +0800
-From: Yibo Dong <dong100@mucse.com>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
-	corbet@lwn.net, gur.stavi@huawei.com, maddy@linux.ibm.com,
-	mpe@ellerman.id.au, danishanwar@ti.com, lee@trager.us,
-	gongfan1@huawei.com, lorenzo@kernel.org, geert+renesas@glider.be,
-	Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
-	alexanderduyck@fb.com, richardcochran@gmail.com, kees@kernel.org,
-	gustavoars@kernel.org, netdev@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH net-next v8 4/5] net: rnpgbe: Add basic mbx_fw support
-Message-ID: <4E0FB703028E42A8+20250827063401.GA504899@nic-Precision-5820-Tower>
-References: <20250827034509.501980-1-dong100@mucse.com>
- <20250827034509.501980-5-dong100@mucse.com>
- <4b6eb676-10f5-4438-9457-6aeda0ee7fb0@infradead.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=eb1YtJXAybSw75eueWkxJPELMtJQpvlud44Hq0kRU/e4smfH/+zif2C9rxhJ3HlGLsA1y9fXqWNi4LIG5StLDrH4WwT6c4J6cf/gzf5CwhBoBbpJHn/epg/EjT6qcoD2rGiHnETNyNBDb4zjRRklUXZukH3KMg1XnP4QWvuWpSA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a9JgtiBX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C05A1C4CEEB;
+	Wed, 27 Aug 2025 06:34:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756276470;
+	bh=dOTckYvVImYjZpxv/z1LSXxh9jwhCh1JDe2QIDn/QlQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=a9JgtiBXRDvkjujnxJ63j3G2BMBZVXUoeQbzJbonwjIZLHPiuoODiOQnpyZfvAFSv
+	 2eeWEu4bPG9d3tqUKmy94/CaSdPvNzDmYgid7EqE5KZMs8ZhF1mOl+uQ0Rg8kv34rR
+	 +JF2p+orkisruTV7t1/t8vri6wXXMA8EaCEU+rhWWND/ItO2jnsfY8MnkxdPMwJQXm
+	 GoDw5Cz3c6E55kksuBZc4BsvgleH9LUm39UmPVpP8ixE8stafVx2ht4sV+IpXsQ1+M
+	 efTdYxGKDj72P0jGMA/6sMEql96ydxNBxpBhJUBM8ifaJPEAJaVh8DH1uYqWuH90Wc
+	 DN7o74Mp3X6Jg==
+Date: Wed, 27 Aug 2025 08:34:27 +0200
+From: "mripard@kernel.org" <mripard@kernel.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: "Kandpal, Suraj" <suraj.kandpal@intel.com>, 
+	"liviu.dudau@arm.com" <liviu.dudau@arm.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	"kernel-list@raspberrypi.com" <kernel-list@raspberrypi.com>, "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, 
+	"freedreno@lists.freedesktop.org" <freedreno@lists.freedesktop.org>, 
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, 
+	"intel-xe@lists.freedesktop.org" <intel-xe@lists.freedesktop.org>, 
+	"intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>, "Nautiyal, Ankit K" <ankit.k.nautiyal@intel.com>, 
+	"Murthy, Arun R" <arun.r.murthy@intel.com>, "Shankar, Uma" <uma.shankar@intel.com>, 
+	"Nikula, Jani" <jani.nikula@intel.com>, "harry.wentland@amd.com" <harry.wentland@amd.com>, 
+	"siqueira@igalia.com" <siqueira@igalia.com>, "alexander.deucher@amd.com" <alexander.deucher@amd.com>, 
+	"christian.koenig@amd.com" <christian.koenig@amd.com>, "airlied@gmail.com" <airlied@gmail.com>, 
+	"simona@ffwll.ch" <simona@ffwll.ch>, 
+	"maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>, "robin.clark@oss.qualcomm.com" <robin.clark@oss.qualcomm.com>, 
+	"abhinav.kumar@linux.dev" <abhinav.kumar@linux.dev>, "tzimmermann@suse.de" <tzimmermann@suse.de>, 
+	"jessica.zhang@oss.qualcomm.com" <jessica.zhang@oss.qualcomm.com>, "sean@poorly.run" <sean@poorly.run>, 
+	"marijn.suijten@somainline.org" <marijn.suijten@somainline.org>, "mcanal@igalia.com" <mcanal@igalia.com>, 
+	"dave.stevenson@raspberrypi.com" <dave.stevenson@raspberrypi.com>, 
+	"tomi.valkeinen+renesas@ideasonboard.com" <tomi.valkeinen+renesas@ideasonboard.com>, 
+	"kieran.bingham+renesas@ideasonboard.com" <kieran.bingham+renesas@ideasonboard.com>, "louis.chauvet@bootlin.com" <louis.chauvet@bootlin.com>
+Subject: Re: [RFC PATCH 1/8] drm: writeback: Refactor drm_writeback_connector
+ structure
+Message-ID: <20250827-helpful-outgoing-capuchin-d2acc8@houat>
+References: <awtqznhquyn7etojonmjn7karznefsb7fdudawcjsj5g2bok3u@2iqcdviuiz2s>
+ <20250811111546.GA30760@pendragon.ideasonboard.com>
+ <2ah3pau7p7brgw7huoxznvej3djct76vgfwtc72n6uub7sjojd@zzaebjdcpdwf>
+ <DM3PPF208195D8D0E55A761A3C16B87BAEEE32AA@DM3PPF208195D8D.namprd11.prod.outlook.com>
+ <aJ4LQvqli36TlETu@e110455-lin.cambridge.arm.com>
+ <hc6f6wgsnauh72cowocpm55tikejhiha5z4mgufeq7v6gb2qml@kmgfd26bigos>
+ <wr76vyag2osox2xf7ducnkiaanzk2k5ehd2ahnoyqdm5qiywlk@penf4v5bvg5z>
+ <DM3PPF208195D8D87AECE8397914A67D9A1E33EA@DM3PPF208195D8D.namprd11.prod.outlook.com>
+ <20250826-skinny-dancing-otter-de9be4@houat>
+ <76cmo6pqa534cdnckfgsnspczenzt7kiwkpgg4olxysjn2can7@g5dxteqi5jjs>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="2bcu3ttzioot2gyg"
 Content-Disposition: inline
-In-Reply-To: <4b6eb676-10f5-4438-9457-6aeda0ee7fb0@infradead.org>
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpgz:mucse.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: ORqNQdnYjakC0GymvZaT7wSRhIi1hzcMqJ3OYYj+gj4GsX77VOLGWp48
-	dGRpeSGHKgEK5z9Hy5HXCY58NBa74URD4BN5x6/gse3Rb7ADjevC+kCKIAodB4cRSmpmPqK
-	2Rtsbt3n98XeM3WNuCZSIaxwJuupE7081p7XRlh55KlaOiERDDtxwJqGtGiFt1LAy1UvF/v
-	nm6eCYKXAdlROy4GhlVswM2AxLO22wGXwhitGONrgEq1NRydAWJJKkmSKg1jEEG08bn/oIS
-	zFVgXw+xhAYd9COuZ+oRUtioe9RqXAuYhzcHZvMq/Z9yFGj5d0PlIQjsJqStfdOwMMgsNZX
-	K86NhzhAE5g71hLCWthslSz9A5Vt37B+/++F/xmNzfwgGeSzy9f1vHgYJYIx5VieRZkwQ9Y
-	paSr4//YXp45OtyBGFMWZ9l86KAI++9LqpUGSSSBUysBfVbvuZLnqD8Bsgc8pX1bFi2NtY6
-	x8MoXHdRay/jZOCzlDRosyka2akuyu8DvRCuFb+KoozvEgkPJRiDTopSQuw2l6aZdHCFYSF
-	BP9M2niaMeFuUq3bnacaI6l8HAc6UpRAnaiVXKDnXdz+zNcwLOj1kd09iz/mPUR/FkiCTfp
-	eFdcPpJ+71vnsjgzM7F2MoSXurU8HOGra4M6Ne3EKQECTh9DqL3Pn93/E7VTmj2ENDg/pSM
-	lvOpJcMt3bAc2xGXkDyUGmBE5K2jiSb7kql9gCQT/pg1s8mgy8BhPQHot6bWIQrsoXu+ZCP
-	4/uBApBfSAtPuyyGVtggY8S3Zo3ESvvBqbQF3uThdWWN96DyDr+url2H0gRmqou/34EahIv
-	vDCCyMjFqt4E5HxfSU2yYkIqMUC8KM3/lzI8Q4LnaZfb+4cJ/ivDXh+x3zarxjW3v6FZWn0
-	RqTa6Ut5kXA+Ex+eL5/+pXiK7hignroVPCJqa9BKcSkksaUKFITlP6cbmq3GXAafGPGPuDc
-	3v/dnOWz0ehS00gV/OMo02PW8XvREtiNTD6dxjQMAKWoRxH8bKI/ArCkitGqq0BOJzVK3VX
-	Z8kgfcmw==
-X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
-X-QQ-RECHKSPAM: 0
+In-Reply-To: <76cmo6pqa534cdnckfgsnspczenzt7kiwkpgg4olxysjn2can7@g5dxteqi5jjs>
 
-On Tue, Aug 26, 2025 at 10:26:38PM -0700, Randy Dunlap wrote:
-> On 8/26/25 8:45 PM, Dong Yibo wrote:
-> > Initialize basic mbx_fw ops, such as get_capability, reset phy
-> > and so on.
-> > 
-> > Signed-off-by: Dong Yibo <dong100@mucse.com>
-> > ---
-> >  drivers/net/ethernet/mucse/rnpgbe/Makefile    |   3 +-
-> >  drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h    |   1 +
-> >  .../net/ethernet/mucse/rnpgbe/rnpgbe_mbx_fw.c | 253 ++++++++++++++++++
-> >  .../net/ethernet/mucse/rnpgbe/rnpgbe_mbx_fw.h | 126 +++++++++
-> >  4 files changed, 382 insertions(+), 1 deletion(-)
-> >  create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe_mbx_fw.c
-> >  create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe_mbx_fw.h
-> > 
-> 
-> 
-> > diff --git a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_mbx_fw.c b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_mbx_fw.c
-> > new file mode 100644
-> > index 000000000000..d3b323760708
-> > --- /dev/null
-> > +++ b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_mbx_fw.c
-> > @@ -0,0 +1,253 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/* Copyright(c) 2020 - 2025 Mucse Corporation. */
-> > +
-> > +#include <linux/pci.h>
-> > +#include <linux/if_ether.h>
-> > +
-> > +#include "rnpgbe.h"
-> > +#include "rnpgbe_hw.h"
-> > +#include "rnpgbe_mbx.h"
-> > +#include "rnpgbe_mbx_fw.h"
-> > +
-> > +/**
-> > + * mucse_fw_send_cmd_wait - Send cmd req and wait for response
-> > + * @hw: pointer to the HW structure
-> > + * @req: pointer to the cmd req structure
-> > + * @reply: pointer to the fw reply structure
-> > + *
-> > + * mucse_fw_send_cmd_wait sends req to pf-fw mailbox and wait
-> > + * reply from fw.
-> > + *
-> > + * @return: 0 on success, negative on failure
-> 
-> Use of @return: is not a documented feature although kernel-doc does accept it.
-> I prefer that people don't use it, but I can't insist since it does work.
-> 
-> 
 
-Maybe change it like this?
-Return: 0 on success, negative errno on failure
+--2bcu3ttzioot2gyg
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [RFC PATCH 1/8] drm: writeback: Refactor drm_writeback_connector
+ structure
+MIME-Version: 1.0
 
-> > + **/
-> > +static int mucse_fw_send_cmd_wait(struct mucse_hw *hw,
-> > +				  struct mbx_fw_cmd_req *req,
-> > +				  struct mbx_fw_cmd_reply *reply)
-> > +{
-> > +	int len = le16_to_cpu(req->datalen);
-> > +	int retry_cnt = 3;
-> > +	int err;
-> > +
-> > +	err = mutex_lock_interruptible(&hw->mbx.lock);
-> > +	if (err)
-> > +		return err;
-> > +	err = mucse_write_posted_mbx(hw, (u32 *)req, len);
-> > +	if (err)
-> > +		goto out;
-> > +	do {
-> > +		err = mucse_read_posted_mbx(hw, (u32 *)reply,
-> > +					    sizeof(*reply));
-> > +		if (err)
-> > +			goto out;
-> > +		/* mucse_write_posted_mbx return 0 means fw has
-> > +		 * received request, wait for the expect opcode
-> > +		 * reply with 'retry_cnt' times.
-> > +		 */
-> > +	} while (--retry_cnt >= 0 && reply->opcode != req->opcode);
-> > +out:
-> > +	mutex_unlock(&hw->mbx.lock);
-> > +	if (!err && retry_cnt < 0)
-> > +		return -ETIMEDOUT;
-> > +	if (!err && reply->error_code)
-> > +		return -EIO;
-> > +	return err;
-> > +}
-> 
-> 
-> [snip]
-> 
-> > +
-> > +/**
-> > + * mucse_fw_get_capability - Get hw abilities from fw
-> > + * @hw: pointer to the HW structure
-> > + * @abil: pointer to the hw_abilities structure
-> > + *
-> > + * mucse_fw_get_capability tries to get hw abilities from
-> > + * hw.
-> > + *
-> > + * @return: 0 on success, negative on failure
-> 
-> negative errno or just some negative number?
-> 
+On Tue, Aug 26, 2025 at 07:08:17PM +0300, Dmitry Baryshkov wrote:
+> On Tue, Aug 26, 2025 at 05:48:18PM +0200, mripard@kernel.org wrote:
+> > On Mon, Aug 25, 2025 at 06:26:48AM +0000, Kandpal, Suraj wrote:
+> > > > Subject: Re: [RFC PATCH 1/8] drm: writeback: Refactor
+> > > > drm_writeback_connector structure
+> > > >=20
+> > > > Hi,
+> > > >=20
+> > > > On Sat, Aug 16, 2025 at 01:20:53AM +0300, Dmitry Baryshkov wrote:
+> > > > > On Thu, Aug 14, 2025 at 05:13:54PM +0100, liviu.dudau@arm.com wro=
+te:
+> > > > > > Hi,
+> > > > > >
+> > > > > > On Wed, Aug 13, 2025 at 10:04:22AM +0000, Kandpal, Suraj wrote:
+> > > > > > > > > > };
+> > > > > > > > >
+> > > > > > > > > I still don't like that. This really doesn't belong here.=
+ If
+> > > > > > > > > anything, the drm_connector for writeback belongs to drm_=
+crtc.
+> > > > > > > >
+> > > > > > > > Why? We already have generic HDMI field inside drm_connecto=
+r. I
+> > > > > > > > am really hoping to be able to land DP parts next to it. In
+> > > > > > > > theory we can have a DVI- specific entry there (e.g. with t=
+he
+> > > > subconnector type).
+> > > > > > > > The idea is not to limit how the drivers subclass those str=
+uctures.
+> > > > > > > >
+> > > > > > > > I don't see a good case why WB should deviate from that des=
+ign.
+> > > > > > > >
+> > > > > > > > > If the issue is that some drivers need a custom drm_conne=
+ctor
+> > > > > > > > > subclass, then I'd rather turn the connector field of
+> > > > > > > > > drm_writeback_connector into a pointer.
+> > > > > > > >
+> > > > > > > > Having a pointer requires additional ops in order to get
+> > > > > > > > drm_connector from WB code and vice versa. Having
+> > > > > > > > drm_connector_wb inside drm_connector saves us from those o=
+ps
+> > > > (which don't manifest for any other kind of structure).
+> > > > > > > > Nor will it take any more space since union will reuse space
+> > > > > > > > already taken up by HDMI part.
+> > > > > > > >
+> > > > > > > > >
+> > > > > > >
+> > > > > > > Seems like this thread has died. We need to get a conclusion =
+on the
+> > > > design.
+> > > > > > > Laurent do you have any issue with the design given Dmitry's
+> > > > > > > explanation as to why this Design is good for drm_writeback_c=
+onnector.
+> > > > > >
+> > > > > > I'm with Laurent here. The idea for drm_connector (and a lot of=
+ drm
+> > > > > > structures) are to be used as base "classes" for extended
+> > > > > > structures. I don't know why HDMI connector ended up inside
+> > > > > > drm_connector as not all connectors have HDMI functionality, bu=
+t that's a
+> > > > cleanup for another day.
+> > > > >
+> > > > > Maybe Maxime can better comment on it, but I think it was made ex=
+actly
+> > > > > for the purpose of not limiting the driver's design. For example,=
+ a
+> > > > > lot of drivers subclass drm_connector via drm_bridge_connector. If
+> > > > > struct drm_connector_hdmi was a wrapper around struct drm_connect=
+or,
+> > > > > then it would have been impossible to use HDMI helpers for bridge
+> > > > > drivers, while current design freely allows any driver to utilize
+> > > > > corresponding library code.
+> > > >=20
+> > > > That's exactly why we ended up like this. With that design, we woul=
+dn't have
+> > > > been able to "inherit" two connector "classes": bridge_connector is=
+ one,
+> > > > intel_connector another one.
+> > > >=20
+> > > > See here for the rationale:
+> > > > https://lore.kernel.org/dri-devel/ZOTDKHxn2bOg+Xmg@phenom.ffwll.loc=
+al/
+> > > >=20
+> > > > I don't think the "but we'll bloat drm_connector" makes sense eithe=
+r.
+> > > > There's already a *lot* of things that aren't useful to every conne=
+ctor (fwnode,
+> > > > display_info, edid in general, scaling, vrr, etc.)
+> > > >=20
+> > > > And it's not like we allocate more than a handful of them during a =
+system's life.
+> > >=20
+> > > So Are we okay with the approach mentioned here with the changes that=
+ have been proposed here like
+> > > Having drm_writeback_connector in union with drm_hdmi_connector
+> >=20
+> > I don't think we need a union here. It artificially creates the same
+> > issue: we can't have two types for a connector if we do so.
+>=20
+> Well... What kind of connector would be both HDMI and WriteBack? I think
+> they are mutually exclusive already.
+>=20
+> > > Also one more thing I would like to clarify here is how everyone would
+> > > like the patches patches where each patch changes both the drm core
+> > > and all related drivers (ensures buildability but then review is tough
+> > > for each driver). Or patches where we have initial drm core changes
+> > > and then each patch does the all changes in a driver in its own
+> > > respective patch.
+> >=20
+> > The latter should be preferred, but if you can't maintain bisectability
+> > that way, then it's the most important and you should fall back to the
+> > former.
+>=20
+> I'd say, we should be trying our best in providing bisectability. It
+> really a PITA if one can not use `git bisect run`.
 
-errno, -EINTR, -EIO, -ETIMEDOUT
-Maybe update it like this?
+Yeah, I believe we are saying the same thing :)
 
-Return: 0 on success, negative errno on failure
+Maxime
 
-> > + **/
-> > +static int mucse_fw_get_capability(struct mucse_hw *hw,
-> > +				   struct hw_abilities *abil)
-> > +{
-> > +	struct mbx_fw_cmd_reply reply = {};
-> > +	struct mbx_fw_cmd_req req = {};
-> > +	int err;
-> > +
-> > +	build_phy_abilities_req(&req);
-> > +	err = mucse_fw_send_cmd_wait(hw, &req, &reply);
-> > +	if (!err)
-> > +		memcpy(abil, &reply.hw_abilities, sizeof(*abil));
-> > +	return err;
-> > +}
-> 
-> -- 
-> ~Randy
-> 
-> 
+--2bcu3ttzioot2gyg
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Thanks for your feedback.
+-----BEGIN PGP SIGNATURE-----
 
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaK6m7wAKCRAnX84Zoj2+
+doq7AYCGPkzQsh6eK7sNZpx+oS1S0ulIy7SlWpjGFlx+gKw8CWeZ49ePtAl290cq
+u833Oa0BgLNM0z3GhbAuoZEIMj3lrg5ki7r3yNe4zG/aPbKJZ1ocfGrd2wTgY+q3
+3zMMttn/aw==
+=kBfE
+-----END PGP SIGNATURE-----
+
+--2bcu3ttzioot2gyg--
 
