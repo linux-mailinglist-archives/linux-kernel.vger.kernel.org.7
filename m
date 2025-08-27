@@ -1,108 +1,98 @@
-Return-Path: <linux-kernel+bounces-788684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65E7AB388AE
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 19:31:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E24AB388AF
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 19:31:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 229F717D957
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 17:31:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D6D93BF212
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 17:31:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B3DA29D291;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4FB11EFFB4;
 	Wed, 27 Aug 2025 17:31:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zBpxi8j+"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tyR2QNtN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 625B219CCEC
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 17:31:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36F1527B323;
+	Wed, 27 Aug 2025 17:31:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756315876; cv=none; b=SkXun4VCMWdB8KFD9Ux2K/D3h4Ft4mNRYFGq/H2aQwVGTFv0IDhSYeEHXqDvmeqXM0u8FSiuMeY8qUy92dubkGENICvC9o2neu/2SVFLIKF+69aZLJvRD6A04ynJ3fyq/9/aez+xCHHYS3Uq0IS1IPfrbwajGUkkUfFcgrTu0l8=
+	t=1756315876; cv=none; b=rJL21VrJYMqxa2JJ6XNbN0RIzxBNJttlqduJVcD6ragkf3NWHI+0gavLVvZwCAV+qBv7GkGFrXrBxJmThYd0es/7MMxILM4Dhhq/Rw+laRiIi3KHQEJMDksqGCyhdiAUJPExatqbp6giTep+ioRQqgFqFUCF3y8M7AfUmLezuAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1756315876; c=relaxed/simple;
-	bh=Or1YtCo1m/YUhX9dpsqsIrPaYwB+P2dq/LEd0lL+/Wg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QDhY8YvYorZ8RSr/YRcXe21PoC2EDKi2sun8/oX/a7FuzTk+uUgETHzOsOeZcOiHhdLv+wY7RMVA/8KlNKVNSUoyVO5HHwk/x0xrTHxkd9QYF8wZ4Cvk8gv+I/IYl3mMqj+ODlehT7fFBVO60YqLO6AO26B3OYF15YO43Q87D6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zBpxi8j+; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3c68ac7e18aso43213f8f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 10:31:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756315873; x=1756920673; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Or1YtCo1m/YUhX9dpsqsIrPaYwB+P2dq/LEd0lL+/Wg=;
-        b=zBpxi8j+8x96oi0aPWc0G7yLKVPOJKslX1cYJGGulQPHWihBJYe3UK3FfCBkFez9ZN
-         ONuK5ZasTtZrgcs9byT8feQBoOvBOLsWZ2lNxByjbr4wbNfVgvXUo3hGLdP309X43MNo
-         uG8T1Zh8ExMEc3HpQYjecM2Nmp8+mP80axT4g9OftTXVe51cSeCLjKqYDsIlDvIrK8fT
-         4dAZUvK7vZ0X8W1WVXzAfvnMh4N0Ko4NsO0BynO8SlGa+J/Rxom7wTe5t7o54+dzrXOm
-         99ARNpktjTz3QS/tJ7EhleUs7SznETOp7LBCm7C3Mtll8WJPRmESNI8eBDovNwkrW7bF
-         x6zw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756315873; x=1756920673;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Or1YtCo1m/YUhX9dpsqsIrPaYwB+P2dq/LEd0lL+/Wg=;
-        b=FmeV4LBv6K9dKidFioiTXKz/eNZsp5chME2xzqVnAmOmoB3fUQExT5MUnYqfRS9vAh
-         Jsk6nMWUT/Mw7qIb9urYrN1CBVwT5RMpgh+yNezXn/CkR6x+2cYAn21cxl2xKA71irEY
-         yBbNpp72brtv/fN1Yx4hzf9Aq++AmdffQVWG0395Os6h7iUvFphUdfRRN+OOaUi24GMA
-         YZ8J2fSS/uCHPnNYAIPV5+xl49djHt543C9p1rof8dz3+NE4X4emN4fT81LtJaGucazx
-         aKq9S5DMSSCtk429NHfFYM54cN0pSVJP9COV8LA+zVNl5YIGwwmaOsrasmnKqUXSOh8R
-         rX+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCW8q4ld3SbmpqG0lfmi8hAlanIzMzWmHw75e8Vp+u8+r+63O6WsI6Yirk4e60f9KB1oSrvI0LweDAIb4fU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwcWNnCFxZgDRO+3m1M58YwS7MoZfLf652xyhmeCzDmFM5qfKzK
-	sUOTScYeeg+mJI5SEZMYDT4zdCHQslWdyP37pzBbsL+h03CWT1EWGW2xWN9faZgO4CclnNpu7t9
-	WiOYrnTHMHfbVFu6qEV17PRCg3y/c8rmb2BzVDpXD
-X-Gm-Gg: ASbGncuXqTkDJPYkrmzvueS5SmanRpTICHsPHJbWN8784fSA1X3H5zT53t5lZzGOD6x
-	bi+s6IIR6YTfy21ycnMHMPLcrwT769oE69jT86xyhw/5JkOSqOmkHqevCM84TQq4t336PwNpvth
-	YVwqAsrbqYtF4C3/Oi0BIzKnV4NxI9+CnyVUGtumWQaLf/QuQI948o7MqQPywBhD4bAVymznFVG
-	D+krQlp69AdEYs4s9tR7qu0hznMKYIEDZhMVwUniotUQp0=
-X-Google-Smtp-Source: AGHT+IGc7d8Pq14S2SYlUEH3xU20sRWuSFJKCdfeEnTmu9D/gpsBAVtTzNJTf3E/dhzYSTnSXR1XNWNmY9g2cqBDGtk=
-X-Received: by 2002:a05:6000:2f81:b0:3c9:24f5:4711 with SMTP id
- ffacd0b85a97d-3c924f54bb0mr9843614f8f.43.1756315872503; Wed, 27 Aug 2025
- 10:31:12 -0700 (PDT)
+	bh=cXxFf40MPDViexLTcqO0ztrjyez1wiDGf0ZJBEGexao=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BGTL2iWTeShh1sdKta9STfvVr2mGmzyT7XAjBKAutACs0hDzaLHWnHS8yvYpnuWtF8BJhrAVhv9MjkQZaczG9oBiaJwQX0TEo/zERHnEK6vWT3Aq1KWFE6mNDdEOSFB8NQJcCXem8tCRYN7lHsyU2f22oSIP160GC/jjRNjWMPM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tyR2QNtN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7677EC4CEEB;
+	Wed, 27 Aug 2025 17:31:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756315875;
+	bh=cXxFf40MPDViexLTcqO0ztrjyez1wiDGf0ZJBEGexao=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tyR2QNtN22RvMDohWgsRxKLr4FDC+++nmC+K23QB0czoCoV9wY0GfXKCx6P+xDtW/
+	 ZpCPe49Yu4BqdPI9kZYDJxp4y1dzpN/OrQCtYTlfNu1SFTfGBjJCWlz5Qt0mJaoOCh
+	 5V5ecyHf9IgmKtmyaoOZm47WjmTTPimv+CSUN+toJ2qxd00wwzRpzKoXwLJN0ao5eY
+	 05XOUjLA/cCTP6ENn5rv5r59tJEoE3yfUjWqZiu6Go3M/yFqAVbfFtr4JVSlh5Sg5g
+	 l4sD/2Ko33Vlga370ZkhPXbMhiaZy1lOsdYrovz/unS6m2srqvq3UJkAj3R73vKjyq
+	 9Q78SHoGD+pHQ==
+Date: Wed, 27 Aug 2025 18:31:11 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+	Kees Cook <kees@kernel.org>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>, llvm@lists.linux.dev,
+	patches@lists.linux.dev, Palmer Dabbelt <palmer@dabbelt.com>,
+	Alexandre Ghiti <alex@ghiti.fr>, linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v2 07/12] riscv: Remove version check for LTO_CLANG
+ selects
+Message-ID: <20250827-stick-duly-b40d7e90de1f@spud>
+References: <20250821-bump-min-llvm-ver-15-v2-0-635f3294e5f0@kernel.org>
+ <20250821-bump-min-llvm-ver-15-v2-7-635f3294e5f0@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250814093046.2071971-1-lossin@kernel.org> <20250814093046.2071971-3-lossin@kernel.org>
-In-Reply-To: <20250814093046.2071971-3-lossin@kernel.org>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Wed, 27 Aug 2025 19:30:59 +0200
-X-Gm-Features: Ac12FXzOvTF883WqSz8gINB3T0AfVGe4A5ccB0Utfotj0gCC-lsWQgkVt0ROKd8
-Message-ID: <CAH5fLggOfOFj+v5vhmF0m9VhBUeegAT7Y8NR3++04LKsBrJPEA@mail.gmail.com>
-Subject: Re: [PATCH v3 02/11] rust: derive `Zeroable` for all structs & unions
- generated by bindgen where possible
-To: Benno Lossin <lossin@kernel.org>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, Tamir Duberstein <tamird@gmail.com>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="9hV4SjGmbLMT0uH7"
+Content-Disposition: inline
+In-Reply-To: <20250821-bump-min-llvm-ver-15-v2-7-635f3294e5f0@kernel.org>
+
+
+--9hV4SjGmbLMT0uH7
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 14, 2025 at 11:31=E2=80=AFAM Benno Lossin <lossin@kernel.org> w=
-rote:
->
-> Using the `--with-derive-custom-{struct,union}` option of bindgen, add
-> `#[derive(MaybeZeroable)]` to every struct & union. This makes those
-> types implement `Zeroable` if all their fields implement it.
->
-> Sadly bindgen doesn't add custom derives to the `__BindgenBitfieldUnit`
-> struct. So manually implement `Zeroable` for that.
->
-> Signed-off-by: Benno Lossin <lossin@kernel.org>
+On Thu, Aug 21, 2025 at 02:15:44PM -0700, Nathan Chancellor wrote:
+> Now that the minimum supported version of LLVM for building the kernel
+> has been bumped to 15.0.0, there is no need to check the LLD version
+> before selecting ARCH_SUPPORTS_LTO_CLANG{,_THIN} because it will always
+> be true.
+>=20
+> Reviewed-by: Kees Cook <kees@kernel.org>
+> Signed-off-by: Nathan Chancellor <nathan@kernel.org>
 
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+
+--9hV4SjGmbLMT0uH7
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaK9A3wAKCRB4tDGHoIJi
+0nSUAQCDJ2G/cZdQFmAmDOl90XeIgL2nlWFCnq0Pv2BL+l+WwQEAlL0ORgY2kcgL
+CJQL4AtmMpjkg5O2g+HksQ80QfPKFgo=
+=KfEH
+-----END PGP SIGNATURE-----
+
+--9hV4SjGmbLMT0uH7--
 
