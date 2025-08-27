@@ -1,146 +1,210 @@
-Return-Path: <linux-kernel+bounces-788745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82F8AB389A2
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 20:34:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 31947B389A4
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 20:35:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 477BE7C1B32
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 18:34:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71E1B3AD1DC
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 18:35:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 971EC2EB85D;
-	Wed, 27 Aug 2025 18:34:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A3FB2E174C;
+	Wed, 27 Aug 2025 18:34:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NY4/5mdE"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="GfOCaaj9"
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D4152D0C8E
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 18:34:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D062E2D836A
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 18:34:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756319671; cv=none; b=mSgclw0fXKJ9xHCcbtZv5dEIjR45/Zyt0uuu7uXITa2e21P4m5eyDaAXLL0BpXDEuWl9Y33KSJsdhJXFQIX6TyHXnCQ5lgfiezoNQR/ZEhJrqmJRPr2CFJjJXLNg9H49+PrhVma+0cL0knE/CHXDu5MQekqW7Q0DxSwoEtt1RCA=
+	t=1756319682; cv=none; b=O6L74Mv45no0qHKOv6uiLXpEMxcE1wtpXFrRwJOYnxO+Zr+zLRMJosx+r++2T+nhzHTxHfpXH4kyUuYGF5v6N5YT+XQjRYSan+kMFLJGETXiATmzLzOfHSYOrEpe7UIAv9yHeLZSgAzLpR2VIAw92bsaeCeUwI56pXS5LYA8H7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756319671; c=relaxed/simple;
-	bh=nJq64zCCsCh4Yq3xI6XA8YnoA3McWGqAk1X/hBQmSN8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Ri8xfTMg08iLMc22DXyZAmteIr5e8FCwnDD8ArlYgguoA0uKrorLQPyd4DcLOyOpC8OTMQrYGf7YPzscMtLr14L63BnDnZkMiABwdc9SdCqP9LJxynqosV2//8nTfJedgLwCWPi39ox3onX+qsRwCh/wwGK54QRnwzz3QVPe5y4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NY4/5mdE; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-45b627ea685so955335e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 11:34:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756319667; x=1756924467; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YA6lB2OHRh04z8ztLcpTUu2sKqTDk2Id/2bOxOEc5ac=;
-        b=NY4/5mdELCgn0ABh67K1V3lzc/T7Y1/JJ1J5UWBZE3mN4b6NGYQMFeAB8bNFpNbUqT
-         wmfSFdJuAnBRUggvsowiUSuTw7bd5T2tYZdmSYpeTqoKK53kiNjF4dhLKOSukghh3aK8
-         TRY4hBkjoLywX9PKhfq5w+7hretnqx0Y7rpXwRqqx1z56g0+7NGzXBriqq76qCxDlS1y
-         sSyOOmOeQSOxZiDaVCe8LoQi0t6mg907GMBIi21p2/BeYukUk4wMFd1FagEahhHQQ9iB
-         SmzJcX3DGoxuEUePLr9AK1P7yoJD5Fz0CMZgJBrHkaff5/CWQ0IK/3mMK8UQsvM74o8q
-         q3TA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756319667; x=1756924467;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YA6lB2OHRh04z8ztLcpTUu2sKqTDk2Id/2bOxOEc5ac=;
-        b=mN4oYAPLtfHxrv85+pqZZB7ruKmX5v3Er45wEW8yGPVBsw2kMpZPrBRsplLazEA+Ov
-         5aDeHxdmN2r2HChXprEmpLvORtCSBC0Ipn/IaNxuLZn2ZuXgpq07gI2VQQ9qMufJRiuB
-         NLdoIhxBQIiqVvRxlZD1dcYrhB6jKVQ69VDI51KpLGJENO4h+A4T8C0OAqWaQrGvmb8Z
-         KrsLfzZYUmku1ppjT9u6fR60PtqkALv3p+l/SZrNIRDiML2LU7Mew39ThAu8DYqRjTzR
-         cB2ehcLJ9OAqoQJyhsB1hXAs46SWIKJ3qGCW/QMDW9Qw4X6GnDP7xtx6KJtOEbI48h52
-         C9Pw==
-X-Forwarded-Encrypted: i=1; AJvYcCVtLqr/h1/ILlcrE7IxzbxSsdiJQgNTgsVnh6BrVbcC2S50ASVExO1QY1ByniNx+9t6tR3Zb3JOraFf8HI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwRKFnxuO2v7q1qt/CLEf4S6qWsOrVjcVUDUD7c6GkHkR5kSIWo
-	dtHe4AViFkQLU8PGB+tyg1zdlQ7ZjBD/vc6FA0GpOeYbon0PwTAKRv2Z
-X-Gm-Gg: ASbGnctpzIkUfmFsf3LcYBpf50Kuyzdd86MKKU0ZZrN7B2s3koyFwgwShi25qRSCCym
-	dSfNPtNaYfu5gbnfj0ZZ8obgkvB0ggh6QELg7RrycTeBSxOFHPjh79O3/TV2akK9025W9GoXJU9
-	qCQ2xJdLpOyeKhpTe4KgW8HPVBPPhD+kF8v54bZB/+46slI5Cyehat22D9HFroo4DjtMhhKnYDz
-	NnuArCyCN1ERJGZDB0vSYlKseAjrK73W7EGMGGERv+vh41/vkZ/hkMYWe0IxDr7BwgLHePF/qX0
-	2NaIfHZebtedZe/kJxDa5DyVYBxgRspRN9FD+Dx/7Hz4VZno4Kq247kXL7FiMECU+WsiC60jLqh
-	dEAHVuNJaaCA=
-X-Google-Smtp-Source: AGHT+IE0hXtxhpjlhfM+hRo7ji39tkDJ8DWU2BUHg+pIVaprTDiApHeE6ZCxx0FjYX9RgVOZ2NgUxA==
-X-Received: by 2002:a05:600c:1c14:b0:459:d780:3604 with SMTP id 5b1f17b1804b1-45b771b5ca1mr1652945e9.3.1756319667550;
-        Wed, 27 Aug 2025 11:34:27 -0700 (PDT)
-Received: from localhost ([2a03:2880:31ff::])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3cce1724939sm3580972f8f.26.2025.08.27.11.34.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Aug 2025 11:34:27 -0700 (PDT)
-From: Yueyang Pan <pyyjason@gmail.com>
-To: Suren Baghdasaryan <surenb@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Michal Hocko <mhocko@suse.com>,
-	Brendan Jackman <jackmanb@google.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Zi Yan <ziy@nvidia.com>,
-	Usama Arif <usamaarif642@gmail.com>
-Cc: linux-mm@kvack.org,
-	kernel-team@meta.com,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 2/2] mm/show_mem: Add trylock while printing alloc info
-Date: Wed, 27 Aug 2025 11:34:23 -0700
-Message-ID: <7e2bc96faab1a338829e549246189ad96e6c866b.1756318426.git.pyyjason@gmail.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <cover.1756318426.git.pyyjason@gmail.com>
-References: <cover.1756318426.git.pyyjason@gmail.com>
+	s=arc-20240116; t=1756319682; c=relaxed/simple;
+	bh=BwP2Im58iS/1V1K2roDJStD7HUdyohg5SWw9CmSQFro=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=mCYt2nO/fDiHT4fkygovL81KgJo6tCS4RJiBc25jaFvujUd1YYGuVxKyCTrsFmMVki/F+hrlpxprGVR6VnIWJcWjW85/JeEjyml9EaH5Z22kYroZ1+Om8BoTlXCs0bxTteubt2DVpX3Ir/OnBZ/o1Vq8uQBRg/M/HvLt4YPSIHk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=GfOCaaj9; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250827183432euoutp0106c579edb0dcc3944172649e539ebe14~fs2-MCluu3061130611euoutp01G
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 18:34:32 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250827183432euoutp0106c579edb0dcc3944172649e539ebe14~fs2-MCluu3061130611euoutp01G
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1756319672;
+	bh=0vmdefCDmyt9ywh+yymejY1N8ERx9TnrKiWiAjIj7Kg=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=GfOCaaj9iz+LW9wShqGApHa6/ZXQqOzHlqMklQXcYYC4w2as50eHruUBxlDoQeKd8
+	 DY/qvufuUXCjNJZCjcFtYZOg42voEjT8ILaKIyRgs5ZzcIS53QnL52Zy2vmMoiK5eP
+	 O2zDW8gyof+yqtT2zRTYPNi1no0gLH3CNcPp47nY=
+Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250827183431eucas1p18406106ab84b10142c924ddc8afe26ba~fs2_wamdm0942609426eucas1p1k;
+	Wed, 27 Aug 2025 18:34:31 +0000 (GMT)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250827183431eusmtip29186bce2444aa1e212b09f3beb37a98d~fs292QuJH0603806038eusmtip2h;
+	Wed, 27 Aug 2025 18:34:30 +0000 (GMT)
+Message-ID: <8f6aa9a5-54bf-4884-aaf8-d2e3cef6ec78@samsung.com>
+Date: Wed, 27 Aug 2025 20:34:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Betterbird (Windows)
+Subject: Re: [syzbot] [fs?] [mm?] linux-next test error: WARNING in
+ __folio_start_writeback
+To: Joanne Koong <joannelkoong@gmail.com>, Aleksandr Nogikh
+	<nogikh@google.com>
+Cc: syzbot <syzbot+0630e71306742d4b2aea@syzkaller.appspotmail.com>, David
+	Hildenbrand <david@redhat.com>, mszeredi@redhat.com,
+	akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	linux-next@vger.kernel.org, sfr@canb.auug.org.au,
+	syzkaller-bugs@googlegroups.com, willy@infradead.org
+Content-Language: en-US
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <CAJnrk1Ziam4ZqqyzOpbUD8j=RwJOK22Uz3VMqWZsUNiJ5bkBrg@mail.gmail.com>
 Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20250827183431eucas1p18406106ab84b10142c924ddc8afe26ba
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20250827164428eucas1p1e184d31f56fbcbb0d0526d2354d730a5
+X-EPHeader: CA
+X-CMS-RootMailID: 20250827164428eucas1p1e184d31f56fbcbb0d0526d2354d730a5
+References: <68a841d7.050a0220.37038e.0051.GAE@google.com>
+	<CANp29Y5zWmwXDq1uuzxi43_VXieykD2OOLF12YvBELCUS_Hibg@mail.gmail.com>
+	<CGME20250827164428eucas1p1e184d31f56fbcbb0d0526d2354d730a5@eucas1p1.samsung.com>
+	<CAJnrk1Ziam4ZqqyzOpbUD8j=RwJOK22Uz3VMqWZsUNiJ5bkBrg@mail.gmail.com>
 
-In production, show_mem() can be called concurrently from two
-different entities, for example one from oom_kill_process()
-another from __alloc_pages_slowpath from another kthread. This
-patch adds a mutex and invokes trylock before printing out the
-kernel alloc info in show_mem(). This way two alloc info won't
-interleave with each other, which then makes parsing easier.
+On 27.08.2025 18:42, Joanne Koong wrote:
+> On Wed, Aug 27, 2025 at 6:45 AM Aleksandr Nogikh <nogikh@google.com> wrote:
+>> I've bisected the problem to the following commit:
+>>
+>> commit 167f21a81a9c4dbd6970a4ee3853aecad405fa7f (HEAD)
+>> Author: Joanne Koong <joannelkoong@gmail.com>
+>> Date:   Mon Jul 7 16:46:06 2025 -0700
+>>
+>>      mm: remove BDI_CAP_WRITEBACK_ACCT
+>>
+>>      There are no users of BDI_CAP_WRITEBACK_ACCT now that fuse doesn't do
+>>      its own writeback accounting. This commit removes
+>>      BDI_CAP_WRITEBACK_ACCT.
+>>
+>> Joanne Koong, could you please take a look at the syzbot report below?
+> Hi Aleksandr,
+>
+> Thanks for bisecting this. This is a duplicate of what Marek reported
+> in [1]. His patch in [2] fixes the warning getting triggered.
+>
+> Marek, could you submit your patch formally to the mm tree so it could
+> be picked up?
 
-Signed-off-by: Yueyang Pan <pyyjason@gmail.com>
----
- mm/show_mem.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+I've already did that:
 
-diff --git a/mm/show_mem.c b/mm/show_mem.c
-index b71e222fde86..8814b5f8a7dc 100644
---- a/mm/show_mem.c
-+++ b/mm/show_mem.c
-@@ -23,6 +23,8 @@ EXPORT_SYMBOL(_totalram_pages);
- unsigned long totalreserve_pages __read_mostly;
- unsigned long totalcma_pages __read_mostly;
- 
-+static DEFINE_MUTEX(mem_alloc_profiling_mutex);
-+
- static inline void show_node(struct zone *zone)
- {
- 	if (IS_ENABLED(CONFIG_NUMA))
-@@ -419,7 +421,7 @@ void __show_mem(unsigned int filter, nodemask_t *nodemask, int max_zone_idx)
- 	printk("%lu pages hwpoisoned\n", atomic_long_read(&num_poisoned_pages));
- #endif
- #ifdef CONFIG_MEM_ALLOC_PROFILING
--	if (mem_alloc_profiling_enabled()) {
-+	if (mem_alloc_profiling_enabled() && mutex_trylock(&mem_alloc_profiling_mutex)) {
- 		struct codetag_bytes tags[10];
- 		size_t i, nr;
- 
-@@ -445,6 +447,7 @@ void __show_mem(unsigned int filter, nodemask_t *nodemask, int max_zone_idx)
- 						  ct->lineno, ct->function);
- 			}
- 		}
-+		mutex_unlock(&mem_alloc_profiling_mutex);
- 	}
- #endif
- }
+https://lore.kernel.org/all/20250826130948.1038462-1-m.szyprowski@samsung.com/
+
+
+
+>
+> Thanks,
+> Joanne
+>
+>
+> [1] https://lore.kernel.org/linux-fsdevel/a91010a8-e715-4f3d-9e22-e4c34efc0408@samsung.com/T/#u
+> [2] https://lore.kernel.org/linux-fsdevel/a91010a8-e715-4f3d-9e22-e4c34efc0408@samsung.com/T/#m3aa6506ee7de302242e64861f8e2199f24e4ad46
+>
+>> On Fri, Aug 22, 2025 at 12:09 PM syzbot
+>> <syzbot+0630e71306742d4b2aea@syzkaller.appspotmail.com> wrote:
+>>> Hello,
+>>>
+>>> syzbot found the following issue on:
+>>>
+>>> HEAD commit:    0f4c93f7eb86 Add linux-next specific files for 20250822
+>>> git tree:       linux-next
+>>> console output: https://protect2.fireeye.com/v1/url?k=1fb70741-7eccadc9-1fb68c0e-74fe4860018a-55254c3abc8830cc&q=1&e=3aa7e54d-e6d6-43e9-ade0-0a94ae0545e0&u=https%3A%2F%2Fsyzkaller.appspot.com%2Fx%2Flog.txt%3Fx%3D172c07bc580000
+>>> kernel config:  https://protect2.fireeye.com/v1/url?k=7674b464-170f1eec-76753f2b-74fe4860018a-dc792d3947085adc&q=1&e=3aa7e54d-e6d6-43e9-ade0-0a94ae0545e0&u=https%3A%2F%2Fsyzkaller.appspot.com%2Fx%2F.config%3Fx%3D21eed27c0deadb92
+>>> dashboard link: https://protect2.fireeye.com/v1/url?k=cc82c51b-adf96f93-cc834e54-74fe4860018a-15cd3914e26f6b7e&q=1&e=3aa7e54d-e6d6-43e9-ade0-0a94ae0545e0&u=https%3A%2F%2Fsyzkaller.appspot.com%2Fbug%3Fextid%3D0630e71306742d4b2aea
+>>> compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+>>>
+>>> Downloadable assets:
+>>> disk image: https://protect2.fireeye.com/v1/url?k=e6bff250-87c458d8-e6be791f-74fe4860018a-800b933a7034a696&q=1&e=3aa7e54d-e6d6-43e9-ade0-0a94ae0545e0&u=https%3A%2F%2Fstorage.googleapis.com%2Fsyzbot-assets%2F669ede8f5d66%2Fdisk-0f4c93f7.raw.xz
+>>> vmlinux: https://protect2.fireeye.com/v1/url?k=2603018e-4778ab06-26028ac1-74fe4860018a-9b89a99c7853c7f0&q=1&e=3aa7e54d-e6d6-43e9-ade0-0a94ae0545e0&u=https%3A%2F%2Fstorage.googleapis.com%2Fsyzbot-assets%2F50feda89fe89%2Fvmlinux-0f4c93f7.xz
+>>> kernel image: https://protect2.fireeye.com/v1/url?k=420b962e-23703ca6-420a1d61-74fe4860018a-a965e5c8c6b4614a&q=1&e=3aa7e54d-e6d6-43e9-ade0-0a94ae0545e0&u=https%3A%2F%2Fstorage.googleapis.com%2Fsyzbot-assets%2F317a0d3516fb%2FbzImage-0f4c93f7.xz
+>>>
+>>> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+>>> Reported-by: syzbot+0630e71306742d4b2aea@syzkaller.appspotmail.com
+>>>
+>>> ------------[ cut here ]------------
+>>> WARNING: ./include/linux/backing-dev.h:243 at inode_to_wb include/linux/backing-dev.h:239 [inline], CPU#1: kworker/u8:6/2949
+>>> WARNING: ./include/linux/backing-dev.h:243 at __folio_start_writeback+0x9d5/0xb70 mm/page-writeback.c:3027, CPU#1: kworker/u8:6/2949
+>>> Modules linked in:
+>>> CPU: 1 UID: 0 PID: 2949 Comm: kworker/u8:6 Not tainted syzkaller #0 PREEMPT(full)
+>>> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
+>>> Workqueue: writeback wb_workfn (flush-8:0)
+>>> RIP: 0010:inode_to_wb include/linux/backing-dev.h:239 [inline]
+>>> RIP: 0010:__folio_start_writeback+0x9d5/0xb70 mm/page-writeback.c:3027
+>>> Code: 28 4c 89 f8 48 c1 e8 03 42 80 3c 28 00 74 08 4c 89 ff e8 ce a2 29 00 49 8b 07 25 ff 3f 00 00 e9 1b fa ff ff e8 7c 04 c6 ff 90 <0f> 0b 90 e9 d6 fb ff ff e8 6e 04 c6 ff 48 c7 c7 a0 f8 5f 8e 4c 89
+>>> RSP: 0018:ffffc9000bb06ea0 EFLAGS: 00010293
+>>> RAX: ffffffff81fad344 RBX: ffffea00050de8c0 RCX: ffff88802ee29e00
+>>> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+>>> RBP: ffffc9000bb07010 R08: ffffc9000bb06f97 R09: 0000000000000000
+>>> R10: ffffc9000bb06f80 R11: fffff52001760df3 R12: ffffea00050de8c8
+>>> R13: 0000000000000000 R14: ffff888023060880 R15: ffff888023060660
+>>> FS:  0000000000000000(0000) GS:ffff8881258c3000(0000) knlGS:0000000000000000
+>>> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>>> CR2: 00007f7354907000 CR3: 000000000e338000 CR4: 00000000003526f0
+>>> Call Trace:
+>>>   <TASK>
+>>>   __block_write_full_folio+0x75f/0xe10 fs/buffer.c:1928
+>>>   blkdev_writepages+0xd1/0x170 block/fops.c:484
+>>>   do_writepages+0x32e/0x550 mm/page-writeback.c:2604
+>>>   __writeback_single_inode+0x145/0xff0 fs/fs-writeback.c:1680
+>>>   writeback_sb_inodes+0x6c7/0x1010 fs/fs-writeback.c:1976
+>>>   __writeback_inodes_wb+0x111/0x240 fs/fs-writeback.c:2047
+>>>   wb_writeback+0x44f/0xaf0 fs/fs-writeback.c:2158
+>>>   wb_check_old_data_flush fs/fs-writeback.c:2262 [inline]
+>>>   wb_do_writeback fs/fs-writeback.c:2315 [inline]
+>>>   wb_workfn+0xaef/0xef0 fs/fs-writeback.c:2343
+>>>   process_one_work kernel/workqueue.c:3236 [inline]
+>>>   process_scheduled_works+0xade/0x17b0 kernel/workqueue.c:3319
+>>>   worker_thread+0x8a0/0xda0 kernel/workqueue.c:3400
+>>>   kthread+0x711/0x8a0 kernel/kthread.c:463
+>>>   ret_from_fork+0x47c/0x820 arch/x86/kernel/process.c:148
+>>>   ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+>>>   </TASK>
+>>>
+>>>
+>>> ---
+>>> This report is generated by a bot. It may contain errors.
+>>> See https://protect2.fireeye.com/v1/url?k=d9d7c080-b8ac6a08-d9d64bcf-74fe4860018a-5a4a20c239e4ea82&q=1&e=3aa7e54d-e6d6-43e9-ade0-0a94ae0545e0&u=https%3A%2F%2Fgoo.gl%2FtpsmEJ for more information about syzbot.
+>>> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>>>
+>>> syzbot will keep track of this issue. See:
+>>> https://protect2.fireeye.com/v1/url?k=03a49fa8-62df3520-03a514e7-74fe4860018a-9a57f917485c2c59&q=1&e=3aa7e54d-e6d6-43e9-ade0-0a94ae0545e0&u=https%3A%2F%2Fgoo.gl%2FtpsmEJ%23status for how to communicate with syzbot.
+>>>
+>>> If the report is already addressed, let syzbot know by replying with:
+>>> #syz fix: exact-commit-title
+>>>
+>>> If you want to overwrite report's subsystems, reply with:
+>>> #syz set subsystems: new-subsystem
+>>> (See the list of subsystem names on the web dashboard)
+>>>
+>>> If the report is a duplicate of another one, reply with:
+>>> #syz dup: exact-subject-of-another-report
+>>>
+>>> If you want to undo deduplication, reply with:
+>>> #syz undup
+>>>
+Best regards
 -- 
-2.47.3
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
 
