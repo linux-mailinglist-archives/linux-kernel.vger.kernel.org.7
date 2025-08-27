@@ -1,51 +1,54 @@
-Return-Path: <linux-kernel+bounces-788249-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788250-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3663BB381D1
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 13:58:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EA298B381D2
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 13:58:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D7FAB206312
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 11:58:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B590D205E86
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 11:58:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8BA02FF65A;
-	Wed, 27 Aug 2025 11:58:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A15C430100B;
+	Wed, 27 Aug 2025 11:58:43 +0000 (UTC)
 Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85D9C2FE04B
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29BA82F99B3
 	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 11:58:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756295922; cv=none; b=mSvwuascbzeEW3lKxPXbT0m0vntTh1wKA+zAifsDs84VA1/66YJjZTJ7nDsr2FUG4g8TEK/p9r/UjVMsnq6FEsgUdZldBIu+GQGVY3M/iByWKOl0J4o8Abccw9KJfVdhQ00jN2fZux8R+vkKAxal0/L4ufn9FKEUpKry2i3OgxQ=
+	t=1756295923; cv=none; b=iGoSUPw4qxzBNPiHj+YP4ANXDd9hZFM9DSyP7aHgDouihduc2FLlUo47lhrASxwLiJ5Unh5lDdjIcbtft7ABkOSNXCJD0vuPayo4l5J40fwTqpSrbwP9j28wAB5udPO63xMT6VIL2eLgQ/do+0Ot4fNEM0z1ooU/se7hU16zfJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756295922; c=relaxed/simple;
-	bh=OWLQw4lnYUYtpWOqi4TdnN5N+Uc2CIvj6pHOBNWwyjE=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=SuGyZGiNO6HPi5EmT66l35dle6aGmrQXegsUo0lOPnXct9n1/HsXsuwBo+vIBIIqKGeDIm4O17IKsTCP5CD8LMEoxrpTVoyfMVeWl5UY6UaVZJ9U+AxlLoCclwhWox6artyxsELowcIhh4PCCMmvAzKiomG40qVWKHzVzc+ojxw=
+	s=arc-20240116; t=1756295923; c=relaxed/simple;
+	bh=TkIgPFBZrwHKn9HCQHkOWlhto+Sgm1X+3+iNhv1C41A=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=pQ58W4hrgorfuXkwTqG+1VY2umq8OZTARXf4C8ej1UZkWW29ss2aAOVbDnIZc4x5TyAo/Qm8k0FjUifkBeZOpmdhdnglrS4vri2AvPmIjzw1+ATI3PBTZ5BEFtqY8mgX+FiDdcejsEPtlEAdCmb4r5LuAeXgMKYXNq4yGGOi1NQ=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4cBjjK4h2rz14MGx;
-	Wed, 27 Aug 2025 19:58:29 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4cBjdB5csMz13N0R;
+	Wed, 27 Aug 2025 19:54:54 +0800 (CST)
 Received: from dggpemf200018.china.huawei.com (unknown [7.185.36.31])
-	by mail.maildlp.com (Postfix) with ESMTPS id 9C630180483;
-	Wed, 27 Aug 2025 19:58:36 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTPS id 3852414011F;
+	Wed, 27 Aug 2025 19:58:37 +0800 (CST)
 Received: from huawei.com (10.50.85.135) by dggpemf200018.china.huawei.com
  (7.185.36.31) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 27 Aug
- 2025 19:58:35 +0800
+ 2025 19:58:36 +0800
 From: Quanmin Yan <yanquanmin1@huawei.com>
 To: <sj@kernel.org>
 CC: <akpm@linux-foundation.org>, <damon@lists.linux.dev>,
 	<linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
 	<yanquanmin1@huawei.com>, <wangkefeng.wang@huawei.com>, <zuoze1@huawei.com>
-Subject: [PATCH 0/2] mm/damon: void divide-by-zero in DAMON module's parameters application
-Date: Wed, 27 Aug 2025 19:58:56 +0800
-Message-ID: <20250827115858.1186261-1-yanquanmin1@huawei.com>
+Subject: [PATCH 1/2] mm/damon/lru_sort: avoid divide-by-zero in damon_lru_sort_apply_parameters()
+Date: Wed, 27 Aug 2025 19:58:57 +0800
+Message-ID: <20250827115858.1186261-2-yanquanmin1@huawei.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250827115858.1186261-1-yanquanmin1@huawei.com>
+References: <20250827115858.1186261-1-yanquanmin1@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,29 +60,38 @@ Content-Type: text/plain
 X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
  dggpemf200018.china.huawei.com (7.185.36.31)
 
-DAMON's RECLAIM or LRU_SORT modules perform no validation on
-user-configured parameters during application, which may lead
-to division-by-zero errors.
+During the calculation of 'hot_thres' and 'cold_thres', either
+'sample_interval' or 'aggr_interval' is used as the divisor,
+which may lead to division-by-zero errors. Fix it by directly
+returning -EINVAL when such a case occurs. Additionally, since
+'aggr_interval' is already required to be set no smaller than
+'sample_interval' in damon_set_attrs(), only the case where
+'sample_interval' is zero needs to be checked.
 
-Avoid the divide-by-zero by adding validation checks when DAMON
-modules attempt to apply the parameters.
-
-Changes from RFC v1
-(https://lore.kernel.org/all/20250826033653.1208227-1-yanquanmin1@huawei.com/)
-- No code changes.
-  - Drop RFC tag.
-  - Add 'Cc: stable@' tags to each patch.
-
-Quanmin Yan (2):
-  mm/damon/lru_sort: avoid divide-by-zero in
-    damon_lru_sort_apply_parameters()
-  mm/damon/reclaim: avoid divide-by-zero in
-    damon_reclaim_apply_parameters()
-
+Fixes: 40e983cca927 ("mm/damon: introduce DAMON-based LRU-lists Sorting")
+Cc: <stable@vger.kernel.org> # 6.0.x
+Signed-off-by: Quanmin Yan <yanquanmin1@huawei.com>
+Reviewed-by: SeongJae Park <sj@kernel.org>
+---
  mm/damon/lru_sort.c | 5 +++++
- mm/damon/reclaim.c  | 5 +++++
- 2 files changed, 10 insertions(+)
+ 1 file changed, 5 insertions(+)
 
+diff --git a/mm/damon/lru_sort.c b/mm/damon/lru_sort.c
+index 151a9de5ad8b..b5a5ed16a7a5 100644
+--- a/mm/damon/lru_sort.c
++++ b/mm/damon/lru_sort.c
+@@ -198,6 +198,11 @@ static int damon_lru_sort_apply_parameters(void)
+ 	if (err)
+ 		return err;
+ 
++	if (!damon_lru_sort_mon_attrs.sample_interval) {
++		err = -EINVAL;
++		goto out;
++	}
++
+ 	err = damon_set_attrs(ctx, &damon_lru_sort_mon_attrs);
+ 	if (err)
+ 		goto out;
 -- 
 2.43.0
 
