@@ -1,178 +1,130 @@
-Return-Path: <linux-kernel+bounces-787587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787586-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB5E3B3784D
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 04:45:39 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1A05B3784B
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 04:45:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 492BD6816AC
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 02:45:33 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7DDAD4E3735
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 02:45:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B9C53009D4;
-	Wed, 27 Aug 2025 02:45:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3C2F2E22BF;
+	Wed, 27 Aug 2025 02:45:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="VkN1HxuQ"
-Received: from OS8PR02CU002.outbound.protection.outlook.com (mail-japanwestazon11012002.outbound.protection.outlook.com [40.107.75.2])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F+kmSNd0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CC802FCC13;
-	Wed, 27 Aug 2025 02:45:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.75.2
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756262730; cv=fail; b=DmC/GkrQbqy1TP1TWurOAVwBd4JTcOo4gJxdELTb6FzCwR7tawDFcZtZkXon+/KgNpNSYVTkFu/5ObUm53f5btRjodERyX0cvRUyu7hMcYPof/FCrwt72nR/7E41YvT+pU58U16MUeBiChyFuIKlxVAjTegV3wj3SEzP5Vp+rNs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756262730; c=relaxed/simple;
-	bh=+Mf5iMwgBd1pjTEjYarCOSZ3bcZDjQJWbJ3nbmlhb+w=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=S/H7pBQRe6seRfUVNc6hWvn64lNpx8ns5BnqMn8emkXOSBFKpJD1xag1Fn/vEbxwIfqgmwRvtlShlQI8h7nU73EIy0wC7H2NnRuWgot1izFTaFhW/a/5F9T1u+7vsyeu17S0lfKQpXz/o2bfMaYP16SlHhFY0SKiST7ZwArHEoY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=VkN1HxuQ; arc=fail smtp.client-ip=40.107.75.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=QN6yJh9z5Sfg4CIfnJJ/xuI13U8iXPzVucGSM/3TsOaThHYUM+0fWqeiD1YWAeoaXnYm53PO1TvxlG1mYLTHFdn552MLirMMS45Gktp67q/+eXX8GQ+8CoKHD4Rqg+lg2bPrXqBV25JJ01Rd/ExBVuPGs+Vgs0HOAvCVeO2dCuG/gqHM1UovZ4Rwx8dESKeZRrsWE/Y6+6y3AMVdWwpY7Q17ELjpANSGuvxQ1ehcFhN8CloSkeQ4adD3aroCspGQ3rV8Yc2L5laxARgoG8NueESQ0y5eJrYuFV1dKd5BxhBRsvSbFoQwD+KO9wlyyzRMEPz9qvGKV0voFeivMH/aDQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=SAqPmzXUTwmXoGBqaHwbXX6tJtNe41ozuSWTYz2GAC8=;
- b=URel8D9C1ZDCBqefJdafJ+kLfs3rARqv0SvfhgJchH5P0k8ZQGUq9kMwfgfzALXVG9/IFV4z7KaNwTbcF9VFcNH6/cGsU8TDoU6kM+qlLc4fhvI1/seuJq9al/FNk8B60jWdXFNKpBZmCnrGv6Zgq709Mf4eeRt3Su4ACa204v+seeMw3Kg/IVgpLKLAJldIpR0sLUj+ANMiGdHFHBeywxo774ARi9/Y15CCrcBBKbXqQZIe9S9GL1cTctsS50XO9zNsTyZg5VkjXRpj/W3Ud1KVFIZNur+Ph+m5tbsKAX0h8cwbYibF7TdTyGENxFRP8s6vho46BEYSNR4KwtGLcA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=SAqPmzXUTwmXoGBqaHwbXX6tJtNe41ozuSWTYz2GAC8=;
- b=VkN1HxuQFChWMi4PViC6DzRZwZ+5RXv+5FDD9nyP7tgk/vTmmuIqZ//zYyUhWV7efDYKVMAog+lQ0Xyc2kHHdJxGWIYSqyX9QyHWhS7/w5PO4rJN2RTmJT++k8+gx6rV43ulRpHdgGSd5JR+8cuui2Nd3X2198RBT316Sseqxa+0JKVgJD4ioy2Pke/nBU8BYI2zv0WFeDep3hhDF139NsKVttjQoHMwVQ2vsrjU/NwD6trKqgu65B2oBIxJTzZ3breDg2jlYwu3gT4LMTTMUmSFIK7IUcQeUxUenYrwe5f/wzkOysj9374XtL47Rhw6pFsrU3yG1MzCoUyjscnxUQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from KL1PR06MB6020.apcprd06.prod.outlook.com (2603:1096:820:d8::5)
- by TYZPR06MB5805.apcprd06.prod.outlook.com (2603:1096:400:26a::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.21; Wed, 27 Aug
- 2025 02:45:23 +0000
-Received: from KL1PR06MB6020.apcprd06.prod.outlook.com
- ([fe80::4ec9:a94d:c986:2ceb]) by KL1PR06MB6020.apcprd06.prod.outlook.com
- ([fe80::4ec9:a94d:c986:2ceb%5]) with mapi id 15.20.9073.010; Wed, 27 Aug 2025
- 02:45:23 +0000
-From: Xichao Zhao <zhao.xichao@vivo.com>
-To: gregkh@linuxfoundation.org,
-	jirislaby@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	Xichao Zhao <zhao.xichao@vivo.com>
-Subject: [PATCH] serial: sc16is7xx: drop redundant conversion to bool
-Date: Wed, 27 Aug 2025 10:45:14 +0800
-Message-Id: <20250827024514.76149-1-zhao.xichao@vivo.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: TYCP286CA0139.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:31b::7) To KL1PR06MB6020.apcprd06.prod.outlook.com
- (2603:1096:820:d8::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BCCA25BF13;
+	Wed, 27 Aug 2025 02:45:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756262720; cv=none; b=jDcKdymRc7D6yVF1tLRgIlkCRrx4V5fCoo97PCUp5EDmTy/Idv4SOzUaqImiggba7HUwba/I5tx7FY6ufthpFQoNLKx3Dy/pf7WAe9i54PxHJxNEOtPH0gDy3ZjeWulPf0hb19GgZ+NPV8tQ3q66y7imLJFy9MLZybowdJ0YxyU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756262720; c=relaxed/simple;
+	bh=WYZjGVhbi9PZZbObUWGRV+CpiiLKNvQiFfF1DJ0PfbY=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=gsj0YPx1a2FBXvYaeohAhjPczpYegpVm7fmh6C3jnBdrpvDGMCqte0vkO01Ghj8apEryI5feGNBqhtloBTMXc+0OI+FeVdzJsxRwXVfjP7dwcYsuOYQ/m2mFezkpSq7KTJ43Hm22n5AteNj6iTtqa0kvW4BMNz88kCOSwpt32Jg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F+kmSNd0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43A6AC4CEF1;
+	Wed, 27 Aug 2025 02:45:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756262719;
+	bh=WYZjGVhbi9PZZbObUWGRV+CpiiLKNvQiFfF1DJ0PfbY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=F+kmSNd0hNr6jyE/chTdjU47XA4mRJCURDLzABpP6xhbx+WXqS2wQQjqmDRUZWUt7
+	 6BvTuZC7ewzl7kUp2GtsBv9TrZUP24nb2FWLWRFQGdtzqRaHSaWPh1o6F7nSZRjw23
+	 YqjhV73izlUONt8YCkiO7mT4b1HEvCzUPXFEJhK70MZXZtGLoPcnpdSP08eWFesebx
+	 JuEfuheaKTDfFmAhXE7rfjIoZq+KIOhyOf3P1S5NL1ddkQgsDZ0/9de5cPxZYrhAM6
+	 /RMytj8ppv/cdoGDKQt/rAuiLgSgu0Dr24Vlwxn0db6sBLo7Ai1Sfgd5rG0o6MTuhC
+	 LbL7pX0BgE9aA==
+Date: Wed, 27 Aug 2025 11:45:16 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Finn Thain <fthain@linux-m68k.org>
+Cc: "Andrew Morton" <akpm@linux-foundation.org>, "Lance Yang"
+ <lance.yang@linux.dev>, "Geert Uytterhoeven" <geert@linux-m68k.org>,
+ "Masami Hiramatsu" <mhiramat@kernel.org>, "Eero Tamminen"
+ <oak@helsinkinet.fi>, "Peter Zijlstra" <peterz@infradead.org>,
+ "Will Deacon" <will@kernel.org>, stable@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] atomic: Specify natural alignment for atomic_t
+Message-Id: <20250827114516.efd544acda4e3c0492d893e7@kernel.org>
+In-Reply-To: <7d9554bfe2412ed9427bf71ce38a376e06eb9ec4.1756087385.git.fthain@linux-m68k.org>
+References: <7d9554bfe2412ed9427bf71ce38a376e06eb9ec4.1756087385.git.fthain@linux-m68k.org>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: KL1PR06MB6020:EE_|TYZPR06MB5805:EE_
-X-MS-Office365-Filtering-Correlation-Id: 51d4b2b9-c578-46b8-1e68-08dde513c543
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|52116014|376014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?XjoWe99+ORvrq8gSFY2Ce3IAlwBFp6FRGqX4SzWRR5+PIMqJs0gw3lKtdHSf?=
- =?us-ascii?Q?eTFo+fOLm09njCirGEu281fdlNtCgeNpqNepP7QGcz4dRHWoX/qsAJSe/KZ6?=
- =?us-ascii?Q?xoWYvJ11eAxvApHGPRWfB/tKHW991pyiAWrb3BKXRo0Y0wTZbNh2MecQPLY8?=
- =?us-ascii?Q?eCAU/7UmGV7Gyz54vbVa+AWvtco2dccfLkMnqqMXuRGOdTqWD6ukq2V4V1I2?=
- =?us-ascii?Q?i0ioWq0CgNl+hcPon4IPwQmxcMufyZt0QPM83731IfVUB4V1YfSCjugQzXZw?=
- =?us-ascii?Q?64M1F37idrvhhKlTCGL1Aqr2iRYa/E3bqzQ1i1q8ciABB0Jvy2OGIsOkpIyM?=
- =?us-ascii?Q?DE+QGHTkFet85ZeFTdnHg1J59THSj5Py9g9bol/L3721KryCu/iHlkm1iNw5?=
- =?us-ascii?Q?2Wvhva4XsTJG7ABkdMGiSXy2Plm7MVgVMNUxqg9qXBUXgzfvOwXjx3qsWWgH?=
- =?us-ascii?Q?/z89TvHHIfdo2Cs8GiBeXDeCB61mJZFEgIhNSAy9KH4j6eImyKRqTMXgIOD0?=
- =?us-ascii?Q?JJbR3JES4/TS3snRBSJKR3DRjRu65HaCnRRijGU+ji4TCTqH/uu3gcymbpNq?=
- =?us-ascii?Q?Ehv20qW3v+z+9Sd5QYyBeASUWcbwVJraGg/OYlgdD5KvF5YLfuYjrzgFKLon?=
- =?us-ascii?Q?Pwb1C+6bhO786Q1tvBOh5W7oLTVIfzrzG/Yh5VnfFHwrJ0ffbMVD1NeXmZIS?=
- =?us-ascii?Q?WwZ3m57xUElAwx+IfdfAf4nbF9Vlk6BCEf81kccSSoTOaWUfdzA6Fyqs4Ic4?=
- =?us-ascii?Q?w8YkOi+sr/gqly/8ao1m+Q0WjI20DNoZ2OwRKZjsPyAwX11n5ocgGfYIXh3c?=
- =?us-ascii?Q?vtonhUyPiD1CtzXHe1m/36lpQzdHgDn3GWqJ/Axh0UB8QiE7IKbTjPdnua/3?=
- =?us-ascii?Q?YJiaPQ4S75oNDkIPdoNRQS0gOrh5UEsQ1d59x+ACEyVY/+roiJvzWW/gpktc?=
- =?us-ascii?Q?lo6p+zrzWrPtbGTOCktLVFJ8hdNPRXqBH6rDOdmNO3Pp0Sn0/gtW+mQvNEot?=
- =?us-ascii?Q?c0oB62/HOBrhmOaVVqVZB6LfVPfS5F8W2PEd7pd1NKPJ2e770b/LCpqInJdF?=
- =?us-ascii?Q?sThi+GNmV546baT+4fIMB5ZgM4kFZOUNmq7d/gPnEORwI0Pl3ri9t+WOGLMn?=
- =?us-ascii?Q?HqH8GHzpJzfmfNNEuiVmJh3QH2ZgeNMgpFP51m+VZbmGwMt5sbeuXEsbuWYZ?=
- =?us-ascii?Q?2+N79aHrcvo9DuYD33QvNPHfNJNKgm/QGX+TGj00qMBctETMmgeaylVHNpPF?=
- =?us-ascii?Q?BeA/n7x3uDBaHxqDgKCkxlrX0oVpkRJDlr+or47/GFZaC5xCWbtLvAEdJgf3?=
- =?us-ascii?Q?PDuX8oUZ1oyZkJoe++c5wxf0AxZo9Q7lseFfR3Qru2pbusRGr2S2bNtFDdHo?=
- =?us-ascii?Q?qAdsZdIu4dXVlNGH1c1XPv9PL1c1r6Vj1jzCk9iUCNYVRKiNdsZwZIHFlj2h?=
- =?us-ascii?Q?kPlm5r2Afh1hYWtaFa2sOV1g31uozV34gVE/Ecuta7KvPSVytuGWmA=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR06MB6020.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(52116014)(376014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?jyAV7bDUwyvytzAZfFjXiIll8MAq0vpg8hFienqTrDhPpbqt4V4njY9xvdOl?=
- =?us-ascii?Q?CQnsOyM9GWLHsPSRHVvCOq7N/QH0EVncSp+0kLgW8fd+2amtRXgcbxQPwwxx?=
- =?us-ascii?Q?l+xu5MPWq4WBXLwX6TuFYwE1D5oSNnYAQE7ek42XjahHT9WGNKI10S5JjX2j?=
- =?us-ascii?Q?gZnDWNK6HPtGLNVjfFWRckDial/IO7Uq0w5wwDe8sQzNdMt8CuXArwGh3a54?=
- =?us-ascii?Q?oQRK3q5XR8ZbtT5hqqkLhfWrUftfeuVA3b1HjIgZOl4pvqpwNkbZObouN/m9?=
- =?us-ascii?Q?AyzhPuanDG5d+T8aU6Z/x1uRfUMNWAOiTJA5AEtTF5Y5ZAgMJdYig+DvmaMu?=
- =?us-ascii?Q?AJGIz0pzP4TjiRDfP9LgXld8a7CGDuZz72vomZiPdMPCOlGQoP9Kuefyd8rD?=
- =?us-ascii?Q?jr6kNWFpfg9xNIiFUvdNE0y8C6C0DJe93ZVZ2sMLDSFCeWkkCWlS0GmH81Of?=
- =?us-ascii?Q?5ZJ0qPiYUoFSzKrcHB2T3MY7WZrhvzQMGFyudwH4TCV237gsp84Ph8bH0R7V?=
- =?us-ascii?Q?31NOhrlJ0PSlUJCjqy78cEgPFbEIvAitQPxOrA3Xy0V8qftT2AwCbytt2+8f?=
- =?us-ascii?Q?VRHIeE9L85t4zjsiva3YERNmfKeF8ihnLHt9UFsZQLemTn3FQaWMiCd+qkvh?=
- =?us-ascii?Q?uZx+zErpNGgCyWDaZd+RgwmuK2jU/SxjVgTwBUB1bYVzjC5S7CV6Rf887pjm?=
- =?us-ascii?Q?Mf2phsCA/9cZs09di2vlj9EP332RE5FRqtEBAqGNcWp2RyBsReHMzujU5DI1?=
- =?us-ascii?Q?OQ01J4GhlMqAwKXZZx8aRxWUKX5DNa9hZeXp6YhR+1M+idAQ+OYNqJjlExsx?=
- =?us-ascii?Q?psKaUgJnMqj4DvRJ0HZW3ZGS5VDuk9gqfRBPzFW+DCBcQmt+Zn9JyAm8J5cY?=
- =?us-ascii?Q?lyk8H3baFAT6U+SFh6qIZ427cnyC3dyI/xpNZnnzZQnutIWeDQbWh9XyEew5?=
- =?us-ascii?Q?UTbnOwb5wFoiyKX9wrcnntVgMqq8miX/g7X+h7tKs65jOnh+QT+9DoXAT0E0?=
- =?us-ascii?Q?IOf48rUGwMkxsbk7OfG0Bkx+9a9G5ySSPbDrwd/iTrx80CFmnF7Oy6W8YJWG?=
- =?us-ascii?Q?c8qbW+xeLYsvnZBOndyV4AsCgm5cNsbbvO3cpvlx8CV2XvY0ZscN/MrLOENT?=
- =?us-ascii?Q?WAT+9FoI1IkWLtAAj/SAzDqVNz5U5Q7zM+zUISRdwptfz5c44A6KhcgE+Xep?=
- =?us-ascii?Q?W2l1L5OwQmXlE10oJHKWa5emtjz+qJFQO3e30ihW3ZqIJtN8M7QSDjQPQ5Il?=
- =?us-ascii?Q?EbQ/f4h3dpCJiK7eGFxel5U/NNyzA1xwfVnHAaOejNS2J0/Lze6AJKwsua9q?=
- =?us-ascii?Q?8iodU38Q9cAGLFCn2u4YzYjLEu4TsT/ARab60Z3EJSlqm1Vex8m4D9TPGQE/?=
- =?us-ascii?Q?dQFv3ds7ETVp+Lj/nJXUOkiq7Wfe4tBRTgzFBWYs6CikcBp8DCmlKqROdcrw?=
- =?us-ascii?Q?gbq+lS/mzGeDk813Gxjr4Mn3MBbVuuTYT8DnlWLq54Tf7t2qoSrv6rTXI/QR?=
- =?us-ascii?Q?rdx1zLF+q5psLS6t2XILWKV0ChvdZZOpKy79tSO7/AHBY+64aQAu23iAhXSv?=
- =?us-ascii?Q?d8dRsMae9WOcY+J8XxHOnDCK6mdifb6hmcs+J4J3?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 51d4b2b9-c578-46b8-1e68-08dde513c543
-X-MS-Exchange-CrossTenant-AuthSource: KL1PR06MB6020.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2025 02:45:23.5576
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: HwpuJeRpSRtPvsWhKOI6IqcjEgp5I7+BLyTfINPopt5RXu4DXZ/znBcEIZoPDPjhVR/XluECxdvosMYroi1xOQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR06MB5805
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-The result of integer comparison already evaluates to bool. No need for
-explicit conversion.
+On Mon, 25 Aug 2025 12:03:05 +1000
+Finn Thain <fthain@linux-m68k.org> wrote:
 
-Signed-off-by: Xichao Zhao <zhao.xichao@vivo.com>
----
- drivers/tty/serial/sc16is7xx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> Some recent commits incorrectly assumed the natural alignment of locks.
+> That assumption fails on Linux/m68k (and, interestingly, would have failed
+> on Linux/cris also). This leads to spurious warnings from the hang check
+> code. Fix this bug by adding the necessary 'aligned' attribute.
+> 
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+> Cc: Lance Yang <lance.yang@linux.dev>
+> Cc: Masami Hiramatsu <mhiramat@kernel.org>
+> Cc: Eero Tamminen <oak@helsinkinet.fi>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Will Deacon <will@kernel.org>
+> Cc: stable@vger.kernel.org
+> Reported-by: Eero Tamminen <oak@helsinkinet.fi>
+> Closes: https://lore.kernel.org/lkml/CAMuHMdW7Ab13DdGs2acMQcix5ObJK0O2dG_Fxzr8_g58Rc1_0g@mail.gmail.com/
+> Fixes: e711faaafbe5 ("hung_task: replace blocker_mutex with encoded blocker")
+> Signed-off-by: Finn Thain <fthain@linux-m68k.org>
 
-diff --git a/drivers/tty/serial/sc16is7xx.c b/drivers/tty/serial/sc16is7xx.c
-index 5ea8aadb6e69..1c115d9e3b3f 100644
---- a/drivers/tty/serial/sc16is7xx.c
-+++ b/drivers/tty/serial/sc16is7xx.c
-@@ -626,7 +626,7 @@ static void sc16is7xx_handle_rx(struct uart_port *port, unsigned int rxlen,
- {
- 	struct sc16is7xx_one *one = to_sc16is7xx_one(port, port);
- 	unsigned int lsr = 0, bytes_read, i;
--	bool read_lsr = (iir == SC16IS7XX_IIR_RLSE_SRC) ? true : false;
-+	bool read_lsr = (iir == SC16IS7XX_IIR_RLSE_SRC);
- 	u8 ch, flag;
- 
- 	if (unlikely(rxlen >= sizeof(one->buf))) {
+This seems good anyway because unaligned atomic memory access
+sounds insane. So looks good to me.
+
+Reviewed-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+
+Anyway, Lance's patch[1] is still needed. We'd better gracefully
+ignore if the blocker is not aligned, because hung_task blocker
+detection is an optional for debugging and not necessary for
+the kernel operation.
+
+[1] https://lore.kernel.org/all/20250823050036.7748-1-lance.yang@linux.dev/ 
+
+
+Thank you,
+
+> ---
+> I tested this on m68k using GCC and it fixed the problem for me. AFAIK,
+> the other architectures naturally align ints already so I'm expecting to
+> see no effect there.
+> ---
+>  include/linux/types.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/include/linux/types.h b/include/linux/types.h
+> index 6dfdb8e8e4c3..cd5b2b0f4b02 100644
+> --- a/include/linux/types.h
+> +++ b/include/linux/types.h
+> @@ -179,7 +179,7 @@ typedef phys_addr_t resource_size_t;
+>  typedef unsigned long irq_hw_number_t;
+>  
+>  typedef struct {
+> -	int counter;
+> +	int counter __aligned(sizeof(int));
+>  } atomic_t;
+>  
+>  #define ATOMIC_INIT(i) { (i) }
+> -- 
+> 2.49.1
+> 
+
+
 -- 
-2.34.1
-
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
