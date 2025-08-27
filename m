@@ -1,149 +1,128 @@
-Return-Path: <linux-kernel+bounces-787849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 350BFB37C2C
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 09:48:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEE60B37C2E
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 09:49:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 047A4177BA6
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 07:48:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8FCA53ACE00
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 07:49:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25B7631B100;
-	Wed, 27 Aug 2025 07:48:35 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD88C320CCD;
+	Wed, 27 Aug 2025 07:49:39 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90997279324;
-	Wed, 27 Aug 2025 07:48:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EECF62749D7
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 07:49:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756280914; cv=none; b=MOwtiOnyeztMQo/7cqJU2gUknZmMtreoRMvmBgonZUDk8ShNlFu7KfEWzENBUPVw9NPLSRBgPuMk+VwsvLVmPjj5vh5OJh8Gypo0zsmrRDTGa+BfHcAOEMo4hKY1pDxJi99x9211Pfl6UyPlUM8lBIFXdYkvLe/G0uwWdSAdmFI=
+	t=1756280979; cv=none; b=YIFZT5sCDY2/xeOiTxJmX/m2VMOyiroq+D2MiakgznqnaTL0+chUtpaB9jrN+X0pLqmFu8rD85+gGSSEIGlJjgh0HbASYiHgty0oY+LTxZnnSa5fxhrstVAGIrURn+cgMvW54CqC/AY/zeGRyXIoUS8o26zISs1+qxa7Z5a1sBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756280914; c=relaxed/simple;
-	bh=cP5Y2mGHURdlwuOS7YOPmu+pWISUV9HqC6HMUnN+kBE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Vnwqzxogw0HppL8cie1ouaC144wMMVlWSkXVTSu1aMBX1CtenufmYvSoT1IkJB8J++ox+XcNv9AMyKcyKgcXBfQrwSFL4gZhvp6XhuHFH7HXi/JTyOLOBL187OivaxVAhAN2QpddgvfAcQhJcRjavVY+wHCtb6VDBRqayVDn4i0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4cBc8r5ys0zKHNR8;
-	Wed, 27 Aug 2025 15:48:28 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 794821A0F8E;
-	Wed, 27 Aug 2025 15:48:28 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgAncY1KuK5oBejNAQ--.53136S4;
-	Wed, 27 Aug 2025 15:48:28 +0800 (CST)
-From: linan666@huaweicloud.com
-To: jk@ozlabs.org,
-	ardb@kernel.org,
-	matt.fleming@intel.com
-Cc: linux-efi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linan666@huaweicloud.com,
-	yangerkun@huawei.com,
-	yi.zhang@huawei.com
-Subject: [PATCH v3] efivarfs: Fix slab-out-of-bounds in efivarfs_d_compare
-Date: Wed, 27 Aug 2025 15:39:54 +0800
-Message-Id: <20250827073954.2046464-1-linan666@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1756280979; c=relaxed/simple;
+	bh=VcO2mA3r3AuhPb3tjISs7ZOhpMjbS7Bm61eiWNbKoBo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dBXmB3NkiiC+l2NHGWNYjPX6YrRVxbNsuF78sQByoj0wz4LmWRXVLMvjZama4YVnFBPVIsup0FOXHtWHNLxAdERWF9DIsx/ZHw2rl8QMerES7CUGRDGJelJb5LH4ftKbbV40Go8k7t5lSK5OCm3x3dIN9fI6zk0Zz2wEGaXeiPU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1urAuS-00025y-Hq; Wed, 27 Aug 2025 09:49:32 +0200
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1urAuS-002MHx-19;
+	Wed, 27 Aug 2025 09:49:32 +0200
+Received: from pengutronix.de (unknown [IPv6:2a01:4f8:1c1c:29e9:22:41ff:fe00:1400])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id AECC445ECD2;
+	Wed, 27 Aug 2025 07:40:17 +0000 (UTC)
+Date: Wed, 27 Aug 2025 09:40:16 +0200
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: mailhol@kernel.org
+Cc: linux-can@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] MAINTAINERS: update Vincent Mailhol's email address
+Message-ID: <20250827-winged-bizarre-mackerel-a91272-mkl@pengutronix.de>
+References: <20250826105255.35501-2-mailhol@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgAncY1KuK5oBejNAQ--.53136S4
-X-Coremail-Antispam: 1UD129KBjvJXoW7Cr1rWF18Wr1rGFyrXw47urg_yoW8Cr43p3
-	yrGF4IgFZ5Ww1jy3yrZF1kJa4jg3Wqqr43XF4qgryaqryxWr1xWrn7Kr1Ygryjvr13Xasr
-	Wa1DKw4DK3W3A3JanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9G14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1lnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xv
-	F2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r
-	4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I
-	648v4I1lw4CEc2x0rVAKj4xxMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAKI48JMx
-	C20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAF
-	wI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20x
-	vE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v2
-	0xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxV
-	W8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUb5ku7UUUUU==
-X-CM-SenderInfo: polqt0awwwqx5xdzvxpfor3voofrz/
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="x7y5plluoqutyj6f"
+Content-Disposition: inline
+In-Reply-To: <20250826105255.35501-2-mailhol@kernel.org>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-From: Li Nan <linan122@huawei.com>
 
-Observed on kernel 6.6 (present on master as well):
+--x7y5plluoqutyj6f
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] MAINTAINERS: update Vincent Mailhol's email address
+MIME-Version: 1.0
 
-  BUG: KASAN: slab-out-of-bounds in memcmp+0x98/0xd0
-  Call trace:
-   kasan_check_range+0xe8/0x190
-   __asan_loadN+0x1c/0x28
-   memcmp+0x98/0xd0
-   efivarfs_d_compare+0x68/0xd8
-   __d_lookup_rcu_op_compare+0x178/0x218
-   __d_lookup_rcu+0x1f8/0x228
-   d_alloc_parallel+0x150/0x648
-   lookup_open.isra.0+0x5f0/0x8d0
-   open_last_lookups+0x264/0x828
-   path_openat+0x130/0x3f8
-   do_filp_open+0x114/0x248
-   do_sys_openat2+0x340/0x3c0
-   __arm64_sys_openat+0x120/0x1a0
+On 26.08.2025 19:48:39, mailhol@kernel.org wrote:
+> From: Vincent Mailhol <mailhol@kernel.org>
+>=20
+> Now that I have received my kernel.org account, I am changing my email
+> address from mailhol.vincent@wanadoo.fr to mailhol@kernel.org. The
+> wanadoo.fr address was my first email which I created when I was a kid
+> and has a special meaning to me, but it is restricted to a maximum of
+> 50 messages per hour which starts to be problematic on threads where
+> many people are CC-ed.
+>=20
+> Update all the MAINTAINERS entries accordingly and map the old address
+> to the new one.
+>=20
+> I remain reachable from my old address. The different copyright
+> notices mentioning my old address are kept as-is for the moment. I
+> will update those one at a time only if I need to touch those files.
+>=20
+> Signed-off-by: Vincent Mailhol <mailhol@kernel.org>
 
-If dentry->d_name.len < EFI_VARIABLE_GUID_LEN , 'guid' can become
-negative, leadings to oob. The issue can be triggered by parallel
-lookups using invalid filename:
+Applied to linux-can-next.
 
-  T1			T2
-  lookup_open
-   ->lookup
-    simple_lookup
-     d_add
-     // invalid dentry is added to hash list
+BTW: The "From" header of your mail only contains you e-mail address,
+not your real name.
 
-			lookup_open
-			 d_alloc_parallel
-			  __d_lookup_rcu
-			   __d_lookup_rcu_op_compare
-			    hlist_bl_for_each_entry_rcu
-			    // invalid dentry can be retrieved
-			     ->d_compare
-			      efivarfs_d_compare
-			      // oob
+regards,
+Marc
 
-Fix it by checking 'guid' before cmp.
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
 
-Fixes: da27a24383b2 ("efivarfs: guid part of filenames are case-insensitive")
-Signed-off-by: Li Nan <linan122@huawei.com>
-Signed-off-by: Wu Guanghao <wuguanghao3@huawei.com>
----
-v3: Check guid directly, add comment. Emphasize 'invalid filename' in
-    commit message.
+--x7y5plluoqutyj6f
+Content-Type: application/pgp-signature; name="signature.asc"
 
- fs/efivarfs/super.c | 4 ++++
- 1 file changed, 4 insertions(+)
+-----BEGIN PGP SIGNATURE-----
 
-diff --git a/fs/efivarfs/super.c b/fs/efivarfs/super.c
-index c4a139911356..4bb4002e3cdf 100644
---- a/fs/efivarfs/super.c
-+++ b/fs/efivarfs/super.c
-@@ -152,6 +152,10 @@ static int efivarfs_d_compare(const struct dentry *dentry,
- {
- 	int guid = len - EFI_VARIABLE_GUID_LEN;
- 
-+	/* Parallel lookups may produce a temporary invalid filename */
-+	if (guid <= 0)
-+		return 1;
-+
- 	if (name->len != len)
- 		return 1;
- 
--- 
-2.39.2
+iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmiutl0ACgkQDHRl3/mQ
+kZwuvggAsuU56iTV6Si4It0cvBLYDjjga6dcOWUJjkiTRtzcQQFVWogQ2Tvym4he
+T5vjXXbcCrccNBvGhcpBqlhUbNK+5k5Jm8TxBnajFX7lZwq3RbJE+yKc3TT+Qpu3
+b8LRrrLrFs9GyVYcSzoTYrQZQ1prNTcynqfonanyFj39mK5H5dkC08YttKHOO4jo
+FzPJQeFHgJlhN8L4qzE0kCJlfVqYy8dt+dx7M3eUwxYoNTLPOFN5gXpc4iXL1dVl
+Od3TRCDExLcByWP+reZq2BPtZcRmE5BMAt1cOLVvs4hYjHmGaloj+K51pcWtGPGW
+0oNxuO9ZeHQ4LlyJPQqG1sidkmc0fA==
+=ERBZ
+-----END PGP SIGNATURE-----
 
+--x7y5plluoqutyj6f--
 
