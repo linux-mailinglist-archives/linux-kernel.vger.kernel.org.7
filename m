@@ -1,122 +1,173 @@
-Return-Path: <linux-kernel+bounces-787430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07889B37629
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 02:41:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3ECACB3762B
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 02:42:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD246360EFB
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 00:41:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 01C04204A97
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 00:42:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C93619CC0A;
-	Wed, 27 Aug 2025 00:40:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C25B41A704B;
+	Wed, 27 Aug 2025 00:42:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="JktGW+kl"
-Received: from r3-18.sinamail.sina.com.cn (r3-18.sinamail.sina.com.cn [202.108.3.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="CeRtCxN4"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3449FF9D6
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 00:40:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AD5AEACE;
+	Wed, 27 Aug 2025 00:42:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756255256; cv=none; b=CBr6VUQSNhkQQq0B7DnW8mTKQ0jBW+nszCcrXFu2voiMQhiupeQhWTl8ZuLD7m5U30BZ5j4kOc423RYWB363QGvWC3RcavYLp7ULwuaiDtp2uv4Z5hxvpz2l/uNRNb5By3JekMxBrbsn+Nc5Qp5d40VUl8rV48vF5CeI4t3Lc9o=
+	t=1756255332; cv=none; b=fNdw/CEBDFMpdwEbqbnC6Xk0ydg9QTsa6xH9G/NmHelX/91BJwvM+JLJFZJw2ZluNiiDyHjFs1hHtB4qWcnL5CGI0PAJfPk7ytLbr4BXbKxiBbIqAGjLfw1plWDsk9xp8jwjiA0ta2+5wR0z9kOoB98RJwUvmPBMI1pSq32oGTE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756255256; c=relaxed/simple;
-	bh=ZIP8hF44M6IJGIjSSyGjYXXnwuLdQmO35En6HJGa/XY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=FhRqN/Xg6rS2TIhI1bAKThWZ/BSNhEtu9USRWBVEXFC36ZQaF8T+OBkMmmRJ0QTWqwa3yGMyP0K6C/4xju0rinBVkkeoBxaV84sxDpJ1hplrgRrN6ueWX//gGCEDp0FBiZ5atlHi9q0ckDd0SjLJ9Tu/HgcjvNhaeZlCjO1Wlds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=JktGW+kl; arc=none smtp.client-ip=202.108.3.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1756255251;
-	bh=Gl6tAbUq+DzbydUTHpVw8ebckTFWUFP6T43SjEnyiKU=;
-	h=From:Subject:Date:Message-ID;
-	b=JktGW+klaIKEaACDrVfNASGPTCtgEBgfG4HzpKDOslAhCWHTGVWGzubfgdgvi2rog
-	 /Vp4CeLpAJuP11yPROWSm7HuVSUkux8j+OZBuY7Gc3BxAUOQuRZgfXqVyZbfbtN4ix
-	 FccT9H9f67o75YmecMddTH44CmYnDQxyMNrC7WmA=
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
-	by sina.com (10.54.253.32) with ESMTP
-	id 68AE540E00007EC1; Wed, 27 Aug 2025 08:40:48 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 6469054456922
-X-SMAIL-UIID: 754A451A8BA24684912915226A503815-20250827-084048-1
-From: Hillf Danton <hdanton@sina.com>
-To: syzbot <syzbot+a25ee9d20d31e483ba7b@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [net?] KASAN: slab-use-after-free Write in __xfrm_state_delete
-Date: Wed, 27 Aug 2025 08:40:36 +0800
-Message-ID: <20250827004037.5728-1-hdanton@sina.com>
-In-Reply-To: <68ab6633.050a0220.37038e.0079.GAE@google.com>
-References: 
+	s=arc-20240116; t=1756255332; c=relaxed/simple;
+	bh=aWrkSc0EvEUTVz7uCJDC5DoUaqvbLy75eSYZVCTHbLI=;
+	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=QcYCAiHb5kxVu3+oi2ppPjCRbwBLHZNxuBaxJJhCuFSKNkg6eXtAdh2LeVbIuLkOBpB3/HxmdHzLyu+wb7w2imWbXWhrs/dXHhyTqAI9T+HloyjEFWynXEsb70doZapupb3zPYWfoqWjiTYiPEh1VcdFE+s7A1Fx9rIHjg3Kp2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=CeRtCxN4; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 57R0g5fB52564623, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
+	t=1756255326; bh=A1zkMaBL6G6zKXwe6drFmbj8wp4GlsPTwl9smSGEmic=;
+	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:MIME-Version;
+	b=CeRtCxN4FUynvKN2OHau+NvGiX8m673tFu2uzrwiz4kBuDyiX3B0hJmKeUVtrcR+F
+	 T4dssHqoHk2QrtnfHYFTcL8gN5Zd1IImWKJiTAnakvde49Qm0Scbxok8fbgQZ8ULQl
+	 lHlIWamcFNtp/zwzsM1lDrA0enSm9/QdL4GkU9mD6XeTF86PqqSv7AI8acZRcHx+2q
+	 /Zi1gJrL6HYzuIUdV1Lsl6TGGGaT8Tch8Ipj24sawsTwSpjgHkSkJjIbw2sbIHNOiT
+	 07mm9Ufl3c4xzelpULKDGJFx0XMdazxQYA/24P2KsBb1qC//I39lay8UuzuaVd+Iru
+	 CNY4INJ6LObzg==
+Received: from mail.realtek.com (rtkexhmbs03.realtek.com.tw[10.21.1.53])
+	by rtits2.realtek.com.tw (8.15.2/3.13/5.93) with ESMTPS id 57R0g5fB52564623
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 27 Aug 2025 08:42:06 +0800
+Received: from RTKEXHMBS06.realtek.com.tw (10.21.1.56) by
+ RTKEXHMBS03.realtek.com.tw (10.21.1.53) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.27; Wed, 27 Aug 2025 08:42:06 +0800
+Received: from RTKEXHMBS06.realtek.com.tw ([fe80::c39a:c87d:b10b:d090]) by
+ RTKEXHMBS06.realtek.com.tw ([fe80::c39a:c87d:b10b:d090%10]) with mapi id
+ 15.02.1544.027; Wed, 27 Aug 2025 08:42:06 +0800
+From: Ping-Ke Shih <pkshih@realtek.com>
+To: Qianfeng Rong <rongqianfeng@vivo.com>,
+        "linux-wireless@vger.kernel.org"
+	<linux-wireless@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] wifi: rtw89: use int type to store negative error codes
+Thread-Topic: [PATCH] wifi: rtw89: use int type to store negative error codes
+Thread-Index: AQHcFo1wpnnDoE003EKhdLe9btN+vLR1pnvQ
+Date: Wed, 27 Aug 2025 00:42:06 +0000
+Message-ID: <b1f89b89906a4573bb8a916ed33763b5@realtek.com>
+References: <20250826132905.501755-1-rongqianfeng@vivo.com>
+In-Reply-To: <20250826132905.501755-1-rongqianfeng@vivo.com>
+Accept-Language: en-US, zh-TW
+Content-Language: zh-TW
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-> Date: Sun, 24 Aug 2025 12:21:23 -0700	[thread overview]
-> syzbot has found a reproducer for the following issue on:
-> 
-> HEAD commit:    b1c92cdf5af3 Merge branch 'net-wangxun-complete-ethtool-co..
-> git tree:       net-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=1411b062580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=67b99ceb67d33475
-> dashboard link: https://syzkaller.appspot.com/bug?extid=a25ee9d20d31e483ba7b
-> compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14221862580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=159fba34580000
+Qianfeng Rong <rongqianfeng@vivo.com> wrote:
+> The 'ret' variable stores returns from other functions, which return
+> either zero on success or negative error codes on failure.  Storing
+> error codes in u32 (an unsigned type) causes no runtime issues but is
+> stylistically inconsistent and very ugly.  Change 'ret' from u32 to
+> int - this has no runtime impact.
+>=20
+> Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
+> ---
+>  drivers/net/wireless/realtek/rtw89/fw.c  |  7 ++++---
+>  drivers/net/wireless/realtek/rtw89/mac.c | 16 ++++++++--------
+>  drivers/net/wireless/realtek/rtw89/pci.c |  4 ++--
+>  3 files changed, 14 insertions(+), 13 deletions(-)
+>=20
+> diff --git a/drivers/net/wireless/realtek/rtw89/fw.c b/drivers/net/wirele=
+ss/realtek/rtw89/fw.c
+> index 16e59a4a486e..01d53f7c142d 100644
+> --- a/drivers/net/wireless/realtek/rtw89/fw.c
+> +++ b/drivers/net/wireless/realtek/rtw89/fw.c
+> @@ -1537,7 +1537,7 @@ static int __rtw89_fw_download_hdr(struct rtw89_dev=
+ *rtwdev,
+>         struct rtw89_fw_hdr *fw_hdr;
+>         struct sk_buff *skb;
+>         u32 truncated;
+> -       u32 ret =3D 0;
+> +       int ret =3D 0;
 
-#syz test
+Initializer is not necessary, by the way.=20
 
---- x/include/net/xfrm.h
-+++ y/include/net/xfrm.h
-@@ -202,6 +202,7 @@ struct xfrm_state {
- 
- 	refcount_t		refcnt;
- 	spinlock_t		lock;
-+	int deleted;
- 
- 	u32			pcpu_num;
- 	struct xfrm_id		id;
---- x/net/xfrm/xfrm_state.c
-+++ y/net/xfrm/xfrm_state.c
-@@ -615,6 +615,7 @@ static void xfrm_state_gc_destroy(struct
- 		put_page(x->xfrag.page);
- 	xfrm_dev_state_free(x);
- 	security_xfrm_state_free(x);
-+	xfrm_state_delete(x);
- 	xfrm_state_free(x);
- }
- 
-@@ -812,10 +813,16 @@ int __xfrm_state_delete(struct xfrm_stat
- 	struct net *net = xs_net(x);
- 	int err = -ESRCH;
- 
--	if (x->km.state != XFRM_STATE_DEAD) {
--		x->km.state = XFRM_STATE_DEAD;
-+	for (;;) {
-+		if (x->km.state != XFRM_STATE_DEAD)
-+			x->km.state = XFRM_STATE_DEAD;
- 
- 		spin_lock(&net->xfrm.xfrm_state_lock);
-+		if (x->deleted) {
-+			spin_unlock(&net->xfrm.xfrm_state_lock);
-+			return 0;
-+		}
-+		x->deleted++;
- 		list_del(&x->km.all);
- 		hlist_del_rcu(&x->bydst);
- 		hlist_del_rcu(&x->bysrc);
---
+>=20
+>         skb =3D rtw89_fw_h2c_alloc_skb_with_hdr(rtwdev, len);
+>         if (!skb) {
+> @@ -6826,7 +6826,8 @@ static int rtw89_fw_read_c2h_reg(struct rtw89_dev *=
+rtwdev,
+>         const struct rtw89_chip_info *chip =3D rtwdev->chip;
+>         struct rtw89_fw_info *fw_info =3D &rtwdev->fw;
+>         const u32 *c2h_reg =3D chip->c2h_regs;
+> -       u32 ret, timeout;
+> +       u32 timeout;
+> +       int ret;
+>         u8 i, val;
+
+Keep it in reverse X'mas tree order.
+
+>=20
+>         info->id =3D RTW89_FWCMD_C2HREG_FUNC_NULL;
+> @@ -6865,7 +6866,7 @@ int rtw89_fw_msg_reg(struct rtw89_dev *rtwdev,
+>                      struct rtw89_mac_h2c_info *h2c_info,
+>                      struct rtw89_mac_c2h_info *c2h_info)
+>  {
+> -       u32 ret;
+> +       int ret;
+>=20
+>         if (h2c_info && h2c_info->id !=3D RTW89_FWCMD_H2CREG_FUNC_GET_FEA=
+TURE)
+>                 lockdep_assert_wiphy(rtwdev->hw->wiphy);
+
+[...]
+
+> @@ -3105,7 +3105,7 @@ int rtw89_mac_setup_phycap(struct rtw89_dev *rtwdev=
+)
+>  static int rtw89_hw_sch_tx_en_h2c(struct rtw89_dev *rtwdev, u8 band,
+>                                   u16 tx_en_u16, u16 mask_u16)
+>  {
+> -       u32 ret;
+> +       int ret;
+
+Please move below to be reverse X'mas tree order.
+
+>         struct rtw89_mac_c2h_info c2h_info =3D {0};
+>         struct rtw89_mac_h2c_info h2c_info =3D {0};
+>         struct rtw89_h2creg_sch_tx_en *sch_tx_en =3D &h2c_info.u.sch_tx_e=
+n;
+
+(move here)
+
+[...]
+
+> @@ -4158,7 +4158,7 @@ static int rtw89_pci_lv1rst_stop_dma_ax(struct rtw8=
+9_dev *rtwdev)
+>=20
+>  static int rtw89_pci_lv1rst_start_dma_ax(struct rtw89_dev *rtwdev)
+>  {
+> -       u32 ret;
+> +       int ret;
+>=20
+>         if (rtwdev->chip->chip_id =3D=3D RTL8852C)
+>                 return 0;
+
+
+The last statement of this function is 'return ret;', but actually it can
+just be 'return 0;'. Please change it by the way.=20
+
+
 
