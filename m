@@ -1,191 +1,106 @@
-Return-Path: <linux-kernel+bounces-788134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D1EFB38016
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 12:43:12 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B61EB38021
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 12:45:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 06D60460332
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 10:43:12 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 563974E4017
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 10:45:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 095D234F491;
-	Wed, 27 Aug 2025 10:42:42 +0000 (UTC)
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A268F34DCE8;
-	Wed, 27 Aug 2025 10:42:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB9E334A31D;
+	Wed, 27 Aug 2025 10:45:07 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C0D3343D62;
+	Wed, 27 Aug 2025 10:45:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756291361; cv=none; b=kMErJ7zV78gzipb/DELPTeZno+ZHyr4JSFU86rtas/H+DBzpf/7a3cN4bhS9X2cEbcj9HWkWq4VWWetYl06DccQyj+knCrGrgjiJzHdUBdT6tUefy8MXHCAHVi1iHin/aCh8PwwSKcfM2AyjEFgPzQGhmyIsPSELaznfoX6VH6Y=
+	t=1756291507; cv=none; b=ab1otppxeuqGIpI8XCovi0uo6W5cu8TpvDzSMfeNObVL2QHoSRBr2UFlwGhg8mYlVQy7XcGvd9Aw3ZJ2z9zuCTfZEzaf3FRmwXkXk9anENZ0vR5SiuqvAz25cDMGOkwRGX5gsy/es4TjuZbPMcQEUhsXOkXIzbLpm9VVNbGuKsQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756291361; c=relaxed/simple;
-	bh=GxK8Y/l6QMpHsSC5/lKRcWUThT3tPFQypyafdn6KEZQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=MEGfm5tPJNSsMIwc6pIf1rLWEG44YB3h3GZI323xpwUyqVFr+nTLCkfzOMvLQeJEeN9SQnHXsOfHK7M2XInWbPWIVBCmqcrIxa4BZ4g0nPdnEv6n+Ss0+/9zBMqwsdMIIgpgdSZQLdZMH4ymjmJSo0wjwTNLZwjZvpqI+lCDtuw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-afcb7a16441so1039589266b.2;
-        Wed, 27 Aug 2025 03:42:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756291358; x=1756896158;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6X/wDuwMGXHolRz+V9ennd5Bffj6ymv9Jrzy1lUthU8=;
-        b=TnX1Lni4pC80AArMqk35JkaJ8Q7l1UUImHFGQM3N7n3EP3tP+Kl/1vlVpBWxcH26zt
-         DNYkEOTYPiJccIOclA8VGV4a/AwkGJYNS63oKPr8+4QYXrP3dZgUSXZThNqjcYOuNkBQ
-         yJ7vfXPDXHU4RpLlX3a6NH6bXS8PJ6FUi+fDptWI8I0h6Bv2gfw8vkd90nEe10eUohzR
-         A/U7tN5S/rENMckucQXgMmAo1Hd8g7taRJVojvq55kKks+LuszcFPDK+ap2PuCeGopnX
-         wat749RuA7GqYm7cxUVEngXzkp4mLZeruzJCoe2+8Bi3CEUUl5Cwq0a8RSmNA6dOCTTY
-         0oPA==
-X-Forwarded-Encrypted: i=1; AJvYcCU+HKxoZ7NYoSpPSw6vh2TR5jR75zihRPg7FWOBlGUZf5IXg9MS4hApHsRD7w+uwUex1TRCw9tC0U+26DM=@vger.kernel.org, AJvYcCUfvAnKTbS8lW/zPwBUCRZ7EUMWijk3/q6x4Ae/GZFkYPTadKRaesSOieQp5FZdOydCWsQoNZ2Ax2hTTA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJa+Qb2JY9hBflJjaoK9uhxBjvnb8WWbIhSHyEwbSVmoFM45Lb
-	QqEmMn0pIVWyssVF37e3GjPA1d5wDwi1t/gVkYBT++qoXaEUZVBJ6tgM
-X-Gm-Gg: ASbGncvRk0Q8RRunv5FmplxdqQcaRDk4124hD+6DJ2RS5NKzKYVs3J1PejCnzerx24a
-	h4nbpAzrVn3H67Fzj80eDMObbnR1BAPV9bUzDkMKyiy87KpoVZR0NU3h2UF7xc3euSflVCNlsL5
-	+5VUct9PpPZ84+KRizjj3IPjqULoVzZHEJdBRn7/bFLc26G1UqC/GrF50beOHhvYsWuuEer4/J/
-	1xwFlz3ZMp0NOThccCACp5dYsMv9dSz2CR0cnCqo/lVxugN7jqS18FMXszk/15bfQOeeC5ZAfkY
-	6NHM3pnjqMQ0xZ8ZC4sWqMWpNjLnmRqn6L/RB3mfFLQtLfLBO7z5qGmEBYF4ZhqLZoWcREzrey9
-	Vedfu+/xpd7f5Mfa1sY52L9o=
-X-Google-Smtp-Source: AGHT+IEt7HUfyMYn7wwTTBfAgAlW9baMBm2buHWzgRksugd2fL7uEBallbmWq6FW+jaBEaqaNP9fhw==
-X-Received: by 2002:a17:907:934c:b0:add:fe17:e970 with SMTP id a640c23a62f3a-afe28fbaffcmr1737084966b.14.1756291357601;
-        Wed, 27 Aug 2025 03:42:37 -0700 (PDT)
-Received: from localhost ([2a03:2880:30ff:7::])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afea4b5eafcsm365786666b.9.2025.08.27.03.42.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Aug 2025 03:42:37 -0700 (PDT)
-From: Breno Leitao <leitao@debian.org>
-Date: Wed, 27 Aug 2025 03:42:23 -0700
-Subject: [PATCH 3/3] s390: kexec: Initialize kexec_buf struct
+	s=arc-20240116; t=1756291507; c=relaxed/simple;
+	bh=mTHdHp88cfulmKlg6hi2N+BqqmTIwWb7wo7FeEhOdyc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=G97fw2PDKwQ1HIUW/ddZdtSPbFG4TYn4xr0Vt/qozvq4xXkIUDkUiVOUAOxwCb8JKFavQDl0GqlwvGp3gDM4OgCgUSjvI/joJULJxvoVxeXmjWZZB+5iUXajcKrXzxQ5o58B9YCKzA58stPzLN8gHBkPXZ4hO9feIcmp6miM1Iw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 67C571688;
+	Wed, 27 Aug 2025 03:44:55 -0700 (PDT)
+Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A7C5D3F738;
+	Wed, 27 Aug 2025 03:44:59 -0700 (PDT)
+Date: Wed, 27 Aug 2025 11:44:52 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Chengdong =?utf-8?B?TGko5p2O5oiQ5qCLKQ==?= <chengdongli@optimatist.com>
+Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+	namhyung@kernel.org, alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
+	kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] perf/core: Improve arguments checking of inherited
+ per-task counters when sampling.
+Message-ID: <aK7hpARhr5RxVveA@J2N7QTR9R3>
+References: <20250814110625.84622-1-chengdongli@optimatist.com>
+ <aKRRSsEJxb1LZDV1@J2N7QTR9R3>
+ <D1D50EA0-EFC3-4FAB-A898-A61BD081B527@optimatist.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250827-kbuf_all-v1-3-1df9882bb01a@debian.org>
-References: <20250827-kbuf_all-v1-0-1df9882bb01a@debian.org>
-In-Reply-To: <20250827-kbuf_all-v1-0-1df9882bb01a@debian.org>
-To: Catalin Marinas <catalin.marinas@arm.com>, 
- Will Deacon <will@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
- Baoquan He <bhe@redhat.com>, Coiby Xu <coxu@redhat.com>, 
- Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
- Alexandre Ghiti <alex@ghiti.fr>, Heiko Carstens <hca@linux.ibm.com>, 
- Vasily Gorbik <gor@linux.ibm.com>, 
- Alexander Gordeev <agordeev@linux.ibm.com>, 
- Christian Borntraeger <borntraeger@linux.ibm.com>, 
- Sven Schnelle <svens@linux.ibm.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org, 
- Breno Leitao <leitao@debian.org>, kernel-team@meta.com
-X-Mailer: b4 0.15-dev-dd21f
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2880; i=leitao@debian.org;
- h=from:subject:message-id; bh=GxK8Y/l6QMpHsSC5/lKRcWUThT3tPFQypyafdn6KEZQ=;
- b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBoruEXRx0x/sg5L8lF842+++ptuDPjC3oj8dadJ
- uKgX0JY7+mJAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCaK7hFwAKCRA1o5Of/Hh3
- bf5WEACRmffaU59y0c07C3h33TU9GzbJO9HOZxapXThAtEqn33XPo4si1FFGv6sTYNargSr6Lzs
- MJosdJiWDHRZaXSxFawvJvBq5XBTfFYs+4tW2EiAU19diAu5I3J5dfl8lqww3GI6zzZIrB5wA4B
- r71V3ZUJK3cZ8l4gTpGp2zWNvG7Q+121ozv4yRD5kfazvucI93HIth7LZcXGKfNkpz+1aW8Y+Bo
- CECDcsH4Z4ZHW/73m7w0ThVouXFEkSIxWhyzVtYPFMWF/MmktJ0t7niZfKNMTRyu++v37nlGcmY
- uWpa1o6LmJUU93AJFkXojU93ztyTZZ2RC7FupVqYsQy5ZqvoIJ37Zd7oPpAULS1x5FX2xzbe7s4
- PYhfG2kBSlHriVV/gT/wRX6SMyVLWK0NQOszrjhZoQUHCkTPzfBdtRkf06wYGOoZHY8VV70IOSX
- fxXgT6OPXyi7xResv3bkLI4vLyEvNWjbQXsAOX3L/ZLQwvYKEpMDSd2eaoO2TSKIBnuQnArR846
- uDq8NSU+HoTOGc4chbxXxwQZH2qpGuNnndVelTsFCmtlb9I7yVtrk/qCAN/9fdHnGjVmU9f6grm
- TWCAnmqakjCXdNYLT+OhBxkDcorfJgKFH/44W4AXsfhUTjdTaRNM+uGkGeRohC2Vx/EUGQTChd+
- UYUwpwtf+a6rOTg==
-X-Developer-Key: i=leitao@debian.org; a=openpgp;
- fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <D1D50EA0-EFC3-4FAB-A898-A61BD081B527@optimatist.com>
 
-The kexec_buf structure was previously declared without initialization.
-commit bf454ec31add ("kexec_file: allow to place kexec_buf randomly")
-added a field that is always read but not consistently populated by all
-architectures. This un-initialized field will contain garbage.
+On Tue, Aug 19, 2025 at 09:31:46PM +0800, Chengdong Li(李成栋) wrote:
+> Hi Mark,
+> 
+> On 2025/8/19, 18:26, "Mark Rutland" <mark.rutland@arm.com <mailto:mark.rutland@arm.com>> wrote:
+> 
+> 
+> >On Thu, Aug 14, 2025 at 07:06:25PM +0800, Chengdong Li wrote:
+> >> It's not allowed to mmap() of inherited per-task counters with CPU ==
+> >> -1, this would create a performance issue. But it is not friendly to
+> >> developers as current implementation postponed the arguments checking to
+> >> perf_mmap(), developer can get an -EINVAL from mmap() but without
+> >> any previous error returned from perf_event_open().
+> >>
+> >> This patch improves it by moving the arguments checking from perf_mmap()
+> >> to perf_event_open().
+> >
+> >Why is that an improvement?
+> >
+> >IIUC before this patch, it would be possible to read() the event,
+> >whereas now the event cannot be opened at all.
+> 
+> That's true, could you provide a use case that using sampling mode but without
+> ring buffer? From my best knowledge, I think counting mode is more suitable
+> for read() only.
 
-This is also triggering a UBSAN warning when the uninitialized data was
-accessed:
+I could be mistaken, but IIRC the RR folk were using sampling mode to
+get notifications upon each sample/overflow, but they don't really care
+about the sample itself. They might not care about inherited counters
+for that workload, but I'm fairly sure that sampling without mmap is a
+real (albeit unusual) use-case.
 
-	------------[ cut here ]------------
-	UBSAN: invalid-load in ./include/linux/kexec.h:210:10
-	load of value 252 is not a valid value for type '_Bool'
+> >AFAICT this is removing functionality people could legitimately use, so
+> >this doesn't seem like an improvement.
+> 
+> The problem is that using inherit per-task counter with sampling mode would lead
+> developer hard to debug why mmap() returns -EINVAL. There is not error returned from
+> perf_event_open(), everything done seems right but failed at mmap(), and there is
+> no clue in man open_event_open() as well.
 
-Zero-initializing kexec_buf at declaration ensures all fields are
-cleanly set, preventing future instances of uninitialized memory being
-used.
+Ok, but presumably they do that mmap() shortly after doing the relavant
+perf_event_open() calls?
 
-Fixes: bf454ec31add ("kexec_file: allow to place kexec_buf randomly")
-Signed-off-by: Breno Leitao <leitao@debian.org>
----
- arch/s390/kernel/kexec_elf.c          | 2 +-
- arch/s390/kernel/kexec_image.c        | 2 +-
- arch/s390/kernel/machine_kexec_file.c | 6 +++---
- 3 files changed, 5 insertions(+), 5 deletions(-)
+When do people hit this in practice? Do they actually see this when
+deploying a workload, or just when developing code that uses sampling?
 
-diff --git a/arch/s390/kernel/kexec_elf.c b/arch/s390/kernel/kexec_elf.c
-index 4d364de437992..143e34a4eca57 100644
---- a/arch/s390/kernel/kexec_elf.c
-+++ b/arch/s390/kernel/kexec_elf.c
-@@ -16,7 +16,7 @@
- static int kexec_file_add_kernel_elf(struct kimage *image,
- 				     struct s390_load_data *data)
- {
--	struct kexec_buf buf;
-+	struct kexec_buf buf = {};
- 	const Elf_Ehdr *ehdr;
- 	const Elf_Phdr *phdr;
- 	Elf_Addr entry;
-diff --git a/arch/s390/kernel/kexec_image.c b/arch/s390/kernel/kexec_image.c
-index a32ce8bea745c..9a439175723ca 100644
---- a/arch/s390/kernel/kexec_image.c
-+++ b/arch/s390/kernel/kexec_image.c
-@@ -16,7 +16,7 @@
- static int kexec_file_add_kernel_image(struct kimage *image,
- 				       struct s390_load_data *data)
- {
--	struct kexec_buf buf;
-+	struct kexec_buf buf = {};
- 
- 	buf.image = image;
- 
-diff --git a/arch/s390/kernel/machine_kexec_file.c b/arch/s390/kernel/machine_kexec_file.c
-index c2bac14dd668a..a36d7311c6683 100644
---- a/arch/s390/kernel/machine_kexec_file.c
-+++ b/arch/s390/kernel/machine_kexec_file.c
-@@ -129,7 +129,7 @@ static int kexec_file_update_purgatory(struct kimage *image,
- static int kexec_file_add_purgatory(struct kimage *image,
- 				    struct s390_load_data *data)
- {
--	struct kexec_buf buf;
-+	struct kexec_buf buf = {};
- 	int ret;
- 
- 	buf.image = image;
-@@ -152,7 +152,7 @@ static int kexec_file_add_purgatory(struct kimage *image,
- static int kexec_file_add_initrd(struct kimage *image,
- 				 struct s390_load_data *data)
- {
--	struct kexec_buf buf;
-+	struct kexec_buf buf = {};
- 	int ret;
- 
- 	buf.image = image;
-@@ -184,7 +184,7 @@ static int kexec_file_add_ipl_report(struct kimage *image,
- {
- 	__u32 *lc_ipl_parmblock_ptr;
- 	unsigned int len, ncerts;
--	struct kexec_buf buf;
-+	struct kexec_buf buf = {};
- 	unsigned long addr;
- 	void *ptr, *end;
- 	int ret;
-
--- 
-2.47.3
-
+Mark.
 
