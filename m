@@ -1,80 +1,78 @@
-Return-Path: <linux-kernel+bounces-788430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89493B3843D
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 15:59:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B090EB3843F
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 16:00:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D0E05E42F3
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 13:59:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 619F5366473
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 14:00:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AFA435691D;
-	Wed, 27 Aug 2025 13:59:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8996356904;
+	Wed, 27 Aug 2025 13:59:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="YptpW1Nr"
-Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com [209.85.210.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="OTcu6qo4"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2070.outbound.protection.outlook.com [40.107.237.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DF0F34DCCF
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 13:59:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.50
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756303173; cv=none; b=KZqa38TQKoHGQC9YsYDsj0RT8+FlmSUmXWFcxgWSgfPrizIuDOS9LkpjhFApTm2MTTjUkvITqCpadBH0S8fHIAJV6mTLJT41L3VgmO7POjRA/1HvzVUaHoNFWfW2fbnnuQWVixq6xVqBEH4kZoyBsQXSgS6u4nvQqQ+8E567ph8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756303173; c=relaxed/simple;
-	bh=IpRMFO2MeMkQytb9AR0N8Z1FemuJAxPT/DZPEjNV+I0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VTG8EBkcM4wPfSdzK1SPt6986zGSwH1kx9DkMlNYLoPKPrEiUfDtX9vXoMNuyRFItQpIQTYsVu1iIh8z4KnRBdVPl7oqxgTxa14AZqae4xouc14NO5+2cVDRQP5VfK+ljrIBxj4rQe2qzZgrrJmHjpkEoyuMQASmrIH5chjG5JY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=YptpW1Nr; arc=none smtp.client-ip=209.85.210.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-74526ca7929so1440682a34.3
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 06:59:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1756303169; x=1756907969; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=3DEQfVOF90gg0nQ2w58ay9TgS+NK/WWzZloFFYDQxeI=;
-        b=YptpW1NrPYQJUtxCJxZlAK41GASCaGI4T10wdA5OdawvHzTMqRmt7uiQjYF8J304o9
-         mabZ2XbXzBbEWnpbb+zDacrcII40gVXfhuen1Gf5ldgZlce2154Bx2G6XWlYC9t7JIrO
-         O513s0gDl53nAk3Tb38MmHFZmCdMd+gzOYiTVUX3k2PpaiiZOcvO0aHamUsZgr6+ncAc
-         RIMQwABckeBrY7pwYLhy3PESwrXI5M2GMQVww+kFDIqw8Q1SZLRAbklJXAN0v+pSFGoz
-         dEzdIWevFM7Cqg1UX5RE3MSFfVXUocnfAHyUrwrsU7FHZL1LJPFNwQW2/kClsnKWTANk
-         cpNQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756303169; x=1756907969;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3DEQfVOF90gg0nQ2w58ay9TgS+NK/WWzZloFFYDQxeI=;
-        b=SNsRwLQHG0Bf52ie6o07eGiSwZEXcQnWCR23B2+Pa83RAsRKbXnYFGOe068MFhNw+L
-         cZ3tdmOrGd1TnWQ9cix2kfgUrcDK6XQE3M7s9ISWGVZSXoZJ1oPyEZGWQqfZ8z4ocpiC
-         8mjYc84PPR0ZdypP9QtjMeZHjGqvOJJqGIYoNV3q3F27IxyrSsd4W5Fz8I9Ie7lhj3zg
-         llY83erK25MqGR145Jb+u5uALrOTEqNq2CSNQBMnMxly1YFQl3QgcYO6Wj5tLzhpQveV
-         S5n5A4VE/RrceMjTr3u+vPyS6uncGDDyfAr/WegrLzI1ZJmtjma1Kxl+ErjRPVzEu2xQ
-         pCzw==
-X-Forwarded-Encrypted: i=1; AJvYcCWbsCEkC5m8y8gw3zSsoqHwGu2pPQQOGayXecZfBtsya8xosTsOeXGvqFZc2oJIiPUWM7BvrcFj15iZ1ps=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+W/yrJ5N0v9lQJeoewXhXHz3brnQlI0w6j2Nr+sX3HY+df2XA
-	6XM8ia4XWsDjKP9L8IpIujPsXpAu1PoN97ATbI3myzZXkiFYn0c1yZEcqYDeD69N0BI=
-X-Gm-Gg: ASbGnculRYBOB2M6zpsuFM3e+EwZGsndkJ6jKrA+ObCXIxB8EUGKlpEsJm42LqzZ9kc
-	MA3nltfkJSbhIT4UU0DWHGk5K5QL4Fi11X5dwNePG5S5Qx5uxSrSiJrcREFKCpZ4G9L6vtoaN2A
-	fZkVlW4afxu2fkjJOeesHmtj0n2BRmD+tb5RBkwkOAEfvXGaa6vYuPgvpfZdFUx9gxzUCGDXXfu
-	qdfCXfqbfY9O2pWfNTzEFqVHJsOd3sb0dIagWbii9eOq8sp3azj4MjXFX25PvM55mX2HAXRH0eu
-	PiQTeYT1fg2O/LlcuE4wMGxnecnsaaGFRFVe97WuCBjTpbHDWAAKIUqVJAABOKA0iHcBssOGMFG
-	BxtAeKnUWI2Hx3pYo59obZgVOCKaW4x2wHJEy5/c2byqcwA5gJesMCbL8qnph0mFJXqCi3ZzYTo
-	UgyhkjlAN2Bg==
-X-Google-Smtp-Source: AGHT+IHSftKprg4A6uiJZsbpSHa4sPR9ZXxfCmFTDjOuRBFTS34c1PezHWubSzt7gTo1cYwVIRJIbw==
-X-Received: by 2002:a05:6830:2b07:b0:72b:992b:e41 with SMTP id 46e09a7af769-74500a5c79amr8967488a34.23.1756303169172;
-        Wed, 27 Aug 2025 06:59:29 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:1d00:aa9f:f4cd:76b1:fecb? ([2600:8803:e7e4:1d00:aa9f:f4cd:76b1:fecb])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7450e474c76sm3019432a34.24.2025.08.27.06.59.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Aug 2025 06:59:28 -0700 (PDT)
-Message-ID: <ca078446-7cdf-4922-b550-6dd671d39589@baylibre.com>
-Date: Wed, 27 Aug 2025 08:59:27 -0500
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DA0235690B
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 13:59:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.70
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756303199; cv=fail; b=Zn691i+uC/urK5IYjiPiX/h2zsTmTJ9S4UYaQ06g24TWctQSyHoWppaTuyiZLfjf+j9ISHKVf0GlAKD0SMGlGAPQneKw/4pIlOdKobD47BYQO0o+vii6dgSCYbHZZOIkkX8VCOABdCkpdBVD/ltA38FOWLGu1R091IGGitycJVA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756303199; c=relaxed/simple;
+	bh=0BA33ZsummWU4252PtSR/7VDGp+ngWjZbaTzTKK6YZA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=WJIeZFxDF8lMFQaEwSnzNl/sRflpkjQEGQmgykueEtfDKmOU7H66mw2cpNRrWWo1H4ffdha6PV4XhpobBvEVL4JXTQfWfMy5zXpxk1+RxqRQFdJlLe8pMVBCzK3raUTTvWjZiF4eMMBimGnvqiJqEN4HoXNGxLLoncoEVR3p1Sg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=OTcu6qo4; arc=fail smtp.client-ip=40.107.237.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=UMtfl8ZaV/sAWiqP2AV3PllARO8engtEJxKYBWykT9lXHvO6Le+hgmJL1RmQPCW+QsvSgytHsoKEIU+2/6RmVlcsHVP58zUCeSKIiR3tEUDFEknREmbh8OgWoUu0KkLN+HIX6reVqx2UnADH+/Lc+NbqWu8zyYSCKyS25QX2/NCc4I0tF1PUCN7mBfIMfnPoKILgUF/weBtZWPK34dTl9qy6Teh4N78aNfBlri2qxGaD1KxEt4dv4NNRu+UahosETH7k2z+cDKjwA+RA7hA1p1kiNZR1ScqTV4TKcDUZkRj+BiAj1OGxqlUManMSRjKioM9sVwf6kwARKD5LsgEHeQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Bl9UBhq5Xzhz6YxyZDO6gE47MqshMlgfDdo4nvt3U14=;
+ b=khLFoOYPcCSyQuOHOxClRDB5mSSgnJwtwrFuckbGdaR9IBbAD8DIZyhtVN0o1+BvgDZtOghzdwS6VA1H7F6nlpiQ2htqEAg9tg2tmAJKPxyv0ih7KCy5rWR50OYm/ikYr6kS4oI4kpo/diOQguHgMGAW5oz26pTjv398XpD2EycxHSjSFTS6nkv9heO3MXr0nuU7/zvHsifVEZDgfNU4wztJE0zOSPRcmeAZhSUxvOiSd1Z6+xXBNXIJ8Fqq7dcUjyslcJmi7gpVX7kVqmQc2ZMadUH7FiPttKKLL5XgW3dfmEr4qNtARUlQr9/pfMtWJ+7dhY/I60f2FjC++wtI0w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=suse.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Bl9UBhq5Xzhz6YxyZDO6gE47MqshMlgfDdo4nvt3U14=;
+ b=OTcu6qo4JRgl6bmkmHsWCPS7s6dfte2eC4+4Oy3rb7E1TVfULI3LbHjSnwfcRwCKLqEMqliRwjnBoMPihIrtEMFcJmJKFdW8kuqno7cyilm2awOZUX7YB58GDka++39EJ+qd9RL3WtFjshLqpIOnmDKZp3Ll0memdWjr871B+u0=
+Received: from BYAPR01CA0020.prod.exchangelabs.com (2603:10b6:a02:80::33) by
+ CH3PR12MB7761.namprd12.prod.outlook.com (2603:10b6:610:153::7) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9073.13; Wed, 27 Aug 2025 13:59:55 +0000
+Received: from SJ1PEPF00002315.namprd03.prod.outlook.com
+ (2603:10b6:a02:80:cafe::69) by BYAPR01CA0020.outlook.office365.com
+ (2603:10b6:a02:80::33) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9073.16 via Frontend Transport; Wed,
+ 27 Aug 2025 14:00:57 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ SJ1PEPF00002315.mail.protection.outlook.com (10.167.242.169) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.9073.11 via Frontend Transport; Wed, 27 Aug 2025 13:59:54 +0000
+Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 27 Aug
+ 2025 08:59:54 -0500
+Received: from [172.31.63.243] (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Wed, 27 Aug 2025 08:59:53 -0500
+Message-ID: <39e7bafa-652c-4ee7-80b6-1edb97640d73@amd.com>
+Date: Wed, 27 Aug 2025 10:00:25 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,175 +80,90 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] dt-bindings: iio: temperature: Add NXP P3T175x
- support
-To: Lakshay Piplani <lakshay.piplani@nxp.com>, linux-kernel@vger.kernel.org,
- linux-iio@vger.kernel.org, jic23@kernel.org, nuno.sa@analog.com,
- andy@kernel.org, marcelo.schmitt1@gmail.com, gregkh@linuxfoundation.org,
- viro@zeniv.linux.org.uk, peterz@infradead.org, jstephan@baylibre.com,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- devicetree@vger.kernel.org, ilpo.jarvinen@linux.intel.com,
- jonathan.cameron@huawei.com, akpm@linux-foundation.org, chao@kernel.org,
- jaegeuk@kernel.org
-Cc: vikash.bansal@nxp.com, priyanka.jain@nxp.com,
- shashank.rebbapragada@nxp.com, Frank.Li@nxp.com
-References: <20250827103105.2472328-1-lakshay.piplani@nxp.com>
+Subject: Re: [PATCH 2/3] xen: replace XENFEAT_auto_translated_physmap with
+ xen_pv_domain()
+To: Juergen Gross <jgross@suse.com>, <linux-kernel@vger.kernel.org>,
+	<x86@kernel.org>
+CC: Boris Ostrovsky <boris.ostrovsky@oracle.com>, Thomas Gleixner
+	<tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov
+	<bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin"
+	<hpa@zytor.com>, Stefano Stabellini <sstabellini@kernel.org>, Oleksandr
+ Tyshchenko <oleksandr_tyshchenko@epam.com>, <xen-devel@lists.xenproject.org>
+References: <20250826145608.10352-1-jgross@suse.com>
+ <20250826145608.10352-3-jgross@suse.com>
 Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <20250827103105.2472328-1-lakshay.piplani@nxp.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From: Jason Andryuk <jason.andryuk@amd.com>
+In-Reply-To: <20250826145608.10352-3-jgross@suse.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Received-SPF: None (SATLEXMB04.amd.com: jason.andryuk@amd.com does not
+ designate permitted sender hosts)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PEPF00002315:EE_|CH3PR12MB7761:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9552ac1e-ccb6-4d30-da98-08dde5720047
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|376014|7416014|36860700013|82310400026|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?VE1kMzB0MWlpeXNYSE5XdmdEYlphakNkWnNFWW5FaGlOYTh2aWZtMCsxanlR?=
+ =?utf-8?B?SERkcjVYNjN4SDgxWGtSN3ZLUUNLQjB0QzRjS1VWU1duR0pzbytNNm9JOVl5?=
+ =?utf-8?B?YXJQMTQ5ZWovVXJKeUNIbmdidGpCMTdRam85b1FSVnFpZnBYTVBHUWVjNFhP?=
+ =?utf-8?B?eDg5bmVWc3R0TkhYVzVEc01QbVNCci9SbkVBQjdLR1pPTGdQN2w1RCtsb1lx?=
+ =?utf-8?B?S09OWGFVRHpKQXdvOXNiZzZscGRONWJuUXgycVQzcDJOZG9nTFdtU09IOS95?=
+ =?utf-8?B?SkdJbURBZFRBeEJHZjVYMnI0WEZxNDlxOGNZUVZ1YTJIdTdDVkFWZWtRK2hl?=
+ =?utf-8?B?NWF4eVd3UGo1RTdaRm82dWVZNCtxdnQySk10cDVYbEl2ZTZLTC9FMFEzQVFO?=
+ =?utf-8?B?RTFaUW9nMVpBM1VqdTRRSldyeWVieXFyZ0ZPZHY4RFV0SXhpa2JodHFvd0lE?=
+ =?utf-8?B?eTJuaWRGYVJVc3RBY1BrRzAwajRkZ2gxc0lzY01GZm03YVptQVB1Zm5oR0h0?=
+ =?utf-8?B?NVUyTHg2Nk1ERFRzVzZybGM2NjlhU3FCR3lkajdKdGo2R3FDVFZkL2VqK0tY?=
+ =?utf-8?B?Q08xUXJ5d3ZsdWczdEk5dXM2YlYyeUVhNXNzZGg4cE9WUG0wSHlDV284YnFK?=
+ =?utf-8?B?QllqZGo2MXp2alJZTi9qdTk2Skt6Y3cwQXRLSlFjNjhvSHJjYjZneHBTdFdi?=
+ =?utf-8?B?UGhSeXlGcXFQNS9wOUsvcDA2amVXK0w2SEV5Rzl5OWtKMUhVMjRweHFtTEx4?=
+ =?utf-8?B?WnQyZDM0NEFscnlnWkZEUkZQRm1VRnpxOHJDQW9uRklpYzg3M2Q3Wi9nT0hm?=
+ =?utf-8?B?U0kyZGVvVmpTeUZ6bDdTZWEzUFU2eUVnL0Ntb3F3VGV6dTZDaTlTYTRFSFJh?=
+ =?utf-8?B?aVJ0SithTU1UdUJlQVQwNXV0S2pLUkFhcVVFUmY5RlpEZlMvY2tvRlpURXFT?=
+ =?utf-8?B?eDhUbXpGTklnWkoxTmI1VUdjVzVBR29rN2p6My8xb3RhcC8xN3RMampNMTdz?=
+ =?utf-8?B?UDJxSDYwL2hWVnIvb1BMNE9XV04zdkxvVFBCcGgrSnNUdGVZZkluZFpTazE2?=
+ =?utf-8?B?NmxCV2c5aVBlanFobzY2M3FaNVgzcDQ2SDBhbUMyM0VxY0htcUkzUTdmeHRl?=
+ =?utf-8?B?K1NacnB5K2hpVXF3ZW1IMnVLbEhJcXQzNE1qTDQvbC8xZXZhL3hiT2VEdkRZ?=
+ =?utf-8?B?ak5yeVN3SmhheW1YWUxoM0VZSUoxQlNwRjNMVEFYZUZacWdCVlhKcTNvWHFl?=
+ =?utf-8?B?c2s1bXhlMTAyZFgwZXUvKzlJSGRXTVAzWGxVS2JBejV3UVgyM1FpaG96Mmxq?=
+ =?utf-8?B?ZmFOaWlBc0FNQzlTVFhHZFFwa3pCRUlHbUc1ZGUrOWtFRlhSVjVaYlE2S3Rl?=
+ =?utf-8?B?VnlWOHhkNC9OTCtuYWZPSHpXNFlRaHdXaGt5NFMxQmJIRlRDaFNDd2p2ckhB?=
+ =?utf-8?B?cFk3R3Y1eUZGb1pQWndDaFBuOHNtMHFOdStLb1RmRm5iQ3JGb3ZMb29VQjZG?=
+ =?utf-8?B?RDNuU0dkMmF4K3Q0Sjdkb0xxbE5INEVnVG82NTVweWNUZlZnU3VmamZZM0Nm?=
+ =?utf-8?B?Z0QwY3Q4WWZEcDF0V1QreGtWNFFXbDM4eEZTNzhqMGx5UVpaazFCbmQ1MHJ3?=
+ =?utf-8?B?bitZMi9RclZDMTFVOFVBOVFZMndQK2U5dnQ1UlgrV0cyM2pYNFlkSkQyd1FB?=
+ =?utf-8?B?SnVVOGlnWTRFQTFsaDI4dkFEY2VScUNhekRqOUZBUDVyR1VEZHZVTE51WXhv?=
+ =?utf-8?B?NjdObWNNQ01vRjdZZXY3VE1OMFBIR1dpTGtzWWhLcjJwbjZMWUd3N1NUMjNK?=
+ =?utf-8?B?dGhXcE80Z1ZZdnYwb2I1bVpiTnc3bUE4dTl2UEJJL2VQdzk2U0lHRHFsZFA3?=
+ =?utf-8?B?VTJMNk1FUFdnSzkxRjRaWW1PWHlIUk9UOWJFTVlBdE40RUJkUUxYS1QxWXNS?=
+ =?utf-8?B?SFRNd0crUXcvQWdxNktyd280NlJBQVVqVFVrNW5OTnlFMFpIMlhsSmZlYTNB?=
+ =?utf-8?B?N0FZVzI5YkdaQ1RnNVQ4cHUyd3ozZDhocUxIcGFWVkV2RkRjd1I3ZURMMmpi?=
+ =?utf-8?Q?MUHwAY?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(36860700013)(82310400026)(7053199007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2025 13:59:54.8869
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9552ac1e-ccb6-4d30-da98-08dde5720047
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ1PEPF00002315.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB7761
 
-On 8/27/25 5:31 AM, Lakshay Piplani wrote:
-> Add bindings for the NXP P3T175x (P3T1750/P3T1755) temperature
-> sensor, supporting both I2C & I3C interfaces.
+On 2025-08-26 10:56, Juergen Gross wrote:
+> Instead of testing the XENFEAT_auto_translated_physmap feature, just
+> use !xen_pv_domain() which is equivalent.
 > 
-> Signed-off-by: Lakshay Piplani <lakshay.piplani@nxp.com>
-> ---
-> Changes in v2 (addressed review comments from Krzysztof Kozlowski):
->  - Dropped nxp,alert-active-high: unnecessary as polarity handling is implicit in driver.
-
->  - Retained nxp,interrupt-mode: required to program TM(thermostat mode) bit; enables interrupt
->    (latched) mode. If not present in DT entry comparator mode is set as default.
->  - Retained nxp,fault-queue: This needs to be configured during device initialization.
->    This property configures the hardware fault queue length. Defines how many consecutive faults
->    are required before ALERT/IBI is asserted, preventing false triggers in noisy environments.
-
-These are not very convincing reasons that these to properties should
-be in the devicetree. The devicetree describes how things are wired
-up, not how they are used in the driver. For the first one, we already
-have the parent node to tell us if we are using I2C or I3C, so the
-property is redundant. For the second one, the whole system could be
-moved from a less noisy to a more noisy environment and we should not
-have to change the devicetree to handle that.
-
->  - The `reg` property remains required to satisfy `dt_binding_check`.
->  - Fixed YAML formatting, line wrapping, and examples.
->  - Changed compatibles from nxp,p3t1755 to nxp,p3t1755-iio and nxp,p3t1750 to nxp,p3t1750-iio
->    as reported by kernel test robot.
+> This has the advantage that a kernel not built with CONFIG_XEN_PV
+> will be smaller due to dead code elimination.
 > 
->  .../bindings/iio/temperature/nxp,p3t1755.yaml | 97 +++++++++++++++++++
->  1 file changed, 97 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/iio/temperature/nxp,p3t1755.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/iio/temperature/nxp,p3t1755.yaml b/Documentation/devicetree/bindings/iio/temperature/nxp,p3t1755.yaml
-> new file mode 100644
-> index 000000000000..4eb6fc5cb247
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/iio/temperature/nxp,p3t1755.yaml
-> @@ -0,0 +1,97 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/iio/temperature/nxp,p3t1755.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: NXP P3T175x Temperature Sensor
-> +
-> +maintainers:
-> +  - Lakshay Piplani <lakshay.piplani@nxp.com>
-> +
-> +description: |
-> +  Datasheet: https://www.nxp.com/docs/en/data-sheet/P3T1755.pdf
-> +
-> +  P3T175x (P3T1750/P3T1755) is a digital temperature sensor with a range of -40°C to
-> +  +125°C and a 12-bit resolution. It supports communication over
-> +  both I2C and I3C interfaces.
-> +
-> +  The I2C interface supports up to 32 static addresses and provides
-> +  an ALERT output to signal when temperature thresholds are crossed.
-> +
-> +  The I3C interface supports In-Band interrupts (IBI) in interrupt mode,
-> +  allowing the device to notify the controller of threshold events without
-> +  dedicated alert pin.
-> +
-> +  The device supports configurable thermostat modes (interrupt or comparator),
-> +  fault queue length etc.
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - nxp,p3t1750-iio
-> +      - nxp,p3t1755-iio
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  reg:
-> +    maxItems: 1
-> +    description: |
-> +      In I2C mode, the device supports up to 32 static addresses.
-> +      In I3C mode, the 'reg' property encodes a triplet of
-> +      <static-address BCR PID> used for device matching.
-> +      Static address is optional if matching is done via PID.
-> +
-> +  nxp,interrupt-mode:
-> +    type: boolean
-> +    description: |
-> +      Enables interrupt mode (TM = 1), where alerts are latched until
-> +      cleared by a register read.
+> Signed-off-by: Juergen Gross <jgross@suse.com>
 
-As mentioned above, the driver should know best which mode makes the
-most sense without having a property to restrict it.
-
-> +      Required for IBI support over I3C. On I2C, both interrupt and
-> +      comparator mode support events.
-> +
-> +  nxp,fault-queue:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    enum: [1, 2, 4, 6]
-> +    description: |
-> +      Number of consecutive temperature limit
-> +      violations required before an alert is triggered.
-> +      valid values:- 1, 2, 4 or 6.
-> +      If unspecified, hardware default (2) is used.
-
-If we kept this, it should have `default: 2`. But as mentioned above,
-this doesn't seem like something that would be known when writing
-the device tree since it could depend on variable environmental
-conditions.
-
-We already have IIO_EV_INFO_RUNNING_COUNT that sounds similar to this
-type of control that would allow it to be set at runtime instead.
-
-> +
-> +  assigned-address:
-> +    true
-> +
-
-Missing `vcc-supply: true`, which should also be required.
-
-> +required:
-> +  - compatible
-> +  - reg
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +    i2c {
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +
-> +        temp-sensor@48 {
-> +            compatible = "nxp,p3t1755-iio";
-> +            reg = <0x48>;
-> +            nxp,interrupt-mode;
-> +            nxp,fault-queue = <6>;
-> +            interrupt-parent = <&gpio2>;
-> +            interrupts = <3 IRQ_TYPE_EDGE_FALLING>;
-> +        };
-> +    };
-> +
-> +  - |
-> +    i3c {
-> +      #address-cells = <3>;
-> +      #size-cells = <0>;
-> +      temp-sensor@48,236152a00 {
-> +        reg = <0x48 0x236 0x152a00>;
-> +        assigned-address = <0x50>;
-> +      };
-> +    };
-
+Reviewed-by: Jason Andryuk <jason.andryuk@amd.com>
 
