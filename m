@@ -1,364 +1,592 @@
-Return-Path: <linux-kernel+bounces-788307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788309-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DAF8B3829C
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 14:41:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D025CB382A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 14:41:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7EDE3BC363
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 12:41:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D92C81B644E7
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 12:42:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6B333176E8;
-	Wed, 27 Aug 2025 12:40:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 226C6340DBD;
+	Wed, 27 Aug 2025 12:41:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="neYI6t/L"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LqpSHHig"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1BD931E0EE
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 12:40:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 359822BD5B0;
+	Wed, 27 Aug 2025 12:41:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756298445; cv=none; b=Kb2G4I22UNqif+5TPjGr4EuCKizQ3URM+LkO84KuBGAHZFcLAt0kbSH9qt18qWIiVRR6vmvdxN14YWC7eMTWnCQ2uNApnJnpepD2MQy2iVlKbaT8ro8P+n6CgmAU9aUoIzUwwsHI6X0GgvWn3+Zr52CcyRytoSVFejsfCz93cm8=
+	t=1756298493; cv=none; b=DpeKcZDaZJtUKesfB1YOwSGZsHz7/83UdIIXStHchxlA2f3nQuyKTFLd+PJ0t2wFAolQoWHIeIgucNjaiZdj7E+ZhyUE8uPOOa9Gv0/CbWJLVRgSpQyWi+99uSkRk+Jm4P+XBeRLaw8cTFP91EJPwas4ZDaKBBuc3NdazolJsSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756298445; c=relaxed/simple;
-	bh=Oj9INxjIP6sQuRtRZC1XEXWjUDxgq7X4x6/xPaQ16Us=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g//QYg/XPuiAM56vOh+S+978gjhZBO7rdh0A2IhBl7p55hZF45vplim2E6Q3c5WmMqoEhLRjwzxFEU5Ek7sqah9+hu5V+lZmD1UeuiqmtIJxb/WG5mR/ONz+HBWB4+PSMzuiFXnpYxX/bYP4t2Ufl5/XmlQmrzk5VQXPvM3O37M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=neYI6t/L; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (unknown [213.244.170.152])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 58F0D2093;
-	Wed, 27 Aug 2025 14:39:35 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1756298375;
-	bh=Oj9INxjIP6sQuRtRZC1XEXWjUDxgq7X4x6/xPaQ16Us=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=neYI6t/LDCSI6Okctg7uyem8zY2jgCfp4upaDeyVGnQp2R7L566zYTjeGqfBKPHxe
-	 po/PaSSgr+A3CNPoSJ6hITWUoUPLVG39eEBdNRSjP9VQTNDgVB089FLlJBaYQQXrFR
-	 SytrLKgNDAkQV9FHQwNEQHxPJeJlpF9UFVUeqU3c=
-Date: Wed, 27 Aug 2025 14:40:16 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Jai Luthra <jai.luthra@ideasonboard.com>
-Cc: Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org, kernel-list@raspberrypi.com,
-	Stefan Wahren <wahrenst@gmx.net>,
-	Dave Stevenson <dave.stevenson@raspberrypi.com>,
-	Umang Jain <uajain@igalia.com>
-Subject: Re: [PATCH 1/5] include: linux: Destage VCHIQ interface headers
-Message-ID: <20250827124016.GF5650@pendragon.ideasonboard.com>
-References: <20250827-vchiq-destage-v1-0-5052a0d81c42@ideasonboard.com>
- <20250827-vchiq-destage-v1-1-5052a0d81c42@ideasonboard.com>
+	s=arc-20240116; t=1756298493; c=relaxed/simple;
+	bh=7zmPGcEfj0ZiZy8vWMpg2dZkCoswCO/krL4SObFfafE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=seKz+AksKuzCqN7bt+g4skrKysjPORM+o234fYkl7DsLEvXW6m/uziKk0l6jU9dvQx1zw6qRFbh2eUppfrqU50m2qzqj/iTljKd+GMcF1SPCeD9a3tZKR1e1QUbuRylqVhclcLF0Fog8QKC/mD6WSpMBT0LZunefKANNBxK6uwQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LqpSHHig; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-6188b72b7caso8906099a12.2;
+        Wed, 27 Aug 2025 05:41:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756298489; x=1756903289; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eMmM0u08wwwsS70h/c9rFw/WvMY6gf51mO+EfZq2OB4=;
+        b=LqpSHHigjItjlxEqVOR2osQ1rkjCb9jNLNw5jHLWNE3EavpPbIn3+Q1/7Lv2PmBzew
+         M9Oy+uLig3A73MHCyNGM68b/Cpsl9R4L+4xVBa8JW7KdnYkRLpdzTJSlNQNaarLy6028
+         UUtd6aGwOcntw0ULhr6rrZKQSwZPt4wrVnu3//Na2V6W82XHwaoUVzSFBgoo0o0x4SHx
+         I4iqksH3Nh7QywcIaIgvhH3N5vTcIPlW/z5SMptnvSecCe4Y6rYNDoJtvPEdVpgmmpR6
+         38GYlFNmetHSX3tf1JcL49Tqk6lHzav/zT8y/NaEKRKiKro1RnQn3Q6Vsn9lyLWH05rs
+         +sFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756298489; x=1756903289;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eMmM0u08wwwsS70h/c9rFw/WvMY6gf51mO+EfZq2OB4=;
+        b=PV+4HXAI2OBzeZ4qNtugQfI1+7snQodBQduuRT/wIH2YnF+6f1xazB4q278Yyl/w/U
+         FNsIaF7jJxk6PWYcMgBy4XujD+WDyGMtP2BSY+qSytr2ApUOGo6pt6k8lP5i2eitIA9J
+         SKQ995J2HDjLDmUyNsaOZyc+dC5nYSMKKYatQTztATkvjenNu44RoOWl2I4/6DWC8Lzp
+         nFfxK/mCSUTwJnnBugr37Y2p1yD/6TVekYjUcysBfqS8W9u+gAp/aEaYcjVHUUlBaEC1
+         Uv0usXeXZ295lQQg2GqQUorVjyCdn/Bv7LI8APhnZQt3k5gNBa5OArtI224c2ycow9w5
+         mLQg==
+X-Forwarded-Encrypted: i=1; AJvYcCVEo9LbTckMkOnG5c2VvUajlmE3iVsZJDhoULGytxtoNJ2JzD3hBWLsVidK7rkCgHTO+YjefjtQ4NgB@vger.kernel.org, AJvYcCVcQQw+be9N0Hk9KYEJyACeC0X3y1YehO/gXko4QrKBvrK6X6IjexAVs6JwldJQHTSa6fIv9/gWCUd67CLM@vger.kernel.org, AJvYcCVg29v59Y/9ZLRvpT3f+nHwlnazvFW3J4uCWVJHa2fcOVxb68NLhndYI3vbE5rqm3W4i6/15kMWY0GZ@vger.kernel.org, AJvYcCWxwZxQYwBIwnGNze0HWPSQ7/d+QpD/rbJp2c0Y1JvRfG74U/ZXipmn+9jTpsKtLGmyJuewPMJ2/pZDCfI8Y50Y6es=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzBvY6F5t2vcnQlHRzImskJF8k7kdze7Q1GNuvKv2O65xuW6myU
+	S6qzI/r5WWTRxIlK627S6PFWGXbUF/iDdILqqfSDHfKRKjf1vWzRVFYmM5rmc29O9nKFUKB+JW2
+	cBCc3rdYZvN2UHAFOpW7COv2uQY/naEU=
+X-Gm-Gg: ASbGncsRw2srMpCNRTYjsL6ZE6M9sPgrC4+9G5uNIwFshj2tITvGcjN7fHdLm2CW0xi
+	+5O2+XsCpsF+BzrafHx/xlQZKrFy5tGryACD4WsyNs/b3HrJrYPb8rt3FPos/WMKy2aK9YVeZ4H
+	AktYpE4JfrHWLO3kngyobHlmfEUTWtB/VlYozhIQDg6ZAi3iVLWYK6Dkn5imGuXNlhguorC26wG
+	waaY08pIegtecgGc2Y=
+X-Google-Smtp-Source: AGHT+IGAEM5j3YGCjXIQuGckrO2T8lMGWacAUaSsDuQNxM+xoz+WZ7QKrSAI9z3U+JQuGCLeWnzZu3sl0gYiGY8EcQM=
+X-Received: by 2002:a05:6402:40c3:b0:61c:7743:7f9a with SMTP id
+ 4fb4d7f45d1cf-61c7743853emr6957109a12.28.1756298488818; Wed, 27 Aug 2025
+ 05:41:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250827-vchiq-destage-v1-1-5052a0d81c42@ideasonboard.com>
+References: <20250728201435.3505594-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250728201435.3505594-7-prabhakar.mahadev-lad.rj@bp.renesas.com> <7284cad0-b71b-49dc-bb09-cd9f1ff00028@ideasonboard.com>
+In-Reply-To: <7284cad0-b71b-49dc-bb09-cd9f1ff00028@ideasonboard.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Wed, 27 Aug 2025 13:41:01 +0100
+X-Gm-Features: Ac12FXyDkkuzQztuz4_kFDFT2wtV1C7V7elochaTfQIrqWyA90yeg-B8c4pt0vU
+Message-ID: <CA+V-a8spWss_aM-NwbeidYKJBugWvTyZoOtaLGRGeq_v1Sr4TA@mail.gmail.com>
+Subject: Re: [PATCH v7 6/6] drm: renesas: rz-du: mipi_dsi: Add support for
+ RZ/V2H(P) SoC
+To: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Biju Das <biju.das.jz@bp.renesas.com>, Magnus Damm <magnus.damm@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Jai,
+Hi Tomi,
 
-Thank you for the patch.
+Thank you for the review.
 
-On Wed, Aug 27, 2025 at 11:54:08AM +0530, Jai Luthra wrote:
-> From: Umang Jain <umang.jain@ideasonboard.com>
-> 
-> Move the VCHIQ headers from drivers/staging/vc04_services/include to
-> include/linux/vchiq
-> 
-> This is done so that they can be shared between the VCHIQ interface
-> (which is going to be de-staged in a subsequent commit from staging)
-> and the VCHIQ drivers left in the staging/vc04_services (namely
-> bcm2835-audio, bcm2835-camera).
-> 
-> The include/linux/vchiq/ provides a central location to serve both
-> of these areas.
+On Thu, Aug 21, 2025 at 10:28=E2=80=AFAM Tomi Valkeinen
+<tomi.valkeinen+renesas@ideasonboard.com> wrote:
+>
+> Hi,
+>
+> On 28/07/2025 23:14, Prabhakar wrote:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > Add DSI support for Renesas RZ/V2H(P) SoC.
+>
+> I think a bit longer desc would be in order, as this is not just a "add
+> a new compatible string" patch, but we have new registers and functions.
+>
+Sure, I'll elaborate on the commit message.
 
-Lots of SoC-specific headers are stored in include/linux/soc/$vendor/.
-This would be include/linux/soc/bcm/vchiq/ in this case. I'm also fine
-with include/linux/vchiq/ but other people may have a preference.
+> > Co-developed-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+> > Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > ---
+> > v6->v7:
+> > - Used the new apis for calculating the PLLDSI
+> >   parameters in the DSI driver.
+> >
+> > v5->v6:
+> > - Made use of GENMASK() macro for PLLCLKSET0R_PLL_*,
+> >   PHYTCLKSETR_* and PHYTHSSETR_* macros.
+> > - Replaced 10000000UL with 10 * MEGA
+> > - Renamed mode_freq_hz to mode_freq_khz in rzv2h_dsi_mode_calc
+> > - Replaced `i -=3D 1;` with `i--;`
+> > - Renamed RZV2H_MIPI_DPHY_FOUT_MIN_IN_MEGA to
+> >   RZV2H_MIPI_DPHY_FOUT_MIN_IN_MHZ and
+> >   RZV2H_MIPI_DPHY_FOUT_MAX_IN_MEGA to
+> >   RZV2H_MIPI_DPHY_FOUT_MAX_IN_MHZ.
+> >
+> > v4->v5:
+> > - No changes
+> >
+> > v3->v4
+> > - In rzv2h_dphy_find_ulpsexit() made the array static const.
+> >
+> > v2->v3:
+> > - Simplifed V2H DSI timings array to save space
+> > - Switched to use fsleep() instead of udelay()
+> >
+> > v1->v2:
+> > - Dropped unused macros
+> > - Added missing LPCLK flag to rzv2h info
+> > ---
+> >  .../gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c    | 345 ++++++++++++++++++
+> >  .../drm/renesas/rz-du/rzg2l_mipi_dsi_regs.h   |  34 ++
+> >  2 files changed, 379 insertions(+)
+> >
+> > diff --git a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c b/drivers/g=
+pu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
+> > index 893a90c7a886..3b2f77665309 100644
+> > --- a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
+> > +++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
+> > @@ -7,6 +7,7 @@
+> >
+> >  #include <linux/bitfield.h>
+> >  #include <linux/clk.h>
+> > +#include <linux/clk/renesas-rzv2h-cpg-pll.h>
+> >  #include <linux/delay.h>
+> >  #include <linux/dma-mapping.h>
+> >  #include <linux/io.h>
+> > @@ -46,6 +47,11 @@ struct rzg2l_mipi_dsi_hw_info {
+> >                             u64 *hsfreq_millihz);
+> >       unsigned int (*dphy_mode_clk_check)(struct rzg2l_mipi_dsi *dsi,
+> >                                           unsigned long mode_freq);
+> > +     struct {
+> > +             const struct rzv2h_pll_limits **limits;
+> > +             const u8 *table;
+> > +             const u8 table_size;
+> > +     } cpg_plldsi;
+> >       u32 phy_reg_offset;
+> >       u32 link_reg_offset;
+> >       unsigned long min_dclk;
+> > @@ -53,6 +59,11 @@ struct rzg2l_mipi_dsi_hw_info {
+> >       u8 features;
+> >  };
+> >
+> > +struct rzv2h_dsi_mode_calc {
+> > +     unsigned long mode_freq_khz;
+> > +     struct rzv2h_pll_pars dsi_parameters;
+> > +};
+> > +
+> >  struct rzg2l_mipi_dsi {
+> >       struct device *dev;
+> >       void __iomem *mmio;
+> > @@ -75,11 +86,22 @@ struct rzg2l_mipi_dsi {
+> >       unsigned int lanes;
+> >       unsigned long mode_flags;
+> >
+> > +     struct rzv2h_dsi_mode_calc mode_calc;
+> > +
+> >       /* DCS buffer pointers when using external memory. */
+> >       dma_addr_t dcs_buf_phys;
+> >       u8 *dcs_buf_virt;
+> >  };
+> >
+> > +static const struct rzv2h_pll_limits rzv2h_plldsi_div_limits =3D {
+> > +     .fout =3D { .min =3D 80 * MEGA, .max =3D 1500 * MEGA },
+> > +     .fvco =3D { .min =3D 1050 * MEGA, .max =3D 2100 * MEGA },
+> > +     .m =3D { .min =3D 64, .max =3D 1023 },
+> > +     .p =3D { .min =3D 1, .max =3D 4 },
+> > +     .s =3D { .min =3D 0, .max =3D 5 },
+> > +     .k =3D { .min =3D -32768, .max =3D 32767 },
+> > +};
+> > +
+> >  static inline struct rzg2l_mipi_dsi *
+> >  bridge_to_rzg2l_mipi_dsi(struct drm_bridge *bridge)
+> >  {
+> > @@ -194,6 +216,155 @@ static const struct rzg2l_mipi_dsi_timings rzg2l_=
+mipi_dsi_global_timings[] =3D {
+> >       },
+> >  };
+> >
+> > +struct rzv2h_mipi_dsi_timings {
+> > +     const u8 *hsfreq;
+> > +     u8 len;
+> > +     u8 start_index;
+> > +};
+> > +
+> > +enum {
+> > +     TCLKPRPRCTL,
+> > +     TCLKZEROCTL,
+> > +     TCLKPOSTCTL,
+> > +     TCLKTRAILCTL,
+> > +     THSPRPRCTL,
+> > +     THSZEROCTL,
+> > +     THSTRAILCTL,
+> > +     TLPXCTL,
+> > +     THSEXITCTL,
+> > +};
+> > +
+> > +static const u8 tclkprprctl[] =3D {
+> > +     15, 26, 37, 47, 58, 69, 79, 90, 101, 111, 122, 133, 143, 150,
+> > +};
+> > +
+> > +static const u8 tclkzeroctl[] =3D {
+> > +     9, 11, 13, 15, 18, 21, 23, 24, 25, 27, 29, 31, 34, 36, 38,
+> > +     41, 43, 45, 47, 50, 52, 54, 57, 59, 61, 63, 66, 68, 70, 73,
+> > +     75, 77, 79, 82, 84, 86, 89, 91, 93, 95, 98, 100, 102, 105,
+> > +     107, 109, 111, 114, 116, 118, 121, 123, 125, 127, 130, 132,
+> > +     134, 137, 139, 141, 143, 146, 148, 150,
+> > +};
+> > +
+> > +static const u8 tclkpostctl[] =3D {
+> > +     8, 21, 34, 48, 61, 74, 88, 101, 114, 128, 141, 150,
+> > +};
+> > +
+> > +static const u8 tclktrailctl[] =3D {
+> > +     14, 25, 37, 48, 59, 71, 82, 94, 105, 117, 128, 139, 150,
+> > +};
+> > +
+> > +static const u8 thsprprctl[] =3D {
+> > +     11, 19, 29, 40, 50, 61, 72, 82, 93, 103, 114, 125, 135, 146, 150,
+> > +};
+> > +
+> > +static const u8 thszeroctl[] =3D {
+> > +     18, 24, 29, 35, 40, 46, 51, 57, 62, 68, 73, 79, 84, 90,
+> > +     95, 101, 106, 112, 117, 123, 128, 134, 139, 145, 150,
+> > +};
+> > +
+> > +static const u8 thstrailctl[] =3D {
+> > +     10, 21, 32, 42, 53, 64, 75, 85, 96, 107, 118, 128, 139, 150,
+> > +};
+> > +
+> > +static const u8 tlpxctl[] =3D {
+> > +     13, 26, 39, 53, 66, 79, 93, 106, 119, 133, 146, 150,
+> > +};
+> > +
+> > +static const u8 thsexitctl[] =3D {
+> > +     15, 23, 31, 39, 47, 55, 63, 71, 79, 87,
+> > +     95, 103, 111, 119, 127, 135, 143, 150,
+> > +};
+> > +
+> > +static const struct rzv2h_mipi_dsi_timings rzv2h_dsi_timings_tables[] =
+=3D {
+> > +     [TCLKPRPRCTL] =3D {
+> > +             .hsfreq =3D tclkprprctl,
+> > +             .len =3D ARRAY_SIZE(tclkprprctl),
+> > +             .start_index =3D 0,
+> > +     },
+> > +     [TCLKZEROCTL] =3D {
+> > +             .hsfreq =3D tclkzeroctl,
+> > +             .len =3D ARRAY_SIZE(tclkzeroctl),
+> > +             .start_index =3D 2,
+> > +     },
+> > +     [TCLKPOSTCTL] =3D {
+> > +             .hsfreq =3D tclkpostctl,
+> > +             .len =3D ARRAY_SIZE(tclkpostctl),
+> > +             .start_index =3D 6,
+> > +     },
+> > +     [TCLKTRAILCTL] =3D {
+> > +             .hsfreq =3D tclktrailctl,
+> > +             .len =3D ARRAY_SIZE(tclktrailctl),
+> > +             .start_index =3D 1,
+> > +     },
+> > +     [THSPRPRCTL] =3D {
+> > +             .hsfreq =3D thsprprctl,
+> > +             .len =3D ARRAY_SIZE(thsprprctl),
+> > +             .start_index =3D 0,
+> > +     },
+> > +     [THSZEROCTL] =3D {
+> > +             .hsfreq =3D thszeroctl,
+> > +             .len =3D ARRAY_SIZE(thszeroctl),
+> > +             .start_index =3D 0,
+> > +     },
+> > +     [THSTRAILCTL] =3D {
+> > +             .hsfreq =3D thstrailctl,
+> > +             .len =3D ARRAY_SIZE(thstrailctl),
+> > +             .start_index =3D 3,
+> > +     },
+> > +     [TLPXCTL] =3D {
+> > +             .hsfreq =3D tlpxctl,
+> > +             .len =3D ARRAY_SIZE(tlpxctl),
+> > +             .start_index =3D 0,
+> > +     },
+> > +     [THSEXITCTL] =3D {
+> > +             .hsfreq =3D thsexitctl,
+> > +             .len =3D ARRAY_SIZE(thsexitctl),
+> > +             .start_index =3D 1,
+> > +     },
+> > +};
+> > +
+> > +static u16 rzv2h_dphy_find_ulpsexit(unsigned long freq)
+> > +{
+> > +     static const unsigned long hsfreq[] =3D {
+> > +             1953125UL,
+> > +             3906250UL,
+> > +             7812500UL,
+> > +             15625000UL,
+> > +     };
+> > +     static const u16 ulpsexit[] =3D {49, 98, 195, 391};
+> > +     unsigned int i;
+> > +
+> > +     for (i =3D 0; i < ARRAY_SIZE(hsfreq); i++) {
+> > +             if (freq <=3D hsfreq[i])
+> > +                     break;
+> > +     }
+> > +
+> > +     if (i =3D=3D ARRAY_SIZE(hsfreq))
+> > +             i--;
+> > +
+> > +     return ulpsexit[i];
+> > +}
+> > +
+> > +static u16 rzv2h_dphy_find_timings_val(unsigned long freq, u8 index)
+> > +{
+> > +     const struct rzv2h_mipi_dsi_timings *timings;
+> > +     u16 i;
+> > +
+> > +     timings =3D &rzv2h_dsi_timings_tables[index];
+> > +     for (i =3D 0; i < timings->len; i++) {
+> > +             unsigned long hsfreq =3D timings->hsfreq[i] * 10 * MEGA;
+> > +
+> > +             if (freq <=3D hsfreq)
+> > +                     break;
+> > +     }
+> > +
+> > +     if (i =3D=3D timings->len)
+> > +             i--;
+> > +
+> > +     return timings->start_index + i;
+> > +};
+>
+> I have to say I really don't like this... In the minimum, the method how
+> this works has to be explained in a comment. These values can't really
+> be calculated? If we really have to deal with hardcoded values and with
+> that table from the docs, I would say that just replicate the table in
+> the driver (i.e. a struct that represents one row of the table), instead
+> of the method in this driver.
+>
+> Or was this method added based on earlier feedback, for v3? I see
+> "Simplifed V2H DSI timings array to save space" in the change log. If
+> so, at least document it clearly.
+>
+As mentioned in the previous thread, we will have to live with the
+lookup tables. I'll add some comments for it.
 
-> Signed-off-by: Umang Jain <umang.jain@ideasonboard.com>
-> Signed-off-by: Jai Luthra <jai.luthra@ideasonboard.com>
-> ---
->  MAINTAINERS                                                      | 1 +
->  drivers/staging/vc04_services/bcm2835-audio/bcm2835-vchiq.c      | 5 +++--
->  drivers/staging/vc04_services/bcm2835-audio/bcm2835.c            | 3 ++-
->  drivers/staging/vc04_services/bcm2835-audio/bcm2835.h            | 3 +--
->  drivers/staging/vc04_services/bcm2835-camera/bcm2835-camera.c    | 3 ++-
->  drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c    | 9 +++++----
->  drivers/staging/vc04_services/interface/vchiq_arm/vchiq_bus.c    | 4 ++--
->  drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c   | 4 ++--
->  .../staging/vc04_services/interface/vchiq_arm/vchiq_debugfs.c    | 6 +++---
->  drivers/staging/vc04_services/interface/vchiq_arm/vchiq_dev.c    | 7 ++++---
->  drivers/staging/vc04_services/interface/vchiq_arm/vchiq_ioctl.h  | 3 +--
->  drivers/staging/vc04_services/vchiq-mmal/mmal-vchiq.c            | 5 +++--
->  .../include/linux/raspberrypi => include/linux/vchiq}/vchiq.h    | 0
->  .../interface/vchiq_arm => include/linux/vchiq}/vchiq_arm.h      | 0
->  .../interface/vchiq_arm => include/linux/vchiq}/vchiq_bus.h      | 0
->  .../interface/vchiq_arm => include/linux/vchiq}/vchiq_cfg.h      | 0
->  .../interface/vchiq_arm => include/linux/vchiq}/vchiq_core.h     | 2 +-
->  .../interface/vchiq_arm => include/linux/vchiq}/vchiq_debugfs.h  | 0
->  18 files changed, 30 insertions(+), 25 deletions(-)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index fe168477caa45799dfe07de2f54de6d6a1ce0615..f17ebb1fa51bd7e4dcb2ae1b0fced6d41685dc84 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -4754,6 +4754,7 @@ T:	git https://github.com/broadcom/stblinux.git
->  F:	Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml
->  F:	drivers/pci/controller/pcie-brcmstb.c
->  F:	drivers/staging/vc04_services
-> +F:	include/linux/vchiq
->  N:	bcm2711
->  N:	bcm2712
->  N:	bcm283*
-> diff --git a/drivers/staging/vc04_services/bcm2835-audio/bcm2835-vchiq.c b/drivers/staging/vc04_services/bcm2835-audio/bcm2835-vchiq.c
-> index 0dbe76ee557032d7861acfc002cc203ff2e6971d..c49f2f7409b84ed6ebdd71787566efb1bc230f55 100644
-> --- a/drivers/staging/vc04_services/bcm2835-audio/bcm2835-vchiq.c
-> +++ b/drivers/staging/vc04_services/bcm2835-audio/bcm2835-vchiq.c
-> @@ -4,11 +4,12 @@
->  #include <linux/slab.h>
->  #include <linux/module.h>
->  #include <linux/completion.h>
-> +
-> +#include <linux/vchiq/vchiq_arm.h>
+> > +
+> >  static void rzg2l_mipi_dsi_phy_write(struct rzg2l_mipi_dsi *dsi, u32 r=
+eg, u32 data)
+> >  {
+> >       iowrite32(data, dsi->mmio + dsi->info->phy_reg_offset + reg);
+> > @@ -318,6 +489,150 @@ static int rzg2l_dphy_conf_clks(struct rzg2l_mipi=
+_dsi *dsi, unsigned long mode_f
+> >       return 0;
+> >  }
+> >
+> > +static unsigned int rzv2h_dphy_mode_clk_check(struct rzg2l_mipi_dsi *d=
+si,
+> > +                                           unsigned long mode_freq)
+> > +{
+> > +     u64 hsfreq_millihz, mode_freq_hz, mode_freq_millihz;
+> > +     struct rzv2h_pll_div_pars cpg_dsi_parameters;
+> > +     struct rzv2h_pll_pars dsi_parameters;
+> > +     bool parameters_found;
+> > +     unsigned int bpp;
+> > +
+> > +     bpp =3D mipi_dsi_pixel_format_to_bpp(dsi->format);
+> > +     mode_freq_hz =3D mul_u32_u32(mode_freq, KILO);
+> > +     mode_freq_millihz =3D mode_freq_hz * MILLI;
+> > +     parameters_found =3D
+> > +             rzv2h_get_pll_divs_pars(dsi->info->cpg_plldsi.limits[0],
+> > +                                     &cpg_dsi_parameters,
+> > +                                     dsi->info->cpg_plldsi.table,
+> > +                                     dsi->info->cpg_plldsi.table_size,
+> > +                                     mode_freq_millihz);
+> > +     if (!parameters_found)
+> > +             return MODE_CLOCK_RANGE;
+> > +
+> > +     hsfreq_millihz =3D DIV_ROUND_CLOSEST_ULL(cpg_dsi_parameters.div.f=
+req_millihz * bpp,
+> > +                                            dsi->lanes);
+> > +     parameters_found =3D rzv2h_get_pll_pars(&rzv2h_plldsi_div_limits,
+> > +                                           &dsi_parameters, hsfreq_mil=
+lihz);
+> > +     if (!parameters_found)
+> > +             return MODE_CLOCK_RANGE;
+> > +
+> > +     if (abs(dsi_parameters.error_millihz) >=3D 500)
+> > +             return MODE_CLOCK_RANGE;
+> > +
+> > +     memcpy(&dsi->mode_calc.dsi_parameters, &dsi_parameters, sizeof(ds=
+i_parameters));
+> > +     dsi->mode_calc.mode_freq_khz =3D mode_freq;
+> > +
+> > +     return MODE_OK;
+> > +}
+> > +
+> > +static int rzv2h_dphy_conf_clks(struct rzg2l_mipi_dsi *dsi, unsigned l=
+ong mode_freq,
+> > +                             u64 *hsfreq_millihz)
+> > +{
+> > +     struct rzv2h_pll_pars *dsi_parameters =3D &dsi->mode_calc.dsi_par=
+ameters;
+> > +     unsigned long status;
+> > +
+> > +     if (dsi->mode_calc.mode_freq_khz !=3D mode_freq) {
+> > +             status =3D rzv2h_dphy_mode_clk_check(dsi, mode_freq);
+> > +             if (status !=3D MODE_OK) {
+> > +                     dev_err(dsi->dev, "No PLL parameters found for mo=
+de clk %lu\n",
+> > +                             mode_freq);
+> > +                     return -EINVAL;
+> > +             }
+> > +     }
+> > +
+> > +     *hsfreq_millihz =3D dsi_parameters->freq_millihz;
+> > +
+> > +     return 0;
+> > +}
+> > +
+> > +static int rzv2h_mipi_dsi_dphy_init(struct rzg2l_mipi_dsi *dsi,
+> > +                                 u64 hsfreq_millihz)
+> > +{
+> > +     struct rzv2h_pll_pars *dsi_parameters =3D &dsi->mode_calc.dsi_par=
+ameters;
+> > +     unsigned long lpclk_rate =3D clk_get_rate(dsi->lpclk);
+> > +     u32 phytclksetr, phythssetr, phytlpxsetr, phycr;
+> > +     struct rzg2l_mipi_dsi_timings dphy_timings;
+> > +     u16 ulpsexit;
+> > +     u64 hsfreq;
+> > +
+> > +     hsfreq =3D DIV_ROUND_CLOSEST_ULL(hsfreq_millihz, MILLI);
+> > +
+> > +     if (dsi_parameters->freq_millihz =3D=3D hsfreq_millihz)
+> > +             goto parameters_found;
+> > +
+> > +     if (rzv2h_get_pll_pars(&rzv2h_plldsi_div_limits,
+> > +                            dsi_parameters, hsfreq_millihz))
+> > +             goto parameters_found;
+> > +
+> > +     dev_err(dsi->dev, "No PLL parameters found for HSFREQ %lluHz\n", =
+hsfreq);
+> > +     return -EINVAL;
+> > +
+> > +parameters_found:
+>
+> Maybe:
+>
+> if (dsi_parameters->freq_millihz !=3D hsfreq_millihz &&
+>         !rzv2h_get_pll_pars(&rzv2h_plldsi_div_limits, dsi_parameters,
+>                         hsfreq_millihz)) {
+>         dev_err(dsi->dev, "No PLL parameters found for HSFREQ %lluHz\n",
+>                 hsfreq);
+>         return -EINVAL;
+> }
+>
+> keeps the flow a bit cleaner.
+>
+Agreed, I will update as above.
 
-You can group this with the other headers above (ideally in alphabetical
-order when #include statements are already sorted). Same comment where
-applicable below.
+> > +     dphy_timings.tclk_trail =3D
+> > +             rzv2h_dphy_find_timings_val(hsfreq, TCLKTRAILCTL);
+> > +     dphy_timings.tclk_post =3D
+> > +             rzv2h_dphy_find_timings_val(hsfreq, TCLKPOSTCTL);
+> > +     dphy_timings.tclk_zero =3D
+> > +             rzv2h_dphy_find_timings_val(hsfreq, TCLKZEROCTL);
+> > +     dphy_timings.tclk_prepare =3D
+> > +             rzv2h_dphy_find_timings_val(hsfreq, TCLKPRPRCTL);
+> > +     dphy_timings.ths_exit =3D
+> > +             rzv2h_dphy_find_timings_val(hsfreq, THSEXITCTL);
+> > +     dphy_timings.ths_trail =3D
+> > +             rzv2h_dphy_find_timings_val(hsfreq, THSTRAILCTL);
+> > +     dphy_timings.ths_zero =3D
+> > +             rzv2h_dphy_find_timings_val(hsfreq, THSZEROCTL);
+> > +     dphy_timings.ths_prepare =3D
+> > +             rzv2h_dphy_find_timings_val(hsfreq, THSPRPRCTL);
+> > +     dphy_timings.tlpx =3D
+> > +             rzv2h_dphy_find_timings_val(hsfreq, TLPXCTL);
+> > +     ulpsexit =3D rzv2h_dphy_find_ulpsexit(lpclk_rate);
+> > +
+> > +     phytclksetr =3D FIELD_PREP(PHYTCLKSETR_TCLKTRAILCTL, dphy_timings=
+.tclk_trail) |
+> > +                   FIELD_PREP(PHYTCLKSETR_TCLKPOSTCTL, dphy_timings.tc=
+lk_post) |
+> > +                   FIELD_PREP(PHYTCLKSETR_TCLKZEROCTL, dphy_timings.tc=
+lk_zero) |
+> > +                   FIELD_PREP(PHYTCLKSETR_TCLKPRPRCTL, dphy_timings.tc=
+lk_prepare);
+> > +     phythssetr =3D FIELD_PREP(PHYTHSSETR_THSEXITCTL, dphy_timings.ths=
+_exit) |
+> > +                  FIELD_PREP(PHYTHSSETR_THSTRAILCTL, dphy_timings.ths_=
+trail) |
+> > +                  FIELD_PREP(PHYTHSSETR_THSZEROCTL, dphy_timings.ths_z=
+ero) |
+> > +                  FIELD_PREP(PHYTHSSETR_THSPRPRCTL, dphy_timings.ths_p=
+repare);
+> > +     phytlpxsetr =3D rzg2l_mipi_dsi_phy_read(dsi, PHYTLPXSETR) & ~PHYT=
+LPXSETR_TLPXCTL;
+> > +     phytlpxsetr |=3D FIELD_PREP(PHYTLPXSETR_TLPXCTL, dphy_timings.tlp=
+x);
+> > +     phycr =3D rzg2l_mipi_dsi_phy_read(dsi, PHYCR) & ~GENMASK(9, 0);
+> > +     phycr |=3D FIELD_PREP(PHYCR_ULPSEXIT, ulpsexit);
+> > +
+> > +     /* Setting all D-PHY Timings Registers */
+> > +     rzg2l_mipi_dsi_phy_write(dsi, PHYTCLKSETR, phytclksetr);
+> > +     rzg2l_mipi_dsi_phy_write(dsi, PHYTHSSETR, phythssetr);
+> > +     rzg2l_mipi_dsi_phy_write(dsi, PHYTLPXSETR, phytlpxsetr);
+> > +     rzg2l_mipi_dsi_phy_write(dsi, PHYCR, phycr);
+> > +
+> > +     rzg2l_mipi_dsi_phy_write(dsi, PLLCLKSET0R,
+> > +                              FIELD_PREP(PLLCLKSET0R_PLL_S, dsi_parame=
+ters->s) |
+> > +                              FIELD_PREP(PLLCLKSET0R_PLL_P, dsi_parame=
+ters->p) |
+> > +                              FIELD_PREP(PLLCLKSET0R_PLL_M, dsi_parame=
+ters->m));
+> > +     rzg2l_mipi_dsi_phy_write(dsi, PLLCLKSET1R,
+> > +                              FIELD_PREP(PLLCLKSET1R_PLL_K, dsi_parame=
+ters->k));
+> > +     fsleep(20);
+>
+> Why sleep? Sleeps should (almost) always have a comment, explaining what
+> it is waiting for.
+>
+Sure, I will add comments here (and below).
 
-With that,
+Cheers,
+Prabhakar
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-> +
->  #include "bcm2835.h"
->  #include "vc_vchi_audioserv_defs.h"
->  
-> -#include "../interface/vchiq_arm/vchiq_arm.h"
-> -
->  struct bcm2835_audio_instance {
->  	struct device *dev;
->  	unsigned int service_handle;
-> diff --git a/drivers/staging/vc04_services/bcm2835-audio/bcm2835.c b/drivers/staging/vc04_services/bcm2835-audio/bcm2835.c
-> index b74cb104e9de00e7688a320949111a419cca084a..5011720940715c12a2d2fe58b40ed84dcb2e6824 100644
-> --- a/drivers/staging/vc04_services/bcm2835-audio/bcm2835.c
-> +++ b/drivers/staging/vc04_services/bcm2835-audio/bcm2835.c
-> @@ -6,7 +6,8 @@
->  #include <linux/slab.h>
->  #include <linux/module.h>
->  
-> -#include "../interface/vchiq_arm/vchiq_bus.h"
-> +#include <linux/vchiq/vchiq_bus.h>
-> +
->  #include "bcm2835.h"
->  
->  static bool enable_hdmi;
-> diff --git a/drivers/staging/vc04_services/bcm2835-audio/bcm2835.h b/drivers/staging/vc04_services/bcm2835-audio/bcm2835.h
-> index 49ec5b496edb4ba8634171b1390c4e15181e4048..7e63ef251c37269032fc20ae1237855245e5e0a7 100644
-> --- a/drivers/staging/vc04_services/bcm2835-audio/bcm2835.h
-> +++ b/drivers/staging/vc04_services/bcm2835-audio/bcm2835.h
-> @@ -5,13 +5,12 @@
->  #define __SOUND_ARM_BCM2835_H
->  
->  #include <linux/device.h>
-> +#include <linux/vchiq/vchiq.h>
->  #include <linux/wait.h>
->  #include <sound/core.h>
->  #include <sound/pcm.h>
->  #include <sound/pcm-indirect.h>
->  
-> -#include "../include/linux/raspberrypi/vchiq.h"
-> -
->  #define MAX_SUBSTREAMS   (8)
->  #define AVAIL_SUBSTREAMS_MASK  (0xff)
->  
-> diff --git a/drivers/staging/vc04_services/bcm2835-camera/bcm2835-camera.c b/drivers/staging/vc04_services/bcm2835-camera/bcm2835-camera.c
-> index fa7ea4ca4c36f4ec7f76f6ffbea9f45205116bb8..fcbbe1aa60b768e5a7a08a131f595a0457f4473a 100644
-> --- a/drivers/staging/vc04_services/bcm2835-camera/bcm2835-camera.c
-> +++ b/drivers/staging/vc04_services/bcm2835-camera/bcm2835-camera.c
-> @@ -26,7 +26,8 @@
->  #include <media/v4l2-common.h>
->  #include <linux/delay.h>
->  
-> -#include "../interface/vchiq_arm/vchiq_bus.h"
-> +#include <linux/vchiq/vchiq_bus.h>
-> +
->  #include "../vchiq-mmal/mmal-common.h"
->  #include "../vchiq-mmal/mmal-encodings.h"
->  #include "../vchiq-mmal/mmal-vchiq.h"
-> diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
-> index 721b15b7e13b9f25cee7619575bbfa1a4734cce8..10138c1454dd7fdcbab6b95ea41f8e1ac2defc4b 100644
-> --- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
-> +++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
-> @@ -30,11 +30,12 @@
->  #include <linux/uaccess.h>
->  #include <soc/bcm2835/raspberrypi-firmware.h>
->  
-> -#include "vchiq_core.h"
-> +#include <linux/vchiq/vchiq_core.h>
-> +#include <linux/vchiq/vchiq_arm.h>
-> +#include <linux/vchiq/vchiq_bus.h>
-> +#include <linux/vchiq/vchiq_debugfs.h>
-> +
->  #include "vchiq_ioctl.h"
-> -#include "vchiq_arm.h"
-> -#include "vchiq_bus.h"
-> -#include "vchiq_debugfs.h"
->  
->  #define DEVICE_NAME "vchiq"
->  
-> diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_bus.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_bus.c
-> index 41ece91ab88aa647a348910a0b913d0b28a8c761..5d55dbff82150a84b15483e71718c48f5cb8caea 100644
-> --- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_bus.c
-> +++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_bus.c
-> @@ -11,8 +11,8 @@
->  #include <linux/slab.h>
->  #include <linux/string.h>
->  
-> -#include "vchiq_arm.h"
-> -#include "vchiq_bus.h"
-> +#include <linux/vchiq/vchiq_arm.h>
-> +#include <linux/vchiq/vchiq_bus.h>
->  
->  static int vchiq_bus_type_match(struct device *dev, const struct device_driver *drv)
->  {
-> diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
-> index e2cac0898b8faa3c255de6b8562c7096a9683c49..ac0379f5f45dfa331dc2fec8d580d176f931cf2b 100644
-> --- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
-> +++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
-> @@ -15,8 +15,8 @@
->  #include <linux/rcupdate.h>
->  #include <linux/sched/signal.h>
->  
-> -#include "vchiq_arm.h"
-> -#include "vchiq_core.h"
-> +#include <linux/vchiq/vchiq_arm.h>
-> +#include <linux/vchiq/vchiq_core.h>
->  
->  #define VCHIQ_SLOT_HANDLER_STACK 8192
->  
-> diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_debugfs.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_debugfs.c
-> index d5f7f61c5626934b819e8ff322e22ae3d6158b31..b1a8f1abafc2fa83132b1a02ba343d71315950de 100644
-> --- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_debugfs.c
-> +++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_debugfs.c
-> @@ -5,9 +5,9 @@
->   */
->  
->  #include <linux/debugfs.h>
-> -#include "vchiq_core.h"
-> -#include "vchiq_arm.h"
-> -#include "vchiq_debugfs.h"
-> +#include <linux/vchiq/vchiq_core.h>
-> +#include <linux/vchiq/vchiq_arm.h>
-> +#include <linux/vchiq/vchiq_debugfs.h>
->  
->  #ifdef CONFIG_DEBUG_FS
->  
-> diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_dev.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_dev.c
-> index 3b20ba5c736221ce1cacfc9ce86eca623382a30b..781d6dd64ee33816b52b62f1f25bcd33363d8e02 100644
-> --- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_dev.c
-> +++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_dev.c
-> @@ -11,10 +11,11 @@
->  #include <linux/compat.h>
->  #include <linux/miscdevice.h>
->  
-> -#include "vchiq_core.h"
-> +#include <linux/vchiq/vchiq_core.h>
-> +#include <linux/vchiq/vchiq_arm.h>
-> +#include <linux/vchiq/vchiq_debugfs.h>
-> +
->  #include "vchiq_ioctl.h"
-> -#include "vchiq_arm.h"
-> -#include "vchiq_debugfs.h"
->  
->  static const char *const ioctl_names[] = {
->  	"CONNECT",
-> diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_ioctl.h b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_ioctl.h
-> index afb71a83cfe7035e5dd61003fa99fd514ca18047..638469f18f859a0c7e738ef5bed7bf3c3ebebe59 100644
-> --- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_ioctl.h
-> +++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_ioctl.h
-> @@ -5,8 +5,7 @@
->  #define VCHIQ_IOCTLS_H
->  
->  #include <linux/ioctl.h>
-> -
-> -#include "../../include/linux/raspberrypi/vchiq.h"
-> +#include <linux/vchiq/vchiq.h>
->  
->  #define VCHIQ_IOC_MAGIC 0xc4
->  #define VCHIQ_INVALID_HANDLE (~0)
-> diff --git a/drivers/staging/vc04_services/vchiq-mmal/mmal-vchiq.c b/drivers/staging/vc04_services/vchiq-mmal/mmal-vchiq.c
-> index 3fe482bd279390a7586c49bde00f38c61558ca8e..f5e141908b0f91ca4172d48aee37f0329d239d7c 100644
-> --- a/drivers/staging/vc04_services/vchiq-mmal/mmal-vchiq.c
-> +++ b/drivers/staging/vc04_services/vchiq-mmal/mmal-vchiq.c
-> @@ -22,11 +22,12 @@
->  #include <linux/mm.h>
->  #include <linux/slab.h>
->  #include <linux/completion.h>
-> +#include <linux/vchiq/vchiq.h>
->  #include <linux/vmalloc.h>
->  #include <media/videobuf2-vmalloc.h>
->  
-> -#include "../include/linux/raspberrypi/vchiq.h"
-> -#include "../interface/vchiq_arm/vchiq_arm.h"
-> +#include <linux/vchiq/vchiq_arm.h>
-> +
->  #include "mmal-common.h"
->  #include "mmal-vchiq.h"
->  #include "mmal-msg.h"
-> diff --git a/drivers/staging/vc04_services/include/linux/raspberrypi/vchiq.h b/include/linux/vchiq/vchiq.h
-> similarity index 100%
-> rename from drivers/staging/vc04_services/include/linux/raspberrypi/vchiq.h
-> rename to include/linux/vchiq/vchiq.h
-> diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.h b/include/linux/vchiq/vchiq_arm.h
-> similarity index 100%
-> rename from drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.h
-> rename to include/linux/vchiq/vchiq_arm.h
-> diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_bus.h b/include/linux/vchiq/vchiq_bus.h
-> similarity index 100%
-> rename from drivers/staging/vc04_services/interface/vchiq_arm/vchiq_bus.h
-> rename to include/linux/vchiq/vchiq_bus.h
-> diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_cfg.h b/include/linux/vchiq/vchiq_cfg.h
-> similarity index 100%
-> rename from drivers/staging/vc04_services/interface/vchiq_arm/vchiq_cfg.h
-> rename to include/linux/vchiq/vchiq_cfg.h
-> diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.h b/include/linux/vchiq/vchiq_core.h
-> similarity index 99%
-> rename from drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.h
-> rename to include/linux/vchiq/vchiq_core.h
-> index 9b4e766990a493d6e9d4e0604f2c84f4e7b77804..dbcb19e7a6d39b94967261c4ab23d6325e999249 100644
-> --- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.h
-> +++ b/include/linux/vchiq/vchiq_core.h
-> @@ -15,7 +15,7 @@
->  #include <linux/spinlock_types.h>
->  #include <linux/wait.h>
->  
-> -#include "../../include/linux/raspberrypi/vchiq.h"
-> +#include "vchiq.h"
->  #include "vchiq_cfg.h"
->  
->  /* Do this so that we can test-build the code on non-rpi systems */
-> diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_debugfs.h b/include/linux/vchiq/vchiq_debugfs.h
-> similarity index 100%
-> rename from drivers/staging/vc04_services/interface/vchiq_arm/vchiq_debugfs.h
-> rename to include/linux/vchiq/vchiq_debugfs.h
-> 
-
--- 
-Regards,
-
-Laurent Pinchart
+> > +
+> > +     rzg2l_mipi_dsi_phy_write(dsi, PLLENR, PLLENR_PLLEN);
+> > +     fsleep(500);
+> > +
+> > +     return 0;
+> > +}
+> > +
+> > +static void rzv2h_mipi_dsi_dphy_startup_late_init(struct rzg2l_mipi_ds=
+i *dsi)
+> > +{
+> > +     fsleep(220);
+>
+> Especially sleeps like this, where the upper side is "open ended".
+>
+> > +     rzg2l_mipi_dsi_phy_write(dsi, PHYRSTR, PHYRSTR_PHYMRSTN);
+> > +}
+> > +
+>
+>  Tomi
+>
 
