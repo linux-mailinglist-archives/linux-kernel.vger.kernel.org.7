@@ -1,94 +1,85 @@
-Return-Path: <linux-kernel+bounces-788211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3C3FB38146
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 13:38:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B46BBB38168
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 13:40:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE40A5E55BD
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 11:38:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC6D37C2D91
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 11:40:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 064053019D2;
-	Wed, 27 Aug 2025 11:38:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8649B30146E;
+	Wed, 27 Aug 2025 11:40:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KOOw4n3Q"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="dl8A4zWL"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA3672FF16A;
-	Wed, 27 Aug 2025 11:37:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CEC128153A;
+	Wed, 27 Aug 2025 11:40:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756294679; cv=none; b=uAkEER4W/zjAC1IaGXiv//eSkyXX0rDOjQZqdaWUHABhTA/XIN7aXhV+DFovg76GMu/V+TUXnKh+9Ha7z7GkCR9+K13tzc+66MV8YTNyhI6kVXRos3m6/dBmMO5gjTWG61J7lIf5HTonLavGCeZj4BNnDQ6iKKUnFMi/dfKeuVM=
+	t=1756294819; cv=none; b=up/sTjmc7pIQHh8AYF43+KnPd/eAn907G93srqtInGgMfNoSVHLLKR17exdTBvTrmOgBBQOTRaVCHsKVHeXkqT/GXCwVRLVS+kw8OaQL6/zPmmwfkUO8SdLYISDCAJjIEX86fyQg/aIm+Juf+FfuzspqEEaKiXihTuStLABdZXI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756294679; c=relaxed/simple;
-	bh=/tQ/wqmHmUwYAheMmvjzfMN49kXQJ+eJ8SBjzDv8EJo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lGiDGiROMoyMXYkWeSE0j2RivR8PIyOJXhe3hrcMEbmXhbhQqTN10lU1mQ7prKnsjkPP8jpw7He0A3rbIL/WeS1FdXw8OhN1YS2On7wlTyw2dfEf2l1/K0loZjkgq9GdT9UB2mL2tX/k3QQKk3DGSqGOsmTjxO5TpEH6GrktldU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KOOw4n3Q; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-afeba8e759eso149695466b.3;
-        Wed, 27 Aug 2025 04:37:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756294676; x=1756899476; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=P0C9hmh4vnRqesYo5DwgFCTzSzopjMLbL20csj4cb7I=;
-        b=KOOw4n3QvsckK1wMjAaIuM8D9Ba+OI6k9Zf8vK6KK3jIJabKq0QKdtwTLnnQEe19mZ
-         2fddi8UDaUfIrCiXYe+/vICmdZOtwjqp84Yb03c88DJpiOuZenMpUkG3LyZEDoWq33zH
-         I90tDgWvExHos4LuID0E+PGWgjH0izlFotyvBCvxOPAqYfK/pk0Hg86vrtaXUWZb7qMI
-         nqeu9OPP6GitFO4M8Qk+RcV6auCewRTXhMvmwG/R4cQ6VkPvDP5GeLNWDmCNaEsldLrP
-         d96U2bzf1dKCbzGTdIaP1EHMgzVAEPUcNjc12uOzqvHjt1xQ9pscC+aE7b6uvTf2+U9M
-         uIAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756294676; x=1756899476;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=P0C9hmh4vnRqesYo5DwgFCTzSzopjMLbL20csj4cb7I=;
-        b=oD74mB82SxuGFahJ8C3hUpuyTsQqnBjJ1HNtVlnccnTSn+R4dECxJsABFr1FdZLqFb
-         CCJ73wjavUSSjLnxwYa3Wi0+kQclvhw3oo+FpqL/+VmYdmlvQK2nLBeVwxLGei9T5gaJ
-         dg01xzqwoZO/c530FZalpq76vdEBmWFbFCHEeFGAEtY5JD0qaXHW7TroJb8MCEs+GLPU
-         NQEF3uGWlMbmUq66fFsKx5h8/DvnixBIxN0UVBte3phSH0BlUIxoqVoQ9Yxg0UsmCYuw
-         vttSsvXnjf+yOsc8NT5GUpq6V2U8E0P5HCEF+C8S59SGgL08GpeCBOyr82MFM6Tme5rZ
-         t0Ew==
-X-Forwarded-Encrypted: i=1; AJvYcCXgM/ZvY953DAeSaRHzuhwdZkSR5gCTmdDedkGjZLccVYXdIV3pcTNvHJlYOYP7fHNLYxLz3vEijo58fg4=@vger.kernel.org, AJvYcCXwPns3+gfqz+pNOryvnBHrWMKBQo0Q83aL/9SMc934YywSPhzMD4VVJXoGb8e+/GfdvqbFNqPy/JASVqA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzM4jsAjaIAeDLx+mgeKXNTQunwppzJEOSAw+T0E2VPEtKpR0z8
-	83bOnqt1CCJF1L2HI8csG1WyYdkUj9+qdKv3FYEY5bqfgsCRFjVrUqJ5
-X-Gm-Gg: ASbGncsyWXtMfGv3YBfpR0FPkTzdqG8hSQ1xN2zNYkN5V/1Vu5I9weQ5el4+bifCp5m
-	hbmNCm997jpzrpmZb6Yyt+G9TPzPesrE//0KgtyC3KsZt5uZi3BCb38JYKt+iAf8AHFaH99O5wj
-	58Nre/hNMiNLXN0SC1JXwrz8o3SclK7xtQnGT8PEKjPBngPNaVHV8JWE8aE7RoSQj59sHtXv6GJ
-	kFjfeMyAHiTTYlp0sWzz0NGx8RhdF1f8JplToSFw4VW33JfM+m/RSUggl2BmYv/Y9eSUKHkXdVb
-	xgXtc9S29RUYqctbaQPMG4jEJQRNnhBtQlAEq41CuDlfZxLLg6UOy0DLP+N+VtMnIcEMNXBOMgQ
-	ISzB2rKpi70ero/ZXFmea1IQl
-X-Google-Smtp-Source: AGHT+IGQYZNygmBI+7r9v6ROe7yL1PjnQiRPO0EJIa0L6acLDhkeVvZvHqdPYJRJr7MWuMmq2BiClg==
-X-Received: by 2002:a17:907:1c17:b0:af9:1184:68b3 with SMTP id a640c23a62f3a-afe296358ebmr1875534866b.55.1756294675912;
-        Wed, 27 Aug 2025 04:37:55 -0700 (PDT)
-Received: from xeon.. ([188.163.112.70])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afe7aad5d61sm675607866b.105.2025.08.27.04.37.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Aug 2025 04:37:55 -0700 (PDT)
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thierry Reding <treding@nvidia.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: devicetree@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v5 4/4] arm64: tegra210: drop redundant clock and reset names from TSEC node
-Date: Wed, 27 Aug 2025 14:37:34 +0300
-Message-ID: <20250827113734.52162-5-clamor95@gmail.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250827113734.52162-1-clamor95@gmail.com>
-References: <20250827113734.52162-1-clamor95@gmail.com>
+	s=arc-20240116; t=1756294819; c=relaxed/simple;
+	bh=CXVp3Biqn4WNx4t2DOR6Ybu6eknf30HbMTCs7zItvT8=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QcSPWX4m+Ev0emHRYEcT1irVCY+ojT4PcVfXIB8PHDMugZanH0QmWoTMIse5uYzT57KDxhtsbiYV/MQ2TxkasifxlEo3E87IueB9UyvqVTianDO0e4c/8K404YE56izUlMw2BpZ/Dk1SH4Ibr5rEdgtXoWb7tKNkh3YJj49dK68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=dl8A4zWL; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 96868d28833a11f0b33aeb1e7f16c2b6-20250827
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=DTPoIaj0j466odp02KCB5hkNOemLA40opzjQokQVmLE=;
+	b=dl8A4zWLiiNTr4DElIuvKwJtOC29UHt51LxZZqqWDLH2RZbRaWJ0OAR1cqBWteiJ4XR0m1ltAPiLn6ITsXGcfMLMvgcUiMJuojaPBOPs2qky8COdyAe3mV+XnW+b+Eae8Yv669qLUdhVKKRcdjbmh9uQsEgNJFwzIqP2ssMdjGk=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.3,REQID:9f29c164-bf59-4680-9f6f-c9ea3a9a1da5,IP:0,UR
+	L:0,TC:0,Content:100,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:100
+X-CID-META: VersionHash:f1326cf,CLOUDID:d0a59020-786d-4870-a017-e7b4f3839b3f,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:81|82|102|801,TC:-5,Content:3|15|50,
+	EDM:-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OS
+	A:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 2,SSN|SDN
+X-CID-BAS: 2,SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: 96868d28833a11f0b33aeb1e7f16c2b6-20250827
+Received: from mtkmbs14n2.mediatek.inc [(172.21.101.76)] by mailgw02.mediatek.com
+	(envelope-from <jason-jh.lin@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 36246290; Wed, 27 Aug 2025 19:40:10 +0800
+Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
+ MTKMBS09N2.mediatek.inc (172.21.101.94) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.39; Wed, 27 Aug 2025 19:40:08 +0800
+Received: from mtksitap99.mediatek.inc (10.233.130.16) by
+ mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1258.39 via Frontend Transport; Wed, 27 Aug 2025 19:40:08 +0800
+From: Jason-JH Lin <jason-jh.lin@mediatek.com>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>,
+	Chun-Kuang Hu <chunkuang.hu@kernel.org>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>, Mauro Carvalho Chehab
+	<mchehab@kernel.org>
+CC: Matthias Brugger <matthias.bgg@gmail.com>, Nicolas Dufresne
+	<nicolas@ndufresne.ca>, Jason-JH Lin <jason-jh.lin@mediatek.com>, Nancy Lin
+	<nancy.lin@mediatek.com>, Singo Chang <singo.chang@mediatek.com>, Paul-PL
+ Chen <paul-pl.chen@mediatek.com>, Moudy Ho <moudy.ho@mediatek.com>, Xiandong
+ Wang <xiandong.wang@mediatek.com>, Sirius Wang <sirius.wang@mediatek.com>,
+	Fei Shao <fshao@chromium.org>, Chen-yu Tsai <wenst@chromium.org>,
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<dri-devel@lists.freedesktop.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-media@vger.kernel.org>
+Subject: [PATCH v7 03/20] mailbox: mtk-cmdq: Add cmdq private data to cmdq_pkt for generating instruction
+Date: Wed, 27 Aug 2025 19:37:35 +0800
+Message-ID: <20250827114006.3310175-4-jason-jh.lin@mediatek.com>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20250827114006.3310175-1-jason-jh.lin@mediatek.com>
+References: <20250827114006.3310175-1-jason-jh.lin@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,30 +87,84 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-MTK: N
 
-Clock and reset names are not needed if node contains only one clocks and
-one reset.
+Add the cmdq_mbox_priv structure to store the private data of GCE,
+such as the shift bits of the physical address. Then, include the
+cmdq_mbox_priv structure within the cmdq_pkt structure.
 
-Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+This allows CMDQ users to utilize the private data in cmdq_pkt to
+generate GCE instructions when needed. Additionally, having
+cmdq_mbox_priv makes it easier to expand and reference other GCE
+private data in the future.
+
+Add cmdq_get_mbox_priv() for CMDQ users to get all the private data
+into the cmdq_mbox_priv of the cmdq_pkt.
+
+Fixes: 0858fde496f8 ("mailbox: cmdq: variablize address shift in platform")
+Signed-off-by: Jason-JH Lin <jason-jh.lin@mediatek.com>
 ---
- arch/arm64/boot/dts/nvidia/tegra210.dtsi | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/mailbox/mtk-cmdq-mailbox.c       |  8 ++++++++
+ include/linux/mailbox/mtk-cmdq-mailbox.h | 18 ++++++++++++++++++
+ 2 files changed, 26 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-index 942e3a0f81ed..cbe54c4e5da8 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-@@ -183,9 +183,7 @@ tsec@54100000 {
- 			reg = <0x0 0x54100000 0x0 0x00040000>;
- 			interrupts = <GIC_SPI 50 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&tegra_car TEGRA210_CLK_TSEC>;
--			clock-names = "tsec";
- 			resets = <&tegra_car 83>;
--			reset-names = "tsec";
- 			status = "disabled";
- 		};
+diff --git a/drivers/mailbox/mtk-cmdq-mailbox.c b/drivers/mailbox/mtk-cmdq-mailbox.c
+index a60486cbb533..6b6b0abe9c36 100644
+--- a/drivers/mailbox/mtk-cmdq-mailbox.c
++++ b/drivers/mailbox/mtk-cmdq-mailbox.c
+@@ -102,6 +102,14 @@ static inline dma_addr_t cmdq_reg_revert_addr(u32 addr, const struct gce_plat *p
+ 	return ((dma_addr_t)addr << pdata->shift);
+ }
  
++void cmdq_get_mbox_priv(struct mbox_chan *chan, struct cmdq_mbox_priv *priv)
++{
++	struct cmdq *cmdq = container_of(chan->mbox, struct cmdq, mbox);
++
++	priv->shift_pa = cmdq->pdata->shift;
++}
++EXPORT_SYMBOL(cmdq_get_mbox_priv);
++
+ u8 cmdq_get_shift_pa(struct mbox_chan *chan)
+ {
+ 	struct cmdq *cmdq = container_of(chan->mbox, struct cmdq, mbox);
+diff --git a/include/linux/mailbox/mtk-cmdq-mailbox.h b/include/linux/mailbox/mtk-cmdq-mailbox.h
+index e1555e06e7e5..73b70be4a8a7 100644
+--- a/include/linux/mailbox/mtk-cmdq-mailbox.h
++++ b/include/linux/mailbox/mtk-cmdq-mailbox.h
+@@ -70,13 +70,31 @@ struct cmdq_cb_data {
+ 	struct cmdq_pkt		*pkt;
+ };
+ 
++struct cmdq_mbox_priv {
++	u8 shift_pa;
++};
++
+ struct cmdq_pkt {
+ 	void			*va_base;
+ 	dma_addr_t		pa_base;
+ 	size_t			cmd_buf_size; /* command occupied size */
+ 	size_t			buf_size; /* real buffer size */
++	struct cmdq_mbox_priv	priv; /* for generating instruction */
+ };
+ 
++/**
++ * cmdq_get_mbox_priv() - get the private data of mailbox channel
++ * @chan: mailbox channel
++ * @priv: pointer to store the private data of mailbox channel
++ *
++ * While generating the GCE instruction to command buffer, the private data
++ * of GCE hardware may need to be referenced, such as the shift bits of
++ * physical address.
++ *
++ * This function should be called before generating the GCE instruction.
++ */
++void cmdq_get_mbox_priv(struct mbox_chan *chan, struct cmdq_mbox_priv *priv);
++
+ /**
+  * cmdq_get_shift_pa() - get the shift bits of physical address
+  * @chan: mailbox channel
 -- 
-2.48.1
+2.43.0
 
 
