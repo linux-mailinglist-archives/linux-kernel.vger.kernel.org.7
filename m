@@ -1,234 +1,234 @@
-Return-Path: <linux-kernel+bounces-787740-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15B0BB37A76
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 08:34:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B036EB37A77
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 08:34:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38F956884FD
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 06:34:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 95A3F7B11F4
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 06:33:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD4E42F3C15;
-	Wed, 27 Aug 2025 06:34:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 029E32ECD14;
+	Wed, 27 Aug 2025 06:34:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a9JgtiBX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="IsCaEwqa"
+Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB6C92F39B7;
-	Wed, 27 Aug 2025 06:34:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E34AA29AAFD;
+	Wed, 27 Aug 2025 06:34:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756276471; cv=none; b=jpMYfOVmlK3ribHqWFEdwUXaGVFSmQH4tqD3EYfWi79Gtqwf1r6XlrWtu7olDWsPZMOANKeExhgYGXj3jUBqBv8JhDdctd5i7vrul6cXJfKpaNbmhdQft2zxj4rCeZOLQXuoSsgNiKFY+DB2RH94JKlISSh0Fy1v4m7AlamhRBM=
+	t=1756276478; cv=none; b=IPkjJD7WXxghY9eUAvbsfKyV4P3hAAt55W9CPIB/XmBbF7LUBF+Mdld1TumNFe2SGEOU2r6bl5HsuqkJ0FHbDZVdCanitkjygnzEEM9jSRrc2gsFSlvnVBH9g3uwjLjhtNFm/NhrYGyiTHUqdLAuoK2Q7YrjLEX9AKnLNEbsp40=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756276471; c=relaxed/simple;
-	bh=dOTckYvVImYjZpxv/z1LSXxh9jwhCh1JDe2QIDn/QlQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eb1YtJXAybSw75eueWkxJPELMtJQpvlud44Hq0kRU/e4smfH/+zif2C9rxhJ3HlGLsA1y9fXqWNi4LIG5StLDrH4WwT6c4J6cf/gzf5CwhBoBbpJHn/epg/EjT6qcoD2rGiHnETNyNBDb4zjRRklUXZukH3KMg1XnP4QWvuWpSA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a9JgtiBX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C05A1C4CEEB;
-	Wed, 27 Aug 2025 06:34:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756276470;
-	bh=dOTckYvVImYjZpxv/z1LSXxh9jwhCh1JDe2QIDn/QlQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=a9JgtiBXRDvkjujnxJ63j3G2BMBZVXUoeQbzJbonwjIZLHPiuoODiOQnpyZfvAFSv
-	 2eeWEu4bPG9d3tqUKmy94/CaSdPvNzDmYgid7EqE5KZMs8ZhF1mOl+uQ0Rg8kv34rR
-	 +JF2p+orkisruTV7t1/t8vri6wXXMA8EaCEU+rhWWND/ItO2jnsfY8MnkxdPMwJQXm
-	 GoDw5Cz3c6E55kksuBZc4BsvgleH9LUm39UmPVpP8ixE8stafVx2ht4sV+IpXsQ1+M
-	 efTdYxGKDj72P0jGMA/6sMEql96ydxNBxpBhJUBM8ifaJPEAJaVh8DH1uYqWuH90Wc
-	 DN7o74Mp3X6Jg==
-Date: Wed, 27 Aug 2025 08:34:27 +0200
-From: "mripard@kernel.org" <mripard@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: "Kandpal, Suraj" <suraj.kandpal@intel.com>, 
-	"liviu.dudau@arm.com" <liviu.dudau@arm.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	"kernel-list@raspberrypi.com" <kernel-list@raspberrypi.com>, "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, 
-	"freedreno@lists.freedesktop.org" <freedreno@lists.freedesktop.org>, 
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, 
-	"intel-xe@lists.freedesktop.org" <intel-xe@lists.freedesktop.org>, 
-	"intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>, "Nautiyal, Ankit K" <ankit.k.nautiyal@intel.com>, 
-	"Murthy, Arun R" <arun.r.murthy@intel.com>, "Shankar, Uma" <uma.shankar@intel.com>, 
-	"Nikula, Jani" <jani.nikula@intel.com>, "harry.wentland@amd.com" <harry.wentland@amd.com>, 
-	"siqueira@igalia.com" <siqueira@igalia.com>, "alexander.deucher@amd.com" <alexander.deucher@amd.com>, 
-	"christian.koenig@amd.com" <christian.koenig@amd.com>, "airlied@gmail.com" <airlied@gmail.com>, 
-	"simona@ffwll.ch" <simona@ffwll.ch>, 
-	"maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>, "robin.clark@oss.qualcomm.com" <robin.clark@oss.qualcomm.com>, 
-	"abhinav.kumar@linux.dev" <abhinav.kumar@linux.dev>, "tzimmermann@suse.de" <tzimmermann@suse.de>, 
-	"jessica.zhang@oss.qualcomm.com" <jessica.zhang@oss.qualcomm.com>, "sean@poorly.run" <sean@poorly.run>, 
-	"marijn.suijten@somainline.org" <marijn.suijten@somainline.org>, "mcanal@igalia.com" <mcanal@igalia.com>, 
-	"dave.stevenson@raspberrypi.com" <dave.stevenson@raspberrypi.com>, 
-	"tomi.valkeinen+renesas@ideasonboard.com" <tomi.valkeinen+renesas@ideasonboard.com>, 
-	"kieran.bingham+renesas@ideasonboard.com" <kieran.bingham+renesas@ideasonboard.com>, "louis.chauvet@bootlin.com" <louis.chauvet@bootlin.com>
-Subject: Re: [RFC PATCH 1/8] drm: writeback: Refactor drm_writeback_connector
- structure
-Message-ID: <20250827-helpful-outgoing-capuchin-d2acc8@houat>
-References: <awtqznhquyn7etojonmjn7karznefsb7fdudawcjsj5g2bok3u@2iqcdviuiz2s>
- <20250811111546.GA30760@pendragon.ideasonboard.com>
- <2ah3pau7p7brgw7huoxznvej3djct76vgfwtc72n6uub7sjojd@zzaebjdcpdwf>
- <DM3PPF208195D8D0E55A761A3C16B87BAEEE32AA@DM3PPF208195D8D.namprd11.prod.outlook.com>
- <aJ4LQvqli36TlETu@e110455-lin.cambridge.arm.com>
- <hc6f6wgsnauh72cowocpm55tikejhiha5z4mgufeq7v6gb2qml@kmgfd26bigos>
- <wr76vyag2osox2xf7ducnkiaanzk2k5ehd2ahnoyqdm5qiywlk@penf4v5bvg5z>
- <DM3PPF208195D8D87AECE8397914A67D9A1E33EA@DM3PPF208195D8D.namprd11.prod.outlook.com>
- <20250826-skinny-dancing-otter-de9be4@houat>
- <76cmo6pqa534cdnckfgsnspczenzt7kiwkpgg4olxysjn2can7@g5dxteqi5jjs>
+	s=arc-20240116; t=1756276478; c=relaxed/simple;
+	bh=PZjWQD4BsTRO7eDMy1mLp0E4ctDh1vgzEEDVWQehuXw=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=KnnE+4LJAGHLo3rE/BYMfZBOU0nOX29ciqOqZK44LOqXe9tRutdBQSFUDi5pdz0PbyiVxB4gOB9J+SMVSne/CH/TAu6kHpmAhVzvzo2DH20U4j4VSjUzShZGqOgedgyt5ZnWnbYmmn7/LQMbkvZvrk49NkyAC2N0hKmrGVxIRtc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=IsCaEwqa; arc=none smtp.client-ip=130.133.4.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:From:
+	Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
+	References; bh=0aLUAnOKy29JMuN55fsGKvv4SaweddIZcXsgdi8Fzho=; t=1756276475;
+	x=1756881275; b=IsCaEwqaBDtdldhMEvhhl0RlqOjHpR9ZoE29cy5mn0nawgsHbKeIhOew33g8A
+	mFxIdeH+BMXxtG64j+GqAKSiubZHj7EkO9OvwxZbD9Q4cwPFHJJ7a5gAwC9Ly3zdB43Fs+b4rcFyZ
+	0M29TJ/6+iFNbz6hhkEuzPYyEcp1ROJ9fBSHm7swczXOVviEVo0BEQ4y0cCoPphTLX5RKUrETqrus
+	psTaLdw1uxsVvKqLMombHyNqzc2RXzAgxZf6n7eLKqAk/bhRVjdA/jGwc6aZYB6jpmBX9pld7aONG
+	GqFbCc/kieVgVEO7uVE1dHxARsISsw3E27St1gMhA3EVbyALjg==;
+Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
+          by outpost.zedat.fu-berlin.de (Exim 4.98)
+          with esmtps (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@zedat.fu-berlin.de>)
+          id 1ur9jr-00000003c6n-2K2I; Wed, 27 Aug 2025 08:34:31 +0200
+Received: from p57bd96d0.dip0.t-ipconnect.de ([87.189.150.208] helo=[192.168.178.61])
+          by inpost2.zedat.fu-berlin.de (Exim 4.98)
+          with esmtpsa (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@physik.fu-berlin.de>)
+          id 1ur9jr-00000003BVm-1Nu7; Wed, 27 Aug 2025 08:34:31 +0200
+Message-ID: <e4c64a83895eea9eb4ae73ef4da81a901748b921.camel@physik.fu-berlin.de>
+Subject: Re: [PATCH 2/4] sparc: fix accurate exception reporting in
+ copy_{from_to}_user for UltraSPARC III
+From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+To: Michael Karcher <kernel@mkarcher.dialup.fu-berlin.de>, 
+	linux-kernel@vger.kernel.org
+Cc: sparclinux@vger.kernel.org, Andreas Larsson <andreas@gaisler.com>, 
+ Anthony Yznaga <anthony.yznaga@oracle.com>
+Date: Wed, 27 Aug 2025 08:34:30 +0200
+In-Reply-To: <20250826160312.2070-3-kernel@mkarcher.dialup.fu-berlin.de>
+References: <20250826160312.2070-1-kernel@mkarcher.dialup.fu-berlin.de>
+	 <20250826160312.2070-3-kernel@mkarcher.dialup.fu-berlin.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="2bcu3ttzioot2gyg"
-Content-Disposition: inline
-In-Reply-To: <76cmo6pqa534cdnckfgsnspczenzt7kiwkpgg4olxysjn2can7@g5dxteqi5jjs>
+X-Original-Sender: glaubitz@physik.fu-berlin.de
+X-ZEDAT-Hint: PO
 
+Hi Michael,
 
---2bcu3ttzioot2gyg
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [RFC PATCH 1/8] drm: writeback: Refactor drm_writeback_connector
- structure
-MIME-Version: 1.0
-
-On Tue, Aug 26, 2025 at 07:08:17PM +0300, Dmitry Baryshkov wrote:
-> On Tue, Aug 26, 2025 at 05:48:18PM +0200, mripard@kernel.org wrote:
-> > On Mon, Aug 25, 2025 at 06:26:48AM +0000, Kandpal, Suraj wrote:
-> > > > Subject: Re: [RFC PATCH 1/8] drm: writeback: Refactor
-> > > > drm_writeback_connector structure
-> > > >=20
-> > > > Hi,
-> > > >=20
-> > > > On Sat, Aug 16, 2025 at 01:20:53AM +0300, Dmitry Baryshkov wrote:
-> > > > > On Thu, Aug 14, 2025 at 05:13:54PM +0100, liviu.dudau@arm.com wro=
-te:
-> > > > > > Hi,
-> > > > > >
-> > > > > > On Wed, Aug 13, 2025 at 10:04:22AM +0000, Kandpal, Suraj wrote:
-> > > > > > > > > > };
-> > > > > > > > >
-> > > > > > > > > I still don't like that. This really doesn't belong here.=
- If
-> > > > > > > > > anything, the drm_connector for writeback belongs to drm_=
-crtc.
-> > > > > > > >
-> > > > > > > > Why? We already have generic HDMI field inside drm_connecto=
-r. I
-> > > > > > > > am really hoping to be able to land DP parts next to it. In
-> > > > > > > > theory we can have a DVI- specific entry there (e.g. with t=
-he
-> > > > subconnector type).
-> > > > > > > > The idea is not to limit how the drivers subclass those str=
-uctures.
-> > > > > > > >
-> > > > > > > > I don't see a good case why WB should deviate from that des=
-ign.
-> > > > > > > >
-> > > > > > > > > If the issue is that some drivers need a custom drm_conne=
-ctor
-> > > > > > > > > subclass, then I'd rather turn the connector field of
-> > > > > > > > > drm_writeback_connector into a pointer.
-> > > > > > > >
-> > > > > > > > Having a pointer requires additional ops in order to get
-> > > > > > > > drm_connector from WB code and vice versa. Having
-> > > > > > > > drm_connector_wb inside drm_connector saves us from those o=
-ps
-> > > > (which don't manifest for any other kind of structure).
-> > > > > > > > Nor will it take any more space since union will reuse space
-> > > > > > > > already taken up by HDMI part.
-> > > > > > > >
-> > > > > > > > >
-> > > > > > >
-> > > > > > > Seems like this thread has died. We need to get a conclusion =
-on the
-> > > > design.
-> > > > > > > Laurent do you have any issue with the design given Dmitry's
-> > > > > > > explanation as to why this Design is good for drm_writeback_c=
-onnector.
-> > > > > >
-> > > > > > I'm with Laurent here. The idea for drm_connector (and a lot of=
- drm
-> > > > > > structures) are to be used as base "classes" for extended
-> > > > > > structures. I don't know why HDMI connector ended up inside
-> > > > > > drm_connector as not all connectors have HDMI functionality, bu=
-t that's a
-> > > > cleanup for another day.
-> > > > >
-> > > > > Maybe Maxime can better comment on it, but I think it was made ex=
-actly
-> > > > > for the purpose of not limiting the driver's design. For example,=
- a
-> > > > > lot of drivers subclass drm_connector via drm_bridge_connector. If
-> > > > > struct drm_connector_hdmi was a wrapper around struct drm_connect=
-or,
-> > > > > then it would have been impossible to use HDMI helpers for bridge
-> > > > > drivers, while current design freely allows any driver to utilize
-> > > > > corresponding library code.
-> > > >=20
-> > > > That's exactly why we ended up like this. With that design, we woul=
-dn't have
-> > > > been able to "inherit" two connector "classes": bridge_connector is=
- one,
-> > > > intel_connector another one.
-> > > >=20
-> > > > See here for the rationale:
-> > > > https://lore.kernel.org/dri-devel/ZOTDKHxn2bOg+Xmg@phenom.ffwll.loc=
-al/
-> > > >=20
-> > > > I don't think the "but we'll bloat drm_connector" makes sense eithe=
-r.
-> > > > There's already a *lot* of things that aren't useful to every conne=
-ctor (fwnode,
-> > > > display_info, edid in general, scaling, vrr, etc.)
-> > > >=20
-> > > > And it's not like we allocate more than a handful of them during a =
-system's life.
-> > >=20
-> > > So Are we okay with the approach mentioned here with the changes that=
- have been proposed here like
-> > > Having drm_writeback_connector in union with drm_hdmi_connector
-> >=20
-> > I don't think we need a union here. It artificially creates the same
-> > issue: we can't have two types for a connector if we do so.
+On Tue, 2025-08-26 at 18:03 +0200, Michael Karcher wrote:
+> Based on a finding by Anthony Yznaga that the UltraSPARC III copy_from_us=
+er
+> returns invalid values breaking other parts of the kernel in case of a
+> fault, while the generic implementation is correct.
 >=20
-> Well... What kind of connector would be both HDMI and WriteBack? I think
-> they are mutually exclusive already.
+> Fixes: ee841d0aff64 ("sparc64: Convert U3copy_{from,to}_user to accurate =
+exception reporting.")
+> Signed-off-by: Michael Karcher <kernel@mkarcher.dialup.fu-berlin.de>
+> ---
+>  arch/sparc/lib/U3memcpy.S | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 >=20
-> > > Also one more thing I would like to clarify here is how everyone would
-> > > like the patches patches where each patch changes both the drm core
-> > > and all related drivers (ensures buildability but then review is tough
-> > > for each driver). Or patches where we have initial drm core changes
-> > > and then each patch does the all changes in a driver in its own
-> > > respective patch.
-> >=20
-> > The latter should be preferred, but if you can't maintain bisectability
-> > that way, then it's the most important and you should fall back to the
-> > former.
->=20
-> I'd say, we should be trying our best in providing bisectability. It
-> really a PITA if one can not use `git bisect run`.
+> diff --git a/arch/sparc/lib/U3memcpy.S b/arch/sparc/lib/U3memcpy.S
+> index 9248d59c734c..bace3a18f836 100644
+> --- a/arch/sparc/lib/U3memcpy.S
+> +++ b/arch/sparc/lib/U3memcpy.S
+> @@ -267,6 +267,7 @@ FUNC_NAME:	/* %o0=3Ddst, %o1=3Dsrc, %o2=3Dlen */
+>  	faligndata	%f10, %f12, %f26
+>  	EX_LD_FP(LOAD(ldd, %o1 + 0x040, %f0), U3_retl_o2)
+> =20
+> +	and		%o2, 0x3f, %o2
+>  	subcc		GLOBAL_SPARE, 0x80, GLOBAL_SPARE
+>  	add		%o1, 0x40, %o1
+>  	bgu,pt		%XCC, 1f
+> @@ -336,7 +337,6 @@ FUNC_NAME:	/* %o0=3Ddst, %o1=3Dsrc, %o2=3Dlen */
+>  	 * Also notice how this code is careful not to perform a
+>  	 * load past the end of the src buffer.
+>  	 */
+> -	and		%o2, 0x3f, %o2
+>  	andcc		%o2, 0x38, %g2
+>  	be,pn		%XCC, 2f
+>  	 subcc		%g2, 0x8, %g2
 
-Yeah, I believe we are saying the same thing :)
+I patched Debian's unstable kernel yesterday and to my surprise, the kernel=
+ crashed
+during boot on the Sun Netra 240. Could be related to some Debian-specific =
+changes
+though or to issues with gcc-14:
 
-Maxime
+[   30.683477] rcu: INFO: rcu_sched detected stalls on CPUs/tasks:
+[   30.683485] rcu:     (detected by 0, t=3D5262 jiffies, g=3D-955, q=3D12 =
+ncpus=3D1)
+[   30.683492] rcu: All QSes seen, last rcu_sched kthread activity 5262 (42=
+94897854-4294892592), jiffies_till_next_fqs=3D1, root ->qsmask 0x0
+[   30.683503] rcu: rcu_sched kthread starved for 5262 jiffies! g-955 f0x2 =
+RCU_GP_WAIT_FQS(5) ->state=3D0x0 ->cpu=3D0
+[   30.683511] rcu:     Unless rcu_sched kthread gets sufficient CPU time, =
+OOM is now expected behavior.
+[   30.683515] rcu: RCU grace-period kthread stack dump:
+[   30.683518] task:rcu_sched       state:R  running task     stack:0     p=
+id:15    tgid:15    ppid:2      task_flags:0x208040 flags:0x07000000
+[   30.683536] Call Trace:
+[   30.683540] [<0000000000f80a5c>] schedule+0x1c/0x180
+[   30.683562] [<0000000000f870b0>] schedule_timeout+0x70/0x100
+[   30.683572] [<000000000052b4c8>] rcu_gp_fqs_loop+0x108/0x5e0
+[   30.683582] [<0000000000530ae0>] rcu_gp_kthread+0x180/0x200
+[   30.683591] [<00000000004ac704>] kthread+0x104/0x280
+[   30.683605] [<00000000004060c8>] ret_from_fork+0x1c/0x2c
+[   30.683618] [<0000000000000000>] 0x0
+[   30.683626] rcu: Stack dump where RCU GP kthread last ran:
+[   30.683632] CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.16.3+1-sp=
+arc64-smp #1 NONE  Debian 6.16.3-1+sparc64=20
+[   30.683642] TSTATE: 0000004411001602 TPC: 000000000050bbf0 TNPC: 0000000=
+00050bbf4 Y: 0000004a    Not tainted
+[   30.683648] TPC: <console_flush_all+0x3d0/0x540>
+[   30.683662] g0: 000000000050bbf0 g1: 0000000000000000 g2: 00000000000000=
+00 g3: 0000000001544800
+[   30.683668] g4: fff000000022ad00 g5: fff000023e2f6000 g6: fff00000002640=
+00 g7: 000000000000000e
+[   30.683673] o0: 0000000001544958 o1: 0000000001543d48 o2: 00000000000000=
+4f o3: 00000000015b3080
+[   30.683678] o4: 00000000015b3080 o5: 00000000015b3080 sp: fff00000002663=
+f1 ret_pc: 000000000050bbe0
+[   30.683683] RPC: <console_flush_all+0x3c0/0x540>
+[   30.683692] l0: 0000000001544958 l1: 0000000000000000 l2: 0000000001543d=
+48 l3: 00000000012e3ef8
+[   30.683697] l4: 00000000013fb770 l5: 0000000000000000 l6: 000000000137a8=
+00 l7: 000000000000004f
+[   30.683702] i0: 0000000000000000 i1: fff0000000266db8 i2: fff0000000266d=
+b3 i3: 00000000012f65f0
+[   30.683707] i4: 0000000000000000 i5: 00000000012f65f0 i6: fff00000002665=
+01 i7: 000000000050bdf8
+[   30.683712] I7: <console_unlock+0x98/0x140>
+[   30.683721] Call Trace:
+[   30.683724] [<000000000050bdf8>] console_unlock+0x98/0x140
+[   30.683733] [<000000000050cbec>] vprintk_emit+0x2cc/0x360
+[   30.683742] [<000000000050cc9c>] vprintk_default+0x1c/0x40
+[   30.683752] [<000000000050dbd0>] vprintk+0x10/0x20
+[   30.683761] [<000000000042b3a8>] _printk+0x24/0x34
+[   30.683772] [<000000000050d1c8>] register_console+0x3a8/0x600
+[   30.683781] [<0000000000bd07c0>] serial_core_register_port+0x680/0x8a0
+[   30.683790] [<0000000000bd12f0>] serial_ctrl_register_port+0x10/0x20
+[   30.683798] [<0000000000bd1370>] uart_add_one_port+0x10/0x20
+[   30.683806] [<0000000000bd8bb4>] su_probe+0x174/0x400
+[   30.683816] [<0000000000c044cc>] platform_probe+0x4c/0xc0
+[   30.683825] [<0000000000c00e28>] really_probe+0xc8/0x400
+[   30.683839] [<0000000000c011ec>] __driver_probe_device+0x8c/0x160
+[   30.683848] [<0000000000c013a8>] driver_probe_device+0x28/0x100
+[   30.683857] [<0000000000c0165c>] __driver_attach+0xbc/0x1e0
+[   30.683865] [<0000000000bfe7dc>] bus_for_each_dev+0x5c/0xc0
+[   32.641998] watchdog: BUG: soft lockup - CPU#0 stuck for 23s! [swapper/0=
+:1]
+[   32.642006] Modules linked in:
+[   32.642012] CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.16.3+1-sp=
+arc64-smp #1 NONE  Debian 6.16.3-1+sparc64=20
+[   32.642020] TSTATE: 0000004411001602 TPC: 000000000050bbf0 TNPC: 0000000=
+00050bbf4 Y: 00000052    Not tainted
+[   32.642026] TPC: <console_flush_all+0x3d0/0x540>
+[   32.642035] g0: 00000000015b1f48 g1: 0000000000000000 g2: 00000000000000=
+00 g3: 0000000001544800
+[   32.642040] g4: fff000000022ad00 g5: fff000023e2f6000 g6: fff00000002640=
+00 g7: 000000000000000e
+[   32.642045] o0: 0000000001544958 o1: 0000000001543d48 o2: 00000000000000=
+54 o3: 00000000015b3080
+[   32.642050] o4: 00000000015b3080 o5: 00000000015b3080 sp: fff00000002663=
+f1 ret_pc: 000000000050bbe0
+[   32.642054] RPC: <console_flush_all+0x3c0/0x540>
+[   32.642062] l0: 0000000001544958 l1: 0000000000000000 l2: 0000000001543d=
+48 l3: 00000000012e3ef8
+[   32.642067] l4: 00000000013fb770 l5: 0000000000000000 l6: 000000000137a8=
+00 l7: 0000000000000054
+[   32.642072] i0: 0000000000000000 i1: fff0000000266db8 i2: fff0000000266d=
+b3 i3: 00000000012f65f0
+[   32.642077] i4: 0000000000000000 i5: 00000000012f65f0 i6: fff00000002665=
+01 i7: 000000000050bdf8
+[   32.642081] I7: <console_unlock+0x98/0x140>
+[   32.642089] Call Trace:
+[   32.642092] [<000000000050bdf8>] console_unlock+0x98/0x140
+[   32.642101] [<000000000050cbec>] vprintk_emit+0x2cc/0x360
+[   32.642110] [<000000000050cc9c>] vprintk_default+0x1c/0x40
+[   32.642118] [<000000000050dbd0>] vprintk+0x10/0x20
+[   32.642127] [<000000000042b3a8>] _printk+0x24/0x34
+[   32.642135] [<000000000050d1c8>] register_console+0x3a8/0x600
+[   32.642144] [<0000000000bd07c0>] serial_core_register_port+0x680/0x8a0
+[   32.642151] [<0000000000bd12f0>] serial_ctrl_register_port+0x10/0x20
+[   32.642158] [<0000000000bd1370>] uart_add_one_port+0x10/0x20
+[   32.642165] [<0000000000bd8bb4>] su_probe+0x174/0x400
+[   32.642173] [<0000000000c044cc>] platform_probe+0x4c/0xc0
+[   32.642180] [<0000000000c00e28>] really_probe+0xc8/0x400
+[   32.642189] [<0000000000c011ec>] __driver_probe_device+0x8c/0x160
+[   32.642198] [<0000000000c013a8>] driver_probe_device+0x28/0x100
+[   32.642206] [<0000000000c0165c>] __driver_attach+0xbc/0x1e0
+[   32.642215] [<0000000000bfe7dc>] bus_for_each_dev+0x5c/0xc0
 
---2bcu3ttzioot2gyg
-Content-Type: application/pgp-signature; name="signature.asc"
+Adrian
 
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaK6m7wAKCRAnX84Zoj2+
-doq7AYCGPkzQsh6eK7sNZpx+oS1S0ulIy7SlWpjGFlx+gKw8CWeZ49ePtAl290cq
-u833Oa0BgLNM0z3GhbAuoZEIMj3lrg5ki7r3yNe4zG/aPbKJZ1ocfGrd2wTgY+q3
-3zMMttn/aw==
-=kBfE
------END PGP SIGNATURE-----
-
---2bcu3ttzioot2gyg--
+--=20
+ .''`.  John Paul Adrian Glaubitz
+: :' :  Debian Developer
+`. `'   Physicist
+  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
 
