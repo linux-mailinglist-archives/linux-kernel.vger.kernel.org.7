@@ -1,193 +1,136 @@
-Return-Path: <linux-kernel+bounces-788144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76494B3805A
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 12:54:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE305B3805C
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 12:55:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 19ACE7AAD55
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 10:52:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B9D61B66A7B
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 10:55:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D773134DCC0;
-	Wed, 27 Aug 2025 10:53:58 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF4AD29A33E;
-	Wed, 27 Aug 2025 10:53:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C8B134DCC0;
+	Wed, 27 Aug 2025 10:55:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AMiMcPjb"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 705A634A331;
+	Wed, 27 Aug 2025 10:55:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756292038; cv=none; b=LZtWtdsCc/+AzIcZ2dU5RRFpP928fSdfTGVTR/PHNyjzJs8m8Ys4GZlHNNRNcH070QOymcvCtg6DP6svAus3k8ZSJkz4AdQF+C8ubVbqPqlXkcxxbO9bP4GgfevSmyCC/IrTvpHiOWQCAXBRDeX2ccHyTv4yudxjX3ADlgu4QoI=
+	t=1756292105; cv=none; b=XvVr0HBRQ+nYDE/VnAxrVrvilPhXORdd89vd5UJIE1bMXzUePTQutal+NXNjRXHisCREepYCvVOvV8r7nHiJt78+PiFOISspV5Fmc/hd3lT/66hIQRXvdLwwuE4jJXjm2lcJrMiPn33zy1k869OXeDrIz8lViQZ0TDP4a7/08G4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756292038; c=relaxed/simple;
-	bh=KvhQhFpVLx+Ks6mcVPyRIJpuYbXB4z0eugel3mQtXSw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tPGBJrA38HPzqAq2cNIQhKDaX4uRIhMttbcfZJh1WYr0M/EI9ZVMo2x0CfGw1XS8xbvjRs34vuK+6vCC8n+EVqcbMunuJcLLelo0tGCcpvX2VpIq8DpZwbwQcVA6GbPaBMalsqTIrhXVVGChza5BS/p+cqky2Hedu00Rw6k9mP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BFEFE1688;
-	Wed, 27 Aug 2025 03:53:47 -0700 (PDT)
-Received: from e133380.arm.com (e133380.arm.com [10.1.197.68])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 491FF3F694;
-	Wed, 27 Aug 2025 03:53:50 -0700 (PDT)
-Date: Wed, 27 Aug 2025 11:53:47 +0100
-From: Dave Martin <Dave.Martin@arm.com>
-To: James Morse <james.morse@arm.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-acpi@vger.kernel.org, devicetree@vger.kernel.org,
-	shameerali.kolothum.thodi@huawei.com,
-	D Scott Phillips OS <scott@os.amperecomputing.com>,
-	carl@os.amperecomputing.com, lcherian@marvell.com,
-	bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
-	baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
-	Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
-	dfustini@baylibre.com, amitsinght@marvell.com,
-	David Hildenbrand <david@redhat.com>,
-	Rex Nie <rex.nie@jaguarmicro.com>, Koba Ko <kobak@nvidia.com>,
-	Shanker Donthineni <sdonthineni@nvidia.com>, fenghuay@nvidia.com,
-	baisheng.gao@unisoc.com,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Rob Herring <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
-	Rafael Wysocki <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Hanjun Guo <guohanjun@huawei.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Danilo Krummrich <dakr@kernel.org>
-Subject: Re: [PATCH 06/33] ACPI / PPTT: Add a helper to fill a cpumask from a
- cache_id
-Message-ID: <aK7ju2caTjqf1+VN@e133380.arm.com>
-References: <20250822153048.2287-1-james.morse@arm.com>
- <20250822153048.2287-7-james.morse@arm.com>
+	s=arc-20240116; t=1756292105; c=relaxed/simple;
+	bh=brtTeOq7t9D29DOEYbCG+995QksqWJLkIz1HRzKOgFY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kaxtcrJmfP5KWxyyESwOKP/aAu5VgsylZJpPfibbMT9wQqbxFpDQIJjVCPQ6Us+T+mq8yTxtEYuosfzjjdQX9sZtibF6KXz6Pc5zCv94fohHalDDZX+qWHXPwFiurexTQslXaQ+lyhKiCGNtcWcBeAYY08ur6RNcBRQXIuulsqI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AMiMcPjb; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-24646202152so52301235ad.0;
+        Wed, 27 Aug 2025 03:55:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756292104; x=1756896904; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=KDBhuoyCHEkjgWaDPbp519QDqLxjbIBjIvhNBom08HM=;
+        b=AMiMcPjbrX/RA7PHWmNFNN3Q84pRMiWG79w5IhCn2aiKtHzVxwV5ZozoHVtaraZn9w
+         guZWYDUv4PpIw29fA/a51oO8BUY57xsG1/jklBdF2wiBGjyByhzqkN5WdphWBObikwu/
+         iaUmugg8qsIMYYzMhyQkTglljTlVuvVkY3FawDvImDxQXJMsbGzL532089yiPV6ZJO/s
+         X/K1neARxxUHOQbGTbd7SzAikm0Jx29xNRoHR8coHtrNnaRgoM64pvmiDRCtJ58o7mng
+         CazB0IxJE4d0A6h2G/yLFBr/4qU7tW75vGPN7vC1hwvIUzwfXl0DIQ22wIOFZmLzZlHH
+         KN5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756292104; x=1756896904;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KDBhuoyCHEkjgWaDPbp519QDqLxjbIBjIvhNBom08HM=;
+        b=ln7dRtf24NOj1x5/38up7sAsZ1SXoSDe8LsQkd/k7QpyuC4X3FeBThY8ymE5Fa1vzq
+         EsRYZhMdfUO3/aMQsqYpHVfuQeUR9X5cNhzTmbSAwPinb9bE9CwgZJ/olV9KnhtbIGp1
+         s699MfappF1Ylx2JdcgT3fJku/beshCosfb4oiKGqu66uHU05F7nnWYJ6cY6c7V3yAZa
+         UwgbE5XUGsm/ouev7gHCHRUsihF8IY6k5Oyi0c8S1ENuoBpXSXCqYIyQ7jswyvjmWXnz
+         hxirbOaZofzVfAoDrAIgoc2A1Kn6Bwq6B8LQInbfr/LRHAx945GurqAOlu0JmlRKxtMI
+         Y5/w==
+X-Forwarded-Encrypted: i=1; AJvYcCVhv97D/pYE9MFrwZ/CA9Up2cwdzyONR8YCrgv61PSNWKu/wwK97JigmJcz3kGhJvziCeBs3S7ljd/nuT0=@vger.kernel.org, AJvYcCXkbzyIwhWGj0puWcgx179p9yk5FY8lSYdwlUsZ8pIclb1nhP3AtVr3/Wg/WRQa1GZrW8fMUaujgyl08F34SwuH@vger.kernel.org
+X-Gm-Message-State: AOJu0YyrFAOdWkhs3+P+FB2fT5MbrE5l71ljXISnpmc3gF2/MfPoJoep
+	ZPWWQa05TRktXa0yc9lbc6bK9/7gxO3HXpzXSnTs1R4kv4mhrbT4wn7m
+X-Gm-Gg: ASbGncs5NDY9JWAITuW+PQ6jACZhv0A2KpTWlDkDcTmmafZ6hitPLFQjvyAFmcmXMpr
+	8uQqkLQjIVpL58QVfLbAp/mQbxw1ffXX8jKFoVSKIhmMapOlVVkQJ61CKuvwvVf4jWUwvhw6c3O
+	3WtLP+ZvPm3e8hIYhVaM0QX3hYQKeUy82Z7y6WwddrgMwcxBko5rr4BVlJSgTOsXpADKeOC2qSP
+	LMP0lOlbjLzCE5GrlrUL3JLfgy5sun7gl5wLrKqxGOUNqfGl084kdp9O/ENbyW5QlLpHzo4LkY2
+	KqEMYjhY3Oar0/jOZ29mdsHbAx7jWJeLRz6s3oozEjjspvzAqi8Z+6blPC0kiN5oSMtF/G1GHuo
+	mWJI9iMiZVREt9iNZeU9QkxcwKAZLKop0AwudxJ8KcP2maBcD
+X-Google-Smtp-Source: AGHT+IEhirihpN1QSJ58xrmifvBkFp/Oy5ttrOOp4jBR4YeWiJAGvBREB33nGZkv2OirbOnMcYZQZw==
+X-Received: by 2002:a17:902:dad1:b0:242:befb:b04e with SMTP id d9443c01a7336-2462ee9cbfcmr253453335ad.25.1756292103508;
+        Wed, 27 Aug 2025 03:55:03 -0700 (PDT)
+Received: from ti-am64x-sdk.. ([152.57.137.11])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24668779f6csm119573885ad.26.2025.08.27.03.54.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 Aug 2025 03:55:03 -0700 (PDT)
+From: bhanuseshukumar <bhanuseshukumar@gmail.com>
+To: tglx@linutronix.de,
+	mingo@redhat.com,
+	shuah@kernel.org
+Cc: peterz@infradead.org,
+	dvhart@infradead.org,
+	dave@stgolabs.net,
+	andrealmeid@igalia.com,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel-mentees@lists.linuxfoundation.org,
+	bigeasy@linutronix.de,
+	colin.i.king@gmail.com,
+	bhanuseshukumar@gmail.com
+Subject: [PATCH v2] selftests: futex; Fix spelling in test messages
+Date: Wed, 27 Aug 2025 16:24:12 +0530
+Message-Id: <20250827105412.19113-1-bhanuseshukumar@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250822153048.2287-7-james.morse@arm.com>
+Content-Transfer-Encoding: 8bit
 
-Hi James,
+    Correct few spelling mistakes in selftest output messages to improve
+    readability
 
-On Fri, Aug 22, 2025 at 03:29:47PM +0000, James Morse wrote:
-> MPAM identifies CPUs by the cache_id in the PPTT cache structure.
-> 
-> The driver needs to know which CPUs are associated with the cache,
-> the CPUs may not all be online, so cacheinfo does not have the
-> information.
+Signed-off-by: bhanuseshukumar <bhanuseshukumar@gmail.com>
+---
+ This fix is part of kselftest pre-requisite task for kernel mentorship fall 2025.
 
-Nit: cacheinfo lacking the information is not a consequence of the
-driver needing it.
+ --changes in v2 to v1
+     grammar fix : instead -> instead of 
+ tools/testing/selftests/futex/functional/futex_priv_hash.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Maybe split the sentence:
+diff --git a/tools/testing/selftests/futex/functional/futex_priv_hash.c b/tools/testing/selftests/futex/functional/futex_priv_hash.c
+index aea001ac4946..8a5735391f2e 100644
+--- a/tools/testing/selftests/futex/functional/futex_priv_hash.c
++++ b/tools/testing/selftests/futex/functional/futex_priv_hash.c
+@@ -132,7 +132,7 @@ static void usage(char *prog)
+ {
+ 	printf("Usage: %s\n", prog);
+ 	printf("  -c    Use color\n");
+-	printf("  -g    Test global hash instead intead local immutable \n");
++	printf("  -g    Test global hash instead of local immutable \n");
+ 	printf("  -h    Display this help message\n");
+ 	printf("  -v L  Verbosity level: %d=QUIET %d=CRITICAL %d=INFO\n",
+ 	       VQUIET, VCRITICAL, VINFO);
+@@ -267,7 +267,7 @@ int main(int argc, char *argv[])
+ 	join_max_threads();
+ 
+ 	ret = futex_hash_slots_get();
+-	ksft_test_result(ret == 2, "No more auto-resize after manaul setting, got %d\n",
++	ksft_test_result(ret == 2, "No more auto-resize after manual setting, got %d\n",
+ 			 ret);
+ 
+ 	futex_hash_slots_set_must_fail(1 << 29);
+-- 
+2.34.1
 
--> "[...] associated with the cache. The CPUs may not [...]"
-
-> 
-> Add a helper to pull this information out of the PPTT.
-> 
-> CC: Rohit Mathew <Rohit.Mathew@arm.com>
-> Signed-off-by: James Morse <james.morse@arm.com>
-> Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
-> ---
-> Changes since RFC:
->  * acpi_count_levels() now returns a value.
->  * Converted the table-get stuff to use Jonathan's cleanup helper.
->  * Dropped Sudeep's Review tag due to the cleanup change.
-> ---
->  drivers/acpi/pptt.c  | 62 ++++++++++++++++++++++++++++++++++++++++++++
->  include/linux/acpi.h |  6 +++++
->  2 files changed, 68 insertions(+)
-> 
-> diff --git a/drivers/acpi/pptt.c b/drivers/acpi/pptt.c
-> index 660457644a5b..cb93a9a7f9b6 100644
-> --- a/drivers/acpi/pptt.c
-> +++ b/drivers/acpi/pptt.c
-> @@ -971,3 +971,65 @@ int find_acpi_cache_level_from_id(u32 cache_id)
->  
->  	return -ENOENT;
->  }
-> +
-> +/**
-> + * acpi_pptt_get_cpumask_from_cache_id() - Get the cpus associated with the
-> + *					   specified cache
-> + * @cache_id: The id field of the unified cache
-> + * @cpus: Where to build the cpumask
-> + *
-> + * Determine which CPUs are below this cache in the PPTT. This allows the property
-> + * to be found even if the CPUs are offline.
-> + *
-> + * The PPTT table must be rev 3 or later,
-> + *
-> + * Return: -ENOENT if the PPTT doesn't exist, or the cache cannot be found.
-> + * Otherwise returns 0 and sets the cpus in the provided cpumask.
-> + */
-> +int acpi_pptt_get_cpumask_from_cache_id(u32 cache_id, cpumask_t *cpus)
-> +{
-> +	u32 acpi_cpu_id;
-> +	int level, cpu, num_levels;
-> +	struct acpi_pptt_cache *cache;
-> +	struct acpi_pptt_cache_v1 *cache_v1;
-> +	struct acpi_pptt_processor *cpu_node;
-> +	struct acpi_table_header *table __free(acpi_table) = acpi_get_table_ret(ACPI_SIG_PPTT, 0);
-> +
-> +	cpumask_clear(cpus);
-> +
-> +	if (IS_ERR(table))
-> +		return -ENOENT;
-> +
-> +	if (table->revision < 3)
-> +		return -ENOENT;
-> +
-> +	/*
-> +	 * If we found the cache first, we'd still need to walk from each cpu.
-> +	 */
-> +	for_each_possible_cpu(cpu) {
-> +		acpi_cpu_id = get_acpi_id_for_cpu(cpu);
-> +		cpu_node = acpi_find_processor_node(table, acpi_cpu_id);
-> +		if (!cpu_node)
-> +			return 0;
-> +		num_levels = acpi_count_levels(table, cpu_node, NULL);
-> +
-> +		/* Start at 1 for L1 */
-> +		for (level = 1; level <= num_levels; level++) {
-> +			cache = acpi_find_cache_node(table, acpi_cpu_id,
-> +						     ACPI_PPTT_CACHE_TYPE_UNIFIED,
-> +						     level, &cpu_node);
-> +			if (!cache)
-> +				continue;
-> +
-> +			cache_v1 = ACPI_ADD_PTR(struct acpi_pptt_cache_v1,
-> +						cache,
-> +						sizeof(struct acpi_pptt_cache));
-> +
-> +			if (cache->flags & ACPI_PPTT_CACHE_ID_VALID &&
-> +			    cache_v1->cache_id == cache_id)
-> +				cpumask_set_cpu(cpu, cpus);
-
-Again, it feels like we are repeating the same walk multiple times to
-determine how deep the table is (on which point the table is self-
-describing anyway), and then again to derive some static property, and
-then we are then doing all of that work multiple times to derive
-different static properties, etc.
-
-Can we not just walk over the tables once and stash the derived
-properties somewhere?
-
-I'm still getting my head around this parsing code, so I'm not saying
-that the approach is incorrect here -- just wondering whether there is
-a way to make it simpler.
-
-[...]
-
-Cheers
----Dave
 
