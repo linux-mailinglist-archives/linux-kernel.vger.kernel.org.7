@@ -1,157 +1,159 @@
-Return-Path: <linux-kernel+bounces-787702-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787703-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA972B379FD
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 07:48:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CC8AB379FF
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 07:49:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D27541B27F5C
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 05:48:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4BDFB7A46C8
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 05:48:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 890A830BBA0;
-	Wed, 27 Aug 2025 05:48:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AFC830BBA0;
+	Wed, 27 Aug 2025 05:49:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KRSYhZpX"
-Received: from mail-yw1-f195.google.com (mail-yw1-f195.google.com [209.85.128.195])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="hw3nvmqY"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7451A28E7;
-	Wed, 27 Aug 2025 05:48:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF5E828E7
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 05:49:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756273683; cv=none; b=EDuwdUafvlcAIYQjLAhHh28wHu6Zcl9sElfttdtWNox+th7A+vJVpUIGdSHnHC5Kx6tufagkt4zx3IS4FkoguM0/5DYOSSKjRQvuPRDoGMNp/Kp3+gbGtEFOIU3X/nBcYuGMKOrqgPcPL8zv9io09qPxYrT0tgNMA/Xe3bqfCO4=
+	t=1756273773; cv=none; b=OaWyMOm6KEEuQSejd09o6mFJ8adyAe1qch3bgQzNTlNXXuH0LRv04PinHpepR1uSjBS2yUEr2StWwzs4XAfvXqrYeEhy7wJeJ0khRuPxvw1Qst/Ku7ae2Qs05N52eJL4mwCn2UrIxgiZmOrUJj6wv9DzCNKTpkovsqbKjt4e7ns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756273683; c=relaxed/simple;
-	bh=GzmKTtGKIfZZGH6TH/jszUd0cGgbKaGK8YsA1hHZb1I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RAlTFfJAVmwTAlQ75xizXM1WsEASJDuWDNzoBTvruzDKEW3bGJ2YYR0g8LChtxZgo33WSjbaxgutDGblOaa5JR7dZyCMK7UxpgjCPGO2nAiHRz0rMYIQMOxozoyKreIXE6ETL8Io2OHfvmaP+1MNIo1Yht3iW+GH6zE590aufnU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KRSYhZpX; arc=none smtp.client-ip=209.85.128.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f195.google.com with SMTP id 00721157ae682-71d608e34b4so51391727b3.3;
-        Tue, 26 Aug 2025 22:48:02 -0700 (PDT)
+	s=arc-20240116; t=1756273773; c=relaxed/simple;
+	bh=pUJmrIA2x5LczKe5rphw2E8dq4urzGNQhhsVJS1L7BM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MBUIyjrFtmOVhs3XZ7nDxyC1bbv/SeCU4udaqTYYhtCti2sIsAL/LnFH5/GSYDu43p/tqOE9IxwvkeLm728+h4NspcbuoU7oAkdtPhiweTtXWOsNB9vA5rtH3zBN3saFli8NCMAv0WNRFi3X1NPXNcHnTSNxVypGaGGaRHstobE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=hw3nvmqY; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-771f3f89952so514540b3a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 22:49:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756273681; x=1756878481; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+7uF9JtjJ8XNaR2fn4Yge/aYYLRZsT+czQkmcDUbcNQ=;
-        b=KRSYhZpXQ2Zpz3p4p+r/1hhQT/zHQmMfOnmCCgWzlQD9/QMm3CyscEFFNKlcInw/cH
-         RmfJ4ZIrJL1nZoplLuB37JQ3Xsu1M+vl+81YUlm6FDpgolPHuk8KeDEW53WVedlJx+6k
-         JKFmVb8klGB3KuwyS5gRLr+3KXw1xhEcrYDJ1qSRLb3xORMfvd0CJ3thbBdkqeVAd9XC
-         d0RXSBjaBUcreH+neiP6vwOX9gAID901NTAvpk6K4VONd/9fCu4DikN+wTT07DH0ZgsF
-         N2VUsmgjfl6aThG48MSvm6NWu0+4qKmfzy5c0me4pFXWRQi7CM8n/lMcH4mRC1O316RE
-         GYUg==
+        d=linuxfoundation.org; s=google; t=1756273771; x=1756878571; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=AcHF6RnbmpTEQbStJ3Ge4aHFj+SeTRpsf2Mr2iXfDM8=;
+        b=hw3nvmqYNdUSWFIVZBT2gh0NSpOWoBTO7T1t4275kyxqIi0NlKl3HzMn+EMyGEq5X9
+         OpDcz9qdbttpwNNxVLUh05F8nu9QVSOiQI6xALC344lSQjagRPrDPWJ9qjZKfdjvxKZA
+         nA4EUToAfXEu3V37bqA5CusJ4oyv5idntHL6w=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756273681; x=1756878481;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+7uF9JtjJ8XNaR2fn4Yge/aYYLRZsT+czQkmcDUbcNQ=;
-        b=htv7EIZPW7khtnU4aIJLIZ6uXR3lXLY/wj5tibrdrQoGfiY2VZVmOFzmBxQQ2ljmqt
-         OJW+Dd1HDnwXJz0Adko/vIG0la7j2xRUC86n4wX5WHPTS+ljr8Gn+2ePwlDeMKdEqijH
-         O2Sqs8yV3fficECdZIOxUefYpRYGnPJCOphqGORcb1eiMioCDxjT+nc1EABcJOBZZniQ
-         c5qvBsRyPVBO40ZBe2EW7a9i25X3p41kWnR26SHN6pN0i8PH6+P7UdwQXWdhu4wUBeEn
-         kUyCFc6bg/0FRqV48yHEyFIIMSQaFwcOy4JfDaGd9ZKs2Ivj0qC4cmkSBppNLdAjvYjd
-         6wPA==
-X-Forwarded-Encrypted: i=1; AJvYcCX3rPHO+o/oqOk+VqArDR0GIN7h08BS+8VzYn8tDaoxIfsRDPS/2g4B3rZnM88LqzmK87k=@vger.kernel.org, AJvYcCXSjpwP1gaukqN/1dCkhkds/hAxUCaO0Tv+gmgOujfGlQnkXimS5aGFiSjNCnkj6AVsOyhCXeCOlypoiaou@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEtOXRNwt61dhWo87Xkf1p1T09d68EbSea4u+CZoF5zM874XVq
-	ZVJcN5C5OKuMZ373jCkUjRDViN7+hjxbYPClONdo9v2sqHH4DEMcJId5aJlEoZs+oGma2r4YP/O
-	eRojiL7sIdfnxJcUSn9+iu7N9RCTbZdU=
-X-Gm-Gg: ASbGncvjQrjsj+fDMxA1DTAJyt3IzYpFczUb8WIim+COvXOwZSzxWkmShTDzHLX0ZB+
-	ooYG2IOmeJ6A0Wy4u3RBemCWbE0ujrjOV8sWUJuYxsEse6RjZ1epa7qw9ErKERir+/E+GRHbaPq
-	mNbXCWfaMzecmzyFjF8ZrmezIdXWEK3jPTxDU+S5TBd0ZBZjzfgcRcCDQt4/M+gxnk6syrel83R
-	Y4QjeK8MdQ=
-X-Google-Smtp-Source: AGHT+IF3YgGlv+JZQTO4rCIuMzkeGcZaTmy3/9WsREKziOK+3nyZ10vYsWXPK7HfkDQovlrEmkU9ODB2ujG6k0QqkxQ=
-X-Received: by 2002:a05:690c:680c:b0:6ef:5097:5daa with SMTP id
- 00721157ae682-71fdc3e0647mr184242747b3.34.1756273681346; Tue, 26 Aug 2025
- 22:48:01 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1756273771; x=1756878571;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=AcHF6RnbmpTEQbStJ3Ge4aHFj+SeTRpsf2Mr2iXfDM8=;
+        b=gFBp4BW1rX7Mv2zg+23x9Khspk7cbEzAL5F0U9Wi4QSMvAHKwUYHcpDp1TfAJafSGw
+         zXQWQ2NtQmaLyGr/dUPicld2gh7OvihYwNlfU3wrxvF/sqkfmjD08WhoPJkw+SH8yBlz
+         IWm7b702lsKiZ3h/F1iiAh6PcLO7GhpoV98UVlPcdFx0b/TelZoAe3z+qYntUTMId1CE
+         Ro4WXdan76qN9H7Ktmxq4vuIGpQdD1uShIPx9yQ7XkWP9cWLgGbhXh3YSb2ecrJ/nPrj
+         S55loHEBj99wM1W7fgQOXnpa60Ogj7OcXgLy4Z+m/QN3g2D3KBWT0KMmbdyqRvHZf+jT
+         ukfA==
+X-Forwarded-Encrypted: i=1; AJvYcCU1NErR7C/U73fx9bkTPMbAukW+ndTz83lUPmVCuMlgZDjNHGN7Lzyr90HAex0p3Q50+8wjZJJkZY9fGWg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyo7vbOfZH5x7Xrhv8jzxfrAG551n0MEb3HFjTfjueqyfMb4+Oa
+	idS+JF8o3x8GtanpUNkxJZx9wn03Fzqx9Sr/OEQqIRvEIyo4JlVIGXVjPCET476m/Ys=
+X-Gm-Gg: ASbGncvpF4UFCB1HJiRZkKvZjY13VizHmnw432WUA2jjkWf6j4XLNUgobjHDyiVN3p2
+	Oir0s8sNhXIQaFnnVb+m4qA8sygOWuhostPaKwRstmmoq7JoSYcXzYub4u0S9gl7yEBPQKQU3Vy
+	McL0WgqS+VeyNveWqw4Vsg0+qCnZ07j6iLkXnrUa4j1jzSOU5ncYgHJjA/gwUwgxzOuYFF4PU14
+	B2TvBp3m40aspgjwpN4FvJMAIBuaLDJ7BHm1teDrMononGYp9uuZEZHLGtWuDR29DTWX/hZvy9R
+	2ebtU8PInL21AkK75fNyuFH8bE2n6sfkVY74sHJwGJ3phpFJS/a9RRFTVCxX7oRTN3X5416Fjxs
+	+A7xfTbLEAGjKpAV03NI5VBPGFlDWtZrW6atgjJfeHAdBsiRelMA+Zd1ki6dPyxBN4TDQzDr20x
+	yP3cVsdrRxZjJRhQ==
+X-Google-Smtp-Source: AGHT+IEPRjnzRJoy3RI7aBDNF9oE7mN9+D8p1oqa7z508XWwunVdVtcVLS9rgz2/V4+0jMlyan7bKA==
+X-Received: by 2002:a05:6a20:7490:b0:243:7e4e:3cdd with SMTP id adf61e73a8af0-2438fad29d0mr5907065637.16.1756273771075;
+        Tue, 26 Aug 2025 22:49:31 -0700 (PDT)
+Received: from ?IPV6:2405:201:c017:f074:2f08:3cb7:de48:e39a? ([2405:201:c017:f074:2f08:3cb7:de48:e39a])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3276fbca8d4sm976356a91.28.2025.08.26.22.49.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 26 Aug 2025 22:49:30 -0700 (PDT)
+Message-ID: <b8dbb85b-124b-4d25-b734-069809240e81@linuxfoundation.org>
+Date: Tue, 26 Aug 2025 23:49:26 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250821093807.49750-1-dongml2@chinatelecom.cn>
- <20250821093807.49750-3-dongml2@chinatelecom.cn> <CAADnVQL0oWnQM2AJh=yzNtRmH2Mx=B-hM2xsvgEx2uqLEBQ5Dw@mail.gmail.com>
-In-Reply-To: <CAADnVQL0oWnQM2AJh=yzNtRmH2Mx=B-hM2xsvgEx2uqLEBQ5Dw@mail.gmail.com>
-From: Menglong Dong <menglong8.dong@gmail.com>
-Date: Wed, 27 Aug 2025 13:47:50 +0800
-X-Gm-Features: Ac12FXxVAGCqC8kO7laXHrqyg9NLNXjG8EmnlF9FGvji4Ol9mhbcIb_uqI19KF8
-Message-ID: <CADxym3bo1DEtR+oFaN7F-cvFZ8yPgivxL69w35EETMKCGpmS0w@mail.gmail.com>
-Subject: Re: [PATCH v3 2/3] sched: make migrate_enable/migrate_disable inline
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Benjamin Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Valentin Schneider <vschneid@redhat.com>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, Eduard <eddyz87@gmail.com>, 
-	Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
-	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
-	tzimmermann@suse.de, simona.vetter@ffwll.ch, 
-	Jani Nikula <jani.nikula@intel.com>, LKML <linux-kernel@vger.kernel.org>, 
-	bpf <bpf@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: linux-next: build failure after merge of the kunit-next tree
+To: David Gow <davidgow@google.com>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Marie Zhussupova <marievic@google.com>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ KUnit Development <kunit-dev@googlegroups.com>,
+ Linux Next Mailing List <linux-next@vger.kernel.org>,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20250818120846.347d64b1@canb.auug.org.au>
+ <1befd7ab-f343-450f-9484-0cef21fe2da8@linuxfoundation.org>
+ <CABVgOSm2_FGfjQpUBttuUH5ZrMEqnaGkYVkN6N96wX7Qs8EE2Q@mail.gmail.com>
+ <4d5bad8a-6afa-4284-8f78-b52e2cfedbf0@linuxfoundation.org>
+ <CABVgOS=groSq6Dcdbb_PxFwikQTDodhA7gCAJBvv3jWzk8jrZQ@mail.gmail.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <CABVgOS=groSq6Dcdbb_PxFwikQTDodhA7gCAJBvv3jWzk8jrZQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Aug 27, 2025 at 10:58=E2=80=AFAM Alexei Starovoitov
-<alexei.starovoitov@gmail.com> wrote:
->
-> On Thu, Aug 21, 2025 at 2:38=E2=80=AFAM Menglong Dong <menglong8.dong@gma=
-il.com> wrote:
-> >
-> > +
-> > +#ifndef CREATE_MIGRATE_DISABLE
-> > +static inline void migrate_disable(void)
-> > +{
-> > +       __migrate_disable();
-> > +}
-> > +
-> > +static inline void migrate_enable(void)
-> > +{
-> > +       __migrate_enable();
-> > +}
-> > +#else /* CREATE_MIGRATE_DISABLE */
-> > +extern void migrate_disable(void);
-> > +extern void migrate_enable(void);
-> > +#endif /* CREATE_MIGRATE_DISABLE */
->
-> I think the explanation from the commit log is better to be
-> copy pasted here as a comment, since the need for the macro
-> is quite hard to understand.
+On 8/26/25 03:24, David Gow wrote:
+> On Tue, 26 Aug 2025 at 10:15, Shuah Khan <skhan@linuxfoundation.org> wrote:
+>>
+>> On 8/19/25 01:44, David Gow wrote:
+>>> On Tue, 19 Aug 2025 at 00:32, Shuah Khan <skhan@linuxfoundation.org> wrote:
+>>>>
+>>>> On 8/17/25 20:08, Stephen Rothwell wrote:
+>>>>> Hi all,
+>>>>>
+>>>>> After merging the kunit-next tree, today's linux-next build (x86_64
+>>>>> allmodconfig) failed like this:
+>>>>
+>>>> Thank you Stephen. I did a allmodconfig build on 6.17-rc1 base - didn't
+>>>> see the error.
+>>>>
+>>>> Marie, David, can you take a look this. Looks like conflict with drm
+>>>> in next?
+>>>>
+>>>
+>>> Thanks, Shuah. I've managed to reproduce this with:
+>>> ./tools/testing/kunit/kunit.py run --arch x86_64 --kunitconfig
+>>> drivers/gpu/drm/xe
+>>>
+>>> These patches fix it (and a corresponding drm/xe test failure):
+>>> https://lore.kernel.org/linux-next/20250819073434.1411114-1-davidgow@google.com/T/#t
+>>>
+>>> Ideally, they'll be squashed into the corresponding patches, as
+>>> otherwise there'd be some temporary breakage during bisections. I can
+>>> squash these into the original series and re-send it out if that works
+>>> best for you.
+>>>
+>>
+>> David,
+>>
+>> Please squash them and resend - also I see a kernel test robot
+>> error in patch 1/2.
+>>
+>> I was going to squash them, but I saw the kernel test robot error patch.
+>>
+> 
+> Thanks, Shuah.
+> 
+> A v2 of the fix series, with the kernel test robot error fixed, is
+> here: https://lore.kernel.org/linux-kselftest/20250821135447.1618942-1-davidgow@google.com/
+> 
+> I've also squashed the fixes into a v4 of the original series here:
+> https://lore.kernel.org/linux-kselftest/20250826091341.1427123-1-davidgow@google.com/
+> 
 
-Okay!
+I applied these to kunit next and ran test:
 
->
-> > +
-> > +#else /* MODULE */
-> > +extern void migrate_disable(void);
-> > +extern void migrate_enable(void);
-> > +#endif /* MODULE */
-> > +
->
-> ...
-> > diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> > index be00629f0ba4..58164a69449d 100644
-> > --- a/kernel/sched/core.c
-> > +++ b/kernel/sched/core.c
-> > @@ -7,6 +7,8 @@
-> >   *  Copyright (C) 1991-2002  Linus Torvalds
-> >   *  Copyright (C) 1998-2024  Ingo Molnar, Red Hat
-> >   */
-> > +#define CREATE_MIGRATE_DISABLE
-> > +#include <linux/sched.h>
->
-> Also how about calling it
-> #define INSTANTIATE_EXPORTED_MIGRATE_DISABLE
->
-> When I asked AI what "instantiate exported migrate_disable"
-> means it guessed it nicely :)
-> while "create migrate_disable" had a vague answer.
+./tools/testing/kunit/kunit.py run --arch x86_64 --kunitconfig drivers/gpu/drm/xe
 
-Okay, sounds nice!
+Looks good. Hopefully next is happy now.
+
+thanks,
+-- Shuah
+
+
 
