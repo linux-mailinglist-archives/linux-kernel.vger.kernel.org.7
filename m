@@ -1,110 +1,116 @@
-Return-Path: <linux-kernel+bounces-788376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788375-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD78CB38386
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 15:15:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EBFDB38383
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 15:14:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A02BF3ABB0A
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 13:14:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6D4DD7A766C
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 13:13:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35287212D83;
-	Wed, 27 Aug 2025 13:14:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43E5735206B;
+	Wed, 27 Aug 2025 13:14:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="eqxS/kK2"
-Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o2IyALzM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EAE0350D44;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 977941A23AF;
 	Wed, 27 Aug 2025 13:14:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756300479; cv=none; b=PKA/rUwPUwOLtTs+AJRDiq3YU2uIzztHmZZ4AFB36KXtyEdP+8SLDL4O62Dp5k7KJ6U0VfSkXTgzvbo8MlvHyHwtgOfzO82gG43iJrEzl23hV5af46tDkqqiEAqDOvw3USe2L3viHKX4n57+ha9PBaXOjE4Hhbbdt0seqJWGZJk=
+	t=1756300475; cv=none; b=PNoqctxhxp4okXwDj3GYtBDV1OQfuqMGJqby2I1F0tlrZIsBzuyxFktEXJH/fydpgABd1iA1vgWVuhLHyLLOSQB/ZGdckk9JV5R0ABg+D+QnbAp/eRai4VEUWqvfFs1NbIFuebHPhgbxKGJ0Ylsl9J1ptQVrjHL9iLc2tu8kvEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756300479; c=relaxed/simple;
-	bh=XsTRRz4BTX2KhPuoFFU7MrW0RBviwDXWMSW/gPPwM7Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=B9Kz7uD1njVKtpHvsZr7WiY6no0mPJVm4+xhTB0BEFQ4rymTg4B6YJvfzSO3Q5RkMTWhV0SnrYRSvNQnWeDmdRBL0Bg2v+I58pomdLAzIBaPam8IIkynQptw+VAohFozh1fvYHSg0zXaKg2PyZGcVgThZc9VKlICoSLViiaOqIM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=eqxS/kK2; arc=none smtp.client-ip=157.90.84.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
-Received: from wse-pc.fritz.box (p5de4594b.dip0.t-ipconnect.de [93.228.89.75])
-	(Authenticated sender: wse@tuxedocomputers.com)
-	by mail.tuxedocomputers.com (Postfix) with ESMTPA id 5F3122FC0052;
-	Wed, 27 Aug 2025 15:14:27 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
-	s=default; t=1756300467;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=FqPgpq5SHXLx8DYXA2ddMhOwpyfjgYUmrPIjnikdu8w=;
-	b=eqxS/kK27fbIX5Da6DjV2v1LcZceMTzP0vXO2tyUFn6pAH7DbnuupxseJm0m06UYV8oUK6
-	RGlaEAyz+Nwe8kcpzFAUujUk3wUsx3HYq9122bSoUb6y+fURw36lxh5esahxWQfQ2LLRhP
-	k/ehUGVOSoMaGoWs1Hj0ez94QUIUgeQ=
-Authentication-Results: mail.tuxedocomputers.com;
-	auth=pass smtp.auth=wse@tuxedocomputers.com smtp.mailfrom=wse@tuxedocomputers.com
-From: Werner Sembach <wse@tuxedocomputers.com>
-To: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
-	Hans de Goede <hansg@kernel.org>,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: Christoffer Sandberg <cs@tuxedo.de>,
-	Werner Sembach <wse@tuxedocomputers.com>,
-	platform-driver-x86@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] platform/x86/amd/pmc: Add TUXEDO IB Pro Gen10 AMD to spurious 8042 quirks list
-Date: Wed, 27 Aug 2025 15:13:51 +0200
-Message-ID: <20250827131424.16436-1-wse@tuxedocomputers.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1756300475; c=relaxed/simple;
+	bh=BHEGK0fjVDQ6cDX+4RlPfEiA5ObgqNeGUDDWhUIpej0=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=TEHDMa9ec3Jdq39r2gRrZDIe82FedoRLlzSeVSC0rrPhJzGkXeM6hZ8SrZ+jlA3riLT4Mb8VW5xiW+Fzc/wBuoEKb/IedVv3UktadnoZ4f1pdEe2tLAzV8phLzaw0Zp1kJW2OCbFeZ5dEk/ETzWe+y37MJbMZ+4Zvo3uVidnruM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o2IyALzM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B56FC4CEF4;
+	Wed, 27 Aug 2025 13:14:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756300475;
+	bh=BHEGK0fjVDQ6cDX+4RlPfEiA5ObgqNeGUDDWhUIpej0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=o2IyALzMaZe28pUewT2u98hAlAgAi8OG1UFonYL2PVwNhwLFRPjz4ZgJWEmd+2rPZ
+	 4qwg3KdcpZmXOHV2K4VYd9LiC8VZatPXt0Z4g8aXLv20PP/jnTN1y6jrKIY0t4oF8K
+	 REJ7Uwba+MfFbQQuG7rCO1aC3C4GPuB5Ig5LxaMcY1d0qDFb4+D2BcmjW4tekwzITX
+	 njvcJiDibURZ9YuuffsO94mK1EhpIusfUJWmU5MT3tEA3vwFAHnDv8zFP6BW+H70S/
+	 ZvR9lIgZSHrKyQuGFyj1kcO8f6AuqhatMd9LoZKrYxjaMqTDK0mAowmiKHlXL/Xo45
+	 E1yKzpQrSVEWA==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <maz@kernel.org>)
+	id 1urFyy-00000000vKi-3IYO;
+	Wed, 27 Aug 2025 13:14:32 +0000
+Date: Wed, 27 Aug 2025 14:14:31 +0100
+Message-ID: <86ecswewjs.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Sean Christopherson <seanjc@google.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	kvm@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Ira Weiny <ira.weiny@intel.com>,
+	Gavin Shan <gshan@redhat.com>,
+	Shivank Garg <shivankg@amd.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Xiaoyao Li <xiaoyao.li@intel.com>,
+	David Hildenbrand <david@redhat.com>,
+	Fuad Tabba <tabba@google.com>,
+	Ackerley Tng <ackerleytng@google.com>,
+	Tao Chan <chentao@kylinos.cn>,
+	James Houghton <jthoughton@google.com>
+Subject: Re: [PATCH v17 00/24] KVM: Enable mmap() for guest_memfd
+In-Reply-To: <CABgObfb21UEZf4aQVv_-v3uFCp08G3SWhoTbpmSFz7qL0Xm63w@mail.gmail.com>
+References: <20250729225455.670324-1-seanjc@google.com>
+	<87b10d94-dca2-4ecb-a86f-b38c5c90e0cf@redhat.com>
+	<86frdcewue.wl-maz@kernel.org>
+	<CABgObfb21UEZf4aQVv_-v3uFCp08G3SWhoTbpmSFz7qL0Xm63w@mail.gmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: pbonzini@redhat.com, seanjc@google.com, oliver.upton@linux.dev, kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, ira.weiny@intel.com, gshan@redhat.com, shivankg@amd.com, vbabka@suse.cz, xiaoyao.li@intel.com, david@redhat.com, tabba@google.com, ackerleytng@google.com, chentao@kylinos.cn, jthoughton@google.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-From: Christoffer Sandberg <cs@tuxedo.de>
+On Wed, 27 Aug 2025 14:11:22 +0100,
+Paolo Bonzini <pbonzini@redhat.com> wrote:
+>=20
+> Yo can
+>=20
+> On Wed, Aug 27, 2025 at 3:08=E2=80=AFPM Marc Zyngier <maz@kernel.org> wro=
+te:
+> >
+> > On Wed, 27 Aug 2025 09:43:54 +0100,
+> > Paolo Bonzini <pbonzini@redhat.com> wrote:
+> > > Applied to kvm/next, thanks!
+> >
+> > Can you please create a stable branch for these patches? It is quite
+> > likely that whatever I queue for 6.18 will conflict with that, and I'd
+> > like to be able to resolve the conflicts myself.
+>=20
+> You can just base kvm-arm/next on kvm/next, but if you prefer I pushed
+> guest-memfd-mmap at https://git.kernel.org/pub/scm/virt/kvm/kvm.git/.
 
-Prevents instant wakeup ~1s after suspend.
+Pulled, thanks.
 
-It seems to be kernel/system dependent if the IRQ actually manages to wake
-the system every time or if it gets ignored (and everything works as
-expected).
+	M.
 
-Signed-off-by: Christoffer Sandberg <cs@tuxedo.de>
-Signed-off-by: Werner Sembach <wse@tuxedocomputers.com>
-Cc: stable@vger.kernel.org
----
- drivers/platform/x86/amd/pmc/pmc-quirks.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
-
-diff --git a/drivers/platform/x86/amd/pmc/pmc-quirks.c b/drivers/platform/x86/amd/pmc/pmc-quirks.c
-index 7ffc659b27944..18fb44139de25 100644
---- a/drivers/platform/x86/amd/pmc/pmc-quirks.c
-+++ b/drivers/platform/x86/amd/pmc/pmc-quirks.c
-@@ -248,6 +248,20 @@ static const struct dmi_system_id fwbug_list[] = {
- 			DMI_MATCH(DMI_PRODUCT_NAME, "Lafite Pro V 14M"),
- 		}
- 	},
-+	{
-+		.ident = "TUXEDO InfinityBook Pro 14/15 AMD Gen10",
-+		.driver_data = &quirk_spurious_8042,
-+		.matches = {
-+			DMI_MATCH(DMI_BOARD_NAME, "XxHP4NAx"),
-+		}
-+	},
-+	{
-+		.ident = "TUXEDO InfinityBook Pro 14/15 AMD Gen10",
-+		.driver_data = &quirk_spurious_8042,
-+		.matches = {
-+			DMI_MATCH(DMI_BOARD_NAME, "XxKK4NAx_XxSP4NAx"),
-+		}
-+	},
- 	{}
- };
- 
--- 
-2.43.0
-
+--=20
+Without deviation from the norm, progress is not possible.
 
