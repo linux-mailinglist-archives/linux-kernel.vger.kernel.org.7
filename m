@@ -1,139 +1,265 @@
-Return-Path: <linux-kernel+bounces-788873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788872-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56F7AB38B9A
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 23:46:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A0DFB38B97
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 23:45:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F360189EE32
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 21:46:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7F0C1893C14
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 21:46:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B0DA30DEAF;
-	Wed, 27 Aug 2025 21:45:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AFAE3009D8;
+	Wed, 27 Aug 2025 21:45:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LjCp83OS"
-Received: from mail-oa1-f54.google.com (mail-oa1-f54.google.com [209.85.160.54])
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="CjmuBQxR"
+Received: from mail-io1-f52.google.com (mail-io1-f52.google.com [209.85.166.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 105932EAB6D;
-	Wed, 27 Aug 2025 21:45:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0507E23D7F8
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 21:45:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756331155; cv=none; b=VAa6a0fddY8OE5vkrbLZ/pIijo9JJPhX0E28jxHuHNXug1e9xueDL+jquirSgvANKRj/gmG+KjhHLvKfM60WjMaOViorJdu1zKmfbOFt796uPSiMVgqffXevglhTi5wITPWUV7dmGvqHVqKj+C09Z6cPrMIdN6QMbodl3KS+ajg=
+	t=1756331134; cv=none; b=fbmDluFbG7d59YsPctCIibDnTeRKpJLEIHjfiVivTgMFI/8ZUFgqPX/X62zW2XRV2O0jcghL1b/FQwv/DYB4kRZ53uXDNC+3VMNCsswZo1RpncFt0njgTVShwiDVIXaVeynPrX0x8x10Tc+X6m+xQWan+2f96A8sRZzuc+2odnA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756331155; c=relaxed/simple;
-	bh=lW+KKbGwe58r6KqnEQZQdWWOb/U79mT0k10tLt6KMF0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ong796FOJQdXhrlwhvfbtOau8dJeIUsC92I4m/Dp51+9V8inRq1bAcA9TLutN3Q27OkM5HuaMMpSbo25/+ZenzJneRYxhQI0w08cG6d6C4pNNPvsSqwbxfGlH7y6+Kr6HIxHm/avqUr83Fa01cdmktykzCI/wXsRrZVdIwvTing=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LjCp83OS; arc=none smtp.client-ip=209.85.160.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-30cceb3be82so293402fac.2;
-        Wed, 27 Aug 2025 14:45:53 -0700 (PDT)
+	s=arc-20240116; t=1756331134; c=relaxed/simple;
+	bh=moYggT99h1EG8/bE3TxVdXK2XRp9prtRhgIAEzXgWJw=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=QLl9Ae75Sz8SpmyRsT2ubLqMQOZlOcAlSvyDPDOwJUGWWcsxSg4Gy+lLcqnmJs5Z+Htb5AvlXQ/mzmkC2qQZcyGNC6Uh/nHJMNV+F061YFhdipwpImZB1eTkiUJU/47gq0uYaqNFeu3j8Bs0Tmzv3kvtfKcITI0subPTT+FjIBo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=CjmuBQxR; arc=none smtp.client-ip=209.85.166.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f52.google.com with SMTP id ca18e2360f4ac-88432daa973so9733139f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 14:45:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756331153; x=1756935953; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=LUrauvtwu2W119rfRMW5e2S4jfehzM8m9wXYieQYqSo=;
-        b=LjCp83OSea3/LfQsBu8kiwIx0j0paZagFIjwjFHQCAYkjQRBUAd7uXxwv06qV3VFVU
-         i1ThMcWgDJaSeUWxLnCmTm2QaQhU0F+2LNqHgQ4fRcJ6KpUjbKajh8k5Bw8DuLNUTw6T
-         +xOZ9Hv2kiuPOEQfgZVOU9FatG6ShSqry9ecMX9oM9SHrJw5qYAJdYnMgE2Tn35j+1ez
-         cW2hoszA2GoJydkyffRTUcXLivuUpWJMrkv6eTmSBRMkSbRtoIrQam9P9YXV1gHJjmcc
-         NhRjafohfyk4OWGbX9qVpYSTi7Sbi0vwqGZP6rk8KXlo8u2zZfGZvlzo3gOwPl8edcuG
-         d/OQ==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1756331130; x=1756935930; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=pA+zU0ZC0y/SbU2udeBUP/+OQmH4g9eRHQrYtvBpENg=;
+        b=CjmuBQxRtT/d4O97qAiVXF68nYoY3jmmdCdDhjZo1espl5xCSW7Jrs3czBOQaK+/1Y
+         MBD2TFonX8VC2aX70Ha2RdI9NZUmk29UkX7VgiXKFNojGfNKLFb8vqGDU7z8mZpaOC03
+         VxVY1mO71dYz9TrieVBLicqv3KIg9w172wAYFIdWOyy5bHioMj/9MWRZYr9Ms2MfIZ7F
+         nmnklMNu9nPUaVP5q83wHwPuXZ0paH/X3i7n+CBASU21wHzzXS+r91Hj2ifTbZvLv+Ek
+         F6BVXgdNAtm1kWmY6Kosirx/D5Ry+/4Gyy9EPPVKzMf5j6701ahxhl7zHLg5gcUsu8ws
+         IgBQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756331153; x=1756935953;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LUrauvtwu2W119rfRMW5e2S4jfehzM8m9wXYieQYqSo=;
-        b=GjkGHHTRKbB+QaA4UZeaKzNcT8stqJlIBeFzVJnI+LBv2lIlskxIow3FIB0e5zgOCc
-         uyI3hfse+DB7Jsd7Qbv06xfmG55T0QRhoKeicsJpG1/i96Dfndl+Nw3Ao25pd+e5pNHP
-         Ks1NCfq/6rSeLOm+dogsSrqdGs8ZtwstujQYtN2fgnIC3JjYKVspkdFfVCGh8CFkvrEr
-         JCEo7lTS6G1l2ryk9IJ2JR/mnM+SnhJ9WrpQvEWjNfJoxk6OEAX/foiKpR11430Dnc0c
-         C1V+JfUN7Q0kntdNtxhvrdEkDhLMAV5lDAQ69/BymiqrwJfvgnHgR/pIxLM5R1vQXd5b
-         ImyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUBizLxaPXdXrSFix9C/UUnD2ptqFP43k9aNT96td+KzNMa3/NHmM/EfVsP0wQYobrqap1C7W9Uf0uogA==@vger.kernel.org, AJvYcCURZYp5vzGpvLvLwMpV1O2WYZ0TsBxO6o5T25A7k9/Sy0Rsg0Y6umNDEDr+/CBej+gggGsM3tFsQj+z1ZY=@vger.kernel.org, AJvYcCV5E/IY379sKOeXcFIjS8A3yWwnKdo6ofHIjSKakVYz8CHiUZZB47Z7wXofnhw/I6Gssjy82JoR@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4Ghkxs/GF3lnm+Bn+JpmFOiDvYVt8+rCLES0EW3m3Vkv3vGXz
-	JsdZRlsxScW5UYYY1EmU9zEgu5QAc+SxBMAUsVIwC5hFuvJQsruX1T81tEWi9eKsRDVEQOswC3D
-	2py0JeGAV1gl7Fjdhly5V4CWfHpplIbIm4Lo8
-X-Gm-Gg: ASbGncvGvNBA1LbfLgxG6ayIB81HgvQ8oamDC2Jak8xyFfhv/ylJvTMgpVjirCo8GRQ
-	zfDJifHnfGeR7o468D8DTj/ginFNHwosJn9sT8JabxzrvU2TicJDEj3W7sSSKBeq0/2m4Xz/sjb
-	kXYYYbUVHePZy9VT2pxSTVMhpKX7rbKAMvjMVs2ai3y6uFj/wkl+5jlBgGiilhKfWy1oYYM2uyd
-	gpVrhKl9gqMO2EnYbo=
-X-Google-Smtp-Source: AGHT+IHSW7spTIH9AFthG4zHmAsL6v/aQYPQ1pjUfKWPLeIfYjBzm0dV/Mg2kJB60nI6RAYzGPNT0kKbj3HrPkw2Da0=
-X-Received: by 2002:a05:690c:e0d:b0:71e:759c:f7bc with SMTP id
- 00721157ae682-71fdc43724cmr247244277b3.36.1756330788260; Wed, 27 Aug 2025
- 14:39:48 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1756331130; x=1756935930;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pA+zU0ZC0y/SbU2udeBUP/+OQmH4g9eRHQrYtvBpENg=;
+        b=ow4oscMEXps9G4h4+6iJII7XafrviXP9Q2lyp1gsFo8vIhWQUvXYkLv1Vl7NF8WqAA
+         IJTWCkY1LWnseFGLMZNzsBSE1I8VWDevtSd5AQCItMbkbgFbr1gs6a7+W+A+2yCsfi1j
+         uTbM3tu8Yqmj+XBWtwtK39eLxPjom9RmiK5n5mvYYoUeAT5i5drKhnt9QZM0kVhT0jTx
+         /V2gf2ojl6Pf5ZcJOgZZdC8YssuQcthaSZj7t17AWL6LRM0kvPgwlp5C4GSxoU5q4vMI
+         XJnr0J9wNvd6dR34Xs+gUdFvKPD1AFaIH+0Qsl0GnWjQ7IM7UjdPYIUhAEowZNnhzqWx
+         Ho/g==
+X-Forwarded-Encrypted: i=1; AJvYcCUTBoJHVxlyf0yjZFwn/RC4oBVi+jpQ1ZN8AGNkDZUXyFqcaFF8sVrt29Thm/T7DsjuSiWrYbeqcu10udg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzUvnPuVanuYDYQ7q/KFylvVHSZgNH1br1yBzUi1LFQP30j/Q1D
+	WOu2lQxHuWSl6JSeM+13r8kPK2vlkbBlHPP21+XjcoX6PEGdawQVC7kGLMnw3993TLw=
+X-Gm-Gg: ASbGncu4wZEbBwg3HOHPKKxLoIVrhT6qRR3mXIKyUXAox6BL01aqD8jEZvI0m8VKU8u
+	aoy12g8ntgAoUDSBB8DQJVii7SjoRL51uA4FToJ5HCKlz1iypcGNyoy2JilOOA4fJ5AJ6mokcBE
+	36QOd0XHOQUTfP29J9AitLeu61e0bXj773l7ou2tmIcOMz/RaYHnqcXnswxk2E1l8qVLP6nXcMi
+	fxiZ0VmTXbsMTP3ofNsu2XiAnbYThRNfrdGbMcdEHmaM/oOAbqgz3BUVCyYG6+ghCBjU8m8edve
+	ChkM5NCBiLky5Suy8DBQ2ClzC8SZ+ktiKEF6V+U7dB77h8zW4V3vQbJKJ2z0PfzeI42/PJWa0W5
+	GIquK2pX8J63K9SFvJes=
+X-Google-Smtp-Source: AGHT+IGy9ULcGdjoUvwyKJa7TjyN21QlUTRM/qFOEKNSy81yxzH/dzcresGtYnSny/HJAfCkpRGAXg==
+X-Received: by 2002:a05:6602:1649:b0:881:962e:31a2 with SMTP id ca18e2360f4ac-886bd102341mr3078982939f.1.1756331129671;
+        Wed, 27 Aug 2025 14:45:29 -0700 (PDT)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-886c8f09bbcsm929301839f.9.2025.08.27.14.45.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 27 Aug 2025 14:45:28 -0700 (PDT)
+Message-ID: <4b8eb795-239f-4f46-af4f-7a05056ab516@kernel.dk>
+Date: Wed, 27 Aug 2025 15:45:28 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250826195645.720-1-evans1210144@gmail.com> <CABPRKS_bKK-6ph1ETQ1pLsY_KPPQBnCyBsqfd9V2JrOQXHQT7Q@mail.gmail.com>
- <CA+KyXhKX1n6fsjfRE_ocu5rKsP3Yp4UoEGVyq_=TZwftnWLdkw@mail.gmail.com>
-In-Reply-To: <CA+KyXhKX1n6fsjfRE_ocu5rKsP3Yp4UoEGVyq_=TZwftnWLdkw@mail.gmail.com>
-From: Justin Tee <justintee8345@gmail.com>
-Date: Wed, 27 Aug 2025 14:39:25 -0700
-X-Gm-Features: Ac12FXzXuHU8HLBelj2Jx1McWTtlvi_S5_UeoTFZWxLoKoZQo9y3T6ZY7KpvyIg
-Message-ID: <CABPRKS-DZ9hY99QfVKuHNEt3m3AF2iLb7TP8j6+gPsGMux+Xdg@mail.gmail.com>
-Subject: Re: [PATCH] scsi: lpfc: Fix buffer free/clear order in deferred
- receive path
-To: John Evans <evans1210144@gmail.com>
-Cc: james.smart@broadcom.com, Justin Tee <justin.tee@broadcom.com>, 
-	James.Bottomley@hansenpartnership.com, martin.petersen@oracle.com, 
-	linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] io_uring/kbuf: fix infinite loop in
+ io_kbuf_inc_commit()
+From: Jens Axboe <axboe@kernel.dk>
+To: Qingyue Zhang <chunzhennn@qq.com>
+Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Suoxing Zhang <aftern00n@qq.com>
+References: <20250827114339.367080-1-chunzhennn@qq.com>
+ <tencent_000C02641F6250C856D0C26228DE29A3D30A@qq.com>
+ <fcfd5324-9918-4613-94b0-c27fb8398375@kernel.dk>
+Content-Language: en-US
+In-Reply-To: <fcfd5324-9918-4613-94b0-c27fb8398375@kernel.dk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi John,
+On 8/27/25 8:30 AM, Jens Axboe wrote:
+> On 8/27/25 5:44 AM, Qingyue Zhang wrote:
+>> In io_kbuf_inc_commit(), buf points to a user-mapped memory region,
+>> which means buf->len might be changed between importing and committing.
+>> Add a check to avoid infinite loop when sum of buf->len is less than
+>> len.
+>>
+>> Co-developed-by: Suoxing Zhang <aftern00n@qq.com>
+>> Signed-off-by: Suoxing Zhang <aftern00n@qq.com>
+>> Signed-off-by: Qingyue Zhang <chunzhennn@qq.com>
+>> ---
+>>  io_uring/kbuf.c | 9 +++++++--
+>>  1 file changed, 7 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/io_uring/kbuf.c b/io_uring/kbuf.c
+>> index 81a13338dfab..80ffe6755598 100644
+>> --- a/io_uring/kbuf.c
+>> +++ b/io_uring/kbuf.c
+>> @@ -34,11 +34,12 @@ struct io_provide_buf {
+>>  
+>>  static bool io_kbuf_inc_commit(struct io_buffer_list *bl, int len)
+>>  {
+>> +	struct io_uring_buf *buf, *buf_start;
+>> +
+>> +	buf_start = buf = io_ring_head_to_buf(bl->buf_ring, bl->head, bl->mask);
+>>  	while (len) {
+>> -		struct io_uring_buf *buf;
+>>  		u32 this_len;
+>>  
+>> -		buf = io_ring_head_to_buf(bl->buf_ring, bl->head, bl->mask);
+>>  		this_len = min_t(u32, len, buf->len);
+>>  		buf->len -= this_len;
+>>  		if (buf->len) {
+>> @@ -47,6 +48,10 @@ static bool io_kbuf_inc_commit(struct io_buffer_list *bl, int len)
+>>  		}
+>>  		bl->head++;
+>>  		len -= this_len;
+>> +
+>> +		buf = io_ring_head_to_buf(bl->buf_ring, bl->head, bl->mask);
+>> +		if (unlikely(buf == buf_start))
+>> +			break;
+>>  	}
+>>  	return true;
+>>  }
+> 
+> Maybe I'm dense, but I don't follow this one. 'len' is passed in, and
+> the only thing that should cause things to loop more than it should
+> would be if we do:
+> 
+> len -= this_len;
+> 
+> and this_len > len;
+> 
+> Yes, buf->len is user mapped, perhaps we just need to do:
+> 
+> diff --git a/io_uring/kbuf.c b/io_uring/kbuf.c
+> index f2d2cc319faa..569f4d957051 100644
+> --- a/io_uring/kbuf.c
+> +++ b/io_uring/kbuf.c
+> @@ -36,15 +36,18 @@ static bool io_kbuf_inc_commit(struct io_buffer_list *bl, int len)
+>  {
+>  	while (len) {
+>  		struct io_uring_buf *buf;
+> -		u32 this_len;
+> +		u32 buf_len, this_len;
+>  
+>  		buf = io_ring_head_to_buf(bl->buf_ring, bl->head, bl->mask);
+> -		this_len = min_t(int, len, buf->len);
+> -		buf->len -= this_len;
+> -		if (buf->len) {
+> +		buf_len = READ_ONCE(buf->len);
+> +		this_len = min_t(int, len, buf_len);
+> +		buf_len -= this_len;
+> +		if (buf_len) {
+>  			buf->addr += this_len;
+> +			buf->len = buf_len;
+>  			return false;
+>  		}
+> +		buf->len = 0;
+>  		bl->head++;
+>  		len -= this_len;
+>  	}
+> 
+> so that we operate on a local variable, and just set buf->len
+> appropriate for each buffer.
 
-Ah okay, then how about moving where we take the ctxp->ctxlock?
+I took a closer look and there's another spot where we should be
+using READ_ONCE() to get the buffer length. How about something like
+the below rather than the loop work-around?
 
-diff --git a/drivers/scsi/lpfc/lpfc_nvmet.c b/drivers/scsi/lpfc/lpfc_nvmet.c
-index fba2e62027b7..3d8ab456ced5 100644
---- a/drivers/scsi/lpfc/lpfc_nvmet.c
-+++ b/drivers/scsi/lpfc/lpfc_nvmet.c
-@@ -1243,7 +1243,7 @@ lpfc_nvmet_defer_rcv(struct nvmet_fc_target_port *tgtport,
-        struct lpfc_nvmet_tgtport *tgtp;
-        struct lpfc_async_xchg_ctx *ctxp =
-                container_of(rsp, struct lpfc_async_xchg_ctx, hdlrctx.fcp_req);
--       struct rqb_dmabuf *nvmebuf = ctxp->rqb_buffer;
-+       struct rqb_dmabuf *nvmebuf;
-        struct lpfc_hba *phba = ctxp->phba;
-        unsigned long iflag;
 
-@@ -1251,11 +1251,14 @@ lpfc_nvmet_defer_rcv(struct
-nvmet_fc_target_port *tgtport,
-        lpfc_nvmeio_data(phba, "NVMET DEFERRCV: xri x%x sz %d CPU %02x\n",
-                         ctxp->oxid, ctxp->size, raw_smp_processor_id());
+commit 7f472373b2855087ae2df9dc6a923f3016a1ed21
+Author: Jens Axboe <axboe@kernel.dk>
+Date:   Wed Aug 27 15:27:30 2025 -0600
 
-+       spin_lock_irqsave(&ctxp->ctxlock, iflag);
-+       nvmebuf = ctxp->rqb_buffer;
-        if (!nvmebuf) {
-                lpfc_printf_log(phba, KERN_INFO, LOG_NVME_IOERR,
-                                "6425 Defer rcv: no buffer oxid x%x: "
-                                "flg %x ste %x\n",
-                                ctxp->oxid, ctxp->flag, ctxp->state);
-+               spin_unlock_irqrestore(&ctxp->ctxlock, iflag);
-                return;
-        }
+    io_uring/kbuf: always use READ_ONCE() to read ring provided buffer lengths
+    
+    Since the buffers are mapped from userspace, it is prudent to use
+    READ_ONCE() to read the value into a local variable, and use that for
+    any other actions taken. Having a stable read of the buffer length
+    avoids worrying about it changing after checking, or being read multiple
+    times.
+    
+    Fixes: c7fb19428d67 ("io_uring: add support for ring mapped supplied buffers")
+    Link: https://lore.kernel.org/io-uring/tencent_000C02641F6250C856D0C26228DE29A3D30A@qq.com/
+    Reported-by: Qingyue Zhang <chunzhennn@qq.com>
+    Signed-off-by: Jens Axboe <axboe@kernel.dk>
 
-@@ -1264,10 +1267,9 @@ lpfc_nvmet_defer_rcv(struct
-nvmet_fc_target_port *tgtport,
-                atomic_inc(&tgtp->rcv_fcp_cmd_defer);
+diff --git a/io_uring/kbuf.c b/io_uring/kbuf.c
+index 81a13338dfab..394037d3f2f6 100644
+--- a/io_uring/kbuf.c
++++ b/io_uring/kbuf.c
+@@ -36,15 +36,18 @@ static bool io_kbuf_inc_commit(struct io_buffer_list *bl, int len)
+ {
+ 	while (len) {
+ 		struct io_uring_buf *buf;
+-		u32 this_len;
++		u32 buf_len, this_len;
+ 
+ 		buf = io_ring_head_to_buf(bl->buf_ring, bl->head, bl->mask);
+-		this_len = min_t(u32, len, buf->len);
+-		buf->len -= this_len;
+-		if (buf->len) {
++		buf_len = READ_ONCE(buf->len);
++		this_len = min_t(u32, len, buf_len);
++		buf_len -= this_len;
++		if (buf_len) {
+ 			buf->addr += this_len;
++			buf->len = buf_len;
+ 			return false;
+ 		}
++		buf->len = 0;
+ 		bl->head++;
+ 		len -= this_len;
+ 	}
+@@ -159,6 +162,7 @@ static void __user *io_ring_buffer_select(struct io_kiocb *req, size_t *len,
+ 	__u16 tail, head = bl->head;
+ 	struct io_uring_buf *buf;
+ 	void __user *ret;
++	u32 buf_len;
+ 
+ 	tail = smp_load_acquire(&br->tail);
+ 	if (unlikely(tail == head))
+@@ -168,8 +172,9 @@ static void __user *io_ring_buffer_select(struct io_kiocb *req, size_t *len,
+ 		req->flags |= REQ_F_BL_EMPTY;
+ 
+ 	buf = io_ring_head_to_buf(br, head, bl->mask);
+-	if (*len == 0 || *len > buf->len)
+-		*len = buf->len;
++	buf_len = READ_ONCE(buf->len);
++	if (*len == 0 || *len > buf_len)
++		*len = buf_len;
+ 	req->flags |= REQ_F_BUFFER_RING | REQ_F_BUFFERS_COMMIT;
+ 	req->buf_list = bl;
+ 	req->buf_index = buf->bid;
+@@ -265,7 +270,7 @@ static int io_ring_buffers_peek(struct io_kiocb *req, struct buf_sel_arg *arg,
+ 
+ 	req->buf_index = buf->bid;
+ 	do {
+-		u32 len = buf->len;
++		u32 len = READ_ONCE(buf->len);
+ 
+ 		/* truncate end piece, if needed, for non partial buffers */
+ 		if (len > arg->max_len) {
 
-        /* Free the nvmebuf since a new buffer already replaced it */
--       nvmebuf->hrq->rqbp->rqb_free_buffer(phba, nvmebuf);
--       spin_lock_irqsave(&ctxp->ctxlock, iflag);
-        ctxp->rqb_buffer = NULL;
-        spin_unlock_irqrestore(&ctxp->ctxlock, iflag);
-+       nvmebuf->hrq->rqbp->rqb_free_buffer(phba, nvmebuf);
- }
-
-Regards,
-Justin
+-- 
+Jens Axboe
 
