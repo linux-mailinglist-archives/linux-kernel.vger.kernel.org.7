@@ -1,194 +1,308 @@
-Return-Path: <linux-kernel+bounces-787471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C9ADB376F2
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 03:31:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C61E9B376F8
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 03:34:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F46B2A7495
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 01:31:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B14B61BA0296
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 01:34:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B9B81A8F84;
-	Wed, 27 Aug 2025 01:31:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A3B9189919;
+	Wed, 27 Aug 2025 01:34:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UyRF7U3D"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="rQ+HL9IS"
+Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2076.outbound.protection.outlook.com [40.107.102.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 496A930CD95;
-	Wed, 27 Aug 2025 01:30:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756258259; cv=none; b=gdl6f3RzqQOXZgWzaDPNBFpLigIbM4a/CSScctn5N9Jgq7xALocDxyHBACCCCgKi+DB15/IYCN97NoFnEl9qv99RSiUvMH/V2DInEUiDiHfnFlHZ9S69Dy8QwNcnlubyHX4D++apjO0W71c2nXabXxLKwdVU+0xMa/MjsaCeHM8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756258259; c=relaxed/simple;
-	bh=Ma6zPkLuZOyhRNH2DiEPSmnzmAIv+f//eK9q3sN1l2w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PCuWGjxOyxVeQpE1pLah6LWOEdXf1CaGwiifLzm/ubVm70B4KXz8wkfAIgF+7g0JF8OGrWTgDx+3aYTrOu6nioZIR1KCtXV+lzyxD3Wpoa8wX1SFz5qqDZ1H1ipfuSg2nygjye+QVuxrIfxnC+nj+iYtlGHTyMvfaOnhFDvCkjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UyRF7U3D; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756258258; x=1787794258;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=Ma6zPkLuZOyhRNH2DiEPSmnzmAIv+f//eK9q3sN1l2w=;
-  b=UyRF7U3D71O8kAKQDmlja0uc3o6BXaN0ij/5c/SwgJ9iphi4YAGZZ4Q4
-   c6bpMs5AWHZEGI51b7hmFj7O9k1pdx6KwgXBMhSvj8pnoLbYqk5Pj/PXH
-   urg+P9Pzg+DGSqMGkDsNVD1YJaQPGl4r8ODGIw+G9UpmWeA1j7YMAv12Z
-   h+ecGinoHAgkWkldE9EzrIzUPRvPJYCF8meSnmJJKFI4NmUenImzMDZQC
-   XsAngO26LRraVsF3LEQ178ICJ3XqsXKzFRM2sn2lHrpgQiRbQcZgfyctg
-   hTVL3WWV/O4NUdBxSubeu8AgiO+mECPTXGLo1dx7GTgWzlbAWirDOrs/M
-   g==;
-X-CSE-ConnectionGUID: e0zYEug7TXKomfftKR1spA==
-X-CSE-MsgGUID: MCl3OjtrQzarUUu7OkwS2Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="62344906"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="62344906"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2025 18:30:57 -0700
-X-CSE-ConnectionGUID: W9YuCKEqSw24YZWgGcvdYQ==
-X-CSE-MsgGUID: TiCAk7ScQg+A51i62HIycg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,214,1751266800"; 
-   d="scan'208";a="174048790"
-Received: from binbinwu-mobl.ccr.corp.intel.com (HELO [10.124.233.111]) ([10.124.233.111])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2025 18:30:54 -0700
-Message-ID: <135fa768-c1f5-4936-afa5-509d66364241@linux.intel.com>
-Date: Wed, 27 Aug 2025 09:30:51 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEBC44A33;
+	Wed, 27 Aug 2025 01:34:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.76
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756258461; cv=fail; b=dOkdV8fRAADq/RhqX8ulo4Z3dgpce6nTK6J8YRMocMYB7CK53AncL3+bsJ9FyB8CAnN1S+kGwka4VLsI1Fb7NJ2eXwvzOjdz2wdzbMRGUyEGuxl+xoRuhIm6ScfykKUfAx+lDwTMV1EX/YPNXcwMahpP7N08rpyYCltFx85sBvc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756258461; c=relaxed/simple;
+	bh=AeRorgpAMWhd28YBqI1mxH+IpLy/aVY2RtJPtAIAqH4=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=FTBl2E6XsIXr7eiEcTrh4ctG6GDS24jBW2ny/5533YFCoayPFl+UDcagOdKqIpQ+zF5AMcZkUkmirtHVA2xQ3SPK+bvPessEtk0GZ8b3G10iUIb+W3NxouvxqCInITNbO7mM0pjMW8GYHXONeS3dvToOcFeAjfEC4HaOF2mj/gM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=rQ+HL9IS; arc=fail smtp.client-ip=40.107.102.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=N+ejXUlo6gt/44PHdlqFuJ92qjgvpB2ZXKr73m78bjvFW600ynP7DwfnB9RIUXJQFc/BhkbX+8aZR9IzNRlks8TwgCoiWtJ9arByEVJEdD7mKx68xIFZct0tPuvy3gEGOcsZDjYgvmFmAsEtohm8kR1B12Xw2kERM/QPhVXtdEzSMkf0Fa5jyCF2an3v5jX6jG+CkisjdKvWpBgTVClo7VGWjCfk+J7AD1qzpvfdqlfJG+iJFAB76ZNtO/jVCfhEhN28F3HK3rZgwQrpk3KVX5lIlcAzEqMbxDuiCm9YKXjHIaKVQ9i2y+Nm1Lbz4VVKU680T9nFB6wtnO1WqgAAUQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=3Zkb1n+AGZU1/djRmLQNf5xYqssYKVc9BvK1hgmnHUY=;
+ b=mx7p5G/Wx4JdcgbBFVAfKdF9V1eoBtS8qcoq9QkIUR4FeNy5USPiaL3sL+2ibZ3+8becUd7lYCzTlyVg+qRwSxP65NZPo0uAPvFzizTu8M1WDPslFJUZ6he9aEFmRPfzCWbHpOIh7lkx04AChTvo2eZtnqRJ1e6waxVrrOL9yQuijzergKEkvK9ktsWlnPyWmjD9mNWP8zZXMrnPvSKA/V6F8y49uQCZ7aeB6MtMdWHW5f/HxvcPd+FWIQH62oBh/fMuDKdF47abIbkCSPZ4AA4bDDPI3yN7tikO2tmLNkVC/73INzonaYqNekAcxXEay7AVnjQOwpmuDeOUqOqk/Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3Zkb1n+AGZU1/djRmLQNf5xYqssYKVc9BvK1hgmnHUY=;
+ b=rQ+HL9ISwOO55vvSPdqP6Ao9Agn5yfCIfgqJUicyaxBXbX0AQXK+XkE/Ip/sThAS/2ljtK/JR3XhwxE5sHSLWXFOTOG4bHWUDSjcWlhM0D3e7TtpMppzUtNSzwBdbUK9/Jnxu2AdxKTw0pWFXWUhG7wWzLgro7pD1fqZodEUkKh0P5IzPuZ6bPAOVCwHPbbxBYF932XJlKUv4myhDumbD/U95oZ3z3t2jlJqkfTg3uvDlyLjfht39lRim3yArKYW3ju0OPJZ+wibxOKs7XFhUhNaoksTeH/p2htnuu6OooP1QiBRMHb0/S1zo9OcVgqTmFCgrhW1LCMdhR9ctLxnhg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from LV2PR12MB5968.namprd12.prod.outlook.com (2603:10b6:408:14f::7)
+ by DM4PR12MB5986.namprd12.prod.outlook.com (2603:10b6:8:69::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.21; Wed, 27 Aug
+ 2025 01:34:16 +0000
+Received: from LV2PR12MB5968.namprd12.prod.outlook.com
+ ([fe80::e6dd:1206:6677:f9c4]) by LV2PR12MB5968.namprd12.prod.outlook.com
+ ([fe80::e6dd:1206:6677:f9c4%6]) with mapi id 15.20.9073.010; Wed, 27 Aug 2025
+ 01:34:16 +0000
+Message-ID: <9adb92d4-6063-4032-bf76-f98dcfe2c824@nvidia.com>
+Date: Tue, 26 Aug 2025 18:34:13 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/8] gpu: nova-core: firmware: add support for common
+ firmware header
+To: Alexandre Courbot <acourbot@nvidia.com>, Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>,
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>
+Cc: Alistair Popple <apopple@nvidia.com>,
+ Joel Fernandes <joelagnelf@nvidia.com>, Timur Tabi <ttabi@nvidia.com>,
+ rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+ nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+References: <20250826-nova_firmware-v2-0-93566252fe3a@nvidia.com>
+ <20250826-nova_firmware-v2-2-93566252fe3a@nvidia.com>
+Content-Language: en-US
+From: John Hubbard <jhubbard@nvidia.com>
+In-Reply-To: <20250826-nova_firmware-v2-2-93566252fe3a@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SJ0PR05CA0038.namprd05.prod.outlook.com
+ (2603:10b6:a03:33f::13) To LV2PR12MB5968.namprd12.prod.outlook.com
+ (2603:10b6:408:14f::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] KVM: TDX: Force split irqchip for TDX at irqchip creation
- time
-To: Sagi Shahar <sagis@google.com>
-Cc: Sean Christopherson <seanjc@google.com>,
- Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>, Ira Weiny <ira.weiny@intel.com>,
- "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
- kvm@vger.kernel.org, x86@kernel.org
-References: <20250826213455.2338722-1-sagis@google.com>
-Content-Language: en-US
-From: Binbin Wu <binbin.wu@linux.intel.com>
-In-Reply-To: <20250826213455.2338722-1-sagis@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV2PR12MB5968:EE_|DM4PR12MB5986:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8ee1be6c-96c3-41d0-de78-08dde509d5ef
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|376014|7416014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?OE1oQmdYWU0vTmFITlZDenFydzZ5RWZoVGIrMzFTTDhHRnk1SU1EZjZ3TjNQ?=
+ =?utf-8?B?WXc0cTNuc3plTHVIcjNZeThBRnZIME0xdUR4MjlUWEI3NTFsc21XaTRSMld0?=
+ =?utf-8?B?Mk5heFR0S0IxNU51UFh0SFhVaDhGTnYzRmluUUs0TWhwdnQrNlFrMFJyRjVN?=
+ =?utf-8?B?eE1PWFNhU2xqZXRKZzNYVkJVZzAzckIwcExIc0xhTUQ0U2wySGZNTDg3dmJx?=
+ =?utf-8?B?RXpORmFaeEs5WlROWVhqdStjeW94TXdQaFdpZDBxWXptUE1vc2dUYjdmTUdm?=
+ =?utf-8?B?eUxZRTdlMmttOHB2QmVvMGlGSURxTVdXVmhLbTU1dHBCbWNPMnhWYzhkWFdP?=
+ =?utf-8?B?cVBBUlk1RTVBNmtyNUthdnFPOGg1cjZiK3ZSSTU1QXVXdU0wYmFpdkNIWk8v?=
+ =?utf-8?B?S3dhZzZNNWhER25lOWFXSlJyVi9TNG1PbHhSRE9lTERKQnBBTjRlOTl6SEFQ?=
+ =?utf-8?B?bmtva1ZGMHZFL3RNcS9mQjF2cm5XVVY0b1k0ZjgwMFFUazYySmp5bHZJZjNq?=
+ =?utf-8?B?WlFDaVlmbHo1eDVBTlJ3NktVb0U1VGJmeUxXcks4QkoyWXVSK0pNdHFmYXcv?=
+ =?utf-8?B?MzFVd0FvbXBGQ0FNWEZSOXZwcHhwdHF1OEdHVjkxYmdmdG5xWUYyZk9UUm42?=
+ =?utf-8?B?cFIzMWNndW95a3hMR3BwWkp1NjRObWxIMXU2dGRNdmt4eXFodlZrL2hpTHhM?=
+ =?utf-8?B?WjVuanZOMlEwQUZkQWprMUd6cGU1YUFrRTN6UVBIMVRvelRCRkFxSkN3R1BG?=
+ =?utf-8?B?MTJhMElvQ2VweTI1ZmVWR2d1NW5yRU5kb2FpdERRZkNCTHJ4VkxlTjRMWkc5?=
+ =?utf-8?B?Ti9CaDg4V1phMUxmL2tBVEU3RkZvUUNsUGNFVnQ2NzlISFRzY0F2RXI3dXND?=
+ =?utf-8?B?Y255Z0g4Q3BFdVZRYldmMG9FTEtieG51aWpadzhIR2dvSmVoMUJYTktpZTZ1?=
+ =?utf-8?B?SUxTWGZzWGpRQjBoL3BDMURZMXMzZFlYeXZVNWJGZmxTUExDVlIyblh0QndL?=
+ =?utf-8?B?NHNtNHhGVGpaZ1NVU1VhaUMzbkRrTTluTzBmcGpES21RMEJlTUtHMUNldnNR?=
+ =?utf-8?B?cTFyOUg0U0l6MXo3cXl0NkU2RzVHL2JqbzZYMDhJY1RRM0JvRjVrNy81MGVK?=
+ =?utf-8?B?eTdpdFNPMmZzd05pNFpvd2xWRG1Ra2M1eTFZaW9PSS95YU1tWlBvbm45Vm10?=
+ =?utf-8?B?M3dFM2VIZ3lxWmVxRGhuYVpRYkhSdDlZbDhsakoxRm9TZGtubGZHYytuUS9N?=
+ =?utf-8?B?Zm9hcHNweS8vVTl1OGdpMHk3NkZWUXNBNWJqakVJdTdqQTRsRGUxeXk1Q05O?=
+ =?utf-8?B?MjYwWWE2Q2hMc0kwVlQ2bld6VCt3V2hlV2hzZnpKa3J2ME5rNnFHNit5bXZU?=
+ =?utf-8?B?cjF2NUJuZ3RBNURZTW8rbkpVb25kazdjRU1Cc2FtOXMxMkk4Sng1aHBHNjZE?=
+ =?utf-8?B?Wndqa1ZZQmFSU014NU1XT09Nd3NsY3NYS0dmdFQycy84ZGlqZGlyS2Y2Tkp5?=
+ =?utf-8?B?N0QzdVlyM0xOZUlTWmlLUVpHeDFLOTVWd1VMbzMvTVlWNjlzWHJndm5rMS9Q?=
+ =?utf-8?B?OHlzei9HbWlKTC9LdW9NOXNSc1ovZTYvVDBZNEhSOGRrRmpObmFMbzVLbUtv?=
+ =?utf-8?B?VjcwWDdKZEZ6UndTVEI5UVdWenV0TnJScjlzeUJLZmdMVitiR0pqNzNtMGhj?=
+ =?utf-8?B?Y3k4N0hxdGs0RmozSGFGVWMrL0w4b1dlcFg3cmdWNEpMRno2Q3hwaXZ5NTYw?=
+ =?utf-8?B?M1RFdjRsRW1xd2JOeTBSWVZGTEgza3lSMjhEbFdEODVzV1NQdmc2ZjFnbmJy?=
+ =?utf-8?B?ZjdJa1c5UUVtOUJySU1BcDhMQ1k5SlROckdNWVB5SUloRit0Z2FmRTZvNlMv?=
+ =?utf-8?B?NzY0YzF5NXlLa2NmMW5UZ25GVEMrcTFGSXRnVTlkZUFqbWUyWExkZ1lWRXpW?=
+ =?utf-8?B?YWMyS245bHRMRy91VGdCdEJDL2RqOVdlS1RUYzlDa3NJZnlZSjF2TVpjbmFF?=
+ =?utf-8?B?SVpTRm10SjJnPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV2PR12MB5968.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?dHFXeEJJamhNTXc0RWtuSnNpNmxuR2tIcW93RlZmcmtIWEZ5eDdhYTYwRnNj?=
+ =?utf-8?B?RkJZUXF2bUJHNGJqMGZYcG1lbWtURUxaUVpLcnRNVEFxdXMyRFZPaEsydC9m?=
+ =?utf-8?B?dGdLc3FQZzl4S1JKQ01vQ2JhODJVaUx3WVphWDMwendJZGNuS0FYWmE3OWFL?=
+ =?utf-8?B?WmJvMXVpYkRmbDkzN2lNeE90Y1ZZZ1VvcVJVcVBWVUxDZlFYL1d2VmUyOTVt?=
+ =?utf-8?B?cWRINCtsMXhiTUJkRjA5NzU0RkJTSFZ5dk50Y29aS1N2Vks3VVl6aUl3T1la?=
+ =?utf-8?B?T1hLWE1pNEpxczFwL1crZWVXRTBqU2dUTFJBUE5TRXhhcW1GL2JXVncyaUkv?=
+ =?utf-8?B?TFQvaEVKZExXc0JjU0VaYVdXZjJlMTNFQk9lellIZFhVT1ZsZDFET1o4VWsv?=
+ =?utf-8?B?UzFaNWtCNTk0aGh1VERILzBqUXUzanZ3Vy92cVk2NWRmT2UxbHlrSFVTUmFk?=
+ =?utf-8?B?Y2xaVVR4dHZ3ZUVNZndiTWFEMWl5ZW1WbndmVDVObmdzdUtpMVhtSGRQSUVw?=
+ =?utf-8?B?R2pvOTBicWFXNUxWakw2bFo4ajBjbXgxZHNPeU13bERBTzZHVG5nMTFwVGVQ?=
+ =?utf-8?B?ZVpJbHZOUlBST3BzdzRaVWdvZG51QmVwUXZUblVnOG1tM1hKUHdYMjZBZkQ4?=
+ =?utf-8?B?RTk4dXVlQnZmYkxHTWxFd09raEQ1bzl2V21WQlVTZ0RwNlpEUDJJK0kyb0N1?=
+ =?utf-8?B?UlRUZW5ER1pkK3ZGcENJeU12U1doeGl3SFJyQklUWWlNTVJDeEhCSEI4T2VK?=
+ =?utf-8?B?NTBPMXcyaGRRQWU5RE5CR2hPTmZIbDlqNzlGRFZ2YmVRZll0STlWYzdZY1lw?=
+ =?utf-8?B?dW9SWUpvRks5R2V5WHVLMjQwbmQ0RkJ6V2psL0RPZ3gyRG5NTFZId0xzN0pD?=
+ =?utf-8?B?T2JGMnYrYXU4Wm9JTmcyUzBRWC9jcTBMemxOM3Z6bjU5eW41ZkRrdkU0NkJt?=
+ =?utf-8?B?bTE2WWZKbEtRM04rTCtsVzl6ZjhoSUlUMmVXQTZjdmxhb3VWSDRJYnRUOW10?=
+ =?utf-8?B?VEZPNmVsL0h2WkVjQnRBMzk5MXdGa3JpR0liSGxNdjNOZS9wQ0FVZFVPS24y?=
+ =?utf-8?B?TnJNNTVMYkMrY21Lb2V4eDB5TUxvaHVjdUJ5ektHeFdGVUt3MnhKWUhsN1Ey?=
+ =?utf-8?B?NlZ0WXMzL2hlNVp2TElYVEcwWncySnlZeFowbFJzOW5EdWQwYWs1OWorSFU5?=
+ =?utf-8?B?ME8yUDRmWnRuTmIrMUFDQmZtWmxPTE00NkF0Vm02bTg4ZEpITmZlbzk5ODFL?=
+ =?utf-8?B?eFlTS1drRUVBOXdqb1crWHZCZmd0TGpXcjdnRDRaeFBwa3dtL1pMUHl3K0tG?=
+ =?utf-8?B?SGtvZDNtVG5KTitWUCszWERQT1JlRHZMaDB0c2JNODIwK2dJR2ZneVJubmR1?=
+ =?utf-8?B?VUpMN3FPOWUxdXJYNmVMczBNY1haOXNHVHo1RG5GNmlPYnZ2NXU5bkZsSVZz?=
+ =?utf-8?B?dFZZU3FCU01TQzQxVm5xQkp3UTFWMEtNREYwRXNoY2ZLK0svKzVMd1F2WEpq?=
+ =?utf-8?B?ZUNQdDFVazkrK3Y4dHVDQWtOR2lmN2RiN0dyeUJmTzJCdnEzSzNsdDhWU3VF?=
+ =?utf-8?B?K2lLOHpFWGVmdm92TVhaMFFqeTl5aUJteUYvbW9PY0dKUnBjcWJYSFBNaWJL?=
+ =?utf-8?B?VVg5L1FNZmNTUjRqano0aWVkT1ZHMmN1S3JsMmY4aExoQXV1dm9rdWI5a04r?=
+ =?utf-8?B?QjhzckFmMzVVRUl1OS8wa01PYXkzNDF1QmxHTnRpV3NUbzFXa29TTmw3MXlJ?=
+ =?utf-8?B?T1FPeWxBOWJHb2YrOTR3b1JHQnRGVmd6MTJKQ3hCZlFuTjdDejZ6dGdKYThT?=
+ =?utf-8?B?d1BvTnpzYUdmWEdsY0JBbTBrSlo0bk5jMyswR0FuRXBpT1BKNzhkY1NRMW5k?=
+ =?utf-8?B?MnVLWkpPZ01hZlg2Zm9RZUJ6MEJxdGpOR2hsTGlYMm14RjE3Z0FIQndxTWRw?=
+ =?utf-8?B?cTEzNXE0cVBpNUdGTGNLSjZhd1ZrbFg0ZmE0b0I0M0orNmIyUlBIWm5tbzg2?=
+ =?utf-8?B?TFVUUm5jcGFHQUEwb29GZXVsc0xLUWIvcTdqbXZIMytXY3Q2dVlST3MzRjNK?=
+ =?utf-8?B?QnJNTzd0L21jRWhqdy96djdtMHdpeVVmMkhDKzNWU3Y4UzVJYVNQSzVSOEdt?=
+ =?utf-8?Q?maO0m2X70G1JJm8j15fibTlQK?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8ee1be6c-96c3-41d0-de78-08dde509d5ef
+X-MS-Exchange-CrossTenant-AuthSource: LV2PR12MB5968.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2025 01:34:16.4984
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: WhJ70gXKaw5V7oDtUb+NXVAS8/0IZfwSpjQxqpf4WDoTFFBdVx8vRDVYxKL0cJp37SgX+IxA1jEV0xP2Ngm2nQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB5986
 
-
-
-On 8/27/2025 5:34 AM, Sagi Shahar wrote:
-> TDX module protects the EOI-bitmap which prevents the use of in-kernel
-> I/O APIC. See more details in the original patch [1]
->
-> The current implementation already enforces the use of split irqchip for
-> TDX but it does so at the vCPU creation time which is generally to late
-                                                                 ^
-                                                                 too
-> to fallback to split irqchip.
->
-> This patch follows Sean's recomendation from [2] and move the check if
-
-recomendation -> recommendation
-
-> I/O APIC is supported for the VM at irqchip creation time.
->
-> [1] https://lore.kernel.org/lkml/20250222014757.897978-11-binbin.wu@linux.intel.com/
-> [2] https://lore.kernel.org/lkml/aK3vZ5HuKKeFuuM4@google.com/
->
-> Suggested-by: Sean Christopherson <seanjc@google.com>
-> Signed-off-by: Sagi Shahar <sagis@google.com>
+On 8/25/25 9:07 PM, Alexandre Courbot wrote:
+> Several firmware files loaded from userspace feature a common header
+> that describes their payload. Add basic support for it so subsequent
+> patches can leverage it.
+> 
+> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
 > ---
->   arch/x86/include/asm/kvm_host.h |  3 +++
->   arch/x86/kvm/vmx/tdx.c          | 15 ++++++++-------
->   arch/x86/kvm/x86.c              | 10 ++++++++++
->   3 files changed, 21 insertions(+), 7 deletions(-)
->
-> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-> index f19a76d3ca0e..cb22fc48cdec 100644
-> --- a/arch/x86/include/asm/kvm_host.h
-> +++ b/arch/x86/include/asm/kvm_host.h
-> @@ -1357,6 +1357,7 @@ struct kvm_arch {
->   	u8 vm_type;
->   	bool has_private_mem;
->   	bool has_protected_state;
-> +	bool has_protected_eoi;
->   	bool pre_fault_allowed;
->   	struct hlist_head *mmu_page_hash;
->   	struct list_head active_mmu_pages;
-> @@ -2284,6 +2285,8 @@ void kvm_configure_mmu(bool enable_tdp, int tdp_forced_root_level,
->   
->   #define kvm_arch_has_readonly_mem(kvm) (!(kvm)->arch.has_protected_state)
->   
-> +#define kvm_arch_has_protected_eoi(kvm) (!(kvm)->arch.has_protected_eoi)
-> +
->   static inline u16 kvm_read_ldt(void)
->   {
->   	u16 ldt;
-> diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
-> index 66744f5768c8..8c270a159692 100644
-> --- a/arch/x86/kvm/vmx/tdx.c
-> +++ b/arch/x86/kvm/vmx/tdx.c
-> @@ -658,6 +658,12 @@ int tdx_vm_init(struct kvm *kvm)
->   	 */
->   	kvm->max_vcpus = min_t(int, kvm->max_vcpus, num_present_cpus());
->   
-> +	/*
-> +	 * TDX Module doesn't allow the hypervisor to modify the EOI-bitmap,
-> +	 * i.e. all EOIs are accelerated and never trigger exits.
-> +	 */
-> +	kvm->arch.has_protected_eoi = true;
-> +
->   	kvm_tdx->state = TD_STATE_UNINITIALIZED;
->   
->   	return 0;
-> @@ -671,13 +677,8 @@ int tdx_vcpu_create(struct kvm_vcpu *vcpu)
->   	if (kvm_tdx->state != TD_STATE_INITIALIZED)
->   		return -EIO;
->   
-> -	/*
-> -	 * TDX module mandates APICv, which requires an in-kernel local APIC.
-> -	 * Disallow an in-kernel I/O APIC, because level-triggered interrupts
-> -	 * and thus the I/O APIC as a whole can't be faithfully emulated in KVM.
-> -	 */
-> -	if (!irqchip_split(vcpu->kvm))
-> -		return -EINVAL;
-> +	/* Split irqchip should be enforced at irqchip creation time. */
-> +	KVM_BUG_ON(irqchip_split(vcpu->kvm), vcpu->kvm);
+>  drivers/gpu/nova-core/firmware.rs | 62 +++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 62 insertions(+)
+> 
+> diff --git a/drivers/gpu/nova-core/firmware.rs b/drivers/gpu/nova-core/firmware.rs
+> index 2931912ddba0ea1fe6d027ccec70b39cdb40344a..ccb4d19f8fa76b0e844252dede5f50b37c590571 100644
+> --- a/drivers/gpu/nova-core/firmware.rs
+> +++ b/drivers/gpu/nova-core/firmware.rs
+> @@ -4,11 +4,13 @@
+>  //! to be loaded into a given execution unit.
+>  
+>  use core::marker::PhantomData;
+> +use core::mem::size_of;
+>  
+>  use kernel::device;
+>  use kernel::firmware;
+>  use kernel::prelude::*;
+>  use kernel::str::CString;
+> +use kernel::transmute::FromBytes;
+>  
+>  use crate::dma::DmaObject;
+>  use crate::falcon::FalconFirmware;
+> @@ -150,6 +152,66 @@ fn no_patch_signature(self) -> FirmwareDmaObject<F, Signed> {
+>      }
+>  }
+>  
+> +/// Header common to most firmware files.
+> +#[repr(C)]
+> +#[derive(Debug, Clone)]
+> +struct BinHdr {
+> +    /// Magic number, must be `0x10de`.
 
-Should be
-KVM_BUG_ON(!irqchip_split(vcpu->kvm), vcpu->kvm);
+How about:
 
->   
->   	fpstate_set_confidential(&vcpu->arch.guest_fpu);
->   	vcpu->arch.apic->guest_apic_protected = true;
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index a1c49bc681c4..a846dd3dcb23 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -6966,6 +6966,16 @@ int kvm_arch_vm_ioctl(struct file *filp, unsigned int ioctl, unsigned long arg)
->   		if (irqchip_in_kernel(kvm))
->   			goto create_irqchip_unlock;
->   
-> +		/*
-> +		 * Disallow an in-kernel I/O APIC for platforms that has protected
-> +		 * EOI (such as TDX). The hypervisor can't modify the EOI-bitmap
-> +		 * on these platforms which prevents the proper emulation of
-> +		 * level-triggered interrupts.
-> +		 */
-> +		r = -ENOTTY;
-> +		if (kvm_arch_has_protected_eoi(kvm))
-> +			goto create_irqchip_unlock;
+       /// Magic number, required to be equal to BIN_MAGIC
+
+...and see below.
+
+> +    bin_magic: u32,
+> +    /// Version of the header.
+> +    bin_ver: u32,
+> +    /// Size in bytes of the binary (to be ignored).
+> +    bin_size: u32,
+> +    /// Offset of the start of the application-specific header.
+> +    header_offset: u32,
+> +    /// Offset of the start of the data payload.
+> +    data_offset: u32,
+> +    /// Size in bytes of the data payload.
+> +    data_size: u32,
+> +}
 > +
->   		r = -EINVAL;
->   		if (kvm->created_vcpus)
->   			goto create_irqchip_unlock;
+> +// SAFETY: all bit patterns are valid for this type, and it doesn't use interior mutability.
+> +unsafe impl FromBytes for BinHdr {}
+> +
+> +// A firmware blob starting with a `BinHdr`.
+> +struct BinFirmware<'a> {
+> +    hdr: BinHdr,
+> +    fw: &'a [u8],
+> +}
+> +
+> +#[expect(dead_code)]
+> +impl<'a> BinFirmware<'a> {
+> +    /// Interpret `fw` as a firmware image starting with a [`BinHdr`], and returns the
+> +    /// corresponding [`BinFirmware`] that can be used to extract its payload.
+> +    fn new(fw: &'a firmware::Firmware) -> Result<Self> {
+> +        const BIN_MAGIC: u32 = 0x10de;
+
+Let's promote this to approximately file scope and put it just
+above the BinHdr definition. Then we end up with one definition
+at the ideal scope, and the comment docs take better care of 
+themselves.
+
+> +        let fw = fw.data();
+> +
+> +        fw.get(0..size_of::<BinHdr>())
+> +            // Extract header.
+> +            .and_then(BinHdr::from_bytes_copy)
+> +            // Validate header.
+> +            .and_then(|hdr| {
+> +                if hdr.bin_magic == BIN_MAGIC {
+> +                    Some(hdr)
+> +                } else {
+> +                    None
+> +                }
+> +            })
+> +            .map(|hdr| Self { hdr, fw })
+> +            .ok_or(EINVAL)
+> +    }
+> +
+> +    /// Returns the data payload of the firmware, or `None` if the data range is out of bounds of
+> +    /// the firmware image.
+> +    fn data(&self) -> Option<&[u8]> {
+> +        let fw_start = self.hdr.data_offset as usize;
+> +        let fw_size = self.hdr.data_size as usize;
+> +
+> +        self.fw.get(fw_start..fw_start + fw_size)
+
+This worries me a bit, because we never checked that these bounds
+are reasonable: within the range of the firmware, and not overflowing
+(.checked_add() for example), that sort of thing.
+
+Thoughts?
+
+> +    }
+> +}
+> +
+>  pub(crate) struct ModInfoBuilder<const N: usize>(firmware::ModInfoBuilder<N>);
+>  
+>  impl<const N: usize> ModInfoBuilder<N> {
+> 
+
+thanks,
+-- 
+John Hubbard
 
 
