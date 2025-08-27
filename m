@@ -1,293 +1,341 @@
-Return-Path: <linux-kernel+bounces-788646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0856B387D0
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 18:34:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00B22B387D4
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 18:35:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2213462391
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 16:34:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED52D1BA5B72
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 16:35:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 390F429B799;
-	Wed, 27 Aug 2025 16:34:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25E862DEA74;
+	Wed, 27 Aug 2025 16:34:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="Q3h0u66i"
-Received: from AM0PR02CU008.outbound.protection.outlook.com (mail-westeuropeazon11013004.outbound.protection.outlook.com [52.101.72.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="mzNGsLP+"
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F11D20A5EA
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 16:34:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.72.4
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756312462; cv=fail; b=GqWRZyZh/FZrt9x/tRYgPDVfnhmVT2BVdiTv2/Qyc5RzIvop5jxgbJSWf4BlviNM3kFW9YqtsQwBt1V24VWCS4KwbV/CN5p33Rf/jXqozHf71LZE51lPmvz7s5vhNj1AcLbrGof5016acfz3uucHRxTFiPh0iafeY84BTxzzDFQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756312462; c=relaxed/simple;
-	bh=EL3PRkTXvMBHj2DlBNrpZbbWfUdc1n8z4fL/x7bRj2E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=Y8XKl8+WoFALqjVDqeHhxj+UPOToEp49xi9DENqbGWML43kxP+hNAkzAYbV873STrhnk/rC7aJn8Z4ekbiHuMW2+l6E7FVQyT85+EZ3u5EyUC6qxRDziu7auvT7aLIpKlmAiXDmkov98ivQTomwCtxYyp+pFRFCQ6iaiWmWy4Ro=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=Q3h0u66i; arc=fail smtp.client-ip=52.101.72.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=qyBV6QRXpLlgMbciaC3ozuza01/HJAH4+CtG6yWY3H2OOPx4NVo80NexROj9UvOm42moBBuVEu5bThFHxYperdyVf7d5lbJJF1keYu64OMFiiNCGO/jm5CkscLGSo4utS7aVILtaDxitArnqXIxn8pVkLmk8NdynElNKvGB4/JRlBqR3N2aju6xuwdVnDJnd0yjI5NFETWOdOGwe5+SeWaVA3deqJx0s38Pb4iFxH04KJelGZTkUWjDKIo9p3dZurkg0mWUQWVBKlfWJOLIiTTNAOEqvAp5TCvh0z1UhP0SsGtglKJgq7Rxf+2UpkhbpdI7KcULezIMfTQPPdTDY7A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9ikGRxCK5RZO5F/VHNhPesyQgUMbVU3iPeUJKWnDkEc=;
- b=euX6fx+vqx1bOfIeBJFNAFF+0Yfcdfcy8T7FAHOtkONQPLYJXmvbBSKSFWp1zrQnVhoPdblLJjP877qPBgfLTzyyN6zud9scuv8MG4p8e2WHz/4TYS66aOP7tIXQkm/Yf4OfOUSKXXFbLUgDTAkX/TwXGHwj+GoMd+eyQ7mkUREpni9oWfgngiG3YdXMcvi26+3vSk4dzVq1ou/nPrpoKrLlKmOhHZ+BjSc31ZlAp1hVQz4tTf9FlSo4wzArZvQeeF/uhAxlNFPnilxx1WrojsDrPdNFheNPhSQVMqMuKvbToRvIOgQoYeHYUireH0ad6dn7mtl8S4Jab822EGRhdA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9ikGRxCK5RZO5F/VHNhPesyQgUMbVU3iPeUJKWnDkEc=;
- b=Q3h0u66iNUqr8XJPv0klU32WWTAkxILNw90E7P3A1Xwp0qu98WWeKed3LCEXvxTod1p0GNUcOO36VZbLLIXNxMF3OENoO18gsLscSCdc78BWi7YivJiLth8sv8lVxVg9oRvqYrfXnM/57P1l8zb9UvH8+iJr6cEXLDo8vhMOzVDBtjnpBn7kk0vfwak/TD6b0XVl3K2N/1IMS7WtY2Aag1ucJVIKHmgK193Dvj8MXahFMrfuT6pL0NQoCvybNh0+qOZuMiicZnRa9M9e+YJNaPh/KKC2bfnvES8WC/PrmHyn1X86eINvPzzgC9BlY3/4bWf9O+5Sin9diFJYrBQiGw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from DB9PR04MB9626.eurprd04.prod.outlook.com (2603:10a6:10:309::18)
- by DB9PR04MB8348.eurprd04.prod.outlook.com (2603:10a6:10:25c::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.14; Wed, 27 Aug
- 2025 16:34:17 +0000
-Received: from DB9PR04MB9626.eurprd04.prod.outlook.com
- ([fe80::e81:b393:ebc5:bc3d]) by DB9PR04MB9626.eurprd04.prod.outlook.com
- ([fe80::e81:b393:ebc5:bc3d%5]) with mapi id 15.20.9073.009; Wed, 27 Aug 2025
- 16:34:17 +0000
-Date: Wed, 27 Aug 2025 12:34:11 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Srinivas Kandagatla <srini@kernel.org>,
-	NXP S32 Linux Team <s32@nxp.com>, linaro-s32@linaro.org,
-	linux-kernel@vger.kernel.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH V2 2/3] nvmem: s32g-ocotp: Add driver for S32G OCOTP
-Message-ID: <aK8zg3sA4csHwAHU@lizhi-Precision-Tower-5810>
-References: <cover.1756219848.git.dan.carpenter@linaro.org>
- <dce51c4706ca4961a2ade23756aab750803b12ec.1756219848.git.dan.carpenter@linaro.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <dce51c4706ca4961a2ade23756aab750803b12ec.1756219848.git.dan.carpenter@linaro.org>
-X-ClientProxiedBy: BYAPR02CA0067.namprd02.prod.outlook.com
- (2603:10b6:a03:54::44) To DB9PR04MB9626.eurprd04.prod.outlook.com
- (2603:10a6:10:309::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84E6E20A5EA
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 16:34:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756312493; cv=none; b=GB2CNnW/r6hj4Sa321B+/xRWF9f8bTZA8XNc0VGZ+ttIcaAjaOd2VwnHZVwgNwc2agyXYGAUFwedRNoegdvqz2xDD4hcbg7Xrms7JoUx7ayvbfeHLczKbi6q/emWeC3hlBh2SqY1LDUR8BE25J/LYD0UaPZdeLvfkmLECKcJwCQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756312493; c=relaxed/simple;
+	bh=hIdOxF0V/GWmdAeRpodpW7JqSq9MrMJaTYcZSngLWgI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dwzSMTSlPWeufo3uJteggmmugB++2Iw9wmIQMF6f8vgn5y2v7U65Kle9lH5X4FcTgyxiM02jc9w6QSYw3Pi7pgeZUFsYzZ2lqDpMcXKRVSX0UKKe0c61WHhyW+mXleT8UBJJZ99uZPOl69TDt742ueL35FuADuMHoQQY8JDGzMU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=mzNGsLP+; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-333f8d1cbcdso304091fa.0
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 09:34:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1756312490; x=1756917290; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dYJFvxznS9qH/KLo9mNWDlA9h7eslmU7zn/DFqWipOo=;
+        b=mzNGsLP+DwTz6zz4mOzVbPvmkTkwaOFWU6JNu0li39PchAkuq2dQwvNisfN8xl6gpr
+         6rATK/eTLMpEmEK69WT8/2M+/HK9b4oIblbei2o/POnOBeHcfD+vAa9oR8PKdYEis8PG
+         hQvpsQQMasAEU2GPrilzjnbhmgEqb9M+SS9yb4y7pGKOawjtIKuevc39tIVuIP2Cg0PY
+         +9pBgOrLYpZ8YCc/yAqDM7lqiLiY3C2+HmXSlWPgYWe9adj9rFRj9Gql+KZ2QFTDe5oi
+         Df2c/ZxbjmRRakv1v5/NOzM4inzP9S6vbj6eoqdjEO0oF0WknGPIt7ljLNZZJa5uPUqB
+         fQEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756312490; x=1756917290;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dYJFvxznS9qH/KLo9mNWDlA9h7eslmU7zn/DFqWipOo=;
+        b=Gzpdv6cCAkCFvYp8U+/I4UQWtS3/TyHeDlzksb4ZjRjvcTk2pl3YUlOnrflyDIbmzT
+         uRNnytXzChIFKXDj8Bzigqy+oIEPr00CGm7rJZz/x+w0HjqyBxsDdhiLFEjmB3DEHoG0
+         WAFT440DVlkyXuZQ43sbRLa9ht6SLIGY3yMw/27mfOy4i2OBvnCA9UVuFU5dAglXcp+O
+         +78FujY+tJP8kok3jJ5h81WnH0Ip1/QlyyB25AeTIR1Fh1OSy3iLJwQR8I+P8ncBmXD6
+         cK+Gauk5K39kMVZ5GMU+/pLAJ9t/9mP+ub0jGpqU2FCtIfaymP/eNAgUNAOo+asmdsa5
+         IXtQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVfWwktFWqwuptybkIdDRcyBN/FP/YoVQ996SgSMrX191jdejX7QfbWmcGoMnnqdI8i542XuJe/D+kIIt8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIBhVwDS19d+pb/fcxqvbTq7N+77lMxTudc/IXyu54yojjSDyX
+	f6HJuEqW68fr8/x5QHTfdD5ArV2JJKCAz2iWmCydXoX5H/LqLyK5tmuduzix011ZIxxbxs/NkR2
+	OwcnjuVcidnpnl+2j+UqE0s8ygzFNmO6FOJKyPUjJKw==
+X-Gm-Gg: ASbGnctc3URAZN38CpNvNnQrUqGOwnhwbK3pEYr/BVfHjF0+ZHUd66VPQtjdIo4Ee5V
+	mY1wpwwi96YWxdUgstS5xksCo1+ToxwE1YSmPU+taZmnlMCyY0J21+RAlzpNEd9q6ZCkGsw7sT9
+	AvSCN1nZDJdcq+gWhK/K5Dm2Rdh6VOI9oMx7w6bV1fV+JsSGuUx7TZQcMlab6s1Jd33gSVojbo6
+	+LZgEGpdUNsqargB4+TryGatjJ6lfAUocsLRaY=
+X-Google-Smtp-Source: AGHT+IEYAM6G7jrQwiVwruO6yosvrhxlh0HPcGpJQY4iz4Lhz2MgtOaLooKmiHE3wnTbkxrjwI2ai0VEsGMyeCbbJ/o=
+X-Received: by 2002:a2e:be1c:0:b0:336:7b66:13a1 with SMTP id
+ 38308e7fff4ca-3367b662564mr27772081fa.0.1756312489551; Wed, 27 Aug 2025
+ 09:34:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DB9PR04MB9626:EE_|DB9PR04MB8348:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5244ce75-8b2f-4757-a5cd-08dde58790f7
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|52116014|366016|19092799006|38350700014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?E5yCIRcKBLnTb5SLDrYbavfE/qnqSs/T8tZSLPUYlGBf/5p3oAfv6rx3Gg6G?=
- =?us-ascii?Q?RWcq89TpnbM5XgAqANcdlIMLNAAS3yuFTRxpe63IIo7rJTLl6LEPAz5ka7lC?=
- =?us-ascii?Q?Lu4+8yWB44NsQX1miB/D80CpkxqtEF2g9MXHOayWo/ggYxpB5eunKqTxhlMQ?=
- =?us-ascii?Q?wvvtjETGWkKfvrcjbjQA634d8tJbMDV3UNMWw/LaDMzt/aEE17wZq3JymkgH?=
- =?us-ascii?Q?PdySFvb8Am63+CRovSztxCsWI8UYfHBbHeWtkdK1etdCdWHI+mo1dQVd2ZCs?=
- =?us-ascii?Q?NRLpLQAOi3hgHOkt1pBvzrP6Dm7z9jC0zDtxyQRU5gGDLL+Pvzy8EFx9PwYU?=
- =?us-ascii?Q?Xqn24hjwghSac+vDVWou1g9Rck/rkZlfiPGLcF2ivVNOwXQZxVZ3a6csA7sc?=
- =?us-ascii?Q?WuLX+hsOnIkVL+N9CMaCoBhJndOqPC9PGS0JdVM9jCaEDkIdi2+jkoxA973n?=
- =?us-ascii?Q?hrYlIeyDFS9Wmj2ORQNONM8pOgItH/fucbt1Pz11sFfaD/sEa5tBJFxoRSDE?=
- =?us-ascii?Q?rOfLQn+TdEURwT7lX9Tg2Y2hl7MVQeaHHybq9mhsmNt8Ok56Fv6g3BAXwkSx?=
- =?us-ascii?Q?+DU+WvF/eVt3q4ASe2azV6Sh4/anE4kwxQXd6LjhIr5cHDx7/aoIaedxNrO7?=
- =?us-ascii?Q?q8IHIdMEwtCeTrODyIekJETl8eO76fCQxPz65xYAyGOSH8XM7BS8xopSLN+r?=
- =?us-ascii?Q?vknDGad1bRp31QDvSTKKcSmCEmd+HelBlfrlFw6MYL3yA+XKtgFzENgJB0Dj?=
- =?us-ascii?Q?BTZwden1P3Af7PZBy9hAOwqUWhIYsvtQ1x48TsMQvdLVHL0MUxJA2exO+L8S?=
- =?us-ascii?Q?itNPU/SvyFh926gYodAFs5S37Qn03Zw9jt66HOXUZsRq+f8rVPC2Jgflbk2K?=
- =?us-ascii?Q?pclyTeg3EdXO1AGFLvM1aEerQa8+rsteMIH0Rn0rTxV4IlPImNH60nIlkD0Y?=
- =?us-ascii?Q?5atJuF4P4j7kVaylsftTgbf1WqHImEHbBL/HG55DuPU+CkOXw92zNfWY1ISu?=
- =?us-ascii?Q?JKpubTVUDJp2BikcxzlJCj3ZjPC8FagiawR9gGR70by9xX8FlVgDQzXNAjWf?=
- =?us-ascii?Q?L9vKM2sbbmzRJIlm2QX1z+bmMF8wHVVcRti6ZhPt76EvopyLfNCxHemH+4T/?=
- =?us-ascii?Q?VJK2NhPlG0aTOTaj3EyHxaqQiOouOcSk7wdNryi+BDzGwaFRnLyv28+bac6g?=
- =?us-ascii?Q?v/HCEm6RfkYyV8RWx0Q1HILBndnbFMzqlk2a/a56qRTJtglf7zaPgH92wwZk?=
- =?us-ascii?Q?+uG9tZDpIihTCcJadcW/SS6gjV3Zip5leii044ZB8tgMUF1rDnT5ERFtalOD?=
- =?us-ascii?Q?u6GeoUalUa1iAKMXv5OuWUwBvS6hTqKALrDyzWXl0pvrR/Ek4nVqKh3nll+n?=
- =?us-ascii?Q?jw0fOGtKlkc3JNQxM3+1dGcgQaS6KR05LYl98Of2D+hzd8xZzhswNTW9t8So?=
- =?us-ascii?Q?bULk/QYvwZ0HU//xfMC3C/R2Cea6Skb79FnQ4+TuWizqW76uasdcDA=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR04MB9626.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(52116014)(366016)(19092799006)(38350700014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?9VqFHKq8Fx/Aox22rqjFAWEnAlxKkFsB0Qb80OOhMVU+VNUfaXbfqcx2gN3y?=
- =?us-ascii?Q?fS+nWiIjh+G50GJGtNLPy971rjVgaF9q1hMZ3A428c+JhbAmpVY+nJuRjvcK?=
- =?us-ascii?Q?BxMQT9xh3HT+83D5D4d+E0JVvwE9cftsZBPLkpNgoReaQjYMtY2Ns0O5l4VL?=
- =?us-ascii?Q?2lZQkf2vKmLT/Rlt55Et6n86nxMlRspP/Hn4Z37Sx6HIIvVSfx2dBS7787ZL?=
- =?us-ascii?Q?qSfPwaOBvWKokysR/zEC5auyMgg8edgfg341GA8/i4VQU53oPt/z4KzndzSF?=
- =?us-ascii?Q?b6pTvoZozGhOZKELF06TXRm3uXY7ijXDni4gaocCWuVmbLNMiIarnUnXzfhS?=
- =?us-ascii?Q?1XWqZj9w+iwZFPaIlPnyqOKYIlx1pY1rv+K/ScZDkcRv6zGgdVhE4Q0njTnZ?=
- =?us-ascii?Q?M9lhnNkaBTDGErC32zALzDES8/XMCE4Nh43ULtHm62fD4q9luYi+37NReg3K?=
- =?us-ascii?Q?jjF7iEqPDv9TJpxl2Gz9zejRoBKX2TaYhJr0DDSpN3Nj/PIbRhg/FkLuk/L5?=
- =?us-ascii?Q?BHiVd4zRljtadx6tviVpl4xLYQjfw0U9iQKCTopAet4rIlKPKMa761d4trD7?=
- =?us-ascii?Q?CubzowL81UsIppsMoc/QsHCTTa1OAWIT53yRQ97tBBoFwK6wtGU8qd0bZoyX?=
- =?us-ascii?Q?5beiRa8/Ft2nFA67aUaJLpKVRGfliEeKyICdluqmI+hStPWvuGYlAjiiDAbQ?=
- =?us-ascii?Q?zE8E9VBdKFtJ6ZYT5jp4gsCcx5gjinLjRhRLG2ogIJ/eazfG2royaEBFYXKV?=
- =?us-ascii?Q?HxlpGBR6+W4ZdzCiEirTb8gv6mFoaa3gtutOyvl9HgWxYgiV0UdtEnJNAihS?=
- =?us-ascii?Q?ZGiFMD7pezt/VpjQOn1hY9q8Fda91YhNK8PCXzumwPbOU0oFXdF+wQ2ZHCJK?=
- =?us-ascii?Q?I3i22sudVzMYTuz1aEqG54B2fzAPfbNbVjqMi0G7eCQsBulVaLS0RLeYqWbT?=
- =?us-ascii?Q?UYfbwDneWw0HJldbzBWMTLHB3UnJsboTiXZkmjVJbQXUaMU+Vq+k7R4XhsQ2?=
- =?us-ascii?Q?AEbwgOflpiFVUmknoGgyekNgtxs0MJZ9Ffqef0rsM9zoOsMmHI0sxM7hTkAL?=
- =?us-ascii?Q?5YGw9ZUmcGAWZblQYuTmPKjtxawsbOLfjuWo6VHFHk+2l7Rd0nbBzLtWH1RE?=
- =?us-ascii?Q?YActpB2vNIg2fCJy2/cZZjvai1QnEjzQprc0z/eGCZznFzZR1T3I0HlRX1Lo?=
- =?us-ascii?Q?dS/yNfjY1Cq2CJ16IWscnlNMM3N4t103xiHhMJBZzyTIm36LhmQ58TCFpLWe?=
- =?us-ascii?Q?SEkoVE73ah7z0Oj4OuJo3DhRg0PSlwauQbUG7TF7xwBJWvhoVA82OefKT/pM?=
- =?us-ascii?Q?NYN30gJDqKwFp2B61IfBrxGIeCRljUZAJWPEA0OfTWZWDIceu8F0QL9P+01O?=
- =?us-ascii?Q?gzoCc1Gddde0lcHGj/N7uKiujteyx01VFXDoldozz8CcRYrAz665CU4OXZ0Q?=
- =?us-ascii?Q?2S3JTAYOjRH8GxvpEYPnCuYakZPiVNY1voAfBF5QiQHD0qimXFC9wBRBhzYU?=
- =?us-ascii?Q?JJBBZlG1RA8GeiikPkwnc093pK9On4XvNMuzX1dWolr1Hwx1YWK9Io6D8NoE?=
- =?us-ascii?Q?VKiXMY2b1YwMHsqXcldDtq2b4Fku8r+LDIx63kyJ?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5244ce75-8b2f-4757-a5cd-08dde58790f7
-X-MS-Exchange-CrossTenant-AuthSource: DB9PR04MB9626.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2025 16:34:17.3545
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 9TaVvgXBH5kqi+dG2g14gTsR5cmXBb6Xu7mQ1S6QCzUOqUIDi6juJsuAYwXJ/k3K0G34HFtmekH4wTuQ6L4eug==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR04MB8348
+References: <20250819-pci-pwrctrl-perst-v1-0-4b74978d2007@oss.qualcomm.com> <20250819-pci-pwrctrl-perst-v1-5-4b74978d2007@oss.qualcomm.com>
+In-Reply-To: <20250819-pci-pwrctrl-perst-v1-5-4b74978d2007@oss.qualcomm.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Wed, 27 Aug 2025 18:34:38 +0200
+X-Gm-Features: Ac12FXyDhSf2ewNZkMyp76yle-wH_-s-bfKPLfIcpdEFx6e8RooRgknLS6PhU94
+Message-ID: <CAMRc=MdyTOYyeMJa_HBgJVo=ZNxsgdTsw6rhOUmGtNYeSrXLCw@mail.gmail.com>
+Subject: Re: [PATCH 5/6] PCI: qcom: Parse PERST# from all PCIe bridge nodes
+To: manivannan.sadhasivam@oss.qualcomm.com
+Cc: Manivannan Sadhasivam <mani@kernel.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Saravana Kannan <saravanak@google.com>, linux-pci@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, 
+	Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>, Brian Norris <briannorris@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 26, 2025 at 07:38:10PM +0300, Dan Carpenter wrote:
-> From: Ciprian Costea <ciprianmarian.costea@nxp.com>
+On Tue, Aug 19, 2025 at 9:15=E2=80=AFAM Manivannan Sadhasivam via B4 Relay
+<devnull+manivannan.sadhasivam.oss.qualcomm.com@kernel.org> wrote:
 >
-> Provide access to the On Chip One-Time Programmable Controller (OCOTP)
-> pages on the NXP S32G platform.
+> From: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
 >
-> Signed-off-by: Ciprian Costea <ciprianmarian.costea@nxp.com>
-> Co-developed-by: Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>
-> Signed-off-by: Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>
-> Co-developed-by: Larisa Grigore <larisa.grigore@nxp.com>
-> Signed-off-by: Larisa Grigore <larisa.grigore@nxp.com>
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> Devicetree schema allows the PERST# GPIO to be present in all PCIe bridge
+> nodes, not just in Root Port node. But the current logic parses PERST# on=
+ly
+> from the Root Port node. Though it is not causing any issue on the curren=
+t
+> platforms, the upcoming platforms will have PERST# in PCIe switch
+> downstream ports also. So this requires parsing all the PCIe bridge nodes
+> for the PERST# GPIO.
+>
+> Hence, rework the parsing logic to extend to all PCIe bridge nodes starti=
+ng
+> from Root Port node. If the 'reset-gpios' property is found for a node, t=
+he
+> GPIO descriptor will be stored in IDR structure with node BDF as the ID.
+>
+> It should be noted that if more than one bridge node has the same GPIO fo=
+r
+> PERST# (shared PERST#), the driver will error out. This is due to the
+> limitation in the GPIOLIB subsystem that allows only exclusive (non-share=
+d)
+> access to GPIOs from consumers. But this is soon going to get fixed. Once
+> that happens, it will get incorporated in this driver.
+>
+> So for now, PERST# sharing is not supported.
+>
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.=
+com>
 > ---
-> v2: Add S-o-b tags for Ghennadi and Larisa.
+>  drivers/pci/controller/dwc/pcie-qcom.c | 90 +++++++++++++++++++++++++++-=
+------
+>  1 file changed, 73 insertions(+), 17 deletions(-)
 >
->     Use keepouts instead of the s32g_map[] table.  This allows a bunch
->     of code to be deleted.
+> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/control=
+ler/dwc/pcie-qcom.c
+> index bcd080315d70e64eafdefd852740fe07df3dbe75..5d73c46095af3219687ff77e5=
+922f08bb41e43a9 100644
+> --- a/drivers/pci/controller/dwc/pcie-qcom.c
+> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
+> @@ -19,6 +19,7 @@
+>  #include <linux/iopoll.h>
+>  #include <linux/kernel.h>
+>  #include <linux/limits.h>
+> +#include <linux/idr.h>
+>  #include <linux/init.h>
+>  #include <linux/of.h>
+>  #include <linux/of_pci.h>
+> @@ -286,6 +287,7 @@ struct qcom_pcie {
+>         const struct qcom_pcie_cfg *cfg;
+>         struct dentry *debugfs;
+>         struct list_head ports;
+> +       struct idr perst;
+>         bool suspended;
+>         bool use_pm_opp;
+>  };
+> @@ -294,14 +296,15 @@ struct qcom_pcie {
 >
->     Version 1 only let one word (S32G_OCOTP_WORD_SIZE or 4) to be read
->     at a time, but now the driver allows larger reads.  Set the
->     .word_size in s32g_ocotp_nvmem_config to be 4 instead.
+>  static void qcom_perst_assert(struct qcom_pcie *pcie, bool assert)
+>  {
+> -       struct qcom_pcie_port *port;
+>         int val =3D assert ? 1 : 0;
+> +       struct gpio_desc *perst;
+> +       int bdf;
 >
->     Krzysztof asked for some changes in the probe() function but that
->     code was deleted instead.
+> -       if (list_empty(&pcie->ports))
+> +       if (idr_is_empty(&pcie->perst))
+>                 gpiod_set_value_cansleep(pcie->reset, val);
+> -       else
+> -               list_for_each_entry(port, &pcie->ports, list)
+> -                       gpiod_set_value_cansleep(port->reset, val);
+> +
+> +       idr_for_each_entry(&pcie->perst, perst, bdf)
+> +               gpiod_set_value_cansleep(perst, val);
+>  }
 >
->  drivers/nvmem/Kconfig            |  10 +++
->  drivers/nvmem/Makefile           |   2 +
->  drivers/nvmem/s32g-ocotp-nvmem.c | 101 +++++++++++++++++++++++++++++++
->  3 files changed, 113 insertions(+)
->  create mode 100644 drivers/nvmem/s32g-ocotp-nvmem.c
+>  static void qcom_ep_reset_assert(struct qcom_pcie *pcie)
+> @@ -1702,20 +1705,58 @@ static const struct pci_ecam_ops pci_qcom_ecam_op=
+s =3D {
+>         }
+>  };
 >
-> diff --git a/drivers/nvmem/Kconfig b/drivers/nvmem/Kconfig
-> index 0bdd86d74f62..55016f803492 100644
-> --- a/drivers/nvmem/Kconfig
-> +++ b/drivers/nvmem/Kconfig
-> @@ -240,6 +240,16 @@ config NVMEM_NINTENDO_OTP
->  	  This driver can also be built as a module. If so, the module
->  	  will be called nvmem-nintendo-otp.
+> -static int qcom_pcie_parse_port(struct qcom_pcie *pcie, struct device_no=
+de *node)
+> +/* Parse PERST# from all nodes in depth first manner starting from @np *=
+/
+> +static int qcom_pcie_parse_perst(struct qcom_pcie *pcie,
+> +                                struct device_node *np)
+>  {
+>         struct device *dev =3D pcie->pci->dev;
+> -       struct qcom_pcie_port *port;
+>         struct gpio_desc *reset;
+> -       struct phy *phy;
+>         int ret;
 >
-...
+> -       reset =3D devm_fwnode_gpiod_get(dev, of_fwnode_handle(node),
+> -                                     "reset", GPIOD_OUT_HIGH, "PERST#");
+> -       if (IS_ERR(reset))
+> +       if (!of_find_property(np, "reset-gpios", NULL))
+> +               goto parse_child_node;
+> +
+> +       ret =3D of_pci_get_bdf(np);
+> +       if (ret < 0)
+> +               return ret;
+> +
+> +       reset =3D devm_fwnode_gpiod_get(dev, of_fwnode_handle(np), "reset=
+",
+> +                                     GPIOD_OUT_HIGH, "PERST#");
+> +       if (IS_ERR(reset)) {
+> +               /*
+> +                * FIXME: GPIOLIB currently supports exclusive GPIO acces=
+s only.
+> +                * Non exclusive access is broken. But shared PERST# requ=
+ires
+> +                * non-exclusive access. So once GPIOLIB properly support=
+s it,
+> +                * implement it here.
+> +                */
+> +               if (PTR_ERR(reset) =3D=3D -EBUSY)
+> +                       dev_err(dev, "Shared PERST# is not supported\n");
+
+Then maybe just use the GPIOD_FLAGS_BIT_NONEXCLUSIVE flag for now and
+don't bail-out - it will make it easier to spot it when converting to
+the new solution?
+
+Bart
 
 > +
-> +static int s32g_ocotp_read(void *context, unsigned int offset,
-> +			    void *val, size_t bytes)
-> +{
-> +	struct s32g_ocotp_priv *s32g_data = context;
-> +	u32 *dst = val;
+>                 return PTR_ERR(reset);
+> +       }
 > +
-> +	while (bytes >= sizeof(u32)) {
-> +		*dst++ = ioread32(s32g_data->base + offset);
+> +       ret =3D idr_alloc(&pcie->perst, reset, ret, 0, GFP_KERNEL);
+> +       if (ret < 0)
+> +               return ret;
 > +
-> +		bytes -= sizeof(u32);
-> +		offset += sizeof(u32);
-> +	}
-
-readsw() ?
-
+> +parse_child_node:
+> +       for_each_available_child_of_node_scoped(np, child) {
+> +               ret =3D qcom_pcie_parse_perst(pcie, child);
+> +               if (ret)
+> +                       return ret;
+> +       }
 > +
-> +	return 0;
+> +       return 0;
 > +}
-> +
-> +static struct nvmem_keepout s32g_keepouts[] = {
-> +	{ .start = 0,   .end = 520 },
-> +	{ .start = 540, .end = 564 },
-> +	{ .start = 596, .end = 664 },
-> +	{ .start = 668, .end = 676 },
-> +	{ .start = 684, .end = 732 },
-> +	{ .start = 744, .end = 864 },
-> +	{ .start = 908, .end = 924 },
-> +	{ .start = 928, .end = 936 },
-> +	{ .start = 948, .end = 964 },
-> +	{ .start = 968, .end = 976 },
-> +	{ .start = 984, .end = 1012 },
-> +};
-> +
-> +static struct nvmem_config s32g_ocotp_nvmem_config = {
-> +	.name = "s32g-ocotp",
-> +	.add_legacy_fixed_of_cells = true,
-> +	.read_only = true,
-> +	.word_size = 4,
-> +	.reg_read = s32g_ocotp_read,
-> +	.keepout = s32g_keepouts,
-> +	.nkeepout = ARRAY_SIZE(s32g_keepouts),
-> +};
-> +
-> +static const struct of_device_id ocotp_of_match[] = {
-> +	{ .compatible = "nxp,s32g2-ocotp" },
-> +	{ /* sentinel */ }
-> +};
-> +
-> +static int s32g_ocotp_probe(struct platform_device *pdev)
+>
+> -       phy =3D devm_of_phy_get(dev, node, NULL);
+> +static int qcom_pcie_parse_port(struct qcom_pcie *pcie, struct device_no=
+de *np)
 > +{
-> +	struct s32g_ocotp_priv *s32g_data;
-> +	struct device *dev = &pdev->dev;
-> +	struct nvmem_device *nvmem;
-> +	struct resource *res;
+> +       struct device *dev =3D pcie->pci->dev;
+> +       struct qcom_pcie_port *port;
+> +       struct phy *phy;
+> +       int ret;
 > +
-> +	s32g_data = devm_kzalloc(dev, sizeof(*s32g_data), GFP_KERNEL);
-> +	if (!s32g_data)
-> +		return -ENOMEM;
+> +       phy =3D devm_of_phy_get(dev, np, NULL);
+>         if (IS_ERR(phy))
+>                 return PTR_ERR(phy);
+>
+> @@ -1727,7 +1768,10 @@ static int qcom_pcie_parse_port(struct qcom_pcie *=
+pcie, struct device_node *node
+>         if (ret)
+>                 return ret;
+>
+> -       port->reset =3D reset;
+> +       ret =3D qcom_pcie_parse_perst(pcie, np);
+> +       if (ret)
+> +               return ret;
 > +
-> +	s32g_data->base = devm_platform_get_and_ioremap_resource(pdev, 0, &res);
-> +	if (IS_ERR(s32g_data->base)) {
-> +		dev_err(dev, "Cannot map OCOTP device.\n");
-> +		return PTR_ERR(s32g_data->base);
-
-return dev_err_probe(dev, PTR_ERR(s32g_data->base), ...)
-
-Frank
-
-> +	}
+>         port->phy =3D phy;
+>         INIT_LIST_HEAD(&port->list);
+>         list_add_tail(&port->list, &pcie->ports);
+> @@ -1739,7 +1783,11 @@ static int qcom_pcie_parse_ports(struct qcom_pcie =
+*pcie)
+>  {
+>         struct device *dev =3D pcie->pci->dev;
+>         struct qcom_pcie_port *port, *tmp;
+> -       int ret =3D -ENOENT;
+> +       struct gpio_desc *perst;
+> +       int ret =3D -ENODEV;
+> +       int bdf;
 > +
-> +	s32g_data->dev = dev;
-> +	s32g_ocotp_nvmem_config.dev = dev;
-> +	s32g_ocotp_nvmem_config.priv = s32g_data;
-> +	s32g_ocotp_nvmem_config.size = resource_size(res);
+> +       idr_init(&pcie->perst);
+>
+>         for_each_available_child_of_node_scoped(dev->of_node, of_port) {
+>                 ret =3D qcom_pcie_parse_port(pcie, of_port);
+> @@ -1750,8 +1798,13 @@ static int qcom_pcie_parse_ports(struct qcom_pcie =
+*pcie)
+>         return ret;
+>
+>  err_port_del:
+> -       list_for_each_entry_safe(port, tmp, &pcie->ports, list)
+> +       list_for_each_entry_safe(port, tmp, &pcie->ports, list) {
+> +               phy_exit(port->phy);
+>                 list_del(&port->list);
+> +       }
 > +
-> +	nvmem = devm_nvmem_register(dev, &s32g_ocotp_nvmem_config);
-> +
-> +	return PTR_ERR_OR_ZERO(nvmem);
-> +}
-> +
-> +static struct platform_driver s32g_ocotp_driver = {
-> +	.probe = s32g_ocotp_probe,
-> +	.driver = {
-> +		.name = "s32g-ocotp",
-> +		.of_match_table = ocotp_of_match,
-> +	},
-> +};
-> +module_platform_driver(s32g_ocotp_driver);
-> +MODULE_AUTHOR("NXP");
-> +MODULE_DESCRIPTION("S32G OCOTP driver");
-> +MODULE_LICENSE("GPL");
+> +       idr_for_each_entry(&pcie->perst, perst, bdf)
+> +               idr_remove(&pcie->perst, bdf);
+>
+>         return ret;
+>  }
+> @@ -1782,12 +1835,13 @@ static int qcom_pcie_probe(struct platform_device=
+ *pdev)
+>         unsigned long max_freq =3D ULONG_MAX;
+>         struct qcom_pcie_port *port, *tmp;
+>         struct device *dev =3D &pdev->dev;
+> +       struct gpio_desc *perst;
+>         struct dev_pm_opp *opp;
+>         struct qcom_pcie *pcie;
+>         struct dw_pcie_rp *pp;
+>         struct resource *res;
+>         struct dw_pcie *pci;
+> -       int ret, irq;
+> +       int ret, irq, bdf;
+>         char *name;
+>
+>         pcie_cfg =3D of_device_get_match_data(dev);
+> @@ -1927,7 +1981,7 @@ static int qcom_pcie_probe(struct platform_device *=
+pdev)
+>
+>         ret =3D qcom_pcie_parse_ports(pcie);
+>         if (ret) {
+> -               if (ret !=3D -ENOENT) {
+> +               if (ret !=3D -ENODEV) {
+>                         dev_err_probe(pci->dev, ret,
+>                                       "Failed to parse Root Port: %d\n", =
+ret);
+>                         goto err_pm_runtime_put;
+> @@ -1989,6 +2043,8 @@ static int qcom_pcie_probe(struct platform_device *=
+pdev)
+>         qcom_pcie_phy_exit(pcie);
+>         list_for_each_entry_safe(port, tmp, &pcie->ports, list)
+>                 list_del(&port->list);
+> +       idr_for_each_entry(&pcie->perst, perst, bdf)
+> +               idr_remove(&pcie->perst, bdf);
+>  err_pm_runtime_put:
+>         pm_runtime_put(dev);
+>         pm_runtime_disable(dev);
+>
 > --
-> 2.47.2
+> 2.45.2
+>
 >
 
