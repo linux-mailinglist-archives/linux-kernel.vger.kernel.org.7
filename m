@@ -1,208 +1,192 @@
-Return-Path: <linux-kernel+bounces-787689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B193B379BB
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 07:22:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CE79B379BD
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 07:25:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 48FEC20430F
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 05:22:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 336E57ACE77
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 05:23:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DB9230F944;
-	Wed, 27 Aug 2025 05:21:53 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CA4830F938;
+	Wed, 27 Aug 2025 05:24:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="NzV0BBzM";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="agDB9rje";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="NzV0BBzM";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="agDB9rje"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A8841C8606;
-	Wed, 27 Aug 2025 05:21:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21FA627A442
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 05:24:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756272112; cv=none; b=Qh5bVGCaSM0yB3q3ybZ2GQ7x5zEyX5EHjSn8h44pQJ/uTpox5vmf0eYACypqhomUBkOp4Cc2T9SRzgtWVCNXSYo8wRdLQBqRocTr4gnqsWnYA9RnIiWRu2WRdoCvSZ8EIOQjiUX6WhqXNFg276Gf/Nm/sGyV3mdVUQ9WhenH5X8=
+	t=1756272294; cv=none; b=DNvDnK4sRxTNMYLXz2rg99v+c/ukJNjv00n4gBxhQUFzpyKMYfVl6jYluaj8xM7k2wakDpxSRbzwwtMzKHNyNeWUvyg6RS0Hi4LJAZQ61S1GWcQUrhmQTsxyVypYDd0lJwVQsQty9yf0JVr+teoV0zsVh4OpzextsShjx2Rji2Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756272112; c=relaxed/simple;
-	bh=VRExz2y98Y4Bks79KG62576slKCC55TnEApk2y1mwr8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tIoi6M2AwxybqbpN8FbmxuGC8FwZbC5JgWsOgZWrB8e8vfYxXFTwuiHDmkkFwttWXtkfWP8gepo3QdJi5IY5Unve19ebj+zWwmSmTatCwoRRULQwx/c9OlupSCObHyzzFDDtuCYY87g9e319J89rKCOISGuepNfMZ3ICqdJgTz4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: b68a31cc830511f0b29709d653e92f7d-20250827
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:34726253-5bea-4e9b-b07f-349fa0556763,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:6493067,CLOUDID:f8fed63546234af68ef13bd91ef320cf,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102,TC:nil,Content:0|52,EDM:
-	-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,
-	AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: b68a31cc830511f0b29709d653e92f7d-20250827
-Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
-	(envelope-from <zhangzihuan@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 1509111154; Wed, 27 Aug 2025 13:21:40 +0800
-Received: from mail.kylinos.cn (localhost [127.0.0.1])
-	by mail.kylinos.cn (NSMail) with SMTP id A2851E008FAA;
-	Wed, 27 Aug 2025 13:21:40 +0800 (CST)
-X-ns-mid: postfix-68AE95E4-5407809
-Received: from [172.25.120.24] (unknown [172.25.120.24])
-	by mail.kylinos.cn (NSMail) with ESMTPA id 0D64DE008FA3;
-	Wed, 27 Aug 2025 13:21:25 +0800 (CST)
-Message-ID: <773da273-4ab7-4672-b4d7-f9c560f3fccc@kylinos.cn>
-Date: Wed, 27 Aug 2025 13:21:25 +0800
+	s=arc-20240116; t=1756272294; c=relaxed/simple;
+	bh=ddlFw/qlOGkmq6rrOarImW8+DPpQrMpmV1aUJHh34pk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=j7qN38dy/n+beJJldR7O36yiFlpkiB3+uejXLpCI1EhopkBmFMHL+F4zjUKHB1d4BgnuHHsKTTdSeFnmPire9MJtNL0sCFXTXGi0fXfWE6cEPmbYnEqvGyU5B8bZhAmBst5fZEOOI2wNSYAzsC1SY4h+pDHaVcJ7sY59GTt5zXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=NzV0BBzM; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=agDB9rje; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=NzV0BBzM; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=agDB9rje; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 1758621D59;
+	Wed, 27 Aug 2025 05:24:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1756272291; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=BGshCphT136+Q4sfRRF7efgjNpZ2QZ9axcWbncoYV3s=;
+	b=NzV0BBzMqa3OvXYNbbwD42dfIV3HVuTImlhzT5BD3xB1XX0j2M5XLE3AT8U4HaiCMANmmg
+	cFqtqksaRGscdlXHalAhvqNpxZkjRjRpt7L3zza16aCt2iaI5C9gp/Wx+iCgzMCZwLmO+g
+	oV+SbRQD/+U4c7Ba1Vx4lyZjF/kiGrM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1756272291;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=BGshCphT136+Q4sfRRF7efgjNpZ2QZ9axcWbncoYV3s=;
+	b=agDB9rjePOx8HNNHSEf/jOLd0rLH0AbSU74gJKfOiYtsScs04cUBPTJAL+zLEsWrLYzoCl
+	/5M2lNdtKzdDpRAA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=NzV0BBzM;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=agDB9rje
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1756272291; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=BGshCphT136+Q4sfRRF7efgjNpZ2QZ9axcWbncoYV3s=;
+	b=NzV0BBzMqa3OvXYNbbwD42dfIV3HVuTImlhzT5BD3xB1XX0j2M5XLE3AT8U4HaiCMANmmg
+	cFqtqksaRGscdlXHalAhvqNpxZkjRjRpt7L3zza16aCt2iaI5C9gp/Wx+iCgzMCZwLmO+g
+	oV+SbRQD/+U4c7Ba1Vx4lyZjF/kiGrM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1756272291;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=BGshCphT136+Q4sfRRF7efgjNpZ2QZ9axcWbncoYV3s=;
+	b=agDB9rjePOx8HNNHSEf/jOLd0rLH0AbSU74gJKfOiYtsScs04cUBPTJAL+zLEsWrLYzoCl
+	/5M2lNdtKzdDpRAA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C984F13867;
+	Wed, 27 Aug 2025 05:24:50 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id ZL+AL6KWrmgXRwAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Wed, 27 Aug 2025 05:24:50 +0000
+From: Takashi Iwai <tiwai@suse.de>
+To: "Luke D . Jones" <luke@ljones.dev>
+Cc: Corentin Chary <corentin.chary@gmail.com>,
+	Hans de Goede <hansg@kernel.org>,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	platform-driver-x86@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] platform/x86: asus-wmi: Fix racy registrations
+Date: Wed, 27 Aug 2025 07:24:33 +0200
+Message-ID: <20250827052441.23382-1-tiwai@suse.de>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 15/18] powercap: dtpm_cpu: Use
- __free(put_cpufreq_policy) for policy reference
-To: "Rafael J . wysocki" <rafael@kernel.org>,
- Viresh Kumar <viresh.kumar@linaro.org>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Sean Christopherson <seanjc@google.com>, Paolo Bonzini
- <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>, Markus Mayer
- <mmayer@broadcom.com>, Florian Fainelli <florian.fainelli@broadcom.com>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
- Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Krzysztof Kozlowski
- <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- MyungJoo Ham <myungjoo.ham@samsung.com>,
- Kyungmin Park <kyungmin.park@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>,
- Jani Nikula <jani.nikula@linux.intel.com>,
- Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
- Rodrigo Vivi <rodrigo.vivi@intel.com>, Tvrtko Ursulin
- <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Daniel Lezcano <daniel.lezcano@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>,
- Eduardo Valentin <edubezval@gmail.com>, Keerthy <j-keerthy@ti.com>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: zhenglifeng <zhenglifeng1@huawei.com>, "H . Peter Anvin" <hpa@zytor.com>,
- Zhang Rui <rui.zhang@intel.com>, Len Brown <lenb@kernel.org>,
- Nicholas Piggin <npiggin@gmail.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Lukasz Luba <lukasz.luba@arm.com>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Beata Michalska <beata.michalska@arm.com>, Fabio Estevam
- <festevam@gmail.com>, Pavel Machek <pavel@kernel.org>,
- Sumit Gupta <sumitg@nvidia.com>,
- Prasanna Kumar T S M <ptsm@linux.microsoft.com>,
- Sudeep Holla <sudeep.holla@arm.com>, Yicong Yang <yangyicong@hisilicon.com>,
- linux-pm@vger.kernel.org, x86@kernel.org, kvm@vger.kernel.org,
- linux-acpi@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-tegra@vger.kernel.org, intel-gfx@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, imx@lists.linux.dev,
- linux-omap@vger.kernel.org, linux-mediatek@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250827023202.10310-1-zhangzihuan@kylinos.cn>
- <20250827035056.353772-1-zhangzihuan@kylinos.cn>
-From: Zihuan Zhang <zhangzihuan@kylinos.cn>
-In-Reply-To: <20250827035056.353772-1-zhangzihuan@kylinos.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: 1758621D59
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-1.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_MISSING_CHARSET(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	MIME_TRACE(0.00)[0:+];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	ARC_NA(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	RCVD_TLS_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[gmail.com,kernel.org,linux.intel.com,vger.kernel.org];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:url];
+	TAGGED_RCPT(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	DKIM_TRACE(0.00)[suse.de:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com]
+X-Spam-Score: -1.51
 
-=E5=9C=A8 2025/8/27 11:50, Zihuan Zhang =E5=86=99=E9=81=93:
+asus_wmi_register_driver() may be called from multiple drivers
+concurrently, which can lead to the racy list operations, eventually
+corrupting the memory and hitting Oops on some ASUS machines.
+Also, the error handling is missing, and it forgot to unregister ACPI
+lps0 dev ops in the error case.
 
-> Replace the manual cpufreq_cpu_put() with __free(put_cpufreq_policy)
-> annotation for policy references. This reduces the risk of reference
-> counting mistakes and aligns the code with the latest kernel style.
->
-> No functional change intended.
->
-> Signed-off-by: Zihuan Zhang <zhangzihuan@kylinos.cn>
-> ---
->   drivers/powercap/dtpm_cpu.c | 24 +++++++-----------------
->   1 file changed, 7 insertions(+), 17 deletions(-)
->
-> diff --git a/drivers/powercap/dtpm_cpu.c b/drivers/powercap/dtpm_cpu.c
-> index 99390ec1481f..65117569d0f3 100644
-> --- a/drivers/powercap/dtpm_cpu.c
-> +++ b/drivers/powercap/dtpm_cpu.c
-> @@ -144,19 +144,16 @@ static int update_pd_power_uw(struct dtpm *dtpm)
->   static void pd_release(struct dtpm *dtpm)
->   {
->   	struct dtpm_cpu *dtpm_cpu =3D to_dtpm_cpu(dtpm);
-> -	struct cpufreq_policy *policy;
-> +	struct cpufreq_policy *policy __free(put_cpufreq_policy);
->  =20
->   	if (freq_qos_request_active(&dtpm_cpu->qos_req))
->   		freq_qos_remove_request(&dtpm_cpu->qos_req);
->  =20
->   	policy =3D cpufreq_cpu_get(dtpm_cpu->cpu);
-> -	if (policy) {
-> +	if (policy)
->   		for_each_cpu(dtpm_cpu->cpu, policy->related_cpus)
->   			per_cpu(dtpm_per_cpu, dtpm_cpu->cpu) =3D NULL;
->  =20
-> -		cpufreq_cpu_put(policy);
-> -	}
-> -
->   	kfree(dtpm_cpu);
->   }
->  =20
-> @@ -192,7 +189,7 @@ static int cpuhp_dtpm_cpu_online(unsigned int cpu)
->   static int __dtpm_cpu_setup(int cpu, struct dtpm *parent)
->   {
->   	struct dtpm_cpu *dtpm_cpu;
-> -	struct cpufreq_policy *policy;
-> +	struct cpufreq_policy *policy __free(put_cpufreq_policy);
->   	struct em_perf_state *table;
->   	struct em_perf_domain *pd;
->   	char name[CPUFREQ_NAME_LEN];
-> @@ -207,16 +204,12 @@ static int __dtpm_cpu_setup(int cpu, struct dtpm =
-*parent)
->   		return 0;
->  =20
->   	pd =3D em_cpu_get(cpu);
-> -	if (!pd || em_is_artificial(pd)) {
-> -		ret =3D -EINVAL;
-> -		goto release_policy;
-> -	}
-> +	if (!pd || em_is_artificial(pd))
-> +		return -EINVAL;
->  =20
->   	dtpm_cpu =3D kzalloc(sizeof(*dtpm_cpu), GFP_KERNEL);
-> -	if (!dtpm_cpu) {
-> -		ret =3D -ENOMEM;
-> -		goto release_policy;
-> -	}
-> +	if (!dtpm_cpu)
-> +		return -ENOMEM;
->  =20
->   	dtpm_init(&dtpm_cpu->dtpm, &dtpm_ops);
->   	dtpm_cpu->cpu =3D cpu;
-> @@ -239,7 +232,6 @@ static int __dtpm_cpu_setup(int cpu, struct dtpm *p=
-arent)
->   	if (ret < 0)
->   		goto out_dtpm_unregister;
->  =20
-> -	cpufreq_cpu_put(policy);
->   	return 0;
->  =20
->   out_dtpm_unregister:
-> @@ -251,8 +243,6 @@ static int __dtpm_cpu_setup(int cpu, struct dtpm *p=
-arent)
->   		per_cpu(dtpm_per_cpu, cpu) =3D NULL;
->   	kfree(dtpm_cpu);
->  =20
-> -release_policy:
-> -	cpufreq_cpu_put(policy);
->   	return ret;
->   }
->  =20
-I accidentally sent a duplicate patch in the series.
-Please ignore the extra one, sorry for the noise.
+This patch covers those issues by introducing a simple mutex at
+acpi_wmi_register_driver() & *_unregister_driver, and adding the
+proper call of asus_s2idle_check_unregister() in the error path.
+
+Fixes: feea7bd6b02d ("platform/x86: asus-wmi: Refactor Ally suspend/resume")
+Link: https://bugzilla.suse.com/show_bug.cgi?id=1246924
+Link: https://lore.kernel.org/07815053-0e31-4e8e-8049-b652c929323b@kernel.org
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+---
+ drivers/platform/x86/asus-wmi.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
+index f7191fdded14..e72a2b5d158e 100644
+--- a/drivers/platform/x86/asus-wmi.c
++++ b/drivers/platform/x86/asus-wmi.c
+@@ -5088,16 +5088,22 @@ static int asus_wmi_probe(struct platform_device *pdev)
+ 
+ 	asus_s2idle_check_register();
+ 
+-	return asus_wmi_add(pdev);
++	ret = asus_wmi_add(pdev);
++	if (ret)
++		asus_s2idle_check_unregister();
++
++	return ret;
+ }
+ 
+ static bool used;
++static DEFINE_MUTEX(register_mutex);
+ 
+ int __init_or_module asus_wmi_register_driver(struct asus_wmi_driver *driver)
+ {
+ 	struct platform_driver *platform_driver;
+ 	struct platform_device *platform_device;
+ 
++	guard(mutex)(&register_mutex);
+ 	if (used)
+ 		return -EBUSY;
+ 
+@@ -5120,6 +5126,7 @@ EXPORT_SYMBOL_GPL(asus_wmi_register_driver);
+ 
+ void asus_wmi_unregister_driver(struct asus_wmi_driver *driver)
+ {
++	guard(mutex)(&register_mutex);
+ 	asus_s2idle_check_unregister();
+ 
+ 	platform_device_unregister(driver->platform_device);
+-- 
+2.50.1
+
 
