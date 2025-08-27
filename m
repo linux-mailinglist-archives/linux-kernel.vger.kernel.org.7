@@ -1,189 +1,155 @@
-Return-Path: <linux-kernel+bounces-788449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788450-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B152B3848F
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 16:13:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED362B384BA
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 16:17:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 494CC6834E2
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 14:13:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E74D41887E82
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 14:17:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02D5135A2A0;
-	Wed, 27 Aug 2025 14:13:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F075835336D;
+	Wed, 27 Aug 2025 14:16:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dWTiy0/i"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="abY+ko7+"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D676735A29F
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 14:13:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFFBA1E008B
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 14:16:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756303996; cv=none; b=pe8dRHIsfyXS0tF9KLkJZX2iC5KeYON0UmnJumqTsqseqxLNR7c3hqJy89R+1+Kr0MKkO3wyXkKO4xsnvzgFBwAEieqhReZKysFVuc5x1GpKO8zQ/nP9htWIrt5Ts+BzX31xPNBLzN2A8Za+nuiR3Oh4qsMZyIPp+rQ9MjM/C+U=
+	t=1756304213; cv=none; b=mSntQyo8ZuohS7qxgW5TlUGeQQysfIOoDEw57QKvPuw185HK9F5WbvTfG6cua6TTUSQHiLpMvdXHmLlz8xjRx5KypTm2Vju6biSbumn7fLD1nnWLIEY7VHhhNNNL9jdfYJjQAWUnEuIQaUAGU5o0NnAeClNyTiqWlYZdn9vgP0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756303996; c=relaxed/simple;
-	bh=DbwcQqcSgOgf9ZSwsPbdu37ylfuV2VigX8RYWvus3Uo=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=ja5Yg71Csr01MH4mUbiOXjkILxbZ1E1GjT8hsI1JBpcvexOpZSolmuFqWaLS/wPFv6i4nSqiOmueBGRKlW3rTDjBYPZ5jDLUZFCCaKzbR8zr4wyhBwyd2IPgSr3ix+c62noHDGZY4Xzq4jBB61TaY8A1AU9V7HPb+SP3pKIfFn4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dWTiy0/i; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-2445805d386so77906355ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 07:13:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756303993; x=1756908793; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=oT9Qx0pL0526DK73EqyoLYw0wsYmSjn2bOtkKWj9+LI=;
-        b=dWTiy0/irckCaQzk1WuEdn1/rIGs7BUH5HtaVC4UoJeOx0TpCeqeE6kk77pxAcqrnj
-         8LojKUuALAEpPlTJymXuhPzon4uOCNgzVgt0TkOgA6Z6gJ5ao7qNO5a0VaRMShCbvqEb
-         7Z62nl5DvJ20RiK5OTGZ86B3DOv8vFnsYY+sJzLivJ/iGpVMmBOsweBiRfyJ/72qPJCX
-         PwBUcRJOon6Uj9jfopwF3gsWHxnnuYseo58d2oMPKXgA5TBeCfN+sZsEs6MYpfkwete7
-         EjDMl/KFvG2qvR/qwNw21N6nT6u+87ofdLzjCfMKz7iNC8r3Su2x+Dx8A/RBkzH8CXtw
-         fv/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756303993; x=1756908793;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oT9Qx0pL0526DK73EqyoLYw0wsYmSjn2bOtkKWj9+LI=;
-        b=Ks2LC719UFWwzPvNU8C8rXupDKpeNAMkfQBZaGe0R84ZHwpd8Jl4Fip0QdJ/haVRDJ
-         eEXG7bv2jM5nhnZz9yLBtA4JYDeuzELLgB6Ryg53S8WhMWJcviiv9RBDOXkSd7Au8VOL
-         TdfSYR5ZhDkjnENbMmUrqIr83H8yaC4FaUF+iUalrkkfKvPkdDYJCXpjgYZXTvkRDnfq
-         FWBJ+cTrsnb98ieW5gEp5xZGd4/YRgF4X6xY6QFkuXRDwrqm36W5G9jNG6iLPx4sKzM7
-         r/c4QeiY7fMh7ubGcxwZo2Afkk+BY4peh/bgDHsiEdtoWb+RFH004GDd6vD0DdMVrV2u
-         aWcg==
-X-Forwarded-Encrypted: i=1; AJvYcCULCZGhlYITViynIxWd4RJTbOAcCcKK77gphSI2VfVJTndCpp+14CuxsjVPaU4H9SYiBWDa7pPuCIcnaoU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzb6kIeitHH2i5iBsFch2f90SBGNUZxHi8mIMl4woy4gUTc8f3Q
-	pn8AhMtKhK+TaxfYHlzRi8nUZqZ/3Oz31VK8aMjN7Z7vVLoD+qslB4U0sEDqH+Q2js+CMPPU9bB
-	cR+F6xA==
-X-Google-Smtp-Source: AGHT+IGTSg2J3odWqRi5DzWDmdBYNRXtpWLMNIy0mlgNYPFM/YLwHCJkE7ruCavXPIcZq+6RDeJTdDhPxa4=
-X-Received: from plan10.prod.google.com ([2002:a17:903:404a:b0:248:7792:b8da])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:1a8e:b0:246:620:a0b9
- with SMTP id d9443c01a7336-2462efcaaa3mr229124795ad.61.1756303993097; Wed, 27
- Aug 2025 07:13:13 -0700 (PDT)
-Date: Wed, 27 Aug 2025 07:13:11 -0700
-In-Reply-To: <20250827023202.10310-3-zhangzihuan@kylinos.cn>
+	s=arc-20240116; t=1756304213; c=relaxed/simple;
+	bh=C9EcVdbRtohDPBUdmtofgnEaVriqBKDSdG6iuU5Uz6c=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=GicxYbMUDvqrsmNLXQrZ0YWrLY1d+E0vFgIZrWMwVaCaeLs3JRVJUwATCtUlG38StS8sb5Wb/IXKLgnGibjnVxnRVCnzMUj4EYRaentfx0z4cw9fxEGROst2EB8BBnQN7+NwRXAzyY332nxy264uVvXijRsCnBOAlYLabK2BWEU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=abY+ko7+; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57REFqJq1296261;
+	Wed, 27 Aug 2025 09:15:52 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1756304152;
+	bh=C9EcVdbRtohDPBUdmtofgnEaVriqBKDSdG6iuU5Uz6c=;
+	h=From:To:CC:Subject:Date:References:In-Reply-To;
+	b=abY+ko7+fCgauFDy+RDVkT2U2UnENSYjRY74kuxcoVmxyRVG0xl7ao7x3h3Cj+iet
+	 tbcu0KXCshJVdqJFAc8wb9+USc9CGwQLp7An6v3O7GXS28VeHq1zxP9QVckho4DTjS
+	 LGfQvm5XowjHrs3lAzNR23d74ieBvz75EmJ4nbT4=
+Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
+	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57REFq4j2758029
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Wed, 27 Aug 2025 09:15:52 -0500
+Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Wed, 27
+ Aug 2025 09:15:51 -0500
+Received: from DLEE101.ent.ti.com ([fe80::91ee:60bc:bfb7:851c]) by
+ DLEE101.ent.ti.com ([fe80::91ee:60bc:bfb7:851c%18]) with mapi id
+ 15.01.2507.055; Wed, 27 Aug 2025 09:15:51 -0500
+From: "Ding, Shenghao" <shenghao-ding@ti.com>
+To: Gergo Koteles <soyer@irl.hu>, "tiwai@suse.de" <tiwai@suse.de>
+CC: "broonie@kernel.org" <broonie@kernel.org>,
+        "andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>,
+        "13564923607@139.com" <13564923607@139.com>,
+        "13916275206@139.com"
+	<13916275206@139.com>,
+        "alsa-devel@alsa-project.org"
+	<alsa-devel@alsa-project.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+        "Xu, Baojun" <baojun.xu@ti.com>,
+        "Baojun.Xu@fpt.com" <Baojun.Xu@fpt.com>, "Ji, Jesse" <jesse-ji@ti.com>
+Subject: RE: [EXTERNAL] Re: [PATCH v2] ALSA: hda/tas2781: Fix EFI name for
+ calibration beginning with 1 instead of 0
+Thread-Topic: [EXTERNAL] Re: [PATCH v2] ALSA: hda/tas2781: Fix EFI name for
+ calibration beginning with 1 instead of 0
+Thread-Index: AQHcFm2Qg1IXiOB8z0+fE/8Y+/X2AbR2DGCAgABxWjA=
+Date: Wed, 27 Aug 2025 14:15:51 +0000
+Message-ID: <3917a54f72134949a4baadd706463fa7@ti.com>
+References: <20250826094105.1325-1-shenghao-ding@ti.com>
+ <8187d109eb70f6d459df63f3507a0be79efd9aa9.camel@irl.hu>
+In-Reply-To: <8187d109eb70f6d459df63f3507a0be79efd9aa9.camel@irl.hu>
+Accept-Language: en-US, zh-CN
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-c2processedorg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250827023202.10310-1-zhangzihuan@kylinos.cn> <20250827023202.10310-3-zhangzihuan@kylinos.cn>
-Message-ID: <aK8Sd30K64mbN1Nt@google.com>
-Subject: Re: [PATCH v2 02/18] KVM: x86: Use __free(put_cpufreq_policy) for
- policy reference
-From: Sean Christopherson <seanjc@google.com>
-To: Zihuan Zhang <zhangzihuan@kylinos.cn>
-Cc: "Rafael J . wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
-	Markus Mayer <mmayer@broadcom.com>, Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, 
-	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, 
-	Chanwoo Choi <cw00.choi@samsung.com>, Jani Nikula <jani.nikula@linux.intel.com>, 
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, 
-	Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Daniel Lezcano <daniel.lezcano@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, 
-	Eduardo Valentin <edubezval@gmail.com>, Keerthy <j-keerthy@ti.com>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	zhenglifeng <zhenglifeng1@huawei.com>, "H . Peter Anvin" <hpa@zytor.com>, Zhang Rui <rui.zhang@intel.com>, 
-	Len Brown <lenb@kernel.org>, Nicholas Piggin <npiggin@gmail.com>, 
-	Christophe Leroy <christophe.leroy@csgroup.eu>, Lukasz Luba <lukasz.luba@arm.com>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Beata Michalska <beata.michalska@arm.com>, 
-	Fabio Estevam <festevam@gmail.com>, Pavel Machek <pavel@kernel.org>, Sumit Gupta <sumitg@nvidia.com>, 
-	Prasanna Kumar T S M <ptsm@linux.microsoft.com>, Sudeep Holla <sudeep.holla@arm.com>, 
-	Yicong Yang <yangyicong@hisilicon.com>, linux-pm@vger.kernel.org, x86@kernel.org, 
-	kvm@vger.kernel.org, linux-acpi@vger.kernel.org, 
-	linuxppc-dev@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, 
-	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
-	imx@lists.linux.dev, linux-omap@vger.kernel.org, 
-	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
 
-On Wed, Aug 27, 2025, Zihuan Zhang wrote:
-> Replace the manual cpufreq_cpu_put() with __free(put_cpufreq_policy)
-> annotation for policy references. This reduces the risk of reference
-> counting mistakes and aligns the code with the latest kernel style.
-> 
-> No functional change intended.
-> 
-> Signed-off-by: Zihuan Zhang <zhangzihuan@kylinos.cn>
-> ---
->  arch/x86/kvm/x86.c | 10 ++++------
->  1 file changed, 4 insertions(+), 6 deletions(-)
-> 
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index a1c49bc681c4..2a825f4ec701 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -9492,16 +9492,14 @@ static void kvm_timer_init(void)
->  		max_tsc_khz = tsc_khz;
->  
->  		if (IS_ENABLED(CONFIG_CPU_FREQ)) {
-> -			struct cpufreq_policy *policy;
-> +			struct cpufreq_policy *policy __free(put_cpufreq_policy);
->  			int cpu;
->  
->  			cpu = get_cpu();
->  			policy = cpufreq_cpu_get(cpu);
-> -			if (policy) {
-> -				if (policy->cpuinfo.max_freq)
-> -					max_tsc_khz = policy->cpuinfo.max_freq;
-> -				cpufreq_cpu_put(policy);
-> -			}
-> +			if (policy && policy->cpuinfo.max_freq)
-> +				max_tsc_khz = policy->cpuinfo.max_freq;
-> +
->  			put_cpu();
-
-Hmm, this is technically buggy.  __free() won't invoke put_cpufreq_policy() until
-policy goes out of scope, and so using __free() means the code is effectively:
-
-		if (IS_ENABLED(CONFIG_CPU_FREQ)) {
-			struct cpufreq_policy *policy;
-			int cpu;
-
-			cpu = get_cpu();
-			policy = cpufreq_cpu_get(cpu);
-			if (policy && policy->cpuinfo.max_freq)
-				max_tsc_khz = policy->cpuinfo.max_freq;
-			put_cpu();
-
-			if (policy)
-				cpufreq_cpu_put(policy);
-		}
-
-That's "fine" because the policy isn't truly referenced after preemption is
-disabled, the lifecycle of the policy doesn't rely on preemption being disabled,
-and KVM doesn't actually care which CPU is used to get the max frequency, i.e.
-this would technically be "fine" too:
-
-		if (IS_ENABLED(CONFIG_CPU_FREQ)) {
-			struct cpufreq_policy *policy;
-			int cpu;
-
-			cpu = get_cpu();
-			policy = cpufreq_cpu_get(cpu);
-			put_cpu();
-
-			if (policy && policy->cpuinfo.max_freq)
-				max_tsc_khz = policy->cpuinfo.max_freq;
-
-			if (policy)
-				cpufreq_cpu_put(policy);
-		}
-
-But given that the code we have today is perfectly readable, I don't see any
-reason to switch to __free() given that's it's technically flawed.  So I'm very
-strongly inclined to skip this patch and keep things as-is.
+SGkgR0sNCkxvbmcgdGltZSBubyBzZWUuIFRoYW5rcyBmb3IgcG9pbnRpbmcgdGhhdMKgb3V0Lg0K
+SSdtIHByZXBhcmluZyBhIG5ldyBwYXRjaCB0byBjb3JyZWN0IGl0Lg0KDQo+IC0tLS0tT3JpZ2lu
+YWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IEdlcmdvIEtvdGVsZXMgPHNveWVyQGlybC5odT4NCj4g
+U2VudDogV2VkbmVzZGF5LCBBdWd1c3QgMjcsIDIwMjUgOTozNCBBTQ0KPiBUbzogRGluZywgU2hl
+bmdoYW8gPHNoZW5naGFvLWRpbmdAdGkuY29tPjsgdGl3YWlAc3VzZS5kZQ0KPiBDYzogYnJvb25p
+ZUBrZXJuZWwub3JnOyBhbmRyaXkuc2hldmNoZW5rb0BsaW51eC5pbnRlbC5jb207DQo+IDEzNTY0
+OTIzNjA3QDEzOS5jb207IDEzOTE2Mjc1MjA2QDEzOS5jb207IGFsc2EtZGV2ZWxAYWxzYS0NCj4g
+cHJvamVjdC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IFh1LCBCYW9qdW4gPGJh
+b2p1bi54dUB0aS5jb20+Ow0KPiBCYW9qdW4uWHVAZnB0LmNvbTsgSmksIEplc3NlIDxqZXNzZS1q
+aUB0aS5jb20+DQo+IFN1YmplY3Q6IFtFWFRFUk5BTF0gUmU6IFtQQVRDSCB2Ml0gQUxTQTogaGRh
+L3RhczI3ODE6IEZpeCBFRkkgbmFtZSBmb3INCj4gY2FsaWJyYXRpb24gYmVnaW5uaW5nIHdpdGgg
+MSBpbnN0ZWFkIG9mIDANCj4gDQo+IEhpIFNoZW5naGFvLCBPbiBUdWUsIDIwMjUtMDgtMjYgYXQg
+MTc64oCKNDEgKzA4MDAsIFNoZW5naGFvIERpbmcgd3JvdGU6ID4gQQ0KPiBidWcgcmVwb3J0ZWQg
+Ynkgb25lIG9mIG15IGN1c3RvbWVycyB0aGF0IEVGSSBuYW1lIGJlZ2lubmluZyB3aXRoIDAgPiBp
+bnN0ZWFkDQo+IG9mIDEuID4gPiBGaXhlczogNGZlMjM4NTEzNDA3ICgiQUxTQTogaGRhL3RhczI3
+ODE6IE1vdmUgYW5kIHVuaWZpZWQgdGhlDQo+IGNhbGlicmF0ZWQtZGF0YSBaalFjbVFSWUZwZnB0
+QmFubmVyU3RhcnQgVGhpcyBtZXNzYWdlIHdhcyBzZW50IGZyb20NCj4gb3V0c2lkZSBvZiBUZXhh
+cyBJbnN0cnVtZW50cy4NCj4gRG8gbm90IGNsaWNrIGxpbmtzIG9yIG9wZW4gYXR0YWNobWVudHMg
+dW5sZXNzIHlvdSByZWNvZ25pemUgdGhlIHNvdXJjZSBvZiB0aGlzDQo+IGVtYWlsIGFuZCBrbm93
+IHRoZSBjb250ZW50IGlzIHNhZmUuDQo+IDxodHRwczovL3VzLXBoaXNoYWxhcm0tDQo+IGV3dC5w
+cm9vZnBvaW50LmNvbS9FV1QvdjEvRzN2SyF1bGRySFRhUG5PMDdLeXpPZkRPSkhNSEdpcGNqWTJS
+RU1RDQo+IHRnMnNxNkVzck5xbzNCdnh3SzdISzFQYTZJb0VxcDBBc1h5X2FtT3FHSUY3eEl1ZkN4
+YVpmUDViNFc1TVlJd1YNCj4geG9ueWRPS0pBJD4NCj4gUmVwb3J0IFN1c3BpY2lvdXMNCj4gDQo+
+IFpqUWNtUVJZRnBmcHRCYW5uZXJFbmQNCj4gSGkgU2hlbmdoYW8sDQo+IA0KPiBPbiBUdWUsIDIw
+MjUtMDgtMjYgYXQgMTc6NDEgKzA4MDAsIFNoZW5naGFvIERpbmcgd3JvdGU6DQo+ID4gQSBidWcg
+cmVwb3J0ZWQgYnkgb25lIG9mIG15IGN1c3RvbWVycyB0aGF0IEVGSSBuYW1lIGJlZ2lubmluZyB3
+aXRoIDANCj4gPiBpbnN0ZWFkIG9mIDEuDQo+ID4NCj4gPiBGaXhlczogNGZlMjM4NTEzNDA3ICgi
+QUxTQTogaGRhL3RhczI3ODE6IE1vdmUgYW5kIHVuaWZpZWQgdGhlDQo+ID4gY2FsaWJyYXRlZC1k
+YXRhIGdldHRpbmcgZnVuY3Rpb24gZm9yIFNQSSBhbmQgSTJDIGludG8gdGhlIHRhczI3ODFfaGRh
+DQo+ID4gbGliIikNCj4gPiBTaWduZWQtb2ZmLWJ5OiBTaGVuZ2hhbyBEaW5nIDxzaGVuZ2hhby1k
+aW5nQHRpLmNvbT4NCj4gPg0KPiA+IC0tLQ0KPiA+IHYyOg0KPiA+ICAtIHJlbW92ZSB1bnJlbGF0
+ZWQgY2hhbmdlDQo+ID4gdjE6DQo+ID4gIC0gRml4IEVGSSBuYW1lIGJlZ2lubmluZyB3aXRoIDEg
+aW5zdGVhZCBvZiAwDQo+ID4gIC0gQWRkIGV4dHJhIGNvbW1lbnRzIG9uIEVGSSBuYW1lIGZvciBj
+YWxpYnJhdGlvbg0KPiA+ICAtIFJlbW92ZSBhbiBleHRyYSBzcGFjZQ0KPiA+IC0tLQ0KPiA+ICBz
+b3VuZC9oZGEvY29kZWNzL3NpZGUtY29kZWNzL3RhczI3ODFfaGRhX2kyYy5jIHwgNSArKystLQ0K
+PiA+ICAxIGZpbGUgY2hhbmdlZCwgMyBpbnNlcnRpb25zKCspLCAyIGRlbGV0aW9ucygtKQ0KPiA+
+DQo+ID4gZGlmZiAtLWdpdCBhL3NvdW5kL2hkYS9jb2RlY3Mvc2lkZS1jb2RlY3MvdGFzMjc4MV9o
+ZGFfaTJjLmMNCj4gPiBiL3NvdW5kL2hkYS9jb2RlY3Mvc2lkZS1jb2RlY3MvdGFzMjc4MV9oZGFf
+aTJjLmMNCj4gPiBpbmRleCBlZDc3NzFhYjk0NzUuLjYzNWNiZDg4MjBhYyAxMDA2NDQNCj4gPiAt
+LS0gYS9zb3VuZC9oZGEvY29kZWNzL3NpZGUtY29kZWNzL3RhczI3ODFfaGRhX2kyYy5jDQo+ID4g
+KysrIGIvc291bmQvaGRhL2NvZGVjcy9zaWRlLWNvZGVjcy90YXMyNzgxX2hkYV9pMmMuYw0KPiA+
+IEBAIC0zNDAsNyArMzQwLDggQEAgc3RhdGljIGludCB0YXMyNTYzX3NhdmVfY2FsaWJyYXRpb24o
+c3RydWN0DQo+IHRhczI3ODFfaGRhICpoKQ0KPiA+ICAJCWRhdGFbb2Zmc2V0XSA9IGk7DQo+ID4g
+IAkJb2Zmc2V0Kys7DQo+ID4gIAkJZm9yIChqID0gMDsgaiA8IFRBU0RFVl9DQUxJQl9OOyArK2op
+IHsNCj4gPiAtCQkJcmV0ID0gc25wcmludGYodmFyOCwgc2l6ZW9mKHZhcjgpLCB2YXJzW2pdLCBp
+KTsNCj4gPiArCQkJLyogRUZJIG5hbWUgZm9yIGNhbGlicmF0aW9uIHN0YXJ0ZWQgd2l0aCAxLCBu
+b3QgMCAqLw0KPiA+ICsJCQlyZXQgPSBzbnByaW50Zih2YXI4LCBzaXplb2YodmFyOCksIHZhcnNb
+al0sIGkgKyAxKTsNCj4gPg0KPiA+ICAJCQlpZiAocmV0IDwgMCB8fCByZXQgPj0gc2l6ZW9mKHZh
+cjgpIC0gMSkgew0KPiA+ICAJCQkJZGV2X2VycihwLT5kZXYsICIlczogUmVhZCAlcyBmYWlsZWRc
+biIsIEBAIC0NCj4gMzQ5LDcgKzM1MCw3IEBADQo+ID4gc3RhdGljIGludCB0YXMyNTYzX3NhdmVf
+Y2FsaWJyYXRpb24oc3RydWN0IHRhczI3ODFfaGRhICpoKQ0KPiA+ICAJCQl9DQo+ID4gIAkJCS8q
+DQo+ID4gIAkJCSAqIE91ciB2YXJpYWJsZSBuYW1lcyBhcmUgQVNDSUkgYnkgY29uc3RydWN0aW9u
+LCBidXQNCj4gPiAtCQkJICogRUZJIG5hbWVzIGFyZSB3aWRlIGNoYXJzLiAgQ29udmVydCBhbmQg
+emVyby1wYWQuDQo+ID4gKwkJCSAqIEVGSSBuYW1lcyBhcmUgd2lkZSBjaGFycy4gQ29udmVydCBh
+bmQgemVyby1wYWQuDQo+ID4gIAkJCSAqLw0KPiA+ICAJCQltZW1zZXQoZWZpX25hbWUsIDAsIHNp
+emVvZihlZmlfbmFtZSkpOw0KPiA+ICAJCQlmb3IgKGsgPSAwOyBrIDwgc2l6ZW9mKHZhcjgpICYm
+IHZhcjhba107IGsrKykNCj4gDQo+IEluIHRoZSB0YXMyNTYzX3NhdmVfY2FsaWJyYXRpb24oKSBm
+dW5jdGlvbiB0aGUgdmFyaWFibGVzIGFyZSByZWFkIGluIHRoZQ0KPiBmb2xsb3dpbmcgb3JkZXI6
+IFIwLCBJbnZSMCwgUjBfTG93LCBQb3dlciwgVExpbS4NCj4gVGhleSBhcmUgYWxzbyBpbmNsdWRl
+ZCBpbiBjYWxpX2RhdGEgaW4gdGhpcyBvcmRlci4NCj4gDQo+IEJ1dCB0aGUgdGFzZGV2X2xvYWRf
+Y2FsaWJyYXRlZF9kYXRhKCkgZnVuY3Rpb24gcmVhZHMgdGhlbSBmcm9tIGNhbGlfZGF0YSBhcw0K
+PiBSMCwgUjBfTG93LCBJbnZSMCwgUG93ZXIsIFRMaW0uDQo+IA0KPiBBbmQgdGhpcyBtYXkgYmUg
+dHJ1ZSBmb3IgdGFzMjc4MSBhcyB3ZWxsLg0KDQoNCj4gDQo+IENvdWxkIHlvdSBjaGVjayB0aGlz
+IGFsc28/DQo+IA0KPiBUaGFua3MsDQo+IEdlcmdvDQo=
 
