@@ -1,635 +1,120 @@
-Return-Path: <linux-kernel+bounces-788713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB0DBB38933
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 20:01:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C0FCB38931
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 20:01:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 540727B914A
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 17:58:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 369D54644A1
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 18:01:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52B942DF3EC;
-	Wed, 27 Aug 2025 17:58:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41BD227B323;
+	Wed, 27 Aug 2025 18:01:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g58Xbx8Y"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="MVpLRtR4"
+Received: from relay10.grserver.gr (relay10.grserver.gr [37.27.248.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CA8B2D9487;
-	Wed, 27 Aug 2025 17:58:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD58113E41A;
+	Wed, 27 Aug 2025 18:00:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.27.248.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756317494; cv=none; b=QOuKgUx4bVcJBlsdwGPTkc+V2RLLpjcKaifAUQbs2YDw05Bdg9zsMtZUaINDK02fxBQ0NlYRzNbxs7M78su/Ul6d2dSvUE1LNmwutq9uOJomkO+Cgl55BghNasJwcXGwagDExrIfL96g0sepdUZPPcRhh1alB8kc8vwBVZWUfRo=
+	t=1756317659; cv=none; b=siv+OCGCbwIOG9wTbXkpKtkzwJS1jAiny53Di7LWiOagMz6D64YAWRsRNjxY6TNXzQSx7wsj/rTQTvAn5PiWEe9I4n3TvRjemHkm7BSvhVeRFXNh8+hP1Bc+1Oo9Ix2zIOJYevt6v9qoJ36NAc4GEt/QfjbxqCNK6zMIe4mxqDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756317494; c=relaxed/simple;
-	bh=8y5XV4XIM1TnHjweSA2aTmVE4u32NjAJ3n+V4hprS/s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o+G0TaVEBA6jSoWX/euBJnsoC7ipujBvBGv4xDzbXRNZGv9LXDkeKLIz9IizQr+S+iXG/Hv8afsD53FNKCXsImeG/cLqyG3novV871seAEjyN4hALis336bGRHr+i63sWZnljSI6lAg9i+zyZdXUkw5KYXcqeJiMagzQ0fIrRZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g58Xbx8Y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C949C4CEF0;
-	Wed, 27 Aug 2025 17:58:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756317493;
-	bh=8y5XV4XIM1TnHjweSA2aTmVE4u32NjAJ3n+V4hprS/s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=g58Xbx8Y6wi29Z5jf6p1cGc/gNVTt7/6fjT28JgG2gkTh5yLq3hPTxmsG1vPraWUz
-	 PEyjOyBwxDScZuJUe8VQ6noGEkh+8DZyjfp7wpcrMwMQxwvqNDCHFN4y4a/5XAGqxZ
-	 n/gLV3Kgp2pg6RkWxZ7GZ22/ubhU0URHQ6R421z8GDhB3D6r+ecXpwTyMy0Kt63cb3
-	 jr46hYND/qK0BH72Hct9PjA/Df4gYKhGvfF4ryepd/hSXLGYO90iRixoSEJryUaei9
-	 YE5BhpgnRl753S3zOlXdLGUrbYD1nblnXy4XQQfUeVvvxUhP5cAEUO6x+2eATV1c0I
-	 5IIhDpYteouEA==
-Date: Wed, 27 Aug 2025 12:58:10 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: Umang Chheda <umang.chheda@oss.qualcomm.com>
-Cc: Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Richard Cochran <richardcochran@gmail.com>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Rakesh Kota <rakesh.kota@oss.qualcomm.com>, 
-	Nirmesh Kumar Singh <quic_nkumarsi@quicinc.com>, Viken Dadhaniya <viken.dadhaniya@oss.qualcomm.com>, 
-	Mohd Ayaan Anwar <quic_mohdayaa@quicinc.com>, Arun Khannna <quic_arkhanna@quicinc.com>, 
-	Monish Chunara <quic_mchunara@quicinc.com>, Vikash Garodia <quic_vgarodia@quicinc.com>, 
-	Swati Agarwal <swati.agarwal@oss.qualcomm.com>
-Subject: Re: [PATCH v3 2/2] arm64: dts: qcom: Add Monaco EVK initial board
- support
-Message-ID: <tzw3meuh4ioyolhx5l4uoz6ztlt73dl5ijd6rsornusfgzmq65@v3d56czx5otn>
-References: <20250826181506.3698370-1-umang.chheda@oss.qualcomm.com>
- <20250826181506.3698370-3-umang.chheda@oss.qualcomm.com>
+	s=arc-20240116; t=1756317659; c=relaxed/simple;
+	bh=sWCGTZe2jXvPtA8z2lu570Aoie8t2QFzT5hY5nOrwfA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=A1Ri5rs5kQJ5W+V7Gao9KvhJHzyz5G8T1PUPQ9FkWTvIEaOIHKIs4tOtF3QCG1DbM1bI8qX8urg2RskNor88orptXzNpHeElZX183VpSWnIIv/oa6pea3p5r/HDYFC6j3h+aFW5LCOCTV5hZqO3ThxU6K4dorW4m3u4vXJegZNE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=MVpLRtR4; arc=none smtp.client-ip=37.27.248.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
+Received: from relay10 (localhost.localdomain [127.0.0.1])
+	by relay10.grserver.gr (Proxmox) with ESMTP id BA9CD4935F;
+	Wed, 27 Aug 2025 21:00:55 +0300 (EEST)
+Received: from linux3247.grserver.gr (linux3247.grserver.gr [213.158.90.240])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by relay10.grserver.gr (Proxmox) with ESMTPS id D1F18491B2;
+	Wed, 27 Aug 2025 21:00:54 +0300 (EEST)
+Received: from antheas-z13 (x5996a855.customers.hiper-net.dk [89.150.168.85])
+	by linux3247.grserver.gr (Postfix) with ESMTPSA id 46B711FF6EE;
+	Wed, 27 Aug 2025 21:00:53 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
+	s=default; t=1756317654;
+	bh=mAfJYfiIgzNvgbEcVv2Z96v/vZoKteB0l8ih2gQ1320=; h=From:To:Subject;
+	b=MVpLRtR4iwD1M9ubl2FuzG299pfztxD02lRHoDZxEZzC1+SjyevrgNNmC6HXDHu0u
+	 M2Ycbdk9otUWK4sUL9L/ETL3QEUB/K2l17lITN3NLx2fDUZLTT/qA6ON0d/inHOvTd
+	 715zFxn+qarC+XTPIHU0VicAVQZnRU7Jw5dc6KLwvSsHheqgMHW70wgWgCbPnwiDjR
+	 t039h6jzC/Q4mNR3p2Wt+OMuj4vdrx9aXmomqOiChLCugjVKJJP6EeIr8KbgMqvjqr
+	 qw0bo38hNPNhH5CtVO70958YBKSV/nM61UfxhBhkEljWLaL0YyCMAZ6yftciozJfH4
+	 kRkCkNF4lGciw==
+Authentication-Results: linux3247.grserver.gr;
+	spf=pass (sender IP is 89.150.168.85) smtp.mailfrom=lkml@antheas.dev smtp.helo=antheas-z13
+Received-SPF: pass (linux3247.grserver.gr: connection is authenticated)
+From: Antheas Kapenekakis <lkml@antheas.dev>
+To: linux-gpio@vger.kernel.org
+Cc: linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Mika Westerberg <westeri@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Antheas Kapenekakis <lkml@antheas.dev>
+Subject: [PATCH v1] gpiolib: acpi: Ignore touchpad wakeup on GPD G1619-05
+Date: Wed, 27 Aug 2025 19:58:42 +0200
+Message-ID: <20250827175842.3697418-1-lkml@antheas.dev>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250826181506.3698370-3-umang.chheda@oss.qualcomm.com>
+X-PPP-Message-ID: 
+ <175631765413.1413749.7209228509442678446@linux3247.grserver.gr>
+X-PPP-Vhost: antheas.dev
+X-Virus-Scanned: clamav-milter 1.4.3 at linux3247.grserver.gr
+X-Virus-Status: Clean
 
-On Tue, Aug 26, 2025 at 11:45:06PM +0530, Umang Chheda wrote:
+Same issue as G1619-04 in commit 805c74eac8cb ("gpiolib: acpi: Ignore
+touchpad wakeup on GPD G1619-04"), Strix Point lineup uses 05.
 
-Please add "qcs8300: " to the prefix and drop the words "initial" and
-"support" from subject.
+Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
+---
+ drivers/gpio/gpiolib-acpi-quirks.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-> Add initial device tree support for Monaco EVK board, based on
-> Qualcomm's QCS8300 SoC.
+diff --git a/drivers/gpio/gpiolib-acpi-quirks.c b/drivers/gpio/gpiolib-acpi-quirks.c
+index c13545dce349..bb63138c4b5b 100644
+--- a/drivers/gpio/gpiolib-acpi-quirks.c
++++ b/drivers/gpio/gpiolib-acpi-quirks.c
+@@ -317,6 +317,18 @@ static const struct dmi_system_id gpiolib_acpi_quirks[] __initconst = {
+ 			.ignore_wake = "PNP0C50:00@8",
+ 		},
+ 	},
++	{
++		/*
++		 * Same as G1619-04. New model.
++		 */
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "GPD"),
++			DMI_MATCH(DMI_PRODUCT_NAME, "G1619-05"),
++		},
++		.driver_data = &(struct acpi_gpiolib_dmi_quirk) {
++			.ignore_wake = "PNP0C50:00@8",
++		},
++	},
+ 	{
+ 		/*
+ 		 * Spurious wakeups from GPIO 11
 
-Drop this sentence and embed the useful information in the next
-paragraph, which introduces us to the purpose of the patch.
-
-"Monaco EVK is a single board computer, based on the Qualcomm QCS8300
-SoC, with the following features:"
-> 
-> Monaco EVK is single board supporting these peripherals:
->   - Storage: 1 × 128 GB UFS, micro-SD card, EEPROMs for MACs,
->     and eMMC.
->   - Audio/Video, Camera & Display ports.
->   - Connectivity: RJ45 2.5GbE, WLAN/Bluetooth, CAN/CAN-FD.
->   - PCIe ports.
->   - USB & UART ports.
-> 
-> On top of Monaco EVK board additional mezzanine boards can be
-> stacked in future.
-> 
-> Add support for the following components :
->   - GPI (Generic Peripheral Interface) and QUPv3-0/1
->     controllers to facilitate DMA and peripheral communication.
->   - TCA9534 I/O expander via I2C to provide 8 additional GPIO
->     lines for extended I/O functionality.
->   - USB1 controller in device mode to support USB peripheral
->     operations.
->   - Remoteproc subsystems for supported DSPs such as Audio DSP,
->     Compute DSP and Generic DSP, along with their corresponding
->     firmware.
->   - Configure nvmem-layout on the I2C EEPROM to store data for Ethernet
->     and other consumers.
->   - QCA8081 2.5G Ethernet PHY on port-0 and expose the
->     Ethernet MAC address via nvmem for network configuration.
->     It depends on CONFIG_QCA808X_PHY to use QCA8081 PHY.
->   - Support for the Iris video decoder, including the required
->     firmware, to enable video decoding capabilities.
-> 
-> Co-developed-by: Rakesh Kota <rakesh.kota@oss.qualcomm.com>
-> Signed-off-by: Rakesh Kota <rakesh.kota@oss.qualcomm.com>
-> Co-developed-by: Nirmesh Kumar Singh <quic_nkumarsi@quicinc.com>
-> Signed-off-by: Nirmesh Kumar Singh <quic_nkumarsi@quicinc.com>
-> Co-developed-by: Viken Dadhaniya <viken.dadhaniya@oss.qualcomm.com>
-> Signed-off-by: Viken Dadhaniya <viken.dadhaniya@oss.qualcomm.com>
-> Co-developed-by: Mohd Ayaan Anwar <quic_mohdayaa@quicinc.com>
-> Signed-off-by: Mohd Ayaan Anwar <quic_mohdayaa@quicinc.com>
-> Co-developed-by: Arun Khannna <quic_arkhanna@quicinc.com>
-> Signed-off-by: Arun Khannna <quic_arkhanna@quicinc.com>
-> Co-developed-by: Monish Chunara <quic_mchunara@quicinc.com>
-> Signed-off-by: Monish Chunara <quic_mchunara@quicinc.com>
-> Co-developed-by: Vikash Garodia <quic_vgarodia@quicinc.com>
-> Signed-off-by: Vikash Garodia <quic_vgarodia@quicinc.com>
-> Co-developed-by: Swati Agarwal <swati.agarwal@oss.qualcomm.com>
-> Signed-off-by: Swati Agarwal <swati.agarwal@oss.qualcomm.com>
-> Signed-off-by: Umang Chheda <umang.chheda@oss.qualcomm.com>
-> ---
->  arch/arm64/boot/dts/qcom/Makefile       |   1 +
->  arch/arm64/boot/dts/qcom/monaco-evk.dts | 463 ++++++++++++++++++++++++
->  2 files changed, 464 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/qcom/monaco-evk.dts
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
-> index 94a84770b080..057a81ea04ed 100644
-> --- a/arch/arm64/boot/dts/qcom/Makefile
-> +++ b/arch/arm64/boot/dts/qcom/Makefile
-> @@ -30,6 +30,7 @@ dtb-$(CONFIG_ARCH_QCOM)	+= ipq9574-rdp449.dtb
->  dtb-$(CONFIG_ARCH_QCOM)	+= ipq9574-rdp453.dtb
->  dtb-$(CONFIG_ARCH_QCOM)	+= ipq9574-rdp454.dtb
->  dtb-$(CONFIG_ARCH_QCOM)	+= lemans-evk.dtb
-> +dtb-$(CONFIG_ARCH_QCOM)	+= monaco-evk.dtb
->  dtb-$(CONFIG_ARCH_QCOM)	+= msm8216-samsung-fortuna3g.dtb
->  dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-acer-a1-724.dtb
->  dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-alcatel-idol347.dtb
-> diff --git a/arch/arm64/boot/dts/qcom/monaco-evk.dts b/arch/arm64/boot/dts/qcom/monaco-evk.dts
-> new file mode 100644
-> index 000000000000..8d58e62f6c87
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/qcom/monaco-evk.dts
-> @@ -0,0 +1,463 @@
-> +// SPDX-License-Identifier: BSD-3-Clause
-> +/*
-> + * Copyright (c) 2025 Qualcomm Innovation Center, Inc. All rights reserved.
-
-This is the wrong copyright statement.
-
-> + */
-> +
-> +/dts-v1/;
-> +
-> +#include <dt-bindings/gpio/gpio.h>
-> +#include <dt-bindings/regulator/qcom,rpmh-regulator.h>
-> +
-> +#include "qcs8300.dtsi"
-> +#include "qcs8300-pmics.dtsi"
-> +
-> +/ {
-> +	model = "Qualcomm Technologies, Inc. Monaco EVK";
-> +	compatible = "qcom,monaco-evk", "qcom,qcs8300";
-> +
-> +	aliases {
-> +		ethernet0 = &ethernet0;
-> +		i2c1 = &i2c1;
-> +		serial0 = &uart7;
-> +	};
-> +
-> +	chosen {
-> +		stdout-path = "serial0:115200n8";
-> +	};
-> +};
-> +
-> +&apps_rsc {
-> +	regulators-0 {
-> +		compatible = "qcom,pmm8654au-rpmh-regulators";
-> +		qcom,pmic-id = "a";
-> +
-> +		vreg_l3a: ldo3 {
-> +			regulator-name = "vreg_l3a";
-> +			regulator-min-microvolt = <1200000>;
-> +			regulator-max-microvolt = <1200000>;
-> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-> +			regulator-allow-set-load;
-> +			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM
-> +						   RPMH_REGULATOR_MODE_HPM>;
-
-Are you sure that all these should have LPM and HPM as allowed modes? I
-would have preferred HPM-only and then selectively enable LPM, to avoid
-issues when LPM is entered.
-
-Such as what happened in fba47ba8c8a8 ("arm64: dts: qcom: qcs615: Set
-LDO12A regulator to HPM to avoid boot hang")
-
-Regards,
-Bjorn
+base-commit: 1b237f190eb3d36f52dffe07a40b5eb210280e00
+-- 
+2.51.0
 
 
-> +		};
-> +
-> +		vreg_l4a: ldo4 {
-> +			regulator-name = "vreg_l4a";
-> +			regulator-min-microvolt = <880000>;
-> +			regulator-max-microvolt = <912000>;
-> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-> +			regulator-allow-set-load;
-> +			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM
-> +						   RPMH_REGULATOR_MODE_HPM>;
-> +		};
-> +
-> +		vreg_l5a: ldo5 {
-> +			regulator-name = "vreg_l5a";
-> +			regulator-min-microvolt = <1200000>;
-> +			regulator-max-microvolt = <1200000>;
-> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-> +			regulator-allow-set-load;
-> +			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM
-> +						   RPMH_REGULATOR_MODE_HPM>;
-> +		};
-> +
-> +		vreg_l6a: ldo6 {
-> +			regulator-name = "vreg_l6a";
-> +			regulator-min-microvolt = <880000>;
-> +			regulator-max-microvolt = <912000>;
-> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-> +			regulator-allow-set-load;
-> +			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM
-> +						   RPMH_REGULATOR_MODE_HPM>;
-> +		};
-> +
-> +		vreg_l7a: ldo7 {
-> +			regulator-name = "vreg_l7a";
-> +			regulator-min-microvolt = <880000>;
-> +			regulator-max-microvolt = <912000>;
-> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-> +			regulator-allow-set-load;
-> +			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM
-> +						   RPMH_REGULATOR_MODE_HPM>;
-> +		};
-> +
-> +		vreg_l8a: ldo8 {
-> +			regulator-name = "vreg_l8a";
-> +			regulator-min-microvolt = <2504000>;
-> +			regulator-max-microvolt = <2960000>;
-> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-> +			regulator-allow-set-load;
-> +			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM
-> +						   RPMH_REGULATOR_MODE_HPM>;
-> +		};
-> +
-> +		vreg_l9a: ldo9 {
-> +			regulator-name = "vreg_l9a";
-> +			regulator-min-microvolt = <2970000>;
-> +			regulator-max-microvolt = <3072000>;
-> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-> +			regulator-allow-set-load;
-> +			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM
-> +						   RPMH_REGULATOR_MODE_HPM>;
-> +		};
-> +	};
-> +
-> +	regulators-1 {
-> +		compatible = "qcom,pmm8654au-rpmh-regulators";
-> +		qcom,pmic-id = "c";
-> +
-> +		vreg_s5c: smps5 {
-> +			regulator-name = "vreg_s5c";
-> +			regulator-min-microvolt = <1104000>;
-> +			regulator-max-microvolt = <1104000>;
-> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-> +		};
-> +
-> +		vreg_l1c: ldo1 {
-> +			regulator-name = "vreg_l1c";
-> +			regulator-min-microvolt = <300000>;
-> +			regulator-max-microvolt = <512000>;
-> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-> +			regulator-allow-set-load;
-> +			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM
-> +						   RPMH_REGULATOR_MODE_HPM>;
-> +		};
-> +
-> +		vreg_l2c: ldo2 {
-> +			regulator-name = "vreg_l2c";
-> +			regulator-min-microvolt = <900000>;
-> +			regulator-max-microvolt = <904000>;
-> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-> +			regulator-allow-set-load;
-> +			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM
-> +						   RPMH_REGULATOR_MODE_HPM>;
-> +		};
-> +
-> +		vreg_l4c: ldo4 {
-> +			regulator-name = "vreg_l4c";
-> +			regulator-min-microvolt = <1200000>;
-> +			regulator-max-microvolt = <1200000>;
-> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-> +			regulator-allow-set-load;
-> +			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM
-> +						   RPMH_REGULATOR_MODE_HPM>;
-> +		};
-> +
-> +		vreg_l7c: ldo7 {
-> +			regulator-name = "vreg_l7c";
-> +			regulator-min-microvolt = <1800000>;
-> +			regulator-max-microvolt = <1800000>;
-> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-> +			regulator-allow-set-load;
-> +			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM
-> +						   RPMH_REGULATOR_MODE_HPM>;
-> +		};
-> +
-> +		vreg_l8c: ldo8 {
-> +			regulator-name = "vreg_l8c";
-> +			regulator-min-microvolt = <1800000>;
-> +			regulator-max-microvolt = <1800000>;
-> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-> +			regulator-allow-set-load;
-> +			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM
-> +						   RPMH_REGULATOR_MODE_HPM>;
-> +		};
-> +
-> +		vreg_l9c: ldo9 {
-> +			regulator-name = "vreg_l9c";
-> +			regulator-min-microvolt = <1800000>;
-> +			regulator-max-microvolt = <1800000>;
-> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-> +			regulator-allow-set-load;
-> +			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM
-> +						   RPMH_REGULATOR_MODE_HPM>;
-> +		};
-> +	};
-> +};
-> +
-> +&ethernet0 {
-> +	phy-mode = "2500base-x";
-> +	phy-handle = <&hsgmii_phy0>;
-> +
-> +	pinctrl-0 = <&ethernet0_default>;
-> +	pinctrl-names = "default";
-> +
-> +	snps,mtl-rx-config = <&mtl_rx_setup>;
-> +	snps,mtl-tx-config = <&mtl_tx_setup>;
-> +	snps,ps-speed = <1000>;
-> +	nvmem-cells = <&mac_addr0>;
-> +	nvmem-cell-names = "mac-address";
-> +
-> +	status = "okay";
-> +
-> +	mdio {
-> +		compatible = "snps,dwmac-mdio";
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +
-> +		hsgmii_phy0: ethernet-phy@1c {
-> +			compatible = "ethernet-phy-id004d.d101";
-> +			reg = <0x1c>;
-> +			reset-gpios = <&tlmm 31 GPIO_ACTIVE_LOW>;
-> +			reset-assert-us = <11000>;
-> +			reset-deassert-us = <70000>;
-> +		};
-> +	};
-> +
-> +	mtl_rx_setup: rx-queues-config {
-> +		snps,rx-queues-to-use = <4>;
-> +		snps,rx-sched-sp;
-> +
-> +		queue0 {
-> +			snps,dcb-algorithm;
-> +			snps,map-to-dma-channel = <0x0>;
-> +			snps,route-up;
-> +			snps,priority = <0x1>;
-> +		};
-> +
-> +		queue1 {
-> +			snps,dcb-algorithm;
-> +			snps,map-to-dma-channel = <0x1>;
-> +			snps,route-ptp;
-> +		};
-> +
-> +		queue2 {
-> +			snps,avb-algorithm;
-> +			snps,map-to-dma-channel = <0x2>;
-> +			snps,route-avcp;
-> +		};
-> +
-> +		queue3 {
-> +			snps,avb-algorithm;
-> +			snps,map-to-dma-channel = <0x3>;
-> +			snps,priority = <0xc>;
-> +		};
-> +	};
-> +
-> +	mtl_tx_setup: tx-queues-config {
-> +		snps,tx-queues-to-use = <4>;
-> +
-> +		queue0 {
-> +			snps,dcb-algorithm;
-> +		};
-> +
-> +		queue1 {
-> +			snps,dcb-algorithm;
-> +		};
-> +
-> +		queue2 {
-> +			snps,avb-algorithm;
-> +			snps,send_slope = <0x1000>;
-> +			snps,idle_slope = <0x1000>;
-> +			snps,high_credit = <0x3e800>;
-> +			snps,low_credit = <0xffc18000>;
-> +		};
-> +
-> +		queue3 {
-> +			snps,avb-algorithm;
-> +			snps,send_slope = <0x1000>;
-> +			snps,idle_slope = <0x1000>;
-> +			snps,high_credit = <0x3e800>;
-> +			snps,low_credit = <0xffc18000>;
-> +		};
-> +	};
-> +};
-> +
-> +&gpi_dma0 {
-> +	status = "okay";
-> +};
-> +
-> +&gpi_dma1 {
-> +	status = "okay";
-> +};
-> +
-> +&i2c1 {
-> +	pinctrl-0 = <&qup_i2c1_default>;
-> +	pinctrl-names = "default";
-> +
-> +	status = "okay";
-> +
-> +	eeprom0: eeprom@50 {
-> +		compatible = "atmel,24c256";
-> +		reg = <0x50>;
-> +		pagesize = <64>;
-> +
-> +		nvmem-layout {
-> +			compatible = "fixed-layout";
-> +			#address-cells = <1>;
-> +			#size-cells = <1>;
-> +
-> +			mac_addr0: mac-addr@0 {
-> +				reg = <0x0 0x6>;
-> +			};
-> +		};
-> +	};
-> +};
-> +
-> +&i2c15 {
-> +	pinctrl-0 = <&qup_i2c15_default>;
-> +	pinctrl-names = "default";
-> +
-> +	status = "okay";
-> +
-> +	expander0: pca953x@38 {
-> +		compatible = "ti,tca9538";
-> +		#gpio-cells = <2>;
-> +		gpio-controller;
-> +		reg = <0x38>;
-> +	};
-> +
-> +	expander1: pca953x@39 {
-> +		compatible = "ti,tca9538";
-> +		#gpio-cells = <2>;
-> +		gpio-controller;
-> +		reg = <0x39>;
-> +	};
-> +
-> +	expander2: pca953x@3a {
-> +		compatible = "ti,tca9538";
-> +		#gpio-cells = <2>;
-> +		gpio-controller;
-> +		reg = <0x3a>;
-> +	};
-> +
-> +	expander3: pca953x@3b {
-> +		compatible = "ti,tca9538";
-> +		#gpio-cells = <2>;
-> +		gpio-controller;
-> +		reg = <0x3b>;
-> +	};
-> +
-> +	expander4: pca953x@3c {
-> +		compatible = "ti,tca9538";
-> +		#gpio-cells = <2>;
-> +		gpio-controller;
-> +		reg = <0x3c>;
-> +	};
-> +
-> +	expander5: pca953x@3d {
-> +		compatible = "ti,tca9538";
-> +		#gpio-cells = <2>;
-> +		gpio-controller;
-> +		reg = <0x3d>;
-> +	};
-> +
-> +	expander6: pca953x@3e {
-> +		compatible = "ti,tca9538";
-> +		#gpio-cells = <2>;
-> +		gpio-controller;
-> +		reg = <0x3e>;
-> +	};
-> +};
-> +
-> +&iris {
-> +	status = "okay";
-> +};
-> +
-> +&qupv3_id_0 {
-> +	status = "okay";
-> +};
-> +
-> +&qupv3_id_1 {
-> +	status = "okay";
-> +};
-> +
-> +&remoteproc_adsp {
-> +	firmware-name = "qcom/qcs8300/adsp.mbn";
-> +
-> +	status = "okay";
-> +};
-> +
-> +&remoteproc_cdsp {
-> +	firmware-name = "qcom/qcs8300/cdsp0.mbn";
-> +
-> +	status = "okay";
-> +};
-> +
-> +&remoteproc_gpdsp {
-> +	firmware-name = "qcom/qcs8300/gpdsp0.mbn";
-> +
-> +	status = "okay";
-> +};
-> +
-> +&serdes0 {
-> +	phy-supply = <&vreg_l4a>;
-> +
-> +	status = "okay";
-> +};
-> +
-> +&tlmm {
-> +	ethernet0_default: ethernet0-default-state {
-> +		ethernet0_mdc: ethernet0-mdc-pins {
-> +			pins = "gpio5";
-> +			function = "emac0_mdc";
-> +			drive-strength = <16>;
-> +			bias-pull-up;
-> +		};
-> +
-> +		ethernet0_mdio: ethernet0-mdio-pins {
-> +			pins = "gpio6";
-> +			function = "emac0_mdio";
-> +			drive-strength = <16>;
-> +			bias-pull-up;
-> +		};
-> +	};
-> +
-> +	qup_i2c1_default: qup-i2c1-state {
-> +		pins = "gpio19", "gpio20";
-> +		function = "qup0_se1";
-> +		drive-strength = <2>;
-> +		bias-pull-up;
-> +	};
-> +
-> +	qup_i2c15_default: qup-i2c15-state {
-> +		pins = "gpio91", "gpio92";
-> +		function = "qup1_se7";
-> +		drive-strength = <2>;
-> +		bias-pull-up;
-> +	};
-> +};
-> +
-> +&uart7 {
-> +	status = "okay";
-> +};
-> +
-> +&ufs_mem_hc {
-> +	reset-gpios = <&tlmm 133 GPIO_ACTIVE_LOW>;
-> +	vcc-supply = <&vreg_l8a>;
-> +	vcc-max-microamp = <1100000>;
-> +	vccq-supply = <&vreg_l4c>;
-> +	vccq-max-microamp = <1200000>;
-> +
-> +	status = "okay";
-> +};
-> +
-> +&ufs_mem_phy {
-> +	vdda-phy-supply = <&vreg_l4a>;
-> +	vdda-pll-supply = <&vreg_l5a>;
-> +
-> +	status = "okay";
-> +};
-> +
-> +&usb_1 {
-> +	status = "okay";
-> +};
-> +
-> +&usb_1_dwc3 {
-> +	dr_mode = "peripheral";
-> +};
-> +
-> +&usb_1_hsphy {
-> +	vdda-pll-supply = <&vreg_l7a>;
-> +	vdda18-supply = <&vreg_l7c>;
-> +	vdda33-supply = <&vreg_l9a>;
-> +
-> +	status = "okay";
-> +};
-> +
-> +&usb_qmpphy {
-> +	vdda-phy-supply = <&vreg_l7a>;
-> +	vdda-pll-supply = <&vreg_l5a>;
-> +
-> +	status = "okay";
-> +};
-> --
-> 2.34.1
-> 
 
