@@ -1,116 +1,118 @@
-Return-Path: <linux-kernel+bounces-788726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98743B38949
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 20:08:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1EABB3894B
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 20:09:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B7327C6742
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 18:08:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D598B1B20403
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 18:09:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFB6E2D7817;
-	Wed, 27 Aug 2025 18:07:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7F1C2C3252;
+	Wed, 27 Aug 2025 18:09:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OSeMR7II"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="L0BWlagE"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DDAB2D5A14;
-	Wed, 27 Aug 2025 18:07:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA18442AA5
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 18:09:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756318078; cv=none; b=e4C0NMAhEI4xpe1poYvpKoivgRcibbZLaXIsx7Wr14SAl1O0Bcnp7jJmLF9FybMlx/Dow7obJoTKt0eyWqEK1uzwwbwDXdR4y+/5r5infKldBUt/+eCWup7TAr8XtgvjZHD30B6EaVCxr3YbnGiMLPr2Y3kk61MEBcii8zbbHDA=
+	t=1756318154; cv=none; b=SygJSZLSno+V4g/jkoSDrUiBy7cFQYbUSLbUbp3+o/cIJbEI6vx9JeFWfK9/COQqAUz1Iib+CHGYJ0gkZH8BrhvozwDEPES6PPtus1xT6XfC1IMAHE0wLGYx7/lePHQBnqU6wSGVQoOtBT/rN2KiRjPop7H/aNVt0qNJWM2bnyM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756318078; c=relaxed/simple;
-	bh=/WdGTRKu/uP6MLjm6SOTm91vY1PdpeieaEytTE+Y2Gg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Yj0OfKOIsD0C8M7z9Bz9P6n09Qj6yiaE8MXrhbmLtYSISS4bovAApz85jcBkefU4dIpBATdmRZoH4ZNz4MOTY8BnpseHGBycx3oxOWZdRlpYY7vkJT6wZdQASTqDWnaCqJtZISGBLnJmh/xej8Xfu8etML0MNNxJkBkHuzqP9Mg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OSeMR7II; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-55f46ec2e00so87252e87.3;
-        Wed, 27 Aug 2025 11:07:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756318074; x=1756922874; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/WdGTRKu/uP6MLjm6SOTm91vY1PdpeieaEytTE+Y2Gg=;
-        b=OSeMR7II1fGsvJ+tOxnEu4LsPas9I83sF4gDjNbMgQ2rAUFci4uxITi1TGB/BLUX2l
-         6bJncxNYZFKHYO5BD8Y06J2B2Qw7pvk7EG+iutvkWnqlBVOgOVp4dAMTzqMuB9X4F1AJ
-         1mJoAhuc08YKpTcTCBiMDTaqTkuRBUKc8pauT0HiDnq8w6hlI+j6Cq/6DHwe0PFWiNBt
-         jjloItMwdArHvF/xzuqhZOxeP/6ukzl0uzXZGxjPhCnaG1B7AuwZC9pOtH5x5S0Dxcyl
-         gDx31ek4PUq1Cdqyyv3NnznCYwQcGqeXk6eKgHuri/sh69zM1FDsgL4J9dj55btOh3+W
-         CcUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756318074; x=1756922874;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/WdGTRKu/uP6MLjm6SOTm91vY1PdpeieaEytTE+Y2Gg=;
-        b=c/NzUUfmzC+lZRaaNP5YuwemsOn0SAaW2r6WC0IAVf/O5pU1UcrFDF2B78AZKSOEJ/
-         N3YRPiYijfPGbx5XVgTb6X5U4imaen5N/6bqmYX3TV7Ayf/U6nOybRCdg2hKdlRosZIQ
-         jztGUpGgnWx9pkT5IZnRkzpORk6EeUpTikLXChdA2sxVQIufz+AUXIc2Jb7xAvhEOutp
-         OO8CeZ6UZNQodJWyiIRMJwxXGGMjy0xRdE3wZ/RQF0C24YgDD8KyeCqNhA0zAxbyUrAD
-         9D4iP38ySVfF+4CMR3/kTZVUZjxPU+DUXpmPVzz2CW4QbZc4rzGuvrb0m2Q9ENdJ34KN
-         c5lQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUPRyA0fgBR6lxhQFu2E7moFGxZSpV/2ascoQZMsQvIP93BW5ULq4P1zZ1wItDYtam5CuLqCjeID98VO/Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxdz2aPT0eTRp6ngTAxhw2wyYibYJP4G02/3chKOP7ZThVFQNhV
-	PYbL8DC0BSTetGSmhPtRWu8A4fkwTGRvkrY5sjJCZiwTejrdTifFYKnl
-X-Gm-Gg: ASbGncvgHmWHFrhyITmYQtn827NA+PgQU4oMvd+IyyADsWjf3NSuQEZL0HbtI1kqCx2
-	SasdF+06OSf9RJK0bVpYo4xjtDy4AjSctCkLuj50szHpBgiCuJWBDhYIQp2ihrFzPrOp1WR/HqM
-	xBSt2jZVm98m91zSrUjNYfnzkoykIDvrH30sllQgZumVN0iJqt1pQmZSslJY9DAO9h0CXOkxp77
-	dAcM306h9xQWI1WnMTKXUghasvWJqMa4ZrxMf50K8PW7vF4AgQMeBDNRTyB3TqL6xuDe8aDf9Jg
-	zOkltij+nW7ho83d1KtzrI6lsZOdVZ8KvAcY2kfySqsTlYQoUcphir6s+ci9cbUePh6KiJRW4Ow
-	Pnd6NoXdjuloa2cZRVx4xMvbxwdjS6R0NNglxTcFBk7y0YFHu/nTq
-X-Google-Smtp-Source: AGHT+IF3nDKCNH/VGBdJIOnvJMgsc7so58iZHTtkkTL4914QNqndPNJjDY2mNADdhvhLNN58clRckg==
-X-Received: by 2002:a05:6512:1408:b0:55f:4bf6:eff1 with SMTP id 2adb3069b0e04-55f4bf6f56emr2272046e87.39.1756318074092;
-        Wed, 27 Aug 2025 11:07:54 -0700 (PDT)
-Received: from SC-WS-02452.corp.sbercloud.ru ([95.220.211.111])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55f35ca7437sm2899756e87.146.2025.08.27.11.07.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Aug 2025 11:07:53 -0700 (PDT)
-Date: Wed, 27 Aug 2025 21:07:52 +0300
-From: Sergey Bashirov <sergeybashirov@gmail.com>
-To: Jeff Layton <jlayton@kernel.org>, Chuck Lever <chuck.lever@oracle.com>, 
-	NeilBrown <neil@brown.name>, Olga Kornievskaia <okorniev@redhat.com>, 
-	Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>
-Cc: linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Konstantin Evtushenko <koevtushenko@yandex.com>, Sergey Bashirov <sergeybashirov@gmail.com>
-Subject: Re: [PATCH] NFSD: Disallow layoutget during grace period
-Message-ID: <7h5p5ktyptyt37u6jhpbjfd5u6tg44lriqkdc7iz7czeeabrvo@ijgxz27dw4sg>
-References: <20250825131122.98410-1-sergeybashirov@gmail.com>
- <f2f09b651a30333e0c9fce311c848c8803c2f7ca.camel@kernel.org>
+	s=arc-20240116; t=1756318154; c=relaxed/simple;
+	bh=xXLFaEOa7kNU5nCuyofgXlecYFrck7qrhKPmkUvct2k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cWYh/kGJVFFLkYmSiLAaxXTA4NPCIR89Znvn+eVT7g/6IAAfGuMYDP/VuYtE48aaAyj0xDzy+x4LSN/TIQXd49LWBuUu9M0hIwyeCOJh0LknarM/+VHCxxXJluZyX1E/+jdLEuR5e1exihwUvLNw3Ohpso28GyqE7qDjZO+Bj3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=L0BWlagE; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756318153; x=1787854153;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=xXLFaEOa7kNU5nCuyofgXlecYFrck7qrhKPmkUvct2k=;
+  b=L0BWlagEYMSp2XQuDAT1N0iLQ+dcvMphBaYjb8AHpOYPYsi/dVeoBwzG
+   HMrIQOf672couu79Ek3YStdU1jrb3sWaaJMcHv/Fh0pYQd82T3Gc4DLSc
+   XfvKDg+L8Er+nlDO8GFkzAHfV7yBhOnlwbkuuvSnrlR//9TWD2TXuz3Lc
+   Ag2Rnz63dej4znp7qi3n0gMvG64tlEBig6r07SNq8xEnttwDfWj3sCrBo
+   KM9nvv2fc9DDsC008h7b7sTKtihxVp++jPZ3HGFM9MoXzuM1EGzTpNm5/
+   FAUu9v5nnxx5QuZXjHlakX7fPLmGbn2pvOrEPIVFIJYyWGo1Ty3CSqFpK
+   w==;
+X-CSE-ConnectionGUID: dVpooaU4R+uBu7mx02vRGA==
+X-CSE-MsgGUID: KcjxdUBIQhiFepKup36vTA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11535"; a="58645698"
+X-IronPort-AV: E=Sophos;i="6.18,217,1751266800"; 
+   d="scan'208";a="58645698"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2025 11:09:12 -0700
+X-CSE-ConnectionGUID: jZEGCfkbTk+hVnHXSxvFfg==
+X-CSE-MsgGUID: 1RzOjyvXRqiP48PSA+9qAw==
+X-ExtLoop1: 1
+Received: from anmitta2-mobl4.gar.corp.intel.com (HELO [10.247.118.29]) ([10.247.118.29])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2025 11:09:08 -0700
+Message-ID: <d3cd8520-4727-4275-8a61-0dc631109378@intel.com>
+Date: Wed, 27 Aug 2025 11:09:03 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <f2f09b651a30333e0c9fce311c848c8803c2f7ca.camel@kernel.org>
-User-Agent: NeoMutt/20231103
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] nvdimm: Use str_plural() to simplify the code
+To: Xichao Zhao <zhao.xichao@vivo.com>, dan.j.williams@intel.com,
+ vishal.l.verma@intel.com, ira.weiny@intel.com
+Cc: nvdimm@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20250827021325.61145-1-zhao.xichao@vivo.com>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <20250827021325.61145-1-zhao.xichao@vivo.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Jeff,
 
-On Mon, Aug 25, 2025 at 12:33:46PM -0400, Jeff Layton wrote:
-> This seems like a reasonable thing to do, but I wonder if it makes
-> sense across all different pNFS layout types? This restriction is
-> definitely not needed for the (trivial) in-kernel flexfiles server, for
-> instance.
->
-> Maybe it'd be best to push this down into the individual layout drivers
-> and let them make the decision?
 
-Good point. The spec says: "If the metadata server is in a grace period,
-and does not persist layouts and device ID to device address mappings,
-then it MUST return NFS4ERR_GRACE". As far as I understand, this is a
-requirement for a specific implementation option. So moving this logic
-to the layout driver level seems reasonable to me. Will submit new patch.
+On 8/26/25 7:13 PM, Xichao Zhao wrote:
+> Use the string choice helper function str_plural() to simplify the code.
+> 
+> Signed-off-by: Xichao Zhao <zhao.xichao@vivo.com>
 
---
-Sergey Bashirov
+Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+> ---
+>  drivers/nvdimm/namespace_devs.c | 2 +-
+>  drivers/nvdimm/region.c         | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/nvdimm/namespace_devs.c b/drivers/nvdimm/namespace_devs.c
+> index 55cfbf1e0a95..507dcae9dac0 100644
+> --- a/drivers/nvdimm/namespace_devs.c
+> +++ b/drivers/nvdimm/namespace_devs.c
+> @@ -1983,7 +1983,7 @@ static struct device **scan_labels(struct nd_region *nd_region)
+>  	}
+>  
+>  	dev_dbg(&nd_region->dev, "discovered %d namespace%s\n", count,
+> -		count == 1 ? "" : "s");
+> +		str_plural(count));
+>  
+>  	if (count == 0) {
+>  		struct nd_namespace_pmem *nspm;
+> diff --git a/drivers/nvdimm/region.c b/drivers/nvdimm/region.c
+> index 88dc062af5f8..68a26002f8b9 100644
+> --- a/drivers/nvdimm/region.c
+> +++ b/drivers/nvdimm/region.c
+> @@ -70,7 +70,7 @@ static int nd_region_probe(struct device *dev)
+>  	 * "<async-registered>/<total>" namespace count.
+>  	 */
+>  	dev_err(dev, "failed to register %d namespace%s, continuing...\n",
+> -			err, err == 1 ? "" : "s");
+> +			err, str_plural(err));
+>  	return 0;
+>  }
+>  
+
 
