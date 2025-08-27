@@ -1,118 +1,94 @@
-Return-Path: <linux-kernel+bounces-788678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EFF8B38897
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 19:28:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 185C1B3889A
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 19:28:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 196287A27DD
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 17:26:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 32A6E7AA02E
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 17:27:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57D382D661D;
-	Wed, 27 Aug 2025 17:28:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3C672D7DED;
+	Wed, 27 Aug 2025 17:28:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lG1FAEOT"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a83xwGxl"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B275521FF55;
-	Wed, 27 Aug 2025 17:28:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 166602D7D2A;
+	Wed, 27 Aug 2025 17:28:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756315694; cv=none; b=is3CilPsb1IJNIGx75InV3WF8RGsqQ3kCOf5B5BQFfqr+pLwiAl2L3/Rt8Yu6EFzTZIlOTjqgEV9t1anaQWcmUwhV+geVt/CCWVFRplpuN5NOY0rUWrwIwrpjX2nta96BzmSfMW2VClnyjoLriL36queHktVW5Vj/x5yl6vmrys=
+	t=1756315697; cv=none; b=kR+tflKu8osw2dLfRhlUPbMowy/oU2ev+8UiWu2jYJwLOrMwVhzyK2Dmc+CyQHjFl0hRgyxRsttGZPVi1WnAMphT/Kuni216FPrKc+xIjpGhOty+uaAV+PQdPIMtHxVbDHh6CT6I9aGJNH/RK4m8ju8LwPzbm7tMnFqJN9+ySmg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756315694; c=relaxed/simple;
-	bh=Y+WRbM0Av3TYxIZ0+HcIYsryUVDHh/DopvC0d2C5448=;
+	s=arc-20240116; t=1756315697; c=relaxed/simple;
+	bh=J2iW4fcquoMXCFvrwNgVUWmetrANS/ZUtfkvs7vrbUw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U8Suv9a1YxF8yVe+sOgTpIZjdS2+OESdl5kYcBCF0uOEn9P8VSpVh7R3W+uxoBs5R09CzCNN4HCUozHtBQRG8OnAOi1SOqd2D63keZUSTL0LA2mI8FFCrZUUQyJmBc0TjUI+rmb3TIncE6+PwY2fxw4Cl90osC2R56bSRQIiwoQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lG1FAEOT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9907C4CEEB;
-	Wed, 27 Aug 2025 17:28:13 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=bhrNqdNBzmwEOr6DQc2o/nmESwMGDsFFb0V9+6ngGZjFsU9mjaaYHxJ/7oJVsdUGK2weuIeohvItfLfXk1BvW3SVr9R+nRdhhYQ/6/DXnShQUsk2rDciFyLfE5rlhWk6lIEZzDLp+YBArGtFL3T8jmZXadNy4fKjPPgIxV8s990=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a83xwGxl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4104C4CEF0;
+	Wed, 27 Aug 2025 17:28:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756315694;
-	bh=Y+WRbM0Av3TYxIZ0+HcIYsryUVDHh/DopvC0d2C5448=;
+	s=k20201202; t=1756315696;
+	bh=J2iW4fcquoMXCFvrwNgVUWmetrANS/ZUtfkvs7vrbUw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lG1FAEOTYoYLojqKFHHz395F+UUmtL5cHE5X8Z4OFzNR26pWRILL8Gk7oMudvwEqm
-	 WDLDZuHgnrUosXlmhS8Wo+f/d5OtYeGwYlgHLPc6ssMNM4fojaNKuRgz1ZZKlf4VA2
-	 r8gvFsczsDNUVe6IThHZXqnMzsf9wcLnfjZb+Oo0KtQLxIZHixXJKSORANrq6semJL
-	 Qus9X2Dw3ieJ25im3k/YejPs/hSGHs/8134DAFw5zq+2/qW0uPJs1o4yrz5rEncKpL
-	 1M3dMdb85zggOkrS76RvvMyTh+3kOIgIMQkyfPR05acDEHYMyyadMKptw1IeNsgNk5
-	 jlk5ZR4hy2rjg==
-Date: Wed, 27 Aug 2025 10:28:12 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Leo Yan <leo.yan@arm.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Ian Rogers <irogers@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 05/11] tools headers: Sync arm64 headers with the kernel
- source
-Message-ID: <aK9ALIkD95ignpzq@google.com>
-References: <20250825215904.2594216-1-namhyung@kernel.org>
- <20250825215904.2594216-6-namhyung@kernel.org>
- <20250827081252.GD745921@e132581.arm.com>
+	b=a83xwGxlmmFgKbpXsiSmmPwVl48weCDVspZ0TGs/TfZ7amQqZKAQIUXlr2ls5/7RV
+	 ES/aC3DOfpBAIuOy7lhwp0at6S1I7BRy/gV1WaX0PgupjR4DgdRacO2y6s27OHweXV
+	 iqXXrvV5EEcNZtEY9548ph9X5pyM6QfZLU1lLbiZeNdIuciZVj1TFPOZ83OSUWbHmp
+	 W4D2PTsd/47Q2NdXl+J0chm/MSYSDh7VgpdTDSXY0ZE6vDoDA29aEljZcBTwx3lR2w
+	 O/RJWDlkB9MBrmZ23DhkkZNRmBcF+LrhauKt77mYId7FuYF9GBVMPnChHysjjh7X6P
+	 wS5+1qz+WQg+Q==
+Date: Wed, 27 Aug 2025 18:28:12 +0100
+From: Conor Dooley <conor@kernel.org>
+To: E Shattow <e@freeshell.de>
+Cc: Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Hal Feng <hal.feng@starfivetech.com>,
+	Minda Chen <minda.chen@starfivetech.com>
+Subject: Re: [PATCH v3 RESEND 0/3] riscv: dts: starfive: jh7110: More U-Boot
+ downstream changes for JH7110
+Message-ID: <20250827-aloha-datebook-6133960546ff@spud>
+References: <20250823100159.203925-1-e@freeshell.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="DBSyI2GI+xVp3lzx"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250827081252.GD745921@e132581.arm.com>
+In-Reply-To: <20250823100159.203925-1-e@freeshell.de>
 
-Hi Leo,
 
-On Wed, Aug 27, 2025 at 09:12:52AM +0100, Leo Yan wrote:
-> On Mon, Aug 25, 2025 at 02:58:57PM -0700, Namhyung Kim wrote:
-> 
-> [...]
-> 
-> > But the following two changes cannot be applied since they introduced
-> > new build errors in util/arm-spe.c.  So it still has the warning after
-> > this change.
-> > 
-> >   c8c2647e69bedf80 arm64: Make  _midr_in_range_list() an exported function
-> >   e3121298c7fcaf48 arm64: Modify _midr_range() functions to read MIDR/REVIDR internally
-> 
-> Hi Namhyung,
-> 
-> Thanks for working on this. It is on our todo list for automatic
-> generating MIDR. Sorry for any troubling during the syncing.
+--DBSyI2GI+xVp3lzx
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-No worries, and thanks for your review.  I'm glad you noticed the issue
-and have it in you TODO list. :)
+On Sat, Aug 23, 2025 at 03:01:40AM -0700, E Shattow wrote:
+> Bring in additional downstream U-Boot boot loader changes for StarFive
+> VisionFive2 board target (and related JH7110 common boards). Create a
+> basic dt-binding (and not any Linux driver) in support of the
+> memory-controller dts node used in mainline U-Boot. Also add
+> bootph-pre-ram hinting to jh7110.dtsi needed at SPL boot phase.
 
-> 
-> Just a minor comment below.
-> 
-> [...]
-> 
-> > +struct target_impl_cpu {
-> > +	u64 midr;
-> > +	u64 revidr;
-> > +	u64 aidr;
-> > +};
-> > +
-> > +bool cpu_errata_set_target_impl(u64 num, void *impl_cpus);
-> > +
-> 
-> Currently, no one uses this API. It seems to me that we don't need to
-> sync this code chunk.
+Emil, could you take a look at this please?
 
-Ok, but it'd be easier for me just to have the change anyway.
 
-> 
-> Otherwise, other changes LGTM.
+--DBSyI2GI+xVp3lzx
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Thanks,
-Namhyung
+-----BEGIN PGP SIGNATURE-----
 
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaK9ALAAKCRB4tDGHoIJi
+0h47AQC8FbMusMnLVxo/83unGL4xyLbvXY89HBtv7cWlwJZMIwEAgL1E3yrJIeXC
+LtVzvGmO2ZTGxJTfVWJVmWMOuLQsLgg=
+=7Ecq
+-----END PGP SIGNATURE-----
+
+--DBSyI2GI+xVp3lzx--
 
