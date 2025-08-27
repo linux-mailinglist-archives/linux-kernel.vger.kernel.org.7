@@ -1,81 +1,87 @@
-Return-Path: <linux-kernel+bounces-788111-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34A16B37FCE
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 12:23:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D69FDB37FC2
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 12:21:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 314CC7B04D4
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 10:21:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D72EA189510F
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 10:22:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B9B634A332;
-	Wed, 27 Aug 2025 10:23:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B345430ACF4;
+	Wed, 27 Aug 2025 10:21:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="cM2D6X/l"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2044.outbound.protection.outlook.com [40.107.237.44])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="RmWejYIT"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EDAA223301;
-	Wed, 27 Aug 2025 10:23:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.44
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756290185; cv=fail; b=dYcR3fySezxRc52hNmTPLgdo14RyH0u9lb9yUClwXRBh2vNCJDjO1OppzU0vpAlMvnbuQ8gVHFVyIDFcjA+tWCpZHMbtUHyj6+AxmM+gPFCj2Bt/tte3SLTFGAkdLABb7e+ra/oWEpS7wUpZa9zZJij2UkPhclfP13lN3mxtoMU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756290185; c=relaxed/simple;
-	bh=j33lNq/1eyvB5bGNrgdJxwQGRL/0AYQYavlRnUCREv4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=DOme9e3luREbTG8qd1nvcbYRlIsUFT2c0kNlepIVU9nPycHif8I6uK523X8lq1OCaUObi+4Q84NJRwZ/RqCp9E1dLHoeh48xHJgj2oor+f9mJfhwAskR2Pe0XsBe9rMYYjxTNGuAarYuvu6ki4OmYclhg7AdXxbDAO6FizyTLwQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=cM2D6X/l; arc=fail smtp.client-ip=40.107.237.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=tgAVX2MCyHloIME33yG1xAJZZDBYmXUOsftC3Fr6FJcEH2q2u4eF/8YX52R4KzfSKhLHi4fz4FXgOSz1VEa+EHVYdfLPJPlEIGj6NwtlsIrRGpcf2rXFD04GB51HYHtF46fL9xE69JYiLr6de1eVUOB8y2Hry+03yUzeLIwCjtcR3EpzNbG9RjqXXOV+scK7hfiLTI85OOBotb6ui9SAqVtft9vBR5iKf5D2RUo32+bRZF4ofhGzpwrhP0msZ+eLaWyhpAUNZR5/r+RL+DHYmtEyaLkOfWmF0QFu2ATjMVn9ZTcqgVqHg8Orlmt6TF8Q4jDXQoLqp33nT1IyoOC1lA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=X06AKaUU5+2cN09CEvDU38sXrjJCE0Ujw2tHpH7PLro=;
- b=RPyzVJQ1FzT6R4kr6lJ2Tq/lcTeW1o7CLQpX5fLUDvwgvD0v5FwSWIookUrMocmaRqgI8ekFtbAh9f1VflHOe2rfB5R6PnJmRkzM4DkOQC6igTfG03bczRzDAgAguCXP7ewci0VpOUq1ymXyY9LSaOnbGqjOhYEsZ600rJ9P7mt9ZJkQfOqmKV2K5p7ErX7Ro/5y8/FT/Xw8M7QGucoaZ/0PZNL4INfg6QNq6ITn7XaJ29/ntT9fIa4prSHisGm7VvQ06B2CsjsemV/un7HDb6mEufrvJr5a6DA5AyrWehhsIjv8iEyMxihoUN/OKPx2CuBVGw5eGhVcYeHMkmKuZw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=X06AKaUU5+2cN09CEvDU38sXrjJCE0Ujw2tHpH7PLro=;
- b=cM2D6X/lTf7pKOARsJTUCA8cBS2WW1za/ihR8WACQZBGwSQJnRuZnjnuZKCpYoDVO+0wXw06wlO+y31nkpl3Mu9fs2x59R9dpuids5NzuR5wD0ohugQe0fEK9kmalidpQ2SgtJaqQdyH7sJ0uNeUb1EnbgvD+rEwmrqzHWdT1klBG9bVGbMl/KWY36slsqKqa3J70eOodM6+mbYcZv39jKUGU4oQqyXg1gwfaXufB22gG8aDa1E1sjBNkxHPbyT8D9IydKjmeXvoZEtSnQFXdBfuNFiSLWBgaitdkZ1t98p5jEzIiABbwYt2sPuZUkO2aWYaCuy8WtD5GtoEKvWV/A==
-Received: from BN0PR02CA0031.namprd02.prod.outlook.com (2603:10b6:408:e5::6)
- by DM6PR12MB4171.namprd12.prod.outlook.com (2603:10b6:5:21f::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.24; Wed, 27 Aug
- 2025 10:23:00 +0000
-Received: from BL02EPF0001A0FA.namprd03.prod.outlook.com
- (2603:10b6:408:e5:cafe::ab) by BN0PR02CA0031.outlook.office365.com
- (2603:10b6:408:e5::6) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9052.22 via Frontend Transport; Wed,
- 27 Aug 2025 10:22:59 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- BL02EPF0001A0FA.mail.protection.outlook.com (10.167.242.101) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9073.11 via Frontend Transport; Wed, 27 Aug 2025 10:22:59 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Wed, 27 Aug
- 2025 03:22:39 -0700
-Received: from [10.64.161.125] (10.126.230.35) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Wed, 27 Aug
- 2025 03:22:36 -0700
-Message-ID: <b35dc03c-a947-4139-8e70-dbfb5c701cdf@nvidia.com>
-Date: Wed, 27 Aug 2025 12:21:33 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE9D427CCCD
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 10:21:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756290105; cv=none; b=mWc3pe3rSTPdUJIYqp4M2idd/bnMI0Fq+1tESV8jxKyKa55aQ1GieLa8T+6XL5qdm8vjC9xoThxjzc/oPOrwtaZv2//ZGbgL6clIT4XDPXDnqNwcbstAjtfheQRAHvrl3mWm8Pw0rn/1ZsV5DeWbf9fL++k8fAK6MVC4wDeGz8Y=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756290105; c=relaxed/simple;
+	bh=r7Igf50Fi/rJZL4ROxs/FI0yfWeOkTDKsFYChf+3u/s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MRWZrahMAr8LH9L9UJ566ZyXWmkS3F+7kfQ7RfXEXWj2OQIUOkmINOizRFkZfUdYliKAHnJEblIVHiYD1FxFqRQvnnHRRvwSQbMXyIGZCfEKmbIV8wyAM0RXy8YbdyniFPGyi5L671FwR1PiVqS7QvzXi1D3A1aicnen0tda0fg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=RmWejYIT; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57R6kC0P015824
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 10:21:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	YWqGiEoMh1Ixg9kMOfn/oNPCFZIKj8izNNs6P0FgqRM=; b=RmWejYITii3bKMyq
+	4QiiPUeUVEBqKm0O0+BcdSZKkNquXIl7bLEFPe4jMN1l1lED2/RCSLCRKumJKzm+
+	pYPdT7mBSI3ijTmk56pBeY5kBXEfMpHT/3DGcKzAU63J3sKHcAG4WvPWTZKnOYnA
+	6/M27Nu4c9TkEkSNQX11WpOwA1VoynE4gJwRBGfHoAymAao7CPEpECMAZcNAG+k+
+	zXfqrdxFPsVKXboOvbi33GqY/p8ducY04BanxDWf3tgR/c58+J/272grNd/X0GfZ
+	Xbqhqhn4sd/o8aifX3Aj6ucH67VpDMNqrw71TPAjzfF8cLbJFCuthKoRwvR1xfJ+
+	fCr/9w==
+Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com [209.85.215.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48rtpexnjs-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 10:21:42 +0000 (GMT)
+Received: by mail-pg1-f200.google.com with SMTP id 41be03b00d2f7-b471757d82fso5071522a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 03:21:42 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756290101; x=1756894901;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YWqGiEoMh1Ixg9kMOfn/oNPCFZIKj8izNNs6P0FgqRM=;
+        b=f+03ghLDq6UZfw27j97yGxZbJKH3vzP1GxqF0vrgODytWOEagFPGzoI3dXiiq5qWD+
+         /lf1TkEx/Na2LfzyMT0mbq6S1cg17obVYA9wTGWA3eIF50MyNmIJXGLjKC8kineWFRuS
+         7cA/LmwJmN+GY+hIGayiP1qOtvbMgsRF76KjZlQC2Zv/TpVylejKcKSJ5dNytaweiokx
+         a4AxLgubVoifXlarhrHOTuNFyr3hFswwv6kyrXX0DAnYgXwQw/JXvHLEGF0iROPoyT9d
+         ybInAMStUixuPizlZqRtxmGfw8NTRSnm96fLORnnx8iZ/fzKDHsliZZiMBiIizS1ZM5R
+         4J+w==
+X-Forwarded-Encrypted: i=1; AJvYcCV5LaAmpVot3tNuLlbWWmCojgCJL/4eChWSfmeEWWAnG0zxFkwJd1XzMsywfkPuXyUvj/EshmgWNfo0VdU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3VDdWrXI6K3vl25vFQcw0Cm0DBb8iSpE6s52K9mYg1WzKN2in
+	HnmLC81ZwEfYk+5w1ATYd3a6DSiNimr5NEclFrizi3CwwyajGmddn7q67kwL0ASAkS7TrZxDPLK
+	XwY5AHPO7rK/mT5M2N4fVAK1jvAMjOnO/E937cBbMTr3g/+VyLAGnjoYC6+maQkrFl9o=
+X-Gm-Gg: ASbGncv9b7gVCYu1chP9wjntpQwyAhAOBAQeUPTpX50jRCn1cFOyqvxbNVURG5esYTl
+	clpi6Lt5//FoLC0TtGLwke/osQEO+GHl09ALr6iBHbMz5bt62IGbV7+MOu6xndz/L47TTq9QVho
+	8rWiX1W2oKbpxeN3kNcsTnhWjaNaUZuoJRBWkfKG+5AHLPgD5t1iVMvk1B+sfy/xnl2z6OSWGaU
+	37bTdKKjqEcwN3Se3MQyNEy/gTEC7FcJP3ecxq+aE9jmCY6aUq9q0dX6jG0PM4CtRcBZXDFuHaF
+	vXs37MNwFkClKeN2uy3Nlgkf7SDA7Ezpk1zeeM2TD2vhgcHK30n1G+UF7sJQ56Okv6m9i9jyaGX
+	Y9bkvM+FYan8hyYKqIA==
+X-Received: by 2002:a05:6a20:914f:b0:243:755:58b1 with SMTP id adf61e73a8af0-24340d4476dmr30221836637.50.1756290101216;
+        Wed, 27 Aug 2025 03:21:41 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE20Ixn8/Rp7/u1DnA2k88RHtjNUK6RsfUauJ/MGItqwZiSd6g1xgmpqv58urRl32gT6x4ReA==
+X-Received: by 2002:a05:6a20:914f:b0:243:755:58b1 with SMTP id adf61e73a8af0-24340d4476dmr30221793637.50.1756290100603;
+        Wed, 27 Aug 2025 03:21:40 -0700 (PDT)
+Received: from [10.133.33.155] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3276fce1f30sm1667244a91.23.2025.08.27.03.21.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 27 Aug 2025 03:21:40 -0700 (PDT)
+Message-ID: <bfed7735-0f82-40d2-9a85-b99ec39fcf4d@oss.qualcomm.com>
+Date: Wed, 27 Aug 2025 18:21:34 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,122 +89,224 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ACPI/PCI: Fix memory leak fix in pci_acpi_preserve_config
-To: Bjorn Helgaas <helgaas@kernel.org>
-CC: <linux-acpi@vger.kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, "Rafael
- J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, Vidya Sagar
-	<vidyas@nvidia.com>, <linux-pci@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-References: <20250825223731.GA808746@bhelgaas>
+Subject: Re: [PATCH v2 3/3] coresight: tpda: add sysfs node to flush specific
+ port
+To: James Clark <james.clark@linaro.org>, Jie Gan <jie.gan@oss.qualcomm.com>
+Cc: coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Mike Leach
+ <mike.leach@linaro.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Tingwei Zhang <tingwei.zhang@oss.qualcomm.com>
+References: <20250827042042.6786-1-jie.gan@oss.qualcomm.com>
+ <20250827042042.6786-4-jie.gan@oss.qualcomm.com>
+ <b1f79a26-97e1-40f4-b076-51d5c2abe736@linaro.org>
+ <78d2ab99-f304-4fab-bc7b-859c8aa781d6@oss.qualcomm.com>
+ <bc337e7c-42e7-4e2d-8b2d-c39174d1ddd5@linaro.org>
 Content-Language: en-US
-From: Nirmoy Das <nirmoyd@nvidia.com>
-In-Reply-To: <20250825223731.GA808746@bhelgaas>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: rnnvmail202.nvidia.com (10.129.68.7) To
- rnnvmail201.nvidia.com (10.129.68.8)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL02EPF0001A0FA:EE_|DM6PR12MB4171:EE_
-X-MS-Office365-Filtering-Correlation-Id: 54d6872b-2e36-453d-5e7a-08dde553b2a8
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|1800799024|376014|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?VXlEN0ExTDdrNGp5eVZVMGtieW5BM0FIaGFSWnk3RG9MVG5SQ0FJa0JBeHY3?=
- =?utf-8?B?dHJGSDZzbkE0ZXlkWm5kYUd0ZjY4K1JVQ3BnT0R0QkpyRmNqS0svUHJyYlBn?=
- =?utf-8?B?Qktrb3RzR1N3bXBuSUdFME4yencveEJtUk92dzRaMEtFOHJQU3llZUtnbmNv?=
- =?utf-8?B?Y0JCQ2VpeFJuU2JpUzNrNG1KUXgrbFNrOWpITWNRS0lWbTJFamFjcERlb2xX?=
- =?utf-8?B?WU5DY1BXTituaU1xRUloUVcrUzVnVVFzUm5oNFBCRXFUa0xZYVZKS1djS000?=
- =?utf-8?B?anBTcjJHekE2ZjhERFE5b0dMYm1KMW5Calc4QWVqQmdZRjFSOUpiTU5TR3B4?=
- =?utf-8?B?R21uMGZja0dsbTZuYW1mUkQ0OElMVU8wdk1ycDA4VEFQTmRhUUI3Uk9QdGVh?=
- =?utf-8?B?VmMyRXkrQnY0OFUrd0cwWE9hdGJWYWV1dXBLNERCNURZSkhORXR2RkpDUC9U?=
- =?utf-8?B?VUVaajQyczQzK0dGMTREaUNwclZkam5VUXFFb2VJYkJ3ZTVSRCsxMndhN3Ny?=
- =?utf-8?B?UkxmQW1ub1VTM0NkM05VN1h1Ykozc2Y4am51bHBMRWNEMzVaS2F2TStMR0NE?=
- =?utf-8?B?eFNkUU9vdXk2Uld0dkQrMUtqb0FUbmMwMmo1eW4rNmxjT0hVM3lnREFhWWMw?=
- =?utf-8?B?Q0xkekQyMEVMUFBXNURLb0tuT0dPNXNEYXhpZk1DQ2dSSThCSENyanJCbVdM?=
- =?utf-8?B?YXhBTXk4NkV4eXV0cVVlczNlU2o0R01haTBoUGNxQWhSSGMxSnlUNEhxdE0r?=
- =?utf-8?B?dVBLTW12cTBvamtIQkVxWmQrbUN5c1gzR0xOSlFiYkZrVDFtWGk4aVJHcXhU?=
- =?utf-8?B?N0E2ZDNjcXlvMkZYZXVuM2tnM2cwdEozaHlEUGRDaXE0TzMybHRvd1V1Qm9R?=
- =?utf-8?B?ajZ2dStucG5WdXlVVWpmd01wSG1TTEZZZ096RGlYbVdtV1YyR1FSVFZuUTE4?=
- =?utf-8?B?d2dVamJuNVY4TThVMmU3OFRzUUhKV2diWVFHWFFvQk94cWlDTGVBTTltT3Q0?=
- =?utf-8?B?WlNiRUFXcFhJQlY2S29NSjRteGxmR1A0cXVwK3JuSGJOU1l1RUlVWEFmWmxG?=
- =?utf-8?B?M0pIOXZBZUZ5OHBJdnE4QWFJMGNVbHVlZ0t4cFlyekJaN2lYREw5by9YWjl5?=
- =?utf-8?B?bjB2eUxEeE1Ob0ZNSFA0aWlidjZTNlVSSjVqTmNlcGhtWUhWeWFHOXhOV09Q?=
- =?utf-8?B?cERZNlp5cDdTZ1FySWluZEM3aDlWejBVUVV0YzNJeFRac1o5NzRJNTY0U2JQ?=
- =?utf-8?B?Rm92RTFEajRmb3AyTlJHdnFaQUZBZ1Y2QUFqbEpvQTBwZ3JINHlaRll0NTlw?=
- =?utf-8?B?MUdaaWFSaXRkMWxoaXU3aVNjNnU3Q1pwc2Ird0I0UmZMWHlQVzdweitvejla?=
- =?utf-8?B?S1g4dVozeXdJYkZuY0JDd1V2VzdYSW9FZlhxL1BSbjVPV3p4Tko2TldxWDNK?=
- =?utf-8?B?OEJpcnRBYk9CeENXQi9RdHVzRXR2aExzWlUyVndWYjlNcis4d2haalhXYzFJ?=
- =?utf-8?B?UFBQZDJpSWZjOVByRzFKaG9WL1l3ay92YTRCc1FVRmNKMlFsNVV1YktZbUxZ?=
- =?utf-8?B?eUdpalo4eFdQTUNoeHlxeFhUUkhCZ1RxVkt6MkNlSUM3VWg5RkFoY2M5U3Jt?=
- =?utf-8?B?T2w5RnhsS0JGMkphZkc0Q2IwVGhTN1NpMmE4Q2VPYlp0cU9jbzVSMlNrQlRa?=
- =?utf-8?B?aFMybTJSa2p1Q3AyRGprdmxmbnZmUDRCVmpLZjJoQ2xTRkhLd1RuQUkrSlU3?=
- =?utf-8?B?L0tNZEtTaWZZT0J5VzBqVUZ4K1Z6VlB0QXNYSEUzWEJsTVp3WHhreDVoRkNL?=
- =?utf-8?B?ZWdnMStxZUNNdFNCaC9UMHlEejVJY2tzbzczeTNPTDFDNWdPbWdIM1lLSWoz?=
- =?utf-8?B?LytKNUdOVnZsdjA1b0dQMHhXWEpwNWZmcUdNQTRXTWkwaGVaYUMxdmVVbVJV?=
- =?utf-8?B?ZnZPWnJQY2VFZlpST1FXTUFCUGJqa1lnWWt1NnpBR1cxdnV2K0Q2am9rU0Yw?=
- =?utf-8?B?K3g0RndzTTFpOW15M0FIS1RadzlZWGg2a2k1Lys1cGFDTjRGNHdhNzBGbjg2?=
- =?utf-8?Q?Hgok+8?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(376014)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2025 10:22:59.7152
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 54d6872b-2e36-453d-5e7a-08dde553b2a8
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BL02EPF0001A0FA.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4171
+From: Jie Gan <jie.gan@oss.qualcomm.com>
+In-Reply-To: <bc337e7c-42e7-4e2d-8b2d-c39174d1ddd5@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-GUID: nTrQ-xV-rwpg4RJinh0hylUIbtLRu9nR
+X-Proofpoint-ORIG-GUID: nTrQ-xV-rwpg4RJinh0hylUIbtLRu9nR
+X-Authority-Analysis: v=2.4 cv=Hd8UTjE8 c=1 sm=1 tr=0 ts=68aedc36 cx=c_pps
+ a=oF/VQ+ItUULfLr/lQ2/icg==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=W2FtnCjKMyXqdGChcqkA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=3WC7DwWrALyhR5TkjVHa:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODI1MDE0MiBTYWx0ZWRfXyEaGzS5VQhon
+ Il7NV9ZY4FB8snrQ/ua2XY3fuoqvIr13G/4bNMBzExw+6S5E14kmGrz8N8jIIUNjs/S8uO6a2Ut
+ WQTi/M4D0dT6nBYOTa/4yACDqpa88Nl/FwL39thhMJrZ69j3rBHhCZJ+KYorxolUndKkhoYWqNz
+ vSRMA7qayWODP7NEJuutxSyKx2GbEfcjR8A6ZbNDUH2JYPNCNKL3mqaJKFE/lqxE17VkZ6WRj4a
+ ZtaqGC9mQJ7f5fxwLFWkxq87aHhe5YJ56Yk/jNSfREff+BQ7SM7kD33cz+Oj+gbA0EugJrBCkh/
+ Mqe3GCvAopd/n8DUwiVwzzxmk87KqbcOj2XjrLqXxMIWrqXgaj4Tc+khw7pjq7mDO/LxHem+QmG
+ zrt6Ryt5
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-27_02,2025-08-26_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0
+ adultscore=0 clxscore=1015 impostorscore=0 spamscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508250142
 
 
-On 26.08.25 00:37, Bjorn Helgaas wrote:
-> On Mon, Aug 25, 2025 at 02:46:42PM -0700, Nirmoy Das wrote:
->> The pci_acpi_preserve_config() function is leaking memory by returning
->> early without freeing the ACPI object on success. Fix that by always
->> freeing the obj which is not needed by the caller.
+
+On 8/27/2025 6:16 PM, James Clark wrote:
+> 
+> 
+> On 27/08/2025 10:48 am, Jie Gan wrote:
 >>
->> Fixes: 9d7d5db8e78e ("PCI: Move PRESERVE_BOOT_CONFIG _DSM evaluation to pci_register_host_bridge()")
->> Signed-off-by: Nirmoy Das <nirmoyd@nvidia.com>
-> Applied to pci/misc for v6.18, thanks!
-Thanks Bjorn!
->
->> ---
->>   drivers/pci/pci-acpi.c | 6 ++++--
->>   1 file changed, 4 insertions(+), 2 deletions(-)
 >>
->> diff --git a/drivers/pci/pci-acpi.c b/drivers/pci/pci-acpi.c
->> index ddb25960ea47d..9369377725fa0 100644
->> --- a/drivers/pci/pci-acpi.c
->> +++ b/drivers/pci/pci-acpi.c
->> @@ -122,6 +122,8 @@ phys_addr_t acpi_pci_root_get_mcfg_addr(acpi_handle handle)
->>   
->>   bool pci_acpi_preserve_config(struct pci_host_bridge *host_bridge)
->>   {
->> +	bool ret = false;
->> +
->>   	if (ACPI_HANDLE(&host_bridge->dev)) {
->>   		union acpi_object *obj;
->>   
->> @@ -135,11 +137,11 @@ bool pci_acpi_preserve_config(struct pci_host_bridge *host_bridge)
->>   					      1, DSM_PCI_PRESERVE_BOOT_CONFIG,
->>   					      NULL, ACPI_TYPE_INTEGER);
->>   		if (obj && obj->integer.value == 0)
->> -			return true;
->> +			ret = true;
->>   		ACPI_FREE(obj);
->>   	}
->>   
->> -	return false;
->> +	return ret;
->>   }
->>   
->>   /* _HPX PCI Setting Record (Type 0); same as _HPP */
->> -- 
->> 2.43.0
+>> On 8/27/2025 5:17 PM, James Clark wrote:
+>>>
+>>>
+>>> On 27/08/2025 5:20 am, Jie Gan wrote:
+>>>> From: Tao Zhang <tao.zhang@oss.qualcomm.com>
+>>>>
+>>>> Setting bit i in the TPDA_FLUSH_CR register initiates a flush request
+>>>> for port i, forcing the data to synchronize and be transmitted to the
+>>>> sink device.
+>>>>
+>>>> Signed-off-by: Tao Zhang <tao.zhang@oss.qualcomm.com>
+>>>> Co-developed-by: Jie Gan <jie.gan@oss.qualcomm.com>
+>>>> Signed-off-by: Jie Gan <jie.gan@oss.qualcomm.com>
+>>>> ---
+>>>>   .../testing/sysfs-bus-coresight-devices-tpda  |  7 ++++
+>>>>   drivers/hwtracing/coresight/coresight-tpda.c  | 42 +++++++++++++++ 
+>>>> ++++
+>>>>   drivers/hwtracing/coresight/coresight-tpda.h  |  2 +
+>>>>   3 files changed, 51 insertions(+)
+>>>>
+>>>> diff --git a/Documentation/ABI/testing/sysfs-bus-coresight-devices- 
+>>>> tpda b/Documentation/ABI/testing/sysfs-bus-coresight-devices-tpda
+>>>> index fb651aebeb31..2cf2dcfc13c8 100644
+>>>> --- a/Documentation/ABI/testing/sysfs-bus-coresight-devices-tpda
+>>>> +++ b/Documentation/ABI/testing/sysfs-bus-coresight-devices-tpda
+>>>> @@ -41,3 +41,10 @@ Contact:    Jinlong Mao 
+>>>> <jinlong.mao@oss.qualcomm.com>, Tao Zhang <tao.zhang@oss.qu
+>>>>   Description:
+>>>>           (RW) Configure the CMB/MCMB channel mode for all enabled 
+>>>> ports.
+>>>>           Value 0 means raw channel mapping mode. Value 1 means 
+>>>> channel pair marking mode.
+>>>> +
+>>>> +What:        /sys/bus/coresight/devices/<tpda-name>/port_flush_req
+>>>> +Date:        August 2025
+>>>> +KernelVersion:    6.17
+>>>> +Contact:    Jinlong Mao <jinlong.mao@oss.qualcomm.com>, Tao Zhang 
+>>>> <tao.zhang@oss.qualcomm.com>, Jie Gan <jie.gan@oss.qualcomm.com>
+>>>> +Description:
+>>>> +        (RW) Configure the bit i to requests a flush operation of 
+>>>> port i on the TPDA.
+>>>> diff --git a/drivers/hwtracing/coresight/coresight-tpda.c b/drivers/ 
+>>>> hwtracing/coresight/coresight-tpda.c
+>>>> index 430f76c559f2..8b1fe128881d 100644
+>>>> --- a/drivers/hwtracing/coresight/coresight-tpda.c
+>>>> +++ b/drivers/hwtracing/coresight/coresight-tpda.c
+>>>> @@ -487,6 +487,47 @@ static ssize_t cmbchan_mode_store(struct device 
+>>>> *dev,
+>>>>   }
+>>>>   static DEVICE_ATTR_RW(cmbchan_mode);
+>>>> +static ssize_t port_flush_req_show(struct device *dev,
+>>>> +                   struct device_attribute *attr,
+>>>> +                   char *buf)
+>>>> +{
+>>>> +    struct tpda_drvdata *drvdata = dev_get_drvdata(dev->parent);
+>>>> +    unsigned long val;
+>>>> +
+>>>> +    if (!drvdata->csdev->refcnt)
+>>>> +        return -EINVAL;
+>>>> +
+>>>> +    guard(spinlock)(&drvdata->spinlock);
+>>>> +    CS_UNLOCK(drvdata->base);
+>>>> +    val = readl_relaxed(drvdata->base + TPDA_FLUSH_CR);
+>>>> +    CS_LOCK(drvdata->base);
+>>>> +    return sysfs_emit(buf, "%lx\n", val);
+>>>
+>>> Still missing the 0x prefix
 >>
+>> Will re-check rest of the codes and add prefix. Sorry I missed it 
+>> during the review process.
+>>
+>>>
+>>>> +}
+>>>> +
+>>>> +static ssize_t port_flush_req_store(struct device *dev,
+>>>> +                    struct device_attribute *attr,
+>>>> +                    const char *buf,
+>>>> +                    size_t size)
+>>>> +{
+>>>> +    struct tpda_drvdata *drvdata = dev_get_drvdata(dev->parent);
+>>>> +    unsigned long val;
+>>>> +
+>>>> +    if (kstrtoul(buf, 0, &val))
+>>>> +        return -EINVAL;
+>>>> +
+>>>> +    if (!drvdata->csdev->refcnt || !val)
+>>>> +        return -EINVAL;
+>>>> +
+>>>> +    val |= FIELD_PREP(TPDA_MAX_INPORTS_MASK, val);
+>>>
+>>> Using FIELD_PREP() now that it's the full width of the register makes 
+>>> less sense. Especially when there is no corresponding FIELD_FIT() 
+>>> check,   which is fine because everything always fits. But if you 
+>>> didn't know the mask was the full width you'd wonder if the check is 
+>>> missing.
+>>>
+>>> I would just write val directly to TPDA_FLUSH_CR so it's simpler.
+>>>
+>>> It should also have been val = FIELD_PREP(...)
+>>
+>> Yeah, it should have been val = FIELD_PREP(...) here... sorry for the 
+>> mistake here..
+>>
+>> I was thinking the unsigned long here could be 64 or 32 bits and we 
+>> only need the value of the lower 32 bits. So that's why I am using val 
+>> = FIELD_PREP(...) here. We shouldn't write a value greater than 
+>> UINT32_MAX to the register.
+>>
+>> Thanks,
+>> Jie
+>>
+> 
+> writel_relaxed() is always 32 bits though so it is a bit confusing if 
+> you truncate the user value without an error. Also a reason to use u32 
+> instead of unsigned long types.
+> 
+> Are you trying to support arm and arm64 with tpda? Or just arm64? For it 
+> to be consistent you can use kstrtou32(), or use kstrtoull() and then 
+> FIELD_FIT() to error on truncation. kstrtou32() is probably the cleanest.
+
+Only arm64. Will try kstrtou32() with u32.
+
+Thanks,
+Jie
+
+> 
+>>>
+>>>> +    guard(spinlock)(&drvdata->spinlock);
+>>>> +    CS_UNLOCK(drvdata->base);
+>>>> +    writel_relaxed(val, drvdata->base + TPDA_FLUSH_CR);
+>>>> +    CS_LOCK(drvdata->base);
+>>>> +
+>>>> +    return size;
+>>>> +}
+>>>> +static DEVICE_ATTR_RW(port_flush_req);
+>>>> +
+>>>>   static struct attribute *tpda_attrs[] = {
+>>>>       &dev_attr_trig_async_enable.attr,
+>>>>       &dev_attr_trig_flag_ts_enable.attr,
+>>>> @@ -494,6 +535,7 @@ static struct attribute *tpda_attrs[] = {
+>>>>       &dev_attr_freq_ts_enable.attr,
+>>>>       &dev_attr_global_flush_req.attr,
+>>>>       &dev_attr_cmbchan_mode.attr,
+>>>> +    &dev_attr_port_flush_req.attr,
+>>>>       NULL,
+>>>>   };
+>>>> diff --git a/drivers/hwtracing/coresight/coresight-tpda.h b/drivers/ 
+>>>> hwtracing/coresight/coresight-tpda.h
+>>>> index 8e1b66115ad1..56d3ad293e46 100644
+>>>> --- a/drivers/hwtracing/coresight/coresight-tpda.h
+>>>> +++ b/drivers/hwtracing/coresight/coresight-tpda.h
+>>>> @@ -10,6 +10,7 @@
+>>>>   #define TPDA_Pn_CR(n)        (0x004 + (n * 4))
+>>>>   #define TPDA_FPID_CR        (0x084)
+>>>>   #define TPDA_SYNCR        (0x08C)
+>>>> +#define TPDA_FLUSH_CR        (0x090)
+>>>>   /* Cross trigger FREQ packets timestamp bit */
+>>>>   #define TPDA_CR_FREQTS        BIT(2)
+>>>> @@ -35,6 +36,7 @@
+>>>>   #define TPDA_SYNCR_MAX_COUNTER_VAL    (0xFFF)
+>>>>   #define TPDA_MAX_INPORTS    32
+>>>> +#define TPDA_MAX_INPORTS_MASK    GENMASK(31, 0)
+>>>>   /* Bits 6 ~ 12 is for atid value */
+>>>>   #define TPDA_CR_ATID        GENMASK(12, 6)
+>>>
+>>>
+>>
+> 
+> 
+
 
