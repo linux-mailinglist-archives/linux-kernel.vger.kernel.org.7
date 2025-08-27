@@ -1,145 +1,109 @@
-Return-Path: <linux-kernel+bounces-788622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788623-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC63EB3876B
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 18:09:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FEFAB3876D
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 18:09:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8E6744E319B
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 16:09:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 009CC1B25C26
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 16:09:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BFB52C2358;
-	Wed, 27 Aug 2025 16:09:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XBUSXGrU"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56B202DFA3C
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 16:09:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 347DD34A305;
+	Wed, 27 Aug 2025 16:09:14 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC262343D9B;
+	Wed, 27 Aug 2025 16:09:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756310949; cv=none; b=h5OSpdGYuuOHxlE5yMUwk4V0eOq+GNURr0/+3f7JUkQGQ5R3mu3LmnVtkb9lELlaJ9jaEW10ERFxztAw39UZLI9FYSCngnb6pgF9LZnl6VOC4MHnsEX5M8Rv8ENDuXafEvjKOlwZetqZKNFS4/84m0P9cFInsneBOhK6BI34Vgg=
+	t=1756310953; cv=none; b=O5Rgu/sKOn7IRjJlReeD/Pfpv7VkVA9KvXq+10QdTfNrDt7voy16hxryurky7jv0KYlmhZpejhei0jmFUqt6v+KpgsUduv0mPatLRRc/GiYQE6BkTIaKx98IlbY30nSo8K90xCbl8HYzVyMC5bXHOSpsnpY+eunK2YF634xIQXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756310949; c=relaxed/simple;
-	bh=wlTH+5UGUT9Xvxi73T4MXazMDiYu+KQldwNPj3NcMc8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=URoqyrs1NBvP/gKmV5Ax3dJ+VIp5IrGfZ3Xb2gwagLX+SL/6tEnS/0dlxC6DL17aRTwoqzn+G4qLqmb99LCg3ZUvz3kRHWopYYHDFwpkYII33QiMy1kQ9H1aQUpKnS2IScuwAyEeEctB5sOGnroOcz9y6AFlUAPFVtq1irkWhkY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XBUSXGrU; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756310946;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aziSJBo5W0zZFPc57AR4Qia1md3fUN9PvjS7bGiGW2g=;
-	b=XBUSXGrUBChLdZ4+Tfx2FOQVoP3m57MiKVLagmk7s9+rPN6oljNCkPFSS7Lf1dpGIQJkPj
-	7BULTBzB1/0ml19rSohnUeRmnHRIheAxX5l7X6+5/m+IEV4fqYMAE70CbFmSfC8Z4gu/hb
-	O87oTUs5p6Oduyi+DV2l7ItcbQKpa2I=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-265-7Z2RFrZ2N_e3HuJUHp_Qcg-1; Wed, 27 Aug 2025 12:09:04 -0400
-X-MC-Unique: 7Z2RFrZ2N_e3HuJUHp_Qcg-1
-X-Mimecast-MFC-AGG-ID: 7Z2RFrZ2N_e3HuJUHp_Qcg_1756310944
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-45b71fe31ffso5236845e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 09:09:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756310944; x=1756915744;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=aziSJBo5W0zZFPc57AR4Qia1md3fUN9PvjS7bGiGW2g=;
-        b=kbFSwtkSV+Gv5F43HYqanbV9x3IrxVdhA/CXbRRtyZOSru72awZaZw5SJJ5v7JSAON
-         iSZIojRoRjG6fzlAc2BQVX3yUG/OiHv36XOPGJZ6NVnfx86JXYg08J8ejS1SCkcgM+rL
-         utOAS6JCvUv+FvU8E+3RknO0TEPRElysF9RZHHNQwebJCyGRmoq+DJ+724voLn4/i4VD
-         kLLyXvLY/g1Hls2/32jTJvQovR1Gpg+3AEW/PWfrO4tJsa+Yq3Qp7Klv9PMulFNRF1P6
-         34vGFa12T7cUlzL9F77SIs7QCUcM2mB1bWwEc4U1pRojPiQ1E73fC+dqrH3MoXJ/9BYd
-         Yrng==
-X-Forwarded-Encrypted: i=1; AJvYcCVskbjnZD/MclhkH+Zr3PSzgMnUy2/NcycN0VrMzp2+y1iQxvcAlVCgXfYeqMH7tFrK9mIVs5qwhxU7wRY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKNslexzk/RaWsB7CyMMi9sZSSGledkByT/TigE1ciGMEEFSy7
-	NdAbp1t0AFVFIunqe7VP8PDAmJB3U6M8b8zxKB1WOgVXzJZhwrkvUPkAgRsje1TF2cKjTLZq1um
-	wIvKcbk5PcF3BrZFSRPl/MoPRPAp08QStn6pJvaxnAKIi2HXjT3Al6WHf9HjKp98nQLrVAcARQw
-	8lzDufGV5LvwwXNb6JxF71Dzlt21EiVa5sz6ccHUoy
-X-Gm-Gg: ASbGncvbIvLPY8i1q4wlxeELr3sT2TpT8HvfCzNdiIHTsGZ2pnjqbA7ZM6K8fa5FL1Z
-	mMaIoJiXq7G0y/qd9ey6V4OpurQz3Cla/DpWoGzWKtNJ0OC6Vvgfr/Uk2pwAWZ563QAtshVo8MF
-	gII/B+y7WrJRO11k2lJCJZ2qE5AFyd7tDqLtHDTrL7UZScnZhbaDr8FMR2eIjbVnTMFXE+Kt2fT
-	DxpLmDxg2xaAdLMU+TEUb7v
-X-Received: by 2002:a05:6000:4283:b0:3ca:3206:292 with SMTP id ffacd0b85a97d-3ca3206064fmr8023184f8f.48.1756310943665;
-        Wed, 27 Aug 2025 09:09:03 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFyzruEFQtE9U3R7B7rCEUd8qatzIadAOnmk2mQCbEKGI0DFr7kcsvt9yS7Q0qnfidsQFJAmgRQ1SijtcNlzA4=
-X-Received: by 2002:a05:6000:4283:b0:3ca:3206:292 with SMTP id
- ffacd0b85a97d-3ca3206064fmr8023149f8f.48.1756310943213; Wed, 27 Aug 2025
- 09:09:03 -0700 (PDT)
+	s=arc-20240116; t=1756310953; c=relaxed/simple;
+	bh=2FIZ5aJCiTKj3kPm7g09Z5KJppD3cqCl82AjidiHnlo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=t7VZ5mVDdejDuvaApTneYRJV0hh6sNuPZIgIDl8L/NWbgRUeMePFDfTW3S0z6Wc6wDjvQ8cxyznE6UjqI5HJ0kqb751Rijw41PVirM9MAQdZFcMJdEokTwnHVsxMLvTXVzujAFQ3OqhrryXjRTbFEPnBr0RCqO9ePsc0kN/VK4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C752B2720;
+	Wed, 27 Aug 2025 09:09:02 -0700 (PDT)
+Received: from [172.31.18.237] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9CF663F738;
+	Wed, 27 Aug 2025 09:09:05 -0700 (PDT)
+Message-ID: <b9212134-0efa-422d-8cbf-4761e39ce8d6@arm.com>
+Date: Wed, 27 Aug 2025 18:09:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250827152754.12481-1-lifei.shirley@bytedance.com> <aK8r11trXDjBnRON@google.com>
-In-Reply-To: <aK8r11trXDjBnRON@google.com>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Date: Wed, 27 Aug 2025 18:08:51 +0200
-X-Gm-Features: Ac12FXyXHiiKVDGGLGUulr7kfdt9R7TiAvRQk5lVCccDer67HJTPi0VyzHtDREc
-Message-ID: <CABgObfYqVTK3uB00pAyZAdX=Vx1Xx_M0MOwUzm+D1C04mrVfig@mail.gmail.com>
-Subject: Re: [PATCH] KVM: x86: Latch INITs only in specific CPU states in KVM_SET_VCPU_EVENTS
-To: Sean Christopherson <seanjc@google.com>
-Cc: Fei Li <lifei.shirley@bytedance.com>, tglx@linutronix.de, mingo@redhat.com, 
-	bp@alien8.de, dave.hansen@linux.intel.com, liran.alon@oracle.com, 
-	hpa@zytor.com, wanpeng.li@hotmail.com, kvm@vger.kernel.org, x86@kernel.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v5 00/18] pkeys-based page table hardening
+To: Yang Shi <yang@os.amperecomputing.com>, linux-hardening@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
+ Andy Lutomirski <luto@kernel.org>, Catalin Marinas
+ <catalin.marinas@arm.com>, Dave Hansen <dave.hansen@linux.intel.com>,
+ David Hildenbrand <david@redhat.com>, Ira Weiny <ira.weiny@intel.com>,
+ Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@chromium.org>,
+ Joey Gouly <joey.gouly@arm.com>, Kees Cook <kees@kernel.org>,
+ Linus Walleij <linus.walleij@linaro.org>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Marc Zyngier <maz@kernel.org>,
+ Mark Brown <broonie@kernel.org>, Matthew Wilcox <willy@infradead.org>,
+ Maxwell Bland <mbland@motorola.com>, "Mike Rapoport (IBM)"
+ <rppt@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+ Pierre Langlois <pierre.langlois@arm.com>,
+ Quentin Perret <qperret@google.com>,
+ Rick Edgecombe <rick.p.edgecombe@intel.com>,
+ Ryan Roberts <ryan.roberts@arm.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Vlastimil Babka <vbabka@suse.cz>, Will Deacon <will@kernel.org>,
+ linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org, x86@kernel.org
+References: <20250815085512.2182322-1-kevin.brodsky@arm.com>
+ <98c9689f-157b-4fbb-b1b4-15e5a68e2d32@os.amperecomputing.com>
+ <8e4e5648-9b70-4257-92c5-14c60928e240@arm.com>
+ <939ac25a-096f-46b3-90c1-d8cd6a9e445e@os.amperecomputing.com>
+Content-Language: en-GB
+From: Kevin Brodsky <kevin.brodsky@arm.com>
+In-Reply-To: <939ac25a-096f-46b3-90c1-d8cd6a9e445e@os.amperecomputing.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, Aug 27, 2025 at 6:01=E2=80=AFPM Sean Christopherson <seanjc@google.=
-com> wrote:
+On 26/08/2025 21:18, Yang Shi wrote:
+>>
+>>>> from a contiguous cache of pages could help minimise the overhead, as
+>>>> proposed for x86 in [1].
+>>> I'm a little bit confused about how this can work. The contiguous
+>>> cache of pages should be some large page, for example, 2M. But the
+>>> page table pages allocated from the cache may have different
+>>> permissions if I understand correctly. The default permission is RO,
+>>> but some of them may become R/W at sometime, for example, when calling
+>>> set_pte_at(). You still need to split the linear mapping, right?
+>> When such a helper is called, *all* PTPs become writeable - there is no
+>> per-PTP permission switching.
 >
-> On Wed, Aug 27, 2025, Fei Li wrote:
-> > Commit ff90afa75573 ("KVM: x86: Evaluate latched_init in
-> > KVM_SET_VCPU_EVENTS when vCPU not in SMM") changes KVM_SET_VCPU_EVENTS
-> > handler to set pending LAPIC INIT event regardless of if vCPU is in
-> > SMM mode or not.
-> >
-> > However, latch INIT without checking CPU state exists race condition,
-> > which causes the loss of INIT event. This is fatal during the VM
-> > startup process because it will cause some AP to never switch to
-> > non-root mode. Just as commit f4ef19108608 ("KVM: X86: Fix loss of
-> > pending INIT due to race") said:
-> >       BSP                          AP
-> >                      kvm_vcpu_ioctl_x86_get_vcpu_events
-> >                        events->smi.latched_init =3D 0
-> >
-> >                      kvm_vcpu_block
-> >                        kvm_vcpu_check_block
-> >                          schedule
-> >
-> > send INIT to AP
-> >                      kvm_vcpu_ioctl_x86_set_vcpu_events
-> >                      (e.g. `info registers -a` when VM starts/reboots)
-> >                        if (events->smi.latched_init =3D=3D 0)
-> >                          clear INIT in pending_events
->
-> This is a QEMU bug, no?
+> OK, so all PTPs in the same contiguous cache will become writeable
+> even though the helper (i.e. set_pte_at()) is just called on one of
+> the PTPs.  But doesn't it compromise the page table hardening somehow?
+> The PTPs from the same cache may belong to different processes. 
 
-I think I agree.
+First just a note that this is true regardless of how the PTPs are
+allocated (i.e. this is already the case in this version of the series).
 
-> IIUC, it's invoking kvm_vcpu_ioctl_x86_set_vcpu_events()
-> with stale data.
+Either way, yes you are right, this approach does not introduce any
+isolation *between* page tables - pgtable helpers are able to write to
+all page tables. In principle it should be possible to use a different
+pkey for kernel and user page tables, but that would make the kpkeys
+level switching in helpers quite a bit more complicated. Isolating
+further is impractical as we have so few pkeys (just 8 on arm64).
 
-More precisely, it's not expecting other vCPUs to change the pending
-events asynchronously.
+That said, what kpkeys really tries to protect against is the direct
+corruption of critical data by arbitrary (unprivileged) code. If the
+attacker is able to manipulate calls to set_pte() and the likes, kpkeys
+cannot provide much protection - even if we restricted the writes to a
+specific set of page tables, the attacker would still be able to insert
+a translation to any arbitrary physical page.
 
-> I'm also a bit confused as to how QEMU is even gaining control
-> of the vCPU to emit KVM_SET_VCPU_EVENTS if the vCPU is in
-> kvm_vcpu_block().
-
-With a signal. :)
-
-Paolo
-
+- Kevin
 
