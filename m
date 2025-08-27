@@ -1,203 +1,192 @@
-Return-Path: <linux-kernel+bounces-787876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80948B37CDB
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 10:05:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B6BBB37D38
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 10:11:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F0781BA2BFB
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 08:05:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89AC31BA0F28
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 08:12:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DE113314A7;
-	Wed, 27 Aug 2025 08:04:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="fDMVk27s"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E028A32A3F9
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 08:04:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BECA632C312;
+	Wed, 27 Aug 2025 08:11:38 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 539DB322768;
+	Wed, 27 Aug 2025 08:11:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756281898; cv=none; b=LnLnfUGvLBQ4pBKy58IXU72xCA18hlgyp7fJIcD/iv+A2dtrkKe1O0Hfp0C9hybW/dC8BMOaEke3jnsiBzNVf4BZicma/e+C2nI6XCBg0keRitwbLwRC88CfubpEFaGluRHZRJdBLv2NGWXJwSU1RKI7e9UGXSZu8y7FFwtBAqo=
+	t=1756282298; cv=none; b=TTPeA3eSrZMZoUgVJ0Hm4iyQp/LxWPdfrZKjArsjM9vuDnVCDI8cgKj2GKXjfdL536x1AaphojUzZomW6B7ze2y2XoaV6Q+7OwERL6Q8flieXOdwzU0CQli2lEuXlTSVCraUttSqjxxjy7GDmcwX6RqakiS/NCmbdrx1Rx4r92E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756281898; c=relaxed/simple;
-	bh=g+KW9TEeVGqYphEisf/ETPbXzv+fd0lBq6e6n0plR/M=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
-	 References:In-Reply-To; b=etuewo+0wf/gTft27LUWokxw7yijRMEDhs66qArTAA8THg9Xxnk13d9pLkPxaXqHvqzBOEIEhdVU3yqLAhT1PZAEV+6MqfWiOjkb31FvLmcntx5u42F8imoTKJ3TmUcTGot9+hlDEOENj4++7HshFFqaoH2b8lnJWkJUo2Ojp0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=fDMVk27s; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-afe84202bc2so431169166b.2
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 01:04:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1756281893; x=1756886693; darn=vger.kernel.org;
-        h=in-reply-to:references:subject:cc:to:from:message-id:date
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=o38urx3Y5liCjRZycGC30h3AxkEKhcqPAFepRrs3ec0=;
-        b=fDMVk27sioxSQfUj+NERtZPfo0GlsETGlORLyy3ZT+lzjJ+z7XeF8r4tSxc0W5mxVb
-         bR1216Db1cFXjPU5M+QfdPo42l5ADMzwKKtiJSdV6Fzzs7dsUwQ2krYvIYga30Mke6pJ
-         g/Ua8WLE5hc34IjEPCvocqcCgC0bkFTVsmDc65dVV3mPsBGaT+9RvfqapaXrOncOp27b
-         HtG1x7KsEuupa8heo31rfFHSHwaCO4TXQAHNi3x7A0UQYPGE2cXCGG6xDS51QUFul2yn
-         T+zhWRtcrR5mDXVvKWIl9r0pVwu9/G2MdYTgH/5kGxriNy196EG+AssHwdv9TkZkmC1v
-         JeKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756281893; x=1756886693;
-        h=in-reply-to:references:subject:cc:to:from:message-id:date
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=o38urx3Y5liCjRZycGC30h3AxkEKhcqPAFepRrs3ec0=;
-        b=hKrQIir8Beme9WyMBEsz33mVgshPVwKygK9sYICKk4GUIrATsg+yNkSBvJGqb8q2hn
-         IJW1DuQIXt0C8B8oP9eQCr79I28DbIadoZ4ADI8i2ykeBHs2j15X9YX0K+EANvZWjENb
-         DOupBv6Cy1GVi/bRHvBVy4xvJpzg8HgqdTIMA4RrVz6aHGdSYJfg8Iy2Kpas2KppP+ct
-         tEBbQOtnCHHiD+TwGJWw8loRKFNGp2jQWl9e2WFLWBsKkf12yq183jxVms3uPUN9XeQb
-         IgiYGjbMEoukgaKjJ2C6Ikzv8GTxxgoX5uJ+dZurwWNK/YLxZDDZ+/QWIodCQawjlLwu
-         ILVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUI/lJwpySkuDNhxJ//LYVu5qdsCWP3r3wf6nfjBJndRxBOfgu/m2hDj7c92lQ8MlaKkfe7Ckxf1BeNtPc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBp80DwnLlXE34fGQ8tSkzW2zylKKzZ9d6ZKLdAlmBF2TpFMt1
-	e785D0X4/NWctgy7Vg9+VVWulNAfqWXVJEF176sNqh8QxcTaaSY/QyYnbr3PeudNkJQ=
-X-Gm-Gg: ASbGnctxhtc1wjm47mh7OS05TSkbmZh5UNnZrGihJch8avVfRFBtb+ep+mTK3G6PiJy
-	Y+5x+X8Nk/dgAnpLzqLHefkDQS8AplGnBS6vobLdAniPz9E+x8S9qIW69aB8dTkgmeZRc/yrLHC
-	cgtPXc2l1Icq6qzgCqkhdWLRdNSTgHx7Y1K9dawFY4UegxmnPD1RAAmYZBby2X7hHiwPq2DFSxD
-	Hrw+LdwsYN2tW127v0+adQ8VFqZo7okxd/+OFpjp3tH1HyBInar126sHbjiFkUqdVSlioAPSNcR
-	w38z4ViM9bPlwlLq/0huc9/ciGYGBun6JPYribDOP4Az/FX6H6ITA1d0kq5B8ZI5az/14j3op9y
-	mdHUuLaKHfyQR2zxY3xZn7upLDLD6Il9gNhBB88FsFe9a5u/M
-X-Google-Smtp-Source: AGHT+IHAZruNO8PxiQDS6YA+oxemi3oPab4ygrNWQ7snhZ/72+NK1dE4fWGZyqEZWKw8iTnURGRP8A==
-X-Received: by 2002:a17:907:6096:b0:afe:7d3b:8463 with SMTP id a640c23a62f3a-afe7d4ace6fmr1003276666b.62.1756281892878;
-        Wed, 27 Aug 2025 01:04:52 -0700 (PDT)
-Received: from localhost (83-97-14-186.biz.kpn.net. [83.97.14.186])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-afeaf41dc6fsm283102066b.18.2025.08.27.01.04.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Aug 2025 01:04:52 -0700 (PDT)
+	s=arc-20240116; t=1756282298; c=relaxed/simple;
+	bh=/qXxxLaNG/fJKAgG5N1611Recp7NdyiAzN47tqQDfTE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aHWB/Z+Gp6aqz7cnFkCAZxRqR6hyAB/uDf6OPNGd2tM6QVH0/vX+Mtvq0OEZIo1nzBwnlJP96dFjMuaZi9VLwfPu/JhDfrT7qrxkHGH6X2ycGl9rp6h13M6lL7dRmZ3pDWy9cCyiVrGg/pqobtLdz14bdpqe/y2O0WrlYTF3TsM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3E3641691;
+	Wed, 27 Aug 2025 01:05:09 -0700 (PDT)
+Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D650B3F694;
+	Wed, 27 Aug 2025 01:05:07 -0700 (PDT)
+Date: Wed, 27 Aug 2025 09:04:46 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Robin Murphy <robin.murphy@arm.com>
+Cc: peterz@infradead.org, mingo@redhat.com, will@kernel.org,
+	acme@kernel.org, namhyung@kernel.org,
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+	irogers@google.com, adrian.hunter@intel.com,
+	kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-alpha@vger.kernel.org,
+	linux-snps-arc@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
+	linux-csky@vger.kernel.org, loongarch@lists.linux.dev,
+	linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+	linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+	sparclinux@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-rockchip@lists.infradead.org, dmaengine@vger.kernel.org,
+	linux-fpga@vger.kernel.org, amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+	intel-xe@lists.freedesktop.org, coresight@lists.linaro.org,
+	iommu@lists.linux.dev, linux-amlogic@lists.infradead.org,
+	linux-cxl@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH 18/19] perf: Introduce positive capability for raw events
+Message-ID: <aK68Ht03vZ0G3Xpt@J2N7QTR9R3>
+References: <cover.1755096883.git.robin.murphy@arm.com>
+ <542787fd188ea15ef41c53d557989c962ed44771.1755096883.git.robin.murphy@arm.com>
+ <aK259PrpyxguQzdN@J2N7QTR9R3>
+ <015974a4-f129-4ae5-adf9-c94b29f0576a@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: multipart/signed;
- boundary=41c8a4c6eaeda649630e38b4e0028da409cd67aaf3a4c32373d96e5bca68;
- micalg=pgp-sha512; protocol="application/pgp-signature"
-Date: Wed, 27 Aug 2025 10:04:32 +0200
-Message-Id: <DCD1YPX4T779.ADK4JCGW1MU7@baylibre.com>
-From: "Markus Schneider-Pargmann" <msp@baylibre.com>
-To: "Rob Herring" <robh@kernel.org>
-Cc: "Chandrasekar Ramakrishnan" <rcsekar@samsung.com>, "Marc Kleine-Budde"
- <mkl@pengutronix.de>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor
- Dooley" <conor+dt@kernel.org>, "Vishal Mahaveer" <vishalm@ti.com>, "Kevin
- Hilman" <khilman@baylibre.com>, "Dhruva Gole" <d-gole@ti.com>, "Sebin
- Francis" <sebin.francis@ti.com>, "Kendall Willis" <k-willis@ti.com>,
- "Akashdeep Kaur" <a-kaur@ti.com>, "Simon Horman" <horms@kernel.org>,
- "Vincent MAILHOL" <mailhol.vincent@wanadoo.fr>,
- <linux-can@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v9 1/4] dt-bindings: can: m_can: Add wakeup properties
-X-Mailer: aerc 0.20.1
-References: <20250820-topic-mcan-wakeup-source-v6-12-v9-0-0ac13f2ddd67@baylibre.com> <20250820-topic-mcan-wakeup-source-v6-12-v9-1-0ac13f2ddd67@baylibre.com> <20250822143549.GA3664230-robh@kernel.org>
-In-Reply-To: <20250822143549.GA3664230-robh@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <015974a4-f129-4ae5-adf9-c94b29f0576a@arm.com>
 
---41c8a4c6eaeda649630e38b4e0028da409cd67aaf3a4c32373d96e5bca68
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
+On Tue, Aug 26, 2025 at 11:46:02PM +0100, Robin Murphy wrote:
+> On 2025-08-26 2:43 pm, Mark Rutland wrote:
+> > On Wed, Aug 13, 2025 at 06:01:10PM +0100, Robin Murphy wrote:
+> > To bikeshed a little here, I'm not keen on the PERF_PMU_CAP_RAW_EVENTS
+> > name, because it's not clear what "RAW" really means, and people will
+> > definitely read that to mean something else.
+> > 
+> > Could we go with something like PERF_PMU_CAP_COMMON_CPU_EVENTS, to make
+> > it clear that this is about opting into CPU-PMU specific event types (of
+> > which PERF_TYPE_RAW is one of)?
+> 
+> Indeed I started with that very intention after our previous discussion, but
+> soon realised that in fact nowhere in the code is there any definition or
+> even established notion of what "common" means in this context, so it's
+> hardly immune to misinterpretation either.
 
-Hi Rob,
+We can document that; it's everything less than PERF_TYPE_MAX:
 
-On Fri Aug 22, 2025 at 4:35 PM CEST, Rob Herring wrote:
-> On Wed, Aug 20, 2025 at 02:42:25PM +0200, Markus Schneider-Pargmann wrote=
-:
->> The pins associated with m_can have to have a special configuration to
->> be able to wakeup the SoC from some system states. This configuration is
->> described in the wakeup pinctrl state while the default state describes
->> the default configuration. Also add the sleep state which is already in
->> use by some devicetrees.
->>=20
->> Also m_can can be a wakeup-source if capable of wakeup.
->>=20
->> Signed-off-by: Markus Schneider-Pargmann <msp@baylibre.com>
->> ---
->>  .../devicetree/bindings/net/can/bosch,m_can.yaml   | 25 +++++++++++++++=
-+++++++
->>  1 file changed, 25 insertions(+)
->>=20
->> diff --git a/Documentation/devicetree/bindings/net/can/bosch,m_can.yaml =
-b/Documentation/devicetree/bindings/net/can/bosch,m_can.yaml
->> index c4887522e8fe97c3947357b4dbd4ecf20ee8100a..0e00be18a8be681634f25378=
-bb2cdef034dc4e6b 100644
->> --- a/Documentation/devicetree/bindings/net/can/bosch,m_can.yaml
->> +++ b/Documentation/devicetree/bindings/net/can/bosch,m_can.yaml
->> @@ -106,6 +106,26 @@ properties:
->>          maximum: 32
->>      minItems: 1
->> =20
->> +  pinctrl-0:
->> +    description: Default pinctrl state
->> +
->> +  pinctrl-1:
->> +    description: Can be Sleep or Wakeup pinctrl state
->> +
->> +  pinctrl-2:
->> +    description: Can be Sleep or Wakeup pinctrl state
->> +
->> +  pinctrl-names:
->> +    description:
->> +      When present should contain at least "default" describing the def=
-ault pin
->> +      states. Other states are "sleep" which describes the pinstate whe=
-n
->> +      sleeping and "wakeup" describing the pins if wakeup is enabled.
->> +    minItems: 1
->> +    items:
->> +      - const: default
->> +      - const: sleep
->> +      - const: wakeup
->
-> This doesn't allow '"default", "wakeup"' which I think you want.
->
-> "sleep" and "wakeup" seem mutually exclusive and really are just the=20
-> same thing. Both apply to the same mode/state. Whether you can wake from=
-=20
-> it is just an additional property (of the state).=20
->
-> So I think you want:
->
-> items:
->   - const: default
->   - enum: [ sleep, wakeup ]
->
->
-> Or you should just drop 'wakeup' and just support wakeup with 'sleep'=20
-> when 'wakeup-source' is present.
+	enum perf_type_id {
+		PERF_TYPE_HARDWARE                      = 0, 
+		PERF_TYPE_SOFTWARE                      = 1, 
+		PERF_TYPE_TRACEPOINT                    = 2, 
+		PERF_TYPE_HW_CACHE                      = 3, 
+		PERF_TYPE_RAW                           = 4, 
+		PERF_TYPE_BREAKPOINT                    = 5, 
 
-Thanks for your feedback. I see they seem to be mutually exclusive, but
-I think they serve different purposes. The sleep state describes the
-pins when sleeping with wakeup disabled. The wakeup state describes the
-pins when sleeping or off and wakeup is enabled.
+		PERF_TYPE_MAX,                          /* non-ABI */
+	};
 
-Only allowing one of the two states or only using the sleep state will
-enable or disable wakeup statically, there is no way to choose one or
-the other.
+... and maybe you could use "PERF_PMU_CAP_ABI_TYPES" to align with that
+comment?
 
-For my specific setup, the name of a sleep state is also kind of
-misleading. The SoC is in a poweroff state and sensitive to activity on
-the pins configured for wakeup. It is not just sleeping, it will do a
-fresh boot once woken up.=20
+> Furthermore the semantics of the cap as it ended up are specifically
+> that the PMU wants the same behaviour as if it had registered as
+> PERF_TYPE_RAW, so having "raw" in the name started to look like the
+> more intuitive option after all (plus being nice and short helps.)
 
-Best
-Markus
+I appreciate the shortness, but I think it's misleading to tie this to
+"RAW" specifically, when really this is a capabiltiy to say "please let
+me try to init any events for non-dynamic types, in addition to whatever
+specific type I am registered with".
 
---41c8a4c6eaeda649630e38b4e0028da409cd67aaf3a4c32373d96e5bca68
-Content-Type: application/pgp-signature; name="signature.asc"
+> If anything, it's "events" that carries the implication that's proving hard
+> to capture precisely and concisely here, so maybe the answer to avoid
+> ambiguity is to lean further away from a "what it represents" to a "what it
+> actually does" naming - PERF_PMU_CAP_TYPE_RAW, anyone?
 
------BEGIN PGP SIGNATURE-----
+I'm happy with TYPE in the name; it's just RAW specifically that I'm
+objecting to.
 
-iKMEABYKAEsWIQSJYVVm/x+5xmOiprOFwVZpkBVKUwUCaK68EhsUgAAAAAAEAA5t
-YW51MiwyLjUrMS4xMSwyLDIRHG1zcEBiYXlsaWJyZS5jb20ACgkQhcFWaZAVSlN4
-dwEAmJszUShVvXfS2LCmLmEu7BZUsJ2zzz7SGnnInFEs3FEBAOcxPEuvnj7hWYdH
-3c/Loa6iaWxbVEoBV2+H35Z3algJ
-=jiEZ
------END PGP SIGNATURE-----
+> > Likewise, s/is_raw_pmu()/pmu_supports_common_cpu_events()/.
+> 
+> Case in point: is it any more logical and expected that supporting common
+> CPU events implies a PMU should be offered software or breakpoint events as
+> well? Because that's what such a mere rename would currently mean :/
 
---41c8a4c6eaeda649630e38b4e0028da409cd67aaf3a4c32373d96e5bca68--
+Yes, I think it is.
+
+> > > ---
+> > > 
+> > > A further possibility is to automatically add the cap to PERF_TYPE_RAW
+> > > PMUs in perf_pmu_register() to have a single point-of-use condition; I'm
+> > > undecided...
+> > 
+> > I reckon we don't need to automagically do that, but I reckon that
+> > is_raw_pmu()/pmu_supports_common_cpu_events() should only check the cap,
+> > and we don't read anything special into any of
+> > PERF_TYPE_{RAW,HARDWARE,HW_CACHE}.
+> 
+> OK, but that would then necessitate having to explicitly add the cap to all
+> 15-odd other drivers which register as PERF_TYPE_RAW as well, at which point
+> it starts to look like a more general "I am a CPU PMU in terms of most
+> typical assumptions you might want to make about that" flag...
+> 
+> To clarify (and perhaps something for a v2 commit message), we currently
+> have 3 categories of PMU driver:
+> 
+> 1: (Older/simpler CPUs) Registers as PERF_TYPE_RAW, wants
+> PERF_TYPE_RAW/HARDWARE/HW_CACHE events
+> 2: (Heterogeneous CPUs) Registers as dynamic type, wants
+> PERF_TYPE_RAW/HARDWARE/HW_CACHE events plus events of its own type
+> 3: (Mostly uncore) Registers as dynamic type, only wants events of its own
+> type
+
+Sure, but I think that separating 1 and 2 is an artificial distinction,
+and what we really have is:
+
+(a) Wants to handle (some of) the non-dynamic/common/ABI types (in
+    addition to whatever specific type it was registered with). Needs to
+    have a switch statement somewhere in pmu::event_init().
+
+(b) Only wants to handle the specific type the PMU was registered with.
+
+> My vested interest is in making category 3 the default behaviour, given that
+> the growing majority of new drivers are uncore (and I keep having to write
+> them...) 
+
+Yes, we're aligned on that.
+
+> However unclear the type overlaps in category 1 might be, it's been
+> like that for 15 years, so I didn't feel compelled to churn fossils like
+> Alpha more than reasonably necessary. Category 2 is only these 5 drivers, so
+> a relatively small tweak to distinguish them from category 3 and let them
+> retain the effective category 1 behaviour (which remains the current one of
+> potentially still being offered software etc. events too) seemed like the
+> neatest way to make progress.
+
+I just think we should combine 1 and 2 (into categroy a as above), since
+that removes the need to treat RAW specially going forwards.
+
+> I'm not saying I'm necessarily against a general overhaul of CPU PMUs being
+> attempted too, just that it seems more like a whole other side-quest, and
+> I'd really like to slay the uncore-boilerplate dragon first.
+
+I think that adding the cap to those 15 PMUs would take less time than
+it has taken me to write this email, so I do not understand the
+objection.
+
+Mark.
 
