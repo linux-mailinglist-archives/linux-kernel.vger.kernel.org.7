@@ -1,202 +1,139 @@
-Return-Path: <linux-kernel+bounces-788260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788262-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 316FEB381F3
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 14:07:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC128B381F6
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 14:07:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3410206308
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 12:07:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69A709812A3
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 12:07:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46882303CBD;
-	Wed, 27 Aug 2025 12:06:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="JrLM7P64"
-Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87E313019B8;
+	Wed, 27 Aug 2025 12:07:33 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CD483002B1;
-	Wed, 27 Aug 2025 12:06:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B7F530148E
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 12:07:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756296406; cv=none; b=bz1YGeAaEjGVKSYtGp5nT1kiVVzTZrTX0PwctD3yN08ykChGkCXvEQM/zBrSm8J7gtvF0aDQgs2CRrXMssq61Y0CBBTq926kfelp/nDxwMbKhiukwVgKEwCY+zy+q/gPNyNr4cXmUBqUIVn+ym5NYI1TwrrJiClDKqAUsFI1SgY=
+	t=1756296453; cv=none; b=Aw4YD98K2Ou696Q68F+fBjlaI34N7YXICLJVSziLoguyHK0xU4qdfqUOp1NHcV3Q8vnd6QaiLF1h/PEPwc8fcWcAVyfWQZjoxy+vdMl6X/tc8feMtlwOtZnou2+igOmUoQ+Tz54fD9lnklo0o5v9QFjjZRbsXx2W2KFAv0jxG/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756296406; c=relaxed/simple;
-	bh=vqZZIw5/ur/jIhQWs/3Gokj0Zn0OQYByDQGXFndhH3Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lbgRLAEPo18FOQaAtGRQnLX4WBtgfpsiO043ek7gtJhNsEZ/6GH7PBZPoK5p1O3jomHBQu5yLp8wox4JEPl0UWbTIiO9rLrhztrQwaj+a6GT+1Tk+4zfRaFwArGZrepP+ybSZ4WCS60Td2gVYLGgVsWWb3XJd5bWGbWTrQ+Rc54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=JrLM7P64; arc=none smtp.client-ip=83.149.199.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
-Received: from debian (unknown [5.228.116.177])
-	by mail.ispras.ru (Postfix) with ESMTPSA id CE9AD406C3E2;
-	Wed, 27 Aug 2025 12:06:41 +0000 (UTC)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru CE9AD406C3E2
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
-	s=default; t=1756296401;
-	bh=tQlyuqDvMaR9vp6QaKLqCqx+jLri4M8w72th86oy/gw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=JrLM7P64VgNKcZcC4cEnsp9RpLGDsez78nzt4CVfdinKjBCSIdVPzn92keA8aFaLK
-	 yV//ffIb0PUmu4/TGOEoMpvOu3cbeNOneZiuSdjI4eZb2IIHs11akrsdOK+kVGEs+b
-	 /A0h54ky2cHmmEF7EsDI1yBVGEEcSBYHXTF2YknI=
-From: Fedor Pchelkin <pchelkin@ispras.ru>
-To: Ping-Ke Shih <pkshih@realtek.com>,
-	Zong-Zhe Yang <kevin_yang@realtek.com>
-Cc: Fedor Pchelkin <pchelkin@ispras.ru>,
-	Po-Hao Huang <phhuang@realtek.com>,
-	linux-wireless@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	lvc-project@linuxtesting.org
-Subject: [PATCH rtw v2 4/4] wifi: rtw89: avoid circular locking dependency in ser_state_run()
-Date: Wed, 27 Aug 2025 15:05:17 +0300
-Message-ID: <20250827120603.723548-5-pchelkin@ispras.ru>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250827120603.723548-1-pchelkin@ispras.ru>
-References: <20250827120603.723548-1-pchelkin@ispras.ru>
+	s=arc-20240116; t=1756296453; c=relaxed/simple;
+	bh=N551f1zEeh77RdBWR5xcd7hebFhagadFzC2VtCRqMz8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=K7LxAjvZAek5Qpi55aP56DDWLoQnQ+MeTRRDB9ncHhPOXVe9WDn8qjmvreHD9jxl6stGo3m51+Wlef3ecSEc8n9mHhiVjdB5uIV5CzE/oKtx0p91YOHdeLdf6H1n8Z9xgBsQ1Kt/w7T0wRPryTcX8YR7r0eIubRH9Ycx+zcgKTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4cBjvZ028gz14MQj;
+	Wed, 27 Aug 2025 20:07:22 +0800 (CST)
+Received: from kwepemj200003.china.huawei.com (unknown [7.202.194.15])
+	by mail.maildlp.com (Postfix) with ESMTPS id EEE6C1402D0;
+	Wed, 27 Aug 2025 20:07:28 +0800 (CST)
+Received: from [10.67.120.170] (10.67.120.170) by
+ kwepemj200003.china.huawei.com (7.202.194.15) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 27 Aug 2025 20:07:28 +0800
+Message-ID: <e0584468-ca8e-4a3e-944d-c0bff8569a83@huawei.com>
+Date: Wed, 27 Aug 2025 20:07:28 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] tools/dma: move dma_map_benchmark from selftests to
+ tools/dma
+To: Barry Song <21cnbao@gmail.com>
+CC: <m.szyprowski@samsung.com>, <robin.murphy@arm.com>,
+	<jonathan.cameron@huawei.com>, <prime.zeng@huawei.com>,
+	<fanghao11@huawei.com>, <linux-kernel@vger.kernel.org>,
+	<linuxarm@huawei.com>, <yangyicong@huawei.com>
+References: <20250814133527.2679261-1-xiaqinxin@huawei.com>
+ <20250814133527.2679261-2-xiaqinxin@huawei.com>
+ <CAGsJ_4wbgqGavjQNXtbFVeMw8j8oSCEVSdL4BrBVWEuNHzomPg@mail.gmail.com>
+ <8db50f47-9295-4c7c-8bbc-dbbbd3fb5f79@huawei.com>
+ <CAGsJ_4xXt2uEtAohcq+3XF_cKdsZiWsRaRh+ZK4nj0-Zw-yWYw@mail.gmail.com>
+ <ca162322-b97e-4ec1-828e-dad7b09f4735@huawei.com>
+ <CAGsJ_4yTOPoO98TTh3oQ4t6rag==yqeYP8HQ1wKvYdvg4e1RTQ@mail.gmail.com>
+From: Qinxin Xia <xiaqinxin@huawei.com>
+In-Reply-To: <CAGsJ_4yTOPoO98TTh3oQ4t6rag==yqeYP8HQ1wKvYdvg4e1RTQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
+ kwepemj200003.china.huawei.com (7.202.194.15)
 
-Lockdep gives a splat [1] when ser_hdl_work item is executed.  It is
-scheduled at mac80211 workqueue via ieee80211_queue_work() and takes a
-wiphy lock inside.  However, this workqueue can be flushed when e.g.
-closing the interface and wiphy lock is already taken in that case.
 
-Choosing wiphy_work_queue() for SER is likely not suitable.  Back on to
-the global workqueue.
 
-[1]:
+On 2025/8/22 09:12:07, Barry Song <21cnbao@gmail.com> wrote:
+>>
+>> Does usr/include have header files? Did you run make headers_install
+>> before make?
+>> [xiaqinxin@localhost linux]$ make headers_install
+>>     HOSTCC  scripts/basic/fixdep
+>>     HOSTCC  scripts/unifdef
+>>     WRAP    arch/arm64/include/generated/uapi/asm/socket.h
+>>     SYSHDR  arch/arm64/include/generated/uapi/asm/unistd_64.h
+>>     HDRINST usr/include/asm-generic/mman.h
+>>     HDRINST usr/include/asm-generic/stat.h
+>>     HDRINST usr/include/asm-generic/ucontext.h
+>>     HDRINST usr/include/asm-generic/int-ll64.h
+>>     HDRINST usr/include/asm-generic/unistd.h
+>>     HDRINST usr/include/asm-generic/kvm_para.h
+>>     HDRINST usr/include/asm-generic/types.h
+>>     HDRINST usr/include/asm-generic/ipcbuf.h
+>>     HDRINST usr/include/asm-generic/termbits-common.h
+>> ...
+>> [xiaqinxin@localhost linux]$ cd tools/dma/
+>> [xiaqinxin@localhost dma]$ make
+>> cc -I../../usr/include -I../../include dma_map_benchmark.c -o
+>> dma_map_benchmark
+> 
+> This is really frustrating. Why do other parts not need this, but
+> dma_map_benchmark does? It is also not acceptable to hardcode the
+> path to usr/include.
+> 
+> It is also not good practice to access a kernel header directly from a
+> userspace tool - such as -I../../include.
+> 
+> Shouldn't map_benchmark.h be a proper UAPI header that gets installed
+> into the toolchain like the others?
+> 
+Hello Barry :
 
- WARNING: possible circular locking dependency detected
- 6.17.0-rc2 #17 Not tainted
- ------------------------------------------------------
- kworker/u32:1/61 is trying to acquire lock:
- ffff88811bc00768 (&rdev->wiphy.mtx){+.+.}-{4:4}, at: ser_state_run+0x5e/0x180 [rtw89_core]
+This include file is inherited from the original version, and there are 
+similar
 
- but task is already holding lock:
- ffffc9000048fd30 ((work_completion)(&ser->ser_hdl_work)){+.+.}-{0:0}, at: process_one_work+0x7b5/0x1450
+method in other parts ：
 
- which lock already depends on the new lock.
+pcmcia/Makefile:CFLAGS := -I../../usr/include
+laptop/dslm/Makefile:CFLAGS := -I../../usr/include
+accounting/Makefile:CFLAGS := -I../../usr/include
 
- the existing dependency chain (in reverse order) is:
+During compilation, the system searches for header files from 
+../../usr/include first.
 
- -> #2 ((work_completion)(&ser->ser_hdl_work)){+.+.}-{0:0}:
-        process_one_work+0x7c6/0x1450
-        worker_thread+0x49e/0xd00
-        kthread+0x313/0x640
-        ret_from_fork+0x221/0x300
-        ret_from_fork_asm+0x1a/0x30
+If no header file is found in ../../usr/include, the system attempts to 
+get header files
 
- -> #1 ((wq_completion)phy0){+.+.}-{0:0}:
-        touch_wq_lockdep_map+0x8e/0x180
-        __flush_workqueue+0x129/0x10d0
-        ieee80211_stop_device+0xa8/0x110
-        ieee80211_do_stop+0x14ce/0x2880
-        ieee80211_stop+0x13a/0x2c0
-        __dev_close_many+0x18f/0x510
-        __dev_change_flags+0x25f/0x670
-        netif_change_flags+0x7b/0x160
-        do_setlink.isra.0+0x1640/0x35d0
-        rtnl_newlink+0xd8c/0x1d30
-        rtnetlink_rcv_msg+0x700/0xb80
-        netlink_rcv_skb+0x11d/0x350
-        netlink_unicast+0x49a/0x7a0
-        netlink_sendmsg+0x759/0xc20
-        ____sys_sendmsg+0x812/0xa00
-        ___sys_sendmsg+0xf7/0x180
-        __sys_sendmsg+0x11f/0x1b0
-        do_syscall_64+0xbb/0x360
-        entry_SYSCALL_64_after_hwframe+0x77/0x7f
+from the system directory of the compilation environment. So maybe in 
+some compilation
 
- -> #0 (&rdev->wiphy.mtx){+.+.}-{4:4}:
-        __lock_acquire+0x124c/0x1d20
-        lock_acquire+0x154/0x2e0
-        __mutex_lock+0x17b/0x12f0
-        ser_state_run+0x5e/0x180 [rtw89_core]
-        rtw89_ser_hdl_work+0x119/0x220 [rtw89_core]
-        process_one_work+0x82d/0x1450
-        worker_thread+0x49e/0xd00
-        kthread+0x313/0x640
-        ret_from_fork+0x221/0x300
-        ret_from_fork_asm+0x1a/0x30
+environments, compiling these modules might have the same problem...
 
- other info that might help us debug this:
+'struct map_benchmark' is defined in map_benchmark.h which is used by 
+map_benchmark.c
 
- Chain exists of:
-   &rdev->wiphy.mtx --> (wq_completion)phy0 --> (work_completion)(&ser->ser_hdl_work)
-
-  Possible unsafe locking scenario:
-
-        CPU0                    CPU1
-        ----                    ----
-   lock((work_completion)(&ser->ser_hdl_work));
-                                lock((wq_completion)phy0);
-                                lock((work_completion)(&ser->ser_hdl_work));
-   lock(&rdev->wiphy.mtx);
-
-  *** DEADLOCK ***
-
- 2 locks held by kworker/u32:1/61:
-  #0: ffff888103835148 ((wq_completion)phy0){+.+.}-{0:0}, at: process_one_work+0xefa/0x1450
-  #1: ffffc9000048fd30 ((work_completion)(&ser->ser_hdl_work)){+.+.}-{0:0}, at: process_one_work+0x7b5/0x1450
-
- stack backtrace:
- CPU: 0 UID: 0 PID: 61 Comm: kworker/u32:1 Not tainted 6.17.0-rc2 #17 PREEMPT(voluntary)
- Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS edk2-20250523-14.fc42 05/23/2025
- Workqueue: phy0 rtw89_ser_hdl_work [rtw89_core]
- Call Trace:
-  <TASK>
-  dump_stack_lvl+0x5d/0x80
-  print_circular_bug.cold+0x178/0x1be
-  check_noncircular+0x14c/0x170
-  __lock_acquire+0x124c/0x1d20
-  lock_acquire+0x154/0x2e0
-  __mutex_lock+0x17b/0x12f0
-  ser_state_run+0x5e/0x180 [rtw89_core]
-  rtw89_ser_hdl_work+0x119/0x220 [rtw89_core]
-  process_one_work+0x82d/0x1450
-  worker_thread+0x49e/0xd00
-  kthread+0x313/0x640
-  ret_from_fork+0x221/0x300
-  ret_from_fork_asm+0x1a/0x30
-  </TASK>
-
-Found by Linux Verification Center (linuxtesting.org).
-
-Fixes: ebfc9199df05 ("wifi: rtw89: add wiphy_lock() to work that isn't held wiphy_lock() yet")
-Signed-off-by: Fedor Pchelkin <pchelkin@ispras.ru>
----
- drivers/net/wireless/realtek/rtw89/ser.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/drivers/net/wireless/realtek/rtw89/ser.c b/drivers/net/wireless/realtek/rtw89/ser.c
-index bb39fdbcba0d..6c0a13a854f6 100644
---- a/drivers/net/wireless/realtek/rtw89/ser.c
-+++ b/drivers/net/wireless/realtek/rtw89/ser.c
-@@ -205,7 +205,6 @@ static void rtw89_ser_hdl_work(struct work_struct *work)
- 
- static int ser_send_msg(struct rtw89_ser *ser, u8 event)
- {
--	struct rtw89_dev *rtwdev = container_of(ser, struct rtw89_dev, ser);
- 	struct ser_msg *msg = NULL;
- 
- 	if (test_bit(RTW89_SER_DRV_STOP_RUN, ser->flags))
-@@ -221,7 +220,7 @@ static int ser_send_msg(struct rtw89_ser *ser, u8 event)
- 	list_add(&msg->list, &ser->msg_q);
- 	spin_unlock_irq(&ser->msg_q_lock);
- 
--	ieee80211_queue_work(rtwdev->hw, &ser->ser_hdl_work);
-+	schedule_work(&ser->ser_hdl_work);
- 	return 0;
- }
- 
--- 
-2.50.1
+Do we need to define them separately in the kernel and uapi header files?>>
+>> My test is ok.
+> 
+> 
+> Thanks
+> Barry
 
 
