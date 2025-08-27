@@ -1,217 +1,228 @@
-Return-Path: <linux-kernel+bounces-788004-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788005-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F8AFB37EA9
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 11:22:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37A74B37EB2
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 11:22:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86C265E8394
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 09:22:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 189975E84D9
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 09:22:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03CCC3451A1;
-	Wed, 27 Aug 2025 09:21:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DXJsQyjz"
-Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0303E3451B2;
+	Wed, 27 Aug 2025 09:22:11 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97910343D9B
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 09:21:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F9AB34321F;
+	Wed, 27 Aug 2025 09:22:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756286507; cv=none; b=KDsBxVAeW8z2SmWqIqHDMWNGnXXZZUHbE5uJanbsnhqDRknbOumpBexB6w3GpHHQbznIYLCnw++QxUw2/+ttT4W9+uQnUcQCWfeiTz+I5TOObEVRGq5W0j3LenXD2IzM2RwrjC7MR1F71+zzDLAcKcWpj9Rhyu3f8X3ivXxlNGQ=
+	t=1756286530; cv=none; b=KTGnfv1oQe6qSSfloqieLZvbgJwbgQeRi84jca4zVE2bnBhFzGZ1Zx5PuJffxqXFn0AfwdV8gqD8Q7CtYumwoAYOpLsaFCmTE1ZOpYzbRkVJ83bXOndJDVZV5r1cYDF04zo7bYhVq0cS65wmbRHowqfWuqDFlOXcFAXzg+AmQOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756286507; c=relaxed/simple;
-	bh=AZj1pPR0y6aQduaZ5xgjFt/qPTTBCkCy04MTwZiYc68=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iSeIRhF2vQAYZF+bv604PrF0jmd77LNj7ZM/J2vLvM8BavNSNV0RFNXuYSase97cxHHgnXSgJdaTfx1bqxXcu294SDoamQtY6p/gqLEUp5J4jOPAJch14kVrltAVdXECg4Ids00PgWgo8zXSXzmukxVMg8CLxaOVw5Ls+26wD/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DXJsQyjz; arc=none smtp.client-ip=209.85.219.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-70d9b07e163so13143256d6.2
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 02:21:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756286504; x=1756891304; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=TokNB2bRsR2/8TfbgHqQMAf+PDOGibFsscNCc1T3i2Y=;
-        b=DXJsQyjzv7bGB67WaGlP/U/Jn9ntzRxhpvuLco63GLMqt10RaqmkWdstLTy6jfgqDn
-         eVvJy58229Fq9GoFAgm3/kxh8dspGIlwerg2g5RHKReYgevwy5RV34xhwDT7Zm9OkgnL
-         aT8g+vLbEx2CUXSm3GPNIy8E0Um0s/0O7D/nRcXnks+Kify2FJiGhJ/GN3rl1eLbXVJk
-         NUrmiiCbQi1iGkcbE6TOSvTo6IFavxxMoGiek6Pg54wwAmXkO1sdMxPJqGUcMkvEkGXh
-         Pr9f4MjntxVF0CQCHmqz1NuKV3dAAo9J2N+l2AyKIahrarmcdCbB5k6Uzt1P5AnDs9Uc
-         HWxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756286504; x=1756891304;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TokNB2bRsR2/8TfbgHqQMAf+PDOGibFsscNCc1T3i2Y=;
-        b=HfEhtJJIWLAZUVx4lBGZZQqK0fQC4PsCFkTjId8C2qbyzXsyGTdHO6zt1VVT4C2QSj
-         oz6uJ3QSAdu01wm+mqpjIU/OLr5qQJsCr93RSzVUX+IFK4SaWZ3ExSyoyGwQbmDxfnJT
-         uAFlBt7HhKwMG6QypDjgft7INF4GEKOZhsUh7I0y1vloH972n9rSmpJ4W8hepx+0RMi8
-         ZuHTvWPfzCifw3U+x0c1VBRQAHesEYMK3BWwOL2LPgGl82hENH22cn3eUr9a55qwpvas
-         g0ycHdqx9FVPhlvQlShfw37PjqxhaUeJIHspuXXlaAFuGq7ET6ZW95e2VjPJflJkB+Gi
-         LRig==
-X-Forwarded-Encrypted: i=1; AJvYcCVi4zFgLAhi4D56zm6Lil7YZSlfOWJK0MZx4c0Hvk+bzOfSuZiwUT++p1XtvZLDvgyBso9BGPN0dsTwVes=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzMr3mNgjlCpDqlN8XM4DQsC837kmnIMXNkRxgr9cy1I7/o5CzV
-	n+wVILbjrowNZHCWA+KGG1/t7sG34FAP6krt5WyrMQt0IlChSU7QdFV3OZVF4xpSXrr2C7iNt+6
-	7orMgV7g2ZnUW5O2PfpvZ7e6F0G8cHGIkNKD0jnmPVQ==
-X-Gm-Gg: ASbGncu+vtMo99Zq5VE4SdFPli3W/bk9zfpzZgvd5wE/u8hWcc4KNL5kfrHfIv37fty
-	7BUTJapgQf45FXO7qnqmP7xcC3wsE0qNes6e6ONnW1sDSyhVQl13lSWyQhVEMPsD+eeG4GSczJB
-	xwSKhGDO/mXtKnX3tTJjAgh+3oPOEtolbr+RFYnJbL5H1L6TgPfWB/fzVJ3ErmSlUfrVgXyRDFy
-	97psUuz1Bi2mizd
-X-Google-Smtp-Source: AGHT+IHRCD/JU20GaEDsiDJhdDH/JUKzDUt65iA63JTM/WPiGZauyuzKZ1lvNdONWuPnXHyUAwIhAWkdWHIzEzbCdvI=
-X-Received: by 2002:a05:6214:2602:b0:70d:dcc0:75e with SMTP id
- 6a1803df08f44-70ddcc007d8mr23662316d6.4.1756286504325; Wed, 27 Aug 2025
- 02:21:44 -0700 (PDT)
+	s=arc-20240116; t=1756286530; c=relaxed/simple;
+	bh=yhlLnIwh5EAspfP/d8/YzhSo9nSTSkS/qjAAzLglvzw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qBXEhaFMA9sQ3zI8C+u58v6BDBS90M55MAPwnnQiAHIZ7ZH6rhU4P9DsLvXG7/LKJIlvOzXyF5rHqsvi4HpEdyf9ENYhk1oXkxC4TPNUhMBUXzYO842Weyqr6VMlQmyOhox58YKee0Kq4X8qT+CBOYrZJE9WfZwDRWO7cen09IU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 4906fcb2832711f0b29709d653e92f7d-20250827
+X-CID-CACHE: Type:Local,Time:202508271655+08,HitQuantity:2
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:5b7c15bc-159f-42bd-a2b8-83a68d4f1701,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:6493067,CLOUDID:b5736a825b981a30f067edd239e3633a,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102,TC:nil,Content:0|52,EDM:
+	-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,
+	AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 4906fcb2832711f0b29709d653e92f7d-20250827
+Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
+	(envelope-from <zhangzihuan@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 553424126; Wed, 27 Aug 2025 17:22:00 +0800
+Received: from mail.kylinos.cn (localhost [127.0.0.1])
+	by mail.kylinos.cn (NSMail) with SMTP id 88D30E008FAA;
+	Wed, 27 Aug 2025 17:21:59 +0800 (CST)
+X-ns-mid: postfix-68AECE37-425912845
+Received: from [172.25.120.24] (unknown [172.25.120.24])
+	by mail.kylinos.cn (NSMail) with ESMTPA id 41835E008FA3;
+	Wed, 27 Aug 2025 17:21:51 +0800 (CST)
+Message-ID: <5081cf6c-6e2a-4a6f-841a-e4a21c35cb21@kylinos.cn>
+Date: Wed, 27 Aug 2025 17:21:50 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250826110924.562212281@linuxfoundation.org>
-In-Reply-To: <20250826110924.562212281@linuxfoundation.org>
-From: Anders Roxell <anders.roxell@linaro.org>
-Date: Wed, 27 Aug 2025 11:21:33 +0200
-X-Gm-Features: Ac12FXx6SLC1LrRxF2iJyXQTbryx0aIJgs-VszLB4HPdRp05YybesyDgvF8jLqI
-Message-ID: <CADYN=9JypMr473i0yV00bwEkOyi3hgN+q48+e+dEhikqPYQVYw@mail.gmail.com>
-Subject: Re: [PATCH 5.10 000/523] 5.10.241-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
-	broonie@kernel.org, achill@achill.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 01/18] arm64: topology: Use __free(put_cpufreq_policy)
+ for policy reference
+To: Ben Horgan <ben.horgan@arm.com>, "Rafael J . wysocki"
+ <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Sean Christopherson <seanjc@google.com>, Paolo Bonzini
+ <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>, Markus Mayer
+ <mmayer@broadcom.com>, Florian Fainelli <florian.fainelli@broadcom.com>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Krzysztof Kozlowski
+ <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>,
+ MyungJoo Ham <myungjoo.ham@samsung.com>,
+ Kyungmin Park <kyungmin.park@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>,
+ Jani Nikula <jani.nikula@linux.intel.com>,
+ Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+ Rodrigo Vivi <rodrigo.vivi@intel.com>, Tvrtko Ursulin
+ <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Daniel Lezcano <daniel.lezcano@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>,
+ Eduardo Valentin <edubezval@gmail.com>, Keerthy <j-keerthy@ti.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: zhenglifeng <zhenglifeng1@huawei.com>, "H . Peter Anvin" <hpa@zytor.com>,
+ Zhang Rui <rui.zhang@intel.com>, Len Brown <lenb@kernel.org>,
+ Nicholas Piggin <npiggin@gmail.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Lukasz Luba <lukasz.luba@arm.com>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Beata Michalska <beata.michalska@arm.com>, Fabio Estevam
+ <festevam@gmail.com>, Pavel Machek <pavel@kernel.org>,
+ Sumit Gupta <sumitg@nvidia.com>,
+ Prasanna Kumar T S M <ptsm@linux.microsoft.com>,
+ Sudeep Holla <sudeep.holla@arm.com>, Yicong Yang <yangyicong@hisilicon.com>,
+ linux-pm@vger.kernel.org, x86@kernel.org, kvm@vger.kernel.org,
+ linux-acpi@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-tegra@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org, imx@lists.linux.dev,
+ linux-omap@vger.kernel.org, linux-mediatek@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20250827023202.10310-1-zhangzihuan@kylinos.cn>
+ <20250827023202.10310-2-zhangzihuan@kylinos.cn>
+ <70f4c2ce-1dbd-4596-af78-bca1cdbbb581@arm.com>
+ <57016487-0fee-4821-9cd5-d6e5fe80a65d@kylinos.cn>
+ <e7e9d8f5-9a4b-4efa-9634-7443ca7af2a6@arm.com>
+From: Zihuan Zhang <zhangzihuan@kylinos.cn>
+In-Reply-To: <e7e9d8f5-9a4b-4efa-9634-7443ca7af2a6@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 26 Aug 2025 at 13:12, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
+Hi,
+
+=E5=9C=A8 2025/8/27 17:12, Ben Horgan =E5=86=99=E9=81=93:
+> Hi Zihuan,
 >
-> This is the start of the stable review cycle for the 5.10.241 release.
-> There are 523 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+> On 8/27/25 09:55, Zihuan Zhang wrote:
+>> Hi,
+>>
+>> =E5=9C=A8 2025/8/27 16:30, Ben Horgan =E5=86=99=E9=81=93:
+>>> Hi Zihuan,
+>>>
+>>> On 8/27/25 03:31, Zihuan Zhang wrote:
+>>>> Replace the manual cpufreq_cpu_put() with __free(put_cpufreq_policy)
+>>>> annotation for policy references. This reduces the risk of reference
+>>>> counting mistakes and aligns the code with the latest kernel style.
+>>>>
+>>>> No functional change intended.
+>>>>
+>>>> Signed-off-by: Zihuan Zhang <zhangzihuan@kylinos.cn>
+>>>> ---
+>>>>  =C2=A0 arch/arm64/kernel/topology.c | 9 +++------
+>>>>  =C2=A0 1 file changed, 3 insertions(+), 6 deletions(-)
+>>>>
+>>>> diff --git a/arch/arm64/kernel/topology.c b/arch/arm64/kernel/topolo=
+gy.c
+>>>> index 5d07ee85bdae..e3cb6d54f35b 100644
+>>>> --- a/arch/arm64/kernel/topology.c
+>>>> +++ b/arch/arm64/kernel/topology.c
+>>>> @@ -307,17 +307,16 @@ int arch_freq_get_on_cpu(int cpu)
+>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 */
+>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (!houseke=
+eping_cpu(cpu, HK_TYPE_TICK) ||
+>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0 time_is_before_jiffies(last_update +
+>>>> msecs_to_jiffies(AMU_SAMPLE_EXP_MS))) {
+>>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
+struct cpufreq_policy *policy =3D cpufreq_cpu_get(cpu);
+>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
+struct cpufreq_policy *policy __free(put_cpufreq_policy);
+>>> Based on the guidance, in include/linux/cleanup.h, I would expect the
+>>> assignment to be done on this line.
+>>>
+>>> "...the recommendation is to always define and assign variables in on=
+e
+>>>  =C2=A0 * statement and not group variable definitions at the top of =
+the
+>>>  =C2=A0 * function when __free() is used."
+>>
+>> The reason I split the assignment into multiple lines is because
+>> scripts/checkpatch.pl gave a warning about the line being too long.
+>>
+>> But if you think a single-line assignment is better, I will modify it
+>> accordingly.
+> My preference, for what it's worth, would be to keep it one statement
+> and split the line after the =3D.
+
+
+Okay,=C2=A0 I will update it that way. Thanks.
+
+>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0 int ref_cpu;
+>>>>  =C2=A0 +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 policy =3D cpufreq_cpu_get(cpu);
+>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0 if (!policy)
+>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return -EINVAL;
+>>>>  =C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 if (!cpumask_intersects(policy->related_cpus,
+>>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 hou=
+sekeeping_cpumask(HK_TYPE_TICK))) {
+>>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 cpufreq_cpu_put(policy);
+>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 hou=
+sekeeping_cpumask(HK_TYPE_TICK)))
+>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return -EOPNOTSUPP;
+>>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
+}
+>>>>  =C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 for_each_cpu_wrap(ref_cpu, policy->cpus, cpu + 1) {
+>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (ref_cpu =3D=3D start_cpu) {
+>>>> @@ -329,8 +328,6 @@ int arch_freq_get_on_cpu(int cpu)
+>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 break;
+>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0 }
+>>>>  =C2=A0 -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 cpufreq_cpu_put(policy);
+>>>> -
+>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0 if (ref_cpu >=3D nr_cpu_ids)
+>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /* No alternative to pull info from */
+>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return -EAGAIN;
+>>> Thanks,
+>>>
+>>> Ben
+>>>
+> Thanks,
 >
-> Responses should be made by Thu, 28 Aug 2025 11:08:19 +0000.
-> Anything received after that time might be too late.
+> Ben
 >
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.241-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.10.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
-
-Results from Linaro's test farm.
-No regressions on arm64, arm, x86_64, and i386.
-
-Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
-
-
-## Build
-* kernel: 5.10.241-rc1
-* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-* git commit: d8db2c8f2fffdb163fc985c8f87a2847f3ccd4b8
-* git describe: v5.10.240-524-gd8db2c8f2fff
-* test details:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-5.10.y/build/v5.10.240-524-gd8db2c8f2fff
-
-## Test Regressions (compared to v5.10.239-210-g2067ea3274d0)
-
-## Metric Regressions (compared to v5.10.239-210-g2067ea3274d0)
-
-## Test Fixes (compared to v5.10.239-210-g2067ea3274d0)
-
-## Metric Fixes (compared to v5.10.239-210-g2067ea3274d0)
-
-## Test result summary
-total: 38319, pass: 31293, fail: 1893, skip: 4967, xfail: 166
-
-## Build Summary
-* arc: 5 total, 5 passed, 0 failed
-* arm: 100 total, 100 passed, 0 failed
-* arm64: 28 total, 28 passed, 0 failed
-* i386: 20 total, 20 passed, 0 failed
-* mips: 22 total, 22 passed, 0 failed
-* parisc: 3 total, 0 passed, 3 failed
-* powerpc: 21 total, 21 passed, 0 failed
-* riscv: 9 total, 9 passed, 0 failed
-* s390: 9 total, 9 passed, 0 failed
-* sh: 10 total, 10 passed, 0 failed
-* sparc: 6 total, 6 passed, 0 failed
-* x86_64: 24 total, 24 passed, 0 failed
-
-## Test suites summary
-* boot
-* kselftest-arm64
-* kselftest-breakpoints
-* kselftest-capabilities
-* kselftest-clone3
-* kselftest-core
-* kselftest-cpu-hotplug
-* kselftest-exec
-* kselftest-fpu
-* kselftest-futex
-* kselftest-intel_pstate
-* kselftest-kcmp
-* kselftest-livepatch
-* kselftest-membarrier
-* kselftest-mincore
-* kselftest-mqueue
-* kselftest-openat2
-* kselftest-ptrace
-* kselftest-rseq
-* kselftest-rtc
-* kselftest-sigaltstack
-* kselftest-size
-* kselftest-timers
-* kselftest-tmpfs
-* kselftest-tpm2
-* kselftest-user_events
-* kselftest-vDSO
-* kselftest-x86
-* kunit
-* lava
-* libgpiod
-* libhugetlbfs
-* log-parser-boot
-* log-parser-build-clang
-* log-parser-build-gcc
-* log-parser-test
-* ltp-capability
-* ltp-commands
-* ltp-containers
-* ltp-controllers
-* ltp-cpuhotplug
-* ltp-crypto
-* ltp-cve
-* ltp-dio
-* ltp-fcntl-locktests
-* ltp-fs
-* ltp-fs_bind
-* ltp-fs_perms_simple
-* ltp-hugetlb
-* ltp-math
-* ltp-mm
-* ltp-nptl
-* ltp-pty
-* ltp-sched
-* ltp-smoke
-* ltp-syscalls
-* ltp-tracing
-* perf
-* rcutorture
-
---
-Linaro LKFT
-https://lkft.linaro.org
 
