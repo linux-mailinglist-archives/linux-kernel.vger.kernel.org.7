@@ -1,132 +1,346 @@
-Return-Path: <linux-kernel+bounces-787921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1763DB37DB2
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 10:24:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 898FCB37DB5
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 10:25:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 02E7C1BA3B51
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 08:24:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7068683C13
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 08:25:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0BD62E7F3E;
-	Wed, 27 Aug 2025 08:23:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD1F3334379;
+	Wed, 27 Aug 2025 08:25:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c8PJwCR3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="0PEvmLKd"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3B981E0DE3;
-	Wed, 27 Aug 2025 08:23:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D30C192B84;
+	Wed, 27 Aug 2025 08:25:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756283005; cv=none; b=PtWESP2meWDyQNhrLSLLXlHbNIiKN/EZ4FdwNbnl0f8/wEKFhR09qO5lnEFdI/7PIkU6NGSqt0VREzRa0hplQszURUC4ixLAPTaPi+7UX+4L75RJI363b/q1CxgKhX5533c4N8Oi6Q2DucUnuN0YwI+hb+BB1lCu3dXebECgCVk=
+	t=1756283106; cv=none; b=ILV/a1qwK0y+OJN4KcW6imVzqa1Y6If1q+3Mh1IhoKx20fDqc/QmsUslE5ECAmBvhnAVP7JJoHFzQR1XUIR1RUnawBVizqGGhFIF+IRgmF51vCYWPULxPWKI22kxbqH1aXVmFIFJLRTVoz9tHdSr0vxwXRvuKN/4YCw9jQ00YUE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756283005; c=relaxed/simple;
-	bh=gNhw5sDdbytS69Zvz8J4UTfBWbSNwq0muyDCfIzl6fw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HV08uEmYSeawj0biWjUL5MHC5GhAq+A1tNeiiDmSFaDfIcMJROTepj7wlGMlw5HQd74QqiXRehkeAdO7ergWROv2Uf07AEmtEQPk+rKfyyaU+s6Sl0Kwu2I0E7R6AKMU9ciS/Tnuq4Weex1HUZqI82+pY8C9AsLDzvoKXTMQBTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c8PJwCR3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 908F3C4CEEB;
-	Wed, 27 Aug 2025 08:23:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756283004;
-	bh=gNhw5sDdbytS69Zvz8J4UTfBWbSNwq0muyDCfIzl6fw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=c8PJwCR3vTY7LglCIa0SIw7SNKOd7OuxKsRGU0fk7UiQjyIjb98h3ZyCRsQ+RNeyQ
-	 eZqjUd62xPiYy+8DvFTto4oB0mOVmRc/5OqoVnnwH0BIJ2V9syj+bTEiC8RuCHlPNr
-	 TQ9x1iPaeBUG5TtND2co+AD9TTvG4ST9TlsAQtYYrS7vX+RAe56A8esC4fue8seLwZ
-	 PzAUl5L7cok63punZRDh+iiTmHU14t9+5up/sPtz8etfTNI77r3E+SVwX1Ge6Va+aw
-	 6BPE+uy7VB64kl5FNPxUbBlm2Sxn+nPKfHlDZ8CHVEqcng+bWY3MANzLJBskeyAkuv
-	 Lij09qlQ4VSSw==
-Message-ID: <05c468dd-526d-4367-8e24-98647d5232fd@kernel.org>
-Date: Wed, 27 Aug 2025 10:23:21 +0200
+	s=arc-20240116; t=1756283106; c=relaxed/simple;
+	bh=7MzOmrm8rrQp+hXTksvCOI2puqNTUDNWi4DQ91lmPf8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Wph6dHwolw0GMCOUi89wc6m4Ma7pwzdIt4dVBrc9/7+eQavMWCpEY4cUVzlQaLzqHN5pdu8E+m+sLGfYYBvCuereM1jg5qk42xHmv4/MLRmwf2NTYqDEu2U+QQhjGwjgQV+1Ju2ImjXvUCg1IVYt/gnfac7P1WzkqCqS9qXus/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=0PEvmLKd; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=KGZ9fOwje4MlqtMCuczbLxb/Olo2qc1yHQaGkujfbWg=; b=0PEvmLKdfidIG6CQlBbJ38O/N6
+	35bcf3xx776W1e4TOIvZSQ1ph3SkNL4KmOvzUsxl3WOTm3FPJhEC21oe/elTgB+K1ar2o40rqS3pb
+	l4uc1hMPr+dT7TlvbY9TexsZXSRxN61QOcriD1wl2ckYcv6ae92U0oerZimP3HdoHPNEAV9B2lYVe
+	eQtW9kz80lNScz26Qdhn8ssO3pmqStU/7nq3IRR07KV1+b16otoYYKktKYPjPzl0upNPIFAqO3uq5
+	Je5W8yMySwD1lERtOW6Kq+GI/Ajrl7ievIhVgEZSBDj2CJ5DeWVic3Dv/YtsXkNJFupr4IGppXXYa
+	StGQS9dA==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:33890)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1urBSi-000000000Cj-3ECE;
+	Wed, 27 Aug 2025 09:24:56 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1urBSd-0000000022P-2QG2;
+	Wed, 27 Aug 2025 09:24:51 +0100
+Date: Wed, 27 Aug 2025 09:24:51 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: weishangjuan@eswincomputing.com
+Cc: devicetree@vger.kernel.org, andrew+netdev@lunn.ch, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	linux-arm-kernel@lists.infradead.org, mcoquelin.stm32@gmail.com,
+	alexandre.torgue@foss.st.com, yong.liang.choong@linux.intel.com,
+	vladimir.oltean@nxp.com, faizal.abdul.rahim@linux.intel.com,
+	prabhakar.mahadev-lad.rj@bp.renesas.com, inochiama@gmail.com,
+	jan.petrous@oss.nxp.com, jszhang@kernel.org, p.zabel@pengutronix.de,
+	boon.khai.ng@altera.com, 0x1207@gmail.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com, ningyu@eswincomputing.com,
+	linmin@eswincomputing.com, lizhi2@eswincomputing.com
+Subject: Re: [PATCH v4 2/2] ethernet: eswin: Add eic7700 ethernet driver
+Message-ID: <aK7A0-nYxBQM03zq@shell.armlinux.org.uk>
+References: <20250827081135.2243-1-weishangjuan@eswincomputing.com>
+ <20250827081418.2347-1-weishangjuan@eswincomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] arm64: dts: cix: Add pinctrl nodes for sky1
-To: Gary Yang <gary.yang@cixtech.com>, linus.walleij@linaro.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
-Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, cix-kernel-upstream@cixtech.com
-References: <20250827024222.588082-1-gary.yang@cixtech.com>
- <20250827024222.588082-4-gary.yang@cixtech.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250827024222.588082-4-gary.yang@cixtech.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250827081418.2347-1-weishangjuan@eswincomputing.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On 27/08/2025 04:42, Gary Yang wrote:
->  			};
->  		};
+On Wed, Aug 27, 2025 at 04:14:17PM +0800, weishangjuan@eswincomputing.com wrote:
+> +struct eic7700_qos_priv {
+> +	struct device *dev;
+> +	struct regmap *hsp_regmap;
+> +	struct clk *clk_tx;
+
+Consider putting a pointer to the plat_dat here instead of clk_tx.
+
+> +	struct clk *clk_axi;
+> +	struct clk *clk_cfg;
+
+Consider moving these into plat_dat->clks.
+
+> +	u32 tx_delay_ps;
+> +	u32 rx_delay_ps;
+> +};
 > +
-> +		iomuxc: pinctrl@4170000 {
-> +			compatible = "cix,sky1-iomuxc";
-> +			reg = <0x0 0x04170000 0x0 0x1000>;
-> +		};
+> +/**
+> + * eic7700_apply_delay - Update TX or RX delay bits in delay parameter value.
+> + * @delay_ps: Delay in picoseconds (capped at 12.7ns).
+> + * @reg:      Pointer to register value to modify.
+> + * @is_rx:    True for RX delay (bits 30:24), false for TX delay (bits 14:8).
+> + *
+> + * Converts delay to 0.1ns units, caps at 0x7F, and sets appropriate bits.
+> + * Only RX or TX bits are updated; other bits remain unchanged.
+> + */
+> +static inline void eic7700_apply_delay(u32 delay_ps, u32 *reg, bool is_rx)
+> +{
+> +	if (!reg)
+> +		return;
 > +
-> +		iomuxc_s5: pinctrl@16007000 {
+> +	u32 val = min(delay_ps / 100, EIC7700_MAX_DELAY_UNIT);
+> +
+> +	if (is_rx) {
+> +		*reg &= ~EIC7700_ETH_RX_ADJ_DELAY;
+> +		*reg |= (val << 24) & EIC7700_ETH_RX_ADJ_DELAY;
+> +	} else {
+> +		*reg &= ~EIC7700_ETH_TX_ADJ_DELAY;
+> +		*reg |= (val << 8) & EIC7700_ETH_TX_ADJ_DELAY;
+> +	}
+> +}
+> +
+> +static int eic7700_clks_config(void *priv, bool enabled)
+> +{
+> +	struct eic7700_qos_priv *dwc = (struct eic7700_qos_priv *)priv;
+> +	int ret = 0;
+> +
+> +	if (enabled) {
+> +		ret = clk_prepare_enable(dwc->clk_tx);
+> +		if (ret < 0) {
+> +			dev_err(dwc->dev, "Failed to enable tx clock: %d\n",
+> +				ret);
+> +			goto err;
+> +		}
+> +
+> +		ret = clk_prepare_enable(dwc->clk_axi);
+> +		if (ret < 0) {
+> +			dev_err(dwc->dev, "Failed to enable axi clock: %d\n",
+> +				ret);
+> +			goto err_tx;
+> +		}
+> +
+> +		ret = clk_prepare_enable(dwc->clk_cfg);
+> +		if (ret < 0) {
+> +			dev_err(dwc->dev, "Failed to enable cfg clock: %d\n",
+> +				ret);
+> +			goto err_axi;
+> +		}
 
-Are you sure you follow DTS coding style for ordering of nodes? Looks
-like you just keep adding things to the end...
+You can then use clk_bulk_prepare_enable() here without the complex
+unwinding if one enable fails.
 
-> +			compatible = "cix,sky1-iomuxc-s5";
-> +			reg = <0x0 0x16007000 0x0 0x1000>;
-> +		};
->  	};
->  
->  	timer {
+> +	} else {
+> +		clk_disable_unprepare(dwc->clk_tx);
+> +		clk_disable_unprepare(dwc->clk_axi);
+> +		clk_disable_unprepare(dwc->clk_cfg);
 
+and clk_bulk_disable_unprepare() here.
 
-Best regards,
-Krzysztof
+> +	}
+> +	return ret;
+> +
+> +err_axi:
+> +	clk_disable_unprepare(dwc->clk_axi);
+> +err_tx:
+> +	clk_disable_unprepare(dwc->clk_tx);
+> +err:
+> +	return ret;
+> +}
+> +
+> +static int eic7700_dwmac_probe(struct platform_device *pdev)
+> +{
+> +	struct plat_stmmacenet_data *plat_dat;
+> +	struct stmmac_resources stmmac_res;
+> +	struct eic7700_qos_priv *dwc_priv;
+> +	u32 eth_axi_lp_ctrl_offset;
+> +	u32 eth_phy_ctrl_offset;
+> +	u32 eth_phy_ctrl_regset;
+> +	u32 eth_rxd_dly_offset;
+> +	u32 eth_dly_param = 0;
+> +	int ret;
+> +
+> +	ret = stmmac_get_platform_resources(pdev, &stmmac_res);
+> +	if (ret)
+> +		return dev_err_probe(&pdev->dev, ret,
+> +				"failed to get resources\n");
+> +
+> +	plat_dat = devm_stmmac_probe_config_dt(pdev, stmmac_res.mac);
+> +	if (IS_ERR(plat_dat))
+> +		return dev_err_probe(&pdev->dev, PTR_ERR(plat_dat),
+> +				"dt configuration failed\n");
+> +
+> +	dwc_priv = devm_kzalloc(&pdev->dev, sizeof(*dwc_priv), GFP_KERNEL);
+> +	if (!dwc_priv)
+> +		return -ENOMEM;
+> +
+> +	dwc_priv->dev = &pdev->dev;
+> +
+> +	/* Read rx-internal-delay-ps and update rx_clk delay */
+> +	if (!of_property_read_u32(pdev->dev.of_node,
+> +				  "rx-internal-delay-ps",
+> +				  &dwc_priv->rx_delay_ps)) {
+> +		eic7700_apply_delay(dwc_priv->rx_delay_ps,
+> +				    &eth_dly_param, true);
+> +	} else {
+> +		dev_warn(&pdev->dev, "can't get rx-internal-delay-ps\n");
+> +	}
+> +
+> +	/* Read tx-internal-delay-ps and update tx_clk delay */
+> +	if (!of_property_read_u32(pdev->dev.of_node,
+> +				  "tx-internal-delay-ps",
+> +				  &dwc_priv->tx_delay_ps)) {
+> +		eic7700_apply_delay(dwc_priv->tx_delay_ps,
+> +				    &eth_dly_param, false);
+> +	} else {
+> +		dev_warn(&pdev->dev, "can't get tx-internal-delay-ps\n");
+> +	}
+> +
+> +	dwc_priv->hsp_regmap =
+> +		syscon_regmap_lookup_by_phandle(pdev->dev.of_node,
+> +						"eswin,hsp-sp-csr");
+> +	if (IS_ERR(dwc_priv->hsp_regmap))
+> +		return dev_err_probe(&pdev->dev,
+> +				PTR_ERR(dwc_priv->hsp_regmap),
+> +				"Failed to get hsp-sp-csr regmap\n");
+> +
+> +	ret = of_property_read_u32_index(pdev->dev.of_node,
+> +					 "eswin,hsp-sp-csr",
+> +					 1, &eth_phy_ctrl_offset);
+> +	if (ret)
+> +		return dev_err_probe(&pdev->dev,
+> +				ret,
+> +				"can't get eth_phy_ctrl_offset\n");
+> +
+> +	regmap_read(dwc_priv->hsp_regmap, eth_phy_ctrl_offset,
+> +		    &eth_phy_ctrl_regset);
+> +	eth_phy_ctrl_regset |=
+> +		(EIC7700_ETH_TX_CLK_SEL | EIC7700_ETH_PHY_INTF_SELI);
+> +	regmap_write(dwc_priv->hsp_regmap, eth_phy_ctrl_offset,
+> +		     eth_phy_ctrl_regset);
+> +
+> +	ret = of_property_read_u32_index(pdev->dev.of_node,
+> +					 "eswin,hsp-sp-csr",
+> +					 2, &eth_axi_lp_ctrl_offset);
+> +	if (ret)
+> +		return dev_err_probe(&pdev->dev,
+> +				ret,
+> +				"can't get eth_axi_lp_ctrl_offset\n");
+> +
+> +	regmap_write(dwc_priv->hsp_regmap, eth_axi_lp_ctrl_offset,
+> +		     EIC7700_ETH_CSYSREQ_VAL);
+> +
+> +	ret = of_property_read_u32_index(pdev->dev.of_node,
+> +					 "eswin,hsp-sp-csr",
+> +					 3, &eth_rxd_dly_offset);
+> +	if (ret)
+> +		return dev_err_probe(&pdev->dev,
+> +				ret,
+> +				"can't get eth_rxd_dly_offset\n");
+> +
+> +	regmap_write(dwc_priv->hsp_regmap, eth_rxd_dly_offset,
+> +		     eth_dly_param);
+> +
+> +	dwc_priv->clk_tx = devm_clk_get(&pdev->dev, "tx");
+> +	if (IS_ERR(dwc_priv->clk_tx))
+> +		return dev_err_probe(&pdev->dev,
+> +				PTR_ERR(dwc_priv->clk_tx),
+> +				"error getting tx clock\n");
+> +
+> +	dwc_priv->clk_axi = devm_clk_get(&pdev->dev, "axi");
+> +	if (IS_ERR(dwc_priv->clk_axi))
+> +		return dev_err_probe(&pdev->dev,
+> +				PTR_ERR(dwc_priv->clk_axi),
+> +				"error getting axi clock\n");
+> +
+> +	dwc_priv->clk_cfg = devm_clk_get(&pdev->dev, "cfg");
+> +	if (IS_ERR(dwc_priv->clk_cfg))
+> +		return dev_err_probe(&pdev->dev,
+> +				PTR_ERR(dwc_priv->clk_cfg),
+> +				"error getting cfg clock\n");
+
+These then become devm_clk_bulk_get_all().
+
+> +
+> +	ret = eic7700_clks_config(dwc_priv, true);
+> +	if (ret)
+> +		return dev_err_probe(&pdev->dev,
+> +				ret,
+> +				"error enable clock\n");
+
+Maybe even devm_clk_bulk_get_all_enabled() which will omit this
+step...
+
+> +
+> +	plat_dat->clk_tx_i = dwc_priv->clk_tx;
+> +	plat_dat->set_clk_tx_rate = stmmac_set_clk_tx_rate;
+> +	plat_dat->bsp_priv = dwc_priv;
+> +	plat_dat->clks_config = eic7700_clks_config;
+> +
+> +	ret = stmmac_dvr_probe(&pdev->dev, plat_dat, &stmmac_res);
+> +	if (ret) {
+> +		eic7700_clks_config(dwc_priv, false);
+
+... and means you don't need this call...
+
+> +		return dev_err_probe(&pdev->dev,
+> +				ret,
+> +				"Failed to driver probe\n");
+> +	}
+> +
+> +	return ret;
+> +}
+> +
+> +static void eic7700_dwmac_remove(struct platform_device *pdev)
+> +{
+> +	struct eic7700_qos_priv *dwc_priv = get_stmmac_bsp_priv(&pdev->dev);
+> +
+> +	stmmac_pltfr_remove(pdev);
+> +	eic7700_clks_config(dwc_priv, false);
+> +}
+
+... and you can remove this function entirely ...
+
+> +
+> +static const struct of_device_id eic7700_dwmac_match[] = {
+> +	{ .compatible = "eswin,eic7700-qos-eth" },
+> +	{ }
+> +};
+> +MODULE_DEVICE_TABLE(of, eic7700_dwmac_match);
+> +
+> +static struct platform_driver eic7700_dwmac_driver = {
+> +	.probe  = eic7700_dwmac_probe,
+> +	.remove = eic7700_dwmac_remove,
+
+... replacing this with stmmac_pltfr_remove().
+
+Thanks.
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
