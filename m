@@ -1,106 +1,85 @@
-Return-Path: <linux-kernel+bounces-788318-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87165B382C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 14:46:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7120B382CA
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 14:48:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 55B7417F7A9
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 12:46:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED0F31B661F0
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 12:48:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 010CB307AFD;
-	Wed, 27 Aug 2025 12:46:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B465134A32D;
+	Wed, 27 Aug 2025 12:47:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="DEPAr+pG"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="if2hlFn7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AE971A0711
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 12:46:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BCF41A0711;
+	Wed, 27 Aug 2025 12:47:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756298783; cv=none; b=OY9nodyh7Op9pyR4r1DLUdVmcZftyd6BPlqVYys9LOLsyvpLMNjWAnfo9brdBPD+AZrGZasBfPKWV2lvYiQF3BZ/tWhPngb3ZBJjLrgivKgX6UQBtlKxt68+OJGH+EZtXTps9xB9S6Mh2EMgxUXHgD5YyajSnSEWRpKuXrwm0dY=
+	t=1756298874; cv=none; b=eniGaoIBOpAoJ+K9zaCMPdAYqgrCa0aCcNydEFwrtbOliRHj6ryac7//5m13pQykqGT/EMB9m0hJdzuugm6epYbcyl8tjsh5Kdbg01wT2GbbUMaeFcatRUm22fX+tSxpgTj5aX5shAdQ1xZNlkp4h0TuEuuqGCizzLlTA0C9yH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756298783; c=relaxed/simple;
-	bh=nnSCxw1iZ1Q7cRVjXpqsgv65+CCdynSW8nKFaPIbcp0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F5Utn1enz6+N3hn7okJ3WfOL/7WqzB354eNk0zcXPQI2zY4QHBo+LAtXF5iusX1S4miFSw0/voB7MbnvQv+XikPmSeC4v30YYh8P9MBC1Rkjnxs0EOmS3wk9UkZIz8LGi1Oy5WaECNiigbvHQ7+BtHFyhWln0ANuHmBxJ1jSv3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=DEPAr+pG; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (unknown [213.244.170.152])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 7EAE12093;
-	Wed, 27 Aug 2025 14:45:16 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1756298716;
-	bh=nnSCxw1iZ1Q7cRVjXpqsgv65+CCdynSW8nKFaPIbcp0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DEPAr+pGbD0maywrSdDOecgUU2QsS5iWefrUOxYnPfRKZzQXF55DXNttn04Twsdk0
-	 GTujJ1IYF9BCcvnU3P3u5KS7XVlCB3BOL+6PDc3o6JyO4azTKeCC4hW1rpz2pVuppa
-	 Oi+0eQ5WdBrOvAiapimJEvpqtNmNsA3y3jGycXeo=
-Date: Wed, 27 Aug 2025 14:45:57 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Jai Luthra <jai.luthra@ideasonboard.com>
-Cc: Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org, kernel-list@raspberrypi.com,
-	Stefan Wahren <wahrenst@gmx.net>,
-	Dave Stevenson <dave.stevenson@raspberrypi.com>
-Subject: Re: [PATCH 2/5] staging: vc04_services: Cleanup formatting TODO entry
-Message-ID: <20250827124557.GG5650@pendragon.ideasonboard.com>
-References: <20250827-vchiq-destage-v1-0-5052a0d81c42@ideasonboard.com>
- <20250827-vchiq-destage-v1-2-5052a0d81c42@ideasonboard.com>
+	s=arc-20240116; t=1756298874; c=relaxed/simple;
+	bh=xUruCi2k+1duHtAUPHbdbOT0BVdL6VnSjr48neZmYCQ=;
+	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=oY8LJRO5AVffPK1B8yRt1iGP3yb0y6k93oe2gv+90BfjVpm2FPqr6Uyx+ndMgu1NKfEASqRF7nW2dOJSzoPC7vf6j9TXexxMWIVIxHnxWATTVSBx0fl8JWiWQjbC7nFZzpr+OOS0sVzLYwz7gOLluNQSSHOPCeVY3l5poSud4iA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=if2hlFn7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9922C4CEEB;
+	Wed, 27 Aug 2025 12:47:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756298873;
+	bh=xUruCi2k+1duHtAUPHbdbOT0BVdL6VnSjr48neZmYCQ=;
+	h=From:To:In-Reply-To:References:Subject:Date:From;
+	b=if2hlFn7iVatis/yOuKmzahvxWuE1X4oWZe2jM/JimGXmMqWW5+xskJ+0ES5P3ZS8
+	 4919W8wjqIaf2DGZ0l4X9BQ8VEF/OtFMly4pmhIXsv6f4k+PTExbvfV2M1wIYA8vqs
+	 wuiyPjamha7RvEaWayy/ZBaKhxjeTLUO3KmaZL5Bsh8v89tzSLKf+FZ3Z231yGfEsW
+	 H0ODSSk+CkDOzvwRrw2SZ/srOn1t4dH1nR5RfbNVUZFxzPnc9rvu8c69M0WE07VwQZ
+	 mrDIGPYjbauWhoLaS0B6GEn7F3ZMZHzzGfzQFgrj4wTedZyEdgcVk+ojtrJh6kenWo
+	 ubLkBA0Pz/YYg==
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Bjorn Helgaas <bhelgaas@google.com>, 
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Thippeswamy Havalige <thippeswamy.havalige@amd.com>, 
+ Bjorn Andersson <andersson@kernel.org>, linux-pci@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20250818142138.129327-2-krzysztof.kozlowski@linaro.org>
+References: <20250818142138.129327-2-krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH] dt-bindings: PCI: Correct example indentation
+Message-Id: <175629886215.5618.15838466125684644462.b4-ty@kernel.org>
+Date: Wed, 27 Aug 2025 18:17:42 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250827-vchiq-destage-v1-2-5052a0d81c42@ideasonboard.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
-On Wed, Aug 27, 2025 at 11:54:09AM +0530, Jai Luthra wrote:
-> The code indentation for the vchiq interface driver is not so bad
-> anymore [1], so drop it from the TODO.
+
+On Mon, 18 Aug 2025 16:21:39 +0200, Krzysztof Kozlowski wrote:
+> DTS example in the bindings should be indented with 2- or 4-spaces, so
+> correct a mixture of different styles to keep consistent 4-spaces.
 > 
-> Link: https://lore.kernel.org/all/20241013112128.397249-1-umang.jain@ideasonboard.com/ [1]
-
-Adding '[1]' at the end doesn't seem to be standard practice and may
-break automatic parsing. I'd drop that and reword the commit message
-accordingly.
-
-> Signed-off-by: Jai Luthra <jai.luthra@ideasonboard.com>
-
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-> ---
->  drivers/staging/vc04_services/interface/TODO | 6 ------
->  1 file changed, 6 deletions(-)
 > 
-> diff --git a/drivers/staging/vc04_services/interface/TODO b/drivers/staging/vc04_services/interface/TODO
-> index f6f24600aa86240fba77169f62f3e657e42727c3..6e5f27db88ba8e533ee1fabc3091771d8efe66a2 100644
-> --- a/drivers/staging/vc04_services/interface/TODO
-> +++ b/drivers/staging/vc04_services/interface/TODO
-> @@ -20,9 +20,3 @@ some of the ones we want:
->  
->  A short top-down description of this driver's architecture (function of
->  kthreads, userspace, limitations) could be very helpful for reviewers.
-> -
-> -* Reformat core code with more sane indentations
-> -
-> -The code follows the 80 characters limitation yet tends to go 3 or 4 levels of
-> -indentation deep making it very unpleasant to read. This is specially relevant
-> -in the character driver ioctl code and in the core thread functions.
 
+Applied, thanks!
+
+[1/1] dt-bindings: PCI: Correct example indentation
+      commit: 4edc575c5582550d0905f39c5e27f1f1f925fffa
+
+Best regards,
 -- 
-Regards,
+Manivannan Sadhasivam <mani@kernel.org>
 
-Laurent Pinchart
 
