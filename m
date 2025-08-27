@@ -1,170 +1,279 @@
-Return-Path: <linux-kernel+bounces-788729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59518B3894E
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 20:09:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C39A4B3894D
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 20:09:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 10B534625FB
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 18:09:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 851BB46214B
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 18:09:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EE4E2D77EF;
-	Wed, 27 Aug 2025 18:09:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D998C2C031E;
+	Wed, 27 Aug 2025 18:09:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ruGTJgx7"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="4Ap4FfKM"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2089.outbound.protection.outlook.com [40.107.93.89])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31FBE2D73A7
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 18:09:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756318176; cv=none; b=YQK7uf9yHtWpM/4UhYknCuZdqRHsN+3m6nY+PIcfrc1k1LZAXIQr6SaaN7bEB04ksoHOXMFc2DaztxcSWT/xlmBcCTZFoZl5AQvrEF3aRtOoTjDMntYamDbmE82O9X5+R9Dl5n+2SHGEX/sY0S+hSktURJPhkPHxWkw6kFd8eFY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756318176; c=relaxed/simple;
-	bh=G54h9i/+zjlrtR1T4zEW4KrreOz3RuhA0Y4mYJJEGvc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EDJqBm2XeoG3GxGEEnKJ3sGc16TY3d+nfdG/nvJFPf0gRkJSC5eFc+OXrLCpEUDHVqqiI+N19K5QkflIQLe0+29CLqeq/rANNMBL72HdAkDIf90JxifW5PInQE4E8JEY+tyKTEpeWpg+w+9XP+dEvumwrv4n+Uc6PC6tS8W4J9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ruGTJgx7; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57RBVVGj001647;
-	Wed, 27 Aug 2025 18:09:21 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=Henezf
-	0j+nTZDVoAa0az5i1UqTqYlYmxIli7NXVRxFA=; b=ruGTJgx7WGavQoeJYMlNor
-	XMzhWKSZblz1JTDwZMzRjTwsDT8AobIt38400xI5YMn2eaxjOFhE7Ll/0DTsJl65
-	L3o4V0qjvzhdNHDScwz/ZyZMMxUwipV7mm1CN3Ju+fER6qkHtG/eqfccWUh4jQeo
-	vxWuVeBBaAd/kLIqeNKZOYu/7xl43Lv4iCYCZzLy0oMmjP95UjMiUXdun+tq7hNs
-	gCit0cV+ZCZVDlzWAkK+AljMNZrGnUG3vvwI6k/zb7YcH9ic+RMFpECmxfR7Rqmr
-	JxCHyqDlirH19vV6G//9KLKTcEHB37pon9YR6wliIf3kDM5qNo5xdEX0Cx+bv/QQ
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48q5585p0j-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 27 Aug 2025 18:09:20 +0000 (GMT)
-Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 57RHuHtp008453;
-	Wed, 27 Aug 2025 18:09:20 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48q5585p0g-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 27 Aug 2025 18:09:20 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 57RGUB41002473;
-	Wed, 27 Aug 2025 18:09:19 GMT
-Received: from smtprelay05.wdc07v.mail.ibm.com ([172.16.1.72])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 48qt6mh1d6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 27 Aug 2025 18:09:19 +0000
-Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
-	by smtprelay05.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 57RI9IEw31130128
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 27 Aug 2025 18:09:18 GMT
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 9277958055;
-	Wed, 27 Aug 2025 18:09:18 +0000 (GMT)
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 49F8758043;
-	Wed, 27 Aug 2025 18:09:15 +0000 (GMT)
-Received: from [9.124.214.234] (unknown [9.124.214.234])
-	by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 27 Aug 2025 18:09:14 +0000 (GMT)
-Message-ID: <b451b318-133b-45f6-87b3-3dc3fa1f75a8@linux.ibm.com>
-Date: Wed, 27 Aug 2025 23:39:13 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F3CA2798FB
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 18:09:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.89
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756318170; cv=fail; b=BI1i0ouMnxhL6Wm3LhFgi2wXq/kb8+9jjrizg3m9hUoiBgLm6CvgwvOTiK11Y2mYPExi21dPibdBLc9ZzQbG4JU7FfGuYWn9zxl9AHjRBmKFsXa0xGP5xBTh4Wa2Z+VXEA2l4z36NNOC+SFWMfgBq2TR+ZeMtoOcd9AEPGFR84w=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756318170; c=relaxed/simple;
+	bh=9ttsEJisv4FONOxkfQzn7Bxk3Y7KSmzm3CcfztHBVRk=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=gmvEPmwLE7ChX385MXRcWbg37EvCZZXXV6UouT6LTTbanbiDT4vCFzC5phgQ2qL4igUOUUQNXJh/p7Ey8M3R+KxkOfD3F/xDYX+Jbr8VsvDcNRHiykdT6Gj2otMZVa1Zd5Q7v33zMtHeWAQTRNSj+1J4XBz3ySGVQkrLvngurk8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=4Ap4FfKM; arc=fail smtp.client-ip=40.107.93.89
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=DelC/OygZVvaey96DUlYQIvFWBSnH0LlN/tVlsPCXJ6XQ2LfRq/wQODBscKq6QF9ZGXZT4gv60kinebnfoAEiVmbe/j0QATDSwSWUNyunCBD17iDJB3yWprtFMuMEodMG1FqHPWa2mqc8yuT7M/efOYT6x/RiVXXpq4ZmXQ9URG/rTiuBOl24trSABUFYV/AfoQFGZAYqIAH8t07NIvM6+mjDpgg+7Ou3mPRfhX8b2rQKSzyx2n2yhSAEZVWVMyeqx5BhPMgtl5PtSL/ceEg5V1LRziXDsMCdDSyF+VutXlRoFQ5zDZWfMCarUDUyhW/4M+pXNyNkIMinVasgUCyvA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Fl0nLaZ3+nstSyi5Oj9864Y+O86pScnLIkoM+EYU6sI=;
+ b=r80OysWswL0kg/zrITzBtWab/DgAdw9yqUNAKMsY2hEekIdEANBSsyXzDc2uGfiMX9630GhpaO2WzwB3xuHmi7QMbb9R23tcMrPtJ/2ETAJ8ZfVF8sCCPKuwgsFtPDR5oL9jt/aPUTJQtGpLtbuCa1xBeDl6hsguuCL/D9GG4XgULvKrPzFX13nEHCB4WwenUgp07sdPUhDa/MVNle0T6U8jhlvzXN6e58wc7lZw8Q8Ml1/IH1zcPju+JrdabHBoP1f6XEFDtYnepPhq2J1YQxWptIR4VTY49zCYHa7eVHA7pMACTc/3IvIzwpgcRlQgb5QVUfaJlcbpwd5EfVGVnw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Fl0nLaZ3+nstSyi5Oj9864Y+O86pScnLIkoM+EYU6sI=;
+ b=4Ap4FfKM+rsPhwPQ+Ts2n1Q0FBJ45TDPlfIqxpeWez/Cm0evUaqpGeKALYnnjhswN+Dx9EODPAw3EvTf62xxhL7DqMj8CVLSaT+phpWvK+oFIjRAYBMyh7+6MQvQ4Iw3AwPJKdV1hQMYUt3wpafsRXe4f4p6AGL1iHUzAPsTIU8=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
+ by SJ2PR12MB8978.namprd12.prod.outlook.com (2603:10b6:a03:545::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.21; Wed, 27 Aug
+ 2025 18:09:24 +0000
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca%7]) with mapi id 15.20.9052.017; Wed, 27 Aug 2025
+ 18:09:24 +0000
+Message-ID: <a4fa5f39-17a9-4b47-a53f-ff49db536eb2@amd.com>
+Date: Wed, 27 Aug 2025 13:09:21 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V1] accel/amdxdna: Add ioctl DRM_IOCTL_AMDXDNA_GET_ARRAY
+To: Lizhi Hou <lizhi.hou@amd.com>, ogabbay@kernel.org,
+ quic_jhugo@quicinc.com, jacek.lawrynowicz@linux.intel.com,
+ dri-devel@lists.freedesktop.org
+Cc: linux-kernel@vger.kernel.org, max.zhen@amd.com, sonal.santan@amd.com
+References: <20250822172319.377848-1-lizhi.hou@amd.com>
+ <2bec1429-4f8c-472c-99a1-420a33a3d316@amd.com>
+ <d6a02baa-3b05-73e6-9c2a-66c257efecc3@amd.com>
+ <a9814644-96e3-456f-90b7-8705a102c938@amd.com>
+ <2a21100b-2078-a166-0b47-9db6b4446b5a@amd.com>
+ <b758a72f-e30e-42f9-a6aa-6f6297b8cce3@amd.com>
+ <b3874221-5b4f-9625-de8a-4e54dc6884a2@amd.com>
+ <c048645d-480d-4b7f-8dde-efb095b2c2fa@amd.com>
+ <492b465b-03d5-e80e-a31a-79ce4b1f83f7@amd.com>
+Content-Language: en-US
+From: Mario Limonciello <mario.limonciello@amd.com>
+In-Reply-To: <492b465b-03d5-e80e-a31a-79ce4b1f83f7@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SA1P222CA0014.NAMP222.PROD.OUTLOOK.COM
+ (2603:10b6:806:22c::23) To MN0PR12MB6101.namprd12.prod.outlook.com
+ (2603:10b6:208:3cb::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] mm/ksm: Reset KSM counters in mm_struct during fork
-To: David Hildenbrand <david@redhat.com>,
-        Giorgi Tchankvetadze <giorgitchankvetadze1997@gmail.com>
-Cc: aboorvad@linux.ibm.com, akpm@linux-foundation.org,
-        chengming.zhou@linux.dev, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, richard.weiyang@gmail.com, ritesh.list@gmail.com,
-        xu.xin16@zte.com.cn
-References: <2e662107e01417bf9af23bc7f52863cd538419be.1756211338.git.donettom@linux.ibm.com>
- <512764a4-611c-42d4-8b4a-2aaca4e519a4@gmail.com>
- <53a7bf3d-843d-4e19-b0a3-cc6852fe72c1@redhat.com>
-Content-Language: en-US
-From: Donet Tom <donettom@linux.ibm.com>
-In-Reply-To: <53a7bf3d-843d-4e19-b0a3-cc6852fe72c1@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: mS-jT1OluJPLxq8noMhODUtObNItOHqs
-X-Proofpoint-ORIG-GUID: W_QujhfOUYSUVaoozQfOXykh24azsJoS
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIzMDAyMSBTYWx0ZWRfX+NdWAw+hGmuK
- bVsLNdGQeZLHk3q4tmYipIsA/dlu0JGkf7ViJ3+k15NZckt954S2qyhu5FV6DI1hteHgrsUdG73
- BUINunicVcSn0LEKstYS0y8JuDsY+up/ZaxD4jtUVSJQbW6+DhVHvyst+6F1izjdYzs5qk60lpa
- xDlpQ6BZymTbXdJlfzAFDuK/Bb/7Yxpssfb1cG+6KBFh7G8jSVJ+ItrsLT/Q52VXWLyZc/zxkxV
- Eqq++paV8dIaMF/DIQ7f0jdpg+9Ju++YHuX2fHLzNpNX4zwdYISUlsfwAYJFF5iHY4BCEil7M3J
- MyYG7p6LVAWUfo6/Q31YJChJliIfgXamffu058dZVaKCdWs2OwfQAKvzmf5wKoJpaa+1UAaZyrT
- YuIXP/AX
-X-Authority-Analysis: v=2.4 cv=A8ZsP7WG c=1 sm=1 tr=0 ts=68af49d1 cx=c_pps
- a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=nXaOtthc6F8xOgzlwIkA:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-27_04,2025-08-26_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 adultscore=0 priorityscore=1501 suspectscore=0 clxscore=1015
- spamscore=0 impostorscore=0 malwarescore=0 bulkscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508230021
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|SJ2PR12MB8978:EE_
+X-MS-Office365-Filtering-Correlation-Id: daeb740d-5b83-42fe-21dc-08dde594daa5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?QlgxSm82RE1UY0grOXhkYWw0M01kQUp5K2ZyK1pXRUs4aVluNDhZZ2czMzBh?=
+ =?utf-8?B?V05KWEU0RWlITjhydGJwdVB0UEJDWDdGeUVMdG1iVTFxNDR0OUtEOEVjZXFG?=
+ =?utf-8?B?bkt2YTFyS0VLalRoaWhkWm1qek9jbVlDMGJpTll0VGZzYnJoWDNIV2xSaFEw?=
+ =?utf-8?B?bnZGUENSY25aa3l4NGUzMHVCaFBHTkVuVkhoNS8zenlKZFNCSGNRMjdyL3RD?=
+ =?utf-8?B?K2k4TUpSU1FtOGoyU2JEWFZYdVVsUnV0NmYwUWhTbzc2ano2aG54VUMvS0R4?=
+ =?utf-8?B?eXEvVzZ0Z1NlSFhPc1FRMFJNOW93cmF0MFdTMmkrV1BGQ2FJMG52bStIT0lK?=
+ =?utf-8?B?eUppMVhxQU5TN2ltR0grSmxwa0I3SXh4V2trVXdEQnlvS0E0K3YwSnJ2c2xC?=
+ =?utf-8?B?MEpseWpscksyTUd3Tm1FVHBvR3ZKSUZxYi9sZktlY1RrZ3QwWVdDWkhicGMw?=
+ =?utf-8?B?dDcxbW5mNDdmcWdmc0RXTHdTdmF1MDFLL21aU2IrS2pjVklPbU5aNmZYUjlS?=
+ =?utf-8?B?RDNvSm9BVzdiVytSZFV4RXRUTXVyZW5YaHg3RHlscjFSVmpyckE4eWZQaU4r?=
+ =?utf-8?B?eGJIQXh3a1EyVFpMT3N4eDVTZ3BMYW8wcGpyOEE5ZWVXd0ZjVVczNS9Jd0pj?=
+ =?utf-8?B?VEY3R2hMd0JBNFlBMVhKVmYvZWVmbEtVVmNKWkd0M2tURGNNOWJ1RkdVRGFL?=
+ =?utf-8?B?UC9WRm1hNWo0aXJyY2diUzVUdkw0MW5uRGM2T05aRkZoeHR2YjJPalRrN2N2?=
+ =?utf-8?B?QVhncXZLWWlvQlBMRi9uQ2gzczM2Z2tVSERWMkFBcEVXaXNGaXJweHptWFV6?=
+ =?utf-8?B?U0JQOXR2YjVpeEpmc1JTZnhkY2xBbW9VY1UyK3hIVUFTTkhZRUpaYWk0Q3VV?=
+ =?utf-8?B?MEovQTFHMkdXVW1sYkNmQW1iUUc3WWtIb2srRmhJbFFaR1lMS0F6eElyWTN0?=
+ =?utf-8?B?amg4Y1BRTkh1aVEyZ0xPd2RyRXNVWFo5WFNhS014aTc5aUplem1TSUlXeWE4?=
+ =?utf-8?B?dUVGVG1Qem5qYi92K0ZyenVCc0k4TkJRQ2F2T0FDa0pVRTVYd1ZRN2o1Y2Zo?=
+ =?utf-8?B?djRhQ25xc1lCbmNaV2RYVE53dGNPWmdoc0RleURLb29XcThNMDZYRkRTOVdI?=
+ =?utf-8?B?bXY3c1VrQ1ZyOW5DM3hCV2Q4OWprK09TZzg5anJkM3hEbVVwazZxR2MyZTBR?=
+ =?utf-8?B?d1k3TDd5U053bjR0dUcxYVBjTVgxcndYVXBNNEVZRnhjTHpDQ08zQldZZGFk?=
+ =?utf-8?B?c3hRR1p4dlk2NXo0MjZHM3ViTTlPMVF3Qm5qWEorMXlFamkxbGJJVVlzSGFU?=
+ =?utf-8?B?S0l6OXJEbkk1bndaZzZaWFdEWWVJZEIzczV1anFvc1Vxenc1dWpQNXhUTFd4?=
+ =?utf-8?B?L2pEaDN0cENwNmNmMXljdStDQTMwZ3ZQSGgyY3d5VzJtNWdNR0RRblVRd3NM?=
+ =?utf-8?B?THlRbUVxMHJhdFZlSWJ4SWxPam1MTzdUSU92SzRZVy9NODRGVUZLQ2NlUkJD?=
+ =?utf-8?B?aGEwU0dyNFpQVGxyaFlyaDRxOWl0QUZEVWVNREI2aHFialRqY1hIVVJCWjZ1?=
+ =?utf-8?B?Q1Nob2FuckxXNUQwMUtwSy81QTZLL2VlYkV3WFFSRTlERnNZRDUwSGZwTlFv?=
+ =?utf-8?B?N0MyUDJHWStGUnJaZGlLdzF6WmpReXJ6WFFQeTExN09DSXRwZWJhdEtxN0tu?=
+ =?utf-8?B?clExRVFIc3BPTlR0MTJrYWRBQTIxd0ExR3lDUE9WT3VyK202WlJlSE5KblNq?=
+ =?utf-8?B?SGJBZTMrVHpUQjRiT3ZwalJjZWxudG9Cc2k1OWtXcUltRXE0OFVOb2pPQWpT?=
+ =?utf-8?B?Ym9heXhoNFhEK2I4Nkh1dGNzOHREK01YZ1VJY3h6UDhxdG80VVpDZHFtR1ZG?=
+ =?utf-8?B?QXZkZitVcE56M1lrQXJFWVRGeUl6a0Z4c1VpU0VOLzFsTnR5cXhiT3Vuc1dz?=
+ =?utf-8?Q?r5LHbySquMg=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?SUJLdXA3KytmTFpBaXlXRFZwYzU1RjlrOEIrTUpJV1BIZmh5TEV1L3BQRTJy?=
+ =?utf-8?B?b1FTQlhWdW13ZFNJdWFxMmd0bTJza01PT1hLcXl0S1JEdi96NGpiZG1tTE9B?=
+ =?utf-8?B?aGJ3aURXb2dlSnBhb0lZVE9tN09ST2NSTEMycjFyRmU0elRIRXhmdDNnUDFG?=
+ =?utf-8?B?WElWeGtBVUZZQUpyU3lTN0kzMlZTMHppV1B4TDlKRjk4TU9RbERhQlhQdWd5?=
+ =?utf-8?B?eCs4NGxMS2JMS0VmNjN0bUtaQlI3VXV1aWpNT3BtVWZSRFNaWjdmcXZrZHlG?=
+ =?utf-8?B?YktVdWFCeDFDZFpYZHRqejh5Ry9MN0Mya3M3aUV0MmxvZmJIZmx1MUlUdHYz?=
+ =?utf-8?B?OHNuV3R2WER6d3dCTTNkZVlRUG9leXIwakFJcUxITlMxSFE5SFVKbjJLQ0xW?=
+ =?utf-8?B?RW9CcDFqTnlXT05yU20yTmpVL3FWWjY2eWdobGMrTVFiZ1NXaGpNazZRRTJC?=
+ =?utf-8?B?L2dpYU56UnR0T0gzMnZweHc2TS9rSC9tVUhBakpBL0pPcmpWNTVEeWFHOWpk?=
+ =?utf-8?B?U3M2REpvN1V6VVNOMkZ1TmVCNGJFMkxuQWVZV0k1cHMxMFhFaW9halNacEdC?=
+ =?utf-8?B?RW1wZXNsNnhOZTBJbHZDZ1lsN050SW5IR1g4ZUFBM2VtbHBQK0lubU9KSTZ5?=
+ =?utf-8?B?Y3BoNGdLZE92YXdPbTJSZEw2ZHhhZU1nOVIxYWRRaTJkL3RYZFBVb1ZLZHlW?=
+ =?utf-8?B?dit6cS96cUh4UTNiVW9yazZKVURIVmpEbkh4S2U3MTZJQ2NUY0Jya1M2bkFE?=
+ =?utf-8?B?eTFidVBLUVNUeWZwbGJueHZnTFlibHY2cEtEdkt2THlYcDllZXgyRkxYVlNv?=
+ =?utf-8?B?QnJ1K05nVjdXTGJJTm84M2hTZE5PY3VVZjJVWTMraTI1a3IxV1RMWDlPdjFH?=
+ =?utf-8?B?OWhOd2M3N0I4NFp1Y1BYUVd4NFEwc1F3QkRBNXQwaHNwdGZaRjlCd3dkamZF?=
+ =?utf-8?B?RVNLSnhZVk9sWFNtMmxSWGhWQWNBSDY5K2RsUFdiVk9zdWFBd0lwbmZhTVNV?=
+ =?utf-8?B?Y1F5ZjRGR2JBMzlVRXNIU2JzY2dTbStadXBseDFBMWN5MlcxWFdCNllrVzFl?=
+ =?utf-8?B?dDczeGZqbERrNnBlbWg4a1NBcm8rMjJjaEptSEJBK0hQemF2ZU5uRDNsckpW?=
+ =?utf-8?B?emdCWE9KYTVUL3E4RXdoc2szRm15b29qSkVUQTBRT2RIcHN3aysyTzBKZU53?=
+ =?utf-8?B?VHp6R0ZhRFhITWsyenNWcUxOYjZmbU15amFXK2lpWWx5TXJFUTdZMW5aeEtB?=
+ =?utf-8?B?bmlqOTlGU2pmenRFTVd5VFNpa2pYZW9nbmczdzdheTBYVCtDaTlCWlA3N2dD?=
+ =?utf-8?B?Y0FKZkkrc1oxUTk4VzJFdnF3S0dGWERYU1JPZVhzMk5MMUw1ZzJvRVVBSmhK?=
+ =?utf-8?B?bENIZmJWWVZ0SXM0bzZoV0Zmb0RrVit1cjIwdHNZTGVoNVVUT0FGUzBxVGtj?=
+ =?utf-8?B?VTZ3K2Z2SnQrcTNkMWxlUDdpbzIxSkxkWnYwL0txbGxzNy80RWt4WjFLNHEy?=
+ =?utf-8?B?d0pnbjJHTHNoTGtJZndHdUNXbUdQZks2dGZOQmVzalZGRjFPWEZDaUkzNHk3?=
+ =?utf-8?B?WDdtRnBVMHJUVUY4ZWpCL0pnZmlDRk9wakJmWldvb3VMdnJjWjRrbnlHZTRu?=
+ =?utf-8?B?LzRjdTgrNEtnd2Rndm1oN01Ud01leHRLZGx1UE5RYzVDTi83cURUWHBBQkdy?=
+ =?utf-8?B?MVpjaDJkQzJFSEVwQUpUVEZZT1JsOEZFOEx5NVFDUm5KNU4xYXRLOSt1ZG9B?=
+ =?utf-8?B?ZG05Ymp2NURGM3FGTXMvTHFJMXV0NmM0eThPb2dUN1JVTWJLUDRYYWJ4RUg2?=
+ =?utf-8?B?bEoyWG5oY2c0OWZvQk5zVjBJaDdKRXVIbFZibnhFK1ZJbTRiN2t1dkhBcmI1?=
+ =?utf-8?B?QlBSVDIzS0UxUTRNYUk1bjJGa1UwcnVYWE92RmRVbHhsendjN3JkZW95YzRj?=
+ =?utf-8?B?aUZkaG1IakpFY29qMHVPZWhKMG5Jb01tZVlKc2QrNElvb0x0STg0MjIyQzkw?=
+ =?utf-8?B?MHhlYWxLYzd4a1V4TkE1U1F3TnNZTmdaZmM5RDg5a2txUWJrOURmeHYrNGtx?=
+ =?utf-8?B?SGZsc1AvcUVkTGlhVGhjV0M3ZGgwdGNRWERNNTdXVG1jWStQMGs5L201Rnk3?=
+ =?utf-8?Q?eyu/xx6xPGvaduf+09J/k+0RH?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: daeb740d-5b83-42fe-21dc-08dde594daa5
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2025 18:09:24.4760
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: C+Av3GQSJ1eIFQRizbxYD4vhzAn9pRNo7dpJMhdorq6qbZZ9l/z/PuZa9+dfYk/CXmcSD3D47M/2b5J+66TS1g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB8978
 
-
-On 8/26/25 7:39 PM, David Hildenbrand wrote:
-> On 26.08.25 15:47, Giorgi Tchankvetadze wrote:
->> What if we only allocate KSM stats when a process actually uses KSM?
+On 8/27/2025 11:41 AM, Lizhi Hou wrote:
+> 
+> On 8/26/25 17:31, Mario Limonciello wrote:
+>> On 8/26/2025 1:10 PM, Lizhi Hou wrote:
+>>>
+>>> On 8/26/25 10:58, Mario Limonciello wrote:
+>>>> On 8/26/2025 12:55 PM, Lizhi Hou wrote:
+>>>>>
+>>>>> On 8/26/25 10:18, Mario Limonciello wrote:
+>>>>>> On 8/25/2025 11:48 PM, Lizhi Hou wrote:
+>>>>>>>
+>>>>>>> On 8/25/25 14:28, Mario Limonciello wrote:
+>>>>>>>> On 8/22/2025 12:23 PM, Lizhi Hou wrote:
+>>>>>>>>> Add interface for applications to get information array. The 
+>>>>>>>>> application
+>>>>>>>>> provides a buffer pointer along with information type, maximum 
+>>>>>>>>> number of
+>>>>>>>>> entries and maximum size of each entry. The buffer may also 
+>>>>>>>>> contain match
+>>>>>>>>> conditions based on the information type. After the ioctl 
+>>>>>>>>> completes, the
+>>>>>>>>> actual number of entries and entry size are returned.
+>>>>>>>>>
+>>>>>>>>> Signed-off-by: Lizhi Hou <lizhi.hou@amd.com>
+>>>>>>>>
+>>>>>>>> How does userspace discover whether or not the new IOCTL call is 
+>>>>>>>> supported?  Just a test call?
+>>>>>>> The kernel header version will be used to determine whether the 
+>>>>>>> application which uses new IOCTL will be compiled or not.
+>>>>>>>
+>>>>>>
+>>>>>> But it's not actually an application compile time decision, it's a 
+>>>>>> runtime decision.  IE I can compile an application with the 
+>>>>>> headers on kernel 6.18 that has this, but if I try to run it on 
+>>>>>> 6.15 it's going to barf.
+>>>>>>
+>>>>>> To some extent that comes with the territory, but I'm wondering if 
+>>>>>> a better solution going forward would be for there to be a 
+>>>>>> dedicated version command that you bump.
+>>>>>
+>>>>> For in-tree driver, I did not aware a common way for this other 
+>>>>> than checking the kernel version.
+>>>>>
+>>>>> And here is qaic patch of adding a new IOCTL.
+>>>>>
+>>>>> https://github.com/torvalds/linux/ 
+>>>>> commit/217b812364d360e1933d8485f063400e5dda7d66
+>>>>>
+>>>>>
+>>>>> I know there is major, minor, patchlevel in struct drm_driver. And 
+>>>>> I think that is not required for in-tree driver.
+>>>>>
+>>>>> Please let me know if I missed anything.
+>>>>>
+>>>>> Thanks,
+>>>>
+>>>> Right; so bump up one of those so that userspace can check it. Maybe 
+>>>> "minor"?
+>>>
+>>> I meant for in-tree driver, is it good enough for userspace to just 
+>>> check kernel version?  E.g. The drm driver versions are not used by 
+>>> ivpu or qaic.
+>>>
 >>
->> struct ksm_mm_stats {
->>     atomic_long_t merging_pages;
->>     atomic_long_t rmap_items;
->>     atomic_long_t zero_pages;
->> };
->> struct ksm_mm_stats *mm->ksm_stats; // NULL until first enter
+>> Just because they don't doesn't mean you shouldn't.
+> Ok. :) It does not sound amdxdna specific. Just wondering how the other 
+> driver/application under accel subsystem handle this.
 >>
->> static inline struct ksm_mm_stats *mm_get_ksm_stats(struct mm_struct 
->> *mm)
->> {
->>     if (likely(mm->ksm_stats))
->>         return mm->ksm_stats;
->>     return ksm_alloc_stats_if_needed(mm); // Slow path
->> }
->
-> The fork'ed child uses KSM. It just doesn't have any stable rmap entries.
->
-> We have to copy the zero_pages counter such that 
-> ksm_might_unmap_zero_page() will do the right thing.
->
-> But you're comment made me realize that there is likely another bug:
->
-> When copying zero_pages during fork(), we have to increment 
-> &ksm_zero_pages as well. Otherwise we will get an underflow later.
+>> Take a look at what amdgpu does for user queues earlier this year for 
+>> example: 100b6010d7540e
+>>
+>> This means that a userspace application can look for that minor bump 
+>> or newer to know the ioctl supports user queues.
+> 
+> As in-tree driver is part of kernel, the userspace application can check 
+> kernel version to determine whether a feature is supported or not. Could 
+> you share the idea why would user application to check drm driver 
+> version for this?
+> 
+> And amdxdna driver is new added driver which never bumped drm major/ 
+> minor before. Thus there is not any application use drm versions. Maybe 
+> using kernel version directly is good enough in this case?
+> 
+> I am fine to bump minor if it provides better support to user applications.
+> 
+> 
+> Thanks,
+> 
+> Lizhi
+> 
 
+If you're running mainline kernel I totally agree with you that you can 
+make a runtime call based upon major/minor kernel version.  To me the 
+problem ends up being cases that distros do a backport of a driver or 
+subsystem that this falls apart.
 
-Yes, David, you are right. I added a test to check this scenario, and I 
-am seeing ksm_zero_pages go negative.
-
-# cat /sys/kernel/mm/ksm/ksm_zero_pages
--128
-#
-
-
->
-> @Donet, can you look into that as well?
-
-
-Sure, I will add a fix for this issue in the next version.
-
-
+For example RHEL and CentOS stream both do this, and then such 
+comparisons can no longer be made accurately.
 
