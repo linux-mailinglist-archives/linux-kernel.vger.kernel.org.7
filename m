@@ -1,306 +1,235 @@
-Return-Path: <linux-kernel+bounces-788848-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BD19B38AFB
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 22:33:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B956CB38B02
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 22:35:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50696189E9D2
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 20:34:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 555613BF461
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 20:35:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 311C9284B35;
-	Wed, 27 Aug 2025 20:33:41 +0000 (UTC)
-Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 408BF2F3638;
+	Wed, 27 Aug 2025 20:35:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=amacapital-net.20230601.gappssmtp.com header.i=@amacapital-net.20230601.gappssmtp.com header.b="GJalcVct"
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DD811C3C08
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 20:33:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E39F2F39DA
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 20:35:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756326820; cv=none; b=UtVcJd+7BwlXlyWUpNMgG2nQ/RP8qF1evXaq30cp1g35VNiE9bMVbwr6vVb89iqjl7xdccwhzXBPSnFIziU6SWFIshUNTR0I5tHndDsxti5xPm6U2efR4wej8F+zO5Sm/gEMAMyaGQxoKUsRAZSPZf1RuizUeTwU0OMc7YliGqs=
+	t=1756326929; cv=none; b=OYI+aOjlY2I7ciTQOTnAvoy85/4G38Hx6KjzDAh8yi6pOJ6BpPReCBnn7097EoSMCRokyFMN28/35ujXVp9njG3Cug+cJG1m2a/MWbXYjDC2DR695uwye8yOxx45aEiF6BxrBYOlZw6hxTzTbtvyV7ILcnOVGUFKrvKTL1ahl08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756326820; c=relaxed/simple;
-	bh=xPuG+qUhqTW3G4H+uPp506IaIqsO905LH7HNMtz/Q0E=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=pLflYGWRh4V/HB8UdkMTuQ2WSPpdI4d0OegyRG+DftUceayRqpGTwuIzQMwshiNssNoPZo2N0NDtQieOT7Ko1rOx47RV+TUU936XKAB2seU0wxesg2qwr+4Br+dhSgYgyOfykhW3C7E+BGoD4rxm82J4YLrhkpbTDUBJzij9AJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3ea2bd7b667so7008825ab.0
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 13:33:38 -0700 (PDT)
+	s=arc-20240116; t=1756326929; c=relaxed/simple;
+	bh=p6ZnKcI6F1mAg5pkdsDn0kIOGkIWEzaMWKJgn7QqNeU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=C6xkDd2mT3onRcFIZ5xwmn7HZq2PBf8TYtXAgC6vU6CltQGuQa13/lulA2heZJZa2GMi8ud6er0c138JqLHr7aHfPn3wrFL9KWXw/XRLS1x+Ig0A/ulRZEFE5h5Tv6PWsG1zlPXTzeFCKJj3bvsrtod9HtF140swnJNq1Jw2UaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net; spf=pass smtp.mailfrom=amacapital.net; dkim=pass (2048-bit key) header.d=amacapital-net.20230601.gappssmtp.com header.i=@amacapital-net.20230601.gappssmtp.com header.b=GJalcVct; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amacapital.net
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-3364e945ce7so2315761fa.1
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 13:35:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amacapital-net.20230601.gappssmtp.com; s=20230601; t=1756326925; x=1756931725; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Wl0ljXkPyLBoAJTX9TjDS8ZEVo6BAT27dTBeN90CXWg=;
+        b=GJalcVct1ylww4R06bAl1a/YAkEtNyGc/ApXVXzRUqrz0sigmC8ZNhV/T7KYq1MxEV
+         fuEGCNtGIuRSX8GnpWnIq9hJ30M6m1ekxmwHqof1Jjz7jADsVFmlS4oTd0nlzZ6j0PVt
+         QrZwp0Ypi3RX9o/0HCFgroQPTM/K9NCOOyjL+aN2l1Dc5r+ZGI2UW5OVJ9/jbcVVFLwa
+         +Vb5Q9zDwglekmx/8z7aN719XO79/0FXhF3gT9MYCJpyuMBDI2SIeFQ2PtDVVIxvHpN8
+         ijCb5Lx7q67MG8jt+zxONJ5o9Kla1DK+jezTp00pnbh3+A060Z+2pmPyKi1L1wXPQ8zq
+         TJTQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756326818; x=1756931618;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ClMMWPm0halKkm7yoGCwfsVNtnQ0YJOwTOy1VEYzY0A=;
-        b=eyc1AHLkNntUKQL7xBCgIsRvu/mFmn53Z+KFYCeDC0zoXbYZNYtd1BNdob83NWLmku
-         6Ni5D2DhE78thq62wvwp+po2aW9gCKO+tHun0iN2kuAKShwNu+rhGQaOb+rKJLXEossp
-         oc3s9/S0ioS5bOJVMISBU/6iTmYlldUniHX2VhhNcCOa+66OLWMcM+v+1ycivlskWx2N
-         j2qEUPLvfk4QkVxv8NHPdBzInRYIuDvyXXT0QKGGE9ar6zFaNOvvmBwyMJqruJeK+aTf
-         oLGwMd72wb5rRm1bgKittjclGMt096PXnzSfGD0yvFmeEnRrTNWKeSySzvlZIP6PbeHK
-         cFCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX+725uZnEq6eWF55R66+CHY/o+c2lBgNtfg/bizT5xGBYjyPYdoErjRSMHwbP0UhgwIZQ+bcPmz8OF1qw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8KPO+hUgZTN0aQiaQir6ZJz1tSGBVZJ8gi5gfmFsPe1hiOA6A
-	i3M2HgesudkGkJe0xtMxVD42QWcafofvKQ6vKr4V/mLNem8mf8fTgrvbFLLR3NTbdRMfMMJr6Ol
-	Kopm/v7Ka7doAXULb84e9drxGb40yS+Iswv7gRBfJkz9fFqmmBECuQe7PFC0=
-X-Google-Smtp-Source: AGHT+IFr42bWTP2BVIAPBvd3kBfvGI0HWMGsXQiOl0SHGkEgP/4kACwt/1rvrAiCs+q4WgdtlT4ie4WM0IXIiBdWj62bOjWZWHBp
+        d=1e100.net; s=20230601; t=1756326925; x=1756931725;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Wl0ljXkPyLBoAJTX9TjDS8ZEVo6BAT27dTBeN90CXWg=;
+        b=EBxqPefKZA+de6T13uzsm59sQeBoihJX47xElkunAVaUXJZHMbIwiocHdwXWJ1YyR2
+         wktzTGMz0+wh36Ab/f1hGGdSvuWtOlok4JMN1L6qbXke8b/TNfTbZrKW4b8+qxt8+O7g
+         hRMteMyTKAEVRcY/TJqz6+1aIuBbEJxXCg6m8vVrRjcjHrdjvq+2T0JYTJNWSh/BGTGK
+         4y919qn3Pulte/4pp6UM0BU5Nu2dQanHo1otlHZbG31a6xI5u+hPdE+MM+D7+v/C1aY2
+         9QkmmrxRoOSJi1KCCQrAoiT68DuxpQIW1QTmdN9CZga5CTlKY3YZ1z3ClZug/MYJeouz
+         Wusg==
+X-Forwarded-Encrypted: i=1; AJvYcCVxpZVXjvBJ7Bj57+cxS1pd+VT5E8CMv/ArKaHl5wAB4eoMRamQ1Mm1T5D+qqbrSvPcv4ei5/QcQwHgZak=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyn+R6BOlb/3ZlOXhEye2sCvcDt8yH/DWZ1bivrl/r5i/KB86T5
+	OYgRD7M3DIWnWvHhPKs4awTVvtOBcw4zzhvt0Z1kCHlpMseaA2e5iTgsB9x6QNixGGbehpf6k35
+	O/wB0Wa3aYaH4+m40rc8vUJlI114vCH314+ex79qF
+X-Gm-Gg: ASbGncudZK8gUXN2EO2qOtMn27sCl/CSu493Qlmn6TV+hZxl07JXkv9vvagh/WM41f4
+	OLMaVBJkL0ScfrWSiFeinXbZkFE+JRXuRMaiGhl2PGX7PHU7LJ7IyiCc8+2vPxGVen1hcwPWeaB
+	OTviim1zseI4cZHF6x9zvHjPUKTUgIh388i2pHr0iSyqAL1PHOqYDwh3nJB3+3ytALS2/r868o5
+	cpvBEDrZGnI9klF1vc=
+X-Google-Smtp-Source: AGHT+IGjsa20oKobGhO2nM0A+5O9r9SpySfPXdDwEkZvs/Q/UX/cGwHkgk6K1CRbBEum5T5gJOenn7JtwIEd8EnKFq0=
+X-Received: by 2002:a05:651c:41cf:b0:335:4d0e:9493 with SMTP id
+ 38308e7fff4ca-33650f997d5mr58918271fa.28.1756326925222; Wed, 27 Aug 2025
+ 13:35:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2308:b0:3ef:d092:c07d with SMTP id
- e9e14a558f8ab-3efd092c0d2mr62467855ab.16.1756326813782; Wed, 27 Aug 2025
- 13:33:33 -0700 (PDT)
-Date: Wed, 27 Aug 2025 13:33:33 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68af6b9d.a70a0220.3cafd4.0032.GAE@google.com>
-Subject: [syzbot] [bluetooth?] KASAN: slab-use-after-free Read in release_sock (2)
-From: syzbot <syzbot+e5e64cdf8e92046dd3e1@syzkaller.appspotmail.com>
-To: johan.hedberg@gmail.com, linux-bluetooth@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, luiz.dentz@gmail.com, marcel@holtmann.org, 
-	syzkaller-bugs@googlegroups.com
+References: <20250822170800.2116980-1-mic@digikod.net> <20250826-skorpion-magma-141496988fdc@brauner>
+ <20250826.aig5aiShunga@digikod.net> <20250826123041.GB1603531@mit.edu>
+ <20250826.iewie7Et5aiw@digikod.net> <CALCETrW=V9vst_ho2Q4sQUJ5uZECY5h7TnF==sG4JWq8PsWb8Q@mail.gmail.com>
+ <20250827.Fuo1Iel1pa7i@digikod.net>
+In-Reply-To: <20250827.Fuo1Iel1pa7i@digikod.net>
+From: Andy Lutomirski <luto@amacapital.net>
+Date: Wed, 27 Aug 2025 13:35:13 -0700
+X-Gm-Features: Ac12FXyp51op4OQBdoTDCrgv2p90HecB5l5_GBOrhFfKRX5VCL-77MvuK466l-o
+Message-ID: <CALCETrVDJYK+vWOe+-NACAqQ9i4nhCz-7rMMdkRuxexgnpzZow@mail.gmail.com>
+Subject: Re: [RFC PATCH v1 0/2] Add O_DENY_WRITE (complement AT_EXECVE_CHECK)
+To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Cc: Andy Lutomirski <luto@kernel.org>, "Theodore Ts'o" <tytso@mit.edu>, 
+	Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, 
+	Kees Cook <keescook@chromium.org>, Paul Moore <paul@paul-moore.com>, 
+	Serge Hallyn <serge@hallyn.com>, Arnd Bergmann <arnd@arndb.de>, 
+	Christian Heimes <christian@python.org>, Dmitry Vyukov <dvyukov@google.com>, 
+	Elliott Hughes <enh@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
+	Florian Weimer <fweimer@redhat.com>, Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Jordan R Abrahams <ajordanr@google.com>, 
+	Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, Luca Boccassi <bluca@debian.org>, 
+	Matt Bobrowski <mattbobrowski@google.com>, Miklos Szeredi <mszeredi@redhat.com>, 
+	Mimi Zohar <zohar@linux.ibm.com>, 
+	Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>, Robert Waite <rowait@microsoft.com>, 
+	Roberto Sassu <roberto.sassu@huawei.com>, Scott Shell <scottsh@microsoft.com>, 
+	Steve Dower <steve.dower@python.org>, Steve Grubb <sgrubb@redhat.com>, 
+	kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Wed, Aug 27, 2025 at 12:07=E2=80=AFPM Micka=C3=ABl Sala=C3=BCn <mic@digi=
+kod.net> wrote:
+>
+> On Wed, Aug 27, 2025 at 10:35:28AM -0700, Andy Lutomirski wrote:
+> > On Tue, Aug 26, 2025 at 10:47=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@=
+digikod.net> wrote:
+> > >
+> > > On Tue, Aug 26, 2025 at 08:30:41AM -0400, Theodore Ts'o wrote:
+> > > > Is there a single, unified design and requirements document that
+> > > > describes the threat model, and what you are trying to achieve with
+> > > > AT_EXECVE_CHECK and O_DENY_WRITE?  I've been looking at the cover
+> > > > letters for AT_EXECVE_CHECK and O_DENY_WRITE, and the documentation
+> > > > that has landed for AT_EXECVE_CHECK and it really doesn't describe
+> > > > what *are* the checks that AT_EXECVE_CHECK is trying to achieve:
+> > > >
+> > > >    "The AT_EXECVE_CHECK execveat(2) flag, and the
+> > > >    SECBIT_EXEC_RESTRICT_FILE and SECBIT_EXEC_DENY_INTERACTIVE
+> > > >    securebits are intended for script interpreters and dynamic link=
+ers
+> > > >    to enforce a consistent execution security policy handled by the
+> > > >    kernel."
+> > >
+> > > From the documentation:
+> > >
+> > >   Passing the AT_EXECVE_CHECK flag to execveat(2) only performs a che=
+ck
+> > >   on a regular file and returns 0 if execution of this file would be
+> > >   allowed, ignoring the file format and then the related interpreter
+> > >   dependencies (e.g. ELF libraries, script=E2=80=99s shebang).
+> > >
+> > > >
+> > > > Um, what security policy?
+> > >
+> > > Whether the file is allowed to be executed.  This includes file
+> > > permission, mount point option, ACL, LSM policies...
+> >
+> > This needs *waaaaay* more detail for any sort of useful evaluation.
+> > Is an actual credible security policy rolling dice?  Asking ChatGPT?
+> > Looking at security labels?  Does it care who can write to the file,
+> > or who owns the file, or what the file's hash is, or what filesystem
+> > it's on, or where it came from?  Does it dynamically inspect the
+> > contents?  Is it controlled by an unprivileged process?
+>
+> AT_EXECVE_CHECK only does the same checks as done by other execveat(2)
+> calls, but without actually executing the file/fd.
+>
 
-syzbot found the following issue on:
+okay... but see below.
 
-HEAD commit:    32b7144f806e Merge tag 'libcrypto-for-linus' of git://git...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=162256f0580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b7511150b112b9c3
-dashboard link: https://syzkaller.appspot.com/bug?extid=e5e64cdf8e92046dd3e1
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+> >
+> > I can easily come up with security policies for which DENYWRITE is
+> > completely useless.  I can come up with convoluted and
+> > not-really-credible policies where DENYWRITE is important, but I'm
+> > honestly not sure that those policies are actually useful.  I'm
+> > honestly a bit concerned that AT_EXECVE_CHECK is fundamentally busted
+> > because it should have been parametrized by *what format is expected*
+> > -- it might be possible to bypass a policy by executing a perfectly
+> > fine Python script using bash, for example.
+>
+> There have been a lot of bikesheding for the AT_EXECVE_CHECK patch
+> series, and a lot of discussions too (you where part of them).  We ended
+> up with this design, which is simple and follows the kernel semantic
+> (requested by Linus).
 
-Unfortunately, I don't have any reproducer for this issue yet.
+I recall this.  That doesn't mean I totally love AT_EXECVE_CHECK.  And
+it especially doesn't mean that I believe that it usefully does
+something that justifies anything like DENYWRITE.
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-32b7144f.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/c99ef9a67dcb/vmlinux-32b7144f.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/674eddcd5e31/bzImage-32b7144f.xz
+>
+> >
+> > I genuinely have not come up with a security policy that I believe
+> > makes sense that needs AT_EXECVE_CHECK and DENYWRITE.  I'm not saying
+> > that such a policy does not exist -- I'm saying that I have not
+> > thought of such a thing after a few minutes of thought and reading
+> > these threads.
+>
+> A simple use case is for systems that wants to enforce a
+> write-xor-execute policy e.g., thanks to mount point options.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+e5e64cdf8e92046dd3e1@syzkaller.appspotmail.com
+Sure, but I'm contemplating DENYWRITE, and this thread is about
+DENYWRITE.  If the kernel is enforcing W^X, then there are really two
+almost unrelated things going on:
 
-==================================================================
-BUG: KASAN: slab-use-after-free in debug_spin_lock_before kernel/locking/spinlock_debug.c:86 [inline]
-BUG: KASAN: slab-use-after-free in do_raw_spin_lock+0x26f/0x2b0 kernel/locking/spinlock_debug.c:115
-Read of size 4 at addr ffff88803b7eb1c4 by task syz.5.3276/16995
+1. LSM policy that enforces W^X for memory mappings.  This is to
+enforce that applications don't do nasty things like having executable
+stacks, and it's a mess because no one has really figured out how JITs
+are supposed to work in this world.  It has almost nothing to do with
+execve except incidentally.
 
-CPU: 3 UID: 0 PID: 16995 Comm: syz.5.3276 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
- print_address_description mm/kasan/report.c:378 [inline]
- print_report+0xcd/0x630 mm/kasan/report.c:482
- kasan_report+0xe0/0x110 mm/kasan/report.c:595
- debug_spin_lock_before kernel/locking/spinlock_debug.c:86 [inline]
- do_raw_spin_lock+0x26f/0x2b0 kernel/locking/spinlock_debug.c:115
- spin_lock_bh include/linux/spinlock.h:356 [inline]
- release_sock+0x21/0x220 net/core/sock.c:3746
- bt_accept_dequeue+0x505/0x600 net/bluetooth/af_bluetooth.c:312
- l2cap_sock_cleanup_listen+0x5c/0x2a0 net/bluetooth/l2cap_sock.c:1451
- l2cap_sock_release+0x5c/0x210 net/bluetooth/l2cap_sock.c:1425
- __sock_release+0xb3/0x270 net/socket.c:649
- sock_close+0x1c/0x30 net/socket.c:1439
- __fput+0x3ff/0xb70 fs/file_table.c:468
- task_work_run+0x14d/0x240 kernel/task_work.c:227
- resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
- exit_to_user_mode_loop+0xeb/0x110 kernel/entry/common.c:43
- exit_to_user_mode_prepare include/linux/irq-entry-common.h:225 [inline]
- syscall_exit_to_user_mode_work include/linux/entry-common.h:175 [inline]
- syscall_exit_to_user_mode include/linux/entry-common.h:210 [inline]
- do_syscall_64+0x3f6/0x4c0 arch/x86/entry/syscall_64.c:100
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f2accf8ebe9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffdb6cb1378 EFLAGS: 00000246 ORIG_RAX: 00000000000001b4
-RAX: 0000000000000000 RBX: 00000000000426fb RCX: 00007f2accf8ebe9
-RDX: 0000000000000000 RSI: 000000000000001e RDI: 0000000000000003
-RBP: 00007f2acd1b7da0 R08: 0000000000000001 R09: 00000012b6cb166f
-R10: 0000001b30e20000 R11: 0000000000000246 R12: 00007f2acd1b609c
-R13: 00007f2acd1b6090 R14: ffffffffffffffff R15: 00007ffdb6cb1490
- </TASK>
+2. LSM policy that enforces that someone doesn't execve (or similar)
+something that *that user* can write.  Or that non-root can write.  Or
+that anyone at all can write, etc.
 
-Allocated by task 5326:
- kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
- kasan_save_track+0x14/0x30 mm/kasan/common.c:68
- poison_kmalloc_redzone mm/kasan/common.c:388 [inline]
- __kasan_kmalloc+0xaa/0xb0 mm/kasan/common.c:405
- kasan_kmalloc include/linux/kasan.h:260 [inline]
- __do_kmalloc_node mm/slub.c:4365 [inline]
- __kmalloc_noprof+0x223/0x510 mm/slub.c:4377
- kmalloc_noprof include/linux/slab.h:909 [inline]
- sk_prot_alloc+0x1a8/0x2a0 net/core/sock.c:2239
- sk_alloc+0x36/0xc20 net/core/sock.c:2295
- bt_sock_alloc+0x3b/0x3a0 net/bluetooth/af_bluetooth.c:151
- l2cap_sock_alloc.constprop.0+0x33/0x1d0 net/bluetooth/l2cap_sock.c:1894
- l2cap_sock_new_connection_cb+0x101/0x240 net/bluetooth/l2cap_sock.c:1482
- l2cap_connect_cfm+0x4c4/0xf80 net/bluetooth/l2cap_core.c:7287
- hci_connect_cfm include/net/bluetooth/hci_core.h:2050 [inline]
- hci_remote_features_evt+0x4dd/0x970 net/bluetooth/hci_event.c:3712
- hci_event_func net/bluetooth/hci_event.c:7519 [inline]
- hci_event_packet+0xa0d/0x11c0 net/bluetooth/hci_event.c:7573
- hci_rx_work+0x2c5/0x16b0 net/bluetooth/hci_core.c:4071
- process_one_work+0x9cf/0x1b70 kernel/workqueue.c:3236
- process_scheduled_works kernel/workqueue.c:3319 [inline]
- worker_thread+0x6c8/0xf10 kernel/workqueue.c:3400
- kthread+0x3c2/0x780 kernel/kthread.c:463
- ret_from_fork+0x5d7/0x6f0 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+I think, but I'm not sure, that you're talking about #2.  So maybe
+there's a policy that says that one may only exec things that are on
+an fs with the 'exec' mount option.  Or maybe there's a policy that
+says that one may only exec things that are on a readonly fs.  In
+these specific cases, I believe in AT_EXECVE_CHECK.  *But* I don't
+believe in DENYWRITE: in the 'exec' case, if an fs has the exec option
+set, that doesn't change if the file is subsequently modified.  And if
+an fs is readonly, then the file is quite unlikely to be modified at
+all and will certainly not be modified via the mount through which
+it's being executed.  And you don't need DENYWRITE.
 
-Freed by task 16995:
- kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
- kasan_save_track+0x14/0x30 mm/kasan/common.c:68
- kasan_save_free_info+0x3b/0x60 mm/kasan/generic.c:576
- poison_slab_object mm/kasan/common.c:243 [inline]
- __kasan_slab_free+0x60/0x70 mm/kasan/common.c:275
- kasan_slab_free include/linux/kasan.h:233 [inline]
- slab_free_hook mm/slub.c:2417 [inline]
- slab_free mm/slub.c:4680 [inline]
- kfree+0x2b4/0x4d0 mm/slub.c:4879
- sk_prot_free net/core/sock.c:2278 [inline]
- __sk_destruct+0x75f/0x9a0 net/core/sock.c:2373
- sk_destruct+0xc2/0xf0 net/core/sock.c:2401
- __sk_free+0xf4/0x3e0 net/core/sock.c:2412
- sk_free+0x6a/0x90 net/core/sock.c:2423
- sock_put include/net/sock.h:1960 [inline]
- bt_accept_unlink+0x245/0x2e0 net/bluetooth/af_bluetooth.c:262
- bt_accept_dequeue+0x517/0x600 net/bluetooth/af_bluetooth.c:308
- l2cap_sock_cleanup_listen+0x5c/0x2a0 net/bluetooth/l2cap_sock.c:1451
- l2cap_sock_release+0x5c/0x210 net/bluetooth/l2cap_sock.c:1425
- __sock_release+0xb3/0x270 net/socket.c:649
- sock_close+0x1c/0x30 net/socket.c:1439
- __fput+0x3ff/0xb70 fs/file_table.c:468
- task_work_run+0x14d/0x240 kernel/task_work.c:227
- resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
- exit_to_user_mode_loop+0xeb/0x110 kernel/entry/common.c:43
- exit_to_user_mode_prepare include/linux/irq-entry-common.h:225 [inline]
- syscall_exit_to_user_mode_work include/linux/entry-common.h:175 [inline]
- syscall_exit_to_user_mode include/linux/entry-common.h:210 [inline]
- do_syscall_64+0x3f6/0x4c0 arch/x86/entry/syscall_64.c:100
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+So I think my question still stands: is there a credible security
+policy *that actually benefits from DENYWRITE*?  If so, can you give
+an example?
 
-The buggy address belongs to the object at ffff88803b7eb000
- which belongs to the cache kmalloc-2k of size 2048
-The buggy address is located 452 bytes inside of
- freed 2048-byte region [ffff88803b7eb000, ffff88803b7eb800)
+> >
+> > Seriously, consider all the unending recent attacks on LLMs an
+> > inspiration.  The implications of viewing an image, downscaling the
+> > image, possibly interpreting the image as something containing text,
+> > possibly following instructions in a given language contained in the
+> > image, etc are all wildly different.  A mechanism for asking for
+> > general permission to "consume this image" is COMPLETELY MISSING THE
+> > POINT.  (Never mind that the current crop of LLMs seem entirely
+> > incapable of constraining their own use of some piece of input, but
+> > that's a different issue and is besides the point here.)
+>
+> You're asking about what should we consider executable.  This is a good
+> question, but AT_EXECVE_CHECK is there to answer another question: would
+> the kernel execute it or not?
+>
 
-The buggy address belongs to the physical page:
-page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x3b7e8
-head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
-flags: 0xfff00000000040(head|node=0|zone=1|lastcpupid=0x7ff)
-page_type: f5(slab)
-raw: 00fff00000000040 ffff88801b842f00 dead000000000100 dead000000000122
-raw: 0000000000000000 0000000000080008 00000000f5000000 0000000000000000
-head: 00fff00000000040 ffff88801b842f00 dead000000000100 dead000000000122
-head: 0000000000000000 0000000000080008 00000000f5000000 0000000000000000
-head: 00fff00000000003 ffffea0000edfa01 00000000ffffffff 00000000ffffffff
-head: ffffffffffffffff 0000000000000000 00000000ffffffff 0000000000000008
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 3, migratetype Unmovable, gfp_mask 0xd20c0(__GFP_IO|__GFP_FS|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC), pid 5972, tgid 5972 (syz-executor), ts 43865453144, free_ts 42562860965
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x1c0/0x230 mm/page_alloc.c:1851
- prep_new_page mm/page_alloc.c:1859 [inline]
- get_page_from_freelist+0x132b/0x38e0 mm/page_alloc.c:3858
- __alloc_frozen_pages_noprof+0x261/0x23f0 mm/page_alloc.c:5148
- alloc_pages_mpol+0x1fb/0x550 mm/mempolicy.c:2416
- alloc_slab_page mm/slub.c:2487 [inline]
- allocate_slab mm/slub.c:2655 [inline]
- new_slab+0x247/0x330 mm/slub.c:2709
- ___slab_alloc+0xcf2/0x1740 mm/slub.c:3891
- __slab_alloc.constprop.0+0x56/0xb0 mm/slub.c:3981
- __slab_alloc_node mm/slub.c:4056 [inline]
- slab_alloc_node mm/slub.c:4217 [inline]
- __do_kmalloc_node mm/slub.c:4364 [inline]
- __kmalloc_node_track_caller_noprof+0x2ee/0x510 mm/slub.c:4384
- kmalloc_reserve+0xef/0x2c0 net/core/skbuff.c:600
- __alloc_skb+0x166/0x380 net/core/skbuff.c:669
- alloc_skb include/linux/skbuff.h:1336 [inline]
- nlmsg_new include/net/netlink.h:1055 [inline]
- rtmsg_ifinfo_build_skb+0x81/0x280 net/core/rtnetlink.c:4392
- rtmsg_ifinfo_event net/core/rtnetlink.c:4434 [inline]
- rtmsg_ifinfo_event net/core/rtnetlink.c:4424 [inline]
- rtmsg_ifinfo+0x9f/0x1a0 net/core/rtnetlink.c:4443
- register_netdevice+0x1bd9/0x2270 net/core/dev.c:11246
- __ip_tunnel_create+0x540/0x6e0 net/ipv4/ip_tunnel.c:268
- ip_tunnel_init_net+0x22f/0x7d0 net/ipv4/ip_tunnel.c:1161
- ops_init+0x1df/0x5f0 net/core/net_namespace.c:136
-page last free pid 5942 tgid 5942 stack trace:
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1395 [inline]
- __free_frozen_pages+0x7d5/0x10f0 mm/page_alloc.c:2895
- __folio_put+0x329/0x450 mm/swap.c:112
- folio_put include/linux/mm.h:1360 [inline]
- put_page include/linux/mm.h:1429 [inline]
- put_netmem net/core/skbuff.c:7370 [inline]
- skb_page_unref include/linux/skbuff_ref.h:43 [inline]
- __skb_frag_unref include/linux/skbuff_ref.h:56 [inline]
- skb_release_data+0x81a/0x9e0 net/core/skbuff.c:1080
- skb_release_all net/core/skbuff.c:1151 [inline]
- napi_consume_skb+0x15a/0x220 net/core/skbuff.c:1479
- skb_defer_free_flush net/core/dev.c:6635 [inline]
- skb_defer_free_flush net/core/dev.c:6619 [inline]
- net_rx_action+0x47f/0xfe0 net/core/dev.c:7665
- handle_softirqs+0x216/0x8e0 kernel/softirq.c:579
- do_softirq kernel/softirq.c:480 [inline]
- do_softirq+0xb2/0xf0 kernel/softirq.c:467
- __local_bh_enable_ip+0x100/0x120 kernel/softirq.c:407
- local_bh_enable include/linux/bottom_half.h:33 [inline]
- rcu_read_unlock_bh include/linux/rcupdate.h:910 [inline]
- __dev_queue_xmit+0xb06/0x4490 net/core/dev.c:4740
- dev_queue_xmit include/linux/netdevice.h:3361 [inline]
- neigh_hh_output include/net/neighbour.h:531 [inline]
- neigh_output include/net/neighbour.h:545 [inline]
- ip_finish_output2+0xc38/0x21a0 net/ipv4/ip_output.c:235
- __ip_finish_output.part.0+0x1b4/0x350 net/ipv4/ip_output.c:313
- __ip_finish_output net/ipv4/ip_output.c:301 [inline]
- ip_finish_output net/ipv4/ip_output.c:323 [inline]
- NF_HOOK_COND include/linux/netfilter.h:307 [inline]
- ip_output+0x35e/0xa10 net/ipv4/ip_output.c:436
- dst_output include/net/dst.h:461 [inline]
- ip_local_out net/ipv4/ip_output.c:129 [inline]
- __ip_queue_xmit+0x1d30/0x2620 net/ipv4/ip_output.c:532
- __tcp_transmit_skb+0x265f/0x3df0 net/ipv4/tcp_output.c:1479
- __tcp_send_ack.part.0+0x3de/0x700 net/ipv4/tcp_output.c:4285
- __tcp_send_ack net/ipv4/tcp_output.c:4291 [inline]
- tcp_send_ack+0x84/0xa0 net/ipv4/tcp_output.c:4291
-
-Memory state around the buggy address:
- ffff88803b7eb080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff88803b7eb100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->ffff88803b7eb180: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                                           ^
- ffff88803b7eb200: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff88803b7eb280: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+That's a sort of odd way of putting it.  The kernel won't execute it
+because the kernel doesn't know how to :)  But I think I understand
+what you're saying.
 
