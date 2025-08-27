@@ -1,58 +1,59 @@
-Return-Path: <linux-kernel+bounces-788827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788830-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91EC6B38AD2
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 22:24:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A234B38AD5
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 22:24:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F24672080D3
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 20:24:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28AD9208178
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 20:24:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3BB12F0C76;
-	Wed, 27 Aug 2025 20:24:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E0562F1FFB;
+	Wed, 27 Aug 2025 20:24:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="euLhcl90"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="MRqjuAsc"
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 383602EA477;
-	Wed, 27 Aug 2025 20:24:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA27E2EB85D;
+	Wed, 27 Aug 2025 20:24:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756326250; cv=none; b=ojGS0RLQgiBbG9Tk95qvIlnU7ibqMG7uPrkrEWZhVxQCOUQrBic1e6qCfNz8Zi4pRDyzpu/AkO4274ty7OBHuKR/fW6VSKRGaxnriY7usqFhIfBI85YCUA5j9Bquxp+iesBir3xLXM89V220X77hERQrq6KHGa5k/bALtl0yFjE=
+	t=1756326250; cv=none; b=tNhMw+9LmNjuoY8N57cDEWk/cIyvrwrEQXzLqEcJx2Qvhu5CL4LUd4DSzSZ6ER47rTLtzE04pLVt0qBOHX8K2eqi+/jcm6Hjx7CLw+bh5kCuJV/MhlHXS7V9tp0viGYYWeyEImSpi4MJYhiuHMQu8ECxaQaeP43n8OF43BpUDjY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1756326250; c=relaxed/simple;
-	bh=BozmQ9qzelVF+gtm7pEEW7ElkcXCmdHFmSEyyp0FLTo=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=cbv+AkVgDwQ5Fr5C3hS0wA8Kc6ddGFb6C5jokXyR3Xx5klVvzfkED08jCF+BAhMlmT3X4dfqviSHmaDUu+sJdvqPyRtCebon3PwMXIhDqk0AqPGgBx3u+BebvQAbgkjnH97ZTCFnCXtaazO5rnDwT/zAUAvWXruRt3JM/ahBbBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=euLhcl90; arc=none smtp.client-ip=198.47.19.246
+	bh=Qx7HgWweJC0iBiCsiTAuxGIumAKR6tAjbidbRrcNPBw=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ry8BKYnsdab1lhjwfADgx4/5RPI/ME+c+I9qDQxmqXXU0lc3SoSt32K6VLapLEGFAppGsm2kg2mLJhDXIwwo1esJ1ZfN3lPa0XbJd21K+JJkEdUnbtU3AE9KfttrYR5Rjen49mxTdNjA9n2hHFxS8gqxhPIgpESOS9IOX285EH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=MRqjuAsc; arc=none smtp.client-ip=198.47.23.235
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57RKNvp81825109;
+Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57RKNvU91848599;
 	Wed, 27 Aug 2025 15:23:57 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
 	s=ti-com-17Q1; t=1756326237;
-	bh=l2kumuCMLlBCJKAinXlyJgLWFRWFnmkwqXm+yzlGKgc=;
-	h=From:To:CC:Subject:Date;
-	b=euLhcl90UmAP6JPogxrdYfsXvuEeQFvw02QsxLt2OGBZroIQoKGO8TVnfgxXSXGMt
-	 FCb99EywBWCegcvpqBOeFU5tFGOeHETl9VDGN7kPSLKeaF2WIpPfpuTQwMikTrqtKJ
-	 icrDy7wX0am3FxxqMk0AdKW2lapiPq+i8pDeEwAE=
-Received: from DLEE101.ent.ti.com (dlee101.ent.ti.com [157.170.170.31])
-	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57RKNv122382663
+	bh=91iFr4naHIXlcV9GivKcF6EgtPgOgYZQJGU5T0IlmwA=;
+	h=From:To:CC:Subject:Date:In-Reply-To:References;
+	b=MRqjuAsc9XSXF8yTvjLC3do/Ez1UFUMU1Mn6GEZEAjx4U9NT8ImKbnYPVacb2BdyD
+	 6xgD/tP9jgpGtfRyBtX3dUxzHXEBtHqxlqvdXXZvgYJPrpU1zDPiSVyJXBNaEEqRCs
+	 MGju3CQ7ex7cOvNMmTjDP+qJC/2JvFtiELl1l7Ro=
+Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
+	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57RKNvnu2707068
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
 	Wed, 27 Aug 2025 15:23:57 -0500
-Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE101.ent.ti.com
- (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
+Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Wed, 27
  Aug 2025 15:23:57 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE101.ent.ti.com
- (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE106.ent.ti.com
+ (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Wed, 27 Aug 2025 15:23:56 -0500
+ Frontend Transport; Wed, 27 Aug 2025 15:23:57 -0500
 Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57RKNvFS3643386;
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57RKNvhF3367088;
 	Wed, 27 Aug 2025 15:23:57 -0500
 From: Nishanth Menon <nm@ti.com>
 To: Conor Dooley <conor+dt@kernel.org>,
@@ -70,11 +71,15 @@ CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
         Robert Nelson <robertcnelson@gmail.com>,
         Jason Kridner <jkridner@beagleboard.org>, <afd@ti.com>,
         <tomi.valkeinen@ideasonboard.com>, <devarsht@ti.com>,
-        <dmitry.baryshkov@oss.qualcomm.com>, Nishanth Menon <nm@ti.com>
-Subject: [PATCH V5 0/5] drm/bridge: it66121: Add initial it66122 support
-Date: Wed, 27 Aug 2025 15:23:49 -0500
-Message-ID: <20250827202354.2017972-1-nm@ti.com>
+        <dmitry.baryshkov@oss.qualcomm.com>, Nishanth Menon <nm@ti.com>,
+        Krzysztof
+ Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH V5 1/5] dt-bindings: display: bridge: it66121: Add compatible string for IT66122
+Date: Wed, 27 Aug 2025 15:23:50 -0500
+Message-ID: <20250827202354.2017972-2-nm@ti.com>
 X-Mailer: git-send-email 2.47.0
+In-Reply-To: <20250827202354.2017972-1-nm@ti.com>
+References: <20250827202354.2017972-1-nm@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,65 +90,37 @@ Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Hi,
+Add a new ite,it66122 compatible string to the IT66121 binding
+documentation, since the two chips are practically same except for id
+register difference.
 
-Add initial support for IT66122, which seems to be compatible to it66121
-but probably has additional functionality.
+Signed-off-by: Nishanth Menon <nm@ti.com>
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Reviewed-by: Andrew Davis <afd@ti.com>
+---
+Changes since V4:
+None
 
-BeagleY-AI uses this it66122 as the old part is no longer in production
-as far as I understand.
+V4: https://lore.kernel.org/all/20250819130807.3322536-2-nm@ti.com/
+V3: https://lore.kernel.org/all/20250815034105.1276548-2-nm@ti.com/
+V2: https://lore.kernel.org/all/20250813204106.580141-2-nm@ti.com/
+V1: https://lore.kernel.org/all/20250813190835.344563-2-nm@ti.com/
 
-Now, BeaglePlay uses it66121 at the moment, but at some point, it might
-end up flipping over to the new part. Additionally, it also looks like
-Revision D of BeagleBone Black switched over to it66122 as well.
+ .../devicetree/bindings/display/bridge/ite,it66121.yaml          | 1 +
+ 1 file changed, 1 insertion(+)
 
-Series is based on next-20250827
-
-Bootlog: BeaglePlay: https://gist.github.com/nmenon/65afb917ee1818979d338cf25732a920
-
-Changes in V5:
-* Switched over to ARRAY_SIZE
-* Picked up Andrew's Reviewed-by
-
-Changes in V4:
-* Added patch to sort the compatibles alpha-numerically
-* vid/pid lookup is done without using the match_data.
-* picked reviews
-
-Changes in V3:
-Based on Tomi's and Devarsh's reviews, and searching online (and failing
-to find) for a public data sheet, I have refactored the series to:
-a) Detect the ID by matching vid/pid
-b) Introduce it66122 basic support which seems to work based on
-   empirical testing evidence on BeagleY-AI. This allows incremental
-   patches in the future by someone who might have access to the data
-   sheet to add additional features for the chip.
-c) Irritated by checkpatch --strict warnings, added a patch to fix
-   existing warnings as part of this series, but it could probably go
-   in independent of everything else.
-d) Stopped claiming it66122 is drop in replacement of it66121 :)
-
-Changes in V2:
-* Picked up Krystoff's binding ack
-* Switched over to a vid/pid list
-
-V4: https://lore.kernel.org/all/20250819130807.3322536-1-nm@ti.com/
-V3: https://lore.kernel.org/all/20250815034105.1276548-1-nm@ti.com/
-V2: https://lore.kernel.org/all/20250813204106.580141-1-nm@ti.com/
-V1: https://lore.kernel.org/all/20250813190835.344563-1-nm@ti.com/
-
-Nishanth Menon (5):
-  dt-bindings: display: bridge: it66121: Add compatible string for
-    IT66122
-  drm/bridge: it66121: Drop ftrace like dev_dbg() prints
-  drm/bridge: it66121: Sort the compatibles
-  drm/bridge: it66121: Use vid/pid to detect the type of chip
-  drm/bridge: it66121: Add minimal it66122 support
-
- .../bindings/display/bridge/ite,it66121.yaml  |  1 +
- drivers/gpu/drm/bridge/ite-it66121.c          | 68 +++++++++----------
- 2 files changed, 34 insertions(+), 35 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/display/bridge/ite,it66121.yaml b/Documentation/devicetree/bindings/display/bridge/ite,it66121.yaml
+index a7eb2603691f..c99b67f0bb73 100644
+--- a/Documentation/devicetree/bindings/display/bridge/ite,it66121.yaml
++++ b/Documentation/devicetree/bindings/display/bridge/ite,it66121.yaml
+@@ -19,6 +19,7 @@ properties:
+   compatible:
+     enum:
+       - ite,it66121
++      - ite,it66122
+       - ite,it6610
+ 
+   reg:
 -- 
 2.47.0
 
