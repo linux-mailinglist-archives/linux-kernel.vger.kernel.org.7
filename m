@@ -1,125 +1,142 @@
-Return-Path: <linux-kernel+bounces-788090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2AB6B37F94
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 12:14:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E001B37F91
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 12:14:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39CC93AA226
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 10:14:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 122ED3ABF6E
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 10:14:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5209346A1D;
-	Wed, 27 Aug 2025 10:14:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70BC330FC1E;
+	Wed, 27 Aug 2025 10:14:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Lmv/BHMq"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="XGKDRchi"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 767A728312E
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 10:14:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A71822E406
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 10:13:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756289675; cv=none; b=f82A8YpsoD0gyiWDNPRGzGemHR8ezKNByhiJF10vu6CzIsUtxx/1nf5pH+AAmlIRY3U5CoxVB2Dk7bwqXM68VYwTzVrcNZ8UZ+5AGwdMIte1yZcdDM7beQNyvL0LxpgzhM9CKiLybzJQ7zaMK2ez7nv1/Ii7TCThJBZdJgkCfcQ=
+	t=1756289640; cv=none; b=Z6dXTmDGhyQD5GT1Zbwt3YkrVBC5QLhz6ytVwwjz+rQ+Y3JnQMR0LiM3N90kljf2WqpSy6AE7ieoO9WFdqPze3o+38LK8QXOj7oLNAipA9Goh8jn+E+m4RwmP4SWb/fzvP9/i5AOcgNeCeFb5l2fDjbCphCJbETi4FB11tSv4Pc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756289675; c=relaxed/simple;
-	bh=tzFOwNwr0snYPZ9heeocBWU+MEJ4iTAIlNqCq7DUpQk=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=bLgDrJbxxFcj0lFNulfGru2+tViozACzCgU/9dHtTUcewMFSWCHaMRWhH8/qYOmfOm6KDDKODyc9YqoyRmuAGmrxaXqpNlXQWQZxtUjb//H574QnI8K2DgYX6xSRGurlAR719vLOKL7jsg3tp5Eth5VKvxlWYcqKYuV4IKP9jpc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Lmv/BHMq; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756289673; x=1787825673;
-  h=date:from:to:cc:subject:message-id;
-  bh=tzFOwNwr0snYPZ9heeocBWU+MEJ4iTAIlNqCq7DUpQk=;
-  b=Lmv/BHMqLBBLcZsqnSAScKg3I6XI/BnzJeV2o4Sc+UF0whAOY6yh8VKR
-   1dFNQT/B2deWGHLAO8rMjcwjZn878TeL0senqtbiI0jrMd3yqXWCkTCSE
-   9i/rqz1PtGHu7ZewCKIRfRJAPpk5AzVjwiYd5j0peEuoVB1OizIAHzlAK
-   zSiTA1ppxRCNmdqhoyHG0NbfnTKt15HfLEic5gX4gDLAMCollrNwPdBIR
-   JQfldY7KoAa3TF3fpIoODZtPTHOM11Iaa/RDn7rbWDN/it6erOs2TSdX/
-   tm4y6emliv2qggDLZBW9AuTHBPcn+iBd7C1871k35vV0qiWf4m/66Cz4T
-   A==;
-X-CSE-ConnectionGUID: FpokwhGlTAWSr10YRxfahw==
-X-CSE-MsgGUID: A5fp53F2QBudW45O6zVX8g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11534"; a="69130503"
-X-IronPort-AV: E=Sophos;i="6.18,214,1751266800"; 
-   d="scan'208";a="69130503"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2025 03:14:30 -0700
-X-CSE-ConnectionGUID: 7Ir+y3czQP65v2Of4lvjfA==
-X-CSE-MsgGUID: KfnWhHZ5QyakOLsX44epbA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,214,1751266800"; 
-   d="scan'208";a="169746876"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by fmviesa006.fm.intel.com with ESMTP; 27 Aug 2025 03:14:28 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1urDAg-000SrJ-1m;
-	Wed, 27 Aug 2025 10:14:26 +0000
-Date: Wed, 27 Aug 2025 18:13:40 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:x86/asm] BUILD SUCCESS
- ac9c408ed19d535289ca59200dd6a44a6a2d6036
-Message-ID: <202508271833.XGp5DFf2-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1756289640; c=relaxed/simple;
+	bh=7zvrItd6lF7DhWRHMFACpJHxtADzo3yZV9OaBF0xCkk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PsK9SxFwpb22KTtkn6QEEE8h5ogQx3++28k0QSGr4h+TCZKa2mv4+M2/G/S4Y0p32v7b2yvZQ+bgxKxSEYCoHuMJPficxSp3PAMHkQ9hFn8CwEO3YPg46GC6ect5Bhu0wu1xW5i0DVRXg6UYsq55f7sbdd5UyqUtVjSJgg67r+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=XGKDRchi; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-45b4d8921f2so48804715e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 03:13:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1756289636; x=1756894436; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=cFHfv4BgFFf6UjrjZCzlbsHb0+jz7Jlyk/zxyT76xO4=;
+        b=XGKDRchiy2N7qzjFIJSPjgHAUVf/aKOnuZFiZvpRpwuLrz79bOgFcFRqGHdG/g0lE+
+         hj1iDsRZk5p5TzFZiV2EwLAbqIJAXcilODWYDoqhnoqNe5Dv1F2Q9duXMhN9oOJEZvrE
+         1WI8biYKr0T8SPwESI/I8WOhxRy5r1UwkJdTvFFC7hI7wSRFerDfk0R2ceMIWSqAOcMS
+         DxcZnGuoT81slK811cugw1xPoePaldpOKG00gvcXXMjHcn7YSuM3TI2Z7ki6Yi8zNu7G
+         7UzyIDzQfCg1Zl0LVLLmDg8HDMMASnkDUR8V0p8VDGJfGI0yTXR8qwOYQvIalmm3ULwj
+         juzg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756289636; x=1756894436;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cFHfv4BgFFf6UjrjZCzlbsHb0+jz7Jlyk/zxyT76xO4=;
+        b=j5HGwz88C2YR8LgybqKHcYj9qcJE/tHOHO6P0pr0zL5grswNghWFN5CXWeLVoSY5Pe
+         jSvOATGFywBq/uxFt+XVMSmG/+HvxHbbuvJjrFGYlkJrRKLGJjJ9JOZSKkywYrPgxSAG
+         IwXjMubzN+5W/Jibr4rF/JhKJsxrEjz/JmF38J41UbFMZgiHBxUGGIjR1f4ZgDInyrHR
+         E85oV1yMQyUL8x703HyD+2aPHlI2abDi9vrIk/8TNg07j3ZgJ3b+lKnMQy5K/pj2Ttf/
+         om8xVYXDb6/Zo0o/k3NkBDS5JTwUUor5SfuRoLtaRq+Ogo40wg559hR4mDRxgyVFr3MI
+         NA5g==
+X-Forwarded-Encrypted: i=1; AJvYcCWnkOCBhStOP7tPqhKJnVQD7a/qXzDUsqpyG+tLS/tG1n0taerD39kT0CdN9jjOJTTMpujgOqhsUcVx/Bg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxcn+2v3Z1aVfWvHSCo65nEEbfwpuGLEWfOLX5qK8u0etvn8rKL
+	2xlWMOyTMJZi9JvL6eRwEn1RvBruWr/6+KWQ+8svk9+CjsqMkv+NmDWpxzG19s7YA2AR3oWG8DW
+	u2evV
+X-Gm-Gg: ASbGncsIoEDHGVomI4c2sKyhuCcb7iprzvFZ7xwQHhl6TsNyFhynHW0rDCN7C/yY3iI
+	/TbD3SW3QWhT1RdzVnaXoSe3gff04QvIzvRoMo8cETPlNjba8u33XDo6xjl5vfj8RXiiwDbzzJC
+	kYPQEgSIqjxdv+085ov+xurLzrb6d01eQTvFz7XApOk2meHjnsvjikNzz3y3Xp1weuWUQBal3jw
+	8F6bjbeLQkNDKfkJy8syeeS30qcOD1PJ0TKYjidbGa8rHGUthGz3kz2NIuF2f50Fjre0Y0gQvtC
+	jPw59a2JTA0i8jfDOZxjwdOTbZgMFDjIqhYjvpuyw0m2Lm/M3VmksANmV/6aLhKU1ePIcg9/FwL
+	Mk9jJ8Fis2RPNOiBqsk62cfP7WXX2oZFRt7TMsCwoNSuclNqrZhUWEO+L1qZqsVpNteBb28OirY
+	KIo02kFVvd044XBYfl
+X-Google-Smtp-Source: AGHT+IHpy82kDFbawOUYQ7LQKwjjk9cJ9CSb6+MrqfxOmu2ab2pw0XNrTRDxvK7P/73HdRFHaFAj9g==
+X-Received: by 2002:a05:600c:1f83:b0:456:1c4a:82b2 with SMTP id 5b1f17b1804b1-45b517ad803mr163924265e9.10.1756289636196;
+        Wed, 27 Aug 2025 03:13:56 -0700 (PDT)
+Received: from claudiu-TUXEDO-InfinityBook-Pro-AMD-Gen9.. ([2a02:2f04:6103:4200:a5a4:15e6:5b6a:a96])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3cc890b178bsm2700425f8f.52.2025.08.27.03.13.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 Aug 2025 03:13:55 -0700 (PDT)
+From: Claudiu <claudiu.beznea@tuxon.dev>
+X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
+To: andersson@kernel.org,
+	mathieu.poirier@linaro.org,
+	ulf.hansson@linaro.org,
+	rafael@kernel.org
+Cc: claudiu.beznea@tuxon.dev,
+	linux-remoteproc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH] rpmsg: core: Drop dev_pm_domain_detach() call
+Date: Wed, 27 Aug 2025 13:13:52 +0300
+Message-ID: <20250827101352.927542-1-claudiu.beznea.uj@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/asm
-branch HEAD: ac9c408ed19d535289ca59200dd6a44a6a2d6036  x86/vdso: Fix output operand size of RDPID
+From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-elapsed time: 984m
+Starting with commit f99508074e78 ("PM: domains: Detach on
+device_unbind_cleanup()"), there is no longer a need to call
+dev_pm_domain_detach() in the bus remove function. The
+device_unbind_cleanup() function now handles this to avoid
+invoking devres cleanup handlers while the PM domain is
+powered off, which could otherwise lead to failures as
+described in the above-mentioned commit.
 
-configs tested: 33
-configs skipped: 119
+Drop the explicit dev_pm_domain_detach() call and rely instead
+on the flags passed to dev_pm_domain_attach() to power off the
+domain.
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+---
+ drivers/rpmsg/rpmsg_core.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-tested configs:
-i386                             allmodconfig    gcc-12
-i386                              allnoconfig    gcc-12
-i386                             allyesconfig    gcc-12
-i386        buildonly-randconfig-001-20250827    clang-20
-i386        buildonly-randconfig-002-20250827    clang-20
-i386        buildonly-randconfig-003-20250827    clang-20
-i386        buildonly-randconfig-004-20250827    clang-20
-i386        buildonly-randconfig-005-20250827    clang-20
-i386        buildonly-randconfig-006-20250827    gcc-12
-i386                                defconfig    clang-20
-m68k                              allnoconfig    gcc-15.1.0
-microblaze                        allnoconfig    gcc-15.1.0
-mips                              allnoconfig    gcc-15.1.0
-nios2                             allnoconfig    gcc-15.1.0
-openrisc                          allnoconfig    clang-22
-parisc                            allnoconfig    clang-22
-powerpc                           allnoconfig    clang-22
-riscv                             allnoconfig    clang-22
-s390                              allnoconfig    clang-22
-sh                                allnoconfig    gcc-15.1.0
-sparc                             allnoconfig    gcc-15.1.0
-um                                allnoconfig    clang-22
-x86_64                            allnoconfig    clang-20
-x86_64                           allyesconfig    clang-20
-x86_64      buildonly-randconfig-001-20250827    clang-20
-x86_64      buildonly-randconfig-002-20250827    clang-20
-x86_64      buildonly-randconfig-003-20250827    gcc-12
-x86_64      buildonly-randconfig-004-20250827    gcc-12
-x86_64      buildonly-randconfig-005-20250827    clang-20
-x86_64      buildonly-randconfig-006-20250827    clang-20
-x86_64                              defconfig    gcc-11
-x86_64                          rhel-9.4-rust    clang-20
-xtensa                            allnoconfig    gcc-15.1.0
+diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
+index bece5e635ee9..5d661681a9b6 100644
+--- a/drivers/rpmsg/rpmsg_core.c
++++ b/drivers/rpmsg/rpmsg_core.c
+@@ -479,7 +479,8 @@ static int rpmsg_dev_probe(struct device *dev)
+ 	struct rpmsg_endpoint *ept = NULL;
+ 	int err;
+ 
+-	err = dev_pm_domain_attach(dev, PD_FLAG_ATTACH_POWER_ON);
++	err = dev_pm_domain_attach(dev, PD_FLAG_ATTACH_POWER_ON |
++					PD_FLAG_DETACH_POWER_OFF);
+ 	if (err)
+ 		goto out;
+ 
+@@ -538,8 +539,6 @@ static void rpmsg_dev_remove(struct device *dev)
+ 	if (rpdrv->remove)
+ 		rpdrv->remove(rpdev);
+ 
+-	dev_pm_domain_detach(dev, true);
+-
+ 	if (rpdev->ept)
+ 		rpmsg_destroy_ept(rpdev->ept);
+ }
+-- 
+2.43.0
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
