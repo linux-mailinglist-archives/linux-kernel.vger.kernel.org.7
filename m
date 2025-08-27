@@ -1,139 +1,121 @@
-Return-Path: <linux-kernel+bounces-788760-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E08AB389F3
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 20:57:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9917EB389FA
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 20:58:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A40377C4ABD
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 18:57:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5FB31B66551
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 18:58:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0854E2E92D2;
-	Wed, 27 Aug 2025 18:57:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAB952EA498;
+	Wed, 27 Aug 2025 18:58:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ltXO+4Qr"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p/A4hCuX"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5954B1DFE0B;
-	Wed, 27 Aug 2025 18:57:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10A0C23C4F1;
+	Wed, 27 Aug 2025 18:58:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756321032; cv=none; b=YDmBbz1rtxtUgV7OinKdNBb1krCUHB2B35RMIaC7tY1vnb3BGOfYhy5IjJ0S6YTWfhaWR6yRQcBB6A/KMBDyZytHTn8ppiV92WibLNZivU8lNhlHuCYMMJH+SyncDpO827rJC8IFnYStzQM67+WrfsBBRk720g7pefBJZrH6wBw=
+	t=1756321107; cv=none; b=AExw2Bnq7+ceWs8nMS5sAyYuwAZV3KuNdLv2kR2c2ZNdHFC+/WUl3M+jwjL9nfyzbYK4RMWpK+/Z0xo7jBz3PRt+hztNJwxqqt4YMSeaE1OvZ7zSP8mn6NBABNjispAfnT//Xhqk9W4UaU2CrrcUUKlLOqvJ3yQl3A+1OsMNioI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756321032; c=relaxed/simple;
-	bh=DFcwD5wv8boG5Yw+kZoSyddpCexgu/K9NQMraZJx9i8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mo+8y8eki4X1HEgL5IP105ziKWcQmlOtJUtPm9w1KjrZD9YAzFacsfFvJEJHL6XikWOsXDeRXK4GuQcQULeNffJfbgUdXjZse2gUODy3o737q5igSmBA4hYh9L6CH9J0tBcPZeymSka+izOovj1IKf9e9yweZBx7quVtbvY7Ekc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ltXO+4Qr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E52FFC4CEFA;
-	Wed, 27 Aug 2025 18:57:11 +0000 (UTC)
+	s=arc-20240116; t=1756321107; c=relaxed/simple;
+	bh=k/tPNcfJ/qdnWRcsE6nXClRCEZmBAkB4S98CVmbWffE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=JtGnJck9IV9bpJSrfzKsLhLYq6Xcgqhi7XgSBCF4SHBYdlJ3PuI7oWUmyhIwcxXVkuBo9KZ5SFprjPPJolLqvb8zfJhs+wz0QTsN9bIdCzxJ6+K4LY+nahUcTyh6YXkKQrQ3WK5OpgITag/5/RESRuJ17/VqeujeidZQYbo889A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p/A4hCuX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8403C4CEEB;
+	Wed, 27 Aug 2025 18:58:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756321031;
-	bh=DFcwD5wv8boG5Yw+kZoSyddpCexgu/K9NQMraZJx9i8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=ltXO+4QrZcKiWl8KcMd/n0W3EtEqJ3EffFBILsTzuhRBgM/Pbuh2CKSU6MWxNvz4O
-	 sDAcGoqZQ1NfZS926zQtaxnWo7MEPxrnM3trQhHRQcbq8mF8ruGtSOBB2YObDWpBur
-	 dbbcerasz0BrYk6Mn5Sf/GuK3+ycMR86wkXqQ2R2/NyK6QzP8BXImp4FOtudYuJ/UC
-	 4QFJSGu8O2Aeg1xFuStBUkkV0huotYRirRffiAGNz0ELr+p29JI0njXpTuFPeVAc+J
-	 pUB0sZboY0jc3t/gaLjA317M/++CRkp6fR6O7mAFsmMqf4sjGcLbfzA+Uure3rOi24
-	 m4cNBcaFw2uwg==
-Received: by mail-ot1-f42.google.com with SMTP id 46e09a7af769-743749537caso1030961a34.0;
-        Wed, 27 Aug 2025 11:57:11 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUVqZmngs9APkZcyykXGPjdsBoo5Xvhvt9p1ehKxULx/cD6XCLZOMOZXTVuKP3yJHVLLlDw6btDKfMPyH4=@vger.kernel.org, AJvYcCVvaQmKi90y2SIceBzypkb5s88yIll/prBBJ+/broOepRaEzDoK4EG9AqRH/WMZOsdw/2hIs8RdJJSL@vger.kernel.org, AJvYcCWeuSKUgjL2dYDqMhFPUfZPcOmyabPsQ80nwbwENB6YDn3NoMMPicydLEqlva3o9UkSXXZWjXWx7N0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwsFFfyxq9O9k0guutx444dvYBfsdHg88klHEXkFHppSM30NnYa
-	ApyN2DaN/HfbGoTQDhRowqyioI0TGygdpCuzs3COJkSm/jFNAH3zl5RjUYWm+7OxO8i5rfFBD4G
-	uKotL0LReVB56RiDiAz2sveDymrkcb1U=
-X-Google-Smtp-Source: AGHT+IEC2ghCQ0MO1CJCGsXmI5mtSbb6TkKZeWUOoMwVPghWXTpZl6QcvCdI3YgtP05qnKHcAXNzKpCNWfVMRWLM8Io=
-X-Received: by 2002:a05:6808:1b1f:b0:437:75ea:6c72 with SMTP id
- 5614622812f47-437c544113bmr3155427b6e.21.1756321031183; Wed, 27 Aug 2025
- 11:57:11 -0700 (PDT)
+	s=k20201202; t=1756321106;
+	bh=k/tPNcfJ/qdnWRcsE6nXClRCEZmBAkB4S98CVmbWffE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=p/A4hCuXnw78K2/C7/7U2ep3c3mB0WH5FKsFfvMkA9XgZ3H7LOX8UCUSWJNoafOwu
+	 VJwzEpoV0FLpzBZU2Gw77yR4FhTSim9ud/WuydhPXNXtF/rGRXGfd+YK3F5on9j3m1
+	 BS5UCJTAZLWfEiDJLhUiXABrbbSP1hTFOC4xOKq0sIZR+fCLsoqZpQlzLmgFotwXwP
+	 JttlA+091dVHUkpQgd8HOqDX2sV3jjLpIwqXnPEyTY1NeHt8YuYy8Rg6HWDtPSKuuJ
+	 jW3ADEJW9Z1TzPtmOWkaj5LY0S4P5ZnFSbOb2JCD/SeOL3yUWwPQSTKjtiQSTch1dj
+	 WebNWWgPMD0CA==
+Date: Wed, 27 Aug 2025 13:58:25 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Christian Bruel <christian.bruel@foss.st.com>
+Cc: lpieralisi@kernel.org, kwilczynski@kernel.org, mani@kernel.org,
+	robh@kernel.org, bhelgaas@google.com, krzk+dt@kernel.org,
+	conor+dt@kernel.org, mcoquelin.stm32@gmail.com,
+	alexandre.torgue@foss.st.com, linus.walleij@linaro.org,
+	corbet@lwn.net, p.zabel@pengutronix.de, shradha.t@samsung.com,
+	mayank.rana@oss.qualcomm.com, namcao@linutronix.de,
+	qiang.yu@oss.qualcomm.com, thippeswamy.havalige@amd.com,
+	inochiama@gmail.com, quic_schintav@quicinc.com,
+	johan+linaro@kernel.org, linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: Re: [PATCH v13 06/11] PCI: stm32: Add PCIe Endpoint support for
+ STM32MP25
+Message-ID: <20250827185825.GA894342@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250826150826.11096-1-ryanzhou54@gmail.com> <CA+zupgwnbt=5Oh28Chco=YNt9WwKzi2J+0hQ04nqyZG_7WUAYg@mail.gmail.com>
- <CAPwe5RMpdG1ziRAwDhqkxuzHX0x=SdFQRFUbPCVuir1OgE90YQ@mail.gmail.com> <5d692b81-6f58-4e86-9cb0-ede69a09d799@rowland.harvard.edu>
-In-Reply-To: <5d692b81-6f58-4e86-9cb0-ede69a09d799@rowland.harvard.edu>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 27 Aug 2025 20:56:59 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0jQpQjfU5YCDbfdsJNV=6XWD=PyazGC3JykJVdEX3hQ2Q@mail.gmail.com>
-X-Gm-Features: Ac12FXwZkTPT2-RMDugAYZDU2uopbwIA2WbOc1-Kkou8zroX8GC-ntYgdaMUhSM
-Message-ID: <CAJZ5v0jQpQjfU5YCDbfdsJNV=6XWD=PyazGC3JykJVdEX3hQ2Q@mail.gmail.com>
-Subject: Re: [PATCH] drvier: usb: dwc3: Fix runtime PM trying to activate
- child device xxx.dwc3 but parent is not active
-To: Alan Stern <stern@rowland.harvard.edu>
-Cc: ryan zhou <ryanzhou54@gmail.com>, "Rafael J. Wysocki" <rafael@kernel.org>, Roy Luo <royluo@google.com>, 
-	Thinh.Nguyen@synopsys.com, gregkh@linuxfoundation.org, 
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-pm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250820075411.1178729-7-christian.bruel@foss.st.com>
 
-On Wed, Aug 27, 2025 at 4:52=E2=80=AFPM Alan Stern <stern@rowland.harvard.e=
-du> wrote:
->
-> Ryan:
->
-> You should present your questions to the maintainer of the kernel's
-> Power Management subsystem, Rafael Wysocki (added to the To: list for
-> this email).
+On Wed, Aug 20, 2025 at 09:54:06AM +0200, Christian Bruel wrote:
+> Add driver to configure the STM32MP25 SoC PCIe Gen1 2.5GT/s or Gen2 5GT/s
+> controller based on the DesignWare PCIe core in endpoint mode.
 
-Thanks Alan!
+> +static void stm32_pcie_perst_deassert(struct dw_pcie *pci)
+> +{
+> +	struct stm32_pcie *stm32_pcie = to_stm32_pcie(pci);
+> +	struct device *dev = pci->dev;
+> +	struct dw_pcie_ep *ep = &pci->ep;
+> +	int ret;
+> +
+> +	dev_dbg(dev, "PERST de-asserted by host\n");
+> +
+> +	ret = pm_runtime_resume_and_get(dev);
+> +	if (ret < 0) {
+> +		dev_err(dev, "Failed to resume runtime PM: %d\n", ret);
+> +		return;
+> +	}
+> +
+> +	ret = stm32_pcie_enable_resources(stm32_pcie);
+> +	if (ret) {
+> +		dev_err(dev, "Failed to enable resources: %d\n", ret);
+> +		goto err_pm_put_sync;
+> +	}
+> +
+> +	/*
+> +	 * Need to reprogram the configuration space registers here because the
+> +	 * DBI registers were incorrectly reset by the PHY RCC during phy_init().
 
+Is this incorrect reset of DBI registers a software issue or some kind
+of hardware erratum that might be fixed someday?  Or maybe it's just a
+characteristic of the hardware and thus not really "incorrect"?
 
-> On Wed, Aug 27, 2025 at 10:09:10PM +0800, ryan zhou wrote:
-> > Hi Roy,
-> > Thank you for reviewing my patch.
-> > >
-> > > Wouldn't the parent glue dev already resume before resuming the child=
- dwc3?
-> > >
-> > No, in the following case, the parent device will not be reviewed
-> > before resuming the child device.
-> > Taking the 'imx8mp-dwc3' driver as an example.
-> > Step 1.usb disconnect trigger: the child device dwc3 enter runtime
-> > suspend state firstly, followed by
-> > the parent device imx8mp-dwc3 enters runtime suspend
-> > flow:dwc3_runtime_suspend->dwc3_imx8mp_runtime_suspend
-> > Step2.system deep trigger:consistent with the runtime suspend flow,
-> > child enters pm suspend and followed
-> > by parent
-> > flow: dwc3_pm_suspend->dwc3_imx8mp_pm_suspend
-> > Step3: After dwc3_pm_suspend, and before dwc3_imx8mp_pm_suspend, a
-> > task terminated the system suspend process
-> > . The system will resume from the checkpoint, and resume devices in
-> > the suspended state in the reverse
-> > of pm suspend, but excluding the parent device imx8mp-dwc3 since it
-> > did not execute the suspend process.
-> >
-> > >
-> > >Why would 'runtime PM trying to activate child device xxx.dwc3 but par=
-ent is not active' happen in the first place?
-> > >
-> > Following the above analysis, dwc3_resume calls
+I do see that qcom_pcie_perst_deassert() in pcie-qcom-ep.c also calls
+dw_pcie_ep_init_registers() in the qcom_pcie_ep_perst_irq_thread()
+path.
 
-I assume that dwc3_pm_resume() is meant here.
+So does pex_ep_event_pex_rst_deassert() (pcie-tegra194.c) in the
+tegra_pcie_ep_pex_rst_irq() path.
 
-> > pm_runtime_set_active(dev), it checks the
-> > parent.power->runtime_status is not RPM_ACTIVE and outputs the error lo=
-g.
+But as far as I can tell, none of the other dwc drivers need this, so
+maybe it's something to do with the glue around the DWC core?
 
-And it does so because enabling runtime PM for the child with
-runtime_status =3D=3D RPM_ACTIVE does not make sense when the parent has
-runtime PM enabled and its status is not RPM_ACTIVE.
-
-It looks like the runtime PM status of the parent is not as expected,
-but quite frankly I don't quite follow the logic in dwc3_pm_resume().
-
-Why does it disable runtime PM just for the duration of
-dwc3_resume_common()?  If runtime PM is functional before the
-pm_runtime_disable() call in dwc3_pm_resume(), the device may as well
-be resumed by calling pm_runtime_resume() on it without disabling
-runtime PM.  In turn, if runtime PM is not functional at that point,
-it should not be enabled.
+> +	 */
+> +	ret = dw_pcie_ep_init_registers(ep);
+> +	if (ret) {
+> +		dev_err(dev, "Failed to complete initialization: %d\n", ret);
+> +		goto err_disable_resources;
+> +	}
 
