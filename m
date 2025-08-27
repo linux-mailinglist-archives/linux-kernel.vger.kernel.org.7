@@ -1,205 +1,129 @@
-Return-Path: <linux-kernel+bounces-788558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D37A5B3865A
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 17:20:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1C75B38668
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 17:21:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68312464B50
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 15:19:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 466523A5D3E
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 15:19:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7A0F2877ED;
-	Wed, 27 Aug 2025 15:16:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E6992750E2;
+	Wed, 27 Aug 2025 15:19:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="tQrILEOn"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Fb//LxOD"
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BD8427FD5D;
-	Wed, 27 Aug 2025 15:16:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D1BE18A6AD
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 15:19:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756307812; cv=none; b=EmNdd/xyGVhV+YZV7WBocUJRO5SDSX1NPvYA0ngBgEXJawRFcp+5JbdLl+VfDofG8EYf7P53azZg2n+LvGxVPeBtV2oJ+FtLUSKQXXI+/rtyPOYtMJAvFCz3jRMVP5535mbpQWBnSpWIQ0EgcKtiXY2ZCfqOtpY1kg2pVQCXKIM=
+	t=1756307957; cv=none; b=ktx6gz9MnF1TkR7H6Osu7pY9r5oOzBA4O4IZryDzvO4MtfxCVmVLDuAmPHQE5LZWpqNiScR4GQxZRkn9O/q5Kjwu8NEjrGPuUTPtGCr1aBI0UBqMDTpMoXOwyGbrFEcweUOT0hQDQkwC9fdUAWC8JnVJ5f/uhFhJdf7zxIcK6BQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756307812; c=relaxed/simple;
-	bh=mOV+nWXhghC+6OaXr13EUm4ZGN4mHYeKxrBdFRkt1RM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sFkHQBoeT9SUJ9yVHDsx32ym9hd3CFvg+g3dgONiwWQcGveEcQ4bsGeFYaBWN1DqUiTrmbQXuUuz4h5VwoP05KVoV2e5qNv51N/4UwM9GjCHy6CZwwRnwa7kLVYTNI92Ce6XQVPvZV90bUYzBIdlYoYF3yoPrKftVswAm3ifOQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=tQrILEOn; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57R7wpnL011849;
-	Wed, 27 Aug 2025 15:16:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=SPyx11geBrvCeW8/DE+b27cLGdioY2
-	twq7XbikpR9hU=; b=tQrILEOnkv2ygrRG3IyrCMGcoKLVm+C7kU+2PbwLRdD9xc
-	k+zwwxhG3qr4s/HFsObRELXYawLhEKRj3ltaBYe1cHFLEoud0wzvNM+r0Wzk5hMk
-	e3NPwuIZ+E/lA3yqqvf2hJ8jc9KW05gfWA4++ZKt3CvGFrrxQ2iF7Kjvck70i+sY
-	zyoS6OJZ3FGu20LMFB3teNdc3yHh7kYS6KsjCdOurGRGRu46e9ixLnd/QAsDsVWT
-	KnMmdrU37hV8/uSUj5Qx3tKQ5Uej02bM7nO1/VznvitGD+95vCDkFsBbFBWpNe7A
-	+ximIn47kMLCHslR5Wa1+gjIKGf2YVxilLBZZRrg==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48q5584tyh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 27 Aug 2025 15:16:42 +0000 (GMT)
-Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 57RFGgVX001288;
-	Wed, 27 Aug 2025 15:16:42 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48q5584tyc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 27 Aug 2025 15:16:42 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 57RCPxFe002473;
-	Wed, 27 Aug 2025 15:16:41 GMT
-Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 48qt6mgahc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 27 Aug 2025 15:16:41 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 57RFGdWA38666592
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 27 Aug 2025 15:16:39 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 2463D2004E;
-	Wed, 27 Aug 2025 15:16:39 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id DD3D120040;
-	Wed, 27 Aug 2025 15:16:36 +0000 (GMT)
-Received: from li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com (unknown [9.39.23.211])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Wed, 27 Aug 2025 15:16:36 +0000 (GMT)
-Date: Wed, 27 Aug 2025 20:46:34 +0530
-From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-To: Zorro Lang <zlang@redhat.com>
-Cc: fstests@vger.kernel.org, Ritesh Harjani <ritesh.list@gmail.com>,
-        djwong@kernel.org, john.g.garry@oracle.com, tytso@mit.edu,
-        linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-ext4@vger.kernel.org
-Subject: Re: [PATCH v5 02/12] common/rc: Add _require_fio_version helper
-Message-ID: <aK8hUqdee-JFcFHn@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
-References: <cover.1755849134.git.ojaswin@linux.ibm.com>
- <955d47b2534d9236adbd2bbd13598bbd1da8fc04.1755849134.git.ojaswin@linux.ibm.com>
- <20250825160801.ffktqauw2o6l5ql3@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
+	s=arc-20240116; t=1756307957; c=relaxed/simple;
+	bh=Kt3Udn/8Xkz3eQMsYEXGabwKtkHaEJrBLbjoYi4NyTY=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=EBKgIDemipoRu/rqTpPEvYr8LMIcrDr/J6teL6GAPLwoyVcdEkdCS0Yr9fOwp9Mq+n2GT2jdR9dhGYjfxJPUy+TbWENER7jA9jVH9ZpoifyIAZvLEAhiEBbRxNdoUcLg5VTxmfKd9K5oQgt4t8XmOq6ya1sXb+SEXNmpDVIfqsA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Fb//LxOD; arc=none smtp.client-ip=209.85.128.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-45a1b0caae1so35698225e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 08:19:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1756307953; x=1756912753; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=26+u1vZm8GxbnUTWqM0HadqqbzPHef0N7bih2NyHOqQ=;
+        b=Fb//LxODdNE45K7JFBVLaL77L4J9daosZNWIjbhLmV0M2B2Lx6g2G7qwBVnc6xLxk6
+         rdgaHSwakH3kNmXiyg5B/WmlPLay3vWdLg3U/fuTNjuo8MYy+Imy5ynvsge4NpgIRRZG
+         zQ/aQ4FId9xlbXqEF6TMy1kA7bQ40cqMJEkd34Ads5G2TsxNp7/bfe8frM8c7zNuGG7R
+         l41eJueS0Ajo7gcXegN/YNJEBAOVAHg0fCklpKrb8gObea2bL2g6sCRa70xuw+RpLYwA
+         y4XIevvOTuMM1puedm+CoEmdFiHRes2/Bm1buPEbuk0M1i7aOhWSGUhM7FRbz3ToYabB
+         aqHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756307953; x=1756912753;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=26+u1vZm8GxbnUTWqM0HadqqbzPHef0N7bih2NyHOqQ=;
+        b=gOmgvinCo1WyCsy2Hnh6JhHGTvoQGrIrMwlYmdEQgjSroW2pO1wnm58g9diQVySHw6
+         wsi8NynQZgXxmHejL3o1p52t10AzEPsPPKiiqYzM102LUWyrUKJCCKQ5gN8QpMUgxQhe
+         rpZfX9KpIhrmjLSCz9dVFd28wyAcqnP0J0AvAEAlCu70jpbiiLzL95+q05+wlfJR5Y9e
+         IC40c6BYjB9gGLfKa125hdp7sfpC2LjiZY6OMsGcQHNPfGJDhabBSBZ5JFh3Yx661gIJ
+         ofFT5N33vYMWEgfdjZ5YsTsvrzjjbxAxsUn6SiwSFIo06pXrkGPdLozwki1cWwfUYwP9
+         idaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXUWEOMYuXwdmzSn2JppNO7XrIJQonLpc8hT7ie8yM/BD4J7tNI4i1VhR0BLyYz/x0dCvvdoiVGKuhaC+A=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw50kKUeS/jli+7h2uf2zWXEYzgKuh+zYeJdljiVXVXHa2PJoZF
+	jyvFjChLj0Gdmyvls0u5IaFYJ1sAg4qPUBfrx6FHBYOKPSVmVQM3AF3kMbxYnIkcXFMDpGRIMRU
+	FccVOJmOCvjJbVw==
+X-Google-Smtp-Source: AGHT+IEKQVr/X7PUctYr0S2ZQywjoScHzWuQZ6wJrsqpJVFUkj/CHPN4LgbezPeCJmgfoN7X2qZ2PUA/itWFng==
+X-Received: from wmbel18.prod.google.com ([2002:a05:600c:3e12:b0:45b:732e:5a16])
+ (user=jackmanb job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:1e8a:b0:459:ddad:a3a3 with SMTP id 5b1f17b1804b1-45b517ddbd5mr183215045e9.25.1756307953668;
+ Wed, 27 Aug 2025 08:19:13 -0700 (PDT)
+Date: Wed, 27 Aug 2025 15:19:12 +0000
+In-Reply-To: <xz2m4q24kgig36wu3enk6qlsxo5xywsaffgivyubadsps5topi@6yupqs7b7cze>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250825160801.ffktqauw2o6l5ql3@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: d02U5Q3hom6xqs3PZk50E5KMp5ujhhzo
-X-Proofpoint-ORIG-GUID: 00srl8NFDJ-SUUPFIpEZKfq2C8CLAwNd
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIzMDAyMSBTYWx0ZWRfXzU/FxPxWV0P6
- 2hwQiSOLB/vjx4nk+bTJyGT8MGii3+ZjEOZnyJb01w/UJ1S/AKOgcG67CH1ulmF67o9kQK4K1Xc
- Lol2JdhQEvv7wSeJHOUVsBdNRPJ0MGixviP01yc5FUUzdXdP0YIiOFTwl5L1MOovEg3UjwMHpRz
- 5yDgylgLQ4BDRud4OhT9wDKC+YY954F6+8k1zrxZFSX9vcP7kRh4VGEFrCEYuYhBoqU0GlcqWH1
- DpspFAEpy4fhrvOhc+C3lzISvQDwmlHTIIg3NyaDlzPJzuyhHtYUjhtsa0noqsbrjA0EhTHrw/K
- ijcGDxOHO6oHVEShn9YXo++MlbfHZs5GvbSoufzQ0uBkuNyjoV2gA2g3pMAEjdUvyvbhEfariqm
- QMsf9fYf
-X-Authority-Analysis: v=2.4 cv=A8ZsP7WG c=1 sm=1 tr=0 ts=68af215a cx=c_pps
- a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
- a=kj9zAlcOel0A:10 a=2OwXVqhp2XgA:10 a=VnNF1IyMAAAA:8 a=eC5F5FB79jDbC9rVOvkA:9
- a=CjuIK1q_8ugA:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-27_03,2025-08-26_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 adultscore=0 priorityscore=1501 suspectscore=0 clxscore=1015
- spamscore=0 impostorscore=0 malwarescore=0 bulkscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508230021
+Mime-Version: 1.0
+References: <20250827-b4-vma-no-atomic-h-v1-0-5d3a94ae670f@google.com>
+ <20250827-b4-vma-no-atomic-h-v1-2-5d3a94ae670f@google.com> <xz2m4q24kgig36wu3enk6qlsxo5xywsaffgivyubadsps5topi@6yupqs7b7cze>
+X-Mailer: aerc 0.20.1
+Message-ID: <DCDB7IYZS73V.2KL54A53D1O1L@google.com>
+Subject: Re: [PATCH 2/3] tools: testing: Use existing atomic.h for
+ vma/radix-tree tests
+From: Brendan Jackman <jackmanb@google.com>
+To: Pedro Falcato <pfalcato@suse.de>
+Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Jann Horn <jannh@google.com>, <linux-kernel@vger.kernel.org>, 
+	<maple-tree@lists.infradead.org>, <linux-mm@kvack.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Aug 26, 2025 at 12:08:01AM +0800, Zorro Lang wrote:
-> On Fri, Aug 22, 2025 at 01:32:01PM +0530, Ojaswin Mujoo wrote:
-> > The main motivation of adding this function on top of _require_fio is
-> > that there has been a case in fio where atomic= option was added but
-> > later it was changed to noop since kernel didn't yet have support for
-> > atomic writes. It was then again utilized to do atomic writes in a later
-> > version, once kernel got the support. Due to this there is a point in
-> > fio where _require_fio w/ atomic=1 will succeed even though it would
-> > not be doing atomic writes.
-> > 
-> > Hence, add an explicit helper to ensure tests to require specific
-> > versions of fio to work past such issues.
-> 
-> Actually I'm wondering if fstests really needs to care about this. This's
-> just a temporary issue of fio, not kernel or any fs usespace program. Do
-> we need to add a seperated helper only for a temporary fio issue? If fio
-> doesn't break fstests running, let it run. Just the testers install proper
-> fio (maybe latest) they need. What do you and others think?
-> 
-> Thanks,
-> Zorro
+On Wed Aug 27, 2025 at 12:56 PM UTC, Pedro Falcato wrote:
+> On Wed, Aug 27, 2025 at 11:04:42AM +0000, Brendan Jackman wrote:
+>> The shared userspace logic used for unit-testing radix-tree and VMA code
+>> currently has its own replacements for atomics helpers. This is not
+>> needed as the necessary APIs already have userspace implementations in
+>> the tools tree. Switching over to that allows deleting a bit of code.
+>> 
+>> Note that the implementation is different; while the version being
+>> deleted here is implemented using liburcu, the existing version in tools
+>> uses either x86 asm or compiler builtins. It's assumed that both are
+>> equally likely to be correct.
+>> 
+>> The tools tree's version of atomic_t is a struct type while the version
+>> being deleted was just a typedef of an integer. This means it's no
+>> longer valid to call __sync_bool_compare_and_swap() directly on it. One
+>> option would be to just peek into the struct and call it on the field,
+>> but it seems a little cleaner to just use the corresponding atomic.h
+>> API. On non-x86 archs this is implemented using
+>> __sync_val_compare_and_swap(). It's not clear why the old version uses
+>> the bool variant instead of the generic "val" one, for now it's assumed
+>> that this was a mistake.
+>>
+>
+> I don't think it's a mistake. Namely we're checking if the cmpxchg occured.
+> So in the new version you'll have trouble incrementing i_mmap_writeable from
+> 0 to 1, where in practice you should (AIUI) see 0 -> 1 (old val = 0, retry) -> 2,
+> which is obviously not correct here.
+>
+> At the very least you'll need some:
+>
+> do {
+> } while(atomic_cmpxchg(&mapping->i_mmap_writeable, c, c+1) != c);
 
-Hey Zorro,
+Oops, yeah my code is total nonsense here - thanks for paying attention.
+I guess I "got away with it" because there's probably no actual races
+going on when I run the tests...
 
-Sure I'm okay with not keeping the helper and letting the user make sure
-the fio version is correct.
+Anyway I'll apply my brain properly next time I get the chance and send
+a v2.
 
-@John, does that sound okay?
-
-Regards,
-ojaswin
-> 
-> > 
-> > Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-> > ---
-> >  common/rc | 32 ++++++++++++++++++++++++++++++++
-> >  1 file changed, 32 insertions(+)
-> > 
-> > diff --git a/common/rc b/common/rc
-> > index 35a1c835..f45b9a38 100644
-> > --- a/common/rc
-> > +++ b/common/rc
-> > @@ -5997,6 +5997,38 @@ _max() {
-> >  	echo $ret
-> >  }
-> >  
-> > +# Check the required fio version. Examples:
-> > +#   _require_fio_version 3.38 (matches 3.38 only)
-> > +#   _require_fio_version 3.38+ (matches 3.38 and above)
-> > +#   _require_fio_version 3.38- (matches 3.38 and below)
-> > +_require_fio_version() {
-> > +	local req_ver="$1"
-> > +	local fio_ver
-> > +
-> > +	_require_fio
-> > +	_require_math
-> > +
-> > +	fio_ver=$(fio -v | cut -d"-" -f2)
-> > +
-> > +	case "$req_ver" in
-> > +	*+)
-> > +		req_ver=${req_ver%+}
-> > +		test $(_math "$fio_ver >= $req_ver") -eq 1 || \
-> > +			_notrun "need fio >= $req_ver (found $fio_ver)"
-> > +		;;
-> > +	*-)
-> > +		req_ver=${req_ver%-}
-> > +		test $(_math "$fio_ver <= $req_ver") -eq 1 || \
-> > +			_notrun "need fio <= $req_ver (found $fio_ver)"
-> > +		;;
-> > +	*)
-> > +		req_ver=${req_ver%-}
-> > +		test $(_math "$fio_ver == $req_ver") -eq 1 || \
-> > +			_notrun "need fio = $req_ver (found $fio_ver)"
-> > +		;;
-> > +	esac
-> > +}
-> > +
-> >  ################################################################################
-> >  # make sure this script returns success
-> >  /bin/true
-> > -- 
-> > 2.49.0
-> > 
-> 
+Thanks for the review!
 
