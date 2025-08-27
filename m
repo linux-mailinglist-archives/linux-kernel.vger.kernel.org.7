@@ -1,244 +1,187 @@
-Return-Path: <linux-kernel+bounces-788467-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788466-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FF1AB38503
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 16:31:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6177B384FE
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 16:31:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F08416CCAD
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 14:31:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD3DC3A749E
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 14:31:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 851901FDE31;
-	Wed, 27 Aug 2025 14:31:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DF8318FDBD;
+	Wed, 27 Aug 2025 14:31:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="CEl84/Ko"
-Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11011067.outbound.protection.outlook.com [52.101.65.67])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="UZ3fJ4vY"
+Received: from mail-il1-f170.google.com (mail-il1-f170.google.com [209.85.166.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C768481B1;
-	Wed, 27 Aug 2025 14:30:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.67
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756305060; cv=fail; b=WgXsK6syJJ4TpRu+9p6DlnbGhmfcadyQ8kdqtOw1hHK9kNqI1X9fmYx8oxFXCQBDMdKvpJPysWBbzwXnuidg5v2UjQSbAcAn6eHztEiIeKUh3HRyVL0fz3hU09BLCAcWQrrhWhd2DdGwaKp/SreiBK+/TpvK/+LFq7/BW7pCnQk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756305060; c=relaxed/simple;
-	bh=Bw21LaqjVew4m1jT29TmUJmaFzfI7wqcwOMQiYzQjsA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=dk/76SGtxcFmmvHitO13nmNcYXH9WnswStdprYj9YMClWIZ8OVeagxtsHSPobIwsu70HdMSZh08446AqKSNFu6Y3HNhxsY0YkISzGR9jM6XowIbNqT23Eyq+A4gVzdAGcT5gSZh9mNCOnh1SxI3/O/zWamv3BL5DvN9UrFtCgFs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=CEl84/Ko; arc=fail smtp.client-ip=52.101.65.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=gFzEy5Ys3Y3g8KteoJNWUPEUAIfk7Nxu37VFKLY+eTpeUoHTSAF8iyTvekXeSaMoO4m015TlFwVEqb4WSmROwaYgIeosi/cu1GdmbW1Zg36mnTtc849ztPT3/nS87jQVepbyjYpAEOjrQH0BsT2o5oqUpWlbuI9zbOTJzd4u2jRp2gEbFTExuul1uwQa7Zdim5t0C+kFhnZHoCCey2tSh1sZPOyc/QczT7VmrFFhiuoU7c1djz4YYZ7bakSFQTyGdIZinmX0ntNCCCKHymb0G1+ft8DkiTccT2CE9wcUpmpofb1l6dCWcqe1wRxcMFSaO+qwi7dtha50BS7n4US9Iw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=JVYmFx4GQu8y3Mo2gN1C1HL2La180G/5HnTbDHTQ6ko=;
- b=qow0XFXAdDBo/Ug4xD3rjLnNku3sEuQS83jhkIRQRFePgLSudRLNAf3vuBLAKqRYOfMYJXKV0xKRz9fiW5fRQ3Sm9XvVu3A05b8gDW9innSXygYvfgtTWIGlJ/63zO1W4etiOOe9M5etSULVhaELtcBjPOYFguVewg8xMc+psw891Ge1snbVLaFBF8r7pDirB1Dh2nyFqrMErUckDBbjzBwZXxN1nBV3SBx26/tPpG3KfHgMZW2Ak9SQGEV5FJ/nXUm8vih9KuRuKn3AmcOA0vmEvyZK48c9bve+Q8U2reZhekW5gFqGlsfqX+ykXhpyNGs33SCAqGYg5dn7KWV7sQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JVYmFx4GQu8y3Mo2gN1C1HL2La180G/5HnTbDHTQ6ko=;
- b=CEl84/KoOT6jkCTjHz99bx20wHfw0HIpjaAqaGTc3cpn6eluja+NJK3m5PY+PQaa+5kz8LCrEYvWjSBUfv0FwXKWhi+nZpTrc93Tz6G0eM99eyTvn8+o/DtxtrMraCt2/jUQo2rgXBsvHqIxLxc3odWLmTgCvcLBgpEW08MbmxwfEfAfBYPeHjPnm8Nb4gCr+R/H0x0eAauozSW5DS/GcHtoS33tH5U0umY7A/NqYT9ObR+rlwXBXDXsyE4Ds4GIUioutDJxGubD9quqz+jg+8jsVNHnOFOZFYinsorcEVwceMpAg2M/YlD/TYE9JX661BjrH/ZSM2LB6QjDWLWX7g==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from DB9PR04MB9626.eurprd04.prod.outlook.com (2603:10a6:10:309::18)
- by GV1PR04MB10966.eurprd04.prod.outlook.com (2603:10a6:150:204::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.24; Wed, 27 Aug
- 2025 14:30:54 +0000
-Received: from DB9PR04MB9626.eurprd04.prod.outlook.com
- ([fe80::e81:b393:ebc5:bc3d]) by DB9PR04MB9626.eurprd04.prod.outlook.com
- ([fe80::e81:b393:ebc5:bc3d%5]) with mapi id 15.20.9073.009; Wed, 27 Aug 2025
- 14:30:54 +0000
-Date: Wed, 27 Aug 2025 10:30:44 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Guoniu Zhou <guoniu.zhou@nxp.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, linux-media@vger.kernel.org,
-	devicetree@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/5] media: nxp: imx8-isi: Reorder the platform data
-Message-ID: <aK8WlNKmMZo+F+vW@lizhi-Precision-Tower-5810>
-References: <20250827-isi_imx93-v1-0-83e6b4b50c4d@nxp.com>
- <20250827-isi_imx93-v1-4-83e6b4b50c4d@nxp.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250827-isi_imx93-v1-4-83e6b4b50c4d@nxp.com>
-X-ClientProxiedBy: BYAPR02CA0062.namprd02.prod.outlook.com
- (2603:10b6:a03:54::39) To DB9PR04MB9626.eurprd04.prod.outlook.com
- (2603:10a6:10:309::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7491F1E502
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 14:30:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.170
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756305059; cv=none; b=bWj49E60yWqosrAne8mfQ7Y2+buqef9ltRBB3pjfRpgIdRNty7XPJQZsCCloHQ5vLwYIhVHc3BhFimuaQ+4mWuy6XeAeJOWkPpL871t8MKZhv6eHds2Jx+9Ld0ONfhfJTIUhDtyLkkVunJyyO88vd6isxcOtk/IOO0ycIn6DWDE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756305059; c=relaxed/simple;
+	bh=ekYO+g2DeAY7OpkpV3uLfFZhqmRFp4OHZb6J73pGdnY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pelZGzaqBfuzxgOGFlTnc7yBOARUwWGo8z7a/nWF4zY/Qt8QcqWJPPc+E6O3jyHBo7tI/ev4MR+QdlBodQGT5gaVFJEHtgtweyov8W72rwnIhR5oW1T4jTirpdM+AyoEFrFIqaytYVQ8slOOyVBn0GIu6U01SriUA75N1pmmlD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=UZ3fJ4vY; arc=none smtp.client-ip=209.85.166.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-il1-f170.google.com with SMTP id e9e14a558f8ab-3f0fcd81068so52695ab.2
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 07:30:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1756305054; x=1756909854; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=BvhGwzAhrDpzRW76hw6st02Qx9plIVjdiLTJdLVN7ms=;
+        b=UZ3fJ4vYtL89Hy7qitdjpODoWXsN16zgEzzSM78vC+alWIiNPT0puOC2EMx4UmOqGM
+         aL6Odtu8Wr4amqGPBS/dYxOMd9JtmeULimUcyslAzGa9fn7o2YO7GiVabcP1mIdvvP1O
+         7m++ePfxI8f70GF+PrVRXsaZ4LQF8uO2EyLUBhmlYQ5yE6AJc9E3AGdVA+KJaylD+auX
+         vWl4/2mjJpUDmKIym0cvuVxEoaKsHG9QTHGaaJ1PxgNYZhryXna6w5OOz30cgS68TIRT
+         ckMOfoesp6/0MSl8Yk+IUpRFIEW8jGZa9xd/no987ccuAw0FPsMTPSSj1Oa/wFSY0bYt
+         dtdQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756305054; x=1756909854;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=BvhGwzAhrDpzRW76hw6st02Qx9plIVjdiLTJdLVN7ms=;
+        b=q7QmLrRLnnDMPTvUml0NZ/ak1POqTHqLNOlf6oVVAeYBoz4V4ClSVfRw37MIKgERzd
+         r8Hi/XztONAQjLfbqS1VMm+sI19IwU2mYRzlEUVm07Ooj5jdMWjzZTUwjtiYrE06z21H
+         rSUuW0PS9KaFy9utKvciFyvX5alx0iQx654VTWs8KeKJ0yJYMlvVBboVLaQIXfkifpnz
+         PglE3gCzaas3z3acKI1Nh20BsPii84DDlIz/e7jG9GbETR/Da2oNltPVssbH9JDrhr8z
+         4knDO1bRAoIMBssteiDMKkYXp9zk8jip42csybmk1LCZVpmEnKZfZrO+89RMUp4HfsDD
+         ip+w==
+X-Forwarded-Encrypted: i=1; AJvYcCU8tzJXXOxf/NGnQ44fLSOXnQNcDg8V4Ya0lEgBD+9oLtdRC1ZBmSW3hwygb2ULP881iykZA6LhmW89ULg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YygtMyKif8z6C7rO7xMezBE4rIkk0mHNGHkMx60nJBPdlf5LJNh
+	axRHr7fRPjqYJ0LFG5bipb2oSzMYDnKmlsTAROjgnSEN1vk5YA31ALz/S74ZYXUooaYjQ6t/3Nn
+	8Ps9K
+X-Gm-Gg: ASbGncu5mYlxfpIOEbCm1dvPS3qZAySLirPxoagn4AJraDPlk9CRS+uDzGp7qv4N81e
+	U3oFY56plWi+H5WUl9NOL4hVm/9RbbfMUhVHARHutHGwm9bBC8qOi1Sa/tXgrFulKkK6FJ6SC62
+	41kiLI2Pcr86fgMuPaAfnDj04UMIM6G9X3q805/zKV+b3Fd9o6f2zNjTcf+kept5E2rsqP+3ZOm
+	H18rZDumwRLj8eEliVJvwtyfbdkQzu0bd/En+CQYAS/j8WlZCB5S1u52axt04BrFrd4pzsopqH5
+	J94uBu3rFjT5kBYWqu+1cOSWuOf08F1cvrgrmQUUVPYRlluFiaDVAtM63d+MiC7WTZlEJdz+nq8
+	dpr1ncShJmn9VolQcWNMFUN65iszY/JwHxieRsGZ8
+X-Google-Smtp-Source: AGHT+IFnFm3nE5momCbmzhmqVeWBi4QobS9Cc/xr+4yGN08493B+GGco3c+Pt/f1l2wDN+e4gkkJEQ==
+X-Received: by 2002:a05:6e02:2142:b0:3e5:5357:6dd4 with SMTP id e9e14a558f8ab-3e92231673fmr272052845ab.20.1756305054391;
+        Wed, 27 Aug 2025 07:30:54 -0700 (PDT)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3eaa5f05661sm78097235ab.52.2025.08.27.07.30.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 27 Aug 2025 07:30:53 -0700 (PDT)
+Message-ID: <fcfd5324-9918-4613-94b0-c27fb8398375@kernel.dk>
+Date: Wed, 27 Aug 2025 08:30:52 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DB9PR04MB9626:EE_|GV1PR04MB10966:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6d96cfcd-28af-4495-93a4-08dde576548c
-X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
- BCL:0;ARA:13230040|1800799024|7416014|52116014|376014|366016|19092799006|38350700014;
-X-Microsoft-Antispam-Message-Info:
- =?us-ascii?Q?DUukO9Wi88rtoLxvO1+FQTtR7auPym44S7mRgo1xhbS3jTEk2zjTTshqqaSy?=
- =?us-ascii?Q?nw1lPvDmB1KqgNG4fXU9cF/tnwslpFmyDjFKX7UGQBkMrnzngdT/85Dakgft?=
- =?us-ascii?Q?KmJF4ey5sktyYUGEidRMiJGBSgsPRAFFsMlLZEL/xPFjGIGxy7AsWlBT3lz/?=
- =?us-ascii?Q?wEck4sdVhw6mEJk+ODRlxj4NLat3if/8e9NrE5tddfiTp5029O9PIcERCALr?=
- =?us-ascii?Q?vpFTY4DPgjAZHK0LdL/O6d1wJ65SIltNi7DngyOP0I3Mjuz6496Se7xQI/Iq?=
- =?us-ascii?Q?SV81K3thNjgepGqpcwkIGuj0/NPy90GIqD2bFPApICQf0ajlRKkU2c58Lzop?=
- =?us-ascii?Q?FeDQMkG3bMHrXzIZ0J5/tjbm9BIY5ke7FVDnfKbPfnY9CEGRfsjF47E/Yqtp?=
- =?us-ascii?Q?eW04sOSmnV8iZ/BvcH7sHQn6e2atLJSJi2uWhdXRkLFCRKdDTWHbZsxWcLjD?=
- =?us-ascii?Q?fyjo+TYh12HNhn2VwgcKKn4QGUCH72Mwsyt7dozCfBLfGCMXjqzeo0QRyIZB?=
- =?us-ascii?Q?clvfgm773r3jgy3CZkN1E/DjumDgurRu3kvPMgr26BZQZCgdnZ5bABkQrIdL?=
- =?us-ascii?Q?wqN2/eDEbkAtrxAMF0A1P9ScpTt0U5pwxWbinvz8DDX4EYZfgyJOqzkuzGCp?=
- =?us-ascii?Q?gGW1rkF83T3Fg2AjqcHlx460oHp7yZLfbtpp/Z4UFbbA+eQ1uaiSTtjeW+6S?=
- =?us-ascii?Q?u15n1cdsE2Ei/x23CZwLtKQEnw4ng0BQIeMgh9V5jVugfJ2KCrFGcqQIpo4N?=
- =?us-ascii?Q?HsxIpolb85DIxgNgxuXJuth18PsOhxwU5xbwE67JawYuGuturji2S51FkuKC?=
- =?us-ascii?Q?xyS6k80wci075q/r76itt9zFYNOrHaZ8LDlHT+oJ6P6yQYUkNSF5m3MgYmhS?=
- =?us-ascii?Q?HV583w09p1TsdFRGNy86ShS6vWW/tHdrWYQTMqOb/jUc6oFF0o3sqyXJySda?=
- =?us-ascii?Q?rRwAZlsQ0yomeSN3iNUvM3iVVHh+jtdkgoSb+W8EP8fbM9+HjQbIwLhFsyRE?=
- =?us-ascii?Q?nsrA6lH1sZbhwu/Ud7/SLh8XLbBDnXybdvy+BopU42aaaej7kmfGlOD+Dfl0?=
- =?us-ascii?Q?MD6c+X/Ho2qxZxiPftHxQDz+J43te8AUzjsWcS/IPknY/D5WCbUlk13H0WQh?=
- =?us-ascii?Q?N1OqH6jakHtDvo0RJBQngH4XJbeUuFXscfXSlCK+1OamCUN49t/RxQZCS4ll?=
- =?us-ascii?Q?wr5OWj86Ceo1+6cKLzXrgJG37ViitX53rf92eFwjqIsWkgJ1fTR/3LMGiF21?=
- =?us-ascii?Q?1ATeulhAFjTdn+TGKw0SUN0V3oRg8inOhD3tb5ab6ohsMz7iUJ5h0N5u1zRk?=
- =?us-ascii?Q?wV+/epud/PQrEA2Gx64pzu1mZwTDK6kyJ8yfuBc5sMSGgRXwsVn6e/kuOCsR?=
- =?us-ascii?Q?g5rqkJ1v8JBM1PZg9wFd0yr/5PxGXHI1cTt6otKIrkv2ggCH69iFllEYDwiD?=
- =?us-ascii?Q?W391BZiOEHmXe89/YafGWY2+smTOAuvLsz/T5xatInRC5AoaZMAO+w=3D=3D?=
-X-Forefront-Antispam-Report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR04MB9626.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(52116014)(376014)(366016)(19092799006)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
- =?us-ascii?Q?xHDyNqI/tm5OYI6nInj0ama+hJcbrlZKQbk0QjSZ4aCuNi+qe2C+vxt2MYeB?=
- =?us-ascii?Q?lSDCZalwLSPL9tJYnB1+WoyHZ2hlpo2HOwENAiFJAf7lSnUiGru55IrPg2St?=
- =?us-ascii?Q?Av2j1eMtDC3H8qiQqgNBxThH04J7u7He/x8YIFDjl7er63SL5b/hpl25V8Ks?=
- =?us-ascii?Q?m8VKpFzeBG4w15O014hLloBD1ohxEBlZXs2088f84zoM/Xo8zKQhSyruzfgQ?=
- =?us-ascii?Q?/D0Lc9QInScueI649YuQYMBXR1SjFX9IrLzOLf39gpSQ/naDjU9KYqqiwrC1?=
- =?us-ascii?Q?gZOeiDByi1p868PP4BM4EeLob1XnCXwxCeXN1NjXKyMav5+WId7t0z8vCC88?=
- =?us-ascii?Q?M0OU7hCYunjPElSZvhvwnujUO8kj73J5oZaKGYq34f1WuwlAyvxgi/eiKxON?=
- =?us-ascii?Q?OBupjP0N821SlkgonUjiyPT0yetkxL6OWt6nmx1ILVqZDPg6xKbL1Y/qdFBP?=
- =?us-ascii?Q?csFPTEWmd6Y0motnSOTCCcHRQKhuk0EDDScW1xfr+6mpoHDX03yOl0Rpq+rx?=
- =?us-ascii?Q?U933QokYtHtUpCL7E/RKMywI1yh8VPqb30RrY+KTZiy/AAzDK5ZlZdQ+ELbi?=
- =?us-ascii?Q?XFiC9w/yu5I+8NN/lnbqYQGKym16nF3rSfp0jP/sBnietiMzrWJbmSsZ9BJd?=
- =?us-ascii?Q?uNy8P4JKQegVD9mwcL2CR12glqKhMojGit6Rkqu7zRyA1/X2sQYsKeIsLte3?=
- =?us-ascii?Q?Tkgf07W3Shc4HfYsJ864mc5R/b+25qMBHuej83UoAoC486g/ghr9aWHTIaCy?=
- =?us-ascii?Q?xxffz41ot6HjMi7Jb4IFuNrb3Y+s+UEXbHnuOQJ3IJtUlFJ1emsCuRSHCEWE?=
- =?us-ascii?Q?AKm1mjzF4Mj8nWMy/K47iigZGmdYj6/XKKxKLjEwFy8S226imqoNO5wKO1qI?=
- =?us-ascii?Q?8t5H5LEFad55hhQIBkjcHn2DrAaQENxprFKF9zUD7W6g9iAMKMTb4z+pFREj?=
- =?us-ascii?Q?SQQ5/Tcw4bxvRJd4Xae5D4nLg3ko0YS/05D5WqPbfwiIm6o7BL6gudNND4M7?=
- =?us-ascii?Q?mTDsABK96PHY1EM+wBMOZbAOPzIizzhBnTBq45YnlIILeJeEdz1qSI3kp3Pu?=
- =?us-ascii?Q?nMxwo8+lC3GaQ4yZjUj5uO8MuvTyt1DuxMlfA9loy0KRY/p8HR/FLc3c/doa?=
- =?us-ascii?Q?5t8Q5x57GBwIQ2iDe1rsvWKIsVrKtlUc9eSlOa8MXEFzUttHjWBc0ycibEAL?=
- =?us-ascii?Q?4dbt0G06LpdRf6V3BUEwFa8Y79Lu/PKNaWZQ1+huhW8MocoRQ3CwcJMce3kQ?=
- =?us-ascii?Q?v5ZSShgPGnbaSoHMlYTYvacXmJp++uZYezxUWU8MYRYXeGg16wbmFJPDwrgO?=
- =?us-ascii?Q?fIJfgWgrOtbiSh0WukfoSAMmMghCj0bhqWBzRt6gUWOQZ4xzAg1T9TaL7uFW?=
- =?us-ascii?Q?HbgardRIp6JsovRKrfuOc3lkNWtjkEyjMwFdI3OV84+cSGekVcN8J08UJZKo?=
- =?us-ascii?Q?4+deo+Sj3Ws/l0fK5/CIJw3ESKJtzRRqHEtouw/q/60ZkYrXZexqpdfQhANX?=
- =?us-ascii?Q?YqLTcuUbYmgv0+7bRMya+qaIuVFkUNcqq/sWtauAcQ5eD1wmoTq1k1rBO7sY?=
- =?us-ascii?Q?TYcW3XOS3cAM7C8hUhO3544lIMHZl3YpyMZVowZE?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6d96cfcd-28af-4495-93a4-08dde576548c
-X-MS-Exchange-CrossTenant-AuthSource: DB9PR04MB9626.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2025 14:30:54.5284
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: /HCmzjXD4fFLI9r8nkLSfGwfmt6Fzrs/SJAyuAxu2PrpzQm01AmlE+pT5psiX0LxtD3q3390UPAIngwm8lnE0w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR04MB10966
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] io_uring/kbuf: fix infinite loop in
+ io_kbuf_inc_commit()
+To: Qingyue Zhang <chunzhennn@qq.com>
+Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Suoxing Zhang <aftern00n@qq.com>
+References: <20250827114339.367080-1-chunzhennn@qq.com>
+ <tencent_000C02641F6250C856D0C26228DE29A3D30A@qq.com>
+From: Jens Axboe <axboe@kernel.dk>
+Content-Language: en-US
+In-Reply-To: <tencent_000C02641F6250C856D0C26228DE29A3D30A@qq.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Aug 27, 2025 at 05:53:51PM +0800, Guoniu Zhou wrote:
-> Sort platform data in the order of compatible strings in of_match table
-> to make it more convenient to read.
->
-> No functions changed.
->
-> Signed-off-by: Guoniu Zhou <guoniu.zhou@nxp.com>
-
-Reviewed-by: Frank Li <Frank.Li@nxp.com>
-
+On 8/27/25 5:44 AM, Qingyue Zhang wrote:
+> In io_kbuf_inc_commit(), buf points to a user-mapped memory region,
+> which means buf->len might be changed between importing and committing.
+> Add a check to avoid infinite loop when sum of buf->len is less than
+> len.
+> 
+> Co-developed-by: Suoxing Zhang <aftern00n@qq.com>
+> Signed-off-by: Suoxing Zhang <aftern00n@qq.com>
+> Signed-off-by: Qingyue Zhang <chunzhennn@qq.com>
 > ---
->  .../media/platform/nxp/imx8-isi/imx8-isi-core.c    | 44 +++++++++++-----------
->  1 file changed, 22 insertions(+), 22 deletions(-)
->
-> diff --git a/drivers/media/platform/nxp/imx8-isi/imx8-isi-core.c b/drivers/media/platform/nxp/imx8-isi/imx8-isi-core.c
-> index 981648a0311374597a033a7ecbf39f7b0b252cb0..cae918792ddbe3e6f458606fbbb7d0ad5738504c 100644
-> --- a/drivers/media/platform/nxp/imx8-isi/imx8-isi-core.c
-> +++ b/drivers/media/platform/nxp/imx8-isi/imx8-isi-core.c
-> @@ -314,6 +314,28 @@ static const struct mxc_isi_plat_data mxc_imx8mp_data = {
->  	.has_36bit_dma		= true,
->  };
->
-> +static const struct mxc_isi_plat_data mxc_imx8qm_data = {
-> +	.model			= MXC_ISI_IMX8QM,
-> +	.num_ports		= 5,
-> +	.num_channels		= 8,
-> +	.reg_offset		= 0x10000,
-> +	.ier_reg		= &mxc_imx8_isi_ier_qm,
-> +	.set_thd		= &mxc_imx8_isi_thd_v1,
-> +	.buf_active_reverse	= true,
-> +	.has_36bit_dma		= false,
-> +};
+>  io_uring/kbuf.c | 9 +++++++--
+>  1 file changed, 7 insertions(+), 2 deletions(-)
+> 
+> diff --git a/io_uring/kbuf.c b/io_uring/kbuf.c
+> index 81a13338dfab..80ffe6755598 100644
+> --- a/io_uring/kbuf.c
+> +++ b/io_uring/kbuf.c
+> @@ -34,11 +34,12 @@ struct io_provide_buf {
+>  
+>  static bool io_kbuf_inc_commit(struct io_buffer_list *bl, int len)
+>  {
+> +	struct io_uring_buf *buf, *buf_start;
 > +
-> +static const struct mxc_isi_plat_data mxc_imx8qxp_data = {
-> +	.model			= MXC_ISI_IMX8QXP,
-> +	.num_ports		= 5,
-> +	.num_channels		= 6,
-> +	.reg_offset		= 0x10000,
-> +	.ier_reg		= &mxc_imx8_isi_ier_v2,
-> +	.set_thd		= &mxc_imx8_isi_thd_v1,
-> +	.buf_active_reverse	= true,
-> +	.has_36bit_dma		= false,
-> +};
+> +	buf_start = buf = io_ring_head_to_buf(bl->buf_ring, bl->head, bl->mask);
+>  	while (len) {
+> -		struct io_uring_buf *buf;
+>  		u32 this_len;
+>  
+> -		buf = io_ring_head_to_buf(bl->buf_ring, bl->head, bl->mask);
+>  		this_len = min_t(u32, len, buf->len);
+>  		buf->len -= this_len;
+>  		if (buf->len) {
+> @@ -47,6 +48,10 @@ static bool io_kbuf_inc_commit(struct io_buffer_list *bl, int len)
+>  		}
+>  		bl->head++;
+>  		len -= this_len;
 > +
->  static const struct mxc_isi_plat_data mxc_imx8ulp_data = {
->  	.model			= MXC_ISI_IMX8ULP,
->  	.num_ports		= 1,
-> @@ -337,28 +359,6 @@ static const struct mxc_isi_plat_data mxc_imx93_data = {
->  	.has_36bit_dma		= false,
->  };
->
-> -static const struct mxc_isi_plat_data mxc_imx8qm_data = {
-> -	.model			= MXC_ISI_IMX8QM,
-> -	.num_ports		= 5,
-> -	.num_channels		= 8,
-> -	.reg_offset		= 0x10000,
-> -	.ier_reg		= &mxc_imx8_isi_ier_qm,
-> -	.set_thd		= &mxc_imx8_isi_thd_v1,
-> -	.buf_active_reverse	= true,
-> -	.has_36bit_dma		= false,
-> -};
-> -
-> -static const struct mxc_isi_plat_data mxc_imx8qxp_data = {
-> -	.model			= MXC_ISI_IMX8QXP,
-> -	.num_ports		= 5,
-> -	.num_channels		= 6,
-> -	.reg_offset		= 0x10000,
-> -	.ier_reg		= &mxc_imx8_isi_ier_v2,
-> -	.set_thd		= &mxc_imx8_isi_thd_v1,
-> -	.buf_active_reverse	= true,
-> -	.has_36bit_dma		= false,
-> -};
-> -
->  /* -----------------------------------------------------------------------------
->   * Power management
->   */
->
-> --
-> 2.34.1
->
+> +		buf = io_ring_head_to_buf(bl->buf_ring, bl->head, bl->mask);
+> +		if (unlikely(buf == buf_start))
+> +			break;
+>  	}
+>  	return true;
+>  }
+
+Maybe I'm dense, but I don't follow this one. 'len' is passed in, and
+the only thing that should cause things to loop more than it should
+would be if we do:
+
+len -= this_len;
+
+and this_len > len;
+
+Yes, buf->len is user mapped, perhaps we just need to do:
+
+diff --git a/io_uring/kbuf.c b/io_uring/kbuf.c
+index f2d2cc319faa..569f4d957051 100644
+--- a/io_uring/kbuf.c
++++ b/io_uring/kbuf.c
+@@ -36,15 +36,18 @@ static bool io_kbuf_inc_commit(struct io_buffer_list *bl, int len)
+ {
+ 	while (len) {
+ 		struct io_uring_buf *buf;
+-		u32 this_len;
++		u32 buf_len, this_len;
+ 
+ 		buf = io_ring_head_to_buf(bl->buf_ring, bl->head, bl->mask);
+-		this_len = min_t(int, len, buf->len);
+-		buf->len -= this_len;
+-		if (buf->len) {
++		buf_len = READ_ONCE(buf->len);
++		this_len = min_t(int, len, buf_len);
++		buf_len -= this_len;
++		if (buf_len) {
+ 			buf->addr += this_len;
++			buf->len = buf_len;
+ 			return false;
+ 		}
++		buf->len = 0;
+ 		bl->head++;
+ 		len -= this_len;
+ 	}
+
+so that we operate on a local variable, and just set buf->len
+appropriate for each buffer.
+
+?
+
+-- 
+Jens Axboe
 
