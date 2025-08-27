@@ -1,101 +1,133 @@
-Return-Path: <linux-kernel+bounces-788279-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788280-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEF52B38225
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 14:19:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5522B38226
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 14:19:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F0611BA715B
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 12:19:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD6B41BA725A
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 12:19:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B588D285061;
-	Wed, 27 Aug 2025 12:18:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16999303C88;
+	Wed, 27 Aug 2025 12:19:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=walle.cc header.i=@walle.cc header.b="z9zv6kIQ"
-Received: from mail.3ffe.de (0001.3ffe.de [159.69.201.130])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l8u5cF2S"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2B6C86348;
-	Wed, 27 Aug 2025 12:18:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.201.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D6023019A7;
+	Wed, 27 Aug 2025 12:19:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756297136; cv=none; b=LvLvCXr5lIOUEnCds7Zryw4JuCaHyljTtLVmHLszaDJjbqW6tGFX9OWnloBu2P2eCNM0MKvEXyK47ZyZHPUKT4W+vjMTyNQDn0jYuV8s9H2/U1nVIjuvMXjt28PcIJbjMoQ1mKOs6ueUn8DZ8Tmji9XIdcPVxDiFX8IpXNr7twg=
+	t=1756297159; cv=none; b=iK8xz+HHtldXgMh2Ye9cHYvrGEmX8+VAwM9C/NtdvgWEFLA6Cjd3UisBwYe8A1FuXHUqnaaW726ZIzQYdkdXH2J/EG8mUp071AeGZanKvtCsKkf9BkVE/nOEdZSQ4kA6OSGO4G/3+XCgTkEvvOTDl4GvDVeKRN+Kn15X4bmq33A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756297136; c=relaxed/simple;
-	bh=BAZ6kW+urfpJVrbmmVHyScLCZdUx7Khi8HxkOyhlNCw=;
-	h=Content-Type:Date:Message-Id:Subject:Cc:From:To:References:
-	 In-Reply-To; b=MbcmPGHI3BHGoalSsf12LLLgB8Vc8gW9gK/Qq3zskZug6i+fPlAl2FfkD6UbvZojcd1DkE95/lDBZ7ujubt5OVFU43A2Cy/0nS31VcO0JYnpiD3+o2usjttQojbGm8ulxWxolax+B465J6gnDME2EPzsmOQVYn7F0+Y69IKX2uU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=walle.cc; spf=pass smtp.mailfrom=walle.cc; dkim=pass (2048-bit key) header.d=walle.cc header.i=@walle.cc header.b=z9zv6kIQ; arc=none smtp.client-ip=159.69.201.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=walle.cc
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=walle.cc
-Received: from localhost (unknown [213.135.10.150])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.3ffe.de (Postfix) with ESMTPSA id EDA853B5;
-	Wed, 27 Aug 2025 14:18:44 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2022082101;
-	t=1756297125;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:content-type:content-type:in-reply-to:in-reply-to:
-	 references:references; bh=BAZ6kW+urfpJVrbmmVHyScLCZdUx7Khi8HxkOyhlNCw=;
-	b=z9zv6kIQFoN2PsmzULXqbyFV4INj7xiF/R3wu5k7KzkFZ/Yy4dv7xMoA9IGDTNv6o2bCOJ
-	khCF+QlpsciCiL6qil5OGsIFmU+lgeHoZStyNJpaqi9GJwRigWWzze2R3aJ9CfPJ2oDL9g
-	0KJSbA8JbzQiVH6VUd27HYIFwkyR9uIXymFlNFoZ6alDxpRX7E1zyuQixVHfXxNGoC7bhK
-	Ksc4nhICEp4UnwtquAgnrUojEd9wif3qgWbr/Ly/VZnYzgtjTVch4yPrkK3pLCWkgExWt7
-	n5F2R+0cFZfrVmtLPFic9F+nt22eNHqqDw4n0rvdvWvnz/SvWK18S1XZdi1G3w==
-Content-Type: multipart/signed;
- boundary=25eabf0cb9a9a7b93c31748f8706f21d7f3e417daa07d5fb9c4f9131d56c;
- micalg=pgp-sha384; protocol="application/pgp-signature"
-Date: Wed, 27 Aug 2025 14:18:42 +0200
-Message-Id: <DCD7DBPZMCSI.1516QNLWGT6FP@walle.cc>
-Subject: Re: [PATCH v1 0/7] Initial Kontron SMARC-sAM67 support
-Cc: "Vignesh Raghavendra" <vigneshr@ti.com>, "Tero Kristo"
- <kristo@kernel.org>, "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski"
- <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>, "Jean Delvare"
- <jdelvare@suse.com>, "Guenter Roeck" <linux@roeck-us.net>, "Lee Jones"
- <lee@kernel.org>, "Srinivas Kandagatla" <srini@kernel.org>, "Wim Van
- Sebroeck" <wim@linux-watchdog.org>, <linux-arm-kernel@lists.infradead.org>,
- <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <linux-hwmon@vger.kernel.org>, <linux-watchdog@vger.kernel.org>
-From: "Michael Walle" <michael@walle.cc>
-To: "Michael Walle" <mwalle@kernel.org>, "Nishanth Menon" <nm@ti.com>
-X-Mailer: aerc 0.16.0
-References: <20250822131531.1366437-1-mwalle@kernel.org>
- <20250822152313.vjzjtzik2q5ek5kq@sadly>
- <DCBBY4827XAZ.11UHI6NWP7RT0@kernel.org>
-In-Reply-To: <DCBBY4827XAZ.11UHI6NWP7RT0@kernel.org>
+	s=arc-20240116; t=1756297159; c=relaxed/simple;
+	bh=U7W40+0vxc7wcdfrmKLjhhWcYucQeqjz/QKKtUOo7bU=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=Rob0lO37VQIGhM8Df9ZwOr6/6wsqqKjJcsM++5xOWaEK8h2T3Oq32vS3N6N0xChr9L+2PGDAyAbP28zLDag6GaIsoNsnaH/x/2lH/F+eD0ri+X3Mo+doc6DuQ+V0lkhxjzAuOSYdFwJzcbLLJXG+y5k2rZaz4OqL7QLWHaGaDxc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l8u5cF2S; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72B29C4CEF4;
+	Wed, 27 Aug 2025 12:19:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756297158;
+	bh=U7W40+0vxc7wcdfrmKLjhhWcYucQeqjz/QKKtUOo7bU=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=l8u5cF2SudidspF66C+JepyroQu7V7+NaZk4fQsdB1bqr09I5bWNPF3W+BgGeqOoE
+	 QWTBYsnCxHOycOVSgDzUqinM+A2R+ImB7Y0glmEUGmJ0wJ6CcoA8W03+PIoxx3MEyN
+	 /QpkzHvP2qUyxLUQgOnKyxxucVKsCe6qtgrqRSJR82IjrLENsF5BB2asCNggd6tRuv
+	 TQQou/N4GL1DuobV7JguH91JZsb71jkpuOzv7PLsY72dJsD/JCCPEs2VXacEraFkCE
+	 pObugJR0S6Aw892emdVzVl27toi1CQE6HQj/rys7MbSGUlyd2YoZCBXJsnm9VYYn/l
+	 VZ3PRPeDfzs7g==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-
---25eabf0cb9a9a7b93c31748f8706f21d7f3e417daa07d5fb9c4f9131d56c
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
+Date: Wed, 27 Aug 2025 14:19:11 +0200
+Message-Id: <DCD7DP6A72A8.2HAYR7K7Z14UO@kernel.org>
+Subject: Re: [PATCH v1 2/2] rust: Add read_poll_timeout_atomic function
+Cc: "FUJITA Tomonori" <fujita.tomonori@gmail.com>, <a.hindborg@kernel.org>,
+ <alex.gaynor@gmail.com>, <ojeda@kernel.org>, <aliceryhl@google.com>,
+ <anna-maria@linutronix.de>, <bjorn3_gh@protonmail.com>,
+ <boqun.feng@gmail.com>, <frederic@kernel.org>, <gary@garyguo.net>,
+ <jstultz@google.com>, <linux-kernel@vger.kernel.org>, <lossin@kernel.org>,
+ <lyude@redhat.com>, <rust-for-linux@vger.kernel.org>, <sboyd@kernel.org>,
+ <tglx@linutronix.de>, <tmgross@umich.edu>, <acourbot@nvidia.com>
+To: "Daniel Almeida" <daniel.almeida@collabora.com>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <20250821035710.3692455-1-fujita.tomonori@gmail.com>
+ <20250821035710.3692455-3-fujita.tomonori@gmail.com>
+ <DCCF63BESWQ9.9LC8MZK7NG1Y@kernel.org>
+ <20250827.091427.1081669324737480994.fujita.tomonori@gmail.com>
+ <DCD35NEEPLYB.2PBCLR8FWFGKD@kernel.org>
+ <DCD51BP7YXJV.3BLY6YJKGC58W@kernel.org>
+ <D8CE958C-508F-4A09-96BA-985B5A7C2BA7@collabora.com>
+In-Reply-To: <D8CE958C-508F-4A09-96BA-985B5A7C2BA7@collabora.com>
 
-> I'd expect that Lee is picking up the first 6 patches after they got
-> an ACK. Please correct me if I'm wrong, Lee.
+On Wed Aug 27, 2025 at 2:14 PM CEST, Daniel Almeida wrote:
+> Hi Danilo,
+>
+> [=E2=80=A6}
+>
+>>=20
+>> Actually, let me put it in other words:
+>>=20
+>> let val =3D read_poll_timeout_atomic(
+>>     || {
+>>         // Fetch the offset to read from from the HW.
+>>         let offset =3D io.read32(0x1000);
+>>=20
+>>         // HW needs a break for some odd reason.
+>>         udelay(100);
+>>=20
+>>         // Read the actual value.
+>>         io.try_read32(offset)
+>>     },
+>>     |val: &u32| *val =3D=3D HW_READY,
+>>     Delta::from_micros(0),      // No delay, keep spinning.
+>>     Delta::from_millis(10),     // Timeout after 10ms.
+>> )?;
+>>=20
+>> Seems like a fairly reasonable usage without knowing the implementation =
+details
+>> of read_poll_timeout_atomic(), right?
+>>=20
+>> Except that if the hardware does not become ready, this will spin for 16=
+.67
+>> *minutes* -- in atomic context. Instead of the 10ms the user would expec=
+t.
+>>=20
+>> This would be way less error prone if we do not provide a timeout value,=
+ but a
+>> retry count.
+>>=20
+>>> Instead, I think it makes much more sense to provide a retry count as f=
+unction
+>>> argument, such that the user can specify "I want a dealy of 100us, try =
+it 100
+>>> times".
+>>>=20
+>>> This way it is transparent to the caller that the timeout may be signif=
+icantly
+>>> more than 10ms depending on the user's implementation.
+>>>=20
+>>> As for doing this in C vs Rust: I don't think things have to align in e=
+very
+>>> implementation detail. If we can improve things on the Rust side from t=
+he
+>>> get-go, we should not stop ourselves from doing so, just because a simi=
+lar C
+>>> implementation is hard to refactor, due to having a lot of users alread=
+y.
+>
+> I must say I do not follow. Can you expand yet some more on this?
 
-Ah my bad, patches 2-6, i.e. everything belonging to the MFD driver.
-
--michael
-
---25eabf0cb9a9a7b93c31748f8706f21d7f3e417daa07d5fb9c4f9131d56c
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iKcEABMJAC8WIQTIVZIcOo5wfU/AngkSJzzuPgIf+AUCaK73oxEcbWljaGFlbEB3
-YWxsZS5jYwAKCRASJzzuPgIf+NPvAYDV89x/w4W9hx/fkMchHZt5GuIDMb82EdyH
-GzA6TiGytphiSsatpAK5+CjxCG5h+BYBfje+9JS6ChAetWdIq0skCvlLswe9Gdkr
-XEQfnTuzXkZMTxp99sjE7obqH0FpmSfssQ==
-=HTIU
------END PGP SIGNATURE-----
-
---25eabf0cb9a9a7b93c31748f8706f21d7f3e417daa07d5fb9c4f9131d56c--
+Sure, but it would help if you could clarify which aspect you want me to ex=
+pand
+on. :)
 
