@@ -1,121 +1,97 @@
-Return-Path: <linux-kernel+bounces-788048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D591AB37F25
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 11:46:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD469B37F2C
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 11:48:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 068F41BA3C13
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 09:46:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 891C5177D37
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 09:48:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FCD62F9985;
-	Wed, 27 Aug 2025 09:46:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B1622D4B71;
+	Wed, 27 Aug 2025 09:48:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DPtdGno7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="CYbXcZK5"
+Received: from out30-119.freemail.mail.aliyun.com (out30-119.freemail.mail.aliyun.com [115.124.30.119])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92BF52989B7;
-	Wed, 27 Aug 2025 09:46:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EB238F48;
+	Wed, 27 Aug 2025 09:48:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.119
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756287966; cv=none; b=kxcUoMVsSMFe6CFCdAEvfVw8hZqvhmBATU1SZa/gPowM77cyG1hdo6ntau/uqdtNp9WuR6JtFUVRRty7Xw1k46sxnbe0oYSO+hh3xSC5HXeiUqEef0gJikPTqFCRqXtYZ4vU0456JcbQrww9K/wGlNwn//CVsHhl24d3DLY07Rc=
+	t=1756288102; cv=none; b=e4tmmV3uGEhwYrMknbAbUF3c3xmAtY4FaIdfr6R+PG9GtSSyleAd8Qa3MzEjw0E0HOYIUIIqSrgruNNMvF5HDbKxWLPwcNcuS4cM25Ktd89U7MsOm89epf1A/Yw7uWM/euR68svxsPqM/AGFLCVI6ivt+U6DUHBBqczNlD6cI7E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756287966; c=relaxed/simple;
-	bh=u9w+QyKfs4d6GbI4eKQgVeNDXR2KS703PWN7laxmAHs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=RzVVRqw8jii70JAGwB2BVRHIfReKz0RG6EDRCDe2WaawrcupRzNsziHs2eBeCVtJf8C93Ni6TqoHTCRbchC+xy/VOXvGuqSvpelMRodKRNHNmXk/tcGFV/AI4p1XsyUjMkTOSTMJnVZJZ9h4YRdxJLwGe8mnIx5P3eB/Em8Gcl4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DPtdGno7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 360DBC4CEEB;
-	Wed, 27 Aug 2025 09:46:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756287966;
-	bh=u9w+QyKfs4d6GbI4eKQgVeNDXR2KS703PWN7laxmAHs=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=DPtdGno7rn2UMayPEjN0ybxuEJ35q7Fce6ysG0HyrVAmvuLMWzUZKDBPGmR3oGQFK
-	 PJlRvcTFHi7QoUk3gwDrz9e6UFoLVt5+b2t6CJhmE5QZUHiRZk3+jJWVtxPokYUEwG
-	 MjbaqA248AWscU3ukiZmKJBdUUTypX9On9QUfa5hrNOQr2zgBAnwkwuooJMBqUrPnb
-	 ZUToIJv40YlwpTv3VGGqfDJvFnKkQ79qEoDs/ox8rnuNoT51iS0baThfqlcNFlND8A
-	 WuBXCYmhhx+ucYNrszUpEgsnLWPqxF3Ode2ZbKYYLIFxFLxAuh1gWmbsrSFMNvUyb+
-	 Oh/C8oZkz56bQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15262CA0FED;
-	Wed, 27 Aug 2025 09:46:06 +0000 (UTC)
-From: Cryolitia PukNgae via B4 Relay <devnull+cryolitia.uniontech.com@kernel.org>
-Date: Wed, 27 Aug 2025 17:46:04 +0800
-Subject: [PATCH] cpupower: fix memory leak in print_{on,off}line_cpus()
+	s=arc-20240116; t=1756288102; c=relaxed/simple;
+	bh=+w2RGnieQf6fF7AYdvNbK7tdl8lTwQYl3t6wdcQBQVc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SNplj3Q33KETfE5xROgqhD48YWQpaJ+s8ZwcfC3BBeop49hsAR/n3A3LM0gZc5NdbxxaOR1BFYKCFtVCYTYE10Imgv0mM6Y+4aqTiYkDd8sRhvsuono3BGsjlbIJiU13f/KJhhvas0PPR3+p5D17E9wtBBcRAC3phiEThztSbyY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=CYbXcZK5; arc=none smtp.client-ip=115.124.30.119
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1756288089; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=yI9aY3kCrwJbkAALJF4/YaEOmckx3mMDHOyqA2RjXOY=;
+	b=CYbXcZK5+EOEXc180ee1iIQ6SP0fuw89NwPqXZdSGWKIT0jHHmEgChdxrgREHK+/q2XhCIPdfs6BTxchCxch3siaRXiJZlfUFm0wP5hzvK5TOPn+UsumFND6ciM3xmiS45mSulbD9/jKDNaJSYeOTJ50fo+UP70HbAXhKguuTQU=
+Received: from 30.221.131.253(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WmicQLC_1756288088 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Wed, 27 Aug 2025 17:48:08 +0800
+Message-ID: <d820951e-f5df-4ddb-a657-5f0cc7c3493a@linux.alibaba.com>
+Date: Wed, 27 Aug 2025 17:48:07 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] initrd: support erofs as initrd
+To: Askar Safin <safinaskar@zohomail.com>
+Cc: Byron Stanoszek <gandalf@winds.org>, Christoph Hellwig <hch@lst.de>,
+ gregkh <gregkh@linuxfoundation.org>,
+ "julian.stecklina" <julian.stecklina@cyberus-technology.de>,
+ linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+ linux-kernel <linux-kernel@vger.kernel.org>, rafael <rafael@kernel.org>,
+ torvalds <torvalds@linux-foundation.org>, viro <viro@zeniv.linux.org.uk>,
+ =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
+ Christian Brauner <brauner@kernel.org>
+References: <20250321050114.GC1831@lst.de>
+ <20250825182713.2469206-1-safinaskar@zohomail.com>
+ <20250826075910.GA22903@lst.de>
+ <a54ced51-280e-cc9d-38e4-5b592dd9e77b@winds.org>
+ <6b77eda9-142e-44fa-9986-77ac0ed5382f@linux.alibaba.com>
+ <198ead62fff.fc7d206346787.2754614060206901867@zohomail.com>
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+In-Reply-To: <198ead62fff.fc7d206346787.2754614060206901867@zohomail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250827-power-memoryleak-v1-1-e4baf7b59a41@uniontech.com>
-X-B4-Tracking: v=1; b=H4sIANvTrmgC/x2MSQqAMAwAvyI5W9CAVv2KeJAaNWhbScEF6d8tH
- gdm5oVAwhSgy14QOjmwdwnKPAOzjm4hxVNiwAKrokGtDn+RKEvWy7PTuCldmbpFTILWkLJDaOb
- 7X/ZDjB80im1xYgAAAA==
-X-Change-ID: 20250827-power-memoryleak-75c692220277
-To: Thomas Renninger <trenn@suse.com>, Shuah Khan <shuah@kernel.org>, 
- "John B. Wyatt IV" <jwyatt@redhat.com>, John Kacur <jkacur@redhat.com>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
- niecheng1@uniontech.com, zhanjun@uniontech.com, 
- Cryolitia PukNgae <cryolitia@uniontech.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1756287965; l=1207;
- i=cryolitia@uniontech.com; s=20250730; h=from:subject:message-id;
- bh=CIlvBttpFzObEhZv2UVHoutl1JwPsF3bnPu6l999qkU=;
- b=UkmkUmpkLJ8MK37NBRy+YepHCVbC0uEGXSWXdSsHmU48X4tg2mUFA/0caUeiIZmmhCQDT/90Z
- h+n0QUp/qJXBB3a9KD/P5kwrUyM7Z3dAMu7YMmmCqJIWXJlSkBUPEzm
-X-Developer-Key: i=cryolitia@uniontech.com; a=ed25519;
- pk=tZ+U+kQkT45GRGewbMSB4VPmvpD+KkHC/Wv3rMOn/PU=
-X-Endpoint-Received: by B4 Relay for cryolitia@uniontech.com/20250730 with
- auth_id=474
-X-Original-From: Cryolitia PukNgae <cryolitia@uniontech.com>
-Reply-To: cryolitia@uniontech.com
-
-From: Cryolitia PukNgae <cryolitia@uniontech.com>
-
-{on,off}online_cpus_str not free after use
-
-Suggested-by: Jun Zhan <zhanjun@uniontech.com>
-Signed-off-by: Cryolitia PukNgae <cryolitia@uniontech.com>
----
- tools/power/cpupower/utils/helpers/misc.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/tools/power/cpupower/utils/helpers/misc.c b/tools/power/cpupower/utils/helpers/misc.c
-index 166dc1e470ea6d70079fea6570750885d549603a..f3b4fe95520ff96a1be8b1ba8e7be1ec116b1bc0 100644
---- a/tools/power/cpupower/utils/helpers/misc.c
-+++ b/tools/power/cpupower/utils/helpers/misc.c
-@@ -213,6 +213,8 @@ void print_online_cpus(void)
- 		bitmask_displaylist(online_cpus_str, str_len, online_cpus);
- 		printf(_("Following CPUs are online:\n%s\n"), online_cpus_str);
- 	}
-+
-+	free(online_cpus_str);
- }
- 
- /* print_offline_cpus
-@@ -232,6 +234,8 @@ void print_offline_cpus(void)
- 		printf(_("Following CPUs are offline:\n%s\n"), offline_cpus_str);
- 		printf(_("cpupower set operation was not performed on them\n"));
- 	}
-+
-+	free(offline_cpus_str);
- }
- 
- /*
-
----
-base-commit: fab1beda7597fac1cecc01707d55eadb6bbe773c
-change-id: 20250827-power-memoryleak-75c692220277
-
-Best regards,
--- 
-Cryolitia PukNgae <cryolitia@uniontech.com>
 
 
+
+On 2025/8/27 17:22, Askar Safin wrote:
+>   ---- On Tue, 26 Aug 2025 19:32:34 +0400  Gao Xiang <hsiangkao@linux.alibaba.com> wrote ---
+>   > I completely agree with that point. However, since EROFS is a
+>   > block-based filesystem (Thanks to strictly block alignment, meta(data)
+>   > can work efficiently on both block-addressed storage
+>   > devices and byte-addressed memory devices. Also if the fsblock size
+> 
+> As I said previously, just put your erofs image to initramfs
+> (or to disk) and then (in your initramfs init) create ramdisk out of it
+> or loop mount it (both ramdisks and loop devices are block devices).
+> 
+> This way you will have erofs on top of block device.
+> 
+> And you will not depend on initrd. (Again: I plan to remove initial ramdisk
+> support, not ramdisk support per se.)
+
+It doesn't work if end users put `init` into erofs image and sign
+the whole erofs initram images with their certifications.
+
+And it doesn't have any relationship with cpio because users need
+signed image and load from memory.
+
+Thanks,
+Gao Xiang
 
