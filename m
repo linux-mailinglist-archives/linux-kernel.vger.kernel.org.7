@@ -1,130 +1,153 @@
-Return-Path: <linux-kernel+bounces-788524-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4E4BB385C6
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 17:09:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97434B385CE
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 17:11:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 644CF3AC06E
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 15:09:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 574BE5E663E
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 15:11:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6464271468;
-	Wed, 27 Aug 2025 15:09:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BjkqBsVN"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C64562727E4;
+	Wed, 27 Aug 2025 15:11:05 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFDB726F2A2
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 15:09:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF1252185A8
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 15:11:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756307356; cv=none; b=BuBnZzmBQqa3kcvxkoJvDcfULT+8UCvh0c8bb+VuE/g/+f5N1tUn5HsbDV5tw9JOkODLxNEO5BIgeCuoTHRoCFLfwwQz21X55OJlaxWyfcwFyLtUMEiZf7byPkCW3yUXCFfROOikiFNANJozVcrQWCBlKuFKzjA8QW3VbGpyUWY=
+	t=1756307465; cv=none; b=HC2CNSyX9mLsf9SKJaY7uh1993ZAVPPJKPvgbxaF5/lKc1l05bityU8nNxKYY6BAONCgNK7kyNJXjBo5/CLAIWA8qAPcxvpLP8/jlLU6qoS5Dq+8u7LSpN/eJ8852p1cEXYYjA0IpM1Tktrkm9rIpkSYrKkly2GPQgPnVgk+55A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756307356; c=relaxed/simple;
-	bh=DpCJEIfwQQGl2PQO5j/mO2MScWyLFDJU13NPV8HrF00=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=TSci91UOsIo4T9x7auXEweWWIzwWF7YDcTcqCsOg+40Rmbge82vAMZXX44ryuBMGPOzeJDq8TfymEwfBJ92Kvfyoj37taZCiKvsBL0noIXHsxZSLlXEOp1ez88jKOoR/F/Bi0Qxfc9o+D2ohQxWa40S4Skpj7FsCF5HtaY4DrKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BjkqBsVN; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-246f49067bdso34080425ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 08:09:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756307354; x=1756912154; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=cGukJNryZsxnvP4t0ed2eFtZxN1ggIA3k+je7ANvR9U=;
-        b=BjkqBsVN70DlSzInhmoYOBVf/N6nxteSjO+iNnu5cHi7bwta4wXuUMICxIJy5nLbVi
-         W0+N9gVgb2aMjgL/FYyK8zcPyd++cJYmGDkN316LPfkz20BA6eoKvFQaPJXQWlJqICRQ
-         zPqWtOqO218cQGNDtdDz1i0M9n+9E5zBe6fOc/qdnTIMcfFKXITCOxz8R+tSAjz5LOWd
-         4nZuvvZin3NRPb2GyxEb3KrhLxfhgYz+BfJJif2jW806Q8VEUX/4pcwSTXiUN9pmsloP
-         /2yhwt0AojT0ZZYh6m6G/3dhCLpnf13bnjoFV4baKNtw3L1ygtahkB81u2qZFKGRKN1J
-         P0wA==
+	s=arc-20240116; t=1756307465; c=relaxed/simple;
+	bh=D4TdlXJCnyBmyoe1BGRuMZrUx2zzlLLIK6orGeTQTwI=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=H0b7pcWGunf7TJ57F1VsB6LQzVbAEOQD3KBmO2H1efR92EF6CakY2pM216MQmGRQCseWqM7fHcAP1bZqeFIs3WsCem3u26P/UnMjIPlVKX/V529Syn9IHzBATWPWbC4T/YlLWWc7ENOmUEatSGvtbwREJ1MwnLVL4I6l/56BMn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3ee1d164774so12415045ab.1
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 08:11:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756307354; x=1756912154;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cGukJNryZsxnvP4t0ed2eFtZxN1ggIA3k+je7ANvR9U=;
-        b=wF5Ao8yola2zAEfh+1JL/b/I8fKGWErYOdt+a2P9g6U1/omfQtuDrnE054pA25NvEx
-         YkGg3rLvRHNYCl4NFdWskT5LAirfwwNtNBLmMjrIgb1LiqjFt/9xSycoF0rbN9jOrwSk
-         t6h9CubEywsIlzS9NADD31pWKYlIZ1A1eRzjVME8FmOAbmEaOm8DMC4uaZ7EFvuzHe1x
-         Jfw18n+09iK5v3ZQT+Czs9vtmTmTfO970nCieVtpsU6anior47KntWNjYgHRLFY7mVAm
-         ao+/XVLmmhuFLU9FXw6xjIskIqCdemQTUHf2o3xibyJ/1gl17q8jdkUMrI227s8x80mX
-         +IhA==
-X-Forwarded-Encrypted: i=1; AJvYcCWVRyLFmr31AcIpDnLEdeG84XV7MQgSU2zI2uh/u+FjtVHnhBeqKvPpDsUmzykQQ68kb1sBwFZpU02PxSM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwL+PW1JpQiq74T0rjL0bDKWg3CECZjEuEgnNHCUSTslsr95Exi
-	zGqJsCkBCmD4emGIKRcfAwBONosgHmhsZdCUxL2Lb7WT/z/rQPqyf7nK5ShT3jCNnBIroM697Tv
-	dbLFsQg==
-X-Google-Smtp-Source: AGHT+IF5KFARexvwm/25NO3qrVpMzrxQ7U+d6fK+0Kta/gTZ9/eFHTNO/iB4Ran3E9PIhtNjR3PKhzpId3I=
-X-Received: from pjur11.prod.google.com ([2002:a17:90a:d40b:b0:325:9404:7ff3])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:e5c7:b0:240:640a:c576
- with SMTP id d9443c01a7336-2462ee02b9bmr261770115ad.15.1756307353868; Wed, 27
- Aug 2025 08:09:13 -0700 (PDT)
-Date: Wed, 27 Aug 2025 08:09:12 -0700
-In-Reply-To: <ae363ab5-8985-4c4e-910e-969d442cd7ed@zytor.com>
+        d=1e100.net; s=20230601; t=1756307463; x=1756912263;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=yj8i8TIMKcbHgdbb7SW+9Erl7uM6fcJ5LI3tWKtidsw=;
+        b=NHQEqink3q390C5614SoBKbPy5gB4BoZcDSV/D/tEDwiBsoUmtD/LfH2pWEG5BUwJn
+         tKypctLC/eyQMcYwvOwGEd28jhFZW+Zqtxy+c/7TipY0hf+olEEt0MzshUsGyy8ng/Xa
+         /5cqL2+JWO747lSyz/yDyxVFvhZhAFR0umd9KScH6gfHyr5NYrcp30XHBRbn4nbpUwWh
+         22/gvDpz+TRXVghUaFchkWCGtXUdJ8ZD0cn7uzu6ZdeMiORyks+DVWT1gaogfDj3FUr2
+         nNXTtgKOa/JjmLZKta1ArKg0lDB/mHT6BTqNxsHGM4z8qqNohZGWXT8szCXdHqe9P8mT
+         jAKw==
+X-Forwarded-Encrypted: i=1; AJvYcCWaOWhI+c9Ip9nQruX2DGPT0qFdr+RO/xJ9J3GC1+A7HTJhRyrj8mu/SDhL/Mr80YDxewAts6wm3CS4UP0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDJy6S+Mi2I7J9qFE+nFqdD79qZnL/OFn1mmfq9xPEAP4oB91x
+	ceOBIqJbUSq7KLj8KniHRQENR1IrHJ2AGG63z6/wqNSMJzJ6zlz5lElcrwh3G3caM1pyAgsKtuT
+	Eq+Hzyt5+uFyz2RznaCROrDy3Zfl4nLcs/J7qrBkCcQvxY+qvNZ5tSxyPpaA=
+X-Google-Smtp-Source: AGHT+IHZbdmHPb+zWI8d5Tl+udK1WWYgBH7nngTLpilUNJvO32vX5g4ksyIlM13lMDVNAHu7O6ngEoOBvROLj0Iabp9QKva9j/QK
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250821133132.72322-1-chao.gao@intel.com> <20250821133132.72322-6-chao.gao@intel.com>
- <ae363ab5-8985-4c4e-910e-969d442cd7ed@zytor.com>
-Message-ID: <aK8fmMGH0rB2LuA9@google.com>
-Subject: Re: [PATCH v13 05/21] KVM: x86: Load guest FPU state when access
- XSAVE-managed MSRs
-From: Sean Christopherson <seanjc@google.com>
-To: Xin Li <xin@zytor.com>
-Cc: Chao Gao <chao.gao@intel.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com, john.allen@amd.com, 
-	mingo@redhat.com, minipli@grsecurity.net, mlevitsk@redhat.com, 
-	pbonzini@redhat.com, rick.p.edgecombe@intel.com, tglx@linutronix.de, 
-	weijiang.yang@intel.com, x86@kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+X-Received: by 2002:a05:6e02:4617:b0:3ea:d47f:5995 with SMTP id
+ e9e14a558f8ab-3ef08764393mr82012185ab.11.1756307462935; Wed, 27 Aug 2025
+ 08:11:02 -0700 (PDT)
+Date: Wed, 27 Aug 2025 08:11:02 -0700
+In-Reply-To: <nqdjhsx4cy3x64g3q6w6ffczvcwhh7aavelmrvqjtinqetusa4@4xdhtbpkhlse>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68af2006.a70a0220.3cafd4.0027.GAE@google.com>
+Subject: Re: [syzbot] [bluetooth?] general protection fault in bcsp_recv
+From: syzbot <syzbot+4ed6852d4da4606c93da@syzkaller.appspotmail.com>
+To: ipravdin.official@gmail.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Aug 26, 2025, Xin Li wrote:
-> On 8/21/2025 6:30 AM, Chao Gao wrote:
-> > diff --git a/arch/x86/kvm/x86.h b/arch/x86/kvm/x86.h
-> > index eb3088684e8a..d90f1009ac10 100644
-> > --- a/arch/x86/kvm/x86.h
-> > +++ b/arch/x86/kvm/x86.h
-> > @@ -701,4 +701,28 @@ int ____kvm_emulate_hypercall(struct kvm_vcpu *vcpu, int cpl,
-> >   int kvm_emulate_hypercall(struct kvm_vcpu *vcpu);
-> > +/*
-> > + * Lock and/or reload guest FPU and access xstate MSRs. For accesses initiated
-> > + * by host, guest FPU is loaded in __msr_io(). For accesses initiated by guest,
-> > + * guest FPU should have been loaded already.
-> > + */
-> > +
-> > +static inline void kvm_get_xstate_msr(struct kvm_vcpu *vcpu,
-> > +				      struct msr_data *msr_info)
-> > +{
-> > +	KVM_BUG_ON(!vcpu->arch.guest_fpu.fpstate->in_use, vcpu->kvm);
-> > +	kvm_fpu_get();
-> > +	rdmsrl(msr_info->index, msr_info->data);
-> 
-> s/rdmsrl/rdmsrq/
-> 
-> > +	kvm_fpu_put();
-> > +}
-> > +
-> > +static inline void kvm_set_xstate_msr(struct kvm_vcpu *vcpu,
-> > +				      struct msr_data *msr_info)
-> > +{
-> > +	KVM_BUG_ON(!vcpu->arch.guest_fpu.fpstate->in_use, vcpu->kvm);
-> > +	kvm_fpu_get();
-> > +	wrmsrl(msr_info->index, msr_info->data);
-> 
-> s/wrmsrl/wrmsrq/
-> 
-> 
-> Perhaps it's time to remove rdmsrl() and wrmsrl(), as keeping them around
-> won't trigger any errors when the old APIs are still being used.
+Hello,
 
-Yeah, we should bite the bullet and force in-flight code to adapt.  I was _this_
-close to making the same goof in the mediated PMU series, and IIRC it was only
-some random conflict that alerted me to using the old/wrong APIs.
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+general protection fault in bcsp_recv
+
+Oops: general protection fault, probably for non-canonical address 0xdffffc0000000021: 0000 [#1] SMP KASAN PTI
+KASAN: null-ptr-deref in range [0x0000000000000108-0x000000000000010f]
+CPU: 1 UID: 0 PID: 6475 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
+RIP: 0010:bcsp_recv+0x13d/0x1740 drivers/bluetooth/hci_bcsp.c:590
+Code: 89 4c 24 40 48 89 54 24 28 48 c1 ea 03 48 89 54 24 68 48 89 5c 24 20 48 c1 eb 03 48 89 5c 24 60 4c 89 7c 24 38 48 8b 44 24 58 <42> 80 3c 30 00 74 08 4c 89 ff e8 44 b1 be f9 49 8b 1f 31 ff 48 89
+RSP: 0018:ffffc90002fb7c00 EFLAGS: 00010206
+RAX: 0000000000000021 RBX: 0000000000000030 RCX: 000000000000002f
+RDX: 000000000000002f RSI: 0000000000000001 RDI: 0000000000000000
+RBP: ffffc90002fb7d60 R08: ffff888062a12c1f R09: 1ffff1100c542583
+R10: dffffc0000000000 R11: ffffffff88623580 R12: 0000000000000001
+R13: ffffc90002fb7e00 R14: dffffc0000000000 R15: 0000000000000108
+FS:  00007f4f2f09f6c0(0000) GS:ffff888125d53000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f4f2f09ef98 CR3: 0000000031000000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ hci_uart_tty_receive+0x194/0x220 drivers/bluetooth/hci_ldisc.c:627
+ tiocsti+0x239/0x2c0 drivers/tty/tty_io.c:2290
+ tty_ioctl+0x626/0xde0 drivers/tty/tty_io.c:2706
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:598 [inline]
+ __se_sys_ioctl+0xfc/0x170 fs/ioctl.c:584
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f4f2e18e9a9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f4f2f09f038 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007f4f2e3b6080 RCX: 00007f4f2e18e9a9
+RDX: 0000200000000140 RSI: 0000000000005412 RDI: 0000000000000004
+RBP: 00007f4f2e210d69 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000001 R14: 00007f4f2e3b6080 R15: 00007ffc2eba6848
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:bcsp_recv+0x13d/0x1740 drivers/bluetooth/hci_bcsp.c:590
+Code: 89 4c 24 40 48 89 54 24 28 48 c1 ea 03 48 89 54 24 68 48 89 5c 24 20 48 c1 eb 03 48 89 5c 24 60 4c 89 7c 24 38 48 8b 44 24 58 <42> 80 3c 30 00 74 08 4c 89 ff e8 44 b1 be f9 49 8b 1f 31 ff 48 89
+RSP: 0018:ffffc90002fb7c00 EFLAGS: 00010206
+RAX: 0000000000000021 RBX: 0000000000000030 RCX: 000000000000002f
+RDX: 000000000000002f RSI: 0000000000000001 RDI: 0000000000000000
+RBP: ffffc90002fb7d60 R08: ffff888062a12c1f R09: 1ffff1100c542583
+R10: dffffc0000000000 R11: ffffffff88623580 R12: 0000000000000001
+R13: ffffc90002fb7e00 R14: dffffc0000000000 R15: 0000000000000108
+FS:  00007f4f2f09f6c0(0000) GS:ffff888125d53000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f4f2f09ef98 CR3: 0000000031000000 CR4: 00000000003526f0
+----------------
+Code disassembly (best guess):
+   0:	89 4c 24 40          	mov    %ecx,0x40(%rsp)
+   4:	48 89 54 24 28       	mov    %rdx,0x28(%rsp)
+   9:	48 c1 ea 03          	shr    $0x3,%rdx
+   d:	48 89 54 24 68       	mov    %rdx,0x68(%rsp)
+  12:	48 89 5c 24 20       	mov    %rbx,0x20(%rsp)
+  17:	48 c1 eb 03          	shr    $0x3,%rbx
+  1b:	48 89 5c 24 60       	mov    %rbx,0x60(%rsp)
+  20:	4c 89 7c 24 38       	mov    %r15,0x38(%rsp)
+  25:	48 8b 44 24 58       	mov    0x58(%rsp),%rax
+* 2a:	42 80 3c 30 00       	cmpb   $0x0,(%rax,%r14,1) <-- trapping instruction
+  2f:	74 08                	je     0x39
+  31:	4c 89 ff             	mov    %r15,%rdi
+  34:	e8 44 b1 be f9       	call   0xf9beb17d
+  39:	49 8b 1f             	mov    (%r15),%rbx
+  3c:	31 ff                	xor    %edi,%edi
+  3e:	48                   	rex.W
+  3f:	89                   	.byte 0x89
+
+
+Tested on:
+
+commit:         fab1beda Merge tag 'devicetree-fixes-for-6.17-1' of gi..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=17af4fbc580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=16cf058b8ba89168
+dashboard link: https://syzkaller.appspot.com/bug?extid=4ed6852d4da4606c93da
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=14bc6462580000
+
 
