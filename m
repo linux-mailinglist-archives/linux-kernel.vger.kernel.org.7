@@ -1,199 +1,131 @@
-Return-Path: <linux-kernel+bounces-788851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED60CB38B08
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 22:37:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9C7FB38B0C
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 22:39:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A26243AD6B2
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 20:37:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06EA51893A22
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 20:39:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFD642F39D1;
-	Wed, 27 Aug 2025 20:37:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 882BD2F39D1;
+	Wed, 27 Aug 2025 20:38:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="X/2NIHA+"
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lEC5xu31"
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 411802D3220;
-	Wed, 27 Aug 2025 20:37:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9620A27A92D;
+	Wed, 27 Aug 2025 20:38:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756327066; cv=none; b=tfDl6hLvMOGwjK6+ePb8gDn7HRxqSwJx6Ueb+1vex6TjAeng1nFlOLsFAZgjor3e3+1RT5oN9Z8uec4STG8GaLHJ6RqGHcx3BJGb9bSeGk8Sm9d1ueskMQR8itOfGRd/EaELyWG6hWQFm4RG5RzZ4bx6RJJXUkcIfr43u/aUvpY=
+	t=1756327136; cv=none; b=kqqX3KV8vMgprNadRIWXhXNE03Akht90FiEzcu03HECssiTj3nsWxS7KhyDGfde66nOWLGZ6ZVrxKjPxBHQmYbZJvw7sIddQ3ljqWiW2Bm4b7xa6dLcAln5AqM3dZtgm8dLXtNMHckxVa4EUJglRcmC8J8DcQmzpCe2b0Ht0sxo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756327066; c=relaxed/simple;
-	bh=7AmZiN2smU+gwIEOHsqoUJ9PRQrK2WNsjJB6SdskA0E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CzNc10WmjYUwJ1zdB1NuBGbDrRVIYRA+9Yhebbn5qGkoubVbPsY7QwnUOOVgRbDeaOweUux6r75CaEDMpE+VY7p4zI+x3w94KaL9wo7KjjlWWkcNzTY1wiVLudMD9R92WEov1Y7bRkXXkC0RtoPV9r9geG/xCVJKk3ybK0ksIO4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=X/2NIHA+; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=wZyx7QTDejNp5Lx9hmwKjKcPMV0r7m+t7KQuiDG/eZM=; b=X/2NIHA+idvHlpmmxhYCSHdK/Y
-	Ip1FbvaxaKR7cgEeq5jjV+M2wkYytXYY9cKb4N0+qfXPKIsXCg8lgWEMttytXPVCmKrYpZr69Q/R6
-	eaCiHqKlokxCivUXR1YxE5Waac5/qU/Ig18N00FC8CevQCkQBUCoYV7JNx3PUagmJ6esAgK6KP9iq
-	fkxotaz738hk7cwHIcKp7ZHEPZ5ttz3TvzzQXFHGwjkBupHlNq5oxrQpuyBDul6JTuyUpx/1jikNd
-	aReRi0Ot6Sw7eKtcfWbQXhv1Fj/PkJ5DeH8mXr8sGFqZLRT6gped+6w2c2ODy42uRpxix08mr1TsZ
-	mdtOe8mQ==;
-Received: from [187.57.78.222] (helo=[192.168.15.100])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1urMte-002bm5-PL; Wed, 27 Aug 2025 22:37:30 +0200
-Message-ID: <5934fe16-32e7-425a-b4ee-cdcb77dd751a@igalia.com>
-Date: Wed, 27 Aug 2025 17:37:26 -0300
+	s=arc-20240116; t=1756327136; c=relaxed/simple;
+	bh=g3vUD8LgLz8xosHWcuASjycEENaFn9WsWMleiuh0mwQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FmDbVrRTutLh3dLi9cydL4EJuzv0kne27Q4E9CHXLqMbkEI2p8zOTKKLEcsP7PO/7EKmiQkW7UirwjPQlA8J9+ALzvCil78+gAsnFpYC5mqyErNP5ETuD9zwCcDAEX8OI2ePZ+zxu/ohos2GSOVwCxvjtOMNbyImrMY2XOdmC9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lEC5xu31; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-7720f231174so276445b3a.1;
+        Wed, 27 Aug 2025 13:38:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756327134; x=1756931934; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=252oT4Hha69glxkP3l/gBHkZ/1EONz03+KC5CcMvNa0=;
+        b=lEC5xu31iWCpNur4KGiuavH0DlRsB7p4sByZ7+MgBA3hHdiZWSXO4VkBe9GQIWfBXU
+         3tQqBDoLO/SWFBIKwWrvZAMyZvg37Jq7nJcVx+S6JYEbcuj9/MCHu+38U3mOpQ0P+9/t
+         z5O9XGtDuoSs8KRYN6Pam3ESc79XkAq8w6IHhB1x1sHqHnJ5zyMM2HwgjjlvlcQKWT1k
+         JvD6ckNxHtaGseikTOp97/qU30BD7BfMRKTAefYLRkvC+UauW6YoRyUEjP+MqzpyGNC7
+         /7U0tIFHiojueBZ5pM8Hg5FkDjsRCd/wOGGEohzxaWD1BDry6TtkMyMFRU8L7YegOyXs
+         1YZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756327134; x=1756931934;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=252oT4Hha69glxkP3l/gBHkZ/1EONz03+KC5CcMvNa0=;
+        b=rfgN8RCUA7R19KNuTqYi5DoIveATXEJd5XXBfCQfEBHpEb6jqaIuXnxeFRv47/1uCi
+         fL+B/A5JaK5Rpg9646HDbClTr4cJ3Lx+vdNxrOuTmIJJwwn+WAm5YdtETB93yhankO5v
+         82+St4BOSOLcccD3PA95eS6qizCF1ARzLiCcwHUJkcPtjlJpJLrHv0yX9wgXraWfRWoX
+         1RVO4+p4Z/FiVouEUoVuqQw+N+kgPzhu2y+6qg4ruNZauBArweVaD7oNMBu8qXFcBf5M
+         L8l3Arf0VqpkSsWlcVQMNIHVFtvok4hade4HspQFQqQcc5almSDnj6z3+UGrv8TUzh+k
+         BdGA==
+X-Forwarded-Encrypted: i=1; AJvYcCU5t3kXNLLctvA/ERIWYtLyc+6hbvxMddzVyczeTEJd7pjSwNZJqdN0phOpDmZ2i8UQnNDQk9sz+reI0VA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYzlKmRr7Ute3s6aasr9Tpr7aD2WMIfYnwFJfVvtZLcOv7KYoC
+	2ahOz7Ytpc8tlGe6VrKgpB244c8x9qFM18svAGgyEJAWQ826ZorFzwY47bIE5Q==
+X-Gm-Gg: ASbGncuzMWS3XoTRHR3vUzuSAHPjP7gY1Y4Xk7xx95kUPASToIOXNz7CsUFOcL2fgAP
+	UkuPm5O0VgeAbDdRl2wsrzLmFuOKmhQBTDAFIBtfZU6WPMWOoiD7rRYC0L5iPeazfh6oDtYx22S
+	uthI7ai3Hrx2KS9ERXOYDPWokZ1RjQPLTD27eFJeFSJR8Cn89BwH0nv2Lxm4sT+4yoz8p4J3vIh
+	4YPEzuc3K0NUhAMl7aEYBPqoAIeRtzWOAUaL8Fhc5TYGkVIIOaQvkbTt1xozaoW1rXaaLO5hYwc
+	DZ/bZkezMme+izk3mhsn7szQ0pnsVZ5iSHhZlUtrXIYnHU0L5bcVtYWk3sHP+OyEtmSyYlyX5dE
+	DNYapu5Y4gKsWCTxSM3bgIK6qn8RMyRZKpNHB6/mnLdfzZjgFrHyteNxg+/+FukGKxg==
+X-Google-Smtp-Source: AGHT+IF76jF27JYYyP/4B25nnu5OjijebrPt3nphOQyIKm79HURBtHuWwXY2bqBXwU8nN9mXaGGHLQ==
+X-Received: by 2002:a05:6a00:b52:b0:772:114c:bcbb with SMTP id d2e1a72fcca58-772114cc0d7mr2575723b3a.4.1756327133677;
+        Wed, 27 Aug 2025 13:38:53 -0700 (PDT)
+Received: from archlinux.lan ([2601:644:8200:acc7::1f6])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-771e6535272sm8578355b3a.24.2025.08.27.13.38.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 Aug 2025 13:38:53 -0700 (PDT)
+From: Rosen Penev <rosenp@gmail.com>
+To: linux-wireless@vger.kernel.org
+Cc: Jeff Johnson <jjohnson@kernel.org>,
+	miquel.raynal@bootlin.com,
+	vasanthakumar.thiagarajan@oss.qualcomm.com,
+	ath11k@lists.infradead.org (open list:QUALCOMM ATHEROS ATH11K WIRELESS DRIVER),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCHv2 ath-next] wifi: ath11k: switch to of_get_mac_address
+Date: Wed, 27 Aug 2025 13:38:52 -0700
+Message-ID: <20250827203852.8586-1-rosenp@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 9/9] ovl: Support mounting case-insensitive enabled
- layers
-To: Amir Goldstein <amir73il@gmail.com>, NeilBrown <neil@brown.name>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, Theodore Tso <tytso@mit.edu>,
- Gabriel Krisman Bertazi <krisman@kernel.org>, linux-unionfs@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- kernel-dev@igalia.com
-References: <20250822-tonyk-overlayfs-v6-0-8b6e9e604fa2@igalia.com>
- <20250822-tonyk-overlayfs-v6-9-8b6e9e604fa2@igalia.com>
- <CAOQ4uxhWE=5_+DBx7OJ94NVCZXztxf1d4sxyMuakDGKUmbNyTg@mail.gmail.com>
- <62e60933-1c43-40c2-a166-91dd27b0e581@igalia.com>
- <CAOQ4uxjgp20vQuMO4GoMxva_8yR+kcW3EJxDuB=T-8KtvDr4kg@mail.gmail.com>
- <6235a4c0-2b28-4dd6-8f18-4c1f98015de6@igalia.com>
- <CAOQ4uxgMdeiPt1v4s07fZkGbs5+3sJw5VgcFu33_zH1dZtrSsg@mail.gmail.com>
- <18704e8c-c734-43f3-bc7c-b8be345e1bf5@igalia.com>
- <CAOQ4uxj551a7cvjpcYEyTLtsEXw9OxHtTc-VSm170J5pWtwoUQ@mail.gmail.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
-In-Reply-To: <CAOQ4uxj551a7cvjpcYEyTLtsEXw9OxHtTc-VSm170J5pWtwoUQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Em 27/08/2025 15:06, Amir Goldstein escreveu:
+This is needed to support nvmem defined MAC addresses in DTS.
 
-[...]
+In addition, check if the probe should be deferred as nvmem can load
+after ath11k.
 
-> 
-> The reason is this:
-> 
-> static struct dentry *ext4_lookup(...
-> {
-> ...
->          if (IS_ENABLED(CONFIG_UNICODE) && !inode && IS_CASEFOLDED(dir)) {
->                  /* Eventually we want to call d_add_ci(dentry, NULL)
->                   * for negative dentries in the encoding case as
->                   * well.  For now, prevent the negative dentry
->                   * from being cached.
->                   */
->                  return NULL;
->          }
-> 
->          return d_splice_alias(inode, dentry);
-> }
-> 
-> Neil,
-> 
-> Apparently, the assumption that
-> ovl_lookup_temp() => ovl_lookup_upper() => lookup_one()
-> returns a hashed dentry is not always true.
-> 
-> It may be always true for all the filesystems that are currently
-> supported as an overlayfs
-> upper layer fs (?), but it does not look like you can count on this
-> for the wider vfs effort
-> and we should try to come up with a solution for ovl_parent_lock()
-> that will allow enabling
-> casefolding on overlayfs layers.
-> 
-> This patch seems to work. WDYT?
-> 
-> Thanks,
-> Amir.
-> 
+For brevity, ACPI is not a factor here. ath11k is too new for that.
+Except for ath10k, all other users of device_get_mac_address are old
+drivers with explicit ACPI support.
 
-Thank you for the fix!
+Signed-off-by: Rosen Penev <rosenp@gmail.com>
+---
+ v2: remove wrong EPROBE_DEFER handling.
+ drivers/net/wireless/ath/ath11k/mac.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-> commit 5dfcd10378038637648f3f422e3d5097eb6faa5f
-> Author: Amir Goldstein <amir73il@gmail.com>
-> Date:   Wed Aug 27 19:55:26 2025 +0200
-> 
->      ovl: adapt ovl_parent_lock() to casefolded directories
-> 
->      e8bd877fb76bb9f3 ("ovl: fix possible double unlink") added a sanity
-
-Just to make checkpatch happy, this should be
-
-Commit e8bd877fb76b ("ovl: fix possible double unlink") added a sanity
-
->      check of !d_unhashed(child) to try to verify that child dentry was not
->      unlinked while parent dir was unlocked.
-> 
->      This "was not unlink" check has a false positive result in the case of
->      casefolded parent dir, because in that case, ovl_create_temp() returns
->      an unhashed dentry.
-> 
->      Change the "was not unlinked" check to use cant_mount(child).
->      cant_mount(child) means that child was unlinked while we have been
->      holding a reference to child, so it could not have become negative.
-> 
->      This fixes the error in ovl_parent_lock() in ovl_check_rename_whiteout()
->      after ovl_create_temp() and allows mount of overlayfs with casefolding
->      enabled layers.
-> 
->      Reported-by: André Almeida <andrealmeid@igalia.com>
->      Link: https://lore.kernel.org/r/18704e8c-c734-43f3-bc7c-b8be345e1bf5@igalia.com/
-
-I think the correct chain here is:
-
-Reported-by: André Almeida <andrealmeid@igalia.com>
-Closes: 
-https://lore.kernel.org/r/18704e8c-c734-43f3-bc7c-b8be345e1bf5@igalia.com/
-Fixes: e8bd877fb76b ("ovl: fix possible double unlink")
-
->      Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> 
-
-Reviewed-by: André Almeida <andrealmeid@igalia.com>
-
-> diff --git a/fs/overlayfs/util.c b/fs/overlayfs/util.c
-> index bec4a39d1b97c..bffbb59776720 100644
-> --- a/fs/overlayfs/util.c
-> +++ b/fs/overlayfs/util.c
-> @@ -1551,9 +1551,23 @@ void ovl_copyattr(struct inode *inode)
-> 
->   int ovl_parent_lock(struct dentry *parent, struct dentry *child)
->   {
-> +       bool is_unlinked;
-> +
->          inode_lock_nested(parent->d_inode, I_MUTEX_PARENT);
-> -       if (!child ||
-> -           (!d_unhashed(child) && child->d_parent == parent))
-> +       if (!child)
-> +               return 0;
-> +
-> +       /*
-> +        * After re-acquiring parent dir lock, verify that child was not moved
-> +        * to another parent and that it was not unlinked. cant_mount() means
-> +        * that child was unlinked while parent was unlocked. Since we are
-> +        * holding a reference to child, it could not have become negative.
-> +        * d_unhashed(child) is not a strong enough indication for unlinked,
-> +        * because with casefolded parent dir, ovl_create_temp() returns an
-> +        * unhashed dentry.
-> +        */
-> +       is_unlinked = cant_mount(child) || WARN_ON_ONCE(d_is_negative(child));
-> +       if (!is_unlinked && child->d_parent == parent)
->                  return 0;
-> 
->          inode_unlock(parent->d_inode);
+diff --git a/drivers/net/wireless/ath/ath11k/mac.c b/drivers/net/wireless/ath/ath11k/mac.c
+index 1fadf5faafb8..2a55c5ab2f2d 100644
+--- a/drivers/net/wireless/ath/ath11k/mac.c
++++ b/drivers/net/wireless/ath/ath11k/mac.c
+@@ -9,6 +9,7 @@
+ #include <linux/etherdevice.h>
+ #include <linux/bitfield.h>
+ #include <linux/inetdevice.h>
++#include <linux/of_net.h>
+ #include <net/if_inet6.h>
+ #include <net/ipv6.h>
+ 
+@@ -10434,7 +10435,7 @@ int ath11k_mac_register(struct ath11k_base *ab)
+ 	if (ret)
+ 		return ret;
+ 
+-	device_get_mac_address(ab->dev, mac_addr);
++	of_get_mac_address(ab->dev->of_node, mac_addr);
+ 
+ 	for (i = 0; i < ab->num_radios; i++) {
+ 		pdev = &ab->pdevs[i];
+-- 
+2.51.0
 
 
