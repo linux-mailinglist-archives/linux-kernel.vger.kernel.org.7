@@ -1,112 +1,135 @@
-Return-Path: <linux-kernel+bounces-787883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A872BB37CFE
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 10:08:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B567B37D2B
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 10:11:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D0E637A3D4F
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 08:07:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 85C467A2151
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 08:09:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A762322770;
-	Wed, 27 Aug 2025 08:08:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB776322770;
+	Wed, 27 Aug 2025 08:11:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="b9FHjbL2"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dOWWANzG"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61CE132145D;
-	Wed, 27 Aug 2025 08:08:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD7AD30CDBB
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 08:11:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756282120; cv=none; b=Jbp34JbruKXhE3qht1/2bUiEBxa54NnlDC0ig3hLIWBJVs9lfe1YMYYsVHaomt0WG+ATB0FJcTz74NwAWZnRyVVFBuekor04GhdY4wfJjzShScsLCSXZfXAMS0Z7Y7MxkT0Oi7WgYefzkUdU+4DmPjcoGmGfEwbbf2lZErYb/bg=
+	t=1756282269; cv=none; b=ltgSWz7FgqlEyCzC10nfpO42nX0o2jaHF6tRhFbYwY42ZUW8wITpdD8IQSU63BIbmU3Y7RWjiqh6MEvesIzNn8lpewNl4pfB08/6f+n6lWaDrDiTyVzcy7imqURZn/SXQeNkrswZGM6CzEGOFzQSazVRBgVTacc1bONEWUfQqVs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756282120; c=relaxed/simple;
-	bh=lsJDDxdY1N4gALbPCmycovRhFfEL8Y0hbTDgIyjV50k=;
+	s=arc-20240116; t=1756282269; c=relaxed/simple;
+	bh=JXICbYhdmChLc41AgM4Z3BbjQKBNTd50BLRpu+QU3ak=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g8rMHs3rP9mQyRCUetjIxUVitAzLSMPJgVJwz9w7Qr+iXPl6l6VokDAYZZQqNJeMTMp0C3jyNdDyNaSUn8fIEM1FRSFoR5O1dA6ih08I8CVg0OKQpKdckoK9tb4q1LwrJbGf07FfR/sTKs5K6t0nyDaER08q0qI00bYR5k2abkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=b9FHjbL2; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=CmS9SC4kc4d1Ykb5qagMWrsRP/ZqbzwfCcHKP8Zo8Nc=; b=b9FHjbL2D/NyUZbVGsNSGDOKvx
-	byW+FtR+l+Yy5FZ7feS+2oSxWAaha8s355suFXT9WYCxdQHC/DJiMSH6LGnbEjSX4PPrWMjN9EvXT
-	VtfXjnrfMh4DwyTfrTTVFjwBqdEAPNZJYPnLKXpTvCu0fgEGQ6CfirsaZSL2Nofjx/S2onXGVNoMP
-	lNakSHx1AgMJgzSM4znClbha3NxOWBKu/GOUvs7dv1HcTjNlpRRt56VO/csC6J9Jcyu6ggt5XohKF
-	QmzQ9yosw4LFHSLAj6WIph4lfBMLNLZXQushdLgkyIUJFcTuOobNHEw6wjjCLVW7YjzSErnBjl681
-	X+C1ezDw==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:51254)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1urBCm-000000000Bm-2wEJ;
-	Wed, 27 Aug 2025 09:08:28 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1urBCi-00000000218-25TM;
-	Wed, 27 Aug 2025 09:08:24 +0100
-Date: Wed, 27 Aug 2025 09:08:24 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Alexander Wilhelm <alexander.wilhelm@westermo.com>
-Cc: Vladimir Oltean <vladimir.oltean@nxp.com>, Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: Aquantia PHY in OCSGMII mode?
-Message-ID: <aK68-Bp77-HiOAJk@shell.armlinux.org.uk>
-References: <aJCvOHDUv8iVNXkb@FUE-ALEWI-WINX>
- <20250804134115.cf4vzzopf5yvglxk@skbuf>
- <aJDH56uXX9UVMZOf@FUE-ALEWI-WINX>
- <20250804160037.bqfb2cmwfay42zka@skbuf>
- <20250804160234.dp3mgvtigo3txxvc@skbuf>
- <aJG5/d8OgVPsXmvx@FUE-ALEWI-WINX>
- <20250805102056.qg3rbgr7gxjsl3jd@skbuf>
- <aJH8n0zheqB8tWzb@FUE-ALEWI-WINX>
- <20250806145856.kyxognjnm4fnh4m6@skbuf>
- <aK6eSEOGhKAcPzBq@FUE-ALEWI-WINX>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZgMyRkYa6NEtyMilD0zCkacmkCFokPup+iUcS5bjeaIJxiXmbDizCANSZAnwrV1qpVHdrcTd8lMHG+dpKMGooY9oiMCjDQJUeS/RCXTLhTpmlH14HWOv7CCz96sNjGPAZ45CrQ5RLn/lgvpG7VjCbOoTQHsgikVMyEgguVFjJPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dOWWANzG; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756282264;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uQE71pYJ0Ki8BlgkgxpbmRY9eNjrqJ40gZ/eBOhq1WU=;
+	b=dOWWANzGbQqOQyBmtDkVwQeWuJ9a9gApqJiu95cDqP6MxI/SfpF24Ed5Gi4GTdj2Rpdy+1
+	WKEaVlIFiLpAasHGeAplXu4/3vPyrhqvJZNiYRxAZrJBvWtahp/+Z3A2AfJc+uUy4e4jkG
+	Nt4Ms+/ZWBFrZdw0kWYogGAd2yoAJlM=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-556-WWUC8apGN9KI_Emm32ol9g-1; Wed,
+ 27 Aug 2025 04:11:00 -0400
+X-MC-Unique: WWUC8apGN9KI_Emm32ol9g-1
+X-Mimecast-MFC-AGG-ID: WWUC8apGN9KI_Emm32ol9g_1756282259
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 242EE1956087;
+	Wed, 27 Aug 2025 08:10:58 +0000 (UTC)
+Received: from fedora (unknown [10.72.116.24])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3CDF31800291;
+	Wed, 27 Aug 2025 08:10:48 +0000 (UTC)
+Date: Wed, 27 Aug 2025 16:10:42 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Li Nan <linan666@huaweicloud.com>
+Cc: Yu Kuai <yukuai1@huaweicloud.com>, axboe@kernel.dk,
+	jianchao.w.wang@oracle.com, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, yangerkun@huawei.com,
+	yi.zhang@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
+Subject: Re: [PATCH] blk-mq: check kobject state_in_sysfs before deleting in
+ blk_mq_unregister_hctx
+Message-ID: <aK69gpTnVv3TZtjg@fedora>
+References: <20250826084854.1030545-1-linan666@huaweicloud.com>
+ <aK5YH4Jbt3ZNngwR@fedora>
+ <3853d5bf-a561-ec2d-e063-5fbe5cf025ca@huaweicloud.com>
+ <aK5g-38izFqjPk9v@fedora>
+ <b5f385bc-5e16-2a79-f997-5fd697f2a38a@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <aK6eSEOGhKAcPzBq@FUE-ALEWI-WINX>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <b5f385bc-5e16-2a79-f997-5fd697f2a38a@huaweicloud.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-On Wed, Aug 27, 2025 at 07:57:28AM +0200, Alexander Wilhelm wrote:
-> Hi Vladimir,
+On Wed, Aug 27, 2025 at 11:22:06AM +0800, Li Nan wrote:
 > 
-> One of our hardware engineers has looked into the issue with the 100M link and
-> found the following: the Aquantia AQR115 always uses 2500BASE-X (GMII) on the
-> host side. For both 1G and 100M operation, it enables pause rate adaptation.
-> However, our MAC only applies rate adaptation for 1G links. For 100M, it uses a
-> 10x symbol replication instead.
+> 
+> 在 2025/8/27 9:35, Ming Lei 写道:
+> > On Wed, Aug 27, 2025 at 09:04:45AM +0800, Yu Kuai wrote:
+> > > Hi,
+> > > 
+> > > 在 2025/08/27 8:58, Ming Lei 写道:
+> > > > On Tue, Aug 26, 2025 at 04:48:54PM +0800, linan666@huaweicloud.com wrote:
+> > > > > From: Li Nan <linan122@huawei.com>
+> > > > > 
+> > > > > In __blk_mq_update_nr_hw_queues() the return value of
+> > > > > blk_mq_sysfs_register_hctxs() is not checked. If sysfs creation for hctx
+> > > > 
+> > > > Looks we should check its return value and handle the failure in both
+> > > > the call site and blk_mq_sysfs_register_hctxs().
+> > > 
+> > >  From __blk_mq_update_nr_hw_queues(), the old hctxs is already
+> > > unregistered, and this function is void, we failed to register new hctxs
+> > > because of memory allocation failure. I really don't know how to handle
+> > > the failure here, do you have any suggestions?
+> > 
+> > It is out of memory, I think it is fine to do whatever to leave queue state
+> > intact instead of making it `partial workable`, such as:
+> > 
+> > - try update nr_hw_queues to 1
+> > 
+> > - if it still fails, delete disk & mark queue as dead if disk is attached
+> > 
+> 
+> If we ignore these non-critical sysfs creation failures, the disk remains
+> usable with no loss of functionality. Deleting the disk seems to escalate
+> the error?
 
-This sounds like a misunderstanding, specifically:
+It is more like a workaround by ignoring the sysfs register failure. And if
+the issue need to be fixed in this way, you have to document it.
 
-"our MAC only applies rate adaptation for 1G links. For 100M, it uses
-10x symbol replication instead."
+In case of OOM, it usually means that the system isn't usable any more.
+But it is NOIO allocation and the typical use case is for error recovery in
+nvme pci, so there may not be enough pages for noio allocation only. That is
+the reason for ignoring sysfs register in blk_mq_update_nr_hw_queues()?
 
-It is the PHY that does rate adaption, so the MAC doesn't need to
-support other speeds. Therefore, if the PHY is using a 2.5Gbps link
-to the MAC with rate adaption for 100M, then the MAC needs to operate
-at that 2.5Gbps speed.
+But NVMe has been pretty fragile in this area by using non-owner queue
+freeze, and call blk_mq_update_nr_hw_queues() on frozen queue, so it is
+really necessary to take it into account?
 
-You don't program the MAC differently depending on the media side
-speed, unlike when rate adaption is not being used.
+Thanks,
+Ming
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
