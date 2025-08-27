@@ -1,212 +1,181 @@
-Return-Path: <linux-kernel+bounces-787546-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F7A9B377AC
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 04:22:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1293B377AF
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 04:23:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE4B8682B3D
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 02:22:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DFED71B6553D
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 02:24:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F1942727F4;
-	Wed, 27 Aug 2025 02:22:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=oppo.com header.i=@oppo.com header.b="uoPgPbZq"
-Received: from TYPPR03CU001.outbound.protection.outlook.com (mail-japaneastazon11012005.outbound.protection.outlook.com [52.101.126.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED3E02737E7;
+	Wed, 27 Aug 2025 02:23:52 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74B2127707;
-	Wed, 27 Aug 2025 02:22:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.126.5
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756261359; cv=fail; b=L1IZQYYlM0DrHF4v99CCbr0rj/zI/idj0W9IPVid/KS6xc3CyT2QcwN7JSfAMqrYml0mz1lhLo4aKrMYOpchA+BkcOMivDzarpqpZYBstmbC8stSlFdmKSvZqPInjPO4kpdwfwBDJ7R4RqU06WT/7EVJNgiegN7M6AWGc3L7Vqk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756261359; c=relaxed/simple;
-	bh=cEhcWC9SJcfRPr8jdSUF5s/JQoifp5s9fJBirPhSLoc=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=bl994TgrraLN3GsvwplHwR62p0csZYDeFHzZwgUqqZo6Ws+4K9x0Uj8m7NLXt44Rk60EYG9I5IB3F6WqWmcInmZy4Ij1N02vsuLFbG2FMqA2ilR2De/9EVGXSd3ShPzPcBZFyrmreo7+zYyfdI9h8huBgFU3qdVD4qCPpddcpyE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oppo.com; spf=pass smtp.mailfrom=oppo.com; dkim=pass (1024-bit key) header.d=oppo.com header.i=@oppo.com header.b=uoPgPbZq; arc=fail smtp.client-ip=52.101.126.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oppo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oppo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=vd5IqpitTQfiljj/NmiREppo2QUbEh2y+VRv9D342/KPxQwrFD9CwOd0FpFZCon77YkZ1XVi0wItpEfroXQze/TbL0V1PS3w0GQSlfNWSBV6+rw/Iv+SavbllvXZUSQoJjf7PYvz0qAumXRKss3SK8raj212xi4vu2h1qSTIZYm4VFuf7+aL2yBjJyBNOTwFQgZ8hFUspICQuIcKEk5S9dw73pWtp5/dtQ+Qz6W7SeO96t93vgHp9QnCOHrVEgJLDg/sW4pMGlbB71vadzupY6MzpuJDapyqZ6lOtLe5RvuTVp2h9Gwgo2wq16uumG8rJIekE8OM1r5HG6VcLIGZmA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=hWSPZojpdNmOE+6L7pouSkerXw2zIbiaFWjETMJpR9M=;
- b=hsJH2UjiIrcz3TpCmd+ZR8g+VXPyukTP5GazHSecMWcVDzuRuSDz4hGzZkRLCHwVzNdW77exuki8z3uUhQ1tArjTYZGyDYwlNRSEyzty9yQ9B/ZPn/SsQtDTRnRhAIe+ou2VxrSTU17w9OrDTPGCQnEPoYKk0/k9zmKCtL3jBS9kwZJazyKadcJh2xlcKaJNeLrSU1DKbD1ujl0mLXOtPvxOvTaMmblceQ8JTJEfV1jRpIZMLvC3oJrR5JID/e1ffAAlCyp7Nvo865VF7eetj6Z3f/0nkpNaXPS3k7a47HVVjGGa2/Ow6e1kRlFPhjb6L8yJl4pcwNN9y9kyS/C/Qg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 58.252.5.68) smtp.rcpttodomain=bytedance.com smtp.mailfrom=oppo.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=oppo.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oppo.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hWSPZojpdNmOE+6L7pouSkerXw2zIbiaFWjETMJpR9M=;
- b=uoPgPbZqPuBw1M9E8feJ6YSjYZr9xPfJ4nE9td3bRbTcYUdM7UDtUY2XSyS5Y2tU9lPW3GDMxmA0zEoxj+a0L21RyrPnQTVRo/0y+Lrb7n/juwwncGOmtCaBwrJq5+wJSR67IN5DLgbghLYXg4GeJfIoXVp0hdMoFVctjKdCGnA=
-Received: from SG2P153CA0022.APCP153.PROD.OUTLOOK.COM (2603:1096:4:c7::9) by
- KL1PR02MB7827.apcprd02.prod.outlook.com (2603:1096:820:138::9) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9052.21; Wed, 27 Aug 2025 02:22:33 +0000
-Received: from SG2PEPF000B66CC.apcprd03.prod.outlook.com
- (2603:1096:4:c7:cafe::9d) by SG2P153CA0022.outlook.office365.com
- (2603:1096:4:c7::9) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9094.3 via Frontend Transport; Wed,
- 27 Aug 2025 02:22:33 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 58.252.5.68)
- smtp.mailfrom=oppo.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=oppo.com;
-Received-SPF: Pass (protection.outlook.com: domain of oppo.com designates
- 58.252.5.68 as permitted sender) receiver=protection.outlook.com;
- client-ip=58.252.5.68; helo=mail.oppo.com; pr=C
-Received: from mail.oppo.com (58.252.5.68) by
- SG2PEPF000B66CC.mail.protection.outlook.com (10.167.240.25) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.9073.11 via Frontend Transport; Wed, 27 Aug 2025 02:22:32 +0000
-Received: from localhost.localdomain (172.16.40.118) by mailappw30.adc.com
- (172.16.56.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.57; Wed, 27 Aug
- 2025 10:22:31 +0800
-From: xupengbo <xupengbo@oppo.com>
-To: <ziqianlu@bytedance.com>, Ingo Molnar <mingo@redhat.com>, Peter Zijlstra
-	<peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot
-	<vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, "Mel
- Gorman" <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>, Aaron Lu
-	<aaron.lu@intel.com>, David Vernet <void@manifault.com>,
-	<linux-kernel@vger.kernel.org>
-CC: <xupengbo@oppo.com>, <cgroups@vger.kernel.org>, <xupengbo1029@163.com>
-Subject: [PATCH v5] sched/fair: Fix unfairness caused by stalled tg_load_avg_contrib when the last task migrates out.
-Date: Wed, 27 Aug 2025 10:22:07 +0800
-Message-ID: <20250827022208.14487-1-xupengbo@oppo.com>
-X-Mailer: git-send-email 2.43.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58BEE27707;
+	Wed, 27 Aug 2025 02:23:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756261432; cv=none; b=GkeXB2AphecP+3xUTomZk3uQtec0neNQ+viDdj43RbN6II5jg6Y24moGGu4SU+R9ClmrUXww76X7ZyvTDbzsbPWlnDZDfhlnUSTaoP7DNYv/0IxxDKwQEMqwTgu/Z0q6FOsuPl+VZ4sovLUNzkrM+ZAzUHyW5Xnc1Ou5nJ6aaso=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756261432; c=relaxed/simple;
+	bh=AKi9/OHy1tHN9Xiukj7H9Mq4C66I06orms63TzLZEnw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IWsBth+owypdPUXgv0t/BPAQZot1GAHlM/0teR3wOYs4VxG/7I3H2c5yQdfoglFr7LKRIKj73LuzUeHJHZIgur/UIeMe4eUvshN9757XUn0OdV2tTpHiV5m0cYoclTFht0bCAwuBt1HCKmK2KwK71OpSF5gRwJKsq+JpXCDZxQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cBSyD0LSRzYQtM6;
+	Wed, 27 Aug 2025 10:23:48 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 8FD1A1A0F22;
+	Wed, 27 Aug 2025 10:23:46 +0800 (CST)
+Received: from [10.174.179.247] (unknown [10.174.179.247])
+	by APP4 (Coremail) with SMTP id gCh0CgAncY0wbK5ougC0AQ--.46889S3;
+	Wed, 27 Aug 2025 10:23:46 +0800 (CST)
+Message-ID: <e1212545-2013-775d-e3a8-07b3be2cfc00@huaweicloud.com>
+Date: Wed, 27 Aug 2025 10:23:44 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [PATCH v2] efivarfs: Fix slab-out-of-bounds in efivarfs_d_compare
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: jk@ozlabs.org, linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
+ yangerkun@huawei.com, yi.zhang@huawei.com
+References: <20250819090802.2258766-1-linan666@huaweicloud.com>
+ <CAMj1kXHvEOTHHshS9uoL4RSZgJZgd9OR9qzPHYJ5xW2Vgeefcg@mail.gmail.com>
+From: Li Nan <linan666@huaweicloud.com>
+In-Reply-To: <CAMj1kXHvEOTHHshS9uoL4RSZgJZgd9OR9qzPHYJ5xW2Vgeefcg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: mailappw30.adc.com (172.16.56.197) To mailappw30.adc.com
- (172.16.56.197)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SG2PEPF000B66CC:EE_|KL1PR02MB7827:EE_
-X-MS-Office365-Filtering-Correlation-Id: fc0ff309-d924-44c8-eb30-08dde5109453
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|36860700013|376014|7416014|82310400026|921020|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?MJ4hvktoXrlSMGfuVfKDIYieQdFHmwZPgJ8Hi0k1BhbT/24cDRgaPqRyUXvH?=
- =?us-ascii?Q?k3SUiIvSS8r6CKbkHzZ4Tfv0+IZcAlsnX3MBn+3Xc2vJSyldoH8JYqR4iAXS?=
- =?us-ascii?Q?QVy7b29DLt3pXIOofbQHPPunT2b0baoS8i9OB1C0W+mLMko7WkyiY57d2NH6?=
- =?us-ascii?Q?M/1x7L3izdA67Kc0oNDXaAHUb3sM1xL/Uh4v5byn5DjyPN1/haWAUY9gKC+O?=
- =?us-ascii?Q?GoiIX9LqfgOZMBslBdTkV9EsPbIyUhDav2/iGXfqhy/GeO3u0Dk2aOuO489q?=
- =?us-ascii?Q?35XlyLeEFFnPUoAeda/qjzO+E5Gusqdwxbw2lJbZHGtKu+t8Fta9ea0b2Du8?=
- =?us-ascii?Q?LBOQtRxIbFD6AyBL8DMxhRIOSRPtpM1hCBpxmKRDS07qqcFkgW3A5e3TkrAa?=
- =?us-ascii?Q?xbdWA40NMhASSJXSLOi8pGS0IBsZ4vQfoBd2DLKvtUmYke9Y1YuKgVA5f78B?=
- =?us-ascii?Q?p/YUaZAF/AYQbSpWe2MEYP4HQSsQNYySLg/R7OOu8jZGSoNCZ+gniGGjAwaY?=
- =?us-ascii?Q?MLKLC0Q3gIKfUppnp+urEUKftGbD3uirwasWrWcHJ1LgL2nAVB6rMosepeD3?=
- =?us-ascii?Q?cZWP0C7p15YRxUpAsvA3tZeuuOjyOpkuXzPCMV3m50E47hIUBg2FINwIqWq3?=
- =?us-ascii?Q?5fLnMfEhDA8qWibBxjvgNhlnfScBqs/UIOlqfCRquMq2GHzNWTD55CY/JvFj?=
- =?us-ascii?Q?LR7Z0op+VmVjv4xNXD6UcyzL2+TO0N8YDVWYWzHrQSB3twzWth3sUDqNXr0v?=
- =?us-ascii?Q?yFGyrF0dR3u1ZF3p0qbPox6NwqhoRI7MScbyvVliKBoPPdFFaFYoZZsXrkol?=
- =?us-ascii?Q?0CRjKW18PRrWn6vwT8g2h9N95pid2d/OrhecL7OBepHkLf1OwlfObdbPVyfm?=
- =?us-ascii?Q?BU9eRpZFowKg9lf5qCB9jpWtP+6VdkFF/OvYUHIxbdOT6RxV3/OpMKu7lLuO?=
- =?us-ascii?Q?xBzgHdwNVhon55AjyWVkaA3FNZGt9AHx1GJ4RhifgmdQP4pq4ujoKr2n2NZq?=
- =?us-ascii?Q?7WCrEOfDN611RNVTwLEtDRJwSd1fYJ4j1YTNdcjwVKEygHlVYaSDSmSL+knu?=
- =?us-ascii?Q?ulJPPVje4jVF8MdikHpZpvlnjLEpxOvTwnRsWDgO7uTbUMzKfO/gBJLHiLja?=
- =?us-ascii?Q?07CQkAuGcJuSvyuDDxS6IrXjwsmqHsrhKtl/CdZ7zgsLPj8OPoExQahfDzLD?=
- =?us-ascii?Q?jB/cN3rjtTIyfCX4ZkTdXwgnHPkPpCNLm1/M9OC93cA3czUdZHubRNEX24PN?=
- =?us-ascii?Q?lCRom2YMY352v5a3M5dZjWHeX0mzAY3CbuvFAboIaz1u5SWO0ExsfxEw5aHm?=
- =?us-ascii?Q?+e+qyOcriT4jtUqi16pqa0kQi/kTvDXi4K8dA9GyYZ61f/ndUDFvlk1JPxg5?=
- =?us-ascii?Q?jdOMgAQjsB5vsFjx1razegfg697DkBoy4dQaPO6ZSrfyDXR7FSXY6oL6+qrG?=
- =?us-ascii?Q?d86rDN/Y1bpRdX6aUhFy3wsRE4pfeiEBxN5f4rpzNFMzgHoDgG7m6dmHy0Eo?=
- =?us-ascii?Q?qEBEMXkYALromrA5jNwujFWyFtWDhVaYdhDXikSlXmuiYeJeJlUPRTVAWw?=
- =?us-ascii?Q?=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:58.252.5.68;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.oppo.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(376014)(7416014)(82310400026)(921020)(7053199007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: oppo.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2025 02:22:32.6182
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: fc0ff309-d924-44c8-eb30-08dde5109453
-X-MS-Exchange-CrossTenant-Id: f1905eb1-c353-41c5-9516-62b4a54b5ee6
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f1905eb1-c353-41c5-9516-62b4a54b5ee6;Ip=[58.252.5.68];Helo=[mail.oppo.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SG2PEPF000B66CC.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR02MB7827
+X-CM-TRANSID:gCh0CgAncY0wbK5ougC0AQ--.46889S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7tw1DXrykAryrGw1UZw1kKrg_yoW5JF1Dpr
+	WrG3WxKFZ5Xw1jy3yFvFn7Ja4jgan2qr43XFsFqr12gF97Wr1fWrZFgw1Y9Fyqvr18Xayk
+	Wayqg3Waka13Aa7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU90b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487
+	Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aV
+	AFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxk0xIA0c2IEe2xF
+	o4CEbIxvr21lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
+	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
+	zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
+	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
+	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIda
+	VFxhVjvjDU0xZFpf9x07UMnQUUUUUU=
+X-CM-SenderInfo: polqt0awwwqx5xdzvxpfor3voofrz/
 
-When a task is migrated out, there is a probability that the tg->load_avg
-value will become abnormal. The reason is as follows.
 
-1. Due to the 1ms update period limitation in update_tg_load_avg(), there
-is a possibility that the reduced load_avg is not updated to tg->load_avg
-when a task migrates out.
-2. Even though __update_blocked_fair() traverses the leaf_cfs_rq_list and
-calls update_tg_load_avg() for cfs_rqs that are not fully decayed, the key
-function cfs_rq_is_decayed() does not check whether
-cfs->tg_load_avg_contrib is null. Consequently, in some cases,
-__update_blocked_fair() removes cfs_rqs whose avg.load_avg has not been
-updated to tg->load_avg.
 
-Add a check of cfs_rq->tg_load_avg_contrib in cfs_rq_is_decayed(),
-which fixes the case (2.) mentioned above.
+在 2025/8/26 21:32, Ard Biesheuvel 写道:
+> On Tue, 19 Aug 2025 at 11:16, <linan666@huaweicloud.com> wrote:
+>>
+>> From: Li Nan <linan122@huawei.com>
+>>
+>> Observed on kernel 6.6 (present on master as well):
+>>
+>>    BUG: KASAN: slab-out-of-bounds in memcmp+0x98/0xd0
+>>    Call trace:
+>>     kasan_check_range+0xe8/0x190
+>>     __asan_loadN+0x1c/0x28
+>>     memcmp+0x98/0xd0
+>>     efivarfs_d_compare+0x68/0xd8
+>>     __d_lookup_rcu_op_compare+0x178/0x218
+>>     __d_lookup_rcu+0x1f8/0x228
+>>     d_alloc_parallel+0x150/0x648
+>>     lookup_open.isra.0+0x5f0/0x8d0
+>>     open_last_lookups+0x264/0x828
+>>     path_openat+0x130/0x3f8
+>>     do_filp_open+0x114/0x248
+>>     do_sys_openat2+0x340/0x3c0
+>>     __arm64_sys_openat+0x120/0x1a0
+>>
+>> If dentry->d_name.len < EFI_VARIABLE_GUID_LEN , 'guid' can become
+>> negative, leadings to oob. The issue can be triggered as below:
+>>
+>>    T1                    T2
+>>    lookup_open
+>>     ->lookup
+>>      simple_lookup
+>>       d_add
+>>       // invalid dentry is added to hash list
+>>
+>>                          lookup_open
+>>                           d_alloc_parallel
+>>                            __d_lookup_rcu
+>>                             __d_lookup_rcu_op_compare
+>>                              hlist_bl_for_each_entry_rcu
+>>                              // invalid dentry can be retrieved
+>>                               ->d_compare
+>>                                efivarfs_d_compare
+>>
+>> Fix it by checking len before cmp.
+>>
+>> Fixes: da27a24383b2 ("efivarfs: guid part of filenames are case-insensitive")
+>> Signed-off-by: Li Nan <linan122@huawei.com>
+>> Signed-off-by: Wu Guanghao <wuguanghao3@huawei.com>
+>> ---
+>> v2: optimize commit message
+>>
+> 
+> Thanks for the fix, and for the elaborate description.
+> 
+> IIUC, two parallel lookups using an invalid filename can reproduce this?
+> 
 
-Fixes: 1528c661c24b ("sched/fair: Ratelimit update to tg->load_avg")
-Tested-by: Aaron Lu <ziqianlu@bytedance.com>
-Reviewed-by: Aaron Lu <ziqianlu@bytedance.com>
-Reviewed-by: Vincent Guittot <vincent.guittot@linaro.org>
-Signed-off-by: xupengbo <xupengbo@oppo.com>
----
-Changes:
-v1 -> v2: 
-- Another option to fix the bug. Check cfs_rq->tg_load_avg_contrib in 
-cfs_rq_is_decayed() to avoid early removal from the leaf_cfs_rq_list.
-- Link to v1 : https://lore.kernel.org/cgroups/20250804130326.57523-1-xupengbo@oppo.com/
-v2 -> v3:
-- Check if cfs_rq->tg_load_avg_contrib is 0 derectly.
-- Link to v2 : https://lore.kernel.org/cgroups/20250805144121.14871-1-xupengbo@oppo.com/
-v3 -> v4:
-- Fix typo
-- Link to v3 : https://lore.kernel.org/cgroups/20250826075743.19106-1-xupengbo@oppo.com/
-v4 -> v5:
-- Amend the commit message
-- Link to v4 : https://lore.kernel.org/cgroups/20250826084854.25956-1-xupengbo@oppo.com/
+Thansk for your review.
 
-After some preliminary discussion and analysis, I think it is feasible to
-directly check if cfs_rq->tg_load_avg_contrib is 0 in cfs_rq_is_decay().
-So patch v3 was submitted.
+Yes, the filename is invalid. I'll add that to the commit message in the 
+next version.
 
-Please send emails to a different email address <xupengbo1029@163.com>
-after September 3, 2025, after that date <xupengbo@oppo.com> will expire
-for personal reasons.
+>>   fs/efivarfs/super.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/fs/efivarfs/super.c b/fs/efivarfs/super.c
+>> index 23ff4e873651..c30d758e303a 100644
+>> --- a/fs/efivarfs/super.c
+>> +++ b/fs/efivarfs/super.c
+>> @@ -152,7 +152,7 @@ static int efivarfs_d_compare(const struct dentry *dentry,
+>>   {
+>>          int guid = len - EFI_VARIABLE_GUID_LEN;
+>>
+> 
+> Could we do a separate
+> 
+> if (guid <= 0)
+>    return 1;
+> 
+> here, with a comment describing how that condition might become true?
+> 
 
-Thanks,
-Xu Pengbo
- kernel/sched/fair.c | 3 +++
- 1 file changed, 3 insertions(+)
+Okay, I will update it in v3.
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index b173a059315c..81b7df87f1ce 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -4062,6 +4062,9 @@ static inline bool cfs_rq_is_decayed(struct cfs_rq *cfs_rq)
- 	if (child_cfs_rq_on_list(cfs_rq))
- 		return false;
- 
-+	if (cfs_rq->tg_load_avg_contrib)
-+		return false;
-+
- 	return true;
- }
- 
+>> -       if (name->len != len)
+>> +       if (name->len != len || len <= EFI_VARIABLE_GUID_LEN)
+> 
+> ... and drop this change.
+> 
+>>                  return 1;
+>>
+>>          /* Case-sensitive compare for the variable name */
+>> --
+>> 2.39.2
+>>
+>>
 
-base-commit: fab1beda7597fac1cecc01707d55eadb6bbe773c
 -- 
-2.43.0
+Thanks,
+Nan
 
 
