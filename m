@@ -1,97 +1,116 @@
-Return-Path: <linux-kernel+bounces-787802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A30A8B37B4A
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 09:12:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3055B37B54
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 09:14:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D237A1B632EB
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 07:12:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E30757A2C74
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 07:12:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55092314A71;
-	Wed, 27 Aug 2025 07:12:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 296AD314B9D;
+	Wed, 27 Aug 2025 07:13:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AtHAkBA+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="f87tkpfp"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB883EEB3;
-	Wed, 27 Aug 2025 07:12:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDB6A29CB48;
+	Wed, 27 Aug 2025 07:13:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756278743; cv=none; b=N23dp6ckPW1qfsaTB0ziYFQhQ+xUEPO3OeeJamSflVDC9IsZBQ3qlyWJ+sn2omi4SZpoH5EImygWJ1kjk+9kQAp8waoli9toF5O1eLcn64uM0syNJ86Mlb2qGdWjW+tbGLNIAWsHYlN0uR10JossW87nCHhyzSJ+c2hbj+hbUlI=
+	t=1756278833; cv=none; b=fg81Xf2q4fsCLVkCJVCNshUKeu24ZY34sjpz/E/PAfJDlX9YrrFCQ4tEaZPlChKIuhMMPJM2muwaiyyrkxkR4oMCAXl8ikFasiPqWuR11YaTEwY29gAu7zw5+5DoLp/1v14z/uRJVTnVxl5Lr60EPdq95gezkKR1XgXqCMmRLg0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756278743; c=relaxed/simple;
-	bh=hSQyXH2l/jK1XL9U1NDobErbBuoxjNhahxJ89CbTppo=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=bLTvWnUfCU19VCNlpH8ZbuDFlpQdZ5I4D1ff1YdWx1Kbv9Aw20lEWgE3LgY4pHYDNftBTQfjeMSkz4ljKbOO+h2za4cO95GtlSIVXpiaAZbP/6yiHGQIAEVwMeZj4fmRLb+FTJbWT2Ehv4dFU7iWyo5Hh2/TZhv9/o6V9CQ3F4I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AtHAkBA+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22475C4CEEB;
-	Wed, 27 Aug 2025 07:12:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756278743;
-	bh=hSQyXH2l/jK1XL9U1NDobErbBuoxjNhahxJ89CbTppo=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=AtHAkBA+cBiIbAftXtXNcGz3FobX/ez2/SMkxg/Ni9QHlu3vWrU9xRluah6c1FK/F
-	 qUJPCgvtCDdnETwL64wjVvtsf2TfgTdNmjQqYm9NEQlvUe5t5z9u5vFEYV/n8Z+hLG
-	 AK/VZ2HXYgVLNntubI02jl28eOuYwFkTAeLqX2lq9yXT3R3ufhJaewwyEoGHiX6fbx
-	 O7OITnY/CCqhcZSqz/FyUVNMblcaQPGJDyvKatOG8fKYzsrT1Ee5ZhnHUn9cxIHHVg
-	 jTe7txSmGugAFYbYGNHgXN2Qx8pv21pFolAaY6596iUhr9TZplHP1m8Z9BTGKrjSBw
-	 O1ynjX8NKCIqQ==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, FUJITA Tomonori
- <fujita.tomonori@gmail.com>
-Cc: alex.gaynor@gmail.com, ojeda@kernel.org, aliceryhl@google.com,
- anna-maria@linutronix.de, bjorn3_gh@protonmail.com, boqun.feng@gmail.com,
- dakr@kernel.org, frederic@kernel.org, gary@garyguo.net,
- jstultz@google.com, linux-kernel@vger.kernel.org, lossin@kernel.org,
- lyude@redhat.com, rust-for-linux@vger.kernel.org, sboyd@kernel.org,
- tglx@linutronix.de, tmgross@umich.edu, acourbot@nvidia.com,
- daniel.almeida@collabora.com
-Subject: Re: [PATCH v1 1/2] rust: add udelay() function
-In-Reply-To: <CANiq72n4GKUo3LjNkvBvh0C=20tfz7D_jirZpu+2BogqNuK3KQ@mail.gmail.com>
-References: <ub8ohgErgUJB1KWyrSWn18gSQiyiIJ4Py133yi5fMR68ZG2zeWokoP7kULU7voBjry46A7GZUSrHuCQn0C_DZg==@protonmail.internalid>
- <20250821035710.3692455-2-fujita.tomonori@gmail.com>
- <87bjo2witj.fsf@t14s.mail-host-address-is-not-set>
- <20250826.205941.963904478024459782.fujita.tomonori@gmail.com>
- <MXM2tcMcDw96t0MaotkNUv8G6s6LZSMuI9XZppDap5ha8qIbYPjF3P4xl5aRumL8avwdLDL3vBAnnr1acmsYEA==@protonmail.internalid>
- <CANiq72n4GKUo3LjNkvBvh0C=20tfz7D_jirZpu+2BogqNuK3KQ@mail.gmail.com>
-Date: Wed, 27 Aug 2025 09:12:14 +0200
-Message-ID: <87349dw84x.fsf@t14s.mail-host-address-is-not-set>
+	s=arc-20240116; t=1756278833; c=relaxed/simple;
+	bh=K0bQQpsDzeY/Y26tMD08d+PjvNTQF08RYzop/82EMok=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=aJBx1zzrulZJbRlRIBEMbkoNUBSkM1j+kHuBv0Prp0x+6LYmm0K8nuqLYLQEeVPOcUeGVRP0xMzvWoSO967CLV64lj1Yxq1uCI7Cvr1ue/thHsgGCv+IFyxdeIfr0NU+x4R7ewFyq6iExQit+FpXX+IxcqAebrTg2lVpwHB9KpY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=f87tkpfp; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
+	bh=K0bQQpsDzeY/Y26tMD08d+PjvNTQF08RYzop/82EMok=; b=f87tkpfpVxZrRViMoRI4d1CeNZ
+	8kgIuN7oxH9O0wqnPTCRHKcal3QmoH2sNRFm8kzVA0dBaxO/xTgrAnG98dBu4cMlnWqLvWGlgqea4
+	NfNGd2f6Q1bvhz596vb9/7BU+93Up+/Ue9FOv+GapwhELYQiBKPa2GrmunCDcjo9MH47g6KJAWNJ1
+	JwBlcinp6eoLNgtYnTn+zvXwO7dI7mKgfBZNw1h5r4OSRXhSFCR9bVck4P1C7ZO4CzxWb1tdTIcHA
+	dhkdnLYvhksEDxzgNsPRLh5jHPGi2kMi53E7XKn2Qmw9xpWa/o3wlL7supWIZRrx/dfvHuRrnGdNt
+	Z3xESJfg==;
+Received: from [213.244.170.152] (helo=phil.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1urALS-0001of-9v; Wed, 27 Aug 2025 09:13:22 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: Yury Norov <yury.norov@gmail.com>,
+ Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+ Jaehoon Chung <jh80.chung@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>,
+ Shreeya Patel <shreeya.patel@collabora.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Sandy Huang <hjc@rock-chips.com>,
+ Andy Yan <andy.yan@rock-chips.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
+ Nicolas Frattaroli <frattaroli.nicolas@gmail.com>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Shawn Lin <shawn.lin@rock-chips.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ Krzysztof =?UTF-8?B?V2lsY3p5xYRza2k=?= <kwilczynski@kernel.org>,
+ Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>,
+ Bjorn Helgaas <bhelgaas@google.com>, Chanwoo Choi <cw00.choi@samsung.com>,
+ MyungJoo Ham <myungjoo.ham@samsung.com>,
+ Kyungmin Park <kyungmin.park@samsung.com>, Qin Jian <qinjian@cqplus1.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+ Nathan Chancellor <nathan@kernel.org>,
+ Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+ Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
+ Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Cc: kernel@collabora.com, linux-kernel@vger.kernel.org,
+ linux-mmc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-media@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-phy@lists.infradead.org,
+ linux-sound@vger.kernel.org, netdev@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com, linux-pci@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-clk@vger.kernel.org, llvm@lists.linux.dev,
+ Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Subject:
+ Re: [PATCH v3 06/20] phy: rockchip-emmc: switch to FIELD_PREP_WM16 macro
+Date: Wed, 27 Aug 2025 09:13:18 +0200
+Message-ID: <6820610.MHq7AAxBmi@phil>
+In-Reply-To: <20250825-byeword-update-v3-6-947b841cdb29@collabora.com>
+References:
+ <20250825-byeword-update-v3-0-947b841cdb29@collabora.com>
+ <20250825-byeword-update-v3-6-947b841cdb29@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-"Miguel Ojeda" <miguel.ojeda.sandonis@gmail.com> writes:
+Am Montag, 25. August 2025, 10:28:26 Mitteleurop=C3=A4ische Sommerzeit schr=
+ieb Nicolas Frattaroli:
+> The era of hand-rolled HIWORD_UPDATE macros is over, at least for those
+> drivers that use constant masks.
+>=20
+> Replace the implementation of the rockchip eMMC PHY driver's
+> HIWORD_UPDATE macro with hw_bitfield.h's FIELD_PREP_WM16. This makes the
+> change more easily reviewable.
+>=20
+> Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
 
-> On Tue, Aug 26, 2025 at 1:59=E2=80=AFPM FUJITA Tomonori
-> <fujita.tomonori@gmail.com> wrote:
->>
->> This can lead to an unexpected delay duration, but it's safe in Rust=E2=
-=80=99s
->> sense of safety?
->
-> If it is just unexpected behavior, then yeah.
->
-> Perhaps Andreas is referring to C overflow UB? If that is the case,
-> then in the kernel it is actually defined due to
-> `-fno-strict-overflow`.
-
-OK, cool Then I would suggest that we just add a small note in the docs
-about the C behavior that even though passing an invalid value is
-considered a bug, it will not cause UB or memory unsafety.
-
-
-Best regards,
-Andreas Hindborg
-
+Acked-by: Heiko Stuebner <heiko@sntech.de>
 
 
 
