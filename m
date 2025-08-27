@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-787415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B98DAB375E0
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 02:08:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21B6DB375E3
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 02:09:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78FCE7C05B5
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 00:08:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 626907A1D2B
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 00:07:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78A6E223DDF;
-	Wed, 27 Aug 2025 00:05:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CCB7226CE5;
+	Wed, 27 Aug 2025 00:05:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TxEF2nTJ"
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UyDKvtjz"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EE9E21FF3F
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 00:05:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 247112236F2
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 00:05:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756253145; cv=none; b=E9iRowNhfMxKlQWIXRD9hx0hrkAyyVCeghTphbJptxIenifURgLuE9s5QeWblcWlV/nvaqnvRHIj5KXzbEgSvs+w7mr3gW5ciUniDmIWXano6YkHbWu+dvRsUxsiza0VAs8mEKUJ/MAUQ1OUKiH9Pu6IuCVn/vStXUcUb5vbExc=
+	t=1756253147; cv=none; b=I4S4qucPqAH/eDegiLJ4AGDs1YE8dWhQodlqnJgVPMdJ40ZLZtbj1wthtc+x9TNMWKW4DB/zz72GfrLQC+tf5t8SLewOzhmISG2VZBYdljF3fwXREi8q8O9FX/+6QcclOYUspTEuhqL5d93NQSZ4RNDKSxi7FyJqqzYc91dMvFc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756253145; c=relaxed/simple;
-	bh=LPaxkW9YyCXUJeIK8cRJGK+UjtY30XS0fpBptMGlvUg=;
+	s=arc-20240116; t=1756253147; c=relaxed/simple;
+	bh=+ptPO8wiWLdE67ovmdHqqqNTkWuU8Wbd/ifeWjv87No=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=ReJBExVuirPq+ER2rUpZ8BZNreCnvhmx7stTkDUlYI+QNCNzmFkRSpW7qi/rtU1HTV1CmI3Up0RtvL2nhYFHsbKwXyS166ocpfJzr01EcmRlxDZe6Ce8TP2eCltIczZu+yzdvdJGqq3geAf+PoKH3tzELAsovq70Fc0Pp663pro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TxEF2nTJ; arc=none smtp.client-ip=209.85.210.201
+	 To:Cc:Content-Type; b=O0s43up4NhMOBL+XwxoI+b6VG+eIVd6DvWZE0YnuQa5Rex+Zzfpu+zYm9rQBlapSnnFR2Tl0ldXVmN+iu20zfu3CnjFyhtFaX7rme/FcxACcaxQcZFIJrFbJ/sAjNLsaWsrAmhA5uTBD/8uK/t2f+INcKM8ms2HDZlGPg+j32G8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UyDKvtjz; arc=none smtp.client-ip=209.85.216.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-76e2eb6d2baso11635006b3a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 17:05:44 -0700 (PDT)
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-3274f7e6c1fso988480a91.0
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 17:05:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756253143; x=1756857943; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1756253145; x=1756857945; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=FsJkpNgJKrVlrQ0kYYDnZ364wlXe53Et8BwiZ80i0+M=;
-        b=TxEF2nTJSm7I/lUichMiss/0dvcKnEKDsf82vrVDpgCCQjNJm0HP0v6S2+6VYI6S89
-         calCE3XGypg6kPehwicAXodOrXQXCZ9deEDjA3XEiJ/7/rng4LKDFZ6DO9Z5GbSUHKsF
-         TpNfLMWj+ZVNMDslsamUf8xUSjm51BxWOKbpffAdV7ZyMOFiwNSNmoqcggWqWbFpaGL2
-         jns5LFUzHCFEBKvbi8j25BZwm9EUfEUMF2dxxEH2eMKCRIVwdwcffum1QKNPymcOug0M
-         m2NTuqt3YxcTLWrVdQB2r8OeB86JqdltJviAfRzBVF/NQzuBOupGtyCc/es8jZ9NzsE0
-         umRw==
+        bh=kJ6rATzspI5eGA3xG6HKuRZsUtSaW3a6n8TI9IFDChs=;
+        b=UyDKvtjzswpXJX9jy2hmIk8acSjaNvnee4L8cF2Xd2jtvcT9EMX8UOlY0CxOTedEwo
+         kFhi6ptMoz+K7uFbbBJaND1mNXhmfpoFq8y4yFsd0xL5ocDKoymfLtqRxQOFvjbQ7MYQ
+         M+/c/bA2xI1tDFtWKbZ15RE83XU3/gP5e/ur0HG22HOrcLsc6N7CrHTU0qX1b0XDKlmF
+         KdJobPW6xCCFoMO1aOH/k8D+1xewU3zDopQz9osRapmEkX5F2rp4H67ptXBtn8vZFCq8
+         0LvVUme/6QPbnvgpyUmVOJQWnaa8BaTM9ngIjbqK3P9/px/LlUk+3iQ2hkFkdK+JUOTf
+         YD2w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756253143; x=1756857943;
+        d=1e100.net; s=20230601; t=1756253145; x=1756857945;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=FsJkpNgJKrVlrQ0kYYDnZ364wlXe53Et8BwiZ80i0+M=;
-        b=fy4pPTUZKQ7W7Z398kLRCl9y9XpC8ZihL2z3xIEUG/MT2IRP+w1MgSd/I4xobnhxp6
-         TL+khkaFCamhZ/swr92+hdM884AtHHnxvS4Ltd3dE0a212ZoQABcO7DTDosUqe5geuP+
-         788jYp89sI0ETmFA13XeICmm+W3zaTcqDJmOIroySCS96pyXdbxs+AaFplRP7nNIL9Hw
-         3E2SHETv/7UdI1WmnxuxMXO8EIWOW82giEmPTUBj9tsp2LaAEpev+8AkNRm2rmM69rQV
-         1yOQgRLpk3VKotqTFMwGFpMN8VOvJv3nFUAJDEg9eWQFWdAx1Y7uROyuv3ywx9KbAnvG
-         7MsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVUv66CPzQIwWAYJl4WI9qRZoXTD08j5HpVe6StPxM92qm690IW9DENkxKoMlbtqiPKCJMhpCQFPQkH1vs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+9LzZF4YQLUZ+qUfX1xJv5m/81km2dzunaZdm32nSs/Si+RLO
-	Zvl85aFcVAKnQNjT82GBBuc1Fx0s7FMTJSaZP2EmGX7lrtN0HyifUUhVxUdThmiIZjIFikgO5a3
-	rk4TWmg==
-X-Google-Smtp-Source: AGHT+IEpi55G8voNDVUumr/uaCI0zU1p73RuojkrRDx6WiI41KFFc3w7odsA7AW9Ablcl98PDu4S12vgqWw=
-X-Received: from pjvb15.prod.google.com ([2002:a17:90a:d88f:b0:311:c197:70a4])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:5493:b0:243:15b9:7661
- with SMTP id adf61e73a8af0-24340d71cfcmr26934393637.59.1756253143613; Tue, 26
- Aug 2025 17:05:43 -0700 (PDT)
+        bh=kJ6rATzspI5eGA3xG6HKuRZsUtSaW3a6n8TI9IFDChs=;
+        b=k3SWVvHunp/QSLF4wBshbKu6V11tcC7HXgp2OT79BBS9EcJF5rS/kWQJxmM9NSWCll
+         JVAKeD0EREDHQZS2VsewqFcl6iszS3Iw617C87g9n7liVnWsIlWEZ/SQ1qERc7Y1VnQn
+         kjBPwbE01SjvrjEOwwlh1ABNv0L4SROnio/9cnSC7YafI9EVF9+dLphBvMc/mUnTpakY
+         A4KVo7V28lg7HWR4WTd1Aievr8r6kwttBqjRjEwuwBYDmddny1TMFH6ThVIyggJab1LU
+         CFrFD1fceULBpnqACeAtv9mFHbB51pkcK/NsvH2pA666xaPn8/gZCTAhVj1t3Xbj3VVa
+         cVQg==
+X-Forwarded-Encrypted: i=1; AJvYcCU+dYhb+iCzW286uM5tn0LntyHGv9rPfu4ibDWq4iqeTtP/0bSDDLinXWYTzDhXMxGvdb8ztjR6eK9gJus=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwsLiW+eLpnRdnSIAIrIv7aI4F2L1lrUBI4asJgGZASZndCvsfd
+	mhGuTF0attM5EokUgvIhmpmt1zQE4gymFN2sAEovPzXimw7rFPoZYexogNQt3oLfQLm5tVSepB8
+	3NRy04Q==
+X-Google-Smtp-Source: AGHT+IF+jEprkjlej8Prs6xu/gBvPow2HKyDXuqwzy8PeYZGXGFMT3K+Rg3QiclX8uRbzKpIye1R6CZL/V0=
+X-Received: from pjbqb16.prod.google.com ([2002:a17:90b:2810:b0:321:c441:a0a])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3b87:b0:327:41c8:882a
+ with SMTP id 98e67ed59e1d1-32741c8893dmr5208970a91.20.1756253145402; Tue, 26
+ Aug 2025 17:05:45 -0700 (PDT)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Tue, 26 Aug 2025 17:05:21 -0700
+Date: Tue, 26 Aug 2025 17:05:22 -0700
 In-Reply-To: <20250827000522.4022426-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -75,9 +75,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250827000522.4022426-1-seanjc@google.com>
 X-Mailer: git-send-email 2.51.0.268.g9569e192d0-goog
-Message-ID: <20250827000522.4022426-12-seanjc@google.com>
-Subject: [RFC PATCH 11/12] KVM: TDX: Track nr_premapped as an "unsigned long",
- not an "atomic64_t"
+Message-ID: <20250827000522.4022426-13-seanjc@google.com>
+Subject: [RFC PATCH 12/12] KVM: TDX: Rename nr_premapped to nr_pending_tdh_mem_page_adds
 From: Sean Christopherson <seanjc@google.com>
 To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
 Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
@@ -86,28 +85,29 @@ Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
 	Rick Edgecombe <rick.p.edgecombe@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Track the number of premapped pfns as a non-atomic variable as all usage
-is guarded by slots_lock, and KVM now asserts as much.  Note, slots_lock
-has always effectively guarded nr_premapped since TDX support landed, the
-use of an atomic64_t was likely a leftover from development that was
-never cleaned up.
+Rename "nr_premapped" to an asurdly verbose "nr_pending_tdh_mem_page_adds"
+to make it explicitly clear what the counter tracks.  "pre-map" is far
+too similar to "pre-fault", especially since tdx_sept_set_private_spte()
+deals with both "pre_fault_allowed" and the counter.
+
+No functional change intended.
 
 Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
  arch/x86/kvm/vmx/tdx.c | 8 ++++----
- arch/x86/kvm/vmx/tdx.h | 2 +-
- 2 files changed, 5 insertions(+), 5 deletions(-)
+ arch/x86/kvm/vmx/tdx.h | 9 +++++++--
+ 2 files changed, 11 insertions(+), 6 deletions(-)
 
 diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
-index 27941defb62e..5d2bb27f22da 100644
+index 5d2bb27f22da..f9ac590e8ff0 100644
 --- a/arch/x86/kvm/vmx/tdx.c
 +++ b/arch/x86/kvm/vmx/tdx.c
 @@ -1639,7 +1639,7 @@ static int tdx_sept_set_private_spte(struct kvm *kvm, gfn_t gfn,
  		if (KVM_BUG_ON(kvm->arch.pre_fault_allowed, kvm))
  			return -EIO;
  
--		atomic64_inc(&kvm_tdx->nr_premapped);
-+		kvm_tdx->nr_premapped++;
+-		kvm_tdx->nr_premapped++;
++		kvm_tdx->nr_pending_tdh_mem_page_adds++;
  		return 0;
  	}
  
@@ -115,8 +115,8 @@ index 27941defb62e..5d2bb27f22da 100644
  	if (tdx_is_sept_zap_err_due_to_premap(kvm_tdx, err, entry, level)) {
  		lockdep_assert_held(&kvm->slots_lock);
  
--		if (KVM_BUG_ON(atomic64_dec_return(&kvm_tdx->nr_premapped) < 0, kvm))
-+		if (KVM_BUG_ON(--kvm_tdx->nr_premapped < 0, kvm))
+-		if (KVM_BUG_ON(--kvm_tdx->nr_premapped < 0, kvm))
++		if (KVM_BUG_ON(--kvm_tdx->nr_pending_tdh_mem_page_adds < 0, kvm))
  			return -EIO;
  
  		return 0;
@@ -124,8 +124,8 @@ index 27941defb62e..5d2bb27f22da 100644
  	 * Pages are pending for KVM_TDX_INIT_MEM_REGION to issue
  	 * TDH.MEM.PAGE.ADD().
  	 */
--	if (atomic64_read(&kvm_tdx->nr_premapped))
-+	if (kvm_tdx->nr_premapped)
+-	if (kvm_tdx->nr_premapped)
++	if (kvm_tdx->nr_pending_tdh_mem_page_adds)
  		return -EINVAL;
  
  	cmd->hw_error = tdh_mr_finalize(&kvm_tdx->td);
@@ -133,21 +133,28 @@ index 27941defb62e..5d2bb27f22da 100644
  		goto out;
  	}
  
--	KVM_BUG_ON(atomic64_dec_return(&kvm_tdx->nr_premapped) < 0, kvm);
-+	KVM_BUG_ON(--kvm_tdx->nr_premapped < 0, kvm);
+-	KVM_BUG_ON(--kvm_tdx->nr_premapped < 0, kvm);
++	KVM_BUG_ON(--kvm_tdx->nr_pending_tdh_mem_page_adds < 0, kvm);
  
  	if (arg->flags & KVM_TDX_MEASURE_MEMORY_REGION) {
  		for (i = 0; i < PAGE_SIZE; i += TDX_EXTENDMR_CHUNKSIZE) {
 diff --git a/arch/x86/kvm/vmx/tdx.h b/arch/x86/kvm/vmx/tdx.h
-index ca39a9391db1..04ba9ea3e0ba 100644
+index 04ba9ea3e0ba..45d86f9fa41c 100644
 --- a/arch/x86/kvm/vmx/tdx.h
 +++ b/arch/x86/kvm/vmx/tdx.h
-@@ -37,7 +37,7 @@ struct kvm_tdx {
+@@ -36,8 +36,13 @@ struct kvm_tdx {
+ 
  	struct tdx_td td;
  
- 	/* For KVM_TDX_INIT_MEM_REGION. */
--	atomic64_t nr_premapped;
-+	unsigned long nr_premapped;
+-	/* For KVM_TDX_INIT_MEM_REGION. */
+-	unsigned long nr_premapped;
++	/*
++	 * The number of pages that KVM_TDX_INIT_MEM_REGION has mapped into the
++	 * S-EPT, but not yet initialized via TDH.MEM.PAGE_ADD.  Used to sanity
++	 * check adding pages to the image, and to ensure that all pages have
++	 * been initialized before finalizing the TD.
++	 */
++	unsigned long nr_pending_tdh_mem_page_adds;
  
  	/*
  	 * Prevent vCPUs from TD entry to ensure SEPT zap related SEAMCALLs do
