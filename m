@@ -1,298 +1,168 @@
-Return-Path: <linux-kernel+bounces-788665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788702-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4557B38865
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 19:14:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8C79B388E9
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 19:50:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA87317321F
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 17:14:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34B75684120
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 17:50:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD6E6278143;
-	Wed, 27 Aug 2025 17:14:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DjfNtCQE"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3CF030C367;
-	Wed, 27 Aug 2025 17:14:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA03C277C81;
+	Wed, 27 Aug 2025 17:50:37 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56D0F21FF55
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 17:50:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756314867; cv=none; b=WGl/i7X1AiwP+gquUZnXqk8Y2Yke4Fetf+K8bh9ucnxzCxWGHFsye9xHKijLnkrsQgwrMMEZSQoBiGWvF9BOkl0Bp+jzbudJbyDv9/aTM+WYl9gNrax6a7XpLgtzdaUKmeK6ecQ6TBN7UolntOpf+bQz3H01WdFgzqnonTU8GPk=
+	t=1756317037; cv=none; b=h4bIxNcsd+kaTnqV6wC1kk0Px57xC0ZBv07MsWgUNWV9R76nVrgcckEm9ObXBp0VVLjfWdbGAPyqeXJsIFOY9o73flP16PMcoykn8ZQuJFQWxof3PHaaodXJaI9IrAesxhGpf52wfXt9n5wM9erXNTrJ8MX0l9YygIRNWUiVb04=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756314867; c=relaxed/simple;
-	bh=CXDcZQ0Se7Zr++g/D9aafksWpOAhnUBq9vUM6z+CdtQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=mqJgXh+VFArJj5VSLuFN4YizTelzBgqahU21gL288fjeoMMySfW8k1baXkF9QypSIUBHJBtLjy5RvXU3DUytmW/cnnx+T2XpoNBxpXUow5DgXZs2pjo8xGzW+GYGkN85Xl6M7ha0aHkbKdDuZ1wQGIbu6JYtwVun0N6BpgrIaEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DjfNtCQE; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3c79f0a604aso27370f8f.2;
-        Wed, 27 Aug 2025 10:14:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756314864; x=1756919664; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fPU4UG0shymed19kC5QQuX+JC22baf0fpM1+kwSIVDw=;
-        b=DjfNtCQEOg1XGVdQ7+5UCbNT9KZGToMaV5jT2XrrzMkLvwHQLPlMFktcY9f6SEGSSG
-         tMfyPcg++zCh4XJI1Uzaw5/DRaUDfiOTMHoWN0MNp3vlveCzGTHEbREXCPEXSIVarP9E
-         l9lK5Fr/Un8WukxTl0GUF4W6PUkLlqwOpFi4oG7f0xqOZ59csyUYtCb/twpqjTePzyL9
-         cDUxjfyawRkgXFnt2Y7QDvi+2d5i5306b3sP+SwhyHF08hNNW9Mj97AKHTRUP4pawLEW
-         ynJaSUhKQoT6on0R822N3/2MowCRmH2SoenqlFLv4qOJJ1WlXQr8/LFRgOOumR2p7iO5
-         x4sg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756314864; x=1756919664;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fPU4UG0shymed19kC5QQuX+JC22baf0fpM1+kwSIVDw=;
-        b=IEewcQ708Pa8iYih0PgHQCzuzu9MvNA4lGSsQirInx6CnMWp0jFOw6Mpa80WoNzNaH
-         Q+tDwDZX74tC7BH25w50+FzsIxo1dXhTbMd352eLlnlrtIVhoWA8wUGrtN/9GXAo/M8X
-         CBpW21gx7RqQYI1ElEDbS7AVDspx/sjuv0VmNAoWaQQN/Q/TtMALFVR8CZpiY1cRelkM
-         8aI02Wn6RWFJPaNyvL5Vzkq3xT2AaQZBLg43tvSbvJ14T3je1Q+eBRRDu0CYo7dN37oJ
-         /0Cy906iIIRKyQO0B3Ht81jZ9uAtzdTWQoWhHCXpWb6yXP1cWJnvj088YMzfYWFbEuLE
-         aDQg==
-X-Forwarded-Encrypted: i=1; AJvYcCUwGK4QetgxhmQPHuYhpK1GBfskVvSz4daktiWUTowX4S6awM9zg5HetZ/cKC6jHm8RVmgo0QSBISGaNq2r@vger.kernel.org, AJvYcCV1/Udclo18JngbTli83KoEWwVjdnJLx4qsBgU6hfiFYD/ayNOjkiMuWTDZb0YCCgw734Se4DTd@vger.kernel.org, AJvYcCWemF1ctQhYlIs1/fZZR/YQy/Hh5Z5qaT2HBc7w2mtZOkyeEkyDNPJkl/nXWCqofh7gMrJOW1a3Iv8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxz+qJK/KQQMMV1nuPw9RKsCDUrlcXHilU42okC2guw69c/p2W0
-	F9K0r2F/fuGc3dk74PdScRZKt/0/6FTBNty6Ul/GFvgoy5ZtacFZAk/W7nCpig==
-X-Gm-Gg: ASbGncvLym8Rey+13glIfrTK46cDjjGNF+BsJwxyCH8iNIUrGpx72qQ5Y7626N4HcmG
-	7bFQgaTwRsMpTl7UgJHro6Gmh0xZF8u4W/IyQTgrTAE8VOiJoiYEb2LcnBgKwbkTHxNnI8BC12g
-	nN3CYiCYIJWNUuQPRwy5qpSZMoy8FT0ehMRjZgaaJUo/o3GqC1VsMwhmulfHy9o3+BJplJ1qprn
-	evrBjibXJyw8ElqtYd5hqwHxvueaX1ggfC2eGHV1jZcJ1WNoAOu/uy9txOlaZtYsMg6nK4MnS7N
-	FRUgRcImLOhz5IgjgOJzXfEaQyTqVFlBj+pcc/+4/VzJamm6Q8EOnC0/5mfiYiCdhF17lkyqx3k
-	ZqbtPALmt4kNG7WgRHRZlAehNdo0fG2PDUOXg4vOmxYYW4fGmuPE=
-X-Google-Smtp-Source: AGHT+IGkGgu/zepDaclUovYHbHFUPlfCtylJkPVDNcl1jkGqRtflyZavEYXbWDBRApoSMNQfSS+G0g==
-X-Received: by 2002:adf:8bd4:0:b0:3cc:a507:80d4 with SMTP id ffacd0b85a97d-3cca507822amr1650176f8f.7.1756314863975;
-        Wed, 27 Aug 2025 10:14:23 -0700 (PDT)
-Received: from [192.168.0.253] (5D59A51C.catv.pool.telekom.hu. [93.89.165.28])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3c7113fdacfsm21272365f8f.35.2025.08.27.10.14.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Aug 2025 10:14:23 -0700 (PDT)
-From: Gabor Juhos <j4g8y7@gmail.com>
-Date: Wed, 27 Aug 2025 19:13:59 +0200
-Subject: [PATCH v3 2/2] i2c: pxa: handle 'Early Bus Busy' condition on
- Armada 3700
+	s=arc-20240116; t=1756317037; c=relaxed/simple;
+	bh=HRG6YsD+dlohOnmGtsaXwqmyTMM/+nZ99oakldaTKp4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FC5jBKx8+P2xtDWhILq0VysdYbsp0QGTxMSRvof0Xr1mA0y1DCNNDVe/0aLFkwEPy9xrWkZftDWewtfsqWIBGaKU6vUyv+LgekYSyb9a0j5wLJVBqa/e+MNVNqzDFacf3wxUIB3KDnptKZD6yJ/5Vh2qKFA2k/rnibE6p/GIFAg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4cBrlQ6VXXz9sS7;
+	Wed, 27 Aug 2025 19:15:46 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id VH7Q5uEy69_B; Wed, 27 Aug 2025 19:15:46 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4cBrlQ5CHWz9sRy;
+	Wed, 27 Aug 2025 19:15:46 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 9A0458B764;
+	Wed, 27 Aug 2025 19:15:46 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id vywdVwtWOi4k; Wed, 27 Aug 2025 19:15:46 +0200 (CEST)
+Received: from [192.168.202.221] (unknown [192.168.202.221])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 29C2F8B763;
+	Wed, 27 Aug 2025 19:15:46 +0200 (CEST)
+Message-ID: <3236e24d-4800-44e1-99de-4e8d0d204daa@csgroup.eu>
+Date: Wed, 27 Aug 2025 19:15:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250827-i2c-pxa-fix-i2c-communication-v3-2-052c9b1966a2@gmail.com>
-References: <20250827-i2c-pxa-fix-i2c-communication-v3-0-052c9b1966a2@gmail.com>
-In-Reply-To: <20250827-i2c-pxa-fix-i2c-communication-v3-0-052c9b1966a2@gmail.com>
-To: Wolfram Sang <wsa@kernel.org>, 
- Wolfram Sang <wsa+renesas@sang-engineering.com>, 
- Andi Shyti <andi.shyti@kernel.org>, 
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
- Russell King <rmk+kernel@armlinux.org.uk>, Andrew Lunn <andrew@lunn.ch>, 
- Hanna Hawa <hhhawa@amazon.com>
-Cc: Robert Marko <robert.marko@sartura.hr>, 
- Linus Walleij <linus.walleij@linaro.org>, 
- Russell King <rmk+kernel@armlinux.org.uk>, linux-i2c@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Gabor Juhos <j4g8y7@gmail.com>, stable@vger.kernel.org, 
- Imre Kaloz <kaloz@openwrt.org>
-X-Mailer: b4 0.14.2
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] powerpc/lib/xor_vmx: Relax frame size for clang
+To: Mathieu Malaterre <malat@debian.org>
+Cc: linux-kernel@vger.kernel.org, Joel Stanley <joel@jms.id.au>,
+ linuxppc-dev@lists.ozlabs.org
+References: <20190621085822.1527-1-malat@debian.org>
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+Content-Language: fr-FR
+In-Reply-To: <20190621085822.1527-1-malat@debian.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Under some circumstances I2C recovery fails on Armada 3700. At least
-on the Methode uDPU board, removing and replugging an SFP module fails
-often, like this:
 
-  [   36.953127] sfp sfp-eth1: module removed
-  [   38.468549] i2c i2c-1: i2c_pxa: timeout waiting for bus free
-  [   38.486960] sfp sfp-eth1: module MENTECHOPTO      POS22-LDCC-KR    rev 1.0  sn MNC208U90009     dc 200828
-  [   38.496867] mvneta d0040000.ethernet eth1: unsupported SFP module: no common interface modes
-  [   38.521448] hwmon hwmon2: temp1_input not attached to any thermal zone
-  [   39.249196] sfp sfp-eth1: module removed
-  ...
-  [  292.568799] sfp sfp-eth1: please wait, module slow to respond
-  ...
-  [  625.208814] sfp sfp-eth1: failed to read EEPROM: -EREMOTEIO
 
-Note that the 'unsupported SFP module' messages are not relevant. The
-module is used only for testing the I2C recovery funcionality, because
-the error can be triggered easily with this specific one.
+Le 21/06/2019 à 10:58, Mathieu Malaterre a écrit :
+> When building with clang-8 the frame size limit is hit:
+> 
+>    ../arch/powerpc/lib/xor_vmx.c:119:6: error: stack frame size of 1200 bytes in function '__xor_altivec_5' [-Werror,-Wframe-larger-than=]
+> 
+> Follow the same approach as commit 9c87156cce5a ("powerpc/xmon: Relax
+> frame size for clang") until a proper fix is implemented upstream in
+> clang and relax requirement for clang.
+> 
+> Link: https://github.com/ClangBuiltLinux/linux/issues/563
+> Cc: Joel Stanley <joel@jms.id.au>
+> Signed-off-by: Mathieu Malaterre <malat@debian.org>
 
-Enabling debug in the i2c-pxa driver reveals the following:
+Apparently the problem is gone with recent versions of clang, frame size 
+is 16.
 
-  [   82.034678] sfp sfp-eth1: module removed
-  [   90.008654] i2c i2c-1: slave_0x50 error: timeout with active message
-  [   90.015112] i2c i2c-1: msg_num: 2 msg_idx: 0 msg_ptr: 0
-  [   90.020464] i2c i2c-1: IBMR: 00000003 IDBR: 000000a0 ICR: 000007e0 ISR: 00000802
-  [   90.027906] i2c i2c-1: log:
-  [   90.030787]
+000001b0 <__xor_altivec_5>:
+  1b0:	94 21 ff f0 	stwu    r1,-16(r1)
+  1b4:	93 c1 00 08 	stw     r30,8(r1)
+  1b8:	54 63 d1 be 	srwi    r3,r3,6
+  1bc:	39 20 00 00 	li      r9,0
+  1c0:	39 40 00 10 	li      r10,16
+  1c4:	39 60 00 20 	li      r11,32
+  1c8:	7c 69 03 a6 	mtctr   r3
+  1cc:	38 60 00 30 	li      r3,48
+  1d0:	7c 44 48 ce 	lvx     v2,r4,r9
+  1d4:	7d 84 4a 14 	add     r12,r4,r9
+  1d8:	7c 65 48 ce 	lvx     v3,r5,r9
+  1dc:	7f c5 4a 14 	add     r30,r5,r9
+  1e0:	7c 86 48 ce 	lvx     v4,r6,r9
+  1e4:	7c a7 48 ce 	lvx     v5,r7,r9
+  1e8:	10 43 14 c4 	vxor    v2,v3,v2
+  1ec:	7c 2c 50 ce 	lvx     v1,r12,r10
+  1f0:	10 42 24 c4 	vxor    v2,v2,v4
+  1f4:	7d 1e 50 ce 	lvx     v8,r30,r10
+  1f8:	10 42 2c c4 	vxor    v2,v2,v5
+  1fc:	7d 3e 58 ce 	lvx     v9,r30,r11
+  200:	7d 5e 18 ce 	lvx     v10,r30,r3
+  204:	7f c6 4a 14 	add     r30,r6,r9
+  208:	7c 08 48 ce 	lvx     v0,r8,r9
+  20c:	10 68 0c c4 	vxor    v3,v8,v1
+  210:	7c cc 58 ce 	lvx     v6,r12,r11
+  214:	7c ec 18 ce 	lvx     v7,r12,r3
+  218:	10 42 04 c4 	vxor    v2,v2,v0
+  21c:	7d 7e 50 ce 	lvx     v11,r30,r10
+  220:	10 29 34 c4 	vxor    v1,v9,v6
+  224:	7d 9e 58 ce 	lvx     v12,r30,r11
+  228:	10 aa 3c c4 	vxor    v5,v10,v7
+  22c:	7d be 18 ce 	lvx     v13,r30,r3
+  230:	7f c7 4a 14 	add     r30,r7,r9
+  234:	7d de 50 ce 	lvx     v14,r30,r10
+  238:	10 63 5c c4 	vxor    v3,v3,v11
+  23c:	10 21 64 c4 	vxor    v1,v1,v12
+  240:	7d fe 58 ce 	lvx     v15,r30,r11
+  244:	7e 1e 18 ce 	lvx     v16,r30,r3
+  248:	7f c8 4a 14 	add     r30,r8,r9
+  24c:	7e 3e 50 ce 	lvx     v17,r30,r10
+  250:	10 63 74 c4 	vxor    v3,v3,v14
+  254:	7e 5e 58 ce 	lvx     v18,r30,r11
+  258:	7c 9e 18 ce 	lvx     v4,r30,r3
+  25c:	10 63 8c c4 	vxor    v3,v3,v17
+  260:	7c 44 49 ce 	stvx    v2,r4,r9
+  264:	10 45 6c c4 	vxor    v2,v5,v13
+  268:	10 a1 7c c4 	vxor    v5,v1,v15
+  26c:	39 29 00 40 	addi    r9,r9,64
+  270:	10 42 84 c4 	vxor    v2,v2,v16
+  274:	7c 6c 51 ce 	stvx    v3,r12,r10
+  278:	10 65 94 c4 	vxor    v3,v5,v18
+  27c:	10 42 24 c4 	vxor    v2,v2,v4
+  280:	7c 6c 59 ce 	stvx    v3,r12,r11
+  284:	7c 4c 19 ce 	stvx    v2,r12,r3
+  288:	42 00 ff 48 	bdnz    1d0 <__xor_altivec_5+0x20>
+  28c:	83 c1 00 08 	lwz     r30,8(r1)
+  290:	38 21 00 10 	addi    r1,r1,16
+  294:	4e 80 00 20 	blr
 
-This continues until the retries are exhausted ...
+Christophe
 
-  [  110.192489] i2c i2c-1: slave_0x50 error: exhausted retries
-  [  110.198012] i2c i2c-1: msg_num: 2 msg_idx: 0 msg_ptr: 0
-  [  110.203323] i2c i2c-1: IBMR: 00000003 IDBR: 000000a0 ICR: 000007e0 ISR: 00000802
-  [  110.210810] i2c i2c-1: log:
-  [  110.213633]
-
-... then the whole sequence starts again ...
-
-  [  115.368641] i2c i2c-1: slave_0x50 error: timeout with active message
-
-... while finally the SFP core gives up:
-
-  [  671.975258] sfp sfp-eth1: failed to read EEPROM: -EREMOTEIO
-
-When we analyze the log, it can be seen that bit 1 and 11 is set in the
-ISR (Interface Status Register). Bit 1 indicates the ACK/NACK status, but
-the purpose of bit 11 is not documented in the driver code unfortunately.
-
-The 'Functional Specification' document of the Armada 3700 SoCs family
-however says that this bit indicates an 'Early Bus Busy' condition. The
-document also notes that whenever this bit is set, it is not possible to
-initiate a transaction on the I2C bus. The observed behaviour corresponds
-to this statement.
-
-Unfortunately, I2C recovery does not help as it never runs in this
-special case. Although the driver checks the busyness of the bus at
-several places, but since it does not consider the A3700 specific bit
-in these checks it can't determine the actual status of the bus correctly
-which results in the errors above.
-
-In order to fix the problem, add a new member to struct 'i2c_pxa' to
-store a controller specific bitmask containing the bits indicating the
-busy status, and use that in the code while checking the actual status
-of the bus. This ensures that the correct status can be determined on
-the Armada 3700 based devices without causing functional changes on
-devices based on other SoCs.
-
-With the change applied, the driver detects the busy condition, and runs
-the recovery process:
-
-  [  742.617312] i2c i2c-1: state:i2c_pxa_wait_bus_not_busy:449: ISR=00000802, ICR=000007e0, IBMR=03
-  [  742.626099] i2c i2c-1: i2c_pxa: timeout waiting for bus free
-  [  742.631933] i2c i2c-1: recovery: resetting controller, ISR=0x00000802
-  [  742.638421] i2c i2c-1: recovery: IBMR 0x00000003 ISR 0x00000000
-
-This clears the EBB bit in the ISR register, so it makes it possible to
-initiate transactions on the I2C bus again.
-
-After this patch, the SFP module used for testing can be removed and
-replugged numerous times without causing the error described at the
-beginning. Previously, the error happened after a few such attempts.
-
-The patch has been tested also with the following kernel versions:
-5.10.240, 5.15.189, 6.1.148, 6.6.102, 6.12.42, 6.14.11, 6.15.10, 6.16.1
-It improves recovery on all of them.
-
-Cc: stable@vger.kernel.org # 5.10+
-Reviewed-by: Imre Kaloz <kaloz@openwrt.org>
-Signed-off-by: Gabor Juhos <j4g8y7@gmail.com>
----
-Changes in v3:
-  - rebase on tip of i2c/for-current
-  - use Reviewed-by tag for Imre
-  - remove Fixes tag as the problem is not caused by the previously mentioned
-    commit, simply it is not handled by the code yet
-  - update list of tested kernels
-  - Link to v2: https://lore.kernel.org/r/20250811-i2c-pxa-fix-i2c-communication-v2-3-ca42ea818dc9@gmail.com
-
-Changes in v2:
-  - rebase and retest on tip of i2c/for-current
-  - Link to v1: https://lore.kernel.org/r/20250511-i2c-pxa-fix-i2c-communication-v1-3-e9097d09a015@gmail.com
----
- drivers/i2c/busses/i2c-pxa.c | 18 ++++++++++++------
- 1 file changed, 12 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/i2c/busses/i2c-pxa.c b/drivers/i2c/busses/i2c-pxa.c
-index 70acf33e1d573231f84a1f09cffb376a8277351d..19f5da08def11ded1d3de968f50fa5b5851066f5 100644
---- a/drivers/i2c/busses/i2c-pxa.c
-+++ b/drivers/i2c/busses/i2c-pxa.c
-@@ -71,6 +71,7 @@
- #define ISR_GCAD	(1 << 8)	   /* general call address detected */
- #define ISR_SAD		(1 << 9)	   /* slave address detected */
- #define ISR_BED		(1 << 10)	   /* bus error no ACK/NAK */
-+#define ISR_A3700_EBB	(1 << 11)	   /* early bus busy for armada 3700 */
- 
- #define ILCR_SLV_SHIFT		0
- #define ILCR_SLV_MASK		(0x1FF << ILCR_SLV_SHIFT)
-@@ -263,6 +264,7 @@ struct pxa_i2c {
- 	bool			highmode_enter;
- 	u32			fm_mask;
- 	u32			hs_mask;
-+	u32			busy_mask;
- 
- 	struct i2c_bus_recovery_info recovery;
- 	struct pinctrl		*pinctrl;
-@@ -430,7 +432,7 @@ static int i2c_pxa_wait_bus_not_busy(struct pxa_i2c *i2c)
- 
- 	while (1) {
- 		isr = readl(_ISR(i2c));
--		if (!(isr & (ISR_IBB | ISR_UB)))
-+		if (!(isr & i2c->busy_mask))
- 			return 0;
- 
- 		if (isr & ISR_SAD)
-@@ -467,7 +469,7 @@ static int i2c_pxa_wait_master(struct pxa_i2c *i2c)
- 		 * quick check of the i2c lines themselves to ensure they've
- 		 * gone high...
- 		 */
--		if ((readl(_ISR(i2c)) & (ISR_UB | ISR_IBB)) == 0 &&
-+		if ((readl(_ISR(i2c)) & i2c->busy_mask) == 0 &&
- 		    readl(_IBMR(i2c)) == (IBMR_SCLS | IBMR_SDAS)) {
- 			if (i2c_debug > 0)
- 				dev_dbg(&i2c->adap.dev, "%s: done\n", __func__);
-@@ -488,7 +490,7 @@ static int i2c_pxa_set_master(struct pxa_i2c *i2c)
- 	if (i2c_debug)
- 		dev_dbg(&i2c->adap.dev, "setting to bus master\n");
- 
--	if ((readl(_ISR(i2c)) & (ISR_UB | ISR_IBB)) != 0) {
-+	if ((readl(_ISR(i2c)) & i2c->busy_mask) != 0) {
- 		dev_dbg(&i2c->adap.dev, "%s: unit is busy\n", __func__);
- 		if (!i2c_pxa_wait_master(i2c)) {
- 			dev_dbg(&i2c->adap.dev, "%s: error: unit busy\n", __func__);
-@@ -514,7 +516,7 @@ static int i2c_pxa_wait_slave(struct pxa_i2c *i2c)
- 			dev_dbg(&i2c->adap.dev, "%s: %ld: ISR=%08x, ICR=%08x, IBMR=%02x\n",
- 				__func__, (long)jiffies, readl(_ISR(i2c)), readl(_ICR(i2c)), readl(_IBMR(i2c)));
- 
--		if ((readl(_ISR(i2c)) & (ISR_UB|ISR_IBB)) == 0 ||
-+		if ((readl(_ISR(i2c)) & i2c->busy_mask) == 0 ||
- 		    (readl(_ISR(i2c)) & ISR_SAD) != 0 ||
- 		    (readl(_ICR(i2c)) & ICR_SCLE) == 0) {
- 			if (i2c_debug > 1)
-@@ -1177,7 +1179,7 @@ static int i2c_pxa_pio_set_master(struct pxa_i2c *i2c)
- 	/*
- 	 * Wait for the bus to become free.
- 	 */
--	while (timeout-- && readl(_ISR(i2c)) & (ISR_IBB | ISR_UB))
-+	while (timeout-- && readl(_ISR(i2c)) & i2c->busy_mask)
- 		udelay(1000);
- 
- 	if (timeout < 0) {
-@@ -1322,7 +1324,7 @@ static void i2c_pxa_unprepare_recovery(struct i2c_adapter *adap)
- 	 * handing control of the bus back to avoid the bus changing state.
- 	 */
- 	isr = readl(_ISR(i2c));
--	if (isr & (ISR_UB | ISR_IBB)) {
-+	if (isr & i2c->busy_mask) {
- 		dev_dbg(&i2c->adap.dev,
- 			"recovery: resetting controller, ISR=0x%08x\n", isr);
- 		i2c_pxa_do_reset(i2c);
-@@ -1479,6 +1481,10 @@ static int i2c_pxa_probe(struct platform_device *dev)
- 	i2c->fm_mask = pxa_reg_layout[i2c_type].fm;
- 	i2c->hs_mask = pxa_reg_layout[i2c_type].hs;
- 
-+	i2c->busy_mask = ISR_UB | ISR_IBB;
-+	if (i2c_type == REGS_A3700)
-+		i2c->busy_mask |= ISR_A3700_EBB;
-+
- 	if (i2c_type != REGS_CE4100)
- 		i2c->reg_isar = i2c->reg_base + pxa_reg_layout[i2c_type].isar;
- 
-
--- 
-2.50.1
+> ---
+>   arch/powerpc/lib/Makefile | 4 ++++
+>   1 file changed, 4 insertions(+)
+> 
+> diff --git a/arch/powerpc/lib/Makefile b/arch/powerpc/lib/Makefile
+> index c55f9c27bf79..b3f7d64caaf0 100644
+> --- a/arch/powerpc/lib/Makefile
+> +++ b/arch/powerpc/lib/Makefile
+> @@ -58,5 +58,9 @@ obj-$(CONFIG_FTR_FIXUP_SELFTEST) += feature-fixups-test.o
+>   
+>   obj-$(CONFIG_ALTIVEC)	+= xor_vmx.o xor_vmx_glue.o
+>   CFLAGS_xor_vmx.o += -maltivec $(call cc-option,-mabi=altivec)
+> +ifdef CONFIG_CC_IS_CLANG
+> +# See https://github.com/ClangBuiltLinux/linux/issues/563
+> +CFLAGS_xor_vmx.o += -Wframe-larger-than=4096
+> +endif
+>   
+>   obj-$(CONFIG_PPC64) += $(obj64-y)
 
 
