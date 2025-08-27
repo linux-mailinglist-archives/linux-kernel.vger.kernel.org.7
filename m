@@ -1,132 +1,91 @@
-Return-Path: <linux-kernel+bounces-788105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788107-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2D6DB37FB2
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 12:18:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B93DDB37FBE
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 12:19:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B180A1B6852E
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 10:18:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C823E1B685ED
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 10:19:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 451A934A30A;
-	Wed, 27 Aug 2025 10:18:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M5hdkaV6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98DA42D2485;
-	Wed, 27 Aug 2025 10:18:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 240B4337683;
+	Wed, 27 Aug 2025 10:19:34 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F44F2F1FE6
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 10:19:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756289909; cv=none; b=rW24C60RHgUWo7lJsQNroKL23VvMH0QFVMZlyxdq1OgPN7+EBBM4lgiQVntt6kOOKIMq7hbLoiy7tl/w30XIB2/axhEKET75NRA+t7prrV9Q2FF+RZ3bLJ1w/kmRyMp+uWSfEamjWDnlrsU4iOfrb1LePOJmortTRp1+qCBmEog=
+	t=1756289973; cv=none; b=uZBxkZYE/91JA5wPa9fZUGqzMQQ56osERaZinLAu8tJ8jwkNo6O8Z7SA7f/n1XYhgT487Kcp9Eaz9+VVg+ls2QnykktuKlM28rf+MiHv1x4wadE7nCuWXx0ca1KeVcS2dk9Kazypi+ZtXoU9YsjYoEWRZmwiTrttbStrqNdvnlc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756289909; c=relaxed/simple;
-	bh=6FzlqskmpU4mqgsOXMFz/wgzjeVlAW4PBLT2lq24aV4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VlV4BYkxeFcTpByc1jTxRzC1yLAOY0xvRv83n2lCo0vEU+GrzsX31tZCZ6x+TWRQOXZG1sEBNwG98i8ITmudRTpTaRbNk9EmxDkf5F4V1T+OZpoZGRxI9MB4C1xZuxDum9zOSockFy5XaazeUAsSy2LrQECse7IDonGvGW6Uu64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M5hdkaV6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79B5AC4AF09;
-	Wed, 27 Aug 2025 10:18:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756289909;
-	bh=6FzlqskmpU4mqgsOXMFz/wgzjeVlAW4PBLT2lq24aV4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=M5hdkaV6NdbcRgLMTdZNGtKkBXlDzUaESLeMZ3UhOp2Lu/Eb0eDmH9DxvQDERmD8d
-	 dtg061BoVzk20FeEZOnpFcC8GsXs9FG0Ypc97u7EKCQYyqQpg89MG3RInCZUAgZ6Tl
-	 4QS+GTYWtFzE0laGDd2Vc0aoU8JL1sbVRu2ynic6fYmCGgJM+S0wMvGxWhA5SBQoTI
-	 DJv0i0ugeEtFH7IMPF0nQzozL1UiUPYta68OfIq1TKnmI5OiosllEU7wDkz52/norF
-	 SmKPFOQmjlZw7SdJGmn2ocSfchl0m2Sxfv/3PTI4SFSPkI+9rkApLntyGCWYPnQ+IY
-	 NqGcgP6jKuerg==
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-61cb9f6dbe7so641815a12.0;
-        Wed, 27 Aug 2025 03:18:29 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCW2akWTwVVsaNFbLMQwUQ7oGJ8TynEDACjgDd7lp1edNTOqkJy6n+/LOm0A561qTEzWdyHwUBA02Yk67kUt@vger.kernel.org, AJvYcCXPlqOzM+DvvtivQmledf0dVqcABqJ6lhmfP/wgYekIajN9cERIgyIio6cE+WyG5IlBEjo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzW3GsTBYzCYLovO80ErHAvViMklo7xfW3EFTB/7lfbCFUKxSU/
-	N1SJPPKLNGPaMRm+HjE+9b8/1K1HIPnl4dP6v+N8I3EbvL3vfkWIZ0yAQ30qbi7La/BRM0WqcvP
-	NNRj3/1rNUcs6ZFzLMy+p5Al8BzdD/8g=
-X-Google-Smtp-Source: AGHT+IFDaHJmXdP3CC1Di8LlIhQV097JtkfPqlF8wrrAryeIiXdqAtfMWhdoQiulQi8pOLJWyHP8mPXfB1Tn/2IkwCk=
-X-Received: by 2002:a05:6402:2792:b0:61c:bfa7:5d0 with SMTP id
- 4fb4d7f45d1cf-61cbfa706c9mr119825a12.30.1756289908044; Wed, 27 Aug 2025
- 03:18:28 -0700 (PDT)
+	s=arc-20240116; t=1756289973; c=relaxed/simple;
+	bh=l8icMveQ0TFtZyFnl67j/FQ9dMtBjO0VTK+3/J5OuVM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ocanp4a6FiU5+xuOgut4j/OtX6yrUva+KOgOOs4Wfe6plrIwgsbRm8abzf5O9EO74bDiuwTPj+sPiOanxSQpm45Ksfd/E50tpLlSnw0J54mZ8i5zIxErDIng/PNQiB6yt/l7LeFue6i3wxJlxO5Q5RiRtBrthoGJjXylUw8cmkg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com; spf=none smtp.mailfrom=foss.arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=foss.arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EE98214BF;
+	Wed, 27 Aug 2025 03:19:22 -0700 (PDT)
+Received: from bogus (unknown [10.57.57.52])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DCC4D3F738;
+	Wed, 27 Aug 2025 03:19:27 -0700 (PDT)
+Date: Wed, 27 Aug 2025 11:19:04 +0100
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: Shijie Huang <shijie@amperemail.onmicrosoft.com>
+Cc: Jeremy Linton <jeremy.linton@arm.com>,
+	"Christoph Lameter (Ampere)" <cl@gentwo.org>,
+	Huang Shijie <shijie@os.amperecomputing.com>,
+	catalin.marinas@arm.com, will@kernel.org,
+	patches@amperecomputing.com, Shubhang@os.amperecomputing.com,
+	krzysztof.kozlowski@linaro.org, bjorn.andersson@oss.qualcomm.com,
+	geert+renesas@glider.be, arnd@arndb.de, nm@ti.com,
+	ebiggers@kernel.org, nfraprado@collabora.com,
+	prabhakar.mahadev-lad.rj@bp.renesas.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: defconfig: enable CONFIG_SCHED_CLUSTER
+Message-ID: <20250827-mushroom-of-heavenly-efficiency-f0ebbc@sudeepholla>
+References: <2d9259e4-1b58-435d-bf02-9c4badd52fd9@arm.com>
+ <20250813-gifted-nimble-wildcat-6cdf65@sudeepholla>
+ <d172f30d-28ad-dd46-1385-f010107bc789@gentwo.org>
+ <c45b13b9-52ae-a52b-ce39-77f7ebe09507@gentwo.org>
+ <aJ20imoeRL_tifky@bogus>
+ <97278200-b877-47a6-84d4-34ea9dda4e6b@gentwo.org>
+ <20250815-pheasant-of-eternal-tact-6f9bbc@sudeepholla>
+ <1097a1d1-483d-44b3-b473-4350b5a4b04d@arm.com>
+ <20250818-mysterious-aromatic-wasp-cdbaae@sudeepholla>
+ <bdfdc220-63d8-45ff-a475-41a6a63e61ff@amperemail.onmicrosoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250826064906.10683-1-yangtiezhu@loongson.cn> <CAEyhmHQJcCvy2TPv7nwT87yS6y698WrECwd+xA9RjsCVmrVXvw@mail.gmail.com>
-In-Reply-To: <CAEyhmHQJcCvy2TPv7nwT87yS6y698WrECwd+xA9RjsCVmrVXvw@mail.gmail.com>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Wed, 27 Aug 2025 18:18:16 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H5SCuXERUBbC5D+k1pjf-Pmf33LOQXL=aUP-E-DgO6+qg@mail.gmail.com>
-X-Gm-Features: Ac12FXw1WWwPsT1YP9ZG06PGkyzJXhLdasQwDqY8XKTWfUUAYVafM9Q29pau5cA
-Message-ID: <CAAhV-H5SCuXERUBbC5D+k1pjf-Pmf33LOQXL=aUP-E-DgO6+qg@mail.gmail.com>
-Subject: Re: [PATCH] LoongArch: BPF: Optimize sign-extention mov instructions
-To: Hengqi Chen <hengqi.chen@gmail.com>
-Cc: Tiezhu Yang <yangtiezhu@loongson.cn>, bpf@vger.kernel.org, loongarch@lists.linux.dev, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <bdfdc220-63d8-45ff-a475-41a6a63e61ff@amperemail.onmicrosoft.com>
 
-Applied, thanks.
+On Wed, Aug 27, 2025 at 10:33:17AM +0800, Shijie Huang wrote:
+> 
+> On 18/08/2025 17:33, Sudeep Holla wrote:
+> > >  From a distro perspective it makes more sense to me to change it from a
+> > > compile time option to a runtime kernel command line option with the default
+> > > on/off set by this SCHED_CLUSTER flag rather than try to maintain a
+> > > blocklist.
+> > > 
+> > Right, that makes complete sense to me.
+> 
+> Anyway, Peter is also try to make the SCHED_CLUSTER as default for arm64
+> platform, please see the email link:
+> 
+> https://patchew.org/linux/20250826041319.1284-1-kprateek.nayak@amd.com/20250826041319.1284-5-kprateek.nayak@amd.com/
+> 
 
-Huacai
+Yes, I was cc-ed and I am following the discussions.
 
-On Wed, Aug 27, 2025 at 9:27=E2=80=AFAM Hengqi Chen <hengqi.chen@gmail.com>=
- wrote:
->
-> On Tue, Aug 26, 2025 at 2:49=E2=80=AFPM Tiezhu Yang <yangtiezhu@loongson.=
-cn> wrote:
-> >
-> > For 8-bit and 16-bit sign-extention mov instructions, it can use the na=
-tive
-> > instructions ext.w.b and ext.w.h directly, no need to use the temporary=
- t1
-> > register, just remove the redundant operations.
-> >
-> > Here are the test results:
-> >
-> >   # modprobe test_bpf test_range=3D81,84
-> >   # dmesg -t | tail -5
-> >   test_bpf: #81 ALU_MOVSX | BPF_B jited:1 5 PASS
-> >   test_bpf: #82 ALU_MOVSX | BPF_H jited:1 5 PASS
-> >   test_bpf: #83 ALU64_MOVSX | BPF_B jited:1 5 PASS
-> >   test_bpf: #84 ALU64_MOVSX | BPF_H jited:1 5 PASS
-> >   test_bpf: Summary: 4 PASSED, 0 FAILED, [4/4 JIT'ed]
-> >
-> > Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
-> > ---
-> >  arch/loongarch/net/bpf_jit.c | 6 ++----
-> >  1 file changed, 2 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/arch/loongarch/net/bpf_jit.c b/arch/loongarch/net/bpf_jit.=
-c
-> > index abfdb6bb5c38..7072db18c6cd 100644
-> > --- a/arch/loongarch/net/bpf_jit.c
-> > +++ b/arch/loongarch/net/bpf_jit.c
-> > @@ -527,13 +527,11 @@ static int build_insn(const struct bpf_insn *insn=
-, struct jit_ctx *ctx, bool ext
-> >                         emit_zext_32(ctx, dst, is32);
-> >                         break;
-> >                 case 8:
-> > -                       move_reg(ctx, t1, src);
-> > -                       emit_insn(ctx, extwb, dst, t1);
-> > +                       emit_insn(ctx, extwb, dst, src);
-> >                         emit_zext_32(ctx, dst, is32);
-> >                         break;
-> >                 case 16:
-> > -                       move_reg(ctx, t1, src);
-> > -                       emit_insn(ctx, extwh, dst, t1);
-> > +                       emit_insn(ctx, extwh, dst, src);
-> >                         emit_zext_32(ctx, dst, is32);
-> >                         break;
-> >                 case 32:
-> > --
->
-> Acked-by: Hengqi Chen <hengqi.chen@gmail.com>
->
-> > 2.42.0
-> >
+-- 
+Regards,
+Sudeep
 
