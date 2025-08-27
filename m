@@ -1,79 +1,87 @@
-Return-Path: <linux-kernel+bounces-788807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB5DAB38A88
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 21:55:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACAC9B38A8E
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 21:57:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BCB65361BDC
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 19:55:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6265F7C36F8
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 19:57:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABC5E2EAB6D;
-	Wed, 27 Aug 2025 19:55:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E09E2EE61C;
+	Wed, 27 Aug 2025 19:57:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="opw7qt1N"
-Received: from mail-io1-f53.google.com (mail-io1-f53.google.com [209.85.166.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="d5LlrHtm"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E11762857C7
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 19:55:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C9462D24B2
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 19:57:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756324533; cv=none; b=ACwsAkBfzDogFi5mxihjov2ma1p8p9GfLVqXuw/6Gjov5ifiCF37xjUswhQiZyomvZnCgNGR0mTBsasJqcZLhG/kZ6CzaB5Tjmy53VW5QQ0+aE60J5/zKEv3tC75qE2Y5EkhPbbz5Jv+OcpTAqt1yyAnXYdCeEBVfcvvBOlLS1E=
+	t=1756324636; cv=none; b=F6BdzEN5xRCbu9XWnbbwC0RJlM2J+GQesBO8ENo6gu99iZV6arrLmSEAtwJugMSYCk8fVYmRMzfc+k2eTLeSUPKEpMxqSHZZ7d8dpusMfXXwgpElg6EHQ5GEWN/3yaPrCQXeVB2VbUydNWSlIO0JLWz1dWH/JAp4s9Lr9syft+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756324533; c=relaxed/simple;
-	bh=N09Lggw+BrEhUebvMDbNZVCFYWU967lqapi7gcfd2XY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=KAuMiDTXfy8yMlg9Vl4tgqbylpLnb1/7h3ZOFdGBT7aVbbHLRTDHNkC1fbwe6hC2Gy9JYFTGr0Sk0z028+ZFcLBctCbvnKlNa+ViGEKRZj8CzddzqH/GRMcc3RFZBXfKLoW40qMAiyLXv1jIlH4fT3kbbOMNTQIMrzPE1wsc4/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=opw7qt1N; arc=none smtp.client-ip=209.85.166.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f53.google.com with SMTP id ca18e2360f4ac-88432e27c77so10497739f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 12:55:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1756324530; x=1756929330; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=8MUZaQIYG6BL6uW/+MzW11iO+Nd9sV80O7ktOqXKopk=;
-        b=opw7qt1NRQvuclajfZ9250Of9XAJs1f3vCgXtI8j10KdNTDwr4BfDVWMRtYSpEsYkP
-         poQ6WN1s7ycRvhTaz9pakzJYcKd1Vm4Yajclrlu6FwZIwDNvktSU11iCBK1/qjCG765i
-         zhgvKObK+wPuUr4tPBXLkmuLbPVyQvRY2SRIXPkHZBSks38uxOQ3wEX/AoYS2ItOmDGH
-         5IAGfQpBY/3HVXpQI/OfiG0gGb5UgCsbZGkWV0Hu2kFjE5T1SMLUIW+37VRQqEKqL+a6
-         qe9zotoiuYnddG7MhRQT4CepUNW+Q+Dvz0369eO74b1ZJIbdkXM96v4FSq8VT6c8ApY9
-         Wf2g==
+	s=arc-20240116; t=1756324636; c=relaxed/simple;
+	bh=j65qgSbcORyR6mUhxelh/nAXSvHcmnZ7Hmr1KsAs19Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EYnWRHGFuly6Zdv2fZAJE6t9G45NM/DOFDYJDgPpcO/t7PPQhcuscH934uQhSLrOGxGAFeElpPJB45xEbn+nc3f0H3bvgcDnNn4Ex6IKUwftG5N4+/Oa01H60czdke9Ma7xkgLV2hKoWnj8uZdIsQQ2q4DCiqts4bCpynIRBjJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=d5LlrHtm; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756324632;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=WeO0im/QGecZr0be3griSovPXhUrYcztVBMRyg2pzV8=;
+	b=d5LlrHtmhs9/xkVo2glGMwloqYTRs0u3pRs4oJIrf1YUWJ70shWY86p21OHh+BznV/Nkit
+	mNsHcsCn1OSolKne/F5+H5tEad3NLHxu5LRMy+DWu93LVpCvoPoK1n4XNVFMH9rxO1WdFX
+	Ez/perLuphiLIO5RiJUkUU4O70cY7Yg=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-488-H5tmT3gmM82zN2QJgOO4xg-1; Wed, 27 Aug 2025 15:57:10 -0400
+X-MC-Unique: H5tmT3gmM82zN2QJgOO4xg-1
+X-Mimecast-MFC-AGG-ID: H5tmT3gmM82zN2QJgOO4xg_1756324629
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3c7aa4cf187so114263f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 12:57:10 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756324530; x=1756929330;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8MUZaQIYG6BL6uW/+MzW11iO+Nd9sV80O7ktOqXKopk=;
-        b=SS5qvJurXscvw8GzyKrm1/fKr4hQF6gFa/S8uZvVLb18wUC/4BlVPVmyMhLFHEOejz
-         EHMQNwUit4YAEz7sP8+4MPh/fVtpY5cWk2YtBnMEPAuMNV3+5XlVjmtnrzkVYmzuDiv3
-         zl7TGSxt1PCgkEJvg5gC6mwDXHMdqcDb7LVsEhFgj01RJdv/STsefJCdnU/ZVFFT1Xpm
-         8tVZjKaDPpJX8WWEqbAZmpowit61iR4xi27Os6lW9wzAcIqfGUxALlyPRAsPQent5U0G
-         Px+GaohK8tgcDu7yRigyGTerVwDp8gsGbpQj7SFhjf/YMuPhw3b0gtUKcbOXD2UmK1i7
-         Dugw==
-X-Forwarded-Encrypted: i=1; AJvYcCVk6oDEWtkpV9O/JvM6Z+l4RitKm3etGVJ+vN3mRvpM3QpQKHJLSslEC6ALbwn65XmwfXnzu0b8ijVatOY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yztm5Lv6YJvVs2es/we5xPgrhgrq4uED5dUbJEHMtkWKylwHGzu
-	E26wFAiT8b3MAlLRA59ewcQ0kvsw6M5O0fTgb8CmzbUL06w58mokYgYy2a8NMg8QFw8=
-X-Gm-Gg: ASbGncuQRqFJycSYRRMrUL5LdIQAODYDrsuoG6P4Isf+fsTEKDaw6DDflJiFWfZeOzz
-	5kyMh17H8TXzRmRTKQuSI9RlTzwOnobA8aRZJ94NydpdHqDOD2SAyoef3vvQd0N9e6EgfQngKjH
-	8SfKIiRfEiDpdPMxvEa46rX5s4CeJAllNrlKzuEpTB8e4xGpkRckNNtCqLGF6/RNLZuvlRmZXhn
-	542TJiWWI9SjiCulbgnMACqS2XSOzh07YIpMjV1sHR5gxmLvTCcoDhbBwn5ShQQy2PcXY+6vlp+
-	xGIX1IvXt1e1ZfdPo+AZ3IDcaT/mDT1uU4idqD5blx4zASc0MWcrj7FhWyAlydxE7K1/LX+GQdT
-	COI3uPXC6iWHolT1DKtKdUCacyJQFOw==
-X-Google-Smtp-Source: AGHT+IEsQmmJ+nFf1MkiGe++IkZlgHN6eqs940thF8/gYFel04yO1dSdjxBZQMNe5eKew3zIP+O6Ug==
-X-Received: by 2002:a05:6e02:1a0f:b0:3eb:8e5a:8fd7 with SMTP id e9e14a558f8ab-3eb8e5a9145mr192453505ab.11.1756324529861;
-        Wed, 27 Aug 2025 12:55:29 -0700 (PDT)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3ea4c191550sm97846035ab.14.2025.08.27.12.55.29
+        d=1e100.net; s=20230601; t=1756324629; x=1756929429;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WeO0im/QGecZr0be3griSovPXhUrYcztVBMRyg2pzV8=;
+        b=IcdzHKsp9LIHUAR4pVGqghYl0f7Wr7zfOuo+cB0RtQeO/SIJuibMGbKQmg9xdVzQ1l
+         x4Uktg+bYyR2Xdds20uJRc2wZk7leQiJd9jaitgOGiLZukc4h+4hZ75rAyuloq1eVF3/
+         rLoUT+T+IT/gCkrvli3YgQKl5NI4WstCBm+5vkfIjE1nbjQMfT9Yl+9wiFtf6FCcBx67
+         3NSTjw8rC+2Kw2LWXbckDyLub8M9HV1Yajt/p4rQNG/7Dg8q84HXMnrnwzKdmLaPc48+
+         VGR4Bru5zDwlKPZQeC07tsfMy5TpZEb7Hy7ZMR1Tk1lv+IWNk8RKbtzQGIs48MZpNnzX
+         z1wQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWH4g3oPrrsaKccwT/cXti/K/fSr3vviHoEOnIEClf7CsUTs2Ci9P1N7ps/0/YIxpvx0FGqxxi5cp+SLHU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyfu+OvGjyG5ntyrZ2hvKjzKtxrvWTt83m3hS8dPVc6fnf4225U
+	Y/71uM2J2cwngZUaTr8gLwGu630IDCbVkiNjs8JySIczJEuEIJyPUuPrsuhevf9ONIRrTLpoY+g
+	0mSIE++cbWKtYmxMIsN2wYQeapqDzhRWad1CAMuORW/wo/jlhZBS4qom6YdwTx/3/mWnGbwPmhz
+	Hg
+X-Gm-Gg: ASbGncvda5wrG/DcMrO6LDj1aHiJ7f5qaOYHWkveiGZgKHay7DsjgDH7O+aqJkOy3iF
+	+H+pNzdBWV2DBt8G1SaLFxu1Ak+g0KNKnaDgKOMlyaMn+GhqVPdrQTk8E8sZj6ZZTlacJOm2KmD
+	xK1heCtihSKGVrCTYRJXoGi0b+axpMoJXB6GVUHyB64sPtNVFym5eixsdupeKP29LuV5AIcaDKR
+	qJTPCD878agwxQ87ZybcaR4syTqTO3L2scHN2wpzKlATaeUfJCaj7xONFXXm82/v3mM3MGU1Tqe
+	fx+nMoEGl6rMT8AjBxPrrsrToI1kJf8w900CZnt8Wpd7C/yqiLEUj6UrLy2HOtws9drUu6c=
+X-Received: by 2002:a5d:5f4a:0:b0:3ca:5708:2b0a with SMTP id ffacd0b85a97d-3ca57082f7bmr6237660f8f.4.1756324629118;
+        Wed, 27 Aug 2025 12:57:09 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGw8SR9bQ8n/6/JMeWtNWjuCDZmep5VhDu+OqVpD982EgtQAreXteDUKqZxzqH1dML5SdFe7g==
+X-Received: by 2002:a5d:5f4a:0:b0:3ca:5708:2b0a with SMTP id ffacd0b85a97d-3ca57082f7bmr6237649f8f.4.1756324628685;
+        Wed, 27 Aug 2025 12:57:08 -0700 (PDT)
+Received: from [192.168.3.141] (p4ff1fc83.dip0.t-ipconnect.de. [79.241.252.131])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3cb901975adsm7882053f8f.8.2025.08.27.12.57.07
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Aug 2025 12:55:29 -0700 (PDT)
-Message-ID: <1182267c-d291-47bc-8e5f-2e11aa93421b@kernel.dk>
-Date: Wed, 27 Aug 2025 13:55:28 -0600
+        Wed, 27 Aug 2025 12:57:07 -0700 (PDT)
+Message-ID: <345d49d2-5b6b-4307-824b-5167db737ad2@redhat.com>
+Date: Wed, 27 Aug 2025 21:57:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,46 +89,84 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [REGRESSION] loopback block device on top of block devices don't
- work anymore
-To: Lennart Poettering <mzxreary@0pointer.de>, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, Rajeev Mishra <rajeevm@hpe.com>
-References: <aK9c5jJepHEWIONM@gardel-login>
+Subject: Re: [PATCH] mm: fix lockdep issues in writeback handling
+To: Marek Szyprowski <m.szyprowski@samsung.com>,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Miklos Szeredi <mszeredi@redhat.com>, Joanne Koong <joannelkoong@gmail.com>
+References: <CGME20250826131210eucas1p21a27a684042f37080b7a19599f479b7a@eucas1p2.samsung.com>
+ <20250826130948.1038462-1-m.szyprowski@samsung.com>
+From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <aK9c5jJepHEWIONM@gardel-login>
-Content-Type: text/plain; charset=UTF-8
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <20250826130948.1038462-1-m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 8/27/25 1:30 PM, Lennart Poettering wrote:
-> Heya!
-> 
-> Recent kernels fail if it is attempted to create a loopback block
-> device on top of a block device (rather than a regular file), which is a
-> feature long supported on Linux kernels, and that systemd relies on
-> (specifically, systemd-repart does).
-> 
-> For example, this used to work:
-> 
-> losetup --find --show --offset=4096 --sizelimit=409600 /dev/nvme0n1
-> 
-> But now it doesn't anymore...
-> 
-> This is on 6.17rc3. My educated guess is that this is caused by
-> Rajeev's 8aa5a3b68ad144da49a3d17f165e6561255e3529, which tightened the
-> screws on validating the backing file's size, which now fails if the
-> backing file isn't actually a file, but a block device.
-> 
-> (But I didn't spend more time tracking this down.)
+On 26.08.25 15:09, Marek Szyprowski wrote:
+> Commit 167f21a81a9c ("mm: remove BDI_CAP_WRITEBACK_ACCT") removed
+> BDI_CAP_WRITEBACK_ACCT flag and refactored code that depend on it.
+> Unfortunately it also moved some variable intialization out of guarded
+> scope in writeback handling, what triggers a true lockdep warning. Fix
+> this by moving initialization to the proper place.
 
-Yeah sorry about that, the problem is the followup to the commit
-you mentioned, and the fix for that is here:
+Nasty
 
-https://web.git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git/commit/?h=block-6.17&id=d14469ed7c00314fe8957b2841bda329e4eaf4ab
+> 
+> Fixes: 167f21a81a9c ("mm: remove BDI_CAP_WRITEBACK_ACCT")
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
 
-and will land in -rc4.
+Acked-by: David Hildenbrand <david@redhat.com>
 
 -- 
-Jens Axboe
+Cheers
+
+David / dhildenb
 
 
