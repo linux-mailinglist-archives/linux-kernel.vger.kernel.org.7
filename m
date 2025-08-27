@@ -1,263 +1,257 @@
-Return-Path: <linux-kernel+bounces-787548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787549-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17371B377B1
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 04:24:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 182B2B377B4
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 04:25:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1153C1B655F9
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 02:24:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CAF582A55C3
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 02:25:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D436273D65;
-	Wed, 27 Aug 2025 02:24:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85711273804;
+	Wed, 27 Aug 2025 02:25:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IHL3GrFU"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="TPNrXvwq"
+Received: from TYPPR03CU001.outbound.protection.outlook.com (mail-japaneastazon11012071.outbound.protection.outlook.com [52.101.126.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77DDB2727F4;
-	Wed, 27 Aug 2025 02:24:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756261454; cv=none; b=PDMiD67Cp+1DWH5dO5AO/EgCpiC8Xw4/EqPiuYhH4YWU2ZCqIyQmSTHPC7Bpqdsz+DHIA+mMW1CAE0L7bcQSxhT66pkllLbhhfMQAiurIcCuGyHdnFrsvDwrO2XmHAG0eFcYcRTbghg1bE1kxtWICk/CxVHpqof59m+aE/HYuh4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756261454; c=relaxed/simple;
-	bh=9O5covZ/PBS82MTmAF2q8dcGpYCmRc/sVWncSnvYRAc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Uc/hZjDmBQ5U+hYeCeVmXiuFSKI8IodCipwVYJOaf3wjXv12bThf1H/+7Zo1WpydCDvWE15TOeRjz60MJMvB57WSHt9imItwEmmiX6r0FhPnikWf3yQ/taH2uWAVisQZbeIw2XU6qKk6YTpyVLDKcJvnonCLB17KbjkRdXUOo3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IHL3GrFU; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756261452; x=1787797452;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=9O5covZ/PBS82MTmAF2q8dcGpYCmRc/sVWncSnvYRAc=;
-  b=IHL3GrFU71EtLWAs/UsgYpliZhdM87YxbfeYNz6xp280lvp/52dNGEQN
-   5r6SSHD1eH84JHlCcj63d+XimrppfRzsG5SZiWIRKaCAr2cpVZy4gg+If
-   ZddpGgetsUP2fjDbGnIqKjwDPAulQsZqbO/Sjx+GiQe6Jll/I5jeo14bJ
-   6MlFsXITA1qUEKeMJpn0sgfYMeWrVjU16j//x5y96u9KSM4l4bIigv/dc
-   bsDipghXlAccqdPA2Mwr8LwwGhxi650rsOuw5ouFpEU4Ic+qqi0U70cFQ
-   Vmg0bZv+w1jyfOrNen2QK7Dqmt+N+Nab56ZPpRmCXfkuG2CU5DEAFLVOY
-   w==;
-X-CSE-ConnectionGUID: GeH7whp2QmClJTTD1RdwSQ==
-X-CSE-MsgGUID: ux3Apb4yTiyUYfJwHnuDuQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11534"; a="68779100"
-X-IronPort-AV: E=Sophos;i="6.18,214,1751266800"; 
-   d="scan'208";a="68779100"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2025 19:24:11 -0700
-X-CSE-ConnectionGUID: WiWP+sYRRXuPPsYnRF+O5w==
-X-CSE-MsgGUID: 5Epv/vZMTfa56PB0r65XfQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,214,1751266800"; 
-   d="scan'208";a="206893613"
-Received: from binbinwu-mobl.ccr.corp.intel.com (HELO [10.124.233.111]) ([10.124.233.111])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2025 19:24:06 -0700
-Message-ID: <2a97db5e-ee82-43b0-a148-e4af1b93ca10@linux.intel.com>
-Date: Wed, 27 Aug 2025 10:24:03 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4003327707;
+	Wed, 27 Aug 2025 02:25:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.126.71
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756261508; cv=fail; b=MbCiYNfkc5VeKGAm0Mj7pXdg9lha7VHEfNA17KCnJaHZuI0XL2/7jhoTSNfb8OSXd5tbVz8Yc1FAVyA9hmlzCqFvPjLUDq0dtvtMSCcsEw5L680d7ShY8ioga4Z+TslvFpy4cPUwLhRlGvDOqhQFgiGvFTsCkWK7G3Sfmo00uEY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756261508; c=relaxed/simple;
+	bh=8WhjwfxgBLXHThRk5HtI27hdliNQP3CXRdwdrZczYU8=;
+	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=VDPcAn7zoOkCPgvYsG0M02mBrozsY2EwVMXsKDbwyeM4WmBmWHV9nv5yZGnCAz88BtGrUOgEX0vpJX9EHkb8zjv2jENRVVFFduy8UMa5YBqqtSvbdrtyuDrRcafHtJpm+JI/Sm5ivtxYWJ12V/pNCeiOi+cf4FuBhv7SnvALRVU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=TPNrXvwq; arc=fail smtp.client-ip=52.101.126.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=M/K0L674fMhWwVFIlEfnHGKyL+yE1OQ1p80y/ObPtuxnlFcsXj8c3/L7hw9nrpYmNW27R6IzwQNun+ugJyskOjSBTFOER3rRlsuBOLCorYJXkkwhxUwiekjjaiJRAV63yxHGHOyGWTmPojlYeqcc8pRXlp9NiAvmPmfiTCQE6iHDdmfkXqy7LZ3VRmcgBmxsbgymxtj2mnHIzYhARNstsEF09SdFqDXPXVDEHK3MLFgH2KoOyv3Z9bIyDoi0W6Ql1fOLd4yogWt9FaN71cGQxalq6wkrAkHmoHcisXboWS/9oBlDAqjFDXTnCQEpDfBvi6sA7aIc+4aEvbsxyJJu7Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=VcWon4ONIg0lkqF0a46OcEowY4k+AgVFCuIU3+Ab7tE=;
+ b=aSSZYxCv0WK4mHB8p8mDCD2oXX2kHh8p1/fXCwmTPzb5AtnUqw8ANtrp66nu+/RzAmUCSJmgTlZLS5G4kSOh/T8LNt+AdWQ1ftHMGYmAIsLXu9lE4TPJhkq8TdeYebUsNy0XWDrTA+l6cSqCJUVJdtSBmOKKyoDut2W0qh1AvUoMBUhC5MiLYI/tLr09Xe73MRQnPD8lKR9JyRwQzZFg6cBAiaPYOJ4BAIu3lk692qQg2tE2SHN1vEFXcIk6M/8TLcjD5sal5CD5ZVeKOSGY5qHgEmhKhCmgUpdeY7efmAv+V5mX6AavuXLUvEp9DN4gCfehbhcqLVgwaO9/ifIYpA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=VcWon4ONIg0lkqF0a46OcEowY4k+AgVFCuIU3+Ab7tE=;
+ b=TPNrXvwqOtvdBydykQAgLQ5mSDnhtOfD7WHorEj29Gr974p7nZshfjwbhjF5cBvFIH8E/3xS6YQqO2AGir6hUQUYLqw/L/iJqxZUNfYzy00KGY5EJXLgSiErYSdCFTVln2JTI7JH5PP3PgoqWKYZqgqTP9UjXv4vNZw9VYXyFqzD8GG3x4cboxLYQciqE3rR1rzAzCn5Xdl2420UeUjEq73DiqtUUZZ33PG0nfhaCmVsEGayOtoZlbop9NBpvjBqDpXD5iPpl8YtqaTvEVE8pnI3kP1Sc68VqHl99mOVLdCMj6Qbg0mStHlVepH3fLM/vK+zNbJLNqN98QDmryGxzw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SI2PR06MB5140.apcprd06.prod.outlook.com (2603:1096:4:1af::9) by
+ SI6PR06MB7147.apcprd06.prod.outlook.com (2603:1096:4:24c::7) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9052.20; Wed, 27 Aug 2025 02:25:01 +0000
+Received: from SI2PR06MB5140.apcprd06.prod.outlook.com
+ ([fe80::468a:88be:bec:666]) by SI2PR06MB5140.apcprd06.prod.outlook.com
+ ([fe80::468a:88be:bec:666%5]) with mapi id 15.20.9073.010; Wed, 27 Aug 2025
+ 02:25:01 +0000
+Message-ID: <3e38b927-ea3a-409c-93b6-32f86fe68110@vivo.com>
+Date: Wed, 27 Aug 2025 10:24:57 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] wifi: rtw89: use int type to store negative error codes
+Content-Language: en-US
+To: Ping-Ke Shih <pkshih@realtek.com>,
+ "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20250826132905.501755-1-rongqianfeng@vivo.com>
+ <b1f89b89906a4573bb8a916ed33763b5@realtek.com>
+From: Qianfeng Rong <rongqianfeng@vivo.com>
+In-Reply-To: <b1f89b89906a4573bb8a916ed33763b5@realtek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SI2PR01CA0049.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:193::13) To SI2PR06MB5140.apcprd06.prod.outlook.com
+ (2603:1096:4:1af::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 14/19] KVM: selftests: Add helpers to init TDX memory
- and finalize VM
-To: Yan Zhao <yan.y.zhao@intel.com>, Sagi Shahar <sagis@google.com>
-Cc: linux-kselftest@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
- Shuah Khan <shuah@kernel.org>, Sean Christopherson <seanjc@google.com>,
- Ackerley Tng <ackerleytng@google.com>, Ryan Afranji <afranji@google.com>,
- Andrew Jones <ajones@ventanamicro.com>,
- Isaku Yamahata <isaku.yamahata@intel.com>,
- Erdem Aktas <erdemaktas@google.com>,
- Rick Edgecombe <rick.p.edgecombe@intel.com>,
- Roger Wang <runanwang@google.com>, Oliver Upton <oliver.upton@linux.dev>,
- "Pratik R. Sampat" <pratikrajesh.sampat@amd.com>,
- Reinette Chatre <reinette.chatre@intel.com>, Ira Weiny
- <ira.weiny@intel.com>, Chao Gao <chao.gao@intel.com>,
- Chenyi Qiang <chenyi.qiang@intel.com>, linux-kernel@vger.kernel.org,
- kvm@vger.kernel.org
-References: <20250821042915.3712925-1-sagis@google.com>
- <20250821042915.3712925-15-sagis@google.com>
- <aKwhchKBV1ts+Jhm@yzhao56-desk.sh.intel.com>
- <CAAhR5DGZnrpW8u9Y0O+EFLJJsbTVO6mdrh4jbG4CrFgR13Y60g@mail.gmail.com>
- <aK0IxsvmlNvc/u7j@yzhao56-desk.sh.intel.com>
-Content-Language: en-US
-From: Binbin Wu <binbin.wu@linux.intel.com>
-In-Reply-To: <aK0IxsvmlNvc/u7j@yzhao56-desk.sh.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SI2PR06MB5140:EE_|SI6PR06MB7147:EE_
+X-MS-Office365-Filtering-Correlation-Id: c2a76757-bed1-4a9a-d019-08dde510ec9f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Z01qUTdEM3Q5S3RKTmJPMThvVHFBUEZPT3hQeFJNdWJvbFArenZiaWsydDdR?=
+ =?utf-8?B?c0lJWHdmQzRON0NQcHZkMkYxOFp2U0ZocENqR3dqT3ZNdVluQ0tvaHQ4bHZP?=
+ =?utf-8?B?WDl3eDh2TDU0bzhuSThITXVBa2s3THB0WldCQ2QzQVUzNE1KK3lRVHo3bGtw?=
+ =?utf-8?B?dEVLSWFyUzVmZ25wY3dka21ZUG5VV1FOREpPaG1IQ1pyQlRiT2F4SDMvNy9E?=
+ =?utf-8?B?UXZIeVZXd3J6NFByQ2FaOWJsWUE2Y044SlpaR3FZaDdTdDdWZlg0eUJIOWhZ?=
+ =?utf-8?B?OWVJY2xqOXdBclBJSUFSZWNYcHhHajdvSXNhWW1DUDh2SldPZUUxTjZFY2Nw?=
+ =?utf-8?B?bFFjZkJWaEpDamlManNuQWg2aDFKNGIxTnUwVmtzZlhnUEhReFkwQWlSUzE2?=
+ =?utf-8?B?ZS9mTENaM1FQdWZLajZCL2xvSTh0YUxMMDZXSXpvTTZkZVJkdXk5UDhKS0Q0?=
+ =?utf-8?B?bVVjR2hEWlREUktTajlQUnd6QktBRytEZ2c2NjZibG9wazdaMG51TGpiT3Rw?=
+ =?utf-8?B?L3RaN2xFYTYxdW1ESUdyZG5LV0Nuek9JSnBhZkxRd05nRllJTjNZRDFINmk3?=
+ =?utf-8?B?TWZHV3UvSWpGNFQ2QVNPWlVqZVFGUWZlZnFFUmRWSms5cE1McWdrZkhXUCsv?=
+ =?utf-8?B?RWNqNmZoekNJaTIrbHlRWVJhTzN5SEJZZTU0Y1dEUVRHcm05Q0JpUzdHd25i?=
+ =?utf-8?B?dFlYaE95bnM1Q05Ld2hCRFhQaVhYdmptWCs0eVRwanloNllKdjhZUVM1cGdO?=
+ =?utf-8?B?TEV4VUhoRzl2WFdsbGdMb2tJYitvc3IxWCt1aWdaUUw3djhRYXNPTDFGQ2gy?=
+ =?utf-8?B?enRqUldjY3B0RGpHR016d2pXWjhBV0ZDZHgzR0ZSdVVyakdpb0p1TUZsSnJl?=
+ =?utf-8?B?K1dGTXdsanE5VHZmYnEwYmh1M2JkbUFvbkhSUDVlaG0xSDlUb21Id1U0UHdR?=
+ =?utf-8?B?Q25vTjVSQVljZ2N2MnNETFphTmZROEZYczNxZGV3UURjYzErd1Y4dUl2Z3U5?=
+ =?utf-8?B?QUw1RWU2M3l2aitsWXJGd0VDeVhLY1JSSTBKcjZXbDBkTXgvSmVQSWpzaHlr?=
+ =?utf-8?B?U2k0bi9JaEs2MUY1SlRWZTZ3TzJDYlFqY2NGRnM5TU1vaTAyR2tpeTI1UGRw?=
+ =?utf-8?B?T09FRmlnNTJiRjBnMlZFRGJVNVlLSHpUN0xaNldIR0VzTmhxalF1a1N0dzZR?=
+ =?utf-8?B?QWV0Vm5QWGNBVFUwNTk1bHJpQzg2cEUxWkd3STFVVG9YWkk2OFN2S1FUUHlY?=
+ =?utf-8?B?M29PUWxwdGs4SFJpdGdpODhQbmZQVE8rVnp4TzR3SXl4ZmptQW5xUm1VNmYr?=
+ =?utf-8?B?dlFmWDNCa0QxVy82WHN0azMweXRqR2FpNEIwMGtZSmVPZWZhZDI4NkR6OG9K?=
+ =?utf-8?B?QmdXNXY3eDhpUEo4dW8yaHI4ZVRjSUZna2lTdzNlK2RuL3F2bFJnNno5MGcx?=
+ =?utf-8?B?aWJ6T2ZYMU5IdUcyZ0c3S2E3TEtvL2FRQnJFenR6L09oNVZST2VwWm1xRXND?=
+ =?utf-8?B?YTB3czE0NXNYVUpIMVVyTUJ4RGdjcWc5ZDBXYmlaMHo3RDB1cDk1RXpTU1B6?=
+ =?utf-8?B?eTk1aWNySzNmS3pzTnE2RGIyWVFscUFWcFZ1REJwaDNZUVpacmEydk1EUkU1?=
+ =?utf-8?B?dmpSUkhiQURpM0o4N1F6S2EvS3pRbCs5K3hxVDBUSTl4VjBLdmh4RTl5MFlD?=
+ =?utf-8?B?b3orSjZwOVZ1dXA4bkN2cXVadldzbjJJYUptS1NVcXlkMG1NdzZBZy92emtH?=
+ =?utf-8?B?aWdWbVR4ekNmTVVrVU5aZGs3VjhxK0ttWERBcWZjd1M2T05sOWU0NitYY1FT?=
+ =?utf-8?B?dHhTeFRSbFd4UzlaZ3N6RkZQdzA2OUZGM3ppNjVLdE1UelhEY1d0V2ZneTYw?=
+ =?utf-8?B?bTVIYk12QTRDVjBLMWVHWjl6dDVzYmMzbGhFZVdsQjc3ck9JaXRQM243MTVy?=
+ =?utf-8?Q?aMU3CE8EbMs=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SI2PR06MB5140.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Rkc4bVcxSytPVyttNDZLVCsrNmJkNHI3cFJPUU9VTkNXWXJWTEVtSjYvSlJj?=
+ =?utf-8?B?eUJuV0VQNlMrMFJCTnlxb2Nuck40ZU56amlaK1ZEYk1wL0tpeVIxYStGQjRp?=
+ =?utf-8?B?eVVlbTJxMHFQalAycXB2Y3dKendLWDdaanFpRFJqUFJ4cVdsN0NodTJQUm1o?=
+ =?utf-8?B?ajZEVFd0WlVWSjhZdjh0cDNBSVdGakZObkdRd3c3NmpxbHRCa2NvWXVSMEZB?=
+ =?utf-8?B?a0k3QUxGdGpzYlBrM2lGSVJhTVU2eUR5UWZHTS9IQUlFNHpQc3RySG9uRXlP?=
+ =?utf-8?B?RUl1YWdlRVZod1hyNXhsWG8xUkhWZE1YVHRTSHBMNDB0aWRvUjZhOGlyWm1C?=
+ =?utf-8?B?bkJwN2E2WHVDd3Q0ZEdjWlRkUTFFMThvNDZadnFOMGhKa09jZ2lBOGwyN2dh?=
+ =?utf-8?B?TjRjN3VzRmFSS0lCNlAzUFJxSVYzN2tMMWNOeGQ3QmhSbElMcXI4UTh3eWph?=
+ =?utf-8?B?eFRIM0puOEgvMGZIWFpFMU1YL29DWFZ4UnIxTU5tWEdML2RPSVpSR2FFeXJM?=
+ =?utf-8?B?aTNTK3NKZ0IxNnVaNG1QQ0dQcmtHa1J1TTVrc08yd2hLVnNMYm5PbkhCY3lQ?=
+ =?utf-8?B?WWNkcXZCWjkyRkJTbDNybmFieUZmRnZKdmt4bEFKVXRQU2NhMEVxZWhDQU53?=
+ =?utf-8?B?L0xDZTFWczZzU3BUeEtPZ01JQnpoY0RCSXpIUjkyNUx2a2tVT1FrQ3cwdVFl?=
+ =?utf-8?B?TmFUbThLRzZ2MmtDRW90RVBHUURxK0ZqT1VZdmJvRGQ0bm1QKytyUU5VVXF1?=
+ =?utf-8?B?d2xTdnErQWVFbzNpa1lTZDB1SXR1TVo4cWVURWhwNjR3Y2l0MkZkOUI4RUxU?=
+ =?utf-8?B?SndEZnB0K1MwYVFBWThWbkN3RW8rdVhkTkFnb2JDLzdHWEtwQzMzTmh3dlF6?=
+ =?utf-8?B?YU5yWTkvTHBNWnVKaEYxemFUb2lqak0yWCtQTTFqd2MyemtEa3dyQTl6LzV0?=
+ =?utf-8?B?c2FZQXo3YnZiQ2tRK1BOVVJqcHRBTzFDRUdNbzBzYjl6YXlobSs1MW5UKzE4?=
+ =?utf-8?B?ZkY5NE94QUVJMGIyc0U3MU96WFUzc3l3VURXbDRLUnAxa0xEN1VET1lVNEJP?=
+ =?utf-8?B?b0dCdVNXQk9WWjMrS2VYTXo4NFUrWEFrMmFBZitmOFhua0F5Qk56TE9EdU1S?=
+ =?utf-8?B?eitPT1pHc1pTQWJ5S0YvQnJ2RktlWGNGbldWMzk4M01sY3BodEJzS2Yvd3lo?=
+ =?utf-8?B?SnNpaEh4M2hOMXFLUEJIYzgxNXRTdmNBZklXazZhQTNTVG1GQ0hTTGhIUmYx?=
+ =?utf-8?B?anFjVFNyQWtIVjlIU3dFeFBvcWMzd3k0UVBGclk0OStNSXJQaXhaUllORUY0?=
+ =?utf-8?B?emF3NnpING44RXBJdWRTblhyZTBRZlZOQkhUWmdRVUlBWTBlZjZLVHZmRHRZ?=
+ =?utf-8?B?T1lTRlgySVQ0U25VRk5rVFFCTWNEYWJqemN5alJkTWF2YTBJV2pXajl0R3Fj?=
+ =?utf-8?B?cnNyR0JMejNKYjhnUGdRdkt6YjNKV0VtN21Ra2dCcngrMWRvNCs5Vks2WCt5?=
+ =?utf-8?B?SGNvY24zY0hhdE92RGpHMEY3dzNqaDBDckZVbG5QZEpWN2tia1k0Uno2VlhN?=
+ =?utf-8?B?dTZVM2F3R1VFc3FSSmdPYk53VGFCMENsclZLOUNsSlBLd0Z4ckFNYTFmNi94?=
+ =?utf-8?B?V2hEdnl3S1JveGN2N2Zlekx6clpHZTErdStCaDUrSXFJR0R4aitFY0JMbzZk?=
+ =?utf-8?B?NW1oSXZQQlBhNWhqNVAwc3I0UllSVzNPWDlRNWNkUVpHYktSbVgvUzk0QUh6?=
+ =?utf-8?B?cUZ0LytXU0N0em9yNU5ONFJMazBBRDFNMHJJVVRNb3J6WVVoT0ZsVUVabThZ?=
+ =?utf-8?B?c1RZb3gxOU5RUjV6SkoyQXZqTHA3eVltZHROTDI1Q3V4UE1SWDFxVTJSQisy?=
+ =?utf-8?B?bXlhUWtzc1BUYWhyYUtZZHJjUHJHRDVPMFpZY3prZlVLbUsyMzZlU1Jqdlhy?=
+ =?utf-8?B?NndUYnhtUUVNZEFzVTVaRkdZdENyNzR6VmpsM1VLc241UUhpWVRFdWVPNjZV?=
+ =?utf-8?B?WGF1S05kS0tWZUVEaTFUa05aTFRRV244M1JiaFoyWkdBS3UyMGdPQmhxZHg4?=
+ =?utf-8?B?QkNtbUJaU1RORkpzNDMrL050RzBtcFUxMWZXcGZjUnRrVDY2N3c4SlpmTkdN?=
+ =?utf-8?Q?OdUVYTW3aUf5D9zN7lkgfmJ6A?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c2a76757-bed1-4a9a-d019-08dde510ec9f
+X-MS-Exchange-CrossTenant-AuthSource: SI2PR06MB5140.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2025 02:25:00.9997
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 4PNMIW1QRHvQ65xjIBJR8M2tbyZW1EblcurALnUV3kk1B67VDMKQWeS0dk7sgowBijVPqAEGPwGn/mTmhXY9Zw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SI6PR06MB7147
 
 
-
-On 8/26/2025 9:07 AM, Yan Zhao wrote:
-> On Mon, Aug 25, 2025 at 02:02:00PM -0500, Sagi Shahar wrote:
->> On Mon, Aug 25, 2025 at 3:41 AM Yan Zhao <yan.y.zhao@intel.com> wrote:
->>> On Wed, Aug 20, 2025 at 09:29:07PM -0700, Sagi Shahar wrote:
->>>> From: Ackerley Tng <ackerleytng@google.com>
->>>>
->>>> TDX protected memory needs to be measured and encrypted before it can be
->>>> used by the guest. Traverse the VM's memory regions and initialize all
->>>> the protected ranges by calling KVM_TDX_INIT_MEM_REGION.
->>>>
->>>> Once all the memory is initialized, the VM can be finalized by calling
->>>> KVM_TDX_FINALIZE_VM.
->>>>
->>>> Signed-off-by: Ackerley Tng <ackerleytng@google.com>
->>>> Co-developed-by: Erdem Aktas <erdemaktas@google.com>
->>>> Signed-off-by: Erdem Aktas <erdemaktas@google.com>
->>>> Co-developed-by: Sagi Shahar <sagis@google.com>
->>>> Signed-off-by: Sagi Shahar <sagis@google.com>
->>>> ---
->>>>   .../selftests/kvm/include/x86/tdx/tdx_util.h  |  2 +
->>>>   .../selftests/kvm/lib/x86/tdx/tdx_util.c      | 97 +++++++++++++++++++
->>>>   2 files changed, 99 insertions(+)
->>>>
->>>> diff --git a/tools/testing/selftests/kvm/include/x86/tdx/tdx_util.h b/tools/testing/selftests/kvm/include/x86/tdx/tdx_util.h
->>>> index a2509959c7ce..2467b6c35557 100644
->>>> --- a/tools/testing/selftests/kvm/include/x86/tdx/tdx_util.h
->>>> +++ b/tools/testing/selftests/kvm/include/x86/tdx/tdx_util.h
->>>> @@ -71,4 +71,6 @@ void vm_tdx_load_common_boot_parameters(struct kvm_vm *vm);
->>>>   void vm_tdx_load_vcpu_boot_parameters(struct kvm_vm *vm, struct kvm_vcpu *vcpu);
->>>>   void vm_tdx_set_vcpu_entry_point(struct kvm_vcpu *vcpu, void *guest_code);
->>>>
->>>> +void vm_tdx_finalize(struct kvm_vm *vm);
->>>> +
->>>>   #endif // SELFTESTS_TDX_TDX_UTIL_H
->>>> diff --git a/tools/testing/selftests/kvm/lib/x86/tdx/tdx_util.c b/tools/testing/selftests/kvm/lib/x86/tdx/tdx_util.c
->>>> index d8eab99d9333..4024587ed3c2 100644
->>>> --- a/tools/testing/selftests/kvm/lib/x86/tdx/tdx_util.c
->>>> +++ b/tools/testing/selftests/kvm/lib/x86/tdx/tdx_util.c
->>>> @@ -274,3 +274,100 @@ void vm_tdx_init_vm(struct kvm_vm *vm, uint64_t attributes)
->>>>
->>>>        free(init_vm);
->>>>   }
->>>> +
->>>> +static void tdx_init_mem_region(struct kvm_vm *vm, void *source_pages,
->>>> +                             uint64_t gpa, uint64_t size)
->>>> +{
->>>> +     uint32_t metadata = KVM_TDX_MEASURE_MEMORY_REGION;
->>>> +     struct kvm_tdx_init_mem_region mem_region = {
->>>> +             .source_addr = (uint64_t)source_pages,
->>>> +             .gpa = gpa,
->>>> +             .nr_pages = size / PAGE_SIZE,
->>>> +     };
->>>> +     struct kvm_vcpu *vcpu;
->>>> +
->>>> +     vcpu = list_first_entry_or_null(&vm->vcpus, struct kvm_vcpu, list);
->>>> +
->>>> +     TEST_ASSERT((mem_region.nr_pages > 0) &&
->>>> +                 ((mem_region.nr_pages * PAGE_SIZE) == size),
->>>> +                 "Cannot add partial pages to the guest memory.\n");
->>>> +     TEST_ASSERT(((uint64_t)source_pages & (PAGE_SIZE - 1)) == 0,
->>>> +                 "Source memory buffer is not page aligned\n");
->>>> +     vm_tdx_vcpu_ioctl(vcpu, KVM_TDX_INIT_MEM_REGION, metadata, &mem_region);
->>>> +}
->>>> +
->>>> +static void tdx_init_pages(struct kvm_vm *vm, void *hva, uint64_t gpa,
->>>> +                        uint64_t size)
->>>> +{
->>>> +     void *scratch_page = calloc(1, PAGE_SIZE);
->>>> +     uint64_t nr_pages = size / PAGE_SIZE;
->>>> +     int i;
->>>> +
->>>> +     TEST_ASSERT(scratch_page,
->>>> +                 "Could not allocate memory for loading memory region");
->>>> +
->>>> +     for (i = 0; i < nr_pages; i++) {
->>>> +             memcpy(scratch_page, hva, PAGE_SIZE);
->>>> +
->>>> +             tdx_init_mem_region(vm, scratch_page, gpa, PAGE_SIZE);
->>>> +
->>>> +             hva += PAGE_SIZE;
->>>> +             gpa += PAGE_SIZE;
->>>> +     }
->>>> +
->>>> +     free(scratch_page);
->>>> +}
->>>> +
->>>> +static void load_td_private_memory(struct kvm_vm *vm)
->>>> +{
->>>> +     struct userspace_mem_region *region;
->>>> +     int ctr;
->>>> +
->>>> +     hash_for_each(vm->regions.slot_hash, ctr, region, slot_node) {
->>>> +             const struct sparsebit *protected_pages = region->protected_phy_pages;
->>>> +             const vm_paddr_t gpa_base = region->region.guest_phys_addr;
->>>> +             const uint64_t hva_base = region->region.userspace_addr;
->>>> +             const sparsebit_idx_t lowest_page_in_region = gpa_base >> vm->page_shift;
->>>> +
->>>> +             sparsebit_idx_t i;
->>>> +             sparsebit_idx_t j;
->>>> +
->>>> +             if (!sparsebit_any_set(protected_pages))
->>>> +                     continue;
->>>> +
->>>> +             sparsebit_for_each_set_range(protected_pages, i, j) {
->>>> +                     const uint64_t size_to_load = (j - i + 1) * vm->page_size;
->>>> +                     const uint64_t offset =
->>>> +                             (i - lowest_page_in_region) * vm->page_size;
->>>> +                     const uint64_t hva = hva_base + offset;
->>>> +                     const uint64_t gpa = gpa_base + offset;
->>>> +
->>>> +                     vm_set_memory_attributes(vm, gpa, size_to_load,
->>>> +                                              KVM_MEMORY_ATTRIBUTE_PRIVATE);
->>>> +
->>>> +                     /*
->>>> +                      * Here, memory is being loaded from hva to gpa. If the memory
->>>> +                      * mapped to hva is also used to back gpa, then a copy has to be
->>>> +                      * made just for loading, since KVM_TDX_INIT_MEM_REGION ioctl
->>>> +                      * cannot encrypt memory in place.
->>>> +                      *
->>>> +                      * To determine if memory mapped to hva is also used to back
->>>> +                      * gpa, use a heuristic:
->>>> +                      *
->>>> +                      * If this memslot has guest_memfd, then this memslot should
->>>> +                      * have memory backed from two sources: hva for shared memory
->>>> +                      * and gpa will be backed by guest_memfd.
->>>> +                      */
->>>> +                     if (region->region.guest_memfd == -1)
->>> Why to pass !guest_memfd region to tdx_init_mem_region()?
->>>
->> Not sure I understand your comment.
->  From the implementation of tdx_init_pages(), it also invokes
-> tdx_init_mem_region(), which further invokes ioctl KVM_TDX_INIT_MEM_REGION.
+在 2025/8/27 8:42, Ping-Ke Shih 写道:
+> Qianfeng Rong <rongqianfeng@vivo.com> wrote:
+>> The 'ret' variable stores returns from other functions, which return
+>> either zero on success or negative error codes on failure.  Storing
+>> error codes in u32 (an unsigned type) causes no runtime issues but is
+>> stylistically inconsistent and very ugly.  Change 'ret' from u32 to
+>> int - this has no runtime impact.
+>>
+>> Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
+>> ---
+>>   drivers/net/wireless/realtek/rtw89/fw.c  |  7 ++++---
+>>   drivers/net/wireless/realtek/rtw89/mac.c | 16 ++++++++--------
+>>   drivers/net/wireless/realtek/rtw89/pci.c |  4 ++--
+>>   3 files changed, 14 insertions(+), 13 deletions(-)
+>>
+>> diff --git a/drivers/net/wireless/realtek/rtw89/fw.c b/drivers/net/wireless/realtek/rtw89/fw.c
+>> index 16e59a4a486e..01d53f7c142d 100644
+>> --- a/drivers/net/wireless/realtek/rtw89/fw.c
+>> +++ b/drivers/net/wireless/realtek/rtw89/fw.c
+>> @@ -1537,7 +1537,7 @@ static int __rtw89_fw_download_hdr(struct rtw89_dev *rtwdev,
+>>          struct rtw89_fw_hdr *fw_hdr;
+>>          struct sk_buff *skb;
+>>          u32 truncated;
+>> -       u32 ret = 0;
+>> +       int ret = 0;
+> Initializer is not necessary, by the way.
 >
-> However, if the region is with guest_memfd == -1, the ioctl
-> KVM_TDX_INIT_MEM_REGION should fail as kvm_gmem_populate() won't succeed.
+>>          skb = rtw89_fw_h2c_alloc_skb_with_hdr(rtwdev, len);
+>>          if (!skb) {
+>> @@ -6826,7 +6826,8 @@ static int rtw89_fw_read_c2h_reg(struct rtw89_dev *rtwdev,
+>>          const struct rtw89_chip_info *chip = rtwdev->chip;
+>>          struct rtw89_fw_info *fw_info = &rtwdev->fw;
+>>          const u32 *c2h_reg = chip->c2h_regs;
+>> -       u32 ret, timeout;
+>> +       u32 timeout;
+>> +       int ret;
+>>          u8 i, val;
+> Keep it in reverse X'mas tree order.
 >
-> So, I'm wondering why there's a need to for the case of
-> "region->region.guest_memfd == -1".
+>>          info->id = RTW89_FWCMD_C2HREG_FUNC_NULL;
+>> @@ -6865,7 +6866,7 @@ int rtw89_fw_msg_reg(struct rtw89_dev *rtwdev,
+>>                       struct rtw89_mac_h2c_info *h2c_info,
+>>                       struct rtw89_mac_c2h_info *c2h_info)
+>>   {
+>> -       u32 ret;
+>> +       int ret;
+>>
+>>          if (h2c_info && h2c_info->id != RTW89_FWCMD_H2CREG_FUNC_GET_FEATURE)
+>>                  lockdep_assert_wiphy(rtwdev->hw->wiphy);
+> [...]
 >
-> Or anything I missed?
-I had the same question in v8
-https://lore.kernel.org/lkml/4b7e7099-79da-4178-8f16-6780d8137ae1@linux.intel.com/
+>> @@ -3105,7 +3105,7 @@ int rtw89_mac_setup_phycap(struct rtw89_dev *rtwdev)
+>>   static int rtw89_hw_sch_tx_en_h2c(struct rtw89_dev *rtwdev, u8 band,
+>>                                    u16 tx_en_u16, u16 mask_u16)
+>>   {
+>> -       u32 ret;
+>> +       int ret;
+> Please move below to be reverse X'mas tree order.
+>
+>>          struct rtw89_mac_c2h_info c2h_info = {0};
+>>          struct rtw89_mac_h2c_info h2c_info = {0};
+>>          struct rtw89_h2creg_sch_tx_en *sch_tx_en = &h2c_info.u.sch_tx_en;
+> (move here)
+>
+> [...]
+>
+>> @@ -4158,7 +4158,7 @@ static int rtw89_pci_lv1rst_stop_dma_ax(struct rtw89_dev *rtwdev)
+>>
+>>   static int rtw89_pci_lv1rst_start_dma_ax(struct rtw89_dev *rtwdev)
+>>   {
+>> -       u32 ret;
+>> +       int ret;
+>>
+>>          if (rtwdev->chip->chip_id == RTL8852C)
+>>                  return 0;
+>
+> The last statement of this function is 'return ret;', but actually it can
+> just be 'return 0;'. Please change it by the way.
 
-I guess the code path for non-guest_memfd is due to some old versions of TDX KVM
-code before upstream. Currently, KVM doesn't support private memory from
-non-guest_memfd backed memory.
+Thanks for taking the time to reply. All your suggestions will be 
+modified in v2.
 
->
->>>> +                             tdx_init_pages(vm, (void *)hva, gpa, size_to_load);
->>>> +                     else
->>>> +                             tdx_init_mem_region(vm, (void *)hva, gpa, size_to_load);
->>>> +             }
->>>> +     }
->>>> +}
->>>> +
->>>> +void vm_tdx_finalize(struct kvm_vm *vm)
->>>> +{
->>>> +     load_td_private_memory(vm);
->>>> +     vm_tdx_vm_ioctl(vm, KVM_TDX_FINALIZE_VM, 0, NULL);
->>>> +}
->>>> --
->>>> 2.51.0.rc1.193.gad69d77794-goog
->>>>
->>>>
+Best regards, Qianfeng
 
 
