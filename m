@@ -1,188 +1,202 @@
-Return-Path: <linux-kernel+bounces-787650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 397C8B3792B
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 06:32:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C4D87B3792E
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 06:33:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E17586815EA
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 04:32:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74FFF5E8032
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 04:33:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B41DA246BB2;
-	Wed, 27 Aug 2025 04:32:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E79F32C0F91;
+	Wed, 27 Aug 2025 04:33:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YZ2WOR/7"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=cs.stanford.edu header.i=@cs.stanford.edu header.b="D9leVfTY"
+Received: from smtp1.cs.Stanford.EDU (smtp1.cs.stanford.edu [171.64.64.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54FD83BB44;
-	Wed, 27 Aug 2025 04:32:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F089F237180
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 04:33:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=171.64.64.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756269153; cv=none; b=Jl3X52VDmhOG01Ixnt8oN5R1fjFTATOexUPVE2nvicEWFywEtmwkH4q7IVz86/SQeM4D+hDkzZDvJMpoABy5a4w6oY+ariZdwoi6rL7yD2hLyGxWBCsVHd0lD8u85x0g6YrTcmGviSXYhZYXvYECElf1GH/Lomb2ZVIBt0ZhkQ0=
+	t=1756269206; cv=none; b=als6H2eKBVy9qtPv7cYXaqOnU5bmCJD+iNywQujQazP6wJFov7zo55Rle0quxJ3o6qf/Rl1YMPljoSVN9/Cqn/SqP3aaYRGZZI4we9U8xmOCTVDtJNca1ZDsfl8qxdPnVk7FYVaHjY6HxioiPxtRttAmjDQ4tUs2Yraq1nhjJ7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756269153; c=relaxed/simple;
-	bh=P9yK6j01vQIjUrDmFztN5hiPanzCry8mwLN54etanfw=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=HcNSWwAQMOXaF+iL7Gz9RmytdsWODmKUQoHGUifg1/dmrqmbOpPOZvTfA3VQ2yNI/l0EXlDqwXaLkgjELutswarfmOsl2XdASILIBcuCfxA7bZng9C2k03XGJTU7uM12+qteJI6APkAD1ngHiDftj+tAqSbMofPVQg0OhJP0PZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YZ2WOR/7; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-61c266e81caso5608219a12.3;
-        Tue, 26 Aug 2025 21:32:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756269150; x=1756873950; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:references
-         :in-reply-to:user-agent:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=nPT7S7ck2OMPXfBxc+RzMc8Kxenf3tVh8lBsVSZT310=;
-        b=YZ2WOR/7kAG7rb0/cIiOc5bhpgQaf+JOgI7BQ5zTaO+eVxgh3LNrmiMrSUd7RdvJWC
-         xchm22x2ERkHufCg7gsUFNPaj+xliMUXdF08O6OCRu5/VaTdwy7Fguz/4NkDyP0/OeQi
-         9cBy1kXu3LuozSe8qBECPAjJpNQNQ7Y9o/rQBLv32xfVgPnUD7KV2I6qQ9CxJNbNnUDB
-         ZdCL4ZvRYX+oRkNYMcEziv0p+43+URM7jaCQUFxJyur/Lrex2qkEhcQAIZ+iA3BGbmK6
-         NUk5PkD6PyN2OegUYss1b8OHDgsqH3w/tcaaUQJLeI/A6OKk9AdWYaIuqD7FEbf15Pvd
-         nTVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756269150; x=1756873950;
-        h=content-transfer-encoding:mime-version:message-id:references
-         :in-reply-to:user-agent:subject:cc:to:from:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=nPT7S7ck2OMPXfBxc+RzMc8Kxenf3tVh8lBsVSZT310=;
-        b=Fw/8G295UrQkYYZadPRl8pOVOKf9SPNAlbAyoSKnYnDYn7PNYcusAgCghJ21cWXpZH
-         J5FU1Pi4AaK2c+vxZkw4ycH1iKhuy420oBEQYNCz09phjnLzvOIfwXDTYUr/2t2Z310Y
-         7C7XcuDyYWlgof8sGbEdLHCiCmFDKTvHwYF1O/zNu9SuDhtgexc+06bD3aJV+1xxw2ua
-         38Vh8CLJsoXbP+BbiuyMLjvoTn+cMJgHc80s6St0rikaXbf1wN6++60PwhLD9XLi+1tT
-         u6vuwLx4yKMbbNyVZEbyyYLs4dlYvSxWEEObn+QXDJM7WkMKaCJiVFfLsG7YAbJbBoJs
-         YaQw==
-X-Forwarded-Encrypted: i=1; AJvYcCV5CJ2TwtQQisEfdUbYe/6aSoM3xBca5imh5uzbaGIbHWdHdEt9OPubaP2DW1Gmc3vK/hfTF/ibTPqlnzU=@vger.kernel.org, AJvYcCW0wBj4q5rXthLM7K/wIZ77PGyDW5UcERQ2qctO0hB5uLrhQoBH8q7rZ3INUo6V+S2tQDA8kAOO2ZncFmq8@vger.kernel.org, AJvYcCW8MPtjnSV0fU72OxhcrKiu+eyjINi1KR0mUd7LY/FGo1awyd9HKSydxHmBffnuN46jadSlvuhk7bMJ@vger.kernel.org, AJvYcCX58Uxr/4vLhd4IgJMQ4MeARbWVO01zlOcrBPKPgS4nmIt/Qg+ENeH5EajYHBRBzLC/UT7pNOEpbDWI@vger.kernel.org
-X-Gm-Message-State: AOJu0YxS65nbI4jtNQx604vNQ33Ay806ha2Gy39oWNQhNhbBdeHwG2Ms
-	BVGz0+kMAXwduhyeU8/abTMm5Wny/XV1Kl197wjngTPHp+lC3dWCsPim
-X-Gm-Gg: ASbGnctJGM5qNG2ht99BN7PNsaCvaQqmO5dVMPQ8Q3hVJS5HwHlxEs/gE0YKAswxcrC
-	T0YnObEyUqh63mVj9T24lZM9VCtFRRkErh98P0FUxtBMQr4o/uP0d1q7UjwF7Okr4dwGezI79jj
-	kj8hLHjSbpdclca6pDsCsUU4IHxpix0MN7w/cTthczzmvZAsUdWzJa/yUcGvLMdsniFR6M23H2H
-	taI6Y9tn5mzJ3YGMbXYtc8Y5nTwr1zbs2d0YGC/sDFua+TBJc8v1+wZGXID7cNxx4gqjq5sl2F2
-	nQzLSTor2GbZQCmASxq9/Fkgm+P+E/yq5EJuM6DIqnyr0C7f0Ho6AzOFC0vtqDWTnb6t4tinGY3
-	/CqP7jFwtpCrnBQ==
-X-Google-Smtp-Source: AGHT+IF+5wxPF37wRl5q6Zpcp5YXeXsq5X1FBZFa1yIqF0zMTpeqok9u42a8ivFBmKB0sTZEfjjT5A==
-X-Received: by 2002:a05:6402:13d4:b0:61c:4c77:cb8 with SMTP id 4fb4d7f45d1cf-61c4c771153mr10662557a12.15.1756269149569;
-        Tue, 26 Aug 2025 21:32:29 -0700 (PDT)
-Received: from [127.0.0.1] ([5.248.55.4])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61c78e49ca4sm4263216a12.47.2025.08.26.21.32.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 Aug 2025 21:32:29 -0700 (PDT)
-Date: Wed, 27 Aug 2025 07:32:27 +0300
-From: Svyatoslav <clamor95@gmail.com>
-To: Mikko Perttunen <mperttunen@nvidia.com>,
- Thierry Reding <thierry.reding@gmail.com>,
- Thierry Reding <treding@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>,
- Sowjanya Komatineni <skomatineni@nvidia.com>,
- Luca Ceresoli <luca.ceresoli@bootlin.com>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Peter De Schrijver <pdeschrijver@nvidia.com>,
- Prashant Gaikwad <pgaikwad@nvidia.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Dmitry Osipenko <digetx@gmail.com>,
- Charan Pedumuru <charan.pedumuru@gmail.com>
-CC: linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
- dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-staging@lists.linux.dev
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v1_01/19=5D_clk=3A_tegra=3A_ini?=
- =?US-ASCII?Q?t_CSUS_clock_for_Tegra20_and_Tegra30?=
-User-Agent: K-9 Mail for Android
-In-Reply-To: <1909286.atdPhlSkOF@senjougahara>
-References: <20250819121631.84280-1-clamor95@gmail.com> <20250819121631.84280-2-clamor95@gmail.com> <1909286.atdPhlSkOF@senjougahara>
-Message-ID: <76B1EB6D-B149-43C2-AA56-A15C9DCCA3AF@gmail.com>
+	s=arc-20240116; t=1756269206; c=relaxed/simple;
+	bh=3bQUggs1dz2lXC5HEhH3WckpGVBZUfB1XMP6X6RhnGs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=duJj9kX2OLLS5AkqYOT+azs3qop2PQQSPyG0oM6FvWmMW8KHsvvprIjCHvcPbH6HAFiQfX2QgA5QYkQFW8OYa8ZSEqrDqg4E9PJK742LLSOTWkSstkLFoaOXEeKenLLtsKTSH8HvXBZCFGElEdO/McxNlSzHpHpwDmcYigOgmX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cs.stanford.edu; spf=pass smtp.mailfrom=cs.stanford.edu; dkim=pass (2048-bit key) header.d=cs.stanford.edu header.i=@cs.stanford.edu header.b=D9leVfTY; arc=none smtp.client-ip=171.64.64.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cs.stanford.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cs.stanford.edu
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=cs.stanford.edu; s=cs2308; h=Content-Transfer-Encoding:MIME-Version:
+	Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=9rOBB/o71xl0ikIjLsjC7srjUMkDatat+eZgYGtvux4=; t=1756269203; x=1757133203; 
+	b=D9leVfTYhD5YypcEJdCo3NGNxOEkJYbBuDFbZE3BMjCeEjUwgWCdTXPUU9YkF1X7GTU7eRj+xBP
+	YW4q4ZopHf2KjF3XmE/SHcGO63Z1fvZyc83Vz3oey+IK0b6/fVQVmq+ZCaFOKCCe3XTXVAu/f94uN
+	cs1ue/v3Guiw6DCbHuC/u0o7HyTdLQkO4jkdCiguCa1VctjFULNiHkPF8/JPLuFd4SA3bA3LuHEHJ
+	kZ7Lip75dJq2Autkgp6q6YinI5YAyzLWfNXZZ+kMQZGsoTkB9F9XOxyf+Hh+mjvL/yxUjeoB7qovo
+	NhSjN/gdTdm+iZbXSJ/UgOgUniBPHNYZUj4A==;
+Received: from 135-180-5-199.fiber.dynamic.sonic.net ([135.180.5.199]:53481 helo=macbookair.lan)
+	by smtp1.cs.Stanford.EDU with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.94.2)
+	(envelope-from <jgnieto@cs.stanford.edu>)
+	id 1ur7qc-0003X1-AN; Tue, 26 Aug 2025 21:33:23 -0700
+From: Javier Nieto <jgnieto@cs.stanford.edu>
+To: luiz.dentz@gmail.com,
+	marcel@holtmann.org
+Cc: linux-bluetooth@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Javier Nieto <jgnieto@cs.stanford.edu>
+Subject: [PATCH] Bluetooth: hci_h5: implement CRC data integrity
+Date: Tue, 26 Aug 2025 21:32:54 -0700
+Message-Id: <20250827043254.26611-1-jgnieto@cs.stanford.edu>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Spam-Score: -1.0
+X-Scan-Signature: 255d2abca2c607fc06a55785d004a2f5
 
+The UART-based H5 protocol supports CRC data integrity checks for
+reliable packets. The host sets bit 5 in the configuration field of the
+CONFIG link control message to indicate that CRC is supported. The
+controller sets the same bit in the CONFIG RESPONSE message to indicate
+that CRC may be used from then on.
 
+Signed-off-by: Javier Nieto <jgnieto@cs.stanford.edu>
+---
 
-27 =D1=81=D0=B5=D1=80=D0=BF=D0=BD=D1=8F 2025=E2=80=AF=D1=80=2E 07:09:45 GM=
-T+03:00, Mikko Perttunen <mperttunen@nvidia=2Ecom> =D0=BF=D0=B8=D1=88=D0=B5=
-:
->On Tuesday, August 19, 2025 9:16=E2=80=AFPM Svyatoslav Ryhel wrote:
->> CSUS clock is required to be enabled on camera device configuration or
->> else camera module refuses to initiate properly=2E
->>=20
->> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail=2Ecom>
->> ---
->>  drivers/clk/tegra/clk-tegra20=2Ec | 1 +
->>  drivers/clk/tegra/clk-tegra30=2Ec | 1 +
->>  2 files changed, 2 insertions(+)
->>=20
->> diff --git a/drivers/clk/tegra/clk-tegra20=2Ec
->> b/drivers/clk/tegra/clk-tegra20=2Ec index 551ef0cf0c9a=2E=2E42f8150c611=
-0 100644
->> --- a/drivers/clk/tegra/clk-tegra20=2Ec
->> +++ b/drivers/clk/tegra/clk-tegra20=2Ec
->> @@ -1043,6 +1043,7 @@ static struct tegra_clk_init_table init_table[] =
-=3D {
->>  	{ TEGRA20_CLK_GR3D, TEGRA20_CLK_PLL_C, 300000000, 0 },
->>  	{ TEGRA20_CLK_VDE, TEGRA20_CLK_PLL_C, 300000000, 0 },
->>  	{ TEGRA20_CLK_PWM, TEGRA20_CLK_PLL_P, 48000000, 0 },
->> +	{ TEGRA20_CLK_CSUS, TEGRA20_CLK_CLK_MAX, 6000000, 1 },
->>  	/* must be the last entry */
->>  	{ TEGRA20_CLK_CLK_MAX, TEGRA20_CLK_CLK_MAX, 0, 0 },
->>  };
->> diff --git a/drivers/clk/tegra/clk-tegra30=2Ec
->> b/drivers/clk/tegra/clk-tegra30=2Ec index 82a8cb9545eb=2E=2E70e85e2949e=
-0 100644
->> --- a/drivers/clk/tegra/clk-tegra30=2Ec
->> +++ b/drivers/clk/tegra/clk-tegra30=2Ec
->> @@ -1237,6 +1237,7 @@ static struct tegra_clk_init_table init_table[] =
-=3D {
->>  	{ TEGRA30_CLK_HDA, TEGRA30_CLK_PLL_P, 102000000, 0 },
->>  	{ TEGRA30_CLK_HDA2CODEC_2X, TEGRA30_CLK_PLL_P, 48000000, 0 },
->>  	{ TEGRA30_CLK_PWM, TEGRA30_CLK_PLL_P, 48000000, 0 },
->> +	{ TEGRA30_CLK_CSUS, TEGRA30_CLK_CLK_MAX, 6000000, 1 },
->>  	/* must be the last entry */
->>  	{ TEGRA30_CLK_CLK_MAX, TEGRA30_CLK_CLK_MAX, 0, 0 },
->>  };
->
->I looked into what this clock does and it seems to be a gate for the CSUS=
- pin,=20
->which provides an output clock for camera sensors (VI MCLK)=2E Default so=
-urce=20
->seems to be PLLC_OUT1=2E It would be good to note that on the commit mess=
-age, as=20
->I can't find any documentation about the CSUS clock elsewhere=2E
->
->What is the 6MHz rate based on?
->
+Tested on a MangoPi MQ-Pro with a Realtek RTL8723DS Bluetooth controller
+using the tip of the bluetooth-next tree.
 
-6mhz is the statistic value which I was not able to alter while testing=2E=
- I have tried 12mhz and 24mhz too but it remained 6mhz, so I left it 6mhz=
-=2E
+It would be nice to have this feature available for somewhat more reliable
+communication over UART, especially if RTS/CTS is disabled, as this is the
+primary benefit of the H5 protocol. Thanks!
 
->Since this seems to be a clock consumed by the sensor, it seems to me tha=
-t=20
->rather than making it always on, we could point to it in the sensor's dev=
-ice=20
->tree entry=2E
->
+---
+ drivers/bluetooth/hci_h5.c | 42 ++++++++++++++++++++++++++++++++++----
+ 1 file changed, 38 insertions(+), 4 deletions(-)
 
-Sensor device tree uses vi_sensor as clocks source and sensor drivers don'=
-t support multiple linked clocks=2E
+diff --git a/drivers/bluetooth/hci_h5.c b/drivers/bluetooth/hci_h5.c
+index d0d4420c1a0f..7faafc62666b 100644
+--- a/drivers/bluetooth/hci_h5.c
++++ b/drivers/bluetooth/hci_h5.c
+@@ -7,6 +7,8 @@
+  */
+ 
+ #include <linux/acpi.h>
++#include <linux/bitrev.h>
++#include <linux/crc-ccitt.h>
+ #include <linux/errno.h>
+ #include <linux/gpio/consumer.h>
+ #include <linux/kernel.h>
+@@ -58,6 +60,7 @@ enum {
+ 	H5_TX_ACK_REQ,		/* Pending ack to send */
+ 	H5_WAKEUP_DISABLE,	/* Device cannot wake host */
+ 	H5_HW_FLOW_CONTROL,	/* Use HW flow control */
++	H5_CRC,			/* Use CRC */
+ };
+ 
+ struct h5 {
+@@ -141,8 +144,8 @@ static void h5_link_control(struct hci_uart *hu, const void *data, size_t len)
+ 
+ static u8 h5_cfg_field(struct h5 *h5)
+ {
+-	/* Sliding window size (first 3 bits) */
+-	return h5->tx_win & 0x07;
++	/* Sliding window size (first 3 bits) and CRC request (fifth bit). */
++	return (h5->tx_win & 0x07) | 0x10;
+ }
+ 
+ static void h5_timed_event(struct timer_list *t)
+@@ -360,8 +363,10 @@ static void h5_handle_internal_rx(struct hci_uart *hu)
+ 		h5_link_control(hu, conf_rsp, 2);
+ 		h5_link_control(hu, conf_req, 3);
+ 	} else if (memcmp(data, conf_rsp, 2) == 0) {
+-		if (H5_HDR_LEN(hdr) > 2)
++		if (H5_HDR_LEN(hdr) > 2) {
+ 			h5->tx_win = (data[2] & 0x07);
++			assign_bit(H5_CRC, &h5->flags, data[2] & 0x10);
++		}
+ 		BT_DBG("Three-wire init complete. tx_win %u", h5->tx_win);
+ 		h5->state = H5_ACTIVE;
+ 		hci_uart_init_ready(hu);
+@@ -425,7 +430,24 @@ static void h5_complete_rx_pkt(struct hci_uart *hu)
+ 
+ static int h5_rx_crc(struct hci_uart *hu, unsigned char c)
+ {
+-	h5_complete_rx_pkt(hu);
++	struct h5 *h5 = hu->priv;
++	const unsigned char *hdr = h5->rx_skb->data;
++	u16 crc;
++	__be16 crc_be;
++
++	crc = crc_ccitt(0xffff, hdr, 4 + H5_HDR_LEN(hdr));
++	crc = bitrev16(crc);
++
++	crc_be = cpu_to_be16(crc);
++
++	if (memcmp(&crc_be, hdr + 4 + H5_HDR_LEN(hdr), 2) != 0) {
++		bt_dev_err(hu->hdev, "Received packet with invalid CRC");
++		h5_reset_rx(h5);
++	} else {
++		/* Remove CRC bytes */
++		skb_trim(h5->rx_skb, 4 + H5_HDR_LEN(hdr));
++		h5_complete_rx_pkt(hu);
++	}
+ 
+ 	return 0;
+ }
+@@ -556,6 +578,7 @@ static void h5_reset_rx(struct h5 *h5)
+ 	h5->rx_func = h5_rx_delimiter;
+ 	h5->rx_pending = 0;
+ 	clear_bit(H5_RX_ESC, &h5->flags);
++	clear_bit(H5_CRC, &h5->flags);
+ }
+ 
+ static int h5_recv(struct hci_uart *hu, const void *data, int count)
+@@ -686,6 +709,7 @@ static struct sk_buff *h5_prepare_pkt(struct hci_uart *hu, u8 pkt_type,
+ 	struct h5 *h5 = hu->priv;
+ 	struct sk_buff *nskb;
+ 	u8 hdr[4];
++	u16 crc;
+ 	int i;
+ 
+ 	if (!valid_packet_type(pkt_type)) {
+@@ -713,6 +737,7 @@ static struct sk_buff *h5_prepare_pkt(struct hci_uart *hu, u8 pkt_type,
+ 	/* Reliable packet? */
+ 	if (pkt_type == HCI_ACLDATA_PKT || pkt_type == HCI_COMMAND_PKT) {
+ 		hdr[0] |= 1 << 7;
++		hdr[0] |= (test_bit(H5_CRC, &h5->flags) && 1) << 6;
+ 		hdr[0] |= h5->tx_seq;
+ 		h5->tx_seq = (h5->tx_seq + 1) % 8;
+ 	}
+@@ -732,6 +757,15 @@ static struct sk_buff *h5_prepare_pkt(struct hci_uart *hu, u8 pkt_type,
+ 	for (i = 0; i < len; i++)
+ 		h5_slip_one_byte(nskb, data[i]);
+ 
++	if (H5_HDR_CRC(hdr)) {
++		crc = crc_ccitt(0xffff, hdr, 4);
++		crc = crc_ccitt(crc, data, len);
++		crc = bitrev16(crc);
++
++		h5_slip_one_byte(nskb, (crc >> 8) & 0xff);
++		h5_slip_one_byte(nskb, crc & 0xff);
++	}
++
+ 	h5_slip_delim(nskb);
+ 
+ 	return nskb;
+-- 
+2.43.0
 
->Cheers,
->Mikko
->
->
->
 
