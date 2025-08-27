@@ -1,287 +1,268 @@
-Return-Path: <linux-kernel+bounces-788119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B384B37FE9
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 12:30:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58868B37FEC
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 12:30:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56DA85E03DF
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 10:30:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1675D2076D6
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 10:30:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63C8223BD05;
-	Wed, 27 Aug 2025 10:30:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EE9629A33E;
+	Wed, 27 Aug 2025 10:30:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="bL/I88Cm"
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="O30vN76y"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2073.outbound.protection.outlook.com [40.107.244.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4149934AAEF;
-	Wed, 27 Aug 2025 10:30:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756290605; cv=none; b=TP4tHPAULetUbqnuAT4p+Kn5LzZcEtsPX+xEE4H9+RXiPBvfXKk4TNpOxF+VtybquyxEAEFtEHYlQBcAZe+scsuxLF5w6x71DWNMnVmYBbxvTz+wv28H0D4dZyi74K0dBky5djqHqQg6tQJ2RHajG8eSOznfksKG6O+j1vUXOBk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756290605; c=relaxed/simple;
-	bh=sZwXV1GGNI/QxWKqPUT9q5nIIlCmGoLyzmwaAEHmM0I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m+T7XmCRY79h7R9JVBM/6dapa1M0aVYWugxSxV0NyeiNFXLw+pe9Ua2XGUfpLUMJC5VJW185vU/1aG/Wnv9/LiwAlVtreCJ7lDg/VpARehig3CyQJquOSSdsY6nYObD4E2vM83ea6EMUeSgSplVGTW/yCmZiTVEuTgvYXfslNWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=bL/I88Cm; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4cBglC02YGz9tjd;
-	Wed, 27 Aug 2025 12:29:59 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
-	t=1756290599;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=m6kfYmEF60frm5ESfpqkpSIWm2QXtU3dm6hKsbfysq8=;
-	b=bL/I88CmRYJ0Ggq1FHXs6ULLcJ/6/cCF893rzC33wQuoMO7fgAYlRJvmJHgkiJMMA7amV7
-	SyptXzg8agcA2szr8KRoHtPzi6AVHAiushOPKtAFEvlJ4YECDJCPOG9it6zxTM8TmxXOxU
-	9EWrueILRyWBPgBd1/GomMLB5oaJpL4NnsQJrcwwcUhnys3p+nWCw9br7FCw8b2jkD061V
-	JO5DsolO7kNGc3pnuvTcEk34Fn4MagnYML/AQQolng4gmmFRqXo6HRv69O0tFhdtI4cyMe
-	SgOvy8acEtwhXDLNG/4OggYt/N9uUq4IMoxa86NsyvEh++Z+OgBynbsrb7EQkg==
-Date: Wed, 27 Aug 2025 20:29:38 +1000
-From: Aleksa Sarai <cyphar@cyphar.com>
-To: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Kees Cook <keescook@chromium.org>, 
-	Paul Moore <paul@paul-moore.com>, Serge Hallyn <serge@hallyn.com>, 
-	Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Christian Heimes <christian@python.org>, Dmitry Vyukov <dvyukov@google.com>, 
-	Elliott Hughes <enh@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
-	Florian Weimer <fweimer@redhat.com>, Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Jordan R Abrahams <ajordanr@google.com>, 
-	Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, Luca Boccassi <bluca@debian.org>, 
-	Matt Bobrowski <mattbobrowski@google.com>, Miklos Szeredi <mszeredi@redhat.com>, 
-	Mimi Zohar <zohar@linux.ibm.com>, Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>, 
-	Robert Waite <rowait@microsoft.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
-	Scott Shell <scottsh@microsoft.com>, Steve Dower <steve.dower@python.org>, 
-	Steve Grubb <sgrubb@redhat.com>, kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, Andy Lutomirski <luto@amacapital.net>, 
-	Jeff Xu <jeffxu@chromium.org>
-Subject: Re: [RFC PATCH v1 1/2] fs: Add O_DENY_WRITE
-Message-ID: <2025-08-27-needy-drab-puritan-rebates-tHEaFw@cyphar.com>
-References: <20250822170800.2116980-1-mic@digikod.net>
- <20250822170800.2116980-2-mic@digikod.net>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93F7621ADA4;
+	Wed, 27 Aug 2025 10:30:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.73
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756290629; cv=fail; b=LkUaUQdIg3ik5qfjrGdgucxIAz1wjFwKtpjdcE8ZDMdyjE3DaH3tmA1SA5PuiRYXTDmwVqtWKQGSwXCuVR2AKpER+YW5/t6UwYPWm2A8bgHz3VUBtAwm51LRKektoiFQoQzZmi+ZlHK6KYnVwv339W0CZmxXWWigXf/Xm5sJ0E0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756290629; c=relaxed/simple;
+	bh=KhZJ3kDxsHFz2ty5A99jkppDO5IdlSHTG+TTggzCByA=;
+	h=Message-ID:Date:From:Subject:To:Cc:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=AJhM4Sp+UGBAm0JoHSluPpMkzoyIHdDEYEmlpZCMVgpxJMmeduP0cGirHvikHS0mkUGgQqN42YCe8e9mYGzVCsAmbKoWfNCndpvTIXuaoon7QGetjKhfXiLfrpp7zHL5Xi8NW3aDzJOBJRfTLbOd37ARYIervhjzgySSglDwUUk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=O30vN76y; arc=fail smtp.client-ip=40.107.244.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=GR8MMFZL+/hy4V20l3eY/574BJn0LWPNm1rYOeZlZB8evIo4046fSHL9CFxTnkhaGiwz7hhqFi94buAckqByjfsWFXVvKGl6NFceZHKMYHuc2gjmY2Yhl2z5dpCn+Nfqf4HlUbBxax3fpEviWfOKHY3jOzZr1Awc2Qvrf3uCnji38iieB8sOybRkB6aNy80a4C1sC5VWaEUBB4oFjBv6iHQTORkYg9JMNxlfKTprYamwqCzoK1enApK/n0NV535CRD3aunxXTkdsv4HD5JO4w65kSdd+0lS60lrGsqSfFG9BwTSOCOcY7onjkGCCe/i2uwseBjoxSNMAFaBsiL4Csg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=4jgu1mfM9aVma2k8+9r01Ky+tr1Tr0cCwLmMO1zGa6M=;
+ b=I/vp0GWwmpQq1cteF/PlMoyWTWMxM1QjCrcWajQlpaHlGyydc7wzHSBcBeJkTutv3OpNGikkIEAZ9dSYLtfZgD5Fa4G4dVrRQMwLAwokObo7P4AOyUwwSCHgxLCkWXuLbj2RBx94VNXxrEouFJf74SdiT/O99uVgq3KcgI++nLpQavMcqKflXasKua8kmdrjWbXAppSS2VvEQ8K6OEDzkwnNPqZFUeSKxpTcGv3OJDL1poXYVcZWiK8zK9muR3HlKeLaQANq3Wjdl53Td/qizy8imDvcmN6Ob7qm5bSH41rokT+78ZLZaI9tJ81iFN1nHMuK6RGXWGkRSRwUisrPnw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=4jgu1mfM9aVma2k8+9r01Ky+tr1Tr0cCwLmMO1zGa6M=;
+ b=O30vN76yUz/O+vMP2VIovHlPR9oxUvnTKgXI6pGSVt0kQaA2nUsbYQ5YCpxRUw3HEhOHqVwmt8505q7wBlU4WQAdo6KUiCloglf/FtRdivkNilzJPiE06xBhqGJvUqHAo6ghnSq94X4FEl8NC3ZasH2T/fuj9uVKbLKRJyaFEAc=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from PH8PR12MB7446.namprd12.prod.outlook.com (2603:10b6:510:216::13)
+ by CH3PR12MB8306.namprd12.prod.outlook.com (2603:10b6:610:12c::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.20; Wed, 27 Aug
+ 2025 10:30:23 +0000
+Received: from PH8PR12MB7446.namprd12.prod.outlook.com
+ ([fe80::e5c1:4cae:6e69:52d7]) by PH8PR12MB7446.namprd12.prod.outlook.com
+ ([fe80::e5c1:4cae:6e69:52d7%4]) with mapi id 15.20.9052.014; Wed, 27 Aug 2025
+ 10:30:22 +0000
+Message-ID: <1633b6cd-c84f-4cac-9f87-9dbfd0d2847c@amd.com>
+Date: Wed, 27 Aug 2025 18:30:14 +0800
+User-Agent: Mozilla Thunderbird
+From: "Du, Bin" <bin.du@amd.com>
+Subject: Re: [PATCH v2 0/8] Add AMD ISP4 driver
+To: Sultan Alsawaf <sultan@kerneltoast.com>
+Cc: "mchehab@kernel.org" <mchehab@kernel.org>,
+ "hverkuil@xs4all.nl" <hverkuil@xs4all.nl>,
+ "laurent.pinchart+renesas@ideasonboard.com"
+ <laurent.pinchart+renesas@ideasonboard.com>,
+ "bryan.odonoghue@linaro.org" <bryan.odonoghue@linaro.org>,
+ "sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>,
+ "prabhakar.mahadev-lad.rj@bp.renesas.com"
+ <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+ "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "Nirujogi, Pratap" <Pratap.Nirujogi@amd.com>,
+ "Chan, Benjamin (Koon Pan)" <Benjamin.Chan@amd.com>,
+ "Li, King" <King.Li@amd.com>,
+ "Rosikopulos, Gjorgji" <Gjorgji.Rosikopulos@amd.com>,
+ "Jawich, Phil" <Phil.Jawich@amd.com>,
+ "Antony, Dominic" <Dominic.Antony@amd.com>,
+ "Limonciello, Mario" <Mario.Limonciello@amd.com>,
+ "Gong, Richard" <Richard.Gong@amd.com>, "Tsao, Anson" <anson.tsao@amd.com>
+References: <20250618091959.68293-1-Bin.Du@amd.com>
+ <aJ2H6CIyZvN8W2sS@sultan-box> <ed9deffd-296c-465b-ad8a-314ed0968390@amd.com>
+ <aKfqVNk_WSEeBxlz@sultan-box>
+Content-Language: en-US
+In-Reply-To: <aKfqVNk_WSEeBxlz@sultan-box>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SI1PR02CA0058.apcprd02.prod.outlook.com
+ (2603:1096:4:1f5::9) To PH8PR12MB7446.namprd12.prod.outlook.com
+ (2603:10b6:510:216::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="psrvdihhhcwoejuq"
-Content-Disposition: inline
-In-Reply-To: <20250822170800.2116980-2-mic@digikod.net>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH8PR12MB7446:EE_|CH3PR12MB8306:EE_
+X-MS-Office365-Filtering-Correlation-Id: a89b1ea8-0930-4005-c112-08dde554ba4b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?NG15UUJ0VWhVa0Q3NDQ1TUNXUHQ2R2w2aGFQYnRTeHJlSWZLSHIzMVY1THpx?=
+ =?utf-8?B?czBBeXExUERsY0FRTFcrN2JpNjZtK0tIUW92QzBDeG11SktJeXZpNlo4RnJM?=
+ =?utf-8?B?d3lGT25ydFl4OStLb3ZWSWZMLzlmdjZ1TFR1SkU4VmFZNkNORWd1aUtqWG1x?=
+ =?utf-8?B?UFRrZTZpRHpaRmRnNnR1cDJUZVpvZkk2YXRYdjkwK0xUZjBDOFliVjQ4RTNK?=
+ =?utf-8?B?YmlvNFJ0enFBaHZiMTFuNU9TcUozMExlNlFsVklybzI0bllObndXZU92VHJN?=
+ =?utf-8?B?dW9VNmV0ajJnYWVLRDNjN0pjanhUM04vSXIvd05GSmFhaWhPU0R0bmg2cGRk?=
+ =?utf-8?B?V2U5KzdRbTMwR0tWSlZSRlIvL2RaS25IU0JpRm1oM1Vmb2Z0TFRWRTFNcVBx?=
+ =?utf-8?B?c2NYOHNxWU1oTE0xMVNGWURaM2R0R0kxeDd4NDExSXp5SkJQNFdHMEY3SEsy?=
+ =?utf-8?B?Tk9RM0VVMUIxeTAzV2JBY3RYV1hKUzByRXdLZ3ZlcjBtKzRJUHlsTlhrYm1X?=
+ =?utf-8?B?T2lSRGxXS0NENlJ4Znh3VVQwdXVESHk1M2RGVEc5elEzZ1kwTnpDT2VNclhT?=
+ =?utf-8?B?ajMrTlBRSElWRXRSRHRsa0RobXpuY1lEbytveDUrRVM5VlJ6Zy9QOGtYSCt1?=
+ =?utf-8?B?ckJPVWFPYVcrOWF3S0JJRGdoTElob3dWRWJtK2hweGJwc29NVWJzN2FTczdQ?=
+ =?utf-8?B?d1hMVENqQmd1R1VBZzNaWU9zMjFCa2Z6bXFON1IyMWxuVHBsaDh2N3J5bmZZ?=
+ =?utf-8?B?ckZTclQvR2lrbFQzNVVnWnJQVGZvb3hXcTB5MGJmdU8zRFBLNFJWeVdROWpt?=
+ =?utf-8?B?QWR4Q0JjaFdWekhKb3VtdHZVTndIb3NjbzhLdW1IR1JtenJ6MjlhTnVOTmlQ?=
+ =?utf-8?B?STg0Z2NZNFIvSVI2NElqZWprekdpWDU5aWZKSU5nbC80QjV3Yk5TRVVoa1Bk?=
+ =?utf-8?B?QnM2YkExa1VmWXNyYjk3WmtwejY0TDNSYldRbjI1TDczSWdXc0diZS9wTzFw?=
+ =?utf-8?B?Ukl2UzlwUElreWcxYWlERi90N0JSZ0JXQ0RuUFg1N0Vva3BwcWpUVkR3cUIv?=
+ =?utf-8?B?aWxPRFpmVnlPdmEwVm9MU3lsL3RoMVJVWHY3U1hXNm5kMmlvK1hidW9rZlpF?=
+ =?utf-8?B?UmVnb01aSHNURFRFOUladG5NQjc0d2NhZEJRWklGVkI5Z3pBVmMxM1NPR0ll?=
+ =?utf-8?B?bEVQUUpMMXRNODZJYkhuV0dlNUZIRFdBemtFcjYvVWtZN2F5Zi81NUVzdE1N?=
+ =?utf-8?B?bGEyMkcwelhaWXloNWRtVDVNNjQwckJWVWgveW5BLzd6WlZVV2dMOS9NNXBy?=
+ =?utf-8?B?aEpoQjlaQW95NWI2b3hnRWd5MWRjS05xVTNxUHF6OG1RTFVLWHNzMmlxOGxQ?=
+ =?utf-8?B?OFE0cmhjSGQ2dDJkUTJLbUlHNUFxNWZaYXV3eGEzMjhtQ0I2U2J5bVQvR092?=
+ =?utf-8?B?M1lIRFVneWN6WFg3bWg0TVhzSWFEckZYMzFwcTAzV2lydGMzdFZPMTl4ZUJY?=
+ =?utf-8?B?RTRvU3psTUdlenQ3SEc1WGd4L2VGL2JhQS9Pd1Z6SlhXTndXSWJhbnBLZlBH?=
+ =?utf-8?B?RU9ZcUZwTmVYZWVnRTBYYTFlRCtEclJ6NDhEbGJOcjQrZmczRVlNdUFFUVVq?=
+ =?utf-8?B?ZjRLaE5idG94MGxPbmY5SHFNTVBZZkJRVllyZEprNXF3cU1QdzIvZWt3Q05o?=
+ =?utf-8?B?WGtZOUQwTW9uZDBZVC9XYmxYTVBYMEZtem41cXlLeElUbGxNRlZzclpQZCtT?=
+ =?utf-8?B?SGQva3JQaWNsVWt1aTdOVFZHN0Y5dlVtdm1vM2JoOGxKZzYzN1QvTnp2RW5m?=
+ =?utf-8?B?aDlDWHZjTWFsZEY0WWNaMEYxZFBuQThDNk5nWkMxYmdqcXZQN1B3bStOaCtD?=
+ =?utf-8?B?R2VUVTFGYjZ4bkFwNzZVeHBybzBsbjJBcmtLTndkeVBCdU5EZ0RRWUs5VEtN?=
+ =?utf-8?Q?9FGJFvAkGpA=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR12MB7446.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?VEJxRlRTZjVlTHZFeThWUmVER0FJdlB0RG9tdVZFcEhNSzVXSkFleEZMM3R0?=
+ =?utf-8?B?S0liZXpKdjZ3Yyt2bFRmQ1RkL0hPRUZyTUR0OTVXU3pSdWlzR1JFaTNRWnM2?=
+ =?utf-8?B?VksxaWFiOVBxUXNiVnpjbVNudnJOZ3lGSzM3VE5SZW9mUFlxRHdNNjJOMytM?=
+ =?utf-8?B?dFVVY0ZJZ2x6TUs2Y3R6RGE4c3NsNjJIZDlIZi9DQWIvL3NLb1VJRk5ZRWRH?=
+ =?utf-8?B?WUYyR1pPQ1RkZVVreFJLc1NuTzNWanY0N24zaFlpSzdNQXo4NTdsQ0dOUjc5?=
+ =?utf-8?B?QTZ5MmhFLzVZNDcrcVYwZ1BlTHY3RUdzaUtOeGtyVU5rcUErMW9QYyt6TmRC?=
+ =?utf-8?B?MzljTTRpVmp1VWgvRVFyRXlNL0daM0tHdTdIQ1pNelY5N21TWm9adXNVbnZw?=
+ =?utf-8?B?UDY0WVU3SFFBOVAxUU5YdXg3NmhnZ1I4Zmk2V3pENy9YUVZkK25FVEprUXRj?=
+ =?utf-8?B?eTZhZTZsY2hiUUtNZStSS3FveG1mdU13V0VXK3FBNkdrOUZGT2c0L04xNmEw?=
+ =?utf-8?B?aWl4STN1eEJKRSs2WnZNd0ZxdSsvK1BFMG95NkVXRFpuMkJIMmNuTlNmTEZn?=
+ =?utf-8?B?bHpFWEVmRVlXbE8weTVSZGRuK3ZQQ1lZSTJoYitMcjB4clRGdzFvNVgweWRT?=
+ =?utf-8?B?THlHOWhzMTREc1JlZlgybDJ6dHVpYktsb0RjK2FlTmhwWnNnMEF2TWNWR2NH?=
+ =?utf-8?B?R2wvYXF1RTdsaHhMRDl1SE1HUzRuMjNselM5aVVaK05peUFSQ1RFZVh3TkhM?=
+ =?utf-8?B?M0dvemxwQlZaS3hMMmNkK2Q4aUVnWjdOcG9rK0hzL0Q4QW5rczdxY0dtQmNW?=
+ =?utf-8?B?SjN4Rkg5L25MbFJmUW9OWld1MXFuQzNjQ3BkTmdmNUhyQzZ6VVdkRXBWUU5k?=
+ =?utf-8?B?MVQreXJzL1UwdEMvOVo2T2JrRG5HamZhYlR5OFJXMXNUa2FjV3N0UnMycGJn?=
+ =?utf-8?B?TjVnUTFuT1NSM3hvcVJHaEFBWXFGb2N6bXNQaDRVb2IrRU42S09QcExQRDBY?=
+ =?utf-8?B?bHRQK2h2eUVvdm5nZnp4NWQ0cExhN0g4a1FMQ2p1cGMvcmJRK0tOMEx6SmtC?=
+ =?utf-8?B?WC90NU5sdFNUSTFzeXlNN2V1Zis2QjQvRGg4Tm9uaWVUTElva05HaUlBUTJM?=
+ =?utf-8?B?MEZHc01sSG5HTER6U0pEKzVrUzRLR3dsOUdXcW8rbFRQaXQ3RlZGUzNQazNy?=
+ =?utf-8?B?NERDV3Y5ZFRFeXRaY0tZTVdvdjlxeW5wb1lVcmxoQ3dWU3dQa1B2bGpSQkRQ?=
+ =?utf-8?B?MmtoKy8wb2FCT0llbmxrblBZdERmMnNsRGpCd3czeE5UMXNhcy9LaVZXcCsx?=
+ =?utf-8?B?KzhTbDBtQVhmRTQ3d2lLVGl3RFdiWjhaS2xENXQyU3JWTk5CZWpNSi8xQ2xR?=
+ =?utf-8?B?dkU3ZUhnZzdIWTUvTFUzODZwZHRXbDV2ckFZMWF2SzhXNWRTS255TDR5aTlO?=
+ =?utf-8?B?NnpBeTkwTW55eXFIOWQzUkJWUHpubStaaVNJcEprQ0txRFNPL2xBUkFxSDdp?=
+ =?utf-8?B?MVJHY1FOMEllQ25acjZwWmJVV2F1T1hvWU52VFpqR2FVMTZqUVJwTStpN29y?=
+ =?utf-8?B?VnpCNURZNE5OcDFSaTU5U1dibDdpM0U3LzMySmcxUG5PQ011NWlvakFYc2NY?=
+ =?utf-8?B?Tm5abWtESHJlVXBPTThXMkZSTVA1S3JJSnlPTnZSck9pL29IK1B6T3hGNGwr?=
+ =?utf-8?B?NFhpaEkrUFZERDN5SGY3NG1jdE9PVWhFLzlmTVQ4SkJtcHp0Uk4rMllFaC93?=
+ =?utf-8?B?MlNNc3pMa0lOVThsMWx0cWswWFRqc2VZMnZBVXdOaVhCS2tWMlAwOXFrRTg5?=
+ =?utf-8?B?dEl0dGp4NVdheEhEMU9NdHRkamo4S0wzMlBKdGMwbTE0OVpZekVIVnNKWHJq?=
+ =?utf-8?B?ck90UHdGWUhGUlVGSGlMQVFSWWs2a1Zxc1JqWXFQZW5nMFJSTkNiSjV0d0ti?=
+ =?utf-8?B?aGYwRWQ1NFVITWNPS0s3TTg5a3NTK2JLOG5hQ3BrSmRUekFISFVCdThHYjg2?=
+ =?utf-8?B?clhQamV1WC96NFVZTWd1QW9iZFdvOHZLclROV2FQcGljTTYyZ1lnem5lMVhF?=
+ =?utf-8?B?alY3MlpiQ01ReURmekRHTHhUUHBzTTdHS01lSkZEYXExdmJETjJBNWppTFdX?=
+ =?utf-8?Q?cMXY=3D?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a89b1ea8-0930-4005-c112-08dde554ba4b
+X-MS-Exchange-CrossTenant-AuthSource: PH8PR12MB7446.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2025 10:30:22.8580
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 8FMUNbTQYNNKddP1IoE3840MaEJOazjgWystsx2CtDyro7hwDapGPsJq8DW2V6Ae
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB8306
 
+Thanks Sultan.
 
---psrvdihhhcwoejuq
-Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [RFC PATCH v1 1/2] fs: Add O_DENY_WRITE
-MIME-Version: 1.0
+On 8/22/2025 11:56 AM, Sultan Alsawaf wrote:
+> On Fri, Aug 22, 2025 at 10:23:48AM +0800, Du, Bin wrote:
+>> On 8/14/2025 2:53 PM, Sultan Alsawaf wrote:
+>>> On Wed, Jun 18, 2025 at 05:19:51PM +0800, Bin Du wrote:
+>>>> AMD ISP4 Key features:
+>>>> - Processes bayer raw data from the connected sensor and output them to different YUV formats
+>>>> - Downscale input image to different output image resolution
+>>>> - Pipeline to do image processing on the input image including demosaic, denoise, 3A, etc
+>>>
+>>> BTW, another problem I have which I would love some help with: may I get the FW
+>>> commands for setting basic 3A parameters?
+>>>
+>>> It seems like the default AE mode does frame-averaging, which is really
+>>> unsuitable for video calls on the webcam. My face is really underexposed as a
+>>> result during the daytime because there's a lot of ambient light in the
+>>> background.
+>>>
+>>> The webcam on this laptop also has a very wide field of view, which makes my
+>>> face appear small and shows too much of the background. This also exacerbates
+>>> the AE problem.
+>>>
+>>> I'm thinking CMD_ID_SET_ZOOM would fix the FOV problem, and then either
+>>> CMD_ID_AE_SET_MODE to change the AE mode or CMD_ID_AE_SET_REGION to set the AE
+>>> ROI would fix the exposure problem. What do you think?
+>>>
+>>> Thanks,
+>>> Sultan
+>>
+>> Thanks Sultan for the suggestion, sorry for the late response because we
+>> spent some time internally to discuss the feasibility.
+> 
+> Thanks for looking into this!
+> 
+>> Yes, it's really good suggestion. Because current V4l2 doesn't have standard
+>> ioctl for like region setting, to support it, besides adding FW command, new
+>> customized ioctl also needs be added and no existing APP can benefit from
+>> it. So our idea is not to add them to our current upstream driver, but we
+>> would be really glad to help you to enable them locally with dedicated
+>> thread, suppose it can help to improve the IQ with correct input setting
+>> like the correct ROI region, but we aren't sure because we didn't do that
+>> before on Linux and would really expect your test result and feedback.
+> 
+> I'm happy to help develop this and even help write the code. :)
+> 
 
-On 2025-08-22, Micka=EBl Sala=FCn <mic@digikod.net> wrote:
-> Add a new O_DENY_WRITE flag usable at open time and on opened file (e.g.
-> passed file descriptors).  This changes the state of the opened file by
-> making it read-only until it is closed.  The main use case is for script
-> interpreters to get the guarantee that script' content cannot be altered
-> while being read and interpreted.  This is useful for generic distros
-> that may not have a write-xor-execute policy.  See commit a5874fde3c08
-> ("exec: Add a new AT_EXECVE_CHECK flag to execveat(2)")
->=20
-> Both execve(2) and the IOCTL to enable fsverity can already set this
-> property on files with deny_write_access().  This new O_DENY_WRITE make
-> it widely available.  This is similar to what other OSs may provide
-> e.g., opening a file with only FILE_SHARE_READ on Windows.
->=20
-> Cc: Al Viro <viro@zeniv.linux.org.uk>
-> Cc: Andy Lutomirski <luto@amacapital.net>
-> Cc: Christian Brauner <brauner@kernel.org>
-> Cc: Jeff Xu <jeffxu@chromium.org>
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: Paul Moore <paul@paul-moore.com>
-> Cc: Serge Hallyn <serge@hallyn.com>
-> Reported-by: Robert Waite <rowait@microsoft.com>
-> Signed-off-by: Micka=EBl Sala=FCn <mic@digikod.net>
-> Link: https://lore.kernel.org/r/20250822170800.2116980-2-mic@digikod.net
-> ---
->  fs/fcntl.c                       | 26 ++++++++++++++++++++++++--
->  fs/file_table.c                  |  2 ++
->  fs/namei.c                       |  6 ++++++
->  include/linux/fcntl.h            |  2 +-
->  include/uapi/asm-generic/fcntl.h |  4 ++++
->  5 files changed, 37 insertions(+), 3 deletions(-)
->=20
-> diff --git a/fs/fcntl.c b/fs/fcntl.c
-> index 5598e4d57422..0c80c0fbc706 100644
-> --- a/fs/fcntl.c
-> +++ b/fs/fcntl.c
-> @@ -34,7 +34,8 @@
-> =20
->  #include "internal.h"
-> =20
-> -#define SETFL_MASK (O_APPEND | O_NONBLOCK | O_NDELAY | O_DIRECT | O_NOAT=
-IME)
-> +#define SETFL_MASK (O_APPEND | O_NONBLOCK | O_NDELAY | O_DIRECT | O_NOAT=
-IME | \
-> +	O_DENY_WRITE)
-> =20
->  static int setfl(int fd, struct file * filp, unsigned int arg)
->  {
-> @@ -80,8 +81,29 @@ static int setfl(int fd, struct file * filp, unsigned =
-int arg)
->  			error =3D 0;
->  	}
->  	spin_lock(&filp->f_lock);
-> +
-> +	if (arg & O_DENY_WRITE) {
-> +		/* Only regular files. */
-> +		if (!S_ISREG(inode->i_mode)) {
-> +			error =3D -EINVAL;
-> +			goto unlock;
-> +		}
-> +
-> +		/* Only sets once. */
-> +		if (!(filp->f_flags & O_DENY_WRITE)) {
-> +			error =3D exe_file_deny_write_access(filp);
-> +			if (error)
-> +				goto unlock;
-> +		}
-> +	} else {
-> +		if (filp->f_flags & O_DENY_WRITE)
-> +			exe_file_allow_write_access(filp);
-> +	}
+Thank you very much for your consistent help, that's invaluable.
 
-I appreciate the goal of making this something that can be cleared
-(presumably for interpreters that mmap(MAP_PRIVATE) their scripts), but
-making a security-related flag this easy to clear seems like a footgun
-(any library function could mask O_DENY_WRITE or forget to copy the old
-flag values).
+> I think a lot of useful functionality can be put upstream just through V4L2,
+> like V4L2_CID_EXPOSURE_METERING to control the AE mode.
+> 
 
-> +
->  	filp->f_flags =3D (arg & SETFL_MASK) | (filp->f_flags & ~SETFL_MASK);
->  	filp->f_iocb_flags =3D iocb_flags(filp);
-> +
-> +unlock:
->  	spin_unlock(&filp->f_lock);
-> =20
->   out:
-> @@ -1158,7 +1180,7 @@ static int __init fcntl_init(void)
->  	 * Exceptions: O_NONBLOCK is a two bit define on parisc; O_NDELAY
->  	 * is defined as O_NONBLOCK on some platforms and not on others.
->  	 */
-> -	BUILD_BUG_ON(20 - 1 /* for O_RDONLY being 0 */ !=3D
-> +	BUILD_BUG_ON(21 - 1 /* for O_RDONLY being 0 */ !=3D
->  		HWEIGHT32(
->  			(VALID_OPEN_FLAGS & ~(O_NONBLOCK | O_NDELAY)) |
->  			__FMODE_EXEC));
-> diff --git a/fs/file_table.c b/fs/file_table.c
-> index 81c72576e548..6ba896b6a53f 100644
-> --- a/fs/file_table.c
-> +++ b/fs/file_table.c
-> @@ -460,6 +460,8 @@ static void __fput(struct file *file)
->  	locks_remove_file(file);
-> =20
->  	security_file_release(file);
-> +	if (unlikely(file->f_flags & O_DENY_WRITE))
-> +		exe_file_allow_write_access(file);
->  	if (unlikely(file->f_flags & FASYNC)) {
->  		if (file->f_op->fasync)
->  			file->f_op->fasync(-1, file, 0);
-> diff --git a/fs/namei.c b/fs/namei.c
-> index cd43ff89fbaa..366530bf937d 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -3885,6 +3885,12 @@ static int do_open(struct nameidata *nd,
->  	error =3D may_open(idmap, &nd->path, acc_mode, open_flag);
->  	if (!error && !(file->f_mode & FMODE_OPENED))
->  		error =3D vfs_open(&nd->path, file);
-> +	if (!error && (open_flag & O_DENY_WRITE)) {
-> +		if (S_ISREG(file_inode(file)->i_mode))
-> +			error =3D exe_file_deny_write_access(file);
-> +		else
-> +			error =3D -EINVAL;
-> +	}
->  	if (!error)
->  		error =3D security_file_post_open(file, op->acc_mode);
->  	if (!error && do_truncate)
-> diff --git a/include/linux/fcntl.h b/include/linux/fcntl.h
-> index a332e79b3207..dad14101686f 100644
-> --- a/include/linux/fcntl.h
-> +++ b/include/linux/fcntl.h
-> @@ -10,7 +10,7 @@
->  	(O_RDONLY | O_WRONLY | O_RDWR | O_CREAT | O_EXCL | O_NOCTTY | O_TRUNC |=
- \
->  	 O_APPEND | O_NDELAY | O_NONBLOCK | __O_SYNC | O_DSYNC | \
->  	 FASYNC	| O_DIRECT | O_LARGEFILE | O_DIRECTORY | O_NOFOLLOW | \
-> -	 O_NOATIME | O_CLOEXEC | O_PATH | __O_TMPFILE)
-> +	 O_NOATIME | O_CLOEXEC | O_PATH | __O_TMPFILE | O_DENY_WRITE)
+Yes, that's feasible, the consideration is if we add support to control 
+AE mode, as a complete solution, then we have to add support to set 
+again and exposure time in manual mode by FW command , besides that, 
+extra work is also needed from QA to develop new testcases, all these 
+together will cost more time. So, our current plan is first to upstream 
+a version with basic functions, after that, we can submit incremental 
+patches to add more features. Does it make sense?
 
-I don't like this patch for the same reasons Christian has already said,
-but in addition -- you cannot just add new open(2) flags like this.
+> For advanced functions that don't have a standard V4L2 control, maybe we can set
+> some defaults in the driver to improve the experience for front-facing cameras,
+> i.e. webcams.
+>> Depending on the features exposed by FW, maybe setting a ROI for AE isn't
+> necessary. Is it possible for the FW to do face detection and set 3A according
+> to the face landmarks/ROI?
+> 
 
-Unlike openat2(2), classic open(2) does not verify invalid flag bits, so
-any new flag must be designed so that old kernels will return an error
-for that flag combination, which ensures that:
+Oh, so sad, our FW doesn't embed algorithm to do face detection. :(
 
- * No old programs set those bits inadvertently, which lets us avoid
-   breaking userspace in some really fun and hard-to-debug ways.
- * For security-related bits, that new programs running on old kernels
-   do not think they are getting a security property that they aren't
-   actually getting.
+> Thanks,
+> Sultan
 
-O_TMPFILE's bitflag soup is an example of how you can resolve this issue
-for open(2), but I would suggest that authors of new O_* flags seriously
-consider making their flags openat2(2)-only unless it's trivial to get
-the above behaviour.
+-- 
+Regards,
+Bin
 
->  /* List of all valid flags for the how->resolve argument: */
->  #define VALID_RESOLVE_FLAGS \
-> diff --git a/include/uapi/asm-generic/fcntl.h b/include/uapi/asm-generic/=
-fcntl.h
-> index 613475285643..facd9136f5af 100644
-> --- a/include/uapi/asm-generic/fcntl.h
-> +++ b/include/uapi/asm-generic/fcntl.h
-> @@ -91,6 +91,10 @@
->  /* a horrid kludge trying to make sure that this will fail on old kernel=
-s */
->  #define O_TMPFILE (__O_TMPFILE | O_DIRECTORY)
-> =20
-> +#ifndef O_DENY_WRITE
-> +#define O_DENY_WRITE	040000000
-> +#endif
-> +
->  #ifndef O_NDELAY
->  #define O_NDELAY	O_NONBLOCK
->  #endif
-
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-https://www.cyphar.com/
-
---psrvdihhhcwoejuq
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJEEABYKADkWIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCaK7eEhsUgAAAAAAEAA5t
-YW51MiwyLjUrMS4xMSwyLDIACgkQKJf60rfpRG9V3AEA5oOWpgL+FjTae5hN5S0u
-NsO3eAJnHacwgGQQEQNbJY0A+wWEmDH7pIvldv0TNbUu37QH46/cRLEB3/OX44QK
-JV8I
-=c4ff
------END PGP SIGNATURE-----
-
---psrvdihhhcwoejuq--
 
