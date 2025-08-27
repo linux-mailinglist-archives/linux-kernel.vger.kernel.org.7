@@ -1,175 +1,121 @@
-Return-Path: <linux-kernel+bounces-788956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48B98B38E81
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 00:35:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29D56B38E88
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 00:36:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9139E6866DC
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 22:35:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1CF41165F11
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 22:36:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D641730F923;
-	Wed, 27 Aug 2025 22:35:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EB6D30F929;
+	Wed, 27 Aug 2025 22:36:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RFJnMN7p"
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DUpxeAZt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88DBF4438B;
-	Wed, 27 Aug 2025 22:35:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA3704438B;
+	Wed, 27 Aug 2025 22:36:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756334136; cv=none; b=dJeF+C+ADmKdBt+ubnCUW8QnrDBBnee/4XcO6L/l+bG9DNghNASLLqV4ZGUcVWe6G3TFC9adqtgCMHkZcwK3bkZ7KYoTkBas0RHNT1F9XhMjc2r5Nug/RC4JNEXqhbd/7yj4i4Tpfvpo6Sgx/N+6m1gr23EjAJcgKqklFfKpm04=
+	t=1756334169; cv=none; b=QDggZiLqi8kJNimMoCLdNCDFT6jgIhCcST7tCPT4a+i9cYs1Pks/oT3Fd+qt4aThe93oOGE663bV1ezvbt3RPLD0SxeejvlxyWXXXFH2/1ULrsnYoW1wE1rx2Iaxm982WortLHTmebSaKPY7lEGMsfJINZz4VbgaG8zw8fnL2J4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756334136; c=relaxed/simple;
-	bh=SXs86Z/ghHdUpv2SW5CCCQ+HH076bKTpxuaSrBbkGxA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Z3dm5nt5G22gKjRZ02vNGTPhbFBAwDc16eODaKZiY+ZHqOPApGbHh99ekmHDVxKz2my82gJ9wP5ng8tMJVrZGW+IWiEvYAx7YUeZIvFTZHp7P9B0ipHaWQzgrbWgieg0IPuv8LcCUwonwVxxK2nEUobuJflyjHh0C3UAkUQaJbM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RFJnMN7p; arc=none smtp.client-ip=209.85.215.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-b47173749dbso287946a12.1;
-        Wed, 27 Aug 2025 15:35:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756334134; x=1756938934; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=g436yRDs2oFYHuwHkA6woTZL702ArnB+cDHvw8FDL8c=;
-        b=RFJnMN7pHTKkX0VmQ4v2BgzJPCYFbIKBCkLkKIfO3kA1sSpQqNkxr72PAF20J/Aj4U
-         B53Vcjaip3PefQS6VZBLHhKZqOpZD37ddT8FwyjvLEqpnUFTK58vMVlcanIcB5W3raFM
-         Mw+fBfKZ+Xbnwx+oqLueIq2A8FsLWOKqVM7tvJuBtLl80hP07ZDv8tbAx0B52Q7W2nbI
-         BZVnmF72rZqsZFH8wZ+4omxJ3kt+jNSxFCmK3DleTx2PrfaiSNRLz+VFC5j+k0+ZI9BD
-         rSY8s2uH272ZbL7o5tYaTQPse8Wa4YXYt88/7L5T1qcma3bt2coKZnB/4j2EcHkIxsE1
-         x63Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756334134; x=1756938934;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=g436yRDs2oFYHuwHkA6woTZL702ArnB+cDHvw8FDL8c=;
-        b=O9fOJfBmSoGeY3ZEhq4mefL2XJ2t31TIY633jur5JXYqweL1YeVtNPIJZcxMyZ6wkk
-         LE5LS1wLIDCkY1r3OiClhdOf/Cfb6jIj5Gcrxew2tXz7vdnKiibkSlc4SCBCHB/sh+QL
-         7Yomx1RW7qCf6u/gmugv9zhRcBROXJNNscCXJfcPPqDY0GHG1lIVfpcEWdouc4/sA5iB
-         3SRFHouoZ3r+mF07uGzMQKMfwEL9mWmU1f3s7M8iTQAafLcv/pLCKsUwGfBft8z9QkJa
-         NfRsHaPc/NDpiGpraKTW28pvYlwEiCaZeOzh7yxelM59VHvceqE//k6j1g4WFClDlokt
-         3sRQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVIk4iBZocL5yMt+Wcm/A2Af8pqdKlEdLXAmWdLUxAx8/wozTjWCupBSjlDYk1xTlxm1Vn3TAOvnz8gRGb4@vger.kernel.org, AJvYcCXCBiJAp1c2T69pbUZbAPY7iDfN3WOVcmpeO08sbkcalZmrCDl1mIPKmfw1It7vO2ltbsE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywr+OSMOGTbPr9CxBRFUzpnsIFctwsTBoNyCeW+XYO64iYnBBhP
-	/vHMeY6BwL/K0Nj6ThTDf7sM2VFYiG5qbf525FLSUIiO9zWRrSp0jQhOwe24b1h5lydgJduoBUo
-	b1sXfWUGzA4vSL2buajV7khz+knMk69E=
-X-Gm-Gg: ASbGncspKC7NghGY1hIiEb9yXOYpmsWGnSAewtPD4Ilqz15OYqy9i1vlkZJebv+b2hs
-	ZThDZeScY6B6ycFN4uVzFwuzqu4ZMljteJ1A6d3potEt/UfZZe+zqiL9L+LI4nbdErXVzsx8c9e
-	xPhNq/DBZNj72WkVaVvRXMS6cRo+ThfSeu8W9Dn7TCFYSWVEqKniZj5xYDmV8OMj7SpSiomj35H
-	+CLMJwyUTLDOgRSs87KLQs=
-X-Google-Smtp-Source: AGHT+IEMhGho3V13rfPJ7OAJesJPtlRBTfKaNkPl34bBTrx8f0Z2ik5O1dV7r67GNkOypyb4AvYz5/DDh05R6k6JfCI=
-X-Received: by 2002:a17:903:2349:b0:248:abeb:c104 with SMTP id
- d9443c01a7336-248abebc290mr40398975ad.15.1756334133667; Wed, 27 Aug 2025
- 15:35:33 -0700 (PDT)
+	s=arc-20240116; t=1756334169; c=relaxed/simple;
+	bh=SuvtG9zPU1paS6zdtAQLH1EmQzS92Y488uepGCslfWI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=FANBEHsYc+JZAcAgVqyNA+ReDGEuKt0Ah7/hf+bqGxWM7BpFfzRTvZgQr14mz6fAfvRX08wUyjgEmxB5Vy0+nsxhxKjn+LAS/m8WxQ3Y4gR11WV0iaGWqhAUFDNEGTm3Sw486jybZDpMsHrwDRcueNuKi/3FfmjgNXF24HbV2K0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DUpxeAZt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C3EBC4CEEB;
+	Wed, 27 Aug 2025 22:36:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756334168;
+	bh=SuvtG9zPU1paS6zdtAQLH1EmQzS92Y488uepGCslfWI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=DUpxeAZt3sd2SF+CHF9cOy/FaqwBpkfO3QmQLN4WtjqYJww1JgdN330EJgtOo7awf
+	 xyWVC65Ik9s82mLjd16u/fsvSuu23dv4M1YBxCe8bO6CXWEgzoRLhpV3WDHPmP25aY
+	 MN84rM34MoHWDkORX0/iiQ1n3JoUADeR5wXKbBAovlj1sAMI5uZeJDeOfTYi0lz+zn
+	 V5/DUusNTXr35xQCbizoSyjKjZgXsropAj0Da/2jC4EKIm5VEVn251opw5aNwUVvou
+	 RRsuPYOe7vPF9M/TvmOxlhhB1X2T3hVX9lRk7L3x0iNPNnhqbMmQokcb4oci+E0njx
+	 QPfbX1CvuOzSQ==
+Date: Wed, 27 Aug 2025 17:36:06 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>
+Cc: Andreas Larsson <andreas@gaisler.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+	linux-pci@vger.kernel.org, sparclinux@vger.kernel.org,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
+	Yinghai Lu <yinghai@kernel.org>,
+	Igor Mammedov <imammedo@redhat.com>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	linux-kernel@vger.kernel.org,
+	=?utf-8?Q?Micha=C5=82?= Winiarski <michal.winiarski@intel.com>,
+	linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH 00/24] PCI: Bridge window selection improvements
+Message-ID: <20250827223606.GA915856@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <tencent_65E5988AD52BEC280D22964189505CD6ED06@qq.com>
-In-Reply-To: <tencent_65E5988AD52BEC280D22964189505CD6ED06@qq.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Wed, 27 Aug 2025 15:35:19 -0700
-X-Gm-Features: Ac12FXzr0aV8tX6mrAQDZiFZAhBUoaHQ7KfdnOPlGI_LftpBv2kw6CZvUBSGpks
-Message-ID: <CAEf4BzaMUEPjix29JjiYCt1JmWcz97gemSpXL9iD9Gc-g+yZYw@mail.gmail.com>
-Subject: Re: [PATCH bpf-next] bpf/helpers: bpf_strnstr: Exact match length
-To: Rong Tao <rtoax@foxmail.com>, Viktor Malik <vmalik@redhat.com>
-Cc: ast@kernel.org, daniel@iogearbox.net, rongtao@cestc.cn, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, 
-	"open list:BPF [GENERAL] (Safe Dynamic Programs and Tools)" <bpf@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250822145605.18172-1-ilpo.jarvinen@linux.intel.com>
 
-cc'ing Viktor as well
+On Fri, Aug 22, 2025 at 05:55:41PM +0300, Ilpo Järvinen wrote:
+> This series is based on top of the three resource fitting and
+> assignment algorithm fixes (v3).
+> 
+> PCI resource fitting and assignment code needs to find the bridge
+> window a resource belongs to in multiple places, yet, no common
+> function for that exists. Thus, each site has its own version of
+> the decision, each with their own corner cases, misbehaviors, and
+> some resulting in complex interfaces between internal functions.
+> ...
 
-On Tue, Aug 26, 2025 at 9:29=E2=80=AFPM Rong Tao <rtoax@foxmail.com> wrote:
->
-> From: Rong Tao <rongtao@cestc.cn>
->
-> strnstr should not treat the ending '\0' of s2 as a matching character,
-> otherwise the parameter 'len' will be meaningless, for example:
->
->     1. bpf_strnstr("openat", "open", 4) =3D -ENOENT
->     2. bpf_strnstr("openat", "open", 5) =3D 0
+> I've tried to look out for any trouble that code under arch/ could
+> cause after the flags start to behave differently and therefore ended
+> up consolidating arch/ code to use pci_enable_resources(). My
+> impression is that strictly speaking only the MIPS code would break
+> similar to PCI core's copy of pci_enable_resources(), the others were
+> much more lax in checking so they'd likely keep working but
+> consolidation seemed still the best approach there as the enable checks
+> seemed diverging for no apparent reason.
+> ...
 
-please add these cases to the tests
+>   m68k/PCI: Use pci_enable_resources() in pcibios_enable_device()
+>   sparc/PCI: Remove pcibios_enable_device() as they do nothing extra
+>   MIPS: PCI: Use pci_enable_resources()
+> ...
 
->
-> This patch makes (1) return 0, indicating a successful match.
->
-> Signed-off-by: Rong Tao <rongtao@cestc.cn>
-> ---
->  kernel/bpf/helpers.c | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/kernel/bpf/helpers.c b/kernel/bpf/helpers.c
-> index 401b4932cc49..65bd0050c560 100644
-> --- a/kernel/bpf/helpers.c
-> +++ b/kernel/bpf/helpers.c
-> @@ -3681,6 +3681,8 @@ __bpf_kfunc int bpf_strnstr(const char *s1__ign, co=
-nst char *s2__ign, size_t len
->                                 return -ENOENT;
->                         if (c1 !=3D c2)
->                                 break;
-> +                       if (j =3D=3D len - 1)
-> +                               return i;
+>  arch/m68k/kernel/pcibios.c   |  39 +-
+>  arch/mips/pci/pci-legacy.c   |  38 +-
+>  arch/sparc/kernel/leon_pci.c |  27 --
+>  arch/sparc/kernel/pci.c      |  27 --
+>  arch/sparc/kernel/pcic.c     |  27 --
+> ...
 
-But this seems like a wrong fix. The API assumes that s2 is
-well-formed zero-terminated string, and so we shouldn't just randomly
-truncate it. Along the examples above, what will happen to
-bpf_strnstr("openat", "open", 3)? With your fix it will return
-success, right? But it shouldn't, IMO, because "open" wasn't really
-found in the first 3 characters of, effectively, "ope".
+I love the fact that you're doing so much cleanup.  Thanks for all the
+work in this!
 
-We should also test bpf_strnstr("", "", 0)... ;)
+Obviously all this code is quite sensitive, so I put it on
+pci/resource to get more exposure in -next.  If it turns out that we
+trip over things or just don't feel comfortable yet for v6.18, we can
+always defer this part until the next cycle.
 
+I will also watch for acks from the m68k, mips, and sparc maintainers
+for those pieces.
 
-So maybe something like this (but I haven't really tested it):
-
-
-diff --git a/kernel/bpf/helpers.c b/kernel/bpf/helpers.c
-index 401b4932cc49..ced7132980fe 100644
---- a/kernel/bpf/helpers.c
-+++ b/kernel/bpf/helpers.c
-@@ -3672,10 +3672,12 @@ __bpf_kfunc int bpf_strnstr(const char
-*s1__ign, const char *s2__ign, size_t len
-
-        guard(pagefault)();
-        for (i =3D 0; i < XATTR_SIZE_MAX; i++) {
--               for (j =3D 0; i + j < len && j < XATTR_SIZE_MAX; j++) {
-+               for (j =3D 0; i + j <=3D len && j < XATTR_SIZE_MAX; j++) {
-                        __get_kernel_nofault(&c2, s2__ign + j, char, err_ou=
-t);
-                        if (c2 =3D=3D '\0')
-                                return i;
-+                       if (i + j =3D=3D len)
-+                               break;
-                        __get_kernel_nofault(&c1, s1__ign + j, char, err_ou=
-t);
-                        if (c1 =3D=3D '\0')
-                                return -ENOENT;
-
-
-pw-bot: cr
-
-
->                 }
->                 if (j =3D=3D XATTR_SIZE_MAX)
->                         return -E2BIG;
-> --
-> 2.51.0
->
->
+Bjorn
 
