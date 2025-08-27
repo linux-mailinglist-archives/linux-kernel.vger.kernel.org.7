@@ -1,216 +1,162 @@
-Return-Path: <linux-kernel+bounces-787693-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A01DB379D1
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 07:27:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62D5CB379DC
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 07:32:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E84A16FF00
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 05:27:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD5293B5F0C
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 05:32:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3501029CB32;
-	Wed, 27 Aug 2025 05:27:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EC783101BD;
+	Wed, 27 Aug 2025 05:32:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="fFfa87uM"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5612430F941;
-	Wed, 27 Aug 2025 05:27:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="PYyLAM/t"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 186D018FDDB;
+	Wed, 27 Aug 2025 05:32:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756272460; cv=none; b=FGICX/Qc4V8BVhSlnN4c7QJlEL7qkGS3IZO04/lkhMLsEOrRjQIZpEnb57zmVc1gbtYjlmOtTCGk1RGOjDvH82+JPKm0Ado0RfQ40Ux0gHX9CkfBjYEjpvFpEl4vF9g9pCC8auJGy5clikLip0Cl+QQochIumJsksaufqScXVCs=
+	t=1756272725; cv=none; b=gKUf9s4fQytLXNecL0En8avjVhUC4TAukyXw2VPPPdGAcXLmHidjl3PMAZzMwIP216DJlYjwqGJwQEUj6dK2MTMdhLlrQsKNrn+tpjwBgtfVHkxvWRLbk16imz2k264Qwy+8aA3wrwq8Q/0bEnz8Km576zNqvdoSkhn/T0BEuoM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756272460; c=relaxed/simple;
-	bh=+pAURm+gSzUePMcSSAf3SHQZLY9qMhpS2XZkBkV2krw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dhtd3JwEEiBiPtMFMcvHfmbhK90l1F1v/Y3ZyX2/FuvUhwGFjQCkwo1bOGFhpuw2HHWSulcocUfw+Hn8mhqtfC9/WnnmBt23dUfqNKWZ6PrMQtQPg2Q44n9UL2GjTyJveN33NsGiuLiAMDGbK3htJGjMBn1m0KHj2QQ00OgNMaY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=fFfa87uM; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57QJuQZo029875;
-	Wed, 27 Aug 2025 05:27:07 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=jxijss
-	tmEiNGZJKG6yltOja4dBZKrqMyUi/HgZLz1Sk=; b=fFfa87uMu8acvDC8OVnLiF
-	3Gw7T94UM/oONEZ9FfO6ESJm9dykU5EYEWzJ6thKl8AEybeSnU7jVczC+OsbSmIg
-	U1DTm1ikvBxQhtMsBkqiirIjOSbWdtCJnpSDht3JKVzPoBOjH3KPPIjRZwjgIoz4
-	PIz+4T0pathmf8bjMQQcBo9Nngpp8r0YuSt99tds0+EviRwkVU+5p0dMPKzJ5SJZ
-	NqSby3CqAv1CiFuqsjN+UtUj0P6MofPcWemNISQn5nz/ZN8twBsE28xbYF1o/y5D
-	T+rxMTdyXFQiS1FQNk9wuoFsc0iqqXm08NakEBDb3JoIMWYZ+sB++DfGZXvYi8bQ
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48q42j2cs9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 27 Aug 2025 05:27:07 +0000 (GMT)
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 57R5K8Rl017639;
-	Wed, 27 Aug 2025 05:27:06 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48q42j2cs6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 27 Aug 2025 05:27:06 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 57R3lXEH029924;
-	Wed, 27 Aug 2025 05:27:05 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 48qsfmpe9d-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 27 Aug 2025 05:27:05 +0000
-Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
-	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 57R5R1oh53739874
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 27 Aug 2025 05:27:01 GMT
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 6821520049;
-	Wed, 27 Aug 2025 05:27:01 +0000 (GMT)
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id A772520040;
-	Wed, 27 Aug 2025 05:27:00 +0000 (GMT)
-Received: from [9.152.212.92] (unknown [9.152.212.92])
-	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 27 Aug 2025 05:27:00 +0000 (GMT)
-Message-ID: <ac6dfaec-38ea-486d-89a0-ab02768cee42@linux.ibm.com>
-Date: Wed, 27 Aug 2025 07:27:00 +0200
+	s=arc-20240116; t=1756272725; c=relaxed/simple;
+	bh=1BHJF1h4JZLF7LABNHrdLQUa+nhGCuBTTqiPKQScGjo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RuEIaGqW750arTlH6qXadwS5hGXZseWnAKOXsqSHhGBqcPRpiySMy1PXv4usl+aCy3xT5PW7W6myFEQ7gUH0IqJipGTHSAAhk8K/PdjoTExLRUrx0iyjyjMByTis4JblqnuR7DiGSYN3dtqibJeRLxEFBw8VaoJ8BhagcPfrT68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=PYyLAM/t; arc=none smtp.client-ip=117.135.210.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=Xb
+	/sQq4p+ehlInw6xv3fSf5GeZqtRWl42FnrsJrIPHY=; b=PYyLAM/t33Js4LgT5L
+	jzx44K2Y93yCyZ18VsooZUsVHHvoBlc9pAZf+TVpQOhdy4QUws9nWRvnMiCZwket
+	M3hG/PTl7CjEd7G6K5QVEHLhTIKfzpz5Pw+XCwvcg111yT0EmWCxyujiL9QmsJAn
+	+oLLClxx4iXgBp2OA5FGu92Ac=
+Received: from phoenix.. (unknown [])
+	by gzga-smtp-mtada-g0-1 (Coremail) with SMTP id _____wDXH3YxmK5oLPk1Ew--.15805S2;
+	Wed, 27 Aug 2025 13:31:31 +0800 (CST)
+From: Jiawei Zhao <phoenix500526@163.com>
+To: ast@kernel.org
+Cc: daniel@iogearbox.net,
+	andrii@kernel.org,
+	yonghong.song@linux.dev,
+	bpf@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH bpf-next v16 0/2] libbpf: fix USDT SIB argument handling causing unrecognized register error
+Date: Wed, 27 Aug 2025 05:31:26 +0000
+Message-ID: <20250827053128.1301287-1-phoenix500526@163.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 18/19] perf: Introduce positive capability for raw events
-To: Mark Rutland <mark.rutland@arm.com>, Robin Murphy <robin.murphy@arm.com>,
-        Sumanth Korikkar <sumanthk@linux.ibm.com>,
-        Jan Polensky <japo@linux.ibm.com>
-Cc: peterz@infradead.org, mingo@redhat.com, will@kernel.org, acme@kernel.org,
-        namhyung@kernel.org, alexander.shishkin@linux.intel.com,
-        jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
-        kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-alpha@vger.kernel.org,
-        linux-snps-arc@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
-        linux-csky@vger.kernel.org, loongarch@lists.linux.dev,
-        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-        sparclinux@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-rockchip@lists.infradead.org, dmaengine@vger.kernel.org,
-        linux-fpga@vger.kernel.org, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
-        intel-xe@lists.freedesktop.org, coresight@lists.linaro.org,
-        iommu@lists.linux.dev, linux-amlogic@lists.infradead.org,
-        linux-cxl@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-riscv@lists.infradead.org
-References: <cover.1755096883.git.robin.murphy@arm.com>
- <542787fd188ea15ef41c53d557989c962ed44771.1755096883.git.robin.murphy@arm.com>
- <aK259PrpyxguQzdN@J2N7QTR9R3>
-Content-Language: en-US
-From: Thomas Richter <tmricht@linux.ibm.com>
-Organization: IBM
-In-Reply-To: <aK259PrpyxguQzdN@J2N7QTR9R3>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIzMDAxMCBTYWx0ZWRfXx7bT3ieVYWZ1
- FvRIJn/6odyl76gPtjq2fdUI3+ddgoyBguazv17xAc0h1PWPsciO7Io1+yf38004HJX48EZKQe4
- jjqa2jsZ613Il7PEWWZLmHVXl0DVElauSgaXsW2jrn5unNTZZAgCkgP5ixkSnbssGkUA98RWoHK
- 6CllyViFj8nmb4/kmZamtgDzlo/xirMdIPTqK1ytIy748E4TyQcONzfTAVM6cDoHbAMLdYuTHtD
- UT6EmBwE8Tz6Ajw1M3OeNTbMk21jMwITf/ouwlMB6Q/Hm12FuudC6E2iwfSIPWm8nU5cvD4JBmw
- ghpRUxLnbbdBrU5mCsCpBm2H2yjaVRWCqCxRNsBxe1xCwhV1Oev6PUoPQ5TLoGumXLZUFEfuXwo
- /BJHYr+T
-X-Proofpoint-ORIG-GUID: Z1OBCqtS81HxjTSNcENNGRKeOQ0QzPO9
-X-Proofpoint-GUID: 4pnWswYamnTcgbcPVqCp3LQWR1ph9h16
-X-Authority-Analysis: v=2.4 cv=evffzppX c=1 sm=1 tr=0 ts=68ae972b cx=c_pps
- a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=7CQSdrXTAAAA:8 a=KByoUL483hSIROooWq4A:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=a-qgeE7W1pNrGK8U0ZQC:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-26_02,2025-08-26_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 adultscore=0 malwarescore=0 spamscore=0 bulkscore=0
- impostorscore=0 clxscore=1015 priorityscore=1501 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508230010
+X-CM-TRANSID:_____wDXH3YxmK5oLPk1Ew--.15805S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxWw4kGw1UKr1ftr1UKr4kJFb_yoWrJry5pF
+	WrWws8KrWjy3Z7GFsxWr42yw43Gan5GF4UJr1vqw1Yvr48GF17Zr4Igr15WrnxXa92g34Y
+	vFW3tFs8Gas5Zw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07joGQDUUUUU=
+X-CM-SenderInfo: pskrv0dl0viiqvswqiywtou0bp/xtbBgAW2iGiui+TTrwAAsu
 
-On 8/26/25 15:43, Mark Rutland wrote:
-> On Wed, Aug 13, 2025 at 06:01:10PM +0100, Robin Murphy wrote:
->> Only a handful of CPU PMUs accept PERF_TYPE_{RAW,HARDWARE,HW_CACHE}
->> events without registering themselves as PERF_TYPE_RAW in the first
->> place. Add an explicit opt-in for these special cases, so that we can
->> make life easier for every other driver (and probably also speed up the
->> slow-path search) by having perf_try_init_event() do the basic type
->> checking to cover the majority of cases.
->>
->> Signed-off-by: Robin Murphy <robin.murphy@arm.com>
-> 
-> 
-> To bikeshed a little here, I'm not keen on the PERF_PMU_CAP_RAW_EVENTS
-> name, because it's not clear what "RAW" really means, and people will
-> definitely read that to mean something else.
-> 
-> Could we go with something like PERF_PMU_CAP_COMMON_CPU_EVENTS, to make
-> it clear that this is about opting into CPU-PMU specific event types (of
-> which PERF_TYPE_RAW is one of)?
-> 
-> Likewise, s/is_raw_pmu()/pmu_supports_common_cpu_events()/.
-> 
->> ---
->>
->> A further possibility is to automatically add the cap to PERF_TYPE_RAW
->> PMUs in perf_pmu_register() to have a single point-of-use condition; I'm
->> undecided...
-> 
-> I reckon we don't need to automagically do that, but I reckon that
-> is_raw_pmu()/pmu_supports_common_cpu_events() should only check the cap,
-> and we don't read anything special into any of
-> PERF_TYPE_{RAW,HARDWARE,HW_CACHE}.
-> 
->> ---
->>  arch/s390/kernel/perf_cpum_cf.c    |  1 +
->>  arch/s390/kernel/perf_pai_crypto.c |  2 +-
->>  arch/s390/kernel/perf_pai_ext.c    |  2 +-
->>  arch/x86/events/core.c             |  2 +-
->>  drivers/perf/arm_pmu.c             |  1 +
->>  include/linux/perf_event.h         |  1 +
->>  kernel/events/core.c               | 15 +++++++++++++++
->>  7 files changed, 21 insertions(+), 3 deletions(-)
->>
->> diff --git a/arch/s390/kernel/perf_cpum_cf.c b/arch/s390/kernel/perf_cpum_cf.c
->> index 1a94e0944bc5..782ab755ddd4 100644
->> --- a/arch/s390/kernel/perf_cpum_cf.c
->> +++ b/arch/s390/kernel/perf_cpum_cf.c
->> @@ -1054,6 +1054,7 @@ static void cpumf_pmu_del(struct perf_event *event, int flags)
->>  /* Performance monitoring unit for s390x */
->>  static struct pmu cpumf_pmu = {
->>  	.task_ctx_nr  = perf_sw_context,
->> +	.capabilities = PERF_PMU_CAP_RAW_EVENTS,
->>  	.pmu_enable   = cpumf_pmu_enable,
->>  	.pmu_disable  = cpumf_pmu_disable,
->>  	.event_init   = cpumf_pmu_event_init,
-> 
-> Tangential, but use of perf_sw_context here looks bogus.
-> 
+When using GCC on x86-64 to compile an usdt prog with -O1 or higher
+optimization, the compiler will generate SIB addressing mode for global
+array, e.g. "1@-96(%rbp,%rax,8)".
 
-It might look strange, but it was done on purpose. For details see
-commit 9254e70c4ef1 ("s390/cpum_cf: use perf software context for hardware counters")
+The current USDT implementation in libbpf cannot parse these two formats,
+causing `bpf_program__attach_usdt()` to fail with -ENOENT
+(unrecognized register).
 
-Background was a WARN_ON() statement which fired, because several PMU device drivers
-existed in parallel on s390x platform.
-Not sure if this condition is still true after all these years...
+This patch series adds support for SIB addressing mode in USDT probes.
+The main changes include:
+- add correct handling logic for SIB-addressed arguments in
+  `parse_usdt_arg`.
+- add an usdt_o2 test case to cover SIB addressing mode.
+
+Testing shows that the SIB probe correctly generates 8@(%rcx,%rax,8) 
+argument spec and passes all validation checks.
+
+The modification history of this patch series:
+Change since v1:
+- refactor the code to make it more readable
+- modify the commit message to explain why and how
+
+Change since v2:
+- fix the `scale` uninitialized error
+
+Change since v3:
+- force -O2 optimization for usdt.test.o to generate SIB addressing usdt
+  and pass all test cases.
+
+Change since v4:
+- split the patch into two parts, one for the fix and the other for the
+  test
+
+Change since v5:
+- Only enable optimization for x86 architecture to generate SIB addressing
+  usdt argument spec.
+
+Change since v6:
+- Add an usdt_o2 test case to cover SIB addressing mode.
+- Reinstate the usdt.c test case.
+
+Change since v7:
+- Refactor modifications to __bpf_usdt_arg_spec to avoid increasing its size,
+  achieving better compatibility
+- Fix some minor code style issues
+- Refactor the usdt_o2 test case, removing semaphore and adding GCC attribute
+  to force -O2 optimization
+
+Change since v8:
+- Refactor the usdt_o2 test case, using assembly to force SIB addressing mode.
+
+Change since v9:
+- Only enable the usdt_o2 test case on x86_64 and i386 architectures since the
+  SIB addressing mode is only supported on x86_64 and i386.
+
+Change since v10:
+- Replace `__attribute__((optimize("O2")))` with `#pragma GCC optimize("O1")`
+  to fix the issue where the optimized compilation condition works improperly. 
+- Renamed test case usdt_o2 and relevant files name to usdt_o1 in that O1
+  level optimization is enough to generate SIB addressing usdt argument spec.
+
+Change since v11:
+- Replace `STAP_PROBE1` with `STAP_PROBE_ASM`
+- Use bit fields instead of bit shifting operations
+- Merge the usdt_o1 test case into the usdt test case
+
+Change since v12:
+- This patch is same with the v12 but with a new version number.
+
+Change since v13(resolve some review comments):
+- https://lore.kernel.org/bpf/CAEf4BzZWd2zUC=U6uGJFF3EMZ7zWGLweQAG3CJWTeHy-5yFEPw@mail.gmail.com/
+- https://lore.kernel.org/bpf/CAEf4Bzbs3hV_Q47+d93tTX13WkrpkpOb4=U04mZCjHyZg4aVdw@mail.gmail.com/
+
+Change since v14:
+- fix a typo in __bpf_usdt_arg_spec
+
+Change since v15(resolve some review comments):
+- https://lore.kernel.org/bpf/CAEf4BzaxuYijEfQMDFZ+CQdjxLuDZiesUXNA-SiopS+5+VxRaA@mail.gmail.com/
+- https://lore.kernel.org/bpf/CAEf4BzaHi5kpuJ6OVvDU62LT5g0qHbWYMfb_FBQ3iuvvUF9fag@mail.gmail.com/
+- https://lore.kernel.org/bpf/d438bf3a-a9c9-4d34-b814-63f2e9bb3a85@linux.dev/
+
+
+Jiawei Zhao (2):
+  libbpf: fix USDT SIB argument handling causing unrecognized register
+    error
+  selftests/bpf: Enrich subtest_basic_usdt case in selftests to cover
+    SIB handling logic
+
+ tools/lib/bpf/usdt.bpf.h                      | 44 +++++++++-
+ tools/lib/bpf/usdt.c                          | 69 +++++++++++++--
+ tools/testing/selftests/bpf/prog_tests/usdt.c | 84 ++++++++++++++++++-
+ tools/testing/selftests/bpf/progs/test_usdt.c | 31 +++++++
+ 4 files changed, 219 insertions(+), 9 deletions(-)
 
 -- 
-Thomas Richter, Dept 3303, IBM s390 Linux Development, Boeblingen, Germany
---
-IBM Deutschland Research & Development GmbH
+2.43.0
 
-Vorsitzender des Aufsichtsrats: Wolfgang Wendt
-
-Geschäftsführung: David Faller
-
-Sitz der Gesellschaft: Böblingen / Registergericht: Amtsgericht Stuttgart, HRB 243294
 
