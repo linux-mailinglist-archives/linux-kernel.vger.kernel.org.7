@@ -1,149 +1,349 @@
-Return-Path: <linux-kernel+bounces-788384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788385-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4684B3839E
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 15:21:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 17AB2B383A4
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 15:24:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 718243B3929
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 13:21:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C074E7C08F8
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 13:24:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B448E350D53;
-	Wed, 27 Aug 2025 13:21:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4279350D7A;
+	Wed, 27 Aug 2025 13:24:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OVqM2ydK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XBT8DDmz"
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08139298CC7;
-	Wed, 27 Aug 2025 13:21:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 663321BCA07;
+	Wed, 27 Aug 2025 13:24:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756300864; cv=none; b=MJ9/AwRbW9ve6fxpjG3trIh5dWlssrNRvcqX2yTywKV8eggDpf/SvslI7EmSNQO82BouKfW2vyOrA5qZ8/qi9WpnqBWRMNC0afyc0RotAZLGVlTlttcqrUmOoAWeE2lrREd081mecPye3LY3om6LsN0/vwFjF28YTA+7NuDKfJI=
+	t=1756301042; cv=none; b=CCo6iYiArZeGaY3sCvJjlDS/ASz7qPOI5JHXKHlRqIOHVxuGNRLxNNlgKMIL9/gRK3d2m43XNjNiX9Y8l1KaE+J7EDu12baw6USbvakkwZv8teMnFE0bthttRDR3quNcr5EGEKYaMqIz3vi5CT0n4XPcdRLMKIoPtpMvblwwsdg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756300864; c=relaxed/simple;
-	bh=Wzw9A2fGU7gurXwIUpH8Synua2BxNhx7miIcMSPtbFI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PoHkO6NKXmWK4NtIp29dAhsspjK+eAafHkEKNs/SNFzxFBpjrhjkBNvptf6nu8UdODcb4ciI5W3B1lgN1KltdQM+EIhIkU1hzazeE2A5Hu7i1fBWvnODheIC9u8rZB3nbg2Tu60p385efaKvl5DqM3IX66SOL8kDMMm6IT5Y1eU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OVqM2ydK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60C0AC4CEEB;
-	Wed, 27 Aug 2025 13:20:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756300863;
-	bh=Wzw9A2fGU7gurXwIUpH8Synua2BxNhx7miIcMSPtbFI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=OVqM2ydKwGTnVMxTjiWXhqEIXrZbPzpeWmKQcq4EgGBy3WcS8p8Gc20DX+eaQODM6
-	 uTvsOrSjYJ0BYlSkrL7/eDizLL0UMC5TqacWRGbFDhdGWCf83TzaJ1psWyBQHVKJh1
-	 e06+mfR65iM++vRY9s2dk4BJlEF7L4IY+OV11yLZJrno/UEOBpzG7ysmplGPaAgIMb
-	 082/pg4A4MgxQ4BR8QKtDS3hKsDuB8LOOCCfI1YGCxNOv2Iptmd6jNcnEsJMiiVRdX
-	 2Qr2ymwqpxzhF+Kxmn5YklgLxsJFGssaX9G5LVFV0VJlDcJ/fgtKfGZ1DxbThyCNAP
-	 wn9u98AL1NhRQ==
-Message-ID: <3147ebf4-054c-4777-811f-86d0ad14caf6@kernel.org>
-Date: Wed, 27 Aug 2025 15:20:57 +0200
+	s=arc-20240116; t=1756301042; c=relaxed/simple;
+	bh=hjx/uoa80SZqvUAo5XbxoL3ZPIhgVRCbYC4iMT9S2jo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qBjwFlTnTESoPr8cSRlnYrXGNXUaPOaMKfSXjE/Ie4p3dYwSyw6e7S49TjtAJw/qbyI4SjvccqbuvB+kMHlzI6W2evLRBEeOQvFCHTO9rdP2AdEQvAtaZzGhDZVT9XZ6e9QiIrHIA5ls2lQK4g1DyAGuuJAwy39BlljkwkhV1XA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XBT8DDmz; arc=none smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-32326e5f058so4682378a91.3;
+        Wed, 27 Aug 2025 06:24:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756301040; x=1756905840; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0+Z6EZIQR0o/UT5Ew23/Zd4wA8+f+oOfKWhDtiUSUCA=;
+        b=XBT8DDmzfoRlnfWCkoozU9fH7X5aE6fUsoDh1H3Tdz9eiOis7xkdyRTQTXhpnWu1OM
+         DVNL+/9Fqth4VfphaWMpUIHpqXHXsirZFaHHoLpKycUIL9WdoNePcrWm0ou0TAZtd1sK
+         pNzrYL6dIn8dPUUtXVHAKIlr18EVhiYJWEK5f8LWx+UNttg+uWsfJonRt+rhG8N1XPbz
+         N3EQMU/ZJ4cJS92AbdAYqmB0ZUNlPQPVIWsKZuqponowRKbYhQu99Zai4GulVwqK+E3R
+         DMnRKDmd4qCFKb1ZKuZo1fdwPAQmHJ5p43ZE0OXNgfgvRCjXwKk5bW39w6jl/9IizaYd
+         TilA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756301040; x=1756905840;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0+Z6EZIQR0o/UT5Ew23/Zd4wA8+f+oOfKWhDtiUSUCA=;
+        b=JLIn+PiHVb7MR1Or9emlqyKBld4iRSDPewclBNgWtojWKmxviptBsstNu8CQj5hZJJ
+         FuhLrpWLgCNgXpaCw6BznVS7HvJpvwhMnL84WigkGKrA3n0qlLH7dUi5Oibh498SLSBY
+         HAYkV7GHht62qXvVQ5TvTBzjagbG/GgPIEDw3U0AeG9tCv+WWhkzSxNdrRAyWt9k82Od
+         O62Svc/8UL8ozGFIfdKW/Ywfke7vQmNTR0tT83kAC9znHUw7F3kAX8RwXnpIiAXTzxxv
+         J/yypp1ZrPFC88K4LAAHZDCv/t6Q7XvYuQABne9H9QXIIhVgkkkfTqX6XwALQt4bAmkY
+         5FGg==
+X-Forwarded-Encrypted: i=1; AJvYcCUJ25/Fy7fvOMO72+V1KpaPnSFpfC3tPc8f2/9CoHQV9+eiYD3U7mvdSygHJ0UKY5DKv7hmMdyTSKePQxjxhmz3dWBah1z1@vger.kernel.org, AJvYcCW1dEOlKGKQqMYdspVI8HV3f+BvNPZtXeaK3XzjrfAVkkEEJGCvpChMj0GfzH+uK55LLZXrW1E+tQ==@vger.kernel.org, AJvYcCWnpTXof8VfdWjez7IS8eDQCJ/oso1JzPHBB3QEDSWVTh3o7vdhbXtjMpNq2rqh24Tg1MRE1rLVJmwn+xs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YztUnWNGsTLBbvLmeTNCVWJTxwsi0OC9NKiOd/vKtXBcF0XhHtC
+	/RlPUJ+a5BRVhZHx/Jo0N246IoV1Dp9Ow35TzAMFWTbaLpqEXlpmJrA+cuUqiE9rTLg/TYI2xHG
+	3cS9XvVuK4ru935PqGxGRUH3f+qp0gcM=
+X-Gm-Gg: ASbGncstVx2Z8JD0M+IxdeNucw136KvBpLLvTuWE6EZuJbUm6wrvcvymOo4LgOtSuIp
+	0MhalIsvaolJvz7PyPrfpWi+EjO4JwtljVIIxhLvozCCcy41tIesSSI/Ktm5rhfYUQyBGepHX40
+	/hyOE33ptLm+O2axbxVW/Ggpv5N9fX/Y5216Ph6qFyjZIejAcU9m9leL03ggzBCwVCR7QzokSgW
+	MYKTPI=
+X-Google-Smtp-Source: AGHT+IFqToF9gBp+UyFTqKlU5wNf+zGDiS/bnFnnJhMueM+agaECoZFQMDP9MtD0GJBSwP2SR02RjH7cGdZdRQCzIbI=
+X-Received: by 2002:a17:90b:17c4:b0:31e:6f0a:6a1a with SMTP id
+ 98e67ed59e1d1-32515e12e55mr24232684a91.3.1756301039423; Wed, 27 Aug 2025
+ 06:23:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/9] dt-bindings: iommu: apple,sart: Add Apple A11
-To: Rob Herring <robh@kernel.org>, Nick Chan <towinchenmi@gmail.com>
-Cc: Sven Peter <sven@kernel.org>, Janne Grunau <j@jannau.net>,
- Alyssa Rosenzweig <alyssa@rosenzweig.io>, Neal Gompa <neal@gompa.dev>,
- Jassi Brar <jassisinghbrar@gmail.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Hector Martin <marcan@marcan.st>,
- Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
- Robin Murphy <robin.murphy@arm.com>, Keith Busch <kbusch@kernel.org>,
- Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
- Sagi Grimberg <sagi@grimberg.me>, asahi@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, iommu@lists.linux.dev,
- linux-nvme@lists.infradead.org
-References: <20250818-t8015-nvme-v2-0-65648cd189e0@gmail.com>
- <20250818-t8015-nvme-v2-3-65648cd189e0@gmail.com>
- <20250820222044.GA1513864-robh@kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250820222044.GA1513864-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250826031824.1227551-1-tweek@google.com>
+In-Reply-To: <20250826031824.1227551-1-tweek@google.com>
+From: Stephen Smalley <stephen.smalley.work@gmail.com>
+Date: Wed, 27 Aug 2025 09:23:47 -0400
+X-Gm-Features: Ac12FXwwVCVh8Q4CW3b7vD2Y1uA9d0c9oJmdXy-DlkO1Tt715Tn3W-AtphEbLg8
+Message-ID: <CAEjxPJ6G2iK9Yp8eCwbwHQfF1J3WBEVU42kAMQHNuuC_H5QHNw@mail.gmail.com>
+Subject: Re: [PATCH] memfd,selinux: call security_inode_init_security_anon
+To: =?UTF-8?Q?Thi=C3=A9baud_Weksteen?= <tweek@google.com>
+Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	Hugh Dickins <hughd@google.com>, Jeff Vander Stoep <jeffv@google.com>, Nick Kralevich <nnk@google.com>, 
+	Jeff Xu <jeffxu@google.com>, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, selinux@vger.kernel.org, 
+	linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 21/08/2025 00:20, Rob Herring wrote:
-> On Mon, Aug 18, 2025 at 04:42:56PM +0800, Nick Chan wrote:
->> Add bindings for SARTv0 as found on Apple A11 SoC.
->>
->> Reviewed-by: Sven Peter <sven@kernel.org>
->> Signed-off-by: Nick Chan <towinchenmi@gmail.com>
->> ---
->>  Documentation/devicetree/bindings/iommu/apple,sart.yaml | 1 +
->>  1 file changed, 1 insertion(+)
->>
->> diff --git a/Documentation/devicetree/bindings/iommu/apple,sart.yaml b/Documentation/devicetree/bindings/iommu/apple,sart.yaml
->> index e87c1520fea60a2de549aa8a469fcded52e3b6e3..95d55ec688779bd52b8aef316a4c1ba7b7449574 100644
->> --- a/Documentation/devicetree/bindings/iommu/apple,sart.yaml
->> +++ b/Documentation/devicetree/bindings/iommu/apple,sart.yaml
->> @@ -29,6 +29,7 @@ description:
->>  properties:
->>    compatible:
->>      oneOf:
->> +      - const: apple,t8015-sart
-> 
-> Actually I take back my ack, move this to the existing 'enum' down 
-> below. With that change, you can keep the ack.
+On Mon, Aug 25, 2025 at 11:18=E2=80=AFPM Thi=C3=A9baud Weksteen <tweek@goog=
+le.com> wrote:
+>
+> Prior to this change, no security hooks were called at the creation of a
+> memfd file. It means that, for SELinux as an example, it will receive
+> the default type of the filesystem that backs the in-memory inode. In
+> most cases, that would be tmpfs, but if MFD_HUGETLB is passed, it will
+> be hugetlbfs. Both can be considered implementation details of memfd.
+>
+> It also means that it is not possible to differentiate between a file
+> coming from memfd_create and a file coming from a standard tmpfs mount
+> point.
+>
+> Additionally, no permission is validated at creation, which differs from
+> the similar memfd_secret syscall.
+>
+> Call security_inode_init_security_anon during creation. This ensures
+> that the file is setup similarly to other anonymous inodes. On SELinux,
+> it means that the file will receive the security context of its task.
+>
+> The ability to limit fexecve on memfd has been of interest to avoid
+> potential pitfalls where /proc/self/exe or similar would be executed
+> [1][2]. Reuse the "execute_no_trans" and "entrypoint" access vectors,
+> similarly to the file class. These access vectors may not make sense for
+> the existing "anon_inode" class. Therefore, define and assign a new
+> class "memfd_file" to support such access vectors.
+>
+> Guard these changes behind a new policy capability named "memfd_class".
+>
+> [1] https://crbug.com/1305267
+> [2] https://lore.kernel.org/lkml/20221215001205.51969-1-jeffxu@google.com=
+/
+>
+> Signed-off-by: Thi=C3=A9baud Weksteen <tweek@google.com>
 
-What commit fails to explain (folks, please fix that) is that device is
-incompatible with existing ones. Right?
+This looks good to me, but do you have a test for it, preferably via
+patch for the selinux-testsuite?
+See https://github.com/SELinuxProject/selinux-testsuite/commit/023b79b8319e=
+5fe222fb5af892c579593e1cbc50
+for an example.
 
-Commit should describe the hardware or any unusual things here. Not
-making devices compatible, while usually they were compatible, is the
-unusual thing.
-Best regards,
-Krzysztof
+Otherwise, you can add my:
+Acked-by: Stephen Smalley <stephen.smalley.work@gmail.com>
+
+> ---
+> Changes since RFC:
+> - Remove enum argument, simply compare the anon inode name
+> - Introduce a policy capability for compatility
+> - Add validation of class in selinux_bprm_creds_for_exec
+>
+>  include/linux/memfd.h                      |  2 ++
+>  mm/memfd.c                                 | 14 +++++++++--
+>  security/selinux/hooks.c                   | 27 ++++++++++++++++++----
+>  security/selinux/include/classmap.h        |  2 ++
+>  security/selinux/include/policycap.h       |  1 +
+>  security/selinux/include/policycap_names.h |  1 +
+>  security/selinux/include/security.h        |  5 ++++
+>  7 files changed, 46 insertions(+), 6 deletions(-)
+>
+> diff --git a/include/linux/memfd.h b/include/linux/memfd.h
+> index 6f606d9573c3..cc74de3dbcfe 100644
+> --- a/include/linux/memfd.h
+> +++ b/include/linux/memfd.h
+> @@ -4,6 +4,8 @@
+>
+>  #include <linux/file.h>
+>
+> +#define MEMFD_ANON_NAME "[memfd]"
+> +
+>  #ifdef CONFIG_MEMFD_CREATE
+>  extern long memfd_fcntl(struct file *file, unsigned int cmd, unsigned in=
+t arg);
+>  struct folio *memfd_alloc_folio(struct file *memfd, pgoff_t idx);
+> diff --git a/mm/memfd.c b/mm/memfd.c
+> index bbe679895ef6..63b439eb402a 100644
+> --- a/mm/memfd.c
+> +++ b/mm/memfd.c
+> @@ -433,6 +433,8 @@ static struct file *alloc_file(const char *name, unsi=
+gned int flags)
+>  {
+>         unsigned int *file_seals;
+>         struct file *file;
+> +       struct inode *inode;
+> +       int err =3D 0;
+>
+>         if (flags & MFD_HUGETLB) {
+>                 file =3D hugetlb_file_setup(name, 0, VM_NORESERVE,
+> @@ -444,12 +446,20 @@ static struct file *alloc_file(const char *name, un=
+signed int flags)
+>         }
+>         if (IS_ERR(file))
+>                 return file;
+> +
+> +       inode =3D file_inode(file);
+> +       err =3D security_inode_init_security_anon(inode,
+> +                       &QSTR(MEMFD_ANON_NAME), NULL);
+> +       if (err) {
+> +               fput(file);
+> +               file =3D ERR_PTR(err);
+> +               return file;
+> +       }
+> +
+>         file->f_mode |=3D FMODE_LSEEK | FMODE_PREAD | FMODE_PWRITE;
+>         file->f_flags |=3D O_LARGEFILE;
+>
+>         if (flags & MFD_NOEXEC_SEAL) {
+> -               struct inode *inode =3D file_inode(file);
+> -
+>                 inode->i_mode &=3D ~0111;
+>                 file_seals =3D memfd_file_seals_ptr(file);
+>                 if (file_seals) {
+> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> index c95a5874bf7d..429b2269b35a 100644
+> --- a/security/selinux/hooks.c
+> +++ b/security/selinux/hooks.c
+> @@ -93,6 +93,7 @@
+>  #include <linux/fanotify.h>
+>  #include <linux/io_uring/cmd.h>
+>  #include <uapi/linux/lsm.h>
+> +#include <linux/memfd.h>
+>
+>  #include "avc.h"
+>  #include "objsec.h"
+> @@ -2366,9 +2367,12 @@ static int selinux_bprm_creds_for_exec(struct linu=
+x_binprm *bprm)
+>         ad.type =3D LSM_AUDIT_DATA_FILE;
+>         ad.u.file =3D bprm->file;
+>
+> +       if (isec->sclass !=3D SECCLASS_FILE && isec->sclass !=3D SECCLASS=
+_MEMFD_FILE)
+> +               return -EPERM;
+> +
+>         if (new_tsec->sid =3D=3D old_tsec->sid) {
+> -               rc =3D avc_has_perm(old_tsec->sid, isec->sid,
+> -                                 SECCLASS_FILE, FILE__EXECUTE_NO_TRANS, =
+&ad);
+> +               rc =3D avc_has_perm(old_tsec->sid, isec->sid, isec->sclas=
+s,
+> +                                 FILE__EXECUTE_NO_TRANS, &ad);
+>                 if (rc)
+>                         return rc;
+>         } else {
+> @@ -2378,8 +2382,8 @@ static int selinux_bprm_creds_for_exec(struct linux=
+_binprm *bprm)
+>                 if (rc)
+>                         return rc;
+>
+> -               rc =3D avc_has_perm(new_tsec->sid, isec->sid,
+> -                                 SECCLASS_FILE, FILE__ENTRYPOINT, &ad);
+> +               rc =3D avc_has_perm(new_tsec->sid, isec->sid, isec->sclas=
+s,
+> +                                 FILE__ENTRYPOINT, &ad);
+>                 if (rc)
+>                         return rc;
+>
+> @@ -2974,10 +2978,18 @@ static int selinux_inode_init_security_anon(struc=
+t inode *inode,
+>         struct common_audit_data ad;
+>         struct inode_security_struct *isec;
+>         int rc;
+> +       bool is_memfd =3D false;
+>
+>         if (unlikely(!selinux_initialized()))
+>                 return 0;
+>
+> +       if (name !=3D NULL && name->name !=3D NULL &&
+> +           !strcmp(name->name, MEMFD_ANON_NAME)) {
+> +               if (!selinux_policycap_memfd_class())
+> +                       return 0;
+> +               is_memfd =3D true;
+> +       }
+> +
+>         isec =3D selinux_inode(inode);
+>
+>         /*
+> @@ -2996,6 +3008,13 @@ static int selinux_inode_init_security_anon(struct=
+ inode *inode,
+>
+>                 isec->sclass =3D context_isec->sclass;
+>                 isec->sid =3D context_isec->sid;
+> +       } else if (is_memfd) {
+> +               isec->sclass =3D SECCLASS_MEMFD_FILE;
+> +               rc =3D security_transition_sid(
+> +                       sid, sid,
+> +                       isec->sclass, name, &isec->sid);
+> +               if (rc)
+> +                       return rc;
+>         } else {
+>                 isec->sclass =3D SECCLASS_ANON_INODE;
+>                 rc =3D security_transition_sid(
+> diff --git a/security/selinux/include/classmap.h b/security/selinux/inclu=
+de/classmap.h
+> index 5665aa5e7853..3ec85142771f 100644
+> --- a/security/selinux/include/classmap.h
+> +++ b/security/selinux/include/classmap.h
+> @@ -179,6 +179,8 @@ const struct security_class_mapping secclass_map[] =
+=3D {
+>         { "anon_inode", { COMMON_FILE_PERMS, NULL } },
+>         { "io_uring", { "override_creds", "sqpoll", "cmd", "allowed", NUL=
+L } },
+>         { "user_namespace", { "create", NULL } },
+> +       { "memfd_file",
+> +         { COMMON_FILE_PERMS, "execute_no_trans", "entrypoint", NULL } }=
+,
+>         /* last one */ { NULL, {} }
+>  };
+>
+> diff --git a/security/selinux/include/policycap.h b/security/selinux/incl=
+ude/policycap.h
+> index 7405154e6c42..dabcc9f14dde 100644
+> --- a/security/selinux/include/policycap.h
+> +++ b/security/selinux/include/policycap.h
+> @@ -17,6 +17,7 @@ enum {
+>         POLICYDB_CAP_NETLINK_XPERM,
+>         POLICYDB_CAP_NETIF_WILDCARD,
+>         POLICYDB_CAP_GENFS_SECLABEL_WILDCARD,
+> +       POLICYDB_CAP_MEMFD_CLASS,
+>         __POLICYDB_CAP_MAX
+>  };
+>  #define POLICYDB_CAP_MAX (__POLICYDB_CAP_MAX - 1)
+> diff --git a/security/selinux/include/policycap_names.h b/security/selinu=
+x/include/policycap_names.h
+> index d8962fcf2ff9..8e96f2a816b6 100644
+> --- a/security/selinux/include/policycap_names.h
+> +++ b/security/selinux/include/policycap_names.h
+> @@ -20,6 +20,7 @@ const char *const selinux_policycap_names[__POLICYDB_CA=
+P_MAX] =3D {
+>         "netlink_xperm",
+>         "netif_wildcard",
+>         "genfs_seclabel_wildcard",
+> +       "memfd_class",
+>  };
+>  /* clang-format on */
+>
+> diff --git a/security/selinux/include/security.h b/security/selinux/inclu=
+de/security.h
+> index 8201e6a3ac0f..72c963f54148 100644
+> --- a/security/selinux/include/security.h
+> +++ b/security/selinux/include/security.h
+> @@ -209,6 +209,11 @@ static inline bool selinux_policycap_netif_wildcard(=
+void)
+>                 selinux_state.policycap[POLICYDB_CAP_NETIF_WILDCARD]);
+>  }
+>
+> +static inline bool selinux_policycap_memfd_class(void)
+> +{
+> +       return READ_ONCE(selinux_state.policycap[POLICYDB_CAP_MEMFD_CLASS=
+]);
+> +}
+> +
+>  struct selinux_policy_convert_data;
+>
+>  struct selinux_load_state {
+> --
+> 2.51.0.261.g7ce5a0a67e-goog
+>
 
