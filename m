@@ -1,211 +1,121 @@
-Return-Path: <linux-kernel+bounces-788885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA299B38BBE
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 23:56:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0889B38BBF
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 23:58:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED3D21B23A6F
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 21:57:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DB3A3B17CC
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 21:58:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12B5430F530;
-	Wed, 27 Aug 2025 21:56:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D3B830F920;
+	Wed, 27 Aug 2025 21:58:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="jy6GKzaR"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2057.outbound.protection.outlook.com [40.107.93.57])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OEgEOQgj"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3EA530DEB4;
-	Wed, 27 Aug 2025 21:56:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.57
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756331796; cv=fail; b=YylmBWGwHNmdJcPpoUjEj4yqlmjyzURfP3UWkc1wquKwYOIyXW3s1CgbYbSK9RPWU8RMSn/5uL2cd65p9IhztaKS9oMS2evNrt1C7YfYBPeFhIgqzN+pivew/mAD5D+rsS2SIp/kbEQjSRBYJCWntwO4QfzyIKb+5Nc6+WJEAy0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756331796; c=relaxed/simple;
-	bh=Dv+AAmIBv/hmVKr6qTZrQE/sSNf8h4wiRljYloSUuLc=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=NYp1BUgLYHBNbwV2vs4HIVZMLINavV33vItQ0jAb/kxy/l1zpyo4AXke3q+7Y4oASND20+5QxsFuIGzdL8Y/x6UbexVpkxZ2Jl1qdHCNRCiWqX0afUsXUZBr58LRaNYxkC4PH9ynmji0aEjmPZgTOVpglshUwfi7F8ekL2JaZzY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=jy6GKzaR; arc=fail smtp.client-ip=40.107.93.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=jQkC7K+FB9Q/rCCQGYxAG8HW7Y8aZvnwxjeRvbBSjmOPAtxDm25ig9eumHKUR3cg3689NTLlvP0k+enBC7jC3lEATIblMSY/BUzr5L8WksNepsEHQ2uyhiI+FQ0sZMemC48Bx8Yj0R21oXcC3mSY7sPHYqEi07EIVGiZyjK41ryTGiaogFgSbasNzUINuf8iVeyV726nvsGJG/6FB7iJJQexX0alLtRLfN3GJY2CKN6O/hbVAZDoJkr+ERR20xvvaeZlWIrsgQIe0iWTW9jSlr+uBym4Z+X7Bt2D26W6a1ZzbKo7N4IlB7IK5kst6ib2igfYRF5UmwL39tANtKxKSw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Uq0CPNLKMEz7J26PKmYLOZVccaC4IygLTh/nLsHz6LY=;
- b=iA/12tgxEB13bX4l6r4tcQzwpjwdts/mkb0aQAXxA3uX/T0DiewFZg0obrRrEQ/xYRQ+nmq09Egax1yzhMQmNad6Tw2DwZBX+mF7a6dAupNrXfPwHLD8jRh1dxrKFZHsavZRi1dNSe3U9BIg7cZ4n/kzX9gpanvKMl6LVB/XSJi9r5ZIp1Sd9o4ngAKinqs5vi2yV3tf6VmUUPAiDP6xFzqB9btyfTqp7/LwxuoScvfjdVElAl4NgoN1g5X2jKydP+L6Y21Is1BYCprbj4gscmicy5Ysluet6gmK0alx7GyOioUyLeYfcfNyqMPr1U+TV8xCDLpUvst58g2KCTuGgA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Uq0CPNLKMEz7J26PKmYLOZVccaC4IygLTh/nLsHz6LY=;
- b=jy6GKzaRZKc9K66mEA1viqyoE8AJjdTMEu9t6hsHQtqd9POoH3LpYzN4rw9fxh+vvtiUQWd4olXRg454DPjntAizMiZhSutsfWzUlEOmiW3gLfuAReyGehQJNlkrvy5lpTBSaEJtBjCGjpSIDQq7C/sactUCzS1vrod3U3wo8ZSASBZxDp53F5D0azOowlP3o3xhjdR4sZPI+g2ztHUTczsQTp+ShANT37CQ0YWL04PDNGQZq4wrh3IT/U5bSVQNVFWfC8fz2oMvKcfxvhKsLpT2D3Dq6Z7IKDbZPSu/GdWJ1f7tuB26m2Us5CBW/eV3NMOZzoRiG8k1o7JNe4z5iQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from LV2PR12MB5968.namprd12.prod.outlook.com (2603:10b6:408:14f::7)
- by MN2PR12MB4126.namprd12.prod.outlook.com (2603:10b6:208:199::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.22; Wed, 27 Aug
- 2025 21:56:30 +0000
-Received: from LV2PR12MB5968.namprd12.prod.outlook.com
- ([fe80::e6dd:1206:6677:f9c4]) by LV2PR12MB5968.namprd12.prod.outlook.com
- ([fe80::e6dd:1206:6677:f9c4%6]) with mapi id 15.20.9073.010; Wed, 27 Aug 2025
- 21:56:30 +0000
-Message-ID: <79c7d5b5-5fe0-4306-b8c4-3c91758a4c00@nvidia.com>
-Date: Wed, 27 Aug 2025 14:56:26 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/8] gpu: nova-core: process and prepare more firmwares
- to boot GSP
-To: Alexandre Courbot <acourbot@nvidia.com>, Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>,
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>
-Cc: Alistair Popple <apopple@nvidia.com>,
- Joel Fernandes <joelagnelf@nvidia.com>, Timur Tabi <ttabi@nvidia.com>,
- rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
- nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-References: <20250826-nova_firmware-v2-0-93566252fe3a@nvidia.com>
- <dc18894e-09d3-4088-9be0-22c2070b61f4@nvidia.com>
- <DCD2P4ORDLYV.2NSHXI305AF2E@nvidia.com>
-Content-Language: en-US
-From: John Hubbard <jhubbard@nvidia.com>
-In-Reply-To: <DCD2P4ORDLYV.2NSHXI305AF2E@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BYAPR11CA0088.namprd11.prod.outlook.com
- (2603:10b6:a03:f4::29) To LV2PR12MB5968.namprd12.prod.outlook.com
- (2603:10b6:408:14f::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A28F32D0601
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 21:58:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756331926; cv=none; b=jwIhZwiTPrRnZdeOFOUMr6BRF0r3cPvmD13yeRMZYafTkUOUds5TtCxPs2rN6gIFthY6sSB5qAMSl0pp4es3j3WxLJ+WmQafOdf/z0jLoTVwbdUNobv/WjsULi6wTdms23hqnEelSpJ4h1uaNWA2ztH3XRltDwSbW9jD3MNobm4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756331926; c=relaxed/simple;
+	bh=YS6ot1jmwQhlh433tsFpYy/7s7M2yewP96Xw9GjQ0qM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=jLM9+d189yhxCySEaVYqdAzeQGGbBGFRuu02Z8sGJfwDAVUNTT5BnypaAH3SFRXeTv0wknzOzjUCJ3S/fZzjY1OTXuAe1+tYZSZVwwORL6ZBxA6NWZkC/MyFeh2EOZhAKzFDI4c+PYFzbNklj3qrDTTbAQZCUifiaGwfSPb9i7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OEgEOQgj; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756331924; x=1787867924;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=YS6ot1jmwQhlh433tsFpYy/7s7M2yewP96Xw9GjQ0qM=;
+  b=OEgEOQgjPTrRQwFelWWTXyF7o3+7ZymCUcMSBc/CIEgMwOPE7Wf+xQLs
+   HK7t+pM+QgTY2u6vZKuOd8LdAtkRwcazGW9SmfJ2G4brwh4EgaNJWntbq
+   0geQsWBmE49HWhmZdoGf/34bg5oL53oZShxRCIDsMoQCa0Ghq9Y2LzE3k
+   kLXieJZKUhKwV088CK/u/30WwlqqUohnDy4CJYwaKwp02kEcs1fL8YKbV
+   h5HE7YbO+FQstVw3x3dzR1RIdiAUyTTlQfTOtRHjNjkBueg2HGQfT/8H5
+   YO8KMCcPfkLgUN1NuVqhYqa/tCWRhFQDI/hdfb4Gt+yk5sLFQAX9w02mL
+   Q==;
+X-CSE-ConnectionGUID: kYh0ytZ6Ti+X9Lq6Jqvs1A==
+X-CSE-MsgGUID: B5Ie6JSoTAmkRESqMuuqug==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="62430999"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="62430999"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2025 14:58:43 -0700
+X-CSE-ConnectionGUID: 2mgufOTfRc6+uresMxp6sQ==
+X-CSE-MsgGUID: 4RbBMExbRs6R2xyPE5Dk8A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,217,1751266800"; 
+   d="scan'208";a="169463537"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by fmviesa007.fm.intel.com with ESMTP; 27 Aug 2025 14:58:41 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1urOAB-000TFT-1e;
+	Wed, 27 Aug 2025 21:58:39 +0000
+Date: Thu, 28 Aug 2025 05:58:37 +0800
+From: kernel test robot <lkp@intel.com>
+To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Daniel Gomez <da.gomez@samsung.com>
+Subject: ld.lld: error: Function Import: link error: linking module flags
+ 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at
+ 1395198), and 'i32 1' from vmlinux.a(ring_buffer.o at 1404378)
+Message-ID: <202508280535.yj6qjEKj-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV2PR12MB5968:EE_|MN2PR12MB4126:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6db0c1f5-4abb-4c18-a69f-08dde5b49414
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|7416014|376014|1800799024|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?R0pkYiswTndwSWRsUXFOL2FwNkdYVUVDaXlZcnQ0MGtqVkdtRlM2OEpOdFFL?=
- =?utf-8?B?L1llM3ZrK3JvS3QyNFlFY3NDWklBNjNKWXVmcUxWVHZZeFU0dXZibkt5Q2ww?=
- =?utf-8?B?c2x6cWZ5VWE5aUlDRTVMMGhLZEV0ZzgyZnI2cExoeEZRRFNrSll2U0hrRXYr?=
- =?utf-8?B?dXgzZlM0UVhzcmJmSzN1ZTlHcjgyUS8rS294M3VtcVRGbE1EVG5rS3paZmEv?=
- =?utf-8?B?MDNHUjc5eUd4am9tY2VSZE93RVRGYnRRZ212YmpWM05tY0paWDVpVENwQUU3?=
- =?utf-8?B?ZTFZYWUyM3F6cFRQVkJCSERVaWlHZHRuY3dCNldubTJnb3FjTnlEMUd1STBx?=
- =?utf-8?B?STZXaXNBQzZrN2lJdElzUWlhZWVHYVJtSzlwako4aW9MaXczVFppMXJnWWZB?=
- =?utf-8?B?YmlvZGUyTHZUcjlPdTFjTWpVMTJURm9wWUFab1VSVUJYN1BVTzk3WHMyUFd1?=
- =?utf-8?B?NkJMaWpsM0ZjaWdGalN6eHlqMFpwUGEwRS8zdlh0SnRNKzUrSHl2ZURRNzFG?=
- =?utf-8?B?MUxVdTU4cFFrMWgrcUtVb3lSUHVLbVBwMmFPK0xvOXJ4WmlpNG5obWNUYW9L?=
- =?utf-8?B?OHY5N0JuZEhTWDc4RWlIMXBkaDVhQUZYKzM0YmgwQVFINGN2aFY1RE9kUXBT?=
- =?utf-8?B?S2lENUFDUGdkTUV4V0dPRDlvM2hjY3hYWkxwZExzcGJlb1B0NzNpVHNJS2hC?=
- =?utf-8?B?UUhTTHhxdmt3bGpUVmlNZFV2VzBVSjdzZm1BKzYrTXhKcHVkdVRJQjVxTjlO?=
- =?utf-8?B?aXFVNFp6TVBjTXpDVXRZeWlMUzVzdlY5MjNVYkJCM0lPWnJLNTVNSEU4amwv?=
- =?utf-8?B?bnMxdmpKRVdOUFExZzBaTmFIN0NVZzlSWk94aG5pMEVWK1YrKzZTL0lKbGhn?=
- =?utf-8?B?SGJMR0ZzaW9yUEZsTmNibDd1SUZYemtJNytkb2w4WXVZTmxQZWlHYStNNEdX?=
- =?utf-8?B?N3oxaUQ3V3NzOXNQM2l3WUpUMjdsUmxQSW9mY0lJT05IVWRpaEJPZXRMODJT?=
- =?utf-8?B?Mm0vZ2k0MFNQdjRHandWUlFWWklwN0hNV2dJTWhuaTVzQm1qK0FtZXNxZThU?=
- =?utf-8?B?Y1FIVk53NTY2KzFPcGVGT2VUeStYSnJnclBVQXVmcFVKQ3lmbTYzSWljcVh4?=
- =?utf-8?B?dUI5RlFhOXBCNXdSWXMxRXhaQ3RHb2pWOGR4MzBKMUpXZTEwclMwZTFzOTdz?=
- =?utf-8?B?VWlzNGpXY2JXWFE2L2tuUFRkejlOakIxVCtKS0FDQnkwOTBuWlVjTmZrdWJy?=
- =?utf-8?B?SXhSRWN0NDI2QW9SQUd2a0hXUk5iZGVzRURDQS85ZU5wL1FEb1dyb0gxRWtw?=
- =?utf-8?B?QnZCaEd3bjJ2WldySjJwTStmM3d5ZmlXa0djZnAxTGFKeHRmTEVYem9naGVQ?=
- =?utf-8?B?dHBvbG1vS3pDdkpWd1c3VG1weEEzUDZ5V3Bnb0plWldubi95ZTA5dlozZU1t?=
- =?utf-8?B?R3pDc1F3MmtCMkRNUVBvM3BKb1J5Z0FTaVZQQmU1cVpYdkpsdU1iWS9OVVV6?=
- =?utf-8?B?M0xSUkk3YkptdHc0T2NlT3ZjdGN2SnBHR1IyUFdRN05JNWVITVRIYllieTcy?=
- =?utf-8?B?N1ZUVmlQR2tvMlBvSUx2TWV4ZW5aUmJNdmN2U0k3UUJWckxybW8rY1BUOUla?=
- =?utf-8?B?N0pPSG5kS1BIU3NqK1VBZEUwTG50L0Fzai9DdGpMSk1wYm85dWttRlNQV2ZD?=
- =?utf-8?B?eEZyUUIvK0RYejIvamdaSkJOSjdnVTVMZ211MEM5MXZ6bnFEQ2FmbnhOZlpQ?=
- =?utf-8?B?Tjd3a2RrT3FpWitTMWVQS29JTWNWUmh4RnJSNms1NDZPRnlLNVJTOTEzakww?=
- =?utf-8?B?THllLzFpcHl5VkRDSTA4TThRRzV5ZkJ1R1JpOVh2NytZV1JLR3N4VGEzaGFE?=
- =?utf-8?B?S2dzVHVybEhWc2x1Y2xYcWhPOGRnU0xwMWVZbDUxUFM4TFNDcVNIdlZyM3ZU?=
- =?utf-8?B?UVF3V21SMGpyTmpnQ1YyazNqRUptQlpJMU5SeWJscXJEWnRoVzBkQWYvM2wv?=
- =?utf-8?B?WGpQazZ5bEdBPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV2PR12MB5968.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Tkt1dDdDSFVDTEQ2dmtqbE9QN3E5U216VTNzUjZaenpLek81Z1FqWG5XMlNm?=
- =?utf-8?B?TGNzdnR2TnVwdEhYTDBBZFgzSWhmOW43RkRobm5pODNMb28zaWY5c0VuZVU3?=
- =?utf-8?B?YzJHaVdEUVNYWE9tUnV2NGdRTit4emtEM1lSNTc0UTYxL0pkb1poR2ozNVd2?=
- =?utf-8?B?Y1FiK2c2dnlPcjVmbzFiVElnK0pidlg4TEkwVTNZTFNOeDZPM3dUOFBaTnpP?=
- =?utf-8?B?Q1d6M05oSHFqYVhrbk5qWWJoR1pGNXZnNzBhaXdYSXo0RVRMdjNvN3VaQk1i?=
- =?utf-8?B?RENMRSs2Tm9MeEFLZmlYRnNkVnlNMVdiU3lSUmtabzNtckp4U0dlRzEvZXR5?=
- =?utf-8?B?TTVQMVRYUWozbGRsc2M4R3Bzd29wNlpOMW5sV0hlOHIxYjJ6ckV1ZTZQWUx2?=
- =?utf-8?B?YnhUTGNFS3ZicDR3Q29FL20vY1QrV29KQmJKSy9hZVU3aUZWdCtxY00rNmpR?=
- =?utf-8?B?NGZuWWhESVVVNGVYQW5KZWtzakEvZWprQjdmREErbUZ6NEh5UkJYdVNZNkVR?=
- =?utf-8?B?QzdnZHJreENxVSs5MUxaK1Z5TmR5YTBPQU10WTNkOVFRSHJQbzJKNXUwTGxj?=
- =?utf-8?B?MjhLNHoxMW1iSk4xZFNtQyt2OCtDK0FnaS9sM3VjMkhHbFVaS3hkS1BkV3Rm?=
- =?utf-8?B?YTZzWFFCSy9Vanl6UzB4QTJDUVVXSHUrdEZMVTlVeUNCS0l1eXdTb2FucWZX?=
- =?utf-8?B?WFJUMXdXa3VZZkZGdFlLTjZxamswOFJYdkQ5QVBjQkh3RTg5SllDbDdheGFC?=
- =?utf-8?B?MEVrSUVrVlAwKzRoOU9TWStMR1d4cEVrTE9keEx2RGtKOTYzTng3ck1TRlFh?=
- =?utf-8?B?YkpHWXFVa2V2bnhLYlEwZm5EWmt6ZzMwYVNWOWlPSEd0Z1pSVDRGOEtBRUR2?=
- =?utf-8?B?VmFhN3E4VThWbVFEdWd4SlcxV3RsbEdYZUhNVDZjTDM3RCtXSnk4YVc1RG1p?=
- =?utf-8?B?NXJaQzl3YjBuSTVRWEswTVpKdTd6MDVKbzRmQnV0cEFBQXVzMUpFOStFc0lI?=
- =?utf-8?B?ZkdPNjNNTFlQanBLRnEzanBsWEd6Q1Z2b0pLc3FuTGE0QURUbG95OENIM3ps?=
- =?utf-8?B?bkZ1c3dJUzVzb25SNXluVzgrQVpaYW9mbzZtY2c4Mm9TdFFsV0xLN1hGMFNF?=
- =?utf-8?B?R2I2MEpIZC9veEpMYjdjTmpwSTZTNTgzbStuc0VidGcrSjZTNjJ3WkJHZ09x?=
- =?utf-8?B?ZE54VmQ2dU9sTVp1cFlIWnM0bFRtemFpU29YUlQvazMybm9tSXNWZDRWa2p3?=
- =?utf-8?B?ZE5VVzF3MjFxWW1hTHZEeVB5MlFyZFRDWS9RN3BpTDhDTGt3U0lPbXZmSy9p?=
- =?utf-8?B?a2VYUDkwYU95cUh6dGwwc0cxeldxQklJK25tVnlpc3B1ZDhtMDNjK3ZXUStO?=
- =?utf-8?B?T29VZzM2NWYrWng3UGZCQkI0UXRvcWRpWU5pYktodUFBZldjMEJVOW9qaVNP?=
- =?utf-8?B?NFFqWnJxUkpvVkFMcjhBd01NazdHaGtFZURHekhJaTYvSTAyam5pYlJ1aVhq?=
- =?utf-8?B?d2FnckFHMjRFSThUb1RnRWlsREEra0xCeHAwYTBvODJIMC8ybHBWZGszU016?=
- =?utf-8?B?R20xOWhxRll2VW9ZQ3RBdVdCVDFpYlJ0ZmlNOSs5NCt1Y1dwSXE5TS9pS0NC?=
- =?utf-8?B?Q3VpL3RZVGg2WklUT0NEajlqeG9RV2NaaytaSVp6YlBsbGhZQ1BZMlhMUCt5?=
- =?utf-8?B?cE1VTERJV0o2MEM3WjV4aXV2cXgvR1M2aloxcXlXNksxOHRNVzdiaHVMRHEz?=
- =?utf-8?B?YzlHb1c3YS9NaSticU5xV1NvdmVhbmYydFdJTlljMXg1c2hpZHlKN0xzUW42?=
- =?utf-8?B?clpqakZmcHNhZERIaGM1REVDM1RXODJFNlJoSWMxZ3Y2UDRia3NnY25odnFr?=
- =?utf-8?B?cjdSancxK2lXQTY3Mmgyc3lsbkZNb0VwUG95SVR3dmFjTDBZeGtOVUJyM3JE?=
- =?utf-8?B?bXRlY2tPOVlud3VDQmFtc1o5YndBaTFvUVFZb1NSeUdvU3VkVXpCeHNFZTZT?=
- =?utf-8?B?aG5WMlo5UjZkVmJpR0FybGRqRUJlbkhGSFE5K01aV3U4R3R5T2lCR2JVUVAv?=
- =?utf-8?B?NTd4cW01dVoyazV6MVM4Z29zbm5GdktTLzJGZ2F5NkVyMnhHWmEyTUlldkNX?=
- =?utf-8?Q?yameUZd7a7etedLMH9snbqodH?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6db0c1f5-4abb-4c18-a69f-08dde5b49414
-X-MS-Exchange-CrossTenant-AuthSource: LV2PR12MB5968.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2025 21:56:29.9726
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 5T6CVjeHnVk0WY+2aiqnFm4xW+8ZufF8+HfXtONnAYCsPlZ9qqEcoY1zg45kZuL3r1JZhcGviBAVZtoAEOrNjw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4126
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 8/27/25 1:39 AM, Alexandre Courbot wrote:
-> On Wed Aug 27, 2025 at 9:29 AM JST, John Hubbard wrote:
->> On 8/25/25 9:07 PM, Alexandre Courbot wrote:
->> ...
->> But the point is that the admin can be made simpler for the reviewers--even
->> those of us who know exactly what you're up to. And we should keep
->> that in mind, especially because there are many more of these situations
->> coming soon.
-> 
-> Right, b4 is supposed to be able to help with this as well, but indeed a
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   39f90c1967215375f7d87b81d14b0f3ed6b40c29
+commit: 818783c804bc051f7faf0ac226b5597f8259c6f8 module: make structure definitions always visible
+date:   4 weeks ago
+config: riscv-randconfig-r062-20250827 (https://download.01.org/0day-ci/archive/20250828/202508280535.yj6qjEKj-lkp@intel.com/config)
+compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project d26ea02060b1c9db751d188b2edb0059a9eb273d)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250828/202508280535.yj6qjEKj-lkp@intel.com/reproduce)
 
-It really doesn't quite, though.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508280535.yj6qjEKj-lkp@intel.com/
 
-It is true that "base" (git format-patch --base) helps "b4 am" set things
-up, but then a subsequent "git am" fails due to missing prerequisites.
+All errors (new ones prefixed by >>):
 
-b4 isn't set up to go retrieve those, on its own anyway.
+   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 1395198), and 'i32 1' from vmlinux.a(skbuff.o at 1672878)
+   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 1395198), and 'i32 1' from vmlinux.a(trace.o at 1404438)
+   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 1395198), and 'i32 1' from vmlinux.a(mballoc.o at 1420038)
+   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 1395198), and 'i32 1' from vmlinux.a(filter.o at 1673958)
+   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 1395198), and 'i32 1' from vmlinux.a(core.o at 1405698)
+   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 1395198), and 'i32 1' from vmlinux.a(volumes.o at 1437858)
+   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 1395198), and 'i32 1' from vmlinux.a(segment.o at 1441758)
+   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 1395198), and 'i32 1' from vmlinux.a(file.o at 1441158)
+   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 1395198), and 'i32 1' from vmlinux.a(core.o at 1583358)
+   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 1395198), and 'i32 1' from vmlinux.a(memcontrol.o at 1410018)
+   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 1395198), and 'i32 1' from vmlinux.a(inode.o at 1419918)
+   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 1395198), and 'i32 1' from vmlinux.a(vmscan.o at 1406958)
+   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 1395198), and 'i32 1' from vmlinux.a(super.o at 1436718)
+   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 1395198), and 'i32 1' from vmlinux.a(data.o at 1441638)
+>> ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 1395198), and 'i32 1' from vmlinux.a(ring_buffer.o at 1404378)
+   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 1395198), and 'i32 1' from vmlinux.a(super.o at 1441398)
+   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 1395198), and 'i32 1' from vmlinux.a(spi.o at 1591578)
+   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 1395198), and 'i32 1' from vmlinux.a(inode.o at 1437318)
+   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 1395198), and 'i32 1' from vmlinux.a(af_packet.o at 1677078)
+   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 1395198), and 'i32 1' from vmlinux.a(send.o at 1438998)
+   ld.lld: error: too many errors emitted, stopping now (use --error-limit=0 to see all errors)
 
-
-thanks,
 -- 
-John Hubbard
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
