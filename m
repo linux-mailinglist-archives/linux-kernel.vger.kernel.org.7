@@ -1,95 +1,90 @@
-Return-Path: <linux-kernel+bounces-788977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7A99B38EF6
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 01:11:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF75FB38EF8
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 01:11:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A731818890EE
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 23:11:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 184F91BA132B
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 23:11:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B25FF310783;
-	Wed, 27 Aug 2025 23:10:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7618830FC3D;
+	Wed, 27 Aug 2025 23:11:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SvxspZqQ"
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ENlbXIkC"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEA112F067F;
-	Wed, 27 Aug 2025 23:10:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E4032F3C01;
+	Wed, 27 Aug 2025 23:11:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756336253; cv=none; b=pXgLzL2XAkIOiODzIGap7Q46DlyYaYtgX6nluQ+/AUpFOYwv2RzXjo1ozYLr0qCKANdOi+/SfPwD0V5Mcy3NOdKNGEc1gschHihrptHkrLJWbcvWAy2Wgh8/vOTuhePJRvLGTKBLdTDCVBuaeWmOAwZL2BvhrqRMvgM28CyDs6Y=
+	t=1756336272; cv=none; b=WFXVNTVR0IEeME4IdwBjuZU+cyPr8qaQz6bhtAAqhJpop83+LM/53Nhx9wzOFV4wRjAFyz5JCAGLlcq6PWpfP4MyVNWxNKcGvQB8grAvJHF9DpjtWjTfagmCPxGbiGvKrH3sJOrbcm2qEIlwRKX7oo0bRIzE2/jd61ex8g8U9yU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756336253; c=relaxed/simple;
-	bh=D1uBYeI6yyHG//TIoDOYhr9aTlJxFP7mh06RYuz+MwM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tiD3V88qvFYevoYgQXG4wtco3gIBR8coMDmuslMSU7+nKDGFUq/xXlcw9t0YLxkmcSydOiiaZ80N/6FzHDxQdIkg61+6EdAWWdAk2pnos9tCvw5lXP9DOl2TPRcueay6tkN8VeggjHZhEuAk7bOv1e52eT8G0epX60ylIZyS6NQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SvxspZqQ; arc=none smtp.client-ip=209.85.215.179
+	s=arc-20240116; t=1756336272; c=relaxed/simple;
+	bh=sV5p/8hQyYhf/F/xeYzTMNSgTTLGCoZL8gvJCvGfRpo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Hl/+gmEzMMjCv7sAiJaNOsX5CuGYVk7jqDvlN5IeqhUu9zWxWBeQc2ubqnL8sSJ3mkjKeqRnqpPkE/ZCw768FaDqlFcZx0WXfiwkOoH0FbS+EgTcQ7vuZTtNpICvIHrSBUogmLsIS/2JnZX93CtgL/5WIKN7o24LhMZDr2fYXjg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ENlbXIkC; arc=none smtp.client-ip=209.85.218.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-b47175d02dcso361087a12.3;
-        Wed, 27 Aug 2025 16:10:51 -0700 (PDT)
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-afe84202bc2so44881066b.2;
+        Wed, 27 Aug 2025 16:11:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756336251; x=1756941051; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1756336269; x=1756941069; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=hpTGX6D+zEWo2TDoU/huOakyARg4JVK9BfIYOBFF8Fo=;
-        b=SvxspZqQeXxL+hI0FLdUOBM6A7NaO6pMsTxHo5xveRJ1iSiWPWxHlHBlA2gIVPKJbi
-         GuOryZGRAtTIhMo8on4cfIMj6rQ4VsXRnbOEM7YUqgQmfJ0bx4bidz8ir+595xsxoSzL
-         2ULuTQlC6qOELRfDyEfe2IRvwJlmdmxXJECv6aX69pZPylfVxj+oY8sQjv+M0G69jbNl
-         REQrTlbmSkojyFAkf50TnHBusz8FMFHZZAOErk3Vv4D2DfXg1ZAI4huzYXueo8Ldx/BP
-         LzROzcpmig7BC4y3qV6jzCsFb/OEzLmiZH8g3IIQbBn5z3mIpMck7ZMoIh28AnOJHry3
-         TuFA==
+        bh=J2Y5rkqTkQGFZn+G33FhbclZiqRvFHI9z8Mh5cwkab0=;
+        b=ENlbXIkC2tAcXdIo0fcG2SJz7MOp3lLhTqLenSnCvM6JqyN3jdg0YO1S68fHKCXzuI
+         QkdJZuxn4Ix+t3q7yTjDb1gNvsb1+oa421TwKgRknlG5xHgGg/b8eFjD2v0csfP7Cs72
+         ylwjzUx+YQvuE0eDt2VA5SPqepBBk0k9+YxEoIjH7SUIvcLYzzJK4zMX9Zp4CcKh2gvD
+         e1ZsqJY2zedb621lkC0svYvqLZyuODiw/QFzyWGKM/JxMJST/6UHAsw5ilIX0r3FARH6
+         0X7Mq4Z5VVAD42g2eOvcraxYxZH3Ewj/L07jU8ntT+jwAxltPbvePEV6bjIVhE1WOCwJ
+         U5/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756336251; x=1756941051;
+        d=1e100.net; s=20230601; t=1756336269; x=1756941069;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=hpTGX6D+zEWo2TDoU/huOakyARg4JVK9BfIYOBFF8Fo=;
-        b=sJEuW3Z8iC0KHj7Jj8KvZEsCH5Y1oUe66cCMyDYzX/rKAD1ZwsqbwRKsfuZTQYNl7s
-         japYuJZEtJwWbrlz7XxatLF/lmxDAK/ysXsX6pwqkSiNI9Uiuc4uWOUsLlWsBgv7GbG/
-         eq0u3gZ5EVsIvTcNhV8NGJY9nnyhWqYXsx5WT83WON6YFoHPWIh92rgy6gTEF5jm6A9d
-         Yoe0GRLvRK7gooSq46XLTb2UWYz0QCHBdFgJfmEnX42RRipTe6M94hmk0Gymy9Ax6Y8u
-         M9r3GusCht8speTtWfW0oCyYVMnTXsSb5h20zCrJvSRSDoOoim+kyPMvrQydNBWdHIK8
-         MiAg==
-X-Forwarded-Encrypted: i=1; AJvYcCVsyJTYLCEF+kI2viv3Iny20iXmZqt2v9tkGLiJfAtF6ylmxK73IPb5IyBzo6A3fxZItiGAsRx/SqFfECI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzW8fybucuonKS8pMtJo+G7r+KoPPBSLNspxOVMmi2SOqPUDmC5
-	US5kQPF07W9kzhFsZJnptHt0zbxr6NbzPyjP48ckY1mp0uw6FPXwmE9u
-X-Gm-Gg: ASbGncuofRBka4S9OIQefEshSUJsoP2pfGKXr2i3N3nCkHssQhqlDuufiOYks6PAYzj
-	bXd7u1VVZ6SjeTfEusxGjippGw4oxEsRvvHQPs0/mtzvkPslwyS39VRTXP4hR98yxXbd9nBWKHH
-	KYN8Gto8FDRrExZUG/0N9LHBRV+cpApIPsPDrdnh+8pO31iZWAUOtk8G6pf7uBJabxU/0kzNkyG
-	0IYp5dGvAH61DzV4T2l2V5/rpspH0iwgCFKJLSkJko1LlnbNkJCjnR7nUblK0bonUVCau8YohTL
-	4uJxLMVcsP94TNEql7SUUv2VPB+xIj375Fn/UgJ0H/qGz7ncgRZ1qDvP8TWoDWKTmqByQQSuqXl
-	mt6sjmIgS3vuxuxFDFuBefF3ohb/0GVxe
-X-Google-Smtp-Source: AGHT+IHxryo3kJsFVbI54HWkyx4jlhELnk+fiqRoyjgbrqoKw8bic27qXRHW7BIUKUhVzP25dhDVqQ==
-X-Received: by 2002:a17:90b:4c02:b0:31e:ec02:229b with SMTP id 98e67ed59e1d1-32515eabb9bmr27912917a91.20.1756336250903;
-        Wed, 27 Aug 2025 16:10:50 -0700 (PDT)
-Received: from localhost ([2001:19f0:ac00:4eb8:5400:5ff:fe30:7df3])
-        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-327ab0dbeecsm332644a91.19.2025.08.27.16.10.49
+        bh=J2Y5rkqTkQGFZn+G33FhbclZiqRvFHI9z8Mh5cwkab0=;
+        b=MMDkYFdF3QKxFBK2U9nPKDsg6NE+zZyq/cWvA7oIdg2dGTjA2BU7OB2C2hfhgOJOHA
+         Han753W+GDjRcJf+6Lkzt6S1I9NAV8ydhY7TQvRbR92TKRwk/yVkt1/IUi/Wn9Y6b2t5
+         LJYg32JVL4DbeKBuRUtZor3/6Ip5HkVz1o17btC7OpHZcxNFYsrebpYMEBlypDC/J8n7
+         19/K64Z+EZNIAoO1EA6U2WgLN3m3mGzgEh+LKgCOO5eWWoxzWliuekl9na2k4vTYAsE9
+         Xpe/j+sM4prlN7yaKVNC3qhv0aVs+H0WUWasYYg1edc379RAdsE+yhwJRxgz8pf5wpwh
+         cRpQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVGNM8NCW+HadOWPVnwIJSpZl620fzEcTgw8eH8vV93uk1a5gHSdwDoob1fRz99GmYbc8/hOHcPCeNl7Zw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwbzJKh7+RkiCo6P4e2uo9WGGW01yQVCtHFvONbBB1XrSWIPS7X
+	yUy7WEtnzhNjrtlOgmr9izk6ARg5hmXU7B+27CVTEXHoReP5vecTS7Ij
+X-Gm-Gg: ASbGncvp51+HLw1j8Ed500wpH9W4xc9FXYIHz7fl4u36Gkv/ONpBjH/2Cp13KlosnRC
+	qhfodCSuy5MEy6eaOVDxrlyPf/AW4T63/Kyb0D9FCOlSXwUHbcJcshPKvgsoCOIPlWYTK319kg0
+	FKrealneutihCvKoEOvxuveSX/YmPFzElWl35EJYJSNGgDmW6olFaliZZxX3gsVcyIZbLuMKb8H
+	jea0Cy9jdeI5Odokin7jZGjWs9PnN8kd6a9yLpyXjlxi1Zquq0eYdmpr17tZogT1NTRRhlaSjNi
+	rD+Mky1tdagfr1ncZkGo6dR7xeDRzIsSeF9BmOwelQzitZBKbgwjArv+DidFGtFkzaLGwGgVjbW
+	rstpDysbgC4Fz+hWUx4qzbUDpZHz+pFgzCUj3fm6PgWfEOU4s7GxJQ0QmN77JYLzIO7WTXRdGF6
+	B55HZm+JmP6NGHddU=
+X-Google-Smtp-Source: AGHT+IGC0ek2tM1fa4TYn2jXxr/gTcFEJ29qVv+nUj3N+Ad09aJF1WitxL5+HNd2VP4bg9FWCyYi/g==
+X-Received: by 2002:a17:907:9693:b0:afe:ae99:9d23 with SMTP id a640c23a62f3a-afeae999e86mr620115666b.61.1756336269319;
+        Wed, 27 Aug 2025 16:11:09 -0700 (PDT)
+Received: from XPS.. ([2a02:908:1b0:afe0:8c2b:6018:3d63:236f])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afe907e14a1sm619320366b.74.2025.08.27.16.11.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Aug 2025 16:10:50 -0700 (PDT)
-From: Inochi Amaoto <inochiama@gmail.com>
-To: Bjorn Helgaas <bhelgaas@google.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Marc Zyngier <maz@kernel.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Inochi Amaoto <inochiama@gmail.com>,
-	Shradha Gupta <shradhagupta@linux.microsoft.com>,
-	Chen Wang <unicorn_wang@outlook.com>
-Cc: linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Yixun Lan <dlan@gentoo.org>,
-	Longbin Li <looong.bin@gmail.com>,
-	Linux Kernel Functional Testing <lkft@linaro.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Wei Fang <wei.fang@nxp.com>,
-	Jon Hunter <jonathanh@nvidia.com>
-Subject: [PATCH v2] PCI/MSI: Check MSI_FLAG_PCI_MSI_MASK_PARENT in cond_[startup|shutdown]_parent()
-Date: Thu, 28 Aug 2025 07:09:42 +0800
-Message-ID: <20250827230943.17829-1-inochiama@gmail.com>
-X-Mailer: git-send-email 2.51.0
+        Wed, 27 Aug 2025 16:11:08 -0700 (PDT)
+From: Osama Abdelkader <osama.abdelkader@gmail.com>
+To: gregkh@linuxfoundation.org,
+	jirislaby@kernel.org,
+	andriy.shevchenko@linux.intel.com,
+	elder@riscstar.com,
+	benjamin.larsson@genexis.eu,
+	u.kleine-koenig@baylibre.com
+Cc: linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	Osama Abdelkader <osama.abdelkader@gmail.com>
+Subject: [PATCH] serial: 8250_of: replace kzalloc with devm_kzalloc
+Date: Thu, 28 Aug 2025 01:11:05 +0200
+Message-ID: <20250827231105.126378-1-osama.abdelkader@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -98,63 +93,52 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-For msi controller that only supports MSI_FLAG_PCI_MSI_MASK_PARENT,
-the newly added callback irq_startup() and irq_shutdown() for
-pci_msi[x]_template will not unmask/mask the interrupt when startup/
-shutdown the interrupt. This will prevent the interrupt from being
-enabled/disabled normally.
+Use devm_kzalloc for automatic memory cleanup.
 
-Add the missing check for MSI_FLAG_PCI_MSI_MASK_PARENT in the
-cond_[startup|shutdown]_parent(). So the interrupt can be normally
-unmasked/masked if it does not support MSI_FLAG_PCI_MSI_MASK_PARENT.
-
-Fixes: 54f45a30c0d0 ("PCI/MSI: Add startup/shutdown for per device domains")
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-Closes: https://lore.kernel.org/regressions/aK4O7Hl8NCVEMznB@monster/
-Reported-by: Nathan Chancellor <nathan@kernel.org>
-Closes: https://lore.kernel.org/regressions/20250826220959.GA4119563@ax162/
-Reported-by: Wei Fang <wei.fang@nxp.com>
-Closes: https://lore.kernel.org/all/20250827093911.1218640-1-wei.fang@nxp.com/
-Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
-Tested-by: Nathan Chancellor <nathan@kernel.org>
-Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
-Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+Signed-off-by: Osama Abdelkader <osama.abdelkader@gmail.com>
 ---
-Change from v1:
-- https://lore.kernel.org/all/20250827062911.203106-1-inochiama@gmail.com/
-1. Apply Tested-by, Reported-by and Tested-by from original post [1].
-2. update mistake in the comments.
+ drivers/tty/serial/8250/8250_of.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-[1] https://lore.kernel.org/regressions/aK4O7Hl8NCVEMznB@monster/
----
- drivers/pci/msi/irqdomain.c | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/drivers/pci/msi/irqdomain.c b/drivers/pci/msi/irqdomain.c
-index e0a800f918e8..b11b7f63f0d6 100644
---- a/drivers/pci/msi/irqdomain.c
-+++ b/drivers/pci/msi/irqdomain.c
-@@ -154,6 +154,8 @@ static void cond_shutdown_parent(struct irq_data *data)
-
- 	if (unlikely(info->flags & MSI_FLAG_PCI_MSI_STARTUP_PARENT))
- 		irq_chip_shutdown_parent(data);
-+	else if (unlikely(info->flags & MSI_FLAG_PCI_MSI_MASK_PARENT))
-+		irq_chip_mask_parent(data);
+diff --git a/drivers/tty/serial/8250/8250_of.c b/drivers/tty/serial/8250/8250_of.c
+index d178b6c54ea1..4fe3b79d0e4f 100644
+--- a/drivers/tty/serial/8250/8250_of.c
++++ b/drivers/tty/serial/8250/8250_of.c
+@@ -217,14 +217,14 @@ static int of_platform_serial_probe(struct platform_device *ofdev)
+ 	if (of_property_read_bool(ofdev->dev.of_node, "used-by-rtas"))
+ 		return -EBUSY;
+ 
+-	info = kzalloc(sizeof(*info), GFP_KERNEL);
++	info = devm_kzalloc(&ofdev->dev, sizeof(*info), GFP_KERNEL);
+ 	if (info == NULL)
+ 		return -ENOMEM;
+ 
+ 	memset(&port8250, 0, sizeof(port8250));
+ 	ret = of_platform_serial_setup(ofdev, port_type, &port8250, info);
+ 	if (ret)
+-		goto err_free;
++		return ret;
+ 
+ 	if (port8250.port.fifosize)
+ 		port8250.capabilities = UART_CAP_FIFO;
+@@ -266,8 +266,6 @@ static int of_platform_serial_probe(struct platform_device *ofdev)
+ err_dispose:
+ 	pm_runtime_put_sync(&ofdev->dev);
+ 	pm_runtime_disable(&ofdev->dev);
+-err_free:
+-	kfree(info);
+ 	return ret;
  }
-
- static unsigned int cond_startup_parent(struct irq_data *data)
-@@ -162,6 +164,9 @@ static unsigned int cond_startup_parent(struct irq_data *data)
-
- 	if (unlikely(info->flags & MSI_FLAG_PCI_MSI_STARTUP_PARENT))
- 		return irq_chip_startup_parent(data);
-+	else if (unlikely(info->flags & MSI_FLAG_PCI_MSI_MASK_PARENT))
-+		irq_chip_unmask_parent(data);
-+
- 	return 0;
+ 
+@@ -286,7 +284,6 @@ static void of_platform_serial_remove(struct platform_device *ofdev)
+ 	reset_control_assert(info->rst);
+ 	pm_runtime_put_sync(&ofdev->dev);
+ 	pm_runtime_disable(&ofdev->dev);
+-	kfree(info);
  }
-
---
-2.51.0
+ 
+ #ifdef CONFIG_PM_SLEEP
+-- 
+2.43.0
 
 
