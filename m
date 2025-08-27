@@ -1,137 +1,128 @@
-Return-Path: <linux-kernel+bounces-788915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95302B38D4F
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 00:13:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 89C30B38D68
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 00:14:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56D591C2485B
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 22:12:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CE5C1C2370B
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 22:13:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2110C321F40;
-	Wed, 27 Aug 2025 22:07:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF2C132BF4F;
+	Wed, 27 Aug 2025 22:08:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IMCHxakz"
-Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bRX+tNGW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D194032145D;
-	Wed, 27 Aug 2025 22:07:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D43BB314A86;
+	Wed, 27 Aug 2025 22:08:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756332438; cv=none; b=A0pHd1wuqOKMPdZUpFhA7GbN5efgxxQgZdSSJ9XcVoVGVa2G1G5F3GWRvcmSKcrHFFHl/2jApw8cPG1vWOnJVCRqM55gDcuhsEIJbkdWIeB64NaIhE5Ru93bst+rCTR3J2qptjT4uKRyx41avp6eZ8+Wapyq7n4cMyZJPchUjtM=
+	t=1756332484; cv=none; b=rh7NkClOPyKmyED8QzkAqB8nlKN4/jx0wV+xe9tRD1qjE4/vgJfjQgyjF0LIfd8L2lQwUcU0u7MERjEbVa6jnKmys84kpq6ddsWWlvV1HwavyBwjQxPb/428RZl0NPXLdJkMtL13iayZ0Whk1Tv6zcGahhokoEuZiX/yQ2MryvE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756332438; c=relaxed/simple;
-	bh=vUC4qlsxVvPTVPExTfWGe5A+3iWqGaWbw/x33NuF0r0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ACywZF10O9ymwyQDTznDRxJE49DxblFA0GCRulruwC73m0J3UCxHwi3uth+N5Vly4wZzM0Gc5c9ui1N+Z0O+T7N0whpReIgU0cSwCddt5texc2zVLqeoygloeeetkLyq2Q3rhE5WG/cXECoG3HYkn6hwrOxbP4bLbj/LFetOTmk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IMCHxakz; arc=none smtp.client-ip=209.85.222.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-7e9f7c46edbso123373185a.0;
-        Wed, 27 Aug 2025 15:07:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756332436; x=1756937236; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vUC4qlsxVvPTVPExTfWGe5A+3iWqGaWbw/x33NuF0r0=;
-        b=IMCHxakzn7iSdt1dvuMKQCTtmgFmSl6phVeR2J8CTA3p4hwBjYLX2/ELkZCbT+iMLS
-         3na5j1rxRVVeGfHLclYhDgxGQCeUjyOe32D199F6OAieTJaehxqf0hOaUQUEsRgYMtez
-         2SQ0CvOvU+6kYCbEfXfB7lNqHBBJVLTH+DkxAfy5owUockcYgUqQHYN+BWiY4ohvOzt3
-         eR88lFQiF8wXKsEPnXAGnzK6RpltkQ4pRDRONyrfa9dJoMacHSfK274WZB6ZpODvdhFg
-         3dTdz35u9Nhaei1Ig76ScyGax6SpU7TrCnplmZtMTbEXOHbdp7uA7Oyf+s+FHqWpGpuR
-         5AmQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756332436; x=1756937236;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vUC4qlsxVvPTVPExTfWGe5A+3iWqGaWbw/x33NuF0r0=;
-        b=AVlJRZ5cAhmSYcjsHfRasXplTnBEyKIwvFW+z9CZmEXZalFe52xg8SqeKOFca+3xzc
-         K3xtCzWGxFrIKrAUXt2pHheJ88KesLEaWoGySvmu7f4Qr8jfhOyQdsO+kGyKHMGLkVKu
-         JLIflUiomHqf9b+f5hi8ifFeT3IaZDxjlYEnu3WwccjreIzfjwpYc6a7JlHCnZs76fnP
-         jMb/QSUS2bC0h8Gk5kkcukeZlM75pkOA8ot9iUrMug2Qw8liX6AXEfhTP6wQ+MG7N3zK
-         mLI+G6ubjtC6Nkfv0AjkD9FTBsVnok0pAsUk9oN9TO9FWJfogXA0JyX2ty/cI+psZ1s6
-         Qutw==
-X-Forwarded-Encrypted: i=1; AJvYcCUuIobgwclCajpdQZFiycykzLIW5FI8GcD+15sX0xRfKX28VzomlZai03Yqo63L8+neB0Pmd8mm7pW+qoQ=@vger.kernel.org, AJvYcCV2PuyePRT2VaaONGqj5w6/MuZWyqH/v0tot66tv/M52WlSJlhwsZnQ0+RnimbUtsYL/948Ljwta7Kk@vger.kernel.org, AJvYcCVTHUkuDOmuIWHfwMVlyicfMOI62qTTH/2jkRSxL9hUL06Ki/xCET9iLNUmacyGpkECewH0+h/5tDPD@vger.kernel.org, AJvYcCWyBaBiTJseS26/5HhT/rzQy5GfzDcnV1h+5Tn9EwbolrskKA0VwujQkW5WxyC8WbGq0QN5533f1n5DDqM=@vger.kernel.org, AJvYcCXVpZNG6L28WBV4HIXq8/nJHQ4OKuHB1jbGuhBws/RpvuKI/ioRvHDn51mfFSU319bYxrRGVjk4J3+ieqSk@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDb2+G69+2iCrPVxkbPVoMsblRzJZe2IjboOMy3xh/tq1dbEIk
-	o7kW2L8O0LQrL56voNmDki4fx05hDUYnwq3AWosQG/6WaeCAJG/+ncWjmDEBtT0dgCoxBe56C85
-	YThmAr2Z55UUSO8giQFPNP9wTMma0hF0=
-X-Gm-Gg: ASbGncvhQB8Aqxd8nt/rqdNP3BLap/i0qxe7M7yFOdKZuyH06On/kxP/DB4Wuab9LMb
-	wanuHPZHk1uI0mpuFVZA60EFeVih0uOQvLuOVnknjDXByY83lQY32n83Uet+rPYKCzNcidRlkSk
-	MaSqnqRwEichnCjRRkHhPy4upj8Z3Eq2FMQs9RzrVozN54mluK1dp9tXqhiU6RywO/XQj4e15dS
-	p3eog==
-X-Google-Smtp-Source: AGHT+IFWnq8ORXAI8SSjemzLtCbxSTUPIYIEaJ5tGH8UF3103yXoCHbrBxVEF+Bu2TrfLXMCEXU8uRfcWJlgWZbs5Og=
-X-Received: by 2002:a05:620a:390a:b0:7e8:8086:cb83 with SMTP id
- af79cd13be357-7f58d941ce0mr891896885a.28.1756332435727; Wed, 27 Aug 2025
- 15:07:15 -0700 (PDT)
+	s=arc-20240116; t=1756332484; c=relaxed/simple;
+	bh=zzgfsYDCFmRhdoMZwZ++3Els9HxkLOsb+5Uew5Yhl6I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VVAjmmZRH2n0HKFhF7+DZbzgQHb2o9yGBT7e9Nl9qsKnYfJcjuudV2lyFQFJPvVyeBV77kQ7mMAU6h3uOytVyDZjXQ2j3VzP6ExIyq9V7Nv+Y89rIb5aCoCGNjaVWulC17/2WxNqvBlyI6DKJKGEgBnXn9idmezbyp9G4KM19Nc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bRX+tNGW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EECAEC4CEEB;
+	Wed, 27 Aug 2025 22:08:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756332483;
+	bh=zzgfsYDCFmRhdoMZwZ++3Els9HxkLOsb+5Uew5Yhl6I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bRX+tNGWVTUIuuRWXCG5ONBpUuQUHP/wyei8Yn+SJQPZSdxqbskV+o+bN48kMj2LB
+	 4LR1hBAGzxuKLAJWZNXy2LqiiK4grBJTMBnIjHo0RwE4YUqcPtybj6NCyu5EeXcjNd
+	 n0UcO9BkDLs6IzjiMW2jrqIMMVulxJo5Do3KhN4j9Hvj+V51zj+8jFAFccSUx9DHvR
+	 /2IKuBbcutfJoszc+0hXc++CluMVTe/YUadwI9Jqk2eOGsxfQeX5CdH02aoJyE9ygy
+	 k3Zy+tyzneCTzQN6/F9NY9/LcqCQjrY9f2UV7/xR2BsYufOXpBoDEbFPfmTFIJ7lsY
+	 9CC5fg9wyhsdg==
+Date: Wed, 27 Aug 2025 15:08:01 -0700
+From: Drew Fustini <fustini@kernel.org>
+To: Matt Coster <matt.coster@imgtec.com>
+Cc: Michal Wilczynski <m.wilczynski@samsung.com>,
+	Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Frank Binns <frank.binns@imgtec.com>,
+	Matt Coster <matt.coster@imgtec.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH v13 3/4] riscv: dts: thead: th1520: Add IMG BXM-4-64 GPU
+ node
+Message-ID: <aK-BwY8c-OR_WqNk@thelio>
+References: <20250822-apr_14_for_sending-v13-0-af656f7cc6c3@samsung.com>
+ <CGME20250821222023eucas1p1805feda41e485de76c2981beb8b9102d@eucas1p1.samsung.com>
+ <20250822-apr_14_for_sending-v13-3-af656f7cc6c3@samsung.com>
+ <aKjWiU4fQw3k77GR@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250827-macsmc-subdevs-v2-0-ce5e99d54c28@gmail.com> <cff7c8d0-cdd8-4ba5-864a-936a059624d8@roeck-us.net>
-In-Reply-To: <cff7c8d0-cdd8-4ba5-864a-936a059624d8@roeck-us.net>
-From: James Calligeros <jcalligeros99@gmail.com>
-Date: Thu, 28 Aug 2025 08:06:57 +1000
-X-Gm-Features: Ac12FXwItn5RDOOJRHCpy_8GPQsXlU1HYJaUvZiX6yrBr_5ZrTi13wSDfRmUQBk
-Message-ID: <CAHgNfTx32B4p6U8Z+dy02jWdQhW0uR3ytovc5u-3bE8kNk=p4Q@mail.gmail.com>
-Subject: Re: [PATCH v2 00/11] mfd: macsmc: add rtc, hwmon and hid subdevices
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Sven Peter <sven@kernel.org>, Janne Grunau <j@jannau.net>, 
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>, Neal Gompa <neal@gompa.dev>, Lee Jones <lee@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Jean Delvare <jdelvare@suse.com>, 
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>, asahi@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org, 
-	linux-hwmon@vger.kernel.org, linux-input@vger.kernel.org, 
-	Mark Kettenis <kettenis@openbsd.org>, Hector Martin <marcan@marcan.st>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aKjWiU4fQw3k77GR@x1>
 
-On Wed, Aug 27, 2025 at 11:47=E2=80=AFPM Guenter Roeck <linux@roeck-us.net>=
- wrote:
+On Fri, Aug 22, 2025 at 01:43:53PM -0700, Drew Fustini wrote:
+> On Fri, Aug 22, 2025 at 12:20:17AM +0200, Michal Wilczynski wrote:
+> > Add a device tree node for the IMG BXM-4-64 GPU present in the T-HEAD
+> > TH1520 SoC used by the Lichee Pi 4A board. This node enables support for
+> > the GPU using the drm/imagination driver.
+> > 
+> > By adding this node, the kernel can recognize and initialize the GPU,
+> > providing graphics acceleration capabilities on the Lichee Pi 4A and
+> > other boards based on the TH1520 SoC.
+> > 
+> > Add fixed clock gpu_mem_clk, as the MEM clock on the T-HEAD SoC can't be
+> > controlled programatically.
+> > 
+> > Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+> > Reviewed-by: Drew Fustini <drew@pdp7.com>
+> > Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> > Acked-by: Matt Coster <matt.coster@imgtec.com>
+> > Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
 > > ---
-> > Changes in v2:
-> > - Added Rob's R-b tag to RTC DT binding
-> > - Removed redundant nesting from hwmon DT binding
-> > - Dedpulicated property definitions in hwmon DT schema
-> > - Made label a required property for hwmon DT nodes
-> > - Clarified semantics in hwmon DT schema definitions
-> > - Split mfd tree changes into separate commits
-> > - Fixed numerous style errors in hwmon driver
-> > - Addressed Guenter's initial feedback on the hwmon driver
->
-> Don't you think that is a bit useless ? You might as well say "Addressed
-> feedback comments" and be done with the change log.
->
-> Guenter
+> >  arch/riscv/boot/dts/thead/th1520.dtsi | 21 +++++++++++++++++++++
+> >  1 file changed, 21 insertions(+)
+> 
+> I've applied this to thead-dt-for-next [1]:
+> 
+> 0f78e44fb857 ("riscv: dts: thead: th1520: Add IMG BXM-4-64 GPU node")
+> 
+> Thanks,
+> Drew
+> 
+> [1] https://git.kernel.org/pub/scm/linux/kernel/git/fustini/linux.git/log/?h=thead-dt-for-next
 
-I don't think this warrants a v3, so hopefully the amended
-changelog below will suffice.
+Hi Matt,
 
----
-Changes in v2:
-- Added Rob's R-b tag to RTC DT binding
-- Removed redundant nesting from hwmon DT binding
-- Dedpulicated property definitions in hwmon DT schema
-- Made label a required property for hwmon DT nodes
-- Clarified semantics in hwmon DT schema definitions
-- Split mfd tree changes into separate commits
-- Fixed numerous style errors in hwmon driver
-- Removed log messages sysfs read/write functions in hwmon driver
-- Removed ignored errors from hwmon driver
-- Removed uses of dev_err for non-errors in hwmon driver
-- Made it more obvious that a number of hwmon fan properties are optional
-- Modified hwmon driver to reflect DT schema changes
-- Added compatible property to hwmon node
-- Link to v1: https://lore.kernel.org/r/20250819-macsmc-subdevs-v1-0-57df6c=
-3e5f19@gmail.com
+Do you know when the dt binding patch will be applied to
+the drm-misc/for-linux-next tree?
 
-James
+I applied the dts patch but it is creating a warning in next right now.
+If the binding won't show up soon in drm-misc, then I'll remove this dts
+patch from next as dtbs_check is now failing in next. I can add it back
+once the binding makes it to next.
+
+Thanks,
+Drew
 
