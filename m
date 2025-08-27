@@ -1,172 +1,142 @@
-Return-Path: <linux-kernel+bounces-788983-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788984-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5B0EB38F0D
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 01:19:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACDE5B38F20
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 01:22:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5EDB7463619
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 23:19:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A7A237AF3A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 23:21:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16E9331282E;
-	Wed, 27 Aug 2025 23:18:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E8cyyx/r"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF1863112A1;
+	Wed, 27 Aug 2025 23:22:37 +0000 (UTC)
+Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53F36311979;
-	Wed, 27 Aug 2025 23:18:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA273283159
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 23:22:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756336736; cv=none; b=PwdMiOvZojBWDjPvWN62HPS+58xP+DEKsA0feSSdypmkNWFftiPsqz0/umz3DW6GOUHTjJq6yXrN1pdQrTSAI+aYKDwqKnwJzLXXs47RGg/oAMwm9jiSguwjRy7FxdeFX81HIm4fCHML9G9bBoHxIVozqVNxrYxMf5YVAUcGqDM=
+	t=1756336957; cv=none; b=i7pl1XaSTClelyBtkCAMlcib2ejgFEyMqnpZBroIe1BOYeEFBXIxIV5yoNXeFIriq70Hzf4CNOtHNV+UU281JkqZ4MrylJL2/9YyrqKOXfj4ICpggHEshPzpg2bK2mGznVRfmt+HfkiOc1ruhAa8wD3rUc01IJ/tLJsU6ksbh5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756336736; c=relaxed/simple;
-	bh=j8waJiGPLOxyz6bi8Ol4G/oClugFmBhM7jsST0ztxBs=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=fYOJeSyxcnBdV/GJl2ghTFu3ZIUsGa+3fSoTzqwnr2DllQr4ehLcS0Mx9Ui03iJxs9DWMvTAX+hPhkr/tHJtjV+BU9br1zwWT7XDQSEY/jucRPbqNKuGWsK4hbBTc90gfXyG2IdSaXe1YrGjD5nY8ZKHZDhY/9tmNohQ3eEKfnE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E8cyyx/r; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC86DC4CEF6;
-	Wed, 27 Aug 2025 23:18:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756336735;
-	bh=j8waJiGPLOxyz6bi8Ol4G/oClugFmBhM7jsST0ztxBs=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=E8cyyx/rwL8EQRPsXH7QQFMg+Bii0icmcov7ZtMo654C+ZEw1jaff3nwGrb5nbU6u
-	 u7f+FLe6L17U3cdW5dVzQ1hwlEF/X679YTv03jter5rBP00nHbKxkoQ0Ls/bF6PP54
-	 o6KHm6mwGYxNKBtfYMjjdyRwFeAIRdIaD8e5P2yJd+nk92Gb/pr1fz8hmOYtEhrDME
-	 tlNxpPgCsxDUvlKa9piu9E0+ykq6h1IAFxlTIj+KkKbuRupvsGkwSBle3F/MlwIvIV
-	 +hgBMXbXir10OUizCPspCRXqmfkXAeu7ouF34xWf+KFzRPi5cBpLGSwJmzeoap+Gy9
-	 5TBGoYzI5ptUQ==
-Date: Wed, 27 Aug 2025 18:18:54 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1756336957; c=relaxed/simple;
+	bh=0GRIOvOeVhXcTpXjeCZTG4Wm6VLWPHRblsRlooK4Ayg=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=r7B1W1jzx7PiAM39sQ7wHUXRKJtK9upN7uy7P4dGBxQWX1ORBuby8s1p793Buo56Qo2h8BRDThVOMUO8K0SkUhe79OziaHFpVo+FOnHwJNVjuDl3QjxCIaTXh12vcSCYf2AtiqWZvy8IcjXWwrLowVBy89UyYFh+F/sw/LiDz+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-886b58db928so46937539f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 16:22:35 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756336955; x=1756941755;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ki+X7udoy2qkKDlMn7tVUFGA43nOQ+o8mdWuhpBpgeA=;
+        b=sXIGW3Nc5tMV4enBpDjC3UzLeOuhH0pZmI82XUVADs8KhKVlsgePKMcJSr/W+w1Hsp
+         jEQu/Sqv2NWD/EWJjPVIi+5mPHbFkLMXkXwBYJjilkTJnM1j6QXsgZF0zpPdjKZ2JWAw
+         RB5wyfQaiTAD/xEjuhpPDl7kkhuatzoyoIxKIpFMm0OuKCOa8ABbxa4spYDq6ccrtkOf
+         Z70keqQoHIQiTNtvV0xoKdMUTRp32IqjJste7R/pyYXEUkVbL6w5SVX9TJa0qdgN5B0b
+         K0q9JtDtjZ5ZxBZPq8t3CynFIBZUX4daQ7mxp4nIh2Y6UwsfqD0KCdrPursLJlBB5rDE
+         8YGg==
+X-Forwarded-Encrypted: i=1; AJvYcCUDKQUsHHswl337oZAVbUp4pQ9irqesndIZOWseEL/PU0FWqDRTN7ueABN5UCsM9B8IkGznEJ+2sHlNvvU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywsn09IilL7OLJLeT/OFFB19IzIofPIhAQTngcIk+jpGIFKSMRJ
+	h9zXgq6Okk1mhY8owV/x9yRD4/eJ46zzr3egoqqwn6973kmRtr8YT7gZzTrF79OExd8eOsdN7rm
+	tn2SMUf8BdZz5olCQTiRwIWsX48vLv2h1yzGm+GdO9NEo8vJASAgNOh7ohXo=
+X-Google-Smtp-Source: AGHT+IH3N1ARNwZGmUjEWCZQJ81oG91H3vhlVBbtDcF1nVYElY3E28RiYQ5MQlN4AKZM4aYUDzUYwQE5O+jjny0YFPioim6so6+G
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Peter Griffin <peter.griffin@linaro.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, Conor Dooley <conor+dt@kernel.org>, 
- linux-arm-kernel@lists.infradead.org, Will Deacon <will@kernel.org>, 
- willmcvicker@google.com, linux-kernel@vger.kernel.org, 
- linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Catalin Marinas <catalin.marinas@arm.com>, kernel-team@android.com, 
- devicetree@vger.kernel.org, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-To: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <20250827-acpm-dvfs-dt-v2-0-e1d2890d12b4@linaro.org>
-References: <20250827-acpm-dvfs-dt-v2-0-e1d2890d12b4@linaro.org>
-Message-Id: <175633665113.3746832.15304875656374701987.robh@kernel.org>
-Subject: Re: [PATCH v2 0/3] arm64: dts: exynos: gs101: add cpufreq support
+X-Received: by 2002:a05:6602:2c11:b0:881:87ac:24a with SMTP id
+ ca18e2360f4ac-886bd14dd6cmr2927042739f.7.1756336955004; Wed, 27 Aug 2025
+ 16:22:35 -0700 (PDT)
+Date: Wed, 27 Aug 2025 16:22:34 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68af933a.a00a0220.2929dc.0007.GAE@google.com>
+Subject: [syzbot] [net?] [usb?] KMSAN: uninit-value in rtl8150_open
+From: syzbot <syzbot+b4d5d8faea6996fd55e3@syzkaller.appspotmail.com>
+To: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com, 
+	kuba@kernel.org, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
+	netdev@vger.kernel.org, pabeni@redhat.com, petkan@nucleusys.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    fab1beda7597 Merge tag 'devicetree-fixes-for-6.17-1' of gi..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=17a9e462580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=6ccfdce02093e91f
+dashboard link: https://syzkaller.appspot.com/bug?extid=b4d5d8faea6996fd55e3
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/db03ab9be061/disk-fab1beda.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/465314c75c15/vmlinux-fab1beda.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/02e5480b1de2/bzImage-fab1beda.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+b4d5d8faea6996fd55e3@syzkaller.appspotmail.com
+
+usb 1-1: device reset failed
+=====================================================
+BUG: KMSAN: uninit-value in set_carrier drivers/net/usb/rtl8150.c:721 [inline]
+BUG: KMSAN: uninit-value in rtl8150_open+0x1131/0x1360 drivers/net/usb/rtl8150.c:758
+ set_carrier drivers/net/usb/rtl8150.c:721 [inline]
+ rtl8150_open+0x1131/0x1360 drivers/net/usb/rtl8150.c:758
+ __dev_open+0x7e9/0xc60 net/core/dev.c:1682
+ __dev_change_flags+0x3a8/0x9f0 net/core/dev.c:9549
+ netif_change_flags+0x8d/0x1e0 net/core/dev.c:9612
+ dev_change_flags+0x18c/0x320 net/core/dev_api.c:68
+ devinet_ioctl+0x1186/0x2500 net/ipv4/devinet.c:1200
+ inet_ioctl+0x4c0/0x6f0 net/ipv4/af_inet.c:1001
+ sock_do_ioctl+0x9c/0x480 net/socket.c:1238
+ sock_ioctl+0x70b/0xd60 net/socket.c:1359
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:598 [inline]
+ __se_sys_ioctl+0x23c/0x400 fs/ioctl.c:584
+ __x64_sys_ioctl+0x97/0xe0 fs/ioctl.c:584
+ x64_sys_call+0x1cbc/0x3e20 arch/x86/include/generated/asm/syscalls_64.h:17
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xd9/0x210 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Local variable tmp created at:
+ number+0x8a/0x2200 lib/vsprintf.c:469
+ vsnprintf+0xd21/0x1bd0 lib/vsprintf.c:2890
+
+CPU: 1 UID: 0 PID: 5461 Comm: dhcpcd Not tainted syzkaller #0 PREEMPT(none) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
+=====================================================
 
 
-On Wed, 27 Aug 2025 12:59:45 +0000, Tudor Ambarus wrote:
-> Define the CPU clocks and OPPs.
-> 
-> The patch set depends on the bindings sent at:
-> https://lore.kernel.org/linux-samsung-soc/20250827-acpm-clk-v2-1-de5c86b49b64@linaro.org/T/#u
-> 
-> The following error will be seen without the bindings patch:
-> arch/arm64/boot/dts/exynos/google/gs101.dtsi:75.24-25 syntax error
-> FATAL ERROR: Unable to parse input tree
-> 
-> Thanks,
-> ta
-> 
-> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
-> ---
-> Changes in v2:
-> - acpm node becomes a clock provider.
-> - reword commit message, extend cover letter with info about dependency
->   on a bindings patch.
-> - Link to v1: https://lore.kernel.org/r/20250819-acpm-dvfs-dt-v1-0-4e38b95408c4@linaro.org
-> 
-> ---
-> Tudor Ambarus (3):
->       arm64: dts: exynos: gs101: add #clock-cells to the ACPM protocol node
->       arm64: dts: exynos: gs101: add CPU clocks
->       arm64: dts: exynos: gs101: add OPPs
-> 
->  arch/arm64/boot/dts/exynos/google/gs101.dtsi | 284 +++++++++++++++++++++++++++
->  1 file changed, 284 insertions(+)
-> ---
-> base-commit: c17b750b3ad9f45f2b6f7e6f7f4679844244f0b9
-> change-id: 20250819-acpm-dvfs-dt-06bc794bdccd
-> 
-> Best regards,
-> --
-> Tudor Ambarus <tudor.ambarus@linaro.org>
-> 
-> 
-> 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
-  pip3 install dtschema --upgrade
-
-
-This patch series was applied (using b4) to base:
- Base: using specified base-commit c17b750b3ad9f45f2b6f7e6f7f4679844244f0b9
-
-If this is not the correct base, please add 'base-commit' tag
-(or use b4 which does this automatically)
-
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/exynos/' for 20250827-acpm-dvfs-dt-v2-0-e1d2890d12b4@linaro.org:
-
-Error: arch/arm64/boot/dts/exynos/google/gs101.dtsi:75.24-25 syntax error
-FATAL ERROR: Unable to parse input tree
-make[4]: *** [scripts/Makefile.dtbs:131: arch/arm64/boot/dts/exynos/google/gs101-oriole.dtb] Error 1
-make[3]: *** [scripts/Makefile.build:556: arch/arm64/boot/dts/exynos/google] Error 2
-make[3]: Target 'arch/arm64/boot/dts/exynos/google/gs101-oriole.dtb' not remade because of errors.
-make[2]: *** [scripts/Makefile.build:556: arch/arm64/boot/dts/exynos] Error 2
-make[2]: Target 'arch/arm64/boot/dts/exynos/google/gs101-oriole.dtb' not remade because of errors.
-make[1]: *** [/home/rob/proj/linux-dt-testing/Makefile:1480: exynos/google/gs101-oriole.dtb] Error 2
-Error: arch/arm64/boot/dts/exynos/google/gs101.dtsi:75.24-25 syntax error
-FATAL ERROR: Unable to parse input tree
-make[4]: *** [scripts/Makefile.dtbs:131: arch/arm64/boot/dts/exynos/google/gs101-raven.dtb] Error 1
-make[3]: *** [scripts/Makefile.build:556: arch/arm64/boot/dts/exynos/google] Error 2
-make[3]: Target 'arch/arm64/boot/dts/exynos/google/gs101-raven.dtb' not remade because of errors.
-make[2]: *** [scripts/Makefile.build:556: arch/arm64/boot/dts/exynos] Error 2
-make[2]: Target 'arch/arm64/boot/dts/exynos/google/gs101-raven.dtb' not remade because of errors.
-make[1]: *** [/home/rob/proj/linux-dt-testing/Makefile:1480: exynos/google/gs101-raven.dtb] Error 2
-make: *** [Makefile:248: __sub-make] Error 2
-make: Target 'exynos/exynos8895-dreamlte.dtb' not remade because of errors.
-make: Target 'exynos/exynos2200-g0s.dtb' not remade because of errors.
-make: Target 'exynos/exynos850-e850-96.dtb' not remade because of errors.
-make: Target 'exynos/exynos7870-on7xelte.dtb' not remade because of errors.
-make: Target 'exynos/exynos7885-jackpotlte.dtb' not remade because of errors.
-make: Target 'exynos/exynos990-x1slte.dtb' not remade because of errors.
-make: Target 'exynos/exynos5433-tm2.dtb' not remade because of errors.
-make: Target 'exynos/exynos990-r8s.dtb' not remade because of errors.
-make: Target 'exynos/exynos7-espresso.dtb' not remade because of errors.
-make: Target 'exynos/google/gs101-oriole.dtb' not remade because of errors.
-make: Target 'exynos/google/gs101-raven.dtb' not remade because of errors.
-make: Target 'exynos/exynosautov920-sadk.dtb' not remade because of errors.
-make: Target 'exynos/exynosautov9-sadk.dtb' not remade because of errors.
-make: Target 'exynos/exynos990-c1s.dtb' not remade because of errors.
-make: Target 'exynos/exynos9810-starlte.dtb' not remade because of errors.
-make: Target 'exynos/exynos990-x1s.dtb' not remade because of errors.
-make: Target 'exynos/exynos7870-a2corelte.dtb' not remade because of errors.
-make: Target 'exynos/exynos5433-tm2e.dtb' not remade because of errors.
-make: Target 'exynos/exynos7870-j6lte.dtb' not remade because of errors.
-
-
-
-
-
+If you want to undo deduplication, reply with:
+#syz undup
 
