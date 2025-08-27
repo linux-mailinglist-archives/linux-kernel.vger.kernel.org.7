@@ -1,118 +1,112 @@
-Return-Path: <linux-kernel+bounces-787882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF000B37CFC
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 10:08:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A872BB37CFE
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 10:08:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5F75362D33
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 08:08:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D0E637A3D4F
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 08:07:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D2D1322774;
-	Wed, 27 Aug 2025 08:08:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A762322770;
+	Wed, 27 Aug 2025 08:08:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Mnb84gfl"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="b9FHjbL2"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8547322771
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 08:08:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61CE132145D;
+	Wed, 27 Aug 2025 08:08:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756282087; cv=none; b=RI72fNZP1EVHapr6/Gl8Rsh+B93KvTh2og0QDXGZqq2OfiscRQHV8IAwH6STNplkzRzNLgIBi0JW1HTeVtxSewUwZtUqNMDqax+NFa8nSAUerFpcDsSQV57125FxN4yQuUFT0naxkQbeQXV7+z4LdUL5OSL0x9fyTedHBmsc+rQ=
+	t=1756282120; cv=none; b=Jbp34JbruKXhE3qht1/2bUiEBxa54NnlDC0ig3hLIWBJVs9lfe1YMYYsVHaomt0WG+ATB0FJcTz74NwAWZnRyVVFBuekor04GhdY4wfJjzShScsLCSXZfXAMS0Z7Y7MxkT0Oi7WgYefzkUdU+4DmPjcoGmGfEwbbf2lZErYb/bg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756282087; c=relaxed/simple;
-	bh=iUMnI1Gr4aSIqM3m6NcNydTZjndSBas7VbolVEVepzU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VPKAyvraqj+h64zT/tlCV8Bn7sVGF1d7yMZQYud8mOzfN8GokCZ7Z0KI0LGrkPSt8ZEFxi2ZvG8KnmvYQAhXocTsht5IChq6ZcmZjCPe6UIBel/hQqC2cxr2whb3XoMvMtMVj2BUBWsX4SWndnh8OwUPypigCLAYNb7YK1vFzbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Mnb84gfl; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1756282076;
-	bh=iUMnI1Gr4aSIqM3m6NcNydTZjndSBas7VbolVEVepzU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Mnb84gflk5q2wshjIppNvzipnpgkgqqqkczdn533RahwnTwvlfvMoPzKAl1VUJPJc
-	 hTN5RyiO9im78ixrxURAKhqtHk+IaHrV5FIgbsMWkdu7eRzgtE5JgDIMA5cPdUzWAw
-	 5lsbxiIbOBFHOwM0mWRRB56Xy6BLDcwjTqoFakuJSHqNdeCWQsn5WpLXV1SEqiWybh
-	 Q6ZBT9fl49OU4kTiZTiCXh3ZivyZKcappvkcGmcJR7KI/xP86+8YT1ys0VB46RSo3+
-	 d14WLCELgzukLxxEHccJ/kTN9X2MhOAcPjWT7ctVijmQmPgrEBA/aoi0C6gM7hekeB
-	 BScLOoxqZwIUw==
-Received: from fedora (unknown [IPv6:2a01:e0a:2c:6930:d919:a6e:5ea1:8a9f])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bbrezillon)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 6D9E117E00A3;
-	Wed, 27 Aug 2025 10:07:56 +0200 (CEST)
-Date: Wed, 27 Aug 2025 10:07:48 +0200
-From: Boris Brezillon <boris.brezillon@collabora.com>
-To: Xiaolei Wang <xiaolei.wang@windriver.com>
-Cc: maarten.lankhorst@linux.intel.com, mripard@kernel.org,
- tzimmermann@suse.de, dmitry.baryshkov@oss.qualcomm.com, airlied@gmail.com,
- simona@ffwll.ch, dmitry.osipenko@collabora.com,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Use drm_gem_shmem_unpin() to unpin the backing pages
- for a shmem GEM
-Message-ID: <20250827100748.0d7fb9d1@fedora>
-In-Reply-To: <20250827022516.2890226-1-xiaolei.wang@windriver.com>
-References: <20250827022516.2890226-1-xiaolei.wang@windriver.com>
-Organization: Collabora
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1756282120; c=relaxed/simple;
+	bh=lsJDDxdY1N4gALbPCmycovRhFfEL8Y0hbTDgIyjV50k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=g8rMHs3rP9mQyRCUetjIxUVitAzLSMPJgVJwz9w7Qr+iXPl6l6VokDAYZZQqNJeMTMp0C3jyNdDyNaSUn8fIEM1FRSFoR5O1dA6ih08I8CVg0OKQpKdckoK9tb4q1LwrJbGf07FfR/sTKs5K6t0nyDaER08q0qI00bYR5k2abkQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=b9FHjbL2; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=CmS9SC4kc4d1Ykb5qagMWrsRP/ZqbzwfCcHKP8Zo8Nc=; b=b9FHjbL2D/NyUZbVGsNSGDOKvx
+	byW+FtR+l+Yy5FZ7feS+2oSxWAaha8s355suFXT9WYCxdQHC/DJiMSH6LGnbEjSX4PPrWMjN9EvXT
+	VtfXjnrfMh4DwyTfrTTVFjwBqdEAPNZJYPnLKXpTvCu0fgEGQ6CfirsaZSL2Nofjx/S2onXGVNoMP
+	lNakSHx1AgMJgzSM4znClbha3NxOWBKu/GOUvs7dv1HcTjNlpRRt56VO/csC6J9Jcyu6ggt5XohKF
+	QmzQ9yosw4LFHSLAj6WIph4lfBMLNLZXQushdLgkyIUJFcTuOobNHEw6wjjCLVW7YjzSErnBjl681
+	X+C1ezDw==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:51254)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1urBCm-000000000Bm-2wEJ;
+	Wed, 27 Aug 2025 09:08:28 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1urBCi-00000000218-25TM;
+	Wed, 27 Aug 2025 09:08:24 +0100
+Date: Wed, 27 Aug 2025 09:08:24 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Alexander Wilhelm <alexander.wilhelm@westermo.com>
+Cc: Vladimir Oltean <vladimir.oltean@nxp.com>, Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: Aquantia PHY in OCSGMII mode?
+Message-ID: <aK68-Bp77-HiOAJk@shell.armlinux.org.uk>
+References: <aJCvOHDUv8iVNXkb@FUE-ALEWI-WINX>
+ <20250804134115.cf4vzzopf5yvglxk@skbuf>
+ <aJDH56uXX9UVMZOf@FUE-ALEWI-WINX>
+ <20250804160037.bqfb2cmwfay42zka@skbuf>
+ <20250804160234.dp3mgvtigo3txxvc@skbuf>
+ <aJG5/d8OgVPsXmvx@FUE-ALEWI-WINX>
+ <20250805102056.qg3rbgr7gxjsl3jd@skbuf>
+ <aJH8n0zheqB8tWzb@FUE-ALEWI-WINX>
+ <20250806145856.kyxognjnm4fnh4m6@skbuf>
+ <aK6eSEOGhKAcPzBq@FUE-ALEWI-WINX>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aK6eSEOGhKAcPzBq@FUE-ALEWI-WINX>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Wed, 27 Aug 2025 10:25:16 +0800
-Xiaolei Wang <xiaolei.wang@windriver.com> wrote:
-
-> Although drm_gem_shmem_free() will decrease the use count
-> on the backing pages and free backing pages for a GEM object,
-> the pages_pin_count count is not decremented, which results
-> in a warning. Therefore, use drm_gem_shmem_unpin() to unpin
-> the backing pages for a shmem GEM.
-
-With the subject prefixed with "drm/gem-shmem: " this is
-
-Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
-
+On Wed, Aug 27, 2025 at 07:57:28AM +0200, Alexander Wilhelm wrote:
+> Hi Vladimir,
 > 
-> WARNING: CPU: 2 PID: 1106 at drivers/gpu/drm/drm_gem_shmem_helper.c:180 drm_gem_shmem_free+0x4d0/0x6f0
->  Call trace:
->   drm_gem_shmem_free+0x4d0/0x6f0 (P)
->   drm_gem_shmem_free_wrapper+0x10/0x1c
->   __kunit_action_free+0x50/0x70
->   kunit_remove_resource+0x144/0x1e4
->   kunit_cleanup+0x64/0xfc
->   kunit_try_run_case_cleanup+0xa0/0xd4
->   kunit_generic_run_threadfn_adapter+0x80/0xec
->   kthread+0x3b8/0x6c0
->   ret_from_fork+0x10/0x20
-> 
-> Fixes: 93032ae634d4 ("drm/test: add a test suite for GEM objects backed by shmem")
-> Signed-off-by: Xiaolei Wang <xiaolei.wang@windriver.com>
-> ---
->  drivers/gpu/drm/tests/drm_gem_shmem_test.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/gpu/drm/tests/drm_gem_shmem_test.c b/drivers/gpu/drm/tests/drm_gem_shmem_test.c
-> index 68f2c3162354..e0a9f3a917ed 100644
-> --- a/drivers/gpu/drm/tests/drm_gem_shmem_test.c
-> +++ b/drivers/gpu/drm/tests/drm_gem_shmem_test.c
-> @@ -227,6 +227,7 @@ static void drm_gem_shmem_test_get_pages_sgt(struct kunit *test)
->  		len += sg->length;
->  	}
->  
-> +	drm_gem_shmem_unpin(shmem);
->  	KUNIT_EXPECT_GE(test, len, TEST_SIZE);
->  }
->  
+> One of our hardware engineers has looked into the issue with the 100M link and
+> found the following: the Aquantia AQR115 always uses 2500BASE-X (GMII) on the
+> host side. For both 1G and 100M operation, it enables pause rate adaptation.
+> However, our MAC only applies rate adaptation for 1G links. For 100M, it uses a
+> 10x symbol replication instead.
 
+This sounds like a misunderstanding, specifically:
+
+"our MAC only applies rate adaptation for 1G links. For 100M, it uses
+10x symbol replication instead."
+
+It is the PHY that does rate adaption, so the MAC doesn't need to
+support other speeds. Therefore, if the PHY is using a 2.5Gbps link
+to the MAC with rate adaption for 100M, then the MAC needs to operate
+at that 2.5Gbps speed.
+
+You don't program the MAC differently depending on the media side
+speed, unlike when rate adaption is not being used.
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
