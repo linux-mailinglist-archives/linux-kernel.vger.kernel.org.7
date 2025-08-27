@@ -1,62 +1,122 @@
-Return-Path: <linux-kernel+bounces-788413-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 921AFB38403
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 15:49:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09029B38412
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 15:51:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C93633B8910
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 13:49:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5264175685
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 13:50:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E63313568E4;
-	Wed, 27 Aug 2025 13:49:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OOtippKz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C9AA2EACEF;
-	Wed, 27 Aug 2025 13:49:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F1373570B6;
+	Wed, 27 Aug 2025 13:50:32 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C66F7342C92;
+	Wed, 27 Aug 2025 13:50:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756302566; cv=none; b=XuKjvNp5qR4FoqyBo6tVutmXeRdF7hefYP4VVyH26X/hLesni/c3fR/kwxk9Uvcv4cvXasBdlPmWiJfFydwIIdX3olX1eD4CatyCrloJ/TPTcR9Q5pBjjZx9EHqQGJwuYIzTqkjY4Ha0rsqconkyC3NwiTie6lG1077sbmK3KSk=
+	t=1756302631; cv=none; b=bc9h+gGGyZ/ohefJtj25jaExmeN0UpW35lBCbimGbcRsGY9EQSZr0b5n+WQOlj4wihDQzWTxt7aAZYmNnrWYQFLJBgETU/Jspn+hASSp+pugOR9tNjcwBpYIbKNlj17472tC1uN5qd2WSWI1dXptI9fLM5dVhAKq2yXj8ByGPBY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756302566; c=relaxed/simple;
-	bh=Dpt8GGfeLnVmr0M6zmnyoYGC08US4tTed/rZezkvqNs=;
+	s=arc-20240116; t=1756302631; c=relaxed/simple;
+	bh=sjDy2yPaMyRUWRHA7zNCNkrYIPM6l4g0nDQeVISxPDs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LbjWyfy8yG+iOCVI6iOwN3lyXRl5jTmfG96H9CSk/F8LnCXXIMvMVXX9HLf8slfinQSf2UBKJNNahl5+FWQnCCp5eAIEJqBN+MAvYs3Lp7EtwWbs3lHypwiKbVdnaAs3HMdMBvwljXCk5pxh1k6Ux2XgtQeLVSEAtRvSe2b88Xk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OOtippKz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3273BC4CEF0;
-	Wed, 27 Aug 2025 13:49:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756302565;
-	bh=Dpt8GGfeLnVmr0M6zmnyoYGC08US4tTed/rZezkvqNs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OOtippKzko2TKtCwDI35Ogr/YO2PjQWOoj13B8dT5h1/hATBhQfvwMJ08m+DKhXfn
-	 cezFaKFTYtWm29o9AzkgTbr3+Kh3wVFClkJDPz3qVfSuuJ3Y8C8R7kZ4LJeIqBzIB0
-	 +/9qdIedLLHPbQfeYd7biIoTgnUgYbk4uXAHbrT6AL5ZSixpxJqP0EzQXQ5YQoOWWD
-	 OopFahUco65XVC+L4hmZaeYpBTao3oW2QEBorNtH8VtO3/uV68oEb68F0MYHgy4lBs
-	 V/17hAgCznYPQWeAw9FByFMH9O9wLlwiK+2FoeFmKeTu2W+mIu9Bn70714b8z/jsVd
-	 a5YdP4jMucoJQ==
-Date: Wed, 27 Aug 2025 14:49:20 +0100
-From: Simon Horman <horms@kernel.org>
-To: Kohei Enju <enjuk@amazon.com>
-Cc: intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Tony Nguyen <anthony.l.nguyen@intel.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	kohei.enju@gmail.com, Paul Menzel <pmenzel@molgen.mpg.de>
-Subject: Re: [PATCH v2 iwl-next 2/2] igbvf: remove redundant counter
- rx_long_byte_count from ethtool statistics
-Message-ID: <20250827134920.GA5652@horms.kernel.org>
-References: <20250818151902.64979-4-enjuk@amazon.com>
- <20250818151902.64979-6-enjuk@amazon.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=VvLjF50lMH9BSuMKY/T0ifYiu9BvZ9cOl5k7gZaEOMdlVu7hNVjMY+LLOvtvLKbsV9m/MjIAwQ7d9WPFuzzMuXPGB5Z73mcC/HTaQFguerZhp7GLSzOEsM5jbgU9U0O7aaj1x4c+U7gEezTN1/gqIlOd69QCOx2KAlSMkcOe0IU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com; spf=none smtp.mailfrom=foss.arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=foss.arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D1ECC1688;
+	Wed, 27 Aug 2025 06:50:20 -0700 (PDT)
+Received: from bogus (unknown [10.57.57.52])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A11B23F694;
+	Wed, 27 Aug 2025 06:50:11 -0700 (PDT)
+Date: Wed, 27 Aug 2025 14:49:48 +0100
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: Brian Masney <bmasney@redhat.com>
+Cc: Peng Fan <peng.fan@oss.nxp.com>, Sudeep Holla <sudeep.holla@arm.com>,
+	Cristian Marussi <cristian.marussi@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Inochi Amaoto <inochiama@gmail.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Paul Cercueil <paul@crapouillou.net>,
+	Keguang Zhang <keguang.zhang@gmail.com>,
+	Taichi Sugaya <sugaya.taichi@socionext.com>,
+	Takao Orito <orito.takao@socionext.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Jacky Huang <ychuang3@nuvoton.com>,
+	Shan-Chun Hung <schung@nuvoton.com>,
+	Vladimir Zapolskiy <vz@mleia.com>,
+	Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Yixun Lan <dlan@gentoo.org>,
+	Steen Hegelund <Steen.Hegelund@microchip.com>,
+	Daniel Machon <daniel.machon@microchip.com>,
+	UNGLinuxDriver@microchip.com, Orson Zhai <orsonzhai@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Michal Simek <michal.simek@amd.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Andreas =?utf-8?Q?F=C3=A4rber?= <afaerber@suse.de>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Sven Peter <sven@kernel.org>, Janne Grunau <j@jannau.net>,
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	Neal Gompa <neal@gompa.dev>,
+	Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Max Filippov <jcmvbkbc@gmail.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Daniel Palmer <daniel@thingy.jp>,
+	Romain Perier <romain.perier@gmail.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Gregory Clement <gregory.clement@bootlin.com>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Andrea della Porta <andrea.porta@suse.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Qin Jian <qinjian@cqplus1.com>, Viresh Kumar <vireshk@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Alex Helms <alexander.helms.jy@renesas.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Liviu Dudau <liviu.dudau@arm.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	sophgo@lists.linux.dev, linux-mips@vger.kernel.org,
+	imx@lists.linux.dev, linux-riscv@lists.infradead.org,
+	spacemit@lists.linux.dev, linux-stm32@st-md-mailman.stormreply.com,
+	patches@opensource.cirrus.com, linux-actions@lists.infradead.org,
+	asahi@lists.linux.dev, linux-mediatek@lists.infradead.org,
+	linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, soc@lists.linux.dev
+Subject: Re: [PATCH 112/114] clk: scmi: remove round_rate() in favor of
+ determine_rate()
+Message-ID: <20250827-abstract-maize-tanuki-d1bdcb@sudeepholla>
+References: <20250811-clk-for-stephen-round-rate-v1-0-b3bf97b038dc@redhat.com>
+ <20250811-clk-for-stephen-round-rate-v1-112-b3bf97b038dc@redhat.com>
+ <20250827070933.GB18994@nxa18884-linux.ap.freescale.net>
+ <aK8EbcEHz3Yzpa1W@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,21 +125,80 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250818151902.64979-6-enjuk@amazon.com>
+In-Reply-To: <aK8EbcEHz3Yzpa1W@x1>
 
-On Tue, Aug 19, 2025 at 12:18:27AM +0900, Kohei Enju wrote:
-> rx_long_byte_count shows the value of the GORC (Good Octets Received
-> Count) register. However, the register value is already shown as
-> rx_bytes and they always show the same value.
+On Wed, Aug 27, 2025 at 09:13:17AM -0400, Brian Masney wrote:
+> On Wed, Aug 27, 2025 at 03:09:33PM +0800, Peng Fan wrote:
+> > Hi Brian, Sudeep, Cristian
+> > 
+> > On Mon, Aug 11, 2025 at 11:19:44AM -0400, Brian Masney via B4 Relay wrote:
+> > >From: Brian Masney <bmasney@redhat.com>
+> > >
+> > >This driver implements both the determine_rate() and round_rate() clk
+> > >ops, and the round_rate() clk ops is deprecated. When both are defined,
+> > >clk_core_determine_round_nolock() from the clk core will only use the
+> > >determine_rate() clk ops, so let's remove the round_rate() clk ops since
+> > >it's unused.
+> > >
+> > >Signed-off-by: Brian Masney <bmasney@redhat.com>
+> > >---
+> > > drivers/clk/clk-scmi.c | 30 ------------------------------
+> > > 1 file changed, 30 deletions(-)
+> > >
+> > >diff --git a/drivers/clk/clk-scmi.c b/drivers/clk/clk-scmi.c
+> > >index d2408403283fc72f0cf902e65f4c08bcbc7b4b0b..6c6ddb92e7cf6a0cfac2c7e19c0f15f777bb8c51 100644
+> > >--- a/drivers/clk/clk-scmi.c
+> > >+++ b/drivers/clk/clk-scmi.c
+> > >@@ -54,35 +54,6 @@ static unsigned long scmi_clk_recalc_rate(struct clk_hw *hw,
+> > > 	return rate;
+> > > }
+> > > 
+> > >-static long scmi_clk_round_rate(struct clk_hw *hw, unsigned long rate,
+> > >-				unsigned long *parent_rate)
+> > >-{
+> > 
+> > I see the point of round_rate is not used if determine_rate is there.
+> > But reading the code of round_rate, It might be better to rename
+> > scmi_clk_round_rate to scmi_clk_determine_rate.
+> > 
+> > Anyway, need Sudeep and Cristian to comment.
 > 
-> Remove rx_long_byte_count as the Intel ethernet driver e1000e did in
-> commit 0a939912cf9c ("e1000e: cleanup redundant statistics counter").
+> In this case, yes the round_rate implementation is filled out, whereas
+> the determine_rate lets the firmware handle it, and
+> scmi_clk_recalc_rate() will later populate the rate the clock is running
+> at.
 > 
-> Tested on Intel Corporation I350 Gigabit Network Connection.
-> 
-> Reviewed-by: Paul Menzel <pmenzel@molgen.mpg.de>
-> Signed-off-by: Kohei Enju <enjuk@amazon.com>
+> I can convert round_rate over to determine_rate in this case, however it
+> would be a change to what's there now, and risks a regression. Here's
+> the relevant code from drivers/clk/clk.c where the determine_rate and
+> round_rate ops are called:
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+I am inclined towards this. Determine rate was added recently when the
+clock parent support was added IIUC, so I don't think it should regress
+anything.
 
+> 
+>     static int clk_core_determine_round_nolock(struct clk_core *core,
+>                                                struct clk_rate_request *req)
+>     {
+>     	...
+>             if (clk_core_rate_is_protected(core)) {
+>                     req->rate = core->rate;
+>             } else if (core->ops->determine_rate) {
+>                     return core->ops->determine_rate(core->hw, req);
+>             } else if (core->ops->round_rate) {
+>                     rate = core->ops->round_rate(core->hw, req->rate,
+>                                                  &req->best_parent_rate);
+>     	...
+> 
+> If Sudeep / Cristian want the round rate converted to determine rate in
+> this driver, then I can do that in a v2.
+> 
+
+Yes please. Also please post it independent if it doesn't have to be in
+the series. To many in cc and lots of patches to respin all.
+
+-- 
+Regards,
+Sudeep
 
