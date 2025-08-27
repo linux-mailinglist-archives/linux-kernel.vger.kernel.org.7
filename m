@@ -1,120 +1,182 @@
-Return-Path: <linux-kernel+bounces-788409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71158B383F6
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 15:47:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86902B383F8
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 15:47:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04D949821BA
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 13:47:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C76D0685905
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 13:47:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3487306D37;
-	Wed, 27 Aug 2025 13:46:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 441E1356900;
+	Wed, 27 Aug 2025 13:47:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hAMKJVgS"
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="C1+9CW5p"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AE9228F1
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 13:46:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756302417; cv=none; b=QkHw3ktJhEyOi/RYxShUeuXD9uWXnrb22fHt43Z5aLAwJhsZKT5WqNyRQiK6GvFm4wM/HuHO+pINGNAqhwFpo4uqSM+pcclZ21Yos0nYKtjicCPx12xE6PKiF4IdEb8ZFd5S6sd09ZbLxijGp0jRDPQHuwYt0pYqrTNzbfqMDuk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756302417; c=relaxed/simple;
-	bh=ajtTmcH0Rw+RQP6CIk/J5eUechM69LLIqZ8n3NZbgqc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RBn8RPsIHe4FJdJW0SViQ1ZSGk3cimrT+Ym1pbE3B/LZ0x+H9KeCNbq2jJzny7ZeHIe4lzw8JCJCdImXMrKOwL1/67Z9Zesn3KflwmYJkRAYacK45ulFvLYHZt3WwyVifgQEEVgNYv5t8734P/FSp+TC281rmBjC23pWS18zDGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hAMKJVgS; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-3367e0f9c1cso21340851fa.3
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 06:46:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756302414; x=1756907214; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tWdtgwMC4xOmfKmxCHPIWNUnKj2dqPGspbwOLyOacsE=;
-        b=hAMKJVgSMD43pAXkIuw1z0LMvalEuD9o6c+Jvi5ZH3BHJeGBK6FS//hxAcIBLxxVQv
-         6wHj9sCiKjekNZajKLo6zqGWNAsjmDJ/xsWKLcJS1xp19qu7q2Nh4I9GMzyI5CQ2dhQb
-         TdDBikFcnmnJnuklue53cdR+Yhle/TZonO/zUdD5EbcvXMFnp1Lecai8VLNnoRK6yQTF
-         UzKLTPrik74RJCXNkN8NNp1J5BjCZ5fNxVrTKHR84fZAt3mRnViCxHpRcaeqTZOdUYDO
-         y+7Od6iA4skaCuCZKj5fCYUiX42Yi9EVVK4NCDq3osXgoledTEissNpSmIp8lH+GlO/o
-         YvPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756302414; x=1756907214;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tWdtgwMC4xOmfKmxCHPIWNUnKj2dqPGspbwOLyOacsE=;
-        b=uNdtPrwraKHpgRghBl1kMbaFEkycMxwgIu2MN2ZTj4CyttALny9Cx2YMKygJ7gQ2rV
-         USmrbfW4DpGqxc3lFn3HAvjIHlO19z276gu/zvY46eSRgCd0ukfISLreyfF5K/PUWfUQ
-         Ul8QYufbZiMMG1O9O8rosDA02RKfkwSHOtpXkJR6QGKDWEDd7ZGkUFEwlyg0wH83SaJG
-         qCK9FXhxjIyRJy3Pb5QlaqrdEdxDJrP0MzK3wamPs4w9ieXyLcZ53p1+n6u58hxvj3fe
-         PwpEVZHdaBFCP17Q9q96exNbpse1ej2NBA5JjEpp2Sdxg3tMzLWc8xHOxmRblDOhIf3J
-         IDgw==
-X-Forwarded-Encrypted: i=1; AJvYcCVbk/bYlG1Px+DKdhGhAhRkQ1k+wKuFW+fij8o8KbW1dluKs5PpWYGb2BY/R8WTwwnDqU5Y3gbsb8AD3+g=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+LZ4q0vrAXlJYGHNNTIrfflPCDCCw69OTM9tw3tLRWAM1Nnfw
-	/FNv2SE91HuEIhI7NePhLVnJG2iHnY1rre2IduQ4ABl8U1VDGKI/I4Qk+hADIDRzKXVCi5K1F5s
-	tABg5ZKwqFMyiObZ3spkKt8Wf64maH6k=
-X-Gm-Gg: ASbGncsGUyXzbcaczHwtifeHbKGNrFi62Vwbc3OJdOkVY6QwtF5qYjQBjLRANHwKakp
-	l1DjLx1c8v9ul6H+eFOXycJkT8svTLXkNOq8hBG6U5wQJQth17W79dgRHKaxadaSDyTWEFHNich
-	Ek9IYNMoj1fSgYdH3I2AInIJmP1FobNHwWSubz5k11b9phZeydGAEmRXPOZ6GOkwhF9MCHAMaRP
-	gpm9xQ=
-X-Google-Smtp-Source: AGHT+IFjPl2md36EjKemozMYhYwDLSCZh2KeLt3TyuHDY9I2P4jqHFGfc3BYtzJxAKzHDYtC6+Y3UQVaMl8l54xjk0g=
-X-Received: by 2002:a2e:a4b7:0:b0:336:8c6d:dfe3 with SMTP id
- 38308e7fff4ca-3368c6de41emr11268681fa.18.1756302413473; Wed, 27 Aug 2025
- 06:46:53 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A388C3009FA;
+	Wed, 27 Aug 2025 13:47:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756302424; cv=pass; b=cwZ3n5W/Kh8EgvX4qGZrE2+9fFYzBGKW1isG74Ed9md5ZvseVbazl1iOgkGAGVIsbj6rFpWiUctdB0HC//WlxkurEpurO+a3I5n/MpdLA81/YLYWrZ1zloDTMoHw5oLfMOKo3ir08M6plJ4LMKih1zvTmtqmuzra11Vd9ypAY2E=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756302424; c=relaxed/simple;
+	bh=4F4PSpfzqc4T3sl1FWdLl5F4O54g0Xgbs8dayq40s2k=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=Ww2w7cYuOBtc+Lwb0QNzIZwOF7AqGEey4b/CSwkGo5PQdysYUTLaB3kRqu9XQZ/lsV2L0gCYstuUkDC83o3QhgU4lQ3opAqXqcHFRMfFJQqlAE9NRg3xTus1XEm3tA6Lqj+851ax0kxSV//WQZA+DAdih9IJCUN/gFH23Hk3pnI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=C1+9CW5p; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1756302399; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=D/zawCSW5Xvy+e1Qi5+0Zh3LTohvB2uDyw3SRcnLfYOwfgiAniJdb1zbO5ix2b3Lesj67sTv0KN+YmYQJUwwVnp07/FV8OLcchgIRHqdeICWEJYC2ZhOyv5NmyHIEr3lngCIw1kR/kD9ohbpJ23ByMU9bcl572OgxGTxCsSyfMU=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1756302399; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=z3hQA04U/NsIOTB7Ljgoe9/oGh3W8wlbOOT2f7+/2+s=; 
+	b=O8fDZZKxGRr7i+mxUhWplOWxOJMQIVjMl44P5L0cz7JLsxe4iw8S3zv5yv21VDusYca7T08Y33aEPO8e9jvaEH1eQnA9ErThJrhonkbWlQBKFapfrmf55Kg+QgTJwNswjwTsdunB826tElFOyzuvzGFP7oqn/B+nd7Nz/KdG/2c=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1756302399;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=z3hQA04U/NsIOTB7Ljgoe9/oGh3W8wlbOOT2f7+/2+s=;
+	b=C1+9CW5pT3qSVbF7XGhxN6gtZDzloNcg6g7kq7Zwod5jQQ+DnitiKLuJMhmTyrnf
+	RZ0HShPHaSsYP+/GLaLLj2/HhyiuxPzx1NGuSRw/+NwTDhF+9BRd/yF48CS2psVRwaJ
+	fWcsYhZaP7mLpw1+Uc1b/376jGNZEqUXEyR8+7r8=
+Received: by mx.zohomail.com with SMTPS id 1756302395027874.0815258877969;
+	Wed, 27 Aug 2025 06:46:35 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250822192023.13477-1-ryncsn@gmail.com> <20250822192023.13477-2-ryncsn@gmail.com>
- <aK6A76NVcV2j+J57@MiWiFi-R3L-srv>
-In-Reply-To: <aK6A76NVcV2j+J57@MiWiFi-R3L-srv>
-From: Kairui Song <ryncsn@gmail.com>
-Date: Wed, 27 Aug 2025 21:46:16 +0800
-X-Gm-Features: Ac12FXyR4V0OeH51yDQpMdfxm3IPqgbIMY4zg2e5mYKtqWnw1-Pko8dcKcOhbWI
-Message-ID: <CAMgjq7D93cj6CHxJDKc1ax5SCeb9QvFt38YWQM_rrF7SRi+zCA@mail.gmail.com>
-Subject: Re: [PATCH 1/9] mm, swap: use unified helper for swap cache look up
-To: Baoquan He <bhe@redhat.com>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
-	Matthew Wilcox <willy@infradead.org>, Hugh Dickins <hughd@google.com>, Chris Li <chrisl@kernel.org>, 
-	Barry Song <baohua@kernel.org>, Nhat Pham <nphamcs@gmail.com>, 
-	Kemeng Shi <shikemeng@huaweicloud.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	Ying Huang <ying.huang@linux.alibaba.com>, Johannes Weiner <hannes@cmpxchg.org>, 
-	David Hildenbrand <david@redhat.com>, Yosry Ahmed <yosryahmed@google.com>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
+Subject: Re: [PATCH v6 06/18] rust: str: add `bytes_to_bool` helper function
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <20250822-rnull-up-v6-16-v6-6-ec65006e2f07@kernel.org>
+Date: Wed, 27 Aug 2025 10:46:18 -0300
+Cc: Boqun Feng <boqun.feng@gmail.com>,
+ Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <lossin@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ Danilo Krummrich <dakr@kernel.org>,
+ Jens Axboe <axboe@kernel.dk>,
+ Breno Leitao <leitao@debian.org>,
+ linux-block@vger.kernel.org,
+ rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org
 Content-Transfer-Encoding: quoted-printable
+Message-Id: <60D09FDF-D1EB-46A0-8F76-13F98BE9C518@collabora.com>
+References: <20250822-rnull-up-v6-16-v6-0-ec65006e2f07@kernel.org>
+ <20250822-rnull-up-v6-16-v6-6-ec65006e2f07@kernel.org>
+To: Andreas Hindborg <a.hindborg@kernel.org>
+X-Mailer: Apple Mail (2.3826.700.81)
+X-ZohoMailClient: External
 
-On Wed, Aug 27, 2025 at 12:48=E2=80=AFPM Baoquan He <bhe@redhat.com> wrote:
->
-> On 08/23/25 at 03:20am, Kairui Song wrote:
-> > From: Kairui Song <kasong@tencent.com>
-> ......snip...
-> > diff --git a/mm/swap_state.c b/mm/swap_state.c
-> > index 99513b74b5d8..ff9eb761a103 100644
-> > --- a/mm/swap_state.c
-> > +++ b/mm/swap_state.c
-> > @@ -69,6 +69,21 @@ void show_swap_cache_info(void)
-> >       printk("Total swap =3D %lukB\n", K(total_swap_pages));
-> >  }
-> >
-> > +/*
-> > + * Lookup a swap entry in the swap cache. A found folio will be return=
-ed
->
-> Lookup is a noun, we should use 'look up' which is a verb here instead?
 
-Hi Baoquan,
 
-I just checked filemap.c to see how page cache helpers describe
-themselves, 'Look up' is better indeed. Thanks for the review.
+> On 22 Aug 2025, at 09:14, Andreas Hindborg <a.hindborg@kernel.org> =
+wrote:
+>=20
+> Add a convenience function to convert byte slices to boolean values by
+> wrapping them in a null-terminated C string and delegating to the
+> existing `kstrtobool` function. Only considers the first two bytes of
+> the input slice, following the kernel's boolean parsing semantics.
+>=20
+> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
+> ---
+> rust/kernel/str.rs | 35 +++++++++++++++++++++++++++++------
+> 1 file changed, 29 insertions(+), 6 deletions(-)
+>=20
+> diff --git a/rust/kernel/str.rs b/rust/kernel/str.rs
+> index d070c0bd86c3..b185262b4851 100644
+> --- a/rust/kernel/str.rs
+> +++ b/rust/kernel/str.rs
+> @@ -921,6 +921,20 @@ fn write_str(&mut self, s: &str) -> fmt::Result {
+>     }
+> }
+>=20
+> +/// # Safety
+> +///
+> +/// - `string` must point to a null terminated string that is valid =
+for read.
+> +unsafe fn kstrtobool_raw(string: *const u8) -> Result<bool> {
+> +    let mut result: bool =3D false;
+> +
+> +    // SAFETY:
+> +    // - By function safety requirement, `string` is a valid =
+null-terminated string.
+> +    // - `result` is a valid `bool` that we own.
+> +    let ret =3D unsafe { bindings::kstrtobool(string, &mut result) };
+> +
+> +    kernel::error::to_result(ret).map(|()| result)
+> +}
+> +
+> /// Convert common user inputs into boolean values using the kernel's =
+`kstrtobool` function.
+> ///
+> /// This routine returns `Ok(bool)` if the first character is one of =
+'YyTt1NnFf0', or
+> @@ -968,13 +982,22 @@ fn write_str(&mut self, s: &str) -> fmt::Result =
+{
+> /// assert_eq!(kstrtobool(c_str!("2")), Err(EINVAL));
+> /// ```
+> pub fn kstrtobool(string: &CStr) -> Result<bool> {
+> -    let mut result: bool =3D false;
+> -
+> -    // SAFETY: `string` is a valid null-terminated C string, and =
+`result` is a valid
+> -    // pointer to a bool that we own.
+> -    let ret =3D unsafe { bindings::kstrtobool(string.as_char_ptr(), =
+&mut result) };
+> +    // SAFETY:
+> +    // - The pointer returned by `CStr::as_char_ptr` is guaranteed to =
+be
+> +    //   null terminated.
+> +    // - `string` is live and thus the string is valid for read.
+> +    unsafe { kstrtobool_raw(string.as_char_ptr()) }
+> +}
+>=20
+> -    kernel::error::to_result(ret).map(|()| result)
+> +/// Convert `&[u8]` to `bool` by deferring to =
+[`kernel::str::kstrtobool`].
+> +///
+> +/// Only considers at most the first two bytes of `bytes`.
+> +pub fn kstrtobool_bytes(bytes: &[u8]) -> Result<bool> {
+> +    // `ktostrbool` only considers the first two bytes of the input.
+> +    let stack_string =3D [*bytes.first().unwrap_or(&0), =
+*bytes.get(1).unwrap_or(&0), 0];
+
+Can=E2=80=99t this be CStr::from_bytes_with_nul() ?
+
+This means that kstrtobool_raw could take a &CStr directly and thus not =
+be unsafe IIUC?
+
+> +    // SAFETY: `stack_string` is null terminated and it is live on =
+the stack so
+> +    // it is valid for read.
+> +    unsafe { kstrtobool_raw(stack_string.as_ptr()) }
+> }
+>=20
+> /// An owned string that is guaranteed to have exactly one `NUL` byte, =
+which is at the end.
+>=20
+> --=20
+> 2.47.2
+>=20
+>=20
+>=20
+
+
 
