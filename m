@@ -1,174 +1,169 @@
-Return-Path: <linux-kernel+bounces-787505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3159B37741
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 03:42:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C187B37749
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 03:43:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 22AC57B773E
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 01:41:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDA903612DA
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 01:43:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 693171E25F9;
-	Wed, 27 Aug 2025 01:41:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gImOeSR6"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEBAB20459A;
+	Wed, 27 Aug 2025 01:42:42 +0000 (UTC)
+Received: from smtpbgau1.qq.com (smtpbgau1.qq.com [54.206.16.166])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 279CC1C4A2D;
-	Wed, 27 Aug 2025 01:41:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1600530CD95;
+	Wed, 27 Aug 2025 01:42:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.16.166
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756258884; cv=none; b=q9TwVWlXut36De3//YPuN+h+h6OpRptdyTiVQngBttl0ofNSNJK0eCOGJn8Sx7lY1ke0v53NzMQFmU5cVrrreRQkniv4Ecr9ZUVQdXhPdD3BaaDZfUOKq/tXwe+DZhEeX4Y7O65uC436qpCM9yQEI6AxrHfr+AVFpsDGfsAGboY=
+	t=1756258962; cv=none; b=ibktkUvPc6kEtpLJTo8FWLSLp4bkbE+5uCUkSQU4Pgy+ZD1aq82GGWb/o65V23D7x+ZlFyBwtH5NAIsUa3zlRNCr/44+dgs5KVNJjzMtkqEW6D8mdtScmmYuaIb4T5Rx/Zfjl+YMDNui5HiMjQpobxgXFma96lgOV5VJfSUvGzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756258884; c=relaxed/simple;
-	bh=5q/Ust8foSKyq6WO+ak6JuWcOY7OhfnIEHWOyJ906RY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kDskp8rulsc8Hmb0MbYsb8dUbpKHbiwaicLyWdmR9EZ+eoyLOHOuZ5SHfQWgkUa8rzqKsKp/cUTqeAFHBHgAH92JuqOMkbmOj0R2aMKGOY3ZAKuZ7qlaZaP0bo4qfVRDc0WXepIlBqWSCqB3t4LlkdfWxlZS5lp5lMRYJ+1bbCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gImOeSR6; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756258882; x=1787794882;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=5q/Ust8foSKyq6WO+ak6JuWcOY7OhfnIEHWOyJ906RY=;
-  b=gImOeSR6wThi2SFZIPr6IGS0j0LdgI2J1BGhIpxMOKzrq9DbGMBaw1BB
-   E3rwdTPwMV5xJrzJ7ivGdkzaTBJJjgo3dXAXYqsUogJe96ND4L0U50l0d
-   0T6T35IKNkmmScaVrYj3K+VkCs/vLCMp6UwkWdYGi1WNtPqm4MWUc5r8b
-   O9d8IQCh1YkENeFeuU4pCkhMLFTPFLhvd8G6RZ42wXkn/HU4hTgUKaydh
-   t8swewDekCBzgpzBNhN9son4HWoJVAuwI893KDzZkIjXfmVXtaM7NDDyq
-   n8YM1591SFVTDiGbA4eJePlHjsLc+hp9N3NVIFEV/5JVFQCZeDPRy2lvz
-   A==;
-X-CSE-ConnectionGUID: Kl6EsD/NSjmJ0E94dqIFbQ==
-X-CSE-MsgGUID: lULzFO8aSB+GlhwhWgeGfQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11534"; a="57709292"
-X-IronPort-AV: E=Sophos;i="6.18,214,1751266800"; 
-   d="scan'208";a="57709292"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2025 18:41:21 -0700
-X-CSE-ConnectionGUID: 5nRBdw2zStmpM56MDnB8EQ==
-X-CSE-MsgGUID: ir69S7cYRvGcocswCgFTJA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,214,1751266800"; 
-   d="scan'208";a="169631845"
-Received: from binbinwu-mobl.ccr.corp.intel.com (HELO [10.124.233.111]) ([10.124.233.111])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2025 18:41:17 -0700
-Message-ID: <3d9b21a7-269e-47ef-99e4-889b19e1dbf0@linux.intel.com>
-Date: Wed, 27 Aug 2025 09:41:14 +0800
+	s=arc-20240116; t=1756258962; c=relaxed/simple;
+	bh=uH2VFSJMyCnSLjpcnGx56opsnpfl5naJHZ3WXF5SFAM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FWEEeKqu/8RgS81NY3rFwGip0t4pkXeSesXxllCRwCjp1rr9WLER5gJO/56qzNgi0SyJwNzPjiFrds+SwiiRxtvEocEcAmgl77vds/Iigpg/vLOph3g3CwZHkhn0pr/U0q/pCfGzTHHoDbnJfU2ms+38Uu8E9M2zNDLsfxj55Is=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com; spf=pass smtp.mailfrom=mucse.com; arc=none smtp.client-ip=54.206.16.166
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mucse.com
+X-QQ-mid: esmtpsz20t1756258933t53080512
+X-QQ-Originating-IP: 1lOMaAuA9nfuwe2FeABSvz6MykdgCUNe1qBMkBQJ4Vg=
+Received: from localhost ( [203.174.112.180])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Wed, 27 Aug 2025 09:42:11 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 10885226712742933272
+Date: Wed, 27 Aug 2025 09:42:11 +0800
+From: Yibo Dong <dong100@mucse.com>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Vadim Fedorenko <vadim.fedorenko@linux.dev>, andrew+netdev@lunn.ch,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, horms@kernel.org, corbet@lwn.net,
+	gur.stavi@huawei.com, maddy@linux.ibm.com, mpe@ellerman.id.au,
+	danishanwar@ti.com, lee@trager.us, gongfan1@huawei.com,
+	lorenzo@kernel.org, geert+renesas@glider.be,
+	Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
+	alexanderduyck@fb.com, richardcochran@gmail.com, kees@kernel.org,
+	gustavoars@kernel.org, netdev@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH net-next v7 4/5] net: rnpgbe: Add basic mbx_fw support
+Message-ID: <05B2D818DB1348E6+20250827014211.GA469112@nic-Precision-5820-Tower>
+References: <20250822023453.1910972-1-dong100@mucse.com>
+ <20250822023453.1910972-5-dong100@mucse.com>
+ <316f57e3-5953-4db6-84aa-df9278461d30@linux.dev>
+ <82E3BE49DB4195F0+20250826013113.GA6582@nic-Precision-5820-Tower>
+ <bbdabd48-61c0-46f9-bf33-c49d6d27ffb0@linux.dev>
+ <8C1007761115185D+20250826110539.GA461663@nic-Precision-5820-Tower>
+ <bd1d77b2-c218-4dce-bbf6-1cbdecabb30b@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] KVM: TDX: Force split irqchip for TDX at irqchip
- creation time
-To: Sagi Shahar <sagis@google.com>
-Cc: Sean Christopherson <seanjc@google.com>,
- Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>, Ira Weiny <ira.weiny@intel.com>,
- "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
- kvm@vger.kernel.org, x86@kernel.org
-References: <20250827011726.2451115-1-sagis@google.com>
-Content-Language: en-US
-From: Binbin Wu <binbin.wu@linux.intel.com>
-In-Reply-To: <20250827011726.2451115-1-sagis@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <bd1d77b2-c218-4dce-bbf6-1cbdecabb30b@lunn.ch>
+X-QQ-SENDSIZE: 520
+Feedback-ID: esmtpsz:mucse.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: MNsLylogNlqc6nEp4WVIUhq56of8guHz52MSHB8r89kVkvD5Sqrq9HQD
+	7V1CMGDOCVUhFU4MNcBTcz4D+A+5nJmGIiU/HOh+0o3A1KzX6gRwhbARZJ9Jh7jPegIH80M
+	xqRrxn840BbUOJBXhtaDbLpb3OtHqi/3rqpP+7vM7h9DPb+BGHAaEcij6/VQzDjBjLahzWr
+	SukMm0WfpCrbPOlSq/8BWYA45jhx/rqSTxYB6MPh38iqKSc8g3uHkxQJyuZcRO7oyEp7glv
+	MtU07FrRXgTgUXDIjOYWkjTFw0bpCM8NibLSehKerqXOAj1oBsz3p37B0NjJuJ7a8LKDkKZ
+	YROF59AsqPduzBBYpgjakUOt3l5nSV+1Z8yg+7PxaIaDVBhiL4HN+lvsvNU+WEteW1/P1ng
+	x/WfoUqt1CzhPjzyTZLmuXij5WIj5aQu+yGW4dLzjHJ3IGF4fdsrsh+w0cy1Xul9mfyxq+u
+	YmmnMFZysLpccjPKVt8/qU6omzGArZXpnHmF7eBsh2JDUmJGXW7YBGZQUzIL7B1kVVWrGfz
+	7fFQPPseO8huV2WchoUM2MMWRVFEH9GvZP4dWnCztZRAcQumInWnFn7pFAPNQYrHupKkvs/
+	Tzh3D2jVcfI9DwobeFgv5+8SqmGcDeBqnvRhxhe07dvA+PzxCp8IDvb8E9xNUV8aVd3LoHm
+	sjsSQYbI84wGqSL0eLHEjEdvzS6iNCYDYM47uJHTIhLUVR/zU/3TOwB4Om9RVYOODYEnz6D
+	pad7SxviHVzTwDKSQWqjaDX8/oH31wcjdPsp7Fd0ItmwBL9JVuxgp//Vu9BfGGzAG8rvX45
+	8sTj05502IWdtL1fxgFFMgRVlL8a5dUmrHmu5wT3BtKdCB+ustkp3vj+Eg347yh8igVV0G8
+	gPPCziKvbdWVZRgFygVMji6gqm0Hf/RkSE/dDtXuRjODqzKgwoyCgbVfcbyc7xedNiH37Pp
+	Ffqyzbeto8fzam3t714l2BYyLBIHDq7zDkvpwWa/XeWEUNlJFL7OcjvE/
+X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
+X-QQ-RECHKSPAM: 0
 
+On Tue, Aug 26, 2025 at 02:39:07PM +0200, Andrew Lunn wrote:
+> > Yes. It is not safe, so I 'must wait_event_timeout before free cookie'....
+> > But is there a safe way to do it?
+> > Maybe:
+> > ->allocate cookie
+> >   -> map it to an unique id
+> >     ->set the id to req->cookie
+> >       ->receive response and check id valid? Then access cookie?
+> 
+> This is part of why adding cookies in a separate patch with a good
+> commit message is important.
+> 
+> Please take a step back. What is the big picture? Why do you need a
+> cookie? What is it used for? If you describe what your requirements
+> are, we might be able to suggest a better solution, or point you at a
+> driver you can copy code from.
+> 
+> 	Andrew
+> 
 
+I try to explain the it:
 
-On 8/27/2025 9:17 AM, Sagi Shahar wrote:
-> TDX module protects the EOI-bitmap which prevents the use of in-kernel
-> I/O APIC. See more details in the original patch [1]
->
-> The current implementation already enforces the use of split irqchip for
-> TDX but it does so at the vCPU creation time which is generally to late
-to late -> too late
+driver-->fw, we has two types request:
+1. without response, such as mucse_mbx_ifinsmod
+2. with response, such as mucse_fw_get_macaddr
 
-> to fallback to split irqchip.
->
-> This patch follows Sean's recomendation from [2] and move the check if
-recomendation -> recommendation
+fw --> driver, we has one types request:
+1. link status (link speed, duplex, pause status...)
 
-Also "move the check ..." needs to be updated, since the check during vCPU
-creation is still there.
+fw tiggers irq when it sends response or request.
+In order to handle link status timely, we do an irqhandle like this:
 
-> I/O APIC is supported for the VM at irqchip creation time.
+static int rnpgbe_rcv_msg_from_fw(struct mucse *mucse)
+{
+        u32 msgbuf[MUCSE_FW_MAILBOX_WORDS];
+        struct mucse_hw *hw = &mucse->hw;
+        struct mbx_fw_cmd_reply *reply;
+        int retval;
+	/* read mbx data out */
+        retval = mucse_read_mbx(hw, msgbuf, MUCSE_FW_MAILBOX_WORDS);
+        if (retval)
+                return retval;
 
+        reply = (struct mbx_fw_cmd_reply *)msgbuf;
+	/* judge request or response */
+        if (le16_to_cpu(reply->flags) & FLAGS_DD) {
+		/* if it is a response, call wake_up(cookie) */
+                return rnpgbe_mbx_fw_reply_handler(mucse,
+                                (struct mbx_fw_cmd_reply *)msgbuf);
+        } else {
+		/* if it is a request, handle link status */
+                return rnpgbe_mbx_fw_req_handler(mucse,
+                                (struct mbx_fw_cmd_req *)msgbuf);
+        }
+}
 
-Some nits above.
+And driver requests with response is bellow 'without' irqhandle:
 
-Otherwise,
-Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
+static int mucse_fw_send_cmd_wait(struct mucse_hw *hw,
+				  struct mbx_fw_cmd_req *req,
+				  struct mbx_fw_cmd_reply *reply)
+{
+...
+	mucse_write_posted_mbx(hw, (u32 *)req, len);
 
+	...
+	/* but as irqhandle be added, mbx data is read out in the
+	 * handler, mucse_read_posted_mbx cannot read anything */
+	mucse_read_posted_mbx(hw, (u32 *)reply, sizeof(*reply));
 
->
-> [1] https://lore.kernel.org/lkml/20250222014757.897978-11-binbin.wu@linux.intel.com/
-> [2] https://lore.kernel.org/lkml/aK3vZ5HuKKeFuuM4@google.com/
->
-> Suggested-by: Sean Christopherson <seanjc@google.com>
-> Signed-off-by: Sagi Shahar <sagis@google.com>
-> ---
->   arch/x86/include/asm/kvm_host.h | 1 +
->   arch/x86/kvm/vmx/tdx.c          | 6 ++++++
->   arch/x86/kvm/x86.c              | 9 +++++++++
->   3 files changed, 16 insertions(+)
->
-> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-> index f19a76d3ca0e..6a4019d3a184 100644
-> --- a/arch/x86/include/asm/kvm_host.h
-> +++ b/arch/x86/include/asm/kvm_host.h
-> @@ -1357,6 +1357,7 @@ struct kvm_arch {
->   	u8 vm_type;
->   	bool has_private_mem;
->   	bool has_protected_state;
-> +	bool has_protected_eoi;
->   	bool pre_fault_allowed;
->   	struct hlist_head *mmu_page_hash;
->   	struct list_head active_mmu_pages;
-> diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
-> index 66744f5768c8..9637d9da1af1 100644
-> --- a/arch/x86/kvm/vmx/tdx.c
-> +++ b/arch/x86/kvm/vmx/tdx.c
-> @@ -658,6 +658,12 @@ int tdx_vm_init(struct kvm *kvm)
->   	 */
->   	kvm->max_vcpus = min_t(int, kvm->max_vcpus, num_present_cpus());
->   
-> +	/*
-> +	 * TDX Module doesn't allow the hypervisor to modify the EOI-bitmap,
-> +	 * i.e. all EOIs are accelerated and never trigger exits.
-> +	 */
-> +	kvm->arch.has_protected_eoi = true;
-> +
->   	kvm_tdx->state = TD_STATE_UNINITIALIZED;
->   
->   	return 0;
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index a1c49bc681c4..57b4d5ba2568 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -6966,6 +6966,15 @@ int kvm_arch_vm_ioctl(struct file *filp, unsigned int ioctl, unsigned long arg)
->   		if (irqchip_in_kernel(kvm))
->   			goto create_irqchip_unlock;
->   
-> +		/*
-> +		 * Disallow an in-kernel I/O APIC if the VM has protected EOIs,
-> +		 * i.e. if KVM can't intercept EOIs and thus can't properly
-> +		 * emulate level-triggered interrupts.
-> +		 */
-> +		r = -ENOTTY;
-> +		if (kvm->arch.has_protected_eoi)
-> +			goto create_irqchip_unlock;
-> +
->   		r = -EINVAL;
->   		if (kvm->created_vcpus)
->   			goto create_irqchip_unlock;
+}
+
+To solve mucse_read_posted_mbx cannot read data with irq, we add 'cookie'.
+After mucse_write_posted_mbx, call wait_event_timeout. wake_up is called
+in irqhandle.
+
+Thanks for your feedback.
 
 
