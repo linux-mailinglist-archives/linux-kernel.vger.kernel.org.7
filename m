@@ -1,30 +1,30 @@
-Return-Path: <linux-kernel+bounces-787508-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787509-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D08BB37745
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 03:43:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E82FB37746
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 03:43:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BCA3D1BA1D4A
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 01:43:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFA7A361273
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 01:43:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 033042080C8;
-	Wed, 27 Aug 2025 01:42:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24BC02046BA;
+	Wed, 27 Aug 2025 01:42:26 +0000 (UTC)
 Received: from smtps.ntu.edu.tw (smtps.ntu.edu.tw [140.112.2.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F1371E5B62
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 01:42:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 814A71F8908
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 01:42:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.112.2.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756258943; cv=none; b=QBNxWIBzZGdCRaIR0MADkO2RWZGeiWU1yh9i/hfGtt+P7d76VYa4SR5aEa4jepsFJDVlX70GymC45yDogl591I7moxodtZAo60SSoDW9KHJIgy5VBEpfwwsdUy08LSGZxBGNOljA/HG7DQdHDPOQqnF4eEXVENvRrTEHXKwsg7M=
+	t=1756258945; cv=none; b=XT4tyUOcqIzD+4GZbSxBHG3atNtZUul7fJ9Fr5atZvCPbHw6LtWlQQOpDf1U8qHmABb+wxi8R2Qb4Fv+neLm8NGrPkKq4EOwKNunwE6oPRCmGgTBJXv4jd8tFENzxOypf5rvNmI8B20UvtNUo6NnPYVHUP0kXGBOIqsy83331o4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756258943; c=relaxed/simple;
-	bh=j1xJkDz4IPC6ojSYEVosmWHwWdwZi0b+bSKNlF3mqUw=;
+	s=arc-20240116; t=1756258945; c=relaxed/simple;
+	bh=hyHqqgsKCQITQyRm5hh0V/liS81UjB7HvC7eoO7k/08=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Pc4VjV/ylGTUYjGLkoxUk08OTgucbaPJQut4MfzsA1T/mUvjvyZtRN2RRWrYIAt3r4gEZX4FRCClAxr8ShIPWlE7NnGyd7sNtbBq6d4RzOlaphv3d9XgqitpBmfF3ytpMmM1nojKA4ikChsEO9NOe4EIrNLt/yFaFE/iRT2w6wA=
+	 MIME-Version; b=XhHf9DoYYi9jo3AMGyzcLdxFJQXl0rTkAtkXcMPJe2GR2vS0ZxDmSVKe9gnnI4xuWEb6vl8CJrEYO94xv0U1u8aaFQUyJODPqB7p1Qhuzm6XAK4ZweHoDbUcSUm3KRMMSGQmKRMJ67LyQEcksBTlL7TVOczoL2Gce4jzf1/uIxM=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ntu.edu.tw; spf=pass smtp.mailfrom=ntu.edu.tw; arc=none smtp.client-ip=140.112.2.142
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ntu.edu.tw
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ntu.edu.tw
@@ -32,8 +32,8 @@ Received: from x415ea.. (unknown [101.12.130.11])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtps.ntu.edu.tw (Postfix) with ESMTPSA id 5E30932275;
-	Wed, 27 Aug 2025 09:42:10 +0800 (CST)
+	by smtps.ntu.edu.tw (Postfix) with ESMTPSA id 6BF5D31F50;
+	Wed, 27 Aug 2025 09:42:14 +0800 (CST)
 From: Bill Tsui <b10902118@ntu.edu.tw>
 To: oleg@redhat.com,
 	linux@armlinux.org.uk,
@@ -42,9 +42,9 @@ To: oleg@redhat.com,
 Cc: linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	Bill Tsui <b10902118@ntu.edu.tw>
-Subject: [PATCH v2 1/3] arm64: ptrace: fix hw_break_set() by setting addr and ctrl together
-Date: Wed, 27 Aug 2025 09:41:11 +0800
-Message-Id: <20250827014113.5852-2-b10902118@ntu.edu.tw>
+Subject: [PATCH v2 2/3] arm64: ptrace: minimize default bp_len for hw breakpoints to pass check
+Date: Wed, 27 Aug 2025 09:41:12 +0800
+Message-Id: <20250827014113.5852-3-b10902118@ntu.edu.tw>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250827014113.5852-1-b10902118@ntu.edu.tw>
 References: <20250824124317.390795-1-b10902118@ntu.edu.tw>
@@ -57,91 +57,68 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-PTRACE_SETREGSET fails when setting a hardware breakpoint on a
+PTRACE_SETHBPREGS fails when setting a hardware breakpoint on a
 non-4-byte aligned address with a valid length to a 32-bit tracee. The
 length should be valid as long as the range started from the address
 is within one aligned 4 bytes.
 
-The cause is that hw_break_set() modifies a breakpoint's addr
-first and then ctrl. This calls modify_user_hw_breakpoint() twice,
-although once registering both suffices. The first modification causes
-errors because new addr and old ctrl can be an invalid combination at
-hw_breakpoint_arch_parse(). For example, when a user sets a hardware
-breakpoint with addr=0x2 and ctrl.len=1, hw_breakpoint_arch_parse()
-will first see addr=0x2 and ctrl.len=4 (the default) and return
--EINVAL. On the other hand, if a user sets the same value to
-a breakpoint whose ctrl.len has previously been set to 1 or 2,
-it succeeds.
+The cause is that compat_ptrace_hbp_set() can only modify either
+addr or ctrl of a breakpoint per call, but always checks alignment in
+hw_breakpoint_arch_parse(). If a breakpoint has ctrl.len=4 (the
+default), then users cannot set the addr to a non-4-byte aligned
+address. Likewise, if the addr was previously set unaligned, users
+cannot set ctrl.len to 4.
 
-The fix is to set addr and ctrl in one modify_user_hw_breakpoint(),
-effectively eliminating the discrepancy in validation.
+This patch mitigates the issue by minimizing the default bp_len, so
+that any possibly valid address can pass the check with it. However, it
+does not solve misaligned addr/len in modifying existing breakpoints;
+further work may be needed to remove or relax the alignment check.
 
 Signed-off-by: Bill Tsui <b10902118@ntu.edu.tw>
 ---
- arch/arm64/kernel/ptrace.c | 34 +++++++++++++++++++++++++++++-----
- 1 file changed, 29 insertions(+), 5 deletions(-)
+ arch/arm64/kernel/ptrace.c | 15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
 
 diff --git a/arch/arm64/kernel/ptrace.c b/arch/arm64/kernel/ptrace.c
-index 4b001121c..73c67f743 100644
+index 73c67f743..70c9acd94 100644
 --- a/arch/arm64/kernel/ptrace.c
 +++ b/arch/arm64/kernel/ptrace.c
-@@ -467,6 +467,32 @@ static int ptrace_hbp_set_addr(unsigned int note_type,
- 	return err;
- }
+@@ -288,14 +288,25 @@ static struct perf_event *ptrace_hbp_create(unsigned int note_type,
+ {
+ 	struct perf_event *bp;
+ 	struct perf_event_attr attr;
+-	int err, type;
++	int err, type, min_len;
  
-+/* Set the address and control together for non-compat ptrace */
-+static int ptrace_hbp_set(unsigned int note_type, struct task_struct *tsk,
-+			  unsigned long idx, u64 addr, u32 uctrl)
-+{
-+	int err;
-+	struct perf_event *bp;
-+	struct perf_event_attr attr;
-+	struct arch_hw_breakpoint_ctrl ctrl;
-+
-+	bp = ptrace_hbp_get_initialised_bp(note_type, tsk, idx);
-+	if (IS_ERR(bp)) {
-+		err = PTR_ERR(bp);
-+		return err;
-+	}
-+
-+	attr = bp->attr;
-+	attr.bp_addr = addr;
-+
-+	decode_ctrl_reg(uctrl, &ctrl);
-+	err = ptrace_hbp_fill_attr_ctrl(note_type, ctrl, &attr);
-+	if (err)
-+		return err;
-+
-+	return modify_user_hw_breakpoint(bp, &attr);
-+}
-+
- #define PTRACE_HBP_ADDR_SZ	sizeof(u64)
- #define PTRACE_HBP_CTRL_SZ	sizeof(u32)
- #define PTRACE_HBP_PAD_SZ	sizeof(u32)
-@@ -524,9 +550,6 @@ static int hw_break_set(struct task_struct *target,
- 			return -EINVAL;
- 		ret = user_regset_copyin(&pos, &count, &kbuf, &ubuf, &addr,
- 					 offset, offset + PTRACE_HBP_ADDR_SZ);
--		if (ret)
--			return ret;
--		ret = ptrace_hbp_set_addr(note_type, target, idx, addr);
- 		if (ret)
- 			return ret;
- 		offset += PTRACE_HBP_ADDR_SZ;
-@@ -537,10 +560,11 @@ static int hw_break_set(struct task_struct *target,
- 					 offset, offset + PTRACE_HBP_CTRL_SZ);
- 		if (ret)
- 			return ret;
--		ret = ptrace_hbp_set_ctrl(note_type, target, idx, ctrl);
-+		offset += PTRACE_HBP_CTRL_SZ;
-+
-+		ret = ptrace_hbp_set(note_type, target, idx, addr, ctrl);
- 		if (ret)
- 			return ret;
--		offset += PTRACE_HBP_CTRL_SZ;
++	/*
++	 * min_len ensures any possibly valid address can pass alignment
++	 * validation with it.
++	 * This is for compat mode, in which addr and ctrl can only be set
++	 * one after one with SETHBPREGS. If addr is set first, ctrl will
++	 * remain as initial value.
++	 */
+ 	switch (note_type) {
+ 	case NT_ARM_HW_BREAK:
+ 		type = HW_BREAKPOINT_X;
++		min_len = (tsk && is_compat_thread(task_thread_info(tsk))) ?
++				  HW_BREAKPOINT_LEN_2 :
++				  HW_BREAKPOINT_LEN_4;
+ 		break;
+ 	case NT_ARM_HW_WATCH:
+ 		type = HW_BREAKPOINT_RW;
++		min_len = HW_BREAKPOINT_LEN_1;
+ 		break;
+ 	default:
+ 		return ERR_PTR(-EINVAL);
+@@ -308,7 +319,7 @@ static struct perf_event *ptrace_hbp_create(unsigned int note_type,
+ 	 * (i.e. values that will pass validation).
+ 	 */
+ 	attr.bp_addr	= 0;
+-	attr.bp_len	= HW_BREAKPOINT_LEN_4;
++	attr.bp_len	= min_len;
+ 	attr.bp_type	= type;
+ 	attr.disabled	= 1;
  
- 		user_regset_copyin_ignore(&pos, &count, &kbuf, &ubuf,
- 					  offset, offset + PTRACE_HBP_PAD_SZ);
 -- 
 2.50.1
 
