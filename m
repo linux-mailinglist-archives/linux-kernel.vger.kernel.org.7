@@ -1,126 +1,113 @@
-Return-Path: <linux-kernel+bounces-788586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C553CB386DD
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 17:41:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DF32B386B1
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 17:30:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5752463009
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 15:41:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E496C162286
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 15:30:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0ADB2E2280;
-	Wed, 27 Aug 2025 15:41:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A28429B8F8;
+	Wed, 27 Aug 2025 15:30:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=khirnov.net header.i=@khirnov.net header.b="OcAiS4F1"
-Received: from mail1.khirnov.net (quelana.khirnov.net [94.230.150.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="N1V7Ry/Y"
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AE262D3A65;
-	Wed, 27 Aug 2025 15:41:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.230.150.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 055B52C2368
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 15:30:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756309300; cv=none; b=N1tl1lrB8X2L07czFEsxsRzAZT5yD5vP32DcvafzIuBJ/Igr/cr+l31A1GUilD8mGDwPJgxLV4VouBtb6ttct/zQYIZbbrl+7hmT5jZeV6BLqcEaeNIloMjBxiLsLuatys3jYYCztfCPt8Tfg6kwpK+FS6aHdVp6YTKflHd1hJ0=
+	t=1756308631; cv=none; b=d/U/I+ZXsYhwLNAcIycjGByLZqaT0OUy7sz1/qMtEsrZgVxhdGQL4yIiOk/cP2LOL0xzTsnvG73xCWBVH13YdvW0HF5sHTrz6mPqfbLWj7yLVen0/YfRauNnQBQ0O5MOc4Qd4gMkiPAkjrI0RXR2oCtPG6r1pIoj2tBvsh84R84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756309300; c=relaxed/simple;
-	bh=gD8kF92HRH+Visy2lZQ4To2uQb0bha9BsVW+KZEj9NM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=I6TWQHpbDslxIegiq6QLhav1Ye5xPR2ps/crktyYz0VcA3A2OYYUInCu9Ynbs5hXP9VVmc5Hk41/cBDCZsDT8YTyXFN3IQTVeyi4w/xOgvhl9RPlqVsbspsU0dJ7228hKOXmj9kk9oWdnGe8v20PZqoXKnK4qOS2N7e4XrSKWvc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=khirnov.net; spf=pass smtp.mailfrom=khirnov.net; dkim=pass (2048-bit key) header.d=khirnov.net header.i=@khirnov.net header.b=OcAiS4F1; arc=none smtp.client-ip=94.230.150.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=khirnov.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=khirnov.net
-Authentication-Results: mail1.khirnov.net;
-	dkim=pass (2048-bit key; unprotected) header.d=khirnov.net header.i=@khirnov.net header.a=rsa-sha256 header.s=mail header.b=OcAiS4F1;
-	dkim-atps=neutral
-Received: from localhost (mail1.khirnov.net [IPv6:::1])
-	by mail1.khirnov.net (Postfix) with ESMTP id B4A653FBB;
-	Wed, 27 Aug 2025 17:33:16 +0200 (CEST)
-Received: from mail1.khirnov.net ([IPv6:::1])
- by localhost (mail1.khirnov.net [IPv6:::1]) (amavis, port 10024) with ESMTP
- id HlDlsPuRrlJc; Wed, 27 Aug 2025 17:33:15 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=khirnov.net; s=mail;
-	t=1756308795; bh=gD8kF92HRH+Visy2lZQ4To2uQb0bha9BsVW+KZEj9NM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=OcAiS4F1TM0sAH2xf00NluMr02l9WAEIRZ+8V6v7+poH47Tpza93r/7G8FRVPmLSI
-	 avsjPcC0NX9nRAUrTcj/JnpLHX5yFQrOSvgjGMNS9RryX439Jp+/ycMC7uPEmFw8l0
-	 glnoqUvOn433rk8je/BR2cPhvQnOLza4py0N+oUwdvpEZOpD8xiFWNj+cNqKa5WBYe
-	 vW0mM9n25FVCBkmhZAvkLozhWDgkJe17Y5ts9hhWza4ZmYJakryPv/PyZQeuwSAnBF
-	 dwnEYgS/1O7fwNfuMama9H1ClOYBM2RGmwbBsBQgOpl3Cqv9ABtJPqz2xaWPc5JAvV
-	 hNw9cHBWedlGA==
-Received: from dev0.khirnov.net (dev0.khirnov.net [IPv6:2a00:c500:561:201::6])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256
-	 client-signature RSA-PSS (2048 bits) client-digest SHA256)
-	(Client CN "dev0.khirnov.net", Issuer "smtp.khirnov.net SMTP CA" (verified OK))
-	by mail1.khirnov.net (Postfix) with ESMTPS id 8DCE23248;
-	Wed, 27 Aug 2025 17:33:15 +0200 (CEST)
-Received: by dev0.khirnov.net (Postfix, from userid 1000)
-	id 75EF5402C62; Wed, 27 Aug 2025 17:33:15 +0200 (CEST)
-From: Anton Khirnov <anton@khirnov.net>
-To: Hans de Goede <hansg@kernel.org>,
-	Corentin Chary <corentin.chary@gmail.com>,
-	"Luke D. Jones" <luke@ljones.dev>,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: Anton Khirnov <anton@khirnov.net>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	linux-input@vger.kernel.org,
-	platform-driver-x86@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3] platform/x86: asus-wmi: map more keys on ExpertBook B9
-Date: Wed, 27 Aug 2025 17:29:54 +0200
-Message-Id: <20250827152954.4844-1-anton@khirnov.net>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <e39cf267-0784-4b56-a989-349e84487bbf@kernel.org>
-References: <e39cf267-0784-4b56-a989-349e84487bbf@kernel.org>
+	s=arc-20240116; t=1756308631; c=relaxed/simple;
+	bh=nRBXuJZ3I5e1TctbwJST9Ghq/VA5jwV1pNUBnMqDY1I=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=snQrYt+xToQuh/Dyw4YZFm9y33IOR5fibISmfqKzeFuXd71mtFxgMuJdBzxdOZ+nnjZYDitGEI27zITKdS7Ydb6nHWk4HRe4I7DNFr7E8PZFeTpBazECt2p54MuOCcTDQNKj8vDYPOQzs+82Cnw79gZVgfXiq/CZg5aqQoIl7Vk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=N1V7Ry/Y; arc=none smtp.client-ip=209.85.128.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-45a1b0098c0so47813435e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 08:30:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1756308628; x=1756913428; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=+2lcoD1SkCJi8dEvMItuNydCcCeq1NBdI+5d9T3pGQk=;
+        b=N1V7Ry/YVS8gEtFnR9CYMo+CuWALymfZv0zi3fB80/hpMmgfmpX/L3DcjC3YEUMuPe
+         yz6aL9GhND10gnUsm/BxRDNKasLJYIrj7gxD3xb0IAkwUpJtAEYT7rOPM4MFwzTxfK+Q
+         s4laPfAxmR69Va8LKz7Yidsi4YuMePm3Tn9me50vqeKAsAmQcLcds+fwvgtyfdh7sfn6
+         PXoC6IUJuwbgg3bifBjnKH4Zx4JjYWuzGYXtt4ghLf6sG5A+M+h2agBulPUup13heTpL
+         N0X4FP6y9DVubpEz2RjWiRCiFc509JOhTTBgMU+Vrz0K0eSpW0MD9Mi7MRqpSg8stinC
+         eRWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756308628; x=1756913428;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+2lcoD1SkCJi8dEvMItuNydCcCeq1NBdI+5d9T3pGQk=;
+        b=qMoPaid8WBgV6XWXy/hx5mSB/f1JMDhDvMcCv9FMVAfscyIcQ1dtprj+G+mdMTlQi1
+         /d6h8PAK84NGkEb8gc9luCoEXR5IGGx4CpvD9vqEa+jMTbc1IOfmYrEKhDliNPP/c/4r
+         FsQwD2qCylIsvVZxeyAJ+aijk5bCdtHz8//O6xtfhD3eRN5/j3prTbsrN+u9dJyEjA87
+         22St476TUw/eYFzQmOf9LK5APQIJ1nD6NbLNgiOPDTJMXymgC5cyNRtCOWvaLALHkpBX
+         SLHifm2wUPrRv8RtRugUQJ19QGJxH0/3w5ImR3Q4MZDbybf5Mx0st2kZz2eW2f0Mx62Z
+         YsoA==
+X-Forwarded-Encrypted: i=1; AJvYcCWTE0rKEiBxzEsxTPGQHyYWv50CZL0KGsgnFgqcRnSbShPwuK2oeW9s6DIatfDVKE4myq7Z4hhIdOPs4r8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxImnodkk7qvVIB6FK2BXuEvjtu/+2bxYJgzw07PPIl+hkkfY5m
+	gOc5qcP7tcEQToU7FHlcaaiYFEJSqb7Tx0Y4aQp9lrky9SR4pkXf3COfM4nu854fo/wb77sFdLX
+	j/rPOSCcdbW1/tA==
+X-Google-Smtp-Source: AGHT+IEvXocNCcysmhKTOTVqBVS/7zQEmjrI1mwpeLDOcAO5bM1y/TcdWjOA2UfYgroW31bB46gdDNVFr0ea3Q==
+X-Received: from wmte19.prod.google.com ([2002:a05:600c:8b33:b0:45b:73cf:2862])
+ (user=jackmanb job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:1994:b0:45b:7185:9e4 with SMTP id 5b1f17b1804b1-45b71850b8cmr27223015e9.11.1756308628229;
+ Wed, 27 Aug 2025 08:30:28 -0700 (PDT)
+Date: Wed, 27 Aug 2025 15:30:27 +0000
+In-Reply-To: <20250826191320.d5aa551eb5abef316de41175@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20250826-cleanup-should_compact_retry-v1-1-d2ca89727fcf@google.com>
+ <20250826191320.d5aa551eb5abef316de41175@linux-foundation.org>
+X-Mailer: aerc 0.20.1
+Message-ID: <DCDBG4WR1ZDF.23COVR1IO2OSJ@google.com>
+Subject: Re: [PATCH] mm/page_alloc: Harmonize should_compact_retry() type
+From: Brendan Jackman <jackmanb@google.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Vlastimil Babka <vbabka@suse.cz>, Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Zi Yan <ziy@nvidia.com>, <linux-mm@kvack.org>, 
+	<linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-* there is a dedicated "noise cancel" key in top row, between mic mute
-  and PrintScreen; it sends 0xCA when pressed by itself (mapped to F13),
-  0xCB with Fn (mapped to F14)
-* Fn+f sends 0x9D; it is not documented in the manual, but some web
-  search results mention "asus intelligent performance"; mapped to FN_F
+On Wed Aug 27, 2025 at 2:13 AM UTC, Andrew Morton wrote:
+> On Tue, 26 Aug 2025 14:06:54 +0000 Brendan Jackman <jackmanb@google.com> wrote:
+>
+>> Currently order is signed in one version of the function and unsigned in
+>> the other. Tidy that up.
+>> 
+>> In page_alloc.c, order is unsigned in the vast majority of cases. But,
+>> there is a cluster of exceptions in compaction-related code (probably
+>> stemming from the fact that compact_control.order is signed). So, prefer
+>> local consistency and make this one signed too.
+>> 
+>
+> grumble, pet peeve.  Negative orders make no sense.  Can we make
+> cc->order unsigned in order (heh) to make everything nice?
 
-Signed-off-by: Anton Khirnov <anton@khirnov.net>
----
-Hi Hans,
-would you mind applying this version of the patch, with the Fn+space
-mapping left out for now?
+I think we can't "just" do that:
 
-Thanks
----
-
- drivers/platform/x86/asus-nb-wmi.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/drivers/platform/x86/asus-nb-wmi.c b/drivers/platform/x86/asus-nb-wmi.c
-index f84c3d03c1de..dba3c1488db2 100644
---- a/drivers/platform/x86/asus-nb-wmi.c
-+++ b/drivers/platform/x86/asus-nb-wmi.c
-@@ -618,6 +618,7 @@ static const struct key_entry asus_nb_wmi_keymap[] = {
- 	{ KE_KEY, 0x93, { KEY_SWITCHVIDEOMODE } }, /* SDSP LCD + CRT + TV + DVI */
- 	{ KE_KEY, 0x95, { KEY_MEDIA } },
- 	{ KE_KEY, 0x99, { KEY_PHONE } }, /* Conflicts with fan mode switch */
-+	{ KE_KEY, 0X9D, { KEY_FN_F } },
- 	{ KE_KEY, 0xA0, { KEY_SWITCHVIDEOMODE } }, /* SDSP HDMI only */
- 	{ KE_KEY, 0xA1, { KEY_SWITCHVIDEOMODE } }, /* SDSP LCD + HDMI */
- 	{ KE_KEY, 0xA2, { KEY_SWITCHVIDEOMODE } }, /* SDSP CRT + HDMI */
-@@ -632,6 +633,8 @@ static const struct key_entry asus_nb_wmi_keymap[] = {
- 	{ KE_IGNORE, 0xC0, }, /* External display connect/disconnect notification */
- 	{ KE_KEY, 0xC4, { KEY_KBDILLUMUP } },
- 	{ KE_KEY, 0xC5, { KEY_KBDILLUMDOWN } },
-+	{ KE_KEY, 0xCA, { KEY_F13 } }, /* Noise cancelling on Expertbook B9 */
-+	{ KE_KEY, 0xCB, { KEY_F14 } }, /* Fn+noise-cancel */
- 	{ KE_IGNORE, 0xC6, },  /* Ambient Light Sensor notification */
- 	{ KE_IGNORE, 0xCF, },	/* AC mode */
- 	{ KE_KEY, 0xFA, { KEY_PROG2 } },           /* Lid flip action */
--- 
-2.39.5
-
+/*
+ * order == -1 is expected when compacting proactively via
+ * 1. /proc/sys/vm/compact_memory
+ * 2. /sys/devices/system/node/nodex/compact
+ * 3. /proc/sys/vm/compaction_proactiveness
+ */
+static inline bool is_via_compact_memory(int order)
+{
+	return order == -1;
+}
 
