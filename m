@@ -1,62 +1,94 @@
-Return-Path: <linux-kernel+bounces-788079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B292B37F82
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 12:08:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C324BB37F81
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 12:08:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD79F1897347
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 10:09:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00ECA189710C
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 10:08:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A6A03090F4;
-	Wed, 27 Aug 2025 10:08:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37CD730F926;
+	Wed, 27 Aug 2025 10:08:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="a+OEcKte"
-Received: from r3-20.sinamail.sina.com.cn (r3-20.sinamail.sina.com.cn [202.108.3.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="H4jpo4EL"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5725528312E
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 10:08:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C76042AE90
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 10:08:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756289333; cv=none; b=WBJC4aTQEOPXerCAi8cE3JSBr3Nh+Q9ErIAPMV5E6xj7iJEMG1jI/SctfGm8XAIV8X4OHKLW9dfptkEcpXu3OpcRnPGH+XX1zC/a+zp85ye9MOz0jVMvLX84Bc26wRqYTqrRRhTD0lDhySUSxcTUBtMhGnXy/jo7GJgnGSL3TjU=
+	t=1756289294; cv=none; b=Lxpe14iP9yuhHAmB3XrWUh+RtuVmxZfqZY8arBXSFZ9HXwTpnt+IlxI4NrM7aEQoFNUVxwXiBFOteeKP/N068D6W24H3dB23RROrKwxGB/otS5NUtNr/q+9lLM8gUsAQLNYKIfPEKTMA5D+ojt910CUHaR7rAgSQ3WIlTcLAgmI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756289333; c=relaxed/simple;
-	bh=5j+zv/LW29Fwq0Et5XGu7e4Lv33X89RXoND/awpP0DA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Ui1F5/E+DI4Vk/S4Qjq9HZQJfsaVV0GBW1tBmBlRJGtSZuRpP5xuyX98KsrHtvwKOoLuq93dYqYc96H1yCjqppgCuHjT4fygG+VJ0y+wrrahp2HBbCgo4MTvIWkgSfUymSxqh0/2O+pSM2sxLualihv08zp7xTzxy7ghxDtphMg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=a+OEcKte; arc=none smtp.client-ip=202.108.3.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1756289326;
-	bh=6eLyljDPHXcoUhbmlspSlqR/53Enef0kRgnhwegeozM=;
-	h=From:Subject:Date:Message-ID;
-	b=a+OEcKte+SNUR/qwaeuuBktPhrdolviF835wuhlO+i4ezgrIsRo7rWvnF0B5c11NU
-	 K5tPMejRpeflgLyJfekdR1b4LuHu+iorAUbjApglW7c/+ViIkzwLaaZe6ZMsvz0Tci
-	 hIXqJHU2dD7I/8dPhuE6lozpzMv2Ba/kOqo7ZgaM=
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
-	by sina.com (10.54.253.32) with ESMTP
-	id 68AED90600002823; Wed, 27 Aug 2025 18:08:08 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 3905734457092
-X-SMAIL-UIID: 88015A7633A4428FAC62E7093CE52033-20250827-180808-1
-From: Hillf Danton <hdanton@sina.com>
-To: syzbot <syzbot+a25ee9d20d31e483ba7b@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [net?] KASAN: slab-use-after-free Write in __xfrm_state_delete
-Date: Wed, 27 Aug 2025 18:07:55 +0800
-Message-ID: <20250827100757.5864-1-hdanton@sina.com>
-In-Reply-To: <68ab6633.050a0220.37038e.0079.GAE@google.com>
-References: 
+	s=arc-20240116; t=1756289294; c=relaxed/simple;
+	bh=8g3LHa5yiSyBWmJY+w12ha7ZYg8HBqxyOXjkVHt3Hjk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eTw3uqtI8jWn1qE9WOjbZNJ9hKxCPsnkXNi4AxaxDtUEohB+CJvuyXvj9fWvd/x6kIUFBs3LJhhiWQv9H4AmWIL/SijOr7OPmSy7T1Of+QBPuklLH6u+RlGlekdSQ7rksmhLQ2Ml54s4AvmbLzJks98rN/unmBOzUjf2/j7RSpY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=H4jpo4EL; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-45a1b05ac1eso35249485e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 03:08:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1756289290; x=1756894090; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=sXT1+ZhdRYw9on7KamKzgM97PHmPN2Js9ftnngLmHdk=;
+        b=H4jpo4EL7kk6LEWUqFMScxle4zwI69VcgnH46ZMXJB7eNq+Va49svbP0jZj8+nyzwr
+         az/9ydptZTu+QdaizMQjp/7NSB4liuHO+EmGQ6wM4DYELZPCNbXqYQ6oS38NCy5AnA1K
+         L5UUK5X16um+VqeKGWwEzHL3AS9DqXBpmKvQ0bSFdNSoqXSFLflYUN7zXZLDtNk3nvt5
+         rG4oEZaBD+DvB/uS3VqINCfPIN5r/bs+1nWfwIAVUrEL9jm+RguF9YQCV4O08hpAB3yV
+         PtF3x4xV2eS1HqAsVZRvYCroIN8RGgNJ/Gf0OeVCuF3fTtN8VajuOoDHkrd6ZvnLDMc8
+         mpxQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756289290; x=1756894090;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=sXT1+ZhdRYw9on7KamKzgM97PHmPN2Js9ftnngLmHdk=;
+        b=jDES8o35Ffwsy0KjwVdh8CrGTDLx77Lxzi3hh6wvgdH6itcWYxG1+6gUnDZ8typQLD
+         hOYCHmy/cLYQq8iS6VCMY3Q+eS1YYcbwS02JvhWD/xbyQXOYE3hRF8K7Lz9keaXUShMu
+         cIPhP809WLaRWFfc1A5g0IZDRUdv3A6TFuT9OqNKEP2yS5QTYYw8OHVtccfBl72CkHaG
+         JYiHShnRvuucKowcLvXXr9/IUviU9RMyeTK3bK6UmLJdHBAWBWweLvhB7RcGnhnfGrfd
+         wraqm6sU69ci7wEHNiGXvkduHDIb4tcW8FU834FYDHjTVYxadDCCEky2Qkp1X4qaw1Na
+         Nklw==
+X-Forwarded-Encrypted: i=1; AJvYcCUegMF2FiYZ4csEbla4abgisEl9fUyVcP1/aDVxzAIFdyiF+fAYOjP4pczUpyWA9LGsGYPuRCi6cXUY+VM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxvZt3TfCO5WjH5VW2EmtCoPWHkxhEdxI//bI8Nm10aig2sqboh
+	QtH/+dKeiOYsUvKLGvAsHKDAtuHO/xZLnY+fotrkmdAhDnVgarSYaoFIUbMKeS0b6oM=
+X-Gm-Gg: ASbGncu0FfjT+h6JLE25RZvt2vC+fWhvWwY09lcT2aAW9iWvzBZrYezMTiyjd7VfRQ9
+	hTXm66tIlD/n9kll2SM5IxcorJi6hIQXbI3SM/FcH0r7+5IgQbT1QYz8gKvb5xDlcAzJ/IrXq6Q
+	EX4KkfSuW7yVKfIOKjP4GEHYbWJbH7XTIa9SACQt6V2OZghydWuiR0bZwW+YXxFH8fg5yPN2/Y2
+	PIDLv5d0aj5OsYzESL2mlMLgWYftCK21s0fiFQx9PBoL1wREm3VbofdvtLiGnP4L82dR1QVUiqZ
+	Ok6D5h641owMkUisu1wVd5aHiSEoR4CfM6bgFA/UwVohzlJDifWL1McQfLMPsTf/iq4+PPPMJCq
+	MGeKSXJxgOtl3JMQ2FOuDRqEouGDsfJ4rBziUiulZZ6Ue50GA0CxQDzKuflXQ/XyeCD+VolPN60
+	mHtq4Lze8/Z6FMZl3t
+X-Google-Smtp-Source: AGHT+IGhD1atCfo4ZwImu6PpxS5A/Aon596DElxCkBAX5H/h4QkS48jyqdKtBal8nCISAnOuiKWemg==
+X-Received: by 2002:a05:600c:1c87:b0:456:173c:8a53 with SMTP id 5b1f17b1804b1-45b5179cdd5mr133811985e9.2.1756289289948;
+        Wed, 27 Aug 2025 03:08:09 -0700 (PDT)
+Received: from claudiu-TUXEDO-InfinityBook-Pro-AMD-Gen9.. ([2a02:2f04:6103:4200:a5a4:15e6:5b6a:a96])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b723a1ff9sm16471855e9.22.2025.08.27.03.08.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 Aug 2025 03:08:09 -0700 (PDT)
+From: Claudiu <claudiu.beznea@tuxon.dev>
+X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
+To: maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	claudiu.beznea.uj@bp.renesas.com,
+	saravanak@google.com,
+	treding@nvidia.com,
+	ulf.hansson@linaro.org
+Cc: claudiu.beznea@tuxon.dev,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] drm: display: Drop dev_pm_domain_detach() call
+Date: Wed, 27 Aug 2025 13:08:04 +0300
+Message-ID: <20250827100804.926672-1-claudiu.beznea.uj@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,116 +97,64 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-> Date: Sun, 24 Aug 2025 12:21:23 -0700	[thread overview]
-> syzbot has found a reproducer for the following issue on:
-> 
-> HEAD commit:    b1c92cdf5af3 Merge branch 'net-wangxun-complete-ethtool-co..
-> git tree:       net-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=1411b062580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=67b99ceb67d33475
-> dashboard link: https://syzkaller.appspot.com/bug?extid=a25ee9d20d31e483ba7b
-> compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14221862580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=159fba34580000
+From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-#syz test
+Starting with commit f99508074e78 ("PM: domains: Detach on
+device_unbind_cleanup()"), there is no longer a need to call
+dev_pm_domain_detach() in the bus remove function. The
+device_unbind_cleanup() function now handles this to avoid
+invoking devres cleanup handlers while the PM domain is
+powered off, which could otherwise lead to failures as
+described in the above-mentioned commit.
 
---- x/include/net/xfrm.h
-+++ y/include/net/xfrm.h
-@@ -202,6 +202,7 @@ struct xfrm_state {
+Drop the explicit dev_pm_domain_detach() call and rely instead
+on the flags passed to dev_pm_domain_attach() to power off the
+domain.
+
+Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+---
+ drivers/gpu/drm/display/drm_dp_aux_bus.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/gpu/drm/display/drm_dp_aux_bus.c b/drivers/gpu/drm/display/drm_dp_aux_bus.c
+index 2d279e82922f..191664900ac7 100644
+--- a/drivers/gpu/drm/display/drm_dp_aux_bus.c
++++ b/drivers/gpu/drm/display/drm_dp_aux_bus.c
+@@ -58,13 +58,14 @@ static int dp_aux_ep_probe(struct device *dev)
+ 		container_of(aux_ep, struct dp_aux_ep_device_with_data, aux_ep);
+ 	int ret;
  
- 	refcount_t		refcnt;
- 	spinlock_t		lock;
-+	int deleted;
+-	ret = dev_pm_domain_attach(dev, PD_FLAG_ATTACH_POWER_ON);
++	ret = dev_pm_domain_attach(dev, PD_FLAG_ATTACH_POWER_ON |
++					PD_FLAG_DETACH_POWER_OFF);
+ 	if (ret)
+ 		return dev_err_probe(dev, ret, "Failed to attach to PM Domain\n");
  
- 	u32			pcpu_num;
- 	struct xfrm_id		id;
---- x/net/xfrm/xfrm_state.c
-+++ y/net/xfrm/xfrm_state.c
-@@ -615,6 +615,7 @@ static void xfrm_state_gc_destroy(struct
- 		put_page(x->xfrag.page);
- 	xfrm_dev_state_free(x);
- 	security_xfrm_state_free(x);
-+	xfrm_state_delete(x);
- 	xfrm_state_free(x);
+ 	ret = aux_ep_drv->probe(aux_ep);
+ 	if (ret)
+-		goto err_attached;
++		return ret;
+ 
+ 	if (aux_ep_with_data->done_probing) {
+ 		ret = aux_ep_with_data->done_probing(aux_ep->aux);
+@@ -88,8 +89,6 @@ static int dp_aux_ep_probe(struct device *dev)
+ err_probed:
+ 	if (aux_ep_drv->remove)
+ 		aux_ep_drv->remove(aux_ep);
+-err_attached:
+-	dev_pm_domain_detach(dev, true);
+ 
+ 	return ret;
+ }
+@@ -107,7 +106,6 @@ static void dp_aux_ep_remove(struct device *dev)
+ 
+ 	if (aux_ep_drv->remove)
+ 		aux_ep_drv->remove(aux_ep);
+-	dev_pm_domain_detach(dev, true);
  }
  
-@@ -812,10 +813,16 @@ int __xfrm_state_delete(struct xfrm_stat
- 	struct net *net = xs_net(x);
- 	int err = -ESRCH;
- 
--	if (x->km.state != XFRM_STATE_DEAD) {
--		x->km.state = XFRM_STATE_DEAD;
-+	for (;;) {
-+		if (x->km.state != XFRM_STATE_DEAD)
-+			x->km.state = XFRM_STATE_DEAD;
- 
- 		spin_lock(&net->xfrm.xfrm_state_lock);
-+		if (x->deleted) {
-+			spin_unlock(&net->xfrm.xfrm_state_lock);
-+			return 0;
-+		}
-+		x->deleted++;
- 		list_del(&x->km.all);
- 		hlist_del_rcu(&x->bydst);
- 		hlist_del_rcu(&x->bysrc);
-@@ -833,14 +840,7 @@ int __xfrm_state_delete(struct xfrm_stat
- 		spin_unlock(&net->xfrm.xfrm_state_lock);
- 
- 		xfrm_dev_state_delete(x);
--
- 		xfrm_state_delete_tunnel(x);
--
--		/* All xfrm_state objects are created by xfrm_state_alloc.
--		 * The xfrm_state_alloc call gives a reference, and that
--		 * is what we are dropping here.
--		 */
--		xfrm_state_put(x);
- 		err = 0;
- 	}
- 
-@@ -929,22 +929,29 @@ int xfrm_state_flush(struct net *net, u8
- 	err = -ESRCH;
- 	for (i = 0; i <= net->xfrm.state_hmask; i++) {
- 		struct xfrm_state *x;
-+		bool dead;
- restart:
- 		hlist_for_each_entry(x, net->xfrm.state_bydst+i, bydst) {
- 			if (!xfrm_state_kern(x) &&
- 			    xfrm_id_proto_match(x->id.proto, proto)) {
--				xfrm_state_hold(x);
-+				dead = x->km.state == XFRM_STATE_DEAD;
-+				x->km.state = XFRM_STATE_DEAD;
- 				spin_unlock_bh(&net->xfrm.xfrm_state_lock);
- 
--				err = xfrm_state_delete(x);
-+				if (dead) {
-+			flush:
-+					schedule_work(&xfrm_state_gc_work);
-+					flush_work(&xfrm_state_gc_work);
-+					spin_lock_bh(&net->xfrm.xfrm_state_lock);
-+					goto restart;
-+				}
-+				err = 0;
- 				xfrm_audit_state_delete(x, err ? 0 : 1,
- 							task_valid);
- 				xfrm_state_put(x);
- 				if (!err)
- 					cnt++;
--
--				spin_lock_bh(&net->xfrm.xfrm_state_lock);
--				goto restart;
-+				goto flush;
- 			}
- 		}
- 	}
-@@ -1863,6 +1870,7 @@ static struct xfrm_state *__find_acq_cor
- 		x->mark.m = m->m;
- 		x->lft.hard_add_expires_seconds = net->xfrm.sysctl_acq_expires;
- 		xfrm_state_hold(x);
-+		xfrm_state_hold(x);
- 		hrtimer_start(&x->mtimer,
- 			      ktime_set(net->xfrm.sysctl_acq_expires, 0),
- 			      HRTIMER_MODE_REL_SOFT);
---
+ /**
+-- 
+2.43.0
+
 
