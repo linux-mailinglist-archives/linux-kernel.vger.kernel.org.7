@@ -1,269 +1,198 @@
-Return-Path: <linux-kernel+bounces-788098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C61FB37FA3
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 12:16:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3DEBB37FA9
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 12:17:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 273285E1281
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 10:16:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81C5F172585
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 10:17:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FD11322774;
-	Wed, 27 Aug 2025 10:16:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 944E034DCD7;
+	Wed, 27 Aug 2025 10:16:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ir2shk5D"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="DQp4Kyh6"
+Received: from TYDPR03CU002.outbound.protection.outlook.com (mail-japaneastazon11013027.outbound.protection.outlook.com [52.101.127.27])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A6552877DA
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 10:16:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756289767; cv=none; b=K3yWatp5LjxR5QN/1cnlxDQ3M1tUPzLxroBApAHVSypW8Y/Rjt8df66WDEmhHziLbO8q8fJI42RaFgwsICLgs1BAHsRHqE3r5DYO9Q+qfiLObO2c1Bx3rTVcpA+A45vXQhaksDYc2RMAF1GyES7wSINijsnJvxrCBmCgdP35GNU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756289767; c=relaxed/simple;
-	bh=p3f+mzSQvuTAA6R9g1jc8HAhyKZCEh6wbqX6AbTopoM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UaLO0+9FLUmA+2ZwrVeibP2rDe6FRG7ykKTUwRiqhbfZC7zpcKoZZgHMZPBtshNtIS/vnQObAQTA07s+13Gqe7yB8BCltBE9K6VKxdW/SbLf6v46qRBlVMi9OP2YfUUPlEfJWZmCug6bwiTQ21qraZ3UP1sds/iqH9K4W1fjjD8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ir2shk5D; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-45a1b05fe23so36798995e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 03:16:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756289762; x=1756894562; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=d1Dw90QlXeLsOzAEqypsdzJHvGAD420d9Q1/z4Sh4TQ=;
-        b=Ir2shk5DnE+4oG+zVjCO/nLW1lDjE7d5ZsoH3XyJNmyfrs8IHA96UOb39NLtWzRHqs
-         eiuyptJ0j5yluaI+/vsZkkEcCShUBFjLZjzwFRy1WTeEmB/H0v38UBY/VzCPN6fIYsvC
-         yqE4AOooyc519mF33tDhJQulvUjGi/bqkcnGYRYYzy+wMYW8/8kaMLLKE0WZYY7N719C
-         lm0RtuDsuxCC/RpM3/2m08zEDpKP7TooA885s8BH9594gvBHDrVnoh8w5OcJ5R/i2E5e
-         hAtGHIZJ39RCG6YQ0bOzVaZLQQzfPkjwZ/b++ixY51BTAjJSILzK1rdHtc00rOyO4tM4
-         SYkQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756289762; x=1756894562;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=d1Dw90QlXeLsOzAEqypsdzJHvGAD420d9Q1/z4Sh4TQ=;
-        b=ma8e0QCu7AeyW403rDc5vIObvyY43Id6baKg73kERNqHtqe+aSKWvWvoAV7N+KVHcm
-         33xFf1RLYZ4G0x/MwR+xEPCP0nv0DJWgjZ9dgG71geA1AiDBnEWD7Cof0ZHNjnWQhFkh
-         XaB0oPMxFVKyqHj/8f3VhQKGD43mlsW7ab9ml3iu7YLF0SImGByJ3e5mObKUqEas7jm5
-         +x/UwHgPH2kqUF77ogFI+OuHuXnMBX5/CNV5U99R8YtCndSckf/e53ZRaSubtQfYFPcD
-         pi7Pvojx92m/YXDXSZOqlW83MjSugjV91vLCRPA6zy87DKUD+a40lZHBWjIB0FPNFcgB
-         /how==
-X-Forwarded-Encrypted: i=1; AJvYcCXqTgBQycKgYl+ineuCBVfb44ofQb27algH5P+K6n1v38I24Updh4zQvrf2mL9ndWLG7ETjUqM4pKedjSY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwS6iANZdPRTXF6IA4/KtnipfxjmzvXs9j6LnK+aYh4sqwi0YSF
-	oROfSXhPVV4qXJWeVZJ+KD8hAjS3HPVb8deVNOJ3M88HzOgp+xWjXXn342cTlTxn+0M=
-X-Gm-Gg: ASbGncs/X343CuNUhCdISTqqc4w2rDpCKWMtSR/qNcssmdFGlG2iGk4QE/CMNbdDgAL
-	/eok42HM0IkJH70pcYqKd7iQ8zNvC7YHThHWu0SaA6SavyXBKdecWeLgGWGQbOObw5T4sYJ401e
-	suGqegFozt8NkPiiTizpli5mJ3pd/aYDGSYQqhtMcbF3oDK5UVT7+DP6XkQ17pAxqEe+JrpuF3N
-	/aV3d9ax877Kas1eNKWUn9e5FTTmBBC8KzphAHuktkZp/ciY9U3KjZRT3iAljSCwJ4Q8Yk3T8zP
-	8gtQ3+xECAiVfh8/s2HlpAmBo7M4wrrbFdx4EqowfpHSVC4XJBsQ7wHfAmzJ/voZ525+LnYVUV7
-	JqqHvHlghZoBadrS3eG51eWo4fnVfR2Hbihacyw==
-X-Google-Smtp-Source: AGHT+IGsDBxLcBzPHHU2PS5TGpLgmGzal6Fc/PpQk1ENqWTdXvkIRY9ehvzlf+vR27NlOBpNheomEw==
-X-Received: by 2002:a05:600c:3149:b0:456:28f4:a576 with SMTP id 5b1f17b1804b1-45b517dd9a3mr143701635e9.27.1756289762374;
-        Wed, 27 Aug 2025 03:16:02 -0700 (PDT)
-Received: from [192.168.1.3] ([185.48.76.109])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b6f4aa8a0sm24318175e9.12.2025.08.27.03.16.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Aug 2025 03:16:01 -0700 (PDT)
-Message-ID: <bc337e7c-42e7-4e2d-8b2d-c39174d1ddd5@linaro.org>
-Date: Wed, 27 Aug 2025 11:16:01 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4779334DCCC;
+	Wed, 27 Aug 2025 10:16:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.127.27
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756289784; cv=fail; b=G1GOS5SCgmkLpg5Dub/wZlzfsDc3LFxEYfaKmTkBrnizrpE7LMxcEmG+ukZ+sq893G3A6ivHORvqGT9+mO0a6SkhQ5FFTOJZZHl/fvO3mdmGcFFMHIbHmlBfr4zco9ixkYB3NsUVVjIRTfiVt9sN2G8jk3WPm0LqzdRsHgrhUB0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756289784; c=relaxed/simple;
+	bh=3kdcOV1VA7zSF1/2/A2TsbsYuIRgtvmQaiXGguAIq6o=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=JcG+wIcJlnZSl+dcbWvOaqnoRImlYw5pYZLUnk5y+Zz3JhwAnK0y7zHHkr7ksSPwahccTBE9yY4baOTXQU9O4PQPXFEaCPgH7JHdLrq0blfcvrt9Wo+Sd697Szfo4mJg+AQUEtjJrXDfL+sdl0ZcnNjUdpxxQSw5QIhhRozrB3U=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=DQp4Kyh6; arc=fail smtp.client-ip=52.101.127.27
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=aM0JA7ExeXaq8ICcpg0KTkk+LfIrNo79ULNvg/+743/cj86VmGZjHDbkjlmxbeDJBlHUVaJgdhQXTiEPqQ59Wvrl6C9hUXUV+NjfXPsiSXUX6lg1Ge8SU+Q//sPC4nH+Y1JfgJPI4WsS9M7RWLDAOy0W/tXMh9Y0yMotQOMFqsZscDsImbOiClMQ0xAuCwVLoiSNO9WqOkf6BMtEAggL0sblTCKqf5y9Djr54r6dRQMQgSqQmnK3so8ZdM5fBJ9c0vP67f5F++dWNzQRQcJLuWUjbJY5mQkzaYJov+LZiBFtNhpD2OHPnCUGYYde/1opuGU9CV0rtdwQNf/zCAORlg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=QDZVNExzGsLb0DiW6lZ8kUpFn0xEpdkkHQ586earrhE=;
+ b=gvD6fI/ZDknhrC3niGQctsw4ShTrc8FWBlvie/sUhMawVj4ngA0yTm5Wqbnd9VXLQZHTs5QS6d0kH3QAtFTSnqqDXp5IzICFRgwSussEkYkXPb66//Mx4OeRVwUjfzcOzuVuQEW21jdjryfDDVrYUJXRoAKYffAo9z5mRAnzGWDcKwH078/QWuM4uOddPFpNDqc/qOwgQb2nZdwCsHZu95VzdYfFyBAAyHEgfBSzaAlQluep4NbflmPZc0JVhmNq92eJk3F22DnSqqXKvkxH1yVvRWCaHFVTHRWcZ9hl4R7cpOCc5wgZEDQaGxuEkfu9SLm4YG3VqxyhRgVqg56dwg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=QDZVNExzGsLb0DiW6lZ8kUpFn0xEpdkkHQ586earrhE=;
+ b=DQp4Kyh6eFtmuh0NIR20ZwC+Z1BvOdqP2uYcR2Th93BH930pT2bCnNjtmr6pkzhjH6T6xJ/y5ziCTcOz5SD13JDDNu8HIUoC316kacWLebivI7g+XCtiUcPS3WLDF6m07rxuPkcxaYZ6fq/E6duZHlub9dYDHJweOIRSmoZrNznufF4bNARbWdpK/gWL7boKWxpnZ8xvevuzH1abrCfDXS6e0n5FWF8FNRjyke+846ISG0Bhju/WGGJF3PegTEISI6agBfEs26TFsf85cDexTnPVfkipKFPUhhFiXamadrDi05LHczSDTvn/qhpnpwNlD07DpOckWJYnVbdoDQKQ5w==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SEZPR06MB5576.apcprd06.prod.outlook.com (2603:1096:101:c9::14)
+ by TY2PPF7BEC1550B.apcprd06.prod.outlook.com (2603:1096:408::797) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.13; Wed, 27 Aug
+ 2025 10:16:20 +0000
+Received: from SEZPR06MB5576.apcprd06.prod.outlook.com
+ ([fe80::5c0a:2748:6a72:99b6]) by SEZPR06MB5576.apcprd06.prod.outlook.com
+ ([fe80::5c0a:2748:6a72:99b6%7]) with mapi id 15.20.9052.019; Wed, 27 Aug 2025
+ 10:16:19 +0000
+From: Liao Yuanhong <liaoyuanhong@vivo.com>
+To: Sunil Goutham <sgoutham@marvell.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	linux-arm-kernel@lists.infradead.org (moderated list:ARM/CAVIUM THUNDER NETWORK DRIVER),
+	netdev@vger.kernel.org (open list:NETWORKING DRIVERS),
+	linux-kernel@vger.kernel.org (open list)
+Cc: Liao Yuanhong <liaoyuanhong@vivo.com>
+Subject: [PATCH] net: thunderx: Remove redundant ternary operators
+Date: Wed, 27 Aug 2025 18:16:07 +0800
+Message-Id: <20250827101607.444580-1-liaoyuanhong@vivo.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SI1PR02CA0009.apcprd02.prod.outlook.com
+ (2603:1096:4:1f7::10) To SEZPR06MB5576.apcprd06.prod.outlook.com
+ (2603:1096:101:c9::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/3] coresight: tpda: add sysfs node to flush specific
- port
-To: Jie Gan <jie.gan@oss.qualcomm.com>
-Cc: coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach
- <mike.leach@linaro.org>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Tingwei Zhang <tingwei.zhang@oss.qualcomm.com>
-References: <20250827042042.6786-1-jie.gan@oss.qualcomm.com>
- <20250827042042.6786-4-jie.gan@oss.qualcomm.com>
- <b1f79a26-97e1-40f4-b076-51d5c2abe736@linaro.org>
- <78d2ab99-f304-4fab-bc7b-859c8aa781d6@oss.qualcomm.com>
-Content-Language: en-US
-From: James Clark <james.clark@linaro.org>
-In-Reply-To: <78d2ab99-f304-4fab-bc7b-859c8aa781d6@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SEZPR06MB5576:EE_|TY2PPF7BEC1550B:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4b53b031-4654-4f31-26c5-08dde552c426
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|52116014|376014|1800799024|366016|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?4743pnwZvn6zCyKo4TmZNBlShwvg+XH84PrmnDHAn1PDO3NoEGRTG+yaWkQf?=
+ =?us-ascii?Q?AHZfmSjpCDB7jOYxlSvgJLz/Z4sxcLixHCj5qR/7iuOxWWh3cPVDZ5ipOORi?=
+ =?us-ascii?Q?o6joRpjCopbKvXh3gutzovsvvwyox83g8P6VlSHh/97Hrb3SpnM49G07U0SQ?=
+ =?us-ascii?Q?VVyMjfYwGxAMNPLRrr+VeToVofmQdkQZ11nR4w+p4dQdtFXDyuXmGFAz6q5J?=
+ =?us-ascii?Q?didBcPGx67wYp9vya/cQvr6IX9U7kJqa/fKn1H9KX6z5uDr8tjC8lN4s2OOT?=
+ =?us-ascii?Q?Yhnec6Pz+oDrz+i3o/XHaT9zVmoBMC2eGSLo3zcKta+OYDKh1kCotqTbW/bC?=
+ =?us-ascii?Q?qz4wmnjmjfQsuxSzEJPYxPpigd9h9H3QR8hivvGWW3YU/CTiS9up7JvAxZVX?=
+ =?us-ascii?Q?aYDab1o0ECKKO/r85+tGmhme+9Bf3wpWqd2LEXQcTeW1IcbOsVVzsHqh9jqP?=
+ =?us-ascii?Q?FMVggP2yxvLhFoTAkvOz393xQV/FNPhq6T6M7zjBufPUrlVoXG+1NCpF+fu2?=
+ =?us-ascii?Q?AMZtEqmCmy4Ub2O4rtcpG4Txl6VDMOGVcC0XsE7FHp3+PLVbX0Gzy7ZoduAd?=
+ =?us-ascii?Q?6tOgv0A+HxOdur094/bheOiO7XNoq6Zmh0r4TKv12tUggO3dROlr4e9pQcgV?=
+ =?us-ascii?Q?jieIOZu5PfylOhHFWd0qQHQYby+gGtGdtA0CimgEZUGk5qF4S9ILvaDFT55z?=
+ =?us-ascii?Q?tU/AOZhSPL3v7Co6TxDttNZcIgt18nGChmccT6HzXR0NgXMCTC4CZyaHIrru?=
+ =?us-ascii?Q?Hj/ThOfAgozfxZvgpf16XFklIDqhcz96AlWBZLpADAfJecLpGvinUz4oPd8j?=
+ =?us-ascii?Q?ThCmJ3wD1WNPC0Pcwrcjss0vQkuCvvEjQFZ5jCV1N21up5OmtAcArt84W/PQ?=
+ =?us-ascii?Q?0zc32QXXwhR7/nKTNY6gqAl8Fo62qzGjB2zmn/RfjNdcmvnyGOPqk6X31UTZ?=
+ =?us-ascii?Q?Dm8HL5GDMbaO0BHTt2IIYW3ALM7naTEhicZEdwOjDm9L06+J4fsU105inpHV?=
+ =?us-ascii?Q?0AyQjwUEMaOR/dXwVmuWDFmwrFNrSroGEFabTHST0HtrzoDpk+K9WFiBLOj1?=
+ =?us-ascii?Q?LRXXRX4E3ZVTFhYeq4MGxZTLWyuoL2akmaxMTAKFw8yhyoLL2aWrEFkfpoz/?=
+ =?us-ascii?Q?sWtHhBwDhqqX2YRBgw++1LtYKsvShco3T9afDwbgpyzLR4YcX1EcTnxdeKJ2?=
+ =?us-ascii?Q?DjbAwvqQjAcBpRsjgpFaU7F0k1TFg/V+FXcDe909r3kTB5iwfps4PdGmn0bw?=
+ =?us-ascii?Q?AcJoHtl+EELoJjxoK4EZ5ij5cJEIjGGTd471ZboBUmTiQWkQBkp+15Sj5C9D?=
+ =?us-ascii?Q?joe5VW+3NfHeysHPBJ78bf8TlcHmIf95AkCFIbxUfHZRF935KrDJxQgRyGhH?=
+ =?us-ascii?Q?u2uu3khY3ntClR+WSkYpwbcasLrclVFLgzrXhpH2amtrCTyz1R4rARkJ/8xn?=
+ =?us-ascii?Q?qU6dAj8YHXvwZOyAP5tgOonT4RusKUDQLPQGzEAJuJaTMHRDAzg7cw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5576.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(376014)(1800799024)(366016)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?5L/15aWHQwOXJ3Heq5sdWkLwatp70hB9xRekA+jEvlHg5i3yJtn+QfSUDsS1?=
+ =?us-ascii?Q?0nHH3fbV5+0jPJZKQ+HbtOtxP8jnd3nphAOItH3kIzGcHuT/Wf1TtRsqbwFg?=
+ =?us-ascii?Q?WZEndbrHXcWMKeow+HpBwLTVNZ0oq7MCyjTAe8e9SAu4EMvcVzg37CfFh3An?=
+ =?us-ascii?Q?MqLT7uAlUsqzdIc3bniswS2uGFlzfdbSC5BVyrB+eH41MVw0xzSzx+MNZF4w?=
+ =?us-ascii?Q?dyKlGrQhLe2WMbfuAUhGFXcc2+bhaZr9rrrHmI+fHsJS74Q7yDEmexS8WpPA?=
+ =?us-ascii?Q?i+LMNaBEVhO1875Go96HbPsCTDRGZiiqmM3h44hJd7JTcrNwzGF1S0yvAnfK?=
+ =?us-ascii?Q?1+SQV4OULvrGCHfVutr0ygeLIvHiH7pSEGjMFt/pbjJ5/pf/bVd1DH+Uhrkj?=
+ =?us-ascii?Q?3FJlEsD1Y/dOt9n+Nr2Z2TwPx0GTmFa2VP3k7UWqR7lqFQvLjnq7nkEL8jYQ?=
+ =?us-ascii?Q?fw/6pbwJooysJp83I82eka/zpjvpPEDrN+i6QIRvciwMrlW+ggrL8uYUrqr2?=
+ =?us-ascii?Q?kcJH8Iz4bA8SuS+73y6r546gYQVNjXrPIOfez3D3e35OIq7MZybzLefxVwSE?=
+ =?us-ascii?Q?pXXgFunCK6rgYK3A222cxu5STJj995QZ6hRyQ5tgTwwvXuphY7fQ822Mm/RU?=
+ =?us-ascii?Q?Dhd0/SIR9Zwx12S2Ed+YVNRNgDMFfRwiFXy5u8NGFlq4zYn/ZBK4UqowDO+0?=
+ =?us-ascii?Q?MOund91e0x3wkAR5l7gJko+i43DUBd99K2eUULgXHe3co1xNgNhmJKZ5otEb?=
+ =?us-ascii?Q?8Yq4oOydgYXhCCMZwbCpL63ppJ873Ze72WHlt2+MGsYXOS3IxLXu0pFU651y?=
+ =?us-ascii?Q?a/FbP+MiS0GKL4s0mWwC3qr4frbITvE0pR/cmRHhIbGp5ES3FCmEpoexgH0N?=
+ =?us-ascii?Q?cUi1Il2CnyOk7QJiF/7TlLc1L0lMZ+WqQI0tmYoTF40L81h7aoQLQlGgvQPE?=
+ =?us-ascii?Q?I4nnBlzF6YkKcxgT29Segkn6uWuvdxCKbZO5D9HTAzz/dIiTQ5moRKh4sbiz?=
+ =?us-ascii?Q?MT4yKubUs5Me9CrTrDkPUy+WyTXomIO2I5pHYQMkjCHw9xqUcmNBduVoXSnQ?=
+ =?us-ascii?Q?xoL7x/mReW30b1JlUwlcnR2hGjUdVtWIO+nOpIKv/rtNVx2rXXZVt1V4CkAW?=
+ =?us-ascii?Q?V4V/JJgv8eP9eqobsxrQDNoN8hkLxIPHmsX6tXCteJHyxOeh/cS7lXsKvhSL?=
+ =?us-ascii?Q?K+arQVWs6p4fHjn1Is9TyuZJSNfkdtZB97yR1BcG8LILFjVqxPNw5E/exEph?=
+ =?us-ascii?Q?nYAyibWwd1yMnbVMbkxWJDFVz8M882xhV9VEQeSnS7bSqMyxwrqYSLjSAsiY?=
+ =?us-ascii?Q?3ZbDcIl+GqVaRO+OWPRgMaHq0J+ZSX6YGEdhDVf5Y3luDERNl0BboTe8+DcP?=
+ =?us-ascii?Q?NzEocScrjKImnTQvBSPJK5ZHnUeSICkpL/CO0FGJke0g58F63WsDmCH9jzm0?=
+ =?us-ascii?Q?ZcAoTBjPXpgQ8a7+jkAhFDY8xfXOPusIyZq1FATIXP7jl96YrhXvo563iiHr?=
+ =?us-ascii?Q?k9vZOB2zp5Yg8MalhDYug4L+L4WvIMt7AEtO+oVfB/naxhDRU2gWZnPfxo/f?=
+ =?us-ascii?Q?yJIWWRihIXOjbUFKt1MZrTWhB0DNzJsPEKO+xi6M?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4b53b031-4654-4f31-26c5-08dde552c426
+X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5576.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2025 10:16:19.9292
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 4UUCAVFuKD/9tqT1EDNRTG7rBoB/UVyBSVvHpA+UoSIlYuNBxhl1oZpFPkLOSt1ssWldPPhr6TmwK34uUlZ8Zw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY2PPF7BEC1550B
 
+For ternary operators in the form of "a ? true : false", if 'a' itself
+returns a boolean result, the ternary operator can be omitted. Remove
+redundant ternary operators to clean up the code.
 
+Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
+---
+ drivers/net/ethernet/cavium/thunder/nic_main.c    | 2 +-
+ drivers/net/ethernet/cavium/thunder/thunder_bgx.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-On 27/08/2025 10:48 am, Jie Gan wrote:
-> 
-> 
-> On 8/27/2025 5:17 PM, James Clark wrote:
->>
->>
->> On 27/08/2025 5:20 am, Jie Gan wrote:
->>> From: Tao Zhang <tao.zhang@oss.qualcomm.com>
->>>
->>> Setting bit i in the TPDA_FLUSH_CR register initiates a flush request
->>> for port i, forcing the data to synchronize and be transmitted to the
->>> sink device.
->>>
->>> Signed-off-by: Tao Zhang <tao.zhang@oss.qualcomm.com>
->>> Co-developed-by: Jie Gan <jie.gan@oss.qualcomm.com>
->>> Signed-off-by: Jie Gan <jie.gan@oss.qualcomm.com>
->>> ---
->>>   .../testing/sysfs-bus-coresight-devices-tpda  |  7 ++++
->>>   drivers/hwtracing/coresight/coresight-tpda.c  | 42 +++++++++++++++++++
->>>   drivers/hwtracing/coresight/coresight-tpda.h  |  2 +
->>>   3 files changed, 51 insertions(+)
->>>
->>> diff --git a/Documentation/ABI/testing/sysfs-bus-coresight-devices- 
->>> tpda b/Documentation/ABI/testing/sysfs-bus-coresight-devices-tpda
->>> index fb651aebeb31..2cf2dcfc13c8 100644
->>> --- a/Documentation/ABI/testing/sysfs-bus-coresight-devices-tpda
->>> +++ b/Documentation/ABI/testing/sysfs-bus-coresight-devices-tpda
->>> @@ -41,3 +41,10 @@ Contact:    Jinlong Mao 
->>> <jinlong.mao@oss.qualcomm.com>, Tao Zhang <tao.zhang@oss.qu
->>>   Description:
->>>           (RW) Configure the CMB/MCMB channel mode for all enabled 
->>> ports.
->>>           Value 0 means raw channel mapping mode. Value 1 means 
->>> channel pair marking mode.
->>> +
->>> +What:        /sys/bus/coresight/devices/<tpda-name>/port_flush_req
->>> +Date:        August 2025
->>> +KernelVersion:    6.17
->>> +Contact:    Jinlong Mao <jinlong.mao@oss.qualcomm.com>, Tao Zhang 
->>> <tao.zhang@oss.qualcomm.com>, Jie Gan <jie.gan@oss.qualcomm.com>
->>> +Description:
->>> +        (RW) Configure the bit i to requests a flush operation of 
->>> port i on the TPDA.
->>> diff --git a/drivers/hwtracing/coresight/coresight-tpda.c b/drivers/ 
->>> hwtracing/coresight/coresight-tpda.c
->>> index 430f76c559f2..8b1fe128881d 100644
->>> --- a/drivers/hwtracing/coresight/coresight-tpda.c
->>> +++ b/drivers/hwtracing/coresight/coresight-tpda.c
->>> @@ -487,6 +487,47 @@ static ssize_t cmbchan_mode_store(struct device 
->>> *dev,
->>>   }
->>>   static DEVICE_ATTR_RW(cmbchan_mode);
->>> +static ssize_t port_flush_req_show(struct device *dev,
->>> +                   struct device_attribute *attr,
->>> +                   char *buf)
->>> +{
->>> +    struct tpda_drvdata *drvdata = dev_get_drvdata(dev->parent);
->>> +    unsigned long val;
->>> +
->>> +    if (!drvdata->csdev->refcnt)
->>> +        return -EINVAL;
->>> +
->>> +    guard(spinlock)(&drvdata->spinlock);
->>> +    CS_UNLOCK(drvdata->base);
->>> +    val = readl_relaxed(drvdata->base + TPDA_FLUSH_CR);
->>> +    CS_LOCK(drvdata->base);
->>> +    return sysfs_emit(buf, "%lx\n", val);
->>
->> Still missing the 0x prefix
-> 
-> Will re-check rest of the codes and add prefix. Sorry I missed it during 
-> the review process.
-> 
->>
->>> +}
->>> +
->>> +static ssize_t port_flush_req_store(struct device *dev,
->>> +                    struct device_attribute *attr,
->>> +                    const char *buf,
->>> +                    size_t size)
->>> +{
->>> +    struct tpda_drvdata *drvdata = dev_get_drvdata(dev->parent);
->>> +    unsigned long val;
->>> +
->>> +    if (kstrtoul(buf, 0, &val))
->>> +        return -EINVAL;
->>> +
->>> +    if (!drvdata->csdev->refcnt || !val)
->>> +        return -EINVAL;
->>> +
->>> +    val |= FIELD_PREP(TPDA_MAX_INPORTS_MASK, val);
->>
->> Using FIELD_PREP() now that it's the full width of the register makes 
->> less sense. Especially when there is no corresponding FIELD_FIT() 
->> check,   which is fine because everything always fits. But if you 
->> didn't know the mask was the full width you'd wonder if the check is 
->> missing.
->>
->> I would just write val directly to TPDA_FLUSH_CR so it's simpler.
->>
->> It should also have been val = FIELD_PREP(...)
-> 
-> Yeah, it should have been val = FIELD_PREP(...) here... sorry for the 
-> mistake here..
-> 
-> I was thinking the unsigned long here could be 64 or 32 bits and we only 
-> need the value of the lower 32 bits. So that's why I am using val = 
-> FIELD_PREP(...) here. We shouldn't write a value greater than UINT32_MAX 
-> to the register.
-> 
-> Thanks,
-> Jie
-> 
-
-writel_relaxed() is always 32 bits though so it is a bit confusing if 
-you truncate the user value without an error. Also a reason to use u32 
-instead of unsigned long types.
-
-Are you trying to support arm and arm64 with tpda? Or just arm64? For it 
-to be consistent you can use kstrtou32(), or use kstrtoull() and then 
-FIELD_FIT() to error on truncation. kstrtou32() is probably the cleanest.
-
->>
->>> +    guard(spinlock)(&drvdata->spinlock);
->>> +    CS_UNLOCK(drvdata->base);
->>> +    writel_relaxed(val, drvdata->base + TPDA_FLUSH_CR);
->>> +    CS_LOCK(drvdata->base);
->>> +
->>> +    return size;
->>> +}
->>> +static DEVICE_ATTR_RW(port_flush_req);
->>> +
->>>   static struct attribute *tpda_attrs[] = {
->>>       &dev_attr_trig_async_enable.attr,
->>>       &dev_attr_trig_flag_ts_enable.attr,
->>> @@ -494,6 +535,7 @@ static struct attribute *tpda_attrs[] = {
->>>       &dev_attr_freq_ts_enable.attr,
->>>       &dev_attr_global_flush_req.attr,
->>>       &dev_attr_cmbchan_mode.attr,
->>> +    &dev_attr_port_flush_req.attr,
->>>       NULL,
->>>   };
->>> diff --git a/drivers/hwtracing/coresight/coresight-tpda.h b/drivers/ 
->>> hwtracing/coresight/coresight-tpda.h
->>> index 8e1b66115ad1..56d3ad293e46 100644
->>> --- a/drivers/hwtracing/coresight/coresight-tpda.h
->>> +++ b/drivers/hwtracing/coresight/coresight-tpda.h
->>> @@ -10,6 +10,7 @@
->>>   #define TPDA_Pn_CR(n)        (0x004 + (n * 4))
->>>   #define TPDA_FPID_CR        (0x084)
->>>   #define TPDA_SYNCR        (0x08C)
->>> +#define TPDA_FLUSH_CR        (0x090)
->>>   /* Cross trigger FREQ packets timestamp bit */
->>>   #define TPDA_CR_FREQTS        BIT(2)
->>> @@ -35,6 +36,7 @@
->>>   #define TPDA_SYNCR_MAX_COUNTER_VAL    (0xFFF)
->>>   #define TPDA_MAX_INPORTS    32
->>> +#define TPDA_MAX_INPORTS_MASK    GENMASK(31, 0)
->>>   /* Bits 6 ~ 12 is for atid value */
->>>   #define TPDA_CR_ATID        GENMASK(12, 6)
->>
->>
-> 
+diff --git a/drivers/net/ethernet/cavium/thunder/nic_main.c b/drivers/net/ethernet/cavium/thunder/nic_main.c
+index 0ec65ec634df..b7cf4ba89b7c 100644
+--- a/drivers/net/ethernet/cavium/thunder/nic_main.c
++++ b/drivers/net/ethernet/cavium/thunder/nic_main.c
+@@ -174,7 +174,7 @@ static void nic_mbx_send_ready(struct nicpf *nic, int vf)
+ 		if (mac)
+ 			ether_addr_copy((u8 *)&mbx.nic_cfg.mac_addr, mac);
+ 	}
+-	mbx.nic_cfg.sqs_mode = (vf >= nic->num_vf_en) ? true : false;
++	mbx.nic_cfg.sqs_mode = vf >= nic->num_vf_en;
+ 	mbx.nic_cfg.node_id = nic->node;
+ 
+ 	mbx.nic_cfg.loopback_supported = vf < nic->num_vf_en;
+diff --git a/drivers/net/ethernet/cavium/thunder/thunder_bgx.c b/drivers/net/ethernet/cavium/thunder/thunder_bgx.c
+index 21495b5dce25..10d501ee7b32 100644
+--- a/drivers/net/ethernet/cavium/thunder/thunder_bgx.c
++++ b/drivers/net/ethernet/cavium/thunder/thunder_bgx.c
+@@ -959,7 +959,7 @@ static void bgx_poll_for_sgmii_link(struct lmac *lmac)
+ 		goto next_poll;
+ 	}
+ 
+-	lmac->link_up = ((pcs_link & PCS_MRX_STATUS_LINK) != 0) ? true : false;
++	lmac->link_up = (pcs_link & PCS_MRX_STATUS_LINK) != 0;
+ 	an_result = bgx_reg_read(lmac->bgx, lmac->lmacid,
+ 				 BGX_GMP_PCS_ANX_AN_RESULTS);
+ 
+-- 
+2.34.1
 
 
