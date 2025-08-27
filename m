@@ -1,94 +1,88 @@
-Return-Path: <linux-kernel+bounces-787535-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787537-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B76EFB37793
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 04:13:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA82CB37797
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 04:13:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D2B887AF5A5
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 02:11:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA7361B64ACA
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 02:13:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAD64248F57;
-	Wed, 27 Aug 2025 02:13:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F227F24DD11;
+	Wed, 27 Aug 2025 02:13:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IhUhZmhs"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="hgTIAS6y"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D3761DB356;
-	Wed, 27 Aug 2025 02:13:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BE962472B1
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 02:13:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756260784; cv=none; b=XNjq1OO1rNJGk4IGM2ehi4tXoNjKIxMcUPVWH2RyrE827Sq036hY2iI/2lwMgTNaZpWi8zPZPeuTRotred8sB3N/XqrpZbZvN+YzL953Zwpwxq4FzlojLNnEwOPUkFD73E3ZsP7w4cTSpEcznLtJItWJFBCypKTbmGob1C2zL4s=
+	t=1756260802; cv=none; b=WIC+YTGYnGhBxyABue4t8KjKhj8ql24eje0G1gKc/MN9fo5aBCeQ1en7tUxbHB5XU7XuurVyxmaI+vlaDx8BsyTlvf4q4ZQ76fz3/RpjXRdbrnsE7q5iS6tYxJLaYfFGZD8HFhxWiTmt/MMKPg7schBkA/4M9IkpuTpuzrka4gw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756260784; c=relaxed/simple;
-	bh=AFuDBk0eLL+Qy41VIQegDgTCTFROIcEB8P2huuPNwog=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HHOCbJF2OI5JaxR2GCZu0Nhk+KiTfmwBm3Ilftq4C0sjZ7gSTJ21AIJkNB0529CRWY4d/nN8F6lGpPxBo87oTjDxRGZT7NB1oS4VEs58krWQWzGiaL5KNOIk3ucmnk5onGjuLwCUo7Ef6HMJHieTES/zlG8JNOzPnKq7PLSY5H8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IhUhZmhs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9320C4CEF1;
-	Wed, 27 Aug 2025 02:13:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756260783;
-	bh=AFuDBk0eLL+Qy41VIQegDgTCTFROIcEB8P2huuPNwog=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IhUhZmhsbxOZ+lfXDAK8KkzQXW9IAzyP6K5mHeKz5Ahg+M56c5+phLxl7YpvWu6kk
-	 W/x7Ykg31qwj2v77cv3SYjNFJPUV3LnAgdVzdiZecXiCvsmRsfix3QugEjBz5kY4D+
-	 oVukQAZ237CFBzY3cPPJ9iXZRWPZ0WMbUBV07KepRFBYt6IAKa262QyhFYOyf2OUf7
-	 HN9zGhRgCrq4lA8rhL0WhrMfjmhACnZKHVb4EjcJV4GWAR2DRDwgHa/a5XbOOYChsJ
-	 iBtEN0syQrH7joaI7mR5TTQoTlXqWgo9tvTRAdMmA2GtNj0XeLUGsMbk/+sX24dIbG
-	 oy58+u+trER+g==
-Date: Tue, 26 Aug 2025 19:13:03 -0700
-From: Kees Cook <kees@kernel.org>
-To: Yury Norov <yury.norov@gmail.com>
-Cc: Rasmus Villemoes <ravi@prevas.dk>, kernel test robot <lkp@intel.com>,
-	Vineet Gupta <vgupta@kernel.org>,
-	linux-snps-arc@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH] arc: Fix __fls() const-foldability via __builtin_clzl()
-Message-ID: <202508261911.ECB628656@keescook>
-References: <20250826034354.work.684-kees@kernel.org>
- <87ldn644d0.fsf@prevas.dk>
- <202508260955.2DE50A3FB@keescook>
- <aK5eNDa5H-PNGHpj@yury>
+	s=arc-20240116; t=1756260802; c=relaxed/simple;
+	bh=31xzUCd2w+RjdiecsXImYkR5SG0HS35zBroNDDwiWR0=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=Sy5v6oyTk9SbO8G6d4Kop8ZhCl6SD1gBIuji3BXAE/xAZoGG7FNT9LjGB1ee1mts7QPqOq8x7pN/6LT1POyyQQ9yfPS0Tm2hE8Tzlbk+Ke2+bhWolb7615pnR9N6bRkYCEpM3AcfSTGtn+zb5pr+8J9KD6xQ8473/sJJdhpLzwU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=hgTIAS6y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70614C4CEF1;
+	Wed, 27 Aug 2025 02:13:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1756260801;
+	bh=31xzUCd2w+RjdiecsXImYkR5SG0HS35zBroNDDwiWR0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=hgTIAS6yP/wrdJ0SA2Mce6/+XNZ4GoM0RcWE+3Y8geFt4RR8cFij/JCSKDywrlkZt
+	 HjEkPsZWhSn1ogFHu5QDI2c6dSrV2vc0Pm0jjbC/Acz5cZAXiKpekrSZrwORbESDo2
+	 koHcbNaKVIyqOUCnwuzCqRatMlcik1tLtH7ZHZjg=
+Date: Tue, 26 Aug 2025 19:13:20 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Brendan Jackman <jackmanb@google.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>, Suren Baghdasaryan
+ <surenb@google.com>, Michal Hocko <mhocko@suse.com>, Johannes Weiner
+ <hannes@cmpxchg.org>, Zi Yan <ziy@nvidia.com>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm/page_alloc: Harmonize should_compact_retry() type
+Message-Id: <20250826191320.d5aa551eb5abef316de41175@linux-foundation.org>
+In-Reply-To: <20250826-cleanup-should_compact_retry-v1-1-d2ca89727fcf@google.com>
+References: <20250826-cleanup-should_compact_retry-v1-1-d2ca89727fcf@google.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aK5eNDa5H-PNGHpj@yury>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Aug 26, 2025 at 09:24:04PM -0400, Yury Norov wrote:
-> On Tue, Aug 26, 2025 at 09:56:06AM -0700, Kees Cook wrote:
-> > On Tue, Aug 26, 2025 at 03:08:59PM +0200, Rasmus Villemoes wrote:
-> > > If __builtin_arc_fls() simply doesn't qualify for attr_const for
-> > > $reason, I think it would be good to have that documented in the commit
-> > > msg. If it does, I think a gcc ticket and link to that would be in order.
-> > 
-> > I already sent the patch to fix it. :)
-> > 
-> > https://gcc.gnu.org/pipermail/gcc-patches/2025-August/693273.html
+On Tue, 26 Aug 2025 14:06:54 +0000 Brendan Jackman <jackmanb@google.com> wrote:
+
+> Currently order is signed in one version of the function and unsigned in
+> the other. Tidy that up.
 > 
-> I'm OK taking the patch if it fixes real problem for you, but it looks
-> more like a GCC problem, right? Is Clang also affected?
+> In page_alloc.c, order is unsigned in the vast majority of cases. But,
+> there is a cluster of exceptions in compaction-related code (probably
+> stemming from the fact that compact_control.order is signed). So, prefer
+> local consistency and make this one signed too.
+> 
 
-Without it, KUnit testing of ffs/fls fails on arc. Clang is not
-affected. Even with the GCC fix landed, all older GCCs with still fail,
-and since it provides a improved code generation for arc, it seems worth
-it (compile-time-calculable values will be emitted instead of always
-running the arc instructions).
+grumble, pet peeve.  Negative orders make no sense.  Can we make
+cc->order unsigned in order (heh) to make everything nice?
 
-> If, say, Clang is not affected, and you expect that newer GCC versions
-> will not be affected too, let's protect the new code with a proper
-> ifdefery, so that it will be easier to drop the workaround later?
+> --- a/mm/page_alloc.c
+> +++ b/mm/page_alloc.c
+> @@ -4182,7 +4182,7 @@ __alloc_pages_direct_compact(gfp_t gfp_mask, unsigned int order,
+>  }
+>  
+>  static inline bool
+> -should_compact_retry(struct alloc_context *ac, unsigned int order, int alloc_flags,
+> +should_compact_retry(struct alloc_context *ac, int order, int alloc_flags,
+>  		     enum compact_result compact_result,
+>  		     enum compact_priority *compact_priority,
+>  		     int *compaction_retries)
+> 
 
-I think the codegen benefit is worth it as I have it.
-
--- 
-Kees Cook
 
