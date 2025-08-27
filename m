@@ -1,105 +1,78 @@
-Return-Path: <linux-kernel+bounces-788363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 174BAB3835C
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 15:08:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEA24B38360
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 15:08:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D5EF1BA467A
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 13:08:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA4F3462653
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 13:08:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BEC43128A2;
-	Wed, 27 Aug 2025 13:07:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32F82350D6E;
+	Wed, 27 Aug 2025 13:08:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="y7AZwNR0";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="DoYkPznx";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="lL2qGwys";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="7HGcCvNk"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="snBJ2WlH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF78235082B
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 13:07:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 800753128A2;
+	Wed, 27 Aug 2025 13:08:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756300066; cv=none; b=SbQAqupAsuHn7zPVaxTJaf/AenlKitcJIZNOrgn63eIZAnQS0bmha/in/ompCTMEynGExv4RR9CK56cXqP/2YlDueTdrfsVTZ7kwqKcqlKqekR81RYvdIXqH+C+LMOd3Di/MtHhp8DdcV2c1w+ZqfSkHl8lVcFRsOil0kDkfjD0=
+	t=1756300093; cv=none; b=otIbaPzLvTm5l08o87RUzDxI+PAwaMdVlrg8jKjkLEpkYuuQyW50K/zSrN7y4Rc6O/TmmDHuJ8joYfYm3olayIsg6xP/1ZzYAve1ooMVwSoqyKN5cgPnWvjO+L2fRg2Sl9Msb5MVTUsMFhM4jYWkPu4JJRGd3BjNl8z5NmX0tFg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756300066; c=relaxed/simple;
-	bh=eI+Nz2KY3Oicb6ucDRp/ea+Tefai8e7GEELnp3WqITk=;
+	s=arc-20240116; t=1756300093; c=relaxed/simple;
+	bh=IpEGFEEfU545ej3QeF5+hs5SmtlfBlWhDI8ZhRwmlgs=;
 	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HhRKyEgSYTqb2zWw0AQBwGxB5IsSBzu53knlS7QAmA0Oqj+pCeE7fZHqQPzcJpN2Y6W0yGRcBuPCFMbRitr30K4UMcIDZKnQgCAkM86c5sAUWOApCtogrpA5l0XHy2QmdRbY7ElFbP5VnUaSH2kL2L3UoYnMVmpzhl+pCEyADlc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=y7AZwNR0; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=DoYkPznx; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=lL2qGwys; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=7HGcCvNk; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id B5F7522641;
-	Wed, 27 Aug 2025 13:07:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1756300061; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zSMcRXhDYhxLein4Kd5+NaB9/kTemgomKAqbBV9fU+k=;
-	b=y7AZwNR0Bo5F5yIxEJisv65vHgAlJhXIXgkkw1jbXtODRWW1O+hRwmBAow6yPHKzsMjsqI
-	2M2DRdO7y7h6Ylo/k/WhlTgEefziQ4VhTYnx2fkdpCSjfdLGDYfLirn+fIlVTi9OkbguQH
-	odZP7K9uHZlriM5iOhAfqCXeDfW+4gU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1756300061;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zSMcRXhDYhxLein4Kd5+NaB9/kTemgomKAqbBV9fU+k=;
-	b=DoYkPznxpHy4dPdPuQ/MPFbY2703qrFTS5b8uDQttGHvTq+1JoRth5CjPkgh8SUVzNCJ6n
-	Bp8StDOgouwoPKCg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1756300060; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zSMcRXhDYhxLein4Kd5+NaB9/kTemgomKAqbBV9fU+k=;
-	b=lL2qGwysmEO7KroHVP0qOdWbYO0DyV5AW++RQgIsFcW7uUlVsNp9lm0wFggXeHQJufZXX2
-	sCum/I/C4jqy1mwQ6dDqcrFo8PLRiax3lMrwH4VGBSAk+TaVo8lzzLVQc3Dse4YmVl0zM/
-	LSRjWJIJ08Kkwc0IKWx/XL8cjeG3IIc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1756300060;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zSMcRXhDYhxLein4Kd5+NaB9/kTemgomKAqbBV9fU+k=;
-	b=7HGcCvNk8Uun0+7RUWtvqCB+KItnMNwsp5OBaAQJQslKc4+tYSeg2hN5W1rxB+ecVmeFTw
-	BqswCJ0DnwA9SjBQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9204013867;
-	Wed, 27 Aug 2025 13:07:40 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id H98PIxwDr2iUXwAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Wed, 27 Aug 2025 13:07:40 +0000
-Date: Wed, 27 Aug 2025 15:07:40 +0200
-Message-ID: <878qj4hq03.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Shenghao Ding <shenghao-ding@ti.com>
-Cc: <broonie@kernel.org>,
-	<andriy.shevchenko@linux.intel.com>,
-	<13564923607@139.com>,
-	<13916275206@139.com>,
-	<alsa-devel@alsa-project.org>,
-	<linux-kernel@vger.kernel.org>,
-	<baojun.xu@ti.com>,
-	<Baojun.Xu@fpt.com>,
-	<jesse-ji@ti.com>
-Subject: Re: [PATCH v3] ALSA: hda/tas2781: Fix EFI name for calibration beginning with 1 instead of 0
-In-Reply-To: <20250827043404.644-1-shenghao-ding@ti.com>
-References: <20250827043404.644-1-shenghao-ding@ti.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	 MIME-Version:Content-Type; b=KUqNBi0tmBsF6Cr6phR9xYpDPct0CBwXs5R8bwqIUEbTDa4opY1kFL0y6fAx4Zf9BZ28LtRFjDQIORkT6ZUC8xK1tNIB0NOshmTBOG0zE6jaG1Ou/43xn6uJhEPhwbs6fJiiVuU5rvgdiNb9uNvZc7/pmQMx7+A9d3R5DaqsIw0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=snBJ2WlH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 187D9C4CEEB;
+	Wed, 27 Aug 2025 13:08:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756300092;
+	bh=IpEGFEEfU545ej3QeF5+hs5SmtlfBlWhDI8ZhRwmlgs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=snBJ2WlHLIctRupH0IhLfUosaWzE7Cju4kyy0lsniZeIChbOLef9dHdVmypF8wmtx
+	 GTxBQaL2ur3CWyPzoUipmCJMQb5gql+q8rE140bjVEJaa1tHLJt0AhkE6g7BE+i+Fp
+	 IFBTiLevWOnfXr4ryw1r6Fq0G9Tmg2MIXHrq4TzdAxIRx+bUNbOvPbVMDgoGTxRfQC
+	 Ujl7kQdI4Tq1m801f4hO7W3HBcGpBaSf8vs7/3xfY9aTEeZGHpkztdLOIPIjuvkyZT
+	 08+FQmvxN7zOdv2ybOlfSzRuL19cKPM9ZicK2Mw71lZyPcfpZqaSqcHTbe5XGoY422
+	 FSmkjaloeEqqw==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <maz@kernel.org>)
+	id 1urFsn-00000000vBX-20Bc;
+	Wed, 27 Aug 2025 13:08:09 +0000
+Date: Wed, 27 Aug 2025 14:08:09 +0100
+Message-ID: <86frdcewue.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Sean Christopherson <seanjc@google.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	kvm@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Ira Weiny <ira.weiny@intel.com>,
+	Gavin Shan <gshan@redhat.com>,
+	Shivank Garg <shivankg@amd.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Xiaoyao Li <xiaoyao.li@intel.com>,
+	David Hildenbrand <david@redhat.com>,
+	Fuad Tabba <tabba@google.com>,
+	Ackerley Tng <ackerleytng@google.com>,
+	Tao Chan <chentao@kylinos.cn>,
+	James Houghton <jthoughton@google.com>
+Subject: Re: [PATCH v17 00/24] KVM: Enable mmap() for guest_memfd
+In-Reply-To: <87b10d94-dca2-4ecb-a86f-b38c5c90e0cf@redhat.com>
+References: <20250729225455.670324-1-seanjc@google.com>
+	<87b10d94-dca2-4ecb-a86f-b38c5c90e0cf@redhat.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -107,42 +80,57 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
 Content-Type: text/plain; charset=US-ASCII
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_TLS_ALL(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	FREEMAIL_ENVRCPT(0.00)[139.com];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FREEMAIL_CC(0.00)[kernel.org,linux.intel.com,139.com,alsa-project.org,vger.kernel.org,ti.com,fpt.com];
-	TO_DN_SOME(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:mid]
-X-Spam-Flag: NO
-X-Spam-Score: -3.30
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: pbonzini@redhat.com, seanjc@google.com, oliver.upton@linux.dev, kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, ira.weiny@intel.com, gshan@redhat.com, shivankg@amd.com, vbabka@suse.cz, xiaoyao.li@intel.com, david@redhat.com, tabba@google.com, ackerleytng@google.com, chentao@kylinos.cn, jthoughton@google.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Wed, 27 Aug 2025 06:34:03 +0200,
-Shenghao Ding wrote:
+On Wed, 27 Aug 2025 09:43:54 +0100,
+Paolo Bonzini <pbonzini@redhat.com> wrote:
 > 
-> A bug reported by one of my customers that EFI name beginning with 0
-> instead of 1.
+> On 7/30/25 00:54, Sean Christopherson wrote:
+> > Paolo,
+> > 
+> > The arm64 patches have been Reviewed-by Marc, and AFAICT the x86 side of
+> > things is a go.  Barring a screwup on my end, this just needs your approval.
+> > 
+> > Assuming everything looks good, it'd be helpful to get this into kvm/next
+> > shortly after rc1.  The x86 Kconfig changes in particular create semantic
+> > conflicts with in-flight series.
+> > 
+> > 
+> > Add support for host userspace mapping of guest_memfd-backed memory for VM
+> > types that do NOT use support KVM_MEMORY_ATTRIBUTE_PRIVATE (which isn't
+> > precisely the same thing as CoCo VMs, since x86's SEV-MEM and SEV-ES have
+> > no way to detect private vs. shared).
+> > 
+> > mmap() support paves the way for several evolving KVM use cases:
+> > 
+> >   * Allows VMMs like Firecracker to run guests entirely backed by
+> >     guest_memfd [1]. This provides a unified memory management model for
+> >     both confidential and non-confidential guests, simplifying VMM design.
+> > 
+> >   * Enhanced Security via direct map removal: When combined with Patrick's
+> >     series for direct map removal [2], this provides additional hardening
+> >     against Spectre-like transient execution attacks by eliminating the
+> >     need for host kernel direct maps of guest memory.
+> > 
+> >   * Lays the groundwork for *restricted* mmap() support for guest_memfd-backed
+> >     memory on CoCo platforms [3] that permit in-place
+> >     sharing of guest memory with the host.
+> > 
+> > Based on kvm/queue.
 > 
-> Fixes: 4fe238513407 ("ALSA: hda/tas2781: Move and unified the calibrated-data getting function for SPI and I2C into the tas2781_hda lib")
-> Signed-off-by: Shenghao Ding <shenghao-ding@ti.com>
+> Applied to kvm/next, thanks!
 
-Applied now.  Thanks.
+Can you please create a stable branch for these patches? It is quite
+likely that whatever I queue for 6.18 will conflict with that, and I'd
+like to be able to resolve the conflicts myself.
 
+Thanks,
 
-Takashi
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
