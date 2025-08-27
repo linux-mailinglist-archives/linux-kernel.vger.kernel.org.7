@@ -1,84 +1,93 @@
-Return-Path: <linux-kernel+bounces-788154-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788155-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67A8CB38073
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 13:00:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85586B38075
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 13:01:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E9A31BA5EA8
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 11:00:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E167E7C1683
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 11:01:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26C1834DCD7;
-	Wed, 27 Aug 2025 11:00:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E07F283680;
+	Wed, 27 Aug 2025 11:01:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="E4v1qubR";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="U8TFjCj/"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="dA4qv5BM"
+Received: from r3-20.sinamail.sina.com.cn (r3-20.sinamail.sina.com.cn [202.108.3.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6825630DECF;
-	Wed, 27 Aug 2025 11:00:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA27B30CD82
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 11:01:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756292415; cv=none; b=STWQnzgQDvjHena8ZvgsnXsTGB7zxrl8GSTQEqO8KnnAjECSJCHrN6jMURfHQxS+keFXagOCl2zVWelknTz1Q9fuS7EIg2jClRoy50r3o/kz76VVTKg24blA0XnldPNjfw4o1VgdTyVLynAipdPbJFIfC26DeAq133yrq8lSbRg=
+	t=1756292468; cv=none; b=SB60SkGpogxJAcSaM5A2n7A9C2tOPbxzYxciKOXDQsxFpawfBYXjpw5AYR5h379fLK4AvboJ2xJRJebHNhc/CKRTyifLC9Pj3DalglUdbeEhBfG38AtbopJvWkg9PTQjnx35XTKWucqCYNkov8D5/2XjrfAahuAvudV+4RKpkCQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756292415; c=relaxed/simple;
-	bh=089uvcPzKEMjllQfZC9ze5HF4s61d3lApct5f3CcAVY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MKBHugkYwQinlYIyZumxUlCHm1NaVv8flK33Xk/QT1Pj4nI0brG/RbnQB7ewJ4LaNkrr0AYwQGi3bC1kB9X5JhJlHmNDVmAVmIp28Mym9ZhSFCA3VwMPJ+k2eDI0Pfouy5g6GYiZFagSD165t6Q2Tz/ot9P/VS3VJoJ9zRvYXzo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=E4v1qubR; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=U8TFjCj/; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 27 Aug 2025 13:00:09 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1756292410;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=N7Pjc2TaTel/23f5s8SPnvNOw2jZdg7VRa902XINe/Y=;
-	b=E4v1qubRYMYwkK4/AZdUy9rzDhRE9JkUOMtTv5TmHv7mLe9FsEKdSLe1ZjdXEUWpyLI8Nx
-	ZzKOXsGMQhqbTdTT0N4/LT2nMwkZgLXxMdnMxxREu47/+Ls3MEhKI7Fb9MijbbYJHty3YE
-	ZhpAP3/z6glnNSopiAIWGHQXfGq6927I7qFTnZ8h9n5z6OWpuTmvuCIzsIW8S6t8ILoGiQ
-	40GkQsfAl36ysXBwAkosf0vH6JwVAHcZ7w9AzPr+1vAw3RBYcP4enkTAy7ir6mnIjvHwdW
-	ItbF7H5H4QjD2JOnyxLGLHzE1KvG23NNcWIr2ZZxOvaKaph7lnOzNcaA/QJtxA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1756292410;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=N7Pjc2TaTel/23f5s8SPnvNOw2jZdg7VRa902XINe/Y=;
-	b=U8TFjCj/Gd3JWBpo5tqKnTYOiZGM/WASjwFoe9mF31X9n5uSr463yIYSjBLcm1NSdI9NMe
-	K4uL+fLUJLOU5MBQ==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: bhanuseshukumar <bhanuseshukumar@gmail.com>
-Cc: tglx@linutronix.de, mingo@redhat.com, shuah@kernel.org,
-	peterz@infradead.org, dvhart@infradead.org, dave@stgolabs.net,
-	andrealmeid@igalia.com, linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel-mentees@lists.linuxfoundation.org,
-	colin.i.king@gmail.com
-Subject: Re: [PATCH v2] selftests: futex; Fix spelling in test messages
-Message-ID: <20250827110009.H96ue6JM@linutronix.de>
-References: <20250827105639.19156-1-bhanuseshukumar@gmail.com>
+	s=arc-20240116; t=1756292468; c=relaxed/simple;
+	bh=hdF6LkoMf4VRQEF5H3s7/unZXKIC7ROymsz4wF4o6ns=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=j1DcwlRDUwB2vOrrqVm8I1d/VOuBYshAc+krQRNwz84ZnPM3W2emEuDgUtYK8rkIPRXQQWDCt0saHHWkf+qiXZb6FgZuPn6o3+OqcfqwvJILrrmNZU9eM15+tCAXM/py2HiOmy92+Z5kEFXY06HphdiJ5zuEX5h7xTKqW9nmSeM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=dA4qv5BM; arc=none smtp.client-ip=202.108.3.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1756292463;
+	bh=lNlcXwzdELjQCxJzRSPA67T9YGSAQBMjvtNSVrIMoBo=;
+	h=From:Subject:Date:Message-ID;
+	b=dA4qv5BMuriCc3kGp6y4xZfeawPo8xy+8RA8eAMOVjaSU1GOjHi83bS4N+ebeyB6+
+	 OAUpv5VSrWLf7hEbAaT6XgZOURmhFWoJBbMVXzACjFt8q967EHStKD/ZlEUMgCqfgW
+	 p9XUI3t0+Qr9UKRHKnfd7pQnVo9k5G7Pj1PfFYzA=
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
+	by sina.com (10.54.253.32) with ESMTP
+	id 68AEE56700004B50; Wed, 27 Aug 2025 19:00:57 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 3230924456929
+X-SMAIL-UIID: A516C9DBB79B4CB39E32949DFE029B32-20250827-190057-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+a25ee9d20d31e483ba7b@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [net?] KASAN: slab-use-after-free Write in __xfrm_state_delete
+Date: Wed, 27 Aug 2025 19:00:45 +0800
+Message-ID: <20250827110046.5887-1-hdanton@sina.com>
+In-Reply-To: <68ab6633.050a0220.37038e.0079.GAE@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250827105639.19156-1-bhanuseshukumar@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On 2025-08-27 16:26:39 [+0530], bhanuseshukumar wrote:
->     Correct few spelling mistakes in selftest output messages to improve
->     readability
+> Date: Sun, 24 Aug 2025 12:21:23 -0700	[thread overview]
+> syzbot has found a reproducer for the following issue on:
 > 
-> Signed-off-by: bhanuseshukumar <bhanuseshukumar@gmail.com>
+> HEAD commit:    b1c92cdf5af3 Merge branch 'net-wangxun-complete-ethtool-co..
+> git tree:       net-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=1411b062580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=67b99ceb67d33475
+> dashboard link: https://syzkaller.appspot.com/bug?extid=a25ee9d20d31e483ba7b
+> compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14221862580000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=159fba34580000
 
-I am picking up patches and this got already fixed.
+#syz test
 
-Sebastian
+--- x/net/xfrm/xfrm_state.c
++++ y/net/xfrm/xfrm_state.c
+@@ -1863,6 +1863,7 @@ static struct xfrm_state *__find_acq_cor
+ 		x->mark.m = m->m;
+ 		x->lft.hard_add_expires_seconds = net->xfrm.sysctl_acq_expires;
+ 		xfrm_state_hold(x);
++		xfrm_state_hold(x);
+ 		hrtimer_start(&x->mtimer,
+ 			      ktime_set(net->xfrm.sysctl_acq_expires, 0),
+ 			      HRTIMER_MODE_REL_SOFT);
+--
 
