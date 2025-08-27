@@ -1,643 +1,270 @@
-Return-Path: <linux-kernel+bounces-788815-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788816-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74712B38AA2
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 22:04:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA24EB38AA5
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 22:06:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 53DF47A5E2F
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 20:02:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75D6A36637D
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 20:06:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0A5E2E3AFE;
-	Wed, 27 Aug 2025 20:04:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEA6D2C15AF;
+	Wed, 27 Aug 2025 20:06:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="NzvWbO7v"
-Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="eRQ0BhvP"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2055.outbound.protection.outlook.com [40.107.223.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4983CA5A
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 20:04:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756325053; cv=none; b=DRXN+6pubV60AIu+voGW0SERjX4cnfSVl2xeIwmCVMXVvzXFAtdCjt62LnCxxgElc9ZBKRFyS5/pAGk15WpiAklXybXKSBtFEPic0XB0Ym662TvDLUCOcS7aRt2075+1tv0BJpUvbJkpP3xCwBjXaFc9EwBOEH9vcdUNvOShxVI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756325053; c=relaxed/simple;
-	bh=lEECP8sLHkrjv5PDRa5Nz050IrTm7wq11Qe/q+RREgI=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=kxzRqGqjEeaAlsgtroV01MQ/GgeH/EVlUhEEdN9VjC9KTgzX4j8skXJrX9EgtE/KpfPRnamSWV12F6tlNZJSqEMq9+ZH6Rzf5cgSzFtJHoB6XLf9SQX6FgMg9H/P94DPSDdFjlU582LT8blAGzd573RcdOQ6lbDivQ0RiF0ui7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=NzvWbO7v; arc=none smtp.client-ip=209.85.219.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
-Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-e953397c16eso150387276.0
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 13:04:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1756325049; x=1756929849; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:autocrypt
-         :references:in-reply-to:date:cc:to:from:subject:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=gIElFavk+IY4EPoRuABBoeaw8C7mUqfEAtIctmxNh5U=;
-        b=NzvWbO7vTKtaMWBLXgYKxlVuZ7kniu4C2XCcEJhiEb86AGsBkz1AtdbDC2L9xJNBr9
-         EBj5ESST9xyFUN9+ItHlkLhc5l8dnXiehqrZCKflokYK/bgH4sZ9yd2hh19Umlrr6Fde
-         Q63zDoKjQn4AbzQzj2dkMfhchoyLm1XjLdFawD4Ek/8PGPGIyDcHRpMeyT1yOFZ/I5Sc
-         sn/nfnh6PArcb/f8MxvrgGos9O8SZHXZw7W3TCQDCGAtduZTSAAp3eUiGVChTtVppQOp
-         g0Z/V9Xci2FvRTh8uhKgq1qtF0Pk2i5yDCPxqHDPZnWro2psIQOLnagZ7zeEO1bIeT6Q
-         sViA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756325049; x=1756929849;
-        h=mime-version:user-agent:content-transfer-encoding:autocrypt
-         :references:in-reply-to:date:cc:to:from:subject:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gIElFavk+IY4EPoRuABBoeaw8C7mUqfEAtIctmxNh5U=;
-        b=D2Uy+qnoasM7+LNg43tSqXXiU1SedBYiWUc1eVfCi8arPa3ZcWDxoRCTCwMm3XiGP6
-         Wl6DkASQz6uQ8Ip34O2mewmqK2dXjc231veOmLUNJZl+3fK6wveiz4IwRm9gTH0PrxM/
-         NjYvzBROrz7FBNHA+ejfDwzjGi6/rsr152Hg7RwJc+ghh44V21guO5o/p7vbZdozPguY
-         x+mgYNogngBuvC3d5+kVM/48QY7Y0cl1e15C+yKjIap4SKHRoYB1f0/FL4RXmBEPjBdk
-         cgilvo47UbDfhZJK/p6Yf56hCC5uYFbxe13TPuQ2TbOT6DF6nc+kbeD4AETMUQaDe3XT
-         Qxlw==
-X-Forwarded-Encrypted: i=1; AJvYcCVivaX+DMotby4HB+D5OOXhSJOkjtHeCgIAdHZ3foot3aXHiwMGhH6c0ZECVj6tP9sDRcAoOO/hskPA0A0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/j+iYTYSXHPdbpOS7yBaEnELHH3UxzlmICJ8+jB/lp08h4/Q+
-	VHuMnLr3lYlcFm3uWlB8PfRoyTQo/QZMcodBzggwyVSi5uYWp7VTz3WuulmFjjIBrT8=
-X-Gm-Gg: ASbGncuuRVs2EC72fp+lgRD0rSjEh8icgLif+kfEmUTlnpBk2wMHEZImjS0CWd6EaAO
-	XspNvRyPheoEzHurakryMPq3Bm37MhhIezQD8jtdr2Q3CWKv+o2cVt3LPNrH9CzAtXbvx60VtNZ
-	x/6SzQIiMdEGQVL8kC3OF/bi9vA3uY9KIyTB3LDqPsOk9CB5RaKkAFt76nEh5JtpDNFaX4MjJ+i
-	w+rt1pUQ5J2CP/tlkqVf++B/pi8umztjtz23CgxCwrqGnY9i/Dt4qdb1LSty1+9JhpJ48uDqElJ
-	6Ypm6wB9D0+BLIAIAK0T1KO0x6bm47MYQRtNFi33y980A0F14OQMA8GGco0dYnF8X24xPPE0QUo
-	Kb7/256jMNgQkEzDz5+MIxTMHqfeJnuvPwg==
-X-Google-Smtp-Source: AGHT+IGhD1/lT8YmvxteUbOgQfKML7Nke0CB94LOX6/z7nvYthwVGBpKqziGYrSiylPHzzZyWZ2IcA==
-X-Received: by 2002:a05:6902:1243:b0:e95:37c1:aa89 with SMTP id 3f1490d57ef6-e9537c1afc3mr15890878276.42.1756325048339;
-        Wed, 27 Aug 2025 13:04:08 -0700 (PDT)
-Received: from pop-os.attlocal.net ([2600:1700:6476:1430:2480:b54f:6f64:7f79])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e96d661d1basm2046705276.13.2025.08.27.13.04.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Aug 2025 13:04:07 -0700 (PDT)
-Message-ID: <2913155abcc272d83d369ff4f81a08483be021dc.camel@dubeyko.com>
-Subject: Re: [RFC PATCH v2] hfs: add return values to hfs_brec_lenoff and
- hfs_bnode_read to improve robustness
-From: Viacheslav Dubeyko <slava@dubeyko.com>
-To: Chenzhi Yang <yang.chenzhi@vivo.com>, glaubitz@physik.fu-berlin.de, 
-	frank.li@vivo.com
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Wed, 27 Aug 2025 13:04:06 -0700
-In-Reply-To: <20250827064018.327046-1-yang.chenzhi@vivo.com>
-References: <20250827064018.327046-1-yang.chenzhi@vivo.com>
-Autocrypt: addr=slava@dubeyko.com; prefer-encrypt=mutual;
- keydata=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
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (by Flathub.org) 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3032822A1D5
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 20:06:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.55
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756325196; cv=fail; b=k3wT9uZxF5SNn5Nn/Uh/1yxBKHeXBl15iYgQdZUGR/8Z4u5ZfaDZrujbT70iQ7nUkvIT+oRQjoE2sERFZ7wyMZ+Z0t2LtmcExA+mV6yXgYUq7H8k62DtS/2vFryr16kUOTK6ZVoxwn0emPNaKmTzHTMEt4deSkc5x1slHFYZP+Y=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756325196; c=relaxed/simple;
+	bh=iZWvgK4RqgbA8EutEq17aroVekcDhqzWsAvVo00/QWw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ShvXRFF76vFwJ2AsIHZKdcrvxZfqF1uycyyEXY8PSv3sd8jbmeVL2NpzA72C/RWt6EcrLMi54eRPVIctNEN/YSOB7qV/p44aNRzZxf1Tyo/5XGVB5ljzBglTbnKaL7uSSGTJ/KFmYx4wF67/WBG7RLZTbyJM+C1x4qulQfndDSI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=eRQ0BhvP; arc=fail smtp.client-ip=40.107.223.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ln7cayfBc0H3iiHxtLfQ5LKcRbj8/tRZ5nEPa5KWV8W4U0+P1qvgvmQ6H9RRVc3cQkTi6w8oi02mFsKVBwINT6vcZkZcRjlx/fs7t4UwDawu4wTU7uhG6ie6lD8prCnCbOFxJJLmzTM1861/DjYLvFURNR14JGrJV1q+RQgm7cIVM9fqRUt4neDYIbyLpd0W5G3XUWacUkmgibo7mQ13rL9zNpWEG5ierdsirRm5hdgwg8cx//mHdvom1+U+2XMM1H6rYIlNL77PJjwFv+zOWSHOCUTQ2XhOEzIRYwpV/8QKodlgsBbSG2lUrHzRZas0PoRjpFBoXYc9WhrtMtOS6Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=NMVZwoKL9uyXiEU5ssOGCM+zNMqsUmbAMGSH7W1sb80=;
+ b=F4bXXFBdKZ/AnHgqSV7GpjTPcaLp6e/cwGQb6CuNo/jKcheOKUMRQ4FDZ41pVX6qVkbMw12ySCB3DYv9ERlYeRc6FIybW4vmHqJ6SgaRMvtNFz+JyKRuwpEjpPxlGwKGcu2/o8S9HyIATNkUFh4bY2X8GUYspI4YkgXtrQUOadZXXN8/TfFaEsFJ/4a84gJwGAYZ1wv8ZwpWwfWixg+SrlRscX1DFtcdOK7HyybGxNvOtqzRndrjWGCf5Rk/MjdV4/ns64LEtKoTObXj4LgiDDw5rme4RIojyXrXm3NZ/arYeb2BFc3pMy4AQvLT9701XK6gyxgVsv4EpWaH04BdJQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=NMVZwoKL9uyXiEU5ssOGCM+zNMqsUmbAMGSH7W1sb80=;
+ b=eRQ0BhvP4Vh0hISU6Ab+If4IOl3gqr8DzhYoCKk/ZoZL1cxRS9dJtGS++UEDKJXbMF7LOXE8kgdV5/sXuCEB+v2Als4+X5olWW/2gLUUf6BiU8UM+Bwhi+F8YjG8RPQdeLwITzVslN3G3sbuTIATNDVNHYrVRhfoqHxILojSs3Q=
+Received: from DM5PR07CA0055.namprd07.prod.outlook.com (2603:10b6:4:ad::20) by
+ CY5PR12MB6646.namprd12.prod.outlook.com (2603:10b6:930:41::14) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9052.18; Wed, 27 Aug 2025 20:06:29 +0000
+Received: from DS2PEPF00003439.namprd02.prod.outlook.com
+ (2603:10b6:4:ad:cafe::43) by DM5PR07CA0055.outlook.office365.com
+ (2603:10b6:4:ad::20) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9073.16 via Frontend Transport; Wed,
+ 27 Aug 2025 20:06:29 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
+Received: from SATLEXMB03.amd.com (165.204.84.17) by
+ DS2PEPF00003439.mail.protection.outlook.com (10.167.18.36) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.9052.8 via Frontend Transport; Wed, 27 Aug 2025 20:06:28 +0000
+Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 27 Aug
+ 2025 15:06:27 -0500
+Received: from [172.19.71.207] (10.180.168.240) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Wed, 27 Aug 2025 15:06:27 -0500
+Message-ID: <c0c465c3-6ab6-615a-781a-e819941d33ff@amd.com>
+Date: Wed, 27 Aug 2025 13:06:21 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH V1] accel/amdxdna: Add ioctl DRM_IOCTL_AMDXDNA_GET_ARRAY
+Content-Language: en-US
+To: Mario Limonciello <mario.limonciello@amd.com>, <ogabbay@kernel.org>,
+	<quic_jhugo@quicinc.com>, <jacek.lawrynowicz@linux.intel.com>,
+	<dri-devel@lists.freedesktop.org>
+CC: <linux-kernel@vger.kernel.org>, <max.zhen@amd.com>, <sonal.santan@amd.com>
+References: <20250822172319.377848-1-lizhi.hou@amd.com>
+ <2bec1429-4f8c-472c-99a1-420a33a3d316@amd.com>
+ <d6a02baa-3b05-73e6-9c2a-66c257efecc3@amd.com>
+ <a9814644-96e3-456f-90b7-8705a102c938@amd.com>
+ <2a21100b-2078-a166-0b47-9db6b4446b5a@amd.com>
+ <b758a72f-e30e-42f9-a6aa-6f6297b8cce3@amd.com>
+ <b3874221-5b4f-9625-de8a-4e54dc6884a2@amd.com>
+ <c048645d-480d-4b7f-8dde-efb095b2c2fa@amd.com>
+ <492b465b-03d5-e80e-a31a-79ce4b1f83f7@amd.com>
+ <a4fa5f39-17a9-4b47-a53f-ff49db536eb2@amd.com>
+From: Lizhi Hou <lizhi.hou@amd.com>
+In-Reply-To: <a4fa5f39-17a9-4b47-a53f-ff49db536eb2@amd.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+Received-SPF: None (SATLEXMB03.amd.com: lizhi.hou@amd.com does not designate
+ permitted sender hosts)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS2PEPF00003439:EE_|CY5PR12MB6646:EE_
+X-MS-Office365-Filtering-Correlation-Id: 29487d58-3390-4fe3-6e12-08dde5a5352d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|82310400026|376014|36860700013|13003099007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Yy83bWZrWlE5b1Z2UzdoenN3bmlvTFZIWDY3Ry8zUnB1SU5ZTjlSZm4rRlNq?=
+ =?utf-8?B?TXA4dkdicytXTkJobEZaWjlybDZCeEtRdEdjMUZ5VDBncU8zNFQzVkMwYThM?=
+ =?utf-8?B?b2RRNDNJSllCYVNRRjIzTkRGSXlNSW90eFZsOFAxQ2h5L0dQZW1JWjNrS0xx?=
+ =?utf-8?B?amxDSEg1MXpReW5lUHM3WWlWZ2dQUDA4OVlkcGVtQ0hNUllDdnhGMXJ1cjRT?=
+ =?utf-8?B?Z1ZDVStJVUkwQUlOSkNYSDhJampxMkE4MXp1T2ZzalVCcDBrdWYzSHQzZ1hW?=
+ =?utf-8?B?ZVpXOGdNcDNkbUNVa2FjTkc0M21wUFRlb2xMeXc4bXdzOVNCMGdUY0wrKzJS?=
+ =?utf-8?B?cnhYV0I2Zk1KL0RjdXAwVkhHRWFidHB5NVJEYy82QnJYWStTYkNwTzM0T1Vj?=
+ =?utf-8?B?Qy8rMTl3RDl4ZTh2OGVmdWNYcjc4dXR4TVplTTlYalI5emIxa3JXYWhsZUNG?=
+ =?utf-8?B?SHN5MGN4U0xkUHJWcUZMY3k3cGU1eVI2cTFzYUM0dncwNHlMeFZGeTlxQnNw?=
+ =?utf-8?B?enpzYnduM1AwN2xZZmhhMjQxZ2FDM1BHL0NhSjdUNHlrRnFpeFFNL2hjTEZJ?=
+ =?utf-8?B?TUVVVUl3ajVEU3NHcDRFaFdvQXViK25ZTm5uaEZ1QVQxcnlWNG5vNFlkVGNL?=
+ =?utf-8?B?U1doNlFEZ2k2WTB5Ti9Tb0hoU04zUUs4alpucVh0eGx1bURKMzJsT3JNa25k?=
+ =?utf-8?B?aDRGeHRFdTRtWURmSU1sRVV6ekxlY2VsMUJTbDB1Y2J1R3I0R09qYzBkb3VZ?=
+ =?utf-8?B?QVlMZkZsVEV2RGlHejJycStBNU5jREM0SEhaS1ZPeEw1Wk5QVlB6anh1d0dw?=
+ =?utf-8?B?SlBLbkhDQUlHOUJzVVhITlJWSGRrdUZkY1JiQmdRVEMyK2s3K2ExT2k5Njh0?=
+ =?utf-8?B?QWdFa0VJOWkrK1pMV1UzeW1TSDFSWG5SMVBucUQyV3ZzUUg2bkhrVTZXRnhW?=
+ =?utf-8?B?YTFZaGNFeUp3cGpjVGJWcFVwN01OWGx1UGxpK1FzZVVJVmhBalZraVdNNllU?=
+ =?utf-8?B?YnF1RFp5cVlmMnJuTFdOQWpyVHdRZDFkd0g5ZmV4c1RkdUczVlBvQzMrNG5L?=
+ =?utf-8?B?bUdkYU1zUm5NM0M5UGlKYURaOGI1MGdEOGNVZ084Y3BQT25mMmtJMWtyWStN?=
+ =?utf-8?B?clpwWStmcUN4a2xDZ3FwcUhhOEYwWlBUVGxjSmh5K2V5SzE0WTByS0hEalN1?=
+ =?utf-8?B?TW85WXR6TXE5b2w1enNuVE1adGVNRnEyYkJzZFpiM2FLRlFUWExhUUZSZGVh?=
+ =?utf-8?B?aXU3RVFPWTdRWm52WlpjWTBqUDZJelA3eHpBM3IwSnYzWFdtT01kM1hlNFZh?=
+ =?utf-8?B?RXlsaGJjOFBucjJMMUpRQjM3eitwWVltZDJIdWZPNUlJYWlYbDQzVm1qTTRy?=
+ =?utf-8?B?NExJamYwKzU5Z3crRkt4RWhlVys2YkI3NzQzVzNwckFWVFZyTEEvbFV2Vmt1?=
+ =?utf-8?B?NHpmdWZIUEZYWExZRmxKUllJU2t0M1NXVWpNQjYzeDNoQ2FQWkVENXZPcVJY?=
+ =?utf-8?B?ZWJKcmQvMmdHbUl1SjQyUm15YjNsUE9RbzRkbkVnN0p5RXdqMVNEU3R3akE0?=
+ =?utf-8?B?NXZSUmVsbVdTK1krK3dEbzM1Y044UmpacmJ1Tk9RTmN5MndtUmppdUhiRFZT?=
+ =?utf-8?B?cmlOVmF3T29HVitHZytzMGdzLzJyYUcvbU9rVGRFWEd0OFZmdko5YUE0QWFv?=
+ =?utf-8?B?YzdvL2JhM21Iek0zR0V6T2Nma2lPYmJqeGUvZ08xdDI4UDRNYWNOYklURlFG?=
+ =?utf-8?B?akVWQTRCY1lSTXJmcHBDV25PYjdVT2tGSXVmUHh6bldZUzR1bjVET0E0WFVz?=
+ =?utf-8?B?VVRsTEZIRW1qM3ZCQ0tzM2VHUzAzUGpXY0l1Sm9CeXZVc0syQzZMUXJ0M0dh?=
+ =?utf-8?B?ZDhTSTdQSGxkcE5kbHBCSkVWRy9uL3MvTHhUTmUzWTgvd2JnTHVwb0djRGg4?=
+ =?utf-8?B?Nk81NHpsYUhidE96TGl3RzVuWlpmM25TRlpmRUJUV0NSenBzRlNhTlFjRmxI?=
+ =?utf-8?B?YjZWWnBuZE14bzJreXpQNXNGWFF3bzhIZmpKOGxkNFIrRHF6ZDJ2SklReE5T?=
+ =?utf-8?Q?DkxslE?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(376014)(36860700013)(13003099007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2025 20:06:28.0188
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 29487d58-3390-4fe3-6e12-08dde5a5352d
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DS2PEPF00003439.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6646
 
-On Wed, 2025-08-27 at 14:40 +0800, Chenzhi Yang wrote:
-> From: Yang Chenzhi <yang.chenzhi@vivo.com>
->=20
-> This patch addresses two issues in the hfs filesystem:
->=20
-> 1. out-of-bounds access in hfs_bmap_alloc
->=20
-> Analysis can be found here:
-> https://lore.kernel.org/all/20250818141734.8559-2-yang.chenzhi@vivo.com/
->=20
-> With specially crafted offsets from syzbot, hfs_brec_lenoff()
-> could return invalid offset and length values.
->=20
-> This patch introduces a return value for hfs_brec_lenoff().
-> The function now validates offset and length:
-> =C2=A0 - if invalid, it returns an error code;
-> =C2=A0 - if valid, it returns 0.
->=20
-> All callers of hfs_brec_lenoff() are updated to check its return
-> value before using offset and length, thus preventing out-of-bounds
-> access.
->=20
-> 2. potential use of uninitialized memory in hfs_bnode_dump
->=20
-> Related bug report:
-> https://syzkaller.appspot.com/bug?extid=3Df687659f3c2acfa34201
->=20
-> This bug was previously fixed in commit:
-> commit a431930c9bac518bf99d6b1da526a7f37ddee8d8
->=20
-> However, a new syzbot report indicated a KMSAN use-uninit-value.
-> The root cause is that hfs_bnode_dump() calls hfs_bnode_read_u16()
-> with an invalid offset.
-> =C2=A0 - hfs_bnode_read() detects the invalid offset and returns
-> immediately;
-> =C2=A0 - Back in hfs_bnode_read_u16(), be16_to_cpu() was then called on a=
-n
-> =C2=A0=C2=A0=C2=A0 uninitialized variable.
->=20
-> To address this, the intended direction is for hfs_bnode_read()
-> to return a status code (0 on success, negative errno on failure)
-> so that callers can detect errors and exit early, avoiding the use
-> of uninitialized memory.
->=20
-> However, hfs_bnode_read() is widely used, this patch does not modify
-> it directly. Instead, new __hfs_bnode_read*() helper functions are
-> introduced, which mirror the original behavior but add offset/length
-> validation and return values.
->=20
-> For now, only the hfs_bnode_dump() code path is updated to use these
-> helpers in order to validate the feasibility of this approach.
->=20
-> After applying the patch, the xfstests quick suite was run:
-> =C2=A0 - The previously failing generic/113 test now passes;
-> =C2=A0 - All other test cases remain unchanged.
->=20
-> -------------------------------------------
->=20
-> The main idea of this patch is to:
-> Add explicit return values to critical functions so that
-> invalid offset/length values are reported via error codes;
->=20
-> Require all callers to check return values, ensuring
-> invalid parameters are not propagated further;
->=20
-> Improve the overall robustness of the HFS codebase and
-> protect against syzbot-crafted invalid inputs.
->=20
-> RFC: feedback is requested on whether adding return values
-> to hfs_brec_lenoff() and hfs_bnode_read() in this manner
-> is an acceptable direction, and if such safety improvements
-> should be expanded more broadly within the HFS subsystem.
->=20
-> Signed-off-by: Yang Chenzhi <yang.chenzhi@vivo.com>
-> ---
-> =C2=A0fs/hfs/bfind.c | 14 ++++----
-> =C2=A0fs/hfs/bnode.c | 87 +++++++++++++++++++++++++++++++++++------------=
--
-> --
-> =C2=A0fs/hfs/brec.c=C2=A0 | 13 ++++++--
-> =C2=A0fs/hfs/btree.c | 21 +++++++++---
-> =C2=A0fs/hfs/btree.h | 21 +++++++++++-
-> =C2=A05 files changed, 116 insertions(+), 40 deletions(-)
->=20
-> diff --git a/fs/hfs/bfind.c b/fs/hfs/bfind.c
-> index 34e9804e0f36..aea6edd4d830 100644
-> --- a/fs/hfs/bfind.c
-> +++ b/fs/hfs/bfind.c
-> @@ -61,16 +61,16 @@ int __hfs_brec_find(struct hfs_bnode *bnode,
-> struct hfs_find_data *fd)
-> =C2=A0	u16 off, len, keylen;
-> =C2=A0	int rec;
-> =C2=A0	int b, e;
-> -	int res;
-> +	int res, ret;
-> =C2=A0
-> =C2=A0	b =3D 0;
-> =C2=A0	e =3D bnode->num_recs - 1;
-> =C2=A0	res =3D -ENOENT;
-> =C2=A0	do {
-> =C2=A0		rec =3D (e + b) / 2;
-> -		len =3D hfs_brec_lenoff(bnode, rec, &off);
-> +		ret =3D hfs_brec_lenoff(bnode, rec, &off, &len);
 
-Frankly speaking, I don't think that reworking this method for
-returning the error code is necessary. Currently, we return the length
-value (u16) and we can return U16_MAX as for off as for len for the
-case of incorrect offset or erroneous logic. We can treat U16_MAX as
-error condition and we can check off and len for this value. Usually,
-HFS b-tree node has 512 bytes in size and as offset as length cannot be
-equal to U16_MAX (or bigger). And we don't need to change the input and
-output arguments if we will check for U16_MAX value.
+On 8/27/25 11:09, Mario Limonciello wrote:
+> On 8/27/2025 11:41 AM, Lizhi Hou wrote:
+>>
+>> On 8/26/25 17:31, Mario Limonciello wrote:
+>>> On 8/26/2025 1:10 PM, Lizhi Hou wrote:
+>>>>
+>>>> On 8/26/25 10:58, Mario Limonciello wrote:
+>>>>> On 8/26/2025 12:55 PM, Lizhi Hou wrote:
+>>>>>>
+>>>>>> On 8/26/25 10:18, Mario Limonciello wrote:
+>>>>>>> On 8/25/2025 11:48 PM, Lizhi Hou wrote:
+>>>>>>>>
+>>>>>>>> On 8/25/25 14:28, Mario Limonciello wrote:
+>>>>>>>>> On 8/22/2025 12:23 PM, Lizhi Hou wrote:
+>>>>>>>>>> Add interface for applications to get information array. The 
+>>>>>>>>>> application
+>>>>>>>>>> provides a buffer pointer along with information type, 
+>>>>>>>>>> maximum number of
+>>>>>>>>>> entries and maximum size of each entry. The buffer may also 
+>>>>>>>>>> contain match
+>>>>>>>>>> conditions based on the information type. After the ioctl 
+>>>>>>>>>> completes, the
+>>>>>>>>>> actual number of entries and entry size are returned.
+>>>>>>>>>>
+>>>>>>>>>> Signed-off-by: Lizhi Hou <lizhi.hou@amd.com>
+>>>>>>>>>
+>>>>>>>>> How does userspace discover whether or not the new IOCTL call 
+>>>>>>>>> is supported?  Just a test call?
+>>>>>>>> The kernel header version will be used to determine whether the 
+>>>>>>>> application which uses new IOCTL will be compiled or not.
+>>>>>>>>
+>>>>>>>
+>>>>>>> But it's not actually an application compile time decision, it's 
+>>>>>>> a runtime decision.  IE I can compile an application with the 
+>>>>>>> headers on kernel 6.18 that has this, but if I try to run it on 
+>>>>>>> 6.15 it's going to barf.
+>>>>>>>
+>>>>>>> To some extent that comes with the territory, but I'm wondering 
+>>>>>>> if a better solution going forward would be for there to be a 
+>>>>>>> dedicated version command that you bump.
+>>>>>>
+>>>>>> For in-tree driver, I did not aware a common way for this other 
+>>>>>> than checking the kernel version.
+>>>>>>
+>>>>>> And here is qaic patch of adding a new IOCTL.
+>>>>>>
+>>>>>> https://github.com/torvalds/linux/ 
+>>>>>> commit/217b812364d360e1933d8485f063400e5dda7d66
+>>>>>>
+>>>>>>
+>>>>>> I know there is major, minor, patchlevel in struct drm_driver. 
+>>>>>> And I think that is not required for in-tree driver.
+>>>>>>
+>>>>>> Please let me know if I missed anything.
+>>>>>>
+>>>>>> Thanks,
+>>>>>
+>>>>> Right; so bump up one of those so that userspace can check it. 
+>>>>> Maybe "minor"?
+>>>>
+>>>> I meant for in-tree driver, is it good enough for userspace to just 
+>>>> check kernel version?  E.g. The drm driver versions are not used by 
+>>>> ivpu or qaic.
+>>>>
+>>>
+>>> Just because they don't doesn't mean you shouldn't.
+>> Ok. :) It does not sound amdxdna specific. Just wondering how the 
+>> other driver/application under accel subsystem handle this.
+>>>
+>>> Take a look at what amdgpu does for user queues earlier this year 
+>>> for example: 100b6010d7540e
+>>>
+>>> This means that a userspace application can look for that minor bump 
+>>> or newer to know the ioctl supports user queues.
+>>
+>> As in-tree driver is part of kernel, the userspace application can 
+>> check kernel version to determine whether a feature is supported or 
+>> not. Could you share the idea why would user application to check drm 
+>> driver version for this?
+>>
+>> And amdxdna driver is new added driver which never bumped drm major/ 
+>> minor before. Thus there is not any application use drm versions. 
+>> Maybe using kernel version directly is good enough in this case?
+>>
+>> I am fine to bump minor if it provides better support to user 
+>> applications.
+>>
+>>
+>> Thanks,
+>>
+>> Lizhi
+>>
+>
+> If you're running mainline kernel I totally agree with you that you 
+> can make a runtime call based upon major/minor kernel version.  To me 
+> the problem ends up being cases that distros do a backport of a driver 
+> or subsystem that this falls apart.
+>
+> For example RHEL and CentOS stream both do this, and then such 
+> comparisons can no longer be made accurately.
 
-> =C2=A0		keylen =3D hfs_brec_keylen(bnode, rec);
-> -		if (keylen =3D=3D 0) {
-> +		if (keylen =3D=3D 0 || ret) {
-> =C2=A0			res =3D -EINVAL;
-> =C2=A0			goto fail;
-> =C2=A0		}
-> @@ -87,9 +87,9 @@ int __hfs_brec_find(struct hfs_bnode *bnode, struct
-> hfs_find_data *fd)
-> =C2=A0			e =3D rec - 1;
-> =C2=A0	} while (b <=3D e);
-> =C2=A0	if (rec !=3D e && e >=3D 0) {
-> -		len =3D hfs_brec_lenoff(bnode, e, &off);
-> +		ret =3D hfs_brec_lenoff(bnode, e, &off, &len);
-> =C2=A0		keylen =3D hfs_brec_keylen(bnode, e);
-> -		if (keylen =3D=3D 0) {
-> +		if (keylen =3D=3D 0 || ret) {
+Ok. I will bump minor by 1.
 
-The same here.
+Lizhi
 
-> =C2=A0			res =3D -EINVAL;
-> =C2=A0			goto fail;
-> =C2=A0		}
-> @@ -223,9 +223,9 @@ int hfs_brec_goto(struct hfs_find_data *fd, int
-> cnt)
-> =C2=A0		fd->record +=3D cnt;
-> =C2=A0	}
-> =C2=A0
-> -	len =3D hfs_brec_lenoff(bnode, fd->record, &off);
-> +	res =3D hfs_brec_lenoff(bnode, fd->record, &off, &len);
-> =C2=A0	keylen =3D hfs_brec_keylen(bnode, fd->record);
-> -	if (keylen =3D=3D 0) {
-> +	if (keylen =3D=3D 0 || res) {
-
-Ditto.
-
-> =C2=A0		res =3D -EINVAL;
-> =C2=A0		goto out;
-> =C2=A0	}
-> diff --git a/fs/hfs/bnode.c b/fs/hfs/bnode.c
-> index e8cd1a31f247..b0bbaf016b8d 100644
-> --- a/fs/hfs/bnode.c
-> +++ b/fs/hfs/bnode.c
-> @@ -57,26 +57,16 @@ int check_and_correct_requested_length(struct
-> hfs_bnode *node, int off, int len)
-> =C2=A0	return len;
-> =C2=A0}
-> =C2=A0
-> -void hfs_bnode_read(struct hfs_bnode *node, void *buf, int off, int
-> len)
-> +int __hfs_bnode_read(struct hfs_bnode *node, void *buf, u16 off, u16
-> len)
-
-I don't follow why do we need to introduce __hfs_bnode_read(). One
-method for all is enough. And I think we still can use only
-hfs_bnode_read(). Because, we can initialize the buffer by 0x00 or 0xFF
-in the case we cannot read if offset or length are invalid. Usually,
-every method checks (or should) check the returning value of
-hfs_bnode_read().
-
-> =C2=A0{
-> =C2=A0	struct page *page;
-> =C2=A0	int pagenum;
-> =C2=A0	int bytes_read;
-> =C2=A0	int bytes_to_read;
-> =C2=A0
-> -	if (!is_bnode_offset_valid(node, off))
-> -		return;
-> -
-> -	if (len =3D=3D 0) {
-> -		pr_err("requested zero length: "
-> -		=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 "NODE: id %u, type %#x, height %u=
-, "
-> -		=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 "node_size %u, offset %d, len %d\=
-n",
-> -		=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 node->this, node->type, node->hei=
-ght,
-> -		=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 node->tree->node_size, off, len);
-> -		return;
-> -	}
-> -
-> -	len =3D check_and_correct_requested_length(node, off, len);
-> +	/* len =3D 0 is invalid: prevent use of an uninitalized
-> buffer*/
-> +	if (!len || !hfs_off_and_len_is_valid(node, off, len))
-> +		return -EINVAL;
-> =C2=A0
-> =C2=A0	off +=3D node->page_offset;
-> =C2=A0	pagenum =3D off >> PAGE_SHIFT;
-> @@ -93,6 +83,47 @@ void hfs_bnode_read(struct hfs_bnode *node, void
-> *buf, int off, int len)
-> =C2=A0		pagenum++;
-> =C2=A0		off =3D 0; /* page offset only applies to the first
-> page */
-> =C2=A0	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int __hfs_bnode_read_u16(struct hfs_bnode *node, u16* buf,
-> u16 off)
-
-I don't see the point to introduce another version of method because we
-can return U16_MAX as invalid value.
-
-> +{
-> +	__be16 data;
-> +	int res;
-> +
-> +	res =3D __hfs_bnode_read(node, (void*)(&data), off, 2);
-> +	if (res)
-> +		return res;
-> +	*buf =3D be16_to_cpu(data);
-> +	return 0;
-> +}
-> +
-> +
-> +static int __hfs_bnode_read_u8(struct hfs_bnode *node, u8* buf, u16
-> off)
-
-And we can return U8_MAX as invalid value here too.
-
-> +{
-> +	int res;
-> +
-> +	res =3D __hfs_bnode_read(node, (void*)(&buf), off, 2);
-> +	if (res)
-> +		return res;
-> +	return 0;
-> +}
-> +
-> +void hfs_bnode_read(struct hfs_bnode *node, void *buf, int off, int
-> len)
-
-I don't think that we need two methods instead of one.
-
-> +{
-> +	int res;
-> +
-> +	len =3D check_and_correct_requested_length(node, off, len);
-> +	res =3D __hfs_bnode_read(node, buf, (u16)off, (u16)len);
-> +	if (res) {
-> +		pr_err("hfs_bnode_read error: "
-> +		=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 "NODE: id %u, type %#x, height %u=
-, "
-> +		=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 "node_size %u, offset %d, len %d\=
-n",
-> +		=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 node->this, node->type, node->hei=
-ght,
-> +		=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 node->tree->node_size, off, len);
-> +	}
-> +	return;
-> =C2=A0}
-> =C2=A0
-> =C2=A0u16 hfs_bnode_read_u16(struct hfs_bnode *node, int off)
-> @@ -241,7 +272,8 @@ void hfs_bnode_dump(struct hfs_bnode *node)
-
-The hfs_bnode_dump() is mostly debugging method. So, maybe, it could be
-interesting to see the "garbage" instead of breaking the read logic.
-
-> =C2=A0{
-> =C2=A0	struct hfs_bnode_desc desc;
-> =C2=A0	__be32 cnid;
-> -	int i, off, key_off;
-> +	int i, res;
-> +	u16 off, key_off;
-> =C2=A0
-> =C2=A0	hfs_dbg(BNODE_MOD, "bnode: %d\n", node->this);
-> =C2=A0	hfs_bnode_read(node, &desc, 0, sizeof(desc));
-> @@ -251,23 +283,28 @@ void hfs_bnode_dump(struct hfs_bnode *node)
-> =C2=A0
-> =C2=A0	off =3D node->tree->node_size - 2;
-> =C2=A0	for (i =3D be16_to_cpu(desc.num_recs); i >=3D 0; off -=3D 2, i--)
-> {
-> -		key_off =3D hfs_bnode_read_u16(node, off);
-> +		res =3D __hfs_bnode_read_u16(node, &key_off, off);
-> +		if (res) return;
-> =C2=A0		hfs_dbg_cont(BNODE_MOD, " %d", key_off);
-> =C2=A0		if (i && node->type =3D=3D HFS_NODE_INDEX) {
-> -			int tmp;
-> -
-> -			if (node->tree->attributes &
-> HFS_TREE_VARIDXKEYS)
-> -				tmp =3D (hfs_bnode_read_u8(node,
-> key_off) | 1) + 1;
-> -			else
-> +			u8 tmp, data;
-> +			if (node->tree->attributes &
-> HFS_TREE_VARIDXKEYS) {
-> +				res =3D __hfs_bnode_read_u8(node,
-> &data, key_off);
-> +				if (res) return;
-
-This breaks the kernel code style.
-
-> +				tmp =3D (data | 1) + 1;
-> +			} else {
-> =C2=A0				tmp =3D node->tree->max_key_len + 1;
-> -			hfs_dbg_cont(BNODE_MOD, " (%d,%d",
-> -				=C2=A0=C2=A0=C2=A0=C2=A0 tmp, hfs_bnode_read_u8(node,
-> key_off));
-> +			}
-> +			res =3D __hfs_bnode_read_u8(node, &data,
-> key_off);
-> +			if (res) return;
-
-This breaks the kernel code style.
-
-> +			hfs_dbg_cont(BNODE_MOD, " (%d,%d", tmp,
-> data);
-> =C2=A0			hfs_bnode_read(node, &cnid, key_off + tmp,
-> 4);
-> =C2=A0			hfs_dbg_cont(BNODE_MOD, ",%d)",
-> be32_to_cpu(cnid));
-> =C2=A0		} else if (i && node->type =3D=3D HFS_NODE_LEAF) {
-> -			int tmp;
-> +			u8 tmp;
-> =C2=A0
-> -			tmp =3D hfs_bnode_read_u8(node, key_off);
-> +			res =3D __hfs_bnode_read_u8(node, &tmp,
-> key_off);
-> +			if (res) return;
-
-This breaks the kernel code style.
-
-> =C2=A0			hfs_dbg_cont(BNODE_MOD, " (%d)", tmp);
-> =C2=A0		}
-> =C2=A0	}
-> diff --git a/fs/hfs/brec.c b/fs/hfs/brec.c
-> index 896396554bcc..d7026a3ffeea 100644
-> --- a/fs/hfs/brec.c
-> +++ b/fs/hfs/brec.c
-> @@ -16,15 +16,22 @@ static int hfs_brec_update_parent(struct
-> hfs_find_data *fd);
-> =C2=A0static int hfs_btree_inc_height(struct hfs_btree *tree);
-> =C2=A0
-> =C2=A0/* Get the length and offset of the given record in the given node
-> */
-> -u16 hfs_brec_lenoff(struct hfs_bnode *node, u16 rec, u16 *off)
-> +int hfs_brec_lenoff(struct hfs_bnode *node, u16 rec, u16 *off, u16
-> *len)
-
-Please, see my comments above. I think we can use U16_MAX as invalid
-value.
-
-> =C2=A0{
-> =C2=A0	__be16 retval[2];
-> =C2=A0	u16 dataoff;
-> +	int res;
-> =C2=A0
-> =C2=A0	dataoff =3D node->tree->node_size - (rec + 2) * 2;
-> -	hfs_bnode_read(node, retval, dataoff, 4);
-> +	res =3D __hfs_bnode_read(node, retval, dataoff, 4);
-> +	if (res)
-> +		return -EINVAL;
-> =C2=A0	*off =3D be16_to_cpu(retval[1]);
-> -	return be16_to_cpu(retval[0]) - *off;
-> +	*len =3D be16_to_cpu(retval[0]) - *off;
-> +	if (!hfs_off_and_len_is_valid(node, *off, *len) ||
-> +			*off < sizeof(struct hfs_bnode_desc))
-> +		return -EINVAL;
-> +	return 0;
-> =C2=A0}
-> =C2=A0
-> =C2=A0/* Get the length of the key from a keyed record */
-> diff --git a/fs/hfs/btree.c b/fs/hfs/btree.c
-> index e86e1e235658..b13582dcc27a 100644
-> --- a/fs/hfs/btree.c
-> +++ b/fs/hfs/btree.c
-> @@ -301,7 +301,9 @@ struct hfs_bnode *hfs_bmap_alloc(struct hfs_btree
-> *tree)
-> =C2=A0	node =3D hfs_bnode_find(tree, nidx);
-> =C2=A0	if (IS_ERR(node))
-> =C2=A0		return node;
-> -	len =3D hfs_brec_lenoff(node, 2, &off16);
-> +	res =3D hfs_brec_lenoff(node, 2, &off16, &len);
-> +	if (res)
-> +		return ERR_PTR(res);
-> =C2=A0	off =3D off16;
-> =C2=A0
-> =C2=A0	off +=3D node->page_offset;
-> @@ -347,7 +349,9 @@ struct hfs_bnode *hfs_bmap_alloc(struct hfs_btree
-> *tree)
-> =C2=A0			return next_node;
-> =C2=A0		node =3D next_node;
-> =C2=A0
-> -		len =3D hfs_brec_lenoff(node, 0, &off16);
-> +		res =3D hfs_brec_lenoff(node, 0, &off16, &len);
-> +		if (res)
-> +			return ERR_PTR(res);
-> =C2=A0		off =3D off16;
-> =C2=A0		off +=3D node->page_offset;
-> =C2=A0		pagep =3D node->page + (off >> PAGE_SHIFT);
-> @@ -363,6 +367,7 @@ void hfs_bmap_free(struct hfs_bnode *node)
-> =C2=A0	u16 off, len;
-> =C2=A0	u32 nidx;
-> =C2=A0	u8 *data, byte, m;
-> +	int res;
-> =C2=A0
-> =C2=A0	hfs_dbg(BNODE_MOD, "btree_free_node: %u\n", node->this);
-> =C2=A0	tree =3D node->tree;
-> @@ -370,7 +375,9 @@ void hfs_bmap_free(struct hfs_bnode *node)
-> =C2=A0	node =3D hfs_bnode_find(tree, 0);
-> =C2=A0	if (IS_ERR(node))
-> =C2=A0		return;
-> -	len =3D hfs_brec_lenoff(node, 2, &off);
-> +	res =3D hfs_brec_lenoff(node, 2, &off, &len);
-> +	if (res)
-> +		goto fail;
-> =C2=A0	while (nidx >=3D len * 8) {
-> =C2=A0		u32 i;
-> =C2=A0
-> @@ -394,7 +401,9 @@ void hfs_bmap_free(struct hfs_bnode *node)
-> =C2=A0			hfs_bnode_put(node);
-> =C2=A0			return;
-> =C2=A0		}
-> -		len =3D hfs_brec_lenoff(node, 0, &off);
-> +		res =3D hfs_brec_lenoff(node, 0, &off, &len);
-> +		if (res)
-> +			goto fail;
-> =C2=A0	}
-> =C2=A0	off +=3D node->page_offset + nidx / 8;
-> =C2=A0	page =3D node->page[off >> PAGE_SHIFT];
-> @@ -415,4 +424,8 @@ void hfs_bmap_free(struct hfs_bnode *node)
-> =C2=A0	hfs_bnode_put(node);
-> =C2=A0	tree->free_nodes++;
-> =C2=A0	mark_inode_dirty(tree->inode);
-> +	return;
-> +fail:
-> +	hfs_bnode_put(node);
-> +	pr_err("fail to free a bnode due to invalid off or len\n");
-
-I am not sure that breaking free bnode logic because of incorrect
-length (and, maybe, even offset) is correct behavior. Because, we can
-correct length and continue to free bnode. So, I am not sure that
-complete failure is the correct way of managing the situation.
-
-Thanks,
-Slava.
-
-> =C2=A0}
-> diff --git a/fs/hfs/btree.h b/fs/hfs/btree.h
-> index 0e6baee93245..78f228e62a86 100644
-> --- a/fs/hfs/btree.h
-> +++ b/fs/hfs/btree.h
-> @@ -94,6 +94,7 @@ extern struct hfs_bnode * hfs_bmap_alloc(struct
-> hfs_btree *);
-> =C2=A0extern void hfs_bmap_free(struct hfs_bnode *node);
-> =C2=A0
-> =C2=A0/* bnode.c */
-> +extern int __hfs_bnode_read(struct hfs_bnode *, void *, u16, u16);
-> =C2=A0extern void hfs_bnode_read(struct hfs_bnode *, void *, int, int);
-> =C2=A0extern u16 hfs_bnode_read_u16(struct hfs_bnode *, int);
-> =C2=A0extern u8 hfs_bnode_read_u8(struct hfs_bnode *, int);
-> @@ -116,7 +117,7 @@ extern void hfs_bnode_get(struct hfs_bnode *);
-> =C2=A0extern void hfs_bnode_put(struct hfs_bnode *);
-> =C2=A0
-> =C2=A0/* brec.c */
-> -extern u16 hfs_brec_lenoff(struct hfs_bnode *, u16, u16 *);
-> +extern int hfs_brec_lenoff(struct hfs_bnode *, u16, u16 *, u16 *);
-> =C2=A0extern u16 hfs_brec_keylen(struct hfs_bnode *, u16);
-> =C2=A0extern int hfs_brec_insert(struct hfs_find_data *, void *, int);
-> =C2=A0extern int hfs_brec_remove(struct hfs_find_data *);
-> @@ -170,3 +171,21 @@ struct hfs_btree_header_rec {
-> =C2=A0						=C2=A0=C2=A0 max key length.
-> use din catalog
-> =C2=A0						=C2=A0=C2=A0 b-tree but not in
-> extents
-> =C2=A0						=C2=A0=C2=A0 b-tree (hfsplus).
-> */
-> +static inline
-> +bool hfs_off_and_len_is_valid(struct hfs_bnode *node, u16 off, u16
-> len)
-> +{
-> +	bool ret =3D true;
-> +	if (off > node->tree->node_size ||
-> +			off + len > node->tree->node_size)
-> +		ret =3D false;
-> +
-> +	if (!ret) {
-> +		pr_err("requested invalid offset: "
-> +		=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 "NODE: id %u, type %#x, height %u=
-, "
-> +		=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 "node_size %u, offset %u, length =
-%u\n",
-> +		=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 node->this, node->type, node->hei=
-ght,
-> +		=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 node->tree->node_size, off, len);
-> +	}
-> +
-> +	return ret;
-> +}
 
