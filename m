@@ -1,266 +1,188 @@
-Return-Path: <linux-kernel+bounces-788273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBAFBB3820C
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 14:16:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03F1FB3820E
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 14:16:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B12B1BA7747
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 12:16:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F303981756
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 12:16:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15E8230DECF;
-	Wed, 27 Aug 2025 12:15:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44F48302778;
+	Wed, 27 Aug 2025 12:16:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mlPTId9r"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="ThOyqj16"
+Received: from TYPPR03CU001.outbound.protection.outlook.com (mail-japaneastazon11012038.outbound.protection.outlook.com [52.101.126.38])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 854AA303CB6;
-	Wed, 27 Aug 2025 12:15:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756296926; cv=none; b=NqmDnA50yEb6SmBn0cAYKNNez+jHwiy9t6xcUGPj05trcW52WK2Ji/H/ZaOiLhDT+9pa7rUPTs2/llmsrTrZ6hXuBUKWsoromDaEjPVkAPox6ACnxAOUs4pTbbtWcWAhIhqiFbWvt6aWvvdlOnxrL/VEsoiVeFwIC+KPrdAz3Lo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756296926; c=relaxed/simple;
-	bh=4RXyP0M5mYncRYJ/RZ27T+ZgcfDjWi9oAGtWgYDaovw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jDqAkTjj40vKo4Jfz/IvZV0oDjRfxL9KdhCqFu68Yv/749V3mn6PxXhPR804FOjqrdJjQTwzPC0F2W4YSI9zWv+B7VV3XGnVp4xWQFJDQqT6VHN+0nfVS8uSMro43odBs5n+9Ebt8JNtAaXCeoDPB3DIyjrkEEngCl44E/yZHx8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mlPTId9r; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-45a1b004a31so51675555e9.0;
-        Wed, 27 Aug 2025 05:15:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756296922; x=1756901722; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=deWal6fGTmJIA2DRBxXQwsqRR1CnN/qtvwinddrGd2I=;
-        b=mlPTId9rHGVZ7Bhzh6lq6z+AFm9NXVlGFsdlX+tkTkwBvRVFwfYWw7QoEmAPT5sdQP
-         83sTCfasyJRbI95i7tIZIgm9eZN4ce+FXnb49I03KV1mTZ0f4cuDV+i+pwhMYlmlwV/1
-         pV7iYFK5LJI9oAUsBhjmuUCQnP9zbtt7SvweeTVWp4XHN3JdhnGrIMD+JrbHWWNUhk67
-         7Yn0felirakQYSEYp3LhKdnyFKN1hh8wQ8eescgVRX4E6TumVtXOIEom4sGTXxGx+Gwt
-         diPIZHahXrLMk6Fe3J5xdTe5APxSeMd7MsHvdywRLh6Z52vu3/0RSr76V3excLueT5vM
-         qMkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756296922; x=1756901722;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=deWal6fGTmJIA2DRBxXQwsqRR1CnN/qtvwinddrGd2I=;
-        b=BKH6y5IznxSYN+l+QSZEBvXNukOxgIsnBAgGupab+ctDBuuSzMvAqN2EJktExMqCi0
-         slzeyis6DOlIKWou2JV21c2DAKhrLjuPlMCXlS7kAU6HU1AQJpNHAe4EXY16MxRRX62I
-         mVltdX+jG+w0ZhAFXTXhYjN77FhWUvLY3yxkE7/d7A3bd+fn6G+daQsfyvfn3dI1ZzCs
-         bDwPgHtShcxVWsUXFlLMJIiaDr6tvMgnbblFk6Yf7FRMTkoH9yuxAzwyfBXklMKv2CfH
-         nzQWlkfRoa9nPWqMbo1m0A/voRPVszbAWuOnZB/Avu7wQAo0WEHz8Jzv4dO0afFlGDEx
-         b/AQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVD5LxsSXUUcPKORVrmm0ZhdnY5tKkuqOJLV0958Yc5Op3bWSeYDvFZtTZEJg9U30p32vSBpts/KNw/tQog@vger.kernel.org, AJvYcCVqFIPiYaoHxYC0mP+ghg097yomTLJztE+RoZW3vjY5I2mNkiK4bJvR00ZMW2PCKV5pYp3c3AVrd6ek6LAwSv61@vger.kernel.org, AJvYcCW6Qe2jQoqAQiouNLX3bXVrVSfeHB2wl75Qv7P3X9QyEQIGw5zjGmieBeBBEijLdO/oP3+ZPzn8Sqn+@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmY9IZL8cIMzZ3l1bYtxY6oEvxY13/ZXT0frwGXdzn7olIcC6S
-	lTJpqaSpPahqTN8+Ek/Vul/BVqU78Qwt+ImoGzkOoW/c60iD6oVilnEXhYzBAMehxHKyAA==
-X-Gm-Gg: ASbGncsjl3XSPLVpjBZyxweFhRsuA4pLQuzep+78DNxDCVKZB1cbt/GZECQmSJ3Xli/
-	6HLrj58BCrqSeouU+GXE7O5jdkQ+9o3LKGk7A+8ivzuGWvhwaJvJILVSC3AhfQm58ZlwI76EixI
-	QUTi1ndnikB5Nxr8leI972Z0IpOHWEc64CP6EyBtNZM6NtqQhWd6ATJjJwkAF64ff0EjDhaCPst
-	phjU6N0lk3mbR74KtwCF2s5tXoQiI+N4QeIM2/DXRy22zAsoX+aUytcDRi0JnwUFRAAAQsMDRly
-	TCX9S6UctrcFd8BH170Vg+oY4MVHeocy3k3Y2VFfubWZSZebIjclxJF/RDFvJygRiOe9IeJrtB2
-	Z0cbvI8q46Zea8A3W7CP0tRmOHuCpgt1lNGG/9FGFaaQ/EvdatHx5EIf4uPH+gCH6MhMaLQZBXT
-	sOMA7+b0pImw==
-X-Google-Smtp-Source: AGHT+IH7ZMKSdqmekj5haFzANAciqUU5tKO1zCWwczU/8ZOjMqgAYLGB6etXPY1O7g1rn4Nha+5qqA==
-X-Received: by 2002:a05:600c:1c0c:b0:458:bda4:43df with SMTP id 5b1f17b1804b1-45b727a2c43mr16217345e9.17.1756296921471;
-        Wed, 27 Aug 2025 05:15:21 -0700 (PDT)
-Received: from HYB-DlYm71t3hSl.ad.analog.com ([137.71.226.91])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c70eb7eed5sm19747374f8f.18.2025.08.27.05.15.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Aug 2025 05:15:21 -0700 (PDT)
-Date: Wed, 27 Aug 2025 14:15:18 +0200
-From: Jorge Marques <gastmaier@gmail.com>
-To: Frank Li <Frank.li@nxp.com>
-Cc: Jorge Marques <jorge.marques@analog.com>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Kees Cook <kees@kernel.org>, 
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>, linux-i3c@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH v7 0/2] Add ADI I3C Controller
-Message-ID: <4cnv4s5puov5xrzfvv4fn4ndwup6g5kpbeiwjaybqcvacw7tvj@hfr2cusdxr5m>
-References: <20250818-adi-i3c-master-v7-0-f7207902669d@analog.com>
- <aK3ZFSQ9FUwuxT12@lizhi-Precision-Tower-5810>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E96EC285061;
+	Wed, 27 Aug 2025 12:16:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.126.38
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756296972; cv=fail; b=cy+dXLDynAQf74WsRTowfq6ahfwjwpfX9uj9U3Nnxu5QlHEZvKf3VBmf6ZXCFJyWD9yznovW0XJjv+8TRKt4EyjGhRfR8Sn9Nl7VQ7xiMjV5XZvqQwCgH18oi8MmpvQ21fx9qyq2zLN4s6MBw/K22W4KQQZI0ay8hTsu7163H0A=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756296972; c=relaxed/simple;
+	bh=7N7JuGBlXIvY/akBQeh2xYnteJ09lQoFaD8YQ0lD/uo=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=HrORyBqSadp6VnT2R+lfpKzyrm7R7rI6SCc8sx583I+kAOjBH6hfP7F90YSpFJ3TGnFKhc7VFtqam6bl3IASDL8ow+LuHB/c3iYodCBrIZPk+c6Qtm3k9qBP88P8CV294DUh9CObAu7cCx97i8zJpRzQ4TORfKLq0btsgRGBxAE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=ThOyqj16; arc=fail smtp.client-ip=52.101.126.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Mfh5B82WAaQUaiSTPENC51soh/HJn2sIxh7oqtb7vWY2BfavXqpuSrtNzrWYDxLeRvKvhPzaSvp4lyrv29rdquYXiXd3FQcbiDRFCI4qltViBcABmIDuJoD+eImHNEqOffPWzZGyVzulirDtTf/OeyX2ud5lNWCjxHchDHHyIa73JvBJ5O8UQihaP8BRn+vmE5nX4NgwMOIQli+hBMKHVEdhMaFFDuRE3Or0Bc/ON5C5bbTmfVOGI4zJFpJwO8hoo6UsltAWZlHcMv0fPBOpZVPT93HwmVrBIMcDjUOzckwjSvnVNNK+KOppRdwPqXEFaTroQV7j5ylyOXHr2WABrg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=SUeyn2FKrREJcNNGHEQM3gnYpRSix4Dzh8wunkHq2RI=;
+ b=wvVQjjX5xZA7UWldgsxV1jMLqvSQuiAEqz3uzmJkLdEZGkt+2ke0VvEugPPYYuAPArJtha4MFIvWX2cNVx93k4u6Jgo0WIV/64vSJY+VNbTxY/3rETuyToM4AI5iDG2m37GonOSfzY4LKIjyz6UI+w7/WXFZ7zXliSGA0WyO7s0uXUPD4ojrS842XFXvDcR1w48NReQE77EfvPECJnuwspQgIoagNuqTwoBSrs5n5ywJNFSbmcarOeN6SPAf6zzCFoAYcSG7orBvBp0kxO5CGxuoCzDTJ2gwC/TaMapaiYSlhzXAS9BW/VII+l1gJMVAFmu5raIzZoQYeYJ9wCdmcA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=SUeyn2FKrREJcNNGHEQM3gnYpRSix4Dzh8wunkHq2RI=;
+ b=ThOyqj16q5gGNIYo0XRHeaBEuraF87ZnIFjt4gwrv0CpHLksJ30+YJroALuZhmZ1CZaJUKvvBIGUCTrrBs/GLDGOuE7UXHcYI8dILVXhWZmcBr8WEkR4Y1hmGzXb3qxszYmQ0zDwhrMuGMIrswczvCnEA39OcoPULxErR5efDks2YIXAu3KElVPZ/L0YzIE59UCTnMLytI7XviOTAyZXmfmkm9nuTx9QlqWKbkgcwAFWoG+tOw/K3mgRYsS2Vd5HDs9JY/RN6Xq9baqFN5HxpTP7UaXEUFpwWcQ+xV5b849qlYKv2GbF9neIyzMVKvUX+a2QyUg5tKT5i80NZkfOrg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SEZPR06MB5576.apcprd06.prod.outlook.com (2603:1096:101:c9::14)
+ by SEYPR06MB6684.apcprd06.prod.outlook.com (2603:1096:101:176::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.14; Wed, 27 Aug
+ 2025 12:16:06 +0000
+Received: from SEZPR06MB5576.apcprd06.prod.outlook.com
+ ([fe80::5c0a:2748:6a72:99b6]) by SEZPR06MB5576.apcprd06.prod.outlook.com
+ ([fe80::5c0a:2748:6a72:99b6%7]) with mapi id 15.20.9052.019; Wed, 27 Aug 2025
+ 12:16:06 +0000
+From: Liao Yuanhong <liaoyuanhong@vivo.com>
+To: Sunil Goutham <sgoutham@marvell.com>,
+	Linu Cherian <lcherian@marvell.com>,
+	Geetha sowjanya <gakula@marvell.com>,
+	Jerin Jacob <jerinj@marvell.com>,
+	hariprasad <hkelam@marvell.com>,
+	Subbaraya Sundeep <sbhatta@marvell.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org (open list:MARVELL OCTEONTX2 RVU ADMIN FUNCTION DRIVER),
+	linux-kernel@vger.kernel.org (open list)
+Cc: Liao Yuanhong <liaoyuanhong@vivo.com>
+Subject: [PATCH net-next] octeontx2-af: Remove redundant ternary operators
+Date: Wed, 27 Aug 2025 20:15:52 +0800
+Message-Id: <20250827121552.497268-1-liaoyuanhong@vivo.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: TYCPR01CA0007.jpnprd01.prod.outlook.com (2603:1096:405::19)
+ To SEZPR06MB5576.apcprd06.prod.outlook.com (2603:1096:101:c9::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aK3ZFSQ9FUwuxT12@lizhi-Precision-Tower-5810>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SEZPR06MB5576:EE_|SEYPR06MB6684:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6e98ab58-7fcf-4506-98b5-08dde5637fcc
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|52116014|376014|366016|1800799024|38350700014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?azthTuk5Nb++kLHFZCa441yv6j2TF874m9CPhE2r1raC48N9403TXOXh6yqE?=
+ =?us-ascii?Q?lBJBgcu2PeWNjqHvpeWfdzcO/pT9ZjJPgwK9bANRG/7exCft78H57WAP/Dmt?=
+ =?us-ascii?Q?ObJoIv1JKtbWtckgcNk9qV8cVvGlaPH2sg4Kx+fXR8aXZtpMqnk6I+69n3jF?=
+ =?us-ascii?Q?GIsGSgcFqhp52LQhr0tP4LPNBMzR2josPtvqqePpRO3TlPAlArG0pnUkqsNp?=
+ =?us-ascii?Q?h+/1KjGs62V49N6VSgUK2qBml66EX6ZuKPhyurOkx+V75E8yM5qDReKaUJD5?=
+ =?us-ascii?Q?tGNu6/qH/uf2/2stDRXOIqaaI8XMP+AG3bsPUD8MwJzKkqgf8T4LdJTNcOhu?=
+ =?us-ascii?Q?q4rNb6/Ryw9qDpNtVaByNn/AVNuj46H/s1DT9Ze2QN+08w+ldsomo66iU/jj?=
+ =?us-ascii?Q?TyIpM5gwSbgLjAMndtHV/9LKgmAbdEXQ/i68u9FKA8z5JPvBgkDVzrhr+mNH?=
+ =?us-ascii?Q?noTr9V9JSP61cq2t4OlZZjkyIUERj9XjrzIQ9IB36ZIqkbKcc5ND2AuIZaiB?=
+ =?us-ascii?Q?44mWmwqA0QZj4XqFzQMiCNIj7QDjMvk8h97LO5vlfbL0/023wMW+PbaGxRcy?=
+ =?us-ascii?Q?yHr94ecdWMfybfqLWBQZpzuyzl7D0nIf/dBuKmeIhdlYHuie7J8miqBLtVUx?=
+ =?us-ascii?Q?38s6N4ENy1/GIQ9FftxP8BB5fDofwQDZ0DAhoQI1NF4ecfXP4t3CZvYkC/GS?=
+ =?us-ascii?Q?FXYJym1RU1gLBpusGhK6JpupTiUExudz49kvcE/rbZ4SuMur3cnwbQL+OGxc?=
+ =?us-ascii?Q?PXkOHbbBFY5jCZab82czQbPqE+xFtTnm/dS/UgsfJccLFogSn0x2s6aoQGju?=
+ =?us-ascii?Q?4OXmWjrV4JhXEVzpPIywvpvNojlWKzjgNx3xgH9nFmRpsQoQrmesEFt0HZs4?=
+ =?us-ascii?Q?m0v8vZgo8MeUlq20zkhp+RJdend6t9nUx+KJi06kfyAVE+oAlpNo6hrOsiB1?=
+ =?us-ascii?Q?Rx4V8pAWzGLYrhQUnGBM9Xgsu0fxBU3f8MFe3SlokGfHTkg4exibdvBfzOBl?=
+ =?us-ascii?Q?nth7Jo/1RWUMdOK3EGxraXa4c6C0yZc+FMgSFHNRI8WjYYRTRj0Pp++O8rku?=
+ =?us-ascii?Q?BYkNRlHWx5njMcjHzv739vT8NuRDrzTisX6nTeGIzgJ7VrYQZLyeQML80OmI?=
+ =?us-ascii?Q?oVV4+JKeD7eTjpUJSg/I9LfJ6ZIZsY3HYodMk12fi1AV/Ru3InNBBAxwZDkd?=
+ =?us-ascii?Q?58M6rFNjg6pqoQMdkiKPjVoyEVVpmzvfrJnndtR7mNE2T6yetWXcUYZdKi+M?=
+ =?us-ascii?Q?vAZo72EC3dzcgtNm5pei+8UflMcG5gtmakqiRv3PKaPxg1pbi84pqi0mtg2c?=
+ =?us-ascii?Q?9k2sG5oRrkWKhU8hbVcCVtqvb7lL08eSeWU6Ls2or3WX7RZgQrqI3OarludW?=
+ =?us-ascii?Q?kga6dzE5rrAlu4BJTnpPSNiQJWPYMkx+Ju0WzXsPrjXv607Jz9cbeQWR02mn?=
+ =?us-ascii?Q?byFLRD/C5PlOtrq8adeqjWPueuZmn+KdgryFetJs/H+yVYchjaRTlpdklZz/?=
+ =?us-ascii?Q?Bjq5GafCYH9aTXk=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5576.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(52116014)(376014)(366016)(1800799024)(38350700014)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?/NK1NyeVvBDk7AJ4wQqSq66Xg37YsQeiS0fUsugIPUZI28Eu2oh3aNPu1GNk?=
+ =?us-ascii?Q?XsfQEYbmeS4qODJSrLSm/85N9nDiD7dGTKHof12X75jDVJSN3q6bd1NH8eyG?=
+ =?us-ascii?Q?MLDq+BB4U4MgzzvZsARf3vuiAg7rYWic3mI9c+UpfkEhncp5E8s2+vDNqAVI?=
+ =?us-ascii?Q?jOWEVfquDt/eQQYCnWDHzVBjq6uZkfQ970Pl4AoUQC656SqR8yUZgkLT/qMZ?=
+ =?us-ascii?Q?055TiP8nF3WZpbyfeaNMYQApGTb/JWSgMfOyMWH6SsIKmPk9tRh48A2QbcMy?=
+ =?us-ascii?Q?7Y141annLpME2jLcgLBq6DZyDEyI+tiXjUxcykwdQkL9ERgvN8ps0oL5YLGY?=
+ =?us-ascii?Q?9gSFV9HiJd3kXsIS59xjry6NUqt2s2uoVNlKa2IrDohJTFtL4ViNMfvP5tcd?=
+ =?us-ascii?Q?P8JqwdhwBfQwZIgfFFy3244lifmWL68zYGvjz2hO9m6sb17Jxr9+BVo0oR0h?=
+ =?us-ascii?Q?Kss2l//RqKJHx8ME/IuBjLQx3/3u6zShDSfNaZhd7QH/1MBIZugIDZ50USeq?=
+ =?us-ascii?Q?ZsNv317KHJUjuzFAhDBGuYUdLzbII1kjjUSwINr52VYi5eB1V9IpXKSfsuwI?=
+ =?us-ascii?Q?spME1fL1Bu1iNl5VzDwK5TXWgPDRsgSM2CSujjD0IWEoWsevJvWeqEc9SYwV?=
+ =?us-ascii?Q?Z/BGaZ2fE8aLa1eOBhS8yL8i5XrbGD2pJAUM2I0u714J5ELotgklPyEp4Idz?=
+ =?us-ascii?Q?w0gKahlIAG/OciImFeV9cWnaMOy8RQjk8DOSK7spYE89GkBw36GquJC7aPHI?=
+ =?us-ascii?Q?XpyQApz91281tuf1DmJSvE2EvD82TsS7wyp5zkBLavENcjM0D/t/Sigtb+Ee?=
+ =?us-ascii?Q?dLWfJh2lYcuuXf/1AnzETX4OdZicMjc5LB2AMlgMmWtuMHv4Dww1F3f6wFYo?=
+ =?us-ascii?Q?aqgrqk+0yJQ0PNYEeFysaRWVnQUrqpEknfAqXTfFIvSUs+Ngstab4XxarBtv?=
+ =?us-ascii?Q?5TLxWZ/0KHqK6T1YX3qs0Rgsye0EGulWJ2L3UWBLc6axBa9AoSBj2wl5Tvu6?=
+ =?us-ascii?Q?LYOgzD6U7p9DQeZ/xVViNVX44R2Qf3Ycj8DmEPEJi89b/Im1Y0qniq4qVkn1?=
+ =?us-ascii?Q?4uXRYaTEcgpbxACIFbJJrtzkQhxA+M2LzPLjGVCpP9QIN2TjXe1u0hIVoDLb?=
+ =?us-ascii?Q?NxByP921/pWrEy/LeHxFh2f3+fuhjJGGoc/OmD1i1LoLYYSwZS/R8cDx9gP+?=
+ =?us-ascii?Q?kAYSK2PQNk3bs0DW2E4JnzlEFRldzAUrIswdWD+6w0cJ77KyEXAuoMIVC6XG?=
+ =?us-ascii?Q?xR0u3uYhsPV2X2H4VgwbFcUGOXVUpcg0ehQCNc2mmgBeEl2aUM0mCMA/ikta?=
+ =?us-ascii?Q?kdf4fu7mZ4O3CjRX+ySW/dhI3/28huK9gD3Qnbs1mCxmqyI4AGvVQxwtN/zL?=
+ =?us-ascii?Q?fN4H0m6D5m0F2i4esqOS4D8R0RZ0w0dj8TOO4g+q1auNaBPrF0trqoxJmQIb?=
+ =?us-ascii?Q?EHv+yKdT6aveUPEq72ZtayifaenGFNLZAg+35NE6xjkZx0LlQn8/asnUgqVr?=
+ =?us-ascii?Q?5N0w3hZBj9Bs4PWwb8DG5K2kkA++9lAPdoIb/cXo+wo32Nl1XzHHlxZX3ofA?=
+ =?us-ascii?Q?goawU3xcktD6p8vpQxhPkWsGruNuWD/i5o5cuivZ?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6e98ab58-7fcf-4506-98b5-08dde5637fcc
+X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5576.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2025 12:16:06.7785
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: vGDIAuJidvhRRsiXyHrTtQMPnwz3oQ2TYeln/PY6f//nFAjOOxfEIf7BY9BiN6ra+EiAJzAONbRBUPitRpqQWA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR06MB6684
 
-On Tue, Aug 26, 2025 at 11:56:05AM -0400, Frank Li wrote:
-> On Mon, Aug 18, 2025 at 01:51:12PM +0200, Jorge Marques wrote:
-> > I3C Controller is subset of the I3C-basic specification to interface
-> > peripherals through I3C and I2C. The controller RTL is FPGA
-> > synthesizable and documentation is provided at
-> > https://analogdevicesinc.github.io/hdl/library/i3c_controller
-> >
-> > The main target for the I3C Controller IP is low-cost FPGAs.
-> > In this version the driver supports IBI (only the MDB), I3C and I2C
-> > transfers.
-> >
-> > The IP Core is versioned following ADI's open source HDL guidelines
-> > for devicetree bindings and drivers described at
-> > https://analogdevicesinc.github.io/hdl/user_guide/contributing.html#devicetree-bindings-drivers
-> > in summary, follows Semantic Versioning 2.0.0, with the dt-binding suffixed
-> > by -v<major>.
-> >
-> > If necessary, the contents of
-> > https://analogdevicesinc.github.io/hdl/user_guide/contributing.html#devicetree-bindings-drivers
-> > can be replicated to a file in a different series, similar to AMD Xilinx
-> > at Documentation/devicetree/bindings/xilinx.txt, but as adi.txt or
-> > similar.
-> >
-> > Depends on https://lore.kernel.org/linux-i3c/20250622-i3c-writesl-readsl-v2-0-2afd34ec6306@analog.com/T/#t
-> 
-> It is already in v6.17-rc1. You can remove this depends.
+For ternary operators in the form of "a ? true : false", if 'a' itself
+returns a boolean result, the ternary operator can be omitted. Remove
+redundant ternary operators to clean up the code.
 
-Ack
+Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
+---
+ drivers/net/ethernet/marvell/octeontx2/af/rvu_nix.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Best regards,
-Jorge
-> 
-> commit 733b439375b494e8a6950ab47d18a4b615b73cb3
-> Author: Jorge Marques <jorge.marques@analog.com>
-> Date:   Tue Jun 24 11:06:04 2025 +0200
-> 
->     i3c: master: Add inline i3c_readl_fifo() and i3c_writel_fifo()
-> 
->     The I3C abstraction expects u8 buffers, but some controllers operate with
->     a 32-bit bus width FIFO and cannot flag valid bytes individually. To avoid
->     reading or writing outside the buffer bounds, use 32-bit accesses where
->     possible and apply memcpy for any remaining bytes
-> 
->     Signed-off-by: Jorge Marques <jorge.marques@analog.com>
->     Suggested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
->     Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
->     Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
->     Reviewed-by: Frank Li <Frank.Li@nxp.com>
->     Link: https://lore.kernel.org/r/20250624-i3c-writesl-readsl-v3-1-63ccf0870f01@analog.com
->     Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-> 
+diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu_nix.c b/drivers/net/ethernet/marvell/octeontx2/af/rvu_nix.c
+index 828316211b24..b4b0613a5be1 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/af/rvu_nix.c
++++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu_nix.c
+@@ -3258,7 +3258,7 @@ static int nix_update_ingress_mce_list_hw(struct rvu *rvu,
+ 		err = nix_blk_setup_mce(rvu, nix_hw, idx, NIX_AQ_INSTOP_WRITE,
+ 					mce->pcifunc, next_idx,
+ 					mce->rq_rss_index, mce->dest_type,
+-					(next_idx > last_idx) ? true : false);
++					next_idx > last_idx);
+ 		if (err)
+ 			return err;
+ 
+-- 
+2.34.1
 
-> >
-> > Signed-off-by: Jorge Marques <jorge.marques@analog.com>
-> > ---
-> > Changes in v7:
-> > - Edit cover linking guidelines to ADI IP Core versioning.
-> > Documentation/devicetree/bindings/i3c/adi,i3c-master.yaml:
-> > - Extend second clock description to explain relation to synthesized topology.
-> > - Link to v6: https://lore.kernel.org/r/20250717-adi-i3c-master-v6-0-6c687ed71bed@analog.com
-> >
-> > Changes in v6:
-> > - Format 0x05C undercase
-> > - Link to v5: https://lore.kernel.org/r/20250715-adi-i3c-master-v5-0-c89434cbaf5e@analog.com
-> >
-> > Changes in v5:
-> > Documentation/devicetree/bindings/i3c/adi,i3c-master.yaml:
-> > - Use semantic versioning major field for dt-binding compatible, with
-> >   the format adi,<ip-name>-v<major>
-> >
-> > adi-i3c-master.c:
-> > - Rename MAX_DEVS to ADI_MAX_DEVS
-> > - Encapsulate REG_CMD_FIFO_0_DEV_ADDR var
-> > - Reorder struct adi_i3c_i2c_dev_data fields
-> > - Start addr at 0 instead of 8 at adi_i3c_master_get_rr_slot
-> > - Minor rework on adi_i3c_master_handle_ibi to most logic out of the
-> >   lock. Even if length is 0 (BCR[2]=0), the mdb field is extracted and
-> >   written to the slot buffer. Since the length is 0, the written data
-> >   doesn't matter.
-> >   In a future update with additional bytes support (e.g., bits 31-23),
-> >   len would be incremented and an IBI FIFO would be read.
-> > - Version check against first stable release, major v1.
-> >   Driver+RTL features updates affect the minor field, therefore check
-> >   for major == 1.
-> > - Link to v4: https://lore.kernel.org/r/20250626-adi-i3c-master-v4-0-3846a1f66d5e@analog.com
-> >
-> > Changes in v4:
-> > Documentation/devicetree/bindings/i3c/adi,i3c-master.yaml:
-> > - Add -1.00.a suffix where missing
-> > - Extend clocks descriptions
-> > - Add minItems to clock-names, to match clocks
-> > - Use header in example
-> >
-> > adi-i3c-master.c:
-> > - Regmap:
-> >   - Add new controller info registers (dyn_addr, dcr, bcr, pid)
-> >   - Always decreasing fields
-> >   - Add line break between registers
-> >   - Reformat REG_DEV_CHAR_BSCR_IBI to use easier to read FIELD_GET,
-> >     FIELD_PREP
-> > - Read controller info from regmap with explanation comment
-> > - Use linux/fpga/adi-axi-common.h macros
-> > - Use __counter_by macro on ncmds
-> > - Use __free macro
-> > - Use new i3c_writel_fifo and i3c_readl_fifo macros
-> > - Rename bytes to buf when nbytes is present
-> > - Use scoped_guard instead of spin_lock, spin_unlock
-> > - Reformat loops to read fifo status, use while single line alternative
-> > - Drop adi_i3c_master.max_devs, use MAX_DEVS directly
-> > - Use devm_clk_bulk_get_all_enabled, dropping clock name match (CHECK_DTB does it)
-> > - Init spin_lock
-> > - Init list head
-> > - Link to v3: https://lore.kernel.org/r/20250618-adi-i3c-master-v3-0-e66170a6cb95@analog.com
-> >
-> > Changes in v3:
-> > Documentation/devicetree/bindings/i3c/adi,i3c-master.yaml:
-> > - Small reworking of the description
-> > - Add -1.00.a suffix to compatible
-> >
-> > adi-i3c-master.c:
-> > - Misspelling
-> > - Remove REG_CMD_FIFO_0_LEN_MAX since it is a HDL parameter
-> > - Use adapter timeout value for I2C transfers, as in
-> >   https://lore.kernel.org/linux-i3c/aEBd%2FFIKADYr%2F631@lizhi-Precision-Tower-5810/T/#t
-> >
-> > - Link to v2: https://lore.kernel.org/r/20250606-adi-i3c-master-v2-0-e68b9aad2630@analog.com
-> >
-> > Changes in v2:
-> > Documentation/devicetree/bindings/i3c/adi,i3c-master.yaml:
-> > - Move allof
-> > - Rename clocks to axi, i3c
-> >
-> > adi-i3c-master.c:
-> > - Update license year
-> > - Rework regmap to use FIELD_GET, FIELD_PREP
-> > - Reformat regmap to have FIELDS after REG, prefixed by reg name.
-> > - Add overflow safeguards to cmd, tx fifos
-> > - Fix macro related macros (mostly erroneous `| ~BITMASK`
-> > - Use guard macros, remove goto.
-> > - Simplify daa logic
-> > - Replace devm_clk_get with devm_clk_get_enabled
-> > - Solve 64bit->32bit warnings on x86_64 systems by casting to u32
-> > - Immediate clear irq request flags, then handle it.
-> >
-> > - Link to v1: https://lore.kernel.org/r/20250604-adi-i3c-master-v1-0-0488e80dafcb@analog.com
-> >
-> > ---
-> > Jorge Marques (2):
-> >       dt-bindings: i3c: Add adi-i3c-master
-> >       i3c: master: Add driver for Analog Devices I3C Controller IP
-> >
-> >  .../devicetree/bindings/i3c/adi,i3c-master.yaml    |   72 ++
-> >  MAINTAINERS                                        |    6 +
-> >  drivers/i3c/master/Kconfig                         |   11 +
-> >  drivers/i3c/master/Makefile                        |    1 +
-> >  drivers/i3c/master/adi-i3c-master.c                | 1019 ++++++++++++++++++++
-> >  5 files changed, 1109 insertions(+)
-> > ---
-> > base-commit: 51963783b876a2f493a3eac0ea9eba271cb6809a
-> > change-id: 20250604-adi-i3c-master-2a5148c58c47
-> > prerequisite-message-id: <20250622-i3c-writesl-readsl-v2-0-2afd34ec6306@analog.com>
-> > prerequisite-patch-id: 5443f14ca82fc08593960fafdb43488cce56f7d9
-> > prerequisite-patch-id: 647084f5fe09f4887f633b0b02b306912a156672
-> > prerequisite-patch-id: 6f582bb2ef1aafb66f26c515a19d5efa06ab8968
-> >
-> > Best regards,
-> > --
-> > Jorge Marques <jorge.marques@analog.com>
-> >
 
