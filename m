@@ -1,198 +1,118 @@
-Return-Path: <linux-kernel+bounces-787617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1B46B378A2
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 05:40:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94981B378F2
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 06:03:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52290366336
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 03:40:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AFD617C74BB
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 04:03:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1B8A26AA91;
-	Wed, 27 Aug 2025 03:39:59 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CFA526AABE;
+	Wed, 27 Aug 2025 04:03:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZnS32EDt"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59880366;
-	Wed, 27 Aug 2025 03:39:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE7082AE97;
+	Wed, 27 Aug 2025 04:03:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756265999; cv=none; b=jzgtWnOYzK3v6CVbfKxueCQbELYem11sVTwjuEg63Ic0+ci9QhSWEnT2FJV2MRrdGGecILr9DDNzAFJnkXnNOBCf1nhCllOPVAoxc7oWCvMDM28xaj8wznlH06f2oLQREF3u75c7xKg7PjUT0pafLGcsTjWqfJSexPmR60ldKuc=
+	t=1756267421; cv=none; b=aTwwKKmI0pWDmhh8oKKzN3yJaRWE9Rqp3YO+s4EFjRx/bbJ7feOuY5pzrSe3Mr5QKeW4HxLRs/bRoQ+Ez9wsFJFOQpMaHsDqr5Z8A+YelzH9AOj/02lUHOLzqm1J4WCvb2kPG07fXstKqd+paTiDscIPLRsnZnrEFNiAMI/Sts0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756265999; c=relaxed/simple;
-	bh=kIZz56o+BRvkcYy+7q+hWQW13ZtVMi2D9iQFL5rmnag=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=kQsc2I4DpXRD9cOS8B3+lEyghn5V1yow8ey11mylYe+W/t+rNMjH6Fa/4nXBukpttcTOaMVDs+zHA8Qf2LxRcDHHQuDBvFv2WOehJKaW74khWAo/qgbpjMJYn4Lf7h7UiN7xfyH+n9Zk8U7uWBrZRaDI/3/ZqxO6eOdkBKzvg1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4cBVZV0Trmz1R95m;
-	Wed, 27 Aug 2025 11:36:50 +0800 (CST)
-Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id 318231A016C;
-	Wed, 27 Aug 2025 11:39:46 +0800 (CST)
-Received: from huawei.com (10.50.159.234) by dggpemf500002.china.huawei.com
- (7.185.36.57) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 27 Aug
- 2025 11:39:45 +0800
-From: Yue Haibing <yuehaibing@huawei.com>
-To: <davem@davemloft.net>, <dsahern@kernel.org>, <edumazet@google.com>,
-	<kuba@kernel.org>, <pabeni@redhat.com>, <horms@kernel.org>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<yuehaibing@huawei.com>
-Subject: [PATCH net-next] ipv6: sit: Add ipip6_tunnel_dst_find() for cleanup
-Date: Wed, 27 Aug 2025 12:00:27 +0800
-Message-ID: <20250827040027.1013335-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1756267421; c=relaxed/simple;
+	bh=A87iSRfscBq7P7SkJu3Iss7j2q8ndX/POmT8sGhRjPI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZY2Ip/eSJefbSH4XkSpBoRr6rFop57gBv7YkVuCx9ieGKcgqqomNn2b/azOgGbdgNTswi0y+Iu0oEfw40nhqJ7G1X8DkhJ6LVpaADS6N+p9Ou83BZjVG1kSxQC/ti55nh/1EbR5bBLlUVaCRC4PppaLXot0w36x6R/FtDLgYCgI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZnS32EDt; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3c6df24f128so3081211f8f.3;
+        Tue, 26 Aug 2025 21:03:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756267418; x=1756872218; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xHKcYRsTqnrv9URkPiuGk0iej4H3twd5JOLJiNJ/Tfc=;
+        b=ZnS32EDteyZ8HPcVDX9164Ed1FslAtePXq4P4qRhJkEiCPU5+TxYVhbG89VFKvK52c
+         q/ubV3IgGWNKS6b/x1RFgIVyEJlkuldhBigzWRm3ohKOYDwZbvZfy/VPwzx7wTd5C9PB
+         ItT5FjmwEcAcX/+QBzYUoOce+KPRNajyUmdirN6myipNqn/hHXQLHIZT05989yEFUBf3
+         b71VEF5LiugFvZHG7EpHSylw2f8QQAPx5oZC+kPo+oAVRTWRNoL7gdLJsFRkSNkbiQT1
+         D2k05uKbHaAQfCZbePdjoLt6uOwrDI3tN/lLVrFMQ1yojuKmtfekzBIjoeECB4X0NWeq
+         VQNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756267418; x=1756872218;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xHKcYRsTqnrv9URkPiuGk0iej4H3twd5JOLJiNJ/Tfc=;
+        b=huJWFX1yCr8f+az6d477lGug7Hv0thU1QRpJfrJcWlf3XYP7rzay842bxFZDY2UOGA
+         ZGZ5RDYrsf7wqxiRODHUvkTfypK06u8JB/ofjeQqL1lxlT6RDZGc9araB6Q/iCE9jOlw
+         se5ZrauvtNvs5mwLVLQFk5VzTB1bfpLOUF3A9q1tce4hU5JqgUIa3oP0AlF7SeX1wSDC
+         L9m8eCqSWA8CYeaD9HPy5UTH77J28L2+j2QNQ4G+Sh6BM29mCkl3qD4VbyJ6zEeW5y+D
+         S3Ul9AdUpsbumSTNEj4790XeZFoNzNguRTFF1INq8Uzs69LeO5nFDLyxW0CoWv9XOZ+i
+         D+Dg==
+X-Forwarded-Encrypted: i=1; AJvYcCU1FmuBCqsBc0bj+fTEbpPMm/gIUn8Rd3/092DodVvkJHFWhqwuWx7iuio4rsoh8xwc/nYlV46eRtWFOdm+@vger.kernel.org, AJvYcCWFxZodmUYpanMjvTSu8rteRRRg3qqgu0Rc8OoBsOaz2IU67xnUTtfs2QMkCHulaoQHCZCp9IXH7WGw5hu66CxW@vger.kernel.org, AJvYcCXsdRBR10vkyJBI6FHcVTBIKJfuv8v3bZwkhIsohZjiwUbwRTEtRmbvQ+PMzZ++D/L3kkg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzDjbotNnqvee9vbMjyBnMOlxlfQxqK81lVUhDNC0PT5EvjQajs
+	VGWwUr4zxyYPnE6+Q7yUQHEcweqNkQYVvc+3G85g30arB1xmS5IJkPycLUSgGxjaaLGNuBTn7Dj
+	LLZvbt3cJoovfvYGM7MhVw2V2rJpJD2g=
+X-Gm-Gg: ASbGncsF6AeKygB7lDftspF2V0L+MZteVcp/sk1P0p/Rbrd9G7ZMATk68Qs8lt24bIO
+	7uaRgVEIa/60ISy+lrgIZHYgSOeyXXh4T+vqmyILJbJlhCTirinO0qaHLbwQzUm0MYJWND9JFpL
+	auPV2iXpBxdWBB8bQj56CzeR+ltiHN+bW7A+W3TYrh6TCd3iSACmtkx8MICw6iRVHaMua/nzfSi
+	JsdMivuGimdWScqQm71ey336KedRL2K5YM4
+X-Google-Smtp-Source: AGHT+IFDWKI4ZGd0VrwR+tlbRT2bpFaa0Wri3a0FhO4T8VY8YDpJ6CXxmBVYEC8Zpvs9OwA5CQ3stiQLNQBhXkLhC/w=
+X-Received: by 2002:a05:6000:4010:b0:3c9:79fe:f4f6 with SMTP id
+ ffacd0b85a97d-3c979fefd71mr6751069f8f.18.1756267418019; Tue, 26 Aug 2025
+ 21:03:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
- dggpemf500002.china.huawei.com (7.185.36.57)
+References: <20250827031540.461017-1-yangfeng59949@163.com>
+In-Reply-To: <20250827031540.461017-1-yangfeng59949@163.com>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Tue, 26 Aug 2025 21:03:26 -0700
+X-Gm-Features: Ac12FXw4hTBUHTL4RjsVAGs1lO8wZQ0GKceQVN45AgylHH7YunDvWiMf_lzMnqE
+Message-ID: <CAADnVQLQ4=sLwwzuzip+FoeW1RDxKtuhDRbBSnigeQ6O4w8m0g@mail.gmail.com>
+Subject: Re: [PATCH bpf-next] selftests/bpf: Fix the invalid operand for
+ instruction issue
+To: Feng Yang <yangfeng59949@163.com>
+Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	John Fastabend <john.fastabend@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Eduard <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
+	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
+	bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, clang-built-linux <llvm@lists.linux.dev>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Extract the dst lookup logic from ipip6_tunnel_xmit() into new helper
-ipip6_tunnel_dst_find() to reduce code duplication and enhance readability.
+On Tue, Aug 26, 2025 at 8:16=E2=80=AFPM Feng Yang <yangfeng59949@163.com> w=
+rote:
+>
+> From: Feng Yang <yangfeng@kylinos.cn>
+>
+> The following issue occurs when compiling with clang version 17.0.6,
+> but not with version 18.1.8. Add a version restriction to fix this proble=
+m.
+>
+> progs/compute_live_registers.c:251:3: error: invalid operand for instruct=
+ion
+>   251 |                 "r0 =3D 1;"
+>       |                 ^
+> <inline asm>:1:22: note: instantiated into assembly here
+>     1 |         r0 =3D 1;r2 =3D 2;if r1 & 0x7 goto +1;exit;r0 =3D r2;exit=
+;
+>       |                             ^
+> 1 error generated.
 
-No functional change intended.
+and once it compiles what happens next ?
 
-Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
----
- net/ipv6/sit.c | 93 +++++++++++++++++++++++---------------------------
- 1 file changed, 43 insertions(+), 50 deletions(-)
-
-diff --git a/net/ipv6/sit.c b/net/ipv6/sit.c
-index 12496ba1b7d4..bcd261ff985b 100644
---- a/net/ipv6/sit.c
-+++ b/net/ipv6/sit.c
-@@ -848,6 +848,47 @@ static inline __be32 try_6rd(struct ip_tunnel *tunnel,
- 	return dst;
- }
- 
-+static bool ipip6_tunnel_dst_find(struct sk_buff *skb, __be32 *dst,
-+				  bool is_isatap)
-+{
-+	const struct ipv6hdr *iph6 = ipv6_hdr(skb);
-+	struct neighbour *neigh = NULL;
-+	const struct in6_addr *addr6;
-+	bool found = false;
-+	int addr_type;
-+
-+	if (skb_dst(skb))
-+		neigh = dst_neigh_lookup(skb_dst(skb), &iph6->daddr);
-+
-+	if (!neigh) {
-+		net_dbg_ratelimited("nexthop == NULL\n");
-+		return found;
-+	}
-+
-+	addr6 = (const struct in6_addr *)&neigh->primary_key;
-+	addr_type = ipv6_addr_type(addr6);
-+
-+	if (is_isatap) {
-+		if ((addr_type & IPV6_ADDR_UNICAST) &&
-+		    ipv6_addr_is_isatap(addr6)) {
-+			*dst = addr6->s6_addr32[3];
-+			found = true;
-+		}
-+	} else {
-+		if (addr_type == IPV6_ADDR_ANY) {
-+			addr6 = &ipv6_hdr(skb)->daddr;
-+			addr_type = ipv6_addr_type(addr6);
-+		}
-+
-+		if ((addr_type & IPV6_ADDR_COMPATv4) != 0) {
-+			*dst = addr6->s6_addr32[3];
-+			found = true;
-+		}
-+	}
-+	neigh_release(neigh);
-+	return found;
-+}
-+
- /*
-  *	This function assumes it is being called from dev_queue_xmit()
-  *	and that skb is filled properly by that function.
-@@ -867,8 +908,6 @@ static netdev_tx_t ipip6_tunnel_xmit(struct sk_buff *skb,
- 	__be32 dst = tiph->daddr;
- 	struct flowi4 fl4;
- 	int    mtu;
--	const struct in6_addr *addr6;
--	int addr_type;
- 	u8 ttl;
- 	u8 protocol = IPPROTO_IPV6;
- 	int t_hlen = tunnel->hlen + sizeof(struct iphdr);
-@@ -878,28 +917,7 @@ static netdev_tx_t ipip6_tunnel_xmit(struct sk_buff *skb,
- 
- 	/* ISATAP (RFC4214) - must come before 6to4 */
- 	if (dev->priv_flags & IFF_ISATAP) {
--		struct neighbour *neigh = NULL;
--		bool do_tx_error = false;
--
--		if (skb_dst(skb))
--			neigh = dst_neigh_lookup(skb_dst(skb), &iph6->daddr);
--
--		if (!neigh) {
--			net_dbg_ratelimited("nexthop == NULL\n");
--			goto tx_error;
--		}
--
--		addr6 = (const struct in6_addr *)&neigh->primary_key;
--		addr_type = ipv6_addr_type(addr6);
--
--		if ((addr_type & IPV6_ADDR_UNICAST) &&
--		     ipv6_addr_is_isatap(addr6))
--			dst = addr6->s6_addr32[3];
--		else
--			do_tx_error = true;
--
--		neigh_release(neigh);
--		if (do_tx_error)
-+		if (!ipip6_tunnel_dst_find(skb, &dst, true))
- 			goto tx_error;
- 	}
- 
-@@ -907,32 +925,7 @@ static netdev_tx_t ipip6_tunnel_xmit(struct sk_buff *skb,
- 		dst = try_6rd(tunnel, &iph6->daddr);
- 
- 	if (!dst) {
--		struct neighbour *neigh = NULL;
--		bool do_tx_error = false;
--
--		if (skb_dst(skb))
--			neigh = dst_neigh_lookup(skb_dst(skb), &iph6->daddr);
--
--		if (!neigh) {
--			net_dbg_ratelimited("nexthop == NULL\n");
--			goto tx_error;
--		}
--
--		addr6 = (const struct in6_addr *)&neigh->primary_key;
--		addr_type = ipv6_addr_type(addr6);
--
--		if (addr_type == IPV6_ADDR_ANY) {
--			addr6 = &ipv6_hdr(skb)->daddr;
--			addr_type = ipv6_addr_type(addr6);
--		}
--
--		if ((addr_type & IPV6_ADDR_COMPATv4) != 0)
--			dst = addr6->s6_addr32[3];
--		else
--			do_tx_error = true;
--
--		neigh_release(neigh);
--		if (do_tx_error)
-+		if (!ipip6_tunnel_dst_find(skb, &dst, false))
- 			goto tx_error;
- 	}
- 
--- 
-2.34.1
-
+pw-bot: cr
 
