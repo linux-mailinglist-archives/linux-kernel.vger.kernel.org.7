@@ -1,89 +1,78 @@
-Return-Path: <linux-kernel+bounces-787553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E611B377BD
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 04:30:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28404B377BE
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 04:30:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 36D8A1B66A09
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 02:30:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0D657C2B21
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 02:30:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2BEE273811;
-	Wed, 27 Aug 2025 02:29:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33B182741B0;
+	Wed, 27 Aug 2025 02:30:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="I8DqSL8B"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2063.outbound.protection.outlook.com [40.107.223.63])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="nBbjfZph"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2057.outbound.protection.outlook.com [40.107.244.57])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F2D724466D;
-	Wed, 27 Aug 2025 02:29:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.63
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 067D22741B6
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 02:30:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.57
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756261797; cv=fail; b=rKziUlNCRBNcH0Gslgu+0DmGpZFoNvFIbPo7ntfTdjBgbwLxFqVQC+KYlJxl8vyt7n5l5e5aDoP9+puzKiX3TJsyaGZ2d9bXz7mz82IeddQfL1/+4x9MvOpBwtgqFc/v5YJYH0e4xLCHDSxGunbZjVu38836Bo46YLrRNkDpo30=
+	t=1756261805; cv=fail; b=sHmxAQaY3c9Ehm62zGBbU3dFTxCZI4/xfiGTmAXkfBi9htFiLcGxqUg5wuj63+0B8wF9Y05ahPlRd/AOxSeHK3zrmrRdzjyF8ZCDCasu/53pRHW1ZYp8aPkCfAJJYMl72jlC2yUL9GA5DKAnpSgNWAdtGIud2uf2YsZfrWlmGBY=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756261797; c=relaxed/simple;
-	bh=vis1YTE8H1TQPnhGfiP9Hi2F6ThG5ZFr4ZrLORIpXlk=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=c6JPisG3+p8y8d5zox7B897sm+jyLHM5mevFZwuDkyC3xtnGjuAQb0hmn4W23EbQkcriFu69qZqRz+HZBdJA4QARhghhKVTDDtKheGwX0+b0XaQyNngZLr4S54TkHKxFFCxqEs4d4Sc7LXx5yDCc2TpoxCqQMqzjJpfLdQaHLLo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=I8DqSL8B; arc=fail smtp.client-ip=40.107.223.63
+	s=arc-20240116; t=1756261805; c=relaxed/simple;
+	bh=+vYyD1QFRa2RSfOwMWJkmLiIJLhGdEVv9R9oV5dRHc8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Nu1oNc3DzAlfCqFR2EBBLZwD6asmKU8+DTtnbElN2afdypjcXIyJDu5xdri3LDJd7MtT/6RYZtlxrdyQ+je2n0RLwpT8jpPYKibZCv1RYjtfHgwFM3+BiW+wTmWJq8vsBdiRBzaGPDejGiL/x0OYP7E7Dwjrjxypy186dEZLBbo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=nBbjfZph; arc=fail smtp.client-ip=40.107.244.57
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=fHLuMNMtkAOPswtugcT/rKu2zgPQdcyrkILx3iBD4J6vvWzeydAq/AAQ7q+DuGPGkrCG7589IB89uO4GacJvNZSnLfaRFXOIdZwArjGMrp4kj2L3EeujUBnD9dRyZyLEcnD7iG0SfisCxlfsdIvFacgaOPkuTxe8WTdOuLOX7cJeAV0Ab26NnkFrZYWfI4VdVNccunSTyLmw3mtGTHiqH+jzPm1/MMLsKKwwWm2v+a4z/2VQWoI+sK0vKv3sLXmpRFDIWD85rwy3tRKuzQ4FfTISt4LGf3SJUKQwOuvlEXTKFiKj4v4UqvpnE/f186xR4QJl2bvAhJ6LixguVIOq5Q==
+ b=bQJcmst7E/wRvGqxB+Hf2VG5wkUF/T7WkmnA+nWxnUIKHZKIMcBXFZOra9LlmMWBxemKWuzR4pgmElYPa77/+mfENzjd4Vb69y5DRkcLC2QbMcrUW+zdf2zxY18gBMiur62DZEJZfQcW9FseyDO8yBntdnm6pMJZ4OoT0nUyG7JLgweFc4eyLTY6FjW+Ghj7lHU+Tf6Cd4XJmoZLv5hOD7Ule3sjynOkoiHOjUjKwetR6EZUO3M1EePiz0NtntqbwDDW1ryYL+q5VtafjKVDhmw1tbMRJEayDnVdd+adMuhuEcqLtyQ0nU6x7RGzx15z+FEVhGFtC6iNBzMr0/frig==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9/pb5fBmoRhwEOO3IDrNjU3FsHGxN7fRQMg58bhPKk8=;
- b=utVDjpJeALPm7rZbTqjmdNvJ9gKNqkVZLIGdSnWYn/V8CFP97rswpTihKMhoceiUOT8LGweczpbbpNX4J8bb0tnQg4DPJqFCLGnhqIZyjdA8rVKCfQe02BcyMlFR6N2gScgMRTggE+KxzHeB1pLONyGxH6HT52ybu0MLyTYdgZ4bFC8fH07dwoHZ2wzfIXqE+5tvduWK/K2xkzpSUnYDr8TvP5AULHfHX3cQV72Og0bXBiUGmHY4itjkujRim47KWAuq9ORM6PeUH5hZAH9bpjhwihWBnZKLA2WAGeDE4A4e9gXtwEz4BRM2AybjUl5FdYF1AlyKC2wF8UK/vgOUQw==
+ bh=dexFsQOTqqUQWqFEyfblKK2Vd7BeIy3rknbSAUEGT70=;
+ b=lQMzr9V7D+yHdZo4Y62/rFXMRP87ICX66IalcvMCEOnpCGg79f7u8KJwnAn97S4dwTdXC/3MKjow6/CMglngt1pz8hISAt17FcjbQnaGAPHIU01d37CXfre6inoctSylUcPz1/O0U4FxzpRA6CItf6mGy2PD7A7IkhBqeiS4feJbii1DMGkgZu4G7mMxZmPh5V/V3pbY3DzJkSKREfspTt9od2hmSmg6WOzikRvjTPvJxmz5Gsu2WqLJB3pYMFfLc0gvloQmINtQVCLE4mc53XjjZESZp0YmchneDaasZLxpx+6JV5ogB99w9uYFP3LXN8LMtcjghcORSV4hpDiIUw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
  dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9/pb5fBmoRhwEOO3IDrNjU3FsHGxN7fRQMg58bhPKk8=;
- b=I8DqSL8BYfG7HPaH6gds1GJfbBkyMpV8kWVryhBEU8Odl92bUxdV+RUip0TmxsGdm+EpWho07awe/0TcgjFQ+fvAFdzJPENanhvBRkWok7lK9r2zYXt0Wglcq88olbYOKx0jgLVao8dqknhAr5rNBJIi6wyjzAVBoZjY+nvga9/G8VtwBfu+xdIJkfxFNUVxQoOxpdjYJoshZd/Cm4I5RrOjWPRauaBL+nJ908GhCBU0oXuZxTeC1cm2JgxvSfdtMuFlF85MzDKFanOheU0vq4r2u98VeNqMoxrPeVc5PR2XWlu0wy2yUabY9qdKQGmoAqjZyzRHn7pb2hKr3pAfDQ==
+ bh=dexFsQOTqqUQWqFEyfblKK2Vd7BeIy3rknbSAUEGT70=;
+ b=nBbjfZphFrzrAiGKzKP0bPW8nzYhv5OTY3HJJyAqoFT6dzL3joO89ykURc2288OhlP1CoEM0zXUuxlAwX2kn/0XslH7XR48E7vumUbH1e5K6nV8MTXhWmNgvwMJIECwty65LnWGeDMz8mLM9zvk9fAVbnO/AstlbdbUnBXVAKMx8awHcww6gHleEHvvizcOvonWySvuT2VnvgH8TNQz/D3TLoK0yLwFM1T4VRkXXdCHGsiLz4LyXyiYXz6Cc9usoqoXWRM3hCtjAV10w7ZIEKrEFdYbh1Aw/A2Dg3uMQUUHCtiDxdfkef6xP7upwMvJwiwV4xjtFZEMqqGx0uNB+TQ==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from LV2PR12MB5968.namprd12.prod.outlook.com (2603:10b6:408:14f::7)
- by DM4PR12MB6009.namprd12.prod.outlook.com (2603:10b6:8:69::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.20; Wed, 27 Aug
- 2025 02:29:53 +0000
-Received: from LV2PR12MB5968.namprd12.prod.outlook.com
- ([fe80::e6dd:1206:6677:f9c4]) by LV2PR12MB5968.namprd12.prod.outlook.com
- ([fe80::e6dd:1206:6677:f9c4%6]) with mapi id 15.20.9073.010; Wed, 27 Aug 2025
- 02:29:53 +0000
-Message-ID: <a9467dd4-6551-4ef2-b231-02d7696e2d8f@nvidia.com>
-Date: Tue, 26 Aug 2025 19:29:49 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/8] gpu: nova-core: firmware: process Booter and patch
- its signature
-To: Alexandre Courbot <acourbot@nvidia.com>, Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>,
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>
-Cc: Alistair Popple <apopple@nvidia.com>,
- Joel Fernandes <joelagnelf@nvidia.com>, Timur Tabi <ttabi@nvidia.com>,
- rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
- nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-References: <20250826-nova_firmware-v2-0-93566252fe3a@nvidia.com>
- <20250826-nova_firmware-v2-3-93566252fe3a@nvidia.com>
-Content-Language: en-US
-From: John Hubbard <jhubbard@nvidia.com>
-In-Reply-To: <20250826-nova_firmware-v2-3-93566252fe3a@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SJ0PR03CA0011.namprd03.prod.outlook.com
- (2603:10b6:a03:33a::16) To LV2PR12MB5968.namprd12.prod.outlook.com
- (2603:10b6:408:14f::7)
+Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
+ BY5PR12MB4212.namprd12.prod.outlook.com (2603:10b6:a03:202::8) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9052.19; Wed, 27 Aug 2025 02:30:01 +0000
+Received: from DS7PR12MB9473.namprd12.prod.outlook.com
+ ([fe80::5189:ecec:d84a:133a]) by DS7PR12MB9473.namprd12.prod.outlook.com
+ ([fe80::5189:ecec:d84a:133a%6]) with mapi id 15.20.9052.019; Wed, 27 Aug 2025
+ 02:30:01 +0000
+From: Zi Yan <ziy@nvidia.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Brendan Jackman <jackmanb@google.com>, Vlastimil Babka <vbabka@suse.cz>,
+ Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+ Johannes Weiner <hannes@cmpxchg.org>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm/page_alloc: Harmonize should_compact_retry() type
+Date: Tue, 26 Aug 2025 22:29:57 -0400
+X-Mailer: MailMate (2.0r6272)
+Message-ID: <758DA9C6-D4FD-4985-B6C2-B68CF9F4622F@nvidia.com>
+In-Reply-To: <20250826191320.d5aa551eb5abef316de41175@linux-foundation.org>
+References: <20250826-cleanup-should_compact_retry-v1-1-d2ca89727fcf@google.com>
+ <20250826191320.d5aa551eb5abef316de41175@linux-foundation.org>
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: BN0PR03CA0001.namprd03.prod.outlook.com
+ (2603:10b6:408:e6::6) To DS7PR12MB9473.namprd12.prod.outlook.com
+ (2603:10b6:8:252::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,295 +80,123 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV2PR12MB5968:EE_|DM4PR12MB6009:EE_
-X-MS-Office365-Filtering-Correlation-Id: c9a55ad6-5128-4d06-bfab-08dde5119a8d
+X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|BY5PR12MB4212:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2d0b9f23-5b0a-4ad1-cb9e-08dde5119ed6
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|366016|1800799024|921020;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?d2ZiTDVwY0YrN0RaYmYzTHZmZi9wMEhFcGZqcmdPV2VvUk1CUW1vZXFFV1Vi?=
- =?utf-8?B?c0w1WEliUHdKWUNtd0JLd01rZzQxT1kvQm5hNWprelRnVkhlZjgzd3dJN3ly?=
- =?utf-8?B?Si9lMFNSMmwyR2YvS1phNG5LZUFjbDBRRVN2ZnZESzJ6WS8yd1BuZ3pjQUJ4?=
- =?utf-8?B?S1VEcWZCaW1wNWxzS2c0VVhqVGFyQjVmUy91dkI0Y21uQnNTaWFodm9GU2tm?=
- =?utf-8?B?Zmg1Q29ob1NOWUlwWEFiR3JSRXViVGQ3c2ZadmF2a0ErNHFHVzhPazEvWndv?=
- =?utf-8?B?cXU4c1FJQWFVZFFGWTVVYVBVT3dkTU5YV2hhSGp4S0JzOHBnQ2g2WVg4Ynhk?=
- =?utf-8?B?QVlUZCs5QTZiL2sxL2h1MTlEU3ppczBzb2Z5bVdzWTJLTnZFYUJ4TDU0V2l5?=
- =?utf-8?B?Q0cwTTIxNWxpSEl3SGd1Q0dDL3o3bDV0Sk80NzhIay9QSDJIZ0VKZXV5UXFy?=
- =?utf-8?B?VHIxMDVjaFVRa0JoZG5Ed2VMZ1NBS3B4d2xoV25VckJkcFpkeDd6VXFtUVZN?=
- =?utf-8?B?S1BFVVpEc1ZzRmFVdHVwRDRmZVJEbEU0RXhuM2dOOXpjb0dWOFRudWYyR2dL?=
- =?utf-8?B?YUtVRDFJRkxKV3U2cW5xNk05UzA1Ti9HOG1rTUdPYi9hcHl3MURXa2IwdUhE?=
- =?utf-8?B?VGNKRDhISGNtYk5GNkR0N2NEdHdvb1pnT3ovbjhISCticzU0azZnb3JPem1Q?=
- =?utf-8?B?dzB5UlBXeGt0R1hkcUx4VmEzM0ljR2hOdWVGb3pyMUpNL3piZFZEVVIvRHZJ?=
- =?utf-8?B?UDRBVTBvaWtTWjY1TGtmZDlnTmMrY2hLUVFZTnVuYkRMZFI3dXd0QTUyZVZW?=
- =?utf-8?B?WGoxMUc1d1JsWjJqditiK3YvbUxBRUd2YXFkTWJ3dGFOcmtWOFg4eFpKK1M0?=
- =?utf-8?B?cWN1bjVtd29qYUJ4RHBiV2x5dTIwRld6eUJzUWhLYzVyZ3dmamlYWVZRNGVD?=
- =?utf-8?B?RzB1WlBRQUZqd3k2Q1RMQklXSEVET0M1UUF4RVQvdHV5Q0gzT3NVNmw4MTVI?=
- =?utf-8?B?aUZvUFJ2Mmw3WTVBSDVpZG96ZklHRjdJL2swN1dOejVxR1R6RHZOcjNqK2FN?=
- =?utf-8?B?Vk54aHRBT0I2TTBSQy9ZaStSRUN5ZEdMVzRkK0xZODI0S29hZ3dvWEVtTndt?=
- =?utf-8?B?ditwcnN3ZVFGNU1sbnNrcDFIaVRTR0cyejF5SUk3OHFlMkZ1N0hGUm56Smt5?=
- =?utf-8?B?RHJCa1ZtQ044M3FKekR3R2xVQTVpZlFCUXZYSUpSYTFTWm9HZmlZWDJXUmVG?=
- =?utf-8?B?Rm1ObjVNSm11WWJlZzBYMVpWSGpZZG9aNE9xazFJUUkxaXk3L0hHV2hHaVp0?=
- =?utf-8?B?RCtReVNQS3FaWU9DRjEyNEdyU3MxdlQ1dDdZYTUvYXlYdzBPSEcrTTRBcWc2?=
- =?utf-8?B?bFNyODNaeFdydWdxMG9IZW5oUm9td0RwcUhKdVhIVGtLcEZzRTN5Qy9JNTAr?=
- =?utf-8?B?MEhwUFR3b0lkanNWM1pHN01VaUpyRWVTckxYaHI1OVNsczBpZFVxQ3VJYndv?=
- =?utf-8?B?N2lvcVo0NzFqYzhhd2JrUTZUMGFIUlA1cmVSbWd6TWJyTmhDaWxzVWZ0RHpF?=
- =?utf-8?B?Q3liUWVyQ21sWFdzMGFWQ2Fsc3lCSTh6cTBEYXdlTDhSdDRGM3AxZTlYN3ly?=
- =?utf-8?B?ODdGZ1QvTU1FV3U1ZVJva3RCdGl3d1ZmZHB3SEZoNjh6L2ZDRTJCSW40WDhI?=
- =?utf-8?B?WWltTmVJdmFvV3ljK3VtRVZ2dU1BcjlJeDdkWmRDRWhyUGxPQThmczBiMk5w?=
- =?utf-8?B?Zk01bG1jY25JR2ZXTFQ1MGNYWTk5TzNSODJHMUs2VWYzbEV6dXphV1hlZ2pD?=
- =?utf-8?B?RGJTRXV3bG5oNmF0dFBZQXp2bU14RFRIWHc0RGJCWEN3K0VnajJiTHZheXRP?=
- =?utf-8?B?RjdMSnNYVmFxZTFvOEZLc2xndXkvZlIvNGZQNVdQNlljYytwWGhhV0x2S01V?=
- =?utf-8?B?c1NKdy9hZ2JQM0EzNitnYWRHM1pQMmNlRGh2UmlKVGtEY1VCOTRuMTAwWFlq?=
- =?utf-8?B?aG0ydFdoL0tRPT0=?=
+	=?us-ascii?Q?g0paC7gZEEVr5bh7/0Y8kN1gY2lnKEGipKqkjps4zOisdR8fLerUIxXeZvim?=
+ =?us-ascii?Q?bIG4wfZMPh1F018BKKzLakTevA34BRCsRJ3N1ob0/cVXfLGihFgLaSg416GZ?=
+ =?us-ascii?Q?bZ/Prai8/pV0iqB0D6QDggnfB1OtDuri/QLDNZXZMr95SFqaQDrA49bRPvLC?=
+ =?us-ascii?Q?JXP37JGuoTU7SqyoEd8oruf/C7loGO94h1/qSa2asAc7+Zmk2s8sGLP/0oNI?=
+ =?us-ascii?Q?MLyPPgFig8XgctfvocPxceS+o+uv+ldv4N8Xx7t+vHtZf4v+hzjpV6wvu6s/?=
+ =?us-ascii?Q?03U39q9uaODYL30Jf4DUxvRUM1cxVT/+h+FRHOfSOIh0jXWTXreu8nPbUyMb?=
+ =?us-ascii?Q?jkGYR/Y0wLj1U0JmpCARA3pS+MNtd8prBSclMFqXUeD/8REhW/KRZy4fnk6V?=
+ =?us-ascii?Q?J2naxcIlz4eJm1mLnweUrL0wTzh3za5QYRkZfHfcB29yUPa6reOO8GVeURLQ?=
+ =?us-ascii?Q?S/scZKaD0hvoQmrX+kUA1aG8zfvvd0bBY0V7LUReRqm+AxqlBXcN+V2Q5HBm?=
+ =?us-ascii?Q?dEeLHGZSghsij2ngkNcLS5X5I7YkWpGQKobjoaAcc9PvZwuTDkyVnUJTUJ8C?=
+ =?us-ascii?Q?x1QmtMxhStCIg47jL8RV0AUQkKGew1/+l7ML2RJx0G7lw03Ee9qh8qOSAoqy?=
+ =?us-ascii?Q?fi1q/CegDXn6c8sGefAdonC7XXkhPKEL8r/iCz94Ql5Vy0n9naoj9ggbiPE1?=
+ =?us-ascii?Q?NZe4GSIzBXB3UqlhHslq/hff0uFLbXL4TaDucgXa3s0CNTCxFsg84L1luH8f?=
+ =?us-ascii?Q?5qL2D6UoPXZeoATfc0Ii/Oy/wil9UMJlMxhFkPtjoGUl2LnnzJ7QYiBi1eZR?=
+ =?us-ascii?Q?14+fa+z2Iedda8txPnNlBlZRhJ9izA/H+9RF1Q25xjxYog0Xb0NobNtV8P+3?=
+ =?us-ascii?Q?ArA4JI2atGj0NQ0KGNJFI+m1Wk0utgs1iJcxtulnz7cFuI0O2YD2xO4HeJwB?=
+ =?us-ascii?Q?Uk3beKnJ2ExXkYktAGeo0v7Il4lWv57c9y0NWUEMkP343roxzS+M2sXhF19t?=
+ =?us-ascii?Q?zpvvm6gNfzifCSVHZYf92usKyFxwcQ2p2Ylvm/q8Q9wjvpUs5HrbYuRiK00r?=
+ =?us-ascii?Q?DZrANaVSR2VuvmFV+K2+hdHcEusmRVQVxRHvMdIGaJstw+Bmo03Xn/j1XpTv?=
+ =?us-ascii?Q?JtgcIBY3JCl4Mt8m8xBEB7zJZUcpXMKeEQLY2Ss33r3KzRMOuxM2qNi1Eb+z?=
+ =?us-ascii?Q?yDK6fiyD8RcbUpH8skwT1O+STGvsEl6CaS4Kj/yoFIcRXWRkU/F8EPUG54oh?=
+ =?us-ascii?Q?L1Dtc7P0T6ofUD8JqHbPZAlygIlqhbnGdC8I0TJm3QFMSEbVn20SWIXQhDlo?=
+ =?us-ascii?Q?2ToLyqLLpfx62B1zueNidBQEJKzqe/QHOxMHqI65MShKcQhAJLU9CA3S3pjK?=
+ =?us-ascii?Q?asLBbf3qs5uSX08//+JjtDdgGMaPgJhplL9A1LiioC/nNW042u2+cPV9Zw8H?=
+ =?us-ascii?Q?e9JrCYVcg7M=3D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV2PR12MB5968.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(921020);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?aENGeERET2JNTktjcEhySFpjMnRCbVVqbzNBQ3QyaUxlVEY1NmR0SVkvZWZp?=
- =?utf-8?B?NzVldXpvcVJUZG00NnRrTDJoQ1N3MFo1eHdGbW1UMGI5VHV0c1FDdlM4dTBw?=
- =?utf-8?B?UkY0Q1pncVJmUkEyN2pIaUR0cVQ0Y0lyUzdzSzZtdEJvVDJQTnpXQXVkaGQy?=
- =?utf-8?B?VExRVlVHdk1BSnJWcHFSR1k5Y04zSjJESldaQ1BEeFUvc0E5TlNTWjcxY3Jn?=
- =?utf-8?B?LzJPSVlVVTk1VTAyWHVDNWpoZEZhNzQwb2NacWpWR0NBdGdIRU5sNWZGL082?=
- =?utf-8?B?VGMrelZCUmFyMVVJVTlMaUZqSDE0NzFKR24wcEpuUCtPbFpCcU5mVFJ6RUhO?=
- =?utf-8?B?TFBtcThIUTg4TlprQjJKeEpSdVZsT01USys4MlM2dENMa0gydzNWdkdkdVAz?=
- =?utf-8?B?aHhISWFQWnQ3My9zcVdhS3gva0RXVWlSRkZSUVA5YzdzcHFCT09GRFVWNU5P?=
- =?utf-8?B?NkRyYnVPc25ZdVVHVWZCNDFLQkJ5U0FEYnNhZm9COWw1U1o0dUhReGRENjFh?=
- =?utf-8?B?VmpnUTNnVUdUU0puZHluSnVUTmRjSFVsbzY4MGd3Qkpla3lCQ3l2RnZnOGpj?=
- =?utf-8?B?WFd0Q0orVS8zS2xQSkJGeVdBM21kSjMyUXozQkphdGtXcGlOaStHUnNxZFVW?=
- =?utf-8?B?L1drTUN2Y2lnYkpYZ0JIOHo1ejYwcll4RC85ZjlYRmhKNXVJclZ0dDlLN3hB?=
- =?utf-8?B?b3ZJV1MybXdNNWRaRkdDTXV0Z2JCb1pjZ284SDREcmFQbUY0K2xuQmU2aWNr?=
- =?utf-8?B?dlNNZG5UZkNqTVkzVWZwMzVKK1l2a0V3WkFzSXM2Z3pyVndEQ0xtMVQ3RHlX?=
- =?utf-8?B?RVVaQUVLaWU4K0h3SGR0QTVtQ3hUaEZoTzdzS0NmcWNyM2hZRWtiTk42a3kr?=
- =?utf-8?B?UnJaa0l3NjFEazBrWHlqZENMOStYOHhnMmY5STFuYWJWUHRLRmI2TmFpQXdl?=
- =?utf-8?B?UzhXTWNpQ0JPMDBjUE50bWdOY05ydjJhUnpabkloaFdxdG9ZdVZpWlVxVWFS?=
- =?utf-8?B?M3RlYmJzYjNwWUsvKzNSYzJWcmR3ODVhNkZlQ1g2SGtaTElqNzVFMG45amsz?=
- =?utf-8?B?UEhhM1ptV2MzUW4yd1NmeEtRT2F3TXRFMXpWeEd5TmQyb2o2U09CRmtpRFBn?=
- =?utf-8?B?MGFPT3hHQkRwZXVWWCtFN1dBdWNORmxaTzl0ZjhQcHI2cWdvRFZiV2k2akNW?=
- =?utf-8?B?cTBJNGNSVHhUWWFncEdXVE1KemhDdVhseWtneUpJRllLUlBobTNFZG5HTTZm?=
- =?utf-8?B?KzgvTi9nTmZ3eUdVckQrTG9YcExCV2w2RnRRaWZidEZ0aURVWlBjdlZmQXJT?=
- =?utf-8?B?YmlmdVVpb1VFNUJLWFlNZmlhMUVoWjlhVlg2cnB2YVgwdERCYXJ0NllmMFh0?=
- =?utf-8?B?UXUxTE5hanRINkhpc2QxUlIyVUNNKzBTTVpQZjNxckZUeTd6KzdGSlNJN3RX?=
- =?utf-8?B?Tk9WMUNxbUtTVmVWczBIajJCeEN3ZThWQ0JTSmNCYUxtL0dJSnBsM0M0Vkhh?=
- =?utf-8?B?QVFxN0pLSzZRZ3pmdmRmQU9jTFpOMjZBRk5YVTVhVEloS2xTemI1bHBDelE3?=
- =?utf-8?B?UDdudis4ZE1McU9qbnBDQnIyaTl0QlR3WmhXeUl0NW5IRGh0TitlSkQrWFdI?=
- =?utf-8?B?SmxyTDFRd1ZPMis3RGhTdkZHanVzMERhYVJzeUVXTkRBSWM1S3NXRWxQSXh3?=
- =?utf-8?B?WVNSajNMblRwZzgrMm1jTFFFTXU0R21OTXlPdnNQTHVQUTFMV0xJQ2g2UThJ?=
- =?utf-8?B?UnZWQXVZdDgwSERpWEJTeFJJSFY4eW9HT0tGYzY5NGIwY0lLMEVVYW83U1FF?=
- =?utf-8?B?UEVlZDJ0Q2tVRVJheHpZeFBQVE9vdUJTcVBCcjVVbUFpNVNLVFdQOHhkcGxn?=
- =?utf-8?B?bGIxWk5Sa0NsRUdGZzc5TWcxOFVTYUlqM2RtV1JKejg2RnNiNk1RK1h6c2Yr?=
- =?utf-8?B?S3N1QkJLMzM3OE5NNUxKMk5QOThsRU5LV3ZJUlJrVGFiRXVCU01Vam1LcXgy?=
- =?utf-8?B?ZVhUc2RnTEwxcWJ5d1FKV2VLSGhWS1YyaWNyT05DSjBVLzM4K21kM21uU2dT?=
- =?utf-8?B?ejRBY2lQNTZMZWFNSzR2NFdWR3FZdzZ2QWN6cXlPUFo2QlVDcjFYSko1RGJv?=
- =?utf-8?Q?jGWGXj3eX489v9Ty7sBGooUmj?=
+	=?us-ascii?Q?hR+fmPirHNcXI4alrcWlyxuoOekEd0wr9PZwkHqIDlN/sNg4N42GGWm6iYTt?=
+ =?us-ascii?Q?xdH4SPFTgd4OdsjdzL8s8vC95+ONVcTB8jUDOa7wfcGl0Qzn0nsr1djtV2Rf?=
+ =?us-ascii?Q?ABWdhv1J1HCm5NWgZ1+aeFYRYOyJGuxcoSAW0KJQoQeAa51yixyAYVKauvfQ?=
+ =?us-ascii?Q?ghAmZM5rILEDXnHG9BgpLq5LSWug1l6TivPzC7/4pDyxj2xpQsli0hV1KX08?=
+ =?us-ascii?Q?5G8fQ7m/oAiTsNuvy4rtpibQG2UnuZW8EW5K4XjkCt2esaVXxuAZ7jAkx0Uv?=
+ =?us-ascii?Q?JLB7hQt68/kzHIZq3IIHqje8f6XY/fKqPWMw3ClHwh4gQDoz26MDrbMemQys?=
+ =?us-ascii?Q?FOCVCA+iQv6ippLkPj5+JxHI3MwC0LAslC4dAXxRGS9wwoOgtBoTksJbKE7V?=
+ =?us-ascii?Q?oWY+vM/azxO+ji5IOsB2RImNfH70mV7z3x5KnN3uzcd6LjnG4KmaW8aUzn3T?=
+ =?us-ascii?Q?R6bbMsejj1BrhwVtyamEpxT4i3kxbObXvV2/ezmW4jnnK2FynS7fLGS7iG9z?=
+ =?us-ascii?Q?ufKpLnIbbwIBr742qw3MR6UqudDMq3KI94SbTde1TrCJc+7q0IOnzUViJhy8?=
+ =?us-ascii?Q?dXregx2aUbj2fXxzamB2AVqQV6AzD39fzKVao9o/JPJAKTV9CK40nKqBogPo?=
+ =?us-ascii?Q?fdM7uX3uXEqB+KRBvOhe6zClk+kauNNDU/jt6Eglokt0kifeSASynePW/Aj/?=
+ =?us-ascii?Q?yf2CtPATTsCYdn3kdFOf4XJB4xMZi9pcxoAN8zZfbIXGTYWe9FO7Ppw7+X/X?=
+ =?us-ascii?Q?0/hSym2WsHJ3S0ZdVFkWJoQIqvDug87vPEFyKdvzX0OBm3CacBql7xJZ2UpL?=
+ =?us-ascii?Q?9lhzVZYqxpHVSpEw7pTw20zb62MWeaUV/2KQ6LwSvkbnK5pRKIxkx/iTPxpU?=
+ =?us-ascii?Q?hjxYWxJG3Gxi7IiLSxSlxhwN/Fs5mX4MX9d9O7wUCaTvjwKPpguNe5WizRhb?=
+ =?us-ascii?Q?LuEl066ppadYUQbFfIOMEXO1Hiuzr6ZQlvnuR/PyBkWt7v80jKN0Al9zNMxw?=
+ =?us-ascii?Q?RunJryYhf5zy8x+wk4io+9UaQEiPgoPDB+LbZ9dUzwzqUruq7vywNNm+Prus?=
+ =?us-ascii?Q?eE2glp6BrlRV/wrtz6cPN3vRLHbOqAElknPb+iA5+v5fBkyBB5reLvF+uLbi?=
+ =?us-ascii?Q?I14GN5lYrh8HegMr6pVCXNby6J7gzceUYfRm+s2YawLVG7lUxzQt5oSvqEMD?=
+ =?us-ascii?Q?ziw66/sEzNu0DhSgSL9Sdh9RjF0aoovRxT/bRFwO1ZVvRQpuRlQTtFVAHh8a?=
+ =?us-ascii?Q?H38H+HGXHPe3MKkzWvty48fLPi9th7QcIBy6MuQHjYj4zHLEwkWS5HNPKpzc?=
+ =?us-ascii?Q?TBRyJpxeYXj7+vdoto5t7lMcfaXhNY7ayQp1Thj0Ow6Ca0IRnkQeafaGK03H?=
+ =?us-ascii?Q?hrlsc9ig7/viuq9kVWsGk/BhOOlcoEV1G3j4u/U6Iw0CVmB/U+pyJi9OMg3b?=
+ =?us-ascii?Q?o35TVfBQ5LSBduWN4nUxANbpEWnPf5KAlLBkxpBsdb80MK5HdPN2GOmDCIAU?=
+ =?us-ascii?Q?SBNdVq/eqd/Z4RLqQVCDml4uWcIUr38PYjdsGn3GUsmglplFmJd9WZT9d7x7?=
+ =?us-ascii?Q?kXmXzmGeZ3kTkeO+Z/ooLJswJka+2HY97WztzdaJ?=
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c9a55ad6-5128-4d06-bfab-08dde5119a8d
-X-MS-Exchange-CrossTenant-AuthSource: LV2PR12MB5968.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2d0b9f23-5b0a-4ad1-cb9e-08dde5119ed6
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2025 02:29:52.8850
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2025 02:30:01.1864
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: i1Cl/Dx6/RMvv+cv8W0/OjwagMkKE9dPsh3PfV7NwdcoKfewUaX23/4k2XdTAyuj5PQ6chp7K4RLPatkpR2QOA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6009
+X-MS-Exchange-CrossTenant-UserPrincipalName: +OvuS1Q90RqkIWpAUOfMKuYcKovkfR7X6Tb+7t5o5qOanrqWT321FfQwbj3oohgN
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4212
 
-On 8/25/25 9:07 PM, Alexandre Courbot wrote:
-...
-> +/// Signature parameters, as defined in the firmware.
-> +#[repr(C)]
-> +struct HsSignatureParams {
-> +    // Fuse version to use.
-> +    fuse_ver: u32,
-> +    // Mask of engine IDs this firmware applies to.
-> +    engine_id_mask: u32,
-> +    // ID of the microcode.
+On 26 Aug 2025, at 22:13, Andrew Morton wrote:
 
-Should these three comments use "///" instead of "//" ?
+> On Tue, 26 Aug 2025 14:06:54 +0000 Brendan Jackman <jackmanb@google.com=
+> wrote:
+>
+>> Currently order is signed in one version of the function and unsigned =
+in
+>> the other. Tidy that up.
+>>
+>> In page_alloc.c, order is unsigned in the vast majority of cases. But,=
 
-...> +pub(crate) struct BooterFirmware {
-> +    // Load parameters for `IMEM` falcon memory.
-> +    imem_load_target: FalconLoadTarget,
-> +    // Load parameters for `DMEM` falcon memory.
-> +    dmem_load_target: FalconLoadTarget,
-> +    // BROM falcon parameters.
-> +    brom_params: FalconBromParams,
-> +    // Device-mapped firmware image.
-> +    ucode: FirmwareDmaObject<Self, Signed>,
-> +}
-> +
-> +impl FirmwareDmaObject<BooterFirmware, Unsigned> {
-> +    fn new_booter(dev: &device::Device<device::Bound>, data: &[u8]) -> Result<Self> {
-> +        DmaObject::from_data(dev, data).map(|ucode| Self(ucode, PhantomData))
-> +    }
-> +}
-> +
-> +impl BooterFirmware {
-> +    /// Parses the Booter firmware contained in `fw`, and patches the correct signature so it is
-> +    /// ready to be loaded and run on `falcon`.
-> +    pub(crate) fn new(
-> +        dev: &device::Device<device::Bound>,
-> +        fw: &Firmware,
-> +        falcon: &Falcon<<Self as FalconFirmware>::Target>,
-> +        bar: &Bar0,
-> +    ) -> Result<Self> {
-> +        let bin_fw = BinFirmware::new(fw)?;
+>> there is a cluster of exceptions in compaction-related code (probably
+>> stemming from the fact that compact_control.order is signed). So, pref=
+er
+>> local consistency and make this one signed too.
+>>
+>
+> grumble, pet peeve.  Negative orders make no sense.  Can we make
+> cc->order unsigned in order (heh) to make everything nice?
 
-A few newlines for a little visual "vertical relief" would be a
-welcome break from this wall of text. Maybe one before and after
-each comment+line, just for this one time here, if that's not too 
-excessive:
+Unless we do not do order--, where order can go negative. See next_search=
+_order()
+in mm/compaction.c as an example.
 
-here> +        // The binary firmware embeds a Heavy-Secured firmware.
-> +        let hs_fw = HsFirmwareV2::new(&bin_fw)?;
-here> +        // The Heavy-Secured firmware embeds a firmware load descriptor.
-> +        let load_hdr = HsLoadHeaderV2::new(&hs_fw)?;
-here> +        // Offset in `ucode` where to patch the signature.
-> +        let patch_loc = hs_fw.patch_location()?;
-here> +        let sig_params = HsSignatureParams::new(&hs_fw)?;
-> +        let brom_params = FalconBromParams {
-> +            // `load_hdr.os_data_offset` is an absolute index, but `pkc_data_offset` is from the
-> +            // signature patch location.
-> +            pkc_data_offset: patch_loc
-> +                .checked_sub(load_hdr.os_data_offset)
-> +                .ok_or(EINVAL)?,
-> +            engine_id_mask: u16::try_from(sig_params.engine_id_mask).map_err(|_| EINVAL)?,
-> +            ucode_id: u8::try_from(sig_params.ucode_id).map_err(|_| EINVAL)?,
-> +        };
-> +        let app0 = HsLoadHeaderV2App::new(&hs_fw, 0)?;
-> +
-> +        // Object containing the firmware microcode to be signature-patched.
-> +        let ucode = bin_fw
-> +            .data()
-> +            .ok_or(EINVAL)
-> +            .and_then(|data| FirmwareDmaObject::<Self, _>::new_booter(dev, data))?;
-> +
-> +        let ucode_signed = {
-
-This ucode_signed variable is misnamed...
-
-> +            let mut signatures = hs_fw.signatures_iter()?.peekable();
-> +
-> +            if signatures.peek().is_none() {
-> +                // If there are no signatures, then the firmware is unsigned.
-> +                ucode.no_patch_signature()
-
-...as we can see here. :)
-
-> +            } else {
-> +                // Obtain the version from the fuse register, and extract the corresponding
-> +                // signature.
-> +                let reg_fuse_version = falcon.signature_reg_fuse_version(
-
-Oh...I don't want to derail this patch review with a pre-existing problem,
-but let me mention it anyway so I don't forget: .signature_reg_fuse_version()
-appears to be unnecessarily HAL-ified. I think.
-
-SEC2 boot flow only applies to Turing, Ampere, Ada, and so unless Timur
-uncovers a Turing-specific signature_reg_fuse_version(), then I think
-we'd best delete that entire HAL area and call it directly.
-
-Again, nothing to do with this patch, I'm just looking for a quick
-sanity check on my first reading of this situation.
-
-> +                    bar,
-> +                    brom_params.engine_id_mask,
-> +                    brom_params.ucode_id,
-> +                )?;
-> +
-> +                let signature = match reg_fuse_version {
-> +                    // `0` means the last signature should be used.
-> +                    0 => signatures.last(),
-
-Should we provide a global const, to make this concept a little more self-documenting?
-Approximately: 
-
-const FUSE_VERSION_USE_LAST_SIG: u32 = 0;
-
-> +                    // Otherwise hardware fuse version needs to be substracted to obtain the index.
-
-typo: "s/substracted/subtracted/"
-
-> +                    reg_fuse_version => {
-> +                        let Some(idx) = sig_params.fuse_ver.checked_sub(reg_fuse_version) else {
-> +                            dev_err!(dev, "invalid fuse version for Booter firmware\n");
-> +                            return Err(EINVAL);
-> +                        };
-> +                        signatures.nth(idx as usize)
-> +                    }
-> +                }
-> +                .ok_or(EINVAL)?;
-> +
-> +                ucode.patch_signature(&signature, patch_loc as usize)?
-> +            }
-> +        };
-> +
-> +        Ok(Self {
-> +            imem_load_target: FalconLoadTarget {
-> +                src_start: app0.offset,
-> +                dst_start: 0,
-> +                len: app0.len,
-
-Should we check that app0.offset.checked_add(app0.len) doesn't cause an
-out of bounds read?
+>
+>> --- a/mm/page_alloc.c
+>> +++ b/mm/page_alloc.c
+>> @@ -4182,7 +4182,7 @@ __alloc_pages_direct_compact(gfp_t gfp_mask, uns=
+igned int order,
+>>  }
+>>
+>>  static inline bool
+>> -should_compact_retry(struct alloc_context *ac, unsigned int order, in=
+t alloc_flags,
+>> +should_compact_retry(struct alloc_context *ac, int order, int alloc_f=
+lags,
+>>  		     enum compact_result compact_result,
+>>  		     enum compact_priority *compact_priority,
+>>  		     int *compaction_retries)
+>>
 
 
-> +            },
-> +            dmem_load_target: FalconLoadTarget {
-> +                src_start: load_hdr.os_data_offset,
-> +                dst_start: 0,
-> +                len: load_hdr.os_data_size,
-> +            },
-> +            brom_params,
-> +            ucode: ucode_signed,
-> +        })
-> +    }
-> +}
-> +
-> +impl FalconLoadParams for BooterFirmware {
-> +    fn imem_load_params(&self) -> FalconLoadTarget {
-> +        self.imem_load_target.clone()
-> +    }
-> +
-> +    fn dmem_load_params(&self) -> FalconLoadTarget {
-> +        self.dmem_load_target.clone()
-> +    }
-> +
-> +    fn brom_params(&self) -> FalconBromParams {
-> +        self.brom_params.clone()
-> +    }
-> +
-> +    fn boot_addr(&self) -> u32 {
-> +        self.imem_load_target.src_start
-> +    }
-> +}
-> +
-> +impl Deref for BooterFirmware {
-> +    type Target = DmaObject;
-> +
-> +    fn deref(&self) -> &Self::Target {
-> +        &self.ucode.0
-> +    }
-> +}
-
-OK, so this allows &BooterFirmware to be used where &DmaObject is expected,
-but it's not immediately obvious that BooterFirmware derefs to its internal
-DMA object. It feels too clever...
-
-Could we do something a little more obvious instead? Sort of like this:
-
-impl BooterFirmware {
-    pub(crate) fn dma_object(&self) -> &DmaObject {
-        &self.ucode.0
-    }
-}
-
-...
-
-I'm out of time today, will work on the other half of the series tomorrow.
-
-thanks,
--- 
-John Hubbard
-
+--
+Best Regards,
+Yan, Zi
 
