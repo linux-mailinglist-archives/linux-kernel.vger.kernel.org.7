@@ -1,178 +1,124 @@
-Return-Path: <linux-kernel+bounces-788166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788170-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF4A8B38097
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 13:08:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A9B2B380A7
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 13:15:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DAF391BA59C7
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 11:09:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF8EC20882A
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 11:15:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3545632144A;
-	Wed, 27 Aug 2025 11:08:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0EB034F48C;
+	Wed, 27 Aug 2025 11:15:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hMOKcIoj"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="TOkbCw8v"
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 941D828C847
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 11:08:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF3241FA178;
+	Wed, 27 Aug 2025 11:15:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.156.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756292913; cv=none; b=s2Xi+AK/VSuXkNXhqladmNiasFlxlR/CcO47En1ukICzxlaCqTRzZp9KTwrQ7AOjrdY/xlajOA/YXeIa8VPS7s2iFNLj9NxQyu4vVYPDwVkvkXgSQU0QK6WBox/C/DJQsxb/jZ5DKbfVEkFjcg3tkoErgEvU97UVPY+asbqeQNk=
+	t=1756293337; cv=none; b=KhNDqg4+SvPRxpA741nPp2AmQ1ZRUJThlSM3v8w9nkZm2fu/SNT1lrKTXvMhzKehX34QhoC8kCJDOYsODCM4ncZOAOzFAn9lWLHI5M/XezmS1waCzLunSVK2v4JxqvfXdlDY+B21XichPMh49cZ8wQc6HVNuc2cIpX1CKScXXRI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756292913; c=relaxed/simple;
-	bh=3PjxlAWf7veWGNv8WxmuluBCo2cmlQimJC4dQF/7vCU=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
-	 References:In-Reply-To; b=p/Vk8dyQHBapCthqxJOSbbgL8/uHRFU0Wb4Wx5dJeJsTJVsgRS0KmB+PdGTeKJ25pu4SZ04Dw+MKM5v0NAVw0KVx5k7KAW6MbiFgYiFVdJeamFAW+eYAUVVTXKUhfHsNuKM5RVbSNPQ52IlmFpED7IWwaXmjbjGq0JyND28w+7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hMOKcIoj; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756292910;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3PjxlAWf7veWGNv8WxmuluBCo2cmlQimJC4dQF/7vCU=;
-	b=hMOKcIojpMtY6qdr3F+RLu97ElOIpF3xX4RjfiwLk1kSOyhRB2zyP6e12RgK1fitsbdnbQ
-	R5uOj+QkoX+NqzagYMZzngnu8micYiyTvj7+1ykN3ZbdAX2Wc23AYZLemXm0oqUAHaAoen
-	LNeSMyOkKQtqUifu6EtknHGrwD1QOOY=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-591-0WB_z29hPsm9r_1MsdnIRA-1; Wed, 27 Aug 2025 07:08:29 -0400
-X-MC-Unique: 0WB_z29hPsm9r_1MsdnIRA-1
-X-Mimecast-MFC-AGG-ID: 0WB_z29hPsm9r_1MsdnIRA_1756292908
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-45b7265febdso2096275e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 04:08:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756292908; x=1756897708;
-        h=in-reply-to:references:subject:cc:to:from:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=3PjxlAWf7veWGNv8WxmuluBCo2cmlQimJC4dQF/7vCU=;
-        b=ilIB29IsjCUSRExKSjaR293Uw8RuXF6h0jH4dcmdVHiLVYEMeQyGAntFSIspAGtvWA
-         PQ+azAfUO0+1bDghpEQK1FkWfuT06XRkrrC92FWSh9hc/IDLBFhDbcJ/FTwwsaW24XLd
-         GtmfVHQpT5h317Qm7ZZ3CM2S4FsNlOmeBGIj7jvCSVbj/Ot4T7Iemi+IY8IIK1r3f+Rp
-         UqWI6ZPO79pQ8gPfspMxN/3D39fq7KlHzCJnsadujsGdnOkmOMGH8dBs7qwHbk14ezri
-         Dc9hAmQS4c0IplGJufTzao1B/QJtShnNeSH8PWaVrtIPWFrRq9/5FPWwnB9X2TLrYog8
-         xVkw==
-X-Forwarded-Encrypted: i=1; AJvYcCWm9kOpBuqQfNioGTcPN2lz72YxijxorB1pzIXhwxFejkmQJAKxBJWx2E1VjHRofdmjzFZO/Yeq5jIqcwI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YynyxOs15MMyv3DuxNEsHWWyh8qtrnbxj/t0mg08SrpDbJMdL4C
-	aWfSJzf/DetVwJOLQKDXndI+DmscFjZu/fqHz6GHtT9c9145lH7Hu2KKu5yHQMYgbbxl4FvcAj7
-	kRR5oSK5dsXONRmmf/bu4fldfPYWM0TCJs9JnDKGhU3AyodhD8aL+EGDKEXcPsql39g==
-X-Gm-Gg: ASbGncuR5whUnGpK/XuD5VxSDtUHor1cc10WiIGAMfiJsWHebtlj+Vkb7stP78w/K7C
-	L55KsfJs3SYR3OHZAqxT0aH4GA2Zk2aBNFOFS48vQ/vwz7WgvMbVTpqFjoFcwv3CdTEpV7aX0d5
-	QVPES3lWIPPG7T/pq4f3bHvBjnbp2sk8cmAF0sEm74BEtbJR+7aPyPc4/mO6hCgPujvcWxXPb7T
-	FUndiWJQYz1VoBww7umjPErRnLVz3V4yYLjZxfmajZrV5NY44r/CtVpTrQaegUczY3WdlHPf4la
-	dtoAoze2KboH2sBh4PPCdbWqz5Bu4CZkPutHxLm85h+dew==
-X-Received: by 2002:a5d:5f46:0:b0:3c5:c344:ffb8 with SMTP id ffacd0b85a97d-3cbb15ca309mr4023100f8f.12.1756292907964;
-        Wed, 27 Aug 2025 04:08:27 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHnbaAqjIreMNe/bzEU3jkon+3zC2R03YKoR/bFzRlaIY/38ozGFFh2vpp9cdD5NjXCSRmsZQ==
-X-Received: by 2002:a5d:5f46:0:b0:3c5:c344:ffb8 with SMTP id ffacd0b85a97d-3cbb15ca309mr4023053f8f.12.1756292907494;
-        Wed, 27 Aug 2025 04:08:27 -0700 (PDT)
-Received: from localhost ([2001:9e8:898f:9300:ff23:be77:f1bc:ffc8])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c70ef566dcsm19986409f8f.24.2025.08.27.04.08.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Aug 2025 04:08:26 -0700 (PDT)
+	s=arc-20240116; t=1756293337; c=relaxed/simple;
+	bh=DELClcv/QFFbgr0N0aIqJpzPrZ9sa0zi5L0dUoIeEug=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Hzkkjq3itxTMSxw6Fqj8Kh1cD//RzsB1gFaAW5woa/lJoEPusXBziXlrcOf/jQDawOJ6uALaqzgt2AAntgZ6Q0/EeqKZuzjKYeKUJwz9i/Wa9XUxKMy6+ZrZaCLRaLIG4c31ZjXG5vyJYVKXcvP73o1l7Tezx5ehgdW+X9iTd3I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=TOkbCw8v; arc=none smtp.client-ip=67.231.156.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
+	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57R0Wwsi018064;
+	Wed, 27 Aug 2025 04:12:27 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pfpt0220; bh=eS4PJTq7t6gAJPQmnSbdZkL6W
+	tmo5aHPtGS7PhCB2/g=; b=TOkbCw8v3Q5QFfD+A1EZnSJVz3bnUg2t6UEPAMh5G
+	qc36UQz/W75ptu5+a0WPwNdPfiFEFEHXp7YYI1dE38sIg1Kb4yeKBpd1yxAh9+lG
+	QbYBDNgUWeXG/mySNgMTPg/0xnPiPnwOmqlZ9kdzEm82uezjAQ/ckZvoxRc/AqQH
+	HPpA2XOe3Y6kFQ/UfF+2ixo7+blW7tOm2oz81k3DRLSDwBCdMqqel0tYZQG2OBNd
+	Acc+nbM1rj0SUYBpr8xTReyaWj+p3pBtzdiBAn3QuHaYakkmifwwgh78jQIg0JK2
+	zZwj32aYMkBQteRkbrGEImDhOSoarLvHsxbeVGtMFJKwg==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 48spmm98st-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 27 Aug 2025 04:12:26 -0700 (PDT)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Wed, 27 Aug 2025 04:12:26 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
+ Transport; Wed, 27 Aug 2025 04:12:26 -0700
+Received: from opensource (unknown [10.29.8.22])
+	by maili.marvell.com (Postfix) with SMTP id 1DF463F706B;
+	Wed, 27 Aug 2025 04:12:22 -0700 (PDT)
+Date: Wed, 27 Aug 2025 11:12:21 +0000
+From: Subbaraya Sundeep <sbhatta@marvell.com>
+To: Liao Yuanhong <liaoyuanhong@vivo.com>
+CC: Igor Russkikh <irusskikh@marvell.com>,
+        Andrew Lunn
+	<andrew+netdev@lunn.ch>,
+        "David S. Miller" <davem@davemloft.net>,
+        "Eric
+ Dumazet" <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+	<pabeni@redhat.com>,
+        "open list:AQUANTIA ETHERNET DRIVER (atlantic)"
+	<netdev@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] net: aquantia: Remove redundant ternary operators
+Message-ID: <aK7oFUHS0l9w3MdI@opensource>
+References: <20250827095836.431248-1-liaoyuanhong@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 27 Aug 2025 13:08:25 +0200
-Message-Id: <DCD5VIFRKFB9.1KHIZI3ASID2I@redhat.com>
-From: "Sebastian Wick" <sebastian.wick@redhat.com>
-To: "Daniel Stone" <daniel@fooishbar.org>, "Maxime Ripard"
- <mripard@kernel.org>
-Cc: "Shengyu Qu" <wiagn233@outlook.com>, "Marius Vlad"
- <marius.vlad@collabora.com>, <alexander.deucher@amd.com>,
- <christian.koenig@amd.com>, <airlied@gmail.com>, <simona@ffwll.ch>,
- <harry.wentland@amd.com>, <sunpeng.li@amd.com>, <siqueira@igalia.com>,
- <maarten.lankhorst@linux.intel.com>, <tzimmermann@suse.de>,
- <contact@rafaelrc.com>, <lijo.lazar@amd.com>, <jesse.zhang@amd.com>,
- <tim.huang@amd.com>, <dark_sylinc@yahoo.com.ar>,
- <mario.limonciello@amd.com>, <alex.hung@amd.com>,
- <aurabindo.pillai@amd.com>, <sunil.khatri@amd.com>,
- <chiahsuan.chung@amd.com>, <mwen@igalia.com>, <Roman.Li@amd.com>,
- <Wayne.Lin@amd.com>, <dominik.kaszewski@amd.com>, <alvin.lee2@amd.com>,
- <Aric.Cyr@amd.com>, <Austin.Zheng@amd.com>, <Sung.Lee@amd.com>,
- <PeiChen.Huang@amd.com>, <dillon.varone@amd.com>, <Richard.Chiang@amd.com>,
- <ryanseto@amd.com>, <linux@treblig.org>, <haoping.liu@amd.com>,
- <Relja.Vojvodic@amd.com>, <Yihan.Zhu@amd.com>, <Samson.Tam@amd.com>,
- <amd-gfx@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
- <linux-kernel@vger.kernel.org>, <wayland-devel@lists.freedesktop.org>
-Subject: Re: [PATCH v2 0/2] Add "pixel_encoding" to switch between RGB & YUV
- color modes
-X-Mailer: aerc 0.20.1
-References: <TY4PR01MB14432B688209B2AA416A95228983EA@TY4PR01MB14432.jpnprd01.prod.outlook.com> <aK1hPoCmLziaPPOd@xpredator> <TY4PR01MB1443219A9870877AF120FE63B9839A@TY4PR01MB14432.jpnprd01.prod.outlook.com> <20250827-imperial-mongrel-of-dignity-712fab@houat> <CAPj87rPhK+E2FP62fnNxFySDOkqqKxo_oa94i7DR3_6a1j1o1A@mail.gmail.com>
-In-Reply-To: <CAPj87rPhK+E2FP62fnNxFySDOkqqKxo_oa94i7DR3_6a1j1o1A@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250827095836.431248-1-liaoyuanhong@vivo.com>
+X-Proofpoint-ORIG-GUID: WZigA6f_8B3AKV0MlGZq1D8xO-3M0eWr
+X-Proofpoint-GUID: WZigA6f_8B3AKV0MlGZq1D8xO-3M0eWr
+X-Authority-Analysis: v=2.4 cv=RMyzH5i+ c=1 sm=1 tr=0 ts=68aee81a cx=c_pps a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17 a=kj9zAlcOel0A:10 a=2OwXVqhp2XgA:10 a=1WtWmnkvAAAA:8 a=M5GUcnROAAAA:8 a=XY7qareSp0-CB3CkL5gA:9 a=CjuIK1q_8ugA:10
+ a=OBjm3rFKGHvpk9ecZwUJ:22 a=6wIt35iRdmYE2F5fZHQ2:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODI2MDIwNSBTYWx0ZWRfX7cNUJ5Hknlh7 t8u7lyArV9NJ9Mz7eNWU2fhRKSyjEvRtqx8EFEP8Qjnea8OzZYhKbF4rP3bQYyZ+OJNCVZ71Cu3 jQ+LJqo/AgnvEIKsLS1xvELONrzJI2Z5aDRsoR+ifBfk/I52gpLz0Cdu7MwUlYHsormdhqlaW/M
+ zgmRPBxOkIJ4/mZKL+F4MPYM8kemWV8u5k9s5B8gEy1l7bBtZbNDyd54ep80TFlKZHP5Qv6XDGG H+rgjkGpBwBBOhoZbB5Q0OcpqWfMi5640TxPTTP1vGemctE1mbw71Rn3H0RXd664aD3oMzL3ieL 7NoefaA4SD/Zd7494f7d4sJtLcayw6lZl2mjdJcWbM6zSFZFFYsYMgNETaTiZBEosFtIWlwb8Tr gGCnearW
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-27_02,2025-08-26_01,2025-03-28_01
 
-On Wed Aug 27, 2025 at 12:39 PM CEST, Daniel Stone wrote:
-> Hey,
->
-> On Wed, 27 Aug 2025 at 10:41, Maxime Ripard <mripard@kernel.org> wrote:
->> On Wed, Aug 27, 2025 at 12:26:56AM +0800, Shengyu Qu wrote:
->> > 1.Can you send patch with only i915/amdgpu first? It's a long-needed f=
-eature
->> > to deal with some monitors/TVs with broken EDID.
->>
->> If it's to workaround broken monitors, then it's really not something we
->> should be doing using a property.
->>
->> Most likely, those monitors don't support YUV* output and will just need
->> to be forced to RGB, so it's not something that the user (or the
->> compositor, really) has to care about.
->>
->> And it would be broken with every driver, not just i915 and amdgpu.
->>
->> We already have some quirks infrastructure in place, the only thing we
->> need to do is create an EDID_QUIRK_NO_$FORMAT, clear
->> drm_display_info->color_formats based on it, and you're done. No uapi to
->> agree upon, support, test, and it works with every driver.
->
-> There are other reasons to have uAPI though ...
->
-> One is because you really care about the colour properties, and you'd
-> rather have better fidelity than anything else, even if it means some
-> modes are unusable.
->
-> Another is for situations which static quirks can't handle. If you
-> want to keep headroom on the link (either to free up bandwidth for
-> other uses), or you accidentally bought a super-long cable so have a
-> flaky link, you might well want to force it to use lower fidelity so
-> you can negotiate a lower link rate.
->
-> I'm all for just dtrt automatically, but there are definitely reasons
-> to expose it to userspace regardless.
+On 2025-08-27 at 09:58:33, Liao Yuanhong (liaoyuanhong@vivo.com) wrote:
+> For ternary operators in the form of "a ? true : false", if 'a' itself
+> returns a boolean result, the ternary operator can be omitted. Remove
+> redundant ternary operators to clean up the code.
+> 
+> Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
 
-Yes!
-
-Broadcast RGB is a property that only works as a workaround for broken
-monitors. If user space sets it to a value other than auto, even after
-first checking the EDID if the sink supports it, we don't know if the
-kernel just changes the values, or also sends the InfoFrame (or the DP
-equivalent).
-
-So even if the new property was just for broken sinks, we already have a
-similar case, and it makes sense: If the EDID fails to read properly, or
-the display has no EDID, the kernel can't really identify the thing, so
-you need something in user space anyway.
-
-Even for quirks where you can identify something, user space is a better
-fit because we can update things faster. This is one of the goals of
-libdisplay-info anyway.
-
-Either way, like Daniel said, this *is* useful for other reasons. We
-want to be able to switch between quality and bandwidth.
-
-> Cheers,
-> Daniel
-
+Reviewed-by: Subbaraya Sundeep <sbhatta@marvell.com>
+> ---
+>  drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_utils.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_utils.c b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_utils.c
+> index 7e88d7234b14..f5e0f784ec56 100644
+> --- a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_utils.c
+> +++ b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_utils.c
+> @@ -463,8 +463,7 @@ bool hw_atl_utils_ver_match(u32 ver_expected, u32 ver_actual)
+>  	ver_match = (dw_major_mask & (ver_expected ^ ver_actual)) ? false : true;
+>  	if (!ver_match)
+>  		goto err_exit;
+> -	ver_match = ((dw_minor_mask & ver_expected) > (dw_minor_mask & ver_actual)) ?
+> -		false : true;
+> +	ver_match = (dw_minor_mask & ver_expected) <= (dw_minor_mask & ver_actual);
+>  
+>  err_exit:
+>  	return ver_match;
+> -- 
+> 2.34.1
+> 
 
