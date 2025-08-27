@@ -1,130 +1,157 @@
-Return-Path: <linux-kernel+bounces-787866-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787867-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D13B8B37C8F
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 09:58:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 655FDB37C91
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 09:58:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3049B17E55C
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 07:57:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A21D1BA236F
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 07:58:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D025A321F48;
-	Wed, 27 Aug 2025 07:57:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF73432145D;
+	Wed, 27 Aug 2025 07:58:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="ETZTkoEo"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="ILjsjLfj"
+Received: from r3-11.sinamail.sina.com.cn (r3-11.sinamail.sina.com.cn [202.108.3.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28EBD2BE7DF;
-	Wed, 27 Aug 2025 07:57:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DB041A9F86
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 07:58:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756281461; cv=none; b=fIHpFjMfbTiYVrNP9CfvzTY3k9WUITj8yq4XJt9xpOImkzEmLaBTgRRUIZRNvQh7NhNAFs2R1wy0tuy5M0JnueWVIdRNgdQnfaOwD7zWlhCy02CKrEVy80qDqDLhLwegO0enmUq1jCC4qDRGFhtwfFuzdoPBdL4GI9Zo7/TJrFY=
+	t=1756281493; cv=none; b=tQoHQ0XdYc6BQx9vHbAy1q6A9mpcL0G68jxoPVSoZ0YNXSotiNq5Y3YAXotrIssQV00m0saKIQZchH6OiUE19Uvfq3E18lqM6qq/rIdAam/7VsTd2l1cjkxj3Gdshfaj6bE9ZV4bHalDkyusu5L5mKN1AB6jTJ/5H9UyHpjPXx4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756281461; c=relaxed/simple;
-	bh=0MK1dUMIBWuj72rwewkqEVH0cn/LnA/1R+TUGxOlw7A=;
+	s=arc-20240116; t=1756281493; c=relaxed/simple;
+	bh=6XWsz5fE1b3NySvmjWOLDDL69Emwrji8tzxSn8nVz8I=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mlOqgHAwDwrLDc0v0peUBcMCR5JyiGWyJYva7Q76UYTQ02AwsyvXa7yd5qdVuHurMyhVyQ9t5s4xZX/mv3onJCCJKhzF/F/dyE+KbhbRUpnHcLWu/DWzumjaseYPN9uhmuO1LGYQVQCR4trisOgSljiKr1pv6kes61mpFijNkFU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=ETZTkoEo; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
-	bh=0MK1dUMIBWuj72rwewkqEVH0cn/LnA/1R+TUGxOlw7A=; b=ETZTkoEoOwtznU7PtnZeQFX4Fe
-	vM6Gg/U5rsSJj/WUqqtUEJV3BceYz2JVc61zNRNRjL4DFqp104N1wUclJpSswXx5sqCln7OWyunG6
-	1BXLLRpOWOQKi7IxecmWks9WndogbL1isYzy85Po6NTAI5iUKT6cVGycUUx1+G9Sdk6QBfX5Nab2O
-	AoHyUEffPqw/BIjMBTDsou/G4FI5gXNkiAM7XHNVs95bP9wM5OxBgaN/F8O7uh73Jt61EZ5SREvoE
-	VRfAa8DcHOrlfJ+EZjWxzMMZ6lcGDOSdP3RHulTQGePkNCSjMsKPIAnaT2QKSPEuFVcPwPFvGnA9V
-	jTWs2Wcg==;
-Received: from [213.244.170.152] (helo=phil.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1urB1d-0002Lk-PM; Wed, 27 Aug 2025 09:56:57 +0200
-From: Heiko Stuebner <heiko@sntech.de>
-To: Yury Norov <yury.norov@gmail.com>,
- Rasmus Villemoes <linux@rasmusvillemoes.dk>,
- Jaehoon Chung <jh80.chung@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>,
- Shreeya Patel <shreeya.patel@collabora.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Sandy Huang <hjc@rock-chips.com>,
- Andy Yan <andy.yan@rock-chips.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
- Nicolas Frattaroli <frattaroli.nicolas@gmail.com>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Shawn Lin <shawn.lin@rock-chips.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- Krzysztof =?UTF-8?B?V2lsY3p5xYRza2k=?= <kwilczynski@kernel.org>,
- Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>,
- Bjorn Helgaas <bhelgaas@google.com>, Chanwoo Choi <cw00.choi@samsung.com>,
- MyungJoo Ham <myungjoo.ham@samsung.com>,
- Kyungmin Park <kyungmin.park@samsung.com>, Qin Jian <qinjian@cqplus1.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
- Nathan Chancellor <nathan@kernel.org>,
- Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
- Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
- Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-Cc: kernel@collabora.com, linux-kernel@vger.kernel.org,
- linux-mmc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-media@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-phy@lists.infradead.org,
- linux-sound@vger.kernel.org, netdev@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com, linux-pci@vger.kernel.org,
- linux-pm@vger.kernel.org, linux-clk@vger.kernel.org, llvm@lists.linux.dev,
- Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-Subject: Re: [PATCH v3 16/20] PCI: rockchip: Switch to FIELD_PREP_WM16* macros
-Date: Wed, 27 Aug 2025 09:56:55 +0200
-Message-ID: <7681880.cEBGB3zze1@phil>
-In-Reply-To: <20250825-byeword-update-v3-16-947b841cdb29@collabora.com>
-References:
- <20250825-byeword-update-v3-0-947b841cdb29@collabora.com>
- <20250825-byeword-update-v3-16-947b841cdb29@collabora.com>
+	 MIME-Version; b=Xdlk8QUFj6ZEtugGgzEaALHysK+Xwu0cOFtNbCaJix2yEczPKyp+awEDQomHqLeGDfbyMg5UIya6hfI9FMYRlgrUu7OONHvFA9gHucy8GKev0FBDqgW4hbf59aCQs7tWtYB/Iznghdji3hq1olLZVRuUizhuaSFEc3iTlGDUj4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=ILjsjLfj; arc=none smtp.client-ip=202.108.3.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1756281487;
+	bh=Cn8dpOuN9Xb+9qyQf/t/k6jIrwreYRP+VzBXeUJw9pw=;
+	h=From:Subject:Date:Message-ID;
+	b=ILjsjLfjgtuzd5v8CtXNKl6bn5TyompaaBuA4+nS8jEL83wBVvXbvzZqTFpRtNDsi
+	 ysgRHW8UKhWG8u/rEilew1qq7WRmNdC2c3YoMM8c6nzOsSkaoZ6lk5AqeRIkVERpNi
+	 KuLyq0jcqMwbG2WCEqljl01VcCskqI03GeCr3Qx4=
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
+	by sina.com (10.54.253.34) with ESMTP
+	id 68AEBA600000048D; Wed, 27 Aug 2025 15:57:21 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 9047486292032
+X-SMAIL-UIID: 9786116694194F798B47C684A1AA57ED-20250827-155721-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+a25ee9d20d31e483ba7b@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [net?] KASAN: slab-use-after-free Write in __xfrm_state_delete
+Date: Wed, 27 Aug 2025 15:57:10 +0800
+Message-ID: <20250827075711.5808-1-hdanton@sina.com>
+In-Reply-To: <68ab6633.050a0220.37038e.0079.GAE@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-Am Montag, 25. August 2025, 10:28:36 Mitteleurop=C3=A4ische Sommerzeit schr=
-ieb Nicolas Frattaroli:
-> The era of hand-rolled HIWORD_UPDATE macros is over, at least for those
-> drivers that use constant masks.
->=20
-> The Rockchip PCI driver, like many other Rockchip drivers, has its very
-> own definition of HIWORD_UPDATE.
->=20
-> Remove it, and replace its usage with either FIELD_PREP_WM16, or two new
-> header local macros for setting/clearing a bit with the high mask, which
-> use FIELD_PREP_WM16_CONST internally. In the process, ENCODE_LANES
-> needed to be adjusted, as FIELD_PREP_WM16* shifts the value for us.
->=20
-> That this is equivalent was verified by first making all FIELD_PREP_WM16
-> instances FIELD_PREP_WM16_CONST, then doing a static_assert() comparing
-> it to the old macro (and for those with parameters, static_asserting for
-> the full range of possible values with the old encode macro).
->=20
-> What we get out of this is compile time error checking to make sure the
-> value actually fits in the mask, and that the mask fits in the register,
-> and also generally less icky code that writes shifted values when it
-> actually just meant to set and clear a handful of bits.
->=20
-> Acked-by: Bjorn Helgaas <bhelgaas@google.com>
-> Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+> Date: Sun, 24 Aug 2025 12:21:23 -0700	[thread overview]
+> syzbot has found a reproducer for the following issue on:
+> 
+> HEAD commit:    b1c92cdf5af3 Merge branch 'net-wangxun-complete-ethtool-co..
+> git tree:       net-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=1411b062580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=67b99ceb67d33475
+> dashboard link: https://syzkaller.appspot.com/bug?extid=a25ee9d20d31e483ba7b
+> compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14221862580000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=159fba34580000
 
-Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+#syz test
 
-
+--- x/include/net/xfrm.h
++++ y/include/net/xfrm.h
+@@ -202,6 +202,7 @@ struct xfrm_state {
+ 
+ 	refcount_t		refcnt;
+ 	spinlock_t		lock;
++	int deleted;
+ 
+ 	u32			pcpu_num;
+ 	struct xfrm_id		id;
+--- x/net/xfrm/xfrm_state.c
++++ y/net/xfrm/xfrm_state.c
+@@ -615,6 +615,7 @@ static void xfrm_state_gc_destroy(struct
+ 		put_page(x->xfrag.page);
+ 	xfrm_dev_state_free(x);
+ 	security_xfrm_state_free(x);
++	xfrm_state_delete(x);
+ 	xfrm_state_free(x);
+ }
+ 
+@@ -812,10 +813,16 @@ int __xfrm_state_delete(struct xfrm_stat
+ 	struct net *net = xs_net(x);
+ 	int err = -ESRCH;
+ 
+-	if (x->km.state != XFRM_STATE_DEAD) {
+-		x->km.state = XFRM_STATE_DEAD;
++	for (;;) {
++		if (x->km.state != XFRM_STATE_DEAD)
++			x->km.state = XFRM_STATE_DEAD;
+ 
+ 		spin_lock(&net->xfrm.xfrm_state_lock);
++		if (x->deleted) {
++			spin_unlock(&net->xfrm.xfrm_state_lock);
++			return 0;
++		}
++		x->deleted++;
+ 		list_del(&x->km.all);
+ 		hlist_del_rcu(&x->bydst);
+ 		hlist_del_rcu(&x->bysrc);
+@@ -929,22 +936,29 @@ int xfrm_state_flush(struct net *net, u8
+ 	err = -ESRCH;
+ 	for (i = 0; i <= net->xfrm.state_hmask; i++) {
+ 		struct xfrm_state *x;
++		bool dead;
+ restart:
+ 		hlist_for_each_entry(x, net->xfrm.state_bydst+i, bydst) {
+ 			if (!xfrm_state_kern(x) &&
+ 			    xfrm_id_proto_match(x->id.proto, proto)) {
+-				xfrm_state_hold(x);
++				dead = x->km.state == XFRM_STATE_DEAD;
++				x->km.state = XFRM_STATE_DEAD;
+ 				spin_unlock_bh(&net->xfrm.xfrm_state_lock);
+ 
+-				err = xfrm_state_delete(x);
++				if (dead) {
++			flush:
++					schedule_work(&xfrm_state_gc_work);
++					flush_work(&xfrm_state_gc_work);
++					spin_lock_bh(&net->xfrm.xfrm_state_lock);
++					goto restart;
++				}
++				err = 0;
+ 				xfrm_audit_state_delete(x, err ? 0 : 1,
+ 							task_valid);
+ 				xfrm_state_put(x);
+ 				if (!err)
+ 					cnt++;
+-
+-				spin_lock_bh(&net->xfrm.xfrm_state_lock);
+-				goto restart;
++				goto flush;
+ 			}
+ 		}
+ 	}
+--
 
