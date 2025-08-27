@@ -1,107 +1,223 @@
-Return-Path: <linux-kernel+bounces-788008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 764BEB37EBA
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 11:23:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DEFBB37EB8
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 11:23:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 148B25E8563
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 09:23:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9BD45E8482
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 09:23:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E23DA3451A5;
-	Wed, 27 Aug 2025 09:23:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FBCC343213;
+	Wed, 27 Aug 2025 09:23:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b="dqeqCziO"
-Received: from sender4-pp-o95.zoho.com (sender4-pp-o95.zoho.com [136.143.188.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YiOx7qa7"
+Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A75D4306D2A;
-	Wed, 27 Aug 2025 09:23:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.95
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756286607; cv=pass; b=i2Unj4n3Ps5ARHl5obYUfuk0emPcLfyMNUVg92xMez0ocJMjAPlrlaZ+FQZ97Lxt09LX3Vz5BPZKNeLhiKZnrEqc5aTFUU40do8pnEF4wqwwAY2IlOcptVt/P0Dli/YEMx/BdPhbCXGuCIbrA1DEGaYiwAD3zVrJPdb1J6vqIRA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756286607; c=relaxed/simple;
-	bh=RA4P+oQcj3vYUX71f7TDM9B8UHfY4GWfTDJxXDKPjeQ=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=JuzkpTNrM7E4521SWyx4mGWgrihSATVnYvI0O62CcF+LF0+eo5Ren2d/32sa8WQl2sylBMWRJyiU1QtpVMXpUMUuUnsz8QiztStT2AtrnnJAoI4SsuHGuXQ9h3mH8PkUWURDUupX/em0me4B3vDYiZfqwrxp3UaL9F6jmN8rf7s=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b=dqeqCziO; arc=pass smtp.client-ip=136.143.188.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
-ARC-Seal: i=1; a=rsa-sha256; t=1756286564; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=nvYYq+1uUMzNsugcosQytW7TefWCuoA6nJDCpz8Nwk26CX5SMmvRaxBGdXaMj7p2wTRkaaMd3B6aSisXbdP06djXE61RPwfhbuky+7WhjeNx7RHZhKKVroeZfcphE5tucM6yQGHcw9gnHCS8NjnLHrOCaKlo+/vCfO7jdat5WnY=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1756286564; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=cepMxqe31sYhS3zxRITCN1TUDCwTfxDmEl9J9e/eKlY=; 
-	b=YP0kyzZ+R5d3ijRIpjdG7px+7RCzNjINzlRvLHWD0yAkSvxh1/IXa1U1y8+lDjtJ7VX+c6QTAp3eD4DSUi6t8hTVgbpO24coxzsDuqjcw9gStiRo6q6CYjFpIrVIEtv6BW1eSrsIuNZn2c6zMVCYYHzxCFUpnj0uMYrIOkbD2IE=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=zohomail.com;
-	spf=pass  smtp.mailfrom=safinaskar@zohomail.com;
-	dmarc=pass header.from=<safinaskar@zohomail.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1756286564;
-	s=zm2022; d=zohomail.com; i=safinaskar@zohomail.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
-	bh=cepMxqe31sYhS3zxRITCN1TUDCwTfxDmEl9J9e/eKlY=;
-	b=dqeqCziOQa+0ARnlNcf2Md3m2fX869bAqXZqfyTmvp/XuoPu5JtFb7eFHBax8Cyx
-	eNSdkIaqvbZV0hn8BYNP0XzDy/r5P1M4KPCNMggSPHr4BAzhSxGgsGyiej8OGcsHzs5
-	W52rujEkRPFVlxtl1QJmwdfSC7nrbVAhKWjowWqQ=
-Received: from mail.zoho.com by mx.zohomail.com
-	with SMTP id 1756286562319324.87485774257095; Wed, 27 Aug 2025 02:22:42 -0700 (PDT)
-Received: from  [212.73.77.104] by mail.zoho.com
-	with HTTP;Wed, 27 Aug 2025 02:22:42 -0700 (PDT)
-Date: Wed, 27 Aug 2025 13:22:42 +0400
-From: Askar Safin <safinaskar@zohomail.com>
-To: "Gao Xiang" <hsiangkao@linux.alibaba.com>
-Cc: "Byron Stanoszek" <gandalf@winds.org>, "Christoph Hellwig" <hch@lst.de>,
-	"gregkh" <gregkh@linuxfoundation.org>,
-	"julian.stecklina" <julian.stecklina@cyberus-technology.de>,
-	"linux-fsdevel" <linux-fsdevel@vger.kernel.org>,
-	"linux-kernel" <linux-kernel@vger.kernel.org>,
-	"rafael" <rafael@kernel.org>,
-	"torvalds" <torvalds@linux-foundation.org>,
-	"viro" <viro@zeniv.linux.org.uk>,
-	=?UTF-8?Q?=22Thomas_Wei=C3=9Fschuh=22?= <thomas.weissschuh@linutronix.de>,
-	"Christian Brauner" <brauner@kernel.org>
-Message-ID: <198ead62fff.fc7d206346787.2754614060206901867@zohomail.com>
-In-Reply-To: <6b77eda9-142e-44fa-9986-77ac0ed5382f@linux.alibaba.com>
-References: <20250321050114.GC1831@lst.de>
- <20250825182713.2469206-1-safinaskar@zohomail.com>
- <20250826075910.GA22903@lst.de>
- <a54ced51-280e-cc9d-38e4-5b592dd9e77b@winds.org> <6b77eda9-142e-44fa-9986-77ac0ed5382f@linux.alibaba.com>
-Subject: Re: [PATCH] initrd: support erofs as initrd
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14B7A269811
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 09:23:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756286593; cv=none; b=rNVdLlmi6r/Zng0wlPmiKh05mI1Dy0WRpW+1rW3s1NxxSJrgT7tlEOIga45EB+fn40kg4Jk6qzx+OFhWj3comBXFHwrc4btD23PhTqMsQJHslh6XIK8+vdR7uu/TmN2139ZzAyA+X5H0pTM6/zZQMQcJSvJ0hgEtWo6Tafm6pKk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756286593; c=relaxed/simple;
+	bh=bwgOcihveHo1IHnUEhXEtpdi3wHT9QoUfXh1TGK/7DY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Rlgc6aB1+bFvIg85SBEwcAqFBZfqgFxX/X/1aAbJZaxTRMb2jeV+XmPmVPGOz6FAPibotL3T+nnxihY3ELSJK8r9CtDFPfbZFky/Eg/ja/zwE9cxdZ2k+paj32/ZEOY5r4FUIj3Z+pJS8pfoG+CRkeo95noEBof4XoQSInx+ki8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YiOx7qa7; arc=none smtp.client-ip=209.85.219.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-70d9b07e163so13146296d6.2
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 02:23:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1756286591; x=1756891391; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Gy53dfjoHVrP8RNMRiWCawaGbeGl47u9vCoywHsRB4o=;
+        b=YiOx7qa7NIDNnXaGBwXU9ndbbZZMeX4Tq9JNZJcIL38ByMYXjRUPuMY9DU+WzG9JCo
+         3Ljvulxndx7rfdQkxWIjoFmFuBaEXEl0LdP+2yiUTNKIrmTFBsVXHSAE1flfVLkVoD1r
+         T9RFhF4OccpPJEUFn3ei7ubNxyKTq4t3tLeEfQxMlmNkuDJZ2hwrt/5M9ut+pgyiigfG
+         iQszXkjMPQcGJqnkWiqdLTDvNR8/MeZIUlxFzW+MS8yaXtQOJLP1+E6bHv3nSfsSXJd5
+         qQNsaQuxip5W6YfZ625sWj7ljyooWAJ8y1rzW/VdNGgBwf30bfYW+ClDdIzgYUg716Zg
+         UJbQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756286591; x=1756891391;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Gy53dfjoHVrP8RNMRiWCawaGbeGl47u9vCoywHsRB4o=;
+        b=SnRiGNxeeWZn/0KZYRM+EDaIKoB+doNlsdkM2TP7dfnDqNJNqOycN9KOmR/yzUGMz1
+         CKQx8+qlbhEWAN86Go/Lb1o21cwxs/IabEXxvSXqC/CKGYNZZF9DZxIYVfEVTkGTKM1w
+         a5M5mPsaqMDl33U92oNnB8rlyI/DyrYOTS5/uShowaOkKrYFl3qTc1dZ1M2Ar7nszuMe
+         IWQ4SSKLXJFCWMotMheH+mo6QkoUac5Og+v8h7oJTg3qoByMeYKGdBUNkNWVYPSN89FR
+         u7P8TWaF73UA3HvgeqZTbFJHgkscKVmV4eFCywVJOJRiQnlI6gjHjf3CxsOousN8A90F
+         y7tQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU7EeL5SlpEY3PLFek3KkmK42jqVY8eYrvnlZ4TcQDcpMSsV2ToCEvBCK/ViauMy+EJEKc7wZpt3sQntQI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6NPqfELNcf8afIwJfiqCIuVarOgBsq/GvyLAaI3pvrjW039Jq
+	3INRTf/KlLxOCzeyJRYrlCdzo2hwrfDXPfvQ0rXIDGxRz+onzZZThXFLCgXc8ZJPszSe0o9rSq9
+	4Sc5PA056LSdz24iYDK3srvFu9kp8e5uKc5UphJwg/Q==
+X-Gm-Gg: ASbGncvrzv46L2jUWoQ1yQPWZogFEJ685VOwluegqTBjQI+QksT/nth+HCqNhlgYHfG
+	YQMbkACFcoeqYipV+JIciYfP9xnaL8UXB14wSsZlrM6DSNRDPbj+Z8VnNSUk9RsZWJH5BNGZZsy
+	3yvhbnbt6pK/Lcx9EOJTLMR6ChKWr13oszdOL5AnUHAudLCm96yttmeYl7ZAuX7tYfrtE04TwRN
+	h+QosoUYYBMz2+t
+X-Google-Smtp-Source: AGHT+IEfOA450mJxRrc99VUf+eR6gCbzMwJPgmzNiqytpGVEC9y17SY44iovOMWF7glIDdN/1KXkJR5caySfB5IZEx0=
+X-Received: by 2002:a0c:e34c:0:b0:70d:e501:1f90 with SMTP id
+ 6a1803df08f44-70de5012309mr4016716d6.6.1756286590954; Wed, 27 Aug 2025
+ 02:23:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20250826110946.507083938@linuxfoundation.org>
+In-Reply-To: <20250826110946.507083938@linuxfoundation.org>
+From: Anders Roxell <anders.roxell@linaro.org>
+Date: Wed, 27 Aug 2025 11:22:59 +0200
+X-Gm-Features: Ac12FXw6Z8mjq6c5HZ8ZGdhYEx3nZq7WNG2ZP8naHTGP5anPZsnrFM6a1FWSUIY
+Message-ID: <CADYN=9JKN_r=wHa_OPCENT3zW2AFe0ana8dP88fowgjh4-NqqQ@mail.gmail.com>
+Subject: Re: [PATCH 5.15 000/644] 5.15.190-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
+	broonie@kernel.org, achill@achill.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Importance: Medium
-User-Agent: Zoho Mail
-X-Mailer: Zoho Mail
-Feedback-ID: rr08011227ec7073a703ffadd1c058ccf40000f7a76c4460ed5e02c74afc22b15c40a9cfbfca769482fcdf44:zu0801122795554f161c923eaa9e2c3bf30000a9843515b0da5356519e4e0028ac833545ef8695ba26975809:rf0801122b5a48a337bd55376ac829bbb10000f008c53306315767454786e22901052dbe60583c0d9e7b83b19dcefddd:ZohoMail
 
- ---- On Tue, 26 Aug 2025 19:32:34 +0400  Gao Xiang <hsiangkao@linux.alibaba.com> wrote --- 
- > I completely agree with that point. However, since EROFS is a
- > block-based filesystem (Thanks to strictly block alignment, meta(data)
- > can work efficiently on both block-addressed storage
- > devices and byte-addressed memory devices. Also if the fsblock size
+On Tue, 26 Aug 2025 at 13:13, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 5.15.190 release.
+> There are 644 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Thu, 28 Aug 2025 11:08:21 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.190-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-As I said previously, just put your erofs image to initramfs
-(or to disk) and then (in your initramfs init) create ramdisk out of it
-or loop mount it (both ramdisks and loop devices are block devices).
+Results from Linaro's test farm.
+No regressions on arm64, arm, x86_64, and i386.
 
-This way you will have erofs on top of block device.
+Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
-And you will not depend on initrd. (Again: I plan to remove initial ramdisk
-support, not ramdisk support per se.)
 
--- 
-Askar Safin
-https://types.pl/@safinaskar
+## Build
+* kernel: 5.15.190-rc1
+* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+* git commit: e09f9302f92d6e366e40ce66054adc57d2bada85
+* git describe: v5.15.189-645-ge09f9302f92d
+* test details:
+https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-5.15.y/build/v5.15.189-645-ge09f9302f92d
 
+## Test Regressions (compared to v5.15.187-81-gd21affcc10e6)
+
+## Metric Regressions (compared to v5.15.187-81-gd21affcc10e6)
+
+## Test Fixes (compared to v5.15.187-81-gd21affcc10e6)
+
+## Metric Fixes (compared to v5.15.187-81-gd21affcc10e6)
+
+## Test result summary
+total: 52799, pass: 43384, fail: 2145, skip: 6975, xfail: 295
+
+## Build Summary
+* arc: 5 total, 5 passed, 0 failed
+* arm: 101 total, 101 passed, 0 failed
+* arm64: 28 total, 28 passed, 0 failed
+* i386: 18 total, 18 passed, 0 failed
+* mips: 22 total, 22 passed, 0 failed
+* parisc: 3 total, 3 passed, 0 failed
+* powerpc: 22 total, 22 passed, 0 failed
+* riscv: 8 total, 8 passed, 0 failed
+* s390: 9 total, 9 passed, 0 failed
+* sh: 10 total, 10 passed, 0 failed
+* sparc: 6 total, 6 passed, 0 failed
+* x86_64: 24 total, 24 passed, 0 failed
+
+## Test suites summary
+* boot
+* kselftest-arm64
+* kselftest-breakpoints
+* kselftest-capabilities
+* kselftest-clone3
+* kselftest-core
+* kselftest-cpu-hotplug
+* kselftest-exec
+* kselftest-fpu
+* kselftest-futex
+* kselftest-intel_pstate
+* kselftest-kcmp
+* kselftest-livepatch
+* kselftest-membarrier
+* kselftest-mincore
+* kselftest-mm
+* kselftest-mqueue
+* kselftest-net
+* kselftest-net-mptcp
+* kselftest-openat2
+* kselftest-ptrace
+* kselftest-rseq
+* kselftest-rtc
+* kselftest-seccomp
+* kselftest-sigaltstack
+* kselftest-size
+* kselftest-tc-testing
+* kselftest-timers
+* kselftest-tmpfs
+* kselftest-tpm2
+* kselftest-user_events
+* kselftest-vDSO
+* kselftest-x86
+* kunit
+* kvm-unit-tests
+* lava
+* libgpiod
+* libhugetlbfs
+* log-parser-boot
+* log-parser-build-clang
+* log-parser-build-gcc
+* log-parser-test
+* ltp-capability
+* ltp-commands
+* ltp-containers
+* ltp-controllers
+* ltp-cpuhotplug
+* ltp-crypto
+* ltp-cve
+* ltp-dio
+* ltp-fcntl-locktests
+* ltp-fs
+* ltp-fs_bind
+* ltp-fs_perms_simple
+* ltp-hugetlb
+* ltp-math
+* ltp-mm
+* ltp-nptl
+* ltp-pty
+* ltp-sched
+* ltp-smoke
+* ltp-syscalls
+* ltp-tracing
+* perf
+* rcutorture
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
