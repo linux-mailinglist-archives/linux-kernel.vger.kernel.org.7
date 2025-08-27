@@ -1,384 +1,160 @@
-Return-Path: <linux-kernel+bounces-788441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11447B38471
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 16:09:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B3CFB38474
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 16:09:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D705E17F4BC
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 14:09:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B6AF1B65E02
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 14:09:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3978E35A29B;
-	Wed, 27 Aug 2025 14:09:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CA2735A290;
+	Wed, 27 Aug 2025 14:09:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HGUp8HdP"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Lj5NMgJO"
+Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com [209.85.217.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D463D350847
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 14:08:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44C252EBDCF;
+	Wed, 27 Aug 2025 14:09:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756303739; cv=none; b=aMF3MOgEwSqPsoYa2Zu8tZ1wb5x4rx/7mqMGn/Z1CHSz9EdIpKTZHn7xTFFCREoqACB3JlzX+GavR6FJFJU7EE4TrXs+BHT9NdVFm17bK20zzAljvxdyZwlQLoGisy71wV1ZxEnRwklYEbyfaiVV/g/ugAzD7W01wkHw7z83gyY=
+	t=1756303764; cv=none; b=UMNV28du+8E5M/b9wvP8S8P97vV5cMeXK0mpdmClfDQoxLRj+Egwifdp6sL34efIYwd6JYx6XDDxu4go2Uw733z+GeVz5S//FJYpK07AldRux/6tcMysiOXuFbwAYg9EK1cz6dg/AlLBTeAIzHDGHQ7LamWVv4kchIdBQrz+Huk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756303739; c=relaxed/simple;
-	bh=YTISNKJVJ8MY89bk7WOjHxjc0eIoX4hY9eRNO6eflsU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=j+Z6d/OdO9b9PF3xRoYjrQ5ORriFO3cT6EZlFrOpQwMNxuAPOQ8b1NKUnzuikv75lJvDoM2GmEQN/qukDYBBTehq2vs/2r8Yp0phDMjKRbOGw3cmDJXGEYnTisydFK9ifXXJ+oN6jyl+2bEDvs3a+Qe/KcEK70x1LGYTQGB1q3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HGUp8HdP; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3c84925055aso2874077f8f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 07:08:55 -0700 (PDT)
+	s=arc-20240116; t=1756303764; c=relaxed/simple;
+	bh=lw/ewX5G9BRbmm4WjkDHiNTtRtMqaUqiqwaQ6Fn7fsc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QAJD7Ic5g4QoG2r99PNdgikoRcNWI8nUYToaeoKZT+aBNAnyZwa4doMAsonWDLLC4xKf+ktDG66zkakxuqx3dwyfMtdiwIeNGoPpSBn6AtQKdjSVjcvYLjeeAsUYmQVfm02dJpO9+NEdnE8MT7naHrQergpuJJh5SKVszchCVWA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Lj5NMgJO; arc=none smtp.client-ip=209.85.217.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f44.google.com with SMTP id ada2fe7eead31-520c0e267bcso1236702137.1;
+        Wed, 27 Aug 2025 07:09:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756303734; x=1756908534; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=xvE4LTDafzST+ebfuxrN2rVGDKvjsNA49QvlFFlyWIM=;
-        b=HGUp8HdP2807EgbpXRxdAuj9zzWFmJ1flNQ+2JKDiuH1AKfFKfBxYi6FTLcwlecJwl
-         Ewzk63rwAH3SwCUHOzq7AGlD0YM2IPyuvo2ag8wxhb0UFKzv+hME/Cwtn5o0f+zUPRwd
-         UMNfc1sanB5BK9TknBQizLNCy65fG1hr7B7r3asvjcXKha0KydFlva3glpOp5Z4o1twU
-         mlnSd47qY9c8NDI8sKamazOPAaQH9O+euaKOzIf/L8h0U9hPbIyGSCrcDK5jMUai25OD
-         kx/DPv5pRoeD/VMPvMlxUaXLhN7zgzvTeyCogpXps+scUEJ22aqXuuiWiw8vW+yCPeG8
-         6tlQ==
+        d=gmail.com; s=20230601; t=1756303762; x=1756908562; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lw/ewX5G9BRbmm4WjkDHiNTtRtMqaUqiqwaQ6Fn7fsc=;
+        b=Lj5NMgJOxc0NvXe02uSTqgA4VIqNfrENO57DI13J0rZdduSQsBw7zsPtEee9azvlAc
+         CHFFSm85nxK5uw9bd0kZSm1krbe9iUV7dwRkgywixOtrpmxtHSNyizspcEypL9qRUZu0
+         HdNsOn6McUB3KW5b8+YabprnBQ/gFziI6mnQQo5IqkL9crs16bslzVqI8E4xI7SdHfv1
+         U0A9fVPDlXRy9QVxjxtg+VXxhl0RzTw6K5rDUk4+T86+veBtKIPfgOp+WmWMVrbFXOjy
+         JlkkWg9Y9YWwhcYO/SfQtqYiHlk8vFDPQtPyB7NDAZ61CUHInpnYiNfI+5welovswwKf
+         vMOg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756303734; x=1756908534;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xvE4LTDafzST+ebfuxrN2rVGDKvjsNA49QvlFFlyWIM=;
-        b=OHYqGgSfuDzMlRq1xxDc0p4vWXcZqTWqoIqhw1Z9mqrNaI82kQ2gMAOMdxzVris3Vu
-         dFJa95lJCswEFlPnMqxgOXBo4UsGu3fymZWkaZfFQeCwnkXpac4v9ayW1jdd6l4uJ3YQ
-         vkZ++Dva2aOISpWyNGuiOKonIexRTyxFpZJu3VeX+E2vCwxP5BJKPgrlfshup6g96P2w
-         Zp0JkqPJ8dul9yOPNhjsg/lt1Vmi5ZoFiKreAZPi7AyTLMx+UTCgxgbGe+1wwS6ijnOj
-         Pg8oAlpTKFyTp64kz5Ax1MKRjeHlldBtMDoS0soXE4j+htIy5qpHivRY8f+g7egm2PdN
-         YzgA==
-X-Gm-Message-State: AOJu0YxHNid+NAHlpP78E/5yENoH4gBVRUJ+55iW1RSdJR4GSEi2Yg4Z
-	RnIQJPOZnB0NiwXVE3py1jTvv6lU60ZJJISnKaBDxvb9u8NeVTSecc8tsrwtnuapYoI=
-X-Gm-Gg: ASbGncsWmlRTr8KZw50NtLjx07RTngpv80tgWr5PNxMUPMQ2W6OgkI/97g5uXBNEarC
-	6DM7BeMrMO9NlhSnL/WSh/1a7rcNcX+MjuYAHfV32mPsoXSUQPWkymeMAQSwOpW3ZWPpOX1Iq7y
-	E7+3FLB4CclMf1ZNb4JBt9Ny3IrUfqOTnH1Sn8H/nIkbytlmUpbErhmkb1C6w4gS8CUUZ1dNoi2
-	ul1NFZPFuMxoJpTPIupfVqlI59RO9Y/XWImULCEbv8njVVZVpftW7yQSq9QN4BFW672bhAKcVKr
-	1/R6gvrcjjfks2bOCFwbC6cpeR0XysrsOb1GE+6VbYE8Y51FATqy0aZugODCQ+ApQb03XFCnEEC
-	eNfzl1yOaXIvjiHexiS2ghbctO737Vw==
-X-Google-Smtp-Source: AGHT+IHkXcu1NEQam2q8j8cNwacl8Imtu6GXIMZzfeXxsacEy+DVaG4nf82ZkbK5vX8UXnyEqjuJwg==
-X-Received: by 2002:a05:6000:188e:b0:3cd:9794:cbcf with SMTP id ffacd0b85a97d-3cd9794cc94mr128751f8f.60.1756303733978;
-        Wed, 27 Aug 2025 07:08:53 -0700 (PDT)
-Received: from [192.168.0.24] ([82.76.24.202])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3cc56bde919sm4094896f8f.59.2025.08.27.07.08.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Aug 2025 07:08:53 -0700 (PDT)
-Message-ID: <98afe1bd-99d2-4b5d-866a-e9541390fab4@linaro.org>
-Date: Wed, 27 Aug 2025 17:08:51 +0300
+        d=1e100.net; s=20230601; t=1756303762; x=1756908562;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lw/ewX5G9BRbmm4WjkDHiNTtRtMqaUqiqwaQ6Fn7fsc=;
+        b=K8xpUmfwXitjFj4wmT5z1ZcPxnC7TZwJGSYLzvFeh9ofQ/ffBu1JLmw4ysXWO/CbaC
+         FCLVXjha4qelmjt93zI47MCEEkc8GkNFZe+BHjMkSBaH0eBN+cLC5uZu8fA0psctbJXy
+         CPDVma+IW3WhLrA33ETKxzqlpOStvGjQy2qP7SCV7G8ChGRgDldtxg2rjpK/nvKVJ6Qx
+         q31rYgcwldTb6G3ILbQS/1LxQW4FiowZ7OBkLX7EeDbLVcYwCaR7Rvq2HC0ZdyfLuBQY
+         HUb7btmm1xwgsOvbUwJxzw6gjY9IXUd97192yt1zZJvCxPnRJp5Vis0BgQVdZ8ul2f5f
+         U2vg==
+X-Forwarded-Encrypted: i=1; AJvYcCWK0RRd4D2fbFUi9mgwvlHh1EXDOmWJNRqoE7sENRW2HA8RwmxbGFOjYS7izy8yQ0BB9ftN3+hFws37nIY=@vger.kernel.org, AJvYcCXHvuiDAb8LPirGaqgs1P7fTNs6AmePGJbwaQhoTeQX80XlNbO9uotIsboNRq2N+AX+yIqNzIpTeq8m@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBaq6/w7EmQA2ftYPM3+NGhE+ZonL6TRc4xBIR/9PZZFVdg3tQ
+	GD/qAJMRssmMAgsyN7ABYAqbyBK38Z0H4WqXV7R869UnLdnFlbpMOXYGs+xtvHyrWZBvFl996rV
+	+K21vq+sQS+zxuGiDaWk/bf+T+MxdzRc=
+X-Gm-Gg: ASbGncsnPVFxt/gIXFFFUC3ea7v2JWieqEW6+1fQlALBJ7advJxJVhfA9CGnjnTU3ht
+	kfIAjCkGxjcNTnpm15ns21T6Ls3JTviNzwysR06MB7NwaEgwvAooqJbU7syX2jw69tafTVCGHCe
+	lyb571z4imyyJrz7tDxGBtuSVqt58gjK8reH7RmI/Qt4ECmy8RsYIr+ivWscNntGAwZDP99C1YA
+	XxsBQtHNgXDDkDh7NjNnQt2cOhT4FPFBg==
+X-Google-Smtp-Source: AGHT+IEsHqORETtcRAqgaEWBcvCh4LHCsnL8g9LYpLirejx7dyaIzf7+44UuXaRbms0Hlagzl1uMpfcD3HDhSjx8Q1w=
+X-Received: by 2002:a05:6102:809e:b0:51a:4906:f194 with SMTP id
+ ada2fe7eead31-51d0f2f9a6cmr6143334137.28.1756303761898; Wed, 27 Aug 2025
+ 07:09:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC][PATCH v2 22/29] mm/numa: Register information into Kmemdump
-To: David Hildenbrand <david@redhat.com>, Michal Hocko <mhocko@suse.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-arch@vger.kernel.org, linux-mm@kvack.org, tglx@linutronix.de,
- andersson@kernel.org, pmladek@suse.com,
- linux-arm-kernel@lists.infradead.org, linux-hardening@vger.kernel.org,
- corbet@lwn.net, mojha@qti.qualcomm.com, rostedt@goodmis.org,
- jonechou@google.com, tudor.ambarus@linaro.org,
- Christoph Hellwig <hch@infradead.org>,
- Sergey Senozhatsky <senozhatsky@chromium.org>
-References: <20250724135512.518487-1-eugen.hristev@linaro.org>
- <20250724135512.518487-23-eugen.hristev@linaro.org>
- <ffc43855-2263-408d-831c-33f518249f96@redhat.com>
- <e66f29c2-9f9f-4b04-b029-23383ed4aed4@linaro.org>
- <751514db-9e03-4cf3-bd3e-124b201bdb94@redhat.com>
- <aJCRgXYIjbJ01RsK@tiehlicka>
- <e2c031e8-43bd-41e5-9074-c8b1f89e04e6@linaro.org>
- <23e7ec80-622e-4d33-a766-312c1213e56b@redhat.com>
- <f43a61b4-d302-4009-96ff-88eea6651e16@linaro.org>
- <77d17dbf-1609-41b1-9244-488d2ce75b33@redhat.com>
- <ecd33fa3-8362-48f0-b3c2-d1a11d8b02e3@linaro.org>
- <9f13df6f-3b76-4d02-aa74-40b913f37a8a@redhat.com>
- <64a93c4a-5619-4208-9e9f-83848206d42b@linaro.org>
- <f1f290fc-b2f0-483b-96d5-5995362e5a8b@redhat.com>
- <01c67173-818c-48cf-8515-060751074c37@linaro.org>
- <aab5e2af-04d6-485f-bf81-557583f2ae4b@redhat.com>
- <1b52419c-101b-487e-a961-97bd405c5c33@linaro.org>
- <99d2cc96-03ea-4026-883e-1ee083a96c39@redhat.com>
-From: Eugen Hristev <eugen.hristev@linaro.org>
-Content-Language: en-US
-In-Reply-To: <99d2cc96-03ea-4026-883e-1ee083a96c39@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250826150826.11096-1-ryanzhou54@gmail.com> <CA+zupgwnbt=5Oh28Chco=YNt9WwKzi2J+0hQ04nqyZG_7WUAYg@mail.gmail.com>
+In-Reply-To: <CA+zupgwnbt=5Oh28Chco=YNt9WwKzi2J+0hQ04nqyZG_7WUAYg@mail.gmail.com>
+From: ryan zhou <ryanzhou54@gmail.com>
+Date: Wed, 27 Aug 2025 22:09:10 +0800
+X-Gm-Features: Ac12FXwQ-ThUrJUqJwXUGkI_6xk5qW_tdN4AELgG8XuFDbYTWP_0wCw7B03cV0I
+Message-ID: <CAPwe5RMpdG1ziRAwDhqkxuzHX0x=SdFQRFUbPCVuir1OgE90YQ@mail.gmail.com>
+Subject: Re: [PATCH] drvier: usb: dwc3: Fix runtime PM trying to activate
+ child device xxx.dwc3 but parent is not active
+To: Roy Luo <royluo@google.com>
+Cc: Thinh.Nguyen@synopsys.com, gregkh@linuxfoundation.org, 
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+Hi Roy,
+Thank you for reviewing my patch.
+>
+> Wouldn't the parent glue dev already resume before resuming the child dwc=
+3?
+>
+No, in the following case, the parent device will not be reviewed
+before resuming the child device.
+Taking the 'imx8mp-dwc3' driver as an example.
+Step 1.usb disconnect trigger: the child device dwc3 enter runtime
+suspend state firstly, followed by
+the parent device imx8mp-dwc3 enters runtime suspend
+flow:dwc3_runtime_suspend->dwc3_imx8mp_runtime_suspend
+Step2.system deep trigger:consistent with the runtime suspend flow,
+child enters pm suspend and followed
+by parent
+flow: dwc3_pm_suspend->dwc3_imx8mp_pm_suspend
+Step3: After dwc3_pm_suspend, and before dwc3_imx8mp_pm_suspend, a
+task terminated the system suspend process
+. The system will resume from the checkpoint, and resume devices in
+the suspended state in the reverse
+of pm suspend, but excluding the parent device imx8mp-dwc3 since it
+did not execute the suspend process.
+
+>
+>Why would 'runtime PM trying to activate child device xxx.dwc3 but parent =
+is not active' happen in the first place?
+>
+Following the above analysis, dwc3_resume calls
+pm_runtime_set_active(dev), it checks the
+parent.power->runtime_status is not RPM_ACTIVE and outputs the error log.
+
+>
+>What is the glue driver that's being used here? Knowing what's being done =
+in the glue driver pm callbacks
+>would help in understanding the issue.
+>
+Refer to the driver 'dwc3-imx8mp.c' please, maybe you could help me
+find a better solution.
 
 
+Thanks,
+ryan
 
-On 8/27/25 15:18, David Hildenbrand wrote:
-> On 27.08.25 13:59, Eugen Hristev wrote:
->>
->>
->> On 8/25/25 16:58, David Hildenbrand wrote:
->>> On 25.08.25 15:36, Eugen Hristev wrote:
->>>>
->>>>
->>>> On 8/25/25 16:20, David Hildenbrand wrote:
->>>>>
->>>>>>>
->>>>>>> IIRC, kernel/vmcore_info.c is never built as a module, as it also
->>>>>>> accesses non-exported symbols.
->>>>>>
->>>>>> Hello David,
->>>>>>
->>>>>> I am looking again into this, and there are some things which in my
->>>>>> opinion would be difficult to achieve.
->>>>>> For example I looked into my patch #11 , which adds the `runqueues` into
->>>>>> kmemdump.
->>>>>>
->>>>>> The runqueues is a variable of `struct rq` which is defined in
->>>>>> kernel/sched/sched.h , which is not supposed to be included outside of
->>>>>> sched.
->>>>>> Now moving all the struct definition outside of sched.h into another
->>>>>> public header would be rather painful and I don't think it's a really
->>>>>> good option (The struct would be needed to compute the sizeof inside
->>>>>> vmcoreinfo). Secondly, it would also imply moving all the nested struct
->>>>>> definitions outside as well. I doubt this is something that we want for
->>>>>> the sched subsys. How the subsys is designed, out of my understanding,
->>>>>> is to keep these internal structs opaque outside of it.
->>>>>
->>>>> All the kmemdump module needs is a start and a length, correct? So the
->>>>> only tricky part is getting the length.
->>>>
->>>> I also have in mind the kernel user case. How would a kernel programmer
->>>> want to add some kernel structs/info/buffers into kmemdump such that the
->>>> dump would contain their data ? Having "KMEMDUMP_VAR(...)" looks simple
->>>> enough.
->>>
->>> The other way around, why should anybody have a saying in adding their
->>> data to kmemdump? Why do we have that all over the kernel?
->>>
->>> Is your mechanism really so special?
->>>
->>> A single composer should take care of that, and it's really just start +
->>> len of physical memory areas.
->>>
->>>> Otherwise maybe the programmer has to write helpers to compute lengths
->>>> etc, and stitch them into kmemdump core.
->>>> I am not saying it's impossible, but just tiresome perhaps.
->>>
->>> In your patch set, how many of these instances did you encounter where
->>> that was a problem?
->>>
->>>>>
->>>>> One could just add a const variable that holds this information, or even
->>>>> better, a simple helper function to calculate that.
->>>>>
->>>>> Maybe someone else reading along has a better idea.
->>>>
->>>> This could work, but it requires again adding some code into the
->>>> specific subsystem. E.g. struct_rq_get_size()
->>>> I am open to ideas , and thank you very much for your thoughts.
->>>>
->>>>>
->>>>> Interestingly, runqueues is a percpu variable, which makes me wonder if
->>>>> what you had would work as intended (maybe it does, not sure).
->>>>
->>>> I would not really need to dump the runqueues. But the crash tool which
->>>> I am using for testing, requires it. Without the runqueues it will not
->>>> progress further to load the kernel dump.
->>>> So I am not really sure what it does with the runqueues, but it works.
->>>> Perhaps using crash/gdb more, to actually do something with this data,
->>>> would give more insight about its utility.
->>>> For me, it is a prerequisite to run crash, and then to be able to
->>>> extract the log buffer from the dump.
->>>
->>> I have the faint recollection that percpu vars might not be stored in a
->>> single contiguous physical memory area, but maybe my memory is just
->>> wrong, that's why I was raising it.
->>>
->>>>
->>>>>
->>>>>>
->>>>>>    From my perspective it's much simpler and cleaner to just add the
->>>>>> kmemdump annotation macro inside the sched/core.c as it's done in my
->>>>>> patch. This macro translates to a noop if kmemdump is not selected.
->>>>>
->>>>> I really don't like how we are spreading kmemdump all over the kernel,
->>>>> and adding complexity with __section when really, all we need is a place
->>>>> to obtain a start and a length.
->>>>>
->>>>
->>>> I understand. The section idea was suggested by Thomas. Initially I was
->>>> skeptic, but I like how it turned out.
->>>
->>> Yeah, I don't like it. Taste differs ;)
->>>
->>> I am in particular unhappy about custom memblock wrappers.
->>>
->>> [...]
->>>
->>>>>>
->>>>>> To have this working outside of printk, it would be required to walk
->>>>>> through all the printk structs/allocations and select the required info.
->>>>>> Is this something that we want to do outside of printk ?
->>>>>
->>>>> I don't follow, please elaborate.
->>>>>
->>>>> How is e.g., log_buf_len_get() + log_buf_addr_get() not sufficient,
->>>>> given that you run your initialization after setup_log_buf() ?
->>>>>
->>>>>
->>>>
->>>> My initial thought was the same. However I got some feedback from Petr
->>>> Mladek here :
->>>>
->>>> https://lore.kernel.org/lkml/aBm5QH2p6p9Wxe_M@localhost.localdomain/
->>>>
->>>> Where he explained how to register the structs correctly.
->>>> It can be that setup_log_buf is called again at a later time perhaps.
->>>>
->>>
->>> setup_log_buf() is a __init function, so there is only a certain time
->>> frame where it can be called.
->>>
->>> In particular, once the buddy is up, memblock allocations are impossible
->>> and it would be deeply flawed to call this function again.
->>>
->>> Let's not over-engineer this.
->>>
->>> Peter is on CC, so hopefully he can share his thoughts.
->>>
->>
->> Hello David,
->>
->> I tested out this snippet (on top of my series, so you can see what I
->> changed):
->>
->>
->> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
->> index 18ba6c1e174f..7ac4248a00e5 100644
->> --- a/kernel/sched/core.c
->> +++ b/kernel/sched/core.c
->> @@ -67,7 +67,6 @@
->>   #include <linux/wait_api.h>
->>   #include <linux/workqueue_api.h>
->>   #include <linux/livepatch_sched.h>
->> -#include <linux/kmemdump.h>
->>
->>   #ifdef CONFIG_PREEMPT_DYNAMIC
->>   # ifdef CONFIG_GENERIC_IRQ_ENTRY
->> @@ -120,7 +119,12 @@
->> EXPORT_TRACEPOINT_SYMBOL_GPL(sched_update_nr_running_tp);
->>   EXPORT_TRACEPOINT_SYMBOL_GPL(sched_compute_energy_tp);
->>
->>   DEFINE_PER_CPU_SHARED_ALIGNED(struct rq, runqueues);
->> -KMEMDUMP_VAR_CORE(runqueues, sizeof(runqueues));
->> +
->> +size_t runqueues_get_size(void);
->> +size_t runqueues_get_size(void)
->> +{
->> +       return sizeof(runqueues);
->> +}
->>
->>   #ifdef CONFIG_SCHED_PROXY_EXEC
->>   DEFINE_STATIC_KEY_TRUE(__sched_proxy_exec);
->> diff --git a/kernel/vmcore_info.c b/kernel/vmcore_info.c
->> index d808c5e67f35..c6dd2d6e96dd 100644
->> --- a/kernel/vmcore_info.c
->> +++ b/kernel/vmcore_info.c
->> @@ -24,6 +24,12 @@
->>   #include "kallsyms_internal.h"
->>   #include "kexec_internal.h"
->>
->> +typedef void* kmemdump_opaque_t;
->> +
->> +size_t runqueues_get_size(void);
->> +
->> +extern kmemdump_opaque_t runqueues;
-> 
-> I would have tried that through:
-> 
-> struct rq;
-> extern struct rq runqueues;
-> 
-> But the whole PER_CPU_SHARED_ALIGNED makes this all weird, and likely
-> not the way we would want to handle that.
-> 
->>   /* vmcoreinfo stuff */
->>   unsigned char *vmcoreinfo_data;
->>   size_t vmcoreinfo_size;
->> @@ -230,6 +236,9 @@ static int __init crash_save_vmcoreinfo_init(void)
->>
->>          kmemdump_register_id(KMEMDUMP_ID_COREIMAGE_VMCOREINFO,
->>                               (void *)vmcoreinfo_data, vmcoreinfo_size);
->> +       kmemdump_register_id(KMEMDUMP_ID_COREIMAGE_runqueues,
->> +                            (void *)&runqueues, runqueues_get_size());
->> +
->>          return 0;
->>   }
->>
->> With this, no more .section, no kmemdump code into sched, however, there
->> are few things :
-> 
-> I would really just do here something like the following:
-> 
-> /**
->   * sched_get_runqueues_area - obtain the runqueues area for dumping
->   * @start: ...
->   * @size: ...
->   *
->   * The obtained area is only to be used for dumping purposes.
->   */
-> void sched_get_runqueues_area(void *start, size_t size)
-> {
-> 	start = &runqueues;
-> 	size = sizeof(runqueues);
-> }
-> 
-> might be cleaner.
-> 
-
-How about this in the header:
-
-#define DECLARE_DUMP_AREA_FUNC(subsys, symbol) \
-
-void subsys ## _get_ ## symbol ##_area(void **start, size_t *size);
-
-
-
-#define DEFINE_DUMP_AREA_FUNC(subsys, symbol) \
-
-void subsys ## _get_ ## symbol ##_area(void **start, size_t *size)\
-
-{\
-
-        *start = &symbol;\
-
-        *size = sizeof(symbol);\
-
-}
-
-
-then, in sched just
-
-DECLARE_DUMP_AREA_FUNC(sched, runqueues);
-
-DEFINE_DUMP_AREA_FUNC(sched, runqueues);
-
-or a single macro that wraps both.
-
-would make it shorter and neater.
-
-What do you think ?
-
-> 
-> Having said that, if you realize that there is a fundamental issue with 
-> what I propose, please speak up.
-> 
-> So far, I feel like there are only limited number of "suboptimal" cases 
-> of this kind, but I might be wrong of course.
-> 
-
+Roy Luo <royluo@google.com> =E4=BA=8E2025=E5=B9=B48=E6=9C=8827=E6=97=A5=E5=
+=91=A8=E4=B8=89 02:38=E5=86=99=E9=81=93=EF=BC=9A
+>
+> On Tue, Aug 26, 2025 at 8:12=E2=80=AFAM Ryan Zhou <ryanzhou54@gmail.com> =
+wrote:
+> >
+> > Issue description:
+> > The parent device dwc3_glue has runtime PM enabled and is in the
+> > runtime suspended state. The system enters the deep sleep process
+> > but is interrupted by another task. When resuming dwc3,
+> > console outputs the log 'runtime PM trying to activate child device
+> > xxx.dwc3 but parent is not active'.
+> >
+>
+> Wouldn't the parent glue dev already resume before resuming the child dwc=
+3?
+> Why would 'runtime PM trying to activate child device xxx.dwc3 but parent=
+ is
+> not active' happen in the first place?
+> What is the glue driver that's being used here? Knowing what's being done=
+ in
+> the glue driver pm callbacks would help in understanding the issue.
+>
+> Regards,
+> Roy
 
