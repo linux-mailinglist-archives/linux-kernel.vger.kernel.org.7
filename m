@@ -1,83 +1,79 @@
-Return-Path: <linux-kernel+bounces-788786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69F57B38A46
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 21:37:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 722E4B38A4B
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 21:38:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3040F17529A
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 19:37:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81C679818BA
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 19:38:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27B5C2ECE8D;
-	Wed, 27 Aug 2025 19:37:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB9572ECEA6;
+	Wed, 27 Aug 2025 19:38:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BEEKmRTW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="Xdl3XLkt"
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 819A427815F;
-	Wed, 27 Aug 2025 19:37:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1C882EC561
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 19:38:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756323437; cv=none; b=nEAxJ1disIbuV9z7ZQpx7YnfQ/xHXoDlCw3fqE115HWCoeyD+iuCFDYBgVZ5M9lV3tVWBz1pU+CSn9QVUhj2++q/s+Egp2jK5NNjtTT5NFSebdCDq02AlfU5DoQJu3/5ahtLKkXJbM0M+czn8ASKerl89EZQf/TcgxxLIkkOzZE=
+	t=1756323503; cv=none; b=G9n2jUcP80ZhZfRgxKJJZlu9ORWwuoUqvypaJZs2BWxfWKVxDLvTHGzv/f0WVdVArHl/Fa9HTbXlcmIyiH5aVD0WW1kKBQUEW3THR71lhNnj558IT9XHVBYVcRq/U6Jd0GKNTiRu7giynCOrYucyB+hCTcGe1OIJaseD4eCZAqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756323437; c=relaxed/simple;
-	bh=K1XTGE4MN2P+aCGgRWfp/hPBijxkjr+OSHnR1IeqAE4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J52bZRyh1k0CqTpqL42MXRAShrA8H2eCvkp8CtIxLCyco0DU+cWJYk/aHV6JrqEnjw+fdypyyu8YmNNWr7RxH35hQCT4Nf6Av7x05ccaD0IXlTDu/ePJ5OlyAXLH/9FlHrPeKsIk2I8sTVANXjdNw0EVJqPDl47Zh6AMWtT8H7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BEEKmRTW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE080C4CEEB;
-	Wed, 27 Aug 2025 19:37:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756323435;
-	bh=K1XTGE4MN2P+aCGgRWfp/hPBijxkjr+OSHnR1IeqAE4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BEEKmRTWeodVBjBbH73lkZAxwH1UfRtlk5C6OJ9rRDfTH/5+stFleldq5xVQ8Q51D
-	 O1Wh59nNNaGkNOgSJWC3ipzV1KcbAaFmhPmlEjA16F0X+vQUryS5UrzNRwWUFpJvk4
-	 GGQL/kdyPcmiqTnaVeYaEP04FmrYH+79HJjsBgwq4bq6etdL0Sk+phfVmS605EG/g+
-	 7V0C/YiIAcBVL0MUb8OUKTFsIfooDyAaLYI9Ldm0ZezPdN12Onq7dqBvpRoTkWBF4N
-	 LyXdCyW9Y2n8ErWnTZeGn0oL2GuPGTJEksw5piExZp97N9rflX05hGHWjPnFyt+J21
-	 roHQNq3oElBoA==
-Date: Wed, 27 Aug 2025 20:37:10 +0100
-From: Simon Horman <horms@kernel.org>
-To: Konrad Leszczynski <konrad.leszczynski@intel.com>
-Cc: davem@davemloft.net, andrew+netdev@lunn.ch, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, cezary.rojewski@intel.com,
-	sebastian.basierski@intel.com,
-	Karol Jurczenia <karol.jurczenia@intel.com>
-Subject: Re: [PATCH net-next 7/7] net: stmmac: add TC flower filter support
- for IP EtherType
-Message-ID: <20250827193710.GT10519@horms.kernel.org>
-References: <20250826113247.3481273-1-konrad.leszczynski@intel.com>
- <20250826113247.3481273-8-konrad.leszczynski@intel.com>
+	s=arc-20240116; t=1756323503; c=relaxed/simple;
+	bh=bmGI/NEfAfgDB/a+dal7o7pLk2x1XlSfdfQurPmEfKc=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=DwnzSK3/P8tM32nbw9NpH1eQQtWFcC21aZM62qP6pIEGg+iwYPpFXl/HpyeKqn09hP7XYlgNeBG/zKeo/TpmjHDI4S+o89SbbNDCUZu5tslnzpkXcCe4cKwM6HIyIHjqcqfNTP0u1+j1CxUrSphroZX8ilCXPdLTNOmtt9ob4S8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=Xdl3XLkt; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=bmGI/NEfAfgDB/a+dal7o7pLk2x1XlSfdfQurPmEfKc=;
+	t=1756323501; x=1757533101; b=Xdl3XLktkfjgfr5e5qmOWkGyZW4oR43T+PpinuC82MHOPKl
+	nFsyk06KqGOjq7mJzfOqS6VnlPw58YrJrP1sndPcdGt2KR2Pefvg6OXiQ6nEOIxE0jQCQGPyWvLrU
+	+qSwqQlklAvt9lbJf0W0J9Nu3ckMLKZg4uNvgnumvP4CUvs0Lo9y9Tk9JKxVtOcrK/iSbC2rDt48U
+	13cCd6aoW1RUcHKKK8M9liUYJmb9UK2tqSWKufJ9l5C9EVYPtGCkyErmV+1+2Io3kJI8ZjXkOVDQF
+	/q8xprVw424gzchit50X8q4QI99pbzdsh5wOWTmc5T6UwppeX2d4aRE4EcVfaazQ==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.98.2)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1urLyM-000000060vA-04ur;
+	Wed, 27 Aug 2025 21:38:18 +0200
+Message-ID: <155ce30d5fad5a444f72b681eb096418384542b3.camel@sipsolutions.net>
+Subject: Re: [PATCH] um: Support SPARSE_IRQ
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Brian Norris <briannorris@chromium.org>, Richard Weinberger
+ <richard@nod.at>,  Anton Ivanov <anton.ivanov@cambridgegreys.com>
+Cc: linux-um@lists.infradead.org, linux-kernel@vger.kernel.org, David Gow
+	 <davidgow@google.com>, Sinan Nalkaya <sardok@gmail.com>
+Date: Wed, 27 Aug 2025 21:38:17 +0200
+In-Reply-To: <20250825212031.111027-1-briannorris@chromium.org>
+References: <20250825212031.111027-1-briannorris@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250826113247.3481273-8-konrad.leszczynski@intel.com>
+X-malware-bazaar: not-scanned
 
-On Tue, Aug 26, 2025 at 01:32:47PM +0200, Konrad Leszczynski wrote:
-> From: Karol Jurczenia <karol.jurczenia@intel.com>
-> 
-> Add missing Traffic Control (TC) offload for flower filters matching the
-> IP EtherType (ETH_P_IP).
-> 
-> Reviewed-by: Konrad Leszczynski <konrad.leszczynski@intel.com>
-> Reviewed-by: Sebastian Basierski <sebastian.basierski@intel.com>
-> Signed-off-by: Karol Jurczenia <karol.jurczenia@intel.com>
+On Mon, 2025-08-25 at 14:19 -0700, Brian Norris wrote:
+>=20
+> +#ifdef CONFIG_SPARSE_IRQ
+> +int __init arch_probe_nr_irqs(void)
+>=20
 
-Konrad,
+Is there much point in the ifdef if it's anyway always going to be
+enabled due to the 'select'?
 
-As per my comment on an earlier patch, your SoB line needs to go here.
-
-Otherwise, this looks good to me.
-
-Reviewed-by: Simon Horman <horms@kernel.org>
+johannes
 
