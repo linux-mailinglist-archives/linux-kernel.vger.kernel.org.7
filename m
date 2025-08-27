@@ -1,371 +1,262 @@
-Return-Path: <linux-kernel+bounces-787851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7850CB37C30
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 09:50:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B98DB37C34
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 09:51:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C829C1B27E52
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 07:50:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE2201773AF
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 07:51:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0454832145C;
-	Wed, 27 Aug 2025 07:50:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D0E3321F2B;
+	Wed, 27 Aug 2025 07:50:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b6aYxye9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="TlWxhkQb"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 128D01E9B12;
-	Wed, 27 Aug 2025 07:50:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDF9131CA42;
+	Wed, 27 Aug 2025 07:50:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756281012; cv=none; b=CtZOSXDfgiUhjdYYnZOhYEe0d6o+S3X+cqKA8m6DSuoLal7/CGHQJdp1Pq3ufsXkj+9wH7u7RHx75hnKOLSIixixlczSxSxqmFSxuaoknLsqVN8UOOvsNTWAhlBmZy6LXhQcaLuwoX2nbtgsrMNZyLy/brYJHwbe6QQ7VKXEE+c=
+	t=1756281046; cv=none; b=pbcDKRbCmKPzBMmQBfqiQexZ6rxz6OICH/w/xodNQhYqsTMWLy+gxY98aFh7coWkV8tZF70gai69KJ4LNREsnq9X22FarBhABNakCVMQnfAZjh13N6WrLyxDKIIXcZqbFKA06Hblc6jEw6v8aDuFYbfScPFO3Ab/h3yFz6ChVXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756281012; c=relaxed/simple;
-	bh=TLzcboUlgUgMPALkL0SEtfnA51JYIowP1RwyrX89uEA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=FTko9FZLXTBaRoy1Fmz/t2RNfGywyZntb7nRtSm4hhlvWh2UDDdbvrEUz1QuLN5lPpIzG4QYJbLaRR2ZwrY4yKITntD2oJvhvE6krLjZ/k73m5MMueHjzGdmZqrw2O0S9qt7Q9RoUntL6W6UgVagrkgAIlcTzNx0G5n7D4u9LRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b6aYxye9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC2F0C4CEEB;
-	Wed, 27 Aug 2025 07:50:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756281011;
-	bh=TLzcboUlgUgMPALkL0SEtfnA51JYIowP1RwyrX89uEA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=b6aYxye9kjJ0n3mTyqm8rDastOST5yPxY6ekrsaxf3rkjdj3GKngY5omQLurQTtM0
-	 Sz81uyl/ZFZuigFcpLZiixDuX+TxmkdggOiIAnNgFPI4CyliAAmPA4xrearCzihTlT
-	 OrI6lKxJeA0GW58PrwXKcD1kT1UzOpGT7+ivJk4qtu2ia59UVA7jcE7GjYUw/3ICQ0
-	 QLs2BCH6LRhJwXyHLDMj7QUS0wj/lMnbDyOidygdISLev1LjMvSsL/TPe7QU5WvyUQ
-	 NNKsGBCqU3ZAY/3uEzT6kJCmcbu5bDYwkmQgaR1TXKPJtxCKmsy6z1gTxeOXbgsi0x
-	 MauTe/42e87vQ==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: Daniel Almeida <daniel.almeida@collabora.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn?= Roy
- Baron <bjorn3_gh@protonmail.com>, Alice Ryhl <aliceryhl@google.com>,
- Trevor
- Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
- <rafael@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Bjorn
- Helgaas <bhelgaas@google.com>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?=
- <kwilczynski@kernel.org>, Benno Lossin <lossin@kernel.org>,
- linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
- linux-pci@vger.kernel.org, Joel Fernandes <joelagnelf@nvidia.com>, Dirk
- Behme <dirk.behme@de.bosch.com>
-Subject: Re: [PATCH v9 3/7] rust: irq: add support for non-threaded IRQs and
- handlers
-In-Reply-To: <9A068CEC-E45F-44B1-9D16-D550835503F9@collabora.com>
-References: <20250811-topics-tyr-request_irq2-v9-0-0485dcd9bcbf@collabora.com>
- <ZBiGWoEXSxAUvEwNj8vzyDa5L6KvqTuKBTKz3mzyhMGBAja6PJsMtIiSdAUKDmn_FumrmDYuOk4PKlXRW055Qw==@protonmail.internalid>
- <20250811-topics-tyr-request_irq2-v9-3-0485dcd9bcbf@collabora.com>
- <87wm71cahd.fsf@t14s.mail-host-address-is-not-set>
- <AEwfSACv6dV1KuKmY7ufNvpYacRoT4xbJRGQJP7zfeV2GfeKcNpXZqsOQJw_w4lqbjqIsMjt-NZqp4OqBeIFpA==@protonmail.internalid>
- <9A068CEC-E45F-44B1-9D16-D550835503F9@collabora.com>
-Date: Wed, 27 Aug 2025 09:50:00 +0200
-Message-ID: <87zfblurtj.fsf@t14s.mail-host-address-is-not-set>
+	s=arc-20240116; t=1756281046; c=relaxed/simple;
+	bh=E13liiV1vn68rNIA25MCsUZqiJwzIO6wW6GFVuzr3PA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=OR7QcGksnmA0sfs352YO1rDbHw8KF8hbzUYWNJsy6BcSssLVziCqqzW1kt/A+htBWiVhI8BLvlmrDWt/ONL6xTvRIoGMMEC5PKT9edNOJFE3rSnMAQBnWU7qiaDK1ppRLSzhTH8tmIlSAjXwQ8CEt2cX//OiOrKw72oxbbYm0So=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=TlWxhkQb; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57R739Ou001329;
+	Wed, 27 Aug 2025 07:50:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=VFhNfQ
+	KPr2sy+yxCip+9sXGk5A98Q9PJI58g61iOqPo=; b=TlWxhkQbtYnNvUYozAVp3i
+	ECR8Fp0P+2OrIgOEFlwOhqBUAjZSI3x6G4pXIA7XspH5ZB5QSNRtR9Y8T1sehysv
+	+ApWHUPQ3XTClRwpliPylmaA+C1zvnVoJxTm7C/Vx3V2DNisOxniwnenmxX2ttZS
+	1vFBkxp1wR/gJb4wnZ/auhDX9Q8LPcU9mBMZTE8KgeK7WnHEP/eA/kqapU4BFzu9
+	kuatQEf/lYCe6ALehvzoDjg8FK74CJ6S9hN/0wFnwTQMWua3/5uqbiiDxfL6gRVX
+	sRBsv6il509/GExFFMpADatK7wMEdkCiRJPV6XQ11JUAyP3oTu53Q/6wNHmN5Mmg
+	==
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48q5hq2rhh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 27 Aug 2025 07:50:39 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 57R7honi002543;
+	Wed, 27 Aug 2025 07:50:39 GMT
+Received: from smtprelay02.dal12v.mail.ibm.com ([172.16.1.4])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 48qryppy4f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 27 Aug 2025 07:50:39 +0000
+Received: from smtpav05.dal12v.mail.ibm.com (smtpav05.dal12v.mail.ibm.com [10.241.53.104])
+	by smtprelay02.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 57R7obuI31064680
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 27 Aug 2025 07:50:38 GMT
+Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id DC1795805D;
+	Wed, 27 Aug 2025 07:50:37 +0000 (GMT)
+Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 8D38758056;
+	Wed, 27 Aug 2025 07:50:36 +0000 (GMT)
+Received: from [9.111.77.147] (unknown [9.111.77.147])
+	by smtpav05.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 27 Aug 2025 07:50:36 +0000 (GMT)
+Message-ID: <cad13ef2b958b70f7242e2ee1c89e2c458c8a5e5.camel@linux.ibm.com>
+Subject: Re: [PATCH v2 3/9] PCI: Allow per function PCI slots for hypervisor
+ isolated functions
+From: Niklas Schnelle <schnelle@linux.ibm.com>
+To: Farhan Ali <alifm@linux.ibm.com>, linux-s390@vger.kernel.org,
+        kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: alex.williamson@redhat.com, helgaas@kernel.org, mjrosato@linux.ibm.com
+Date: Wed, 27 Aug 2025 09:50:35 +0200
+In-Reply-To: <20250825171226.1602-4-alifm@linux.ibm.com>
+References: <20250825171226.1602-1-alifm@linux.ibm.com>
+	 <20250825171226.1602-4-alifm@linux.ibm.com>
+Autocrypt: addr=schnelle@linux.ibm.com; prefer-encrypt=mutual;
+ keydata=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
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIzMDAyMSBTYWx0ZWRfX3NHg/1iYwkKt
+ D4/r1B8c8bJRc4vU2xluer12IuDEwueF4HxnmXKeKCJvkbtdBTGawT9nZnvlD5RlxHCtdUWyqQz
+ EYJbH59U1UoaLGPIGapiW+WVe+PqSfGDA7wyApH6Gnl0d6w1IZdi6645DldSNxG2FicEhWBVf8L
+ /9TxwukD/tXfD8/Lum2LJpGMU0xZIqMoeqSZ+hszPQ0Xfhv77g7PElz2jC5eOJXy2g8+zqa472s
+ 5KQugjfzjjKx+DjJHrP3pLC2DtgHxV88QPEPS2Wd3NcxD0v42FVf36c674E9FBUJ7YtH1BOextB
+ s15tlSgiBt7JHfvgPeLbbshfzXX8FKDQySTxvq1i70b6iCeSCtVHTfSdrKYty7SDEQJfMJYdC/z
+ QqLrb2Bp
+X-Proofpoint-ORIG-GUID: jGfNyVBr-pMLjG7oNTtEg484WoZC4iah
+X-Proofpoint-GUID: jGfNyVBr-pMLjG7oNTtEg484WoZC4iah
+X-Authority-Analysis: v=2.4 cv=Ndbm13D4 c=1 sm=1 tr=0 ts=68aeb8cf cx=c_pps
+ a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VnNF1IyMAAAA:8 a=cH6R9-kdAAAA:8
+ a=NsU5iuw7hqHUjNsZKVwA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-26_02,2025-08-26_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 impostorscore=0 clxscore=1015 phishscore=0 malwarescore=0
+ suspectscore=0 bulkscore=0 spamscore=0 adultscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508230021
 
-"Daniel Almeida" <daniel.almeida@collabora.com> writes:
+On Mon, 2025-08-25 at 10:12 -0700, Farhan Ali wrote:
+> On s390 systems, which use a machine level hypervisor, PCI devices are
+> always accessed through a form of PCI pass-through which fundamentally
+> operates on a per PCI function granularity. This is also reflected in the
+> s390 PCI hotplug driver which creates hotplug slots for individual PCI
+> functions. Its reset_slot() function, which is a wrapper for
+> zpci_hot_reset_device(), thus also resets individual functions.
+>=20
+> Currently, the kernel's PCI_SLOT() macro assigns the same pci_slot object
+> to multifunction devices. This approach worked fine on s390 systems that
+> only exposed virtual functions as individual PCI domains to the operating
+> system.  Since commit 44510d6fa0c0 ("s390/pci: Handling multifunctions")
+> s390 supports exposing the topology of multifunction PCI devices by
+> grouping them in a shared PCI domain. When attempting to reset a function
+> through the hotplug driver, the shared slot assignment causes the wrong
+> function to be reset instead of the intended one. It also leaks memory as
+> we do create a pci_slot object for the function, but don't correctly free
+> it in pci_slot_release().
+>=20
+> This patch adds a helper function to allow per function PCI slots for
+> functions managed through a hypervisor which exposes individual PCI
+> functions while retaining the topology.
+>=20
+> Fixes: 44510d6fa0c0 ("s390/pci: Handling multifunctions")
+> Co-developed-by: Niklas Schnelle <schnelle@linux.ibm.com>
+> Signed-off-by: Niklas Schnelle <schnelle@linux.ibm.com>
+> Signed-off-by: Farhan Ali <alifm@linux.ibm.com>
+> ---
+>  drivers/pci/slot.c | 19 ++++++++++++++++---
+>  1 file changed, 16 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/drivers/pci/slot.c b/drivers/pci/slot.c
+> index 50fb3eb595fe..991526af0ffe 100644
+> --- a/drivers/pci/slot.c
+> +++ b/drivers/pci/slot.c
+> @@ -5,6 +5,7 @@
+>   *	Alex Chiang <achiang@hp.com>
+>   */
+> =20
+> +#include <linux/hypervisor.h>
+>  #include <linux/kobject.h>
+>  #include <linux/slab.h>
+>  #include <linux/pci.h>
+> @@ -73,7 +74,7 @@ static void pci_slot_release(struct kobject *kobj)
+> =20
+>  	down_read(&pci_bus_sem);
+>  	list_for_each_entry(dev, &slot->bus->devices, bus_list)
+> -		if (PCI_SLOT(dev->devfn) =3D=3D slot->number)
+> +		if (dev->slot =3D=3D slot->number)
+>  			dev->slot =3D NULL;
+>  	up_read(&pci_bus_sem);
+> =20
+> @@ -160,13 +161,25 @@ static int rename_slot(struct pci_slot *slot, const=
+ char *name)
+>  	return result;
+>  }
+> =20
+> +static bool pci_dev_matches_slot(struct pci_dev *dev, struct pci_slot *s=
+lot)
+> +{
+> +	if (hypervisor_isolated_pci_functions()) {
+> +		if (dev->devfn =3D=3D slot->number)
+> +			return true;
+> +	} else {
+> +		if (PCI_SLOT(dev->devfn) =3D=3D slot->number)
+> +			return true;
+> +	}
+> +	return false;
+> +}
+> +
+>  void pci_dev_assign_slot(struct pci_dev *dev)
+>  {
+>  	struct pci_slot *slot;
+> =20
+>  	mutex_lock(&pci_slot_mutex);
+>  	list_for_each_entry(slot, &dev->bus->slots, list)
+> -		if (PCI_SLOT(dev->devfn) =3D=3D slot->number)
+> +		if (pci_dev_matches_slot(dev, slot))
+>  			dev->slot =3D slot;
+>  	mutex_unlock(&pci_slot_mutex);
+>  }
 
-> Hi Andreas,
->
->> On 18 Aug 2025, at 05:14, Andreas Hindborg <a.hindborg@kernel.org> wrote:
->>
->> "Daniel Almeida" <daniel.almeida@collabora.com> writes:
->>
->>> This patch adds support for non-threaded IRQs and handlers through
->>> irq::Registration and the irq::Handler trait.
->>>
->>> Registering an irq is dependent upon having a IrqRequest that was
->>> previously allocated by a given device. This will be introduced in
->>> subsequent patches.
->>>
->>> Tested-by: Joel Fernandes <joelagnelf@nvidia.com>
->>> Tested-by: Dirk Behme <dirk.behme@de.bosch.com>
->>> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
->>> Signed-off-by: Daniel Almeida <daniel.almeida@collabora.com>
->>> ---
->>> rust/bindings/bindings_helper.h |   1 +
->>> rust/helpers/helpers.c          |   1 +
->>> rust/helpers/irq.c              |   9 ++
->>> rust/kernel/irq.rs              |   5 +
->>> rust/kernel/irq/request.rs      | 264 ++++++++++++++++++++++++++++++++++++++++
->>> 5 files changed, 280 insertions(+)
->>>
->>> diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_helper.h
->>> index 84d60635e8a9baef1f1a1b2752dc0fa044f8542f..69a975da829f0c35760f71a1b32b8fcb12c8a8dc 100644
->>> --- a/rust/bindings/bindings_helper.h
->>> +++ b/rust/bindings/bindings_helper.h
->>> @@ -52,6 +52,7 @@
->>> #include <linux/ethtool.h>
->>> #include <linux/file.h>
->>> #include <linux/firmware.h>
->>> +#include <linux/interrupt.h>
->>> #include <linux/fs.h>
->>> #include <linux/ioport.h>
->>> #include <linux/jiffies.h>
->>> diff --git a/rust/helpers/helpers.c b/rust/helpers/helpers.c
->>> index 7cf7fe95e41dd51717050648d6160bebebdf4b26..44b2005d50140d34a44ae37d01c2ddbae6aeaa32 100644
->>> --- a/rust/helpers/helpers.c
->>> +++ b/rust/helpers/helpers.c
->>> @@ -22,6 +22,7 @@
->>> #include "dma.c"
->>> #include "drm.c"
->>> #include "err.c"
->>> +#include "irq.c"
->>> #include "fs.c"
->>> #include "io.c"
->>> #include "jump_label.c"
->>> diff --git a/rust/helpers/irq.c b/rust/helpers/irq.c
->>> new file mode 100644
->>> index 0000000000000000000000000000000000000000..1faca428e2c047a656dec3171855c1508d67e60b
->>> --- /dev/null
->>> +++ b/rust/helpers/irq.c
->>> @@ -0,0 +1,9 @@
->>> +// SPDX-License-Identifier: GPL-2.0
->>> +
->>> +#include <linux/interrupt.h>
->>> +
->>> +int rust_helper_request_irq(unsigned int irq, irq_handler_t handler,
->>> +     unsigned long flags, const char *name, void *dev)
->>> +{
->>> + return request_irq(irq, handler, flags, name, dev);
->>> +}
->>> diff --git a/rust/kernel/irq.rs b/rust/kernel/irq.rs
->>> index 068df2fea31de51115c30344f7ebdb4da4ad86cc..c1019bc36ad1e7ae7dd3af8a8b5c14780bf70712 100644
->>> --- a/rust/kernel/irq.rs
->>> +++ b/rust/kernel/irq.rs
->>> @@ -13,4 +13,9 @@
->>> /// Flags to be used when registering IRQ handlers.
->>> mod flags;
->>>
->>> +/// IRQ allocation and handling.
->>> +mod request;
->>> +
->>> pub use flags::Flags;
->>> +
->>> +pub use request::{Handler, IrqRequest, IrqReturn, Registration};
->>> diff --git a/rust/kernel/irq/request.rs b/rust/kernel/irq/request.rs
->>> new file mode 100644
->>> index 0000000000000000000000000000000000000000..57e00ebf694d8e6e870d9ed57af7ee2ecf86ec05
->>> --- /dev/null
->>> +++ b/rust/kernel/irq/request.rs
->>> @@ -0,0 +1,264 @@
->>> +// SPDX-License-Identifier: GPL-2.0
->>> +// SPDX-FileCopyrightText: Copyright 2025 Collabora ltd.
->>> +
->>> +//! This module provides types like [`Registration`] which allow users to
->>> +//! register handlers for a given IRQ line.
->>> +
->>> +use core::marker::PhantomPinned;
->>> +
->>> +use crate::alloc::Allocator;
->>> +use crate::device::{Bound, Device};
->>
->> nit: I would suggest either normalizing all the imports, or using one
->> import per line consistently.
->>
->>> +use crate::devres::Devres;
->>> +use crate::error::to_result;
->>> +use crate::irq::flags::Flags;
->>> +use crate::prelude::*;
->>> +use crate::str::CStr;
->>> +use crate::sync::Arc;
->>> +
->>> +/// The value that can be returned from a [`Handler`] or a [`ThreadedHandler`].
->>
->> error: unresolved link to `ThreadedHandler`
->>  --> /home/aeh/src/linux-rust/request-irq/rust/kernel/irq/request.rs:18:62
->>   |
->> 18 | /// The value that can be returned from a [`Handler`] or a [`ThreadedHandler`].
->>   |                                                              ^^^^^^^^^^^^^^^ no item named `ThreadedHandler` in scope
->>   |
->
-> This was introduced by the next commit. I wonder what is the right thing to do
-> here now?
+Doing some more digging, I believe this also needs adjustment in
+pci_dev_reset_slot_function(). Since commit 10791141a6cf ("PCI:
+Simplify pci_dev_reset_slot_function()") that no longer directly looks
+at the struct pci_slot linking but instead assumes that slot resets
+don't work on multifunction devices. With per PCI function slots the
+slot reset should work with pdev->multifunction set. I think adjusting
+pci_dev_reset_slot_function() may be easier if instead of using the
+hypervisor_isolated_pci_functions() helper we would set up a struct
+pci_slot::per_func flag as we had considered as an option.
 
-I would suggest (next time, since this is applied) not linking the
-symbol in this patch and then adding the link in the patch that adds the
-link target.
-
-Or, adding the paragraph with the patch that adds the link target.
-
->
->>
->>> +#[repr(u32)]
->>> +pub enum IrqReturn {
->>> +    /// The interrupt was not from this device or was not handled.
->>> +    None = bindings::irqreturn_IRQ_NONE,
->>> +
->>> +    /// The interrupt was handled by this device.
->>> +    Handled = bindings::irqreturn_IRQ_HANDLED,
->>> +}
->>> +
->>> +/// Callbacks for an IRQ handler.
->>> +pub trait Handler: Sync {
->>> +    /// The hard IRQ handler.
->>
->> Could you do a vocabulary somewhere? What does it mean that the handler
->> is hard?
->
->
-> This nomenclature is borrowed from the C part of the kernel. The hard part is
-> what runs immediately in interrupt context while the bottom half runs later. In
-> this case, the bottom half is a threaded handler, i.e.: code running in a
-> separate kthread.
->
-> I think this is immediately understandable most of the time because it's a term
-> that is often used in the kernel. Do you still feel that I should expand the
-> docs in this case?
-
-Yes, I do. We have to consider that some people reading this API might
-not be aware of this tribal knowledge. This is our chance to properly
-document public kernel APIs.
-
-If you feel that you would be duplicating existing documentation, I
-would suggest linking to that documentation.
-
-We could just add a paragraph inline:
-
-  The hard IRQ handler.
-
-  A "hard" handler in the context of the Linux kernel is the part of an
-  interrupt handler that runs in interrupt context. The hard handler
-  usually defers time consuming processing to run in process context,
-  for instance by queuing the work on a work queue for later execution.
-
-(I am not sure if this description is correct, and I would suggest also
-describing "bottom half" if you are going to use that term.)
-
->
->>
->>> +    ///
->>> +    /// This is executed in interrupt context, hence all corresponding
->>> +    /// limitations do apply.
->>> +    ///
->>> +    /// All work that does not necessarily need to be executed from
->>> +    /// interrupt context, should be deferred to a threaded handler.
->>> +    /// See also [`ThreadedRegistration`].
->>
->> error: unresolved link to `ThreadedRegistration`
->>  --> /home/aeh/src/linux-rust/request-irq/rust/kernel/irq/request.rs:37:20
->>   |
->> 37 |     /// See also [`ThreadedRegistration`].
->>   |                    ^^^^^^^^^^^^^^^^^^^^ no item named `ThreadedRegistration` in scope
->>   |
->>
->
-> Same as the previous doc issue you highlighted.
->
->>> +    fn handle(&self) -> IrqReturn;
->>> +}
->>> +
->>> +impl<T: ?Sized + Handler + Send> Handler for Arc<T> {
->>> +    fn handle(&self) -> IrqReturn {
->>> +        T::handle(self)
->>> +    }
->>> +}
->>> +
->>> +impl<T: ?Sized + Handler, A: Allocator> Handler for Box<T, A> {
->>> +    fn handle(&self) -> IrqReturn {
->>> +        T::handle(self)
->>> +    }
->>> +}
->>> +
->>> +/// # Invariants
->>> +///
->>> +/// - `self.irq` is the same as the one passed to `request_{threaded}_irq`.
->>> +/// - `cookie` was passed to `request_{threaded}_irq` as the cookie. It is guaranteed to be unique
->>> +///   by the type system, since each call to `new` will return a different instance of
->>> +///   `Registration`.
->>
->> This seems like a mix of invariant declaration and conformance. I don't
->> think the following belongs here:
->>
->>  It is guaranteed to be unique
->>  by the type system, since each call to `new` will return a different instance of
->>  `Registration`.
->>
->> You could replace it with a uniqueness requirement.
->
-> WDYM? This invariant is indeed provided by the type system and we do rely on it
-> to make the abstraction work.
-
-The invariant section of the type documentation should be a list of
-invariants, not reasoning about why the invariants hold. The reasoning
-goes in the code where we construct the type, where we momentarily
-break invariants, or where we change the value of the type.
-
-In this case, I think the invariant is that `cookie` is unique. How we
-conform to this invariant does not belong in the list. When you
-construct the type, you should have an `// INVARIANT:` comment
-explaining why the newly constructed type upholds the invariant.
-
-At least that is how I understand intended use of the framework.
-
->
->>
->>> +#[pin_data(PinnedDrop)]
->>> +struct RegistrationInner {
->>> +    irq: u32,
->>> +    cookie: *mut c_void,
->>> +}
->>> +
->>> +impl RegistrationInner {
->>> +    fn synchronize(&self) {
->>> +        // SAFETY: safe as per the invariants of `RegistrationInner`
->>> +        unsafe { bindings::synchronize_irq(self.irq) };
->>> +    }
->>> +}
->>> +
->>> +#[pinned_drop]
->>> +impl PinnedDrop for RegistrationInner {
->>> +    fn drop(self: Pin<&mut Self>) {
->>> +        // SAFETY:
->>> +        //
->>> +        // Safe as per the invariants of `RegistrationInner` and:
->>> +        //
->>> +        // - The containing struct is `!Unpin` and was initialized using
->>> +        // pin-init, so it occupied the same memory location for the entirety of
->>> +        // its lifetime.
->>> +        //
->>> +        // Notice that this will block until all handlers finish executing,
->>> +        // i.e.: at no point will &self be invalid while the handler is running.
->>> +        unsafe { bindings::free_irq(self.irq, self.cookie) };
->>> +    }
->>> +}
->>> +
->>> +// SAFETY: We only use `inner` on drop, which called at most once with no
->>> +// concurrent access.
->>> +unsafe impl Sync for RegistrationInner {}
->>> +
->>> +// SAFETY: It is safe to send `RegistrationInner` across threads.
->>
->> Why?
->
-> It's a u32 and an opaque pointer. The pointer itself (which is what demands a
-> manual send/sync impl) is only used on drop() and there are no restrictions
-> that prevent freeing an irq from another thread.
-
-Then use this as your safety comment. This text way more informative to
-the reader than the original. Perhaps something like this:
-
-  It is safe to transfer ownership of `RegistrationInner` from another
-  thread, because it has no shared mutable state. The IRQ owned by
-  `RegistrationInner` via `cookie` can be dropped from any thread.
-
-
-Best regards,
-Andreas Hindborg
-
-
+Thanks,
+Niklas
 
