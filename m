@@ -1,236 +1,250 @@
-Return-Path: <linux-kernel+bounces-788242-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F349CB381B2
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 13:49:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DF0AB381B8
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 13:51:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C5B637AD918
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 11:47:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 218A9980F14
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 11:51:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57BF82F3611;
-	Wed, 27 Aug 2025 11:49:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A61C52FAC0B;
+	Wed, 27 Aug 2025 11:51:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jhFNmels"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="P9Zuxf28"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D6341EDA09;
-	Wed, 27 Aug 2025 11:49:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AE4B2D8DA9
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 11:51:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756295358; cv=none; b=tN6+7C34u4McBX6CxyYtZVFqIlKMbY/1AwOjBAf12GXPxC0tmwvLJ01KSrkv9qtCzP7wIgmhFeEPsq/FA2IErwojmvjdrgh/WWc9otbjhotTXXwVI7nKB7IB+J0GPcZ5n2nSSrbbXosb/gPRAF3K89KQYP5C2qKPhBPnUHixW5w=
+	t=1756295482; cv=none; b=VcGkCwDU2ChIErny5bGNIeDiZQGsz0oaWP0GCFN1rLwa1oBG4KvaAmPtrRsDKe/nkUcb/FBcl74mMoFRvbnYwuC3gzhzMD3HMvKouelELr5GwcaO/S7VDbyhaSKZ2nCO5h6hO2b+sSNpoPYM+126z/GCplGkmKiRakUxHFO2zWs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756295358; c=relaxed/simple;
-	bh=znhfLiwONlPw/MZzbudWQ/KtJzWSWLhDzuDkeba+KRo=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=dKniIgw1sHv0r3ISn4d5HGAplfdx0OL/szx0iTvlhymdZ8m1lcINHqZUzdjX8oD6IenFlt0sT6eAvfANWGmOVYg5ZfbJiorvoRmSUlZGxdoxlakbYDF7KgBCBr1nr9olJfhVYsG6LHKVcrT3KzY02o+6QFTf6L3PTBKZpKlVTCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jhFNmels; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756295357; x=1787831357;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=znhfLiwONlPw/MZzbudWQ/KtJzWSWLhDzuDkeba+KRo=;
-  b=jhFNmelscrPcHGL7D60jKPGu9xtIDHsl6Se0sVtp8lr3PbqQBDfedFu6
-   odAMsIKBw5Ec52S35T+5dyAk3C/cNS4Q++U0ozLBKESiu5reQn1Vli++u
-   skFOiqXCQoZBCREAbFeR45NgNPGMim4t7rAu6Htu9lzrs/JYlgC1P6MPb
-   dy5mgCKRQ9q/guVrJI4MuBtgJm7UxmWO0ob13HBM+PQFvdnzFQbjWNx9p
-   2WOXiQ4/wcz+AdjMi0NJeSChIEc8NJSq8qwx/67m0hVxRpumyn9LMlI9C
-   X0gjEVOVAgy3UMrG3pdswPka3xqrWTyMdvZUPevjsdAbYxfgj620odUgZ
-   w==;
-X-CSE-ConnectionGUID: t02bfFOPRSeVh2PZfED7ZA==
-X-CSE-MsgGUID: X7OUtA9IQ0+Vavw/txMWww==
-X-IronPort-AV: E=McAfee;i="6800,10657,11534"; a="57563662"
-X-IronPort-AV: E=Sophos;i="6.18,214,1751266800"; 
-   d="scan'208";a="57563662"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2025 04:49:15 -0700
-X-CSE-ConnectionGUID: zvvBl4BYSyOUXekQlljAAA==
-X-CSE-MsgGUID: VXomUqURQ/O9wweXrTn6IQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,214,1751266800"; 
-   d="scan'208";a="175121283"
-Received: from gabaabhi-mobl2.amr.corp.intel.com ([10.125.109.50])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2025 04:49:14 -0700
-Message-ID: <abdd6c22714984782fbbb7dab5a7e1ab0fa4799c.camel@linux.intel.com>
-Subject: Re: [PATCH] platform/x86/intel: power-domains validate domain in
- tpmi_cpu_online()
-From: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>
-To: David Arcari <darcari@redhat.com>, platform-driver-x86@vger.kernel.org
-Cc: Hans de Goede <hansg@kernel.org>, Ilpo =?ISO-8859-1?Q?J=E4rvinen?=
- <ilpo.jarvinen@linux.intel.com>, Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@kernel.org>, Dan Carpenter <dan.carpenter@linaro.org>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Tero Kristo
- <tero.kristo@linux.intel.com>,  linux-kernel@vger.kernel.org
-Date: Wed, 27 Aug 2025 04:49:12 -0700
-In-Reply-To: <adbc0e8b-199a-42af-a45e-cb3791923554@redhat.com>
-References: <20250826164331.1372856-1-darcari@redhat.com>
-	 <00466c7a41bd4a0120a7798318ac5bba8878ada5.camel@linux.intel.com>
-	 <adbc0e8b-199a-42af-a45e-cb3791923554@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3-0ubuntu1 
+	s=arc-20240116; t=1756295482; c=relaxed/simple;
+	bh=cTI1Fhwm9QigQTj4jlBzBG62+BgcgXwdk+Ld3xpU0rA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ggiVoFIYzMMndY7dIfvsHmWfao7siPACNSVqKtBCYeLIjfo56TDx29Ak2+sWlr90CA83gF4CtP4tN69B5N1B1d/IEhJbzgb4UJjEl0EwM5mS3IX5nt1J+jNARQnQY5/++mOUTvKqPj5YPjNpf3uzqZed2eoveORva2nKiD+w9wg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=P9Zuxf28; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756295480;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Kj+WQqNx6mfeEUrQ2egTOZFN5drPRSU994Gb6Ia13Mw=;
+	b=P9Zuxf28pi7DArlsanmjzRZ3r7dEFnlNMY7SGAJ2+NR3LzJ+inTXFzmot/dptQfAPTBmsQ
+	yWdNLB3TSCEi7UsUoSFxtMMymSBNdfAKH8gKW2cD+TZzp3Ulh8Vu6a2AO4HACmZKBAbMfV
+	YqWFedqnhcRB/jeP7uS6Yr/yIY85Bkg=
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
+ [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-253-h2ZCWK_2PVeLUfgg0FpOVw-1; Wed, 27 Aug 2025 07:51:18 -0400
+X-MC-Unique: h2ZCWK_2PVeLUfgg0FpOVw-1
+X-Mimecast-MFC-AGG-ID: h2ZCWK_2PVeLUfgg0FpOVw_1756295478
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7f2942a1aa1so214390885a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 04:51:18 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756295478; x=1756900278;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Kj+WQqNx6mfeEUrQ2egTOZFN5drPRSU994Gb6Ia13Mw=;
+        b=L7XryZTMDz6cV3TEloZ2DHmphpiaPPTpjuQFXlgd2NVayJBCEQ/fP0JR0fbLDdRCgR
+         U8zajHYLqHDsm9ARY8hqYs+CUpivsJBLLi87rUGdLDZF56kiUgBc/OUIQLgeyN0LUxSq
+         bHogeIZJddhgCsM5V4NiQZ2UMYbikDhP0AlWvCUSKeMcv4l6GvZjcqFqFm/LfE1/L68W
+         Mxn/oS0loO4TwlClqLFGrb0Ng8Mgh3ifAePhzn4P7kpKAfj61d/aJc61acK4T4OmeYSi
+         JPA8sSxAqBHVWhWwc4d5ICQpqT5e2kZG5n9RGZaJ89SRDvO2BW/DMDXvjzjEhbHhwKIR
+         vEjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWqg6CsH3XQ1VopOqg8ankV+gP9/zYvICAAX4PU27zqRSvjPRg2c1+toAdCv1mehORhDnU16TFUW7F4l6Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwsgFV83DN7IocT4s1nVJa6IR3ZvcyeyGNDXg67TrYW9ormdaXA
+	x7BSlZh+eVwIMmV2bbanRDY8d1rTU47JR3UqoDEdIkdyXf56YDAd8LAvV9VOsexpOL2gYNTiOHJ
+	84SffyWd1757I/IUkEG99v4toK/6SOsQ+TX/oReUBN2cczXixtJ1VQuvYOD1T83lFqA==
+X-Gm-Gg: ASbGnct+gJ0MVgmWO+iadZ0HUsNm/qCdP+j3I38MlTFOsykIxdNS2HLeFmNarXU7qop
+	kGY4XtfzsvnxqO3iZjLaeZwGyvSWfDgOArOSANAlftESv3xbyIVMIm/TZsjvi/JGWCdragSlhPx
+	mPJghfSZaghMAcbmj8dW4llbRDN7QPFfTMAlAR1H5BT3Rp40kDSCiczQhRk3BFpNoUKTJRvt8m+
+	NeFXyRYNhhl9ZloVYP6B9TEJ4HsOmwrIgKoRCxIuQ/Ria3xBVEfBEBwVs0xuefHcMCsBBq9kptS
+	8jkT7X4CApslvrKu8H3SA6+s5zads5ZnDkVRv8rwKwy4ABuuPsU+Qz/lPwvimQ==
+X-Received: by 2002:a05:620a:3885:b0:7f6:9f86:4e76 with SMTP id af79cd13be357-7f69f865039mr312098985a.23.1756295478048;
+        Wed, 27 Aug 2025 04:51:18 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFVmBzDtfDq10Nt79ue8F/PO01PWq9Aj/sKChiNk7iQU5whHjgTqD35dLozWe6HEX9Zy0TzKw==
+X-Received: by 2002:a05:620a:3885:b0:7f6:9f86:4e76 with SMTP id af79cd13be357-7f69f865039mr312096285a.23.1756295477451;
+        Wed, 27 Aug 2025 04:51:17 -0700 (PDT)
+Received: from [10.32.64.156] (nat-pool-muc-t.redhat.com. [149.14.88.26])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7ebecb1825bsm848326885a.10.2025.08.27.04.51.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 27 Aug 2025 04:51:17 -0700 (PDT)
+Message-ID: <1be63942-f3a8-404f-bf26-cfe7eaf2ef58@redhat.com>
+Date: Wed, 27 Aug 2025 13:51:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm/hugetlb: two-phase hugepage allocation when
+ reservation is high
+To: "Li,Rongqing" <lirongqing@baidu.com>,
+ "muchun.song@linux.dev" <muchun.song@linux.dev>,
+ "osalvador@suse.de" <osalvador@suse.de>,
+ "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+ "linux-mm@kvack.org" <linux-mm@kvack.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "giorgitchankvetadze1997@gmail.com" <giorgitchankvetadze1997@gmail.com>
+Cc: "Xu,Wenjie(ACG CCN)" <xuwenjie04@baidu.com>
+References: <33c9676b1fda4cbaa42857787e03c7ec@baidu.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <33c9676b1fda4cbaa42857787e03c7ec@baidu.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, 2025-08-26 at 21:39 -0400, David Arcari wrote:
->=20
-> Hi Srinivas,
->=20
-> On 8/26/25 4:26 PM, srinivas pandruvada wrote:
-> > Hi David,
-> >=20
-> > On Tue, 2025-08-26 at 12:43 -0400, David Arcari wrote:
-> > > Although tpmi_get_power_domain_mask() calls
-> > > tpmi_domain_is_valid()
-> > > prior to indexing tpmi_power_domain_mask[],
-> > Because this an API call so that caller parameter needs to be
-> > sanitized.
-> >=20
-> > > =C2=A0 tpmi_cpu_online() does
-> > > not.
-> > This is hotplug callback, which should have correct topology
-> > information.
-> >=20
-> > > =C2=A0 In the case where a VM creates non-contiguous package ids the
-> > > result can be memory corruption. This can be prevented by adding
-> > > the same validation in tpmi_cpu_online().
-> > >=20
-> >=20
-> > This driver is getting loaded means MSR 0x54 is virtualised
-> > otherwise
-> > this driver will not load.
->=20
-> I don't have direct access to the system, but this appears to be the=20
-> case.=C2=A0 The driver is reading MSR 0x54:
->=20
-> drivers/platform/x86/intel/tpmi_power_domains.c:#define=20
-> MSR_PM_LOGICAL_ID=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 0x54
-> drivers/platform/x86/intel/tpmi_power_domains.c:=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 ret =3D=20
-> rdmsrl_safe(MSR_PM_LOGICAL_ID, &data);
-> drivers/platform/x86/intel/tpmi_power_domains.c:=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 ret =3D=20
-> rdmsrl_safe(MSR_PM_LOGICAL_ID, &data);
->=20
->=20
-> > Not sure this is an upstream kernel or not.
->=20
-> This was not an upstream kernel, but I don't see anything in the=20
-> upstream driver that would have prevented the access that is
-> occurring.
->=20
-The issue here the topology_max_packages() is 2 but cpu 1 package ID is
-also 2. So everywhere topology_max_packages() is used there may be
-issue as you have to verify the package ID is fine.
+On 27.08.25 06:12, Li,Rongqing wrote:
+> 
+> .
+>>
+>> Also, can't we fail lightly during the first attempt and dynamically decide if we
+>> should do a second pase?
+>>
+> 
+> 
+> Good idea, like below
+> 
+> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+> index 753f99b..425a759 100644
+> --- a/mm/hugetlb.c
+> +++ b/mm/hugetlb.c
+> @@ -3589,6 +3589,7 @@ static unsigned long __init hugetlb_pages_alloc_boot(struct hstate *h)
+> 
+>          unsigned long jiffies_start;
+>          unsigned long jiffies_end;
+> +       unsigned long remaining;
+> 
+>          job.thread_fn   = hugetlb_pages_alloc_boot_node;
+>          job.start       = 0;
+> @@ -3620,6 +3621,18 @@ static unsigned long __init hugetlb_pages_alloc_boot(struct hstate *h)
+> 
+>          jiffies_start = jiffies;
+>          padata_do_multithreaded(&job);
+> +
+> +       if (h->nr_huge_pages != h->max_huge_pages && hugetlb_vmemmap_optimizable(h)) {
+> +               remaining = h->max_huge_pages - h->nr_huge_pages;
+> +               /* vmemmap optimization can save about 1.6% (4/250) memory */
+> +               remaining = min(remaining, (h->nr_huge_pages * 4 / 250));
+
+I don't like hard coding that here.
+
+> +
+> +               job.start       = h->nr_huge_pages;
+> +               job.size        = remaining;
+> +               job.min_chunk   = remaining / hugepage_allocation_threads;
+> +               padata_do_multithreaded(&job);
+> +       }
+
+Thinking out load, can't we try in a loop until either
+
+a) We allocated all we need
+
+b) We don't make any more progress
 
 
-Repost the patch by adding the above root cause in the description, so
-we know why we need this change.
+Not sure if something like the following could fly:
 
-Thanks,
-Srinivas
+diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+index 1f42186a85ea4..dfb4d717b8a02 100644
+--- a/mm/hugetlb.c
++++ b/mm/hugetlb.c
+@@ -3595,8 +3595,6 @@ static unsigned long __init hugetlb_pages_alloc_boot(struct hstate *h)
+         unsigned long jiffies_end;
+  
+         job.thread_fn   = hugetlb_pages_alloc_boot_node;
+-       job.start       = 0;
+-       job.size        = h->max_huge_pages;
+  
+         /*
+          * job.max_threads is 25% of the available cpu threads by default.
+@@ -3620,10 +3618,24 @@ static unsigned long __init hugetlb_pages_alloc_boot(struct hstate *h)
+         }
+  
+         job.max_threads = hugepage_allocation_threads;
+-       job.min_chunk   = h->max_huge_pages / hugepage_allocation_threads;
+  
+         jiffies_start = jiffies;
+-       padata_do_multithreaded(&job);
++       /* TODO: comment why we retry and how it interacts with vmemmap op. */
++       while (h->nr_huge_pages != h->max_huge_pages) {
++               unsigned long remaining = h->max_huge_pages - h->nr_huge_pages;
++
++               job.start       = h->nr_huge_pages;
++               job.size        = remaining;
++               job.min_chunk   = remaining / hugepage_allocation_threads;
++               padata_do_multithreaded(&job);
++
++               if (hugetlb_vmemmap_optimizable(h))
++                       break;
++
++               /* Stop if there is no progress. */
++               if (remaining == h->max_huge_pages - h->nr_huge_pages)
++                       break;
++       }
+         jiffies_end = jiffies;
+  
+         pr_info("HugeTLB: allocation took %dms with hugepage_allocation_threads=%ld\n",
 
-> >=20
-> > Some comments below.
-> >=20
-> > > Fixes: 17ca2780458c ("platform/x86/intel: TPMI domain id and CPU
-> > > mapping")
-> > >=20
-> > Andy already pointed about new line here.
-> >=20
-> > > Cc: Hans de Goede <hansg@kernel.org>
-> > > Cc: "Ilpo J=C3=A4rvinen" <ilpo.jarvinen@linux.intel.com>
-> > > Cc: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-> > > Cc: Peter Zijlstra <peterz@infradead.org>
-> > > Cc: Ingo Molnar <mingo@kernel.org>
-> > > Cc: Dan Carpenter <dan.carpenter@linaro.org>
-> > > Cc: David Arcari <darcari@redhat.com>
-> > > Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> > > Cc: Tero Kristo <tero.kristo@linux.intel.com>
-> > > Cc: linux-kernel@vger.kernel.org
-> > > Signed-off-by: David Arcari <darcari@redhat.com>
-> > > ---
-> > > =C2=A0=C2=A0drivers/platform/x86/intel/tpmi_power_domains.c | 3 +++
-> > > =C2=A0=C2=A01 file changed, 3 insertions(+)
-> > >=20
-> > > diff --git a/drivers/platform/x86/intel/tpmi_power_domains.c
-> > > b/drivers/platform/x86/intel/tpmi_power_domains.c
-> > > index 9d8247bb9cfa..ae5b58679e29 100644
-> > > --- a/drivers/platform/x86/intel/tpmi_power_domains.c
-> > > +++ b/drivers/platform/x86/intel/tpmi_power_domains.c
-> > > @@ -194,6 +194,9 @@ static int tpmi_cpu_online(unsigned int cpu)
-> > > =C2=A0=C2=A0	if (ret)
-> > > =C2=A0=C2=A0		return 0;
-> > > =C2=A0=20
-> > Need some more information.
-> >=20
-> > The only case this check is required if
-> > topology_physical_package_id(cpu) is returning greater or equal to
-> > topology_max_packages(). If this true in this case, please check
-> > the
-> > value of info->pkg_id. If this is bad then then some other places
-> > also
-> > this may have issue. info->punit_domain_id is already checked for
-> > valid
-> > value in tpmi_get_logical_id().
->=20
-> That is correct.=C2=A0 In the case of the crash we have:
->=20
-> crash> p/x __max_logical_packages
-> $1 =3D 0x2
->=20
-> static inline unsigned int topology_max_packages(void)
-> {
-> 	return __max_logical_packages;
-> }
->=20
->=20
-> $2 =3D {
-> =C2=A0=C2=A0 hnode =3D {
-> =C2=A0=C2=A0=C2=A0=C2=A0 next =3D 0xffff9651bbc37010,
-> =C2=A0=C2=A0=C2=A0=C2=A0 pprev =3D 0xffffffffc0b7a640 <tpmi_cpu_hash>
-> =C2=A0=C2=A0 },
-> =C2=A0=C2=A0 linux_cpu =3D 1,
-> =C2=A0=C2=A0 pkg_id =3D 2 '\002',
-> =C2=A0=C2=A0 punit_thread_id =3D 0 '\000',
-> =C2=A0=C2=A0 punit_core_id =3D 0 '\000',
-> =C2=A0=C2=A0 punit_domain_id =3D 0 '\000'
-> }
->=20
-> The pkg_id of 2 leads to the bad reference.
->=20
-> FWIW this change has been tested and resolves the issue.
->=20
-> Let me know if there is any other information I can provide.=C2=A0 I will
-> be=20
-> out of the office on Wednesday, so response may be delayed.
->=20
-> Best,
-> -DA
->=20
-> >=20
-> > Thanks,
-> > Srinivas
-> >=20
-> > > +	if (!tpmi_domain_is_valid(info))
-> > > +		return 0;
-> > > +
-> > > =C2=A0=C2=A0	index =3D info->pkg_id * MAX_POWER_DOMAINS + info-
-> > > > punit_domain_id;
-> > > =C2=A0=20
-> > > =C2=A0=C2=A0	guard(mutex)(&tpmi_lock);
-> >=20
-> >=20
->=20
+
+-- 
+Cheers
+
+David / dhildenb
 
 
