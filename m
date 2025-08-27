@@ -1,125 +1,127 @@
-Return-Path: <linux-kernel+bounces-787871-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787872-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BF09B37CB2
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 10:02:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AF4FB37CC6
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 10:04:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E335C200F6B
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 08:02:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 618AF1B27CC2
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 08:04:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A146331A55C;
-	Wed, 27 Aug 2025 08:02:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8E7732276F;
+	Wed, 27 Aug 2025 08:03:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YiAMRB1e"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="X5YrLclw"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2014A2D320E
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 08:02:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6885C32252A;
+	Wed, 27 Aug 2025 08:03:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756281771; cv=none; b=FNNXs3FbL4UusYUf9KJAMF3FmFl/ctUr+W8Hmfur+ayyxRVKoX9p3zj9EkdJ7E+kaAzOO78lubdQcllJ1Jsv5IfZ5b+xY5/yPhcqWxW+slohaTMyz5n2l9FTxTrBSjD6m2UFo53M+bFFZNqVuw9G/ttGigM4Tu/Hcl4UFYzTo3c=
+	t=1756281839; cv=none; b=O4z94cDZ8IKa2pwguK4GklcWKEKfLso0ajLkbyKwITt/lIJq+oYM2uef54ve+5M29MLoeyzEPWsm5K5jjX1+0xbMrLUhk7U8kVMjm+21sEt0TCtCtV5MGcEwINskdnUz3icqbAGVtbi++1JkBSgVBZm8ifKh/lJTi8zlic5CR0g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756281771; c=relaxed/simple;
-	bh=FLTLlRj2l99VLo6DxkctWbbapbGFjWXzr0jrRSqXp5A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZQiKIadEeJuhhokB4Uz3+BQ+ZAYNUHKNY+KmLewGXDxIQWkRv3oiivJssc4P8BGNQM/ok6DdlFXNjwN2Ygu1JkdgCEON36ELJ7ziOaLUKAuUszuKUSVAuFuGEzhE529c7CoJZO2y7GpfYecKFKtQ0SAXx4GlhkuV3NdxpRKwIQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YiAMRB1e; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3b9edf4cf6cso5232910f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 01:02:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756281767; x=1756886567; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=KDBYQofHZrYl10kQ9PzJbTY770l6maNuIETUuPQwgh8=;
-        b=YiAMRB1e5J/XAIbEb27hOsFoOBG3doXwhGqNfNc05kHqtjLRDjI47DXgyAmCysac6y
-         OiSzxDjDeP390rTiOlWEWBWbyK882iMUpKjvMYzPGLEILNsYcHBPgy9xfFXH6gbyxZIO
-         CHovtHQiiL4PSXfBQkhSPgxyws9yJPeJLR2K5M9/X8fx7gYv1raGUZvW3Z8m2c3Y+CMO
-         lkqKjFuJal2f0Vvpqj6YtqxD4OhftXH+IK9M4bVaurG+jZkvgk2/64lspIoV8S76JKJf
-         /aOViHEtwJ3ukqfgkNiLaYj+Vy7oXY3q6OUjNcjWHozUalYMi0CZM2lWO044PQIFgZXl
-         W0Hg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756281767; x=1756886567;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KDBYQofHZrYl10kQ9PzJbTY770l6maNuIETUuPQwgh8=;
-        b=xO9ANm90UTWjgmjZIpXEmIAbbgbZlYUcfTFKeHlByrWAz8D8rfcT3ySfhYrM1uRrjR
-         TVHOKK00Lb0OlLYz/wKkbl5NE0+xocT1Mt6/zEWAhGiJPeenCWxK0dd1nNhFwsqMlPz2
-         uR2YtA+GVMx5sq+LX25Ocmvwx6dZyWBUTsdz8Gr7fZAMrvcp9b01DJt4+XVnIGLeaUb7
-         gtm+TWTnhBvHbVOkvQSD9tiJ8ojW9wDvVc/CzliEjD1K/Z1+pqIL5bvSxJyf6y7qT5sY
-         p1b+OnKlVq4uLJ518eCNUvG3kX+YZI/3ujIHDDVchDh3YpurlMTsyALBIWXxEEhq9jAc
-         QlUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVsxZtHjbccNzb0FWmwjEeWNJimKB0S4qJ6pGlb8lFs4KaoSUb1aCU18CtxTtYtxFLagg93hnj0W6FgXOI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzkT2EaiMSS4zfUG5lU+1Ekj436DRXoQBhXbZshE13zOUlW73AC
-	CumJUS+v2OyBpunQwlHJfhYxkFXlJGAshKumMZrBrYNaieScigK6PQE/hVmLQK3NiiY=
-X-Gm-Gg: ASbGncva7geQlDKTSNDG3zeXmbPmkx/JB7y8s4IXvB/XMjev+8Oq7zedEDXtccAGwnf
-	pHxdSFWviu0uyZpG6enFKqOw53zvNoOzSBSSENuzRhMdVFDcX/8aTPGCMA6ii4Kb7HJFWlKwsID
-	6d0IMMIFqMtY2wekPx+z0ch7RzNIoqB54Ofqwq3sHszNB7dzYpor1sHTMgYOJbHwZ/v8I7No4j6
-	UHbhxSzT2n66ITQJzBLrJOTJZM1+I+2/QFKSok1SwM+xJNvIUjXubQqpyYNN+JvDgIpqertyDkc
-	W7TF1DW8RTfT/Ci9M5VcRQTymHdbxT5IbNQLijuulMYPnVOb/iCZy6o5pB+KSoE4Iu5aVU3zr1J
-	rtN223RQqIB2T3q8+HGLWzXxJtrs=
-X-Google-Smtp-Source: AGHT+IF6Rlth0CMRJNdIQHC/Hhgq3FdizOsAb3JDfqJzuNPw+A8sYYuExQ63wUeMcxziaJJlxQPtDg==
-X-Received: by 2002:a05:6000:40dc:b0:3b9:14f2:7eed with SMTP id ffacd0b85a97d-3cc22e34bc6mr2220251f8f.56.1756281767311;
-        Wed, 27 Aug 2025 01:02:47 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3c70f14372fsm19327876f8f.28.2025.08.27.01.02.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Aug 2025 01:02:46 -0700 (PDT)
-Date: Wed, 27 Aug 2025 11:02:40 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Xichao Zhao <zhao.xichao@vivo.com>
-Cc: gregkh@linuxfoundation.org, linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: rtl8723bs: drop redundant conversion to bool
-Message-ID: <aK67oBH4cQ10C4A6@stanley.mountain>
-References: <20250827031500.91732-1-zhao.xichao@vivo.com>
+	s=arc-20240116; t=1756281839; c=relaxed/simple;
+	bh=u0/Z7ZF5puT3D2uP7V4EC7GIKsUnJywvfN1YRQGw/Ec=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=iTNE/gf4Q42dLErLp5kPHtDz+kq8IAL8PTEExDvux4sZmq/hbZBJCt1oBgvZEaQW4YY1faDNcW++bfPAnqBpDk4VKZPRMEB6GGMMuuU/7qy6LrVyLO5jO4mBronCHmWMxkotVv95k4cI8t7UvTKVT1QeWLFE3Kx8kIDUScs+Lv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=X5YrLclw; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
+	bh=NqL3zrDeVOVmwd8ScXywURS5QoRIm4+QJ5WQbVoMCp8=; b=X5YrLclwiUXRxe4YKbLSt2k8b4
+	sa2/8T33ut/6gr5gidLW0B7gFLiB8iX3JUwpCmTDPuMh2zzUTdwwEQumk7+R/D8rggSl4x1NB3mT6
+	m6vYJCM9j58i/dnWOFIvuMj8zAM2MWxtvfqSFOIRBbYhxnittEcH8SXwDzvqCsZVKJb1Gs5OJXOV+
+	sH0ofNfiK5taJBTtc1XfF9XAC7JBwX3J7hHrsshgW6w+WNHYdt9OB0SXlP5956BCvkjR9XkKhI6K3
+	iCYOn6UIsY/6dFUEidhp+4ZOye7qnvOcMifW4x6Z9698PaQCKr1wI9TTIpN7uiXcGmmt2pRtbq/d6
+	zEOcbQLA==;
+Received: from [213.244.170.152] (helo=phil.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1urB7w-0006zw-Js; Wed, 27 Aug 2025 10:03:28 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: Yury Norov <yury.norov@gmail.com>,
+ Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+ Jaehoon Chung <jh80.chung@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>,
+ Shreeya Patel <shreeya.patel@collabora.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Sandy Huang <hjc@rock-chips.com>,
+ Andy Yan <andy.yan@rock-chips.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
+ Nicolas Frattaroli <frattaroli.nicolas@gmail.com>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Shawn Lin <shawn.lin@rock-chips.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ Krzysztof =?UTF-8?B?V2lsY3p5xYRza2k=?= <kwilczynski@kernel.org>,
+ Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>,
+ Bjorn Helgaas <bhelgaas@google.com>, Chanwoo Choi <cw00.choi@samsung.com>,
+ MyungJoo Ham <myungjoo.ham@samsung.com>,
+ Kyungmin Park <kyungmin.park@samsung.com>, Qin Jian <qinjian@cqplus1.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+ Nathan Chancellor <nathan@kernel.org>,
+ Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+ Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
+ Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Cc: kernel@collabora.com, linux-kernel@vger.kernel.org,
+ linux-mmc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-media@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-phy@lists.infradead.org,
+ linux-sound@vger.kernel.org, netdev@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com, linux-pci@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-clk@vger.kernel.org, llvm@lists.linux.dev,
+ Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Subject:
+ Re: [PATCH v3 18/20] PM / devfreq: rockchip-dfi: switch to FIELD_PREP_WM16
+ macro
+Date: Wed, 27 Aug 2025 10:03:27 +0200
+Message-ID: <16814931.dW097sEU6C@phil>
+In-Reply-To: <20250825-byeword-update-v3-18-947b841cdb29@collabora.com>
+References:
+ <20250825-byeword-update-v3-0-947b841cdb29@collabora.com>
+ <20250825-byeword-update-v3-18-947b841cdb29@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250827031500.91732-1-zhao.xichao@vivo.com>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-On Wed, Aug 27, 2025 at 11:15:00AM +0800, Xichao Zhao wrote:
-> The result of integer comparison already evaluates to bool. No need for
-> explicit conversion.
-> 
-> No functional impact.
-> 
-> Signed-off-by: Xichao Zhao <zhao.xichao@vivo.com>
-> ---
->  drivers/staging/rtl8723bs/core/rtw_mlme.c        | 6 +++---
->  drivers/staging/rtl8723bs/os_dep/osdep_service.c | 4 ++--
->  2 files changed, 5 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/staging/rtl8723bs/core/rtw_mlme.c b/drivers/staging/rtl8723bs/core/rtw_mlme.c
-> index 692d0c2b766d..570c99192d3f 100644
-> --- a/drivers/staging/rtl8723bs/core/rtw_mlme.c
-> +++ b/drivers/staging/rtl8723bs/core/rtw_mlme.c
-> @@ -1597,7 +1597,7 @@ inline bool rtw_is_scan_deny(struct adapter *adapter)
->  {
->  	struct mlme_priv *mlmepriv = &adapter->mlmepriv;
->  
-> -	return (atomic_read(&mlmepriv->set_scan_deny) != 0) ? true : false;
-> +	return (atomic_read(&mlmepriv->set_scan_deny) != 0);
+Am Montag, 25. August 2025, 10:28:38 Mitteleurop=C3=A4ische Sommerzeit schr=
+ieb Nicolas Frattaroli:
+> The era of hand-rolled HIWORD_UPDATE macros is over, at least for those
+> drivers that use constant masks.
+>=20
+> Like many other Rockchip drivers, rockchip-dfi brings with it its own
+> HIWORD_UPDATE macro. This variant doesn't shift the value (and like the
+> others, doesn't do any checking).
+>=20
+> Remove it, and replace instances of it with hw_bitfield.h's
+> FIELD_PREP_WM16.  Since FIELD_PREP_WM16 requires contiguous masks and
+> shifts the value for us, some reshuffling of definitions needs to
+> happen.
+>=20
+> This gives us better compile-time error checking, and in my opinion,
+> nicer code.
+>=20
+> Tested on an RK3568 ODROID-M1 board, and an RK3588 ROCK 5B board.
+>=20
+> Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
 
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
 
-mlmepriv->set_scan_deny is either 0 or 1 so it's cleaner to just do:
-
-	return atomic_read(&mlmepriv->set_scan_deny);
-
-(avoids the double negative).
-
-regards,
-dan carpenter
 
 
