@@ -1,71 +1,68 @@
-Return-Path: <linux-kernel+bounces-787943-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3447FB37DE4
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 10:31:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C7CAB37D3F
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 10:12:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00EFA460F7D
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 08:31:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BFA897B1763
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 08:10:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B92D633A01A;
-	Wed, 27 Aug 2025 08:31:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="KuIIjGjL"
-Received: from out162-62-58-216.mail.qq.com (out162-62-58-216.mail.qq.com [162.62.58.216])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9765C2773C3
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 08:31:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.216
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E755732C31B;
+	Wed, 27 Aug 2025 08:12:08 +0000 (UTC)
+Received: from zg8tmja2lje4os43os4xodqa.icoremail.net (zg8tmja2lje4os43os4xodqa.icoremail.net [206.189.79.184])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23771322774;
+	Wed, 27 Aug 2025 08:12:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=206.189.79.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756283499; cv=none; b=AdXieZJgCMVZETGTsYb4V+Z+zX8MoqMSPRaZsy2vOzUlZNoVXFZNU2cIA58OR75crs+ZF2HXAiKYilaAfXtmMCjiI664Wj+IJxyVFELx+t1nC9l0sBSfw3eCisNGbi4kY8p9+6kDkV/zEODY2G9+yeE61V7EZIftavYaa0/qsqc=
+	t=1756282328; cv=none; b=bGil1k5fm9IGHwt5+eXITCtec6eyL/5xHtRzWtDRaBk7ma9TG9hIH0zC8kiDq4zCk0rDmN7Rwgcjxovf1+Z3/7RPG4gcOMxHFp0bLcaKK3X2hG3ig8VsZXROZSlDu9U5fuYNhpfAPTvOhCmqNEHJkyD6p/7oqRRxY0Pur2HQwww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756283499; c=relaxed/simple;
-	bh=5KMB8Ae1XhAqhV90CeLl8aZxM2RgOuhx2AYeegn9toA=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=kI0NnmSjUQp6bl7rd8qwzb72wIbcHr8LS3O9rV9vxm1Jx3V0If4hSrMu+wC20QQDfMAnOCuuFSr5PLgpv9Ye3DJr+w6m7n9HtX1AhBpIWlbL96t1S6NU6l96KrCIDLqiRuNWczLeTTCR/61ZNEmEXKlSHi29FtnsTYNMGlPOmHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=KuIIjGjL; arc=none smtp.client-ip=162.62.58.216
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1756283486; bh=uxGlfm28oCal3Wjjr2FjMrBnYDX4ivF732oR0a82qYs=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=KuIIjGjL5GQ9cGQGOVpNZL6oJKnKS2ygUtmwuWNJ9wsVj0+OuAvyDzc7bHwT7ZHcJ
-	 PYVX2hCXdr0YM5TrHwxv4tuODVIRaAT0k6FdZd8T24QgjiqxeYFwW1+qENDm0I1s3K
-	 nb987eqnzsjrCnoeX6eWuPzFLmmNPN4i8Pn4gcnI=
-Received: from pek-lxu-l1.corp.ad.wrs.com ([111.198.230.220])
-	by newxmesmtplogicsvrszb20-1.qq.com (NewEsmtp) with SMTP
-	id 2AF99A74; Wed, 27 Aug 2025 16:10:47 +0800
-X-QQ-mid: xmsmtpt1756282247tsga5dny8
-Message-ID: <tencent_D22CE56CB09408EBB2ED76CC3479F66C980A@qq.com>
-X-QQ-XMAILINFO: MgWJKXkE5JIqHw6tBH4x7JBbpTk2eeD6WXBF3YE9aNn67Y3RwtXvut7nsLMHzf
-	 OQ4PFGuWMR8Ua6f7bkuwjKNDeBDrcDC2bTC1S5Bjvlo07j9Mjoh6Etbu8v812H54gpxsTUUQxBsi
-	 MbpmePQIGqD47iG+kQXmJLHTzR5PJHk2sUreEjLIkw5FxcpoCBipyJHoLOBe3kIe6WUSE1/oH6nm
-	 wNmXg+R65kaEI4mzo+WIjMHfqPa7H1dhq71+2SH12btBGuM+BeAYweGRkxXFm5OHEhTN2lyuJUKh
-	 mVtcJGLL4nfR1E2Yi7iaIfIFKzdqdXSgdfBbLu/Yn6JGIJU/krY94aNAhb/VXQLVaKsENmRZD1Gi
-	 znf6ykwLvSUjlz4kdqjPStrCZev0O0wcGb5tVeT/O3XW0DWREH/R14fr5NHWhiUy25oAN9pv8ZpI
-	 PGSj9Wrd3EjZgj5tK8eaklSHPXN6n1BtCmz1EvroCT6L87bV5WvrL2yUuzEmTE0Sq9PJLfBM2AfO
-	 9IN0cVeIpaFmfE9A0m4qSsYQsZ9gpBYDPuwiqVcQqyKxt+Ccjzj6BUbmihdMacQS0aspEW9NXUPn
-	 jBopC3qASI61RwSDHLQdAUnNvVG/aNV+gMw8PMtlFTUFK8OAVNdC7WduP7gk9g95mUqHmd246FD/
-	 px8aUOHE/tz1vSGD1pyTSS4HvKvzI0tndvrzajxW3WHaTEmhFO+yRYiUB0GD4qKWmRS3UK8BPOU8
-	 hJOydlLD8RwpKjjYfAGKo1gv8wnEy4DO2YPfaYFmhQ5a7qwXdJWeiVRLtw880iLJcGM6TQU09dM7
-	 8B7hYbQ/GgXo9k46PMDFYyexoHHOcReISSNzXKvty9xvoj7wj5f7d01nobnTtnCvAKhClj5vvyV+
-	 gDXJBK7OwOslu4ZE2eX+yAAwGJpnxb9vkhGsLVcmBQk/2nbOxTtPhCo7KK6yCb4R+dqV82KN9lAG
-	 /NnFij4sX5DkLznaxHf9tZezntFnSeZkgcm6PbcbNjK4hB9c20Fo1lh1N4p5X/
-X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+a25ee9d20d31e483ba7b@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [net?] KASAN: slab-use-after-free Write in __xfrm_state_delete
-Date: Wed, 27 Aug 2025 16:10:48 +0800
-X-OQ-MSGID: <20250827081047.665663-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <68ab6633.050a0220.37038e.0079.GAE@google.com>
-References: <68ab6633.050a0220.37038e.0079.GAE@google.com>
+	s=arc-20240116; t=1756282328; c=relaxed/simple;
+	bh=1Pzns2qvG64vOKuRvgtz/ctuggrku83t0/gBpcOPr8U=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=F73CqyQeEVIndbBw1Avb/uqyhNT9Bfnne+sOAjYVERtSMPps+Krw1v0Cr5tvuszP5skOaYQMNc3LjYcW4lY6IdQVoKK8owyLKq2TPSsbGf9TW45forM2kYJ3NlpkzhDLwYVH2G9znBT/Iz3/I9oLkprkbYdeNxZ4EVk0XSCwjR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=206.189.79.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
+Received: from E0005182LT.eswin.cn (unknown [10.12.96.155])
+	by app1 (Coremail) with SMTP id TAJkCgC32xG5va5ofjTEAA--.25212S2;
+	Wed, 27 Aug 2025 16:11:40 +0800 (CST)
+From: weishangjuan@eswincomputing.com
+To: devicetree@vger.kernel.org,
+	andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	mcoquelin.stm32@gmail.com,
+	alexandre.torgue@foss.st.com,
+	yong.liang.choong@linux.intel.com,
+	vladimir.oltean@nxp.com,
+	rmk+kernel@armlinux.org.uk,
+	faizal.abdul.rahim@linux.intel.com,
+	prabhakar.mahadev-lad.rj@bp.renesas.com,
+	inochiama@gmail.com,
+	jan.petrous@oss.nxp.com,
+	jszhang@kernel.org,
+	p.zabel@pengutronix.de,
+	boon.khai.ng@altera.com,
+	0x1207@gmail.com,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com
+Cc: ningyu@eswincomputing.com,
+	linmin@eswincomputing.com,
+	lizhi2@eswincomputing.com,
+	Shangjuan Wei <weishangjuan@eswincomputing.com>
+Subject: [PATCH v4 0/2] Add driver support for Eswin eic7700 SoC ethernet controller
+Date: Wed, 27 Aug 2025 16:11:35 +0800
+Message-Id: <20250827081135.2243-1-weishangjuan@eswincomputing.com>
+X-Mailer: git-send-email 2.31.1.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,34 +70,106 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:TAJkCgC32xG5va5ofjTEAA--.25212S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxGw4Duw4ftr1xZFW8ArW3trb_yoWrGrykpF
+	Wjkry5Wwn8JryxXa9ayw10kFyfJan3Xr1akr1Iqw1fXws0va90qr4a9w1YgFy7Cr4DZ34Y
+	gay3uF47Ca4ay3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUPG14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lw4CEc2x0rVAKj4xxMxkF7I0En4kS14v26r4a6rW5MxkIecxEwVCm-wCF04
+	k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwCFI7km07C267AKxVWUXVWUAwC2
+	0s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI
+	0_GFv_WrylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv2
+	0xvEc7CjxVAFwI0_Cr0_Gr1UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87
+	Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIF
+	yTuYvjTRMrWrDUUUU
+X-CM-SenderInfo: pzhl2xxdqjy31dq6v25zlqu0xpsx3x1qjou0bp/
 
-#syz test
+From: Shangjuan Wei <weishangjuan@eswincomputing.com>
 
-diff --git a/net/ipv6/xfrm6_tunnel.c b/net/ipv6/xfrm6_tunnel.c
-index 0a0eeaed0591..5120a763da0d 100644
---- a/net/ipv6/xfrm6_tunnel.c
-+++ b/net/ipv6/xfrm6_tunnel.c
-@@ -334,7 +334,7 @@ static void __net_exit xfrm6_tunnel_net_exit(struct net *net)
- 	struct xfrm6_tunnel_net *xfrm6_tn = xfrm6_tunnel_pernet(net);
- 	unsigned int i;
- 
--	xfrm_state_flush(net, 0, false);
-+	xfrm_state_flush(net, IPSEC_PROTO_ANY, false);
- 	xfrm_flush_gc();
- 
- 	for (i = 0; i < XFRM6_TUNNEL_SPI_BYADDR_HSIZE; i++)
-diff --git a/net/xfrm/xfrm_state.c b/net/xfrm/xfrm_state.c
-index 78fcbb89cf32..77db3b5fe4ac 100644
---- a/net/xfrm/xfrm_state.c
-+++ b/net/xfrm/xfrm_state.c
-@@ -3297,7 +3297,7 @@ void xfrm_state_fini(struct net *net)
- 	unsigned int sz;
- 
- 	flush_work(&net->xfrm.state_hash_work);
--	xfrm_state_flush(net, 0, false);
-+	xfrm_state_flush(net, IPSEC_PROTO_ANY, false);
- 	flush_work(&xfrm_state_gc_work);
- 
- 	WARN_ON(!list_empty(&net->xfrm.state_all));
+This series depends on the vendor prefix [1] and config option patch [2].
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?h=next-20250825&id=ac29e4487aa20a21b7c3facbd1f14f5093835dc9
+[2] https://lore.kernel.org/all/20250825132427.1618089-3-pinkesh.vaghela@einfochips.com/
+
+Updates:
+
+  Changes in v4:
+  - Updated eswin,eic7700-eth.yaml
+    - Modify reg:minItems:1 to reg:maxItems: 1
+    - Delete minItems and maxItems of clock and clock-names
+    - Delete phy-mode and phy-handle properties
+    - Add description for clock
+    - Add types of clock-names
+    - Delete descriptions for rx-internal-delay-ps and tx-internal-delay-ps
+    - Add enum value for rx-internal-delay-ps and tx-internal-delay-ps
+    - Modify description for eswin,hsp-sp-csr property
+    - Delete eswin,syscrg-csr and eswin,dly-hsp-reg properties
+    - Modify phy-mode="rgmii" to phy-mode="rgmii-id"
+  - Updated dwmac-eic7700.c
+    - Remove fix_mac_speed and configure different delays for different rates
+    - Merge the offset of the dly register into the eswin, hsp sp csr attributes
+      for unified management
+    - Add missing Author and optimize the number of characters per
+      line to within 80
+    - Support default delay configuration and add the handling of vendor delay 
+      configuration
+    - Add clks_config for pm_runtime
+    - Modify the attribute format, such as eswin,hsp_sp_csr to eswin,hsp-sp-csr
+  - Link to v3: https://lore.kernel.org/all/20250703091808.1092-1-weishangjuan@eswincomputing.com/
+
+  Changes in v3:
+  - Updated eswin,eic7700-eth.yaml
+    - Modify snps,dwmac to snps,dwmac-5.20
+    - Remove the description of reg
+    - Modify the value of clock minItems and maxItems
+    - Modify the value of clock-names minItems and maxItems
+    - Add descriptions of snps,write-questions, snps,read-questions
+    - Add rx-internal-delay-ps and tx-internal-delay-ps properties
+    - Modify descriptions for custom properties, such as eswin,hsp-sp-csr
+    - Delete snps,axi-config property
+    - Add snps,fixed-burst snps,aal snps,tso properties
+    - Delete snps,lpi_en property
+    - Modify format of custom properties
+  - Updated dwmac-eic7700.c
+    - Simplify drivers and remove unnecessary API and DTS attribute configurations
+    - Increase the mapping from tx/rx_delay_ps to private dly
+  - Link to v2: https://lore.kernel.org/all/aDad+8YHEFdOIs38@mev-dev.igk.intel.com/
+
+  Changes in v2:
+  - Updated eswin,eic7700-eth.yaml
+    - Add snps,dwmac in binding file
+    - Modify the description of reg
+    - Modify the number of clock-names
+    - Changed the names of reset-names and phy-mode
+    - Add description for custom properties, such as eswin,hsp_sp_csr
+    - Delete snps,blen snps,rd_osr_lmt snps,wr_osr_lmt properties
+  - Updated dwmac-eic7700.c
+    - Remove the code related to PHY LED configuration from the MAC driver
+    - Adjust the code format and driver interfaces, such as replacing kzalloc
+      with devm_kzalloc, etc.
+    - Use phylib instead of the GPIO API in the driver to implement the PHY
+      reset function
+  - Link to v1: https://lore.kernel.org/all/20250516010849.784-1-weishangjuan@eswincomputing.com/
+
+Shangjuan Wei (2):
+  dt-bindings: ethernet: eswin: Document for EIC7700 SoC
+  ethernet: eswin: Add eic7700 ethernet driver
+
+ .../bindings/net/eswin,eic7700-eth.yaml       | 130 +++++++++
+ drivers/net/ethernet/stmicro/stmmac/Kconfig   |  11 +
+ drivers/net/ethernet/stmicro/stmmac/Makefile  |   1 +
+ .../ethernet/stmicro/stmmac/dwmac-eic7700.c   | 270 ++++++++++++++++++
+ 4 files changed, 412 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/net/eswin,eic7700-eth.yaml
+ create mode 100644 drivers/net/ethernet/stmicro/stmmac/dwmac-eic7700.c
+
+--
+2.17.1
 
 
