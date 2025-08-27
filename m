@@ -1,136 +1,85 @@
-Return-Path: <linux-kernel+bounces-788412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35BC4B38401
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 15:49:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 921AFB38403
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 15:49:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5598A3B5FC5
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 13:49:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C93633B8910
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 13:49:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17E523568E4;
-	Wed, 27 Aug 2025 13:49:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E63313568E4;
+	Wed, 27 Aug 2025 13:49:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="A1TdO/EE"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OOtippKz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6E062EACEF;
-	Wed, 27 Aug 2025 13:49:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756302554; cv=pass; b=bAg3hUJjTYF33wP/f92PPw1N4ljHqK8Khp/ruvah6lVYNJebCFFb52Crg+gCw6uTcfkOmCw42VwPJsp+Ug8ko5w/NSfj21+pkBu7GPsagbAYFUkmcg8sQxdL3gOnc2n+25tiCkPoSdO1oPcz3QMeIcLx2lTM+N8iUQXYOkB96Vg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756302554; c=relaxed/simple;
-	bh=phbd8aXSaP/OR1qJvMNuysR5rKmV7cN8BJSmKMNybzk=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=HwXOYj2zOegpaOPpmmDHfzryLxAVsPpJujSvYOrv45ZX6+usNboHGVVDpYNsMbOxA1PikQHV5k/G+3KHyev0nlA4L65pnbJCt+06hoeAJnsnLkXw+g+BaFJCgfdCzBrbYktUIgBG4H11NZEJwUhOe+Dd/urrELz7GQd4RH5KWVw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=A1TdO/EE; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1756302534; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=S/O6eWEN5q6SAI3A9eKQajoU8zhhpeAzX2TRfoj77EDTruVBoRze4R4J06R7VwvZSicOqiGctEPw6iGu9cg+J2VI8SjjHFLNyofFUe9aT65T85yr68i2bFoMbM6yiR0MM3uvJqumquaFnc+n1+ezUOV0Lch7GzGWvCYAzDNjb9E=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1756302534; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=bev1UYNNO9TNoilL6Ch+V4I1og/LGfHRmEFQwCrifvs=; 
-	b=ZzvslLKRaqONnx30cAO0k2XxKmdhpftg4lGPeDXIHL+mBFVgADSyd5vCkWvjsJptJF8RYzZKHxr3NE6GELG1Or8AS/rdY5c9AqvdoUSRNtRhBBlY0VMYtb27wqXd96zcaCVtY13Sfw7PO8euGDNtLeO9/Bzn4nuv08UawZNi9aU=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1756302534;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=bev1UYNNO9TNoilL6Ch+V4I1og/LGfHRmEFQwCrifvs=;
-	b=A1TdO/EEGcubukTMTT7AsaB/+2TvCIbhASEosUebiRafbnaT5MGbBNYJa+citm0u
-	IPlSnByXX919go8fYRHqLfABaN2FEheLUa8pRQ/2A+99gwBO8mj4ambDT21qLmLJNx6
-	/2szd+c9htqEdZMmlgw+3tyWZkG4Pzjxhn0uLcUE=
-Received: by mx.zohomail.com with SMTPS id 175630253092986.34973539824443;
-	Wed, 27 Aug 2025 06:48:50 -0700 (PDT)
-Content-Type: text/plain;
-	charset=us-ascii
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C9AA2EACEF;
+	Wed, 27 Aug 2025 13:49:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756302566; cv=none; b=XuKjvNp5qR4FoqyBo6tVutmXeRdF7hefYP4VVyH26X/hLesni/c3fR/kwxk9Uvcv4cvXasBdlPmWiJfFydwIIdX3olX1eD4CatyCrloJ/TPTcR9Q5pBjjZx9EHqQGJwuYIzTqkjY4Ha0rsqconkyC3NwiTie6lG1077sbmK3KSk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756302566; c=relaxed/simple;
+	bh=Dpt8GGfeLnVmr0M6zmnyoYGC08US4tTed/rZezkvqNs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LbjWyfy8yG+iOCVI6iOwN3lyXRl5jTmfG96H9CSk/F8LnCXXIMvMVXX9HLf8slfinQSf2UBKJNNahl5+FWQnCCp5eAIEJqBN+MAvYs3Lp7EtwWbs3lHypwiKbVdnaAs3HMdMBvwljXCk5pxh1k6Ux2XgtQeLVSEAtRvSe2b88Xk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OOtippKz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3273BC4CEF0;
+	Wed, 27 Aug 2025 13:49:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756302565;
+	bh=Dpt8GGfeLnVmr0M6zmnyoYGC08US4tTed/rZezkvqNs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OOtippKzko2TKtCwDI35Ogr/YO2PjQWOoj13B8dT5h1/hATBhQfvwMJ08m+DKhXfn
+	 cezFaKFTYtWm29o9AzkgTbr3+Kh3wVFClkJDPz3qVfSuuJ3Y8C8R7kZ4LJeIqBzIB0
+	 +/9qdIedLLHPbQfeYd7biIoTgnUgYbk4uXAHbrT6AL5ZSixpxJqP0EzQXQ5YQoOWWD
+	 OopFahUco65XVC+L4hmZaeYpBTao3oW2QEBorNtH8VtO3/uV68oEb68F0MYHgy4lBs
+	 V/17hAgCznYPQWeAw9FByFMH9O9wLlwiK+2FoeFmKeTu2W+mIu9Bn70714b8z/jsVd
+	 a5YdP4jMucoJQ==
+Date: Wed, 27 Aug 2025 14:49:20 +0100
+From: Simon Horman <horms@kernel.org>
+To: Kohei Enju <enjuk@amazon.com>
+Cc: intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Tony Nguyen <anthony.l.nguyen@intel.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	kohei.enju@gmail.com, Paul Menzel <pmenzel@molgen.mpg.de>
+Subject: Re: [PATCH v2 iwl-next 2/2] igbvf: remove redundant counter
+ rx_long_byte_count from ethtool statistics
+Message-ID: <20250827134920.GA5652@horms.kernel.org>
+References: <20250818151902.64979-4-enjuk@amazon.com>
+ <20250818151902.64979-6-enjuk@amazon.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
-Subject: Re: [PATCH v6 07/18] rust: configfs: re-export `configfs_attrs` from
- `configfs` module
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <20250822-rnull-up-v6-16-v6-7-ec65006e2f07@kernel.org>
-Date: Wed, 27 Aug 2025 10:48:35 -0300
-Cc: Boqun Feng <boqun.feng@gmail.com>,
- Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <lossin@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>,
- Danilo Krummrich <dakr@kernel.org>,
- Jens Axboe <axboe@kernel.dk>,
- Breno Leitao <leitao@debian.org>,
- linux-block@vger.kernel.org,
- rust-for-linux@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 7bit
-Message-Id: <8AA2058F-B9CA-4B5F-99B5-8C719C4630C3@collabora.com>
-References: <20250822-rnull-up-v6-16-v6-0-ec65006e2f07@kernel.org>
- <20250822-rnull-up-v6-16-v6-7-ec65006e2f07@kernel.org>
-To: Andreas Hindborg <a.hindborg@kernel.org>
-X-Mailer: Apple Mail (2.3826.700.81)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250818151902.64979-6-enjuk@amazon.com>
 
+On Tue, Aug 19, 2025 at 12:18:27AM +0900, Kohei Enju wrote:
+> rx_long_byte_count shows the value of the GORC (Good Octets Received
+> Count) register. However, the register value is already shown as
+> rx_bytes and they always show the same value.
+> 
+> Remove rx_long_byte_count as the Intel ethernet driver e1000e did in
+> commit 0a939912cf9c ("e1000e: cleanup redundant statistics counter").
+> 
+> Tested on Intel Corporation I350 Gigabit Network Connection.
+> 
+> Reviewed-by: Paul Menzel <pmenzel@molgen.mpg.de>
+> Signed-off-by: Kohei Enju <enjuk@amazon.com>
 
+Reviewed-by: Simon Horman <horms@kernel.org>
 
-> On 22 Aug 2025, at 09:14, Andreas Hindborg <a.hindborg@kernel.org> wrote:
-> 
-> Re-export `configfs_attrs` from `configfs` module, so that users can import
-> the macro from the `configfs` module rather than the root of the `kernel`
-> crate.
-> 
-> Also update users to import from the new path.
-> 
-> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
-> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
-> ---
-> rust/kernel/configfs.rs       | 2 ++
-> samples/rust/rust_configfs.rs | 2 +-
-> 2 files changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/rust/kernel/configfs.rs b/rust/kernel/configfs.rs
-> index 2736b798cdc6..318a2f073d1c 100644
-> --- a/rust/kernel/configfs.rs
-> +++ b/rust/kernel/configfs.rs
-> @@ -1039,3 +1039,5 @@ macro_rules! configfs_attrs {
->     };
-> 
-> }
-> +
-> +pub use crate::configfs_attrs;
-> diff --git a/samples/rust/rust_configfs.rs b/samples/rust/rust_configfs.rs
-> index af04bfa35cb2..ad364fb93e53 100644
-> --- a/samples/rust/rust_configfs.rs
-> +++ b/samples/rust/rust_configfs.rs
-> @@ -5,7 +5,7 @@
-> use kernel::alloc::flags;
-> use kernel::c_str;
-> use kernel::configfs;
-> -use kernel::configfs_attrs;
-> +use kernel::configfs::configfs_attrs;
-> use kernel::new_mutex;
-> use kernel::page::PAGE_SIZE;
-> use kernel::prelude::*;
-> 
-> -- 
-> 2.47.2
-> 
-> 
-> 
-
-Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>
 
