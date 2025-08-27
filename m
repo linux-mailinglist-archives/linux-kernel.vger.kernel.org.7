@@ -1,117 +1,143 @@
-Return-Path: <linux-kernel+bounces-788963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECE8CB38E9F
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 00:44:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28CADB38EB5
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 00:49:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B59BB365591
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 22:44:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6901188ABC5
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 22:50:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A64B30F932;
-	Wed, 27 Aug 2025 22:44:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B1C130DEB0;
+	Wed, 27 Aug 2025 22:49:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IyNSwioP"
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ocX7D9UB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31C4730CD80;
-	Wed, 27 Aug 2025 22:44:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 918DF30CD9C;
+	Wed, 27 Aug 2025 22:49:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756334663; cv=none; b=CObU0CDpTlBhZfGRSnWwkPtICNaqTq4lF0Fxl084yq6AGi2kH2QT1cz29waINaZNwnJmaQk9C71xclpJ6WMzvIukvkNDIm24ntFV7/jOBxeABm2DxhsR0jz1tCDguuKMYEHCdCjzE9BRfJo/jaOSNSRx3oii49FUesSWDHH2s2A=
+	t=1756334979; cv=none; b=VtXyUUvosC1oIZeKGVgjx+ON+SiimDPdpC0d6F2Eru/BibTJ7BQxpY/Ydg2caqnSMamo6n+MXKRguQmuzA0Gzw7O0rIAXnOqowln7AT2WD087Ihon1dovwIq0q8yAgzFkNXE3chWX4bvoKy5HBVd3/U6NI3u/YnOrGAhNExaLLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756334663; c=relaxed/simple;
-	bh=/yUgfiFEencipy3cbMv919gSm8VjsrUVB61Wp75DqIg=;
+	s=arc-20240116; t=1756334979; c=relaxed/simple;
+	bh=ybnfv5G/UHvJ1FV2+oMrm4MyyGYbL0FpiszOiePMzGI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=unYi1pXR6W6BjTuSWgHoTwihnJBkitkTWQm+fwizryGZVZ1MX7fj96idN1gEnRJs4WbH5aFSLLOiyzcebT8BRsm3R7KhM4ufHCVeU0spRb4CrHfK9VFqi+HWnc+guHDinogucSK8gLK4QpcrpYaHHSwIp9wN2VeRGs4RPioHl9I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IyNSwioP; arc=none smtp.client-ip=209.85.128.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-71d71bcac45so2551697b3.0;
-        Wed, 27 Aug 2025 15:44:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756334661; x=1756939461; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=lwUqcyx60/hVH7kKMxcTFGB8KNjk/JKhOvJoDYdMGAs=;
-        b=IyNSwioPnJ5DNZ6Lg/AE8C9Jtm5CBRoF6BrjWHsvYVtI4bKdqOFohGWx4AeuDzllvq
-         6yUTpWfKC3YQiMbSxpB5m3f/9GTnr59k/mornhypIUChihNetgK4zYi1aF3XOGRV1cz/
-         5mX57OEqpXyBB/JcCLT2B8gKjNjxj6QnOc9nKthuodase9N6WfLaR7qv2dvJ3+U4kyms
-         lQJUYsIEKtQWhNQr8e8pFX6o8ztKOZkxq/rckakMN+s5xFJuU23BmPtZYWGMSkx5o+KS
-         tBaeiU240sTwj/NKLHUXVNdnauHdqWsW9TJvxPbFK/yayZEDas3fTT8sPP2+cnfKh1Eh
-         Zo/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756334661; x=1756939461;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lwUqcyx60/hVH7kKMxcTFGB8KNjk/JKhOvJoDYdMGAs=;
-        b=iGcb8QdDobtZcNFrk1EPTz6IsORRBGbodREVGWQzUh3364PvTbCqbZjgS0aFdlaCa9
-         8sujLvBFRNwXTZNmlrLXXB1Yvlpl33xLmUXOceSJp5d/FJjmycJSCsq68c8hIIpHRD1v
-         fligIKQ+Rphkeu1yfko7/BWQTIYRJNG2BrO7vs2rrOmMcf+Kdd3JKniBmuZoTFpxXaR6
-         7e+X0xtIyVm4AZ3VfAOFDOg7QlIyDZRNZO+tNvfgJXbYVo8niMW2gNe4qFw6ytIl3Ms3
-         6CRx8PYZN2NxcZsSUgRqzS/lAjA5+QgU592p/3J9VBBikhqEap7MXSVDSPY+gvTzSjRp
-         YQdA==
-X-Forwarded-Encrypted: i=1; AJvYcCUUZnUiQJQNDAbpmsBNuIsdPivcBLGq7uQunN2yKZEY6eCh3AsDHETH8++w0DqezVsXoTbRujE6hsWh@vger.kernel.org, AJvYcCWOpV1x0K9SG6Mn1XJq9pR4iY1NMRnqZJSOKxGV203lMJQHm6BYxBb2gk/Pld1umjUxd/Z+Tr1Hu7K6KGhw@vger.kernel.org, AJvYcCXqvYO02yHg0EMLETfyThfu2wSA44BuUK1x1MxdPkPe/OqfA96Cvp9aj+qnNB8ORbjlpk39u0rlJ0ZkhXA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz6HbeA3Sd7HHjdpOlDiPZhxzHdGe9drhbo++aOr1/ohOnO/ge1
-	rbfBzU2lTzH20jHoZPqE+4pPuFGGzIMQAH79OuJZItyJbWQALGTI687KAUa/tKFe
-X-Gm-Gg: ASbGncv0r/jqQ0rFPFIvVXIQOh5Qn80697JdJFB7bm08k9BJGE2C9rKWpy4mX25oehk
-	uMg4AO64EpPGY4zwiwxg8KjBbaKwtdTyDPERYUDkzgzWRXJYcln5uF4zatq9CHOyWDZr2/zXAnn
-	1sUi5ExOSIbW43qAqh5U5B8SEOoSOlyDAWuXcWDyaK/CpTbTMWONFenZw4P2aRXZq0UOAYCJV0h
-	OKtZE/NCcE+DTQyI0QwLD4epQsGw4bacqrhZJkckVdTmC3/R6SXsx2DXEfQWfksSrwq0Uncnn6p
-	OHLNcp//HBwaHGvPgwwI4coEUt4MOwGRYLZp0ky7P7RbaoFxJzSu3AYbZAJdTc2cb68rS2nFunh
-	H+Rw5Zd0JIHYnTIqZJg==
-X-Google-Smtp-Source: AGHT+IFuAUSUhO+Z4D6ZkaJYjQgZRNptH+8z6yXRxRHJsrFIqVkRrr1Vf81WRdJ2isSjF/uwz3rPLw==
-X-Received: by 2002:a05:690c:d96:b0:721:1d52:1989 with SMTP id 00721157ae682-7211d523da1mr108376527b3.28.1756334660972;
-        Wed, 27 Aug 2025 15:44:20 -0700 (PDT)
-Received: from raspberrypi ([2600:1700:90:4c80::d])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-7212005f70dsm18256417b3.40.2025.08.27.15.44.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Aug 2025 15:44:20 -0700 (PDT)
-Date: Wed, 27 Aug 2025 17:44:19 -0500
-From: Grant Peltier <grantpeltier93@gmail.com>
-To: robh@kernel.org, conor+dt@kernel.org
-Cc: grant.peltier.jg@renesas.com, linux@roeck-us.net,
-	linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] dt-bindings: hwmon: (pmbus/isl68137) add RAA228244 and
- RAA228246 support
-Message-ID: <c0c6e99e51b6fd4c5dbab02e02e4d81abe31f085.1756331945.git.grantpeltier93@gmail.com>
-References: <cover.1756331945.git.grantpeltier93@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=FyC2NPgyFUbwJseEzec7SN1x1guGVSdeFGHgq75LHBJUMVB2rx1658g3sCVvsJbTQCJX9Um1LKkC5ru4aD0o0HhhWAYrH/WjsldtO2rKGUqX8D0wiZaA/pofbX1NV5H0Noj3RcV+/IrnsImh2DpDA12HzxFezDFUuAiLklQ+Qf4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ocX7D9UB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCC68C4CEEB;
+	Wed, 27 Aug 2025 22:49:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756334979;
+	bh=ybnfv5G/UHvJ1FV2+oMrm4MyyGYbL0FpiszOiePMzGI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ocX7D9UBVYze+yjlww4QFREVgkeu1y0cTcIewEiMl481Vq1waDGRmAToN0KNJi37C
+	 g3H3fK/lloeGSxSlw6ON+Tou4PvOzGt32XX5obxB7pwxAQpz9sEwMlT1mZ4RYo38bj
+	 KrYlDESV+p9lh5WmRZlkPgEj8Ik5mmG00nodJ8VqOlas4dbSzDlz9xPo84Pgjx/XLV
+	 QSQB8+i9Zdatsi21s7iEAdJiNo1oSEpR9Y9xwqTlG6q24lBSkS9ikSdoTnxv9PK9jf
+	 NDXx1oc5iEIIL+hilfI0ooGhHoFsdC9qHxOSrlkZG/+Mt8NjBTU8Z7tjm19L3WrjQi
+	 DZKqiDWDS73zQ==
+Date: Wed, 27 Aug 2025 15:49:35 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>
+Cc: Nicolas Schier <nicolas.schier@linux.dev>, linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Masahiro Yamada <masahiroy@kernel.org>
+Subject: Re: [PATCH 2/2] kbuild: userprogs: also inherit byte order and ABI
+ from kernel
+Message-ID: <20250827224935.GB414199@ax162>
+References: <20250813-kbuild-userprogs-bits-v1-0-2d9f7f411083@linutronix.de>
+ <20250813-kbuild-userprogs-bits-v1-2-2d9f7f411083@linutronix.de>
+ <20250827075334-3332c08d-66f3-427d-b0b2-4460e779f261@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <cover.1756331945.git.grantpeltier93@gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250827075334-3332c08d-66f3-427d-b0b2-4460e779f261@linutronix.de>
 
-Add device type support for raa228244 and raa228246.
+Hi Thomas,
 
-Signed-off-by: Grant Peltier <grantpeltier93@gmail.com>
----
- .../devicetree/bindings/hwmon/pmbus/isil,isl68137.yaml          | 2 ++
- 1 file changed, 2 insertions(+)
+On Wed, Aug 27, 2025 at 08:31:00AM +0200, Thomas Weißschuh wrote:
+> On Wed, Aug 13, 2025 at 07:43:41AM +0200, Thomas Weißschuh wrote:
+...
+> > diff --git a/Makefile b/Makefile
+> > index d0f5262a9c0f3b4aa79a91c20cc149d034ffa0b7..7d40f84d5efde18ed3a2f4d8cf7a9b1ec3610ed4 100644
+> > --- a/Makefile
+> > +++ b/Makefile
+> > @@ -1137,8 +1137,8 @@ ifneq ($(CONFIG_ARCH_VMLINUX_NEEDS_RELOCS),)
+> >  LDFLAGS_vmlinux	+= --emit-relocs --discard-none
+> >  endif
+> >  
+> > -# Align the bit size of userspace programs with the kernel
+> > -USERFLAGS_FROM_KERNEL := -m32 -m64 --target=%
+> > +# Align the bit size, byte order and architecture of userspace programs with the kernel
+> > +USERFLAGS_FROM_KERNEL := -m32 -m64 -mlittle-endian -mbig-endian -EL -EB --target=% -march=% -mabi=%
+> >  KBUILD_USERCFLAGS  += $(filter $(USERFLAGS_FROM_KERNEL), $(KBUILD_CPPFLAGS) $(KBUILD_CFLAGS))
+> >  KBUILD_USERLDFLAGS += $(filter $(USERFLAGS_FROM_KERNEL), $(KBUILD_CPPFLAGS) $(KBUILD_CFLAGS))
+> 
+> I looked some more at the breakage reported from -next [0].
 
-diff --git a/Documentation/devicetree/bindings/hwmon/pmbus/isil,isl68137.yaml b/Documentation/devicetree/bindings/hwmon/pmbus/isil,isl68137.yaml
-index 3dc7f15484d2..ae23a05375cb 100644
---- a/Documentation/devicetree/bindings/hwmon/pmbus/isil,isl68137.yaml
-+++ b/Documentation/devicetree/bindings/hwmon/pmbus/isil,isl68137.yaml
-@@ -54,6 +54,8 @@ properties:
-       - renesas,raa228004
-       - renesas,raa228006
-       - renesas,raa228228
-+      - renesas,raa228244
-+      - renesas,raa228246
-       - renesas,raa229001
-       - renesas,raa229004
-       - renesas,raa229621
--- 
-2.39.5
+Thanks for looking into this.
 
+> For architectures with multiple possible byte orders or ABIs the toolchain
+> might be able to build the kernel for all combinations but might not have a
+> matching libc for them. Currently userprogs uses the default byteorder and
+> ABI from the compiler, which will match the included libcs if there is any.
+> However the resulting binary might not run on the built kernel.
+> CC_CAN_LINK can be extended to generically handle different byte orders, as
+> for those we have standard kconfig symbols. But handling ABIs would need to
+> be architecture specific and a bit more complex.
+> 
+> We can't use KBUILD_*FLAGS for CC_CAN_LINK, as they are not yet set during
+> the configuration stage.
+
+Right, this was the biggest thing that I noticed, which would really
+help us out...
+
+> I see the following options:
+> 
+> * Add byte order and architecture-specific ABI handling to CC_CAN_LINK
+
+How do you envision this? Different default lines for each combination?
+Feels like that could get complicated quickly but this would probably be
+the objectively most robust and "hands off" option.
+
+> * Accept that userprogs might not be runnable on the built kernel
+
+I do wonder how common running the userprogs are. Obviously you hit this
+in testing but I am curious if others have reported this.
+
+> * Let the user manually set CC_CAN_LINK to override the autodetection
+
+I am not sure I like this one but maybe we could have a hidden
+CC_MAY_LINK with something like the current CC_CAN_LINK then CC_CAN_LINK
+could be turned into something like
+
+    config CC_CAN_LINK
+        bool "Toolchain can link userspace executables" if !COMPILE_TEST
+        default CC_MAY_LINK
+
+I am not surethat would actually help us here plus I still do not like
+the idea of throwing this back to the user.
+
+> * Add separate handling for runnable userprogs
+
+What do you mean by this?
+
+> * Use tools/include/nolibc/ for userprogs instead of the toolchain libc
+>   (unlikely, but I wanted do mention the option)
+
+This could be interesting to explore but I assume using a cross libc
+could be desirable for some people depending on the testing?
+
+Cheers,
+Nathan
 
