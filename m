@@ -1,155 +1,170 @@
-Return-Path: <linux-kernel+bounces-788968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A245B38ED3
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 00:52:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3C45B38ED7
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 00:53:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6888B367D92
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 22:52:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D70B71897990
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 22:54:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36F5A310783;
-	Wed, 27 Aug 2025 22:52:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 041E630FC0A;
+	Wed, 27 Aug 2025 22:53:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZqUYD5aQ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PoHlYsN3"
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8D8330CD80;
-	Wed, 27 Aug 2025 22:52:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E98EC6FC5;
+	Wed, 27 Aug 2025 22:53:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756335151; cv=none; b=KXgi6WgkcZG480q6tm1bs1ZGhKiQhu5L5kuYNBf6BAxVCCeGRxRDs1wvp4lVUAZmbFcRDeQA5Nma2AEri+g5y188sfc0ASlP7rjld2ipNb1R491sJTzp81Sl5fCvleOOuMadkRyoZWvyVTXu7AErUMRcBvZZflxpvdIoU7+obsk=
+	t=1756335228; cv=none; b=CNOlYzmR5fy1yG0Usn2MngxzsMwyFVaLgaGSyqvLhvgV9xEWR07vrWkyAHt7aj0U4EdmK0Dezte1SSj8XbgTpPj7zXmyizZSPaMRmH+p7mhZ+/PTF24z8niuSAC/1ZDjnZaflsZ6rLtFFctpQmRGArK71ixRz5va54wquOruw4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756335151; c=relaxed/simple;
-	bh=vJgBl10AZNWfXOOB/pDgIkoKh9accRpxxsoejJNG8b8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fNfKHMP7i7g1huBD3J2lXNgNIgWQvlcd2Y9bkzHRzdM4mE6MH/wP+O/CSy+IhccOxXwbnlh1LBS1EE3c/dpvNhPdE81LzTJB8dEAevj7qhAqFIf+imlVWiqOXImO6Mh8c7IxaPYS4bV743z7u5fXWL9H1IVp0Ej7I0wb+nYnUHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZqUYD5aQ; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756335150; x=1787871150;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=vJgBl10AZNWfXOOB/pDgIkoKh9accRpxxsoejJNG8b8=;
-  b=ZqUYD5aQ0RvN9oWcS1wHmKoTChfKlOu12uMrFqZBvPjU6ATwEN5wI7OI
-   XVQZEpU4en1EEhTZAxFf1+jxaH+/k25YxS445oDGl1euSAha5ZmDWNH9S
-   IDC4d8klMHt7K4xv8tW+pg5eI1FpOhUSI2twTrdCL/l6Cebg2i2hSrGMx
-   mJOK46brGFPvECj/NrDVavCjrGNtVeGWb0tzL5v1ZhiuxmiMubvYDNnim
-   JoLZzCK/cEC21TGZpZyU5GEGpqVTVppuy/9KiL4gBAF2d6q/x7UIWpek4
-   Y9Sy+46ZrrvN0TuHsue52dirTThVNWl3PbUzp9DLy2ziscChJdE67ShN4
-   A==;
-X-CSE-ConnectionGUID: pDqvskmnSW+oOrzuhqp5DA==
-X-CSE-MsgGUID: YfcphaR6S/e6cBigflTLVA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11535"; a="62418157"
-X-IronPort-AV: E=Sophos;i="6.18,217,1751266800"; 
-   d="scan'208";a="62418157"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2025 15:52:29 -0700
-X-CSE-ConnectionGUID: 3xdHidK7Tq+UjmDsKE0yNA==
-X-CSE-MsgGUID: CnrtJs0bTmqQznqiw11SnA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,217,1751266800"; 
-   d="scan'208";a="174125255"
-Received: from dwesterg-mobl1.amr.corp.intel.com (HELO [10.125.109.56]) ([10.125.109.56])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2025 15:52:28 -0700
-Message-ID: <ab1e0119-85a6-4b2e-a734-275b43e6dac4@intel.com>
-Date: Wed, 27 Aug 2025 15:52:27 -0700
+	s=arc-20240116; t=1756335228; c=relaxed/simple;
+	bh=qx9L6BbewKMpl4DXPDq6nEwKsLd49TI5v6Q+s2yIAeU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lggmpNTy6UBb4MfvD5z+l9NitjvTBznZU82gv7YcUN+9Q+VizRrMlWSURPJqMKyNd55egyOaOaLjYJq0OM8vaVFeUcw0jcHZkVnfn5sJsJiP/tQzX+e3ebA7iBXtDD2ikyiyxVzxSllHkM8N+0/SCVhmHDxoHc0hLiAd9uHEIIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PoHlYsN3; arc=none smtp.client-ip=209.85.215.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-b49d46a8d05so357304a12.0;
+        Wed, 27 Aug 2025 15:53:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756335226; x=1756940026; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=S5GAPOkJLyGHl3BeAzPSzMibv8UFdn1Toswu4lqeRmw=;
+        b=PoHlYsN3ySST1K9iXoLiNg7VaRZ0zhv+eOGhqdhMq8rt+YFD4GRbgOJr+XspWYm43i
+         9oYElgW+HhFePyFhRtJCPCQMejrDfUo0rTnP0AjObLODhh0BVei+xkadQplxMLruuT8V
+         of31QEX6o/ya4s+E3IrxS6R7o7NxFU6XREZsfNkUEqc9PKgrsR+YLf9Otj1HINggjTiC
+         Izmj5uNDQPz229UlgcjQwTWhCBCyszjBh5lFvAdxFdHxwIS8Qzw17TR6kLYRuKx1rXHU
+         I+g0LWxT5sccYw7yS4Zs85DjWDjLrjExCuHwMXdbGcyiuMq/h4sSM7wbbqPtXfR9RxPW
+         3Oww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756335226; x=1756940026;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=S5GAPOkJLyGHl3BeAzPSzMibv8UFdn1Toswu4lqeRmw=;
+        b=B/rSJ6dpLs0A5OLg3NQgwM6sCTgZU1mchTThazNtR4swHyaI56VjZcKvA/S8OJeQqz
+         5ZkCFBIKr242vHU+0qh/fCmh+IEv8gM42CLLLC2K+FBecYPMcHR108+3QCQDbRFT5Dl0
+         KsWOeG7OF8mp7HajHa8XYHqsOp5ZaktMxwTKLAje4zIaAcgAgRF/s0DGNaycs6p+pEbj
+         cnfomdUOl41cI5mLJm11LjN3kTLQISwIRUvUiWhSHir59RtwGf6Q3IrcWY7eBgvBRSHI
+         oFmu5RnKDcLhqeC0EvfUhTFaXx7i5qLv9uklfWkWMniM0cMu0pJBzRVuU3ptdCM2L2nu
+         +0Wg==
+X-Forwarded-Encrypted: i=1; AJvYcCW/P4fkguHa5ghQBLbayn5dJfQhxY4LM4SP06KQh/XaywuFhk4CyI7gMTDGdykR/bK2lkTAwiCzqB+I@vger.kernel.org, AJvYcCX7anjq8vRvbJyIjP0OqiE7NcErgwitmakAdRDVX7QYUd2WtFpyDENMMOc+BRtHBdJ3Lg2eumH/VgMNjJE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzpVd2Fk9wrysqaAFRfITsaFhDvI9UFOOdxR2s+S19ocqkgl23Y
+	SSAPp8CJo1P+OXSUNe//uhTE+eyr9lTmr+x3rILaOhpSdry96VUL5u35
+X-Gm-Gg: ASbGncsADUJeBJxvTptxgUiXhIqWpX1+2u0yV9f1FORMTZkVz6Wmtro9dOmA8193cPn
+	vQY3ObR6dy+0kB8LDyT8ZagAOxcXiQ1Tv6D+kJWChuLR4zIUcGlVzezBkqswkgA7oFizllV61NL
+	40CN+XI6LNAD7KMVxAptWlWOKbYyV0zk6wWgYrDsm+8/PujiGP+TmWsJeaA8jNZ99yNYBdfsgzN
+	79ctgbDnKHAUP1H3wymN3cQ1i2SS3iyiOaWnZBoWmyPNEBjayBjOXG5I7ZIgIESAld7qnxd4BjQ
+	KerguYv9fje9515uRqUE/i8/lHccEmn7tJXI4kYbgz1eOMyWwzq25GopBeM2j2R5zsBAz2bssej
+	vH/nIm4g5pd/x/7YWo3+YeQ==
+X-Google-Smtp-Source: AGHT+IHDSSVKStlkRxc9uZPGoNs8adMCt2I9S7LNO+sTw/f4mEs4YfBgNzFG6sTKv8biCiKs+WODkw==
+X-Received: by 2002:a17:903:943:b0:234:b743:c7a4 with SMTP id d9443c01a7336-2462eeb75edmr258424945ad.38.1756335226090;
+        Wed, 27 Aug 2025 15:53:46 -0700 (PDT)
+Received: from localhost ([2001:19f0:ac00:4eb8:5400:5ff:fe30:7df3])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-248953dc1f4sm30583395ad.30.2025.08.27.15.53.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 Aug 2025 15:53:45 -0700 (PDT)
+Date: Thu, 28 Aug 2025 06:52:39 +0800
+From: Inochi Amaoto <inochiama@gmail.com>
+To: Bjorn Helgaas <helgaas@kernel.org>, 
+	Inochi Amaoto <inochiama@gmail.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, Marc Zyngier <maz@kernel.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	Shradha Gupta <shradhagupta@linux.microsoft.com>, Nathan Chancellor <nathan@kernel.org>, 
+	Anders Roxell <anders.roxell@linaro.org>, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Longbin Li <looong.bin@gmail.com>, Linux Kernel Functional Testing <lkft@linaro.org>
+Subject: Re: [PATCH] PCI/MSI: Check MSI_FLAG_PCI_MSI_MASK_PARENT in
+ cond_[startup|shutdown]_parent()
+Message-ID: <zlhxt6zqvweklyknmmrlheg3ojy4lildosfjoginliggdtdf5x@zent5qnnawvb>
+References: <20250827062911.203106-1-inochiama@gmail.com>
+ <20250827183202.GA893001@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 04/36] x86/Kconfig: drop superfluous "select
- SPARSEMEM_VMEMMAP"
-To: David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org
-Cc: "Mike Rapoport (Microsoft)" <rppt@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- Alexander Potapenko <glider@google.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Brendan Jackman <jackmanb@google.com>, Christoph Lameter <cl@gentwo.org>,
- Dennis Zhou <dennis@kernel.org>, Dmitry Vyukov <dvyukov@google.com>,
- dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
- iommu@lists.linux.dev, io-uring@vger.kernel.org,
- Jason Gunthorpe <jgg@nvidia.com>, Jens Axboe <axboe@kernel.dk>,
- Johannes Weiner <hannes@cmpxchg.org>, John Hubbard <jhubbard@nvidia.com>,
- kasan-dev@googlegroups.com, kvm@vger.kernel.org,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Linus Torvalds <torvalds@linux-foundation.org>, linux-arm-kernel@axis.com,
- linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
- linux-ide@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-mips@vger.kernel.org, linux-mmc@vger.kernel.org, linux-mm@kvack.org,
- linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
- linux-scsi@vger.kernel.org, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Marco Elver <elver@google.com>, Marek Szyprowski <m.szyprowski@samsung.com>,
- Michal Hocko <mhocko@suse.com>, Muchun Song <muchun.song@linux.dev>,
- netdev@vger.kernel.org, Oscar Salvador <osalvador@suse.de>,
- Peter Xu <peterx@redhat.com>, Robin Murphy <robin.murphy@arm.com>,
- Suren Baghdasaryan <surenb@google.com>, Tejun Heo <tj@kernel.org>,
- virtualization@lists.linux.dev, Vlastimil Babka <vbabka@suse.cz>,
- wireguard@lists.zx2c4.com, x86@kernel.org, Zi Yan <ziy@nvidia.com>
-References: <20250827220141.262669-1-david@redhat.com>
- <20250827220141.262669-5-david@redhat.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <20250827220141.262669-5-david@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250827183202.GA893001@bhelgaas>
 
-On 8/27/25 15:01, David Hildenbrand wrote:
-> Now handled by the core automatically once SPARSEMEM_VMEMMAP_ENABLE
-> is selected.
+On Wed, Aug 27, 2025 at 01:32:02PM -0500, Bjorn Helgaas wrote:
+> On Wed, Aug 27, 2025 at 02:29:07PM +0800, Inochi Amaoto wrote:
+> > For msi controller that only supports MSI_FLAG_PCI_MSI_MASK_PARENT,
+> > the newly added callback irq_startup() and irq_shutdown() for
+> > pci_msi[x]_templete will not unmask/mask the interrupt when startup/
+> > shutdown the interrupt. This will prevent the interrupt from being
+> > enabled/disabled normally.
+> 
+> s/templete/template/
+> 
 
-Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
+> AFAICS cond_startup_parent() is used by pci_irq_startup_msi() and
+> pci_irq_startup_msix() in pci_msi_template; cond_shutdown_parent() is
+> used by pci_irq_shutdown_msi() and pci_irq_shutdown_msix() in
+> pci_msix_template.
+> 
 
+cond_startup_parent() is used by pci_irq_startup_msi() in
+pci_msi_template and pci_irq_startup_msix() in pci_msix_template;
+cond_shutdown_parent() is used by pci_irq_shutdown_msi() in
+pci_msi_template and pci_irq_shutdown_msix() in pci_msix_template.
+
+> > Add the missing check for MSI_FLAG_PCI_MSI_MASK_PARENT in the
+> > cond_[startup|shutdown]_parent(). So the interrupt can be normally
+> > unmasked/masked if it does not support MSI_FLAG_PCI_MSI_MASK_PARENT.
+> > 
+> > Fixes: 54f45a30c0d0 ("PCI/MSI: Add startup/shutdown for per device domains")
+> > Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+> > Closes: https://lore.kernel.org/regressions/aK4O7Hl8NCVEMznB@monster/
+> 
+> I guess there are several other reporters and reports that could be
+> added here.  Up to you whether to add them.
+> 
+
+Yeah, there are some missing tag from the original post, as this patch is
+already submitted. I will add it in v2.
+
+> > Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
+> > Tested-by: Nathan Chancellor <nathan@kernel.org>
+> 
+> Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+> 
+> > ---
+> >  drivers/pci/msi/irqdomain.c | 5 +++++
+> >  1 file changed, 5 insertions(+)
+> > 
+> > diff --git a/drivers/pci/msi/irqdomain.c b/drivers/pci/msi/irqdomain.c
+> > index e0a800f918e8..b11b7f63f0d6 100644
+> > --- a/drivers/pci/msi/irqdomain.c
+> > +++ b/drivers/pci/msi/irqdomain.c
+> > @@ -154,6 +154,8 @@ static void cond_shutdown_parent(struct irq_data *data)
+> > 
+> >  	if (unlikely(info->flags & MSI_FLAG_PCI_MSI_STARTUP_PARENT))
+> >  		irq_chip_shutdown_parent(data);
+> > +	else if (unlikely(info->flags & MSI_FLAG_PCI_MSI_MASK_PARENT))
+> > +		irq_chip_mask_parent(data);
+> >  }
+> > 
+> >  static unsigned int cond_startup_parent(struct irq_data *data)
+> > @@ -162,6 +164,9 @@ static unsigned int cond_startup_parent(struct irq_data *data)
+> > 
+> >  	if (unlikely(info->flags & MSI_FLAG_PCI_MSI_STARTUP_PARENT))
+> >  		return irq_chip_startup_parent(data);
+> > +	else if (unlikely(info->flags & MSI_FLAG_PCI_MSI_MASK_PARENT))
+> > +		irq_chip_unmask_parent(data);
+> > +
+> >  	return 0;
+> >  }
+> > 
+> > --
+> > 2.51.0
+> > 
 
