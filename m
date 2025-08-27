@@ -1,167 +1,262 @@
-Return-Path: <linux-kernel+bounces-787986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787989-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3991AB37E73
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 11:10:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6FA8B37E7F
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 11:13:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F1BD204D83
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 09:09:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CEA477B568B
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 09:11:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8EBB34DCCE;
-	Wed, 27 Aug 2025 09:08:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6A4A341AC8;
+	Wed, 27 Aug 2025 09:13:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Hi6o7ZZA"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bPw7OYFO"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39BFE345732
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 09:08:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756285704; cv=none; b=Om3pCxck70DOlXuM0SdefrO3V7/3v5kHz2tEQPvidZ+nUKmsA0FlbEGUoNF/diHmxiXYI53Z9joGS/Q2TW3+mWXBsFbq7t26jK5F6XzoIF0nvj53tDux3hz3GEkpPdrxC6ixbExKUp4KSFZBYddpZ6TQWv6xQtJw0BtJ97+xKPg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756285704; c=relaxed/simple;
-	bh=HSoyRRGbqwKrrPWn0b3Gxv3O7atFcfaJ2Ou+bHXSKWI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VvqBqypFvf+S/cCV9ayeACNwcQeo8dUR7YCLg80rtayEhwFudMjjfgxuGOJULkf3JYHd8/UbtgMg0GduJiKNiQkKVNxb8tu1tWF2AiRQloCWzqUZeGqPKe3mc11DE5lo2rWPhnoo5LWu9hshfEDWyP62aUD0J+GXpnmbsKsQvOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Hi6o7ZZA; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756285700;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=btmAfnbOXrpj/8xKgw2LcnKjNrejkITdGU2HjYixq9M=;
-	b=Hi6o7ZZAuMxbQuyKowH91qdDM/b/adER79TeDLNS6mMxmRtvovs8ZAAqSxB8x4EVt2g3+L
-	1UFaw4rQ+bUyHedyVUb5KBu0ZTybmoZXm5PQkkf1x0vYtgxlcPSh+Ypvz5yPkCQuW0zbXS
-	6xbtP4TXLQymcWaJeJaMgq7zSnLvitE=
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
- [209.85.219.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-90-_E0yIbiEOAWSdkMYQDpUDQ-1; Wed, 27 Aug 2025 05:08:18 -0400
-X-MC-Unique: _E0yIbiEOAWSdkMYQDpUDQ-1
-X-Mimecast-MFC-AGG-ID: _E0yIbiEOAWSdkMYQDpUDQ_1756285698
-Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-70dd6d25609so32356916d6.0
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 02:08:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756285698; x=1756890498;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=btmAfnbOXrpj/8xKgw2LcnKjNrejkITdGU2HjYixq9M=;
-        b=UeYcHVL1ROvCzelxlmsWu0VvUXemvFp6CK909xP935R6gVo0xHZA5no+YVME8PHjE9
-         wDCk0h6RXJJ9y31s3ZvSN65QrAU93kg7sTvAMVNiZfZ9itJvaEuAgc6lBst2fZh2x8xw
-         LLI5y5O7H56ZBUcwS/G3jPu04w9uYrX5ah8uYg9uS9W0VKMOx1gG+rT7xxq4CxtBRrTg
-         K6mcokQy/2mZJ15dgoQqFIhMBhMn2p32TilyRsTLtE2k3Ebo7BQbN17xQw/Hbb1lkGcz
-         YA2oOb1jQnnsKrobTo/pndv9lzXGnw8T6lv+lk2GECARUdDpejw/BH97VxUmgChtXEi9
-         38CA==
-X-Forwarded-Encrypted: i=1; AJvYcCXs/VjiTzQkMi6hdAxtXu5XmgGjC0gfDcq+E/WmOjL4DJpWxRIhr96iwLtSPIO+drRIRuJMx+VL+OqRyEA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyrukVz2KM0xGEly7PCQzwnvvqJB3Xrxni7Auh/P+WSF+v2fMMw
-	qhvYAHHMW/TnnP5kd9jPAg5AyPgxH6cAIYY8SH6lNYF7tMnDNw0nviT4ZkJDisYPe0zakyvdCyN
-	dbmcSJ6UdAEDa2x9vTQn1Y6Eew5ErwLOGBTOMaoZOGD4E/98uFXuJtvsji0Uk7COlMQ==
-X-Gm-Gg: ASbGncssNcGV6lJe5GvmEKLSLhks6vnDRVEKHHOFD2I+k8ENExYcgS9ZUnX8a55aI9D
-	U8gFaDz6AXHHog8qxK67/nWIOvGXM1gv1T6KwR2+VwYU/n8UY3w5Yfdx3Cc/oS8KwykB9DHFtqv
-	LveasXiOq1jIx4L7FaCjnvu/7So07LKGhtqYjWttr0j0+IZp5cwVoxcyV8f1n8k5tX+iEbWeleK
-	aS/fQwsTqGeo7mcD57E83uxs4aUIwGS6YDRln9UX9l5cQWbDlzxOg9juaWWUZQGkVI1NL+/Cszt
-	K17oLF4wqGc90wTVNma7871ONoNvVgJLaOC1gygmdz+4wonExdtkzVLCf+dHhCR+KWhFB9LdASj
-	b4U/SYODsSQ==
-X-Received: by 2002:a05:6214:f2f:b0:70d:ad2e:ced8 with SMTP id 6a1803df08f44-70dad2ed051mr7559316d6.54.1756285697876;
-        Wed, 27 Aug 2025 02:08:17 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGKnx0Sy0uoUmTwX2Z3OLZ81WV24S78smOZB6VPkrYeFf13KoSmBl+HyiIGutNgl+jaQogtkw==
-X-Received: by 2002:a05:6214:f2f:b0:70d:ad2e:ced8 with SMTP id 6a1803df08f44-70dad2ed051mr7559106d6.54.1756285697478;
-        Wed, 27 Aug 2025 02:08:17 -0700 (PDT)
-Received: from lbulwahn-thinkpadx1carbongen9.rmtde.csb ([2a02:810d:7e01:ef00:b52:2ad9:f357:f709])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-70da72b3c1csm81764646d6.58.2025.08.27.02.08.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Aug 2025 02:08:16 -0700 (PDT)
-From: Lukas Bulwahn <lbulwahn@redhat.com>
-X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-To: Theodore Ts'o <tytso@mit.edu>,
-	Andreas Dilger <adilger.kernel@dilger.ca>,
-	linux-ext4@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Lukas Bulwahn <lukas.bulwahn@redhat.com>
-Subject: [PATCH] ext4: remove obsolete EXT3 config options
-Date: Wed, 27 Aug 2025 11:08:08 +0200
-Message-ID: <20250827090808.80287-1-lukas.bulwahn@redhat.com>
-X-Mailer: git-send-email 2.50.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 545B22F83A5;
+	Wed, 27 Aug 2025 09:13:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.8
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756285985; cv=fail; b=QO/TqFqw5sfY8wUy7pWkrKmJS5sBboApli4PDdCcOb8ntn6rzN9Ubt084qzfmcrEWiawy+remcBZCJcRZnBmkNpGubfUOG1x9CZKikam8w6zjAsFgPS08EM1dNZ/x3wD3I/o+DqM1Yh4DMrLA+Kk0lLtKcFE+LNvZL2+iYu0EMo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756285985; c=relaxed/simple;
+	bh=dRISzVKoK1Nj6JlDccLHG7VUJ1xjhfpUiJzwEldHK58=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=WoFTjEuENdajoc7kIMFg50A0i6s6bzkGW38dpcSeyam3dUZPF4L494Il4RBduBkuk85DXZd5QoMSlqvrlXWoPOnM/c6yaEiudnv+d50/LD+XteerqHQcoVU1KR0EMBBysK9mzf+VveH6M+i+yCepNen3qaQG0mkZESyBIE0YvL8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bPw7OYFO; arc=fail smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756285984; x=1787821984;
+  h=date:from:to:cc:subject:message-id:reply-to:references:
+   in-reply-to:mime-version;
+  bh=dRISzVKoK1Nj6JlDccLHG7VUJ1xjhfpUiJzwEldHK58=;
+  b=bPw7OYFOWaEpwcP/j5VEEkrV9ZsOW5wvFJr4AxrX7bz/nm8s96F0W+E7
+   l8MesOHVhKwQB9qamLO03t7Mss/v8yeUTiliVk4bAMOtmd2LwjHbu++dI
+   iafApg29r31Q4O9I1goVPtBx5uIcBLBWqU4F3ZkC4leL/BQrYxUn0f1UF
+   x/GLSu9LSND2LNdS27tvb5j+qs526MOeIZY39egm35RmB+y4heLW/Nqre
+   r7L6SNAdSVpts1yAUAUQZnDylDPeQ24yYswxAsiX3tArxTZN2cXXTbST0
+   CcyZkkJfyhoonHFIS4lR5Fzt+66uJjKkVm7B1657zlbjk6RpsC8zkBdy4
+   A==;
+X-CSE-ConnectionGUID: nDUfH4nkQEW1pZshA4Of8A==
+X-CSE-MsgGUID: XSTQnne+Spu7VXAf1JOavw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11534"; a="76134134"
+X-IronPort-AV: E=Sophos;i="6.18,214,1751266800"; 
+   d="scan'208";a="76134134"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2025 02:13:03 -0700
+X-CSE-ConnectionGUID: anCpiQXpR528p1KXfNcnHQ==
+X-CSE-MsgGUID: 1SaKRqRBQt+vhpvj8Tx3uQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,214,1751266800"; 
+   d="scan'208";a="170623779"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2025 02:13:03 -0700
+Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Wed, 27 Aug 2025 02:13:02 -0700
+Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17 via Frontend Transport; Wed, 27 Aug 2025 02:13:02 -0700
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (40.107.220.68)
+ by edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Wed, 27 Aug 2025 02:13:02 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=CXt0vYYBtHrCYlvGMp9lcULoqPqvOQoN3wA4KURl36qvcbXPITUTR8ZszAprv7GwpBtR9HBvo546E9KCanS1Mp9f7iEWXgr934RLUtmBTl1j1VCFQv4MPugtkUrRFraWSY8kwiWL2JTi5ZYTmyN95yxfMI5kVaQ8k3WtypWCu87dqbKBaPlupVdMEYCDIKigOpPqiWcHANoOJ3AXO+R/UocX6sbuzvsFXrY8jJnHLeS7sHmBhGCgFtOWrAvzF6rKxWHZaub3PVbsQf8f30ODAc5KIHtuiyyDRlwrv3bCUb3hWkVGjbSGUGaGc2ZkR/VB9FyMStvZRH+2BIB8FPVs+g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=LQfG2ljCXkgGNA1BFAMXGPxW99ag6Fx/EGV0DxYXfb8=;
+ b=BlyJYXVfBTM9oT5Oe6+4Pq7iFi/VvI3dBxvfztKdV9g/TrHeWaKXShWq4cFkMR8LEvTGIwD3IPFSzs9UmyOyTURH4WCunojkSxpcroU9ItCWOOKQ6GbYyOfO55ellL/pxc4ZypMvc2ZrNJ7k27D8OZhbL59XQkwdQlP1AjH4jgs47B7wgDxL1PkDvK7bRbV80rvSSHIjg0X+Ms5y9Yvp5BpdhAYJGC8pxuAf68Ky60FW0kj4PAXaNajtffGfa/Z/RJGsLfsuxlcCiRS9gsDZWbq1fXj1xqEGc15E2jVGdzAYJbUWLQArgskbcc9dvo5pWUB0AmzLKTELsedy0IR6zg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS7PR11MB5966.namprd11.prod.outlook.com (2603:10b6:8:71::6) by
+ CY8PR11MB7799.namprd11.prod.outlook.com (2603:10b6:930:78::14) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9052.20; Wed, 27 Aug 2025 09:13:00 +0000
+Received: from DS7PR11MB5966.namprd11.prod.outlook.com
+ ([fe80::e971:d8f4:66c4:12ca]) by DS7PR11MB5966.namprd11.prod.outlook.com
+ ([fe80::e971:d8f4:66c4:12ca%7]) with mapi id 15.20.9052.013; Wed, 27 Aug 2025
+ 09:13:00 +0000
+Date: Wed, 27 Aug 2025 17:12:11 +0800
+From: Yan Zhao <yan.y.zhao@intel.com>
+To: Sean Christopherson <seanjc@google.com>
+CC: Paolo Bonzini <pbonzini@redhat.com>, <kvm@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Michael Roth <michael.roth@amd.com>, "Ira
+ Weiny" <ira.weiny@intel.com>, Vishal Annapurve <vannapurve@google.com>, "Rick
+ Edgecombe" <rick.p.edgecombe@intel.com>
+Subject: Re: [RFC PATCH 11/12] KVM: TDX: Track nr_premapped as an "unsigned
+ long", not an "atomic64_t"
+Message-ID: <aK7L6zZDIeSObzTV@yzhao56-desk.sh.intel.com>
+Reply-To: Yan Zhao <yan.y.zhao@intel.com>
+References: <20250827000522.4022426-1-seanjc@google.com>
+ <20250827000522.4022426-12-seanjc@google.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250827000522.4022426-12-seanjc@google.com>
+X-ClientProxiedBy: SG2PR04CA0216.apcprd04.prod.outlook.com
+ (2603:1096:4:187::18) To DS7PR11MB5966.namprd11.prod.outlook.com
+ (2603:10b6:8:71::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR11MB5966:EE_|CY8PR11MB7799:EE_
+X-MS-Office365-Filtering-Correlation-Id: ac9a26d5-3df1-4464-bdb3-08dde549eb39
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7053199007;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?A559mfcc2Jfl5vKOdfvxIdTB3+7fI5N0t3E0N9M54ujm7GGPLcIJOSnDcrLu?=
+ =?us-ascii?Q?MkPISQN7T+O6nDI0rLyaPNN/AZ7mQk8kd0ZUbdOX0awR0P1FixXxSmajuAQc?=
+ =?us-ascii?Q?ECptv0Ljuic8YUpKmwDpBHFg9u8KcxqK6SU2vzC2a5jyHTUU2pwEzLyftXGq?=
+ =?us-ascii?Q?p4YAnFwAKUrYrwoYh6HV/mdqsMO9i+5QHWL/+4rxyHjtcw+ZGhi5obgZr7FB?=
+ =?us-ascii?Q?ZtWq/Sl54INMr1XqtVAGTEhMafuJSKDj2EuUhwrHsJuCqXMBQ8RClMTEjynY?=
+ =?us-ascii?Q?4OfFi5G1lkG70eU2vDvTekwNjzlYhFLtIBjxCQk8kFnMVhUrvX8VhmiOe0NH?=
+ =?us-ascii?Q?JTQEnRXyGpGVD3aw2A2u27kwmb7wah7BWdGVgA7EubBG+jmCPtTyVoaYNHuu?=
+ =?us-ascii?Q?3WK7FxiSG5MxAY4LAPA0/qHPJMRTIySKybeY4RUKRknUGqO1srXtAP2PmodG?=
+ =?us-ascii?Q?mjOfPNCe5TguZhb2V8kJBMEIUIsrOyOrDdfN0K51oncxkhmEEy/inJAsx7a3?=
+ =?us-ascii?Q?Hfwcni0fPzHrA0oijR1+OkYmNSkaXjOyNB7Te2S2X8zeh8pbBLsNV8eSvjFW?=
+ =?us-ascii?Q?Dw2mwF/fOM+ztUBZ/IM9DkOVl3pLYhgRHX01UQItqHt50hfGJmy8U/dOpdpx?=
+ =?us-ascii?Q?YRMuXTMXG9SzoJJwbQDHdvgW8hp3DIS3jvTRy+okC5LNazR/8QxMARrGuL6a?=
+ =?us-ascii?Q?lEy9FAOAl/0LLNdICuFAc6/ZUIcGWa1oUpZ95jnO4oLpFqMyS7pQdDhPnlqu?=
+ =?us-ascii?Q?FVVx+1rwuiwcBY4PSwFvjtqjJLNjdiwFIFY8dMIrik0NddvCtCWsVyJFSw2w?=
+ =?us-ascii?Q?oII5iuNuoCO1KdpyWa5d6mwJProcfPR5JFZlrNYihlN0gwhDrcsL/TDCM9mK?=
+ =?us-ascii?Q?6X489PpQLH6VfwHoldo+zDk7/bouNcnru8e7UkQtqkMbqXdjew+9E27xWgfV?=
+ =?us-ascii?Q?kq0SRp6BOEEopJWy8CzrDz3Mb/OhKwuhvDdo4sHGwYeCDtLafh1ycnCiMG25?=
+ =?us-ascii?Q?GeslU/3Hi02bfdJ9x8kaYqqghwpWOsCG+BGv9S2mj8R4YmGnNsM7h4rZDTny?=
+ =?us-ascii?Q?guc3Qw87LkM8XSEI1cV70Nx4EAbc0Gvt9gkhisnxIA++iDWUDgcAKwA4UzYQ?=
+ =?us-ascii?Q?ukyN5BQLEIQMSOZkgTw6cERO+lm7f1HRzCXFDRap2tMEygMPDv6zkbLh/E+j?=
+ =?us-ascii?Q?rCq/oj7i0tQk58djfAb1ReEDjbUgQGO/TObUq+OvFkmJqctlaAs5V+Sjy1GN?=
+ =?us-ascii?Q?xPBZ8+IDGbPOvgDaTlo+7SAZezQ+tArrTAN8LHEZiytKVLq/42O8c2MTKZ8i?=
+ =?us-ascii?Q?4uWNegLmChCt/64j+Sg0iPt4rRRHiOW0xUsxomxvVyCque6P4knsR2u9PnzJ?=
+ =?us-ascii?Q?4gew2RLkHQHQmu0Qop2YKhbpGizxrRwKgZXvo8hJ3OdqHdzvYE4OR0lS4WB0?=
+ =?us-ascii?Q?5y8l0Pqgg6Q=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR11MB5966.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?rOydVVwueHk0OHL4TMEdErkoiiaou96aKTHXwWvsY7SgW5koQJaYDC2RjyOX?=
+ =?us-ascii?Q?QlykOkQX88E/Kaq7fQZ0TsG75UsAwG93E7Gf/wmabrQSeJyLhW6smzPiusNy?=
+ =?us-ascii?Q?VFF+NK94p+z8cfLUjBRIEETzX/VMHRvy++pl6LPs3SN1op5ZYSYiTXjuKvuU?=
+ =?us-ascii?Q?gJMrYy2EYtUJoN13S/G4YXS1ZNJXWp6EyKFzW0bnPeST+K9PPVZMaSSI+Qc0?=
+ =?us-ascii?Q?6fwOavAXrO2C09Px4kbZvj07uBsRIBtWsJCqzZdhh9gUApiGR5jrGWx7DpHk?=
+ =?us-ascii?Q?euSeLDS7LSqrjb8aErSoG5RTfcBFjim4dMILKSPdT33xzpHW77R9fo5hJrBO?=
+ =?us-ascii?Q?8WpALJ/QKNdb97a0nYYsDmi+C1XOx3ZvJi8YmR8Fk410NdLQAaDU24j1yDLd?=
+ =?us-ascii?Q?HOWaaMjA+fmzj0VolGl3pd6v1nwdHn7uNXAas05WSp1Urj9jGQOLXRgO6mye?=
+ =?us-ascii?Q?nhBqhXjAkTIS7kxVEpRMuWvhymSPlSl/OV6jmqzbQR87b4d58bNqmiAv2iwz?=
+ =?us-ascii?Q?DYiMb8zbUd5reYzeT0lqEk3JwbCCLfS+w2HkojyErmNAaHPZJ/LIH6S0G9G8?=
+ =?us-ascii?Q?Ytbk2rcSMbuk3KZJYIAlO8XQPZ1ySxn4JKL0MQa09jVkDp7IGn/S7dBMJ4En?=
+ =?us-ascii?Q?r8EW7tMRVzfmG1hIDRZp7vFpC0ht1eWBEqoDvLZOfiWcuTr+DryATsL+ZAMI?=
+ =?us-ascii?Q?mBpu68BK6NXAxSL2fQWyhC+ysvEMQVLxsQnT9JqqIsgiR3dxWELMGQDcSL9n?=
+ =?us-ascii?Q?UyM2QHKbDmBTx3+RYaj0m4PbPKBZmWKKeZadTm1VuLjoYflkTE2ZNmQDwn3c?=
+ =?us-ascii?Q?wftxDlrB3UG2vAHVDefdOXa7YNWAnujpNmfOIYRfLxTN7UClfHWZeIDJUjNV?=
+ =?us-ascii?Q?gOtfgwStUMN+BNBa8WpZNRnVRhBWy45o8l48IFeuWxGRf4c7MnUSOkqo4LCB?=
+ =?us-ascii?Q?26Vmmk3wihNjjEhZfQelM3dsH6JlaT8f/0bpLWhOFQfU8hE23WTnVd1jYLdh?=
+ =?us-ascii?Q?fW5967qw0n6jrdex69YIWWGsq1cm1EARIkbMPghjdL4HVd5ElpWYzS+AlEyY?=
+ =?us-ascii?Q?lhjzMPISoG7/2JMlBfa+VGJEBFBlm/917jCSt554GbEZLSWiF5muTSUGNSWg?=
+ =?us-ascii?Q?NNJJ20OYLBQAOyQRmWKnjq/ccKEStHwjO9HtD07vcv1c+XSFba8civ58bD6v?=
+ =?us-ascii?Q?1A7DWfqay1XUrrGa0tNBVbxVJoBg+bb/Ote92qUlHfR8KqxZR1YjqWhvIzvg?=
+ =?us-ascii?Q?KZrKG69KOaaaUKuENAIIeQ2iShWBUqMkWRY2uIqedgzO0Q/txOgFAa3tXhl+?=
+ =?us-ascii?Q?9YLeh5MQrHl2lHQZryRTISjuoQhTyaRoPhyK+SXaqpynVNwIkGvSIh8Io005?=
+ =?us-ascii?Q?v3ydbCRlnuIcieGtALiTiG6Ii35nlRmIeAPtEK3v4PPaVqxjnDDhhTRMz90S?=
+ =?us-ascii?Q?5+Pd0xtG9RqcmEw0rEReyhDQQsJuL1HlAJ0RMJQzWSDvU3R/yVHd/NISxZ4c?=
+ =?us-ascii?Q?Eq0CnEqKApst36k8GpqJgi/cqe9BVv6QARUCxMP7zJ/xEtwAIG3Qu5Axbw04?=
+ =?us-ascii?Q?3/DBP8UpipgjJecXOC4cWyuzz5otQBHsefsuYZVe?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: ac9a26d5-3df1-4464-bdb3-08dde549eb39
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR11MB5966.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2025 09:12:59.9572
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: x+W+/S3urjAs6ABU60h+dMtzabW1K7i9jWuFO9oK4liZtgZ6Rd1fd2JFsUAu2Mw2CIWbQ6Sh5ojEFGEDHXG2ww==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR11MB7799
+X-OriginatorOrg: intel.com
 
-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+On Tue, Aug 26, 2025 at 05:05:21PM -0700, Sean Christopherson wrote:
+> Track the number of premapped pfns as a non-atomic variable as all usage
+> is guarded by slots_lock, and KVM now asserts as much.  Note, slots_lock
+> has always effectively guarded nr_premapped since TDX support landed, the
+> use of an atomic64_t was likely a leftover from development that was
+> never cleaned up.
+> 
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
+> ---
+>  arch/x86/kvm/vmx/tdx.c | 8 ++++----
+>  arch/x86/kvm/vmx/tdx.h | 2 +-
+>  2 files changed, 5 insertions(+), 5 deletions(-)
+> 
+> diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
+> index 27941defb62e..5d2bb27f22da 100644
+> --- a/arch/x86/kvm/vmx/tdx.c
+> +++ b/arch/x86/kvm/vmx/tdx.c
+> @@ -1639,7 +1639,7 @@ static int tdx_sept_set_private_spte(struct kvm *kvm, gfn_t gfn,
+>  		if (KVM_BUG_ON(kvm->arch.pre_fault_allowed, kvm))
+>  			return -EIO;
+>  
+> -		atomic64_inc(&kvm_tdx->nr_premapped);
+> +		kvm_tdx->nr_premapped++;
+>  		return 0;
+>  	}
+>  
+> @@ -1771,7 +1771,7 @@ static int tdx_sept_zap_private_spte(struct kvm *kvm, gfn_t gfn,
+>  	if (tdx_is_sept_zap_err_due_to_premap(kvm_tdx, err, entry, level)) {
+>  		lockdep_assert_held(&kvm->slots_lock);
+>  
+> -		if (KVM_BUG_ON(atomic64_dec_return(&kvm_tdx->nr_premapped) < 0, kvm))
+> +		if (KVM_BUG_ON(--kvm_tdx->nr_premapped < 0, kvm))
+>
+>  			return -EIO;
+>  
+>  		return 0;
+> @@ -2846,7 +2846,7 @@ static int tdx_td_finalize(struct kvm *kvm, struct kvm_tdx_cmd *cmd)
+>  	 * Pages are pending for KVM_TDX_INIT_MEM_REGION to issue
+>  	 * TDH.MEM.PAGE.ADD().
+>  	 */
+> -	if (atomic64_read(&kvm_tdx->nr_premapped))
+> +	if (kvm_tdx->nr_premapped)
+>  		return -EINVAL;
+>  
+>  	cmd->hw_error = tdh_mr_finalize(&kvm_tdx->td);
+> @@ -3160,7 +3160,7 @@ static int tdx_gmem_post_populate(struct kvm *kvm, gfn_t gfn, kvm_pfn_t pfn,
+>  		goto out;
+>  	}
+>  
+> -	KVM_BUG_ON(atomic64_dec_return(&kvm_tdx->nr_premapped) < 0, kvm);
+> +	KVM_BUG_ON(--kvm_tdx->nr_premapped < 0, kvm);
+>  
+>  	if (arg->flags & KVM_TDX_MEASURE_MEMORY_REGION) {
+>  		for (i = 0; i < PAGE_SIZE; i += TDX_EXTENDMR_CHUNKSIZE) {
+> diff --git a/arch/x86/kvm/vmx/tdx.h b/arch/x86/kvm/vmx/tdx.h
+> index ca39a9391db1..04ba9ea3e0ba 100644
+> --- a/arch/x86/kvm/vmx/tdx.h
+> +++ b/arch/x86/kvm/vmx/tdx.h
+> @@ -37,7 +37,7 @@ struct kvm_tdx {
+>  	struct tdx_td td;
+>  
+>  	/* For KVM_TDX_INIT_MEM_REGION. */
+> -	atomic64_t nr_premapped;
+> +	unsigned long nr_premapped;
 
-In June 2015, commit c290ea01abb7 ("fs: Remove ext3 filesystem driver")
-removed the historic ext3 filesystem support as ext3 partitions are fully
-supported with the ext4 filesystem support. To simplify updating the kernel
-build configuration, which had only EXT3 support but not EXT4 support
-enabled, the three config options EXT3_{FS,FS_POSIX_ACL,FS_SECURITY} were
-kept, instead of immediately removing them. The three options just enable
-the corresponding EXT4 counterparts when configs from older kernel versions
-are used to build on later kernel versions. This ensures that the kernels
-from those kernel build configurations would then continue to have EXT4
-enabled for supporting booting from ext3 and ext4 file systems, to avoid
-potential unexpected surprises.
-
-Given that the kernel build configuration has no backwards-compatibility
-guarantee and this transition phase for such build configurations has been
-in place for a decade, we can reasonably expect all such users to have
-transitioned to use the EXT4 config options in their config files at this
-point in time. With that in mind, the three EXT3 config options are
-obsolete by now.
-
-Remove the obsolete EXT3 config options.
-
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
----
- fs/ext4/Kconfig | 27 ---------------------------
- 1 file changed, 27 deletions(-)
-
-diff --git a/fs/ext4/Kconfig b/fs/ext4/Kconfig
-index c9ca41d91a6c..01873c2a34ad 100644
---- a/fs/ext4/Kconfig
-+++ b/fs/ext4/Kconfig
-@@ -1,31 +1,4 @@
- # SPDX-License-Identifier: GPL-2.0-only
--# Ext3 configs are here for backward compatibility with old configs which may
--# have EXT3_FS set but not EXT4_FS set and thus would result in non-bootable
--# kernels after the removal of ext3 driver.
--config EXT3_FS
--	tristate "The Extended 3 (ext3) filesystem"
--	select EXT4_FS
--	help
--	  This config option is here only for backward compatibility. ext3
--	  filesystem is now handled by the ext4 driver.
--
--config EXT3_FS_POSIX_ACL
--	bool "Ext3 POSIX Access Control Lists"
--	depends on EXT3_FS
--	select EXT4_FS_POSIX_ACL
--	select FS_POSIX_ACL
--	help
--	  This config option is here only for backward compatibility. ext3
--	  filesystem is now handled by the ext4 driver.
--
--config EXT3_FS_SECURITY
--	bool "Ext3 Security Labels"
--	depends on EXT3_FS
--	select EXT4_FS_SECURITY
--	help
--	  This config option is here only for backward compatibility. ext3
--	  filesystem is now handled by the ext4 driver.
--
- config EXT4_FS
- 	tristate "The Extended 4 (ext4) filesystem"
- 	select BUFFER_HEAD
--- 
-2.50.1
-
+Due to the comparison with < 0, the type should be "s64" or "signed long"?
+  
+>  	/*
+>  	 * Prevent vCPUs from TD entry to ensure SEPT zap related SEAMCALLs do
+> -- 
+> 2.51.0.268.g9569e192d0-goog
+> 
 
