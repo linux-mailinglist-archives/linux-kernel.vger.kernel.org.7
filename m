@@ -1,243 +1,171 @@
-Return-Path: <linux-kernel+bounces-788923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61615B38D83
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 00:15:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 21954B38DDF
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 00:19:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3841172B44
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 22:14:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D0DD4162713
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 22:19:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03504341ACA;
-	Wed, 27 Aug 2025 22:08:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCABF32038C;
+	Wed, 27 Aug 2025 22:11:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iugXPN0O"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="SIIzS/BM"
+Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E8E831578F;
-	Wed, 27 Aug 2025 22:08:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69332311979
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 22:11:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756332524; cv=none; b=A9NkZBRukhMxy2+5Mp29N7VM+y5QfeaEeOo1mSShuGg9KHXG9cbDhWapxcdLMG8/aCrG46b3Oc3HogacRj+8UWxt5gSnuNalVtiSV4tBFU794zDm+7cLmumHEwt2Xcyy6Hq4WIfXNsNRRYuvF+X18ljMtHExD4AMoYRanXXFqIs=
+	t=1756332668; cv=none; b=G68z9wKx9eSrDa8LK3Pr24rbRdwITDyDR0y/zmQ5ymdkoon8bSEtIBMKkQphiAnV8tb+VCzWWJtZQex5dO7YixzRcIS3Rg1eS5al2PDuVIQ506C/JdK1jjukSB5MDBmZS0nqDonT0D9j7H7H8+Aja94EHZiAKyOU/wLLsrO7jEE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756332524; c=relaxed/simple;
-	bh=q1no6700hSm+r3y2ZzQhTNjhasSRnDPnqRS3By0gMPk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AQWS66gpEA3c1VyHKRGIyYXZn6KY1MNNND9TQqjDMhvOrqzYRQRuE6GPGiTrHSn87lWbnWkM4YOVvzmQe8NVbELbkFoDXnXlvt+rYdJXLphlBS3Q2pny30E4um4jlbzIUgu0EvlSYggOdq1yRVLCuPCx7izK4jPFdkh1IvdWoog=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iugXPN0O; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-45a1b04f8b5so1585945e9.1;
-        Wed, 27 Aug 2025 15:08:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756332521; x=1756937321; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Rl4uR1undi2hLndggsDMeomTcONpI+N6b9vCtXfnWlA=;
-        b=iugXPN0OtXh/UH7njHPnUeKcmoIT/W2XHNtu6bWRYZc0WHwWTdZxhBdoSO3CoT8k/W
-         UliFNx1m9L/rfgsmBfyXFLm4t0+HZWtSa+PPND3upd5ytJAcPAZ4rg6BGqOqxj9h9s6S
-         vorkR5S/bDagaQtMDF11iOfTi/pD4eBHbN/j2AaMlqESFxFjoKo4CdIKvlDyjPTWVVHY
-         9BUAcLjBzMCA6FgoUJzZryPo4H/in0Q5N84ZE7cDojKEcpY939r1iZNTwVlGwKi6m7rC
-         UrDSPHD1sOtd9JFTB9S20n0z74jbbEDKBso9gbnED7BKCnVJKZwo/V66FMritEdYJ5NY
-         VCiw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756332521; x=1756937321;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Rl4uR1undi2hLndggsDMeomTcONpI+N6b9vCtXfnWlA=;
-        b=n99vt69YXIKIBg8yw+oAuUcB34sCaZBMUqcDmvglZfIvVIkstkyXsK/NTiQMElA2DS
-         XJLes93pnBNlbBFKBoAskQf0C/kx3a+fUNtfh5gVvBbcWvQyaAonmtAWLaws0x6R7RQZ
-         FEFxx5L8aTdpfwRtySikGQr+q8dcEa9tJXIbRvpoLYVDZGsOCGUskHVePqpjA4ZDbriF
-         nov1qFEzDpFZjksChsMEbKkeTwkABmZVCJTfWI7RmQkHI08m+fl5d8SkpdueH+CSywc4
-         YrJDf2V3IRzR5rtyjTomYOMfINgNcDVUadN4sGcl4FvnuKWfosrvV4uOJ8nc8QNqmG/9
-         WTOA==
-X-Forwarded-Encrypted: i=1; AJvYcCVlR6sco2VDEN4xhqEdDB9lr9HsejP3/tnI/UfMhZOVUnrjApGANQ0D6e8jAyvWS0EBkCWW//ke64IrRbY=@vger.kernel.org, AJvYcCWWZqpooY43IrrBViOlzWFy3xi/rtFQekto/Hr589oHBAh81qWDSFdDCZYauOlOf+Mo+gpEW6uNzvMidQA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzyMerr+0FvPeKgKyX5N8KPlYqJMOQM2hYw1WgjhQNiGEY/REz2
-	THgGFm1jaE3dK9N9wTdzD38jx27KzH6cP6NgwbI0dICn5fr4pGTtcNWy6lTpr9GG8tBfVfcKi72
-	GgFNI+hixiT7zG/AQW4UVg8ZUv3x/s9B6uUVI8Tc=
-X-Gm-Gg: ASbGncsVYyU9mNUw0BTHcglVV6uSkmwMXfnkFZRzGdjQUFNHE3JuVX4Ou+wDFat73SG
-	zRSGpGqmLqDwnZpIx0Kn/5+SODleft6Ib2VUCMBeULxcysus3oQe/bX7xtBNDDGb5A8ioYsv3kC
-	WekN0dOPYhvkJWSh6kUvKZ1aZgPEgh3ZfmhFhlinStYz9DSfJHqklBoEFKKndEKxgGOzyC6LSmz
-	mq6w5w1da5kQbW04KM=
-X-Google-Smtp-Source: AGHT+IHjHPjGGyZmdxxy9zsVU1+WBfGSaYVs5LzepEAwe+vQXYHvA2UfJ0GV3dP8c3UvsvGDhNMX/rmBLexSRfEQayA=
-X-Received: by 2002:a5d:5f42:0:b0:3c7:ac80:6938 with SMTP id
- ffacd0b85a97d-3c7ac8fbe53mr11897903f8f.27.1756332520540; Wed, 27 Aug 2025
- 15:08:40 -0700 (PDT)
+	s=arc-20240116; t=1756332668; c=relaxed/simple;
+	bh=evoc7gdcyPrc/Ie0TDe1eAiLfXUiEcTzOigU5YfvG/c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=njtJUNXWbj6lc6KWASEDULceQjWvNqVyGN3qswOgUcfTKx67Bb6kTFf/2nAxN1OH9EIMm4Fh0FMex/Wrj1t9al3CgCNXBv5k9LVMfyuYPGS++X3obQQ6sRLqxo9G8o0O6XqtPf6p6H3pQwPfNNesCTbmBKwJk6QN/tHOLABJDeg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=SIIzS/BM; arc=none smtp.client-ip=91.218.175.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <4690bebe-0ff6-4258-9cab-3dfe2d00fa15@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1756332653;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=e0Gx8ALySI3X0w8oV2nNtG9pan3UPn8x700zl5Yl6lU=;
+	b=SIIzS/BMkEut1Feu7PLceeGygEs6Ca7bvqaaLt6e/2CNGE6YSz3bjFenXPV9sFhAW3xwxG
+	oDKcsZSSsOWr0VELv5RkdSQxBMhGujuD+wcJlFHm7F5Nbi739NO7L5VBlTeHmgTX2ar0A7
+	lKcGiJ4VYM5HvoUBVZJDbxOgB5cxNEY=
+Date: Wed, 27 Aug 2025 15:10:44 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250826-rzv2h-cru-sizes-v1-1-dbdfc54bba11@ideasonboard.com>
-In-Reply-To: <20250826-rzv2h-cru-sizes-v1-1-dbdfc54bba11@ideasonboard.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Wed, 27 Aug 2025 23:08:14 +0100
-X-Gm-Features: Ac12FXzHW0W80QiEkk_RbotfUxLgokkWN7UqPtPj3VdHgBx3UQZLkmIJUNj-M3k
-Message-ID: <CA+V-a8t+XXNBU2GtRmAD+QJnARcSiR13j=_hPNRc=Pw=p1QNzQ@mail.gmail.com>
-Subject: Re: [PATCH] media: rzg2l-cru: csi-2: Support RZ/V2H input sizes
-To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Hans Verkuil <hverkuil@kernel.org>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
-	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Daniel Scally <dan.scally+renesas@ideasonboard.com>, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] bpf: Mark kfuncs as __noclone
+Content-Language: en-GB
+To: Eduard Zingerman <eddyz87@gmail.com>, Andrea Righi <arighi@nvidia.com>,
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ Andrii Nakryiko <andrii@kernel.org>, alan.maguire@oracle.com
+Cc: Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, David Vernet <void@manifault.com>,
+ bpf@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250822140553.46273-1-arighi@nvidia.com>
+ <86de1bf6-83b0-4d31-904b-95af424a398a@linux.dev>
+ <45c49b4eedc6038d350f61572e5eed9f183b781b.camel@gmail.com>
+ <a3dabb42-efb5-4aea-8bf8-b3d5ae26dfa1@linux.dev>
+ <a7bcc333d54501d544821b5feeb82588d3bc06cb.camel@gmail.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yonghong Song <yonghong.song@linux.dev>
+In-Reply-To: <a7bcc333d54501d544821b5feeb82588d3bc06cb.camel@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-Hi Jacopo,
 
-Thank you for the patch.
 
-On Tue, Aug 26, 2025 at 11:59=E2=80=AFAM Jacopo Mondi
-<jacopo.mondi@ideasonboard.com> wrote:
+On 8/27/25 12:13 PM, Eduard Zingerman wrote:
+> On Wed, 2025-08-27 at 10:00 -0700, Yonghong Song wrote:
+>> On 8/26/25 10:02 PM, Eduard Zingerman wrote:
+>>> On Tue, 2025-08-26 at 13:17 -0700, Yonghong Song wrote:
+>>>
+>>> [...]
+>>>
+>>>> I tried with gcc14 and can reproduced the issue described in the above.
+>>>> I build the kernel like below with gcc14
+>>>>      make KCFLAGS='-O3' -j
+>>>> and get the following build error
+>>>>      WARN: resolve_btfids: unresolved symbol bpf_strnchr
+>>>>      make[2]: *** [/home/yhs/work/bpf-next/scripts/Makefile.vmlinux:91: vmlinux] Error 255
+>>>>      make[2]: *** Deleting file 'vmlinux'
+>>>> Checking the symbol table:
+>>>>       22276: ffffffff81b15260   249 FUNC    LOCAL  DEFAULT    1 bpf_strnchr.cons[...]
+>>>>      235128: ffffffff81b1f540   296 FUNC    GLOBAL DEFAULT    1 bpf_strnchr
+>>>> and the disasm code:
+>>>>      bpf_strnchr:
+>>>>        ...
+>>>>
+>>>>      bpf_strchr:
+>>>>        ...
+>>>>        bpf_strnchr.constprop.0
+>>>>        ...
+>>>>
+>>>> So in symbol table, we have both bpf_strnchr.constprop.0 and bpf_strnchr.
+>>>> For such case, pahole will skip func bpf_strnchr hence the above resolve_btfids
+>>>> failure.
+>>>>
+>>>> The solution in this patch can indeed resolve this issue.
+>>> It looks like instead of adding __noclone there is an option to
+>>> improve pahole's filtering of ambiguous functions.
+>>> Abstractly, there is nothing wrong with having a clone of a global
+>>> function that has undergone additional optimizations. As long as the
+>>> original symbol exists, everything should be fine.
+>> Right. The generated code itself is totally fine. The problem is
+>> currently pahole will filter out bpf_strnchr since in the symbol table
+>> having both bpf_strnchr and bpf_strnchr.constprop.0. It there is
+>> no explicit dwarf-level signature in dwarf for bpf_strnchr.constprop.0.
+>> (For this particular .constprop.0 case, it is possible to derive the
+>>    signature. but it will be hard for other suffixes like .isra).
+>> The current pahole will have strip out suffixes so the function
+>> name is 'bpf_strnchr' which covers bpf_strnchr and bpf_strnchr.constprop.0.
+>> Since two underlying signature is different, the 'bpf_strnchr'
+>> will be filtered out.
+> Yes, I understand the mechanics. My question is: is it really
+> necessary for pahole to go through this process?
 >
-> From: Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>
->
-> The CRU version on the RZ/V2H SoC supports larger input sizes
-> (4096x4096) compared to the version on the RZ/G2L (2800x4095).
->
-> Store the per-SoC min/max sizes in the device match info and use them
-> in place of the hardcoded ones.
->
-> Signed-off-by: Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>
-> ---
-> Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-> ---
->  .../media/platform/renesas/rzg2l-cru/rzg2l-csi2.c  | 34 ++++++++++++++++=
-++----
->  1 file changed, 28 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c b/driv=
-ers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c
-> index 1520211e74185fea3bca85f36239254f6b4651db..96d17ae0048f9d88aa73bec91=
-6365f3dbc421882 100644
-> --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c
-> +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c
-> @@ -101,6 +101,11 @@
->  #define RZG2L_CSI2_MAX_WIDTH           2800
->  #define RZG2L_CSI2_MAX_HEIGHT          4095
->
-> +#define RZV2H_CSI2_MIN_WIDTH           320
-> +#define RZV2H_CSI2_MIN_HEIGHT          240
-> +#define RZV2H_CSI2_MAX_WIDTH           4096
-> +#define RZV2H_CSI2_MAX_HEIGHT          4096
-> +
-The changes LGTM. I'd prefer you to drop these macros and just use
-plain numbers in the rzv2h_csi2_info/rzg2l_csi2_info.
+> It sees two functions: 'bpf_strnchr', 'bpf_strnchr.constprop.0',
+> first global, second local, first with DWARF signature, second w/o
+> DWARF signature. So, why conflating the two?
 
-Additionally we could also drop the
-RZG2L_CSI2_DEFAULT_WIDTH/RZG2L_CSI2_DEFAULT_HEIGHT macros too and use
-csi2->info->min_height/csi2->info->min_width in
-rzg2l_csi2_init_state().
+In this particular case, I think what you describe the correct.
+For *Global* symbol 'bpf_strnchr', the signature should be in
+the dwarf. But for *Local* symbol 'bpf_strnchr.constprop.0', the
+signature is not clear. I suspect that pahole may not
+distinguish between *Global* and *Local* symbols where they have
+the same prefix.
 
-Cheers,
-Prabhakar
+The case like this patch to have a clone for a kfunc global
+func should be very rare. That is another reason I think
+__noclone should be good enough and it can reduce the
+complexity in pahole. But I will be okay as well if the
+consensus is to implement the support in pahole.
 
->  #define RZG2L_CSI2_DEFAULT_WIDTH       RZG2L_CSI2_MIN_WIDTH
->  #define RZG2L_CSI2_DEFAULT_HEIGHT      RZG2L_CSI2_MIN_HEIGHT
->  #define RZG2L_CSI2_DEFAULT_FMT         MEDIA_BUS_FMT_UYVY8_1X16
-> @@ -137,6 +142,10 @@ struct rzg2l_csi2_info {
->         int (*dphy_enable)(struct rzg2l_csi2 *csi2);
->         int (*dphy_disable)(struct rzg2l_csi2 *csi2);
->         bool has_system_clk;
-> +       unsigned int min_width;
-> +       unsigned int min_height;
-> +       unsigned int max_width;
-> +       unsigned int max_height;
->  };
 >
->  struct rzg2l_csi2_timings {
-> @@ -418,6 +427,10 @@ static const struct rzg2l_csi2_info rzg2l_csi2_info =
-=3D {
->         .dphy_enable =3D rzg2l_csi2_dphy_enable,
->         .dphy_disable =3D rzg2l_csi2_dphy_disable,
->         .has_system_clk =3D true,
-> +       .min_width =3D RZG2L_CSI2_MIN_WIDTH,
-> +       .min_height =3D RZG2L_CSI2_MIN_HEIGHT,
-> +       .max_width =3D RZG2L_CSI2_MAX_WIDTH,
-> +       .max_height =3D RZG2L_CSI2_MAX_HEIGHT,
->  };
+> For non-lto build the function being global guarantees signature
+> correctness, and below you confirm that it is the case for lto builds
+> as well. So, it looks like we are just loosing 'bpf_strnchr' for no
+> good reason.
 >
->  static int rzg2l_csi2_dphy_setting(struct v4l2_subdev *sd, bool on)
-> @@ -542,6 +555,10 @@ static const struct rzg2l_csi2_info rzv2h_csi2_info =
-=3D {
->         .dphy_enable =3D rzv2h_csi2_dphy_enable,
->         .dphy_disable =3D rzv2h_csi2_dphy_disable,
->         .has_system_clk =3D false,
-> +       .min_width =3D RZV2H_CSI2_MIN_WIDTH,
-> +       .min_height =3D RZV2H_CSI2_MIN_HEIGHT,
-> +       .max_width =3D RZV2H_CSI2_MAX_WIDTH,
-> +       .max_height =3D RZV2H_CSI2_MAX_HEIGHT,
->  };
->
->  static int rzg2l_csi2_mipi_link_setting(struct v4l2_subdev *sd, bool on)
-> @@ -631,6 +648,7 @@ static int rzg2l_csi2_set_format(struct v4l2_subdev *=
-sd,
->                                  struct v4l2_subdev_state *state,
->                                  struct v4l2_subdev_format *fmt)
->  {
-> +       struct rzg2l_csi2 *csi2 =3D sd_to_csi2(sd);
->         struct v4l2_mbus_framefmt *src_format;
->         struct v4l2_mbus_framefmt *sink_format;
->
-> @@ -653,9 +671,11 @@ static int rzg2l_csi2_set_format(struct v4l2_subdev =
-*sd,
->         sink_format->ycbcr_enc =3D fmt->format.ycbcr_enc;
->         sink_format->quantization =3D fmt->format.quantization;
->         sink_format->width =3D clamp_t(u32, fmt->format.width,
-> -                                    RZG2L_CSI2_MIN_WIDTH, RZG2L_CSI2_MAX=
-_WIDTH);
-> +                                    csi2->info->min_width,
-> +                                    csi2->info->max_width);
->         sink_format->height =3D clamp_t(u32, fmt->format.height,
-> -                                     RZG2L_CSI2_MIN_HEIGHT, RZG2L_CSI2_M=
-AX_HEIGHT);
-> +                                    csi2->info->min_height,
-> +                                    csi2->info->max_height);
->         fmt->format =3D *sink_format;
->
->         /* propagate format to source pad */
-> @@ -697,16 +717,18 @@ static int rzg2l_csi2_enum_frame_size(struct v4l2_s=
-ubdev *sd,
->                                       struct v4l2_subdev_state *sd_state,
->                                       struct v4l2_subdev_frame_size_enum =
-*fse)
->  {
-> +       struct rzg2l_csi2 *csi2 =3D sd_to_csi2(sd);
-> +
->         if (fse->index !=3D 0)
->                 return -EINVAL;
->
->         if (!rzg2l_csi2_code_to_fmt(fse->code))
->                 return -EINVAL;
->
-> -       fse->min_width =3D RZG2L_CSI2_MIN_WIDTH;
-> -       fse->min_height =3D RZG2L_CSI2_MIN_HEIGHT;
-> -       fse->max_width =3D RZG2L_CSI2_MAX_WIDTH;
-> -       fse->max_height =3D RZG2L_CSI2_MAX_HEIGHT;
-> +       fse->min_width =3D csi2->info->min_width;
-> +       fse->min_height =3D csi2->info->min_height;
-> +       fse->max_width =3D csi2->info->max_width;
-> +       fse->max_height =3D csi2->info->max_height;
->
->         return 0;
->  }
->
-> ---
-> base-commit: 16428e2449ab96cce27be6ab17b750b404c76c7c
-> change-id: 20250826-rzv2h-cru-sizes-371ff5a88081
->
-> Best regards,
-> --
-> Jacopo Mondi <jacopo.mondi@ideasonboard.com>
->
->
+>> I am actually working to improve such cases in llvm to address
+>> like foo() and foo.<...>() functions and they will have their
+>> own respective functions. We will discuss with gcc folks
+>> about how to implement similar approaches in gcc.
+>>
+>>> Since kfuncs are global, this should guarantee that the compiler does not
+>>> change their signature, correct? Does this also hold for LTO builds?
+>> Yes, the original signature will not changed. This holds for LTO build
+>> and global variables/functions will not be renamed.
+>>
+>>> If so, when pahole sees a set of symbols like [foo, foo.1, foo.2, ...],
+>> The compiler needs to emit the signature in dwarf for foo.1, foo.2, etc. and this
+>> is something I am working on.
+>>
+>>> with 'foo' being global and the rest local, then there is no real need
+>>> to filter out 'foo'.
+>> I think the current __noclone approach is okay as the full implementation
+>> for signature changes (foo, foo.1, ...) might takes a while for both llvm
+>> and gcc.
+>>
+>>> Wdyt?
+>>>
+>>> [...]
+
 
