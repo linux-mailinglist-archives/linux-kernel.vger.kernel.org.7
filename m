@@ -1,275 +1,252 @@
-Return-Path: <linux-kernel+bounces-787716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D8A3B37A2C
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 08:09:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F5F8B37A2E
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 08:11:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A459C365758
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 06:09:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E45625E7DC1
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 06:11:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C88830F945;
-	Wed, 27 Aug 2025 06:09:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0533310784;
+	Wed, 27 Aug 2025 06:11:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZJ+h+xEf"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aEJzbIXS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11D1328725F;
-	Wed, 27 Aug 2025 06:09:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.18
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756274948; cv=fail; b=pHZBOnUlU2jtdY/H+jjClpDcZ84giN/SLmjdHZPgEj5aZXqPh07i7jtXfFmwfTUg65buRfTLOnM+1IO8Nxinzs8CB9LBPRoNOv3QsSjt2sb3+nvtL1fscMOUzlGoAzNid4IkBPXaygul0ISIVeg+qrGKNimUlS9109ggVybm48E=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756274948; c=relaxed/simple;
-	bh=4jpuok04Autft2sL7oaNLA/GwN5pkIklHgHTMHUOGMI=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=R+l5oVJQzCHNkpKE0su+EADJmUlvaNd6upoH84XJzek8u9RsmFVUO8eWHUxbgZ0B5HoREpOQPAiUsylTzgBKa2cZaeS2uozSunEu4weDkMq8/0mBE0L33kL3FlJZ6yxTEVvu0yQZXP0ND+yRsEKQCohmlCV1f7tPh+2BT3oODtA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZJ+h+xEf; arc=fail smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756274947; x=1787810947;
-  h=date:from:to:cc:subject:message-id:references:
-   content-transfer-encoding:in-reply-to:mime-version;
-  bh=4jpuok04Autft2sL7oaNLA/GwN5pkIklHgHTMHUOGMI=;
-  b=ZJ+h+xEf6XZGcu4LlWZk4gz4fkHVq94SlqFyujN8KRjQSOTJadsI4QYy
-   npK5C9ORm6cmcVlRomcLr8ouEAmF0Gxjn2NaVaKvXEvZrAfccMu0uYWoF
-   M2jWY/NQv6CA+BUrsC61Uw2Rh8KKNvsKOwhiL17vkFRsPfobdZMrE8lkv
-   +v39JSjLqx5KyXEDBeJF5H+kHuQ9vyWT7K/FqslfODktX7mrfrikc1cgW
-   fUIOOq8hQzmtvCYARM+u0RDAhNmH65Q4DQwzpp1vS0ZVPxHS+Oa/8HCa/
-   xiW1veDwz3PQlqdAJWXU7v61q4NkQ3bwTRbdPClGRRHcFc3zPo/ou7/b/
-   Q==;
-X-CSE-ConnectionGUID: biIhl6b0Tey5NktFPgl6Uw==
-X-CSE-MsgGUID: kaaqmkLeRtiacDeG3IAZMw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11534"; a="57724914"
-X-IronPort-AV: E=Sophos;i="6.18,214,1751266800"; 
-   d="scan'208";a="57724914"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2025 23:09:07 -0700
-X-CSE-ConnectionGUID: D3iUhNgzQYSP0N31xmhv5w==
-X-CSE-MsgGUID: dE9TQyEdSHSZq59mu2qZog==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,214,1751266800"; 
-   d="scan'208";a="169369128"
-Received: from fmsmsx903.amr.corp.intel.com ([10.18.126.92])
-  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2025 23:09:06 -0700
-Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
- fmsmsx903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Tue, 26 Aug 2025 23:09:05 -0700
-Received: from fmsedg903.ED.cps.intel.com (10.1.192.145) by
- FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17 via Frontend Transport; Tue, 26 Aug 2025 23:09:05 -0700
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (40.107.237.72)
- by edgegateway.intel.com (192.55.55.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Tue, 26 Aug 2025 23:09:05 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=IJm0ohcOG1soB4TLlEn135MGOrEMqJQuzYItr/pkit+LEdiLKvaA2tf0V4gh45p7dlwMmsA8ZT76WLHqHugyms3Oup7HQxio3HU0SmH1VzUs41VHNnbwyRQc0Yd7pxTijfGk9GjMAnSxQFY/XCNyMvpm9PydhDHaX4EeumkJjoB0TeTdJb7jcJb6GCRIQk3quWBBqnUJta/vuaD0Z7XpBTw4ZWrga9zFOXX++q4NXOntUw9wn+PN94TQWxkrbfPPVsT9rXtFHbVPhUJ5z7TT/+9D933CX836uGLNkOeFGffAux9r9P1pN+2j4V2sQxH9a+2wcKycI/4T0coFyCGQCQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=DK3HH92O00VpZRiOdtNfl93guRSUK5PuZfDfcXy2YKI=;
- b=NTRhTw/noMzAHptu4zyKpMksFVzGVMIJ02i0/NNoN9NHbYsFFY/cjYsZ2kuH60DmXIbtyzBNrYEbnES4r9wbe+zu8gYaCwfaJ6FhZVCAfOYazdm6ZgniUYs6GseBRVQHdy1zAyJzqIUm8dThXM7WIYQ/e+Rp1n7GwRyAOQqwfirqxgtec5tNV6ZvYFZCNbKiVTBhbqEqJyooGmMsoPxPNWuMUplYxhwtqB/vQgk9g0xQXtQ+Dbr4yNukrLTpGJdsJJ85c79zu4jlMRC7GMIp+aHvmginegdapKPXLvfjxbjW4AKJfROci7BxekjLvit8oa64E8Vy+uYD/ZHix7Olhw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from MN2PR11MB3934.namprd11.prod.outlook.com (2603:10b6:208:152::20)
- by IA3PR11MB9349.namprd11.prod.outlook.com (2603:10b6:208:571::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.20; Wed, 27 Aug
- 2025 06:09:03 +0000
-Received: from MN2PR11MB3934.namprd11.prod.outlook.com
- ([fe80::45fd:d835:38c1:f5c2]) by MN2PR11MB3934.namprd11.prod.outlook.com
- ([fe80::45fd:d835:38c1:f5c2%6]) with mapi id 15.20.9052.019; Wed, 27 Aug 2025
- 06:09:03 +0000
-Date: Wed, 27 Aug 2025 08:08:30 +0200
-From: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
-To: Samuel Holland <samuel.holland@sifive.com>
-CC: Dave Hansen <dave.hansen@intel.com>, <x86@kernel.org>,
-	<linux-doc@vger.kernel.org>, <linux-mm@kvack.org>, <llvm@lists.linux.dev>,
-	<linux-kbuild@vger.kernel.org>, <kasan-dev@googlegroups.com>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v5 10/19] x86: LAM compatible non-canonical definition
-Message-ID: <gcpw2nrwltvgatdjcu2at6hpse42iudy5dqx7rv5m427dommwg@akooygrdmfvf>
-References: <cover.1756151769.git.maciej.wieczor-retman@intel.com>
- <c1902b7c161632681dac51bc04ab748853e616d0.1756151769.git.maciej.wieczor-retman@intel.com>
- <c68330de-c076-45be-beac-147286f2b628@intel.com>
- <4rkxgsa5zfrvjqtii7cxocdk6g2qel3hif4hcpeboos2exndoe@hp7bok5o2inx>
- <2e9ee035-9a1d-4a7b-b380-6ea1985eb7be@sifive.com>
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2e9ee035-9a1d-4a7b-b380-6ea1985eb7be@sifive.com>
-X-ClientProxiedBy: DUZPR01CA0103.eurprd01.prod.exchangelabs.com
- (2603:10a6:10:4bb::15) To MN2PR11MB3934.namprd11.prod.outlook.com
- (2603:10b6:208:152::20)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2802628E7;
+	Wed, 27 Aug 2025 06:10:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756275060; cv=none; b=Ngex9Iop19msWLYAyCtIZlcxdl5TIZTfg/NBY+R9uLSx0UgiDYxx8T+UpRlOd/dGQRjJhcFQJt3qbdj9kQaEbZcHz+FiSyroi2YKcY7y73xYpL0GbE/Tc55Lo1/sL4coz+TMB0zMs0SFn9X3C5uHIFGBqfBOvascM6RtDLjz0gk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756275060; c=relaxed/simple;
+	bh=+GN6jtKxkDuSkcNSTpi1Xi9ELLdwSX5uB0MS/o2bNe0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=ZYDWWqCrh5OA8LdBQubBwk3UJOXJYyDob8r8J2GGV8e7X5sH3/K/wIpHIAxGo+K/krN++a1x49dmB8V/VK+NbMWx1hKLrEohumnCHqkaY64pAQf25ZxjP8Q613QG0Dz6q1LuBG/tVY3ZQJOY54un4wIh61o/FUJVMoLYyIqG6+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aEJzbIXS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97187C4CEEB;
+	Wed, 27 Aug 2025 06:10:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756275059;
+	bh=+GN6jtKxkDuSkcNSTpi1Xi9ELLdwSX5uB0MS/o2bNe0=;
+	h=Date:From:To:Cc:Subject:From;
+	b=aEJzbIXSNAX5Fe5bBerVT3Ij4GUapE7v79aSjBOuGmQCIB/OT1V1MzmOcpuzhCNqS
+	 C11qJjbairy6TcVhdFhM+4T01Ubb8POAdpBwmkAgKNj/XKlRVOt4pdEjgafwT5sxFV
+	 0UBdpJutZev0TSEo0ht3FLhy8bnbVEPxObk30CFbC4xRf/ILUmBzu6CGGLWALB1fBG
+	 S9tibtlJ26enSAW/DddNBC5qR1gXcNl9/m1EUwZpEi1+aT9gOgEBZF9wJDb+EGxFpC
+	 up7V0/P4NUaegaEdkKqKM8N02lW0c3bztoWTsqOHm3sh0awe/k8fjyCE+8DChylybq
+	 ZBZDr4or6okOQ==
+Date: Wed, 27 Aug 2025 08:10:53 +0200
+From: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+To: Justin Tee <justin.tee@broadcom.com>,
+	James Smart <james.smart@broadcom.com>,
+	Dick Kennedy <dick.kennedy@broadcom.com>,
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	Hannes Reinecke <hare@suse.de>
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH v2] scsi: fc: Avoid -Wflex-array-member-not-at-end warnings
+Message-ID: <aK6hbQLyQlvlySf8@kspp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN2PR11MB3934:EE_|IA3PR11MB9349:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7f6cc0d5-53d0-4a07-d5f3-08dde53038d9
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|27256017;
-X-Microsoft-Antispam-Message-Info: =?iso-8859-1?Q?/OIBpjR6XkYn0b1X5wB13Iy9hW2CBOpikVO/Oj898U+a0FzdbTUvHJLUAT?=
- =?iso-8859-1?Q?IX0Tc/mRuYef1mEzfxzFy1L/x8rkXewbJujnYJZgrdKMJ7okK/2yK6xCGD?=
- =?iso-8859-1?Q?msizSfRvKvkyTkJScMX9IygogMbo0S+cu9vObvFg3AA39AjQ9brLXAGWZe?=
- =?iso-8859-1?Q?3ciGXXY735NoTUjTAx4jCff5FKgXVAuXkBUKTLLDdfiVzKksRslc6TueRK?=
- =?iso-8859-1?Q?jR7Bo+pJ+2c0WH9R/mDvZgCIUMWkAv979G7suCGJu5p4J9biWIuKuYnWUf?=
- =?iso-8859-1?Q?ecjGdBiiCrehvXwj3DoLpNkImBTZXUpaZA0EPbXLz9ra5NP2Xl8erPRaQm?=
- =?iso-8859-1?Q?oUNM2nX+iOjuc6nrmLSasMwgbjpnjsXWezlobF/rqhAq3uGl+5i930VrqF?=
- =?iso-8859-1?Q?iqf6u9hstUThSkYGNkFqk6pHj5+vhqDJnDL/O8gTxoC8Uzwfsae4KOgIiU?=
- =?iso-8859-1?Q?Lv+FQvbeMN53PhhkptAXsCD6ARnTDzz6Lrx60Xwx4eOGphff8GlYldJ1VQ?=
- =?iso-8859-1?Q?h9gqhJLbNLSUfYq/cqsyjwheuylpvEJmCfmcyAy3aV3Ds9cbnFaEb4Vm2m?=
- =?iso-8859-1?Q?OpTz9X9As9+/A6qi2hGkD5GJp3qukToM5S6nNZgk5HtQbfF8V85PksUamO?=
- =?iso-8859-1?Q?Il4IuQlEuIob583/PspRQBpF/7C+iVflrISKtjiGE3UtAiZywxQiTOxppd?=
- =?iso-8859-1?Q?IdPrU+IcPFu0dvd1YdU+DM/v+7oF+26WaPi3gXZvejV/tDVZxgo8YSlE5R?=
- =?iso-8859-1?Q?0pS5UyLLIeXtoviWXbK4jVRpwFVxt1b1HiItZcUlrZPSxFhWYx3bImVSa9?=
- =?iso-8859-1?Q?zoHGoza7v99cGqzKRCKkIzGvYID+y5+ELcJMr4rp49s46bLFCiWgF/FZRU?=
- =?iso-8859-1?Q?8THT8kdeQX77c8zQBk8OzQUDvdchloJ/RyoXnCRX2iYKr07MVWZUm4f1Zk?=
- =?iso-8859-1?Q?8rnrHhOKGwkcO11GIWkamhM1+H6a2QQXq/Hbqlr7tN+Sk1Y5oMIrFqXGrC?=
- =?iso-8859-1?Q?zTGTW4hgZRGYRZIktyoTgmJx3lMyBvvbMXulvOxSmB1XdNM+b1AiDaPmpM?=
- =?iso-8859-1?Q?ciJHJn2JMRVNYIuRq4+x3TL7/+jXLx+ouUAu0eK8b+7uPtbRIo9h7CltgA?=
- =?iso-8859-1?Q?+K6L5PkxMoMZ+goOKCNtLA/NyZQRyjhj0kZdqvaMrp8vhjrBwJ5JcJMgNL?=
- =?iso-8859-1?Q?ZuHKUsaq0Ue9LmNvFCGM3V9wTnB1ZCqVDB+fL4vjDikRSE6I2+RiieRiLk?=
- =?iso-8859-1?Q?7aEP8Slft+bRReSHbWQ7wnJZQZ3nTQmwesFskrSFFQ9l/6oE3ZcJ9cRjIs?=
- =?iso-8859-1?Q?hrEgUHbhx/RYEq48z1NMG3OJMY2g2MtbaVJOleD453QfVGNzDO4PDm1Lpa?=
- =?iso-8859-1?Q?uJV+ZKFd0dtjkq4rxx3wBLFhgt8cjnvs1XbSzZb1Ito+DejrttPEh1tCDP?=
- =?iso-8859-1?Q?/CTh2GSgVl7HcM4vO4fFOob/BlJe8qni2XcCxGfK1zrViK0lsZjLxFHfLT?=
- =?iso-8859-1?Q?QgqX4A6qcrSGvAHRdoMUUW6PTMJRYpPrK8aS9ahl0lxg=3D=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR11MB3934.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(27256017);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?iso-8859-1?Q?EwmElDDC2dNIkiL20YXAKgLRZcGLtBE5gKfara5+e1RzY+MKq1ZJLnx9/g?=
- =?iso-8859-1?Q?jc8EKtY/gB/cCykFfAv/huBlmrKA1XvqNQ9vahK8/v17Ww3BHpXX3prAjE?=
- =?iso-8859-1?Q?j32gN0NCEsHdpJqCvpO9/gql/sVS4wKUjt8KBo6KzqD7sWegN7/syk7Fzl?=
- =?iso-8859-1?Q?/ZkT5D9IbaUBmXUwIBmq5zqCpiMRWdtLYS7ySGaGTPn12VgM9gHwGNmqDg?=
- =?iso-8859-1?Q?rNQSBhJTVp5cKavv2i1Tk0zdK21wOww2nLBKWa2BnexUpr/xr8qrZPn/08?=
- =?iso-8859-1?Q?cMKP8GfVzF3FEU4Lzpt/Y2lwRM6dGNcS5KsDezx6zFpxpAQKihT6JoYUNJ?=
- =?iso-8859-1?Q?1TtNd5KMW6N3jW4YSwSJvIzEedVK2RD35/VRx7wtgSVAdAM/I8oxupfCIO?=
- =?iso-8859-1?Q?co9DDOzeYAmpjzDVHvTIAQAyGhVjcBTG4J6sILxcdxoCqZ8Sjzhv7aniNJ?=
- =?iso-8859-1?Q?nC7zjeKvZZYyiPaLJ6+zxIGD+vAu5hkaifB6Yr9Vpvtom4jP72Ls0Eaczk?=
- =?iso-8859-1?Q?L8jbxE5/av8qRQD9x701rtohCNbxBOcte1aMcF/pTdQ5zpM8a4vVx5Z9Az?=
- =?iso-8859-1?Q?nPPoKIxVRZ+yWsSqhn8OOsPJt77u9QkJ3ljoNQmTRxQ87xHaoUMGxnojCu?=
- =?iso-8859-1?Q?dX9A5V/rN0YDRUA6kU1SliKG7LVZunmEa3mFYWWjM2gyC0WMIDA/jxbuPH?=
- =?iso-8859-1?Q?wLs2xkJ8B+Wvv9P9BowmXOJ9r7f7R4dAoSFoNpbXmDK4EE27OF6Sd7e7vE?=
- =?iso-8859-1?Q?xdL/tfeIRxhAgIJZUEgIPctsOdy2VXQDTgfDwXkpPFgbURIMvrFswkm5DB?=
- =?iso-8859-1?Q?DbXfcipzEVnizRU3CJNE01NfCch/XC8vVjVcZ6pJ54b1+Z4Z6pBpaCdcS7?=
- =?iso-8859-1?Q?3S/Z3bsEx5kOGVJ9SxPv/4LzOd57MqOXLmhPclnLkPwDOWVfZzL0xByr8+?=
- =?iso-8859-1?Q?g8qJhX3KPnEdVMmNfk3eDHqdgVlLkY96W+3xhOk8BTqrkge6FEyvuQ83wA?=
- =?iso-8859-1?Q?XAw0kfJdsjR/iSuRU4jLr/QfLhlyA+py+1u1uP9UIJ/OGmv5ZN2VIlXAUa?=
- =?iso-8859-1?Q?Dq+9uUelsf/TFjwKzUmbTUgzAdXDyfAv+0IjiVaveilO4O72R8Ftvt95O7?=
- =?iso-8859-1?Q?O63YhSUITcRp00GgbvFjN/moJN8ZtuTb4iaadqFiJUIXMd0cX5oRwpieZO?=
- =?iso-8859-1?Q?hfjEsrk+cRC7AElhjs6A9k6PCzF1rXzA3RmCsh2SpKIuZHCFgqEAKI5QzK?=
- =?iso-8859-1?Q?D9TK2Cq7s84r6WbbMFkyRj3bfYagXOoBhZwuJx65r7iXub6qZytGH7xgRG?=
- =?iso-8859-1?Q?jLwXeWRnGXTJXLbU+QfuCCYofhT6KVIk+GYgTt9dMRPewwvAFtli2cU6FJ?=
- =?iso-8859-1?Q?0bjygSRJsrXh/xJK7n9lJC3si6pteF/LbZgq+QSGDFhHPsbTnJJ9vsiISQ?=
- =?iso-8859-1?Q?kiCWUVVIyGe4CMiv2fCEwPajaMHeD5iyE5bIOiBQZVjo862RQ2ubFwvLR6?=
- =?iso-8859-1?Q?a8g1whgF7NQCdS1czxa5RDq7x8XloIrrI2K/MRUkCTu00KTM19bmpNivOK?=
- =?iso-8859-1?Q?uVXooMSUhXXdYDHVneuiwHWqsscrpaiEprwZlEbsg/h+dBwIf6FlA7IavC?=
- =?iso-8859-1?Q?+NPXprx7agmhsSrVS0xYRGAC9t9QEp72lA25ggsyWjMs2ICxBLeIuBgqcE?=
- =?iso-8859-1?Q?JVl9oJJY7QjqmT/ExpA=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7f6cc0d5-53d0-4a07-d5f3-08dde53038d9
-X-MS-Exchange-CrossTenant-AuthSource: MN2PR11MB3934.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2025 06:09:03.3838
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: aplAYVEN7LwEi94pirUyRYIzoEGo2AMl3KuwfxLMlCOG0TtUZkbNH1ySigp7qy6WWfPtfXJcOiS+Xjz+kJJP0DDjpu5IijidDpCrD7GGfqI=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA3PR11MB9349
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 2025-08-26 at 19:46:19 -0500, Samuel Holland wrote:
->Hi Maciej,
->
->On 2025-08-26 3:08 AM, Maciej Wieczor-Retman wrote:
->> On 2025-08-25 at 14:36:35 -0700, Dave Hansen wrote:
->>> On 8/25/25 13:24, Maciej Wieczor-Retman wrote:
->>>> +/*
->>>> + * CONFIG_KASAN_SW_TAGS requires LAM which changes the canonicality checks.
->>>> + */
->>>> +#ifdef CONFIG_KASAN_SW_TAGS
->>>> +static __always_inline u64 __canonical_address(u64 vaddr, u8 vaddr_bits)
->>>> +{
->>>> +	return (vaddr | BIT_ULL(63) | BIT_ULL(vaddr_bits - 1));
->>>> +}
->>>> +#else
->>>>  static __always_inline u64 __canonical_address(u64 vaddr, u8 vaddr_bits)
->>>>  {
->>>>  	return ((s64)vaddr << (64 - vaddr_bits)) >> (64 - vaddr_bits);
->>>>  }
->>>> +#endif
->>>
->>> This is the kind of thing that's bound to break. Could we distill it
->>> down to something simpler, perhaps?
->>>
->>> In the end, the canonical enforcement mask is the thing that's changing.
->>> So perhaps it should be all common code except for the mask definition:
->>>
->>> #ifdef CONFIG_KASAN_SW_TAGS
->>> #define CANONICAL_MASK(vaddr_bits) (BIT_ULL(63) | BIT_ULL(vaddr_bits-1))
->>> #else
->>> #define CANONICAL_MASK(vaddr_bits) GENMASK_UL(63, vaddr_bits)
->>> #endif
->>>
->>> (modulo off-by-one bugs ;)
->>>
->>> Then the canonical check itself becomes something like:
->>>
->>> 	unsigned long cmask = CANONICAL_MASK(vaddr_bits);
->>> 	return (vaddr & mask) == mask;
->>>
->>> That, to me, is the most straightforward way to do it.
->> 
->> Thanks, I'll try something like this. I will also have to investigate what
->> Samuel brought up that KVM possibly wants to pass user addresses to this
->> function as well.
->> 
->>>
->>> I don't see it addressed in the cover letter, but what happens when a
->>> CONFIG_KASAN_SW_TAGS=y kernel is booted on non-LAM hardware?
->> 
->> That's a good point, I need to add it to the cover letter. On non-LAM hardware
->> the kernel just doesn't boot. Disabling KASAN in runtime on unsupported hardware
->> isn't that difficult in outline mode, but I'm not sure it can work in inline
->> mode (where checks into shadow memory are just pasted into code by the
->> compiler).
->
->On RISC-V at least, I was able to run inline mode with missing hardware support.
->The shadow memory is still allocated, so the inline tag checks do not fault. And
->with a patch to make kasan_enabled() return false[1], all pointers remain
->canonical (they match the MatchAllTag), so the inline tag checks all succeed.
->
->[1]:
->https://lore.kernel.org/linux-riscv/20241022015913.3524425-3-samuel.holland@sifive.com/
+-Wflex-array-member-not-at-end has been introduced in GCC-14, and we
+are getting ready to enable it, globally.
 
-Thanks, that should work :)
+So, in order to avoid ending up with a flexible-array member in the
+middle of multiple other structs, we use the `__struct_group()`
+helper to create a new tagged `struct fc_df_desc_fpin_reg_hdr`.
+This structure groups together all the members of the flexible
+`struct fc_df_desc_fpin_reg` except the flexible array.
 
-I'll test it and apply to the series.
+As a result, the array is effectively separated from the rest of the
+members without modifying the memory layout of the flexible structure.
+We then change the type of the middle struct members currently causing
+trouble from `struct fc_df_desc_fpin_reg` to `struct
+fc_df_desc_fpin_reg_hdr`.
 
->
->Regards,
->Samuel
->
->> Since for now there is no compiler support for the inline mode anyway, I'll try to
->> disable KASAN on non-LAM hardware in runtime.
->> 
->
+We also want to ensure that in case new members need to be added to the
+flexible structure, they are always included within the newly created
+tagged struct. For this, we use `_Static_assert()`. This ensures that
+the memory layout for both the flexible structure and the new tagged
+struct is the same after any changes.
 
+This approach avoids having to implement `struct fc_df_desc_fpin_reg_hdr`
+as a completely separate structure, thus preventing having to maintain
+two independent but basically identical structures, closing the door
+to potential bugs in the future.
+
+The above is also done for flexible structures `struct fc_els_rdf` and
+`struct fc_els_rdf_resp`
+
+So, with these changes, fix the following warnings:
+drivers/scsi/lpfc/lpfc_hw4.h:4936:41: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+drivers/scsi/lpfc/lpfc_hw4.h:4942:41: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+drivers/scsi/lpfc/lpfc_hw4.h:4947:41: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+
+Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+---
+Changes in v2:
+ - Implement the same changes for `struct fc_els_rdf_resp`
+ - Fix size calculation in lpfc_issue_els_rdf(). (Justin Tee)
+
+v1:
+ - Link: https://lore.kernel.org/linux-hardening/aJtMETERd-geyP1q@kspp/
+
+ include/uapi/scsi/fc/fc_els.h | 58 +++++++++++++++++++++++------------
+ drivers/scsi/lpfc/lpfc_els.c  |  2 +-
+ drivers/scsi/lpfc/lpfc_hw4.h  |  6 ++--
+ 3 files changed, 43 insertions(+), 23 deletions(-)
+
+diff --git a/include/uapi/scsi/fc/fc_els.h b/include/uapi/scsi/fc/fc_els.h
+index 16782c360de3..019096beb179 100644
+--- a/include/uapi/scsi/fc/fc_els.h
++++ b/include/uapi/scsi/fc/fc_els.h
+@@ -11,6 +11,12 @@
+ #include <linux/types.h>
+ #include <asm/byteorder.h>
+ 
++#ifdef __KERNEL__
++#include <linux/stddef.h>	/* for offsetof */
++#else
++#include <stddef.h>		/* for offsetof */
++#endif
++
+ /*
+  * Fibre Channel Switch - Enhanced Link Services definitions.
+  * From T11 FC-LS Rev 1.2 June 7, 2005.
+@@ -1109,12 +1115,15 @@ struct fc_els_fpin {
+ 
+ /* Diagnostic Function Descriptor - FPIN Registration */
+ struct fc_df_desc_fpin_reg {
+-	__be32		desc_tag;	/* FPIN Registration (0x00030001) */
+-	__be32		desc_len;	/* Length of Descriptor (in bytes).
+-					 * Size of descriptor excluding
+-					 * desc_tag and desc_len fields.
+-					 */
+-	__be32		count;		/* Number of desc_tags elements */
++	/* New members MUST be added within the __struct_group() macro below. */
++	__struct_group(fc_df_desc_fpin_reg_hdr, __hdr, /* no attrs */,
++		__be32		desc_tag; /* FPIN Registration (0x00030001) */
++		__be32		desc_len; /* Length of Descriptor (in bytes).
++					   * Size of descriptor excluding
++					   * desc_tag and desc_len fields.
++					   */
++		__be32		count;	  /* Number of desc_tags elements */
++	);
+ 	__be32		desc_tags[];	/* Array of Descriptor Tags.
+ 					 * Each tag indicates a function
+ 					 * supported by the N_Port (request)
+@@ -1124,33 +1133,44 @@ struct fc_df_desc_fpin_reg {
+ 					 * See ELS_FN_DTAG_xxx for tag values.
+ 					 */
+ };
++_Static_assert(offsetof(struct fc_df_desc_fpin_reg, desc_tags) == sizeof(struct fc_df_desc_fpin_reg_hdr),
++	      "struct member likely outside of __struct_group()");
+ 
+ /*
+  * ELS_RDF - Register Diagnostic Functions
+  */
+ struct fc_els_rdf {
+-	__u8		fpin_cmd;	/* command (0x19) */
+-	__u8		fpin_zero[3];	/* specified as zero - part of cmd */
+-	__be32		desc_len;	/* Length of Descriptor List (in bytes).
+-					 * Size of ELS excluding fpin_cmd,
+-					 * fpin_zero and desc_len fields.
+-					 */
++	/* New members MUST be added within the __struct_group() macro below. */
++	__struct_group(fc_els_rdf_hdr, __hdr, /* no attrs */,
++		__u8		fpin_cmd;	/* command (0x19) */
++		__u8		fpin_zero[3];	/* specified as zero - part of cmd */
++		__be32		desc_len;	/* Length of Descriptor List (in bytes).
++						 * Size of ELS excluding fpin_cmd,
++						 * fpin_zero and desc_len fields.
++						 */
++	);
+ 	struct fc_tlv_desc	desc[];	/* Descriptor list */
+ };
++_Static_assert(offsetof(struct fc_els_rdf, desc) == sizeof(struct fc_els_rdf_hdr),
++	       "struct member likely outside of __struct_group()");
+ 
+ /*
+  * ELS RDF LS_ACC Response.
+  */
+ struct fc_els_rdf_resp {
+-	struct fc_els_ls_acc	acc_hdr;
+-	__be32			desc_list_len;	/* Length of response (in
+-						 * bytes). Excludes acc_hdr
+-						 * and desc_list_len fields.
+-						 */
+-	struct fc_els_lsri_desc	lsri;
++	/* New members MUST be added within the __struct_group() macro below. */
++	__struct_group(fc_els_rdf_resp_hdr, __hdr, /* no attrs */,
++		struct fc_els_ls_acc	acc_hdr;
++		__be32			desc_list_len;	/* Length of response (in
++							 * bytes). Excludes acc_hdr
++							 * and desc_list_len fields.
++							 */
++		struct fc_els_lsri_desc	lsri;
++	);
+ 	struct fc_tlv_desc	desc[];	/* Supported Descriptor list */
+ };
+-
++_Static_assert(offsetof(struct fc_els_rdf_resp, desc) == sizeof(struct fc_els_rdf_resp_hdr),
++	       "struct member likely outside of __struct_group()");
+ 
+ /*
+  * Diagnostic Capability Descriptors for EDC ELS
+diff --git a/drivers/scsi/lpfc/lpfc_els.c b/drivers/scsi/lpfc/lpfc_els.c
+index fca81e0c7c2e..432761fb49de 100644
+--- a/drivers/scsi/lpfc/lpfc_els.c
++++ b/drivers/scsi/lpfc/lpfc_els.c
+@@ -3762,7 +3762,7 @@ lpfc_issue_els_rdf(struct lpfc_vport *vport, uint8_t retry)
+ 	memset(prdf, 0, cmdsize);
+ 	prdf->rdf.fpin_cmd = ELS_RDF;
+ 	prdf->rdf.desc_len = cpu_to_be32(sizeof(struct lpfc_els_rdf_req) -
+-					 sizeof(struct fc_els_rdf));
++					 sizeof(struct fc_els_rdf_hdr));
+ 	prdf->reg_d1.reg_desc.desc_tag = cpu_to_be32(ELS_DTAG_FPIN_REGISTER);
+ 	prdf->reg_d1.reg_desc.desc_len = cpu_to_be32(
+ 				FC_TLV_DESC_LENGTH_FROM_SZ(prdf->reg_d1));
+diff --git a/drivers/scsi/lpfc/lpfc_hw4.h b/drivers/scsi/lpfc/lpfc_hw4.h
+index bc709786e6af..a7f7ed86d2b0 100644
+--- a/drivers/scsi/lpfc/lpfc_hw4.h
++++ b/drivers/scsi/lpfc/lpfc_hw4.h
+@@ -4909,18 +4909,18 @@ struct send_frame_wqe {
+ 
+ #define ELS_RDF_REG_TAG_CNT		4
+ struct lpfc_els_rdf_reg_desc {
+-	struct fc_df_desc_fpin_reg	reg_desc;	/* descriptor header */
++	struct fc_df_desc_fpin_reg_hdr	reg_desc;	/* descriptor header */
+ 	__be32				desc_tags[ELS_RDF_REG_TAG_CNT];
+ 							/* tags in reg_desc */
+ };
+ 
+ struct lpfc_els_rdf_req {
+-	struct fc_els_rdf		rdf;	   /* hdr up to descriptors */
++	struct fc_els_rdf_hdr		rdf;	   /* hdr up to descriptors */
+ 	struct lpfc_els_rdf_reg_desc	reg_d1;	/* 1st descriptor */
+ };
+ 
+ struct lpfc_els_rdf_rsp {
+-	struct fc_els_rdf_resp		rdf_resp;  /* hdr up to descriptors */
++	struct fc_els_rdf_resp_hdr	rdf_resp;  /* hdr up to descriptors */
+ 	struct lpfc_els_rdf_reg_desc	reg_d1;	/* 1st descriptor */
+ };
+ 
 -- 
-Kind regards
-Maciej Wieczór-Retman
+2.43.0
+
 
