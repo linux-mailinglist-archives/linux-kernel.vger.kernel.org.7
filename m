@@ -1,253 +1,415 @@
-Return-Path: <linux-kernel+bounces-788855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3D52B38B15
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 22:42:58 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C4A1B38B16
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 22:43:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8B8104E0FE5
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 20:42:57 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 253584E0F74
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 20:43:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2197C2F49F2;
-	Wed, 27 Aug 2025 20:42:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3657E27817F;
+	Wed, 27 Aug 2025 20:43:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ko3VYDBz"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="TphgsXag";
+	dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="Wm1fK3fX"
+Received: from mailrelay-egress16.pub.mailoutpod3-cph3.one.com (mailrelay-egress16.pub.mailoutpod3-cph3.one.com [46.30.212.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60FBF1DE4CA;
-	Wed, 27 Aug 2025 20:42:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.11
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756327365; cv=fail; b=ip+ZLi9lTKEwOWB9GfsITReww/7DZxfVwTkahk71FuVjiN3804CCSei7B1NiG2PjvoLrzf7KzEs6hpgYKJvUXIa4wy1zy65EQtxTXN4jCh2C5t3uu8GbCU3wUYtGogqIfsvPFBJff1iwLBeYOUTlo2O43Q/a8Eqo0Cns53hZnXE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756327365; c=relaxed/simple;
-	bh=b2beKKMn+SG9AemLQzopQLsdnMBK4JghVNDmEQWL/V8=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=u4HvIKx5Mb8lGghQqteQoI7lWUa2in59UfC6qq5KA+f1zwBhhmdaDoin2BenEgoj09HRFP03FjwAxdPHSH7zuWoUwmxUdABYoJTxBxzAq/sc+3z0FT1kaFi8VucNQMm4mPtA9hoCsryFKwCXiOgUWR7oFjFtd9dNqt7Nrb6iWw8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ko3VYDBz; arc=fail smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756327363; x=1787863363;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=b2beKKMn+SG9AemLQzopQLsdnMBK4JghVNDmEQWL/V8=;
-  b=Ko3VYDBzymMVqc8WKBI8GD5Ad9ta/VkNORN/OkjViPXVv62r8dvtx7TJ
-   DPMQDGMIc4qOZi89w5anqQmAqGtHkMlnoCd5SIouBQGJoypU+pEwYOiGN
-   EQk1qDx++UMOlWx+KjTwhBO8GzSvs3dUOSNOx8W+yB3D9yaF3ykkZyTLa
-   BscFp40Z85iQXGS2o0KxJm8P1mxwBeWSOd3JHCP1gylPZ8winULP788a0
-   gExk7nTX4VmWVB34gUg4bH8xSpyAHa/nUZb+tLphPoXtUsqmz9mta6uS0
-   4D2rmWyrj4C35mEbFha917HDwLuKjyfvZcGCCkTQS36XdLo1FRSp/cYLU
-   Q==;
-X-CSE-ConnectionGUID: 9Ome1sSwSrW0VYJPTCoCEQ==
-X-CSE-MsgGUID: CfLaOt8VQcuUMBc2LquBkw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11535"; a="68860045"
-X-IronPort-AV: E=Sophos;i="6.18,217,1751266800"; 
-   d="scan'208";a="68860045"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2025 13:42:43 -0700
-X-CSE-ConnectionGUID: Xs9a44jZRvSAKEbmffX8SA==
-X-CSE-MsgGUID: 1Rwep/4cT+K5rB4zMzkDIQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,217,1751266800"; 
-   d="scan'208";a="169864022"
-Received: from fmsmsx903.amr.corp.intel.com ([10.18.126.92])
-  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2025 13:42:43 -0700
-Received: from FMSMSX902.amr.corp.intel.com (10.18.126.91) by
- fmsmsx903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Wed, 27 Aug 2025 13:42:42 -0700
-Received: from fmsedg901.ED.cps.intel.com (10.1.192.143) by
- FMSMSX902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17 via Frontend Transport; Wed, 27 Aug 2025 13:42:42 -0700
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (40.107.237.40)
- by edgegateway.intel.com (192.55.55.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Wed, 27 Aug 2025 13:42:41 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=my47w04ZB3tNK3TzT8hakjRdksQLLZ10ossZM5mXH8YXoTJGON4e2wkpPku0+/eyZWMfdIO6zGg95Mzajwfbt8gKHOEc8C3DpiakRsgijbrt8euJzfh4vRdcFO4dQwM5F1PwYfPs52CAzrmVG95/7Rb0QYqWAfJyTvXaErDdrB5TcDfDyUFRNnTf8B+tq6/oPAmN6fZXLCuBGvl7soy+1xl9PT1FUkQqznIoeQevf+YS/4LuDo/YzCyBAEcj/zJqWfMP4e848owApd30MwOcb/D9AZyPAF/T7ei7t3F1On6fqvYK8noLS4mHJ+d/aoWmU8UyjYzSpFNHUkOB45B+/Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=6j+K34PM6Mya3vWXbFztB18jeF3wsKiocAT0z93zRqQ=;
- b=DRKFFkiuPlRHJ4p200SBuVwv7s/ENXBwxxBnEGu0+F6RmKcFuojzVrteBu/boRuAIsJWVCjC2RgDy9BqcBTZpX/hEMuDd25pwWGyyYS1ySnxBxE0IfPzLHfikcgm56XUSoTb4mXPL8UHXdUNH0z7jVp6ftAiEPpzXzslx/9rHKfU1qYUHnu3xppLDV30v9sz7DA6JO7IPaLRdA14PKoYI/bVNWK6aA+f/x7LFTgydDY5qrk8K93TPgC644NEfs3teNm/aamwklbzgvkW7WAyWL6ddVZy28u3pZeTQ3IynDtZ45W2rdzUebM2WDsoPVaGRsqbAxn4o/UY06LtdIgbIA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from BL3PR11MB6435.namprd11.prod.outlook.com (2603:10b6:208:3bb::9)
- by CY8PR11MB7082.namprd11.prod.outlook.com (2603:10b6:930:52::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.16; Wed, 27 Aug
- 2025 20:42:39 +0000
-Received: from BL3PR11MB6435.namprd11.prod.outlook.com
- ([fe80::24ab:bc69:995b:e21]) by BL3PR11MB6435.namprd11.prod.outlook.com
- ([fe80::24ab:bc69:995b:e21%5]) with mapi id 15.20.9009.013; Wed, 27 Aug 2025
- 20:42:39 +0000
-Message-ID: <26255031-9f8e-4d22-bbb2-f2a61655c1d6@intel.com>
-Date: Wed, 27 Aug 2025 13:42:35 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH iwl-next v5 00/13] idpf: add XDP support
-To: Simon Horman <horms@kernel.org>, Alexander Lobakin
-	<aleksander.lobakin@intel.com>
-CC: <intel-wired-lan@lists.osuosl.org>, Michal Kubiak
-	<michal.kubiak@intel.com>, Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>, Andrew Lunn
-	<andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, "Eric
- Dumazet" <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
-	<pabeni@redhat.com>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
-	<daniel@iogearbox.net>, <nxne.cnse.osdt.itp.upstreaming@intel.com>,
-	<bpf@vger.kernel.org>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-References: <20250826155507.2138401-1-aleksander.lobakin@intel.com>
- <20250827172828.GP10519@horms.kernel.org>
-Content-Language: en-US
-From: Tony Nguyen <anthony.l.nguyen@intel.com>
-In-Reply-To: <20250827172828.GP10519@horms.kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MW4PR04CA0083.namprd04.prod.outlook.com
- (2603:10b6:303:6b::28) To BL3PR11MB6435.namprd11.prod.outlook.com
- (2603:10b6:208:3bb::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC5862E888A
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 20:43:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.30.212.3
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756327402; cv=none; b=L1IqCp91orOS79gDWdywR0RPvw/b7soboKnLnFI9jVEzZAflc2g+BGY8Q+aXDG03+JuwP/vuSr1/ehguYv6DkcSwWsCDHxZKxSWQWtGSNTdMiMl4bvpXQ4D/nZ4JtwbFwPqBMNzfKgPYbcUOSi8mHPR4KK29DAKVC7OcKsjNmEk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756327402; c=relaxed/simple;
+	bh=dyDMF/cwAIlIm+AcMnZv4Sla5VsVuVdxhN/jaefnoPk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mzVNrneK8r8xGRcKfXUGJfBJ3RbKigsb8F51U89u7W+PyDs3XtXsIAc8TXdH4OQY7PizudtuRyQxx7fszQKEpvOiO1np28glHUh9X6I8D01SKbX8KKzDXhoIYZFSVaQ1skfEggxlBJrEYPIbOfaD2WQHoWdtEBgvF4j+ZbixO2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se; spf=none smtp.mailfrom=konsulko.se; dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=TphgsXag; dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=Wm1fK3fX; arc=none smtp.client-ip=46.30.212.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=konsulko.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1756327390; x=1756932190;
+	d=konsulko.se; s=rsa2;
+	h=content-transfer-encoding:content-type:in-reply-to:from:references:cc:to:
+	 subject:mime-version:date:message-id:from;
+	bh=AZedlH50mveQm2l1NixYwK48/IUW8iWvnLQXSAqCWOg=;
+	b=TphgsXagp7bCIZd+a5snmButOT3yQ+6eUJLXHxZqVi8DLmgofwRs8ISwr1NZIJgBYw06F6pOm+S0E
+	 mJ0qDPiG4JM5tMXTkYGvwnGNsT55dLUGVHG8rqddcMPLSxdsLNopFm+YDic040yp7j7jkqkKxyTEza
+	 o+OxM8lqQalVEiq8PHMqEP3cyETwi+vLkdN+Vzdolwhdi0NH0IScAGhHtY+v8edZOOWB6/OfdQ8b4V
+	 CLuzIkynoVK+Sr1Jo0JNoqn8DVtkGytxVaZwafKSfYLGdGCOLPMW7hlqkp2o5oEeDbtVQnAzG0hm5k
+	 dhoeSA+nDnpyNV4MmTNaZGNCtte1wKg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1756327390; x=1756932190;
+	d=konsulko.se; s=ed2;
+	h=content-transfer-encoding:content-type:in-reply-to:from:references:cc:to:
+	 subject:mime-version:date:message-id:from;
+	bh=AZedlH50mveQm2l1NixYwK48/IUW8iWvnLQXSAqCWOg=;
+	b=Wm1fK3fXzdlOu2kYnKQmwUzwQK82UNEkNswgPKQLzA8bS9slQQm19yNcCVdxG4mAGwdlu6d8Mah5H
+	 lp+PFfRBQ==
+X-HalOne-ID: 70387192-8386-11f0-bb7c-fb5fec76084d
+Received: from [192.168.10.245] (host-95-203-16-218.mobileonline.telia.com [95.203.16.218])
+	by mailrelay3.pub.mailoutpod3-cph3.one.com (Halon) with ESMTPSA
+	id 70387192-8386-11f0-bb7c-fb5fec76084d;
+	Wed, 27 Aug 2025 20:43:09 +0000 (UTC)
+Message-ID: <b1509e7f-4817-4466-bd2b-c083f024c0d4@konsulko.se>
+Date: Wed, 27 Aug 2025 22:43:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL3PR11MB6435:EE_|CY8PR11MB7082:EE_
-X-MS-Office365-Filtering-Correlation-Id: c9150ac6-7db4-446d-5162-08dde5aa437c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?Tk5PYWpxQjJSdURHUFROU1JBYnlha2c5cnlITzIzRE5QeXgvNVMwaFJtQkYz?=
- =?utf-8?B?Z3BwR0t6bk9DQ3ZGUWRJUUkxaDh4VjJ5aHhxT1FWa1NEa1FTN1gwT0hOZVRy?=
- =?utf-8?B?RGtsekV6VjFjc2ZvSVozY1V3NVM3YVFOQVJGcWFRdXJldjhxY2dhbnlYMWQ2?=
- =?utf-8?B?U1gvZGF4MlozMit1RnlONXdjMms0YWR2Y3RIdkpRVSs0b1JZbmlLaDdRNjNh?=
- =?utf-8?B?VGVkOENFUjJ1eXlHK200em8vdE1qWFJ3NHp1VDh3b3Vob0krUWV5dTlCZXhP?=
- =?utf-8?B?R1ZxS3c1M1NUTGRoUGJYRkJHazZlR3F0VE43R0RhVmJ1Sis1V09ZMHFpMzJ2?=
- =?utf-8?B?MEU0UVEvKzlkTUhMM0xldmxIQXc4QWhwWm1yYkxPRG02L0UyZWhXZ1hxUVZD?=
- =?utf-8?B?TUpjUEpDQzdoUHNrUjQ0ZnQwcXJtYnRoVkZremc4S3l3Vyt1dzNKWkhQeFBG?=
- =?utf-8?B?SlpkTTA0eFBrQTFCcjJZMnZwc2R5YUZEcW5lYU1QNU1WU3dxY1VLK0ZrL0R6?=
- =?utf-8?B?VVBhU3VmZWhhTG5xSytBYkxxQW9wNTMxaEJITlVkeGhDazltcDhsb2ttS0Fr?=
- =?utf-8?B?ZFN2eHl4dis0T1MzREJ0NUdPeHlpbGNkYnVPT3dqTUZHNjMwZUtVeHBIOTlr?=
- =?utf-8?B?Vk9ldFF5M3ZCdDc0TEhheGIzVENVT2lOUmFXSkYxTHE3Vm5ieGJBS1licXhC?=
- =?utf-8?B?ajhYY0lNOE1Bc3RQVUV5aWI1QVQxSElPWnIydWxRRzFEcDYyODMzSTNERzQr?=
- =?utf-8?B?R1FBQ1Y1d00ySjdzb1BaUWYvb2RXNlJSWjFidkw3MHBOZ2tleXFaOUxiMXBz?=
- =?utf-8?B?anpZUHJWVUh4c2ZEd1lXUzlMVm5mWmh2VGt0cmc4UVdXSytaRUxIdWNzQ0dD?=
- =?utf-8?B?cmp4bE5Ldk13YlJtQW9kbjZiZ0JDWDN6V1g5ZFJYV1dxZkJLcVpGQ1BjM2pa?=
- =?utf-8?B?Sk5zejBkN21zLzdTa0FOUjBwSk1iZVJodGZ6dFpJTDJhYSs5WE5LaGcraHdL?=
- =?utf-8?B?WXlmWkxtU1lObWgrSnk1WU5xU2NHb01tTTFpb3hLTkwyclBDM2tLWWxKSTMr?=
- =?utf-8?B?QlduL05IWWlXVVVUbm1vRERLSm8rS0VSWUhOVldVUkJXVWEzQnByeEtRVFNi?=
- =?utf-8?B?eDNoa3pXeW9zV0ZZTkp3Qkh1T3N6dHRreGV6a2xQNnpVR01aL0t3cE5VSmty?=
- =?utf-8?B?dHhVNzdTS09ZcjRTQkV6Y3g0ZjF0TzVzV1JndGU0RlF0d0pqRjdBV0VlTXhT?=
- =?utf-8?B?eGgrTXZMMXRlVGJETTZTMm54SVVTNkpkR2NkUHd4cTBLNzFnWGRyS2UyVUNU?=
- =?utf-8?B?R24zTGdpQWJ4NkNGcVE0a3dOdFZWc201TTlXSHJFS1JodXJJZ1prejZNUW81?=
- =?utf-8?B?SkV1SXNtdlo3OTJrTWpTQTB6cGJjcCtFRUJqeEdYb3NneFFWVlNXMmhUMVlS?=
- =?utf-8?B?TCtxYjhhWjJndDFsSUNQU05JNkg4U1NObkpiTXYyWjNBazJ3dldoc1kxRUcy?=
- =?utf-8?B?ZXZaVno5ejRWODdGZjIyd3hTbUFPeWVBRlIxU0ljYUIveVN1UmhVOGh5Nkc2?=
- =?utf-8?B?Qm5USlZOZGExT09uNzRmSDZNbXFBREljeEVweWNqKzhHSTF4U29VbDBnME84?=
- =?utf-8?B?RkFFVmlSVkM1b1hMN0tTMlYxUTRmR242S0trUGQyR0srTk9xZ0ZubWo2NC8v?=
- =?utf-8?B?MzcyWll5VzFvZjJtWWpvQkMxeklYMEozcXBGZHBtOXJLMWpwdW1IRnYyejR4?=
- =?utf-8?B?dGR3eVlNcTMwK29Zd1lsYUk5MXNZMHdqNHByeUNsbmlWYXduQlM0Z1RURXR5?=
- =?utf-8?B?eS85L2ltTmFqWWVVYjgxY3Q2SE41bDhHamRkNFJ6b3JjODk5NE93UkcwM0xa?=
- =?utf-8?B?TGRQaEZHejRSdFNYa1UvRkxMb29vdHRCYm5zRmgxVnZaRGhFNWdZeWZKY1Ux?=
- =?utf-8?Q?IeoL0ZVTUQI=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL3PR11MB6435.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?OWRaLzlNSnR6b2Ria3Y0NDlhRU1XRjJFQTE4UDJrQ0RXZXpqd3JmNnZvSURy?=
- =?utf-8?B?amNndDhCeE1pOHM1YWc5ZFFtVDFNcXBlcHRaeUFLMUl5R0V4K0NaMjRKb3dl?=
- =?utf-8?B?Q2VrL2kxbTJVSUlsTkZjZDZCWmJLTFJFcFVPUGdPR1paNWd1ZkZpT0NWN3Fi?=
- =?utf-8?B?NmRCb21sVHdnL3hPQ2RpSTVjRENGc2FvdXdBNUkxeloyZmh1WCtxS2RTRThI?=
- =?utf-8?B?WkwrNFR0NHZmbENBcUh2MENJOFpqb3MzSklaS3FsREpSMFdLVEpaRWlkZHhS?=
- =?utf-8?B?eWdPUTVOMU0vbkhNZHlzR1pqL2ZxYUQ1THVWTEdacmtxMmdncTVHWm9VWlFG?=
- =?utf-8?B?dWVqdDlUbEQzTjgzd0FQUk01MWpFRGxjL1UxM296dWc4enk0a2dlSUMzOXEw?=
- =?utf-8?B?RVhQYmY4VG9QVmZjWEZzMUlZRWZNZGE1dXFQSjgrK2ZNTVVOdzdNdXhUb0ZU?=
- =?utf-8?B?UXdCWnBiUDR2MmNGY2dCOXZqdmkweml4Rko3ZEVTTW5QbzZIK3M5c05TL21R?=
- =?utf-8?B?Vm45cVRxUHU5ZXdPTzBQVDR2dm9xcnpCaWxrUFpwRkcyVW1Dc1R3MUNSaTVk?=
- =?utf-8?B?TTN1Zm1WeEQ0RFVHcTZvcWs5aEVVNWtPU2VmMzcxano4dk1JWFBpMjhBVG9R?=
- =?utf-8?B?NitRM2RIeGY0TEtxV1E2d3N1V1JoT3ZkZmxqMlVvcG80SmJUMEo3UjltWEJu?=
- =?utf-8?B?U2tMaEgxdVBxWDBjU20yZ2V1SmhINHRtOWpFVWVMeStObmdaVHFKUHJ4eE9n?=
- =?utf-8?B?MS9NZzhsUHZxeHB3MFVIemR3ZEtsNGd0SzYyUWFrbjUxU21kd1FHSXBWUGkz?=
- =?utf-8?B?dVBCUWw5RzJJdXVGVEVNWDVWV3ZEUW1aTWs1eWV6R2lVdFVJdDJoNVdnL2FY?=
- =?utf-8?B?ZDMvajlsOFVEOHpjVjRsNEZxY0kxeG9OZUhSQUl3K0NxbmRNWmxtZGZiczZV?=
- =?utf-8?B?TEVCTjBISjhWMzREak54Rk04UVZXa0FqWURTamxjSFlITG0wN2gwUnplWWh2?=
- =?utf-8?B?RUIwYlhEVEt1cE5vRGhiUmpZREhNRm5NNmhvdmk3SnRadi9Ga0tFOFZ6dHps?=
- =?utf-8?B?dTJDQzZTdVEwR2t6eUhYb2ZEMitvWTlMSHpzZmsrODBDS0tyVVh4dUtXd1gr?=
- =?utf-8?B?RmNvOTFrZlJ4UjV1SzZhbXdtTFJ5N2JyNHdkYkNXNTZaRTZidEg0RWRTdFFL?=
- =?utf-8?B?di9NaDNJeEVJL0VoWGh1Zm9QaTk5V1l0azJZTGFDRnZyNFhldFUwa20rejJB?=
- =?utf-8?B?TnpmSGpHWFU1UmdQT3grN2I1d1RjN1YyRGpaRm9jRjlMcE92aWp1SHhJYnFZ?=
- =?utf-8?B?U3BVY21BTXVuNWtOY0ZCUXZrU0oxOTZoQkJHSHlTbEYxQTQvU2tSYkQrR1BD?=
- =?utf-8?B?Y0ZwSlJ6U0hUbjV0dVhpWGF6M1NOemlMaTV0TytIQWZUVzZRUFJKRUFLaE5h?=
- =?utf-8?B?Y3FLSnVsQVdkMzV2TWxiTHpqZ200eTBCdkx1cUhFOWRwQk82L3o2dUR5Sm95?=
- =?utf-8?B?eEFlaVZCU0RJa2VhdElFeTRwa2NkTFlzT0Q1eEZ5U1czOFEzTGc2Q3FaMmRn?=
- =?utf-8?B?VFI2aURjWDR0S2F3SWpxOU11TWplRld6SW5LWkF2R1hIak5PeVJsNUZLc2hJ?=
- =?utf-8?B?NnFVQ1dWU2dVMURHYkZYRUhFbEprdjNveVppUC84Vk93R0RCaFNMdHFSQ3NT?=
- =?utf-8?B?VitxUjZuR2dkUi9maFJmUnZmMWRoUStYcDRvK2xtZE9mSUxyczRkTjJKQWFr?=
- =?utf-8?B?ZEF1SEFiNUxvVktmU0hOZjZuT1lLWFNLZ1NSRWQvQjBhWXQ4M0xGTkZ4eFdt?=
- =?utf-8?B?czNPOTZTSHB4MzdxakQ4THRtNk9oOEVveGdZOU1MMGYrdWJFYStLcFN1bkJ3?=
- =?utf-8?B?QkVBWmVpaXppekhteTVjdTlHSk9VSXVtK0xwVWJmVVExekZRZGxXdUVaLzZM?=
- =?utf-8?B?c1VlczZsNk5JWHAzbHRKNUlGSXQydXVNUlg1bHZZK3dGVnJhbS9abUVxR014?=
- =?utf-8?B?SVZIdFYxeFEvWmhFN2EvZG1MZVB5OERGcDBlVUVNeWlWMHZFM0poazdMTzdj?=
- =?utf-8?B?R1BPcldGdTJ0dzlHdU8xbHEvOVZwTmFkeHZBb3VHM1dUc3YwVm1CZThxTWwv?=
- =?utf-8?B?QTh5WGpreURCcGJZODU0dHhSbGQ0bW5EMXIyUWZ4aGVleGNIdlExU3R2cS9M?=
- =?utf-8?B?OHc9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: c9150ac6-7db4-446d-5162-08dde5aa437c
-X-MS-Exchange-CrossTenant-AuthSource: BL3PR11MB6435.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2025 20:42:39.7612
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Tpxy61280Pz/e1BnFEcoVW+f9T9J+uCwg/ABJN7Tq7eoLZlq47YEFUxwdbtrsX6V49j2hBPNAQwZdZvurK+kp0jq4XiOW80Sh8HN0vkOoNs=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR11MB7082
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/2] rust: zpool: add abstraction for zpool drivers
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Uladzislau Rezki <urezki@gmail.com>, Alice Ryhl <aliceryhl@google.com>,
+ Vlastimil Babka <vbabka@suse.cz>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>, Miguel Ojeda
+ <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+ Bjorn Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin
+ <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>,
+ Trevor Gross <tmgross@umich.edu>, Johannes Weiner <hannes@cmpxchg.org>,
+ Yosry Ahmed <yosry.ahmed@linux.dev>, Nhat Pham <nphamcs@gmail.com>,
+ linux-mm@kvack.org
+References: <20250823130420.867133-1-vitaly.wool@konsulko.se>
+ <20250823130522.867263-1-vitaly.wool@konsulko.se>
+ <DCCCRYEUVJWZ.2AUDA0DXK0XSF@kernel.org>
+Content-Language: en-US
+From: Vitaly Wool <vitaly.wool@konsulko.se>
+In-Reply-To: <DCCCRYEUVJWZ.2AUDA0DXK0XSF@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
 
-On 8/27/2025 10:28 AM, Simon Horman wrote:
-> On Tue, Aug 26, 2025 at 05:54:54PM +0200, Alexander Lobakin wrote:
->> Add XDP support (w/o XSk for now) to the idpf driver using the libeth_xdp
->> sublib. All possible verdicts, .ndo_xdp_xmit(), multi-buffer etc. are here.
->> In general, nothing outstanding comparing to ice, except performance --
->> let's say, up to 2x for .ndo_xdp_xmit() on certain platforms and
->> scenarios.
->> idpf doesn't support VLAN Rx offload, so only the hash hint is
->> available for now.
->>
->> Patches 1-7 are prereqs, without which XDP would either not work at all or
->> work slower/worse/...
+On 8/26/25 14:20, Danilo Krummrich wrote:
+> On Sat Aug 23, 2025 at 3:05 PM CEST, Vitaly Wool wrote:
+>> +/// Zpool API.
+>> +///
+>> +/// The [`ZpoolDriver`] trait serves as an interface for Zpool drivers implemented in Rust.
+>> +/// Such drivers implement memory storage pools in accordance with the zpool API.
+>> +///
+>> +/// # Example
+>> +///
+>> +/// A zpool driver implementation which uses KVec of 2**n sizes, n = 6, 7, ..., PAGE_SHIFT.
+>> +/// Every zpool object is packed into a KVec that is sufficiently large, and n (the
+>> +/// denominator) is saved in the least significant bits of the handle, which is guaranteed
+>> +/// to be at least 2**6 aligned by kmalloc.
+>> +///
+>> +/// ```
+>> +/// use core::ptr::{NonNull, copy_nonoverlapping};
+>> +/// use core::sync::atomic::{AtomicU64, Ordering};
+>> +/// use kernel::alloc::{Flags, KBox, KVec, NumaNode};
+>> +/// use kernel::page::PAGE_SHIFT;
+>> +/// use kernel::prelude::EINVAL;
+>> +/// use kernel::zpool::*;
+>> +///
+>> +/// struct MyZpool {
+>> +///     name: &'static CStr,
+>> +///     bytes_used: AtomicU64,
+>> +/// }
+>> +///
+>> +/// struct MyZpoolDriver;
+>> +///
+>> +/// impl ZpoolDriver for MyZpoolDriver {
+>> +///     type Pool = KBox<MyZpool>;
+>> +///
+>> +///     fn create(name: &'static CStr, gfp: Flags) -> Result<KBox<MyZpool>> {
+>> +///         let my_pool = MyZpool { name, bytes_used: AtomicU64::new(0) };
+>> +///         let pool = KBox::new(my_pool, gfp)?;
+>> +///
+>> +///         Ok(pool)
+>> +///     }
+>> +///
+>> +///     fn destroy(p: KBox<MyZpool>) {
+>> +///         drop(p);
+>> +///     }
+>> +///
+>> +///     fn malloc(pool: &mut MyZpool, size: usize, gfp: Flags, _nid: NumaNode) -> Result<usize> {
+>> +///         let mut pow: usize = 0;
+>> +///         for n in 6..=PAGE_SHIFT {
+>> +///             if size <= 1 << n {
+>> +///                 pow = n;
+>> +///                 break;
+>> +///             }
+>> +///         }
 > 
-> Hi Alexander,
+> Why not just use next_power_of_two()? I think the same logic could also be
+> achieved with
 > 
-> I'm wondering if you could give a hash that this patch-set applies to.
-> Or a branch where it has been applied.
+> 	size.next_power_of_two().trailing_zeros().max(6).min(PAGE_SHIFT)
 
-Hi Simon,
+It indeed can, thanks :)
 
-I believe this will apply to net-next if you apply this series [1] 
-beforehand; it should merge into net-next this week. Alternatively,
-you could use IWL next-queue/dev-queue [2] and replace the patches there 
-(v4) with this these.
-
-Thanks,
-Tony
-
-[1] 
-https://lore.kernel.org/netdev/20250821180100.401955-1-anthony.l.nguyen@intel.com/
-[2] 
-https://web.git.kernel.org/pub/scm/linux/kernel/git/tnguy/next-queue.git/
-
-> I suspect it's terribly obvious how to do this, but I'm drawing a blank here.
+>> +///         match pow {
+>> +///             0 => Err(EINVAL),
+>> +///             _ => {
+>> +///                 let vec = KVec::<u64>::with_capacity(1 << (pow - 3), gfp)?;
 > 
-> Thanks!
+> Why use u64 and 1 << (pow - 3), rather than simply u8 and 1 << pow?
+> 
+> (Btw. you could also just use VBox<u8; PAGE_SIZE>::new_uninit() for all
+> allocations to keep the example simple.)
 
+Right, that fixation on u64 doesn't help at all here.
+
+>> +///                 let (ptr, _len, _cap) = vec.into_raw_parts();
+>> +///                 pool.bytes_used.fetch_add(1 << pow, Ordering::Relaxed);
+>> +///                 Ok(ptr as usize | (pow - 6))
+>> +///             }
+>> +///         }
+>> +///     }
+>> +///
+>> +///     unsafe fn free(pool: &MyZpool, handle: usize) {
+>> +///         let n = (handle & 0x3F) + 3;
+>> +///         let uptr = handle & !0x3F;
+>> +///
+>> +///         // SAFETY:
+>> +///         // - uptr comes from handle which points to the KVec allocation from `alloc`.
+> 
+> That's not true, you modified the pointer you got from KVec. Please explain why
+> it is always safe to use lower 6 bits for something else.
+> 
+> What does "`alloc`" refer to?
+
+It refers to the alloc function we implement in this toy backend for 
+ZpoolDriver trait.
+
+> NIT: `uptr`, `KVec`
+> 
+>> +///         // - size == capacity and is coming from the first 6 bits of handle.
+>> +///         let vec = unsafe { KVec::<u64>::from_raw_parts(uptr as *mut u64, 1 << n, 1 << n) };
+> 
+> Why do you set the length (not the capacity) of the Vector to 1 << n? I think
+> technically it doesn't matter, but you should explain that in the safety
+> comment.
+
+Would the following work: "we know the capacity of this vector and it is 
+1 << n, we set the length to the same value to be deterministic, but the 
+actual length of vec doesn't matter because we're dropping it right here 
+anyway"?
+
+>> +///         drop(vec);
+>> +///         pool.bytes_used.fetch_sub(1 << (n + 3), Ordering::Relaxed);
+>> +///     }
+>> +///
+>> +///     unsafe fn read_begin(_pool: &MyZpool, handle: usize) -> NonNull<u8> {
+>> +///         let uptr = handle & !0x3F;
+>> +///         // SAFETY: uptr points to a memory area allocated by KVec
+> 
+> Please use markdown and end sentences with a period. (Applies to the entire
+> file.)
+> 
+>> +///         unsafe { NonNull::new_unchecked(uptr as *mut u8) }
+>> +///     }
+>> +///
+>> +///     unsafe fn read_end(_pool: &MyZpool, _handle: usize, _handle_mem: NonNull<u8>) {}
+>> +///
+>> +///     unsafe fn write(_p: &MyZpool, handle: usize, handle_mem: NonNull<u8>, mem_len: usize) {
+>> +///         let uptr = handle & !0x3F;
+>> +///         // SAFETY: handle_mem is a valid non-null pointer provided by zpool, uptr points to
+>> +///         // a KVec allocated in `malloc` and is therefore also valid.
+>> +///         unsafe {
+>> +///             copy_nonoverlapping(handle_mem.as_ptr().cast(), uptr as *mut c_void, mem_len)
+>> +///         };
+>> +///     }
+>> +///
+>> +///     fn total_pages(pool: &MyZpool) -> u64 {
+>> +///         pool.bytes_used.load(Ordering::Relaxed) >> PAGE_SHIFT
+> 
+> I'm not sure what the semantic of this function is; the documentation says
+> "Get the number of pages used by the `pool`".
+> 
+> However, given that you give out allocations from a kmalloc() bucket in
+> malloc(), this pool might be backed by more pages than what you calculate here.
+
+Well, maybe I need to add an explicit comment about it here, but the 
+idea is that with the SLUB allocator, you have kmalloc-64, kmalloc-128, 
+kmalloc-256 etc. caches which will be used to manage requests for up to 
+64, 128, 256, ... bytes respectively, and in that case the calculations 
+are correct. FWIW I smoke tested this allocator and the actual numbers 
+seem to be consistent with these calculations.
+
+> So, what is done here is calculating the number of pages you could fill with
+> the memory that is kept around, but not the number of backing pages you consume
+> memory from.
+> 
+> Using VBox<u8; PAGE_SIZE>::new_uninit() for all allocations might simplify this.
+> 
+>> +///     }
+>> +/// }
+>> +/// ```
+>> +///
+>> +pub trait ZpoolDriver {
+>> +    /// Opaque Rust representation of `struct zpool`.
+>> +    type Pool: ForeignOwnable;
+>> +
+>> +    /// Create a pool.
+>> +    fn create(name: &'static CStr, gfp: Flags) -> Result<Self::Pool>;
+>> +
+>> +    /// Destroy the pool.
+>> +    fn destroy(pool: Self::Pool);
+>> +
+>> +    /// Allocate an object of size `size` bytes from `pool`, with the allocation flags `gfp` and
+> 
+> "of `size` bytes"
+> 
+>> +    /// preferred NUMA node `nid`. If the allocation is successful, an opaque handle is returned.
+>> +    fn malloc(
+>> +        pool: <Self::Pool as ForeignOwnable>::BorrowedMut<'_>,
+>> +        size: usize,
+>> +        gfp: Flags,
+>> +        nid: NumaNode,
+>> +    ) -> Result<usize>;
+>> +
+>> +    /// Free a previously allocated from the `pool` object, represented by `handle`.
+>> +    ///
+>> +    /// # Safety
+>> +    ///
+>> +    /// - `handle` must be a valid handle previously returned by `malloc`.
+>> +    /// - `handle` must not be used any more after the call to `free`.
+>> +    unsafe fn free(pool: <Self::Pool as ForeignOwnable>::Borrowed<'_>, handle: usize);
+>> +
+>> +    /// Make all the necessary preparations for the caller to be able to read from the object
+>> +    /// represented by `handle` and return a valid pointer to the `handle` memory to be read.
+>> +    ///
+>> +    /// # Safety
+>> +    ///
+>> +    /// - `handle` must be a valid handle previously returned by `malloc`.
+>> +    /// - `read_end` with the same `handle` must be called for each `read_begin`.
+> 
+> What can potentially happen if we don't? I.e. how is this different from
+> malloc()?
+
+Here the idea is that if read_begin() has some sort of extra mapping 
+involved (like, doing kmap_atomic() on some weird memory address) for 
+the caller to be able to read directly from the returned pointer, 
+read_end() must clean that mapping up.
+
+>> +    unsafe fn read_begin(
+>> +        pool: <Self::Pool as ForeignOwnable>::Borrowed<'_>,
+>> +        handle: usize,
+>> +    ) -> NonNull<u8>;
+>> +
+>> +    /// Finish reading from a previously allocated `handle`. `handle_mem` must be the pointer
+>> +    /// previously returned by `read_begin`.
+>> +    ///
+>> +    /// # Safety
+>> +    ///
+>> +    /// - `handle` must be a valid handle previously returned by `malloc`.
+>> +    /// - `handle_mem` must be the pointer previously returned by `read_begin`.
+>> +    unsafe fn read_end(
+>> +        pool: <Self::Pool as ForeignOwnable>::Borrowed<'_>,
+>> +        handle: usize,
+>> +        handle_mem: NonNull<u8>,
+>> +    );
+>> +
+>> +    /// Write to the object represented by a previously allocated `handle`. `handle_mem` points
+>> +    /// to the memory to copy data from, and `mem_len` defines the length of the data block to
+>> +    /// be copied.
+>> +    ///
+>> +    /// # Safety
+>> +    ///
+>> +    /// - `handle` must be a valid handle previously returned by `malloc`.
+>> +    /// - `handle_mem` must be a valid pointer to an allocated memory area.
+> 
+> "must be a valid pointer into the allocated memory aread represented by
+> `handle`"
+> 
+>> +    /// - `handle_mem` + `mem_len` must not point outside the allocated memory area.
+>> +    unsafe fn write(
+>> +        pool: <Self::Pool as ForeignOwnable>::Borrowed<'_>,
+>> +        handle: usize,
+>> +        handle_mem: NonNull<u8>,
+>> +        mem_len: usize,
+>> +    );
+>> +
+>> +    /// Get the number of pages used by the `pool`.
+>> +    fn total_pages(pool: <Self::Pool as ForeignOwnable>::Borrowed<'_>) -> u64;
+>> +}
+>> +
+>> +/// An "adapter" for the registration of zpool drivers.
+>> +pub struct Adapter<T: ZpoolDriver>(T);
+>> +
+>> +impl<T: ZpoolDriver> Adapter<T> {
+>> +    extern "C" fn create_(name: *const c_uchar, gfp: u32) -> *mut c_void {
+>> +        // SAFETY: the memory pointed to by name is guaranteed by zpool to be a valid string
+> 
+> What about the lifetime of the string? In the abstraction you assume 'static,
+> how is this guaranteed?
+
+Actually it isn't, thanks for finding this.
+
+>> +        let pool = unsafe { T::create(CStr::from_char_ptr(name), Flags::from_raw(gfp)) };
+>> +        match pool {
+>> +            Err(_) => null_mut(),
+>> +            Ok(p) => T::Pool::into_foreign(p),
+>> +        }
+>> +    }
+> 
+> Please add an empty line in between function definitions.
+> 
+>> +    extern "C" fn destroy_(pool: *mut c_void) {
+>> +        // SAFETY: The pointer originates from an `into_foreign` call.
+>> +        T::destroy(unsafe { T::Pool::from_foreign(pool) })
+>> +    }
+>> +    extern "C" fn malloc_(
+>> +        pool: *mut c_void,
+>> +        size: usize,
+>> +        gfp: u32,
+>> +        handle: *mut usize,
+>> +        nid: c_int,
+>> +    ) -> c_int {
+>> +        // SAFETY: The pointer originates from an `into_foreign` call. If `pool` is passed to
+>> +        // `from_foreign`, then that happens in `_destroy` which will not be called during this
+>> +        // method.
+>> +        let pool = unsafe { T::Pool::borrow_mut(pool) };
+> 
+> Wait, can't this happen concurrently to all the other functions that borrow the
+> pool? This would be undefined behavior, no?
+
+Theoretically, yes, but since pool is actually Box<T>, it's only the 
+inner T that is mutable.
+
+Anyway, the only reason for malloc() to require a mutable reference is 
+that the backend implementation *may* use RBTree::cursor_lower_bound() 
+which requires a mutable reference of the tree.
+
+Would it be okay if I
+* change the Zpool API so that malloc takes an immutable reference
+* extend the RBTree API with a cursor_lower_bound analog which doesn't 
+require a mutable tree?
+
+>> +        from_result(|| {
+>> +            let real_nid = match nid {
+>> +                bindings::NUMA_NO_NODE => NumaNode::NO_NODE,
+>> +                _ => NumaNode::new(nid)?,
+>> +            };
+>> +            let h = T::malloc(pool, size, Flags::from_raw(gfp), real_nid)?;
+>> +            // SAFETY: handle is guaranteed to be a valid pointer by zpool.
+>> +            unsafe { *handle = h };
+>> +            Ok(0)
+>> +        })
+>> +    }
+>> +    extern "C" fn free_(pool: *mut c_void, handle: usize) {
+>> +        // SAFETY: The pointer originates from an `into_foreign` call. If `pool` is passed to
+>> +        // `from_foreign`, then that happens in `_destroy` which will not be called during this
+>> +        // method.
+>> +        let pool = unsafe { T::Pool::borrow(pool) };
+>> +
+>> +        // SAFETY: the caller (zswap) guarantees that `handle` is a valid handle previously
+> 
+> Why does this mention zwap here and in the other functions below?
+
+Should have been "(e. g. zswap)".
+
+>> +        // allocated by `malloc`.
+>> +        unsafe { T::free(pool, handle) }
+>> +    }
+> 
 
