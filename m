@@ -1,135 +1,86 @@
-Return-Path: <linux-kernel+bounces-788864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC1F2B38B44
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 23:16:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 01DCAB38B50
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 23:24:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30F721C2185B
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 21:17:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F1991C203FC
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 21:25:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12A2D2C2377;
-	Wed, 27 Aug 2025 21:16:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9468830C634;
+	Wed, 27 Aug 2025 21:24:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NGtQFa50"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N6inQvkI"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F17C149C6F
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 21:16:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E07B63093A8;
+	Wed, 27 Aug 2025 21:24:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756329410; cv=none; b=VQV1E2StPobGT6QvNRXoKqY0T5boiFDQy1EwtekpxfbeVf9FgE7z8zantQMWMUEZp4Z9PZAtIcTA/DHV6trRLoSx1yO+KR0Kl9Byf59siM3n7crhLM9FaJ4dWqgbPfQpb4JeQF5KkOg5YlOCwpVODZOwKk9WifP8Ki0EAV4xKSQ=
+	t=1756329872; cv=none; b=lGRBCpginunw8ZUL64gVDRz2oyxoSkMzrUgWlnO4xSctvOfk22OlXb0FZzToDaXCeJQhK4dB1TK5z39pOsw4af7MSdkL+AEi1x3BcqDA4rvmYRZho4aVhyWB+5X3b+Z7vXst0C6rz0UYIoQ9p+JMWWuOaH7+7aC3S7cCeK8doc8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756329410; c=relaxed/simple;
-	bh=h2vwcYvB52wM6p8rPx+g4cI7a/giRHNuNaRI6L0ndwg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VVCKdIChz6IEEaCtISGpmlMdg8+QnKJztzlsqCsNXd0WrqpVsgLCBFGZhi9X3ZYPSJc/RD71WVq8UZIptpmEU0g37pnv9li6ixj7RbhhAc74ij07LtC+DAOUhdplIXF9X4nztwo8IJRTcxtIBP30HKuLd39B8WoGM3Ufetv4fCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NGtQFa50; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3883C4CEFF
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 21:16:49 +0000 (UTC)
+	s=arc-20240116; t=1756329872; c=relaxed/simple;
+	bh=UJFJMU1UD+WG1g/ePunik75j/tAVkx3D42evy8MfEYY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=swIxIvBXmz848nPJhWOY0iyWJFqLlSkQBxtHUHsNYg3t0SXpBCtVGS54V0ecvXoRkMuWvQpuDqlYdcvairE242WfwFQKgfnj9/3be7/RPg7oErIvIv4F1X36+fIU9zOUzVybk0vLq67w74vCL1hJ6jmPWiewGRItULoYPUAHuD8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N6inQvkI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F169EC4CEEB;
+	Wed, 27 Aug 2025 21:24:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756329409;
-	bh=h2vwcYvB52wM6p8rPx+g4cI7a/giRHNuNaRI6L0ndwg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=NGtQFa50GgZfyUt2ZuklQdFNsYfU7Ys+pBXZw8rBRW1zV9/d+vb8cykG3SNhiz1ju
-	 ntwrf/VUpSNZTYkw+edjpYah9yvLRRDK/+Q0pfk/KjsYptsiGmDdMOKGKytBlYH79B
-	 idZv06zyv/gxjGjsMVGWdKkmFtx75Uuf+3v6UxjKAKBsaZyGYOGeS/qQjvs/aA8cg6
-	 nslq5b5+CYWVk5khPQ3gcCLPMIHBrk8zcdtCNL55XL2aFJDq8gocRgru5Gv0folsVb
-	 IlzJyV7zVvZGG8zVIGs0jbuLdPOHgyYH9mg+RqBhcW/O8uY6NRNeSEZIaeozATIKO4
-	 VBAdq/fSgfpCA==
-Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-e96e892081eso159389276.3
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 14:16:49 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCW1f+7vbIB6MHbAsjK6maKxGiC32yte734moylc/HwIbjOV9lBHu4gl3i3P6Ijwt8jDq0Ud5gYiGOx2UR8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxYSZO7I+6HGBBSN6cfO4yhqhzZEshU6B4HRB50nR5kNFH6uwwM
-	QG20s9FLCD9R5XECnfn4x11EK1uhf5xb3tzuvKBGy1+9m2y/etI8GGiFEhGXyebETlpaSQGtb6B
-	isH3RhGnkNiWuB4jaFpU8GmqIHg0acTZhkx3bm51hyw==
-X-Google-Smtp-Source: AGHT+IFExBNFXHaK1D9PX+y6rV6yrbQyNeRcW17eknQkn390Bdly6Ur/L2Q/PGdRn8kWIwZ+xuAQ6TWixh5N9DqDn2s=
-X-Received: by 2002:a05:690c:3345:b0:71f:b944:104f with SMTP id
- 00721157ae682-71fdc568115mr250305367b3.50.1756329409097; Wed, 27 Aug 2025
- 14:16:49 -0700 (PDT)
+	s=k20201202; t=1756329871;
+	bh=UJFJMU1UD+WG1g/ePunik75j/tAVkx3D42evy8MfEYY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=N6inQvkIkBZaN0kYG3XCFdf+K6mO1S/KZc/QcWnv7rgEnYIz8zGMINylM7CxXRnnH
+	 /JX5neMsDcoVqWKD7eAdOUzVtDvcjoVhGrpO7eTD4qMu3O/eXxAmb4g57U4MfV9qf/
+	 0bmGq+cEPraMNTDAIU8QdNlMAEFdsRNyIsd/HRxqmK+R7cx+cwdlrl3a6TrO3o0ZFU
+	 l2fqGfIJAcFbAC4vp+PsTgsMAE2X2ui95IegkW2pIMfgr4EeVBMTh2zm3Rf62oz8JJ
+	 6e2yjQ9NAtdtAbbfePRb02nHxdjv2BSDUH150fql/Sl5SfKUp8y8FfGfmbSHJ8PA9D
+	 fus0MRTc18Eag==
+Date: Wed, 27 Aug 2025 14:24:29 -0700
+From: Luis Chamberlain <mcgrof@kernel.org>
+To: Marco Felsch <m.felsch@pengutronix.de>
+Cc: Russ Weight <russ.weight@linux.dev>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Kamel Bouhara <kamel.bouhara@bootlin.com>,
+	Marco Felsch <kernel@pengutronix.de>,
+	Henrik Rydberg <rydberg@bitmath.org>,
+	Danilo Krummrich <dakr@kernel.org>, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-input@vger.kernel.org
+Subject: Re: [PATCH v3 1/4] firmware_loader: expand firmware error codes with
+ up-to-date error
+Message-ID: <aK93jXST02r3C3iC@bombadil.infradead.org>
+References: <20250821-v6-10-topic-touchscreen-axiom-v3-0-940ccee6dba3@pengutronix.de>
+ <20250821-v6-10-topic-touchscreen-axiom-v3-1-940ccee6dba3@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CACePvbWzyqJJxP8BFXS_NDLcXCz-YXkt8eYBxv3CER9RpnJVXA@mail.gmail.com>
- <20250827174513.47171-1-sj@kernel.org>
-In-Reply-To: <20250827174513.47171-1-sj@kernel.org>
-From: Chris Li <chrisl@kernel.org>
-Date: Wed, 27 Aug 2025 14:16:37 -0700
-X-Gmail-Original-Message-ID: <CACePvbXnaWZh61aH=BHoGDqbKvBSE52Me+PpE-WMXcGpRy0FFw@mail.gmail.com>
-X-Gm-Features: Ac12FXxDZkGQigQMPqlJ2_x7uvW4YhEBBCZKu1uKYoU3sLqFVC_3DHYznctEp38
-Message-ID: <CACePvbXnaWZh61aH=BHoGDqbKvBSE52Me+PpE-WMXcGpRy0FFw@mail.gmail.com>
-Subject: Re: [PATCH v5] mm/zswap: store <PAGE_SIZE compression failed page as-is
-To: SeongJae Park <sj@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Chengming Zhou <chengming.zhou@linux.dev>, 
-	Herbert Xu <herbert@gondor.apana.org.au>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Nhat Pham <nphamcs@gmail.com>, Yosry Ahmed <yosry.ahmed@linux.dev>, kernel-team@meta.com, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	Takero Funaki <flintglass@gmail.com>, David Hildenbrand <david@redhat.com>, Baoquan He <bhe@redhat.com>, 
-	Barry Song <baohua@kernel.org>, Kairui Song <kasong@tencent.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250821-v6-10-topic-touchscreen-axiom-v3-1-940ccee6dba3@pengutronix.de>
 
-On Wed, Aug 27, 2025 at 10:45=E2=80=AFAM SeongJae Park <sj@kernel.org> wrot=
-e:
-> > > >
-> > > > On Fri, Aug 22, 2025 at 12:08=E2=80=AFPM SeongJae Park <sj@kernel.o=
-rg> wrote:
-> [...]
-> > > """
-> > > --- a/mm/zswap.c
-> > > +++ b/mm/zswap.c
-> > > @@ -952,6 +952,7 @@ static bool zswap_compress(struct page *page, str=
-uct zswap_entry *entry,
-> > >         struct zpool *zpool;
-> > >         gfp_t gfp;
-> > >         u8 *dst;
-> > > +       bool dst_need_unmap =3D false;
-> >
-> > A bit nitpicky. That variable name is too long as a C local variable.
-> > We want local auto variables to be short and sweet. That is why you
-> > have "dst" rather than  "u8 *destination_compressed_buffer;"
-> > The local variable name is too long and it can hurt the reading as well=
-.
-> > Can we have something shorter? e.g. "mapped" or "has_map"
->
-> I agree your points, and thank you for suggestions.  I will take "mapped"=
-.
+On Thu, Aug 21, 2025 at 07:26:36PM +0200, Marco Felsch wrote:
+> Add FW_UPLOAD_ERR_DUPLICATE to allow drivers to inform the firmware_loader
+> framework that the update is not required. This can be the case if the
+> user provided firmware matches the current running firmware.
+> 
+> Sync lib/test_firmware.c accordingly.
+> 
+> Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
 
-Thank you.
+Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
 
-> > > We may also need to initialize 'dlen' as PAGE_SIZE ?
-> >
-> > If there is a code path can lead to dlen use not initialized value? If
-> > not then we don't have to assign it.
->
-> The success return path of zswap_decompress() checks dlen together with
-> decomp_ret as below.  So I think we need to initialize dlen, too.  Please=
- let
-> me know if I'm missing something.
-
-I normally don't worry about those, the compiler will complain if I
-get it wrong. The compiler might have false positives, but should not
-have false negatives because the compiler can see all the incoming
-edges of the basic block. It is a trivial graph reachability problem
-if we allow false positives reports.
-
-Anyway, I just opened the editor to check again. Yes, if we goto the
-read_done, the if condition using dlen can introduce a new incoming
-edge that has len uninitialized value to be used. Yes, need to
-initialize dlen =3D=3D PAGE_SIZE or you initialize it at the memcpy of
-page.
-
-> I will post the fixup by tomorrow morning (Pacific time) unless I
-> hear other opinions or find my mistakes on the above plan by tonight.
-
-You are too humble, that is the normal reviewing process. You can take
-your time.
-
-Chris
+ Luis
 
