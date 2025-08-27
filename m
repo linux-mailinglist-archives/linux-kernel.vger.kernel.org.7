@@ -1,190 +1,157 @@
-Return-Path: <linux-kernel+bounces-787681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787558-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFA47B37996
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 07:02:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71E33B377C7
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 04:32:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8BDE07C06B0
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 05:02:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3CD2017629A
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 02:32:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 218372E0B5D;
-	Wed, 27 Aug 2025 05:02:05 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34DD627381F;
+	Wed, 27 Aug 2025 02:32:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OlRPu2rv"
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0144123507E;
-	Wed, 27 Aug 2025 05:02:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 074CDFC1D
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 02:32:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756270924; cv=none; b=m0fBy+jxv+WayTgcvBS0stXGIvEuc/I1Xci4HQrMkjf2BIXbUCF6keEtA0eLQ5Zty+N635GSI2rhv0APXtE4ngDOdlcLttXzFfBLugXwSMAIWp1pyANI4eLvGTEkyjJR3dqCYHQx09CE7AJQnIJcINdpXj1oud5Iw5+ojejFz5Y=
+	t=1756261951; cv=none; b=HTlYCtqwtXAu06HUVio2HMzl5VPqCl/FFkV3C/LfiZDf0aTZmZ5L3WFSDZuQCYeLv1ndegsK4kFkhTzmQ1k1i7hcVEjDPWrlNEudeppgib7zCEnvl/SKzHgWhlJ+tJmcqlBklvxBLmgBi5RKEGdF93otDc4iyLeBr0EY7LKzGos=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756270924; c=relaxed/simple;
-	bh=FE0eo5Ga2qkimmk9oNH2NxpHXXg2SOZVHj8Um2Vo+f4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=MrMCv5Fbdk8TPGGWrXacBoKqGya8wyWo6LwjVF4IybPCNGgNeGuT7anESBwBXU/e64whFoLRo8/Z1dOaBwn/ps0kSlmneIQTDFQFOdG/DUM4Rg45CMYwwRppLd+hOpayYODllDTSMqlhVqCoyVjz1tO8HY6TDiX7Nfc1Ru3uBWw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: f38b124c830211f0b29709d653e92f7d-20250827
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:0290cae2-efde-447b-90d3-a1b8997896e3,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:6493067,CLOUDID:b88084040a57fcf217a1f01948e6576c,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:81|82|102|850,TC:nil,Content:0|50,EDM:-3
-	,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV
-	:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: f38b124c830211f0b29709d653e92f7d-20250827
-Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
-	(envelope-from <zhangzihuan@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 799344177; Wed, 27 Aug 2025 13:01:54 +0800
-Received: from mail.kylinos.cn (localhost [127.0.0.1])
-	by mail.kylinos.cn (NSMail) with SMTP id 8E1F0E008FB0;
-	Wed, 27 Aug 2025 10:35:06 +0800 (CST)
-X-ns-mid: postfix-68AE6EDA-170480226
-Received: from localhost.localdomain (unknown [172.25.120.24])
-	by mail.kylinos.cn (NSMail) with ESMTPA id F2CB3E008FB2;
-	Wed, 27 Aug 2025 10:35:00 +0800 (CST)
-From: Zihuan Zhang <zhangzihuan@kylinos.cn>
-To: "Rafael J . wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Markus Mayer <mmayer@broadcom.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	MyungJoo Ham <myungjoo.ham@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Daniel Lezcano <daniel.lezcano@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Eduardo Valentin <edubezval@gmail.com>,
-	Keerthy <j-keerthy@ti.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: zhenglifeng <zhenglifeng1@huawei.com>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Len Brown <lenb@kernel.org>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Lukasz Luba <lukasz.luba@arm.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Beata Michalska <beata.michalska@arm.com>,
-	Fabio Estevam <festevam@gmail.com>,
-	Pavel Machek <pavel@kernel.org>,
-	Sumit Gupta <sumitg@nvidia.com>,
-	Prasanna Kumar T S M <ptsm@linux.microsoft.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Yicong Yang <yangyicong@hisilicon.com>,
-	linux-pm@vger.kernel.org,
-	x86@kernel.org,
-	kvm@vger.kernel.org,
-	linux-acpi@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-tegra@vger.kernel.org,
-	intel-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	imx@lists.linux.dev,
-	linux-omap@vger.kernel.org,
-	linux-mediatek@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Zihuan Zhang <zhangzihuan@kylinos.cn>
-Subject: [PATCH v2 18/18] PM: EM: Use __free(put_cpufreq_policy) for policy reference
-Date: Wed, 27 Aug 2025 10:32:02 +0800
-Message-Id: <20250827023202.10310-19-zhangzihuan@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250827023202.10310-1-zhangzihuan@kylinos.cn>
-References: <20250827023202.10310-1-zhangzihuan@kylinos.cn>
+	s=arc-20240116; t=1756261951; c=relaxed/simple;
+	bh=phLICMoxD4JP6sKT1DeC5mUYYErOOuHJsUqnVc0nu0Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rTeIA4UD8+kYkCegto/zMKviZAw+Vn5EZ6yI+hj18sVRtGnKtuTDnboSIglKX5nhV1hdHW5PLGxdM4WFCiR/vhVcyw1hnutQn7TUxSNOn2BkG5X7HOFaac0smAM7eoyseLuvMiA9YBUBT1hdRzB8lC3w1eXnL2SZZcH2RP5r3x4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=OlRPu2rv; arc=none smtp.client-ip=209.85.160.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-4b29b714f8cso135831cf.1
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 19:32:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1756261949; x=1756866749; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=phLICMoxD4JP6sKT1DeC5mUYYErOOuHJsUqnVc0nu0Y=;
+        b=OlRPu2rvec8Qzn1mqyCPLHPWANvGTHVwbDsAFSWtgYaADHlT+js4RUVs10IQTYZfn1
+         7w3zg8aadiApb/FVHm9g2dQMoYzmcUVdPa+6CTQ84uk/uxvgwQ2m9g0xYKdWhlRQUHQd
+         zmxp/EH2Njd46298gqXe7nFKzp65vMaXW9KsjGk/otT/UnTjEaG4Y2lti4Ov/NysHOv5
+         0HxfB+U5vyyN5++a3K3I/QlRDHB4e/swIaDXxhG8WW6d54Rc9DZA0wN4cG8pGFkzgzlG
+         FUUWhtiuQkoohhs6L3Un4gDpApXMiXqiZm/m11FpV6+VywniqCVUFFVub8nML3vxrBcD
+         MAbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756261949; x=1756866749;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=phLICMoxD4JP6sKT1DeC5mUYYErOOuHJsUqnVc0nu0Y=;
+        b=LRmkgKVQV+DW4kv/2hYKYZy/jG6QQY14tsYiHgBfwRHV/ABQh/2u+EmfHDmea9TbnX
+         Bi12NNCHi1LXEBvSgZ4o7t/bDms6Y2I3z4M7ysokczGWuX/a4ZGDo1qqUQSJ3w9oNFqs
+         5NMBC/aR6dOZ+yzY3Mx+Z3qEoUoLCJzIubr3ZryXdgZpbW/tSSAtD01SHUNrCCv2YLcI
+         wXdHbKB1SRjhLp5+Pqqtq1TvNlzePg0ajmhVI9e2gS4ES0PdB3DJCeZeNB/7KkDyB+2f
+         2dEsilYG1vpQ6lD6+M8FJa85rc1BUdjnZAB9Jk0RaLTgoLY85JsryNbNRkGKDEzVQsEY
+         qKxA==
+X-Forwarded-Encrypted: i=1; AJvYcCUqadVz/RMrRteQVIzfJLwfmjsqlbB+l3VZwA30ylKsfYdEsfhcVsC0DxEheDPRhLVDDBIQ9zDFYoN9moc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUBQ8RddiZnX8htG20fQgATSZRLIEaIXD9g4x+6wIkVAqOm0w+
+	+EeTYprdHAwVnvC0QLLoHRcuzMO7e6v6gVoSSii6ljzRcgfX12dD9Kt/13vSA88GR6dmuqqwkx+
+	Kia4rrbXs+cnH60AzpViYBHYGC7OfMpeqow3ru5Wl
+X-Gm-Gg: ASbGncsYuyKci2qoPFu9T7z4Uv2nCgH6mm5X8XgSUk0b9Rt+qFuFFqryd2fA7fiqqZt
+	kYkk1IkIyTYdiOcsMTTSe5gVWMXhq67EtS/CInaalA4t31E4f+kefVC12jRzn2yvQDEjlVMjY1r
+	PvmYJke/aVGxKrZTzWPgeKUkrDyhRMRrUALmOnFeQ437wniQYCn7KIbg8W3JFJYTS2da3Bfwa+F
+	2AvE8x5pGQC
+X-Google-Smtp-Source: AGHT+IGEkFxoIeaU31PPrER+XD5lzwwgqgu6SIDi6/2BzLmU7aGrEqvMu3SzdfymXhnaZAVtazALtqj98L/HKOhu2Pg=
+X-Received: by 2002:ac8:5a49:0:b0:4ae:d2cc:ad51 with SMTP id
+ d75a77b69052e-4b2e2b6d63dmr9758151cf.1.1756261948495; Tue, 26 Aug 2025
+ 19:32:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <cover.1755190013.git.pyyjason@gmail.com> <6qu2uo3d2msctkkz5slhx5piqtt64wsvkgkvjjpd255k7nrds4@qtffskmesivg>
+ <aKdw6Pkj2H4B6QDb@devbig569.cln6.facebook.com> <tiwa6wnkdf6q2pfchxbbqb6r42y7moykqumvnzauckhavyemg2@zc5haja5mlxs>
+In-Reply-To: <tiwa6wnkdf6q2pfchxbbqb6r42y7moykqumvnzauckhavyemg2@zc5haja5mlxs>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Tue, 26 Aug 2025 19:32:17 -0700
+X-Gm-Features: Ac12FXx-amMNGfYthUlKXoV2KJV8Ivl2glrfWFB94kYjwtAlLlUunZcwpQnXXCU
+Message-ID: <CAJuCfpHyXWwrKkFmmbHTGtG9L-JK2eCt03ku9364i4v6SJKFbA@mail.gmail.com>
+Subject: Re: [RFC 0/1] Try to add memory allocation info for cgroup oom kill
+To: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: Yueyang Pan <pyyjason@gmail.com>, Kent Overstreet <kent.overstreet@linux.dev>, 
+	Usama Arif <usamaarif642@gmail.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Replace the manual cpufreq_cpu_put() with __free(put_cpufreq_policy)
-annotation for policy references. This reduces the risk of reference
-counting mistakes and aligns the code with the latest kernel style.
+On Thu, Aug 21, 2025 at 12:53=E2=80=AFPM Shakeel Butt <shakeel.butt@linux.d=
+ev> wrote:
+>
+> On Thu, Aug 21, 2025 at 12:18:00PM -0700, Yueyang Pan wrote:
+> > On Thu, Aug 21, 2025 at 11:35:19AM -0700, Shakeel Butt wrote:
+> > > On Thu, Aug 14, 2025 at 10:11:56AM -0700, Yueyang Pan wrote:
+> > > > Right now in the oom_kill_process if the oom is because of the cgro=
+up
+> > > > limit, we won't get memory allocation infomation. In some cases, we
+> > > > can have a large cgroup workload running which dominates the machin=
+e.
+> > > > The reason using cgroup is to leave some resource for system. When =
+this
+> > > > cgroup is killed, we would also like to have some memory allocation
+> > > > information for the whole server as well. This is reason behind thi=
+s
+> > > > mini change. Is it an acceptable thing to do? Will it be too much
+> > > > information for people? I am happy with any suggestions!
+> > >
+> > > For a single patch, it is better to have all the context in the patch
+> > > and there is no need for cover letter.
+> >
+> > Thanks for your suggestion Shakeel! I will change this in the next vers=
+ion.
+> >
+> > >
+> > > What exact information you want on the memcg oom that will be helpful
+> > > for the users in general? You mentioned memory allocation information=
+,
+> > > can you please elaborate a bit more.
+> > >
+> >
+> > As in my reply to Suren, I was thinking the system-wide memory usage in=
+fo
+> > provided by show_free_pages and memory allocation profiling info can he=
+lp
+> > us debug cgoom by comparing them with historical data. What is your tak=
+e on
+> > this?
+> >
+>
+> I am not really sure about show_free_areas(). More specifically how the
+> historical data diff will be useful for a memcg oom. If you have a
+> concrete example, please give one. For memory allocation profiling, is
+> it possible to filter for the given memcg? Do we save memcg information
+> in the memory allocation profiling?
 
-No functional change intended.
+Actually I was thinking about making memory profiling memcg-aware but
+it would be quite costly both from memory and performance points of
+view. Currently we have a per-cpu counter for each allocation in the
+kernel codebase. To make it work for each memcg we would have to add
+memcg dimension to the counters, so each counter becomes per-cpu plus
+per-memcg. I'll be thinking about possible optimizations since many of
+these counters will stay at 0 but any such optimization would come at
+a performance cost, which we tried to keep at the absolute minimum.
 
-Signed-off-by: Zihuan Zhang <zhangzihuan@kylinos.cn>
----
- kernel/power/energy_model.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
-
-diff --git a/kernel/power/energy_model.c b/kernel/power/energy_model.c
-index ea7995a25780..4f91112c10bd 100644
---- a/kernel/power/energy_model.c
-+++ b/kernel/power/energy_model.c
-@@ -451,7 +451,7 @@ static void
- em_cpufreq_update_efficiencies(struct device *dev, struct em_perf_state =
-*table)
- {
- 	struct em_perf_domain *pd =3D dev->em_pd;
--	struct cpufreq_policy *policy;
-+	struct cpufreq_policy *policy __free(put_cpufreq_policy);
- 	int found =3D 0;
- 	int i, cpu;
-=20
-@@ -479,8 +479,6 @@ em_cpufreq_update_efficiencies(struct device *dev, st=
-ruct em_perf_state *table)
- 			found++;
- 	}
-=20
--	cpufreq_cpu_put(policy);
--
- 	if (!found)
- 		return;
-=20
-@@ -787,7 +785,7 @@ static void em_check_capacity_update(void)
-=20
- 	/* Check if CPUs capacity has changed than update EM */
- 	for_each_possible_cpu(cpu) {
--		struct cpufreq_policy *policy;
-+		struct cpufreq_policy *policy __free(put_cpufreq_policy);
- 		struct em_perf_domain *pd;
- 		struct device *dev;
-=20
-@@ -801,7 +799,6 @@ static void em_check_capacity_update(void)
- 					      msecs_to_jiffies(1000));
- 			break;
- 		}
--		cpufreq_cpu_put(policy);
-=20
- 		dev =3D get_cpu_device(cpu);
- 		pd =3D em_pd_get(dev);
---=20
-2.25.1
-
+I'm CC'ing Sourav and Pasha since they were also interested in making
+memory allocation profiling memcg-aware. Would Meta folks (Usama,
+Shakeel, Johannes) be interested in such enhancement as well? Would it
+be preferable to have such accounting for a specific memcg which we
+pre-select (less memory and performance overhead) or we need that for
+all memcgs as a generic feature? We have some options here but I want
+to understand what would be sufficient and add as little overhead as
+possible.
+Thanks,
+Suren.
 
