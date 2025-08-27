@@ -1,244 +1,180 @@
-Return-Path: <linux-kernel+bounces-788322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68600B382CD
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 14:48:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 867E9B382D7
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 14:49:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 24942461494
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 12:48:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 886291B667D1
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 12:49:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03F78310771;
-	Wed, 27 Aug 2025 12:48:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F49934DCD8;
+	Wed, 27 Aug 2025 12:49:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cZV9J1a4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hNZJL511"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CDA41A0711
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 12:48:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A99E2E2DC1;
+	Wed, 27 Aug 2025 12:49:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756298916; cv=none; b=fdjnDBt+5Bf+1EqYy5Bkg47e1e2u7i5dL+03oD0NxPxit/+ug6xDAwb44ZBKLgisZ+magRqbR+Ckdpf2QoMCsJf4s1YQwOZsL3NkIMi50tXSNwek9x3ec9C6k16mEm3EE5hiXaYEgVD34S7whBm792Fib9PcRE8EpytoqWo7KXo=
+	t=1756298946; cv=none; b=PSGhPs7TMqTN+0pbhYXTOhuOs503F0/W/wrCfB+Ch0a5xdceSLZuBdRajxgyo33R1F/X4pg00T8DL9QVNNmA4UqBeeJx74kuJnvu+LFCNTMnnramYnfslPj5KCe51hrNxQUa5wgViFlGn8dcTHrLWKPVI4ruv62gbEGWzuw+JJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756298916; c=relaxed/simple;
-	bh=boJHzfZQIJgcM1/GV387QaK5mDcJHs2QxJhzT1rJCUI=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fvNbkKGCrMKlvZObT0ClwCEBPWwx3hCXpFIgwchmaD3/ASESJV4QdXbXBgM068RrO6IpoHTi8T/9YfEufHDchNk+I69WbQbBVaUOZb/h3JMlPgckk08Ght/DWTr95Xjv33MHNvNSE5WFGc48e51JyP+tewVALh2HzhGqA3h1GPo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cZV9J1a4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B47D0C4CEEB;
-	Wed, 27 Aug 2025 12:48:35 +0000 (UTC)
+	s=arc-20240116; t=1756298946; c=relaxed/simple;
+	bh=FBo4RbmvBwJYaj/cUiU+/0VAPX3y3i/AlyAKfvOtI0M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=g7yj024+IwD8bXwia91ya0JG979LRT1gB+F5Wf0Goljs91y4cSTdt6CcXKBVE2W5nPz91hdMRgqGa7GwBYA3oMBsFwnP1MpmAGgMB1+6IS2+YM6j9XjkMqjmZx6K9TuJcOMEGIm3WIPa9XbQWB/lo1w0f7pw9/zbwzKYgYKRl3I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hNZJL511; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3F73C4CEEB;
+	Wed, 27 Aug 2025 12:49:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756298915;
-	bh=boJHzfZQIJgcM1/GV387QaK5mDcJHs2QxJhzT1rJCUI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=cZV9J1a4H0MDK5HqdlAnjvXs2nUG3jJ5gcnrlsI9cA/ST4QxE5cNYdt4d4uhFFCXV
-	 6BQBgGH/tLhzUJZ35dASi+U+VBloU4nEEKepqPf/Dj/d6UnPR/plob4NN0Z7kuxOWm
-	 VcOG+wXsBi8H2z4yns4c0FKNIjxVBWj6DDyRr+99RH2KOYduCNo8CEqxuZsBEO1xor
-	 XIvWou42GhFk07ZLpGnM0l7nuGAkHUmXUEVDGfkby+AyXhwXWfkUorQHkjAmSKDNvN
-	 mTGJfY8+FSemPNPpIHWDyWmpkqILAqTCiYGjN1AnE9Z6RMRBjuE/PEspCK8NjM1x3i
-	 yupPagpSOaPlg==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <maz@kernel.org>)
-	id 1urFZp-00000000und-1YJf;
-	Wed, 27 Aug 2025 12:48:33 +0000
-Date: Wed, 27 Aug 2025 13:48:33 +0100
-Message-ID: <86h5xtdj6m.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Koichiro Den <den@valinux.co.jp>
-Cc: linux-arm-kernel@lists.infradead.org,
-	tglx@linutronix.de,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] irqchip/gic-v3-its: Fix invalid wait context lockdep report
-In-Reply-To: <20250827073848.1410315-1-den@valinux.co.jp>
-References: <20250827073848.1410315-1-den@valinux.co.jp>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=k20201202; t=1756298946;
+	bh=FBo4RbmvBwJYaj/cUiU+/0VAPX3y3i/AlyAKfvOtI0M=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=hNZJL511EAaIdyjnHxN24TaEFmW5tAtSBQOCdkPAYPummTQtDGeDGlXJ6/5h3BAu4
+	 fB5kvVMznekqyZTHYsH2ev5V1dW56BLCfAR9eROxUmI0vw/DPix8i2pRzf/2AKGpi/
+	 FO80oIPwV9DdoqzMQKHIHBf0Mmy+T5KzK6jSNIDhA6D74Zzd02T65+Te79/Bf6Uy2k
+	 rtc7AT8vUlHVOUzX7+iHnIrpFBcbu6ccmvoMIlaKyjDTZI2tke9uNbZb3+LVpWCMi1
+	 /hT8dU9KgFsVTNrCbXGzEKWrytw2yNfjGbXkNOaz2XyH1/aD0SjfHC6ZbHgwh+xXdA
+	 27W0k7pAB3paQ==
+Message-ID: <f093fc68-c783-41eb-b51e-e48a18e6d2cf@kernel.org>
+Date: Wed, 27 Aug 2025 14:48:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: den@valinux.co.jp, linux-arm-kernel@lists.infradead.org, tglx@linutronix.de, linux-kernel@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/2] dt-bindings: ethernet: eswin: Document for EIC7700
+ SoC
+To: weishangjuan@eswincomputing.com, devicetree@vger.kernel.org,
+ andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, linux-arm-kernel@lists.infradead.org,
+ mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com,
+ yong.liang.choong@linux.intel.com, vladimir.oltean@nxp.com,
+ rmk+kernel@armlinux.org.uk, faizal.abdul.rahim@linux.intel.com,
+ prabhakar.mahadev-lad.rj@bp.renesas.com, inochiama@gmail.com,
+ jan.petrous@oss.nxp.com, jszhang@kernel.org, p.zabel@pengutronix.de,
+ boon.khai.ng@altera.com, 0x1207@gmail.com, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com
+Cc: ningyu@eswincomputing.com, linmin@eswincomputing.com,
+ lizhi2@eswincomputing.com
+References: <20250827081135.2243-1-weishangjuan@eswincomputing.com>
+ <20250827081314.2295-1-weishangjuan@eswincomputing.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250827081314.2295-1-weishangjuan@eswincomputing.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, 27 Aug 2025 08:38:48 +0100,
-Koichiro Den <den@valinux.co.jp> wrote:
-> 
-> its_irq_set_vcpu_affinity() always runs under a raw_spin_lock wait
-> context, so calling kcalloc there is not permitted and RT-unsafe since
-> ___slab_alloc() may acquire a local lock. The below is the actual
-> lockdep report observed:
-> 
->   =============================
->   [ BUG: Invalid wait context ]
->   6.16.0-rc3-irqchip-next-7e28bba92c5c+ #1 Tainted: G S
->   -----------------------------
->   qemu-system-aar/2129 is trying to lock:
->   ffff0085b74f2178 (batched_entropy_u32.lock){..-.}-{3:3}, at: get_random_u32+0x9c/0x708
->   other info that might help us debug this:
->   context-{5:5}
->   6 locks held by qemu-system-aar/2129:
->    #0: ffff0000b84a0738 (&vdev->igate){+.+.}-{4:4}, at: vfio_pci_core_ioctl+0x40c/0x748 [vfio_pci_core]
->    #1: ffff8000883cef68 (lock#6){+.+.}-{4:4}, at: irq_bypass_register_producer+0x64/0x2f0
->    #2: ffff0000ac0df960 (&its->its_lock){+.+.}-{4:4}, at: kvm_vgic_v4_set_forwarding+0x224/0x6f0
->    #3: ffff000086dc4718 (&irq->irq_lock#3){....}-{2:2}, at: kvm_vgic_v4_set_forwarding+0x288/0x6f0
->    #4: ffff0001356200c8 (&irq_desc_lock_class){-.-.}-{2:2}, at: __irq_get_desc_lock+0xc8/0x158
->    #5: ffff00009eae4850 (&dev->event_map.vlpi_lock){....}-{2:2}, at: its_irq_set_vcpu_affinity+0x8c/0x528
->   ...
->   Call trace:
->    show_stack+0x30/0x98 (C)
->    dump_stack_lvl+0x9c/0xd0
->    dump_stack+0x1c/0x34
->    __lock_acquire+0x814/0xb40
->    lock_acquire.part.0+0x16c/0x2a8
->    lock_acquire+0x8c/0x178
->    get_random_u32+0xd4/0x708
->    __get_random_u32_below+0x20/0x80
->    shuffle_freelist+0x5c/0x1b0
->    allocate_slab+0x15c/0x348
->    new_slab+0x48/0x80
->    ___slab_alloc+0x590/0x8b8
->    __slab_alloc.isra.0+0x3c/0x80
->    __kmalloc_noprof+0x174/0x520
->    its_vlpi_map+0x834/0xce0
->    its_irq_set_vcpu_affinity+0x21c/0x528
->    irq_set_vcpu_affinity+0x160/0x1b0
->    its_map_vlpi+0x90/0x100
->    kvm_vgic_v4_set_forwarding+0x3c4/0x6f0
->    kvm_arch_irq_bypass_add_producer+0xac/0x108
->    __connect+0x138/0x1b0
->    irq_bypass_register_producer+0x16c/0x2f0
->    vfio_msi_set_vector_signal+0x2c0/0x5a8 [vfio_pci_core]
->    vfio_msi_set_block+0x8c/0x120 [vfio_pci_core]
->    vfio_pci_set_msi_trigger+0x120/0x3d8 [vfio_pci_core]
-
-Huh. I guess this is due to RT not being completely compatible with
-GFP_ATOMIC...  Why you'd want RT and KVM at the same time is beyond
-me, but hey.
-
->   ...
-> 
-> To avoid this, simply pre-allocate vlpi_maps when creating an ITS v4
-> device with LPIs allcation. The trade-off is some wasted memory
-> depending on nr_lpis, if none of those LPIs are never upgraded to VLPIs.
->
-> An alternative would be to move the vlpi_maps allocation out of
-> its_map_vlpi() and introduce a two-stage prepare/commit flow, allowing a
-> caller (KVM in the lockdep splat shown above) to do the allocation
-> outside irq_set_vcpu_affinity(). However, this would unnecessarily add
-> complexity.
-
-That's debatable. It is probably fine for now, but if this was to
-grow, we'd need to revisit this.
-
-> Fixes: d011e4e654d7 ("irqchip/gic-v3-its: Add VLPI map/unmap operations")
-
-No. This code predates RT being merged, and this problem cannot occur
-before RT.
-
-> Signed-off-by: Koichiro Den <den@valinux.co.jp>
-> ---
->  drivers/irqchip/irq-gic-v3-its.c | 36 ++++++++++++++++++--------------
->  1 file changed, 20 insertions(+), 16 deletions(-)
-> 
-> diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
-> index 467cb78435a9..b933be8ddc51 100644
-> --- a/drivers/irqchip/irq-gic-v3-its.c
-> +++ b/drivers/irqchip/irq-gic-v3-its.c
-> @@ -1923,19 +1923,10 @@ static int its_vlpi_map(struct irq_data *d, struct its_cmd_info *info)
->  	if (!info->map)
->  		return -EINVAL;
->  
-> -	if (!its_dev->event_map.vm) {
-> -		struct its_vlpi_map *maps;
-> -
-> -		maps = kcalloc(its_dev->event_map.nr_lpis, sizeof(*maps),
-> -			       GFP_ATOMIC);
-> -		if (!maps)
-> -			return -ENOMEM;
-> -
-> +	if (!its_dev->event_map.vm)
->  		its_dev->event_map.vm = info->map->vm;
-> -		its_dev->event_map.vlpi_maps = maps;
-> -	} else if (its_dev->event_map.vm != info->map->vm) {
-> +	else if (its_dev->event_map.vm != info->map->vm)
->  		return -EINVAL;
-> -	}
->  
->  	/* Get our private copy of the mapping information */
->  	its_dev->event_map.vlpi_maps[event] = *info->map;
-> @@ -2010,10 +2001,8 @@ static int its_vlpi_unmap(struct irq_data *d)
->  	 * Drop the refcount and make the device available again if
->  	 * this was the last VLPI.
->  	 */
-> -	if (!--its_dev->event_map.nr_vlpis) {
-> +	if (!--its_dev->event_map.nr_vlpis)
->  		its_dev->event_map.vm = NULL;
-> -		kfree(its_dev->event_map.vlpi_maps);
-> -	}
->  
->  	return 0;
->  }
-> @@ -3469,6 +3458,7 @@ static struct its_device *its_create_device(struct its_node *its, u32 dev_id,
->  {
->  	struct its_device *dev;
->  	unsigned long *lpi_map = NULL;
-> +	struct its_vlpi_map *vlpi_maps;
->  	unsigned long flags;
->  	u16 *col_map = NULL;
->  	void *itt;
-> @@ -3497,16 +3487,28 @@ static struct its_device *its_create_device(struct its_node *its, u32 dev_id,
->  
->  	if (alloc_lpis) {
->  		lpi_map = its_lpi_alloc(nvecs, &lpi_base, &nr_lpis);
-> -		if (lpi_map)
-> +		if (lpi_map) {
->  			col_map = kcalloc(nr_lpis, sizeof(*col_map),
->  					  GFP_KERNEL);
+On 27/08/2025 10:13, weishangjuan@eswincomputing.com wrote:
+> +  clocks:
+> +    items:
+> +      - description: GMAC main clock
+> +      - description: Tx clock
+> +      - description: AXI clock
+> +      - description: Configuration clock
 > +
-> +			/*
-> +			 * Pre-allocate vlpi_maps to avoid slab allocation
-> +			 * under the strict raw spinlock wait context of
-> +			 * irq_set_vcpu_affinity. This could waste memory
-> +			 * if no vlpi map is ever created.
-> +			 */
-> +			if (is_v4(its) && nr_lpis > 0)
-> +				vlpi_maps = kcalloc(nr_lpis, sizeof(*vlpi_maps),
-> +						    GFP_KERNEL);
-> +		}
->  	} else {
->  		col_map = kcalloc(nr_ites, sizeof(*col_map), GFP_KERNEL);
->  		nr_lpis = 0;
->  		lpi_base = 0;
->  	}
->  
-> -	if (!dev || !itt || !col_map || (!lpi_map && alloc_lpis)) {
-> +	if (!dev || !itt || !col_map ||
-> +	    (alloc_lpis && (!lpi_map || (is_v4(its) && !vlpi_maps)))) {
+> +  clock-names:
+> +    contains:
 
-This needs to be collapsed into a single boolean evaluated with the
-pointer being NULL.
+This part did not improve:
+items: instead
 
->  		kfree(dev);
->  		itt_free_pool(itt, sz);
->  		bitmap_free(lpi_map);
+> +      enum:
+> +        - axi
+> +        - cfg
+> +        - stmmaceth
+> +        - tx
+> +
+> +  resets:
+> +    maxItems: 1
+> +
+> +  reset-names:
+> +    items:
+> +      - const: stmmaceth
+> +
+> +  rx-internal-delay-ps:
+> +    enum: [0, 200, 600, 1200, 1600, 1800, 2000, 2200, 2400]
+> +
+> +  tx-internal-delay-ps:
+> +    enum: [0, 200, 600, 1200, 1600, 1800, 2000, 2200, 2400]
+> +
+> +  eswin,hsp-sp-csr:
+> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+> +    items:
+> +      - description: Phandle to HSP(High-Speed Peripheral) device
+> +      - description: Offset of phy control register for internal
+> +                     or external clock selection
+> +      - description: Offset of AXI clock controller Low-Power request
+> +                     register
+> +      - description: Offset of register controlling TX/RX clock delay
+> +    description: |
+> +      A phandle to hsp-sp-csr with three arguments that configure
+> +      HSP(High-Speed Peripheral) device. The argument one is the
+> +      offset of phy control register for internal or external clock
+> +      selection, the argument two is Offset of AXI clock controller
+> +      Low-Power request register, the argument three is Offset of
+> +      register controlling TX/RX clock delay.
 
-Where are you freeing vlpi_maps if on the failure path??
+Description is mostly redundant - it is already part of items:. Just say
+here "HSP (High Spee....) device needed to configure clock selection,
+clock low-power mode and clock delay." or something similar.
 
-Thanks,
-
-	M.
-
--- 
-Without deviation from the norm, progress is not possible.
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - clock-names
+Best regards,
+Krzysztof
 
