@@ -1,152 +1,162 @@
-Return-Path: <linux-kernel+bounces-788422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 685C4B3841E
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 15:52:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C48EB3841A
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 15:52:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6B14363875
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 13:52:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52E5C174B06
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 13:52:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8DDD30CD98;
-	Wed, 27 Aug 2025 13:52:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B9E23568E4;
+	Wed, 27 Aug 2025 13:51:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b="ilyMGL76"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r+pCKIeV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B831302CDE
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 13:52:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756302727; cv=pass; b=SoH1CUtU9RxBcjIU7kUxWK/ezTKaIWB5zcafrcNFoQ+kcFO7p+GuFSink9ZOuh0tk37Cu0ZFbmsN2s2FMaOYUoP4aIeSwrTiHDHp07pjkuO2q4t0G3vIukyICHZAC2fo5NdCPCqPXOexl1TjVmrhorSa5XYnxnaAM4VcXRTjb1I=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756302727; c=relaxed/simple;
-	bh=Vxwm7fPLCfOF27s2ioW7LLt2uWYZCG+SENORbSAmjMc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=e72tNIMilJWAb0CCKUCYmJqcSLiI8ZDtoGXWDRFg8xHNORMM+i0LnGBp0iL2GCPUVqxfQAHV314Rf64wWTOk7GGwKgOG5GeON1UY9JIEShCfi7f8rkzS/zeX35TCm/xOL5cCMfBe5O7UAf7oZycdxhYoKdJtQLivCwLekBS2fB4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b=ilyMGL76; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1756302704; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=Yh5Nbo9xBtgQquxT/qctZYSJZhiA10KfgVT77xk+HjndUMVTkx93Y2zWNzscwZC5ZKaV42Jyg5FwFbFL65kxwS+J9lYDm6UbvhBrU9cIIQQCUYi/rZD2IJdA3TjFDcpzWZ/sHv7p23FE0ExsfxJZemTxFF63XyEi2FrsJk8PGZI=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1756302704; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=EAFsioYoZbKGGEutWEZhd4alxqjm707Aznz1ZWVx3qw=; 
-	b=h+/4Ql/bYUF5tjs9LPqYPrJIwNBzH384Rx2dKLSMkmdm77jBTnQtJlzXRvUaAabuT1f5SVjoMCwl4RWSE6KtgCUF4YCaklYG85OC07WyMPnLHBB/AfKzNmukNGUl20rnRgglXimb0oWrvSf2BPFnFMlDlYglqWxWyaTpXGeSQP8=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=dmitry.osipenko@collabora.com;
-	dmarc=pass header.from=<dmitry.osipenko@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1756302704;
-	s=zohomail; d=collabora.com; i=dmitry.osipenko@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=EAFsioYoZbKGGEutWEZhd4alxqjm707Aznz1ZWVx3qw=;
-	b=ilyMGL76UggPGXRg+vn0XjxklEPTkIjjAKDdHp8p8MwTUFIeBcovPdPpKZlv/Nts
-	g0vuz0yROpkReQNaQf93S7B/1W+UzaTDzVlK0dOyBsxnWHFcnyRPdmaQ/lmqZa2zAHS
-	qUFLQT1723TX5tF05ClP9ZWOaeiuoc9YMBHSErfQ=
-Received: by mx.zohomail.com with SMTPS id 1756302702560280.8524637739665;
-	Wed, 27 Aug 2025 06:51:42 -0700 (PDT)
-Message-ID: <c38fb2bf-15c4-4cee-be0e-59d998cd03ac@collabora.com>
-Date: Wed, 27 Aug 2025 16:51:37 +0300
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEF1928F1;
+	Wed, 27 Aug 2025 13:51:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756302717; cv=none; b=upS+2Ft52UuOwvCKR2FGY7t5WUKUahc43m+HN+mJRqKysBIcPyQ9ci8yiRVQ02wTITDMh0DPIqYwdhjRbnWoihFeZVGH+A+O7/nJ0kECiuN620XHvrh/BpeBdkQeXRln6hX1KrCIqEM4DpbLrHx0GAZck9llyIdcoTqlaU2u2AA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756302717; c=relaxed/simple;
+	bh=bDGV7GGXaBIBhhu9ubPKd1YOpjVPci+GfwgdUO3lnmE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=A1LYZuCAsV9V2foN82X3frgaa7AM2AIdnJD8lX7h76F1Vt9JWbKwa+tGQgBfYiTya5/iMqQ72448g+walths53PogSN9ZdCJpcqT6bxQLg01jdVxDgVXeol/hJwVcTucdHaKUYOQ7YAELilTqOGmZX24PGkds8zlU9ATU4uIt1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r+pCKIeV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C852DC4CEEB;
+	Wed, 27 Aug 2025 13:51:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756302717;
+	bh=bDGV7GGXaBIBhhu9ubPKd1YOpjVPci+GfwgdUO3lnmE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=r+pCKIeVMtH32tdBaOxBO3TvACFgMOTkkgxI5e7y2Bb8GGOVFE/Uj+8U+IPU+tuVc
+	 4yavSlf4bFtz9Qmyb8P8qmAhvOPiqlW08Hz2AWuhg0ZKsoDEza5JsHTgt7dK8558zx
+	 aljn3hilRsdK9PpmF1n7jBvSbf8uwqV9px8qCH4HVyRUy59wXmpeLaOVZHFaTaJCBj
+	 3l8RQTIwhlnkozB/Y2H1LQB+6K7T/ba7ABMRefkHtm4/1pH3S048T7bLyPKDy5sgTp
+	 Csq4mr0zFqr8V7Fd32c2uyIl6fEm4vM2qtBhAazEmMtDufUE234MBCnj1/dt6eEFXZ
+	 LXASUBpudX/7A==
+Date: Wed, 27 Aug 2025 19:21:51 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Hans Zhang <18255117159@163.com>
+Cc: lpieralisi@kernel.org, bhelgaas@google.com, kwilczynski@kernel.org, 
+	robh@kernel.org, jingoohan1@gmail.com, linux-pci@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 02/13] PCI: dwc: Refactor code by using
+ dw_pcie_clear_and_set_dword()
+Message-ID: <wi2mylqrf6szc5iluncle2lj373aoxu46lyy7d2gaqx4dv3abq@sja5aj5mwv3j>
+References: <20250813044531.180411-1-18255117159@163.com>
+ <20250813044531.180411-3-18255117159@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/virtio: fix host visible memory detection in
- virtio-gpu
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: Honglei Huang <honglei1.huang@amd.com>, David Airlie
- <airlied@redhat.com>, Gerd Hoffmann <kraxel@redhat.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Simona Vetter <simona@ffwll.ch>,
- Gurchetan Singh <gurchetansingh@chromium.org>, Chia-I Wu
- <olvaffe@gmail.com>, dri-devel@lists.freedesktop.org,
- virtualization@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20250827081231.1878248-1-honglei1.huang@amd.com>
- <9ecf015d-d96a-40ac-a7fb-50e46c4f6e00@collabora.com>
- <20250827093320-mutt-send-email-mst@kernel.org>
-Content-Language: en-US
-From: Dmitry Osipenko <dmitry.osipenko@collabora.com>
-In-Reply-To: <20250827093320-mutt-send-email-mst@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250813044531.180411-3-18255117159@163.com>
 
-On 8/27/25 16:33, Michael S. Tsirkin wrote:
-> On Wed, Aug 27, 2025 at 03:52:05PM +0300, Dmitry Osipenko wrote:
->> On 8/27/25 11:12, Honglei Huang wrote:
->>> From: Honglei Huang <Honglei1.Huang@amd.com>
->>>
->>> Commit 206cc44588f7 ("virtio: reject shm region if length is zero")
->>> enhanced the validation in virtio_get_shm_region() by adding a check
->>> for a zero-length shared memory region.
->>>
->>> It is performed before the underlying transport's .get_shm_region()
->>> implementation is called. This creates an issue in the virtio-gpu
->>> driver, where the `region` struct is part of a larger structure
->>> that is zero-initialized by drmm_kzalloc().
->>>
->>> Consequently, the `len` field is 0 at the time of the check, causing
->>> virtio_get_shm_region() to return false prematurely. This prevents the
->>> host visible memory feature from being enabled, even when the device
->>> supports it.
->>>
->>> To resolve this, this patch bypasses the inline helper and calls the
->>> underlying vdev->config->get_shm_region() function pointer directly.
->>> This ensures that the region's parameters are checked only after they
->>> have been populated by the transport, aligning with the intended logic.
->>>
->>> Signed-off-by: Honglei Huang <Honglei1.Huang@amd.com>
->>> ---
->>>  drivers/gpu/drm/virtio/virtgpu_kms.c | 6 ++++--
->>>  1 file changed, 4 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/drivers/gpu/drm/virtio/virtgpu_kms.c b/drivers/gpu/drm/virtio/virtgpu_kms.c
->>> index 7dfb2006c561..ed5981248302 100644
->>> --- a/drivers/gpu/drm/virtio/virtgpu_kms.c
->>> +++ b/drivers/gpu/drm/virtio/virtgpu_kms.c
->>> @@ -174,8 +174,10 @@ int virtio_gpu_init(struct virtio_device *vdev, struct drm_device *dev)
->>>  	if (virtio_has_feature(vgdev->vdev, VIRTIO_GPU_F_RESOURCE_BLOB)) {
->>>  		vgdev->has_resource_blob = true;
->>>  	}
->>> -	if (virtio_get_shm_region(vgdev->vdev, &vgdev->host_visible_region,
->>> -				  VIRTIO_GPU_SHM_ID_HOST_VISIBLE)) {
->>> +	if (vgdev->vdev->config->get_shm_region &&
->>> +	    vgdev->vdev->config->get_shm_region(
->>> +		    vgdev->vdev, &vgdev->host_visible_region,
->>> +		    VIRTIO_GPU_SHM_ID_HOST_VISIBLE)) {
->>>  		if (!devm_request_mem_region(&vgdev->vdev->dev,
->>>  					     vgdev->host_visible_region.addr,
->>>  					     vgdev->host_visible_region.len,
->>
->> Hi, virtio_get_shm_region() change has been reverted by [1]. Don't think
->> anything else needs to be done.
->>
->> [1]
->> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?h=next-20250827&id=ced17ee32a9988b8a260628e7c31a100d7dc082e
->>
->> +cc Michael Tsirkin
->>
->> Might be only good to send a stable kernel PR with that revert. I see
->> patch available only in linux-next, while stable kernels need to be
->> fixed sooner.
+On Wed, Aug 13, 2025 at 12:45:20PM GMT, Hans Zhang wrote:
+> DesignWare core modules contain multiple instances of manual
+> read-modify-write operations for register bit manipulation.
+> These patterns duplicate functionality now provided by
+> dw_pcie_clear_and_set_dword(), particularly in debugfs, endpoint,
+> host, and core initialization paths.
 > 
-> sooner than what?
+> Replace open-coded bit manipulation sequences with calls to
+> dw_pcie_clear_and_set_dword(). Affected areas include debugfs register
+> control, endpoint capability configuration, host setup routines, and
+> core link initialization logic. The changes simplify power management
+> handling, capability masking, and feature configuration.
+> 
+> Standardizing on the helper function reduces code duplication by ~140
+> lines across core modules while improving readability. The refactoring
+> also ensures consistent error handling for register operations and
+> provides a single point of control for future bit manipulation logi
+> updates.
+> 
+> Signed-off-by: Hans Zhang <18255117159@163.com>
+> ---
+>  .../controller/dwc/pcie-designware-debugfs.c  | 66 +++++++---------
+>  .../pci/controller/dwc/pcie-designware-ep.c   | 20 +++--
+>  .../pci/controller/dwc/pcie-designware-host.c | 26 +++----
+>  drivers/pci/controller/dwc/pcie-designware.c  | 75 +++++++------------
+>  drivers/pci/controller/dwc/pcie-designware.h  | 18 +----
+>  5 files changed, 76 insertions(+), 129 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-designware-debugfs.c b/drivers/pci/controller/dwc/pcie-designware-debugfs.c
+> index 0fbf86c0b97e..ff185b8977f3 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware-debugfs.c
+> +++ b/drivers/pci/controller/dwc/pcie-designware-debugfs.c
+> @@ -213,10 +213,8 @@ static ssize_t lane_detect_write(struct file *file, const char __user *buf,
+>  	if (val)
+>  		return val;
+>  
+> -	val = dw_pcie_readl_dbi(pci, rinfo->ras_cap_offset + SD_STATUS_L1LANE_REG);
+> -	val &= ~(LANE_SELECT);
+> -	val |= FIELD_PREP(LANE_SELECT, lane);
+> -	dw_pcie_writel_dbi(pci, rinfo->ras_cap_offset + SD_STATUS_L1LANE_REG, val);
+> +	dw_pcie_clear_and_set_dword(pci, rinfo->ras_cap_offset + SD_STATUS_L1LANE_REG,
+> +				    LANE_SELECT, FIELD_PREP(LANE_SELECT, lane));
+>  
+>  	return count;
+>  }
+> @@ -309,12 +307,11 @@ static void set_event_number(struct dwc_pcie_rasdes_priv *pdata,
+>  {
+>  	u32 val;
+>  
+> -	val = dw_pcie_readl_dbi(pci, rinfo->ras_cap_offset + RAS_DES_EVENT_COUNTER_CTRL_REG);
+> -	val &= ~EVENT_COUNTER_ENABLE;
+> -	val &= ~(EVENT_COUNTER_GROUP_SELECT | EVENT_COUNTER_EVENT_SELECT);
+> -	val |= FIELD_PREP(EVENT_COUNTER_GROUP_SELECT, event_list[pdata->idx].group_no);
+> +	val = FIELD_PREP(EVENT_COUNTER_GROUP_SELECT, event_list[pdata->idx].group_no);
+>  	val |= FIELD_PREP(EVENT_COUNTER_EVENT_SELECT, event_list[pdata->idx].event_no);
+> -	dw_pcie_writel_dbi(pci, rinfo->ras_cap_offset + RAS_DES_EVENT_COUNTER_CTRL_REG, val);
+> +	dw_pcie_clear_and_set_dword(pci, rinfo->ras_cap_offset + RAS_DES_EVENT_COUNTER_CTRL_REG,
+> +				    EVENT_COUNTER_ENABLE | EVENT_COUNTER_GROUP_SELECT |
+> +				    EVENT_COUNTER_EVENT_SELECT, val);
+>  }
+>  
+>  static ssize_t counter_enable_read(struct file *file, char __user *buf,
+> @@ -354,13 +351,10 @@ static ssize_t counter_enable_write(struct file *file, const char __user *buf,
+>  
+>  	mutex_lock(&rinfo->reg_event_lock);
+>  	set_event_number(pdata, pci, rinfo);
+> -	val = dw_pcie_readl_dbi(pci, rinfo->ras_cap_offset + RAS_DES_EVENT_COUNTER_CTRL_REG);
+> -	if (enable)
+> -		val |= FIELD_PREP(EVENT_COUNTER_ENABLE, PER_EVENT_ON);
+> -	else
+> -		val |= FIELD_PREP(EVENT_COUNTER_ENABLE, PER_EVENT_OFF);
+>  
+> -	dw_pcie_writel_dbi(pci, rinfo->ras_cap_offset + RAS_DES_EVENT_COUNTER_CTRL_REG, val);
+> +	val |= FIELD_PREP(EVENT_COUNTER_ENABLE, enable ? PER_EVENT_ON : PER_EVENT_OFF);
 
-Next 6.17 kernel release. I see patch in the linux-next branch. Often
-there is a -fixes branch for patches that go into RC kernel, but I don't
-see one in your vhost kernel tree. Will the revert land into 6.17-rc4?
-Everything is good if yes.
+So you just added the bitfields to the existing 'val' variable which was storing
+the return value of kstrtou32_from_user().
+
+What makes me nervous about this series is these kind of subtle bugs. It is
+really hard to spot all with too many drivers/changes :/
+
+I would suggest you to just convert whatever drivers you can test with and leave
+the rest to platforms maintainers to convert later. I do not want to regress
+platforms for cleanups.
+
+> +	dw_pcie_clear_and_set_dword(pci, rinfo->ras_cap_offset + RAS_DES_EVENT_COUNTER_CTRL_REG,
+> +				    0, val);
+
+Similar to what Lukas suggested here: https://lore.kernel.org/linux-pci/aKDpIeQgt7I9Ts8F@wunner.de
+
+Please use separate API for just setting the word instead of passing 0 to this
+API.
+
+- Mani
 
 -- 
-Best regards,
-Dmitry
+மணிவண்ணன் சதாசிவம்
 
