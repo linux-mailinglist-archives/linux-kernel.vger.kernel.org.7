@@ -1,83 +1,80 @@
-Return-Path: <linux-kernel+bounces-788428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87A87B38432
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 15:58:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89493B3843D
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 15:59:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8236C1BA24DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 13:59:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D0E05E42F3
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 13:59:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74596356902;
-	Wed, 27 Aug 2025 13:58:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AFA435691D;
+	Wed, 27 Aug 2025 13:59:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="ZwR5UJKg"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2055.outbound.protection.outlook.com [40.107.92.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="YptpW1Nr"
+Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com [209.85.210.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E784E350D6E
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 13:58:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.55
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756303116; cv=fail; b=aeHRDHbM5LT57MmpqEGWYG2ErakMvti1kBwH2I30Fe5M7gjoEa93FXxMQX5bc73kS4NflNF2Yr32X+1F65AyJ8Rys0QiVxkCNUV9kM3gubNHPNESrBG4XfNNVCydMhvhl/jnbJ0sh5HaRz2eEMTZB705Eun83ruDm1y8MQ4RWyg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756303116; c=relaxed/simple;
-	bh=ELgX1W9xKvPWjIsOcnudYDbniueXxkRnN1+wDCVAnCY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=U2x2dGyS+R/RCosw1Ofyg+HXp2TGwTN+g1iP+SNEdiwCiPyQXgmNNpesO1D7kUtIPA0H/RLwK3sZ+lf/+3ohSt7L+lPHtskMMO9ksNyTLq/8i/6WDAwOCqM278XiSKZ/I+anms3rQyfphDPKMaaFtuKidsTpKDuWlvYVKWs1Iek=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=ZwR5UJKg; arc=fail smtp.client-ip=40.107.92.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=FH8spdrE3erGTd8Njk66mnISHky2DCZZkEceK6Zihke2OQYKWo0Er4QJw1xaeXINssfAsmDOJesKXZIKppg7giHHyKlNqKYV3ijZuengg6ySd6+z9c1cnS0XvgpU5hUibxSymW8qUmebXJM77N0US8gi2gg4C2LXp36+3Imth+sKznMaiAR1Me7YxUIZ7aX1GC8hO9B6aM79lrujCM1yyopwajDX9cgm6UFcaW8YCz07wRXzpceEdRXfzogdx+2qp0jRQvGLi2bkDuV5LhQSwBGSKTeW6exBSjuHNc2rvuOYMemNQrA3HHiKmAuG3bMCjBGvfLX9X2hSp6Wr6DWPFQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=O94bgVEIti/iD7TO9AcUNGXlXChxMCiTY0vxoPt7OKw=;
- b=xwbC8T9Fb3cB4v42hwWt+u0qipkwEWy3iWj+4scAGaAkWh/wN4xMAjZkbJnAzZ2dYHfq6i3QxZRFZtEdZ8FNujDSGyO0Ali5nahINdGyfQB1YbF3mpoEOaDNaFlIpTSAggGC362N/617NyuCv/CWFo/UG8x8d2OQh6FGwuLGWowuXN/uOroT/KXMRA0h7BYL5A5O5Qgxca6K1jyUKOPE+K/+L5uuDJKcYJv0x0S9YUeYI6CauObArL2o5eyqBjvL4GNzB3PU0KG5IsMBfqUAXxkPmvpTnhefIhkf2zFppp+zWOaKDgQtwdfq21+eLGxso/9A40nxxu25+rPTX/Qb8w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=suse.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=O94bgVEIti/iD7TO9AcUNGXlXChxMCiTY0vxoPt7OKw=;
- b=ZwR5UJKgU7ma6TNq1Cx6TojVkXKaa0dvSuFgDdy2DXozzekeTUuwcz8+blIp+58e0Y0qaMffGh6j3sQEri4+COoPVXTTOnaiaEgEiGQZZYOLbJCgbyPrC5sG48lWTjizmbUXH3oAJJ/THcQlSi4hh8Adk1bZyPebp3/GhIBzJpQ=
-Received: from CH5PR05CA0017.namprd05.prod.outlook.com (2603:10b6:610:1f0::7)
- by SJ2PR12MB9238.namprd12.prod.outlook.com (2603:10b6:a03:55d::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.21; Wed, 27 Aug
- 2025 13:58:30 +0000
-Received: from CH3PEPF0000000D.namprd04.prod.outlook.com
- (2603:10b6:610:1f0:cafe::f8) by CH5PR05CA0017.outlook.office365.com
- (2603:10b6:610:1f0::7) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9094.5 via Frontend Transport; Wed,
- 27 Aug 2025 13:58:30 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
-Received: from SATLEXMB03.amd.com (165.204.84.17) by
- CH3PEPF0000000D.mail.protection.outlook.com (10.167.244.43) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.9073.11 via Frontend Transport; Wed, 27 Aug 2025 13:58:30 +0000
-Received: from Satlexmb09.amd.com (10.181.42.218) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 27 Aug
- 2025 08:58:30 -0500
-Received: from SATLEXMB04.amd.com (10.181.40.145) by satlexmb09.amd.com
- (10.181.42.218) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.1748.10; Wed, 27 Aug
- 2025 06:58:30 -0700
-Received: from [172.31.63.243] (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Wed, 27 Aug 2025 08:58:29 -0500
-Message-ID: <c6bb835a-40dc-44b6-8f95-4254f10db98a@amd.com>
-Date: Wed, 27 Aug 2025 09:59:01 -0400
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DF0F34DCCF
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 13:59:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.50
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756303173; cv=none; b=KZqa38TQKoHGQC9YsYDsj0RT8+FlmSUmXWFcxgWSgfPrizIuDOS9LkpjhFApTm2MTTjUkvITqCpadBH0S8fHIAJV6mTLJT41L3VgmO7POjRA/1HvzVUaHoNFWfW2fbnnuQWVixq6xVqBEH4kZoyBsQXSgS6u4nvQqQ+8E567ph8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756303173; c=relaxed/simple;
+	bh=IpRMFO2MeMkQytb9AR0N8Z1FemuJAxPT/DZPEjNV+I0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VTG8EBkcM4wPfSdzK1SPt6986zGSwH1kx9DkMlNYLoPKPrEiUfDtX9vXoMNuyRFItQpIQTYsVu1iIh8z4KnRBdVPl7oqxgTxa14AZqae4xouc14NO5+2cVDRQP5VfK+ljrIBxj4rQe2qzZgrrJmHjpkEoyuMQASmrIH5chjG5JY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=YptpW1Nr; arc=none smtp.client-ip=209.85.210.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-74526ca7929so1440682a34.3
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 06:59:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1756303169; x=1756907969; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=3DEQfVOF90gg0nQ2w58ay9TgS+NK/WWzZloFFYDQxeI=;
+        b=YptpW1NrPYQJUtxCJxZlAK41GASCaGI4T10wdA5OdawvHzTMqRmt7uiQjYF8J304o9
+         mabZ2XbXzBbEWnpbb+zDacrcII40gVXfhuen1Gf5ldgZlce2154Bx2G6XWlYC9t7JIrO
+         O513s0gDl53nAk3Tb38MmHFZmCdMd+gzOYiTVUX3k2PpaiiZOcvO0aHamUsZgr6+ncAc
+         RIMQwABckeBrY7pwYLhy3PESwrXI5M2GMQVww+kFDIqw8Q1SZLRAbklJXAN0v+pSFGoz
+         dEzdIWevFM7Cqg1UX5RE3MSFfVXUocnfAHyUrwrsU7FHZL1LJPFNwQW2/kClsnKWTANk
+         cpNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756303169; x=1756907969;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3DEQfVOF90gg0nQ2w58ay9TgS+NK/WWzZloFFYDQxeI=;
+        b=SNsRwLQHG0Bf52ie6o07eGiSwZEXcQnWCR23B2+Pa83RAsRKbXnYFGOe068MFhNw+L
+         cZ3tdmOrGd1TnWQ9cix2kfgUrcDK6XQE3M7s9ISWGVZSXoZJ1oPyEZGWQqfZ8z4ocpiC
+         8mjYc84PPR0ZdypP9QtjMeZHjGqvOJJqGIYoNV3q3F27IxyrSsd4W5Fz8I9Ie7lhj3zg
+         llY83erK25MqGR145Jb+u5uALrOTEqNq2CSNQBMnMxly1YFQl3QgcYO6Wj5tLzhpQveV
+         S5n5A4VE/RrceMjTr3u+vPyS6uncGDDyfAr/WegrLzI1ZJmtjma1Kxl+ErjRPVzEu2xQ
+         pCzw==
+X-Forwarded-Encrypted: i=1; AJvYcCWbsCEkC5m8y8gw3zSsoqHwGu2pPQQOGayXecZfBtsya8xosTsOeXGvqFZc2oJIiPUWM7BvrcFj15iZ1ps=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+W/yrJ5N0v9lQJeoewXhXHz3brnQlI0w6j2Nr+sX3HY+df2XA
+	6XM8ia4XWsDjKP9L8IpIujPsXpAu1PoN97ATbI3myzZXkiFYn0c1yZEcqYDeD69N0BI=
+X-Gm-Gg: ASbGnculRYBOB2M6zpsuFM3e+EwZGsndkJ6jKrA+ObCXIxB8EUGKlpEsJm42LqzZ9kc
+	MA3nltfkJSbhIT4UU0DWHGk5K5QL4Fi11X5dwNePG5S5Qx5uxSrSiJrcREFKCpZ4G9L6vtoaN2A
+	fZkVlW4afxu2fkjJOeesHmtj0n2BRmD+tb5RBkwkOAEfvXGaa6vYuPgvpfZdFUx9gxzUCGDXXfu
+	qdfCXfqbfY9O2pWfNTzEFqVHJsOd3sb0dIagWbii9eOq8sp3azj4MjXFX25PvM55mX2HAXRH0eu
+	PiQTeYT1fg2O/LlcuE4wMGxnecnsaaGFRFVe97WuCBjTpbHDWAAKIUqVJAABOKA0iHcBssOGMFG
+	BxtAeKnUWI2Hx3pYo59obZgVOCKaW4x2wHJEy5/c2byqcwA5gJesMCbL8qnph0mFJXqCi3ZzYTo
+	UgyhkjlAN2Bg==
+X-Google-Smtp-Source: AGHT+IHSftKprg4A6uiJZsbpSHa4sPR9ZXxfCmFTDjOuRBFTS34c1PezHWubSzt7gTo1cYwVIRJIbw==
+X-Received: by 2002:a05:6830:2b07:b0:72b:992b:e41 with SMTP id 46e09a7af769-74500a5c79amr8967488a34.23.1756303169172;
+        Wed, 27 Aug 2025 06:59:29 -0700 (PDT)
+Received: from ?IPV6:2600:8803:e7e4:1d00:aa9f:f4cd:76b1:fecb? ([2600:8803:e7e4:1d00:aa9f:f4cd:76b1:fecb])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7450e474c76sm3019432a34.24.2025.08.27.06.59.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 27 Aug 2025 06:59:28 -0700 (PDT)
+Message-ID: <ca078446-7cdf-4922-b550-6dd671d39589@baylibre.com>
+Date: Wed, 27 Aug 2025 08:59:27 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,92 +82,175 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] xen: rework xen_pv_domain()
-To: Juergen Gross <jgross@suse.com>, <linux-kernel@vger.kernel.org>,
-	<x86@kernel.org>
-CC: Boris Ostrovsky <boris.ostrovsky@oracle.com>, Thomas Gleixner
-	<tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov
-	<bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin"
-	<hpa@zytor.com>, Stefano Stabellini <sstabellini@kernel.org>, "Oleksandr
- Tyshchenko" <oleksandr_tyshchenko@epam.com>, <xen-devel@lists.xenproject.org>
-References: <20250826145608.10352-1-jgross@suse.com>
- <20250826145608.10352-2-jgross@suse.com>
+Subject: Re: [PATCH v2 1/2] dt-bindings: iio: temperature: Add NXP P3T175x
+ support
+To: Lakshay Piplani <lakshay.piplani@nxp.com>, linux-kernel@vger.kernel.org,
+ linux-iio@vger.kernel.org, jic23@kernel.org, nuno.sa@analog.com,
+ andy@kernel.org, marcelo.schmitt1@gmail.com, gregkh@linuxfoundation.org,
+ viro@zeniv.linux.org.uk, peterz@infradead.org, jstephan@baylibre.com,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ devicetree@vger.kernel.org, ilpo.jarvinen@linux.intel.com,
+ jonathan.cameron@huawei.com, akpm@linux-foundation.org, chao@kernel.org,
+ jaegeuk@kernel.org
+Cc: vikash.bansal@nxp.com, priyanka.jain@nxp.com,
+ shashank.rebbapragada@nxp.com, Frank.Li@nxp.com
+References: <20250827103105.2472328-1-lakshay.piplani@nxp.com>
 Content-Language: en-US
-From: Jason Andryuk <jason.andryuk@amd.com>
-In-Reply-To: <20250826145608.10352-2-jgross@suse.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PEPF0000000D:EE_|SJ2PR12MB9238:EE_
-X-MS-Office365-Filtering-Correlation-Id: ceabcf71-b094-4b2c-13ac-08dde571cdfd
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|82310400026|36860700013|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?bC9PMG9kUXllMExxK1ErekZvcVVmdmIrZXFQWXNYR2JhR2RqdnEyT2lpb1V2?=
- =?utf-8?B?MUR2MXZzbTl2dnZidEpjSzhPMWtLNDFjYTZvbnQ4aVlnQitYU2xRNzBSc1h3?=
- =?utf-8?B?VHBkU01EMTBmeEhKRENtYU1BbC9wcXlKSnFzT0FkSHVRUEtwcW1SM09JOG9S?=
- =?utf-8?B?MjA4bjA5a0V0NzlXMHI3OEFsZWVvVWpHeW1zcXBkRzlpNGJpU05uQWcxVUZC?=
- =?utf-8?B?aFJ2K2IxOXcwQ3JETkdobDhxVGVkT2hvT0Q4ck5wVm9VV0R0eTEvUzc5WnVC?=
- =?utf-8?B?UVlXQ2N0VXUrbnlZQ3l4L08rZ0RCQ2o3TjdVd0xvLyt6ckM2elRuZ2ZBbUM0?=
- =?utf-8?B?WEl3NFR2TUVzM2JDWUZWTE91b1p5aTJYK1Y0Y3g4N04vRUU1UGpCQytLbzZu?=
- =?utf-8?B?MzN5ZHN1UWZaSjlNWk5Oa1dEUmFtblBYN1NqcmUvcmkrSWd5bjJHN251R2p5?=
- =?utf-8?B?QjFLSmJDTDNpQ3htVmFoV0tOWGM2Y0ttdktVK0FDTllJcmYzcGFFMzhTYUlm?=
- =?utf-8?B?SFZWZVdLYlFBcnlhcmx3bHRXcTVqRzJISjNKb3JBNC9UeGVMcll0MUlVRFRt?=
- =?utf-8?B?RVBqNjBHV1VSY0ZCa3BuYnhsZ0NOUEhIb0lwY015T1BHdFlJc3RKZ1MreEx5?=
- =?utf-8?B?L0taUnB4SVVyc1ZiWXZhSStSVThMUGsyV09UNjN6YlRTK3dGUENpRTlmKzR6?=
- =?utf-8?B?cTA2SHdPNmE3ZmFGRkNaVnBValN0TE9oT3p6SllZbDRKSHFmNllaaXVUek5L?=
- =?utf-8?B?d0NCaFFFanB5WUlKNXlrNGRndE1udWtCQVRZU0JJNnBJd2xBWTZIVUFBUnZo?=
- =?utf-8?B?d0s3c3pRRWwzRXUwSEtIQ0FvZTVZOTZzRWVwY25ETlFjamdyelE5dDBsQnhZ?=
- =?utf-8?B?YTc2emk4VWlvN2RSemtqZHUvZUUyenE4RHZjMENmRzdnVTZjNkFhSldmVk5M?=
- =?utf-8?B?RkQ4U1JRVmEzTWl5Z0N5eDUyeFhDNFFMZlR0WlpGYVFTU2o3OVNncXpiQ1NI?=
- =?utf-8?B?UUFRMFh0bXZHZkdMdUNMVlB1R2JlZlVRT3BGbGNmd3JVejRTL3F4SkU2Q2ZH?=
- =?utf-8?B?aEJxZ3JiSkhjUVZHOTBvNjhnR1VpQTlSMkpSL1lzZy9lZlFPNGdwMnk0czJL?=
- =?utf-8?B?ZGdjYzNsUzFZZEtoNm1YZyt2U0V2TDNEbERJckFoS1RqY0ZVc2ROQ1RwemMy?=
- =?utf-8?B?L1BDQ09EVGVKek92ZjE5ZnlFMlJjazJ4RkREb1R5OUt4VVRWYndib3dHVW1z?=
- =?utf-8?B?WWZ6TGo2RTVra3JSK1Jrb3N5MFVhWUs2NDdGYUJud1VkNmxaaGtpWDhJM2ZC?=
- =?utf-8?B?bWo3NlI0eUoxbWoxVkpHMUxuV0cvSXdoOW5YOGEvWXFtM1RQK3lodjg4STg3?=
- =?utf-8?B?dEdTY0luZWhvOXBMNlVqY29FSGNBeTlQMTVINmlFNEl6MmJGTmY3ZFRxc2hs?=
- =?utf-8?B?eTBLaXpzdyttK2psZDFxdU5BbTBzY29pTnZZTVNlbTA1SUc5a1NhU1F6aUZ2?=
- =?utf-8?B?QzBUbW1KUm9hZ0RkOEwyTDRMY0xKd2dVcEwwSXpneXhUbTNEMkIxOW9VZEVi?=
- =?utf-8?B?d1JrZ3MydUhNWUFpQnh6Z3ZMRFZ6aDVSQmEyeEJVQXJGUVNzVDQvRzBURG91?=
- =?utf-8?B?VnpkdDZ1eWpaaUMvazlwNG1abHo2dWg1MVpTWTdXdWN6ZTRqc09qbXBsQlhZ?=
- =?utf-8?B?N3Bic3FVMjZTT2gwWUhGbTYxckIrRWFNbENBR2hEb2FyN0ptZ2M4cjZDenlM?=
- =?utf-8?B?UTFyYUx0dUhtay9ib2xZeDN4T3RZM05ZdHgvZENibFFuc0dEOHlvV0JnVlhR?=
- =?utf-8?B?OEtNVTJNcjhGeE05dFM3bzM5aVM3anBTdWZlSEU3aTJkZ1lOakFyUE5PVTg4?=
- =?utf-8?B?ZTBQZXAxeDVmdDU4eW0wVEFGelp1THdXNW16ZUphTnVuWmtBZloyaENkVEl3?=
- =?utf-8?B?UlVVTmdhS3BicHI2TFkvWmdPR0FkR05YMCtUeFJFN2NzSGgxTThEL2xGSFdr?=
- =?utf-8?B?cVNKNm5teHVUSHlGdElkSkk2RUFWdUJIRzE3SjI5S0RKTHp1VkNpdTVJY1FO?=
- =?utf-8?Q?dPB1zL?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(7416014)(82310400026)(36860700013)(1800799024)(7053199007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2025 13:58:30.5853
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: ceabcf71-b094-4b2c-13ac-08dde571cdfd
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CH3PEPF0000000D.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB9238
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <20250827103105.2472328-1-lakshay.piplani@nxp.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 2025-08-26 10:56, Juergen Gross wrote:
-> Rework xen_pv_domain() to no longer use the xen_domain_type variable,
-> but the artificial X86_FEATURE_XENPV cpu feature.
+On 8/27/25 5:31 AM, Lakshay Piplani wrote:
+> Add bindings for the NXP P3T175x (P3T1750/P3T1755) temperature
+> sensor, supporting both I2C & I3C interfaces.
 > 
-> On non-x86 architectures xen_pv_domain() can be defined as "0".
-> 
-> This has the advantage that a kernel not built with CONFIG_XEN_PV
-> will be smaller due to dead code elimination.
-> 
-> Set the X86_FEATURE_XENPV feature very early, as xen_pv_domain() is
-> used rather early, too.
-> 
-> Signed-off-by: Juergen Gross <jgross@suse.com>
+> Signed-off-by: Lakshay Piplani <lakshay.piplani@nxp.com>
+> ---
+> Changes in v2 (addressed review comments from Krzysztof Kozlowski):
+>  - Dropped nxp,alert-active-high: unnecessary as polarity handling is implicit in driver.
 
-Reviewed-by: Jason Andryuk <jason.andryuk@amd.com>
+>  - Retained nxp,interrupt-mode: required to program TM(thermostat mode) bit; enables interrupt
+>    (latched) mode. If not present in DT entry comparator mode is set as default.
+>  - Retained nxp,fault-queue: This needs to be configured during device initialization.
+>    This property configures the hardware fault queue length. Defines how many consecutive faults
+>    are required before ALERT/IBI is asserted, preventing false triggers in noisy environments.
+
+These are not very convincing reasons that these to properties should
+be in the devicetree. The devicetree describes how things are wired
+up, not how they are used in the driver. For the first one, we already
+have the parent node to tell us if we are using I2C or I3C, so the
+property is redundant. For the second one, the whole system could be
+moved from a less noisy to a more noisy environment and we should not
+have to change the devicetree to handle that.
+
+>  - The `reg` property remains required to satisfy `dt_binding_check`.
+>  - Fixed YAML formatting, line wrapping, and examples.
+>  - Changed compatibles from nxp,p3t1755 to nxp,p3t1755-iio and nxp,p3t1750 to nxp,p3t1750-iio
+>    as reported by kernel test robot.
+> 
+>  .../bindings/iio/temperature/nxp,p3t1755.yaml | 97 +++++++++++++++++++
+>  1 file changed, 97 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/iio/temperature/nxp,p3t1755.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/iio/temperature/nxp,p3t1755.yaml b/Documentation/devicetree/bindings/iio/temperature/nxp,p3t1755.yaml
+> new file mode 100644
+> index 000000000000..4eb6fc5cb247
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/iio/temperature/nxp,p3t1755.yaml
+> @@ -0,0 +1,97 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/iio/temperature/nxp,p3t1755.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: NXP P3T175x Temperature Sensor
+> +
+> +maintainers:
+> +  - Lakshay Piplani <lakshay.piplani@nxp.com>
+> +
+> +description: |
+> +  Datasheet: https://www.nxp.com/docs/en/data-sheet/P3T1755.pdf
+> +
+> +  P3T175x (P3T1750/P3T1755) is a digital temperature sensor with a range of -40°C to
+> +  +125°C and a 12-bit resolution. It supports communication over
+> +  both I2C and I3C interfaces.
+> +
+> +  The I2C interface supports up to 32 static addresses and provides
+> +  an ALERT output to signal when temperature thresholds are crossed.
+> +
+> +  The I3C interface supports In-Band interrupts (IBI) in interrupt mode,
+> +  allowing the device to notify the controller of threshold events without
+> +  dedicated alert pin.
+> +
+> +  The device supports configurable thermostat modes (interrupt or comparator),
+> +  fault queue length etc.
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - nxp,p3t1750-iio
+> +      - nxp,p3t1755-iio
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  reg:
+> +    maxItems: 1
+> +    description: |
+> +      In I2C mode, the device supports up to 32 static addresses.
+> +      In I3C mode, the 'reg' property encodes a triplet of
+> +      <static-address BCR PID> used for device matching.
+> +      Static address is optional if matching is done via PID.
+> +
+> +  nxp,interrupt-mode:
+> +    type: boolean
+> +    description: |
+> +      Enables interrupt mode (TM = 1), where alerts are latched until
+> +      cleared by a register read.
+
+As mentioned above, the driver should know best which mode makes the
+most sense without having a property to restrict it.
+
+> +      Required for IBI support over I3C. On I2C, both interrupt and
+> +      comparator mode support events.
+> +
+> +  nxp,fault-queue:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    enum: [1, 2, 4, 6]
+> +    description: |
+> +      Number of consecutive temperature limit
+> +      violations required before an alert is triggered.
+> +      valid values:- 1, 2, 4 or 6.
+> +      If unspecified, hardware default (2) is used.
+
+If we kept this, it should have `default: 2`. But as mentioned above,
+this doesn't seem like something that would be known when writing
+the device tree since it could depend on variable environmental
+conditions.
+
+We already have IIO_EV_INFO_RUNNING_COUNT that sounds similar to this
+type of control that would allow it to be set at runtime instead.
+
+> +
+> +  assigned-address:
+> +    true
+> +
+
+Missing `vcc-supply: true`, which should also be required.
+
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +    i2c {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        temp-sensor@48 {
+> +            compatible = "nxp,p3t1755-iio";
+> +            reg = <0x48>;
+> +            nxp,interrupt-mode;
+> +            nxp,fault-queue = <6>;
+> +            interrupt-parent = <&gpio2>;
+> +            interrupts = <3 IRQ_TYPE_EDGE_FALLING>;
+> +        };
+> +    };
+> +
+> +  - |
+> +    i3c {
+> +      #address-cells = <3>;
+> +      #size-cells = <0>;
+> +      temp-sensor@48,236152a00 {
+> +        reg = <0x48 0x236 0x152a00>;
+> +        assigned-address = <0x50>;
+> +      };
+> +    };
+
 
