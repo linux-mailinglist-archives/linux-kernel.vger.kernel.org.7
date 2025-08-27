@@ -1,221 +1,103 @@
-Return-Path: <linux-kernel+bounces-787556-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F36E8B377C3
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 04:31:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F03AB377C5
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 04:32:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0E197C076C
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 02:31:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4AFA31B66C74
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 02:32:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D0BA2750F4;
-	Wed, 27 Aug 2025 02:31:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC75D2749F0;
+	Wed, 27 Aug 2025 02:31:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BUe5HIzm"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k3UcQ+RI"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05A2D274B5E;
-	Wed, 27 Aug 2025 02:31:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 883E02741B6;
+	Wed, 27 Aug 2025 02:31:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756261868; cv=none; b=Gdyz1jbmxOscqyOb3k0n8vIEbO3v/oZx66LPvIfB8sC49l/dwTigkc1nQ95Kt4xYZohLj9p5sbGkYkr9f8BJD0hdL7ANFD8Yx2WW8rCSDEy9vdApNLI7QK82G3LAAEF4d42qeWm8weq15GtRscR8w5G+a1wSg8bB3+YZFzctzvw=
+	t=1756261910; cv=none; b=VSV5e5AxZQmkHxJDeJudgJjUrS3uID1lCpwrIYcuHi8IfzGRpx1uTuYpwu+9nKnavA+BPe7F9WQ1sQEehPnG6JGaU+dDgGKCf3G3uirrUPXM3PwDQ8eMuNOIkRGyGHHDVpX5UL/V5/cmPsdGisPYZzXpj7iarNcZiHAY9rDAr+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756261868; c=relaxed/simple;
-	bh=UsH29VEzKGfjdoIrHKgxZpQuSteEnapr88KYuXyYsBY=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jvWCA6fIiPzxVU9WtvzMOTChdMSuMXoujeEOEIZ3giu8phTs5vt3ccgK3tSpFCE3iGbFpxx2GLNEHvGU/DYcxDXI2MLlqmDOjusoVdwD+hllbhZb82qxkHVIC6PFSHwR9y8NatbdKWY2yjIESPyHtjnk1QODA9i0Dny2Y038F1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BUe5HIzm; arc=none smtp.client-ip=209.85.214.171
+	s=arc-20240116; t=1756261910; c=relaxed/simple;
+	bh=3Tox78mtmLbV4ZIp0EyBj34pqSOH2j8gIMnB7+StZxM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZaRAPPMNq8/ihoaD/9u8/b7x6ty2JdFEciG6KMJetBNcpU+NjpUMIjT8kZjL6wbveRKuAtPBq97wqXojdWYtuQYozHcxoe8FEEO3805N/2cmlosZimdNfgFD8YTf0Z1jVWD6mZMyIACueIyUMxmLG1QIJJxYGr9JbJxa9z9RueA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k3UcQ+RI; arc=none smtp.client-ip=209.85.218.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2465cb0e81bso29829695ad.1;
-        Tue, 26 Aug 2025 19:31:06 -0700 (PDT)
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-afcb7acfde3so931078066b.3;
+        Tue, 26 Aug 2025 19:31:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756261866; x=1756866666; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ELQPbA9j9oun69aUaju4EsWrSj5hAvjhLzmU//1o98Y=;
-        b=BUe5HIzmizAPu37e1xSlBgpi5b0xj8v5spawOz7vHh/EcjF5qYMWF+dFtW7MBm8j5p
-         KcScbUKl+rtwNtSopBmJ+7iMydPNYqiXZ7I9FLAGlzfoSurmNVe3eJYV7td08xCtDRPO
-         4UWbURppgtqPDlh+l8GR7tQ9yHSjDZrc2vOU5qic4Py/ICY9pDns8yfkCLy3obMyXHSl
-         gh+Bhw+0S8yuVsjhmvXCXvNENIreIGEsF+1qEB1w3L0acxAFF9ZULZsQga5zjbxpFsFH
-         waZ30OYjXDH8vmIP3pPrtiqe/NBXdgSDeGkmb1JfXunD2OOo6390C44nGZWadUTh/MKc
-         75XQ==
+        d=gmail.com; s=20230601; t=1756261907; x=1756866707; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=3Tox78mtmLbV4ZIp0EyBj34pqSOH2j8gIMnB7+StZxM=;
+        b=k3UcQ+RIj3uvaLYxeZUSffKdEM8JFjCsfi7cZwxkRK4Rb9lYa7h0etAPRkSjaRBk86
+         ovoEP69nIyJrZx1ZugyJKTuxbfD5C+/i0VrLaAjFEoEo8y6Hh9sxeUnHvlXMCkcrIU/S
+         ip8NCfIayahwm80IvHZjeUt4XqlSUjc4YcMr6ec8HjNF595zEEpK9Jf4eIv3TccV/9uG
+         Wvc+iC5X00lfJwRKr6nbsJE5ThaJ9BYcBIwYcPf7DjhcAselj3OgfC6ZlbboMPrMdA9D
+         2hbdD9en/m8y4C5w/af4/a4SOOMcCzjHufw1KJpmrRVLQyzxzuI6SrvEZxwRC0VwrshL
+         c2Tw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756261866; x=1756866666;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ELQPbA9j9oun69aUaju4EsWrSj5hAvjhLzmU//1o98Y=;
-        b=GfWHJm6jEm8i3ukaw2hcEqjMzr4v2nhtzhFPs/jH3HQdpG0V8Fka/9DmzkmSqxMe88
-         pcWWblOICyk1jXRmnS4kZBQqtOrCbiLgcMkqg8V6iTgWfK4DAXfJfcbKKtoai5wKfirE
-         0foaVK0CDSjsC3UfOhnH+zKb+Hqxlq5+tBjjbdhaEOFRBKwFJmRvTtAFyhL6z3pRP69d
-         zphzWE9Prz5K6qKahX6uyiPMZD8Bl3WRS7hqX66eRJukQ/JyFh9kH5HzSgWNkoFFxm6h
-         R4+Q257WCY0o5QmcFaA7tP6oqI3CuGIDnElN8EBfJx2dOg1lVKee/fgF69484DxxOlJH
-         KNhg==
-X-Forwarded-Encrypted: i=1; AJvYcCUXfXNlnNSJMODZzB0DLqkUtM/A0oVY9K98f+R++2wI4Giia0XDEh2uZ9Lk9Sz2MJ9RKWBNbdI0ly6DJlU=@vger.kernel.org, AJvYcCW6zO8zfKgIdGS/wnwm3G4X4HoD76e2MLa8oyV4eFJNFUyoNUURjH2ea2j71rEcGsTFI5nbCleG@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxuu2owJCdnSbZpDiVhOcnYyKyE26P5bnuSjxT8qHytBQ6XAtBX
-	sUfN6GYQ95ctBIbrXaoIXO65QwZf3kXYy3/0EFkmbUaz2UNzbj9RxpS5
-X-Gm-Gg: ASbGncugrEtU1e/ZBXvp9oOX4Avq8TQ1cDDHYVAinfRLO/IdeqZp84V90GXv0e4uHpB
-	E8XcIAFSSTMYmdB/kY3LMUm8qdDDoI/M6681yfInWz17W58yqeV3aU3ftko4XXcb3V9t36A64MZ
-	dlDUcf5FPcdAsLGCgjkLEY3P+YZxRr2t0bDI66Uh/+E2CulTYU9S1QIu4FHFNy0zSeki0Bju7c2
-	9zRNTqr1nRvNN+JQel/prJs1Pq69YzlsDMJ13a8DlKY3fJeiWMd3tP8hkfLZgFAt4+o+l+rD1Lt
-	AEABF8KEmh9hpc65Ivpc8cRbJbhDMs6VikDt3bf2A8/CK8Qu+fWMOAc3jPKWBFn+8j5Iv/XzKKJ
-	C3Wz9RqeN0hNpGoZO/WeCaXPfCg==
-X-Google-Smtp-Source: AGHT+IEbGAraGZ8WRe5yJCiR8pmLgPtMlwyRDsX1/6XvFHQAcx/H+BrsXtOLxPFK8pW4k9Y0iM9tNg==
-X-Received: by 2002:a17:902:ea12:b0:246:f090:6d88 with SMTP id d9443c01a7336-246f090736bmr105692945ad.34.1756261866048;
-        Tue, 26 Aug 2025 19:31:06 -0700 (PDT)
-Received: from gmail.com ([223.166.86.185])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2487928c46dsm24007655ad.68.2025.08.26.19.31.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Aug 2025 19:31:05 -0700 (PDT)
-From: Qingfang Deng <dqfext@gmail.com>
-To: Michal Ostrowski <mostrows@earthlink.net>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next v2 2/2] pppoe: drop sock reference counting on fast path
-Date: Wed, 27 Aug 2025 10:30:44 +0800
-Message-ID: <20250827023045.25002-2-dqfext@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250827023045.25002-1-dqfext@gmail.com>
-References: <20250827023045.25002-1-dqfext@gmail.com>
+        d=1e100.net; s=20230601; t=1756261907; x=1756866707;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3Tox78mtmLbV4ZIp0EyBj34pqSOH2j8gIMnB7+StZxM=;
+        b=EE87sUX9mj4/rwS6bxoPT1rI9Q2HtKngP2jU1O3h0f5/gsBwa4rDaHemuDS+8IO2X+
+         ac/XWa7tUbOTcCERnnKOdSSCRad9eCBgALYkzpPDYp6173s5+ynpl2axmCLlrS8jNR1x
+         4PduMRioonVkwsacs6h6Yfeb9eHwd4mg63r8eTq10pT9sY5C4W72U3gfDBBQYDhjDOpX
+         1DwZMm5PHI1+HyjUs+WGzAVkQu5h0OrT++j7uh+FWGjwYEAUBWarlF7jRoioFhxqM1pJ
+         6zLJPbjkwk1fNtRYytGvm+OijwEocXsVwB0xo4naf040U4QcBh8cogxULy88WDQ1H2cb
+         EtHw==
+X-Forwarded-Encrypted: i=1; AJvYcCUYNHLqL9StO6QzN336FNLD6FIpirIjOBNaST8Bd/JCp983YM8nRc2Xwgr4Lt3UKE9gyxsV+LEP+c6TXD0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzY/2gSedvmPxfZwXYOIYy55+z2o31zGRmmzwK9McNP/4BnKRDh
+	6ssELnPCM4pXwyJJ80NfXax7nEkQUBTDfloO1GUy/JA1XHaNmtsMIG7Rlbid9QV2HVEDBXa5ZZw
+	C6cC0par5L/sieCtkVrqGoK5LBoTbkko=
+X-Gm-Gg: ASbGncs19xereLmIYoDSJO07KfYaqGAFLaiqsFXwWt/pQkkz9NkCAaD3WdF0wbV01Bs
+	Yq3AaimHMwedvYjcx0UtctZIEsIByslM6Cmp7PK889tyOawIxB1N51xjONObWr7/cBhzakzQ1lB
+	QLOJ5FidPb5wPYn/2v2kamZlED3JLnmTW6M6NNj+Qoc8/+QgYPQC4L+ClI5VQJaZkpGyHH3cEyQ
+	BfiUKc9
+X-Google-Smtp-Source: AGHT+IF/cBA2dPjn5YWfGm4NB8Dtpf09/BH19PA8AhsgdZqR9MmpCCy8AgCTCnIw+WE2sOhS7LboK3LUldgBf+Lfnb4=
+X-Received: by 2002:a17:907:86ab:b0:afd:eb93:f809 with SMTP id
+ a640c23a62f3a-afe28ff9036mr1744018666b.27.1756261905930; Tue, 26 Aug 2025
+ 19:31:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <CANypQFbEySjKOFLqtFFf2vrEe=NBr7XJfbkjQhqXuZGg7Rpoxw@mail.gmail.com>
+ <aK3z92uBZNcVQGf7@google.com>
+In-Reply-To: <aK3z92uBZNcVQGf7@google.com>
+From: Jiaming Zhang <r772577952@gmail.com>
+Date: Wed, 27 Aug 2025 10:31:05 +0800
+X-Gm-Features: Ac12FXyj_UMmVg7isRdshSVjB90FO-vOrAzFKlr8-K_BZH_EANWkLmSCqzZYyDY
+Message-ID: <CANypQFZKnwafAFm2v5S_kbgr=p0UBBsmcSVsE2r65cayObaoiA@mail.gmail.com>
+Subject: Re: [Discussion] Undocumented behavior of KVM_SET_PIT2 with count=0
+To: Sean Christopherson <seanjc@google.com>
+Cc: kvm@vger.kernel.org, pbonzini@redhat.com, linux-kernel@vger.kernel.org, 
+	syzkaller@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Now that PPPoE sockets are freed via RCU (SOCK_RCU_FREE), it is no longer
-necessary to take a reference count when looking up sockets on the receive
-path. Readers are protected by RCU, so the socket memory remains valid
-until after a grace period.
+Hi Sean,
 
-Convert fast-path lookups to avoid refcounting:
- - Replace get_item() and sk_receive_skb() in pppoe_rcv() with
-   __get_item() and __sk_receive_skb().
- - Rework get_item_by_addr() into __get_item_by_addr() (no refcount and
-   move RCU lock into pppoe_ioctl)
- - Remove unnecessary sock_put() calls.
+Thank you for the reply!
 
-This avoids cacheline bouncing from atomic reference counting and improves
-performance on the receive fast path.
+I will prepare the documentation patch and plan to submit it in the
+next few days.
 
-Signed-off-by: Qingfang Deng <dqfext@gmail.com>
----
-v2: let pppoe_ioctl() call __get_item_by_addr() under rcu_read_lock().
+And thank you for the additional context on KVM_SET_LAPIC and
+KVM_GET_LAPIC; it's very helpful to understand that other GET/SET
+pairs might have similar fixups. I'll keep that in mind.
 
- drivers/net/ppp/pppoe.c | 35 +++++++++++++----------------------
- 1 file changed, 13 insertions(+), 22 deletions(-)
+Thanks again,
 
-diff --git a/drivers/net/ppp/pppoe.c b/drivers/net/ppp/pppoe.c
-index 25939d6bd114..b43b1a55e487 100644
---- a/drivers/net/ppp/pppoe.c
-+++ b/drivers/net/ppp/pppoe.c
-@@ -237,8 +237,8 @@ static inline struct pppox_sock *get_item(struct pppoe_net *pn, __be16 sid,
- 	return po;
- }
- 
--static inline struct pppox_sock *get_item_by_addr(struct net *net,
--						struct sockaddr_pppox *sp)
-+static inline struct pppox_sock *__get_item_by_addr(struct net *net,
-+						    struct sockaddr_pppox *sp)
- {
- 	struct net_device *dev;
- 	struct pppoe_net *pn;
-@@ -246,15 +246,13 @@ static inline struct pppox_sock *get_item_by_addr(struct net *net,
- 
- 	int ifindex;
- 
--	rcu_read_lock();
- 	dev = dev_get_by_name_rcu(net, sp->sa_addr.pppoe.dev);
- 	if (dev) {
- 		ifindex = dev->ifindex;
- 		pn = pppoe_pernet(net);
--		pppox_sock = get_item(pn, sp->sa_addr.pppoe.sid,
--				sp->sa_addr.pppoe.remote, ifindex);
-+		pppox_sock = __get_item(pn, sp->sa_addr.pppoe.sid,
-+					sp->sa_addr.pppoe.remote, ifindex);
- 	}
--	rcu_read_unlock();
- 	return pppox_sock;
- }
- 
-@@ -381,18 +379,16 @@ static int pppoe_rcv_core(struct sock *sk, struct sk_buff *skb)
- 	if (sk->sk_state & PPPOX_BOUND) {
- 		ppp_input(&po->chan, skb);
- 	} else if (sk->sk_state & PPPOX_RELAY) {
--		relay_po = get_item_by_addr(sock_net(sk),
--					    &po->pppoe_relay);
-+		relay_po = __get_item_by_addr(sock_net(sk),
-+					      &po->pppoe_relay);
- 		if (relay_po == NULL)
- 			goto abort_kfree;
- 
- 		if ((sk_pppox(relay_po)->sk_state & PPPOX_CONNECTED) == 0)
--			goto abort_put;
-+			goto abort_kfree;
- 
- 		if (!__pppoe_xmit(sk_pppox(relay_po), skb))
--			goto abort_put;
--
--		sock_put(sk_pppox(relay_po));
-+			goto abort_kfree;
- 	} else {
- 		if (sock_queue_rcv_skb(sk, skb))
- 			goto abort_kfree;
-@@ -400,9 +396,6 @@ static int pppoe_rcv_core(struct sock *sk, struct sk_buff *skb)
- 
- 	return NET_RX_SUCCESS;
- 
--abort_put:
--	sock_put(sk_pppox(relay_po));
--
- abort_kfree:
- 	kfree_skb(skb);
- 	return NET_RX_DROP;
-@@ -447,14 +440,11 @@ static int pppoe_rcv(struct sk_buff *skb, struct net_device *dev,
- 	ph = pppoe_hdr(skb);
- 	pn = pppoe_pernet(dev_net(dev));
- 
--	/* Note that get_item does a sock_hold(), so sk_pppox(po)
--	 * is known to be safe.
--	 */
--	po = get_item(pn, ph->sid, eth_hdr(skb)->h_source, dev->ifindex);
-+	po = __get_item(pn, ph->sid, eth_hdr(skb)->h_source, dev->ifindex);
- 	if (!po)
- 		goto drop;
- 
--	return sk_receive_skb(sk_pppox(po), skb, 0);
-+	return __sk_receive_skb(sk_pppox(po), skb, 0, 1, false);
- 
- drop:
- 	kfree_skb(skb);
-@@ -815,11 +805,12 @@ static int pppoe_ioctl(struct socket *sock, unsigned int cmd,
- 
- 		/* Check that the socket referenced by the address
- 		   actually exists. */
--		relay_po = get_item_by_addr(sock_net(sk), &po->pppoe_relay);
-+		rcu_read_lock();
-+		relay_po = __get_item_by_addr(sock_net(sk), &po->pppoe_relay);
-+		rcu_read_unlock();
- 		if (!relay_po)
- 			break;
- 
--		sock_put(sk_pppox(relay_po));
- 		sk->sk_state |= PPPOX_RELAY;
- 		err = 0;
- 		break;
--- 
-2.43.0
-
+Jiaming Zhang
 
