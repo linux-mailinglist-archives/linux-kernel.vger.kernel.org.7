@@ -1,96 +1,100 @@
-Return-Path: <linux-kernel+bounces-787853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D8C5B37C37
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 09:51:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B3E5B37C3C
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 09:52:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04FAD3B0178
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 07:51:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB1D417F638
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 07:52:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63F95321457;
-	Wed, 27 Aug 2025 07:51:07 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65310261596;
+	Wed, 27 Aug 2025 07:52:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fdBr6Pht"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C509317702;
-	Wed, 27 Aug 2025 07:51:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 447A231A06B
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 07:52:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756281067; cv=none; b=KD1P/EOf4XXlFgkkc5J+kN/iuITfbvhw6bBdY5ZXfV6qj5aCoj0LhWUcExXSn28FrAS5JBEcVSpJuOMtQqDLxBmhkxF1hddhKEXOvctzxVdl7SIK/LWOG7VU48ZhGLU7csqck6+zFIod523I7+c7g7iUiNMjbDYDoQDDFgWCeu8=
+	t=1756281151; cv=none; b=HJ7Vl4w8lVU17mykRY83orDL37nuJJXIJcc0g0ARWuEGqNDjcZNKpXmF2NwlcZF2Fssg0Muwss//NZI4RJKofMHsGHRusF8QmtjUZ6euNUTX4qyTXjnMuw1o9vyfXsEieT1CNIdCd+BRVx5aCf3mZORZWiDG4pKEDE3TIV1NuiE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756281067; c=relaxed/simple;
-	bh=DPZDbWIF2dAyl97Dh6I0cH5avMiSRZLdTQpuF5OAdj0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=EtqJKmnA4PHLePSb3hEVED9U3NmDLmfaOBkqrf9J7SFoZIVQwqaSzxeEDO+qjnAHXOO4Wz1g+J0lb2rxERwRrwqobKjGl8Bj94sAI4USTouyHOqQi31FL3mmEctOrsI2NspsWbX2cTbrlTOxPd5irwgDFh1rD+ni8ryas1488dg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 8f630bfe831a11f0b29709d653e92f7d-20250827
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:046c84e6-4418-4075-a1ea-5e4cd761d646,IP:0,U
-	RL:0,TC:0,Content:0,EDM:25,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
-	:release,TS:25
-X-CID-META: VersionHash:6493067,CLOUDID:7bd9595c1ac3a38d3e6fb39d93a7e729,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:102|850,TC:nil,Content:0|50,EDM:5,IP:nil
-	,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:
-	1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 8f630bfe831a11f0b29709d653e92f7d-20250827
-Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
-	(envelope-from <liqiang01@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 382673948; Wed, 27 Aug 2025 15:50:54 +0800
-Received: from mail.kylinos.cn (localhost [127.0.0.1])
-	by mail.kylinos.cn (NSMail) with SMTP id 6EDD7E008FAA;
-	Wed, 27 Aug 2025 15:50:54 +0800 (CST)
-X-ns-mid: postfix-68AEB8DE-248194557
-Received: from localhost.localdomain (unknown [10.42.20.41])
-	by mail.kylinos.cn (NSMail) with ESMTPA id 9F883E008FA3;
-	Wed, 27 Aug 2025 15:50:52 +0800 (CST)
-From: Li Qiang <liqiang01@kylinos.cn>
-To: wim@linux-watchdog.org,
-	linux@roeck-us.net
-Cc: linux-watchdog@vger.kernel.org,
+	s=arc-20240116; t=1756281151; c=relaxed/simple;
+	bh=dg56cDVzVKF5RZZcfZmiI2WJCoLUQN9GcG/PmKry18c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Xcp6SBzvPZqKplqJryD4NpSyStU4x9+WKJUGBu2/Nvk3x9bNO3ism9XnwnQd/QyYAIfp9qk2gL2karUwkBaBnTzYAx3m+xP8qD2GlrPuM94JDvb5jg4U1rDoea+veS0HwHNXKxoQNYkCRO+nUshX5xVxv/3zVvolA7RA8O8joHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fdBr6Pht; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756281149;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=N6SntE+UiHIpGFBxOP3k+c2SCeNJCrXgtm7HmQ15Vds=;
+	b=fdBr6PhtQNqMREnAC2FEfyBPO5yo3E9tVOk+TZ46q6kXF79xoz+NCjVKwC1o1F6quEWfyV
+	osUP73Fnpt7SKNk9SclAUWbQYm0wIikISG1c48t5rXxeJGjWiVSibSZDEf/KczyTG3S1/9
+	R3I+htpA/QZ9JEicqKdS4Yp7I7rdp6g=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-76-iZHGTYBHNge45eseCba7nw-1; Wed,
+ 27 Aug 2025 03:52:25 -0400
+X-MC-Unique: iZHGTYBHNge45eseCba7nw-1
+X-Mimecast-MFC-AGG-ID: iZHGTYBHNge45eseCba7nw_1756281140
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5354319560B4;
+	Wed, 27 Aug 2025 07:52:20 +0000 (UTC)
+Received: from dell-per7425-02.rhts.eng.pek2.redhat.com (dell-per7425-02.rhts.eng.pek2.redhat.com [10.73.116.18])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4A23E180044F;
+	Wed, 27 Aug 2025 07:52:13 +0000 (UTC)
+From: Chunyu Hu <chuhu@redhat.com>
+To: akpm@linux-foundation.org,
+	david@redhat.com,
+	shuah@kernel.org,
+	linux-mm@kvack.org
+Cc: linux-kselftest@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Li Qiang <liqiang01@kylinos.cn>
-Subject: [PATCH] wdt: add wdt resource name
-Date: Wed, 27 Aug 2025 15:50:50 +0800
-Message-Id: <20250827075050.1187397-1-liqiang01@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
+	lorenzo.stoakes@oracle.com,
+	Liam.Howlett@oracle.com,
+	vbabka@suse.cz,
+	rppt@kernel.org,
+	surenb@google.com,
+	mhocko@suse.com,
+	chuhu@redhat.com
+Subject: [PATCH 0/2] Fix va_high_addr_switch.sh test failure
+Date: Wed, 27 Aug 2025 15:52:07 +0800
+Message-ID: <20250827075209.2347015-1-chuhu@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-When using allocate_resource() to allocate mem resource without
-resource name on x86 platforms, we may find "<BAD>" mem resource
-at "/proc/iomem", and the system will stuck when booting.
+The two patches fix the va_high_addr_switch.sh test failure on x86_64.
+Patch 1 fixes the hugepages setup issue that nr_hugepages is reset too
+early in run_vmtests.sh and break the later va_high_addr_switch testing.
+Patch 2 fixes the test failure caused by the hint addr align method change
+in hugetlb_get_unmapped_area().
 
-Signed-off-by: Li Qiang <liqiang01@kylinos.cn>
----
- drivers/watchdog/via_wdt.c | 1 +
- 1 file changed, 1 insertion(+)
+Chunyu Hu (2):
+  selftests/mm: fix hugepages cleanup too early
+  selftests/mm: fix va_high_addr_switch.sh failure on x86_64
 
-diff --git a/drivers/watchdog/via_wdt.c b/drivers/watchdog/via_wdt.c
-index d647923d68fe..f55576392651 100644
---- a/drivers/watchdog/via_wdt.c
-+++ b/drivers/watchdog/via_wdt.c
-@@ -165,6 +165,7 @@ static int wdt_probe(struct pci_dev *pdev,
- 		dev_err(&pdev->dev, "cannot enable PCI device\n");
- 		return -ENODEV;
- 	}
-+	wdt_res.name =3D "via_wdt";
-=20
- 	/*
- 	 * Allocate a MMIO region which contains watchdog control register
---=20
-2.25.1
+ tools/testing/selftests/mm/run_vmtests.sh        | 9 +++++++--
+ tools/testing/selftests/mm/va_high_addr_switch.c | 4 ++--
+ 2 files changed, 9 insertions(+), 4 deletions(-)
+
+-- 
+2.49.0
 
 
