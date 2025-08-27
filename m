@@ -1,133 +1,143 @@
-Return-Path: <linux-kernel+bounces-788352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63368B38357
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 15:07:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD915B38340
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 15:03:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 155667BCBBD
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 13:01:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC955463BBF
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 13:02:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12481276022;
-	Wed, 27 Aug 2025 13:01:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 187DA352080;
+	Wed, 27 Aug 2025 13:02:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="b9jrQ/bv"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KnMEod5P"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DE502F0C66
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 13:01:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53762350D41;
+	Wed, 27 Aug 2025 13:02:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756299671; cv=none; b=WnJxLIWDp9n3rU4KoxPiF87HDYRhEjnSlMISWKXepLaGGIVVB9D83dr3fAY7Z88kBZIqkZQTLYuXk8UrMbN930z3gNY82K3D3OVXg8+ddG3BFHx0HnWKlc3FOcD/a92bSGYzQMTLeaMryRgVvR1/AernIHigDzF+IAplmf2fh9U=
+	t=1756299742; cv=none; b=cZe1+x30QRYElfyWg9YUk12AvPE0dXbWbl7tRmjS2fxFsuYAvQhEKKsUtRwUo6ES11uaxF8kikLRrzTwgOxxEaeKnhhSAEkM7WmDv8nIMWMuPZDKUFUnl2fr7ojHIowYLx9hOmNAEEze4po/1MYYKGs0W3HRI+vLl/Dvr/UuS6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756299671; c=relaxed/simple;
-	bh=hxB5lyREhdgbUBcOx3UJyF20LvnlKY+cAGXFsyaLqBQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HK/HdGo0wQvYuE7d3zZU6BOE9Kk8ycH1jwDatuYsIvxhQeOL4V1zsME4YIc8RctnWF2K63VetfVOisfuTDYYLkPN7IdAgmZk4MD58bVK3FbUxnD2XKlyVnZTQqYtZwVy/O+NR4oEtP1KRFX0Ks/oMUyeW8m4lKVOLIPIj3EUNRY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=b9jrQ/bv; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-45a1b05a59fso51222665e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 06:01:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756299663; x=1756904463; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=HR0ZA4NZ0E17Q0Z6+d0qJgv1KmpugOB/InPQaoD7lOo=;
-        b=b9jrQ/bvqyUhmac0mgQrgGlpMaYtG4ugRVamMtBvKByrnA1PBn3AZWIBZFelvmDVHP
-         8OY2ppJ71PmEcumpolpIunrlPOFHmo6OTUskP13osQtc1bksVjIxbn04OY7Gvf6HOAnI
-         BuFaL7t9XbWwKqNdlUVLFLJMQxMkY0meEkHNhhG1ZlZL8y2p69WOqEmvbAWUuAePt7ms
-         vzQettJ+WJBj54FjXnXTDzlSiTinUz0suXtx5cMtH/QgS+cEEBasmJd1lBrBDM1G859m
-         nP+LXn6ROH8f2B3522nVzbxjK2rBR+2p4u5T0S9Yw4VWk2ar34fhORYuTnST25FOZ4RA
-         Ng2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756299663; x=1756904463;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HR0ZA4NZ0E17Q0Z6+d0qJgv1KmpugOB/InPQaoD7lOo=;
-        b=P6ue4YQPVyTl6d8zYKSkpGaD5QsoDY1rLX9vVIVs8YPl/AETGCskLLY1vD+Fz/Z4Qk
-         2cMDdTKugMAge6yuZK21RZWY7rTPZD02c+/u+acsY6lob3Fv8tNBiE9aYUlrODbuqDCA
-         IC/zmjrqeq9MKNVGI488xuJ5D9PWTMBUZNzs0p1zbLYnlT5DZr8bwhPLrOCIoftxiG1F
-         pVQI6Wt03OmuSEax//b6Fx3I64tiCfQfSYnqpe2MSdAD3Klu/pSy2YN099b+a2W/FYAx
-         pQ/Ns7uHmRi2lQCRf21fM2qTgDGzh6kgRs9LcSOfSF85zEj6+HReDdjC/ptu57TtdQgk
-         C86Q==
-X-Forwarded-Encrypted: i=1; AJvYcCV7bGV8pPJBKkBbWz0srTiHZiaUwhQ0bkQbRf5nUBiFji1DdEN4OCEzT8aZ3TYWspyF8dajqQyOoaqfIWg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxuwDCWPNRoZmLGgf4cI5AHt/dGpR60Fc5/tCFLNk3krkJTrqN1
-	YO6cCROuFvW0KS9o27p29DChBotTrwgtjvHkTrMzwSyAA99IkBmC/X52XRDONia9WF8=
-X-Gm-Gg: ASbGnct9RgNc5RPeiQRTKtTWlEbO3bedjpeTPgJ7KX94M3KPvzFKWirGKacEb5TNQCe
-	4eKpEVY/PJdiQFBrpCpx/whv2yjj6mn4VTCTyoHP8MDlAzwjgGVDL2cmKW2vpiz2JuL+dSI8ieL
-	pBhbVmUCL35rRDAOZ1wgH2KZJtFyZqTtHMZyQY20OEtetAdM5/ZarhnmLc9+rXTAV961nUnzCxg
-	uy5pmAO7DQjexZe7HkyrkkA9pCsk/qnulI6POFjoL3Hbr1uaiaEnK+nl1jfw9C491e9auw76BzB
-	hSfq7nGxW10/ZLusiG8uss7j6kUZ4WB+yK0E4gTevzHIDC/Hz7ey7WGGfxFnYfSYq2t0VL1/CiD
-	W7OyDmAK6dfjG38JZFI1PuYe2lQTT6Ic429z+Ug==
-X-Google-Smtp-Source: AGHT+IF1J878zuA2zsA2LZmjU+Nf3PbWC4scoCL4N2DKNTYWqSPUxijVodiq3E9n32T4M+Wmjv6xGg==
-X-Received: by 2002:a05:600c:3b0c:b0:458:a7fa:2120 with SMTP id 5b1f17b1804b1-45b517d2668mr180851495e9.25.1756299662976;
-        Wed, 27 Aug 2025 06:01:02 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45b6f2eab0csm29733035e9.20.2025.08.27.06.01.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Aug 2025 06:01:02 -0700 (PDT)
-Date: Wed, 27 Aug 2025 16:00:59 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Liao Yuanhong <liaoyuanhong@vivo.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Ricky Wu <ricky_wu@realtek.com>,
-	Avri Altman <avri.altman@sandisk.com>,
-	Binbin Zhou <zhoubinbin@loongson.cn>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
-	Jisheng Zhang <jszhang@kernel.org>,
-	"open list:MULTIMEDIA CARD (MMC), SECURE DIGITAL (SD) AND..." <linux-mmc@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/2] mmc: rtsx_usb_sdmmc: Remove redundant ternary
- operators
-Message-ID: <aK8Bi0yIMW8-yb_n@stanley.mountain>
-References: <20250827093530.416071-1-liaoyuanhong@vivo.com>
- <20250827093530.416071-3-liaoyuanhong@vivo.com>
+	s=arc-20240116; t=1756299742; c=relaxed/simple;
+	bh=pdaZgyDKWduWywmpNcrDzWI6wdyAlK9zHnnkATIEfsU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iPPJYgqWIPGJ6IyjuOSr+ivnTF4t39E8n5Oz3FV97BlEDDxEX378jxUqgI9EG0s+a0CiVTShU88FpOQJzaBRXRcRpi2m0njaOXofEmK6lL8bxcLhgBA90GKn5STNlDQSeIcYf7tMXQaxqABkaXORCo4SHCD1EGkf2DUPyoqkUMM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KnMEod5P; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7FCBC4CEEB;
+	Wed, 27 Aug 2025 13:02:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756299742;
+	bh=pdaZgyDKWduWywmpNcrDzWI6wdyAlK9zHnnkATIEfsU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=KnMEod5PlH1LBjVuIyG2Pq7McWbUK+zfxwPYwywj2NUEPLWhNtZdFBxgbqCdT3ESa
+	 u/OcGHJzI+igID+X/p05MEX0bwsbPcts8pbYbwW9JXN7vT7PZ+xnIAx7J+1itlXQu3
+	 Td6i8xJtFNfOxApExGN/xgNoT2BbsW7V6dbInxswySNfhSKVZ9WqVk47KON++U3sT2
+	 0YHENZqnThd2oo6DA7PW4Pi5Q4R1GBoiYSxVV4xbUvHKNSp7fo0yFVwM88pld5woJW
+	 dvL9GSnY2bAVarfVv3Zmh9yfAuMnQyAoBXjvsj4NrXG313Pk8g1u7JWKKJWeHyDgL7
+	 GSLJeBnbJB1SA==
+Message-ID: <fdc2d293-fe35-4bbd-8ea1-78baa83a4239@kernel.org>
+Date: Wed, 27 Aug 2025 15:02:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250827093530.416071-3-liaoyuanhong@vivo.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 1/2] dt-bindings: i3c: Add adi-i3c-master
+To: Jorge Marques <jorge.marques@analog.com>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Frank Li <Frank.Li@nxp.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Kees Cook <kees@kernel.org>,
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: linux-i3c@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, gastmaier@gmail.com,
+ linux-hardening@vger.kernel.org
+References: <20250827-adi-i3c-master-v8-0-0a7c78e58bd4@analog.com>
+ <20250827-adi-i3c-master-v8-1-0a7c78e58bd4@analog.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250827-adi-i3c-master-v8-1-0a7c78e58bd4@analog.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Aug 27, 2025 at 05:35:26PM +0800, Liao Yuanhong wrote:
-> Remove redundant ternary operators to clean up the code.
+On 27/08/2025 14:25, Jorge Marques wrote:
+> Add bindings doc for ADI I3C Controller IP core, a FPGA synthesizable IP
+> core that implements the MIPI I3C Basic controller specification.
+> The IP Core is versioned following Semantic Versioning 2.0.0 and
+> ADI's open-source HDL guidelines for devicetree bindings and drivers.
 > 
-> Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
-> ---
->  drivers/mmc/host/rtsx_usb_sdmmc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/mmc/host/rtsx_usb_sdmmc.c b/drivers/mmc/host/rtsx_usb_sdmmc.c
-> index 84674659a84d..97bc3a2e3cca 100644
-> --- a/drivers/mmc/host/rtsx_usb_sdmmc.c
-> +++ b/drivers/mmc/host/rtsx_usb_sdmmc.c
-> @@ -1169,7 +1169,7 @@ static void sdmmc_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
->  		break;
->  	}
->  
-> -	host->initial_mode = (ios->clock <= 1000000) ? true : false;
-> +	host->initial_mode = ios->clock <= 1000000;
+> Signed-off-by: Jorge Marques <jorge.marques@analog.com>
 
-This is more minimalist, but is it really more readable?  All the
-"redundant" bits are deliberate visual clues that this is a condition.
-Probably the most readable thing is to just make it an if statement:
+<form letter>
+This is a friendly reminder during the review process.
 
-	if (ios->clock <= 1000000)
-		host->initial_mode = true;
-	else
-		host->initial_mode = false;
+It looks like you received a tag and forgot to add it.
 
-I don't really have strong feelings either way...
+If you do not know the process, here is a short explanation:
+Please add Acked-by/Reviewed-by/Tested-by tags when posting new versions
+of patchset, under or above your Signed-off-by tag, unless patch changed
+significantly (e.g. new properties added to the DT bindings). Tag is
+"received", when provided in a message replied to you on the mailing
+list. Tools like b4 can help here. However, there's no need to repost
+patches *only* to add the tags. The upstream maintainer will do that for
+tags received on the version they apply.
 
-regards,
-dan carpenter
+Please read:
+https://elixir.bootlin.com/linux/v6.12-rc3/source/Documentation/process/submitting-patches.rst#L577
 
+If a tag was not added on purpose, please state why and what changed.
+</form letter>
+
+Best regards,
+Krzysztof
 
