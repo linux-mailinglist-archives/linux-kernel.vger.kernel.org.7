@@ -1,92 +1,74 @@
-Return-Path: <linux-kernel+bounces-788680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0BC0B3889D
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 19:28:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A220B3889E
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 19:29:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 031501B62871
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 17:29:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36EA05E2CD5
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 17:29:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4A9321FF55;
-	Wed, 27 Aug 2025 17:28:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB6CA2D9787;
+	Wed, 27 Aug 2025 17:28:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PqU8HTMS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n2GEqtHi"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 102062D6418;
-	Wed, 27 Aug 2025 17:28:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4163222370A;
+	Wed, 27 Aug 2025 17:28:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756315716; cv=none; b=NHxDvVnRrDsIQk/dtq3uRTT/tC7cgL7aTRPpQ794yJtHwSdqbdoPLovtA7Gni/MVmuP+Ty0vjkuO2ftgcAOoEgTIpKbs0fzKx7WkTDOm6K0cHNfryTlKujmE2hEx745lsxrBm55sUM1z2sstFLd3sJ28XwUeNUfnUkSuAqMPxQU=
+	t=1756315719; cv=none; b=gpo73n/+W3103PENHbCR4L8D72xWrzY/i5s6Qltlk2fMOcvDzgKDEW84ck+kug29yelLk9DRu9/DuyebQVHY0//yKahanxWXCSBrqq+vryPg+JH7XDlvHjWjGZTWMmOtW4Hht1P8YsOLlr1cyFQjifh5GT5r23tD6THPFWfN4Dg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756315716; c=relaxed/simple;
-	bh=UtrbolA1HHDmLzgsn3xYeflYPsigIkwUh0momqKEeHk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=btFvVokbSZxUuWLbSRwoWgNyDucski/lHF9pLv49hElHS4JVUqhbppVJCCFHVDVgoyoVEdXilExvWaysshsuKQqZiMQhTNmb0Fobsdvxv81/8tfRKv7AHdBqgQ8PFp88+OH2sYxSGHVWdAgvzJlePdKmoo+iYN2gNPY0hxwjCMc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PqU8HTMS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 620B1C4CEEB;
-	Wed, 27 Aug 2025 17:28:30 +0000 (UTC)
+	s=arc-20240116; t=1756315719; c=relaxed/simple;
+	bh=Ihd/WN/NFD7DgbyYCHyUYrG3OoCqvMMxeCfn7+DAdf0=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=XT8pOERMO9+jJcCsuGpCG9QuJHkCdLNeJ/OjpsOpPcvWofm+FfoV6UNyqTz/CongQSpTX9FiiIP1aQi8ciljQLWGbkXIYlC5ziu7qGaGInPM6la1jxu8gsdNjjHjF+PmFY5oy2clhKtcLt9jKNf0L+9u+pM+SWPAVWAB8OEyv/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n2GEqtHi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A95F9C4CEEB;
+	Wed, 27 Aug 2025 17:28:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756315713;
-	bh=UtrbolA1HHDmLzgsn3xYeflYPsigIkwUh0momqKEeHk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PqU8HTMSa5I6ObcVPSD4d6fKFh1wfzdb23B3poxfHNfoGUDbJCIqkxP6+I4ROQbd2
-	 Z6xA07kdpSE/mdfKDSKk+ea2P5RvKDCmcmk9GQ2e/M41195zoHe20Yc4cCoRhjrmQm
-	 GN3g9T4c7il6y5uFDmLbfIqONUInMwlXcDlgfcdS5ZMSBmP/S6CmkvquFnzYZMdtHx
-	 gRKpt14RcBAfZ1nR9UYvuLDLQ8L+tVLj7CopjeLh4i31juvpj2ak2NT2vwh/nUL3Wr
-	 w+x0MN175xpyHRzneD8cpnC70V4KmE74o56eLhzuUlFhYrxaL0+6necozhXfn6n/V6
-	 nBOgBoF20lxwg==
-Date: Wed, 27 Aug 2025 18:28:28 +0100
-From: Simon Horman <horms@kernel.org>
-To: Alexander Lobakin <aleksander.lobakin@intel.com>
-Cc: intel-wired-lan@lists.osuosl.org,
-	Michal Kubiak <michal.kubiak@intel.com>,
-	Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
-	Tony Nguyen <anthony.l.nguyen@intel.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	nxne.cnse.osdt.itp.upstreaming@intel.com, bpf@vger.kernel.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH iwl-next v5 00/13] idpf: add XDP support
-Message-ID: <20250827172828.GP10519@horms.kernel.org>
-References: <20250826155507.2138401-1-aleksander.lobakin@intel.com>
+	s=k20201202; t=1756315718;
+	bh=Ihd/WN/NFD7DgbyYCHyUYrG3OoCqvMMxeCfn7+DAdf0=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=n2GEqtHi7T9vJRjyVbY5sSlB8/fdDmk5i180Zhsei6CtJ5GkoP000/FREiZhYHZ/b
+	 1iV3oDiCAWSYXmfeU1VWMhYiSuGwZsGjq5oDBQgn0U6mwLLftOAKyGZolycNZVCpZQ
+	 kHoIl53CBR3/NI4yN0MpPK1TvnMrk9E1se3TAtRtLuTPvs10k91+RKRbxS0aMGilg1
+	 7GIEPn8IH4WOEEL82bA+QNRjpbyD1BJYZk246azDiMALKQJCRzUCcxvYXFjEjTk6Mj
+	 /6A6L3ggBjRci99/laP+nhya7VXnudwDD3fgnovqIEBZBebF5J/5pI+5DgIcE8U92K
+	 Fq1Ax1RM7lw6w==
+From: SeongJae Park <sj@kernel.org>
+To: Quanmin Yan <yanquanmin1@huawei.com>
+Cc: SeongJae Park <sj@kernel.org>,
+	akpm@linux-foundation.org,
+	damon@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	wangkefeng.wang@huawei.com,
+	zuoze1@huawei.com
+Subject: Re: [PATCH 0/2] mm/damon: void divide-by-zero in DAMON module's parameters application
+Date: Wed, 27 Aug 2025 10:28:36 -0700
+Message-Id: <20250827172836.105335-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250827115858.1186261-1-yanquanmin1@huawei.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250826155507.2138401-1-aleksander.lobakin@intel.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Aug 26, 2025 at 05:54:54PM +0200, Alexander Lobakin wrote:
-> Add XDP support (w/o XSk for now) to the idpf driver using the libeth_xdp
-> sublib. All possible verdicts, .ndo_xdp_xmit(), multi-buffer etc. are here.
-> In general, nothing outstanding comparing to ice, except performance --
-> let's say, up to 2x for .ndo_xdp_xmit() on certain platforms and
-> scenarios.
-> idpf doesn't support VLAN Rx offload, so only the hash hint is
-> available for now.
-> 
-> Patches 1-7 are prereqs, without which XDP would either not work at all or
-> work slower/worse/...
+A trivial typo on the subject: "s/void/avoid/".  Andrew, could you please fix
+that when you pick this in mm tree?  Let us know if we can help.
 
-Hi Alexander,
 
-I'm wondering if you could give a hash that this patch-set applies to.
-Or a branch where it has been applied.
+Thanks,
+SJ
 
-I suspect it's terribly obvious how to do this, but I'm drawing a blank here.
-
-Thanks!
+[...]
 
