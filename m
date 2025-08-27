@@ -1,105 +1,156 @@
-Return-Path: <linux-kernel+bounces-788193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788194-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFCE2B38110
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 13:29:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EB8EB38118
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 13:33:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B37E460041
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 11:29:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 057135E5867
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 11:33:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8537C34F49C;
-	Wed, 27 Aug 2025 11:29:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BAC52BE7D0;
+	Wed, 27 Aug 2025 11:32:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="XP5J0TD5"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YvHbhYDD"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F21E22D191C;
-	Wed, 27 Aug 2025 11:29:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14421298CAB;
+	Wed, 27 Aug 2025 11:32:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756294145; cv=none; b=tWXsGRguoL16vk0fQ2J1c6mV+dbG9QywHMW2I4RuQwwuXLxMfCSMlOTmvrHB1jsiBMszc14dQoYdBJSWM4wxjbJrV+40O75U6M/FHW/X4xxmvAqFUVnnuF0ts4RD5IcJAzeNf2/8ntUaqhqOFMZarI6GTwkgPY31Zx0555OscRI=
+	t=1756294374; cv=none; b=iuPcdAqYBTSnduKg26f7m6bYsEGMuUVaUTqfNbK34BAUqk4lKv4CwazS4Z/5pS4bkNk4vlNEtfN1gUnf1RlUKGzhS8FIELAaVB48GqM0DwW1Pqo/G+Gj28v47HfW6v2wvhJhXrmJ2yFxkKbc2JWVmztW4SrIj+ab+H/g80zuAyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756294145; c=relaxed/simple;
-	bh=ZAA5H80sfHbp3PdX6tNqosaiLeRO73rZrlC2QKyRPAI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=fCm+uKQqyCoD4f+969QtGifeJ/3s9Yf6uHDcIPiwmL97T6BHZatwyKin4+xirFMtalhM0wDxRJqBqbkYtNks0+RAPo2UXHmPbwGWnp16mILCm0Dk6vjaJfcrqZqZnLuKpwbxfz/Swrek3vCLSDClxrGqUeGtdy2vDkjzg64/g6Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=XP5J0TD5; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 696FC40AE7
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1756294136; bh=UpgPvg4urVxloVNFyyTQlEb9ha3EJSydCmrpNuvHHh4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=XP5J0TD5ENlnwD9O4WY89Ftgr9vAlfut3MkPr+riqgBoWa43vUlBX012yEbI/yLdc
-	 7uup+dEq6e7mmKdY20sDh0CJqcgsZ20+8eFTHV3xI2zm0dE48vktKnh48+nhMdvasF
-	 YSRKnRwaYROBp3ZuR3nxHKqBAD/JHR62ogQOMtVlWa49u5BMvEiYNB7auJxJB4GRXl
-	 tbMM1xZS4isNYHZVvOdF1UCDIrVrl0OYM5MaF3+cmty6NzfnumSyopHWcuh86N3bbm
-	 tMW05WsZ7WYbKQjo61cgFO97RJm2sukLFKgCnnp+tuISeKQNTs95L2lhtBeyD1LYRX
-	 pkINcxpArs5TA==
-Received: from localhost (mdns.lwn.net [45.79.72.68])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id 696FC40AE7;
-	Wed, 27 Aug 2025 11:28:55 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: Bagas Sanjaya <bagasdotme@gmail.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Documentation
- <linux-doc@vger.kernel.org>, Linux Kernel Workflows
- <workflows@vger.kernel.org>, Jonathan =?utf-8?Q?Neusch=C3=A4fer?=
- <j.neuschaefer@gmx.net>,
- Fox Foster <fox@tardis.ed.ac.uk>, Federico Vaga
- <federico.vaga@vaga.pv.it>, Randy Dunlap <rdunlap@infradead.org>, Stephen
- Rothwell <sfr@canb.auug.org.au>, Konstantin Ryabitsev
- <konstantin@linuxfoundation.org>, Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH v2] Documentation: management-style: Reword "had better
- known the details" phrase
-In-Reply-To: <20250827113312.62162725@foz.lan>
-References: <20250827044848.17374-1-bagasdotme@gmail.com>
- <87wm6p9v8l.fsf@trenco.lwn.net> <20250827113312.62162725@foz.lan>
-Date: Wed, 27 Aug 2025 05:28:52 -0600
-Message-ID: <877byp9f63.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1756294374; c=relaxed/simple;
+	bh=u9OTU4Xk2A7POXiZ76mfiEEhC3Lzb8hnkPR7i69yNfA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=L1hIoQ9CBsAfjtdW8ry0yrwqfi53i1T2dEkihtY3qFXCf19/3FmFbfMD+eZ7ypVRwuULMHUZwTi63DLwB9w1dydhdAniduJAHBpbhwCOZKvNe6iNWkMrn7Bd2T+GwY1uq4lyoNTzyR1WvVGGVobTWDWf3gzjiTYqxda1P3NKGx0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YvHbhYDD; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-771e4378263so2769203b3a.0;
+        Wed, 27 Aug 2025 04:32:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756294371; x=1756899171; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=CpcO0FpzfQ6tP5e2Bv81hhnFr9+a71IHnO4egieaRJ4=;
+        b=YvHbhYDD9RCxUyXNj1sD+XdT45IfYw+sNfpbJNcHXIq2g4/ITDKR89rD6R7uVVeT41
+         ElIgfzaxZWF6Ozp+yJD2B8GLyWC+oRqUHSyHakCDmbn/wDffYznJLoFg9o1MyeGSgZCZ
+         crEXcGpCQbjNry/6/cLQ1JyCpjz40Tt1tkJdTK3fluQ/pqhWODTQHN63Cqex9RcWW8tk
+         pM52MNZTh7lGDYYFpiVKvCPL5kZaByOoYbwAhoZ21zCDL/+2wCYbQlbM/AJxTvZFCyEE
+         fTzQxk5UgMP9HFSH+TsedZUf21spDe1I14nZ4+jLHG6C0qiHFMHbepnS1sJpb/ilH4YF
+         wBMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756294371; x=1756899171;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CpcO0FpzfQ6tP5e2Bv81hhnFr9+a71IHnO4egieaRJ4=;
+        b=GVKztMlNqvaS2yQy1bziRTlutqa5fFTc+QaDPTJtgv/qmlHlF8HqCYWBoQ829CR4xb
+         3Xw521QUMr9T/K6VoB+I75dZA3zJk4HgVZfS3XQgUndF8noQOJ1a6lT5ihX9zwLpOR6I
+         NJpnw3jgnqTn0PqVYgISVwwWmJfyVkioF8XtfSxugs/vpFd64wcWpidJtXof/3frZE4g
+         eiOnvxQ4YxUPWKRwFo5cv2pjMP3NntA3iC6OGW122kjca/3Nfbd39MtSIVZI0D4HboX4
+         jNXgy6JY7zb2a4aLqB9j09tn3rQN1eexTTF5xuWWD/T3oZP0goRpEKC84FUSD6cChw8U
+         Bxzw==
+X-Forwarded-Encrypted: i=1; AJvYcCVaN9QGUfPJbhT1kVPcQQ6xfN7SBO6ofyTUF3J6WFJGifCUrBYVTQLhO+lHkSPec0GnS6a5DGaEWJAdjfo=@vger.kernel.org, AJvYcCVf4ALh8oYmLsQ4D/m1dGRqi0me55IHT8H8h4Dpnlkf774qe40Cpw145AJ4O5qsNpH7Di1ZmVt1wTZ6/vpxoHh7@vger.kernel.org
+X-Gm-Message-State: AOJu0YxllqxG7AEnuoqn45+CNi52buh6KynLskHWXWbNW1QIGD0qA4kY
+	rFJsmeuLToEQW8Eo8CO/bd26yvysmGSiEX3SIlGLLYU2g76mrzVvup5v
+X-Gm-Gg: ASbGncvODJrZSOG9YulAAC+69jAgAbaxT/n17SSO1iluDKFPqHQA6LQc2l0ZJoTZzi9
+	mSQ8a/W5Ub3V7dpAUN9Y4mpq8koN5W2Tle2tR/VCogW5kGi3s4QT1bM2JIjaUVIWmbsyJ+3MLLi
+	0JaZ6f7l1z7fsUZs5WmRR1X+l6DtCP8OUuLboZlOC6kAySb110TXwlVAmXmmI6/ZyrjxK40zIl2
+	odYxoHgDFw7V7Y0Icf/a4B4iUR0ZeAzKOR6Z/kaHF3SksKQQ9UJ4SdyPKUOJPTETAHw3K3JIv1Y
+	+lJ9JqJtJidbXVViZQAlfp9YEvW9lWbbUxFV0egHjpWCYtImrh+zCw5lY57N6xKlM/z53yCwn5R
+	VR2Ij+Zpw/qgW70cWdAFqLr2t3qTvtlxh2X5rIqReOBw2w2VT0WRZ732/MHllnlm4GeVkR0/q/1
+	lbF6FAtdyfhLJA0nyzni0khvQ1kFud
+X-Google-Smtp-Source: AGHT+IG4UV2HHnp/tCD+4rPlaCvAmsTvqXKJsbede+fSOHhgxu+Jba4EKmBftuPTHICWnTxtmzA/bg==
+X-Received: by 2002:a17:903:1b4b:b0:245:fbf8:dd0b with SMTP id d9443c01a7336-2462efd4ec2mr256304915ad.57.1756294371251;
+        Wed, 27 Aug 2025 04:32:51 -0700 (PDT)
+Received: from server.. ([103.251.57.213])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-248a043de2asm12565345ad.27.2025.08.27.04.32.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 Aug 2025 04:32:50 -0700 (PDT)
+From: Bala-Vignesh-Reddy <reddybalavignesh9979@gmail.com>
+To: shuah@kernel.org
+Cc: brauner@kernel.org,
+	amir73il@gmail.com,
+	jhubbard@nvidia.com,
+	mszeredi@redhat.com,
+	jack@suse.cz,
+	skhan@linuxfoundation.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bala-Vignesh-Reddy <reddybalavignesh9979@gmail.com>,
+	kernel test robot <oliver.sang@intel.com>
+Subject: [PATCH] selftests: filesystems: mount-notify: remove kernel_fsid_t
+Date: Wed, 27 Aug 2025 17:02:42 +0530
+Message-ID: <20250827113242.6106-1-reddybalavignesh9979@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
+Build kselftests casues compile error:
+error: conflicting types for ‘__kernel_fsid_t’;
+have ‘struct <anonymous>’
+   22 | } __kernel_fsid_t;
 
-> As a non-native English speaker, "had better know" looks really
-> weird on my eyes, as, at least for me, "know" is a verb.
->
-> Heh, I just discovered today by looking on a dictionary:
->
-> 	https://dictionary.cambridge.org/dictionary/english/know
->
-> That know can informally be used as a noun (a shortcut for
-> knowledge?).
+This removes the declaration of kernel_fsid_t.
 
-"know" is a verb as used in the sentence in question too.
+Reported-by: kernel test robot <oliver.sang@intel.com>
+Closes: https://lore.kernel.org/oe-lkp/202508110628.65069d92-lkp@intel.com
 
-> For me as a non-native English speaker, when one writes:
->
-> 	They "most likely know"		(know here is a verb)
->
-> or:
-> 	They "had better knowledge"	(knowledge is a name)
->
-> Things become clearer.
+Signed-off-by: Bala-Vignesh-Reddy <reddybalavignesh9979@gmail.com>
+---
+ .../filesystems/mount-notify/mount-notify_test.c          | 8 --------
+ .../filesystems/mount-notify/mount-notify_test_ns.c       | 8 --------
+ 2 files changed, 16 deletions(-)
 
-But neither of those say the same thing.  Read "had better know" as
-"really should know" and you get a lot closer.  I guess I didn't realize
-that it was such a strange construction.
+diff --git a/tools/testing/selftests/filesystems/mount-notify/mount-notify_test.c b/tools/testing/selftests/filesystems/mount-notify/mount-notify_test.c
+index 63ce708d93ed..a853671f2505 100644
+--- a/tools/testing/selftests/filesystems/mount-notify/mount-notify_test.c
++++ b/tools/testing/selftests/filesystems/mount-notify/mount-notify_test.c
+@@ -14,14 +14,6 @@
+ #include "../../kselftest_harness.h"
+ #include "../statmount/statmount.h"
+ #include "../utils.h"
+-
+-// Needed for linux/fanotify.h
+-#ifndef __kernel_fsid_t
+-typedef struct {
+-	int	val[2];
+-} __kernel_fsid_t;
+-#endif
+-
+ #include <sys/fanotify.h>
+ 
+ static const char root_mntpoint_templ[] = "/tmp/mount-notify_test_root.XXXXXX";
+diff --git a/tools/testing/selftests/filesystems/mount-notify/mount-notify_test_ns.c b/tools/testing/selftests/filesystems/mount-notify/mount-notify_test_ns.c
+index 090a5ca65004..2ca867687a60 100644
+--- a/tools/testing/selftests/filesystems/mount-notify/mount-notify_test_ns.c
++++ b/tools/testing/selftests/filesystems/mount-notify/mount-notify_test_ns.c
+@@ -15,14 +15,6 @@
+ #include "../../pidfd/pidfd.h"
+ #include "../statmount/statmount.h"
+ #include "../utils.h"
+-
+-// Needed for linux/fanotify.h
+-#ifndef __kernel_fsid_t
+-typedef struct {
+-	int	val[2];
+-} __kernel_fsid_t;
+-#endif
+-
+ #include <sys/fanotify.h>
+ 
+ static const char root_mntpoint_templ[] = "/tmp/mount-notify_test_root.XXXXXX";
+-- 
+2.43.0
 
-Languages are fun.
-
-jon
 
