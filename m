@@ -1,85 +1,94 @@
-Return-Path: <linux-kernel+bounces-787804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCD75B37B57
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 09:15:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17F10B37B5A
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 09:17:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A68F681505
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 07:15:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6DE3D365638
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 07:17:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B44872EACFF;
-	Wed, 27 Aug 2025 07:15:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AFBB3164A5;
+	Wed, 27 Aug 2025 07:17:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="D1pVV/NX"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="BZeJdeb7"
+Received: from fhigh-b7-smtp.messagingengine.com (fhigh-b7-smtp.messagingengine.com [202.12.124.158])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56C391A9FB8
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 07:15:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00C6025B1CB;
+	Wed, 27 Aug 2025 07:17:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756278942; cv=none; b=ItlLBHHkB1F6iIR2P+od59zMwhRV/rOSaDRQEU1URYb0PkaUP5RY61M2ikoRVzd4roHxr7x20udVmBdCEYCZogdflB4nsTTjH8hFKc1CbugZy6TjOttX+basThHYb3k1zp0tLtq1MQZkXMWBRurR5VPePklmJJ2VT4whLoU6Hy8=
+	t=1756279047; cv=none; b=ncNPn+oC/F46qFCaTvqxaadnsQzEl5D/dJwWfh7u74JpI7yoqMJdhE3cvl9XjAeudV2fDPFiOQXS5mVqqNLrMtj3Q0VQlr9OmcX45eDBNAp//nzHGLTUdYY2SitCGPEK/OtvQC7IRbTGj2GZ2gFiM4D6LW8IgDft2pPpLfUVvQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756278942; c=relaxed/simple;
-	bh=eJUdkWuojsgRcPJQERC9HoSP+HFyVytDvOc649sWpJU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HUgPT+l9+eJtrcB6C3AuV5Zn4iKN4yuWXk4PWe/Snovfb5H6j5BCzaL4uzaTzBAI7TMT9YAX40jrOSs3H/19ZA9ZDjpVsCF8fKjrCVVqplE7NRpxqAbp7AQzB3djf9gC5G4+RIB+BHdtlCOwd+VY45PG9BbOUE0nyV3TbMUxFHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=D1pVV/NX; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3cb9268511bso720892f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 00:15:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756278939; x=1756883739; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=hlLv4S/UPFBuBEfiiKihhCuycUkTi3/tZ4pnK9d2kGk=;
-        b=D1pVV/NX8eOf5fqe7L3D32r48rrgVbftlA6cy0lqO2hrxTCbOIL9yW4FfCvffSsXXK
-         Lh6wJOnvRb13PvczBGGX8Hi9QlB5n/adzirgJ7gzePWPf6+Z/Awl+J7yVj8N7Ky5gJsQ
-         dAWdA0w87M5QYFP2dxlo6OhW6iqvCEeI5M+/MeBnjFN36lSzuZnXXtat+OmWcbsYGYjJ
-         WOZtQekNeyWGjTqItj1xNASXN5pTxfJ21n+Ffq+MAHD+oNMDCO6relp3p3YxPXRs/K7n
-         gfG/GYe5zIcRp54ALuoWtDLv0xa05bFUKZ8B2fI3c8Ca+4YRuKxrM+e7vticJ6G4AEzl
-         GOpQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756278939; x=1756883739;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hlLv4S/UPFBuBEfiiKihhCuycUkTi3/tZ4pnK9d2kGk=;
-        b=t4YVqpEyG/nnZJayPZLQR2NR7EaRabv2fC0BnyR/LbecOigpeUEBbe/SFs3LCbm3qO
-         Cfn978vnxGdYebfWO3tarVs/l44Y2tEhKzhLY1FXDhWtiImx9iEibaeczZ32JicGLYZj
-         krAGizSSewRG52nsFXPeT1VkIQ6rbXW7mMNV3prp3888kHEx9E21hfP+HHgEOrcBLaw0
-         FlWrY7HKRLvIP9Sxd9Na7ELtyKoF5LAWx1Q27HLRF54hYxwz9B7PwJ9l4W4TJCWJzH52
-         7750i84EDispRCjOfAMl69mSnLbTrDC/RPY1d4knx/DD0h+g0kPlXr/Qh/hPO/I3r32J
-         Ukrg==
-X-Forwarded-Encrypted: i=1; AJvYcCWQsMqzKRX2Q0A25VQgNMJgJn2ZzXGe6Sbs47Fy4wzkAwk8xferfZkqeiodV4lY+NpbNXlvGJ6By1l0Thg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNNxraSHXtf9FkQzg3lLLkK17kNhoOZ5VHut/Ri6z9mZ2ZgvcN
-	Fu9VVjMApdvu4W5p5qSNfDj1K9+n0T/zyGGqYBz2ETUPA/+5Vw9F3ontMRicg44n+fM=
-X-Gm-Gg: ASbGncu65tT8MawWyhDjdXaSzhkXloSFb0AkQjnIFbywAClsoilL7C8wGGJ4C51lyN5
-	aG86pytsaHQo8xzXpHbHxFO8DI8V46q3BiiI3LkYtKv3Je1y9nJrWHPrdQh6iIBhyJO0refB90s
-	vIB87/eV+ApAp26FpnWbgyFc7obxjKmLbK9ldqVbcQmBGrEBRfiUyxWVau2swcCvLaHP7lTNkG1
-	EYZhKwUIFXImNf5/wYurYeNoR2ek8PEg762o9RX6vcXFo7w3VIPrb94KVS88zdC7u6YIUstHIMf
-	D4pOJ2/0d7zsZLh7khG1CcMqOZyGWRI/Pw5OHv1vhpR9wkZ9CVjn9cAcQxyy83diaHZAQywgxja
-	SQsUGA9TTZpEQucgirZQQJrduMBI=
-X-Google-Smtp-Source: AGHT+IHGLQK+/bIqO0EGakdV6TeJY1UPjMkYcLkAtbFxpvXgRAwvr0BTLtLlmQ9ZA9cZOdmyT34Qdw==
-X-Received: by 2002:a05:6000:2304:b0:3ca:ad45:6363 with SMTP id ffacd0b85a97d-3caad456a18mr5084286f8f.17.1756278938614;
-        Wed, 27 Aug 2025 00:15:38 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45b6b1cdf05sm14123395e9.1.2025.08.27.00.15.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Aug 2025 00:15:37 -0700 (PDT)
-Date: Wed, 27 Aug 2025 10:15:33 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Osama Abdelkader <osama.abdelkader@gmail.com>
-Cc: gregkh@linuxfoundation.org, dpenkler@gmail.com,
-	matchstick@neverthere.org, arnd@arndb.de,
-	linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev
-Subject: Re: [PATCH] staging: gpib: simplify and fix get_data_lines
-Message-ID: <aK6wlcLBN1HclMpl@stanley.mountain>
-References: <20250826220502.210485-1-osama.abdelkader@gmail.com>
+	s=arc-20240116; t=1756279047; c=relaxed/simple;
+	bh=qLC53StXZFW+6X9riho55iA3y6os4QIsqa03TFKFkOU=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=WKfnfpjC8ns7u/TUe6CRjcEr+cgYv8Gb/K8ttQMYjfcS5DhX8MF2MTpAL3Lrv5m5R9La6IkNvbwPq7j1+Y7PrpWQxHf/UlGbTjuorccFCLc7bqZj6pQq/o+hySvc8erF/AGMRqecHWz8eecCCjnEdWrZnq2bKz7zYJm8s1YPwpY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=BZeJdeb7; arc=none smtp.client-ip=202.12.124.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from phl-compute-09.internal (phl-compute-09.internal [10.202.2.49])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id B443B7A01B6;
+	Wed, 27 Aug 2025 03:17:23 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-09.internal (MEProxy); Wed, 27 Aug 2025 03:17:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1756279043; x=1756365443; bh=TRPUqU5i8tcWANGMpkmvpTzAU/bgHfQuZgK
+	QdInClDE=; b=BZeJdeb7bd+JdwUunh6xHrHl4MXB2J62IAnFSX20nwhjGB8DOnv
+	YEK+8gbHxER1dru+U/Cbv8IPELZ6Lid7trvapBhBnk4HVjonHjBoQWuyreHLKA/t
+	i6tP7lmVo2d50t5VlW8xiqwzOAccMmAcMuyfti4ajI2Ih2AWgI9akeo/OnnJMOBK
+	n6cYp7U63KJ3O4xCik6YnMMjC27XYfufAigijGr9YqrKXLnm3VmIBNlDWD3v/QLw
+	sj9Od8Iy8FJSqqvM9uIHdSRVILC+1tyKiKhwDGqqj3JFb9s5oC1G9iZANsWa70b3
+	jUPrANuQTm+gdGD2zmuT6NjVkrZ7sPo+SqQ==
+X-ME-Sender: <xms:ArGuaJTpjKACwhU1krrsEZDEkBeG5ykgVj3O4mxFKAqJxC34p7KjmA>
+    <xme:ArGuaNabyiOPkNCL9lKmZPREFA21v_aEydHRddfR2HVwb83EJougQrx9E26rtNVXb
+    Q4CO9LIHxIPXI90prk>
+X-ME-Received: <xmr:ArGuaE1UMJT-qGu23QowhE3xC6_6jpNXayMn06jAsvIYSi5nE0f5LMdbcah0SNXX7yQ6d96RVGybFMdwNSkzrzKPkUMRc7DzSak>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddujeejhedvucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepfffhvfevufgjkfhfgggtsehttdertddttddvnecuhfhrohhmpefhihhnnhcuvfhh
+    rghinhcuoehfthhhrghinheslhhinhhugidqmheikehkrdhorhhgqeenucggtffrrghtth
+    gvrhhnpeelueehleehkefgueevtdevteejkefhffekfeffffdtgfejveekgeefvdeuheeu
+    leenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehfth
+    hhrghinheslhhinhhugidqmheikehkrdhorhhgpdhnsggprhgtphhtthhopeelpdhmohgu
+    vgepshhmthhpohhuthdprhgtphhtthhopehpvghtvghriiesihhnfhhrrgguvggrugdroh
+    hrghdprhgtphhtthhopegrkhhpmheslhhinhhugidqfhhouhhnuggrthhiohhnrdhorhhg
+    pdhrtghpthhtoheplhgrnhgtvgdrhigrnhhgsehlihhnuhigrdguvghvpdhrtghpthhtoh
+    epghgvvghrtheslhhinhhugidqmheikehkrdhorhhgpdhrtghpthhtohepmhhhihhrrghm
+    rghtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehorghksehhvghlshhinhhkihhnvg
+    htrdhfihdprhgtphhtthhopeifihhllheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohep
+    shhtrggslhgvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugi
+    dqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:ArGuaAoPVMrFJkEoxUQWIs98XMYDgKVJlhW8xE74LGRV6zzeGJIstw>
+    <xmx:ArGuaDNKUawbYxP5NcUsZBDPORnAuBnjTcm2iMX8AgwCmqOIRUzqWg>
+    <xmx:ArGuaJqi8HvNi0eavK-iinM0LBN1Up462-L-33Ts3HhX4I6bSjgnbg>
+    <xmx:ArGuaOuY-JnD5_PVqxPX_9EP09aV8erEooqHh9ENQctN2q9SfHfHQA>
+    <xmx:A7GuaP7B0SYlUw3ocUCDxPB_eYG_6DyZpOsFxmIynvYKGgskTMG9evoR>
+Feedback-ID: i58a146ae:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 27 Aug 2025 03:17:20 -0400 (EDT)
+Date: Wed, 27 Aug 2025 17:17:19 +1000 (AEST)
+From: Finn Thain <fthain@linux-m68k.org>
+To: Peter Zijlstra <peterz@infradead.org>
+cc: Andrew Morton <akpm@linux-foundation.org>, 
+    Lance Yang <lance.yang@linux.dev>, 
+    Geert Uytterhoeven <geert@linux-m68k.org>, 
+    Masami Hiramatsu <mhiramat@kernel.org>, Eero Tamminen <oak@helsinkinet.fi>, 
+    Will Deacon <will@kernel.org>, stable@vger.kernel.org, 
+    linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] atomic: Specify natural alignment for atomic_t
+In-Reply-To: <20250825114136.GX3245006@noisy.programming.kicks-ass.net>
+Message-ID: <9453560f-2240-ab6f-84f1-0bb99d118998@linux-m68k.org>
+References: <7d9554bfe2412ed9427bf71ce38a376e06eb9ec4.1756087385.git.fthain@linux-m68k.org> <20250825071247.GO3245006@noisy.programming.kicks-ass.net> <58dac4d0-2811-182a-e2c1-4edfe4759759@linux-m68k.org>
+ <20250825114136.GX3245006@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,37 +96,33 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250826220502.210485-1-osama.abdelkader@gmail.com>
 
-On Wed, Aug 27, 2025 at 12:05:02AM +0200, Osama Abdelkader wrote:
-> The function `get_data_lines()` in gpib_bitbang.c currently reads 8
-> GPIO descriptors individually and combines them into a byte.
-> This has two issues:
+
+On Mon, 25 Aug 2025, Peter Zijlstra wrote:
+
+> On Mon, Aug 25, 2025 at 06:03:23PM +1000, Finn Thain wrote:
+> > 
+> > On Mon, 25 Aug 2025, Peter Zijlstra wrote:
+> > 
+> > > 
+> > > And your architecture doesn't trap on unaligned atomic access ?!!?!
+> > > 
+> > 
+> > Right. This port doesn't do SMP.
 > 
->   * `gpiod_get_value()` returns an `int` which may be negative on
->     error. Assigning it directly into a `u8` may propagate unexpected
->     values. Masking ensures only the LSB is used.
+> There is RMW_INSN which seems to imply a compare-and-swap instruction of 
+> sorts. That is happy to work on unaligned storage?
+> 
 
-Using the last bit in an error code is not really "error handling"...
+Yes, the TAS and CAS instructions are happy to work on unaligned storage. 
 
-What you could do instead would be something like:
+However, these operations involve an indivisible bus cycle that hogs the 
+bus to the detriment of other processors, DMA controllers etc. So I 
+suspect lock alignment would tend to shorten read-modify-write cycles, and 
+improve efficiency, when CONFIG_RMW_INSN is enabled.
 
-	int ret;
-
-	for (i = 0; i < 8; i++) {
-		ret |= (gpiod_get_value(lines[i]) & 1) << i;
-		if (ret < 0) {
-			pr_err("something failed\n");
-			return -EINVAL;
-		}
-	}
-
-	return ~ret;
-
-Which might also not be correct, but it's probably closer to being okay.
-
-regards,
-dan carpenter
-
+Most m68k platforms will have CONFIG_RMW_INSN disabled, or else simply 
+don't implement TAS and CAS. In this case, lock alignment might still 
+help, just because L1 cache entries are long words. I've not tried to 
+measure this.
 
