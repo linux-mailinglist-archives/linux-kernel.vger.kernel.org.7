@@ -1,78 +1,97 @@
-Return-Path: <linux-kernel+bounces-788672-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 087C8B38882
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 19:24:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3643B38888
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 19:26:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD7C63AEE17
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 17:24:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 79BBD16B90A
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 17:26:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EE542D1F72;
-	Wed, 27 Aug 2025 17:24:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 670082D5A14;
+	Wed, 27 Aug 2025 17:26:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h4kt2AVS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X7DTS/Wi"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9A472D2386;
-	Wed, 27 Aug 2025 17:24:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C08F930CDA8;
+	Wed, 27 Aug 2025 17:26:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756315456; cv=none; b=GvFcVQj88Gb9dNKTSBaaQBOstR3SvCPUXXrn67oJXJpICHIPPo/onRtA9hY6E8m05itXIQK4BcLRc4oBKBVO/huPc7PEG6nS/QxtXtQn+RCPdPVLBKqLqoGVAYZq9vvi7OfHVIKTdN4gqPJU2uDu2J5fJCxc9y3MyELLdmdV/QY=
+	t=1756315578; cv=none; b=uQ/pPfV0fWyDvORXQ9ufiQ5pghKhxhf8x3xLzviSrfuYgLflNtudGSb/pi34k3Kz7LGes52fbJviyi5tMdqXI5DkZuBgxfN5GPc8cxMTdJXv7pkz6GLxqKtb2UKH4wVAlkUrriPqznaIs8g6/K9/jlG77Hd+hDGxGI7lj/AI6dg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756315456; c=relaxed/simple;
-	bh=TAyh4MeB7znA2ziTl6hgFkn0e0AT5eLo0+Xk1nz8pY8=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=agNrQHKECM7WwnXABo7xatCdkRkqSuAQU5HYbK3aLTRNgNHsZyxVJ7YapB6FaBrBn5u2tsFDDJEnP6p5GROiZuHPYTFvn449KjwkH6sOPJcjmUo72XLsBYYARpmhT3Tfz31USUmndoUqIzIJVIekPNbH4nPXBQz6jvIlIwUVr3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h4kt2AVS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99B52C4CEEB;
-	Wed, 27 Aug 2025 17:24:16 +0000 (UTC)
+	s=arc-20240116; t=1756315578; c=relaxed/simple;
+	bh=n9DnZifmjjR/lsd2ag9tVatg0zcJwZgYkw52UdyN7PA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bkmV01Qrovs0jQrXkhuWvSaLEupRHhwqrS/zps4IS0FlcBSIUDJNzasCEXn5MARj6vrtHQMXj8EOQgXq5JL9w3YXlTFgmvRawvM2/BZ+oW3ZWsamhfy/WuJqzs7iZK4wY5ED3a2fX9TDebUaBxirE92kBNT/n7odRrvs2h9ucQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X7DTS/Wi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6DD5DC4CEF0;
+	Wed, 27 Aug 2025 17:26:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756315456;
-	bh=TAyh4MeB7znA2ziTl6hgFkn0e0AT5eLo0+Xk1nz8pY8=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=h4kt2AVSurdAkeQK6rt4mfD2DTTUq09wkBkouyDizaNmDGVOd5MxvuLgLAbIs9jEK
-	 0tRIsaIAzk/w+xhloUjU3ECpoZphiXOrpGQt8X7LbaMy6rG6/9DcoZxzotkfaOSwqa
-	 aaN0cuRqTnHX6kwKDsjklkkVp3vN25hP3XesvooSbrDy0xSec/d6uE+pCZdsVZ4pkx
-	 BesptcEP1snGhU0fuEKXQ1NrZ7OmxKU8mzcJChSA751Kl0SxEMrGvnoXV75DGyBqpM
-	 TWZUiMDi8wooTv6q8GL0qTWi3b6sjU7sfV8e1fnIpJikGABCbTuQVwBSh1qyMMaE79
-	 i2xlx7GD9EdOw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33DB1383BF76;
-	Wed, 27 Aug 2025 17:24:25 +0000 (UTC)
-Subject: Re: [GIT PULL for v6.17-rc4] media fixes
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20250827105749.32f7cc29@foz.lan>
-References: <20250827105749.32f7cc29@foz.lan>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20250827105749.32f7cc29@foz.lan>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/mchehab/linux-media.git media/v6.17-2
-X-PR-Tracked-Commit-Id: 6f6fbd9a0c5a75eee0618c1499cf73cc770b3f52
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 518b21ba139cefa2ee7f9fcf516fdc6743e8db68
-Message-Id: <175631546378.782678.13817975298306925119.pr-tracker-bot@kernel.org>
-Date: Wed, 27 Aug 2025 17:24:23 +0000
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Andrew Morton <akpm@linux-foundation.org>, Linux Media Mailing List <linux-media@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+	s=k20201202; t=1756315578;
+	bh=n9DnZifmjjR/lsd2ag9tVatg0zcJwZgYkw52UdyN7PA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=X7DTS/Wig2P7M2VUD1GR6NRpapIb2G8ux6Pk5r61b325I82VIZFPTqurlGx+Wf69k
+	 nW5gh+4kYZYnyyC/CBysVmG+TWpN9Sd6Fx/O8vJ5H75bvIo3F6t4shVYY9+bmGobol
+	 5P8/MnbdcoBChV/8ZHw+TPbByHyoGV0OqMbYTXJEk26Mk2jIvh0ijbSm92t9vjwBlJ
+	 1uXeeyCVHcfM9eFe1DCAxiqU9t7/q/navGV1xD81g8+Tr16bSbmAZDIq6g4d5VmZ55
+	 DELy2aQav2hbf0GfxD/zUHoHsqPvvmgcAuGTFo7MpNA9uvNQ2F+Q2Q1KIn6+VGR0Xm
+	 IiB2uiokCkGRQ==
+Date: Wed, 27 Aug 2025 10:26:16 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
+	Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: duplicate patch in the vhost tree
+Message-ID: <aK8_uOoLxLOniEbR@google.com>
+References: <20250827124654.78881028@canb.auug.org.au>
+ <20250827062218-mutt-send-email-mst@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250827062218-mutt-send-email-mst@kernel.org>
 
-The pull request you sent on Wed, 27 Aug 2025 10:57:49 +0200:
+Hello,
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/mchehab/linux-media.git media/v6.17-2
+On Wed, Aug 27, 2025 at 06:23:52AM -0400, Michael S. Tsirkin wrote:
+> On Wed, Aug 27, 2025 at 12:46:54PM +1000, Stephen Rothwell wrote:
+> > Hi all,
+> > 
+> > The following commit is also in the perf-current tree as a different
+> > commit (but the same patch):
+> > 
+> >   c67e16d30dca ("tools headers: Sync uapi/linux/vhost.h with the kernel source"
+> > )
+> > 
+> > This is commit
+> > 
+> >   f79a62f4b3c7 ("tools headers: Sync uapi/linux/vhost.h with the kernel source")
+> > 
+> > in the perf-current tree.
+> 
+> 
+> Hmm.  I could drop mine I guess, but it only really makes sense after:
+> 
+>     vhost: Fix ioctl # for VHOST_[GS]ET_FORK_FROM_OWNER
+>     
+> 
+> which is not in the perf tree.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/518b21ba139cefa2ee7f9fcf516fdc6743e8db68
+Yep, so I was waiting for you to send PR with the fix.
+It seems you already removed the commit in your tree.
+I'll send a PR for perf tools with this change.
 
-Thank you!
+Thanks,
+Namhyung
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
 
