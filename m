@@ -1,61 +1,70 @@
-Return-Path: <linux-kernel+bounces-787652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4D87B3792E
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 06:33:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE24AB3792F
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 06:34:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74FFF5E8032
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 04:33:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A2DC33649BA
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 04:34:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E79F32C0F91;
-	Wed, 27 Aug 2025 04:33:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76545286D76;
+	Wed, 27 Aug 2025 04:34:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=cs.stanford.edu header.i=@cs.stanford.edu header.b="D9leVfTY"
-Received: from smtp1.cs.Stanford.EDU (smtp1.cs.stanford.edu [171.64.64.25])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ut96wx9A"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F089F237180
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 04:33:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=171.64.64.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDDD330CDBB
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 04:34:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756269206; cv=none; b=als6H2eKBVy9qtPv7cYXaqOnU5bmCJD+iNywQujQazP6wJFov7zo55Rle0quxJ3o6qf/Rl1YMPljoSVN9/Cqn/SqP3aaYRGZZI4we9U8xmOCTVDtJNca1ZDsfl8qxdPnVk7FYVaHjY6HxioiPxtRttAmjDQ4tUs2Yraq1nhjJ7k=
+	t=1756269291; cv=none; b=FDdPhu38LPJRNY0HcnZtwb4krr0WGOxls7ZWTJCrUHE0mmSJ1yvjhH2Ig00I32DqGceZtqJsz1I5sSHUvSDPV05TpC9oyCLy85daBSh/NK4RzSb07uA3Oq3v16uDjZ3kFFbz9c260okXYahoubNc2CgiLS+Ete2oxPSpas3Csqo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756269206; c=relaxed/simple;
-	bh=3bQUggs1dz2lXC5HEhH3WckpGVBZUfB1XMP6X6RhnGs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=duJj9kX2OLLS5AkqYOT+azs3qop2PQQSPyG0oM6FvWmMW8KHsvvprIjCHvcPbH6HAFiQfX2QgA5QYkQFW8OYa8ZSEqrDqg4E9PJK742LLSOTWkSstkLFoaOXEeKenLLtsKTSH8HvXBZCFGElEdO/McxNlSzHpHpwDmcYigOgmX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cs.stanford.edu; spf=pass smtp.mailfrom=cs.stanford.edu; dkim=pass (2048-bit key) header.d=cs.stanford.edu header.i=@cs.stanford.edu header.b=D9leVfTY; arc=none smtp.client-ip=171.64.64.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cs.stanford.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cs.stanford.edu
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=cs.stanford.edu; s=cs2308; h=Content-Transfer-Encoding:MIME-Version:
-	Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=9rOBB/o71xl0ikIjLsjC7srjUMkDatat+eZgYGtvux4=; t=1756269203; x=1757133203; 
-	b=D9leVfTYhD5YypcEJdCo3NGNxOEkJYbBuDFbZE3BMjCeEjUwgWCdTXPUU9YkF1X7GTU7eRj+xBP
-	YW4q4ZopHf2KjF3XmE/SHcGO63Z1fvZyc83Vz3oey+IK0b6/fVQVmq+ZCaFOKCCe3XTXVAu/f94uN
-	cs1ue/v3Guiw6DCbHuC/u0o7HyTdLQkO4jkdCiguCa1VctjFULNiHkPF8/JPLuFd4SA3bA3LuHEHJ
-	kZ7Lip75dJq2Autkgp6q6YinI5YAyzLWfNXZZ+kMQZGsoTkB9F9XOxyf+Hh+mjvL/yxUjeoB7qovo
-	NhSjN/gdTdm+iZbXSJ/UgOgUniBPHNYZUj4A==;
-Received: from 135-180-5-199.fiber.dynamic.sonic.net ([135.180.5.199]:53481 helo=macbookair.lan)
-	by smtp1.cs.Stanford.EDU with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.94.2)
-	(envelope-from <jgnieto@cs.stanford.edu>)
-	id 1ur7qc-0003X1-AN; Tue, 26 Aug 2025 21:33:23 -0700
-From: Javier Nieto <jgnieto@cs.stanford.edu>
-To: luiz.dentz@gmail.com,
-	marcel@holtmann.org
-Cc: linux-bluetooth@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Javier Nieto <jgnieto@cs.stanford.edu>
-Subject: [PATCH] Bluetooth: hci_h5: implement CRC data integrity
-Date: Tue, 26 Aug 2025 21:32:54 -0700
-Message-Id: <20250827043254.26611-1-jgnieto@cs.stanford.edu>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+	s=arc-20240116; t=1756269291; c=relaxed/simple;
+	bh=aWTOvqQJqVhvq0kHlay3cBgBEi9sg0yCfPp/3mN63Z0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=RjdPe7Y4CdOcrv3YTU4YJCAvBFdvC1PwsqfkohbPQRMJFdc8ByaIbyIYxEIA7t7AnVqqAw1+ob+AkCNhsbXbxYCH4hTKx2EvbLwL6kkpEdFIOQCZQiap9hW9fiYsgNxVXcWqUGkf8J+vj+Q6HIwAW2iJ7j8Tk0/Bc72kez/X+VM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=ut96wx9A; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57R4YDq41200925;
+	Tue, 26 Aug 2025 23:34:13 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1756269253;
+	bh=onUPctksx9v/T9fvKGxi3HtsF9f2imEu14eR2p3XkFc=;
+	h=From:To:CC:Subject:Date;
+	b=ut96wx9A473TuRqqNBG65MitpI0YYiuShzfK6RlQxrdiURnOpdQLH4vjYI7DynHmO
+	 3eEQqMEI2oyPEH14Kk0/p69rnQ8vGTGiYILTEU03wPKXY2cNcJafglwii3lYIPJbtA
+	 UGmw0D64l2gTeO00jQGeht4y4130oSKOVG2RUPJs=
+Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
+	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57R4YCG72192944
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Tue, 26 Aug 2025 23:34:12 -0500
+Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE104.ent.ti.com
+ (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Tue, 26
+ Aug 2025 23:34:11 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Tue, 26 Aug 2025 23:34:11 -0500
+Received: from LT5CG31242FY.dhcp.ti.com ([10.250.161.79])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57R4Y8S92555052;
+	Tue, 26 Aug 2025 23:34:08 -0500
+From: Shenghao Ding <shenghao-ding@ti.com>
+To: <tiwai@suse.de>
+CC: <broonie@kernel.org>, <andriy.shevchenko@linux.intel.com>,
+        <13564923607@139.com>, <13916275206@139.com>,
+        <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>,
+        <baojun.xu@ti.com>, <Baojun.Xu@fpt.com>, <jesse-ji@ti.com>,
+        Shenghao Ding <shenghao-ding@ti.com>
+Subject: [PATCH v3] ALSA: hda/tas2781: Fix EFI name for calibration beginning with 1 instead of 0
+Date: Wed, 27 Aug 2025 12:34:03 +0800
+Message-ID: <20250827043404.644-1-shenghao-ding@ti.com>
+X-Mailer: git-send-email 2.33.0.windows.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,139 +72,40 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Spam-Score: -1.0
-X-Scan-Signature: 255d2abca2c607fc06a55785d004a2f5
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-The UART-based H5 protocol supports CRC data integrity checks for
-reliable packets. The host sets bit 5 in the configuration field of the
-CONFIG link control message to indicate that CRC is supported. The
-controller sets the same bit in the CONFIG RESPONSE message to indicate
-that CRC may be used from then on.
+A bug reported by one of my customers that EFI name beginning with 0
+instead of 1.
 
-Signed-off-by: Javier Nieto <jgnieto@cs.stanford.edu>
----
-
-Tested on a MangoPi MQ-Pro with a Realtek RTL8723DS Bluetooth controller
-using the tip of the bluetooth-next tree.
-
-It would be nice to have this feature available for somewhat more reliable
-communication over UART, especially if RTS/CTS is disabled, as this is the
-primary benefit of the H5 protocol. Thanks!
+Fixes: 4fe238513407 ("ALSA: hda/tas2781: Move and unified the calibrated-data getting function for SPI and I2C into the tas2781_hda lib")
+Signed-off-by: Shenghao Ding <shenghao-ding@ti.com>
 
 ---
- drivers/bluetooth/hci_h5.c | 42 ++++++++++++++++++++++++++++++++++----
- 1 file changed, 38 insertions(+), 4 deletions(-)
+v3:
+ - remove unrelated change
+v1:
+ - Fix EFI name beginning with 1 instead of 0
+ - Add extra comments on EFI name for calibration
+---
+ sound/hda/codecs/side-codecs/tas2781_hda_i2c.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/bluetooth/hci_h5.c b/drivers/bluetooth/hci_h5.c
-index d0d4420c1a0f..7faafc62666b 100644
---- a/drivers/bluetooth/hci_h5.c
-+++ b/drivers/bluetooth/hci_h5.c
-@@ -7,6 +7,8 @@
-  */
- 
- #include <linux/acpi.h>
-+#include <linux/bitrev.h>
-+#include <linux/crc-ccitt.h>
- #include <linux/errno.h>
- #include <linux/gpio/consumer.h>
- #include <linux/kernel.h>
-@@ -58,6 +60,7 @@ enum {
- 	H5_TX_ACK_REQ,		/* Pending ack to send */
- 	H5_WAKEUP_DISABLE,	/* Device cannot wake host */
- 	H5_HW_FLOW_CONTROL,	/* Use HW flow control */
-+	H5_CRC,			/* Use CRC */
- };
- 
- struct h5 {
-@@ -141,8 +144,8 @@ static void h5_link_control(struct hci_uart *hu, const void *data, size_t len)
- 
- static u8 h5_cfg_field(struct h5 *h5)
- {
--	/* Sliding window size (first 3 bits) */
--	return h5->tx_win & 0x07;
-+	/* Sliding window size (first 3 bits) and CRC request (fifth bit). */
-+	return (h5->tx_win & 0x07) | 0x10;
- }
- 
- static void h5_timed_event(struct timer_list *t)
-@@ -360,8 +363,10 @@ static void h5_handle_internal_rx(struct hci_uart *hu)
- 		h5_link_control(hu, conf_rsp, 2);
- 		h5_link_control(hu, conf_req, 3);
- 	} else if (memcmp(data, conf_rsp, 2) == 0) {
--		if (H5_HDR_LEN(hdr) > 2)
-+		if (H5_HDR_LEN(hdr) > 2) {
- 			h5->tx_win = (data[2] & 0x07);
-+			assign_bit(H5_CRC, &h5->flags, data[2] & 0x10);
-+		}
- 		BT_DBG("Three-wire init complete. tx_win %u", h5->tx_win);
- 		h5->state = H5_ACTIVE;
- 		hci_uart_init_ready(hu);
-@@ -425,7 +430,24 @@ static void h5_complete_rx_pkt(struct hci_uart *hu)
- 
- static int h5_rx_crc(struct hci_uart *hu, unsigned char c)
- {
--	h5_complete_rx_pkt(hu);
-+	struct h5 *h5 = hu->priv;
-+	const unsigned char *hdr = h5->rx_skb->data;
-+	u16 crc;
-+	__be16 crc_be;
-+
-+	crc = crc_ccitt(0xffff, hdr, 4 + H5_HDR_LEN(hdr));
-+	crc = bitrev16(crc);
-+
-+	crc_be = cpu_to_be16(crc);
-+
-+	if (memcmp(&crc_be, hdr + 4 + H5_HDR_LEN(hdr), 2) != 0) {
-+		bt_dev_err(hu->hdev, "Received packet with invalid CRC");
-+		h5_reset_rx(h5);
-+	} else {
-+		/* Remove CRC bytes */
-+		skb_trim(h5->rx_skb, 4 + H5_HDR_LEN(hdr));
-+		h5_complete_rx_pkt(hu);
-+	}
- 
- 	return 0;
- }
-@@ -556,6 +578,7 @@ static void h5_reset_rx(struct h5 *h5)
- 	h5->rx_func = h5_rx_delimiter;
- 	h5->rx_pending = 0;
- 	clear_bit(H5_RX_ESC, &h5->flags);
-+	clear_bit(H5_CRC, &h5->flags);
- }
- 
- static int h5_recv(struct hci_uart *hu, const void *data, int count)
-@@ -686,6 +709,7 @@ static struct sk_buff *h5_prepare_pkt(struct hci_uart *hu, u8 pkt_type,
- 	struct h5 *h5 = hu->priv;
- 	struct sk_buff *nskb;
- 	u8 hdr[4];
-+	u16 crc;
- 	int i;
- 
- 	if (!valid_packet_type(pkt_type)) {
-@@ -713,6 +737,7 @@ static struct sk_buff *h5_prepare_pkt(struct hci_uart *hu, u8 pkt_type,
- 	/* Reliable packet? */
- 	if (pkt_type == HCI_ACLDATA_PKT || pkt_type == HCI_COMMAND_PKT) {
- 		hdr[0] |= 1 << 7;
-+		hdr[0] |= (test_bit(H5_CRC, &h5->flags) && 1) << 6;
- 		hdr[0] |= h5->tx_seq;
- 		h5->tx_seq = (h5->tx_seq + 1) % 8;
- 	}
-@@ -732,6 +757,15 @@ static struct sk_buff *h5_prepare_pkt(struct hci_uart *hu, u8 pkt_type,
- 	for (i = 0; i < len; i++)
- 		h5_slip_one_byte(nskb, data[i]);
- 
-+	if (H5_HDR_CRC(hdr)) {
-+		crc = crc_ccitt(0xffff, hdr, 4);
-+		crc = crc_ccitt(crc, data, len);
-+		crc = bitrev16(crc);
-+
-+		h5_slip_one_byte(nskb, (crc >> 8) & 0xff);
-+		h5_slip_one_byte(nskb, crc & 0xff);
-+	}
-+
- 	h5_slip_delim(nskb);
- 
- 	return nskb;
+diff --git a/sound/hda/codecs/side-codecs/tas2781_hda_i2c.c b/sound/hda/codecs/side-codecs/tas2781_hda_i2c.c
+index ed7771ab9475..dbd71e173119 100644
+--- a/sound/hda/codecs/side-codecs/tas2781_hda_i2c.c
++++ b/sound/hda/codecs/side-codecs/tas2781_hda_i2c.c
+@@ -340,8 +340,8 @@ static int tas2563_save_calibration(struct tas2781_hda *h)
+ 		data[offset] = i;
+ 		offset++;
+ 		for (j = 0; j < TASDEV_CALIB_N; ++j) {
+-			ret = snprintf(var8, sizeof(var8), vars[j], i);
+-
++			/* EFI name for calibration started with 1, not 0 */
++			ret = snprintf(var8, sizeof(var8), vars[j], i + 1);
+ 			if (ret < 0 || ret >= sizeof(var8) - 1) {
+ 				dev_err(p->dev, "%s: Read %s failed\n",
+ 					__func__, var8);
 -- 
 2.43.0
 
