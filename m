@@ -1,47 +1,66 @@
-Return-Path: <linux-kernel+bounces-787975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9548B37E4E
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 11:05:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6531EB37E58
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 11:07:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AFC4E189A9ED
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 09:05:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1651B3B0387
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 09:07:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68CE331E112;
-	Wed, 27 Aug 2025 09:05:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCF8D33A023;
+	Wed, 27 Aug 2025 09:07:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="foGOJh+M"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="3oHQmmcJ"
+Received: from omta36.uswest2.a.cloudfilter.net (omta36.uswest2.a.cloudfilter.net [35.89.44.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E20CF2F3C0E
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 09:05:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C6C0340D9C
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 09:07:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756285512; cv=none; b=RR16Ap6BVridHStiq9dGBjSW6wMEY54MfXCYUQqlFNIJmqApn1d7JQ/8mjmE/ta2tp2GTT5fiGq3ACI+CFO00OqiCkU+XDQmOLTUG85OAkpdXHQmaRMfZHr9SRHg89z6nkumyp3umWp3ZLDqic8V3laS6snu0elXVj7O1aJN9fs=
+	t=1756285671; cv=none; b=nv6SjhN1z2wO+ioYz+vfFNyXQGUbLF6EJbke/pnLEDM+jbhfSrvxoo9a07ClPWARn49rgubjL24tUbKOKl0SDwKmEFRUAHEPkC+5AtJ1/nGM1yY8xckEvZB6yAlO520On+sK6P+7H5EaJ7sdDZ+6lWwLk7zBFAtSLm8umIc/xjU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756285512; c=relaxed/simple;
-	bh=BqfGj/Qf7oF170Z0M5L9JeEBmw+CwhVeSxwOpo/viKE=;
+	s=arc-20240116; t=1756285671; c=relaxed/simple;
+	bh=klb05lpdI4kaKBVrc0TwPb7cdhRmkZQDYnxWizwMpkY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hZiFDq/wHfhJLByonxKuV6LIPHrYyVgFBSHJzZByoZWq07r0We4HwwGsvegwm7+08tIO1J785PlWQuh0zw11rvkLP4qzTFZFMyZBIJRhchMLGDAMZ3PyT8elYccPWobdAsYcU6IqWVA6VwVEuRMaw8bZjWqqeZfQl7T2BpLhGLA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=foGOJh+M; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from [192.168.88.20] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 5666F300E;
-	Wed, 27 Aug 2025 11:04:04 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1756285445;
-	bh=BqfGj/Qf7oF170Z0M5L9JeEBmw+CwhVeSxwOpo/viKE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=foGOJh+MUP7+G8LbioZlBb2Brhhkwu6QXvd9Csn7eNo6WQYU1LWYCD/h07bsh4KJm
-	 4wdCxGX7NrZfIoVU4sIqzB9hJVX15dDyaUHLWaeEbzzOOvvkzu26ec84P3ZxjxPvKP
-	 2KMJ+GN5MjDJSfFmupNTBYoW8Bz7kNx+u/AmaJbw=
-Message-ID: <837a8381-02bd-4882-bfa4-6d5c34f44119@ideasonboard.com>
-Date: Wed, 27 Aug 2025 12:05:04 +0300
+	 In-Reply-To:Content-Type; b=roDV7d6Ydj0C1d0YuXTMXxL/8YUbaaImZnTFjmI7cM3HZ4HH1/oDQ3uUlrv41zn7Jx6LjnMAt6SJg2QAagIpW6HYN2mGvgc+P7kKd8Oe8YfMc/ppe0AE3TGIY16kZzoAWSm6QTENJN99ml7MD1D2vfxPQB9o9qVdXCp4vU1rMfo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=3oHQmmcJ; arc=none smtp.client-ip=35.89.44.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
+Received: from eig-obgw-5005b.ext.cloudfilter.net ([10.0.29.189])
+	by cmsmtp with ESMTPS
+	id rAPquavjizNRxrC6eu4SbF; Wed, 27 Aug 2025 09:06:12 +0000
+Received: from box5620.bluehost.com ([162.241.219.59])
+	by cmsmtp with ESMTPS
+	id rC6euP5Bsb6dmrC6euU4l7; Wed, 27 Aug 2025 09:06:12 +0000
+X-Authority-Analysis: v=2.4 cv=bs9MBFai c=1 sm=1 tr=0 ts=68aeca84
+ a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
+ a=HaFmDPmJAAAA:8 a=nDJXrlvuemic_4Ofhm4A:9 a=QEXdDO2ut3YA:10
+ a=nmWuMzfKamIsx3l42hEX:22 a=Wh1V8bzkS9CpCxOpQUxp:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
+	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=HQQeENt7JHfYmG9hkaa7t21nor9vhOWUk1xWH/UFGhI=; b=3oHQmmcJxQMlHJpiYJpD2fQXXX
+	a+A4TYT3oibobr6/U5qmOWSNe0g33mtxlK/AOvbRza7BaO4VKzjboD4sfxwu3e1aNXaOvQPFgQpRh
+	rr7p2+q93TL5Z8Dmk5BHU9cfZIG6amCtE+KbfauVQp4pX3ZlaunzlU2nip8RCowxXvdrQaU/wQHBT
+	xhspZK2etvYkYIfdJ43NbamWrq+wfhtOogVq745f+sXG3NOs2Zoby2x90wOoaD5ZhOmxZZyScoyaN
+	uMUrs0EqKB86nAGnJgt1dH64yuJPtaIsImqtzFLwN8G8fIuZVBPE6RLDHHQu98k+8Q+2B8lwpwzTQ
+	T46YQjew==;
+Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:49356 helo=[10.0.1.116])
+	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.98.1)
+	(envelope-from <re@w6rz.net>)
+	id 1urC6d-00000004AGp-1oJj;
+	Wed, 27 Aug 2025 03:06:11 -0600
+Message-ID: <ca193a08-1667-498e-a4c6-c579002b004b@w6rz.net>
+Date: Wed, 27 Aug 2025 02:06:09 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,148 +68,63 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 3/3] drm/tidss: oldi: Add atomic_check hook for oldi
- bridge
-To: Swamil Jain <s-jain1@ti.com>
-Cc: h-shenoy@ti.com, devarsht@ti.com, vigneshr@ti.com, praneeth@ti.com,
- u-kumar1@ti.com, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, jyri.sarha@iki.fi,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
- airlied@gmail.com, simona@ffwll.ch, aradhya.bhatia@linux.dev
-References: <20250819192113.2420396-1-s-jain1@ti.com>
- <20250819192113.2420396-4-s-jain1@ti.com>
+Subject: Re: [PATCH 6.12 000/322] 6.12.44-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
+ achill@achill.org
+References: <20250826110915.169062587@linuxfoundation.org>
 Content-Language: en-US
-From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
- 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
-In-Reply-To: <20250819192113.2420396-4-s-jain1@ti.com>
-Content-Type: text/plain; charset=UTF-8
+From: Ron Economos <re@w6rz.net>
+In-Reply-To: <20250826110915.169062587@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - box5620.bluehost.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - w6rz.net
+X-BWhitelist: no
+X-Source-IP: 73.223.253.157
+X-Source-L: No
+X-Exim-ID: 1urC6d-00000004AGp-1oJj
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.116]) [73.223.253.157]:49356
+X-Source-Auth: re@w6rz.net
+X-Email-Count: 17
+X-Org: HG=bhshared;ORG=bluehost;
+X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfJgrsBQMXqk90yPFmZRIQVCAdihohciVVtd9cNwTzalAIp2/I2HHcRFJ6cT9q0NImh8622FnAIXfnrv5C5KFrHVMxsiVd6rURMQl96m7FhEvbyhD3sJP
+ p5MBSdlhk0OyT5YU7jaCpEYszmCkiOLkV1rEHdT2YmNMGl+rzyfTf+D/CQ+GeLo0uo7rSxJ1Yb7374UQ1/JsUyE/SEcDAahnhO0=
 
-Hi,
+On 8/26/25 04:06, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.12.44 release.
+> There are 322 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Thu, 28 Aug 2025 11:08:26 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.12.44-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.12.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-On 19/08/2025 22:21, Swamil Jain wrote:
-> From: Jayesh Choudhary <j-choudhary@ti.com>
-> 
-> Since OLDI consumes DSS VP clock directly as serial clock, certain
-> checks cannot be performed in tidss driver which should be checked
+Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
 
-I think this is a bit misleading. The OLDI input clock doesn't come from
-DSS, so I wouldn't call it "DSS VP clock". The point here is that the
-clock from the PLL is used by both OLDI and DSS, and in the current
-architecture the OLDI driver manages the clock, so the DSS driver can't
-really do checks, it just has to accept the clock rate. All checks need
-to be done in the OLDI driver.
-
-> in OLDI driver. Add check for mode clock and set max_successful_rate
-> and max_attempted_rate field for tidss in case the VP is OLDI.
-> 
-> Fixes: 7246e0929945 ("drm/tidss: Add OLDI bridge support")
-> Reviewed-by: Devarsh Thakkar <devarsht@ti.com>
-> Signed-off-by: Jayesh Choudhary <j-choudhary@ti.com>
-> Signed-off-by: Swamil Jain <s-jain1@ti.com>
-> ---
->  drivers/gpu/drm/tidss/tidss_oldi.c | 25 +++++++++++++++++++++++++
->  1 file changed, 25 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/tidss/tidss_oldi.c b/drivers/gpu/drm/tidss/tidss_oldi.c
-> index ef01ecc17a12..2ed2d0666ccb 100644
-> --- a/drivers/gpu/drm/tidss/tidss_oldi.c
-> +++ b/drivers/gpu/drm/tidss/tidss_oldi.c
-> @@ -309,6 +309,30 @@ static u32 *tidss_oldi_atomic_get_input_bus_fmts(struct drm_bridge *bridge,
->  	return input_fmts;
->  }
->  
-> +static int tidss_oldi_atomic_check(struct drm_bridge *bridge,
-> +				   struct drm_bridge_state *bridge_state,
-> +				   struct drm_crtc_state *crtc_state,
-> +				   struct drm_connector_state *conn_state)
-> +{
-> +	struct tidss_oldi *oldi = drm_bridge_to_tidss_oldi(bridge);
-> +	struct drm_display_mode *adjusted_mode;
-> +	unsigned long round_clock;
-> +
-> +	adjusted_mode = &crtc_state->adjusted_mode;
-> +
-> +	if (adjusted_mode->clock > oldi->tidss->max_successful_rate[oldi->parent_vp]) {
-
-You can change the above check to <=, and return 0 here early.
-
-> +		round_clock = clk_round_rate(oldi->serial, adjusted_mode->clock * 7 * 1000);
-> +
-> +		if (dispc_pclk_diff(adjusted_mode->clock * 7 * 1000, round_clock) > 5)
-> +			return -EINVAL;
-> +
-> +		oldi->tidss->max_successful_rate[oldi->parent_vp] = round_clock;
-> +		oldi->tidss->max_attempted_rate[oldi->parent_vp] = adjusted_mode->clock * 7 * 1000;
-> +	}
-
-This is not very nice. We should have a function in tidss that we call
-here, instead of poking into these tidss's variables directly.
-
-Actually... Do we even need to use the tidss->max_* fields? The above
-code is not checking the VP clock maximum, it's actually looking at the
-serial clock maximum. Currently those two clocks are linked, though, but
-would it make more sense to have the max_* fields here, in OLDI, for
-OLDI's serial clock?
-
- Tomi
-
-> +
-> +	return 0;
-> +}
-> +
->  static const struct drm_bridge_funcs tidss_oldi_bridge_funcs = {
->  	.attach	= tidss_oldi_bridge_attach,
->  	.atomic_pre_enable = tidss_oldi_atomic_pre_enable,
-> @@ -317,6 +341,7 @@ static const struct drm_bridge_funcs tidss_oldi_bridge_funcs = {
->  	.atomic_duplicate_state = drm_atomic_helper_bridge_duplicate_state,
->  	.atomic_destroy_state = drm_atomic_helper_bridge_destroy_state,
->  	.atomic_reset = drm_atomic_helper_bridge_reset,
-> +	.atomic_check = tidss_oldi_atomic_check,
->  };
->  
->  static int get_oldi_mode(struct device_node *oldi_tx, int *companion_instance)
+Tested-by: Ron Economos <re@w6rz.net>
 
 
