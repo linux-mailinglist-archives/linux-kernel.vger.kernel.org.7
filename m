@@ -1,192 +1,184 @@
-Return-Path: <linux-kernel+bounces-788626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FA00B3878B
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 18:12:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9B60B38793
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 18:13:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 923AE1732DD
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 16:12:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C970A1C20CF0
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 16:13:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 077F533EB16;
-	Wed, 27 Aug 2025 16:12:06 +0000 (UTC)
-Received: from leonov.paulk.fr (leonov.paulk.fr [185.233.101.22])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9F16350D70;
+	Wed, 27 Aug 2025 16:12:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="gOSN5fG7"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74E5F20C00E;
-	Wed, 27 Aug 2025 16:12:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.233.101.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02466350D42
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 16:12:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756311125; cv=none; b=Z4JNsqeo48/K9iI1Z/PhGXfSOBrZaM18BWqvzl/+GVMWVG7EAlbVH/m9TzMWCoGDtnidspOZGtIt8Rvx1BiIkL2kwbf26MOy8ekERkQyLm1atvmIPqhgC27zZAZj5+0wmz6tVd3AUfXgxmiEdrGYGO93c/arFAu8YiB8THx3DRU=
+	t=1756311146; cv=none; b=M1mXDp7X54V2ziloEtKW91kOml5LymnBpzc2pGUVakXPvXhZLGfGGjigytFBqDis3Vi+dgtBDmG1QBi5F3bKcTngPTu9tAAG3UH1c+Rm7847CmsEX/YCx40T2L5P91Vwnj6nFArZk7N5+T180CXiLjuMJFroKAPUP3jd8gTt1Rg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756311125; c=relaxed/simple;
-	bh=i9u4ueMDOCYd4PdWvQmBlID8NKYd3eHGKqj1Gu30cYc=;
+	s=arc-20240116; t=1756311146; c=relaxed/simple;
+	bh=0JxrVzNpw3Jf9BCkoaMJwaZLJ223Jv0LANCgaQFioWk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=asDBLpUevaW6xEtzpyaJr3VkkMKY9fhNsXPn8gLvoLNEwvdLu9Pa9zs2UuNquNy3UTtmdItIdTeh6dPhBL0hFriAm8/HsvBoLXCLCCJPqtGlj9thpLW2dVO2CWCwpaAkwZHJxPwhBA3r7JKRljH52AuYBq5DQVqMkZep0I1ETZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sys-base.io; spf=pass smtp.mailfrom=sys-base.io; arc=none smtp.client-ip=185.233.101.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sys-base.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sys-base.io
-Received: from laika.paulk.fr (12.234.24.109.rev.sfr.net [109.24.234.12])
-	by leonov.paulk.fr (Postfix) with ESMTPS id 110751F00062;
-	Wed, 27 Aug 2025 16:11:55 +0000 (UTC)
-Received: by laika.paulk.fr (Postfix, from userid 65534)
-	id DB3ADB020DD; Wed, 27 Aug 2025 16:11:53 +0000 (UTC)
-X-Spam-Level: 
-Received: from shepard (unknown [192.168.1.1])
-	by laika.paulk.fr (Postfix) with ESMTPSA id AB57FB020D6;
-	Wed, 27 Aug 2025 16:11:52 +0000 (UTC)
-Date: Wed, 27 Aug 2025 18:11:50 +0200
-From: Paul Kocialkowski <paulk@sys-base.io>
-To: Nicolas Dufresne <nicolas.dufresne@collabora.com>
-Cc: linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>
-Subject: Re: [PATCH] media: verisilicon: Explicitly disable all encoder
- ioctls for decoders
-Message-ID: <aK8uRrlbMWZsA88Q@shepard>
-References: <20250826190416.1287089-1-paulk@sys-base.io>
- <ee7416c9db2128ab1a8c1bbdc7cd231da21e5b53.camel@collabora.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=uZWPQMHjF6UCubAGKAbLadk4NxrMKGMRV+VWzVphYbSpAB79KBEM5A2J7l/UFWmWOAykXB5P5QEQ5gisBaoFiSqOzOeeHJQ6s1WdTITCMEr8jjRwQbxyt2Amr5AWnYQimmOM+TD3+nBsyGNHi4UHKe+RpKolQImHeOl9AnCE1ZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=gOSN5fG7; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id D03B340E00DD;
+	Wed, 27 Aug 2025 16:12:20 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 8LHbDrb2B3K0; Wed, 27 Aug 2025 16:12:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1756311136; bh=5RQhtA81tuTodT1U0o77ysAnmlDypdy9Tu9wlb6GeaI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gOSN5fG7uYnIKo19Lry8DMyc+VssloRLg6Jie3G05yMz3S5KPn+eJ+lT3LDcl0odk
+	 LSx95c4lw8UPIaB0LBa+q/c2gQtMUdUmALmpaUROWESh9GUeHrZX6X2yrF6CF4SP9O
+	 hsAO5nETHBPlng1v0nX1hw4AMaWp6N6JvfHKG5ExCc6UF1iwEHi1tHDK3nz48uYwFq
+	 02pawKLXLJTIgktYbpO2TejZgTWfH8yUImiS4VLOKtk53Yvv7cyhW8S2sI2twxUHU1
+	 49/0dbrZXHj5Y0bUnMtFz7YGPfwRUeT3Mqj6BHO/id4M2svRgnWg404TIn/C7RYaix
+	 L3xy8yIgJmRlqgZktnBvvXGefijDAWCB7WoaPvywT0e7od40/z8w4YsN3PZDtP0Cey
+	 EV4/PPMfsQHQeopy8ed7f+ns8RaISBZEDGGyu2vGD83CXeMb5pWHKIknaPVxSP1t5s
+	 kfLjehgiyZXNmVX9hahdsKeTpcRLneb3Ijic72tniqQIWyqtGLRlURCOXOKvOSpSFW
+	 0wsKR9sa24X6wncgBljm9MYGtElUxVg9I5E9Zf6GiuPHTkmoUZh4/htYsEtSI6HE+O
+	 888kAgBSYc1WVMIuore4XokYrflMgLSgUps5uCYik5tqs8MxTI3JWX83/yrekfyx9V
+	 KFLPmfwVhbzZUj7icYUg/O+U=
+Received: from zn.tnic (pd953092e.dip0.t-ipconnect.de [217.83.9.46])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 4C7FF40E00DA;
+	Wed, 27 Aug 2025 16:12:06 +0000 (UTC)
+Date: Wed, 27 Aug 2025 18:11:59 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: "Kaplan, David" <David.Kaplan@amd.com>
+Cc: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"x86@kernel.org" <x86@kernel.org>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 4/5] x86/bugs: Add attack vector controls for SSB
+Message-ID: <20250827161159.GKaK8uTy8aW6Xl7UCr@fat_crate.local>
+References: <20250819192200.2003074-1-david.kaplan@amd.com>
+ <20250819192200.2003074-5-david.kaplan@amd.com>
+ <7vo33zwvn2wz74fg7wuflrr2gnhlkn7hwaziuzkk7brrp2morh@ltbtredcwb5x>
+ <20250827102754.GHaK7dqivnNnQsWGeS@fat_crate.local>
+ <20250827110403.GFaK7mIxwsQ9IF7ML8@fat_crate.local>
+ <LV3PR12MB92655023C50A92BE30D7A8049438A@LV3PR12MB9265.namprd12.prod.outlook.com>
+ <20250827142225.GIaK8UoYo-rnR9T2OD@fat_crate.local>
+ <LV3PR12MB9265934929BC29E635C39EDD9438A@LV3PR12MB9265.namprd12.prod.outlook.com>
+ <20250827153358.GJaK8lZm3cggYDbw2C@fat_crate.local>
+ <LV3PR12MB9265ABD1B81D759A618A20029438A@LV3PR12MB9265.namprd12.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="C71n5l9ay7s/mv82"
-Content-Disposition: inline
-In-Reply-To: <ee7416c9db2128ab1a8c1bbdc7cd231da21e5b53.camel@collabora.com>
-
-
---C71n5l9ay7s/mv82
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <LV3PR12MB9265ABD1B81D759A618A20029438A@LV3PR12MB9265.namprd12.prod.outlook.com>
 
-Hi Nicolas,
+On Wed, Aug 27, 2025 at 03:47:10PM +0000, Kaplan, David wrote:
+> After reviewing this further, this change should be removed.  The AUTO mitigation is intended to say 'choose based on attack vector', but with this patch you're not looking at ssb_mode to decide to do that.  You're looking at the ssb mitigation cmd (which already defaults to SPEC_STORE_BYPASS_CMD_AUTO).  Therefore there is no need for a SPEC_STORE_BYPASS_AUTO setting of ssb_mode.
+> 
+> (The clean-up patch removes ssb_mitigation_cmd entirely, so it needs an AUTO setting of ssb_mitigation)
 
-On Wed 27 Aug 25, 10:30, Nicolas Dufresne wrote:
-> Hi Paul,
->=20
-> Le mardi 26 ao=C3=BBt 2025 =C3=A0 21:04 +0200, Paul Kocialkowski a =C3=A9=
-crit=C2=A0:
-> > Call the dedicated v4l2_disable_ioctl helper instead of manually
-> > checking whether the current context is an encoder for the selection
-> > ioctls.
-> >=20
-> > Signed-off-by: Paul Kocialkowski <paulk@sys-base.io>
-> > ---
-> > =C2=A0drivers/media/platform/verisilicon/hantro_drv.c=C2=A0 | 2 ++
-> > =C2=A0drivers/media/platform/verisilicon/hantro_v4l2.c | 6 ++----
-> > =C2=A02 files changed, 4 insertions(+), 4 deletions(-)
-> >=20
-> > diff --git a/drivers/media/platform/verisilicon/hantro_drv.c
-> > b/drivers/media/platform/verisilicon/hantro_drv.c
-> > index 4cc9d00fd293..6fb28a6293e7 100644
-> > --- a/drivers/media/platform/verisilicon/hantro_drv.c
-> > +++ b/drivers/media/platform/verisilicon/hantro_drv.c
-> > @@ -916,6 +916,8 @@ static int hantro_add_func(struct hantro_dev *vpu,
-> > unsigned int funcid)
-> > =C2=A0		vpu->decoder =3D func;
-> > =C2=A0		v4l2_disable_ioctl(vfd, VIDIOC_TRY_ENCODER_CMD);
-> > =C2=A0		v4l2_disable_ioctl(vfd, VIDIOC_ENCODER_CMD);
-> > +		v4l2_disable_ioctl(vfd, VIDIOC_G_SELECTION);
-> > +		v4l2_disable_ioctl(vfd, VIDIOC_S_SELECTION);
->=20
-> Disabling this IOCTL for JPEG is fine, but for VP8, H.264, HEVC, VP9 and =
-AV1, it
-> is pretty much mandatory. Otherwise your stream will advertise the padded
-> dimentions and there would be no way to tell it that what is the cropping=
- window
-> for bitstream generation purpose.
+...
 
-Maybe the lack of context around the patch doesn't make it clear, but this =
-is
-to disable the ioctls for decoders (not encoders), which don't need to use =
-the
-selection API. This keeps the ioctls enabled and available for all encoders.
+> But more importantly, please remove this.  That's because in the current patch, if the user says 'nospec_store_bypass_disable' then the ssb_select_mitigation() function does not change ssb_mode.  So it needs to default to NONE.
 
-> Considering you are looking forward adding H.264 encoding, do you really =
-want
-> to apply this fix ?
+Yah, agreed with both. Here's a minimal thing.
 
-I am well aware that this is required to setup the crop in the coded bitstr=
-eam
-and I am definitely using it in my encoding work :)
+---
+From: David Kaplan <david.kaplan@amd.com>
+Date: Tue, 19 Aug 2025 14:21:59 -0500
+Subject: [PATCH] x86/bugs: Add attack vector controls for SSB
 
-Cheers,
+Attack vector controls for SSB were missed in the initial attack vector series.
+The default mitigation for SSB requires user-space opt-in so it is only
+relevant for user->user attacks.  Add an AUTO mitigation for SSB and use this
+attack vector control to select the SSB mitigation.
 
-Paul
+Fixes: 2d31d2874663 ("x86/bugs: Define attack vectors relevant for each bug")
+Signed-off-by: David Kaplan <david.kaplan@amd.com>
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+Link: https://lore.kernel.org/20250819192200.2003074-5-david.kaplan@amd.com
+---
+ .../admin-guide/hw-vuln/attack_vector_controls.rst       | 5 +----
+ arch/x86/kernel/cpu/bugs.c                               | 9 +++++++++
+ 2 files changed, 10 insertions(+), 4 deletions(-)
 
->=20
-> Nicolas
->=20
-> > =C2=A0	}
-> > =C2=A0
-> > =C2=A0	video_set_drvdata(vfd, vpu);
-> > diff --git a/drivers/media/platform/verisilicon/hantro_v4l2.c
-> > b/drivers/media/platform/verisilicon/hantro_v4l2.c
-> > index 6bcd892e7bb4..fcf3bd9bcda2 100644
-> > --- a/drivers/media/platform/verisilicon/hantro_v4l2.c
-> > +++ b/drivers/media/platform/verisilicon/hantro_v4l2.c
-> > @@ -663,8 +663,7 @@ static int vidioc_g_selection(struct file *file, vo=
-id
-> > *priv,
-> > =C2=A0	struct hantro_ctx *ctx =3D file_to_ctx(file);
-> > =C2=A0
-> > =C2=A0	/* Crop only supported on source. */
-> > -	if (!ctx->is_encoder ||
-> > -	=C2=A0=C2=A0=C2=A0 sel->type !=3D V4L2_BUF_TYPE_VIDEO_OUTPUT)
-> > +	if (sel->type !=3D V4L2_BUF_TYPE_VIDEO_OUTPUT)
-> > =C2=A0		return -EINVAL;
-> > =C2=A0
-> > =C2=A0	switch (sel->target) {
-> > @@ -696,8 +695,7 @@ static int vidioc_s_selection(struct file *file, vo=
-id
-> > *priv,
-> > =C2=A0	struct vb2_queue *vq;
-> > =C2=A0
-> > =C2=A0	/* Crop only supported on source. */
-> > -	if (!ctx->is_encoder ||
-> > -	=C2=A0=C2=A0=C2=A0 sel->type !=3D V4L2_BUF_TYPE_VIDEO_OUTPUT)
-> > +	if (sel->type !=3D V4L2_BUF_TYPE_VIDEO_OUTPUT)
-> > =C2=A0		return -EINVAL;
-> > =C2=A0
-> > =C2=A0	/* Change not allowed if the queue is streaming. */
+diff --git a/Documentation/admin-guide/hw-vuln/attack_vector_controls.rst b/Documentation/admin-guide/hw-vuln/attack_vector_controls.rst
+index 6dd0800146f6..5964901d66e3 100644
+--- a/Documentation/admin-guide/hw-vuln/attack_vector_controls.rst
++++ b/Documentation/admin-guide/hw-vuln/attack_vector_controls.rst
+@@ -215,7 +215,7 @@ Spectre_v2            X                           X
+ Spectre_v2_user                      X                           X            *       (Note 1)
+ SRBDS                 X              X            X              X
+ SRSO                  X              X            X              X
+-SSB                                                                                   (Note 4)
++SSB                                  X
+ TAA                   X              X            X              X            *       (Note 2)
+ TSA                   X              X            X              X
+ =============== ============== ============ ============= ============== ============ ========
+@@ -229,9 +229,6 @@ Notes:
+    3 --  Disables SMT if cross-thread mitigations are fully enabled, the CPU is
+    vulnerable, and STIBP is not supported
+ 
+-   4 --  Speculative store bypass is always enabled by default (no kernel
+-   mitigation applied) unless overridden with spec_store_bypass_disable option
+-
+ When an attack-vector is disabled, all mitigations for the vulnerabilities
+ listed in the above table are disabled, unless mitigation is required for a
+ different enabled attack-vector or a mitigation is explicitly selected via a
+diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+index 49ef1b832c1a..af838b8d845c 100644
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -416,6 +416,10 @@ static bool __init should_mitigate_vuln(unsigned int bug)
+ 		       cpu_attack_vector_mitigated(CPU_MITIGATE_USER_USER) ||
+ 		       cpu_attack_vector_mitigated(CPU_MITIGATE_GUEST_GUEST) ||
+ 		       (smt_mitigations != SMT_MITIGATIONS_OFF);
++
++	case X86_BUG_SPEC_STORE_BYPASS:
++		return cpu_attack_vector_mitigated(CPU_MITIGATE_USER_USER);
++
+ 	default:
+ 		WARN(1, "Unknown bug %x\n", bug);
+ 		return false;
+@@ -2710,6 +2714,11 @@ static void __init ssb_select_mitigation(void)
+ 		ssb_mode = SPEC_STORE_BYPASS_DISABLE;
+ 		break;
+ 	case SPEC_STORE_BYPASS_CMD_AUTO:
++		if (should_mitigate_vuln(X86_BUG_SPEC_STORE_BYPASS))
++			ssb_mode = SPEC_STORE_BYPASS_PRCTL;
++		else
++			ssb_mode = SPEC_STORE_BYPASS_NONE;
++		break;
+ 	case SPEC_STORE_BYPASS_CMD_PRCTL:
+ 		ssb_mode = SPEC_STORE_BYPASS_PRCTL;
+ 		break;
+-- 
+2.51.0
 
+-- 
+Regards/Gruss,
+    Boris.
 
-
---=20
-Paul Kocialkowski,
-
-Independent contractor - sys-base - https://www.sys-base.io/
-Free software developer - https://www.paulk.fr/
-
-Expert in multimedia, graphics and embedded hardware support with Linux.
-
---C71n5l9ay7s/mv82
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEEAbcMXZQMtj1fphLChP3B6o/ulQwFAmivLkYACgkQhP3B6o/u
-lQxk1A/9ELY5RTuo/mlmxWE7Lq+eC0ax4KNowasbC3RE5o9RQ18n2yDBD1TCeXlv
-4ZAQVTjE/oBy4/tQ43FH7vt3xgMLjvZ09+XUefXvT00ITtMekW4POd+oqeEaNyWi
-jfr128LANaLTRODiDIeuufVOK9KTlcIpR7aZjA/FXgq8iOtibWzQxWBQV1JiWwTS
-fwiTRfkSYAxyIIHRBYbLh/lhorl34uDp44i4vZdmg7Dy77RVzn7zwz4al5Gsut7w
-WGWgsUPX1UDMvJ6jXEHw99JRAhR168M1VSo8zAD3iC2I8hxH7HSHaY5zZXraolEL
-8pBysbXDWNV8AjxcyIDdykgnlLqrY6fhctQA7x6cOF0ls1Z/tO7yc8YckjK/Scnw
-/cBPAxbalXEGeB+8AEIFiJAe6WE/ciyq28cm75xadkkIc9iBLw7KJD1aDVF7g9kC
-yVV0LHoeNlVBR82MsxFAzIRyPvSnjqF92gBLmFqU5tgygxMtLTse44Hvq3drlc3M
-/vcZqfdRMZFkrkcw5D1HPxirPPuF+nv2XPlF/PBOTSxexg73PpZLfzJYD5MQGNHD
-YIlhOOpmBEJLhD5kQswvACua6Av3wbeO2/nGFk9ZZuF2BHYGsRKL2gxOmqe07beG
-1WRv8r+M0hHzKYC/MnjZWgPMWnCp0J/H8WnrLktVIrlv2L/zNyM=
-=87s1
------END PGP SIGNATURE-----
-
---C71n5l9ay7s/mv82--
+https://people.kernel.org/tglx/notes-about-netiquette
 
