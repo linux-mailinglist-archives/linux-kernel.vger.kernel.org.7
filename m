@@ -1,167 +1,125 @@
-Return-Path: <linux-kernel+bounces-787834-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787842-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00E94B37C07
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 09:41:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CFB8B37C19
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 09:43:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB2EB188E773
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 07:41:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74C0F1BA3150
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 07:42:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99835319857;
-	Wed, 27 Aug 2025 07:40:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCB743203BF;
+	Wed, 27 Aug 2025 07:41:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b="MIoeDUY0"
-Received: from mail.thorsis.com (mail.thorsis.com [217.92.40.78])
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="0MHuf6jQ"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF064317709;
-	Wed, 27 Aug 2025 07:40:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.92.40.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E661D31A55C;
+	Wed, 27 Aug 2025 07:41:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756280436; cv=none; b=eqOC3j1Ggky7bgzIlNWryY6fdIwadmfXbqyL+2ps8T/4Vpbof88DwuLxKcMcm7TDTEULfvznBTm8NcnR2qWFkhVg4806gSHyxGqZZTOVDYQjLKd3nQ7HdQSseG9sMx/MUrUz88+AJf3T0a6cHN1QJk+ttRN2RpCaB4qxyvghZ2k=
+	t=1756280466; cv=none; b=Tia+tvUvagSfzFNHMXemIXtXOZy8Mm71f1FtDOYp1eEylEoDsKUdzWpnpdJUU8PxA03XHDru8eNFPkuy/cJKaJU4S9yjj0XSXBVznBPCqJH1AniyqWMr6smTEf5qAphhOmahSJ5zzbVKi1kGSo9/46xpx+2sFC5mIknFHdxo4WI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756280436; c=relaxed/simple;
-	bh=rqPWaLDRg3bp/PAzP6w8uq+EP8F3u9Ob0SvOy41xlbE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O8oeZyhGhWxNsjcPNlqsvZOchtV/dtDVpvClTZVCV1BFQxW6/CP1oNjJLVPg+pCdhiNHyXrQRGSw2X97FlkrZKITFGIX7SzDYNpkZUc/Uy2XBqrqwpzhodUybsMwPTZGKk3neW+vOJrQZrix4PVT8geQO2lNHZgP+UBWZl28zVI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com; spf=pass smtp.mailfrom=thorsis.com; dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b=MIoeDUY0; arc=none smtp.client-ip=217.92.40.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thorsis.com
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 72CED1486D83;
-	Wed, 27 Aug 2025 09:40:23 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=thorsis.com; s=dkim;
-	t=1756280425; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=qMxDqcO10CQjtqMyM0nhgxsy6XVaXNzX5ZNKBhwX5EE=;
-	b=MIoeDUY0bHvT9/EGh+S8MX5ao+f4UgDTS15BKzwXl/CJi0KT0eUVTF55jYcJ4Bh2ONggfM
-	ODcAIKfvYC/BlwBwywHeb4OKOKNcnzAziBkWJBu+nSBq4LA3Ba3XPv6itIupAmbc2ndOEI
-	bL9eANLD5NJ5LHOHhDQ8cXbcutGI3hjmbX/fUaVgZjifWE9qo7D5LqmOjHxzsO0DguPnYy
-	Ga83w5aiTOqVYF9qW4sc72gWPX4tj99WBPuttYp7iZoGofkPzMvH2sUM+wHZQp5YhWUhgo
-	5N30Jf/kA0RrOUguoUW08kydVEG+Sv8HctxboELf+WFzJEqIQoNCGaY/b5ovNQ==
-Date: Wed, 27 Aug 2025 09:40:17 +0200
-From: Alexander Dahl <ada@thorsis.com>
-To: Julien Massot <julien.massot@collabora.com>
-Cc: kernel@collabora.com, Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>,
-	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] arm64: dts: mediatek: mt8395-nio-12l: add support
- for blue and red LEDs
-Message-ID: <20250827-psychic-exclusive-be9758124693@thorsis.com>
-Mail-Followup-To: Julien Massot <julien.massot@collabora.com>,
-	kernel@collabora.com, Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>,
-	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org
-References: <20250826-radxa-nio-12-l-gpio-v2-0-7f18fa3fbfc8@collabora.com>
- <20250826-radxa-nio-12-l-gpio-v2-3-7f18fa3fbfc8@collabora.com>
+	s=arc-20240116; t=1756280466; c=relaxed/simple;
+	bh=bsC6LX5KLBpHBBCk3mbVzt+mSuWolXNYjnnfwoyQUZ8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=FahoPm/159qPzF0TIVtFJSQG8u09EbD8CpoTtTEYr7Nt0nax0yqozQ6pRes4AoTW38BLRD3vi3F7YDEelIyEsUVbD+G/iy/dviHeW/UekRIffRseorpVlqUxmo+v2CzT+fYRNgF4GRjT5Ikz5405zYj8FctNyrUtK7uJzqiMD5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=0MHuf6jQ; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
+	bh=bsC6LX5KLBpHBBCk3mbVzt+mSuWolXNYjnnfwoyQUZ8=; b=0MHuf6jQlqwSWrbC6GXaYnywCB
+	f6Zup2bXNYDbFkL2YGWPczXsD5ZtqbJKKh0BhmRnw8SOJxnDAKiA2qCo1fg28YOdcUHEBB7kL08nU
+	hVQWQlysQQNnGDJ8YZnYUSjiiMmSpgFVkdhrfk/3L/UtTyJM4X2QUkPkXVcvytuy+v234X44xG2Nn
+	NFKzhD3MvS5KbiUhwEhHLQ6OKa9ZmQjAcZjGMpmGhqdE1HQqXl9pJWGUIuFIpPAnW4GpdQQCgG9u5
+	6xUVgQBKXv4z5fmLBcNQPuTq4ya+FmLZZ9hDe4VRhOsQ4J8wNxkxWPXh8BmTybsapbu6MV4QTc04R
+	IIJ4G3rA==;
+Received: from [213.244.170.152] (helo=phil.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1urAli-0001Gx-L4; Wed, 27 Aug 2025 09:40:30 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: Yury Norov <yury.norov@gmail.com>,
+ Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+ Jaehoon Chung <jh80.chung@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>,
+ Shreeya Patel <shreeya.patel@collabora.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Sandy Huang <hjc@rock-chips.com>,
+ Andy Yan <andy.yan@rock-chips.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
+ Nicolas Frattaroli <frattaroli.nicolas@gmail.com>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Shawn Lin <shawn.lin@rock-chips.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ Krzysztof =?UTF-8?B?V2lsY3p5xYRza2k=?= <kwilczynski@kernel.org>,
+ Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>,
+ Bjorn Helgaas <bhelgaas@google.com>, Chanwoo Choi <cw00.choi@samsung.com>,
+ MyungJoo Ham <myungjoo.ham@samsung.com>,
+ Kyungmin Park <kyungmin.park@samsung.com>, Qin Jian <qinjian@cqplus1.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+ Nathan Chancellor <nathan@kernel.org>,
+ Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+ Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
+ Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Cc: kernel@collabora.com, linux-kernel@vger.kernel.org,
+ linux-mmc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-media@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-phy@lists.infradead.org,
+ linux-sound@vger.kernel.org, netdev@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com, linux-pci@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-clk@vger.kernel.org, llvm@lists.linux.dev,
+ Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Subject:
+ Re: [PATCH v3 15/20] net: stmmac: dwmac-rk: switch to FIELD_PREP_WM16 macro
+Date: Wed, 27 Aug 2025 09:40:28 +0200
+Message-ID: <12530943.rMLUfLXkoz@phil>
+In-Reply-To: <20250825-byeword-update-v3-15-947b841cdb29@collabora.com>
+References:
+ <20250825-byeword-update-v3-0-947b841cdb29@collabora.com>
+ <20250825-byeword-update-v3-15-947b841cdb29@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250826-radxa-nio-12-l-gpio-v2-3-7f18fa3fbfc8@collabora.com>
-User-Agent: Mutt/2.2.12 (2023-09-09)
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-Hello Julien,
+Am Montag, 25. August 2025, 10:28:35 Mitteleurop=C3=A4ische Sommerzeit schr=
+ieb Nicolas Frattaroli:
+> The era of hand-rolled HIWORD_UPDATE macros is over, at least for those
+> drivers that use constant masks.
+>=20
+> Like many other Rockchip drivers, dwmac-rk has its own HIWORD_UPDATE
+> macro. Its semantics allow us to redefine it as a wrapper to the shared
+> hw_bitfield.h FIELD_PREP_WM16 macros though.
+>=20
+> Replace the implementation of this driver's very own HIWORD_UPDATE macro
+> with an instance of FIELD_PREP_WM16 from hw_bitfield.h. This keeps the
+> diff easily reviewable, while giving us more compile-time error
+> checking.
+>=20
+> The related GRF_BIT macro is left alone for now; any attempt to rework
+> the code to not use its own solution here would likely end up harder to
+> review and less pretty for the time being.
+>=20
+> Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
 
-Am Tue, Aug 26, 2025 at 04:01:54PM +0200 schrieb Julien Massot:
-> The Radxa NIO 12L board has an RGB LED, of which only red and blue
-> are controllable.
-> 
-> Red and blue LEDs: no need to choose, both are enabled.
-> 
-> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-> Signed-off-by: Julien Massot <julien.massot@collabora.com>
-> ---
->  .../boot/dts/mediatek/mt8395-radxa-nio-12l.dts     | 31 ++++++++++++++++++++++
->  1 file changed, 31 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/mediatek/mt8395-radxa-nio-12l.dts b/arch/arm64/boot/dts/mediatek/mt8395-radxa-nio-12l.dts
-> index fd596e2298285361ad7c2fb828feec598d75a73e..12288ad4d2932b7f78c96c0efe366a046721f919 100644
-> --- a/arch/arm64/boot/dts/mediatek/mt8395-radxa-nio-12l.dts
-> +++ b/arch/arm64/boot/dts/mediatek/mt8395-radxa-nio-12l.dts
-> @@ -10,6 +10,7 @@
->  #include <dt-bindings/gpio/gpio.h>
->  #include <dt-bindings/input/input.h>
->  #include <dt-bindings/interrupt-controller/irq.h>
-> +#include <dt-bindings/leds/common.h>
->  #include <dt-bindings/pinctrl/mt8195-pinfunc.h>
->  #include <dt-bindings/regulator/mediatek,mt6360-regulator.h>
->  #include <dt-bindings/spmi/spmi.h>
-> @@ -73,6 +74,28 @@ button-volume-up {
->  		};
->  	};
->  
-> +	gpio-leds {
-> +		compatible = "gpio-leds";
-> +		pinctrl-0 = <&gpio_leds_pins>;
-> +		pinctrl-names = "default";
-> +
-> +		/*
-> +		 * This board has a RGB LED, of which only R and B
-> +		 * are controllable.
-> +		 */
-> +		led-0 {
-> +			label = "rgb-blue";
-> +			color = <LED_COLOR_ID_BLUE>;
-> +			gpios = <&pio 6 GPIO_ACTIVE_HIGH>;
-> +		};
-> +
-> +		led-1 {
-> +			label = "rgb-red";
-> +			color = <LED_COLOR_ID_RED>;
-> +			gpios = <&pio 7 GPIO_ACTIVE_HIGH>;
-> +		};
+Acked-by: Heiko Stuebner <heiko@sntech.de>
 
-The label property is deprecated, and if I'm not mistaken not
-recommended for new boards.  Do you have a reason to set it?
-If so, it might be worth adding in the commit message.
 
-Greets
-Alex
-
-> +	};
-> +
->  	wifi_vreg: regulator-wifi-3v3-en {
->  		compatible = "regulator-fixed";
->  		regulator-name = "wifi_3v3_en";
-> @@ -647,6 +670,14 @@ pins {
->  		};
->  	};
->  
-> +	gpio_leds_pins: gpio-leds-pins {
-> +		pins {
-> +			pinmux = <PINMUX_GPIO6__FUNC_GPIO6>,
-> +				 <PINMUX_GPIO7__FUNC_GPIO7>;
-> +			output-low;
-> +		};
-> +	};
-> +
->  	i2c2_pins: i2c2-pins {
->  		pins-bus {
->  			pinmux = <PINMUX_GPIO12__FUNC_SDA2>,
-> 
-> -- 
-> 2.50.1
-> 
-> 
 
