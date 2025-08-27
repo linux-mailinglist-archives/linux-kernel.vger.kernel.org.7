@@ -1,422 +1,608 @@
-Return-Path: <linux-kernel+bounces-788294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E713B3827A
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 14:35:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3428FB38275
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 14:35:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4B4097A8C4D
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 12:33:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA19917AB70
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 12:35:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12F8A32C31D;
-	Wed, 27 Aug 2025 12:35:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8E0D31A54D;
+	Wed, 27 Aug 2025 12:34:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jIJv1N1Q"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="kcT7r4cX"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBF1E3176E8;
-	Wed, 27 Aug 2025 12:35:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7E14303CB2
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 12:34:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756298108; cv=none; b=dhwjVOXcNYkOQZyPjlrLYZBv1BKRlX03S5NYN2JYuT8ZzAkZbHFPV3gOMP7hMgtx2VhS1e24fCpsGnXfmpfgi9xJGvtbC8adHXCyO1b9xlBP7QUsHmFyaxyaq7ymTTXa9BhlhdayWpfBx2swvadKo8gKF2ZrOFGeryHcTOZztRc=
+	t=1756298094; cv=none; b=JS+kDDOKf9OEQejmu8j9DjaFFyziFKoHInUP3vIw9X0olc3QkrT7H9bzKUGhklikG0GX2XDt/eYroPjbCIK0WN2/kB6ynIssvnPhT2FQWQbtYBCF6EH+sK0YfR5YPTx9DdMyUM7MVqaU8wifaihIwAa2lF857WQEL0GiEJmvQ1c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756298108; c=relaxed/simple;
-	bh=I9S8dhFfwhYVV9LJP5nrwF2h1OWEBnaPPUJukMGPR6E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WUmQ6M5z6pBmzPWvV0gM90DcfKoIcvgyE125u5qr6dn+UVutPwWuUzSDI3FTi+ErhKxyWI2LuLYTkghhllzYAItK4DlCB1aM5uEcB2ZcemAHZvu0ckF0umAKhAXzGblqYsIdgrgaa+AayaXbpt007UmG1EXgO/XMRGmjjOPiTvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jIJv1N1Q; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-6188b6f7f15so8035811a12.2;
-        Wed, 27 Aug 2025 05:35:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756298104; x=1756902904; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SHFgmAZOGjeLkGcvGE0FBaqwDaI12623dASzVp4BTPM=;
-        b=jIJv1N1QEi0qc8bJIGsymQ0YxC5M+38g7W/tkArm8bFQ/+Fwrt8IuLBba+KscvTgkJ
-         GE3uFgUXlPSzODQfwG8wH1Tu1AcQ+H3KOeIJPSD5reoaXkfkSKGTgzoUKCtt/Orxk9/i
-         A6i6HR85FBKJgFnjRPmeMz8awYvxbHgIIS3XMlzk8MvmoivqhNUkyLWEZY8jbdN1NgCQ
-         IDeMdvUco5Z7V5I/3crZDnRo4pVsH63QcrA3ND0ECUuyzNXyn5sBfWv+RiriRyMQ926j
-         0oyBUOBXzeWXwFVGNCNoT+K0kQf2XyNiVVudg/+5yuqlfjRUJLcjzRfk9l0JIWjVohAI
-         4lKA==
+	s=arc-20240116; t=1756298094; c=relaxed/simple;
+	bh=fORM78J2LEjwiHM/5Za/ZQ20C9VI21N+MlEcTEgcsag=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QyKkYKmznN4WN6MyjhEH2JKLhVGwzJz5htYkaNj52FdwW1sGMnz6DSlpB/qxldSqcwQjZzL78ClVBAp8MMgGtvwkBwIGYY4ZLRlQ+ULxh94gxxOGFvdKq9g9UBNA9z/PFodl6/fEMSs3WJlD4awBjYBfRTZtDdGkclNM9pID65E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=kcT7r4cX; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57R6kFAn031773
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 12:34:52 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	moILJAXmTfUtnXXDqDg1ejK2v0bi2+Kmg3gwvaT5IAU=; b=kcT7r4cX6jMCokX6
+	iwDB+WNXSFWGceMUF1/OnZTS9fyIm6qKJE0Lmy/6kF50JJs1T7U7ogDkKTwVlxwD
+	wnlq727cX+POJkQ0tCNjYo42Yq+ndV6ssHAJ856DW+EeUZ7MrCas/YiDta7CEa5H
+	E8dIu+g1xAo35AKZFznsCuJFnuM4UOEmKZNIOkYsUU7OfyB9nPW+s1oozoUSF21d
+	9Lm9RcE3E/p529g+bdRJP9XQoGCk+yKBO+1LbuZ4awAs1SK8n3GkI8iAalV+FVsU
+	DSLsHM8kWmg5rJHgsUqhy0kZ7EppLCSGyL1MpP3tEi8pK4yhVyK/0wHammkjKleq
+	ltdN9A==
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48q5xpvtfx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 12:34:51 +0000 (GMT)
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-2489bcfa938so1439985ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 05:34:51 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756298104; x=1756902904;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SHFgmAZOGjeLkGcvGE0FBaqwDaI12623dASzVp4BTPM=;
-        b=dCuZ1sqejPymRLoqG8ZhagPdIryERI3amDnCSlzojkYMojfKkspYbM4IjZbk2eCJPJ
-         XtCkMrOdIqFcGcBNm3cEItHQ0xk6wxdB9DX0JTLPMAlrancxhzCMoIQf+xv11XXgicgu
-         2OnpyIOQ4AnBWME+Yb9UIrVj3LcTEExr4iEmWAx5sZoQtmJY12GYAQCAkNbQv7ksjXZj
-         Pa4QvDUnRX6IyWTldVbpjlo3cKq3YMFh3sO0wXW/tga7SxnopfShIHqac0hqfHzS5Qds
-         w45z/O8Poj5Hx+1VIdozY5x7iDP3wHlXFO3Da8oYaCWutvzqBrihYo45GZPLn0LsHCYQ
-         vsKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW1A0x8bbAxcd/NUmzRhsQncuB10FLZiKNNMBuN/62VfDXkgpk52/dUMcJW8gZB2NO4QggMcxaI/MAoazD24Hcf4gM=@vger.kernel.org, AJvYcCWJMOE8gg27nYuF8i8eUoEgYmb9VM/h1kI79hLGx6FVT1J82TqbX2/zaO4vzIev/U+jjgBT/2XgbUManFTi@vger.kernel.org, AJvYcCXE6k6w4cbU7+Za2wv/h9ssj/Tse39FoLNWPaS6AmIId6aAeOPf73fYHVW6RmsYaQn6cDMo5avPRkJK@vger.kernel.org, AJvYcCXavny0qDw4JUzhrNctYs7T7svK99B+yqk8tXhaApVCFfe8AjBlbgBXrMajG1Q/oJITAQFLod60WqhQ@vger.kernel.org
-X-Gm-Message-State: AOJu0YykZu2esd+OfxhPACrR/kLprnZgnlgv5BFF+7PsdYO6rz9sw/2+
-	c91ezVmwT20Xyqa40oVbK9AunAzikaDE6csdIANiSwyrAJVdSuzAT98FZ3pOHKzz2vZzf0Gimrx
-	8E9WO200IG4VHadRvXOQExQ13m3M945o=
-X-Gm-Gg: ASbGnct81sYg8wY+hyt6eHkeawnX/+D0Qsy5dhZuTwKfaxbLU2t/U93TiBFCG+Oxkps
-	tXp7z3ipB8UAqBY1ZI+yZbOGlJ/pb+DMAz8yVP5heQzczKnYKKh0Lv+g6rsmKdXIC5WN8LBvsD/
-	WcVT+aJEWMU5Ie5EG7FFHsWqbZQbsiRx0lvJ6zZcBKcCD4nKVwNWrjPZTBb89mBxHmaaqRyDDGg
-	+nq/lFm
-X-Google-Smtp-Source: AGHT+IEW9kDEeEJu5U/vbfc8A6J2wAYUKMjqkVwvtun1hnGaHdKolJO0k+wwdChOzQTBUTNfkT4zcnvbbtaO0USTHmk=
-X-Received: by 2002:a05:6402:44d2:b0:615:8db4:2602 with SMTP id
- 4fb4d7f45d1cf-61c1b6f3f1fmr13199591a12.22.1756298103678; Wed, 27 Aug 2025
- 05:35:03 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1756298091; x=1756902891;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=moILJAXmTfUtnXXDqDg1ejK2v0bi2+Kmg3gwvaT5IAU=;
+        b=MiYO6yzkW2amdmBWXB7D5y5q50PxQg/tQGzUm6uyPzqQpMSlERv0Ouh/kvn4IhQttZ
+         9Qkq01o3lmwCPxrNKdanJyFAJq4ht9TufHeFwzDGg2iOXqBRa0+LcgxiWCa/KvLIOEPJ
+         /HSg6ceL+JXz7Ki/0veoDbpDj0FxvRAPgeHUgNGwxyBkssaQVTYgZW/Kkh+Rk0QdGauP
+         EpaMBbJ5xNvF/pFfFtgQ8GTjclQkBlpy/YEN5DUSINxG34BFoprdARiQNpyxh7ihcZfP
+         QA9YFDcsm8ZyaS02bMZ81/95e9/lT4wF3fuUsxSLTUceiM6KpzhmZU+aRlXiWdxML6cQ
+         KR7w==
+X-Forwarded-Encrypted: i=1; AJvYcCVK6vveb8q1flHwxVR9V8yHVw6HB3WCmgYFdXeGVPeq07A1QAge/ST+nMSHCOwh4kTH+93vmrEGPgRCFJI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNt2irheBnRng57bCiJNt5IKTurtYKzLPByRUf9vqj6w0H+MOr
+	CFbP9arkr6+3rz0aXOr64ew3wLSm5AIkS6bRUAc4LCfgRMCO8gHbOaLl4ohb2Yu3RTEwU5vf7ZJ
+	Vfj6VyLdAHvTgDiPZ0BbBSbzQy4s6s5Ll6IUfgKfisvBHYm0K/fd1T0x+s+XgMn8dSHA=
+X-Gm-Gg: ASbGncui6CzfKdmxXPZjEbBv0xXvDAlUoGN0LHA3lYCdx+mNqwHJvOoX4+DGpcg2Vi2
+	SJ9/8UjOVZDsqGFEp92K9CqP5moeyFzekVNzcJj/CRYtUauGZQM5dXBvaJawSn/UjSdFcaQcKOP
+	ECjt86snP6VOYXj1cuKMtvWaEEK6nP4BaZ42iETCFzwuheyEV2VKPEmcJnSQudCwfF1kBB9mGcm
+	707e/l3Hf1KA6TUcoi5WKLFY2AnjEuJ5Ibh/2dLRbOigbpLWiBmCN9rEeM1AaBsStNKHEshMXHH
+	qaN2Xq1n592nR6rPWA4v1EgZdjXKyUPkopM87gRQuFrLxPDBvyjMCuwlwgSrHWUqQvdjJM9G87t
+	64dN2V4ZV8BwhX6+UhP53hoE/etBjTw==
+X-Received: by 2002:a17:902:db0c:b0:240:9dcd:94c0 with SMTP id d9443c01a7336-2462edfb000mr126194175ad.2.1756298090611;
+        Wed, 27 Aug 2025 05:34:50 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHmo8pGCrQnTIdRGu+JeUzJwBMxSLoH2t3e3ElN+ikXmyLBInIuVbe8SmuBSp+d9zO2wWMHGg==
+X-Received: by 2002:a17:902:db0c:b0:240:9dcd:94c0 with SMTP id d9443c01a7336-2462edfb000mr126193655ad.2.1756298089987;
+        Wed, 27 Aug 2025 05:34:49 -0700 (PDT)
+Received: from [10.133.33.166] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-248787e1bb2sm37623965ad.96.2025.08.27.05.34.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 27 Aug 2025 05:34:49 -0700 (PDT)
+Message-ID: <82d19340-b887-4093-9d24-4b2e19b99f8b@oss.qualcomm.com>
+Date: Wed, 27 Aug 2025 20:34:39 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250728201435.3505594-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20250728201435.3505594-7-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <7284cad0-b71b-49dc-bb09-cd9f1ff00028@ideasonboard.com> <TY3PR01MB11346B44AEFCB6B76F00FF160863DA@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <e6f4a0dd-deff-408a-a5ff-8fdc74a6fd25@ideasonboard.com>
-In-Reply-To: <e6f4a0dd-deff-408a-a5ff-8fdc74a6fd25@ideasonboard.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Wed, 27 Aug 2025 13:34:37 +0100
-X-Gm-Features: Ac12FXyQcNCKuyLxAqAkoHSfiemZgMTWZD4BEsEV1IyJ4ImKKRnOUvoFIYMABhA
-Message-ID: <CA+V-a8udtvk1vWnMZngPLqnD3n3G4ZnG-DxMSqmqXD+Q=Zi4pA@mail.gmail.com>
-Subject: Re: [PATCH v7 6/6] drm: renesas: rz-du: mipi_dsi: Add support for
- RZ/V2H(P) SoC
-To: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>, 
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, 
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, 
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>, 
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	"laurent.pinchart" <laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	"magnus.damm" <magnus.damm@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 11/14] phy: qcom: qmp-usbc: Finalize USB/DP switchable
+ PHY support
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Rob Clark <robin.clark@oss.qualcomm.com>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Abhinav Kumar
+ <abhinav.kumar@linux.dev>,
+        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Kuogee Hsieh <quic_khsieh@quicinc.com>, Vinod Koul <vkoul@kernel.org>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>, linux-arm-msm@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-phy@lists.infradead.org, fange.zhang@oss.qualcomm.com,
+        yongxing.mou@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, quic_lliu6@quicinc.com
+References: <20250820-add-displayport-support-for-qcs615-platform-v3-0-a43bd25ec39c@oss.qualcomm.com>
+ <20250820-add-displayport-support-for-qcs615-platform-v3-11-a43bd25ec39c@oss.qualcomm.com>
+ <jjsijdmh4hdbgd2boebtrmzvblvhz2hnl7mtv5ga76ine2fnsb@i72dz3r4lbjp>
+From: Xiangxu Yin <xiangxu.yin@oss.qualcomm.com>
+In-Reply-To: <jjsijdmh4hdbgd2boebtrmzvblvhz2hnl7mtv5ga76ine2fnsb@i72dz3r4lbjp>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Authority-Analysis: v=2.4 cv=KOlaDEFo c=1 sm=1 tr=0 ts=68aefb6c cx=c_pps
+ a=IZJwPbhc+fLeJZngyXXI0A==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=ecvn3kWp99I1lx1hcDoA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=uG9DUKGECoFWVXl0Dc02:22
+X-Proofpoint-GUID: yHU--F_taD3jeuWCiWNnkaVt0ZY6XsYl
+X-Proofpoint-ORIG-GUID: yHU--F_taD3jeuWCiWNnkaVt0ZY6XsYl
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIzMDAzMyBTYWx0ZWRfXw5sefOcWy+ps
+ 8lnevR8dyMxnOA83EKKzibDIeo3txi1DGJBjAgffgMyyGI840lRGROiI1jh6QAqjUYl2GZFoc4f
+ iHFmuWVsVzUzjtegg/m5EbkfZo+YzHfqOFDlWFTspkdIN+QRB0k2l/6FQfa4HytTD+OLXXFJrt2
+ KkMjGMKpFT/3+Y1SsBoFBajritgO4wVKU7ootX85LHpuuotE9ltnMvLCml0W5TocCvEhLPw+OuM
+ Li9BQFpoiDWMOwNroVIZPgDYfq3QaycZOChRjFJ/h4AZAeFzYo9jLVG1PdhfT3jpowKujCJeHqa
+ lgwCJJP9GTuMbUCc8yX1ygJOB5AmfRlI1QtyCiNNe4jiLHVdgpYUMy3umfnAeF136xhT/qwZOUk
+ nIEpWv7w
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-27_03,2025-08-26_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 clxscore=1015 bulkscore=0 adultscore=0 phishscore=0
+ impostorscore=0 spamscore=0 suspectscore=0 priorityscore=1501
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508230033
 
-Hi Tomi,
 
-On Fri, Aug 22, 2025 at 8:05=E2=80=AFAM Tomi Valkeinen
-<tomi.valkeinen+renesas@ideasonboard.com> wrote:
->
-> Hi,
->
-> On 22/08/2025 10:01, Biju Das wrote:
-> > Hi Tomi,
-> >
-> >> -----Original Message-----
-> >> From: dri-devel <dri-devel-bounces@lists.freedesktop.org> On Behalf Of=
- Tomi Valkeinen
-> >> Sent: 21 August 2025 10:29
-> >> Subject: Re: [PATCH v7 6/6] drm: renesas: rz-du: mipi_dsi: Add support=
- for RZ/V2H(P) SoC
-> >>
-> >> Hi,
-> >>
-> >> On 28/07/2025 23:14, Prabhakar wrote:
-> >>> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >>>
-> >>> Add DSI support for Renesas RZ/V2H(P) SoC.
-> >>
-> >> I think a bit longer desc would be in order, as this is not just a "ad=
-d a new compatible string" patch,
-> >> but we have new registers and functions.
-> >>
-> >>> Co-developed-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-> >>> Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-> >>> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com=
->
-> >>> ---
-> >>> v6->v7:
-> >>> - Used the new apis for calculating the PLLDSI
-> >>>   parameters in the DSI driver.
-> >>>
-> >>> v5->v6:
-> >>> - Made use of GENMASK() macro for PLLCLKSET0R_PLL_*,
-> >>>   PHYTCLKSETR_* and PHYTHSSETR_* macros.
-> >>> - Replaced 10000000UL with 10 * MEGA
-> >>> - Renamed mode_freq_hz to mode_freq_khz in rzv2h_dsi_mode_calc
-> >>> - Replaced `i -=3D 1;` with `i--;`
-> >>> - Renamed RZV2H_MIPI_DPHY_FOUT_MIN_IN_MEGA to
-> >>>   RZV2H_MIPI_DPHY_FOUT_MIN_IN_MHZ and
-> >>>   RZV2H_MIPI_DPHY_FOUT_MAX_IN_MEGA to
-> >>>   RZV2H_MIPI_DPHY_FOUT_MAX_IN_MHZ.
-> >>>
-> >>> v4->v5:
-> >>> - No changes
-> >>>
-> >>> v3->v4
-> >>> - In rzv2h_dphy_find_ulpsexit() made the array static const.
-> >>>
-> >>> v2->v3:
-> >>> - Simplifed V2H DSI timings array to save space
-> >>> - Switched to use fsleep() instead of udelay()
-> >>>
-> >>> v1->v2:
-> >>> - Dropped unused macros
-> >>> - Added missing LPCLK flag to rzv2h info
-> >>> ---
-> >>>  .../gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c    | 345 ++++++++++++++++=
-++
-> >>>  .../drm/renesas/rz-du/rzg2l_mipi_dsi_regs.h   |  34 ++
-> >>>  2 files changed, 379 insertions(+)
-> >>>
-> >>> diff --git a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
-> >>> b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
-> >>> index 893a90c7a886..3b2f77665309 100644
-> >>> --- a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
-> >>> +++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
-> >>> @@ -7,6 +7,7 @@
-> >>>
-> >>>  #include <linux/bitfield.h>
-> >>>  #include <linux/clk.h>
-> >>> +#include <linux/clk/renesas-rzv2h-cpg-pll.h>
-> >>>  #include <linux/delay.h>
-> >>>  #include <linux/dma-mapping.h>
-> >>>  #include <linux/io.h>
-> >>> @@ -46,6 +47,11 @@ struct rzg2l_mipi_dsi_hw_info {
-> >>>                           u64 *hsfreq_millihz);
-> >>>     unsigned int (*dphy_mode_clk_check)(struct rzg2l_mipi_dsi *dsi,
-> >>>                                         unsigned long mode_freq);
-> >>> +   struct {
-> >>> +           const struct rzv2h_pll_limits **limits;
-> >>> +           const u8 *table;
-> >>> +           const u8 table_size;
-> >>> +   } cpg_plldsi;
-> >>>     u32 phy_reg_offset;
-> >>>     u32 link_reg_offset;
-> >>>     unsigned long min_dclk;
-> >>> @@ -53,6 +59,11 @@ struct rzg2l_mipi_dsi_hw_info {
-> >>>     u8 features;
-> >>>  };
-> >>>
-> >>> +struct rzv2h_dsi_mode_calc {
-> >>> +   unsigned long mode_freq_khz;
-> >>> +   struct rzv2h_pll_pars dsi_parameters; };
-> >>> +
-> >>>  struct rzg2l_mipi_dsi {
-> >>>     struct device *dev;
-> >>>     void __iomem *mmio;
-> >>> @@ -75,11 +86,22 @@ struct rzg2l_mipi_dsi {
-> >>>     unsigned int lanes;
-> >>>     unsigned long mode_flags;
-> >>>
-> >>> +   struct rzv2h_dsi_mode_calc mode_calc;
-> >>> +
-> >>>     /* DCS buffer pointers when using external memory. */
-> >>>     dma_addr_t dcs_buf_phys;
-> >>>     u8 *dcs_buf_virt;
-> >>>  };
-> >>>
-> >>> +static const struct rzv2h_pll_limits rzv2h_plldsi_div_limits =3D {
-> >>> +   .fout =3D { .min =3D 80 * MEGA, .max =3D 1500 * MEGA },
-> >>> +   .fvco =3D { .min =3D 1050 * MEGA, .max =3D 2100 * MEGA },
-> >>> +   .m =3D { .min =3D 64, .max =3D 1023 },
-> >>> +   .p =3D { .min =3D 1, .max =3D 4 },
-> >>> +   .s =3D { .min =3D 0, .max =3D 5 },
-> >>> +   .k =3D { .min =3D -32768, .max =3D 32767 }, };
-> >>> +
-> >>>  static inline struct rzg2l_mipi_dsi *
-> >>> bridge_to_rzg2l_mipi_dsi(struct drm_bridge *bridge)  { @@ -194,6
-> >>> +216,155 @@ static const struct rzg2l_mipi_dsi_timings rzg2l_mipi_dsi=
-_global_timings[] =3D {
-> >>>     },
-> >>>  };
-> >>>
-> >>> +struct rzv2h_mipi_dsi_timings {
-> >>> +   const u8 *hsfreq;
-> >>> +   u8 len;
-> >>> +   u8 start_index;
-> >>> +};
-> >>> +
-> >>> +enum {
-> >>> +   TCLKPRPRCTL,
-> >>> +   TCLKZEROCTL,
-> >>> +   TCLKPOSTCTL,
-> >>> +   TCLKTRAILCTL,
-> >>> +   THSPRPRCTL,
-> >>> +   THSZEROCTL,
-> >>> +   THSTRAILCTL,
-> >>> +   TLPXCTL,
-> >>> +   THSEXITCTL,
-> >>> +};
-> >>> +
-> >>> +static const u8 tclkprprctl[] =3D {
-> >>> +   15, 26, 37, 47, 58, 69, 79, 90, 101, 111, 122, 133, 143, 150, };
-> >>> +
-> >>> +static const u8 tclkzeroctl[] =3D {
-> >>> +   9, 11, 13, 15, 18, 21, 23, 24, 25, 27, 29, 31, 34, 36, 38,
-> >>> +   41, 43, 45, 47, 50, 52, 54, 57, 59, 61, 63, 66, 68, 70, 73,
-> >>> +   75, 77, 79, 82, 84, 86, 89, 91, 93, 95, 98, 100, 102, 105,
-> >>> +   107, 109, 111, 114, 116, 118, 121, 123, 125, 127, 130, 132,
-> >>> +   134, 137, 139, 141, 143, 146, 148, 150, };
-> >>> +
-> >>> +static const u8 tclkpostctl[] =3D {
-> >>> +   8, 21, 34, 48, 61, 74, 88, 101, 114, 128, 141, 150, };
-> >>> +
-> >>> +static const u8 tclktrailctl[] =3D {
-> >>> +   14, 25, 37, 48, 59, 71, 82, 94, 105, 117, 128, 139, 150, };
-> >>> +
-> >>> +static const u8 thsprprctl[] =3D {
-> >>> +   11, 19, 29, 40, 50, 61, 72, 82, 93, 103, 114, 125, 135, 146, 150,=
- };
-> >>> +
-> >>> +static const u8 thszeroctl[] =3D {
-> >>> +   18, 24, 29, 35, 40, 46, 51, 57, 62, 68, 73, 79, 84, 90,
-> >>> +   95, 101, 106, 112, 117, 123, 128, 134, 139, 145, 150, };
-> >>> +
-> >>> +static const u8 thstrailctl[] =3D {
-> >>> +   10, 21, 32, 42, 53, 64, 75, 85, 96, 107, 118, 128, 139, 150, };
-> >>> +
-> >>> +static const u8 tlpxctl[] =3D {
-> >>> +   13, 26, 39, 53, 66, 79, 93, 106, 119, 133, 146, 150,
-> >>> +};
-> >>> +
-> >>> +static const u8 thsexitctl[] =3D {
-> >>> +   15, 23, 31, 39, 47, 55, 63, 71, 79, 87,
-> >>> +   95, 103, 111, 119, 127, 135, 143, 150, };
-> >>> +
-> >>> +static const struct rzv2h_mipi_dsi_timings rzv2h_dsi_timings_tables[=
-] =3D {
-> >>> +   [TCLKPRPRCTL] =3D {
-> >>> +           .hsfreq =3D tclkprprctl,
-> >>> +           .len =3D ARRAY_SIZE(tclkprprctl),
-> >>> +           .start_index =3D 0,
-> >>> +   },
-> >>> +   [TCLKZEROCTL] =3D {
-> >>> +           .hsfreq =3D tclkzeroctl,
-> >>> +           .len =3D ARRAY_SIZE(tclkzeroctl),
-> >>> +           .start_index =3D 2,
-> >>> +   },
-> >>> +   [TCLKPOSTCTL] =3D {
-> >>> +           .hsfreq =3D tclkpostctl,
-> >>> +           .len =3D ARRAY_SIZE(tclkpostctl),
-> >>> +           .start_index =3D 6,
-> >>> +   },
-> >>> +   [TCLKTRAILCTL] =3D {
-> >>> +           .hsfreq =3D tclktrailctl,
-> >>> +           .len =3D ARRAY_SIZE(tclktrailctl),
-> >>> +           .start_index =3D 1,
-> >>> +   },
-> >>> +   [THSPRPRCTL] =3D {
-> >>> +           .hsfreq =3D thsprprctl,
-> >>> +           .len =3D ARRAY_SIZE(thsprprctl),
-> >>> +           .start_index =3D 0,
-> >>> +   },
-> >>> +   [THSZEROCTL] =3D {
-> >>> +           .hsfreq =3D thszeroctl,
-> >>> +           .len =3D ARRAY_SIZE(thszeroctl),
-> >>> +           .start_index =3D 0,
-> >>> +   },
-> >>> +   [THSTRAILCTL] =3D {
-> >>> +           .hsfreq =3D thstrailctl,
-> >>> +           .len =3D ARRAY_SIZE(thstrailctl),
-> >>> +           .start_index =3D 3,
-> >>> +   },
-> >>> +   [TLPXCTL] =3D {
-> >>> +           .hsfreq =3D tlpxctl,
-> >>> +           .len =3D ARRAY_SIZE(tlpxctl),
-> >>> +           .start_index =3D 0,
-> >>> +   },
-> >>> +   [THSEXITCTL] =3D {
-> >>> +           .hsfreq =3D thsexitctl,
-> >>> +           .len =3D ARRAY_SIZE(thsexitctl),
-> >>> +           .start_index =3D 1,
-> >>> +   },
-> >>> +};
-> >>> +
-> >>> +static u16 rzv2h_dphy_find_ulpsexit(unsigned long freq) {
-> >>> +   static const unsigned long hsfreq[] =3D {
-> >>> +           1953125UL,
-> >>> +           3906250UL,
-> >>> +           7812500UL,
-> >>> +           15625000UL,
-> >>> +   };
-> >>> +   static const u16 ulpsexit[] =3D {49, 98, 195, 391};
-> >>> +   unsigned int i;
-> >>> +
-> >>> +   for (i =3D 0; i < ARRAY_SIZE(hsfreq); i++) {
-> >>> +           if (freq <=3D hsfreq[i])
-> >>> +                   break;
-> >>> +   }
-> >>> +
-> >>> +   if (i =3D=3D ARRAY_SIZE(hsfreq))
-> >>> +           i--;
-> >>> +
-> >>> +   return ulpsexit[i];
-> >>> +}
-> >>> +
-> >>> +static u16 rzv2h_dphy_find_timings_val(unsigned long freq, u8 index)
-> >>> +{
-> >>> +   const struct rzv2h_mipi_dsi_timings *timings;
-> >>> +   u16 i;
-> >>> +
-> >>> +   timings =3D &rzv2h_dsi_timings_tables[index];
-> >>> +   for (i =3D 0; i < timings->len; i++) {
-> >>> +           unsigned long hsfreq =3D timings->hsfreq[i] * 10 * MEGA;
-> >>> +
-> >>> +           if (freq <=3D hsfreq)
-> >>> +                   break;
-> >>> +   }
-> >>> +
-> >>> +   if (i =3D=3D timings->len)
-> >>> +           i--;
-> >>> +
-> >>> +   return timings->start_index + i;
-> >>> +};
-> >>
-> >> I have to say I really don't like this... In the minimum, the method h=
-ow this works has to be explained
-> >> in a comment. These values can't really be calculated? If we really ha=
-ve to deal with hardcoded values
-> >> and with that table from the docs, I would say that just replicate the=
- table in the driver (i.e. a
-> >> struct that represents one row of the table), instead of the method in=
- this driver.
-> >>
-> >> Or was this method added based on earlier feedback, for v3? I see "Sim=
-plifed V2H DSI timings array to
-> >> save space" in the change log. If so, at least document it clearly.
-> >
-> > It was added based on v3 based on my comment on v2[1].
-> >
-> > If you see each table entries it is now just 1 byte vs 10 bytes (u8 vs =
-(u64 + u16)).
-> >
-> > So, it is saving considerable space by using this methos. Maybe we need=
- to document this
-> >
-> > [1] https://lore.kernel.org/all/TY3PR01MB113462CC30072B670E23EC7F586B12=
-@TY3PR01MB11346.jpnprd01.prod.outlook.com/
->
-> Ok. I guess it's fine if it's documented. It wasn't super hard to
-> reverse engineer it, but a short comment would have saved me the time =3D=
-).
->
-> But still, where do the numbers come from? Is there a formula that was
-> used to generate the values in the doc? Maybe the Renesas HW people
-> know? If yes, it'd be much better to use that formula. These are normal
-> DSI timings, based on the hs clock, so I think they should be calculable.
->
-I did check this internally with the HW team, based on the feedback
-the IP vendor which provides the DSI IP does not disclose any formula
-so unfortunately we will have to stick with the current lookup table
-implementation. I'll add some comments for the lookup table in the
-next version.
+On 8/20/2025 7:42 PM, Dmitry Baryshkov wrote:
+> On Wed, Aug 20, 2025 at 05:34:53PM +0800, Xiangxu Yin wrote:
+>> Complete USB/DP switchable PHY integration by adding DP clock
+>> registration, aux bridge setup, and DT parsing. Implement clock
+>> provider logic for USB and DP branches, and extend PHY translation
+>> to support both USB and DP instances.
+>>
+>> Signed-off-by: Xiangxu Yin <xiangxu.yin@oss.qualcomm.com>
+>> ---
+>>  drivers/phy/qualcomm/phy-qcom-qmp-usbc.c | 331 ++++++++++++++++++++++++++++---
+>>  1 file changed, 299 insertions(+), 32 deletions(-)
+>>
+>> diff --git a/drivers/phy/qualcomm/phy-qcom-qmp-usbc.c b/drivers/phy/qualcomm/phy-qcom-qmp-usbc.c
+>> index 821398653bef23e1915d9d3a3a2950b0bfbefb9a..74b9f75c8864efe270f394bfbfd748793dada1f5 100644
+>> --- a/drivers/phy/qualcomm/phy-qcom-qmp-usbc.c
+>> +++ b/drivers/phy/qualcomm/phy-qcom-qmp-usbc.c
+>> @@ -995,6 +995,11 @@ static int qmp_usbc_usb_power_on(struct phy *phy)
+>>  	qmp_configure(qmp->dev, qmp->serdes, cfg->serdes_tbl,
+>>  		      cfg->serdes_tbl_num);
+>>  
+>> +	if (IS_ERR(qmp->pipe_clk)) {
+>> +		return dev_err_probe(qmp->dev, PTR_ERR(qmp->pipe_clk),
+>> +				     "pipe clock not defined\n");
+>> +	}
+> No, this should not be allowed.
 
-Cheers,
-Prabhakar
+
+Ok, will fix in next patch.
+
+
+>> +
+>>  	ret = clk_prepare_enable(qmp->pipe_clk);
+>>  	if (ret) {
+>>  		dev_err(qmp->dev, "pipe_clk enable failed err=%d\n", ret);
+>> @@ -1365,11 +1370,13 @@ static int __maybe_unused qmp_usbc_runtime_resume(struct device *dev)
+>>  	if (ret)
+>>  		return ret;
+>>  
+>> -	ret = clk_prepare_enable(qmp->pipe_clk);
+>> -	if (ret) {
+>> -		dev_err(dev, "pipe_clk enable failed, err=%d\n", ret);
+>> -		clk_bulk_disable_unprepare(qmp->num_clks, qmp->clks);
+>> -		return ret;
+>> +	if (!IS_ERR(qmp->pipe_clk)) {
+> Similarly.
+
+
+Ack.
+
+
+>> +		ret = clk_prepare_enable(qmp->pipe_clk);
+>> +		if (ret) {
+>> +			dev_err(dev, "pipe_clk enable failed, err=%d\n", ret);
+>> +			clk_bulk_disable_unprepare(qmp->num_clks, qmp->clks);
+>> +			return ret;
+>> +		}
+>>  	}
+>>  
+>>  	qmp_usbc_disable_autonomous_mode(qmp);
+>> @@ -1422,9 +1429,23 @@ static int qmp_usbc_clk_init(struct qmp_usbc *qmp)
+>>  	return devm_clk_bulk_get_optional(dev, num, qmp->clks);
+>>  }
+>>  
+>> -static void phy_clk_release_provider(void *res)
+>> +static struct clk_hw *qmp_usbc_clks_hw_get(struct of_phandle_args *clkspec, void *data)
+>>  {
+>> -	of_clk_del_provider(res);
+>> +	struct qmp_usbc *qmp = data;
+>> +
+>> +	if (clkspec->args_count == 0)
+>> +		return &qmp->pipe_clk_fixed.hw;
+>> +
+>> +	switch (clkspec->args[0]) {
+>> +	case QMP_USB43DP_USB3_PIPE_CLK:
+>> +		return &qmp->pipe_clk_fixed.hw;
+>> +	case QMP_USB43DP_DP_LINK_CLK:
+>> +		return &qmp->dp_link_hw;
+>> +	case QMP_USB43DP_DP_VCO_DIV_CLK:
+>> +		return &qmp->dp_pixel_hw;
+>> +	}
+>> +
+>> +	return ERR_PTR(-EINVAL);
+>>  }
+>>  
+>>  /*
+>> @@ -1453,8 +1474,11 @@ static int phy_pipe_clk_register(struct qmp_usbc *qmp, struct device_node *np)
+>>  
+>>  	ret = of_property_read_string(np, "clock-output-names", &init.name);
+>>  	if (ret) {
+>> -		dev_err(qmp->dev, "%pOFn: No clock-output-names\n", np);
+>> -		return ret;
+>> +		char name[64];
+>> +
+>> +		/* Clock name is not mandatory. */
+>> +		snprintf(name, sizeof(name), "%s::pipe_clk", dev_name(qmp->dev));
+>> +		init.name = name;
+>>  	}
+>>  
+>>  	init.ops = &clk_fixed_rate_ops;
+>> @@ -1463,19 +1487,7 @@ static int phy_pipe_clk_register(struct qmp_usbc *qmp, struct device_node *np)
+>>  	fixed->fixed_rate = 125000000;
+>>  	fixed->hw.init = &init;
+>>  
+>> -	ret = devm_clk_hw_register(qmp->dev, &fixed->hw);
+>> -	if (ret)
+>> -		return ret;
+>> -
+>> -	ret = of_clk_add_hw_provider(np, of_clk_hw_simple_get, &fixed->hw);
+>> -	if (ret)
+>> -		return ret;
+>> -
+>> -	/*
+>> -	 * Roll a devm action because the clock provider is the child node, but
+>> -	 * the child node is not actually a device.
+>> -	 */
+>> -	return devm_add_action_or_reset(qmp->dev, phy_clk_release_provider, np);
+>> +	return devm_clk_hw_register(qmp->dev, &fixed->hw);
+>>  }
+>>  
+>>  #if IS_ENABLED(CONFIG_TYPEC)
+>> @@ -1660,6 +1672,235 @@ static int qmp_usbc_parse_tcsr(struct qmp_usbc *qmp)
+>>  	return 0;
+>>  }
+>>  
+>> +static int qmp_usbc_parse_usb3dp_dt(struct qmp_usbc *qmp)
+>> +{
+>> +	struct platform_device *pdev = to_platform_device(qmp->dev);
+>> +	const struct qmp_phy_cfg *cfg = qmp->cfg;
+>> +	const struct qmp_usbc_offsets *offs = cfg->offsets;
+>> +	struct device *dev = qmp->dev;
+>> +	void __iomem *base;
+>> +	int ret;
+>> +
+>> +	base = devm_platform_ioremap_resource(pdev, 0);
+>> +	if (IS_ERR(base))
+>> +		return PTR_ERR(base);
+>> +
+>> +	qmp->dp_serdes = base + offs->dp_serdes;
+>> +	qmp->dp_tx = base + offs->dp_txa;
+>> +	qmp->dp_tx2 = base + offs->dp_txb;
+>> +	qmp->dp_dp_phy = base + offs->dp_dp_phy;
+> Squash this into qmp_usbc_parse_dt(). Set these fields if
+> dp_serdes != 0.
+
+
+Ack.
+
+
+>> +	qmp->serdes = base + offs->serdes;
+>> +	qmp->pcs = base + offs->pcs;
+>> +	if (offs->pcs_misc)
+>> +		qmp->pcs_misc = base + offs->pcs_misc;
+>> +	qmp->tx = base + offs->tx;
+>> +	qmp->rx = base + offs->rx;
+>> +
+>> +	qmp->tx2 = base + offs->tx2;
+>> +	qmp->rx2 = base + offs->rx2;
+>> +
+>> +	ret = qmp_usbc_clk_init(qmp);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	qmp->pipe_clk = devm_clk_get(dev, "pipe");
+>> +	if (IS_ERR(qmp->pipe_clk)) {
+>> +		/* usb3dp allow no pipe clk define */
+>> +		if (cfg->type == QMP_PHY_USBC_USB3_ONLY)
+>> +			return dev_err_probe(dev, PTR_ERR(qmp->pipe_clk),
+>> +						"failed to get pipe clock\n");
+>> +	}
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +/*
+>> + * Display Port PLL driver block diagram for branch clocks
+>> + *
+>> + *              +------------------------------+
+>> + *              |         DP_VCO_CLK           |
+>> + *              |                              |
+>> + *              |    +-------------------+     |
+>> + *              |    |   (DP PLL/VCO)    |     |
+>> + *              |    +---------+---------+     |
+>> + *              |              v               |
+>> + *              |   +----------+-----------+   |
+>> + *              |   | hsclk_divsel_clk_src |   |
+>> + *              |   +----------+-----------+   |
+>> + *              +------------------------------+
+>> + *                              |
+>> + *          +---------<---------v------------>----------+
+>> + *          |                                           |
+>> + * +--------v----------------+                          |
+>> + * |    dp_phy_pll_link_clk  |                          |
+>> + * |     link_clk            |                          |
+>> + * +--------+----------------+                          |
+>> + *          |                                           |
+>> + *          |                                           |
+>> + *          v                                           v
+>> + * Input to DISPCC block                                |
+>> + * for link clk, crypto clk                             |
+>> + * and interface clock                                  |
+>> + *                                                      |
+>> + *                                                      |
+>> + *      +--------<------------+-----------------+---<---+
+>> + *      |                     |                 |
+>> + * +----v---------+  +--------v-----+  +--------v------+
+>> + * | vco_divided  |  | vco_divided  |  | vco_divided   |
+>> + * |    _clk_src  |  |    _clk_src  |  |    _clk_src   |
+>> + * |              |  |              |  |               |
+>> + * |divsel_six    |  |  divsel_two  |  |  divsel_four  |
+>> + * +-------+------+  +-----+--------+  +--------+------+
+>> + *         |                 |                  |
+>> + *         v---->----------v-------------<------v
+>> + *                         |
+>> + *              +----------+-----------------+
+>> + *              |   dp_phy_pll_vco_div_clk   |
+>> + *              +---------+------------------+
+>> + *                        |
+>> + *                        v
+>> + *              Input to DISPCC block
+>> + *              for DP pixel clock
+>> + *
+>> + */
+>> +static int qmp_dp_pixel_clk_determine_rate(struct clk_hw *hw, struct clk_rate_request *req)
+>> +{
+>> +	switch (req->rate) {
+>> +	case 1620000000UL / 2:
+>> +	case 2700000000UL / 2:
+>> +	/* 5.4 and 8.1 GHz are same link rate as 2.7GHz, i.e. div 4 and div 6 */
+>> +		return 0;
+>> +	default:
+>> +		return -EINVAL;
+>> +	}
+>> +}
+>> +
+>> +static unsigned long qmp_dp_pixel_clk_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
+>> +{
+>> +	const struct qmp_usbc *qmp;
+>> +	const struct phy_configure_opts_dp *dp_opts;
+>> +
+>> +	qmp = container_of(hw, struct qmp_usbc, dp_pixel_hw);
+>> +
+>> +	dp_opts = &qmp->dp_opts;
+>> +
+>> +	switch (dp_opts->link_rate) {
+>> +	case 1620:
+>> +		return 1620000000UL / 2;
+>> +	case 2700:
+>> +		return 2700000000UL / 2;
+>> +	case 5400:
+>> +		return 5400000000UL / 4;
+>> +	default:
+>> +		return 0;
+>> +	}
+>> +}
+>> +
+>> +static const struct clk_ops qmp_dp_pixel_clk_ops = {
+>> +	.determine_rate	= qmp_dp_pixel_clk_determine_rate,
+>> +	.recalc_rate	= qmp_dp_pixel_clk_recalc_rate,
+>> +};
+>> +
+>> +static int qmp_dp_link_clk_determine_rate(struct clk_hw *hw, struct clk_rate_request *req)
+>> +{
+>> +	switch (req->rate) {
+>> +	case 162000000:
+>> +	case 270000000:
+>> +	case 540000000:
+>> +		return 0;
+>> +	default:
+>> +		return -EINVAL;
+>> +	}
+>> +}
+>> +
+>> +static unsigned long qmp_dp_link_clk_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
+>> +{
+>> +	const struct qmp_usbc *qmp;
+>> +	const struct phy_configure_opts_dp *dp_opts;
+>> +
+>> +	qmp = container_of(hw, struct qmp_usbc, dp_link_hw);
+>> +	dp_opts = &qmp->dp_opts;
+>> +
+>> +	switch (dp_opts->link_rate) {
+>> +	case 1620:
+>> +	case 2700:
+>> +	case 5400:
+>> +		return dp_opts->link_rate * 100000;
+>> +	default:
+>> +		return 0;
+>> +	}
+>> +}
+>> +
+>> +static const struct clk_ops qmp_dp_link_clk_ops = {
+>> +	.determine_rate	= qmp_dp_link_clk_determine_rate,
+>> +	.recalc_rate	= qmp_dp_link_clk_recalc_rate,
+>> +};
+>> +
+>> +static int phy_dp_clks_register(struct qmp_usbc *qmp, struct device_node *np)
+>> +{
+>> +	struct clk_init_data init = { };
+>> +	char name[64];
+>> +	int ret;
+>> +
+>> +	snprintf(name, sizeof(name), "%s::link_clk", dev_name(qmp->dev));
+>> +	init.ops = &qmp_dp_link_clk_ops;
+>> +	init.name = name;
+>> +	qmp->dp_link_hw.init = &init;
+>> +	ret = devm_clk_hw_register(qmp->dev, &qmp->dp_link_hw);
+>> +	if (ret < 0) {
+>> +		dev_err(qmp->dev, "link clk reg fail ret=%d\n", ret);
+>> +		return ret;
+>> +	}
+>> +
+>> +	snprintf(name, sizeof(name), "%s::vco_div_clk", dev_name(qmp->dev));
+>> +	init.ops = &qmp_dp_pixel_clk_ops;
+>> +	init.name = name;
+>> +	qmp->dp_pixel_hw.init = &init;
+>> +	ret = devm_clk_hw_register(qmp->dev, &qmp->dp_pixel_hw);
+>> +	if (ret) {
+>> +		dev_err(qmp->dev, "pxl clk reg fail ret=%d\n", ret);
+>> +		return ret;
+>> +	}
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int qmp_usbc_register_clocks(struct qmp_usbc *qmp, struct device_node *np)
+>> +{
+>> +	int ret;
+>> +
+>> +	if (!IS_ERR(qmp->pipe_clk)) {
+>> +		ret = phy_pipe_clk_register(qmp, np);
+>> +		if (ret)
+>> +			return ret;
+>> +	}
+>> +
+>> +	if (qmp->cfg->type == QMP_PHY_USBC_USB3_DP) {
+> if dp_serdes != 0
+
+
+Ack.
+
+
+>> +		ret = phy_dp_clks_register(qmp, np);
+>> +		if (ret)
+>> +			return ret;
+>> +	}
+>> +
+>> +	return devm_of_clk_add_hw_provider(qmp->dev, qmp_usbc_clks_hw_get, qmp);
+>> +}
+>> +
+>> +static struct phy *qmp_usbc_phy_xlate(struct device *dev, const struct of_phandle_args *args)
+>> +{
+>> +	struct qmp_usbc *qmp = dev_get_drvdata(dev);
+>> +
+>> +	if (args->args_count == 0)
+>> +		return qmp->usb_phy;
+>> +
+>> +	switch (args->args[0]) {
+>> +	case QMP_USB43DP_USB3_PHY:
+>> +		return qmp->usb_phy;
+>> +	case QMP_USB43DP_DP_PHY:
+>> +		return qmp->dp_phy;
+>> +	}
+>> +
+>> +	return ERR_PTR(-EINVAL);
+>> +}
+>> +
+>>  static int qmp_usbc_probe(struct platform_device *pdev)
+>>  {
+>>  	struct device *dev = &pdev->dev;
+>> @@ -1703,16 +1944,32 @@ static int qmp_usbc_probe(struct platform_device *pdev)
+>>  	if (ret)
+>>  		return ret;
+>>  
+>> -	/* Check for legacy binding with child node. */
+>> -	np = of_get_child_by_name(dev->of_node, "phy");
+>> -	if (np) {
+>> -		ret = qmp_usbc_parse_usb_dt_legacy(qmp, np);
+>> -	} else {
+>> +	if (qmp->cfg->type == QMP_PHY_USBC_USB3_DP) {
+> Should not be necessary.
+
+
+Got it. I’ll merge the parsing logic into a single qmp_usbc_parse_dt function.
+
+Also, I checked the compatible strings in the dtsi files for this PHY series
+looks like no current product uses the legacy binding. 
+I’ll drop qmp_usbc_parse_usb_dt_legacy in the next version.
+
+
+>>  		np = of_node_get(dev->of_node);
+>> -		ret = qmp_usbc_parse_usb_dt(qmp);
+>> +
+>> +		ret = qmp_usbc_parse_usb3dp_dt(qmp);
+>> +		if (ret) {
+>> +			dev_err(qmp->dev, "parse DP dt fail ret=%d\n", ret);
+>> +			goto err_node_put;
+>> +		}
+>> +
+>> +		ret = drm_aux_bridge_register(dev);
+>> +		if (ret) {
+>> +			dev_err(qmp->dev, "aux bridge reg fail ret=%d\n", ret);
+>> +			goto err_node_put;
+>> +		}
+>> +	} else {
+>> +		/* Check for legacy binding with child node. */
+>> +		np = of_get_child_by_name(dev->of_node, "phy");
+>> +		if (np) {
+>> +			ret = qmp_usbc_parse_usb_dt_legacy(qmp, np);
+>> +		} else {
+>> +			np = of_node_get(dev->of_node);
+>> +			ret = qmp_usbc_parse_usb_dt(qmp);
+>> +		}
+>> +		if (ret)
+>> +			goto err_node_put;
+>>  	}
+>> -	if (ret)
+>> -		goto err_node_put;
+>>  
+>>  	pm_runtime_set_active(dev);
+>>  	ret = devm_pm_runtime_enable(dev);
+>> @@ -1724,7 +1981,7 @@ static int qmp_usbc_probe(struct platform_device *pdev)
+>>  	 */
+>>  	pm_runtime_forbid(dev);
+>>  
+>> -	ret = phy_pipe_clk_register(qmp, np);
+>> +	ret = qmp_usbc_register_clocks(qmp, np);
+>>  	if (ret)
+>>  		goto err_node_put;
+>>  
+>> @@ -1737,9 +1994,19 @@ static int qmp_usbc_probe(struct platform_device *pdev)
+>>  
+>>  	phy_set_drvdata(qmp->usb_phy, qmp);
+>>  
+>> +	if (qmp->cfg->type == QMP_PHY_USBC_USB3_DP) {
+> if dp_serdes != 0
+
+
+Ack.
+
+
+>> +		qmp->dp_phy = devm_phy_create(dev, np, &qmp_usbc_dp_phy_ops);
+>> +		if (IS_ERR(qmp->dp_phy)) {
+>> +			ret = PTR_ERR(qmp->dp_phy);
+>> +			dev_err(dev, "failed to create PHY: %d\n", ret);
+>> +			goto err_node_put;
+>> +		}
+>> +		phy_set_drvdata(qmp->dp_phy, qmp);
+>> +	}
+>> +
+>>  	of_node_put(np);
+>>  
+>> -	phy_provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
+>> +	phy_provider = devm_of_phy_provider_register(dev, qmp_usbc_phy_xlate);
+>>  
+>>  	return PTR_ERR_OR_ZERO(phy_provider);
+>>  
+>>
+>> -- 
+>> 2.34.1
+>>
 
