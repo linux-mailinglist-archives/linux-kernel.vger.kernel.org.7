@@ -1,58 +1,58 @@
-Return-Path: <linux-kernel+bounces-788346-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69394B38337
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 15:01:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCBDFB38336
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 15:01:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E88FB162444
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 13:01:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C43B31BA656C
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 13:01:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D75A35208F;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74134352FC3;
 	Wed, 27 Aug 2025 13:00:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1GVufiW/";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="6spmfgn4"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="YpRyIbxI";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="cPe49t71"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB34534A301
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 13:00:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DC97192B84
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 13:00:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756299624; cv=none; b=L+YSSqTUuf3r/PFQOFI6cOC/7cnT6g6qkFmvw0Vp7aZbbhRtZmwKLo1AXrKpP7YmUyjN9ziB7kW8SbK+iI0xC30kV8mWwNdTFz2MlAiDlWpDs0i9kko1PtT2VgsGiTSMNq5bwulGBURxu851v4eRiFF+dMemnCb2kNvK9AHSiW8=
+	t=1756299624; cv=none; b=UP4E6ldZHl/3FpPmU1F6SIgqB9xGvzkYRHNvhyIUCyfwdT7SE4piet4RPfpSBf8AtcqzHIvK8C+70NKWidcHglQMBQa/2FbUuJy9bKMjr8xGayJ9Gq5cGTczIWr51xLhfLXV5WvNF5pmIYhN4i6Tr6P+1/X+oWYosPNxlSRlKIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1756299624; c=relaxed/simple;
-	bh=Wj1y8gn/J0QHpIMqAcP/x+ZIF0m6lF8e4xaVbfhkM5s=;
+	bh=HZ4zcuznyaYA5mz+3FMVlFtEKIO6itv+bsJUJaHdWUQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=muD4qc2nGCmdWf5VdoVMPcarXVB8Tg8ieNnNEM8IumSXmTKPCkjMSh0ixJgmtF7612iuXO7BlEwx0beRjNzTG64Nx5VCpxiKqtAwcVwO1XvaMwXZesF5PIbs8iTK6PNH3Dxh0cauWrfAOKEyki19/sCAEOGlY28Tt256/owx/ZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1GVufiW/; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=6spmfgn4; arc=none smtp.client-ip=193.142.43.55
+	 MIME-Version; b=kf0SIDIytXtvLbxbtJNBTDNNoYUAYugSyQwcfmoMliiItfPwNmZLxKrhEtxxTTaPsGyc1ynoWE33nabs4vLdYCKmW6Ma2yAueyvOH0MCli5w6MdRwpBM6JQkirp6j/JFrirF83ujawKF3MyuBx3s8kzbA0G7i0HgwXY5FZ6j5bo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=YpRyIbxI; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=cPe49t71; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1756299619;
+	s=2020; t=1756299620;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=1OU4TYMbx3gnkGTLvEmo9Pz0rBoJv4uu7FvjyzQJmjk=;
-	b=1GVufiW/0uNd5E+xG1zNYW3jNY7QXvBUh0U1uvYxNDzB85O0e3MtW4JOm577iplrnek/Rj
-	C+7Im9V75o4/TTyZ/bNe23APVBU0c6vMzN7IQTGTVpAAE8XP3VvWduURZNELf3OW8wNsKS
-	8xpxnrN5kfI7HjBkGjNXHsEUZJTK7MMzGsi64TyJekJOBqHeX1mBai5BsidB8/uS5wHP0i
-	x+aLFwDgW8wBZXfd8KARtOn6tnDORc7M2yMr4HExQNw8aRW3xlJerRpirl67Uo+3C+w+4N
-	413eEFjItNF7rKWpjVKk+Ww6rGtS7mTjcvICymUzKZ9b5FsIozogps6oNrxbHw==
+	bh=yt6pNORiBRMKarAJyYXvL7QTT3KKl4VK2drJoxldTRs=;
+	b=YpRyIbxITXK3hM4iUFSuX1MrR2itsuStX3jOycoy4jpD9xXMfu3s1ZGoddfpEb/hi4+G+J
+	fOUWNq0yelg06sjQb8xss1b16NS+TF6F8wJPe4GDlLD8DIz6PKU/OnwUSqj63Xh7eAY+c2
+	El+k9nhuz53YuQmhYYpMbYRkMq/HG+/rNt7xxt/4hffyDUVvukbM+VCooD3aMDX++Roo15
+	c35xcRbjyuiLyYI4x69O8XIjBV5Z8D3KPnVrLs25e6lM7gGbwoUkzoBjo/i6aNS1L+oF+4
+	VzT1SMbc0oZEahtSATsy/GRr+9b0Ab5WkzM8Oln9UOp1c7aRaXbJscpzy/n7FQ==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1756299619;
+	s=2020e; t=1756299620;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=1OU4TYMbx3gnkGTLvEmo9Pz0rBoJv4uu7FvjyzQJmjk=;
-	b=6spmfgn4KO4eAZsZSXgvG95twh2q9edNhNFHuqowKMQUhEHjYOalyxeUC78h4PHXx71fsM
-	5OgZwjk8hvPQEnDA==
+	bh=yt6pNORiBRMKarAJyYXvL7QTT3KKl4VK2drJoxldTRs=;
+	b=cPe49t71HvBt7JlYWs9Hs/9/jONDXbGYxEK44tOOx/2WHfhPtFGLiPRXDrk3eVepMiezEo
+	Ps60lk1yc5HMsPAg==
 To: linux-kernel@vger.kernel.org
 Cc: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>,
 	Darren Hart <dvhart@infradead.org>,
@@ -65,9 +65,9 @@ Cc: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>,
 	Borislav Petkov <bp@alien8.de>,
 	Waiman Long <longman@redhat.com>,
 	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH 1/5] selftests/futex: Remove the -g parameter from futex_priv_hash
-Date: Wed, 27 Aug 2025 15:00:07 +0200
-Message-ID: <20250827130011.677600-2-bigeasy@linutronix.de>
+Subject: [PATCH 2/5] selftests/futex: Fix some futex_numa_mpol subtests
+Date: Wed, 27 Aug 2025 15:00:08 +0200
+Message-ID: <20250827130011.677600-3-bigeasy@linutronix.de>
 In-Reply-To: <20250827130011.677600-1-bigeasy@linutronix.de>
 References: <20250827130011.677600-1-bigeasy@linutronix.de>
 Precedence: bulk
@@ -78,46 +78,63 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 
-The -g parameter was meant to the test the immutable global hash instead
-the private hash which has been made immutable. The global hash is
-tested as part at the end of the regular test. The immutable private
-hash been removed.
+From: Waiman Long <longman@redhat.com>
 
-Remove last traces of the immutable private hash.
+The "Memory out of range" subtest of futex_numa_mpol assumes that memory
+access outside of the mmap'ed area is invalid. That may not be the case
+depending on the actual memory layout of the test application. When
+that subtest was run on an x86-64 system with latest upstream kernel,
+the test passed as an error was returned from futex_wake(). On another
+powerpc system, the same subtest failed because futex_wake() returned 0.
 
-Fixes: 16adc7f136dc1 ("selftests/futex: Remove support for IMMUTABLE")
+  Bail out! futex2_wake(64, 0x86) should fail, but didn't
+
+Looking further into the passed subtest on x86-64, it was found that an
+-EINVAL was returned instead of -EFAULT. The -EINVAL error was returned
+because the node value test with FLAGS_NUMA set failed with a node value
+of 0x7f7f. IOW, the futex memory was accessible and futex_wake() failed
+because the supposed node number wasn't valid. If that memory location
+happens to have a very small value (e.g. 0), the test will pass and no
+error will be returned.
+
+Since this subtest is non-deterministic, it is dropped unless we
+explicitly set a guard page beyond the mmap region.
+
+The other problematic test is the "Memory too small" test. The
+futex_wake() function returns the -EINVAL error code because the given
+futex address isn't 8-byte aligned, not because only 4 of the 8 bytes
+are valid and the other 4 bytes are not. So proper name of this subtest
+is changed to "Mis-aligned futex" to reflect the reality.
+
+Fixes: 3163369407ba ("selftests/futex: Add futex_numa_mpol")
+Signed-off-by: Waiman Long <longman@redhat.com>
+Reviewed-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Link: https://lore.kernel.org/r/20250810222742.290485-1-longman@redhat.com
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 ---
- tools/testing/selftests/futex/functional/futex_priv_hash.c | 1 -
- tools/testing/selftests/futex/functional/run.sh            | 1 -
- 2 files changed, 2 deletions(-)
+ tools/testing/selftests/futex/functional/futex_numa_mpol.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/tools/testing/selftests/futex/functional/futex_priv_hash.c b/t=
-ools/testing/selftests/futex/functional/futex_priv_hash.c
-index aea001ac49460..ec032faca6a91 100644
---- a/tools/testing/selftests/futex/functional/futex_priv_hash.c
-+++ b/tools/testing/selftests/futex/functional/futex_priv_hash.c
-@@ -132,7 +132,6 @@ static void usage(char *prog)
- {
- 	printf("Usage: %s\n", prog);
- 	printf("  -c    Use color\n");
--	printf("  -g    Test global hash instead intead local immutable \n");
- 	printf("  -h    Display this help message\n");
- 	printf("  -v L  Verbosity level: %d=3DQUIET %d=3DCRITICAL %d=3DINFO\n",
- 	       VQUIET, VCRITICAL, VINFO);
-diff --git a/tools/testing/selftests/futex/functional/run.sh b/tools/testin=
-g/selftests/futex/functional/run.sh
-index 81739849f2994..5470088dc4dfb 100755
---- a/tools/testing/selftests/futex/functional/run.sh
-+++ b/tools/testing/selftests/futex/functional/run.sh
-@@ -85,7 +85,6 @@ echo
+diff --git a/tools/testing/selftests/futex/functional/futex_numa_mpol.c b/t=
+ools/testing/selftests/futex/functional/futex_numa_mpol.c
+index a9ecfb2d3932a..802c15c821906 100644
+--- a/tools/testing/selftests/futex/functional/futex_numa_mpol.c
++++ b/tools/testing/selftests/futex/functional/futex_numa_mpol.c
+@@ -182,12 +182,10 @@ int main(int argc, char *argv[])
+ 	if (futex_numa->numa =3D=3D FUTEX_NO_NODE)
+ 		ksft_exit_fail_msg("NUMA node is left uninitialized\n");
 =20
- echo
- ./futex_priv_hash $COLOR
--./futex_priv_hash -g $COLOR
+-	ksft_print_msg("Memory too small\n");
++	/* FUTEX2_NUMA futex must be 8-byte aligned */
++	ksft_print_msg("Mis-aligned futex\n");
+ 	test_futex(futex_ptr + mem_size - 4, 1);
 =20
- echo
- ./futex_numa_mpol $COLOR
+-	ksft_print_msg("Memory out of range\n");
+-	test_futex(futex_ptr + mem_size, 1);
+-
+ 	futex_numa->numa =3D FUTEX_NO_NODE;
+ 	mprotect(futex_ptr, mem_size, PROT_READ);
+ 	ksft_print_msg("Memory, RO\n");
 --=20
 2.50.1
 
