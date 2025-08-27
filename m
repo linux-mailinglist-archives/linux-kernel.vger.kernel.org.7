@@ -1,184 +1,364 @@
-Return-Path: <linux-kernel+bounces-788306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EACF8B3829D
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 14:41:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DAF8B3829C
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 14:41:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 84EAA7B5731
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 12:39:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7EDE3BC363
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 12:41:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23B0D35208F;
-	Wed, 27 Aug 2025 12:39:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6B333176E8;
+	Wed, 27 Aug 2025 12:40:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="marJK7Hv"
-Received: from TYPPR03CU001.outbound.protection.outlook.com (mail-japaneastazon11012038.outbound.protection.outlook.com [52.101.126.38])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="neYI6t/L"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4C3535082E;
-	Wed, 27 Aug 2025 12:39:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.126.38
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756298393; cv=fail; b=OfOxGDquB8AUkWVDQHpXEfyDyYMcPfRltoIra/IhkXOBP752DV4oyk2sIbOJas8LMFhSj8TRqxqD4cDhALv5orJNc+YlNT5KbOySpduHfAOeuCICv6zSFTHaelFKo+sZnWP6T0XzPXoumY1bSHvCHQ4jUhVtiAc9ztLsbXfhzAE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756298393; c=relaxed/simple;
-	bh=N1J/uYqQQt64J/LboJWKLPHp76oKij4AJgkX3KczFSo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=mHglu0RnQZsuiBIKgqNdkDmQjIaawYI2WjvDY6oKf7vnvupTzMEbF9rjc4YmBaNsxfFCI/95xX1VY6uzONjEWKCO9IK5AbwX7qAFM1RqV3cpC1UjO4dswcBe45ZYQ3tT+AUSPsT6mNLaGFecC5nPoA4GGXweiD0u/u+lDKyWMxs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=marJK7Hv; arc=fail smtp.client-ip=52.101.126.38
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=fRYdkAnAUGh3xFiGgLLSjYdwE3D3IT3c/RIVMnZN0HOMgqRCpO+aO8WCxR1GMI3ATckOrnNfyTzqgt/TBXl/s0bukvLftTeVQUzwvWlgfeAH01Tb6PVr1G5RKvDwNDTzsTyAVaJfu6kInP9l0gttAuu6865n+Ro29aWrvU53fvw0zqajgSe4RPjoO/hI8Eo1Grht5vxSoC/bunHHGnnOk5tOuiLQiZL0FWYYi9Ej01qnTBrgbFwXaTS+S9FRLaDvGyyYh6aPjQsFtjYg3rIEZW4X8R1vd56VfV41xajkbV1o4mE6aLSolMd8Bd9NZ9Z336LnIV8i29RULX6aRbOhKQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=GPSaDWZ5UWJp40FE2AerA/TeUScRIKV4FkeX02TeZi4=;
- b=MjeDPPHFDLJWoM3XSXsZudoPhMFU2IjVrvgm8NuA//QX9ZloJuM0ws9F1dSZ7T+nAvGZA9sbLA9BuJcwEPtt89KGArr1+NSNDV/uIoXYELKWjWhia89VvXPyR313NgwZuwsu2V5+arwoizgit0b/CBFQqqeCGoXQSgQlJDtpZp4TivnqJNp/ZvNNtiZ0j9XbFZtIPyUT1O4sfnuBX9irX7T2oXhr25RotFebCWF3AkR2V4gJIjcCJ+cCoYLxw0F5xO2Jzl/UzCwUDDEGUCdiGexUcAnWBP9u6exvxgiFjbNqQWRXu4vYbB6Q6OYjZ+4XzBoqHa/nzX3AQHLvbxRZfA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GPSaDWZ5UWJp40FE2AerA/TeUScRIKV4FkeX02TeZi4=;
- b=marJK7HvmyxJg6zwulC3R7HLVfwUuyfrUr2isrXcLo3aaG3HSRPPqFSaqB71b4R2CJbia0FV3wYzHsDsHcJwlEowwEOUUZU0ivq0oUqbFhtzcRqSqsVRPpAdSRGacbgtNPKu4FQgfN3immhZ2cScKKsvADa93anSOIjmXSVBohHA9yr8bMeNAcF6fDd2EoH+KBDkX4bGbAE2h+W5s7E4S19OwaRJYnf8YtptNpQzYDXz8Z0zN1H9NWdya2P0rH2DbZMjliU1VP/nPf1C0En7oQrDRZwTrciqBhF5oi4gnr/nG1J1kzvjVe9DYzbZTsfgdhTpluYtn//IyAFEm+6rRw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from SI2PR06MB5140.apcprd06.prod.outlook.com (2603:1096:4:1af::9) by
- PUZPR06MB5539.apcprd06.prod.outlook.com (2603:1096:301:e9::14) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9073.13; Wed, 27 Aug 2025 12:39:47 +0000
-Received: from SI2PR06MB5140.apcprd06.prod.outlook.com
- ([fe80::468a:88be:bec:666]) by SI2PR06MB5140.apcprd06.prod.outlook.com
- ([fe80::468a:88be:bec:666%5]) with mapi id 15.20.9073.010; Wed, 27 Aug 2025
- 12:39:46 +0000
-From: Qianfeng Rong <rongqianfeng@vivo.com>
-To: Sean Young <sean@mess.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	linux-media@vger.kernel.org (open list:RC-CORE / LIRC FRAMEWORK),
-	linux-kernel@vger.kernel.org (open list)
-Cc: Qianfeng Rong <rongqianfeng@vivo.com>
-Subject: [PATCH 5/5] media: redrat3: use int type to store negative error codes
-Date: Wed, 27 Aug 2025 20:39:13 +0800
-Message-Id: <20250827123916.504189-6-rongqianfeng@vivo.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250827123916.504189-1-rongqianfeng@vivo.com>
-References: <20250827123916.504189-1-rongqianfeng@vivo.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SI2PR01CA0049.apcprd01.prod.exchangelabs.com
- (2603:1096:4:193::13) To SI2PR06MB5140.apcprd06.prod.outlook.com
- (2603:1096:4:1af::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1BD931E0EE
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 12:40:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756298445; cv=none; b=Kb2G4I22UNqif+5TPjGr4EuCKizQ3URM+LkO84KuBGAHZFcLAt0kbSH9qt18qWIiVRR6vmvdxN14YWC7eMTWnCQ2uNApnJnpepD2MQy2iVlKbaT8ro8P+n6CgmAU9aUoIzUwwsHI6X0GgvWn3+Zr52CcyRytoSVFejsfCz93cm8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756298445; c=relaxed/simple;
+	bh=Oj9INxjIP6sQuRtRZC1XEXWjUDxgq7X4x6/xPaQ16Us=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=g//QYg/XPuiAM56vOh+S+978gjhZBO7rdh0A2IhBl7p55hZF45vplim2E6Q3c5WmMqoEhLRjwzxFEU5Ek7sqah9+hu5V+lZmD1UeuiqmtIJxb/WG5mR/ONz+HBWB4+PSMzuiFXnpYxX/bYP4t2Ufl5/XmlQmrzk5VQXPvM3O37M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=neYI6t/L; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (unknown [213.244.170.152])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 58F0D2093;
+	Wed, 27 Aug 2025 14:39:35 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1756298375;
+	bh=Oj9INxjIP6sQuRtRZC1XEXWjUDxgq7X4x6/xPaQ16Us=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=neYI6t/LDCSI6Okctg7uyem8zY2jgCfp4upaDeyVGnQp2R7L566zYTjeGqfBKPHxe
+	 po/PaSSgr+A3CNPoSJ6hITWUoUPLVG39eEBdNRSjP9VQTNDgVB089FLlJBaYQQXrFR
+	 SytrLKgNDAkQV9FHQwNEQHxPJeJlpF9UFVUeqU3c=
+Date: Wed, 27 Aug 2025 14:40:16 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Jai Luthra <jai.luthra@ideasonboard.com>
+Cc: Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org, kernel-list@raspberrypi.com,
+	Stefan Wahren <wahrenst@gmx.net>,
+	Dave Stevenson <dave.stevenson@raspberrypi.com>,
+	Umang Jain <uajain@igalia.com>
+Subject: Re: [PATCH 1/5] include: linux: Destage VCHIQ interface headers
+Message-ID: <20250827124016.GF5650@pendragon.ideasonboard.com>
+References: <20250827-vchiq-destage-v1-0-5052a0d81c42@ideasonboard.com>
+ <20250827-vchiq-destage-v1-1-5052a0d81c42@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SI2PR06MB5140:EE_|PUZPR06MB5539:EE_
-X-MS-Office365-Filtering-Correlation-Id: fde2d42a-43d9-4e49-ead6-08dde566cde8
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|376014|52116014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?9t2M25kPj3cqasS/nxqJGumEaDzxE56u6Ywnxh1NFG6YsmBTU2ISXN53ppD/?=
- =?us-ascii?Q?wEqV6hy+ZUhzhE2JWRL8A99kncjcQnRd7ZW4hwKBe0bCzJJbZahewLqqdmYc?=
- =?us-ascii?Q?7H8qGxyzZ8PeTffbaLh23JgwbEnYc4fSNawuOQWo5MpgFdUrHkJeJBi17x2Y?=
- =?us-ascii?Q?Xs82GXR3+mQyb+Bx6SIJMNp6D/fV08cKYQndVvsoLZuKYecvON04CU8jlPCi?=
- =?us-ascii?Q?uHkJ3sGjCGbfeFABPqIoRBzvB5EdGBZDFOXc9EcL9bC5ABkoAOkD4S6vbyHZ?=
- =?us-ascii?Q?Hwv4fomS4bMxjmDbQWSJH7AbnFST6kvdx+nRK+rMYN2PO8R6BYgNocm4Hlxa?=
- =?us-ascii?Q?jsDxbC1OrVqqBI45qC5WQnh6wQvEx8EPezOhoniFnZFb16uiMNOYIaXztwpW?=
- =?us-ascii?Q?WRe5eIrV+BViueHIY6g2URJ9dRXG0M5v2+tUFGeHTawPxCwzAwSH3kba0XFt?=
- =?us-ascii?Q?p+dTaf5shy3IPVnWSi6ZGNgHl7ccvKNnffPzk9GkH4sXc1rYy1tlFEcZChBp?=
- =?us-ascii?Q?Ciz9o7lBnimTaf7Z3UoiRBR6zuDIJeNNJXBj2VEKPZ4PKoy9MMIu/krA/Uqq?=
- =?us-ascii?Q?nFO2ptV8QgrTCoLo3zsNliv3jq228FDhnKTt89eADSM2S5j2XduHFKANZXK5?=
- =?us-ascii?Q?szmr+TEwh5AXurZ9v5Ps9vL1K64wSdevhY1npIzgfDODSIbe9I9HLP271ebp?=
- =?us-ascii?Q?3n89aLNw28q3cM2MJCNhleMtiRlz5YEFg0TaZT97MnGgFVMZjDtVEcyp8oFK?=
- =?us-ascii?Q?BnzJBcXoUaVBPhc+C8R7SVK9kObO67ZSi0dyZwIbd/TbVPc6dKR4JLsZ61Tc?=
- =?us-ascii?Q?13RqpldZUh6Cw5lrnZkOTsFtPKPqB0RABZSA/aGHXZqcVsBff9TzJ96RwSKd?=
- =?us-ascii?Q?pKt+S3rOwPQkmgJkPpOP1DiZO4uduNAuc5NE/oDp9uEiVtIi7wS6OH1R6YHi?=
- =?us-ascii?Q?fTQHS736zG0FJwiyyYathsuqq7+W/OzPTxmxMXoypq2cezrGa6vYe35x1jvE?=
- =?us-ascii?Q?mS6gL0CacBS3Un9n6c138/ev/yHIy3mjGrJquNx0MwG6vHGna0OZU4KaAaEJ?=
- =?us-ascii?Q?+iiu8YcteM8j935oxtOomWxfnvVaaarLtqzCnad3PIyH0ShP/a5H8qePhHgT?=
- =?us-ascii?Q?YB3Trr7hM+xQ7GkBR4FpB3UoQ70nOp5wsQrSKRu+/xCOv1Ag1iNCIMt5m9bZ?=
- =?us-ascii?Q?JmeHxOundeJfxVOB4roLNaj6OCh0xQx3K5cPUdsnDO4R6sP0J0VTmgOiQ4zu?=
- =?us-ascii?Q?AZY+vruGy4S1Py0UG9M+xUFdkOEo3Fl3Vh1lESWKUFakA+jyYOMvmE7fia+N?=
- =?us-ascii?Q?8Xwu5NzWJN9pYfRizCO4qtp4C6NqvHgxSK2mQOcfJ9ovRoH4YX/bLQPALsju?=
- =?us-ascii?Q?zijlwdqY5qz2SN0BDNJEnzMTDmjBR+xlFVJ2PPMcjrpm9JVW1kQLE9MRea7s?=
- =?us-ascii?Q?1U2e3rt3miAIxjXAbI5gHzyw2v5xwP0WmN9J4JiO4AHi+xEugKbNAQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SI2PR06MB5140.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(52116014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?Nm2TBP2Xo5frC/G674a89VURFcWDz4gNN/O8RgLI2MjJGOuE7LYom5L5gQKY?=
- =?us-ascii?Q?x17xudHrUgWJm3K5BZtHiJ49TBKbHLdip8k2GEQ964CbZa6edI2TG+R2pNwo?=
- =?us-ascii?Q?AxRk75MGdn7/vZG06dQgS04jwuFEM8VdS1mLZixYZ/kR+N4YEhz8lpdOVWvl?=
- =?us-ascii?Q?WwcvjxtDd7TlnEyTdP02TaLT7WDWd0uatG/CFSKYpT2vsKZS/cWLX9Fe+cAe?=
- =?us-ascii?Q?HoRimftAwoPVgrjEM/mfiwGv1Mbca++mZ8X6SliTS0EeKZyhJdK/PPWeVqPX?=
- =?us-ascii?Q?Et+u7WddgGlL9grUJdLkV1Apm1NvBIwtw+4pveCHNs2UqaipkiHewoN61Mcb?=
- =?us-ascii?Q?+CwzgcN/JC85asPnZw9XFEJNWWa9rt5+Vz1PvOW59z//m+/9wGC/bDKupfFa?=
- =?us-ascii?Q?zlOxpcXOrzSBQIZlgZanTPgL1Mqs9CKrD7CYnhHVE231Bb9/tVkuvfsFRBbx?=
- =?us-ascii?Q?ECUX9B9WZvDyd+uMk9noMbWwKi/FJu3xN6fNjwITDCRiKn6lUJgoPGfyN1VO?=
- =?us-ascii?Q?P3Ku5QFqmP/NVqjIeQkmp+Dm3crWJ3ZiWSgiqJtBh7fgpPF3uRchxGiIZmp8?=
- =?us-ascii?Q?St1ugKJwoj8qZxm7PPvCu0T+KoWdcLTVJUjWj0Ug2Tbz+iED5B2mCgOS5kVb?=
- =?us-ascii?Q?b1hGuPlB+GhH6SHYniFOnNM55DjzUAWmlGL6IhHAsj+zQNARXmMLz3/t5XAY?=
- =?us-ascii?Q?6PI1oiE5GkFhTFsUxIjXbNuJEt0jPkFmQO4A664Fp0kBYgf57JgnaEjECuEr?=
- =?us-ascii?Q?BxLtQPIDgcpXM1ir6uhgQKOJf9QdVIXDBy5Yu/ld4ojgXybkrtHDgQJFgi70?=
- =?us-ascii?Q?vu7NBdnokRjvMWZV1r+YO+7Ovs4Xb3NPyBbv9OXuK2xl+Q29pTjnMuwcA5in?=
- =?us-ascii?Q?hvHe/aLp8nJ5Cozk9F07bxsMCv1KNyvuio2yOYmB8pru6w694L9aHB24PRp/?=
- =?us-ascii?Q?Wfsrxavn9KFxvGyYEHUcjbQ2UGIXTzVP0sHt6jKD0y8bQ7kx3y/YtuIDBszW?=
- =?us-ascii?Q?6hyhC80BU9MPnsLgQoJ1CINwGtA8haCCaA8bpvUWuP0YliDeVYCGPeVuvodO?=
- =?us-ascii?Q?+XNJPjap9wtuI4nD8pLoX/ea3udHd7Ta8HmBwW6+vxpSW78MlNLHGxwOE34Z?=
- =?us-ascii?Q?IosmWs2XnHqP0/OdzoUqwsGX51xlN/+8V1MgkUhjcY4uSq6B1JUWpn3OBY+R?=
- =?us-ascii?Q?CwuHFjZNQa0uCc/LoNzUfMERbva+BBF4viOIt/EkC+dEiAx4svDwbnXS/yXy?=
- =?us-ascii?Q?j1ajaprfoV9ePmil4k6pHfKcFaZiNGAn4e6IG51v3BEkD9MOkRxsM8mEzoNZ?=
- =?us-ascii?Q?ndtp8dCloH6qpaoWYkP1xVRC8mSAEa53tSMo5iv8ZCsxJthQ/4eBRcpNoT9F?=
- =?us-ascii?Q?aP6x3FYTGrQuUqYxIfo7QQ5PJcNe2z0tGz4o40AJvNS6p79NUJsQ8ynjmb84?=
- =?us-ascii?Q?DbAbcsmQnkVknCv+YsoU36kA8+fy0YijqtWonHvgjsebFygmAIb+mIEa1k3u?=
- =?us-ascii?Q?qoWozEoc15vrkXrmz72QIJWYbvxmfQpIffetvAgv9EAIuSvpKTq2js6NuLGG?=
- =?us-ascii?Q?+1GhWwK4hJT+7LyJPCcwSbgURqfXtBcUJ7guzLWn?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fde2d42a-43d9-4e49-ead6-08dde566cde8
-X-MS-Exchange-CrossTenant-AuthSource: SI2PR06MB5140.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2025 12:39:46.4469
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: BW73GaX9z1p65Q5yOd72b6numt0SQIJQYcjw8OhZt+hecLREj5GmpkFD3hMse63lJOlLGshX0n6h1C4vssBrEA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PUZPR06MB5539
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250827-vchiq-destage-v1-1-5052a0d81c42@ideasonboard.com>
 
-Change "ret" from u8 to int type in redrat3_enable_detector() to store
-negative error codes or zero returned by redrat3_send_cmd() and
-usb_submit_urb() - this better aligns with the coding standards and
-maintains code consistency.
+Hi Jai,
 
-No effect on runtime.
+Thank you for the patch.
 
-Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
----
- drivers/media/rc/redrat3.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Wed, Aug 27, 2025 at 11:54:08AM +0530, Jai Luthra wrote:
+> From: Umang Jain <umang.jain@ideasonboard.com>
+> 
+> Move the VCHIQ headers from drivers/staging/vc04_services/include to
+> include/linux/vchiq
+> 
+> This is done so that they can be shared between the VCHIQ interface
+> (which is going to be de-staged in a subsequent commit from staging)
+> and the VCHIQ drivers left in the staging/vc04_services (namely
+> bcm2835-audio, bcm2835-camera).
+> 
+> The include/linux/vchiq/ provides a central location to serve both
+> of these areas.
 
-diff --git a/drivers/media/rc/redrat3.c b/drivers/media/rc/redrat3.c
-index d89a4cfe3c89..a49173f54a4d 100644
---- a/drivers/media/rc/redrat3.c
-+++ b/drivers/media/rc/redrat3.c
-@@ -422,7 +422,7 @@ static int redrat3_send_cmd(int cmd, struct redrat3_dev *rr3)
- static int redrat3_enable_detector(struct redrat3_dev *rr3)
- {
- 	struct device *dev = rr3->dev;
--	u8 ret;
-+	int ret;
- 
- 	ret = redrat3_send_cmd(RR3_RC_DET_ENABLE, rr3);
- 	if (ret != 0)
+Lots of SoC-specific headers are stored in include/linux/soc/$vendor/.
+This would be include/linux/soc/bcm/vchiq/ in this case. I'm also fine
+with include/linux/vchiq/ but other people may have a preference.
+
+> Signed-off-by: Umang Jain <umang.jain@ideasonboard.com>
+> Signed-off-by: Jai Luthra <jai.luthra@ideasonboard.com>
+> ---
+>  MAINTAINERS                                                      | 1 +
+>  drivers/staging/vc04_services/bcm2835-audio/bcm2835-vchiq.c      | 5 +++--
+>  drivers/staging/vc04_services/bcm2835-audio/bcm2835.c            | 3 ++-
+>  drivers/staging/vc04_services/bcm2835-audio/bcm2835.h            | 3 +--
+>  drivers/staging/vc04_services/bcm2835-camera/bcm2835-camera.c    | 3 ++-
+>  drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c    | 9 +++++----
+>  drivers/staging/vc04_services/interface/vchiq_arm/vchiq_bus.c    | 4 ++--
+>  drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c   | 4 ++--
+>  .../staging/vc04_services/interface/vchiq_arm/vchiq_debugfs.c    | 6 +++---
+>  drivers/staging/vc04_services/interface/vchiq_arm/vchiq_dev.c    | 7 ++++---
+>  drivers/staging/vc04_services/interface/vchiq_arm/vchiq_ioctl.h  | 3 +--
+>  drivers/staging/vc04_services/vchiq-mmal/mmal-vchiq.c            | 5 +++--
+>  .../include/linux/raspberrypi => include/linux/vchiq}/vchiq.h    | 0
+>  .../interface/vchiq_arm => include/linux/vchiq}/vchiq_arm.h      | 0
+>  .../interface/vchiq_arm => include/linux/vchiq}/vchiq_bus.h      | 0
+>  .../interface/vchiq_arm => include/linux/vchiq}/vchiq_cfg.h      | 0
+>  .../interface/vchiq_arm => include/linux/vchiq}/vchiq_core.h     | 2 +-
+>  .../interface/vchiq_arm => include/linux/vchiq}/vchiq_debugfs.h  | 0
+>  18 files changed, 30 insertions(+), 25 deletions(-)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index fe168477caa45799dfe07de2f54de6d6a1ce0615..f17ebb1fa51bd7e4dcb2ae1b0fced6d41685dc84 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -4754,6 +4754,7 @@ T:	git https://github.com/broadcom/stblinux.git
+>  F:	Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml
+>  F:	drivers/pci/controller/pcie-brcmstb.c
+>  F:	drivers/staging/vc04_services
+> +F:	include/linux/vchiq
+>  N:	bcm2711
+>  N:	bcm2712
+>  N:	bcm283*
+> diff --git a/drivers/staging/vc04_services/bcm2835-audio/bcm2835-vchiq.c b/drivers/staging/vc04_services/bcm2835-audio/bcm2835-vchiq.c
+> index 0dbe76ee557032d7861acfc002cc203ff2e6971d..c49f2f7409b84ed6ebdd71787566efb1bc230f55 100644
+> --- a/drivers/staging/vc04_services/bcm2835-audio/bcm2835-vchiq.c
+> +++ b/drivers/staging/vc04_services/bcm2835-audio/bcm2835-vchiq.c
+> @@ -4,11 +4,12 @@
+>  #include <linux/slab.h>
+>  #include <linux/module.h>
+>  #include <linux/completion.h>
+> +
+> +#include <linux/vchiq/vchiq_arm.h>
+
+You can group this with the other headers above (ideally in alphabetical
+order when #include statements are already sorted). Same comment where
+applicable below.
+
+With that,
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+> +
+>  #include "bcm2835.h"
+>  #include "vc_vchi_audioserv_defs.h"
+>  
+> -#include "../interface/vchiq_arm/vchiq_arm.h"
+> -
+>  struct bcm2835_audio_instance {
+>  	struct device *dev;
+>  	unsigned int service_handle;
+> diff --git a/drivers/staging/vc04_services/bcm2835-audio/bcm2835.c b/drivers/staging/vc04_services/bcm2835-audio/bcm2835.c
+> index b74cb104e9de00e7688a320949111a419cca084a..5011720940715c12a2d2fe58b40ed84dcb2e6824 100644
+> --- a/drivers/staging/vc04_services/bcm2835-audio/bcm2835.c
+> +++ b/drivers/staging/vc04_services/bcm2835-audio/bcm2835.c
+> @@ -6,7 +6,8 @@
+>  #include <linux/slab.h>
+>  #include <linux/module.h>
+>  
+> -#include "../interface/vchiq_arm/vchiq_bus.h"
+> +#include <linux/vchiq/vchiq_bus.h>
+> +
+>  #include "bcm2835.h"
+>  
+>  static bool enable_hdmi;
+> diff --git a/drivers/staging/vc04_services/bcm2835-audio/bcm2835.h b/drivers/staging/vc04_services/bcm2835-audio/bcm2835.h
+> index 49ec5b496edb4ba8634171b1390c4e15181e4048..7e63ef251c37269032fc20ae1237855245e5e0a7 100644
+> --- a/drivers/staging/vc04_services/bcm2835-audio/bcm2835.h
+> +++ b/drivers/staging/vc04_services/bcm2835-audio/bcm2835.h
+> @@ -5,13 +5,12 @@
+>  #define __SOUND_ARM_BCM2835_H
+>  
+>  #include <linux/device.h>
+> +#include <linux/vchiq/vchiq.h>
+>  #include <linux/wait.h>
+>  #include <sound/core.h>
+>  #include <sound/pcm.h>
+>  #include <sound/pcm-indirect.h>
+>  
+> -#include "../include/linux/raspberrypi/vchiq.h"
+> -
+>  #define MAX_SUBSTREAMS   (8)
+>  #define AVAIL_SUBSTREAMS_MASK  (0xff)
+>  
+> diff --git a/drivers/staging/vc04_services/bcm2835-camera/bcm2835-camera.c b/drivers/staging/vc04_services/bcm2835-camera/bcm2835-camera.c
+> index fa7ea4ca4c36f4ec7f76f6ffbea9f45205116bb8..fcbbe1aa60b768e5a7a08a131f595a0457f4473a 100644
+> --- a/drivers/staging/vc04_services/bcm2835-camera/bcm2835-camera.c
+> +++ b/drivers/staging/vc04_services/bcm2835-camera/bcm2835-camera.c
+> @@ -26,7 +26,8 @@
+>  #include <media/v4l2-common.h>
+>  #include <linux/delay.h>
+>  
+> -#include "../interface/vchiq_arm/vchiq_bus.h"
+> +#include <linux/vchiq/vchiq_bus.h>
+> +
+>  #include "../vchiq-mmal/mmal-common.h"
+>  #include "../vchiq-mmal/mmal-encodings.h"
+>  #include "../vchiq-mmal/mmal-vchiq.h"
+> diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
+> index 721b15b7e13b9f25cee7619575bbfa1a4734cce8..10138c1454dd7fdcbab6b95ea41f8e1ac2defc4b 100644
+> --- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
+> +++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
+> @@ -30,11 +30,12 @@
+>  #include <linux/uaccess.h>
+>  #include <soc/bcm2835/raspberrypi-firmware.h>
+>  
+> -#include "vchiq_core.h"
+> +#include <linux/vchiq/vchiq_core.h>
+> +#include <linux/vchiq/vchiq_arm.h>
+> +#include <linux/vchiq/vchiq_bus.h>
+> +#include <linux/vchiq/vchiq_debugfs.h>
+> +
+>  #include "vchiq_ioctl.h"
+> -#include "vchiq_arm.h"
+> -#include "vchiq_bus.h"
+> -#include "vchiq_debugfs.h"
+>  
+>  #define DEVICE_NAME "vchiq"
+>  
+> diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_bus.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_bus.c
+> index 41ece91ab88aa647a348910a0b913d0b28a8c761..5d55dbff82150a84b15483e71718c48f5cb8caea 100644
+> --- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_bus.c
+> +++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_bus.c
+> @@ -11,8 +11,8 @@
+>  #include <linux/slab.h>
+>  #include <linux/string.h>
+>  
+> -#include "vchiq_arm.h"
+> -#include "vchiq_bus.h"
+> +#include <linux/vchiq/vchiq_arm.h>
+> +#include <linux/vchiq/vchiq_bus.h>
+>  
+>  static int vchiq_bus_type_match(struct device *dev, const struct device_driver *drv)
+>  {
+> diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
+> index e2cac0898b8faa3c255de6b8562c7096a9683c49..ac0379f5f45dfa331dc2fec8d580d176f931cf2b 100644
+> --- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
+> +++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
+> @@ -15,8 +15,8 @@
+>  #include <linux/rcupdate.h>
+>  #include <linux/sched/signal.h>
+>  
+> -#include "vchiq_arm.h"
+> -#include "vchiq_core.h"
+> +#include <linux/vchiq/vchiq_arm.h>
+> +#include <linux/vchiq/vchiq_core.h>
+>  
+>  #define VCHIQ_SLOT_HANDLER_STACK 8192
+>  
+> diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_debugfs.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_debugfs.c
+> index d5f7f61c5626934b819e8ff322e22ae3d6158b31..b1a8f1abafc2fa83132b1a02ba343d71315950de 100644
+> --- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_debugfs.c
+> +++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_debugfs.c
+> @@ -5,9 +5,9 @@
+>   */
+>  
+>  #include <linux/debugfs.h>
+> -#include "vchiq_core.h"
+> -#include "vchiq_arm.h"
+> -#include "vchiq_debugfs.h"
+> +#include <linux/vchiq/vchiq_core.h>
+> +#include <linux/vchiq/vchiq_arm.h>
+> +#include <linux/vchiq/vchiq_debugfs.h>
+>  
+>  #ifdef CONFIG_DEBUG_FS
+>  
+> diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_dev.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_dev.c
+> index 3b20ba5c736221ce1cacfc9ce86eca623382a30b..781d6dd64ee33816b52b62f1f25bcd33363d8e02 100644
+> --- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_dev.c
+> +++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_dev.c
+> @@ -11,10 +11,11 @@
+>  #include <linux/compat.h>
+>  #include <linux/miscdevice.h>
+>  
+> -#include "vchiq_core.h"
+> +#include <linux/vchiq/vchiq_core.h>
+> +#include <linux/vchiq/vchiq_arm.h>
+> +#include <linux/vchiq/vchiq_debugfs.h>
+> +
+>  #include "vchiq_ioctl.h"
+> -#include "vchiq_arm.h"
+> -#include "vchiq_debugfs.h"
+>  
+>  static const char *const ioctl_names[] = {
+>  	"CONNECT",
+> diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_ioctl.h b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_ioctl.h
+> index afb71a83cfe7035e5dd61003fa99fd514ca18047..638469f18f859a0c7e738ef5bed7bf3c3ebebe59 100644
+> --- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_ioctl.h
+> +++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_ioctl.h
+> @@ -5,8 +5,7 @@
+>  #define VCHIQ_IOCTLS_H
+>  
+>  #include <linux/ioctl.h>
+> -
+> -#include "../../include/linux/raspberrypi/vchiq.h"
+> +#include <linux/vchiq/vchiq.h>
+>  
+>  #define VCHIQ_IOC_MAGIC 0xc4
+>  #define VCHIQ_INVALID_HANDLE (~0)
+> diff --git a/drivers/staging/vc04_services/vchiq-mmal/mmal-vchiq.c b/drivers/staging/vc04_services/vchiq-mmal/mmal-vchiq.c
+> index 3fe482bd279390a7586c49bde00f38c61558ca8e..f5e141908b0f91ca4172d48aee37f0329d239d7c 100644
+> --- a/drivers/staging/vc04_services/vchiq-mmal/mmal-vchiq.c
+> +++ b/drivers/staging/vc04_services/vchiq-mmal/mmal-vchiq.c
+> @@ -22,11 +22,12 @@
+>  #include <linux/mm.h>
+>  #include <linux/slab.h>
+>  #include <linux/completion.h>
+> +#include <linux/vchiq/vchiq.h>
+>  #include <linux/vmalloc.h>
+>  #include <media/videobuf2-vmalloc.h>
+>  
+> -#include "../include/linux/raspberrypi/vchiq.h"
+> -#include "../interface/vchiq_arm/vchiq_arm.h"
+> +#include <linux/vchiq/vchiq_arm.h>
+> +
+>  #include "mmal-common.h"
+>  #include "mmal-vchiq.h"
+>  #include "mmal-msg.h"
+> diff --git a/drivers/staging/vc04_services/include/linux/raspberrypi/vchiq.h b/include/linux/vchiq/vchiq.h
+> similarity index 100%
+> rename from drivers/staging/vc04_services/include/linux/raspberrypi/vchiq.h
+> rename to include/linux/vchiq/vchiq.h
+> diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.h b/include/linux/vchiq/vchiq_arm.h
+> similarity index 100%
+> rename from drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.h
+> rename to include/linux/vchiq/vchiq_arm.h
+> diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_bus.h b/include/linux/vchiq/vchiq_bus.h
+> similarity index 100%
+> rename from drivers/staging/vc04_services/interface/vchiq_arm/vchiq_bus.h
+> rename to include/linux/vchiq/vchiq_bus.h
+> diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_cfg.h b/include/linux/vchiq/vchiq_cfg.h
+> similarity index 100%
+> rename from drivers/staging/vc04_services/interface/vchiq_arm/vchiq_cfg.h
+> rename to include/linux/vchiq/vchiq_cfg.h
+> diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.h b/include/linux/vchiq/vchiq_core.h
+> similarity index 99%
+> rename from drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.h
+> rename to include/linux/vchiq/vchiq_core.h
+> index 9b4e766990a493d6e9d4e0604f2c84f4e7b77804..dbcb19e7a6d39b94967261c4ab23d6325e999249 100644
+> --- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.h
+> +++ b/include/linux/vchiq/vchiq_core.h
+> @@ -15,7 +15,7 @@
+>  #include <linux/spinlock_types.h>
+>  #include <linux/wait.h>
+>  
+> -#include "../../include/linux/raspberrypi/vchiq.h"
+> +#include "vchiq.h"
+>  #include "vchiq_cfg.h"
+>  
+>  /* Do this so that we can test-build the code on non-rpi systems */
+> diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_debugfs.h b/include/linux/vchiq/vchiq_debugfs.h
+> similarity index 100%
+> rename from drivers/staging/vc04_services/interface/vchiq_arm/vchiq_debugfs.h
+> rename to include/linux/vchiq/vchiq_debugfs.h
+> 
+
 -- 
-2.34.1
+Regards,
 
+Laurent Pinchart
 
