@@ -1,105 +1,136 @@
-Return-Path: <linux-kernel+bounces-788874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04A22B38BA1
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 23:47:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB632B38BB8
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 23:53:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4E0216E17D
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 21:47:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E70EB1B22BB0
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 21:54:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9033E2F0C76;
-	Wed, 27 Aug 2025 21:47:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60CAC2F0C76;
+	Wed, 27 Aug 2025 21:53:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BP2txcJj"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UVBDrdAh"
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67ACA30DEB4
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 21:47:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 566B130C373;
+	Wed, 27 Aug 2025 21:53:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756331230; cv=none; b=eGfO0ibbBWgrsnVz+d2FymISp24leVHG2YQ8U9BnTYbY7nITZNATmz6hwVclsBq1TW4/hlBU3Gwxd0cwZSLBdzq0T9rTctckaWhoB8Aq0yD8uDHD1CmKXNHvh0ugiZNTNyPRTVh9wuMejnBojvI45CxQYAQfNx1ThK87dd1byBs=
+	t=1756331620; cv=none; b=KsbrR6ZzgyqPBCopaRCs3r4NSN9ZgxM3nUD1yxi5EDR80pASQro49VflHSISoYExp6Ukgnu66Sk4iSdXvj1ulgwtZDncRhpeURlZXQ3aORXEKwJ1dJyfRh6maz70Ibx++YAiXFy2mwbow6Ih51FIlxYhIDntp4556FMb/zUpJMM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756331230; c=relaxed/simple;
-	bh=9RW8zXdpdVYAVUqtLZZ63zwdMXfvo4c5jZhmHZV/++Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d2S48rL/9RLwdjI+SP+MoUN3WbBdE30QuF/poVN3HwNy64hmo1gW8iiQmYXkGms92Cs/VdbwfSGSbsgtRg9EG9hDsXThoXSbSWxVz3oJChyTtMbvM1DqOMvW9O6gpnajNurIS0zkSQv+P4fO3k4jH4SUrljbMMbCiens/OzOrZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BP2txcJj; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756331229; x=1787867229;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=9RW8zXdpdVYAVUqtLZZ63zwdMXfvo4c5jZhmHZV/++Q=;
-  b=BP2txcJjZMHp2cr+g6iHM0Xw3Mouy/S0/eIiYnfcB6Besp0GK/mcmasx
-   7VBbzYH4h1fCiEskFesNTo54kHFZUMHTiCPvKrfygDBFUmnYiZdaMwlD7
-   aekhi7as5wBD94jHFp5lWRtOOwOKcksvfJjntCFKXUTPVnr5a/ac7t9sO
-   j4RByLLHggb7D0svN+IeEg9jzSkzuC7H2BRDljPLriF5OlpALHAg5ORz1
-   Ru/EuYs5f1GbIs8rYCbMlNpiIto2izHhS363wD1KLlh2JvmSi0K6MmPxe
-   kLCFYGW8xhoFyeCk8tT/7mfN7HcJruHqc1nT0J4TXMaIljTrpD79eLPyP
-   A==;
-X-CSE-ConnectionGUID: lyTrm3gJSWCa94BZCCiglQ==
-X-CSE-MsgGUID: 4RPmvp1VSyu6nQ8UdFtNJQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11535"; a="76192225"
-X-IronPort-AV: E=Sophos;i="6.18,217,1751266800"; 
-   d="scan'208";a="76192225"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2025 14:47:08 -0700
-X-CSE-ConnectionGUID: OzumYTkkRFipllJ6o2zpgg==
-X-CSE-MsgGUID: ILq6xhTLS6uAnu5M0StACA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,217,1751266800"; 
-   d="scan'208";a="170764828"
-Received: from ranerica-svr.sc.intel.com ([172.25.110.23])
-  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2025 14:47:08 -0700
-Date: Wed, 27 Aug 2025 14:53:18 -0700
-From: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: ricardo.neri@intel.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] genirq/debugfs: Fix a typo in IRQ effective affinity
-Message-ID: <20250827215318.GA28201@ranerica-svr.sc.intel.com>
-References: <20250812-rneri-irq-debugfs-typo-v1-1-f29777b4024d@linux.intel.com>
- <87ikievsh3.ffs@tglx>
- <20250825231054.GA25222@ranerica-svr.sc.intel.com>
+	s=arc-20240116; t=1756331620; c=relaxed/simple;
+	bh=3tptuK9MJ+A2cSfFO09aFBfjOgh9RXe3a1vByS5pMcI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=W5eTD8ReIwqpodmSBNabcfE/K/JW3Iiyg+VaixB9QsndykoseOv97bNGS5/OltIr/xqNBvt9TzDGQ8yTz3Jtbvt9pDUPaTFPeL4PtsAzfw/ndjHPPXVNKFmUL4SRrZuAw9u1g8eCJvQ0ZATOPloECFldMO0DhD/r2S8UHAxFQnQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UVBDrdAh; arc=none smtp.client-ip=209.85.215.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-b4717543ed9so271700a12.3;
+        Wed, 27 Aug 2025 14:53:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756331618; x=1756936418; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nEn8Ne3HB2072aJnQokk4sDSCwEXESgtPT8cGQBeL/A=;
+        b=UVBDrdAhifvMNXhrwbecq3xZkjmCcS31PSWct0pNuqQH7EvBK8KxRSt4ycl3spQ9GS
+         vYjaKLYdIGclrVF5RVK3dAzZAmvCPj7u1hPEdavSY5cH5xTta+lQh9Gjgg+wDPrpP7B1
+         QnD5pramvymYOW7YEddanmt4NkixYWx1RMuX1z+cVAnQqWq7nwK77Wmgc+c+FdOOws0S
+         lt7T0X9J9af1cQmmPESnOHsSQYlXo0/5YMYlFOnwRrTZ1dMaFGUunOjoTNvdLEXJpgk1
+         bpsw+SvBNZBKw4lBuHTLIXdsoauexNvb94q7rX4r0JHtQ+1OS+JXvBQbg4mDwgYe4QoH
+         cWnA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756331618; x=1756936418;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nEn8Ne3HB2072aJnQokk4sDSCwEXESgtPT8cGQBeL/A=;
+        b=g0S7G/iWtR7CisiIpIOAVpAiK+AVxL/tg/JmrfA+vZoxZyQJTNZ7gios+S8cGp3CIX
+         koN7IwR6GL2+tfPcqa/SPm976I3ciIAVwDDPKvBZM2/KcXG8TR4viuRihYHI54ynlvqP
+         jL/3+L+ThFLB9WyI3U8w70xT6zmJviMfIL4xRebdigXwDsheulqFEQGRAg6M2QObyGYz
+         i6gtS9xxkrYYBilwb8LaEzOKj8BZg2O2SY2fxgLRFebXnWwKZRnKaLlq1+nNVQYoVyS4
+         0MRr/tq62iK77VBHvTUmP7vRn7YTgrsCAD8T75aRcnVbE0ptbEVa/FOG2rrXtpxdxZAh
+         oMQg==
+X-Forwarded-Encrypted: i=1; AJvYcCVay2V3gW43d6Y8FE7Hp50TZwCaMhzVjC8VEhFRUe82y+oOxpoO/ce9IZBFc3f/+p1/s1/HjFq43xyOeAsM@vger.kernel.org, AJvYcCXnp/4M5DX9e6G5HXKbWAHx+WlDH2QfhGf9MlO6XwzgYD5ru1Ikc+pkTIyemeQGE+XJwP8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yys1hlDtxVVAIYpAWfkErHJ0GSj+EQ+/Q804U6yhsXI8JNKTWYe
+	+dgwd36OhzWbv+nXuMUpSQmylmyH5uHw6SnKlSYyNp4MBgJm+bz7XYOI0wO6xix/sj4WVIX+CXE
+	89PI9xeoJPHpoAEwvq9LMrEZRjcVhXdA=
+X-Gm-Gg: ASbGncvq+fPxlj+Mf9mZCx/etcv+9ZvdnPEW6adaUZIxoIPW/thXpd4D4nb+pOIo8Cm
+	akGAAjf9i9N4XA3ESpiykVI60u4Del/T6wPzrbwD8xj3dNUEViEnEK6Bxvt7M/2PIZb0HzSeuxx
+	ZUtzJIJv0WKFJiws8horWVwodHo3qOe5CSplu2inbvQCNT54VYmm+HhIT4f8TwJ/FgbelOTAtst
+	uVF1V8EFPrqH4UW+xLOmaTiY1BFAq1FeA==
+X-Google-Smtp-Source: AGHT+IFX+b/ZzJ/SDmHZZwblb9nDhHueYMW0fUFQI0bQkr+xbXuQM60D9SPj5WjZsST5/RhRxSHcIKQvzNHUkFqd5Iw=
+X-Received: by 2002:a17:90b:1c02:b0:327:6f34:3771 with SMTP id
+ 98e67ed59e1d1-3276f3438damr5616329a91.17.1756331618471; Wed, 27 Aug 2025
+ 14:53:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250825231054.GA25222@ranerica-svr.sc.intel.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <aKL4rB3x8Cd4uUvb@krava> <20250825022002.13760-1-chenyuan_fl@163.com>
+In-Reply-To: <20250825022002.13760-1-chenyuan_fl@163.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Wed, 27 Aug 2025 14:53:23 -0700
+X-Gm-Features: Ac12FXxhPGx8AcHhTJQydBJdsPEWkebZKCwzY5tOcU6thRSn2MpqZPeIsxme8R8
+Message-ID: <CAEf4Bzb_3ac0dPnkuMqs-dCrTEWqjVt-fsGWGyHAai_bUxubNA@mail.gmail.com>
+Subject: Re: [PATCH v7 0/2] bpftool: Refactor config parsing and add CET
+ symbol matching
+To: chenyuan_fl@163.com, Quentin Monnet <qmo@kernel.org>
+Cc: olsajiri@gmail.com, aef2617b-ce03-4830-96a7-39df0c93aaad@kernel.org, 
+	andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org, chenyuan@kylinos.cn, 
+	daniel@iogearbox.net, linux-kernel@vger.kernel.org, yonghong.song@linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 25, 2025 at 04:10:54PM -0700, Ricardo Neri wrote:
-> On Sat, Aug 23, 2025 at 07:49:12PM +0200, Thomas Gleixner wrote:
-> > On Tue, Aug 12 2025 at 14:00, Ricardo Neri wrote:
-> > > Fix a typo in the line that prints the effective affinity of the IRQ.
-> > 
-> > It's not a typo. It's intentionally shortened to make the output
-> > tabular, which makes it more readable.
-> 
-> Ah, I didn't see it this way.
-> 
-> > 
-> > If you want 'effective' then please adjust 'affinity:' with an extra
-> > space so it stays that way.
-> 
-> Sure. I can do this.
+On Sun, Aug 24, 2025 at 7:20=E2=80=AFPM <chenyuan_fl@163.com> wrote:
+>
+> From: Yuan CHen <chenyuan@kylinos.cn>
+>
+> 1. **Refactor kernel config parsing**
+>    - Moves duplicate config file handling from feature.c to common.c
+>    - Keeps all existing functionality while enabling code reuse
+>
+> 2. **Add CET-aware symbol matching**
+>    - Adjusts kprobe hook detection for x86_64 CET (endbr32/64 prefixes)
+>    - Matches symbols at both original and CET-adjusted addresses
+>
 
-I looked again at my proposed change. I would need to adjust 10 more lines
-besides 'affinity:' to keep the alignment. Adjusting a couple of lines
-would not pollute history much. Adjusting multiple lines would do more harm
-than good, IMO.
+Quentin, can you please take a quick look at this patch set, when you
+get a chance? Thanks!
 
-Unless you think otherwise, I do not plan to pursue this change further.
- 
-BR,
-Ricardo
+> Changed in PATCH v4:
+> * Refactor repeated code into a function.
+> * Add detection for the x86 architecture.
+>
+> Changed int PATH v5:
+> * Remove detection for the x86 architecture.
+>
+>  Changed in PATCH v6:
+> * Add new helper patch (1/2) to refactor kernel config reading
+> * Use the new read_kernel_config() in CET symbol matching (2/2) to check =
+CONFIG_X86_KERNEL_IBT
+>
+> Changed in PATCH v7:
+> * Display actual kprobe attachment addresses instead of symbol addresses
+>
+> Yuan Chen (2):
+>   bpftool: Refactor kernel config reading into common helper
+>   bpftool: Add CET-aware symbol matching for x86_64 architectures
+>
+>  tools/bpf/bpftool/common.c  | 93 +++++++++++++++++++++++++++++++++++++
+>  tools/bpf/bpftool/feature.c | 86 ++--------------------------------
+>  tools/bpf/bpftool/link.c    | 38 ++++++++++++++-
+>  tools/bpf/bpftool/main.h    |  9 ++++
+>  4 files changed, 142 insertions(+), 84 deletions(-)
+>
+> --
+> 2.39.5
+>
 
