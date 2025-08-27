@@ -1,184 +1,133 @@
-Return-Path: <linux-kernel+bounces-788420-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D4CFB38419
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 15:52:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14C44B38415
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 15:51:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F23B5362F5B
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 13:51:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F06216A142
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 13:51:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 557D835690A;
-	Wed, 27 Aug 2025 13:51:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C22703568F6;
+	Wed, 27 Aug 2025 13:51:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="AHMcxDmJ"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UizGlXP+"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8989302760;
-	Wed, 27 Aug 2025 13:51:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756302693; cv=pass; b=Q3XjQP3MSe+6GScPmsT/omrpMz1lLFk9S9MLBe9zbd5/bDYZA4yzzhWUqh9F/cGHXblX3WeP/ObNp1s8UHfoGP7L/6TDAetyYeLbVGKYnMuW7R1fdo+JBZURe/GrxxTQKg8mxDtDKDkxQG4bioyoDowfK9uop7HUs16WZzCQitU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756302693; c=relaxed/simple;
-	bh=dpx+34T0+fZYkD6nLJf/61+zs/Qi67xKeRs8hN0+VPA=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=JWnbPAD8zkZSgZGg/DAtzd1wfkoBOuA+zzEpsTnT1tVGokiJD4ChJ4rLuar6xXeIsywXGwymZejBt820IANrpfxMRNpyyvmPUxaArSjLFfnNH3LYtAmPybWhA4c9Cd9p1Rpm48UsIvWj0GpV+/8XWJAez2u0/2LBezVqqUzLFhc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=AHMcxDmJ; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1756302673; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=QAXGvRVHHe5QDnlNjnzorWJGhYtShm8DkXSQyeZgi8VlCUcwDkaDrvFiT2dCkka1oB2e+aDDn5HxVww+8ZUKvpbx9gTRwm8sgkq6Jl1gaQGDLG8viXWjtvJFsX78hlyob2pz2gCaFAbvUx/yoqnpaAKymW12kt3w2WWJOUjFmhM=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1756302673; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=r87d2Cvfv+EDJTx1X2oLOP11FqHTagC0pyB7B8rLf/I=; 
-	b=iLu3geV1YZ3/ECNE7c+DXKxRNhDFLDQbVLia+SKyuj0iRVGbsb9FFkySXwvoI3pSkdIwZj2Y8UvvgPbWzLIERnKqOKDYnaxYKiBUK6wPCeX3P3ufViFmGQThy9t651/po85ohg5uhfY6pOJX+hxx50GenLHyvcgxYOk8XwkTRIw=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1756302673;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=r87d2Cvfv+EDJTx1X2oLOP11FqHTagC0pyB7B8rLf/I=;
-	b=AHMcxDmJW1Adv9BXTlQqPTy/OYKFc8fCJJKsAPuzX3Pkk81BMHG4OXozbgCwf4VD
-	+nrlXcgD/8yIOkQRLRDzwbUKvd/Spbur0/9fvZXTo06ApV9LrChf4dxGr5tzgF3c0SS
-	wHv/TnbMq9ybNjLB0MFEO/fH7cdriLpA+lTFxuzw=
-Received: by mx.zohomail.com with SMTPS id 1756302671144595.2863081348415;
-	Wed, 27 Aug 2025 06:51:11 -0700 (PDT)
-Content-Type: text/plain;
-	charset=us-ascii
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D29D73568E4;
+	Wed, 27 Aug 2025 13:51:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756302675; cv=none; b=A6G2wzIFOqWC8R3XXqUPBVtolFaZra6jpxRBrQPm/BmyFvlKYhtXlaaz5+d5BKK/9zik+zsUyhmSyR7Gu5td3snjYHmKwzaMTL8ZvFQF8CH//t+3V6aZNgVggaFCuTPFRGihdR+fuHbCXN53h/f/5SPIQcNZStYZef8tNpdHJ1Y=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756302675; c=relaxed/simple;
+	bh=FDp6JCd4VmqsLTMSNBr3ve+PytzAcHAJUe6Z6k/jtyQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gp+ZuZxUEZHn5129MJSfKImbAeaDnjfqiQFsoqXbsAIe5cYHsPHsLwxH2sBheFWGHQQR+audlDonFJLHqV54gHNlWVVOSZAi9x3tGKXc9RX4GzbYe5/hgfRprWd25Qh0XcnJORnX4RP3BxYVyVsfyudgodxavRz3+EVtsgLEXrU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UizGlXP+; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-24457f581aeso52467075ad.0;
+        Wed, 27 Aug 2025 06:51:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756302673; x=1756907473; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=WUcA4fP8xyhB0lHPFGrUj/zamcTTqzoLH7svjxY0tDo=;
+        b=UizGlXP+GQ6lNXIrA8dj4HVOabSiZ8Y8BgKbVz1GVzy/qrVsw8vl74sMGzuuwiJ03v
+         T/KLnyBuQ44LZ/NuwPhvu65nFq9bhW2wSdaKo11lgzli8YGa9DmgeqZMr0VuKTzjeSYp
+         Upjqf2a+MmTh4TnajyxgLGm+aK8araDjOBnclLrG7zUwP6aaZGic+YlrwKPZwGnQ3k+y
+         Jk5YWB4sDsstbjxAA1uUE+ac2ErLo6CVG7YZ8Jika31/006KXGaYv/+09EngvnXS/7zw
+         MxEm151InrWsGXo8nuSsFmXT68MNl+y9EGGrBbpfh7fk9Z4B7pf/MPfwn3eMijR77N7s
+         yA1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756302673; x=1756907473;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WUcA4fP8xyhB0lHPFGrUj/zamcTTqzoLH7svjxY0tDo=;
+        b=QAv6QSwnTIR2KtbpPYbNakpPadiNBEI0YE78mSCpg+jEQI5mQW5M+QDUCq5VvwjKcL
+         F2UTdLY2xNYxFN0GnX3dh/ThAQKPx4Awk2J6zJEkQGVWUNar1dzQYzBDMB3ot5E7/50i
+         nBgcK8k4kqCzKgDPXveMfMc/wiHVhfQOH8Tt8pckxWRsq3eVVisT0A4Bhp1kGoP+HhRS
+         lwAf6u0bPC0vUW4vAIxFbxbM0s/fn2dKra3A9+drkcl89LvUAE+hKqPMCLxg3cdymlOK
+         gNrTSuEOs6/LAS8M9nJ6jouj2K/4aPWUDQPFkfohECFWirN8J3zh7io9BDAe9yG4g+oH
+         P3uA==
+X-Forwarded-Encrypted: i=1; AJvYcCVe0YMPeHFxPwylXYd/2fqevNLhJl1nG8TRoRJ46PhNQJsb3m3oervWOKPHp0Ht0zBfK7qx2TS1imMJoBM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxFfcC73kCPVkK+vIefoGEFoktPM9AIkiDU4jjalROZGT8CM0yR
+	X4rBOmpeguy2UYN969skP/QZTotEmS6czGge1NTRg4N8rS72P977SjGV
+X-Gm-Gg: ASbGncsGTwSjNqT0bilkClaw6ADpzG1AEB2I8jMkchidsVid51c57WoG4qlOhlxd6VJ
+	qzabR6FoVmL91fB3KsnK2B3gMXz7rfMdmcm7EhpN/A7k4bjrpzUlcMDnEG2/7PYl/hv3gejgzqp
+	sLqhy3heNHOmf420HNp25kIiIGIaaxPhsludhz9Z2hcBCUgeZ7caFvjRgYiM2nyUL5BxE3ylr03
+	+Sb4HXlXUSg9pOHvohvJebq59/dVFlKEzbERscgKuUlZkCqz8sVvVBAGmbOPTYZW64qudyX8s4x
+	vFM91JETUajbt4A6Mz278FzG3Zln3OZiTMcNuvHADhw4rCkWwZ32EEtCixCc33hlGkH8sUxlSPS
+	k2faudM/6BKrQAuS+cKOInwJQ7GFNGx6QeX3v/TI1tQduva1FjGja/1C3s8EC752clo6uSPYBmp
+	+/5w==
+X-Google-Smtp-Source: AGHT+IFif84okb0gHpv6GdHn52xMYcER6a6kVWJvZ+CKvHUoQnE4m3DSbnxjrlJZOUjr3pzzGluEmg==
+X-Received: by 2002:a17:902:d488:b0:246:a4ec:c3a5 with SMTP id d9443c01a7336-246a4ecc618mr185637735ad.25.1756302672907;
+        Wed, 27 Aug 2025 06:51:12 -0700 (PDT)
+Received: from localhost.localdomain ([222.95.34.64])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-246687b0b04sm122790455ad.44.2025.08.27.06.51.07
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Wed, 27 Aug 2025 06:51:12 -0700 (PDT)
+From: qianjiaru77@gmail.com
+To: michael.chan@broadcom.com,
+	pavan.chebbi@broadcom.com,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	andrew+netdev@lunn.ch
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	qianjiaru <qianjiaru77@gmail.com>
+Subject: [PATCH v2 1/1] VF Resource State Inconsistency Vulnerability in Linux bnxt_en Driver
+Date: Wed, 27 Aug 2025 21:51:02 +0800
+Message-ID: <20250827135102.5923-1-qianjiaru77@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
-Subject: Re: [PATCH v6 09/18] rust: block: use `NullTerminatedFormatter`
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <20250822-rnull-up-v6-16-v6-9-ec65006e2f07@kernel.org>
-Date: Wed, 27 Aug 2025 10:50:55 -0300
-Cc: Boqun Feng <boqun.feng@gmail.com>,
- Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <lossin@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>,
- Danilo Krummrich <dakr@kernel.org>,
- Jens Axboe <axboe@kernel.dk>,
- Breno Leitao <leitao@debian.org>,
- linux-block@vger.kernel.org,
- rust-for-linux@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <511180A3-DC0B-40B6-994E-AC8A7A7F6EF3@collabora.com>
-References: <20250822-rnull-up-v6-16-v6-0-ec65006e2f07@kernel.org>
- <20250822-rnull-up-v6-16-v6-9-ec65006e2f07@kernel.org>
-To: Andreas Hindborg <a.hindborg@kernel.org>
-X-Mailer: Apple Mail (2.3826.700.81)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+
+From: qianjiaru <qianjiaru77@gmail.com>
+
+A state management vulnerability exists in the 
+`bnxt_hwrm_reserve_vf_rings()` function of the Linux kernel's
+bnxt_en network driver. The vulnerability causes incomplete 
+resource state updates in SR-IOV Virtual Function (VF) environments,
+potentially leading to system instability and resource allocation
+ failures in virtualized deployments.
 
 
+Signed-off-by: qianjiaru <qianjiaru77@gmail.com>
+---
+ drivers/net/ethernet/broadcom/bnxt/bnxt.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-> On 22 Aug 2025, at 09:14, Andreas Hindborg <a.hindborg@kernel.org> =
-wrote:
->=20
-> Use the new `NullTerminatedFormatter` to write the name of a `GenDisk` =
-to
-> the name buffer. This new formatter automatically adds a trailing null
-> marker after the written characters, so we don't need to append that =
-at the
-> call site any longer.
->=20
-> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
-> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
-> ---
-> rust/kernel/block/mq/gen_disk.rs   | 12 +++++++-----
-> rust/kernel/block/mq/raw_writer.rs |  1 +
-> rust/kernel/str.rs                 |  1 -
-> 3 files changed, 8 insertions(+), 6 deletions(-)
->=20
-> diff --git a/rust/kernel/block/mq/gen_disk.rs =
-b/rust/kernel/block/mq/gen_disk.rs
-> index 679ee1bb2195..20f1d46c774d 100644
-> --- a/rust/kernel/block/mq/gen_disk.rs
-> +++ b/rust/kernel/block/mq/gen_disk.rs
-> @@ -7,9 +7,11 @@
->=20
-> use crate::{
->     bindings,
-> -    block::mq::{raw_writer::RawWriter, Operations, TagSet},
-> +    block::mq::{Operations, TagSet},
->     error::{self, from_err_ptr, Result},
-> +    prelude::*,
->     static_lock_class,
-> +    str::NullTerminatedFormatter,
->     sync::Arc,
-> };
-> use core::fmt::{self, Write};
-> @@ -143,14 +145,14 @@ pub fn build<T: Operations>(
->         // SAFETY: `gendisk` is a valid pointer as we initialized it =
-above
->         unsafe { (*gendisk).fops =3D &TABLE };
->=20
-> -        let mut raw_writer =3D RawWriter::from_array(
-> +        let mut writer =3D NullTerminatedFormatter::new(
->             // SAFETY: `gendisk` points to a valid and initialized =
-instance. We
->             // have exclusive access, since the disk is not added to =
-the VFS
->             // yet.
->             unsafe { &mut (*gendisk).disk_name },
-> -        )?;
-> -        raw_writer.write_fmt(name)?;
-> -        raw_writer.write_char('\0')?;
-> +        )
-> +        .ok_or(EINVAL)?;
-> +        writer.write_fmt(name)?;
->=20
->         // SAFETY: `gendisk` points to a valid and initialized =
-instance of
->         // `struct gendisk`. `set_capacity` takes a lock to =
-synchronize this
-> diff --git a/rust/kernel/block/mq/raw_writer.rs =
-b/rust/kernel/block/mq/raw_writer.rs
-> index 7e2159e4f6a6..0aef55703e71 100644
-> --- a/rust/kernel/block/mq/raw_writer.rs
-> +++ b/rust/kernel/block/mq/raw_writer.rs
-> @@ -24,6 +24,7 @@ fn new(buffer: &'a mut [u8]) -> =
-Result<RawWriter<'a>> {
->         Ok(Self { buffer, pos: 0 })
->     }
->=20
-> +    #[expect(dead_code)]
->     pub(crate) fn from_array<const N: usize>(
->         a: &'a mut [crate::ffi::c_char; N],
->     ) -> Result<RawWriter<'a>> {
-> diff --git a/rust/kernel/str.rs b/rust/kernel/str.rs
-> index b185262b4851..a3e34f566034 100644
-> --- a/rust/kernel/str.rs
-> +++ b/rust/kernel/str.rs
-> @@ -886,7 +886,6 @@ pub(crate) struct NullTerminatedFormatter<'a> {
->=20
-> impl<'a> NullTerminatedFormatter<'a> {
->     /// Create a new [`Self`] instance.
-> -    #[expect(dead_code)]
->     pub(crate) fn new(buffer: &'a mut [u8]) -> =
-Option<NullTerminatedFormatter<'a>> {
->         *(buffer.first_mut()?) =3D 0;
->=20
->=20
-> --=20
-> 2.47.2
->=20
->=20
->=20
+diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt.c b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
+index 207a8bb36..2d06b0ddc 100644
+--- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
++++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
+@@ -7801,7 +7801,13 @@ bnxt_hwrm_reserve_vf_rings(struct bnxt *bp, struct bnxt_hw_rings *hwr)
+ 	int rc;
+ 
+ 	if (!BNXT_NEW_RM(bp)) {
++		// Update all relevant resource state, not just TX rings
+ 		bp->hw_resc.resv_tx_rings = hwr->tx;
++		bp->hw_resc.resv_rx_rings = hwr->rx;
++		bp->hw_resc.resv_vnics = hwr->vnic;
++		bp->hw_resc.resv_rsscos_ctxs = hwr->rss_ctx;
++		bp->hw_resc.resv_cp_rings = hwr->cp;
++		bp->hw_resc.resv_hw_ring_grps = hwr->grp;
+ 		return 0;
+ 	}
+ 
+-- 
+2.34.1
 
-Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>=
 
