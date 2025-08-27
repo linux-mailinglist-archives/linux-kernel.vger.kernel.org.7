@@ -1,261 +1,114 @@
-Return-Path: <linux-kernel+bounces-788634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7721B387A2
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 18:18:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78B48B387A5
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 18:19:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 624103AC67D
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 16:18:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 455A4200067
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 16:19:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB79421579F;
-	Wed, 27 Aug 2025 16:18:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8EE5221FC6;
+	Wed, 27 Aug 2025 16:19:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nmDWPNTe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="kRQ4X/VM"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE7F214AD0D
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 16:18:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DE6A2116E9
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 16:19:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756311515; cv=none; b=c0++C11baZZZDFhiAEGG2z4XKmcvu2dCiY2qavAGPTvGBunf+tA2FukSOZKjcwkWSg/Q63QwqPTm8eBVfRzOFxgkGSfBq2LaMgtdP9gbmF6CxWfR6rasJo+8rJNCRnyM9oZOfemOZXPIBJ1QRvraXhx5A469fKkyzijKI4lbi7I=
+	t=1756311581; cv=none; b=qaRv97Lfci/A4jEVMWWxh0/GKc4hTLEtFt6sT45CXqEnOiVcZDD6YgN2gZDKEOxtwywKUyGsfXN6kIOo0h7/q9v2tYMyBAYjSMykJnBh+vHgvY9aHx68gh2RA9B/UREyaeNQUBfYugpUX1sshLKwKggeVXN7kDGgmac8EzeFnH0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756311515; c=relaxed/simple;
-	bh=28j+S/AtE11EZh6wqHFI1d6l2NcH4n7hMOYZwMPL8LY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RF2Yum+8DJGYHaD6lRP/ypDlIjAuZoI5ypfrTUYMlaXXfhgm6uHg18PS3iDhDIkoX8fKjkl0QvMnQiZDEi3l2u6cEpQA+QO//xoS39bpVajv1IV5nDtpDbRHkltlGwhVpX+fhfULIRaqAtl8jvSOK/v9T8sGwlVrPz/bMVNS/OQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nmDWPNTe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BFF3C4CEEB;
-	Wed, 27 Aug 2025 16:18:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756311514;
-	bh=28j+S/AtE11EZh6wqHFI1d6l2NcH4n7hMOYZwMPL8LY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=nmDWPNTelfD/NRgVrsRxG+nJkWkrNTMjTXii7PepcV7C18daPPt/ALdgDI2p7+XUw
-	 ieYdCH9jmTvedk7vUbDgqllmQnTRK4FttkqI54pIqjkKtfhRp8OQnkmgv4BgcbgjmE
-	 xP5oUmn//0iXEWd9BxE37u4+sB6ED0viyMOtvnUKVxiTb9ox3uFGAHegnUX0nyIZW+
-	 FmSfEfmNfgYMnA9wcsH0bSRPnn0T5XIAofLHahCQSY2iAA1nf98EIPk2xP7KDsznnq
-	 ybV/gyWx8zwZ+OM0lFkCS+mAG6s+cmJ6RIrdHSHak+ljOyu8JlXgUSja+36wMfMCgq
-	 eJCp8MN4yd9QQ==
-From: SeongJae Park <sj@kernel.org>
-To: Chris Li <chrisl@kernel.org>
-Cc: SeongJae Park <sj@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Chengming Zhou <chengming.zhou@linux.dev>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Nhat Pham <nphamcs@gmail.com>,
-	Yosry Ahmed <yosry.ahmed@linux.dev>,
-	kernel-team@meta.com,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	Takero Funaki <flintglass@gmail.com>,
-	David Hildenbrand <david@redhat.com>,
-	Baoquan He <bhe@redhat.com>,
-	Barry Song <baohua@kernel.org>,
-	Kairui Song <kasong@tencent.com>
-Subject: Re: [PATCH v5] mm/zswap: store <PAGE_SIZE compression failed page as-is
-Date: Wed, 27 Aug 2025 09:18:32 -0700
-Message-Id: <20250827161832.164192-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <CACePvbWGPApYr7G29FzbmWzRw-BJE39WH7kUHSaHs+Lnw8=-qQ@mail.gmail.com>
-References: 
+	s=arc-20240116; t=1756311581; c=relaxed/simple;
+	bh=3s8bXXoivjIzQPKuvc7/X3X+0XhuF3Ct3mOZI7JDsMM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Us4bmOyexWYGBAK2uDt3goDzWWlBUDAeTQdy8wjwJTCb0iBVkbsilcGWH/wWy20M8Dp7ioJa94JeLW0iL+CtKOTC3vtspfrXHzJqUh/gJxYvf4lX+vaH2nrQEgcpmRo8kmdXyIEEWtWN2ixEr+ZuEWzYnrbvPnNSZ4PG/pocaMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=kRQ4X/VM; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 260C440E015D;
+	Wed, 27 Aug 2025 16:19:37 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id MzNTIKyuC-QO; Wed, 27 Aug 2025 16:19:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1756311573; bh=0mTubuDuBOdzn3vuvCYOukqWpIN+hiaMClsl75yAPoI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kRQ4X/VMJskIPT2KlgQTYpdZPqJEwRDGdWIIkcKWbWUh7NfTGjoyXAh876bGCtKmy
+	 lLTO2ifQ+XURQ0i0BUav6Etkr2qdn3xij5x4OjfcnlcYTdh134qB2OGzEr/d79KFRF
+	 9Rok8SN2jkUCgEb00yUYIVz1scBSBs6BCB3Nvm3dHHfhQOivNMrOh3rhTWBBTyrGUZ
+	 Vrp4L61VqC+cM+gsmxZ7td5YjTqNAYiE/0T4HMllT0cUFL9uwKHV/UOyzHMZnRep6E
+	 Nelroo5FctYoZokbIq7jMZNK+ShYl49XuNovSEBtG8/1U7P7Eqw1LfdleoEUB4bWxD
+	 uziACtwzDEHLm2HL4vlkBOlkWg7jTBFRlawuCZsZrrsXp9YmDfkfC5iiDOKYy2xTpY
+	 t66siDQ84kQxjznjaLS5Cbfi4sMOmsuLMZ/V5kgdfutKsxx66kR2f730OO+mbiTB+I
+	 GMTjRnWAQVGSAhjruXicp9tCJ+YENMPYQNICeIamyGi5TN+CsLnRLFTcfvP4rcsWSk
+	 lb7Adp3blycVezm9a1RHsM8KNMS9ROCI9L7FzmvX42n+ieiXVadBgpO3vh4nVzebb8
+	 u8fJx5YzI4OjG9SF9rh466zbEa5KAK5+lApQvrNFtfS2JerwamVqGzU0jAjmEOe76R
+	 gaJ66XluCC21eGY7IKEJkQTE=
+Received: from zn.tnic (pd953092e.dip0.t-ipconnect.de [217.83.9.46])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id ABE6D40E00DD;
+	Wed, 27 Aug 2025 16:19:23 +0000 (UTC)
+Date: Wed, 27 Aug 2025 18:19:22 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: "Kaplan, David" <David.Kaplan@amd.com>
+Cc: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"x86@kernel.org" <x86@kernel.org>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 4/5] x86/bugs: Add attack vector controls for SSB
+Message-ID: <20250827161922.GMaK8wCgjLqqVvHqSw@fat_crate.local>
+References: <7vo33zwvn2wz74fg7wuflrr2gnhlkn7hwaziuzkk7brrp2morh@ltbtredcwb5x>
+ <20250827102754.GHaK7dqivnNnQsWGeS@fat_crate.local>
+ <20250827110403.GFaK7mIxwsQ9IF7ML8@fat_crate.local>
+ <LV3PR12MB92655023C50A92BE30D7A8049438A@LV3PR12MB9265.namprd12.prod.outlook.com>
+ <20250827142225.GIaK8UoYo-rnR9T2OD@fat_crate.local>
+ <LV3PR12MB9265934929BC29E635C39EDD9438A@LV3PR12MB9265.namprd12.prod.outlook.com>
+ <20250827153358.GJaK8lZm3cggYDbw2C@fat_crate.local>
+ <LV3PR12MB9265ABD1B81D759A618A20029438A@LV3PR12MB9265.namprd12.prod.outlook.com>
+ <20250827161159.GKaK8uTy8aW6Xl7UCr@fat_crate.local>
+ <LV3PR12MB926507DF8A992FA953F22E099438A@LV3PR12MB9265.namprd12.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <LV3PR12MB926507DF8A992FA953F22E099438A@LV3PR12MB9265.namprd12.prod.outlook.com>
 
-On Tue, 26 Aug 2025 08:52:35 -0700 Chris Li <chrisl@kernel.org> wrote:
+On Wed, Aug 27, 2025 at 04:15:18PM +0000, Kaplan, David wrote:
+> LGTM.  Just make sure to update the commit description since it no longer is
+> adding an AUTO mitigation.
 
-> Hi SeongJae,
-> 
-> I did another pass review on it. This time with the editor so I saw
-> more source code context and had more feedback.
-> Mostly just nitpicks. See the detailed comments below.
+I have this now:
 
-Thank you for your review!
+"Attack vector controls for SSB were missed in the initial attack vector series.
+The default mitigation for SSB requires user-space opt-in so it is only
+relevant for user->user attacks.  Check with attack vector controls when
+the command is auto - i.e., no explicit user selection has been done."
 
-> 
-> On Fri, Aug 22, 2025 at 12:08 PM SeongJae Park <sj@kernel.org> wrote:
-> > @@ -971,8 +975,26 @@ static bool zswap_compress(struct page *page, struct zswap_entry *entry,
-> >          */
-> >         comp_ret = crypto_wait_req(crypto_acomp_compress(acomp_ctx->req), &acomp_ctx->wait);
-> >         dlen = acomp_ctx->req->dlen;
-> > -       if (comp_ret)
-> > -               goto unlock;
-> > +
-> > +       /*
-> > +        * If a page cannot be compressed into a size smaller than PAGE_SIZE,
-> > +        * save the content as is without a compression, to keep the LRU order
-> > +        * of writebacks.  If writeback is disabled, reject the page since it
-> > +        * only adds metadata overhead.  swap_writeout() will put the page back
-> > +        * to the active LRU list in the case.
-> > +        */
-> > +       if (comp_ret || !dlen)
-> > +               dlen = PAGE_SIZE;
-> > +       if (dlen >= PAGE_SIZE) {
-> 
-> I think these two if can be simplify as:
-> 
-> if (comp_ret || !dlen || dlen >= PAGE_SIZE) {
->               dlen = PAGE_SIZE;
-> 
-> then you do the following check.
-> That way when goto unlock happens, you have dlen = PAGE_SIZE related
-> to my other feedback in kunmap_local()
-> 
-> > +               if (!mem_cgroup_zswap_writeback_enabled(
-> > +                                       folio_memcg(page_folio(page)))) {
-> > +                       comp_ret = comp_ret ? comp_ret : -EINVAL;
-> > +                       goto unlock;
-> > +               }
-> > +               comp_ret = 0;
-> > +               dlen = PAGE_SIZE;
-> 
-> Delete this line if you use the above suggestion on: dlen = PAGE_SIZE;
+Thx.
 
-Thank you for nice suggestion!
+-- 
+Regards/Gruss,
+    Boris.
 
-> 
-> > +               dst = kmap_local_page(page);
-> > +       }
-> >
-> >         zpool = pool->zpool;
-> >         gfp = GFP_NOWAIT | __GFP_NORETRY | __GFP_HIGHMEM | __GFP_MOVABLE;
-> > @@ -985,6 +1007,8 @@ static bool zswap_compress(struct page *page, struct zswap_entry *entry,
-> >         entry->length = dlen;
-> >
-> >  unlock:
-> > +       if (dst != acomp_ctx->buffer)
-> > +               kunmap_local(dst);
-> 
-> I think this has a hidden assumption that kmap_local_page() will
-> return a different value than acomp_ctx->buffer. That might be true. I
-> haven't checked the internals. Otherwise you are missing a
-> kunmap_local(). It also looks a bit strange in the sense that
-> kumap_local() should be paired with kmap_local_page() in the same
-> condition. The same condition is not obvious here.
-
-Good point, I agree.
-
-> How about this to
-> make it more obvious and get rid of that assumption above:
-> 
-> if (dlen = PAGE_SIZE)
->                kunmap_local(dst);
-
-However, if the execution reached here because compression failed and writeback
-was disabled, kmap_local_page() wouldn't be called, so we could try to unmap
-unmapped memory.
-
-What do you think about adding another bool vairable for recording if
-kunmap_local() need to be executed?  For example,
-
-"""
---- a/mm/zswap.c
-+++ b/mm/zswap.c
-@@ -952,6 +952,7 @@ static bool zswap_compress(struct page *page, struct zswap_entry *entry,
-        struct zpool *zpool;
-        gfp_t gfp;
-        u8 *dst;
-+       bool dst_need_unmap = false;
-
-        acomp_ctx = acomp_ctx_get_cpu_lock(pool);
-        dst = acomp_ctx->buffer;
-@@ -994,6 +995,7 @@ static bool zswap_compress(struct page *page, struct zswap_entry *entry,
-                comp_ret = 0;
-                dlen = PAGE_SIZE;
-                dst = kmap_local_page(page);
-+               dst_need_unmap = true;
-        }
-
-        zpool = pool->zpool;
-@@ -1007,7 +1009,7 @@ static bool zswap_compress(struct page *page, struct zswap_entry *entry,
-        entry->length = dlen;
-
- unlock:
--       if (dst != acomp_ctx->buffer)
-+       if (dst_need_unmap)
-                kunmap_local(dst);
-        if (comp_ret == -ENOSPC || alloc_ret == -ENOSPC)
-                zswap_reject_compress_poor++;
-"""
-
-> 
-> That assumes you also take my suggestion above to assign dlen PAGE_SIZE earlier.
-> 
-> 
-> >         if (comp_ret = -ENOSPC || alloc_ret = -ENOSPC)
-> >                 zswap_reject_compress_poor++;
-> >         else if (comp_ret)
-> > @@ -1007,6 +1031,14 @@ static bool zswap_decompress(struct zswap_entry *entry, struct folio *folio)
-> >         acomp_ctx = acomp_ctx_get_cpu_lock(entry->pool);
-> >         obj = zpool_obj_read_begin(zpool, entry->handle, acomp_ctx->buffer);
-> >
-> > +       /* zswap entries of length PAGE_SIZE are not compressed. */
-> > +       if (entry->length = PAGE_SIZE) {
-> > +               memcpy_to_folio(folio, 0, obj, entry->length);
-> 
-> The following read_end() followed by acomp unlock() duplicates the
-> normal decompress ending sequence. It will create complications when
-> we modify the normal ending sequence in the future, we need to match
-> it here.How about just goto the ending sequence and share the same
-> return path as normal:
-> 
->  +                  goto read_done;
-> 
-> Then insert the read_done label at ending sequence:
-> 
->         dlen = acomp_ctx->req->dlen;
-> 
-> + read_done:
->         zpool_obj_read_end(zpool, entry->handle, obj);
->         acomp_ctx_put_unlock(acomp_ctx);
-
-I agree your concern and this looks good to me :)
-
-> 
-> If you adopt that, you also will need to init the comp_ret to "0"
-> instead of no init value in the beginning of the function:
-> 
->         struct crypto_acomp_ctx *acomp_ctx;
-> -        int decomp_ret, dlen;
-> +       int decomp_ret = 0, dlen;
->         u8 *src, *obj;
-
-We may also need to initialize 'dlen' as PAGE_SIZE ?
-> 
-> 
-> > +               zpool_obj_read_end(zpool, entry->handle, obj);
-> > +               acomp_ctx_put_unlock(acomp_ctx);
-> > +               return true;
-> 
-> Delete the above 3 lines inside uncompress if case.
-> 
-> Looks good otherwise.
-> 
-> Thanks for the good work.
-
-Thank you for your kind review and nice suggestions!  Since the change is
-simple, I will post a fixup patch as reply to this, for adopting your
-suggestions with my additional changes (adding dst_need_unmap bool variable on
-zswap_compress(), and initializing dlen on zswap_decompress()) if you have no
-objection or different suggestions for the my addition of the changes.  Please
-let me know if you have any concern or other suggestions for my suggested
-additional changes.
-
-
-Thanks,
-SJ
-
-> 
-> Chris
-> 
+https://people.kernel.org/tglx/notes-about-netiquette
 
