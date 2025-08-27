@@ -1,70 +1,133 @@
-Return-Path: <linux-kernel+bounces-788791-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7C57B38A50
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 21:39:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 100BEB38A55
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 21:41:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F3E698174C
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 19:39:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 59CD217562B
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 19:41:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 546132ECD3A;
-	Wed, 27 Aug 2025 19:39:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A16A12EDD62;
+	Wed, 27 Aug 2025 19:41:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ohngir3D"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="AuF7t/qO"
+Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD661212546;
-	Wed, 27 Aug 2025 19:39:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D1FF28313F
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 19:41:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756323584; cv=none; b=t0jZc8KURsa99R07b9UaU43VZrNF9ZvZSzHmEXSCMVcx6jM1TmIqrhAd9ThT5wZwKgZs/raZ6ONHl16b8YxcK7/QXD2EwPOgrktX8MYFC24jttFeQy4Wxb0nWTiJ3yjnZ1z49iewkIVOxISrrdQdgBMJ8zRcLUKgBIEpgqyDoYw=
+	t=1756323675; cv=none; b=DY0NVf/HqNnFlMwPFIFPhDBOWNc6jGmjOkdXmt4lcCMc6A8Ebdf1ygu2VkCVGU/wsOOnwNE5ukTPJ4bUvSIWvyGdBWREZOCNM/NLiijynUgJXcS2r6rwIEINh6j88dcarxAgUd7PYVr0iLB9vRR0FwwUHXqWdaCYAaFNx/CMcio=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756323584; c=relaxed/simple;
-	bh=1OY8DbuPXkQgc9rC1JKFK3DVQN06e26bJvJhVNq23iM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gQsTXHFHqWdVsDYnOmn6jvC/pA6lGTww1rK6nDsStO2tpgK4khUdJRLTTKIZuR+klUq7SLqVKlL8X25auDZe0D9SbMMCGc+H1VU+QTva6CWgkv+yhDET+muP/NUx7T4QhjdJAs/M9rtMcS1ZXf3cBGS+XO1pQVOdMIPuA0B5vDA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ohngir3D; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9533C4CEEB;
-	Wed, 27 Aug 2025 19:39:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756323584;
-	bh=1OY8DbuPXkQgc9rC1JKFK3DVQN06e26bJvJhVNq23iM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Ohngir3DoDOoekEVoO9Sz34pgu1UJMzQBHakBK6mTlq5wk7hixuxX5hA47rYsLKvX
-	 wNvNvSVVU5VVvLJBILX8+9BwDb7+a153rFBgnIEjVTdlHrJwg7Pug7PaHkhLCf1Bzm
-	 NB7Yyf6vhwu67xVnS8POfdfYG2UKy1/L9W552JarSVcYaW4PdC6Gm9DZwXxWF9EEHg
-	 paYIIXttXyBfBw1rgZgFmk/hq/0PNwdc8mV2s8bI0c6ycgSEgBQUwJJU4wn8xkKgKE
-	 BV02IsZV1IeHJy1a8Y6e+KSiNlXpNpJZXwgKq/VMo4HEqZLeDbO3SRzDEvOUL2l5v7
-	 t73bFgTzgdAwA==
-Date: Wed, 27 Aug 2025 13:39:41 -0600
-From: Keith Busch <kbusch@kernel.org>
-To: Matthew Wood <thepacketgeek@gmail.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-	Mario Limonciello <superm1@kernel.org>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-Subject: Re: [RESEND PATCH v7 1/1] PCI/sysfs: Expose PCIe device serial number
-Message-ID: <aK9e_Un3fWMWDIzD@kbusch-mbp>
-References: <20250821232239.599523-1-thepacketgeek@gmail.com>
- <20250821232239.599523-2-thepacketgeek@gmail.com>
+	s=arc-20240116; t=1756323675; c=relaxed/simple;
+	bh=x/i6BRd0cWtRfp3CxZsaVLLtvufEWdcUwwghTxEVFpA=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=Of7dqMe6SEPgehdbaYrZ8sm2PYOv2QgAJbWidlhBy+c6wfTAMQT3RRTAQX88vAqPvIa+Pw+S4eGGYiERqKcqn58/4CML8hV05l2C8wsmMcF351RcFrY+7QT2Dq4Vdijq9OpCIIS+ziBs6vzB0x0Fw35jZnA+aNmrOHa2zxV7GL0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=AuF7t/qO; arc=none smtp.client-ip=209.85.210.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-76e2e614889so209522b3a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 12:41:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1756323673; x=1756928473; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vWAmWKV0YCAe3PkG8+/flyHk3YjgRL//qGGe4nfIRiE=;
+        b=AuF7t/qOQm6qKXSPMaMLuRN6BsIljh2hAs2n96cSqDebchzPlBSsE6uIbP/MOkevzZ
+         ET95rIxOvWEA61A0wwiarEBik76TxH8frvDqebgaviaGRVpaxr3WrY3HdhqNYyJdiMhL
+         cUqloxI/T+NMiPzmfIM/MCpn+L6MD5XISHL2mrNO+emqa+a1ZYov+P1ely7+yn4CMGxo
+         JntqgxWSRawdSoglQ5yaW7YZsdo7WcM4nrhm2I8mQyDt/bxa4Ye62pU2HfIIObJ53mfU
+         BFtWGHkw1NGsjAkal3Mxu3HVIPfNIhpXYXouQ7Qn2rdISurIq1hO639HnfLw+gpc6l00
+         /9Xg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756323673; x=1756928473;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vWAmWKV0YCAe3PkG8+/flyHk3YjgRL//qGGe4nfIRiE=;
+        b=GmhaaMNOjMR2nPluT+Vca6S5dxyVOiw4m4iU+xHNALMEnB25RJWql6taoeE2Bt2Q4I
+         j0pro/PZeETW1Vck84g9GPjeE43gp3TSXjv+Dd1rEvTh13wwFUXWQ+Y+lWsTg8nFsMiq
+         XLSsXIsqGBEJSJQik9hK2tU9io9Eu/tSArU4negSjUoiultixVFSXsFtXmWg3G3l+0Fo
+         gElN7sDyWrSc2qAn71bNj/ohJqdQ1sqCEZ3X0POXfnARWIjilwPcOidOKZQL8kodyGKP
+         eK8jy/QWyZFGGc8LBtKQoIdzZszmgnp2jAObAOQPhs4T6yzd2UVslbFgnEECiFwa9rs0
+         es0g==
+X-Forwarded-Encrypted: i=1; AJvYcCX9Tk7Uhble58u1z1DGuytPOOdZ8TRd2dZ2k721yuk+g18E6BfSWfIoA+eg7tIiGfL73eebRJitPLaozeI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxBPvsA5i6BeHYAELQlxH8T9v1dM+EbVP+VNwhNfM+YnlhT9Jlm
+	DkAnP8+yxTTXowcJuRb+yiz42VQ1Azi0tPnoSZ4C/6VylDpm7TIJXDwyLUHF86Hsqr2cnTyqkmV
+	Yv9u7kw==
+X-Google-Smtp-Source: AGHT+IF3kgndwMxobuC1w46DvzTQVQ+70Io5X5LupzuJERdtYH2UT2HutkGftTPmJvqTvDvQz3iwKQFDQfQ=
+X-Received: from pfjf14.prod.google.com ([2002:a05:6a00:22ce:b0:772:49a:524f])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:b45:b0:770:556d:32e8
+ with SMTP id d2e1a72fcca58-770556d5e86mr17407883b3a.24.1756323672784; Wed, 27
+ Aug 2025 12:41:12 -0700 (PDT)
+Reply-To: Sean Christopherson <seanjc@google.com>
+Date: Wed, 27 Aug 2025 12:41:04 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250821232239.599523-2-thepacketgeek@gmail.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.0.268.g9569e192d0-goog
+Message-ID: <20250827194107.4142164-1-seanjc@google.com>
+Subject: [PATCH v2 0/3] vhost_task: Fix a bug where KVM wakes an exited task
+From: Sean Christopherson <seanjc@google.com>
+To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
+	"Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>
+Cc: kvm@vger.kernel.org, virtualization@lists.linux.dev, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Bjorn,
+Michael,
 
-Can we get a ruling on this one? It's pretty straight forward
-implementation exposing a useful attribute. This patch has got a good
-amount of reviews and tests. Any objections?
+Do you want to take this through the vhost tree?  It technically fixes a KVM
+bug, but this obviously touches far more vhost code than KVM code, and the
+patch that needs to go into 6.17 doesn't touch KVM at all.
+
+
+Fix a bug where KVM attempts to wake a vhost task that has already exited in
+response to a fatal signal, and tack on a few cleanups to harden against
+introducing similar bugs in the future.
+
+The issue is firmly a KVM problem, but I opted to fix the bug by making
+vhost_task_wake() safe against an exited task as doing so is far simpler and
+cleaner than implementing the same functionality in KVM, and I suspect that
+if there are other users of vhost_tasks in the future, then there's a good
+chance they will want/expect vhost_task to handle that detail.
+
+Note, this only started causing problems when commit 56180dd20c19 ("futex:
+Use RCU-based per-CPU reference counting instead of rcuref_t") landed, so
+the explosions are "new" in 6.17, but the bug has existed since KVM switched
+to vhost_task back in 6.13.
+
+v2:
+ - Drop the "safe" postfix variant and make the "default" vhost_task_wake()
+   safe. [Michael].
+ - Use vhost_task_wake() and __vhost_task_wake() for the public APIs, and
+   vhost_task_wake_up_process() for the local helper. [Michael]
+ - Drag the signalas back from their Spanish holiday. [Sebastian]
+
+v1: https://lore.kernel.org/all/20250826004012.3835150-1-seanjc@google.com
+
+Sean Christopherson (3):
+  vhost_task: Don't wake KVM x86's recovery thread if vhost task was
+    killed
+  vhost_task: Allow caller to omit handle_sigkill() callback
+  KVM: x86/mmu: Don't register a sigkill callback for NX hugepage
+    recovery tasks
+
+ arch/x86/kvm/mmu/mmu.c           |  7 +---
+ drivers/vhost/vhost.c            |  2 +-
+ include/linux/sched/vhost_task.h |  1 +
+ kernel/vhost_task.c              | 62 +++++++++++++++++++++++++++-----
+ 4 files changed, 56 insertions(+), 16 deletions(-)
+
+
+base-commit: 1b237f190eb3d36f52dffe07a40b5eb210280e00
+-- 
+2.51.0.268.g9569e192d0-goog
+
 
