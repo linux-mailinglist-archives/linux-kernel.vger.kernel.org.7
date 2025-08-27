@@ -1,152 +1,151 @@
-Return-Path: <linux-kernel+bounces-788989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90BF3B38F58
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 01:44:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C37F3B38F5A
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 01:46:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F04745E8367
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 23:44:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C65D91C24083
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 23:47:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54A60311C3A;
-	Wed, 27 Aug 2025 23:43:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0EA623D7EC;
+	Wed, 27 Aug 2025 23:46:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="OczyYYnq"
-Received: from fhigh-a5-smtp.messagingengine.com (fhigh-a5-smtp.messagingengine.com [103.168.172.156])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ferPd0sQ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84EA227E07E;
-	Wed, 27 Aug 2025 23:43:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 859227260A
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 23:46:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756338238; cv=none; b=FrbDFrlW5aVocTM1WWSizRJcdl6Q/QbOHS6Zh96guNCxZ+hZKztagyUbeKijQ13yRhXIo1dlKamXXIpCrOsEM8p+74fUx1Xaj4Y1wbcriZ+oDOi5fo0Fz6ex7Sic+4dDROIi4aqIBokzY30fyACIySrXuc0pSgrsOh2UjzAYnos=
+	t=1756338398; cv=none; b=h7FgTaeVvIDCVUFdAO2+la9CO3T4LA9NUQSLgZ/dZS7Glo7UTTZ8SL3d8YVT1zsRLRbnqTt4nes7T+A9G4BZ2otPHWZj5S5D2KLKpFLGOaQO6A+Q7eEcJfbqWkhjBTAl1xNQQwEetUfqNlPA1NDls4NUm9Xm7NBfkSG0TtniQls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756338238; c=relaxed/simple;
-	bh=RFxDLtb7LP/7u5S1O1TG891X0C4JHenuzF2zFGe5WAs=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=WsWjhQBGOUEpViMIch1ZqGfB8OaSeJ6/U8aAquBjRhi0QrkT9bFy40kTeWUlxRspu6wixAFA9Wp8piAO7sTocFFz/z3i6hThKRmZo6NBCWUfXBrcJI5oFw7xo0EnQu1jxMHjH2FWfzAy8uiyU6o+EeYBVoizpkMVuH6DOb//trc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=OczyYYnq; arc=none smtp.client-ip=103.168.172.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 8746614000D4;
-	Wed, 27 Aug 2025 19:43:55 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-05.internal (MEProxy); Wed, 27 Aug 2025 19:43:55 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1756338235; x=1756424635; bh=OSG7MgYlnUUnUG1Thtmyq2oRhoYgB9Jct0L
-	D+xiHCZ8=; b=OczyYYnqnaPm5VzjXcG10BgHPB+4Be+Jixh9sUHtNXmNzUHM2pA
-	5wriW+LwidH/YCEq9RGMhQ37fqNPma3IyNGGi41ffFThWIoFGbGUF2bC+r12YCVw
-	J50k8zB5+kBUqJ5oJCDbLgqbpsYNRmOL5CYcCLU8sT8jfxsb5MKlvaJFCv4K0HG3
-	FOn3ky4p7dPXfSGYo5LZJDcadbFKNqirHjb8QUV9AedY0wdm57tB1SNBTyD0GTK4
-	hQaq2jbkZWBioktDPiZrUyC+a4BrROBJFG4DwpHkJDnU5ar09wKSYlwEJVRjImn7
-	2ecqZe4xu3K2nKYmF17Vrl5C/rvVDkPqrDw==
-X-ME-Sender: <xms:OpivaD7sTYKNlUEwI-vOrs9uQHx2s3uCSf-U_ztEqP6sEGqaUZGENA>
-    <xme:OpivaIFlYNrgiQn5Yruo2QEasmalEp_tvWwf7y9LkBVAAx5IX2TA8wdbhdd1-bZ9D
-    V1NIpHTNzF_SYWXRM8>
-X-ME-Received: <xmr:OpivaNKIWsR7a-NaCieNVCGztiR4GeMEwdJhoRwIRlQW5ms8WVM4D452NMIGZDCrnQsVnHSOmX3Vid2A2MS-5eobzGZ-ZDPb4yQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddujeelhedtucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepfffhvfevufgjkfhfgggtsehttdertddttddvnecuhfhrohhmpefhihhnnhcuvfhh
-    rghinhcuoehfthhhrghinheslhhinhhugidqmheikehkrdhorhhgqeenucggtffrrghtth
-    gvrhhnpeelueehleehkefgueevtdevteejkefhffekfeffffdtgfejveekgeefvdeuheeu
-    leenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehfth
-    hhrghinheslhhinhhugidqmheikehkrdhorhhgpdhnsggprhgtphhtthhopeduuddpmhho
-    uggvpehsmhhtphhouhhtpdhrtghpthhtoheplhgrnhgtvgdrhigrnhhgsehlihhnuhigrd
-    guvghvpdhrtghpthhtoheprghkphhmsehlihhnuhigqdhfohhunhgurghtihhonhdrohhr
-    ghdprhgtphhtthhopehgvggvrhhtsehlihhnuhigqdhmieekkhdrohhrghdprhgtphhtth
-    hopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphht
-    thhopehmhhhirhgrmhgrtheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepohgrkheshh
-    gvlhhsihhnkhhinhgvthdrfhhipdhrtghpthhtohepphgvthgvrhiisehinhhfrhgruggv
-    rggurdhorhhgpdhrtghpthhtohepshhtrggslhgvsehvghgvrhdrkhgvrhhnvghlrdhorh
-    hgpdhrtghpthhtohepfihilhhlsehkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:OpivaNgmYvf6gayrdO6qhamBnfLcFAWxgrWWqs7CIGYwkpwBpPGmew>
-    <xmx:OpivaDnXftWRyhf5qIIsSXtTF7chC0CY7UAd23eYFM5TdZ1q_q-T2A>
-    <xmx:OpivaMVvdfkVsA7e5tGo0JrjR_C6-F3KMRcw16Nn_sU4mGrz23JQqA>
-    <xmx:OpivaItmBsTi77MbFmpyMtBQ1STjZ2pPwhwF8qfo3kpxxiExWXbn4A>
-    <xmx:O5ivaDGI_I_SjwT4qwv69EVoot6Z6OBKT5D0PV3m7uWIL2s-X-hKDpQ3>
-Feedback-ID: i58a146ae:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 27 Aug 2025 19:43:51 -0400 (EDT)
-Date: Thu, 28 Aug 2025 09:43:49 +1000 (AEST)
-From: Finn Thain <fthain@linux-m68k.org>
-To: Lance Yang <lance.yang@linux.dev>
-cc: akpm@linux-foundation.org, geert@linux-m68k.org, 
-    linux-kernel@vger.kernel.org, mhiramat@kernel.org, oak@helsinkinet.fi, 
-    peterz@infradead.org, stable@vger.kernel.org, will@kernel.org, 
-    Lance Yang <ioworker0@gmail.com>, linux-m68k@lists.linux-m68k.org
-Subject: Re: [PATCH] atomic: Specify natural alignment for atomic_t
-In-Reply-To: <30a55f56-93c2-4408-b1a5-5574984fb45f@linux.dev>
-Message-ID: <4405ee5a-becc-7375-61a9-01304b3e0b20@linux-m68k.org>
-References: <7d9554bfe2412ed9427bf71ce38a376e06eb9ec4.1756087385.git.fthain@linux-m68k.org> <20250825032743.80641-1-ioworker0@gmail.com> <c8851682-25f1-f594-e30f-5b62e019d37b@linux-m68k.org> <96ae7afc-c882-4c3d-9dea-3e2ae2789caf@linux.dev>
- <5a44c60b-650a-1f8a-d5cb-abf9f0716817@linux-m68k.org> <4e7e7292-338d-4a57-84ec-ae7427f6ad7c@linux.dev> <d07778f8-8990-226b-5171-4a36e6e18f32@linux-m68k.org> <d95592ec-f51e-4d80-b633-7440b4e69944@linux.dev> <30a55f56-93c2-4408-b1a5-5574984fb45f@linux.dev>
+	s=arc-20240116; t=1756338398; c=relaxed/simple;
+	bh=NSEz2Gsq2659Evjda+c7nmwkt2zUQgrHmtnu4V+HBW0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=H2Zc0LFqAC63Kg4WU8DHh6LjiB3V+IgN+3uyAH+B9WE2FYLPwTxUZfNEAfe/OYH0XlDxCCZmV6frlvCkkLenyjnkQAaOV5oHSUpYIHrYdFz8fLEpVj4FOnTvlVebxVZKO20SBMH/w9qVSdKvwYCWwSB7a25Pe5Kwpgor419KdoA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ferPd0sQ; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756338395;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=P5F8gpBz7t5sMa3hnf8LHIFEhCjAdRv+NiEXkMZszlQ=;
+	b=ferPd0sQAEpOpQXdDmjdKuAnHpTJDV4DEXGcjj3MZEKMiUuVt0Bg/xxrrgPedm3MD5WIm7
+	wDgQDXf4dZqnxAxGtzsFeEinuDekZ3TDaSEpc6YGkxiJALixaFlIJcoGnXEydBOgT2zoyf
+	URHaAK20t+w59PaA+oSZNcXN5/C3kK8=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-688-KQYxMOZTN466KSj7S-_7Ag-1; Wed,
+ 27 Aug 2025 19:46:32 -0400
+X-MC-Unique: KQYxMOZTN466KSj7S-_7Ag-1
+X-Mimecast-MFC-AGG-ID: KQYxMOZTN466KSj7S-_7Ag_1756338390
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 01E541800366;
+	Wed, 27 Aug 2025 23:46:29 +0000 (UTC)
+Received: from localhost (unknown [10.72.112.154])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 29DA91800446;
+	Wed, 27 Aug 2025 23:46:25 +0000 (UTC)
+Date: Thu, 28 Aug 2025 07:46:21 +0800
+From: Baoquan He <bhe@redhat.com>
+To: Chris Li <chrisl@kernel.org>
+Cc: Kairui Song <kasong@tencent.com>, linux-mm@kvack.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Matthew Wilcox <willy@infradead.org>,
+	Hugh Dickins <hughd@google.com>, Barry Song <baohua@kernel.org>,
+	Nhat Pham <nphamcs@gmail.com>,
+	Kemeng Shi <shikemeng@huaweicloud.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Ying Huang <ying.huang@linux.alibaba.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	David Hildenbrand <david@redhat.com>,
+	Yosry Ahmed <yosryahmed@google.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Zi Yan <ziy@nvidia.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/9] mm, swap: tidy up swap device and cluster info
+ helpers
+Message-ID: <aK+YzeWToVUX3WOY@MiWiFi-R3L-srv>
+References: <20250822192023.13477-1-ryncsn@gmail.com>
+ <20250822192023.13477-5-ryncsn@gmail.com>
+ <aK5/1so7a0i80+dz@MiWiFi-R3L-srv>
+ <CACePvbU8pnjWCiWcSXRr4UdpuD_wdtrouLMz_fNB_=KRrdHLmQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CACePvbU8pnjWCiWcSXRr4UdpuD_wdtrouLMz_fNB_=KRrdHLmQ@mail.gmail.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
+On 08/27/25 at 10:44am, Chris Li wrote:
+> On Tue, Aug 26, 2025 at 8:47 PM Baoquan He <bhe@redhat.com> wrote:
+> >
+> > On 08/23/25 at 03:20am, Kairui Song wrote:
+> > ......
+> > > diff --git a/mm/swap.h b/mm/swap.h
+> > > index 223b40f2d37e..7b3efaa51624 100644
+> > > --- a/mm/swap.h
+> > > +++ b/mm/swap.h
+> > > @@ -15,6 +15,8 @@ extern int page_cluster;
+> > >  #define swap_entry_order(order)      0
+> > >  #endif
+> > >
+> > > +extern struct swap_info_struct *swap_info[];
+> > > +
+> > >  /*
+> > >   * We use this to track usage of a cluster. A cluster is a block of swap disk
+> > >   * space with SWAPFILE_CLUSTER pages long and naturally aligns in disk. All
+> > > @@ -53,9 +55,28 @@ enum swap_cluster_flags {
+> > >  #include <linux/swapops.h> /* for swp_offset */
+> > >  #include <linux/blk_types.h> /* for bio_end_io_t */
+> > >
+> > > +/*
+> > > + * Callers of all swp_* helpers here must ensure the entry is valid, and
+> > > + * pin the swap device by reference or in other ways.
+> > > + */
+> > > +static inline struct swap_info_struct *swp_type_info(int type)
+> > > +{
+> > > +     struct swap_info_struct *si;
+> > > +
+> > > +     si = READ_ONCE(swap_info[type]); /* rcu_dereference() */
+> > > +     VM_WARN_ON_ONCE(percpu_ref_is_zero(&si->users)); /* race with swapoff */
+> > > +     return si;
+> > > +}
+> > > +
+> > > +static inline struct swap_info_struct *swp_info(swp_entry_t entry)
+> > > +{
+> > > +     return swp_type_info(swp_type(entry));
+> > > +}
+> >
+> > swp_type_info() is only used by swp_info() in the whole series, can we
+> > open code it in swp_info()?
+> 
+> BTW, off topic here. I really don't like the "_info" suffix. Anything
+> you can put into a C struct by definition is some kind of information.
+> Same to the _struct. Anything defined by a struct is a struct. Don't
+> need to say that.
+> The "struct swap_info_struct" gets two of the unnecessary words. It
+> should be something like  "struct swap_file" or "struct swap_device".
+> Renaming it is too invasive to the code base and it will mess up the
+> git annotation history.
 
-On Mon, 25 Aug 2025, Lance Yang wrote:
+I agree. I searched for _info_struct in the current code, only found
+swap_info_struct, ax25_info_struct, vm86plus_info_struct. The latter two
+are seen in very few LOC. Maybe we can rename it later when things are all
+done. And 'struct swap_cluster_info' too.
 
-> 
-> Same here, using a global static variable instead of a local one. The 
-> result is consistently misaligned.
-> 
-> ```
-> #include <linux/module.h>
-> #include <linux/init.h>
-> 
-> static struct __attribute__((packed)) test_container {
->     char padding[49];
->     struct mutex io_lock;
-> } cont;
-> 
-> static int __init alignment_init(void)
-> {
->     pr_info("Container base address      : %px\n", &cont);
->     pr_info("io_lock member address      : %px\n", &cont.io_lock);
->     pr_info("io_lock address offset mod 4: %lu\n", (unsigned long)&cont.io_lock % 4);
->     return 0;
-> }
-> 
-> static void __exit alignment_exit(void)
-> {
->     pr_info("Module unloaded\n");
-> }
-> 
-> module_init(alignment_init);
-> module_exit(alignment_exit);
-> MODULE_LICENSE("GPL");
-> MODULE_AUTHOR("x");
-> MODULE_DESCRIPTION("x");
-> ```
-> 
-> Result from dmesg:
-> 
-> ```
-> [Mon Aug 25 19:33:28 2025] Container base address      : ffffffffc28f0940
-> [Mon Aug 25 19:33:28 2025] io_lock member address      : ffffffffc28f0971
-> [Mon Aug 25 19:33:28 2025] io_lock address offset mod 4: 1
-> ```
-> 
-
-FTR, I was able to reproduce that result (i.e. static storage):
-
-[    0.320000] Container base address      : 0055d9d0
-[    0.320000] io_lock member address      : 0055da01
-[    0.320000] io_lock address offset mod 4: 1
-
-I think the experiments you sent previously would have demonstrated the 
-same result, except for the unpredictable base address that you sensibly 
-logged in this version.
 
