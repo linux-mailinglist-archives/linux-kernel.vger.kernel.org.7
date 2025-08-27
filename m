@@ -1,169 +1,200 @@
-Return-Path: <linux-kernel+bounces-787510-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C187B37749
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 03:43:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 355D4B3774D
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 03:44:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDA903612DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 01:43:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E8EBA7A6422
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 01:42:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEBAB20459A;
-	Wed, 27 Aug 2025 01:42:42 +0000 (UTC)
-Received: from smtpbgau1.qq.com (smtpbgau1.qq.com [54.206.16.166])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA90C1E51EC;
+	Wed, 27 Aug 2025 01:43:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="CBLssEVc"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2072.outbound.protection.outlook.com [40.107.220.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1600530CD95;
-	Wed, 27 Aug 2025 01:42:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.16.166
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756258962; cv=none; b=ibktkUvPc6kEtpLJTo8FWLSLp4bkbE+5uCUkSQU4Pgy+ZD1aq82GGWb/o65V23D7x+ZlFyBwtH5NAIsUa3zlRNCr/44+dgs5KVNJjzMtkqEW6D8mdtScmmYuaIb4T5Rx/Zfjl+YMDNui5HiMjQpobxgXFma96lgOV5VJfSUvGzI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756258962; c=relaxed/simple;
-	bh=uH2VFSJMyCnSLjpcnGx56opsnpfl5naJHZ3WXF5SFAM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FWEEeKqu/8RgS81NY3rFwGip0t4pkXeSesXxllCRwCjp1rr9WLER5gJO/56qzNgi0SyJwNzPjiFrds+SwiiRxtvEocEcAmgl77vds/Iigpg/vLOph3g3CwZHkhn0pr/U0q/pCfGzTHHoDbnJfU2ms+38Uu8E9M2zNDLsfxj55Is=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com; spf=pass smtp.mailfrom=mucse.com; arc=none smtp.client-ip=54.206.16.166
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mucse.com
-X-QQ-mid: esmtpsz20t1756258933t53080512
-X-QQ-Originating-IP: 1lOMaAuA9nfuwe2FeABSvz6MykdgCUNe1qBMkBQJ4Vg=
-Received: from localhost ( [203.174.112.180])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Wed, 27 Aug 2025 09:42:11 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 10885226712742933272
-Date: Wed, 27 Aug 2025 09:42:11 +0800
-From: Yibo Dong <dong100@mucse.com>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Vadim Fedorenko <vadim.fedorenko@linux.dev>, andrew+netdev@lunn.ch,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, horms@kernel.org, corbet@lwn.net,
-	gur.stavi@huawei.com, maddy@linux.ibm.com, mpe@ellerman.id.au,
-	danishanwar@ti.com, lee@trager.us, gongfan1@huawei.com,
-	lorenzo@kernel.org, geert+renesas@glider.be,
-	Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
-	alexanderduyck@fb.com, richardcochran@gmail.com, kees@kernel.org,
-	gustavoars@kernel.org, netdev@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH net-next v7 4/5] net: rnpgbe: Add basic mbx_fw support
-Message-ID: <05B2D818DB1348E6+20250827014211.GA469112@nic-Precision-5820-Tower>
-References: <20250822023453.1910972-1-dong100@mucse.com>
- <20250822023453.1910972-5-dong100@mucse.com>
- <316f57e3-5953-4db6-84aa-df9278461d30@linux.dev>
- <82E3BE49DB4195F0+20250826013113.GA6582@nic-Precision-5820-Tower>
- <bbdabd48-61c0-46f9-bf33-c49d6d27ffb0@linux.dev>
- <8C1007761115185D+20250826110539.GA461663@nic-Precision-5820-Tower>
- <bd1d77b2-c218-4dce-bbf6-1cbdecabb30b@lunn.ch>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8E681D63F5
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 01:43:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.72
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756258984; cv=fail; b=e/lbrN5srO4NZO5zanseKqUqp8uJm97om8SkwChQSaOv9DrXPJs0yeVbPB0EPc76xGzJIlduq+fRJalsBvurzRNR0zERE+WBtl575z2f1JBKc+oC1yQ2PuQi0qvyXhu5n2nO3i9D13Gzf7rZfLerJMvisGMJPllmChLhTEntIGQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756258984; c=relaxed/simple;
+	bh=7UFPOatTfKz4o8A1D7LtNj/cYeIM0PqVCM+92GDkNQo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=jHq778iIuXBI1nnr2HlH6ikxJWBqJ2DzWhQWd3V0YVj3avZctCA2Bo5ZT+lZlNhXTUINJkAZEvjuoadPXeGui5h9wRMhnh0JEo3R/tQ7D81e/dT9Es/NBQBfLhs0jAHnuscMuQdmlmZ2wyJHaI0ln1OxhDtPXahT6AvKnHHFgJw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=CBLssEVc; arc=fail smtp.client-ip=40.107.220.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Y2LppdDqjtpu/XD2HMwD/cB6b7N1LKum+LWLggxJlJcmPh3ztv5f8Ge/rbrzX2IY3oWSeghn861TdolKrrDLqccVLnv9ozvsCaAmoqS0PW5qnU/Pm8JT7lVAYwr8tMYN/TCDufOtvNtz0cZ2nC0Tlk+bZ1CQrkw9FQWSWmbSfivumLJMjPVJLjPcRGXGkEgjQZKPbIIadgLVF0LHIBrtRbrz4TaQOeK2jHNSenqBNgA4nEMiQlQ5MkCwS0w5yzUjIdGFHlRrPRSvS/UNaMyL78OWACeky5ejWSTWriTFy9yUh9bdRX6s/Ig22h0rZTQeOfMo1fJQ8ZfCbI41rGTIiQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=hf9uzvMnGBBRhveWpqmnyt8zWtjJbxZuByT5Xmwvjdo=;
+ b=ssOYWR9vaGVm6wD27YppJhv+kxJby9VkfUfb/X5Y0fG2PSyDPKoU74idoOx5JtqtsaYrJEUvf+sbMf3OBMJy/J7pBFGEutxU31ehMChMb5bPnh1bd5fOQKmDKvBj24K1N0pTbCvWiievqr7g2aDoJVmdfjLeBEjcrcQFB5K6U1LCavXDjDQdfS+e45qvHUNQpgTjZZ0lT7YZlpehcQ8KUOz9YH6OY8G3YPabSSDjSmSvzeVfgwyXrta/vdLiiOawS6nAaYvwQcIgFEodkknf6UC9euMWzirU+zMGn3tar7lnw2CUq+Vjb3vQrCHrCAEvLhZIxSmCdcc0QV6Io8aJCA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hf9uzvMnGBBRhveWpqmnyt8zWtjJbxZuByT5Xmwvjdo=;
+ b=CBLssEVcRL0GOC7NZI+w3nd0doa1pNX8jSkLq2LR9dbf4w/kXBT3a0ffK9I9Akr/zMSA7DaR47mbXI9abUX7+Yj5Gc5bD3s6+gW3A+nsBmPOHCVAAx/S1V1VDVkUVghnRX9IvHzG5ywaWgye3VCVNSAEPOqk8sQ0xvAA1B5nn62bPlsEemoFLxNbDol2R0SzWnvJiuQa64c2/ESjpFJErOeY0V/DsP1G58at5lPzWNDpQaAbfUUTEJIdmU0KIZak7FMkn9D3FwXCyfFtxuu9cN/xQMtUrli5ArTHuVk/4mWJ903CzOsZ4YYslEwwCnranjKMve+m8MwmDilOce/zqA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
+ IA0PR12MB8748.namprd12.prod.outlook.com (2603:10b6:208:482::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.19; Wed, 27 Aug
+ 2025 01:42:59 +0000
+Received: from DS7PR12MB9473.namprd12.prod.outlook.com
+ ([fe80::5189:ecec:d84a:133a]) by DS7PR12MB9473.namprd12.prod.outlook.com
+ ([fe80::5189:ecec:d84a:133a%6]) with mapi id 15.20.9052.019; Wed, 27 Aug 2025
+ 01:42:59 +0000
+From: Zi Yan <ziy@nvidia.com>
+To: Max Kellermann <max.kellermann@ionos.com>
+Cc: akpm@linux-foundation.org, david@redhat.com, lorenzo.stoakes@oracle.com,
+ baolin.wang@linux.alibaba.com, Liam.Howlett@oracle.com, npache@redhat.com,
+ ryan.roberts@arm.com, dev.jain@arm.com, baohua@kernel.org,
+ shikemeng@huaweicloud.com, kasong@tencent.com, nphamcs@gmail.com,
+ bhe@redhat.com, chrisl@kernel.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] mm/swap: add BUG_ON(folio==NULL) to folios_put_refs()
+Date: Tue, 26 Aug 2025 21:42:56 -0400
+X-Mailer: MailMate (2.0r6272)
+Message-ID: <BA16C3BF-C843-4976-8FCC-159324B2E477@nvidia.com>
+In-Reply-To: <20250826231626.218675-2-max.kellermann@ionos.com>
+References: <20250826231626.218675-1-max.kellermann@ionos.com>
+ <20250826231626.218675-2-max.kellermann@ionos.com>
+Content-Type: text/plain
+X-ClientProxiedBy: BN9PR03CA0519.namprd03.prod.outlook.com
+ (2603:10b6:408:131::14) To DS7PR12MB9473.namprd12.prod.outlook.com
+ (2603:10b6:8:252::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bd1d77b2-c218-4dce-bbf6-1cbdecabb30b@lunn.ch>
-X-QQ-SENDSIZE: 520
-Feedback-ID: esmtpsz:mucse.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: MNsLylogNlqc6nEp4WVIUhq56of8guHz52MSHB8r89kVkvD5Sqrq9HQD
-	7V1CMGDOCVUhFU4MNcBTcz4D+A+5nJmGIiU/HOh+0o3A1KzX6gRwhbARZJ9Jh7jPegIH80M
-	xqRrxn840BbUOJBXhtaDbLpb3OtHqi/3rqpP+7vM7h9DPb+BGHAaEcij6/VQzDjBjLahzWr
-	SukMm0WfpCrbPOlSq/8BWYA45jhx/rqSTxYB6MPh38iqKSc8g3uHkxQJyuZcRO7oyEp7glv
-	MtU07FrRXgTgUXDIjOYWkjTFw0bpCM8NibLSehKerqXOAj1oBsz3p37B0NjJuJ7a8LKDkKZ
-	YROF59AsqPduzBBYpgjakUOt3l5nSV+1Z8yg+7PxaIaDVBhiL4HN+lvsvNU+WEteW1/P1ng
-	x/WfoUqt1CzhPjzyTZLmuXij5WIj5aQu+yGW4dLzjHJ3IGF4fdsrsh+w0cy1Xul9mfyxq+u
-	YmmnMFZysLpccjPKVt8/qU6omzGArZXpnHmF7eBsh2JDUmJGXW7YBGZQUzIL7B1kVVWrGfz
-	7fFQPPseO8huV2WchoUM2MMWRVFEH9GvZP4dWnCztZRAcQumInWnFn7pFAPNQYrHupKkvs/
-	Tzh3D2jVcfI9DwobeFgv5+8SqmGcDeBqnvRhxhe07dvA+PzxCp8IDvb8E9xNUV8aVd3LoHm
-	sjsSQYbI84wGqSL0eLHEjEdvzS6iNCYDYM47uJHTIhLUVR/zU/3TOwB4Om9RVYOODYEnz6D
-	pad7SxviHVzTwDKSQWqjaDX8/oH31wcjdPsp7Fd0ItmwBL9JVuxgp//Vu9BfGGzAG8rvX45
-	8sTj05502IWdtL1fxgFFMgRVlL8a5dUmrHmu5wT3BtKdCB+ustkp3vj+Eg347yh8igVV0G8
-	gPPCziKvbdWVZRgFygVMji6gqm0Hf/RkSE/dDtXuRjODqzKgwoyCgbVfcbyc7xedNiH37Pp
-	Ffqyzbeto8fzam3t714l2BYyLBIHDq7zDkvpwWa/XeWEUNlJFL7OcjvE/
-X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
-X-QQ-RECHKSPAM: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|IA0PR12MB8748:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0a35b73e-829d-4cdc-ae5c-08dde50b0de6
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|366016|1800799024|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?AC2yFEfISXUn5+E5NQiYYOyZ/yC77rUOIfD/5NF58qPxVM0DxQNuTF0EPz5B?=
+ =?us-ascii?Q?iJioUEGYTX6PWmdFvY4lBgJxzPxebXQA0tsn2bQvVQf/DIjj7aUAkX3Glnv1?=
+ =?us-ascii?Q?/TliEwxcw5+9ezjh35bqt46urWXLuH9Dl7uSTevxGZzOc3p3xvycckKyuGYH?=
+ =?us-ascii?Q?I4Q22TvNa2CTT1TcNG4uwx3AsDehz4RwBISotiIo+Jmvo2+obsoDm4L/r13M?=
+ =?us-ascii?Q?GjdTQWC+xLdy8RTwz/P8MWVP8NE5EzyesN1YM+FmiO9X6u7/hIGj5zwGU3KE?=
+ =?us-ascii?Q?76P8rHnyjPsf9ExPNLURtEG/6LrLGce0PcIvsSMBQ5J6szoI6psu3yAlHCxf?=
+ =?us-ascii?Q?3NWo8V4heN5Hy4NQoxxQ3ODZe7HEFHxHHL++VyTCsyv7kdQWTRG7CLFk6mpQ?=
+ =?us-ascii?Q?eM2p3kq9+BlmYMaaCEF4XYcMNL+5k9OH/ojUVPxqE6FOLxBPHiweAbovSVI2?=
+ =?us-ascii?Q?ryykNHnI5L8dw0fUt7/oj9L/HJvJP4L6iDNrEFSBHq8BmzWRtjQ9Vj2EWWTD?=
+ =?us-ascii?Q?Xtejeq1T7b6QIPymyavuMmY7sMNFW6Ch7kN1ehshehpRsm6BDv4FB30bXDYH?=
+ =?us-ascii?Q?WwtUKLHebnMQXV4Awq8S2XV1JgUTzuQU03Kcj/A/NtcJGL1YmvO9FQPVAZfs?=
+ =?us-ascii?Q?Vq5n4MnYd084Z+inIYk3N7eVUEEhkuibYfOPA1qCYwuCgsVYzdgHjzWetRB+?=
+ =?us-ascii?Q?4KKZKSyl58lijtzbXsag3b1pnH6Ily3X1tfyI029HpqzrUFwihc7nt6SQR2N?=
+ =?us-ascii?Q?q/NuKPMZYILDxlNjWX42tHBaC/Cs/HpPmTOS5hrvN9IX3QVlYZsnhxy2WQMw?=
+ =?us-ascii?Q?4M75VZaT7pVIEIKVoWTAPYiBBawn8U2W57WbXmMgUGegOxB56EMMzITW9kt3?=
+ =?us-ascii?Q?vKFOd8hZYBh9PUvG14NxiUCz+ueJOp9pVPmxeKrCYDkBUsKwKF0ORoakT80c?=
+ =?us-ascii?Q?CFNVFEtqXMbGyaopqBDYnEgOEbprW/Eo+LcjayevoPK1V+7TUfsszDxvmnNl?=
+ =?us-ascii?Q?jnT3hIT84KDj30LpUva8wi2+/oNSOFz7tdLk3DCa1NfCPPrErU5xVqNkPo6J?=
+ =?us-ascii?Q?tpNGWXxDiV7y91At0cM+BtWLWwB2rkFVFf+RMKegwzq88sTXY46MW2Ar5z0r?=
+ =?us-ascii?Q?b0u8L87jdAOQMXXU9lvtfv3EK0F90lmF/edIuzvXBTiOeXLFn3ZPyf+wQMAf?=
+ =?us-ascii?Q?DZXL/DQdfpRVO2gsqSDTHiRCY4qOqxgd8+4b3JynyuyAreyhR7UwWRjuH2UI?=
+ =?us-ascii?Q?OkuKOEs1cSRuG4ujoHstrmGHtAZPvK9UeBgKZh41kcuqTjBqX8vCeMI3EyVv?=
+ =?us-ascii?Q?pwT/dZHTIMlQfbZ7tPVlcANzG95PFQH0xsV+kVFfiZf/uuyM9prSK8j6vc6e?=
+ =?us-ascii?Q?Vm/aqTWNcOqOh5Bwx4DCrWN6z4UwbeM1YqkhiSW6wEEUxyps43WinY5v7nQQ?=
+ =?us-ascii?Q?xi7hH7FFFz4=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?GFQEGCUn/juzeS+oecjzyC42he3EdoguIdMJHhX1b9WpL08cdtXIfui6yAku?=
+ =?us-ascii?Q?1uG9zpkc4lUNRP7oPrznkvwPij+dKOnq0PKk1u+E12YZVgeA4+HCGn1Oofba?=
+ =?us-ascii?Q?KQYLOmHDhde+epPZAgn7pETHuzNPn/LR86SaOYsXR0xLdaII8dr5DTsslLa3?=
+ =?us-ascii?Q?Mb9aBQj4yNaf1kHNpuhIo2B14btVO/wI5zwO+5C/VMBbvVRF6u53J3cDcdwX?=
+ =?us-ascii?Q?5im8zQpQbPDqgAfNwTLA9F4VSvpWG2k8doYvj26pDnVJ7Qpmya9b9pWxG2J8?=
+ =?us-ascii?Q?huV5H8krdXIk/Skt982ZAHcxqI72W/gbJiGvOg6WAQt9PWYnaC7uw53LfFep?=
+ =?us-ascii?Q?hdyLd+p3xeq+yjecp+yiD8o80yu7UHB3Mx3gfsRsR0mOaXq5TJmZMAi2jL2h?=
+ =?us-ascii?Q?tmoCXyOedFCvFWW+yEQn0GUwNApAiVxKBv3TD+UJIjqUrU7SgCKsXbfuhMAU?=
+ =?us-ascii?Q?wb9QFInHJ3+ujdXyyN1kmT/dVFaA9GgcQ4X/VVW2D46qq47ZUeaeGrw5WGZe?=
+ =?us-ascii?Q?ZggCnIKTMgd8b5a+tXDv2kcMHQu/S8B6BxOZsFJ7T1yY5kXZAXqODQL6YCfb?=
+ =?us-ascii?Q?2IUE+APaLdAc2ML1fZ64R6gVYpiQ3HoQj4HVLv3xu7hiN92PnPA+aX8xdlKn?=
+ =?us-ascii?Q?utCnSNm8nosU9MLeMDCK/tlZ7j36XhvTIdNIMCTTM6wP09XekY7Cim4IKVEd?=
+ =?us-ascii?Q?C+S9MaXs5BncEMc3FrGN/kyPjc3t95+Y7TE5aUGJ5ZzDi1fwBtC9mr3ffgkf?=
+ =?us-ascii?Q?mVbNWhdqFzfZlCbT4TEKWZZ7uT75oUPhF2UaZGZwKumMsJeUD1mp/b55YnEU?=
+ =?us-ascii?Q?8uLjQdw3KEypq4Od9pK0+9qgFqBj9cHAzLCwL6YsWIZ697UCJHOYHFRqxWFw?=
+ =?us-ascii?Q?kGLu+iPNCUkkN8l4TrnZJIbVu0Z5QnheeBJGWusm3YI5vjq14sC4YK/csbrx?=
+ =?us-ascii?Q?H3d4tG0LFLC6yvwoCPl10qwNr60VyGT74HzFzhX4mg4hh3vjeMGFKCLGIBbc?=
+ =?us-ascii?Q?nmrPrOUOzVmov3h0Q3tnyRY4uHr5PF1mrqFZgXAGYldyjR8GDtDHOFpasVZE?=
+ =?us-ascii?Q?OoGplZbaN/xrPW/v8DJgNhF8HZtE0mbW3dEGzUzegLi4uu3bA2moz+UD4R5G?=
+ =?us-ascii?Q?+G4bS9pw8TFrlyfXRr9UK28DDuqKdyBMbigqed/Jlkx+6JVIT/4oTtU2xuEJ?=
+ =?us-ascii?Q?VKVXUE8C6GL12N9bs1RuoVVODVqmf0+f3gwC+o82Vb+0djENLbCT0jLzC4SC?=
+ =?us-ascii?Q?Q8XPj9t+ew8Vpl9vYo5c2tRusO+rj+uIh7Iq8bqY2QhmwiXqsMjd0EIbQVUA?=
+ =?us-ascii?Q?dEswH1pGgYkFv49nDPK1dySxqnStby0nHEDnZBWHMKXHARYtL8ZubNKwzcQ2?=
+ =?us-ascii?Q?5xWra5PgA45esXLgXJXKl0tn1vNqSHrwphJXZZ+K/WtS8DnQbAq6aGhpcv/1?=
+ =?us-ascii?Q?JGLlq6eikEJ7BiC+FnobuzYuFNYXfMbkgYwK/yA8j2pHCS6quCidl1kqrOh1?=
+ =?us-ascii?Q?3ZMA3/0U2k0wdf36zzxVelFqpUoQjE2GA1+m5ijIV21lHmKFktKAT/zIcUQ4?=
+ =?us-ascii?Q?uWcTJk6xRqfUfFNZgE74rgcsCmMdHKUPYuTiLky+?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0a35b73e-829d-4cdc-ae5c-08dde50b0de6
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2025 01:42:59.8339
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ljXErer7hNbjB0fZE7tN3y0FiRqEf3kocRDFjk5TIJFagmkwFhIZGDwoclC1JSDZ
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB8748
 
-On Tue, Aug 26, 2025 at 02:39:07PM +0200, Andrew Lunn wrote:
-> > Yes. It is not safe, so I 'must wait_event_timeout before free cookie'....
-> > But is there a safe way to do it?
-> > Maybe:
-> > ->allocate cookie
-> >   -> map it to an unique id
-> >     ->set the id to req->cookie
-> >       ->receive response and check id valid? Then access cookie?
-> 
-> This is part of why adding cookies in a separate patch with a good
-> commit message is important.
-> 
-> Please take a step back. What is the big picture? Why do you need a
-> cookie? What is it used for? If you describe what your requirements
-> are, we might be able to suggest a better solution, or point you at a
-> driver you can copy code from.
-> 
-> 	Andrew
-> 
+On 26 Aug 2025, at 19:16, Max Kellermann wrote:
 
-I try to explain the it:
+> It is not legal to have NULL pointers in a folio_batch.
+>
+> However, the Ceph code does exactly this, and a refactoring patch gone
+> wrong has exposed this to folios_put_refs(), see
+> https://lore.kernel.org/ceph-devel/aK4v548CId5GIKG1@swift.blarg.de/
+>
+> I believe this should Oops instead of crashing due to NULL pointer
+> reference (guarded by is_huge_zero_folio(), which may silently hide
+> the bug).
+>
+> Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
+> ---
+>  mm/swap.c | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/mm/swap.c b/mm/swap.c
+> index 3632dd061beb..07ccda00e7ee 100644
+> --- a/mm/swap.c
+> +++ b/mm/swap.c
+> @@ -952,6 +952,7 @@ void folios_put_refs(struct folio_batch *folios, unsigned int *refs)
+>  	for (i = 0, j = 0; i < folios->nr; i++) {
+>  		struct folio *folio = folios->folios[i];
+>  		unsigned int nr_refs = refs ? refs[i] : 1;
+> +		BUG_ON(folio == NULL);
+>
+>  		if (is_huge_zero_folio(folio))
+>  			continue;
 
-driver-->fw, we has two types request:
-1. without response, such as mucse_mbx_ifinsmod
-2. with response, such as mucse_fw_get_macaddr
+We are moving away from BUG_ON. It is better to use WARN_ON_ONCE and skip
+NULL values:
 
-fw --> driver, we has one types request:
-1. link status (link speed, duplex, pause status...)
+if (WARN_ON_ONCE(!folio))
+	continue;
 
-fw tiggers irq when it sends response or request.
-In order to handle link status timely, we do an irqhandle like this:
 
-static int rnpgbe_rcv_msg_from_fw(struct mucse *mucse)
-{
-        u32 msgbuf[MUCSE_FW_MAILBOX_WORDS];
-        struct mucse_hw *hw = &mucse->hw;
-        struct mbx_fw_cmd_reply *reply;
-        int retval;
-	/* read mbx data out */
-        retval = mucse_read_mbx(hw, msgbuf, MUCSE_FW_MAILBOX_WORDS);
-        if (retval)
-                return retval;
-
-        reply = (struct mbx_fw_cmd_reply *)msgbuf;
-	/* judge request or response */
-        if (le16_to_cpu(reply->flags) & FLAGS_DD) {
-		/* if it is a response, call wake_up(cookie) */
-                return rnpgbe_mbx_fw_reply_handler(mucse,
-                                (struct mbx_fw_cmd_reply *)msgbuf);
-        } else {
-		/* if it is a request, handle link status */
-                return rnpgbe_mbx_fw_req_handler(mucse,
-                                (struct mbx_fw_cmd_req *)msgbuf);
-        }
-}
-
-And driver requests with response is bellow 'without' irqhandle:
-
-static int mucse_fw_send_cmd_wait(struct mucse_hw *hw,
-				  struct mbx_fw_cmd_req *req,
-				  struct mbx_fw_cmd_reply *reply)
-{
-...
-	mucse_write_posted_mbx(hw, (u32 *)req, len);
-
-	...
-	/* but as irqhandle be added, mbx data is read out in the
-	 * handler, mucse_read_posted_mbx cannot read anything */
-	mucse_read_posted_mbx(hw, (u32 *)reply, sizeof(*reply));
-
-}
-
-To solve mucse_read_posted_mbx cannot read data with irq, we add 'cookie'.
-After mucse_write_posted_mbx, call wait_event_timeout. wake_up is called
-in irqhandle.
-
-Thanks for your feedback.
-
+--
+Best Regards,
+Yan, Zi
 
