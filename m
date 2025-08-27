@@ -1,66 +1,79 @@
-Return-Path: <linux-kernel+bounces-788002-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788003-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71F89B37EA5
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 11:21:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D9EFB37EA8
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 11:21:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 180BF5E82B9
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 09:21:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 29C3036334B
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 09:21:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAD2C3431F5;
-	Wed, 27 Aug 2025 09:21:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88E0A343D96;
+	Wed, 27 Aug 2025 09:21:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="s//95xHf"
-Received: from omta36.uswest2.a.cloudfilter.net (omta36.uswest2.a.cloudfilter.net [35.89.44.35])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HS/yE1n+"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06CC03431E7
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 09:21:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C1D3343D62
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 09:21:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756286489; cv=none; b=tcqNH30L1GdaojdLX4exisHzhFXwZZttwFPBxjAwskaRjw1/cIBeRSs/C26F8P7MFEd7hcxn3FxPsgsABpKYwJgA/frKGCl8dYctBsAyU7KUm2vyWYoU0bzOhCs5WlpKuRv1ffl3rAWZoFL4SGG/eCzQ9Gxv7/t3MqxWJT+DuH4=
+	t=1756286489; cv=none; b=QPiuOAf16v+i0ubBuFhEHiIlDDn4PH82AhrKAeDrMRNCKuyf/tThxy2E9B5wnJORw75VSevUauRRdcHDsyc2TbtEqVKAKy82teQy3Te+b+dtjSf1iy4OpomtO44kGAiaPIyrNuScl6jJ4+4XzKL7blnTdOr5VxpjLIkehvqGhnI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1756286489; c=relaxed/simple;
-	bh=8zinUOrBrdyPH0vtqYLCRXPg4x28SnjVLitLEeTBDdI=;
+	bh=UYHRh0nnf5/4PfZfTpjBoaA1YeifpOFb2r0eI6/SlwM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=d6j9dRctFiYn9F5RO4GC5MBfX9Mjv4isXHyQYyIsvm2d9OsN+wEBMCtrf5ZRaYiY6J9JyM16HEHSDgX/UIzurtSpxEilhhKOJOxMqgmaIzIO1PDu/f2zgkyP5VevwatoF8Mi9ktu/ts5EO5FYKX1VuHqBFyAsEbLPxCN51hLy9A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=s//95xHf; arc=none smtp.client-ip=35.89.44.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
-Received: from eig-obgw-6002b.ext.cloudfilter.net ([10.0.30.203])
-	by cmsmtp with ESMTPS
-	id rANpuavLozNRxrCLOu4XZg; Wed, 27 Aug 2025 09:21:26 +0000
-Received: from box5620.bluehost.com ([162.241.219.59])
-	by cmsmtp with ESMTPS
-	id rCLOuH8hf1ar9rCLOu2vx0; Wed, 27 Aug 2025 09:21:26 +0000
-X-Authority-Analysis: v=2.4 cv=RtrFLDmK c=1 sm=1 tr=0 ts=68aece16
- a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
- a=HaFmDPmJAAAA:8 a=uh_HjuOCLM2ixMC6b1IA:9 a=QEXdDO2ut3YA:10
- a=nmWuMzfKamIsx3l42hEX:22 a=Wh1V8bzkS9CpCxOpQUxp:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
-	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=5SB1wmBLc5smMfA0sMTPBTrAKW/zbSAR8HWXn/kwUbE=; b=s//95xHfiEtsO8lf/BrA4XLQom
-	WAfAEcsXNIflPaoIgCPFYBlovhYl87Yah3HUyDhVioGKixnigriJ2MCg+v2pwi04aR4zKSZsS7pK1
-	EEeJfODRFna511TAAzBflqg99qgYPblxMWEQdOE3+2Xw+ndDXkYLa23MITFgL/fpibfuRLqQ3JvdQ
-	6LHaVOEby3h3AkteyssH8gfcFXsER6AYPBlBFBHU4DkRdEYiOudourzm3i3pHPSxj5iNw8dvjqCZm
-	XaRESlHbafkuFNZ4AbYszH1NNK+VXG8+H66UNjFNSAkzoryqGoO4jyemr6bFYdQXiowzYJSzbgyAS
-	Tue4RZaw==;
-Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:38758 helo=[10.0.1.116])
-	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.98.1)
-	(envelope-from <re@w6rz.net>)
-	id 1urCLN-00000004Gr0-1IzB;
-	Wed, 27 Aug 2025 03:21:25 -0600
-Message-ID: <d07c6235-3f13-4318-823c-ce0ea3b0cbe9@w6rz.net>
-Date: Wed, 27 Aug 2025 02:21:23 -0700
+	 In-Reply-To:Content-Type; b=KUUvtXMETE0HC+U5phopHJt9fka8mRZQxfGlN4KjZGhvqnVGqlhdwpF5DajELGOxiK90c/+LSjLqXcFeCPdVjj1orK9CmPywXM6K5M7TijdhV5NGjTpaKM864zW6gn9fQ233DodfUwThsC9Gx+wc7Hgcbw1V4hXgOQlDoTogawE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HS/yE1n+; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3c79f0a5c5fso2851386f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 02:21:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1756286486; x=1756891286; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Mker59khNl9LO6XVA193w6BS5zlp+w383B89UYOvyb4=;
+        b=HS/yE1n+5NTaDm4mGxRBgJVsxsxzwDfQ15YEo/KJpQQekCMObkiT2JYX0vUhxePwF6
+         Y1VeuV2OB7D90tOtN81Q1Q81HfBlmoY/mIYVRnkFTWWsu4yc3RAHE8yBq7B/ugSXFB+N
+         lXznf0exYygNhTcLd8UMVO1SetzxZv9YKsRSNwRkwrCFnnGvtBD183f5DN8eMNeKKDiz
+         yKb01C5d6mJdqT7V+lh+8gLqV3evMzhuAYp1WTlN6d24Qp9MvTcRX4jzX0ItvBAxm3Ke
+         t/CW/CbKyqImbpeQegxvMDTyJ8cSKq7Or/MJQVL/Tdn+UF2J3F5fXqN3PzY5QWCBJrZY
+         uXww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756286486; x=1756891286;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Mker59khNl9LO6XVA193w6BS5zlp+w383B89UYOvyb4=;
+        b=fRJyeBkYHTv+h4pK4Z8MC+6AQsgAKHChgrvGpNLKKx6d68j9DtL5bYhhir4wrgkwbo
+         uHjn0SftYwGVnFgvWU4JZSmUT+e0H5cnFWc3Wi2fFOPqkGusPd1vT1mSAm3MCb1R0TnC
+         b59gQwOfSbtZT6fySHWtNjjCN9RRZUtX1EirmhWN22fSESMEs3O35K00XeHzm373sNht
+         S6TmBfW61r/zue60qynoQtL40zbUisAVyLhyZaF2flJzOpn6DYOlseF2A/5Ua1b/GWc6
+         GHzjrcpSKbREyA/AGjf3PrCt+n1hnx2dIRhdvMEp5pb9ygZo2KPUFbvo+GUGxWm1GCMW
+         p1Ww==
+X-Forwarded-Encrypted: i=1; AJvYcCUT21biu0yTmRvP6AYQEL6zZPsSYkXwKDmzArvzOM/o9eAxiu/+vmJligV0SCltAHmWOS1vo/zPAofmvk8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxgFxC295TkQKdPKkQCsgzfEx3gvZ/mArifPVQNY1YYYkHkYk8V
+	eD7KXGFUrHymHBHmsjWYLn+mvPR1i+jDoC4lvAImLMMj4lx4if2dE5hUrJ8Ahgp2Es0=
+X-Gm-Gg: ASbGncvY7PsyPfNEq+2HBAfhaCLa3XIcISjDwjl09w/Fzc9AyWA4c+L+oldNhf5sjAI
+	HdyEME/4ylh2mMHl1UWHVt3r8VlOChR704fulqw66KhDBfTDtGH/9wp4Rv3Xmlhpslxp7oW3xBY
+	/5Y5RtQA55QSdwINd5jzv2zFO9dhdfTuGIn6KYDqAXFWpi/MlXi0EBVzOUa/rsO9fCnHhaiyKyE
+	1LUwGcYGg1idro2zQ02k/hcZPq18hWu0KDb+5Ybz6PQTwH/IcJ3rw00d7tRgVejo6YELrxqhbFj
+	YsBLiKW0AmKR/xaXdxXtyS1oc4VK2lvwy6oO68mkHA31oevIkklLU++UsUbfy9SH1sEzIQo4UXh
+	s/ZTsUDdSg/HDEg+MEd26++HjGGU=
+X-Google-Smtp-Source: AGHT+IFvRqEa1ogDaSXzE5145n6AsbEdzn4jkuxQuGsQWp+ChfJK8nOqGUjd3LT9Dxkf37baNqI9Dw==
+X-Received: by 2002:a05:6000:26c8:b0:3c7:6348:4089 with SMTP id ffacd0b85a97d-3c7634846admr10821566f8f.11.1756286486239;
+        Wed, 27 Aug 2025 02:21:26 -0700 (PDT)
+Received: from [192.168.1.3] ([185.48.76.109])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3cc7b699d5dsm2665466f8f.48.2025.08.27.02.21.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 27 Aug 2025 02:21:25 -0700 (PDT)
+Message-ID: <4ca657cf-1c8e-4d51-aba9-c894c32a23b3@linaro.org>
+Date: Wed, 27 Aug 2025 10:21:25 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,63 +81,91 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.1 000/482] 6.1.149-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
- achill@achill.org
-References: <20250826110930.769259449@linuxfoundation.org>
+Subject: Re: [PATCH v2 2/3] coresight: tpda: add logic to configure TPDA_SYNCR
+ register
+To: Jie Gan <jie.gan@oss.qualcomm.com>
+Cc: coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach
+ <mike.leach@linaro.org>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Tingwei Zhang <tingwei.zhang@oss.qualcomm.com>
+References: <20250827042042.6786-1-jie.gan@oss.qualcomm.com>
+ <20250827042042.6786-3-jie.gan@oss.qualcomm.com>
 Content-Language: en-US
-From: Ron Economos <re@w6rz.net>
-In-Reply-To: <20250826110930.769259449@linuxfoundation.org>
+From: James Clark <james.clark@linaro.org>
+In-Reply-To: <20250827042042.6786-3-jie.gan@oss.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - box5620.bluehost.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - w6rz.net
-X-BWhitelist: no
-X-Source-IP: 73.223.253.157
-X-Source-L: No
-X-Exim-ID: 1urCLN-00000004Gr0-1IzB
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.116]) [73.223.253.157]:38758
-X-Source-Auth: re@w6rz.net
-X-Email-Count: 57
-X-Org: HG=bhshared;ORG=bluehost;
-X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfFHIHdUfq6skJeq0fsF770IaCO5SMBzPFb4pnpWfyEsBg97J4U+S3mF/6ADfiHl3/IQ+K2yBm2dvnkyju+ZkJmaucQWqZksXOoN0uXPBwC5ZUNwoUERd
- 1rNwaejtTcp6r3KA/8rqpf8JyalkNkE+daJ9Z8H/YlR7gxxd8BM63IU1rLTRjUa2HVjZHQH5h9MLrVpGNU6j2BerqVmVvb0RCis=
 
-On 8/26/25 04:04, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.1.149 release.
-> There are 482 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Thu, 28 Aug 2025 11:08:22 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.149-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
 
-Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
 
-Tested-by: Ron Economos <re@w6rz.net>
+On 27/08/2025 5:20 am, Jie Gan wrote:
+> From: Tao Zhang <tao.zhang@oss.qualcomm.com>
+> 
+> The TPDA_SYNCR register defines the frequency at which TPDA generates
+> ASYNC packets, enabling userspace tools to accurately parse each valid
+> packet.
+> 
+> Signed-off-by: Tao Zhang <tao.zhang@oss.qualcomm.com>
+> Co-developed-by: Jie Gan <jie.gan@oss.qualcomm.com>
+> Signed-off-by: Jie Gan <jie.gan@oss.qualcomm.com>
+> ---
+>   drivers/hwtracing/coresight/coresight-tpda.c | 7 +++++++
+>   drivers/hwtracing/coresight/coresight-tpda.h | 6 ++++++
+>   2 files changed, 13 insertions(+)
+> 
+> diff --git a/drivers/hwtracing/coresight/coresight-tpda.c b/drivers/hwtracing/coresight/coresight-tpda.c
+> index 647ab49a98d7..430f76c559f2 100644
+> --- a/drivers/hwtracing/coresight/coresight-tpda.c
+> +++ b/drivers/hwtracing/coresight/coresight-tpda.c
+> @@ -187,6 +187,13 @@ static void tpda_enable_pre_port(struct tpda_drvdata *drvdata)
+>   	 */
+>   	if (drvdata->trig_flag_ts)
+>   		writel_relaxed(0x0, drvdata->base + TPDA_FPID_CR);
+> +
+> +	/* Program the counter value for TPDA_SYNCR */
+> +	val = readl_relaxed(drvdata->base + TPDA_SYNCR);
+> +	/* Clear the mode */
+> +	val &= ~TPDA_SYNCR_MODE_CTRL;
+> +	val |= FIELD_PREP(TPDA_SYNCR_COUNTER_MASK, TPDA_SYNCR_MAX_COUNTER_VAL);
+
+Just use the mask directly if you want to set all the bits. This makes 
+it seem like the MAX_COUNTER_VAL is something different.
+
+val |= TPDA_SYNCR_COUNTER_MASK
+
+> +	writel_relaxed(val, drvdata->base + TPDA_SYNCR);
+>   }
+>   
+>   static int tpda_enable_port(struct tpda_drvdata *drvdata, int port)
+> diff --git a/drivers/hwtracing/coresight/coresight-tpda.h b/drivers/hwtracing/coresight/coresight-tpda.h
+> index 0be625fb52fd..8e1b66115ad1 100644
+> --- a/drivers/hwtracing/coresight/coresight-tpda.h
+> +++ b/drivers/hwtracing/coresight/coresight-tpda.h
+> @@ -9,6 +9,7 @@
+>   #define TPDA_CR			(0x000)
+>   #define TPDA_Pn_CR(n)		(0x004 + (n * 4))
+>   #define TPDA_FPID_CR		(0x084)
+> +#define TPDA_SYNCR		(0x08C)
+>   
+>   /* Cross trigger FREQ packets timestamp bit */
+>   #define TPDA_CR_FREQTS		BIT(2)
+> @@ -27,6 +28,11 @@
+>   #define TPDA_Pn_CR_CMBSIZE		GENMASK(7, 6)
+>   /* Aggregator port DSB data set element size bit */
+>   #define TPDA_Pn_CR_DSBSIZE		BIT(8)
+> +/* TPDA_SYNCR mode control bit */
+> +#define TPDA_SYNCR_MODE_CTRL		BIT(12)
+> +/* TPDA_SYNCR counter mask */
+> +#define TPDA_SYNCR_COUNTER_MASK		GENMASK(11, 0)
+> +#define TPDA_SYNCR_MAX_COUNTER_VAL	(0xFFF)
+
+No need to define a numeric value that's the same as the mask. It also 
+opens the possibility of making a mistake.
+
+>   
+>   #define TPDA_MAX_INPORTS	32
+>   
 
 
