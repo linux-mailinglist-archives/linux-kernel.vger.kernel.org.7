@@ -1,113 +1,126 @@
-Return-Path: <linux-kernel+bounces-788722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788724-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BA89B38940
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 20:04:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC3FBB38945
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 20:07:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 289C47ADF21
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 18:03:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 481257C4A89
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 18:07:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED08927A103;
-	Wed, 27 Aug 2025 18:04:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F16742D2483;
+	Wed, 27 Aug 2025 18:07:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TcY0WyrJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="Ve0PpHKk"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EEE213E41A;
-	Wed, 27 Aug 2025 18:04:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756317882; cv=none; b=rC0jBR8QTmvPsiBm+AZ56wy/KJ9NC+JwPmBCKy0y4UhVKt1L1pU9Opc8wbiXX8zQXQgjgcUpwYJkxiPwWjgZ4+shZe0/4bZG3e+tHX/Tymmiq0cqC5d2O/ASCl8ivZ9fqZ6MTa/O+a4SQ+6Y3OsIUxmXkuG/OKYzzmBGN4eJZ+s=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756317882; c=relaxed/simple;
-	bh=Vs26hTuajQyntpw9lB7Y2tIkK0FXXY749vyjkm3YR74=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tX3cO6akt704Ag9i+iHJlJ/pgUZV5ofqXuWM/9qMdmmD4CafipVp4k9MEbjNtEf3GG5W8JAqHTbR2/xv4//z91NTgbIFJkI4JUu1ytzYyKP3sKuIWsJgOLVDttx4d6ReNrAJIQZ0x8lUDpi/ox8uC1eMHYFKJpU+yt+hU3To4tQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TcY0WyrJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23B2FC4CEEB;
-	Wed, 27 Aug 2025 18:04:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756317881;
-	bh=Vs26hTuajQyntpw9lB7Y2tIkK0FXXY749vyjkm3YR74=;
-	h=From:To:Cc:Subject:Date:From;
-	b=TcY0WyrJ8fA48+CGmQa/NR5odU3p+WRJJffmUBeKiJFMIe7KoIYd25pPC3x91fGdb
-	 6619/ALEoF6w3TSKemVAwXVstDzSoqKDpvkYuO69BspDEvs4B9ur/kY0Hv/5kzZGWK
-	 Q+bMYfMcn0z5OqUUQfmSsMve9UiuRFf4h9dd+XntOJuKJ6U1s9xFsuNI8hdxRw4+DX
-	 crjH+gixk9jC1GL0HdVFXwc2uq53lv4hRgkJ1h8XtapBx7UWqTI+GRRepM7781KR/S
-	 bhKcj/Cm1Kf24KCaN52lBWWX6wE1lWNCN7Vkko8oGYY5SPAhqxThRVMM1rTZLi7aF+
-	 vPP1LIawgmwKw==
-From: Conor Dooley <conor@kernel.org>
-To: Conor Dooley <conor@kernel.org>
-Cc: Conor Dooley <conor.dooley@microchip.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Ben Zong-You Xie <ben717@andestech.com>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1] dt-bindings: cache: ax45mp: add 2048 as a supported cache-sets value
-Date: Wed, 27 Aug 2025 19:03:44 +0100
-Message-ID: <20250827-negligee-kinship-7832ba58deba@spud>
-X-Mailer: git-send-email 2.47.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3501278E7C;
+	Wed, 27 Aug 2025 18:07:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756318059; cv=pass; b=FLdEgOZmGrUuMMSkqVmfy0LWNZ7gasZeXDZwEcZAvtxYQR5XR+Xvgj80mi0J7+63V2Ig0z7Q6fBkEoaDIXN8MWjljHtalhuVED8KXHvSLayvHnyKf6/qLkNVKfHYjbBDf4EygyUVdhelCB3uzWyHPiQS1ERISEWBidTwWb56dAE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756318059; c=relaxed/simple;
+	bh=AxBXSo2Fw9dOVAY+F5+8EtyXRQYdzP12cThOUbkVjNc=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=qm1OnizjlSyy3pylK6w0EP7MG4pmCFvdlDnWylcxEzuPBzSCZmQI38dRYlPLG61srcblIHQdVNPCibHwVMYduzunUoqdvcKTGUXqQGSJ0HrKwjysc7wrrKD3xenwxE7cawPqAa/2J3cj+Y5dxG/0sX/g34CjsD91XLCIHrb8B2M=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=Ve0PpHKk; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1756318039; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=c1nmMz2S9S1ZGqwABq9+dpokY3U1sUFFJprD86IyLryfIZ1CXhvym9qXOHjKN51d7lGWbYq4XkBgWTRrrgpCUaxmmoKmBSxsGtGXf/JtwQsYZlSv72vlr9Au/R35EGg1Y/RYJsSx6TXS2URXh/ZuZsD00+/OIG/qAChNmnZASH8=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1756318039; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=guGifk1/HZu+Zmhvno/QhB/iuQPf/SeDPeL8b6rcCwc=; 
+	b=H3jkqNIQeiBEpYquY9uIxZqWvIVeOcEEIip6j+tMULWxePBzlUw5aJW1H7pHO+AShVm5sNjnwOitkl2vBoaLairZlZk9ltw1BXsJ0q4hzqFPTXLelEoPqQB54pEOhuRU3gLHTc/vt4RoenQh+5CralUbbo419ui5evFGEF3C5EQ=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1756318039;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=guGifk1/HZu+Zmhvno/QhB/iuQPf/SeDPeL8b6rcCwc=;
+	b=Ve0PpHKkcJ7zab7sYjunETGK47CDA7AmestbEnP1Pzp0m4ss3PGn7SIfkZ+uXEu3
+	2RQkuXTRofhlbxQeLv46Ik8//AOKLettQiiqFg8HBYmkhk736+3iqdjsBl+tbLblbRv
+	UcPnE5aqMl7oR6plrW2NuD7Dy9Wa3+DSuUaG0dPE=
+Received: by mx.zohomail.com with SMTPS id 1756318036312813.3265747381319;
+	Wed, 27 Aug 2025 11:07:16 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1537; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=ZEJpTfPRiyhRaQLfioVvvFhLpXaostCxUboujWZTiy8=; b=owGbwMvMwCVWscWwfUFT0iXG02pJDBnrPRr+M6Rfn7l6CV9RU/xTxvZfV84Vhwgp/g5xWfxei vH6mdr6jlIWBjEuBlkxRZbE230tUuv/uOxw7nkLM4eVCWQIAxenAEzkCRsjQ4vnlJ4DK3eu5Mk6 dH09+8pifbfA7yfEXx8Rv5qwueqr/2lGhhNTYhqn9uv5NF5ceMxKXyTT/taBgFyd+49mFzH5v1w 8ixsA
-X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
+Subject: Re: [PATCH] rust: regulator: use `to_result` for error handling
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <20250821090720.23939-1-work@onurozkan.dev>
+Date: Wed, 27 Aug 2025 15:06:59 -0300
+Cc: rust-for-linux@vger.kernel.org,
+ lgirdwood@gmail.com,
+ broonie@kernel.org,
+ ojeda@kernel.org,
+ alex.gaynor@gmail.com,
+ boqun.feng@gmail.com,
+ gary@garyguo.net,
+ bjorn3_gh@protonmail.com,
+ lossin@kernel.org,
+ a.hindborg@kernel.org,
+ aliceryhl@google.com,
+ tmgross@umich.edu,
+ dakr@kernel.org,
+ linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <707352A3-B026-4A8A-9D8E-5E0E7BDA2F19@collabora.com>
+References: <20250821090720.23939-1-work@onurozkan.dev>
+To: =?utf-8?Q?Onur_=C3=96zkan?= <work@onurozkan.dev>
+X-Mailer: Apple Mail (2.3826.700.81)
+X-ZohoMailClient: External
 
-From: Conor Dooley <conor.dooley@microchip.com>
 
-The QiLai implementation of this cache controller uses a cache-sets of
-2048, and mandates it in an if/else block - but the definition of the
-property only permits 1024. Add 2048 as an option, and deny its use
-outside of the QiLai.
 
-Fixes: 51b081cdb9237 ("dt-bindings: cache: add QiLai compatible to ax45mp")
-Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
----
-CC: Conor Dooley <conor@kernel.org>
-CC: Rob Herring <robh@kernel.org>
-CC: Krzysztof Kozlowski <krzk+dt@kernel.org>
-CC: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-CC: Ben Zong-You Xie <ben717@andestech.com>
-CC: devicetree@vger.kernel.org
-CC: linux-kernel@vger.kernel.org
----
- .../devicetree/bindings/cache/andestech,ax45mp-cache.yaml   | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+> On 21 Aug 2025, at 06:07, Onur =C3=96zkan <work@onurozkan.dev> wrote:
+>=20
+> Simplifies error handling by replacing the manual check
+> of the return value with the `to_result` helper.
+>=20
+> Signed-off-by: Onur =C3=96zkan <work@onurozkan.dev>
+> ---
+> rust/kernel/regulator.rs | 7 ++-----
+> 1 file changed, 2 insertions(+), 5 deletions(-)
+>=20
+> diff --git a/rust/kernel/regulator.rs b/rust/kernel/regulator.rs
+> index 65f3a125348f..73ad4ad4747d 100644
+> --- a/rust/kernel/regulator.rs
+> +++ b/rust/kernel/regulator.rs
+> @@ -267,11 +267,8 @@ pub fn set_voltage(&self, min_voltage: Voltage, =
+max_voltage: Voltage) -> Result
+>     pub fn get_voltage(&self) -> Result<Voltage> {
+>         // SAFETY: Safe as per the type invariants of `Regulator`.
+>         let voltage =3D unsafe { =
+bindings::regulator_get_voltage(self.inner.as_ptr()) };
+> -        if voltage < 0 {
+> -            Err(kernel::error::Error::from_errno(voltage))
+> -        } else {
+> -            Ok(Voltage::from_microvolts(voltage))
+> -        }
+> +
+> +        to_result(voltage).map(|()| =
+Voltage::from_microvolts(voltage))
+>     }
+>=20
+>     fn get_internal(dev: &Device, name: &CStr) -> Result<Regulator<T>> =
+{
+> =E2=80=94
+> 2.50.0
+>=20
+>=20
 
-diff --git a/Documentation/devicetree/bindings/cache/andestech,ax45mp-cache.yaml b/Documentation/devicetree/bindings/cache/andestech,ax45mp-cache.yaml
-index 4de5bb2e5f246..b135ffa4ab6b8 100644
---- a/Documentation/devicetree/bindings/cache/andestech,ax45mp-cache.yaml
-+++ b/Documentation/devicetree/bindings/cache/andestech,ax45mp-cache.yaml
-@@ -47,7 +47,7 @@ properties:
-     const: 2
- 
-   cache-sets:
--    const: 1024
-+    enum: [1024, 2048]
- 
-   cache-size:
-     enum: [131072, 262144, 524288, 1048576, 2097152]
-@@ -81,6 +81,10 @@ allOf:
-           const: 2048
-         cache-size:
-           const: 2097152
-+    else:
-+      properties:
-+        cache-sets:
-+          const: 1024
- 
- examples:
-   - |
--- 
-2.47.2
-
+Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>=
 
