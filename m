@@ -1,168 +1,176 @@
-Return-Path: <linux-kernel+bounces-787707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B67EB37A09
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 07:55:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E84BB37A0D
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 07:56:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3080F3BD135
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 05:55:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8BB63BCE71
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 05:56:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFD46310771;
-	Wed, 27 Aug 2025 05:54:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D86813101DC;
+	Wed, 27 Aug 2025 05:56:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NiJQ/rjj"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="vdM3fXRk";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ubY41WTn";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="vdM3fXRk";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ubY41WTn"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C94AA287273;
-	Wed, 27 Aug 2025 05:54:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5944927AC34
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 05:56:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756274097; cv=none; b=Ua82v+S+adU8C6+uVFw7biJVlNMxbmxVAOYYkotjldkknlNxswT6cPdkpSk7XLwk7br5BMDGHHdjTuy7qACrKfzNSkc3ghgmNgjZBALcEWay+mq08AA0aPEt2utuFrQFI1T1VmAcQmQAd5KLvEJVHSpMsdBZ51W5VyoEQPz06qk=
+	t=1756274191; cv=none; b=swIbcGLFJbtsq3TdJk/Ddp77IuqRwLHcj5tCqeUF/jfQXWVG9+II6B4CuLG6Uxmj0BuSyoqqjYtbXK8I99fh2LRcPN23oDCtzb+Cw0puBrkRgr9SQhhbbL0xGHgT2AR0v+y06hDYAhxzeQG9jopapeBRY3gS76lYNIb5MxrqBLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756274097; c=relaxed/simple;
-	bh=8eROKf5S0VMq51uDrP4Ccww8z69TnWPueZiuLEnNzMc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OfQYuojg+oGsbzWYYY6YDp5QIMhTSTrnx+89eJj+xF9TNpB4LxiRuyOFuGNmgNk3YZkpoWvgaOLh4eiN59TaOKMClOYQ61cn4o9DmlIVevoIk7xJL27CqjapIrmnc91BiO5B8dONZdZBrWo2GiO2UTyzmKl/ZF9TCRYCwYZJTNQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NiJQ/rjj; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-55f499c7f0cso2408191e87.0;
-        Tue, 26 Aug 2025 22:54:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756274093; x=1756878893; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=m8n1j89CvjN5ZFEbdFGzttMH7tyzPC+isNQLY6VZ0w0=;
-        b=NiJQ/rjjB1cOxvwYSOr41aeZa0HgSKuAbKrug4sqFj/qMV/I05+oY1g9rEjfdHr1HR
-         VqS1GWx4mC8MLFrqo1naF+p3gwE59vZHfpyEtP3brcwn0cwCnye+V8za5uoWuCxX3h+Y
-         KWjzOV96M3vdTeABWrH0d8gKchPgPXu1qyYXoX2AV1Oxnn0iWA693N9+7SAkG3CQX9Ie
-         eVu4+KVuDJHLv0WTjn1yr8Sxia6A4xy28sGRDIfjo9rzU4yE1GJkcmtGbFAyeMm/X74z
-         AO9m3SjVNz5oXIwLjdNbE3thPFDV30rc7K5rSpUd8oKRycjRRPzcgP0zLRfBRmDOGVwa
-         do2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756274093; x=1756878893;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=m8n1j89CvjN5ZFEbdFGzttMH7tyzPC+isNQLY6VZ0w0=;
-        b=d8q4Bfs2yq50o1TbcGAuSGwakwG+q29xSN1eAfy14IbOS/etQi0tmU8eZmGu0W+K2u
-         XfBqYCgFhzMSI9LLPlFQp9MwuRp577VGwbISRR+34xH31Yeleu5xl96dd1D43cSCKT5q
-         X3Y2jfdoOIt5saSYxMxO2ZyTznpXDG+XgAZHHvGFkclqVB7/uuQBOV+ouLPzBk3DjGEo
-         V5vJK4jb0TcjyYDpPTa4C1ZDOT6+8d5z6gFDGs+wnCwdPyeypa5sLABSID1m5OWOChgP
-         ZQmBBy5xU8chyQkz2gj3fQAQtDgRgmMtepM4t6k+ioO7+mKloUQbzCmY0bucquC1LPIE
-         x3xw==
-X-Forwarded-Encrypted: i=1; AJvYcCU1giFfrbS3DKefCbAzdh2nKkkA10BUIm9tKQywakjcgNaUqexSyE3Qz8YoZIrKcQ9fd7E54E5jbXB7x/U=@vger.kernel.org, AJvYcCUXXMaqGVCRZrVzI31ochacr2AYpNO9e9kYGIamR0W8WKDqNa3wpDD7WGF6PW0Jwkuq5FPVajhPbdxiuVk=@vger.kernel.org, AJvYcCXj9/VlVLcrK4+hVOwSKnFcZwJmD/TqDk+wYcrO93iIi+1pVoU/8X7uBe/rz7yJ+5LGXw4vnPLvuAA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFjPGH5Sjn6LJiBowwc0W8aDMRpMhrvrQz6CKKwXJFXDgbQokj
-	bb/BgBD+z1VV1jcqgdVq2O0WUH+Jx3E9AAj+ss0PVpYFj8WfnE6oL09C+xLC6DpwRymofkg0eYZ
-	kBULXPunFCf8bUbZbE6znV4X5sup2ubw=
-X-Gm-Gg: ASbGncvjo5Jt2gbZQFouHSYz2sU7uJ/jyk2971PA/Ccb1cjNngV0aFebdizpx3OUDwz
-	lIhKzz0wDbAP06L2Ljlcrs40hTsD/r9UmlR2pudglpsmykRZR5Kkxaz8fpTvho4/Ve5YzR7pXo4
-	VFS9kAeQw2T+kC2/LKp/uudTlclAbBso7QM7tKPKXpBlivTtHVtsKMCUOcAu+eMKYbjZQqUe0kp
-	XVZK7Q89mcr1q4AHbbeQ9ugurD9
-X-Google-Smtp-Source: AGHT+IHNbW4SO/xBJ0LMEH+gXwKwnl/GVQ4u+pDvk847J5bPbkQbK4PsfsRLx2GNcufPD1Q3bNVfi4pbQWjgy5kT/Vk=
-X-Received: by 2002:a05:6512:1451:20b0:55f:3996:4f82 with SMTP id
- 2adb3069b0e04-55f399650cfmr2395180e87.1.1756274092506; Tue, 26 Aug 2025
- 22:54:52 -0700 (PDT)
+	s=arc-20240116; t=1756274191; c=relaxed/simple;
+	bh=8KGQ2U30WB0kF//3bk0bGjDhq+uOCKuLnyUORX8VUYI=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=RIYYkO8ax7riwfJBWtJ+HbrHN4lV2sgjmvXuFb66cPTmj8saErSOuL0dH1HGjES6Lu4lo7QFuYXO6IDMMhaFc+kxQ1NrCVx3f4JqliPcj0LwD8dejdZCo9D0TkMAWGHit3y5CeGBDc0pIP0J9Bwkz0s7qZOeRL0RqiZrugzA8JU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=vdM3fXRk; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ubY41WTn; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=vdM3fXRk; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ubY41WTn; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 178261FDF0;
+	Wed, 27 Aug 2025 05:56:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1756274186; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Y7l7PrgkDJSFVY+UvFVbNmqI5owAG0Awi1MO5Vsi6Hc=;
+	b=vdM3fXRk4kU3gF15JsbgfiyZ2ihKQ2lz/mCLEZ4fVqFo5iTTDhe2axwZ0EVSnqfTF9pWC6
+	cxS+2aIxv/d+gZFYm8xiPck94cIgGWvinwPRKbCHx3oqYUtZFj3J/ewVZhCQT/ReOQ0mQ/
+	SZfqUSv3Xot8Xu9oG5fVvYQUCqQZ9D0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1756274186;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Y7l7PrgkDJSFVY+UvFVbNmqI5owAG0Awi1MO5Vsi6Hc=;
+	b=ubY41WTnwT6crFwBQ0wklHGYGHAOko0+eQ/0c8NDuF//LLeKLj17uVV/1oBqqaLd29l57o
+	LIbMeiyZjHdHDpAw==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=vdM3fXRk;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=ubY41WTn
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1756274186; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Y7l7PrgkDJSFVY+UvFVbNmqI5owAG0Awi1MO5Vsi6Hc=;
+	b=vdM3fXRk4kU3gF15JsbgfiyZ2ihKQ2lz/mCLEZ4fVqFo5iTTDhe2axwZ0EVSnqfTF9pWC6
+	cxS+2aIxv/d+gZFYm8xiPck94cIgGWvinwPRKbCHx3oqYUtZFj3J/ewVZhCQT/ReOQ0mQ/
+	SZfqUSv3Xot8Xu9oG5fVvYQUCqQZ9D0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1756274186;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Y7l7PrgkDJSFVY+UvFVbNmqI5owAG0Awi1MO5Vsi6Hc=;
+	b=ubY41WTnwT6crFwBQ0wklHGYGHAOko0+eQ/0c8NDuF//LLeKLj17uVV/1oBqqaLd29l57o
+	LIbMeiyZjHdHDpAw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A584013310;
+	Wed, 27 Aug 2025 05:56:25 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id QjjfJgmermhpTwAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Wed, 27 Aug 2025 05:56:25 +0000
+Date: Wed, 27 Aug 2025 07:56:25 +0200
+Message-ID: <874itti9yu.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: cryolitia@uniontech.com,
+	Cryolitia PukNgae via B4 Relay <devnull+cryolitia.uniontech.com@kernel.org>
+Cc: Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Mingcong Bai <jeffbai@aosc.io>,
+	Kexy Biscuit <kexybiscuit@aosc.io>,
+	Wang Yuli <wangyuli@deepin.org>,
+	Guan Wentao <guanwentao@uniontech.com>,
+	Nie Cheng <niecheng1@uniontech.com>,
+	Zhan Jun <zhanjun@uniontech.com>,
+	Celeste Liu <CoelacanthusHex@gmail.com>,
+	Guoli An <anguoli@uniontech.com>
+Subject: Re: [PATCH] ALSA: usb-audio: move mixer_quirks' min_mute into common quirk
+In-Reply-To: <20250827-sound-quirk-min-mute-v1-1-4717aa8a4f6a@uniontech.com>
+References: <20250827-sound-quirk-min-mute-v1-1-4717aa8a4f6a@uniontech.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250826-tegra186-cpufreq-fixes-v1-0-97f98d3e0adb@gmail.com>
- <20250826-tegra186-cpufreq-fixes-v1-2-97f98d3e0adb@gmail.com> <24066927.6Emhk5qWAg@senjougahara>
-In-Reply-To: <24066927.6Emhk5qWAg@senjougahara>
-From: Aaron Kling <webgeek1234@gmail.com>
-Date: Wed, 27 Aug 2025 00:54:41 -0500
-X-Gm-Features: Ac12FXy6I9yuststMLMbu0a9gFKQlY2gGlFE3HWxValsmuH9e5xd_3-3x7Zc26U
-Message-ID: <CALHNRZ8SfAZHm5PszA0uCbr0QUYFSkdayVwEwjgRYX2JT0xhfQ@mail.gmail.com>
-Subject: Re: [PATCH 2/2] cpufreq: tegra186: Initialize all cores to base frequencies
-To: Mikko Perttunen <mperttunen@nvidia.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
-	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Aaron Kling <luceoscutum@gmail.com>, Sumit Gupta <sumitg@nvidia.com>, 
-	Thierry Reding <treding@nvidia.com>, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spamd-Result: default: False [-2.01 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	ARC_NA(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_TWELVE(0.00)[14];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FREEMAIL_CC(0.00)[perex.cz,suse.com,vger.kernel.org,aosc.io,deepin.org,uniontech.com,gmail.com];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	TAGGED_RCPT(0.00)[cryolitia.uniontech.com];
+	DKIM_TRACE(0.00)[suse.de:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:dkim]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Rspamd-Queue-Id: 178261FDF0
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -2.01
 
-On Tue, Aug 26, 2025 at 9:09=E2=80=AFPM Mikko Perttunen <mperttunen@nvidia.=
-com> wrote:
->
-> On Wednesday, August 27, 2025 5:16=E2=80=AFAM Aaron Kling via B4 Relay wr=
-ote:
-> > From: Aaron Kling <webgeek1234@gmail.com>
-> >
-> > During initialization, the EDVD_COREx_VOLT_FREQ registers for some core=
-s
-> > are still at reset values and not reflecting the actual frequency. This
-> > causes get calls to fail. Set all cores to their respective base
-> > frequency during probe to initialize the registers to working values.
-> >
-> > Suggested-by: Mikko Perttunen <mperttunen@nvidia.com>
-> > Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
-> > ---
-> >  drivers/cpufreq/tegra186-cpufreq.c | 11 ++++++++++-
-> >  1 file changed, 10 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/cpufreq/tegra186-cpufreq.c
-> > b/drivers/cpufreq/tegra186-cpufreq.c index
-> > 6c394b429b6182faffabf222e5af501393dbbba9..ef288705f00b0918d0f8963ef9cc9=
-fc53
-> > be88091 100644 --- a/drivers/cpufreq/tegra186-cpufreq.c
-> > +++ b/drivers/cpufreq/tegra186-cpufreq.c
-> > @@ -229,7 +229,8 @@ static int tegra186_cpufreq_probe(struct platform_d=
-evice
-> > *pdev) {
-> >       struct tegra186_cpufreq_data *data;
-> >       struct tegra_bpmp *bpmp;
-> > -     unsigned int i =3D 0, err;
-> > +     unsigned int i =3D 0, err, edvd_offset;
-> > +     u32 edvd_val, cpu;
-> >
-> >       data =3D devm_kzalloc(&pdev->dev,
-> >                           struct_size(data, clusters,
-> TEGRA186_NUM_CLUSTERS),
-> > @@ -257,6 +258,14 @@ static int tegra186_cpufreq_probe(struct
-> > platform_device *pdev) err =3D PTR_ERR(cluster->table);
-> >                       goto put_bpmp;
-> >               }
-> > +
-> > +             for (cpu =3D 0; cpu < ARRAY_SIZE(tegra186_cpus); cpu++) {
-> > +                     if (data->cpus[cpu].bpmp_cluster_id =3D=3D i) {
-> > +                             edvd_val =3D cluster->table[0].driver_dat=
-a;
-> > +                             edvd_offset =3D data->cpus[cpu].edvd_offs=
-et;
-> > +                             writel(edvd_val, data->regs +
-> edvd_offset);
-> > +                     }
-> > +             }
-> >       }
-> >
-> >       tegra186_cpufreq_driver.driver_data =3D data;
->
-> Looks OK, but I think it might be better to set the frequency to Fmax ins=
-tead
-> of Fmin to avoid any slowdown during boot.
+On Wed, 27 Aug 2025 05:29:02 +0200,
+Cryolitia PukNgae via B4 Relay wrote:
+> 
+> From: Cryolitia PukNgae <cryolitia@uniontech.com>
+> 
+> We have found more and more devices that have the same problem, that
+> the mixer's minimum value is muted. Accroding to pipewire's MR[1]
+> and Arch Linux wiki[2], this should be a very common problem in USB
+> audio devices. Move the quirk into common quirk,as a preparation of
+> more devices' quirk's patch coming on the road[3].
+> 
+> 1. https://gitlab.freedesktop.org/pipewire/pipewire/-/merge_requests/2514
+> 2. https://wiki.archlinux.org/index.php?title=PipeWire&oldid=804138#No_sound_from_USB_DAC_until_30%_volume
+> 3. On the road, in the physical sense. We have been buying ton of
+>    these devices for testing the problem.
+> 
+> Tested-by: Guoli An <anguoli@uniontech.com>
+> Signed-off-by: Cryolitia PukNgae <cryolitia@uniontech.com>
+> ---
+> I also would like to know if the quirk worth a kernel param.
 
-I considered this, but I'm somewhat skittish about setting Fmax by
-default due to seeing instability across different tegra archs and
-finding out that the t210 devkits have been factory overclocked on
-mainline for the last six years [0]. That may be less of a problem on
-t186+ with the bpmp having more tight control over stuff, but... yeah,
-I'm still wary. But on the other hand, I set performance governor on
-boot for my android builds and have not seen any obvious cpu related
-instability on p2771 or p3636+p3509, so that might be okay. If you
-still think Fmax is better, I'll update and send a v2.
+If the workaround becomes common for various devices, it makes sense.
+Applied now to for-linus branch.
 
-Aaron
 
-[0] https://lore.kernel.org/all/20250816-tegra210-speedo-v1-0-a981360adc27@=
-gmail.com/
+thanks,
+
+Takashi
 
