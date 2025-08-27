@@ -1,143 +1,196 @@
-Return-Path: <linux-kernel+bounces-787734-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8FA6B37A5F
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 08:30:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3C50B37A57
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 08:29:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D40568803E
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 06:30:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70B57721F24
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 06:29:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90EDD2ECD10;
-	Wed, 27 Aug 2025 06:30:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B9A62E2283;
+	Wed, 27 Aug 2025 06:29:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GDfDwhLv"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="fWGSSyvU";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="WyTUHBvZ";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="fWGSSyvU";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="WyTUHBvZ"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96B612E7F2F;
-	Wed, 27 Aug 2025 06:30:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B6511D88AC
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 06:29:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756276233; cv=none; b=PmqdSI1AVeMG0VMRZ/w60Lq6vwg+61NSHc/keLjsCFAkbttrtX8rTnu6j8zfTn2EEg7GmjWlOCJLL1e986WZLlPw2lb4OHfVXA5wkx8FvyNE2Asl9tvZnKq/CIteOhWtygGnWjHLDoG9I3ITAj40UGAmhDdAg1wXsyq2o/iSmG4=
+	t=1756276157; cv=none; b=czHW4qnqGlpAfHzXpUDVXkST5X+DDr8JfL7RU8E+PFrfqMz4MFMUcGe8Od8xyt/2XuLiHpCUdrS0lwlHD/s8Yd81UOVg9W/1CxNd8zo4SfvstooLAvIQ1ZbJZcrqIz/+TaViRN/HJQg33Shx2IwPVaOwDNpwnnNjA2BoD1xafv0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756276233; c=relaxed/simple;
-	bh=2077pD+AStEyZosAgpSFcTatpLbwOPrlyNYg6MRFuLk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AlmOHoF9jZWj3uLV4dBH7SoShl+dZtmrLari5IWholxeqlVwXn6PP9TBHalrooGyGHbyZFCIjGKUD8td2i2MOmUMEO5/FXKjZOVTvdZG2dY23G+g9X34gZmSR+vOiy0w/thXfgyOhxCQFbtryTsks5idSPnsFqOqim13qhVDC5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GDfDwhLv; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-771facea122so880781b3a.1;
-        Tue, 26 Aug 2025 23:30:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756276230; x=1756881030; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ngDfTlsvSHsLEbTHqYir+BpbldbbX/3shbsCERNxjps=;
-        b=GDfDwhLvcnT+wPhFilC6LDmRXeOz6BopaJxFtRWv40e3lvbWnrZLbstHTquQg2SQez
-         jrcK0gG27bnxp82WM/u5GOJ+PAsaSszQRVHmbhmmc/4/tBM33RWcoUGJ2fOTSV6n34Y2
-         TfChqANdFRMLqLjloxLeBlBE4Auz6FkMnZT95vjDQlDykF7fqqWOc9uPcreZLS2ufN0Y
-         Dtls87r9z1x50ssB/oL/6BtYVqPk+kV95+4Pq6lPe4GIamhpidCDQtz7ORYEg2Go9c5r
-         nBnIs26cN4cEgiFoIYQH386LjbSYE0Fi46THO0ElqUXlEVKWvhEX3gVu6GqTFsEy63d/
-         UNmQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756276230; x=1756881030;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ngDfTlsvSHsLEbTHqYir+BpbldbbX/3shbsCERNxjps=;
-        b=B+yyKu4Hj/IVtWDsFOO71F76iuwyuPvZuOPjlqsRCL/N9eol3HyuFl9kQooxZtiM0o
-         1CYKwhQrXwqskYQ1A2kOurCcWHFLhwQIlmOhkYKzyizofJMA+h+pN80xqehTZEmDrp0J
-         ff6jTCoHuZbAngRVmKxNCXEJ7RxtXt0sOul7QdDAXCvHl5kqE6/Ax7g8c3Miq2qo4yas
-         k4tFzJofkH4JWAm5KMVgHXlpUQ/OtcNmSPKmu3/zPj9XNjij7NRU+9MX1Oia9xf6a1mR
-         EiojEXA0nFjVc730Q5DLxXAdYQ+6MbCiwkBk9ql0vZeoVhhGfm2lco4C3r2NefkL/y9T
-         cArg==
-X-Forwarded-Encrypted: i=1; AJvYcCVa44eV0C+jYCVoxiNEOrQL5npg09OeKKr3we67GYdQsh/XtyRsQexKADpw5GtuZxmIKYL+HnKXNk/rXkk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwvHlFXCjqJAxQcQ+qLoIAZDgfbOWhmNDsxhma6Ht/mTLvCXASK
-	ysXnC9KVYJSe6quAR3UuAseWjcgnwLhJEXTVaYcl7NBCTlI7dCaNQ0vZ
-X-Gm-Gg: ASbGncuXLbOoFzNgTn4be7HUekt+sahwcCKdKdsFZM5sTFm262q3Z/0t3oUh9/O2Nhn
-	klsjyVC2X5j73x4o4zOuxwVuSBib8G5igc+sX4/ujsIRHUTW9IAcO+4b05yMLwSw7bp8vflt065
-	p61Q1GAPPtTIDQqHa0J2gOo3u/KOsSI1XhT6JV7nH62Q02T2VRIAQD4RZTEWeBQhfM0zNYBslp2
-	2OONt0WTSFMBR8mPSYBdNlAt126OkQ9bdI/fGVBSLEpvG+TfdP5gJ+5Ikok5HJWPxbX6Wp/LYJo
-	p+7JFip3EZhuoKM734IX63gifO/qGjy7fHk2UfxFKlkP/4PODz+eHQA1tHsjhWKWaCyrMo+06Nv
-	5O+fNp3YYzwqWDvekImUqqHToeDaXY00k
-X-Google-Smtp-Source: AGHT+IFVjeC07T8TqfGe+a67TKlrMPd0XjccquCqoM7862trcuYZL9ib4faErub/AOy5k20NJY7Rsg==
-X-Received: by 2002:a05:6a20:4e12:b0:243:6e5a:51ef with SMTP id adf61e73a8af0-2436e5a5496mr11711888637.43.1756276230261;
-        Tue, 26 Aug 2025 23:30:30 -0700 (PDT)
-Received: from localhost ([2001:19f0:ac00:4eb8:5400:5ff:fe30:7df3])
-        by smtp.gmail.com with UTF8SMTPSA id 41be03b00d2f7-b49cbb7b375sm10751328a12.29.2025.08.26.23.30.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Aug 2025 23:30:29 -0700 (PDT)
-From: Inochi Amaoto <inochiama@gmail.com>
-To: Bjorn Helgaas <bhelgaas@google.com>,
-	Marc Zyngier <maz@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Inochi Amaoto <inochiama@gmail.com>,
-	Shradha Gupta <shradhagupta@linux.microsoft.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Anders Roxell <anders.roxell@linaro.org>
-Cc: linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Longbin Li <looong.bin@gmail.com>,
-	Linux Kernel Functional Testing <lkft@linaro.org>
-Subject: [PATCH] PCI/MSI: Check MSI_FLAG_PCI_MSI_MASK_PARENT in cond_[startup|shutdown]_parent()
-Date: Wed, 27 Aug 2025 14:29:07 +0800
-Message-ID: <20250827062911.203106-1-inochiama@gmail.com>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1756276157; c=relaxed/simple;
+	bh=rARVGU5C8wUHMe1KNFks5vW2LN9nMDzV86X7axvS1G8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TmTOIy4C72SzvzZjY6CYTOEWVWKrE0Kh7IBax5WT+skFIbNVQRziNdJK6+U1tyGiENDpkAMtWZwzMcGLo+RJSqDf61M0HVuMuGOpG/ndgfo74v7TcSsux4D1Su9D7UyZcy2VArPHPra+coP3NiIsx5jdheYl+bL+awRdlBN3Ia4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=fWGSSyvU; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=WyTUHBvZ; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=fWGSSyvU; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=WyTUHBvZ; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 4E50021BCD;
+	Wed, 27 Aug 2025 06:29:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1756276154; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MIR0tY1TkF8j1XVrNWr3yQ1OdVrmGrEjXuja9vf++n4=;
+	b=fWGSSyvUbb9OZ9/2LdtbKoUz9sZMxIJ9ttgZQr1lnIX7EMQMgMnc4N8SFXQBuCRg77f4Hx
+	JF8Ma+daffJ5EudsX2MK+9h24c5Oy0U14Fqf4kyc/63/he2g5bDVzmRx4oFuFY+vf9lj/l
+	+IBbYj/By6sn21+Bk0obW4s/n9U56Cw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1756276154;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MIR0tY1TkF8j1XVrNWr3yQ1OdVrmGrEjXuja9vf++n4=;
+	b=WyTUHBvZqZ/NXvjNw56HZ8Tg/LRdD+6KHnGr9WX2ZP/IkV2VPbfA9zQne5QO6NmGqinAXC
+	JO7xBRKA75uldWDA==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1756276154; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MIR0tY1TkF8j1XVrNWr3yQ1OdVrmGrEjXuja9vf++n4=;
+	b=fWGSSyvUbb9OZ9/2LdtbKoUz9sZMxIJ9ttgZQr1lnIX7EMQMgMnc4N8SFXQBuCRg77f4Hx
+	JF8Ma+daffJ5EudsX2MK+9h24c5Oy0U14Fqf4kyc/63/he2g5bDVzmRx4oFuFY+vf9lj/l
+	+IBbYj/By6sn21+Bk0obW4s/n9U56Cw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1756276154;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MIR0tY1TkF8j1XVrNWr3yQ1OdVrmGrEjXuja9vf++n4=;
+	b=WyTUHBvZqZ/NXvjNw56HZ8Tg/LRdD+6KHnGr9WX2ZP/IkV2VPbfA9zQne5QO6NmGqinAXC
+	JO7xBRKA75uldWDA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id F139B13310;
+	Wed, 27 Aug 2025 06:29:13 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id XiXVOLmlrmgBWQAAD6G6ig
+	(envelope-from <hare@suse.de>); Wed, 27 Aug 2025 06:29:13 +0000
+Message-ID: <020f8c5c-c9e4-4ad0-8052-a0b182ded92c@suse.de>
+Date: Wed, 27 Aug 2025 08:29:13 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] scsi: fc: Avoid -Wflex-array-member-not-at-end
+ warnings
+To: "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ Justin Tee <justin.tee@broadcom.com>, James Smart
+ <james.smart@broadcom.com>, Dick Kennedy <dick.kennedy@broadcom.com>,
+ "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-hardening@vger.kernel.org
+References: <aK6hbQLyQlvlySf8@kspp>
+Content-Language: en-US
+From: Hannes Reinecke <hare@suse.de>
+In-Reply-To: <aK6hbQLyQlvlySf8@kspp>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:email,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Spam-Score: -4.30
 
-For msi controller that only supports MSI_FLAG_PCI_MSI_MASK_PARENT,
-the newly added callback irq_startup() and irq_shutdown() for
-pci_msi[x]_templete will not unmask/mask the interrupt when startup/
-shutdown the interrupt. This will prevent the interrupt from being
-enabled/disabled normally.
+On 8/27/25 08:10, Gustavo A. R. Silva wrote:
+> -Wflex-array-member-not-at-end has been introduced in GCC-14, and we
+> are getting ready to enable it, globally.
+> 
+> So, in order to avoid ending up with a flexible-array member in the
+> middle of multiple other structs, we use the `__struct_group()`
+> helper to create a new tagged `struct fc_df_desc_fpin_reg_hdr`.
+> This structure groups together all the members of the flexible
+> `struct fc_df_desc_fpin_reg` except the flexible array.
+> 
+> As a result, the array is effectively separated from the rest of the
+> members without modifying the memory layout of the flexible structure.
+> We then change the type of the middle struct members currently causing
+> trouble from `struct fc_df_desc_fpin_reg` to `struct
+> fc_df_desc_fpin_reg_hdr`.
+> 
+> We also want to ensure that in case new members need to be added to the
+> flexible structure, they are always included within the newly created
+> tagged struct. For this, we use `_Static_assert()`. This ensures that
+> the memory layout for both the flexible structure and the new tagged
+> struct is the same after any changes.
+> 
+> This approach avoids having to implement `struct fc_df_desc_fpin_reg_hdr`
+> as a completely separate structure, thus preventing having to maintain
+> two independent but basically identical structures, closing the door
+> to potential bugs in the future.
+> 
+> The above is also done for flexible structures `struct fc_els_rdf` and
+> `struct fc_els_rdf_resp`
+> 
+> So, with these changes, fix the following warnings:
+> drivers/scsi/lpfc/lpfc_hw4.h:4936:41: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> drivers/scsi/lpfc/lpfc_hw4.h:4942:41: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> drivers/scsi/lpfc/lpfc_hw4.h:4947:41: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> 
+> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+> ---
+> Changes in v2:
+>   - Implement the same changes for `struct fc_els_rdf_resp`
+>   - Fix size calculation in lpfc_issue_els_rdf(). (Justin Tee)
+> 
+> v1:
+>   - Link: https://lore.kernel.org/linux-hardening/aJtMETERd-geyP1q@kspp/
+> 
+>   include/uapi/scsi/fc/fc_els.h | 58 +++++++++++++++++++++++------------
+>   drivers/scsi/lpfc/lpfc_els.c  |  2 +-
+>   drivers/scsi/lpfc/lpfc_hw4.h  |  6 ++--
+>   3 files changed, 43 insertions(+), 23 deletions(-)
+> 
+Reviewed-by: Hannes Reinecke <hare@suse.de>
 
-Add the missing check for MSI_FLAG_PCI_MSI_MASK_PARENT in the
-cond_[startup|shutdown]_parent(). So the interrupt can be normally
-unmasked/masked if it does not support MSI_FLAG_PCI_MSI_MASK_PARENT.
+Cheers,
 
-Fixes: 54f45a30c0d0 ("PCI/MSI: Add startup/shutdown for per device domains")
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-Closes: https://lore.kernel.org/regressions/aK4O7Hl8NCVEMznB@monster/
-Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
-Tested-by: Nathan Chancellor <nathan@kernel.org>
----
- drivers/pci/msi/irqdomain.c | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/drivers/pci/msi/irqdomain.c b/drivers/pci/msi/irqdomain.c
-index e0a800f918e8..b11b7f63f0d6 100644
---- a/drivers/pci/msi/irqdomain.c
-+++ b/drivers/pci/msi/irqdomain.c
-@@ -154,6 +154,8 @@ static void cond_shutdown_parent(struct irq_data *data)
-
- 	if (unlikely(info->flags & MSI_FLAG_PCI_MSI_STARTUP_PARENT))
- 		irq_chip_shutdown_parent(data);
-+	else if (unlikely(info->flags & MSI_FLAG_PCI_MSI_MASK_PARENT))
-+		irq_chip_mask_parent(data);
- }
-
- static unsigned int cond_startup_parent(struct irq_data *data)
-@@ -162,6 +164,9 @@ static unsigned int cond_startup_parent(struct irq_data *data)
-
- 	if (unlikely(info->flags & MSI_FLAG_PCI_MSI_STARTUP_PARENT))
- 		return irq_chip_startup_parent(data);
-+	else if (unlikely(info->flags & MSI_FLAG_PCI_MSI_MASK_PARENT))
-+		irq_chip_unmask_parent(data);
-+
- 	return 0;
- }
-
---
-2.51.0
-
+Hannes
+-- 
+Dr. Hannes Reinecke                  Kernel Storage Architect
+hare@suse.de                                +49 911 74053 688
+SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
+HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
 
