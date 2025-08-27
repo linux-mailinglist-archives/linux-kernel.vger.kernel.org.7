@@ -1,128 +1,167 @@
-Return-Path: <linux-kernel+bounces-787850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEE60B37C2E
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 09:49:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00E94B37C07
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 09:41:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8FCA53ACE00
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 07:49:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB2EB188E773
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 07:41:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD88C320CCD;
-	Wed, 27 Aug 2025 07:49:39 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99835319857;
+	Wed, 27 Aug 2025 07:40:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b="MIoeDUY0"
+Received: from mail.thorsis.com (mail.thorsis.com [217.92.40.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EECF62749D7
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 07:49:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF064317709;
+	Wed, 27 Aug 2025 07:40:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.92.40.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756280979; cv=none; b=YIFZT5sCDY2/xeOiTxJmX/m2VMOyiroq+D2MiakgznqnaTL0+chUtpaB9jrN+X0pLqmFu8rD85+gGSSEIGlJjgh0HbASYiHgty0oY+LTxZnnSa5fxhrstVAGIrURn+cgMvW54CqC/AY/zeGRyXIoUS8o26zISs1+qxa7Z5a1sBQ=
+	t=1756280436; cv=none; b=eqOC3j1Ggky7bgzIlNWryY6fdIwadmfXbqyL+2ps8T/4Vpbof88DwuLxKcMcm7TDTEULfvznBTm8NcnR2qWFkhVg4806gSHyxGqZZTOVDYQjLKd3nQ7HdQSseG9sMx/MUrUz88+AJf3T0a6cHN1QJk+ttRN2RpCaB4qxyvghZ2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756280979; c=relaxed/simple;
-	bh=VcO2mA3r3AuhPb3tjISs7ZOhpMjbS7Bm61eiWNbKoBo=;
+	s=arc-20240116; t=1756280436; c=relaxed/simple;
+	bh=rqPWaLDRg3bp/PAzP6w8uq+EP8F3u9Ob0SvOy41xlbE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dBXmB3NkiiC+l2NHGWNYjPX6YrRVxbNsuF78sQByoj0wz4LmWRXVLMvjZama4YVnFBPVIsup0FOXHtWHNLxAdERWF9DIsx/ZHw2rl8QMerES7CUGRDGJelJb5LH4ftKbbV40Go8k7t5lSK5OCm3x3dIN9fI6zk0Zz2wEGaXeiPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1urAuS-00025y-Hq; Wed, 27 Aug 2025 09:49:32 +0200
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1urAuS-002MHx-19;
-	Wed, 27 Aug 2025 09:49:32 +0200
-Received: from pengutronix.de (unknown [IPv6:2a01:4f8:1c1c:29e9:22:41ff:fe00:1400])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id AECC445ECD2;
-	Wed, 27 Aug 2025 07:40:17 +0000 (UTC)
-Date: Wed, 27 Aug 2025 09:40:16 +0200
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: mailhol@kernel.org
-Cc: linux-can@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] MAINTAINERS: update Vincent Mailhol's email address
-Message-ID: <20250827-winged-bizarre-mackerel-a91272-mkl@pengutronix.de>
-References: <20250826105255.35501-2-mailhol@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=O8oeZyhGhWxNsjcPNlqsvZOchtV/dtDVpvClTZVCV1BFQxW6/CP1oNjJLVPg+pCdhiNHyXrQRGSw2X97FlkrZKITFGIX7SzDYNpkZUc/Uy2XBqrqwpzhodUybsMwPTZGKk3neW+vOJrQZrix4PVT8geQO2lNHZgP+UBWZl28zVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com; spf=pass smtp.mailfrom=thorsis.com; dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b=MIoeDUY0; arc=none smtp.client-ip=217.92.40.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thorsis.com
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 72CED1486D83;
+	Wed, 27 Aug 2025 09:40:23 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=thorsis.com; s=dkim;
+	t=1756280425; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=qMxDqcO10CQjtqMyM0nhgxsy6XVaXNzX5ZNKBhwX5EE=;
+	b=MIoeDUY0bHvT9/EGh+S8MX5ao+f4UgDTS15BKzwXl/CJi0KT0eUVTF55jYcJ4Bh2ONggfM
+	ODcAIKfvYC/BlwBwywHeb4OKOKNcnzAziBkWJBu+nSBq4LA3Ba3XPv6itIupAmbc2ndOEI
+	bL9eANLD5NJ5LHOHhDQ8cXbcutGI3hjmbX/fUaVgZjifWE9qo7D5LqmOjHxzsO0DguPnYy
+	Ga83w5aiTOqVYF9qW4sc72gWPX4tj99WBPuttYp7iZoGofkPzMvH2sUM+wHZQp5YhWUhgo
+	5N30Jf/kA0RrOUguoUW08kydVEG+Sv8HctxboELf+WFzJEqIQoNCGaY/b5ovNQ==
+Date: Wed, 27 Aug 2025 09:40:17 +0200
+From: Alexander Dahl <ada@thorsis.com>
+To: Julien Massot <julien.massot@collabora.com>
+Cc: kernel@collabora.com, Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>,
+	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 3/3] arm64: dts: mediatek: mt8395-nio-12l: add support
+ for blue and red LEDs
+Message-ID: <20250827-psychic-exclusive-be9758124693@thorsis.com>
+Mail-Followup-To: Julien Massot <julien.massot@collabora.com>,
+	kernel@collabora.com, Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>,
+	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org
+References: <20250826-radxa-nio-12-l-gpio-v2-0-7f18fa3fbfc8@collabora.com>
+ <20250826-radxa-nio-12-l-gpio-v2-3-7f18fa3fbfc8@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="x7y5plluoqutyj6f"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250826105255.35501-2-mailhol@kernel.org>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <20250826-radxa-nio-12-l-gpio-v2-3-7f18fa3fbfc8@collabora.com>
+User-Agent: Mutt/2.2.12 (2023-09-09)
+X-Last-TLS-Session-Version: TLSv1.3
 
+Hello Julien,
 
---x7y5plluoqutyj6f
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] MAINTAINERS: update Vincent Mailhol's email address
-MIME-Version: 1.0
+Am Tue, Aug 26, 2025 at 04:01:54PM +0200 schrieb Julien Massot:
+> The Radxa NIO 12L board has an RGB LED, of which only red and blue
+> are controllable.
+> 
+> Red and blue LEDs: no need to choose, both are enabled.
+> 
+> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> Signed-off-by: Julien Massot <julien.massot@collabora.com>
+> ---
+>  .../boot/dts/mediatek/mt8395-radxa-nio-12l.dts     | 31 ++++++++++++++++++++++
+>  1 file changed, 31 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/mediatek/mt8395-radxa-nio-12l.dts b/arch/arm64/boot/dts/mediatek/mt8395-radxa-nio-12l.dts
+> index fd596e2298285361ad7c2fb828feec598d75a73e..12288ad4d2932b7f78c96c0efe366a046721f919 100644
+> --- a/arch/arm64/boot/dts/mediatek/mt8395-radxa-nio-12l.dts
+> +++ b/arch/arm64/boot/dts/mediatek/mt8395-radxa-nio-12l.dts
+> @@ -10,6 +10,7 @@
+>  #include <dt-bindings/gpio/gpio.h>
+>  #include <dt-bindings/input/input.h>
+>  #include <dt-bindings/interrupt-controller/irq.h>
+> +#include <dt-bindings/leds/common.h>
+>  #include <dt-bindings/pinctrl/mt8195-pinfunc.h>
+>  #include <dt-bindings/regulator/mediatek,mt6360-regulator.h>
+>  #include <dt-bindings/spmi/spmi.h>
+> @@ -73,6 +74,28 @@ button-volume-up {
+>  		};
+>  	};
+>  
+> +	gpio-leds {
+> +		compatible = "gpio-leds";
+> +		pinctrl-0 = <&gpio_leds_pins>;
+> +		pinctrl-names = "default";
+> +
+> +		/*
+> +		 * This board has a RGB LED, of which only R and B
+> +		 * are controllable.
+> +		 */
+> +		led-0 {
+> +			label = "rgb-blue";
+> +			color = <LED_COLOR_ID_BLUE>;
+> +			gpios = <&pio 6 GPIO_ACTIVE_HIGH>;
+> +		};
+> +
+> +		led-1 {
+> +			label = "rgb-red";
+> +			color = <LED_COLOR_ID_RED>;
+> +			gpios = <&pio 7 GPIO_ACTIVE_HIGH>;
+> +		};
 
-On 26.08.2025 19:48:39, mailhol@kernel.org wrote:
-> From: Vincent Mailhol <mailhol@kernel.org>
->=20
-> Now that I have received my kernel.org account, I am changing my email
-> address from mailhol.vincent@wanadoo.fr to mailhol@kernel.org. The
-> wanadoo.fr address was my first email which I created when I was a kid
-> and has a special meaning to me, but it is restricted to a maximum of
-> 50 messages per hour which starts to be problematic on threads where
-> many people are CC-ed.
->=20
-> Update all the MAINTAINERS entries accordingly and map the old address
-> to the new one.
->=20
-> I remain reachable from my old address. The different copyright
-> notices mentioning my old address are kept as-is for the moment. I
-> will update those one at a time only if I need to touch those files.
->=20
-> Signed-off-by: Vincent Mailhol <mailhol@kernel.org>
+The label property is deprecated, and if I'm not mistaken not
+recommended for new boards.  Do you have a reason to set it?
+If so, it might be worth adding in the commit message.
 
-Applied to linux-can-next.
+Greets
+Alex
 
-BTW: The "From" header of your mail only contains you e-mail address,
-not your real name.
-
-regards,
-Marc
-
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---x7y5plluoqutyj6f
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmiutl0ACgkQDHRl3/mQ
-kZwuvggAsuU56iTV6Si4It0cvBLYDjjga6dcOWUJjkiTRtzcQQFVWogQ2Tvym4he
-T5vjXXbcCrccNBvGhcpBqlhUbNK+5k5Jm8TxBnajFX7lZwq3RbJE+yKc3TT+Qpu3
-b8LRrrLrFs9GyVYcSzoTYrQZQ1prNTcynqfonanyFj39mK5H5dkC08YttKHOO4jo
-FzPJQeFHgJlhN8L4qzE0kCJlfVqYy8dt+dx7M3eUwxYoNTLPOFN5gXpc4iXL1dVl
-Od3TRCDExLcByWP+reZq2BPtZcRmE5BMAt1cOLVvs4hYjHmGaloj+K51pcWtGPGW
-0oNxuO9ZeHQ4LlyJPQqG1sidkmc0fA==
-=ERBZ
------END PGP SIGNATURE-----
-
---x7y5plluoqutyj6f--
+> +	};
+> +
+>  	wifi_vreg: regulator-wifi-3v3-en {
+>  		compatible = "regulator-fixed";
+>  		regulator-name = "wifi_3v3_en";
+> @@ -647,6 +670,14 @@ pins {
+>  		};
+>  	};
+>  
+> +	gpio_leds_pins: gpio-leds-pins {
+> +		pins {
+> +			pinmux = <PINMUX_GPIO6__FUNC_GPIO6>,
+> +				 <PINMUX_GPIO7__FUNC_GPIO7>;
+> +			output-low;
+> +		};
+> +	};
+> +
+>  	i2c2_pins: i2c2-pins {
+>  		pins-bus {
+>  			pinmux = <PINMUX_GPIO12__FUNC_SDA2>,
+> 
+> -- 
+> 2.50.1
+> 
+> 
 
