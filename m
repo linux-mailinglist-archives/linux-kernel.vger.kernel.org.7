@@ -1,353 +1,187 @@
-Return-Path: <linux-kernel+bounces-788189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1287B38102
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 13:26:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7544B38107
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 13:26:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48AFE3BB563
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 11:26:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F04CB1B61D2A
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 11:27:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CC4234F49C;
-	Wed, 27 Aug 2025 11:25:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6294134F48A;
+	Wed, 27 Aug 2025 11:26:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XXmfd3Qf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="rI0/XwXV"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63DBC34F47E
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 11:25:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 370E43164B0;
+	Wed, 27 Aug 2025 11:26:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756293958; cv=none; b=WVFhsiSUlM6OzNqxC+tHsz28hkRAkVEtSyUFC6jloF6BslT7dtTWS0HooYMf70f+HNTpiB1hRCyIZT7fKKDgrAo7JnZ9y+KBdFcyR3Y4ma4sgse10YAOvTIOdbEvStGUwSpIrZMYKjZqFlp9Z+5QmpaKO637OBIYL08StOVmNvM=
+	t=1756294005; cv=none; b=Hg9UDUk+VylWnmdaOLSzG4Q06KR4eI904h3v8c6wAV/vc8LZXqNqlLcWKL/bp65m3qa9btzxxVz2ZClzpk9SdfFI9g0N20q2/3+ZnbSRgki6BQc0jRmX1greFHElVtXaFwB3OsLghKy0KIHaN5tG/EIKIpEbv8FPVIpzsNx4zy0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756293958; c=relaxed/simple;
-	bh=ITnC4GspF2BsucMwLslBgivxdK2RlbpUtVB2q9hs1Z4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZSYguQAX2wS+Q5rJx6SUxU9uPCoq+TBcyGFsCQbBQ0+akcojU8AvJ+zwo1jsAuxjUFIq6SSxgWh8KCEe6BkvHiLekpJ8W35QZsMzCL5F24c+jQMnrEYkTQ695igYi4+HJ/ojPz1zuU9TnSSIjeADqyxh8B6458K1MD7ZxyKSt8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XXmfd3Qf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94ACDC4CEEB;
-	Wed, 27 Aug 2025 11:25:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756293957;
-	bh=ITnC4GspF2BsucMwLslBgivxdK2RlbpUtVB2q9hs1Z4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XXmfd3QfVPuKhI5GpPbH5WeYiDX6Mvts/jGQf5NqiIqE3yDffTRf7MhXb56Gxi74l
-	 5rDLZNDgU42hoNOlfu2Znja17PyQqxDdx5enQTLXeRs8h8d53bPyVmXF2mF7x5UtK3
-	 fdIcmyO6HILM5zzy0OynFb+/D0MMejoMGp9G7K0AL6mhpYp2tDl8q74x+oJAbegSC3
-	 FvqkST2rdaPBrYFfh+ER2gXIIysy3jDVef3RFMJZppJmtIqNO2cFNjt2IGcKoOtTPy
-	 pPvBZkKHjFtbMoPgXlGdmEfYxw9PZ7VJuvCBcrBRaP5Osn9eehjrHbC1wfCOdtbKDY
-	 xJc6lf8h4ycLw==
-Date: Wed, 27 Aug 2025 13:25:55 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Cc: Swamil Jain <s-jain1@ti.com>, h-shenoy@ti.com, devarsht@ti.com, 
-	vigneshr@ti.com, praneeth@ti.com, u-kumar1@ti.com, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, jyri.sarha@iki.fi, 
-	maarten.lankhorst@linux.intel.com, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, 
-	aradhya.bhatia@linux.dev
-Subject: Re: [PATCH v5 2/3] drm/tidss: Remove max_pclk_khz from tidss display
- features
-Message-ID: <20250827-practical-crimson-jaguarundi-aa356f@houat>
-References: <20250819192113.2420396-1-s-jain1@ti.com>
- <20250819192113.2420396-3-s-jain1@ti.com>
- <b95b60c3-5988-4238-a8d4-73bd8bbf8779@ideasonboard.com>
- <20250827-illegal-splendid-coyote-aff8cc@houat>
- <c3488e85-5cf0-4c97-85c3-64f4c2f5c9c5@ideasonboard.com>
- <20250827-pompous-sawfly-of-proficiency-7e22ae@houat>
- <e928923a-9a3c-4a7a-b2c1-18fbefe7f577@ideasonboard.com>
+	s=arc-20240116; t=1756294005; c=relaxed/simple;
+	bh=/3Sdl+9Hs4FydUTYom9e80aLYCOQA3AX9l4E0K1R1+E=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=oGJNwXSceT389IrXFaps5BxUhZNU7LdokVq5hRMExj0/BVQByH2uvgpi2tkghTJvbYhOm31/T7CSm94OaunHl+QrSELrWdXb+HgMK/6ULv9HDx66W0HuTHYkseY+fMWwih5Dx4jNn8fFVO1Er/aSd5cw6AqxJQK9xx1hiCxN+bw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=rI0/XwXV; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57R1GrTS021753;
+	Wed, 27 Aug 2025 11:26:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=/3Sdl+
+	9Hs4FydUTYom9e80aLYCOQA3AX9l4E0K1R1+E=; b=rI0/XwXVuA9sb6aICiffPq
+	3BTnQqYFWrMSJFajmzN/4tTIrx2Ts/V6fWatQFxBafZfGWPggB9maTHWZjfnQj6X
+	8TReVuvt1Ut44XvIVwbHyaO5njX0thdfPLzmEHOD+apVE76KNazYW0H5LSOg64P2
+	WgMZQULMASZw+7e5iTJim9ohrrHQVvZUckA2azFMwZLgd9g3c4qkffcUf+DkUgls
+	4EWWehtmWt82feFeM0G5YVYuoLcosgluU4P2EyEQ8MhMBC4/fOAa06xB9XH3nWsJ
+	xd2MDmAgq+r4hMT0E58XcCfL6Jo6WEo31jdl+V+h33eeVGs5J8OHLKMoDjm8twXA
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48q5avkqc5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 27 Aug 2025 11:26:21 +0000 (GMT)
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 57RBIm14017214;
+	Wed, 27 Aug 2025 11:26:20 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48q5avkqc4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 27 Aug 2025 11:26:20 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 57RAm7rk007514;
+	Wed, 27 Aug 2025 11:26:20 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 48qqyufw92-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 27 Aug 2025 11:26:19 +0000
+Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 57RBQGQH30343840
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 27 Aug 2025 11:26:16 GMT
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 0BFCF20043;
+	Wed, 27 Aug 2025 11:26:16 +0000 (GMT)
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 0E64F20040;
+	Wed, 27 Aug 2025 11:26:15 +0000 (GMT)
+Received: from [127.0.0.1] (unknown [9.152.108.100])
+	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 27 Aug 2025 11:26:14 +0000 (GMT)
+Message-ID: <304f8078d9f6d523f4e334503384d7decd6f205d.camel@linux.ibm.com>
+Subject: Re: [PATCH 0/2] scripts/gdb/symbols: make BPF debug info available
+ to GDB
+From: Ilya Leoshkevich <iii@linux.ibm.com>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann
+ <daniel@iogearbox.net>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Jan Kiszka
+ <jan.kiszka@siemens.com>,
+        Kieran Bingham <kbingham@kernel.org>,
+        LKML
+ <linux-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
+        Heiko Carstens	
+ <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev	
+ <agordeev@linux.ibm.com>
+Date: Wed, 27 Aug 2025 13:26:14 +0200
+In-Reply-To: <CAADnVQ+MYKvqRNSHFkMPxENNaZfrvEN8npY2JfiO_izxk1gUFw@mail.gmail.com>
+References: <20250710115920.47740-1-iii@linux.ibm.com>
+	 <8a20f7ba33426bb6ced600f97f5f67e9d67ea503.camel@linux.ibm.com>
+	 <CAADnVQ+MYKvqRNSHFkMPxENNaZfrvEN8npY2JfiO_izxk1gUFw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="htjcadjkokwjhzgn"
-Content-Disposition: inline
-In-Reply-To: <e928923a-9a3c-4a7a-b2c1-18fbefe7f577@ideasonboard.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: vxJE-a3qq31fN7diTDv5cHvJtfx3I6tK
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIzMDAyMSBTYWx0ZWRfX/DgCX+sBZ2Lw
+ oPCXpGl/M0Nw5g+iJhxxyBPOIiVK0RGZssxM3+jQZ/JHAymt4opXf//a6/P/U1qe/Q0j8TzqkIJ
+ xhk8/izkx3IYnJ9+CUxUb0aGh/bRPCBsJ3tMa9SZk8P7yhli5IlvyX17poYQsY7D5Cm7ebeRvYt
+ m/jAeGPHnt3zixAZdLPvRENRmZcVokVd2MkAMgcuvMUv79Sa2PkuuuFwfYve5YwF7raRluKrUJV
+ CEqCN4135G+kuztTYQOoVBpd3JbJArmhHpcHnLKoAMVDd6jadJoCHVL7s7Q1hJiipJj4YHf/q4V
+ 9fPQu6QmcXJI+y1WYjSLhfMaubfqbI7rLhc8QytDQPYb/NkfhA5ECXd3KqP8Bxou4IsIvVmsPxY
+ ARtiuED0
+X-Proofpoint-ORIG-GUID: -CFWS1NRaOp9G16fGYKIVH1tuyOhKRxR
+X-Authority-Analysis: v=2.4 cv=SNNCVPvH c=1 sm=1 tr=0 ts=68aeeb5d cx=c_pps
+ a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=Q-fNiiVtAAAA:8
+ a=VnNF1IyMAAAA:8 a=HnuNM1E2Df1o6BHR4eQA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-27_02,2025-08-26_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 adultscore=0 bulkscore=0 phishscore=0 clxscore=1015
+ impostorscore=0 malwarescore=0 suspectscore=0 priorityscore=1501
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508230021
 
-
---htjcadjkokwjhzgn
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v5 2/3] drm/tidss: Remove max_pclk_khz from tidss display
- features
-MIME-Version: 1.0
-
-On Wed, Aug 27, 2025 at 01:39:06PM +0300, Tomi Valkeinen wrote:
-> Hi,
+On Tue, 2025-08-05 at 09:48 -0700, Alexei Starovoitov wrote:
+> On Tue, Aug 5, 2025 at 6:23=E2=80=AFAM Ilya Leoshkevich <iii@linux.ibm.co=
+m>
+> wrote:
+> >=20
+> > On Thu, 2025-07-10 at 13:53 +0200, Ilya Leoshkevich wrote:
+> > > Hi,
+> > >=20
+> > > This series greatly simplifies debugging BPF progs when using
+> > > QEMU
+> > > gdbstub by providing symbol names, sizes, and line numbers to
+> > > GDB.
+> > >=20
+> > > Patch 1 adds radix tree iteration, which is necessary for parsing
+> > > prog_idr. Patch 2 is the actual implementation; its description
+> > > contains some details on how to use this.
+> > >=20
+> > > Best regards,
+> > > Ilya
+> > >=20
+> > > Ilya Leoshkevich (2):
+> > > =C2=A0 scripts/gdb/radix-tree: add lx-radix-tree-command
+> > > =C2=A0 scripts/gdb/symbols: make BPF debug info available to GDB
+> > >=20
+> > > =C2=A0scripts/gdb/linux/bpf.py=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 | 253
+> > > ++++++++++++++++++++++++++++++
+> > > =C2=A0scripts/gdb/linux/constants.py.in |=C2=A0=C2=A0 3 +
+> > > =C2=A0scripts/gdb/linux/radixtree.py=C2=A0=C2=A0=C2=A0 | 139 ++++++++=
++++++++-
+> > > =C2=A0scripts/gdb/linux/symbols.py=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=
+=A0 77 ++++++++-
+> > > =C2=A04 files changed, 462 insertions(+), 10 deletions(-)
+> > > =C2=A0create mode 100644 scripts/gdb/linux/bpf.py
+> >=20
+> > Gentle ping. Any opinions on whether this is valuable? Personally
+> > I've
+> > been using this for quite some time, and having source level
+> > debugging
+> > for BPF progs (even if variables can't be inspected) feels really
+> > nice.
 >=20
-> On 27/08/2025 13:34, Maxime Ripard wrote:
-> > On Wed, Aug 27, 2025 at 12:49:37PM +0300, Tomi Valkeinen wrote:
-> >> On 27/08/2025 12:27, Maxime Ripard wrote:
-> >>> On Wed, Aug 27, 2025 at 11:49:22AM +0300, Tomi Valkeinen wrote:
-> >>>> On 19/08/2025 22:21, Swamil Jain wrote:
-> >>>>> From: Jayesh Choudhary <j-choudhary@ti.com>
-> >>>>>
-> >>>>> TIDSS hardware by itself does not have variable max_pclk for each V=
-P.
-> >>>>> The maximum pixel clock is determined by the limiting factor between
-> >>>>> the functional clock and the PLL (parent to the VP/pixel clock).
-> >>>>
-> >>>> Hmm, this is actually not in the driver, is it? We're not limiting t=
-he
-> >>>> pclk based on the fclk.
-> >>>>
-> >>>>> The limitation that has been modeled till now comes from the clock
-> >>>>> (PLL can only be programmed to a particular max value). Instead of
-> >>>>> putting it as a constant field in dispc_features, we can query the
-> >>>>> DM to see if requested clock can be set or not and use it in
-> >>>>> mode_valid().
-> >>>>>
-> >>>>> Replace constant "max_pclk_khz" in dispc_features with
-> >>>>> max_successful_rate and max_attempted_rate, both of these in
-> >>>>> tidss_device structure would be modified in runtime. In mode_valid()
-> >>>>> call, check if a best frequency match for mode clock can be found or
-> >>>>> not using "clk_round_rate()". Based on that, propagate
-> >>>>> max_successful_rate and max_attempted_rate and query DM again only =
-if
-> >>>>> the requested mode clock is greater than max_attempted_rate. (As the
-> >>>>> preferred display mode is usually the max resolution, driver ends up
-> >>>>> checking the highest clock the first time itself which is used in
-> >>>>> subsequent checks).
-> >>>>>
-> >>>>> Since TIDSS display controller provides clock tolerance of 5%, we u=
-se
-> >>>>> this while checking the max_successful_rate. Also, move up
-> >>>>> "dispc_pclk_diff()" before it is called.
-> >>>>>
-> >>>>> This will make the existing compatibles reusable if DSS features are
-> >>>>> same across two SoCs with the only difference being the pixel clock.
-> >>>>>
-> >>>>> Fixes: 7246e0929945 ("drm/tidss: Add OLDI bridge support")
-> >>>>> Reviewed-by: Devarsh Thakkar <devarsht@ti.com>
-> >>>>> Signed-off-by: Jayesh Choudhary <j-choudhary@ti.com>
-> >>>>> Signed-off-by: Swamil Jain <s-jain1@ti.com>
-> >>>>> ---
-> >>>>>  drivers/gpu/drm/tidss/tidss_dispc.c | 85 +++++++++++++------------=
-----
-> >>>>>  drivers/gpu/drm/tidss/tidss_dispc.h |  1 -
-> >>>>>  drivers/gpu/drm/tidss/tidss_drv.h   | 11 +++-
-> >>>>>  3 files changed, 47 insertions(+), 50 deletions(-)
-> >>>>>
-> >>>>> diff --git a/drivers/gpu/drm/tidss/tidss_dispc.c b/drivers/gpu/drm/=
-tidss/tidss_dispc.c
-> >>>>> index c0277fa36425..c2c0fe0d4a0f 100644
-> >>>>> --- a/drivers/gpu/drm/tidss/tidss_dispc.c
-> >>>>> +++ b/drivers/gpu/drm/tidss/tidss_dispc.c
-> >>>>> @@ -58,10 +58,6 @@ static const u16 tidss_k2g_common_regs[DISPC_COM=
-MON_REG_TABLE_LEN] =3D {
-> >>>>>  const struct dispc_features dispc_k2g_feats =3D {
-> >>>>>  	.min_pclk_khz =3D 4375,
-> >>>>> =20
-> >>>>> -	.max_pclk_khz =3D {
-> >>>>> -		[DISPC_VP_DPI] =3D 150000,
-> >>>>> -	},
-> >>>>> -
-> >>>>>  	/*
-> >>>>>  	 * XXX According TRM the RGB input buffer width up to 2560 should
-> >>>>>  	 *     work on 3 taps, but in practice it only works up to 1280.
-> >>>>> @@ -144,11 +140,6 @@ static const u16 tidss_am65x_common_regs[DISPC=
-_COMMON_REG_TABLE_LEN] =3D {
-> >>>>>  };
-> >>>>> =20
-> >>>>>  const struct dispc_features dispc_am65x_feats =3D {
-> >>>>> -	.max_pclk_khz =3D {
-> >>>>> -		[DISPC_VP_DPI] =3D 165000,
-> >>>>> -		[DISPC_VP_OLDI_AM65X] =3D 165000,
-> >>>>> -	},
-> >>>>> -
-> >>>>>  	.scaling =3D {
-> >>>>>  		.in_width_max_5tap_rgb =3D 1280,
-> >>>>>  		.in_width_max_3tap_rgb =3D 2560,
-> >>>>> @@ -244,11 +235,6 @@ static const u16 tidss_j721e_common_regs[DISPC=
-_COMMON_REG_TABLE_LEN] =3D {
-> >>>>>  };
-> >>>>> =20
-> >>>>>  const struct dispc_features dispc_j721e_feats =3D {
-> >>>>> -	.max_pclk_khz =3D {
-> >>>>> -		[DISPC_VP_DPI] =3D 170000,
-> >>>>> -		[DISPC_VP_INTERNAL] =3D 600000,
-> >>>>> -	},
-> >>>>> -
-> >>>>>  	.scaling =3D {
-> >>>>>  		.in_width_max_5tap_rgb =3D 2048,
-> >>>>>  		.in_width_max_3tap_rgb =3D 4096,
-> >>>>> @@ -315,11 +301,6 @@ const struct dispc_features dispc_j721e_feats =
-=3D {
-> >>>>>  };
-> >>>>> =20
-> >>>>>  const struct dispc_features dispc_am625_feats =3D {
-> >>>>> -	.max_pclk_khz =3D {
-> >>>>> -		[DISPC_VP_DPI] =3D 165000,
-> >>>>> -		[DISPC_VP_INTERNAL] =3D 170000,
-> >>>>> -	},
-> >>>>> -
-> >>>>>  	.scaling =3D {
-> >>>>>  		.in_width_max_5tap_rgb =3D 1280,
-> >>>>>  		.in_width_max_3tap_rgb =3D 2560,
-> >>>>> @@ -376,15 +357,6 @@ const struct dispc_features dispc_am625_feats =
-=3D {
-> >>>>>  };
-> >>>>> =20
-> >>>>>  const struct dispc_features dispc_am62a7_feats =3D {
-> >>>>> -	/*
-> >>>>> -	 * if the code reaches dispc_mode_valid with VP1,
-> >>>>> -	 * it should return MODE_BAD.
-> >>>>> -	 */
-> >>>>> -	.max_pclk_khz =3D {
-> >>>>> -		[DISPC_VP_TIED_OFF] =3D 0,
-> >>>>> -		[DISPC_VP_DPI] =3D 165000,
-> >>>>> -	},
-> >>>>> -
-> >>>>>  	.scaling =3D {
-> >>>>>  		.in_width_max_5tap_rgb =3D 1280,
-> >>>>>  		.in_width_max_3tap_rgb =3D 2560,
-> >>>>> @@ -441,10 +413,6 @@ const struct dispc_features dispc_am62a7_feats=
- =3D {
-> >>>>>  };
-> >>>>> =20
-> >>>>>  const struct dispc_features dispc_am62l_feats =3D {
-> >>>>> -	.max_pclk_khz =3D {
-> >>>>> -		[DISPC_VP_DPI] =3D 165000,
-> >>>>> -	},
-> >>>>> -
-> >>>>>  	.subrev =3D DISPC_AM62L,
-> >>>>> =20
-> >>>>>  	.common =3D "common",
-> >>>>> @@ -1347,25 +1315,57 @@ static void dispc_vp_set_default_color(stru=
-ct dispc_device *dispc,
-> >>>>>  			DISPC_OVR_DEFAULT_COLOR2, (v >> 32) & 0xffff);
-> >>>>>  }
-> >>>>> =20
-> >>>>> +/*
-> >>>>> + * Calculate the percentage difference between the requested pixel=
- clock rate
-> >>>>> + * and the effective rate resulting from calculating the clock div=
-ider value.
-> >>>>> + */
-> >>>>> +unsigned int dispc_pclk_diff(unsigned long rate, unsigned long rea=
-l_rate)
-> >>>>> +{
-> >>>>> +	int r =3D rate / 100, rr =3D real_rate / 100;
-> >>>>> +
-> >>>>> +	return (unsigned int)(abs(((rr - r) * 100) / r));
-> >>>>> +}
-> >>>>> +
-> >>>>> +static int check_pixel_clock(struct dispc_device *dispc,
-> >>>>> +			     u32 hw_videoport, unsigned long clock)
-> >>>>> +{
-> >>>>> +	unsigned long round_clock;
-> >>>>> +
-> >>>>> +	if (dispc->tidss->is_ext_vp_clk[hw_videoport])
-> >>>>> +		return 0;
-> >>>>> +
-> >>>>> +	if (clock <=3D dispc->tidss->max_successful_rate[hw_videoport])
-> >>>>> +		return 0;
-> >>>>> +
-> >>>>> +	if (clock < dispc->tidss->max_attempted_rate[hw_videoport])
-> >>>>> +		return -EINVAL;
-> >>>>> +
-> >>>>> +	round_clock =3D clk_round_rate(dispc->vp_clk[hw_videoport], clock=
-);
-> >>>>> +
-> >>>>> +	if (dispc_pclk_diff(clock, round_clock) > 5)
-> >>>>> +		return -EINVAL;
-> >>>>> +
-> >>>>> +	dispc->tidss->max_successful_rate[hw_videoport] =3D round_clock;
-> >>>>> +	dispc->tidss->max_attempted_rate[hw_videoport] =3D clock;
-> >>>>
-> >>>> I still don't think this logic is sound. This is trying to find the
-> >>>> maximum clock rate, and optimize by avoiding the calls to
-> >>>> clk_round_rate() if possible. That makes sense.
-> >>>>
-> >>>> But checking for the 5% tolerance breaks it, in my opinion. If we fi=
-nd
-> >>>> out that the PLL can do, say, 100M, but we need pclk of 90M, the cur=
-rent
-> >>>> maximum is still the 100M, isn't it?
-> >>>
-> >>> 5% is pretty large indeed. We've been using .5% in multiple drivers a=
-nd
-> >>> it proved to be pretty ok. I would advise you tu use it too.
-> >>
-> >> The 5% comes from OMAP DSS, where we had to do pixel clock with a few
-> >> dividers and multipliers. The rates were quite coarse, and we ended up
-> >> having quite a large tolerance.
-> >>
-> >> I think with tidss, we always have a PLL we control, so we should alwa=
-ys
-> >> have very exact clocks. So I'm fine with dropping it to .5%. However,
-> >> this patch and series is about removing the a-bit-too-hardcoded VP clk
-> >> max rate code in the driver, so I would leave everything else to anoth=
-er
-> >> series.
-> >=20
-> > Ack
-> >=20
-> >>> It's not clear to me why avoiding a clk_round_rate() call is something
-> >>> worth doing though?
-> >>
-> >> Hard to say if it's worth doing, someone should make some perf tests.
-> >> However, afaik, the calls do go to the firmware, so it involves
-> >> inter-processor calls. On OMAP DSS checking the clock rates was slow, =
-as
-> >> it involved lots of iterating with dividers and multipliers. Perhaps
-> >> it's much faster here.
-> >=20
-> > It's not like it's going to be called a lot anyway. It's called once for
-> > each mode when EDID are read (using an I2C bus), and then once per
-> > commit that change the mode.
-> >=20
-> > Both operations are super slow already, so I'm pretty sure you wouldn't
-> > be able to tell.
-> >=20
-> >>> Even caching the maximum rate you have been able to reach before is
-> >>> pretty fragile: if the PLL changes its rate, or if a sibling clock has
-> >>> set some limits on what the PLL can do, your maximum isn't relevant
-> >>> anymore.
-> >>
-> >> You're right, although afaik it should not happen with TI's SoCs. We
-> >> would be in trouble anyway if that were the case (e.g. someone starts
-> >> the camera, and suddenly we can't support 1080p anymore).
-> >>
-> >>> in other words, what's wrong with simply calling clk_round_rate() and
-> >>> checking if it's within a .5% deviation?
-> >>
-> >> This started with discussions how to replace the hardcoded max VP clock
-> >> rate (used to quickly weed out impossible rates), which in reality was
-> >> actually PLL max clock rate. We don't know the PLL max rate, and can't
-> >> query it, so this approach was taken.
-> >=20
-> > If it's fixed by the platform, you have clk_get_max_rate(), but also,
->=20
-> We have what, where? I don't see clk_get_max_rate(), and when I looked,
-> I didn't see any means to find out the limits of a clock.
+> Looks very useful to me.
+> Not sure which git tree it should be routed to.
 
-Sorry, clk_get_(min|max)_rate is something is sent at some point, but never=
- got merged, and I
-recalled it did. Patch is here:
-https://lore.kernel.org/linux-clk/20220516132527.328190-4-maxime@cerno.tech/
+Thanks, glad to hear that!
 
-There's clk_hw_get_rate_range(), but it's only available to providers.
+I think it makes sense to route it via the Andrew Morton's tree, like
+all the other GDB patches. IIUC the proposal to ask subsystems to
+maintain GDB scripts relevant to them [1] didn't go anywhere.
 
-Maxime
-
---htjcadjkokwjhzgn
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaK7rQwAKCRAnX84Zoj2+
-ds0vAXkB1W7jfv+txlLvGxtRFACqonAoTtkMfJ/vuYAE05yj0Xbb6agLh5TXnNF4
-mhh27i0BfRHQwUDdY51LkEU0AFW+x5mEq4WaCjUfjtDBgnE3atrcIxLIbpm9qdLL
-o6UryJwtnQ==
-=xONC
------END PGP SIGNATURE-----
-
---htjcadjkokwjhzgn--
+[1]
+https://lore.kernel.org/all/20250625231053.1134589-1-florian.fainelli@broad=
+com.com/
 
