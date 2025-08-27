@@ -1,136 +1,83 @@
-Return-Path: <linux-kernel+bounces-787810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26C87B37B7B
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 09:22:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC747B37B67
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 09:22:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D7EB367502
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 07:22:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D54AC1BA062B
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 07:22:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41C61318130;
-	Wed, 27 Aug 2025 07:22:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 774C830C601;
+	Wed, 27 Aug 2025 07:22:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="paqG0/bt"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="cjUH6w95"
+Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBC001E8342;
-	Wed, 27 Aug 2025 07:22:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDE603164B5;
+	Wed, 27 Aug 2025 07:22:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756279358; cv=none; b=uGX6ynxlyr209styAtdI7XkVGo0MJQu61yorK1jiI370xH7YKODeAdEBqCM3Cgwm14GuecTlmjJxqdkSIqpNWY7/1LKwnPezT7bub5G5fcULgHtusopYsXEyMEDsLMLtkeWkkmRjxEARVlro9OXCl+8ny7xve3LSZhr+9dMbAhM=
+	t=1756279342; cv=none; b=X1ZehebEzwyw3BOHTGiCfs9P/Pi8ajt3PvKTZTo8VRN5hIh1YnynGyFIQCXfDxfCr3vDMv/GUJMuqwFo7iYdCBY7As2m+Qgp2YZEF1DErP3Kuv7Ag9eWpG4qRrjSBAbcZ8opPrTsgegofm/SI9H6X3SeqCkDKwKYJqbF9eHAovA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756279358; c=relaxed/simple;
-	bh=G+hmXrHggGQu/DFm2iaN9YOAsgDAVtUlcX4wbDIaTAM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gT2CqTUhQB7mj9sfaXFwIqSImjC1VU/VzP0rnOvm3DTWKqtxp8Byk6M8sWACmQlywhIFkHa6R8p9KG44WEQdPBJXlygFB1DZoBjko89DgTF2fdBCWOelIACLgR/5q6biqt8q/UaQx+c2p6gW6QPGpDIYgxofYUqjsHaFq4fQ8ZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=paqG0/bt; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
-	bh=G+hmXrHggGQu/DFm2iaN9YOAsgDAVtUlcX4wbDIaTAM=; b=paqG0/btPjpriUue1ZLq40xLBd
-	GBgOWrFL05XOmF286hGkQVhrhfZqZimImLzlqfvnvVlVMHo57pYqqanZe5p+RWyExLLfK8pM6Q5Cq
-	xdTc0nJjioWVaXjKpM6xHGG33hNdJlVOqRRL+S4OzGg7IrzrmTrdXDfSV/OniMWb8NfMr7hViTPqT
-	qh4CArG3EfgYiwDGIxDxzDICg/hr95MIGKc/d2Fy1Rh+nq9Okcnz7bP4oClR/Liyw76jtlNxiWYgk
-	upeAZRYX6mfLnf/YA7pnADtT8ZXvkmab4GGfHfUpjyupzxU/QmqBCPG9/xLHsUBttuD7WbfOzPmK7
-	upjPzyNA==;
-Received: from [213.244.170.152] (helo=phil.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1urATt-00078I-85; Wed, 27 Aug 2025 09:22:05 +0200
-From: Heiko Stuebner <heiko@sntech.de>
-To: Yury Norov <yury.norov@gmail.com>,
- Rasmus Villemoes <linux@rasmusvillemoes.dk>,
- Jaehoon Chung <jh80.chung@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>,
- Shreeya Patel <shreeya.patel@collabora.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Sandy Huang <hjc@rock-chips.com>,
- Andy Yan <andy.yan@rock-chips.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
- Nicolas Frattaroli <frattaroli.nicolas@gmail.com>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Shawn Lin <shawn.lin@rock-chips.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- Krzysztof =?UTF-8?B?V2lsY3p5xYRza2k=?= <kwilczynski@kernel.org>,
- Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>,
- Bjorn Helgaas <bhelgaas@google.com>, Chanwoo Choi <cw00.choi@samsung.com>,
- MyungJoo Ham <myungjoo.ham@samsung.com>,
- Kyungmin Park <kyungmin.park@samsung.com>, Qin Jian <qinjian@cqplus1.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
- Nathan Chancellor <nathan@kernel.org>,
- Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
- Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
- Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-Cc: kernel@collabora.com, linux-kernel@vger.kernel.org,
- linux-mmc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-media@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-phy@lists.infradead.org,
- linux-sound@vger.kernel.org, netdev@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com, linux-pci@vger.kernel.org,
- linux-pm@vger.kernel.org, linux-clk@vger.kernel.org, llvm@lists.linux.dev,
- Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-Subject:
- Re: [PATCH v3 07/20] drm/rockchip: dsi: switch to FIELD_PREP_WM16* macros
-Date: Wed, 27 Aug 2025 09:22:04 +0200
-Message-ID: <4886676.atdPhlSkOF@phil>
-In-Reply-To: <20250825-byeword-update-v3-7-947b841cdb29@collabora.com>
-References:
- <20250825-byeword-update-v3-0-947b841cdb29@collabora.com>
- <20250825-byeword-update-v3-7-947b841cdb29@collabora.com>
+	s=arc-20240116; t=1756279342; c=relaxed/simple;
+	bh=5XWS7XyCw+NJDczou25GCvSbDPiWfkEbfUlH2AruYok=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=Q26lSbxPDQe1gnc1Eqe3v5OVTiuO4o3f1at0Esn5nEJguzhtYpSLD28n5r1uh4+BMqEmXfIAxpgzz5jKLvp/jYygpTwC0Ux8ySVzsrslMt62n3TNBB/sZuVRppk411k+X602mIx7oa/huFzbZGEqjh1MnHmsUs6CeKoN45Yvl2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=cjUH6w95; arc=none smtp.client-ip=83.149.199.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
+Received: from monopod.intra.ispras.ru (unknown [10.10.3.121])
+	by mail.ispras.ru (Postfix) with ESMTPSA id 5637D406B8A5;
+	Wed, 27 Aug 2025 07:22:14 +0000 (UTC)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru 5637D406B8A5
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
+	s=default; t=1756279334;
+	bh=0h56dmYpXFNvXHv2vka/Yl8VSMF1DnH9PsEa/ZEq58I=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+	b=cjUH6w95ke+Qj4M3fskURmO7vCqRHo68Ynm+jMhX4XDg5un+thblBAQsAe7fPxo+7
+	 3O/nyeoWciWjPIvWFF+FD6mz58nTPWOLR5eZDUdmgvEG3ZNSXiKfWKmzZC8oCU7YHY
+	 dwaShfMDJnXU+zuNtvxAtJs4+4K800+PgaiOovVo=
+Date: Wed, 27 Aug 2025 10:22:14 +0300 (MSK)
+From: Alexander Monakov <amonakov@ispras.ru>
+To: Al Viro <viro@zeniv.linux.org.uk>
+cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>, 
+    Jan Kara <jack@suse.cz>, linux-kernel@vger.kernel.org
+Subject: Re: ETXTBSY window in __fput
+In-Reply-To: <20250826220033.GW39973@ZenIV>
+Message-ID: <0a372029-9a31-54c3-4d8a-8a9597361955@ispras.ru>
+References: <6e60aa72-94ef-9de2-a54c-ffd91fcc4711@ispras.ru> <20250826220033.GW39973@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
-
-Am Montag, 25. August 2025, 10:28:27 Mitteleurop=C3=A4ische Sommerzeit schr=
-ieb Nicolas Frattaroli:
-> The era of hand-rolled HIWORD_UPDATE macros is over, at least for those
-> drivers that use constant masks.
->=20
-> Remove this driver's HIWORD_UPDATE macro, and replace instances of it
-> with either FIELD_PREP_WM16 or FIELD_PREP_WM16_CONST, depending on
-> whether they're in an initializer. This gives us better error checking,
-> which already saved me some trouble during this refactor.
->=20
-> The driver's HIWORD_UPDATE macro doesn't shift up the value, but expects
-> a pre-shifted value. Meanwhile, FIELD_PREP_WM16 and
-> FIELD_PREP_WM16_CONST will shift the value for us, based on the given
-> mask. So a few things that used to be a HIWORD_UPDATE(VERY_LONG_FOO,
-> VERY_LONG_FOO) are now a somewhat more pleasant
-> FIELD_PREP_WM16(VERY_LONG_FOO, 1).
->=20
-> There are some non-trivial refactors here. A few literals needed a UL
-> suffix added to stop them from unintentionally overflowing as a signed
-> long. To make sure all of these cases are caught, and not just the ones
-> where the FIELD_PREP_WM16* macros use such a value as a mask, just mark
-> every literal that's used as a mask as unsigned.
->=20
-> Non-contiguous masks also have to be split into multiple
-> FIELD_PREP_WM16* instances, as the macro's checks and shifting logic
-> rely on contiguous masks.
->=20
-> This is compile-tested only.
->=20
-> Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-
-Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+Content-Type: text/plain; charset=US-ASCII
 
 
+On Tue, 26 Aug 2025, Al Viro wrote:
+
+> Egads...  Let me get it straight - you have a bunch of threads sharing descriptor
+> tables and some of them are forking (or cloning without shared descriptor tables)
+> while that is going on?
+
+I suppose if they could start a new process in a more straightforward manner,
+they would. But you cannot start a new process without fork. Anyway, I'm but
+a messenger here: the problem has been hit by various people in the Go community
+(and by Go team itself, at least twice). Here I'm asking about a potential
+shortcoming in __fput that exacerbates the problem.
+
+> Frankly, in such situation I would spawn a thread for that, did unshare(CLONE_FILES)
+> in it, replaced the binary and buggered off, with parent waiting for it to complete.
+
+Good to know, but it doesn't sound very efficient (and like something that could be
+integrated in Go runtime).
+
+Anyhow, if the alleged race window in __fput is real, why not close it for good?
+
+Alexander
 
