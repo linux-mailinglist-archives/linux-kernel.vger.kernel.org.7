@@ -1,59 +1,53 @@
-Return-Path: <linux-kernel+bounces-788782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88823B38A3D
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 21:35:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70574B38A3F
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 21:36:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 526DB206F93
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 19:35:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3CF112069F9
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 19:36:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3AD82EC561;
-	Wed, 27 Aug 2025 19:35:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09B752EC576;
+	Wed, 27 Aug 2025 19:35:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Iquvt+hu"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YJxVAz7z"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55C17212546;
-	Wed, 27 Aug 2025 19:35:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BF9E2E1EF8;
+	Wed, 27 Aug 2025 19:35:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756323314; cv=none; b=csmaBvE+9eoULCUqIi4gzBGZOCJgXPffJ9aU3nZot4lam91sy9yZdHUyib4d2rXQU5qvtaM+IMX/U5G65HdM7f6kUgYR3JoHekq84uj2NU8nfHqegCL+k2rhS9lEAJIP6BEd9RKdWTkX3oa5t/cjic5oOAUKlk0cLFyWwEbJcu0=
+	t=1756323354; cv=none; b=J5mBu0x2HBdMQUf3ORHbp3jMJ+vQpQyBZkgQe69+ekabOrXE7Kfwav0sgnbdYlA4mwfTVBSB+QTbYhbRsbrGhYd2EV+GMBlexkn6HniBS940GC/su/nSFVZUzMBh3htFuwvRb4mEHoWZm+dGs40JiV/ZmQGlHiejsGyjWFgAPn4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756323314; c=relaxed/simple;
-	bh=sfyI55oAd8oB6IdULzqgjK2Dw/PnJAupn5hQarovk/s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=egLhDLkgixKjFPa6MfpyA5okGjyfc175/L6aU3MsBLimQ8WPXQQpAjxE4pzv5iklUprBVkCkaspohNRHgYC58yGOZdmUCHQmBe8qwjGcwKmkSSFX5Pucb8JcUUE4ccry8vEQE1vQNNgw2/6anuzfRGKRT+MtdpwPAivwKoo6xa4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Iquvt+hu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90811C4CEEB;
-	Wed, 27 Aug 2025 19:35:11 +0000 (UTC)
+	s=arc-20240116; t=1756323354; c=relaxed/simple;
+	bh=SJr3fUSj8KlK6TPxxNCOrQqv5Fz+mjuAW5MjX7hMj3s=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=iJsfnjHbQskCGHI1QpcVHtvDps7k87BdH1Iq1lExhLtCBybt7lx9j2GfLodtNCHo4UGluotx+ObUBSo791GfGYCJdwQDCswfRcjx1f0iz5bufNiEz/MBFU9eOLzwyli/UPVzaORoGGgJEfAphOh2Na3jaLfl0LoggcdPG6TG6Hk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YJxVAz7z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1294C4CEEB;
+	Wed, 27 Aug 2025 19:35:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756323313;
-	bh=sfyI55oAd8oB6IdULzqgjK2Dw/PnJAupn5hQarovk/s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Iquvt+huIT6XONWVcUwNT2vkn5W6gPIWBukBLzygCKONgNGtvUSuM27G+WEib84aW
-	 EAEvGatLtny8ttkNeKM1B5Z3lNHaAbPeUIvezipSPN0eArNKzpYw6nJSDm4/PPweIr
-	 j2SJ/5yFpVLwzv6n1ScXeUD+gAJ/rGlKIQzUo8Hmj55qm7Vg4MKffRvC91Yll0x9QE
-	 KTGRtZs9OtPZ+HXPtKnDC69k54Zw2pf/N+kIJpJWkHcZehDMDG04J8UNi/0T2y6qpa
-	 3KTGOWI+vTdYl8BW/3AMyhpdhVwZ60khDc1hXR+OPSKx01y5zyrmZlnpivreT0SlEt
-	 X5AJ0LTThuKTw==
-Date: Wed, 27 Aug 2025 20:35:09 +0100
-From: Simon Horman <horms@kernel.org>
-To: Konrad Leszczynski <konrad.leszczynski@intel.com>
-Cc: davem@davemloft.net, andrew+netdev@lunn.ch, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, cezary.rojewski@intel.com,
-	sebastian.basierski@intel.com,
-	Piotr Warpechowski <piotr.warpechowski@intel.com>,
-	Karol Jurczenia <karol.jurczenia@intel.com>
-Subject: Re: [PATCH net-next 6/7] net: stmmac: enhance VLAN protocol
- detection for GRO
-Message-ID: <20250827193509.GS10519@horms.kernel.org>
-References: <20250826113247.3481273-1-konrad.leszczynski@intel.com>
- <20250826113247.3481273-7-konrad.leszczynski@intel.com>
+	s=k20201202; t=1756323351;
+	bh=SJr3fUSj8KlK6TPxxNCOrQqv5Fz+mjuAW5MjX7hMj3s=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=YJxVAz7z1OicMRG7IzdbGoVbWLn5TZgnUoLbnWlrBg+MpmA02GWlh58QppVMv4tc5
+	 /+O64a0EBZVh/ZkehBnE+9SOf8hSodQkGgXdL5K+udlIvAL+v+OhdrnI7KToOLlrCb
+	 Ln1gSt5QwY+koOsHLR9uYoTz28jUgkOmaE43/fjkXlOXU0T4E2iIOZWnMeR40YIEwP
+	 ELgtH6pZqLusGRTD4dP0R8qWF414FgFo3+vwnPmpYE/M2VyoFzt3fIAVdshk4H+6OZ
+	 AmrAeroxiZrwM6o5DDauQWcLogX7kAqBPUGm3ux2PYGCF8Z993LLpniVYtBmeMceCu
+	 YGnbOG9Xqrgyg==
+Date: Wed, 27 Aug 2025 14:35:50 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Johan Hovold <johan+linaro@kernel.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+	Manivannan Sadhasivam <mani@kernel.org>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/3] PCI/pwrctrl: Fix device and OF node leaks
+Message-ID: <20250827193550.GA898664@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,32 +56,25 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250826113247.3481273-7-konrad.leszczynski@intel.com>
+In-Reply-To: <20250721153609.8611-1-johan+linaro@kernel.org>
 
-On Tue, Aug 26, 2025 at 01:32:46PM +0200, Konrad Leszczynski wrote:
-> From: Piotr Warpechowski <piotr.warpechowski@intel.com>
+On Mon, Jul 21, 2025 at 05:36:06PM +0200, Johan Hovold wrote:
+> This series fixes some pwrctrl device and OF node leaks spotted while
+> discussing the recent pwrctrl-related (ASPM and probe) regressions on
+> Qualcomm platforms.
 > 
-> Enhance protocol extraction in stmmac_has_ip_ethertype() by introducing
-> MAC offset parameter and changing:
+> Johan
 > 
-> __vlan_get_protocol() ->  __vlan_get_protocol_offset()
 > 
-> Add correct header length for VLAN tags, which enable Generic Receive
-> Offload (GRO) in VLAN.
+> Johan Hovold (3):
+>   PCI/pwrctrl: Fix device leak at registration
+>   PCI/pwrctrl: Fix device and OF node leak at bus scan
+>   PCI/pwrctrl: Fix device leak at device stop
 > 
-> Co-developed-by: Karol Jurczenia <karol.jurczenia@intel.com>
-> Signed-off-by: Karol Jurczenia <karol.jurczenia@intel.com>
-> Reviewed-by: Konrad Leszczynski <konrad.leszczynski@intel.com>
-> Reviewed-by: Sebastian Basierski <sebastian.basierski@intel.com>
-> Signed-off-by: Piotr Warpechowski <piotr.warpechowski@intel.com>
+>  drivers/pci/bus.c    | 14 +++++++++-----
+>  drivers/pci/probe.c  | 19 ++++++++++++++++---
+>  drivers/pci/remove.c |  2 ++
+>  3 files changed, 27 insertions(+), 8 deletions(-)
 
-Konrad,
-
-As per my comment on an earlier patch, your SoB line needs to go here.
-
-Otherwise, this looks good to me.
-
-Reviewed-by: Simon Horman <horms@kernel.org>
-
-...
+Applied to pci/pwrctrl for v6.18, thanks, Johan!
 
