@@ -1,135 +1,168 @@
-Return-Path: <linux-kernel+bounces-787706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A8DAB37A05
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 07:54:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B67EB37A09
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 07:55:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 27398364489
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 05:54:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3080F3BD135
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 05:55:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25844287273;
-	Wed, 27 Aug 2025 05:54:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFD46310771;
+	Wed, 27 Aug 2025 05:54:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="QUIln5s2"
-Received: from omta34.uswest2.a.cloudfilter.net (omta34.uswest2.a.cloudfilter.net [35.89.44.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NiJQ/rjj"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5652E28E7
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 05:54:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C94AA287273;
+	Wed, 27 Aug 2025 05:54:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756274080; cv=none; b=jcoRN0kFAnV6lApBttSJ5yG8KKpdm8QFHWHAfbnLMPI8jjLyw1l/tdrvolvh8/ClH4doPXsib1uqzMv9RtCieHOyXnQPysltvxoDpFNHB4cg9jDa9zYMhd1ihXDaqCb5gWQGg4Gva3u13DuHtdLoonNXhNRTDoOkxkvt0Mb92qE=
+	t=1756274097; cv=none; b=Ua82v+S+adU8C6+uVFw7biJVlNMxbmxVAOYYkotjldkknlNxswT6cPdkpSk7XLwk7br5BMDGHHdjTuy7qACrKfzNSkc3ghgmNgjZBALcEWay+mq08AA0aPEt2utuFrQFI1T1VmAcQmQAd5KLvEJVHSpMsdBZ51W5VyoEQPz06qk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756274080; c=relaxed/simple;
-	bh=BbD6VwYuebZvVXUTjVIB736OOnh+InOqS07iPo4EGII=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mH7ePvneNjfGf+j0N5Pgc7eCPJEtn6XmL8ZZ5wLKnmTc3p/X/FYXDli0/seZIKM0dclVBqjQJ2NaQO4hmUAqkluvZ3fLAHIdFzdNRTWTP19bbFdBAsMwKKs1x6PfYE0pEyay4DWdgQIPwh5cA3UsFW/QduZHyF1XAzrCvi2CHTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=QUIln5s2; arc=none smtp.client-ip=35.89.44.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
-Received: from eig-obgw-6006b.ext.cloudfilter.net ([10.0.30.211])
-	by cmsmtp with ESMTPS
-	id r4YXuDhpAMvnzr97Aubi9f; Wed, 27 Aug 2025 05:54:32 +0000
-Received: from gator4166.hostgator.com ([108.167.133.22])
-	by cmsmtp with ESMTPS
-	id r978ufXkAGGDlr978uCWB1; Wed, 27 Aug 2025 05:54:30 +0000
-X-Authority-Analysis: v=2.4 cv=XN0wSRhE c=1 sm=1 tr=0 ts=68ae9d96
- a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=DR2cKC/DEnBA9KqqjaPhpA==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=7T7KSl7uo7wA:10
- a=2AWf5FwvJw1iBHfDe3AA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=xYX6OU9JNrHFPr8prv8u:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=WDJGNaVGxwh+yCobnWlXXZbYF5Bu0xJlzbT0v72eZ/Y=; b=QUIln5s2eYN8GScnE9vXjS9uSf
-	tPmySM2JLcYvGA1m1XKq4aEnX/inUyKvpfB4CRSks+IPqNQT5/8y64YARHQQJ/lyaaG4c3/dxtZf1
-	HDnxbGMM2IajLtU1x77StimGO292yCeD2SVnhjqnuVJCnp9u3f9+29e/FT902XqZGKQoEGMhiehMn
-	fRedJQmbDm4nQOpHGnmg02VK5w83GlKyhqGD1cc81iZ5/59a7YP95O527Q6ItF3u4RrhqZc50fL1L
-	cjLz+ZP2ce3zSKOkgaeFbBJwM3IrycAIaiUyqW9zqb6Xjkv0bg1Mu4UGV5WUetdlBCMa1WyAj877O
-	ip9H/dKQ==;
-Received: from static-243-216-117-93.thenetworkfactory.nl ([93.117.216.243]:42968 helo=[10.94.27.44])
-	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.98.1)
-	(envelope-from <gustavo@embeddedor.com>)
-	id 1ur977-00000003S0N-1GL6;
-	Wed, 27 Aug 2025 00:54:30 -0500
-Message-ID: <c3988bb4-a51e-4d7e-90d6-7c37020cd1b4@embeddedor.com>
-Date: Wed, 27 Aug 2025 07:54:09 +0200
+	s=arc-20240116; t=1756274097; c=relaxed/simple;
+	bh=8eROKf5S0VMq51uDrP4Ccww8z69TnWPueZiuLEnNzMc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OfQYuojg+oGsbzWYYY6YDp5QIMhTSTrnx+89eJj+xF9TNpB4LxiRuyOFuGNmgNk3YZkpoWvgaOLh4eiN59TaOKMClOYQ61cn4o9DmlIVevoIk7xJL27CqjapIrmnc91BiO5B8dONZdZBrWo2GiO2UTyzmKl/ZF9TCRYCwYZJTNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NiJQ/rjj; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-55f499c7f0cso2408191e87.0;
+        Tue, 26 Aug 2025 22:54:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756274093; x=1756878893; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=m8n1j89CvjN5ZFEbdFGzttMH7tyzPC+isNQLY6VZ0w0=;
+        b=NiJQ/rjjB1cOxvwYSOr41aeZa0HgSKuAbKrug4sqFj/qMV/I05+oY1g9rEjfdHr1HR
+         VqS1GWx4mC8MLFrqo1naF+p3gwE59vZHfpyEtP3brcwn0cwCnye+V8za5uoWuCxX3h+Y
+         KWjzOV96M3vdTeABWrH0d8gKchPgPXu1qyYXoX2AV1Oxnn0iWA693N9+7SAkG3CQX9Ie
+         eVu4+KVuDJHLv0WTjn1yr8Sxia6A4xy28sGRDIfjo9rzU4yE1GJkcmtGbFAyeMm/X74z
+         AO9m3SjVNz5oXIwLjdNbE3thPFDV30rc7K5rSpUd8oKRycjRRPzcgP0zLRfBRmDOGVwa
+         do2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756274093; x=1756878893;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=m8n1j89CvjN5ZFEbdFGzttMH7tyzPC+isNQLY6VZ0w0=;
+        b=d8q4Bfs2yq50o1TbcGAuSGwakwG+q29xSN1eAfy14IbOS/etQi0tmU8eZmGu0W+K2u
+         XfBqYCgFhzMSI9LLPlFQp9MwuRp577VGwbISRR+34xH31Yeleu5xl96dd1D43cSCKT5q
+         X3Y2jfdoOIt5saSYxMxO2ZyTznpXDG+XgAZHHvGFkclqVB7/uuQBOV+ouLPzBk3DjGEo
+         V5vJK4jb0TcjyYDpPTa4C1ZDOT6+8d5z6gFDGs+wnCwdPyeypa5sLABSID1m5OWOChgP
+         ZQmBBy5xU8chyQkz2gj3fQAQtDgRgmMtepM4t6k+ioO7+mKloUQbzCmY0bucquC1LPIE
+         x3xw==
+X-Forwarded-Encrypted: i=1; AJvYcCU1giFfrbS3DKefCbAzdh2nKkkA10BUIm9tKQywakjcgNaUqexSyE3Qz8YoZIrKcQ9fd7E54E5jbXB7x/U=@vger.kernel.org, AJvYcCUXXMaqGVCRZrVzI31ochacr2AYpNO9e9kYGIamR0W8WKDqNa3wpDD7WGF6PW0Jwkuq5FPVajhPbdxiuVk=@vger.kernel.org, AJvYcCXj9/VlVLcrK4+hVOwSKnFcZwJmD/TqDk+wYcrO93iIi+1pVoU/8X7uBe/rz7yJ+5LGXw4vnPLvuAA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzFjPGH5Sjn6LJiBowwc0W8aDMRpMhrvrQz6CKKwXJFXDgbQokj
+	bb/BgBD+z1VV1jcqgdVq2O0WUH+Jx3E9AAj+ss0PVpYFj8WfnE6oL09C+xLC6DpwRymofkg0eYZ
+	kBULXPunFCf8bUbZbE6znV4X5sup2ubw=
+X-Gm-Gg: ASbGncvjo5Jt2gbZQFouHSYz2sU7uJ/jyk2971PA/Ccb1cjNngV0aFebdizpx3OUDwz
+	lIhKzz0wDbAP06L2Ljlcrs40hTsD/r9UmlR2pudglpsmykRZR5Kkxaz8fpTvho4/Ve5YzR7pXo4
+	VFS9kAeQw2T+kC2/LKp/uudTlclAbBso7QM7tKPKXpBlivTtHVtsKMCUOcAu+eMKYbjZQqUe0kp
+	XVZK7Q89mcr1q4AHbbeQ9ugurD9
+X-Google-Smtp-Source: AGHT+IHNbW4SO/xBJ0LMEH+gXwKwnl/GVQ4u+pDvk847J5bPbkQbK4PsfsRLx2GNcufPD1Q3bNVfi4pbQWjgy5kT/Vk=
+X-Received: by 2002:a05:6512:1451:20b0:55f:3996:4f82 with SMTP id
+ 2adb3069b0e04-55f399650cfmr2395180e87.1.1756274092506; Tue, 26 Aug 2025
+ 22:54:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH][next] scsi: fc: Avoid -Wflex-array-member-not-at-end
- warnings
-To: Justin Tee <justintee8345@gmail.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>,
- "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: James Smart <james.smart@broadcom.com>,
- Justin Tee <justin.tee@broadcom.com>, Hannes Reinecke <hare@suse.de>,
- linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-hardening@vger.kernel.org
-References: <aJtMETERd-geyP1q@kspp> <yq1seheonya.fsf@ca-mkp.ca.oracle.com>
- <CABPRKS9BVsGhBDmNVbts9QhMsJ-mZhMKDB4u-NnfVcVLsfWrAg@mail.gmail.com>
-Content-Language: en-US
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-In-Reply-To: <CABPRKS9BVsGhBDmNVbts9QhMsJ-mZhMKDB4u-NnfVcVLsfWrAg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 93.117.216.243
-X-Source-L: No
-X-Exim-ID: 1ur977-00000003S0N-1GL6
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: static-243-216-117-93.thenetworkfactory.nl ([10.94.27.44]) [93.117.216.243]:42968
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 2
-X-Org: HG=hgshared;ORG=hostgator;
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfGrihx6f/u5RuZS18x2oiY63fyXY2i3EDkjQp3WNbG6pQw3vsLrn5o9u0+N8FNI1ZcIx+Qa2MLyZZVTluvUmISDmJllF7GsyZPd9uekIRrg50GvAqse5
- Tzh3O0vJKZdtfkjOxBJ3kAfYRdVTo9E2l29ad6YPHfhRzVYLpsa6i3xws2mSTOsyhkiE5NXGQW6EBKAGpSl/Iw4ROu57DOxPfvuXXxPneSxpoy1jljVC/TFV
+References: <20250826-tegra186-cpufreq-fixes-v1-0-97f98d3e0adb@gmail.com>
+ <20250826-tegra186-cpufreq-fixes-v1-2-97f98d3e0adb@gmail.com> <24066927.6Emhk5qWAg@senjougahara>
+In-Reply-To: <24066927.6Emhk5qWAg@senjougahara>
+From: Aaron Kling <webgeek1234@gmail.com>
+Date: Wed, 27 Aug 2025 00:54:41 -0500
+X-Gm-Features: Ac12FXy6I9yuststMLMbu0a9gFKQlY2gGlFE3HWxValsmuH9e5xd_3-3x7Zc26U
+Message-ID: <CALHNRZ8SfAZHm5PszA0uCbr0QUYFSkdayVwEwjgRYX2JT0xhfQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] cpufreq: tegra186: Initialize all cores to base frequencies
+To: Mikko Perttunen <mperttunen@nvidia.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
+	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Aaron Kling <luceoscutum@gmail.com>, Sumit Gupta <sumitg@nvidia.com>, 
+	Thierry Reding <treding@nvidia.com>, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, Aug 26, 2025 at 9:09=E2=80=AFPM Mikko Perttunen <mperttunen@nvidia.=
+com> wrote:
+>
+> On Wednesday, August 27, 2025 5:16=E2=80=AFAM Aaron Kling via B4 Relay wr=
+ote:
+> > From: Aaron Kling <webgeek1234@gmail.com>
+> >
+> > During initialization, the EDVD_COREx_VOLT_FREQ registers for some core=
+s
+> > are still at reset values and not reflecting the actual frequency. This
+> > causes get calls to fail. Set all cores to their respective base
+> > frequency during probe to initialize the registers to working values.
+> >
+> > Suggested-by: Mikko Perttunen <mperttunen@nvidia.com>
+> > Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+> > ---
+> >  drivers/cpufreq/tegra186-cpufreq.c | 11 ++++++++++-
+> >  1 file changed, 10 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/cpufreq/tegra186-cpufreq.c
+> > b/drivers/cpufreq/tegra186-cpufreq.c index
+> > 6c394b429b6182faffabf222e5af501393dbbba9..ef288705f00b0918d0f8963ef9cc9=
+fc53
+> > be88091 100644 --- a/drivers/cpufreq/tegra186-cpufreq.c
+> > +++ b/drivers/cpufreq/tegra186-cpufreq.c
+> > @@ -229,7 +229,8 @@ static int tegra186_cpufreq_probe(struct platform_d=
+evice
+> > *pdev) {
+> >       struct tegra186_cpufreq_data *data;
+> >       struct tegra_bpmp *bpmp;
+> > -     unsigned int i =3D 0, err;
+> > +     unsigned int i =3D 0, err, edvd_offset;
+> > +     u32 edvd_val, cpu;
+> >
+> >       data =3D devm_kzalloc(&pdev->dev,
+> >                           struct_size(data, clusters,
+> TEGRA186_NUM_CLUSTERS),
+> > @@ -257,6 +258,14 @@ static int tegra186_cpufreq_probe(struct
+> > platform_device *pdev) err =3D PTR_ERR(cluster->table);
+> >                       goto put_bpmp;
+> >               }
+> > +
+> > +             for (cpu =3D 0; cpu < ARRAY_SIZE(tegra186_cpus); cpu++) {
+> > +                     if (data->cpus[cpu].bpmp_cluster_id =3D=3D i) {
+> > +                             edvd_val =3D cluster->table[0].driver_dat=
+a;
+> > +                             edvd_offset =3D data->cpus[cpu].edvd_offs=
+et;
+> > +                             writel(edvd_val, data->regs +
+> edvd_offset);
+> > +                     }
+> > +             }
+> >       }
+> >
+> >       tegra186_cpufreq_driver.driver_data =3D data;
+>
+> Looks OK, but I think it might be better to set the frequency to Fmax ins=
+tead
+> of Fmin to avoid any slowdown during boot.
 
+I considered this, but I'm somewhat skittish about setting Fmax by
+default due to seeing instability across different tegra archs and
+finding out that the t210 devkits have been factory overclocked on
+mainline for the last six years [0]. That may be less of a problem on
+t186+ with the bpmp having more tight control over stuff, but... yeah,
+I'm still wary. But on the other hand, I set performance governor on
+boot for my android builds and have not seen any obvious cpu related
+instability on p2771 or p3636+p3509, so that might be okay. If you
+still think Fmax is better, I'll update and send a v2.
 
-On 27/08/25 01:13, Justin Tee wrote:
-> Hi Martin and Gustavo,
-> 
-> Regarding the maintainers file, yes Broadcom will push a patch to update soon.
-> 
-> Regarding Gustavo’s patch, I think we should also update the
-> assignment of rdf.desc_len in lpfc_els.c like below.
-> 
-> diff --git a/drivers/scsi/lpfc/lpfc_els.c b/drivers/scsi/lpfc/lpfc_els.c
-> index fca81e0c7c2e..432761fb49de 100644
-> --- a/drivers/scsi/lpfc/lpfc_els.c
-> +++ b/drivers/scsi/lpfc/lpfc_els.c
-> @@ -3762,7 +3762,7 @@ lpfc_issue_els_rdf(struct lpfc_vport *vport,
-> uint8_t retry)
->          memset(prdf, 0, cmdsize);
->          prdf->rdf.fpin_cmd = ELS_RDF;
->          prdf->rdf.desc_len = cpu_to_be32(sizeof(struct lpfc_els_rdf_req) -
-> -                                        sizeof(struct fc_els_rdf));
-> +                                        sizeof(struct fc_els_rdf_hdr));
+Aaron
 
-Good catch! :)
-
-Thanks
--Gustavo
-
+[0] https://lore.kernel.org/all/20250816-tegra210-speedo-v1-0-a981360adc27@=
+gmail.com/
 
