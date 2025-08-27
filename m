@@ -1,116 +1,97 @@
-Return-Path: <linux-kernel+bounces-787605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BE06B37882
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 05:16:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9032CB37885
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 05:18:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 612037B5BC1
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 03:15:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A60A57A4C36
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 03:17:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25E931E260A;
-	Wed, 27 Aug 2025 03:16:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B39ED307498;
+	Wed, 27 Aug 2025 03:18:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="NFc7s06I"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 565B11A3166;
-	Wed, 27 Aug 2025 03:16:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="iNvjIy7z"
+Received: from 003.mia.mailroute.net (003.mia.mailroute.net [199.89.3.6])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48A3430CD98;
+	Wed, 27 Aug 2025 03:18:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756264593; cv=none; b=H/5Y8ncXOxyh1X2EYbGcT8+ks7jzN1vMT9cBfZ1oxc5Vh0DEBWp+TJfmceM8u0WEDMQUwTGkmoZbcjcsXxtBW60xcQlPZrwD8GyhXsZBmHPmSuMZHleoDmrdJ8G5MFOPUR/AlRO72gWqM5Y36MNjwKuhEoiYnoVme3hXL2qIfbM=
+	t=1756264727; cv=none; b=e5pNku363BMJgfIBBSR03+pTtro4G9KeRj2+A2uSQpWNmM0HiJNxPoDn6S4qBaSRY5cIHdSwW+euFdw763CwRQ2Pojbxx/LYoeefvavt4Nxh+A3mSI4JTZo97umENpkMltUJwONwAGC2sYvFRMf/o6mEOFD29z98f1qDbAUzqO4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756264593; c=relaxed/simple;
-	bh=Qs2OM8u+Lsz6MOPYflBgcuyoauChwiyNm0Qg9Fp8l+Q=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=jIIkQgwwIw9UikIa7Q1fSZx8yZaleYC4oNQp8NDO4m3kCxgS0Srq5H7ygjZGKtQqTuvg6gBb8n1sGaRueVdQnYTtlGSfVFdI8mwImcMe3VOW8VpWlbas1cg4FXSnQT8jZ078Td9Ikm5PdYS9IltivJYsf/9CWfJ0OEf7LSkBmWw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=NFc7s06I; arc=none smtp.client-ip=220.197.31.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=J0
-	iCFAWZwK2LvypLJsD3Kz9xYwE43hjGdHVixQJu+A4=; b=NFc7s06IbOvdJXwOCv
-	qcfR255RbqM4W4cadxZZwdHdZ1419RFAnD74XK1SUCCP8tlG+HwmpDd/LDy4MG7L
-	U6qlphAcKfBFMvoIOpD2usNjFGhMRJt4RDO1SGmjINMC0MvXmZIEXBisTdfSjZRt
-	1zQEyW/jDcwgtB6y/P5ZKGLfw=
-Received: from localhost.localdomain (unknown [])
-	by gzga-smtp-mtada-g1-0 (Coremail) with SMTP id _____wD3F+RdeK5ocMYdEw--.56776S2;
-	Wed, 27 Aug 2025 11:15:42 +0800 (CST)
-From: Feng Yang <yangfeng59949@163.com>
-To: ast@kernel.org,
-	daniel@iogearbox.net,
-	john.fastabend@gmail.com,
-	andrii@kernel.org,
-	martin.lau@linux.dev,
-	eddyz87@gmail.com,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org
-Cc: bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	llvm@lists.linux.dev
-Subject: [PATCH bpf-next] selftests/bpf: Fix the invalid operand for instruction issue
-Date: Wed, 27 Aug 2025 11:15:40 +0800
-Message-Id: <20250827031540.461017-1-yangfeng59949@163.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1756264727; c=relaxed/simple;
+	bh=4hE1oU+4pTsfvlqMOOtDJyxVzsrXq+9cfnki53nuljc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FN5SOCh8Oc4eLyxYgCoQ1Pmi1JQl1tZdQDRDaM07AOloNewKcA1570bLIOPjN28LGncyEl+MrQnbAsTq7zqncpkyzrWr4HrtfIf+NwYkkcSThRJHTwnBpIhb4TUTynQOoAdi3fbGmP7jv7Y28tQV3OcMsJJ+OUfEcKPp5HVxkN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=iNvjIy7z; arc=none smtp.client-ip=199.89.3.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 003.mia.mailroute.net (Postfix) with ESMTP id 4cBV9c0ljGzlgqyS;
+	Wed, 27 Aug 2025 03:18:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1756264722; x=1758856723; bh=LOEdC127eBsOZiHvCgEzALfT
+	+5Y8etm3iu37IW8m95Y=; b=iNvjIy7zqXJgv/8b7uPw4N9+++8iKyMvyCOoqm4C
+	767ecvmd/crtU+DEADsGQ5wkZ0fhPDa+oTBwCk/4R1dxmroHCR+9Y3ZluDwe8sIK
+	m7OHBJewJLYZmZc44259a6MAaJdlm1zmum/cpWWx24zXS7c9ffX1V7s3DsnN4ZwO
+	bBMOV4ydIwQdCuN+MbPefUyUq3KPgOZ3iGiNZ2FqMO4hnHtNdxBuq47okzBN6O00
+	bCGRMA/wXv9fv9GUc10Z+OV/2MLD7b6VhO2Wmc3bQ4O6owclJIzj4PaUQFLNci9k
+	e45/FcNbfU/VikkmnW6MnOFyPBOomRkRIpIGXAIOX9D7yQ==
+X-Virus-Scanned: by MailRoute
+Received: from 003.mia.mailroute.net ([127.0.0.1])
+ by localhost (003.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id h2E81GhPXYB6; Wed, 27 Aug 2025 03:18:42 +0000 (UTC)
+Received: from [172.20.6.188] (unknown [208.98.210.68])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 003.mia.mailroute.net (Postfix) with ESMTPSA id 4cBV9R6XkQzlgn8k;
+	Wed, 27 Aug 2025 03:18:35 +0000 (UTC)
+Message-ID: <bfdffd81-d844-4984-a8dd-ffad3e906f96@acm.org>
+Date: Tue, 26 Aug 2025 20:18:29 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3F+RdeK5ocMYdEw--.56776S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7tw18tr4UZFW5tF4kuFyUZFb_yoW8Gry7pw
-	18X3s8tFyS9r1UX3W7Jr4UWF1rWFsaqr48Ar40yr9rAF98GF97Jr1xKFyYgr93Xr4furW3
-	Zrsrtw43CF4kAaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UKzuZUUUUU=
-X-CM-SenderInfo: p1dqww5hqjkmqzuzqiywtou0bp/1tbiYwO2eGiudCWPIwAAsV
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/4] scsi: hisi_sas: Switch to use tasklet over threaded
+ irq handling
+To: Yihang Li <liyihang9@h-partners.com>, martin.petersen@oracle.com,
+ James.Bottomley@HansenPartnership.com
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linuxarm@huawei.com, liuyonglong@huawei.com, prime.zeng@hisilicon.com
+References: <20250822075951.2051639-1-liyihang9@h-partners.com>
+ <f02e9bb8-3477-4fa7-8b20-72bd518407ed@acm.org>
+ <2f2e5534-a368-547d-dedf-78f8ca2fc999@h-partners.com>
+ <62a58038-75da-4976-aec7-016491437735@acm.org>
+ <f996d9cd-7be8-876e-680a-acf842afed5b@h-partners.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <f996d9cd-7be8-876e-680a-acf842afed5b@h-partners.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Feng Yang <yangfeng@kylinos.cn>
+On 8/26/25 7:11 PM, Yihang Li wrote:
+> In the interrupt thread context, the main tasks are handling abnormal I/O
+> and calling.task_done()->scsi_done(). I believe these tasks are not
+> suitable for execution in the interrupt context.
 
-The following issue occurs when compiling with clang version 17.0.6,
-but not with version 18.1.8. Add a version restriction to fix this problem.
+Most code that can be used in tasklet context is also safe to use in 
+interrupt context. Does this patch series complete I/O requests from
+tasklet context? Does that mean that it is also possible to complete
+I/O requests from interrupt context? Or am I perhaps missing something?
 
-progs/compute_live_registers.c:251:3: error: invalid operand for instruction
-  251 |                 "r0 = 1;"
-      |                 ^
-<inline asm>:1:22: note: instantiated into assembly here
-    1 |         r0 = 1;r2 = 2;if r1 & 0x7 goto +1;exit;r0 = r2;exit;
-      |                             ^
-1 error generated.
+Thanks,
 
-Fixes: 4a4b84ba9e453 ("selftests/bpf: verify jset handling in CFG computation")
-Signed-off-by: Feng Yang <yangfeng@kylinos.cn>
----
- tools/testing/selftests/bpf/progs/compute_live_registers.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/tools/testing/selftests/bpf/progs/compute_live_registers.c b/tools/testing/selftests/bpf/progs/compute_live_registers.c
-index 6884ab99a421..56aec43f206f 100644
---- a/tools/testing/selftests/bpf/progs/compute_live_registers.c
-+++ b/tools/testing/selftests/bpf/progs/compute_live_registers.c
-@@ -240,6 +240,7 @@ __naked void if2(void)
- 		::: __clobber_all);
- }
- 
-+#if __clang_major__ >= 18
- /* Verifier misses that r2 is alive if jset is not handled properly */
- SEC("socket")
- __log_level(2)
-@@ -255,6 +256,7 @@ __naked void if3_jset_bug(void)
- 		"exit;"
- 		::: __clobber_all);
- }
-+#endif
- 
- SEC("socket")
- __log_level(2)
--- 
-2.43.0
-
+Bart.
 
