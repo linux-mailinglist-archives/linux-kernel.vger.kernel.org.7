@@ -1,176 +1,127 @@
-Return-Path: <linux-kernel+bounces-788016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCE2EB37ED3
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 11:28:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F00D9B37ED5
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 11:29:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F10491BA185E
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 09:29:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B9BF0365BA7
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 09:29:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65E2B343213;
-	Wed, 27 Aug 2025 09:28:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P/IclHca"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBCF63431FC;
+	Wed, 27 Aug 2025 09:29:11 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1765CEEA6
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 09:28:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6EB8343213;
+	Wed, 27 Aug 2025 09:29:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756286921; cv=none; b=THT2vHnbThjlkZFEC38/isl8Uy4OnePquMEbAroTCNUPAZQBYt6zVRP2sWpv+PzqbfJW1PRjWr0Cp0t61PmKpHvzbRqUCU7QZS2/cEqE7sz/7n4C3Bs/QpAZ/4ELQ1Zo4RdCqydPEXNH4ZrnDFlKhIo8daWSYw5+31B9NWDpydw=
+	t=1756286951; cv=none; b=lfAUyXn9TCO3BvigJK848N84ndmOHKjA4iTOd8Wo0LwCEU880yczQefedUrREj4HjtC69Nb1BHobKaYTc8dJQ8SM8d7zApBohaYR20RmsVXED1HVkeXvcbQsKvRCwPUelkXUrVnTKBi82ptiTjH0tlsPwH4f0j7rJOgUh+IWH7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756286921; c=relaxed/simple;
-	bh=u1JT9esYUPh//8vGQAYEOXy1sSFQYIQb0ssbEMuIBNo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fkZaDHbr+HLo+bEIEiTlmS6pbuJoAjilYIAo/Y3T6fl3R7OhGZ3uyH0l1IXNY2xI6gJuLwSgSWB4s69TTPLv29bOyQuhweOdCTwr40QGna2nlH2ZQE/k7uWKHkEl8L0GVIB4mAmxYvea/68x8AWTFZvYpFJIAg/NR7u91HmBpZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P/IclHca; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-afcb78f5df4so1108583966b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 02:28:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756286918; x=1756891718; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5WNhk1ZhM3W2L38lczRb2sJSYi/8+nhFpxpIIZjaaw4=;
-        b=P/IclHcaTBO+twMuqno5qABqPY94dEDsIboSFdB8kOeMahKckJ755sVJiGpZg44SOE
-         aX57IMZSDfi58Po9wayhn+l0zCIBa3elzmT17M9G+WcuC0At5Aqt+tBlQ8eOJWv9GZkT
-         PpmP3ju9bV4GGXbew8p7qObGDKE2z2mncKVrRXBDYq32A42JYzBOUjp44IKEwNwZav5z
-         Qr8Udh37HDtrv78FsjXPvDC1JyTzcSNqEYTjodPBqhWseaTAmzf8PLRXJWGwqEYFmWnY
-         h/A/gIrq4mK00TglQ10E4NK6/AROolQhjM0Ill1O4mTi78sbu3yS8FT6x+qItCiNUzB/
-         TZUQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756286918; x=1756891718;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5WNhk1ZhM3W2L38lczRb2sJSYi/8+nhFpxpIIZjaaw4=;
-        b=wPysh+8x6pwQAsS85Bm2GecHr+DL1GhYpkwoBsaA/0NDzw3ilJzgsDdFXs6/1AoyhR
-         2tXAapPqkWy9Sx9PCiSh+NcjaYsR62IJ+IJX6btBPS6d1244h29cVHZIgK7DRwSSXOWy
-         u1ELIZvO0VM5ufGsas/w78aJXtc/vsNWcXMmW0BwJAqTXLpuRshCKdN85aPi9ZqIGhsq
-         v1+FG4vCuH49oD0YeWroVCsWbZSgS5RNetgBeS87NMZzicoNRLQAndn+jZb5DopI5nBo
-         Ud2DioOUWpCOiwmz4tL26yscklq/3AXShZvQm+tzrDFcZTHOuKcS1vfGfhTDjhyoW53U
-         46DA==
-X-Forwarded-Encrypted: i=1; AJvYcCVhdwOLPS4mqF8mdIaXe4S0HxcGBXyYtqJKzDlamOivEAwlI19Me+ozDl0eLls2Toketpj9qhPXSzPTkEM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZs4jaF6p+AFfsMQ4NjZYx4DPaeXAZxw4r2hLJkMXPInI8wJmz
-	3L1Mjwr8xV/A4wHpf1jgMxHx33aT97IzOnibVNgmP3HXEZhIgoq9/ULX
-X-Gm-Gg: ASbGncsNKMa30bwqhXF2bRLYC8EObPkrYKA0Ty9As01APHaCzUTJFH52fQYCh95duwK
-	SWRZKyiYjXURY+fWK3U1Uoefgh5CQKLMGTkXmW1Z4kR+KSwR0i20gpj5ydOyfMScIxr+pycyl6G
-	3VbaMrROrGpyGEYGdhciAsiJD8qj4x5Kn1JUQgN84hvnKkykLOnoWh/RjMsgh/WhiBKhlNsnc5A
-	c4R5/pF+173G1QYHLGZOYfHWyR1NAAhVmULHriXNmaC9dx75lZRvEmMaS97tvgFsyxCaU+SdD+T
-	Bqls7GVjq/TdJtVj/YP6FI5HFkFzQ69DU6fs4+SL/AVHHlyd8lS2kmf3/RudbvzWq4iTcPOeDMh
-	U1YxPudBES3n8GqoRPQQYdD/dyTtxR3Tv39Q9clcFA2nbiqBrWYQ6nO43TJ/t2PwYkd4/ms0MM5
-	nLFeJdqsl1fRdx/iZdIdUzLru9Ukb4/ANZRfIcDgEEmG2qKnLZziUbhEZ9
-X-Google-Smtp-Source: AGHT+IEiUn0mw0Bd+eWTikezNk1J+BkpH25CzT2HWGH+6VVEhsrZO7sZhbdFaQJFJa9fYRGNuchv1Q==
-X-Received: by 2002:a17:907:72c9:b0:afd:d6e0:ee39 with SMTP id a640c23a62f3a-afe295c9153mr1713662666b.50.1756286918192;
-        Wed, 27 Aug 2025 02:28:38 -0700 (PDT)
-Received: from ?IPV6:2a02:908:1b0:afe0:92e9:ef08:4a92:adcf? ([2a02:908:1b0:afe0:92e9:ef08:4a92:adcf])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afe79b08cfasm684913866b.101.2025.08.27.02.28.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Aug 2025 02:28:37 -0700 (PDT)
-Message-ID: <f3ab3c2d-2056-4802-aa73-2b0db4c7fc30@gmail.com>
-Date: Wed, 27 Aug 2025 11:28:36 +0200
+	s=arc-20240116; t=1756286951; c=relaxed/simple;
+	bh=846sVfsuK0Ju7cH3HlNLsCCgiTChNfLu+6T6Fn92+Qw=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=J/J/ykDQrWpy53gBDxQav4n9o3waMRZBkQImm3GuERwci0i64kHGIhVOoirG4tgoQv441MoOFGW68hhJG1uM8WywwUDhuxfof2gdAovaefxDc6+mwr7kOXNIuxpS6JIXSR9NHQRjnxO/56tGc8abxYGOB6T0H2GUYrYxs1NmlsM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cBfNy20slzYQtx6;
+	Wed, 27 Aug 2025 17:29:06 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id C67BC1A09F5;
+	Wed, 27 Aug 2025 17:29:04 +0800 (CST)
+Received: from [10.174.179.143] (unknown [10.174.179.143])
+	by APP4 (Coremail) with SMTP id gCh0CgAncY3ez65oPunVAQ--.55068S3;
+	Wed, 27 Aug 2025 17:29:04 +0800 (CST)
+Subject: Re: [PATCH v3 1/2] md: prevent adding disks with larger
+ logical_block_size to active arrays
+To: linan666@huaweicloud.com, song@kernel.org
+Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
+ martin.petersen@oracle.com, bvanassche@acm.org, hch@infradead.org,
+ filipe.c.maia@gmail.com, yangerkun@huawei.com, yi.zhang@huawei.com,
+ "yukuai (C)" <yukuai3@huawei.com>
+References: <20250825075924.2696723-1-linan666@huaweicloud.com>
+ <20250825075924.2696723-2-linan666@huaweicloud.com>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <e1834dd0-ea69-09cf-82b7-0587ba3f3c3a@huaweicloud.com>
+Date: Wed, 27 Aug 2025 17:29:02 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] staging: gpib: simplify and fix get_data_lines
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: gregkh@linuxfoundation.org, dpenkler@gmail.com,
- matchstick@neverthere.org, arnd@arndb.de, linux-kernel@vger.kernel.org,
- linux-staging@lists.linux.dev
-References: <20250826220502.210485-1-osama.abdelkader@gmail.com>
- <aK6wlcLBN1HclMpl@stanley.mountain> <aK68qXqStIwBrejF@stanley.mountain>
-Content-Language: en-US
-From: Osama Abdelkader <osama.abdelkader@gmail.com>
-In-Reply-To: <aK68qXqStIwBrejF@stanley.mountain>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20250825075924.2696723-2-linan666@huaweicloud.com>
+Content-Type: text/plain; charset=gbk; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgAncY3ez65oPunVAQ--.55068S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxJF1UArWDGr13ur4fuw4Uurg_yoW8GFy8pa
+	97Z3Z0k348AF12k347JFyrAFy5Wws7GrZ7Kry2yr1UXFZxJr17KF4akFZ8Wr1ktan3Ar13
+	XF4UKws7C3WIqrDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBF14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
+	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x
+	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
+	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcV
+	C0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF
+	04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7
+	CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUd-B_UUUUU=
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
+Hi,
 
-On 8/27/25 10:07 AM, Dan Carpenter wrote:
-> On Wed, Aug 27, 2025 at 10:15:33AM +0300, Dan Carpenter wrote:
->> On Wed, Aug 27, 2025 at 12:05:02AM +0200, Osama Abdelkader wrote:
->>> The function `get_data_lines()` in gpib_bitbang.c currently reads 8
->>> GPIO descriptors individually and combines them into a byte.
->>> This has two issues:
->>>
->>>   * `gpiod_get_value()` returns an `int` which may be negative on
->>>     error. Assigning it directly into a `u8` may propagate unexpected
->>>     values. Masking ensures only the LSB is used.
->> Using the last bit in an error code is not really "error handling"...
->>
->> What you could do instead would be something like:
->>
->> 	int ret;
->>
->> 	for (i = 0; i < 8; i++) {
->> 		ret |= (gpiod_get_value(lines[i]) & 1) << i;
->> 		if (ret < 0) {
->> 			pr_err("something failed\n");
->> 			return -EINVAL;
-> I meant to write "return 0;".  It's type u8.
->
-> Also that doesn't work.  The masks and shift mess it up.
->
-> 	u8 val = 0;
-> 	int ret;
->
-> 	for (i = 0; i < 8; i++) {
-> 		ret = gpiod_get_value(lines[i]);
-> 		if (ret < 0) {
-> 			pr_err("something failed\n");
-> 			continue;
-> 		}
-> 		val |= ret << i;
-> 	}
->
-> 	return ~val;
+ÔÚ 2025/08/25 15:59, linan666@huaweicloud.com Ð´µÀ:
+> From: Li Nan <linan122@huawei.com>
+> 
+> When adding a disk to a md array, avoid updating the array's
+> logical_block_size to match the new disk. This prevents accidental
+> partition table loss that renders the array unusable.
+> 
+> The later patch will introduce a way to configure the array's
+> logical_block_size.
+> 
+> Signed-off-by: Li Nan <linan122@huawei.com>
+> Reviewed-by: Martin K. Petersen <martin.petersen@oracle.com>
+> ---
+>   drivers/md/md.c | 7 +++++++
+>   1 file changed, 7 insertions(+)
+> 
 
-We can change the return type to int and propagate the error, so:
+Can you add a fix tag, as data loss is really serious.
 
-static int get_data_lines(u8 *out)
+Otherwise, feel free to add:
 
-{
+Reviewed-by: Yu Kuai <yukuai3@huawei.com>
 
-	int val, i;
+> diff --git a/drivers/md/md.c b/drivers/md/md.c
+> index cea8fc96abd3..206434591b97 100644
+> --- a/drivers/md/md.c
+> +++ b/drivers/md/md.c
+> @@ -6064,6 +6064,13 @@ int mddev_stack_new_rdev(struct mddev *mddev, struct md_rdev *rdev)
+>   	if (mddev_is_dm(mddev))
+>   		return 0;
+>   
+> +	if (queue_logical_block_size(rdev->bdev->bd_disk->queue) >
+> +	    queue_logical_block_size(mddev->gendisk->queue)) {
+> +		pr_err("%s: incompatible logical_block_size, can not add\n",
+> +		       mdname(mddev));
+> +		return -EINVAL;
+> +	}
+> +
+>   	lim = queue_limits_start_update(mddev->gendisk->queue);
+>   	queue_limits_stack_bdev(&lim, rdev->bdev, rdev->data_offset,
+>   				mddev->gendisk->disk_name);
+> 
 
-	u8 ret = 0;
-
-	struct gpio_desc *lines[8] = { D01, D02, D03, D04, D05, D06, D07, D08 };
-	for (i = 0; i < 8; i++) { 		val = gpiod_get_value(lines[i]);
-
-		if (val < 0)
-
-			return val; // propagate error
-
-		ret |= (val & 1) << i;
-
-	}
-
-	*out = ~ret; 	return 0;
-
-}
-
-Then in the caller:
-
-u8 data;
-if (!get_data_lines(&data))
-
-	priv->rbuf[priv->count++] = data;
-
-or we print the error here, What do you think?
-
->
-> regards,
-> dan carpenter
->
 
