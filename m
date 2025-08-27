@@ -1,86 +1,86 @@
-Return-Path: <linux-kernel+bounces-788576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81B5BB386B5
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 17:33:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BA6C5B386B7
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 17:34:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8983618918A0
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 15:33:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E32C41C202B2
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 15:35:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 393102C2347;
-	Wed, 27 Aug 2025 15:32:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A352E2C2347;
+	Wed, 27 Aug 2025 15:34:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wbinvd.org header.i=@wbinvd.org header.b="eqdakVXa"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="kBbOZDtB"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B28C41DF268
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 15:32:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7760156C6A
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 15:34:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756308774; cv=none; b=KXWSAE2jhMuYuhU4Lg3q+jQd+tOnG5UmMgdyhz320KfT/uRwC4MYDv0O602J2++5lgkG2sPBx3EiEsmmrq+8mvsZs5lxq+R7q4ettZKeuWZ8fStsFlVFuqS+ePMIDH8MQq/Fm5253hAy0CxsS0p0C99/UmNGyXRKs+EfQQAuH2g=
+	t=1756308873; cv=none; b=E6TqtbPWZd1OJ8s7cpSg+5xsdR6RbKAR7A9l/BX8Mzan1KhL9feh21Vu9Jq9885vglQq31CCyTQw3WdPGpP5B8IfewML0wFon/NFxbheYkYEEugdGxMzChi3IxmFeXFvqAkqzflDeJsIOgKRVqez06pdSZ4HfJxwVxC0Mgun5Zk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756308774; c=relaxed/simple;
-	bh=P/UMJneckZjggAZT0x9bqgpsXF7fGkyvPGShSvidpPA=;
+	s=arc-20240116; t=1756308873; c=relaxed/simple;
+	bh=ZY8DE2wTTl7bjr8bmAc+o3P+HDSm1Zp6irHyv3+E/3E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pQtWY6xvxG790MLN0geaGoZARcZPsx0WgDF+0Wbnbg+q8VYqtHyRzvZHUtKlv0fwp3gnSqOFuaKc1xirZ4WeVD/2s77qEY675wiwba/kKmrHfJWJD3PiM81lGAMq0HXqSIPkN3n7bgV6Q3KaDlyCCDuKCwJoFZlRnwOS0zBpV40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wbinvd.org; spf=pass smtp.mailfrom=wbinvd.org; dkim=pass (2048-bit key) header.d=wbinvd.org header.i=@wbinvd.org header.b=eqdakVXa; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wbinvd.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wbinvd.org
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-2445824dc27so67248545ad.3
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 08:32:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=wbinvd.org; s=wbinvd; t=1756308772; x=1756913572; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=HkG/57BcwE4Wenob4AVy6xzEYDK8Mso4vqGc1h+KMKw=;
-        b=eqdakVXaik++n7+qHSe+eTr3eTYn7nRaY7RsSkKBC3VEfm2SWM3Qsezp0fdDvkSZi6
-         oYrQvyp+VUmoG46LBWUuEpY3CO1eGp2wWSQbf1H0xMWdVUTCbrSYfs62h/BE+EpkfMwa
-         +uQPgASRvDLnvzsdF1Cu5Zx8LqHxMlXlTbcl1dPzR8u9QmoKx/ts9CykX4I/U1IYRv0X
-         tBVdZXGTXZ7Hp/cGF69Ovni4Y1KNO2OdnDPLdqm9kioreqEBOAmfzn1kNS0qt735PtjR
-         GH8bzq3hrv0Tprqgjfqw8QB906mWG1gkVqd3wlhwIIXvTkcDy7jSjbNdlgcPruJpODLX
-         hCTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756308772; x=1756913572;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HkG/57BcwE4Wenob4AVy6xzEYDK8Mso4vqGc1h+KMKw=;
-        b=CpvpjQoBt+bEkK+0ivm35NgNvbKa0z5gqSMREOoLaFU7ROXhsXasl4dqeGpgTHy1xl
-         nqb219hKSd4OzujoEKaAbbo7WyKTtZwk9+MQEhln3GajKFjrRObgX399ryMKvd4204e7
-         4DNPkTJKGIK7cWmfUN73x+gLlOHBZ0RZBfaCXD7PWNaK5kU9QIWbCL5o9nPH0axeQA7e
-         m2VX3ETW5ZooUV3fncQiBNmID0x7YIFVnV2/DNSKjEZAzoYt1fMSDspjaCdWUXygGSsS
-         +/OfyXlNa7VW9C/h3UOI1ExZFvsy2J7nXIH+MXEHs0Ocy4pRd/CmOdJTshHuNKmUwH32
-         uV6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU6mtAXf0tVGJ3Sjjp02IFvz2HtQ2pnb3M3P/nt3nGKK0jI5e/G1ktljXEKcV8SdDH1q1cOp43PHhVRhQ4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwxIYjEjeN4bXB88H+v0BKIiTOvxlfbRxz+FXORKOz/MhxsVx6G
-	5llJ9jw4GBD+vBoFgcDS1EoDdvVQ6M0eSXtbwWrHdxfCXqA3ITD9emw1bcOQVhfDB7M=
-X-Gm-Gg: ASbGnctYX6MYq/CiI8w5joyu39ob7pKQQtTgmPaiJcteGpO3nWov04AH3M1IJvGoCsr
-	OBE4WzZ8JCM3g9dgZbXYKPxDqRVhnu7dI3YCG/jefhOZs1tGnrRaORWcRFQUurFkJOTaUQBpULO
-	dzdt6gJlqIY3LpzAdY/EgI1hujc2rpcII5EcXi4bT4IgagjaL4FOFiN1/l1HINNJN2/yWOLe6L5
-	SzeXkirIEly/ktHmG6dlnEE0yfWsAER4OfASsCcddPFbLtZaUJvstenex61ex0hrzfAlv+Gb9/u
-	duDMaEWWsrWsqSqhq3O5IDWwTqSudySDoukvRNpci2Vq0ONPgDjUzuriNIOFTUgrXw3FafIHJs/
-	tumu3M0l1l3e3XkQCia0gqSytxrM6ZmBk+dw=
-X-Google-Smtp-Source: AGHT+IFLkgScNI+Yz9Vjrzk4w5lMnNdZBYL3hqwZyQm+Rd3Rkok5tTd8ktpgrIQiDrdDWglqEo7HhA==
-X-Received: by 2002:a17:903:37cb:b0:240:763d:e999 with SMTP id d9443c01a7336-2462ef4c905mr268245105ad.29.1756308771887;
-        Wed, 27 Aug 2025 08:32:51 -0700 (PDT)
-Received: from mozart.vkv.me ([192.184.167.117])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-246687a59b1sm125108945ad.42.2025.08.27.08.32.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Aug 2025 08:32:51 -0700 (PDT)
-Date: Wed, 27 Aug 2025 08:32:49 -0700
-From: Calvin Owens <calvin@wbinvd.org>
-To: Wang Liang <wangliang74@huawei.com>
-Cc: giometti@enneenne.com, mschmidt@redhat.com, gregkh@linuxfoundation.org,
-	yuehaibing@huawei.com, zhangchangzhong@huawei.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] pps: fix warning in pps_register_cdev when register
- device fail
-Message-ID: <aK8lIakmj_5eoPZN@mozart.vkv.me>
-References: <20250827065010.3208525-1-wangliang74@huawei.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Yut2MpKTL/kgh1r0paAA3N9YWU+eyyFUVV1YDjl/PvLYXVVhh2wiKuW+Ur4P6DyHrolatPngfl3bWQ05I8nhQgPfedljc9IyejelKDt/67iRyhdcaiPt9ZYPuV898xwo6192cIOM5cGKyJDKkc+V9dKkUsFC0IAbqvkM4sZWXxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=kBbOZDtB; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 6280340E0176;
+	Wed, 27 Aug 2025 15:34:25 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id oC5_GvpXc-CZ; Wed, 27 Aug 2025 15:34:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1756308860; bh=pP3eqlfkRLypmfm0nFTnGblm5dEJ+RXVRIYwXa6XIQ4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kBbOZDtBwpn9Ez69em/RZo6+406izMEvFehiw8VT4hQzl3BqHfDCcjXQfjuJfVw0z
+	 V9s2MApLnETG8yh4K5fSuqrnIh88cpTBpk8hqcGUfJC7cHXnWbqxoWZoHcxIPKATkr
+	 nlJtz0uFLi4mhTB4xvAHxsMRJhokWDcuhATEEC9eDv0qIUBBPcYWF1RMaRA+xL3d79
+	 X85QplnNBMBq51eSGEGfmtKXKt2por/ucOEiG0U60bfCO/NT3onRbPaMq3lQNuZuqH
+	 +TXaeAhn9VsRsQHR2v1gyT5YSBhjeK9WeYxwK2pRJn9bsssjD9d97CM/uYj4Rz8skY
+	 UCSJCbppp2uc7lzwOZXkRvhVWe8s3QDj9ae7BNsZGemWxdwV7NF9XLHy/bd6OKHyq8
+	 GNZCSJ613PcWnbMUmtJEjGsWeqwA6hIHA6uVRiBvalYhWKh+5Y4Hu5fuILJ2BATxLw
+	 Whp5ySwDs2zqdsCI9JqMZO9pyGg/ynhwJbQCFCNydN4SzpSoEmQjWqZN1wXujqZF9V
+	 rIojhdKW70/N5XnbZP6ZsAhDYKjiYfg7a61x5ZtGgXNntiRnU8JvzC52u2iUSLkxVD
+	 dK9uqiV6UcH50MWPtaA61yP9xpNCnPJQVAj/MlA9uPhNx9XZXTmpP46n8oxBv/p8Du
+	 3gCxvhmITEInC5FMsTz8Jfpk=
+Received: from zn.tnic (pd953092e.dip0.t-ipconnect.de [217.83.9.46])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id A4F9A40E00DD;
+	Wed, 27 Aug 2025 15:34:10 +0000 (UTC)
+Date: Wed, 27 Aug 2025 17:33:58 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: "Kaplan, David" <David.Kaplan@amd.com>
+Cc: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"x86@kernel.org" <x86@kernel.org>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 4/5] x86/bugs: Add attack vector controls for SSB
+Message-ID: <20250827153358.GJaK8lZm3cggYDbw2C@fat_crate.local>
+References: <20250819192200.2003074-1-david.kaplan@amd.com>
+ <20250819192200.2003074-5-david.kaplan@amd.com>
+ <7vo33zwvn2wz74fg7wuflrr2gnhlkn7hwaziuzkk7brrp2morh@ltbtredcwb5x>
+ <20250827102754.GHaK7dqivnNnQsWGeS@fat_crate.local>
+ <20250827110403.GFaK7mIxwsQ9IF7ML8@fat_crate.local>
+ <LV3PR12MB92655023C50A92BE30D7A8049438A@LV3PR12MB9265.namprd12.prod.outlook.com>
+ <20250827142225.GIaK8UoYo-rnR9T2OD@fat_crate.local>
+ <LV3PR12MB9265934929BC29E635C39EDD9438A@LV3PR12MB9265.namprd12.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,87 +89,127 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250827065010.3208525-1-wangliang74@huawei.com>
+In-Reply-To: <LV3PR12MB9265934929BC29E635C39EDD9438A@LV3PR12MB9265.namprd12.prod.outlook.com>
 
-On Wednesday 08/27 at 14:50 +0800, Wang Liang wrote:
-> Similar to previous commit 2a934fdb01db ("media: v4l2-dev: fix error
-> handling in __video_register_device()"), the release hook should be set
-> before device_register(). Otherwise, when device_register() return error
-> and put_device() try to callback the release function, the below warning
-> may happen.
-> 
->   ------------[ cut here ]------------
->   WARNING: CPU: 1 PID: 4760 at drivers/base/core.c:2567 device_release+0x1bd/0x240 drivers/base/core.c:2567
->   Modules linked in:
->   CPU: 1 UID: 0 PID: 4760 Comm: syz.4.914 Not tainted 6.17.0-rc3+ #1 NONE
->   RIP: 0010:device_release+0x1bd/0x240 drivers/base/core.c:2567
->   Call Trace:
->    <TASK>
->    kobject_cleanup+0x136/0x410 lib/kobject.c:689
->    kobject_release lib/kobject.c:720 [inline]
->    kref_put include/linux/kref.h:65 [inline]
->    kobject_put+0xe9/0x130 lib/kobject.c:737
->    put_device+0x24/0x30 drivers/base/core.c:3797
->    pps_register_cdev+0x2da/0x370 drivers/pps/pps.c:402
->    pps_register_source+0x2f6/0x480 drivers/pps/kapi.c:108
->    pps_tty_open+0x190/0x310 drivers/pps/clients/pps-ldisc.c:57
->    tty_ldisc_open+0xa7/0x120 drivers/tty/tty_ldisc.c:432
->    tty_set_ldisc+0x333/0x780 drivers/tty/tty_ldisc.c:563
->    tiocsetd drivers/tty/tty_io.c:2429 [inline]
->    tty_ioctl+0x5d1/0x1700 drivers/tty/tty_io.c:2728
->    vfs_ioctl fs/ioctl.c:51 [inline]
->    __do_sys_ioctl fs/ioctl.c:598 [inline]
->    __se_sys_ioctl fs/ioctl.c:584 [inline]
->    __x64_sys_ioctl+0x194/0x210 fs/ioctl.c:584
->    do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->    do_syscall_64+0x5f/0x2a0 arch/x86/entry/syscall_64.c:94
->    entry_SYSCALL_64_after_hwframe+0x76/0x7e
->    </TASK>
-> 
-> Before commit c79a39dc8d06 ("pps: Fix a use-after-free"),
-> pps_register_cdev() call device_create() to create pps->dev, which will
-> init dev->release to device_create_release(). Now the comment is outdated,
-> just remove it.
+On Wed, Aug 27, 2025 at 02:25:26PM +0000, Kaplan, David wrote:
+> Ok.  Then I would go with the suggestion in my reply...move the
+> should_mitigate_vuln() logic into the SPEC_STORE_BYPASS_CMD_AUTO branch of
+> the switch.  I think that should work as expected.
 
-Hi Wang,
+Makes sense...
 
-I'm curious why pps_register_cdev() is failing, is there possibly a
-second issue to investigate there? Or was it fault injection?
+> Rest of the patch was fine I think.
 
-Otherwise, makes perfect sense to me. I'm new to this code, so grain of
-salt, but since I exposed it:
+Here it is - I *think* it looks good now but doublecheck me again pls.
 
-Reviewed-by: Calvin Owens <calvin@wbinvd.org>
+Thx.
 
-Thanks,
-Calvin
+---
+From: David Kaplan <david.kaplan@amd.com>
+Date: Tue, 19 Aug 2025 14:21:59 -0500
+Subject: [PATCH] x86/bugs: Add attack vector controls for SSB
 
-> Fixes: c79a39dc8d06 ("pps: Fix a use-after-free")
-> Signed-off-by: Wang Liang <wangliang74@huawei.com>
-> ---
->  drivers/pps/pps.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
-> 
-> diff --git a/drivers/pps/pps.c b/drivers/pps/pps.c
-> index 9463232af8d2..0d2d57250575 100644
-> --- a/drivers/pps/pps.c
-> +++ b/drivers/pps/pps.c
-> @@ -383,13 +383,11 @@ int pps_register_cdev(struct pps_device *pps)
->  	pps->dev.devt = MKDEV(pps_major, pps->id);
->  	dev_set_drvdata(&pps->dev, pps);
->  	dev_set_name(&pps->dev, "pps%d", pps->id);
-> +	pps->dev.release = pps_device_destruct;
->  	err = device_register(&pps->dev);
->  	if (err)
->  		goto free_idr;
->  
-> -	/* Override the release function with our own */
-> -	pps->dev.release = pps_device_destruct;
-> -
->  	pr_debug("source %s got cdev (%d:%d)\n", pps->info.name, pps_major,
->  		 pps->id);
->  
-> -- 
-> 2.33.0
-> 
+Attack vector controls for SSB were missed in the initial attack vector series.
+The default mitigation for SSB requires user-space opt-in so it is only
+relevant for user->user attacks.  Add an AUTO mitigation for SSB and use this
+attack vector control to select the SSB mitigation.
+
+Fixes: 2d31d2874663 ("x86/bugs: Define attack vectors relevant for each bug")
+Signed-off-by: David Kaplan <david.kaplan@amd.com>
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+Link: https://lore.kernel.org/20250819192200.2003074-5-david.kaplan@amd.com
+---
+ .../admin-guide/hw-vuln/attack_vector_controls.rst  |  5 +----
+ arch/x86/include/asm/nospec-branch.h                |  1 +
+ arch/x86/kernel/cpu/bugs.c                          | 13 ++++++++++++-
+ 3 files changed, 14 insertions(+), 5 deletions(-)
+
+diff --git a/Documentation/admin-guide/hw-vuln/attack_vector_controls.rst b/Documentation/admin-guide/hw-vuln/attack_vector_controls.rst
+index 6dd0800146f6..5964901d66e3 100644
+--- a/Documentation/admin-guide/hw-vuln/attack_vector_controls.rst
++++ b/Documentation/admin-guide/hw-vuln/attack_vector_controls.rst
+@@ -215,7 +215,7 @@ Spectre_v2            X                           X
+ Spectre_v2_user                      X                           X            *       (Note 1)
+ SRBDS                 X              X            X              X
+ SRSO                  X              X            X              X
+-SSB                                                                                   (Note 4)
++SSB                                  X
+ TAA                   X              X            X              X            *       (Note 2)
+ TSA                   X              X            X              X
+ =============== ============== ============ ============= ============== ============ ========
+@@ -229,9 +229,6 @@ Notes:
+    3 --  Disables SMT if cross-thread mitigations are fully enabled, the CPU is
+    vulnerable, and STIBP is not supported
+ 
+-   4 --  Speculative store bypass is always enabled by default (no kernel
+-   mitigation applied) unless overridden with spec_store_bypass_disable option
+-
+ When an attack-vector is disabled, all mitigations for the vulnerabilities
+ listed in the above table are disabled, unless mitigation is required for a
+ different enabled attack-vector or a mitigation is explicitly selected via a
+diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/nospec-branch.h
+index 10f261678749..e263c126723a 100644
+--- a/arch/x86/include/asm/nospec-branch.h
++++ b/arch/x86/include/asm/nospec-branch.h
+@@ -514,6 +514,7 @@ enum spectre_v2_user_mitigation {
+ /* The Speculative Store Bypass disable variants */
+ enum ssb_mitigation {
+ 	SPEC_STORE_BYPASS_NONE,
++	SPEC_STORE_BYPASS_AUTO,
+ 	SPEC_STORE_BYPASS_DISABLE,
+ 	SPEC_STORE_BYPASS_PRCTL,
+ 	SPEC_STORE_BYPASS_SECCOMP,
+diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+index 49ef1b832c1a..7b4b43aabd18 100644
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -416,6 +416,10 @@ static bool __init should_mitigate_vuln(unsigned int bug)
+ 		       cpu_attack_vector_mitigated(CPU_MITIGATE_USER_USER) ||
+ 		       cpu_attack_vector_mitigated(CPU_MITIGATE_GUEST_GUEST) ||
+ 		       (smt_mitigations != SMT_MITIGATIONS_OFF);
++
++	case X86_BUG_SPEC_STORE_BYPASS:
++		return cpu_attack_vector_mitigated(CPU_MITIGATE_USER_USER);
++
+ 	default:
+ 		WARN(1, "Unknown bug %x\n", bug);
+ 		return false;
+@@ -2619,7 +2623,8 @@ void cpu_bugs_smt_update(void)
+ #undef pr_fmt
+ #define pr_fmt(fmt)	"Speculative Store Bypass: " fmt
+ 
+-static enum ssb_mitigation ssb_mode __ro_after_init = SPEC_STORE_BYPASS_NONE;
++static enum ssb_mitigation ssb_mode __ro_after_init =
++	IS_ENABLED(CONFIG_MITIGATION_SSB) ? SPEC_STORE_BYPASS_AUTO : SPEC_STORE_BYPASS_NONE;
+ 
+ /* The kernel command line selection */
+ enum ssb_mitigation_cmd {
+@@ -2710,6 +2715,11 @@ static void __init ssb_select_mitigation(void)
+ 		ssb_mode = SPEC_STORE_BYPASS_DISABLE;
+ 		break;
+ 	case SPEC_STORE_BYPASS_CMD_AUTO:
++		if (should_mitigate_vuln(X86_BUG_SPEC_STORE_BYPASS))
++			ssb_mode = SPEC_STORE_BYPASS_PRCTL;
++		else
++			ssb_mode = SPEC_STORE_BYPASS_NONE;
++		break;
+ 	case SPEC_STORE_BYPASS_CMD_PRCTL:
+ 		ssb_mode = SPEC_STORE_BYPASS_PRCTL;
+ 		break;
+@@ -2935,6 +2945,7 @@ static int ssb_prctl_get(struct task_struct *task)
+ 		return PR_SPEC_DISABLE;
+ 	case SPEC_STORE_BYPASS_SECCOMP:
+ 	case SPEC_STORE_BYPASS_PRCTL:
++	case SPEC_STORE_BYPASS_AUTO:
+ 		if (task_spec_ssb_force_disable(task))
+ 			return PR_SPEC_PRCTL | PR_SPEC_FORCE_DISABLE;
+ 		if (task_spec_ssb_noexec(task))
+-- 
+2.51.0
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
