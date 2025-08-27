@@ -1,202 +1,179 @@
-Return-Path: <linux-kernel+bounces-787564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83CF1B377EB
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 04:34:26 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52AC4B37835
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 04:38:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78EAA1B68C40
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 02:34:46 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DDDDE4E3A57
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 02:38:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32DEE2749F0;
-	Wed, 27 Aug 2025 02:33:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AA5527A442;
+	Wed, 27 Aug 2025 02:38:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=amperemail.onmicrosoft.com header.i=@amperemail.onmicrosoft.com header.b="f3n6lwTT"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2099.outbound.protection.outlook.com [40.107.244.99])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oYr5Pzp7"
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 788E627815D
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 02:33:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.99
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756262023; cv=fail; b=GfEMO1dJ6BE3JMIj6COIunevCgnzhMlpcbHOxFS3L5/XM2b9fJwQ0wlzETEdRPqiOhAQsas7A1wKtoVg5IpIYnNc7HfDJvfT8Ath4xsD9tzgyMztmNoDOObfR8s0LNplyp72Riw1mN0Xmzx9d043nPeTsQEd6lnZJAkZH2AjmYw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756262023; c=relaxed/simple;
-	bh=46QbwAgoHb7PHA2TBpTgRRLmjmawfObILOdyJt7fNQw=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=igVGFBR/qBs1x0eU4EeQnk8osP0KHCaaHtgYfpdpV+qhNbx4g9UnVDAmgm/C7/OgPWb1V2LkjK8Gd1VVhaA5dI6xTvSwoz2ExlwlCzOLyy1IUULRT6QP88JaW4KTdKyk27WsGSPQX3g/z8WgWEs2qBQiFgEGmEsQroVHF6Hybi4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amperemail.onmicrosoft.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=fail (0-bit key) header.d=amperemail.onmicrosoft.com header.i=@amperemail.onmicrosoft.com header.b=f3n6lwTT reason="key not found in DNS"; arc=fail smtp.client-ip=40.107.244.99
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amperemail.onmicrosoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=M24BIken1YUKCQPjpynsJ0ciGE6LpIPP0oYyMsuCL1sOLUs2rayWDgtWflM+8tLM4flDdLpO13MpzndhsMozxzUcs8CJoxqhdjRVuypGKRBy+wRrnZBAGwlJzrFdbg8TfqIvg4NdxG3dJ3Hxx292tD9jojQCp6nJSTPqP10SFDthCrMEg3wt//q2LOcGfMKGC3wimHvnXNNtXU1qiJD3Hta5lDg+eeNQwvWnTj35rRCmn/qyjW8X/wnu7j9bRQkNIWWxJGeKVgxfQnNxE53+els1rsy9AvPmxU+RQ+ciEWmfQioMkWkLAUTE+ysUd8QNpghNHEY4/3/sp5wAdydI2g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=VLUwut5H8H8DiuRbIgspuynN299/oUqNzpjASEEVhdM=;
- b=afTuFEAVHdeDMp/Fv0/vDzgkX6tr4jW3PALhx+DWUXYy3zNejprL7fFgkl1n06lz9519TER1O+DCdY+xBJVNwejEBwH40KErgH0ct9++1zonO1xyDqQ9sc1MZiNtY7TAcKRkujmgyX9RskaWWvt7O7YhAvp/36rbibjP60+o/6f/1GyvtHzKkPYiB+hZeqi0bxd9Vr8c78IMx4QX4W39bx8Dj2uWlAr7sBN8IeqqA6B4x0xZZd+61XvO/xP8QB0hRQOEJY3e0TEIqWSCuIQKyDDEEVnouscCVp6mIHOXM+eg9UF1lLert/QQLSoHXhShYKUuVsyiyQWcyVa1SphayA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
- header.from=amperemail.onmicrosoft.com; dkim=pass
- header.d=amperemail.onmicrosoft.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B76D279DDC
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 02:38:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756262298; cv=none; b=smqaLd6ip7PHYZqwjDfNOfKyzbfFQN1VDynZYTU8mBOp9ZpjyN0VNJc8ajzfj8uYUM7/0dJBmjAutSlcntvh42r/ttzxwfMlZXSP0NZOxZql0XHrMtnnoj2LKCppCpf8EKqDG8v40+zmnXFIrpmuOV8hAy6IZa1Gf6bvyzYRN6Q=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756262298; c=relaxed/simple;
+	bh=5wxJCGpIeokObW2E4VfhvhJc7jVk8a0u10rPoZD+5Yc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=El9u+jwAxMXvbv/agHFgE29GKuZiWS4MyGJ2iTe8pB1eyrTjN0DZRtk1dXv7jF0EMK2M+CB3ev5V6TaW63DudlYfeotlOLHv3O18N4wBofLFe9smyjwKlMnxr6ilLy5hFZ1h1N7yBnvAdoN5c14/EQoPqYDP3h5LihknXDlQp/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oYr5Pzp7; arc=none smtp.client-ip=209.85.160.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4b2f497c230so21451cf.0
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 19:38:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amperemail.onmicrosoft.com; s=selector1-amperemail-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VLUwut5H8H8DiuRbIgspuynN299/oUqNzpjASEEVhdM=;
- b=f3n6lwTT9eYudIJ/UMYx8nuBC9Rm226V6gYYlUtC+vTUT8luOPqhiFG2dEuTyp0z3jbO15pH/5WIo3TlPK4YTkjw81iuyaydq44xYogGsUIe8fpIGo+xay8xsk1h3TAz9QY1mxlHyMKmd0eAvX2DdM3jYA22mba59cGh0iB/sJc=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amperemail.onmicrosoft.com;
-Received: from PH0PR01MB7975.prod.exchangelabs.com (2603:10b6:510:26d::15) by
- DS7PR01MB9185.prod.exchangelabs.com (2603:10b6:8:24e::17) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9073.13; Wed, 27 Aug 2025 02:33:37 +0000
-Received: from PH0PR01MB7975.prod.exchangelabs.com
- ([fe80::6926:a627:118e:8050]) by PH0PR01MB7975.prod.exchangelabs.com
- ([fe80::6926:a627:118e:8050%4]) with mapi id 15.20.9052.019; Wed, 27 Aug 2025
- 02:33:37 +0000
-Message-ID: <bdfdc220-63d8-45ff-a475-41a6a63e61ff@amperemail.onmicrosoft.com>
-Date: Wed, 27 Aug 2025 10:33:17 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: defconfig: enable CONFIG_SCHED_CLUSTER
-To: Sudeep Holla <sudeep.holla@arm.com>, Jeremy Linton <jeremy.linton@arm.com>
-Cc: "Christoph Lameter (Ampere)" <cl@gentwo.org>,
- Huang Shijie <shijie@os.amperecomputing.com>, catalin.marinas@arm.com,
- will@kernel.org, patches@amperecomputing.com,
- Shubhang@os.amperecomputing.com, krzysztof.kozlowski@linaro.org,
- bjorn.andersson@oss.qualcomm.com, geert+renesas@glider.be, arnd@arndb.de,
- nm@ti.com, ebiggers@kernel.org, nfraprado@collabora.com,
- prabhakar.mahadev-lad.rj@bp.renesas.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <e47757c3-6091-43b5-ba28-52e11de7d86a@arm.com>
- <cb383a76-8848-44cd-6f32-fd30478d9ebd@gentwo.org>
- <2d9259e4-1b58-435d-bf02-9c4badd52fd9@arm.com>
- <20250813-gifted-nimble-wildcat-6cdf65@sudeepholla>
- <d172f30d-28ad-dd46-1385-f010107bc789@gentwo.org>
- <c45b13b9-52ae-a52b-ce39-77f7ebe09507@gentwo.org> <aJ20imoeRL_tifky@bogus>
- <97278200-b877-47a6-84d4-34ea9dda4e6b@gentwo.org>
- <20250815-pheasant-of-eternal-tact-6f9bbc@sudeepholla>
- <1097a1d1-483d-44b3-b473-4350b5a4b04d@arm.com>
- <20250818-mysterious-aromatic-wasp-cdbaae@sudeepholla>
-Content-Language: en-GB
-From: Shijie Huang <shijie@amperemail.onmicrosoft.com>
-In-Reply-To: <20250818-mysterious-aromatic-wasp-cdbaae@sudeepholla>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: TYCPR01CA0142.jpnprd01.prod.outlook.com
- (2603:1096:400:2b7::11) To PH0PR01MB7975.prod.exchangelabs.com
- (2603:10b6:510:26d::15)
+        d=google.com; s=20230601; t=1756262296; x=1756867096; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5wxJCGpIeokObW2E4VfhvhJc7jVk8a0u10rPoZD+5Yc=;
+        b=oYr5Pzp7BqAnNyTJ16GPaJZqA9hAcFN81I7W2fHA0j93Aani4l51pCvg3PA7MOmx9J
+         pfjnCR/XJQAupRDreLJjBdylJfmqgs3u6Ii+kr2ZKOCDESvWjH4g7f91F+dNJ1hjdLBP
+         8D4ZWD2XpYQjx16WIcJO0t4SIK3x5Y3NaOBKRERbrETVt2ivhnagYu3f8xIo8p7P+j9P
+         3OB/gKpO+uxtG53r/AWKjTzZvBHXYD/O0gkExgVMoFf428TJ/0yQP9XQbiD4romNKN+k
+         OhazvQN+ie6xn0+eVHkdVHNSkXaJrtSehrNfCXrTkSJ612EsNKf+6S1Iji6F0D8TqDxY
+         TNXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756262296; x=1756867096;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5wxJCGpIeokObW2E4VfhvhJc7jVk8a0u10rPoZD+5Yc=;
+        b=Ig3iNLPshWyaow/7Xib7TupigvW1FStgGXCNjrRQ9KrPTwWZC1fTMRA2TXX3gtC2IW
+         wCE2yQ3trrmfVlYcNW1lV5S/nm3dE8QuYuXHa0GG+w/EmCSIMek0jz+HlXccVo7odhzh
+         dHcyJAeVxyzzJyliK3fe9l4+j9v4/zK6cRLpxjFjU4jMGrf95f6wcLZ4eg4uIe3sUPex
+         +qS9wLlVco5XuzUffKUhqkiZkon4PZms7f8S/thFw1fvhODmBlCRpUDSugAqBlOel63+
+         SDOLGOsVyHna1bYJ/HPBQl5r9LA7MMXQhMEyUvmQwRf5GUhJuKMzqw1NTuAK1MM7RlvC
+         SZ3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWUAXgHn/RI375+KAu/wtYxeS3Y2TfB/qSa4xsO9sL4n4h1nbf/zz68c2tYIuLXxASer0e1Xeac3FAWMFs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTeMEkLYK9fGeqqK1XTGMLsjOCStgRMruHD4CzWWlkJDsqlOAR
+	7fARulrMwdH2piDczEVeefJZ2THgpH8vq7knc9jsPnCl3DXe8m0UgGPm3s46IOItJqgj5Zzr0OY
+	EdNJ+zwk3Z7nfpimksX1ibyTKZRQ470ETmA6XH1Y/
+X-Gm-Gg: ASbGncs9nPRxWeoKmXKeqMxKMz8wwVXtiFitE4zlbiJFvB7m7NMHW6IPMd5r8/K70Ad
+	lGKG86cYiJVOerXV/VwKjP1/Pv/6PSorsOSQy6uRDE3eOo1o9UQmGrJ8EWmdSyL18D8OQam0NWG
+	aNSlC55BYEQ5q4IQhpEFDuh/4XFF2sgkg3jtXOK08jeDoGExuOMK6TF3JgowvDNot7CMmiNenyg
+	3DCJtPgLFk1
+X-Google-Smtp-Source: AGHT+IHkXZk/TosAVwTj41F6DTvN5Ue1gIpGD5Bd+VRvHsa7ptTA61c4W57PBx0gyetDnfjQBN0szf7LJNkOGJNQTr0=
+X-Received: by 2002:ac8:5dd1:0:b0:4b1:1ba4:208 with SMTP id
+ d75a77b69052e-4b2e1d2adcbmr9920991cf.12.1756262295493; Tue, 26 Aug 2025
+ 19:38:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH0PR01MB7975:EE_|DS7PR01MB9185:EE_
-X-MS-Office365-Filtering-Correlation-Id: b1a53515-c426-4684-5bd3-08dde5122063
-X-MS-Exchange-AtpMessageProperties: SA
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?TEhyc3Z4RWpWVnkreXgwUG9HN3hqd1M2R3IzZ0JuZ2xkVFZyNWV6QnFsZ2JB?=
- =?utf-8?B?WG82RDBhRGNBRXhGczFWNjRqbEE3K09zZzB0ODV0anRQOHMzWG9kTW5HOVFU?=
- =?utf-8?B?bUhmNTdqTldFVHJSWjV2bjB2aXR6ajJaY3lBOE90U1hBRE40eVRDMUVsMVpp?=
- =?utf-8?B?cHVTeEp5SU9IWnJKaE4veHRiRUxQeU5sQy9xTzZ1VSt3K3I0S2dEanFzSjBm?=
- =?utf-8?B?L1N0aU5OTWxmak5pdGVWY2hvQlRka1Frc2RBeDg1MXlocUVMUFI1Zllpb3hk?=
- =?utf-8?B?eHJXQ1cwanF3eWw5Umw3Uzh5YjN6ZE8za3JybHhjcmR3Wkgvd1N1Q0QxZGUv?=
- =?utf-8?B?RkFQeUVjc01IamRISFBZa3lSZzFabktrYWE2dUI4SlJTNGNYQXErS1RMV25B?=
- =?utf-8?B?SW5QVVgvc0d5R2JwMllWRlZvZDhJeWFoTmpCRzlwMjd4VjJhUmhYT0dERmlp?=
- =?utf-8?B?MGxvcDZUNUUxN245K3B6cWpiRy9jVFArVWpPT1h5VldvdDd6cVNGMGFJSTFu?=
- =?utf-8?B?WFc1Z082MUR2SjZ4bTZkcEx0SFlKdGNOcitVM2l4MjFlVEFWTWlSdE5KRjVY?=
- =?utf-8?B?NU9KdGJaWk5FbFlyTlNEQW40WVc3L00xSit5RCtJWEdQdmFxL05QTFdvTUpU?=
- =?utf-8?B?YUVJbVJDcHdIRTVVR2tqUElSOWxRZ1AyeEY2L1lJeEppd3BJNTg0T3h6aVdM?=
- =?utf-8?B?d213TkF5bXlmeE5kbDhvcGFpVDREQ01DdHErNXd3bnRGTG0xaU8yZ0JXVjdi?=
- =?utf-8?B?RGZSZmhWMVJISjhuYTlMaGlTaU1LT0JoVjFMSVFwOFFibk5EVGkvVTk2bDQ5?=
- =?utf-8?B?RzdkczJrckFKaDBPL3gvUlZodjJ1K1Z5OTdZQWtsVXhaQjZZci9IQ0tTMkwx?=
- =?utf-8?B?VFFMM1o2bEpEMitBSC90WEs3ZUI0Nm14d2pDZGgrSE9JcjVGUXBvSUU2OFp4?=
- =?utf-8?B?NWhWaGdKSmFvUjZZVTc4NSswaG91bGR0aHo2L3piRkJrWjc3a0pxeHRsT2JG?=
- =?utf-8?B?MTBodU1ZTDJ5eE51ZW1zSTZCc2dKM25KdUdnWEJwYXE2Z2RVQnRRNXVJbUZV?=
- =?utf-8?B?VStFbUQzR25BN0JBK1dxd2s1VGd3VEswWWxObzJWV2RTWW84T1loSUhLUFZM?=
- =?utf-8?B?UlN5QnFGQ1dwcmJTUCtURkhFRm42c0JMNkcrUHVUaFpQQk04QUxjR1ZWNjF4?=
- =?utf-8?B?UjVBQWhubHJyVlRpVW1PZENSb3hPZ1FTSi9qNnNzM1p5d2ZGQ0VhYThJcXIy?=
- =?utf-8?B?ckQzN1lZL3EyNHM1TGZEb2tzemxZTGlIWTF0OXl3eHcrNnlua1VHUTJoV1A4?=
- =?utf-8?B?dUFKV1BIa0RIU2IyZk84bFAreTJHRHFEY0kyNUxxN0lwdkgxei9zdDEyemFR?=
- =?utf-8?B?MG80ay9YSTZFMmhRa0VLcm9WWnZkU2t2YXloM1U3YUYySUN2djYwTEtYdjY5?=
- =?utf-8?B?UjhWbzRhak5QRFovSWhnU0I1ZUdTQlhNWDJJVkw5MUszNEVoS0FkWTRJWXhu?=
- =?utf-8?B?TFAyOWdsd1FQZm1zTjZlb2pMMFd2VlNQZXRPQ3FrcGlFTGFwWEVZUDJpZ28z?=
- =?utf-8?B?dGZ5ZmN5TVczWWNWcW1SRjVFYjZPaFp1a0psQ2JYWWVLL0ErL3F4czVvM29C?=
- =?utf-8?B?d1NzcEpVUW80WmpvZ2NGVjJYc1hHY2hNdWZtcVhBRk1qRjQ4L05Ud2pRRnpH?=
- =?utf-8?B?eDloM2k0aXRvOVdoNXBNZjFXQ3U1VjhFcTNKeXRpUTBMMFc2SkhYdDUxUS9Z?=
- =?utf-8?B?VWNaNGFPc2tvb2dFSnpYWGJ3UVFuNlB4cWo3YlhSaGZjWFFKWGdxWCtDdXha?=
- =?utf-8?Q?f22F5ulqfDBGekWtGk/Bqn9VedkC3D3lZTKaA=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR01MB7975.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?SFM4Kzh1OWQ2NDBwd2RVV3FaN2MvQm5UL2wxYVhFOEtOVjVYLzI3NVVLTlZC?=
- =?utf-8?B?TFA4dW44UmVvaTRBc244bWRrYm1PeWpjN2JBa2tLeXI3bk1vQjdpVisxR1g4?=
- =?utf-8?B?RE1Oa2MyYXVYYktNeXN5VnVUZFpuWlJRQ2ZySW1GWFlsL2tNWjZ3MVRxdkJt?=
- =?utf-8?B?ZmJpYjRsRTRieFdSOHB0d0xFd0pmcmFMYUMrTENkU2JBRlYzenk0ampIT3ds?=
- =?utf-8?B?dCt1VkxuZmdKdEtseVp3OUtvVWtNRTdOcnpxbWtkR3piSjFxNjBpZE1hdGxa?=
- =?utf-8?B?OTVVTndBeEpBc0Exdmd1amZYNVVpSnovdEhUemluaG0xbkJybUI0MFdjT010?=
- =?utf-8?B?UUZXb3JrWkk4SWFWVEo2d0E5em5BT3QvMXpHRTNnQTUrVG1KRkJvTFdWTzlq?=
- =?utf-8?B?RUpTWjl6Q1Q2d2xUL2Nrb3VxYkh4bjJIVXlCbFdEZVhUanBJZEtUOW5pd0lq?=
- =?utf-8?B?RTFTb1g4TTF6SXRvTjNFcFF3ZllGVnpzUGRvb3R4RVFKMjZIaVY4ZFBMTjBl?=
- =?utf-8?B?bExRMjZzaS9UWSt6angvV0kvdTE2N1ZaMStvMVZOTDc4Q0lGbkhLQkNsaXdZ?=
- =?utf-8?B?MzZHUFVGNEM4bHFGOVc2dGFIUWpZK0Q1S1V1Z0FKb21XZmkyZllwNzVsWm83?=
- =?utf-8?B?Y0dmZVVLL2p3eG5xaU1wYUVPdnJBY1Q3V1FKMkJra2RnMXBENHR0bkl6ZmxB?=
- =?utf-8?B?SUE0MEFWcDI3M1pHSU43bG5sNDh5TDVBdmkyU0RoM0NBMHZqYUNFM29MQVh6?=
- =?utf-8?B?dmVLRVcvTW94TE9TREtwUlBOWHplVlpIck0rRWxWOUJxcDI1NmtscFBUSWlo?=
- =?utf-8?B?dHYycU05NFRQUTFCK0NhMTJCSEhiMElaenJKZytGOXVXMmgwTXRDYTFReVg4?=
- =?utf-8?B?aTBQcjJFSEVza08rYnFSZHlBRThZRU96Zm92cm5oRVVaRUx6ZjNwZ3FBbG5B?=
- =?utf-8?B?N0ljUTk1dW03cXZXK3dBTVByemRNaUpsSkRkeXNrK1FMbGNRSWhieTFGSDVy?=
- =?utf-8?B?VVRkSDZuckNwT2F2R0w4dzFkcjBVcjd6V3BnRDQxQVE1VEhDYmNYdnUrTm9u?=
- =?utf-8?B?dnJiZll4VkhES0RQMndGUWpjMXpFQzE2UzlGcDQ2aDJicTgzcXlWcERsbENj?=
- =?utf-8?B?VmUxbFZ1Uk85SFFpa1I5SFIzYzkxSXJHV2QvYm1ncEl5NlVsYUZrZmk5NHVG?=
- =?utf-8?B?cldlWFRyTEVQcnlSV3Qrd1VKR0hwM1NVcldvUkRWVUFodDBUbnYyYlhQWU1Q?=
- =?utf-8?B?Y05vWXNTNTFuVW1wL0ROYmZTakFzeEhOUXIxamhRSHNHRGMvK2paMmNZMWZx?=
- =?utf-8?B?MG5xbFE4bXdUeWRhYlgxZmR2NE5uRHNTZjZIUFBnaVNWb3dDVmlUMEQ4OW9I?=
- =?utf-8?B?c1hNMm1VeGhtSkYzajJCOXlNMndUUGxDSkN6S0EyTW11MzN4endhKzdLdWZt?=
- =?utf-8?B?Tk4rN2t4N0NJKzNsZ3ZyNGRVSWE5aTZnSm1SS1hVejRiTDNsK1R3RG5oZm84?=
- =?utf-8?B?cjhNLys0NjRuejRZQ2E5NFJYSnNyK2F2WEYvQkIrMTZvaXc2OTRZT28vOUZv?=
- =?utf-8?B?c1lFb3QrS1pndmt3MXFsMzlBNHMwUVVjbTNUWmgybERaRlRIKzZXU1M2Q0dr?=
- =?utf-8?B?cjFQcm5wdWFuOUI3YzUrcEh3Vms3QnMxTXVhd3VFZ3BWQ2hzczdhMm1DOXVL?=
- =?utf-8?B?K1RLa2Z3dHR3UXA4OEYySGpUMTFxeU1CYjNFejF4WmlxTmFFRDlCUFp3Ymtj?=
- =?utf-8?B?V3cwUlZ4LzRycWc3QlhMOUpGNG5TS2VjNmFoQndKaUNlMG1oQk1BZFhzVUVt?=
- =?utf-8?B?aktEaTUwczdyN0JWRzdKVExDeGNUd2V6Y1E2a3ZheEl0WU1Vd2huWGhFT3Vq?=
- =?utf-8?B?V3o1d1dCUDRpa2Q1UTl1WW1sNWg3UlBxeitBQ0NaMnNhMm1SMzhQRWZnY09T?=
- =?utf-8?B?aVJkR2lNcHNqaU11aE1EVEZHcE5FNHJ3S090V1hXOGhObTZTT0g4SnRDZHdB?=
- =?utf-8?B?OEwvRG5peHh3aDVQS3ZNUTZ2dG1VRm0xVTJ0MjVEaldVeVdvOE95dFcweHg3?=
- =?utf-8?B?RlNlQUZQNW13TTVhM0QzajZjRFF2VEZKU2tHV3lQajV5WkpOYlRKRkJqNHps?=
- =?utf-8?B?elR4c3ZET2hocWIyWVBJZHNrWE90d01pQ1kvWmY1SnVxbVhNSDJuTkc4Qkdh?=
- =?utf-8?Q?fTQoUcz2RX68nMMlwjtvTfA=3D?=
-X-OriginatorOrg: amperemail.onmicrosoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b1a53515-c426-4684-5bd3-08dde5122063
-X-MS-Exchange-CrossTenant-AuthSource: PH0PR01MB7975.prod.exchangelabs.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2025 02:33:37.6658
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: M/qFNfpxiW72qwjp7KkNwBSg6391fwo0psXQCCTPIO0Xb4qU7uiRYDTz5MPBP2ZOB0EE8PDX7PGmmDbK/i9Qwv2k2XOKDh2OFosnYnqqSmDpCtMPYx52L/ryOfXyTAuh
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR01MB9185
+References: <cover.1755190013.git.pyyjason@gmail.com> <6qu2uo3d2msctkkz5slhx5piqtt64wsvkgkvjjpd255k7nrds4@qtffskmesivg>
+ <aKdw6Pkj2H4B6QDb@devbig569.cln6.facebook.com> <tiwa6wnkdf6q2pfchxbbqb6r42y7moykqumvnzauckhavyemg2@zc5haja5mlxs>
+ <aK2/Vesgr9Xcl5gy@devbig569.cln6.facebook.com>
+In-Reply-To: <aK2/Vesgr9Xcl5gy@devbig569.cln6.facebook.com>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Tue, 26 Aug 2025 19:38:03 -0700
+X-Gm-Features: Ac12FXzR8HgXh88Fj0tWSjUnqZsqYDqw6O3AKBz5yz6NGnFo6aufDqeqpkJm6Y0
+Message-ID: <CAJuCfpHJMSd16j3ANrtJGVfLieHdeO_Epq=U9OKty3TV362ckQ@mail.gmail.com>
+Subject: Re: [RFC 0/1] Try to add memory allocation info for cgroup oom kill
+To: Yueyang Pan <pyyjason@gmail.com>
+Cc: Shakeel Butt <shakeel.butt@linux.dev>, Kent Overstreet <kent.overstreet@linux.dev>, 
+	Usama Arif <usamaarif642@gmail.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	Sourav Panda <souravpanda@google.com>, Pasha Tatashin <tatashin@google.com>, 
+	Johannes Weiner <hannes@cmpxchg.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, Aug 26, 2025 at 7:06=E2=80=AFAM Yueyang Pan <pyyjason@gmail.com> wr=
+ote:
+>
+> On Thu, Aug 21, 2025 at 12:53:03PM -0700, Shakeel Butt wrote:
+> > On Thu, Aug 21, 2025 at 12:18:00PM -0700, Yueyang Pan wrote:
+> > > On Thu, Aug 21, 2025 at 11:35:19AM -0700, Shakeel Butt wrote:
+> > > > On Thu, Aug 14, 2025 at 10:11:56AM -0700, Yueyang Pan wrote:
+> > > > > Right now in the oom_kill_process if the oom is because of the cg=
+roup
+> > > > > limit, we won't get memory allocation infomation. In some cases, =
+we
+> > > > > can have a large cgroup workload running which dominates the mach=
+ine.
+> > > > > The reason using cgroup is to leave some resource for system. Whe=
+n this
+> > > > > cgroup is killed, we would also like to have some memory allocati=
+on
+> > > > > information for the whole server as well. This is reason behind t=
+his
+> > > > > mini change. Is it an acceptable thing to do? Will it be too much
+> > > > > information for people? I am happy with any suggestions!
+> > > >
+> > > > For a single patch, it is better to have all the context in the pat=
+ch
+> > > > and there is no need for cover letter.
+> > >
+> > > Thanks for your suggestion Shakeel! I will change this in the next ve=
+rsion.
+> > >
+> > > >
+> > > > What exact information you want on the memcg oom that will be helpf=
+ul
+> > > > for the users in general? You mentioned memory allocation informati=
+on,
+> > > > can you please elaborate a bit more.
+> > > >
+> > >
+> > > As in my reply to Suren, I was thinking the system-wide memory usage =
+info
+> > > provided by show_free_pages and memory allocation profiling info can =
+help
+> > > us debug cgoom by comparing them with historical data. What is your t=
+ake on
+> > > this?
+> > >
+> >
+> > I am not really sure about show_free_areas(). More specifically how the
+> > historical data diff will be useful for a memcg oom. If you have a
+> > concrete example, please give one. For memory allocation profiling, is
+>
+> Sorry for my late reply. I have been trying hard to think about a use cas=
+e.
+> One specific case I can think about is when there is no workload stacking=
+,
+> when one job is running solely on the machine. For example, memory alloca=
+tion
+> profiling can tell the memory usage of the network driver, which can make
+> cg allocates memory harder and eventually leads to cgoom. Without this
+> information, it would be hard to reason about what is happening in the ke=
+rnel
+> given increased oom number.
+>
+> show_free_areas() will give a summary of different types of memory which
+> can possibably lead to increased cgoom in my previous case. Then one look=
+s
+> deeper via the memory allocation profiling as an entrypoint to debug.
+>
+> Does this make sense to you?
 
-On 18/08/2025 17:33, Sudeep Holla wrote:
->>  From a distro perspective it makes more sense to me to change it from a
->> compile time option to a runtime kernel command line option with the default
->> on/off set by this SCHED_CLUSTER flag rather than try to maintain a
->> blocklist.
->>
-> Right, that makes complete sense to me.
+I think if we had per-memcg memory profiling that would make sense.
+Counters would reflect only allocations made by the processes from
+that memcg and you could easily identify the allocation that caused
+memcg to oom. But dumping system-wide profiling information at
+memcg-oom time I think would not help you with this task. It will be
+polluted with allocations from other memcgs, so likely won't help much
+(unless there is some obvious leak or you know that a specific
+allocation is done only by a process from your memcg and no other
+process).
 
-Anyway, Peter is also try to make the SCHED_CLUSTER as default for arm64 
-platform, please see the email link:
-
-https://patchew.org/linux/20250826041319.1284-1-kprateek.nayak@amd.com/20250826041319.1284-5-kprateek.nayak@amd.com/
-
+>
+> > it possible to filter for the given memcg? Do we save memcg information
+> > in the memory allocation profiling?
+>
+> Thanks
+> Pan
 
