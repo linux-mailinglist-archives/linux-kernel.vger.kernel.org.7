@@ -1,213 +1,223 @@
-Return-Path: <linux-kernel+bounces-787697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B741EB379E7
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 07:34:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CE66B379F2
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 07:41:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71DE63B5485
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 05:34:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 23E5D1B61EA6
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 05:42:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1AB53101A6;
-	Wed, 27 Aug 2025 05:33:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97DE531062D;
+	Wed, 27 Aug 2025 05:41:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="K0lqS2o9"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="dD2clvtS"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2043.outbound.protection.outlook.com [40.107.244.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D582F38DEC;
-	Wed, 27 Aug 2025 05:33:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756272834; cv=none; b=Q8M/XM8oRBnmfNXiw6AzvBV2P48ISSWZJUQfUBM/LTf3JwShmOrTfAlKWqkkdU3WLt6lIf07HbsC/53TBaa6b7AAtnSinFRqsZLTUEqLSMpjelGZgFrI/Dy4DpWuwvHjOxsKSLi1mFGgBIgEZBAHX6ERgqdj7xWvjXz6IGXqwgc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756272834; c=relaxed/simple;
-	bh=5VFDz0Vkj2/2uTvvseBKlXbtMaFHG29kxehO+uaaK5c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s9pLRni2LPm2KEQPUlhm2QKMsgtMyKV2QZ36M2vaHSIx6C37WYEUhIsCalXy7hJ3jhSQMvY4zfpuM6lJJeh6MEmBH15EHNEfVHsHF3h70T4SzNoAvO8yLi/9T+Nwt2aQgMQQHOkThcvQJlpb/jjDq4PLMY7JfQyWNJyOYWAIBPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=K0lqS2o9; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756272832; x=1787808832;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=5VFDz0Vkj2/2uTvvseBKlXbtMaFHG29kxehO+uaaK5c=;
-  b=K0lqS2o9wO+MeoMe5IGOEDgu0NwpsQVDpAgjOY3aRZgfM1EFPQcoLy4f
-   Z0wdGkD8kG4YVwVUqmFoqmNEJS3R36OIv9WLhuf6SeVe+sHTFVBacHxv3
-   D7QkvTosVsrBS9l+EgBAhjnAFcvEAxLTyAo0r48P2mz9g/W30tMlbaZPt
-   dXt897IZwj+YkIMS4NWvGX2G4wTI78nLGyrlTSZk8AYCpz2YVG1lGTcvn
-   R/mnmFLTD/raj5msFpNEd7ILHECrAdw9N32yuzbDLyn982UQdRGLcLPNC
-   HUjhR5fxBn34UBk4BN20CkFELCd16MJ3ygEbfu4lXtJV9qoD6UiSoAiW9
-   Q==;
-X-CSE-ConnectionGUID: g5G9wxlVRgaikpPlLMJRaQ==
-X-CSE-MsgGUID: YxDyeDIsTuqMlk6PjJ4sNQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11534"; a="69889805"
-X-IronPort-AV: E=Sophos;i="6.18,214,1751266800"; 
-   d="scan'208";a="69889805"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2025 22:33:51 -0700
-X-CSE-ConnectionGUID: vodw3LM7TjuitAkIRHSMpw==
-X-CSE-MsgGUID: X0IBI55iQW+IF5BFOsX7aQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,214,1751266800"; 
-   d="scan'208";a="169000028"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by orviesa006.jf.intel.com with ESMTP; 26 Aug 2025 22:33:47 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1ur8mo-000Shv-2m;
-	Wed, 27 Aug 2025 05:33:40 +0000
-Date: Wed, 27 Aug 2025 13:32:42 +0800
-From: kernel test robot <lkp@intel.com>
-To: =?iso-8859-1?Q?Jean-Fran=E7ois?= Lessard <jefflessard3@gmail.com>,
-	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	devicetree@vger.kernel.org, linux-leds@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
-	Boris Gjenero <boris.gjenero@gmail.com>,
-	Christian Hewitt <christianshewitt@gmail.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Paolo Sabatino <paolo.sabatino@gmail.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: Re: [PATCH v3 3/4] auxdisplay: Add TM16xx 7-segment LED matrix
- display controllers driver
-Message-ID: <202508271344.WqQr2aa7-lkp@intel.com>
-References: <20250820163120.24997-4-jefflessard3@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 366272B9A8;
+	Wed, 27 Aug 2025 05:41:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.43
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756273302; cv=fail; b=EID0Xf/EXiI3JJoxMS7xBfHzT7ZJEBCp6NyQBMsyewRhBVjEJDcTYeUT4VY9+AT5ulvwlMGnzkhfWSN87WK25Zast7y1iJ67nA/TYuQLNAMW3vzwZqhYJDhaH1B28YVwoZ6ACueAYX0d5rYZ9WhqKH7xeI89Ob30+vYN5kMPOFM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756273302; c=relaxed/simple;
+	bh=Zu0pdS+vAhggpz65MonGFmZmRdxtCZ7DUiehvJMzNt8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=HprfgJjx5xePjydNj4FWjpw6Is6jHEFVXW/592GfmRManMz2LuJJChjbMdSQ1+jGlOlbSOkDWnrBxh9Y31g6QMpCq3Qd34oWlGLuzD08fdQO1inV4UYp1BoQ7gQXIo6ZhtIS13hp+0UL4MXX2bEQ5hn0ESmhfJqd9akPAizFTQ8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=dD2clvtS; arc=fail smtp.client-ip=40.107.244.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=kjyaurFdeoRedYns7HYiaClRLmYanh0TMgvtG0ohXjl5EQQvWph0yja2xqU6w2U0H+B2g6cKJbTA4WlfvD7b0d9par19HP2CkDWPCtzZWS77CDaQwD8ZRiybimnAn9QhdKdqZap5SKS8RV+CcFB6BXsFoHCNo+TxId4JRS6A9dZEK5Zs+zIz5A8nNR5uCV8eQVqYz2yDzubqjrqjuHVbQ1Vqzn4uUDNzv4bZXfKfQioZ4MSZoeoWZSlgkO+sf9LaOz9l9vpECRZ0bjZOfVdZ0afVJiuuTLc7wyscOLEY+Fwz4U1fxnJfqX4gujmyP5DOVh8v6kfHj33TbH0H62HHFg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Dkvp3R+r7xQucQLRKeKkZL2xYu4d3Lr1PT89L8FA1Xg=;
+ b=Uv3g4NiFG6Clkq5a3/d4ues9kZh+Xl2IcjMGxAkkWkVYf+FjrBTDBKnglx9dbDQwYWjyv2Y4vDObYWtqGCpYH0kLvfK3ePiHX3Gn7N/jZcFCUjpcKXzrUhroSJL7AZMdhEloLQ9Ycoe7XNRX91sIr+jKcjNDSmGo7o6aWkV4djd6G7FPRbq+Iwcnh4bLigBirza1LeK0BB3i/LKFDGe3SJ8YJOUurZJrIxPKXhJmbJ/TiLTgveYd+JIpa9qwQ9zA8+Ry+NIO4MvSG3uS6v6edB7aBbQiNG7knOZNoc3gbvc8VA3gn2jZ0iySsFqCgVjp7w8Z2r3tUkBFbM37qS4C1w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Dkvp3R+r7xQucQLRKeKkZL2xYu4d3Lr1PT89L8FA1Xg=;
+ b=dD2clvtSEVdOgMo+dYO76uzihCQh7mLxgvbnz+YG/JWjbF+XL9Rat55iVP6aDKFgRJF6O+8qVWYfC4UuSFx7rqVqElKjs4sz+gVvPna3OP7LpbKWovPqz9sZI30MaXOFdDlC8bJ/Pj5+X9Cj77ylEiLsNX1j1CTBbwmcc1E5xBVlCkUPir8eO3vdA2NAZoGWPiyn0A3oRNgp7HuWtwYJnxvVCmmGSDuWyWmc5f/m+vIjTbejMJ4j0Zn8uRJyukw+hQzYUSkkyd3yEN0TRDyg22/oMVRGdlcBYWOrjpU2upryQj0BbMlLyQc3RXpYMGvdTh+1WUpgHh2KZQGUZPsMSw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from LV8PR12MB9620.namprd12.prod.outlook.com (2603:10b6:408:2a1::19)
+ by CH3PR12MB7643.namprd12.prod.outlook.com (2603:10b6:610:152::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.15; Wed, 27 Aug
+ 2025 05:41:35 +0000
+Received: from LV8PR12MB9620.namprd12.prod.outlook.com
+ ([fe80::1b59:c8a2:4c00:8a2c]) by LV8PR12MB9620.namprd12.prod.outlook.com
+ ([fe80::1b59:c8a2:4c00:8a2c%5]) with mapi id 15.20.9052.019; Wed, 27 Aug 2025
+ 05:41:35 +0000
+Date: Wed, 27 Aug 2025 07:41:28 +0200
+From: Andrea Righi <arighi@nvidia.com>
+To: Eduard Zingerman <eddyz87@gmail.com>
+Cc: Yonghong Song <yonghong.song@linux.dev>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+	David Vernet <void@manifault.com>, bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] bpf: Mark kfuncs as __noclone
+Message-ID: <aK6aiEbgYaI9K-pt@gpd4>
+References: <20250822140553.46273-1-arighi@nvidia.com>
+ <86de1bf6-83b0-4d31-904b-95af424a398a@linux.dev>
+ <45c49b4eedc6038d350f61572e5eed9f183b781b.camel@gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <45c49b4eedc6038d350f61572e5eed9f183b781b.camel@gmail.com>
+X-ClientProxiedBy: MI2P293CA0012.ITAP293.PROD.OUTLOOK.COM
+ (2603:10a6:290:45::10) To LV8PR12MB9620.namprd12.prod.outlook.com
+ (2603:10b6:408:2a1::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250820163120.24997-4-jefflessard3@gmail.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV8PR12MB9620:EE_|CH3PR12MB7643:EE_
+X-MS-Office365-Filtering-Correlation-Id: a3f23646-6fdf-4aa3-6884-08dde52c626d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?VhnEfMs837U4fhy1+w0NbVbqUf/Xz0kEUtsoFQfrwUoOqxnyrli92rIs3ax5?=
+ =?us-ascii?Q?1zMk28gKHRdLGsk44BqwxF97adtP5so0pVvRpLUuQx6C5htq0JCpYcKbZxlc?=
+ =?us-ascii?Q?KDsFklMFyUBkyaxIUVH9DcTnIgMhKfXOXbzbi6nwtW/gGL1QwC0drQnl0tPP?=
+ =?us-ascii?Q?ZybiUeX59/rnQRv5MQO8ZU7U5sYBZWVRRkaROhJtsfPnD9VUJ/10dNKhOcFR?=
+ =?us-ascii?Q?sECgW8ta02mdmNPQZKuKZveUtxzeHf8r+HFAjGRQ31WQPfqweY8vghWt4RLL?=
+ =?us-ascii?Q?Ry0ppaCe3sBZ4Yv+zl/LWQ01tzJSNo8pYgjvl9PBCVlIdm2+mvr1277W+NzI?=
+ =?us-ascii?Q?t6m1ucCJb/d/35fXJaM3lIz6ofA2obHkLWvNjL2AdL++Y3LAAA5K229WmBRr?=
+ =?us-ascii?Q?1DUBNKbg2gW8+hixBxIi6lRefe3N4bET9QInZ31gcSYGWvVC8vubBv0P4cFo?=
+ =?us-ascii?Q?pbNeHmlRMpJW36BL2yg+EMEKH+aCQ90rzEpYnJwfJ96sMDc0ZmFsqWXgLP9/?=
+ =?us-ascii?Q?MKoUvp+w77gmAWbQ35HMwt1zO2KIRRMIrWemxoLY0MSfaZcoh0OJ8iHNBTCw?=
+ =?us-ascii?Q?iJXkDmcWL8lm2SvIDPy/SURpHUG9GRUlB2v4WhcDFIjsSXCtq8Fw+YgfUJHm?=
+ =?us-ascii?Q?9Ysshroz4sQVccPZGQqQb9+o1OA9HfuaAkzIh4+OwB3tVky+2+bEwiDGgbrz?=
+ =?us-ascii?Q?ZwmHXhJsP8sqDD6rWJ8yW9OHq/SvQ0p6DNmT/nNDO1jwkpHtilK4VcGCU+wW?=
+ =?us-ascii?Q?L9JQJRqtAYPAavvf1JyAY7y/atJjjwk8Bkj4GYYFy0SNUe0NuvJFI0bQXka1?=
+ =?us-ascii?Q?qorUp115/tJA4P5DBYdd/Ih4FMcVJ1nHdP3/NYVwZjB44zRCoQhOAeXDBbAj?=
+ =?us-ascii?Q?Dp+bDqphkV3R3WcS64VDS1mXxfOdBz4YQ9+RoA2WjVZRfceXAUstgKrMEL7B?=
+ =?us-ascii?Q?rA3JelojLEd2MMAxbjvtWPWjS/5esFPmzzN/2L0X/SgFqkE+35nhmh0piDKx?=
+ =?us-ascii?Q?0zxll4VSt1SYfLE/c3fKO6dePmEq4aFC7XsvVY3D4wMaucc4xbQVgM6bumOH?=
+ =?us-ascii?Q?Z7TzRNH1UEzqZWVe0Ln5dYsXHaRTuqw8OMfelG6xqjqYU76/Gg4Vg6Tsc/8L?=
+ =?us-ascii?Q?o/MW9r3yBqMeXcmcowgpdxGHetrH62JDSEhOgh1nPyteWQ1CpUDv3yzyBlBq?=
+ =?us-ascii?Q?8IMxtVZHH6LXs67oQB5dDPe7WAmpcpfYfQEMw121Nx05nb6nYpPms8d/ktQL?=
+ =?us-ascii?Q?4kgEeRM+BzSWf6TN1a+VtQqj7Mm4VEm0j9RZqXzsxgOV3ZoQnMWj1LSrY33h?=
+ =?us-ascii?Q?xZx8F2x0yoB/ZnZvW+WYizS9Ep4/uQCmVTHrf5x+Txaf77PUhJkYW/S+HgJj?=
+ =?us-ascii?Q?TEQzOkWAKG1uhWXjPFP2C9rfiU+rwjaUmr4VEnnpUrcgm4L9OHissdBOiF24?=
+ =?us-ascii?Q?1pYO99hriQk=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR12MB9620.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?IX51uGrRNG8URI4dN6PRQP6TDx7U4AjDiRhTPpMOQ2KWbmF8j1GQ0yiav2Gh?=
+ =?us-ascii?Q?gNYr0sHxuW7AlntcaYOqU3K5ARHIPqeYfIvRL7XIXTmGyNrBm4OvDhVloJYJ?=
+ =?us-ascii?Q?Q9lHKqj9ky2Pf8RbLJrMTBfzgN7lgH16m1gFb8DWyccdw3efZIRWY0tVtWAM?=
+ =?us-ascii?Q?Kgt/IElFVb+vsAHWtHgJ3V66xlIiTwOjWnaGd8iHnMCX/YjwVU5DZDVWA80d?=
+ =?us-ascii?Q?WuCy6Hbbm0bkdTi9LspWc/l/9WM9kElpvrTATkddaxbRRtx4B3wqRxZ4N7vW?=
+ =?us-ascii?Q?wM2z7s5AJ9Ps7viRMYhE8WTxg+FtjNaG6DjXp1thyDK/ZoSWYh9EZbjsipyY?=
+ =?us-ascii?Q?7hbdJeHgGCAzeSxLnjH+YZeVmuQbuXZkKhc1zW8QBjryUFe46+rf5QXcGhYl?=
+ =?us-ascii?Q?4cj4ypMh9HW4v55dRtuYK4YwC0u2KdW/N7MbUgJNnqXFSA0Lb5XVtoHtyvof?=
+ =?us-ascii?Q?BNEwMrERe8XDVMAq0/lG7DTiqdADRvm+wP+d3HyK1I5gCzgEhivvtasGtV2Y?=
+ =?us-ascii?Q?fH3GZHPvMffL1DVEKcxPAGSK6Sbo5vuAtil5PhQ0DWnm8pNIMvf7Ticj6jx9?=
+ =?us-ascii?Q?/J4pkxdOXp6fYnqhH4FRkFttqwso6cc6Oy5Bfm9QKnJx8V9rp0Yog0P+7bRg?=
+ =?us-ascii?Q?QDW1QEBg8Ag9sZWdyQJ3+CZFeizSEzJol9juhSWIjaClO4i7oj/SzZlaZLL2?=
+ =?us-ascii?Q?89kWrUFfUcbrWm0lpAsknMovLK+DPKfso8VrsIkXHziNsN8QyxaYzwhLWIO4?=
+ =?us-ascii?Q?4AFGj3YaQ91jceCAndNDFtRtXEI9RG3vrJrEa6KUNalnYwtQ+ncNgY6aRXei?=
+ =?us-ascii?Q?L9CNEe42D36RoDl1I4+/pqNH76IcHnZqSBfWxLEWzccidx1QytZB6vZe5h+s?=
+ =?us-ascii?Q?/7Os1aOTib0x2ioLhZuz83Iu56fiqISXDG0LkFjwpfjl9LV6ZhFAasVMfO87?=
+ =?us-ascii?Q?ULhNjGiS8PJIDxcz60fXmcfH/1rddbp6NROkzOXcfZ4og+b2Wq22ZfFHRGlc?=
+ =?us-ascii?Q?5tsEuSDz/Ws30Fg03SRTL/WtHbOHAMjgZDopFhgQrtwwtchjH20EuvzHIVJn?=
+ =?us-ascii?Q?qiu6PDQVviWF9YoHSWz6efYG0ou2jlGU/Kf1nUzthzmOtGDE+wNwhmULTFXd?=
+ =?us-ascii?Q?dH2b3PhQHKEX/dC3FINoP0J5BoUh+oJ5pwOvxXlb4WIUOXFLpFzWa9OC6qBk?=
+ =?us-ascii?Q?RdiV/IpwcZJySUFgx27zPY/AFV55FPlCu7a1mwAmigZkCzgbCi6HGatBMUoa?=
+ =?us-ascii?Q?J+HNt1XUchuuPGmj3GT4lNXuFrqGtNeEgOxAdaJSouU5aa3LxeZ/Z1S9zbwb?=
+ =?us-ascii?Q?yCbJmbpjB6uJuYg3I6oCKtjVEMsyhwDJfkhUcuSumY0pyB4QPY5PiMxahmp/?=
+ =?us-ascii?Q?vBcYLqFAMrMRGnGnL+B/DAv7vi1HFq37P1F/vhi35sqCG3kgYzfZ2hhEVfig?=
+ =?us-ascii?Q?x6/O5WbbQNOZC+d5wIGYvEdbvGd5EwtvuLdZL18QCkrWQXE8nWK5M1NLwtwf?=
+ =?us-ascii?Q?UbGwlwc11rwnx/xChZOw+NMNmnJ/dldrlUILAoJiTuwfzMZY8K+BBVjPWZwM?=
+ =?us-ascii?Q?X+qkQkDp6b3a2PyN2DHU0oouPsRrPmfiEIdnd95B?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a3f23646-6fdf-4aa3-6884-08dde52c626d
+X-MS-Exchange-CrossTenant-AuthSource: LV8PR12MB9620.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2025 05:41:35.7235
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: BetKxAGcVB+XSZkwg3rdn9mhfBypH/GJpV2s2CzfFz5QvVw/dQEnQUeKPo3Q2plzSbm6c9iAwbCkB4YSvdbtmQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB7643
 
-Hi Jean-François,
+On Tue, Aug 26, 2025 at 10:02:31PM -0700, Eduard Zingerman wrote:
+> On Tue, 2025-08-26 at 13:17 -0700, Yonghong Song wrote:
+> 
+> [...]
+> 
+> > I tried with gcc14 and can reproduced the issue described in the above.
+> > I build the kernel like below with gcc14
+> >    make KCFLAGS='-O3' -j
+> > and get the following build error
+> >    WARN: resolve_btfids: unresolved symbol bpf_strnchr
+> >    make[2]: *** [/home/yhs/work/bpf-next/scripts/Makefile.vmlinux:91: vmlinux] Error 255
+> >    make[2]: *** Deleting file 'vmlinux'
+> > Checking the symbol table:
+> >     22276: ffffffff81b15260   249 FUNC    LOCAL  DEFAULT    1 bpf_strnchr.cons[...]
+> >    235128: ffffffff81b1f540   296 FUNC    GLOBAL DEFAULT    1 bpf_strnchr
+> > and the disasm code:
+> >    bpf_strnchr:
+> >      ...
+> > 
+> >    bpf_strchr:
+> >      ...
+> >      bpf_strnchr.constprop.0
+> >      ...
+> > 
+> > So in symbol table, we have both bpf_strnchr.constprop.0 and bpf_strnchr.
+> > For such case, pahole will skip func bpf_strnchr hence the above resolve_btfids
+> > failure.
+> > 
+> > The solution in this patch can indeed resolve this issue.
+> 
+> It looks like instead of adding __noclone there is an option to
+> improve pahole's filtering of ambiguous functions.
+> Abstractly, there is nothing wrong with having a clone of a global
+> function that has undergone additional optimizations. As long as the
+> original symbol exists, everything should be fine.
+> 
+> Since kfuncs are global, this should guarantee that the compiler does not
+> change their signature, correct? Does this also hold for LTO builds?
+> If so, when pahole sees a set of symbols like [foo, foo.1, foo.2, ...],
+> with 'foo' being global and the rest local, then there is no real need
+> to filter out 'foo'.
+> 
+> Wdyt?
 
-kernel test robot noticed the following build errors:
+I think we should do both: fix resolve_btfids to ignore compiler
+optimization suffixes (.isra., .constprop., .part., .cold, ...) and add
+__noclone.
 
-[auto build test ERROR on robh/for-next]
-[also build test ERROR on linus/master v6.17-rc3 next-20250826]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+This feels like the safest path IMHO. Fixing resolve_btfids alone works
+with current compilers, but future compiler versions, under aggressive
+IPA/LTO optimizations, might decide that the main global symbol is
+redundant and drop it altogether, leading to similar issues.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Jean-Fran-ois-Lessard/dt-bindings-vendor-prefixes-Add-fdhisi-titanmec-princeton-winrise-wxicore/20250821-003451
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
-patch link:    https://lore.kernel.org/r/20250820163120.24997-4-jefflessard3%40gmail.com
-patch subject: [PATCH v3 3/4] auxdisplay: Add TM16xx 7-segment LED matrix display controllers driver
-config: x86_64-randconfig-r112-20250827 (https://download.01.org/0day-ci/archive/20250827/202508271344.WqQr2aa7-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14+deb12u1) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250827/202508271344.WqQr2aa7-lkp@intel.com/reproduce)
+Basically, fixing the tool makes the BTF pipeline more robust, adding
+__noclone also makes the exported symbols themselves more robust,
+regardless of compiler optimizations.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508271344.WqQr2aa7-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   ld: vmlinux.o: in function `tm16xx_i2c_write':
->> drivers/auxdisplay/tm16xx.c:1469: undefined reference to `i2c_transfer'
-   ld: vmlinux.o: in function `tm16xx_i2c_read':
-   drivers/auxdisplay/tm16xx.c:1497: undefined reference to `i2c_transfer'
-   ld: vmlinux.o: in function `tm16xx_i2c_probe':
->> drivers/auxdisplay/tm16xx.c:1416: undefined reference to `i2c_get_match_data'
-   ld: vmlinux.o: in function `tm16xx_i2c_register':
->> drivers/auxdisplay/tm16xx.c:1727: undefined reference to `i2c_register_driver'
-   ld: vmlinux.o: in function `tm16xx_i2c_unregister':
->> drivers/auxdisplay/tm16xx.c:1732: undefined reference to `i2c_del_driver'
-
-
-vim +1469 drivers/auxdisplay/tm16xx.c
-
-  1401	
-  1402	/* I2C specific code */
-  1403	#if IS_ENABLED(CONFIG_I2C)
-  1404	/**
-  1405	 * tm16xx_i2c_probe() - Probe callback for I2C-attached controllers
-  1406	 * @client: pointer to i2c_client
-  1407	 *
-  1408	 * Return: 0 on success, negative error code on failure
-  1409	 */
-  1410	static int tm16xx_i2c_probe(struct i2c_client *client)
-  1411	{
-  1412		const struct tm16xx_controller *controller;
-  1413		struct tm16xx_display *display;
-  1414		int ret;
-  1415	
-> 1416		controller = i2c_get_match_data(client);
-  1417		if (!controller)
-  1418			return -EINVAL;
-  1419	
-  1420		display = devm_kzalloc(&client->dev, sizeof(*display), GFP_KERNEL);
-  1421		if (!display)
-  1422			return -ENOMEM;
-  1423	
-  1424		display->client.i2c = client;
-  1425		display->dev = &client->dev;
-  1426		display->controller = controller;
-  1427	
-  1428		i2c_set_clientdata(client, display);
-  1429	
-  1430		ret = tm16xx_probe(display);
-  1431		if (ret)
-  1432			return ret;
-  1433	
-  1434		return 0;
-  1435	}
-  1436	
-  1437	/**
-  1438	 * tm16xx_i2c_remove() - Remove callback for I2C-attached controllers
-  1439	 * @client: pointer to i2c_client
-  1440	 */
-  1441	static void tm16xx_i2c_remove(struct i2c_client *client)
-  1442	{
-  1443		struct tm16xx_display *display = i2c_get_clientdata(client);
-  1444	
-  1445		tm16xx_display_remove(display);
-  1446	}
-  1447	
-  1448	/**
-  1449	 * tm16xx_i2c_write() - I2C write helper for controller
-  1450	 * @display: pointer to tm16xx_display structure
-  1451	 * @data: command and data bytes to send
-  1452	 * @len: number of bytes in @data
-  1453	 *
-  1454	 * Return: 0 on success, negative error code on failure
-  1455	 */
-  1456	static int tm16xx_i2c_write(struct tm16xx_display *display, u8 *data, size_t len)
-  1457	{
-  1458		dev_dbg(display->dev, "i2c_write %*ph", (char)len, data);
-  1459	
-  1460		/* expected sequence: S Command [A] Data [A] P */
-  1461		struct i2c_msg msg = {
-  1462			.addr = data[0] >> 1,
-  1463			.flags = 0,
-  1464			.len = len - 1,
-  1465			.buf = &data[1],
-  1466		};
-  1467		int ret;
-  1468	
-> 1469		ret = i2c_transfer(display->client.i2c->adapter, &msg, 1);
-  1470		if (ret < 0)
-  1471			return ret;
-  1472	
-  1473		return (ret == 1) ? 0 : -EIO;
-  1474	}
-  1475	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Thanks,
+-Andrea
 
