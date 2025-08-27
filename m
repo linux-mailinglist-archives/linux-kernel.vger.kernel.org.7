@@ -1,208 +1,409 @@
-Return-Path: <linux-kernel+bounces-787621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD948B378AF
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 05:45:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D2CF8B378D0
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 05:47:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68504688050
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 03:45:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6CB02688600
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 03:47:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EBA526B2D2;
-	Wed, 27 Aug 2025 03:45:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=aspeedtech.com header.i=@aspeedtech.com header.b="JFyfQ2d+"
-Received: from TYDPR03CU002.outbound.protection.outlook.com (mail-japaneastazon11023075.outbound.protection.outlook.com [52.101.127.75])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F5C8DF59;
+	Wed, 27 Aug 2025 03:47:30 +0000 (UTC)
+Received: from smtpbgbr1.qq.com (smtpbgbr1.qq.com [54.207.19.206])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 740B41EDA09;
-	Wed, 27 Aug 2025 03:45:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.127.75
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756266317; cv=fail; b=SiSF1eAkyspNUkKnOeEGD/MnsLo00AZLUW2cSlm3rBU9VbGOddQuJI5IIvKB2kNYJxM0mNjUq2ays3ml+b9Uzt7XxLv6pO97mbr5m1SjmVBZHm6rje09Wt1z18ukmuFii3PJDFKykr/Av6hHWnrikOiiwRZqluwlMTgcSWiS2aA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756266317; c=relaxed/simple;
-	bh=WU+x8B6sboSK/Zx3EUMhThyh0FAxYTyDt7jgdVQrjvk=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=I7IM61znm7OP0SNFUo+zIPKwU/JODuz2hFba4iDPTbglPWf8KwtOv0qPLMYx27UVGbXJX3fbM3amNdvJYr17nfH7xDnkY/INPhQdg4k2OP2X3Ie2RqAt77DF8rF7/KuGNPxA9wIi+9LtAufRJEfn5tKqo/7EbHv7s3xov5axCfQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; dkim=pass (2048-bit key) header.d=aspeedtech.com header.i=@aspeedtech.com header.b=JFyfQ2d+; arc=fail smtp.client-ip=52.101.127.75
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ygypHQAm1q26gBeV4fAEpdjSpw4WU+vTK0/ldEusTln6P3OxchirjF+D3a3ZaDeGRtmgdV3Oh/kzuts0hg4o2wHvmZ2qYAPftnksWKvADu9pwGgwD6PMQg1RD77LmwJGRCrNczN4sggR6Mg/2ltpkHTvChqJiFsIUIzVYSkX9JDCrx1rXY7Jxed0ScZXKVANiu6Zw4SHiTc5Z/O40oI/tc3LUTI2wKsPMCiDW8csSqpguZjcJmlHzxE/9pwTgZaGXmzQWMenXJzItBRgL0suLsETiaSBTHswrcRIQyb9X1lKw3pQI8ZLO2PCmGhELTU3If6C0BYNTf7ryvNDqE43lg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=WU+x8B6sboSK/Zx3EUMhThyh0FAxYTyDt7jgdVQrjvk=;
- b=SLSkytoOYv5rmcnzZO1KKb3q6WACWI3+mNfZzApPFMbyMCc+43Eex0msbWD8aF/hF6QO2qMrylpaj0Am5BAhHqXbPaCGCXBEmtVe1NKXUPBll0Hg3TZEuCuCtkAKb7Yz9TsWgerzYt5yFDVZWs3z3khmXy9U98cfj/4PjVRzOgnSx2oV7F6BabbLxdII0/tbIXtCX6HEQ2rdrt04D7d+EioAmfX66aVW+5W5ZaXW/AvrX+J1t34bWrKWoAWJRaJ0pWdm5NiL155PS+tBjHlOb/xfNv9qSPc6UXMTD5k+lNk/rJNOXke74YQtAlxxgsuYda9YPYXId5gFcWZo1Nwx+A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=aspeedtech.com; dmarc=pass action=none
- header.from=aspeedtech.com; dkim=pass header.d=aspeedtech.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aspeedtech.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=WU+x8B6sboSK/Zx3EUMhThyh0FAxYTyDt7jgdVQrjvk=;
- b=JFyfQ2d+KkeBg9Vid6MW6I3UxQpvyMEOqK15Z1J8WqT+NNVeobWCEHc/NkQpL/mq0mBzn9U7vXCuOuxwT9IfAprrczlJ6C3kBwtSHtJwJlA6QrZU5/IN14+vhRxcefT//ja2zMb31TpuN+VnbRAxskrsGkjquUrpuhLSHit0D4gE3kjvYu3TMaT2NXHkjl1w6KZ2wdULpvNrVOfiBztlVW7hRATq64IANDIXLAIqxSFdCTr1fJqXYjRuEUd9mK5EapYPJ7uVFqoMOJmhHta8icat63KTLPGy0qyzgi/AN62s3g6Ea6OwpE0myIh4bfaRHi7yfBQrkzqKTtb0DH+CRA==
-Received: from SEYPR06MB5134.apcprd06.prod.outlook.com (2603:1096:101:5a::12)
- by KUZPR06MB7964.apcprd06.prod.outlook.com (2603:1096:d10:21::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.21; Wed, 27 Aug
- 2025 03:45:09 +0000
-Received: from SEYPR06MB5134.apcprd06.prod.outlook.com
- ([fe80::6b58:6014:be6e:2f28]) by SEYPR06MB5134.apcprd06.prod.outlook.com
- ([fe80::6b58:6014:be6e:2f28%7]) with mapi id 15.20.9052.019; Wed, 27 Aug 2025
- 03:45:09 +0000
-From: Jacky Chou <jacky_chou@aspeedtech.com>
-To: Markus Elfring <Markus.Elfring@web.de>, "linux-aspeed@lists.ozlabs.org"
-	<linux-aspeed@lists.ozlabs.org>, "linux-pci@vger.kernel.org"
-	<linux-pci@vger.kernel.org>, "linux-gpio@vger.kernel.org"
-	<linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, Andrew Jeffery
-	<andrew@codeconstruct.com.au>, Bjorn Helgaas <bhelgaas@google.com>, Conor
- Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, =?utf-8?B?S3J6eXN6dG9mIFdpbGN6ecWEc2tp?=
-	<kwilczynski@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Lorenzo
- Pieralisi <lpieralisi@kernel.org>, Manivannan Sadhasivam <mani@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>
-CC: LKML <linux-kernel@vger.kernel.org>, "openbmc@lists.ozlabs.org"
-	<openbmc@lists.ozlabs.org>
-Subject: [PATCH v2 09/10] PCI: aspeed: Add ASPEED PCIe RC driver
-Thread-Topic: [PATCH v2 09/10] PCI: aspeed: Add ASPEED PCIe RC driver
-Thread-Index: AQHb9Tqmkbg3qF5lqUafax+6ueL4M7QzaXeAgEK0OLA=
-Date: Wed, 27 Aug 2025 03:45:09 +0000
-Message-ID:
- <SEYPR06MB5134C10E219E40C76D1413579D38A@SEYPR06MB5134.apcprd06.prod.outlook.com>
-References: <20250715034320.2553837-10-jacky_chou@aspeedtech.com>
- <8fe0f561-ef44-4ec2-9b93-f73105bd67ed@web.de>
-In-Reply-To: <8fe0f561-ef44-4ec2-9b93-f73105bd67ed@web.de>
-Accept-Language: zh-TW, en-US
-Content-Language: zh-TW
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=aspeedtech.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SEYPR06MB5134:EE_|KUZPR06MB7964:EE_
-x-ms-office365-filtering-correlation-id: 6304ce3e-e672-4988-106a-08dde51c1eb2
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|376014|7416014|366016|1800799024|38070700018|921020;
-x-microsoft-antispam-message-info:
- =?utf-8?B?R3FOVzYxYXd4a1lDVjk1S0RET3Nwdm53TjNZNTBzeFpvUjVvRXBZejlBVVNl?=
- =?utf-8?B?a2diUG9udC9heVBIT0dUR3hlemxqNGxjbEg5eHpRdHk2REFTaWMvcWNzVlVn?=
- =?utf-8?B?QWZPZUxQSHd5TjY4QklKMlhNSVdhR05zU1BKcitXN09uaXoyMmJHTXNsRzEy?=
- =?utf-8?B?cjRHY25Ma3ZGWmZ5b2pnenh0UWd2WFV1WWZxb2tramVIdmFMQWlxT2o0V3pX?=
- =?utf-8?B?K0l6OXlCK2wwWmQyUWFvQmRXTEtnbDlmUnRqdWk5bnRqYk9jYnI2OUxzdFEr?=
- =?utf-8?B?NjIwZlJMM25XL1NiOU83UHo2QXFIZlpsejNSUy9qR0cxK2tqWmFlR04zV3o4?=
- =?utf-8?B?M0hnUHU3U3kxV01nMFM2ZCswelFVMjlDMThJaFBFQXh5akNMWk1PcDdtT29G?=
- =?utf-8?B?bk0ycUNsdUZJZitPRWFmNTZ2WTJxdEFMVVFpTUd2cWRTU1lwY0s0YlpPUlpR?=
- =?utf-8?B?cTc2eUlNYzlaZEs5VlJLT0xabnAzZCtJdlJibHNSMnlPb3YxVDB1WnNnb2FO?=
- =?utf-8?B?VnRYTFJSWGJ2NEgyemh4b0wrQ1hFd0IyWXdvYXUvQmNOMWFMKzY3N1o1b2gv?=
- =?utf-8?B?ZkFKaDZUZmxZcFRMSVQvUW5kYVNOemJnek9aVkMzQkJDNEYrUTN6bHp4eUtY?=
- =?utf-8?B?S1R1dm9EWmgwSk1ZQ1hRamxWcTkwMkxyQ2kwRXNpY1B0aVFaQzk5by9qb0Fy?=
- =?utf-8?B?djVnemE3R3VqMDF1NlpNenp0bzdKZnY4OTBMVTJPNEc0Ti85aENKK2t6TVkv?=
- =?utf-8?B?SmcwRms1ZEd1OTh2emI4cG1qdTQxUFRPVC9oTURjWCsvZnZhM0NFQlc2R0Vq?=
- =?utf-8?B?R3R0Tm93alVTaU9Td3dnT0ZKRnlYWkhLK2hKUFdiOUF4TGxLaTVRVGcvSlZT?=
- =?utf-8?B?Tit0OXRhKzRacmJmS0dYNzIyN25odHQwSS93WjFuL2ZCSmgxK0pFU2xPbDRI?=
- =?utf-8?B?S2lzaVcwbThqc1JSdXAzeVNESU1ML2JmZjFUUUUraXFDYk5PaUdmLzhZNVRH?=
- =?utf-8?B?THNncHlzb0RKTS9rZ1JsY0pWODF1VmxKMElVRkVUeXlaUk9jaldCRnZhOXlz?=
- =?utf-8?B?eWRHcjB3VjgydlZhUFBQWUdNRldyWXE4UW55MTVTYjF0bEpuSE1DbEpWWitS?=
- =?utf-8?B?TDd0eHgxTk5UNWM0c3BJYTBQVUx6YUpaMEtVc21sODFhWCtiRGQydS9CKzh1?=
- =?utf-8?B?dXcrQ0ZnTlBsS2JhM1RWeUlUb2VpZ1c0ellqT0tuMUhhN2Y1ZFBGcDNBZ0cx?=
- =?utf-8?B?cE83U0dYSU5tZjdGZDhuOVdYZGNkWlVRaXkrY3JTWUFPeWhTcUFhRUhSSUww?=
- =?utf-8?B?MUhDZEFHSllJaXpLOWlrSzZhYmd0YWY3cjFWZmdYdGlqMHNmSkVVNkNHaWZZ?=
- =?utf-8?B?VGtvK2dZM21adnBtaUtwbmhyREUvaTBzSjdGdDJiM2l1SlpKLzAxM0lOMjlP?=
- =?utf-8?B?OUs3UlZFcktveE5PNHFSZVBaSzVMTk9MNFZLRkhTTktuTXhwUnVWQ1RlQWJI?=
- =?utf-8?B?SXJuVk83TENBckJaallJOEl1bVIzcFprK2tVaXNQSzYvRWxYVlRseTZ0aTlV?=
- =?utf-8?B?RE5RQ1QwRG9pUEI0YVBjSWQwREhtVXMyQ2hKeGRCMkIxemx2MkxaQy8vdTFu?=
- =?utf-8?B?cGU4UzdlcXc2UmgycjlFZlNzK0Qvb3Aza0k4UTRMSitxcjBmaGxscXFPcDBZ?=
- =?utf-8?B?SGhPTnA5Y2tldnlLKzg3cGpWdjBvZkZORnkxa1hWUnhLL3grZzNQcC9obW9V?=
- =?utf-8?B?WGE1MmVobURma3RFdmJzNmxmVzFrdmRIcW1iYlNSWS8vSVNXdXNTVHU3NWtu?=
- =?utf-8?B?YnREOGFaQ0pnWXNRbjh5YXRUSkU1Q25LY1R5aUNnTU5RRFkxOS9MbHR1alU5?=
- =?utf-8?B?c0hMSlNDc0lyNGZFTTVUVU14UXJUaWZCRWR3SjNQdlZ1NXlRVlpFSFhMQUh3?=
- =?utf-8?Q?kgDMuA+kcNAszt5D3vbdqZd1hsDCjSST?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:zh-tw;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEYPR06MB5134.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(38070700018)(921020);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?TW5DSk9vMDB3dDliK2pRNVpJTUgvY0NGYms5bFJobXU2T010UFVRQnVGbjJx?=
- =?utf-8?B?MGZEMjZPZlg1dW9XYmR4ck5nMDNsOGdSUytKQ2s5LzdXWkNLMU5NY1c4bG9M?=
- =?utf-8?B?ZnFIN1dORDhmMWM4OEROVnlOR01SRXF2N0llWXFtcDZDeDR4My9XZGRlb2NI?=
- =?utf-8?B?eFM2Y0NHNHo4RXhwbFhpR1I0dDZac2FsVHdnclFqVGYzZG5SWVp5Z2lEaXFV?=
- =?utf-8?B?ckI4Qi9MZTJ0ODhKZjB6dCt4TUQvUVZIWVdrODN0aW9hSGdwc3JRRHJQem0w?=
- =?utf-8?B?V29YL1F1QTFEN0ltbnVvMG5qV1RpN3BySXBOUWczbFhITzVaVXdjTjBDY3lv?=
- =?utf-8?B?T3hRbS9uVXJzekFOUjE1TnBDZG1wYUNldHM0bnkvTk1TQnJyajdyQVQ3bGRR?=
- =?utf-8?B?bWorL1ZKWmlRVFR4NWFnVGVGbHVoaDZLQTg1VU5sRGgrRVBqTUgyQTRUdjJw?=
- =?utf-8?B?ZDREWFYrMnNPTnVsNVF3bTVrZ3VuVTF0T21Pay85OXphNlV6OHRKV1M1Smdz?=
- =?utf-8?B?dUVrWTRhZVJIRFpPdm1sc0I3WkVXTy9nbVVVdThzWFROSXAzaGx0K1dhK1NO?=
- =?utf-8?B?UVJnbCtmZVE0dHV2ZU0zS0g1TTNSOFB6NjRUREUvc2t5Q0t2dnMyMU5vM2xz?=
- =?utf-8?B?WTlSdEw4dHlRKzBBZ2wvUmJ1azE5bXdKTERtbmFEUEFobTN6Q1FVRG15L01L?=
- =?utf-8?B?TUg2bUVyYnVzTWs0WXZRdHhiS09jOTRKbU41WERLZ3pXSkJESkgzVjJQWjJo?=
- =?utf-8?B?dnBJMmRsTmJoY3hsem5LWlRXbkFUUzMzQXplQWNEeTdSRmNnSkRCU3YwMjAv?=
- =?utf-8?B?V1BsMVBNc3R1ZHRaNnZjdDdHbGVMYjlweUowWWtnamVMbk5LSFhzNnRaUkp0?=
- =?utf-8?B?cktVWFFlSXY1MjJRTnFsTDNVdUthY2JoOGtYMkI0aGptL1loYkRlTm1CR1hC?=
- =?utf-8?B?azl3L214dUZwbnJSM3d0aFByT0s3ZE5DbHlBNW9yYTBMcWlUdWpYUEVDTmRW?=
- =?utf-8?B?ekdtcGtZMm9VR0JOSXFXZWFraWpCdUhXREdTRUVTcXdNWk1WbitKZ1lHK1Uv?=
- =?utf-8?B?Y1c4NVdMcnA5S3ZoR0ZqTWYwaC9ZMnRyaUlJL1pnY1B4ellVazdOTGsrcXdG?=
- =?utf-8?B?Q09UcWc1aHdGWDk4LzQrMFp6dnpvQm5jUzRMR0REeVhqWGV1U1F2NHNRdHlx?=
- =?utf-8?B?bTNrZlNFNVRVR1ZteGVsUGNMV0t3QnNheHNoZHJ2V2Y4NS8wUjBUVGpvZGtl?=
- =?utf-8?B?TFJGeFcrS3pKNkhPVTVsdk9aelI5OXlzN0M3RjNqTnNIM01oVkJTRGZ4TzRz?=
- =?utf-8?B?cVhxZit6SGpWOXZLWHVHM2Zrd3orRHA2czJnMTBuREdvZitoSnJpMnY5ZzNs?=
- =?utf-8?B?bEdjUU5NTVBJcC9Ccjk3bk1Wa0QwRjF3bWcydVhaYmZoVDZHMzJSTnQ1TmFG?=
- =?utf-8?B?NGJCbzhwY2hSNGdmT0k1QkErK2xnbE5kL1FhLzV0cDFLTWVBUENHdjdxMDJh?=
- =?utf-8?B?UFRHcXRCUytSdnNIekdKWDNTYVZQQlhRbTkxTGpKUXh1amtiei9TQXpWLzFt?=
- =?utf-8?B?REZLSXRMamNXS05YT2lFajhGVXhMU3NOT2FKUFJmVWVMcnV4U1pVQTZTeVV5?=
- =?utf-8?B?eGNya2p0c2VFT3pySjdYNm1iVkRVTUF2U0JCemczNk1LR29DYzV4czZlUXc3?=
- =?utf-8?B?U3l5cHlwbmQvNUxOVW1VRlJYL3NJdWZva1A2RWIyUnBNcC9wbXJla0JoNTd2?=
- =?utf-8?B?VW9KUHQ5QUR1UXBQMlJqSktkSWlTNVZwbWF2OWFXcE9neEFDRDRmK2dvUXZL?=
- =?utf-8?B?c0lOQ2R2RDZuUG42eDJXL1JBbVg2STk5TmRYUXllMTAzMkJHR1hsd3BESTBi?=
- =?utf-8?B?WktJeGNDVVRJZ3drcEFhaU1ZQ3BicnR2ckNjTjRmZW9HWHZaRUhNaG9xZjNw?=
- =?utf-8?B?TGdGc2dxRDFuY0RYT2h0bE9vR3cwS2ZuTGszUWVvYzhWL1Z4dkRmRVJRdU1p?=
- =?utf-8?B?WllvbEF5WW9Jb0VETU9zdU5kQ2FuYko0cHc5dnd2RjlNSmcyc0R1Mmt4VnFy?=
- =?utf-8?B?UFJtMGVkRk1GYk9Bc1U2TmZ2SE9WL252Y0dXZ1BENTVraGFCNWQxUzVzaUpM?=
- =?utf-8?B?alpKb1E0RTh0T0pDeEdSdWIweVArSHNxbU9GOERpWkNxbVgwZ0puZ1YyMEVX?=
- =?utf-8?B?aVE9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 304A930DD22
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 03:47:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.19.206
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756266449; cv=none; b=Ox91Yr6Hs6X6GPSFMpQvnhda81h/g98RmOWnzLrt/ukeZrPAbaH5wbmlGGfZa6orVXPdnz6bq0SoAdJtZnrCjuy76SWl8w7SF5mVHETBEijFmHmZ6EckKUfS66G1pkehQr6qG1YiZkz+YuFyfpjwKbnTccPORj4ory3XJflplr8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756266449; c=relaxed/simple;
+	bh=8fhzb4bIwKK2zU9G7I2MfQuhrIhOffMr+A41T+liPz0=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=qnGZuB9/zdv67RR1rAzZpcuVgqFP4jt0A+BNLYIZsYdwgXWsLLBTfnDICWDG9q6wFJlbMrLGc9CdLeOxbvHV3tvZvYzCXXqFJzqGvqyHTRvYV+ZVosGlKV62iZLzIDe7gJ8z/z6XDKeECfXQxmFQvr3Fg2nrDPJ4CUA9gOO62xc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com; spf=pass smtp.mailfrom=mucse.com; arc=none smtp.client-ip=54.207.19.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mucse.com
+X-QQ-mid: zesmtpsz7t1756266340tff468fac
+X-QQ-Originating-IP: QhwbKt2J6tkytR1ITvku5qIGf6s87fl/PQkkvsYSJf0=
+Received: from localhost.localdomain ( [203.174.112.180])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Wed, 27 Aug 2025 11:45:37 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 8056536568935068755
+EX-QQ-RecipientCnt: 26
+From: Dong Yibo <dong100@mucse.com>
+To: andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	horms@kernel.org,
+	corbet@lwn.net,
+	gur.stavi@huawei.com,
+	maddy@linux.ibm.com,
+	mpe@ellerman.id.au,
+	danishanwar@ti.com,
+	lee@trager.us,
+	gongfan1@huawei.com,
+	lorenzo@kernel.org,
+	geert+renesas@glider.be,
+	Parthiban.Veerasooran@microchip.com,
+	lukas.bulwahn@redhat.com,
+	alexanderduyck@fb.com,
+	richardcochran@gmail.com,
+	kees@kernel.org,
+	gustavoars@kernel.org
+Cc: netdev@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org,
+	dong100@mucse.com
+Subject: [PATCH net-next v8 5/5] net: rnpgbe: Add register_netdev
+Date: Wed, 27 Aug 2025 11:45:09 +0800
+Message-Id: <20250827034509.501980-6-dong100@mucse.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20250827034509.501980-1-dong100@mucse.com>
+References: <20250827034509.501980-1-dong100@mucse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: aspeedtech.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SEYPR06MB5134.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6304ce3e-e672-4988-106a-08dde51c1eb2
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Aug 2025 03:45:09.2930
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43d4aa98-e35b-4575-8939-080e90d5a249
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: mWVU2X05e8ekYlNHFbdxb2SQ9ODnY2ucowYsHLhR8yZwz7+ppoabeOr/rmrOhvYu3ywgbnDfU0Yu60Gh7uB5L+ieAoBiVhJxZ28TT/axNW0=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: KUZPR06MB7964
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpsz:mucse.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: OMEqDAhtxLq605Btj+6kDe3IwbhQj4SXKPlliZFArJyPVbcZFX/+BI4z
+	vKSBYIln71wWBX76jOvF2fA9H5lZ1ouSDKOmI94Iww5ravbN6IUA/X+YcesfCoyB5v25hwd
+	XvT81PtHw5Kfc0T485SeKoCZfelxi5yFoPPfE/CZThP8U9w1HjEvIlcGC8VB5IREbVMDhly
+	Bqf1HunbnKtjgSh5/bCMVi8Mj3xNelVeRQBx1JfqXPBGNISPgQ9HGdtIcJz0hPkRo+rf5eV
+	7cm/AcSNIBcIlbHxLWUxBsMw8AYgHH+2EMbtz0DbYLcgNNE290Wfwjvry8rbOF4lm1+SdMv
+	+H8RIGaaZzW+ryK0lv/ObAqvMCuzwXR80JARMUZq2j+XEJoqtCT0cVgAOtXd15sDyGtB8/B
+	JJkPOfwsXnGCbvd9BZV93Glng5AcxZ/n018FwSoq7T5MHGQFlBegWfuabcHuuww1PVO5NMH
+	rz3Di+SXXT/rgwZ8VTr+IovDT4omzwFe7kb3ro3Opq+vCe2FkxM0inWN7c9rRuMwPCgxLJX
+	o0YOkNhYmHu/lL4ks8OocXLz1+UF3T9yCNiWyCvtedVgxU3yTlKjbdWeh5EpKMBKOgNnMB9
+	eY4cIMmbdtjRA4+6cYnEQXz7c3z9OAuL/u6Lx9m/ZI5dUQvuvFQEB3rXcDoRapGf2F3KXMd
+	NyIu6FG1R1PRwAzFTi122/mayS0a8U6yinClQYNiHUY5JxzgMcECCg0yUVsuOv9nnUJXS9Z
+	P9Hxiio2Vwf8R0H/T5N7QcM2SsbL102ZPegV0/v3iBKbvejWQPoDmC4NFBBenAxWaUMDORs
+	CaFoSqnfOKr7jjva7dVCJZgI04u56RzoCGFpB1zwuUqdW/XZ0PmVpKaCJZtcdv83Q4jdf0Q
+	1I+nPJnRVngwh0YrdWT2NLabTSjp14jTZFne6BDaadekNV3iV9LeyTlxsvr7BO9Qas4jPKD
+	UeFJTPaZsYPmZRkN2kiCrjHDWIjl4z62MqE4D3aPeJ1kGUbFtuCMgP4RiSiAF5a1XNLu9dp
+	bZb9CSyfhgzK66LdkxMddf0qQuxDtJjBY5GpEVrNZQJdVgJs86B8fkZ7TmlLesS0QLpjN3O
+	Mmmc2BIcTwBK5tmcaU9bK/euFGcXBNsAQ==
+X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
+X-QQ-RECHKSPAM: 0
 
-SGkgTWFya3VzLA0KDQpUaGFuayB5b3UgZm9yIHlvdXIgcmVwbHkuDQoNCj4gPiArKysgYi9kcml2
-ZXJzL3BjaS9jb250cm9sbGVyL3BjaWUtYXNwZWVkLmMNCj4gPiBAQCAtMCwwICsxLDExMzcgQEAN
-Cj4g4oCmDQo+ID4gK3N0YXRpYyBpbnQgYXNwZWVkX2lycV9tc2lfZG9tYWluX2FsbG9jKHN0cnVj
-dCBpcnFfZG9tYWluICpkb21haW4sDQo+ID4gKwkJCQkgICAgICAgdW5zaWduZWQgaW50IHZpcnEs
-IHVuc2lnbmVkIGludCBucl9pcnFzLA0KPiA+ICsJCQkJICAgICAgIHZvaWQgKmFyZ3MpDQo+ID4g
-K3sNCj4g4oCmDQo+ID4gKwltdXRleF9sb2NrKCZwY2llLT5sb2NrKTsNCj4gPiArDQo+ID4gKwli
-aXQgPSBiaXRtYXBfZmluZF9mcmVlX3JlZ2lvbihwY2llLT5tc2lfaXJxX2luX3VzZSwNCj4gTUFY
-X01TSV9IT1NUX0lSUVMsDQo+ID4gKwkJCQkgICAgICBnZXRfY291bnRfb3JkZXIobnJfaXJxcykp
-Ow0KPiA+ICsNCj4gPiArCW11dGV4X3VubG9jaygmcGNpZS0+bG9jayk7DQo+IOKApg0KPiANCj4g
-VW5kZXIgd2hpY2ggY2lyY3Vtc3RhbmNlcyB3b3VsZCB5b3UgYmVjb21lIGludGVyZXN0ZWQgdG8g
-YXBwbHkgYSBzdGF0ZW1lbnQNCj4gbGlrZSDigJxndWFyZChtdXRleCkoJnBjaWUtPmxvY2spO+KA
-nT8NCj4gaHR0cHM6Ly9lbGl4aXIuYm9vdGxpbi5jb20vbGludXgvdjYuMTYtcmM2L3NvdXJjZS9p
-bmNsdWRlL2xpbnV4L211dGV4LmgjTDIyNQ0KPiANCg0KVGhhbmtzIGZvciB0aGUgaW5mb3JtYXRp
-b24gdGhhdCBtYWRlIG1lIGtub3cgdGhpcyBtZXRob2QuDQpJIGp1c3QgcmVmZXJyZWQgdG8gdGhl
-IGV4aXN0ZWQgZHJpdmVycyBpbiBMaW51eCBiZWZvcmUsIGFuZCBpdCBzZWVtcyB0aGVyZSBhcmUg
-YSBsb3Qgb2YgZHJpdmVycyBrZWVwaW5nIHRoZSBvcmlnaW5hbCB1c2FnZS4NClNvLCBJIGhhdmUg
-bm8gaWRlYSBMaW51eCBoYXZlIGludHJvZHVjZWQgdGhlc2UgbWV0aG9kcy4NCkkgd2lsbCB0YWtl
-IGNhcmUgb2YgdGhlc2UgdXNhZ2VzIGluIG15IGRldmVsb3AgYW5kIHdpbGwgY2hhbmdlIGl0IGlu
-IHRoaXMgZHJpdmVyIGluIG5leHQgdmVyc2lvbi4NCg0KVGhhbmtzLA0KSmFja3kNCg0K
+Initialize get mac from hw, register the netdev.
+
+Signed-off-by: Dong Yibo <dong100@mucse.com>
+---
+ drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h    | 23 ++++++
+ .../net/ethernet/mucse/rnpgbe/rnpgbe_chip.c   | 82 +++++++++++++++++++
+ drivers/net/ethernet/mucse/rnpgbe/rnpgbe_hw.h |  2 +
+ .../net/ethernet/mucse/rnpgbe/rnpgbe_main.c   | 75 +++++++++++++++++
+ 4 files changed, 182 insertions(+)
+
+diff --git a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h
+index 4d2cca59fb23..33ee6f05e9b8 100644
+--- a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h
++++ b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h
+@@ -6,6 +6,7 @@
+ 
+ #include <linux/types.h>
+ #include <linux/mutex.h>
++#include <linux/netdevice.h>
+ 
+ extern const struct rnpgbe_info rnpgbe_n500_info;
+ extern const struct rnpgbe_info rnpgbe_n210_info;
+@@ -24,6 +25,10 @@ enum rnpgbe_hw_type {
+ 	rnpgbe_hw_unknown
+ };
+ 
++struct mucse_dma_info {
++	void __iomem *dma_base_addr;
++};
++
+ struct mucse_mbx_stats {
+ 	u32 msgs_tx;
+ 	u32 msgs_rx;
+@@ -47,12 +52,27 @@ struct mucse_mbx_info {
+ 	u32 fw2pf_mbox_vec;
+ };
+ 
++struct mucse_hw;
++
++struct mucse_hw_operations {
++	int (*reset_hw)(struct mucse_hw *hw);
++	void (*driver_status)(struct mucse_hw *hw, bool enable, int mode);
++};
++
++enum {
++	mucse_driver_insmod,
++};
++
+ struct mucse_hw {
+ 	void __iomem *hw_addr;
+ 	struct pci_dev *pdev;
+ 	enum rnpgbe_hw_type hw_type;
+ 	u8 pfvfnum;
++	const struct mucse_hw_operations *ops;
++	struct mucse_dma_info dma;
+ 	struct mucse_mbx_info mbx;
++	int port;
++	u8 perm_addr[ETH_ALEN];
+ };
+ 
+ struct mucse {
+@@ -72,4 +92,7 @@ struct rnpgbe_info {
+ #define PCI_DEVICE_ID_N500_DUAL_PORT 0x8318
+ #define PCI_DEVICE_ID_N210 0x8208
+ #define PCI_DEVICE_ID_N210L 0x820a
++
++#define rnpgbe_dma_wr32(dma, reg, val) \
++	writel((val), (dma)->dma_base_addr + (reg))
+ #endif /* _RNPGBE_H */
+diff --git a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_chip.c b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_chip.c
+index f38daef752a3..40c29411fe09 100644
+--- a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_chip.c
++++ b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_chip.c
+@@ -1,11 +1,87 @@
+ // SPDX-License-Identifier: GPL-2.0
+ /* Copyright(c) 2020 - 2025 Mucse Corporation. */
+ 
++#include <linux/pci.h>
+ #include <linux/string.h>
++#include <linux/etherdevice.h>
+ 
+ #include "rnpgbe.h"
+ #include "rnpgbe_hw.h"
+ #include "rnpgbe_mbx.h"
++#include "rnpgbe_mbx_fw.h"
++
++/**
++ * rnpgbe_get_permanent_mac - Get permanent mac
++ * @hw: hw information structure
++ * @mac_addr: pointer to store mac
++ *
++ * rnpgbe_get_permanent_mac tries to get mac from hw.
++ * It use eth_random_addr if failed.
++ *
++ * @return: 0 on success, negative on failure
++ **/
++static int rnpgbe_get_permanent_mac(struct mucse_hw *hw,
++				    u8 *mac_addr)
++{
++	struct device *dev = &hw->pdev->dev;
++	int err;
++
++	err = mucse_fw_get_macaddr(hw, hw->pfvfnum, mac_addr, hw->port);
++	if (err) {
++		dev_err(dev, "Failed to get MAC from FW %d\n", err);
++		return err;
++	}
++
++	if (!is_valid_ether_addr(mac_addr)) {
++		dev_err(dev, "Failed to get valid MAC from FW\n");
++		return -EINVAL;
++	}
++
++	return 0;
++}
++
++/**
++ * rnpgbe_reset_hw_ops - Do a hardware reset
++ * @hw: hw information structure
++ *
++ * rnpgbe_reset_hw_ops calls fw to do a hardware
++ * reset, and cleans some regs to default.
++ *
++ * @return: 0 on success, negative on failure
++ **/
++static int rnpgbe_reset_hw_ops(struct mucse_hw *hw)
++{
++	struct mucse_dma_info *dma = &hw->dma;
++	int err;
++
++	rnpgbe_dma_wr32(dma, RNPGBE_DMA_AXI_EN, 0);
++	err = mucse_mbx_fw_reset_phy(hw);
++	if (err)
++		return err;
++	return rnpgbe_get_permanent_mac(hw, hw->perm_addr);
++}
++
++/**
++ * rnpgbe_driver_status_hw_ops - Echo driver status to hw
++ * @hw: hw information structure
++ * @enable: true or false status
++ * @mode: status mode
++ **/
++static void rnpgbe_driver_status_hw_ops(struct mucse_hw *hw,
++					bool enable,
++					int mode)
++{
++	switch (mode) {
++	case mucse_driver_insmod:
++		mucse_mbx_ifinsmod(hw, enable);
++		break;
++	}
++}
++
++static const struct mucse_hw_operations rnpgbe_hw_ops = {
++	.reset_hw = &rnpgbe_reset_hw_ops,
++	.driver_status = &rnpgbe_driver_status_hw_ops,
++};
+ 
+ /**
+  * rnpgbe_init_common - Setup common attribute
+@@ -13,10 +89,16 @@
+  **/
+ static void rnpgbe_init_common(struct mucse_hw *hw)
+ {
++	struct mucse_dma_info *dma = &hw->dma;
+ 	struct mucse_mbx_info *mbx = &hw->mbx;
+ 
++	dma->dma_base_addr = hw->hw_addr;
++
+ 	mbx->pf2fw_mbox_ctrl = GBE_PF2FW_MBX_MASK_OFFSET;
+ 	mbx->fw_pf_mbox_mask = GBE_FWPF_MBX_MASK;
++
++	hw->ops = &rnpgbe_hw_ops;
++	hw->port = 0;
+ }
+ 
+ /**
+diff --git a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_hw.h b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_hw.h
+index 746dca78f1df..0ab2c328c9e9 100644
+--- a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_hw.h
++++ b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_hw.h
+@@ -11,6 +11,8 @@
+ #define GBE_FWPF_MBX_MASK 0x5700
+ #define N210_FW2PF_MBX_VEC_OFFSET 0x29400
+ #define N210_FWPF_SHM_BASE_OFFSET 0x2d900
++/**************** DMA Registers ****************************/
++#define RNPGBE_DMA_AXI_EN 0x0010
+ /**************** CHIP Resource ****************************/
+ #define RNPGBE_MAX_QUEUES 8
+ #endif /* _RNPGBE_HW_H */
+diff --git a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_main.c b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_main.c
+index dacb097424c9..e94b0562f3d7 100644
+--- a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_main.c
++++ b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_main.c
+@@ -9,6 +9,8 @@
+ 
+ #include "rnpgbe.h"
+ #include "rnpgbe_hw.h"
++#include "rnpgbe_mbx.h"
++#include "rnpgbe_mbx_fw.h"
+ 
+ static const char rnpgbe_driver_name[] = "rnpgbe";
+ static const struct rnpgbe_info *rnpgbe_info_tbl[] = {
+@@ -35,6 +37,55 @@ static struct pci_device_id rnpgbe_pci_tbl[] = {
+ 	{0, },
+ };
+ 
++/**
++ * rnpgbe_open - Called when a network interface is made active
++ * @netdev: network interface device structure
++ *
++ * The open entry point is called when a network interface is made
++ * active by the system (IFF_UP).
++ *
++ * @return: 0 on success, negative value on failure
++ **/
++static int rnpgbe_open(struct net_device *netdev)
++{
++	return 0;
++}
++
++/**
++ * rnpgbe_close - Disables a network interface
++ * @netdev: network interface device structure
++ *
++ * The close entry point is called when an interface is de-activated
++ * by the OS.
++ *
++ * @return: 0, this is not allowed to fail
++ **/
++static int rnpgbe_close(struct net_device *netdev)
++{
++	return 0;
++}
++
++/**
++ * rnpgbe_xmit_frame - Send a skb to driver
++ * @skb: skb structure to be sent
++ * @netdev: network interface device structure
++ *
++ * @return: NETDEV_TX_OK or NETDEV_TX_BUSY
++ **/
++static netdev_tx_t rnpgbe_xmit_frame(struct sk_buff *skb,
++				     struct net_device *netdev)
++{
++	dev_kfree_skb_any(skb);
++	netdev->stats.tx_dropped++;
++	return NETDEV_TX_OK;
++}
++
++static const struct net_device_ops rnpgbe_netdev_ops = {
++	.ndo_open = rnpgbe_open,
++	.ndo_stop = rnpgbe_close,
++	.ndo_start_xmit = rnpgbe_xmit_frame,
++};
++
+ /**
+  * rnpgbe_add_adapter - Add netdev for this pci_dev
+  * @pdev: PCI device information structure
+@@ -78,6 +129,27 @@ static int rnpgbe_add_adapter(struct pci_dev *pdev,
+ 
+ 	hw->hw_addr = hw_addr;
+ 	info->init(hw);
++	mucse_init_mbx_params_pf(hw);
++	/* echo fw driver insmod to control hw */
++	hw->ops->driver_status(hw, true, mucse_driver_insmod);
++	err = mucse_mbx_get_capability(hw);
++	if (err) {
++		dev_err(&pdev->dev,
++			"mucse_mbx_get_capability failed! %d\n",
++			err);
++		goto err_free_net;
++	}
++	netdev->netdev_ops = &rnpgbe_netdev_ops;
++	netdev->watchdog_timeo = 5 * HZ;
++	err = hw->ops->reset_hw(hw);
++	if (err) {
++		dev_err(&pdev->dev, "Hw reset failed %d\n", err);
++		goto err_free_net;
++	}
++	eth_hw_addr_set(netdev, hw->perm_addr);
++	err = register_netdev(netdev);
++	if (err)
++		goto err_free_net;
+ 	return 0;
+ 
+ err_free_net:
+@@ -145,12 +217,15 @@ static int rnpgbe_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ static void rnpgbe_rm_adapter(struct pci_dev *pdev)
+ {
+ 	struct mucse *mucse = pci_get_drvdata(pdev);
++	struct mucse_hw *hw = &mucse->hw;
+ 	struct net_device *netdev;
+ 
+ 	if (!mucse)
+ 		return;
+ 	netdev = mucse->netdev;
++	unregister_netdev(netdev);
+ 	mucse->netdev = NULL;
++	hw->ops->driver_status(hw, false, mucse_driver_insmod);
+ 	free_netdev(netdev);
+ }
+ 
+-- 
+2.25.1
+
 
