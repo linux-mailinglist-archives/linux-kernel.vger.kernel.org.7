@@ -1,177 +1,110 @@
-Return-Path: <linux-kernel+bounces-787938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E53C7B37DD5
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 10:29:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2ACE1B37DD8
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 10:29:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93C5C7C86EB
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 08:29:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 851B11B63F6B
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 08:30:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E5AE3469FC;
-	Wed, 27 Aug 2025 08:27:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91310335BCF;
+	Wed, 27 Aug 2025 08:29:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="xSTgJhIX";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="SVYIM7N9";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="xSTgJhIX";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="SVYIM7N9"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ATOAo0ZM"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B165933A020
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 08:27:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 543783375BE;
+	Wed, 27 Aug 2025 08:29:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756283239; cv=none; b=fwCtGATWHJSQzFR3FjmzADvrkHAayqjpprH/UuMv8Ulbj78fZe15/TZtodPk1TpQ++zKR7T1DIALriF++cCSnUH7e9kCy984xwJGAkKMbFS+hLzypOskD3wv5Sak0F5BRc/P2dcktbS8r7N6l/S3t9bL8Rejo3XsqgLiNPyn8jU=
+	t=1756283348; cv=none; b=DjIvLQxgecxmLSC70ZhSFttTJqYvRmP6C7VM6FILeS34L3QTJ398MpsNnNDl3GzL7kd7lLozqfI192GanmlRl7UfqaeVeBdvUaJNM9S5DP8qmJ/Tss4C56cALMNTvWI3deKJ3FvJLdheIBr283s3eN42/Pa+EM7VJymtzoE8+os=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756283239; c=relaxed/simple;
-	bh=UlGxvACdv155XrFFrWk0ecsws481oUU4TIOFXFk1vIg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=FgPxOfp1SZoXZgAGNUSvmBKcGFEmfiSU+AHSfOAaiOz2mctvcfzs/zxDinEt7jTo3T9f8jz5mRyuj8+3uR1yaii4NScmOecz0+lM7NZY++U8j0R98PA5ljuI2ryDq1aEBe8fyI3NayBVJl99ymnPXO5hz+mkBAZXb8teybPwRAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=xSTgJhIX; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=SVYIM7N9; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=xSTgJhIX; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=SVYIM7N9; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id CDFAC1FF25;
-	Wed, 27 Aug 2025 08:26:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1756283195; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0KRBIhNrsFaoYAcvZ0YP3W0XTTeCHuYd9glX8HrySn4=;
-	b=xSTgJhIXzLSiuibHPW4pYXFd/u9s/jj08ZTG5dkCAya50kJwjIuH6kUeRPJjHtE7XTNkKY
-	+MdhI1k/ObTywr5+SUtd8soD0Cmn1utHhNAMWheHDHEKhszwoppl5xs8mcNI8Dz7SRCCzY
-	kAqGm4s7/QIxe2Qj9ksRopEHISHLJPE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1756283195;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0KRBIhNrsFaoYAcvZ0YP3W0XTTeCHuYd9glX8HrySn4=;
-	b=SVYIM7N9OfbLAjCujcb/K7N7X7RFZ5jssSiXgju7I7NZ878Mj/thgXlignLIOVkvYO5Pru
-	xC7jP1Mj2uKaEmCQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1756283195; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0KRBIhNrsFaoYAcvZ0YP3W0XTTeCHuYd9glX8HrySn4=;
-	b=xSTgJhIXzLSiuibHPW4pYXFd/u9s/jj08ZTG5dkCAya50kJwjIuH6kUeRPJjHtE7XTNkKY
-	+MdhI1k/ObTywr5+SUtd8soD0Cmn1utHhNAMWheHDHEKhszwoppl5xs8mcNI8Dz7SRCCzY
-	kAqGm4s7/QIxe2Qj9ksRopEHISHLJPE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1756283195;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0KRBIhNrsFaoYAcvZ0YP3W0XTTeCHuYd9glX8HrySn4=;
-	b=SVYIM7N9OfbLAjCujcb/K7N7X7RFZ5jssSiXgju7I7NZ878Mj/thgXlignLIOVkvYO5Pru
-	xC7jP1Mj2uKaEmCQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B8C3A13A31;
-	Wed, 27 Aug 2025 08:26:35 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id mNbSLDvBrmhNfgAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Wed, 27 Aug 2025 08:26:35 +0000
-From: Vlastimil Babka <vbabka@suse.cz>
-Date: Wed, 27 Aug 2025 10:26:42 +0200
-Subject: [PATCH v6 10/10] maple_tree: use percpu sheaves for
- maple_node_cache
+	s=arc-20240116; t=1756283348; c=relaxed/simple;
+	bh=jJFDqg3W1XpIlbQ+NvdZgxCYXLvPUbQ7azAswu3iDDU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=maFMiiryhz2IjGLjgg+mHXGZ+8/fEQwQwxbbPz3SQ42Mta4ZWVyrfUGfRnV+RjFjcZviJyB74vg8dfXPlZrEQNI/Eng6QSd7LSrNuuXsbAoMGw8zYa3XhqjpteSHjSPhnhWvodyraD475GHLX7ZwDcnXUy9bIcCLfdi6vDPK1NE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ATOAo0ZM; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-55ce508d4d6so5313423e87.0;
+        Wed, 27 Aug 2025 01:29:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756283344; x=1756888144; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jJFDqg3W1XpIlbQ+NvdZgxCYXLvPUbQ7azAswu3iDDU=;
+        b=ATOAo0ZMbATAAWThXPtGXYvM3scNDOjwDvxs/SG5aL9TPDUqV20+KyPx2BmoVq1uhl
+         MujSg+gVohdEuxEC/2pRZEBhfFoeDrWdqGayFVgQzz3V21y7d6AG8E+1O3/muW6WfR9N
+         jnjENqbov5VWdPmYeEeqRdyYxIxNTWXlG32pstTlPOIjMMiq7BvAuZi490JKLTu/Ukn4
+         c0oMhIS/XCu2Sw+6DnJIk2FGc6QiVadLY9C1XPoNwPeqDiqOQf11vPz2mcF6cAn2TVfu
+         kHzfjq7+avNH5AD3IGshnOBWw/JE2DgUBemkyN+oOUn4BcGRu+bvf2gne7c6Xbe7UfcH
+         /Z5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756283344; x=1756888144;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jJFDqg3W1XpIlbQ+NvdZgxCYXLvPUbQ7azAswu3iDDU=;
+        b=CxOA1RGiONj8ODSnkdwBI9b3RY4aqLnanLfbQucTY4yURRFRSW7r5++F1VwAfo1JAf
+         YiCXejLAum6wvXiOmMr+s3DbcAd/dOZHww5hisCElah66w9Oc/sTGWGbPZ7IgFu+T9Tr
+         7/dnHPSiv9bvJmnB6JK+QNM8AFDS64v3pdRIBNmJ93GJzlnQZalrXCcMzvoT8LWAPkNo
+         WW+yQIG3WpVnhKIWsmOEDsVksQq3t4XAPLn7TDKFhKEfw/ObBcfJvBN8uaQEpsZECn2O
+         OfGUQrzjdnPduvXWWv9PhWAeoQ5s7H4d68eApl1bK+vebT2icqB9mmDk69Xtw+4Gl7BF
+         2l+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXfnSZPfOtLniM2ZEy8IoywYmGaSq7hza+WeXeRnJPCJrvKqPbkXrCqBInu5YbEE15JAZovrZkPS/7uS32XhW5dPQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwhyNRXOA1jmOahWYIwHRQzteAjYbbON3HG4nWFJ7caKhGO0sAu
+	3reCzfrSWCoEZQSBNXnrV6pxiDK139b6lFf/2BJVpOU9dl09hDzMTE3o/UTOzS42zwPpRZp0bTm
+	wc9KfhFA29Iy500NDahjiqHzSq+qvB8XyIGqk
+X-Gm-Gg: ASbGncvrCM7cSA/J9aX4f4tKw5wAUfs6ZBOx0nS7lctkSDGOZo/TUb/2mmjMbOAEnhR
+	KOTSZCVk4P8WVDzXJgLfqDc1oPEEXTwAXjsF78PJ4Cd9ozM/ynOKFHWOo4Nc3xN3F5Ru6mvBARQ
+	mvU3aeJK8xc0r+0cNcxG1U/TEAXqdytfn2uUbfCJ6I6PGJiUuwnxx3mKZKn6DgYcp7TtqM+EipJ
+	E+gGMAcxMlLDLuLZw==
+X-Google-Smtp-Source: AGHT+IH2vZsJk2P6q12Hpu7iD7LUO/R96zPmhXjoFed6mZ9+n0ZpEcpsnh0U2/soyKVJyQiyrj3fngvsrSUeOr7O/w4=
+X-Received: by 2002:a05:6512:12c4:b0:55f:43ab:b214 with SMTP id
+ 2adb3069b0e04-55f43abb552mr3462437e87.15.1756283344056; Wed, 27 Aug 2025
+ 01:29:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250827-slub-percpu-caches-v6-10-f0f775a3f73f@suse.cz>
-References: <20250827-slub-percpu-caches-v6-0-f0f775a3f73f@suse.cz>
-In-Reply-To: <20250827-slub-percpu-caches-v6-0-f0f775a3f73f@suse.cz>
-To: Suren Baghdasaryan <surenb@google.com>, 
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
- Christoph Lameter <cl@gentwo.org>, David Rientjes <rientjes@google.com>
-Cc: Roman Gushchin <roman.gushchin@linux.dev>, 
- Harry Yoo <harry.yoo@oracle.com>, Uladzislau Rezki <urezki@gmail.com>, 
- linux-mm@kvack.org, linux-kernel@vger.kernel.org, rcu@vger.kernel.org, 
- maple-tree@lists.infradead.org, vbabka@suse.cz
-X-Mailer: b4 0.14.2
-X-Spamd-Result: default: False [-8.30 / 50.00];
-	REPLY(-4.00)[];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_SOME(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	ARC_NA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	R_RATELIMIT(0.00)[to_ip_from(RLwn5r54y1cp81no5tmbbew5oc)];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[linux.dev,oracle.com,gmail.com,kvack.org,vger.kernel.org,lists.infradead.org,suse.cz];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid,suse.cz:email,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Spam-Score: -8.30
+References: <20250616095315.230620-1-ubizjak@gmail.com> <175627714358.1920.14102647257754782558.tip-bot2@tip-bot2>
+ <CAFULd4aZYEi02cKeS1RAL66Qs149nLys8SJfTvfHuPH3FMXJeA@mail.gmail.com> <20250827081900.GAaK6_dB-acJ_rkKk4@fat_crate.local>
+In-Reply-To: <20250827081900.GAaK6_dB-acJ_rkKk4@fat_crate.local>
+From: Uros Bizjak <ubizjak@gmail.com>
+Date: Wed, 27 Aug 2025 10:28:52 +0200
+X-Gm-Features: Ac12FXz0tOCKNvcDKMzf_1OhJZ5v5qrLuZbHPtOpAUnLuK7ZSkY4dlLBmS33J6o
+Message-ID: <CAFULd4bEE=HSRhRGgSVik87maNCqV4TcW5q5HHvfgOp1_NwGdw@mail.gmail.com>
+Subject: Re: [tip: x86/asm] x86/vdso: Fix output operand size of RDPID
+To: Borislav Petkov <bp@alien8.de>
+Cc: linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org, 
+	x86@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Setup the maple_node_cache with percpu sheaves of size 32 to hopefully
-improve its performance. Note this will not immediately take advantage
-of sheaf batching of kfree_rcu() operations due to the maple tree using
-call_rcu with custom callbacks. The followup changes to maple tree will
-change that and also make use of the prefilled sheaves functionality.
+On Wed, Aug 27, 2025 at 10:19=E2=80=AFAM Borislav Petkov <bp@alien8.de> wro=
+te:
+>
+> On Wed, Aug 27, 2025 at 09:53:17AM +0200, Uros Bizjak wrote:
+> > The 1/2 patch is intended to be backportable
+>
+> Is it fixing an actual, real life bug?
 
-Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
-Reviewed-by: Suren Baghdasaryan <surenb@google.com>
----
- lib/maple_tree.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+No, because ".byte 0xf3,0x0f,0xc7,0xf8" encodes "RDPID %rax" on 64-bit
+targets and we are only interested in the lower 32-bits anyway.
 
-diff --git a/lib/maple_tree.c b/lib/maple_tree.c
-index b4ee2d29d7a962ca374467d0533185f2db3d35ff..a0db6bdc63793b8bbd544e246391d99e880dede3 100644
---- a/lib/maple_tree.c
-+++ b/lib/maple_tree.c
-@@ -6302,9 +6302,14 @@ bool mas_nomem(struct ma_state *mas, gfp_t gfp)
- 
- void __init maple_tree_init(void)
- {
-+	struct kmem_cache_args args = {
-+		.align  = sizeof(struct maple_node),
-+		.sheaf_capacity = 32,
-+	};
-+
- 	maple_node_cache = kmem_cache_create("maple_node",
--			sizeof(struct maple_node), sizeof(struct maple_node),
--			SLAB_PANIC, NULL);
-+			sizeof(struct maple_node), &args,
-+			SLAB_PANIC);
- }
- 
- /**
+So, the change only matters on the 64-bit target when mnemonic is used
+(there is no RDPID %eax" instruction), but the patch should not be
+backported for the reasons outlined in my previous message. OTOH, "LSL
+%eax,%eax" zero-extends to the full 64-bit register width on 64-bit
+targets even when 32-bit register form is used.
 
--- 
-2.51.0
-
+Thanks,
+Uros.
 
