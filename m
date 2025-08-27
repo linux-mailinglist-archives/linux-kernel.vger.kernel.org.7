@@ -1,181 +1,186 @@
-Return-Path: <linux-kernel+bounces-788296-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788297-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FBACB38282
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 14:36:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15595B38284
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 14:36:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1A7097ADC39
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 12:34:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F37A21672F8
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 12:36:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58C2E321440;
-	Wed, 27 Aug 2025 12:36:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2E8A31A54D;
+	Wed, 27 Aug 2025 12:36:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="HP6Pd2lg"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hBu5KrX0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A1693176E8
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 12:36:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 258292F49F7;
+	Wed, 27 Aug 2025 12:36:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756298163; cv=none; b=YiF19Cshur5nZqLZYZXvowkBqp4OxsrAclu0b5dwYs5b/R6ZJZXVGU1Z+8Bag5UFzQZGjUW6AAztf1nai1auAchspuSakpC0RWOCzToS/LlGCsUp0uCqHnHEDCsdscl2gkLdPFUYmeNFe+ZOs7/0fS3k7wZQVX2LvfncoMSqenU=
+	t=1756298183; cv=none; b=lTzeiJth/lE8YO08ssMCbODNfU/RCpqGIcF+I0VBYaUMBL3YwBjDzCXbqbPUeigcrqeDm0JrFjJ72sC3e4PHbVz+JwEIDIBvb3U5o5B/I6kLU4JQsVqj1e+zv7unQNW+QjuyEjKECoG7b32T59n0kfsah9VjzL+LR0F5RVD0UTQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756298163; c=relaxed/simple;
-	bh=OtfwXx5I64xIHGxuZSb4288v4TGZmcJgnGcUoChVAhQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lH42662T+VPh14GX7IHg0veMp4d1X+sCYkerBsLLqF9YdFZPOiHVZclqE6ECapoIrCo1CtUPeb1KPTvXgVvEGHI9sd1P157MQ5yckjYx1kOfOMaeUWM6QINwtxN1SRrQTxONN8x+DYmviXvbmWikspJrHZ/NQEFFzPw3cR7+Fog=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=HP6Pd2lg; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57R6kUhC027598
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 12:36:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	aE8zBC2r3Q0RIEhAPiMKgJEgO09ak2j9Srq2WGlHICA=; b=HP6Pd2lgIf3+Ff91
-	zdA15rB7L979ZlVWxyvt9V+gX7l8lhk/YtxeUULsYWP+dZWXurOIURgs04oH4KNS
-	Z/bgwUxV6lP20vVPOCcyPix+DqDw1Ox8eNXjp8japbIeEbJAqF1m5yaEtb6t0pFq
-	fLCElBTU0sSvJTulxTPPQFvFPl1AHiiJ+FntF7mfCQ19RAeDtrdAaTniSVlS9Cnq
-	66JB+bFkO4VQmM28jkAjxofCz6ha4w3eI1nXmdkrVPrxpjZw/Kv/scqkwPqZ1n2W
-	gSild69dNrPSBcFjVEieZb6WT0hQ7IyrUWWLvmtqWNTMcfjWjZ/W8Ynk3LGGEApY
-	ehvgsg==
-Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48se16und4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 12:36:01 +0000 (GMT)
-Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-244582e9d17so18813315ad.3
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 05:36:01 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756298160; x=1756902960;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=aE8zBC2r3Q0RIEhAPiMKgJEgO09ak2j9Srq2WGlHICA=;
-        b=DJ1jQRNyoeOKraxaKAQjP7nh1lh3ZAcKLfzPW67y9KMRAadIOonsLnfFPohrmCe/1b
-         2D+HBgpYghtOtkaJp/IKmByIRx5riKz5iuTYAAPCs6wim8cGshQ9Dm7lg/2+3hrxXyuw
-         sSpK4zBTplicQHeRpLa5EcOTeWw7sFoZn94XCgusW8mP0QkEjOKbL4BeaVxYH4HvBdR2
-         +YLVA6dqgh9/lEiXCW2xub19hrdO2I7hVWxP8c/vzb/7FyV33d86SQuBUPVIQWUblGAP
-         ttIIa394EOMbKgLw9/UMo0HAOS1Dus2oFQI4zhg7nmoLd+qPJxcy+0sHhINSUcub/7DT
-         L/vw==
-X-Forwarded-Encrypted: i=1; AJvYcCW7d6brrlK8vjPyoRqbWqGCRDwZpAoeDsF8ozNREENm0+Lx7tPfpzeTaS2/nogDjL5GyCfy6Kl3XACy49Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwLA/EQUE2YPws+P1qHDGN9CL5dllxKk1fKYdiaurz6DiC4XNRT
-	viv/xgL42tBxtmlQn3WNKlFtSbuapsORr4Hc/yOrS21w6bWBuh6Won/qgJJ1tgbEDnPDdAVd0UJ
-	BOy8BRUXkyCWp25kA2V9U85kAuxoHQWjw+/20GpnAa56/Sjd0xyczypYwp3CZCR1rl8I=
-X-Gm-Gg: ASbGncvIaGXR7Xh0/rLISHPrW1MhSLheag5oGuaXkaBTnIcBPN+xo0Eb90j8yAdc4lE
-	fz9G7AuOZfjl5Ap0VJzSqlYaXdIcPlyImnYKOEl7usqg8mvEUXJcGkKnNvbVTWncrZIvyiJFtcH
-	KbEOSncbiwEhIawFIKMaD9RmxJiiar7qFU1x1rk1nOv/5ed15rUVYucIfw2HDWALcDkSLxzydIe
-	/3jHFahpTNtG/Ld8+V/x5jx0kUfWOvEF/29VlGgRtLolLuH7gxCbvQkReqmsvSw748we4H17gwr
-	ds+P2vvlDHb7M+VKsitUOD3MVVVGmHS/ixslA3D5mBWcTJSuaKw/iADyYG6SRky/jjY5yuon7n0
-	kq2VTwpwLeyNrHDLOExjJpipnwy4rMg==
-X-Received: by 2002:a17:902:c951:b0:248:9afa:7bc3 with SMTP id d9443c01a7336-2489b09c5damr16498765ad.8.1756298160296;
-        Wed, 27 Aug 2025 05:36:00 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEYZ+xD3z7w+wdaYRdOi1NqLqGkN8knb7naudF58SoA0hWReYupg5b3LgtyFq8V+9Sa/QcFuQ==
-X-Received: by 2002:a17:902:c951:b0:248:9afa:7bc3 with SMTP id d9443c01a7336-2489b09c5damr16498445ad.8.1756298159732;
-        Wed, 27 Aug 2025 05:35:59 -0700 (PDT)
-Received: from [10.133.33.166] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-248787e1bb2sm37647865ad.96.2025.08.27.05.35.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Aug 2025 05:35:59 -0700 (PDT)
-Message-ID: <521fc2c7-d58f-4051-89b4-4c5a5a29d798@oss.qualcomm.com>
-Date: Wed, 27 Aug 2025 20:35:51 +0800
+	s=arc-20240116; t=1756298183; c=relaxed/simple;
+	bh=gMawlR1wd4qJw3Yw0u+8/0DluANiBkZNo7MJA2X0QhI=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=FZTWUso2YX2nrmgJGbZwsn8QxTwLWnNTFlhU6Dnp+mlkGcgiECNRh9f+FVa77sCMoPvG6Pl3T90vGElHU7evJazd7dFeLfSDN8albmCaSFiE6TsiW3QczKLqF08G1A97vkqIRO/MiuFf/VCuXItbRD6afAR3fkLD842QZpv14S0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hBu5KrX0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13FACC4CEEB;
+	Wed, 27 Aug 2025 12:36:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756298182;
+	bh=gMawlR1wd4qJw3Yw0u+8/0DluANiBkZNo7MJA2X0QhI=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=hBu5KrX02FvSF9qmFmCqLiUHIdPLM1OOEAduDXvSMZNA7+HrO+JWQc6/AwecHcHlZ
+	 d5x/h/uO0DUD/DazaFemT/Sih0jmA37a72uEbtgAjxAz+XdD2dQOTjsJmBXwYD2xns
+	 iI2IxoG1VpDThAuTtqYAfA7tMJQDeD7IAWuU2l/uEWS0s5SYBqL6/q+fJMqJcIohF2
+	 yr4g480FPavSunfjsa+vLe3FcrWwyJtOiXXkAFMt2tLRgk7wnRoWswMJ/BtOHS9rft
+	 xrl5+KdN6t7PIhw/VKSCfqKitlTwbTC5TGcHNOfLpIiGQIRfBCWer+EvSsYhT1Iq00
+	 8TR2ORbxrpzbg==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 14/14] drm/msm/dp: Add support for lane mapping
- configuration
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Rob Clark <robin.clark@oss.qualcomm.com>,
-        Dmitry Baryshkov <lumag@kernel.org>,
-        Abhinav Kumar
- <abhinav.kumar@linux.dev>,
-        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Kuogee Hsieh <quic_khsieh@quicinc.com>, Vinod Koul <vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>, linux-arm-msm@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-phy@lists.infradead.org, fange.zhang@oss.qualcomm.com,
-        yongxing.mou@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, quic_lliu6@quicinc.com
-References: <20250820-add-displayport-support-for-qcs615-platform-v3-0-a43bd25ec39c@oss.qualcomm.com>
- <20250820-add-displayport-support-for-qcs615-platform-v3-14-a43bd25ec39c@oss.qualcomm.com>
- <wwn24kjpwexl66hd3wufa53lkqojb2bkpdogtxwr3uqotjpf3u@hclfgsv64ajn>
-From: Xiangxu Yin <xiangxu.yin@oss.qualcomm.com>
-In-Reply-To: <wwn24kjpwexl66hd3wufa53lkqojb2bkpdogtxwr3uqotjpf3u@hclfgsv64ajn>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: QblzvIMSwQTSvk_oE-GegPI2rgt9eTnI
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODI2MDEyMCBTYWx0ZWRfXyfYzxaqyTuCS
- p+bb3jMb36/T8trXpJa9nNmmLVW3nn9vME5oMVA1XgeYmtwSleUjBQA/Vg3sZKrynxEIpfYQwEo
- CeYtpSLT7PUJ7R1qNQu0V10EQD/LoEqfC2SIlT1R1DRafTc8xDo9PEI/kN0CFMf+OrOWfR9Qyr5
- 7nVT/9mS4QA467avT2uSiB2Huq1cLv6V8tB1zT/86SSyxzbY6Hc7OLrs3zKrBgxDjVgZV1JV5Xf
- pfx0MU2qcxaV/1GhmrN3fS9r//hcKfU2Qqa4WVbYWw5S3qUkM3FmE2TO3prdKg6bAaRPCQ+Owg0
- dB22/6/hEHLZr9Imy3bRR1sskXYkkjVriegtb8RamrQKTXUF182TCGJDWrshX38Ic7xzzk3i4V9
- cZYZ2wIN
-X-Proofpoint-ORIG-GUID: QblzvIMSwQTSvk_oE-GegPI2rgt9eTnI
-X-Authority-Analysis: v=2.4 cv=CNYqXQrD c=1 sm=1 tr=0 ts=68aefbb1 cx=c_pps
- a=JL+w9abYAAE89/QcEU+0QA==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=o8qHn1sYNikkEtO5ub0A:9
- a=QEXdDO2ut3YA:10 a=324X-CrmTo6CU4MGRt3R:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-27_03,2025-08-26_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 impostorscore=0 priorityscore=1501 adultscore=0 spamscore=0
- phishscore=0 suspectscore=0 bulkscore=0 malwarescore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508260120
+Date: Wed, 27 Aug 2025 14:36:16 +0200
+Message-Id: <DCD7QRZ3L781.PSUM0WWF5UDD@kernel.org>
+Subject: Re: [PATCH v1 2/2] rust: Add read_poll_timeout_atomic function
+Cc: "FUJITA Tomonori" <fujita.tomonori@gmail.com>, <a.hindborg@kernel.org>,
+ <alex.gaynor@gmail.com>, <ojeda@kernel.org>, <aliceryhl@google.com>,
+ <anna-maria@linutronix.de>, <bjorn3_gh@protonmail.com>,
+ <boqun.feng@gmail.com>, <frederic@kernel.org>, <gary@garyguo.net>,
+ <jstultz@google.com>, <linux-kernel@vger.kernel.org>, <lossin@kernel.org>,
+ <lyude@redhat.com>, <rust-for-linux@vger.kernel.org>, <sboyd@kernel.org>,
+ <tglx@linutronix.de>, <tmgross@umich.edu>, <acourbot@nvidia.com>
+To: "Daniel Almeida" <daniel.almeida@collabora.com>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <20250821035710.3692455-1-fujita.tomonori@gmail.com>
+ <20250821035710.3692455-3-fujita.tomonori@gmail.com>
+ <DCCF63BESWQ9.9LC8MZK7NG1Y@kernel.org>
+ <20250827.091427.1081669324737480994.fujita.tomonori@gmail.com>
+ <DCD35NEEPLYB.2PBCLR8FWFGKD@kernel.org>
+ <DCD51BP7YXJV.3BLY6YJKGC58W@kernel.org>
+ <D8CE958C-508F-4A09-96BA-985B5A7C2BA7@collabora.com>
+ <DCD7DP6A72A8.2HAYR7K7Z14UO@kernel.org>
+ <3E41A50E-3D33-4B66-AEBB-91870298137D@collabora.com>
+In-Reply-To: <3E41A50E-3D33-4B66-AEBB-91870298137D@collabora.com>
 
+On Wed Aug 27, 2025 at 2:22 PM CEST, Daniel Almeida wrote:
+>
+>
+>> On 27 Aug 2025, at 09:19, Danilo Krummrich <dakr@kernel.org> wrote:
+>>=20
+>> On Wed Aug 27, 2025 at 2:14 PM CEST, Daniel Almeida wrote:
+>>> Hi Danilo,
+>>>=20
+>>> [=E2=80=A6}
+>>>=20
+>>>>=20
+>>>> Actually, let me put it in other words:
+>>>>=20
+>>>> let val =3D read_poll_timeout_atomic(
+>>>>    || {
+>>>>        // Fetch the offset to read from from the HW.
+>>>>        let offset =3D io.read32(0x1000);
+>>>>=20
+>>>>        // HW needs a break for some odd reason.
+>>>>        udelay(100);
+>
+> Why would we have a delay here? Can=E2=80=99t this be broken into two cal=
+ls to
+> read_poll_timeout_atomic()? That would be equivalent to what you wrote
+> IIUC.
 
-On 8/20/2025 7:49 PM, Dmitry Baryshkov wrote:
-> On Wed, Aug 20, 2025 at 05:34:56PM +0800, Xiangxu Yin wrote:
->> Since max_dp_lanes and max_dp_link_rate are link-specific parameters,
->> move their parsing from dp_panel to dp_link for better separation
->> of concerns.
->>
->> Add lane mapping configuration for the DisplayPort (DP) controller on
->> the QCS615 platform.
-> Separate patch
+I'm sure this can somehow be written otherwise as well. But that's not the
+point, the point is that this looks like perfectly valid code from a users
+perspective.
 
+>>>>=20
+>>>>        // Read the actual value.
+>>>>        io.try_read32(offset)
+>>>>    },
+>>>>    |val: &u32| *val =3D=3D HW_READY,
+>>>>    Delta::from_micros(0),      // No delay, keep spinning.
+>>>>    Delta::from_millis(10),     // Timeout after 10ms.
+>>>> )?;
+>>>>=20
+>>>> Seems like a fairly reasonable usage without knowing the implementatio=
+n details
+>>>> of read_poll_timeout_atomic(), right?
+>>>>=20
+>>>> Except that if the hardware does not become ready, this will spin for =
+16.67
+>>>> *minutes* -- in atomic context. Instead of the 10ms the user would exp=
+ect.
+>
+> This is where you lost me. Where does the 16.67 come from?
 
-Ok. will separate in next patch.
+Ah, I see -- let me explain:
 
+Internally read_poll_timeout_atomic() would convert the timeout (10ms) into=
+ ns
+(let's call it nanos). Then, it would decrement nanos in every iteration of=
+ the
+internal loop, based on the (wrong) assumption that every loop takes exactl=
+y
+1ns.
 
->> QCS615 platform requires non-default logical-to-physical lane mapping
->> due to its unique hardware routing. Unlike the standard mapping sequence
->> <0 1 2 3>, QCS615 uses <3 2 0 1>, which necessitates explicit
->> configuration via the data-lanes property in the device tree. This
->> ensures correct signal routing between the DP controller and PHY.
->>
->> The DP PHY supports polarity inversion (PN swap) but does not support
->> lane swapping. Therefore, lane mapping should be handled in the DP
->> controller domain using REG_DP_LOGICAL2PHYSICAL_LANE_MAPPING.
->>
->> Signed-off-by: Xiangxu Yin <xiangxu.yin@oss.qualcomm.com>
->> ---
->>  drivers/gpu/drm/msm/dp/dp_ctrl.c  | 10 ++---
->>  drivers/gpu/drm/msm/dp/dp_link.c  | 71 +++++++++++++++++++++++++++++++++++
->>  drivers/gpu/drm/msm/dp/dp_link.h  |  5 +++
->>  drivers/gpu/drm/msm/dp/dp_panel.c | 78 +++++----------------------------------
->>  drivers/gpu/drm/msm/dp/dp_panel.h |  3 --
->>  5 files changed, 90 insertions(+), 77 deletions(-)
->>
+However, since the user executes udelay(100), which is perfectly valid from=
+ the
+users perspective, in the Op closure, every loop iteration takes at least 1=
+00us
+instead.
+
+So, the actual timeout calculates as follows.
+
+	Timeout: 10ms =3D 10.000us =3D 10.000.000ns
+
+In every iteration this number is decremented by one, hence 10.000.000
+iterations.
+
+	100us * 10.000.000 iterations =3D 16.67 minutes
+
+So, the issue really is that we're not measuring time, but the number of
+iterations if delay_delta =3D=3D 0.
+
+As delay_delta grows the relative eror becomes smaller, yet this is far fro=
+m
+sane behavior.
+
+>>>>=20
+>>>> This would be way less error prone if we do not provide a timeout valu=
+e, but a
+>>>> retry count.
+>>>>=20
+>>>>> Instead, I think it makes much more sense to provide a retry count as=
+ function
+>>>>> argument, such that the user can specify "I want a dealy of 100us, tr=
+y it 100
+>>>>> times".
+>>>>>=20
+>>>>> This way it is transparent to the caller that the timeout may be sign=
+ificantly
+>>>>> more than 10ms depending on the user's implementation.
+>>>>>=20
+>>>>> As for doing this in C vs Rust: I don't think things have to align in=
+ every
+>>>>> implementation detail. If we can improve things on the Rust side from=
+ the
+>>>>> get-go, we should not stop ourselves from doing so, just because a si=
+milar C
+>>>>> implementation is hard to refactor, due to having a lot of users alre=
+ady.
+>>>=20
+>>> I must say I do not follow. Can you expand yet some more on this?
+>>=20
+>> Sure, but it would help if you could clarify which aspect you want me to=
+ expand
+>> on. :)
+
 
