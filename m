@@ -1,49 +1,62 @@
-Return-Path: <linux-kernel+bounces-787429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34E67B37625
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 02:40:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07889B37629
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 02:41:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 06CCB360C84
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 00:40:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD246360EFB
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 00:41:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BE551A262D;
-	Wed, 27 Aug 2025 00:40:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C93619CC0A;
+	Wed, 27 Aug 2025 00:40:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jUMVylDn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="JktGW+kl"
+Received: from r3-18.sinamail.sina.com.cn (r3-18.sinamail.sina.com.cn [202.108.3.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3CAE13AD3F;
-	Wed, 27 Aug 2025 00:40:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3449FF9D6
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 00:40:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756255207; cv=none; b=sFiqxTzrp3G4cxvnSdMDjNaCm2THvPbUD06QOiYGkHvoumj7O1JUqThWSSXHGreADbqTe5125KfOUBoRpNGbYqRfX0Qv6/H923qiJmQTLvbn7OsqtKS2Wu9ula0lkk44Mtv4AuN7CxcTE+nb61k08PQ/ma86qb+Djvyh6fRkg6k=
+	t=1756255256; cv=none; b=CBr6VUQSNhkQQq0B7DnW8mTKQ0jBW+nszCcrXFu2voiMQhiupeQhWTl8ZuLD7m5U30BZ5j4kOc423RYWB363QGvWC3RcavYLp7ULwuaiDtp2uv4Z5hxvpz2l/uNRNb5By3JekMxBrbsn+Nc5Qp5d40VUl8rV48vF5CeI4t3Lc9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756255207; c=relaxed/simple;
-	bh=9WDRBs9n5VYIz6RH6M4wgnsTs3yVOwevT+fGZyxRKco=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=MlAD4Ue7cdnYRnrJB6T5Qk3Po7sSbR2r0cFS0/DXASxXOsBOQPI1uwgphvEeX4oZeNuJg32f1QFLbig7S2x5qBJhccQ+OTOgLST8/TVGoySRKa11GDOOCbp+sM1hr1TVLtGzn6/nsELlXN3jkcVHchzHau1fam7dPaeHciHwti4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jUMVylDn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27982C4CEF1;
-	Wed, 27 Aug 2025 00:40:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756255207;
-	bh=9WDRBs9n5VYIz6RH6M4wgnsTs3yVOwevT+fGZyxRKco=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=jUMVylDnMh2nroT1KeVXKFVownx4SCIwDCc9Bi8nn05Ydp6GNEKKBIl65lj5mkles
-	 ZbQ+d7cg4KyxtreMy2zC/hvrHr7NSrRbDZ09vMUiMqh6ntiw5t0ZoK8AZjKKA98rYK
-	 74NJS1pV2tx2CBsM2IFd16da36KxCly86sAKoO5gmEwUgpCHnjDt1wpZHnRUNO6zXL
-	 VH0uddkrNAGd7KjBoraJp5RhO6SBWr2ZPzY1suE68VoujLIiDiVIxe3R3EM7GgA/Lj
-	 5uBUQHyt3pjKjifnCpuOIZmb4rTkM6MBt6CZibM9SSXMEGYz/+Q3N9AFzC7Z1h08ne
-	 Fv9H7rh/+V0NA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAE3A383BF70;
-	Wed, 27 Aug 2025 00:40:15 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1756255256; c=relaxed/simple;
+	bh=ZIP8hF44M6IJGIjSSyGjYXXnwuLdQmO35En6HJGa/XY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=FhRqN/Xg6rS2TIhI1bAKThWZ/BSNhEtu9USRWBVEXFC36ZQaF8T+OBkMmmRJ0QTWqwa3yGMyP0K6C/4xju0rinBVkkeoBxaV84sxDpJ1hplrgRrN6ueWX//gGCEDp0FBiZ5atlHi9q0ckDd0SjLJ9Tu/HgcjvNhaeZlCjO1Wlds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=JktGW+kl; arc=none smtp.client-ip=202.108.3.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1756255251;
+	bh=Gl6tAbUq+DzbydUTHpVw8ebckTFWUFP6T43SjEnyiKU=;
+	h=From:Subject:Date:Message-ID;
+	b=JktGW+klaIKEaACDrVfNASGPTCtgEBgfG4HzpKDOslAhCWHTGVWGzubfgdgvi2rog
+	 /Vp4CeLpAJuP11yPROWSm7HuVSUkux8j+OZBuY7Gc3BxAUOQuRZgfXqVyZbfbtN4ix
+	 FccT9H9f67o75YmecMddTH44CmYnDQxyMNrC7WmA=
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
+	by sina.com (10.54.253.32) with ESMTP
+	id 68AE540E00007EC1; Wed, 27 Aug 2025 08:40:48 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 6469054456922
+X-SMAIL-UIID: 754A451A8BA24684912915226A503815-20250827-084048-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+a25ee9d20d31e483ba7b@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [net?] KASAN: slab-use-after-free Write in __xfrm_state_delete
+Date: Wed, 27 Aug 2025 08:40:36 +0800
+Message-ID: <20250827004037.5728-1-hdanton@sina.com>
+In-Reply-To: <68ab6633.050a0220.37038e.0079.GAE@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,54 +64,59 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next V4 0/5] Expose burst period for devlink health
- reporter
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <175625521452.151180.8535021510500656720.git-patchwork-notify@kernel.org>
-Date: Wed, 27 Aug 2025 00:40:14 +0000
-References: <20250824084354.533182-1-mbloch@nvidia.com>
-In-Reply-To: <20250824084354.533182-1-mbloch@nvidia.com>
-To: Mark Bloch <mbloch@nvidia.com>
-Cc: edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- andrew+netdev@lunn.ch, davem@davemloft.net, tariqt@nvidia.com,
- leon@kernel.org, saeedm@nvidia.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, gal@nvidia.com
 
-Hello:
-
-This series was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Sun, 24 Aug 2025 11:43:49 +0300 you wrote:
-> Hi,
+> Date: Sun, 24 Aug 2025 12:21:23 -0700	[thread overview]
+> syzbot has found a reproducer for the following issue on:
 > 
-> This series by Shahar implements burst period in devlink health
-> reporter, and use it in mlx5e driver.
-> 
-> This is V4. Find previous versions here:
-> v3: https://lore.kernel.org/all/1755111349-416632-1-git-send-email-tariqt@nvidia.com/
-> v2: https://lore.kernel.org/all/1753390134-345154-1-git-send-email-tariqt@nvidia.com/
-> v1: https://lore.kernel.org/all/1752768442-264413-1-git-send-email-tariqt@nvidia.com/
-> 
-> [...]
+> HEAD commit:    b1c92cdf5af3 Merge branch 'net-wangxun-complete-ethtool-co..
+> git tree:       net-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=1411b062580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=67b99ceb67d33475
+> dashboard link: https://syzkaller.appspot.com/bug?extid=a25ee9d20d31e483ba7b
+> compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14221862580000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=159fba34580000
 
-Here is the summary with links:
-  - [net-next,V4,1/5] devlink: Move graceful period parameter to reporter ops
-    https://git.kernel.org/netdev/net-next/c/d2b007374551
-  - [net-next,V4,2/5] devlink: Move health reporter recovery abort logic to a separate function
-    https://git.kernel.org/netdev/net-next/c/20597fb9436e
-  - [net-next,V4,3/5] devlink: Introduce burst period for health reporter
-    https://git.kernel.org/netdev/net-next/c/6a06d8c40510
-  - [net-next,V4,4/5] devlink: Make health reporter burst period configurable
-    https://git.kernel.org/netdev/net-next/c/da0e2197645c
-  - [net-next,V4,5/5] net/mlx5e: Set default burst period for TX and RX reporters
-    https://git.kernel.org/netdev/net-next/c/2d5ccb93bbb4
+#syz test
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+--- x/include/net/xfrm.h
++++ y/include/net/xfrm.h
+@@ -202,6 +202,7 @@ struct xfrm_state {
+ 
+ 	refcount_t		refcnt;
+ 	spinlock_t		lock;
++	int deleted;
+ 
+ 	u32			pcpu_num;
+ 	struct xfrm_id		id;
+--- x/net/xfrm/xfrm_state.c
++++ y/net/xfrm/xfrm_state.c
+@@ -615,6 +615,7 @@ static void xfrm_state_gc_destroy(struct
+ 		put_page(x->xfrag.page);
+ 	xfrm_dev_state_free(x);
+ 	security_xfrm_state_free(x);
++	xfrm_state_delete(x);
+ 	xfrm_state_free(x);
+ }
+ 
+@@ -812,10 +813,16 @@ int __xfrm_state_delete(struct xfrm_stat
+ 	struct net *net = xs_net(x);
+ 	int err = -ESRCH;
+ 
+-	if (x->km.state != XFRM_STATE_DEAD) {
+-		x->km.state = XFRM_STATE_DEAD;
++	for (;;) {
++		if (x->km.state != XFRM_STATE_DEAD)
++			x->km.state = XFRM_STATE_DEAD;
+ 
+ 		spin_lock(&net->xfrm.xfrm_state_lock);
++		if (x->deleted) {
++			spin_unlock(&net->xfrm.xfrm_state_lock);
++			return 0;
++		}
++		x->deleted++;
+ 		list_del(&x->km.all);
+ 		hlist_del_rcu(&x->bydst);
+ 		hlist_del_rcu(&x->bysrc);
+--
 
