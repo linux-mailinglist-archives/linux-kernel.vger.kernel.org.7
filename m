@@ -1,111 +1,98 @@
-Return-Path: <linux-kernel+bounces-787854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BABFB37C39
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 09:52:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4772B37D42
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 10:13:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F197D176321
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 07:51:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD13436267D
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 08:13:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 963DC32142B;
-	Wed, 27 Aug 2025 07:51:50 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D4041D514B;
-	Wed, 27 Aug 2025 07:51:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3187432BF2B;
+	Wed, 27 Aug 2025 08:12:57 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88C5B30CD90;
+	Wed, 27 Aug 2025 08:12:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756281110; cv=none; b=rm/sP0qNM4S40LZa6PjbvFZN5YSo7yG8Nb0D5VrObroP+IduUTabWXfMAhLKR5fUTwoZqih1kdTJKnh0ZGD4+Fy1WQmQN39qXu5Ltx3bx7Q/HqY16x+8c4nsAeTbitYmiCLxLcYYVsiOYeavYvDHecBElMsWVw4G5tajwxHpgrc=
+	t=1756282376; cv=none; b=SwYrbxtoNOTVGA+Ac30SWeUxLmbVSwxx+2FF6fkRUH5auIhCkmI60UW2rRiZEhR0Y+ct7OgdcY47utLNCfINciWSs1c5GwKIKu07SFkyiFp8mFeGWMXgDbxOYbPavKgFSpBEXKSPhnfQmWxd1k4Nc4Rn+3D0lkJGiK0qXPAUx7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756281110; c=relaxed/simple;
-	bh=u0mH3ZFUJZIxa+X6JbQQclYaJ4VJc7Ol7j47zzz8YQM=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=KralQzJwRo7dDSs0rvHDj03C87doW7nBUxINyi6nBTkzwr5PqtnLwnpAUjeWQqtaUoIM9oU+25RQN/T+mXgMrUlzh+o81o301SItZ6U7aGp4zjBlgLIiX29Ig2iyAC5uhc+6IAfo9r0AY6uRNPbUb1PEYZqL1Bb3vS+pE4XrwIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4cBc9C45F4z1R8yW;
-	Wed, 27 Aug 2025 15:48:47 +0800 (CST)
-Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id C0ADD140144;
-	Wed, 27 Aug 2025 15:51:43 +0800 (CST)
-Received: from huawei.com (10.50.159.234) by dggpemf500002.china.huawei.com
- (7.185.36.57) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 27 Aug
- 2025 15:51:42 +0800
-From: Yue Haibing <yuehaibing@huawei.com>
-To: <davem@davemloft.net>, <dsahern@kernel.org>, <edumazet@google.com>,
-	<kuba@kernel.org>, <pabeni@redhat.com>, <horms@kernel.org>,
-	<kuniyu@google.com>, <alex.aring@gmail.com>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<yuehaibing@huawei.com>
-Subject: [PATCH v2 net-next] ipv6: annotate data-races around devconf->rpl_seg_enabled
-Date: Wed, 27 Aug 2025 16:12:43 +0800
-Message-ID: <20250827081243.1701760-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1756282376; c=relaxed/simple;
+	bh=QyQhFx8B3bKhrD6YrWj2wpyUU88MY9HsPrDbHArlac8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BP55SCrWoYaYkb0xahCr65HW/IXypireK3gFGZI75qeVnJ0Nsos2VIGHErBUW8OW8w6+Fj738f1DitLvq7DJKNw0zuBYtwMmXjjWZuvrI7Ioane5I8ebO5AHCX5gdyQ8zxFTdn8GhnUDK5EakXiHrOgDRp1DcdYsTaqS5jbVKL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9D7381691;
+	Wed, 27 Aug 2025 01:12:46 -0700 (PDT)
+Received: from localhost (e132581.arm.com [10.1.196.87])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8316E3F694;
+	Wed, 27 Aug 2025 01:12:54 -0700 (PDT)
+Date: Wed, 27 Aug 2025 09:12:52 +0100
+From: Leo Yan <leo.yan@arm.com>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Ian Rogers <irogers@google.com>, Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 05/11] tools headers: Sync arm64 headers with the kernel
+ source
+Message-ID: <20250827081252.GD745921@e132581.arm.com>
+References: <20250825215904.2594216-1-namhyung@kernel.org>
+ <20250825215904.2594216-6-namhyung@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
- dggpemf500002.china.huawei.com (7.185.36.57)
+In-Reply-To: <20250825215904.2594216-6-namhyung@kernel.org>
 
-devconf->rpl_seg_enabled can be changed concurrently from
-/proc/sys/net/ipv6/conf, annotate lockless reads on it.
-Also initializes extra1 and extra2 to SYSCTL_ZERO and SYSCTL_ONE
-respectively to avoid negative value writes, which may lead to
-unexpected results in ipv6_rpl_srh_rcv().
+On Mon, Aug 25, 2025 at 02:58:57PM -0700, Namhyung Kim wrote:
 
-Fixes: 8610c7c6e3bd ("net: ipv6: add support for rpl sr exthdr")
-Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
----
-v2: add extra1/2 check
----
- net/ipv6/addrconf.c | 4 +++-
- net/ipv6/exthdrs.c  | 6 ++----
- 2 files changed, 5 insertions(+), 5 deletions(-)
+[...]
 
-diff --git a/net/ipv6/addrconf.c b/net/ipv6/addrconf.c
-index 1c1d5cb6a7c1..265238574aab 100644
---- a/net/ipv6/addrconf.c
-+++ b/net/ipv6/addrconf.c
-@@ -7240,7 +7240,9 @@ static const struct ctl_table addrconf_sysctl[] = {
- 		.data		= &ipv6_devconf.rpl_seg_enabled,
- 		.maxlen		= sizeof(int),
- 		.mode		= 0644,
--		.proc_handler	= proc_dointvec,
-+		.proc_handler	= proc_dointvec_minmax,
-+		.extra1		= SYSCTL_ZERO,
-+		.extra2		= SYSCTL_ONE,
- 	},
- 	{
- 		.procname	= "ioam6_enabled",
-diff --git a/net/ipv6/exthdrs.c b/net/ipv6/exthdrs.c
-index d1ef9644f826..a23eb8734e15 100644
---- a/net/ipv6/exthdrs.c
-+++ b/net/ipv6/exthdrs.c
-@@ -494,10 +494,8 @@ static int ipv6_rpl_srh_rcv(struct sk_buff *skb)
- 
- 	idev = __in6_dev_get(skb->dev);
- 
--	accept_rpl_seg = net->ipv6.devconf_all->rpl_seg_enabled;
--	if (accept_rpl_seg > idev->cnf.rpl_seg_enabled)
--		accept_rpl_seg = idev->cnf.rpl_seg_enabled;
--
-+	accept_rpl_seg = min(READ_ONCE(net->ipv6.devconf_all->rpl_seg_enabled),
-+			     READ_ONCE(idev->cnf.rpl_seg_enabled));
- 	if (!accept_rpl_seg) {
- 		kfree_skb(skb);
- 		return -1;
--- 
-2.34.1
+> But the following two changes cannot be applied since they introduced
+> new build errors in util/arm-spe.c.  So it still has the warning after
+> this change.
+> 
+>   c8c2647e69bedf80 arm64: Make  _midr_in_range_list() an exported function
+>   e3121298c7fcaf48 arm64: Modify _midr_range() functions to read MIDR/REVIDR internally
 
+Hi Namhyung,
+
+Thanks for working on this. It is on our todo list for automatic
+generating MIDR. Sorry for any troubling during the syncing.
+
+Just a minor comment below.
+
+[...]
+
+> +struct target_impl_cpu {
+> +	u64 midr;
+> +	u64 revidr;
+> +	u64 aidr;
+> +};
+> +
+> +bool cpu_errata_set_target_impl(u64 num, void *impl_cpus);
+> +
+
+Currently, no one uses this API. It seems to me that we don't need to
+sync this code chunk.
+
+Otherwise, other changes LGTM.
+
+Thanks,
+Leo
 
