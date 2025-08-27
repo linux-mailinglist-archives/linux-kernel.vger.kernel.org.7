@@ -1,247 +1,271 @@
-Return-Path: <linux-kernel+bounces-787464-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787465-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01CAEB376D0
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 03:21:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4186B376D8
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 03:22:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9AF4163209
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 01:21:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBE5B1B66FD9
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 01:23:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5767199E89;
-	Wed, 27 Aug 2025 01:20:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1FAC1C5F23;
+	Wed, 27 Aug 2025 01:22:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="lu9R20El"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=aspeedtech.com header.i=@aspeedtech.com header.b="dE7pT2M0"
+Received: from SEYPR02CU001.outbound.protection.outlook.com (mail-koreacentralazon11023099.outbound.protection.outlook.com [40.107.44.99])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E1FF7E0FF
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 01:20:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756257628; cv=none; b=KSBbDBkbwmNxcNK4DZDvd1IdRfvRvDn1QAWvkWGnnoM+WVe4JLb0eJnYMZpW4gVzEd288sXVELLCg2GgTDDR7kICyEmUcKZBxnsyRtsDdlRUEPFsLeWxPZefS6q/nVQ6JGkUEuMbJKQZNQJ2qSK+wKDJ4iZ2lEIC/nx2GPDwALg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756257628; c=relaxed/simple;
-	bh=poieTlsyY1cLQWGzxhRq7UJJusIqma5TDI0g2OmhCPc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FCkKVAOPxfiKfkH+CZDF4NLH/AcNojFlFKG1SW1M8lpeAJ9RppWlfN+fHuk9B8cFX/ePRw/In6YucWHe8FdY6YMh44bvI13/7rX1kyz0PtSYKg6z9bQJteB002VkoCXyvUu+tNJOKuE8JActnQAgKY8msAp+UUbMyb7VA/86E/I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=lu9R20El; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57QJpJ1i006924
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 01:20:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=w/Xn+WN5sZN7Gioa60k8DdWJ
-	ObxIkjRSuxFZ7uva++I=; b=lu9R20ElEb4wMvM0fGhG2Sc/xNgy2iMWZqhMH4F/
-	hDHUsf9UZIqF7DmKCCLFmHYzTS4K6M8JJ01mG8YJ2BsetXgiN7VuCy2dMWBScBOW
-	zSmaJQscYtA9Ggxwu+k817ax+pVwKYmnrc7b0TZ0DLp7U0HEYlgLtwaXQrITcShR
-	2pj9XIzTYsrZoilKT0T8zdGz0jMBuVCaI3sTNH9jmvFaPYCi4JU2LI05UPXRxQkG
-	GBqHT1YC6dQeCQ+5B4nG6ZmoiWyoEyV0B1P0enflkwgRyEqk3xauxOGGYoJZd0oh
-	pu+ljD2VpkY0X5cye4DtSG+AMrRwBlp3PLlVKk/zJ9U7/Q==
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48q5untrsb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 01:20:25 +0000 (GMT)
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-70ddbb816f3so8010106d6.2
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 18:20:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756257624; x=1756862424;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=w/Xn+WN5sZN7Gioa60k8DdWJObxIkjRSuxFZ7uva++I=;
-        b=HdxKsDgXXQT3eIysYHG+gg3Txau/8tD3KdkbA4DgNzOd3PY5tLSa6sjQ+UAppP0PwD
-         +EyalwiSfD4wDozBXpfxty89bATpiJCXSdP5zMnsl18wtot+RDiAQ2+JgYp17U1JYRpg
-         UCke8AfWEEEcSWWbyowWFDBI45I8ARRAjqyUx//h35rJ9jqZAHTTQu2fCFvvgnEIOsTE
-         RaV+i6p8sFU7zkZpOMR0mCN8L0SWYNQzRYyCROvGq/dVM4PSLrIwBStjSb8I6DJ1saRA
-         gi3SGDDDuVholyX4l7r0tUvn0z07vrU6hWz6TR801unGuMJpbSFn1nJpsKpCuI/OEh1l
-         Cddg==
-X-Forwarded-Encrypted: i=1; AJvYcCVdT6H1h3VEFNhoOGPAYZpXzIIx0058WeOJfYAcDJLRM4FIjE/tbqgFrjsvQxuJJ+ihmjzRBibh8pxTnRM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzB69SRQgTW6cW9XBwOWazLsJ7bC8NtkM6UzSWoqyLkiS0SunHU
-	brA8rvF5mCFO7e87GNz1L5X30Rj2+4LSO0yCiRW5GZYjf4DiLiDPuEbElWrU2yG/hG0Q0rvetOr
-	nmol+hBH7io1FvHoEysyEGGU1FnO045NnHWQpW6ZsZcGpOtoIBxY1ZFH5kDyB9cPkLts=
-X-Gm-Gg: ASbGncsI0514yULaRBbZghtrAuOQhEC54M/JZOiY0lDETZInGo4ZX3Yej1/qeTR0oQ/
-	AsNWTXiSwvn3SnvdSl/Bq22O8xtXlScbbrha5FjR7AQ98MAkicNBt4OnYsG4JEg8QM56trWhWJx
-	J+XtWhFui+uHbNCtqx4/vfsBSwCmAXg4JxxlK9MJQ9kU4aJ7ZIXGCGXlRxGciW/1ZZNlduxMDNT
-	8Esl92t4XwLBtmyIC+BnN9xuiiq92N63dEIjE2g5lBqJBvFdcvKuLHBBeb0cigbsoCItPes06JD
-	696/7EDVoX08CVuRYggJb+4zchnTAGddhy2i8WXNw6aPBNpPukwVB4c2EeCD+mfKVLboTIAV9tS
-	B5AHYF0NRczAmWV+4lttcSMpwPYyWPgRTDi/Uz/ESXK9SQXynQPKT
-X-Received: by 2002:a05:6214:5013:b0:70d:a9aa:cf4d with SMTP id 6a1803df08f44-70da9aad0edmr158898376d6.18.1756257623961;
-        Tue, 26 Aug 2025 18:20:23 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEj7mqvlBJ1auHCNj37evOwAu64GQSmzOL1BDuqIdwslMygY6vB1q7fRLG4+OgUF4zumDU1lw==
-X-Received: by 2002:a05:6214:5013:b0:70d:a9aa:cf4d with SMTP id 6a1803df08f44-70da9aad0edmr158898066d6.18.1756257623302;
-        Tue, 26 Aug 2025 18:20:23 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3365e60a67bsm24910871fa.73.2025.08.26.18.20.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Aug 2025 18:20:22 -0700 (PDT)
-Date: Wed, 27 Aug 2025 04:20:20 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Wasim Nazir <wasim.nazir@oss.qualcomm.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Richard Cochran <richardcochran@gmail.com>, kernel@oss.qualcomm.com,
-        linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        netdev@vger.kernel.org, Monish Chunara <quic_mchunara@quicinc.com>
-Subject: Re: [PATCH 2/5] arm64: dts: qcom: lemans: Add SDHC controller and
- SDC pin configuration
-Message-ID: <rxd4js6hb5ccejge2i2fp2syqlzdghqs75hb5ufqrhvpwubjyz@zwumzc7wphjx>
-References: <20250826-lemans-evk-bu-v1-0-08016e0d3ce5@oss.qualcomm.com>
- <20250826-lemans-evk-bu-v1-2-08016e0d3ce5@oss.qualcomm.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D329735966;
+	Wed, 27 Aug 2025 01:22:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.44.99
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756257767; cv=fail; b=oQcx71RMd2l5TJoD/L1FuyI+Aw+ZjCJPJGugxSXt1gB+A4o1A3L85QImPy9O5zfShHixhC7yXY+lZFMbCNMseB0/wsC78YLCfIh/82B00DkQl3OqwJM0MCHKSGzwi9JJPNTUDI3Dz/TcWrec39kveQ0vyDZ8VpunKTGx83qbD+k=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756257767; c=relaxed/simple;
+	bh=c8+BHcE7Lhs8J7dU6lVEOsxTfogUa+9LRlP5MBLCGuk=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=Jwmfxc5JP6Hc/+eTDN8T3JMccbp+lLNFbveUaqISsSBqFfLR50OTZyT9NFERzbcXdCRfcq138IwdIXnH8esI37zbCeVaZCsLYpx49bTBUTCgm8AtvDcxYtRk98JHOaG762QvaUHjXvjKfOVArOjaZAoLOqygXovmQxYg5HHuNMU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; dkim=pass (2048-bit key) header.d=aspeedtech.com header.i=@aspeedtech.com header.b=dE7pT2M0; arc=fail smtp.client-ip=40.107.44.99
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Ae1/vOBZ5L9mVjSpbkewm4wbL4kKLKPAU9vN+MocI9qpIqECBRbYnMVFczC4zEPZybjHCMohyx1hh/PaqjZFvn0hWjJi8wBilsKp0LO+8MMcidfutFEL6jgTEzIQRWDqzFF89tT0ec/yx1UjI2S6ybIpS+oyuXfuBSVej3tUk7DrgN6PyotQEPe/MkvU4MTo3tOcLV6GLzhCsTOuDPpa4weU3kZv0dOiny53VJZLWQYyxROGrEWJTPWCP7Ach5vfqT3MjYU6Q7eMNiSozwkAJnNrt17jT3fRDLBzOUjfBR8LZtZKv2PmcX3ygIw9h4hIDvPqO+8RhoZk9pbqYIXp4g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=SYF3ghQFwfRDuHiZg+nKEcvCy+TrJQJAEedDokrfp9g=;
+ b=dt6wImzeoQyuM1ZMzeTPDq4T7PBPLMYAz3/QC09Rm0fE/jXwDKAtMCZKE8lcUSIKhAY4R88ZZtcXIEzQt0F5oz2KoPYzfOexjDXelD+Kx/yL6sqpCUUbX+tmy9INCQx96uyj4aUGEQUuHCx+Y3y0hVlZ7AxN9hEUMXQXmgS3loGhlTOV2TzKBsipPAPfwXSih2/YnS7fB4L/d+s2toBQV4A2Tn3wYi+SYUfl0MzEZcmRwrGSTFVD3GIvCI/ioumEtGz3TYgZxr2GPkcBrD1VNyG5g2eGWjTtrSPdqDIrW8xj8QXhdfsZxzcCDPhjcrbCjfUiPipR6R74J8wSZbEgrg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=aspeedtech.com; dmarc=pass action=none
+ header.from=aspeedtech.com; dkim=pass header.d=aspeedtech.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aspeedtech.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=SYF3ghQFwfRDuHiZg+nKEcvCy+TrJQJAEedDokrfp9g=;
+ b=dE7pT2M0l3wuApSCY7iUbdj3xl1u5idBEOPzufS5HZFNo+uyjmktVsWumryYi9ao6Rp19CwB/zraeDO3jSDLTUHbCcJ9eqxT8wpjmc0fDjZ0A3Uln9brW4EvZd1QhvUF3zNUrRs532rIV3ahaZPxidba0gg7+EckEdrOyMKObQgX24IEHPYjSHGa3Sr3zh24ZLJrG6CgRV8L8mOUxT+DYYMB2CcGHUgfBDS+NpzCxv12VkCdrAAfmmtH3xtv8XeYgC1Reg+yxmSZ1e9N8aCdYuloBTevx55erkqsqNm3XMpjyJNzQp7dU6NeTs4XuTbMQUlPSWN8hnlGcrLCtKJsRw==
+Received: from SEYPR06MB5134.apcprd06.prod.outlook.com (2603:1096:101:5a::12)
+ by KUZPR06MB7988.apcprd06.prod.outlook.com (2603:1096:d10:21::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.14; Wed, 27 Aug
+ 2025 01:22:41 +0000
+Received: from SEYPR06MB5134.apcprd06.prod.outlook.com
+ ([fe80::6b58:6014:be6e:2f28]) by SEYPR06MB5134.apcprd06.prod.outlook.com
+ ([fe80::6b58:6014:be6e:2f28%7]) with mapi id 15.20.9052.019; Wed, 27 Aug 2025
+ 01:22:41 +0000
+From: Jacky Chou <jacky_chou@aspeedtech.com>
+To: Bjorn Helgaas <helgaas@kernel.org>
+CC: "bhelgaas@google.com" <bhelgaas@google.com>, "lpieralisi@kernel.org"
+	<lpieralisi@kernel.org>, "kwilczynski@kernel.org" <kwilczynski@kernel.org>,
+	"mani@kernel.org" <mani@kernel.org>, "robh@kernel.org" <robh@kernel.org>,
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, "conor+dt@kernel.org"
+	<conor+dt@kernel.org>, "joel@jms.id.au" <joel@jms.id.au>,
+	"andrew@codeconstruct.com.au" <andrew@codeconstruct.com.au>,
+	"linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
+	"linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "openbmc@lists.ozlabs.org"
+	<openbmc@lists.ozlabs.org>, "linux-gpio@vger.kernel.org"
+	<linux-gpio@vger.kernel.org>, "linus.walleij@linaro.org"
+	<linus.walleij@linaro.org>, "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>
+Subject: [PATCH v2 08/10] PCI: Add FMT and TYPE definition for TLP header
+Thread-Topic: [PATCH v2 08/10] PCI: Add FMT and TYPE definition for TLP header
+Thread-Index: AQHb9TqlDxkoR0jv8kmBHlDJRq4OoLQzU3qAgEKjMzA=
+Date: Wed, 27 Aug 2025 01:22:41 +0000
+Message-ID:
+ <SEYPR06MB5134C908801B3F1DB51FB7BE9D38A@SEYPR06MB5134.apcprd06.prod.outlook.com>
+References: <20250715034320.2553837-9-jacky_chou@aspeedtech.com>
+ <20250715154145.GA2461632@bhelgaas>
+In-Reply-To: <20250715154145.GA2461632@bhelgaas>
+Accept-Language: zh-TW, en-US
+Content-Language: zh-TW
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=aspeedtech.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SEYPR06MB5134:EE_|KUZPR06MB7988:EE_
+x-ms-office365-filtering-correlation-id: 74c2daae-557d-4103-62c5-08dde5083794
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|376014|7416014|366016|1800799024|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?wSrxZEtcQerJxT08nYuY4E2RS4uZdnBDROS/Bl4nwCPeGIdCiPf4CI9Y/ggC?=
+ =?us-ascii?Q?PUKYo6AEdgDnilcsEmsPL5Jldd/8EDrU+hU+XLA2tM1eVXDOBsjFAqfOdwss?=
+ =?us-ascii?Q?IrhA/vKhba/ka9K4Sb0BBaXVk9A251g9iwTu0t0IAVPzdleQYSvQqwGS4YfD?=
+ =?us-ascii?Q?XcKgg3thaugX2dvuGzMWvqgt+unrs0exLEzSwyHVr+DzHNkOc7M9B6rqwjUn?=
+ =?us-ascii?Q?Uv2GJ7QA+2pDPID/QjfisMFyap/LMYI42Hofs9bxMuvc6Zbdcn7iT0rW0Ihw?=
+ =?us-ascii?Q?ZqrhHQnU+XYyBeszNPi5SqOHqbYg+exVWvt5cDgdqFlnNjQgkDiMxqz4lOgw?=
+ =?us-ascii?Q?+gi//rbY83RjixtZnbCfDbW4um1GSspN/uGe+Da8dQPbOqzSV4cKobOyzUh0?=
+ =?us-ascii?Q?AxiQJneRpBDsXNj4ZK61HlFEjCDR3GqrwxWT2fXvdQjfb5xE36IGdhuiWzqc?=
+ =?us-ascii?Q?Z6NWS2oYtpgu4dx/8488MiC1FV0B9anJvT0qKgR9c4wpkTt1TMA4TqMUKZw7?=
+ =?us-ascii?Q?dwyb0GYz8OnNKUIJeCWRxddji8tzr47yD0YgRxngbP1HqrOwFbt17bkaKl3K?=
+ =?us-ascii?Q?jxYp4iliuUYtrbx4VqRlshLmskpYomMjQyDtVNdCc7H2DF5qjz/z9fZ4sLQM?=
+ =?us-ascii?Q?D35M8dhdy80NwB+Bwt1aA5yVYnTdEGiJqqsnT1SLT7QGvzUzT/Y3JCLygCAJ?=
+ =?us-ascii?Q?fKBXKvleqZwBPownt+eZ+szf7ljKNT+J8TWEnXRagEEudjlCKsRw/JqoSPOm?=
+ =?us-ascii?Q?uIALZqhsRUmBa1j2wVq3S18hkDuWmWUeC142XRUKZG9s1JCnM0HbkE6mOxLe?=
+ =?us-ascii?Q?ngL9kmxjkpTxjRoI+DOsH445aWKYOgQUEqbKfnN4OWMX7wdlUMQbVz0Bo4kX?=
+ =?us-ascii?Q?nxxPs2XnS6B6zY3fu+2yGy3Aa2u5ciCF3bpk3puIGFhPJN++Upxj64dALctx?=
+ =?us-ascii?Q?kXMXxJaD+iwhVOz/V0QdoE5dDKxZDX3DBzA9OOptNvC4rHsOnjHtLBP7bwSz?=
+ =?us-ascii?Q?PMBED3lClm1N8ko0A4zdQfoFQcBvUUK+5h2eIaTMlj8I5SsMHzmxZDFz4HzJ?=
+ =?us-ascii?Q?JwFX7GZhJzZZMDx1X9YC8jih1jIFTOzzB3z+cIQGBCco7DoNVgFvIsnJ5IXM?=
+ =?us-ascii?Q?SaN6BaZNQ5xN9J6MzVS5zBk4TtNoaizCZY2Hq/t6J2EVvYFMSRPh420VKiQO?=
+ =?us-ascii?Q?F4kFgairNKKoiCgsD8ardXdiT+u/Re0yF0Oy9WCxKdOq6AgbEpv2iQXK7R2d?=
+ =?us-ascii?Q?g+9uuVMktw7HRgKmSgyzej0Kp9E8JRmG+pEzA3iCUrqcFmTGtQyKiW2T7faK?=
+ =?us-ascii?Q?FL6AExcimor1JZCz/08tArhB1OrRJg2EuO2WwBpIWcDD36nJMH6RNTYO4LvG?=
+ =?us-ascii?Q?FLHC48B5MTMp7tENKiBsJvDWuZQavHXcOcqD+yYDTGO1Dy7aAMJ7Hk//qzeR?=
+ =?us-ascii?Q?+Frob1118IpzxFaTEiRsCabZSTWB1347z7uhyllJk/FfWIN+OtFp8Q=3D=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEYPR06MB5134.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?fuBHjCpOVVbFvyWJCP16C+vvVi4c7550E7dFu5YTxJT+ZZWPULf6T3vj8HNv?=
+ =?us-ascii?Q?pmVQ6nf4VYIniVwOJ/Nwak1dF86YMNatLgyRyWEMy11K/KrMHMaMD4xtQBai?=
+ =?us-ascii?Q?T0H033XOP0ooQSTqkFCANTPDHP5gubdrMO7f+DiKRwNrfSyHGYJD7e4s6A9V?=
+ =?us-ascii?Q?zgQqksEh2vUulgi7D1+glkfvr4gdGFNRURWQxiUNFI8FxHgSgHhVo6Ay8aiy?=
+ =?us-ascii?Q?LRIaHv8gZYJGfPInEbU9mtPvrzSSDH4Aw9kAFRj3m4hskbeZ6/L8fKzeL+p4?=
+ =?us-ascii?Q?EcUG25XqpPy9gCV8DONRgPMTZI0zd7hDZn+QU4eYsp+mXZ2CWBaAiQvPnnkZ?=
+ =?us-ascii?Q?ogd6poObfehJ3+VTjIpswA79ghTDFnJ2hGh1GOw6Lq/ChE2Lk+7pnYWAZK3N?=
+ =?us-ascii?Q?bE5fsv2csjWOufRJ1TDhpaRiL5fE1Y+iR24mx3Aya4YeKtY+GePvy/i9p6wM?=
+ =?us-ascii?Q?F4VKdPnQcf3OVhJ4qCaQRgqKrWz0wLAFSJVAzHCIM6rLudzY/QlAJLqx9DWV?=
+ =?us-ascii?Q?BWjvgsMAvTAtW4EX0mxbPCUnsYzn5XzsvSDlAA3vW1t/CWtliKIl31v8PHvd?=
+ =?us-ascii?Q?4K7j9VKMU5YaUUKbvZdkBfKWpmfEmAH233r/awKuyDS2gssxyN+zPGkwa0Pt?=
+ =?us-ascii?Q?sisPDMQyQwMtMbndWGTh7caUC+rHESpsyl/R8UXIVUWVfi6l0ri5lTW8v1uK?=
+ =?us-ascii?Q?2Cl+ncKrmzw2OHkH2dzrzYXUun19Gm85JaxqRsklmyLBxlAuBYIkJfIFTr49?=
+ =?us-ascii?Q?Xj+vLY8DYK+rWJLJMPx3o7AQHyeifh94QkIYyf68aBBYgDjDt+Xy2wKepoKJ?=
+ =?us-ascii?Q?K2X+CGleGrehMUK9akzZCbUMF6hHOfNexu23x0UFuCmpa+LN6B/2yFLLuDpc?=
+ =?us-ascii?Q?2cjiI2YqRmFnI9GToNLxFawKeLBqwyL76iIuLD+PRbEGn6rZRfJYN4+j4+kA?=
+ =?us-ascii?Q?5V7hRA+eghVzJ8ILN/bPaC71ImFxq8rS2VitnThFl0wwzRO4XVqSpuAl1YQI?=
+ =?us-ascii?Q?9xCyDx0XxWsHRkJE3EaIX+oxhTYTNHWydBOl/KumofWFWMBqVcqWPQLrO4lJ?=
+ =?us-ascii?Q?3Ijqz4w6t9p2Y60foB8SriJWM4KCQZHiu4dxLFYY/YEBsATbx7QQq0okOIkf?=
+ =?us-ascii?Q?incsnidKBCVJUFpZ9Y7kggvqiHx4uqIwD4ubTdcCUTxezthrqmGZePOOUMaR?=
+ =?us-ascii?Q?UjVpjZpB/BAVzPidMaSs5jRt6Ij5aZTxpJuqBFJ/xFPJJ6bKF6925qb4w8Rk?=
+ =?us-ascii?Q?EfqoWGHg+pObIPKPjPwJwRPXMsRTzDQSgXq6OYEThW15LFYpi4p6EB9l7v61?=
+ =?us-ascii?Q?4QWj8tbgmBH3QqluyVEwrTcx0f9wFlrUhsCUT8e0ImIUvUxxH0zO2LwIeQ4l?=
+ =?us-ascii?Q?AW56cNHUc9ARX0ZV2/8RAxrkUsS8a05cOgNXL1yRwyuuomSWukDfkug0YjL3?=
+ =?us-ascii?Q?ijXnxoFF0PUTl33JQhJ+b0Or2+cQeNsw6IH0CqhfRvqbZi0wCccHsChb5q6k?=
+ =?us-ascii?Q?BoZXKXffGJV+lIG4Kddqg0+6y6aQENEQrFX60byBwAZLsDSn56Yw/jqq6ZyN?=
+ =?us-ascii?Q?SIn+QbDMS1kVJnYUJs+aySi4L3CK9ita6jK5fXpx?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250826-lemans-evk-bu-v1-2-08016e0d3ce5@oss.qualcomm.com>
-X-Proofpoint-GUID: owU_cW3MQKKBfd_vzZox6cHhFZrzrcTa
-X-Proofpoint-ORIG-GUID: owU_cW3MQKKBfd_vzZox6cHhFZrzrcTa
-X-Authority-Analysis: v=2.4 cv=JJo7s9Kb c=1 sm=1 tr=0 ts=68ae5d59 cx=c_pps
- a=wEM5vcRIz55oU/E2lInRtA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=2OwXVqhp2XgA:10 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8 a=xnlQaYUteIq3HUSXtOEA:9
- a=CjuIK1q_8ugA:10 a=OIgjcC2v60KrkQgK7BGD:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIzMDAzMSBTYWx0ZWRfX5ZyLFW9hCpBe
- 8m64SFCOmzeXdS5Aerv+eJ0sDND7W9816yBK8L568WTvFWF5oVX9wCuqvxC4gGZhWPcCUk3me7r
- yMPgM/2acN8B2qpL7OXty6ydpdx4aFVt9CvT+NRDWGQdqpazb4CuhVOjUcsG1kAh47x8lhOJiN8
- 5PHcF+cnlO6UQsEebYx4NrZt9jp4I823w8xhUTU0UU7OuRcb1sJDKlBoywIWtV4O0AFybX0F747
- lAK7PXK+efxG+ejVe1uGip4wQbJNxhUmeIWMzWmB427hOsW6iXFs1OMIyboxGXSGtF0apXcIjmd
- s5lUgJm/lqZRdMvVC8wSVdP/qoP/AuGqt9QZfdaLIuQZfZAQihWX5JhZut57HqZUt4bZkFRa+NP
- w53cylf/
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-26_02,2025-08-26_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 adultscore=0 bulkscore=0 spamscore=0 impostorscore=0
- malwarescore=0 clxscore=1015 priorityscore=1501 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508230031
+X-OriginatorOrg: aspeedtech.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SEYPR06MB5134.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 74c2daae-557d-4103-62c5-08dde5083794
+X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Aug 2025 01:22:41.0840
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43d4aa98-e35b-4575-8939-080e90d5a249
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 6LT+HwLvv0Ee6Y5lF8KEQnIb7yoQUB65MSRLACsF8fbZjsxaLuE8mQBUXndON9WHEaGYf78Cg9LdyCBtDiFbaeldd5vDxdkG6Yyl1M0jBv8=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: KUZPR06MB7988
 
-On Tue, Aug 26, 2025 at 11:51:01PM +0530, Wasim Nazir wrote:
-> From: Monish Chunara <quic_mchunara@quicinc.com>
-> 
-> Introduce the SDHC v5 controller node for the Lemans platform.
-> This controller supports either eMMC or SD-card, but only one
-> can be active at a time. SD-card is the preferred configuration
-> on Lemans targets, so describe this controller.
-> 
-> Define the SDC interface pins including clk, cmd, and data lines
-> to enable proper communication with the SDHC controller.
-> 
-> Signed-off-by: Monish Chunara <quic_mchunara@quicinc.com>
-> Co-developed-by: Wasim Nazir <wasim.nazir@oss.qualcomm.com>
-> Signed-off-by: Wasim Nazir <wasim.nazir@oss.qualcomm.com>
-> ---
->  arch/arm64/boot/dts/qcom/lemans.dtsi | 70 ++++++++++++++++++++++++++++++++++++
->  1 file changed, 70 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/lemans.dtsi b/arch/arm64/boot/dts/qcom/lemans.dtsi
-> index 99a566b42ef2..a5a3cdba47f3 100644
-> --- a/arch/arm64/boot/dts/qcom/lemans.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/lemans.dtsi
-> @@ -3834,6 +3834,36 @@ apss_tpdm2_out: endpoint {
->  			};
->  		};
->  
-> +		sdhc: mmc@87c4000 {
-> +			compatible = "qcom,sa8775p-sdhci", "qcom,sdhci-msm-v5";
-> +			reg = <0x0 0x087c4000 0x0 0x1000>;
-> +
-> +			interrupts = <GIC_SPI 383 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 521 IRQ_TYPE_LEVEL_HIGH>;
-> +			interrupt-names = "hc_irq", "pwr_irq";
-> +
-> +			clocks = <&gcc GCC_SDCC1_AHB_CLK>,
-> +				 <&gcc GCC_SDCC1_APPS_CLK>;
-> +			clock-names = "iface", "core";
-> +
-> +			interconnects = <&aggre1_noc MASTER_SDC 0 &mc_virt SLAVE_EBI1 0>,
-> +					<&gem_noc MASTER_APPSS_PROC 0 &config_noc SLAVE_SDC1 0>;
-> +			interconnect-names = "sdhc-ddr", "cpu-sdhc";
-> +
-> +			iommus = <&apps_smmu 0x0 0x0>;
-> +			dma-coherent;
-> +
-> +			resets = <&gcc GCC_SDCC1_BCR>;
-> +
-> +			no-sdio;
-> +			no-mmc;
-> +			bus-width = <4>;
+Hi Bjorn,
 
-This is the board configuration, it should be defined in the EVK DTS.
+Thank you for your reply.
 
-> +			qcom,dll-config = <0x0007642c>;
-> +			qcom,ddr-config = <0x80040868>;
-> +
-> +			status = "disabled";
-> +		};
-> +
->  		usb_0_hsphy: phy@88e4000 {
->  			compatible = "qcom,sa8775p-usb-hs-phy",
->  				     "qcom,usb-snps-hs-5nm-phy";
-> @@ -5643,6 +5673,46 @@ qup_uart21_rx: qup-uart21-rx-pins {
->  					function = "qup3_se0";
->  				};
->  			};
-> +
-> +			sdc_default: sdc-default-state {
-> +				clk-pins {
-> +					pins = "sdc1_clk";
-> +					bias-disable;
-> +					drive-strength = <16>;
-> +				};
-> +
-> +				cmd-pins {
-> +					pins = "sdc1_cmd";
-> +					bias-pull-up;
-> +					drive-strength = <10>;
-> +				};
-> +
-> +				data-pins {
-> +					pins = "sdc1_data";
-> +					bias-pull-up;
-> +					drive-strength = <10>;
-> +				};
-> +			};
-> +
-> +			sdc_sleep: sdc-sleep-state {
-> +				clk-pins {
-> +					pins = "sdc1_clk";
-> +					drive-strength = <2>;
-> +					bias-bus-hold;
-> +				};
-> +
-> +				cmd-pins {
-> +					pins = "sdc1_cmd";
-> +					drive-strength = <2>;
-> +					bias-bus-hold;
-> +				};
-> +
-> +				data-pins {
-> +					pins = "sdc1_data";
-> +					drive-strength = <2>;
-> +					bias-bus-hold;
-> +				};
-> +			};
->  		};
->  
->  		sram: sram@146d8000 {
-> 
-> -- 
-> 2.51.0
-> 
+> >  include/uapi/linux/pci_regs.h | 32 ++++++++++++++++++++++++++++++++
+> >  1 file changed, 32 insertions(+)
+>=20
+> I don't think these definitions are relevant to uapi users, so they could=
+ go in
+> drivers/pci/pci.h, similar to the existing PCIE_MSG_* definitions.
 
--- 
-With best wishes
-Dmitry
+Agreed.
+I will move them to drivers/pci/pci.h and rename them in next version.
+
+>=20
+> Please follow the style of PCIE_MSG_*, including the brief spec citations=
+ and
+> /* */ comments.
+>=20
+> Not sure we need *all* of these; it looks like you only use:
+>=20
+>   PCI_TLP_TYPE_CFG0_RD
+>   PCI_TLP_TYPE_CFG0_WR
+>   PCI_TLP_TYPE_CFG1_RD
+>   PCI_TLP_TYPE_CFG1_WR
+>   PCI_TLP_FMT_3DW_NO_DATA
+>   PCI_TLP_FMT_3DW_DATA
+>
+
+Yes, I just use these in our PCIe RC driver.
+I will delete the others that are not used in next version.
+
+> > diff --git a/include/uapi/linux/pci_regs.h
+> > b/include/uapi/linux/pci_regs.h index a3a3e942dedf..700b915e00f5
+> > 100644
+> > --- a/include/uapi/linux/pci_regs.h
+> > +++ b/include/uapi/linux/pci_regs.h
+> > @@ -1230,4 +1230,36 @@
+> >  #define PCI_DVSEC_CXL_PORT_CTL				0x0c
+> >  #define PCI_DVSEC_CXL_PORT_CTL_UNMASK_SBR		0x00000001
+> >
+> > +/* Fmt[2:0] encoding for TLP Header */
+> > +#define PCI_TLP_FMT_3DW_NO_DATA		0x0  // 3DW header, no data
+> > +#define PCI_TLP_FMT_4DW_NO_DATA		0x1  // 4DW header, no data
+> > +#define PCI_TLP_FMT_3DW_DATA		0x2  // 3DW header, with data
+> > +#define PCI_TLP_FMT_4DW_DATA		0x3  // 4DW header, with data
+> > +#define PCI_TLP_FMT_PREFIX		0x4  // Prefix header
+> > +
+> > +/* Type[4:0] encoding for TLP Header */
+> > +#define PCI_TLP_TYPE_MEM_RD		0x00 // Memory Read Request
+> > +#define PCI_TLP_TYPE_MEM_RDLK		0x01 // Memory Read Lock
+> Request
+> > +#define PCI_TLP_TYPE_MEM_WR		0x00 // Memory Write Request
+> (Fmt must be with data)
+> > +#define PCI_TLP_TYPE_IO_RD		0x02 // IO Read Request
+> > +#define PCI_TLP_TYPE_IO_WR		0x02 // IO Write Request (Fmt must be
+> with data)
+> > +#define PCI_TLP_TYPE_CFG0_RD		0x04 // Config Type 0 Read
+> Request
+> > +#define PCI_TLP_TYPE_CFG0_WR		0x04 // Config Type 0 Write
+> Request (Fmt must be with data)
+> > +#define PCI_TLP_TYPE_CFG1_RD		0x05 // Config Type 1 Read
+> Request
+> > +#define PCI_TLP_TYPE_CFG1_WR		0x05 // Config Type 1 Write
+> Request (Fmt must be with data)
+> > +#define PCI_TLP_TYPE_MSG		0x10 // Message Request (see routing
+> field)
+> > +#define PCI_TLP_TYPE_MSGD		0x11 // Message Request with Data
+> (see routing field)
+> > +#define PCI_TLP_TYPE_CPL		0x0A // Completion without Data
+> > +#define PCI_TLP_TYPE_CPLD		0x0A // Completion with Data (Fmt
+> must be with data)
+> > +#define PCI_TLP_TYPE_CPLLCK		0x0B // Completion Locked
+> > +#define PCI_TLP_TYPE_CPLDLCK		0x0B // Completion with Data
+> Locked (Fmt must be with data)
+> > +#define PCI_TLP_TYPE_FETCH_ADD		0x0C // Fetch and Add AtomicOp
+> Request
+> > +#define PCI_TLP_TYPE_SWAP		0x0D // Unconditional Swap AtomicOp
+> Request
+> > +#define PCI_TLP_TYPE_CMP_SWAP		0x0E // Compare and Swap
+> AtomicOp Request
+> > +#define PCI_TLP_TYPE_LOCAL_PREFIX	0x00 // Local TLP Prefix (Fmt =3D
+> 0x4)
+> > +#define PCI_TLP_TYPE_E2E_PREFIX		0x10 // End-to-End TLP Prefix (Fmt
+> =3D 0x4)
+> > +
+> > +/* Macro to combine Fmt and Type into the 8-bit field */
+> > +#define PCIE_TLP_FMT_TYPE(fmt, type)   (((fmt) << 5) | ((type) & 0x1F)=
+)
+>=20
+> This looks like it might be controller-specific and could go in pcie-aspe=
+ed.c.
+
+Agreed.
+
+Thanks,
+Jacky
+
 
