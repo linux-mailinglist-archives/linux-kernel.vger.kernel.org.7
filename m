@@ -1,188 +1,222 @@
-Return-Path: <linux-kernel+bounces-788206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFE23B38137
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 13:37:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24DE7B381A1
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 13:45:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7ED0B5E4BB7
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 11:37:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD4621BA688F
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 11:45:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF6A62C0F78;
-	Wed, 27 Aug 2025 11:37:48 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C5A435E4F7;
+	Wed, 27 Aug 2025 11:40:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="VXhp37CC"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D0AE2BDC37
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 11:37:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 766823568FF;
+	Wed, 27 Aug 2025 11:40:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756294668; cv=none; b=omjunK4TfeLsTQyqMe3DPadAwrW7ovfWcM2LIJCew0AheaaAAkUUnGwyR6ORNceDTNgsvUz2h30GWPofszkqyEug+SOUZre4B3yVO7C8djNt+RLCl/c57c0Ui5hcL5dPMBmG6GQmRB8YODm7jaQUVNm2PtXkOFQTavYEsuP6dsM=
+	t=1756294830; cv=none; b=hIMKK5WpaX33DyckS5HNolYD0hhfT0u8LckEqlqNj0oXaPfXSL1zm/y1aJRTEkJ/dBCU6YPUWf9UeZV8vMcIaVngG5+lwFKLvEB7GEPDjS9xz4iKYGeH9xuldNUhwptD1sb+1h6V8pF+wg3CV5nUYVQdB3k3S++J/uv/RMDMqC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756294668; c=relaxed/simple;
-	bh=9dnKcqc9ZxfIgifH4RbtjueN00a+MjNc8NfZpICC424=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=tCkv9OZeMQTVj6VfWNJE3BrS8j8Oq4jPCHYt+QaCYbODmV5ik//JH1+ytzVE+TQThupAH/Sy7EWcEThz+CBNNkTT4F7eOjml3kKpjEX28YKYGfDFzvxnfwA/WOUHbra6uktbv+/VX6DjCdIJ3fXRLXFoltH9gDXBXqIXx0Aawxo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4cBj8C41csz2CgNN;
-	Wed, 27 Aug 2025 19:33:15 +0800 (CST)
-Received: from dggpemf200018.china.huawei.com (unknown [7.185.36.31])
-	by mail.maildlp.com (Postfix) with ESMTPS id 70EFD1400D4;
-	Wed, 27 Aug 2025 19:37:41 +0800 (CST)
-Received: from [10.174.176.250] (10.174.176.250) by
- dggpemf200018.china.huawei.com (7.185.36.31) with Microsoft SMTP Server
+	s=arc-20240116; t=1756294830; c=relaxed/simple;
+	bh=NJnkVkDo98V+HlHwHWrd7AwU12xeNpcD1LZlQ7EiZ8U=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fs+84eaPW9VyH3XePhqO+enY87ACm/CNHiBcSXSalc8io9vb1a16yuA7/GR4M4biCS9fGHz3KRX8O2JIYhaHrEr03nlAHiN2GpVwIy11T902TqtojltYH40DCj2bEJycKVhdMF6ZsBwF1k+MWmrrYAkj5WWUEA3HPRg0i0Mie4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=VXhp37CC; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 968e2c5e833a11f0bd5779446731db89-20250827
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=RrA3luYhH+iNo5cADqIaqx3+EWgohzWPIamCNjQp0DE=;
+	b=VXhp37CC8C4+wT9DuuezSxarfrZDShlzJb3389POHh8wFzMEat4zTYPhipmVTYW9NJRHfcpg7Z+ke4EA52aS7EPnN5agyqMnvqfM6kV8CmR+QhTQd8iSR/a9JCv1+szNjfb6tk0bGh46jPu26vG5Aulyj9N1SoPHkdN2hTywNFA=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.3,REQID:19960aad-0c5d-42bc-b51d-d8563c8602d1,IP:0,UR
+	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
+	elease,TS:0
+X-CID-META: VersionHash:f1326cf,CLOUDID:7ab6ec44-18c5-4075-a135-4c0afe29f9d6,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:81|82|102,TC:-5,Content:0|15|50,EDM:
+	-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,
+	AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 2,SSN|SDN
+X-CID-BAS: 2,SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: 968e2c5e833a11f0bd5779446731db89-20250827
+Received: from mtkmbs11n2.mediatek.inc [(172.21.101.187)] by mailgw01.mediatek.com
+	(envelope-from <jason-jh.lin@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 2010452521; Wed, 27 Aug 2025 19:40:10 +0800
+Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
+ MTKMBS14N1.mediatek.inc (172.21.101.75) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 27 Aug 2025 19:37:40 +0800
-Message-ID: <890b1575-abab-4b3c-8953-110e1dd3f9ed@huawei.com>
-Date: Wed, 27 Aug 2025 19:37:38 +0800
+ 15.2.1258.39; Wed, 27 Aug 2025 19:40:08 +0800
+Received: from mtksitap99.mediatek.inc (10.233.130.16) by
+ mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1258.39 via Frontend Transport; Wed, 27 Aug 2025 19:40:08 +0800
+From: Jason-JH Lin <jason-jh.lin@mediatek.com>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>,
+	Chun-Kuang Hu <chunkuang.hu@kernel.org>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>, Mauro Carvalho Chehab
+	<mchehab@kernel.org>
+CC: Matthias Brugger <matthias.bgg@gmail.com>, Nicolas Dufresne
+	<nicolas@ndufresne.ca>, Jason-JH Lin <jason-jh.lin@mediatek.com>, Nancy Lin
+	<nancy.lin@mediatek.com>, Singo Chang <singo.chang@mediatek.com>, Paul-PL
+ Chen <paul-pl.chen@mediatek.com>, Moudy Ho <moudy.ho@mediatek.com>, Xiandong
+ Wang <xiandong.wang@mediatek.com>, Sirius Wang <sirius.wang@mediatek.com>,
+	Fei Shao <fshao@chromium.org>, Chen-yu Tsai <wenst@chromium.org>,
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<dri-devel@lists.freedesktop.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-media@vger.kernel.org>
+Subject: [PATCH v7 07/20] mailbox: mtk-cmdq: Add mminfra_offset configuration for DRAM transaction
+Date: Wed, 27 Aug 2025 19:37:39 +0800
+Message-ID: <20250827114006.3310175-8-jason-jh.lin@mediatek.com>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20250827114006.3310175-1-jason-jh.lin@mediatek.com>
+References: <20250827114006.3310175-1-jason-jh.lin@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 03/11] mm/damon/paddr: support addr_unit for
- DAMOS_PAGEOUT
-To: SeongJae Park <sj@kernel.org>
-CC: <akpm@linux-foundation.org>, <damon@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
-	<wangkefeng.wang@huawei.com>, <zuoze1@huawei.com>, <kernel-team@meta.com>,
-	kernel test robot <lkp@intel.com>
-References: <20250827024244.58979-1-sj@kernel.org>
-From: Quanmin Yan <yanquanmin1@huawei.com>
-In-Reply-To: <20250827024244.58979-1-sj@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
- dggpemf200018.china.huawei.com (7.185.36.31)
+Content-Type: text/plain
+X-MTK: N
 
-Hi SJ,
+The GCE in MT8196 is placed in MMINFRA and requires all addresses
+in GCE instructions for DRAM transactions to be IOVA.
 
-在 2025/8/27 10:42, SeongJae Park 写道:
-> On Wed, 27 Aug 2025 10:21:41 +0800 Quanmin Yan <yanquanmin1@huawei.com> wrote:
->
->> 在 2025/8/26 22:21, SeongJae Park 写道:
->>> On Tue, 26 Aug 2025 12:51:17 +0800 Quanmin Yan <yanquanmin1@huawei.com> wrote:
->>>
->>>> Hi SJ,
->>>>
->>>> 在 2025/8/26 11:21, SeongJae Park 写道:
->>>>> [...]
->>>>>
->>>>>>> ==== Attachment 0 (0001-mm-damon-paddr-use-do_div-on-i386-for-damon_pa_pageo.patch) ====
->>>>>>>     From hackermail Thu Jan  1 00:00:00 1970
->>>>>>> From: SeongJae Park <sj@kernel.org>
->>>>>>> To: Andrew Morton <akpm@linux-foundation.org>
->>>>>>> Cc: SeongJae Park <sj@kernel.org>
->>>>>>> Cc: damon@lists.linux.dev
->>>>>>> Cc: kernel-team@meta.com
->>>>>>> Cc: linux-kernel@vger.kernel.org
->>>>>>> Cc: linux-mm@kvack.org
->>>>>>> Date: Mon, 25 Aug 2025 07:41:33 -0700
->>>>>>> Subject: [PATCH 1/3] mm/damon/paddr: use do_div() on i386 for damon_pa_pageout()
->>>>>>>              return value
->>>>>>>
->>>>>>> Otherwise, __udidi3 linking problem happens on certain configs.
->>>>>>>
->>>>>>> Reported-by: kernel test robot <lkp@intel.com>
->>>>>>> Closes: https://lore.kernel.org/oe-kbuild-all/202508241831.EKwdwXZL-lkp@intel.com/
->>>>>>> Signed-off-by: SeongJae Park <sj@kernel.org>
->>>>>>> ---
->>>>>>>      mm/damon/paddr.c | 14 +++++++++++++-
->>>>>>>      1 file changed, 13 insertions(+), 1 deletion(-)
->>>>>>>
->>>>>>> diff --git a/mm/damon/paddr.c b/mm/damon/paddr.c
->>>>>>> index 5fad2f9a99a0..09c87583af6c 100644
->>>>>>> --- a/mm/damon/paddr.c
->>>>>>> +++ b/mm/damon/paddr.c
->>>>>>> @@ -135,6 +135,18 @@ static bool damon_pa_invalid_damos_folio(struct folio *folio, struct damos *s)
->>>>>>>      	return false;
->>>>>>>      }
->>>>>>>      
->>>>>>> +/* convert physical address to core-layer address */
->>>>>>> +static unsigned long damon_pa_core_addr(phys_addr_t pa,
->>>>>>> +		unsigned long addr_unit)
->>>>>>> +{
->>>>>>> +#ifdef __i386__
->>>>>> Can we use the following condition instead?
->>>>>>
->>>>>> #if !defined(CONFIG_64BIT) && defined(CONFIG_PHYS_ADDR_T_64BIT)
->>>>> To my understanding, this issue happens only on i386, not every 32bit
->>>>> architectures.  So I think i386 specific condition is better.
->>>> I understand. However, the aforementioned general condition is essential,
->>>> and we should propose a new patch to address this. After introducing addr_unit,
->>>> any 32-bit architecture should support monitoring of 64-bit phys_addr_t.
->>> The issue is that we cannot divide 64bit values with plain '/' operator on
->>> "i386", and hence this patch makes it to use do_div() instead of '/' on "i386".
->>> No such or other problems at supporting 64-bit phys_addr_t is found on other
->>> 32bit architectures, to my understanding.  My understanding is that at least
->>> you confirmed that on your arm-based test environment.  So we don't need a new
->>> patch to my understanding.
->>>
->>> Am I missing somthing?
->> This is because I seem to have made a mistake earlier: I adjusted the local
->> compilation toolchain. When the __udivdi3 issue mentioned above occurred, it
->> reminded me of a potential problem. After switching to a completely new environment
->> for testing, I discovered the __aeabi_uldivmod linking error in arm, which is similar
->> to the __udivdi3 issue.🙁
-> Thank you for sharing this.  Then I agree the current fixup is insufficient.
->
-> Andrew, could you please drop this patch series from mm tree for now?  I will
-> further discuss with Quanmin about the proper fix and post next version of this
-> series with the proper fixup.
->
->> To prevent similar environment-related problems in the
->> future, I suggest adjusting the condition to the following:
->>
->> #if !defined(CONFIG_64BIT) && defined(CONFIG_PHYS_ADDR_T_64BIT)
->>
->> Please consider approving this fix.
-> I'm yet in travel, and I'd like to take more time on thinking about the proper
-> fix.  Quanmin, could you share more details about your test setups, both for
-> the compiling success case and failing case?
+Due to MMIO, if the GCE needs to access a hardware register at
+0x1000_0000, but the SMMU is also mapping a DRAM block at 0x1000_0000,
+the MMINFRA will not know whether to write to the hardware register or
+the DRAM.
+To solve this, MMINFRA treats addresses greater than 2G as data paths
+and those less than 2G as config paths because the DRAM start address
+is currently at 2G (0x8000_0000). On the data path, MMINFRA remaps
+DRAM addresses by subtracting 2G, allowing SMMU to map DRAM addresses
+less than 2G.
+For example, if the DRAM start address 0x8000_0000 is mapped to
+IOVA=0x0, when GCE accesses IOVA=0x0, it must add a 2G offset to
+the address in the GCE instruction. MMINFRA will then see it as a
+data path (IOVA >= 2G) and subtract 2G, allowing GCE to access IOVA=0x0.
 
-Apologies for disturbing you during your travels. Please allow me to explain:
+Since the MMINFRA remap subtracting 2G is done in hardware and cannot
+be configured by software, the address of DRAM in GCE instruction must
+always add 2G to ensure proper access. After that, the shift functions
+do more than just shift addresses, so the APIs were renamed to
+cmdq_convert_gce_addr() and cmdq_revert_gce_addr().
 
-When CONFIG_PHYS_ADDR_T_64BIT is enabled on "i386" [1], the phys_addr_t type
-becomes 64-bit, requiring the use of the do_div function. We are in agreement
-on this point.
+This 2G adjustment is referred to as mminfra_offset in the CMDQ driver.
+CMDQ helper can get the mminfra_offset from the cmdq_mbox_priv of
+cmdq_pkt and add the mminfra_offset to the DRAM address in GCE
+instructions.
 
-On arm32, if LPAE (which we intend to support in this series) is enabled,
-CONFIG_PHYS_ADDR_T_64BIT will also be enabled. In this case, pa / addr_unit
-will involve 64-bit division and similarly require the do_div function.
-Obviously, such link errors should normally occur under these circumstances.
-Unfortunately, the expected anomalies did not manifest in my previous tests.
-This may be related to some incorrect adjustments I had made to my local build
-environment quite some time ago — though I cannot be entirely certain. That
-said, I have since cleaned up the old configurations and ensured the current
-environment is clean and normal. For now, we have confirmed the actual problem
-and its root cause, shall we focus on fixing it?
+Signed-off-by: Jason-JH Lin <jason-jh.lin@mediatek.com>
+---
+ drivers/mailbox/mtk-cmdq-mailbox.c       | 22 ++++++++++++----------
+ include/linux/mailbox/mtk-cmdq-mailbox.h |  1 +
+ 2 files changed, 13 insertions(+), 10 deletions(-)
 
-In summary, after introducing addr_unit, we expect that any 32-bit architecture
-should support monitoring of 64-bit phys_addr_t. Therefore, we can consider the
-following adjustment:
-
-#if !defined(CONFIG_64BIT) && defined(CONFIG_PHYS_ADDR_T_64BIT)
-
-Or at least adjust it to:
-
-#if defined(__i386__) || (defined(__arm__) && defined(CONFIG_PHYS_ADDR_T_64BIT))
-
-I have thoroughly re-validated the feature functionality today and confirmed the
-correctness of the aforementioned modifications. Therefore, could I kindly ask
-you to consider the aforementioned modifications when you have some free time?
-
-[1]https://download.01.org/0day-ci/archive/20250824/202508241831.EKwdwXZL-lkp@intel.com/config
-
-Thanks,
-Quanmin Yan
-
-[...]
+diff --git a/drivers/mailbox/mtk-cmdq-mailbox.c b/drivers/mailbox/mtk-cmdq-mailbox.c
+index a9e8895d14df..373effbcfa40 100644
+--- a/drivers/mailbox/mtk-cmdq-mailbox.c
++++ b/drivers/mailbox/mtk-cmdq-mailbox.c
+@@ -94,20 +94,21 @@ struct cmdq {
+ struct gce_plat {
+ 	u32 thread_nr;
+ 	u8 shift;
++	dma_addr_t mminfra_offset;
+ 	bool control_by_sw;
+ 	bool sw_ddr_en;
+ 	bool gce_vm;
+ 	u32 gce_num;
+ };
+ 
+-static inline u32 cmdq_reg_shift_addr(dma_addr_t addr, const struct gce_plat *pdata)
++static inline u32 cmdq_convert_gce_addr(dma_addr_t addr, const struct gce_plat *pdata)
+ {
+-	return (addr >> pdata->shift);
++	return ((addr + pdata->mminfra_offset) >> pdata->shift);
+ }
+ 
+-static inline dma_addr_t cmdq_reg_revert_addr(u32 addr, const struct gce_plat *pdata)
++static inline dma_addr_t cmdq_revert_gce_addr(u32 addr, const struct gce_plat *pdata)
+ {
+-	return ((dma_addr_t)addr << pdata->shift);
++	return (((dma_addr_t)addr << pdata->shift) - pdata->mminfra_offset);
+ }
+ 
+ void cmdq_get_mbox_priv(struct mbox_chan *chan, struct cmdq_mbox_priv *priv)
+@@ -115,6 +116,7 @@ void cmdq_get_mbox_priv(struct mbox_chan *chan, struct cmdq_mbox_priv *priv)
+ 	struct cmdq *cmdq = container_of(chan->mbox, struct cmdq, mbox);
+ 
+ 	priv->shift_pa = cmdq->pdata->shift;
++	priv->mminfra_offset = cmdq->pdata->mminfra_offset;
+ }
+ EXPORT_SYMBOL(cmdq_get_mbox_priv);
+ 
+@@ -254,7 +256,7 @@ static void cmdq_task_insert_into_thread(struct cmdq_task *task)
+ 	struct cmdq_task *prev_task = list_last_entry(
+ 			&thread->task_busy_list, typeof(*task), list_entry);
+ 	u64 *prev_task_base = prev_task->pkt->va_base;
+-	u32 shift_addr = cmdq_reg_shift_addr(task->pa_base, task->cmdq->pdata);
++	u32 shift_addr = cmdq_convert_gce_addr(task->pa_base, task->cmdq->pdata);
+ 
+ 	/* let previous task jump to this task */
+ 	dma_sync_single_for_cpu(dev, prev_task->pa_base,
+@@ -326,7 +328,7 @@ static void cmdq_thread_irq_handler(struct cmdq *cmdq,
+ 		return;
+ 
+ 	shift_addr = readl(thread->base + CMDQ_THR_CURR_ADDR);
+-	curr_pa = cmdq_reg_revert_addr(shift_addr, cmdq->pdata);
++	curr_pa = cmdq_revert_gce_addr(shift_addr, cmdq->pdata);
+ 
+ 	list_for_each_entry_safe(task, tmp, &thread->task_busy_list,
+ 				 list_entry) {
+@@ -477,9 +479,9 @@ static int cmdq_mbox_send_data(struct mbox_chan *chan, void *data)
+ 		 */
+ 		WARN_ON(cmdq_thread_reset(cmdq, thread) < 0);
+ 
+-		shift_addr = cmdq_reg_shift_addr(task->pa_base, cmdq->pdata);
++		shift_addr = cmdq_convert_gce_addr(task->pa_base, cmdq->pdata);
+ 		writel(shift_addr, thread->base + CMDQ_THR_CURR_ADDR);
+-		shift_addr = cmdq_reg_shift_addr(task->pa_base + pkt->cmd_buf_size, cmdq->pdata);
++		shift_addr = cmdq_convert_gce_addr(task->pa_base + pkt->cmd_buf_size, cmdq->pdata);
+ 		writel(shift_addr, thread->base + CMDQ_THR_END_ADDR);
+ 
+ 		writel(thread->priority, thread->base + CMDQ_THR_PRIORITY);
+@@ -488,9 +490,9 @@ static int cmdq_mbox_send_data(struct mbox_chan *chan, void *data)
+ 	} else {
+ 		WARN_ON(cmdq_thread_suspend(cmdq, thread) < 0);
+ 		shift_addr = readl(thread->base + CMDQ_THR_CURR_ADDR);
+-		curr_pa = cmdq_reg_revert_addr(shift_addr, cmdq->pdata);
++		curr_pa = cmdq_revert_gce_addr(shift_addr, cmdq->pdata);
+ 		shift_addr = readl(thread->base + CMDQ_THR_END_ADDR);
+-		end_pa = cmdq_reg_revert_addr(shift_addr, cmdq->pdata);
++		end_pa = cmdq_revert_gce_addr(shift_addr, cmdq->pdata);
+ 		/* check boundary */
+ 		if (curr_pa == end_pa - CMDQ_INST_SIZE ||
+ 		    curr_pa == end_pa) {
+diff --git a/include/linux/mailbox/mtk-cmdq-mailbox.h b/include/linux/mailbox/mtk-cmdq-mailbox.h
+index 73b70be4a8a7..07c1bfbdb8c4 100644
+--- a/include/linux/mailbox/mtk-cmdq-mailbox.h
++++ b/include/linux/mailbox/mtk-cmdq-mailbox.h
+@@ -72,6 +72,7 @@ struct cmdq_cb_data {
+ 
+ struct cmdq_mbox_priv {
+ 	u8 shift_pa;
++	dma_addr_t mminfra_offset;
+ };
+ 
+ struct cmdq_pkt {
+-- 
+2.43.0
 
 
