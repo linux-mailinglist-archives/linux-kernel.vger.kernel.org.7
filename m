@@ -1,124 +1,97 @@
-Return-Path: <linux-kernel+bounces-788170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A9B2B380A7
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 13:15:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92192B3809D
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 13:14:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF8EC20882A
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 11:15:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A38620821C
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 11:14:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0EB034F48C;
-	Wed, 27 Aug 2025 11:15:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC9DC343D7F;
+	Wed, 27 Aug 2025 11:13:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="TOkbCw8v"
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="svVrkZTe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF3241FA178;
-	Wed, 27 Aug 2025 11:15:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.156.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34E5672610;
+	Wed, 27 Aug 2025 11:13:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756293337; cv=none; b=KhNDqg4+SvPRxpA741nPp2AmQ1ZRUJThlSM3v8w9nkZm2fu/SNT1lrKTXvMhzKehX34QhoC8kCJDOYsODCM4ncZOAOzFAn9lWLHI5M/XezmS1waCzLunSVK2v4JxqvfXdlDY+B21XichPMh49cZ8wQc6HVNuc2cIpX1CKScXXRI=
+	t=1756293233; cv=none; b=sLxg6ehC3fA6wi/DPgu88ONXSGedBrTotA6+AqS0sxX2RPGPbMjZm6bYHM59nt1HcFYOo1QMp30J7EF0mC8739oKrca7tDzQcvktZHsMvyDU8E4iW7HWe9pItcIDJZeS87vZSG96en0cPP2ENefFNabA21xKeQPB1NE0iWiXA80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756293337; c=relaxed/simple;
-	bh=DELClcv/QFFbgr0N0aIqJpzPrZ9sa0zi5L0dUoIeEug=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Hzkkjq3itxTMSxw6Fqj8Kh1cD//RzsB1gFaAW5woa/lJoEPusXBziXlrcOf/jQDawOJ6uALaqzgt2AAntgZ6Q0/EeqKZuzjKYeKUJwz9i/Wa9XUxKMy6+ZrZaCLRaLIG4c31ZjXG5vyJYVKXcvP73o1l7Tezx5ehgdW+X9iTd3I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=TOkbCw8v; arc=none smtp.client-ip=67.231.156.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
-Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
-	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57R0Wwsi018064;
-	Wed, 27 Aug 2025 04:12:27 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pfpt0220; bh=eS4PJTq7t6gAJPQmnSbdZkL6W
-	tmo5aHPtGS7PhCB2/g=; b=TOkbCw8v3Q5QFfD+A1EZnSJVz3bnUg2t6UEPAMh5G
-	qc36UQz/W75ptu5+a0WPwNdPfiFEFEHXp7YYI1dE38sIg1Kb4yeKBpd1yxAh9+lG
-	QbYBDNgUWeXG/mySNgMTPg/0xnPiPnwOmqlZ9kdzEm82uezjAQ/ckZvoxRc/AqQH
-	HPpA2XOe3Y6kFQ/UfF+2ixo7+blW7tOm2oz81k3DRLSDwBCdMqqel0tYZQG2OBNd
-	Acc+nbM1rj0SUYBpr8xTReyaWj+p3pBtzdiBAn3QuHaYakkmifwwgh78jQIg0JK2
-	zZwj32aYMkBQteRkbrGEImDhOSoarLvHsxbeVGtMFJKwg==
-Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
-	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 48spmm98st-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 27 Aug 2025 04:12:26 -0700 (PDT)
-Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
- DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Wed, 27 Aug 2025 04:12:26 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
- (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
- Transport; Wed, 27 Aug 2025 04:12:26 -0700
-Received: from opensource (unknown [10.29.8.22])
-	by maili.marvell.com (Postfix) with SMTP id 1DF463F706B;
-	Wed, 27 Aug 2025 04:12:22 -0700 (PDT)
-Date: Wed, 27 Aug 2025 11:12:21 +0000
-From: Subbaraya Sundeep <sbhatta@marvell.com>
-To: Liao Yuanhong <liaoyuanhong@vivo.com>
-CC: Igor Russkikh <irusskikh@marvell.com>,
-        Andrew Lunn
-	<andrew+netdev@lunn.ch>,
-        "David S. Miller" <davem@davemloft.net>,
-        "Eric
- Dumazet" <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
-	<pabeni@redhat.com>,
-        "open list:AQUANTIA ETHERNET DRIVER (atlantic)"
-	<netdev@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] net: aquantia: Remove redundant ternary operators
-Message-ID: <aK7oFUHS0l9w3MdI@opensource>
-References: <20250827095836.431248-1-liaoyuanhong@vivo.com>
+	s=arc-20240116; t=1756293233; c=relaxed/simple;
+	bh=+EFunwi1pkJP2H18I61OzrQHFnlmC5R3Abg+XE0LAtg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dEgkuNxD2+CPX6Wn4eBiFizABPlQnpEQXMW5p9nj/rDLjGFYIvDJt/l/AGs2fC50nmuglyV+yFD1IsP9um5WPTZsHQ5mb9RzvCt32uHcOTY407vKLXNfph8xrZMHsdDm6tw4yOUbFcDNCpOB9fVLie6I/7v4WkayYMOPjZpn7Nk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=svVrkZTe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24154C4CEEB;
+	Wed, 27 Aug 2025 11:13:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756293231;
+	bh=+EFunwi1pkJP2H18I61OzrQHFnlmC5R3Abg+XE0LAtg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=svVrkZTezGvrm0Mt6aMtRHx744VUyZDAvYsqHpNDq2g7bzNke3o9POifqXV2Kb+/F
+	 nKp4Ko0bOI+ujsQiY1lWwRGGckVpsAg7OSBVEcAPr9Xc0ri3xuoPVlryyRLJy4XMgF
+	 S8CVdovSALLuXTcwL65WdNdKB5ha6OY83n9xYgYEsT6KB2p5g3kHfdC3aJqgEPlj5A
+	 V43FkapOv5vWESR7LGsmmxeocz+TJXqUNoGmCq+VyWadx7AG8ERRuEmoPZS6cWDeUi
+	 ZY3Cxc2+7J1ZcELM+tCdoCzvUT0Z3SRZL3VMJ4GGe2b8piUTq8ar6m+xBHmjhJtWfo
+	 WsyYl24glhvMw==
+Date: Wed, 27 Aug 2025 12:13:45 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, hargar@microsoft.com, achill@achill.org
+Subject: Re: [PATCH 6.12 000/322] 6.12.44-rc1 review
+Message-ID: <c3304d11-154c-4523-b1ea-b0052b406035@sirena.org.uk>
+References: <20250826110915.169062587@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="L4j0PrOP1RX4Sy0w"
 Content-Disposition: inline
-In-Reply-To: <20250827095836.431248-1-liaoyuanhong@vivo.com>
-X-Proofpoint-ORIG-GUID: WZigA6f_8B3AKV0MlGZq1D8xO-3M0eWr
-X-Proofpoint-GUID: WZigA6f_8B3AKV0MlGZq1D8xO-3M0eWr
-X-Authority-Analysis: v=2.4 cv=RMyzH5i+ c=1 sm=1 tr=0 ts=68aee81a cx=c_pps a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17 a=kj9zAlcOel0A:10 a=2OwXVqhp2XgA:10 a=1WtWmnkvAAAA:8 a=M5GUcnROAAAA:8 a=XY7qareSp0-CB3CkL5gA:9 a=CjuIK1q_8ugA:10
- a=OBjm3rFKGHvpk9ecZwUJ:22 a=6wIt35iRdmYE2F5fZHQ2:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODI2MDIwNSBTYWx0ZWRfX7cNUJ5Hknlh7 t8u7lyArV9NJ9Mz7eNWU2fhRKSyjEvRtqx8EFEP8Qjnea8OzZYhKbF4rP3bQYyZ+OJNCVZ71Cu3 jQ+LJqo/AgnvEIKsLS1xvELONrzJI2Z5aDRsoR+ifBfk/I52gpLz0Cdu7MwUlYHsormdhqlaW/M
- zgmRPBxOkIJ4/mZKL+F4MPYM8kemWV8u5k9s5B8gEy1l7bBtZbNDyd54ep80TFlKZHP5Qv6XDGG H+rgjkGpBwBBOhoZbB5Q0OcpqWfMi5640TxPTTP1vGemctE1mbw71Rn3H0RXd664aD3oMzL3ieL 7NoefaA4SD/Zd7494f7d4sJtLcayw6lZl2mjdJcWbM6zSFZFFYsYMgNETaTiZBEosFtIWlwb8Tr gGCnearW
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-27_02,2025-08-26_01,2025-03-28_01
+In-Reply-To: <20250826110915.169062587@linuxfoundation.org>
+X-Cookie: Most people prefer certainty to truth.
 
-On 2025-08-27 at 09:58:33, Liao Yuanhong (liaoyuanhong@vivo.com) wrote:
-> For ternary operators in the form of "a ? true : false", if 'a' itself
-> returns a boolean result, the ternary operator can be omitted. Remove
-> redundant ternary operators to clean up the code.
-> 
-> Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
 
-Reviewed-by: Subbaraya Sundeep <sbhatta@marvell.com>
-> ---
->  drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_utils.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_utils.c b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_utils.c
-> index 7e88d7234b14..f5e0f784ec56 100644
-> --- a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_utils.c
-> +++ b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_utils.c
-> @@ -463,8 +463,7 @@ bool hw_atl_utils_ver_match(u32 ver_expected, u32 ver_actual)
->  	ver_match = (dw_major_mask & (ver_expected ^ ver_actual)) ? false : true;
->  	if (!ver_match)
->  		goto err_exit;
-> -	ver_match = ((dw_minor_mask & ver_expected) > (dw_minor_mask & ver_actual)) ?
-> -		false : true;
-> +	ver_match = (dw_minor_mask & ver_expected) <= (dw_minor_mask & ver_actual);
->  
->  err_exit:
->  	return ver_match;
-> -- 
-> 2.34.1
-> 
+--L4j0PrOP1RX4Sy0w
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Tue, Aug 26, 2025 at 01:06:55PM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.12.44 release.
+> There are 322 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+
+Tested-by: Mark Brown <broonie@kernel.org>
+
+--L4j0PrOP1RX4Sy0w
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmiu6GgACgkQJNaLcl1U
+h9CDXwf/ZJp4P6IjLVFktwv16AvmHcYcwbnvZZ3qCrsX5M7ndWOJFxWcAys4kuiS
+NHqy94lyYH2IYOuyzdRcfMb4bZ4HBm4AcEYal2vDzAV6ShXRvXesyC5GZUPLU+J6
+IOx742odIZHvHTz9otudpeyO1AfqFhLeAEq94/ak5DnZ87iL2oI8On0VZocx8taR
+zP8KFeUche0mRW3832svpMBCS7Yo1NtyjoXfkGk5yMRyrI8I5qKXNrja1K6gDYku
+NORlsZ5bJ1EHilvC9DePKuITqnuoaBlSIUygltgpSrIHZ7zNaIoR18wQIhIOEV/A
+AGFeoAVKMCYrU/7oECC2nyixpFL2ZQ==
+=xFv1
+-----END PGP SIGNATURE-----
+
+--L4j0PrOP1RX4Sy0w--
 
