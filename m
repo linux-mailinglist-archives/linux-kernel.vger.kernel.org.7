@@ -1,160 +1,128 @@
-Return-Path: <linux-kernel+bounces-787827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA11BB37BE7
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 09:37:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 34629B37BF6
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 09:38:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8E541BA1C4A
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 07:37:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D69EE1BA21D5
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 07:38:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DF1B31984E;
-	Wed, 27 Aug 2025 07:37:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A575831A55B;
+	Wed, 27 Aug 2025 07:38:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QtxBPYu7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="RHfVaqBi"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DE35319843
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 07:37:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D6DA319843;
+	Wed, 27 Aug 2025 07:38:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756280237; cv=none; b=RZzD7/BUxFSP9x3i1WcpzVE7gE4M5mc1xQlLps3WWQNDSiHs5Uhxb0fsuv6tDrPjbgFNMQLR0sL2jqx3DBMH/Yak46MByOjKd3BOhV4gEUD9CHvSRXV/9rTCauheE5NZiHhcxmJZS/Qi0FDUqbZxjEdJSKA7IT9MliDdd6gCp7o=
+	t=1756280293; cv=none; b=YJm9KeumMozASkOBwyLV2Nl0v37iY6IWaMa4NqJUmggWI7/WGKjoV6CvO2jwUIqVCfYgkeu7W2eG3xbjvFqStTjAttPhvpAEpe8kqNuJVY9Rnf/p9/KFv8W5otrysBO3kI5zzFjERYsOYum5fyaeTsXta4efFrEzArInFvpF78c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756280237; c=relaxed/simple;
-	bh=Sh0yJk4cq763Z2S0AabEdm8SBSV2vslsylW6HkFUQaQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uqxdrMiBNLnZKSOjnSgC9AaeSBipmrgaJP1zyAtJDH8MhDsPZIr31RTZiVMMCtS+JGhT2VY6FA+hs+yzLn6cPW5FqdHQAjKr2aT82qx5hRM7OeHbsApKCtZVQO0TQ1id9o53il98s0Nh3/+buHynbqJRcxGP4EyJh6xSrPPRWus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QtxBPYu7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14A54C16AAE
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 07:37:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756280237;
-	bh=Sh0yJk4cq763Z2S0AabEdm8SBSV2vslsylW6HkFUQaQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=QtxBPYu7fDtFycNHJZ2LlU0AUcE4nnO7Q69SU1yBU54GFd/bGX8OOEI0BoOyxD0Ok
-	 isaGIW3gfkiXjKjb54VwDPd+us46jmMNnbFnVro2LXQidKaCeDfQOpqyVvsUdkVGL8
-	 ZUwGmQt5f4w2fjhSUE9T9Efw7ywEIVA7ewDEOOu3AF2YOE1IbhvvbDATFSUeWm/FlB
-	 X0aoJrPMhYaCJc0wXMp9sAjoI0Gss/q4uk/9uLGY7HBlg6sB77xJla0XZIJZVPqw3Q
-	 BrLDCRnoN897a4UA/9pIzw1uiWnBoPg6c44KAOTWo06inXYPdILerPKwR765FVuudF
-	 cnwetJuHMc7vQ==
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-61c22dceb25so7909042a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 00:37:16 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCX8bQn9uTxOhicvthKNl01KP3UQ0ajK6GoYZP6bF5KR5n4V6wpJNHKKfnMD/Yx1jXyZaypkTvW+2RjCtdk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyaFP4v6K7X5aTWDjS+ZYhjJ4g2fsSnRhjwWOgTtZZcHJonsqaV
-	g3XdfHkxfUzOOLL9z91Shu9usO8fcQP77UgG57Pts9jqaD+hCopv3h3G8GW4dRGGJCOCyI5mgWZ
-	gs2+IT83LlxsxbXnf4OROfbJaqzdGCjo=
-X-Google-Smtp-Source: AGHT+IHmE5mRPrt9MQZ5SrGZ/Eh0fnCb6y74Ut+o4kT2Qo/McnYzAh+aX1nwaWNUnvryQLwksDNy0JK0iUscSWykyZo=
-X-Received: by 2002:a05:6402:504e:b0:618:2257:7fcf with SMTP id
- 4fb4d7f45d1cf-61c1b705748mr13883285a12.18.1756280235646; Wed, 27 Aug 2025
- 00:37:15 -0700 (PDT)
+	s=arc-20240116; t=1756280293; c=relaxed/simple;
+	bh=A0g4115fIgBE403Cl3EfktmE7DlY2fExfjJG9NOynE8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=tBDayGV+5dXf/9ghOmDNdi1c9HSa77pMyFDPKMOXMEDbuqwIfsisklB8k2F4/0Op/GDn/6qX1Nm/NQfvT94ETaEUGeenGpHoSD6GtVZE0FeSY1sIuJSIYXh4+VMZcIRNDVNn/t0p57TrCBFH2MVq4wXPnEWOkqc7cGRzeU2rVR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=RHfVaqBi; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
+	bh=A0g4115fIgBE403Cl3EfktmE7DlY2fExfjJG9NOynE8=; b=RHfVaqBiuWv5qA9rEDSV76B74j
+	/VRQEQEMJq+nrAYoEUfkbgqWaVFcKadDL23pvoNbN9HYno5c4fVFKKfHkm22CaOkniiuJytlbHD4H
+	7K/s0kBWZ2gDHfzNqBy15zPAWfeIvhakAsL7tyUP4aCcAMp4Yn0l/l8ZevpodPz8FWhwZsoGGwVSb
+	Z5HU/Cr/JFL/2E6StotztE4Bn9Fz07uO+kKVaugdC58pSD1jdkeB9Rpu6Mjm+PA/A5gNKITUdtDmd
+	bazV4H7WtQdO5d1VmNDBiBkWutZ6vOrDBqE7JVQExXP7kAkhWocTvSvaKBVGHGuRUNaEos8Aep0E6
+	n6v0sEgQ==;
+Received: from [213.244.170.152] (helo=phil.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1urAj0-0007uF-FN; Wed, 27 Aug 2025 09:37:42 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: Yury Norov <yury.norov@gmail.com>,
+ Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+ Jaehoon Chung <jh80.chung@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>,
+ Shreeya Patel <shreeya.patel@collabora.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Sandy Huang <hjc@rock-chips.com>,
+ Andy Yan <andy.yan@rock-chips.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
+ Nicolas Frattaroli <frattaroli.nicolas@gmail.com>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Shawn Lin <shawn.lin@rock-chips.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ Krzysztof =?UTF-8?B?V2lsY3p5xYRza2k=?= <kwilczynski@kernel.org>,
+ Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>,
+ Bjorn Helgaas <bhelgaas@google.com>, Chanwoo Choi <cw00.choi@samsung.com>,
+ MyungJoo Ham <myungjoo.ham@samsung.com>,
+ Kyungmin Park <kyungmin.park@samsung.com>, Qin Jian <qinjian@cqplus1.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+ Nathan Chancellor <nathan@kernel.org>,
+ Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+ Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
+ Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Cc: kernel@collabora.com, linux-kernel@vger.kernel.org,
+ linux-mmc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-media@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-phy@lists.infradead.org,
+ linux-sound@vger.kernel.org, netdev@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com, linux-pci@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-clk@vger.kernel.org, llvm@lists.linux.dev,
+ Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
+ Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Subject:
+ Re: [PATCH v3 13/20] drm/rockchip: dw_hdmi: switch to FIELD_PREP_WM16* macros
+Date: Wed, 27 Aug 2025 09:37:41 +0200
+Message-ID: <18528244.tv2OnDr8pf@phil>
+In-Reply-To: <20250825-byeword-update-v3-13-947b841cdb29@collabora.com>
+References:
+ <20250825-byeword-update-v3-0-947b841cdb29@collabora.com>
+ <20250825-byeword-update-v3-13-947b841cdb29@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250826011722.82391-1-youling.tang@linux.dev> <20250826011722.82391-2-youling.tang@linux.dev>
-In-Reply-To: <20250826011722.82391-2-youling.tang@linux.dev>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Wed, 27 Aug 2025 15:37:03 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H7csV-vce6QGjFGd-R4JrLmbgoEs4UwKayKUxdgc3Ki=w@mail.gmail.com>
-X-Gm-Features: Ac12FXwQWG9U9zLqW3Fy0iKKmm6IRWH5-eIBaw6-dIEfjnX1uwk4CAdRYKGbcgk
-Message-ID: <CAAhV-H7csV-vce6QGjFGd-R4JrLmbgoEs4UwKayKUxdgc3Ki=w@mail.gmail.com>
-Subject: Re: [PATCH v3 1/6] LoongArch: Add struct loongarch_image_header for
- kernel image
-To: Youling Tang <youling.tang@linux.dev>
-Cc: WANG Xuerui <kernel@xen0n.name>, Baoquan He <bhe@redhat.com>, Yao Zi <ziyao@disroot.org>, 
-	kexec@lists.infradead.org, loongarch@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, Youling Tang <tangyouling@kylinos.cn>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-Hi, Youling,
+Am Montag, 25. August 2025, 10:28:33 Mitteleurop=C3=A4ische Sommerzeit schr=
+ieb Nicolas Frattaroli:
+> The era of hand-rolled HIWORD_UPDATE macros is over, at least for those
+> drivers that use constant masks.
+>=20
+> Remove this driver's very own HIWORD_UPDATE macro, and replace all
+> instances of it with equivalent instantiations of FIELD_PREP_WM16 or
+> FIELD_PREP_WM16_CONST, depending on whether it's in an initializer.
+>=20
+> This gives us better error checking, and a centrally agreed upon
+> signature for this macro, to ease in code comprehension.
+>=20
+> Because FIELD_PREP_WM16/FIELD_PREP_WM16_CONST shifts the value to the
+> mask (like FIELD_PREP et al do), a lot of macro instantiations get
+> easier to read.
+>=20
+> This was tested on an RK3568 ODROID M1, as well as an RK3399 ROCKPro64.
+>=20
+> Reviewed-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+> Tested-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+> Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
 
-On Tue, Aug 26, 2025 at 9:18=E2=80=AFAM Youling Tang <youling.tang@linux.de=
-v> wrote:
->
-> From: Youling Tang <tangyouling@kylinos.cn>
->
-> Define a dedicated image header structure for LoongArch architecture to
-> standardize kernel loading in bootloaders (primarily for kexec_file).
->
-> This header includes critical metadata such as PE signature, entry points=
-,
-> image size and load address offset, etc.
->
-> Signed-off-by: Youling Tang <tangyouling@kylinos.cn>
-> ---
->  arch/loongarch/include/asm/image.h | 40 ++++++++++++++++++++++++++++++
->  1 file changed, 40 insertions(+)
->  create mode 100644 arch/loongarch/include/asm/image.h
->
-> diff --git a/arch/loongarch/include/asm/image.h b/arch/loongarch/include/=
-asm/image.h
-> new file mode 100644
-> index 000000000000..1f090736e71d
-> --- /dev/null
-> +++ b/arch/loongarch/include/asm/image.h
-> @@ -0,0 +1,40 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * LoongArch binary image header.
-> + *
-> + * Author: Youling Tang <tangyouling@kylinos.cn>
-> + * Copyright (C) 2025 KylinSoft Corporation.
-> + *
-> + * Most code is derived from LoongArch port of kexec-tools
-> + */
-> +
-> +#ifndef __ASM_IMAGE_H
-> +#define __ASM_IMAGE_H
-> +#ifndef __ASSEMBLY__
-
-__ASSEMBLY__ is replaced by __ASSEMBLER__ now.
-
-> +
-> +/**
-> + * struct loongarch_image_header
-> + *
-> + * @pe_sig: Optional PE format 'MZ' signature.
-> + * @reserved_1: Reserved.
-> + * @kernel_entry: Kernel image entry pointer.
-> + * @image_size: An estimated size of the memory image size in LSB byte o=
-rder.
-> + * @text_offset: The image load offset in LSB byte order.
-> + * @reserved_2: Reserved.
-> + * @reserved_3: Reserved.
-> + * @pe_header: Optional offset to a PE format header.
-> + **/
-> +
-> +struct loongarch_image_header {
-> +       uint8_t pe_sig[2];
-Use dos_sig is better.
-
-> +       uint16_t reserved_1[3];
-Use padding_1[3] is better.
-
-> +       uint64_t kernel_entry;
-> +       uint64_t image_size;
-Use kernel_asize to keep consistency with head.S.
-
-> +       uint64_t text_offset;
-> +       uint64_t reserved_2[3];
-> +       uint32_t reserved_3;
-Just use uint32_t reserved_2[7] here?
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
 
 
-Huacai
-
-> +       uint32_t pe_header;
-> +};
-> +
-> +#endif /* __ASSEMBLY__ */
-> +#endif /* __ASM_IMAGE_H */
-> --
-> 2.43.0
->
 
