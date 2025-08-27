@@ -1,179 +1,241 @@
-Return-Path: <linux-kernel+bounces-787656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 082D0B37942
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 06:48:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18510B37944
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 06:48:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BEB22365646
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 04:48:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 950BC365760
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 04:48:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 987EC2C159C;
-	Wed, 27 Aug 2025 04:47:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 323F42D0C8D;
+	Wed, 27 Aug 2025 04:48:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dtZ4kVh7"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="D6Sqfv4e"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F8574438B
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 04:47:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A97A9285C81;
+	Wed, 27 Aug 2025 04:48:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756270075; cv=none; b=H7vz45UKcgskF2/WUDfhHEzNSGwbd0IYiuut6B50d8h2D+cuTvofFXCdpMWFVAWmtAlBAhanCdRqLigPIgmKLhkaLIhvY4oZq19Bs0n77E6F2aqCrTZHt51GAVrsQojklO4PH9dvYuy8Y4aVW0lxPHgbUr6qc8B2ie65Pce9YxU=
+	t=1756270088; cv=none; b=fLjgKZvOxVcb/KG9CAAjKMekCR+LG7dWFG4egPs/1sCYaLQ6R0zRhI9phFOm7PR340sEnSb1H6FT80U/HKCM6n0MofXT0HQoZOa4aNcvB0yHzkajMq74/BsoZYw4Un74lsspTZnOKRMwSn3it4NsmxNuMN+PR0Py+Qocw5JIqeQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756270075; c=relaxed/simple;
-	bh=HhYEP6qMh9+J2iu+xeQ1AWwC++xtPGmL9tym3pkVh5Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=egN8EEUoU5lS/1dPBoNFX++PthwcMbga1uym9D1O1LKbn+iJcT2SaJz4lLscahiAOav6Yf7dmi3Bt9mf3bkilgV4eOSl3XGidI4iPu3xhJigfgGivPhvtsaf5nzsiGls3I0YLsxVqEf6Tu2jzEq5RhSAV+5YDBUZHyc+63RNX6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dtZ4kVh7; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-45b627ea5f3so12376065e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 21:47:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756270072; x=1756874872; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=wXAK34i6n0IW6+f/U/+fv+MxOP0/U5XW1xTt30ESlvA=;
-        b=dtZ4kVh7aC5nkG9Txf0A65RuXMOwvKYNYygIkeQ4cU8DQsVoHEmYee/dzBVuD8Quu7
-         l+0R6GqZoCDu8ErzIk5Fkg78GMCDd3D4HCm158BUbxwstLVShv6UYl0cUDOovAq2uHaH
-         KJ9ngbm+aP9+6yOW95AklE3OFt9dlQHa/YHBGc56FR4LOK1tFggRNoC4qrcjXz0Ppjdg
-         qWGYzNiOC6ISKT+talsPV0o+M2fTWvF4r9njUkuuMyjO1vy84uZd2om8Tf8wpJ9b9S9y
-         uIEd7x17ivo9GkmggAEBMv2BfaJANhFoCszUhHrEt7LB/Tw+t9ac3GHL8JFKfSQzAtZT
-         Mbqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756270072; x=1756874872;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wXAK34i6n0IW6+f/U/+fv+MxOP0/U5XW1xTt30ESlvA=;
-        b=MsmuPMGiNv+Hpgdkcz7vELbRBTZoGitNNrNm/+ApudTqBxr8pyRpXCACz5mTr7kWGc
-         CTZv+rAK6u9BaJ9aR993VEEf5ob0DKhx/qTNaDUtvrc6SNbMK6sib4lZtgxWEb2flgXG
-         LiWHJ6QZYWFAVFISfqyNk5XDC/lqzmPOQ7WdwpW3lhYkG/u7YgCOI1EQn6Iooq/7zCAb
-         PCKNaGvZ0ekdSKCu2WBArnlUJmm8sX7zdoa7LLzUrNAg2+/1om5iM+iUKIejxuZK4pp3
-         YRjh8YPueNZt9uOsQi9Nvh+bV4eoGI2jQmtmFKs5DMv+SQlHIrDhaT7/08pzZHTbG4SI
-         vb0g==
-X-Forwarded-Encrypted: i=1; AJvYcCXeiHLxKE+4v6mrNIlflYtKbQVdHdF/+jrZXSKiaBAxXrI+wSJFbKWwDNo0jM8XoD8mSz4GoOZ3o37e4R4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGhgeMWcDPrMA5UkSY4OpPmhqRnLiLnVSWjvkAiOqvpXf0bqf/
-	4x55CtSOZlu4moZgmwae3ZlbjWKfVD04aj/YKJi7rsqyIWV3qeznFho7UGAbpQ==
-X-Gm-Gg: ASbGncvDHokr+5DKxXwRJD7M/PCDoVlCnZxGSVh+sWzFPPo2RS3J23wvu+R/TrgXEZd
-	1w6qytDqPeFrnfb3XXLMteP3A6EtDggRRZtKS6sV/tls4aWAIr0V8c0+p/jcP2v6bf16xSm9l7h
-	ktGQxtXfZTapqt1sd8z/kpz68Rp28Yp6QoiVm5mBdNUSRnmF7FV0iFMQ5UvRZgHFhhaBZZMkNri
-	Z3jH+YMXgPeA0RDkme9qcthmk97R7upe1q3u+Ge9SkCmhV0Ec6QwW/S46xlqKlm++qQvR1zRt1E
-	5Fe6Y1lsxJ2LMFdCL+282eBcOCLFXA6i4VwCEixgNcMgOLmlD7uHXG955B8tg+YX4rQRH78zfLV
-	yC+nNCFZQtAuAdGU7YO81yyua0aXOlecTXQ/iRJQnVLD4B7BgTM7LN2qtr2DdZfpSPX9TzQJBeL
-	Ez2gAs/GFg9SnkOCtBHg==
-X-Google-Smtp-Source: AGHT+IEYWtBY/v69iHdBMm2oOUl/phxTLS9NimBh75e+tw8TfgIHGCKLX3FPzWtHINS3KQsJxoZh6A==
-X-Received: by 2002:a05:600c:c87:b0:456:f1e:205c with SMTP id 5b1f17b1804b1-45b5179f338mr152920525e9.4.1756270072226;
-        Tue, 26 Aug 2025 21:47:52 -0700 (PDT)
-Received: from ?IPV6:2a02:6b6f:e759:7e00:1047:5c2a:74d8:1f23? ([2a02:6b6f:e759:7e00:1047:5c2a:74d8:1f23])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b6f3125ccsm13026565e9.19.2025.08.26.21.47.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 Aug 2025 21:47:51 -0700 (PDT)
-Message-ID: <54cf2f4e-5496-45c3-a22c-aa8b38fede47@gmail.com>
-Date: Wed, 27 Aug 2025 05:47:50 +0100
+	s=arc-20240116; t=1756270088; c=relaxed/simple;
+	bh=euhLcg2hYaVzhJLOnM3wXUYMbGQHElOOn0H88J7Xm9M=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=iHqBGeOXLQ3RRN+kMu/2FFz3FvrCRDWNoQnm6TAo8S+sxmZ5LV7vOHhqYCyloEeojtLdMZ/cMDyw3Ql5taj3I6k5ncMzann+PpIuS/1hdvbw6uyGFXxg7SVaKcwJIGDHrlr+YYKSRy+W4EM08eCTjwo1p5h+OeNI9E8tPFCVP50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=D6Sqfv4e; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 00bbe6b4830111f0b33aeb1e7f16c2b6-20250827
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=t0Ryzl+bhnvnUoIRkn4L1iphGVUHu2m+u71p5zhRsXY=;
+	b=D6Sqfv4eUCtPkOCaUFV+JqT0HnJJSWmXadix2JeSAk0T0Joih+J9DIcgib8bQMngOmsAYxlxtJMDH8QeJyeNL/aWU5lt0b3CEydpTiq9MQqr/f9RnoC5zUiGoGc9O8JY3rU5IEzmwvewTLsXBeOmyBXwX4a5l6/u+PFFHgmQ0Cs=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.3,REQID:1a9dbdf3-a11a-4c74-b320-1d1ecf5d2476,IP:0,UR
+	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
+	elease,TS:0
+X-CID-META: VersionHash:f1326cf,CLOUDID:40cc8c20-786d-4870-a017-e7b4f3839b3f,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:-5,Content:0|15|50,EDM:-3,IP:
+	nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,L
+	ES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 2,SSN|SDN
+X-CID-BAS: 2,SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: 00bbe6b4830111f0b33aeb1e7f16c2b6-20250827
+Received: from mtkmbs11n2.mediatek.inc [(172.21.101.187)] by mailgw02.mediatek.com
+	(envelope-from <skylake.huang@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 2146429659; Wed, 27 Aug 2025 12:47:57 +0800
+Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
+ mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.39; Wed, 27 Aug 2025 12:47:56 +0800
+Received: from mtksitap99.mediatek.inc (10.233.130.16) by
+ mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1258.39 via Frontend Transport; Wed, 27 Aug 2025 12:47:56 +0800
+From: Sky Huang <SkyLake.Huang@mediatek.com>
+To: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>, "David S. Miller"
+	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Daniel Golle
+	<daniel@makrotopia.org>, Qingfang Deng <dqfext@gmail.com>, SkyLake Huang
+	<SkyLake.Huang@mediatek.com>, Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	<linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>
+CC: Sky Huang <skylake.huang@mediatek.com>
+Subject: [PATCH net-next 1/1] net: phy: mtk-2p5ge: Add LED support for MT7988
+Date: Wed, 27 Aug 2025 12:47:55 +0800
+Message-ID: <20250827044755.3256991-1-SkyLake.Huang@mediatek.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC 0/1] Try to add memory allocation info for cgroup oom kill
-Content-Language: en-GB
-To: Suren Baghdasaryan <surenb@google.com>,
- Shakeel Butt <shakeel.butt@linux.dev>
-Cc: Yueyang Pan <pyyjason@gmail.com>,
- Kent Overstreet <kent.overstreet@linux.dev>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, hannes@cmpxchg.org
-References: <cover.1755190013.git.pyyjason@gmail.com>
- <6qu2uo3d2msctkkz5slhx5piqtt64wsvkgkvjjpd255k7nrds4@qtffskmesivg>
- <aKdw6Pkj2H4B6QDb@devbig569.cln6.facebook.com>
- <tiwa6wnkdf6q2pfchxbbqb6r42y7moykqumvnzauckhavyemg2@zc5haja5mlxs>
- <CAJuCfpHyXWwrKkFmmbHTGtG9L-JK2eCt03ku9364i4v6SJKFbA@mail.gmail.com>
-From: Usama Arif <usamaarif642@gmail.com>
-In-Reply-To: <CAJuCfpHyXWwrKkFmmbHTGtG9L-JK2eCt03ku9364i4v6SJKFbA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-MTK: N
 
+From: Sky Huang <skylake.huang@mediatek.com>
 
+Add LED support for MT7988's built-in 2.5Gphy. LED hardware has almost
+the same design with MT7981's/MT7988's built-in GbE. So hook the same
+helper function here.
 
-On 27/08/2025 03:32, Suren Baghdasaryan wrote:
-> On Thu, Aug 21, 2025 at 12:53 PM Shakeel Butt <shakeel.butt@linux.dev> wrote:
->>
->> On Thu, Aug 21, 2025 at 12:18:00PM -0700, Yueyang Pan wrote:
->>> On Thu, Aug 21, 2025 at 11:35:19AM -0700, Shakeel Butt wrote:
->>>> On Thu, Aug 14, 2025 at 10:11:56AM -0700, Yueyang Pan wrote:
->>>>> Right now in the oom_kill_process if the oom is because of the cgroup
->>>>> limit, we won't get memory allocation infomation. In some cases, we
->>>>> can have a large cgroup workload running which dominates the machine.
->>>>> The reason using cgroup is to leave some resource for system. When this
->>>>> cgroup is killed, we would also like to have some memory allocation
->>>>> information for the whole server as well. This is reason behind this
->>>>> mini change. Is it an acceptable thing to do? Will it be too much
->>>>> information for people? I am happy with any suggestions!
->>>>
->>>> For a single patch, it is better to have all the context in the patch
->>>> and there is no need for cover letter.
->>>
->>> Thanks for your suggestion Shakeel! I will change this in the next version.
->>>
->>>>
->>>> What exact information you want on the memcg oom that will be helpful
->>>> for the users in general? You mentioned memory allocation information,
->>>> can you please elaborate a bit more.
->>>>
->>>
->>> As in my reply to Suren, I was thinking the system-wide memory usage info
->>> provided by show_free_pages and memory allocation profiling info can help
->>> us debug cgoom by comparing them with historical data. What is your take on
->>> this?
->>>
->>
->> I am not really sure about show_free_areas(). More specifically how the
->> historical data diff will be useful for a memcg oom. If you have a
->> concrete example, please give one. For memory allocation profiling, is
->> it possible to filter for the given memcg? Do we save memcg information
->> in the memory allocation profiling?
-> 
-> Actually I was thinking about making memory profiling memcg-aware but
-> it would be quite costly both from memory and performance points of
-> view. Currently we have a per-cpu counter for each allocation in the
-> kernel codebase. To make it work for each memcg we would have to add
-> memcg dimension to the counters, so each counter becomes per-cpu plus
-> per-memcg. I'll be thinking about possible optimizations since many of
-> these counters will stay at 0 but any such optimization would come at
-> a performance cost, which we tried to keep at the absolute minimum.
-> 
-> I'm CC'ing Sourav and Pasha since they were also interested in making
-> memory allocation profiling memcg-aware. Would Meta folks (Usama,
-> Shakeel, Johannes) be interested in such enhancement as well? Would it
-> be preferable to have such accounting for a specific memcg which we
-> pre-select (less memory and performance overhead) or we need that for
-> all memcgs as a generic feature? We have some options here but I want
-> to understand what would be sufficient and add as little overhead as
-> possible.
+Before mtk_phy_leds_state_init(), set correct default values of LED0
+and LED1.
 
-Yes, having per memcg counters is going to be extremely useful (we were
-thinking of having this as a future project to work on). For meta fleet
-in particular, we might have almost 100 memcgs running, but the number
-of memcgs running workloads is particularly small (usually less than 10).
-In the rest, you might have services that are responsible for telemetry,
-monitoring, security, etc (for which we arent really interested in
-the memory allocation profile). So yes, it would be ideal to have the
-profile for just pre-select memcgs, especially if it leads to lower memory
-and performance overhead.
+Signed-off-by: Sky Huang <skylake.huang@mediatek.com>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+---
+ drivers/net/phy/mediatek/mtk-2p5ge.c | 104 +++++++++++++++++++++++++--
+ 1 file changed, 98 insertions(+), 6 deletions(-)
 
-Having memory allocation profile at memcg level is especially needed when
-we have multiple workloads stacked on the same host. Having it at host
-level in such a case makes the data less useful when we have OOMs and
-for workload analysis as you dont know which workload is contributing
-how much.
-
-> Thanks,
-> Suren.
+diff --git a/drivers/net/phy/mediatek/mtk-2p5ge.c b/drivers/net/phy/mediatek/mtk-2p5ge.c
+index e147eab523ef..de8a41a1841d 100644
+--- a/drivers/net/phy/mediatek/mtk-2p5ge.c
++++ b/drivers/net/phy/mediatek/mtk-2p5ge.c
+@@ -249,8 +249,80 @@ static int mt798x_2p5ge_phy_get_rate_matching(struct phy_device *phydev,
+ 	return RATE_MATCH_PAUSE;
+ }
+ 
++static const unsigned long supported_triggers =
++	BIT(TRIGGER_NETDEV_FULL_DUPLEX) |
++	BIT(TRIGGER_NETDEV_LINK)        |
++	BIT(TRIGGER_NETDEV_LINK_10)     |
++	BIT(TRIGGER_NETDEV_LINK_100)    |
++	BIT(TRIGGER_NETDEV_LINK_1000)   |
++	BIT(TRIGGER_NETDEV_LINK_2500)   |
++	BIT(TRIGGER_NETDEV_RX)          |
++	BIT(TRIGGER_NETDEV_TX);
++
++static int mt798x_2p5ge_phy_led_blink_set(struct phy_device *phydev, u8 index,
++					  unsigned long *delay_on,
++					  unsigned long *delay_off)
++{
++	bool blinking = false;
++	int err = 0;
++
++	err = mtk_phy_led_num_dly_cfg(index, delay_on, delay_off, &blinking);
++	if (err < 0)
++		return err;
++
++	err = mtk_phy_hw_led_blink_set(phydev, index, blinking);
++	if (err)
++		return err;
++
++	if (blinking)
++		mtk_phy_hw_led_on_set(phydev, index, MTK_2P5GPHY_LED_ON_MASK,
++				      false);
++
++	return 0;
++}
++
++static int mt798x_2p5ge_phy_led_brightness_set(struct phy_device *phydev,
++					       u8 index,
++					       enum led_brightness value)
++{
++	int err;
++
++	err = mtk_phy_hw_led_blink_set(phydev, index, false);
++	if (err)
++		return err;
++
++	return mtk_phy_hw_led_on_set(phydev, index, MTK_2P5GPHY_LED_ON_MASK,
++				     (value != LED_OFF));
++}
++
++static int mt798x_2p5ge_phy_led_hw_is_supported(struct phy_device *phydev,
++						u8 index, unsigned long rules)
++{
++	return mtk_phy_led_hw_is_supported(phydev, index, rules,
++					   supported_triggers);
++}
++
++static int mt798x_2p5ge_phy_led_hw_control_get(struct phy_device *phydev,
++					       u8 index, unsigned long *rules)
++{
++	return mtk_phy_led_hw_ctrl_get(phydev, index, rules,
++				       MTK_2P5GPHY_LED_ON_SET,
++				       MTK_2P5GPHY_LED_RX_BLINK_SET,
++				       MTK_2P5GPHY_LED_TX_BLINK_SET);
++};
++
++static int mt798x_2p5ge_phy_led_hw_control_set(struct phy_device *phydev,
++					       u8 index, unsigned long rules)
++{
++	return mtk_phy_led_hw_ctrl_set(phydev, index, rules,
++				       MTK_2P5GPHY_LED_ON_SET,
++				       MTK_2P5GPHY_LED_RX_BLINK_SET,
++				       MTK_2P5GPHY_LED_TX_BLINK_SET);
++};
++
+ static int mt798x_2p5ge_phy_probe(struct phy_device *phydev)
+ {
++	struct mtk_socphy_priv *priv;
+ 	struct pinctrl *pinctrl;
+ 	int ret;
+ 
+@@ -273,19 +345,34 @@ static int mt798x_2p5ge_phy_probe(struct phy_device *phydev)
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	/* Setup LED */
++	/* Setup LED. On default, LED0 is on/off when link is up/down. As for
++	 * LED1, it blinks as tx/rx transmission takes place.
++	 */
+ 	phy_set_bits_mmd(phydev, MDIO_MMD_VEND2, MTK_PHY_LED0_ON_CTRL,
+-			 MTK_PHY_LED_ON_POLARITY | MTK_PHY_LED_ON_LINK10 |
+-			 MTK_PHY_LED_ON_LINK100 | MTK_PHY_LED_ON_LINK1000 |
+-			 MTK_PHY_LED_ON_LINK2500);
+-	phy_set_bits_mmd(phydev, MDIO_MMD_VEND2, MTK_PHY_LED1_ON_CTRL,
+-			 MTK_PHY_LED_ON_FDX | MTK_PHY_LED_ON_HDX);
++			 MTK_PHY_LED_ON_POLARITY | MTK_2P5GPHY_LED_ON_SET);
++	phy_clear_bits_mmd(phydev, MDIO_MMD_VEND2, MTK_PHY_LED0_BLINK_CTRL,
++			   MTK_2P5GPHY_LED_TX_BLINK_SET |
++			   MTK_2P5GPHY_LED_RX_BLINK_SET);
++	phy_clear_bits_mmd(phydev, MDIO_MMD_VEND2, MTK_PHY_LED1_ON_CTRL,
++			   MTK_PHY_LED_ON_FDX | MTK_PHY_LED_ON_HDX |
++			   MTK_2P5GPHY_LED_ON_SET);
++	phy_set_bits_mmd(phydev, MDIO_MMD_VEND2, MTK_PHY_LED1_BLINK_CTRL,
++			 MTK_2P5GPHY_LED_TX_BLINK_SET |
++			 MTK_2P5GPHY_LED_RX_BLINK_SET);
+ 
+ 	/* Switch pinctrl after setting polarity to avoid bogus blinking */
+ 	pinctrl = devm_pinctrl_get_select(&phydev->mdio.dev, "i2p5gbe-led");
+ 	if (IS_ERR(pinctrl))
+ 		dev_err(&phydev->mdio.dev, "Fail to set LED pins!\n");
+ 
++	priv = devm_kzalloc(&phydev->mdio.dev, sizeof(struct mtk_socphy_priv),
++			    GFP_KERNEL);
++	if (!priv)
++		return -ENOMEM;
++	phydev->priv = priv;
++
++	mtk_phy_leds_state_init(phydev);
++
+ 	return 0;
+ }
+ 
+@@ -303,6 +390,11 @@ static struct phy_driver mtk_2p5gephy_driver[] = {
+ 		.resume = genphy_resume,
+ 		.read_page = mtk_phy_read_page,
+ 		.write_page = mtk_phy_write_page,
++		.led_blink_set = mt798x_2p5ge_phy_led_blink_set,
++		.led_brightness_set = mt798x_2p5ge_phy_led_brightness_set,
++		.led_hw_is_supported = mt798x_2p5ge_phy_led_hw_is_supported,
++		.led_hw_control_get = mt798x_2p5ge_phy_led_hw_control_get,
++		.led_hw_control_set = mt798x_2p5ge_phy_led_hw_control_set,
+ 	},
+ };
+ 
+-- 
+2.45.2
 
 
