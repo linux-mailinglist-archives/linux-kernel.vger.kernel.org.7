@@ -1,280 +1,308 @@
-Return-Path: <linux-kernel+bounces-788639-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FA37B387B2
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 18:23:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED987B387B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 18:23:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C446F5E553D
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 16:23:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AED3A361FBC
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 16:23:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84BF52566D2;
-	Wed, 27 Aug 2025 16:22:56 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42101215F7C;
-	Wed, 27 Aug 2025 16:22:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756311776; cv=none; b=kMfIMnMdnRJdGLuxCcijjLRvlEZagyhuBrwoEHbdz20XqhwVxjHEK6zIkh4+3u8DHQR8D7FxO1TjAOjeFAVKjUs6h06T9tT5g9TfLmcnMAcobjXx8MpR8ALArYblKqEWXIg+Ob3op0yh94XsqnbVEpahmnrH97SVitifmiPwIW8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756311776; c=relaxed/simple;
-	bh=yQ8uJib7XZbZoJjhVWHkB3WeWWhdkAEbpFv2lxgoo2M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iEs18Pt8Q6q20BLGD45UGivQSFVYRtHb9oGbkT23XGQJPTL+9zlNSRlTq7muRWyZKSLY+py997JymAHSz2JxZ5P7RyeLessnTuqOhLgUKkQ+7+vCpBgmRYsJKjmzErwEWUbv1BHGPbIwEylV1FtXJYDfE9WJYlnmLv2nj2NhNSY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E4809152B;
-	Wed, 27 Aug 2025 09:22:44 -0700 (PDT)
-Received: from e133380.arm.com (e133380.arm.com [10.1.197.68])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6F0D73F738;
-	Wed, 27 Aug 2025 09:22:47 -0700 (PDT)
-Date: Wed, 27 Aug 2025 17:22:44 +0100
-From: Dave Martin <Dave.Martin@arm.com>
-To: James Morse <james.morse@arm.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-acpi@vger.kernel.org, devicetree@vger.kernel.org,
-	D Scott Phillips OS <scott@os.amperecomputing.com>,
-	carl@os.amperecomputing.com, lcherian@marvell.com,
-	bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
-	baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
-	Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
-	dfustini@baylibre.com, amitsinght@marvell.com,
-	David Hildenbrand <david@redhat.com>,
-	Rex Nie <rex.nie@jaguarmicro.com>, Koba Ko <kobak@nvidia.com>,
-	Shanker Donthineni <sdonthineni@nvidia.com>, fenghuay@nvidia.com,
-	baisheng.gao@unisoc.com,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Rob Herring <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
-	Rafael Wysocki <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Hanjun Guo <guohanjun@huawei.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Danilo Krummrich <dakr@kernel.org>
-Subject: Re: [PATCH 09/33] dt-bindings: arm: Add MPAM MSC binding
-Message-ID: <aK8w1L3gHBk2Fz1k@e133380.arm.com>
-References: <20250822153048.2287-1-james.morse@arm.com>
- <20250822153048.2287-10-james.morse@arm.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D5E4247299;
+	Wed, 27 Aug 2025 16:23:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="yUVsO3Q5"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2062.outbound.protection.outlook.com [40.107.93.62])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3AE42116E9
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 16:23:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.62
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756311818; cv=fail; b=qAI9KcpZev4SSPjVFDOQjP4wsJDmwbn7lc/nr5h4C3ICFp5SyO2qfsII62+3qln1zZW57gJPAc1DGFhz+0MasEhK1P7CeMH6Kw3xjOHhNfYWz/VkKL37AaStIGZBk63hpWm0nsBd5/+v93znk/i9PXPot+b4yjpl8KlGjnIB+TU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756311818; c=relaxed/simple;
+	bh=+mJ2q9sVI6LvS7WqmCRyw+91AVXisNm9sL9Ds/2P7m8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hbCne7CzsswJiUmarc8ML7uPzpcR8fDC2Aj9top0h1MboJkT83tW7RSWEHNLWMquQ7u9JIA79qqXELS9e1HayTMfvtAC3bQ+6Ae7FsqDJsOMI4aKcPiWLQP1epQFyuGa3s0aj3KLzIL6mr5F/lul2FXABg1WSs8TsSITMb+8du8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=yUVsO3Q5; arc=fail smtp.client-ip=40.107.93.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=IvZmiS4VhuwLgdLLy3BvbxB9gT+v9JbFAP2d+KAT5ceHCMJEmIe390VbUr4ek+eyFKl9JR+tcZRsLKrqwuQ5cDSB1pTiqNa1LynIbF6awBzkyopmKWzOFXCOB03U7HoOYiAN/KBz4wIMwMEQBYkFtK/pP4wQUbQZUrD+MXvRA+wPlLkmQL00zQ/K5n0+IRWN3xZHZC9GyW6CZ8JfGOk4eFu7xMYMbOp18nL56k4EFrEL9PFMo1asQoOLx34tVbsVZ8wJM20A50UJXgTgACRY2jWvOjBVE+JpOZkrpKAJQZNc9xuRHd/BX/+Kw1im5xLgxIF6hHBKh/fdoRFIFfudTA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=cSlMfVJgK1kCQy16IH7cJ/lNQlKNpj7UVqgBefCFFKM=;
+ b=s8Qi0vadwLpaif29c3DyV1tw0V9D2ttWHQ0yK+0WF/ukXM/K1/cVTFy2qEiu1cDa8H51316GizjJWkHAox8ZkM0IcUSJUBXam2jSha7a97Ayb0jTTerNBcvb+BGGs7tPSlWiGiDUwtNFztqmzziGOrNngjSU1ykK6zvbu5PVFbKBqVTIqM0HnSdtpe4WV/Ldd0ItVNZBtQrqaqlz1/76E5BneJU++9wjzCI8DGD3aeqxXPa44sqh7UtIrcIHWyYzZ87DJ03uQ9QueZ1dzFP1ENW8ETR7kj5Rj71tYEGR+3GOiegPGK+7iS1240hu2Dtf6tz0X2T2bVJcnG5al++WPQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=nvidia.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=cSlMfVJgK1kCQy16IH7cJ/lNQlKNpj7UVqgBefCFFKM=;
+ b=yUVsO3Q5ImEtRGndEaEHquIPXQzBZVmi+ybDVRX7/Ng7Owp/dUdmU0K+muCl33DRMxPSg4g/wQNn9MfpnrEFdYThFwLzjpBSt3LGCjpLCUF0SkS26mrIWi9litruTW1WhTUW1otj3Dq1a0jCZbuX9ipG4yvKBkCn2ID5dopaAHI=
+Received: from SN7PR04CA0204.namprd04.prod.outlook.com (2603:10b6:806:126::29)
+ by PH8PR12MB7304.namprd12.prod.outlook.com (2603:10b6:510:217::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.21; Wed, 27 Aug
+ 2025 16:23:32 +0000
+Received: from SA2PEPF00003F66.namprd04.prod.outlook.com
+ (2603:10b6:806:126:cafe::c5) by SN7PR04CA0204.outlook.office365.com
+ (2603:10b6:806:126::29) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9073.16 via Frontend Transport; Wed,
+ 27 Aug 2025 16:23:32 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ SA2PEPF00003F66.mail.protection.outlook.com (10.167.248.41) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.9073.11 via Frontend Transport; Wed, 27 Aug 2025 16:23:32 +0000
+Received: from purico-ed03host.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 27 Aug
+ 2025 11:23:26 -0500
+From: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+To: <jgg@nvidia.com>, <nicolinc@nvidia.com>
+CC: <linux-kernel@vger.kernel.org>, <robin.murphy@arm.com>, <will@kernel.org>,
+	<joro@8bytes.org>, <kevin.tian@intel.com>, <jsnitsel@redhat.com>,
+	<vasant.hegde@amd.com>, <iommu@lists.linux.dev>, <santosh.shukla@amd.com>,
+	<sairaj.arunkodilkar@amd.com>, <jon.grimm@amd.com>,
+	<prashanthpra@google.com>, <wvw@google.com>, <wnliu@google.com>,
+	<gptran@google.com>, <kpsingh@google.com>, Suravee Suthikulpanit
+	<suravee.suthikulpanit@amd.com>
+Subject: [PATCH v3] iommu/amd: Add support for hw_info for iommu capability query
+Date: Wed, 27 Aug 2025 16:23:09 +0000
+Message-ID: <20250827162309.50401-1-suravee.suthikulpanit@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250822153048.2287-10-james.morse@arm.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SA2PEPF00003F66:EE_|PH8PR12MB7304:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2a61dd26-5c07-4ddc-3885-08dde586107d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|7416014|376014|13003099007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?l8deieMX7Jlx70hW462f7JCw/SoD2z/8EJhxD1MjxbIXIb0gP7zZ32oX4z/L?=
+ =?us-ascii?Q?2nTTL8Y7pkeaWfoVFr4JYgVApRgfFPmIs8Ga+trwLoG/F2ZZ8SN200WHV/WS?=
+ =?us-ascii?Q?v2FK2WPxXVNKEy1+vY12n9Wpr3NhpSmtf0ByRcThRHNB8+sdtArcgMt7TfK9?=
+ =?us-ascii?Q?uJ6Y6dpyYtSG6c9iAOjsw2KRMG+HWQ8yKLP14ib+a7Dp64AL2Itld8GgXuOK?=
+ =?us-ascii?Q?ERPnibQKOkWCBq5HnRR8YWSDAgacp1uEMvI8pWNB8xySQbjWIM6o+WbJmLNd?=
+ =?us-ascii?Q?iVIUPmThDWu8swRBOONH+WGrRVkPktNv6nTFSVSzwCu8VqhjM9tD1gV8Eemx?=
+ =?us-ascii?Q?fIC85a5Ii8HByxyfNxIKw0jjhfzfOosGUwEFbNoVJUzjaXnwTYdcZSN6Y50h?=
+ =?us-ascii?Q?k7x4X8vKeZnAqM7m0YJ60Yo3AiGJX2BjTDTp2EERMJXVOsAoRSgFrZ+vKRVE?=
+ =?us-ascii?Q?g8fVdnw8O215kbF9w0jgJTKnHeuTTbWIb3a2T+bgeXm+sSlgxFkJeDVoSy5N?=
+ =?us-ascii?Q?4jTrOI7XgrTa1Gr8R9YCw/fTRi1dm2eW/pxqc83mSQ6zocUsLmUMv5G8vfO0?=
+ =?us-ascii?Q?bUxhwMVcQHXbDBJs8/2j1OywcrlseVqXxMWSFBwQKn0NvCCbwX4N0eRTuMIT?=
+ =?us-ascii?Q?bBcAjogKkkVAJ0QDjU3OsJ+v3IWzHLE0V86ZjDxw5Wyhho1f2b0FRHcnIfh+?=
+ =?us-ascii?Q?WYp1omL7EQd7d5xp46Mh1GEZ5yf8y4VG5myE4dSTKeAexrrWrg7MigQduI6T?=
+ =?us-ascii?Q?ntoX0CF6TmRKrQBmsNLkLq6yM43G+PGszy6bFWyNRCZ19S5vIp9s4GEoVda4?=
+ =?us-ascii?Q?l+YfFT18Z45Ah19+w139jj0q5nBS0Udw6i/N+2tLftXMfU8kiXLLP3ezs+hS?=
+ =?us-ascii?Q?Hst8rnd+LfUy6hwRktsm+hTCXDytLbqRwx69dVVFGRjNdIogA7mXcJ5gDhvJ?=
+ =?us-ascii?Q?M7dV+KqKB59svmfOoIR/dLUiorlTyT9/JG4bj9aTpqQcoEBGGOg5xiJOcEgj?=
+ =?us-ascii?Q?ympHp8uQzN8ECY89BIb8Sb5N2LtNxlTgYTHi6w1OlEUVmtbIe5a8BHq3eZ5i?=
+ =?us-ascii?Q?izJwJzkadVQcpyN8yRocHyjGzsV64Oh2VfzYNX7Cz8iDx21MUGOfX+NUeTMz?=
+ =?us-ascii?Q?j5sM/bhcYHMWyyO2PxMr0CaCL17ohdjymQlZtA62Wuv5BGSKm0vk03TaZQE+?=
+ =?us-ascii?Q?FOLxAOlsjiyNTT0TJR3wJgOY6XfBClSg3R9b+KgARzBAazRSehJtkGxEbgVn?=
+ =?us-ascii?Q?CWAAfB+DVoXHX8Thmn1jxAwJVtQvQCsI9rOADd283Yul2pAeBPqvptxxe/e4?=
+ =?us-ascii?Q?I3MSBgU30MXvXe1MR6Qhh54u0LfRbbgRHjJ1LL/rXNbqKh7bnBeYvnhv85gY?=
+ =?us-ascii?Q?ZT92BlRh7gkhWkIanK8Rtt71RtWETHsyxsr2zTYc737X7J6KL4kuKfPLNpkh?=
+ =?us-ascii?Q?RG2wFEWSiJPC6HWGbfMzEqHaZC3aOwJUleF468kRwxUAmqFzdd5LL0XVISi2?=
+ =?us-ascii?Q?PsUEvAAPsnOeNt8oEN+4elvmZy/wOV4Y2pkFkBMfaRtic4awdul3Eu/n7w?=
+ =?us-ascii?Q?=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(7416014)(376014)(13003099007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2025 16:23:32.0843
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2a61dd26-5c07-4ddc-3885-08dde586107d
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SA2PEPF00003F66.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB7304
 
-Hi James,
+AMD IOMMU Extended Feature (EFR) and Extended Feature 2 (EFR2) registers
+specify features supported by each IOMMU hardware instance.
+The IOMMU driver checks each feature-specific bits before enabling
+each feature at run time.
 
-On Fri, Aug 22, 2025 at 03:29:50PM +0000, James Morse wrote:
-> From: Rob Herring <robh@kernel.org>
-> 
-> The binding is designed around the assumption that an MSC will be a
-> sub-block of something else such as a memory controller, cache controller,
-> or IOMMU. However, it's certainly possible a design does not have that
-> association or has a mixture of both, so the binding illustrates how we can
-> support that with RIS child nodes.
-> 
-> A key part of MPAM is we need to know about all of the MSCs in the system
-> before it can be enabled. This drives the need for the genericish
-> 'arm,mpam-msc' compatible. Though we can't assume an MSC is accessible
-> until a h/w specific driver potentially enables the h/w.
+For IOMMUFD, the hypervisor passes the raw value of amd_iommu_efr and
+amd_iommu_efr2 to VMM via iommufd IOMMU_DEVICE_GET_HW_INFO ioctl.
 
-I'll leave detailed review to other people for now, since I'm not so up
-to speed on all things DT.
+Reviewed-by: Nicolin Chen <nicolinc@nvidia.com>
+Signed-off-by: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+---
+Change in v3:
+ * Remove extern
+ * Fix link to IOMMU spec
+ * Update kdoc
 
-A few random comments, below.
+Change in v2:
+ * Do not mask the EFR/EFR2 and simply return the value reported by hardware
+ * Move amd_iommufd_hw_info() to drivers/iommu/amd/iommufd.c
+ * Also support IOMMU_HW_INFO_TYPE_DEFAULT
 
+ drivers/iommu/amd/Makefile   |  2 +-
+ drivers/iommu/amd/iommu.c    |  2 ++
+ drivers/iommu/amd/iommufd.c  | 34 ++++++++++++++++++++++++++++++++++
+ drivers/iommu/amd/iommufd.h  | 11 +++++++++++
+ include/uapi/linux/iommufd.h | 20 ++++++++++++++++++++
+ 5 files changed, 68 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/iommu/amd/iommufd.c
+ create mode 100644 drivers/iommu/amd/iommufd.h
 
-[...]
+diff --git a/drivers/iommu/amd/Makefile b/drivers/iommu/amd/Makefile
+index 59c04a67f398..b74384465594 100644
+--- a/drivers/iommu/amd/Makefile
++++ b/drivers/iommu/amd/Makefile
+@@ -1,3 +1,3 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+-obj-y += iommu.o init.o quirks.o io_pgtable.o io_pgtable_v2.o ppr.o pasid.o
++obj-y += iommu.o init.o quirks.o io_pgtable.o io_pgtable_v2.o ppr.o pasid.o iommufd.o
+ obj-$(CONFIG_AMD_IOMMU_DEBUGFS) += debugfs.o
+diff --git a/drivers/iommu/amd/iommu.c b/drivers/iommu/amd/iommu.c
+index eb348c63a8d0..344364ef94f8 100644
+--- a/drivers/iommu/amd/iommu.c
++++ b/drivers/iommu/amd/iommu.c
+@@ -42,6 +42,7 @@
+ #include <uapi/linux/iommufd.h>
+ 
+ #include "amd_iommu.h"
++#include "iommufd.h"
+ #include "../dma-iommu.h"
+ #include "../irq_remapping.h"
+ #include "../iommu-pages.h"
+@@ -3040,6 +3041,7 @@ static const struct iommu_dirty_ops amd_dirty_ops = {
+ 
+ const struct iommu_ops amd_iommu_ops = {
+ 	.capable = amd_iommu_capable,
++	.hw_info = amd_iommufd_hw_info,
+ 	.blocked_domain = &blocked_domain,
+ 	.release_domain = &release_domain,
+ 	.identity_domain = &identity_domain.domain,
+diff --git a/drivers/iommu/amd/iommufd.c b/drivers/iommu/amd/iommufd.c
+new file mode 100644
+index 000000000000..08deccf9d35a
+--- /dev/null
++++ b/drivers/iommu/amd/iommufd.c
+@@ -0,0 +1,34 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Copyright (C) 2025 Advanced Micro Devices, Inc.
++ */
++
++#include <linux/iommu.h>
++
++#include "iommufd.h"
++#include "amd_iommu.h"
++#include "amd_iommu_types.h"
++
++void *amd_iommufd_hw_info(struct device *dev, u32 *length, u32 *type)
++{
++	struct iommu_hw_info_amd *hwinfo;
++
++	if (*type != IOMMU_HW_INFO_TYPE_DEFAULT &&
++	    *type != IOMMU_HW_INFO_TYPE_AMD)
++		return ERR_PTR(-EOPNOTSUPP);
++
++	hwinfo = kzalloc(sizeof(*hwinfo), GFP_KERNEL);
++	if (!hwinfo)
++		return ERR_PTR(-ENOMEM);
++
++	*length = sizeof(*hwinfo);
++	*type = IOMMU_HW_INFO_TYPE_AMD;
++
++	hwinfo->efr = amd_iommu_efr;
++	hwinfo->efr2 = amd_iommu_efr2;
++
++	pr_debug("%s: efr=%#llx, efr2=%#llx\n", __func__,
++		 hwinfo->efr, hwinfo->efr2);
++
++	return hwinfo;
++}
+diff --git a/drivers/iommu/amd/iommufd.h b/drivers/iommu/amd/iommufd.h
+new file mode 100644
+index 000000000000..992fc5cba21b
+--- /dev/null
++++ b/drivers/iommu/amd/iommufd.h
+@@ -0,0 +1,11 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++/*
++ * Copyright (C) 2025 Advanced Micro Devices, Inc.
++ */
++
++#ifndef AMD_IOMMUFD_H
++#define AMD_IOMMUFD_H
++
++void *amd_iommufd_hw_info(struct device *dev, u32 *length, u32 *type);
++
++#endif /* AMD_IOMMUFD_H */
+diff --git a/include/uapi/linux/iommufd.h b/include/uapi/linux/iommufd.h
+index c218c89e0e2e..6ec6b82674ac 100644
+--- a/include/uapi/linux/iommufd.h
++++ b/include/uapi/linux/iommufd.h
+@@ -613,6 +613,24 @@ struct iommu_hw_info_tegra241_cmdqv {
+ 	__u8 __reserved;
+ };
+ 
++/**
++ * struct iommu_hw_info_amd - AMD IOMMU device info
++ *
++ * @efr : Value of AMD IOMMU Extended Feature Register (EFR) reported by hardware
++ * @efr2: Value of AMD IOMMU Extended Feature 2 Register (EFR2) reported by hardware
++ *
++ * Please See description of these registers in the following sections of
++ * the AMD I/O Virtualization Technology (IOMMU) Specification.
++ * (https://docs.amd.com/v/u/en-US/48882_3.10_PUB)
++ *
++ * - MMIO Offset 0030h IOMMU Extended Feature Register
++ * - MMIO Offset 01A0h IOMMU Extended Feature 2 Register
++ */
++struct iommu_hw_info_amd {
++	__aligned_u64 efr;
++	__aligned_u64 efr2;
++};
++
+ /**
+  * enum iommu_hw_info_type - IOMMU Hardware Info Types
+  * @IOMMU_HW_INFO_TYPE_NONE: Output by the drivers that do not report hardware
+@@ -622,6 +640,7 @@ struct iommu_hw_info_tegra241_cmdqv {
+  * @IOMMU_HW_INFO_TYPE_ARM_SMMUV3: ARM SMMUv3 iommu info type
+  * @IOMMU_HW_INFO_TYPE_TEGRA241_CMDQV: NVIDIA Tegra241 CMDQV (extension for ARM
+  *                                     SMMUv3) info type
++ * @IOMMU_HW_INFO_TYPE_AMD: AMD IOMMU info type
+  */
+ enum iommu_hw_info_type {
+ 	IOMMU_HW_INFO_TYPE_NONE = 0,
+@@ -629,6 +648,7 @@ enum iommu_hw_info_type {
+ 	IOMMU_HW_INFO_TYPE_INTEL_VTD = 1,
+ 	IOMMU_HW_INFO_TYPE_ARM_SMMUV3 = 2,
+ 	IOMMU_HW_INFO_TYPE_TEGRA241_CMDQV = 3,
++	IOMMU_HW_INFO_TYPE_AMD = 4,
+ };
+ 
+ /**
+-- 
+2.34.1
 
-> diff --git a/Documentation/devicetree/bindings/arm/arm,mpam-msc.yaml b/Documentation/devicetree/bindings/arm/arm,mpam-msc.yaml
-
-[...]
-
-> @@ -0,0 +1,200 @@
-
-[...]
-
-> +title: Arm Memory System Resource Partitioning and Monitoring (MPAM)
-> +
-> +description: |
-> +  The Arm MPAM specification can be found here:
-> +
-> +  https://developer.arm.com/documentation/ddi0598/latest
-> +
-> +maintainers:
-> +  - Rob Herring <robh@kernel.org>
-> +
-> +properties:
-> +  compatible:
-> +    items:
-> +      - const: arm,mpam-msc                   # Further details are discoverable
-> +      - const: arm,mpam-memory-controller-msc
-
-There seems to be no clear statement about how these differ.
-
-> +  reg:
-> +    maxItems: 1
-> +    description: A memory region containing registers as defined in the MPAM
-> +      specification.
-
-There seems to be no handling of PCC-based MSCs here.  Should there be?
-
-If this can be added later in a backwards-compatible way, I guess
-that's not a problem (and this is what compatible strings are for, if
-all else fails.)
-
-An explicit statement that PCC is not supported here might be helpful,
-though.
-
-> +  interrupts:
-> +    minItems: 1
-> +    items:
-> +      - description: error (optional)
-> +      - description: overflow (optional, only for monitoring)
-> +
-> +  interrupt-names:
-> +    oneOf:
-> +      - items:
-> +          - enum: [ error, overflow ]
-> +      - items:
-> +          - const: error
-> +          - const: overflow
-
-Yeugh.  Is this really the only way to say "one or both of foo"?
-
-(I don't know the answer to this -- though I can believe that it's
-true.  Perhaps just not describing this property is another option.
-Many bindings seem not to bother.)
-
-> +
-> +  arm,not-ready-us:
-> +    description: The maximum time in microseconds for monitoring data to be
-> +      accurate after a settings change. For more information, see the
-> +      Not-Ready (NRDY) bit description in the MPAM specification.
-> +
-> +  numa-node-id: true # see NUMA binding
-> +
-> +  '#address-cells':
-> +    const: 1
-> +
-> +  '#size-cells':
-> +    const: 0
-> +
-> +patternProperties:
-> +  '^ris@[0-9a-f]$':
-
-It this supposed to be '^ris@[0-9a-f]+$' ?
-
-Currently MPAMF_IDR.RIS_MAX is only 4 bits in size and so cannot be
-greater than 0xf.  But it is not inconceivable that a future revision
-of the architecture might enable more -- and the are 4 RES0 bits
-looming over the RIS_MAX field, just waiting to be used...
-
-(In any case, it feels wrong to try to enforce numeric bounds with a
-regex, even in the cases where it happens to work straightforwardly.)
-
-> +    type: object
-> +    additionalProperties: false
-> +    description:
-> +      RIS nodes for each RIS in an MSC. These nodes are required for each RIS
-
-The architectural term is "resource instance", not "RIS".
-
-But "RIS nodes" is fine for describing the DT nodes, since we can call
-them what we like, and "ris" is widely used inside the MPAM driver.
-
-People writing DTs should not need to be familiar with the driver's
-internal naming conventions, though.
-
-(There are other instances, but I won't comment on them all
-individually.)
-
-> +      implementing known MPAM controls
-> +
-> +    properties:
-> +      compatible:
-> +        enum:
-> +            # Bulk storage for cache
-
-Nit: What is "bulk storage"?
-
-The MPAM spec just refers to "cache" or "cache memory".
-
-> +          - arm,mpam-cache
-> +            # Memory bandwidth
-> +          - arm,mpam-memory
-> +
-> +      reg:
-> +        minimum: 0
-> +        maximum: 0xf
-> +
-> +      cpus:
-> +        description:
-> +          Phandle(s) to the CPU node(s) this RIS belongs to. By default, the parent
-> +          device's affinity is used.
-> +
-> +      arm,mpam-device:
-> +        $ref: /schemas/types.yaml#/definitions/phandle
-> +        description:
-> +          By default, the MPAM enabled device associated with a RIS is the MSC's
-
-Associated how?  Is this the device where the physical resources
-managed by the MSC are located?
-
-> +          parent node. It is possible for each RIS to be associated with different
-> +          devices in which case 'arm,mpam-device' should be used.
-
-[...]
-
-> +examples:
-> +  - |
-> +    L3: cache-controller@30000000 {
-> +        compatible = "arm,dsu-l3-cache", "cache";
-> +        cache-level = <3>;
-> +        cache-unified;
-> +
-> +        ranges = <0x0 0x30000000 0x800000>;
-> +        #address-cells = <1>;
-> +        #size-cells = <1>;
-> +
-> +        msc@10000 {
-> +            compatible = "arm,mpam-msc";
-> +
-> +            /* CPU affinity implied by parent cache node's  */
-
-"node's" -> "nodes".
-
-(or it this supposed to be in the singular -- i.e., the immediately
-parent cache node only?)
-
-Anyway, it looks like this is commenting on the "reg" property, which
-doesn't seem right.
-
-Is this commnent supposed instead to explain the omission of the "cpus"
-property?  If so, that should be made clearer.
-
-> +            reg = <0x10000 0x2000>;
-> +            interrupts = <1>, <2>;
-> +            interrupt-names = "error", "overflow";
-> +            arm,not-ready-us = <1>;
-> +        };
-> +    };
-
-[...]
-
-(Examples otherwise not reviewed in detail.)
-
-Cheers
----Dave
 
