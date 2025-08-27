@@ -1,78 +1,88 @@
-Return-Path: <linux-kernel+bounces-788462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E93EB384F3
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 16:29:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8246B384F4
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 16:29:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3739A1BA60E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 14:29:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C6DC9802BC
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 14:29:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12DD835A280;
-	Wed, 27 Aug 2025 14:29:28 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA7DC35A29C;
+	Wed, 27 Aug 2025 14:29:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="ewQruy5/"
+Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4909F1D5150
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 14:29:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 570A22116E7;
+	Wed, 27 Aug 2025 14:29:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756304967; cv=none; b=Pds09ykQESyatpAPLvx55kzYhGy0v3xipw1uVVcTbTD4wnKqlZiO+o1gOcM+TDbFLpsnrxNI4Hpm17zz4r9CzEH2pNxM5V1RmMRz/WbJaVrIyZNcQOXCtZtPNJimb2zcOri6/W0osivTtdNXnDCXkKnFc64u9rQFUXWN7YI9dO0=
+	t=1756304982; cv=none; b=QUoRyF2RFSLTIfrPucRT2gRt+hScndjP7wxhzJVvHyKawa++RSY9tFO5Wo4GWQ1XENHEZDjDjoEGXDd2Pz1XNnEBlwYfnd/zHUfavwDtq2JbgVH1hYDqiN6gKLpe9bB3zyd2YyKBmJq1c8lYODhIXtJFIBy/cBFNsSEbI761m3Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756304967; c=relaxed/simple;
-	bh=kIJR7cGADyM6kTN8AEDpaIlr1i/X6urH+r5wzhvbbtM=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=EojhntuaBBZ24OdeNmAA2cIB8DPch6XSWg/76k6MF3LTeMWGhbV+DBGWGfmT1vklET6k81dz4mOypsevSpJlgxuUBcUG1cFTe4zTKlaX/hHRpZglVyx2x77XMi6TgwzELk4xVsWnGprU7x28ekmJNx8Rk4Sq++fr4ud6bU8Lj0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3ea6a44ffd8so53019835ab.1
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 07:29:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756304965; x=1756909765;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FXSbQ6VH10E/o/YNj8FDVjkkh//FO7asf5QkENMSHQA=;
-        b=G8TYoPJwg6aEP5JGn+sA9TjVY0svvDzokdNA0qNZ99ZR8+0r/KtYhjc6QjVmAJq22O
-         KVF88Zh8O6FElyVcH2cgFCxHYJcfsBP/2nBpPuLWOaPO84r9JRwb6UIWw9n5JHuLlq3j
-         DKWZGTkbD04boCILv3jFZmsFCMQDduOMn6uvhLUrHO2pyyWrhQBo/Phk16LtZYCztHWC
-         X7k0/KvFMePDvyqZ2qsW9l515U77OUKPd7/x2hD52xyFsv6hxwHy+OyVQ6kD6658OAgj
-         n50WmQvAMvdLaQgjIWF1B+hUNMGYKgh29uvh6uX/aZC5e79xJw8eOFEdUjefYTXghaTs
-         ghWg==
-X-Gm-Message-State: AOJu0YwH3aG3kms39E7aHWOmfjGzaD+oJhwNQ0BucP4HCuchCvB3aQRj
-	P4xNQscNlj6cJuzdgjkN/7etVLsSvzKzuysF7lxhT6Y2/K/si+SrM577DfJIn/3IiKlkP4FqstJ
-	ZA8htAZjIPLY55+VSshGWuDzwfJY09wN1ga+yUqpQmp39HJtG3ss9opCFCbU=
-X-Google-Smtp-Source: AGHT+IF7EIVj9lw7NZSh0Osjqy8XM6ZYf7orYvsCCT2LHUMhSpTeuHvD0gS6VfFxW19eWFUYyZ92VlWlqisJKDj8+qjIsv5XN/cy
+	s=arc-20240116; t=1756304982; c=relaxed/simple;
+	bh=qCgCUjyjsPmF0jdGcBEgngZAniwK2Av1gp8djUQFeNI=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=f3p6aZd3mFNopypmd92IK9CFqfgnj8187AE8QU4tBt2EaP/3C/YEs098x2B7CR4kF2t7C1Zq69xeQNZQJqmNRu5eoS/MAydJz9yUstaK+BqTZ11au7C/b3Uk+Dd4FGgs2+rFyaKJtkEvusig6G3iCakwkQPm/W0y0e+RHcOhd8g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=ewQruy5/; arc=none smtp.client-ip=83.149.199.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
+Received: from monopod.intra.ispras.ru (unknown [10.10.3.121])
+	by mail.ispras.ru (Postfix) with ESMTPSA id B1576406B369;
+	Wed, 27 Aug 2025 14:29:36 +0000 (UTC)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru B1576406B369
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
+	s=default; t=1756304976;
+	bh=50xICCmFUNkQvn1uinC1kdEOBECmusxGYz4OO2607gs=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+	b=ewQruy5/Vapje6Weh9yot3zS867fWsSkLCD1I9OZGeIU9jZfkDD5rhvkNlh1zDP6a
+	 FxU+8A4iAWaal4BeKd3RDElLRhZqTJeD1sTFIcAOeOUuZ9QHJvwdE2kf/yUoGTJa1j
+	 oR4/atltUzio1lxPro9EPqGS2VsrbIBciflBwLJg=
+Date: Wed, 27 Aug 2025 17:29:36 +0300 (MSK)
+From: Alexander Monakov <amonakov@ispras.ru>
+To: Aleksa Sarai <cyphar@cyphar.com>
+cc: Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org, 
+    Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+    linux-kernel@vger.kernel.org
+Subject: Re: ETXTBSY window in __fput
+In-Reply-To: <2025-08-27-powered-crazy-arcade-jack-Ajr33h@cyphar.com>
+Message-ID: <9cdea98c-c227-7897-3001-b7e5f388352b@ispras.ru>
+References: <6e60aa72-94ef-9de2-a54c-ffd91fcc4711@ispras.ru> <20250826220033.GW39973@ZenIV> <0a372029-9a31-54c3-4d8a-8a9597361955@ispras.ru> <2025-08-27-powered-crazy-arcade-jack-Ajr33h@cyphar.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3c03:b0:3e6:7b31:bd71 with SMTP id
- e9e14a558f8ab-3e9223163cdmr319656645ab.19.1756304965253; Wed, 27 Aug 2025
- 07:29:25 -0700 (PDT)
-Date: Wed, 27 Aug 2025 07:29:25 -0700
-In-Reply-To: <67b0cc5b.050a0220.6f0b7.0014.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68af1645.a70a0220.3cafd4.0023.GAE@google.com>
-Subject: Forwarded: Re: [syzbot] [bluetooth?] general protection fault in bcsp_recv
-From: syzbot <syzbot+4ed6852d4da4606c93da@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
 
-***
 
-Subject: Re: [syzbot] [bluetooth?] general protection fault in bcsp_recv
-Author: ipravdin.official@gmail.com
+On Wed, 27 Aug 2025, Aleksa Sarai wrote:
 
-#syz test
+> On 2025-08-27, Alexander Monakov <amonakov@ispras.ru> wrote:
+> > > Frankly, in such situation I would spawn a thread for that, did unshare(CLONE_FILES)
+> > > in it, replaced the binary and buggered off, with parent waiting for it to complete.
+> > 
+> > Good to know, but it doesn't sound very efficient (and like something that could be
+> > integrated in Go runtime).
+> 
+> Can't you create a goroutine, runtime.LockOSThread,
+> unshare(CLONE_FILES), do the work, and then return -- without
+> runtime.UnlockOSThread (to kill the thread and stop it from being used
+> by other Go code)? Or does that not work in stdlib?
 
-	Ivan Pravdin
+Again, with regards to Go backstory, I'm just the messenger. But were I
+a Go runtime implementor, I'm afraid no, I wouldn't be able to do that,
+because while the file is being written, it's done with normal I/O APIs.
+The runtime has no way to look in the future and anticipate that the
+file currently being written will be execve'd.
+
+My first priority here is not to dig up alternative solutions to the
+ETXTBSY problem. I'm asking about a race window in __fput.
+
+Alexander
 
