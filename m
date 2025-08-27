@@ -1,262 +1,431 @@
-Return-Path: <linux-kernel+bounces-787892-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 443C1B37D52
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 10:15:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7700BB37D5B
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 10:16:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41ACC188B2F9
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 08:15:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FA3C3BCAA9
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 08:16:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4B3932A3FF;
-	Wed, 27 Aug 2025 08:15:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RsbHVuP1"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCE7C338F54;
+	Wed, 27 Aug 2025 08:15:43 +0000 (UTC)
+Received: from eswincomputing.com (mail.eswincomputing.com [123.124.195.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E75451DFF0;
-	Wed, 27 Aug 2025 08:14:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.9
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756282501; cv=fail; b=eTSAh2bPxaOz4J+RNJ01RQm0InHnKg2UoCFntEYbka1ljOmfwvP8b54ez9hUfV2iHfzgQDyV1WQnEuHjJdKz5NfTfRofTAOlCqwUoXrh8nnm++n8kgPnDeIU/mTEHwNFGgrJfCbZX1DYovOnxkbffBxKEwmrFFL7KMqAjEyeXr0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756282501; c=relaxed/simple;
-	bh=cGDsEnVdM5YuRS5T3BLwwrTirAv0fe9/TX5jsXQZK1Q=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=UunkIvvU71gMGUBPQsxhndhd6X7Bq2QoXWuGTc+8TQTiI1Z4tHfubRmkDQIYW4eXEfhGOxK4UUK07c2zEcWfOwDv9pslyTOL8Am1lDDH+FlIcRn8kS9JSQgGyV/BbfqOl1oBzTBt7clDGAsT33VrHGDN0GFd011TX7qXg70Pm2I=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RsbHVuP1; arc=fail smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756282500; x=1787818500;
-  h=date:from:to:cc:subject:message-id:reply-to:references:
-   in-reply-to:mime-version;
-  bh=cGDsEnVdM5YuRS5T3BLwwrTirAv0fe9/TX5jsXQZK1Q=;
-  b=RsbHVuP1x+7AGnJHgdhrXqmekvnZvhCmcDnQuhn60Xjst7K+5LmbFnS+
-   RP6GSSvxVJUHV7J2cOenqHoh2reby4uwf0UWlAkzOzT2sIBHn9EJ3ol8k
-   L2jeGGU1yg9heQCW+mXioGxFdlrFlYLArk7zwKbEi7QJ/qAfJf+OYCMo5
-   5ZcsKNAHI5Tqq6tqel2B4s9CmIiBcnaBP+WuW42C0X6UL4y5ZCzyagXdm
-   0Pvm6+97DBdxfsYlGyik2vrbxkY7wOtjJ5mL5XNedocYrqQ0AmPPuUoeA
-   oic6ndaTgM7jN5QEnefL1ha+AykM3ONHBlN/Hyf59n7p+itc4SsQHIYb8
-   A==;
-X-CSE-ConnectionGUID: C4kdVCFOTSqI51yjfpnn4w==
-X-CSE-MsgGUID: enWCHFXhRI+arA4Bcl65Mg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11534"; a="69244246"
-X-IronPort-AV: E=Sophos;i="6.18,214,1751266800"; 
-   d="scan'208";a="69244246"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2025 01:14:59 -0700
-X-CSE-ConnectionGUID: +iCDuLjuSRCWpHBiJX2PWA==
-X-CSE-MsgGUID: 0PcjCiIRRwOu59/nyhU4Vw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,214,1751266800"; 
-   d="scan'208";a="173950055"
-Received: from fmsmsx903.amr.corp.intel.com ([10.18.126.92])
-  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2025 01:14:58 -0700
-Received: from FMSMSX902.amr.corp.intel.com (10.18.126.91) by
- fmsmsx903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Wed, 27 Aug 2025 01:14:57 -0700
-Received: from fmsedg902.ED.cps.intel.com (10.1.192.144) by
- FMSMSX902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17 via Frontend Transport; Wed, 27 Aug 2025 01:14:57 -0700
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (40.107.220.80)
- by edgegateway.intel.com (192.55.55.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Wed, 27 Aug 2025 01:14:57 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=GpdJSXr9EnSwuIGTJ9wFd/VkRG0lI/69ZyBP6UbuaT0cbqWlOjwlPbPs53mpD4wt9kMk4KANUNSLZpCD7TXzZoram6d1SP1NWo2ngP8Gqv8oL7lAG9iQhxxENBu3oUcqiKZ7QM35JUH4bfs2rXNMtdRQ9BLccuCBn8acV4stLgJKp4ImNgkEvvlaTaeE7Ky68nvFPiejAYeitpDTlaN30b74zJQ4FRETaMXSXgAOe5jid0r67iIg0sOJ9+lovLzfEPrrK+1wbKwEMEKtJDv9vjMBzoqqooAkQeuqnRD0bA/nDniqJYrhafUGqRgnqeCmPuSt9erUI9Qc1HXrsAvYiQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=7BbH5afdlTsGjT3If3lkun2m89sfijXTGWlDyWreBdI=;
- b=sY9iT4dcMC6QWVak3vHT9NjSc7XLQRkXVRgjAzCn8CySBCSRtKwSI4H9pH35I8qfMogkTtFKBpnxZJsnbyQG72IKZEWht07wTec/ueSH/mIdtTmfbYEYhDiFbz9hwtIIZFMkCLKCHQNCtTY5zDloqQ+BCVen0oOv33Y97kaWsAIrYxjiOhoRlarKa/79t11ZFDx9aFJov2a4XtliHw6K192vReZrp8eqOVHUNf6V3eLkP9n9IiZVYtPbEA8ZxAQ11GPUdJ4S9EgQ3nDLFS099VA0v+DWYYa9+LyZnhA2/tqjDaRZWqq11+jlCw7oSSj5dNH/2rCN75NORelSjVQGuQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS7PR11MB5966.namprd11.prod.outlook.com (2603:10b6:8:71::6) by
- SA2PR11MB4793.namprd11.prod.outlook.com (2603:10b6:806:fa::8) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9073.15; Wed, 27 Aug 2025 08:14:54 +0000
-Received: from DS7PR11MB5966.namprd11.prod.outlook.com
- ([fe80::e971:d8f4:66c4:12ca]) by DS7PR11MB5966.namprd11.prod.outlook.com
- ([fe80::e971:d8f4:66c4:12ca%7]) with mapi id 15.20.9052.013; Wed, 27 Aug 2025
- 08:14:54 +0000
-Date: Wed, 27 Aug 2025 16:14:05 +0800
-From: Yan Zhao <yan.y.zhao@intel.com>
-To: Sean Christopherson <seanjc@google.com>
-CC: Paolo Bonzini <pbonzini@redhat.com>, <kvm@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Michael Roth <michael.roth@amd.com>, "Ira
- Weiny" <ira.weiny@intel.com>, Vishal Annapurve <vannapurve@google.com>, "Rick
- Edgecombe" <rick.p.edgecombe@intel.com>
-Subject: Re: [RFC PATCH 01/12] KVM: TDX: Drop PROVE_MMU=y sanity check on
- to-be-populated mappings
-Message-ID: <aK6+TQ0r1j5j2PCx@yzhao56-desk.sh.intel.com>
-Reply-To: Yan Zhao <yan.y.zhao@intel.com>
-References: <20250827000522.4022426-1-seanjc@google.com>
- <20250827000522.4022426-2-seanjc@google.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20250827000522.4022426-2-seanjc@google.com>
-X-ClientProxiedBy: SG2P153CA0014.APCP153.PROD.OUTLOOK.COM (2603:1096::24) To
- DS7PR11MB5966.namprd11.prod.outlook.com (2603:10b6:8:71::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DDBF273800;
+	Wed, 27 Aug 2025 08:15:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=123.124.195.78
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756282543; cv=none; b=gFAodB38jstwHrscihZEzinBfveFl/lo6JbdsyRua+aZchoA9GndybZI0Bq049ppHLQ79CtKvmkbjAdFFw9hknjRB45jH3YuO2lpRKNzJ/3UeAyfshEpvzw5GAvnpVrkYljY9c6BA0IoqCrajwfdZmfryWSPTPn76Lo59ucjGUQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756282543; c=relaxed/simple;
+	bh=S9FbG1F9p7hd78sfwJ4pqFn3DG1vWBNXnxhtlo+nslk=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Ztyu6N/O/kYWgCEtQd9TmwfJ6Nv5nucw6SdTsd913MjI9ZfEtj15LD2q7psedQjxj8yxbTgcObdKZKJFHnFLz1H0OKLc5yOpvKl+wpc7kqB4Xwl7TK99cpE7BjMg3of5wTmnVHWcNaNNAbRiTB2s8ibXo7Bv7NM8aiI4QS9qvD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=123.124.195.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
+Received: from E0005182LT.eswin.cn (unknown [10.12.96.155])
+	by app1 (Coremail) with SMTP id TAJkCgBXexFdvq5opjTEAA--.3118S2;
+	Wed, 27 Aug 2025 16:14:24 +0800 (CST)
+From: weishangjuan@eswincomputing.com
+To: devicetree@vger.kernel.org,
+	andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	mcoquelin.stm32@gmail.com,
+	alexandre.torgue@foss.st.com,
+	yong.liang.choong@linux.intel.com,
+	vladimir.oltean@nxp.com,
+	rmk+kernel@armlinux.org.uk,
+	faizal.abdul.rahim@linux.intel.com,
+	prabhakar.mahadev-lad.rj@bp.renesas.com,
+	inochiama@gmail.com,
+	jan.petrous@oss.nxp.com,
+	jszhang@kernel.org,
+	p.zabel@pengutronix.de,
+	boon.khai.ng@altera.com,
+	0x1207@gmail.com,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com
+Cc: ningyu@eswincomputing.com,
+	linmin@eswincomputing.com,
+	lizhi2@eswincomputing.com,
+	Shangjuan Wei <weishangjuan@eswincomputing.com>
+Subject: [PATCH v4 2/2] ethernet: eswin: Add eic7700 ethernet driver
+Date: Wed, 27 Aug 2025 16:14:17 +0800
+Message-Id: <20250827081418.2347-1-weishangjuan@eswincomputing.com>
+X-Mailer: git-send-email 2.31.1.windows.1
+In-Reply-To: <20250827081135.2243-1-weishangjuan@eswincomputing.com>
+References: <20250827081135.2243-1-weishangjuan@eswincomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR11MB5966:EE_|SA2PR11MB4793:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1f5735d0-acea-4d81-0b7d-08dde541cdcb
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?1yGgJTR7PVSPreNwoacwBkRmr8UA94IG4jSJIiJzf3IkK/finuU0V11T3FLt?=
- =?us-ascii?Q?4GZJvDGffOC1xi4PHR3Mz8v4dS9TU34HWSI8zwstCLGAY5UlR3mh3KyKPL5L?=
- =?us-ascii?Q?qrdn0zKb8WDdbs9/Fds6BkdErB02Ng6DvgFgbSi2uNOSnw330ux4N/YrKfwm?=
- =?us-ascii?Q?zsi8up7Z7EdMIhhf3H0RyOaxXLG3CsxAwliDhFoOrT9B2PopyvI//g/sZWdv?=
- =?us-ascii?Q?sTc+fDJ8rNkIQBzej3y38uCWq4iZsK02yA44ts6JVcObtcqn7ZjH+IAnCqIX?=
- =?us-ascii?Q?9tP7ekBlL/Nal37hxT7xUNywKrecXvVLFhO0oNlRC4czzTqqgVx6lw17p1ZO?=
- =?us-ascii?Q?bZJyv5WKu79PepmIJ8Ufh9SqxsfhGxshmI9OEtOzNOEPFWUAEeuvrPbVwcVv?=
- =?us-ascii?Q?CPXStayJiqpGVHRBUQQGJ6nN9oF4ltxWWEQdwLx8bZBt+5OoSzOdaod/t+QI?=
- =?us-ascii?Q?EU6r80Z2alN5eseEphsHlmXuKSO1wQKz+nYMikg4kP3ItMHStCqJuUTnYgjH?=
- =?us-ascii?Q?ukK5gFNIrviNipeZ3FeMJSQ/daKKXs3jCq3o1+0uiT79hHCMfKVxM+7TTvhi?=
- =?us-ascii?Q?WYTTnIoY9FkuUpE31gcpubfm26JZ4YQtZVu5DQc+Mao3DackvFsDJqjfTwCx?=
- =?us-ascii?Q?4WGdFWjjK7h9vWYMJWLLvGU54hrEan9aDVIYwT8L+ESv19bb7i7mVT4GUmFn?=
- =?us-ascii?Q?ySItc9FX7xbOS4z2amvDlOZKbKj2C13HUMyDJA8gSQprEugazFdbrmlFffAw?=
- =?us-ascii?Q?y+SDebuhjVdiTarvU4XvxKow/XcHB/dT7Bv6hueytk26FVyMTlLs1dC4AAK9?=
- =?us-ascii?Q?HGQJFc/hBKWARs3TcYL5VLkiSPYStl5x6zuMAju0usi6b9c5NdRbEF9BTWX8?=
- =?us-ascii?Q?Zg01OxagO3JATtxrLy2Jd6dUxqmZdn6XkGXJET2KauaTZNRiq5OunIVbGGQC?=
- =?us-ascii?Q?FQoIW4rVjcfVWjCq9+0ly+BeKzx/Ns+Qrz2okLzZbsMb5KiidLuHwBPvW4IQ?=
- =?us-ascii?Q?j3bTznAGn7mefIrIB7SQjapnqnxmev3na8/IicIB8TqYlaRU7el7mrbMCLNI?=
- =?us-ascii?Q?zbo/IHgaQ52rqhNcWdDYIn4+cA5AqRhmsIsT8LxT8rgqfv0VUXsA+0XLePZ3?=
- =?us-ascii?Q?1NodeYibS41cE/E7jlM1e84NCV6q0uFKdQY+PCbrkfdHgCqVvr7GbQTX6wzB?=
- =?us-ascii?Q?n/KDhGHJRCiaFD6We7Y3VkDaqSJi5EhDkSBX1gEZKgflwAUNkisWIiqfgzYl?=
- =?us-ascii?Q?4a3ZUlsWr722+VUQn9zRe2loSYEGfums+8y8uHtSc5ogqQTIykwKDcOlzDtP?=
- =?us-ascii?Q?lro5nAIhDnbW4fEJapsOb6QZ2ugS97iDHMcWMWNeYstGEErvci0g7+ypXErM?=
- =?us-ascii?Q?4RJ4sV21k0mbfbF7iwIe2lS1mCoGVkyDrGIHkPaXEY418eM2l0O+L88qhQJn?=
- =?us-ascii?Q?pG5qL/1GO3Y=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR11MB5966.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?pvNYVTAa2pxFnc0hTZ6t3RtRFTcINjtOrrB4xTtC3txSdA6zGmAZA+UP9fd0?=
- =?us-ascii?Q?GTOPZB7MedenNI4fS0eVnYKkKX+qeEeSmttMvby+IPYPbT98/Md9o/8vrJw0?=
- =?us-ascii?Q?DAOVBSnCU0Sx1vOLynEJUdP9ALGTxezhSX6OhiJU6y3LkhR7uO/gqEDJTJHd?=
- =?us-ascii?Q?kzA4m1Y7XNCKYivlmcqmfKapVmE9qM9rz60cHjIAZB00mnto1tnoWUzTzTOv?=
- =?us-ascii?Q?akxl/pMDCpxj/Ze4HoPtAFIxJ5gYINol/LQr6YLjks64ZagZORp4vJs506iO?=
- =?us-ascii?Q?FvN/Rml08+NJq9U6pQ2Afv4vwbXABdpTNI+jSc+tQX6kSaCKgT0tCmFOmvql?=
- =?us-ascii?Q?LWbfT69dEcyQb8GaLz8d6hshkfxZqC6VOGE7dldslb3w4qoBquN3VapFi9D6?=
- =?us-ascii?Q?yHbpnVMQrH4HmCCPkCwhoA4EwZpf/NbxmJeAxKTcMXqpkfFCRGd/sF4gVoGI?=
- =?us-ascii?Q?/QlTYK1E1P+Po9fQh5rlWRL6TJnjgHlOT9+UzgjaVcr7GmHZ0IoIg/mB723R?=
- =?us-ascii?Q?O5VRUT8OZA+vHNRq1NvumjXWadO8ZZVwAsLK/Z0SzNhrXoaEcQpVaEJP47Tu?=
- =?us-ascii?Q?GPx3JC7oRZIEcyTqIw9tLTyPTWgR+pUgrnGsiitilGB8wOE6/0ZUYwe5KWkU?=
- =?us-ascii?Q?HZn05UAXiFdxIU72L+4g/f16zIUoSzvTNddA2VMsrx6H7r1DsbcYjvGmR2j4?=
- =?us-ascii?Q?+sKfFfqIFX01Hqp73nrND8mvRln5MgntHpnm5LXXcZ9K4MzxLXFMe33IyLKj?=
- =?us-ascii?Q?ZmzZsFAQq3sC6LH0rcCuZLlgFp2X6ylBN8EIXbpEwaL55W2xm8Jgr0gl8P85?=
- =?us-ascii?Q?593FcHlG2DG8yY+/W7Ed8cOL23YkqYIkvd720c8BrUPHl45tIzK9KL84i+/2?=
- =?us-ascii?Q?rd6sYxlMREBST87NfDWWbgkbMHOZurk9kjgvrudT19pDmWUFreqTyHTPdgD5?=
- =?us-ascii?Q?pQJ21p2w2GG0mN7vZTEnN48gDP+cpk94wlFVtFfXlwIVIX3jfY1Rzcj0tt+T?=
- =?us-ascii?Q?HoJpa29YoYJh+wrodhQmOU5zYa/A4Cqs4xGVay/A3fxUsM40921Z4UbEu1Vh?=
- =?us-ascii?Q?MoiTsr3Ma1CplWZt7YhzVvsWMYwW20rCZ1UzFfiGh/Ibw6JqqztJB5+ZnuV4?=
- =?us-ascii?Q?0SsLA84e8aZN3uvZeZh9tGDAoFltbZf6vYsxlfZieNzE6n3S7gmX1KSZQI+N?=
- =?us-ascii?Q?jVDHCsfv4ZA3IiZLoKUE9g1caWh6h5l5CuP3u+qT42phPrrdxCMeITNA/E7q?=
- =?us-ascii?Q?vWD05WDgz4MN9Usxx0oJNQycoVZgkQBTkqSpMbqIbvfx11HaAf+liL1r281Q?=
- =?us-ascii?Q?gyo96YxSrGZcKVTTH67tTmb098mqh1CjzT0S2UE3zu6DCr7T00LNL7Rqcs7k?=
- =?us-ascii?Q?s2Fjp9C9dOfK4WC7/YwKfjJYtmABqe2muKm1JwMSQkYmzFbqDvQuk8gCjKNU?=
- =?us-ascii?Q?VvtjqqpjetHghXkzu/Nx0NdI+aQZaXRlaUh6J5njmku4SATyGItPXcrdG6RA?=
- =?us-ascii?Q?w7zE69d8Khj2O7UZTY5jd2bpQ9WqBnH4FhLdqGM34FdTvDupGCas27NgPP+V?=
- =?us-ascii?Q?QBsOHJYYE8WLeDQWorHT1Dnr+kWjgvwrio1ORI9M?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1f5735d0-acea-4d81-0b7d-08dde541cdcb
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR11MB5966.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2025 08:14:54.6883
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: y2kvtjv5rquCx02w0GQH9vxeSEaPT5mEQh5Du2N4XIXjWeLvNrWBe1wKGYp8nD4nDotkQBF8rlEKNK8YChIS3w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA2PR11MB4793
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=yes
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:TAJkCgBXexFdvq5opjTEAA--.3118S2
+X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUO77AC8VAFwI0_Wr0E3s1l1xkIjI8I6I8E
+	6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28Cjx
+	kF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8I
+	cVCY1x0267AKxVWxJr0_GcWl84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2js
+	IEc7CjxVAFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wASzI0E04IjxsIE14AK
+	x2xKxwAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4
+	A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F
+	5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lw4CEc2x0rVAKj4xxM4
+	kE6I8I3I0E14AKx2xKxVC2ax8xMxkIecxEwVCm-wCF04k20xvY0x0EwIxGrwCFx2IqxVCF
+	s4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r1j6r
+	18MI8E67AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWU
+	JVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F4UJwCI42IY6xAIw20EY4v20xvaj4
+	0_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_
+	Cr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUH6wZUUUUU=
+X-CM-SenderInfo: pzhl2xxdqjy31dq6v25zlqu0xpsx3x1qjou0bp/
 
-On Tue, Aug 26, 2025 at 05:05:11PM -0700, Sean Christopherson wrote:
-> Drop TDX's sanity check that an S-EPT mapping isn't zapped between creating
-> said mapping and doing TDH.MEM.PAGE.ADD, as the check is simultaneously
-> superfluous and incomplete.  Per commit 2608f1057601 ("KVM: x86/tdp_mmu:
-> Add a helper function to walk down the TDP MMU"), the justification for
-> introducing kvm_tdp_mmu_gpa_is_mapped() was to check that the target gfn
-> was pre-populated, with a link that points to this snippet:
-> 
->  : > One small question:
->  : >
->  : > What if the memory region passed to KVM_TDX_INIT_MEM_REGION hasn't been pre-
->  : > populated?  If we want to make KVM_TDX_INIT_MEM_REGION work with these regions,
->  : > then we still need to do the real map.  Or we can make KVM_TDX_INIT_MEM_REGION
->  : > return error when it finds the region hasn't been pre-populated?
->  :
->  : Return an error.  I don't love the idea of bleeding so many TDX details into
->  : userspace, but I'm pretty sure that ship sailed a long, long time ago.
-> 
-> But that justification makes little sense for the final code, as simply
-> doing TDH.MEM.PAGE.ADD without a paranoid sanity check will return an error
-> if the S-EPT mapping is invalid (as evidenced by the code being guarded
-> with CONFIG_KVM_PROVE_MMU=y).
-Checking of kvm_tdp_mmu_gpa_is_mapped() was intended to detect unexpected zaps
-like kvm_zap_gfn_range() between kvm_tdp_map_page() and tdh_mem_page_add()?
-In that case, TDH.MEM.PAGE.ADD would succeed without any error.
+From: Shangjuan Wei <weishangjuan@eswincomputing.com>
 
-But as you said, the read mmu_lock is dropped before tdh_mem_page_add().
-Moreover, it still cannot guard against atomic zaps.
+Add Ethernet controller support for Eswin's eic7700 SoC. The driver
+provides management and control of Ethernet signals for the eiC7700
+series chips.
 
-As zaps between kvm_tdp_map_page() and tdh_mem_page_add() could still be
-detectable through the incorrect value of nr_premapped in the end, dropping the
-checks of kvm_tdp_mmu_gpa_is_mapped() looks good.
+Signed-off-by: Zhi Li <lizhi2@eswincomputing.com>
+Signed-off-by: Shangjuan Wei <weishangjuan@eswincomputing.com>
+---
+ drivers/net/ethernet/stmicro/stmmac/Kconfig   |  11 +
+ drivers/net/ethernet/stmicro/stmmac/Makefile  |   1 +
+ .../ethernet/stmicro/stmmac/dwmac-eic7700.c   | 270 ++++++++++++++++++
+ 3 files changed, 282 insertions(+)
+ create mode 100644 drivers/net/ethernet/stmicro/stmmac/dwmac-eic7700.c
 
-> The sanity check is also incomplete in the sense that mmu_lock is dropped
-> between the check and TDH.MEM.PAGE.ADD, i.e. will only detect KVM bugs that
-> zap SPTEs in a very specific window.
->
-> Removing the sanity check will allow removing kvm_tdp_mmu_gpa_is_mapped(),
-> which has no business being exposed to vendor code.
-> 
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-> ---
->  arch/x86/kvm/vmx/tdx.c | 14 --------------
->  1 file changed, 14 deletions(-)
-> 
-> diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
-> index 66744f5768c8..a6155f76cc6a 100644
-> --- a/arch/x86/kvm/vmx/tdx.c
-> +++ b/arch/x86/kvm/vmx/tdx.c
-> @@ -3175,20 +3175,6 @@ static int tdx_gmem_post_populate(struct kvm *kvm, gfn_t gfn, kvm_pfn_t pfn,
->  	if (ret < 0)
->  		goto out;
->  
-> -	/*
-> -	 * The private mem cannot be zapped after kvm_tdp_map_page()
-> -	 * because all paths are covered by slots_lock and the
-> -	 * filemap invalidate lock.  Check that they are indeed enough.
-> -	 */
-> -	if (IS_ENABLED(CONFIG_KVM_PROVE_MMU)) {
-> -		scoped_guard(read_lock, &kvm->mmu_lock) {
-> -			if (KVM_BUG_ON(!kvm_tdp_mmu_gpa_is_mapped(vcpu, gpa), kvm)) {
-> -				ret = -EIO;
-> -				goto out;
-> -			}
-> -		}
-> -	}
-> -
->  	ret = 0;
->  	err = tdh_mem_page_add(&kvm_tdx->td, gpa, pfn_to_page(pfn),
->  			       src_page, &entry, &level_state);
-> -- 
-> 2.51.0.268.g9569e192d0-goog
-> 
+diff --git a/drivers/net/ethernet/stmicro/stmmac/Kconfig b/drivers/net/ethernet/stmicro/stmmac/Kconfig
+index 67fa879b1e52..a13b15ce1abd 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/Kconfig
++++ b/drivers/net/ethernet/stmicro/stmmac/Kconfig
+@@ -67,6 +67,17 @@ config DWMAC_ANARION
+
+ 	  This selects the Anarion SoC glue layer support for the stmmac driver.
+
++config DWMAC_EIC7700
++	tristate "Support for Eswin eic7700 ethernet driver"
++	select CRC32
++	select MII
++	depends on OF && HAS_DMA && ARCH_ESWIN || COMPILE_TEST
++	help
++	  This driver supports the Eswin EIC7700 Ethernet controller,
++	  which integrates Synopsys DesignWare QoS features. It enables
++	  high-speed networking with DMA acceleration and is optimized
++	  for embedded systems.
++
+ config DWMAC_INGENIC
+ 	tristate "Ingenic MAC support"
+ 	default MACH_INGENIC
+diff --git a/drivers/net/ethernet/stmicro/stmmac/Makefile b/drivers/net/ethernet/stmicro/stmmac/Makefile
+index b591d93f8503..f4ec5fc16571 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/Makefile
++++ b/drivers/net/ethernet/stmicro/stmmac/Makefile
+@@ -14,6 +14,7 @@ stmmac-$(CONFIG_STMMAC_SELFTESTS) += stmmac_selftests.o
+ # Ordering matters. Generic driver must be last.
+ obj-$(CONFIG_STMMAC_PLATFORM)	+= stmmac-platform.o
+ obj-$(CONFIG_DWMAC_ANARION)	+= dwmac-anarion.o
++obj-$(CONFIG_DWMAC_EIC7700)	+= dwmac-eic7700.o
+ obj-$(CONFIG_DWMAC_INGENIC)	+= dwmac-ingenic.o
+ obj-$(CONFIG_DWMAC_IPQ806X)	+= dwmac-ipq806x.o
+ obj-$(CONFIG_DWMAC_LPC18XX)	+= dwmac-lpc18xx.o
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-eic7700.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-eic7700.c
+new file mode 100644
+index 000000000000..8b2082126a42
+--- /dev/null
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-eic7700.c
+@@ -0,0 +1,270 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Eswin DWC Ethernet linux driver
++ *
++ * Copyright 2025, Beijing ESWIN Computing Technology Co., Ltd.
++ *
++ * Authors:
++ *   Zhi Li <lizhi2@eswincomputing.com>
++ *   Shuang Liang <liangshuang@eswincomputing.com>
++ *   Shangjuan Wei <weishangjuan@eswincomputing.com>
++ */
++
++#include <linux/platform_device.h>
++#include <linux/mfd/syscon.h>
++#include <linux/stmmac.h>
++#include <linux/regmap.h>
++#include <linux/of.h>
++
++#include "stmmac_platform.h"
++
++/* eth_phy_ctrl_offset eth0:0x100 */
++#define EIC7700_ETH_TX_CLK_SEL		BIT(16)
++#define EIC7700_ETH_PHY_INTF_SELI	BIT(0)
++
++/* eth_axi_lp_ctrl_offset eth0:0x108 */
++#define EIC7700_ETH_CSYSREQ_VAL		BIT(0)
++
++/*
++ * TX/RX Clock Delay Bit Masks:
++ * - TX Delay: bits [14:8] — TX_CLK delay (unit: 0.1ns per bit)
++ * - RX Delay: bits [30:24] — RX_CLK delay (unit: 0.1ns per bit)
++ */
++#define EIC7700_ETH_TX_ADJ_DELAY	GENMASK(14, 8)
++#define EIC7700_ETH_RX_ADJ_DELAY	GENMASK(30, 24)
++
++#define EIC7700_MAX_DELAY_UNIT 0x7F
++
++struct eic7700_qos_priv {
++	struct device *dev;
++	struct regmap *hsp_regmap;
++	struct clk *clk_tx;
++	struct clk *clk_axi;
++	struct clk *clk_cfg;
++	u32 tx_delay_ps;
++	u32 rx_delay_ps;
++};
++
++/**
++ * eic7700_apply_delay - Update TX or RX delay bits in delay parameter value.
++ * @delay_ps: Delay in picoseconds (capped at 12.7ns).
++ * @reg:      Pointer to register value to modify.
++ * @is_rx:    True for RX delay (bits 30:24), false for TX delay (bits 14:8).
++ *
++ * Converts delay to 0.1ns units, caps at 0x7F, and sets appropriate bits.
++ * Only RX or TX bits are updated; other bits remain unchanged.
++ */
++static inline void eic7700_apply_delay(u32 delay_ps, u32 *reg, bool is_rx)
++{
++	if (!reg)
++		return;
++
++	u32 val = min(delay_ps / 100, EIC7700_MAX_DELAY_UNIT);
++
++	if (is_rx) {
++		*reg &= ~EIC7700_ETH_RX_ADJ_DELAY;
++		*reg |= (val << 24) & EIC7700_ETH_RX_ADJ_DELAY;
++	} else {
++		*reg &= ~EIC7700_ETH_TX_ADJ_DELAY;
++		*reg |= (val << 8) & EIC7700_ETH_TX_ADJ_DELAY;
++	}
++}
++
++static int eic7700_clks_config(void *priv, bool enabled)
++{
++	struct eic7700_qos_priv *dwc = (struct eic7700_qos_priv *)priv;
++	int ret = 0;
++
++	if (enabled) {
++		ret = clk_prepare_enable(dwc->clk_tx);
++		if (ret < 0) {
++			dev_err(dwc->dev, "Failed to enable tx clock: %d\n",
++				ret);
++			goto err;
++		}
++
++		ret = clk_prepare_enable(dwc->clk_axi);
++		if (ret < 0) {
++			dev_err(dwc->dev, "Failed to enable axi clock: %d\n",
++				ret);
++			goto err_tx;
++		}
++
++		ret = clk_prepare_enable(dwc->clk_cfg);
++		if (ret < 0) {
++			dev_err(dwc->dev, "Failed to enable cfg clock: %d\n",
++				ret);
++			goto err_axi;
++		}
++	} else {
++		clk_disable_unprepare(dwc->clk_tx);
++		clk_disable_unprepare(dwc->clk_axi);
++		clk_disable_unprepare(dwc->clk_cfg);
++	}
++	return ret;
++
++err_axi:
++	clk_disable_unprepare(dwc->clk_axi);
++err_tx:
++	clk_disable_unprepare(dwc->clk_tx);
++err:
++	return ret;
++}
++
++static int eic7700_dwmac_probe(struct platform_device *pdev)
++{
++	struct plat_stmmacenet_data *plat_dat;
++	struct stmmac_resources stmmac_res;
++	struct eic7700_qos_priv *dwc_priv;
++	u32 eth_axi_lp_ctrl_offset;
++	u32 eth_phy_ctrl_offset;
++	u32 eth_phy_ctrl_regset;
++	u32 eth_rxd_dly_offset;
++	u32 eth_dly_param = 0;
++	int ret;
++
++	ret = stmmac_get_platform_resources(pdev, &stmmac_res);
++	if (ret)
++		return dev_err_probe(&pdev->dev, ret,
++				"failed to get resources\n");
++
++	plat_dat = devm_stmmac_probe_config_dt(pdev, stmmac_res.mac);
++	if (IS_ERR(plat_dat))
++		return dev_err_probe(&pdev->dev, PTR_ERR(plat_dat),
++				"dt configuration failed\n");
++
++	dwc_priv = devm_kzalloc(&pdev->dev, sizeof(*dwc_priv), GFP_KERNEL);
++	if (!dwc_priv)
++		return -ENOMEM;
++
++	dwc_priv->dev = &pdev->dev;
++
++	/* Read rx-internal-delay-ps and update rx_clk delay */
++	if (!of_property_read_u32(pdev->dev.of_node,
++				  "rx-internal-delay-ps",
++				  &dwc_priv->rx_delay_ps)) {
++		eic7700_apply_delay(dwc_priv->rx_delay_ps,
++				    &eth_dly_param, true);
++	} else {
++		dev_warn(&pdev->dev, "can't get rx-internal-delay-ps\n");
++	}
++
++	/* Read tx-internal-delay-ps and update tx_clk delay */
++	if (!of_property_read_u32(pdev->dev.of_node,
++				  "tx-internal-delay-ps",
++				  &dwc_priv->tx_delay_ps)) {
++		eic7700_apply_delay(dwc_priv->tx_delay_ps,
++				    &eth_dly_param, false);
++	} else {
++		dev_warn(&pdev->dev, "can't get tx-internal-delay-ps\n");
++	}
++
++	dwc_priv->hsp_regmap =
++		syscon_regmap_lookup_by_phandle(pdev->dev.of_node,
++						"eswin,hsp-sp-csr");
++	if (IS_ERR(dwc_priv->hsp_regmap))
++		return dev_err_probe(&pdev->dev,
++				PTR_ERR(dwc_priv->hsp_regmap),
++				"Failed to get hsp-sp-csr regmap\n");
++
++	ret = of_property_read_u32_index(pdev->dev.of_node,
++					 "eswin,hsp-sp-csr",
++					 1, &eth_phy_ctrl_offset);
++	if (ret)
++		return dev_err_probe(&pdev->dev,
++				ret,
++				"can't get eth_phy_ctrl_offset\n");
++
++	regmap_read(dwc_priv->hsp_regmap, eth_phy_ctrl_offset,
++		    &eth_phy_ctrl_regset);
++	eth_phy_ctrl_regset |=
++		(EIC7700_ETH_TX_CLK_SEL | EIC7700_ETH_PHY_INTF_SELI);
++	regmap_write(dwc_priv->hsp_regmap, eth_phy_ctrl_offset,
++		     eth_phy_ctrl_regset);
++
++	ret = of_property_read_u32_index(pdev->dev.of_node,
++					 "eswin,hsp-sp-csr",
++					 2, &eth_axi_lp_ctrl_offset);
++	if (ret)
++		return dev_err_probe(&pdev->dev,
++				ret,
++				"can't get eth_axi_lp_ctrl_offset\n");
++
++	regmap_write(dwc_priv->hsp_regmap, eth_axi_lp_ctrl_offset,
++		     EIC7700_ETH_CSYSREQ_VAL);
++
++	ret = of_property_read_u32_index(pdev->dev.of_node,
++					 "eswin,hsp-sp-csr",
++					 3, &eth_rxd_dly_offset);
++	if (ret)
++		return dev_err_probe(&pdev->dev,
++				ret,
++				"can't get eth_rxd_dly_offset\n");
++
++	regmap_write(dwc_priv->hsp_regmap, eth_rxd_dly_offset,
++		     eth_dly_param);
++
++	dwc_priv->clk_tx = devm_clk_get(&pdev->dev, "tx");
++	if (IS_ERR(dwc_priv->clk_tx))
++		return dev_err_probe(&pdev->dev,
++				PTR_ERR(dwc_priv->clk_tx),
++				"error getting tx clock\n");
++
++	dwc_priv->clk_axi = devm_clk_get(&pdev->dev, "axi");
++	if (IS_ERR(dwc_priv->clk_axi))
++		return dev_err_probe(&pdev->dev,
++				PTR_ERR(dwc_priv->clk_axi),
++				"error getting axi clock\n");
++
++	dwc_priv->clk_cfg = devm_clk_get(&pdev->dev, "cfg");
++	if (IS_ERR(dwc_priv->clk_cfg))
++		return dev_err_probe(&pdev->dev,
++				PTR_ERR(dwc_priv->clk_cfg),
++				"error getting cfg clock\n");
++
++	ret = eic7700_clks_config(dwc_priv, true);
++	if (ret)
++		return dev_err_probe(&pdev->dev,
++				ret,
++				"error enable clock\n");
++
++	plat_dat->clk_tx_i = dwc_priv->clk_tx;
++	plat_dat->set_clk_tx_rate = stmmac_set_clk_tx_rate;
++	plat_dat->bsp_priv = dwc_priv;
++	plat_dat->clks_config = eic7700_clks_config;
++
++	ret = stmmac_dvr_probe(&pdev->dev, plat_dat, &stmmac_res);
++	if (ret) {
++		eic7700_clks_config(dwc_priv, false);
++		return dev_err_probe(&pdev->dev,
++				ret,
++				"Failed to driver probe\n");
++	}
++
++	return ret;
++}
++
++static void eic7700_dwmac_remove(struct platform_device *pdev)
++{
++	struct eic7700_qos_priv *dwc_priv = get_stmmac_bsp_priv(&pdev->dev);
++
++	stmmac_pltfr_remove(pdev);
++	eic7700_clks_config(dwc_priv, false);
++}
++
++static const struct of_device_id eic7700_dwmac_match[] = {
++	{ .compatible = "eswin,eic7700-qos-eth" },
++	{ }
++};
++MODULE_DEVICE_TABLE(of, eic7700_dwmac_match);
++
++static struct platform_driver eic7700_dwmac_driver = {
++	.probe  = eic7700_dwmac_probe,
++	.remove = eic7700_dwmac_remove,
++	.driver = {
++		.name           = "eic7700-eth-dwmac",
++		.pm             = &stmmac_pltfr_pm_ops,
++		.of_match_table = eic7700_dwmac_match,
++	},
++};
++module_platform_driver(eic7700_dwmac_driver);
++
++MODULE_AUTHOR("Zhi Li <lizhi2@eswincomputing.com>");
++MODULE_AUTHOR("Shuang Liang <liangshuang@eswincomputing.com>");
++MODULE_AUTHOR("Shangjuan Wei <weishangjuan@eswincomputing.com>");
++MODULE_DESCRIPTION("Eswin eic7700 qos ethernet driver");
++MODULE_LICENSE("GPL");
+--
+2.17.1
+
 
