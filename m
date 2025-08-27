@@ -1,150 +1,196 @@
-Return-Path: <linux-kernel+bounces-787974-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CF65B37E49
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 11:04:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9548B37E4E
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 11:05:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5A3A14E3CA5
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 09:04:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AFC4E189A9ED
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 09:05:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2217342C92;
-	Wed, 27 Aug 2025 09:04:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68CE331E112;
+	Wed, 27 Aug 2025 09:05:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="BYm4kJGY"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="foGOJh+M"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D02B341AB7;
-	Wed, 27 Aug 2025 09:04:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E20CF2F3C0E
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 09:05:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756285466; cv=none; b=hInH+0jVYkSh+q8YoSzGrWfuzUIJHn94YYiLS2S7bMSpYYu8Np3Ecr5Kt1Nhe9bRy+a1x0vZ9JieMtQKwZULzRKD9yyhwHlDjSNzkhlhdWKjAjZ2dZcmmHA6Ls42Ugn5qIaZvs5FiBlSjbX6q09uf8Xvrisb+fKUjCJFeBJoHhs=
+	t=1756285512; cv=none; b=RR16Ap6BVridHStiq9dGBjSW6wMEY54MfXCYUQqlFNIJmqApn1d7JQ/8mjmE/ta2tp2GTT5fiGq3ACI+CFO00OqiCkU+XDQmOLTUG85OAkpdXHQmaRMfZHr9SRHg89z6nkumyp3umWp3ZLDqic8V3laS6snu0elXVj7O1aJN9fs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756285466; c=relaxed/simple;
-	bh=+RpJe2xt313pvzyWmm1FpG9QmaJsYu4M/l2cej6ESFQ=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ByPEKIdLiwpq59kcGm16OP26yNcJbZUz0BloywzQAgyT97MpFjC7PWxHpDUm/CwEvdiiyHwNhXyQGQjfXPvayE6SbikY16GSvL8pCpn+r5QDzdSeO8tNLc0/ZbgRLICT3wfwizitQ2D+ixuIJ18b67/Femm0zah2KajeUvwZGqk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=BYm4kJGY; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1756285462;
-	bh=+RpJe2xt313pvzyWmm1FpG9QmaJsYu4M/l2cej6ESFQ=;
-	h=Subject:From:To:Date:In-Reply-To:References:From;
-	b=BYm4kJGYABV9d0yv5RsVER1mkHTkqzdDJMBn5MibYf4CqzzMMNTwJ2TDcKxkUSBpE
-	 Vv9//c8jVzXKNxCN1LWQVju6BWkiMIaxIwy+0NC5RWrCkW4QlwYNxxphTXOJ22ELsm
-	 fB1qs7gwU0S5ZLfQTaYx7fF+5z4wQ0sls8HvbEzDR51btkyoqKx45JaR3ka3D8clc5
-	 CU/5LCboWVyHEbRqUq/PShhhBEqBvL1vWi6xVtZAJK0JchhjyxR5+bt+3losqxisWm
-	 zQzOFhPL6e3DIrUz6u1TIZAQz9SvHFTmCEtntcw2PuRUtv1wVSoS7mpMNStrIadIB1
-	 oAlF6H3fE3ACg==
-Received: from 2a01cb0892f2d600c8f85cf092d4af51.ipv6.abo.wanadoo.fr (2a01cb0892F2D600C8F85cf092D4Af51.ipv6.abo.wanadoo.fr [IPv6:2a01:cb08:92f2:d600:c8f8:5cf0:92d4:af51])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: jmassot)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 7513D17E0676;
-	Wed, 27 Aug 2025 11:04:21 +0200 (CEST)
-Message-ID: <3e0d30b1d717c8788aa95eb045a034c18e33c88e.camel@collabora.com>
-Subject: Re: [PATCH v2 3/3] arm64: dts: mediatek: mt8395-nio-12l: add
- support for blue and red LEDs
-From: Julien Massot <julien.massot@collabora.com>
-To: kernel@collabora.com, Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
- Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
- <angelogioacchino.delregno@collabora.com>,  Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>,  Louis-Alexis Eyraud
- <louisalexis.eyraud@collabora.com>, linux-input@vger.kernel.org,
- linux-kernel@vger.kernel.org, 	linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, 	devicetree@vger.kernel.org
-Date: Wed, 27 Aug 2025 11:04:20 +0200
-In-Reply-To: <20250827-psychic-exclusive-be9758124693@thorsis.com>
-References: <20250826-radxa-nio-12-l-gpio-v2-0-7f18fa3fbfc8@collabora.com>
-	 <20250826-radxa-nio-12-l-gpio-v2-3-7f18fa3fbfc8@collabora.com>
-	 <20250827-psychic-exclusive-be9758124693@thorsis.com>
-Organization: Collabora Ltd.
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+	s=arc-20240116; t=1756285512; c=relaxed/simple;
+	bh=BqfGj/Qf7oF170Z0M5L9JeEBmw+CwhVeSxwOpo/viKE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hZiFDq/wHfhJLByonxKuV6LIPHrYyVgFBSHJzZByoZWq07r0We4HwwGsvegwm7+08tIO1J785PlWQuh0zw11rvkLP4qzTFZFMyZBIJRhchMLGDAMZ3PyT8elYccPWobdAsYcU6IqWVA6VwVEuRMaw8bZjWqqeZfQl7T2BpLhGLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=foGOJh+M; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [192.168.88.20] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 5666F300E;
+	Wed, 27 Aug 2025 11:04:04 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1756285445;
+	bh=BqfGj/Qf7oF170Z0M5L9JeEBmw+CwhVeSxwOpo/viKE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=foGOJh+MUP7+G8LbioZlBb2Brhhkwu6QXvd9Csn7eNo6WQYU1LWYCD/h07bsh4KJm
+	 4wdCxGX7NrZfIoVU4sIqzB9hJVX15dDyaUHLWaeEbzzOOvvkzu26ec84P3ZxjxPvKP
+	 2KMJ+GN5MjDJSfFmupNTBYoW8Bz7kNx+u/AmaJbw=
+Message-ID: <837a8381-02bd-4882-bfa4-6d5c34f44119@ideasonboard.com>
+Date: Wed, 27 Aug 2025 12:05:04 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 3/3] drm/tidss: oldi: Add atomic_check hook for oldi
+ bridge
+To: Swamil Jain <s-jain1@ti.com>
+Cc: h-shenoy@ti.com, devarsht@ti.com, vigneshr@ti.com, praneeth@ti.com,
+ u-kumar1@ti.com, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, jyri.sarha@iki.fi,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
+ airlied@gmail.com, simona@ffwll.ch, aradhya.bhatia@linux.dev
+References: <20250819192113.2420396-1-s-jain1@ti.com>
+ <20250819192113.2420396-4-s-jain1@ti.com>
+Content-Language: en-US
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
+ 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
+In-Reply-To: <20250819192113.2420396-4-s-jain1@ti.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Alexander,
+Hi,
 
-On Wed, 2025-08-27 at 09:40 +0200, Alexander Dahl wrote:
-> Hello Julien,
->=20
-> Am Tue, Aug 26, 2025 at 04:01:54PM +0200 schrieb Julien Massot:
-> > The Radxa NIO 12L board has an RGB LED, of which only red and blue
-> > are controllable.
-> >=20
-> > Red and blue LEDs: no need to choose, both are enabled.
-> >=20
-> > Reviewed-by: AngeloGioacchino Del Regno
-> > <angelogioacchino.delregno@collabora.com>
-> > Signed-off-by: Julien Massot <julien.massot@collabora.com>
-> > ---
-> > =C2=A0.../boot/dts/mediatek/mt8395-radxa-nio-12l.dts=C2=A0=C2=A0=C2=A0=
-=C2=A0 | 31
-> > ++++++++++++++++++++++
-> > =C2=A01 file changed, 31 insertions(+)
-> >=20
-> > diff --git a/arch/arm64/boot/dts/mediatek/mt8395-radxa-nio-12l.dts
-> > b/arch/arm64/boot/dts/mediatek/mt8395-radxa-nio-12l.dts
-> > index
-> > fd596e2298285361ad7c2fb828feec598d75a73e..12288ad4d2932b7f78c96c0efe36
-> > 6a046721f919 100644
-> > --- a/arch/arm64/boot/dts/mediatek/mt8395-radxa-nio-12l.dts
-> > +++ b/arch/arm64/boot/dts/mediatek/mt8395-radxa-nio-12l.dts
-> > @@ -10,6 +10,7 @@
-> > =C2=A0#include <dt-bindings/gpio/gpio.h>
-> > =C2=A0#include <dt-bindings/input/input.h>
-> > =C2=A0#include <dt-bindings/interrupt-controller/irq.h>
-> > +#include <dt-bindings/leds/common.h>
-> > =C2=A0#include <dt-bindings/pinctrl/mt8195-pinfunc.h>
-> > =C2=A0#include <dt-bindings/regulator/mediatek,mt6360-regulator.h>
-> > =C2=A0#include <dt-bindings/spmi/spmi.h>
-> > @@ -73,6 +74,28 @@ button-volume-up {
-> > =C2=A0		};
-> > =C2=A0	};
-> > =C2=A0
-> > +	gpio-leds {
-> > +		compatible =3D "gpio-leds";
-> > +		pinctrl-0 =3D <&gpio_leds_pins>;
-> > +		pinctrl-names =3D "default";
-> > +
-> > +		/*
-> > +		 * This board has a RGB LED, of which only R and B
-> > +		 * are controllable.
-> > +		 */
-> > +		led-0 {
-> > +			label =3D "rgb-blue";
-> > +			color =3D <LED_COLOR_ID_BLUE>;
-> > +			gpios =3D <&pio 6 GPIO_ACTIVE_HIGH>;
-> > +		};
-> > +
-> > +		led-1 {
-> > +			label =3D "rgb-red";
-> > +			color =3D <LED_COLOR_ID_RED>;
-> > +			gpios =3D <&pio 7 GPIO_ACTIVE_HIGH>;
-> > +		};
->=20
-> The label property is deprecated, and if I'm not mistaken not
-> recommended for new boards.=C2=A0 Do you have a reason to set it?
-> If so, it might be worth adding in the commit message.
+On 19/08/2025 22:21, Swamil Jain wrote:
+> From: Jayesh Choudhary <j-choudhary@ti.com>
+> 
+> Since OLDI consumes DSS VP clock directly as serial clock, certain
+> checks cannot be performed in tidss driver which should be checked
 
-No, I just wasn=E2=80=99t aware of the deprecation, but I can now see
-it in the common LED binding.
-I=E2=80=99ll wait a bit for any other potential reviews and then resend
-the patch without the label. The LED will then appear as 'blue'
-instead of 'rgb-blue' in sysfs.
+I think this is a bit misleading. The OLDI input clock doesn't come from
+DSS, so I wouldn't call it "DSS VP clock". The point here is that the
+clock from the PLL is used by both OLDI and DSS, and in the current
+architecture the OLDI driver manages the clock, so the DSS driver can't
+really do checks, it just has to accept the clock rate. All checks need
+to be done in the OLDI driver.
 
-Regards,
-Julien
+> in OLDI driver. Add check for mode clock and set max_successful_rate
+> and max_attempted_rate field for tidss in case the VP is OLDI.
+> 
+> Fixes: 7246e0929945 ("drm/tidss: Add OLDI bridge support")
+> Reviewed-by: Devarsh Thakkar <devarsht@ti.com>
+> Signed-off-by: Jayesh Choudhary <j-choudhary@ti.com>
+> Signed-off-by: Swamil Jain <s-jain1@ti.com>
+> ---
+>  drivers/gpu/drm/tidss/tidss_oldi.c | 25 +++++++++++++++++++++++++
+>  1 file changed, 25 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/tidss/tidss_oldi.c b/drivers/gpu/drm/tidss/tidss_oldi.c
+> index ef01ecc17a12..2ed2d0666ccb 100644
+> --- a/drivers/gpu/drm/tidss/tidss_oldi.c
+> +++ b/drivers/gpu/drm/tidss/tidss_oldi.c
+> @@ -309,6 +309,30 @@ static u32 *tidss_oldi_atomic_get_input_bus_fmts(struct drm_bridge *bridge,
+>  	return input_fmts;
+>  }
+>  
+> +static int tidss_oldi_atomic_check(struct drm_bridge *bridge,
+> +				   struct drm_bridge_state *bridge_state,
+> +				   struct drm_crtc_state *crtc_state,
+> +				   struct drm_connector_state *conn_state)
+> +{
+> +	struct tidss_oldi *oldi = drm_bridge_to_tidss_oldi(bridge);
+> +	struct drm_display_mode *adjusted_mode;
+> +	unsigned long round_clock;
+> +
+> +	adjusted_mode = &crtc_state->adjusted_mode;
+> +
+> +	if (adjusted_mode->clock > oldi->tidss->max_successful_rate[oldi->parent_vp]) {
+
+You can change the above check to <=, and return 0 here early.
+
+> +		round_clock = clk_round_rate(oldi->serial, adjusted_mode->clock * 7 * 1000);
+> +
+> +		if (dispc_pclk_diff(adjusted_mode->clock * 7 * 1000, round_clock) > 5)
+> +			return -EINVAL;
+> +
+> +		oldi->tidss->max_successful_rate[oldi->parent_vp] = round_clock;
+> +		oldi->tidss->max_attempted_rate[oldi->parent_vp] = adjusted_mode->clock * 7 * 1000;
+> +	}
+
+This is not very nice. We should have a function in tidss that we call
+here, instead of poking into these tidss's variables directly.
+
+Actually... Do we even need to use the tidss->max_* fields? The above
+code is not checking the VP clock maximum, it's actually looking at the
+serial clock maximum. Currently those two clocks are linked, though, but
+would it make more sense to have the max_* fields here, in OLDI, for
+OLDI's serial clock?
+
+ Tomi
+
+> +
+> +	return 0;
+> +}
+> +
+>  static const struct drm_bridge_funcs tidss_oldi_bridge_funcs = {
+>  	.attach	= tidss_oldi_bridge_attach,
+>  	.atomic_pre_enable = tidss_oldi_atomic_pre_enable,
+> @@ -317,6 +341,7 @@ static const struct drm_bridge_funcs tidss_oldi_bridge_funcs = {
+>  	.atomic_duplicate_state = drm_atomic_helper_bridge_duplicate_state,
+>  	.atomic_destroy_state = drm_atomic_helper_bridge_destroy_state,
+>  	.atomic_reset = drm_atomic_helper_bridge_reset,
+> +	.atomic_check = tidss_oldi_atomic_check,
+>  };
+>  
+>  static int get_oldi_mode(struct device_node *oldi_tx, int *companion_instance)
+
 
