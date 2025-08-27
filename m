@@ -1,244 +1,179 @@
-Return-Path: <linux-kernel+bounces-787655-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E1FFB37940
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 06:47:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 082D0B37942
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 06:48:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45B796851BA
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 04:47:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BEB22365646
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 04:48:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 486F72D12E7;
-	Wed, 27 Aug 2025 04:47:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 987EC2C159C;
+	Wed, 27 Aug 2025 04:47:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f/pZ4G7i"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dtZ4kVh7"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B732C1E260A;
-	Wed, 27 Aug 2025 04:47:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F8574438B
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 04:47:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756270055; cv=none; b=tMo67o41kKRG4ICM9Xx/LdWJPCsEzJlUkAsNsbwduHjG24H6uy8ajGuteS7XnKRwHb6hSXbp6KrfTEYTBKIfXVNt5WMBgo35Qlq+TZif5k5zG6B7EHhEM6wiomsSIMNmVv4veMc0n8ifbksfxIL/uAA8OPjZvve3+l9PtdB2bfs=
+	t=1756270075; cv=none; b=H7vz45UKcgskF2/WUDfhHEzNSGwbd0IYiuut6B50d8h2D+cuTvofFXCdpMWFVAWmtAlBAhanCdRqLigPIgmKLhkaLIhvY4oZq19Bs0n77E6F2aqCrTZHt51GAVrsQojklO4PH9dvYuy8Y4aVW0lxPHgbUr6qc8B2ie65Pce9YxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756270055; c=relaxed/simple;
-	bh=FH79sR3wwQwKOwJz4iMC16W4fPbO9VVTpyHth1+ZjzM=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=eUJVBN4phxCxKVtxej6wsNLEVtTyR965TmefXXIQhQM2hLvSZcLDQB9PzUbDVZ9XZgil+0araU2EuoyA0auPJHbmaSPlFU2AXjMn8v0xKKODWv1hED4bh0cjJIERSo1v1O4zM5rZBJbLRGXhdAFAyHufuyNIQYkhO2q1sojfiOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f/pZ4G7i; arc=none smtp.client-ip=209.85.208.53
+	s=arc-20240116; t=1756270075; c=relaxed/simple;
+	bh=HhYEP6qMh9+J2iu+xeQ1AWwC++xtPGmL9tym3pkVh5Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=egN8EEUoU5lS/1dPBoNFX++PthwcMbga1uym9D1O1LKbn+iJcT2SaJz4lLscahiAOav6Yf7dmi3Bt9mf3bkilgV4eOSl3XGidI4iPu3xhJigfgGivPhvtsaf5nzsiGls3I0YLsxVqEf6Tu2jzEq5RhSAV+5YDBUZHyc+63RNX6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dtZ4kVh7; arc=none smtp.client-ip=209.85.128.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-61c325a4d18so6873287a12.0;
-        Tue, 26 Aug 2025 21:47:33 -0700 (PDT)
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-45b627ea5f3so12376065e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 21:47:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756270052; x=1756874852; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:references
-         :in-reply-to:user-agent:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=8TCMaff2/OOBuiGXhxSyW4vUb1EhEINJOzc43HDpiqA=;
-        b=f/pZ4G7ihgGrs8QRe50LTu7+MNAo3IZiZyCH0Ay5BnG9fLql38HrUv4R0p8/54NYku
-         f+dAKyQ8DJ8DcUIeOE4QiwwSuSe3DGHMte6OhlAYNxPvY1SheYGo6SWWmbynMmzdcrmV
-         51HRtriv1lhEOrqIHgikgnmjw+WwiBZBlcMV08dPW6dq0kab3IQWDTPRvE7qcHdsbiZa
-         HCXb95NNLxB9xWpM7i7RtvWoSXtkI3rO9/Rj95+kF4Ja8vnluZA5D7v4VWZYr2oIIU6F
-         WxkdWKsPEYLhoXh5XjJdtS0BYCaZIQCjVfGtNbQy6wnEN9YXLbTODs49nAX6VBVP0/Ms
-         03ww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756270052; x=1756874852;
-        h=content-transfer-encoding:mime-version:message-id:references
-         :in-reply-to:user-agent:subject:cc:to:from:date:x-gm-message-state
+        d=gmail.com; s=20230601; t=1756270072; x=1756874872; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=8TCMaff2/OOBuiGXhxSyW4vUb1EhEINJOzc43HDpiqA=;
-        b=CAs2ynzaBHIaJIitls0K3a/VF8QzSr5YEbijOV8CF3esX5eMSc0tfEeypl8M5Q9R3O
-         +Ii4nyyfhVXXS/cd1Tz86f12+KCHXJ/IUljPdjre+34a5F3a0RKz92e0grHo/IpdKJi3
-         mJjvVSVQvga4eZq7jesH/LIOqZ8YnZ2fwTSfHPvWJVF5YLyACxBoXT5ijq/gLHEef9FW
-         NBej4dhWvACp4Ef2Y7pKFubZqLL0xQjycdNjUuh5KFkS3tVNOv6X8k9UbF+OEDFBf4cv
-         MFsj8miFJ4u/stv7blGTCKE3mwagkKg3OH3IT1VMScBMrQvdLA4MX1Mf1iiIyBDjmewp
-         Rl/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU4X2+hOoXu8VH/+IAtxYe4UldWnFB7R/2G+YFlR9Rgy60qxP+N5+5dC87UKmay4KqH5u/qirJNDe8g@vger.kernel.org, AJvYcCU7yipZjCcyYls+F+RlQRw9x6mo07S5WPPZ6MHGkkFx3pD9n8TEYWGQT9STAeB22AZuLCK/Jmr8QPa5qU9/@vger.kernel.org, AJvYcCVOQyD6I6DUHDqPMvkuqe+3Xm9xwNWmOZydQjH5aC3FXNw5Xw7VcNNXeNtxwYp/jdSHTVDn9ggjGDik@vger.kernel.org, AJvYcCX4TBigD90ptHRcIbyIKcMPlF7f9vNSO9nRiePjlAr/Y9HCv9Ux4yx3wHCnF+hVI/cY9r5ImtTpWT21x3o=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz6jW8cvsZYWha1hMKaoCHaS/tDo9yqbBS23m1AIlxbbORw8cd3
-	4LZjblkXUnxvJBF2zyOvYG21pNZi8brDKm1/c+dvb9lyZ3O0aN+CLPAg
-X-Gm-Gg: ASbGncvDoMK95UpPk4vmy7G6+9QFFSNCk6INeB5m3BgOJ/qcezg84oeU06GYmb3m7FQ
-	N5raJ2cDYPi12Nbw+fAli+CX+kDzdgmy59ia+InehUR7vJFi33hN56AQzX35JLFo0Z6/hWR40ij
-	KhC8cljJRbbu4aaHyt2G7wzrZiNrQ37PnsuU+jXvgkMWQXbT24JHtEByIO39v4GGaMc8uMQg1Vk
-	HE6nrGNrT/duGU0h1b69kfduosI8WqcQ9l/bES6utBSiaM4xYpXw339e79uhJkcaOlAr8/A35O3
-	hAHF1BGuuZG0aD9qjFWg7suzERUEGJk4/O0vq6pI5C07bxflXZZAxZDo39UeCYcmNW14w1AU/Bf
-	IsCAhexAJPmfPb1NBdUozgiv5
-X-Google-Smtp-Source: AGHT+IG9JdOvxAI0JpZC7UN53cppIId0lE2cbYaF9wAYpBd5bYrwqo7A7y/TJvWUTacmrbOk5BBATg==
-X-Received: by 2002:a05:6402:44d2:b0:618:fe3:f4c with SMTP id 4fb4d7f45d1cf-61c1b6f1fbemr12637501a12.29.1756270051831;
-        Tue, 26 Aug 2025 21:47:31 -0700 (PDT)
-Received: from [127.0.0.1] ([5.248.55.4])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61c90ffd677sm2710258a12.46.2025.08.26.21.47.31
+        bh=wXAK34i6n0IW6+f/U/+fv+MxOP0/U5XW1xTt30ESlvA=;
+        b=dtZ4kVh7aC5nkG9Txf0A65RuXMOwvKYNYygIkeQ4cU8DQsVoHEmYee/dzBVuD8Quu7
+         l+0R6GqZoCDu8ErzIk5Fkg78GMCDd3D4HCm158BUbxwstLVShv6UYl0cUDOovAq2uHaH
+         KJ9ngbm+aP9+6yOW95AklE3OFt9dlQHa/YHBGc56FR4LOK1tFggRNoC4qrcjXz0Ppjdg
+         qWGYzNiOC6ISKT+talsPV0o+M2fTWvF4r9njUkuuMyjO1vy84uZd2om8Tf8wpJ9b9S9y
+         uIEd7x17ivo9GkmggAEBMv2BfaJANhFoCszUhHrEt7LB/Tw+t9ac3GHL8JFKfSQzAtZT
+         Mbqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756270072; x=1756874872;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wXAK34i6n0IW6+f/U/+fv+MxOP0/U5XW1xTt30ESlvA=;
+        b=MsmuPMGiNv+Hpgdkcz7vELbRBTZoGitNNrNm/+ApudTqBxr8pyRpXCACz5mTr7kWGc
+         CTZv+rAK6u9BaJ9aR993VEEf5ob0DKhx/qTNaDUtvrc6SNbMK6sib4lZtgxWEb2flgXG
+         LiWHJ6QZYWFAVFISfqyNk5XDC/lqzmPOQ7WdwpW3lhYkG/u7YgCOI1EQn6Iooq/7zCAb
+         PCKNaGvZ0ekdSKCu2WBArnlUJmm8sX7zdoa7LLzUrNAg2+/1om5iM+iUKIejxuZK4pp3
+         YRjh8YPueNZt9uOsQi9Nvh+bV4eoGI2jQmtmFKs5DMv+SQlHIrDhaT7/08pzZHTbG4SI
+         vb0g==
+X-Forwarded-Encrypted: i=1; AJvYcCXeiHLxKE+4v6mrNIlflYtKbQVdHdF/+jrZXSKiaBAxXrI+wSJFbKWwDNo0jM8XoD8mSz4GoOZ3o37e4R4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGhgeMWcDPrMA5UkSY4OpPmhqRnLiLnVSWjvkAiOqvpXf0bqf/
+	4x55CtSOZlu4moZgmwae3ZlbjWKfVD04aj/YKJi7rsqyIWV3qeznFho7UGAbpQ==
+X-Gm-Gg: ASbGncvDHokr+5DKxXwRJD7M/PCDoVlCnZxGSVh+sWzFPPo2RS3J23wvu+R/TrgXEZd
+	1w6qytDqPeFrnfb3XXLMteP3A6EtDggRRZtKS6sV/tls4aWAIr0V8c0+p/jcP2v6bf16xSm9l7h
+	ktGQxtXfZTapqt1sd8z/kpz68Rp28Yp6QoiVm5mBdNUSRnmF7FV0iFMQ5UvRZgHFhhaBZZMkNri
+	Z3jH+YMXgPeA0RDkme9qcthmk97R7upe1q3u+Ge9SkCmhV0Ec6QwW/S46xlqKlm++qQvR1zRt1E
+	5Fe6Y1lsxJ2LMFdCL+282eBcOCLFXA6i4VwCEixgNcMgOLmlD7uHXG955B8tg+YX4rQRH78zfLV
+	yC+nNCFZQtAuAdGU7YO81yyua0aXOlecTXQ/iRJQnVLD4B7BgTM7LN2qtr2DdZfpSPX9TzQJBeL
+	Ez2gAs/GFg9SnkOCtBHg==
+X-Google-Smtp-Source: AGHT+IEYWtBY/v69iHdBMm2oOUl/phxTLS9NimBh75e+tw8TfgIHGCKLX3FPzWtHINS3KQsJxoZh6A==
+X-Received: by 2002:a05:600c:c87:b0:456:f1e:205c with SMTP id 5b1f17b1804b1-45b5179f338mr152920525e9.4.1756270072226;
+        Tue, 26 Aug 2025 21:47:52 -0700 (PDT)
+Received: from ?IPV6:2a02:6b6f:e759:7e00:1047:5c2a:74d8:1f23? ([2a02:6b6f:e759:7e00:1047:5c2a:74d8:1f23])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b6f3125ccsm13026565e9.19.2025.08.26.21.47.51
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 Aug 2025 21:47:31 -0700 (PDT)
-Date: Wed, 27 Aug 2025 07:47:29 +0300
-From: Svyatoslav <clamor95@gmail.com>
-To: Mikko Perttunen <mperttunen@nvidia.com>,
- Thierry Reding <thierry.reding@gmail.com>,
- Thierry Reding <treding@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>,
- Sowjanya Komatineni <skomatineni@nvidia.com>,
- Luca Ceresoli <luca.ceresoli@bootlin.com>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Peter De Schrijver <pdeschrijver@nvidia.com>,
- Prashant Gaikwad <pgaikwad@nvidia.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Dmitry Osipenko <digetx@gmail.com>,
- Charan Pedumuru <charan.pedumuru@gmail.com>
-CC: linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
- dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-staging@lists.linux.dev
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v1_05/19=5D_staging=3A_media=3A_tegra-?=
- =?US-ASCII?Q?video=3A_expand_VI_and_VIP_support_to_Tegra30?=
-User-Agent: K-9 Mail for Android
-In-Reply-To: <2271797.NgBsaNRSFp@senjougahara>
-References: <20250819121631.84280-1-clamor95@gmail.com> <20250819121631.84280-6-clamor95@gmail.com> <2271797.NgBsaNRSFp@senjougahara>
-Message-ID: <4BD9010B-3F5B-4EE3-B57C-A20DFAEC5276@gmail.com>
+        Tue, 26 Aug 2025 21:47:51 -0700 (PDT)
+Message-ID: <54cf2f4e-5496-45c3-a22c-aa8b38fede47@gmail.com>
+Date: Wed, 27 Aug 2025 05:47:50 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC 0/1] Try to add memory allocation info for cgroup oom kill
+Content-Language: en-GB
+To: Suren Baghdasaryan <surenb@google.com>,
+ Shakeel Butt <shakeel.butt@linux.dev>
+Cc: Yueyang Pan <pyyjason@gmail.com>,
+ Kent Overstreet <kent.overstreet@linux.dev>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, hannes@cmpxchg.org
+References: <cover.1755190013.git.pyyjason@gmail.com>
+ <6qu2uo3d2msctkkz5slhx5piqtt64wsvkgkvjjpd255k7nrds4@qtffskmesivg>
+ <aKdw6Pkj2H4B6QDb@devbig569.cln6.facebook.com>
+ <tiwa6wnkdf6q2pfchxbbqb6r42y7moykqumvnzauckhavyemg2@zc5haja5mlxs>
+ <CAJuCfpHyXWwrKkFmmbHTGtG9L-JK2eCt03ku9364i4v6SJKFbA@mail.gmail.com>
+From: Usama Arif <usamaarif642@gmail.com>
+In-Reply-To: <CAJuCfpHyXWwrKkFmmbHTGtG9L-JK2eCt03ku9364i4v6SJKFbA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
 
 
-27 =D1=81=D0=B5=D1=80=D0=BF=D0=BD=D1=8F 2025=E2=80=AF=D1=80=2E 07:29:40 GM=
-T+03:00, Mikko Perttunen <mperttunen@nvidia=2Ecom> =D0=BF=D0=B8=D1=88=D0=B5=
-:
->On Tuesday, August 19, 2025 9:16=E2=80=AFPM Svyatoslav Ryhel wrote:
->> Exisitng VI and VIP implementation for Tegra20 is fully compatible with
->> Tegra30=2E
->>=20
->> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail=2Ecom>
->> ---
->>  drivers/staging/media/tegra-video/Makefile | 1 +
->>  drivers/staging/media/tegra-video/vi=2Ec     | 3 +++
->>  drivers/staging/media/tegra-video/vi=2Eh     | 2 +-
->>  drivers/staging/media/tegra-video/video=2Ec  | 4 ++++
->>  drivers/staging/media/tegra-video/vip=2Ec    | 5 ++++-
->>  5 files changed, 13 insertions(+), 2 deletions(-)
->>=20
->> diff --git a/drivers/staging/media/tegra-video/Makefile
->> b/drivers/staging/media/tegra-video/Makefile index
->> 6c7552e05109=2E=2E96380b5dbd8b 100644
->> --- a/drivers/staging/media/tegra-video/Makefile
->> +++ b/drivers/staging/media/tegra-video/Makefile
->> @@ -6,5 +6,6 @@ tegra-video-objs :=3D \
->>  		csi=2Eo
->>=20
->>  tegra-video-$(CONFIG_ARCH_TEGRA_2x_SOC)  +=3D tegra20=2Eo
->> +tegra-video-$(CONFIG_ARCH_TEGRA_3x_SOC)  +=3D tegra20=2Eo
->>  tegra-video-$(CONFIG_ARCH_TEGRA_210_SOC) +=3D tegra210=2Eo
->>  obj-$(CONFIG_VIDEO_TEGRA) +=3D tegra-video=2Eo
->> diff --git a/drivers/staging/media/tegra-video/vi=2Ec
->> b/drivers/staging/media/tegra-video/vi=2Ec index c9276ff76157=2E=2E71be=
-205cacb5
->> 100644
->> --- a/drivers/staging/media/tegra-video/vi=2Ec
->> +++ b/drivers/staging/media/tegra-video/vi=2Ec
->> @@ -1959,6 +1959,9 @@ static const struct of_device_id
->> tegra_vi_of_id_table[] =3D { #if defined(CONFIG_ARCH_TEGRA_2x_SOC)
->>  	{ =2Ecompatible =3D "nvidia,tegra20-vi",  =2Edata =3D &tegra20_vi_soc=
- },
->>  #endif
->> +#if defined(CONFIG_ARCH_TEGRA_3x_SOC)
->> +	{ =2Ecompatible =3D "nvidia,tegra30-vi",  =2Edata =3D &tegra20_vi_soc=
- },
->> +#endif
->>  #if defined(CONFIG_ARCH_TEGRA_210_SOC)
->>  	{ =2Ecompatible =3D "nvidia,tegra210-vi", =2Edata =3D &tegra210_vi_so=
-c },
->>  #endif
->> diff --git a/drivers/staging/media/tegra-video/vi=2Eh
->> b/drivers/staging/media/tegra-video/vi=2Eh index 1e6a5caa7082=2E=2Ecac0=
-c0d0e225
->> 100644
->> --- a/drivers/staging/media/tegra-video/vi=2Eh
->> +++ b/drivers/staging/media/tegra-video/vi=2Eh
->> @@ -296,7 +296,7 @@ struct tegra_video_format {
->>  	u32 fourcc;
->>  };
->>=20
->> -#if defined(CONFIG_ARCH_TEGRA_2x_SOC)
->> +#if defined(CONFIG_ARCH_TEGRA_2x_SOC) || defined(CONFIG_ARCH_TEGRA_3x_=
-SOC)
->>  extern const struct tegra_vi_soc tegra20_vi_soc;
->>  #endif
->>  #if defined(CONFIG_ARCH_TEGRA_210_SOC)
->> diff --git a/drivers/staging/media/tegra-video/video=2Ec
->> b/drivers/staging/media/tegra-video/video=2Ec index
->> 074ad0dc56ca=2E=2Ea25885f93cd7 100644
->> --- a/drivers/staging/media/tegra-video/video=2Ec
->> +++ b/drivers/staging/media/tegra-video/video=2Ec
->> @@ -127,6 +127,10 @@ static const struct of_device_id host1x_video_subd=
-evs[]
->> =3D { { =2Ecompatible =3D "nvidia,tegra20-vip", },
->>  	{ =2Ecompatible =3D "nvidia,tegra20-vi", },
->>  #endif
->> +#if defined(CONFIG_ARCH_TEGRA_3x_SOC)
->> +	{ =2Ecompatible =3D "nvidia,tegra30-vip", },
->> +	{ =2Ecompatible =3D "nvidia,tegra30-vi", },
->> +#endif
->>  #if defined(CONFIG_ARCH_TEGRA_210_SOC)
->>  	{ =2Ecompatible =3D "nvidia,tegra210-csi", },
->>  	{ =2Ecompatible =3D "nvidia,tegra210-vi", },
->> diff --git a/drivers/staging/media/tegra-video/vip=2Ec
->> b/drivers/staging/media/tegra-video/vip=2Ec index 5ec717f3afd5=2E=2E00e=
-08a9971d5
->> 100644
->> --- a/drivers/staging/media/tegra-video/vip=2Ec
->> +++ b/drivers/staging/media/tegra-video/vip=2Ec
->> @@ -263,13 +263,16 @@ static void tegra_vip_remove(struct platform_devi=
-ce
->> *pdev) pm_runtime_disable(&pdev->dev);
->>  }
->>=20
->> -#if defined(CONFIG_ARCH_TEGRA_2x_SOC)
->> +#if defined(CONFIG_ARCH_TEGRA_2x_SOC) || defined(CONFIG_ARCH_TEGRA_3x_=
-SOC)
->>  extern const struct tegra_vip_soc tegra20_vip_soc;
->>  #endif
->>=20
->>  static const struct of_device_id tegra_vip_of_id_table[] =3D {
->>  #if defined(CONFIG_ARCH_TEGRA_2x_SOC)
->>  	{ =2Ecompatible =3D "nvidia,tegra20-vip", =2Edata =3D &tegra20_vip_so=
-c },
->> +#endif
->> +#if defined(CONFIG_ARCH_TEGRA_3x_SOC)
->> +	{ =2Ecompatible =3D "nvidia,tegra30-vip", =2Edata =3D &tegra20_vip_so=
-c },
->>  #endif
->>  	{ }
->>  };
->
->If tegra30-vip is compatible with tegra20-vip, we don't need to add the=
-=20
->compatible string into the driver=2E Just mark it as 'compatible =3D=20
->"nvidia,tegra30-vip", "nvidia,tegra20-vip";' in the device tree (and as R=
-ob=20
->alluded, have this compat string pair as an option in the device tree sch=
-ema)=2E
->
+On 27/08/2025 03:32, Suren Baghdasaryan wrote:
+> On Thu, Aug 21, 2025 at 12:53 PM Shakeel Butt <shakeel.butt@linux.dev> wrote:
+>>
+>> On Thu, Aug 21, 2025 at 12:18:00PM -0700, Yueyang Pan wrote:
+>>> On Thu, Aug 21, 2025 at 11:35:19AM -0700, Shakeel Butt wrote:
+>>>> On Thu, Aug 14, 2025 at 10:11:56AM -0700, Yueyang Pan wrote:
+>>>>> Right now in the oom_kill_process if the oom is because of the cgroup
+>>>>> limit, we won't get memory allocation infomation. In some cases, we
+>>>>> can have a large cgroup workload running which dominates the machine.
+>>>>> The reason using cgroup is to leave some resource for system. When this
+>>>>> cgroup is killed, we would also like to have some memory allocation
+>>>>> information for the whole server as well. This is reason behind this
+>>>>> mini change. Is it an acceptable thing to do? Will it be too much
+>>>>> information for people? I am happy with any suggestions!
+>>>>
+>>>> For a single patch, it is better to have all the context in the patch
+>>>> and there is no need for cover letter.
+>>>
+>>> Thanks for your suggestion Shakeel! I will change this in the next version.
+>>>
+>>>>
+>>>> What exact information you want on the memcg oom that will be helpful
+>>>> for the users in general? You mentioned memory allocation information,
+>>>> can you please elaborate a bit more.
+>>>>
+>>>
+>>> As in my reply to Suren, I was thinking the system-wide memory usage info
+>>> provided by show_free_pages and memory allocation profiling info can help
+>>> us debug cgoom by comparing them with historical data. What is your take on
+>>> this?
+>>>
+>>
+>> I am not really sure about show_free_areas(). More specifically how the
+>> historical data diff will be useful for a memcg oom. If you have a
+>> concrete example, please give one. For memory allocation profiling, is
+>> it possible to filter for the given memcg? Do we save memcg information
+>> in the memory allocation profiling?
+> 
+> Actually I was thinking about making memory profiling memcg-aware but
+> it would be quite costly both from memory and performance points of
+> view. Currently we have a per-cpu counter for each allocation in the
+> kernel codebase. To make it work for each memcg we would have to add
+> memcg dimension to the counters, so each counter becomes per-cpu plus
+> per-memcg. I'll be thinking about possible optimizations since many of
+> these counters will stay at 0 but any such optimization would come at
+> a performance cost, which we tried to keep at the absolute minimum.
+> 
+> I'm CC'ing Sourav and Pasha since they were also interested in making
+> memory allocation profiling memcg-aware. Would Meta folks (Usama,
+> Shakeel, Johannes) be interested in such enhancement as well? Would it
+> be preferable to have such accounting for a specific memcg which we
+> pre-select (less memory and performance overhead) or we need that for
+> all memcgs as a generic feature? We have some options here but I want
+> to understand what would be sufficient and add as little overhead as
+> possible.
 
-While I am fine with using fallback but it may be a good idea to have a se=
-parate compatible so in case tegra30 would need a specific set of ops (tegr=
-a20 and tegra30 VIs are not exact match) no additional changes into schema =
-would be required=2E
+Yes, having per memcg counters is going to be extremely useful (we were
+thinking of having this as a future project to work on). For meta fleet
+in particular, we might have almost 100 memcgs running, but the number
+of memcgs running workloads is particularly small (usually less than 10).
+In the rest, you might have services that are responsible for telemetry,
+monitoring, security, etc (for which we arent really interested in
+the memory allocation profile). So yes, it would be ideal to have the
+profile for just pre-select memcgs, especially if it leads to lower memory
+and performance overhead.
 
->Cheers,
->Mikko
->
->
->
+Having memory allocation profile at memcg level is especially needed when
+we have multiple workloads stacked on the same host. Having it at host
+level in such a case makes the data less useful when we have OOMs and
+for workload analysis as you dont know which workload is contributing
+how much.
+
+> Thanks,
+> Suren.
+
 
