@@ -1,97 +1,131 @@
-Return-Path: <linux-kernel+bounces-788284-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788286-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 470D4B38232
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 14:25:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6B22B38236
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 14:26:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63F3418870F0
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 12:25:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE6CF1895673
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 12:26:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E568641C63;
-	Wed, 27 Aug 2025 12:24:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83235307AF8;
+	Wed, 27 Aug 2025 12:25:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="IUfIUhRn"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="hiLQ73mD"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAC30212B0A;
-	Wed, 27 Aug 2025 12:24:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756297494; cv=none; b=fnxSUBuR4qPkH57NSujxvqVwa6qXuM2KlCsP6LrEQUqWUw9eRD56wdo5qzMCibvOLjJYpD6xTO/OU/3sjFEGxdTo5sJroFUXsUH9ufRzcrBdo7rB4bUBnAYg8kN4y7SfUE/6eynZ+3h501JzNdmOdbPwAhMEKhzSM4vxZBzHbI4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756297494; c=relaxed/simple;
-	bh=8NniPrND75SaBIzAYSsuz2u5sg1tZ9zb+9wqlGl2oXQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eqETvwkjY4BxAbkf5RBIQF0WWJudi+0fJJkgAwLw46JVxTsIeB3HkomENNPo2Nkm2V9LtsBLVNmhi9Xpkotb3LrSauatYAwlfsfivD1bUS9x/M9MRmhOY5nHJ0BuVo1ucr6W5mc64inArOcYA8jyA46sOgIlm5eFcfbIZfSUzvc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=IUfIUhRn; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=ejVmM74OzePV7mL0FjyFL2LjC29/uRGlhWXi4HmATJw=; b=IUfIUhRnaG6P1yhkTJMhBYVGjp
-	a6X0lyT8aPsQ52aev/uGynr3HgeE6ULUJ2wTnxvlp8IVNdSCG4mVnU8uQ2PLgjN1tSYdlKBgPCW18
-	vI/QUR9MIVcmg/qPqqh36p8iHC6p93BsRVNMEOHeui12VCJ6wh2xkAzUpU+zdadSZ9vg=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1urFCi-006CwW-Og; Wed, 27 Aug 2025 14:24:40 +0200
-Date: Wed, 27 Aug 2025 14:24:40 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Xichao Zhao <zhao.xichao@vivo.com>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, mcoquelin.stm32@gmail.com,
-	alexandre.torgue@foss.st.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: stmmac: use us_to_ktime() where appropriate
-Message-ID: <1ed10006-79e8-47c7-9920-e38343b2c987@lunn.ch>
-References: <20250827020755.59665-1-zhao.xichao@vivo.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E5C1303CA8;
+	Wed, 27 Aug 2025 12:25:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756297543; cv=pass; b=Sb6TuX6SY8bQTEIXuIU7/zM5Bk/aHk6bDo/tMc9TnXg3mTh/Eb0jZY400xr6vw7c3Bu07BcepgeJBFD8aS+DeqhI5SrKo0O0d5Dw1eH2vKFNL3Vm65pUf64h0o3uVCn+wBO6GXfYgfk8xJ8bWXBnDYPCzbZfUi4s9N3xKHUsMLA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756297543; c=relaxed/simple;
+	bh=C4+vc/rI27ADAlxP0+hNA33yvt2az3LH6R0xRiNv94I=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=T6a/rTmTdLWuYUpjBoN8yjm7UYqyZF/S23iYvGnTEGKeMfIbr9KN4Okkw3O1mwCkMtAmufoKKA9tF+pBMFtoAj+EBpOHgNyaG5EjVW+IpFFu4+MQQ10MvtbQqnfzIgVdHzH7/zbnAuAUhAOLDLT8KCvDPMs1ZBn90/0Hqv1EOcg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=hiLQ73mD; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1756297524; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=aY6oSfgPN9mYAxX76fKjCykaf/85KK42O2x8A7NmUOwFZ5XrkeuDW4xPxg6J7hDHlxbhokpmc9Ju+vTbHwrhr/qb5lb15n7vsVJ0vTkJIo7l2eGAVAJ4l9C/X0cjbiQhvogCyGAY5YAm/20prm5oXik1SHctZPlyh5Sjn/72Kck=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1756297524; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=yTHr4GuvJ82yATxlRHsTWsU3wlSxy8CyHreP2Xc96ik=; 
+	b=G6er20C5i/y88T6Jm6yHNWSo0HXDUoQtOqla5+w0oGRCr4KpXYkbINwZgjmA4PtLpRbjDZbgOdYMiCd/6f29kPbyNEXhZLepLFqvOg1f9two/l/vMixtMpRD1x82MdOWL51ZpyWCPtW1dtNn/CZYQGWtB3mp2fpEQ6keEdYTHEc=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1756297524;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=yTHr4GuvJ82yATxlRHsTWsU3wlSxy8CyHreP2Xc96ik=;
+	b=hiLQ73mD5BMf4IdM7C8tyqsYK7iW2pP/SHcW+WL15lmyg77hiz05skCXgsHnBMZF
+	df+oUaenfvjutDu+bIIUjFV2mo+gHYXYPdNUELmBJNP3r3osXvPRQraMbrrNB0EY+HW
+	CwXOC8axaeIa/wxShU+GZ2/MwoE99t/CWz6mSy+k=
+Received: by mx.zohomail.com with SMTPS id 1756297521363698.2551424341978;
+	Wed, 27 Aug 2025 05:25:21 -0700 (PDT)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250827020755.59665-1-zhao.xichao@vivo.com>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
+Subject: Re: [PATCH v6 01/18] rust: str: normalize imports in `str.rs`
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <20250822-rnull-up-v6-16-v6-1-ec65006e2f07@kernel.org>
+Date: Wed, 27 Aug 2025 09:25:04 -0300
+Cc: Boqun Feng <boqun.feng@gmail.com>,
+ Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <lossin@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ Danilo Krummrich <dakr@kernel.org>,
+ Jens Axboe <axboe@kernel.dk>,
+ Breno Leitao <leitao@debian.org>,
+ linux-block@vger.kernel.org,
+ rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Message-Id: <D9BA84D8-51D8-4473-8FF0-9FBD4BF58F81@collabora.com>
+References: <20250822-rnull-up-v6-16-v6-0-ec65006e2f07@kernel.org>
+ <20250822-rnull-up-v6-16-v6-1-ec65006e2f07@kernel.org>
+To: Andreas Hindborg <a.hindborg@kernel.org>
+X-Mailer: Apple Mail (2.3826.700.81)
+X-ZohoMailClient: External
 
-On Wed, Aug 27, 2025 at 10:07:55AM +0800, Xichao Zhao wrote:
-> STMMAC_COAL_TIMER(x) is more suitable for using the us_to_ktime().
-> This can make the code more concise and enhance readability.
-> Therefore, replace ns_to_ktime() with us_to_ktime().
+
+
+> On 22 Aug 2025, at 09:14, Andreas Hindborg <a.hindborg@kernel.org> wrote:
 > 
-> Signed-off-by: Xichao Zhao <zhao.xichao@vivo.com>
+> Clean up imports in `str.rs`. This makes future code manipulation more
+> manageable.
+> 
+> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
 > ---
->  drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> rust/kernel/str.rs | 9 +++++----
+> 1 file changed, 5 insertions(+), 4 deletions(-)
 > 
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-> index f1abf4242cd2..dcbd180c1985 100644
-> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-> @@ -144,7 +144,7 @@ static void stmmac_init_fs(struct net_device *dev);
->  static void stmmac_exit_fs(struct net_device *dev);
->  #endif
->  
-> -#define STMMAC_COAL_TIMER(x) (ns_to_ktime((x) * NSEC_PER_USEC))
-> +#define STMMAC_COAL_TIMER(x) (us_to_ktime(x))
+> diff --git a/rust/kernel/str.rs b/rust/kernel/str.rs
+> index 6c892550c0ba..082790b7a621 100644
+> --- a/rust/kernel/str.rs
+> +++ b/rust/kernel/str.rs
+> @@ -2,12 +2,13 @@
+> 
+> //! String representations.
+> 
+> -use crate::alloc::{flags::*, AllocError, KVec};
+> -use crate::fmt::{self, Write};
+> +use crate::{
+> +    alloc::{flags::*, AllocError, KVec},
+> +    fmt::{self, Write},
+> +    prelude::*,
+> +};
+> use core::ops::{self, Deref, DerefMut, Index};
+> 
+> -use crate::prelude::*;
+> -
+> /// Byte string without UTF-8 validity guarantee.
+> #[repr(transparent)]
+> pub struct BStr([u8]);
+> 
+> -- 
+> 2.47.2
+> 
+> 
+> 
 
-Now that the macro does nothing, please just use us_time_ktime()
-inline and remove the macro.
+Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>
 
-Also:
-
-https://www.kernel.org/doc/html/latest/process/maintainer-netdev.html
-
-
-    Andrew
-
----
-pw-bot: cr
 
