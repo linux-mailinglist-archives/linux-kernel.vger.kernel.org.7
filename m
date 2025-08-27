@@ -1,140 +1,137 @@
-Return-Path: <linux-kernel+bounces-787733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D51C4B37A5D
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 08:30:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A864AB37A61
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 08:31:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A73D1365C76
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 06:30:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9DDB07AAF1D
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 06:29:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 630E42EB5C6;
-	Wed, 27 Aug 2025 06:30:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 198AE199230;
+	Wed, 27 Aug 2025 06:31:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ixT6YZGg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="VpKRZ7MP";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="dNCiLZL9"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A125C2BE05B;
-	Wed, 27 Aug 2025 06:30:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 180302E7F2F;
+	Wed, 27 Aug 2025 06:31:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756276228; cv=none; b=GarPrdsjJk85FBAUxM35gQ7RhPQ+TQoyH3WYkNhlDbm+d7Lcbbmzu0Fx1DZ8Cemou7B8L5zUFVNmmb5PQ06Z1lL1oxPHFVDzg2h+xoOvGljjpQcowHXfSw16X4q/dzGrutHkTAQFkGPe1hKHamJ3mQkPt1KSqMrVEb80Um0X0QU=
+	t=1756276267; cv=none; b=AQo8JXuRC6NACvjXqW3ci4QAVuKGwMffdTN8vO9dkuPiMfPz1SYsP6FLIirZasn0aRAIBlItMokVRMB92G/R4TTQDawV4b/NPdLWpK2kbexebOD2uF2Xj7ODTmQi9WtAOspu2/B0fHxJ+3FiEMxXaX5UrFwBJjdJstkAF1MFuUM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756276228; c=relaxed/simple;
-	bh=tI4PhkEItaDUc859uaBnkI5RDHS5dlXqXvDOceNK4uA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cGyEB24zQPysHCMOIctVYedJdzUHVQI0o+84pmHTW27ipcp/yDI8zmi6sdChtPyeAN1g1AbkJll0cQMzY4krS1ysRh0GrYvE1r9NnjpXQ8E6DVC8UeS22tI30fuJtr75M1nsknrknAbNOmxjKnfKQcH/eq0p/mG6rvpXfEgSd4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ixT6YZGg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 825B3C4CEEB;
-	Wed, 27 Aug 2025 06:30:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756276228;
-	bh=tI4PhkEItaDUc859uaBnkI5RDHS5dlXqXvDOceNK4uA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ixT6YZGgBoUAwcSpCnCCoa5a8V29I+qn6pPvtO9H3nB+l9njf7UccQLiZf73fF8VJ
-	 sdC9+0fc59fzLfYrHvU0k7WQ95hsRymxcxiGVhKmFFY2lL1cEi0wkpgmisp1116Tzw
-	 5PXNWXpP2YRz1e5byAkjSXcyE9nrvA6VZ6dzfHZWSHYZnNdxK2kWn5XhOVG5PBepKO
-	 pFo6S7I0nuc7ORfa9xl/2YFk14vGI+CaRV6wtEmcNsSNYpVPO8e2ztGuVkt8vl+Ybp
-	 EN9pqer8st4mqH4+PIgJmhcSGYITv4sA2gz5LiQ6qjWkqdfco+HzsJTb3bgL0/ZJiz
-	 4fH2C+RxH+VQw==
-Message-ID: <3b72ba2c-707a-4f38-8d8d-548efb358e9b@kernel.org>
-Date: Wed, 27 Aug 2025 08:30:22 +0200
+	s=arc-20240116; t=1756276267; c=relaxed/simple;
+	bh=oRoxIceV7LTx6AmN9NO76jl7HMDW8euf2adJBTHuW+k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Oua9xKJgm7lO1Gch3d3kk5XVtDAmrUrKseaIWS4ltKA6CpQW1IdAySWN8MbwBZq3L4CEx+8r9Y/dUSa6Mjdev8uNFwAaqDnAyeZMbxOVBhvIbE2j1YtQ/c0VbvDHnVXq88gL6Ce4vnUKZw7HV5EHVSgQawKbmSKpwtftslEsBhw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=VpKRZ7MP; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=dNCiLZL9; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 27 Aug 2025 08:31:00 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1756276262;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=w8fEvGw02NawUgUfUQvj6MrhwcD5uPQ6uzaNBRQKmcA=;
+	b=VpKRZ7MPMkJNfWuQYK8gKlpu7kcKbEtK5KnhFSoUoRhEvA/Ve3nezIZj0Z9NnurFBu/j72
+	Vh/0Dukfn+J2opW5io05JjJcfJvQxQyz4YeZeiHt6qG6aWsy9kvGEj6/H3VHfpUWzG8acW
+	wZADGWn1ugn1effPb3YZPPJIkfHiW/6nEOPhhORV5wnHpEd6FvliqQHb9IAFGr/jS/OE5b
+	ga96t+69rEA3Fit5B+cMlRVNd1+pMOSX2K0WbhuaGkNi7bPs1YhEKPWTDpLfFb0m2OFLPK
+	g6Y8mhB3eDMzN1M23vm/SkfwMbC+gddekVoAPvBo/u5Fj9geIghiVQkOk9c+8w==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1756276262;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=w8fEvGw02NawUgUfUQvj6MrhwcD5uPQ6uzaNBRQKmcA=;
+	b=dNCiLZL9IuVyfkB+FHD/I1vJRjT9UTcBsdHsV4mnQHz+vHYVXMoJ0E5QP8EMMG4dKrufI9
+	L7vHyg3bNCzRLnCw==
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+To: Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nicolas.schier@linux.dev>
+Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Masahiro Yamada <masahiroy@kernel.org>
+Subject: Re: [PATCH 2/2] kbuild: userprogs: also inherit byte order and ABI
+ from kernel
+Message-ID: <20250827075334-3332c08d-66f3-427d-b0b2-4460e779f261@linutronix.de>
+References: <20250813-kbuild-userprogs-bits-v1-0-2d9f7f411083@linutronix.de>
+ <20250813-kbuild-userprogs-bits-v1-2-2d9f7f411083@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] dt-bindings: soc: samsung: scaler: exynos: Add
- ExynosAutov920 compatible
-To: Kisung Lee <kiisung.lee@samsung.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Inki Dae <inki.dae@samsung.com>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org
-References: <20250827044720.3751272-1-kiisung.lee@samsung.com>
- <CGME20250827045905epcas2p4b2cbd4b881af1c1be4b345861d1a635b@epcas2p4.samsung.com>
- <20250827044720.3751272-2-kiisung.lee@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250827044720.3751272-2-kiisung.lee@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250813-kbuild-userprogs-bits-v1-2-2d9f7f411083@linutronix.de>
 
-On 27/08/2025 06:47, Kisung Lee wrote:
-> Add samsung,exynos5-scaler compatible for ExynosAutov920 SoC.
+Hi!
+
+On Wed, Aug 13, 2025 at 07:43:41AM +0200, Thomas Weiﬂschuh wrote:
+> Make sure the byte order and ABI of the userprogs matches the one of the
+> kernel, similar to how the bit size is handled.
+> Otherwise the userprogs may not be executable.
+> This happens for example on powerpc little endian, or riscv32.
 > 
-> Signed-off-by: Kisung Lee <kiisung.lee@samsung.com>
+> Signed-off-by: Thomas Weiﬂschuh <thomas.weissschuh@linutronix.de>
+> Reviewed-by: Nicolas Schier <n.schier@avm.de>
+> Acked-by: Masahiro Yamada <masahiroy@kernel.org>
+> 
 > ---
->  Documentation/devicetree/bindings/gpu/samsung-scaler.yaml | 1 +
->  1 file changed, 1 insertion(+)
+> Difference to original series:
+> * Also handle -EL/-EB for MIPS
+> ---
+>  Makefile | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/gpu/samsung-scaler.yaml b/Documentation/devicetree/bindings/gpu/samsung-scaler.yaml
-> index 9fb530e65d0e..5a472e29dc8a 100644
-> --- a/Documentation/devicetree/bindings/gpu/samsung-scaler.yaml
-> +++ b/Documentation/devicetree/bindings/gpu/samsung-scaler.yaml
-> @@ -14,6 +14,7 @@ properties:
->      enum:
->        - samsung,exynos5420-scaler
->        - samsung,exynos5433-scaler
-> +      - samsung,exynos5-scaler
+> diff --git a/Makefile b/Makefile
+> index d0f5262a9c0f3b4aa79a91c20cc149d034ffa0b7..7d40f84d5efde18ed3a2f4d8cf7a9b1ec3610ed4 100644
+> --- a/Makefile
+> +++ b/Makefile
+> @@ -1137,8 +1137,8 @@ ifneq ($(CONFIG_ARCH_VMLINUX_NEEDS_RELOCS),)
+>  LDFLAGS_vmlinux	+= --emit-relocs --discard-none
+>  endif
+>  
+> -# Align the bit size of userspace programs with the kernel
+> -USERFLAGS_FROM_KERNEL := -m32 -m64 --target=%
+> +# Align the bit size, byte order and architecture of userspace programs with the kernel
+> +USERFLAGS_FROM_KERNEL := -m32 -m64 -mlittle-endian -mbig-endian -EL -EB --target=% -march=% -mabi=%
+>  KBUILD_USERCFLAGS  += $(filter $(USERFLAGS_FROM_KERNEL), $(KBUILD_CPPFLAGS) $(KBUILD_CFLAGS))
+>  KBUILD_USERLDFLAGS += $(filter $(USERFLAGS_FROM_KERNEL), $(KBUILD_CPPFLAGS) $(KBUILD_CFLAGS))
 
-Uh, no, 5 != 920.
+I looked some more at the breakage reported from -next [0].
+For architectures with multiple possible byte orders or ABIs the toolchain
+might be able to build the kernel for all combinations but might not have a
+matching libc for them. Currently userprogs uses the default byteorder and
+ABI from the compiler, which will match the included libcs if there is any.
+However the resulting binary might not run on the built kernel.
+CC_CAN_LINK can be extended to generically handle different byte orders, as
+for those we have standard kconfig symbols. But handling ABIs would need to
+be architecture specific and a bit more complex.
 
-Please follow writing bindings or check my talk from yesterday at OSSE25.
+We can't use KBUILD_*FLAGS for CC_CAN_LINK, as they are not yet set during
+the configuration stage.
 
-Best regards,
-Krzysztof
+I see the following options:
+
+* Add byte order and architecture-specific ABI handling to CC_CAN_LINK
+* Accept that userprogs might not be runnable on the built kernel
+* Let the user manually set CC_CAN_LINK to override the autodetection
+* Add separate handling for runnable userprogs
+* Use tools/include/nolibc/ for userprogs instead of the toolchain libc
+  (unlikely, but I wanted do mention the option)
+
+
+Thomas
+
+[0] https://lore.kernel.org/lkml/20250818140143.61b8c466@canb.auug.org.au/
 
