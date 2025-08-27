@@ -1,102 +1,95 @@
-Return-Path: <linux-kernel+bounces-787542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAE7CB377A2
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 04:15:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0E94B377A5
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 04:16:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 977BE208098
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 02:15:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1ED72A4987
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 02:16:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BADF225F995;
-	Wed, 27 Aug 2025 02:15:19 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27D4A272E7B;
+	Wed, 27 Aug 2025 02:16:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vMrdH3wQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D7E925C83A
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 02:15:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80DEB25557;
+	Wed, 27 Aug 2025 02:16:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756260919; cv=none; b=IeUiVMRq4MaTxPF/y0LEbNXw+cuNyhksCk8vdIb75cQXp55onRFmBJBcHYplMhU/gBdv3jPcywz3UkdHxR4NdjAJb6YKRzCBbQqDutiuQ/2Gn2fwoLeZLPEMWqh/UZjr/vcoxcJbBJcpl412QoeQVFdM9Rl58feWq4Zyw5P2JDg=
+	t=1756261011; cv=none; b=jcgvsfZrIbH/hKfiRXKM2Y6IdvpK4Q6dfVxeJq1bM7w53u8b4m763zl0Ds5SoYFsbMjZKKy+knA4CzyBu0mmy9mBnqeiYo4yaPTfVi/deJBaVqF8sua4icTgkeJIo1yJJ2qVw2eOd/qo+Xz2BCVgzOru09RiGwA5ZusX58kfBmA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756260919; c=relaxed/simple;
-	bh=t7m7Vjr0mlgsF5Zl+Zrv2/s8Ahx3RYSp4oHny4ZVA3E=;
-	h=CC:Subject:To:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=pi+KVVbKn9fPvgrzpPOSY3tZwdjxf/j39XcShNrXRG662RYWcqEh9lTFS3rs5/M3Qs7VP+dzvvfwAdpXkMNpM+KWF0yp25eoKBFpRzd2fa7VBDqthrLoeI928FJZ6ZNJ1H6tLEMFJNveg+WVe+xRm/OJrTRnUnrqgkBoaPxUE1U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4cBSmB5GnYz14MLH;
-	Wed, 27 Aug 2025 10:15:06 +0800 (CST)
-Received: from dggemv705-chm.china.huawei.com (unknown [10.3.19.32])
-	by mail.maildlp.com (Postfix) with ESMTPS id 851AD1401E9;
-	Wed, 27 Aug 2025 10:15:13 +0800 (CST)
-Received: from kwepemq200018.china.huawei.com (7.202.195.108) by
- dggemv705-chm.china.huawei.com (10.3.19.32) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 27 Aug 2025 10:15:13 +0800
-Received: from [10.67.121.177] (10.67.121.177) by
- kwepemq200018.china.huawei.com (7.202.195.108) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 27 Aug 2025 10:15:12 +0800
-CC: <yangyicong@hisilicon.com>, <robin.murphy@arm.com>,
-	<Jonathan.Cameron@huawei.com>, <liuyonglong@huawei.com>,
-	<wanghuiqiang@huawei.com>, <prime.zeng@hisilicon.com>,
-	<hejunhao3@h-partners.com>
-Subject: Re: [PATCH v2 8/9] Documentation: hisi-pmu: Fix of minor format error
-To: Yushan Wang <wangyushan12@huawei.com>, <will@kernel.org>,
-	<mark.rutland@arm.com>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-References: <20250821135049.2010220-1-wangyushan12@huawei.com>
- <20250821135049.2010220-9-wangyushan12@huawei.com>
-From: Yicong Yang <yangyicong@huawei.com>
-Message-ID: <3e19cbc9-7a23-dcde-af94-9afee42f044b@huawei.com>
-Date: Wed, 27 Aug 2025 10:15:12 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.5.1
+	s=arc-20240116; t=1756261011; c=relaxed/simple;
+	bh=eDcnJCa93Xe3vxBW0ZfBX8WQI8Q3WYp0DM/g3zZt1X0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XuLuMf5iWpiWzthBesAfFl2BwY+LfYWJMmWr1c0wn0moWmCg4phuzVHOAcHR5ZQt3gke04k5jwwEjp8ZqmyE8C86N5ivrh60a8KRYufra3RPdoGTehSy4cDfK1TWbwlMsTnPzRf9gSzrB/lbhWuEyQRpVvHfwFnCd8rmB63wJGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vMrdH3wQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1FA1C4CEF1;
+	Wed, 27 Aug 2025 02:16:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756261011;
+	bh=eDcnJCa93Xe3vxBW0ZfBX8WQI8Q3WYp0DM/g3zZt1X0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=vMrdH3wQ73KH16B2mWQKpADZU9EJelPjqrVz8uwbk1UXIqcjU3eZLTUtQc9YSV/cw
+	 8yfTYJsdTcwfAgie0JzfQ/v72kcAcuEIk1CwhprXAsl7qoICZ2fsu05rGgKMasYr8L
+	 hVlxymar9e0J9SiHHpk7gq4sCx0YdPe42OTFPPiOKZ3sGexuVULTW3MI0Tmdr2bcFk
+	 lsIDAJ+QxCSEKNpiXG2w4zHg9iVODxbqRvucvgucw1Du6bZhSa7Kwp5BXoNQlMu4Lm
+	 1Adqp8bed4u6GC+aPwrCl4gEo1iH3KmF0EBFyz7c5hT+r2JdqV04dnZZ1bA8/mgmUf
+	 gMpNSm0rhFRSQ==
+Date: Tue, 26 Aug 2025 20:16:46 -0600
+From: Eric Biggers <ebiggers@kernel.org>
+To: linux-crypto@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+	Ard Biesheuvel <ardb@kernel.org>,
+	"Jason A . Donenfeld" <Jason@zx2c4.com>,
+	Zhihang Shao <zhihang.shao.iscas@gmail.com>,
+	Andy Polyakov <appro@cryptogams.org>
+Subject: Re: [PATCH v2 0/3] Consolidate Poly1305 code and add RISC-V
+ optimization
+Message-ID: <20250827021646.GA62136@quark>
+References: <20250824025736.148576-1-ebiggers@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20250821135049.2010220-9-wangyushan12@huawei.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
- kwepemq200018.china.huawei.com (7.202.195.108)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250824025736.148576-1-ebiggers@kernel.org>
 
-On 2025/8/21 21:50, Yushan Wang wrote:
-> The inline path of sysfs should be placed in literal blocks to make
-> documentation look better.
+On Sat, Aug 23, 2025 at 10:57:33PM -0400, Eric Biggers wrote:
+> This series is targeting libcrypto-next.  It can also be retrieved from:
 > 
-> Signed-off-by: Yushan Wang <wangyushan12@huawei.com>
+>     git fetch https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git poly1305-v2
+> 
+> This series simplifies and optimizes the organization of the Poly1305
+> code by consolidating it into a single module.  This follows the example
+> of SHA-1, SHA-256, SHA-512, CRC32, etc.
+> 
+> Since the RISC-V Poly1305 patch has had a moving target, I also rebased
+> it on top of this series and included it as patch 3.
+> 
+> Changed in v2:
+> - Added missing 'FORCE' to the make rules for mips/poly1305-core.S
+>   and riscv/poly1305-core.S
+> 
+> Eric Biggers (2):
+>   lib/crypto: poly1305: Remove unused function
+>     poly1305_is_arch_optimized()
+>   lib/crypto: poly1305: Consolidate into single module
+> 
+> Zhihang Shao (1):
+>   lib/crypto: riscv/poly1305: Import OpenSSL/CRYPTOGAMS implementation
 
-Acked-by: Yicong Yang <yangyicong@hisilicon.com>
+FYI, I applied this series to
+https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git/log/?h=libcrypto-next
 
-> ---
->  Documentation/admin-guide/perf/hisi-pmu.rst | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/admin-guide/perf/hisi-pmu.rst b/Documentation/admin-guide/perf/hisi-pmu.rst
-> index 48992a0b8e94..a307bce2f5c5 100644
-> --- a/Documentation/admin-guide/perf/hisi-pmu.rst
-> +++ b/Documentation/admin-guide/perf/hisi-pmu.rst
-> @@ -18,9 +18,10 @@ HiSilicon SoC uncore PMU driver
->  Each device PMU has separate registers for event counting, control and
->  interrupt, and the PMU driver shall register perf PMU drivers like L3C,
->  HHA and DDRC etc. The available events and configuration options shall
-> -be described in the sysfs, see:
-> +be described in the sysfs, see::
-> +
-> +/sys/bus/event_source/devices/hisi_sccl{X}_<l3c{Y}/hha{Y}/ddrc{Y}>
->  
-> -/sys/bus/event_source/devices/hisi_sccl{X}_<l3c{Y}/hha{Y}/ddrc{Y}>.
->  The "perf list" command shall list the available events from sysfs.
->  
->  Each L3C, HHA and DDRC is registered as a separate PMU with perf. The PMU
-> 
+But as always, reviews and acks would be greatly appreciated!
+
+- Eric
 
