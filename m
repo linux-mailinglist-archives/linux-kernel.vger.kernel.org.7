@@ -1,83 +1,177 @@
-Return-Path: <linux-kernel+bounces-787809-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC747B37B67
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 09:22:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D318B37B96
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 09:23:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D54AC1BA062B
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 07:22:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BC72686125
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 07:23:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 774C830C601;
-	Wed, 27 Aug 2025 07:22:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="cjUH6w95"
-Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25EE4318127;
+	Wed, 27 Aug 2025 07:22:54 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDE603164B5;
-	Wed, 27 Aug 2025 07:22:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8CB2317709
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 07:22:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756279342; cv=none; b=X1ZehebEzwyw3BOHTGiCfs9P/Pi8ajt3PvKTZTo8VRN5hIh1YnynGyFIQCXfDxfCr3vDMv/GUJMuqwFo7iYdCBY7As2m+Qgp2YZEF1DErP3Kuv7Ag9eWpG4qRrjSBAbcZ8opPrTsgegofm/SI9H6X3SeqCkDKwKYJqbF9eHAovA=
+	t=1756279373; cv=none; b=MO8YABhHNIVcbYOftifbr50AJ97u5IyL57Mh6qfR+RGdLpyGJ/abDu8+dhtyc/3g6osTwJ3A1FgnTRU8aCRlEPMr0ICG3bHZK5Spjr+A+Dk/CIMEAmy7XTb8gcCV6T22UORmhwX3Ag1b11xF6U58a2wQrMZjQBOfsej/3eerC5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756279342; c=relaxed/simple;
-	bh=5XWS7XyCw+NJDczou25GCvSbDPiWfkEbfUlH2AruYok=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=Q26lSbxPDQe1gnc1Eqe3v5OVTiuO4o3f1at0Esn5nEJguzhtYpSLD28n5r1uh4+BMqEmXfIAxpgzz5jKLvp/jYygpTwC0Ux8ySVzsrslMt62n3TNBB/sZuVRppk411k+X602mIx7oa/huFzbZGEqjh1MnHmsUs6CeKoN45Yvl2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=cjUH6w95; arc=none smtp.client-ip=83.149.199.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
-Received: from monopod.intra.ispras.ru (unknown [10.10.3.121])
-	by mail.ispras.ru (Postfix) with ESMTPSA id 5637D406B8A5;
-	Wed, 27 Aug 2025 07:22:14 +0000 (UTC)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru 5637D406B8A5
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
-	s=default; t=1756279334;
-	bh=0h56dmYpXFNvXHv2vka/Yl8VSMF1DnH9PsEa/ZEq58I=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=cjUH6w95ke+Qj4M3fskURmO7vCqRHo68Ynm+jMhX4XDg5un+thblBAQsAe7fPxo+7
-	 3O/nyeoWciWjPIvWFF+FD6mz58nTPWOLR5eZDUdmgvEG3ZNSXiKfWKmzZC8oCU7YHY
-	 dwaShfMDJnXU+zuNtvxAtJs4+4K800+PgaiOovVo=
-Date: Wed, 27 Aug 2025 10:22:14 +0300 (MSK)
-From: Alexander Monakov <amonakov@ispras.ru>
-To: Al Viro <viro@zeniv.linux.org.uk>
-cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>, 
-    Jan Kara <jack@suse.cz>, linux-kernel@vger.kernel.org
-Subject: Re: ETXTBSY window in __fput
-In-Reply-To: <20250826220033.GW39973@ZenIV>
-Message-ID: <0a372029-9a31-54c3-4d8a-8a9597361955@ispras.ru>
-References: <6e60aa72-94ef-9de2-a54c-ffd91fcc4711@ispras.ru> <20250826220033.GW39973@ZenIV>
+	s=arc-20240116; t=1756279373; c=relaxed/simple;
+	bh=mYEBONilztsiyb/RUz7aiVO44CL2i8C4UjVcld2XG1g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=K3H5ooWjgyl6b9rI2secM7xQHR4ognDu3X1kfzXnbbs9oA0PXq5aOjo6EUjw2kvJe8ZCqP6V2jkqPUwrMIaC1R1D6qk59Tfe2bmz0bjHZhaSHxndh9v4Eiz7z9kc93AkCbCpWJY1gdv/5RIllNWNQeMiuND0D37ZVM1pP7vrjn0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.214])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4cBbV51JHCz2CgJY;
+	Wed, 27 Aug 2025 15:18:21 +0800 (CST)
+Received: from dggemv712-chm.china.huawei.com (unknown [10.1.198.32])
+	by mail.maildlp.com (Postfix) with ESMTPS id 0AFD81A016C;
+	Wed, 27 Aug 2025 15:22:47 +0800 (CST)
+Received: from kwepemn100008.china.huawei.com (7.202.194.111) by
+ dggemv712-chm.china.huawei.com (10.1.198.32) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 27 Aug 2025 15:22:46 +0800
+Received: from [10.67.120.139] (10.67.120.139) by
+ kwepemn100008.china.huawei.com (7.202.194.111) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 27 Aug 2025 15:22:46 +0800
+Message-ID: <1a3d5331-2ad6-44fd-9156-f50970d8bf01@huawei.com>
+Date: Wed, 27 Aug 2025 15:22:45 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 9/9] Documentation: hisi-pmu: Add introduction to
+ HiSilicon
+To: Yicong Yang <yangyicong@huawei.com>, <will@kernel.org>,
+	<mark.rutland@arm.com>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>
+CC: <yangyicong@hisilicon.com>, <robin.murphy@arm.com>,
+	<Jonathan.Cameron@huawei.com>, <liuyonglong@huawei.com>,
+	<wanghuiqiang@huawei.com>, <prime.zeng@hisilicon.com>,
+	<hejunhao3@h-partners.com>
+References: <20250821135049.2010220-1-wangyushan12@huawei.com>
+ <20250821135049.2010220-10-wangyushan12@huawei.com>
+ <d757a29e-6e13-d528-651b-beff8c2b2c21@huawei.com>
+Content-Language: en-US
+From: wangyushan <wangyushan12@huawei.com>
+In-Reply-To: <d757a29e-6e13-d528-651b-beff8c2b2c21@huawei.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
+ kwepemn100008.china.huawei.com (7.202.194.111)
 
 
-On Tue, 26 Aug 2025, Al Viro wrote:
 
-> Egads...  Let me get it straight - you have a bunch of threads sharing descriptor
-> tables and some of them are forking (or cloning without shared descriptor tables)
-> while that is going on?
+On 8/27/2025 10:27 AM, Yicong Yang wrote:
+> Hi Yushan,
+>
+> the subject seems to be truncated? should it be like below?
+>
+> Documentation: hisi-pmu: Add introduction to HiSilicon v3 PMU
+>
+> other comments inline. sorry for the late reply..
 
-I suppose if they could start a new process in a more straightforward manner,
-they would. But you cannot start a new process without fork. Anyway, I'm but
-a messenger here: the problem has been hit by various people in the Go community
-(and by Go team itself, at least twice). Here I'm asking about a potential
-shortcoming in __fput that exacerbates the problem.
+The subject was automatically wrapped, sorry.
 
-> Frankly, in such situation I would spawn a thread for that, did unshare(CLONE_FILES)
-> in it, replaced the binary and buggered off, with parent waiting for it to complete.
+"Add introduction to HiSilicon v3 PMU" it is.
 
-Good to know, but it doesn't sound very efficient (and like something that could be
-integrated in Go runtime).
 
-Anyhow, if the alleged race window in __fput is real, why not close it for good?
 
-Alexander
+>
+> On 2025/8/21 21:50, Yushan Wang wrote:
+>> Some of HiSilicon V3 PMU hardware is divided into parts to fulfill the
+>> job of monitoring specific parts of a device.  Add description on that
+>> as well as the newly added ext operand for L3C PMU.
+>>
+>> Signed-off-by: Yushan Wang <wangyushan12@huawei.com>
+>> ---
+>>   Documentation/admin-guide/perf/hisi-pmu.rst | 38 +++++++++++++++++++--
+>>   1 file changed, 36 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/Documentation/admin-guide/perf/hisi-pmu.rst b/Documentation/admin-guide/perf/hisi-pmu.rst
+>> index a307bce2f5c5..4c7584fe3c1a 100644
+>> --- a/Documentation/admin-guide/perf/hisi-pmu.rst
+>> +++ b/Documentation/admin-guide/perf/hisi-pmu.rst
+>> @@ -12,8 +12,8 @@ The HiSilicon SoC encapsulates multiple CPU and IO dies. Each CPU cluster
+>>   called Super CPU cluster (SCCL) and is made up of 6 CCLs. Each SCCL has
+>>   two HHAs (0 - 1) and four DDRCs (0 - 3), respectively.
+>>   
+>> -HiSilicon SoC uncore PMU driver
+>> --------------------------------
+>> +HiSilicon SoC uncore PMU v1
+> these (and below) new sections will break the ordered list of the options. this should not be
+> necessary to mention the version, just add the newly added options in the current way and
+> mention the introduced version should be enough.
+
+Given ext operand is for L3C PMU only, I could add that to the existing option order lists, as well
+as the relationship between ext and the PMU name formats.
+
+>
+>> +---------------------------
+>>   
+>>   Each device PMU has separate registers for event counting, control and
+>>   interrupt, and the PMU driver shall register perf PMU drivers like L3C,
+>> @@ -56,6 +56,9 @@ Example usage of perf::
+>>     $# perf stat -a -e hisi_sccl3_l3c0/rd_hit_cpipe/ sleep 5
+>>     $# perf stat -a -e hisi_sccl3_l3c0/config=0x02/ sleep 5
+>>   
+>> +HiSilicon SoC uncore PMU v2
+>> +----------------------------------
+>> +
+>>   For HiSilicon uncore PMU v2 whose identifier is 0x30, the topology is the same
+>>   as PMU v1, but some new functions are added to the hardware.
+>>   
+>> @@ -113,6 +116,37 @@ uring channel. It is 2 bits. Some important codes are as follows:
+>>   - 2'b00: default value, count the events which sent to the both uring and
+>>     uring_ext channel;
+>>   
+>> +HiSilicon SoC uncore PMU v3
+>> +----------------------------------
+>> +
+>> +For HiSilicon uncore PMU v3 whose identifier is 0x40, some uncore PMUs are
+>> +further divided into parts for finer granularity of tracing, each part has its
+>> +own dedicated PMU, and all such PMUs together cover the monitoring job of events
+>> +on particular uncore device. Such PMUs are described in sysfs with name format
+>> +slightly changed::
+>> +
+>> +/sys/bus/event_source/devices/hisi_sccl{X}_<l3c{Y}_{Z}/ddrc{Y}_{Z}/noc{Y}_{Z}>
+>> +
+>> +Z is the sub-id, indicating different PMUs for part of hardware device.
+>> +
+>> +Usage of most PMUs with different sub-ids are identical. Specially, L3C PMU
+>> +provides ``ext`` operand to allow exploration of even finer granual statistics
+>> +of L3C PMU, L3C PMU driver use that as hint of termination when delivering perf
+>> +command to hardware:
+>> +
+>> +- ext=0: Default, could be used with event names.
+>> +- ext=1 and ext=2: Must be used with event codes, event names are not supported.
+>> +
+>> +An example of perf command could be::
+>> +
+>> +  $# perf stat -a -e hisi_sccl0_l3c1_0/event=0x1,ext=1/ sleep 5
+>> +
+>> +or::
+>> +
+>> +  $# perf stat -a -e hisi_sccl0_l3c1_0/rd_spipe/ sleep 5
+>> +
+>> +As above, ``hisi_sccl0_l3c1_0`` locates PMU on CPU cluster 0, L3 cache 1 pipe0.
+> this isn't correct. sccl0 indicates the Super CPU CLuster 0 which is already
+> described in the document.
+>
+> thanks.
+
+Yes, will fix that, thanks.
+
+
 
