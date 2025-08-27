@@ -1,145 +1,177 @@
-Return-Path: <linux-kernel+bounces-788824-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788832-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96507B38ABE
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 22:14:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6192B38ADA
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 22:25:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 482B5460B4C
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 20:14:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B13BB1B249CA
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 20:25:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E5E52E03EC;
-	Wed, 27 Aug 2025 20:14:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABBE63002C0;
+	Wed, 27 Aug 2025 20:24:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b3URCBi5"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cz9MU/TG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 267B02609FC
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 20:14:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DADBE2D97BF;
+	Wed, 27 Aug 2025 20:24:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756325653; cv=none; b=H04ig6RjAe/xlo9HMuhMuOWO+izSozK+1EdVF0l0Dutq25vonABywU6E0AIqBOahhm3h4RN2ebF8fbfyyTP2etZOo8GEJ0esIKwKw9lnL6zUbGifRXTlD6+CVEQhRrwAW5gRCTi6DpDTx1EW4Md+MAKyw/EvzU+IdkzDYXJMh40=
+	t=1756326262; cv=none; b=fLYkIaGEan7Pw+o66haVeYTqR1byvULLDt1jWSqd/pxygrKvgyOd5kajpXqqTrRJdxMEltV+cQCaTC4nlX3KhGZT5jeYrywLRbKkJ8V/UQo4VJv8Mlnx3tw71aoyJv9++DaIG1mZamT/k8RVFKGRiiYgZcWB+vd4/CQik5NR37c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756325653; c=relaxed/simple;
-	bh=aAzcAfgG8Ih2yZLm11hf0ilVbfeD6WSzVq65EPsjs8s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MsDrLAV3ol+8V3yTyuLXwlpgJJhNriCfeCaCc+Nk6PESzZAkgCEXy4cqjuCI0dwU1wbEP1XKMSMhq+o2QBFf2Qhe7RYcnqFbWHKqENSRwb6/ntrj6XmUxZb958RQuqtSGtlzyG5/gZKUts+pgQ2dpLtsDiWstg7Nkc76qRDMXd4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b3URCBi5; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2488be81066so389085ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 13:14:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756325651; x=1756930451; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QlufRgie91QgTam9xSC34zQrGY0Nj6hkzf3Xl64IrEI=;
-        b=b3URCBi5zj3ObjwtKhFBnxZ/gV6HOQg7MgTRN3ydivmSOWXUtNuWAvJfUE6B9705X6
-         O7tEPMqLuIXnjzdrBFtiWIygL7JVuNJ6ilXmTd6mWMkS5PTwXJ0S6k5Qpc2Ec7DJcRHR
-         0DLF7J9NdGLyTkfA86ps14W3FtT7lWWvFmeL0xWVMNHgS+jia7bLhcmmPIHjALAl4gxb
-         lx7dZIHmQB+REib55Zx6pHCJCxo4lsNDu++bZalFAkwE3KrUCz0D8hBT1GUQbe/n+TAy
-         HHaVMQB++tRZwCf98qnFFV4H8T0inIXiGV9D9WFRHEMmC4q7Ri5c29NV72aVanJpVcRN
-         K5Og==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756325651; x=1756930451;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QlufRgie91QgTam9xSC34zQrGY0Nj6hkzf3Xl64IrEI=;
-        b=WUt+/J9l4VCSiVztzZHz+T09nRbT9+/jC/GdF3MeuHZ6LHT5248XqbbEdwGgqK9p7z
-         Mx5ANt/9HCo/7L4w/icslRqMgHOYpe+4foBtR93L4js0ZQHx6k3IsnktQRxKcb9vidQz
-         9F2T+r1eIe1HQDTNpY6ai3ZXzb87F1PSrYUHH+ct7aVFTfojr0OUejQz/n5UYWgDitWd
-         U5sjuFCJfWDotSqa5sIe64NaynaM2gDE+CFS0cWKrzF3PRV5xokbC8524X7WXf7WklBn
-         /BdTUY4eMMpelDxNV6QBVABrEMI3xLgpsWzedv8ImKQPhixoEEwvh55RV/epnyKZrPv/
-         34Aw==
-X-Forwarded-Encrypted: i=1; AJvYcCUU1zrX6A/D45zLakuVt3041nqkap7mwe2kKLD6xJFaI5gWgtMzK4CWtZB9dHpvpx4bbuHGBiv96aaQN7E=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx42V605FNlwZ5Hqwld/s7BbTUi/gODxXqlS+t7EkDgoXHfWmfZ
-	r+UdhxsUkJeBoYzR+Jci80gBoN8tQrVdnODPRJPxk5TyqBVrPjoyzMm82QzTkOwAAMI0Hq49xwI
-	jboWccHq8U7hpUGiwlZgUHr2T9vIesh8=
-X-Gm-Gg: ASbGnctebYNy0FmMARMDqNj+kyKNROTCZ4+FHxV7Ab0xHobmauoOu1BSKx3raD/9K6S
-	vYU6xflRCPqM1fECkUwU551tgWFt5nCHqOIAOvYufZyNLT/sa1AFoA4ypv+g/ponJgdOlRdpAOk
-	MY2wZtFbywLDmnMwfHioGoBXwpOt9vEKD0vzzEml/da5qA79ldC1iAX3xFSRIcFqHn1VSrdd/y+
-	tvw8vmF53sJCATobg==
-X-Google-Smtp-Source: AGHT+IFrr5jFKjpnE8DrRgdjnkjAjrqoK6JTUZFNF2hiIHZxWtLqdu/5EvB4/E0d9H3HhNfbu22mum1R1mgd/ZnN1U0=
-X-Received: by 2002:a17:902:f689:b0:246:b3cc:f854 with SMTP id
- d9443c01a7336-246b3cd0030mr95147505ad.2.1756325651320; Wed, 27 Aug 2025
- 13:14:11 -0700 (PDT)
+	s=arc-20240116; t=1756326262; c=relaxed/simple;
+	bh=jFbyxsG7RwRgME4YN/e4YGrSxJ9KWnGsqcDT7QNU32Q=;
+	h=Message-ID:Date:From:To:Cc:Subject; b=MQIGrslSdYxRWu2F1UyYbvs3fu08sbP+DRK0rz3DckpqxDzFEuOUCvLj8wPpFSFXK9iBetXEiFUmWsxBE2RJYxRHsjDgWDlsz0fiCmiC8/bn2db1QKEMVZzjlwTATU9dBvjbN0tR2n0shi3/XJRbqKKvCs/gdKo1CTO0N/bTwyU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cz9MU/TG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A01AC4CEEB;
+	Wed, 27 Aug 2025 20:24:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756326261;
+	bh=jFbyxsG7RwRgME4YN/e4YGrSxJ9KWnGsqcDT7QNU32Q=;
+	h=Date:From:To:Cc:Subject:From;
+	b=cz9MU/TGs9kzMJ8uOKiGwyDFxIP2YcW/EBSJfxYgt/vpBCz4JtfC1SvoACWEkoyrC
+	 bLgdn16KEJY2v29Pj3hluFS1u62ZrCx8Ko3dty6U42hNdsC6/pSQTzHytdHFYykQz/
+	 YmCin9WJW5hJT90Ywn/uJvNzb8wbRQuSF4r9kcBro4Nr4V922AwymzV/2VzNyT/sQ0
+	 9lRpqkeOXAkMM7hwm8879UzxUvqwCfbun+7nrRfb7MgzpKfPuhtBUncVqVhVf9r1sq
+	 CrbLMuWr09RzOVvSaQbvMpUgaZMMdQRMbgZQ+K+s3gPfcvdxYiIDIWFy9Pd+u3u1qx
+	 yogCn6BJVuksQ==
+Received: from rostedt by gandalf with local (Exim 4.98.2)
+	(envelope-from <rostedt@kernel.org>)
+	id 1urMhE-00000003kvd-0zE5;
+	Wed, 27 Aug 2025 16:24:40 -0400
+Message-ID: <20250827201548.448472904@kernel.org>
+User-Agent: quilt/0.68
+Date: Wed, 27 Aug 2025 16:15:48 -0400
+From: Steven Rostedt <rostedt@kernel.org>
+To: linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org,
+ bpf@vger.kernel.org,
+ x86@kernel.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Josh Poimboeuf <jpoimboe@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@kernel.org>,
+ Jiri Olsa <jolsa@kernel.org>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Andrii Nakryiko <andrii@kernel.org>,
+ Indu Bhagat <indu.bhagat@oracle.com>,
+ "Jose E. Marchesi" <jemarch@gnu.org>,
+ Beau Belgrave <beaub@linux.microsoft.com>,
+ Jens Remus <jremus@linux.ibm.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Florian Weimer <fweimer@redhat.com>,
+ Sam James <sam@gentoo.org>,
+ Kees Cook <kees@kernel.org>,
+ "Carlos O'Donell" <codonell@redhat.com>
+Subject: [PATCH v10 00/11] unwind_deferred: Implement sframe handling
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250823202540.487616-1-kavitheshnitt@gmail.com>
- <CADnq5_Onr6rR12NVagwMHURPfuQxBoVq8Qhui6heH_m-5eHsXA@mail.gmail.com> <5e065f3a-9237-4798-9380-11c43b477882@igalia.com>
-In-Reply-To: <5e065f3a-9237-4798-9380-11c43b477882@igalia.com>
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Wed, 27 Aug 2025 16:13:59 -0400
-X-Gm-Features: Ac12FXyaAs-5dxZif0zb7XyNWucHk08jDJxEwJTUXNmK5agirepWHrhYt6lUYII
-Message-ID: <CADnq5_MwNuSLWePB-GvkAbTv-kf=uxy8y7nd8ZSpPbB7NUVjhA@mail.gmail.com>
-Subject: Re: [PATCH] drm/amd/display: Document num_rmcm_3dluts in mpc_color_caps
-To: Melissa Wen <mwen@igalia.com>
-Cc: "Kavithesh A.S" <kavitheshnitt@gmail.com>, amd-gfx@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	skhan@linuxfoundation.org, harry.wentland@amd.com, sunpeng.li@amd.com, 
-	siqueira@igalia.com, alexander.deucher@amd.com, christian.koenig@amd.com, 
-	airlied@gmail.com, simona@ffwll.ch
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 27, 2025 at 4:10=E2=80=AFPM Melissa Wen <mwen@igalia.com> wrote=
-:
->
->
->
-> On 27/08/2025 17:02, Alex Deucher wrote:
-> > Applied.  Thanks!
-> >
-> > Alex
-> >
-> > On Sat, Aug 23, 2025 at 4:25=E2=80=AFPM Kavithesh A.S <kavitheshnitt@gm=
-ail.com> wrote:
-> >> Fix a kernel-doc warning by documenting the num_rmcm_3dluts member of =
-struct mpc_color_caps.
-> >>
-> >> This is my first patch submission to the kernel, feedback is welcome
-> >>
-> >> Signed-off-by: Kavithesh A.S <kavitheshnitt@gmail.com>
-> >> ---
-> >>   drivers/gpu/drm/amd/display/dc/dc.h | 1 +
-> >>   1 file changed, 1 insertion(+)
-> >>
-> >> diff --git a/drivers/gpu/drm/amd/display/dc/dc.h b/drivers/gpu/drm/amd=
-/display/dc/dc.h
-> >> index 59c077561..06f05979b 100644
-> >> --- a/drivers/gpu/drm/amd/display/dc/dc.h
-> >> +++ b/drivers/gpu/drm/amd/display/dc/dc.h
-> >> @@ -234,6 +234,7 @@ struct lut3d_caps {
-> >>    * @ogam_ram: programmable out gamma LUT
-> >>    * @ocsc: output color space conversion matrix
-> >>    * @num_3dluts: MPC 3D LUT; always assumes a preceding shaper LUT
-> >> + * @num_rmcm_3dluts: number of RMCM 3D LUTS supported
-> A bit late to comment, but I think you should keep the "always assumes a
-> preceding shaper LUT" part.
-> This info is still very useful and links shaper LUT caps to this attribut=
-e.
 
-I'll add that before I push it.
+[
+  This version is simply a rebase of v9 on top of the v6.17-rc3.
+  It needs to be updated to work with the latest SFrame specification.
+  Indu said she'll be able to make those changes, but I needed to
+  forward port the latest code.
 
-Alex
+  You can test this code with the x86 and perf changes applied at:
+  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
+     unwind/sframe-test
+]
 
->
-> Melissa
->
-> >>    * @shared_3d_lut: shared 3D LUT flag. Can be either DPP or MPC, but=
- single
-> >>    * instance
-> >>    * @ogam_rom_caps: pre-definied curve caps for regamma 1D LUT
-> >> --
-> >> 2.43.0
->
+This is the implementation of parsing the SFrame section in an ELF file.
+It's a continuation of Josh's last work that can be found here:
+
+   https://lore.kernel.org/all/cover.1737511963.git.jpoimboe@kernel.org/
+
+Currently the only way to get a user space stack trace from a stack
+walk (and not just copying large amount of user stack into the kernel
+ring buffer) is to use frame pointers. This has a few issues. The biggest
+one is that compiling frame pointers into every application and library
+has been shown to cause performance overhead.
+
+Another issue is that the format of the frames may not always be consistent
+between different compilers and some architectures (s390) has no defined
+format to do a reliable stack walk. The only way to perform user space
+profiling on these architectures is to copy the user stack into the kernel
+buffer.
+
+SFrames[1] is now supported in gcc binutils and soon will also be supported
+by LLVM. SFrames acts more like ORC, and lives in the ELF executable
+file as its own section. Like ORC it has two tables where the first table
+is sorted by instruction pointers (IP) and using the current IP and finding
+it's entry in the first table, it will take you to the second table which
+will tell you where the return address of the current function is located
+and then you can use that address to look it up in the first table to find
+the return address of that function, and so on. This performs a user
+space stack walk.
+
+Now because the SFrame section lives in the ELF file it needs to be faulted
+into memory when it is used. This means that walking the user space stack
+requires being in a faultable context. As profilers like perf request a stack
+trace in interrupt or NMI context, it cannot do the walking when it is
+requested. Instead it must be deferred until it is safe to fault in user
+space. One place this is known to be safe is when the task is about to return
+back to user space.
+
+This series makes the deferred unwind code implement SFrames.
+
+[1] https://sourceware.org/binutils/wiki/sframe
+
+Changes since v9: https://lore.kernel.org/linux-trace-kernel/20250717012848.927473176@kernel.org/
+
+- Rebased on v6.17-rc3
+
+- Update the changes to unwind/user.c to handle passing a const
+  unwind_user_frame pointer.
+
+Josh Poimboeuf (11):
+      unwind_user/sframe: Add support for reading .sframe headers
+      unwind_user/sframe: Store sframe section data in per-mm maple tree
+      x86/uaccess: Add unsafe_copy_from_user() implementation
+      unwind_user/sframe: Add support for reading .sframe contents
+      unwind_user/sframe: Detect .sframe sections in executables
+      unwind_user/sframe: Wire up unwind_user to sframe
+      unwind_user/sframe/x86: Enable sframe unwinding on x86
+      unwind_user/sframe: Remove .sframe section on detected corruption
+      unwind_user/sframe: Show file name in debug output
+      unwind_user/sframe: Add .sframe validation option
+      unwind_user/sframe: Add prctl() interface for registering .sframe sections
+
+----
+ MAINTAINERS                       |   1 +
+ arch/Kconfig                      |  23 ++
+ arch/x86/Kconfig                  |   1 +
+ arch/x86/include/asm/mmu.h        |   2 +-
+ arch/x86/include/asm/uaccess.h    |  39 ++-
+ fs/binfmt_elf.c                   |  49 +++-
+ include/linux/mm_types.h          |   3 +
+ include/linux/sframe.h            |  60 ++++
+ include/linux/unwind_user_types.h |   4 +-
+ include/uapi/linux/elf.h          |   1 +
+ include/uapi/linux/prctl.h        |   6 +-
+ kernel/fork.c                     |  10 +
+ kernel/sys.c                      |   9 +
+ kernel/unwind/Makefile            |   3 +-
+ kernel/unwind/sframe.c            | 593 ++++++++++++++++++++++++++++++++++++++
+ kernel/unwind/sframe.h            |  71 +++++
+ kernel/unwind/sframe_debug.h      |  68 +++++
+ kernel/unwind/user.c              |  41 ++-
+ mm/init-mm.c                      |   2 +
+ 19 files changed, 967 insertions(+), 19 deletions(-)
+ create mode 100644 include/linux/sframe.h
+ create mode 100644 kernel/unwind/sframe.c
+ create mode 100644 kernel/unwind/sframe.h
+ create mode 100644 kernel/unwind/sframe_debug.h
 
