@@ -1,254 +1,225 @@
-Return-Path: <linux-kernel+bounces-788591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E813B386EA
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 17:47:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80BABB386EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 17:48:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F5BB4609EA
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 15:47:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFA1B7C6DCD
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 15:48:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 036672E1C6B;
-	Wed, 27 Aug 2025 15:47:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E2622E03E1;
+	Wed, 27 Aug 2025 15:48:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hy5aSNrp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Eusybuf9"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2077.outbound.protection.outlook.com [40.107.243.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F15E62D0C91;
-	Wed, 27 Aug 2025 15:47:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756309662; cv=none; b=b41O+YqrKgq0Ulfb13JXbQYvDsmuXmXVNFkdJuHGP+7y4Oa01GK6yp8ZjyhosIko+1XusgM8UNqg0mXEEczVdA4JTzWueLo8ePZuq2wTBKZ5VLvjPkx8CXfNo2KvrU7yHYxzqp96lvVwczBopSPC4K/+DmGXS/ixWEAFeXBsT2M=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756309662; c=relaxed/simple;
-	bh=mxcSBMoTgvmfaOSxlDt3Ox0+FxehjBeucQjS9ZMt4Vs=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=ARQ8DfT/MKIfdh5l93O6MbdTgFrzQB7l0rflfjisnD3BeqjuqI206R318lIU3HP6OcKHPfcX0YZDArTBUMjlnfm9lNWYxZSsswiidEw9tHvxoz3xfmOkLrK1tAuVhMPm/J4mlMzezjXPPV7vYOCB/u2CbiQ8mM6E0G+B/JbCxsU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hy5aSNrp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19337C4CEEB;
-	Wed, 27 Aug 2025 15:47:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756309661;
-	bh=mxcSBMoTgvmfaOSxlDt3Ox0+FxehjBeucQjS9ZMt4Vs=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=Hy5aSNrpVl9JJiC7+Fn+wg/YyEXijF4qSZVVsyE+Nzi73/WJPkyGa/uuLSnT7jIil
-	 UYX7BIuOwFtt46+zzCaLT8+efOun0PhBIOMPHqqBzwEz/Z6qAYPVKpRv/3LUkjRO/Y
-	 WremwAVlL0Fw0ximwz0CRJtiUhbHeqqPtDmRkQKkE5BPcVksOpuWE2Gq3lRn96BDmY
-	 oi1Qv5TBv1iXTjb8D7eqywVfyk47C0ImyqeTZnuh+SRdZw1p3SKvDoVASNzqS2OyPS
-	 BAqi00srxf3olPrSaB3JiLNn+s8kBWp+Gz/MX254IhOwaYocbGS5baiu486a8N5obs
-	 OydAgF1r3nRbw==
-Date: Wed, 27 Aug 2025 10:47:39 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: manivannan.sadhasivam@oss.qualcomm.com
-Cc: Manivannan Sadhasivam <mani@kernel.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"David E. Box" <david.e.box@linux.intel.com>,
-	Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
-	Johan Hovold <johan@kernel.org>, stable+noautosel@kernel.org
-Subject: Re: [PATCH v3] PCI: qcom: Use pci_host_set_default_pcie_link_state()
- API to enable ASPM for all platforms
-Message-ID: <20250827154739.GA888232@bhelgaas>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8F80288505
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 15:48:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.77
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756309699; cv=fail; b=lC9VGfo06r7UswVKbmij2tWbf09tSeB0paba4p4eL+wsvJ6k/O1S9+GA9JJtstNJa7m2BPFFBmLvWKXdY1bcm0jj0ZkzxCvVV5rSFqY988EQ1TzLiErW01rvyBEK8AOinu7/KswuPkOzQTdT/i+kqkRSyKJkZOMhPrieoy+Ftjk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756309699; c=relaxed/simple;
+	bh=1AjXDw8T+aPk03l/FyqthVhjjXDvdsMNCGWOK1Dwc+o=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CrNUlmgLICkPd9dtyEnRb4frHF2c96i0F3/KMWxBPobTyAFMKV2o1plDtkBjbAQV6dhKeRX3f/9VdONZQyW1lWSAfCeEfk040xHBI7iXcogyvqBpyeBqGucMjMnz+e1YdbNoLdA3P7kDgoD55neI3K+luFUV5xACxw2E4A9zZBE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Eusybuf9; arc=fail smtp.client-ip=40.107.243.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=O0sQ7z/uItOuruNcqhplMtYfkwdEV1ORglHHTLvuTKsWD1luxWxmUCSu9KS035C7x4Nr/nUZkdBmpJVQdZn45fwRvRKzAIjEIe0YznnFExRA4TQH66B6oNcsmrX6KBqRa3r5PtQRhLg+MqXwklwlDpiX2IZ2gO6rgHdE2WR0/zWKpckFVGM2Ne5TCzrCYH9Duydsn3atxca03f9mC1XKR4kZKKDi3lkMf/gZTuSA765qtu9xwDIin7TeJr8twkZDoxw8dWTVDF6MdM4M2p5TZpoEgomzelWyGDa0+PMWSF7PPHELwaYTcr/9k4AwynbDzt4YxufDw7sDqkjb2rdwjQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=7uBBx67Ny/1cPxVytTAVANzJOBLPvwr38LhI3EwLOFM=;
+ b=Nq+ZxZ7aYw0LMegII8rkkNCnv9AEC+erKag2KlJZ0QimKfPoFqN7bpWagHHXdiaQQFbSeYMMtU7c9znaIlhb4PYE4M5TQjZP7hwPx9zqNzsYvew2LyUdq+thpqoatFgMJF6qTFNJbP6lhzt6aNKS9VFOUeUG40m+i9brIuccJ2NFTdSzO3OinboeQtGdSxHrtSmDIHIpqeAVGRh6uiwa3VME2ltkJYlBUDRx81Skc5ZNfU9saV4iqMko8qEXvpfmdCN59n7Ragj1QLnK3pA+vhH5l+r25+HQDm181G4r3w+JwPoqVOhiu5Uod+C+Q+G437tIga+PvxBKiXW8NCC0bQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=amd.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7uBBx67Ny/1cPxVytTAVANzJOBLPvwr38LhI3EwLOFM=;
+ b=Eusybuf9l3CK0kJHa6yJLztZFhffL+f5zDq4O1ykdbfM7yWHdLbpBg8zi3xQoDTH3TZyna5bQov4Fqgx90HPqpP0QQiXGgLPwueOvi79pg//DMuTmhcPRUPPbX21VjVEfATv2rtTD+rQt7LqGPGdZQHRBPG5SJahG+BLJyMhrR6+ncdZk6B8J0E58ZHpnKcmm0quI4LEPqZc4x2I3uLzor4Q8v3unYvafbdsNAWCClvai5H1n4k5Pb0lvYc2IuejoHS8QQJ7USsANUpbW47A1lI+CN2WqF+kMPdSHEwjD+Y5B/e4HXs/gKv9SkN6Xii3v14xpLJuOS3WHtjeDzBMAA==
+Received: from SJ0P220CA0025.NAMP220.PROD.OUTLOOK.COM (2603:10b6:a03:41b::16)
+ by DS2PR12MB9774.namprd12.prod.outlook.com (2603:10b6:8:270::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.13; Wed, 27 Aug
+ 2025 15:48:13 +0000
+Received: from SJ5PEPF000001F1.namprd05.prod.outlook.com
+ (2603:10b6:a03:41b:cafe::24) by SJ0P220CA0025.outlook.office365.com
+ (2603:10b6:a03:41b::16) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9073.17 via Frontend Transport; Wed,
+ 27 Aug 2025 15:48:13 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ SJ5PEPF000001F1.mail.protection.outlook.com (10.167.242.69) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9073.11 via Frontend Transport; Wed, 27 Aug 2025 15:48:13 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Wed, 27 Aug
+ 2025 08:47:52 -0700
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Wed, 27 Aug
+ 2025 08:47:51 -0700
+Received: from Asurada-Nvidia (10.127.8.14) by mail.nvidia.com (10.129.68.10)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
+ Transport; Wed, 27 Aug 2025 08:47:50 -0700
+Date: Wed, 27 Aug 2025 08:47:48 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+CC: <jgg@nvidia.com>, <linux-kernel@vger.kernel.org>, <robin.murphy@arm.com>,
+	<will@kernel.org>, <joro@8bytes.org>, <kevin.tian@intel.com>,
+	<jsnitsel@redhat.com>, <vasant.hegde@amd.com>, <iommu@lists.linux.dev>,
+	<santosh.shukla@amd.com>, <sairaj.arunkodilkar@amd.com>, <jon.grimm@amd.com>,
+	<prashanthpra@google.com>, <wvw@google.com>, <wnliu@google.com>,
+	<gptran@google.com>, <kpsingh@google.com>
+Subject: Re: [PATCH v2] iommu/amd: Add support for hw_info for iommu
+ capability query
+Message-ID: <aK8opOZJGg7PI9Vb@Asurada-Nvidia>
+References: <20250827142250.5594-1-suravee.suthikulpanit@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"
 Content-Disposition: inline
-In-Reply-To: <20250825-qcom_aspm_fix-v3-1-02c8d414eefb@oss.qualcomm.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250827142250.5594-1-suravee.suthikulpanit@amd.com>
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ5PEPF000001F1:EE_|DS2PR12MB9774:EE_
+X-MS-Office365-Filtering-Correlation-Id: 91a0bc60-93b6-41ad-3ec3-08dde581218f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|7416014|376014|36860700013|82310400026|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?SzdzbldoNEFIUFcxWWU0eHNzeVU5M0VrZm42MzhJM2c0NW5qaDVjanNQeXR5?=
+ =?utf-8?B?cVUreEJCaGlNMzVpWDlnQjBVUzM1VllncjJsS2tZMXFtc29UQnNwZlUzK1BD?=
+ =?utf-8?B?OTkxbTRsbDBWVTFLNm1RTWc3Tm1nMlM1SW1ZbEdJZW1iNlZ0dWpETDlDTDNR?=
+ =?utf-8?B?NUhnWUlNTjBDRjVSRFBmc0Z4UEUvYWtTcTNRV20zU014M3dsVTVaMk1oKyt0?=
+ =?utf-8?B?VG9IdDBqL3RYUUgwQVlhTGZjZ3h3QStwbVJBOEN0d0d2NVdNRHFFRnZ0VC9z?=
+ =?utf-8?B?WFpLZjNSb3hsMHI3ZHRxTG0yeHU2NG5mUGl2TStRSUFOUXAyTzE3ZTJ6aDV1?=
+ =?utf-8?B?YlJYU0NaMmIzaHMxanhRMXFibW1tTExDbXozbHhkVERjUmtqcTU2bC9YRTZ6?=
+ =?utf-8?B?UE1oV1ROdDc0ZWsyTXF3K0R1RkVPMEZJZmM0dUdSOXVrbUUyOFEyM0JBWUli?=
+ =?utf-8?B?bFJhdUF4WndNYUFNMlVkOEZoUlNDaXhmdEdtcFZ1Rzk5cVArTEdtbVExZTda?=
+ =?utf-8?B?SE1QOVpxOFVBeit1L3d5VDBvc016OXl6SDlDUGtLcklsVzBPVTNVcHhtM1p5?=
+ =?utf-8?B?NkRHSGFaKzhGME9iZVUyZHJxamp4cnJlbGt0YkZkUGU3QXF2QVMveHFxcjJF?=
+ =?utf-8?B?eVBOaWFPcjR1RWZLckNlL0hvMWh2UStQUG1PUHRuL1l2Qmt0czVzbjc0dWcr?=
+ =?utf-8?B?cngxdGE5eklHTmllZjgvQ2hXc1JocVNIWm9URmdER2ZWUVY5Nlo0SjVRSXUy?=
+ =?utf-8?B?bWR0cFhtZVJTMWpwQ1NyUTJrSnZRckRucGxnZmZCaHZXQ3dMNDdxRWRodURV?=
+ =?utf-8?B?VXhJTWdWS1ZTK3A0ajM0em5scE40MmpmMy9RWnNzTnVxOU9tSEZCbStyaEJJ?=
+ =?utf-8?B?dFpENGtEdTAralRudjdIOGRjRVhJVFNsaWNWVy9NYzloVTM0b0RRc3hOMHVt?=
+ =?utf-8?B?L0RXOFZFMXh0Q0FrcWlqbGdUbzB2NHplMjJxVml1bi9QWDV0L0M2OG1Nd2lP?=
+ =?utf-8?B?UVF6U2JSMzhVbnExeWltYkg5VEFvYnluVEV2aU9GOUxkbi9VZzM3enBhMko0?=
+ =?utf-8?B?SzVKSjVHSkg4SW5yUlJqd3FBa1E4cklyK052S2ViNDYrVEVVS0p1Y3hhZVhz?=
+ =?utf-8?B?WU1ibjZVbXQvdG1vblZQbi82TGNpR2IxQUpTcGJjUk5JbDIwWUpLSEx6QU5I?=
+ =?utf-8?B?Rks0Q3VtR2dvd1ZveWtMQjdsQ2JsQ1prY0oySWY3V282c1RVK0JTd1RWQ3Ur?=
+ =?utf-8?B?Sm45QzhYejZTVkpIZkE3azg3ekRYNExLaW1ZTzNueC9wYVE3L29ybXBuazBy?=
+ =?utf-8?B?b1ZUc0dtTHpQdW1FY1NYYWlIbU92QlpXQ2pYdDhkWHhrNGtIUFl4UnFOcmha?=
+ =?utf-8?B?WkxqK2s3RDgxWnhJd1BMeVZ0M2d3MndIWjJ3ckVScU9UcEhyazRTaWlpZ3BN?=
+ =?utf-8?B?dmoyYjJlMExaRmd0M0Z3dURyMEFHTHZ4WjdDai90eTQwSHh0OUxpc203bW10?=
+ =?utf-8?B?KzkvbmtQRmo4MFpaYzhNYXVVMU02cjNEeS8yeDZabkFjRmdmVEJUTzZXdFBk?=
+ =?utf-8?B?ZFlRa0JZMmw0bUFvempNR0I5cW5EUlBuSkFUVXR2dWdwSnl5ajI3ZDlvYnhr?=
+ =?utf-8?B?MmRuTmJYTUpZMXNFZ3piaG9xbXZ4QzFjL0RYZ2tLa3dHanRsRXBYV1hHcjI1?=
+ =?utf-8?B?bE1VMlNwUUE2OGJJQjVKczRNb21RY1p0RVYrVGFCaDRHQSs5UTdWS1VjSTNu?=
+ =?utf-8?B?b0tFTnIwUkQwMkdBVWhqUDFQdDdBQ1lac0NrSlcvZkVWT2JtNHpIOGovQ0s1?=
+ =?utf-8?B?YzZQa1ZnMkJZU0VnaGYvdWpTUzlOM05YTGV1aDdyQ3RERVZNcjRnYzNvRW1S?=
+ =?utf-8?B?L3NWRFNCQXdQRlVxMDlkNFcvYTdjU0RjSnJmNTNMWHlvcVhCV0FKZm5Hdk5Q?=
+ =?utf-8?B?SzlYQ1d4K25tTWp3cnFKbWVVTWsyOUd4SUo5VmpqT3dGb09PUnJ3UWRtbERF?=
+ =?utf-8?B?NjNBWDlTejZzdHM3QmNQcmRGWjQvVG9qNTUwNnIzQlovcDFTM1RaWTRIS3NV?=
+ =?utf-8?B?T1ZFT1N6UURTTzIwR0JJaGtBNWNtS09ZQ1VRUT09?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(36860700013)(82310400026)(7053199007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2025 15:48:13.0724
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 91a0bc60-93b6-41ad-3ec3-08dde581218f
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ5PEPF000001F1.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS2PR12MB9774
 
-On Mon, Aug 25, 2025 at 01:52:57PM +0530, Manivannan Sadhasivam via B4 Relay wrote:
-> From: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+On Wed, Aug 27, 2025 at 02:22:50PM +0000, Suravee Suthikulpanit wrote:
+> AMD IOMMU Extended Feature (EFR) and Extended Feature 2 (EFR2) registers
+> specify features supported by each IOMMU hardware instance.
+> The IOMMU driver checks each feature-specific bits before enabling
+> each feature at run time.
 > 
-> Commit 9f4f3dfad8cf ("PCI: qcom: Enable ASPM for platforms supporting 1.9.0
-> ops") allowed the Qcom controller driver to enable ASPM for all PCI devices
-> enumerated at the time of the controller driver probe. It proved to be
-> useful for devices already powered on by the bootloader, as it allowed
-> devices to enter ASPM without user intervention.
+> For IOMMUFD, the hypervisor passes the raw value of amd_iommu_efr and
+> amd_iommu_efr2 to VMM via iommufd IOMMU_DEVICE_GET_HW_INFO ioctl.
 > 
-> However, it could not enable ASPM for the hotplug capable devices i.e.,
-> devices enumerated *after* the controller driver probe. This limitation
-> mostly went unnoticed as the Qcom PCI controllers are not hotplug capable
-> and also the bootloader has been enabling the PCI devices before Linux
-> Kernel boots (mostly on the Qcom compute platforms which users use on a
-> daily basis).
-> 
-> But with the advent of the commit b458ff7e8176 ("PCI/pwrctl: Ensure that
-> pwrctl drivers are probed before PCI client drivers"), the pwrctrl driver
-> started to block the PCI device enumeration until it had been probed.
-> Though, the intention of the commit was to avoid race between the pwrctrl
-> driver and PCI client driver, it also meant that the pwrctrl controlled PCI
-> devices may get probed after the controller driver and will no longer have
-> ASPM enabled. So users started noticing high runtime power consumption with
-> WLAN chipsets on Qcom compute platforms like Thinkpad X13s, and Thinkpad
-> T14s, etc...
-> 
-> Obviously, it is the pwrctrl change that caused regression, but it
-> ultimately uncovered a flaw in the ASPM enablement logic of the controller
-> driver. So to address the actual issue, use the newly introduced
-> pci_host_set_default_pcie_link_state() API, which allows the controller
-> drivers to set the default ASPM state for *all* devices. This default state
-> will be honored by the ASPM driver while enabling ASPM for all the devices.
+> Signed-off-by: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
 
-So I guess this fixes a power consumption regression that became
-visible with b458ff7e8176 ("PCI/pwrctl: Ensure that pwrctl drivers are
-probed before PCI client drivers").  Arguably we should have a Fixes:
-tag for that, and maybe even skip the tag for 9f4f3dfad8cf, since if
-you have 9f4f3dfad8cf but not b458ff7e8176, it doesn't sound like you
-would need to backport this change?
+Reviewed-by: Nicolin Chen <nicolinc@nvidia.com>
 
-I *love* getting rid of the bus walk and solving the hotplug issue.
+With some nits:
 
-> So with this change, we can get rid of the controller driver specific
-> 'qcom_pcie_ops::host_post_init' callback.
-> 
-> Also with this change, ASPM is now enabled by default on all Qcom
-> platforms as I haven't heard of any reported issues (apart from the
-> unsupported L0s on some platorms, which is still handled separately).
-
-If ASPM hasn't been enabled by default, how would you hear about
-issues?  Is ASPM commonly enabled in some other way?
-
-If you think the risk of ASPM issues is nil, I guess it's OK to do at
-the same time.  From a maintenance perspective it might be nice to
-separate that change so if there happened to be a regression, we could
-identify and revert that part by itself if necessary.  It looks like
-previously, ASPM was only enabled for one part:
-
-  ops_2_7_0   # cfg_2_7_0 qcom,pcie-sdm845
-
-But after this patch, ASPM will be enabled for many more parts:
-
-  ops_2_1_0   # cfg_2_1_0 qcom,pcie-apq8064 qcom,pcie-ipq8064 qcom,pcie-ipq8064-v2
-  ops_1_0_0   # cfg_1_0_0 qcom,pcie-apq8084
-  ops_2_3_2   # cfg_2_3_2 qcom,pcie-msm8996
-  ops_2_4_0   # cfg_2_4_0 qcom,pcie-ipq4019 qcom,pcie-qcs404
-  ops_2_3_3   # cfg_2_3_3 qcom,pcie-ipq8074
-  ops_1_9_0   # cfg_1_9_0 qcom,pcie-sc7280 qcom,pcie-sc8180x qcom,pcie-sdx55 qcom,pcie-sm8150 qcom,pcie-sm8250 qcom,pcie-sm8350 qcom,pcie-sm8450-pcie0 qcom,pcie-sm8450-pcie1 qcom,pcie-sm8550
-	      # cfg_1_34_0 qcom,pcie-sa8775p
-  ops_1_21_0  # cfg_sc8280xp qcom,pcie-sa8540p qcom,pcie-sc8280xp qcom,pcie-x1e80100
-  ops_2_9_0   # cfg_2_9_0 qcom,pcie-ipq5018 qcom,pcie-ipq6018 qcom,pcie-ipq8074-gen3 qcom,pcie-ipq9574
-
-> Cc: stable+noautosel@kernel.org # API dependency
-> Fixes: 9f4f3dfad8cf ("PCI: qcom: Enable ASPM for platforms supporting 1.9.0 ops")
-> Reported-by: Johan Hovold <johan@kernel.org>
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
-> ---
-> Changes in v3:
-> 
-> - Moved the ASPM change to qcom_pcie_host_init()
-> - Link to v2: https://lore.kernel.org/r/20250823-qcom_aspm_fix-v2-1-7cef4066663c@oss.qualcomm.com
-> 
-> Changes in v2:
-> 
-> * Used the new API introduced in this patch instead of bus notifier:
-> https://lore.kernel.org/linux-pci/20250822031159.4005529-1-david.e.box@linux.intel.com/
-> 
-> * Enabled ASPM on all platforms as there is no specific reason to limit it to a
-> few.
-> ---
->  drivers/pci/controller/dwc/pcie-qcom.c | 34 ++--------------------------------
->  1 file changed, 2 insertions(+), 32 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
-> index 294babe1816e4d0c2b2343fe22d89af72afcd6cd..0c6741b9a9585bd5566b23ba68ef12f1febab56b 100644
-> --- a/drivers/pci/controller/dwc/pcie-qcom.c
-> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
-> @@ -247,7 +247,6 @@ struct qcom_pcie_ops {
->  	int (*get_resources)(struct qcom_pcie *pcie);
->  	int (*init)(struct qcom_pcie *pcie);
->  	int (*post_init)(struct qcom_pcie *pcie);
-> -	void (*host_post_init)(struct qcom_pcie *pcie);
->  	void (*deinit)(struct qcom_pcie *pcie);
->  	void (*ltssm_enable)(struct qcom_pcie *pcie);
->  	int (*config_sid)(struct qcom_pcie *pcie);
-> @@ -1040,25 +1039,6 @@ static int qcom_pcie_post_init_2_7_0(struct qcom_pcie *pcie)
->  	return 0;
->  }
->  
-> -static int qcom_pcie_enable_aspm(struct pci_dev *pdev, void *userdata)
-> -{
-> -	/*
-> -	 * Downstream devices need to be in D0 state before enabling PCI PM
-> -	 * substates.
-> -	 */
-> -	pci_set_power_state_locked(pdev, PCI_D0);
-> -	pci_enable_link_state_locked(pdev, PCIE_LINK_STATE_ALL);
-> -
-> -	return 0;
-> -}
-> -
-> -static void qcom_pcie_host_post_init_2_7_0(struct qcom_pcie *pcie)
-> -{
-> -	struct dw_pcie_rp *pp = &pcie->pci->pp;
-> -
-> -	pci_walk_bus(pp->bridge->bus, qcom_pcie_enable_aspm, NULL);
-> -}
-> -
->  static void qcom_pcie_deinit_2_7_0(struct qcom_pcie *pcie)
->  {
->  	struct qcom_pcie_resources_2_7_0 *res = &pcie->res.v2_7_0;
-> @@ -1336,6 +1316,8 @@ static int qcom_pcie_host_init(struct dw_pcie_rp *pp)
->  			goto err_assert_reset;
->  	}
->  
-> +	pci_host_set_default_pcie_link_state(pp->bridge, PCIE_LINK_STATE_ALL);
+> diff --git a/drivers/iommu/amd/iommufd.h b/drivers/iommu/amd/iommufd.h
+> new file mode 100644
+> index 000000000000..7c30dcc66a59
+> --- /dev/null
+> +++ b/drivers/iommu/amd/iommufd.h
+> @@ -0,0 +1,11 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only */
+> +/*
+> + * Copyright (C) 2025 Advanced Micro Devices, Inc.
+> + */
 > +
->  	return 0;
->  
->  err_assert_reset:
-> @@ -1358,19 +1340,9 @@ static void qcom_pcie_host_deinit(struct dw_pcie_rp *pp)
->  	pcie->cfg->ops->deinit(pcie);
->  }
->  
-> -static void qcom_pcie_host_post_init(struct dw_pcie_rp *pp)
-> -{
-> -	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
-> -	struct qcom_pcie *pcie = to_qcom_pcie(pci);
-> -
-> -	if (pcie->cfg->ops->host_post_init)
-> -		pcie->cfg->ops->host_post_init(pcie);
-> -}
-> -
->  static const struct dw_pcie_host_ops qcom_pcie_dw_ops = {
->  	.init		= qcom_pcie_host_init,
->  	.deinit		= qcom_pcie_host_deinit,
-> -	.post_init	= qcom_pcie_host_post_init,
->  };
->  
->  /* Qcom IP rev.: 2.1.0	Synopsys IP rev.: 4.01a */
-> @@ -1432,7 +1404,6 @@ static const struct qcom_pcie_ops ops_1_9_0 = {
->  	.get_resources = qcom_pcie_get_resources_2_7_0,
->  	.init = qcom_pcie_init_2_7_0,
->  	.post_init = qcom_pcie_post_init_2_7_0,
-> -	.host_post_init = qcom_pcie_host_post_init_2_7_0,
->  	.deinit = qcom_pcie_deinit_2_7_0,
->  	.ltssm_enable = qcom_pcie_2_3_2_ltssm_enable,
->  	.config_sid = qcom_pcie_config_sid_1_9_0,
-> @@ -1443,7 +1414,6 @@ static const struct qcom_pcie_ops ops_1_21_0 = {
->  	.get_resources = qcom_pcie_get_resources_2_7_0,
->  	.init = qcom_pcie_init_2_7_0,
->  	.post_init = qcom_pcie_post_init_2_7_0,
-> -	.host_post_init = qcom_pcie_host_post_init_2_7_0,
->  	.deinit = qcom_pcie_deinit_2_7_0,
->  	.ltssm_enable = qcom_pcie_2_3_2_ltssm_enable,
->  };
-> 
-> ---
-> base-commit: 681accdad91923ef4938b96ff3eea62e29af74c3
-> change-id: 20250823-qcom_aspm_fix-3264926b5b14
-> 
-> Best regards,
-> -- 
-> Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
-> 
-> 
+> +#ifndef AMD_IOMMUFD_H
+> +#define AMD_IOMMUFD_H
+> +
+> +extern void *amd_iommufd_hw_info(struct device *dev, u32 *length, u32 *type);
+
+No need of "extern"?
+
+> +/**
+> + * struct iommu_hw_info_amd - AMD IOMMU device info
+> + *
+> + * @efr : Value of AMD IOMMU Extended Feature Register (EFR) reported by hardware
+> + * @efr2: Value of AMD IOMMU Extended Feature 2 Register (EFR2) reported by hardware
+> + *
+> + * Please See description of these registers in the following sections of
+> + * the AMD I/O Virtualization Technology (IOMMU) Specification.
+> + * (https://www.amd.com/content/dam/amd/en/documents/processor-tech-docs/specifications/48882_IOMMU.pdf)
+
+The link gives me:
+
+404: Page Not Found
+Sorry, we couldn’t find that page.
+
+:-/
+
+>  /**
+>   * enum iommu_hw_info_type - IOMMU Hardware Info Types
+>   * @IOMMU_HW_INFO_TYPE_NONE: Output by the drivers that do not report hardware
+> @@ -629,6 +647,7 @@ enum iommu_hw_info_type {
+>  	IOMMU_HW_INFO_TYPE_INTEL_VTD = 1,
+>  	IOMMU_HW_INFO_TYPE_ARM_SMMUV3 = 2,
+>  	IOMMU_HW_INFO_TYPE_TEGRA241_CMDQV = 3,
+> +	IOMMU_HW_INFO_TYPE_AMD = 4,
+
+Missing an update in the kdoc above.
+
+Nicolin
 
