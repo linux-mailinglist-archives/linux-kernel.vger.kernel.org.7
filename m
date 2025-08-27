@@ -1,104 +1,86 @@
-Return-Path: <linux-kernel+bounces-787863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70591B37C4E
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 09:56:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82002B37C4C
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 09:55:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55BDF1BA2A88
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 07:56:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D60D5175330
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 07:55:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E81832145F;
-	Wed, 27 Aug 2025 07:55:57 +0000 (UTC)
-Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [160.30.148.35])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0D1A32145B;
+	Wed, 27 Aug 2025 07:55:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JQoC+uIq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 021ED2F617A;
-	Wed, 27 Aug 2025 07:55:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=160.30.148.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C01B4C6C;
+	Wed, 27 Aug 2025 07:55:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756281356; cv=none; b=ntR0hDVMOoUcaJM0g90AqUnocW02hI/ngLRVfknxty9PrY3neeRseREijXcoDY7Nu5SaIzGhwwibD0D8j4xECzzn0hNKy8kUyw9C6xLyUVp6d2o66VIZy++fHSfd2l8flyPr3SeqbGkOpOtCBncNDTs/PdRO+USt4Mm1OoH1HRg=
+	t=1756281338; cv=none; b=L8nrdAwdmICvQM/qOyxumv32GP+EvaFbXyLY0yrHMdFEhrKJs3E7cLUUkHSGSp6ZXjnDlbVGXFGLM5qezvCmaH6np1epgKjn5fFq1zO1J83MW/C2S4gRVLF1xm9uYoDoE0nib/AtQNqQQ5qptt5IhxchWNOaQBcpgNi3WfsMFVs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756281356; c=relaxed/simple;
-	bh=V/k3PlEhOV5Q5JNh16qCP66g14IOSN3k+JYedNywBUs=;
-	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=E6/lz7pxWJyl7AaDf0gquYVdP52zyAgiFXba9Cr/4qAMmBwrT60OM1dK7K6GxiAELxK4G0sy2mlNKXET978gHVw66P/cY9tOUQZ90xsxu6FzyIgyMSFglDuy6SjKoX09yjFT55Idqu6wDzmG/kGEkknn19r+gorukX97K7OoDw4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=160.30.148.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4cBcKH0Nfgz8Xs6v;
-	Wed, 27 Aug 2025 15:55:47 +0800 (CST)
-Received: from xaxapp05.zte.com.cn ([10.99.98.109])
-	by mse-fl2.zte.com.cn with SMTP id 57R7srfU085184;
-	Wed, 27 Aug 2025 15:54:53 +0800 (+08)
-	(envelope-from zhang.enpei@zte.com.cn)
-Received: from mapi (xaxapp01[null])
-	by mapi (Zmail) with MAPI id mid32;
-	Wed, 27 Aug 2025 15:54:55 +0800 (CST)
-Date: Wed, 27 Aug 2025 15:54:55 +0800 (CST)
-X-Zmail-TransId: 2af968aeb9cf00e-edb33
-X-Mailer: Zmail v1.0
-Message-ID: <20250827155455583-PdvmDYA9SD3J37_XRza5@zte.com.cn>
+	s=arc-20240116; t=1756281338; c=relaxed/simple;
+	bh=S5ES48XRkwpB74ejxYCgrfQGaAkor94Qfa1G7gy7vTk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RWJVLRnONjYu7Z+Bp8MSfpSFo2nge/ODeD1rCP9MWaNpCm4baKCporTDAnEum52LwqeBryAgzn3GHZUnBySCeatuywTGb6+PaQBdIQRVm6bxLZS1400t0XKhuG+SFA+wK34pc1i4Lai5nISJrfNm9vDiUMQcUuQFfPnMx6XNFbI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JQoC+uIq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24E95C4CEEB;
+	Wed, 27 Aug 2025 07:55:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756281337;
+	bh=S5ES48XRkwpB74ejxYCgrfQGaAkor94Qfa1G7gy7vTk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=JQoC+uIqPzlaO+KNrOOjvjFjdW1qCfyGTKcJAGSKB/epdwmpvWeoS/bmNn5Sa58tv
+	 ef4j6CgizahE2x4LzFfLpTEJ4p6A7/zNNbGL5BmOE1lcQoX+iFEN+kH1qPuVa5dgat
+	 bP010ZLKyPzCc9oM3EFY+3d7k9992aXgQYZppOD68nv++4Xq/XiArxog2NpIIWOTSh
+	 0TQO8Qk9tXqNUbPqzUfCN8gKQtrHLYU2jOyxlcTlcsjLSeAa+jRAkwIhIsEmCvES5D
+	 aK4w/Rk2b95zhJLwmMHiNCc++l+SxwtJ6wavydkT/12rgZU980M/iFb9omW0XCOOyT
+	 QMPEV7D2PTSYQ==
+Message-ID: <9e30442a-85eb-4577-b81f-89ea68d4ad97@kernel.org>
+Date: Wed, 27 Aug 2025 09:55:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: <zhang.enpei@zte.com.cn>
-To: <chessman@tux.org>
-Cc: <andrew+netdev@lunn.ch>, <davem@davemloft.net>, <edumazet@google.com>,
-        <kuba@kernel.org>, <pabeni@redhat.com>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: =?UTF-8?B?W1BBVENIIHYzXSBldGhlcm5ldDogdGxhbjogQ29udmVydCB0byB1c2UgamlmZmllcyBtYWNybw==?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl2.zte.com.cn 57R7srfU085184
-X-TLS: YES
-X-SPF-DOMAIN: zte.com.cn
-X-ENVELOPE-SENDER: zhang.enpei@zte.com.cn
-X-SPF: None
-X-SOURCE-IP: 10.5.228.133 unknown Wed, 27 Aug 2025 15:55:47 +0800
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 68AEBA03.001/4cBcKH0Nfgz8Xs6v
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 3/7] rust: irq: add support for non-threaded IRQs and
+ handlers
+To: Andreas Hindborg <a.hindborg@kernel.org>
+Cc: Daniel Almeida <daniel.almeida@collabora.com>,
+ Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+ =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Thomas Gleixner
+ <tglx@linutronix.de>, Bjorn Helgaas <bhelgaas@google.com>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+ Benno Lossin <lossin@kernel.org>, linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org, linux-pci@vger.kernel.org,
+ Joel Fernandes <joelagnelf@nvidia.com>, Dirk Behme <dirk.behme@de.bosch.com>
+References: <20250811-topics-tyr-request_irq2-v9-0-0485dcd9bcbf@collabora.com>
+ <ZBiGWoEXSxAUvEwNj8vzyDa5L6KvqTuKBTKz3mzyhMGBAja6PJsMtIiSdAUKDmn_FumrmDYuOk4PKlXRW055Qw==@protonmail.internalid>
+ <20250811-topics-tyr-request_irq2-v9-3-0485dcd9bcbf@collabora.com>
+ <87wm71cahd.fsf@t14s.mail-host-address-is-not-set>
+ <AEwfSACv6dV1KuKmY7ufNvpYacRoT4xbJRGQJP7zfeV2GfeKcNpXZqsOQJw_w4lqbjqIsMjt-NZqp4OqBeIFpA==@protonmail.internalid>
+ <9A068CEC-E45F-44B1-9D16-D550835503F9@collabora.com>
+ <87zfblurtj.fsf@t14s.mail-host-address-is-not-set>
+From: Danilo Krummrich <dakr@kernel.org>
+Content-Language: en-US
+In-Reply-To: <87zfblurtj.fsf@t14s.mail-host-address-is-not-set>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Zhang Enpei <zhang.enpei@zte.com.cn>
+On 8/27/25 9:50 AM, Andreas Hindborg wrote:
+> I would suggest (next time, since this is applied) not linking the
+> symbol in this patch and then adding the link in the patch that adds the
+> link target.
 
-Use time_is_before_eq_jiffies macro instead of using jiffies directly to
-handle wraparound.
-
-Signed-off-by: Zhang Enpei <zhang.enpei@zte.com.cn>
----
- drivers/net/ethernet/ti/tlan.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/drivers/net/ethernet/ti/tlan.c b/drivers/net/ethernet/ti/tlan.c
-index a55b0f951181..7c5e51284942 100644
---- a/drivers/net/ethernet/ti/tlan.c
-+++ b/drivers/net/ethernet/ti/tlan.c
-@@ -1817,7 +1817,6 @@ static void tlan_timer(struct timer_list *t)
- {
- 	struct tlan_priv	*priv = timer_container_of(priv, t, timer);
- 	struct net_device	*dev = priv->dev;
--	u32		elapsed;
- 	unsigned long	flags = 0;
-
- 	priv->timer.function = NULL;
-@@ -1844,8 +1843,7 @@ static void tlan_timer(struct timer_list *t)
- 	case TLAN_TIMER_ACTIVITY:
- 		spin_lock_irqsave(&priv->lock, flags);
- 		if (priv->timer.function == NULL) {
--			elapsed = jiffies - priv->timer_set_at;
--			if (elapsed >= TLAN_TIMER_ACT_DELAY) {
-+			if (time_is_before_eq_jiffies(priv->timer_set_at + TLAN_TIMER_ACT_DELAY)) {
- 				tlan_dio_write8(dev->base_addr,
- 						TLAN_LED_REG, TLAN_LED_LINK);
- 			} else  {
--- 
-2.25.1
+That's what I did on apply. :)
 
