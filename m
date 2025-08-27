@@ -1,83 +1,91 @@
-Return-Path: <linux-kernel+bounces-788699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788700-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 165BFB388DC
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 19:47:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C0B9B388E1
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 19:48:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DA52D7AB110
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 17:46:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4F8A5E739E
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 17:48:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7F682D191E;
-	Wed, 27 Aug 2025 17:47:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE569277C95;
+	Wed, 27 Aug 2025 17:48:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="WCafXPJO"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=sarinay.com header.i=@sarinay.com header.b="rK1g6VF3"
+Received: from natrix.sarinay.com (natrix.sarinay.com [159.100.251.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0D1A1D63E4;
-	Wed, 27 Aug 2025 17:47:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A13E8273F9;
+	Wed, 27 Aug 2025 17:48:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.100.251.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756316849; cv=none; b=ah8YyToiurddwAwV88Kg6Y/6gZY1u2psTnTijtxmFZpTtddnBXHUa1hNHhCNVZW9oD2TCkAMA6plPbDgf0p3kvdTKoDRCUAzlIsT5t9JGIrbo82nSlxKmIO/HUnJCWTNLhYQaVvdvjszOctj7LjDVeMb43mKDMvAIQZGXNs3iWc=
+	t=1756316924; cv=none; b=suX3QOlu3SXK57hrPuu7Dsn7WgEp1Z/X/7Cq4BmOV9GdYgWB+0aFijP3qBfXCb5bHSje7NcW8Pih8kapWH1N+tfNHPNXP/zfl1Fv2bo4rxOlTLDFY5fqRTP0Nhw5p3hnXmCxRj6dTQcao5+kmDI7Gj0V/LoyI2ILbC/CdNhFUKo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756316849; c=relaxed/simple;
-	bh=lEcdqu2a+OP1F9LbMBMvjjMFWRmlLVjtcmctavk5V3U=;
+	s=arc-20240116; t=1756316924; c=relaxed/simple;
+	bh=MzK6hjdsHzWjAx0dhXNnuYZv03t2+HCtYmmUM0F3X1k=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=LDdw7YU+G9lPygt+BlOegFrz7b2YNoQGDp0gPFSGODBScXzrzCqKFC1HjZVziQVK0JVd3Ekbq8r3amh6RChSVTW8Ji9xG/aSsjIym+JBkQrVCM12BLZu2lTbikOP7auNZbGkB/6I+4IbcslWKSvnyP46F1grme0Kggzcf0SZXd4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=WCafXPJO; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1756316844;
-	bh=lEcdqu2a+OP1F9LbMBMvjjMFWRmlLVjtcmctavk5V3U=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=WCafXPJOFiplTO2V2yviBr7RAf4OM4nvQSvyNI/pA7Z6KxlhdfDTRPyk1CMx2pBrs
-	 +KZiKS5ZSWTT0bCfwcAWKFcNWxxEJixi2kPMUMh2CJAJR5+t0HQfU7UO2VSColHnEN
-	 pCbwf7uh5RBvJxtZjJ2jKLv3JuGm1HvV/HN7o0yZ6mAqsvNfL6/Pdt5jDZO0hjT0mS
-	 XP/4Y9x4tyJp9m+uVk//AMeqL/J/7DBHJTihyAaiETsOJuB4/OcinY3Lp+5lSmmn6m
-	 TkqQ+Sj5S07E/0tioqNPkwLsw3gUtU6JMGIJ4ehtwwgvBiuWvo6citKES5EInzFNxI
-	 ctIl/EOQMkwyA==
-Received: from [IPv6:2606:6d00:11:5a76::c41] (unknown [IPv6:2606:6d00:11:5a76::c41])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: nicolas)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id DA40A17E04D6;
-	Wed, 27 Aug 2025 19:47:23 +0200 (CEST)
-Message-ID: <008c8848cfe829d91dc56156653a5856b05d6bad.camel@collabora.com>
-Subject: Re: [PATCH] media: verisilicon: Explicitly disable all encoder
- ioctls for decoders
-From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
-To: Paul Kocialkowski <paulk@sys-base.io>
-Cc: linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Benjamin Gaignard
- <benjamin.gaignard@collabora.com>,  Philipp Zabel <p.zabel@pengutronix.de>,
- Mauro Carvalho Chehab <mchehab@kernel.org>
-Date: Wed, 27 Aug 2025 13:47:21 -0400
-In-Reply-To: <aK8uRrlbMWZsA88Q@shepard>
-References: <20250826190416.1287089-1-paulk@sys-base.io>
-	 <ee7416c9db2128ab1a8c1bbdc7cd231da21e5b53.camel@collabora.com>
-	 <aK8uRrlbMWZsA88Q@shepard>
-Autocrypt: addr=nicolas.dufresne@collabora.com; prefer-encrypt=mutual;
- keydata=mDMEaCN2ixYJKwYBBAHaRw8BAQdAM0EHepTful3JOIzcPv6ekHOenE1u0vDG1gdHFrChD
- /e0J05pY29sYXMgRHVmcmVzbmUgPG5pY29sYXNAbmR1ZnJlc25lLmNhPoicBBMWCgBEAhsDBQsJCA
- cCAiICBhUKCQgLAgQWAgMBAh4HAheABQkJZfd1FiEE7w1SgRXEw8IaBG8S2UGUUSlgcvQFAmibrjo
- CGQEACgkQ2UGUUSlgcvQlQwD/RjpU1SZYcKG6pnfnQ8ivgtTkGDRUJ8gP3fK7+XUjRNIA/iXfhXMN
- abIWxO2oCXKf3TdD7aQ4070KO6zSxIcxgNQFtDFOaWNvbGFzIER1ZnJlc25lIDxuaWNvbGFzLmR1Z
- nJlc25lQGNvbGxhYm9yYS5jb20+iJkEExYKAEECGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4
- AWIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaCyyxgUJCWX3dQAKCRDZQZRRKWBy9ARJAP96pFmLffZ
- smBUpkyVBfFAf+zq6BJt769R0al3kHvUKdgD9G7KAHuioxD2v6SX7idpIazjzx8b8rfzwTWyOQWHC
- AAS0LU5pY29sYXMgRHVmcmVzbmUgPG5pY29sYXMuZHVmcmVzbmVAZ21haWwuY29tPoiZBBMWCgBBF
- iEE7w1SgRXEw8IaBG8S2UGUUSlgcvQFAmibrGYCGwMFCQll93UFCwkIBwICIgIGFQoJCAsCBBYCAw
- ECHgcCF4AACgkQ2UGUUSlgcvRObgD/YnQjfi4+L8f4fI7p1pPMTwRTcaRdy6aqkKEmKsCArzQBAK8
- bRLv9QjuqsE6oQZra/RB4widZPvphs78H0P6NmpIJ
-Organization: Collabora Canada
-Content-Type: multipart/signed; micalg="pgp-sha512";
-	protocol="application/pgp-signature"; boundary="=-AiVj62IW9eUVFUuKYG9Q"
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+	 Content-Type:MIME-Version; b=muxYhCGg6uSvejWWs9JTFhUJxss9XujMf7Hd9yqQQzXtkxvFcAeS77OSMivHn64iSlNmb+nQGvRc9OzjnJyfvOTedEy1Oy+3KC+eQojJJIxr0Lw5r7G1mJXuGi/TdVOu1A1WA86MCQUJLoHBx5RZn8wcJOmaXH0RY2P+Cee+UlI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sarinay.com; spf=pass smtp.mailfrom=sarinay.com; dkim=pass (2048-bit key) header.d=sarinay.com header.i=@sarinay.com header.b=rK1g6VF3; arc=none smtp.client-ip=159.100.251.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sarinay.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sarinay.com
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=sarinay.com; s=2023;
+	t=1756316914; bh=MzK6hjdsHzWjAx0dhXNnuYZv03t2+HCtYmmUM0F3X1k=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References;
+	b=rK1g6VF3F6SHGb6Mw5MO2zxHiD+vSdYorLiUxui14xmqBfvavHfON18EOHDwH7eK4
+	 2APagwjRbYXXU36tMraF4EdnCfuarLDOBZCmLe1otjpfkkWkLHGAkkbR9DY0Ip9ZzO
+	 LdnD3Wr7CuB42V6fRDfZyGXiiBVUpv7UX9l4aoCHU78AwzeCplA1vkSPZsPfvRnjhr
+	 6ljxad2sVMzzHfmAwHxfVagxrDanQVbTMq9zjFSw30oYx7oR/EStxUAb3/iNqrTArN
+	 me+FdB04stmFNylNSWwCaYMxY/Czjc9mrMw+lauQcbfyUYbuT1Q80Me1Hd6bZk4SUz
+	 +moY/6A88gVmg==
+Message-ID: <518333811aeda4dc42445efd6d9cee6cc580145a.camel@sarinay.com>
+Subject: Re: [PATCH net-next v2] net: nfc: nci: Turn data timeout into a
+ module parameter and increase the default
+From: Juraj =?UTF-8?Q?=C5=A0arinay?= <juraj@sarinay.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>, netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, davem@davemloft.net, edumazet@google.com, 
+	kuba@kernel.org, pabeni@redhat.com, mingo@kernel.org, horms@kernel.org, 
+	tglx@linutronix.de
+Date: Wed, 27 Aug 2025 19:48:33 +0200
+In-Reply-To: <c0c14ec0-f582-4e26-bc7e-35a26a7ff1ce@kernel.org>
+References: <20250825234354.855755-1-juraj@sarinay.com>
+	 <c0c14ec0-f582-4e26-bc7e-35a26a7ff1ce@kernel.org>
+Autocrypt: addr=juraj@sarinay.com; prefer-encrypt=mutual;
+ keydata=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
+ oiRvevraR4S+FMeNg+HrhPNNRy45eF4M2RQ==
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,138 +93,34 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
+On Wed, 2025-08-27 at 15:29 +0200, Krzysztof Kozlowski wrote:
 
---=-AiVj62IW9eUVFUuKYG9Q
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+> CardOS is the software running on the NFC card, right?=C2=A0
 
-Le mercredi 27 ao=C3=BBt 2025 =C3=A0 18:11 +0200, Paul Kocialkowski a =C3=
-=A9crit=C2=A0:
-> Hi Nicolas,
->=20
-> On Wed 27 Aug 25, 10:30, Nicolas Dufresne wrote:
-> > Hi Paul,
-> >=20
-> > Le mardi 26 ao=C3=BBt 2025 =C3=A0 21:04 +0200, Paul Kocialkowski a =C3=
-=A9crit=C2=A0:
-> > > Call the dedicated v4l2_disable_ioctl helper instead of manually
-> > > checking whether the current context is an encoder for the selection
-> > > ioctls.
-> > >=20
-> > > Signed-off-by: Paul Kocialkowski <paulk@sys-base.io>
-> > > ---
-> > > =C2=A0drivers/media/platform/verisilicon/hantro_drv.c=C2=A0 | 2 ++
-> > > =C2=A0drivers/media/platform/verisilicon/hantro_v4l2.c | 6 ++----
-> > > =C2=A02 files changed, 4 insertions(+), 4 deletions(-)
-> > >=20
-> > > diff --git a/drivers/media/platform/verisilicon/hantro_drv.c
-> > > b/drivers/media/platform/verisilicon/hantro_drv.c
-> > > index 4cc9d00fd293..6fb28a6293e7 100644
-> > > --- a/drivers/media/platform/verisilicon/hantro_drv.c
-> > > +++ b/drivers/media/platform/verisilicon/hantro_drv.c
-> > > @@ -916,6 +916,8 @@ static int hantro_add_func(struct hantro_dev *vpu=
-,
-> > > unsigned int funcid)
-> > > =C2=A0		vpu->decoder =3D func;
-> > > =C2=A0		v4l2_disable_ioctl(vfd, VIDIOC_TRY_ENCODER_CMD);
-> > > =C2=A0		v4l2_disable_ioctl(vfd, VIDIOC_ENCODER_CMD);
-> > > +		v4l2_disable_ioctl(vfd, VIDIOC_G_SELECTION);
-> > > +		v4l2_disable_ioctl(vfd, VIDIOC_S_SELECTION);
-> >=20
-> > Disabling this IOCTL for JPEG is fine, but for VP8, H.264, HEVC, VP9 an=
-d
-> > AV1, it
-> > is pretty much mandatory. Otherwise your stream will advertise the padd=
-ed
-> > dimentions and there would be no way to tell it that what is the croppi=
-ng
-> > window
-> > for bitstream generation purpose.
->=20
-> Maybe the lack of context around the patch doesn't make it clear, but thi=
-s is
-> to disable the ioctls for decoders (not encoders), which don't need to us=
-e the
-> selection API. This keeps the ioctls enabled and available for all encode=
-rs.
+Yes it is. I may have been too specific, all I am saying is that I made
+some measurements.
 
-My bad, miss-read. I think you could reduce the confusion with a subject li=
-ne
-that is narrower:
+> If so, why would this be Linux kernel module param? Kernel runtime setup =
+is really
+> independent of what NFC card people will use.
 
-  media: verisilicon: Explicitly disable SELECTION API ioctl for decoders
+I suggested a tunable timeout because I am not sure what the new
+universal upper bound should be. It may depend on the NFC card one is
+communicating with. I have since learned that module parameters are
+strongly discouraged (within netdev at least).
 
-And you can add:
+> I think this should be unconditionally raised
 
-Reviewed-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+I am fine with that, but would argue for an even more generous timeout.
+Five seconds, say? One can always set a shorter SO_RCVTIMEO from user
+space if needed.
 
-cheers,
-Nicolas
+Ideally, the kernel would also honor a longer SO_RCVTIMEO and treat
+NCI_DATA_TIMEOUT as a default rather than a rigid limit, completely
+obviating my subjective need for a parameter. I have not explored the
+idea further, given that a somewhat higher value of NCI_DATA_TIMEOUT
+solves most problems.
 
->=20
-> > Considering you are looking forward adding H.264 encoding, do you reall=
-y
-> > want
-> > to apply this fix ?
->=20
-> I am well aware that this is required to setup the crop in the coded bits=
-tream
-> and I am definitely using it in my encoding work :)
->=20
-> Cheers,
->=20
-> Paul
->=20
-> >=20
-> > Nicolas
-> >=20
-> > > =C2=A0	}
-> > > =C2=A0
-> > > =C2=A0	video_set_drvdata(vfd, vpu);
-> > > diff --git a/drivers/media/platform/verisilicon/hantro_v4l2.c
-> > > b/drivers/media/platform/verisilicon/hantro_v4l2.c
-> > > index 6bcd892e7bb4..fcf3bd9bcda2 100644
-> > > --- a/drivers/media/platform/verisilicon/hantro_v4l2.c
-> > > +++ b/drivers/media/platform/verisilicon/hantro_v4l2.c
-> > > @@ -663,8 +663,7 @@ static int vidioc_g_selection(struct file *file, =
-void
-> > > *priv,
-> > > =C2=A0	struct hantro_ctx *ctx =3D file_to_ctx(file);
-> > > =C2=A0
-> > > =C2=A0	/* Crop only supported on source. */
-> > > -	if (!ctx->is_encoder ||
-> > > -	=C2=A0=C2=A0=C2=A0 sel->type !=3D V4L2_BUF_TYPE_VIDEO_OUTPUT)
-> > > +	if (sel->type !=3D V4L2_BUF_TYPE_VIDEO_OUTPUT)
-> > > =C2=A0		return -EINVAL;
-> > > =C2=A0
-> > > =C2=A0	switch (sel->target) {
-> > > @@ -696,8 +695,7 @@ static int vidioc_s_selection(struct file *file, =
-void
-> > > *priv,
-> > > =C2=A0	struct vb2_queue *vq;
-> > > =C2=A0
-> > > =C2=A0	/* Crop only supported on source. */
-> > > -	if (!ctx->is_encoder ||
-> > > -	=C2=A0=C2=A0=C2=A0 sel->type !=3D V4L2_BUF_TYPE_VIDEO_OUTPUT)
-> > > +	if (sel->type !=3D V4L2_BUF_TYPE_VIDEO_OUTPUT)
-> > > =C2=A0		return -EINVAL;
-> > > =C2=A0
-> > > =C2=A0	/* Change not allowed if the queue is streaming. */
->=20
->=20
-
---=-AiVj62IW9eUVFUuKYG9Q
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaK9EqQAKCRDZQZRRKWBy
-9FYjAPwPd/zFoJGIGFBIfHR0pz6/cOmKMiZBS3H36aKdnxgEcwEAoXkLM1W7gRMj
-f9EOhuIcaTgvl9DoPvirUdwt3UkXBg8=
-=Eb1b
------END PGP SIGNATURE-----
-
---=-AiVj62IW9eUVFUuKYG9Q--
+Best,
+Juraj
 
