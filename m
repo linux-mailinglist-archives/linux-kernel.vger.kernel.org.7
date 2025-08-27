@@ -1,109 +1,82 @@
-Return-Path: <linux-kernel+bounces-788880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B2A9B38BAF
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 23:52:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BAE4B38BB3
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 23:52:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF0C4177A34
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 21:52:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F340946309B
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 21:52:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3169830DEA3;
-	Wed, 27 Aug 2025 21:52:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEBBB30DEDD;
+	Wed, 27 Aug 2025 21:52:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TaPvCRUQ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="INiLio9r"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88FC12EDD70
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 21:52:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1360A2F2913
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 21:52:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756331523; cv=none; b=LtA629zvZIXv4R/9CXafYpUEXXcNw4Vuq2NXMJ6Rvs3ipMy8BZu6Zn3qJOAZpzgD3NNfF2AhdbRlO35cNBkiL2/sedxZQMTvMntXuXZV7pGUDq0+vaiilUenhHbOrpSjWJ6sT6wxTdeoNriYauNBhg2yFAhLk9+2cRIvpjXk78s=
+	t=1756331545; cv=none; b=GNiTrGUNrTwQM7UQSI3kgtQXiYDvStjWFdH4rl89XJXGOrTYDmjIyJ9IHBj4Njo6gpk0ULmDBbFR3vW/x32blaQveiqlbeMWJEirehPBZhxKr1EW6x4FqgKFkDs4FqIl01s1AF/SnX/v/39GfEUKOGxz8HnXQIpUkuq/U6/yYN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756331523; c=relaxed/simple;
-	bh=zBANCspRSkikcKMC+MCnrC2GrLJgJj6EBh2lTwmuoHY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A0Wb3vFjKFQsCWgGcUvPAicExsARnrBn4ZrrEMZUp3O1hek9NNHLHCQiO2M5x+LzGkcxTFKFS4aTfRW4fprS1A52qBDTezuBP7zmcAy1Fqb/N0BWHUCDwVKNx2Ew6F4JDqOxyR/c0hP5UOtmuSrzvOxziDs7/I1rjVr1RQm0vNM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TaPvCRUQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA68FC4CEEB;
-	Wed, 27 Aug 2025 21:52:00 +0000 (UTC)
+	s=arc-20240116; t=1756331545; c=relaxed/simple;
+	bh=820xGs1O8S9T2vSvVTVEfothysBjQAsbUNdDwQu4QtY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lXHqpyCbMZJ1wR3LCk0bwnLDBdyo8bk/697oT/tTXBOlaXLDDnAe23sFrNVX1eXegSNm4O51V8vj5JsjJrfbU0KuxmpVuZcDWJNLqnXVVK2JOzTtQH39Ujf4Fr6ztLKF2IoSMpm1eBOvJxQX/HgDxqU8lvqfpmS6Iz35YfN7S9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=INiLio9r; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA201C4CEEB;
+	Wed, 27 Aug 2025 21:52:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756331522;
-	bh=zBANCspRSkikcKMC+MCnrC2GrLJgJj6EBh2lTwmuoHY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TaPvCRUQB2WEZ3ZLB4b0wjFXrYG7pV3Td3WyLY8PvOHGOuFtBha1niv+NR7h0lli/
-	 5XjVhvcUOTkvxiUTsbwU+C/Nda4fer4Wi+YAam4cevQJ78Ik8JSWCSg4Zsiy2PN8Wp
-	 RdPfQ6UjVSLy0TIKAffaJe+sadr7S+l/L+gGWREaRb8l0L9vx+9C4Ss8U9oSWBFOra
-	 TTkZDp7+Tm95DudjkSBrGfO5vCP5mrunUF5WS6iaLOmQx41iBI4pl6haMOoHEFXL/n
-	 8m/zV/0wZieAbwGHmfTtm9Y5EBxIfI4tBFIe84lwpX/VK7VjzZc60Q+ffi7t4GURYv
-	 OtbAN6jwRBeQg==
-Date: Wed, 27 Aug 2025 14:51:59 -0700
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: David Kaplan <david.kaplan@amd.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>, 
-	Peter Zijlstra <peterz@infradead.org>, Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, 
-	Ingo Molnar <mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H . Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/5] x86/bugs: Use early_param for spectre_v2_user
-Message-ID: <5de5fl7tuo5tobdlck5a7inomwecrmw5lbhtp3ldqsxem2wzfy@4sdzpuu77zqe>
-References: <20250819192200.2003074-1-david.kaplan@amd.com>
- <20250819192200.2003074-2-david.kaplan@amd.com>
+	s=k20201202; t=1756331544;
+	bh=820xGs1O8S9T2vSvVTVEfothysBjQAsbUNdDwQu4QtY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=INiLio9r+a1WpOG/Y0Swmwu0Qp5e9Iy5rMWkP8bt8z4pgLp91IKSOylv0p9ST9tns
+	 mk8dRGMuyh7Yzq+A8yMS6IHzX3VRKVYmpTEv+xBtaXjx9FATSuBAh44wfiwlE8AjPt
+	 +gIRLyfEo4tyYoixKv0M0YSr+k/mJQmcPhAKq1YFTy0rq7InHsBV73b1W0nUFPR1QM
+	 Pu1Sq5Teb0XzwXD58N8UgRxDE2+vdCbvcekDS74lo3lpXb3ketetaJ4MWii7DaQO+f
+	 zNhuNSoX1KIkbjNB2+TZeSdul3XWEsSW2UhzglGYhl7Vx5o41BM0nbX/lp2ZtCZHBm
+	 y8b/HyycaiiTA==
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [PATCH] f2fs: allocate HOT_DATA for IPU writes
+Date: Wed, 27 Aug 2025 21:52:22 +0000
+Message-ID: <20250827215222.1615844-1-jaegeuk@kernel.org>
+X-Mailer: git-send-email 2.51.0.318.gd7df087d1a-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250819192200.2003074-2-david.kaplan@amd.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Aug 19, 2025 at 02:21:56PM -0500, David Kaplan wrote:
-> +++ b/arch/x86/kernel/cpu/bugs.c
-> @@ -1826,7 +1826,7 @@ enum spectre_v2_mitigation_cmd {
->  
->  static enum spectre_v2_mitigation_cmd spectre_v2_cmd __ro_after_init = SPECTRE_V2_CMD_AUTO;
->  
-> -enum spectre_v2_user_cmd {
-> +enum spectre_v2_user_mitigation_cmd {
->  	SPECTRE_V2_USER_CMD_NONE,
->  	SPECTRE_V2_USER_CMD_AUTO,
->  	SPECTRE_V2_USER_CMD_FORCE,
-> @@ -1836,6 +1836,9 @@ enum spectre_v2_user_cmd {
->  	SPECTRE_V2_USER_CMD_SECCOMP_IBPB,
->  };
->  
-> +static enum spectre_v2_user_mitigation_cmd spectre_v2_user_cmd __ro_after_init =
-> +	SPECTRE_V2_USER_CMD_AUTO;
+Let's split IPU writes in hot data area to improve the GC efficiency.
 
-Should this default not be dependent on CONFIG_MITIGATION_SPECTRE_V2?
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ fs/f2fs/segment.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-> -static enum spectre_v2_user_cmd __init spectre_v2_parse_user_cmdline(void)
-> +static int __init spectre_v2_parse_user_cmdline(char *str)
-
-Should probably swap "parse" and "user" to match the namespace of the
-surrounding code, i.e. spectre_v2_user_parse_cmdline().  This is for
-parsing the "spectre_v2_user" option after all.
-
->  {
-> -	char arg[20];
-> -	int ret, i;
-> +	if (!str)
-> +		return -EINVAL;
->  
->  	if (!IS_ENABLED(CONFIG_MITIGATION_SPECTRE_V2))
->  		return SPECTRE_V2_USER_CMD_NONE;
-
-This return value no longer makes sense here, as this no longer returns
-'enum spectre_v2_user_cmd'.
-
-But also, most of the other mitigations allow you to override the
-compile time default with the cmdline.  Might as well allow that here
-too for consistency.
-
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index e0f6589c6a1c..bb79dad55ac9 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -3688,7 +3688,8 @@ static int __get_segment_type_6(struct f2fs_io_info *fio)
+ 
+ 		if (file_is_hot(inode) ||
+ 				is_inode_flag_set(inode, FI_HOT_DATA) ||
+-				f2fs_is_cow_file(inode))
++				f2fs_is_cow_file(inode) ||
++				is_inode_flag_set(inode, FI_NEED_IPU))
+ 			return CURSEG_HOT_DATA;
+ 		return f2fs_rw_hint_to_seg_type(F2FS_I_SB(inode),
+ 						inode->i_write_hint);
 -- 
-Josh
+2.51.0.318.gd7df087d1a-goog
+
 
