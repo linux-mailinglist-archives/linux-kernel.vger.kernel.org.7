@@ -1,302 +1,138 @@
-Return-Path: <linux-kernel+bounces-788636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B098DB387A8
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 18:20:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E75CB387AC
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 18:22:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60EED1887F37
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 16:20:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7879B7A2AB0
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 16:20:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9115E26AA93;
-	Wed, 27 Aug 2025 16:19:45 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC98022F177;
-	Wed, 27 Aug 2025 16:19:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8177424467E;
+	Wed, 27 Aug 2025 16:22:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KGuHaasj"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C9CB21ADA4;
+	Wed, 27 Aug 2025 16:22:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756311585; cv=none; b=J2RQl40JTZyS15c+KqsPycuJKdyOkz/pd7VVHXs+TDu5Yljet/Vpsu1anQ7voAWNfpe0OL+oH+fSaXzU/9P1tS1NyDZgfhnpFuQAAD6E/zPXlG1Nf02rXkA+GbKUz4m+a+EBaeQslhuilx4dCXO7NJ2OrAMw/BY7dLObT1Soi8Y=
+	t=1756311725; cv=none; b=PlSxlVB9xfU+W1GuYISAFfMCHMvQ7+uaX77XzLgt2R7pofs/aSHfBWvwgUCgZKa9IdKKXFiFewuoRlYFRowRNRYYLzKNaKmdWVlrm/UM6K43P/uGSpJLcBwzrrR/ewbPDhCza8+jyHmZUiXy25UfvGL5+oVHBubW7lAKuUitvfQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756311585; c=relaxed/simple;
-	bh=xBM+loesgjbHRQ22XIXRGQwNrGCfWcfwc3CKKmZVUrk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=amDHtCCcwpNDFCUPd4i46YKIPDfg8xmfYuCLoSJNswr/7oC4/j7PfHAngsdok6cBSnkg2ySAEsmGg9ebmcMMx5c+L3OWtS1oeDakBGQoUtrGvHAA2sIPKrvIHvhp8lVkGdMLRx0aTS/9+l8V1RMEMJIzxHUeM0LfoJZOzfPX6ko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BE2E9152B;
-	Wed, 27 Aug 2025 09:19:33 -0700 (PDT)
-Received: from [10.1.196.46] (e134344.arm.com [10.1.196.46])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CEF773F738;
-	Wed, 27 Aug 2025 09:19:36 -0700 (PDT)
-Message-ID: <1c20a5b2-2afe-4084-9494-a994e1a275b7@arm.com>
-Date: Wed, 27 Aug 2025 17:19:35 +0100
+	s=arc-20240116; t=1756311725; c=relaxed/simple;
+	bh=jCxCe7NfFgfjNDubdChvfWyemaO1MU4Akx1GvD0fAs0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HE/SPlMxbk3qjqr+9kl/PfELEx7It1rgI6/N7bEeUpDkySQkwMwgTAA3R+dxSlimH3g2Z88RE5J7IP/WCh9W5IYwWPpcmAXX+4ps/zh0nMIXK8Nn8XtGMmDjjZdQTNFsODWEhTIzlA5J8f0AOabvXBvioQUkBnWowBlF8OQgSCg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KGuHaasj; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3cbe70a7923so1295632f8f.2;
+        Wed, 27 Aug 2025 09:22:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756311722; x=1756916522; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2D3AJk4D2c4vynhddacA8LBhopdWO4yfWWNEYOAts+o=;
+        b=KGuHaasjy751FjsmNLMdZU3Im4Zd/7xajWs5TdBEh3XJUptSGv3joA3i4cd3jWRLX9
+         5aB3VjiTFjKjsh071RZ3VtwOIIwSNSYPMgtpPY09Us+iMaFYNab/OJ0jpf8SqwT45QpQ
+         an0xE4fvo7LHTcoKRLssv/eDZmswlrbIyqkDe0sQN04f0XS8O/5/hR8D1/gtXYGVV/KT
+         xOAlh8kr+d+4SSE6ciXo0n2bHlCdqNK00ZAXki/eyjGom09cmrdIOi3jVJjTC58kIlTs
+         yZoih0fFyLiYboVrU6J07wqf9ib6V7v8ixAthedfRVZKCAmx3feabvOLt3mAAEV7MJFC
+         T0Pw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756311722; x=1756916522;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2D3AJk4D2c4vynhddacA8LBhopdWO4yfWWNEYOAts+o=;
+        b=RwtkuK6STsxg1+GQj5BQs0WFzRm+MsV+EHeJBvTsaMIbmLwXiWqjezZftkFZHd3R+C
+         lFfHVWdPaBuXe8OaOm2D7o0KMqX1wLrg4k+84RWlRe+HidqS5zl3D76ryVkzLVCIcmTz
+         sjXhWXvIu8CwzljJWuvtnffJJzGvn883Bj2y6nWD3k0PxxZBG/HYI3KQQTmo1VOCde+H
+         NtgZgqQAamtG+ql2dnrLGnunuy2kXrdLMEm01486m60RVNR/M7I1OLEjlzna5gc/Q3ff
+         OLc7JaCBjKJTR111IUBHOUh00llu0x4TTWa6iBl9UqEgsNnqPOmAXHdmQ/Lj8iZASrbN
+         RfUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVi1eSikhc9V7qbxreRa8jqSs+ellf1ufbnqls8mbZM0ZGvS5GhxAod+fPXIqMfpZhhGdGqIQ1wwfYMstH7@vger.kernel.org, AJvYcCWKbDr+ioj2Q80H12dQK+wtjYUNfNXMh5bnEoxCtb3/382zqn5kr+K2s8uEgkq3xMXHKTE=@vger.kernel.org, AJvYcCWPDfq5Te4AeSv4911MlPS+6y3iCBpEuRwUdiFWNcySueQ5Qf1WVafk+vVzlGz18+4LKz0dKQW1TP8iJr3k0zAZ1XOY@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1Lhs8/mqP77gBb+NghirVzwaC4npcaRYkWlLvftY23WAS4IZi
+	cofg80UNzJ2nGR9HlDONa8K0LQug1IEdxrSLaWO5fOSYnAshpqV9avYWj1cD1Ti93RJav00B9NH
+	8KJ68bBp5i55vvGcSAl8LZ8UM2baYPTw=
+X-Gm-Gg: ASbGncvUiX1RIDTTbEFaX17Y3zr5KiZ4owASdzNuo2EV/EgY8D+DDZ4T7F3H0w2RMiD
+	CgiJSos2gvqc8LubvIH3wrlM6d9OP6OhD+PpItP8mKIh15PCk2heU8ayrk9gJbJQLeB1jScBmA1
+	LLQlxB7xZLgOr/da0yUESI9qHupyIr683fHwPbax9Gg6mYhK2Fwd3+ofnd6Fyq53rmjFeYvfGKi
+	b3yFnAhiTZA49TXIJTs0ZFYWd55WZwISg==
+X-Google-Smtp-Source: AGHT+IFiweMNZe1Ue2jbWG+XrQZJD1Hhj87E+pj9VWnLFhG+6/ADwNhXG1QOFlSsoFq5TJR5UJpZyImKjFyDkhZ90UU=
+X-Received: by 2002:a5d:5d06:0:b0:3cb:6ce9:75f9 with SMTP id
+ ffacd0b85a97d-3cb6ce9788cmr6102232f8f.38.1756311721614; Wed, 27 Aug 2025
+ 09:22:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 19/33] arm_mpam: Reset MSC controls from cpu hp callbacks
-To: James Morse <james.morse@arm.com>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-acpi@vger.kernel.org,
- devicetree@vger.kernel.org
-Cc: shameerali.kolothum.thodi@huawei.com,
- D Scott Phillips OS <scott@os.amperecomputing.com>,
- carl@os.amperecomputing.com, lcherian@marvell.com,
- bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
- baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
- Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
- dfustini@baylibre.com, amitsinght@marvell.com,
- David Hildenbrand <david@redhat.com>, Rex Nie <rex.nie@jaguarmicro.com>,
- Dave Martin <dave.martin@arm.com>, Koba Ko <kobak@nvidia.com>,
- Shanker Donthineni <sdonthineni@nvidia.com>, fenghuay@nvidia.com,
- baisheng.gao@unisoc.com, Jonathan Cameron <jonathan.cameron@huawei.com>,
- Rob Herring <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
- Rafael Wysocki <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo
- <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
- Will Deacon <will@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Danilo Krummrich <dakr@kernel.org>
-References: <20250822153048.2287-1-james.morse@arm.com>
- <20250822153048.2287-20-james.morse@arm.com>
-From: Ben Horgan <ben.horgan@arm.com>
-Content-Language: en-US
-In-Reply-To: <20250822153048.2287-20-james.morse@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250827123814.60217-1-dongml2@chinatelecom.cn>
+In-Reply-To: <20250827123814.60217-1-dongml2@chinatelecom.cn>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Wed, 27 Aug 2025 09:21:49 -0700
+X-Gm-Features: Ac12FXw1kFNZOu-9q7VTAHMguHUr8GQYIcnv17oOnH_FM8KnK8-h2dDeHlH0dXY
+Message-ID: <CAADnVQLBwjVhKFptO1_CEC9q1ugT1Cy2SiG5XgtD+kr7BTrr_A@mail.gmail.com>
+Subject: Re: [PATCH bpf-next] bpf: remove unnecessary rcu_read_lock in kprobe_multi_link_prog_run
+To: Menglong Dong <menglong8.dong@gmail.com>
+Cc: Jiri Olsa <jolsa@kernel.org>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Eduard <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Matt Bobrowski <mattbobrowski@google.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	linux-trace-kernel <linux-trace-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi James,
+On Wed, Aug 27, 2025 at 5:38=E2=80=AFAM Menglong Dong <menglong8.dong@gmail=
+.com> wrote:
+>
+> Preemption is disabled in ftrace graph, which indicate rcu_read_lock. So
+> the rcu_read_lock is not needed in fprobe_entry(), and it is not needed
+> in kprobe_multi_link_prog_run() neither.
 
-On 8/22/25 16:30, James Morse wrote:
-> When a CPU comes online, it may bring a newly accessible MSC with
-> it. Only the default partid has its value reset by hardware, and
-> even then the MSC might not have been reset since its config was
-> previously dirtyied. e.g. Kexec.
-> 
-> Any in-use partid must have its configuration restored, or reset.
-> In-use partids may be held in caches and evicted later.
-> 
-> MSC are also reset when CPUs are taken offline to cover cases where
-> firmware doesn't reset the MSC over reboot using UEFI, or kexec
-> where there is no firmware involvement.
-> 
-> If the configuration for a RIS has not been touched since it was
-> brought online, it does not need resetting again.
-> 
-> To reset, write the maximum values for all discovered controls.
-> 
-> CC: Rohit Mathew <Rohit.Mathew@arm.com>
-> Signed-off-by: James Morse <james.morse@arm.com>
+kprobe_busy_begin() doing preempt_disable() is an implementation
+detail that might change.
+Having explicit rcu_read_lock() doesn't hurt.
+It's a nop anyway in PREEMPT_NONE.
+
+pw-bot: cr
+
+> Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
 > ---
-> Changes since RFC:
->  * Last bitmap write will always be non-zero.
->   * Dropped READ_ONCE() - teh value can no longer change.
-> ---
->  drivers/resctrl/mpam_devices.c  | 121 ++++++++++++++++++++++++++++++++
->  drivers/resctrl/mpam_internal.h |   8 +++
->  2 files changed, 129 insertions(+)
-> 
-> diff --git a/drivers/resctrl/mpam_devices.c b/drivers/resctrl/mpam_devices.c
-> index bb62de6d3847..c1f01dd748ad 100644
-> --- a/drivers/resctrl/mpam_devices.c
-> +++ b/drivers/resctrl/mpam_devices.c
-> @@ -7,6 +7,7 @@
->  #include <linux/atomic.h>
->  #include <linux/arm_mpam.h>
->  #include <linux/bitfield.h>
-> +#include <linux/bitmap.h>
->  #include <linux/cacheinfo.h>
->  #include <linux/cpu.h>
->  #include <linux/cpumask.h>
-> @@ -849,8 +850,115 @@ static int mpam_msc_hw_probe(struct mpam_msc *msc)
->  	return 0;
->  }
->  
-> +static void mpam_reset_msc_bitmap(struct mpam_msc *msc, u16 reg, u16 wd)
-> +{
-> +	u32 num_words, msb;
-> +	u32 bm = ~0;
-> +	int i;
-> +
-> +	lockdep_assert_held(&msc->part_sel_lock);
-> +
-> +	if (wd == 0)
-> +		return;
-> +
-> +	/*
-> +	 * Write all ~0 to all but the last 32bit-word, which may
-> +	 * have fewer bits...
-> +	 */
-> +	num_words = DIV_ROUND_UP(wd, 32);
-> +	for (i = 0; i < num_words - 1; i++, reg += sizeof(bm))
-> +		__mpam_write_reg(msc, reg, bm);
-> +
-> +	/*
-> +	 * ....and then the last (maybe) partial 32bit word. When wd is a
-> +	 * multiple of 32, msb should be 31 to write a full 32bit word.
-> +	 */
-> +	msb = (wd - 1) % 32;
-> +	bm = GENMASK(msb, 0);
-> +	__mpam_write_reg(msc, reg, bm);
-> +}
-> +
-> +static void mpam_reset_ris_partid(struct mpam_msc_ris *ris, u16 partid)
-> +{
-> +	u16 bwa_fract = MPAMCFG_MBW_MAX_MAX;
-> +	struct mpam_msc *msc = ris->vmsc->msc;
-> +	struct mpam_props *rprops = &ris->props;
-> +
-> +	mpam_assert_srcu_read_lock_held();
-> +
-> +	mutex_lock(&msc->part_sel_lock);
-> +	__mpam_part_sel(ris->ris_idx, partid, msc);
-> +
-> +	if (mpam_has_feature(mpam_feat_cpor_part, rprops))
-> +		mpam_reset_msc_bitmap(msc, MPAMCFG_CPBM, rprops->cpbm_wd);
-> +
-> +	if (mpam_has_feature(mpam_feat_mbw_part, rprops))
-> +		mpam_reset_msc_bitmap(msc, MPAMCFG_MBW_PBM, rprops->mbw_pbm_bits);
-> +
-> +	if (mpam_has_feature(mpam_feat_mbw_min, rprops))
-> +		mpam_write_partsel_reg(msc, MBW_MIN, 0);
-> +
-> +	if (mpam_has_feature(mpam_feat_mbw_max, rprops))
-> +		mpam_write_partsel_reg(msc, MBW_MAX, bwa_fract);
-MPAMCFG_MBW_MAX_MAX can be used directly instead of bwa_fract.
-> +
-> +	if (mpam_has_feature(mpam_feat_mbw_prop, rprops))
-> +		mpam_write_partsel_reg(msc, MBW_PROP, bwa_fract);
-Shouldn't this reset to 0? STRIDEM1 is a cost.
-> +	mutex_unlock(&msc->part_sel_lock);
-> +}
-> +
-> +static void mpam_reset_ris(struct mpam_msc_ris *ris)
-> +{
-> +	u16 partid, partid_max;
-> +
-> +	mpam_assert_srcu_read_lock_held();
-> +
-> +	if (ris->in_reset_state)
-> +		return;
-> +
-> +	spin_lock(&partid_max_lock);
-> +	partid_max = mpam_partid_max;
-> +	spin_unlock(&partid_max_lock);
-> +	for (partid = 0; partid < partid_max; partid++)
-> +		mpam_reset_ris_partid(ris, partid);
-> +}
-> +
-> +static void mpam_reset_msc(struct mpam_msc *msc, bool online)
-> +{
-> +	int idx;
-> +	struct mpam_msc_ris *ris;
-> +
-> +	mpam_assert_srcu_read_lock_held();
-> +
-> +	mpam_mon_sel_outer_lock(msc);
-> +	idx = srcu_read_lock(&mpam_srcu);
-> +	list_for_each_entry_srcu(ris, &msc->ris, msc_list, srcu_read_lock_held(&mpam_srcu)) {
-> +		mpam_reset_ris(ris);
-> +
-> +		/*
-> +		 * Set in_reset_state when coming online. The reset state
-> +		 * for non-zero partid may be lost while the CPUs are offline.
-> +		 */
-> +		ris->in_reset_state = online;
-> +	}
-> +	srcu_read_unlock(&mpam_srcu, idx);
-> +	mpam_mon_sel_outer_unlock(msc);
-> +}
-> +
->  static int mpam_cpu_online(unsigned int cpu)
->  {
-> +	int idx;
-> +	struct mpam_msc *msc;
-> +
-> +	idx = srcu_read_lock(&mpam_srcu);
-> +	list_for_each_entry_srcu(msc, &mpam_all_msc, glbl_list, srcu_read_lock_held(&mpam_srcu)) {
-> +		if (!cpumask_test_cpu(cpu, &msc->accessibility))
-> +			continue;
-> +
-> +		if (atomic_fetch_inc(&msc->online_refs) == 0)
-> +			mpam_reset_msc(msc, true);
-> +	}
-> +	srcu_read_unlock(&mpam_srcu, idx);
-> +
->  	return 0;
->  }
->  
-> @@ -886,6 +994,19 @@ static int mpam_discovery_cpu_online(unsigned int cpu)
->  
->  static int mpam_cpu_offline(unsigned int cpu)
->  {
-> +	int idx;
-> +	struct mpam_msc *msc;
-> +
-> +	idx = srcu_read_lock(&mpam_srcu);
-> +	list_for_each_entry_srcu(msc, &mpam_all_msc, glbl_list, srcu_read_lock_held(&mpam_srcu)) {
-> +		if (!cpumask_test_cpu(cpu, &msc->accessibility))
-> +			continue;
-> +
-> +		if (atomic_dec_and_test(&msc->online_refs))
-> +			mpam_reset_msc(msc, false);
-> +	}
-> +	srcu_read_unlock(&mpam_srcu, idx);
-> +
->  	return 0;
->  }
->  
-> diff --git a/drivers/resctrl/mpam_internal.h b/drivers/resctrl/mpam_internal.h
-> index a2b0ff411138..466d670a01eb 100644
-> --- a/drivers/resctrl/mpam_internal.h
-> +++ b/drivers/resctrl/mpam_internal.h
-> @@ -5,6 +5,7 @@
->  #define MPAM_INTERNAL_H
->  
->  #include <linux/arm_mpam.h>
-> +#include <linux/atomic.h>
->  #include <linux/cpumask.h>
->  #include <linux/io.h>
->  #include <linux/llist.h>
-> @@ -43,6 +44,7 @@ struct mpam_msc {
->  	struct pcc_mbox_chan	*pcc_chan;
->  	u32			nrdy_usec;
->  	cpumask_t		accessibility;
-> +	atomic_t		online_refs;
->  
->  	/*
->  	 * probe_lock is only take during discovery. After discovery these
-> @@ -248,6 +250,7 @@ struct mpam_msc_ris {
->  	u8			ris_idx;
->  	u64			idr;
->  	struct mpam_props	props;
-> +	bool			in_reset_state;
->  
->  	cpumask_t		affinity;
->  
-> @@ -267,6 +270,11 @@ struct mpam_msc_ris {
->  extern struct srcu_struct mpam_srcu;
->  extern struct list_head mpam_classes;
->  
-> +static inline void mpam_assert_srcu_read_lock_held(void)
-> +{
-> +	WARN_ON_ONCE(!srcu_read_lock_held((&mpam_srcu)));
-> +}
-> +
->  /* System wide partid/pmg values */
->  extern u16 mpam_partid_max;
->  extern u8 mpam_pmg_max;
-
-Thanks,
-
-Ben
-
+>  kernel/trace/bpf_trace.c | 2 --
+>  1 file changed, 2 deletions(-)
+>
+> diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
+> index 606007c387c5..0e79fa84a634 100644
+> --- a/kernel/trace/bpf_trace.c
+> +++ b/kernel/trace/bpf_trace.c
+> @@ -2741,12 +2741,10 @@ kprobe_multi_link_prog_run(struct bpf_kprobe_mult=
+i_link *link,
+>                 goto out;
+>         }
+>
+> -       rcu_read_lock();
+>         regs =3D ftrace_partial_regs(fregs, bpf_kprobe_multi_pt_regs_ptr(=
+));
+>         old_run_ctx =3D bpf_set_run_ctx(&run_ctx.session_ctx.run_ctx);
+>         err =3D bpf_prog_run(link->link.prog, regs);
+>         bpf_reset_run_ctx(old_run_ctx);
+> -       rcu_read_unlock();
+>
+>   out:
+>         __this_cpu_dec(bpf_prog_active);
+> --
+> 2.51.0
+>
 
