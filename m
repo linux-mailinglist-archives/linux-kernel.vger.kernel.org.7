@@ -1,109 +1,82 @@
-Return-Path: <linux-kernel+bounces-788623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FEFAB3876D
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 18:09:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BFD8B38771
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 18:09:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 009CC1B25C26
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 16:09:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 19CEC17E846
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 16:09:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 347DD34A305;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C95B352089;
+	Wed, 27 Aug 2025 16:09:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gpd2/hr/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F11A34AAE3;
 	Wed, 27 Aug 2025 16:09:14 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC262343D9B;
-	Wed, 27 Aug 2025 16:09:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756310953; cv=none; b=O5Rgu/sKOn7IRjJlReeD/Pfpv7VkVA9KvXq+10QdTfNrDt7voy16hxryurky7jv0KYlmhZpejhei0jmFUqt6v+KpgsUduv0mPatLRRc/GiYQE6BkTIaKx98IlbY30nSo8K90xCbl8HYzVyMC5bXHOSpsnpY+eunK2YF634xIQXY=
+	t=1756310954; cv=none; b=nQ1ZNuBVg0qGWxo176C+1iQaUBKGMyMra4V5R9hjaRjZskPj7zOFVllaEgSFjQ8IH0cDVFAwLO/6oq3R4FWwZ38sRnq3RKuXZ+CMh4Jh9Gl7Gftv3eKoEGdqX60nojv3tRoSla7G9/OQSHDR7WpE++UhMV/S+CyKT46iJe7piyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756310953; c=relaxed/simple;
-	bh=2FIZ5aJCiTKj3kPm7g09Z5KJppD3cqCl82AjidiHnlo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=t7VZ5mVDdejDuvaApTneYRJV0hh6sNuPZIgIDl8L/NWbgRUeMePFDfTW3S0z6Wc6wDjvQ8cxyznE6UjqI5HJ0kqb751Rijw41PVirM9MAQdZFcMJdEokTwnHVsxMLvTXVzujAFQ3OqhrryXjRTbFEPnBr0RCqO9ePsc0kN/VK4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C752B2720;
-	Wed, 27 Aug 2025 09:09:02 -0700 (PDT)
-Received: from [172.31.18.237] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9CF663F738;
-	Wed, 27 Aug 2025 09:09:05 -0700 (PDT)
-Message-ID: <b9212134-0efa-422d-8cbf-4761e39ce8d6@arm.com>
-Date: Wed, 27 Aug 2025 18:09:03 +0200
+	s=arc-20240116; t=1756310954; c=relaxed/simple;
+	bh=gedjhTojdtO0Y60ESbJpUNxPxI1ipaR3giWJlyGTs18=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sduIW7CV4Ybav3cJfv8KhmBwjJTYOPVrbzrV/F9po0by9KNDpcJQOenbs9MJWyWvsUHPmt5RYQOlv7ClrZmLItSJnwYvTdI2QlgUOmZSHYgDhu8sWURm3YT/Hh1M5mVBXIiw3VA1aRLYXSn4j45eGqkYBLen8EyZ3n67zxic6u8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gpd2/hr/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB4B0C4CEF0;
+	Wed, 27 Aug 2025 16:09:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756310954;
+	bh=gedjhTojdtO0Y60ESbJpUNxPxI1ipaR3giWJlyGTs18=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gpd2/hr/NuRLMxyGlrswKwdMJMg2QgSf2a5zyxSOD08Vgwx6U1PrFRaR2E7kygq6w
+	 I4OmXymHvwPBttuwzCBOHLlbwRRsO2x1ogJqD4roO8ennCR8XNDTJGGx2l8Srf4sOx
+	 o6jp3pb/4PDvBAJeDyhrFnNOHDneRo8OFZl0v5nOKV5VkaMrBM6qv3tqGnrAdA9vQf
+	 3uu/3/CFPlqTXcVAStdrXwnnWnsNMUhb0d19vCaiMsy0PFkRcE8nO+ThOVnXPvp/MA
+	 qFjHG1RWtyqkDPIGqCe6/9ldtJjblxby8LHMOpbg4AwgVfQoKlMAOotuD0lGUnZXo0
+	 7TfonItpCEjlg==
+Date: Wed, 27 Aug 2025 06:09:12 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>
+Cc: cgroups@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Sebastian Chlad <sebastian.chlad@suse.com>,
+	Johannes Weiner <hannes@cmpxchg.org>, Shuah Khan <shuah@kernel.org>
+Subject: Re: [PATCH] selftests: cgroup: Make test_pids backwards compatible
+Message-ID: <aK8tqDoouuFmaYb7@slm.duckdns.org>
+References: <20250827155301.174365-1-mkoutny@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v5 00/18] pkeys-based page table hardening
-To: Yang Shi <yang@os.amperecomputing.com>, linux-hardening@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
- Andy Lutomirski <luto@kernel.org>, Catalin Marinas
- <catalin.marinas@arm.com>, Dave Hansen <dave.hansen@linux.intel.com>,
- David Hildenbrand <david@redhat.com>, Ira Weiny <ira.weiny@intel.com>,
- Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@chromium.org>,
- Joey Gouly <joey.gouly@arm.com>, Kees Cook <kees@kernel.org>,
- Linus Walleij <linus.walleij@linaro.org>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Marc Zyngier <maz@kernel.org>,
- Mark Brown <broonie@kernel.org>, Matthew Wilcox <willy@infradead.org>,
- Maxwell Bland <mbland@motorola.com>, "Mike Rapoport (IBM)"
- <rppt@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
- Pierre Langlois <pierre.langlois@arm.com>,
- Quentin Perret <qperret@google.com>,
- Rick Edgecombe <rick.p.edgecombe@intel.com>,
- Ryan Roberts <ryan.roberts@arm.com>, Thomas Gleixner <tglx@linutronix.de>,
- Vlastimil Babka <vbabka@suse.cz>, Will Deacon <will@kernel.org>,
- linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org, x86@kernel.org
-References: <20250815085512.2182322-1-kevin.brodsky@arm.com>
- <98c9689f-157b-4fbb-b1b4-15e5a68e2d32@os.amperecomputing.com>
- <8e4e5648-9b70-4257-92c5-14c60928e240@arm.com>
- <939ac25a-096f-46b3-90c1-d8cd6a9e445e@os.amperecomputing.com>
-Content-Language: en-GB
-From: Kevin Brodsky <kevin.brodsky@arm.com>
-In-Reply-To: <939ac25a-096f-46b3-90c1-d8cd6a9e445e@os.amperecomputing.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250827155301.174365-1-mkoutny@suse.com>
 
-On 26/08/2025 21:18, Yang Shi wrote:
->>
->>>> from a contiguous cache of pages could help minimise the overhead, as
->>>> proposed for x86 in [1].
->>> I'm a little bit confused about how this can work. The contiguous
->>> cache of pages should be some large page, for example, 2M. But the
->>> page table pages allocated from the cache may have different
->>> permissions if I understand correctly. The default permission is RO,
->>> but some of them may become R/W at sometime, for example, when calling
->>> set_pte_at(). You still need to split the linear mapping, right?
->> When such a helper is called, *all* PTPs become writeable - there is no
->> per-PTP permission switching.
->
-> OK, so all PTPs in the same contiguous cache will become writeable
-> even though the helper (i.e. set_pte_at()) is just called on one of
-> the PTPs.Â  But doesn't it compromise the page table hardening somehow?
-> The PTPs from the same cache may belong to different processes.Â 
+On Wed, Aug 27, 2025 at 05:53:00PM +0200, Michal Koutný wrote:
+> The predicates in test expect event counting from 73e75e6fc352b
+> ("cgroup/pids: Separate semantics of pids.events related to pids.max")
+> and the test would fail on older kernels. We want to have one version of
+> tests for all, so detect the feature and skip the test on old kernels.
+> (The test could even switch to check v1 semantics based on the flag but
+> keep it simple for now.)
+> 
+> Fixes: 9f34c566027b6 ("selftests: cgroup: Add basic tests for pids controller")
+> Signed-off-by: Michal Koutný <mkoutny@suse.com>
+> Tested-by: Sebastian Chlad <sebastian.chlad@suse.com>
 
-First just a note that this is true regardless of how the PTPs are
-allocated (i.e. this is already the case in this version of the series).
+Applied to cgroup/for-6.18.
 
-Either way, yes you are right, this approach does not introduce any
-isolation *between* page tables - pgtable helpers are able to write to
-all page tables. In principle it should be possible to use a different
-pkey for kernel and user page tables, but that would make the kpkeys
-level switching in helpers quite a bit more complicated. Isolating
-further is impractical as we have so few pkeys (just 8 on arm64).
+Thanks.
 
-That said, what kpkeys really tries to protect against is the direct
-corruption of critical data by arbitrary (unprivileged) code. If the
-attacker is able to manipulate calls to set_pte() and the likes, kpkeys
-cannot provide much protection - even if we restricted the writes to a
-specific set of page tables, the attacker would still be able to insert
-a translation to any arbitrary physical page.
-
-- Kevin
+-- 
+tejun
 
