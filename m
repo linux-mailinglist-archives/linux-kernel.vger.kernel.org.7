@@ -1,223 +1,146 @@
-Return-Path: <linux-kernel+bounces-788007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DEFBB37EB8
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 11:23:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B7EBB37EBD
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 11:23:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9BD45E8482
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 09:23:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8172B1BA0F25
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 09:24:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FBCC343213;
-	Wed, 27 Aug 2025 09:23:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D0DE278768;
+	Wed, 27 Aug 2025 09:23:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YiOx7qa7"
-Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="CtKt5Wix";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="nyEMOc+w"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14B7A269811
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 09:23:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 343D232C30F;
+	Wed, 27 Aug 2025 09:23:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756286593; cv=none; b=rNVdLlmi6r/Zng0wlPmiKh05mI1Dy0WRpW+1rW3s1NxxSJrgT7tlEOIga45EB+fn40kg4Jk6qzx+OFhWj3comBXFHwrc4btD23PhTqMsQJHslh6XIK8+vdR7uu/TmN2139ZzAyA+X5H0pTM6/zZQMQcJSvJ0hgEtWo6Tafm6pKk=
+	t=1756286623; cv=none; b=nkhexHVqbGcw9rOfgalJchDexyX9uVvsLdTzvfduPRWoNayAXINGpN42hcK2kVW570Wg/faB8hGw5WVijURHJtjQHHZOQynlObGRf86keZl49oyMNxgUUANA24ctrLzrsVvMP1AjDxozKWsAB+bV/fEatqDN5Vg1zlcHTz0z4IA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756286593; c=relaxed/simple;
-	bh=bwgOcihveHo1IHnUEhXEtpdi3wHT9QoUfXh1TGK/7DY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Rlgc6aB1+bFvIg85SBEwcAqFBZfqgFxX/X/1aAbJZaxTRMb2jeV+XmPmVPGOz6FAPibotL3T+nnxihY3ELSJK8r9CtDFPfbZFky/Eg/ja/zwE9cxdZ2k+paj32/ZEOY5r4FUIj3Z+pJS8pfoG+CRkeo95noEBof4XoQSInx+ki8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YiOx7qa7; arc=none smtp.client-ip=209.85.219.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-70d9b07e163so13146296d6.2
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 02:23:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756286591; x=1756891391; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Gy53dfjoHVrP8RNMRiWCawaGbeGl47u9vCoywHsRB4o=;
-        b=YiOx7qa7NIDNnXaGBwXU9ndbbZZMeX4Tq9JNZJcIL38ByMYXjRUPuMY9DU+WzG9JCo
-         3Ljvulxndx7rfdQkxWIjoFmFuBaEXEl0LdP+2yiUTNKIrmTFBsVXHSAE1flfVLkVoD1r
-         T9RFhF4OccpPJEUFn3ei7ubNxyKTq4t3tLeEfQxMlmNkuDJZ2hwrt/5M9ut+pgyiigfG
-         iQszXkjMPQcGJqnkWiqdLTDvNR8/MeZIUlxFzW+MS8yaXtQOJLP1+E6bHv3nSfsSXJd5
-         qQNsaQuxip5W6YfZ625sWj7ljyooWAJ8y1rzW/VdNGgBwf30bfYW+ClDdIzgYUg716Zg
-         UJbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756286591; x=1756891391;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Gy53dfjoHVrP8RNMRiWCawaGbeGl47u9vCoywHsRB4o=;
-        b=SnRiGNxeeWZn/0KZYRM+EDaIKoB+doNlsdkM2TP7dfnDqNJNqOycN9KOmR/yzUGMz1
-         CKQx8+qlbhEWAN86Go/Lb1o21cwxs/IabEXxvSXqC/CKGYNZZF9DZxIYVfEVTkGTKM1w
-         a5M5mPsaqMDl33U92oNnB8rlyI/DyrYOTS5/uShowaOkKrYFl3qTc1dZ1M2Ar7nszuMe
-         IWQ4SSKLXJFCWMotMheH+mo6QkoUac5Og+v8h7oJTg3qoByMeYKGdBUNkNWVYPSN89FR
-         u7P8TWaF73UA3HvgeqZTbFJHgkscKVmV4eFCywVJOJRiQnlI6gjHjf3CxsOousN8A90F
-         y7tQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU7EeL5SlpEY3PLFek3KkmK42jqVY8eYrvnlZ4TcQDcpMSsV2ToCEvBCK/ViauMy+EJEKc7wZpt3sQntQI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6NPqfELNcf8afIwJfiqCIuVarOgBsq/GvyLAaI3pvrjW039Jq
-	3INRTf/KlLxOCzeyJRYrlCdzo2hwrfDXPfvQ0rXIDGxRz+onzZZThXFLCgXc8ZJPszSe0o9rSq9
-	4Sc5PA056LSdz24iYDK3srvFu9kp8e5uKc5UphJwg/Q==
-X-Gm-Gg: ASbGncvrzv46L2jUWoQ1yQPWZogFEJ685VOwluegqTBjQI+QksT/nth+HCqNhlgYHfG
-	YQMbkACFcoeqYipV+JIciYfP9xnaL8UXB14wSsZlrM6DSNRDPbj+Z8VnNSUk9RsZWJH5BNGZZsy
-	3yvhbnbt6pK/Lcx9EOJTLMR6ChKWr13oszdOL5AnUHAudLCm96yttmeYl7ZAuX7tYfrtE04TwRN
-	h+QosoUYYBMz2+t
-X-Google-Smtp-Source: AGHT+IEfOA450mJxRrc99VUf+eR6gCbzMwJPgmzNiqytpGVEC9y17SY44iovOMWF7glIDdN/1KXkJR5caySfB5IZEx0=
-X-Received: by 2002:a0c:e34c:0:b0:70d:e501:1f90 with SMTP id
- 6a1803df08f44-70de5012309mr4016716d6.6.1756286590954; Wed, 27 Aug 2025
- 02:23:10 -0700 (PDT)
+	s=arc-20240116; t=1756286623; c=relaxed/simple;
+	bh=af9wBVNiT+vTt3mdCy5BmdX+mx3ECi96HTztlfWKrlk=;
+	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=a8T56KFX1WCmx4toJzTwoosWdAFPTdP4o0UBjXD2bH1FWewNzXlzbyUATlF85VokwuEs3AWizmfYZxQsVYrkUy2AlErv0bKPb85MIpoBnOvaN4l/VjvdbLZXVlAuIXszyqd6VEeNHAF2JI1x+QESZ4sZ/DTaSrFuFnZATm4MbkM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=CtKt5Wix; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=nyEMOc+w; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 27 Aug 2025 09:23:34 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1756286619;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=HsnapUtUIhE8VfoS7U/LyM1dPlMdcpJ0go6jJo/yzIo=;
+	b=CtKt5WixCE/9aderZWL527eJ/EkR6SypqwVhzL01GbNf5kmWwOFYUK88kfsSHEqnSzSkQN
+	yinL6nMGBZJoXzSCcDI5uY3HAXIhDF+0sDF8tudpNdJFl3pYA84Zg7d6nI5zTAe/i5brra
+	Q7JGWr+w7Y81HpzbSjbIT+qNlD6HW0WaWidMKFNrs/hkgr+EGvY7BEm+uQHSR6ZVY5obvE
+	N+wbbKIVEoUnWaU+S81xtqCy+j5IE3yDh0pB+na9MxFAqwVBJ9slqg/KnNjYKd8DyFGAui
+	lBxOixpmrEDI6auTxC7NswJrj/68ZAHDsbZkh+NfEbnBNCcUZ2CZ8RU33rXlOg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1756286619;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=HsnapUtUIhE8VfoS7U/LyM1dPlMdcpJ0go6jJo/yzIo=;
+	b=nyEMOc+wCn78Lrtl7MY2Vz24GzIJZCst8hjJWbLdxOuIMtAVtrtZGaqomUzuGM4iomU3Ev
+	Yd5UjurLz6AzTMAA==
+From: "tip-bot2 for Borislav Petkov (AMD)" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject:
+ [tip: x86/urgent] x86/microcode/AMD: Handle the case of no BIOS microcode
+Cc: vit.vavra.kh@gmail.com, "Borislav Petkov (AMD)" <bp@alien8.de>,
+  <stable@kernel.org>, x86@kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250826110946.507083938@linuxfoundation.org>
-In-Reply-To: <20250826110946.507083938@linuxfoundation.org>
-From: Anders Roxell <anders.roxell@linaro.org>
-Date: Wed, 27 Aug 2025 11:22:59 +0200
-X-Gm-Features: Ac12FXw6Z8mjq6c5HZ8ZGdhYEx3nZq7WNG2ZP8naHTGP5anPZsnrFM6a1FWSUIY
-Message-ID: <CADYN=9JKN_r=wHa_OPCENT3zW2AFe0ana8dP88fowgjh4-NqqQ@mail.gmail.com>
-Subject: Re: [PATCH 5.15 000/644] 5.15.190-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
-	broonie@kernel.org, achill@achill.org
-Content-Type: text/plain; charset="UTF-8"
+Message-ID: <175628661509.1920.11512044580147254115.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 26 Aug 2025 at 13:13, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 5.15.190 release.
-> There are 644 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Thu, 28 Aug 2025 11:08:21 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.190-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+The following commit has been merged into the x86/urgent branch of tip:
 
-Results from Linaro's test farm.
-No regressions on arm64, arm, x86_64, and i386.
+Commit-ID:     fcf8239ad6a5de54fa7ce18e464c6b5951b982cb
+Gitweb:        https://git.kernel.org/tip/fcf8239ad6a5de54fa7ce18e464c6b5951b=
+982cb
+Author:        Borislav Petkov (AMD) <bp@alien8.de>
+AuthorDate:    Wed, 20 Aug 2025 11:58:57 +02:00
+Committer:     Borislav Petkov (AMD) <bp@alien8.de>
+CommitterDate: Wed, 27 Aug 2025 10:24:10 +02:00
 
-Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+x86/microcode/AMD: Handle the case of no BIOS microcode
 
+Machines can be shipped without any microcode in the BIOS. Which means,
+the microcode patch revision is 0.
 
-## Build
-* kernel: 5.15.190-rc1
-* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-* git commit: e09f9302f92d6e366e40ce66054adc57d2bada85
-* git describe: v5.15.189-645-ge09f9302f92d
-* test details:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-5.15.y/build/v5.15.189-645-ge09f9302f92d
+Handle that gracefully.
 
-## Test Regressions (compared to v5.15.187-81-gd21affcc10e6)
+Fixes: 94838d230a6c ("x86/microcode/AMD: Use the family,model,stepping encode=
+d in the patch ID")
+Reported-by: V=C3=ADtek V=C3=A1vra <vit.vavra.kh@gmail.com>
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+Cc: <stable@kernel.org>
+---
+ arch/x86/kernel/cpu/microcode/amd.c | 22 ++++++++++++++++++++--
+ 1 file changed, 20 insertions(+), 2 deletions(-)
 
-## Metric Regressions (compared to v5.15.187-81-gd21affcc10e6)
-
-## Test Fixes (compared to v5.15.187-81-gd21affcc10e6)
-
-## Metric Fixes (compared to v5.15.187-81-gd21affcc10e6)
-
-## Test result summary
-total: 52799, pass: 43384, fail: 2145, skip: 6975, xfail: 295
-
-## Build Summary
-* arc: 5 total, 5 passed, 0 failed
-* arm: 101 total, 101 passed, 0 failed
-* arm64: 28 total, 28 passed, 0 failed
-* i386: 18 total, 18 passed, 0 failed
-* mips: 22 total, 22 passed, 0 failed
-* parisc: 3 total, 3 passed, 0 failed
-* powerpc: 22 total, 22 passed, 0 failed
-* riscv: 8 total, 8 passed, 0 failed
-* s390: 9 total, 9 passed, 0 failed
-* sh: 10 total, 10 passed, 0 failed
-* sparc: 6 total, 6 passed, 0 failed
-* x86_64: 24 total, 24 passed, 0 failed
-
-## Test suites summary
-* boot
-* kselftest-arm64
-* kselftest-breakpoints
-* kselftest-capabilities
-* kselftest-clone3
-* kselftest-core
-* kselftest-cpu-hotplug
-* kselftest-exec
-* kselftest-fpu
-* kselftest-futex
-* kselftest-intel_pstate
-* kselftest-kcmp
-* kselftest-livepatch
-* kselftest-membarrier
-* kselftest-mincore
-* kselftest-mm
-* kselftest-mqueue
-* kselftest-net
-* kselftest-net-mptcp
-* kselftest-openat2
-* kselftest-ptrace
-* kselftest-rseq
-* kselftest-rtc
-* kselftest-seccomp
-* kselftest-sigaltstack
-* kselftest-size
-* kselftest-tc-testing
-* kselftest-timers
-* kselftest-tmpfs
-* kselftest-tpm2
-* kselftest-user_events
-* kselftest-vDSO
-* kselftest-x86
-* kunit
-* kvm-unit-tests
-* lava
-* libgpiod
-* libhugetlbfs
-* log-parser-boot
-* log-parser-build-clang
-* log-parser-build-gcc
-* log-parser-test
-* ltp-capability
-* ltp-commands
-* ltp-containers
-* ltp-controllers
-* ltp-cpuhotplug
-* ltp-crypto
-* ltp-cve
-* ltp-dio
-* ltp-fcntl-locktests
-* ltp-fs
-* ltp-fs_bind
-* ltp-fs_perms_simple
-* ltp-hugetlb
-* ltp-math
-* ltp-mm
-* ltp-nptl
-* ltp-pty
-* ltp-sched
-* ltp-smoke
-* ltp-syscalls
-* ltp-tracing
-* perf
-* rcutorture
-
---
-Linaro LKFT
-https://lkft.linaro.org
+diff --git a/arch/x86/kernel/cpu/microcode/amd.c b/arch/x86/kernel/cpu/microc=
+ode/amd.c
+index 097e393..514f633 100644
+--- a/arch/x86/kernel/cpu/microcode/amd.c
++++ b/arch/x86/kernel/cpu/microcode/amd.c
+@@ -171,8 +171,28 @@ static int cmp_id(const void *key, const void *elem)
+ 		return 1;
+ }
+=20
++static u32 cpuid_to_ucode_rev(unsigned int val)
++{
++	union zen_patch_rev p =3D {};
++	union cpuid_1_eax c;
++
++	c.full =3D val;
++
++	p.stepping  =3D c.stepping;
++	p.model     =3D c.model;
++	p.ext_model =3D c.ext_model;
++	p.ext_fam   =3D c.ext_fam;
++
++	return p.ucode_rev;
++}
++
+ static bool need_sha_check(u32 cur_rev)
+ {
++	if (!cur_rev) {
++		cur_rev =3D cpuid_to_ucode_rev(bsp_cpuid_1_eax);
++		pr_info_once("No current revision, generating the lowest one: 0x%x\n", cur=
+_rev);
++	}
++
+ 	switch (cur_rev >> 8) {
+ 	case 0x80012: return cur_rev <=3D 0x800126f; break;
+ 	case 0x80082: return cur_rev <=3D 0x800820f; break;
+@@ -749,8 +769,6 @@ static struct ucode_patch *cache_find_patch(struct ucode_=
+cpu_info *uci, u16 equi
+ 	n.equiv_cpu =3D equiv_cpu;
+ 	n.patch_id  =3D uci->cpu_sig.rev;
+=20
+-	WARN_ON_ONCE(!n.patch_id);
+-
+ 	list_for_each_entry(p, &microcode_cache, plist)
+ 		if (patch_cpus_equivalent(p, &n, false))
+ 			return p;
 
