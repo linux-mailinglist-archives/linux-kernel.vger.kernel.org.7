@@ -1,151 +1,226 @@
-Return-Path: <linux-kernel+bounces-787712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D72B5B37A1C
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 08:02:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EC62B37A1F
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 08:04:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D98E36528C
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 06:02:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 241997A7CCC
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 06:02:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 133082E1EF2;
-	Wed, 27 Aug 2025 06:02:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A4912D73B4;
+	Wed, 27 Aug 2025 06:04:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="B2SbTLa0"
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Xvu05be9"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00E58186A;
-	Wed, 27 Aug 2025 06:02:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8E29186A
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 06:04:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756274526; cv=none; b=aLalJtt3gJADXoLw130XmVZtVGRhAsQWYfII3NnYH/ssUxTwk94R/OZKAvkLcx9+R9/jpBXtc0xzMGGB6QUIwYn6yld+dPEO0nH/5CvmU+3X3Ub6UO8dv6BSH7No+E2VDstpBpEGcVvjD5ghY87vXFFhkyF9hQiM4nWg6ZUXhUA=
+	t=1756274666; cv=none; b=U5c+HWOUDYdn4r6m9ExcJKbVWbBUoYsP10K79sDqwoyGBO+BtvqregTo3+0suZsKa2KYkVEFNmSK8VYXe2m0U8tqW4mYTE75w4hg+KtZo0cmbtV3rkLPu14elcN6mGeuIB4jLt8L5RahlWprgC6X4BQ0/lIlThQmIejhd2LQszo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756274526; c=relaxed/simple;
-	bh=HWhGJoV5ssE+aP397OMZszIWNaRw6yr66VO6s5alFkk=;
-	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=Eq4q0VNoR0ubncYEArcRWgIH/A1LqGr9hcQJcdAit2YHPirJ/BYJM2uk6VRaD1cj7cZngLS8kq5hpcLiNITlt/5strFhm+GG6ncprBEIo/3bqXAv+xApnlqT8zfoj6DdSLF+Z24D1v/QIn1egaKigr1pA7V4If0oWvy33Dvb9A0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=B2SbTLa0; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 57R621QL02980532, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
-	t=1756274521; bh=KIVb+4HvtrNUOcoVZ95hxBCBWqZBd1t9atXxBqEI37M=;
-	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding:MIME-Version;
-	b=B2SbTLa0CWPfWEK1P6kyyZRnwZiy+IqEO5KzcH0DFlh/+J7/quRxiRxdccZJgdPsR
-	 TN9vjiZirYrrJmMelWuocwE4FHPPISWzCOR4NblVLBlVOjnT3uzVLTCEc20oofbtMm
-	 JfxBGcpnVzV75kfv6VF/PSJ/xGqWZ13MG9uJF+fiq/or8eLwkTNJVwOjDipAYEucTt
-	 WiCRMqUoZhIemYG9pAwwkThFc1WpycSx65Pfzh4BkTcf+fdQ4ueqRon8sw3ZUqYiXS
-	 unkVSR5r3DF4qpVJtt/3kKYTRA4jmCrSTenaJGR6VWr1ThByRGxb59xLz6+DXQgReW
-	 MGiIxdM0JzKRw==
-Received: from mail.realtek.com (rtkexhmbs03.realtek.com.tw[10.21.1.53])
-	by rtits2.realtek.com.tw (8.15.2/3.13/5.93) with ESMTPS id 57R621QL02980532
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 27 Aug 2025 14:02:01 +0800
-Received: from RTKEXHMBS06.realtek.com.tw (10.21.1.56) by
- RTKEXHMBS03.realtek.com.tw (10.21.1.53) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.27; Wed, 27 Aug 2025 14:02:01 +0800
-Received: from RTKEXHMBS06.realtek.com.tw ([fe80::c39a:c87d:b10b:d090]) by
- RTKEXHMBS06.realtek.com.tw ([fe80::c39a:c87d:b10b:d090%10]) with mapi id
- 15.02.1544.027; Wed, 27 Aug 2025 14:02:01 +0800
-From: Ping-Ke Shih <pkshih@realtek.com>
-To: Liao Yuanhong <liaoyuanhong@vivo.com>,
-        "open list:REALTEK WIRELESS DRIVER
- (rtw89)" <linux-wireless@vger.kernel.org>,
-        open list
-	<linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] wifi: rtw89: 8852bt: Remove redundant off_reverse variables
-Thread-Topic: [PATCH] wifi: rtw89: 8852bt: Remove redundant off_reverse
- variables
-Thread-Index: AQHcFwgL5yWiVoTtL0GaLbiP5ja9NrR196fQgAAKITA=
-Date: Wed, 27 Aug 2025 06:02:01 +0000
-Message-ID: <f9fed9cb54004e93b7d330107c93c7b5@realtek.com>
-References: <20250827040643.208541-1-liaoyuanhong@vivo.com>
- <07dd869670914c659c98eae0315c704a@realtek.com>
-In-Reply-To: <07dd869670914c659c98eae0315c704a@realtek.com>
-Accept-Language: en-US, zh-TW
-Content-Language: zh-TW
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1756274666; c=relaxed/simple;
+	bh=H9gAoo4LWqbpXTiCJbpfpLIaHMRYA0bf/MFTDK9wbE8=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=XSLCGxhGEbvQH94d+AaZWjhq+sQ7BJ4FU+S7SttF4tFePDV+O0fuVubva0xhqDDGu1ukZU1BCisSJwT2dPV5oo2jNahxglt0yWRVp+NUbM1EDu0St1YoA9EJX+DBHUukEQ5+t1SstDgR0CazMVwlY0Tx4qB1ttcADHMPVAUVoeA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Xvu05be9; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756274665; x=1787810665;
+  h=date:from:to:cc:subject:message-id;
+  bh=H9gAoo4LWqbpXTiCJbpfpLIaHMRYA0bf/MFTDK9wbE8=;
+  b=Xvu05be9TCTF84s7fjBMFGUqd5kko7VxqdyUR59ohi/dikYxCJxQLS65
+   hsj5Typg4MZeVm5Qswn+cy26uSCUcrNaC/GqGmaoOjIsgQI3Sf8MB4OXx
+   crKGJxJtU88OaQ1aUmQSaGXj0MfSi3kRU396ZSMub4pxW0nyzXcT9EBz0
+   EcQ34qtDPSbkSv935LAOweilrcxaVxl7XQ2E6Wer65hrjqbKqWOJjhYGm
+   8l2SplYQElb3ocz+mxiggNscLgyQFBhnl7Lzo2/NRVz5ZP3xdGte0WIbS
+   CESQZfRSRdR1/dTJsP4KdWcq/MxRDAygVj+1tD33oIjdBEAHGkXFbd/Ao
+   w==;
+X-CSE-ConnectionGUID: 13b1pLQqR++BI/GvQ4/ATQ==
+X-CSE-MsgGUID: oXBmUTqxTSaVfy2zpFCwjQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11534"; a="58232394"
+X-IronPort-AV: E=Sophos;i="6.18,214,1751266800"; 
+   d="scan'208";a="58232394"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2025 23:04:24 -0700
+X-CSE-ConnectionGUID: 5O6BAH2KR1O/s7ok7JHrlw==
+X-CSE-MsgGUID: ZQRwKPB6RXypV3Kj/bF5jw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,214,1751266800"; 
+   d="scan'208";a="193409534"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by fmviesa002.fm.intel.com with ESMTP; 26 Aug 2025 23:04:23 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1ur9Ga-000Sj2-2O;
+	Wed, 27 Aug 2025 06:04:17 +0000
+Date: Wed, 27 Aug 2025 14:03:04 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:perf/core] BUILD SUCCESS
+ 16ed389227651330879e17bd83d43bd234006722
+Message-ID: <202508271450.niot8ht5-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
 
-Ping-Ke Shih <pkshih@realtek.com> wrote:
-> Liao Yuanhong <liaoyuanhong@vivo.com> wrote:
-> > The variable off_reverse and its related code are completely redundant =
-in
-> > the function. Remove them to clean the code.
-> >
-> > Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
-> > ---
-> >  drivers/net/wireless/realtek/rtw89/rtw8852bt_rfk.c | 12 ++----------
-> >  1 file changed, 2 insertions(+), 10 deletions(-)
-> >
-> > diff --git a/drivers/net/wireless/realtek/rtw89/rtw8852bt_rfk.c
-> > b/drivers/net/wireless/realtek/rtw89/rtw8852bt_rfk.c
-> > index d0e299803225..f23754a5c7b9 100644
-> > --- a/drivers/net/wireless/realtek/rtw89/rtw8852bt_rfk.c
-> > +++ b/drivers/net/wireless/realtek/rtw89/rtw8852bt_rfk.c
-> > @@ -1799,22 +1799,14 @@ static void _dpk_onoff(struct rtw89_dev *rtwdev=
-, enum rtw89_rf_path path, bool
-> o
-> >  {
-> >         struct rtw89_dpk_info *dpk =3D &rtwdev->dpk;
-> >         u8 val, kidx =3D dpk->cur_idx[path];
-> > -       bool off_reverse;
-> >
-> > -       val =3D dpk->is_dpk_enable && !off && dpk->bp[path][kidx].path_=
-ok;
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git perf/core
+branch HEAD: 16ed389227651330879e17bd83d43bd234006722  perf: Skip user unwind if the task is a kernel thread
 
-Please use this style. Otherwise, compiler warns
+elapsed time: 1201m
 
-../drivers/net/wireless/realtek/rtw89/rtw8852bt_rfk.c:1803:34: warning: dub=
-ious: x & !y
+configs tested: 134
+configs skipped: 5
 
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-> > -
-> > -       if (off)
-> > -               off_reverse =3D false;
-> > -       else
-> > -               off_reverse =3D true;
-> > -
-> > -       val =3D dpk->is_dpk_enable & off_reverse & dpk->bp[path][kidx].=
-path_ok;
-> > +       val =3D dpk->is_dpk_enable & !off & dpk->bp[path][kidx].path_ok=
-;
->=20
-> The previous patch has merged. Please re-spin this patch on top of rtw-ne=
-xt [1].
-> The subject should be "[PATCH rtw-next]", so NIPA can do correct tree sel=
-ection.
->=20
-> [1] https://github.com/pkshih/rtw.git rtw-next
->=20
-> >
-> >         rtw89_phy_write32_mask(rtwdev, R_DPD_CH0A + (path << 8) + (kidx=
- << 2),
-> >                                BIT(24), val);
-> >
-> >         rtw89_debug(rtwdev, RTW89_DBG_RFK, "[DPK] S%d[%d] DPK %s !!!\n"=
-, path,
-> > -                   kidx, str_enable_disable(dpk->is_dpk_enable & off_r=
-everse));
-> > +                   kidx, str_enable_disable(dpk->is_dpk_enable & !off)=
-);
-> >  }
-> >
-> >  static void _dpk_one_shot(struct rtw89_dev *rtwdev, enum rtw89_phy_idx=
- phy,
-> > --
-> > 2.34.1
->=20
+tested configs:
+alpha                             allnoconfig    gcc-15.1.0
+alpha                            allyesconfig    gcc-15.1.0
+alpha                               defconfig    gcc-15.1.0
+arc                              allmodconfig    gcc-15.1.0
+arc                               allnoconfig    gcc-15.1.0
+arc                              allyesconfig    gcc-15.1.0
+arc                          axs103_defconfig    gcc-15.1.0
+arc                                 defconfig    gcc-15.1.0
+arc                   randconfig-001-20250826    gcc-11.5.0
+arc                   randconfig-002-20250826    gcc-8.5.0
+arm                              allmodconfig    gcc-15.1.0
+arm                               allnoconfig    clang-22
+arm                              allyesconfig    gcc-15.1.0
+arm                                 defconfig    clang-22
+arm                           imxrt_defconfig    clang-22
+arm                   randconfig-001-20250826    gcc-12.5.0
+arm                   randconfig-002-20250826    gcc-13.4.0
+arm                   randconfig-003-20250826    gcc-8.5.0
+arm                   randconfig-004-20250826    gcc-10.5.0
+arm                           sunxi_defconfig    gcc-15.1.0
+arm                           tegra_defconfig    gcc-15.1.0
+arm64                            allmodconfig    clang-19
+arm64                             allnoconfig    gcc-15.1.0
+arm64                               defconfig    gcc-15.1.0
+arm64                 randconfig-001-20250826    clang-22
+arm64                 randconfig-002-20250826    gcc-8.5.0
+arm64                 randconfig-003-20250826    clang-22
+arm64                 randconfig-004-20250826    gcc-8.5.0
+csky                              allnoconfig    gcc-15.1.0
+csky                                defconfig    gcc-15.1.0
+csky                  randconfig-001-20250826    gcc-15.1.0
+csky                  randconfig-002-20250826    gcc-11.5.0
+hexagon                          allmodconfig    clang-17
+hexagon                           allnoconfig    clang-22
+hexagon                          allyesconfig    clang-22
+hexagon                             defconfig    clang-22
+hexagon               randconfig-001-20250826    clang-19
+hexagon               randconfig-002-20250826    clang-22
+i386                              allnoconfig    gcc-12
+i386                             allyesconfig    gcc-12
+i386        buildonly-randconfig-001-20250826    gcc-12
+i386        buildonly-randconfig-002-20250826    gcc-12
+i386        buildonly-randconfig-003-20250826    clang-20
+i386        buildonly-randconfig-004-20250826    gcc-12
+i386        buildonly-randconfig-005-20250826    clang-20
+i386        buildonly-randconfig-006-20250826    gcc-12
+i386                                defconfig    clang-20
+loongarch                        allmodconfig    clang-19
+loongarch                         allnoconfig    clang-22
+loongarch                           defconfig    clang-19
+loongarch             randconfig-001-20250826    gcc-14.3.0
+loongarch             randconfig-002-20250826    gcc-14.3.0
+m68k                             allmodconfig    gcc-15.1.0
+m68k                              allnoconfig    gcc-15.1.0
+m68k                             allyesconfig    gcc-15.1.0
+m68k                                defconfig    gcc-15.1.0
+microblaze                       allmodconfig    gcc-15.1.0
+microblaze                        allnoconfig    gcc-15.1.0
+microblaze                       allyesconfig    gcc-15.1.0
+microblaze                          defconfig    gcc-15.1.0
+mips                              allnoconfig    gcc-15.1.0
+nios2                             allnoconfig    gcc-11.5.0
+nios2                               defconfig    gcc-11.5.0
+nios2                 randconfig-001-20250826    gcc-8.5.0
+nios2                 randconfig-002-20250826    gcc-10.5.0
+openrisc                          allnoconfig    gcc-15.1.0
+openrisc                         allyesconfig    gcc-15.1.0
+openrisc                            defconfig    gcc-15.1.0
+parisc                           allmodconfig    gcc-15.1.0
+parisc                            allnoconfig    gcc-15.1.0
+parisc                           allyesconfig    gcc-15.1.0
+parisc                              defconfig    gcc-15.1.0
+parisc                randconfig-001-20250826    gcc-8.5.0
+parisc                randconfig-002-20250826    gcc-15.1.0
+parisc64                            defconfig    gcc-15.1.0
+powerpc                          allmodconfig    gcc-15.1.0
+powerpc                           allnoconfig    gcc-15.1.0
+powerpc                          allyesconfig    clang-22
+powerpc               randconfig-001-20250826    gcc-8.5.0
+powerpc               randconfig-002-20250826    clang-22
+powerpc               randconfig-003-20250826    gcc-13.4.0
+powerpc                     skiroot_defconfig    clang-22
+powerpc64             randconfig-001-20250826    gcc-10.5.0
+powerpc64             randconfig-002-20250826    gcc-11.5.0
+powerpc64             randconfig-003-20250826    gcc-14.3.0
+riscv                            allmodconfig    clang-22
+riscv                             allnoconfig    gcc-15.1.0
+riscv                            allyesconfig    clang-16
+riscv                               defconfig    clang-22
+riscv                 randconfig-001-20250826    gcc-8.5.0
+riscv                 randconfig-002-20250826    gcc-11.5.0
+s390                             allmodconfig    clang-18
+s390                              allnoconfig    clang-22
+s390                             allyesconfig    gcc-15.1.0
+s390                                defconfig    clang-22
+s390                  randconfig-001-20250826    clang-22
+s390                  randconfig-002-20250826    clang-18
+sh                               allmodconfig    gcc-15.1.0
+sh                                allnoconfig    gcc-15.1.0
+sh                               allyesconfig    gcc-15.1.0
+sh                                  defconfig    gcc-15.1.0
+sh                          r7780mp_defconfig    gcc-15.1.0
+sh                    randconfig-001-20250826    gcc-11.5.0
+sh                    randconfig-002-20250826    gcc-9.5.0
+sparc                            allmodconfig    gcc-15.1.0
+sparc                             allnoconfig    gcc-15.1.0
+sparc                               defconfig    gcc-15.1.0
+sparc                 randconfig-001-20250826    gcc-13.4.0
+sparc                 randconfig-002-20250826    gcc-8.5.0
+sparc64                             defconfig    clang-20
+sparc64               randconfig-001-20250826    gcc-8.5.0
+sparc64               randconfig-002-20250826    clang-22
+um                               allmodconfig    clang-19
+um                                allnoconfig    clang-22
+um                               allyesconfig    gcc-12
+um                                  defconfig    clang-22
+um                             i386_defconfig    gcc-12
+um                    randconfig-001-20250826    gcc-12
+um                    randconfig-002-20250826    clang-17
+um                           x86_64_defconfig    clang-22
+x86_64                            allnoconfig    clang-20
+x86_64                           allyesconfig    clang-20
+x86_64      buildonly-randconfig-001-20250826    clang-20
+x86_64      buildonly-randconfig-002-20250826    clang-20
+x86_64      buildonly-randconfig-003-20250826    gcc-12
+x86_64      buildonly-randconfig-004-20250826    clang-20
+x86_64      buildonly-randconfig-005-20250826    gcc-12
+x86_64      buildonly-randconfig-006-20250826    gcc-12
+x86_64                              defconfig    gcc-11
+x86_64                          rhel-9.4-rust    clang-20
+xtensa                            allnoconfig    gcc-15.1.0
+xtensa                randconfig-001-20250826    gcc-11.5.0
+xtensa                randconfig-002-20250826    gcc-8.5.0
+xtensa                         virt_defconfig    gcc-15.1.0
 
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
