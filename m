@@ -1,149 +1,150 @@
-Return-Path: <linux-kernel+bounces-788656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C588CB3882C
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 19:01:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41B5CB3882B
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 19:00:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 755E54642ED
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 17:01:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88054982198
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 17:00:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AFAD2EF66E;
-	Wed, 27 Aug 2025 17:00:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="BnZyVOKc"
-Received: from out-188.mta1.migadu.com (out-188.mta1.migadu.com [95.215.58.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC3762F1FE7;
+	Wed, 27 Aug 2025 17:00:39 +0000 (UTC)
+Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBF8B227B9F
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 17:00:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA2D72EF66E
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 17:00:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756314046; cv=none; b=XfNok27QZ9mnxfIGqKLtTifn4Qgdzg7J/Rr6vVjNuydspH75MOeXN9jf9O54DrrPLTQyDbZWzOz40CKZNQp20E6kllRTyv/Aezd2AmjcCLF0ZOSj98stR1ibLnvEqtBHpaXE0KHPGI1lCRSiVnHWaBPhfjT1lhOmeeVeWGXm5qI=
+	t=1756314039; cv=none; b=pwIm550ZlCc+oIwvJOkTvQd2qEqTLRwVhnWm6pIn/HGVEateOx9aTrFCc2HVAn2zQtZiFsAbm/W4Y3CEVm3An+Ioq+XzEhsj/4E89oaA5wJfQMwN8b7Ls4HzxhDnBuDuLXp76+vja6X7dvUoRMJHyqM8Y2x2miwx/Kz3mkwldKA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756314046; c=relaxed/simple;
-	bh=9yqufHvxMyqOIuBjpYx/ib/8sJw+wS8Coz+Mudh6V4c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EbP8lRMA/8lFs14W3mjsuZBq8h9LW4HHOE3X/0tboROKpXw+Hnmfu0afkE7NniVot63bj8fT5OquNrnB6q6ow0ME8GuZhA1PF+MqMttcFRqyFSuwoz+q481SrXD/TYxV5jvS/BteuTFDp/tujai2A4HiZOM/VUsKx/2OBMEYn+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=BnZyVOKc; arc=none smtp.client-ip=95.215.58.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <a3dabb42-efb5-4aea-8bf8-b3d5ae26dfa1@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1756314032;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MQB/6JVMGJQhxdK5s0Uv3W7F4OgykgH3Ou1OA3AP5Y4=;
-	b=BnZyVOKc0NcNLarruwwAHzn5UmenXPlIhhYZuCnflHrxe23c1TDsaNxyXgcjd0IVH2gFPy
-	b35nkqWPRPgvGzGes8DbFsVDbmlaC/kqS3pwpTnaB+Yu8TILtgdWPg+MY74EN4CbgHW8No
-	ON9WhcLpsDOvhEi19s8QZ836ZkzOkxk=
-Date: Wed, 27 Aug 2025 10:00:10 -0700
+	s=arc-20240116; t=1756314039; c=relaxed/simple;
+	bh=ecbNrh3gAkHhs0nqu+5SPQJJyt95NCljejpX4+7MoQQ=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=J7WNfSQGo4fEEqGR90tlBhP7MpDrKmAcJKsAXtqB1TNIIf/QGQL9fOfQscPhnbuskpfD0mxXskjsAsm/41EhDj/iNdCb2d9tDiGJuPQgDOLcmcrMYJDn9LbY2oY3Z2abjQ1NXAUKJ1DpJ7ojyF/uu4ssYrVg6dx+fDaeyzLnfA0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3ec58544f79so466185ab.1
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 10:00:37 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756314037; x=1756918837;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ybv4LIIvMAT3Eoq2aTEAvOM1ieIsoRgZnCI/tNEIGZ8=;
+        b=qUqQKbxXzE1yVIrTEZIJijpWcTKB2l19NBeqcECXbBJIkqsDBJsOkOkZ/CWIhjy44E
+         ansdT6TfVX3O4oN1rnq0psaCPqD3FUtexEyi/SliTmc1LQ2tyE8AqYUvVfnoEwYKG51Z
+         mIQ5l+JUm8b1zrHqPRaBuSZpv4svlyg3Rd5eolWjbytITQwyj0iUZhObSlxFw8oHaP70
+         gd//l1rXreNvVxi9d4G3edykBsMB2XnqJbW9GhXIOckKN4xR5SNLcwftJ/UGIV7zlB1N
+         QT9ZDHiL7r1/XDm4C5ZgZVGO56UHBm7HRm6vALiXmW2dWA7iMMoDfPFAtZz4+1tWMHfV
+         M53Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVDvYFpLSeWvGbcMjQVLlT/vBfPr7keYCbwogVW08QlyA4VLvjKd6mueC4Ct5figW4cErV5qJzhhq+jQbY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyYI+77bzzm6JIPgiqmGzx6Yn5dIGtZAkcVElKeiP3CwTqkAssz
+	ykILlu+o2OIVUEi77jr24pMuZEScyTgdDEBO/tZlSQ/L26gU5BWz7Xh3DtovvWT6U/WmHozkiWA
+	j3kuUMXUysVP2gYOAU9h8QkUCu0iDuICZ0np4l3f8xW/i2riBq3k+2uewYVc=
+X-Google-Smtp-Source: AGHT+IFTaM5B1uw90IYiFhY0ljaYzaOpTyCWJM1NuXIMJUat2baLWHnMrfLCCBb9RyBrFEjcFv5sBCvdXLNx++WR308rFmyDrKXU
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH] bpf: Mark kfuncs as __noclone
-Content-Language: en-GB
-To: Eduard Zingerman <eddyz87@gmail.com>, Andrea Righi <arighi@nvidia.com>,
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
- Andrii Nakryiko <andrii@kernel.org>
-Cc: Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, David Vernet <void@manifault.com>,
- bpf@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250822140553.46273-1-arighi@nvidia.com>
- <86de1bf6-83b0-4d31-904b-95af424a398a@linux.dev>
- <45c49b4eedc6038d350f61572e5eed9f183b781b.camel@gmail.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yonghong Song <yonghong.song@linux.dev>
-In-Reply-To: <45c49b4eedc6038d350f61572e5eed9f183b781b.camel@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+X-Received: by 2002:a05:6e02:2141:b0:3e5:4b2e:3afd with SMTP id
+ e9e14a558f8ab-3e9201fcc4amr275163535ab.8.1756314030129; Wed, 27 Aug 2025
+ 10:00:30 -0700 (PDT)
+Date: Wed, 27 Aug 2025 10:00:30 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68af39ae.a70a0220.3cafd4.002c.GAE@google.com>
+Subject: [syzbot] [net?] [bpf?] WARNING: ODEBUG bug in handle_softirqs
+From: syzbot <syzbot+60db000b8468baeddbb1@syzkaller.appspotmail.com>
+To: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org, 
+	daniel@iogearbox.net, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	peterz@infradead.org, syzkaller-bugs@googlegroups.com, tglx@linutronix.de
+Content-Type: text/plain; charset="UTF-8"
+
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    4774cfe3543a Merge tag 'scsi-fixes' of git://git.kernel.or..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=140f4e82580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3a936e3316f9e2dc
+dashboard link: https://syzkaller.appspot.com/bug?extid=60db000b8468baeddbb1
+compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-1~exp1~20250514183223.118), Debian LLD 20.1.6
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/202021f78569/disk-4774cfe3.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/694d0f540b2c/vmlinux-4774cfe3.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/c3c1a8d42953/bzImage-4774cfe3.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+60db000b8468baeddbb1@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+ODEBUG: free active (active state 0) object: ffff888055e82a78 object type: timer_list hint: br_ip6_multicast_port_query_expired+0x0/0x20 net/bridge/br_multicast.c:1682
+WARNING: CPU: 0 PID: 15 at lib/debugobjects.c:615 debug_print_object+0x16b/0x1e0 lib/debugobjects.c:612
+Modules linked in:
+CPU: 0 UID: 0 PID: 15 Comm: ksoftirqd/0 Not tainted 6.16.0-rc1-syzkaller-00203-g4774cfe3543a #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
+RIP: 0010:debug_print_object+0x16b/0x1e0 lib/debugobjects.c:612
+Code: 4c 89 ff e8 17 37 5c fd 4d 8b 0f 48 c7 c7 a0 90 e2 8b 48 8b 34 24 4c 89 ea 89 e9 4d 89 f0 41 54 e8 4a 6a bc fc 48 83 c4 08 90 <0f> 0b 90 90 ff 05 77 9d d9 0a 48 83 c4 08 5b 41 5c 41 5d 41 5e 41
+RSP: 0000:ffffc90000147758 EFLAGS: 00010282
+RAX: bfb6a7e7ba7ad600 RBX: dffffc0000000000 RCX: ffff88801cef3c00
+RDX: 0000000000000100 RSI: 0000000000000000 RDI: 0000000000000002
+RBP: 0000000000000000 R08: 0000000000000003 R09: 0000000000000004
+R10: dffffc0000000000 R11: fffffbfff1bfa9e4 R12: ffffffff8a423ca0
+R13: ffffffff8be29220 R14: ffff888055e82a78 R15: ffffffff8b8ce020
+FS:  0000000000000000(0000) GS:ffff888125c52000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f8371b71d60 CR3: 000000005b468000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ __debug_check_no_obj_freed lib/debugobjects.c:1099 [inline]
+ debug_check_no_obj_freed+0x3a2/0x470 lib/debugobjects.c:1129
+ slab_free_hook mm/slub.c:2312 [inline]
+ slab_free mm/slub.c:4643 [inline]
+ kfree+0x112/0x440 mm/slub.c:4842
+ kobject_cleanup lib/kobject.c:689 [inline]
+ kobject_release lib/kobject.c:720 [inline]
+ kref_put include/linux/kref.h:65 [inline]
+ kobject_put+0x22b/0x480 lib/kobject.c:737
+ rcu_do_batch kernel/rcu/tree.c:2576 [inline]
+ rcu_core+0xca5/0x1710 kernel/rcu/tree.c:2832
+ handle_softirqs+0x286/0x870 kernel/softirq.c:579
+ run_ksoftirqd+0x9b/0x100 kernel/softirq.c:968
+ smpboot_thread_fn+0x53f/0xa60 kernel/smpboot.c:164
+ kthread+0x70e/0x8a0 kernel/kthread.c:464
+ ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
 
 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-On 8/26/25 10:02 PM, Eduard Zingerman wrote:
-> On Tue, 2025-08-26 at 13:17 -0700, Yonghong Song wrote:
->
-> [...]
->
->> I tried with gcc14 and can reproduced the issue described in the above.
->> I build the kernel like below with gcc14
->>     make KCFLAGS='-O3' -j
->> and get the following build error
->>     WARN: resolve_btfids: unresolved symbol bpf_strnchr
->>     make[2]: *** [/home/yhs/work/bpf-next/scripts/Makefile.vmlinux:91: vmlinux] Error 255
->>     make[2]: *** Deleting file 'vmlinux'
->> Checking the symbol table:
->>      22276: ffffffff81b15260   249 FUNC    LOCAL  DEFAULT    1 bpf_strnchr.cons[...]
->>     235128: ffffffff81b1f540   296 FUNC    GLOBAL DEFAULT    1 bpf_strnchr
->> and the disasm code:
->>     bpf_strnchr:
->>       ...
->>
->>     bpf_strchr:
->>       ...
->>       bpf_strnchr.constprop.0
->>       ...
->>
->> So in symbol table, we have both bpf_strnchr.constprop.0 and bpf_strnchr.
->> For such case, pahole will skip func bpf_strnchr hence the above resolve_btfids
->> failure.
->>
->> The solution in this patch can indeed resolve this issue.
-> It looks like instead of adding __noclone there is an option to
-> improve pahole's filtering of ambiguous functions.
-> Abstractly, there is nothing wrong with having a clone of a global
-> function that has undergone additional optimizations. As long as the
-> original symbol exists, everything should be fine.
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-Right. The generated code itself is totally fine. The problem is
-currently pahole will filter out bpf_strnchr since in the symbol table
-having both bpf_strnchr and bpf_strnchr.constprop.0. It there is
-no explicit dwarf-level signature in dwarf for bpf_strnchr.constprop.0.
-(For this particular .constprop.0 case, it is possible to derive the
-  signature. but it will be hard for other suffixes like .isra).
-The current pahole will have strip out suffixes so the function
-name is 'bpf_strnchr' which covers bpf_strnchr and bpf_strnchr.constprop.0.
-Since two underlying signature is different, the 'bpf_strnchr'
-will be filtered out.
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-I am actually working to improve such cases in llvm to address
-like foo() and foo.<...>() functions and they will have their
-own respective functions. We will discuss with gcc folks
-about how to implement similar approaches in gcc.
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
->
-> Since kfuncs are global, this should guarantee that the compiler does not
-> change their signature, correct? Does this also hold for LTO builds?
-
-Yes, the original signature will not changed. This holds for LTO build
-and global variables/functions will not be renamed.
-
-> If so, when pahole sees a set of symbols like [foo, foo.1, foo.2, ...],
-
-The compiler needs to emit the signature in dwarf for foo.1, foo.2, etc. and this
-is something I am working on.
-
-> with 'foo' being global and the rest local, then there is no real need
-> to filter out 'foo'.
-
-I think the current __noclone approach is okay as the full implementation
-for signature changes (foo, foo.1, ...) might takes a while for both llvm
-and gcc.
-
->
-> Wdyt?
->
-> [...]
-
+If you want to undo deduplication, reply with:
+#syz undup
 
