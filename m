@@ -1,116 +1,129 @@
-Return-Path: <linux-kernel+bounces-787597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1CD1B3786A
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 05:03:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 675D6B3786C
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 05:05:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 894A2361850
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 03:03:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7B3147AFA14
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 03:03:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2FBF2BF01E;
-	Wed, 27 Aug 2025 03:03:06 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14D3130498F;
+	Wed, 27 Aug 2025 03:04:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hCzVeDaF"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08CE6280330
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 03:03:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF8D614F9FB;
+	Wed, 27 Aug 2025 03:04:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756263786; cv=none; b=KU8GDl/JNAwI/vLSXDemi3xyCKCuQXjOw9m0TBttIdzrj063AuPV4mpCBz9tS5KOInAK68FAQWx6PNwLmzf8PJEMIqeMLVbih0PEsK6rUY2CGtS1tX+VcyMQGoko22cgAxj09UtFtsOHMsaMO6uUQ44d2jAxau0ibecFb3nMhyY=
+	t=1756263896; cv=none; b=EMFengMmWKjsxAJTkzVdmCO6mG3FDerL5h/S0Ub7rS99xR1faoj35HDGJcvbrPAUvasBg3URy+qQSti+nI+8SvqUtHsOK8WLVRCejBtdn+7b8+tyheUlb0EJ1WUtOdviUvkSovICDJLagz3CsmLDz2qpO2MLn0jM9HJ6psQ9njA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756263786; c=relaxed/simple;
-	bh=MCZaek7/73Mbf67awWwWzyG/c1bRfgViaF9mbBdNQQU=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=p2e7W5Va2hCjWdICZrHTQEc5juEyFiTm9yE5bN+ymjqeAR0ouOWQ9wLmPSeu+k2gN7590cieBFvUWpKsoA63QNyLQ3HdfPLBH7NDQzK3uHzP0zKvfvCr7QW2xa9Xk/B/FNNQifjcBbk4HtyKWzjckPLfkkAo7iY3ocUe27L7XnI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3eed935cd97so17821915ab.2
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 20:03:03 -0700 (PDT)
+	s=arc-20240116; t=1756263896; c=relaxed/simple;
+	bh=smOktKjtdRWIwgo7/OB0VenJcvMyx+oeyyre95NO4P0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XhALR5tYQpqGyY2H78TUvZDBd+FMiqheDuk63aQidUIw+8Cd25ttw83ubTu0ZV9WF/rMOR0gMvqtQhzSMj8/TgyGm01m1h7+o3RDBZVc919M8PEmqN/4yOWh58AlmaVAh6mviy30spPEuCxrgPnNJrJReWaNH6iizxBm2I2OX58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hCzVeDaF; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-45a1b066b5eso34069155e9.1;
+        Tue, 26 Aug 2025 20:04:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756263893; x=1756868693; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=smOktKjtdRWIwgo7/OB0VenJcvMyx+oeyyre95NO4P0=;
+        b=hCzVeDaFGaJha1OUZHsquva3/C8b5Kl/3TNL0D174oMRTpLdOmrtadgJmuvrBvKSx3
+         hlH/FDc4vVEtiHIfVxduqNSDrbxjETwLmfNbcwMrLO9nK2tJSM0WrdoD6g7kkveQoomL
+         I7fqWk8KFiOx/mV2ajDtQbqOMrR7KCnQXCGxbdJAHw1pCxaPulZuF75Xte0Li51ztqqL
+         MnoDOO+NtfJiylCg9cjdX7jbeAcd7681IodnT9XPQDisjrqkdx2dR8GQ6VtysddYw95z
+         pcerQB2F0fGnmoRz0qw8E7RaV8JpstH1dM0N3tCxK/n2Wurfq2wwGUsfs92gthN39nlJ
+         jEdA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756263783; x=1756868583;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LTIIztX8TABs9J2+7NMorePJMfwGAjefCOpDk/sbvAQ=;
-        b=fAwVVmjc/xQdBQcP0Vpnvxn8L2OtpE1wSS/ezdgiilLH+nVARksbHIOGIw6N+erF26
-         pxKWwX40Y3eTPuIt2i47UVYBOEp46PZbFWH3RH+cfWZan0PjX7BBgVorVerr4a2XMoDn
-         Lkb+LXZLwFZO6kIA5Bfl9jU3gXdrKfV3WfD7N/XxWR6HKz2BS5TAEcQ6HhWbAgyetXwk
-         Sa4EI58VIkzh3vTbW3q4gllVBa1LvcEyXpQxOG69SCBQX/dXh/MWRGm989NiR1MAYu3U
-         QTbuayDlUpTur5MsXUDfjl5zZyTNwWDqG2va77hfnXUCV72i/SA3t7b3MJQmLE25+Eqm
-         N3nw==
-X-Forwarded-Encrypted: i=1; AJvYcCX1ib+KZ7uXlSHd6j1BkS9VAHa7nbhm32LZZFPx4y6V//cuWaIQIaPFZZj8kkAgUUsX07CxCdoVTYS9Oac=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwA2flGXZOnUZj9C9NhUay+KnzeqaG3vuM0/AMo3YauNdyko/jI
-	lwM1Oy7AALq1jv9DU7nhVe6DTNMAAk432taW+X+P438xtg8xA6r+8WT0zX8//ypV2tCOFL5Yl2Y
-	Xv9oybah7+S1CEfq34yXv1jQDZs46FEx83JszYxQg2W2ELrh/TwIu2yscf+I=
-X-Google-Smtp-Source: AGHT+IFD986FgoEH3+lDaXRnoxr4fYrJITbSQtbvgVtRTLriO4wUGLrv6/YkTwCIZPH5d5zB4TOQOZ1W8Mh5+4iH6Vb37I98QrQd
+        d=1e100.net; s=20230601; t=1756263893; x=1756868693;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=smOktKjtdRWIwgo7/OB0VenJcvMyx+oeyyre95NO4P0=;
+        b=eoI4/TZKre6PxMexZOS+FOhhn7VJCCemIRvyGtxUwlN88b2sSOjhjxktH5tnASOZDG
+         oGvRnIIMdkUYp8K3itUY/l8CmT8wnmVOtzWNhUZvMq0YQwMI4kyANXOJ0Gx8A/XjG8z7
+         IQ1OiMZIPJhuu5lgx9EhzsxjIwAX34YOg8VePMcwMFou/ZWCzctOKHgHprLYbDJB56ZC
+         9g8WggjhvVONVchwhHcqy5o26JeOcdpVajyxRlIypJGx/CEoPERrk8e1NaPhaPA2tbbW
+         WxiOk7eMrQlyVTYkF9mI1bS3RM5TE9SxqpJpon5GMUZGl5DkS5tllqj3K4aOEeXkkVoM
+         FNrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV1zeJcA13nhKfg2rjdPQyfmE6Irf8T5vo8gW/+PqSTeMGQ3ZBLqLFoeRCIbCSd8hTL+FU=@vger.kernel.org, AJvYcCWetxAwwJ+pmnTjPUzEp2fGgUpNPC8Lbf3hTjdWBdjYJO5AisVObycMa2KeR8XplOBQCAaoT4lz5pBsoG4h@vger.kernel.org
+X-Gm-Message-State: AOJu0YzdiJcw+Ak+9a5anRHS6wggEDumPAQuk5ZMH8QZPabGMxH4osze
+	2f29IiYTRaOlX7JIYQPXiWFDwDLNdL09kE6A99S86KQsWN7MWldeu1C5Y8oCuvqb0eyuoKBDxwq
+	NIaBk/y3c+fiYiNtnc4Kq+p/WVZSFL5g=
+X-Gm-Gg: ASbGnctt7w0cfHz/FF6fjBXHVuwxU2rGXWZDq1xf68mEc6TWjOhzMTN+0AX5neCKQzD
+	tJSOnFhYnxCYXs9o2fU2F6I8oLcwDY/wTWWzw7IEILbrL/Bgf2PVLczZdU+HMweuPn6QKrTjM8k
+	uWEbN+KYwm5WZo9ClTntfp1lafi02DMS0FEhLaWUHYFK0/6wlRyyBmVikuDqGJv1Hnjh9ygHq97
+	dLrHL7jR97zEJ3w4ztgT+q0g3wLZpGWEcA5s2+dkHyZyS0=
+X-Google-Smtp-Source: AGHT+IFitAmGYZ56kr5IFaTzqBojnOv6C7rCTjgvF16llJhFePceMI6lrkUpiozItpobt4XgXOYYFrG79nOnv0ObZPQ=
+X-Received: by 2002:a05:600c:5493:b0:459:eeaf:d6c7 with SMTP id
+ 5b1f17b1804b1-45b517c2e69mr130967235e9.26.1756263892927; Tue, 26 Aug 2025
+ 20:04:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:480a:b0:3e9:4547:5e03 with SMTP id
- e9e14a558f8ab-3e945479d7dmr213267125ab.10.1756263783150; Tue, 26 Aug 2025
- 20:03:03 -0700 (PDT)
-Date: Tue, 26 Aug 2025 20:03:03 -0700
-In-Reply-To: <tencent_B2496343B244447773976D66CD936C237A05@qq.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68ae7567.a70a0220.3cafd4.0006.GAE@google.com>
-Subject: Re: [syzbot] [net?] KASAN: slab-use-after-free Write in __xfrm_state_delete
-From: syzbot <syzbot+a25ee9d20d31e483ba7b@syzkaller.appspotmail.com>
-To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+References: <20250821093807.49750-1-dongml2@chinatelecom.cn> <20250821093807.49750-2-dongml2@chinatelecom.cn>
+In-Reply-To: <20250821093807.49750-2-dongml2@chinatelecom.cn>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Tue, 26 Aug 2025 20:04:41 -0700
+X-Gm-Features: Ac12FXxG2JTrP3izXMlp35kGr_LV5o12GnoztWhZlRDTE1Syy9dnAPr999ZkpCY
+Message-ID: <CAADnVQLtvygmqCk5QHmHCURAYiLET6BpCxX7TkqmuAdXZ5trZg@mail.gmail.com>
+Subject: Re: [PATCH v3 1/3] arch: add the macro COMPILE_OFFSETS to all the asm-offsets.c
+To: Menglong Dong <menglong8.dong@gmail.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
+	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Benjamin Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Valentin Schneider <vschneid@redhat.com>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, Eduard <eddyz87@gmail.com>, 
+	Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
+	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
+	tzimmermann@suse.de, simona.vetter@ffwll.ch, 
+	Jani Nikula <jani.nikula@intel.com>, LKML <linux-kernel@vger.kernel.org>, 
+	bpf <bpf@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Thu, Aug 21, 2025 at 2:38=E2=80=AFAM Menglong Dong <menglong8.dong@gmail=
+.com> wrote:
+>
+> The include/generated/asm-offsets.h is generated in Kbuild during
+> compiling from arch/SRCARCH/kernel/asm-offsets.c. When we want to
+> generate another similar offset header file, circular dependency can
+> happen.
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-WARNING in xfrm_state_fini
+Is there a way to avoid all this churn?
 
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 3658 at net/xfrm/xfrm_state.c:3301 xfrm_state_fini+0x26d/0x2f0 net/xfrm/xfrm_state.c:3301
-Modules linked in:
-CPU: 1 UID: 0 PID: 3658 Comm: kworker/u8:14 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
-Workqueue: netns cleanup_net
-RIP: 0010:xfrm_state_fini+0x26d/0x2f0 net/xfrm/xfrm_state.c:3301
-Code: c1 e8 03 42 80 3c 28 00 74 08 48 89 df e8 6b b2 00 f8 48 8b 3b 5b 41 5c 41 5d 41 5e 41 5f 5d e9 29 73 e1 f7 e8 84 46 9d f7 90 <0f> 0b 90 e9 fd fd ff ff e8 76 46 9d f7 90 0f 0b 90 e9 60 fe ff ff
-RSP: 0018:ffffc9000c5c7898 EFLAGS: 00010293
-RAX: ffffffff8a2264ac RBX: ffff888033aa8000 RCX: ffff888030f70000
-RDX: 0000000000000000 RSI: ffffffff8be33660 RDI: ffffffff84d05cc3
-RBP: ffffc9000c5c79b0 R08: ffffffff8fa38437 R09: 1ffffffff1f47086
-R10: dffffc0000000000 R11: fffffbfff1f47087 R12: ffffffff8f631480
-R13: 1ffff920018b8f40 R14: ffff888033aa9480 R15: dffffc0000000000
-FS:  0000000000000000(0000) GS:ffff888125d1a000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f67e456d480 CR3: 0000000079c90000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- xfrm_net_exit+0x2d/0x70 net/xfrm/xfrm_policy.c:4354
- ops_exit_list net/core/net_namespace.c:198 [inline]
- ops_undo_list+0x49a/0x990 net/core/net_namespace.c:251
- cleanup_net+0x4c5/0x800 net/core/net_namespace.c:682
- process_one_work kernel/workqueue.c:3236 [inline]
- process_scheduled_works+0xae1/0x17b0 kernel/workqueue.c:3319
- worker_thread+0x8a0/0xda0 kernel/workqueue.c:3400
- kthread+0x70e/0x8a0 kernel/kthread.c:463
- ret_from_fork+0x3f9/0x770 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
+> For example, we want to generate a offset file include/generated/test.h,
+> which is included in include/sched/sched.h. If we generate asm-offsets.h
+> first, it will fail, as include/sched/sched.h is included in asm-offsets.=
+c
 
+if so, may be don't add "static inline void migrate_disable()" to sched.h
+and instead add it to preempt.h and it will avoid this issue?
 
-Tested on:
-
-commit:         24204116 Merge branch 'ipv6-sr-simplify-and-optimize-h..
-git tree:       net-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=15d69ef0580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=67b99ceb67d33475
-dashboard link: https://syzkaller.appspot.com/bug?extid=a25ee9d20d31e483ba7b
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=142d77bc580000
-
+> and include/generated/test.h doesn't exist; If we generate test.h first,
+> it can't success neither, as include/generated/asm-offsets.h is included
+> by it.
+>
+> In x86_64, the macro COMPILE_OFFSETS is used to avoid such circular
+> dependency. We can generate asm-offsets.h first, and if the
+> COMPILE_OFFSETS is defined, we don't include the "generated/test.h".
+>
+> And we define the macro COMPILE_OFFSETS for all the asm-offsets.c for thi=
+s
+> purpose.
 
