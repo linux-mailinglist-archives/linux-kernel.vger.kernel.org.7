@@ -1,136 +1,116 @@
-Return-Path: <linux-kernel+bounces-787749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787750-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E62F1B37A93
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 08:39:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 655DCB37A96
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 08:40:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 20706189ED4A
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 06:40:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3126916F20F
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 06:40:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69DBC3126C6;
-	Wed, 27 Aug 2025 06:39:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t/Zgdu+h"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 060F8312829;
+	Wed, 27 Aug 2025 06:40:31 +0000 (UTC)
+Received: from mail-m155101.qiye.163.com (mail-m155101.qiye.163.com [101.71.155.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEBC330DED7;
-	Wed, 27 Aug 2025 06:39:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18DC71C84A6;
+	Wed, 27 Aug 2025 06:40:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756276777; cv=none; b=Ad10A9fdMUgMn1nSSxIizD4BKkuSAU/SW5GVffZpnUUng0o5+SxZu8BmY5z9B4NRPf7keLTTzTB8c2W9xSSoDXqgYYmn8xLTm+PgqCK1bajpbahLwDqq24+jDQHN9IzcyBJq7mqtlW832biFZlaf2iktk5E+2VwyJE1ihJZQ4LE=
+	t=1756276830; cv=none; b=CcsZHh/WdgFanYrcWU2TMY4U1XYJk+wRj+3OtY0+X0QtuiVmcJjm64atzO2vUiSqMVXHfGJH7fwOdkEnn6iK2K4f0rVwA/OIZSiFEP2mpNJWbGTv2AAv7jS7P5RSxSlao+TeIgjf5Cw/KbXkDyatQBRQlCjuCIX/zH7ruBNOflQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756276777; c=relaxed/simple;
-	bh=wF7DxXmMiUpG3l2HrR1TiFxT3e6vt98mMJE58cq9hWg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MH2molm+sztIjw1U9eSAxGI0EtyJtPS0+j3CTfU+IYtmLNIWdw313tI+BUhydT4FINpBHL5Q36wEwb09irs4V1V3jMdPI5+LBGaO9p03WcxJGQiQEco29S0BZzv8K/LS30Wv5apzcAHOgtOpbAFuMft6jDTxdf1zM67xf0sQVqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t/Zgdu+h; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F9DFC4CEEB;
-	Wed, 27 Aug 2025 06:39:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756276777;
-	bh=wF7DxXmMiUpG3l2HrR1TiFxT3e6vt98mMJE58cq9hWg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=t/Zgdu+h7uj26hFkUpeLwS/FvoEpULB4DwWD+g3yd6xkrqVf3ghEIOmglP82nGQpZ
-	 QfHKCk8QNBdMn8ehcbvjyagmxvlHKb02KXnPBsjxCl85YYHu4oB26HQWMic63RaNL7
-	 XJk4GIMCBwOMN3S+RNVo5Gzndl2sWArWdpvhs0tKOgfCy1TqKqyJQy8IWMFC2BHWPU
-	 Dj2tyGw2xHqafjE7Kkd5dhWoD048KQD0KeFtucgc1uFWfDQCHeFNoFsZsfXqJ5vNcL
-	 E+1uHsZJJ9P0XykHMrEbCBCM0Tv4wwbWkOXnhJg5cv+KiZmLZj9cv+frQ4wb56tD9u
-	 qdYE/Dj/remwQ==
-Message-ID: <87a9e85d-b345-4ea7-895c-ec2328d00954@kernel.org>
-Date: Wed, 27 Aug 2025 08:39:31 +0200
+	s=arc-20240116; t=1756276830; c=relaxed/simple;
+	bh=XZgrDnv9SWmzdVgGFNQhIVjV/gKYCMTTcBovuctsQOY=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=FQj3IUkf9VeFiu510Cn7zPpaqFkf0WccaFdn2S/Gi/4fMW9Dg+fzSwYYsZqL+N5XyqX6NPQnLLkn9zbk1mLsSIizv7+VC+MTfdWtg5UgCR+2Fzxgik3utgmSKdl4zpSnD+wKGlBO5i1DDgp15QHl8IC6FrP5TwqigvZ7IG9shKY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn; spf=pass smtp.mailfrom=jmu.edu.cn; arc=none smtp.client-ip=101.71.155.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jmu.edu.cn
+Received: from localhost.localdomain (unknown [119.122.212.9])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 20c18d712;
+	Wed, 27 Aug 2025 14:40:16 +0800 (GMT+08:00)
+From: Chukun Pan <amadeus@jmu.edu.cn>
+To: iuncuim@gmail.com
+Cc: andre.przywara@arm.com,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	jernej.skrabec@gmail.com,
+	kishon@kernel.org,
+	krzk+dt@kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-phy@lists.infradead.org,
+	linux-sunxi@lists.linux.dev,
+	mturquette@baylibre.com,
+	p.zabel@pengutronix.de,
+	robh@kernel.org,
+	samuel@sholland.org,
+	sboyd@kernel.org,
+	vkoul@kernel.org,
+	wens@csie.org,
+	Chukun Pan <amadeus@jmu.edu.cn>
+Subject: Re: [PATCH 4/7] phy: allwinner: a523: add USB3/PCIe PHY driver
+Date: Wed, 27 Aug 2025 14:40:10 +0800
+Message-Id: <20250827064010.55675-1-amadeus@jmu.edu.cn>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20250816084700.569524-5-iuncuim@gmail.com>
+References: <20250816084700.569524-5-iuncuim@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/4] media: samsung: scaler: Add Kconfig and Makefile
-To: Kisung Lee <kiisung.lee@samsung.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Inki Dae <inki.dae@samsung.com>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org
-References: <20250827044720.3751272-1-kiisung.lee@samsung.com>
- <CGME20250827045906epcas2p2198037517886df0714e24d8d908a6c57@epcas2p2.samsung.com>
- <20250827044720.3751272-5-kiisung.lee@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250827044720.3751272-5-kiisung.lee@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-HM-Tid: 0a98ea417a0203a2kunmedb397446d055
+X-HM-MType: 10
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVlCH09DVkNOHR5PThkYSh9KSlYeHw5VEwETFhoSFy
+	QUDg9ZV1kYEgtZQVlKSkJVSklJVUlKSVVCWVdZFhoPEhUdFFlBWU9LSFVKS0lCTUpKVUpLS1VLWQ
+	Y+
 
-On 27/08/2025 06:47, Kisung Lee wrote:
-> Add Kconfig and Makefile for Scaler driver directory.
-> This will serve as the entry point for enabling and building
-> Exynosautov920 specific device drivers.
+Hi,
 
+> --- a/drivers/phy/allwinner/Makefile
+> +++ b/drivers/phy/allwinner/Makefile
+> @@ -3,3 +3,4 @@ obj-$(CONFIG_PHY_SUN4I_USB)		+= phy-sun4i-usb.o
+>  obj-$(CONFIG_PHY_SUN6I_MIPI_DPHY)	+= phy-sun6i-mipi-dphy.o
+>  obj-$(CONFIG_PHY_SUN9I_USB)		+= phy-sun9i-usb.o
+>  obj-$(CONFIG_PHY_SUN50I_USB3)		+= phy-sun50i-usb3.o
+> +obj-$(CONFIG_PHY_SUN55I_USB3_PCIE)		+= phy-sun55i-usb3-pcie.o
 
-That's not a separate commit.
+Would it be better to call it phy-sun55i-combophy ?
 
-> 
-> Signed-off-by: Kisung Lee <kiisung.lee@samsung.com>
-> ---
->  drivers/media/platform/samsung/Kconfig  | 1 +
->  drivers/media/platform/samsung/Makefile | 1 +
->  2 files changed, 2 insertions(+)
+> --- /dev/null
+> +++ b/drivers/phy/allwinner/phy-sun55i-usb3-pcie.c
+> ...
+> +static int sun55i_usb3_pcie_phy_init(struct phy *_phy)
+> +{
+> +	struct sun55i_usb3_pcie_phy *phy = phy_get_drvdata(_phy);
+> +
+> +	sun55i_usb3_phy_open(phy);
 
+Maybe we need to add `case PHY_TYPE_USB3:`
+And use <&combophy PHY_TYPE_USB3> in the DT
 
-BTW, your patchset does not pass checks required by Samsung SoC
-maintainer profile. Use the tools instead of reviewers...
+> +
+> +	return 0;
+> +}
+> ...
 
-Best regards,
-Krzysztof
+> +static const struct of_device_id sun55i_usb3_pcie_phy_of_match[] = {
+> +	{ .compatible = "allwinner,sun55i-a523-usb3-pcie-phy" },
+
+Would it be better to use "allwinner,sun55i-a523-combophy" as
+the compatible?
+
+> +	{ },
+> +};
+> +MODULE_DEVICE_TABLE(of, sun55i_usb3_pcie_phy_of_match);
+
+Thanks,
+Chukun
 
