@@ -1,156 +1,135 @@
-Return-Path: <linux-kernel+bounces-787704-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787706-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EE54B37A00
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 07:49:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A8DAB37A05
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 07:54:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 009FA683E3E
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 05:49:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 27398364489
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 05:54:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D1CA30BBA0;
-	Wed, 27 Aug 2025 05:49:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25844287273;
+	Wed, 27 Aug 2025 05:54:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="Lspj12IP"
-Received: from out162-62-57-137.mail.qq.com (out162-62-57-137.mail.qq.com [162.62.57.137])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="QUIln5s2"
+Received: from omta34.uswest2.a.cloudfilter.net (omta34.uswest2.a.cloudfilter.net [35.89.44.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EACF2264A7F
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 05:49:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.137
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5652E28E7
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 05:54:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756273787; cv=none; b=IU1MlhaSMWlZ2ZnOavB1XiinbRwB2u7lSvj6Voafpb7kzLnSIEjedyl46zqGi2zSAvyQUnWTknZcHZO8xCMaZUhWe0xR3IBk7rJcKJ+VncYkM7FfkhlFGed3wSzuZqy4SAjiydsdH5nRIImPyp100eJMOxqgOJKn5yWUOmHg+jE=
+	t=1756274080; cv=none; b=jcoRN0kFAnV6lApBttSJ5yG8KKpdm8QFHWHAfbnLMPI8jjLyw1l/tdrvolvh8/ClH4doPXsib1uqzMv9RtCieHOyXnQPysltvxoDpFNHB4cg9jDa9zYMhd1ihXDaqCb5gWQGg4Gva3u13DuHtdLoonNXhNRTDoOkxkvt0Mb92qE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756273787; c=relaxed/simple;
-	bh=EN6vFn97gMBQaSq/XCZjfW03wPb2vRMwI0o/Enun2Gw=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=NJVXF6iljxe1sQt2gv8XzFmqgJtDdeAw8DXtbarEv6CXCvlVAhDltBFbwlLmfUpJE3ZcjGWI9yArjieuClUKjZcCkygq6LtUiEZE7rIJZtVt/Rt+nuL8FSSJ8pbX+s2N9l0FTECtNnDwzCynlPJbFt6wydOxiDdMLlcmIDWX9Gw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=Lspj12IP; arc=none smtp.client-ip=162.62.57.137
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1756273778; bh=qtd7CtVakKa16So2yrWPPc60aKpdTAyiw5Jrl2jnSTY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=Lspj12IP2cCl3N3v8k/2sf8UHGf0/gOk6ukI8JlVnTI/EsDV9shNa0ufa0lbqM4Br
-	 kQXGP346j1qDfzce4iqNRRqDCn26/8+/qkeFZdoL3ZeE81rvQcgBUrTNjMuiMdFwdN
-	 HRHrT49ej5UJjViDOl1ndH16lQhW3J+6J4hS4drc=
-Received: from pek-lxu-l1.corp.ad.wrs.com ([111.198.230.220])
-	by newxmesmtplogicsvrsza56-0.qq.com (NewEsmtp) with SMTP
-	id C64ABC34; Wed, 27 Aug 2025 13:49:36 +0800
-X-QQ-mid: xmsmtpt1756273776tbmr73ubf
-Message-ID: <tencent_CFCFAA0DC325818D879200DDE3DD86193E07@qq.com>
-X-QQ-XMAILINFO: NGZp1yYNf7Y+BVhNUr432huIeyXKGtudE9O40iTYbM+NvX8RXbbS/2GVwP+amg
-	 3BaSruHqdrIuGJcuNc5cCWNYGSVNornwtE/wdt2Z/3dGna+276+QIzTr0oEF9cQyEPdJjOY0OKd6
-	 lZkuqVMTkDuselEc31qEAQoduRaGvjViHuK3Y86C2ARaiSMj2L/HaUfV3cHBk0d2MlAC+Suyj7lv
-	 32PW1tzrXSirno0i3bJb2CsLrqcQPe+/WJau31NOGm+d08yNe95g3OTjZmwQFjlnVTYSc1vMppmy
-	 lMradtRj7jXnIkW652RDGLwk+PZGe/7rh1eNQ88jUNymCckEwx/URfJ2GKyB54FWTrj53QgI8OIy
-	 T9HB/slBLb9C+fADG4q64kHfa2nhRkAdEDS45cEoq7fA9lu1QdDeBgBTP0hrH85Avq0Ve8hGGnxb
-	 Nt36WNubZNsiRcOCjrT78jxNaAoSfXSm5JCqNbRX/Y9407+OekaEcels9vi/4xXIRkv7N7o8UszM
-	 rh0W5WRju2ID2DhPdxKSQjZn+1VKgvdoWT45O+ZeYIerMlY/1U4QArto49QS4Yq4rUcf6WHshYoR
-	 g5wKDbxx70tuzbS7Zn8UsXZH1G6hLxnic4ZCJ4HeTsUNwuxzxD/zCECwvXpcUd9jfGRr3L6LNhKU
-	 nzAoam9hNSZvbAQHNqBQOF7IE49RCFRDG2saqsS4P1Fh/zifynQsS19ANJxynddIuohbBrUZJk9x
-	 mfLze4pRWUhk1t9HQhiW0aZwCEZTNDD4PpakQg6Gp015RIxjfDFXMgtQxgWq2dpzeB6F4oUoesvX
-	 xESZ6+50EodtW1w9fvOSBdkacNfQ+6gd0iEloZaTzCnPcvYUzzInBo7opR/ozcA2HMh9SxyLYE9a
-	 9pANzTyLaPvLScJQIDasywkWde+hACcUq7FC9VVVE+TOszoMoCypXg9PCWAdX76R+k2YQlXN0grm
-	 VWYdzyNbg2TzN1m6HTqdBxXC2210P42gk26B7GDM5yz/rmW3CFJIC4JXzjXOHu
-X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+a25ee9d20d31e483ba7b@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [net?] KASAN: slab-use-after-free Write in __xfrm_state_delete
-Date: Wed, 27 Aug 2025 13:49:37 +0800
-X-OQ-MSGID: <20250827054936.536874-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <68ab6633.050a0220.37038e.0079.GAE@google.com>
-References: <68ab6633.050a0220.37038e.0079.GAE@google.com>
+	s=arc-20240116; t=1756274080; c=relaxed/simple;
+	bh=BbD6VwYuebZvVXUTjVIB736OOnh+InOqS07iPo4EGII=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mH7ePvneNjfGf+j0N5Pgc7eCPJEtn6XmL8ZZ5wLKnmTc3p/X/FYXDli0/seZIKM0dclVBqjQJ2NaQO4hmUAqkluvZ3fLAHIdFzdNRTWTP19bbFdBAsMwKKs1x6PfYE0pEyay4DWdgQIPwh5cA3UsFW/QduZHyF1XAzrCvi2CHTo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=QUIln5s2; arc=none smtp.client-ip=35.89.44.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
+Received: from eig-obgw-6006b.ext.cloudfilter.net ([10.0.30.211])
+	by cmsmtp with ESMTPS
+	id r4YXuDhpAMvnzr97Aubi9f; Wed, 27 Aug 2025 05:54:32 +0000
+Received: from gator4166.hostgator.com ([108.167.133.22])
+	by cmsmtp with ESMTPS
+	id r978ufXkAGGDlr978uCWB1; Wed, 27 Aug 2025 05:54:30 +0000
+X-Authority-Analysis: v=2.4 cv=XN0wSRhE c=1 sm=1 tr=0 ts=68ae9d96
+ a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=DR2cKC/DEnBA9KqqjaPhpA==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=7T7KSl7uo7wA:10
+ a=2AWf5FwvJw1iBHfDe3AA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=xYX6OU9JNrHFPr8prv8u:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=WDJGNaVGxwh+yCobnWlXXZbYF5Bu0xJlzbT0v72eZ/Y=; b=QUIln5s2eYN8GScnE9vXjS9uSf
+	tPmySM2JLcYvGA1m1XKq4aEnX/inUyKvpfB4CRSks+IPqNQT5/8y64YARHQQJ/lyaaG4c3/dxtZf1
+	HDnxbGMM2IajLtU1x77StimGO292yCeD2SVnhjqnuVJCnp9u3f9+29e/FT902XqZGKQoEGMhiehMn
+	fRedJQmbDm4nQOpHGnmg02VK5w83GlKyhqGD1cc81iZ5/59a7YP95O527Q6ItF3u4RrhqZc50fL1L
+	cjLz+ZP2ce3zSKOkgaeFbBJwM3IrycAIaiUyqW9zqb6Xjkv0bg1Mu4UGV5WUetdlBCMa1WyAj877O
+	ip9H/dKQ==;
+Received: from static-243-216-117-93.thenetworkfactory.nl ([93.117.216.243]:42968 helo=[10.94.27.44])
+	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.98.1)
+	(envelope-from <gustavo@embeddedor.com>)
+	id 1ur977-00000003S0N-1GL6;
+	Wed, 27 Aug 2025 00:54:30 -0500
+Message-ID: <c3988bb4-a51e-4d7e-90d6-7c37020cd1b4@embeddedor.com>
+Date: Wed, 27 Aug 2025 07:54:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH][next] scsi: fc: Avoid -Wflex-array-member-not-at-end
+ warnings
+To: Justin Tee <justintee8345@gmail.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>,
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: James Smart <james.smart@broadcom.com>,
+ Justin Tee <justin.tee@broadcom.com>, Hannes Reinecke <hare@suse.de>,
+ linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-hardening@vger.kernel.org
+References: <aJtMETERd-geyP1q@kspp> <yq1seheonya.fsf@ca-mkp.ca.oracle.com>
+ <CABPRKS9BVsGhBDmNVbts9QhMsJ-mZhMKDB4u-NnfVcVLsfWrAg@mail.gmail.com>
+Content-Language: en-US
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+In-Reply-To: <CABPRKS9BVsGhBDmNVbts9QhMsJ-mZhMKDB4u-NnfVcVLsfWrAg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 93.117.216.243
+X-Source-L: No
+X-Exim-ID: 1ur977-00000003S0N-1GL6
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: static-243-216-117-93.thenetworkfactory.nl ([10.94.27.44]) [93.117.216.243]:42968
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 2
+X-Org: HG=hgshared;ORG=hostgator;
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfGrihx6f/u5RuZS18x2oiY63fyXY2i3EDkjQp3WNbG6pQw3vsLrn5o9u0+N8FNI1ZcIx+Qa2MLyZZVTluvUmISDmJllF7GsyZPd9uekIRrg50GvAqse5
+ Tzh3O0vJKZdtfkjOxBJ3kAfYRdVTo9E2l29ad6YPHfhRzVYLpsa6i3xws2mSTOsyhkiE5NXGQW6EBKAGpSl/Iw4ROu57DOxPfvuXXxPneSxpoy1jljVC/TFV
 
-#syz test
 
-diff --git a/net/xfrm/xfrm_state.c b/net/xfrm/xfrm_state.c
-index 78fcbb89cf32..137b5b660683 100644
---- a/net/xfrm/xfrm_state.c
-+++ b/net/xfrm/xfrm_state.c
-@@ -929,10 +929,10 @@ int xfrm_state_flush(struct net *net, u8 proto, bool task_valid)
- 	err = -ESRCH;
- 	for (i = 0; i <= net->xfrm.state_hmask; i++) {
- 		struct xfrm_state *x;
--restart:
- 		hlist_for_each_entry(x, net->xfrm.state_bydst+i, bydst) {
- 			if (!xfrm_state_kern(x) &&
--			    xfrm_id_proto_match(x->id.proto, proto)) {
-+			    xfrm_id_proto_match(x->id.proto, proto) &&
-+			    x->km.state != XFRM_STATE_DEAD) {
- 				xfrm_state_hold(x);
- 				spin_unlock_bh(&net->xfrm.xfrm_state_lock);
- 
-@@ -940,11 +940,9 @@ int xfrm_state_flush(struct net *net, u8 proto, bool task_valid)
- 				xfrm_audit_state_delete(x, err ? 0 : 1,
- 							task_valid);
- 				xfrm_state_put(x);
--				if (!err)
--					cnt++;
-+				cnt++;
- 
- 				spin_lock_bh(&net->xfrm.xfrm_state_lock);
--				goto restart;
- 			}
- 		}
- 	}
-diff --git a/net/xfrm/xfrm_state.c b/net/xfrm/xfrm_state.c
-index 78fcbb89cf32..3de1ac70019f 100644
---- a/net/xfrm/xfrm_state.c
-+++ b/net/xfrm/xfrm_state.c
-@@ -929,10 +929,10 @@ int xfrm_state_flush(struct net *net, u8 proto, bool task_valid)
- 	err = -ESRCH;
- 	for (i = 0; i <= net->xfrm.state_hmask; i++) {
- 		struct xfrm_state *x;
--restart:
- 		hlist_for_each_entry(x, net->xfrm.state_bydst+i, bydst) {
- 			if (!xfrm_state_kern(x) &&
--			    xfrm_id_proto_match(x->id.proto, proto)) {
-+			    xfrm_id_proto_match(x->id.proto, proto) &&
-+			    x->km.state != XFRM_STATE_DEAD) {
- 				xfrm_state_hold(x);
- 				spin_unlock_bh(&net->xfrm.xfrm_state_lock);
- 
-@@ -940,11 +940,9 @@ int xfrm_state_flush(struct net *net, u8 proto, bool task_valid)
- 				xfrm_audit_state_delete(x, err ? 0 : 1,
- 							task_valid);
- 				xfrm_state_put(x);
--				if (!err)
--					cnt++;
-+				cnt++;
- 
- 				spin_lock_bh(&net->xfrm.xfrm_state_lock);
--				goto restart;
- 			}
- 		}
- 	}
-@@ -1557,6 +1555,7 @@ xfrm_state_find(const xfrm_address_t *daddr, const xfrm_address_t *saddr,
- #endif
- 		if (km_query(x, tmpl, pol) == 0) {
- 			spin_lock_bh(&net->xfrm.xfrm_state_lock);
-+			BUG_ON(x->km.state == XFRM_STATE_DEAD);
- 			x->km.state = XFRM_STATE_ACQ;
- 			x->dir = XFRM_SA_DIR_OUT;
- 			list_add(&x->km.all, &net->xfrm.state_all);
-@@ -1722,6 +1721,7 @@ static void __xfrm_state_insert(struct xfrm_state *x)
- 	struct net *net = xs_net(x);
- 	unsigned int h;
- 
-+	BUG_ON(x->km.state == XFRM_STATE_DEAD);
- 	list_add(&x->km.all, &net->xfrm.state_all);
- 
- 	/* Sanitize mark before store */
+
+On 27/08/25 01:13, Justin Tee wrote:
+> Hi Martin and Gustavo,
+> 
+> Regarding the maintainers file, yes Broadcom will push a patch to update soon.
+> 
+> Regarding Gustavo’s patch, I think we should also update the
+> assignment of rdf.desc_len in lpfc_els.c like below.
+> 
+> diff --git a/drivers/scsi/lpfc/lpfc_els.c b/drivers/scsi/lpfc/lpfc_els.c
+> index fca81e0c7c2e..432761fb49de 100644
+> --- a/drivers/scsi/lpfc/lpfc_els.c
+> +++ b/drivers/scsi/lpfc/lpfc_els.c
+> @@ -3762,7 +3762,7 @@ lpfc_issue_els_rdf(struct lpfc_vport *vport,
+> uint8_t retry)
+>          memset(prdf, 0, cmdsize);
+>          prdf->rdf.fpin_cmd = ELS_RDF;
+>          prdf->rdf.desc_len = cpu_to_be32(sizeof(struct lpfc_els_rdf_req) -
+> -                                        sizeof(struct fc_els_rdf));
+> +                                        sizeof(struct fc_els_rdf_hdr));
+
+Good catch! :)
+
+Thanks
+-Gustavo
 
 
