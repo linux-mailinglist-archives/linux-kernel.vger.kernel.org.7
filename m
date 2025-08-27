@@ -1,157 +1,72 @@
-Return-Path: <linux-kernel+bounces-787867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 655FDB37C91
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 09:58:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B7C8B37C72
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 09:57:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A21D1BA236F
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 07:58:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CFED1BA0172
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 07:57:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF73432145D;
-	Wed, 27 Aug 2025 07:58:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7510B321426;
+	Wed, 27 Aug 2025 07:57:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="ILjsjLfj"
-Received: from r3-11.sinamail.sina.com.cn (r3-11.sinamail.sina.com.cn [202.108.3.11])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=bitology.eu header.i=@bitology.eu header.b="n+pitTRN"
+Received: from smtp.domeneshop.no (smtp.domeneshop.no [194.63.252.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DB041A9F86
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 07:58:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E650D18DB01
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 07:57:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.63.252.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756281493; cv=none; b=tQoHQ0XdYc6BQx9vHbAy1q6A9mpcL0G68jxoPVSoZ0YNXSotiNq5Y3YAXotrIssQV00m0saKIQZchH6OiUE19Uvfq3E18lqM6qq/rIdAam/7VsTd2l1cjkxj3Gdshfaj6bE9ZV4bHalDkyusu5L5mKN1AB6jTJ/5H9UyHpjPXx4=
+	t=1756281438; cv=none; b=oIDwBcdBSoW9UAoNlMvbyXl9qfGANs+i/uQyCNnKVwhhmhQKpATNDW6nlcImeu+PvwFe3YEcrI+StsFJ3ajQSqU494dfLg1zE89R/dRyzfiuDDDGPQf4ya+r8fskmTsPQJVFP6hbKk6QNpG8wfJWZp3BGszoF5i5W+bLfCPbxg0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756281493; c=relaxed/simple;
-	bh=6XWsz5fE1b3NySvmjWOLDDL69Emwrji8tzxSn8nVz8I=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Xdlk8QUFj6ZEtugGgzEaALHysK+Xwu0cOFtNbCaJix2yEczPKyp+awEDQomHqLeGDfbyMg5UIya6hfI9FMYRlgrUu7OONHvFA9gHucy8GKev0FBDqgW4hbf59aCQs7tWtYB/Iznghdji3hq1olLZVRuUizhuaSFEc3iTlGDUj4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=ILjsjLfj; arc=none smtp.client-ip=202.108.3.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1756281487;
-	bh=Cn8dpOuN9Xb+9qyQf/t/k6jIrwreYRP+VzBXeUJw9pw=;
-	h=From:Subject:Date:Message-ID;
-	b=ILjsjLfjgtuzd5v8CtXNKl6bn5TyompaaBuA4+nS8jEL83wBVvXbvzZqTFpRtNDsi
-	 ysgRHW8UKhWG8u/rEilew1qq7WRmNdC2c3YoMM8c6nzOsSkaoZ6lk5AqeRIkVERpNi
-	 KuLyq0jcqMwbG2WCEqljl01VcCskqI03GeCr3Qx4=
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
-	by sina.com (10.54.253.34) with ESMTP
-	id 68AEBA600000048D; Wed, 27 Aug 2025 15:57:21 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 9047486292032
-X-SMAIL-UIID: 9786116694194F798B47C684A1AA57ED-20250827-155721-1
-From: Hillf Danton <hdanton@sina.com>
-To: syzbot <syzbot+a25ee9d20d31e483ba7b@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [net?] KASAN: slab-use-after-free Write in __xfrm_state_delete
-Date: Wed, 27 Aug 2025 15:57:10 +0800
-Message-ID: <20250827075711.5808-1-hdanton@sina.com>
-In-Reply-To: <68ab6633.050a0220.37038e.0079.GAE@google.com>
-References: 
+	s=arc-20240116; t=1756281438; c=relaxed/simple;
+	bh=8iAgX0sYCl+R5/2X5xJgUxFEnhdPlRhG/mLBJuD38YM=;
+	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=qtTMfO64iGcOWLTFiv3GEvyeOxYgdZfSLLlEl6GQAi7niLcZy3XgkoEJg2uRJ0wLILOkzoPuA3BRmI4G0X4+LzmI9gt/agHf1hhuFdvF5CtZtLs8gUxkgxTB2wQCHRWU3mPh4NoONNeNOh+sY0RJ9W+vn913L3xIiW8dF7kA9K0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bitology.eu; spf=pass smtp.mailfrom=bitology.eu; dkim=pass (2048-bit key) header.d=bitology.eu header.i=@bitology.eu header.b=n+pitTRN; arc=none smtp.client-ip=194.63.252.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bitology.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bitology.eu
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=bitology.eu
+	; s=ds202506; h=Content-Transfer-Encoding:Content-Type:Subject:From:To:
+	MIME-Version:Date:Message-ID:From:Sender:Reply-To:Subject:Date:Message-ID:To:
+	Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=8iAgX0sYCl+R5/2X5xJgUxFEnhdPlRhG/mLBJuD38YM=; b=n+pitTRNJleL5hSRmpEncpjJYv
+	rEMZ9fDzUnMXamBixl1DDeGbbfbstYVQuxd1WEEARJpKZViYkhKyTGsnFwnmQr595DA08qWgAlxJO
+	XQ6Er7pHQrSPqTr2ImyeVe/zMeK5nW2zeRuKbRa9wHSK78arGmAjT2MBOUDLjdndlHaMjPqI2cE1T
+	iLD+gLL+M8cqrHtkNFL5oWKo7DLe/Dlek0aSuW9LOH/uvJbZ2hBdBk3kwsHMr5QEXhGYkVKFwC9On
+	UMiUBjjgX7sXw80DZw1mshdWAbjGY60f4gYYI4NKOFemStdW2ToeuOUuGCCZwEldWXcWEqz88hfG5
+	gnLUD4zA==;
+Received: from smtp
+	by smtp.domeneshop.no with esmtpsa (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	id 1urB1u-0077xH-Pn
+	for linux-kernel@vger.kernel.org;
+	Wed, 27 Aug 2025 09:57:14 +0200
+Message-ID: <dffb8686-0e9f-4429-b82f-5499783318a0@bitology.eu>
+Date: Wed, 27 Aug 2025 09:57:13 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+To: linux-kernel@vger.kernel.org
+From: =?UTF-8?Q?Ywe_C=C3=A6rlyn?= <bit-budi@bitology.eu>
+Subject: Moved Channel (Fair Pau Philosophy, Low Jitter)
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-> Date: Sun, 24 Aug 2025 12:21:23 -0700	[thread overview]
-> syzbot has found a reproducer for the following issue on:
-> 
-> HEAD commit:    b1c92cdf5af3 Merge branch 'net-wangxun-complete-ethtool-co..
-> git tree:       net-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=1411b062580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=67b99ceb67d33475
-> dashboard link: https://syzkaller.appspot.com/bug?extid=a25ee9d20d31e483ba7b
-> compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14221862580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=159fba34580000
+Moved channel to: https://www.youtube.com/@Budi-Bitstreams_OS
 
-#syz test
+Some 9x media + history and refutations on playlists.
 
---- x/include/net/xfrm.h
-+++ y/include/net/xfrm.h
-@@ -202,6 +202,7 @@ struct xfrm_state {
- 
- 	refcount_t		refcnt;
- 	spinlock_t		lock;
-+	int deleted;
- 
- 	u32			pcpu_num;
- 	struct xfrm_id		id;
---- x/net/xfrm/xfrm_state.c
-+++ y/net/xfrm/xfrm_state.c
-@@ -615,6 +615,7 @@ static void xfrm_state_gc_destroy(struct
- 		put_page(x->xfrag.page);
- 	xfrm_dev_state_free(x);
- 	security_xfrm_state_free(x);
-+	xfrm_state_delete(x);
- 	xfrm_state_free(x);
- }
- 
-@@ -812,10 +813,16 @@ int __xfrm_state_delete(struct xfrm_stat
- 	struct net *net = xs_net(x);
- 	int err = -ESRCH;
- 
--	if (x->km.state != XFRM_STATE_DEAD) {
--		x->km.state = XFRM_STATE_DEAD;
-+	for (;;) {
-+		if (x->km.state != XFRM_STATE_DEAD)
-+			x->km.state = XFRM_STATE_DEAD;
- 
- 		spin_lock(&net->xfrm.xfrm_state_lock);
-+		if (x->deleted) {
-+			spin_unlock(&net->xfrm.xfrm_state_lock);
-+			return 0;
-+		}
-+		x->deleted++;
- 		list_del(&x->km.all);
- 		hlist_del_rcu(&x->bydst);
- 		hlist_del_rcu(&x->bysrc);
-@@ -929,22 +936,29 @@ int xfrm_state_flush(struct net *net, u8
- 	err = -ESRCH;
- 	for (i = 0; i <= net->xfrm.state_hmask; i++) {
- 		struct xfrm_state *x;
-+		bool dead;
- restart:
- 		hlist_for_each_entry(x, net->xfrm.state_bydst+i, bydst) {
- 			if (!xfrm_state_kern(x) &&
- 			    xfrm_id_proto_match(x->id.proto, proto)) {
--				xfrm_state_hold(x);
-+				dead = x->km.state == XFRM_STATE_DEAD;
-+				x->km.state = XFRM_STATE_DEAD;
- 				spin_unlock_bh(&net->xfrm.xfrm_state_lock);
- 
--				err = xfrm_state_delete(x);
-+				if (dead) {
-+			flush:
-+					schedule_work(&xfrm_state_gc_work);
-+					flush_work(&xfrm_state_gc_work);
-+					spin_lock_bh(&net->xfrm.xfrm_state_lock);
-+					goto restart;
-+				}
-+				err = 0;
- 				xfrm_audit_state_delete(x, err ? 0 : 1,
- 							task_valid);
- 				xfrm_state_put(x);
- 				if (!err)
- 					cnt++;
--
--				spin_lock_bh(&net->xfrm.xfrm_state_lock);
--				goto restart;
-+				goto flush;
- 			}
- 		}
- 	}
---
+Light!
+
 
