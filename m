@@ -1,105 +1,58 @@
-Return-Path: <linux-kernel+bounces-788439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43283B3846C
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 16:06:19 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7DFFB3846D
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 16:08:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 768011B658FA
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 14:06:39 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 878044E0F33
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 14:08:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7668C3570B6;
-	Wed, 27 Aug 2025 14:06:12 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7184C28980F;
-	Wed, 27 Aug 2025 14:06:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0CE2353356;
+	Wed, 27 Aug 2025 14:08:04 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57ACB1C6BE
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 14:08:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756303572; cv=none; b=tvhFygYzzovRo7WcQUVJmbDgnMHDrXPHr4uITQHshaYmkGxyq1oQsZsq6wI9CgiLMhn6vVhHza7cKVtyGoVgPGUVPmkkPYF3/HgoJeTg8gUAWAm8Cw0WmeJCg6jM2fTBihaEYoUGwFg3kP2MWGI7ybax4Sdfw4PWo1A9J4oeLtM=
+	t=1756303684; cv=none; b=cC48J82xqpd3ULRSHN5V5wnlgLPpb8gzApqTNIm1sGBIntiiZviBy+OKrjE90YvPb7C2xQ4+twmVMm993PR71lvln0dE+6nNWl1Dyr97OaK1DFDAyZyDreBk+M0dQ5lwNJzP908F5HsxnNKLlweY65OrgXhEJkumEZnFsup/q20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756303572; c=relaxed/simple;
-	bh=3nKQ5Cu61oSMTavvRwK7vBHJ2eUEUXbnTlX4/jxGPkc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=A7m0Ro8bzGPAtNu6NyqVyVWrp0xsQhMtDoAyAl9Wl9hri76h0Ynjp06s0HXHtD5fv6nPoI7/c1J0ZBUNelG7Om9waxfekgEFq1fFEM7Fo0PFEQVkOgPxHlO3ck9T46+uV0SPTEeGWJFeCsmljoKuT1A+XhbQKD+atFaiZL2dB74=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 69F6C2720;
-	Wed, 27 Aug 2025 07:06:01 -0700 (PDT)
-Received: from [10.1.196.50] (e121345-lin.cambridge.arm.com [10.1.196.50])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EF29D3F738;
-	Wed, 27 Aug 2025 07:06:08 -0700 (PDT)
-Message-ID: <2c6d68da-fd1a-4b59-8bfc-5e1c66ceaebe@arm.com>
-Date: Wed, 27 Aug 2025 15:05:58 +0100
+	s=arc-20240116; t=1756303684; c=relaxed/simple;
+	bh=q1mVpQNuoOWSfKd1xb+ddI8Hu6aZaNSoHsuxmcDj1Sw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=N+rVrBnr/sjXblKeL+RVfSRjH1k3FSviWhB2bGn4N7rLhiuQ1IVNeKocRx/DrUyaIDJnWTUbiHxUk8UtbZB/wPRE2308HW6gm/XQoFyT0DLyJY08I6QuqzWruLw6RF28juRvRMf+MDjnqqQQK4mmkQtzvaEO0i5JmmSKURkfe2s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EBF39C4CEEB;
+	Wed, 27 Aug 2025 14:08:02 +0000 (UTC)
+Date: Wed, 27 Aug 2025 15:08:00 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Will Deacon <will@kernel.org>
+Subject: Re: [PATCH v2 6/7] arm64: Stop calling page_address() in free_pages()
+Message-ID: <aK8RQCvXKPQVEccl@arm.com>
+References: <20250826205617.1032945-1-vishal.moola@gmail.com>
+ <20250826205617.1032945-7-vishal.moola@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drivers: perf: use us_to_ktime() where appropriate
-To: Mark Rutland <mark.rutland@arm.com>, Xichao Zhao <zhao.xichao@vivo.com>
-Cc: will@kernel.org, linux-perf-users@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20250813083257.504573-1-zhao.xichao@vivo.com>
- <aK7RkB5p6L17Ffuw@J2N7QTR9R3>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <aK7RkB5p6L17Ffuw@J2N7QTR9R3>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250826205617.1032945-7-vishal.moola@gmail.com>
 
-On 27/08/2025 10:36 am, Mark Rutland wrote:
-> [adding Robin and LAKML]
+On Tue, Aug 26, 2025 at 01:56:16PM -0700, Vishal Moola (Oracle) wrote:
+> free_pages() should be used when we only have a virtual address. We
+> should call __free_pages() directly on our page instead.
 > 
-> On Wed, Aug 13, 2025 at 04:32:57PM +0800, Xichao Zhao wrote:
->> The arm_ccn_pmu_poll_period_us are more suitable for using
->> the us_to_ktime(). This can make the code more concise and
->> enhance readability.
->>
->> Signed-off-by: Xichao Zhao <zhao.xichao@vivo.com>
-> 
-> Superficially this looks fine to me, so:
-> 
-> Acked-by: Mark Rutland <mark.rutland@arm.com>
-> 
-> Will, I assume that (if no-one complains) you'll pick this up when
-> queueing PMU patches.
+> Signed-off-by: Vishal Moola (Oracle) <vishal.moola@gmail.com>
 
-Yup, the new helper looks entirely appropriate here. We could perhaps 
-take this opportunity to drop the unnecessary cast as well though, since 
-automatic promotion from unsigned int to u64 is perfectly well-defined 
-and unsurprising.
-
-Thanks,
-Robin.
-
-> 
-> Mark.
-> 
->> ---
->>   drivers/perf/arm-ccn.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/perf/arm-ccn.c b/drivers/perf/arm-ccn.c
->> index 1a0d0e1a2263..8af3563fdf60 100644
->> --- a/drivers/perf/arm-ccn.c
->> +++ b/drivers/perf/arm-ccn.c
->> @@ -565,7 +565,7 @@ module_param_named(pmu_poll_period_us, arm_ccn_pmu_poll_period_us, uint,
->>   
->>   static ktime_t arm_ccn_pmu_timer_period(void)
->>   {
->> -	return ns_to_ktime((u64)arm_ccn_pmu_poll_period_us * 1000);
->> +	return us_to_ktime((u64)arm_ccn_pmu_poll_period_us);
->>   }
->>   
->>   
->> -- 
->> 2.34.1
->>
-
+Acked-by: Catalin Marinas <catalin.marinas@arm.com>
 
