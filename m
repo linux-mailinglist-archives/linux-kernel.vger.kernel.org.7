@@ -1,240 +1,254 @@
-Return-Path: <linux-kernel+bounces-788590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1EEBB386E7
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 17:47:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E813B386EA
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 17:47:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CC807C33C1
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 15:47:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F5BB4609EA
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 15:47:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B63732D0C91;
-	Wed, 27 Aug 2025 15:47:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 036672E1C6B;
+	Wed, 27 Aug 2025 15:47:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="P5JLPriU"
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2069.outbound.protection.outlook.com [40.107.100.69])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hy5aSNrp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A820258A
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 15:47:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.69
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756309635; cv=fail; b=mUOaLDP+ScHjNHcgNz0v1VLASkGM0mYSebb1ztwt5VULkCwgDSRoz3etpk0s1wj+ub/00qZemaWpBus6PhGgeWFHYFhR4uzVeAnbbBAVRQEDUVq5rGzEdtPWdOPAV5o68VaMCP01NrYaEuZ+6Vtx/GPyzk708Idiz47J7lhGg/k=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756309635; c=relaxed/simple;
-	bh=B4V7esmztU5ChXE3k7/PuFSlreCXa+h9OR3gsJzJz4A=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=JeN68DU0Vd1MoShNSHXijyQk9ixtyMECGDa3LWJJ1e+9jl9aZ7lNJ+w/m6czJlPMYKvcFg4zlMiwZamQUqqXc2N52IvBo6IOq2qz7LNnrOdWQa9KzOWkqx1kVHwLceK3moEiVkobi5zo6ZMTvXPZmWYFOSkaE2l5EU9unmXOn1Q=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=P5JLPriU; arc=fail smtp.client-ip=40.107.100.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=K6kTy6cLup3QIUgkBaxkWpyyLWi6tsjq4Kecs6OlDsKyurOi/GS1nNB0r5xs3bE8uN6vjdztLqqFtQBX85w3v5z5EzCVrRpTYJRaW67sktuFs7e6AwQ2K7ezG+F699eeSj3e06e+35buPicHRqAJpGoAf2yHetjIjzw4RDbKTyeNEMQ1cXg/MVHVGfKQK5PIY1t3Shg6oYNZ6kcGDWeDVgjL2pilgbgG/Q9QhPCKhO6BVTDmJ1LYkSr1UwrwocwfLaU49qIiOZ8zd+fLAApt0X3fjaUPlKSO8UT9bWU6JUgB7rXyFhDzb49J8fK0tio32e4dRPex7+Y8JaJGpM+1Cw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=B4V7esmztU5ChXE3k7/PuFSlreCXa+h9OR3gsJzJz4A=;
- b=WwdQ+WLCpfVOfKfes/3hacOqKDwvM2HLXWB7dtLM1iYn9E3HFEsz9EhUKt1U80EkHLlwhMTdPShYaOewNA5VqvLUzYhaqII5BYV7DsRXmGWgv3ysR5pZ51AUOAVfo+o56AkO8ipWWf9awK3Nr6OfVmT7rChfZZb1rH3he7LR7tvVgo1vqr1jhCoq2FhzNxJcyX6id2JQntrfbxU15H84ECGGllgFEqWSfOxYM0vze/iRxk4LCBLOj2lA5UkOJEUiH4pqbLl2XVjKT15hdBcItB6KENOajkN1Ujk19iYJVStduMd4JjXgRQ5FEs3RR5pVgj0KVWzUPYTlSVrxtxquoQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=B4V7esmztU5ChXE3k7/PuFSlreCXa+h9OR3gsJzJz4A=;
- b=P5JLPriUkfbH6np3BQpZERNd/D/uUKndf5KsuMOCXqCOxXSsLUFsmny43RG6WOKTpmFnBfYM3HX4IOcg85s7IQnFHAp4dWjfm/x4zpXOBy6OG2mE7YrDk/PgT1MDgXhYEhHBQf0HD0AM8gQk1FMxW5wNnJqhsTkb1/uLwR1WxJk=
-Received: from LV3PR12MB9265.namprd12.prod.outlook.com (2603:10b6:408:215::14)
- by IA1PR12MB7760.namprd12.prod.outlook.com (2603:10b6:208:418::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.21; Wed, 27 Aug
- 2025 15:47:10 +0000
-Received: from LV3PR12MB9265.namprd12.prod.outlook.com
- ([fe80::cf78:fbc:4475:b427]) by LV3PR12MB9265.namprd12.prod.outlook.com
- ([fe80::cf78:fbc:4475:b427%5]) with mapi id 15.20.9052.019; Wed, 27 Aug 2025
- 15:47:10 +0000
-From: "Kaplan, David" <David.Kaplan@amd.com>
-To: Borislav Petkov <bp@alien8.de>
-CC: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, Thomas Gleixner
-	<tglx@linutronix.de>, Peter Zijlstra <peterz@infradead.org>, Josh Poimboeuf
-	<jpoimboe@kernel.org>, Ingo Molnar <mingo@redhat.com>, Dave Hansen
-	<dave.hansen@linux.intel.com>, "x86@kernel.org" <x86@kernel.org>, "H . Peter
- Anvin" <hpa@zytor.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v2 4/5] x86/bugs: Add attack vector controls for SSB
-Thread-Topic: [PATCH v2 4/5] x86/bugs: Add attack vector controls for SSB
-Thread-Index:
- AQHcEmNJ5LXItfJ3EEGTlLKvZSsitbR2VbgAgAAKGoCAADDXIIAABpWAgAAAcnCAABOMAIAAAq2A
-Date: Wed, 27 Aug 2025 15:47:10 +0000
-Message-ID:
- <LV3PR12MB9265ABD1B81D759A618A20029438A@LV3PR12MB9265.namprd12.prod.outlook.com>
-References: <20250819192200.2003074-1-david.kaplan@amd.com>
- <20250819192200.2003074-5-david.kaplan@amd.com>
- <7vo33zwvn2wz74fg7wuflrr2gnhlkn7hwaziuzkk7brrp2morh@ltbtredcwb5x>
- <20250827102754.GHaK7dqivnNnQsWGeS@fat_crate.local>
- <20250827110403.GFaK7mIxwsQ9IF7ML8@fat_crate.local>
- <LV3PR12MB92655023C50A92BE30D7A8049438A@LV3PR12MB9265.namprd12.prod.outlook.com>
- <20250827142225.GIaK8UoYo-rnR9T2OD@fat_crate.local>
- <LV3PR12MB9265934929BC29E635C39EDD9438A@LV3PR12MB9265.namprd12.prod.outlook.com>
- <20250827153358.GJaK8lZm3cggYDbw2C@fat_crate.local>
-In-Reply-To: <20250827153358.GJaK8lZm3cggYDbw2C@fat_crate.local>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
- MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Enabled=True;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SiteId=3dd8961f-e488-4e60-8e11-a82d994e183d;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SetDate=2025-08-27T15:43:32.0000000Z;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Name=AMD
- Internal Distribution
- Only;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_ContentBits=3;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Method=Standard
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: LV3PR12MB9265:EE_|IA1PR12MB7760:EE_
-x-ms-office365-filtering-correlation-id: 8cf46529-e186-40b2-4264-08dde580fc54
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|366016|7416014|376014|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?RjZBTTl6MFIzUnROc2pSNjRVbG42NmlEZW5UeTExRThjaFpQK3lxMVNkc3cx?=
- =?utf-8?B?NThNelNoWmZ3TkRZQ2laMGVTL1ltK2J3RDFuMDY0a2p2QkovYmtoaTZ3Sndw?=
- =?utf-8?B?MGdvMkV0bGZuQVUzSzQ5UUk3QmtWRVE2emozU0Q2QTVzZWk4aUN1WHR4SDVG?=
- =?utf-8?B?eWxHbm1EVUJQYjQ4WCt0ZzBkSEhiYnpvM0pxN0FsbklCTWJHNkszSzBLU0kv?=
- =?utf-8?B?UHphQUs0b085SllnRnF5UnQ4NU8rQks2QkUvYXNNRnNzanJTUDVZWFRKNUJ0?=
- =?utf-8?B?OFRuditDSkMrR1B3Wi9HUkl2ZVIwOHU5WHRVMEltLzg5eHJ5ckJmTWZ6L01t?=
- =?utf-8?B?TGh5UHdLVUpGNUVON3Q4dXdEY0F6N3hieGo5WlIyNHhxMUY0RnpUaWNKbW5j?=
- =?utf-8?B?V05jU3VCNC9LL0pma0NCb0ZraWwyTHhaN05CREk3UXIzOVdNTkgwTWpTNUYr?=
- =?utf-8?B?TFN3RnBzcStKYmpSaDNHa1dLK0tZNmhBdm9RNFgxWkZMTjBxcWhSQ1pxK0Jy?=
- =?utf-8?B?bnhpcG03aHQreEt4N2ZTcmVubk1DbVRpbzFWcTRuYU9CejNLaDdHa0FyNkJo?=
- =?utf-8?B?cjRwc3RXYjBXeDE0Y3ZOK2Q1K0JEUTFOOGl1L1JhSWN0bDJHWWt2YXJaWm90?=
- =?utf-8?B?UVVreW00eUtLVDMyejRMR3hUanNtd1FFS3IxK1R6TldMVUk2ZEt0ZytmTWxu?=
- =?utf-8?B?U2RicENoZXlWZTNoQ2FUbE9RTU43NzkwZnFQcFduWUZMK1FzRWM2dnFjMG1p?=
- =?utf-8?B?WkRISWpTZ0F5M1pHVml1Q3docS9td1BhTlNqSWY3bit5dnlkWEFlc3IxQVdJ?=
- =?utf-8?B?dkw2TUpZUEhJUDJJMkJ4V0JZcTgxdWh6aXRsYjVLT3laSTRMSDgyeTN0RUZk?=
- =?utf-8?B?QVpvS1BsdThmUEVDMDF4NTgzM0FQQlZMYzhROTdmaC9wU0VJbXU3QitkOVZo?=
- =?utf-8?B?T1Q5NklSOGNaVUNHRlg3RDdUYUxkMEZVRTdoZlpKWW9vTDNacUlsSmVYVlR5?=
- =?utf-8?B?a09IcklXUXppeG5OWjB4ZFZvMlZvZ2Zvb243MWp2aWpydTUyYzRrUEtNNU9R?=
- =?utf-8?B?cWRFbkdqQ1Jxa0VCR2JqSEhqRUlocXRqSk1iYlA3M3ptcStoWVA4cHRVKzhV?=
- =?utf-8?B?YStMTElVTzhVcmdqdk95Ym0xdEVJMjJaMmgwWHJ1SHRpcWowRk9hcEYzcDY5?=
- =?utf-8?B?di9OUUE4SFNob0QraWV3Ymh4RkVoSFlrU0dGaE9Kb1Fvek9NTm1YQ0NsRHJY?=
- =?utf-8?B?b3dzTVppemFrWFlyald6d0ZRK1djSXVRNWUxdnZUK0VoSDhVZzVmbG5BbWZm?=
- =?utf-8?B?Z1ZwS1lDWG5QTXoxakNHdnZjUEdmdk96czhBN1FJakdtVEtHZmFiMnhiMVFC?=
- =?utf-8?B?MTdvRnkreGRnMHJCb25DTW00YTdHV3JqNjcwRGNxUGFuNEs1bmJpZW1jeldY?=
- =?utf-8?B?emM5aEt2b1E3bGJGaEkxY1gvNDhVQjNRMk9IbGtKdWxucU83RFU3VytEN0tn?=
- =?utf-8?B?WndHV0dyN29UMzVyR20xSExCK3Q1ZGlyd0tnV0dwMms0cEtQUy9RbU5GTHpm?=
- =?utf-8?B?MWZNK1M5TjVZSXlrdng4bXdTaU5kS29HdlVjVlRkWkh6Q3drOG1SVDJvTlhq?=
- =?utf-8?B?WUVkZmk0RE4zK1d0akExRGtLLzZ5czBaMXI0WEdCL1hlM0FGYVRrVkNXQlkz?=
- =?utf-8?B?UTRkQjRiSTRIZzl0VWNhYTJtd2RUNzlYdVhWTU5ORmNIVWs2YjE2Z2pmbEEw?=
- =?utf-8?B?U2ZBTTZ4RXdDcjFOcnZxVTNLTUUxSWM0QnN6bFBuNmFMY240UTljUHA5MExv?=
- =?utf-8?B?aGhVTTRuK0N1RXhUUFpGRDZSaVEyeTgrU2lvMnRmUGxjYlNHS0o3c2c2c3I3?=
- =?utf-8?B?WkkzZjNZUlNNbk8xWEhKNS9RcEMzbVVMMVY4a3NMRTU0S3FtOVhETldTTlZs?=
- =?utf-8?B?bWlzWDNxeEw3eFYzSFhHR1p5V3haRzRPMitHNzNqK0ZiaXN4d3p5S0hob2RQ?=
- =?utf-8?B?eWpYaWJkeWZRPT0=?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV3PR12MB9265.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?cFlCQ0w3Qm5QZWJ2R1dQT1k3d0Q1Zk9rSGlob3FnWnZJQW1yVk1LNmh5NTNq?=
- =?utf-8?B?WW5rMlhNWjJGOGF2QU5tU0NNcTVIb2Zzb0FlVjBPM3I0dDhWRnpUTFBUbDY0?=
- =?utf-8?B?M0dldXVuR3RqU3BJRkhsR1VNdktmNnQ4MGdTbGEzNWdaSzJocGVKcTZuU09v?=
- =?utf-8?B?V0pxUkpCalNLenBlZzFGY2IyWnREMGFqVmdHQlVzRWpiWFpuUE14TEU0bnhP?=
- =?utf-8?B?akFwN3VOSDh3NUtnUk1yRWdzK1JKZWhIMW1TKzRSLzA4eXVDeWcwR2h2djFn?=
- =?utf-8?B?bHhLQWE3Q09MKyttcDYreDdqM1V0bFp3RHBEWkNrWVozV0RCeVEvTDk4SmRW?=
- =?utf-8?B?dFZhUHdLU0wxVHNQOWtMcWNFSWdreXFIZnhEaDVGcStxUnFkNTNVYndrb0M0?=
- =?utf-8?B?MUNVMnNBcmg1a25XcmRrb1dUditWSjB6M1Fab0JnL3FtN2ZFbmczemFPb3No?=
- =?utf-8?B?R2phSEhIaFZOZDV3K0o3czR6Z0YwY1N5bEJsaEZZcjNTTm8yRkNhYXI0blMx?=
- =?utf-8?B?Nk9Jc254YUc1WlNlVllIdHdPdjFjUXgxSS9Xa3dsSFNQbEFyaHFHVVArUGoz?=
- =?utf-8?B?TkFTaUdvbkFyaUtsUHB4NCtVUEJGRUVNSUNROEc4Y2hqZVd2VXRuRVNWMWQ4?=
- =?utf-8?B?QlZxTFNiVFVsMTIrWjAvZUZndXl2UytPa214SFVmR1JXRE8rekVkS1JkbGZC?=
- =?utf-8?B?Z3lSczhoaTdCYmpzYWZ4WEZ1VFlWbE5aWDhJVEpqQ2QvM0FTMktnZDdTY1RH?=
- =?utf-8?B?dzFFMnVXNmRCWkVrU1ovV2Y1WFZmUXJzbkNRc3RKZVM0aUpKaVIrbkliRXFz?=
- =?utf-8?B?NzJERWQ3cnZLT0ZOejZpei9Xbm9HR3dFblVFWHJJbnlVQ2M2c21BdE41eDl2?=
- =?utf-8?B?QmpUbU5tNCs5TEgzZGl4S0cxbUR5UkJ4SXZuczRUV1Rva0N6Unc0WGZyRlA3?=
- =?utf-8?B?R1liaG0wcGFVRHZlaDRySTZMaFZvWXltVURNazFYMzA3ejB1VDBkWXlnaWRQ?=
- =?utf-8?B?d282TGFxSkR2L3Q0NGJvVHVuZW5SSTRWN09BemlFaWMwRTBQNlMvSTdTNTlF?=
- =?utf-8?B?dlM2YURyejhLeSs5KzVyVWFlbW4yc0RXZktCSmxkSEd4cW1SZGFiS3ArODhC?=
- =?utf-8?B?U1kxaFVBeUlCNDFiQlgwdjRTek9rMjk0Zit5NjJsVjZJSGUrU0pLSUxndlV4?=
- =?utf-8?B?NEdzMUN6VVdUZHNDOWhWRExiVUlyYmQvblVvOGtQMDd3d1FlbllUYmU1czhO?=
- =?utf-8?B?bjM0d0lvdlZkNHBhSDZCOG9VVk1SNTNzSG9RSE0zc0JPRXgrL21jL29PZ04z?=
- =?utf-8?B?MXcxQmNwQXlyVzg1WDQ3c1ZoNEtCMmZmZ3BWYVhEK2hqanJEN0Zkazg4UlIr?=
- =?utf-8?B?Mm9FSjFjbzNDa000SElvNTFoS2dQbXkyS09ySjRIeUxuUjJGZW9PTHcxSGZw?=
- =?utf-8?B?VnRiR2hmQ3RZcXBmN0paVk0rMlhMdW95dTB2WTR6OWdqZkZsenNzQlV4NGpj?=
- =?utf-8?B?RFJTa293U0NrWkdReUtYWVlSbTFjS3lzMklvOGw4ZnVLcDRtSlpLS0hKVi9r?=
- =?utf-8?B?UkZWUTBNQ3EyaDI3dTZZNnl0UmZNUGNWNW8rek9Ic01kRWlYMEk4TnJjbzRm?=
- =?utf-8?B?MmR1VDRQRDZnVlYrVU1RQXRGMGQ5ZDZJNzNhR05iQnVHc2s0eVo0RUwrYzFz?=
- =?utf-8?B?Vk9tTmQrVEI4UlhDSVlsdHBWVHBhR0ZtZGFtclptYkRXSmFvWFJ0aHBzUzRh?=
- =?utf-8?B?ajI4MjNJUjNpODNvWmFZY21IMkxCbWRvN2VNcTIzekFMaGpZeHY0ejlGN2M3?=
- =?utf-8?B?VFhyV0J6NHg5bFdjdDhBd3BIQVJpZ2tKVVlGaTlBam9YNldpYVlEOGZMYlph?=
- =?utf-8?B?N0ZZZE9JZTIvUDYyOUx3YXBJUGUxc21wL2ZRczY0anhhOVBlOVpIV1MvV2xy?=
- =?utf-8?B?bTZUUE93ak45WE5wMW8rWE1RRWdTTTZVSFZTUS9SbTNCNDNSUkpJeWR1Mklq?=
- =?utf-8?B?SDRJRUZhalJPaXV6RERHR3NIdURNVGpJRkp0ZDRvbEx6dmhhY29MQnh2VGZt?=
- =?utf-8?B?L01VdTFaOVNMb2pub1IyTk5iMVNVakpHZE9xUlZWRUR1dlFKV3NteCs2cVNZ?=
- =?utf-8?Q?HkKU=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F15E62D0C91;
+	Wed, 27 Aug 2025 15:47:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756309662; cv=none; b=b41O+YqrKgq0Ulfb13JXbQYvDsmuXmXVNFkdJuHGP+7y4Oa01GK6yp8ZjyhosIko+1XusgM8UNqg0mXEEczVdA4JTzWueLo8ePZuq2wTBKZ5VLvjPkx8CXfNo2KvrU7yHYxzqp96lvVwczBopSPC4K/+DmGXS/ixWEAFeXBsT2M=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756309662; c=relaxed/simple;
+	bh=mxcSBMoTgvmfaOSxlDt3Ox0+FxehjBeucQjS9ZMt4Vs=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=ARQ8DfT/MKIfdh5l93O6MbdTgFrzQB7l0rflfjisnD3BeqjuqI206R318lIU3HP6OcKHPfcX0YZDArTBUMjlnfm9lNWYxZSsswiidEw9tHvxoz3xfmOkLrK1tAuVhMPm/J4mlMzezjXPPV7vYOCB/u2CbiQ8mM6E0G+B/JbCxsU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hy5aSNrp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19337C4CEEB;
+	Wed, 27 Aug 2025 15:47:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756309661;
+	bh=mxcSBMoTgvmfaOSxlDt3Ox0+FxehjBeucQjS9ZMt4Vs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=Hy5aSNrpVl9JJiC7+Fn+wg/YyEXijF4qSZVVsyE+Nzi73/WJPkyGa/uuLSnT7jIil
+	 UYX7BIuOwFtt46+zzCaLT8+efOun0PhBIOMPHqqBzwEz/Z6qAYPVKpRv/3LUkjRO/Y
+	 WremwAVlL0Fw0ximwz0CRJtiUhbHeqqPtDmRkQKkE5BPcVksOpuWE2Gq3lRn96BDmY
+	 oi1Qv5TBv1iXTjb8D7eqywVfyk47C0ImyqeTZnuh+SRdZw1p3SKvDoVASNzqS2OyPS
+	 BAqi00srxf3olPrSaB3JiLNn+s8kBWp+Gz/MX254IhOwaYocbGS5baiu486a8N5obs
+	 OydAgF1r3nRbw==
+Date: Wed, 27 Aug 2025 10:47:39 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: manivannan.sadhasivam@oss.qualcomm.com
+Cc: Manivannan Sadhasivam <mani@kernel.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	"David E. Box" <david.e.box@linux.intel.com>,
+	Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
+	Johan Hovold <johan@kernel.org>, stable+noautosel@kernel.org
+Subject: Re: [PATCH v3] PCI: qcom: Use pci_host_set_default_pcie_link_state()
+ API to enable ASPM for all platforms
+Message-ID: <20250827154739.GA888232@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: LV3PR12MB9265.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8cf46529-e186-40b2-4264-08dde580fc54
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Aug 2025 15:47:10.8190
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Abto2H4VCsYnZf9zn6SszLdcmQh8DWPmuSZ15hYlBeeQGLuuytHq/Ko9gBWVhYIW
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB7760
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250825-qcom_aspm_fix-v3-1-02c8d414eefb@oss.qualcomm.com>
 
-W0FNRCBPZmZpY2lhbCBVc2UgT25seSAtIEFNRCBJbnRlcm5hbCBEaXN0cmlidXRpb24gT25seV0N
-Cg0KPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBCb3Jpc2xhdiBQZXRrb3Yg
-PGJwQGFsaWVuOC5kZT4NCj4gU2VudDogV2VkbmVzZGF5LCBBdWd1c3QgMjcsIDIwMjUgMTA6MzQg
-QU0NCj4gVG86IEthcGxhbiwgRGF2aWQgPERhdmlkLkthcGxhbkBhbWQuY29tPg0KPiBDYzogUGF3
-YW4gR3VwdGEgPHBhd2FuLmt1bWFyLmd1cHRhQGxpbnV4LmludGVsLmNvbT47IFRob21hcyBHbGVp
-eG5lcg0KPiA8dGdseEBsaW51dHJvbml4LmRlPjsgUGV0ZXIgWmlqbHN0cmEgPHBldGVyekBpbmZy
-YWRlYWQub3JnPjsgSm9zaCBQb2ltYm9ldWYNCj4gPGpwb2ltYm9lQGtlcm5lbC5vcmc+OyBJbmdv
-IE1vbG5hciA8bWluZ29AcmVkaGF0LmNvbT47IERhdmUgSGFuc2VuDQo+IDxkYXZlLmhhbnNlbkBs
-aW51eC5pbnRlbC5jb20+OyB4ODZAa2VybmVsLm9yZzsgSCAuIFBldGVyIEFudmluDQo+IDxocGFA
-enl0b3IuY29tPjsgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZw0KPiBTdWJqZWN0OiBSZTog
-W1BBVENIIHYyIDQvNV0geDg2L2J1Z3M6IEFkZCBhdHRhY2sgdmVjdG9yIGNvbnRyb2xzIGZvciBT
-U0INCj4NCj4gQ2F1dGlvbjogVGhpcyBtZXNzYWdlIG9yaWdpbmF0ZWQgZnJvbSBhbiBFeHRlcm5h
-bCBTb3VyY2UuIFVzZSBwcm9wZXIgY2F1dGlvbg0KPiB3aGVuIG9wZW5pbmcgYXR0YWNobWVudHMs
-IGNsaWNraW5nIGxpbmtzLCBvciByZXNwb25kaW5nLg0KPg0KPg0KPiBPbiBXZWQsIEF1ZyAyNywg
-MjAyNSBhdCAwMjoyNToyNlBNICswMDAwLCBLYXBsYW4sIERhdmlkIHdyb3RlOg0KPiA+IE9rLiAg
-VGhlbiBJIHdvdWxkIGdvIHdpdGggdGhlIHN1Z2dlc3Rpb24gaW4gbXkgcmVwbHkuLi5tb3ZlIHRo
-ZQ0KPiA+IHNob3VsZF9taXRpZ2F0ZV92dWxuKCkgbG9naWMgaW50byB0aGUgU1BFQ19TVE9SRV9C
-WVBBU1NfQ01EX0FVVE8NCj4gYnJhbmNoIG9mDQo+ID4gdGhlIHN3aXRjaC4gIEkgdGhpbmsgdGhh
-dCBzaG91bGQgd29yayBhcyBleHBlY3RlZC4NCj4NCj4gTWFrZXMgc2Vuc2UuLi4NCj4NCj4gPiBS
-ZXN0IG9mIHRoZSBwYXRjaCB3YXMgZmluZSBJIHRoaW5rLg0KPg0KPiBIZXJlIGl0IGlzIC0gSSAq
-dGhpbmsqIGl0IGxvb2tzIGdvb2Qgbm93IGJ1dCBkb3VibGVjaGVjayBtZSBhZ2FpbiBwbHMuDQo+
-DQo+IFRoeC4NCj4NCj4gLS0tIGEvYXJjaC94ODYvaW5jbHVkZS9hc20vbm9zcGVjLWJyYW5jaC5o
-DQo+ICsrKyBiL2FyY2gveDg2L2luY2x1ZGUvYXNtL25vc3BlYy1icmFuY2guaA0KPiBAQCAtNTE0
-LDYgKzUxNCw3IEBAIGVudW0gc3BlY3RyZV92Ml91c2VyX21pdGlnYXRpb24gew0KPiAgLyogVGhl
-IFNwZWN1bGF0aXZlIFN0b3JlIEJ5cGFzcyBkaXNhYmxlIHZhcmlhbnRzICovDQo+ICBlbnVtIHNz
-Yl9taXRpZ2F0aW9uIHsNCj4gICAgICAgICBTUEVDX1NUT1JFX0JZUEFTU19OT05FLA0KPiArICAg
-ICAgIFNQRUNfU1RPUkVfQllQQVNTX0FVVE8sDQo+ICAgICAgICAgU1BFQ19TVE9SRV9CWVBBU1Nf
-RElTQUJMRSwNCj4gICAgICAgICBTUEVDX1NUT1JFX0JZUEFTU19QUkNUTCwNCj4gICAgICAgICBT
-UEVDX1NUT1JFX0JZUEFTU19TRUNDT01QLA0KDQpBZnRlciByZXZpZXdpbmcgdGhpcyBmdXJ0aGVy
-LCB0aGlzIGNoYW5nZSBzaG91bGQgYmUgcmVtb3ZlZC4gIFRoZSBBVVRPIG1pdGlnYXRpb24gaXMg
-aW50ZW5kZWQgdG8gc2F5ICdjaG9vc2UgYmFzZWQgb24gYXR0YWNrIHZlY3RvcicsIGJ1dCB3aXRo
-IHRoaXMgcGF0Y2ggeW91J3JlIG5vdCBsb29raW5nIGF0IHNzYl9tb2RlIHRvIGRlY2lkZSB0byBk
-byB0aGF0LiAgWW91J3JlIGxvb2tpbmcgYXQgdGhlIHNzYiBtaXRpZ2F0aW9uIGNtZCAod2hpY2gg
-YWxyZWFkeSBkZWZhdWx0cyB0byBTUEVDX1NUT1JFX0JZUEFTU19DTURfQVVUTykuICBUaGVyZWZv
-cmUgdGhlcmUgaXMgbm8gbmVlZCBmb3IgYSBTUEVDX1NUT1JFX0JZUEFTU19BVVRPIHNldHRpbmcg
-b2Ygc3NiX21vZGUuDQoNCihUaGUgY2xlYW4tdXAgcGF0Y2ggcmVtb3ZlcyBzc2JfbWl0aWdhdGlv
-bl9jbWQgZW50aXJlbHksIHNvIGl0IG5lZWRzIGFuIEFVVE8gc2V0dGluZyBvZiBzc2JfbWl0aWdh
-dGlvbikNCg0KPg0KPiAtc3RhdGljIGVudW0gc3NiX21pdGlnYXRpb24gc3NiX21vZGUgX19yb19h
-ZnRlcl9pbml0ID0NCj4gU1BFQ19TVE9SRV9CWVBBU1NfTk9ORTsNCj4gK3N0YXRpYyBlbnVtIHNz
-Yl9taXRpZ2F0aW9uIHNzYl9tb2RlIF9fcm9fYWZ0ZXJfaW5pdCA9DQo+ICsgICAgICAgSVNfRU5B
-QkxFRChDT05GSUdfTUlUSUdBVElPTl9TU0IpID8NCj4gU1BFQ19TVE9SRV9CWVBBU1NfQVVUTyA6
-IFNQRUNfU1RPUkVfQllQQVNTX05PTkU7DQo+DQoNCkJ1dCBtb3JlIGltcG9ydGFudGx5LCBwbGVh
-c2UgcmVtb3ZlIHRoaXMuICBUaGF0J3MgYmVjYXVzZSBpbiB0aGUgY3VycmVudCBwYXRjaCwgaWYg
-dGhlIHVzZXIgc2F5cyAnbm9zcGVjX3N0b3JlX2J5cGFzc19kaXNhYmxlJyB0aGVuIHRoZSBzc2Jf
-c2VsZWN0X21pdGlnYXRpb24oKSBmdW5jdGlvbiBkb2VzIG5vdCBjaGFuZ2Ugc3NiX21vZGUuICBT
-byBpdCBuZWVkcyB0byBkZWZhdWx0IHRvIE5PTkUuDQoNClRoYW5rcw0KLS1EYXZpZCBLYXBsYW4N
-Cg==
+On Mon, Aug 25, 2025 at 01:52:57PM +0530, Manivannan Sadhasivam via B4 Relay wrote:
+> From: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+> 
+> Commit 9f4f3dfad8cf ("PCI: qcom: Enable ASPM for platforms supporting 1.9.0
+> ops") allowed the Qcom controller driver to enable ASPM for all PCI devices
+> enumerated at the time of the controller driver probe. It proved to be
+> useful for devices already powered on by the bootloader, as it allowed
+> devices to enter ASPM without user intervention.
+> 
+> However, it could not enable ASPM for the hotplug capable devices i.e.,
+> devices enumerated *after* the controller driver probe. This limitation
+> mostly went unnoticed as the Qcom PCI controllers are not hotplug capable
+> and also the bootloader has been enabling the PCI devices before Linux
+> Kernel boots (mostly on the Qcom compute platforms which users use on a
+> daily basis).
+> 
+> But with the advent of the commit b458ff7e8176 ("PCI/pwrctl: Ensure that
+> pwrctl drivers are probed before PCI client drivers"), the pwrctrl driver
+> started to block the PCI device enumeration until it had been probed.
+> Though, the intention of the commit was to avoid race between the pwrctrl
+> driver and PCI client driver, it also meant that the pwrctrl controlled PCI
+> devices may get probed after the controller driver and will no longer have
+> ASPM enabled. So users started noticing high runtime power consumption with
+> WLAN chipsets on Qcom compute platforms like Thinkpad X13s, and Thinkpad
+> T14s, etc...
+> 
+> Obviously, it is the pwrctrl change that caused regression, but it
+> ultimately uncovered a flaw in the ASPM enablement logic of the controller
+> driver. So to address the actual issue, use the newly introduced
+> pci_host_set_default_pcie_link_state() API, which allows the controller
+> drivers to set the default ASPM state for *all* devices. This default state
+> will be honored by the ASPM driver while enabling ASPM for all the devices.
+
+So I guess this fixes a power consumption regression that became
+visible with b458ff7e8176 ("PCI/pwrctl: Ensure that pwrctl drivers are
+probed before PCI client drivers").  Arguably we should have a Fixes:
+tag for that, and maybe even skip the tag for 9f4f3dfad8cf, since if
+you have 9f4f3dfad8cf but not b458ff7e8176, it doesn't sound like you
+would need to backport this change?
+
+I *love* getting rid of the bus walk and solving the hotplug issue.
+
+> So with this change, we can get rid of the controller driver specific
+> 'qcom_pcie_ops::host_post_init' callback.
+> 
+> Also with this change, ASPM is now enabled by default on all Qcom
+> platforms as I haven't heard of any reported issues (apart from the
+> unsupported L0s on some platorms, which is still handled separately).
+
+If ASPM hasn't been enabled by default, how would you hear about
+issues?  Is ASPM commonly enabled in some other way?
+
+If you think the risk of ASPM issues is nil, I guess it's OK to do at
+the same time.  From a maintenance perspective it might be nice to
+separate that change so if there happened to be a regression, we could
+identify and revert that part by itself if necessary.  It looks like
+previously, ASPM was only enabled for one part:
+
+  ops_2_7_0   # cfg_2_7_0 qcom,pcie-sdm845
+
+But after this patch, ASPM will be enabled for many more parts:
+
+  ops_2_1_0   # cfg_2_1_0 qcom,pcie-apq8064 qcom,pcie-ipq8064 qcom,pcie-ipq8064-v2
+  ops_1_0_0   # cfg_1_0_0 qcom,pcie-apq8084
+  ops_2_3_2   # cfg_2_3_2 qcom,pcie-msm8996
+  ops_2_4_0   # cfg_2_4_0 qcom,pcie-ipq4019 qcom,pcie-qcs404
+  ops_2_3_3   # cfg_2_3_3 qcom,pcie-ipq8074
+  ops_1_9_0   # cfg_1_9_0 qcom,pcie-sc7280 qcom,pcie-sc8180x qcom,pcie-sdx55 qcom,pcie-sm8150 qcom,pcie-sm8250 qcom,pcie-sm8350 qcom,pcie-sm8450-pcie0 qcom,pcie-sm8450-pcie1 qcom,pcie-sm8550
+	      # cfg_1_34_0 qcom,pcie-sa8775p
+  ops_1_21_0  # cfg_sc8280xp qcom,pcie-sa8540p qcom,pcie-sc8280xp qcom,pcie-x1e80100
+  ops_2_9_0   # cfg_2_9_0 qcom,pcie-ipq5018 qcom,pcie-ipq6018 qcom,pcie-ipq8074-gen3 qcom,pcie-ipq9574
+
+> Cc: stable+noautosel@kernel.org # API dependency
+> Fixes: 9f4f3dfad8cf ("PCI: qcom: Enable ASPM for platforms supporting 1.9.0 ops")
+> Reported-by: Johan Hovold <johan@kernel.org>
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+> ---
+> Changes in v3:
+> 
+> - Moved the ASPM change to qcom_pcie_host_init()
+> - Link to v2: https://lore.kernel.org/r/20250823-qcom_aspm_fix-v2-1-7cef4066663c@oss.qualcomm.com
+> 
+> Changes in v2:
+> 
+> * Used the new API introduced in this patch instead of bus notifier:
+> https://lore.kernel.org/linux-pci/20250822031159.4005529-1-david.e.box@linux.intel.com/
+> 
+> * Enabled ASPM on all platforms as there is no specific reason to limit it to a
+> few.
+> ---
+>  drivers/pci/controller/dwc/pcie-qcom.c | 34 ++--------------------------------
+>  1 file changed, 2 insertions(+), 32 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
+> index 294babe1816e4d0c2b2343fe22d89af72afcd6cd..0c6741b9a9585bd5566b23ba68ef12f1febab56b 100644
+> --- a/drivers/pci/controller/dwc/pcie-qcom.c
+> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
+> @@ -247,7 +247,6 @@ struct qcom_pcie_ops {
+>  	int (*get_resources)(struct qcom_pcie *pcie);
+>  	int (*init)(struct qcom_pcie *pcie);
+>  	int (*post_init)(struct qcom_pcie *pcie);
+> -	void (*host_post_init)(struct qcom_pcie *pcie);
+>  	void (*deinit)(struct qcom_pcie *pcie);
+>  	void (*ltssm_enable)(struct qcom_pcie *pcie);
+>  	int (*config_sid)(struct qcom_pcie *pcie);
+> @@ -1040,25 +1039,6 @@ static int qcom_pcie_post_init_2_7_0(struct qcom_pcie *pcie)
+>  	return 0;
+>  }
+>  
+> -static int qcom_pcie_enable_aspm(struct pci_dev *pdev, void *userdata)
+> -{
+> -	/*
+> -	 * Downstream devices need to be in D0 state before enabling PCI PM
+> -	 * substates.
+> -	 */
+> -	pci_set_power_state_locked(pdev, PCI_D0);
+> -	pci_enable_link_state_locked(pdev, PCIE_LINK_STATE_ALL);
+> -
+> -	return 0;
+> -}
+> -
+> -static void qcom_pcie_host_post_init_2_7_0(struct qcom_pcie *pcie)
+> -{
+> -	struct dw_pcie_rp *pp = &pcie->pci->pp;
+> -
+> -	pci_walk_bus(pp->bridge->bus, qcom_pcie_enable_aspm, NULL);
+> -}
+> -
+>  static void qcom_pcie_deinit_2_7_0(struct qcom_pcie *pcie)
+>  {
+>  	struct qcom_pcie_resources_2_7_0 *res = &pcie->res.v2_7_0;
+> @@ -1336,6 +1316,8 @@ static int qcom_pcie_host_init(struct dw_pcie_rp *pp)
+>  			goto err_assert_reset;
+>  	}
+>  
+> +	pci_host_set_default_pcie_link_state(pp->bridge, PCIE_LINK_STATE_ALL);
+> +
+>  	return 0;
+>  
+>  err_assert_reset:
+> @@ -1358,19 +1340,9 @@ static void qcom_pcie_host_deinit(struct dw_pcie_rp *pp)
+>  	pcie->cfg->ops->deinit(pcie);
+>  }
+>  
+> -static void qcom_pcie_host_post_init(struct dw_pcie_rp *pp)
+> -{
+> -	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+> -	struct qcom_pcie *pcie = to_qcom_pcie(pci);
+> -
+> -	if (pcie->cfg->ops->host_post_init)
+> -		pcie->cfg->ops->host_post_init(pcie);
+> -}
+> -
+>  static const struct dw_pcie_host_ops qcom_pcie_dw_ops = {
+>  	.init		= qcom_pcie_host_init,
+>  	.deinit		= qcom_pcie_host_deinit,
+> -	.post_init	= qcom_pcie_host_post_init,
+>  };
+>  
+>  /* Qcom IP rev.: 2.1.0	Synopsys IP rev.: 4.01a */
+> @@ -1432,7 +1404,6 @@ static const struct qcom_pcie_ops ops_1_9_0 = {
+>  	.get_resources = qcom_pcie_get_resources_2_7_0,
+>  	.init = qcom_pcie_init_2_7_0,
+>  	.post_init = qcom_pcie_post_init_2_7_0,
+> -	.host_post_init = qcom_pcie_host_post_init_2_7_0,
+>  	.deinit = qcom_pcie_deinit_2_7_0,
+>  	.ltssm_enable = qcom_pcie_2_3_2_ltssm_enable,
+>  	.config_sid = qcom_pcie_config_sid_1_9_0,
+> @@ -1443,7 +1414,6 @@ static const struct qcom_pcie_ops ops_1_21_0 = {
+>  	.get_resources = qcom_pcie_get_resources_2_7_0,
+>  	.init = qcom_pcie_init_2_7_0,
+>  	.post_init = qcom_pcie_post_init_2_7_0,
+> -	.host_post_init = qcom_pcie_host_post_init_2_7_0,
+>  	.deinit = qcom_pcie_deinit_2_7_0,
+>  	.ltssm_enable = qcom_pcie_2_3_2_ltssm_enable,
+>  };
+> 
+> ---
+> base-commit: 681accdad91923ef4938b96ff3eea62e29af74c3
+> change-id: 20250823-qcom_aspm_fix-3264926b5b14
+> 
+> Best regards,
+> -- 
+> Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+> 
+> 
 
