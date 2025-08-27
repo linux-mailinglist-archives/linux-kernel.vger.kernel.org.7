@@ -1,210 +1,662 @@
-Return-Path: <linux-kernel+bounces-788746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31947B389A4
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 20:35:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB018B389AF
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 20:38:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71E1B3AD1DC
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 18:35:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 402DA7A806C
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 18:37:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A3FB2E174C;
-	Wed, 27 Aug 2025 18:34:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E2C92E1C56;
+	Wed, 27 Aug 2025 18:38:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="GfOCaaj9"
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="fnP8DfQb"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D062E2D836A
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 18:34:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756319682; cv=none; b=O6L74Mv45no0qHKOv6uiLXpEMxcE1wtpXFrRwJOYnxO+Zr+zLRMJosx+r++2T+nhzHTxHfpXH4kyUuYGF5v6N5YT+XQjRYSan+kMFLJGETXiATmzLzOfHSYOrEpe7UIAv9yHeLZSgAzLpR2VIAw92bsaeCeUwI56pXS5LYA8H7Y=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756319682; c=relaxed/simple;
-	bh=BwP2Im58iS/1V1K2roDJStD7HUdyohg5SWw9CmSQFro=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=mCYt2nO/fDiHT4fkygovL81KgJo6tCS4RJiBc25jaFvujUd1YYGuVxKyCTrsFmMVki/F+hrlpxprGVR6VnIWJcWjW85/JeEjyml9EaH5Z22kYroZ1+Om8BoTlXCs0bxTteubt2DVpX3Ir/OnBZ/o1Vq8uQBRg/M/HvLt4YPSIHk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=GfOCaaj9; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250827183432euoutp0106c579edb0dcc3944172649e539ebe14~fs2-MCluu3061130611euoutp01G
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 18:34:32 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250827183432euoutp0106c579edb0dcc3944172649e539ebe14~fs2-MCluu3061130611euoutp01G
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1756319672;
-	bh=0vmdefCDmyt9ywh+yymejY1N8ERx9TnrKiWiAjIj7Kg=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=GfOCaaj9iz+LW9wShqGApHa6/ZXQqOzHlqMklQXcYYC4w2as50eHruUBxlDoQeKd8
-	 DY/qvufuUXCjNJZCjcFtYZOg42voEjT8ILaKIyRgs5ZzcIS53QnL52Zy2vmMoiK5eP
-	 O2zDW8gyof+yqtT2zRTYPNi1no0gLH3CNcPp47nY=
-Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250827183431eucas1p18406106ab84b10142c924ddc8afe26ba~fs2_wamdm0942609426eucas1p1k;
-	Wed, 27 Aug 2025 18:34:31 +0000 (GMT)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250827183431eusmtip29186bce2444aa1e212b09f3beb37a98d~fs292QuJH0603806038eusmtip2h;
-	Wed, 27 Aug 2025 18:34:30 +0000 (GMT)
-Message-ID: <8f6aa9a5-54bf-4884-aaf8-d2e3cef6ec78@samsung.com>
-Date: Wed, 27 Aug 2025 20:34:30 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D44B32DAFA1;
+	Wed, 27 Aug 2025 18:38:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756319924; cv=pass; b=M8NxXRsQ4pZ0len4dEjXy6XTrWq9wWrn+QYrAbTsT6T2dkPYbOGWIiGKMxhpj/lRYk077ov9Qpys/m/CFkRDPYo0YXmTXjMxD8ogMB4CHC9OFq/RHHLbUwAsJjpOPaa8KyGCCgFBSNEg67n4ZcT2q96pBvNqqhLi60TBgHj2aAo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756319924; c=relaxed/simple;
+	bh=CVMfBSj8Ju/TmXVsxExHZtBmOOyC6csl4+5ca7Y3o1s=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=EJ67ytuxGOU2GKI8GMMDrxr1kSC54p7j44BRYMmvPBYCpDSZi6TMo9iK2T0+vAQDtMOE/hgMcB0Q9UAg+1NIXH2A/IX1zW/aeoWqUYTBSPOynJim7Ozw5dSPCJbLGJw2aMOkRPqPkxpDi9DtwqVJjbsKMWueusDomZOPaj/n8R0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=fnP8DfQb; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1756319876; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=DXvkzY6w0SnEssCmzSpVCDzaSNWiMEu/HBeKBn5+dg0jN3o0aluNkDtx9YuZ6g/nVC5JgPHpCpXjmyTE7KtMa3nA2xMc0Fq4u+vW8rYhXkWzsY1yVGG2IAqr+LfZXMYr7bAllzUiQzabJj3tRe9SYoMxyfok+gBmLajq4Z1wg04=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1756319876; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=uFigvrMzb8XvehQF/tr+qc5cYuogiZyjSf+/9amPAWU=; 
+	b=QEn/VPCjkCwfYHWI9i6AKSkz/Gub37do7icTMvgTkoGtYXW1Iv3HU4uTToNIINLxrcA6E75JD9pKmaN+IUDJ03FU5Uz/ekG+m7mJKEtuF3nqRLwNzooPFHRjQhmYyoG2379SDsOYLQjIdPS0OLBwWbYe728Xq2L56CuztE2/0p0=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1756319876;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=uFigvrMzb8XvehQF/tr+qc5cYuogiZyjSf+/9amPAWU=;
+	b=fnP8DfQbLZ/v6ZSfLu5yoW2BOmrWaQTg1rD7BD8hTOxEnX0wvYR46+d8zgdet2RA
+	C7RzJ6vXINz+hxh+hfk88uYe5SzEwML+v6jX8ZObPtaS+MXq3CMsQWIJDWTRVFIVmj+
+	eFvSKh1aetFShoz5DxawN6oeFWJ2OmL21BTHIJgw=
+Received: by mx.zohomail.com with SMTPS id 1756319874289457.6200987255314;
+	Wed, 27 Aug 2025 11:37:54 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [syzbot] [fs?] [mm?] linux-next test error: WARNING in
- __folio_start_writeback
-To: Joanne Koong <joannelkoong@gmail.com>, Aleksandr Nogikh
-	<nogikh@google.com>
-Cc: syzbot <syzbot+0630e71306742d4b2aea@syzkaller.appspotmail.com>, David
-	Hildenbrand <david@redhat.com>, mszeredi@redhat.com,
-	akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	linux-next@vger.kernel.org, sfr@canb.auug.org.au,
-	syzkaller-bugs@googlegroups.com, willy@infradead.org
-Content-Language: en-US
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <CAJnrk1Ziam4ZqqyzOpbUD8j=RwJOK22Uz3VMqWZsUNiJ5bkBrg@mail.gmail.com>
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20250827183431eucas1p18406106ab84b10142c924ddc8afe26ba
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20250827164428eucas1p1e184d31f56fbcbb0d0526d2354d730a5
-X-EPHeader: CA
-X-CMS-RootMailID: 20250827164428eucas1p1e184d31f56fbcbb0d0526d2354d730a5
-References: <68a841d7.050a0220.37038e.0051.GAE@google.com>
-	<CANp29Y5zWmwXDq1uuzxi43_VXieykD2OOLF12YvBELCUS_Hibg@mail.gmail.com>
-	<CGME20250827164428eucas1p1e184d31f56fbcbb0d0526d2354d730a5@eucas1p1.samsung.com>
-	<CAJnrk1Ziam4ZqqyzOpbUD8j=RwJOK22Uz3VMqWZsUNiJ5bkBrg@mail.gmail.com>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
+Subject: Re: [PATCH v4 1/3] rust: i2c: add basic I2C device and driver
+ abstractions
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <20250820151913.1814284-1-igor.korotin.linux@gmail.com>
+Date: Wed, 27 Aug 2025 15:37:36 -0300
+Cc: Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Wolfram Sang <wsa+renesas@sang-engineering.com>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <lossin@kernel.org>,
+ Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ Danilo Krummrich <dakr@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Viresh Kumar <viresh.kumar@linaro.org>,
+ Asahi Lina <lina+kernel@asahilina.net>,
+ Wedson Almeida Filho <wedsonaf@gmail.com>,
+ Alex Hung <alex.hung@amd.com>,
+ Tamir Duberstein <tamird@gmail.com>,
+ Xiangfei Ding <dingxiangfei2009@gmail.com>,
+ linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org,
+ linux-i2c@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <CB269793-D165-4D22-95E5-F978C1ECC79E@collabora.com>
+References: <20250820151427.1812482-1-igor.korotin.linux@gmail.com>
+ <20250820151913.1814284-1-igor.korotin.linux@gmail.com>
+To: Igor Korotin <igor.korotin.linux@gmail.com>
+X-Mailer: Apple Mail (2.3826.700.81)
+X-ZohoMailClient: External
 
-On 27.08.2025 18:42, Joanne Koong wrote:
-> On Wed, Aug 27, 2025 at 6:45 AM Aleksandr Nogikh <nogikh@google.com> wrote:
->> I've bisected the problem to the following commit:
->>
->> commit 167f21a81a9c4dbd6970a4ee3853aecad405fa7f (HEAD)
->> Author: Joanne Koong <joannelkoong@gmail.com>
->> Date:   Mon Jul 7 16:46:06 2025 -0700
->>
->>      mm: remove BDI_CAP_WRITEBACK_ACCT
->>
->>      There are no users of BDI_CAP_WRITEBACK_ACCT now that fuse doesn't do
->>      its own writeback accounting. This commit removes
->>      BDI_CAP_WRITEBACK_ACCT.
->>
->> Joanne Koong, could you please take a look at the syzbot report below?
-> Hi Aleksandr,
->
-> Thanks for bisecting this. This is a duplicate of what Marek reported
-> in [1]. His patch in [2] fixes the warning getting triggered.
->
-> Marek, could you submit your patch formally to the mm tree so it could
-> be picked up?
+Hi Igor,
 
-I've already did that:
+> On 20 Aug 2025, at 12:19, Igor Korotin <igor.korotin.linux@gmail.com> =
+wrote:
+>=20
+> Implement the core abstractions needed for I2C drivers, including:
+>=20
+> - `i2c::Driver` =E2=80=94 the trait drivers must implement, including =
+`probe`
+>=20
+> - `i2c::I2cClient` =E2=80=94 a safe wrapper around `struct i2c_client`
+>=20
+> - `i2c::Adapter` =E2=80=94 implements `driver::RegistrationOps` to =
+hook into the
+>   generic `driver::Registration` machinery
+>=20
+> - `i2c::DeviceId` =E2=80=94 a `RawDeviceIdIndex` implementation for =
+I2C
+>   device IDs
+>=20
+> Signed-off-by: Igor Korotin <igor.korotin.linux@gmail.com>
+> ---
+> MAINTAINERS                     |   8 +
+> rust/bindings/bindings_helper.h |   1 +
+> rust/kernel/i2c.rs              | 396 ++++++++++++++++++++++++++++++++
+> rust/kernel/lib.rs              |   2 +
+> 4 files changed, 407 insertions(+)
+> create mode 100644 rust/kernel/i2c.rs
+>=20
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index fe168477caa4..c44c7ac317b1 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -11516,6 +11516,14 @@ F: include/linux/i2c.h
+> F: include/uapi/linux/i2c-*.h
+> F: include/uapi/linux/i2c.h
+>=20
+> +I2C SUBSYSTEM [RUST]
+> +M: Igor Korotin <igor.korotin.linux@gmail.com>
+> +R: Danilo Krummrich <dakr@kernel.org>
+> +R: Daniel Almeida <daniel.almeida@collabora.com>
+> +L: rust-for-linux@vger.kernel.org
+> +S: Maintained
+> +F: rust/kernel/i2c.rs
+> +
+> I2C SUBSYSTEM HOST DRIVERS
+> M: Andi Shyti <andi.shyti@kernel.org>
+> L: linux-i2c@vger.kernel.org
+> diff --git a/rust/bindings/bindings_helper.h =
+b/rust/bindings/bindings_helper.h
+> index 84d60635e8a9..81796d5e16e8 100644
+> --- a/rust/bindings/bindings_helper.h
+> +++ b/rust/bindings/bindings_helper.h
+> @@ -53,6 +53,7 @@
+> #include <linux/file.h>
+> #include <linux/firmware.h>
+> #include <linux/fs.h>
+> +#include <linux/i2c.h>
+> #include <linux/ioport.h>
+> #include <linux/jiffies.h>
+> #include <linux/jump_label.h>
+> diff --git a/rust/kernel/i2c.rs b/rust/kernel/i2c.rs
+> new file mode 100644
+> index 000000000000..f5e8c4bc1b7d
+> --- /dev/null
+> +++ b/rust/kernel/i2c.rs
+> @@ -0,0 +1,396 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +//! I2C Driver subsystem
+> +
+> +// I2C Driver abstractions.
+> +use crate::{
+> +    acpi, container_of, device,
+> +    device_id::{RawDeviceId, RawDeviceIdIndex},
+> +    driver,
+> +    error::*,
+> +    of,
+> +    prelude::*,
+> +    types::Opaque,
+> +};
+> +
+> +use core::{marker::PhantomData, ptr::NonNull};
+> +
+> +/// An I2C device id table.
+> +#[repr(transparent)]
+> +#[derive(Clone, Copy)]
+> +pub struct DeviceId(bindings::i2c_device_id);
+> +
+> +impl DeviceId {
+> +    const I2C_NAME_SIZE: usize =3D 20;
+> +
+> +    /// Create a new device id from an I2C 'id' string.
+> +    #[inline(always)]
+> +    pub const fn new(id: &'static CStr) -> Self {
+> +        build_assert!(
+> +            id.len_with_nul() <=3D Self::I2C_NAME_SIZE,
+> +            "ID exceeds 20 bytes"
+> +        );
+> +        let src =3D id.as_bytes_with_nul();
+> +        // Replace with `bindings::acpi_device_id::default()` once =
+stabilized for `const`.
+> +        // SAFETY: FFI type is valid to be zero-initialized.
+> +        let mut i2c: bindings::i2c_device_id =3D unsafe { =
+core::mem::zeroed() };
+> +        let mut i =3D 0;
+> +        while i < src.len() {
+> +            i2c.name[i] =3D src[i];
+> +            i +=3D 1;
+> +        }
+> +
+> +        Self(i2c)
+> +    }
+> +}
+> +
+> +// SAFETY: `DeviceId` is a `#[repr(transparent)]` wrapper of =
+`i2c_device_id` and does not add
+> +// additional invariants, so it's safe to transmute to `RawType`.
+> +unsafe impl RawDeviceId for DeviceId {
+> +    type RawType =3D bindings::i2c_device_id;
+> +}
+> +
+> +// SAFETY: `DRIVER_DATA_OFFSET` is the offset to the `driver_data` =
+field.
+> +unsafe impl RawDeviceIdIndex for DeviceId {
+> +    const DRIVER_DATA_OFFSET: usize =3D =
+core::mem::offset_of!(bindings::i2c_device_id, driver_data);
+> +
+> +    fn index(&self) -> usize {
+> +        self.0.driver_data
+> +    }
+> +}
+> +
+> +/// IdTable type for I2C
+> +pub type IdTable<T> =3D &'static dyn =
+kernel::device_id::IdTable<DeviceId, T>;
+> +
+> +/// Create a I2C `IdTable` with its alias for modpost.
+> +#[macro_export]
+> +macro_rules! i2c_device_table {
+> +    ($table_name:ident, $module_table_name:ident, $id_info_type: ty, =
+$table_data: expr) =3D> {
+> +        const $table_name: $crate::device_id::IdArray<
+> +            $crate::i2c::DeviceId,
+> +            $id_info_type,
+> +            { $table_data.len() },
+> +        > =3D $crate::device_id::IdArray::new($table_data);
+> +
+> +        $crate::module_device_table!("i2c", $module_table_name, =
+$table_name);
+> +    };
+> +}
+> +
+> +/// An adapter for the registration of I2C drivers.
+> +pub struct Adapter<T: Driver>(T);
+> +
+> +// SAFETY: A call to `unregister` for a given instance of `RegType` =
+is guaranteed to be valid if
+> +// a preceding call to `register` has been successful.
+> +unsafe impl<T: Driver + 'static> driver::RegistrationOps for =
+Adapter<T> {
+> +    type RegType =3D bindings::i2c_driver;
+> +
+> +    unsafe fn register(
+> +        idrv: &Opaque<Self::RegType>,
+> +        name: &'static CStr,
+> +        module: &'static ThisModule,
+> +    ) -> Result {
+> +        build_assert!(
+> +            T::ACPI_ID_TABLE.is_some() || T::OF_ID_TABLE.is_some() || =
+T::I2C_ID_TABLE.is_some(),
+> +            "At least one of ACPI/OF/Legacy tables must be present"
+> +        );
 
-https://lore.kernel.org/all/20250826130948.1038462-1-m.szyprowski@samsung.com/
+=E2=80=A6=E2=80=9Dwhen registering an i2c driver=E2=80=9D.
 
+The generated error is cryptic, so we should add as much information as =
+possible.
 
+> +
+> +        let i2c_table =3D match T::I2C_ID_TABLE {
+> +            Some(table) =3D> table.as_ptr(),
+> +            None =3D> core::ptr::null(),
+> +        };
+> +
+> +        let of_table =3D match T::OF_ID_TABLE {
+> +            Some(table) =3D> table.as_ptr(),
+> +            None =3D> core::ptr::null(),
+> +        };
+> +
+> +        let acpi_table =3D match T::ACPI_ID_TABLE {
+> +            Some(table) =3D> table.as_ptr(),
+> +            None =3D> core::ptr::null(),
+> +        };
+> +
+> +        // SAFETY: It's safe to set the fields of `struct i2c_client` =
+on initialization.
+> +        unsafe {
+> +            (*idrv.get()).driver.name =3D name.as_char_ptr();
+> +            (*idrv.get()).probe =3D Some(Self::probe_callback);
+> +            (*idrv.get()).remove =3D Some(Self::remove_callback);
+> +            (*idrv.get()).shutdown =3D Some(Self::shutdown_callback);
+> +            (*idrv.get()).id_table =3D i2c_table;
+> +            (*idrv.get()).driver.of_match_table =3D of_table;
+> +            (*idrv.get()).driver.acpi_match_table =3D acpi_table;
+> +        }
+> +
+> +        // SAFETY: `idrv` is guaranteed to be a valid `RegType`.
+> +        to_result(unsafe { bindings::i2c_register_driver(module.0, =
+idrv.get()) })
+> +    }
+> +
+> +    unsafe fn unregister(idrv: &Opaque<Self::RegType>) {
+> +        // SAFETY: `idrv` is guaranteed to be a valid `RegType`.
+> +        unsafe { bindings::i2c_del_driver(idrv.get()) }
+> +    }
+> +}
+> +
+> +impl<T: Driver + 'static> Adapter<T> {
+> +    extern "C" fn probe_callback(idev: *mut bindings::i2c_client) -> =
+kernel::ffi::c_int {
+> +        // SAFETY: The I2C bus only ever calls the probe callback =
+with a valid pointer to a
+> +        // `struct i2c_client`.
+> +        //
+> +        // INVARIANT: `idev` is valid for the duration of =
+`probe_callback()`.
+> +        let idev =3D unsafe { =
+&*idev.cast::<I2cClient<device::CoreInternal>>() };
+> +
+> +        let info =3D
+> +            Self::i2c_id_info(idev).or_else(|| <Self as =
+driver::Adapter>::id_info(idev.as_ref()));
 
->
-> Thanks,
-> Joanne
->
->
-> [1] https://lore.kernel.org/linux-fsdevel/a91010a8-e715-4f3d-9e22-e4c34efc0408@samsung.com/T/#u
-> [2] https://lore.kernel.org/linux-fsdevel/a91010a8-e715-4f3d-9e22-e4c34efc0408@samsung.com/T/#m3aa6506ee7de302242e64861f8e2199f24e4ad46
->
->> On Fri, Aug 22, 2025 at 12:09 PM syzbot
->> <syzbot+0630e71306742d4b2aea@syzkaller.appspotmail.com> wrote:
->>> Hello,
->>>
->>> syzbot found the following issue on:
->>>
->>> HEAD commit:    0f4c93f7eb86 Add linux-next specific files for 20250822
->>> git tree:       linux-next
->>> console output: https://protect2.fireeye.com/v1/url?k=1fb70741-7eccadc9-1fb68c0e-74fe4860018a-55254c3abc8830cc&q=1&e=3aa7e54d-e6d6-43e9-ade0-0a94ae0545e0&u=https%3A%2F%2Fsyzkaller.appspot.com%2Fx%2Flog.txt%3Fx%3D172c07bc580000
->>> kernel config:  https://protect2.fireeye.com/v1/url?k=7674b464-170f1eec-76753f2b-74fe4860018a-dc792d3947085adc&q=1&e=3aa7e54d-e6d6-43e9-ade0-0a94ae0545e0&u=https%3A%2F%2Fsyzkaller.appspot.com%2Fx%2F.config%3Fx%3D21eed27c0deadb92
->>> dashboard link: https://protect2.fireeye.com/v1/url?k=cc82c51b-adf96f93-cc834e54-74fe4860018a-15cd3914e26f6b7e&q=1&e=3aa7e54d-e6d6-43e9-ade0-0a94ae0545e0&u=https%3A%2F%2Fsyzkaller.appspot.com%2Fbug%3Fextid%3D0630e71306742d4b2aea
->>> compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
->>>
->>> Downloadable assets:
->>> disk image: https://protect2.fireeye.com/v1/url?k=e6bff250-87c458d8-e6be791f-74fe4860018a-800b933a7034a696&q=1&e=3aa7e54d-e6d6-43e9-ade0-0a94ae0545e0&u=https%3A%2F%2Fstorage.googleapis.com%2Fsyzbot-assets%2F669ede8f5d66%2Fdisk-0f4c93f7.raw.xz
->>> vmlinux: https://protect2.fireeye.com/v1/url?k=2603018e-4778ab06-26028ac1-74fe4860018a-9b89a99c7853c7f0&q=1&e=3aa7e54d-e6d6-43e9-ade0-0a94ae0545e0&u=https%3A%2F%2Fstorage.googleapis.com%2Fsyzbot-assets%2F50feda89fe89%2Fvmlinux-0f4c93f7.xz
->>> kernel image: https://protect2.fireeye.com/v1/url?k=420b962e-23703ca6-420a1d61-74fe4860018a-a965e5c8c6b4614a&q=1&e=3aa7e54d-e6d6-43e9-ade0-0a94ae0545e0&u=https%3A%2F%2Fstorage.googleapis.com%2Fsyzbot-assets%2F317a0d3516fb%2FbzImage-0f4c93f7.xz
->>>
->>> IMPORTANT: if you fix the issue, please add the following tag to the commit:
->>> Reported-by: syzbot+0630e71306742d4b2aea@syzkaller.appspotmail.com
->>>
->>> ------------[ cut here ]------------
->>> WARNING: ./include/linux/backing-dev.h:243 at inode_to_wb include/linux/backing-dev.h:239 [inline], CPU#1: kworker/u8:6/2949
->>> WARNING: ./include/linux/backing-dev.h:243 at __folio_start_writeback+0x9d5/0xb70 mm/page-writeback.c:3027, CPU#1: kworker/u8:6/2949
->>> Modules linked in:
->>> CPU: 1 UID: 0 PID: 2949 Comm: kworker/u8:6 Not tainted syzkaller #0 PREEMPT(full)
->>> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
->>> Workqueue: writeback wb_workfn (flush-8:0)
->>> RIP: 0010:inode_to_wb include/linux/backing-dev.h:239 [inline]
->>> RIP: 0010:__folio_start_writeback+0x9d5/0xb70 mm/page-writeback.c:3027
->>> Code: 28 4c 89 f8 48 c1 e8 03 42 80 3c 28 00 74 08 4c 89 ff e8 ce a2 29 00 49 8b 07 25 ff 3f 00 00 e9 1b fa ff ff e8 7c 04 c6 ff 90 <0f> 0b 90 e9 d6 fb ff ff e8 6e 04 c6 ff 48 c7 c7 a0 f8 5f 8e 4c 89
->>> RSP: 0018:ffffc9000bb06ea0 EFLAGS: 00010293
->>> RAX: ffffffff81fad344 RBX: ffffea00050de8c0 RCX: ffff88802ee29e00
->>> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
->>> RBP: ffffc9000bb07010 R08: ffffc9000bb06f97 R09: 0000000000000000
->>> R10: ffffc9000bb06f80 R11: fffff52001760df3 R12: ffffea00050de8c8
->>> R13: 0000000000000000 R14: ffff888023060880 R15: ffff888023060660
->>> FS:  0000000000000000(0000) GS:ffff8881258c3000(0000) knlGS:0000000000000000
->>> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->>> CR2: 00007f7354907000 CR3: 000000000e338000 CR4: 00000000003526f0
->>> Call Trace:
->>>   <TASK>
->>>   __block_write_full_folio+0x75f/0xe10 fs/buffer.c:1928
->>>   blkdev_writepages+0xd1/0x170 block/fops.c:484
->>>   do_writepages+0x32e/0x550 mm/page-writeback.c:2604
->>>   __writeback_single_inode+0x145/0xff0 fs/fs-writeback.c:1680
->>>   writeback_sb_inodes+0x6c7/0x1010 fs/fs-writeback.c:1976
->>>   __writeback_inodes_wb+0x111/0x240 fs/fs-writeback.c:2047
->>>   wb_writeback+0x44f/0xaf0 fs/fs-writeback.c:2158
->>>   wb_check_old_data_flush fs/fs-writeback.c:2262 [inline]
->>>   wb_do_writeback fs/fs-writeback.c:2315 [inline]
->>>   wb_workfn+0xaef/0xef0 fs/fs-writeback.c:2343
->>>   process_one_work kernel/workqueue.c:3236 [inline]
->>>   process_scheduled_works+0xade/0x17b0 kernel/workqueue.c:3319
->>>   worker_thread+0x8a0/0xda0 kernel/workqueue.c:3400
->>>   kthread+0x711/0x8a0 kernel/kthread.c:463
->>>   ret_from_fork+0x47c/0x820 arch/x86/kernel/process.c:148
->>>   ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
->>>   </TASK>
->>>
->>>
->>> ---
->>> This report is generated by a bot. It may contain errors.
->>> See https://protect2.fireeye.com/v1/url?k=d9d7c080-b8ac6a08-d9d64bcf-74fe4860018a-5a4a20c239e4ea82&q=1&e=3aa7e54d-e6d6-43e9-ade0-0a94ae0545e0&u=https%3A%2F%2Fgoo.gl%2FtpsmEJ for more information about syzbot.
->>> syzbot engineers can be reached at syzkaller@googlegroups.com.
->>>
->>> syzbot will keep track of this issue. See:
->>> https://protect2.fireeye.com/v1/url?k=03a49fa8-62df3520-03a514e7-74fe4860018a-9a57f917485c2c59&q=1&e=3aa7e54d-e6d6-43e9-ade0-0a94ae0545e0&u=https%3A%2F%2Fgoo.gl%2FtpsmEJ%23status for how to communicate with syzbot.
->>>
->>> If the report is already addressed, let syzbot know by replying with:
->>> #syz fix: exact-commit-title
->>>
->>> If you want to overwrite report's subsystems, reply with:
->>> #syz set subsystems: new-subsystem
->>> (See the list of subsystem names on the web dashboard)
->>>
->>> If the report is a duplicate of another one, reply with:
->>> #syz dup: exact-subject-of-another-report
->>>
->>> If you want to undo deduplication, reply with:
->>> #syz undup
->>>
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+I wonder if these should be private member functions?
+
+> +
+> +        from_result(|| {
+> +            let data =3D T::probe(idev, info)?;
+> +
+> +            idev.as_ref().set_drvdata(data);
+> +            Ok(0)
+> +        })
+> +    }
+> +
+> +    extern "C" fn remove_callback(idev: *mut bindings::i2c_client) {
+> +        // SAFETY: `idev` is a valid pointer to a `struct =
+i2c_client`.
+> +        let idev =3D unsafe { =
+&*idev.cast::<I2cClient<device::CoreInternal>>() };
+
+> +
+> +        // SAFETY: `remove_callback` is only ever called after a =
+successful call to
+> +        // `probe_callback`, hence it's guaranteed that =
+`I2cClient::set_drvdata()` has been called
+> +        // and stored a `Pin<KBox<T>>`.
+> +        drop(unsafe { idev.as_ref().drvdata_obtain::<Pin<KBox<T>>>() =
+});
+> +    }
+> +
+> +    extern "C" fn shutdown_callback(idev: *mut bindings::i2c_client) =
+{
+> +        // SAFETY: `shutdown_callback` is only ever called for a =
+valid `idev`
+> +        let idev =3D unsafe { =
+&*idev.cast::<I2cClient<device::Core>>() };
+> +
+> +        T::shutdown(idev);
+> +    }
+> +
+> +    /// The [`i2c::IdTable`] of the corresponding driver.
+> +    fn i2c_id_table() -> Option<IdTable<<Self as =
+driver::Adapter>::IdInfo>> {
+> +        T::I2C_ID_TABLE
+> +    }
+> +
+> +    /// Returns the driver's private data from the matching entry in =
+the [`i2c::IdTable`], if any.
+> +    ///
+> +    /// If this returns `None`, it means there is no match with an =
+entry in the [`i2c::IdTable`].
+> +    fn i2c_id_info(dev: &I2cClient) -> Option<&'static <Self as =
+driver::Adapter>::IdInfo> {
+
+Again, perhaps a private member function? I=E2=80=99m trying to simplify =
+the syntax here.
+
+> +        let table =3D Self::i2c_id_table()?;
+> +
+> +        // SAFETY:
+> +        // - `table` has static lifetime, hence it's valid for reads
+> +        // - `dev` is guaranteed to be valid while it's alive, and so =
+is `idev.as_raw()`.
+
+I don=E2=80=99t see an =E2=80=9Cidev=E2=80=9D in scope? Perhaps you =
+meant =E2=80=9Cdev=E2=80=9D ?
+
+> +        let raw_id =3D unsafe { =
+bindings::i2c_match_id(table.as_ptr(), dev.as_raw()) };
+> +
+> +        if raw_id.is_null() {
+> +            return None;
+> +        }
+> +
+> +        // SAFETY: `DeviceId` is a `#[repr(transparent)` wrapper of =
+`struct i2c_device_id` and
+> +        // does not add additional invariants, so it's safe to =
+transmute.
+> +        let id =3D unsafe { &*raw_id.cast::<DeviceId>() };
+> +
+> +        Some(table.info(<DeviceId as =
+crate::device_id::RawDeviceIdIndex>::index(id)))
+
+Do we really need to use the fully-qualified syntax here?
+
+> +    }
+> +}
+> +
+> +impl<T: Driver + 'static> driver::Adapter for Adapter<T> {
+> +    type IdInfo =3D T::IdInfo;
+> +
+> +    fn of_id_table() -> Option<of::IdTable<Self::IdInfo>> {
+> +        T::OF_ID_TABLE
+> +    }
+> +
+> +    fn acpi_id_table() -> Option<acpi::IdTable<Self::IdInfo>> {
+> +        T::ACPI_ID_TABLE
+> +    }
+> +}
+> +
+> +/// Declares a kernel module that exposes a single i2c driver.
+> +///
+> +/// # Examples
+> +///
+> +/// ```ignore
+> +/// kernel::module_i2c_driver! {
+> +///     type: MyDriver,
+> +///     name: "Module name",
+> +///     authors: ["Author name"],
+> +///     description: "Description",
+> +///     license: "GPL v2",
+> +/// }
+> +/// ```
+> +#[macro_export]
+> +macro_rules! module_i2c_driver {
+> +    ($($f:tt)*) =3D> {
+> +        $crate::module_driver!(<T>, $crate::i2c::Adapter<T>, { $($f)* =
+});
+> +    };
+> +}
+> +
+> +/// The i2c driver trait.
+> +///
+> +/// Drivers must implement this trait in order to get a i2c driver =
+registered.
+> +///
+> +/// # Example
+> +///
+> +///```
+> +/// # use kernel::{acpi, bindings, c_str, device::Core, i2c, of};
+> +///
+> +/// struct MyDriver;
+> +///
+> +/// kernel::acpi_device_table!(
+> +///     ACPI_TABLE,
+> +///     MODULE_ACPI_TABLE,
+> +///     <MyDriver as i2c::Driver>::IdInfo,
+> +///     [
+> +///         (acpi::DeviceId::new(c_str!("LNUXBEEF")), ())
+> +///     ]
+> +/// );
+> +///
+> +/// kernel::i2c_device_table!(
+> +///     I2C_TABLE,
+> +///     MODULE_I2C_TABLE,
+> +///     <MyDriver as i2c::Driver>::IdInfo,
+> +///     [
+> +///          (i2c::DeviceId::new(c_str!("rust_driver_i2c")), ())
+> +///     ]
+> +/// );
+> +///
+> +/// kernel::of_device_table!(
+> +///     OF_TABLE,
+> +///     MODULE_OF_TABLE,
+> +///     <MyDriver as i2c::Driver>::IdInfo,
+> +///     [
+> +///         (of::DeviceId::new(c_str!("test,device")), ())
+> +///     ]
+> +/// );
+> +///
+> +/// impl i2c::Driver for MyDriver {
+> +///     type IdInfo =3D ();
+> +///     const I2C_ID_TABLE: Option<i2c::IdTable<Self::IdInfo>> =3D =
+Some(&I2C_TABLE);
+> +///     const OF_ID_TABLE: Option<of::IdTable<Self::IdInfo>> =3D =
+Some(&OF_TABLE);
+> +///     const ACPI_ID_TABLE: Option<acpi::IdTable<Self::IdInfo>> =3D =
+Some(&ACPI_TABLE);
+> +///
+> +///     fn probe(
+> +///         _idev: &i2c::I2cClient<Core>,
+> +///         _id_info: Option<&Self::IdInfo>,
+> +///     ) -> Result<Pin<KBox<Self>>> {
+> +///         Err(ENODEV)
+> +///     }
+> +///
+> +///     fn shutdown(_idev: &i2c::I2cClient<Core>) {
+> +///     }
+> +/// }
+> +///```
+> +pub trait Driver: Send {
+> +    /// The type holding information about each device id supported =
+by the driver.
+> +    // TODO: Use `associated_type_defaults` once stabilized:
+> +    //
+> +    // ```
+> +    // type IdInfo: 'static =3D ();
+> +    // ```
+> +    type IdInfo: 'static;
+> +
+> +    /// The table of device ids supported by the driver.
+> +    const I2C_ID_TABLE: Option<IdTable<Self::IdInfo>> =3D None;
+> +
+> +    /// The table of OF device ids supported by the driver.
+> +    const OF_ID_TABLE: Option<of::IdTable<Self::IdInfo>> =3D None;
+> +
+> +    /// The table of ACPI device ids supported by the driver.
+> +    const ACPI_ID_TABLE: Option<acpi::IdTable<Self::IdInfo>> =3D =
+None;
+> +
+> +    /// I2C driver probe.
+> +    ///
+> +    /// Called when a new i2c client is added or discovered.
+> +    /// Implementers should attempt to initialize the client here.
+> +    fn probe(
+> +        dev: &I2cClient<device::Core>,
+> +        id_info: Option<&Self::IdInfo>,
+> +    ) -> Result<Pin<KBox<Self>>>;
+> +
+> +    /// I2C driver shutdown
+> +    ///
+> +    /// Called when
+> +    fn shutdown(dev: &I2cClient<device::Core>) {
+> +        let _ =3D dev;
+> +    }
+> +}
+> +
+> +/// The i2c client representation.
+> +///
+> +/// This structure represents the Rust abstraction for a C `struct =
+i2c_client`. The
+> +/// implementation abstracts the usage of an existing C `struct =
+i2c_client` that
+> +/// gets passed from the C side
+> +///
+> +/// # Invariants
+> +///
+> +/// A [`I2cClient`] instance represents a valid `struct i2c_client` =
+created by the C portion of
+> +/// the kernel.
+> +#[repr(transparent)]
+> +pub struct I2cClient<Ctx: device::DeviceContext =3D device::Normal>(
+> +    Opaque<bindings::i2c_client>,
+> +    PhantomData<Ctx>,
+> +);
+> +
+> +impl<Ctx: device::DeviceContext> I2cClient<Ctx> {
+> +    fn as_raw(&self) -> *mut bindings::i2c_client {
+> +        self.0.get()
+> +    }
+> +}
+> +
+> +// SAFETY: `I2cClient` is a transparent wrapper of a type that =
+doesn't depend on `I2cClient`'s
+> +// generic argument.
+> +kernel::impl_device_context_deref!(unsafe { I2cClient });
+> +kernel::impl_device_context_into_aref!(I2cClient);
+> +
+> +// SAFETY: Instances of `I2cClient` are always reference-counted.
+> +unsafe impl crate::types::AlwaysRefCounted for I2cClient {
+
+I=E2=80=99d import this.
+
+> +    fn inc_ref(&self) {
+> +        // SAFETY: The existence of a shared reference guarantees =
+that the refcount is non-zero.
+> +        unsafe { bindings::get_device(self.as_ref().as_raw()) };
+> +    }
+> +
+> +    unsafe fn dec_ref(obj: NonNull<Self>) {
+> +        // SAFETY: The safety requirements guarantee that the =
+refcount is non-zero.
+> +        unsafe { bindings::put_device(&raw mut =
+(*obj.as_ref().as_raw()).dev) }
+> +    }
+> +}
+> +
+> +impl<Ctx: device::DeviceContext> AsRef<device::Device<Ctx>> for =
+I2cClient<Ctx> {
+> +    fn as_ref(&self) -> &device::Device<Ctx> {
+> +        let raw =3D self.as_raw();
+> +        // SAFETY: By the type invariant of `Self`, `self.as_raw()` =
+is a pointer to a valid
+> +        // `struct i2c_client`.
+> +        let dev =3D unsafe { &raw mut (*raw).dev };
+> +
+> +        // SAFETY: `dev` points to a valid `struct device`.
+> +        unsafe { device::Device::from_raw(dev) }
+> +    }
+> +}
+> +
+> +impl<Ctx: device::DeviceContext> TryFrom<&device::Device<Ctx>> for =
+&I2cClient<Ctx> {
+> +    type Error =3D kernel::error::Error;
+> +
+> +    fn try_from(dev: &device::Device<Ctx>) -> Result<Self, =
+Self::Error> {
+> +        // SAFETY: By the type invariant of `Device`, `dev.as_raw()` =
+is a valid pointer to a
+> +        // `struct device`.
+> +        if unsafe { =
+bindings::i2c_verify_client(dev.as_raw()).is_null() } {
+> +            return Err(EINVAL);
+> +        }
+> +
+> +        // SAFETY: We've just verified that the type of `dev` equals =
+to
+> +        // `bindings::i2c_client_type`, hence `dev` must be embedded =
+in a valid
+> +        // `struct i2c_client` as guaranteed by the corresponding C =
+code.
+> +        let idev =3D unsafe { container_of!(dev.as_raw(), =
+bindings::i2c_client, dev) };
+> +
+> +        // SAFETY: `idev` is a valid pointer to a `struct =
+i2c_client`.
+> +        Ok(unsafe { &*idev.cast() })
+> +    }
+> +}
+> +
+> +// SAFETY: A `I2cClient` is always reference-counted and can be =
+released from any thread.
+> +unsafe impl Send for I2cClient {}
+> +
+> +// SAFETY: `I2cClient` can be shared among threads because all =
+methods of `I2cClient`
+> +// (i.e. `I2cClient<Normal>) are thread safe.
+> +unsafe impl Sync for I2cClient {}
+> diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
+> index ed53169e795c..a5e97a9b1546 100644
+> --- a/rust/kernel/lib.rs
+> +++ b/rust/kernel/lib.rs
+> @@ -89,6 +89,8 @@
+> pub mod firmware;
+> pub mod fmt;
+> pub mod fs;
+> +#[cfg(CONFIG_I2C =3D "y")]
+> +pub mod i2c;
+> pub mod init;
+> pub mod io;
+> pub mod ioctl;
+> --=20
+> 2.43.0
+>=20
+>=20
 
 
