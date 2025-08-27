@@ -1,83 +1,90 @@
-Return-Path: <linux-kernel+bounces-787666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B699BB37962
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 06:58:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D9C9B37978
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 07:00:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F5996869FE
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 04:58:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C231B366796
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 05:00:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E61B130AD17;
-	Wed, 27 Aug 2025 04:57:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 504D330DEC4;
+	Wed, 27 Aug 2025 04:59:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=amperemail.onmicrosoft.com header.i=@amperemail.onmicrosoft.com header.b="zMAHNIbr"
-Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2112.outbound.protection.outlook.com [40.107.102.112])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="IbtubK/n"
+Received: from PA4PR04CU001.outbound.protection.outlook.com (mail-francecentralazon11013020.outbound.protection.outlook.com [40.107.162.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 952F330ACFA;
-	Wed, 27 Aug 2025 04:57:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.112
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9BF730BBB7;
+	Wed, 27 Aug 2025 04:59:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.162.20
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756270675; cv=fail; b=Lu2glCP9oXtpaMA29dfdFL8z/gT3WRqNdoB17FWufPxG86CVctCVXNr9W30oNGk6jQxi8qxN2YCv98u46YxTXH6QanFLr7M3EJXnq1rWnogLtN1QyCtyYi20W6xgWpF2sykpAJyXhN7JWLQCcwk4g5ilVkUADedvVowBK3Hdu/8=
+	t=1756270780; cv=fail; b=sOVAIUib0cAPSK4iBbJLEvwINUqlO77qYv++ypYQnDFFHL8HABalJdJQDcAZ/Zu9U5PdmdTnBb2mqS6Mi4eAc0/HE7Ch0TzN/G2pM5iUpqhDjKyA/RxLPVLWeW6U8ZkxcVrB6zjp9nX0xQhtj/ssXoHx7SOFbIhcEmKw3ssYUGg=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756270675; c=relaxed/simple;
-	bh=Nw6bgoE6er2UnDEm7DH4D6axdUR9b0SQRmad5jUx4h8=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=A0mixDZpWkXy8ye6VmUHNrA3OOxSa5Cl8yfD9jqnixWIVLp1pZCrQSFYJjW4JLaBI+6T+e3xIafuzBw0BLnIFG5irCvyTIRg/8LWo89EXIMoJ2A2stupKpurGbPYrzkcTCTTvkOIAEgdsvqCRNUdDi/tCmYJ7nEsGwJqiSY0Ib4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amperemail.onmicrosoft.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=fail (0-bit key) header.d=amperemail.onmicrosoft.com header.i=@amperemail.onmicrosoft.com header.b=zMAHNIbr reason="key not found in DNS"; arc=fail smtp.client-ip=40.107.102.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amperemail.onmicrosoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
+	s=arc-20240116; t=1756270780; c=relaxed/simple;
+	bh=37ex7TSAzMOXcON96mGBAM7S8ODTvQSe1OU0Kfvfp30=;
+	h=From:Subject:Date:Message-Id:Content-Type:To:Cc:MIME-Version; b=Q1S2qnogLGIr/+oClWf8OKLGUH5h8DiblozQVuV/QzpuWO4W09wDO79bbkMZDyQzf+TfwKCgzOLzJo6eU1FVeWyAZ6RkWUBBKm+Yb3Yua31gyfEJvaSaOWE46+HOk1k1aEPgDcEUdkzJNo6hm7DspydUSH5rLYnfEQVMN1nZ5H8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=IbtubK/n; arc=fail smtp.client-ip=40.107.162.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ORnB1AQlHyn7hIZJVppHXzCM0+lVlZ9mcjOqWsmSbkwQCtVRJylZRbIYKUbrw2jRQOvnQ3KUfgJkBd5dZH2xA48wj3VQNCmb3jNmQ+J2d97xT5hCrPezm78NvaC4BSyeK1r6UatU/6XzcJKAfjhjK3S4FtMBWRmZ7iqnoe9qCPKm6x2ASz9BhbHmSsp/HbgxWbmB+mT3KoOfhKhbpz7YQR0re8ye4msmX3zJq9AibpKR384V32Ms4rtjdM2UlV3EHjzxRV9E8y57Ew2FByHQJz+Cos/aJmSnZBPr5qE/4UBPW4mUr/1eeeDWAcX6N90IS8d2UYk86Od5sI6Wc6oUXQ==
+ b=nHMkpKSSOZ3+mtPRLJpUnRcop2gawoiSxj4pRoRz1clmbszlvSBk06iIkJS+1j3BWF1hr5V8mAC5nQ9KVWg7pnTIxu9NKQM6QTNHE3quMchaXT0yHMbX6dYQQdbUkHM4u3o0NPkLxxHnFW3aUv8V4aHdKG72DHnJj3w4OdSb7BbiBdIfKNWaxX5bjf2jz1b0oZKlIYIsw0o7yyE33J7DNQPN5xiOQXUxM9W7eE6p5xcY7vhqI8FTQ9mjITBfQVgMQdb9l7LLcaFVC+qXBrWglPWkRJc2bl4c2tRIViN7Va6CFZML+4OMtQ9+I1u39pOpJZBXj2ZKgaztiNvngTfWag==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=7FKnH/49ujBxC0VSCX8BKKzLlby8TU1RvNaKKIEkA00=;
- b=pxGU91C8K1qTUqB6vXSBuXFgybdYBX9qCnhGpDDs4/ZEn/HMk+cQkG2qd4GynAhA/g7b8PNYu+LBK0FlwX889bHDR89uJBoPPoNIBk+gvKh7HE/k1NT/KKijbMj3CIYpQ5NjfN7HiE5srvTG05LVTuUkncncvBtO4+yboBig6PhMu1NuhkhaI3CtsHpelg46cFLQFgT3RnF3n9cCjjgU6AHK6Ozvrbd9rXBHWLD+5WezmMMUf/2YW8ShZPYhpTNzGRtsnMwok8WMDq8I4edI4J0heuftpucEPM9YiO5LkS4xlbT1baAtDWcc6usrnwWFSp8g1hhNib0FIQCTxbfwLw==
+ bh=oIdsmer+S5Hu+dy6qELC55WpumZrXPmBQJbAKeDslZ0=;
+ b=AcW4Xqv0Sng11PCoPMxzZuy0XET5RKhQf3TRJmwgthWhn6+XwG8ig6qhcyBQ1imlMCpc7Vz+3xDfnWlZI6SF//JGOIPZsWHIqRjtDXFvonPZoYTMRFw/7f/pJs/D3d7kG+ud4V9FIro7/g39bCmENT0vej11PtCvs0GW/RDK3O7r3OCqr4i/YBgMjvec+gijtbckMc3vTjwNTpR8uqxUScfCDrDfNYW3Zy6f4VnU1ljhJ7E7YaZa/S2+drLMXjmwpNUBB92vDi6GG5QdMgvbZZnAEPzvicFOyCPXQwbTYRM2kTdk+7Rs9luqzCA6sYZnc04mmQpOO/1u7H2mSbkJTQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
- header.from=amperemail.onmicrosoft.com; dkim=pass
- header.d=amperemail.onmicrosoft.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amperemail.onmicrosoft.com; s=selector1-amperemail-onmicrosoft-com;
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7FKnH/49ujBxC0VSCX8BKKzLlby8TU1RvNaKKIEkA00=;
- b=zMAHNIbrGe2Lj1mC62yhpZf6nvyjn9yoD73lGB1BlH8LEJDFXNA6A9vMXDnox9RHmlpYDVt25jYdIHfelpCdIFUy9jNAOuOaqg7IC6Impeujuj1t40VNG3oBqIEVY8xBLHt5EZ30YLwciPBWjQThfub+UgY+00j4QlDj5n+9gso=
+ bh=oIdsmer+S5Hu+dy6qELC55WpumZrXPmBQJbAKeDslZ0=;
+ b=IbtubK/n2W3eucPUp1ZnJyv/qapQoXZbmvv4SSmLHB/sTfBGk11fNA/4qdmZyHEkeDkvYdTdv4Qbsl2Ac0HQjz1F6Q8tPSRZz05WkfBk+Gtnl7Wing5ykq/mTAzQF2q2Sr0HG3j4Mw4CliKnPO6B5BSDyn6hltYK6IuR4jajfKAHCBKItyHH4kZ70ad3n437r7sd9/QEI3QTYAUHIOVjBXL3p2gWtitoTkBgLRnDPrq5SbmfeXidLF6y3/lWfkRB9lHfhCRWqgk6sZO3+DkRTfdCBdt075rxUzUN8H5DeodxSTAhAD4LggJMm1k0qsrl6PQ7iFpJtcTc0FddtPe4kg==
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amperemail.onmicrosoft.com;
-Received: from BN3PR01MB9212.prod.exchangelabs.com (2603:10b6:408:2cb::8) by
- BL3PR01MB6868.prod.exchangelabs.com (2603:10b6:208:353::6) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9073.15; Wed, 27 Aug 2025 04:57:50 +0000
-Received: from BN3PR01MB9212.prod.exchangelabs.com
- ([fe80::3513:ad6e:208c:5dbd]) by BN3PR01MB9212.prod.exchangelabs.com
- ([fe80::3513:ad6e:208c:5dbd%4]) with mapi id 15.20.9052.019; Wed, 27 Aug 2025
- 04:57:49 +0000
-Message-ID: <496af428-841e-4296-9b53-0dd89d8be655@amperemail.onmicrosoft.com>
-Date: Wed, 27 Aug 2025 00:57:44 -0400
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v25 0/1] MCTP Over PCC Transport
-To: admiyo@os.amperecomputing.com
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- Jeremy Kerr <jk@codeconstruct.com.au>,
- Matt Johnston <matt@codeconstruct.com.au>,
- "David S . Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Sudeep Holla <sudeep.holla@arm.com>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- Huisong Li <lihuisong@huawei.com>
-References: <20250827044810.152775-1-admiyo@os.amperecomputing.com>
-Content-Language: en-US
-From: Adam Young <admiyo@amperemail.onmicrosoft.com>
-In-Reply-To: <20250827044810.152775-1-admiyo@os.amperecomputing.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SJ0PR05CA0023.namprd05.prod.outlook.com
- (2603:10b6:a03:33b::28) To BN3PR01MB9212.prod.exchangelabs.com
- (2603:10b6:408:2cb::8)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
+ by AM0PR04MB6899.eurprd04.prod.outlook.com (2603:10a6:208:183::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.13; Wed, 27 Aug
+ 2025 04:59:33 +0000
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630%7]) with mapi id 15.20.9073.010; Wed, 27 Aug 2025
+ 04:59:33 +0000
+From: Peng Fan <peng.fan@nxp.com>
+Subject: [PATCH v3 0/6] firmware: arm_scmi: imx: Dump syslog and
+ system_info
+Date: Wed, 27 Aug 2025 12:59:12 +0800
+Message-Id: <20250827-sm-misc-api-v1-v3-0-82c982c1815a@nxp.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAKCQrmgC/3WMuw7CMAxFf6XyTFDiNH0w8R+IgQaXeuhDCYqKq
+ v47bpcOCMkezpXOWSBSYIpwyRYIlDjyOAjYUwa+ewwvUvwUBtTodIGlir3qOXr1mFgloyrntdW
+ +KOVBpClQy/MevN2FO47vMXz2fjLb+jclpxU2dZ1XpqUK3XWYp7Mfe9hCCQ+5NPpHRpG9pdpZs
+ nlDxSGv6/oFQO2CvecAAAA=
+X-Change-ID: 20250627-sm-misc-api-v1-85c030c670c6
+To: Sudeep Holla <sudeep.holla@arm.com>, 
+ Cristian Marussi <cristian.marussi@arm.com>, 
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>
+Cc: arm-scmi@vger.kernel.org, imx@lists.linux.dev, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Peng Fan <peng.fan@nxp.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1756270768; l=1999;
+ i=peng.fan@nxp.com; s=20230812; h=from:subject:message-id;
+ bh=37ex7TSAzMOXcON96mGBAM7S8ODTvQSe1OU0Kfvfp30=;
+ b=tMu4Jl7BwPTk9W5SUDzFU98/ozIe03ekZLFkuuzmWutceT5koQlbLDHNWsPyfXeaapz/7cyc+
+ Vb2krcUCvpVA9Z1c8TgrqDne/ne9XMUHBc26p78BMc4MNYrxjjvR2wl
+X-Developer-Key: i=peng.fan@nxp.com; a=ed25519;
+ pk=I4sJg7atIT1g63H7bb5lDRGR2gJW14RKDD0wFL8TT1g=
+X-ClientProxiedBy: SI2P153CA0006.APCP153.PROD.OUTLOOK.COM
+ (2603:1096:4:140::22) To PAXPR04MB8459.eurprd04.prod.outlook.com
+ (2603:10a6:102:1da::15)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,373 +92,143 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN3PR01MB9212:EE_|BL3PR01MB6868:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8e582dc3-7eed-4da8-2965-08dde526459c
-X-MS-Exchange-AtpMessageProperties: SA
+X-MS-TrafficTypeDiagnostic: PAXPR04MB8459:EE_|AM0PR04MB6899:EE_
+X-MS-Office365-Filtering-Correlation-Id: bd5ff2ac-2628-45be-a5ff-08dde5268341
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|376014|7416014|10070799003|1800799024;
+	BCL:0;ARA:13230040|1800799024|366016|52116014|7416014|376014|19092799006|38350700014;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?eDZBM2EreGpYRHEwUElZUjVIa2Y3MVNwb1JZVElkS21FS0s1MVNITXZTakJh?=
- =?utf-8?B?Q3YvZWR2RjF1K0xRZ0FUOC9yR2E1dlExN2ZPZzlGZ1Y0L3o5Q3g3bGNKWFAv?=
- =?utf-8?B?eTA0THJaMS9FbjVjNmlPWU0xNFdlS29LK3k1Sjdqb0Jxa2VlR3MyQ0lvOVFG?=
- =?utf-8?B?TzFibEdCRUNWYWl4RjlYdFpGa3VIdzltSytZNnB5QUxveVkzbHF0ZXEzckl2?=
- =?utf-8?B?cWhOcXYyK3MwTCtHeHNLMkl1aWJnSFBtNXN3REZTQk5NcWltSzZOckF0T0Rm?=
- =?utf-8?B?S2VJWlJwc1lIa3RIVlZxamVReE1DbTdaT2tiL2VROHBaYTVLbUlRZWhaZWMv?=
- =?utf-8?B?djArdUhnZU5uY0JINXFXWGY2YmlLdkdGblBjTzEzT0hXSnBFZTgzN3FaelVZ?=
- =?utf-8?B?OTZzVGtiaTd1Zk9MYW1Gd3lvZldOeElJc3IvNzJqOEJpQ05WMi9sTGlpbktO?=
- =?utf-8?B?TjJTeTh4THVCdkNWQVNudm9McTJ3S0dJeFlnOExGVWFhS2ZhcHpCSUlNeTVj?=
- =?utf-8?B?TmZLNmd5bWNFWDIwU3VmRjBpazdyMlJ4RHNNQmR4ckkycmFaRmZoY3hDa3l5?=
- =?utf-8?B?dlpJZ2pRR2RUY3RLZDVwd1Zia0ZYcG9tVTJldXI5cnUxK2E4NnRTa0pMZWsv?=
- =?utf-8?B?RE5uMGpQUHhHTlV5NzdSOXVjT1l2QUg2dDFRclNFRjJ0WlJjY1U2UVh0dG5H?=
- =?utf-8?B?ZGpJanNhRW1mSlRQeDBSdTFHT2dEZDlRZmhPNjdiSVNHYTRSVEcxYkEvOWV6?=
- =?utf-8?B?dTNoNkRxNHh6S3BTVEhzZXE3RS8wQ2NJb2hpc3hDd1I5Sll4Y0JEdWRoR1F3?=
- =?utf-8?B?aGFIeCtINTJoWFZzUDBDeVB1U21qSTBZYXM5RVBDeVczSGtqR0lKam1rNkVp?=
- =?utf-8?B?WmFDd2RSaG1UcjNVVStPcjBabjFaZTlsUmpubi9ETVJ4bmNPRmxIZSs4L3dn?=
- =?utf-8?B?aEhKaDBpSWVZZ2ZzaWZQczJraUVIMjl4a1hSWlp4RG8zRlhxOW94TG9iQzY1?=
- =?utf-8?B?bUQ5UlAzODE3ZUFQczlwMnVQREhCd3FKMzJ1bnJwaHd3VG1kTnUrZ08wa3ho?=
- =?utf-8?B?OE5lN1g2RkxpcTVFUEg0eUhTT0FxVk1zVXZ6czFDdUVmK1VzL1NNTnA2OUc0?=
- =?utf-8?B?TVp3YkR6RjFjQ0F2OFl0bitQQytLZ2J0aHpiV3N6aEc2Qm9PNEVybitBdG1H?=
- =?utf-8?B?L1ZMVlMxazdOWWtTTmVtUG9TaTd4SVRSTUxWZnRLZ1JEd1lwTnVsa1dLejVk?=
- =?utf-8?B?SitJRXBhbVRQNmtLSk9ETGVrTUxHdXEzRDlNb3g2MlJPNmlNQjM1c3RUcFQ2?=
- =?utf-8?B?U09sd0FxRmFBN3NyKzBHWkpxS1lpYkcydjdvZHBybE1WWDU2ZjdvTko4ak1C?=
- =?utf-8?B?eVZUb0Qyamo3NEcvckwvcno1UnR5SE5EQXJLRWhrQ25xVVZjdHVDdHl5MFN0?=
- =?utf-8?B?NkZIdURGUnFKemg0TDU4L0N2dVFTUklOSnVQOWVkRGdRMGFkd3pKUFJmV09y?=
- =?utf-8?B?TEljcEs4NmN1SEwzTE1BdENDNjVlNGx1TUxWVXBzOE9DakdzK01HV0JWL0Fn?=
- =?utf-8?B?VDBtNlk4WUUzNTdNQ2NyUmpDTlZ3OXpiays2c2t0Yk40cm5KMlFZQWhVbmxO?=
- =?utf-8?B?cnFVK2lMUHJlWGZ6UEFxN3h0RkFRTVYzMytJNUZkOHFHVE1ocndFL1ZNSW9w?=
- =?utf-8?B?SW1lcHpQc0Zad1NHUEJ1M1JXQ09WZ0NYTStFbnNZQnhmYWRWQXMrMVNlK0Fm?=
- =?utf-8?B?L3pkU3FweEFuaEtuU3NISzhDWDZUWEhNSjB6UlcrT2JOUzdaWHBqM3RrT2pJ?=
- =?utf-8?B?ZlFkR0lNQXZlUWd6TmY0d2I3U1ZSR3FhVnBvS2NuQkJwUWRueTk0MTJKc1B5?=
- =?utf-8?B?Z2s5SWxtbXRmTzR1eWlPM1VjSjFkRnFBRkdFUzRCbm5GU0xQa2diZmNXTDJR?=
- =?utf-8?Q?D+VePyTCLIM=3D?=
+	=?utf-8?B?RkowU2RtQzk3SGprNit4Nnl2VUtna0doRkY3MmpQeGZPQTc3Uno5b21WdVBO?=
+ =?utf-8?B?Wnh2bmJWbWVFQ1NtRGJqUjZ5SGl6c3hrcUdkL20wNXBRZFQ2dThrcnNkV3BI?=
+ =?utf-8?B?VHVNRi9uWWRSV2I3S29zMkZMeFJjTzNLRnZsL0gwWmFrOVRFbmtmOEdPcGMw?=
+ =?utf-8?B?Rmw5aHBvTVhLNWdWSUNyRzNjSkUwWEs4ODkzOUd6QUwvaTIrREJEWi90R2NR?=
+ =?utf-8?B?d2NjQ3RFSDBhd3kwNHJEWmlScjhnR1phMCtTQWRibDNvc1FkK2FhTkZ1aE1B?=
+ =?utf-8?B?Um1rR1loRTJTR09ubUNPQjdEVDIzR2xFbkxpdlZUcnJILzBtSEUyUnI4cTdy?=
+ =?utf-8?B?WkNvYkh6S3hnVkFuMmxUNFI2dXhlT2Z6UWFyM1JBREh3Si9rNTlrZUdJTWZ5?=
+ =?utf-8?B?MEJseXFidXd2ZmxkRFp6cUplUGNQUTkxZnkzZC9mQWx4RThhL2IxYkk3c0pS?=
+ =?utf-8?B?SjhYeUx2dkNtNXFaK3pOeFgzaUJsR3RwekxsMU44MGpJOEZkdE9vK1cxRDVV?=
+ =?utf-8?B?SmdNSlBmTjFOeFZvMHBEbGVIaURrMFVGK3FrRTl2Z1NJRkFmK0JYM2JFNFBx?=
+ =?utf-8?B?YTVyQWNUeEEvcmhJRTlGUmd3OEhKOWxBODc1NDJBZmdNOUVCTWVETFEzTGl0?=
+ =?utf-8?B?N3UzeFlEL1dNbDJucklCSHJqTnRHa1JKM05aTUw3NURwbEtwZWZ6Z0xMU1Zp?=
+ =?utf-8?B?ekVtakI0djVWemRsb24xVjNwOGJ4Zk9RaDZLb3R5QUNDcjB2RElFREk2WUNo?=
+ =?utf-8?B?d3k3R2lycG00ZlVQWFZUdzFWOGt2dzI4bmFrcG1DNlZ6SlRVOEFtbG5NK2xT?=
+ =?utf-8?B?T2NCdU5weUdHRDN0Y0xORzMyR3BnMUtSQ2VrWWI5Nk1qUm1aVlZVK0pkUzdM?=
+ =?utf-8?B?OWVVU2J6YzU4c1U5dkZIU3I3dWgwVmV0dmJpSHFQOXdIazBzdW95SkV4OTNR?=
+ =?utf-8?B?WWtGclBLZEhlQXhFSUlKVDdSQXBGcXpmZGdFaFZNSmtMYnpHYUo4RGtIRzVB?=
+ =?utf-8?B?ZzNUb0R1eVRkSm0xVUhLNWM5bTE3bWVkN25VeDdDVXlsUWVLQU84aWtpQllw?=
+ =?utf-8?B?M0tRcHBRYisxMjlFQnJ3MkwvdHlVcFNSVU5MaVBTc2dYVHhZTDFRZ3A4OUND?=
+ =?utf-8?B?NWQzWXdMM0RXUXlJaWQ3ZXN1WWs1SEJNVTVRdWJyeHEzektQdi9UelVSWjln?=
+ =?utf-8?B?WWt5L0NabzU2bE1KT1ZwQlBmOVVKMFkvWExseFF6cHJKOGdBS09DclEzeFVO?=
+ =?utf-8?B?VEdwVUp1MWNabkhvUmtyL2VuOWNQa2svWmR5eGFoSkhQVzFVaDgwZHc5N2RN?=
+ =?utf-8?B?VnE2akt1U2V2RWRzbHYvTUI2QjBBdzFDd1BPdmR2YTMrNWdKNmpCYWMxeDN4?=
+ =?utf-8?B?SnJ4bTBVZjJabHhnaFJpdVF3bjUzeW8vc0U0THRITzNWcmJuUEtjbStVYjFP?=
+ =?utf-8?B?bTNOcm9CRHE0OFZKblJEVDNnbUFGTHFWalV6eGFocittK2pORElSRVRJSjJa?=
+ =?utf-8?B?cWp6VEJ2Y2VaTkJ0eUpIOUlXQUd3ZkllOC9TUlRpMFpSM2FaL3prQi9GODFv?=
+ =?utf-8?B?cEJWV1EzZ3JsTGdRcTM5VFRvSzYyNVRlNUppb0Z2a2xobWJKeWlyaWZqTjdL?=
+ =?utf-8?B?ME5rL2JoaFFXNTRDbjRtNU5tbWJmZi91ZVQvSmlOYk5BREt0UXRXZkhhbTlw?=
+ =?utf-8?B?UDRkck9DNmRWT1ZiMmt4RjBRZk1Pb2liWDJZYU9XYVRVOTVjU1Erak1LUk1B?=
+ =?utf-8?B?T2pPRkp2Zk1xT25BQXdtTm9BUmtYbEJTNS9SV21NWE5VZ3B4STZqRlNvTjhy?=
+ =?utf-8?B?N2g0TnAyN0tRT3VLdzd5WFMxUTVkVldaOXFBUERSZThFSFZwaWd1NEtwZEp1?=
+ =?utf-8?B?TTdoRDFXR2pwL1FwaXN2QzJMR1RDQXVpTkU5QXNybUdyT2k5K0djdWl2Zm1B?=
+ =?utf-8?B?Mmg0a2RvL1VxejA4NHpKV2pqZlRPQ1BEMWtaS2ozMmF2dVhJRndJbkdJeUJl?=
+ =?utf-8?Q?Nn5U1VCdqQcrNqCCtqDFVR5aI55XSA=3D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN3PR01MB9212.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(10070799003)(1800799024);DIR:OUT;SFP:1102;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(52116014)(7416014)(376014)(19092799006)(38350700014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?MzVKZHJSK0tsbkR2Zk9DNDRlYkZWYW16QzFRd2VEcnp0SURiYlhJbHhOMUJP?=
- =?utf-8?B?a1NISE9pZnJWb0VwaXFSdmdBK2YvTERhb1I0MFpqZVJFNGRhR1pmMkF3c0RH?=
- =?utf-8?B?SlVLcUZML0t3WHJZMk1TdGRUeU1Cc3NXY1lYcjBMaFdZL05nb3lISXZqR0NS?=
- =?utf-8?B?MVBpakwzeXVuK3dURlVEZjZjMVRrQ3p1Ny9BWnBLL2FkWlJyMU9ZY2lRZjlz?=
- =?utf-8?B?SVNrRDV5U3lUeHZZWTFDQTVDUldxa3ArV2RLVEZuUnFTS0JEQjZJVkNuUmlW?=
- =?utf-8?B?TGJYMUtRUmd0RXpGWW0vVHVtWFdRN0FCemI4dFpzSzliYzQwS29yNWV3ZElZ?=
- =?utf-8?B?RVhxU2N3S2ZYRW10QzdsZ21rV2E0VjMwYUUxYXM1OXNYSlNYbmh6eCtsdUNo?=
- =?utf-8?B?Q0xDM0pEWkVPUkUzM01WcVk5UjQ4by92NW40UXVpY1Y5SGlNY0NkVVc0Uzk1?=
- =?utf-8?B?ZHpxRHd2a3YwMHk0NnFmbGJqRWs2dlBIaER2bUwzbFNpaXhCQ1k2bk9kR2g2?=
- =?utf-8?B?MFJ4TFNyMmpZQTl3RUhOcDR3Y1Fhb29yYmNrK2g5bVY1L3dtTFdyT3FnVmtk?=
- =?utf-8?B?YnhNMStaZkdkbm5IbEpGYnljSUZHelJoV202eW54cHdGT2lkbjlSZEZtN3A5?=
- =?utf-8?B?cSt0Njg2KzUvSlJwL2R1WlVrMEhYekJSU1M5ejBBU25xdFFubXFNQUd0TC9v?=
- =?utf-8?B?Zy9tRXBKWjQwNXJZODEwM3RJZmdrMFFHTURocEl1WkRNQVdxaU1UN0c5L2xy?=
- =?utf-8?B?bFk1L1k1K3lYRUFnRDVUanpFYnpGdzgvWlNqNGgrUlgrbHo4SjJBTHp2aVJY?=
- =?utf-8?B?UGdhZEVoL0Z5U1FRd3JLMHpNeVVuTkxZajZzWDlyK3dCOHJjd25aM0RqTlA5?=
- =?utf-8?B?V1pBL1RlUXZnYnVMaGFUSmVKcGtmWlRueXBpdVgxekVCSTNUTS9nMU1Kb2V3?=
- =?utf-8?B?VTFSMmNKZkc2M1MzeXhmemlET2ZjZmNwQ2JiZmhxQmVQaTFKM3UzdU9mK2kx?=
- =?utf-8?B?OXlKaG81UkZOOENVdEh0VkFHWDlVR0l3WXN1OGZPSkNuZVRpdHZLT2RxNjd6?=
- =?utf-8?B?ZWZqSlF0TTErRHZoaDlncU5tK084UEV1QWtnM1Z0V2tFVGhYK0xEZXVWQ3VT?=
- =?utf-8?B?VnhRMXFKcEZFYXQyRXRkVFdzSEV0a0lxZ3pleHBrdHRsVklUSmFGdHpoVFY3?=
- =?utf-8?B?Wk1pVGNpN1l5cXJCemdVOUNaa2FpclBNY3VqRy9MTFp3TFRMQzhnYzhzNnBL?=
- =?utf-8?B?V0tPY2F1bzl0SVBQTXJNZUI0eXNrRkJrOUpLNjZIYWMyS1k2MWdSeTVkVXdJ?=
- =?utf-8?B?enNUemNmZXAzNXp3aWt6K290MjZyNW9ONW45ZHlQTGZxS0d0dTFvOGdIYm1q?=
- =?utf-8?B?OWxRc1ZXZUdoLzFFQlV6SHQ5SVpMaWdvQUVabkNuaHB6emxmakhoYkhISTBY?=
- =?utf-8?B?VHpxRTR5ZjZnSXlMaWwzWGV4UjZ2RXpNZFkyOVUwMU8vYlhrV0l0eEdJdjc5?=
- =?utf-8?B?OW9KY2RDdnNzY2tHbDJXdm11UHVDSzVwSnFBdGRoSEU4cDg4WGdsc3lPTVQz?=
- =?utf-8?B?Tk1FVEFWRE1MbkxlTWhSZldxMUtPRnpCTW1wdnEzVGVjRHRKTHJYNkl6VG80?=
- =?utf-8?B?YnRyZ1BaTWF0Rm5yWFIrQVJ3OEc1SDRySHFnV2psTGdVeDFncnhWUGxDS1M4?=
- =?utf-8?B?S1F5UzZPVHUyZmJQaWlSZ2dsWlRTTFphV3Z2dlJNcHQxUnNYTjlYNUQ1SDNv?=
- =?utf-8?B?bHdKVUd5ZUt6MHI2YmM2RzEzMDRqOENybmZUYldmcWpZY1o5ZktMbkk1NGhQ?=
- =?utf-8?B?amI2SlNpTXdTL1NkUXZxWmIxajNYaU1iODRqLysrWE9XOWNzQUp3VTViK3A1?=
- =?utf-8?B?Yk80RE0xVWY4SkR4RkNoZytzNEY1eXVhMXMrTXM2OWYzWUxBd2xDTFFsVEhv?=
- =?utf-8?B?MCtPU0h2Wjd5WW5zeHdiMWMzNHc1YWlabW52V0pMTXVpdi9XOUZoZFQ2VDBX?=
- =?utf-8?B?NjhIcFZ6NFdWUjRHVitHN25nSG9YR3Z4Uk9WaW56RG1Oamd0ZlFpaUZKOXRW?=
- =?utf-8?B?OWFhK3BHMnNUa2h0dkNaa1hoSDZDTjBqaGdibzhqaFB2NXp0OVI0cUs2UFpo?=
- =?utf-8?B?emIzUHBaa1ppSHEyQ3Q3NThBbytONVRVMCt5SjRFLzA0SXZsMjV3UnNNNVYz?=
- =?utf-8?B?OW5vRHV4SWdmZ2F2K0tXNDJLcmRGdEF5bDNNeU5rTnBhMjlPcXF4c3QySE9U?=
- =?utf-8?Q?YE/KiGVSJFJAyVl7joM0K0k5GRPOd+0lbCaDtUjyx8=3D?=
-X-OriginatorOrg: amperemail.onmicrosoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8e582dc3-7eed-4da8-2965-08dde526459c
-X-MS-Exchange-CrossTenant-AuthSource: BN3PR01MB9212.prod.exchangelabs.com
+	=?utf-8?B?RjRFRDVkelZ5cVcrcG8zbGppUjlqOS9Xbm8vdC9sKzdZa1hjR25tWW1PMGRS?=
+ =?utf-8?B?MXpiS0I1U3dWTWo2aHlPZHBxT3FJbWNRWWZJTVZPYjRVZVFzdVlSb3FZVnVF?=
+ =?utf-8?B?Z2kxWHRKL2Y5aW4yN2NWMGJGVzRJME11THEwLzhBNTJ0UjZVcHpWNUZzSnhn?=
+ =?utf-8?B?R2t6MUQ4MFJZN2cwdUxFVkFUY3ZQYnhSRitlbmNVNklLaFhlTkVERDE5Wm5K?=
+ =?utf-8?B?NnMrbGcwRXJXZmxPOGZXUHg1azMzejErM2RjTkJQRGtwTThDdzl4ZVo0V20r?=
+ =?utf-8?B?T0t6UGNmNUxpTHRQRHlUUmZsZUNEK1ZqcENVTDVQMmh0REJ6Z0hIR1p4Ujkz?=
+ =?utf-8?B?Uk4wRHFvU1hyYVhuUElGSkU5bDB0Z0owa1lnUm1kSFFEWVNDUENabklaWUZK?=
+ =?utf-8?B?eVh6ZzJWKzB0QjN5eUFyb1BPb0dRTE4yZ2Myc3FHWlBrRFdZTHU1SGxTYTB6?=
+ =?utf-8?B?dDVJb29kYTMwaFpZVFBqbkFEYy9SOHlSQVZ1M1dWSnY5a1E0N2djUEhHN29s?=
+ =?utf-8?B?VWpiVFpHcDFtaGtZV2lVOXNWYXNsY2hjd2FUWXJzeE1tYm5JT1hnaHd4NFZN?=
+ =?utf-8?B?WE41ZkhPanIyZE85M0RUaEFUMmpMWHBYS3NWWFd4aDBtOWswbHh5bXNTMnNl?=
+ =?utf-8?B?MHZHNGY2cmZkUzJDMjZoUFlvdEJjR05sTW9taW16VGdybmVqOWg2eUw2aHRu?=
+ =?utf-8?B?aVQwNThkVFJ4VVQ1Z252YlNuUmFENDRTTXZrdHhYVkxSdGliS2MyN0ZNaU1T?=
+ =?utf-8?B?UjJMdXhaUnU5amxmcndOaXVZQzZKazI0N0ZTb1dYaUJNall3dEpqVG4reEdR?=
+ =?utf-8?B?RFROOER6dHMwbXFSemZWdW9Id1RIU0pZMG5JR1Q0aVVaL3Z5SUczdGlRMjQx?=
+ =?utf-8?B?a3ZDdUF2MkZBbjdabkZSeEZVYXRsdTh5Rnl0czhsbWExSTVOcGhtd3JWMFhP?=
+ =?utf-8?B?b1pUVVhZTkpJZ0JRUEJLaHVvVlBTSnljYlpPRm00emtQczgvbFBTSlFaUkdm?=
+ =?utf-8?B?Z0Z2WFowRUV2QnRjQjhaMlZ3UkRGdFFaeEJhL09hOVRZS2dSRVA2b0ltRjli?=
+ =?utf-8?B?R1QvWjBoMXJxSlVIUHVpYUljWktCSDlpMXREcjVsWU1TNDIxWHVnUUtTMSta?=
+ =?utf-8?B?UGdNWHJPUFJXbzdIbGFGUXFQK2VhR095U1VkN3RuQ3Y4ZE8wbTFXRjd4UzFs?=
+ =?utf-8?B?dVVHWUZ4YUo1aVNPbUtlZzFYenZzNlp3dGJyNWZBcVJiZWVISm1vUnBxcVA4?=
+ =?utf-8?B?OFBmejc0RUtmZnJqdXF2ZFpWSVlRZUpQektLNlkrMTkvS1RSNVl3bXhTVUpj?=
+ =?utf-8?B?KzVSTDFpbTlLWjlhQ3krTk05ZlJtVGM3eHR0RXlFOTJ1VVJYeS9qWHpSOC95?=
+ =?utf-8?B?cW9wR29VUTNRU1ZEMkRKVjZrU1BrZGxQZkRBbGd5WTJqWXpkRjVNZ0E1ZWVM?=
+ =?utf-8?B?OUJoSnRxNVFNbjdyTmJGcmR5dWQ2TTFIdURLL0FOTE4veWtuZCthOC9zMFZk?=
+ =?utf-8?B?T2tXencvMDhNeVFEb0FUTVhGTGo1YnR3T253NGR5NmJsK21DS0o2K29jVU5O?=
+ =?utf-8?B?MEVDZjZqMFlWSGY0R0tpdXo1dnRYMnVOdDNxTHBPRGJ2OEVxdFNsYXAzeEF0?=
+ =?utf-8?B?YkJTRUpvcGY1OUxzckFQZWkyTzkzKzVlR2RXQnJtSWdNU01BWnlOV1ZxeUFo?=
+ =?utf-8?B?bkszakpoMmxHdFA4eDRnVjhuMGp3S2ZNQ2lZNVl2S0krS1M2TG1wQUVZb1Jk?=
+ =?utf-8?B?UEdGNmFWVi9GN2RKa1VHam1nQlF6YXgwbFdHRjE4VG1lVG5OQStvY09OR0o1?=
+ =?utf-8?B?anFSSWNmS0dIWVZDUjZCd0o5dVdxUldZSHRLVUxkYk9OeStBaWhJK1A0R1FC?=
+ =?utf-8?B?My9WT1NqK2ZCSTdobjQxaGplLzMrZ3FwV0VCMXJ2MldaZWdDMGhKWFpkOGdW?=
+ =?utf-8?B?emJDMFIvTkd0bjY3cTZwTzBsZWFkNmdoWXAwendNUXhXWVhxbEkvTURuOTcy?=
+ =?utf-8?B?Y0JNOXhDSUFjK2hybUcvaG9oOThMVTFlVlBTQjIyNVZ4UHNVNlZWY1czSDh5?=
+ =?utf-8?B?SFVjN0Z4VldTa2xsYzNESGRTeUpqZjRCc2g5QVNmRGJlcDFSVmZ0dUp4VTYr?=
+ =?utf-8?Q?LaPZLyGZWD4znLqSXySalrPHP?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bd5ff2ac-2628-45be-a5ff-08dde5268341
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2025 04:57:49.6932
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2025 04:59:33.1908
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: pbrqPHLpHiQDncTGvUz6R47m7latJqI0ztQBw08p8nIzDv4/cvZd+zI9FmFm72bERP089DGay3xQ1CY1AwZdxbCS0qVL6hJ+c3fg+XiQ4xHof4DPaXKiUc4VpkTEfZrl
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL3PR01MB6868
+X-MS-Exchange-CrossTenant-UserPrincipalName: +0t2NWKesRZw145ec8fotGk/xK9KpUcBrLzx2HtoIEwetlwc/DX8auet3tjBbIURbuQD8e9IMncvArZgs3QKYw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB6899
 
-Apologies for misnumbering this. It is V26 not V25.  I can resend if 
-that is appropriate.
+System Manager firmware provides API to dump board, silicon, firmware
+information. It also provides API to dump system sleep, wakeup
+information. So add the interface for Linux to retrieve the information:
 
+patch 1 is to add doc for board information which was missed before.
 
-On 8/27/25 00:48, admiyo@os.amperecomputing.com wrote:
-> From: Adam Young <admiyo@os.amperecomputing.com>
->
-> This series adds support for the Management Control Transport Protocol (MCTP)
-> over the Platform Communication Channel (PCC) mechanism.
->
-> DMTF DSP:0292
-> https://www.dmtf.org/sites/default/files/standards/documents/DSP0292_1.0.0WIP50.pdf
->
-> MCTP defines a communication model intended to
-> facilitate communication between Management controllers
-> and other management controllers, and between Management
-> controllers and management devices
->
-> PCC is a mechanism for communication between components within
-> the  Platform.  It is a composed of shared memory regions,
-> interrupt registers, and status registers.
->
-> The MCTP over PCC driver makes use of two PCC channels. For
-> sending messages, it uses a Type 3 channel, and for receiving
-> messages it uses the paired Type 4 channel.  The device
-> and corresponding channels are specified via ACPI.
->
-> The first patch in the series implements a mechanism to allow the driver
-> to indicate whether an ACK should be sent back to the caller
-> after processing the interrupt.  This is an optional feature in
-> the PCC code, but has been made explicitly required in another driver.
-> The implementation here maintains the backwards compatibility of that
-> driver.
->
-> MCTP is a general purpose  protocol so  it would  be impossible to enumerate
-> all the use cases, but some of the ones that are most topical are attestation
-> and RAS support.  There are a handful of protocols built on top of MCTP, to
-> include PLDM and SPDM, both specified by the DMTF.
->
-> https://www.dmtf.org/sites/default/files/standards/documents/DSP0240_1.0.0.pdf
-> https://www.dmtf.org/sites/default/files/standards/documents/DSP0274_1.3.0.pd
->
-> SPDM entails various usages, including device identity collection, device
-> authentication, measurement collection, and device secure session establishment.
->
-> PLDM is more likely to be used  for hardware support: temperature, voltage, or
-> fan sensor control.
->
-> At least two companies have devices that can make use of the mechanism. One is
-> Ampere Computing, my employer.
->
-> The mechanism it uses is called Platform Communication Channels is part of the
-> ACPI spec: https://uefi.org/htmlspecs/ACPI_Spec_6_4_html/14_Platform_Communications_Channel/Platform_Comm_Channel.html
->
-> Since it is a socket interface, the system administrator also has  the ability
-> to ignore an MCTP link that they do not want to enable.  This link would be visible
-> to the end user, but would not be usable.
->
-> If MCTP support is disabled in the Kernel, this driver would also be disabled.
->
-> PCC is based on a shared buffer and a set of I/O mapped memory locations that the
-> Spec calls registers.  This mechanism exists regardless of the existence of the
-> driver. Thus, if the user has the ability to map these  physical location to
-> virtual locations, they have the ability to drive the hardware.  Thus, there
-> is a security aspect to this mechanism that extends beyond the responsibilities
-> of the operating system.
->
-> If the hardware does not expose the PCC in the ACPI table, this device will never
-> be enabled.  Thus it is only an issue on hard that does support PCC.  In that case,
-> it is up to the remote controller to sanitize communication; MCTP will be exposed
-> as a socket interface, and userland can send any crafted packet it wants.  It would
-> thus also be incumbent on the hardware manufacturer to allow the end user to disable
-> MCTP over PCC communication if they did not want to expose it.
->
-> Previous implementations of the pcc version of the mailbox protocol assumed the
-> driver was directly managing the shared memory region.  This lead to duplicated
-> code and missed steps of the PCC protocol. The first patch in this series makes
-> it possible for mailbox/pcc to manage the writing of the buffer prior to sending
-> messages.  It also fixes the notification of message transmission completion.
->
-> Previous Version:
-> https://lore.kernel.org/lkml/20250819205159.347561-1-admiyo@os.amperecomputing.com/
->
-> Changes in V26:
-> -  Remove the addition net-device spinlock and use the spinlock already present in skb lists
-> -  Use temporary variables to check for success finding the skb in the lists
-> -  Remove comment that is no longer relevant
->
-> Changes in V25:
-> - Use spin lock to control access to queues of sk_buffs
-> - removed unused constants
-> - added ndo_open and ndo_stop functions.  These two functions do
->    channel creation and cleanup, to remove packets from the mailbox.
->    They do queue cleanup as well.
-> - No longer cleans up the channel from the device.
->
-> Changes in V24:
-> - Removed endianess for PCC header values
-> - Kept Column width to under 80 chars
-> - Typo in commit message
-> - Prereqisite patch for PCC buffer management was merged late in 6.17.
->    See "mailbox/pcc: support mailbox management of the shared buffer"
->
-> Changes in V23:
-> - Trigger for direct management of shared buffer based on flag in pcc channel
-> - Only initialize rx_alloc for inbox, not outbox.
-> - Read value for requested IRQ flag out of channel's current_req
-> - unqueue an sk_buff that failed to send
-> - Move error handling for skb resize error inline instead of goto
->
-> Changes in V22:
-> - Direct management of the shared buffer in the mailbox layer.
-> - Proper checking of command complete flag prior to writing to the buffer.
->
-> Changes in V21:
-> - Use existing constants PCC_SIGNATURE and PCC_CMD_COMPLETION_NOTIFY
-> - Check return code on call to send_data and drop packet if failed
-> - use sizeof(*mctp_pcc_header) etc,  instead of structs for resizing buffers
-> - simplify check for ares->type != PCC_DWORD_TYPE
-> - simply return result devm_add_action_or_reset
-> - reduce initializer for  mctp_pcc_lookup_context context = {};
-> - move initialization of mbox dev into mctp_pcc_initialize_mailbox
-> - minor spacing changes
->
-> Changes in V20:
-> - corrected typo in RFC version
-> - removed spurious space
-> - tx spin lock only controls access to shared memory buffer
-> - tx spin lock not eheld on error condition
-> - tx returns OK if skb can't be expanded
->
-> Changes in V19:
-> - Rebased on changes to PCC mailbox handling
-> - checks for cloned SKB prior to transmission
-> - converted doulbe slash comments to C comments
->
-> Changes in V18:
-> - Added Acked-By
-> - Fix minor spacing issue
->
-> Changes in V17:
-> - No new changes. Rebased on net-next post 6.13 release.
->
-> Changes in V16:
-> - do not duplicate cleanup after devm_add_action_or_reset calls
->
-> Changes in V15:
-> - corrected indentation formatting error
-> - Corrected TABS issue in MAINTAINER entry
->
-> Changes in V14:
-> - Do not attempt to unregister a netdev that is never registered
-> - Added MAINTAINER entry
->
-> Changes in V13:
-> - Explicitly Convert PCC header from little endian to machine native
->
-> Changes in V12:
-> - Explicitly use little endian conversion for PCC header signature
-> - Builds clean with make C=1
->
-> Changes in V11:
-> - Explicitly use little endian types for PCC header
->
-> Changes in V11:
-> - Switch Big Endian data types to machine local for PCC header
-> - use mctp specific function for registering netdev
->
-> Changes in V10:
-> - sync with net-next branch
-> - use dstats helper functions
-> - remove duplicate drop stat
-> - remove more double spaces
->
-> Changes in V9:
-> - Prerequisite patch for PCC mailbox has been merged
-> - Stats collection now use helper functions
-> - many double spaces reduced to single
->
-> Changes in V8:
-> - change 0 to NULL for pointer check of shmem
-> - add semi for static version of pcc_mbox_ioremap
-> - convert pcc_mbox_ioremap function to static inline when client code is not being built
-> - remove shmem comment from struct pcc_chan_info descriptor
-> - copy rx_dropped in mctp_pcc_net_stats
-> - removed trailing newline on error message
-> - removed double space in dev_dbg string
-> - use big endian for header members
-> - Fix use full spec ID in description
-> - Fix typo in file description
-> - Form the complete outbound message in the sk_buff
->
-> Changes in V7:
-> - Removed the Hardware address as specification is not published.
-> - Map the shared buffer in the mailbox and share the mapped region with the driver
-> - Use the sk_buff memory to prepare the message before copying to shared region
->
-> Changes in V6:
-> - Removed patch for ACPICA code that has merged
-> - Includes the hardware address in the network device
-> - Converted all device resources to devm resources
-> - Removed mctp_pcc_driver_remove function
-> - uses acpi_driver_module for initialization
-> - created helper structure for in and out mailboxes
-> - Consolidated code for initializing mailboxes in the add_device function
-> - Added specification references
-> - Removed duplicate constant PCC_ACK_FLAG_MASK
-> - Use the MCTP_SIGNATURE_LENGTH define
-> - made naming of header structs consistent
-> - use sizeof local variables for offset calculations
-> - prefix structure name to avoid potential clash
-> - removed unnecessary null initialization from acpi_device_id
->
-> Changes in V5
-> - Removed Owner field from ACPI module declaration
-> - removed unused next field from struct mctp_pcc_ndev
-> - Corrected logic reading  RX ACK flag.
-> - Added comment for struct pcc_chan_info field shmem_base_addr
-> - check against current mtu instead of max mtu for packet length\
-> - removed unnecessary lookups of pnd->mdev.dev
->
-> Changes in V4
-> - Read flags out of shared buffer to trigger ACK for Type 4 RX
-> - Remove list of netdevs and cleanup from devices only
-> - tag PCCT protocol headers as little endian
-> - Remove unused constants
->
-> Changes in V3
-> - removed unused header
-> - removed spurious space
-> - removed spurious semis after functiomns
-> - removed null assignment for init
-> - remove redundant set of device on skb
-> - tabify constant declarations
-> - added  rtnl_link_stats64 function
-> - set MTU to minimum to start
-> - clean up logic on driver removal
-> - remove cast on void * assignment
-> - call cleanup function directly
-> - check received length before allocating skb
-> - introduce symbolic constatn for ACK FLAG MASK
-> - symbolic constant for PCC header flag.
-> - Add namespace ID to PCC magic
-> - replaced readls with copy from io of PCC header
-> - replaced custom modules init and cleanup with ACPI version
->
-> Changes in V2
->
-> - All Variable Declarations are in reverse Xmass Tree Format
-> - All Checkpatch Warnings Are Fixed
-> - Removed Dead code
-> - Added packet tx/rx stats
-> - Removed network physical address.  This is still in
->    disucssion in the spec, and will be added once there
->    is consensus. The protocol can be used with out it.
->    This also lead to the removal of the Big Endian
->    conversions.
-> - Avoided using non volatile pointers in copy to and from io space
-> - Reorderd the patches to put the ACK check for the PCC Mailbox
->    as a pre-requisite.  The corresponding change for the MCTP
->    driver has been inlined in the main patch.
-> - Replaced magic numbers with constants, fixed typos, and other
->    minor changes from code review.
->
-> Adam Young (1):
->    mctp pcc: Implement MCTP over PCC Transport
->
->   MAINTAINERS                 |   5 +
->   drivers/net/mctp/Kconfig    |  13 ++
->   drivers/net/mctp/Makefile   |   1 +
->   drivers/net/mctp/mctp-pcc.c | 367 ++++++++++++++++++++++++++++++++++++
->   4 files changed, 386 insertions(+)
->   create mode 100644 drivers/net/mctp/mctp-pcc.c
->
+Signed-off-by: Peng Fan <peng.fan@nxp.com>
+---
+Changes in v3:
+- Add R-b from Cristian
+- Store size, per Cristian's comments in patch 5: "*(ipriv->size) =
+st->num_returned + st->num_remaining"
+- Minor change in patch 6 to add size check
+- Rebased to next-20250826
+- Link to v2: https://lore.kernel.org/r/20250710-sm-misc-api-v1-v2-0-c3e953e34be6@nxp.com
+
+Changes in v2:
+- Add more info in patch 1 for documentation(attribute is reserved for
+  future use, boardname may not align with the board name in device tree)
+- Drop dump silicon revision API
+- Update discover build info, cfg info, board info API to be only used in probe phase
+- Update to use single sysfs single value for syslog.
+- Link to v1: https://lore.kernel.org/r/20250627-sm-misc-api-v1-v1-0-2b99481fe825@nxp.com
+
+---
+Peng Fan (6):
+      firmware: arm_scmi: imx: Add documentation for MISC_BOARD_INFO
+      firmware: arm_scmi: imx: Support discovering buildinfo of MISC protocol
+      firmware: arm_scmi: imx: Support getting cfg info of MISC protocol
+      firmware: arm_scmi: imx: Support getting board info of MISC protocol
+      firmware: arm_scmi: imx: Support getting syslog of MISC protocol
+      firmware: imx: sm-misc: Dump syslog info
+
+ .../firmware/arm_scmi/vendors/imx/imx-sm-misc.c    | 193 +++++++++++++++++
+ drivers/firmware/arm_scmi/vendors/imx/imx95.rst    |  22 ++
+ drivers/firmware/imx/sm-misc.c                     | 232 +++++++++++++++++++++
+ include/linux/scmi_imx_protocol.h                  |  19 ++
+ 4 files changed, 466 insertions(+)
+---
+base-commit: 6180c21371050f261dd253947057bf46955548f7
+change-id: 20250627-sm-misc-api-v1-85c030c670c6
+
+Best regards,
+-- 
+Peng Fan <peng.fan@nxp.com>
+
 
