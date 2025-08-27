@@ -1,58 +1,90 @@
-Return-Path: <linux-kernel+bounces-788240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788207-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50EE2B381AD
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 13:47:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8482EB3813A
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 13:38:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E4FC1BA6BAB
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 11:47:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F2C8173C4F
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 11:38:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95AEF31283E;
-	Wed, 27 Aug 2025 11:44:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45CC32F28E7;
+	Wed, 27 Aug 2025 11:37:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tkos.co.il header.i=@tkos.co.il header.b="hnlMpctT"
-Received: from mail.tkos.co.il (golan.tkos.co.il [84.110.109.230])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GL7w5nlP"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0555304BA6;
-	Wed, 27 Aug 2025 11:44:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.110.109.230
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E470520B7EE;
+	Wed, 27 Aug 2025 11:37:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756295072; cv=none; b=bTkdC6GqNBMD0JXDdx4QWitK3th76/kdFMHgHsY365al5jKhu/UpnOc/mUqv7IBbsXlIRdYlNdGXn55ijpNP9EY2cXyoUXHpiXRpQwy4KIlyXKTjkInyUEP/awCj9WM0KQIt3W3YGWYvprNw1VWBFxyp4O1Tf3iAacI8nvZpLYI=
+	t=1756294675; cv=none; b=YXYjCFkg3nW8x6LlkmE7ELE8rhCpbOfhaEVMPR07UawxGtZQVbYQ1Qe+PHgoAEyKvOthxyiZqkp7AdMJAZgDA/+FUD6cSUv6ppkXm1TY448aw1dniXQl8/69AphoSLO3Sa3EMK7/oZuajnD4G9NTxolDktZAK0RQdLcfJsXR4Xw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756295072; c=relaxed/simple;
-	bh=HrMzN83Z+OqzS/BaEKv4QwuDuv3LoZ3f5yvP91A9C9Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MOgqhq4IMIxvpSKo/QunZTf+qewgc/wocbRTY4zV1yb8gHG6fk/W7QW5/qS1rrdNznamS/JlQyUnNfKmlQThpAouunaabNPTKKZGAvK39hsEiWmfUbD0QZpox1qwmbYIeutUZ5ctBSu7u1/kbfc7iTZBKBsR0HoO2FGKGuExuBw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tkos.co.il; spf=pass smtp.mailfrom=tkos.co.il; dkim=pass (2048-bit key) header.d=tkos.co.il header.i=@tkos.co.il header.b=hnlMpctT; arc=none smtp.client-ip=84.110.109.230
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tkos.co.il
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tkos.co.il
-Received: from tarshish.tkos.co.il (unknown [10.0.8.2])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mail.tkos.co.il (Postfix) with ESMTPS id ABBF5440B0C;
-	Wed, 27 Aug 2025 14:37:41 +0300 (IDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=tkos.co.il;
-	s=default; t=1756294661;
-	bh=HrMzN83Z+OqzS/BaEKv4QwuDuv3LoZ3f5yvP91A9C9Y=;
-	h=From:To:Cc:Subject:Date:From;
-	b=hnlMpctTeA8ywnMBVZg826JEeTSyCFtcqmOeYUoWGDQZOeLfdr4Qe37Q7RUy5hqib
-	 KekD1mwEn8ifE1TNXBkRS/QUinu+W53ckbR46zyMcXlgN1lUIwzrBHAyO6Kb6XEKM5
-	 jFECOK9errfBSa35WrVj68igZ0l2xW8LbEcpdm9WcsKBm85npWQdpGFbSXRUfRMFg9
-	 URKeRkZLk9oTuH1il/vShXgFT0So0P5Ch7QEIKzbB2xjxZbMrGbGJqBD2eVJTCYUMx
-	 5KrcaQRGjQyzv0aIDPtVQlBPfFCx8OB1BifGrmKwJ9IjzzTG16BII7EjRzycj6d5vF
-	 lU3f2uyVJHv7A==
-From: Baruch Siach <baruch@tkos.co.il>
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	Baruch Siach <baruch@tkos.co.il>
-Subject: [PATCH] doc: filesystems: proc: remove stale information from intro
-Date: Wed, 27 Aug 2025 14:37:27 +0300
-Message-ID: <cb4987a16ed96ee86841aec921d914bd44249d0b.1756294647.git.baruch@tkos.co.il>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1756294675; c=relaxed/simple;
+	bh=TI1ysOXPP4hVMHn60o6TUG3RYzs3fDZDuOhKElmj1NM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=G88QSRJRMtFlFMNGzZTmoJCRdELQJR3dHJHnlVXdSd9JEiOh3bum8kO14RuWbkaLUef6RURz8npKtPNikVob17pTrWK7dLjmWXUshz9Q5PayyB7yvBgk3swQk1c+yL+8IOLMd+5L+V6ASxcOKORS+2GdtrH6EIy+S/5Prd/fG2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GL7w5nlP; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-afcb78ead12so937392066b.1;
+        Wed, 27 Aug 2025 04:37:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756294672; x=1756899472; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=e0TL/ekeJOQg26wztgmTDgEuvDo0zmkivmyNIAbPqQQ=;
+        b=GL7w5nlPUIdbA8H4Z9LvljoS05tAmolNg9FdLTQb5LUMcCPno5uq1Q6cLkrzTlsKCA
+         27wIYt4wmapobS5a0riCF+vqRS4VAGrF7KMStix/Yd1eQLPz8za8Es02GVuLpbN/f5Ex
+         H4iy1XBPjyLn0vYbJa1Mz59nkEEPcWSIIy+hOLPZ1SypsDBC825/P5FJlKoEGkUcsUdj
+         jrnomwyzX4bmpD3SioD8MY+NP7zjZAFzrdOEBhE9MKcNuc+qVP2NmG3h3+EYG0WXa5QF
+         kR+erzbaniWgVRDIIx1up8+Y8SDjwL/y61/Du/TFgk+TUz0Nu8WGjV6rhZhllSj2jgtV
+         gt6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756294672; x=1756899472;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=e0TL/ekeJOQg26wztgmTDgEuvDo0zmkivmyNIAbPqQQ=;
+        b=qvIAp0YimWE/al0L9l08nVGUuuNQvEJ6WLQadjFPQALIloHHom8xs+9WVDgF+IM8V6
+         N+DB9Et92ehpgI0MJy//s7DKQhb0B4/NhvN5anPzTXQ/oPR1I+Demcj+YG/yl5+nvjPo
+         T1GhIwJEZxbzqxYSnHQ6dA1qEEvLND2FvV6aYKzkw1GVb3Q3CHgI1XMKV0n25y1DX/I7
+         l/NlzrCfE5bP3C+ahc8uisD7U0T30nNITGGU+Y/Zvv11nwEpiMwAlFq+B9hGGOkmD3R2
+         DXt3BY/B32aRRS4Za1tCWgl5edwIjvFs3FMHQsrnXH+Eg799Gl2hNuTV0lpeozpAiXIA
+         B+FQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUWWsrHVRjSnx2tSKDXjUuhnL+yy9c2Z/xU+aM4YPaa8on5SGVOPUYudSmNSS4r/+1gHrXIQ0dV1ezWADA=@vger.kernel.org, AJvYcCWU51tX8JeEx34nhGM2rdftAaq6ENTU3brrFg26IV8uoGOSJFTtXXWjxGrWlIn7OVkcmj07EIq0S6KqaBM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0Gdh8Zoyvs57em/VBL/V3RonoE7qu9oTimbdCfC/ldA6uD9iE
+	pbFsJKmk/BOMb1Qy/y0JWEFyHp/bCGpHJTH9sl5ThD+mAMIKM6E10HL4
+X-Gm-Gg: ASbGnctqV0sZyQDRHtLAHHobW1aEkFKrX7oQl1t05XRJDUrbNIcFCGpo5KRwCQu8QKE
+	a25jZKaw50lCeqw+5gmWCel687nY/XLEIikRyNlZ217chu1EgoAjsP0xsyO0wHrpB+IK7oibQ59
+	w47MNDxUzxPXUsqO1kaskChjiKxHnmSXfX83V7+6IZ/u59k410WXkeNWsIZOyDe99zwDixgS3FI
+	My/brl/mf2vf5lUkYfwZJOBTWI8sVLfwt43WTMpTMHBMP+8YzewMJ3NMPGB6ef7xnd/2o+cCwSX
+	fsd3MBqOVG3DNVjVEPi+XvsyqErK5JmuaKk6Va2CXc+6sQcgKY524UXBaTzv2hlGfLwF/Ejbw2Z
+	HpgslGEgp582p4lle/glCvo/ngk+yeuGqAxc=
+X-Google-Smtp-Source: AGHT+IEHKp7wptHFcLrBt3UnI/jHvsdzwxscNBgxQZxapqmiUONBatuiJfqrhX7xGiGufIrkshgtCw==
+X-Received: by 2002:a17:906:f5a7:b0:afe:ad45:acf5 with SMTP id a640c23a62f3a-afead45ad78mr436922466b.34.1756294671995;
+        Wed, 27 Aug 2025 04:37:51 -0700 (PDT)
+Received: from xeon.. ([188.163.112.70])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afe7aad5d61sm675607866b.105.2025.08.27.04.37.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 Aug 2025 04:37:51 -0700 (PDT)
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thierry Reding <treding@nvidia.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: devicetree@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v5 0/4] ARM: tegra: complete Tegra 4 and Tegra K1 device trees
+Date: Wed, 27 Aug 2025 14:37:30 +0300
+Message-ID: <20250827113734.52162-1-clamor95@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,60 +93,55 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Most of the information in the first paragraph of the
-Introduction/Credits section is outdated.
+Complete T114 and T124 device trees.
 
-Documentation update suggestions should go to documentation maintainers
-listed in MAINTAINERS. Remove misleading contact information.
-
-Signed-off-by: Baruch Siach <baruch@tkos.co.il>
 ---
- Documentation/filesystems/proc.rst | 21 ---------------------
- 1 file changed, 21 deletions(-)
+Changes in v5:
+- dropped clock and reset names from TSEC schema
+- removed clock and reset names from device nodes
 
-diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesystems/proc.rst
-index 2971551b7235..ede654478dff 100644
---- a/Documentation/filesystems/proc.rst
-+++ b/Documentation/filesystems/proc.rst
-@@ -61,19 +61,6 @@ Preface
- 0.1 Introduction/Credits
- ------------------------
- 
--This documentation is  part of a soon (or  so we hope) to be  released book on
--the SuSE  Linux distribution. As  there is  no complete documentation  for the
--/proc file system and we've used  many freely available sources to write these
--chapters, it  seems only fair  to give the work  back to the  Linux community.
--This work is  based on the 2.2.*  kernel version and the  upcoming 2.4.*. I'm
--afraid it's still far from complete, but we  hope it will be useful. As far as
--we know, it is the first 'all-in-one' document about the /proc file system. It
--is focused  on the Intel  x86 hardware,  so if you  are looking for  PPC, ARM,
--SPARC, AXP, etc., features, you probably  won't find what you are looking for.
--It also only covers IPv4 networking, not IPv6 nor other protocols - sorry. But
--additions and patches  are welcome and will  be added to this  document if you
--mail them to Bodo.
--
- We'd like  to  thank Alan Cox, Rik van Riel, and Alexey Kuznetsov and a lot of
- other people for help compiling this documentation. We'd also like to extend a
- special thank  you to Andi Kleen for documentation, which we relied on heavily
-@@ -81,17 +68,9 @@ to create  this  document,  as well as the additional information he provided.
- Thanks to  everybody  else  who contributed source or docs to the Linux kernel
- and helped create a great piece of software... :)
- 
--If you  have  any comments, corrections or additions, please don't hesitate to
--contact Bodo  Bauer  at  bb@ricochet.net.  We'll  be happy to add them to this
--document.
--
- The   latest   version    of   this   document   is    available   online   at
- https://www.kernel.org/doc/html/latest/filesystems/proc.html
- 
--If  the above  direction does  not works  for you,  you could  try the  kernel
--mailing  list  at  linux-kernel@vger.kernel.org  and/or try  to  reach  me  at
--comandante@zaralinux.com.
--
- 0.2 Legal Stuff
- ---------------
- 
+Changes in v4:
+- configured tsec schema to cover Tegra210 TSEC as well
+- added required to tsec schema
+- reset-names preserved for consistency with other host1x devices and align with T210
+- added clock-names to align with T210
+- operating-points-v2 check https://lore.kernel.org/lkml/20230119131033.117324-1-krzysztof.kozlowski@linaro.org/
+
+Changes in v3:
+- added tsec description
+- swapped compatible back to use enum
+- clock and reset description dropped, added maxItems: 1
+- reset-names preserved for consistency with other host1x devices
+- dropped interconnects and interconnect-names
+- dropped isp nodename
+- dropped multiple rest names for mpe/msenc
+- dropped tegra114 msenc example
+- fixed reset name in second isp in t124 dtsi
+
+Changes in v2:
+- dropped accepted commits
+- added EPP, MPE and ISP compatibility for T114 and T124
+- added TSEC schema
+---
+
+Svyatoslav Ryhel (4):
+  dt-bindings: display: tegra: document EPP, ISP, MPE and TSEC for
+    Tegra114+
+  ARM: tegra114: add missing HOST1X device nodes
+  ARM: tegra124: add missing HOST1X device nodes
+  arm64: tegra210: drop redundant clock and reset names from TSEC node
+
+ .../display/tegra/nvidia,tegra114-tsec.yaml   | 68 +++++++++++++++++++
+ .../display/tegra/nvidia,tegra20-epp.yaml     | 14 ++--
+ .../display/tegra/nvidia,tegra20-isp.yaml     | 15 ++--
+ .../display/tegra/nvidia,tegra20-mpe.yaml     | 18 +++--
+ arch/arm/boot/dts/nvidia/tegra114.dtsi        | 64 +++++++++++++++++
+ arch/arm/boot/dts/nvidia/tegra124.dtsi        | 64 +++++++++++++++++
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi      |  2 -
+ 7 files changed, 230 insertions(+), 15 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/display/tegra/nvidia,tegra114-tsec.yaml
+
 -- 
-2.50.1
+2.48.1
 
 
