@@ -1,140 +1,219 @@
-Return-Path: <linux-kernel+bounces-788169-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788152-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DED7B380A6
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 13:15:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 387B1B3806E
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 12:58:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E4C12087C3
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 11:15:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DBA73BB793
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 10:58:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D857134DCE5;
-	Wed, 27 Aug 2025 11:15:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7413734DCCD;
+	Wed, 27 Aug 2025 10:58:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="cBQYT/CT"
-Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cjp7TGjY"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9B4F2D191C;
-	Wed, 27 Aug 2025 11:15:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35C4530CD9F;
+	Wed, 27 Aug 2025 10:58:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756293335; cv=none; b=l9aThq1kkMYTGWy6aeLEIZuo764h4jqjIOWDbAoX4gx+C+t2ChLJFDEJ6H4ac5CcyOMwZB+z/z0UKXEmBYEhruxl4iyIgjgY5MKXWrtF/qnoYFxM3FMdeZZiKloA1W29vfiyV7ZuOoPXEdcaSge4XEmg/GjW4qzk9HcrmlS1yDI=
+	t=1756292291; cv=none; b=ta1XZSbpfB+8zDVZ/74zedW+Xc2aJoS6IT3u/sUbA6QQhWq+mDc3mg2Eej+QMnRob4vNqLo2X16EerDSZ5Rwd4Y2bFP14QYz5/OnO/rfNCOX0SvLZ1ysfDDEL5wf1TausFQYV9KvRETA+FLDrz03/nnqVmqSwpI30mqsZFa9mVs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756293335; c=relaxed/simple;
-	bh=xQI+uKh/GRE9NhzV9gVXj5hBRX5dYil8ROQ6NK5LHy0=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DWgaupIE6AFqg8JGNcMgZwHJWcoNRES7J1d7meJjjAz00mhTcFWckhlPIQgUV0oahCFLhdQyFwkS9poTChL80VaCOcqpF0aOUu0dGGXesR1reE1UrqEE8Qayn6pKIx40XEcDM1ymttIVO/YlCRxPR0NMk2jGH3/P3Sn8VizCAxY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=cBQYT/CT; arc=none smtp.client-ip=67.231.148.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
-Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
-	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57QNKQXI014951;
-	Wed, 27 Aug 2025 03:57:54 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pfpt0220; bh=af/p3RaP/vSahE1FXHlsLYbW2
-	oFoctkUwNzanHkCnaQ=; b=cBQYT/CT/4rzegZX9P3W0dfI+1/GqxMNjoGEymUbx
-	HufBeIzlllwV8um4eLQwyePm8TtYlk8SxzjJoggJ3vW+2hn/yMPZcrDqZ+xN4bLG
-	ZRNjkpdJMpaY+MQnDxNxUwsgn2CcWbEPNpFZFM+/aa5g3x4TErmZpNTQI6IpxhwD
-	BvzaekgBa3NuacPNYv4ELwBg30VzBh1gMlx+jatdM6HqaLISMq8JPJd0/SxYIpsU
-	7Q0dr3OQbm22cjJ+P2GhYotrNJI7TGKGL5LeYgoIVKyYjmy5WjdeICw72xQuLty+
-	r0RsAB7Aa85zQ+0cPpZLNdx53Px6cItQ1lwFfzAKvE64g==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
-	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 48spgv98x0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 27 Aug 2025 03:57:54 -0700 (PDT)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Wed, 27 Aug 2025 03:57:58 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
- Transport; Wed, 27 Aug 2025 03:57:58 -0700
-Received: from opensource (unknown [10.29.8.22])
-	by maili.marvell.com (Postfix) with SMTP id AF2B33F706B;
-	Wed, 27 Aug 2025 03:57:50 -0700 (PDT)
-Date: Wed, 27 Aug 2025 10:57:49 +0000
-From: Subbaraya Sundeep <sbhatta@marvell.com>
-To: Liao Yuanhong <liaoyuanhong@vivo.com>
-CC: Sunil Goutham <sgoutham@marvell.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        "moderated
- list:ARM/CAVIUM THUNDER NETWORK DRIVER"
-	<linux-arm-kernel@lists.infradead.org>,
-        "open list:NETWORKING DRIVERS"
-	<netdev@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] net: thunderx: Remove redundant ternary operators
-Message-ID: <aK7krVpLMXzt_xWU@opensource>
-References: <20250827101607.444580-1-liaoyuanhong@vivo.com>
+	s=arc-20240116; t=1756292291; c=relaxed/simple;
+	bh=pYvi/sEdWDfStM+WfuWaVdKOo1EwYnq9HgrErqhuzmY=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=O6wf1190t4ow/D09X/IOIdY+QlxYEbPSqM6v/gw40CJXnwqC8Rfaua0A8T49yX5qKC9YetUQ7CD57UPWnb8hjDwb8FN6lGaD21efXwnDWv8zEx83q9o3a4nned+Gn4hz5T3sVybfCz7JoOKgv5eNn+Tm/be2TOGTXOCHmfxufnc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cjp7TGjY; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756292290; x=1787828290;
+  h=message-id:date:mime-version:cc:subject:to:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=pYvi/sEdWDfStM+WfuWaVdKOo1EwYnq9HgrErqhuzmY=;
+  b=cjp7TGjYwKjGQ4eWqPo2s/zyWpOvt8119Y4tibvkjwdV1lGbtqe2Byy7
+   kj3+3bcZ7kvRVdd1bN1kUxpmaIYwy2hk2SVz2HEdEMUvolhKpFne9/7DI
+   yIK7HwR0e8+Kw2KWIpdkUpIqmUlsPXCuy3ZUXXyA4v8jIg6KSSPnI3t3n
+   IrbiCVI0+mxmVk1u21/QBMsdzY97nyUnFkev0iUyISG62f0JQkBM5Mxlr
+   9NvWyWoX1wsUu8QP18hnQb6SHW+UJoa/f4/ezQYTJTcXVfeoQju1ksSyK
+   W2YBUMIysoNs9u2IqL4LH0HPNzJdG0UOb4xTTc1uOkHzMQTD4pFrBUEma
+   w==;
+X-CSE-ConnectionGUID: GdnC5Ec6TyK9NU6PBXpwpQ==
+X-CSE-MsgGUID: 9sTVCYSWRs6BJClQhDM/HQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11534"; a="62186473"
+X-IronPort-AV: E=Sophos;i="6.18,214,1751266800"; 
+   d="scan'208";a="62186473"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2025 03:58:10 -0700
+X-CSE-ConnectionGUID: asZwBnRZTEGvodt2Q26vlg==
+X-CSE-MsgGUID: yxrkhQoCRG6hWGFVl9RDaQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,214,1751266800"; 
+   d="scan'208";a="173977483"
+Received: from blu2-mobl.ccr.corp.intel.com (HELO [10.124.233.96]) ([10.124.233.96])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2025 03:58:04 -0700
+Message-ID: <c69950ee-660b-4f51-9277-522470d0ce5d@linux.intel.com>
+Date: Wed, 27 Aug 2025 18:58:02 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20250827101607.444580-1-liaoyuanhong@vivo.com>
-X-Authority-Analysis: v=2.4 cv=E5bNpbdl c=1 sm=1 tr=0 ts=68aee4b2 cx=c_pps a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17 a=kj9zAlcOel0A:10 a=2OwXVqhp2XgA:10 a=1WtWmnkvAAAA:8 a=30FXI7qiAAAA:8 a=ExQkp8-qdG5FzR3rXfMA:9 a=CjuIK1q_8ugA:10
- a=Z3-ukm4F-8FzIVecr7dh:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODI2MDIwNSBTYWx0ZWRfX515N0BPggWRr hZO3IPq5ipoQoZvK1sYw8Tpf1nMeViWlaO8kgK6M4M4WtfHkiXn276c9P5vSgjQyCtuMSXgbLdt q5R+1vSL6sGg5kYp7K5NVfx8EL+FxJw3ucCGCkZqYqnTPGkK+pkJh4VDZC3i92lhnRI/kGUgBhN
- 6ZVzmgcVVobEGgBH4Mf1FZb/D7PolD1F/YAgzNE9vNVvcKycQpLXTlR4iwwty1L5OAKDDSsqLA6 Hnr8OJAczgSHXeFl7K85yOpU4x6LsTsgiXg/48vFSabWahLNwgiVC70EiOOI+tq3GMvwFbCt085 129URzg3v32OOJl+31KLAluSkCpZ7KoVx4CjdnyGx33RxwGXFQoWPngKo1h5hiYbpUf6/uD252e D4PjRqxb
-X-Proofpoint-GUID: -rKVUCWCR-3T-Za0PehwUcB6Xq9hxD5w
-X-Proofpoint-ORIG-GUID: -rKVUCWCR-3T-Za0PehwUcB6Xq9hxD5w
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-27_02,2025-08-26_01,2025-03-28_01
+User-Agent: Mozilla Thunderbird
+Cc: baolu.lu@linux.intel.com, Joerg Roedel <joro@8bytes.org>,
+ Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+ Jann Horn <jannh@google.com>, Vasant Hegde <vasant.hegde@amd.com>,
+ Alistair Popple <apopple@nvidia.com>, Peter Zijlstra <peterz@infradead.org>,
+ Uladzislau Rezki <urezki@gmail.com>,
+ Jean-Philippe Brucker <jean-philippe@linaro.org>,
+ Andy Lutomirski <luto@kernel.org>, "Lai, Yi1" <yi1.lai@intel.com>,
+ "iommu@lists.linux.dev" <iommu@lists.linux.dev>,
+ "security@kernel.org" <security@kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "stable@vger.kernel.org" <stable@vger.kernel.org>, vishal.moola@gmail.com,
+ Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH v3 1/1] iommu/sva: Invalidate KVA range on kernel TLB
+ flush
+To: Dave Hansen <dave.hansen@intel.com>, "Tian, Kevin"
+ <kevin.tian@intel.com>, Jason Gunthorpe <jgg@nvidia.com>
+References: <20250806052505.3113108-1-baolu.lu@linux.intel.com>
+ <d646d434-f680-47a3-b6b9-26f4538c1209@intel.com>
+ <20250806155223.GV184255@nvidia.com>
+ <d02cb97a-7cea-4ad3-82b3-89754c5278ad@intel.com>
+ <20250806160904.GX184255@nvidia.com>
+ <62d21545-9e75-41e3-89a3-f21dda15bf16@intel.com>
+ <4a8df0e8-bd5a-44e4-acce-46ba75594846@linux.intel.com>
+ <20250807195154.GO184255@nvidia.com>
+ <BN9PR11MB52762A47B347C99F0C0E4C288C2FA@BN9PR11MB5276.namprd11.prod.outlook.com>
+ <87bfc80e-258e-4193-a56c-3096608aec30@linux.intel.com>
+ <BN9PR11MB52766165393F7DD8209DA45A8C32A@BN9PR11MB5276.namprd11.prod.outlook.com>
+ <e321d374-38a7-4f60-b991-58458a2761b9@linux.intel.com>
+ <9a649ff4-55fe-478a-bfd7-f3287534499a@intel.com>
+ <b0f613ce-7aad-4b1d-b6a1-4acc1d6c489e@linux.intel.com>
+ <dde6d861-daa3-49ed-ad4f-ff9dcaf1f2b8@linux.intel.com>
+ <b57d7b97-8110-47c5-9c7a-516b7b535ce9@intel.com>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <b57d7b97-8110-47c5-9c7a-516b7b535ce9@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 2025-08-27 at 10:16:07, Liao Yuanhong (liaoyuanhong@vivo.com) wrote:
-> For ternary operators in the form of "a ? true : false", if 'a' itself
-> returns a boolean result, the ternary operator can be omitted. Remove
-> redundant ternary operators to clean up the code.
+On 8/26/2025 10:22 PM, Dave Hansen wrote:
+> On 8/25/25 19:49, Baolu Lu wrote:
+>>> The three separate lists are needed because we're handling three
+>>> distinct types of page deallocation. Grouping the pages this way allows
+>>> the workqueue handler to free each type using the correct function.
+>>
+>> Please allow me to add more details.
 > 
-> Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
-Reviewed-by: Subbaraya Sundeep <sbhatta@marell.com>
+> Right, I know why it got added this way: it was the quickest way to hack
+> together a patch that fixes the IOMMU issue without refactoring anything.
+> 
+> I agree that you have three cases:
+> 1. A full on 'struct ptdesc' that needs its destructor run
+> 2. An order-0 'struct page'
+> 3. A higher-order 'struct page'
+> 
+> Long-term, #2 and #3 probably need to get converted over to 'struct
+> ptdesc'. They don't look _that_ hard to convert to me. Willy, Vishal,
+> any other mm folks: do you agree?
+> 
+> Short-term, I'd just consolidate your issue down to a single list.
+> 
+> #1: For 'struct ptdesc', modify pte_free_kernel() to pass information in
+>      to pagetable_dtor_free() to tell it to use the deferred page table
+>      free list. Do this with a bit in the ptdesc or a new argument to
+>      pagetable_dtor_free().
+> #2. Just append these to the deferred page table free list. Easy.
+> #3. The biggest hacky way to do this is to just treat the higher-order
+>      non-compound page and put the pages on the deferred page table
+>      free list one at a time. The other way to do it is to track down how
+>      this thing got allocated in the first place and make sure it's got
+>      __GFP_COMP metadata. If so, you can just use __free_pages() for
+>      everything.
+> 
+> Yeah, it'll take a couple patches up front to refactor some things. But
+> that refactoring will make things more consistent instead of adding
+> adding complexity to deal with the inconsistency.
 
-Looks good to me but a minor comment - include net-next in the subject
+Following the insights above, I wrote the code as follows. Does it look
+good?
+
+mm/pgtable-generic.c:
+
+#ifdef CONFIG_ASYNC_PGTABLE_FREE
+/* a 'struct ptdesc' that needs its destructor run */
+#define ASYNC_PGTABLE_FREE_DTOR	BIT(NR_PAGEFLAGS)
+
+static void kernel_pgtable_work_func(struct work_struct *work);
+
+static struct {
+	struct list_head list;
+	/* protect above ptdesc lists */
+	spinlock_t lock;
+	struct work_struct work;
+} kernel_pgtable_work = {
+	.list = LIST_HEAD_INIT(kernel_pgtable_work.list),
+	.lock = __SPIN_LOCK_UNLOCKED(kernel_pgtable_work.lock),
+	.work = __WORK_INITIALIZER(kernel_pgtable_work.work, 
+kernel_pgtable_work_func),
+};
+
+static void kernel_pgtable_work_func(struct work_struct *work)
+{
+	struct ptdesc *ptdesc, *next;
+	LIST_HEAD(page_list);
+
+	spin_lock(&kernel_pgtable_work.lock);
+	list_splice_tail_init(&kernel_pgtable_work.list, &page_list);
+	spin_unlock(&kernel_pgtable_work.lock);
+
+	iommu_sva_invalidate_kva_range(0, TLB_FLUSH_ALL);
+
+	list_for_each_entry_safe(ptdesc, next, &page_list, pt_list) {
+		list_del(&ptdesc->pt_list);
+		if (ptdesc->__page_flags & ASYNC_PGTABLE_FREE_DTOR)
+			pagetable_dtor_free(ptdesc);
+		else
+			__free_page(ptdesc_page(ptdesc));
+	}
+}
+
+void kernel_pgtable_async_free_dtor(struct ptdesc *ptdesc)
+{
+	spin_lock(&kernel_pgtable_work.lock);
+	ptdesc->__page_flags |= ASYNC_PGTABLE_FREE_DTOR;
+	list_add(&ptdesc->pt_list, &kernel_pgtable_work.list);
+	spin_unlock(&kernel_pgtable_work.lock);
+
+	schedule_work(&kernel_pgtable_work.work);
+}
+
+void kernel_pgtable_async_free_page_list(struct list_head *list)
+{
+	spin_lock(&kernel_pgtable_work.lock);
+	list_splice_tail(list, &kernel_pgtable_work.list);
+	spin_unlock(&kernel_pgtable_work.lock);
+
+	schedule_work(&kernel_pgtable_work.work);
+}
+
+void kernel_pgtable_async_free_page(struct page *page)
+{
+	spin_lock(&kernel_pgtable_work.lock);
+	list_add(&page_ptdesc(page)->pt_list, &kernel_pgtable_work.list);
+	spin_unlock(&kernel_pgtable_work.lock);
+
+	schedule_work(&kernel_pgtable_work.work);
+}
+#endif
+
 Thanks,
-Sundeep
-
-> ---
->  drivers/net/ethernet/cavium/thunder/nic_main.c    | 2 +-
->  drivers/net/ethernet/cavium/thunder/thunder_bgx.c | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/cavium/thunder/nic_main.c b/drivers/net/ethernet/cavium/thunder/nic_main.c
-> index 0ec65ec634df..b7cf4ba89b7c 100644
-> --- a/drivers/net/ethernet/cavium/thunder/nic_main.c
-> +++ b/drivers/net/ethernet/cavium/thunder/nic_main.c
-> @@ -174,7 +174,7 @@ static void nic_mbx_send_ready(struct nicpf *nic, int vf)
->  		if (mac)
->  			ether_addr_copy((u8 *)&mbx.nic_cfg.mac_addr, mac);
->  	}
-> -	mbx.nic_cfg.sqs_mode = (vf >= nic->num_vf_en) ? true : false;
-> +	mbx.nic_cfg.sqs_mode = vf >= nic->num_vf_en;
->  	mbx.nic_cfg.node_id = nic->node;
->  
->  	mbx.nic_cfg.loopback_supported = vf < nic->num_vf_en;
-> diff --git a/drivers/net/ethernet/cavium/thunder/thunder_bgx.c b/drivers/net/ethernet/cavium/thunder/thunder_bgx.c
-> index 21495b5dce25..10d501ee7b32 100644
-> --- a/drivers/net/ethernet/cavium/thunder/thunder_bgx.c
-> +++ b/drivers/net/ethernet/cavium/thunder/thunder_bgx.c
-> @@ -959,7 +959,7 @@ static void bgx_poll_for_sgmii_link(struct lmac *lmac)
->  		goto next_poll;
->  	}
->  
-> -	lmac->link_up = ((pcs_link & PCS_MRX_STATUS_LINK) != 0) ? true : false;
-> +	lmac->link_up = (pcs_link & PCS_MRX_STATUS_LINK) != 0;
->  	an_result = bgx_reg_read(lmac->bgx, lmac->lmacid,
->  				 BGX_GMP_PCS_ANX_AN_RESULTS);
->  
-> -- 
-> 2.34.1
-> 
+baolu
 
