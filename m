@@ -1,332 +1,180 @@
-Return-Path: <linux-kernel+bounces-787935-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66AF1B37DCF
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 10:28:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24CBAB37DC6
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 10:28:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F4327C8416
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 08:28:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F40CC7AE9B5
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 08:26:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C64813451A0;
-	Wed, 27 Aug 2025 08:27:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TdIIFNWJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 046AE342CAE;
+	Wed, 27 Aug 2025 08:27:01 +0000 (UTC)
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFF7F341ABD;
-	Wed, 27 Aug 2025 08:27:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBA96341ABD
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 08:26:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756283222; cv=none; b=hY2Y4l8OVnGECElvil2Fit2x0ZtjnqtZzxt5NsmxYeZu8G2iOmFruuY54MCBcyGhINVvLx/DAbIeOpW7oYm2/7X/b81CDAUPe2mTL2ULBDPj0QhMixsLyTTGk+yJDDi+QLIspcd7ySkpV4nKwHe4hSjvggCCS9jPpaEbv6zJvCI=
+	t=1756283220; cv=none; b=ip2TyPw+P4FV+Q2pO4/SqMZIcITTTnVk1zrNNvREPatW7Q9lzRLE6ltpdieHu6L6iW6pfLoKlbyX0+6aacE1Jg3vHtyKBVsAGd3PhapRdB7qtjTNkMv2gu0b26DW9ftApZbM3qZgvi4cd+rZeGCa0eAOgckUlfsF4WDgHKLYg00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756283222; c=relaxed/simple;
-	bh=AHXuZr1Diu8xs46wYXTW6iLO5uiucbQ49KiMiUyxeh8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=a87HiW8tNTnBuBpm/sTUAmrqdJfjA20LolBuBjmtSCjHzTmUd8R0BkmsbnRGJj6TUtaelaIH3AIYAoBWDxAmtweJemYVzIHtoMcLRAK5WGD5EPZOc0H2oNW1UOdqSu8sxv/ATT1N4XC3IpK1rI5HdemLIhhHyCGFDjJ3lfuNvZw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TdIIFNWJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A9CCC4CEEB;
-	Wed, 27 Aug 2025 08:27:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756283222;
-	bh=AHXuZr1Diu8xs46wYXTW6iLO5uiucbQ49KiMiUyxeh8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=TdIIFNWJSsWUH/3E4Tz4CaZ7bWBtkVRtAOxfMn0lf813rlJnc+lzZUtVD7TJqDRMN
-	 bP2UNYx5aQH1Bl2BGUVpaA/M6p/pcn2yj4CxxhICWV+rX7XyriTwXmCA101WhXuWAz
-	 y+s4WXBJ0HEQUPrfGvi4wpZk6FunXNFq1inBv34qnfA+twfUBM5w3cA/Vib4FQxsES
-	 PPRQA4jW8CdaqxjAww6ZJJRXluGRb6mijqV69AbibQUI92n/dPJSexYI5C1llYVAap
-	 wCYH9bhlW9t2R5ebj2hIywkVu7pbmHq8j7fcehQf8VXFARQ9TTHYqKvCS6oCTGgQ0Z
-	 jrqqH+Ls5y06Q==
-Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
-	(envelope-from <mchehab+huawei@kernel.org>)
-	id 1urBUi-00000000uUS-0vKP;
-	Wed, 27 Aug 2025 10:27:00 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>
-Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	"Mauro Carvalho Chehab" <mchehab+huawei@kernel.org>,
-	=?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Masahiro Yamada <mchehab+huawei@kernel.org>,
-	Miguel Ojeda <mchehab+huawei@kernel.org>,
-	Nathan Chancellor <mchehab+huawei@kernel.org>,
-	Nicolas Schier <nicolas.schier@linux.dev>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Tamir Duberstein <tamird@gmail.com>,
-	linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 1/2] docs: add support to build manpages from kerneldoc output
+	s=arc-20240116; t=1756283220; c=relaxed/simple;
+	bh=v+q9Vxilok3SbfLK/5B4/q60PmqhPNOvmXaMItd00rQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=WszsBgjDiJPhAbQG9NRjIvl1LIdfhJUFpaHo2gTwEhCPHyo/5Dia9HUaU1HSmLihOBFhifUBsHZ6VmpXKoE40PCMLDQ+P3M6fTvqxNbTp7L73z+Rc1LElAFtQy5eoWIzV9nfJHjRRY1IBE6V80OKHU7jHO4u2MnUH1NONApch6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 6EEFB1FF22;
+	Wed, 27 Aug 2025 08:26:35 +0000 (UTC)
+Authentication-Results: smtp-out2.suse.de;
+	none
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5A4F813A31;
+	Wed, 27 Aug 2025 08:26:35 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id oFnDFTvBrmhNfgAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Wed, 27 Aug 2025 08:26:35 +0000
+From: Vlastimil Babka <vbabka@suse.cz>
 Date: Wed, 27 Aug 2025 10:26:37 +0200
-Message-ID: <d880eb9c915a08c25102b7c1b17a01a8ab7e32c3.1756282370.git.mchehab+huawei@kernel.org>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <cover.1756282370.git.mchehab+huawei@kernel.org>
-References: <cover.1756282370.git.mchehab+huawei@kernel.org>
+Subject: [PATCH v6 05/10] slab: determine barn status racily outside of
+ lock
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250827-slub-percpu-caches-v6-5-f0f775a3f73f@suse.cz>
+References: <20250827-slub-percpu-caches-v6-0-f0f775a3f73f@suse.cz>
+In-Reply-To: <20250827-slub-percpu-caches-v6-0-f0f775a3f73f@suse.cz>
+To: Suren Baghdasaryan <surenb@google.com>, 
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+ Christoph Lameter <cl@gentwo.org>, David Rientjes <rientjes@google.com>
+Cc: Roman Gushchin <roman.gushchin@linux.dev>, 
+ Harry Yoo <harry.yoo@oracle.com>, Uladzislau Rezki <urezki@gmail.com>, 
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org, rcu@vger.kernel.org, 
+ maple-tree@lists.infradead.org, vbabka@suse.cz
+X-Mailer: b4 0.14.2
+X-Rspamd-Pre-Result: action=no action;
+	module=replies;
+	Message is reply to one we originated
+X-Spam-Level: 
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.00 / 50.00];
+	REPLY(-4.00)[]
+X-Rspamd-Queue-Id: 6EEFB1FF22
+X-Rspamd-Pre-Result: action=no action;
+	module=replies;
+	Message is reply to one we originated
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
+X-Spam-Score: -4.00
 
-Generating man files currently requires running a separate
-script. The target also doesn't appear at the docs Makefile.
+The possibility of many barn operations is determined by the current
+number of full or empty sheaves. Taking the barn->lock just to find out
+that e.g. there are no empty sheaves results in unnecessary overhead and
+lock contention. Thus perform these checks outside of the lock with a
+data_race() annotated variable read and fail quickly without taking the
+lock.
 
-Add support for mandocs at the Makefile, adding the build
-logic inside sphinx-build-wrapper, updating documentation
-and dropping the ancillary script.
+Checks for sheaf availability that racily succeed have to be obviously
+repeated under the lock for correctness, but we can skip repeating
+checks if there are too many sheaves on the given list as the limits
+don't need to be strict.
 
-Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+Reviewed-by: Suren Baghdasaryan <surenb@google.com>
+Reviewed-by: Harry Yoo <harry.yoo@oracle.com>
 ---
- Documentation/Makefile                 |  3 +-
- Documentation/doc-guide/kernel-doc.rst | 29 ++++-----
- Makefile                               |  2 +-
- scripts/split-man.pl                   | 28 ---------
- tools/docs/sphinx-build-wrapper        | 81 ++++++++++++++++++++++++--
- 5 files changed, 95 insertions(+), 48 deletions(-)
- delete mode 100755 scripts/split-man.pl
+ mm/slub.c | 27 ++++++++++++++++++++-------
+ 1 file changed, 20 insertions(+), 7 deletions(-)
 
-diff --git a/Documentation/Makefile b/Documentation/Makefile
-index 3e1cb44a5fbb..22e39e5ed07d 100644
---- a/Documentation/Makefile
-+++ b/Documentation/Makefile
-@@ -53,7 +53,7 @@ ifeq ($(HAVE_SPHINX),0)
- else # HAVE_SPHINX
+diff --git a/mm/slub.c b/mm/slub.c
+index c8dda640f95e7e738cf2ceb05b98d1176df6e83f..ee3a222acd6b15389a71bb47429d22b5326a4624 100644
+--- a/mm/slub.c
++++ b/mm/slub.c
+@@ -2796,9 +2796,12 @@ static struct slab_sheaf *barn_get_empty_sheaf(struct node_barn *barn)
+ 	struct slab_sheaf *empty = NULL;
+ 	unsigned long flags;
  
- # Common documentation targets
--infodocs texinfodocs latexdocs epubdocs xmldocs pdfdocs linkcheckdocs:
-+mandocs infodocs texinfodocs latexdocs epubdocs xmldocs pdfdocs linkcheckdocs:
- 	$(Q)@$(srctree)/tools/docs/sphinx-pre-install --version-check
- 	+$(Q)$(PYTHON3) $(BUILD_WRAPPER) $@ \
- 		--sphinxdirs="$(SPHINXDIRS)" --conf=$(SPHINX_CONF) \
-@@ -104,6 +104,7 @@ dochelp:
- 	@echo  '  htmldocs        - HTML'
- 	@echo  '  texinfodocs     - Texinfo'
- 	@echo  '  infodocs        - Info'
-+	@echo  '  mandocs         - Man pages'
- 	@echo  '  latexdocs       - LaTeX'
- 	@echo  '  pdfdocs         - PDF'
- 	@echo  '  epubdocs        - EPUB'
-diff --git a/Documentation/doc-guide/kernel-doc.rst b/Documentation/doc-guide/kernel-doc.rst
-index af9697e60165..4370cc8fbcf5 100644
---- a/Documentation/doc-guide/kernel-doc.rst
-+++ b/Documentation/doc-guide/kernel-doc.rst
-@@ -579,20 +579,23 @@ source.
- How to use kernel-doc to generate man pages
- -------------------------------------------
++	if (!data_race(barn->nr_empty))
++		return NULL;
++
+ 	spin_lock_irqsave(&barn->lock, flags);
  
--If you just want to use kernel-doc to generate man pages you can do this
--from the kernel git tree::
-+To generate man pages for all files that contain kernel-doc markups, run::
+-	if (barn->nr_empty) {
++	if (likely(barn->nr_empty)) {
+ 		empty = list_first_entry(&barn->sheaves_empty,
+ 					 struct slab_sheaf, barn_list);
+ 		list_del(&empty->barn_list);
+@@ -2845,6 +2848,9 @@ static struct slab_sheaf *barn_get_full_or_empty_sheaf(struct node_barn *barn)
+ 	struct slab_sheaf *sheaf = NULL;
+ 	unsigned long flags;
  
--  $ scripts/kernel-doc -man \
--    $(git grep -l '/\*\*' -- :^Documentation :^tools) \
--    | scripts/split-man.pl /tmp/man
-+  $ make mandocs
++	if (!data_race(barn->nr_full) && !data_race(barn->nr_empty))
++		return NULL;
++
+ 	spin_lock_irqsave(&barn->lock, flags);
  
--Some older versions of git do not support some of the variants of syntax for
--path exclusion.  One of the following commands may work for those versions::
-+Or calling ``script-build-wrapper`` directly::
+ 	if (barn->nr_full) {
+@@ -2875,9 +2881,12 @@ barn_replace_empty_sheaf(struct node_barn *barn, struct slab_sheaf *empty)
+ 	struct slab_sheaf *full = NULL;
+ 	unsigned long flags;
  
--  $ scripts/kernel-doc -man \
--    $(git grep -l '/\*\*' -- . ':!Documentation' ':!tools') \
--    | scripts/split-man.pl /tmp/man
-+  $ ./tools/docs/sphinx-build-wrapper mandocs
++	if (!data_race(barn->nr_full))
++		return NULL;
++
+ 	spin_lock_irqsave(&barn->lock, flags);
  
--  $ scripts/kernel-doc -man \
--    $(git grep -l '/\*\*' -- . ":(exclude)Documentation" ":(exclude)tools") \
--    | scripts/split-man.pl /tmp/man
-+The output will be at ``/man`` directory inside the output directory
-+(by default: ``Documentation/output``).
-+
-+Optionally, it is possible to generate a partial set of man pages by
-+using SPHINXDIRS:
-+
-+  $ make SPHINXDIRS=driver-api/media mandocs
-+
-+.. note::
-+
-+   When SPHINXDIRS={subdir} is used, it will only generate man pages for
-+   the files explicitly inside a ``Documentation/{subdir}/.../*.rst`` file.
-diff --git a/Makefile b/Makefile
-index 6bfe776bf3c5..9bd44afeda26 100644
---- a/Makefile
-+++ b/Makefile
-@@ -1800,7 +1800,7 @@ $(help-board-dirs): help-%:
- # Documentation targets
- # ---------------------------------------------------------------------------
- DOC_TARGETS := xmldocs latexdocs pdfdocs htmldocs epubdocs cleandocs \
--	       linkcheckdocs dochelp refcheckdocs texinfodocs infodocs
-+	       linkcheckdocs dochelp refcheckdocs texinfodocs infodocs mandocs
- PHONY += $(DOC_TARGETS)
- $(DOC_TARGETS):
- 	$(Q)$(MAKE) $(build)=Documentation $@
-diff --git a/scripts/split-man.pl b/scripts/split-man.pl
-deleted file mode 100755
-index 96bd99dc977a..000000000000
---- a/scripts/split-man.pl
-+++ /dev/null
-@@ -1,28 +0,0 @@
--#!/usr/bin/env perl
--# SPDX-License-Identifier: GPL-2.0
--#
--# Author: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
--#
--# Produce manpages from kernel-doc.
--# See Documentation/doc-guide/kernel-doc.rst for instructions
--
--if ($#ARGV < 0) {
--   die "where do I put the results?\n";
--}
--
--mkdir $ARGV[0],0777;
--$state = 0;
--while (<STDIN>) {
--    if (/^\.TH \"[^\"]*\" 9 \"([^\"]*)\"/) {
--	if ($state == 1) { close OUT }
--	$state = 1;
--	$fn = "$ARGV[0]/$1.9";
--	print STDERR "Creating $fn\n";
--	open OUT, ">$fn" or die "can't open $fn: $!\n";
--	print OUT $_;
--    } elsif ($state != 0) {
--	print OUT $_;
--    }
--}
--
--close OUT;
-diff --git a/tools/docs/sphinx-build-wrapper b/tools/docs/sphinx-build-wrapper
-index c884022ad733..932b1b675274 100755
---- a/tools/docs/sphinx-build-wrapper
-+++ b/tools/docs/sphinx-build-wrapper
-@@ -47,6 +47,7 @@ the newer version.
- import argparse
- import locale
- import os
-+import re
- import shlex
- import shutil
- import subprocess
-@@ -55,6 +56,7 @@ import sys
- from concurrent import futures
+-	if (barn->nr_full) {
++	if (likely(barn->nr_full)) {
+ 		full = list_first_entry(&barn->sheaves_full, struct slab_sheaf,
+ 					barn_list);
+ 		list_del(&full->barn_list);
+@@ -2901,19 +2910,23 @@ barn_replace_full_sheaf(struct node_barn *barn, struct slab_sheaf *full)
+ 	struct slab_sheaf *empty;
+ 	unsigned long flags;
  
- from lib.python_version import PythonVersion
-+from glob import glob
++	/* we don't repeat this check under barn->lock as it's not critical */
++	if (data_race(barn->nr_full) >= MAX_FULL_SHEAVES)
++		return ERR_PTR(-E2BIG);
++	if (!data_race(barn->nr_empty))
++		return ERR_PTR(-ENOMEM);
++
+ 	spin_lock_irqsave(&barn->lock, flags);
  
- LIB_DIR = "../../scripts/lib"
- SRC_DIR = os.path.dirname(os.path.realpath(__file__))
-@@ -77,6 +79,7 @@ TARGETS = {
-     "epubdocs":      { "builder": "epub",    "out_dir": "epub" },
-     "texinfodocs":   { "builder": "texinfo", "out_dir": "texinfo" },
-     "infodocs":      { "builder": "texinfo", "out_dir": "texinfo" },
-+    "mandocs":       { "builder": "man",     "out_dir": "man" },
-     "latexdocs":     { "builder": "latex",   "out_dir": "latex" },
-     "pdfdocs":       { "builder": "latex",   "out_dir": "latex" },
-     "xmldocs":       { "builder": "xml",     "out_dir": "xml" },
-@@ -455,6 +458,71 @@ class SphinxBuilder:
-             except subprocess.CalledProcessError as e:
-                 sys.exit(f"Error generating info docs: {e}")
+-	if (barn->nr_full >= MAX_FULL_SHEAVES) {
+-		empty = ERR_PTR(-E2BIG);
+-	} else if (!barn->nr_empty) {
+-		empty = ERR_PTR(-ENOMEM);
+-	} else {
++	if (likely(barn->nr_empty)) {
+ 		empty = list_first_entry(&barn->sheaves_empty, struct slab_sheaf,
+ 					 barn_list);
+ 		list_del(&empty->barn_list);
+ 		list_add(&full->barn_list, &barn->sheaves_full);
+ 		barn->nr_empty--;
+ 		barn->nr_full++;
++	} else {
++		empty = ERR_PTR(-ENOMEM);
+ 	}
  
-+    def handle_man(self, kerneldoc, docs_dir, src_dir, output_dir):
-+        """
-+        Create man pages from kernel-doc output
-+        """
-+
-+        re_kernel_doc = re.compile(r"^\.\.\s+kernel-doc::\s*(\S+)")
-+        re_man = re.compile(r'^\.TH "[^"]*" (\d+) "([^"]*)"')
-+
-+        if docs_dir == src_dir:
-+            #
-+            # Pick the entire set of kernel-doc markups from the entire tree
-+            #
-+            kdoc_files = set([self.srctree])
-+        else:
-+            kdoc_files = set()
-+
-+            for fname in glob(os.path.join(src_dir, "**"), recursive=True):
-+                if os.path.isfile(fname) and fname.endswith(".rst"):
-+                    with open(fname, "r", encoding="utf-8") as in_fp:
-+                        data = in_fp.read()
-+
-+                    for line in data.split("\n"):
-+                        match = re_kernel_doc.match(line)
-+                        if match:
-+                            if os.path.isfile(match.group(1)):
-+                                kdoc_files.add(match.group(1))
-+
-+        if not kdoc_files:
-+                sys.exit(f"Directory {src_dir} doesn't contain kernel-doc tags")
-+
-+        cmd = [ kerneldoc, "-m" ] + sorted(kdoc_files)
-+        try:
-+            if self.verbose:
-+                print(" ".join(cmd))
-+
-+            result = subprocess.run(cmd, stdout=subprocess.PIPE, text= True)
-+
-+            if result.returncode:
-+                print(f"Warning: kernel-doc returned {result.returncode} warnings")
-+
-+        except (OSError, ValueError, subprocess.SubprocessError) as e:
-+            sys.exit(f"Failed to create man pages for {src_dir}: {repr(e)}")
-+
-+        fp = None
-+        try:
-+            for line in result.stdout.split("\n"):
-+                match = re_man.match(line)
-+                if not match:
-+                    if fp:
-+                        fp.write(line + '\n')
-+                    continue
-+
-+                if fp:
-+                    fp.close()
-+
-+                fname = f"{output_dir}/{match.group(2)}.{match.group(1)}"
-+
-+                if self.verbose:
-+                    print(f"Creating {fname}")
-+                fp = open(fname, "w", encoding="utf-8")
-+                fp.write(line + '\n')
-+        finally:
-+            if fp:
-+                fp.close()
-+
-     def cleandocs(self, builder):           # pylint: disable=W0613
-         """Remove documentation output directory"""
-         shutil.rmtree(self.builddir, ignore_errors=True)
-@@ -483,7 +551,7 @@ class SphinxBuilder:
-         # Other targets require sphinx-build, so check if it exists
-         #
-         sphinxbuild = shutil.which(self.sphinxbuild, path=self.env["PATH"])
--        if not sphinxbuild:
-+        if not sphinxbuild and target != "mandocs":
-             sys.exit(f"Error: {self.sphinxbuild} not found in PATH.\n")
- 
-         if builder == "latex":
-@@ -572,10 +640,13 @@ class SphinxBuilder:
-                 output_dir,
-             ]
- 
--            try:
--                self.run_sphinx(sphinxbuild, build_args, env=self.env)
--            except (OSError, ValueError, subprocess.SubprocessError) as e:
--                sys.exit(f"Build failed: {repr(e)}")
-+            if target == "mandocs":
-+                self.handle_man(kerneldoc, docs_dir, src_dir, output_dir)
-+            else:
-+                try:
-+                    self.run_sphinx(sphinxbuild, build_args, env=self.env)
-+                except (OSError, ValueError, subprocess.SubprocessError) as e:
-+                    sys.exit(f"Build failed: {repr(e)}")
- 
-             #
-             # Ensure that each html/epub output will have needed static files
+ 	spin_unlock_irqrestore(&barn->lock, flags);
+
 -- 
 2.51.0
 
