@@ -1,137 +1,123 @@
-Return-Path: <linux-kernel+bounces-788315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0E61B382B2
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 14:43:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94095B382C4
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 14:46:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25BBF1B64DC5
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 12:43:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8E32E7A97CF
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 12:42:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68233352FD9;
-	Wed, 27 Aug 2025 12:42:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E6BC34DCC4;
+	Wed, 27 Aug 2025 12:44:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="d0n9PSEf"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="hLDL+MAe"
+Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CD19350D45
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 12:42:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE08434AB1A
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 12:43:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756298544; cv=none; b=UvBxwt1AP+mq4yFR2SUVVOcT3x1lR5XnXYtGxfpya++yJBLbUUoURZYfGnx8HMGlauMKupdq7EvXFUUL6tVxtIfpdDyQPA7UOM1ntrum7oYYzRIE1UdmLI8kGhs7WlIpD6msCIv247FYu4omLPiatTmLTvId5DpvT2QMFmnN9iw=
+	t=1756298640; cv=none; b=J4yxOQ0OYpIfGuHv6WdnDHlQEL51FK+IyVdPtcbVF+FDfL7Kk0B8lMNUlU4R1p8ryhYPZMAFhO3BxzvQHzejHhNPvREOHYyJyYMfoTActKeWaOqe9dwX9OK7FJM0ByhcuSQlDWm2Ihq4V0/mLge/wd+Xo7xCpXbSa3CJrdKZeZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756298544; c=relaxed/simple;
-	bh=FUVnP6N7cHQr47dLL4bin/JIRmBbPwyaNW8naNR4SC8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=vDIaJP4jPxY90JRprJQYEnvT3fS2ofid0eNSKlYDkVwPJQvYDBtWs7CcQkpfOrqU6jX8AYtHWcnbJ9QeeGgKBGeNZkb8VI+ALfYGFJcDW1zF8mb8f6sU93GDQWb878T72ihZlRQYdvPLnnp0uHn2YatFwhtxbodLpY9cJPt+iVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=d0n9PSEf; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3c7edd71bbfso3775291f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 05:42:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756298540; x=1756903340; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=u/mZvV9kb0orEkNWMjrJAyvdt/44HABaPUU1+rYsimU=;
-        b=d0n9PSEf1iLKn/iLkzzmaAeP2ilekJfZZo3zx8KE9J1GKnmDmLuxn/wtdzSZNYjvK5
-         UH+WyFysw1B1+N8pH8Eh+BQCX3qbvjmRYBIOivzyUHdq1mtaHL87suD1MY07Se6bnonQ
-         x/Cyf7PC5s55D4/C+g0efqLrzz925C6LsOnJGhAHfjenD4s8s6YiBz5YPJt/+zWdQi9y
-         WQKfetJviK/ARGtWi9Pkn3zGzbE9LDVUQABfu09vL9+pfVs1wxNJrXpFTzwAhMc+Dl2c
-         kfyhBFPdB0nih99EYc0cZztAv7Ok6vmS01a3wGBvYXTE6esfGQQZB6uD9avFZmx0wxCs
-         Ipqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756298540; x=1756903340;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=u/mZvV9kb0orEkNWMjrJAyvdt/44HABaPUU1+rYsimU=;
-        b=jHlKmTtH7PoLFj1OLF3L3QsG4ygwiRDkd6/BJ68AwK84M+5SRuuYc5J8ibAbxHWo5t
-         Xu2DVmOaiS10cCe3eLLpNHbgYNBfaBBlUIdA8Y19aKl6tHOIWg9kgg5XnH7Zs2ZwuF1y
-         zMsVjM5mgUCqpIJwu21uaFBPf7qI2hdAlyGm10kafXC89bYS+ckLc9jBQ3sAk3MZZkG6
-         j7ZdfKTVRRapy0mo8cTjqahCJysfHTr3NUpTV8viCtrpn5hmDIDH/YCWcqgEoLjKpEaW
-         /+8mAGn6KuEtQ2muJiWxnL8+ndGYN378I1+PDq7zw6GcJY1l3U3ZmD7nwZD4d9hlRhRW
-         jLAQ==
-X-Gm-Message-State: AOJu0YwbsVqBX6MALEjFkgD3F/mlO2n2Q8b9N3etEEw9af9d88Xh5Lmu
-	R4VFBENT6kOVmn1JL40H0qaE0tOgk/0cy/TaawbDH4uOMHtfB9z7O+/U8pJM9BbDQgE=
-X-Gm-Gg: ASbGncu42Y7lqEh/TeeVq8QrgjZhLPbFMI7s3B7o0SorlcAeWLhg2bln6EpHeNXEmEe
-	HmY4ir5/efixXXJ/XuH0g2UDQQYVGPh6fc50vSnUYKSBwUffEDu9uANPRUoxPzeGSv4x4E9R2IZ
-	kSxQYv2y0lSY3AYG+DIeu9Fk8mb/om4ysVeZuwu+qjdC/DI+Mup6cm1nx9hJ4OfEr7jh7ns73Y2
-	s7fmcmNdn6oR1ntTN9vwP4mRNCJd8P+8VMdGp2GqTSHja7OnlifXTrUDGy9KlUmNX5IIDy4H5yc
-	DsCNvfwAEtnn7AZRjgzlnpLrIgXupJpr8MK7Jsum3sRXIGC12MO2az9rpLTSFuw/DISY74BPbm6
-	e2KD2ohfdr+VV+c9WjWDd7nyNLpHlYcmCLf9UbyGuDRljr4GJanE6+YTomfMnp5CXi9qpGAqavg
-	45vg==
-X-Google-Smtp-Source: AGHT+IHDaXwaFMJ9SMq4opGoNcipuyVIDBjCdJ6Q67OG3cP6PVryX0OdauanSBAD0FIphu46Ph59Og==
-X-Received: by 2002:a05:6000:26c7:b0:3ca:368b:b816 with SMTP id ffacd0b85a97d-3ca368bb8d4mr6810396f8f.62.1756298539689;
-        Wed, 27 Aug 2025 05:42:19 -0700 (PDT)
-Received: from ta2.c.googlers.com (219.43.233.35.bc.googleusercontent.com. [35.233.43.219])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3cbab3ead0dsm6439420f8f.29.2025.08.27.05.42.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Aug 2025 05:42:19 -0700 (PDT)
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-Date: Wed, 27 Aug 2025 12:42:15 +0000
-Subject: [PATCH v2 5/5] arm64: defconfig: enable Exynos ACPM clocks
+	s=arc-20240116; t=1756298640; c=relaxed/simple;
+	bh=pfXL9LNkVlMzLJ8k3+XfUf3hhNWeq5ZzTbCIkPXyFVk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WUv4HGkPdeNweWNtggGP1drxKYilw44/Z8rAfqYuUN0bOtiVRF4X+RQWXOMlLMz+s0/6rflrf910T4qP3QZxCO1vA7V8oUyN+GyTBLV6A34lyw7Be0FlXfZs/vEqLEFXtkOtWKJb6yuHirah/QGb/4pBrgSilJgwrmE6QvxBryo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=hLDL+MAe; arc=none smtp.client-ip=91.218.175.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <228e871e-a5c7-4570-b672-a97ac3db90c5@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1756298625;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5XXPK9rgm6hm8EGqcOxFtZdeNx/wbCo+a/fjPKpMhLw=;
+	b=hLDL+MAeFdO6S6GwZPo1qT89iojAr28gdNsifMukqxo6jLtLXLp09wsQpXUT20NMePmJzl
+	+hexT091mG1JyUQ1gBSNCqhuFLf6zoRLv5jpZnmAONL2ZIZL/ysE7sS7x1tgJDZG900Nyw
+	/xW7WAPkq+XrMuaOv5g9JWlqYu3+DaU=
+Date: Wed, 27 Aug 2025 13:43:31 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Subject: Re: [PATCH v4 2/2] ethernet: eswin: Add eic7700 ethernet driver
+To: weishangjuan@eswincomputing.com, devicetree@vger.kernel.org,
+ andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, linux-arm-kernel@lists.infradead.org,
+ mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com,
+ yong.liang.choong@linux.intel.com, vladimir.oltean@nxp.com,
+ rmk+kernel@armlinux.org.uk, faizal.abdul.rahim@linux.intel.com,
+ prabhakar.mahadev-lad.rj@bp.renesas.com, inochiama@gmail.com,
+ jan.petrous@oss.nxp.com, jszhang@kernel.org, p.zabel@pengutronix.de,
+ boon.khai.ng@altera.com, 0x1207@gmail.com, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com
+Cc: ningyu@eswincomputing.com, linmin@eswincomputing.com,
+ lizhi2@eswincomputing.com
+References: <20250827081135.2243-1-weishangjuan@eswincomputing.com>
+ <20250827081418.2347-1-weishangjuan@eswincomputing.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+In-Reply-To: <20250827081418.2347-1-weishangjuan@eswincomputing.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250827-acpm-clk-v2-5-de5c86b49b64@linaro.org>
-References: <20250827-acpm-clk-v2-0-de5c86b49b64@linaro.org>
-In-Reply-To: <20250827-acpm-clk-v2-0-de5c86b49b64@linaro.org>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Peter Griffin <peter.griffin@linaro.org>, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, 
- Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Chanwoo Choi <cw00.choi@samsung.com>, 
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-clk@vger.kernel.org, willmcvicker@google.com, kernel-team@android.com, 
- Tudor Ambarus <tudor.ambarus@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1756298535; l=820;
- i=tudor.ambarus@linaro.org; s=20241212; h=from:subject:message-id;
- bh=FUVnP6N7cHQr47dLL4bin/JIRmBbPwyaNW8naNR4SC8=;
- b=vr4YUS7k2uOJpKSWAUY/kzAsaucmPj03Ajnab4gJvYwF+6XrFjwzDMIGkG2H/vJmrLX4DqF85
- Z56PRG77k/rBpCAlx0bGdbJTtH91a+wz1P3HRfiu3UXboI+aGKI2hkH
-X-Developer-Key: i=tudor.ambarus@linaro.org; a=ed25519;
- pk=uQzE0NXo3dIjeowMTOPCpIiPHEz12IA/MbyzrZVh9WI=
+X-Migadu-Flow: FLOW_OUT
 
-Enable the Exynos ACPM clocks driver. Samsung Exynos platforms
-implement ACPM to provide support for clock configuration, PMIC
-and temperature sensors.
+On 27/08/2025 09:14, weishangjuan@eswincomputing.com wrote:
+> From: Shangjuan Wei <weishangjuan@eswincomputing.com>
+> 
+> Add Ethernet controller support for Eswin's eic7700 SoC. The driver
+> provides management and control of Ethernet signals for the eiC7700
+> series chips.
+> 
+> Signed-off-by: Zhi Li <lizhi2@eswincomputing.com>
+> Signed-off-by: Shangjuan Wei <weishangjuan@eswincomputing.com>
+> ---
 
-Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
----
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+[...]
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 58f87d09366cd12ae212a1d107660afe8be6c5ef..4255bc885545fb3bb7e9cf02760cac35bf2872fa 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -1445,6 +1445,7 @@ CONFIG_CLK_GFM_LPASS_SM8250=m
- CONFIG_SM_VIDEOCC_8450=m
- CONFIG_CLK_RCAR_USB2_CLOCK_SEL=y
- CONFIG_CLK_RENESAS_VBATTB=m
-+CONFIG_EXYNOS_ACPM_CLK=m
- CONFIG_CLK_SOPHGO_CV1800=y
- CONFIG_HWSPINLOCK=y
- CONFIG_HWSPINLOCK_OMAP=m
+> +/**
+> + * eic7700_apply_delay - Update TX or RX delay bits in delay parameter value.
+> + * @delay_ps: Delay in picoseconds (capped at 12.7ns).
+> + * @reg:      Pointer to register value to modify.
+> + * @is_rx:    True for RX delay (bits 30:24), false for TX delay (bits 14:8).
+> + *
+> + * Converts delay to 0.1ns units, caps at 0x7F, and sets appropriate bits.
+> + * Only RX or TX bits are updated; other bits remain unchanged.
+> + */
+> +static inline void eic7700_apply_delay(u32 delay_ps, u32 *reg, bool is_rx)
 
--- 
-2.51.0.261.g7ce5a0a67e-goog
+inlining functions in .c files is discouraged in netdev, let the
+compiler decide inlining
 
+> +{
+> +	if (!reg)
+> +		return;
+
+please, avoid defensive programming. with this check you also mixing
+code and variables..
+
+> +
+> +	u32 val = min(delay_ps / 100, EIC7700_MAX_DELAY_UNIT);
+ > +> +	if (is_rx) {
+> +		*reg &= ~EIC7700_ETH_RX_ADJ_DELAY;
+> +		*reg |= (val << 24) & EIC7700_ETH_RX_ADJ_DELAY;
+> +	} else {
+> +		*reg &= ~EIC7700_ETH_TX_ADJ_DELAY;
+> +		*reg |= (val << 8) & EIC7700_ETH_TX_ADJ_DELAY;
+
+these 2 assignments should be converted to FIELD_PREP()
+
+> +	}
+> +}
+> +
 
