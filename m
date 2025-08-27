@@ -1,137 +1,79 @@
-Return-Path: <linux-kernel+bounces-788730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788731-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F1D7B38955
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 20:14:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2B91B3895D
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 20:17:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5607D1B21E2B
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 18:14:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0CCDE16AAAF
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 18:17:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 847A22D5A14;
-	Wed, 27 Aug 2025 18:14:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DBFC2D9787;
+	Wed, 27 Aug 2025 18:16:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dBQLoxoI"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j999Rflx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 582B84C98;
-	Wed, 27 Aug 2025 18:14:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C71DD2798FB;
+	Wed, 27 Aug 2025 18:16:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756318465; cv=none; b=PGvsB+CtXoj2nG9TJxMeD4Bw/zWEXCSZTVk492JsLw/f9ad89ghSI5/xIctXgYHmLPY8GK9kwmNlw6VTJW0dkqxuEH0jCmF7g91GEL2Po7iOxvCMvliN6inzk+YDfmY1UZGoYW3PywJ9wqW4iqC8JQjFJ1rVExex6Teh/Tj7el4=
+	t=1756318613; cv=none; b=gjZuLnYfFSwggCowk0XpGFH/sWpWVqTARzn29qC2i4EKOeG5xVJYKIrZybru6n9NOFA4I5jB6hKlwTdr0aDtWOndY9eqirozHuSByoHwPIOWV//J9lmCza5r/NSvamGBAh/4K5yIB31zhfUjfVVliZONp2oIO7HUh8AV029laiQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756318465; c=relaxed/simple;
-	bh=WAFX1IVjxCr6lxN0OWYtqi/fknlG0qVBh37tAs9skCo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bGYCY1HCgQJAfJlvBqw1wCLdJceLdO+JqZs5TCAp3vn8bMoaXTGl32WUAthPe9wNLHAu91QJpjFbJa4SF4Mx0bxpuF39D8htDyDzRd/wiYuaFdRRAR1jwf726QB7Z/B+ngOokPxHyXyaWo705omcdMMiv0a9+mQ6JIli/iEn3Ww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dBQLoxoI; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-afeba8e759eso11178866b.3;
-        Wed, 27 Aug 2025 11:14:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756318461; x=1756923261; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RVQT6EwM2XfyxwdqB5IbpraKmNgOxlOjBUQJepRw89w=;
-        b=dBQLoxoI7LA8cdUEDJtn8uCSoe4AQUEZxNDQgHnD2L6w9JA1vpYsuc7Ez94QMp5QMW
-         K2ZU0msbb392oY2fZeFrQuRaWmbuchDfp9nRs7qFJ4NfFgG0BuIkMMQ3DRTMiZ/ZBNVD
-         yUVNoagh6NAwpgCv7JxEgNlIE2P9WFJcTgFuWDwNA4M0GHcbtRhO+ez1FoxH3A1JWJpb
-         GDZcxJBF84hPWy17q3fKhFyPvutmHFTE9iC9hjdkwo0yHwy0IasZg38O00XsEqQJuhsn
-         DdpJSSPXUrxA79TpghlJ5tHYmTdGyJsjCrVXGhxQDK9Ucx1GdxuB4weFHUrFLnTvpHwt
-         8Fvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756318461; x=1756923261;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RVQT6EwM2XfyxwdqB5IbpraKmNgOxlOjBUQJepRw89w=;
-        b=jFGeJFSi3BPLNa96LCquQyTVX4XpOTo8VAl3o8QCWuuy43FsL93Fs3ngnKz0A26GWv
-         G1rmjUh2ZEKxHcPNrlwlLuudaRrBrEWjZNqooJlUqlQvCVvCJpXI15xV4ORkywsolEaK
-         L+V4LeENwU1SFMDZXPNiesS+OLkBPkaSozH0WmsH9R47DwGkkqaDH9VaMs0PeJMdZdYZ
-         0wHbpMTT+2ZVpZuOgyfdpQ20CPvNuJS6nM5OuKNcQvIhfdDSI9zgjICq74KsCvhGxxas
-         X+y5Yhz5nDHjViBOdyOPVkk0EYSR5tnj9D/MhGeCgCCCzveBvoE3+f2VVuGEsMnHdn32
-         ovsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUUCxb7HqYaC5GcknD1DhdJbl/FCI1JVEsmS/WbLSMgUjIdEmxUHjWX+5YcSRsCiLVAmWUvIktZv9HhZyg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOUK5g/sEK7tFHyDK7I0hPhL3VoEVe1FgRlWoRu7V+5SxHmlJa
-	Zq7fW50BC1Wx4HUo3fWXAQqmVuzMiovthciKtC2AmEcolzLz5goGDmBpdQ2UnQimHXs6/kW4Cfv
-	IiH+Ae7c7YfXcgK2L1dZerTWBYd9sZYI=
-X-Gm-Gg: ASbGncu3Dmm9HIqq1S9PvXMHEo+PfS7QLO/AwK/m0UWDIXOWB8Rh+JewSmD00xUlVwA
-	LMwSaJVr6oQMJmITYq+kY2z/gGnqI4H+F9PMEyEo5bDqlfqYFnjvmFcio9Mv8Ebzy85D1jQINS7
-	i4WyKwGCSkOaNxHa0YSvGJObcgV5eIvbjjsQ6kO8K4kA8xgkgkB0aigii/9IBdbzfXG4rftryGV
-	oNDm41ZxspDIrKR
-X-Google-Smtp-Source: AGHT+IFcns/i8B7OkrfutKwqMx9ieCSGim1RGlSGQU3kS5KmFwiIYse2MdZm9Vo9wTNfLc3KTlv44vAxDXdIFWh6nL8=
-X-Received: by 2002:a17:907:1c84:b0:af9:4fa9:b132 with SMTP id
- a640c23a62f3a-afe29548f36mr1941851366b.33.1756318461278; Wed, 27 Aug 2025
- 11:14:21 -0700 (PDT)
+	s=arc-20240116; t=1756318613; c=relaxed/simple;
+	bh=tZYQGAhNSp8+YB6v2kG/8xFnCfWMXDbO7lN7RYNrlm8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=h3aBo4HDc+ql7m1QqPaMjI6jO14KFllczp+14ukG8f3MBIXD3OxLDvn545kPoaiLvkdlAYe126RatVklwlwiJVvfVpenkyiiOvSGurR0qXAEnC9Vfs7SvMPuGtsmxWzNC/iBIKK4p6HnYn+5vgfqnQIQf5nNIs/BVgqkF5ODAhM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j999Rflx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E9B6C4CEEB;
+	Wed, 27 Aug 2025 18:16:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756318613;
+	bh=tZYQGAhNSp8+YB6v2kG/8xFnCfWMXDbO7lN7RYNrlm8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=j999Rflxi7w5R7tVzCQHs4bPSgFvUnumbiY6DTM/jWC/T17eF4KC1wdJNsrOTNr/H
+	 KZIyYiOFtw8xiQzAVBOhGAE5NOIBEolrpV3vlddbZT7jUSy7646Wd9bW9ei9ZXcOXE
+	 dAoxlC3yo3sb60t7DBbJcCLiInMv136DCt7RBLX9PWDavGNSzFNbZkUw+svZ/lrOMT
+	 bKqSDVcVMIa5zAldh9d8QkO2IXCrEhgrYLbbBmlEHV5Z8+XH04QKU4ryOVmkvfhGgF
+	 dHMO7P0Tzhtj+XT9cj6g7uE3YOSfqXy7Wj1W5Z5X6cTtmvPsFn4EBBf6kvo6/rtDaW
+	 aOBZkZ8RJdGlg==
+Date: Wed, 27 Aug 2025 11:16:51 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Lukasz Majewski <lukasz.majewski@mailbox.org>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, davem@davemloft.net, Eric Dumazet
+ <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
+ <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Richard Cochran
+ <richardcochran@gmail.com>, netdev@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, Stefan Wahren
+ <wahrenst@gmx.net>, Simon Horman <horms@kernel.org>
+Subject: Re: [net-next v19 4/7] net: mtip: Add net_device_ops functions to
+ the L2 switch driver
+Message-ID: <20250827111651.022305f9@kernel.org>
+In-Reply-To: <20250824220736.1760482-5-lukasz.majewski@mailbox.org>
+References: <20250824220736.1760482-1-lukasz.majewski@mailbox.org>
+	<20250824220736.1760482-5-lukasz.majewski@mailbox.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAGudoHHBRhU+XidV9U4osc2Ta4w0Lgi2XiFkYukKQoH45zT6vw@mail.gmail.com>
- <20250826-leinen-villa-02f66f98e13e@brauner>
-In-Reply-To: <20250826-leinen-villa-02f66f98e13e@brauner>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Wed, 27 Aug 2025 20:14:08 +0200
-X-Gm-Features: Ac12FXwxmqWdDmYkudS4Qm4tuffTsrkY0hoo-vi10tkGd2D-OiY52PKisY_s1EE
-Message-ID: <CAGudoHESh8dKPLHp68G3QFtzqHXpyg1s8kF_GHHN=S8sfOK=Bg@mail.gmail.com>
-Subject: Re: Infinite loop in get_file_rcu() in face of a saturated ref count
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>, 
-	linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Aug 26, 2025 at 11:23=E2=80=AFAM Christian Brauner <brauner@kernel.=
-org> wrote:
->
-> On Mon, Aug 25, 2025 at 11:43:00PM +0200, Mateusz Guzik wrote:
-> > __get_file_rcu() bails early:
-> >
-> >         if (unlikely(!file_ref_get(&file->f_ref)))
-> >                 return ERR_PTR(-EAGAIN);
-> >
-> > But get_file_rcu():
-> >        for (;;) {
-> >                 struct file __rcu *file;
-> >
-> >                 file =3D __get_file_rcu(f);
-> >                 if (!IS_ERR(file))
-> >                         return file;
-> >         }
-> >
-> > So if this encounters a saturated refcount, the loop with never end.
-> >
-> > I don't know what makes the most sense to do here and I'm no position
-> > to mess with any patches.
-> >
-> > This is not a serious problem either, so I would put this on the back
-> > burner. Just reporting for interested.
->
-> That's like past 2^63 - 1 references. Apart from an odd bug is that
-> really something to worry about. I mean, we can add a VFS_WARN_ON_ONCE()
-> in there of course but specifically handling that in the code doesn't
-> seem sensible to me.
+On Mon, 25 Aug 2025 00:07:33 +0200 Lukasz Majewski wrote:
+> +
+> +	/* On some FEC implementations data must be aligned on
+> +	 * 4-byte boundaries. Use bounce buffers to copy data
+> +	 * and get it aligned.spin
+> +	 */
 
-I'm not worried about the overflow, I am worried about the indefinite
-& unkillable spin.
-
-The only consumer of get_file_rcu() is get_mm_exe_file(), which is
-ultimately used to serve out /proc/$pid/exe
-
-Suppose there is a bug where the refcount got botched and and
-file_ref_get() now fails.
-
-With the current code the userspace processes who happen to try to
-load the value will end up hanging from the user's pov as they will
-keep spinning. No reaction to ^C or any other signal.
-
---
-Mateusz Guzik <mjguzik gmail.com>
+Almost forgot, the word "spin" appears here rather out of place.
 
