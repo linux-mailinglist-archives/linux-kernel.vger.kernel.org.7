@@ -1,172 +1,99 @@
-Return-Path: <linux-kernel+bounces-787857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 637F1B37C3F
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 09:53:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E078CB37C45
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 09:53:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5BBB41BA2170
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 07:53:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 146F61BA1FF3
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 07:53:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 489ED321420;
-	Wed, 27 Aug 2025 07:52:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KeoRXWmN"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50D92322524;
+	Wed, 27 Aug 2025 07:53:05 +0000 (UTC)
+Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [160.30.148.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 052561A9F86
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 07:52:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D82D31CA46;
+	Wed, 27 Aug 2025 07:53:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=160.30.148.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756281162; cv=none; b=Vpr96n3+307LSkUxeTeFH0AegDmUk9+IFkveR2mRumuFlHmLwj2s9XdXDBInNTY0bX0Hi46nLW7cY49aiDY/tSYDf6VTzteHrwOxQfoCeXkvRcOZjT1uvOnUdzIpXaO29jcAkre0hL5Nu+n0Qjry3A2182tIJb1L8btRMjO+v8Y=
+	t=1756281184; cv=none; b=KZPv9eQXfVLwgiPbPPCbsJsDFWy0tRdN2lA94AwDlLybsZGavH9t15aSzSMb4IOSCQtWKyIKkIVkS72K/CKDdgEZujpCShwvEr/dqnDNjIi3T3uiEDCXUCRlMSgTGePfuvKeKq5QLAiu4GUv8k6ZqhgHW9C5AAkXTLeBXr2drpE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756281162; c=relaxed/simple;
-	bh=X6xhglahevnhZRx7A+DO+5AgaPDVE6AJOdFfTLsCHig=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hqn2sFN0SWgebnKbH8ZNEHWpVGPwDC7lH3o782RUmtpvIg7d8L3hcAP3iCnyF/L+D5CIlNiIsQfhS5+i01nkqRHP24Q9Zbu8Gfj0FxLDmBIqVpz7mQNc/Qn82yGlsWkGJseNoRXBvBdAZBAgZ+2ok6DpSo2DODH3WdDv7tTwoA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KeoRXWmN; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756281159;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=L1wY981ud5Z3idUNSxCEbfzkX8eAnGBWH4r/ijktaZU=;
-	b=KeoRXWmNE6bB2P97s88dGKP12BZcOEXXZ5ZhmSln9X/tDWDSBry+bJsjBw418j4RTpWtZL
-	MDpa/Rc6kUKr017GW3rB+Zzhjtw5sfqvfuAvY4sSl7C+uK5TtZGWzP3WVIUIFEHVt55w2K
-	QyxXzFZuukcAiMbbiZ1HyWRLPkmz5xM=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-331-7-GMmW_7OAKFJQWdoOe6_w-1; Wed,
- 27 Aug 2025 03:52:36 -0400
-X-MC-Unique: 7-GMmW_7OAKFJQWdoOe6_w-1
-X-Mimecast-MFC-AGG-ID: 7-GMmW_7OAKFJQWdoOe6_w_1756281154
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	s=arc-20240116; t=1756281184; c=relaxed/simple;
+	bh=L93nAqcXjxAm2bjDZbEkSL7YfXi3Chm7JARcn4q76lM=;
+	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=VsyLGCTrCj5D2p6BLGiXfWn5KGrffArDlw8Fw2sbJ/PfvxWRGn3aE3hJa7NqOZn7ubDYxEleduH1vXNAdajsDqPgKkNcbeRS77eZgca2ThGQVqvgPzpKInhsmsxZcAyjn7pZJ42hy80a4Kw3lAHukr0mfLcSI/9paZBpgcpW3Xg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=160.30.148.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
+Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9EEFC1955F01;
-	Wed, 27 Aug 2025 07:52:34 +0000 (UTC)
-Received: from dell-per7425-02.rhts.eng.pek2.redhat.com (dell-per7425-02.rhts.eng.pek2.redhat.com [10.73.116.18])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id BBC631800447;
-	Wed, 27 Aug 2025 07:52:27 +0000 (UTC)
-From: Chunyu Hu <chuhu@redhat.com>
-To: akpm@linux-foundation.org,
-	david@redhat.com,
-	shuah@kernel.org,
-	linux-mm@kvack.org
-Cc: linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	lorenzo.stoakes@oracle.com,
-	Liam.Howlett@oracle.com,
-	vbabka@suse.cz,
-	rppt@kernel.org,
-	surenb@google.com,
-	mhocko@suse.com,
-	chuhu@redhat.com
-Subject: [PATCH 2/2] selftests/mm: fix va_high_addr_switch.sh failure on x86_64
-Date: Wed, 27 Aug 2025 15:52:09 +0800
-Message-ID: <20250827075209.2347015-3-chuhu@redhat.com>
-In-Reply-To: <20250827075209.2347015-2-chuhu@redhat.com>
-References: <20250827075209.2347015-1-chuhu@redhat.com>
- <20250827075209.2347015-2-chuhu@redhat.com>
+	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4cBcG25D5Sz6G43s;
+	Wed, 27 Aug 2025 15:52:58 +0800 (CST)
+Received: from xaxapp05.zte.com.cn ([10.99.98.109])
+	by mse-fl2.zte.com.cn with SMTP id 57R7qY7c081155;
+	Wed, 27 Aug 2025 15:52:34 +0800 (+08)
+	(envelope-from zhang.enpei@zte.com.cn)
+Received: from mapi (xaxapp02[null])
+	by mapi (Zmail) with MAPI id mid32;
+	Wed, 27 Aug 2025 15:52:36 +0800 (CST)
+Date: Wed, 27 Aug 2025 15:52:36 +0800 (CST)
+X-Zmail-TransId: 2afa68aeb9448a7-ec3ce
+X-Mailer: Zmail v1.0
+Message-ID: <20250827155236014-BSh7mfwJD5Yz3cdi955c@zte.com.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+Mime-Version: 1.0
+From: <zhang.enpei@zte.com.cn>
+To: <horia.geanta@nxp.com>
+Cc: <pankaj.gupta@nxp.com>, <gaurav.jain@nxp.com>,
+        <herbert@gondor.apana.org.au>, <davem@davemloft.net>,
+        <linux-crypto@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <christophe.jaillet@wanadoo.fr>
+Subject: =?UTF-8?B?W1BBVENIIHYzXSBjcnlwdG86IGNhYW0gLSBzd2l0Y2ggdG8gdXNlIGRldm1fa21lbWR1cF9hcnJheSgp?=
+Content-Type: text/plain;
+	charset="UTF-8"
+X-MAIL:mse-fl2.zte.com.cn 57R7qY7c081155
+X-TLS: YES
+X-SPF-DOMAIN: zte.com.cn
+X-ENVELOPE-SENDER: zhang.enpei@zte.com.cn
+X-SPF: None
+X-SOURCE-IP: 10.5.228.133 unknown Wed, 27 Aug 2025 15:52:58 +0800
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 68AEB95A.000/4cBcG25D5Sz6G43s
 
-The test will fail as below on x86_64 with cpu la57 support (will skip if
-no la57 support). Note, the test requries nr_hugepages to be set first.
+From: Zhang Enpei <zhang.enpei@zte.com.cn>
 
-  # running bash ./va_high_addr_switch.sh
-  # -------------------------------------
-  # mmap(addr_switch_hint - pagesize, pagesize): 0x7f55b60fa000 - OK
-  # mmap(addr_switch_hint - pagesize, (2 * pagesize)): 0x7f55b60f9000 - OK
-  # mmap(addr_switch_hint, pagesize): 0x800000000000 - OK
-  # mmap(addr_switch_hint, 2 * pagesize, MAP_FIXED): 0x800000000000 - OK
-  # mmap(NULL): 0x7f55b60f9000 - OK
-  # mmap(low_addr): 0x40000000 - OK
-  # mmap(high_addr): 0x1000000000000 - OK
-  # mmap(high_addr) again: 0xffff55b6136000 - OK
-  # mmap(high_addr, MAP_FIXED): 0x1000000000000 - OK
-  # mmap(-1): 0xffff55b6134000 - OK
-  # mmap(-1) again: 0xffff55b6132000 - OK
-  # mmap(addr_switch_hint - pagesize, pagesize): 0x7f55b60fa000 - OK
-  # mmap(addr_switch_hint - pagesize, 2 * pagesize): 0x7f55b60f9000 - OK
-  # mmap(addr_switch_hint - pagesize/2 , 2 * pagesize): 0x7f55b60f7000 - OK
-  # mmap(addr_switch_hint, pagesize): 0x800000000000 - OK
-  # mmap(addr_switch_hint, 2 * pagesize, MAP_FIXED): 0x800000000000 - OK
-  # mmap(NULL, MAP_HUGETLB): 0x7f55b5c00000 - OK
-  # mmap(low_addr, MAP_HUGETLB): 0x40000000 - OK
-  # mmap(high_addr, MAP_HUGETLB): 0x1000000000000 - OK
-  # mmap(high_addr, MAP_HUGETLB) again: 0xffff55b5e00000 - OK
-  # mmap(high_addr, MAP_FIXED | MAP_HUGETLB): 0x1000000000000 - OK
-  # mmap(-1, MAP_HUGETLB): 0x7f55b5c00000 - OK
-  # mmap(-1, MAP_HUGETLB) again: 0x7f55b5a00000 - OK
-  # mmap(addr_switch_hint - pagesize, 2*hugepagesize, MAP_HUGETLB): 0x800000000000 - FAILED
-  # mmap(addr_switch_hint , 2*hugepagesize, MAP_FIXED | MAP_HUGETLB): 0x800000000000 - OK
-  # [FAIL]
+Use devm_kmemdup_array() to avoid multiplication or possible overflows.
 
-addr_switch_hint is defined as DFEFAULT_MAP_WINDOW in the failed test (for
-x86_64, DFEFAULT_MAP_WINDOW is defined as (1UL<<47) - pagesize) in 64 bit.
-
-Before commit cc92882ee218 ("mm: drop hugetlb_get_unmapped_area{_*}
-functions"), for x86_64 hugetlb_get_unmapped_area() is handled in arch code
-arch/x86/mm/hugetlbpage.c and addr is checked with map_address_hint_valid()
-after align with 'addr &= huge_page_mask(h)' which is a round down way, and
-it will fail the check because the addr is within the DEFAULT_MAP_WINDOW but
-(addr + len) is above the DFEFAULT_MAP_WINDOW. So it wil go through the
-hugetlb_get_unmmaped_area_top_down() to find an area within the
-DFEFAULT_MAP_WINDOW.
-
-After commit cc92882ee218 ("mm: drop hugetlb_get_unmapped_area{_*}
-functions").  The addr hint for hugetlb_get_unmmaped_area() will be rounded
-up and aligned to hugepage size with ALIGN() for all arches.  And after the
-align, the addr will be above the default MAP_DEFAULT_WINDOW, and the
-map_addresshint_valid() check will pass because both aligned addr (addr0)
-and (addr + len) are above the DEFAULT_MAP_WINDOW, and the aligned hint
-address (0x800000000000) is returned as an suitable gap is found there,
-in arch_get_unmapped_area_topdown().
-
-To still cover the case that addr is within the DEFAULT_MAP_WINDOW, and
-addr + len is above the DFEFAULT_MAP_WINDOW, make the addr hint one
-hugepage lower, so that after the align it's still within DEFAULT_MAP_WINDOW,
-and the addr + len (2 hugepages) will be above DEFAULT_MAP_WINDOW.
-
-Fixes: cc92882ee218 ("mm: drop hugetlb_get_unmapped_area{_*} functions")
-Signed-off-by: Chunyu Hu <chuhu@redhat.com>
+Signed-off-by: Zhang Enpei <zhang.enpei@zte.com.cn>
 ---
- tools/testing/selftests/mm/va_high_addr_switch.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/crypto/caam/ctrl.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/tools/testing/selftests/mm/va_high_addr_switch.c b/tools/testing/selftests/mm/va_high_addr_switch.c
-index 896b3f73fc53..bd96dc3b5931 100644
---- a/tools/testing/selftests/mm/va_high_addr_switch.c
-+++ b/tools/testing/selftests/mm/va_high_addr_switch.c
-@@ -230,10 +230,10 @@ void testcases_init(void)
- 			.msg = "mmap(-1, MAP_HUGETLB) again",
- 		},
- 		{
--			.addr = (void *)(addr_switch_hint - pagesize),
-+			.addr = (void *)(addr_switch_hint - pagesize - hugepagesize),
- 			.size = 2 * hugepagesize,
- 			.flags = MAP_HUGETLB | MAP_PRIVATE | MAP_ANONYMOUS,
--			.msg = "mmap(addr_switch_hint - pagesize, 2*hugepagesize, MAP_HUGETLB)",
-+			.msg = "mmap(addr_switch_hint - pagesize - hugepagesize, 2*hugepagesize, MAP_HUGETLB)",
- 			.low_addr_required = 1,
- 			.keep_mapped = 1,
- 		},
+diff --git a/drivers/crypto/caam/ctrl.c b/drivers/crypto/caam/ctrl.c
+index ce7b99019537..2250dce9c344 100644
+--- a/drivers/crypto/caam/ctrl.c
++++ b/drivers/crypto/caam/ctrl.c
+@@ -592,9 +592,9 @@ static int init_clocks(struct device *dev, const struct caam_imx_data *data)
+ 	int ret;
+
+ 	ctrlpriv->num_clks = data->num_clks;
+-	ctrlpriv->clks = devm_kmemdup(dev, data->clks,
+-				      data->num_clks * sizeof(data->clks[0]),
+-				      GFP_KERNEL);
++	ctrlpriv->clks = devm_kmemdup_array(dev, data->clks,
++					    data->num_clks, sizeof(*data->clks),
++					    GFP_KERNEL);
+ 	if (!ctrlpriv->clks)
+ 		return -ENOMEM;
+
 -- 
-2.49.0
-
+2.25.1
 
