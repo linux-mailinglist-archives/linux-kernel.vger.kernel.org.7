@@ -1,259 +1,213 @@
-Return-Path: <linux-kernel+bounces-787696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787697-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA677B379E1
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 07:32:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B741EB379E7
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 07:34:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2FB5F201899
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 05:32:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71DE63B5485
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 05:34:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9137931195B;
-	Wed, 27 Aug 2025 05:32:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1AB53101A6;
+	Wed, 27 Aug 2025 05:33:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="SxhGV5em"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1902930F94A;
-	Wed, 27 Aug 2025 05:32:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="K0lqS2o9"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D582F38DEC;
+	Wed, 27 Aug 2025 05:33:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756272728; cv=none; b=AS34ywYzYdOlCnoZKoYgyaBpljo6ls4b8AYZsjpr4uw5F+JS3drylEuzEwjMt8MBK4NtOO1xKOf944BxXvLtYljOOqktbEQSyR45m7gTrEHKtqEVoT5Boxh+/WT62JkgXEiBbzndezs0oX+eGBtoQXu3AIIf8w+DJkTrNciPKhs=
+	t=1756272834; cv=none; b=Q8M/XM8oRBnmfNXiw6AzvBV2P48ISSWZJUQfUBM/LTf3JwShmOrTfAlKWqkkdU3WLt6lIf07HbsC/53TBaa6b7AAtnSinFRqsZLTUEqLSMpjelGZgFrI/Dy4DpWuwvHjOxsKSLi1mFGgBIgEZBAHX6ERgqdj7xWvjXz6IGXqwgc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756272728; c=relaxed/simple;
-	bh=5Vpv1ExtYf4D2KVtB2QWCAUTZE9RP2CMEBeMd193E6g=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hR23dj3vv0bWTA/wrtlAi4apnesM8nEBlAcuUe61rSS3rX0nZepfr9sqUoD2+Se2c65idmbc3dCq+s0ykcaoc55rtHXQE9nD8xB3xTNbx8j9yOFcoIbcECkk0WR8WR6Mfed1Ml5wbL0fTd03inF0sV0zc6AJ946ghRM2vlMVv5w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=SxhGV5em; arc=none smtp.client-ip=220.197.31.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=9a
-	e29hWzvhMgeOqPH2MWh3VLpeAtPN1QJ1PiRYJW+EA=; b=SxhGV5emhrNmQFauY2
-	H9TOqRIKuxjz5+XmTrrvLQBgGRAwtr2RAsFxEQOQnxwcqrKmR5KLLpfEo1ILJXD9
-	PBkwf1Meu9q6tZZOMpk9tBMmIQLOJp9pJvceZVrHXKqY/JQkAr5mU1HUI3IlDlMv
-	AcPlahoCFZQb4PxOPD8H0tP68=
-Received: from phoenix.. (unknown [])
-	by gzga-smtp-mtada-g0-1 (Coremail) with SMTP id _____wDXH3YxmK5oLPk1Ew--.15805S4;
-	Wed, 27 Aug 2025 13:31:32 +0800 (CST)
-From: Jiawei Zhao <phoenix500526@163.com>
-To: ast@kernel.org
-Cc: daniel@iogearbox.net,
-	andrii@kernel.org,
-	yonghong.song@linux.dev,
-	bpf@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH bpf-next v16 2/2] selftests/bpf: Enrich subtest_basic_usdt case in selftests to cover SIB handling logic
-Date: Wed, 27 Aug 2025 05:31:28 +0000
-Message-ID: <20250827053128.1301287-3-phoenix500526@163.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250827053128.1301287-1-phoenix500526@163.com>
-References: <20250827053128.1301287-1-phoenix500526@163.com>
+	s=arc-20240116; t=1756272834; c=relaxed/simple;
+	bh=5VFDz0Vkj2/2uTvvseBKlXbtMaFHG29kxehO+uaaK5c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=s9pLRni2LPm2KEQPUlhm2QKMsgtMyKV2QZ36M2vaHSIx6C37WYEUhIsCalXy7hJ3jhSQMvY4zfpuM6lJJeh6MEmBH15EHNEfVHsHF3h70T4SzNoAvO8yLi/9T+Nwt2aQgMQQHOkThcvQJlpb/jjDq4PLMY7JfQyWNJyOYWAIBPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=K0lqS2o9; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756272832; x=1787808832;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=5VFDz0Vkj2/2uTvvseBKlXbtMaFHG29kxehO+uaaK5c=;
+  b=K0lqS2o9wO+MeoMe5IGOEDgu0NwpsQVDpAgjOY3aRZgfM1EFPQcoLy4f
+   Z0wdGkD8kG4YVwVUqmFoqmNEJS3R36OIv9WLhuf6SeVe+sHTFVBacHxv3
+   D7QkvTosVsrBS9l+EgBAhjnAFcvEAxLTyAo0r48P2mz9g/W30tMlbaZPt
+   dXt897IZwj+YkIMS4NWvGX2G4wTI78nLGyrlTSZk8AYCpz2YVG1lGTcvn
+   R/mnmFLTD/raj5msFpNEd7ILHECrAdw9N32yuzbDLyn982UQdRGLcLPNC
+   HUjhR5fxBn34UBk4BN20CkFELCd16MJ3ygEbfu4lXtJV9qoD6UiSoAiW9
+   Q==;
+X-CSE-ConnectionGUID: g5G9wxlVRgaikpPlLMJRaQ==
+X-CSE-MsgGUID: YxDyeDIsTuqMlk6PjJ4sNQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11534"; a="69889805"
+X-IronPort-AV: E=Sophos;i="6.18,214,1751266800"; 
+   d="scan'208";a="69889805"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2025 22:33:51 -0700
+X-CSE-ConnectionGUID: vodw3LM7TjuitAkIRHSMpw==
+X-CSE-MsgGUID: X0IBI55iQW+IF5BFOsX7aQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,214,1751266800"; 
+   d="scan'208";a="169000028"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by orviesa006.jf.intel.com with ESMTP; 26 Aug 2025 22:33:47 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1ur8mo-000Shv-2m;
+	Wed, 27 Aug 2025 05:33:40 +0000
+Date: Wed, 27 Aug 2025 13:32:42 +0800
+From: kernel test robot <lkp@intel.com>
+To: =?iso-8859-1?Q?Jean-Fran=E7ois?= Lessard <jefflessard3@gmail.com>,
+	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	devicetree@vger.kernel.org, linux-leds@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
+	Boris Gjenero <boris.gjenero@gmail.com>,
+	Christian Hewitt <christianshewitt@gmail.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Paolo Sabatino <paolo.sabatino@gmail.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: Re: [PATCH v3 3/4] auxdisplay: Add TM16xx 7-segment LED matrix
+ display controllers driver
+Message-ID: <202508271344.WqQr2aa7-lkp@intel.com>
+References: <20250820163120.24997-4-jefflessard3@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDXH3YxmK5oLPk1Ew--.15805S4
-X-Coremail-Antispam: 1Uf129KBjvJXoWxKF15Gw1DZrW8GrWfJw4xZwb_yoWxZFyDpa
-	ykZ34xtFy5t3WfGw1xJr4jqw4fKFn2yrW5ArZ7XrWjyrWkGrZ7Xrn7Kw17KFnxX3ykX3W5
-	ArZIkan5Kw4xXF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jqeHDUUUUU=
-X-CM-SenderInfo: pskrv0dl0viiqvswqiywtou0bp/xtbBgBS2iGiui+TTvQAAst
+In-Reply-To: <20250820163120.24997-4-jefflessard3@gmail.com>
 
-When using GCC on x86-64 to compile an usdt prog with -O1 or higher
-optimization, the compiler will generate SIB addressing mode for global
-array, e.g. "1@-96(%rbp,%rax,8)".
+Hi Jean-François,
 
-In this patch:
-- enrich subtest_basic_usdt test case to cover SIB addressing usdt argument spec
-  handling logic
+kernel test robot noticed the following build errors:
 
-Signed-off-by: Jiawei Zhao <phoenix500526@163.com>
----
- tools/testing/selftests/bpf/prog_tests/usdt.c | 84 ++++++++++++++++++-
- tools/testing/selftests/bpf/progs/test_usdt.c | 31 +++++++
- 2 files changed, 113 insertions(+), 2 deletions(-)
+[auto build test ERROR on robh/for-next]
+[also build test ERROR on linus/master v6.17-rc3 next-20250826]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-diff --git a/tools/testing/selftests/bpf/prog_tests/usdt.c b/tools/testing/selftests/bpf/prog_tests/usdt.c
-index 9057e983cc54..9df2827991c7 100644
---- a/tools/testing/selftests/bpf/prog_tests/usdt.c
-+++ b/tools/testing/selftests/bpf/prog_tests/usdt.c
-@@ -25,6 +25,7 @@ unsigned short test_usdt0_semaphore SEC(".probes");
- unsigned short test_usdt3_semaphore SEC(".probes");
- unsigned short test_usdt12_semaphore SEC(".probes");
- 
-+
- static void __always_inline trigger_func(int x) {
- 	long y = 42;
- 
-@@ -40,12 +41,72 @@ static void __always_inline trigger_func(int x) {
- 	}
- }
- 
-+#if defined(__x86_64__) || defined(__i386__)
-+/*
-+ * SIB (Scale-Index-Base) addressing format:
-+ *   "size@(base_reg, index_reg, scale)"
-+ * - 'size' is the size in bytes of the array element, and its sign indicates
-+ *		whether the type is signed (negative) or unsigned (positive).
-+ * - 'base_reg' is the register holding the base address, normally rdx or edx
-+ * - 'index_reg' is the register holding the index, normally rax or eax
-+ * - 'scale' is the scaling factor (typically 1, 2, 4, or 8), which matches the
-+ *		size of the element type.
-+ *
-+ * For example, for an array of 'short' (signed 2-byte elements), the SIB spec would be:
-+ *	- size: -2 (negative because 'short' is signed)
-+ *	- scale: 2 (since sizeof(short) == 2)
-+ *	The resulting SIB format: "-2@(%%rdx,%%rax,2)" for x86_64, "-2@(%%edx,%%eax,2)" for i386
-+ */
-+static volatile short array[] = {-1, -2, -3, -4};
-+
-+#if defined(__x86_64__)
-+#define USDT_SIB_ARG_SPEC -2@(%%rdx,%%rax,2)
-+#else
-+#define USDT_SIB_ARG_SPEC -2@(%%edx,%%eax,2)
-+#endif
-+
-+unsigned short test_usdt_sib_semaphore SEC(".probes");
-+
-+static void trigger_sib_spec(void)
-+{
-+	/*
-+	 * Force SIB addressing with inline assembly.
-+	 *
-+	 * You must compile with -std=gnu99 or -std=c99 to use the
-+	 * STAP_PROBE_ASM macro.
-+	 *
-+	 * The STAP_PROBE_ASM macro generates a quoted string that gets
-+	 * inserted between the surrounding assembly instructions. In this
-+	 * case, USDT_SIB_ARG_SPEC is embedded directly into the instruction
-+	 * stream, creating a probe point between the asm statement boundaries.
-+	 * It works fine with gcc/clang.
-+	 *
-+	 * Register constraints:
-+	 * - "d"(array): Binds the 'array' variable to %rdx or %edx register
-+	 * - "a"(0): Binds the constant 0 to %rax or %eax register
-+	 * These ensure that when USDT_SIB_ARG_SPEC references %%rdx(%edx) and
-+	 * %%rax(%eax), they contain the expected values for SIB addressing.
-+	 *
-+	 * The "memory" clobber prevents the compiler from reordering memory
-+	 * accesses around the probe point, ensuring that the probe behavior
-+	 * is predictable and consistent.
-+	 */
-+	asm volatile(
-+		STAP_PROBE_ASM(test, usdt_sib, USDT_SIB_ARG_SPEC)
-+		:
-+		: "d"(array), "a"(0)
-+		: "memory"
-+	);
-+}
-+#endif
-+
- static void subtest_basic_usdt(void)
- {
- 	LIBBPF_OPTS(bpf_usdt_opts, opts);
- 	struct test_usdt *skel;
- 	struct test_usdt__bss *bss;
- 	int err, i;
-+	const __u64 expected_cookie = 0xcafedeadbeeffeed;
- 
- 	skel = test_usdt__open_and_load();
- 	if (!ASSERT_OK_PTR(skel, "skel_open"))
-@@ -59,20 +120,29 @@ static void subtest_basic_usdt(void)
- 		goto cleanup;
- 
- 	/* usdt0 won't be auto-attached */
--	opts.usdt_cookie = 0xcafedeadbeeffeed;
-+	opts.usdt_cookie = expected_cookie;
- 	skel->links.usdt0 = bpf_program__attach_usdt(skel->progs.usdt0,
- 						     0 /*self*/, "/proc/self/exe",
- 						     "test", "usdt0", &opts);
- 	if (!ASSERT_OK_PTR(skel->links.usdt0, "usdt0_link"))
- 		goto cleanup;
- 
-+#if defined(__x86_64__) || defined(__i386__)
-+	opts.usdt_cookie = expected_cookie;
-+	skel->links.usdt_sib = bpf_program__attach_usdt(skel->progs.usdt_sib,
-+							 0 /*self*/, "/proc/self/exe",
-+							 "test", "usdt_sib", &opts);
-+	if (!ASSERT_OK_PTR(skel->links.usdt_sib, "usdt_sib_link"))
-+		goto cleanup;
-+#endif
-+
- 	trigger_func(1);
- 
- 	ASSERT_EQ(bss->usdt0_called, 1, "usdt0_called");
- 	ASSERT_EQ(bss->usdt3_called, 1, "usdt3_called");
- 	ASSERT_EQ(bss->usdt12_called, 1, "usdt12_called");
- 
--	ASSERT_EQ(bss->usdt0_cookie, 0xcafedeadbeeffeed, "usdt0_cookie");
-+	ASSERT_EQ(bss->usdt0_cookie, expected_cookie, "usdt0_cookie");
- 	ASSERT_EQ(bss->usdt0_arg_cnt, 0, "usdt0_arg_cnt");
- 	ASSERT_EQ(bss->usdt0_arg_ret, -ENOENT, "usdt0_arg_ret");
- 	ASSERT_EQ(bss->usdt0_arg_size, -ENOENT, "usdt0_arg_size");
-@@ -156,6 +226,16 @@ static void subtest_basic_usdt(void)
- 	ASSERT_EQ(bss->usdt3_args[1], 42, "usdt3_arg2");
- 	ASSERT_EQ(bss->usdt3_args[2], (uintptr_t)&bla, "usdt3_arg3");
- 
-+#if defined(__x86_64__) || defined(__i386__)
-+	trigger_sib_spec();
-+	ASSERT_EQ(bss->usdt_sib_called, 1, "usdt_sib_called");
-+	ASSERT_EQ(bss->usdt_sib_cookie, expected_cookie, "usdt_sib_cookie");
-+	ASSERT_EQ(bss->usdt_sib_arg_cnt, 1, "usdt_sib_arg_cnt");
-+	ASSERT_EQ(bss->usdt_sib_arg, nums[0], "usdt_sib_arg");
-+	ASSERT_EQ(bss->usdt_sib_arg_ret, 0, "usdt_sib_arg_ret");
-+	ASSERT_EQ(bss->usdt_sib_arg_size, sizeof(nums[0]), "usdt_sib_arg_size");
-+#endif
-+
- cleanup:
- 	test_usdt__destroy(skel);
- }
-diff --git a/tools/testing/selftests/bpf/progs/test_usdt.c b/tools/testing/selftests/bpf/progs/test_usdt.c
-index 096488f47fbc..a78c87537b07 100644
---- a/tools/testing/selftests/bpf/progs/test_usdt.c
-+++ b/tools/testing/selftests/bpf/progs/test_usdt.c
-@@ -107,4 +107,35 @@ int BPF_USDT(usdt12, int a1, int a2, long a3, long a4, unsigned a5,
- 	return 0;
- }
- 
-+int usdt_sib_called;
-+u64 usdt_sib_cookie;
-+int usdt_sib_arg_cnt;
-+int usdt_sib_arg_ret;
-+short usdt_sib_arg;
-+int usdt_sib_arg_size;
-+
-+/*
-+ * usdt_sib is only tested on x86-related architectures, so it requires
-+ * manual attach since auto-attach will panic tests under other architectures
-+ */
-+SEC("usdt")
-+int usdt_sib(struct pt_regs *ctx)
-+{
-+	long tmp;
-+
-+	if (my_pid != (bpf_get_current_pid_tgid() >> 32))
-+		return 0;
-+
-+	__sync_fetch_and_add(&usdt_sib_called, 1);
-+
-+	usdt_sib_cookie = bpf_usdt_cookie(ctx);
-+	usdt_sib_arg_cnt = bpf_usdt_arg_cnt(ctx);
-+
-+	usdt_sib_arg_ret = bpf_usdt_arg(ctx, 0, &tmp);
-+	usdt_sib_arg = (short)tmp;
-+	usdt_sib_arg_size = bpf_usdt_arg_size(ctx, 0);
-+
-+	return 0;
-+}
-+
- char _license[] SEC("license") = "GPL";
+url:    https://github.com/intel-lab-lkp/linux/commits/Jean-Fran-ois-Lessard/dt-bindings-vendor-prefixes-Add-fdhisi-titanmec-princeton-winrise-wxicore/20250821-003451
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
+patch link:    https://lore.kernel.org/r/20250820163120.24997-4-jefflessard3%40gmail.com
+patch subject: [PATCH v3 3/4] auxdisplay: Add TM16xx 7-segment LED matrix display controllers driver
+config: x86_64-randconfig-r112-20250827 (https://download.01.org/0day-ci/archive/20250827/202508271344.WqQr2aa7-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14+deb12u1) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250827/202508271344.WqQr2aa7-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508271344.WqQr2aa7-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   ld: vmlinux.o: in function `tm16xx_i2c_write':
+>> drivers/auxdisplay/tm16xx.c:1469: undefined reference to `i2c_transfer'
+   ld: vmlinux.o: in function `tm16xx_i2c_read':
+   drivers/auxdisplay/tm16xx.c:1497: undefined reference to `i2c_transfer'
+   ld: vmlinux.o: in function `tm16xx_i2c_probe':
+>> drivers/auxdisplay/tm16xx.c:1416: undefined reference to `i2c_get_match_data'
+   ld: vmlinux.o: in function `tm16xx_i2c_register':
+>> drivers/auxdisplay/tm16xx.c:1727: undefined reference to `i2c_register_driver'
+   ld: vmlinux.o: in function `tm16xx_i2c_unregister':
+>> drivers/auxdisplay/tm16xx.c:1732: undefined reference to `i2c_del_driver'
+
+
+vim +1469 drivers/auxdisplay/tm16xx.c
+
+  1401	
+  1402	/* I2C specific code */
+  1403	#if IS_ENABLED(CONFIG_I2C)
+  1404	/**
+  1405	 * tm16xx_i2c_probe() - Probe callback for I2C-attached controllers
+  1406	 * @client: pointer to i2c_client
+  1407	 *
+  1408	 * Return: 0 on success, negative error code on failure
+  1409	 */
+  1410	static int tm16xx_i2c_probe(struct i2c_client *client)
+  1411	{
+  1412		const struct tm16xx_controller *controller;
+  1413		struct tm16xx_display *display;
+  1414		int ret;
+  1415	
+> 1416		controller = i2c_get_match_data(client);
+  1417		if (!controller)
+  1418			return -EINVAL;
+  1419	
+  1420		display = devm_kzalloc(&client->dev, sizeof(*display), GFP_KERNEL);
+  1421		if (!display)
+  1422			return -ENOMEM;
+  1423	
+  1424		display->client.i2c = client;
+  1425		display->dev = &client->dev;
+  1426		display->controller = controller;
+  1427	
+  1428		i2c_set_clientdata(client, display);
+  1429	
+  1430		ret = tm16xx_probe(display);
+  1431		if (ret)
+  1432			return ret;
+  1433	
+  1434		return 0;
+  1435	}
+  1436	
+  1437	/**
+  1438	 * tm16xx_i2c_remove() - Remove callback for I2C-attached controllers
+  1439	 * @client: pointer to i2c_client
+  1440	 */
+  1441	static void tm16xx_i2c_remove(struct i2c_client *client)
+  1442	{
+  1443		struct tm16xx_display *display = i2c_get_clientdata(client);
+  1444	
+  1445		tm16xx_display_remove(display);
+  1446	}
+  1447	
+  1448	/**
+  1449	 * tm16xx_i2c_write() - I2C write helper for controller
+  1450	 * @display: pointer to tm16xx_display structure
+  1451	 * @data: command and data bytes to send
+  1452	 * @len: number of bytes in @data
+  1453	 *
+  1454	 * Return: 0 on success, negative error code on failure
+  1455	 */
+  1456	static int tm16xx_i2c_write(struct tm16xx_display *display, u8 *data, size_t len)
+  1457	{
+  1458		dev_dbg(display->dev, "i2c_write %*ph", (char)len, data);
+  1459	
+  1460		/* expected sequence: S Command [A] Data [A] P */
+  1461		struct i2c_msg msg = {
+  1462			.addr = data[0] >> 1,
+  1463			.flags = 0,
+  1464			.len = len - 1,
+  1465			.buf = &data[1],
+  1466		};
+  1467		int ret;
+  1468	
+> 1469		ret = i2c_transfer(display->client.i2c->adapter, &msg, 1);
+  1470		if (ret < 0)
+  1471			return ret;
+  1472	
+  1473		return (ret == 1) ? 0 : -EIO;
+  1474	}
+  1475	
+
 -- 
-2.43.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
