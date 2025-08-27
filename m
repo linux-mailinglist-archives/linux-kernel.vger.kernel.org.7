@@ -1,193 +1,136 @@
-Return-Path: <linux-kernel+bounces-787449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787450-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90505B3765C
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 02:58:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62837B3765D
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 02:58:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4602E5E4F5D
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 00:58:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6113A1B65395
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 00:58:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B073C1DFE0B;
-	Wed, 27 Aug 2025 00:57:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 716A41DED52;
+	Wed, 27 Aug 2025 00:58:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TxdeAdor"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GNh3EhjC"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98A9820ADF8;
-	Wed, 27 Aug 2025 00:57:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91BDD1D63DF
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 00:58:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756256234; cv=none; b=OoOCnGBz1OZo6PZx4zB40biCVw/oAOrvA3ocmGJNXMmhIcrf1Vzq0YlhwJpK8ygWAQqVmuL1+C6ie791NGPqVVVF33OSYoahCZysHPFn9Jslt8dr1ZJ9PH9bmUcp6W1uqdY/YAEtz9Vv9+D3dN0ftNflMQ2WYMNaaOShLZvHtzY=
+	t=1756256307; cv=none; b=SFt8udV49+WjzVqRm2f3PcT5UB0BtsC9QVflFKq9Rqbnau+gJh1GseddJ/4MEiXqQzGho5SSJ5gcIjN+Ez6ik0nySNiV15j0tGTLUDz9sAyJ6F/UFnPjLGhCX7d+j6lKulO8+cC0PINWZlt5q8UCoDpbTQbDgBqd3fwUqismL64=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756256234; c=relaxed/simple;
-	bh=aSiHJJ9WXzlVv9knT6/I6iHouh299Sae5FDjQsAQAKY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=KaXusKdqbbyQ+PPdnAhhU9+cboaW2SbEFaDU7TxMFXonpH2Dcr4AbO+0gw9VBOU+Tkg4uh7RWRIT7O8+EnQ/h/nUJg4HZt6nWTi7MHLFQccO7h6Wn3ZoLoEiAJzaxci0k+vwsLM2f1kYBFROrc2j0hFK0Tab3N/hhoHzbnwFpiM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TxdeAdor; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-771e4378263so2432287b3a.0;
-        Tue, 26 Aug 2025 17:57:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756256232; x=1756861032; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=e+mQsn5nOVfRc5NpRhiJTO0agCV0nYMAh0ExZWY5vJw=;
-        b=TxdeAdorlzs7XLcdGjkIfdbQKOGmOCAUYBapv78lG1ded6ZJUkDwrvIkHJ1X0rw2W0
-         XqMC6JwMZw/XqSuc/5rXmYhBolBztYIonshJLMPmMBeAg+D9fTXBeDwuMgltZ1Znf5C4
-         lkaGmzbEhbAfQN0J5bpjqXnpjuWDFNAm9AVriTdOfsxfVZaaRVV3h0fJVdUjscIShIUb
-         vJKkC763E3aflz34zUNlz7XxSLYX7EdzJgKQi7yEicMirALZACs8or6zW1bOnTu/g5km
-         5qad9ucbdu/7t+1z8VNQVwUENeAvS6RM7C7HyOSLrbsD+ZsBt+0SCwsHzClYp3S1Rcik
-         2zYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756256232; x=1756861032;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=e+mQsn5nOVfRc5NpRhiJTO0agCV0nYMAh0ExZWY5vJw=;
-        b=t3Im2grPvcb6dk43G8QvYWxpQgwYObDCIXM17JbkKnrEfFyPlKrpB5MsoaqDvIxLOU
-         BQG+ZOZGSVB4g9hOF05txy9Mc7+U0637rqM/KolCEhA6UcW54gqdelI2pBM85meLy9BV
-         ejnndhnCVg8xriuQZvojn5AIvocikRfYLoFSs7Ik381COYEFA8j0Du3lPBa9gU4nfm8F
-         tl1h05mL9IBwiifl7zAvMlqJBxpyNtLWPdn80tmLQbgywWosxL6cBKs0pYSI43Z33DhF
-         6iwt/jji5/2CA3xQpDjIlkJjnavxhPIkJae/hac5rJ009R2W7VznzlFdd61HO4TJlfxS
-         5XmA==
-X-Forwarded-Encrypted: i=1; AJvYcCUyIjIxn4FvTP5AZ+g4ffE2gqCDu4N1tqA2uBW4tCu+P/voOXDuzLyFjTf4ts1z0NRbjhnwDmfF1rmtfA==@vger.kernel.org, AJvYcCWp9/OqCty3NgbN7pygN3MTGCt2N7LiCqTKFMcTOG+9DCvNq5X6psbadiW1Z2qvkdWIp1CIJtbNZ8Yd7yOq@vger.kernel.org, AJvYcCXcbjKeJ+1ueQPWW2GyYsJa7wcMojPGKwwTCdJCt52iJVRaYscl2IwHdQUJ6kJg3ZaElsIsAjLQ09ej@vger.kernel.org
-X-Gm-Message-State: AOJu0YzN/WBRmLs9TCjVbL/YhRklnyz4RgX9Pqq3D6gGopA74zoCp2vi
-	yS+Ta5JRMz51/rJcqGNKPDSlfSyrehRDBt2+gxBkXsNcUk4k65KAlAEP4OFVBQ==
-X-Gm-Gg: ASbGnctORtzEBvpmfKlqm+xDFg6RM3WEEnNAyUN1EFpBNGtxUw6gkUL7wMIp8ThX9UB
-	pHQ5ze2EXjOqGOjBAhmR9LTpyb75zvlCQiC6HEtEJ/75VD8Gv3IMvnIsRTdshikX5ac4mHwowf0
-	DY9AjurTyMHniXEfS7jhztsgbC2XrlN9zmzY6z6zTcjg9jRk1ZtaE62y4+CEOvyDeMtBmoi946F
-	Oc7oPdGti7uaIA+SftpQn9OGgKaFhUgbJ3YR/DfoNNJKKH9c9o7FWbfM5M0/dkWNHbDOF6DObaR
-	XZeKmOFb5VmrhyUZxO47RSoha5ML90eoRvsumVOQK/EnXBnKqpK05vevMTs7L0+hIgae9yf0dyn
-	hXp1TkqCsDi1H34L/YkVa0ZuQ39PVCIRxjk0TyPQfPlSIF9vlbS0k4BoNIxlhMI37qg==
-X-Google-Smtp-Source: AGHT+IH9ISDmR2/0VTrTeaTdohaSBjoHB1/bbyP2/lhVXGYdlZJrIcYDkB7uxf31eltgLCrGZP+UDw==
-X-Received: by 2002:a05:6a00:2189:b0:76e:885a:c332 with SMTP id d2e1a72fcca58-7702fc8b7d5mr24500402b3a.32.1756256231552;
-        Tue, 26 Aug 2025 17:57:11 -0700 (PDT)
-Received: from archlinux.lan ([2601:644:8200:acc7::1f6])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77057368ca0sm8382515b3a.58.2025.08.26.17.57.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Aug 2025 17:57:10 -0700 (PDT)
-From: Rosen Penev <rosenp@gmail.com>
-To: linux-wireless@vger.kernel.org
-Cc: =?UTF-8?q?Toke=20H=C3=B8iland-J=C3=B8rgensen?= <toke@toke.dk>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
-	linux-kernel@vger.kernel.org (open list),
-	linux-mips@vger.kernel.org (open list:MIPS)
-Subject: [PATCHv4 3/3] mips: qca: specify WMAC LED directly
-Date: Tue, 26 Aug 2025 17:56:58 -0700
-Message-ID: <20250827005658.3464-4-rosenp@gmail.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250827005658.3464-1-rosenp@gmail.com>
-References: <20250827005658.3464-1-rosenp@gmail.com>
+	s=arc-20240116; t=1756256307; c=relaxed/simple;
+	bh=pJcb+Fht6vB+reX+TqG9R4aKlunq8AvYtB6xYR2vnQw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LfqbQY3DJETfdRofKXQxfpsmYym/kOJ3On2o7t6dr1DYc9xQuPRpqkHgTLGnXmmXeGh8FtaiZ0ULyhdJ41XvSSN/vTcgc6k6DMQEVlAz5HvQdiHFqPliaZZ5aSPq8yVjgNh1B2urKo7pTRIMLMqUioO3DBeM4j1R9QDX2Q8wauc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GNh3EhjC; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756256303;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=W9Vds8El0nHCfAOchscouR6LADiC3NFwfPcPYTHIEQ4=;
+	b=GNh3EhjCbepf2VLHaBfbfEdtJka/gJuoiytdOAhCRt7ytvIK0FX/ie60mWQ5eyzBlYz1dq
+	nPaFcd+OjV8koJ9RhkQTgjMvfk6yN21M5PZz6/sxRb1MSfvcdhtK8YDgoN0VZnVX2D/lyq
+	7Te0PBN4mDwQ1AtKTfTHiWn0kwvLX+8=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-482-2asWDuvsMGqG5usYVPu2Zg-1; Tue,
+ 26 Aug 2025 20:58:21 -0400
+X-MC-Unique: 2asWDuvsMGqG5usYVPu2Zg-1
+X-Mimecast-MFC-AGG-ID: 2asWDuvsMGqG5usYVPu2Zg_1756256300
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CCEB919560B2;
+	Wed, 27 Aug 2025 00:58:19 +0000 (UTC)
+Received: from fedora (unknown [10.72.116.24])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 23BC519560AB;
+	Wed, 27 Aug 2025 00:58:12 +0000 (UTC)
+Date: Wed, 27 Aug 2025 08:58:07 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: linan666@huaweicloud.com
+Cc: axboe@kernel.dk, jianchao.w.wang@oracle.com,
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+	yukuai3@huawei.com, yangerkun@huawei.com, yi.zhang@huawei.com
+Subject: Re: [PATCH] blk-mq: check kobject state_in_sysfs before deleting in
+ blk_mq_unregister_hctx
+Message-ID: <aK5YH4Jbt3ZNngwR@fedora>
+References: <20250826084854.1030545-1-linan666@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250826084854.1030545-1-linan666@huaweicloud.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-The ath9k driver creates an LED unconditionally being driven with
-sometimes the wrong pin. Not only that, the current dts definitions have
-LEDs for the WMAC that do not behave in response to it. Fix both issues.
+On Tue, Aug 26, 2025 at 04:48:54PM +0800, linan666@huaweicloud.com wrote:
+> From: Li Nan <linan122@huawei.com>
+> 
+> In __blk_mq_update_nr_hw_queues() the return value of
+> blk_mq_sysfs_register_hctxs() is not checked. If sysfs creation for hctx
 
-Signed-off-by: Rosen Penev <rosenp@gmail.com>
----
- arch/mips/boot/dts/qca/ar9132_tl_wr1043nd_v1.dts |  9 ++++-----
- arch/mips/boot/dts/qca/ar9331_dragino_ms14.dts   | 11 +++++------
- arch/mips/boot/dts/qca/ar9331_tl_mr3020.dts      | 11 +++++------
- 3 files changed, 14 insertions(+), 17 deletions(-)
+Looks we should check its return value and handle the failure in both
+the call site and blk_mq_sysfs_register_hctxs().
 
-diff --git a/arch/mips/boot/dts/qca/ar9132_tl_wr1043nd_v1.dts b/arch/mips/boot/dts/qca/ar9132_tl_wr1043nd_v1.dts
-index a7901bb040ce..0e813c38c31c 100644
---- a/arch/mips/boot/dts/qca/ar9132_tl_wr1043nd_v1.dts
-+++ b/arch/mips/boot/dts/qca/ar9132_tl_wr1043nd_v1.dts
-@@ -56,11 +56,6 @@ led-2 {
- 			label = "tp-link:green:qss";
- 			gpios = <&gpio 5 GPIO_ACTIVE_HIGH>;
- 		};
--
--		led-3 {
--			label = "tp-link:green:wlan";
--			gpios = <&gpio 9 GPIO_ACTIVE_LOW>;
--		};
- 	};
- };
- 
-@@ -111,4 +106,8 @@ partition@2 {
- 
- &wifi {
- 	status = "okay";
-+
-+	led {
-+		reg = <9>;
-+	};
- };
-diff --git a/arch/mips/boot/dts/qca/ar9331_dragino_ms14.dts b/arch/mips/boot/dts/qca/ar9331_dragino_ms14.dts
-index 37a74aabe4b4..19d72a0fdd8d 100644
---- a/arch/mips/boot/dts/qca/ar9331_dragino_ms14.dts
-+++ b/arch/mips/boot/dts/qca/ar9331_dragino_ms14.dts
-@@ -22,12 +22,6 @@ memory@0 {
- 	leds {
- 		compatible = "gpio-leds";
- 
--		led-wlan {
--			label = "dragino2:red:wlan";
--			gpios = <&gpio 0 GPIO_ACTIVE_HIGH>;
--			default-state = "off";
--		};
--
- 		led-lan {
- 			label = "dragino2:red:lan";
- 			gpios = <&gpio 13 GPIO_ACTIVE_LOW>;
-@@ -101,4 +95,9 @@ spiflash: w25q128@0 {
- 
- &wifi {
- 	status = "okay";
-+
-+	led {
-+		reg = <0>;
-+		led-active-high;
-+	};
- };
-diff --git a/arch/mips/boot/dts/qca/ar9331_tl_mr3020.dts b/arch/mips/boot/dts/qca/ar9331_tl_mr3020.dts
-index a7108c803eb3..c12dd4a72772 100644
---- a/arch/mips/boot/dts/qca/ar9331_tl_mr3020.dts
-+++ b/arch/mips/boot/dts/qca/ar9331_tl_mr3020.dts
-@@ -22,12 +22,6 @@ memory@0 {
- 	leds {
- 		compatible = "gpio-leds";
- 
--		led-wlan {
--			label = "tp-link:green:wlan";
--			gpios = <&gpio 0 GPIO_ACTIVE_HIGH>;
--			default-state = "off";
--		};
--
- 		led-lan {
- 			label = "tp-link:green:lan";
- 			gpios = <&gpio 17 GPIO_ACTIVE_LOW>;
-@@ -117,4 +111,9 @@ spiflash: s25sl032p@0 {
- 
- &wifi {
- 	status = "okay";
-+
-+	led {
-+		reg = <0>;
-+		led-active-high;
-+	};
- };
--- 
-2.50.1
+> fails, later changing the number of hw_queues or removing disk will
+> trigger the following warning:
+> 
+>   kernfs: can not remove 'nr_tags', no directory
+>   WARNING: CPU: 2 PID: 637 at fs/kernfs/dir.c:1707 kernfs_remove_by_name_ns+0x13f/0x160
+>   Call Trace:
+>    remove_files.isra.1+0x38/0xb0
+>    sysfs_remove_group+0x4d/0x100
+>    sysfs_remove_groups+0x31/0x60
+>    __kobject_del+0x23/0xf0
+>    kobject_del+0x17/0x40
+>    blk_mq_unregister_hctx+0x5d/0x80
+>    blk_mq_sysfs_unregister_hctxs+0x94/0xd0
+>    blk_mq_update_nr_hw_queues+0x124/0x760
+>    nullb_update_nr_hw_queues+0x71/0xf0 [null_blk]
+>    nullb_device_submit_queues_store+0x92/0x120 [null_blk]
+> 
+> kobjct_del() was called unconditionally even if sysfs creation failed.
+> Fix it by checkig the kobject creation statusbefore deleting it.
+> 
+> Fixes: 477e19dedc9d ("blk-mq: adjust debugfs and sysfs register when updating nr_hw_queues")
+> Signed-off-by: Li Nan <linan122@huawei.com>
+> ---
+>  block/blk-mq-sysfs.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/block/blk-mq-sysfs.c b/block/blk-mq-sysfs.c
+> index 24656980f443..5c399ac562ea 100644
+> --- a/block/blk-mq-sysfs.c
+> +++ b/block/blk-mq-sysfs.c
+> @@ -150,9 +150,11 @@ static void blk_mq_unregister_hctx(struct blk_mq_hw_ctx *hctx)
+>  		return;
+>  
+>  	hctx_for_each_ctx(hctx, ctx, i)
+> -		kobject_del(&ctx->kobj);
+> +		if (ctx->kobj.state_in_sysfs)
+> +			kobject_del(&ctx->kobj);
+>  
+> -	kobject_del(&hctx->kobj);
+> +	if (hctx->kobj.state_in_sysfs)
+> +		kobject_del(&hctx->kobj);
+
+It is bad to use kobject internal state in block layer.
+
+
+Thanks,
+Ming
 
 
