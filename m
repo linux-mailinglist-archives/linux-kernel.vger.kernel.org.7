@@ -1,132 +1,135 @@
-Return-Path: <linux-kernel+bounces-788863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5591B38B43
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 23:15:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC1F2B38B44
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 23:16:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 961003B14CE
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 21:15:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30F721C2185B
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 21:17:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D46282D46B4;
-	Wed, 27 Aug 2025 21:15:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12A2D2C2377;
+	Wed, 27 Aug 2025 21:16:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="HM+MoNbM"
-Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NGtQFa50"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CBB8149C6F
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 21:15:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F17C149C6F
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 21:16:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756329332; cv=none; b=YUL0Ck2ERyXLEoExQc4I6sTJxa1gMP9TmQrOyqnJG3ZorIDh4q6M4UC35og2lyRr3frYgHQJ6pxdGrxFLvFjQXTCHNaEyIqA47mbC65Q60vnnbJKFq89Val0BQlDXXclTGGuUfl0LGuTELtyDfYBXtkhnstlOBDUhi59tjqdS2c=
+	t=1756329410; cv=none; b=VQV1E2StPobGT6QvNRXoKqY0T5boiFDQy1EwtekpxfbeVf9FgE7z8zantQMWMUEZp4Z9PZAtIcTA/DHV6trRLoSx1yO+KR0Kl9Byf59siM3n7crhLM9FaJ4dWqgbPfQpb4JeQF5KkOg5YlOCwpVODZOwKk9WifP8Ki0EAV4xKSQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756329332; c=relaxed/simple;
-	bh=EjEuwO68MZNs1T0NGo3hCuUSMM1gRk/jrT/8Jsa/fjY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uOVHxvYNBBhkykm6TB+5NCFx3WorLkHQa4H/6jBvgkcPWSBL+yvXRY6/V+/FB5Iy5gNLbUNkYJIWnTNho8pptsJxGjtUQD3KoMoNXK/QP4A9haI3RnPu9xWWraxkGKjpCz1peb56wZuSt/9KQoApRgbBN7aGDW63HcoBl3zPVaI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=HM+MoNbM; arc=none smtp.client-ip=91.218.175.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 27 Aug 2025 14:15:20 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1756329326;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Rcc5U5sbYk7C+fJouaFaLhZUqm8inNlgZ+ZSLJCNPX4=;
-	b=HM+MoNbMsASGnf9PdqLIBZiLT7S/fvLPSA+4c+b2WmnR90L0kJ3APowlgO5+qbgAzEU6Lq
-	UiCQbQHsZyBvPNuf1ozbITBcpLgxRV4AThg5lumSZk/ANCftpc5c7/iITOteh9CZQh0sMv
-	fnZBlC+Cy8vru9NSp39gtom8KRaS2/M=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Suren Baghdasaryan <surenb@google.com>
-Cc: Yueyang Pan <pyyjason@gmail.com>, 
-	Kent Overstreet <kent.overstreet@linux.dev>, Usama Arif <usamaarif642@gmail.com>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [RFC 0/1] Try to add memory allocation info for cgroup oom kill
-Message-ID: <5o52rxp4ujglel53cs6ii2royaczuywuejyn7kbij6jknuglmf@frk4omt5ak7d>
-References: <cover.1755190013.git.pyyjason@gmail.com>
- <6qu2uo3d2msctkkz5slhx5piqtt64wsvkgkvjjpd255k7nrds4@qtffskmesivg>
- <aKdw6Pkj2H4B6QDb@devbig569.cln6.facebook.com>
- <tiwa6wnkdf6q2pfchxbbqb6r42y7moykqumvnzauckhavyemg2@zc5haja5mlxs>
- <CAJuCfpHyXWwrKkFmmbHTGtG9L-JK2eCt03ku9364i4v6SJKFbA@mail.gmail.com>
+	s=arc-20240116; t=1756329410; c=relaxed/simple;
+	bh=h2vwcYvB52wM6p8rPx+g4cI7a/giRHNuNaRI6L0ndwg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VVCKdIChz6IEEaCtISGpmlMdg8+QnKJztzlsqCsNXd0WrqpVsgLCBFGZhi9X3ZYPSJc/RD71WVq8UZIptpmEU0g37pnv9li6ixj7RbhhAc74ij07LtC+DAOUhdplIXF9X4nztwo8IJRTcxtIBP30HKuLd39B8WoGM3Ufetv4fCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NGtQFa50; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3883C4CEFF
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 21:16:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756329409;
+	bh=h2vwcYvB52wM6p8rPx+g4cI7a/giRHNuNaRI6L0ndwg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=NGtQFa50GgZfyUt2ZuklQdFNsYfU7Ys+pBXZw8rBRW1zV9/d+vb8cykG3SNhiz1ju
+	 ntwrf/VUpSNZTYkw+edjpYah9yvLRRDK/+Q0pfk/KjsYptsiGmDdMOKGKytBlYH79B
+	 idZv06zyv/gxjGjsMVGWdKkmFtx75Uuf+3v6UxjKAKBsaZyGYOGeS/qQjvs/aA8cg6
+	 nslq5b5+CYWVk5khPQ3gcCLPMIHBrk8zcdtCNL55XL2aFJDq8gocRgru5Gv0folsVb
+	 IlzJyV7zVvZGG8zVIGs0jbuLdPOHgyYH9mg+RqBhcW/O8uY6NRNeSEZIaeozATIKO4
+	 VBAdq/fSgfpCA==
+Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-e96e892081eso159389276.3
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 14:16:49 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW1f+7vbIB6MHbAsjK6maKxGiC32yte734moylc/HwIbjOV9lBHu4gl3i3P6Ijwt8jDq0Ud5gYiGOx2UR8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxYSZO7I+6HGBBSN6cfO4yhqhzZEshU6B4HRB50nR5kNFH6uwwM
+	QG20s9FLCD9R5XECnfn4x11EK1uhf5xb3tzuvKBGy1+9m2y/etI8GGiFEhGXyebETlpaSQGtb6B
+	isH3RhGnkNiWuB4jaFpU8GmqIHg0acTZhkx3bm51hyw==
+X-Google-Smtp-Source: AGHT+IFExBNFXHaK1D9PX+y6rV6yrbQyNeRcW17eknQkn390Bdly6Ur/L2Q/PGdRn8kWIwZ+xuAQ6TWixh5N9DqDn2s=
+X-Received: by 2002:a05:690c:3345:b0:71f:b944:104f with SMTP id
+ 00721157ae682-71fdc568115mr250305367b3.50.1756329409097; Wed, 27 Aug 2025
+ 14:16:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJuCfpHyXWwrKkFmmbHTGtG9L-JK2eCt03ku9364i4v6SJKFbA@mail.gmail.com>
-X-Migadu-Flow: FLOW_OUT
+References: <CACePvbWzyqJJxP8BFXS_NDLcXCz-YXkt8eYBxv3CER9RpnJVXA@mail.gmail.com>
+ <20250827174513.47171-1-sj@kernel.org>
+In-Reply-To: <20250827174513.47171-1-sj@kernel.org>
+From: Chris Li <chrisl@kernel.org>
+Date: Wed, 27 Aug 2025 14:16:37 -0700
+X-Gmail-Original-Message-ID: <CACePvbXnaWZh61aH=BHoGDqbKvBSE52Me+PpE-WMXcGpRy0FFw@mail.gmail.com>
+X-Gm-Features: Ac12FXxDZkGQigQMPqlJ2_x7uvW4YhEBBCZKu1uKYoU3sLqFVC_3DHYznctEp38
+Message-ID: <CACePvbXnaWZh61aH=BHoGDqbKvBSE52Me+PpE-WMXcGpRy0FFw@mail.gmail.com>
+Subject: Re: [PATCH v5] mm/zswap: store <PAGE_SIZE compression failed page as-is
+To: SeongJae Park <sj@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Chengming Zhou <chengming.zhou@linux.dev>, 
+	Herbert Xu <herbert@gondor.apana.org.au>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Nhat Pham <nphamcs@gmail.com>, Yosry Ahmed <yosry.ahmed@linux.dev>, kernel-team@meta.com, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	Takero Funaki <flintglass@gmail.com>, David Hildenbrand <david@redhat.com>, Baoquan He <bhe@redhat.com>, 
+	Barry Song <baohua@kernel.org>, Kairui Song <kasong@tencent.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 26, 2025 at 07:32:17PM -0700, Suren Baghdasaryan wrote:
-> On Thu, Aug 21, 2025 at 12:53 PM Shakeel Butt <shakeel.butt@linux.dev> wrote:
+On Wed, Aug 27, 2025 at 10:45=E2=80=AFAM SeongJae Park <sj@kernel.org> wrot=
+e:
+> > > >
+> > > > On Fri, Aug 22, 2025 at 12:08=E2=80=AFPM SeongJae Park <sj@kernel.o=
+rg> wrote:
+> [...]
+> > > """
+> > > --- a/mm/zswap.c
+> > > +++ b/mm/zswap.c
+> > > @@ -952,6 +952,7 @@ static bool zswap_compress(struct page *page, str=
+uct zswap_entry *entry,
+> > >         struct zpool *zpool;
+> > >         gfp_t gfp;
+> > >         u8 *dst;
+> > > +       bool dst_need_unmap =3D false;
 > >
-> > On Thu, Aug 21, 2025 at 12:18:00PM -0700, Yueyang Pan wrote:
-> > > On Thu, Aug 21, 2025 at 11:35:19AM -0700, Shakeel Butt wrote:
-> > > > On Thu, Aug 14, 2025 at 10:11:56AM -0700, Yueyang Pan wrote:
-> > > > > Right now in the oom_kill_process if the oom is because of the cgroup
-> > > > > limit, we won't get memory allocation infomation. In some cases, we
-> > > > > can have a large cgroup workload running which dominates the machine.
-> > > > > The reason using cgroup is to leave some resource for system. When this
-> > > > > cgroup is killed, we would also like to have some memory allocation
-> > > > > information for the whole server as well. This is reason behind this
-> > > > > mini change. Is it an acceptable thing to do? Will it be too much
-> > > > > information for people? I am happy with any suggestions!
-> > > >
-> > > > For a single patch, it is better to have all the context in the patch
-> > > > and there is no need for cover letter.
-> > >
-> > > Thanks for your suggestion Shakeel! I will change this in the next version.
-> > >
-> > > >
-> > > > What exact information you want on the memcg oom that will be helpful
-> > > > for the users in general? You mentioned memory allocation information,
-> > > > can you please elaborate a bit more.
-> > > >
-> > >
-> > > As in my reply to Suren, I was thinking the system-wide memory usage info
-> > > provided by show_free_pages and memory allocation profiling info can help
-> > > us debug cgoom by comparing them with historical data. What is your take on
-> > > this?
-> > >
+> > A bit nitpicky. That variable name is too long as a C local variable.
+> > We want local auto variables to be short and sweet. That is why you
+> > have "dst" rather than  "u8 *destination_compressed_buffer;"
+> > The local variable name is too long and it can hurt the reading as well=
+.
+> > Can we have something shorter? e.g. "mapped" or "has_map"
+>
+> I agree your points, and thank you for suggestions.  I will take "mapped"=
+.
+
+Thank you.
+
+> > > We may also need to initialize 'dlen' as PAGE_SIZE ?
 > >
-> > I am not really sure about show_free_areas(). More specifically how the
-> > historical data diff will be useful for a memcg oom. If you have a
-> > concrete example, please give one. For memory allocation profiling, is
-> > it possible to filter for the given memcg? Do we save memcg information
-> > in the memory allocation profiling?
-> 
-> Actually I was thinking about making memory profiling memcg-aware but
-> it would be quite costly both from memory and performance points of
-> view. Currently we have a per-cpu counter for each allocation in the
-> kernel codebase. To make it work for each memcg we would have to add
-> memcg dimension to the counters, so each counter becomes per-cpu plus
-> per-memcg. I'll be thinking about possible optimizations since many of
-> these counters will stay at 0 but any such optimization would come at
-> a performance cost, which we tried to keep at the absolute minimum.
-> 
-> I'm CC'ing Sourav and Pasha since they were also interested in making
-> memory allocation profiling memcg-aware. Would Meta folks (Usama,
-> Shakeel, Johannes) be interested in such enhancement as well? Would it
-> be preferable to have such accounting for a specific memcg which we
-> pre-select (less memory and performance overhead) or we need that for
-> all memcgs as a generic feature? We have some options here but I want
-> to understand what would be sufficient and add as little overhead as
-> possible.
+> > If there is a code path can lead to dlen use not initialized value? If
+> > not then we don't have to assign it.
+>
+> The success return path of zswap_decompress() checks dlen together with
+> decomp_ret as below.  So I think we need to initialize dlen, too.  Please=
+ let
+> me know if I'm missing something.
 
-Thanks Suren, yes, as already mentioned by Usama, Meta will be
-interested in memcg aware allocation profiling. I would say start simple
-and as little overhead as possible. More functionality can be added
-later when the need arises. Maybe the first useful addition is just
-adding how many allocations for a specific allocation site are memcg
-charged.
+I normally don't worry about those, the compiler will complain if I
+get it wrong. The compiler might have false positives, but should not
+have false negatives because the compiler can see all the incoming
+edges of the basic block. It is a trivial graph reachability problem
+if we allow false positives reports.
 
+Anyway, I just opened the editor to check again. Yes, if we goto the
+read_done, the if condition using dlen can introduce a new incoming
+edge that has len uninitialized value to be used. Yes, need to
+initialize dlen =3D=3D PAGE_SIZE or you initialize it at the memcpy of
+page.
+
+> I will post the fixup by tomorrow morning (Pacific time) unless I
+> hear other opinions or find my mistakes on the above plan by tonight.
+
+You are too humble, that is the normal reviewing process. You can take
+your time.
+
+Chris
 
