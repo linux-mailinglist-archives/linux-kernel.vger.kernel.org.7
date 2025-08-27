@@ -1,63 +1,67 @@
-Return-Path: <linux-kernel+bounces-788245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC24FB381BD
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 13:53:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BF22B381C9
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 13:55:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9FCB8367353
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 11:53:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A072460190
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 11:55:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0C1F2F83B6;
-	Wed, 27 Aug 2025 11:53:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D0932FA0F2;
+	Wed, 27 Aug 2025 11:54:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="Iy3ioPuq"
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Ly7Ftn4O"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B43C72EF654
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 11:53:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F0932EF654;
+	Wed, 27 Aug 2025 11:54:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756295586; cv=none; b=U4aQYAqT7u0HJHg2YeYjZlM2+X47tDpZ3SfJiSs+k+kynuJkHV4YOZaXAVaAM0cBjm2171gOoETdGbY/62lza/nhBBNS7a1+g+xzu8ZI0+OHrkLYQfkVU6wwjL0wOk5Bsffcm9iRwzP40Lq734qmUYoQCHeHI4rY8Pjkf1FSSoM=
+	t=1756295694; cv=none; b=s4DLxoe1gtAdMYj77dMkTCpa5ExmtwVq+eZG3xFSDN3CkCfQ9Fpx6Xtjz+Xuhpe9DxYT7EzGx84fG5GAI0BFbjxO45oztJi19eXcJ9JsHTnQRkRjJp1VoQB+m0sc4dmjpIMKqOuoYT+39BOYPZ2EAyqcVPu1++Y/9ZLK18EBtyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756295586; c=relaxed/simple;
-	bh=Q1wvyfNtpBZ25n7ToqHfhAYceHnQbyTxTlk3YBzAMWM=;
+	s=arc-20240116; t=1756295694; c=relaxed/simple;
+	bh=DgO9Epj7G2V28nyOzTrJaqwkdkVXgDII+nsQFo4uC20=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mPcmydVSzFSgBBm3Sb73OVCh+GLyFaC3OVR5Wv1DtcKRNVmNHOJPjiGRYyOJMwlAN3QM+wvpsHplVS+w0+pByFv5HJxS13Er9z1lR2AT98o9+oDUWUJK5vwmOk1jvtzpzs0lqAJeVoeknlqdspd3OOpGdRscwDCsWrHbVCabOpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=Iy3ioPuq; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from trampoline.thunk.org (pool-173-48-119-253.bstnma.fios.verizon.net [173.48.119.253])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 57RBqmmf013246
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 27 Aug 2025 07:52:49 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-	t=1756295570; bh=ctUarcq+LCGpo/C7phydeZnd1chontiYFeJ2Bv6TMt0=;
-	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
-	b=Iy3ioPuqeJietM2uBdZM13d4LE18QIODtxMiyMI3+utXrLLrFtQghuBzmwdB7y/w7
-	 znSTWNd+VGlMIzloXNUVw1bcB1WuEtsx7N43/k/g7Zcz9wGQPN08XJTDa0b3AgRlky
-	 /3L99jGM/kGp9PgboJ9GNUPWkvB395NQtKuuu84U5AEdttrnIGO1FWmuG956dtpxwX
-	 PBxSWBJYkS4MrdFPWn34hM/k1CGDeC7XbZ3de2wM5VfT3yOsyujvQUDo/6ARCOCHUi
-	 aCcgQauhIqDpiUpIlwzHz6XqtqNphgLEVDkkFjqiibhakEgyQRiZn9PrKICDjWvqBA
-	 WbP8ulIcJdzqQ==
-Received: by trampoline.thunk.org (Postfix, from userid 15806)
-	id D382C2E00D6; Wed, 27 Aug 2025 07:52:47 -0400 (EDT)
-Date: Wed, 27 Aug 2025 07:52:47 -0400
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: Alexander Monakov <amonakov@ispras.ru>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org,
-        Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-        linux-kernel@vger.kernel.org
-Subject: Re: ETXTBSY window in __fput
-Message-ID: <20250827115247.GD1603531@mit.edu>
-References: <6e60aa72-94ef-9de2-a54c-ffd91fcc4711@ispras.ru>
- <20250826220033.GW39973@ZenIV>
- <0a372029-9a31-54c3-4d8a-8a9597361955@ispras.ru>
+	 Content-Type:Content-Disposition:In-Reply-To; b=EwRksWaqtSFy9HJUQYkA/mQul7BWp1Xp28q2viSc80nqlfd8WuOc3PW0ADVqFVmTjySXRNMALE9SB6rsUBQXsnri36/SVYk/3ydBUwl4Og6r3JdF6gVm6I8KFKYiMFjM5W0ZwW9TAstHmd8HnWNT3jXnPBr5/uuiXMule41O80w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Ly7Ftn4O; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=1SETbkkiyAcHoMOg7Wufx5MV5M7AVJxVK6U7XSX1J5g=; b=Ly7Ftn4ODuY2i0EHsYb5yvwujB
+	NC4Bc+N7474XTWJCxKx36OhqN25SeLOTtvPv8bciOggkYnu5AhL/87gi4ICNdFZqHr10w4sCcXia4
+	mcnhh1BrY0EygFMjzg/P9zGbgKmLn1MHwtUYzhwJwiyvA02cNYZlbW5bPpkI/KCEgtG1PxjJN/p77
+	v87riijzESGWjixPb9IjaJwfChuEenLkfIgnvzvHYFIkSWCHQdSH4fgDnlM317ITgcCjue0SmfMHi
+	O7WOvisvcbMjnt2JOBkWDSY1SFP2YYcVr8N/IthEYTVKKQgv3EgwZZtEMPZ0yyMPADvow0kbt3bfa
+	KNFzGrsQ==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1urEjn-00000004QAZ-0REC;
+	Wed, 27 Aug 2025 11:54:47 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 4979C3002BF; Wed, 27 Aug 2025 13:54:47 +0200 (CEST)
+Date: Wed, 27 Aug 2025 13:54:47 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Finn Thain <fthain@linux-m68k.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Lance Yang <lance.yang@linux.dev>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Eero Tamminen <oak@helsinkinet.fi>, Will Deacon <will@kernel.org>,
+	stable@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] atomic: Specify natural alignment for atomic_t
+Message-ID: <20250827115447.GR3289052@noisy.programming.kicks-ass.net>
+References: <7d9554bfe2412ed9427bf71ce38a376e06eb9ec4.1756087385.git.fthain@linux-m68k.org>
+ <20250825071247.GO3245006@noisy.programming.kicks-ass.net>
+ <58dac4d0-2811-182a-e2c1-4edfe4759759@linux-m68k.org>
+ <20250825114136.GX3245006@noisy.programming.kicks-ass.net>
+ <9453560f-2240-ab6f-84f1-0bb99d118998@linux-m68k.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,27 +70,46 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <0a372029-9a31-54c3-4d8a-8a9597361955@ispras.ru>
+In-Reply-To: <9453560f-2240-ab6f-84f1-0bb99d118998@linux-m68k.org>
 
-On Wed, Aug 27, 2025 at 10:22:14AM +0300, Alexander Monakov wrote:
+On Wed, Aug 27, 2025 at 05:17:19PM +1000, Finn Thain wrote:
 > 
-> On Tue, 26 Aug 2025, Al Viro wrote:
+> On Mon, 25 Aug 2025, Peter Zijlstra wrote:
 > 
-> > Egads...  Let me get it straight - you have a bunch of threads sharing descriptor
-> > tables and some of them are forking (or cloning without shared descriptor tables)
-> > while that is going on?
+> > On Mon, Aug 25, 2025 at 06:03:23PM +1000, Finn Thain wrote:
+> > > 
+> > > On Mon, 25 Aug 2025, Peter Zijlstra wrote:
+> > > 
+> > > > 
+> > > > And your architecture doesn't trap on unaligned atomic access ?!!?!
+> > > > 
+> > > 
+> > > Right. This port doesn't do SMP.
+> > 
+> > There is RMW_INSN which seems to imply a compare-and-swap instruction of 
+> > sorts. That is happy to work on unaligned storage?
+> > 
 > 
-> I suppose if they could start a new process in a more straightforward manner,
-> they would. But you cannot start a new process without fork. Anyway, I'm but
-> a messenger here: the problem has been hit by various people in the Go community
-> (and by Go team itself, at least twice). Here I'm asking about a potential
-> shortcoming in __fput that exacerbates the problem.
+> Yes, the TAS and CAS instructions are happy to work on unaligned storage. 
+> 
+> However, these operations involve an indivisible bus cycle that hogs the 
+> bus to the detriment of other processors, DMA controllers etc. So I 
+> suspect lock alignment would tend to shorten read-modify-write cycles, and 
+> improve efficiency, when CONFIG_RMW_INSN is enabled.
+> 
+> Most m68k platforms will have CONFIG_RMW_INSN disabled, or else simply 
+> don't implement TAS and CAS. In this case, lock alignment might still 
+> help, just because L1 cache entries are long words. I've not tried to 
+> measure this.
 
-I'm assuming that the problem is showing up in real life when users
-run a go problem using "go run" where the golang compiler freshly
-writes the executable, and then fork/exec's the binary.  And using
-multiple threads sharing descriptor tables was just to make a reliable
-reproducer?
+Fair enough; this sounds a little like the x86 LOCK prefix, it will work
+on unaligned memory, but at tremendous cost (recent chips have an
+optional exception on unaligned).
 
-						- Ted
+Anyway, I'm not opposed to adding an explicit alignment to atomic_t.
+Isn't s32 or __s32 already having this?
+
+But I think it might make sense to have a DEBUG alignment check right
+along with adding that alignment, just to make sure things are indeed /
+stay aligned.
 
