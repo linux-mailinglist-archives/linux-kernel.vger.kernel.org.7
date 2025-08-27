@@ -1,115 +1,231 @@
-Return-Path: <linux-kernel+bounces-788246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BF22B381C9
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 13:55:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EBB4B381CB
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 13:55:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A072460190
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 11:55:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E07D74600BF
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 11:55:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D0932FA0F2;
-	Wed, 27 Aug 2025 11:54:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Ly7Ftn4O"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0B872FA0F2;
+	Wed, 27 Aug 2025 11:55:47 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F0932EF654;
-	Wed, 27 Aug 2025 11:54:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBDC31EDA09;
+	Wed, 27 Aug 2025 11:55:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756295694; cv=none; b=s4DLxoe1gtAdMYj77dMkTCpa5ExmtwVq+eZG3xFSDN3CkCfQ9Fpx6Xtjz+Xuhpe9DxYT7EzGx84fG5GAI0BFbjxO45oztJi19eXcJ9JsHTnQRkRjJp1VoQB+m0sc4dmjpIMKqOuoYT+39BOYPZ2EAyqcVPu1++Y/9ZLK18EBtyI=
+	t=1756295747; cv=none; b=Ky1xXpqk1vLWRXVb/24kXIdL1JHlmfxvlDxY3u/kpUqwSpqlgsCq0ESkL9ZVfWpOshLqTOSSf6FOoseJnt5eKjKHcZPSX6L6yPrO2g8A3py6iYUrNtJVRJhXJA3u6Nkc3esmzOSKP7FTiAR9Wqrjczu8Rsf9Q0LP2H2RViXOvdc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756295694; c=relaxed/simple;
-	bh=DgO9Epj7G2V28nyOzTrJaqwkdkVXgDII+nsQFo4uC20=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EwRksWaqtSFy9HJUQYkA/mQul7BWp1Xp28q2viSc80nqlfd8WuOc3PW0ADVqFVmTjySXRNMALE9SB6rsUBQXsnri36/SVYk/3ydBUwl4Og6r3JdF6gVm6I8KFKYiMFjM5W0ZwW9TAstHmd8HnWNT3jXnPBr5/uuiXMule41O80w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Ly7Ftn4O; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=1SETbkkiyAcHoMOg7Wufx5MV5M7AVJxVK6U7XSX1J5g=; b=Ly7Ftn4ODuY2i0EHsYb5yvwujB
-	NC4Bc+N7474XTWJCxKx36OhqN25SeLOTtvPv8bciOggkYnu5AhL/87gi4ICNdFZqHr10w4sCcXia4
-	mcnhh1BrY0EygFMjzg/P9zGbgKmLn1MHwtUYzhwJwiyvA02cNYZlbW5bPpkI/KCEgtG1PxjJN/p77
-	v87riijzESGWjixPb9IjaJwfChuEenLkfIgnvzvHYFIkSWCHQdSH4fgDnlM317ITgcCjue0SmfMHi
-	O7WOvisvcbMjnt2JOBkWDSY1SFP2YYcVr8N/IthEYTVKKQgv3EgwZZtEMPZ0yyMPADvow0kbt3bfa
-	KNFzGrsQ==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1urEjn-00000004QAZ-0REC;
-	Wed, 27 Aug 2025 11:54:47 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 4979C3002BF; Wed, 27 Aug 2025 13:54:47 +0200 (CEST)
-Date: Wed, 27 Aug 2025 13:54:47 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Finn Thain <fthain@linux-m68k.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Lance Yang <lance.yang@linux.dev>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Eero Tamminen <oak@helsinkinet.fi>, Will Deacon <will@kernel.org>,
-	stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] atomic: Specify natural alignment for atomic_t
-Message-ID: <20250827115447.GR3289052@noisy.programming.kicks-ass.net>
-References: <7d9554bfe2412ed9427bf71ce38a376e06eb9ec4.1756087385.git.fthain@linux-m68k.org>
- <20250825071247.GO3245006@noisy.programming.kicks-ass.net>
- <58dac4d0-2811-182a-e2c1-4edfe4759759@linux-m68k.org>
- <20250825114136.GX3245006@noisy.programming.kicks-ass.net>
- <9453560f-2240-ab6f-84f1-0bb99d118998@linux-m68k.org>
+	s=arc-20240116; t=1756295747; c=relaxed/simple;
+	bh=KhQXv86kQVKGJw8aszaxAC/gVymxYsSpQh5L+SZFkl8=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=LjKiheZ/a9vEEguLh99YF+APf13j0AYLnzcu+AIFZhYcD5B4kXXQGqIYREHMbjrStfcpfU4aps6Ux24g2aLUWrsZ0hmEvaeGmutGsJmC0lcFIs0EX7fUyPbvhaXakfiNhPdUmnOCm6pYEGFKPrLB0G8ryc4SLbQ8T4EDyj2VPXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cBjbR5kl2z6M5BG;
+	Wed, 27 Aug 2025 19:53:23 +0800 (CST)
+Received: from frapeml100008.china.huawei.com (unknown [7.182.85.131])
+	by mail.maildlp.com (Postfix) with ESMTPS id 354791400D3;
+	Wed, 27 Aug 2025 19:55:41 +0800 (CST)
+Received: from frapeml500007.china.huawei.com (7.182.85.172) by
+ frapeml100008.china.huawei.com (7.182.85.131) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Wed, 27 Aug 2025 13:55:40 +0200
+Received: from frapeml500007.china.huawei.com ([7.182.85.172]) by
+ frapeml500007.china.huawei.com ([7.182.85.172]) with mapi id 15.01.2507.039;
+ Wed, 27 Aug 2025 13:55:40 +0200
+From: Shiju Jose <shiju.jose@huawei.com>
+To: Terry Bowman <terry.bowman@amd.com>, "dave@stgolabs.net"
+	<dave@stgolabs.net>, Jonathan Cameron <jonathan.cameron@huawei.com>,
+	"dave.jiang@intel.com" <dave.jiang@intel.com>, "alison.schofield@intel.com"
+	<alison.schofield@intel.com>, "dan.j.williams@intel.com"
+	<dan.j.williams@intel.com>, "bhelgaas@google.com" <bhelgaas@google.com>,
+	"ming.li@zohomail.com" <ming.li@zohomail.com>,
+	"Smita.KoralahalliChannabasappa@amd.com"
+	<Smita.KoralahalliChannabasappa@amd.com>, "rrichter@amd.com"
+	<rrichter@amd.com>, "dan.carpenter@linaro.org" <dan.carpenter@linaro.org>,
+	"PradeepVineshReddy.Kodamati@amd.com" <PradeepVineshReddy.Kodamati@amd.com>,
+	"lukas@wunner.de" <lukas@wunner.de>, "Benjamin.Cheatham@amd.com"
+	<Benjamin.Cheatham@amd.com>, "sathyanarayanan.kuppuswamy@linux.intel.com"
+	<sathyanarayanan.kuppuswamy@linux.intel.com>, "linux-cxl@vger.kernel.org"
+	<linux-cxl@vger.kernel.org>, "alucerop@amd.com" <alucerop@amd.com>,
+	"ira.weiny@intel.com" <ira.weiny@intel.com>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>
+Subject: RE: [PATCH v11 13/23] cxl/pci: Unify CXL trace logging for CXL
+ Endpoints and CXL Ports
+Thread-Topic: [PATCH v11 13/23] cxl/pci: Unify CXL trace logging for CXL
+ Endpoints and CXL Ports
+Thread-Index: AQHcFvNHxFodFG2mWkCAduI7aP/bW7R2YxYg
+Date: Wed, 27 Aug 2025 11:55:40 +0000
+Message-ID: <159c6313b9da45d58d83ca9af8dc9a17@huawei.com>
+References: <20250827013539.903682-1-terry.bowman@amd.com>
+ <20250827013539.903682-14-terry.bowman@amd.com>
+In-Reply-To: <20250827013539.903682-14-terry.bowman@amd.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9453560f-2240-ab6f-84f1-0bb99d118998@linux-m68k.org>
 
-On Wed, Aug 27, 2025 at 05:17:19PM +1000, Finn Thain wrote:
-> 
-> On Mon, 25 Aug 2025, Peter Zijlstra wrote:
-> 
-> > On Mon, Aug 25, 2025 at 06:03:23PM +1000, Finn Thain wrote:
-> > > 
-> > > On Mon, 25 Aug 2025, Peter Zijlstra wrote:
-> > > 
-> > > > 
-> > > > And your architecture doesn't trap on unaligned atomic access ?!!?!
-> > > > 
-> > > 
-> > > Right. This port doesn't do SMP.
-> > 
-> > There is RMW_INSN which seems to imply a compare-and-swap instruction of 
-> > sorts. That is happy to work on unaligned storage?
-> > 
-> 
-> Yes, the TAS and CAS instructions are happy to work on unaligned storage. 
-> 
-> However, these operations involve an indivisible bus cycle that hogs the 
-> bus to the detriment of other processors, DMA controllers etc. So I 
-> suspect lock alignment would tend to shorten read-modify-write cycles, and 
-> improve efficiency, when CONFIG_RMW_INSN is enabled.
-> 
-> Most m68k platforms will have CONFIG_RMW_INSN disabled, or else simply 
-> don't implement TAS and CAS. In this case, lock alignment might still 
-> help, just because L1 cache entries are long words. I've not tried to 
-> measure this.
+>-----Original Message-----
+>From: Terry Bowman <terry.bowman@amd.com>
+>Sent: 27 August 2025 02:35
+>To: dave@stgolabs.net; Jonathan Cameron <jonathan.cameron@huawei.com>;
+>dave.jiang@intel.com; alison.schofield@intel.com; dan.j.williams@intel.com=
+;
+>bhelgaas@google.com; Shiju Jose <shiju.jose@huawei.com>;
+>ming.li@zohomail.com; Smita.KoralahalliChannabasappa@amd.com;
+>rrichter@amd.com; dan.carpenter@linaro.org;
+>PradeepVineshReddy.Kodamati@amd.com; lukas@wunner.de;
+>Benjamin.Cheatham@amd.com;
+>sathyanarayanan.kuppuswamy@linux.intel.com; linux-cxl@vger.kernel.org;
+>alucerop@amd.com; ira.weiny@intel.com
+>Cc: linux-kernel@vger.kernel.org; linux-pci@vger.kernel.org
+>Subject: [PATCH v11 13/23] cxl/pci: Unify CXL trace logging for CXL Endpoi=
+nts
+>and CXL Ports
+>
+>CXL currently has separate trace routines for CXL Port errors and CXL Endp=
+oint
+>errors. This is inconvenient for the user because they must enable
+>2 sets of trace routines. Make updates to the trace logging such that a si=
+ngle
+>trace routine logs both CXL Endpoint and CXL Port protocol errors.
+>
+>Keep the trace log fields 'memdev' and 'host'. While these are not accurat=
+e for
+>non-Endpoints the fields will remain as-is to prevent breaking userspace R=
+AS
+>trace consumers.
+>
+>Add serial number parameter to the trace logging. This is used for EPs and=
+ 0 is
+>provided for CXL port devices without a serial number.
+>
+>Leave the correctable and uncorrectable trace routines' TP_STRUCT__entry()
+>unchanged with respect to member data types and order.
+>
+>Below is output of correctable and uncorrectable protocol error logging.
+>CXL Root Port and CXL Endpoint examples are included below.
+>
+>Root Port:
+>cxl_aer_correctable_error: memdev=3D0000:0c:00.0 host=3Dpci0000:0c serial:=
+ 0
+>status=3D'CRC Threshold Hit'
+>cxl_aer_uncorrectable_error: memdev=3D0000:0c:00.0 host=3Dpci0000:0c seria=
+l: 0
+>status: 'Cache Byte Enable Parity Error' first_error: 'Cache Byte Enable P=
+arity
+>Error'
+>
+>Endpoint:
+>cxl_aer_correctable_error: memdev=3Dmem3 host=3D0000:0f:00.0 serial=3D0
+>status=3D'CRC Threshold Hit'
+>cxl_aer_uncorrectable_error: memdev=3Dmem3 host=3D0000:0f:00.0 serial: 0 s=
+tatus:
+>'Cache Byte Enable Parity Error' first_error: 'Cache Byte Enable Parity Er=
+ror'
+>
+>Signed-off-by: Terry Bowman <terry.bowman@amd.com>
 
-Fair enough; this sounds a little like the x86 LOCK prefix, it will work
-on unaligned memory, but at tremendous cost (recent chips have an
-optional exception on unaligned).
+Reviewed-by: Shiju Jose <shiju.jose@huawei.com>,
+apart from one error below.
 
-Anyway, I'm not opposed to adding an explicit alignment to atomic_t.
-Isn't s32 or __s32 already having this?
+>
+>---
+>Changes in v10->v11:
+>- Updated CE and UCE trace routines to maintain consistent TP_Struct ABI a=
+nd
+>unchanged TP_printk() logging.
+>---
+> drivers/cxl/core/ras.c   | 35 +++++++++++----------
+> drivers/cxl/core/trace.h | 68 +++++++---------------------------------
+> 2 files changed, 30 insertions(+), 73 deletions(-)
+>
+>diff --git a/drivers/cxl/core/ras.c b/drivers/cxl/core/ras.c index
+>3454cf1a118d..fda3b0a64dab 100644
+>--- a/drivers/cxl/core/ras.c
+>+++ b/drivers/cxl/core/ras.c
+>@@ -13,7 +13,7 @@ static void cxl_cper_trace_corr_port_prot_err(struct
+>pci_dev *pdev,  {
+> 	u32 status =3D ras_cap.cor_status & ~ras_cap.cor_mask;
+>
+>-	trace_cxl_port_aer_correctable_error(&pdev->dev, status);
+>+	trace_cxl_aer_correctable_error(&pdev->dev, status, 0);
+> }
+>
+> static void cxl_cper_trace_uncorr_port_prot_err(struct pci_dev *pdev, @@ =
+-
+>28,8 +28,8 @@ static void cxl_cper_trace_uncorr_port_prot_err(struct pci_d=
+ev
+>*pdev,
+> 	else
+> 		fe =3D status;
+>
+>-	trace_cxl_port_aer_uncorrectable_error(&pdev->dev, status, fe,
+>-					       ras_cap.header_log);
+>+	trace_cxl_aer_uncorrectable_error(&pdev->dev, status, fe,
+>+					  ras_cap.header_log, 0);
+> }
+>
+> static void cxl_cper_trace_corr_prot_err(struct cxl_memdev *cxlmd, @@ -37=
+,7
+>+37,8 @@ static void cxl_cper_trace_corr_prot_err(struct cxl_memdev *cxlmd=
+,
+>{
+> 	u32 status =3D ras_cap.cor_status & ~ras_cap.cor_mask;
+>
+>-	trace_cxl_aer_correctable_error(cxlmd, status);
+>+	trace_cxl_aer_correctable_error(&cxlmd->dev, cxlmd->cxlds->serial,
+>+					status);
+Please correct to=20
+             trace_cxl_aer_correctable_error(&cxlmd->dev,  status,=20
+					cxlmd->cxlds->serial);
+> }
+>
+> static void
+[...]
+>-
+> TRACE_EVENT(cxl_aer_correctable_error,
+>-	TP_PROTO(const struct cxl_memdev *cxlmd, u32 status),
+>-	TP_ARGS(cxlmd, status),
+>+	TP_PROTO(const struct device *cxlmd, u32 status, u64 serial),
+>+	TP_ARGS(cxlmd, status, serial),
+> 	TP_STRUCT__entry(
+>-		__string(memdev, dev_name(&cxlmd->dev))
+>-		__string(host, dev_name(cxlmd->dev.parent))
+>+		__string(memdev, dev_name(cxlmd))
+>+		__string(host, dev_name(cxlmd->parent))
+> 		__field(u64, serial)
+> 		__field(u32, status)
+> 	),
+> 	TP_fast_assign(
+> 		__assign_str(memdev);
+> 		__assign_str(host);
+>-		__entry->serial =3D cxlmd->cxlds->serial;
+>+		__entry->serial =3D serial;
+> 		__entry->status =3D status;
+> 	),
+> 	TP_printk("memdev=3D%s host=3D%s serial=3D%lld: status: '%s'",
+>--
+>2.51.0.rc2.21.ge5ab6b3e5a
 
-But I think it might make sense to have a DEBUG alignment check right
-along with adding that alignment, just to make sure things are indeed /
-stay aligned.
+Thanks,
+Shiju
+
 
