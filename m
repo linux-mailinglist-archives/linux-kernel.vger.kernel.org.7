@@ -1,130 +1,110 @@
-Return-Path: <linux-kernel+bounces-788511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF472B38584
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 16:55:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC38FB38589
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 16:56:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 24E211B23A11
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 14:55:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E36A41B24197
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 14:56:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E1CE21A94F;
-	Wed, 27 Aug 2025 14:55:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3AB8224240;
+	Wed, 27 Aug 2025 14:55:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="dXjBSr79"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p5PjSZHf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98BD522541B
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 14:55:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3F3A2264B8;
+	Wed, 27 Aug 2025 14:55:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756306524; cv=none; b=AyYu5yvWnDLf/lKeKKOCT9+2U+0WzJOcC/29HVNKy1AVKxph581kFdntXRIakhCYoI82mAnR2U61r0X6xhx9hfPZHvH9utb5C38bMMD5rjzuwi415gV3867wp7iDiJObdCTBuuZDoUl6l8xPYhbEjv0ADN2TrabIyp1dfXtyQlA=
+	t=1756306554; cv=none; b=Mx75j6fRgKH6kpw5/VYHx0n/XjIIvEsDevIEpnM1te7Wr6pV2auVIadyaSLX0aB1aEr9BGaHht5C55ODk1UwD3UpzbYJIVq6UYv0P3vIoiyeudhR1JTpf+ExQVfLtfesj0MErwjilVl4QDHnzYAQTNLNzs3P41dSYC/OlRpTDs4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756306524; c=relaxed/simple;
-	bh=VVTD+gRkSYL1zFC/AuUFrbB6yo9BKBx9w+JU2+HE7nE=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RkrrCA7xsJVxzlUQS4uGgM3Ip3vX+1TiIkNTdeEt1pJ5/76I6RXL8DzG+OAcsODGZ29qdJ+ATxTq3Y0etxTQdVcgnTQXKQWiUZuhrltuL2BY2D9zbhE1s8hvHXZfcqq/VjIjEBVXVBbDVr4j0soMleG9b/NDCMUwahtcp6X4K6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=dXjBSr79; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1756306522; x=1787842522;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=VVTD+gRkSYL1zFC/AuUFrbB6yo9BKBx9w+JU2+HE7nE=;
-  b=dXjBSr79l1rg4y/PB85wHxPT8yWPjeLlhPs32jID3xeYn4W7YDzqFhVa
-   p9AicCd4sa4b89FnPa5xJAmm2HaqtXZFxYy58cbxgmiITdM2kke1ny3C9
-   zQUOm4eJgTO8gH6SrzSMBIA9lEclUDJ54WZD/Id43yeVDyjP49KvzdnZH
-   3eYZgJG4MH7hVEMUQZZ7rs0lGntuEndd/96pJ+3yKZlqfe8VbJcweaBXL
-   uolHhzMyLuXmGJGisRLIymfcdVsJflTZensjPoPmAbb+KDo1VesFbOl89
-   WbpLPcJDlu9r0JHnkKfO1SS1xvJ8eCJCBHGf6J4twkcjyiHoN0TW4y2/m
-   A==;
-X-CSE-ConnectionGUID: 4yuHX6b1S/u7TSh6v5Gw7g==
-X-CSE-MsgGUID: BUnd2GltR5uNF4z6Farg4g==
-X-IronPort-AV: E=Sophos;i="6.18,214,1751266800"; 
-   d="scan'208";a="46291227"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 27 Aug 2025 07:55:14 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Wed, 27 Aug 2025 07:54:44 -0700
-Received: from ROU-LL-M43238.microchip.com (10.10.85.11) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
- 15.1.2507.44 via Frontend Transport; Wed, 27 Aug 2025 07:54:42 -0700
-From: <nicolas.ferre@microchip.com>
-To: ARM Maintainers <arm@kernel.org>, Alexandre Belloni
-	<alexandre.belloni@bootlin.com>, Ryan Wanner <ryan.wanner@microchip.com>,
-	Varshini Rajendran <varshini.rajendran@microchip.com>, Claudiu Beznea
-	<claudiu.beznea@tuxon.dev>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>
-Subject: [PATCH 3/3] ARM: at91: pm: save and restore ACR during PLL disable/enable
-Date: Wed, 27 Aug 2025 16:54:27 +0200
-Message-ID: <20250827145427.46819-4-nicolas.ferre@microchip.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250827145427.46819-1-nicolas.ferre@microchip.com>
-References: <20250827145427.46819-1-nicolas.ferre@microchip.com>
+	s=arc-20240116; t=1756306554; c=relaxed/simple;
+	bh=xbPlbWZ1yiRh8RKfwrSHlxyRVFlZFQiAJnB8nMi7yVc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=vB3ltxnbRd0Mjub8T5iJpCOCsjG7Ge0ObSMGTpl1SRYP8RBTwHIZXs136CodDVkAIEgQAyi1qfH5dGgXXOlUa2dN5aD8jAqNcJhneScoBi0u/dlN3DFzdjKCDR8jaXXhGxN/BabVqwoOpyj3IfeQ/YtAtiMEBsuzjVOA4bXleqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p5PjSZHf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE257C4CEF0;
+	Wed, 27 Aug 2025 14:55:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756306553;
+	bh=xbPlbWZ1yiRh8RKfwrSHlxyRVFlZFQiAJnB8nMi7yVc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=p5PjSZHf8jLqQsSCutsrupvBsZFRXAamiT2YoaUF/U2uiCLOEWQTVP0xXIbza8Ug/
+	 Dfw6DkF5xN3/v0wdE+8QrZfEGDQ4VzniUJHDqiBAR+VAHQTfS4kxe6GZCZSiCd2zyw
+	 Dk9vCMkMCMrYxe5ENHnZoMivmCRZ2N63AgW5vWu6VUNtURiBffOhNsAUHSyA5izpBE
+	 8Pqm7zQAAzX5E1jQkCV9V7+iflbBa7LmbZ1by0QJT7lbkLPPErQVnnuCILJkE3KXMj
+	 M2d9PaNK3xenS1S4WOWOy2YQj52DBXjDJChFgRpuVQks/E4RcpSLalksfgJywvMWj1
+	 R1UcO1YK3tn2w==
+Date: Wed, 27 Aug 2025 20:25:44 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+Cc: Vinod Koul <vkoul@kernel.org>, 
+	Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
+	quic_vbadigan@quicinc.com, quic_mrana@quicinc.com
+Subject: Re: [PATCH v3 0/3] arm64: dts: qcom: Add PCIe Support for sm8750
+Message-ID: <55lm2trwh3l62om2ozjmywfy6cj4l7iiy5sx66rqawjqcnn6ix@ycqbusd7pi5v>
+References: <20250826-pakala-v3-0-721627bd5bb0@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+In-Reply-To: <20250826-pakala-v3-0-721627bd5bb0@oss.qualcomm.com>
 
-From: Nicolas Ferre <nicolas.ferre@microchip.com>
+On Tue, Aug 26, 2025 at 04:32:52PM GMT, Krishna Chaitanya Chundru wrote:
+> Describe PCIe controller and PHY. Also add required system resources like
+> regulators, clocks, interrupts and registers configuration for PCIe.
+> 
+> The qcom_pcie_parse_ports() function currently iterates over all available
+> child nodes of the PCIe controller's device tree node. This includes
+> unrelated nodes such as OPP (Operating Performance Points) nodes, which do
+> not contain the expected 'reset' and 'phy' properties. As a result, parsing
+> fails and the driver falls back to the legacy method of parsing the
+> controller node directly. However, this fallback also fails when properties
+> are shifted to the root port, leading to probe failure.
+> 
+> Fix this by restricting the parsing logic to only consider child nodes with
+> device_type = "pci", which is the expected and required property for PCIe
+> ports as defined in pci-bus-common.yaml.
+> 
+> Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+> ---
+> Changes in v3:
+> - Use device_type to find pci node or not instead of node name.
+> - Link to v2: https://lore.kernel.org/r/20250826-pakala-v2-0-74f1f60676c6@oss.qualcomm.com
+> 
+> Changes in v2:
+> - Follow the x1e80100.dtsi pcie node description (Konrad).
+> - define phy & perst, wake in port node as per latest bindings.
+> - Add check in the driver to parse only pcie child nodes.
+> - Added acked by tag(Rob).
+> - Removed dtbinding and phy driver patches as they got applied.
+> - Link to v1: https://lore.kernel.org/r/20250809-pakala-v1-0-abf1c416dbaa@oss.qualcomm.com
+> 
+> ---
+> Krishna Chaitanya Chundru (3):
+>       dt-bindings: PCI: qcom,pcie-sm8550: Add SM8750 compatible
+>       arm64: dts: qcom: sm8750: Add PCIe PHY and controller node
+>       PCI: qcom: Restrict port parsing only to pci child nodes
 
-Add a new word in assembly to store ACR value during the calls
-to at91_plla_disable/at91_plla_enable macros and use it.
+Applied patches 1 and 3, thanks!
 
-Signed-off-by: Nicolas Ferre <nicolas.ferre@microchip.com>
-[cristian.birsan@microchip.com: remove ACR_DEFAULT_PLLA loading]
-Signed-off-by: Cristian Birsan <cristian.birsan@microchip.com>
----
- arch/arm/mach-at91/pm_suspend.S | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+- Mani
 
-diff --git a/arch/arm/mach-at91/pm_suspend.S b/arch/arm/mach-at91/pm_suspend.S
-index 7e6c94f8edee..aad53ec9e957 100644
---- a/arch/arm/mach-at91/pm_suspend.S
-+++ b/arch/arm/mach-at91/pm_suspend.S
-@@ -689,6 +689,10 @@ sr_dis_exit:
- 	bic	tmp2, tmp2, #AT91_PMC_PLL_UPDT_ID
- 	str	tmp2, [pmc, #AT91_PMC_PLL_UPDT]
- 
-+	/* save acr */
-+	ldr	tmp2, [pmc, #AT91_PMC_PLL_ACR]
-+	str	tmp2, .saved_acr
-+
- 	/* save div. */
- 	mov	tmp1, #0
- 	ldr	tmp2, [pmc, #AT91_PMC_PLL_CTRL0]
-@@ -758,7 +762,7 @@ sr_dis_exit:
- 	str	tmp1, [pmc, #AT91_PMC_PLL_UPDT]
- 
- 	/* step 2. */
--	ldr	tmp1, =AT91_PMC_PLL_ACR_DEFAULT_PLLA
-+	ldr	tmp1, .saved_acr
- 	str	tmp1, [pmc, #AT91_PMC_PLL_ACR]
- 
- 	/* step 3. */
-@@ -1207,6 +1211,8 @@ ENDPROC(at91_pm_suspend_in_sram)
- #endif
- .saved_mckr:
- 	.word 0
-+.saved_acr:
-+	.word 0
- .saved_pllar:
- 	.word 0
- .saved_sam9_lpr:
 -- 
-2.43.0
-
+மணிவண்ணன் சதாசிவம்
 
