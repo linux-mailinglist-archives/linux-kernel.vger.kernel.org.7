@@ -1,127 +1,87 @@
-Return-Path: <linux-kernel+bounces-788243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3E23B381B7
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 13:51:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64654B381B0
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 13:48:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 267451BA425D
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 11:51:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F2FE168A43
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 11:48:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 774882F6594;
-	Wed, 27 Aug 2025 11:51:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="x2aQd+Fe"
-Received: from xmbghk7.mail.qq.com (xmbghk7.mail.qq.com [43.163.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 690E12EF654;
+	Wed, 27 Aug 2025 11:48:06 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31DF279F2;
-	Wed, 27 Aug 2025 11:51:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.163.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82CFA1EDA09
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 11:48:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756295481; cv=none; b=XIUPPRUmJKTGo13gXttlkqU8UmkK+STXDLN5TtWEUzucpbDrBnsnb4bbZvhdlrzaby+t0bmq0axOoQcE1j3ZUccN/L8SSNPb93IEX88I8lW5eJt8IqScyBANyvB6sbFCKp1a/yApKpw9ELkIot0uRSRqRuGmDKJ3sLLE58WIvQ8=
+	t=1756295286; cv=none; b=aNxHgXFHXKZBfn4Tpx8Z0B4En5BJ/Ie2gzJMk0T6+xwVI/L0wuy04lIDxE8pp9HBy1VY3ttyGc7XABlSGrMD8DeCY2OcqyB31XuzAcKf2c9XviL0jw9vBLzVKXtGv2LaGJr0cdBL6Tut5JAIELxiHvAd1ujjxdQY9V7awdE3tUM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756295481; c=relaxed/simple;
-	bh=ccyX1PDsjLelMFjOfiaiMPG+qkk4GLlT/rYXDlrW0KU=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=qwJizFcc3mj3FUSmVFVIcjyOKleqrbtMBB6t6F9q5W1SPGHjSZACsRoYmNVWyh+4z+WqGUBuIlu/Qozf0oLvc2Dt3xqMU551w0pHvkE0eLsxiI31S8wYLSy08yY5sOd+mNOC606/OISgp6IJV2QpIx4Ld6QM+GEyNHWunFe9vao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=x2aQd+Fe; arc=none smtp.client-ip=43.163.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1756295476; bh=SeX1GYV2aQwc6O4xvX38s0OKdpYFk5AKG8oI2cIJdqE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=x2aQd+FeU5/F1nLPe8y9aMZfM9m8Mhi61fhu497J8UY/lDLZ6OWR40MsfzPwTEVy+
-	 s/k9+lOXFrlsFAL5VF71T/TBXE+IF5QwczvlyMRV2N+Zop7MlziCqDU+Z2KBV3n6Ya
-	 +5mfqdzJxMvTpelOMUZrsTTOZMgCm7Kc+a3+r3WA=
-Received: from nebula-bj.localdomain ([223.104.40.195])
-	by newxmesmtplogicsvrszc43-0.qq.com (NewEsmtp) with SMTP
-	id B488E43B; Wed, 27 Aug 2025 19:45:08 +0800
-X-QQ-mid: xmsmtpt1756295108trorwj4bz
-Message-ID: <tencent_000C02641F6250C856D0C26228DE29A3D30A@qq.com>
-X-QQ-XMAILINFO: N6IfSeM/PG+tJkJouisOQ7aTCUC1nM2EvWU8+pRyPsIQSZuXbpl8r1uFQVEIRX
-	 ikML9JKhepNZqOqi2h5IkbV9n+YmAGkl+N0k69HsZmJUwL7a55NkUgEMTuOV+/frZI8JHPPNmUx2
-	 3OWJKADbDB7Dyuy7+bLWktH1ihhe1RO/CO5v9e5vHcDmHC5HCMPsVPqJc3bdjR1x0lUkpkv8/gx4
-	 gQj3YQ7D49P++5lWDyGwbWfD62O7nKLWTdgzb3dIr+NR2WNDa9KWCPCDwdBkUp592suTV4bJxbp9
-	 /GEMgfjXWRm5afA886kJgsrxTrYepKkwNPfO/6QF6YS7LJ5VmbTXOtTqq0uMgl0tDnU+SJVstlnC
-	 VOdN3FLi9kCUPJhfIcR/SZQqGBJZfJZmvk/0TtfvaSUXcl0XKJRtNsacBhgUHD3OrP1yUE3J5gbo
-	 kX9DFIhBfWBFRaQGQ27iRuKFV+VwUtDPeCzP10datidfTFOEYA3gVYd5KClxSi+OcM1tZfyWLsr5
-	 bYr/zcRlgUnwTeOrTMYLxeHFXT5+69tGvthogPlPKQvhmRopaM2SwQpjv6yncIrQxiyYCrBu0Ug0
-	 tYodv+A380VsaxY+kGPOmbf21ZKC2A0vspuIsCNTKQ7DZQAKzlfMezhHlalqunIslD5Vij+37rrw
-	 yhfkU4AEh9jDGHhNavPbawpa+A4Oy9bZJdH5awUtQ6m70+QPqMn1MHrDlix9uWMPqusJ2cFbnKNw
-	 BIzC0VXGcXtwKrMQwjO0Fm8aq8N/rcGbpHIGHiBmwGhV29oc/SgreuS7iv5F0lOAOTqF7js+DKeB
-	 MDkmGdzaDsxWIXGrCvUzrXhVBQC08u6MA70y33JHrV1+nDp25Tysu+I9n6H+7vKe6mZDWNJoTC0B
-	 vZUtvpXJOQBtdJCda4fKUHGaFz0DPyW6WU0onluR18lnk8H3D7FMWEV9og+ylzO6eK1AvnB945eq
-	 xTV6ECDPQqLHnwOm1UhWjdvthggSaCXDOWWXAI6aaIjvjS3Q4AQ38kNwYV4TOo8KlT9oswsWd6tF
-	 U3XTFxoZrlaej5zaGkOdFwBZTT5E9OunsFWlxarUhp8EZTNTZ7B8Fe4/6+CBnCU558eAmkpRQGGV
-	 /xiBHyrwSfw5VeybOjUkYW9N4Xpf+mEq5KiWXe667wYty5LITZlHHwPz7L+FJajJjIHfeuBc5Ggs
-	 hQem0=
-X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
-From: Qingyue Zhang <chunzhennn@qq.com>
-To: axboe@kernel.dk
-Cc: io-uring@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Qingyue Zhang <chunzhennn@qq.com>,
-	Suoxing Zhang <aftern00n@qq.com>
-Subject: [PATCH 2/2] io_uring/kbuf: fix infinite loop in io_kbuf_inc_commit()
-Date: Wed, 27 Aug 2025 19:44:53 +0800
-X-OQ-MSGID: <20250827114453.368894-1-chunzhennn@qq.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250827114339.367080-1-chunzhennn@qq.com>
-References: <20250827114339.367080-1-chunzhennn@qq.com>
+	s=arc-20240116; t=1756295286; c=relaxed/simple;
+	bh=Lzqw4yG5X9adYi13S+ZqlzxYQJQeGeqenG10o80I6SI=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=nEIQMRSQqbi7zGKWBdgn/hZ3BYnoHPjQ4M4hlPPtXG6NN5JR4LlFr9PeXTCE9Occ1Tk6p1iUxmuOBT7dQ1zVt+kSt8CS8hnGbvyO+VmztG9Y71xXhARP4K2IeXxEj19vMikn4nlykOFchsGWKeeH+pliQXFroM4BvZUhkwh96eI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3e7172deaedso68531195ab.1
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 04:48:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756295283; x=1756900083;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zQ1/bK8yJuj3TaHyHUCbcxI3lfRfPuRfA8WBcc16bJo=;
+        b=OxnEmqhqq/JDrdTDKvH5i9SVQtHTtO07Rj2THmCReuJnGY6xex2tJcC6DKdvBlghfl
+         ZevvGs2xRlulyGFE1OoAIb2SgD3/tslqt5balIZ6t/WeVS+jnd4ODH1M0hcH/8u6lesS
+         qaCi2zV3pRxjE5+pf8iVeJEHGmKeSfbKK7lQlmHC2QHuLTFQgezexIA+6D3ZVjZ248Z2
+         w26DNi92CbqCcQkW4eEzLwIJVFLPaxqK7hTyH+pDsbkO049Wm/ITVLWyUGHjgPpaqI2d
+         pMNBqCXtB4UZAn1CO7el2SVCPSFuOOaCVmptYPiWcqZ25Fpqy2N3qW6Ats2/5FR3fZHP
+         Me7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU09HVZQ4CyjM2/8D71L81vttQ2vImUSUZZ1q5ha7jXC5thbF7afa1/+5Vtv84KPItnZaupjtNRaqh1/Ek=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywzr/tN/4mXRCVcFDaKdq1xxnY8I1b4B2XRyoDxjoyVehxDMmNb
+	4PSbnEp3N99zrqoQH5sBczekupwNgPlDggFQ7W5mr1tVZBuN6MYVRQit8XsSBKMY6Re7Xoc/fEc
+	wgp4at/neFgLb2lIgru5ViVrICwQvDx4rlXtK/VkmrgW5J148Ql8YRel2b/0=
+X-Google-Smtp-Source: AGHT+IG7zSCyONoBYLgMaD31XPpR8A3Ror9QCkbbyFgQDgQipd4PC3aofPGuUJzihgnqFK2WTiAbDPzpx+ndoEXX0N4NrCQjA1bF
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:480a:b0:3e9:4547:5e03 with SMTP id
+ e9e14a558f8ab-3e945479d7dmr226052015ab.10.1756295283748; Wed, 27 Aug 2025
+ 04:48:03 -0700 (PDT)
+Date: Wed, 27 Aug 2025 04:48:03 -0700
+In-Reply-To: <20250827110046.5887-1-hdanton@sina.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68aef073.a70a0220.3cafd4.001d.GAE@google.com>
+Subject: Re: [syzbot] [net?] KASAN: slab-use-after-free Write in __xfrm_state_delete
+From: syzbot <syzbot+a25ee9d20d31e483ba7b@syzkaller.appspotmail.com>
+To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-In io_kbuf_inc_commit(), buf points to a user-mapped memory region,
-which means buf->len might be changed between importing and committing.
-Add a check to avoid infinite loop when sum of buf->len is less than
-len.
+Hello,
 
-Co-developed-by: Suoxing Zhang <aftern00n@qq.com>
-Signed-off-by: Suoxing Zhang <aftern00n@qq.com>
-Signed-off-by: Qingyue Zhang <chunzhennn@qq.com>
----
- io_uring/kbuf.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-diff --git a/io_uring/kbuf.c b/io_uring/kbuf.c
-index 81a13338dfab..80ffe6755598 100644
---- a/io_uring/kbuf.c
-+++ b/io_uring/kbuf.c
-@@ -34,11 +34,12 @@ struct io_provide_buf {
- 
- static bool io_kbuf_inc_commit(struct io_buffer_list *bl, int len)
- {
-+	struct io_uring_buf *buf, *buf_start;
-+
-+	buf_start = buf = io_ring_head_to_buf(bl->buf_ring, bl->head, bl->mask);
- 	while (len) {
--		struct io_uring_buf *buf;
- 		u32 this_len;
- 
--		buf = io_ring_head_to_buf(bl->buf_ring, bl->head, bl->mask);
- 		this_len = min_t(u32, len, buf->len);
- 		buf->len -= this_len;
- 		if (buf->len) {
-@@ -47,6 +48,10 @@ static bool io_kbuf_inc_commit(struct io_buffer_list *bl, int len)
- 		}
- 		bl->head++;
- 		len -= this_len;
-+
-+		buf = io_ring_head_to_buf(bl->buf_ring, bl->head, bl->mask);
-+		if (unlikely(buf == buf_start))
-+			break;
- 	}
- 	return true;
- }
--- 
-2.48.1
+Reported-by: syzbot+a25ee9d20d31e483ba7b@syzkaller.appspotmail.com
+Tested-by: syzbot+a25ee9d20d31e483ba7b@syzkaller.appspotmail.com
 
+Tested on:
+
+commit:         24204116 Merge branch 'ipv6-sr-simplify-and-optimize-h..
+git tree:       net-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=14023c42580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=67b99ceb67d33475
+dashboard link: https://syzkaller.appspot.com/bug?extid=a25ee9d20d31e483ba7b
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=10d43c42580000
+
+Note: testing is done by a robot and is best-effort only.
 
