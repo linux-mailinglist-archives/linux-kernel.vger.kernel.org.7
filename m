@@ -1,219 +1,176 @@
-Return-Path: <linux-kernel+bounces-788015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 586C8B37ED2
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 11:28:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCE2EB37ED3
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 11:28:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16743365581
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 09:28:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F10491BA185E
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 09:29:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62CB73451A0;
-	Wed, 27 Aug 2025 09:28:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65E2B343213;
+	Wed, 27 Aug 2025 09:28:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fCtW1Gp2"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P/IclHca"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E443F1D5150;
-	Wed, 27 Aug 2025 09:28:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1765CEEA6
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 09:28:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756286906; cv=none; b=sqyMFGLTaWIVr+Kk4w0UIm6VOu5Syqi5G0/byVXp0f/DZNrkJ2OlnPjyRRuX6NQ8Hjiz1mkUf44okRZFKs+ljmsFwTM+rkWU89s8Prd226egwdV3s2Tmv732Mzk2LSlIwS3O0LDfsTQn3cfqu7h4e7rFxjQZD/RldLa8dkgqHFY=
+	t=1756286921; cv=none; b=THT2vHnbThjlkZFEC38/isl8Uy4OnePquMEbAroTCNUPAZQBYt6zVRP2sWpv+PzqbfJW1PRjWr0Cp0t61PmKpHvzbRqUCU7QZS2/cEqE7sz/7n4C3Bs/QpAZ/4ELQ1Zo4RdCqydPEXNH4ZrnDFlKhIo8daWSYw5+31B9NWDpydw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756286906; c=relaxed/simple;
-	bh=PfxoAIwcb5X5b4fUYMVVmVFZvGyrGoz5/mNQu2gy8P4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=M3LcBdzV5ilHpV8wJasQpaOlb5B9cHhRiB7TElj8UwlBl3l7jw9u5+zG01AHWq5bQ2pH9304ZPvQuHGcfxkgqBFkXDzXRhwXylyVLFKfjMS52yRFkZ3vUG7m6f0WlHIyWDN0MAX8WNmZd9D4bPRDD6uM/amml5zOh0rJLzy8DPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fCtW1Gp2; arc=none smtp.client-ip=209.85.208.51
+	s=arc-20240116; t=1756286921; c=relaxed/simple;
+	bh=u1JT9esYUPh//8vGQAYEOXy1sSFQYIQb0ssbEMuIBNo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fkZaDHbr+HLo+bEIEiTlmS6pbuJoAjilYIAo/Y3T6fl3R7OhGZ3uyH0l1IXNY2xI6gJuLwSgSWB4s69TTPLv29bOyQuhweOdCTwr40QGna2nlH2ZQE/k7uWKHkEl8L0GVIB4mAmxYvea/68x8AWTFZvYpFJIAg/NR7u91HmBpZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P/IclHca; arc=none smtp.client-ip=209.85.218.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-61c26f3cf6fso9817413a12.1;
-        Wed, 27 Aug 2025 02:28:24 -0700 (PDT)
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-afcb78f5df4so1108583966b.1
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 02:28:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756286903; x=1756891703; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=afRMvMz52lErLIy3TkQ3+HE1dlvb4ERfwloctYrSfu8=;
-        b=fCtW1Gp2RxkSVm4XOotHfDa8NMA11TBIpIRMPA4BdAF327F8/9ySqNSRUOxxaw7yj1
-         1Wn4RvKzSxBnLlzKX4LzxHQ8SJBq9q3YmecIUpBvMbVoFmHcqOp25cmOSxrXkOVYH0r/
-         7H8fcMn3dcxcdDc9MnhpOlHCg+X/q43QdtBoZ0WRmGXEkVP8N30BpnIjAxtaKNcA484v
-         obAVFfVtBUxHtYIwq9fl/ZHp81+pMki6SFoEmIJ2/fAL5y65f1aB7nMY+uRzGP2/iPSX
-         KhqOoNBnvbyWAYeH6N7cOfqOpPkZ8MeQEATdLkqIPeT+beqjMWjvtYg1Z48iM7zJW+Yb
-         iTIQ==
+        d=gmail.com; s=20230601; t=1756286918; x=1756891718; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=5WNhk1ZhM3W2L38lczRb2sJSYi/8+nhFpxpIIZjaaw4=;
+        b=P/IclHcaTBO+twMuqno5qABqPY94dEDsIboSFdB8kOeMahKckJ755sVJiGpZg44SOE
+         aX57IMZSDfi58Po9wayhn+l0zCIBa3elzmT17M9G+WcuC0At5Aqt+tBlQ8eOJWv9GZkT
+         PpmP3ju9bV4GGXbew8p7qObGDKE2z2mncKVrRXBDYq32A42JYzBOUjp44IKEwNwZav5z
+         Qr8Udh37HDtrv78FsjXPvDC1JyTzcSNqEYTjodPBqhWseaTAmzf8PLRXJWGwqEYFmWnY
+         h/A/gIrq4mK00TglQ10E4NK6/AROolQhjM0Ill1O4mTi78sbu3yS8FT6x+qItCiNUzB/
+         TZUQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756286903; x=1756891703;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=afRMvMz52lErLIy3TkQ3+HE1dlvb4ERfwloctYrSfu8=;
-        b=TGMqAORxy3vEM+yUuCeZMuFlo1xARfUDebvezn1mN85cFbkhSzJJbkGojYyjGjz5ZV
-         iNJWDi4ScXHHe44GJmflV+eoJhXLlHtcDh16KuciB24p+k0AwTMoom8zAX38kO2vWp32
-         a6GfxtpZccSqTWAu7xR/G7SlkTbRkJOT0ywXugq19Y70L759NNj1834SI7XKJZ+db5Vu
-         Q1UuK4Wf/rwP8hNbn7RHKZ7paP0o57HBg1fLGcQXsFyCVOa8qbF0JkZp/nQrkupqa5SV
-         85JAom0PyAZECyQIl/vfC75zCH/Yk+a64I6LpUiblP3GcwuA1pq/+d+x037nac/L+QAb
-         cDQw==
-X-Forwarded-Encrypted: i=1; AJvYcCVJidUVUxGB5hhD5nqKCJWBT7gxQ5rHYrm9M47NnZckUKH1HxqCthJIiXxOTxy71omYIUvjyyVIY0rCAAIx@vger.kernel.org, AJvYcCVeFk6lBR+4Sn4GIV2xzlmFdWRzomiOmBSIKsRLPK+F9rn3bTzU0ElBaxpawbrAprDdtAKxLgJXMPjzTzcxUQ==@vger.kernel.org, AJvYcCVpwDzVV4MGpBwVwX/La0ka9cgGbco56dTN248liW3sK5/ph7g5E8SaOx+SSO46oFjzMwpWmNcbThIHnvFt@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0gHc/+K15ZpbUsMs/q2Ar/9kYNW5LGy0oWwyz3fHDDgC/wfxZ
-	JKdvB7/E6P6zcaBnljDi5621HRDI/z6E0y+GDK6OPgU9zLq7dmFyJCKx/0HT+nraISG/zDF7mQR
-	CVjpQdd04CekTFFhoU9yeR0ZhwOmeJLI=
-X-Gm-Gg: ASbGncv1QGwdNkU1KpjycecKtdZL3BBtitA4rGgKawmlSdrSzlsFcQ9ZXiPjFZrUGQH
-	8soM+v3G4Bg8ziTrvUm/XNOWPhoJ6fVFP0Y2Tmdfl/aEnLQE+nY/VNEr5vr9x7JPqC/fHr6HxeV
-	7rcTbDymlfLUS7gAdOkPhDebE+1aryigW0A8FGd21DcZO+rRoEb7277dv5DPVhr1jEb7t1qfkfY
-	igPZvo=
-X-Google-Smtp-Source: AGHT+IGPmcUFgcc9N6VZGuWev475Iqh/3cbemwbh7T5FmHXerjzXVncjDuoQZvhgJ1TFiIWjpSflcF4M5su57L0iUWU=
-X-Received: by 2002:a05:6402:13d0:b0:61c:35c0:87ee with SMTP id
- 4fb4d7f45d1cf-61c35c091b0mr12625331a12.7.1756286903051; Wed, 27 Aug 2025
- 02:28:23 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1756286918; x=1756891718;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5WNhk1ZhM3W2L38lczRb2sJSYi/8+nhFpxpIIZjaaw4=;
+        b=wPysh+8x6pwQAsS85Bm2GecHr+DL1GhYpkwoBsaA/0NDzw3ilJzgsDdFXs6/1AoyhR
+         2tXAapPqkWy9Sx9PCiSh+NcjaYsR62IJ+IJX6btBPS6d1244h29cVHZIgK7DRwSSXOWy
+         u1ELIZvO0VM5ufGsas/w78aJXtc/vsNWcXMmW0BwJAqTXLpuRshCKdN85aPi9ZqIGhsq
+         v1+FG4vCuH49oD0YeWroVCsWbZSgS5RNetgBeS87NMZzicoNRLQAndn+jZb5DopI5nBo
+         Ud2DioOUWpCOiwmz4tL26yscklq/3AXShZvQm+tzrDFcZTHOuKcS1vfGfhTDjhyoW53U
+         46DA==
+X-Forwarded-Encrypted: i=1; AJvYcCVhdwOLPS4mqF8mdIaXe4S0HxcGBXyYtqJKzDlamOivEAwlI19Me+ozDl0eLls2Toketpj9qhPXSzPTkEM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZs4jaF6p+AFfsMQ4NjZYx4DPaeXAZxw4r2hLJkMXPInI8wJmz
+	3L1Mjwr8xV/A4wHpf1jgMxHx33aT97IzOnibVNgmP3HXEZhIgoq9/ULX
+X-Gm-Gg: ASbGncsNKMa30bwqhXF2bRLYC8EObPkrYKA0Ty9As01APHaCzUTJFH52fQYCh95duwK
+	SWRZKyiYjXURY+fWK3U1Uoefgh5CQKLMGTkXmW1Z4kR+KSwR0i20gpj5ydOyfMScIxr+pycyl6G
+	3VbaMrROrGpyGEYGdhciAsiJD8qj4x5Kn1JUQgN84hvnKkykLOnoWh/RjMsgh/WhiBKhlNsnc5A
+	c4R5/pF+173G1QYHLGZOYfHWyR1NAAhVmULHriXNmaC9dx75lZRvEmMaS97tvgFsyxCaU+SdD+T
+	Bqls7GVjq/TdJtVj/YP6FI5HFkFzQ69DU6fs4+SL/AVHHlyd8lS2kmf3/RudbvzWq4iTcPOeDMh
+	U1YxPudBES3n8GqoRPQQYdD/dyTtxR3Tv39Q9clcFA2nbiqBrWYQ6nO43TJ/t2PwYkd4/ms0MM5
+	nLFeJdqsl1fRdx/iZdIdUzLru9Ukb4/ANZRfIcDgEEmG2qKnLZziUbhEZ9
+X-Google-Smtp-Source: AGHT+IEiUn0mw0Bd+eWTikezNk1J+BkpH25CzT2HWGH+6VVEhsrZO7sZhbdFaQJFJa9fYRGNuchv1Q==
+X-Received: by 2002:a17:907:72c9:b0:afd:d6e0:ee39 with SMTP id a640c23a62f3a-afe295c9153mr1713662666b.50.1756286918192;
+        Wed, 27 Aug 2025 02:28:38 -0700 (PDT)
+Received: from ?IPV6:2a02:908:1b0:afe0:92e9:ef08:4a92:adcf? ([2a02:908:1b0:afe0:92e9:ef08:4a92:adcf])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afe79b08cfasm684913866b.101.2025.08.27.02.28.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 27 Aug 2025 02:28:37 -0700 (PDT)
+Message-ID: <f3ab3c2d-2056-4802-aa73-2b0db4c7fc30@gmail.com>
+Date: Wed, 27 Aug 2025 11:28:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250822-tonyk-overlayfs-v6-0-8b6e9e604fa2@igalia.com>
- <20250822-tonyk-overlayfs-v6-4-8b6e9e604fa2@igalia.com> <875xeb64ks.fsf@mailhost.krisman.be>
- <CAOQ4uxiHQx=_d_22RBUvr9FSbtF-+DJMnoRi0QnODXRR=c47gA@mail.gmail.com>
- <CAOQ4uxgaefXzkjpHgjL0AZrOn_ZMP=b1TKp-KDh53q-4borUZw@mail.gmail.com>
- <871poz4983.fsf@mailhost.krisman.be> <87plci3lxw.fsf@mailhost.krisman.be>
- <CAOQ4uxhw26Tf6LMP1fkH=bTD_LXEkUJ1soWwW+BrgoePsuzVww@mail.gmail.com>
- <87ldn62kjy.fsf@mailhost.krisman.be> <564e46ac-a605-4b20-bb48-444bf7141ab5@igalia.com>
-In-Reply-To: <564e46ac-a605-4b20-bb48-444bf7141ab5@igalia.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Wed, 27 Aug 2025 11:28:11 +0200
-X-Gm-Features: Ac12FXwH-ZjnCeErtmUkz32-EBRGSswusBsaCuX6PmlcQ4ri1VqgMyN2js2w0J8
-Message-ID: <CAOQ4uxjOZMq6RYsB5qSVkYPTjd1m4=sr9HbP1kBCD0oLWPwHAQ@mail.gmail.com>
-Subject: Re: [PATCH v6 4/9] ovl: Create ovl_casefold() to support casefolded strncmp()
-To: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
-Cc: Gabriel Krisman Bertazi <krisman@suse.de>, Miklos Szeredi <miklos@szeredi.hu>, Theodore Tso <tytso@mit.edu>, 
-	linux-unionfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, kernel-dev@igalia.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] staging: gpib: simplify and fix get_data_lines
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: gregkh@linuxfoundation.org, dpenkler@gmail.com,
+ matchstick@neverthere.org, arnd@arndb.de, linux-kernel@vger.kernel.org,
+ linux-staging@lists.linux.dev
+References: <20250826220502.210485-1-osama.abdelkader@gmail.com>
+ <aK6wlcLBN1HclMpl@stanley.mountain> <aK68qXqStIwBrejF@stanley.mountain>
+Content-Language: en-US
+From: Osama Abdelkader <osama.abdelkader@gmail.com>
+In-Reply-To: <aK68qXqStIwBrejF@stanley.mountain>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Aug 26, 2025 at 9:58=E2=80=AFPM Andr=C3=A9 Almeida <andrealmeid@iga=
-lia.com> wrote:
->
->
->
-> Em 26/08/2025 12:02, Gabriel Krisman Bertazi escreveu:
-> > Amir Goldstein <amir73il@gmail.com> writes:
-> >
-> >> On Tue, Aug 26, 2025 at 3:34=E2=80=AFAM Gabriel Krisman Bertazi <krism=
-an@suse.de> wrote:
-> >>
-> >>>
-> >>> I was thinking again about this and I suspect I misunderstood your
-> >>> question.  let me try to answer it again:
-> >>>
-> >>> Ext4, f2fs and tmpfs all allow invalid utf8-encoded strings in a
-> >>> casefolded directory when running on non-strict-mode.  They are treat=
-ed
-> >>> as non-encoded byte-sequences, as if they were seen on a case-Sensiti=
-ve
-> >>> directory.  They can't collide with other filenames because they
-> >>> basically "fold" to themselves.
-> >>>
-> >>> Now I suspect there is another problem with this series: I don't see =
-how
-> >>> it implements the semantics of strict mode.  What happens if upper an=
-d
-> >>> lower are in strict mode (which is valid, same encoding_flags) but th=
-ere
-> >>> is an invalid name in the lower?  overlayfs should reject the dentry,
-> >>> because any attempt to create it to the upper will fail.
-> >>
-> >> Ok, so IIUC, one issue is that return value from ovl_casefold() should=
- be
-> >> conditional to the sb encoding_flags, which was inherited from the
-> >> layers.
-> >
-> > yes, unless you reject mounting strict_mode filesystems, which the best
-> > course of action, in my opinion.
-> >
-> >>
-> >> Again, *IF* I understand correctly, then strict mode ext4 will not all=
-ow
-> >> creating an invalid-encoded name, but will strict mode ext4 allow
-> >> it as a valid lookup result?
-> >
-> > strict mode ext4 will not allow creating an invalid-encoded name. And
-> > even lookups will fail.  Because the kernel can't casefold it, it will
-> > assume the dirent is broken and ignore it during lookup.
-> >
-> > (I just noticed the dirent is ignored and the error is not propagated i=
-n
-> > ext4_match.  That needs improvement.).
-> >
-> >>>
-> >>> Andr=C3=A9, did you consider this scenario?
-> >>
-> >> In general, as I have told Andre from v1, please stick to the most com=
-mon
-> >> configs that people actually need.
-> >>
-> >> We do NOT need to support every possible combination of layers configu=
-rations.
-> >>
-> >> This is why we went with supporting all-or-nothing configs for casefol=
-der dirs.
-> >> Because it is simpler for overlayfs semantics and good enough for what
-> >> users need.
-> >>
-> >> So my question is to you both: do users actually use strict mode for
-> >> wine and such?
-> >> Because if they don't I would rather support the default mode only
-> >> (enforced on mount)
-> >> and add support for strict mode later per actual users demand.
-> >
-> > I doubt we care.  strict mode is a restricted version of casefolding
-> > support with minor advantages.  Basically, with it, you can trust that
-> > if you update the unicode version, there won't be any behavior change i=
-n
-> > casefolding due to newly assigned code-points.  For Wine, that is
-> > irrelevant.
-> >
-> > You can very well reject strict mode and be done with it.
-> >
->
-> Amir,
->
-> I think this can be done at ovl_get_layers(), something like:
->
-> if (sb_has_strict_encoding(sb)) {
->         pr_err("strict encoding not supported\n");
->         return -EINVAL;
-> }
->
 
-Yap, I've put it into ovl_set_encoding() to warn more accurately
-on upper fs:
+On 8/27/25 10:07 AM, Dan Carpenter wrote:
+> On Wed, Aug 27, 2025 at 10:15:33AM +0300, Dan Carpenter wrote:
+>> On Wed, Aug 27, 2025 at 12:05:02AM +0200, Osama Abdelkader wrote:
+>>> The function `get_data_lines()` in gpib_bitbang.c currently reads 8
+>>> GPIO descriptors individually and combines them into a byte.
+>>> This has two issues:
+>>>
+>>>   * `gpiod_get_value()` returns an `int` which may be negative on
+>>>     error. Assigning it directly into a `u8` may propagate unexpected
+>>>     values. Masking ensures only the LSB is used.
+>> Using the last bit in an error code is not really "error handling"...
+>>
+>> What you could do instead would be something like:
+>>
+>> 	int ret;
+>>
+>> 	for (i = 0; i < 8; i++) {
+>> 		ret |= (gpiod_get_value(lines[i]) & 1) << i;
+>> 		if (ret < 0) {
+>> 			pr_err("something failed\n");
+>> 			return -EINVAL;
+> I meant to write "return 0;".  It's type u8.
+>
+> Also that doesn't work.  The masks and shift mess it up.
+>
+> 	u8 val = 0;
+> 	int ret;
+>
+> 	for (i = 0; i < 8; i++) {
+> 		ret = gpiod_get_value(lines[i]);
+> 		if (ret < 0) {
+> 			pr_err("something failed\n");
+> 			continue;
+> 		}
+> 		val |= ret << i;
+> 	}
+>
+> 	return ~val;
 
-/*
- * Set the ovl sb encoding as the same one used by the first layer
- */
-static int ovl_set_encoding(struct super_block *sb, struct super_block *fs_=
-sb)
+We can change the return type to int and propagate the error, so:
+
+static int get_data_lines(u8 *out)
+
 {
-        if (!sb_has_encoding(fs_sb))
-                return 0;
 
-#if IS_ENABLED(CONFIG_UNICODE)
-        if (sb_has_strict_encoding(fs_sb)) {
-                pr_err("strict encoding not supported\n");
-                return -EINVAL;
-        }
+	int val, i;
 
-        sb->s_encoding =3D fs_sb->s_encoding;
-        sb->s_encoding_flags =3D fs_sb->s_encoding_flags;
-#endif
-        return 0;
+	u8 ret = 0;
+
+	struct gpio_desc *lines[8] = { D01, D02, D03, D04, D05, D06, D07, D08 };
+	for (i = 0; i < 8; i++) { 		val = gpiod_get_value(lines[i]);
+
+		if (val < 0)
+
+			return val; // propagate error
+
+		ret |= (val & 1) << i;
+
+	}
+
+	*out = ~ret; 	return 0;
+
 }
 
-Thanks,
-Amir.
+Then in the caller:
+
+u8 data;
+if (!get_data_lines(&data))
+
+	priv->rbuf[priv->count++] = data;
+
+or we print the error here, What do you think?
+
+>
+> regards,
+> dan carpenter
+>
 
