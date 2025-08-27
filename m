@@ -1,159 +1,81 @@
-Return-Path: <linux-kernel+bounces-788938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 492C2B38E25
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 00:22:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70D27B38C01
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 00:03:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBF88201A38
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 22:22:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B666C203FC5
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 22:03:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 695273629BD;
-	Wed, 27 Aug 2025 22:12:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D57E2DA746;
+	Wed, 27 Aug 2025 22:02:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DItkAmGa"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qotr//af"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F41D931280B
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 22:12:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 057FB1A9FB0
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 22:02:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756332752; cv=none; b=oBTOOGh5mgDjls53x68Ea9OW6AtPYL5eiuMGZT2Ft89ixgM82aihyalg4ocKt/Pk5xhK0FhHThQsGYKAhiDJQ/njkgVLKNNg0CJY/kh44ZZLfNGFmpJzketil9H1bzi6VsxmmxoyAwAS67NdY+IOX9SU4MKCRGcALxfRDGzfumA=
+	t=1756332158; cv=none; b=ResFsU840z3OfQxq3Px33qX4K2b9mpwpkuUQ8An/X7Awv0GNUsAjyrA1PpOqcsUWxAeiKXf3n28PguJ4HGehF8UFZ6wu8/VOcv19dUs6mnsp4XxQUskmcSU9phK9N/mF2iD++oU8OVvKWvVX3V79haUs0YYN/RQCAoEJUMyUx4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756332752; c=relaxed/simple;
-	bh=iGZUypeqt9sJTZSbmscxEGdF7ypney9TkqLCMup3OEw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lvAtIhcYvXLTYeRKAeFF5vI6+Hx8gZWtOOylGWDksKUKf1/NgZaF1IwZ1Ql14JpyF7Hjt0uYiycanCqfZK+2YFfELuErOSDiFh5C6NbUl0M/7HWRhi143y3/TYN1K3k83kHe2inB9BwbSztllZAL10tni82XJ2VSQoKz+F5N/xM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DItkAmGa; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756332750;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xokvzkSIEpQffuWgfIG7Waj6e5Wn3/nTay4YDrY+vKU=;
-	b=DItkAmGabgzYv3aLZFCKG7dfTPOnhvW4Q1lWQokUnGR7feX9KhVcvj6C2eBQJePzuq3b/V
-	dOIgaMRig2V/qQEhRZ2YSc6szLFg7bU2KrTF13YaFxyrSjaMPt5VyBNDmfu5tVpBkIQcrR
-	MFXCRL2FLNAoetUfkMPiEZs46vndKLA=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-488-RQvXUovaMI65FI3R-Bh1mA-1; Wed,
- 27 Aug 2025 18:12:26 -0400
-X-MC-Unique: RQvXUovaMI65FI3R-Bh1mA-1
-X-Mimecast-MFC-AGG-ID: RQvXUovaMI65FI3R-Bh1mA_1756332741
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A0A3C19560AA;
-	Wed, 27 Aug 2025 22:12:21 +0000 (UTC)
-Received: from t14s.redhat.com (unknown [10.22.80.195])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 2874830001A5;
-	Wed, 27 Aug 2025 22:12:05 +0000 (UTC)
-From: David Hildenbrand <david@redhat.com>
-To: linux-kernel@vger.kernel.org
-Cc: David Hildenbrand <david@redhat.com>,
-	Alexander Potapenko <glider@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Brendan Jackman <jackmanb@google.com>,
-	Christoph Lameter <cl@gentwo.org>,
-	Dennis Zhou <dennis@kernel.org>,
-	Dmitry Vyukov <dvyukov@google.com>,
-	dri-devel@lists.freedesktop.org,
-	intel-gfx@lists.freedesktop.org,
-	iommu@lists.linux.dev,
-	io-uring@vger.kernel.org,
-	Jason Gunthorpe <jgg@nvidia.com>,
-	Jens Axboe <axboe@kernel.dk>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	John Hubbard <jhubbard@nvidia.com>,
-	kasan-dev@googlegroups.com,
-	kvm@vger.kernel.org,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-arm-kernel@axis.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-crypto@vger.kernel.org,
-	linux-ide@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	linux-mips@vger.kernel.org,
-	linux-mmc@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-riscv@lists.infradead.org,
-	linux-s390@vger.kernel.org,
-	linux-scsi@vger.kernel.org,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Marco Elver <elver@google.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Mike Rapoport <rppt@kernel.org>,
-	Muchun Song <muchun.song@linux.dev>,
-	netdev@vger.kernel.org,
-	Oscar Salvador <osalvador@suse.de>,
-	Peter Xu <peterx@redhat.com>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Tejun Heo <tj@kernel.org>,
-	virtualization@lists.linux.dev,
-	Vlastimil Babka <vbabka@suse.cz>,
-	wireguard@lists.zx2c4.com,
-	x86@kernel.org,
-	Zi Yan <ziy@nvidia.com>
-Subject: [PATCH v1 36/36] mm: remove nth_page()
-Date: Thu, 28 Aug 2025 00:01:40 +0200
-Message-ID: <20250827220141.262669-37-david@redhat.com>
-In-Reply-To: <20250827220141.262669-1-david@redhat.com>
-References: <20250827220141.262669-1-david@redhat.com>
+	s=arc-20240116; t=1756332158; c=relaxed/simple;
+	bh=nQYP93js/pw0jrB86UsyLE4CL68ji+oy9CjDEnyRjl0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AcMuPrTw0qYNSk1hD3k0IrS5VcdzH3arZ9ikwNfOkfwPaf7SZYqaeBJoUgglPsQQjUNZAEjB0ryf1d4kszqkcHfGCO9hRiosfGdZ4ukvCGhcH2KSsIt7zlD+BDRV7iOSnzIJWWqWqHBYR1Ibck1PgDc+870TGmlal8X4buPbPL0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qotr//af; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F54FC4CEF7;
+	Wed, 27 Aug 2025 22:02:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756332157;
+	bh=nQYP93js/pw0jrB86UsyLE4CL68ji+oy9CjDEnyRjl0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qotr//af3VS+uKpH/6hWCbMNDCNf3DCTce0aTxVIgxOi0UX4vu6Mhb158vSfuG/Be
+	 SQDwc0KE5fHUGbXedYzSSnGJWNPLSStqW+7fk83PbHe0hOf4AmRdIDEfzvvQtLXrEB
+	 ZhkmmWZYQ7u5wIVj6EjJLinpc1a+7hFdCBrHhggq8m4XPziGNvJpJjZ3XRlrzimcYI
+	 w6s3YUatmq8ohV2pL9DtQdBNQfDnP8+I9qy1lYQq2tXQZpIkpXKg+9VtS8ZH6DkLpl
+	 dGUI83yr4QAId8NsyyX2SrbZteQYe+RalkP6yV+dhGWAwjSY+s1pblvYqSjl1uLNTC
+	 BUk41jG4YT/Ow==
+Date: Wed, 27 Aug 2025 15:02:35 -0700
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: David Kaplan <david.kaplan@amd.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>, 
+	Peter Zijlstra <peterz@infradead.org>, Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, 
+	Ingo Molnar <mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H . Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 3/5] x86/bugs: Simplify SSB cmdline parsing
+Message-ID: <46yv33pq5ilwi6kylrxuciyg2gdqbdj4zdpcnqf6bbp2b3xcnt@raah6px5gzlg>
+References: <20250819192200.2003074-1-david.kaplan@amd.com>
+ <20250819192200.2003074-4-david.kaplan@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250819192200.2003074-4-david.kaplan@amd.com>
 
-Now that all users are gone, let's remove it.
+On Tue, Aug 19, 2025 at 02:21:58PM -0500, David Kaplan wrote:
+> +static int __init ssb_parse_cmdline(char *str)
+> +{
+> +	if (!str)
+> +		return -EINVAL;
+>  
+> -		for (i = 0; i < ARRAY_SIZE(ssb_mitigation_options); i++) {
+> -			if (!match_option(arg, ret, ssb_mitigation_options[i].option))
+> -				continue;
+> +	if (!IS_ENABLED(CONFIG_MITIGATION_SSB))
+> +		return 0;
 
-Signed-off-by: David Hildenbrand <david@redhat.com>
----
- include/linux/mm.h                   | 2 --
- tools/testing/scatterlist/linux/mm.h | 1 -
- 2 files changed, 3 deletions(-)
+Similar to elsewhere, I think we want to be consistent and allow
+overriding the compile time default.
 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 2ca1eb2db63ec..b26ca8b2162d9 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -210,9 +210,7 @@ extern unsigned long sysctl_admin_reserve_kbytes;
- 
- #if defined(CONFIG_SPARSEMEM) && !defined(CONFIG_SPARSEMEM_VMEMMAP)
- bool page_range_contiguous(const struct page *page, unsigned long nr_pages);
--#define nth_page(page,n) pfn_to_page(page_to_pfn((page)) + (n))
- #else
--#define nth_page(page,n) ((page) + (n))
- static inline bool page_range_contiguous(const struct page *page,
- 		unsigned long nr_pages)
- {
-diff --git a/tools/testing/scatterlist/linux/mm.h b/tools/testing/scatterlist/linux/mm.h
-index 5bd9e6e806254..121ae78d6e885 100644
---- a/tools/testing/scatterlist/linux/mm.h
-+++ b/tools/testing/scatterlist/linux/mm.h
-@@ -51,7 +51,6 @@ static inline unsigned long page_to_phys(struct page *page)
- 
- #define page_to_pfn(page) ((unsigned long)(page) / PAGE_SIZE)
- #define pfn_to_page(pfn) (void *)((pfn) * PAGE_SIZE)
--#define nth_page(page,n) pfn_to_page(page_to_pfn((page)) + (n))
- 
- #define __min(t1, t2, min1, min2, x, y) ({              \
- 	t1 min1 = (x);                                  \
 -- 
-2.50.1
-
+Josh
 
