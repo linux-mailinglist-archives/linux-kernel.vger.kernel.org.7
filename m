@@ -1,156 +1,238 @@
-Return-Path: <linux-kernel+bounces-788235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81F1FB381A5
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 13:46:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B767B381A8
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 13:46:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B6F81BA6A46
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 11:46:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 312BC1BA6A70
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 11:46:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 611392FF65C;
-	Wed, 27 Aug 2025 11:40:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A28FC302768;
+	Wed, 27 Aug 2025 11:41:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ip2F1tNP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AWPSLaqg"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B84C92FD7AA
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 11:40:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEA28302773
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 11:41:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756294856; cv=none; b=Zbv6050xF9p5k2Db4xbj/MGLp8eB1Bj92bSqrZkiZZotf3pZfG0+1dIaA+kIFMsmzPOOj7diiNCfikyTKiA2TfoSjrFizoWIY8NsRuk1iNCJzwGRCvfwRwmmiq7iKvCVWLaZy4C1FsDNjuzIvABo4f+EnoB+g7ly35w7Izve4k4=
+	t=1756294905; cv=none; b=qs8CU/kqIC+CjLKJhKYbIJTarlR0EY3r5pXIlAx9SgZLJKqBNptUbDtFxg6qMeOjKTInoG4xK98FqPM5E+c1vUciaw7/Vd8PABiSM9cXTcJ31hr0clfHzCIWZ/tGaaBmszGQ7q7eW1eeKIADeyxTxI7RxSJBV0XjEXj3fmRbwTk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756294856; c=relaxed/simple;
-	bh=j7JKN3Qxc8gOY3CGeEKvm2JllThAj0nwSwGpt/ZdFUs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IjRf/owqZzpNnbbVTNl4biigIIp4TN2F9vpTwcGWOBB1iT7kpXO1bhtfoRGgOvzIHEvPWEisM/mMmwx4g2pRuNP+zi728ZBlDkUC8NmBbXzLdNNp43/L/0qcdktDKBUiO2FT2lzKvd10lmTfxTcF7sSI+ZGpT+SC3ZHk0sbBUaI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ip2F1tNP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C35E7C4CEEB;
-	Wed, 27 Aug 2025 11:40:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756294856;
-	bh=j7JKN3Qxc8gOY3CGeEKvm2JllThAj0nwSwGpt/ZdFUs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Ip2F1tNPOmPTmdlUfxlgawt4/MvQbcBMAU5HrNLXaB2Uc1GWZSOXl7C7awQSv8+2r
-	 T+RgU8qvZsLzeAC26JINq4UZXamUuwPCKRrEVqhi9joV1Ea1nKYwnyJJ3eQEpWB/2v
-	 oE7sAvjdSpVlNxC3zP9tUVTL/2l391lP3CSde8VXqCpnUketo+At91daksdMMdXWQ/
-	 eUPRKsR3KGeJnBTmJnGafNWTA3q+rUYsBzVBi+RUW1bjWDFcHMTSayRGXgs4IULwfL
-	 avJ8BYTywObghm1f2Nj88UK5+B1n6TWgBfwqqIcI7I30OPVvKcrmqTRHb0EtYLDutW
-	 0bvjKpTHBdeOA==
-Date: Wed, 27 Aug 2025 13:40:53 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Daniel Stone <daniel@fooishbar.org>
-Cc: Shengyu Qu <wiagn233@outlook.com>, 
-	Marius Vlad <marius.vlad@collabora.com>, alexander.deucher@amd.com, christian.koenig@amd.com, 
-	airlied@gmail.com, simona@ffwll.ch, harry.wentland@amd.com, sunpeng.li@amd.com, 
-	siqueira@igalia.com, maarten.lankhorst@linux.intel.com, tzimmermann@suse.de, 
-	contact@rafaelrc.com, lijo.lazar@amd.com, jesse.zhang@amd.com, tim.huang@amd.com, 
-	dark_sylinc@yahoo.com.ar, mario.limonciello@amd.com, alex.hung@amd.com, 
-	aurabindo.pillai@amd.com, sunil.khatri@amd.com, chiahsuan.chung@amd.com, mwen@igalia.com, 
-	Roman.Li@amd.com, Wayne.Lin@amd.com, dominik.kaszewski@amd.com, alvin.lee2@amd.com, 
-	Aric.Cyr@amd.com, Austin.Zheng@amd.com, Sung.Lee@amd.com, PeiChen.Huang@amd.com, 
-	dillon.varone@amd.com, Richard.Chiang@amd.com, ryanseto@amd.com, linux@treblig.org, 
-	haoping.liu@amd.com, Relja.Vojvodic@amd.com, Yihan.Zhu@amd.com, Samson.Tam@amd.com, 
-	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	wayland-devel@lists.freedesktop.org
-Subject: Re: [PATCH v2 0/2] Add "pixel_encoding" to switch between RGB & YUV
- color modes
-Message-ID: <20250827-skilled-jasper-angelfish-853f26@houat>
-References: <TY4PR01MB14432B688209B2AA416A95228983EA@TY4PR01MB14432.jpnprd01.prod.outlook.com>
- <aK1hPoCmLziaPPOd@xpredator>
- <TY4PR01MB1443219A9870877AF120FE63B9839A@TY4PR01MB14432.jpnprd01.prod.outlook.com>
- <20250827-imperial-mongrel-of-dignity-712fab@houat>
- <CAPj87rPhK+E2FP62fnNxFySDOkqqKxo_oa94i7DR3_6a1j1o1A@mail.gmail.com>
- <20250827-enchanted-merciful-badger-d51816@houat>
- <CAPj87rMDj-3ohEtXQYy25Rp0zNtZxQxS4Rmd-akgx9kkvB4Ysw@mail.gmail.com>
+	s=arc-20240116; t=1756294905; c=relaxed/simple;
+	bh=gpzJgwGUB84I34ePuaz7BMCZpd8bZhEo2g/I/U029Ps=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DmegKGgvNEcxPo/VA+O9IAd7poG/x5BeRxNHC/9ujsJwTuNig5ZV0rIwCt0ZbeCuWFNEijvks/dtBh5vM1idoE7UHPjfpR7W9Gak0Iit6zcLiAWfO+7IGV02qFi3QGFnlyGwq6ku2ynuGHwkt6jRhrwj16jAWog3iokFMRnSKiM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AWPSLaqg; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756294902;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=HV/xZcVuFLtiCGviUqTx61DCXk4F4wUkVDUlnEBoh2w=;
+	b=AWPSLaqggk+JnD+XMY6LeEaM9lYFxtXjz/1GeQFeu8oJKjdS37XKinsBJ2UTge4Zs30HGW
+	IR/Eeq8Ynb73n2bS1vA3pF9/GA+narAf5Jd+3wPJNWfrbyTQhc5HtJMTTFnuDFNc+Qcpvu
+	LmjtgJN8mVT2tItXpVmoHcK6UalO2fw=
+Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
+ [209.85.219.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-684-ZbYVx16uNO6gCVZ3OD4twg-1; Wed, 27 Aug 2025 07:41:39 -0400
+X-MC-Unique: ZbYVx16uNO6gCVZ3OD4twg-1
+X-Mimecast-MFC-AGG-ID: ZbYVx16uNO6gCVZ3OD4twg_1756294899
+Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-70ddb4037b2so33033106d6.3
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 04:41:39 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756294899; x=1756899699;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HV/xZcVuFLtiCGviUqTx61DCXk4F4wUkVDUlnEBoh2w=;
+        b=VTN+zINtz3JBwasKyvA6dPq2HqsopjAnTVNhmdq0rmg9g8kQ5jdf6m6OEoCJMuvMqg
+         XAki7Y5yTH38YwzXpsgXRD4mTEGBJpJAwchuy2hZDeKGCkVx71q8HJSornc2vd3B1sZw
+         MPxkKuXQRqMSxTMEWV6qVRQBzMCy4bKGicG2BOSqXnOMR4bF1cT8pcGmed9K9TeRfMBk
+         XRpzqNYqC0GWoBedrhFi57a+p/TgHQiGv3Srwxc4E+/BAcG7LluQzbw90BBlAvjwP1sY
+         /1mybHBQq2Xe7VYblP2xCLp4qEQ64wrAEwxDqw/Z0Cmv+ZJheE99o6e/+aludvM0FQIc
+         OEYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWadEWaBnIjFL8Hj8MhpWjOTH7H57ap09bJFSqc+9eBeQJT4lxG4x7xasdCPucSZrMH0vCOBvD7GU1NZ8M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzqC1Hzfe0W9M7k8Q0pd3GdJp1YV/zo1f3h3niiXzX+nb065H1p
+	7a5vV9T9fipFz686/HJSRDiTtbNTwflf6Fm36zHwDw3KBs2jTccngqi5dJLFVC/9RtSCZD/RTy8
+	Q0sUAy1fAeLLOsdU17tNF5BIe+zksdOWi2l1vMrfH/J8eUFLxISn/Jq68nmCe+uzdxQ==
+X-Gm-Gg: ASbGnctyzy1U7Pgdj4IKewPxVqUo9OKcvMXNBulyqjwp/pLoWEMwjE959TaJveigy/B
+	IwfKDagUkO3f2lgzZt8F/yjrX26dsos2DML7yNOiLTC+397DE5ARjvKwzTu/F/WYRPmArcrnabL
+	N+TClFucLKKRGS5gJqMNJWWiJ38l4VLb++ZwW0DFli5vakKGbHjLxkiDHMCWsHwUuzVT/fVRH1v
+	+C25JBPxSOAKEEmtHrSnXs+4Zjx5RuxJkqBgAjI9HQu2uJUGyAcO/YmavCh9dVSltG4Vgw+2kt8
+	t0ipaAh7SvRRxm3L4uT6awIN61XzEgg/UjUGqixuxD0iFXHmvC5VD8lvHdQTPA==
+X-Received: by 2002:a05:6214:29c6:b0:70d:c4cf:66dd with SMTP id 6a1803df08f44-70dc4cf67ebmr95365696d6.20.1756294898614;
+        Wed, 27 Aug 2025 04:41:38 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGoqMNOquK0NnYEjbH/c3aLrCrIDjWCu+uWNdYZocRBUoCUrVCE1pSdaq0vI+MQ/KgHE4I+OA==
+X-Received: by 2002:a05:6214:29c6:b0:70d:c4cf:66dd with SMTP id 6a1803df08f44-70dc4cf67ebmr95365266d6.20.1756294898028;
+        Wed, 27 Aug 2025 04:41:38 -0700 (PDT)
+Received: from [10.32.64.156] (nat-pool-muc-t.redhat.com. [149.14.88.26])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-70dde332f06sm14730336d6.38.2025.08.27.04.41.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 27 Aug 2025 04:41:37 -0700 (PDT)
+Message-ID: <87956f34-e6b0-4d03-b30e-56be4f6b84f1@redhat.com>
+Date: Wed, 27 Aug 2025 13:41:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="kncuhvsrr3qnlsnj"
-Content-Disposition: inline
-In-Reply-To: <CAPj87rMDj-3ohEtXQYy25Rp0zNtZxQxS4Rmd-akgx9kkvB4Ysw@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] selftests/mm: fix hugepages cleanup too early
+To: Chunyu Hu <chuhu@redhat.com>, akpm@linux-foundation.org,
+ shuah@kernel.org, linux-mm@kvack.org
+Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+ lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, vbabka@suse.cz,
+ rppt@kernel.org, surenb@google.com, mhocko@suse.com
+References: <20250827075209.2347015-1-chuhu@redhat.com>
+ <20250827075209.2347015-2-chuhu@redhat.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <20250827075209.2347015-2-chuhu@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+
+On 27.08.25 09:52, Chunyu Hu wrote:
+> The nr_hugepgs variable is used to keep the original nr_hugepages at the
+> hugepage setup step at test beginning. After userfaultfd test, a cleaup is
+> executed, both /sys/kernel/mm/hugepages/hugepages-*/nr_hugepages and
+> /proc/sys//vm/nr_hugepages are reset to 'original' value before userfaultfd
+> test starts.
+> 
+> Issue here is the value used to restore /proc/sys/vm/nr_hugepages is
+> nr_hugepgs which is the initial value before the vm_runtests.sh runs, not
+> the value before userfaultfd test starts. 'va_high_addr_swith.sh' tests
+> runs after that will possibly see no hugepages available for test, and got
+> EINVAL when mmap(HUGETLB), making the result invalid.
+> 
+> And before pkey tests, nr_hugepgs is changed to be used as a temp variable
+> to save nr_hugepages before pkey test, and restore it after pkey tests
+> finish. The original nr_hugepages value is not tracked anymore, so no way
+> to restore it after all tests finish.
+> 
+> Add a new variable nr_hugepgs_origin to save the original nr_hugepages, and
+> and restore it to nr_hugepages after all tests finish. And change to use
+> the nr_hugepgs variable to save the /proc/sys/vm/nr_hugeages after hugepage
+> setup, it's also the value before userfaultfd test starts, and the correct
+> value to be restored after userfaultfd finishes. The va_high_addr_switch.sh
+> broken will be resolved.
+> 
+> Signed-off-by: Chunyu Hu <chuhu@redhat.com>
+> ---
+>   tools/testing/selftests/mm/run_vmtests.sh | 9 +++++++--
+>   1 file changed, 7 insertions(+), 2 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/mm/run_vmtests.sh b/tools/testing/selftests/mm/run_vmtests.sh
+> index 471e539d82b8..f1a7ad3ec6a7 100755
+> --- a/tools/testing/selftests/mm/run_vmtests.sh
+> +++ b/tools/testing/selftests/mm/run_vmtests.sh
+> @@ -172,13 +172,13 @@ fi
+>   
+>   # set proper nr_hugepages
+>   if [ -n "$freepgs" ] && [ -n "$hpgsize_KB" ]; then
+> -	nr_hugepgs=$(cat /proc/sys/vm/nr_hugepages)
+> +	nr_hugepgs_origin=$(cat /proc/sys/vm/nr_hugepages)
+
+I'd call this "orig_nr_hugepgs".
+
+But it's a shame that the naming is then out of sync with nr_size_hugepgs?
 
 
---kncuhvsrr3qnlsnj
-Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 0/2] Add "pixel_encoding" to switch between RGB & YUV
- color modes
-MIME-Version: 1.0
+>   	needpgs=$((needmem_KB / hpgsize_KB))
+>   	tries=2
+>   	while [ "$tries" -gt 0 ] && [ "$freepgs" -lt "$needpgs" ]; do
+>   		lackpgs=$((needpgs - freepgs))
+>   		echo 3 > /proc/sys/vm/drop_caches
+> -		if ! echo $((lackpgs + nr_hugepgs)) > /proc/sys/vm/nr_hugepages; then
+> +		if ! echo $((lackpgs + nr_hugepgs_origin)) > /proc/sys/vm/nr_hugepages; then
+>   			echo "Please run this test as root"
+>   			exit $ksft_skip
+>   		fi
+> @@ -189,6 +189,7 @@ if [ -n "$freepgs" ] && [ -n "$hpgsize_KB" ]; then
+>   		done < /proc/meminfo
+>   		tries=$((tries - 1))
+>   	done
+> +	nr_hugepgs=$(cat /proc/sys/vm/nr_hugepages)
+>   	if [ "$freepgs" -lt "$needpgs" ]; then
+>   		printf "Not enough huge pages available (%d < %d)\n" \
+>   		       "$freepgs" "$needpgs"
+> @@ -532,6 +533,10 @@ CATEGORY="page_frag" run_test ./test_page_frag.sh aligned
+>   
+>   CATEGORY="page_frag" run_test ./test_page_frag.sh nonaligned
+>   
+> +if [ "${HAVE_HUGEPAGES}" = 1 ]; then
+> +	echo "$nr_hugepgs_origin" > /proc/sys/vm/nr_hugepages
+> +fi
 
-On Wed, Aug 27, 2025 at 12:36:53PM +0100, Daniel Stone wrote:
-> Hey,
->=20
-> On Wed, 27 Aug 2025 at 12:21, Maxime Ripard <mripard@kernel.org> wrote:
-> > On Wed, Aug 27, 2025 at 11:39:25AM +0100, Daniel Stone wrote:
-> > > There are other reasons to have uAPI though ...
-> > >
-> > > One is because you really care about the colour properties, and you'd
-> > > rather have better fidelity than anything else, even if it means some
-> > > modes are unusable.
-> > >
-> > > Another is for situations which static quirks can't handle. If you
-> > > want to keep headroom on the link (either to free up bandwidth for
-> > > other uses), or you accidentally bought a super-long cable so have a
-> > > flaky link, you might well want to force it to use lower fidelity so
-> > > you can negotiate a lower link rate.
-> > >
-> > > I'm all for just dtrt automatically, but there are definitely reasons
-> > > to expose it to userspace regardless.
-> >
-> > Oh, yeah, definitely.
-> >
-> > But bringing the big guns and the requirements we have for those to
-> > address the point initially discussed by the gitlab issues seems like
-> > biting off more than they can chew.
-> >
-> > Even more so since whatever uapi we come up with would still depend on
-> > the EDIDs, and they would still be broken for these monitors.
->=20
-> Sounds like we're agreeing with each other then.
->=20
-> Shengyu's 'I want these broken panels to work' usecase is probably
-> best served with an EDID quirk, yeah.
->=20
-> The reason Marius is working on it is the reasons I said above though
-> - some for uses where we'd rather clearly fail out and push an error
-> to userspace than continue with visually-degraded output, and some for
-> uses where people have bought a too-long cable (or bought a too-short
-> one which is now at tension through a 180=B0 bend) so we want to force
-> the lowest link rate possible, without dropping to a ridiculously low
-> resolution.
->=20
-> So I don't think these are in tension, and Marius should proceed with
-> his work (complete with the proper userspace to back it up), and
-> Shengyu should proceed with new in-kernel quirks, which will be
-> effective when the properties are set to auto, but hard overridden by
-> userspace if it decides otherwise.
->=20
-> How does that sound?
+FWIW, I think the tests should maybe be doing that 
+(save+configure+restore) themselves, like we do with THP settings through.
 
-Like a great plan :)
+thp_save_settings()
+thp_write_settings()
 
-Maxime
+and friends.
 
---kncuhvsrr3qnlsnj
-Content-Type: application/pgp-signature; name="signature.asc"
+This is not really something run_vmtests.sh should bother with.
 
------BEGIN PGP SIGNATURE-----
+A bigger rework, though ...
 
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaK7uxQAKCRAnX84Zoj2+
-doZGAYDeBn4U42pxYflUBmNr4nmthfZRNjbO/t9qAtySVnQYrc+Y88V/FrBzvE24
-Kzq7rV8BgNYxo8ee0B72lotJLyC5ir/zpX0Cpf2Itc46E4GudmvDK2a2nnUA2VOx
-STT9RUM2Xw==
-=r7ye
------END PGP SIGNATURE-----
+-- 
+Cheers
 
---kncuhvsrr3qnlsnj--
+David / dhildenb
+
 
