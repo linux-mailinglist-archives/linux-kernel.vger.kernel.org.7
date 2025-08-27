@@ -1,140 +1,161 @@
-Return-Path: <linux-kernel+bounces-787551-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5463BB377B7
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 04:27:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C5E32B377B8
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 04:27:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 264C22A1DBD
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 02:27:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7523D2A56BB
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 02:27:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 570472737E7;
-	Wed, 27 Aug 2025 02:27:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="Nn4bcx8r"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 658042737E7;
+	Wed, 27 Aug 2025 02:27:46 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 050021D63D8
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 02:26:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF37F2737E2
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 02:27:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756261619; cv=none; b=TYQrS2+v8DG2jcbGnCfGBJDB4umzMm26fnAK/zK4N/V2woLQ+bX0uUCkkU/BRRoSujvGmzHOFEbn1qMDqBAErlHkUzkb/MkrT1lqpHse9/hhk3v0M/2Q671JasohC8/ld5B5j8+I2q7B7c5Xv3WffxKo9QGz9aUHb82fRijbmxo=
+	t=1756261666; cv=none; b=OdzmxCd7uxcmCsNXpHvar2mQBsXrScNNV8MQd8NR4dDl9LMc7yW3Y/U6Z4vhgrHylbhcf/09K51Rdw+mNl4Tv3OIM02mIgeyQXcRc1kBKqVSaFh1K6nWXIER+6BxNEbIjC69OYTqvDnK5vqBQ8JJNp4mTsiBJNUeRnFYNjSIrRo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756261619; c=relaxed/simple;
-	bh=ieS+WITdN4OvY4Z7i3BcXJd12Mc54IwH5kzoJJBtBek=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QdumEag1JTr4GZ37wT1coqTCc3oKlk/WT1RrsE02chZmf33+jwjNe53py74me2Uq+P79RbgArCt7CKmvNwshdJFqviXTfp8w7azZE6u1NPPa9uCxwOsZzqvTFGTeHlZqPHRm2n84dBasIqLNsmZBB5ntw3WedKgsIn3SPi8o2hg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=Nn4bcx8r; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2487a60d649so13295845ad.2
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 19:26:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1756261617; x=1756866417; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MHVNbfQCumqxeQCw71J4nlidfnOtKEjFHDsWTl58OjI=;
-        b=Nn4bcx8r/YXoQtravXLvbPEq+KL3V+aTlQe9+I6pKq5ik7ojLRuXGdI1XVg2S7ei2H
-         4xDYEljR2ZEnvWTrixqw6p/oVOO4eRKGvAqguFy6my1HebgorJYgOWC58pymwKFHB5Il
-         FI4sLr2et0wFpy7GvLHsDOPy56j7yRmgLAzNj5SaAKh4iCRSFHEKHVFQZUzfuQCDA4vO
-         +2SnzmctLrbIp/z9lS1S0fBl4YsvKhdGTW69rSHZjPbDTtt+LqRRH6ZxcvYWNmFNqvQt
-         chMFWnX8c9DGuW3m2NaRvKI+4K3LncYUBsz2F1yB++JpVh0nC32xUu+IL4+9T77F02g3
-         9nYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756261617; x=1756866417;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MHVNbfQCumqxeQCw71J4nlidfnOtKEjFHDsWTl58OjI=;
-        b=VypjPsdPhmV0xz48X3OEdqUA1yNVJmyDBlcxNhSQi68exY0fz3qomr45KW/LBD8KNh
-         op1P7WKXg/8XvrvPim7holJvEmqjCW9zl8CQ1ATFAPwj4aJvyuDCjNaEjEC7XNlLj22r
-         B8TfBKogmvuKPcqKd2AQqcOVmaghak63vAYjCScuJGmV3NmCmvRjYwF3XKdhMt91TrFr
-         NP3flC00wejWYeyhGirNOPGzgpMuOv+reycNjUtz9Hf+j7+3qo3R8uf7zl7JSovV6Zgo
-         qiBcvyTZohNSFYVJb9Ow0wYktN93WJMylsn53zvVy3FsxGKDkgN2UkmzmWJ7JxXfdrEe
-         rOXg==
-X-Forwarded-Encrypted: i=1; AJvYcCWJtcGZgV01I7fcZOC1jbWhvQNMUqHZ0B30NDkJNdyjiR4Sl9mVyIHBJzBrmncYWOwnJ0CXLimfLgO+1J8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwUWyI3TwDxKr/8qYxl6f5LLBn+fQopEgA6k7PuvwcdQTVkIfXQ
-	/ldWL8OK3kNwsElpTnRxrx0TZh3esHEeLhqgt4RT7pqfoxjc1olekZijuhF5Hj/Qq5PBlrcczDL
-	JPEuWV+Y5EKEAhzug9dVUlAwy7hWmvGRDk56pQAmlHPzUfN6dOC907yM=
-X-Gm-Gg: ASbGnct+xUHSAlzHdRyzVL9RzfjmMJy/9dKn8+uRVcJkJzc/FEj/uiwLfSgIljyd6Em
-	gahUTXgaH5vcSRGZYXsx/6X4Moy/LLmCBqtm8zYoRfj2ig9DXiulXXVw7WTx/A02kOeas/ZJafk
-	cBOOdeBHqpd1B3Sdl19KQyMK1RtilEgneon29kim5HUBBlL2/4giM4GJ1tZvJcV4n4Esn5hQx9y
-	JpGNXeZsUfwBIwLhWUDsDgmsQ7SAJdwK/LumQm/GOcsS3TJy4OlRuPE/2g=
-X-Google-Smtp-Source: AGHT+IHNZgQsssmPuxXxulhquPiv+J+5gv9oZQdEbvzqvM22YI4EwB4b2bsfvQp7QA39DPvYUCZi5e+iy3hblW/5A30=
-X-Received: by 2002:a17:902:ccc4:b0:248:79d4:939e with SMTP id
- d9443c01a7336-24879d49812mr49737525ad.39.1756261617011; Tue, 26 Aug 2025
- 19:26:57 -0700 (PDT)
+	s=arc-20240116; t=1756261666; c=relaxed/simple;
+	bh=v+PsSQR/QsnG+yciJsCfKji4W1KkaqrU6lyYY+8cXaU=;
+	h=CC:Subject:To:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=Y2x4/LN621qjikqp2u1MmO7vZr2ZstuTg2SchcXYyuu7Mu/5W43606vt+rs/Dm1iRJkn8Oe4exVDo52GAcoLMs7eaY81ZPbkWi4nBoGFLnU7p9Zp/xlQ0MESlkNNJPEl0UN+Wsb+qUu3hHF7UtokInM4Gm/CzGC+dcOVaz7/deE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4cBSzH3tMBz1R8vx;
+	Wed, 27 Aug 2025 10:24:43 +0800 (CST)
+Received: from dggemv705-chm.china.huawei.com (unknown [10.3.19.32])
+	by mail.maildlp.com (Postfix) with ESMTPS id 9FF221A0188;
+	Wed, 27 Aug 2025 10:27:39 +0800 (CST)
+Received: from kwepemq200018.china.huawei.com (7.202.195.108) by
+ dggemv705-chm.china.huawei.com (10.3.19.32) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 27 Aug 2025 10:27:39 +0800
+Received: from [10.67.121.177] (10.67.121.177) by
+ kwepemq200018.china.huawei.com (7.202.195.108) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 27 Aug 2025 10:27:38 +0800
+CC: <yangyicong@hisilicon.com>, <robin.murphy@arm.com>,
+	<Jonathan.Cameron@huawei.com>, <liuyonglong@huawei.com>,
+	<wanghuiqiang@huawei.com>, <prime.zeng@hisilicon.com>,
+	<hejunhao3@h-partners.com>
+Subject: Re: [PATCH v2 9/9] Documentation: hisi-pmu: Add introduction to
+ HiSilicon
+To: Yushan Wang <wangyushan12@huawei.com>, <will@kernel.org>,
+	<mark.rutland@arm.com>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>
+References: <20250821135049.2010220-1-wangyushan12@huawei.com>
+ <20250821135049.2010220-10-wangyushan12@huawei.com>
+From: Yicong Yang <yangyicong@huawei.com>
+Message-ID: <d757a29e-6e13-d528-651b-beff8c2b2c21@huawei.com>
+Date: Wed, 27 Aug 2025 10:27:38 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.5.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250826145740.92276-1-luxu.kernel@bytedance.com> <20250826-dullness-seventy-c93e7c8479d0@spud>
-In-Reply-To: <20250826-dullness-seventy-c93e7c8479d0@spud>
-From: Xu Lu <luxu.kernel@bytedance.com>
-Date: Wed, 27 Aug 2025 10:26:06 +0800
-X-Gm-Features: Ac12FXx2No1D1gMvYg6ri85Ywj4nyF_bfR0xM0UFuGY0pIPPFwb4VR1vHn2UueQ
-Message-ID: <CAPYmKFuZ5y=q-tpmgMzGFEy6y=UPDf5vLg4gS8VAEkAKBr6BmQ@mail.gmail.com>
-Subject: Re: [External] Re: [RFC PATCH 0/4] riscv: Add Zalasr ISA exntesion support
-To: Conor Dooley <conor@kernel.org>
-Cc: paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu, 
-	alex@ghiti.fr, ajones@ventanamicro.com, brs@rivosinc.com, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250821135049.2010220-10-wangyushan12@huawei.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
+ kwepemq200018.china.huawei.com (7.202.195.108)
 
-Hi Conor,
+Hi Yushan,
 
-On Wed, Aug 27, 2025 at 1:46=E2=80=AFAM Conor Dooley <conor@kernel.org> wro=
-te:
->
-> On Tue, Aug 26, 2025 at 10:57:36PM +0800, Xu Lu wrote:
-> > This patch adds support for the Zalasr ISA extension, which supplies th=
-e
-> > real load acquire/store release instructions.
-> >
-> > The specification can be found here:
-> > https://github.com/riscv/riscv-zalasr/blob/main/chapter2.adoc
->
-> Why is this an RFC?
+the subject seems to be truncated? should it be like below?
 
-There is still some code using fence to simulate real
-load-acquire/store-release insns. For example, RISCV_ACQUIRE_BARRIER
-and RISCV_RELEASE_BARRIER, etc. I will resend a formal patch series
-after I modify them.
+Documentation: hisi-pmu: Add introduction to HiSilicon v3 PMU
 
-> Is the RFC tag related to how you have not CCed all relevant mailing
-> lists and maintainers?
+other comments inline. sorry for the late reply..
 
-Sorry about this. I will recheck the maintainer list next time.
+On 2025/8/21 21:50, Yushan Wang wrote:
+> Some of HiSilicon V3 PMU hardware is divided into parts to fulfill the
+> job of monitoring specific parts of a device.  Add description on that
+> as well as the newly added ext operand for L3C PMU.
+> 
+> Signed-off-by: Yushan Wang <wangyushan12@huawei.com>
+> ---
+>  Documentation/admin-guide/perf/hisi-pmu.rst | 38 +++++++++++++++++++--
+>  1 file changed, 36 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/admin-guide/perf/hisi-pmu.rst b/Documentation/admin-guide/perf/hisi-pmu.rst
+> index a307bce2f5c5..4c7584fe3c1a 100644
+> --- a/Documentation/admin-guide/perf/hisi-pmu.rst
+> +++ b/Documentation/admin-guide/perf/hisi-pmu.rst
+> @@ -12,8 +12,8 @@ The HiSilicon SoC encapsulates multiple CPU and IO dies. Each CPU cluster
+>  called Super CPU cluster (SCCL) and is made up of 6 CCLs. Each SCCL has
+>  two HHAs (0 - 1) and four DDRCs (0 - 3), respectively.
+>  
+> -HiSilicon SoC uncore PMU driver
+> --------------------------------
+> +HiSilicon SoC uncore PMU v1
 
-Best regards,
-Xu Lu
+these (and below) new sections will break the ordered list of the options. this should not be
+necessary to mention the version, just add the newly added options in the current way and
+mention the introduced version should be enough.
 
->
-> Cheers,
-> Conor.
->
-> >
-> > Xu Lu (4):
-> >   riscv: add ISA extension parsing for Zalasr
-> >   dt-bindings: riscv: Add Zalasr ISA extension description
-> >   riscv: Instroduce Zalasr instructions
-> >   riscv: Use Zalasr for smp_load_acquire/smp_store_release
-> >
-> >  .../devicetree/bindings/riscv/extensions.yaml |  5 ++
-> >  arch/riscv/include/asm/barrier.h              | 79 ++++++++++++++++---
-> >  arch/riscv/include/asm/hwcap.h                |  1 +
-> >  arch/riscv/include/asm/insn-def.h             | 79 +++++++++++++++++++
-> >  arch/riscv/kernel/cpufeature.c                |  1 +
-> >  5 files changed, 154 insertions(+), 11 deletions(-)
-> >
-> > --
-> > 2.20.1
-> >
+> +---------------------------
+>  
+>  Each device PMU has separate registers for event counting, control and
+>  interrupt, and the PMU driver shall register perf PMU drivers like L3C,
+> @@ -56,6 +56,9 @@ Example usage of perf::
+>    $# perf stat -a -e hisi_sccl3_l3c0/rd_hit_cpipe/ sleep 5
+>    $# perf stat -a -e hisi_sccl3_l3c0/config=0x02/ sleep 5
+>  
+> +HiSilicon SoC uncore PMU v2
+> +----------------------------------
+> +
+>  For HiSilicon uncore PMU v2 whose identifier is 0x30, the topology is the same
+>  as PMU v1, but some new functions are added to the hardware.
+>  
+> @@ -113,6 +116,37 @@ uring channel. It is 2 bits. Some important codes are as follows:
+>  - 2'b00: default value, count the events which sent to the both uring and
+>    uring_ext channel;
+>  
+> +HiSilicon SoC uncore PMU v3
+> +----------------------------------
+> +
+> +For HiSilicon uncore PMU v3 whose identifier is 0x40, some uncore PMUs are
+> +further divided into parts for finer granularity of tracing, each part has its
+> +own dedicated PMU, and all such PMUs together cover the monitoring job of events
+> +on particular uncore device. Such PMUs are described in sysfs with name format
+> +slightly changed::
+> +
+> +/sys/bus/event_source/devices/hisi_sccl{X}_<l3c{Y}_{Z}/ddrc{Y}_{Z}/noc{Y}_{Z}>
+> +
+> +Z is the sub-id, indicating different PMUs for part of hardware device.
+> +
+> +Usage of most PMUs with different sub-ids are identical. Specially, L3C PMU
+> +provides ``ext`` operand to allow exploration of even finer granual statistics
+> +of L3C PMU, L3C PMU driver use that as hint of termination when delivering perf
+> +command to hardware:
+> +
+> +- ext=0: Default, could be used with event names.
+> +- ext=1 and ext=2: Must be used with event codes, event names are not supported.
+> +
+> +An example of perf command could be::
+> +
+> +  $# perf stat -a -e hisi_sccl0_l3c1_0/event=0x1,ext=1/ sleep 5
+> +
+> +or::
+> +
+> +  $# perf stat -a -e hisi_sccl0_l3c1_0/rd_spipe/ sleep 5
+> +
+> +As above, ``hisi_sccl0_l3c1_0`` locates PMU on CPU cluster 0, L3 cache 1 pipe0.
+
+this isn't correct. sccl0 indicates the Super CPU CLuster 0 which is already
+described in the document.
+
+thanks.
+
 
