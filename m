@@ -1,55 +1,96 @@
-Return-Path: <linux-kernel+bounces-787927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79EFDB37DC1
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 10:27:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D179B37DC5
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 10:28:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD3641B6604C
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 08:27:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 27BC0460926
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 08:28:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F0C32C08B0;
-	Wed, 27 Aug 2025 08:26:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 898A6341AC4;
+	Wed, 27 Aug 2025 08:26:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="FdWFdNk6";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="rMcsJ+55";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="FdWFdNk6";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="rMcsJ+55"
 Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B02E633CEB3
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 08:26:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FBF4341658
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 08:26:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756283205; cv=none; b=tJmhYhDSnsO61W63NVe54ZI2NsJk4m3OjsYRXN8DZbYAlHzItckyL0Kk3gG8Yz0ehegWbfDX+1ZCQF5umZrVobZG2n76GHJvPMtlE0JpMxqCkv01M6YVEN219rnXh000GbuQemaq7wjkRpHef/WMKgG//CBIfvDytQcqZG8cMrU=
+	t=1756283217; cv=none; b=OPQIDqqMx3iDI85EmSkLSbF7PHR0Gd/XQfUi8f/+SHHuZ2L5Vf1AzozvjwlOx6do6vHxus7E7vtK4+RH8mjV9U95ElqDKNUOPhpq8dHSJAuSQynsKqb7Lh9ljU8ocovBTpfondyXH5gQVCJqOhHnbb/5qqSM/mOhgRk1/foK7+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756283205; c=relaxed/simple;
-	bh=v9obO0py9wopSX+MdWuhyrZ0RzarMmXuW475AFi3C+k=;
+	s=arc-20240116; t=1756283217; c=relaxed/simple;
+	bh=zXygsHQ8M75ldUrzHX4v4b361hHPjjuRMUX5R7ROHQM=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=qDmlq7C6PAEQ+E6jCQG1uGF+NmjcN/yt3PpinzKbkJxhJsIM93MHrIi602WI8HA8Jcr6vo0CtFCeQKtnOytGIaXSwH/J99GsJxCHbDyaCYoKniDJzYQcEBkiUssO/jcoGeMguhI5SO/hhDp42DTBjBWDXW1O1KNANCPdbKAAOyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; arc=none smtp.client-ip=195.135.223.130
+	 In-Reply-To:To:Cc; b=H19bSsI1Cku0Ebk6T1BmdQSlhJNTGCurJMHgNLwLEy70Y2lKtZz2cuet8whn4dVseHvmihYsdAWKksc7dq8Sy6zEYnmTVlSZt78mOUnA+sXax2Lxv/U5LcHnPn9R28jTEfHQU1xSl/mH8tz1Uv0V1lspAHh5BNkgGV8hASa60qg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=FdWFdNk6; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=rMcsJ+55; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=FdWFdNk6; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=rMcsJ+55; arc=none smtp.client-ip=195.135.223.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 953222207C;
+	by smtp-out1.suse.de (Postfix) with ESMTPS id A82312233D;
 	Wed, 27 Aug 2025 08:26:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1756283195; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GkJLUdth35DaRyhM3TWCLrM77sXSdG1lPON3otYkBww=;
+	b=FdWFdNk6TCZgy2nxkKnHyH/gOhW06MM52E144uaFEptFAWgOxxgZpiqOW+9oHSVGeomEKy
+	DdHbsvEMgqP0LSxABJ7IXL6c5kahQ7XTNIg/Ygrjbua/aFMjbUk/fuPpn6sevEYHkYtLzO
+	15n+KWuecNEPw09EzAeDbBnlnkLvnsk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1756283195;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GkJLUdth35DaRyhM3TWCLrM77sXSdG1lPON3otYkBww=;
+	b=rMcsJ+554wYvI1o+b4gPWt0Utnv4sbAmPE0solGOr15xwL6oebqkMZOo2VoWJPzWx/JCup
+	CAhpVafhccTZF1Ag==
 Authentication-Results: smtp-out1.suse.de;
 	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1756283195; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GkJLUdth35DaRyhM3TWCLrM77sXSdG1lPON3otYkBww=;
+	b=FdWFdNk6TCZgy2nxkKnHyH/gOhW06MM52E144uaFEptFAWgOxxgZpiqOW+9oHSVGeomEKy
+	DdHbsvEMgqP0LSxABJ7IXL6c5kahQ7XTNIg/Ygrjbua/aFMjbUk/fuPpn6sevEYHkYtLzO
+	15n+KWuecNEPw09EzAeDbBnlnkLvnsk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1756283195;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GkJLUdth35DaRyhM3TWCLrM77sXSdG1lPON3otYkBww=;
+	b=rMcsJ+554wYvI1o+b4gPWt0Utnv4sbAmPE0solGOr15xwL6oebqkMZOo2VoWJPzWx/JCup
+	CAhpVafhccTZF1Ag==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7F96A13A31;
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9339013A6A;
 	Wed, 27 Aug 2025 08:26:35 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 2KXgHjvBrmhNfgAAD6G6ig
+	id 6HFpIzvBrmhNfgAAD6G6ig
 	(envelope-from <vbabka@suse.cz>); Wed, 27 Aug 2025 08:26:35 +0000
 From: Vlastimil Babka <vbabka@suse.cz>
-Date: Wed, 27 Aug 2025 10:26:39 +0200
-Subject: [PATCH v6 07/10] slab: allow NUMA restricted allocations to use
- percpu sheaves
+Date: Wed, 27 Aug 2025 10:26:40 +0200
+Subject: [PATCH v6 08/10] mm, vma: use percpu sheaves for vm_area_struct
+ cache
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,7 +99,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250827-slub-percpu-caches-v6-7-f0f775a3f73f@suse.cz>
+Message-Id: <20250827-slub-percpu-caches-v6-8-f0f775a3f73f@suse.cz>
 References: <20250827-slub-percpu-caches-v6-0-f0f775a3f73f@suse.cz>
 In-Reply-To: <20250827-slub-percpu-caches-v6-0-f0f775a3f73f@suse.cz>
 To: Suren Baghdasaryan <surenb@google.com>, 
@@ -69,120 +110,54 @@ Cc: Roman Gushchin <roman.gushchin@linux.dev>,
  linux-mm@kvack.org, linux-kernel@vger.kernel.org, rcu@vger.kernel.org, 
  maple-tree@lists.infradead.org, vbabka@suse.cz
 X-Mailer: b4 0.14.2
-X-Rspamd-Pre-Result: action=no action;
-	module=replies;
-	Message is reply to one we originated
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
 X-Spam-Level: 
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.00 / 50.00];
-	REPLY(-4.00)[]
-X-Rspamd-Queue-Id: 953222207C
-X-Rspamd-Pre-Result: action=no action;
-	module=replies;
-	Message is reply to one we originated
-X-Spam-Score: -4.00
+X-Spamd-Result: default: False [-8.30 / 50.00];
+	REPLY(-4.00)[];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TO_DN_SOME(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	ARC_NA(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	R_RATELIMIT(0.00)[to_ip_from(RLwn5r54y1cp81no5tmbbew5oc)];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[linux.dev,oracle.com,gmail.com,kvack.org,vger.kernel.org,lists.infradead.org,suse.cz];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.cz:mid,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Score: -8.30
 
-Currently allocations asking for a specific node explicitly or via
-mempolicy in strict_numa node bypass percpu sheaves. Since sheaves
-contain mostly local objects, we can try allocating from them if the
-local node happens to be the requested node or allowed by the mempolicy.
-If we find the object from percpu sheaves is not from the expected node,
-we skip the sheaves - this should be rare.
+Create the vm_area_struct cache with percpu sheaves of size 32 to
+improve its performance.
 
-Reviewed-by: Harry Yoo <harry.yoo@oracle.com>
+Reviewed-by: Suren Baghdasaryan <surenb@google.com>
 Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
 ---
- mm/slub.c | 53 ++++++++++++++++++++++++++++++++++++++++++++++-------
- 1 file changed, 46 insertions(+), 7 deletions(-)
+ mm/vma_init.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/mm/slub.c b/mm/slub.c
-index b37e684457e7d14781466c0086d1b64df2fd8e9d..aeaffcbca49b3e50ef345c3a6f24d007b53ef24e 100644
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@ -4808,18 +4808,43 @@ __pcs_replace_empty_main(struct kmem_cache *s, struct slub_percpu_sheaves *pcs,
- }
+diff --git a/mm/vma_init.c b/mm/vma_init.c
+index 8e53c7943561e7324e7992946b4065dec1149b82..52c6b55fac4519e0da39ca75ad018e14449d1d95 100644
+--- a/mm/vma_init.c
++++ b/mm/vma_init.c
+@@ -16,6 +16,7 @@ void __init vma_state_init(void)
+ 	struct kmem_cache_args args = {
+ 		.use_freeptr_offset = true,
+ 		.freeptr_offset = offsetof(struct vm_area_struct, vm_freeptr),
++		.sheaf_capacity = 32,
+ 	};
  
- static __fastpath_inline
--void *alloc_from_pcs(struct kmem_cache *s, gfp_t gfp)
-+void *alloc_from_pcs(struct kmem_cache *s, gfp_t gfp, int node)
- {
- 	struct slub_percpu_sheaves *pcs;
-+	bool node_requested;
- 	void *object;
- 
- #ifdef CONFIG_NUMA
--	if (static_branch_unlikely(&strict_numa)) {
--		if (current->mempolicy)
--			return NULL;
-+	if (static_branch_unlikely(&strict_numa) &&
-+			 node == NUMA_NO_NODE) {
-+
-+		struct mempolicy *mpol = current->mempolicy;
-+
-+		if (mpol) {
-+			/*
-+			 * Special BIND rule support. If the local node
-+			 * is in permitted set then do not redirect
-+			 * to a particular node.
-+			 * Otherwise we apply the memory policy to get
-+			 * the node we need to allocate on.
-+			 */
-+			if (mpol->mode != MPOL_BIND ||
-+					!node_isset(numa_mem_id(), mpol->nodes))
-+
-+				node = mempolicy_slab_node();
-+		}
- 	}
- #endif
- 
-+	node_requested = IS_ENABLED(CONFIG_NUMA) && node != NUMA_NO_NODE;
-+
-+	/*
-+	 * We assume the percpu sheaves contain only local objects although it's
-+	 * not completely guaranteed, so we verify later.
-+	 */
-+	if (unlikely(node_requested && node != numa_mem_id()))
-+		return NULL;
-+
- 	if (!local_trylock(&s->cpu_sheaves->lock))
- 		return NULL;
- 
-@@ -4831,7 +4856,21 @@ void *alloc_from_pcs(struct kmem_cache *s, gfp_t gfp)
- 			return NULL;
- 	}
- 
--	object = pcs->main->objects[--pcs->main->size];
-+	object = pcs->main->objects[pcs->main->size - 1];
-+
-+	if (unlikely(node_requested)) {
-+		/*
-+		 * Verify that the object was from the node we want. This could
-+		 * be false because of cpu migration during an unlocked part of
-+		 * the current allocation or previous freeing process.
-+		 */
-+		if (folio_nid(virt_to_folio(object)) != node) {
-+			local_unlock(&s->cpu_sheaves->lock);
-+			return NULL;
-+		}
-+	}
-+
-+	pcs->main->size--;
- 
- 	local_unlock(&s->cpu_sheaves->lock);
- 
-@@ -4931,8 +4970,8 @@ static __fastpath_inline void *slab_alloc_node(struct kmem_cache *s, struct list
- 	if (unlikely(object))
- 		goto out;
- 
--	if (s->cpu_sheaves && node == NUMA_NO_NODE)
--		object = alloc_from_pcs(s, gfpflags);
-+	if (s->cpu_sheaves)
-+		object = alloc_from_pcs(s, gfpflags, node);
- 
- 	if (!object)
- 		object = __slab_alloc_node(s, gfpflags, node, addr, orig_size);
+ 	vm_area_cachep = kmem_cache_create("vm_area_struct",
 
 -- 
 2.51.0
