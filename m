@@ -1,112 +1,156 @@
-Return-Path: <linux-kernel+bounces-787455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C571B37691
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 03:10:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E0B5FB376AC
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 03:17:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 58ECE2A555F
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 01:10:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A53E12A6401
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 01:17:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 152751F03FB;
-	Wed, 27 Aug 2025 01:10:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9641C35966;
+	Wed, 27 Aug 2025 01:17:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c9W9FtAP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="m5mucb1w"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 632583595C;
-	Wed, 27 Aug 2025 01:10:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CF2E33EC
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 01:17:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756257014; cv=none; b=DXA88OA1FKDLR69FExGXwIvNpGNn1QPgo7qV10ZB4W5n1zErBWRSPEelu2wM1B/QKKfSqrf2RwyaF3G7OZJUrI969sMtLQCLe5pWHOd3kWm7dE5Z6B1El6UJ3vJ9Cdv4I0PzbTN8pKq6ll/+uA347yet7SR1qsjuQQSKW06ioXk=
+	t=1756257458; cv=none; b=hBthmJJBdF+vYDMryeIeyfmoUTOhMVkg79uh7aF99fC0pG4751F/yLoxEdnJlslFFjt5up+i7IFzPE1umzDNbAXynoHwfhspWDLTkvglet2GfJBMgzC/URaNuWiEH3p7kcJUsL1GmnLmpJZTCrFu54Pt7H81we9laB4Ycgq6J/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756257014; c=relaxed/simple;
-	bh=EMhGlZdTvvC26tq0WwXdUrkaRJh8TalYkZUal0nmwE8=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=MF0ZfvOr5zcQT4TYS61BMBYHdVVvkcsg9teYgmOusFADpAHvcv4ZxtYqi4qFaOeNwvg881WkndMOfI5d5c1BqBqOlAy0l5WkimzE3T5imZS0q+n0bOGts28DyKg2G1ACOgVsGsd5WeY/y4mtzWUg15bzzrENEpdqLueQynr798c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c9W9FtAP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E730AC4CEF1;
-	Wed, 27 Aug 2025 01:10:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756257014;
-	bh=EMhGlZdTvvC26tq0WwXdUrkaRJh8TalYkZUal0nmwE8=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=c9W9FtAPumVzAaJv0P327XCzeAq5WUCIU1VATVx7kyde8BgwwiZtcpOiG6dNKNF2G
-	 O8QCe09JhSBo3jDyJ4wf9Tf5Yri6eog3H0HUT7P2qL/dcUTwWgBy/RGz62YsxV6HfU
-	 6B+/MCW8RVUuf5QJzIED89ukLnw/f4YitRHInYICwvOARohatavtMmLUeFjn4rTTCM
-	 iGqfjNacWe9Vdm1g270PWWN+id38cSZMpu2g0xefamZF0flMERk086yXCFhzJGLiGz
-	 iewPIRFPCIRBzVxz2Fued4emyOZKE1r8W6hvoZUHDgn/qLTfBgJB8zEm5PEmTsAw+7
-	 7CDFamMlN9FCw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADFDC383BF70;
-	Wed, 27 Aug 2025 01:10:22 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1756257458; c=relaxed/simple;
+	bh=z39zX8jKiXSJcli3pYHtO1pzGvP+CCP92tyfL+hwwZQ=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=GvGDPfF0P2TfSzCNUkWKpELvLhCFtSZL89gRtZ21eB+cXumQB5TUQPjdDOtKO6jwozNzW1PkRttlZzQkwFwhonym0F30UJUMih+SOQ+n90f+bJ9XkdGBCAVvwfqaGU2PuMm2rlpgw7raIkt4ofLDOGN/HvMOG9LKK00sTpqiz+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--sagis.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=m5mucb1w; arc=none smtp.client-ip=209.85.215.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--sagis.bounces.google.com
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b49de40e845so1899854a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 18:17:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1756257456; x=1756862256; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=hDESIOJq8GHv5dleoVDtYkEZhqiLbfLFs2YCzs5D4Ss=;
+        b=m5mucb1w/VrUDgJRSv1mt1Y6wCMnuTa3DtWy/73itnL6zZJPsxTr9Aw1SJi3GcrIkJ
+         hCXTnaY6fV57wuDmMh5b1tdCB3JEN9w52gVeJXQpU7L8Vmqv3XIUKj47seG03LyJSzfH
+         S5fDhl5K8H81CljHetFnycjSUgF3Umc5ny4perQAhnNVG9EGt0GUwYHVz8b10QNhmU66
+         9AigaqBjuoFUgcvVYntyIarSVvrYZrFV4JLC4lmb9fOr9IYFugqwwncga6J0rRrhLM+P
+         Ui82+HX06veApzA3tOmdxUoBYWblLHc3LXZ9OuhTHSaLrSKYWYAL9IEx1IXPpiDovMLf
+         a8PQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756257456; x=1756862256;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=hDESIOJq8GHv5dleoVDtYkEZhqiLbfLFs2YCzs5D4Ss=;
+        b=k957r/najeHksj3z/Z28hi9/O6S2h+7LziRXJvI2lma9xHRIKL/im3o0EP5DjLDe7R
+         s79Jgqx45BuWNtuFZqdt03mCtPH3RGKWD6ygpFcqoybvX3zlY8pudhyzp1pKuPHnIFgM
+         dw+Lo76sq7bHbC7SdYdV3wg96teWBgv76HuZMYWg+PlmD3FBAEfUkFgS4YW4oOAUW/yz
+         /Jcucv0qYdNLknd0tyrguNbpnGu6PARnL4ylXa3AHcx5UsjSWSi2nqaQ1Im+qJwh5Y8q
+         4mPw8aSPFQdyPI5aZcZ0lFiDts+39lcv99Q6ZdtGuc9febgl0NRfZEFDIakz9kLjT9G1
+         3ucw==
+X-Gm-Message-State: AOJu0Yz/svVdOFs3G3UTPVYIF+uap4emnUjuG+vVcE+UYpDM3k86hO8A
+	H/2h2bzhEjyyEBzg7tW8g/8bkGqUQuemPnEuxYtiP6x+RyvFJHl4g1jjFMSgZru9mBkvpAc/DaJ
+	C6w==
+X-Google-Smtp-Source: AGHT+IFjtzHGaTxpxi30GJGaLGFgv4pvH06ELVsepE1h5HQgDVvsYE0JxfNlj1RO3Kkx4BD58wttxPGckg==
+X-Received: from pfbbe16.prod.google.com ([2002:a05:6a00:1f10:b0:76e:313a:6f90])
+ (user=sagis job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a21:999d:b0:243:78a:828c
+ with SMTP id adf61e73a8af0-24340def5edmr25359829637.51.1756257455928; Tue, 26
+ Aug 2025 18:17:35 -0700 (PDT)
+Date: Tue, 26 Aug 2025 18:17:26 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net V2 00/11] mlx5 misc fixes 2025-08-25
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <175625702150.157007.438680153183937226.git-patchwork-notify@kernel.org>
-Date: Wed, 27 Aug 2025 01:10:21 +0000
-References: <20250825143435.598584-1-mbloch@nvidia.com>
-In-Reply-To: <20250825143435.598584-1-mbloch@nvidia.com>
-To: Mark Bloch <mbloch@nvidia.com>
-Cc: edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- andrew+netdev@lunn.ch, davem@davemloft.net, tariqt@nvidia.com,
- leon@kernel.org, saeedm@nvidia.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, gal@nvidia.com, linux-rdma@vger.kernel.org
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.0.261.g7ce5a0a67e-goog
+Message-ID: <20250827011726.2451115-1-sagis@google.com>
+Subject: [PATCH v2] KVM: TDX: Force split irqchip for TDX at irqchip creation time
+From: Sagi Shahar <sagis@google.com>
+To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, Binbin Wu <binbin.wu@linux.intel.com>, 
+	Ira Weiny <ira.weiny@intel.com>, "H. Peter Anvin" <hpa@zytor.com>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, x86@kernel.org, 
+	Sagi Shahar <sagis@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hello:
+TDX module protects the EOI-bitmap which prevents the use of in-kernel
+I/O APIC. See more details in the original patch [1]
 
-This series was applied to netdev/net.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+The current implementation already enforces the use of split irqchip for
+TDX but it does so at the vCPU creation time which is generally to late
+to fallback to split irqchip.
 
-On Mon, 25 Aug 2025 17:34:23 +0300 you wrote:
-> Hi,
-> 
-> This patchset provides misc bug fixes from the team to the mlx5 core and
-> Eth drivers.
-> 
-> V1: https://lore.kernel.org/all/20250824083944.523858-1-mbloch@nvidia.com/
-> 
-> [...]
+This patch follows Sean's recomendation from [2] and move the check if
+I/O APIC is supported for the VM at irqchip creation time.
 
-Here is the summary with links:
-  - [net,V2,01/11] net/mlx5: HWS, Fix memory leak in hws_pool_buddy_init error path
-    https://git.kernel.org/netdev/net/c/2c0a959bebdc
-  - [net,V2,02/11] net/mlx5: HWS, Fix memory leak in hws_action_get_shared_stc_nic error flow
-    https://git.kernel.org/netdev/net/c/a630f83592cd
-  - [net,V2,03/11] net/mlx5: HWS, Fix uninitialized variables in mlx5hws_pat_calc_nop error flow
-    https://git.kernel.org/netdev/net/c/24b6e5314047
-  - [net,V2,04/11] net/mlx5: HWS, Fix pattern destruction in mlx5hws_pat_get_pattern error path
-    https://git.kernel.org/netdev/net/c/00a50e4e8974
-  - [net,V2,05/11] net/mlx5: Reload auxiliary drivers on fw_activate
-    https://git.kernel.org/netdev/net/c/34cc6a54914f
-  - [net,V2,06/11] net/mlx5: Fix lockdep assertion on sync reset unload event
-    https://git.kernel.org/netdev/net/c/902a8bc23a24
-  - [net,V2,07/11] net/mlx5: Nack sync reset when SFs are present
-    https://git.kernel.org/netdev/net/c/26e42ec7712d
-  - [net,V2,08/11] net/mlx5: Prevent flow steering mode changes in switchdev mode
-    https://git.kernel.org/netdev/net/c/cf9a8627b9a3
-  - [net,V2,09/11] net/mlx5e: Update and set Xon/Xoff upon MTU set
-    https://git.kernel.org/netdev/net/c/ceddedc969f0
-  - [net,V2,10/11] net/mlx5e: Update and set Xon/Xoff upon port speed set
-    https://git.kernel.org/netdev/net/c/d24341740fe4
-  - [net,V2,11/11] net/mlx5e: Set local Xoff after FW update
-    https://git.kernel.org/netdev/net/c/aca0c31af61e
+[1] https://lore.kernel.org/lkml/20250222014757.897978-11-binbin.wu@linux.intel.com/
+[2] https://lore.kernel.org/lkml/aK3vZ5HuKKeFuuM4@google.com/
 
-You are awesome, thank you!
+Suggested-by: Sean Christopherson <seanjc@google.com>
+Signed-off-by: Sagi Shahar <sagis@google.com>
+---
+ arch/x86/include/asm/kvm_host.h | 1 +
+ arch/x86/kvm/vmx/tdx.c          | 6 ++++++
+ arch/x86/kvm/x86.c              | 9 +++++++++
+ 3 files changed, 16 insertions(+)
+
+diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+index f19a76d3ca0e..6a4019d3a184 100644
+--- a/arch/x86/include/asm/kvm_host.h
++++ b/arch/x86/include/asm/kvm_host.h
+@@ -1357,6 +1357,7 @@ struct kvm_arch {
+ 	u8 vm_type;
+ 	bool has_private_mem;
+ 	bool has_protected_state;
++	bool has_protected_eoi;
+ 	bool pre_fault_allowed;
+ 	struct hlist_head *mmu_page_hash;
+ 	struct list_head active_mmu_pages;
+diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
+index 66744f5768c8..9637d9da1af1 100644
+--- a/arch/x86/kvm/vmx/tdx.c
++++ b/arch/x86/kvm/vmx/tdx.c
+@@ -658,6 +658,12 @@ int tdx_vm_init(struct kvm *kvm)
+ 	 */
+ 	kvm->max_vcpus = min_t(int, kvm->max_vcpus, num_present_cpus());
+ 
++	/*
++	 * TDX Module doesn't allow the hypervisor to modify the EOI-bitmap,
++	 * i.e. all EOIs are accelerated and never trigger exits.
++	 */
++	kvm->arch.has_protected_eoi = true;
++
+ 	kvm_tdx->state = TD_STATE_UNINITIALIZED;
+ 
+ 	return 0;
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index a1c49bc681c4..57b4d5ba2568 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -6966,6 +6966,15 @@ int kvm_arch_vm_ioctl(struct file *filp, unsigned int ioctl, unsigned long arg)
+ 		if (irqchip_in_kernel(kvm))
+ 			goto create_irqchip_unlock;
+ 
++		/*
++		 * Disallow an in-kernel I/O APIC if the VM has protected EOIs,
++		 * i.e. if KVM can't intercept EOIs and thus can't properly
++		 * emulate level-triggered interrupts.
++		 */
++		r = -ENOTTY;
++		if (kvm->arch.has_protected_eoi)
++			goto create_irqchip_unlock;
++
+ 		r = -EINVAL;
+ 		if (kvm->created_vcpus)
+ 			goto create_irqchip_unlock;
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.51.0.261.g7ce5a0a67e-goog
 
 
