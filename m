@@ -1,128 +1,143 @@
-Return-Path: <linux-kernel+bounces-788395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25FBFB383C6
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 15:38:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDE47B383CB
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 15:39:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 24FCE189DF2D
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 13:39:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 978207A7A27
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 13:37:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33F66352FD0;
-	Wed, 27 Aug 2025 13:38:42 +0000 (UTC)
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ABE83568F4;
+	Wed, 27 Aug 2025 13:38:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BaN3rQo+"
+Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2482535206D
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 13:38:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2385352FED
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 13:38:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756301921; cv=none; b=jA0DLymBDaOOMhlbyTuBs5c5GRTz1Ej2w2BxD9RiA6ZatKh+Aani1C7XsE3xkvz1QQdFWGmKK/DTxTjj7oAc1MTA9BTs5v2LU816Vpo+T1VPTNevTZ3QplhfKDlTTi8QKEPW4GU3JLJUoxdYiqWQHdShLsIO8V4J8xnoNcfh/VU=
+	t=1756301930; cv=none; b=YkDkNBlNB+n/YbM00ImC9x5/cza8lXHuECeDYUukhxfFgTwxRq0vTe/5Y3bqT749McqwG598idkhlyFMBZSYP2ullpI7jMxo+X0Tq8RipjXXImQK6Lfhy2KfuH5+/KQnzhLt2L/QnLLk1ghhDt2JvjVhNJZfLqnECWiPTk/mh5g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756301921; c=relaxed/simple;
-	bh=tL4OiqhRkwSS3/sNwsrl8QhOR+C51yPZtRwxniuBm10=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sQTHIXbZ/lq6BXdr2tovO87VnI8C1abrymE9bL9AnmVxZyS528HMQ+cK6+D/zuDA5eO204niTP9vL4ISKIdWFfLMEH3DYT4fV0EJj3tRa7QYMiSyuP8hhRtC5Fo8EWcJcL1FOBvNO8ueBtM3bN4cCplLxDMxHKugVoasSJW0rdc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-61c266e81caso6218660a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 06:38:39 -0700 (PDT)
+	s=arc-20240116; t=1756301930; c=relaxed/simple;
+	bh=T4Kk9hg7k6nwC121hIRmflX4axzXFxAKRAccn6Kat2w=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=QMApNgPA2jbNl6icwxfogCIfV29PtjC3qOsqNb1+yTbvqLnu67SmibdXxOCmq5lSRcdB0MkKQW+dW99ZWZbtmZGqGz3vfgQIlOUo7fnQl5GI2sHcwOKs/iV4eoaraGyNxSF5PtON79MOnbfIEHCMBHncCf2bOXb0bFyVpF1o+n8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BaN3rQo+; arc=none smtp.client-ip=209.85.221.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-3c79f0a6050so1967659f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 06:38:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1756301927; x=1756906727; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=ReergRz91VYiD0psPGfUqTceP1iKvfFRvJIV10khnlI=;
+        b=BaN3rQo+awLbHi6djetfwJ+VnnWzLLysehipFjdW+ADBNcoe3pWWHCEHfvxCkU7Btg
+         8U5dRWaX2d0Dnry0agbQ0KnoUYYxeIzRupEOhCLe6kvCBulXDAwyw0d4eioHhQCXQpkk
+         6oKsdZb8Rxkqe51WVLGVygir6e6tHFAueAhls2ZobCvkK6745tXygGRrn9ujujxEuwnL
+         vbT+ksmR33hE9YnrBnQLhlLFwFqS/aULLnTmszPy/3lm/BqvaHbxlsnojQfV9sG+oW0F
+         7dMJD653m7CSZn5JCnDGY+a4fT9njBkjSAQuE46RXKBSX/BwklvK5Ty7EYLQp9/szd9J
+         ZUWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756301918; x=1756906718;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=co19M5oAe+ecTOIHIeJsLscsP51650xD3EtXlcmFl74=;
-        b=TBjMrN7mi5S+VWE6wtfKp8rIhs/D5Sa89R+a70Ao5lRSBSDnVJx26BUgoW6Bo+MbQP
-         oiN70hH3GQ2CnILBDH3SByTPCVwyNPscA4ZnpQCxvBAbmd5MVMkW7qrViuPEcyuYvoe2
-         OMYHNxXWFGvEDiFjLndhdQICIPRig9Bl/W9Fs1stncVETJk3I01CnGkups9iHzWMdLam
-         gceT8dOQPCr5667CQGG+4j6biqBvyFYE6unp+Nu+6sWVEgaVUGizs5mfWcCs+GJENC7e
-         NqZc/Hm+ag1xYB5FC+shpyGAbAdJv263Rxh+vsMj7xlgsfdZcsx4k2U1TH1/YikO8NBb
-         ujjw==
-X-Forwarded-Encrypted: i=1; AJvYcCXixVdyR0q2YwkilHhWmBNoNUV8ju+Is8NUcBTHXSkBPXgKJk4hOQCchHLsGorsWXVI5WRbLR71NFHp6WU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzTQCqJ0sakwqidxE1k1fzkvQDQ24Ig1v2X+2TGsEIYqNcNc6KU
-	eIqlyyUMCxk77dR3hK+8crneWermfVZj+QBdWLG9D2Lebw0nip3RdNzu
-X-Gm-Gg: ASbGncughzQ/qxEgM54U8kzv9s/cYNycMCag7yKsAkket+UtCdLOwlIs4CThUkydN0K
-	4xNVAnLGYzv9rtwEyBMSrg+TRnDBJmNfbMqVQaG6G1at9wZxRS+JCYrBJ4wIv1GhMJgsKcDqZ7/
-	8aU2OYA3+nX6a5ZKIr/m5AiRubW+gut9N30Yl8gMDKlnsKLdomjRQIwDjaHjxwa4wTDopWZjSmY
-	65BA3PB/jfYOZQE7sfQ4Rwf47BjtHtQA+ooMlPEBVcbY6zy+H2pVKmc9StKr5XkyeC0r6k+FWjZ
-	mLWdSwpOSBwj5Tw1lX1yzBYe3G6zF+cvNrx0xx00l/zghzQ+DLmeYe4kBC7MW6/lwOocyzo/953
-	gCVdX/H7Q0k+CXw==
-X-Google-Smtp-Source: AGHT+IHtmXT0w3FPBkdO/ZHOIor+CkRnHyq8bQw6ohQR+7/AOkbO+b8BfyBX59eSb+JDIjRQ4lG5ZQ==
-X-Received: by 2002:a05:6402:34d6:b0:61c:6ca1:1a8c with SMTP id 4fb4d7f45d1cf-61c6ca1237fmr8654931a12.20.1756301918201;
-        Wed, 27 Aug 2025 06:38:38 -0700 (PDT)
-Received: from gmail.com ([2a03:2880:30ff:72::])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61c45040d6fsm7905276a12.41.2025.08.27.06.38.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Aug 2025 06:38:37 -0700 (PDT)
-Date: Wed, 27 Aug 2025 06:38:35 -0700
-From: Breno Leitao <leitao@debian.org>
-To: Baoquan He <bhe@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Coiby Xu <coxu@redhat.com>, 
-	kexec@lists.infradead.org, Ondrej Kozina <okozina@redhat.com>, 
-	Milan Broz <gmazyland@gmail.com>, Thomas Staudt <tstaudt@de.ibm.com>, 
-	Daniel P =?utf-8?B?LiBCZXJyYW5nw6k=?= <berrange@redhat.com>, Kairui Song <ryncsn@gmail.com>, 
-	Pingfan Liu <kernelfans@gmail.com>, Dave Young <dyoung@redhat.com>, linux-kernel@vger.kernel.org, 
-	x86@kernel.org, Dave Hansen <dave.hansen@intel.com>, 
-	Vitaly Kuznetsov <vkuznets@redhat.com>, Arnaud Lefebvre <arnaud.lefebvre@clever-cloud.com>, 
-	Jan Pazdziora <jpazdziora@redhat.com>, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v9 1/8] kexec_file: allow to place kexec_buf randomly
-Message-ID: <enzwdtceeqzkb5twhp3lcslzwbfz2xvam2cxo76gnsljlh6cx3@2nzp7lm2hoo4>
-References: <20250502011246.99238-1-coxu@redhat.com>
- <20250502011246.99238-2-coxu@redhat.com>
- <oninomspajhxp4omtdapxnckxydbk2nzmrix7rggmpukpnzadw@c67o7njgdgm3>
- <yng55a2z25m5upehczerzhi6zawe3j4ka7amfu4vw4cu27bbg2@x2lgbuk3iqyf>
- <20250825180531.94bfb86a26a43127c0a1296f@linux-foundation.org>
- <aK7uNf8n67HQW+hh@MiWiFi-R3L-srv>
+        d=1e100.net; s=20230601; t=1756301927; x=1756906727;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ReergRz91VYiD0psPGfUqTceP1iKvfFRvJIV10khnlI=;
+        b=of4TgtBx3MTTqqiiDobQ7zyP1WS4gKigClNxg+2i3OGwQ5i4zZb16vG5ZsvRVGxYFe
+         wHLBsh98UyX5pPZ8LyzRXPaiY8vhzEIkcVyJPhCKlZoowml41rNyZhu/1d9RpfUxQ9A7
+         onMt3kHDjzOrKVKhqtLF8+4lI2Aq88/FL3GOh3HiBO2XF3htjsjSr6QC4T7FnDY4F7zG
+         b5QXcZ0EUyAQEkh1MgJsur7Q3Bnhs7qam7C2pRaQRU5O37inpYYf8LOZWnCvtKKojKCz
+         g1n5qKNjESfBa0yG1t6x5tODJ9CdiB/WdP76L9F5JpFBZEFjP0fcNA/dBiAFFAxumXqN
+         st9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWMJL/NfWhHlgY7lWmTzBiMzx4qZo/5Q6R8fY4vowsK/mDaKD1tKYk772y1ZruF/GKyK5w3ALRke3oiGdo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4kSo5X2XrjXMgZvr2eP975Eydl3V6Y+y9ghQLzKX0LhauWFGe
+	Dwr+zhAM0XBAzx6Yvhz2z5Pk5HXVo/gwKa9NFzxYC9lUQuwlRsZJwfX00oVIU4DJjZgr+l5ud0e
+	vUHzXZCrFEkUTOgHOLw==
+X-Google-Smtp-Source: AGHT+IGDR/KKmo+S77dpLzFH/5ksImWOImV2ATqsae8Vpzppb4G/We+eedfsA/IVYVa1fkU/sTJDsVbNv2iumkE=
+X-Received: from wmbdt7.prod.google.com ([2002:a05:600c:6307:b0:459:df20:248e])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6000:420d:b0:3c8:e9d3:c380 with SMTP id ffacd0b85a97d-3c8e9d3d035mr9768151f8f.0.1756301926661;
+ Wed, 27 Aug 2025 06:38:46 -0700 (PDT)
+Date: Wed, 27 Aug 2025 13:38:36 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aK7uNf8n67HQW+hh@MiWiFi-R3L-srv>
+Mime-Version: 1.0
+X-B4-Tracking: v=1; b=H4sIAFwKr2gC/33NSw6CMBCA4auQrh3TBy9deQ/jorRDaSKUtNBgC
+ He3sNLEuPwnM9+sJKC3GMg1W4nHaIN1Qwpxyojq5GAQrE5NOOUFrVkOZpyjhH6ecAE7gMEeZEl
+ r2QiRY8FIOhw9tnY50PsjdWfD5Pzr+BHZPv3LRQYUMG2opsVSV9XNOGeeeFauJ7sX+YfB+U+DJ 0PlTDKqmRbN5cvYtu0No2drIfkAAAA=
+X-Change-Id: 20250814-gpuva-mutex-in-gem-a608ab334e51
+X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1355; i=aliceryhl@google.com;
+ h=from:subject:message-id; bh=T4Kk9hg7k6nwC121hIRmflX4axzXFxAKRAccn6Kat2w=;
+ b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBorwpfI6fZ1Q+VznBKbZhsynvbCV9QJCFz4ab1e
+ we4fTxdqyGJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCaK8KXwAKCRAEWL7uWMY5
+ RqI0D/9lXu1uJWu6+0Enpnp9JmQ1MzDX/FOFXYDJEa+jdrDhWIQj5H91zbkjIrhcpmO2eKoIgjR
+ OUxOX0st5kQXKD21DCKJXUWh0lyn7DT/6yiWRC1xjLro7xiUd2RXDWu6TlbIoVIkYAfXMhaNyOf
+ E3T3u3WbsW14M++h1pEl0IGOvPm7/24F4KwUlgEMUUbl6EdJLKQzf0vQenjwVSw8sTVuJ5SjupH
+ R5YnOoZWC+rUTDAiqdeQ4534INCopUh8Sg7BdugkVGuITub4UncURL1R60cIsjWckoYou9L7L2j
+ rTZw3BzldQ2crlaOEeiXmugYudWxsMez+JVEK/SUS1TFPP2sZuVjLLHSnkhU0g4KagwleTClrNY
+ pM0zeqkb6lZcPkOKAvehAMtZc+YFqNn8nDC/qzpoW5TP2Pd3XY9K/ub1B2gbgMMQHSmGhMbJTqs
+ p9L+swwuntKUVc9o7zn4ds+cSl1h7bqzxaAK9suEIaJDkHJOxvPErLK3+f20EjjRC79yJ//U18F
+ yYiLzydHoE1YSR4gWVmvxxC8P/fUv2U69VZ+5ckSxwDzvSj1T4mQILaNgXWzbEAOKBaLNOkIGVY
+ 6X7k5/lxwVBofFI7HEpsyVaydIR+UOhRLlILIR5rKrF8e0XKK30dEW8ZshYMW4rRUoswZr5q4Lm moY/XiZMetGkcoA==
+X-Mailer: b4 0.14.2
+Message-ID: <20250827-gpuva-mutex-in-gem-v3-0-bd89f5a82c0d@google.com>
+Subject: [PATCH v3 0/3] Add mutex to drm_gem_object.gpuva list
+From: Alice Ryhl <aliceryhl@google.com>
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Danilo Krummrich <dakr@kernel.org>, Boris Brezillon <boris.brezillon@collabora.com>, 
+	Daniel Almeida <daniel.almeida@collabora.com>, Steven Price <steven.price@arm.com>, 
+	Liviu Dudau <liviu.dudau@arm.com>, Rob Clark <robin.clark@oss.qualcomm.com>, 
+	Rob Herring <robh@kernel.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?q?Bj=C3=B6rn_Roy_Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, Alice Ryhl <aliceryhl@google.com>
+Content-Type: text/plain; charset="utf-8"
 
-On Wed, Aug 27, 2025 at 07:38:29PM +0800, Baoquan He wrote:
-> On 08/25/25 at 06:05pm, Andrew Morton wrote:
-> > On Mon, 25 Aug 2025 09:18:53 +0800 Coiby Xu <coxu@redhat.com> wrote:
-> > 
-> > > >diff --git a/arch/arm64/kernel/kexec_image.c b/arch/arm64/kernel/kexec_image.c
-> > > >index 532d72ea42ee8..287b25e674d76 100644
-> > > >--- a/arch/arm64/kernel/kexec_image.c
-> > > >+++ b/arch/arm64/kernel/kexec_image.c
-> > > >@@ -76,6 +76,7 @@ static void *image_load(struct kimage *image,
-> > > > 	kbuf.buf_min = 0;
-> > > > 	kbuf.buf_max = ULONG_MAX;
-> > > > 	kbuf.top_down = false;
-> > > >+	kbuf.random = 0;
-> > > >
-> > > > 	kbuf.buffer = kernel;
-> > > > 	kbuf.bufsz = kernel_len;
-> > > >
-> > > 
-> > > And also thanks for posing a fix! The patch LGTM. Can you add a Fixes
-> > > tag 'Fixes: bf454ec31add ("kexec_file: allow to place kexec_buf
-> > > randomly")' and then send it to kexec@lists.infradead.org? Thanks!
-> > 
-> > I turned all this into a regular patch and queued it (see below),
-> > thanks.  No additional actions are needed.
-> > 
-> > I'm really not liking that code.  I laboriously verified that all
-> > fields of kexec_buf are now initialized, except for `cma'.  Is that a
-> > bug?
-> > 
-> > This function has a call frequency of about 3x per week.  Can we please
-> > just memset the whole thing so people don't have to worry about this
-> > any more?
-> 
-> Yeah, adding these trivial patches to mute XXSAN warning is annoying.
+See the first patch for motivation.
 
-The patchset is quite simple, tho:
+Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+---
+Changes in v3:
+- Documentation improvements in patch 1 and 3. 
+- No code changes.
+- Link to v2: https://lore.kernel.org/r/20250822-gpuva-mutex-in-gem-v2-0-c41a10d1d3b9@google.com
 
-https://lore.kernel.org/all/20250827-kbuf_all-v1-0-1df9882bb01a@debian.org/
+Changes in v2:
+- Move the mutex_destroy() call to drm_gem_private_object_fini()
+- Add a third patch to get rid of the lockdep map.
+- Link to v1: https://lore.kernel.org/r/20250814-gpuva-mutex-in-gem-v1-0-e202cbfe6d77@google.com
+
+---
+Alice Ryhl (3):
+      drm_gem: add mutex to drm_gem_object.gpuva
+      panthor: use drm_gem_object.gpuva.lock instead of gpuva_list_lock
+      gpuvm: remove gem.gpuva.lock_dep_map
+
+ drivers/gpu/drm/drm_gem.c             |  2 ++
+ drivers/gpu/drm/drm_gpuvm.c           | 30 ++++++++++-----------
+ drivers/gpu/drm/panthor/panthor_gem.c |  3 ---
+ drivers/gpu/drm/panthor/panthor_gem.h | 12 ---------
+ drivers/gpu/drm/panthor/panthor_mmu.c | 21 ++++++++-------
+ include/drm/drm_gem.h                 | 51 ++++++++++++++++++-----------------
+ include/drm/drm_gpuvm.h               | 30 ++++++++++++++++++---
+ 7 files changed, 80 insertions(+), 69 deletions(-)
+---
+base-commit: 3f13bcc886fc034113cb75cb32b8d9db1216b846
+change-id: 20250814-gpuva-mutex-in-gem-a608ab334e51
+
+Best regards,
+-- 
+Alice Ryhl <aliceryhl@google.com>
+
 
