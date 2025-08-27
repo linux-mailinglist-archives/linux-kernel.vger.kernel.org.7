@@ -1,129 +1,129 @@
-Return-Path: <linux-kernel+bounces-788966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A379B38EC0
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 00:51:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E40AB38EC3
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 00:51:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF347188F2C0
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 22:52:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09422367CBD
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 22:51:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4635930F957;
-	Wed, 27 Aug 2025 22:51:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3405330F957;
+	Wed, 27 Aug 2025 22:51:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d9DTQr4i"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QKhb4886"
+Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59D402F0693;
-	Wed, 27 Aug 2025 22:51:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2298D30C61C;
+	Wed, 27 Aug 2025 22:51:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756335094; cv=none; b=GlHVvWkzJZ4be45nLwlWoVAFdpuAawnjk9miDvGoGXwQOEZLdw4TGIkISVkVa+5lJqq+Rk1DYWMfJeViczKxLdFWCPbfKKr7e9QhcO6ln+w3dsLISiZwQqAO9qQHM2ihWJuZapucBhw7I66CERW05Qd4NQgmmpJbtxU2IjbqRX0=
+	t=1756335107; cv=none; b=HnwxsPqNmV/ryZ+U3nhDmSBWFMLXxg2QQ3egF0MTEwkPiWQ4xMY3kSusu4tvXo63jaU4iOUt+iyVBkB0iid9LlsG62FErHc7eVj/tmiPp5PXGa3hhhVWrvVYYw7oKWIHkd+uhsTm0AqNUCDPjEMGGg3e8X6jSDWdnn9oqsUw4bk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756335094; c=relaxed/simple;
-	bh=q+iZaJMI5VC8X6LKlTV7NTHv1Ux31p6/4S9RFnQNftE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HXHxo0ea6G3KHHvQxq1T6GFcAXN/OjK3C4RzhMYd/9i6areHzZWYEWrHahSe2gSCyd5X5RZd3+60YM1gpXxDvLg7Gcvd4vsdApPiNluxWq/ZrCPR2NZL44yapb22AYHAsobxsX9F/A5vNBlsXCoENkI55f17q+u2St4Z0Y+hcTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d9DTQr4i; arc=none smtp.client-ip=209.85.216.46
+	s=arc-20240116; t=1756335107; c=relaxed/simple;
+	bh=9cV81rIGpOy/YM5fTPAKbxKdQSFcMwRfOq2BESMcKzI=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Q7pJDDnbwFNURxPPyrI3daiZTLIdKUDp7siLlxO16qDT8v6SYz4xk3o8NBhi+dzEhIGoHBP/rMYtAZFp0M+8XrJcXB84PFOGpCTZFSR5B0Nm4qOU5E2SJfnMtkogLKIYWCXt7NQk3l6NYQ4nsGPjTxbLUyRoUljrua+Lbu4RZ4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QKhb4886; arc=none smtp.client-ip=209.85.222.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-32753ef4e33so298386a91.0;
-        Wed, 27 Aug 2025 15:51:32 -0700 (PDT)
+Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-7e872c3a0d5so45098685a.2;
+        Wed, 27 Aug 2025 15:51:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756335092; x=1756939892; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9E2sNlzuy2uLz4gS9frJKufdHd13tdDGNaqeRWyYmtc=;
-        b=d9DTQr4ir5jG+J6fdYFIo/XtcX4YCd+jswkXDrbb62jajBmLSI3AB4yMERZBMBkxBR
-         g8g9PxUetzKvuzOEwt05H2nF7nb6EvBSaZHrhx1j2GAAIOquhs9Mi3Gy6Ce+lZPDJ0Ea
-         gI0y5J74ItG4j5P/TL7cw93GVPgjRSiNW7PoBvu9ZK9890oqA73168H1W6S4kR7GOb8u
-         rfcV32cwrZ5zswbBUb1iYNY9OtngUtZIlX/kgH5274fO3ZBXO5uHBb91in1DtTaeKnyA
-         /hWLX+yqhpTeBerFXM0Rn+H5qj16aGjzUqxKeoHqhUMfjAm9QPP1X5Lj33zqeaaEMtlY
-         U7Yw==
+        d=gmail.com; s=20230601; t=1756335104; x=1756939904; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=qLKctxTOQt+KSqUzMXlw+wuQaBiyEtfCcGttdld7tsQ=;
+        b=QKhb4886oOnYK6Yg6mbXpGSsOePzYL4FM/6XmqPCMQsm6SJ8VRgxEAR3IbnqSuBIye
+         JkXah48elK7HUiTRKh/x/3zrQlXFuK3yiDsKmmrMa/sPGxc6XuziK/y34my13bc0B5w4
+         JaI6fUtBSSO8orJX0LZtDucXifhHtQ+lb1Gl3suSgXGUrBZYvMjjjB2SQZRmsJaG2NTE
+         6E29yKmnraZz3LWGvQi42PrWkrFwjNIziboprrC20e31Bj/UKlqUv2h66owbNdRAYBnm
+         5ZxRQhMSF8i5ZRSTN11KzdrBpfaeYHCnx1KD3AsK67ql4bs1WG+ftUUMjiBDtAMZtHUp
+         FfEw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756335092; x=1756939892;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9E2sNlzuy2uLz4gS9frJKufdHd13tdDGNaqeRWyYmtc=;
-        b=LM3OBNff5npx+UFAbk5QovXYJIJFOmS+YiBZyp25vLqmHSvUdxfurUpI3maUSv7CxL
-         HWV50H7fFonA/7VY+bjBdsOqerKmfp2CxiJH3sbJn+wB63XeDp3zd6YSM0qztnCApF3V
-         AUj/RUgQHGaOE/muvpu2noumAWZ+m8drL4Ido1c/HJaHyMg7lJLb3geb/RgbZuQSZiaI
-         XjTB8I2xGhylRb5XsSgeN74YXhGwBqT+S29Q34j8v3Wf1ajdqg6dLtOHWv4aRm5S9ph8
-         FfnDW9EEih7yV/jrqi/bsUzRUVmnbcfIOLSGjBttFuSQvQXs/q+joCjUD7hDZ//+a239
-         JDtA==
-X-Forwarded-Encrypted: i=1; AJvYcCUOFrLwoPPDZq3KddfqZ8VU6EKqkdtKTXL0ZA3abQM8A1ZVA/4CT48jFaqsoArGhaorolc=@vger.kernel.org, AJvYcCUxMpO5RqxMkrC6281/fJqKy5XAmoiaMX1RDFmtVdr6bxez2IlW4uJvhu+M/LxCH+ftZAL3+ZIvdEqQrXsh@vger.kernel.org, AJvYcCVY+WKC/NA3iebYHETckPoxU4abENHrAQmTsd6H0CTLePEZwZE1iDEG75qmjMMkPAlNVuU9p8byK7/E/hdqBG4T@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzwgcc9ea2xmRZhj8/25eAOW/Rlbd+XiG4of2FzlhgqniqWLl6h
-	2v2j15nlBPBlPnR8D0/ls/wVkmoBZ5edfFEmhC9eJJ7CSko3Q++Xf7KkdNGb7Wo+OXy+jcNYXCg
-	jhqDZN9Qz3rvg3Pvqsd2M3hp8gStBavQ=
-X-Gm-Gg: ASbGncvlSZA7Ei2DkWHqLyxyDue3CIc6UIy/abjCVrCczFeUUDiZQDLdAG0Jdp+yXqd
-	/L8QBqcgiIkx1yvYyUxTWoBRJhwsGEvalf2oAQMZbyGqJVSrzCm0vBEyiWWSscL5ym04MUYwPoa
-	bNk358B3os2kPMkJOQcFiWcTONjDLZydSqS0lZ7Ru6APTV+pBQNWu+onGYJSbmcV/1QbrH48AH2
-	Op3H1lJU7b15kTOxXeek3TjAgxvMwbkZA==
-X-Google-Smtp-Source: AGHT+IE2y1ku4yVQaU2bfw3zNcFhE7DhwRSiHxKM6VzCIj/33jfXgRKfOB1BP3ou1KQiYpb/L/yaw06QRoCNe0OPdzw=
-X-Received: by 2002:a17:90a:e190:b0:327:8c05:f89a with SMTP id
- 98e67ed59e1d1-3278c06016fmr3345624a91.4.1756335091558; Wed, 27 Aug 2025
- 15:51:31 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1756335104; x=1756939904;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qLKctxTOQt+KSqUzMXlw+wuQaBiyEtfCcGttdld7tsQ=;
+        b=wOgincKKER5mKerFCQnp/DXO16v79ddIuGycXe9tJ+MwG8a5J2p4JNY2w13pmTelLo
+         YCQ7qksqU/xxl5xfoQqpEiYOxU4ZcY5XSGV1a3/YrIu/5HXsqfk1nS2ToHmWXq9q0tkS
+         EupUJ7GFw7uTtzqS54o+8Ih/jmA/4++LPz2u68aNRBxWTmphEmoUXMw0y+OmEXhCRFyT
+         u3rr33ZJi/C6F7KXuA9801WZJtFAB3tLardrO1ogDhhUD/mMGrkK7MsPjuvFsA1a+pB+
+         Wbfor5MwOQucR7q6NB7b9qvJd+AYFQ6EX8+bPwIyS1QQ7pOlzV1+PqiBsRSiYniinii/
+         a3Ow==
+X-Forwarded-Encrypted: i=1; AJvYcCXT3xER31WBL2YZitE0QUp9sRdIsM3XBLqk4DrU04GkcKy1M7qjcTYgOR4Qc0M/yDKhkAQ6e35lglK1Ggo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4HwkKiwkA9A/FSb1pPmoUC39WEIQkLo2MdYur9W1a7+jlkmY4
+	SvwPKyJlE+ardXtuhsY7KsCpTWrLxgGIg9RLzwfatnHMGIK71H5aSYg8ydTl28Yk
+X-Gm-Gg: ASbGncujLbaw7hg/8didsmqk9Mfumk5K6qXxLOvIqz4exwjlK2dz0lsFnUw0wwOPQWx
+	BzBXFB2Uy6qY9g0byjoEwSIjUwHbQxT3fn5LFBw19xUQdoAKGS8RPgHOPoQzXlnuoON5aZ8E7kv
+	kqPmmjnXcmtcroCGWuSNFh7G4cmXfzpPAKxz+nyvJs16AjJomt+cUZhDco+7Sst9oL6AYS/BdRb
+	7BWoa1bfPH6krA9WM5y6IVFpAraTmx1ikAfnUKnKAxx4Jq0NrsDwpFgO0hPSexq5haCI5RAAKy+
+	adX9evb3v4PpwFpqBYUUXILGAl7AjU3FJ3H/SgnYsU1W/vAoELF7KQIW1f+kpw3Fzg04CVZaWsi
+	pW3D7/ZWlxA2gZmxv0tYpvXMLAFvtUlFaQ2dV7s9vTEKBqTXsCy4FiJd1fv0=
+X-Google-Smtp-Source: AGHT+IHDaHYGBqi8tCPu0bIHe3JLhoBlRb53NPj46J4iH1xg9p0MMmSeFejFKBzOsvMzWFaf7j+VMA==
+X-Received: by 2002:a05:620a:4495:b0:7e6:9b9f:2fe9 with SMTP id af79cd13be357-7ea11093f3bmr2170227485a.56.1756335104314;
+        Wed, 27 Aug 2025 15:51:44 -0700 (PDT)
+Received: from daniel-desktop3.localnet ([204.48.94.112])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7ebf2b4f01fsm966237185a.36.2025.08.27.15.51.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 Aug 2025 15:51:43 -0700 (PDT)
+From: Daniel Tang <danielzgtg.opensource@gmail.com>
+To: linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+ "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+ Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: [PATCH] acpi: TAD: Add missing sysfs_remove_group for ACPI_TAD_RT
+Date: Wed, 27 Aug 2025 18:51:41 -0400
+Message-ID: <7674021.TlGXAFRqVo@daniel-desktop3>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250827053128.1301287-1-phoenix500526@163.com> <20250827053128.1301287-3-phoenix500526@163.com>
-In-Reply-To: <20250827053128.1301287-3-phoenix500526@163.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Wed, 27 Aug 2025 15:51:16 -0700
-X-Gm-Features: Ac12FXxd9p_CvzpYECfVauL-N_T3Roxw7XRzVNeekhYdfy3Y14p6HRnJy9UcWhk
-Message-ID: <CAEf4BzawZtJJvnMqDp2E7Z=tr9tFvkfA3+w8m9G3TfhsP8eYhA@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v16 2/2] selftests/bpf: Enrich subtest_basic_usdt
- case in selftests to cover SIB handling logic
-To: Jiawei Zhao <phoenix500526@163.com>
-Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org, 
-	yonghong.song@linux.dev, bpf@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 
-On Tue, Aug 26, 2025 at 10:31=E2=80=AFPM Jiawei Zhao <phoenix500526@163.com=
-> wrote:
->
-> When using GCC on x86-64 to compile an usdt prog with -O1 or higher
-> optimization, the compiler will generate SIB addressing mode for global
-> array, e.g. "1@-96(%rbp,%rax,8)".
->
-> In this patch:
-> - enrich subtest_basic_usdt test case to cover SIB addressing usdt argume=
-nt spec
->   handling logic
->
-> Signed-off-by: Jiawei Zhao <phoenix500526@163.com>
-> ---
->  tools/testing/selftests/bpf/prog_tests/usdt.c | 84 ++++++++++++++++++-
->  tools/testing/selftests/bpf/progs/test_usdt.c | 31 +++++++
->  2 files changed, 113 insertions(+), 2 deletions(-)
->
-> diff --git a/tools/testing/selftests/bpf/prog_tests/usdt.c b/tools/testin=
-g/selftests/bpf/prog_tests/usdt.c
-> index 9057e983cc54..9df2827991c7 100644
-> --- a/tools/testing/selftests/bpf/prog_tests/usdt.c
-> +++ b/tools/testing/selftests/bpf/prog_tests/usdt.c
-> @@ -25,6 +25,7 @@ unsigned short test_usdt0_semaphore SEC(".probes");
->  unsigned short test_usdt3_semaphore SEC(".probes");
->  unsigned short test_usdt12_semaphore SEC(".probes");
->
-> +
+Previously, after `rmmod acpi_tad`, `modprobe acpi_tad` would fail
+with this dmesg:
 
-next time don't add random empty lines or unrelated formatting changes
-(I fixed this up as well while applying)
+sysfs: cannot create duplicate filename '/devices/platform/ACPI000E:00/time'
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x6c/0x90
+ dump_stack+0x10/0x20
+ sysfs_warn_dup+0x8b/0xa0
+ sysfs_add_file_mode_ns+0x122/0x130
+ internal_create_group+0x1dd/0x4c0
+ sysfs_create_group+0x13/0x20
+ acpi_tad_probe+0x147/0x1f0 [acpi_tad]
+ platform_probe+0x42/0xb0
+ </TASK>
+acpi-tad ACPI000E:00: probe with driver acpi-tad failed with error -17
 
->  static void __always_inline trigger_func(int x) {
->         long y =3D 42;
->
+Fixes: 3230b2b3c1ab5a0d3f99d5850bfdc4bf48d11cdd ("ACPI: TAD: Add low-level support for real time capability")
+Signed-off-by: Daniel Tang <danielzgtg.opensource@gmail.com>
+---
+ drivers/acpi/acpi_tad.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-[...]
+diff --git a/drivers/acpi/acpi_tad.c b/drivers/acpi/acpi_tad.c
+index 91d7d90c47da..33418dd6768a 100644
+--- a/drivers/acpi/acpi_tad.c
++++ b/drivers/acpi/acpi_tad.c
+@@ -565,6 +565,9 @@ static void acpi_tad_remove(struct platform_device *pdev)
+ 
+ 	pm_runtime_get_sync(dev);
+ 
++	if (dd->capabilities & ACPI_TAD_RT)
++		sysfs_remove_group(&dev->kobj, &acpi_tad_time_attr_group);
++
+ 	if (dd->capabilities & ACPI_TAD_DC_WAKE)
+ 		sysfs_remove_group(&dev->kobj, &acpi_tad_dc_attr_group);
+ 
+-- 
+2.48.1
+
+
 
