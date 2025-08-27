@@ -1,91 +1,86 @@
-Return-Path: <linux-kernel+bounces-788056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D55AB37F3C
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 11:50:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 502ABB37F3E
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 11:51:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1DB03461687
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 09:50:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 69B3A7A43F8
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 09:49:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB0622F745F;
-	Wed, 27 Aug 2025 09:50:18 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF3D22F548A;
+	Wed, 27 Aug 2025 09:50:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e1rV1avx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECF39299927;
-	Wed, 27 Aug 2025 09:50:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5579A28312E;
+	Wed, 27 Aug 2025 09:50:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756288218; cv=none; b=JmWEGz1seDDUdmOrZAIXX2MTDRKlf2WPW/bvK/kWIRiq2XjdTAI6FMKbntVTF1fsPn5NsPQHak4y1Z6foOxEqwv0GJy/nN+6ZLf42+YEWj+UxgVqTBrb7P3AMc/VSpcGHlypjk7F7XQWHGpJKXHzNCDUvQB+hTWiVEagzrzEsqo=
+	t=1756288252; cv=none; b=AtnfFtzD6QFH+fXG8CGuJhsKa7m2gOK3hqY51syz/RbI33gSPjehuR8fe8Z9ojoVC7CEw82JBod4ob4P8wgrBeC52H0l9B57EocS/7aDnajNPFGSD7AJG6i5SzVjcg/hopwb5uGu3UwZOFVCUJHKPA9ARL3GhpW9lne3yDq3z90=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756288218; c=relaxed/simple;
-	bh=z6CBsQ9Jrrtl65/IY31Nk8Vi0G1GqOhAOb8MYIiu7KY=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qO2xik20RidV2l2qvxlhb1WTy/3+bk6F6HlNGil5DJ/MV52tIQuUo4zlcgRS+MzoJomscARZ8Z+1tRio9CO/eUhTdZyWWovtvc5OHD86C7VPZFRn8CxM3bXF/8YpBM8yKiUfq1+3QHT5EH/eGpLWy3mwvrg3qYsJapIi2Lci2xw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4cBfnw1946z1R8xM;
-	Wed, 27 Aug 2025 17:47:16 +0800 (CST)
-Received: from kwepemf100013.china.huawei.com (unknown [7.202.181.12])
-	by mail.maildlp.com (Postfix) with ESMTPS id 5FD581400DA;
-	Wed, 27 Aug 2025 17:50:12 +0800 (CST)
-Received: from DESKTOP-62GVMTR.china.huawei.com (10.174.189.55) by
- kwepemf100013.china.huawei.com (7.202.181.12) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 27 Aug 2025 17:50:11 +0800
-From: Fan Gong <gongfan1@huawei.com>
-To: <edumazet@google.com>
-CC: <andrew+netdev@lunn.ch>, <christophe.jaillet@wanadoo.fr>,
-	<corbet@lwn.net>, <davem@davemloft.net>, <gongfan1@huawei.com>,
-	<guoxin09@huawei.com>, <gur.stavi@huawei.com>, <helgaas@kernel.org>,
-	<horms@kernel.org>, <jdamato@fastly.com>, <kuba@kernel.org>, <lee@trager.us>,
-	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<luosifu@huawei.com>, <meny.yossefi@huawei.com>, <mpe@ellerman.id.au>,
-	<netdev@vger.kernel.org>, <pabeni@redhat.com>,
-	<przemyslaw.kitszel@intel.com>, <shenchenyang1@hisilicon.com>,
-	<shijing34@huawei.com>, <sumang@marvell.com>, <vadim.fedorenko@linux.dev>,
-	<wulike1@huawei.com>, <zhoushuai28@huawei.com>, <zhuyikai1@h-partners.com>
-Subject: Re: [PATCH net-next v01 10/12] hinic3: Add Rss function
-Date: Wed, 27 Aug 2025 17:50:06 +0800
-Message-ID: <20250827095006.1595-1-gongfan1@huawei.com>
-X-Mailer: git-send-email 2.51.0.windows.1
-In-Reply-To: <CANn89i+D+mmGms5eYxntwpyd3OX1yXz3c9xvjQT_XmmnvxJGwg@mail.gmail.com>
-References: <CANn89i+D+mmGms5eYxntwpyd3OX1yXz3c9xvjQT_XmmnvxJGwg@mail.gmail.com>
+	s=arc-20240116; t=1756288252; c=relaxed/simple;
+	bh=Z9v7tOyCLbVTC4vbmMT5DzEjyMHuEBoDGU4LdAB1szI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tFx3hGMDRm2PrnVil5wJZb/chxakJJGPm7z8oC5UMrrgxPO8abO0oWW9UoIwK9dAuIiuAJse1VZ97AWs2jGenV/GIfSWDoX7018Knko5SGcc4yO//hsuyMOHzFWX1hHFMrngMJjkYb0ZueTIHZuOofS0liFea7vvSYG5OmOKMT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e1rV1avx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05BBBC4CEEB;
+	Wed, 27 Aug 2025 09:50:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756288252;
+	bh=Z9v7tOyCLbVTC4vbmMT5DzEjyMHuEBoDGU4LdAB1szI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=e1rV1avxJGTQkHo2kkYr9KjIlQIEsq4jp2M+0eC+XLVYV2v/Z9KWSQZW06cy/y7bm
+	 CGHKJcpZ8WOCC+igAh/FgfalIRE417Q2tNSs3Up4pJt11+6RGSh+jGMzgQ9jqDekHm
+	 Ywzbnjx96ycDhZPFZwS+72u+/MRorJkn4I5QCMixVFFdFltmOnlhefAJh94kPz1PC+
+	 t+b4UkMse3Er+MxQjpG4cDH5yIwKjZckkJeWQqhUaH1WHayO2XUNjrxYqvavjTFmG7
+	 J6GV/vpAmc+Ymvn/fP5xCcDLUL0POUnb9GujFIBbhJN3PQTuUu3Ilxth9v8Z3EzBEf
+	 70Ggujy2F15Yw==
+Received: from johan by xi.lan with local (Exim 4.98.2)
+	(envelope-from <johan@kernel.org>)
+	id 1urCnf-000000002L0-1A0D;
+	Wed, 27 Aug 2025 11:50:39 +0200
+Date: Wed, 27 Aug 2025 11:50:39 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Neil Armstrong <neil.armstrong@linaro.org>
+Cc: Kevin Hilman <khilman@baylibre.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	Carlo Caione <ccaione@baylibre.com>,
+	linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] firmware: meson_sm: fix device leak at probe
+Message-ID: <aK7U7-ebrPcxwEIj@hovoldconsulting.com>
+References: <20250725074019.8765-1-johan@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
- kwepemf100013.china.huawei.com (7.202.181.12)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250725074019.8765-1-johan@kernel.org>
 
-> > +static int alloc_rss_resource(struct net_device *netdev)
-> > +{
-> > +       struct hinic3_nic_dev *nic_dev =3D netdev_priv(netdev);
-> > +       static const u8 default_rss_key[L2NIC_RSS_KEY_SIZE] =3D {
-> > +               0x6d, 0x5a, 0x56, 0xda, 0x25, 0x5b, 0x0e, 0xc2,
-> > +               0x41, 0x67, 0x25, 0x3d, 0x43, 0xa3, 0x8f, 0xb0,
-> > +               0xd0, 0xca, 0x2b, 0xcb, 0xae, 0x7b, 0x30, 0xb4,
-> > +               0x77, 0xcb, 0x2d, 0xa3, 0x80, 0x30, 0xf2, 0x0c,
-> > +               0x6a, 0x42, 0xb7, 0x3b, 0xbe, 0xac, 0x01, 0xfa};
-> > +
-> > +       nic_dev->rss_hkey =3D kzalloc(L2NIC_RSS_KEY_SIZE, GFP_KERNEL);
-> > +       if (!nic_dev->rss_hkey)
-> > +               return -ENOMEM;
-> > +
-> > +       memcpy(nic_dev->rss_hkey, default_rss_key, L2NIC_RSS_KEY_SIZE);
+On Fri, Jul 25, 2025 at 09:40:19AM +0200, Johan Hovold wrote:
+> Make sure to drop the reference to the secure monitor device taken by
+> of_find_device_by_node() when looking up its driver data on behalf of
+> other drivers (e.g. during probe).
 > 
-> I think you need to explain why you are not using netdev_rss_key_fill()
+> Note that holding a reference to the platform device does not prevent
+> its driver data from going away so there is no point in keeping the
+> reference after the helper returns.
+> 
+> Fixes: 8cde3c2153e8 ("firmware: meson_sm: Rework driver as a proper platform driver")
+> Cc: stable@vger.kernel.org	# 5.5
+> Cc: Carlo Caione <ccaione@baylibre.com>
+> Signed-off-by: Johan Hovold <johan@kernel.org>
 
-Thanks for your comment.
-We use this default rss key for stable hashing effect but omit the rss attack
-surface. We will modify this in next version.
+Can someone pick this one up (along with the compile-test patch)?
+
+Johan
 
