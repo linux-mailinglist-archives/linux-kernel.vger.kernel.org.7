@@ -1,87 +1,65 @@
-Return-Path: <linux-kernel+bounces-787999-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788000-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EE61B37EA1
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 11:19:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75D64B37EA2
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 11:19:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43DDE687343
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 09:18:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15EE720744C
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 09:19:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B93C5342C8D;
-	Wed, 27 Aug 2025 09:18:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBD11341652;
+	Wed, 27 Aug 2025 09:19:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="A0ZDD+16"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="A+s+we6F"
+Received: from omta038.useast.a.cloudfilter.net (omta038.useast.a.cloudfilter.net [44.202.169.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A42F925C6F1
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 09:18:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D89934320F
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 09:18:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756286328; cv=none; b=ulORLhjcJrfR/YLDYdlhO2xDaR8mNP1IQobeyDVBwPBooLYFD4N8NQmzTOlRU7ggqWOFh4IuEDqdlDAlJ1OVXBp/Wty9zAkri7gzrZf7hNYskZb1S9jTGHC2w3ubzL0CYN2wGopX6b+NGA6iCcgVOwMhDCWv2KS3k9uMwM8jo64=
+	t=1756286339; cv=none; b=iFgBq/lb2JBpkcviAPVZPBjVo10EnOTWES8ocIdIt52HSDT90GXaQzqRmWUY6+czG36e9ILtIcyY7E/sPvqeLkgkTN0E8niSbZHKqW0NHNRziJa3pFdluBaYLG7mMUxzcK8pe9ptJJJtibyMKGTmAHSfIl9Lsq4EDAHKF87DUlA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756286328; c=relaxed/simple;
-	bh=uVogBQRE2Y/GsSLDqPGy9Aa63de/21Ehujpp/tZQ3Ow=;
+	s=arc-20240116; t=1756286339; c=relaxed/simple;
+	bh=OG4WiHcxZg066v5WoBT20PGlcOVMX2ACBVjx6/f8+3I=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=S6ViYVk2NquK1rmbi1FazVJXqVEWdaE54tpJq1GFMMfi+T4S0TuooJje9qydt+SlkbPYpkckUsVfP5Q/En3b8NflYSM+ajlyXxVNMFA9TyPKdQPH2korlW5olrW/Mbup1AjuzKfVoYcCcXm+P0rRIS5a2Ys1L32Ye6ozc82IrQk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=A0ZDD+16; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57R6kDq5008186
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 09:18:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	y3ZmNgPMfhfr75Jy+s9Ep5b6gD2yM6Jzf4SvrXiJ2Lc=; b=A0ZDD+165l9r6he/
-	0mWHt472B5s7FWBMG7a9bmindEt4NPoSB4zXk8JSX4wmpv1dKRcjbCUIsOZCtdHT
-	6Dzwl1XUzJ+QLFvoiczD3gwMiRuteOc2kXvQwwDO1O1P//gAGoDk68ItxKthnWwv
-	X8nTNXE4qtvxSrSzn8r+CGaCTwOp0SJ93IW6bSt4Nj5WZ3XQNcH2ylnCMSb7nXBq
-	HCGXc1rAVIAG8iGi7wd6N9Z3dBvXsh7TbhgNDi+sl2q+X85lebnQlMzO3P5MUwmg
-	qpIqI8wWtOaJ/Kr37N3PWvC8SEHeiGzAo+CrAkdIYEskvmoPKuQJPjufmV12Mouc
-	FXX6hA==
-Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48sh8ajc5e-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 09:18:45 +0000 (GMT)
-Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-246a8d8a091so83596155ad.2
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 02:18:45 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756286325; x=1756891125;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=y3ZmNgPMfhfr75Jy+s9Ep5b6gD2yM6Jzf4SvrXiJ2Lc=;
-        b=kUsBBauuG9HmloMjs8OOo6qVSlJaGSf7jgASWf/zZW6VkiMcE+eEETuMtsg41iF77s
-         ASN/uAWxsdRkKp411SYLnItlfI0joQiNCJS8SrXNDLI53on7up5Fer/Skjb6WrqTtjny
-         9Vp/a0SxtKj3VC0R5RIN/gb118KrfWrALG5fHp5ZZjzyExLm2yeIzZMSB44NHVCuA25u
-         gPCPar82dxNNKuGuB57LVi5+kT1UmeO/KRMm3YE76Ov8riagHW0dMjzrtpo7qRFxghQh
-         KniybRu3VE+aNk3La4Od5Q8CxzwMHgRY3Hf0u7kK82En79rNVC4FLrV/gcnFKLiQmtnT
-         KxqA==
-X-Forwarded-Encrypted: i=1; AJvYcCVe4hprVJGcwlfCJIV5sEBpeEE3OyQfrdS4qPhfEYs5nyoOnLYS3yorksb7vfm6E801wr7eqexrCg7ziP8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwR+pgBNzbL/TOyoXRDQmWmNBbMm/zM6q+ib1P5ZfAovWnomAJX
-	PHhen5Ry7KDvVYrShK2qYcQWqG77xkpYIrwcxC3jfeQiXYEIUkxNmomoxKLL1Mb7q5orALH+1Wb
-	ZYkOlm2nJDHFBJgaKWWC83O5c7ehp6ghJZXFKpPlO/uEcQxPJwkrUZyAGW4tlHi+u/dE=
-X-Gm-Gg: ASbGnctopGEia8fHRzs9dZXdvUzR83MWGtXsgLPt/pSlkH4xwmaQ2g5zcZPjxGT7alJ
-	uab1vMgoy8IsFmic8ZMeTlTP+IPXsN88sbptD1yZFHCHTXGx+TtLpdbdvuEcSuhA/B58jhPWy4/
-	n6rv1M5a7QcXyHGW6a4DcYiFR8uH7xLGTPZBY468MNbtHEU+1NLqs8I/xUeeDxUlj/w7l6abQ33
-	h15PPAIzdX6PNDqEOyPGUVhqbFI6rQgEUQLRFKkKV4gmKF4DroBhEPEcEfpe2kGonHB0jnDnl+m
-	/bZEGxaaG8CLHbu3e8HznpFNQhHSgwPe93pWhoDG2A+LacJxy4KuWM9XBkZChOO9Z8iM4wAsrq7
-	TvDaPkV5tZUllncQykWEvdebX2qRX8g==
-X-Received: by 2002:a17:903:388c:b0:248:a1d1:28ae with SMTP id d9443c01a7336-248a1d129d7mr14311285ad.39.1756286324814;
-        Wed, 27 Aug 2025 02:18:44 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH5/6oHGHXze6Sp8tZZFAPJM4F1BeCYoxBde0pV4H8aBjDQSfR/ZYTsY9gz+mOb8HWOUU766A==
-X-Received: by 2002:a17:903:388c:b0:248:a1d1:28ae with SMTP id d9443c01a7336-248a1d129d7mr14310795ad.39.1756286324256;
-        Wed, 27 Aug 2025 02:18:44 -0700 (PDT)
-Received: from [10.133.33.198] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2466889f11esm116975865ad.150.2025.08.27.02.18.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Aug 2025 02:18:43 -0700 (PDT)
-Message-ID: <27282f8d-e27d-45c9-b616-28d2c62a4e09@oss.qualcomm.com>
-Date: Wed, 27 Aug 2025 17:18:37 +0800
+	 In-Reply-To:Content-Type; b=ObOzPoFk1rp7r8k9DOyCvlxLxG1RoLWZ4AQjmuzL74PoftaLEdvlqmD/cJ9ARK4cieXtXitTY8XmLOJPAyvpOP8MhSiyhWF75tjobGYk9EYQ5C3UVdmdtgO09zkxnCo3yTdc0h1GaybjOVtgUHbi6eyBuy/BC/3ERCExoHLq6d0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=A+s+we6F; arc=none smtp.client-ip=44.202.169.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
+Received: from eig-obgw-6003b.ext.cloudfilter.net ([10.0.30.175])
+	by cmsmtp with ESMTPS
+	id qyaPu7HolA1smrCIyu6EyF; Wed, 27 Aug 2025 09:18:56 +0000
+Received: from gator4166.hostgator.com ([108.167.133.22])
+	by cmsmtp with ESMTPS
+	id rCIwuzG2wCNkwrCIwukarI; Wed, 27 Aug 2025 09:18:55 +0000
+X-Authority-Analysis: v=2.4 cv=QO1oRhLL c=1 sm=1 tr=0 ts=68aecd7f
+ a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=DR2cKC/DEnBA9KqqjaPhpA==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=7T7KSl7uo7wA:10 a=VwQbUJbxAAAA:8
+ a=bElFif_sz3IZGlVFoh0A:9 a=QEXdDO2ut3YA:10 a=xYX6OU9JNrHFPr8prv8u:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=eP4vZfmrGGYR5txqDWlDSGKo8QxzOxy5urI0CNxLkAU=; b=A+s+we6FOi1JLxb6S0WmQYdbAO
+	CWMkbri7El1IJZ2Bo8s9kSfrhXAqTFTU+il9797xVfHWm3isom/yf1eT8iMu4ieQvhqiGNNR0sVMd
+	5lSc61piUY5/PC+/F3kHhyDYQ8xxS3091rQ/ac29TX/UIyt7+30fUD3yLwVkM7fMH2r/zrf0IrEi+
+	2wD8TqkjBiSsqYqE4i6GPzJuB53NbUryZ5n7XFY3uCLBme/m8OiT35O2CLHrNePt80M09z6B1PS+P
+	5bV3K9NP/4BcPlEBRLICsMqilKCvKUCGaSOsbP2MpYkbFfsRtA+0IXIEVQLu2kcyOagDrjEEs3H/k
+	wTHEY5MQ==;
+Received: from static-243-216-117-93.thenetworkfactory.nl ([93.117.216.243]:33864 helo=[10.94.27.44])
+	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.98.1)
+	(envelope-from <gustavo@embeddedor.com>)
+	id 1urCIw-00000002a63-09fG;
+	Wed, 27 Aug 2025 04:18:54 -0500
+Message-ID: <8007649f-324a-4dfb-ae33-9bed8c8d6eec@embeddedor.com>
+Date: Wed, 27 Aug 2025 11:18:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,338 +67,399 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] coresight: tpda: add sysfs nodes for tpda
- cross-trigger configuration
-To: James Clark <james.clark@linaro.org>
-Cc: coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Mike Leach
- <mike.leach@linaro.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Tingwei Zhang <tingwei.zhang@oss.qualcomm.com>
-References: <20250827042042.6786-1-jie.gan@oss.qualcomm.com>
- <20250827042042.6786-2-jie.gan@oss.qualcomm.com>
- <5acf3562-e69a-49b0-8cb6-9e57c5ad4368@linaro.org>
+Subject: Re: [PATCH v2] fs: hpfs: Avoid multiple
+ -Wflex-array-member-not-at-end warnings
+To: "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ Mikulas Patocka <mikulas@artax.karlin.mff.cuni.cz>,
+ Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+References: <aJnpXOndcEAF6_NW@kspp>
 Content-Language: en-US
-From: Jie Gan <jie.gan@oss.qualcomm.com>
-In-Reply-To: <5acf3562-e69a-49b0-8cb6-9e57c5ad4368@linaro.org>
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+In-Reply-To: <aJnpXOndcEAF6_NW@kspp>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Authority-Analysis: v=2.4 cv=cLDgskeN c=1 sm=1 tr=0 ts=68aecd75 cx=c_pps
- a=JL+w9abYAAE89/QcEU+0QA==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=OiUlF2ysgpT-6eO3SmwA:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=324X-CrmTo6CU4MGRt3R:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODI2MDE1MyBTYWx0ZWRfX6E/qokIAkyXi
- EOP1dkPCNXBqUr2K2bWSXw2HHATbfpOyKCvMc6Oip2PFMAT0OSooBwPn0rojHTcezmW/4hygzzd
- 72A914/LzPLI4DiRGYhd3vFCAZtOTAXHMf7B8htQL66LpgKdPR3PDJ4R01d/2pTl0931Ori7nAT
- ucChyDuho6iebCOES2XyZid/IE6mPrh6UMZkLPEzARRQVR+r8jaVocSgVw5Qthq2scscImy8LQE
- l+UJzIIR0pfpquGreBrd6XrTJeNnWN0suQL425kH6EW/zeTxFuG3jWa1PFfq5aa5911bH/YJcx7
- W8qGTNEpxXp3j4CkieoeipAlTmzSfDRoYHpaewTZbM4UjxdB2qOwWL4gXiUQwsR8SHEsAyKS/Ta
- XQ0RtPXO
-X-Proofpoint-GUID: HNzjWCyTdmoZZ-dsMLipEd2nmLpSRLzR
-X-Proofpoint-ORIG-GUID: HNzjWCyTdmoZZ-dsMLipEd2nmLpSRLzR
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-27_01,2025-08-26_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 clxscore=1015 malwarescore=0 spamscore=0 adultscore=0
- impostorscore=0 suspectscore=0 priorityscore=1501 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508260153
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 93.117.216.243
+X-Source-L: No
+X-Exim-ID: 1urCIw-00000002a63-09fG
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: static-243-216-117-93.thenetworkfactory.nl ([10.94.27.44]) [93.117.216.243]:33864
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 2
+X-Org: HG=hgshared;ORG=hostgator;
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfABGlQhU+gM5mPDo2v11iFpcamfCb0iLyc9te4nSmUlJlZM29PKSxIvXaLddITramnEb15QP0SZWJ3NY90JehQkQNK0iv/6dGdPl1utKeR6lsNDEBoOm
+ NJTY/mQH9cFHKzE2A9nrkuJac1NFTy/ST6xlgvTjh9PNBrXQoKOho6Bu2jzhZaOPuSlBNU7aEyvW4T4nw099y07NpBz17gaNNd56ZuB48vCK4P7DAFSUwxDG
 
+Hi all,
 
+Friendly ping: who can take/review this, please?
 
-On 8/27/2025 5:06 PM, James Clark wrote:
+Any comments or feedback is greatly appreciated. :)
+
+Thanks!
+-Gustavo
+
+On 11/08/25 15:00, Gustavo A. R. Silva wrote:
+> -Wflex-array-member-not-at-end was introduced in GCC-14, and we are
+> getting ready to enable it, globally.
 > 
+> So, in order to avoid ending up with a flexible-array member in the
+> middle of other structs, we use the `struct_group_tagged()` helper
+> to create a new tagged `struct bplus_header_fixed`. This structure
+> groups together all the members of the flexible `struct bplus_header`
+> except the flexible array.
 > 
-> On 27/08/2025 5:20 am, Jie Gan wrote:
->> From: Tao Zhang <tao.zhang@oss.qualcomm.com>
->>
->> Introduce sysfs nodes to configure cross-trigger parameters for TPDA.
->> These registers define the characteristics of cross-trigger packets,
->> including generation frequency and flag values.
->>
->> Signed-off-by: Tao Zhang <tao.zhang@oss.qualcomm.com>
->> Co-developed-by: Jie Gan <jie.gan@oss.qualcomm.com>
->> Signed-off-by: Jie Gan <jie.gan@oss.qualcomm.com>
->> ---
->>   .../testing/sysfs-bus-coresight-devices-tpda  |  43 ++++
->>   drivers/hwtracing/coresight/coresight-tpda.c  | 227 ++++++++++++++++++
->>   drivers/hwtracing/coresight/coresight-tpda.h  |  27 ++-
->>   3 files changed, 296 insertions(+), 1 deletion(-)
->>   create mode 100644 Documentation/ABI/testing/sysfs-bus-coresight- 
->> devices-tpda
->>
->> diff --git a/Documentation/ABI/testing/sysfs-bus-coresight-devices- 
->> tpda b/Documentation/ABI/testing/sysfs-bus-coresight-devices-tpda
->> new file mode 100644
->> index 000000000000..fb651aebeb31
->> --- /dev/null
->> +++ b/Documentation/ABI/testing/sysfs-bus-coresight-devices-tpda
->> @@ -0,0 +1,43 @@
->> +What:        /sys/bus/coresight/devices/<tpda-name>/trig_async_enable
->> +Date:        August 2025
->> +KernelVersion:    6.17
->> +Contact:    Jinlong Mao <jinlong.mao@oss.qualcomm.com>, Tao Zhang 
->> <tao.zhang@oss.qualcomm.com>, Jie Gan <jie.gan@oss.qualcomm.com>
->> +Description:
->> +        (RW) Enable/disable cross trigger synchronization sequence 
->> interface.
->> +
->> +What:        /sys/bus/coresight/devices/<tpda-name>/trig_flag_ts_enable
->> +Date:        August 2025
->> +KernelVersion:    6.17
->> +Contact:    Jinlong Mao <jinlong.mao@oss.qualcomm.com>, Tao Zhang 
->> <tao.zhang@oss.qualcomm.com>, Jie Gan <jie.gan@oss.qualcomm.com>
->> +Description:
->> +        (RW) Enable/disable cross trigger FLAG packet request interface.
->> +
->> +What:        /sys/bus/coresight/devices/<tpda-name>/trig_freq_enable
->> +Date:        August 2025
->> +KernelVersion:    6.17
->> +Contact:    Jinlong Mao <jinlong.mao@oss.qualcomm.com>, Tao Zhang 
->> <tao.zhang@oss.qualcomm.com>, Jie Gan <jie.gan@oss.qualcomm.com>
->> +Description:
->> +        (RW) Enable/disable cross trigger FREQ packet request interface.
->> +
->> +What:        /sys/bus/coresight/devices/<tpda-name>/freq_ts_enable
->> +Date:        August 2025
->> +KernelVersion:    6.17
->> +Contact:    Jinlong Mao <jinlong.mao@oss.qualcomm.com>, Tao Zhang 
->> <tao.zhang@oss.qualcomm.com>, Jie Gan <jie.gan@oss.qualcomm.com>
->> +Description:
->> +        (RW) Enable/disable the timestamp for all FREQ packets.
->> +
->> +What:        /sys/bus/coresight/devices/<tpda-name>/global_flush_req
->> +Date:        August 2025
->> +KernelVersion:    6.17
->> +Contact:    Jinlong Mao <jinlong.mao@oss.qualcomm.com>, Tao Zhang 
->> <tao.zhang@oss.qualcomm.com>, Jie Gan <jie.gan@oss.qualcomm.com>
->> +Description:
->> +        (RW) Set global (all ports) flush request bit. The bit 
->> remains set until a
->> +        global flush request sequence completes.
->> +
->> +What:        /sys/bus/coresight/devices/<tpda-name>/cmbchan_mode
->> +Date:        August 2025
->> +KernelVersion:    6.17
->> +Contact:    Jinlong Mao <jinlong.mao@oss.qualcomm.com>, Tao Zhang 
->> <tao.zhang@oss.qualcomm.com>, Jie Gan <jie.gan@oss.qualcomm.com>
->> +Description:
->> +        (RW) Configure the CMB/MCMB channel mode for all enabled ports.
->> +        Value 0 means raw channel mapping mode. Value 1 means channel 
->> pair marking mode.
->> diff --git a/drivers/hwtracing/coresight/coresight-tpda.c b/drivers/ 
->> hwtracing/coresight/coresight-tpda.c
->> index 4e93fa5bace4..647ab49a98d7 100644
->> --- a/drivers/hwtracing/coresight/coresight-tpda.c
->> +++ b/drivers/hwtracing/coresight/coresight-tpda.c
->> @@ -156,9 +156,37 @@ static void tpda_enable_pre_port(struct 
->> tpda_drvdata *drvdata)
->>       u32 val;
->>       val = readl_relaxed(drvdata->base + TPDA_CR);
->> +    val &= ~TPDA_CR_MID;
->>       val &= ~TPDA_CR_ATID;
->>       val |= FIELD_PREP(TPDA_CR_ATID, drvdata->atid);
->> +    if (drvdata->trig_async)
->> +        val |= TPDA_CR_SRIE;
->> +    else
->> +        val &= ~TPDA_CR_SRIE;
->> +    if (drvdata->trig_flag_ts)
->> +        val |= TPDA_CR_FLRIE;
->> +    else
->> +        val &= ~TPDA_CR_FLRIE;
->> +    if (drvdata->trig_freq)
->> +        val |= TPDA_CR_FRIE;
->> +    else
->> +        val &= ~TPDA_CR_FRIE;
->> +    if (drvdata->freq_ts)
->> +        val |= TPDA_CR_FREQTS;
->> +    else
->> +        val &= ~TPDA_CR_FREQTS;
->> +    if (drvdata->cmbchan_mode)
->> +        val |= TPDA_CR_CMBCHANMODE;
->> +    else
->> +        val &= ~TPDA_CR_CMBCHANMODE;
->>       writel_relaxed(val, drvdata->base + TPDA_CR);
->> +
->> +    /*
->> +     * If FLRIE bit is set, set the master and channel
->> +     * id as zero
->> +     */
->> +    if (drvdata->trig_flag_ts)
->> +        writel_relaxed(0x0, drvdata->base + TPDA_FPID_CR);
->>   }
->>   static int tpda_enable_port(struct tpda_drvdata *drvdata, int port)
->> @@ -274,6 +302,203 @@ static const struct coresight_ops tpda_cs_ops = {
->>       .link_ops    = &tpda_link_ops,
->>   };
->> +static ssize_t trig_async_enable_show(struct device *dev,
->> +                      struct device_attribute *attr,
->> +                      char *buf)
->> +{
->> +    struct tpda_drvdata *drvdata = dev_get_drvdata(dev->parent);
->> +
->> +    return sysfs_emit(buf, "%u\n", (unsigned int)drvdata->trig_async);
->> +}
->> +
->> +static ssize_t trig_async_enable_store(struct device *dev,
->> +                       struct device_attribute *attr,
->> +                       const char *buf,
->> +                       size_t size)
->> +{
->> +    struct tpda_drvdata *drvdata = dev_get_drvdata(dev->parent);
->> +    unsigned long val;
->> +
->> +    if (kstrtoul(buf, 0, &val))
->> +        return -EINVAL;
->> +
->> +    guard(spinlock)(&drvdata->spinlock);
->> +    drvdata->trig_async = !!val;
->> +
->> +    return size;
->> +}
->> +static DEVICE_ATTR_RW(trig_async_enable);
->> +
->> +static ssize_t trig_flag_ts_enable_show(struct device *dev,
->> +                    struct device_attribute *attr,
->> +                    char *buf)
->> +{
->> +    struct tpda_drvdata *drvdata = dev_get_drvdata(dev->parent);
->> +
->> +    return sysfs_emit(buf, "%u\n", (unsigned int)drvdata->trig_flag_ts);
->> +}
->> +
->> +static ssize_t trig_flag_ts_enable_store(struct device *dev,
->> +                     struct device_attribute *attr,
->> +                     const char *buf,
->> +                     size_t size)
->> +{
->> +    struct tpda_drvdata *drvdata = dev_get_drvdata(dev->parent);
->> +    unsigned long val;
->> +
->> +    if (kstrtoul(buf, 0, &val))
->> +        return -EINVAL;
->> +
->> +    guard(spinlock)(&drvdata->spinlock);
->> +    drvdata->trig_flag_ts = !!val;
->> +
->> +    return size;
->> +}
->> +static DEVICE_ATTR_RW(trig_flag_ts_enable);
->> +
->> +static ssize_t trig_freq_enable_show(struct device *dev,
->> +                     struct device_attribute *attr,
->> +                     char *buf)
->> +{
->> +    struct tpda_drvdata *drvdata = dev_get_drvdata(dev->parent);
->> +
->> +    return sysfs_emit(buf, "%u\n", (unsigned int)drvdata->trig_freq);
->> +}
->> +
->> +static ssize_t trig_freq_enable_store(struct device *dev,
->> +                      struct device_attribute *attr,
->> +                      const char *buf,
->> +                      size_t size)
->> +{
->> +    struct tpda_drvdata *drvdata = dev_get_drvdata(dev->parent);
->> +    unsigned long val;
->> +
->> +    if (kstrtoul(buf, 0, &val))
->> +        return -EINVAL;
->> +
->> +    guard(spinlock)(&drvdata->spinlock);
->> +    drvdata->trig_freq = !!val;
->> +
->> +    return size;
->> +}
->> +static DEVICE_ATTR_RW(trig_freq_enable);
->> +
->> +static ssize_t freq_ts_enable_show(struct device *dev,
->> +                   struct device_attribute *attr,
->> +                   char *buf)
->> +{
->> +    struct tpda_drvdata *drvdata = dev_get_drvdata(dev->parent);
->> +
->> +    return sysfs_emit(buf, "%u\n", (unsigned int)drvdata->freq_ts);
->> +}
->> +
->> +static ssize_t freq_ts_enable_store(struct device *dev,
->> +                    struct device_attribute *attr,
->> +                    const char *buf,
->> +                    size_t size)
->> +{
->> +    struct tpda_drvdata *drvdata = dev_get_drvdata(dev->parent);
->> +    unsigned long val;
->> +
->> +    if (kstrtoul(buf, 0, &val))
->> +        return -EINVAL;
->> +
->> +    guard(spinlock)(&drvdata->spinlock);
->> +    drvdata->freq_ts = !!val;
->> +
->> +    return size;
->> +}
->> +static DEVICE_ATTR_RW(freq_ts_enable);
->> +
->> +static ssize_t global_flush_req_show(struct device *dev,
->> +                     struct device_attribute *attr,
->> +                     char *buf)
->> +{
->> +    struct tpda_drvdata *drvdata = dev_get_drvdata(dev->parent);
->> +    unsigned long val;
->> +
->> +    if (!drvdata->csdev->refcnt)
->> +        return -EINVAL;
->> +
->> +    guard(spinlock)(&drvdata->spinlock);
->> +    CS_UNLOCK(drvdata->base);
->> +    val = readl_relaxed(drvdata->base + TPDA_CR);
->> +    CS_LOCK(drvdata->base);
->> +
->> +    return sysfs_emit(buf, "%lx\n", val);
+> As a result, the array is effectively separated from the rest of the
+> members without modifying the memory layout of the flexible structure.
+> We then change the type of the middle struct member currently causing
+> trouble from `struct bplus_header` to `struct bplus_header_fixed`.
 > 
-> I know in practice it's probably only either 0 or 1, but this should 
-> either be decimal or have the 0x prefix otherwise it looks like a mistake.
+> We also want to ensure that when new members need to be added to the
+> flexible structure, they are always included within the newly created
+> tagged struct. For this, we use `static_assert()`. This ensures that the
+> memory layout for both the flexible structure and the new tagged struct
+> is the same after any changes.
 > 
-
-You are right. It looks strange here and I missed this point. I think 
-display the value in decimal would be better.
-
->> +}
->> +
->> +static ssize_t global_flush_req_store(struct device *dev,
->> +                      struct device_attribute *attr,
->> +                      const char *buf,
->> +                      size_t size)
->> +{
->> +    struct tpda_drvdata *drvdata = dev_get_drvdata(dev->parent);
->> +    unsigned long val;
->> +
->> +    if (kstrtoul(buf, 0, &val))
->> +        return -EINVAL;
->> +
->> +    if (!drvdata->csdev->refcnt || !val)
->> +        return -EINVAL;
->> +
->> +    guard(spinlock)(&drvdata->spinlock);
->> +    CS_UNLOCK(drvdata->base);
->> +    val = readl_relaxed(drvdata->base + TPDA_CR);
->> +    val |= BIT(0);
+> This approach avoids having to implement `struct bplus_header_fixed`
+> as a completely separate structure, thus preventing having to maintain
+> two independent but basically identical structures, closing the door
+> to potential bugs in the future.
 > 
-> If you only set bit 0 do you only want to show bit 0 in 
-> global_flush_req_show() above? The sysfs files should be divided up by 
-> function rather than dumping the whole register, otherwise tools need 
-> their own copy of the fields to interperet them.
-
-Got your point here. In the show function, we only need read the value 
-of the bit 0 and display the value.
-
-Thanks,
-Jie
-
+> We also use `container_of()` (via a wrapper) whenever we need to retrieve
+> a pointer to the flexible structure, through which we can access the
+> flexible-array member, if necessary.
 > 
+> So, with these changes, fix 26 of the following type of warnings:
+> fs/hpfs/hpfs.h:456:23: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> fs/hpfs/hpfs.h:498:23: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
 > 
+> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+> ---
+> Changes in v2:
+>   - Add GET_BTREE_PTR() wrapper for container_of().
+> 
+>   fs/hpfs/anode.c | 43 ++++++++++++++++++++++---------------------
+>   fs/hpfs/ea.c    |  2 +-
+>   fs/hpfs/file.c  |  4 +++-
+>   fs/hpfs/hpfs.h  | 44 +++++++++++++++++++++++++++++++-------------
+>   fs/hpfs/map.c   |  8 ++++----
+>   5 files changed, 61 insertions(+), 40 deletions(-)
+> 
+> diff --git a/fs/hpfs/anode.c b/fs/hpfs/anode.c
+> index c14c9a035ee0..a4f5321eafae 100644
+> --- a/fs/hpfs/anode.c
+> +++ b/fs/hpfs/anode.c
+> @@ -27,7 +27,7 @@ secno hpfs_bplus_lookup(struct super_block *s, struct inode *inode,
+>   				a = le32_to_cpu(btree->u.internal[i].down);
+>   				brelse(bh);
+>   				if (!(anode = hpfs_map_anode(s, a, &bh))) return -1;
+> -				btree = &anode->btree;
+> +				btree = GET_BTREE_PTR(&anode->btree);
+>   				goto go_down;
+>   			}
+>   		hpfs_error(s, "sector %08x not found in internal anode %08x", sec, a);
+> @@ -69,12 +69,13 @@ secno hpfs_add_sector_to_btree(struct super_block *s, secno node, int fnod, unsi
+>   	int n;
+>   	unsigned fs;
+>   	int c1, c2 = 0;
+> +
+>   	if (fnod) {
+>   		if (!(fnode = hpfs_map_fnode(s, node, &bh))) return -1;
+> -		btree = &fnode->btree;
+> +		btree = GET_BTREE_PTR(&fnode->btree);
+>   	} else {
+>   		if (!(anode = hpfs_map_anode(s, node, &bh))) return -1;
+> -		btree = &anode->btree;
+> +		btree = GET_BTREE_PTR(&anode->btree);
+>   	}
+>   	a = node;
+>   	go_down:
+> @@ -91,7 +92,7 @@ secno hpfs_add_sector_to_btree(struct super_block *s, secno node, int fnod, unsi
+>   		if (hpfs_sb(s)->sb_chk)
+>   			if (hpfs_stop_cycles(s, a, &c1, &c2, "hpfs_add_sector_to_btree #1")) return -1;
+>   		if (!(anode = hpfs_map_anode(s, a, &bh))) return -1;
+> -		btree = &anode->btree;
+> +		btree = GET_BTREE_PTR(&anode->btree);
+>   		goto go_down;
+>   	}
+>   	if (n >= 0) {
+> @@ -151,7 +152,7 @@ secno hpfs_add_sector_to_btree(struct super_block *s, secno node, int fnod, unsi
+>   		}
+>   		brelse(bh);
+>   		bh = bh1;
+> -		btree = &anode->btree;
+> +		btree = GET_BTREE_PTR(&anode->btree);
+>   	}
+>   	btree->n_free_nodes--; n = btree->n_used_nodes++;
+>   	le16_add_cpu(&btree->first_free, 12);
+> @@ -168,10 +169,10 @@ secno hpfs_add_sector_to_btree(struct super_block *s, secno node, int fnod, unsi
+>   			if (hpfs_stop_cycles(s, up, &c1, &c2, "hpfs_add_sector_to_btree #2")) return -1;
+>   		if (up != node || !fnod) {
+>   			if (!(anode = hpfs_map_anode(s, up, &bh))) return -1;
+> -			btree = &anode->btree;
+> +			btree = GET_BTREE_PTR(&anode->btree);
+>   		} else {
+>   			if (!(fnode = hpfs_map_fnode(s, up, &bh))) return -1;
+> -			btree = &fnode->btree;
+> +			btree = GET_BTREE_PTR(&fnode->btree);
+>   		}
+>   		if (btree->n_free_nodes) {
+>   			btree->n_free_nodes--; n = btree->n_used_nodes++;
+> @@ -206,8 +207,8 @@ secno hpfs_add_sector_to_btree(struct super_block *s, secno node, int fnod, unsi
+>   			anode->btree.n_used_nodes = 1;
+>   			anode->btree.n_free_nodes = 59;
+>   			anode->btree.first_free = cpu_to_le16(16);
+> -			anode->btree.u.internal[0].down = cpu_to_le32(a);
+> -			anode->btree.u.internal[0].file_secno = cpu_to_le32(-1);
+> +			GET_BTREE_PTR(&anode->btree)->u.internal[0].down = cpu_to_le32(a);
+> +			GET_BTREE_PTR(&anode->btree)->u.internal[0].file_secno = cpu_to_le32(-1);
+>   			mark_buffer_dirty(bh);
+>   			brelse(bh);
+>   			if ((anode = hpfs_map_anode(s, a, &bh))) {
+> @@ -229,20 +230,20 @@ secno hpfs_add_sector_to_btree(struct super_block *s, secno node, int fnod, unsi
+>   			brelse(bh2);
+>   			return -1;
+>   		}
+> -		btree = &anode->btree;
+> +		btree = GET_BTREE_PTR(&anode->btree);
+>   	} else {
+>   		if (!(fnode = hpfs_map_fnode(s, node, &bh))) {
+>   			brelse(bh2);
+>   			return -1;
+>   		}
+> -		btree = &fnode->btree;
+> +		btree = GET_BTREE_PTR(&fnode->btree);
+>   	}
+>   	ranode->up = cpu_to_le32(node);
+>   	memcpy(&ranode->btree, btree, le16_to_cpu(btree->first_free));
+>   	if (fnod)
+>   		ranode->btree.flags |= BP_fnode_parent;
+> -	ranode->btree.n_free_nodes = (bp_internal(&ranode->btree) ? 60 : 40) - ranode->btree.n_used_nodes;
+> -	if (bp_internal(&ranode->btree)) for (n = 0; n < ranode->btree.n_used_nodes; n++) {
+> +	GET_BTREE_PTR(&ranode->btree)->n_free_nodes = (bp_internal(GET_BTREE_PTR(&ranode->btree)) ? 60 : 40) - GET_BTREE_PTR(&ranode->btree)->n_used_nodes;
+> +	if (bp_internal(GET_BTREE_PTR(&ranode->btree))) for (n = 0; n < GET_BTREE_PTR(&ranode->btree)->n_used_nodes; n++) {
+>   		struct anode *unode;
+>   		if ((unode = hpfs_map_anode(s, le32_to_cpu(ranode->u.internal[n].down), &bh1))) {
+>   			unode->up = cpu_to_le32(ra);
+> @@ -291,7 +292,7 @@ void hpfs_remove_btree(struct super_block *s, struct bplus_header *btree)
+>   			if (hpfs_stop_cycles(s, ano, &d1, &d2, "hpfs_remove_btree #1"))
+>   				return;
+>   		if (!(anode = hpfs_map_anode(s, ano, &bh))) return;
+> -		btree1 = &anode->btree;
+> +		btree1 = GET_BTREE_PTR(&anode->btree);
+>   		level++;
+>   		pos = 0;
+>   	}
+> @@ -307,7 +308,7 @@ void hpfs_remove_btree(struct super_block *s, struct bplus_header *btree)
+>   	ano = le32_to_cpu(anode->up);
+>   	if (--level) {
+>   		if (!(anode = hpfs_map_anode(s, ano, &bh))) return;
+> -		btree1 = &anode->btree;
+> +		btree1 = GET_BTREE_PTR(&anode->btree);
+>   	} else btree1 = btree;
+>   	for (i = 0; i < btree1->n_used_nodes; i++) {
+>   		if (le32_to_cpu(btree1->u.internal[i].down) == oano) {
+> @@ -332,7 +333,7 @@ static secno anode_lookup(struct super_block *s, anode_secno a, unsigned sec)
+>   	struct anode *anode;
+>   	struct buffer_head *bh;
+>   	if (!(anode = hpfs_map_anode(s, a, &bh))) return -1;
+> -	return hpfs_bplus_lookup(s, NULL, &anode->btree, sec, bh);
+> +	return hpfs_bplus_lookup(s, NULL, GET_BTREE_PTR(&anode->btree), sec, bh);
+>   }
+>   
+>   int hpfs_ea_read(struct super_block *s, secno a, int ano, unsigned pos,
+> @@ -388,7 +389,7 @@ void hpfs_ea_remove(struct super_block *s, secno a, int ano, unsigned len)
+>   	struct buffer_head *bh;
+>   	if (ano) {
+>   		if (!(anode = hpfs_map_anode(s, a, &bh))) return;
+> -		hpfs_remove_btree(s, &anode->btree);
+> +		hpfs_remove_btree(s, GET_BTREE_PTR(&anode->btree));
+>   		brelse(bh);
+>   		hpfs_free_sectors(s, a, 1);
+>   	} else hpfs_free_sectors(s, a, (len + 511) >> 9);
+> @@ -407,10 +408,10 @@ void hpfs_truncate_btree(struct super_block *s, secno f, int fno, unsigned secs)
+>   	int c1, c2 = 0;
+>   	if (fno) {
+>   		if (!(fnode = hpfs_map_fnode(s, f, &bh))) return;
+> -		btree = &fnode->btree;
+> +		btree = GET_BTREE_PTR(&fnode->btree);
+>   	} else {
+>   		if (!(anode = hpfs_map_anode(s, f, &bh))) return;
+> -		btree = &anode->btree;
+> +		btree = GET_BTREE_PTR(&anode->btree);
+>   	}
+>   	if (!secs) {
+>   		hpfs_remove_btree(s, btree);
+> @@ -448,7 +449,7 @@ void hpfs_truncate_btree(struct super_block *s, secno f, int fno, unsigned secs)
+>   			if (hpfs_stop_cycles(s, node, &c1, &c2, "hpfs_truncate_btree"))
+>   				return;
+>   		if (!(anode = hpfs_map_anode(s, node, &bh))) return;
+> -		btree = &anode->btree;
+> +		btree = GET_BTREE_PTR(&anode->btree);
+>   	}	
+>   	nodes = btree->n_used_nodes + btree->n_free_nodes;
+>   	for (i = 0; i < btree->n_used_nodes; i++)
+> @@ -485,7 +486,7 @@ void hpfs_remove_fnode(struct super_block *s, fnode_secno fno)
+>   	struct extended_attribute *ea;
+>   	struct extended_attribute *ea_end;
+>   	if (!(fnode = hpfs_map_fnode(s, fno, &bh))) return;
+> -	if (!fnode_is_dir(fnode)) hpfs_remove_btree(s, &fnode->btree);
+> +	if (!fnode_is_dir(fnode)) hpfs_remove_btree(s, GET_BTREE_PTR(&fnode->btree));
+>   	else hpfs_remove_dtree(s, le32_to_cpu(fnode->u.external[0].disk_secno));
+>   	ea_end = fnode_end_ea(fnode);
+>   	for (ea = fnode_ea(fnode); ea < ea_end; ea = next_ea(ea))
+> diff --git a/fs/hpfs/ea.c b/fs/hpfs/ea.c
+> index 102ba18e561f..2149d3ca530b 100644
+> --- a/fs/hpfs/ea.c
+> +++ b/fs/hpfs/ea.c
+> @@ -41,7 +41,7 @@ void hpfs_ea_ext_remove(struct super_block *s, secno a, int ano, unsigned len)
+>   		struct buffer_head *bh;
+>   		struct anode *anode;
+>   		if ((anode = hpfs_map_anode(s, a, &bh))) {
+> -			hpfs_remove_btree(s, &anode->btree);
+> +			hpfs_remove_btree(s, GET_BTREE_PTR(&anode->btree));
+>   			brelse(bh);
+>   			hpfs_free_sectors(s, a, 1);
+>   		}
+> diff --git a/fs/hpfs/file.c b/fs/hpfs/file.c
+> index 263b5bbe1849..29e876705369 100644
+> --- a/fs/hpfs/file.c
+> +++ b/fs/hpfs/file.c
+> @@ -51,7 +51,9 @@ static secno hpfs_bmap(struct inode *inode, unsigned file_secno, unsigned *n_sec
+>   		return hpfs_inode->i_disk_sec + n;
+>   	}
+>   	if (!(fnode = hpfs_map_fnode(inode->i_sb, inode->i_ino, &bh))) return 0;
+> -	disk_secno = hpfs_bplus_lookup(inode->i_sb, inode, &fnode->btree, file_secno, bh);
+> +	disk_secno = hpfs_bplus_lookup(inode->i_sb, inode,
+> +				       GET_BTREE_PTR(&fnode->btree),
+> +				       file_secno, bh);
+>   	if (disk_secno == -1) return 0;
+>   	if (hpfs_chk_sectors(inode->i_sb, disk_secno, 1, "bmap")) return 0;
+>   	n = file_secno - hpfs_inode->i_file_sec;
+> diff --git a/fs/hpfs/hpfs.h b/fs/hpfs/hpfs.h
+> index 281dec8f636b..353f73c914d9 100644
+> --- a/fs/hpfs/hpfs.h
+> +++ b/fs/hpfs/hpfs.h
+> @@ -394,27 +394,45 @@ enum {
+>   	BP_binary_search = 0x40,
+>   	BP_internal = 0x80
+>   };
+> +
+> +/**
+> + * GET_BTREE_PTR() - Get a pointer to struct bplus_header
+> + *
+> + * Wrapper around container_of() to retrieve a pointer to struct
+> + * bplus_header from a pointer to struct bplus_header_fixed.
+> + *
+> + * @ptr: Pointer to struct bplus_header_fixed.
+> + *
+> + */
+> +#define GET_BTREE_PTR(ptr) \
+> +	container_of(ptr, struct bplus_header, __hdr)
+> +
+>   struct bplus_header
+>   {
+> -  u8 flags;				/* bit 0 - high bit of first free entry offset
+> +	/* New members MUST be added within the struct_group() macro below. */
+> +	struct_group_tagged(bplus_header_fixed, __hdr,
+> +		u8 flags;		/* bit 0 - high bit of first free entry offset
+>   					   bit 5 - we're pointed to by an fnode,
+>   					   the data btree or some ea or the
+>   					   main ea bootage pointer ea_secno
+>   					   bit 6 - suggest binary search (unused)
+>   					   bit 7 - 1 -> (internal) tree of anodes
+>   						   0 -> (leaf) list of extents */
+> -  u8 fill[3];
+> -  u8 n_free_nodes;			/* free nodes in following array */
+> -  u8 n_used_nodes;			/* used nodes in following array */
+> -  __le16 first_free;			/* offset from start of header to
+> +		u8 fill[3];
+> +		u8 n_free_nodes;	/* free nodes in following array */
+> +		u8 n_used_nodes;	/* used nodes in following array */
+> +		__le16 first_free;	/* offset from start of header to
+>   					   first free node in array */
+> -  union {
+> -	/* (internal) 2-word entries giving subtree pointers */
+> -	DECLARE_FLEX_ARRAY(struct bplus_internal_node, internal);
+> -	/* (external) 3-word entries giving sector runs */
+> -	DECLARE_FLEX_ARRAY(struct bplus_leaf_node, external);
+> -  } u;
+> +	);
+> +	union {
+> +		/* (internal) 2-word entries giving subtree pointers */
+> +		DECLARE_FLEX_ARRAY(struct bplus_internal_node, internal);
+> +		/* (external) 3-word entries giving sector runs */
+> +		DECLARE_FLEX_ARRAY(struct bplus_leaf_node, external);
+> +	} u;
+>   };
+> +static_assert(offsetof(struct bplus_header, u.internal) == sizeof(struct bplus_header_fixed),
+> +	      "struct member likely outside of struct_group_tagged()");
+>   
+>   static inline bool bp_internal(struct bplus_header *bp)
+>   {
+> @@ -453,7 +471,7 @@ struct fnode
+>     __le16 flags;				/* bit 1 set -> ea_secno is an anode */
+>   					/* bit 8 set -> directory.  first & only extent
+>   					   points to dnode. */
+> -  struct bplus_header btree;		/* b+ tree, 8 extents or 12 subtrees */
+> +  struct bplus_header_fixed btree;	/* b+ tree, 8 extents or 12 subtrees */
+>     union {
+>       struct bplus_leaf_node external[8];
+>       struct bplus_internal_node internal[12];
+> @@ -495,7 +513,7 @@ struct anode
+>     __le32 self;				/* pointer to this anode */
+>     __le32 up;				/* parent anode or fnode */
+>   
+> -  struct bplus_header btree;		/* b+tree, 40 extents or 60 subtrees */
+> +  struct bplus_header_fixed btree;	/* b+tree, 40 extents or 60 subtrees */
+>     union {
+>       struct bplus_leaf_node external[40];
+>       struct bplus_internal_node internal[60];
+> diff --git a/fs/hpfs/map.c b/fs/hpfs/map.c
+> index ecd9fccd1663..be73233502f8 100644
+> --- a/fs/hpfs/map.c
+> +++ b/fs/hpfs/map.c
+> @@ -178,14 +178,14 @@ struct fnode *hpfs_map_fnode(struct super_block *s, ino_t ino, struct buffer_hea
+>   			}
+>   			if (!fnode_is_dir(fnode)) {
+>   				if ((unsigned)fnode->btree.n_used_nodes + (unsigned)fnode->btree.n_free_nodes !=
+> -				    (bp_internal(&fnode->btree) ? 12 : 8)) {
+> +				    (bp_internal(GET_BTREE_PTR(&fnode->btree)) ? 12 : 8)) {
+>   					hpfs_error(s,
+>   					   "bad number of nodes in fnode %08lx",
+>   					    (unsigned long)ino);
+>   					goto bail;
+>   				}
+>   				if (le16_to_cpu(fnode->btree.first_free) !=
+> -				    8 + fnode->btree.n_used_nodes * (bp_internal(&fnode->btree) ? 8 : 12)) {
+> +				    8 + fnode->btree.n_used_nodes * (bp_internal(GET_BTREE_PTR(&fnode->btree)) ? 8 : 12)) {
+>   					hpfs_error(s,
+>   					    "bad first_free pointer in fnode %08lx",
+>   					    (unsigned long)ino);
+> @@ -233,12 +233,12 @@ struct anode *hpfs_map_anode(struct super_block *s, anode_secno ano, struct buff
+>   				goto bail;
+>   			}
+>   			if ((unsigned)anode->btree.n_used_nodes + (unsigned)anode->btree.n_free_nodes !=
+> -			    (bp_internal(&anode->btree) ? 60 : 40)) {
+> +			    (bp_internal(GET_BTREE_PTR(&anode->btree)) ? 60 : 40)) {
+>   				hpfs_error(s, "bad number of nodes in anode %08x", ano);
+>   				goto bail;
+>   			}
+>   			if (le16_to_cpu(anode->btree.first_free) !=
+> -			    8 + anode->btree.n_used_nodes * (bp_internal(&anode->btree) ? 8 : 12)) {
+> +			    8 + anode->btree.n_used_nodes * (bp_internal(GET_BTREE_PTR(&anode->btree)) ? 8 : 12)) {
+>   				hpfs_error(s, "bad first_free pointer in anode %08x", ano);
+>   				goto bail;
+>   			}
 
 
