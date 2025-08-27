@@ -1,306 +1,261 @@
-Return-Path: <linux-kernel+bounces-787745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EADDBB37A81
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 08:37:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 28CD6B37A83
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 08:38:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9483E3A53F4
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 06:37:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1AB73A8B4B
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 06:38:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0160227934B;
-	Wed, 27 Aug 2025 06:37:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CC2530ACED;
+	Wed, 27 Aug 2025 06:37:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="dvEfK0lS"
-Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="O0TjZxU2"
+Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E684E33EC;
-	Wed, 27 Aug 2025 06:37:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDDBF3002AD
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 06:37:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756276665; cv=none; b=htdt6ReraYmkYsJE0+oSsA0yPW9SuIBT3j+0C/P5+n+BmOSk8vEM7kbLn80mWqisrS7cQ938iRudYoAvdz83MyaOswkNM1Ui23pkwsNHtWfOA56qKU5uF/wUju3wH36RhaJhcLISQYxDC5pVgWRRbp/GmmrKNfLObkfdrCyPhgc=
+	t=1756276674; cv=none; b=hoqWhz5tCp9mjJzH8V+ctLmhjVFtZEIqpU9C2ZyXnc65JgKYuZd8N4NmPm24Y8++dUaZkoVQscgaqw18XERg3reTQ6OxagGDgYHVemamNv+QSBmhahr10ZIRNARSjzdAstbHPSitPryvUmwWVrk2Vs0R+CewrndUREwf+mYxw/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756276665; c=relaxed/simple;
-	bh=96YCLOtNM97OUGEOGZoU8PcZd35sAMHs08pQ+f4QKmg=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ehOWH3HZtifhCC0bWgnCLu4JZp86q3ZWWzhBUfdGGQoB98VN6iGwrBC6gkmQcHokficAzE96vcwXRlZKDXLRQgGTOsodRFdXRatvp6AMQIdfpO/HGgmeHr1TNT+443tz1Dq6WB96fGBfY2NBabH+ZFwP2IQMvgsZfyTemsXqyhg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=dvEfK0lS; arc=none smtp.client-ip=130.133.4.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:From:
-	Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
-	References; bh=6oJr1ziZYKQ2JgwAMwSy5dRdyTEXTKvzrwlvmZzfw0w=; t=1756276662;
-	x=1756881462; b=dvEfK0lS5aTYaADGtR2C+JNCEHU43yfhAHvZxy9JnDvxxtJYWIzFOG4UVc9JT
-	DZNoM2zo9Dgi7HkHETyNXr2TJIz4TBrC8qFbbK0M+8RlScrfVSNo3lgeRHKJ8eDX7n763CxDxJmbB
-	FsSsykFyk0m0F7EOA47ckujDTgIhkv2SRAwJgjhvPLeGsUC0XifdxcsZACUlpO83hg8f9HPH1uqjX
-	uC1K2MH1++4RbStmSG4js1SW4dZpa1OezYCqsAPDl+ZOHIBpML8OAqWCU+kTinLHd3D9w/CX6f6Br
-	5P1UUhZuAf5+Qy/wmZ0WXu9TcuBJvsZS3TFXHjsi4/G9RzgCpQ==;
-Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
-          by outpost.zedat.fu-berlin.de (Exim 4.98)
-          with esmtps (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@zedat.fu-berlin.de>)
-          id 1ur9mt-00000003cmM-35UZ; Wed, 27 Aug 2025 08:37:39 +0200
-Received: from p57bd96d0.dip0.t-ipconnect.de ([87.189.150.208] helo=[192.168.178.61])
-          by inpost2.zedat.fu-berlin.de (Exim 4.98)
-          with esmtpsa (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@physik.fu-berlin.de>)
-          id 1ur9mt-00000003C6q-222m; Wed, 27 Aug 2025 08:37:39 +0200
-Message-ID: <69df7421d50bec1e85ba1e7649326c33ef7226b0.camel@physik.fu-berlin.de>
-Subject: Re: [PATCH 4/4] sparc: fix accurate exception reporting in
- copy_{from_to}_user for Niagara 4
-From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-To: Michael Karcher <kernel@mkarcher.dialup.fu-berlin.de>, 
-	linux-kernel@vger.kernel.org
-Cc: sparclinux@vger.kernel.org, Andreas Larsson <andreas@gaisler.com>, 
- Anthony Yznaga <anthony.yznaga@oracle.com>
-Date: Wed, 27 Aug 2025 08:37:38 +0200
-In-Reply-To: <20250826160312.2070-5-kernel@mkarcher.dialup.fu-berlin.de>
-References: <20250826160312.2070-1-kernel@mkarcher.dialup.fu-berlin.de>
-	 <20250826160312.2070-5-kernel@mkarcher.dialup.fu-berlin.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 
+	s=arc-20240116; t=1756276674; c=relaxed/simple;
+	bh=C4sx527vup15bmoLRVM/Mpf+ndgRGGPXRmnHFVz0gHA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gN1I5P5Eot7botOI3/H8kqU7lnHvZ7tHR22N9bfNe12lpdw4vFNdI1Ze2rd3a2AAPti2tnM+8qEwAt8nPWz+K4y2dX7lbGg3nWOaWVITfO1A54LxR/yJwHtg+CB9lm9+LjQNQLuMPAEe4FW4d0PSqjmTEeot/n+FDche3JzLijE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=O0TjZxU2; arc=none smtp.client-ip=209.85.219.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-70ddadde494so9593916d6.1
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 23:37:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1756276672; x=1756881472; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=C4sx527vup15bmoLRVM/Mpf+ndgRGGPXRmnHFVz0gHA=;
+        b=O0TjZxU2X7F7N4a9vEWJIde7VOaA57PLMxzTmemP8bhisSNxppMPqmgS+kEhrvgcTN
+         ZaYLWc03YWSq4MH2F1h8hpiJUuX6hhivub21uXLEnszc9GLIRoJz7YsbPrM3J9DtEECd
+         rBf/QFL6WFIMtoS+eSW7WmZfKmfykrSY8krEihF0DR+ipFSbJpQcEf6j+CgcJ1pWOg7V
+         Egr6qpTJOfWMUJ+uHdV6nBCNi6jMS497uqCat80+IKTKv89Ck5zpeBfdhZXPdCKLlMb+
+         wcZ8T6tieT+sKwgmXl0WqtqN44+nVfZ3ObaR0p+yy9VZyUAHmWhWZ9z4YEVHXYi1vxkk
+         m6gg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756276672; x=1756881472;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=C4sx527vup15bmoLRVM/Mpf+ndgRGGPXRmnHFVz0gHA=;
+        b=WHyP4i+G1XtwX1sUWc3VQYoRKbLnJofIsJi9IGzFfZbI7zehtb83i/S4gxUXyfHc5p
+         ti0D7PNULYXdkpOxjylNbQzmQC80tQTJtHT0PNqkSjbkrne0xhTjpAgNwtHQNBOS44oZ
+         NAQr731MCkdvED/IWByA09jzKcKNX1IxUMHA/ax1qucScyHtHH405rselW6FW5WuZnTj
+         5bISqpZm+b34XexFPYXsEwq30/6IFaLhOSyxskMsiNCn7eEKfX3UHIds+hLSKPqLJBY2
+         Bbb+BrgrNnE5RlVu33jl0EVA8BexqOYTbzMo+XCyvBjeHBogYJIk+/YlPVnrZj4B0P3B
+         a/7A==
+X-Forwarded-Encrypted: i=1; AJvYcCVnGllzxlY0UrqE72GVZbzv6/RZQvBvPUx36aHCYzr+zA0lYWJza3xe7K5SEOMS5sUANs+zHOaeqDOcNoA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyT79PFoDXo69OzJ37BAziYPBqYtSgRpasFbnk9hZnjtf1jbc1C
+	UV9f2Cx3dHdZLZZjKsUvd6IiUVXo2FIN1BLa1uoM7fjXKh4brukrh77NQ0lI39nvNbtH3WAuwD8
+	w6bKCSFPLli3LXrISGqZG7mo/4DPykxRxRkHMDISi
+X-Gm-Gg: ASbGnct79LDVrAHJkUJ0HKENWBEc6qmvd6MNT+U3cczY1Df/u1Ugg92LnqBmE33+K81
+	d6LvdAMO0Jhe8oTd6UCEQCpU/s9S2QZ17pEZJBgCeSRfQIaWBCeBlj5yKFR0EgtT8WvJE/EzO7P
+	gnEYCxZq6+P43ZC9Eed9hrmaW9vD1Bau3wHhnpuWZ860C8er9+ITHCsIgth0ik932kfL51BqiwU
+	HTt/+vVQNE8CTxVqF2iXls=
+X-Google-Smtp-Source: AGHT+IEMlFMMzwbH544jHwYS2DZm0yBWsqXKCjGANAe3jheNkNEH/AMzsgHI3RNY37QXgFtZHYVYq5NfeSWu9RKtmP0=
+X-Received: by 2002:a05:6214:ca9:b0:705:c148:26a0 with SMTP id
+ 6a1803df08f44-70d971e4c3cmr206586346d6.31.1756276671550; Tue, 26 Aug 2025
+ 23:37:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Original-Sender: glaubitz@physik.fu-berlin.de
-X-ZEDAT-Hint: PO
+References: <20250818120846.347d64b1@canb.auug.org.au> <1befd7ab-f343-450f-9484-0cef21fe2da8@linuxfoundation.org>
+ <CABVgOSm2_FGfjQpUBttuUH5ZrMEqnaGkYVkN6N96wX7Qs8EE2Q@mail.gmail.com>
+ <4d5bad8a-6afa-4284-8f78-b52e2cfedbf0@linuxfoundation.org>
+ <CABVgOS=groSq6Dcdbb_PxFwikQTDodhA7gCAJBvv3jWzk8jrZQ@mail.gmail.com> <b8dbb85b-124b-4d25-b734-069809240e81@linuxfoundation.org>
+In-Reply-To: <b8dbb85b-124b-4d25-b734-069809240e81@linuxfoundation.org>
+From: David Gow <davidgow@google.com>
+Date: Wed, 27 Aug 2025 14:37:39 +0800
+X-Gm-Features: Ac12FXwut-nYDIOgwqfj0aP1wyqnEyLyvoUd-gFksJvpoXKLS-bE87vK3fHguTI
+Message-ID: <CABVgOSksaxKbiBz3Va5FLqAzoHXs4RGkC9YXE=5DmGWzLYU=pw@mail.gmail.com>
+Subject: Re: linux-next: build failure after merge of the kunit-next tree
+To: Shuah Khan <skhan@linuxfoundation.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Marie Zhussupova <marievic@google.com>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	KUnit Development <kunit-dev@googlegroups.com>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+	boundary="0000000000002ccec4063d530790"
 
-Hello Michael,
+--0000000000002ccec4063d530790
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, 2025-08-26 at 18:03 +0200, Michael Karcher wrote:
-> Fixes: 957077048009 ("sparc64: Convert NG4copy_{from,to}_user to accurate=
- exception reporting.")
-> Signed-off-by: Michael Karcher <kernel@mkarcher.dialup.fu-berlin.de>
-> ---
->  arch/sparc/lib/NG4memcpy.S | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/arch/sparc/lib/NG4memcpy.S b/arch/sparc/lib/NG4memcpy.S
-> index 7ad58ebe0d00..df0ec1bd1948 100644
-> --- a/arch/sparc/lib/NG4memcpy.S
-> +++ b/arch/sparc/lib/NG4memcpy.S
-> @@ -281,7 +281,7 @@ FUNC_NAME:	/* %o0=3Ddst, %o1=3Dsrc, %o2=3Dlen */
->  	subcc		%o5, 0x20, %o5
->  	EX_ST(STORE(stx, %g1, %o0 + 0x00), memcpy_retl_o2_plus_o5_plus_32)
->  	EX_ST(STORE(stx, %g2, %o0 + 0x08), memcpy_retl_o2_plus_o5_plus_24)
-> -	EX_ST(STORE(stx, GLOBAL_SPARE, %o0 + 0x10), memcpy_retl_o2_plus_o5_plus=
-_24)
-> +	EX_ST(STORE(stx, GLOBAL_SPARE, %o0 + 0x10), memcpy_retl_o2_plus_o5_plus=
-_16)
->  	EX_ST(STORE(stx, %o4, %o0 + 0x18), memcpy_retl_o2_plus_o5_plus_8)
->  	bne,pt		%icc, 1b
->  	 add		%o0, 0x20, %o0
+On Wed, 27 Aug 2025 at 13:49, Shuah Khan <skhan@linuxfoundation.org> wrote:
+>
+> On 8/26/25 03:24, David Gow wrote:
+> > On Tue, 26 Aug 2025 at 10:15, Shuah Khan <skhan@linuxfoundation.org> wrote:
+> >>
+> >> On 8/19/25 01:44, David Gow wrote:
+> >>> On Tue, 19 Aug 2025 at 00:32, Shuah Khan <skhan@linuxfoundation.org> wrote:
+> >>>>
+> >>>> On 8/17/25 20:08, Stephen Rothwell wrote:
+> >>>>> Hi all,
+> >>>>>
+> >>>>> After merging the kunit-next tree, today's linux-next build (x86_64
+> >>>>> allmodconfig) failed like this:
+> >>>>
+> >>>> Thank you Stephen. I did a allmodconfig build on 6.17-rc1 base - didn't
+> >>>> see the error.
+> >>>>
+> >>>> Marie, David, can you take a look this. Looks like conflict with drm
+> >>>> in next?
+> >>>>
+> >>>
+> >>> Thanks, Shuah. I've managed to reproduce this with:
+> >>> ./tools/testing/kunit/kunit.py run --arch x86_64 --kunitconfig
+> >>> drivers/gpu/drm/xe
+> >>>
+> >>> These patches fix it (and a corresponding drm/xe test failure):
+> >>> https://lore.kernel.org/linux-next/20250819073434.1411114-1-davidgow@google.com/T/#t
+> >>>
+> >>> Ideally, they'll be squashed into the corresponding patches, as
+> >>> otherwise there'd be some temporary breakage during bisections. I can
+> >>> squash these into the original series and re-send it out if that works
+> >>> best for you.
+> >>>
+> >>
+> >> David,
+> >>
+> >> Please squash them and resend - also I see a kernel test robot
+> >> error in patch 1/2.
+> >>
+> >> I was going to squash them, but I saw the kernel test robot error patch.
+> >>
+> >
+> > Thanks, Shuah.
+> >
+> > A v2 of the fix series, with the kernel test robot error fixed, is
+> > here: https://lore.kernel.org/linux-kselftest/20250821135447.1618942-1-davidgow@google.com/
+> >
+> > I've also squashed the fixes into a v4 of the original series here:
+> > https://lore.kernel.org/linux-kselftest/20250826091341.1427123-1-davidgow@google.com/
+> >
+>
+> I applied these to kunit next and ran test:
+>
+> ./tools/testing/kunit/kunit.py run --arch x86_64 --kunitconfig drivers/gpu/drm/xe
+>
+> Looks good. Hopefully next is happy now.
 
-Applied this patch to Debian's kernel from unstable, got the following back=
-trace during boot:
+Thanks very much -- this is still passing all of my KUnit test runs
+(save for a couple of preexisting genirq-related test failures on some
+architectures, for which there are already patches en-route to the irq
+folks).
 
-[   11.109771] Unable to handle kernel paging request at virtual address ff=
-f80000c0000000
-[   11.109824] tsk->{mm,active_mm}->context =3D 0000000000000139
-[   11.109842] tsk->{mm,active_mm}->pgd =3D fff800001bb6c000
-[   11.109859]               \|/ ____ \|/
-[   11.109859]               "@'/ .. \`@"
-[   11.109859]               /_| \__/ |_\
-[   11.109859]                  \__U_/
-[   11.109885] cryptomgr_test(411): Oops [#1]
-[   11.109908] CPU: 0 UID: 0 PID: 411 Comm: cryptomgr_test Not tainted 6.16=
-.3+1-sparc64-smp #1 NONE  Debian 6.16.3-1+sparc64=20
-[   11.109939] TSTATE: 0000008811001601 TPC: 000000001026a048 TNPC: 0000000=
-01026a04c Y: 00001000    Not tainted
-[   11.109963] TPC: <sha512_sparc64_transform+0x48/0x160 [sha512_sparc64]>
-[   11.109990] g0: 0000000000000000 g1: 0000000000000000 g2: 00000000000000=
-00 g3: 0000000000000000
-[   11.110010] g4: fff800001bcd7080 g5: fff800059cef6000 g6: fff8000018e680=
-00 g7: 000000001026a000
-[   11.110031] o0: fff8000018ada7e8 o1: fff80000c0000000 o2: fffffffffeb1cc=
-80 o3: 00000000f70e5800
-[   11.110052] o4: 0000000068581400 o5: 0000000000000000 sp: fff8000018e6af=
-41 ret_pc: 000000001026a5c8
-[   11.110072] RPC: <sha512_sparc64_update+0x48/0x60 [sha512_sparc64]>
-[   11.110093] l0: 000000000000000a l1: 0000000000000000 l2: 00000000000000=
-00 l3: 0000000000000000
-[   11.110113] l4: 0000000000000000 l5: ffffffffffffffff l6: 00000000000000=
-00 l7: fff8000014263c00
-[   11.110133] i0: 0000000000000000 i1: fff8000018e64000 i2: 00000000000000=
-00 i3: 00000000ffc00b31
-[   11.110152] i4: 0000000068581511 i5: 0000000064f98fa7 i6: fff8000018e6af=
-f1 i7: 0000000000980a1c
-[   11.110173] I7: <crypto_shash_finup+0x17c/0x220>
-[   11.110205] Call Trace:
-[   11.110218] [<0000000000980a1c>] crypto_shash_finup+0x17c/0x220
-[   11.110240] [<0000000000989104>] test_shash_vec_cfg+0x2a4/0x580
-[   11.110270] [<000000000098d688>] __alg_test_hash.isra.0+0x1a8/0x360
-[   11.110291] [<000000000098d920>] alg_test_hash+0xe0/0x140
-[   11.110312] [<000000000098bf9c>] alg_test+0x17c/0x7a0
-[   11.110332] [<0000000000987b98>] cryptomgr_test+0x18/0x60
-[   11.110352] [<00000000004ac704>] kthread+0x104/0x280
-[   11.110382] [<00000000004060c8>] ret_from_fork+0x1c/0x2c
-[   11.110410] [<0000000000000000>] 0x0
-[   11.110427] Disabling lock debugging due to kernel taint
-[   11.110442] Caller[0000000000980a1c]: crypto_shash_finup+0x17c/0x220
-[   11.110464] Caller[0000000000989104]: test_shash_vec_cfg+0x2a4/0x580
-[   11.110485] Caller[000000000098d688]: __alg_test_hash.isra.0+0x1a8/0x360
-[   11.110506] Caller[000000000098d920]: alg_test_hash+0xe0/0x140
-[   11.110526] Caller[000000000098bf9c]: alg_test+0x17c/0x7a0
-[   11.110545] Caller[0000000000987b98]: cryptomgr_test+0x18/0x60
-[   11.110565] Caller[00000000004ac704]: kthread+0x104/0x280
-[   11.110585] Caller[00000000004060c8]: ret_from_fork+0x1c/0x2c
-[   11.110606] Caller[0000000000000000]: 0x0
-[   11.110622] Instruction DUMP:
-[   11.110626]  d91a2030=20
-[   11.110640]  12600020=20
-[   11.110653]  dd1a2038=20
-[   11.110666] <e11a6000>
-[   11.110678]  e51a6008=20
-[   11.110691]  e91a6010=20
-[   11.110704]  ed1a6018=20
-[   11.110716]  f11a6020=20
-[   11.110728]  f51a6028=20
-[   11.110741]=20
-[   11.144051] Unable to handle kernel paging request at virtual address ff=
-f80000c0000000
-[   11.144098] tsk->{mm,active_mm}->context =3D 0000000000000144
-[   11.144113] tsk->{mm,active_mm}->pgd =3D fff800001c2d0000
-[   11.144127]               \|/ ____ \|/
-[   11.144127]               "@'/ .. \`@"
-[   11.144127]               /_| \__/ |_\
-[   11.144127]                  \__U_/
-[   11.144150] cryptomgr_test(412): Oops [#2]
-[   11.144171] CPU: 1 UID: 0 PID: 412 Comm: cryptomgr_test Tainted: G      =
-D             6.16.3+1-sparc64-smp #1 NONE  Debian 6.16.3-1+sparc64=20
-[   11.144202] Tainted: [D]=3DDIE
-[   11.144215] TSTATE: 0000008811001601 TPC: 000000001026a048 TNPC: 0000000=
-01026a04c Y: 00001000    Tainted: G      D           =20
-[   11.144237] TPC: <sha512_sparc64_transform+0x48/0x160 [sha512_sparc64]>
-[   11.144260] g0: 0000000000000000 g1: 0000000000000000 g2: 00000000000000=
-00 g3: 0000000000000000
-[   11.144278] g4: fff800001494ec40 g5: fff800059cf16000 g6: fff800001bcb40=
-00 g7: 000000001026a000
-[   11.144296] o0: fff8000018fbd328 o1: fff80000c0000000 o2: fffffffffeac02=
-80 o3: 000000005f1d3400
-[   11.144314] o4: 000000002b3e6c00 o5: 0000000000000000 sp: fff800001bcb6f=
-41 ret_pc: 000000001026a5c8
-[   11.144333] RPC: <sha512_sparc64_update+0x48/0x60 [sha512_sparc64]>
-[   11.144352] l0: 000000000000000a l1: 0000000000000000 l2: 00000000000000=
-00 l3: 0000000000000000
-[   11.144370] l4: 0000000000000000 l5: ffffffffffffffff l6: 00000000000000=
-00 l7: 00000000007c4ee0
-[   11.144388] i0: 0000000000000000 i1: fff8000016014000 i2: 00000000000000=
-00 i3: 00000000ade682d1
-[   11.144406] i4: 000000002b3e6c1f i5: 00000000fb41bd6b i6: fff800001bcb6f=
-f1 i7: 0000000000980a1c
-[   11.144424] I7: <crypto_shash_finup+0x17c/0x220>
-[   11.144448] Call Trace:
-[   11.144460] [<0000000000980a1c>] crypto_shash_finup+0x17c/0x220
-[   11.144480] [<0000000000989104>] test_shash_vec_cfg+0x2a4/0x580
-[   11.144504] [<000000000098d688>] __alg_test_hash.isra.0+0x1a8/0x360
-[   11.144523] [<000000000098d920>] alg_test_hash+0xe0/0x140
-[   11.144542] [<000000000098bf9c>] alg_test+0x17c/0x7a0
-[   11.144560] [<0000000000987b98>] cryptomgr_test+0x18/0x60
-[   11.144579] [<00000000004ac704>] kthread+0x104/0x280
-[   11.144601] [<00000000004060c8>] ret_from_fork+0x1c/0x2c
-[   11.144624] [<0000000000000000>] 0x0
-[   11.144640] Caller[0000000000980a1c]: crypto_shash_finup+0x17c/0x220
-[   11.144658] Caller[0000000000989104]: test_shash_vec_cfg+0x2a4/0x580
-[   11.144677] Caller[000000000098d688]: __alg_test_hash.isra.0+0x1a8/0x360
-[   11.144695] Caller[000000000098d920]: alg_test_hash+0xe0/0x140
-[   11.144714] Caller[000000000098bf9c]: alg_test+0x17c/0x7a0
-[   11.144731] Caller[0000000000987b98]: cryptomgr_test+0x18/0x60
-[   11.144749] Caller[00000000004ac704]: kthread+0x104/0x280
-[   11.144767] Caller[00000000004060c8]: ret_from_fork+0x1c/0x2c
-[   11.144785] Caller[0000000000000000]: 0x0
-[   11.144800] Instruction DUMP:
-[   11.144804]  d91a2030=20
-[   11.144816]  12600020=20
-[   11.144828]  dd1a2038=20
-[   11.144839] <e11a6000>
-[   11.144851]  e51a6008=20
-[   11.144862]  e91a6010=20
-[   11.144874]  ed1a6018=20
-[   11.144885]  f11a6020=20
-[   11.144896]  f51a6028=20
-[   11.144908]
+-- David
 
-However, I made the observation that the Debian kernel started to cause bac=
-ktraces
-even without the patch with newer kernels:
+--0000000000002ccec4063d530790
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
 
-[    1.764073] ------------[ cut here ]------------
-[    1.764113] WARNING: CPU: 23 PID: 194 at lib/kobject.c:734 kobject_put+0=
-x64/0x240
-[    1.764150] kobject: '(null)' ((____ptrval____)): is not initialized, ye=
-t kobject_put() is being called.
-[    1.764169] Modules linked in:
-[    1.764190] CPU: 23 UID: 0 PID: 194 Comm: kworker/u256:16 Not tainted 6.=
-12.38+deb13-sparc64-smp #1  Debian 6.12.38-1
-[    1.764203] Workqueue: async async_run_entry_fn
-[    1.764218] Call Trace:
-[    1.764221] [<0000000000f11864>] dump_stack+0x8/0x18
-[    1.764234] [<000000000046e15c>] __warn+0xdc/0x140
-[    1.764244] [<000000000046e2d8>] warn_slowpath_fmt+0x118/0x140
-[    1.764251] [<0000000000ec8024>] kobject_put+0x64/0x240
-[    1.764260] [<000000000072d98c>] sysfs_slab_release+0xc/0x20
-[    1.764273] [<00000000006dc91c>] kmem_cache_destroy+0xdc/0x1a0
-[    1.764286] [<00000000009593c4>] bioset_exit+0x144/0x1e0
-[    1.764299] [<000000000097a8d4>] disk_release+0x54/0x120
-[    1.764311] [<0000000000b94a0c>] device_release+0x2c/0xa0
-[    1.764322] [<0000000000ec8088>] kobject_put+0xc8/0x240
-[    1.764330] [<0000000000b94c74>] put_device+0x14/0x40
-[    1.764337] [<000000000097ac58>] put_disk+0x18/0x40
-[    1.764346] [<000000000140c2c8>] floppy_async_init+0xbec/0xd10
-[    1.764357] [<00000000004a0cc8>] async_run_entry_fn+0x28/0x160
-[    1.764364] [<000000000049091c>] process_one_work+0x15c/0x3c0
-[    1.764375] [<0000000000490f24>] worker_thread+0x164/0x3e0
-[    1.764384] ---[ end trace 0000000000000000 ]---
-[    1.764546] ------------[ cut here ]------------
-[    1.764557] WARNING: CPU: 23 PID: 194 at lib/refcount.c:28 refcount_warn=
-_saturate+0x18c/0x1a0
-[    1.764581] refcount_t: underflow; use-after-free.
-[    1.764592] Modules linked in:
-[    1.764608] CPU: 23 UID: 0 PID: 194 Comm: kworker/u256:16 Tainted: G    =
-    W          6.12.38+deb13-sparc64-smp #1  Debian 6.12.38-1
-[    1.764618] Tainted: [W]=3DWARN
-[    1.764621] Workqueue: async async_run_entry_fn
-[    1.764629] Call Trace:
-[    1.764631] [<0000000000f11864>] dump_stack+0x8/0x18
-[    1.764639] [<000000000046e15c>] __warn+0xdc/0x140
-[    1.764646] [<000000000046e2d8>] warn_slowpath_fmt+0x118/0x140
-[    1.764652] [<00000000009d4d2c>] refcount_warn_saturate+0x18c/0x1a0
-[    1.764659] [<0000000000ec8134>] kobject_put+0x174/0x240
-[    1.764667] [<000000000072d98c>] sysfs_slab_release+0xc/0x20
-[    1.764676] [<00000000006dc91c>] kmem_cache_destroy+0xdc/0x1a0
-[    1.764684] [<00000000009593c4>] bioset_exit+0x144/0x1e0
-[    1.764691] [<000000000097a8d4>] disk_release+0x54/0x120
-[    1.764699] [<0000000000b94a0c>] device_release+0x2c/0xa0
-[    1.764707] [<0000000000ec8088>] kobject_put+0xc8/0x240
-[    1.764714] [<0000000000b94c74>] put_device+0x14/0x40
-[    1.764721] [<000000000097ac58>] put_disk+0x18/0x40
-[    1.764729] [<000000000140c2c8>] floppy_async_init+0xbec/0xd10
-[    1.764737] [<00000000004a0cc8>] async_run_entry_fn+0x28/0x160
-[    1.764744] [<000000000049091c>] process_one_work+0x15c/0x3c0
-[    1.764752] ---[ end trace 0000000000000000 ]---
-
-Upstream kernels don't show this problem. This is either related to the com=
-piler version
-being used or some Debian-specific patches or configuration options.
-
-Adrian
-
---=20
- .''`.  John Paul Adrian Glaubitz
-: :' :  Debian Developer
-`. `'   Physicist
-  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
+MIIUnQYJKoZIhvcNAQcCoIIUjjCCFIoCAQExDzANBglghkgBZQMEAgEFADALBgkqhkiG9w0BBwGg
+ghIEMIIGkTCCBHmgAwIBAgIQfofDAVIq0iZG5Ok+mZCT2TANBgkqhkiG9w0BAQwFADBMMSAwHgYD
+VQQLExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBSNjETMBEGA1UEChMKR2xvYmFsU2lnbjETMBEGA1UE
+AxMKR2xvYmFsU2lnbjAeFw0yMzA0MTkwMzUzNDdaFw0zMjA0MTkwMDAwMDBaMFQxCzAJBgNVBAYT
+AkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMSowKAYDVQQDEyFHbG9iYWxTaWduIEF0bGFz
+IFI2IFNNSU1FIENBIDIwMjMwggIiMA0GCSqGSIb3DQEBAQUAA4ICDwAwggIKAoICAQDYydcdmKyg
+4IBqVjT4XMf6SR2Ix+1ChW2efX6LpapgGIl63csmTdJQw8EcbwU9C691spkltzTASK2Ayi4aeosB
+mk63SPrdVjJNNTkSbTowej3xVVGnYwAjZ6/qcrIgRUNtd/mbtG7j9W80JoP6o2Szu6/mdjb/yxRM
+KaCDlloE9vID2jSNB5qOGkKKvN0x6I5e/B1Y6tidYDHemkW4Qv9mfE3xtDAoe5ygUvKA4KHQTOIy
+VQEFpd/ZAu1yvrEeA/egkcmdJs6o47sxfo9p/fGNsLm/TOOZg5aj5RHJbZlc0zQ3yZt1wh+NEe3x
+ewU5ZoFnETCjjTKz16eJ5RE21EmnCtLb3kU1s+t/L0RUU3XUAzMeBVYBEsEmNnbo1UiiuwUZBWiJ
+vMBxd9LeIodDzz3ULIN5Q84oYBOeWGI2ILvplRe9Fx/WBjHhl9rJgAXs2h9dAMVeEYIYkvW+9mpt
+BIU9cXUiO0bky1lumSRRg11fOgRzIJQsphStaOq5OPTb3pBiNpwWvYpvv5kCG2X58GfdR8SWA+fm
+OLXHcb5lRljrS4rT9MROG/QkZgNtoFLBo/r7qANrtlyAwPx5zPsQSwG9r8SFdgMTHnA2eWCZPOmN
+1Tt4xU4v9mQIHNqQBuNJLjlxvalUOdTRgw21OJAFt6Ncx5j/20Qw9FECnP+B3EPVmQIDAQABo4IB
+ZTCCAWEwDgYDVR0PAQH/BAQDAgGGMDMGA1UdJQQsMCoGCCsGAQUFBwMCBggrBgEFBQcDBAYJKwYB
+BAGCNxUGBgkrBgEEAYI3FQUwEgYDVR0TAQH/BAgwBgEB/wIBADAdBgNVHQ4EFgQUM7q+o9Q5TSoZ
+18hmkmiB/cHGycYwHwYDVR0jBBgwFoAUrmwFo5MT4qLn4tcc1sfwf8hnU6AwewYIKwYBBQUHAQEE
+bzBtMC4GCCsGAQUFBzABhiJodHRwOi8vb2NzcDIuZ2xvYmFsc2lnbi5jb20vcm9vdHI2MDsGCCsG
+AQUFBzAChi9odHRwOi8vc2VjdXJlLmdsb2JhbHNpZ24uY29tL2NhY2VydC9yb290LXI2LmNydDA2
+BgNVHR8ELzAtMCugKaAnhiVodHRwOi8vY3JsLmdsb2JhbHNpZ24uY29tL3Jvb3QtcjYuY3JsMBEG
+A1UdIAQKMAgwBgYEVR0gADANBgkqhkiG9w0BAQwFAAOCAgEAVc4mpSLg9A6QpSq1JNO6tURZ4rBI
+MkwhqdLrEsKs8z40RyxMURo+B2ZljZmFLcEVxyNt7zwpZ2IDfk4URESmfDTiy95jf856Hcwzdxfy
+jdwx0k7n4/0WK9ElybN4J95sgeGRcqd4pji6171bREVt0UlHrIRkftIMFK1bzU0dgpgLMu+ykJSE
+0Bog41D9T6Swl2RTuKYYO4UAl9nSjWN6CVP8rZQotJv8Kl2llpe83n6ULzNfe2QT67IB5sJdsrNk
+jIxSwaWjOUNddWvCk/b5qsVUROOuctPyYnAFTU5KY5qhyuiFTvvVlOMArFkStNlVKIufop5EQh6p
+jqDGT6rp4ANDoEWbHKd4mwrMtvrh51/8UzaJrLzj3GjdkJ/sPWkDbn+AIt6lrO8hbYSD8L7RQDqK
+C28FheVr4ynpkrWkT7Rl6npWhyumaCbjR+8bo9gs7rto9SPDhWhgPSR9R1//WF3mdHt8SKERhvtd
+NFkE3zf36V9Vnu0EO1ay2n5imrOfLkOVF3vtAjleJnesM/R7v5tMS0tWoIr39KaQNURwI//WVuR+
+zjqIQVx5s7Ta1GgEL56z0C5GJoNE1LvGXnQDyvDO6QeJVThFNgwkossyvmMAaPOJYnYCrYXiXXle
+A6TpL63Gu8foNftUO0T83JbV/e6J8iCOnGZwZDrubOtYn1QwggWDMIIDa6ADAgECAg5F5rsDgzPD
+hWVI5v9FUTANBgkqhkiG9w0BAQwFADBMMSAwHgYDVQQLExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBS
+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
+jmkLAgMBAAGjggHgMIIB3DAeBgNVHREEFzAVgRNkYXZpZGdvd0Bnb29nbGUuY29tMA4GA1UdDwEB
+/wQEAwIFoDAdBgNVHSUEFjAUBggrBgEFBQcDBAYIKwYBBQUHAwIwHQYDVR0OBBYEFBp5bTxrTm/d
+WMmRETO8lNkA4c7fMFgGA1UdIARRME8wCQYHZ4EMAQUBAjBCBgorBgEEAaAyCgMDMDQwMgYIKwYB
+BQUHAgEWJmh0dHBzOi8vd3d3Lmdsb2JhbHNpZ24uY29tL3JlcG9zaXRvcnkvMAwGA1UdEwEB/wQC
+MAAwgZoGCCsGAQUFBwEBBIGNMIGKMD4GCCsGAQUFBzABhjJodHRwOi8vb2NzcC5nbG9iYWxzaWdu
+LmNvbS9jYS9nc2F0bGFzcjZzbWltZWNhMjAyMzBIBggrBgEFBQcwAoY8aHR0cDovL3NlY3VyZS5n
+bG9iYWxzaWduLmNvbS9jYWNlcnQvZ3NhdGxhc3I2c21pbWVjYTIwMjMuY3J0MB8GA1UdIwQYMBaA
+FDO6vqPUOU0qGdfIZpJogf3BxsnGMEYGA1UdHwQ/MD0wO6A5oDeGNWh0dHA6Ly9jcmwuZ2xvYmFs
+c2lnbi5jb20vY2EvZ3NhdGxhc3I2c21pbWVjYTIwMjMuY3JsMA0GCSqGSIb3DQEBCwUAA4ICAQBF
+tO3/N2l9hTaij/K0xCpLwIlrqpNo0nMAvvG5LPQQjSeHnTh06tWTgsPCOJ65GX+bqWRDwGTu8WTq
+c5ihCNOikBs25j82yeLkfdbeN/tzRGUb2RD+8n9I3CnyMSG49U2s0ZdncsrIVFh47KW2TpHTF7R8
+N1dri01wPg8hw4u0+XoczR2TiBrBOISKmAlkAi+P9ivT31gSHdbopoL4x0V2Ow9IOp0chrQQUZtP
+KBytLhzUzd9wIsE0QMNDbw6jeG8+a4sd17zpXSbBywIGw7sEvPtnBjMaf5ib3kznlOne6tuDVx4y
+QFExTCSrP3OTMUkNbpIdgzg2CHQ2aB8i8YsTZ8Q8Q8ztPJ+xDNsqBUeYxILLjTjxQQovToqipB3f
+6IMyk+lWCdDS+iCLYZULV1BTHSdwp1NM3t4jZ8TMlV+JzAyRqz4lzSl8ptkFhKBJ7w2tDrZ3BEXB
+8ASUByRxeh+pC1Z5/HhqfiWMVPjaWmlRRJVlRk+ObKIv2CblwxMYlo2Mn8rrbEDyfum1RTMW55Z6
+Vumvw5QTHe29TYxSiusovM6OD5y0I+4zaIaYDx/AtF0mMOFXb1MDyynf1CDxhtkgnrBUseHSOU2e
+MYs7IqzRap5xsgpJS+t7cp/P8fdlCNvsXss9zZa279tKwaxR0U2IzGxRGsWKGxDysn1HT6pqMDGC
+Al0wggJZAgEBMGgwVDELMAkGA1UEBhMCQkUxGTAXBgNVBAoTEEdsb2JhbFNpZ24gbnYtc2ExKjAo
+BgNVBAMTIUdsb2JhbFNpZ24gQXRsYXMgUjYgU01JTUUgQ0EgMjAyMwIQAUXA7LnOuRz2DvkWTeMc
+0TANBglghkgBZQMEAgEFAKCBxzAvBgkqhkiG9w0BCQQxIgQgqVXi0YuXnPDIQ1D08xNZqMOLZQBV
+zCeNdd3NUJgEtxcwGAYJKoZIhvcNAQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG9w0BCQUxDxcNMjUw
+ODI3MDYzNzUyWjBcBgkqhkiG9w0BCQ8xTzBNMAsGCWCGSAFlAwQBKjALBglghkgBZQMEARYwCwYJ
+YIZIAWUDBAECMAoGCCqGSIb3DQMHMAsGCSqGSIb3DQEBBzALBglghkgBZQMEAgEwDQYJKoZIhvcN
+AQEBBQAEggEAaERJciqZT9hWVMXAjTBEu8lM8u4Pr0Slje2FP2mCQYwm31u9WmNoCwW53Pq5/xzE
+GTqPmIVhFcpCEU6oylvonYkm8e21NIMoffoleuMsbpyaNPMpzGgcnwafOPPWA00A6VCf3n4GyHDV
+QXBReyXXNkhjyrkJObXmcVxyKjbwfvdw90SxcXyKClIOLKiRaXCKCboGwxgjvztPlTl1z8Hjqdl3
+efvAz+2Vxs3JqT2Ou8xd29CngNPY2neo/r6SeFy2wJjy4SdCSa8mT698qYAee9JRAQ+1v0rEwUb6
+nkjoqm6/wv+qr1OD+dLHTmIUtzQK+Dquv9lVgibgOoDnps29Xw==
+--0000000000002ccec4063d530790--
 
