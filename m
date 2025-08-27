@@ -1,187 +1,184 @@
-Return-Path: <linux-kernel+bounces-788032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788029-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FAADB37EF5
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 11:36:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03EC1B37EEE
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 11:35:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE6018E0BC9
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 09:36:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C2C09460FC7
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 09:35:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63B0E342CB2;
-	Wed, 27 Aug 2025 09:36:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CF2A343D6C;
+	Wed, 27 Aug 2025 09:35:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="OqQ4lUh+"
-Received: from OS8PR02CU002.outbound.protection.outlook.com (mail-japanwestazon11012019.outbound.protection.outlook.com [40.107.75.19])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EfMEX70+"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20CC63469E6;
-	Wed, 27 Aug 2025 09:36:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.75.19
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756287369; cv=fail; b=aAuUzuKq1Bg0so8FCe4eFhx/FII0kAJ92Mdb7/sIrBRI4JVV6tBYNhnELOD/S01IFmFfHyXSPBLdaLxXg7Vk8lGtfvFtpA5VPhOe3j7+EVweK/Y++JqtUBrvoy+H0S15lnkCf/BNTxoU0jFl+y0ehUSRGrF2pV6gf+5gXT1hLSM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756287369; c=relaxed/simple;
-	bh=Fzh/RbbnjPBViqQ7wR+ec2P0Unq8VFrGvmOhmxePhmI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=MSYmLt5di5M0Pj6fkC0k0TlsbRvwSchLMHFRvLrx3ILpR3Kk4liDJ9zhQ/SAmLZDvFFdtAUUWiPY2+f1O1hy5oLZr8VWzxlPkhaC14Y1wkXhnouxTwM9wsw29mDthZz5bHn2k/vR/cihyDhGJjKXabGaRI34GGf0g9UhuotNKgE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=OqQ4lUh+; arc=fail smtp.client-ip=40.107.75.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=t1QDeBWroIBQ2o0qwXWHAE5dmwXba0RmUjjSjPy1kcNDFAbQ4Z6D8smWmft9DpHQhhV8GbGADQXgfU/n3sQED5SdCgbXHuTWIbFDYMIlcpTNhIbRGVKk28hivcQgX1aHjKsXrmcWdBP0309oEjHAa7DClIMBO5v/8L/mbkOoNddpaaTXMpBXFHLOdWbWZFbRWJ8y65UlJKWoLST/reMHfXzdkMqApoBsY0E9kvPVrgn/uo/6pMuYsMXQ417+VQCst2jK5Dis6nROsiK5e4zNzfyYY4YTTZsHgdyaWefbiyhhZZ7628ZpLK+QsEzjqkCjGNSQsWsM6sKeiaGNU3GZbg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Zy5fSZE+h0sY5yQJkEK1ebT5nqmmH3/ua6k2AbteaL0=;
- b=SI/LYwUDnDcRX/vz6AUraE8IUvhwikUldMl7qgyDC6LUilsPmW3TZ2+NFx7MSlq2rINqwITEr7o314+na+nTfRm0ucCD3WDwmxw7Zpl2ENCXisZ87cHs32Agq9J4Tt7Pl5OHYV1ZnFXCuQOZC59UTDBydkcKLBg3bRm1E4YAP5SpoAHKbJTpKiUUHnK30yexhU+hZrqgGK48xyKwCa8amzMtKr9COFVBXp/35C/SNm5eTHS1mnvJEXNG3tUs7iW0LXabDCDuOrOUaaUbUu0nuYFmUS/s97b472Xtg9OpFw06KtqRE9yrXvT3tPeRlF5bDc83iJQLguvS5MGvW1QMbQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Zy5fSZE+h0sY5yQJkEK1ebT5nqmmH3/ua6k2AbteaL0=;
- b=OqQ4lUh+0SJvzMXuKjPKEMr1hEXX2WLw0Au59fFNxVloULpPZbkAzk9RBHm75LpKKmM4jAeNA8VK/mvYn47s29TGuqPpvRSVRfmMI7UTWTS2eT6AT0AJ7XfpKpnPAYk+HMhGmUPPc4xMZ53+zuYS+puxsYggCifq2CnJy3TjMQ/lOXTBnI3mmCioJ4O9WRLOC6Gncp320PWll0Oa4HO9sTTBID5BfFL1RbOPPHKcyP7qUlnhHBGMdo5eLRMaYCjR5eCqfxdr2ITKgym+pONC2FY4SoA0VjMTQqxlV2cR6Khj2pCuaud4dUrowYig/lGLARRbjc1Rme2wBl4G72PSPw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from SEZPR06MB5576.apcprd06.prod.outlook.com (2603:1096:101:c9::14)
- by KL1PR0601MB5656.apcprd06.prod.outlook.com (2603:1096:820:9c::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.23; Wed, 27 Aug
- 2025 09:36:03 +0000
-Received: from SEZPR06MB5576.apcprd06.prod.outlook.com
- ([fe80::5c0a:2748:6a72:99b6]) by SEZPR06MB5576.apcprd06.prod.outlook.com
- ([fe80::5c0a:2748:6a72:99b6%7]) with mapi id 15.20.9052.019; Wed, 27 Aug 2025
- 09:36:03 +0000
-From: Liao Yuanhong <liaoyuanhong@vivo.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-	Ricky Wu <ricky_wu@realtek.com>,
-	Avri Altman <avri.altman@sandisk.com>,
-	Binbin Zhou <zhoubinbin@loongson.cn>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
-	Jisheng Zhang <jszhang@kernel.org>,
-	linux-mmc@vger.kernel.org (open list:MULTIMEDIA CARD (MMC), SECURE DIGITAL (SD) AND...),
-	linux-kernel@vger.kernel.org (open list)
-Cc: Liao Yuanhong <liaoyuanhong@vivo.com>
-Subject: [PATCH 2/2] mmc: rtsx_usb_sdmmc: Remove redundant ternary operators
-Date: Wed, 27 Aug 2025 17:35:26 +0800
-Message-Id: <20250827093530.416071-3-liaoyuanhong@vivo.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250827093530.416071-1-liaoyuanhong@vivo.com>
-References: <20250827093530.416071-1-liaoyuanhong@vivo.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SI1PR02CA0010.apcprd02.prod.outlook.com
- (2603:1096:4:1f7::17) To SEZPR06MB5576.apcprd06.prod.outlook.com
- (2603:1096:101:c9::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0574342CA2
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 09:35:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756287339; cv=none; b=cgHOgwNGM+bOfn3F+xj0UE6J1ZF7L8fzvIQ0a3uRKXMOhDWZaPz1yrJFu6lqt5kll2vm3k8+Z8GshnPnbzGRvwXsRZTIzflDoS97z2mDBf8uJxZZSQXzl1UByn04ORkrTwXgWktiLKM638Rzq6k5B2VYWNiolJ4GYw49QOXGDLU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756287339; c=relaxed/simple;
+	bh=NZyjlx9JVrTus4PAEiK6hrf7n0f1GWNy3/KoGu3XbaM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mMMO840R8my0p4ma/zDWEHt4cvXh28jMAckLfEBF008Tjw9dFLwKEHAouXTtjinr6/evf0KLS2DwXR9oSJSO49lbGGKkOPH3/T4uCYz6tSXTfE7zLIz2O2Up9pAh6Z8Nm3N/okAN8xnzQDbXHXCKy9oBpR6CeRyaaBRe5nEY/Do=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EfMEX70+; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756287336;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=z5fukYO7kXwNxBLuSBlCYQ0Hv0U0IOhmRPFv+8P4+0E=;
+	b=EfMEX70+i9xsqHqNSLH5STbuETnTfDPmelLEEHcMYmI/FM1Xdbroj+rfD/pZBZ+avt4h4d
+	64LjevrKlCdwXa7GnmCU9APG5eeMZkvSBav8F74V1Q9NRTZzvR0cBMXKkxSCsMvnIXB59W
+	8xDP85KQ2tyWUnVc/YSTR8ZpvXdXTPI=
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
+ [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-187-9KUxZzOGMvuo9WtxVnQOog-1; Wed, 27 Aug 2025 05:35:35 -0400
+X-MC-Unique: 9KUxZzOGMvuo9WtxVnQOog-1
+X-Mimecast-MFC-AGG-ID: 9KUxZzOGMvuo9WtxVnQOog_1756287335
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-70db634fadfso72352786d6.0
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 02:35:35 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756287335; x=1756892135;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=z5fukYO7kXwNxBLuSBlCYQ0Hv0U0IOhmRPFv+8P4+0E=;
+        b=LTp/1w+n3ZzBBNMOY1pu/BiWlvYjTac5fuOwVW7FmarxlPJ/xiKaSPakHFnKm8C63j
+         CXq6eO3Lfyj91JiJ017X5DT5E/EEYvf0x6QES2LLkiOk3hhA3zAU/1WqRJsQnegMqoRN
+         ceaWvEa8QUQcU0SFQ5XYdu2fyGQDclE4cG9n0rIZtN/FHqV8mrGe4M928f/zg9kL6lKI
+         Bwcy3xMPoJ7x6vtZDGGQ+JCPoCoQrnyzNjn9vYpuIfKCRambmUxVh2Msfllf1vrMOt82
+         WKL3aC3it0hEKc4SYGcD9dLhVl/Nx/3u86tjkU8OwuUXXNJ2KXm9OZYHHqMa6kwZMHqz
+         ADLw==
+X-Forwarded-Encrypted: i=1; AJvYcCW5eVHWYbPaty9LpALlMIe4pPXV/KxbZv4WXa/BzuWhR8b5j65P/Yg05slRmeHFWa3/g0FPVBPXrytvu44=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyvyhc+9qI2NgM5L0EZj4UQr0Go6XzmVyIwfnc2mFDFUmUQBfAo
+	2JCTEUjJz4r9w05uR3pSuHVl5s4ytazUCCJ+Nxn7NStAGg5V+8hap7v8qOx5A4nVTikKQ66KtvZ
+	v9QF9pNrUK/YpzbXTdPY4xGEmGm8w7VF3sZoeB5FrcJrAQTSbiU7ULcqBD5nmph9mhw==
+X-Gm-Gg: ASbGncsxR0OzJ6SJGAxVLF+J1s1JkRjrngsjzsqmqAYMWMA0r3wHa/li+/GZ/KSpx34
+	T2qt2OBd+k8Kr1vWZtohDkOHgrWLwg+oZ1XuENa8yvAmys6C90EKnbFWtOOWYzThFF0rnpzpJAl
+	VT/l8NM2nir0qPhZrbUf3qvm9813gN/5PPXl3/hKHAn4jwGmkezwLjgKXolFZyACFApVNvKDJQi
+	XhoKlCZ2fphdzfFfHyjpn0Wa+Gh/7xk9Weuk4Kgb+6SgALBmvYYcHM8YOv0MBbHW6YCcgQLbv7j
+	M61RYbxGG8MkS8lT8LMArAKV248vRRug+3NFriQ7dTWGo93s90HgB6pIMRxvrw==
+X-Received: by 2002:a05:620a:1913:b0:7f1:9a91:1dde with SMTP id af79cd13be357-7f19a9144d8mr989207085a.20.1756287334746;
+        Wed, 27 Aug 2025 02:35:34 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE2aVIZceEmeuIaXPM4E0OwdyqHE2I9pakBoXeuwOZHcZ1gpwYn5EvPozgzRW+JuFbVfaucVg==
+X-Received: by 2002:a05:620a:1913:b0:7f1:9a91:1dde with SMTP id af79cd13be357-7f19a9144d8mr989202885a.20.1756287334240;
+        Wed, 27 Aug 2025 02:35:34 -0700 (PDT)
+Received: from [10.32.64.156] (nat-pool-muc-t.redhat.com. [149.14.88.26])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7f4eef7101asm266977985a.38.2025.08.27.02.35.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 27 Aug 2025 02:35:33 -0700 (PDT)
+Message-ID: <4e148b62-a7c1-4162-a487-1ab0199b774e@redhat.com>
+Date: Wed, 27 Aug 2025 11:35:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SEZPR06MB5576:EE_|KL1PR0601MB5656:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7a8ae9ee-68a2-4c6d-7193-08dde54d23c2
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|52116014|376014|7416014|366016|921020|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?ivo9OXoDgQAfuss9AmFZWKG1UZmqCbaJeGrEnXxaF+Luv2trbfWUBDj14YcX?=
- =?us-ascii?Q?JCRXRpNDos8sa6NWPs3xQ/Zg+SqcUbcLJWVgtH1jWboL8HJ4kIrg5mN19S2E?=
- =?us-ascii?Q?lvskc3wLzQjScCdF9s+nScJtEh7qbdYYKy+3nCLF8LSbG1wBGfSBXTyfWkSR?=
- =?us-ascii?Q?8aWmaFHLZWNQ+o47hnyW1QmBEzfA7x1pgCn1yu9xrlZfzJE7/xjiBOkNl1Zp?=
- =?us-ascii?Q?91tLdPh11AJ1xvKKOEMkSTd1DfoYTFhmnAgk6IEPrB5yWbModi8MFHZmG33C?=
- =?us-ascii?Q?Y1lZwZJP2gGmC31WNR8HJslDVhBUILvKPNCKxcEKsCwH08hxm5Y1dI5aGoNH?=
- =?us-ascii?Q?OsnQlYM12vtNx6f4/dSEYB0qEhsFuxgeE4JpL1LWeNIfwGLHAeHV3aW5pabc?=
- =?us-ascii?Q?7qHLjWY53AqB12kiP2CnBkgEl4eSXpy9RIPOfxrlh9d1HKxOBI0jU4SsSlNs?=
- =?us-ascii?Q?CzKGI7dzaLCAg7am+wMaeISPzHombEE9zYXkCP2W3NB8Z4gSCOqQ+2MGinRs?=
- =?us-ascii?Q?l/upAdNeKQoHcKZQwKz8NeO6a2H8HCUhsw2RUlZnIeYRF5EXl3kuFvb0ZtMh?=
- =?us-ascii?Q?PCgezaFFoz7mdrkrQAVA8WWcNXYEsQw30qYoLhY+t/FwqVphJfIMRE6mUnG7?=
- =?us-ascii?Q?8axsXIdF0RYgqfOtKV0DNkJIMTnmbXnkwZC3oxsANp2spD2Z310bBaMCxTL0?=
- =?us-ascii?Q?XPMOySByM+HRRlftj62MHs6FiMqBVxc2GJFgdsR/HLHDYmDp5euS+S6/j/FB?=
- =?us-ascii?Q?ni/KCf1ukTlQbJZSv7VhzGNBVEBaexHAiCoDebh+lsa/RMYwwREbZDCSbl8E?=
- =?us-ascii?Q?b1fVxPisxukyZdUNAm7sl+FB+T3qptkwXOaIMFj3qEKR9TuaFmqOgj4uMTYA?=
- =?us-ascii?Q?PSDx20TzJLn7fR8r+2a1Ux5XgQKv1C7XrXNZe+dHfQWy5AauoIsZ0+26THz4?=
- =?us-ascii?Q?Sm7zlLoZYCNR4QtIiWZDtqBHB0EjOnq1pnIFILhjGoYY66nzKUxQ0tqRbDkh?=
- =?us-ascii?Q?UVUp3pnMfHV2FhHc+yrR6Qk5qVUbMqycQmtqpYYOGiog5v+d0m0kHhNd2tRB?=
- =?us-ascii?Q?6UKXdXQeEbtiuDR3Kf2KEF18HKIkpfRqd5PCuB52w7XBzwOy+RG42IEgxmf4?=
- =?us-ascii?Q?Z+JIoIfKcoRG/hI1Pt54o5SxmiI6lTmtfCY7x2JRdRkJ7Vo1Z0cXxxwD86o1?=
- =?us-ascii?Q?BPWNzL70f8zLbKr+Cvx+ydf6TsecgS35zRrVs0p4AxuIC4aEm/rzw1Uk8jW2?=
- =?us-ascii?Q?tWN/PB1nSXuyzhFlXe/Rz0yFVSN8j9gRPN16qdEB7Wfj2AoEbvQxVtxWMQ+s?=
- =?us-ascii?Q?/v2FNNSHAzFP1dJqxYiTXMoB0YTAf+y/k+IlC/2Go5zwQBsYRNKcvEv/G8GN?=
- =?us-ascii?Q?c8zReTB8OChHWf+KwbN+pifTr/Og9Qph6z4+YRpzdwi9BWJXdPD562cKq1rT?=
- =?us-ascii?Q?GcBpBdDTz+D0fzABc5+WTMFhJZFJUNwIBC9WKRsvv8qQYF46Tbn0BcdJMS/Y?=
- =?us-ascii?Q?k/8XTY4T00lJAgo=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5576.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(52116014)(376014)(7416014)(366016)(921020)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?0W8fUXHaLemJOcelbhihBt77etlQNB/W7ohGbJOUsFcUrpUWzdxvRxSZk+rd?=
- =?us-ascii?Q?0NqHO+tQ25F2Y5+2HYule7ZboZ5A6OK+Zq7oVvJYt7Ek0nbLLh1ePkvrurGO?=
- =?us-ascii?Q?3oA//6rUdtYms7TW7GTGiIIMLvR6/KNy8CkEKMgAS2TuGEO3BIzDOgEedGE8?=
- =?us-ascii?Q?GINMfz1294bQvkwRFpccfIdf42+TwkOfWjHh23hfCdL645Cj8yl7o/jULsgO?=
- =?us-ascii?Q?76/QlVUZKEjumOte49lh/wN/TjlwjnVa6b2WnDL0UcQNSyfVr9J1l3X1UffW?=
- =?us-ascii?Q?iRpFYvG5katf0WPwmgYob9/Qh4WIycVHxCdsYkSNrnIcEep5Hs0yQSBaugcs?=
- =?us-ascii?Q?/wzDtgDzxcdijNhLZ9n+O4rbINghEXzkNgkO+vDw++TXJBn0Ou+bz3WQVR1i?=
- =?us-ascii?Q?pEm8zfhsRWtU2vYIwcNVLvctFcfavEzvOjPH1i9RNAzkWCZ7O7CRT+IqX06T?=
- =?us-ascii?Q?nm+J2rQupPrwtKWBK/iDBF3ZjY3hnY1RRQzPfn531TkfjGesmD+RUW3JoJMW?=
- =?us-ascii?Q?L81mFmzkH1jAUuF+lg0ELZf5sE4Ey6WyVPCXJ3QPviF8aSbkCnZbFG5jGwf2?=
- =?us-ascii?Q?jipz8GVCtLXV0UZbtnQZi6r6jGA2vOHxJBur/YAxg8GfqxbuDpjUKXQdeS+/?=
- =?us-ascii?Q?HtCfuP482t8Zn7uzLUQi7duRUMDHsV6T7Vx8YfhhQXaFxHKycoGi2zvDJzry?=
- =?us-ascii?Q?oNFXJmR2U2QAFxuCSnqez9LNq0G6u4WaCuTxj6llNcYucUpqoUe3/jW5l19h?=
- =?us-ascii?Q?P8uVcIF8tUhE3WX1jKLL5q1XGSFdkvpQjBExfZcpbJQFQp8QTlO1kpMgJ33/?=
- =?us-ascii?Q?jLG263tAg6veH/pZMfXcTlddRNjaQuVZns2k1+vA2IiStRUFnReZ4ylQ4TrN?=
- =?us-ascii?Q?5IoZSh0sGJyvXLXqTYxkLuw1aaVSk3qN+ulQPLGHjZLzqygfjV4C3sN/Rgof?=
- =?us-ascii?Q?xLAhB3csX0570aLmpk+egXjlbGdg8/aVclLp2hZ+pivXr03/mAEA/Hzc3caB?=
- =?us-ascii?Q?zEGK9+mSdVDj3geXP7CHtNHJcq/uSYDKZ7bQpx76q5IYYxafQ3GLdc/iHOCw?=
- =?us-ascii?Q?G5L/LZyTNDtexQaeNa4f2epw2X/7GgoKZ59t+D9TArN7XOwYkk4K+aPalYYh?=
- =?us-ascii?Q?HfUElST2bYx04wfLekaWYt1mK0mg4YCbx78o6SKYf6VmeBXhZvvJGIwfJlea?=
- =?us-ascii?Q?IlBZu7Vu77Oher/XZku0OWTXeHaJcYy3Clp6iASrNAhSU/U6tkHBJq5DfCNl?=
- =?us-ascii?Q?IwEZ+cgT+/u8K2Cs669KBjscKM7bwB3+KhsuF81UdUGx2MA0Cu1/4tHG1K0d?=
- =?us-ascii?Q?Y77dLM0+hsec6e6cwYS5scuUgR/SWPFJ/2Oi78yEd12HABPZHELeq2iw7nzw?=
- =?us-ascii?Q?r9oQkvPleSukzs4uwFMwNTMo5xsJVtJLLz7SmBJHcuPPSuZZM52tM2d35IAU?=
- =?us-ascii?Q?3GdinfQGuzWMCpDetkilg1uznr0Mdp445owbfkt7PmQktjnKwiGDqdmwdgDy?=
- =?us-ascii?Q?5MzU5GOxaegqEQ1AYNrbury+7ZP6vGcqiGMtWYI94vJEVqs9xWdU2Gyo55o6?=
- =?us-ascii?Q?pX4MWyQ2mBL5568RA+QKNWAHxOamiclQQReuv4XU?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7a8ae9ee-68a2-4c6d-7193-08dde54d23c2
-X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5576.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2025 09:36:03.3879
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: NtRWzowHwV7bLxbizCuWwjqnnxl9GrcpEIXEw32c3SIpOJ3v8mymyNGkHL8aGFlr8p0wa2YQ5r+5iSNn7SqfuA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR0601MB5656
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] huge_mm.h: is_huge_zero_folio(NULL) should return
+ false
+To: Andrew Morton <akpm@linux-foundation.org>,
+ Max Kellermann <max.kellermann@ionos.com>
+Cc: lorenzo.stoakes@oracle.com, ziy@nvidia.com,
+ baolin.wang@linux.alibaba.com, Liam.Howlett@oracle.com, npache@redhat.com,
+ ryan.roberts@arm.com, dev.jain@arm.com, baohua@kernel.org,
+ shikemeng@huaweicloud.com, kasong@tencent.com, nphamcs@gmail.com,
+ bhe@redhat.com, chrisl@kernel.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+References: <20250826231626.218675-1-max.kellermann@ionos.com>
+ <20250826185515.7fbe1821713195b170ac1b31@linux-foundation.org>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <20250826185515.7fbe1821713195b170ac1b31@linux-foundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Remove redundant ternary operators to clean up the code.
+On 27.08.25 03:55, Andrew Morton wrote:
+> On Wed, 27 Aug 2025 01:16:24 +0200 Max Kellermann <max.kellermann@ionos.com> wrote:
+> 
+>> Calling is_huge_zero_folio(NULL) should not be legal - it makes no
+>> sense, and a different (theoretical) implementation may dereference
+>> the pointer.  But currently, lacking any explicit documentation, this
+>> call is legal.
+>>
+>> But if somebody really passes NULL, the function should not return
+>> true - this isn't the huge zero folio after all!  However, if the
+>> `huge_zero_folio` hasn't been allocated yet, it's NULL, and
+>> is_huge_zero_folio(NULL) just happens to return true, which is a lie.
+> 
+> Isn't it a bug to call is_huge_zero_folio() before the huge_zero_folio
+> has been created?
 
-Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
----
- drivers/mmc/host/rtsx_usb_sdmmc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+It's a bug to call a function that expects a folio without a folio.
 
-diff --git a/drivers/mmc/host/rtsx_usb_sdmmc.c b/drivers/mmc/host/rtsx_usb_sdmmc.c
-index 84674659a84d..97bc3a2e3cca 100644
---- a/drivers/mmc/host/rtsx_usb_sdmmc.c
-+++ b/drivers/mmc/host/rtsx_usb_sdmmc.c
-@@ -1169,7 +1169,7 @@ static void sdmmc_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
- 		break;
- 	}
- 
--	host->initial_mode = (ios->clock <= 1000000) ? true : false;
-+	host->initial_mode = ios->clock <= 1000000;
- 	host->clock = ios->clock;
- 
- 	rtsx_usb_switch_clock(host->ucr, host->clock, host->ssc_depth,
+> 
+> Being a simple soul, I'm thinking
+> 
+> 	VM_BUG_ON(!huge_zero_folio);
+> 	VM_BUG_ON(!folio);
+
+We should just do VM_WARN_ON(!folio);
+
 -- 
-2.34.1
+Cheers
+
+David / dhildenb
 
 
