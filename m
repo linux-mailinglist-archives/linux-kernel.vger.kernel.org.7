@@ -1,60 +1,70 @@
-Return-Path: <linux-kernel+bounces-788140-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788141-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10543B3803E
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 12:48:35 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0B4DB38042
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 12:48:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BBEC9980A39
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 10:48:33 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8AB1D4E415A
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 10:48:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 325F234A333;
-	Wed, 27 Aug 2025 10:48:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eIN265ez"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 819E81C5496;
-	Wed, 27 Aug 2025 10:48:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 798BE34DCCF;
+	Wed, 27 Aug 2025 10:48:34 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A88C1C5496;
+	Wed, 27 Aug 2025 10:48:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756291705; cv=none; b=QHkkj9TV8ZdYGTVxSs2GB3/KXF0qFT/5rLrQju2UdfRfxEIxfyN4GN44eBVml08PuULbDAbxfARaFce2HXyAVn7DApR/5LLBzJrnqtLUSeXUUWJZgCt/NfzsY+PD7dbIobEi30KjtFXg66sWogBmIfTQnMZ+GdGXX3x3TQjOUVQ=
+	t=1756291714; cv=none; b=AGO3iwC0Fc4jMnYkljAdJLlHiS0rouHAv/iGy+W5qwsEDEva1ajHcVjhkx6DMYgRDwlGJXqLJFaAGRmxw6g/soiU7Km1zLQUL8HA+ObIkIyjLjwFodxUN4X/I6epnWQV4NrRbk0YltX/mGDg0PvLvO/86A2laQcpzkF2yf5s2Bs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756291705; c=relaxed/simple;
-	bh=DMYmWN61KVuMj6xHJA0q9m7MIXo+ETDqqJfxsWK/v8Y=;
+	s=arc-20240116; t=1756291714; c=relaxed/simple;
+	bh=/e1fvlVDPE+Xh6RjHgYEJrH51rA/hDJ7BqKp5gDX4u0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ci1WY3uqfcOGrGcFVh+4sI4S0BFm341SVCJN+f9dcnw5gPe2CDHqUEpweai/fxmoyfJPG3R9jSzGdfcRSrhxpwPUqdNHFJp2YRUYwmT1wtRwge9I1vvjEUywUVrZldZGIr1QHbohbNLZ4GcirXc5DUDwZd/xDnqncM89OH7L/Wc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eIN265ez; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25E99C4CEEB;
-	Wed, 27 Aug 2025 10:48:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756291705;
-	bh=DMYmWN61KVuMj6xHJA0q9m7MIXo+ETDqqJfxsWK/v8Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eIN265ezV7OiJZQP/8z192KwoDESRoFkVRGNGA9a/STF00PtCzS/5OHXgbs8/YI4k
-	 1j2bJeEK2rotLlJMMzkgAggFhG0pkNrctucTijjgb/mRZER84h5oI2upOK/LuVQhjB
-	 ypFdsAEMranyGAlnpm3nkx193EoYlhjViFh1nbgAtQlni2Jb6BgT6bT1dPQuPspNZd
-	 rG6NmjxasuowJzzKr6QNndOyGsQM4DKTHt4JzwyKU50Nlieb2Ii1X9GVETzxB2zZEM
-	 rncuCk3QASYaan4UHD6pvL+Y41xzTdOWCzEKDzIUdwi+GmBkf1uAPPlG3gdeleKEJP
-	 8HwDep3xAjQzg==
-Date: Wed, 27 Aug 2025 11:48:19 +0100
-From: Simon Horman <horms@kernel.org>
-To: Frederic Weisbecker <frederic@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	David Ahern <dsahern@kernel.org>, Julian Anastasov <ja@ssi.bg>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Pablo Neira Ayuso <pablo@netfilter.org>,
-	Jozsef Kadlecsik <kadlec@netfilter.org>, netdev@vger.kernel.org,
-	lvs-devel@vger.kernel.org, netfilter-devel@vger.kernel.org,
-	coreteam@netfilter.org
-Subject: Re: [PATCH net] ipvs: Fix estimator kthreads preferred affinity
-Message-ID: <20250827104819.GA26074@horms.kernel.org>
-References: <20250729120659.201095-1-frederic@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=B67g+QE2q3sp2aCGeqDw1CJ2f5oAkn+b82oaeAtKqOxqucB++cWPYuZHEqmOx+aJQdZyxuoBFnXk/x/mPdFGnVLVm0z+W58dXCveRA91pxZLJUjXVGCtilc4TaaGOyNvsCgZdaspFHeX4pt7dtJks3C4oP0LDzMtGCFD/YwDdp4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6194C1688;
+	Wed, 27 Aug 2025 03:48:23 -0700 (PDT)
+Received: from e133380.arm.com (e133380.arm.com [10.1.197.68])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DE6B23F738;
+	Wed, 27 Aug 2025 03:48:25 -0700 (PDT)
+Date: Wed, 27 Aug 2025 11:48:23 +0100
+From: Dave Martin <Dave.Martin@arm.com>
+To: James Morse <james.morse@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-acpi@vger.kernel.org, devicetree@vger.kernel.org,
+	shameerali.kolothum.thodi@huawei.com,
+	D Scott Phillips OS <scott@os.amperecomputing.com>,
+	carl@os.amperecomputing.com, lcherian@marvell.com,
+	bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
+	baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
+	Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
+	dfustini@baylibre.com, amitsinght@marvell.com,
+	David Hildenbrand <david@redhat.com>,
+	Rex Nie <rex.nie@jaguarmicro.com>, Koba Ko <kobak@nvidia.com>,
+	Shanker Donthineni <sdonthineni@nvidia.com>, fenghuay@nvidia.com,
+	baisheng.gao@unisoc.com,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Rob Herring <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
+	Rafael Wysocki <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Hanjun Guo <guohanjun@huawei.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Danilo Krummrich <dakr@kernel.org>
+Subject: Re: [PATCH 03/33] ACPI / PPTT: Add a helper to fill a cpumask from a
+ processor container
+Message-ID: <aK7id14+Spr2VIqR@e133380.arm.com>
+References: <20250822153048.2287-1-james.morse@arm.com>
+ <20250822153048.2287-4-james.morse@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,24 +73,193 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250729120659.201095-1-frederic@kernel.org>
+In-Reply-To: <20250822153048.2287-4-james.morse@arm.com>
 
-On Tue, Jul 29, 2025 at 02:06:59PM +0200, Frederic Weisbecker wrote:
-> The estimator kthreads' affinity are defined by sysctl overwritten
-> preferences and applied through a plain call to the scheduler's affinity
-> API.
-> 
-> However since the introduction of managed kthreads preferred affinity,
-> such a practice shortcuts the kthreads core code which eventually
-> overwrites the target to the default unbound affinity.
-> 
-> Fix this with using the appropriate kthread's API which will carry the
-> desired affinity and maintain it across CPU hotplug events and CPU
-> isolation constraints.
-> 
-> Fixes: d1a89197589c ("kthread: Default affine kthread to its preferred NUMA node")
-> Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+Hi,
 
-Acked-by: Simon Horman <horms@kernel.org>
+On Fri, Aug 22, 2025 at 03:29:44PM +0000, James Morse wrote:
+> The PPTT describes CPUs and caches, as well as processor containers.
+> The ACPI table for MPAM describes the set of CPUs that can access an MSC
+> with the UID of a processor container.
+> 
+> Add a helper to find the processor container by its id, then walk
+> the possible CPUs to fill a cpumask with the CPUs that have this
+> processor container as a parent.
 
+Nit: The motivation for the change is not clear here.
+
+I guess this boils down to the need to map the MSC topology information
+in the the ACPI MPAM table to a cpumask for each MSC.
+
+If so, a possible rearrangement and rewording might be, say:
+
+--8<--
+
+The ACPI MPAM table uses the UID of a processor container specified in
+the PPTT, to indicate the subset of CPUs and upstream cache topology
+that can access each MPAM Memory System Component (MSC).
+
+This information is not directly useful to the kernel.  The equivalent
+cpumask is needed instead.
+
+Add a helper to find the processor container by its id, then [...]
+
+-->8--
+
+
+> 
+> CC: Dave Martin <dave.martin@arm.com>
+> Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
+> Signed-off-by: James Morse <james.morse@arm.com>
+> ---
+> Changes since RFC:
+>  * Dropped has_leaf_flag dodging of acpi_pptt_leaf_node()
+>  * Added missing : in kernel-doc
+>  * Made helper return void as this never actually returns an error.
+> ---
+>  drivers/acpi/pptt.c  | 86 ++++++++++++++++++++++++++++++++++++++++++++
+>  include/linux/acpi.h |  3 ++
+>  2 files changed, 89 insertions(+)
+> 
+> diff --git a/drivers/acpi/pptt.c b/drivers/acpi/pptt.c
+> index 54676e3d82dd..4791ca2bdfac 100644
+> --- a/drivers/acpi/pptt.c
+> +++ b/drivers/acpi/pptt.c
+> @@ -298,6 +298,92 @@ static struct acpi_pptt_processor *acpi_find_processor_node(struct acpi_table_he
+>  	return NULL;
+>  }
+>  
+> +/**
+> + * acpi_pptt_get_child_cpus() - Find all the CPUs below a PPTT processor node
+> + * @table_hdr:		A reference to the PPTT table.
+> + * @parent_node:	A pointer to the processor node in the @table_hdr.
+> + * @cpus:		A cpumask to fill with the CPUs below @parent_node.
+> + *
+> + * Walks up the PPTT from every possible CPU to find if the provided
+> + * @parent_node is a parent of this CPU.
+> + */
+> +static void acpi_pptt_get_child_cpus(struct acpi_table_header *table_hdr,
+> +				     struct acpi_pptt_processor *parent_node,
+> +				     cpumask_t *cpus)
+> +{
+> +	struct acpi_pptt_processor *cpu_node;
+> +	u32 acpi_id;
+> +	int cpu;
+> +
+> +	cpumask_clear(cpus);
+> +
+> +	for_each_possible_cpu(cpu) {
+> +		acpi_id = get_acpi_id_for_cpu(cpu);
+
+^ Presumably this can't fail?
+
+> +		cpu_node = acpi_find_processor_node(table_hdr, acpi_id);
+> +
+> +		while (cpu_node) {
+> +			if (cpu_node == parent_node) {
+> +				cpumask_set_cpu(cpu, cpus);
+> +				break;
+> +			}
+> +			cpu_node = fetch_pptt_node(table_hdr, cpu_node->parent);
+> +		}
+> +	}
+> +}
+> +
+> +/**
+> + * acpi_pptt_get_cpus_from_container() - Populate a cpumask with all CPUs in a
+> + *                                       processor containers
+
+Nit: "containers" -> "container" ?
+
+> + * @acpi_cpu_id:	The UID of the processor container.
+> + * @cpus:		The resulting CPU mask.
+> + *
+> + * Find the specified Processor Container, and fill @cpus with all the cpus
+> + * below it.
+> + *
+> + * Not all 'Processor' entries in the PPTT are either a CPU or a Processor
+> + * Container, they may exist purely to describe a Private resource. CPUs
+> + * have to be leaves, so a Processor Container is a non-leaf that has the
+> + * 'ACPI Processor ID valid' flag set.
+
+(Revise this if dropping the leaf/non-leaf distinction -- see below.)
+
+> + *
+> + * Return: 0 for a complete walk, or an error if the mask is incomplete.
+> + */
+> +void acpi_pptt_get_cpus_from_container(u32 acpi_cpu_id, cpumask_t *cpus)
+> +{
+> +	struct acpi_pptt_processor *cpu_node;
+> +	struct acpi_table_header *table_hdr;
+> +	struct acpi_subtable_header *entry;
+> +	unsigned long table_end;
+> +	acpi_status status;
+> +	bool leaf_flag;
+> +	u32 proc_sz;
+> +
+> +	cpumask_clear(cpus);
+> +
+> +	status = acpi_get_table(ACPI_SIG_PPTT, 0, &table_hdr);
+> +	if (ACPI_FAILURE(status))
+> +		return;
+
+Is acpi_get_pptt() applicable here?
+
+(That function is not thread-safe, but then, perhaps most/all of these
+functions are not thread safe.  If we are still on the boot CPU at this
+point (?) then this wouldn't be a concern.)
+
+> +
+> +	table_end = (unsigned long)table_hdr + table_hdr->length;
+> +	entry = ACPI_ADD_PTR(struct acpi_subtable_header, table_hdr,
+> +			     sizeof(struct acpi_table_pptt));
+> +	proc_sz = sizeof(struct acpi_pptt_processor);
+> +	while ((unsigned long)entry + proc_sz <= table_end) {
+
+Ack that this matches the bounds check in functions that are already
+present.
+
+> +		cpu_node = (struct acpi_pptt_processor *)entry;
+> +		if (entry->type == ACPI_PPTT_TYPE_PROCESSOR &&
+> +		    cpu_node->flags & ACPI_PPTT_ACPI_PROCESSOR_ID_VALID) {
+> +			leaf_flag = acpi_pptt_leaf_node(table_hdr, cpu_node);
+> +			if (!leaf_flag) {
+> +				if (cpu_node->acpi_processor_id == acpi_cpu_id)
+
+Is there any need to distinguish processor containers from (leaf) CPU
+nodes, here?  If not, dropping the distinction might simplify the code
+here (even if callers do not care).
+
+Otherwise, maybe eliminate leaf_flag and collapse these into a single
+if(), as suggested by Ben [1].
+
+> +					acpi_pptt_get_child_cpus(table_hdr, cpu_node, cpus);
+
+Can there ever be multiple matches?
+
+The possibility of duplicate processor IDs in the PPTT sounds weird to
+me, but then I'm not an ACPI expert.
+
+If there can only be a single match, though, then we may as well break
+out of the loop here, unless we want to be paranoid and report
+duplicates as an error -- but that would require extra implementation,
+so I'm not sure that would be worth it.
+
+> +			}
+> +		}
+> +		entry = ACPI_ADD_PTR(struct acpi_subtable_header, entry,
+> +				     entry->length);
+> +	}
+> +
+> +	acpi_put_table(table_hdr);
+> +}
+
+[...]
+
+
+[1] Ben Horgan, Re: [PATCH 03/33] ACPI / PPTT: Add a helper to fill a cpumask from a processor container
+https://lore.kernel.org/lkml/b032775e-1729-441a-8ec4-dd85f70055e8@arm.com/
+
+Cheers
+---Dave
 
