@@ -1,130 +1,188 @@
-Return-Path: <linux-kernel+bounces-787651-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADA2BB3792C
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 06:33:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 397C8B3792B
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 06:32:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6AC3A36498E
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 04:33:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E17586815EA
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 04:32:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80DDF2D24A2;
-	Wed, 27 Aug 2025 04:32:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B41DA246BB2;
+	Wed, 27 Aug 2025 04:32:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MOW4ztdf"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YZ2WOR/7"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80A25277C81;
-	Wed, 27 Aug 2025 04:32:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54FD83BB44;
+	Wed, 27 Aug 2025 04:32:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756269160; cv=none; b=bCu8WeqGUpuFOONhnMR31666qUGEAr/2o1jAvY/eLZr49nyMAi2Q045oOeXd6/F3G/1bOC1Y8CTeN/gvdIHomY9oA6lsR34C4VemqE//T0C1wnUTXf/oTlkzCVRIRZ9CP8geDIdPKkjLhISYxVlDmPxB0YBR09CMeI1EIE24TDk=
+	t=1756269153; cv=none; b=Jl3X52VDmhOG01Ixnt8oN5R1fjFTATOexUPVE2nvicEWFywEtmwkH4q7IVz86/SQeM4D+hDkzZDvJMpoABy5a4w6oY+ariZdwoi6rL7yD2hLyGxWBCsVHd0lD8u85x0g6YrTcmGviSXYhZYXvYECElf1GH/Lomb2ZVIBt0ZhkQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756269160; c=relaxed/simple;
-	bh=wLfoNCHQ065c+E5KCkrQ+BEavCx+WUP32Ro2DHf9B2w=;
-	h=Date:Message-Id:To:Cc:Subject:From:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=sC/VMZB6CtOOu49h8+QN/h/QJwBXXQuGHO2nXvYyLPbYx5LyMBAABtWuzAqAFDjGkQtWgPNsgJqLPm/9e5wcKOD3fbUNlwlgXNraXxOscQ26TNHefQJlSuh0UNR9VNhRH8Eml9f3LBFGnV/cAojHbjv8oCZHhUWe9gpz5xQ7m0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MOW4ztdf; arc=none smtp.client-ip=209.85.210.174
+	s=arc-20240116; t=1756269153; c=relaxed/simple;
+	bh=P9yK6j01vQIjUrDmFztN5hiPanzCry8mwLN54etanfw=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=HcNSWwAQMOXaF+iL7Gz9RmytdsWODmKUQoHGUifg1/dmrqmbOpPOZvTfA3VQ2yNI/l0EXlDqwXaLkgjELutswarfmOsl2XdASILIBcuCfxA7bZng9C2k03XGJTU7uM12+qteJI6APkAD1ngHiDftj+tAqSbMofPVQg0OhJP0PZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YZ2WOR/7; arc=none smtp.client-ip=209.85.208.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-76e6cbb991aso5571290b3a.1;
-        Tue, 26 Aug 2025 21:32:39 -0700 (PDT)
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-61c266e81caso5608219a12.3;
+        Tue, 26 Aug 2025 21:32:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756269159; x=1756873959; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:from
-         :subject:cc:to:message-id:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wLfoNCHQ065c+E5KCkrQ+BEavCx+WUP32Ro2DHf9B2w=;
-        b=MOW4ztdfvBG8Bhd1aEIwsDZF+BQGloMmKNHtjEY69N5v4+PY85UMDloSVmxCxsQ+gS
-         RDJDN95WHDZkjwnhUV4VahsnNVEYR3zgJ2CufWOfhXhepLYshgU+fUISKoe2EYR19A/t
-         QddYDJDjRq43PyFf55SWyaHolhLoNypEnyZo4iMAbIX3lWCDxwF1nqbuPrTpGHJPZ1F4
-         WJv8Hw+TPEE4yFQPUYGpKio5S2CHhjYibAopM9DFmNRlMzJoTu8wmcNYhRN0im5gVby2
-         42x0NmCHqfBxxn1JkoktwHrR5/MqdaFZfAXz1uj+0b2m+gTzEWMqHS+kVX/dAYvVD+Iz
-         Nb7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756269159; x=1756873959;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:from
-         :subject:cc:to:message-id:date:x-gm-message-state:from:to:cc:subject
+        d=gmail.com; s=20230601; t=1756269150; x=1756873950; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:references
+         :in-reply-to:user-agent:subject:cc:to:from:date:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=wLfoNCHQ065c+E5KCkrQ+BEavCx+WUP32Ro2DHf9B2w=;
-        b=skpAUtYYVKCNBYNHj9m0/lhZGYLG9ngvDfsZ4zCUuld65df6Tu+9xRpT1aoUJsiagF
-         nt3yu7McY/0hnYsT0ce5ZctXJ+QnVDxV82Z+wyQueqk+bJhUx7Ii7xgeTbwJnSQKfJJ1
-         /NJ/oQmQUVWVqSLBZ6K3pjIP4c/axUyf/MOuxa4L5HRxVZqIvASCmiWe+CNWFtIPdDfT
-         xp5flZL1Qo0yM7dx/i+J4QLBQc5bBnBPh07aRANKAcQOQTVnyoeH84gO2tKRnLIVO9Jw
-         No2CCADEE08xhkKKhWWwbNeiWm0S07hcNM6x6Q9WLvAUJnm8NtHYCJZiN2thiZooSTal
-         ZvsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU307/547TPDQFUjeJ7z6m7jUmWRYGQLhachXiR1tCaAAnjxXh7A3lEDqmmxPJryRuG45ggO5teU//2dhA=@vger.kernel.org, AJvYcCUyaRt3kN4104a95hG4as5h6Q820lhLV+OecqiSZCOR6TQjCpIWdMPEDcWc5HIzad0SSNVnQW/jJWuJAhuVDmY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwlM/FJifsIBuaW2el1TsbHhQF04mX6YrdbeaphlhzsS9wP5W5K
-	KS1IeLcjnksNTFfIU2WAnE7fm/jZ/GolvG2NSYrjONG1XcLb2XmqUcWm
-X-Gm-Gg: ASbGncuULRM5JDlRWEhK6KJ+z2TKdP+a5HgGGyjXq9LsNlPdtdWS6W4WNPFR6q5QqT6
-	WZhLHV96w87dUNVtEfZYZRIteN7U/dgm0sANbKLaUaUVJW/w5tJSJ0yCkcPqSB8vWIcGYrR+YfM
-	BUYah9kKCwgYkRNKPkfJP/nnQ5MC8fcibncpzxieIhTA98nAy5QlODO7//VTL0RFLCZr+YT01/1
-	m5XwNdhKCUrLoEUnJz3zHv8yOFN2p6jJvuxLAUsJWsDoHKShQQD7Gxb1cC32nX/8Fy1YfrxcPU0
-	9AlNT6lJ8WE3FVpMiVF46gOntIxF7ojckSerEqbmhuIgxNIGOanr5aT0ZshhAJFmTOgMhx+xiBA
-	Eou+K4Rq0gxcXDd3FYTbQvitaLwk2lNLo87SuPTMZacUe95fZ5iJLBumntMudvIemZn1TDHvJ5w
-	H/
-X-Google-Smtp-Source: AGHT+IG6HNsdYadtNr45WiB26DRF77FzbloROp3qetHYX8fk/Hbkl3188y+tLhYXfggD6GzvWCH6hg==
-X-Received: by 2002:a05:6a20:a985:b0:243:9d79:d88a with SMTP id adf61e73a8af0-2439d79da49mr1277794637.20.1756269158586;
-        Tue, 26 Aug 2025 21:32:38 -0700 (PDT)
-Received: from localhost (p5332007-ipxg23901hodogaya.kanagawa.ocn.ne.jp. [180.34.120.7])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-771e814cbccsm6485423b3a.35.2025.08.26.21.32.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Aug 2025 21:32:37 -0700 (PDT)
-Date: Wed, 27 Aug 2025 13:32:22 +0900 (JST)
-Message-Id: <20250827.133222.2149987174177655942.fujita.tomonori@gmail.com>
-To: daniel.almeida@collabora.com
-Cc: a.hindborg@kernel.org, alex.gaynor@gmail.com, ojeda@kernel.org,
- aliceryhl@google.com, anna-maria@linutronix.de, bjorn3_gh@protonmail.com,
- boqun.feng@gmail.com, dakr@kernel.org, frederic@kernel.org,
- gary@garyguo.net, jstultz@google.com, linux-kernel@vger.kernel.org,
- lossin@kernel.org, lyude@redhat.com, rust-for-linux@vger.kernel.org,
- sboyd@kernel.org, tglx@linutronix.de, tmgross@umich.edu,
- acourbot@nvidia.com
-Subject: Re: [PATCH v1 2/2] rust: Add read_poll_timeout_atomic function
-From: FUJITA Tomonori <fujita.tomonori@gmail.com>
-In-Reply-To: <20250827.093559.1495790445785541454.fujita.tomonori@gmail.com>
-References: <20250821035710.3692455-3-fujita.tomonori@gmail.com>
-	<5C851069-5E1E-4DE9-9E1F-0DF2C86C266C@collabora.com>
-	<20250827.093559.1495790445785541454.fujita.tomonori@gmail.com>
+        bh=nPT7S7ck2OMPXfBxc+RzMc8Kxenf3tVh8lBsVSZT310=;
+        b=YZ2WOR/7kAG7rb0/cIiOc5bhpgQaf+JOgI7BQ5zTaO+eVxgh3LNrmiMrSUd7RdvJWC
+         xchm22x2ERkHufCg7gsUFNPaj+xliMUXdF08O6OCRu5/VaTdwy7Fguz/4NkDyP0/OeQi
+         9cBy1kXu3LuozSe8qBECPAjJpNQNQ7Y9o/rQBLv32xfVgPnUD7KV2I6qQ9CxJNbNnUDB
+         ZdCL4ZvRYX+oRkNYMcEziv0p+43+URM7jaCQUFxJyur/Lrex2qkEhcQAIZ+iA3BGbmK6
+         NUk5PkD6PyN2OegUYss1b8OHDgsqH3w/tcaaUQJLeI/A6OKk9AdWYaIuqD7FEbf15Pvd
+         nTVw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756269150; x=1756873950;
+        h=content-transfer-encoding:mime-version:message-id:references
+         :in-reply-to:user-agent:subject:cc:to:from:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=nPT7S7ck2OMPXfBxc+RzMc8Kxenf3tVh8lBsVSZT310=;
+        b=Fw/8G295UrQkYYZadPRl8pOVOKf9SPNAlbAyoSKnYnDYn7PNYcusAgCghJ21cWXpZH
+         J5FU1Pi4AaK2c+vxZkw4ycH1iKhuy420oBEQYNCz09phjnLzvOIfwXDTYUr/2t2Z310Y
+         7C7XcuDyYWlgof8sGbEdLHCiCmFDKTvHwYF1O/zNu9SuDhtgexc+06bD3aJV+1xxw2ua
+         38Vh8CLJsoXbP+BbiuyMLjvoTn+cMJgHc80s6St0rikaXbf1wN6++60PwhLD9XLi+1tT
+         u6vuwLx4yKMbbNyVZEbyyYLs4dlYvSxWEEObn+QXDJM7WkMKaCJiVFfLsG7YAbJbBoJs
+         YaQw==
+X-Forwarded-Encrypted: i=1; AJvYcCV5CJ2TwtQQisEfdUbYe/6aSoM3xBca5imh5uzbaGIbHWdHdEt9OPubaP2DW1Gmc3vK/hfTF/ibTPqlnzU=@vger.kernel.org, AJvYcCW0wBj4q5rXthLM7K/wIZ77PGyDW5UcERQ2qctO0hB5uLrhQoBH8q7rZ3INUo6V+S2tQDA8kAOO2ZncFmq8@vger.kernel.org, AJvYcCW8MPtjnSV0fU72OxhcrKiu+eyjINi1KR0mUd7LY/FGo1awyd9HKSydxHmBffnuN46jadSlvuhk7bMJ@vger.kernel.org, AJvYcCX58Uxr/4vLhd4IgJMQ4MeARbWVO01zlOcrBPKPgS4nmIt/Qg+ENeH5EajYHBRBzLC/UT7pNOEpbDWI@vger.kernel.org
+X-Gm-Message-State: AOJu0YxS65nbI4jtNQx604vNQ33Ay806ha2Gy39oWNQhNhbBdeHwG2Ms
+	BVGz0+kMAXwduhyeU8/abTMm5Wny/XV1Kl197wjngTPHp+lC3dWCsPim
+X-Gm-Gg: ASbGnctJGM5qNG2ht99BN7PNsaCvaQqmO5dVMPQ8Q3hVJS5HwHlxEs/gE0YKAswxcrC
+	T0YnObEyUqh63mVj9T24lZM9VCtFRRkErh98P0FUxtBMQr4o/uP0d1q7UjwF7Okr4dwGezI79jj
+	kj8hLHjSbpdclca6pDsCsUU4IHxpix0MN7w/cTthczzmvZAsUdWzJa/yUcGvLMdsniFR6M23H2H
+	taI6Y9tn5mzJ3YGMbXYtc8Y5nTwr1zbs2d0YGC/sDFua+TBJc8v1+wZGXID7cNxx4gqjq5sl2F2
+	nQzLSTor2GbZQCmASxq9/Fkgm+P+E/yq5EJuM6DIqnyr0C7f0Ho6AzOFC0vtqDWTnb6t4tinGY3
+	/CqP7jFwtpCrnBQ==
+X-Google-Smtp-Source: AGHT+IF+5wxPF37wRl5q6Zpcp5YXeXsq5X1FBZFa1yIqF0zMTpeqok9u42a8ivFBmKB0sTZEfjjT5A==
+X-Received: by 2002:a05:6402:13d4:b0:61c:4c77:cb8 with SMTP id 4fb4d7f45d1cf-61c4c771153mr10662557a12.15.1756269149569;
+        Tue, 26 Aug 2025 21:32:29 -0700 (PDT)
+Received: from [127.0.0.1] ([5.248.55.4])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61c78e49ca4sm4263216a12.47.2025.08.26.21.32.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 26 Aug 2025 21:32:29 -0700 (PDT)
+Date: Wed, 27 Aug 2025 07:32:27 +0300
+From: Svyatoslav <clamor95@gmail.com>
+To: Mikko Perttunen <mperttunen@nvidia.com>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Thierry Reding <treding@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>,
+ Sowjanya Komatineni <skomatineni@nvidia.com>,
+ Luca Ceresoli <luca.ceresoli@bootlin.com>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Peter De Schrijver <pdeschrijver@nvidia.com>,
+ Prashant Gaikwad <pgaikwad@nvidia.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Dmitry Osipenko <digetx@gmail.com>,
+ Charan Pedumuru <charan.pedumuru@gmail.com>
+CC: linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-staging@lists.linux.dev
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v1_01/19=5D_clk=3A_tegra=3A_ini?=
+ =?US-ASCII?Q?t_CSUS_clock_for_Tegra20_and_Tegra30?=
+User-Agent: K-9 Mail for Android
+In-Reply-To: <1909286.atdPhlSkOF@senjougahara>
+References: <20250819121631.84280-1-clamor95@gmail.com> <20250819121631.84280-2-clamor95@gmail.com> <1909286.atdPhlSkOF@senjougahara>
+Message-ID: <76B1EB6D-B149-43C2-AA56-A15C9DCCA3AF@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=iso-8859-7
-Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-T24gV2VkLCAyNyBBdWcgMjAyNSAwOTozNTo1OSArMDkwMCAoSlNUKQ0KRlVKSVRBIFRvbW9ub3Jp
-IDxmdWppdGEudG9tb25vcmlAZ21haWwuY29tPiB3cm90ZToNCg0KPj4+ICtwdWIgZm4gcmVhZF9w
-b2xsX3RpbWVvdXRfYXRvbWljPE9wLCBDb25kLCBUPigNCj4+PiArICAgIG11dCBvcDogT3AsDQo+
-Pj4gKyAgICBtdXQgY29uZDogQ29uZCwNCj4+PiArICAgIGRlbGF5X2RlbHRhOiBEZWx0YSwNCj4+
-PiArICAgIHRpbWVvdXRfZGVsdGE6IERlbHRhLA0KPj4+ICspIC0+IFJlc3VsdDxUPg0KPj4+ICt3
-aGVyZQ0KPj4+ICsgICAgT3A6IEZuTXV0KCkgLT4gUmVzdWx0PFQ+LA0KPj4+ICsgICAgQ29uZDog
-Rm5NdXQoJlQpIC0+IGJvb2wsDQo+Pj4gK3sNCj4+PiArICAgIGxldCBtdXQgbGVmdF9ucyA9IHRp
-bWVvdXRfZGVsdGEuYXNfbmFub3MoKTsNCj4+PiArICAgIGxldCBkZWxheV9ucyA9IGRlbGF5X2Rl
-bHRhLmFzX25hbm9zKCk7DQo+Pj4gKw0KPj4+ICsgICAgbG9vcCB7DQo+Pj4gKyAgICAgICAgbGV0
-IHZhbCA9IG9wKCk/Ow0KPj4+ICsgICAgICAgIGlmIGNvbmQoJnZhbCkgew0KPj4+ICsgICAgICAg
-ICAgICAvLyBVbmxpa2UgdGhlIEMgdmVyc2lvbiwgd2UgaW1tZWRpYXRlbHkgcmV0dXJuLg0KPj4+
-ICsgICAgICAgICAgICAvLyBXZSBrbm93IHRoZSBjb25kaXRpb24gaXMgbWV0IHNvIHdlIGRvbid0
-IG5lZWQgdG8gY2hlY2sgYWdhaW4uDQo+Pj4gKyAgICAgICAgICAgIHJldHVybiBPayh2YWwpOw0K
-Pj4+ICsgICAgICAgIH0NCj4+PiArDQo+Pj4gKyAgICAgICAgaWYgbGVmdF9ucyA8IDAgew0KPj4+
-ICsgICAgICAgICAgICAvLyBVbmxpa2UgdGhlIEMgdmVyc2lvbiwgd2UgaW1tZWRpYXRlbHkgcmV0
-dXJuLg0KPj4+ICsgICAgICAgICAgICAvLyBXZSBoYXZlIGp1c3QgY2FsbGVkIGBvcCgpYCBzbyB3
-ZSBkb24ndCBuZWVkIHRvIGNhbGwgaXQgYWdhaW4uDQo+Pj4gKyAgICAgICAgICAgIHJldHVybiBF
-cnIoRVRJTUVET1VUKTsNCj4+PiArICAgICAgICB9DQo+Pj4gKw0KPj4+ICsgICAgICAgIGlmICFk
-ZWxheV9kZWx0YS5pc196ZXJvKCkgew0KPj4+ICsgICAgICAgICAgICB1ZGVsYXkoZGVsYXlfZGVs
-dGEpOw0KPj4+ICsgICAgICAgICAgICBsZWZ0X25zIC09IGRlbGF5X25zOw0KPj4+ICsgICAgICAg
-IH0NCj4+PiArDQo+Pj4gKyAgICAgICAgY3B1X3JlbGF4KCk7DQo+Pj4gKyAgICAgICAgbGVmdF9u
-cyAtPSAxOw0KPj4gDQo+PiBBIGNvbW1lbnQgb24gdGhlIGxpbmUgYWJvdmUgd291bGQgYmUgbmlj
-ZS4NCj4gDQo+IEFzIEkgd3JvdGUgaW4gYW5vdGhlciBlbWFpbCwgdGhlIEMgdmVyc2lvbiB3YXMg
-Y2hhbmdlZCB0byBhdm9pZCB1c2luZw0KPiBrdGltZSwgYW5kIHRoYXSicyB3aGVuIHRoZSBjb2Rl
-IGFib3ZlIHdhcyBhZGRlZC4gSSBhc3N1bWUgdGhlIGRlbGF5IGlzDQo+IGNvbnNpZGVyZWQgYXMg
-MW5zIGFzIGEgY29tcHJvbWlzZSBiZWNhdXNlIGt0aW1lIGNhbqJ0IGJlIHVzZWQuDQo+IA0KPiBN
-YXliZSB0aGlzIGNvbW1lbnQgc2hvdWxkIGJlIGFkZGVkIHRvIHRoZSBDIHZlcnNpb24gaW5zdGVh
-ZD8NCg0KSSBtZWFudCB0aGF0IGlmIHdlIGFkZCBhIGNvbW1lbnQgaGVyZSwgbWF5YmUgaXQgc2hv
-dWxkIGJlIGFkZGVkIHRvIHRoZQ0KQyB2ZXJzaW9uLg0K
+
+
+27 =D1=81=D0=B5=D1=80=D0=BF=D0=BD=D1=8F 2025=E2=80=AF=D1=80=2E 07:09:45 GM=
+T+03:00, Mikko Perttunen <mperttunen@nvidia=2Ecom> =D0=BF=D0=B8=D1=88=D0=B5=
+:
+>On Tuesday, August 19, 2025 9:16=E2=80=AFPM Svyatoslav Ryhel wrote:
+>> CSUS clock is required to be enabled on camera device configuration or
+>> else camera module refuses to initiate properly=2E
+>>=20
+>> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail=2Ecom>
+>> ---
+>>  drivers/clk/tegra/clk-tegra20=2Ec | 1 +
+>>  drivers/clk/tegra/clk-tegra30=2Ec | 1 +
+>>  2 files changed, 2 insertions(+)
+>>=20
+>> diff --git a/drivers/clk/tegra/clk-tegra20=2Ec
+>> b/drivers/clk/tegra/clk-tegra20=2Ec index 551ef0cf0c9a=2E=2E42f8150c611=
+0 100644
+>> --- a/drivers/clk/tegra/clk-tegra20=2Ec
+>> +++ b/drivers/clk/tegra/clk-tegra20=2Ec
+>> @@ -1043,6 +1043,7 @@ static struct tegra_clk_init_table init_table[] =
+=3D {
+>>  	{ TEGRA20_CLK_GR3D, TEGRA20_CLK_PLL_C, 300000000, 0 },
+>>  	{ TEGRA20_CLK_VDE, TEGRA20_CLK_PLL_C, 300000000, 0 },
+>>  	{ TEGRA20_CLK_PWM, TEGRA20_CLK_PLL_P, 48000000, 0 },
+>> +	{ TEGRA20_CLK_CSUS, TEGRA20_CLK_CLK_MAX, 6000000, 1 },
+>>  	/* must be the last entry */
+>>  	{ TEGRA20_CLK_CLK_MAX, TEGRA20_CLK_CLK_MAX, 0, 0 },
+>>  };
+>> diff --git a/drivers/clk/tegra/clk-tegra30=2Ec
+>> b/drivers/clk/tegra/clk-tegra30=2Ec index 82a8cb9545eb=2E=2E70e85e2949e=
+0 100644
+>> --- a/drivers/clk/tegra/clk-tegra30=2Ec
+>> +++ b/drivers/clk/tegra/clk-tegra30=2Ec
+>> @@ -1237,6 +1237,7 @@ static struct tegra_clk_init_table init_table[] =
+=3D {
+>>  	{ TEGRA30_CLK_HDA, TEGRA30_CLK_PLL_P, 102000000, 0 },
+>>  	{ TEGRA30_CLK_HDA2CODEC_2X, TEGRA30_CLK_PLL_P, 48000000, 0 },
+>>  	{ TEGRA30_CLK_PWM, TEGRA30_CLK_PLL_P, 48000000, 0 },
+>> +	{ TEGRA30_CLK_CSUS, TEGRA30_CLK_CLK_MAX, 6000000, 1 },
+>>  	/* must be the last entry */
+>>  	{ TEGRA30_CLK_CLK_MAX, TEGRA30_CLK_CLK_MAX, 0, 0 },
+>>  };
+>
+>I looked into what this clock does and it seems to be a gate for the CSUS=
+ pin,=20
+>which provides an output clock for camera sensors (VI MCLK)=2E Default so=
+urce=20
+>seems to be PLLC_OUT1=2E It would be good to note that on the commit mess=
+age, as=20
+>I can't find any documentation about the CSUS clock elsewhere=2E
+>
+>What is the 6MHz rate based on?
+>
+
+6mhz is the statistic value which I was not able to alter while testing=2E=
+ I have tried 12mhz and 24mhz too but it remained 6mhz, so I left it 6mhz=
+=2E
+
+>Since this seems to be a clock consumed by the sensor, it seems to me tha=
+t=20
+>rather than making it always on, we could point to it in the sensor's dev=
+ice=20
+>tree entry=2E
+>
+
+Sensor device tree uses vi_sensor as clocks source and sensor drivers don'=
+t support multiple linked clocks=2E
+
+>Cheers,
+>Mikko
+>
+>
+>
 
