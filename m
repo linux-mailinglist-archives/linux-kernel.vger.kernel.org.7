@@ -1,199 +1,168 @@
-Return-Path: <linux-kernel+bounces-788571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B752CB38691
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 17:26:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94572B383C0
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 15:33:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0144D6802E1
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 15:26:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9228D1B235B9
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 13:34:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3C5D2797B8;
-	Wed, 27 Aug 2025 15:26:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0C8435207F;
+	Wed, 27 Aug 2025 13:33:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="LYi7Pz3K"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XAdQFc/+"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 581C9278E7E;
-	Wed, 27 Aug 2025 15:26:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83C1634A30A
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 13:33:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756308373; cv=none; b=r/VVqpBojWgo7r1NlkaQwvvL8jg1MZh2InklSqgMGqMU9XVleTUgOTOl7U2BonrfqLGz+OVVdMNThKvWntYWH2rZ79eNYLIlTbV01ThFAAUqwEdL0Ppu1LiDhOcxHTxgDRP82ReZhebJtFsHmnA/VvTag6QQWC0bZCW18iwMyfI=
+	t=1756301620; cv=none; b=Ib6mCQcOndQpK5trINSDTx/bjk+p0p5gqXmo71ZR7UxCB7XSSj3bY4yGjK/QGVkNOiUjvTJ8yUafi3k2ce/LA+ja/mHHlhEvuBCeYaz4M53jFpVgelWzmE5Xw+AzNmclz6mglJDHspet1m0izQzhxvCvhb5H3W75pODPSXjGJ0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756308373; c=relaxed/simple;
-	bh=i6Xvzh4Ujbr0eo99BolTbLSEmEh822Jw+vwhjVxzmbc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=NTv1+OFPEypWCrGIipwn88T6qDtMIVtse32F4D/9thoGfWSENRs3tJnaW2n85xL9caNqS9X0zQo39d0VGsjzZsjRFCiRzNTTC7pJ6+2dMZAL6vYwrZH0zpzuqufc0A/W0wqB9QZrl/+s1V7Hwvm0l7bBxqzoh0mwd6rjwjqOz5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=LYi7Pz3K; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57RDVZip1754713;
-	Wed, 27 Aug 2025 08:31:35 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1756301495;
-	bh=IXQfCpyLup22AZJ23GsDzWhzY4Tz0dBOwxDytru+TlU=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=LYi7Pz3KO3rsoKBGHpGeJgHpgt7cxsR/LBeRXGbUd0cVflYWq9jQ++SJwlSFVMVnQ
-	 8mIzCJ53CUSuLgyVW420CrksB6wINV6pMsHTWQn4GsaH+WtfFl4dF1taX5fukJBtzp
-	 Hg+76XMv05LLoDjyubHceTWEcn1D4Aolw4s0QBJs=
-Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
-	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57RDVZ9o2487461
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Wed, 27 Aug 2025 08:31:35 -0500
-Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Wed, 27
- Aug 2025 08:31:34 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Wed, 27 Aug 2025 08:31:34 -0500
-Received: from [10.249.42.149] ([10.249.42.149])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57RDVYOw3153773;
-	Wed, 27 Aug 2025 08:31:34 -0500
-Message-ID: <992fcb80-1a54-4d57-a764-d6ba77cb11e9@ti.com>
-Date: Wed, 27 Aug 2025 08:31:33 -0500
+	s=arc-20240116; t=1756301620; c=relaxed/simple;
+	bh=chTWJ/zEI6rTbv+YqS2P0SrjG/e7+RT/8QbiIzXP3ZA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tmuk9SXhaOojOQu7FCqnvB3B8rHwoOJh51drTVWsjo3YFDHilRNdIH0MBLUCkLoBkYiez6abwfy/YdoHnWD67p0zzicI4Q50a56kkZEqM7JW2AqyeUTegnTXGnZ2p2D7kUou50vY9+8Qb2KKNtmjOvaLLq38saLrPQ0fMukkmrQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XAdQFc/+; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756301616;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=K8z/3KgzEoz0nXpB3RNGuEeKXFHUG30ORWT5Yv+ILFU=;
+	b=XAdQFc/+APj2Ni6OA8YpWcFuFZtMD5MnA7H1+sOHppuLvZK9r5LDJw2GcvaFg2GD59HuIW
+	66ASidHiH96Qv0LROw6oZOu+cUraRJWjTifKl0zT8xWL5NliT/NbkFTM099buDRZKRZ5JJ
+	zC2DKUHZi1NEPS1zSOKLH8HlcLtleX8=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-38-5AxBASESPZqW7TLdP5WcUQ-1; Wed, 27 Aug 2025 09:33:35 -0400
+X-MC-Unique: 5AxBASESPZqW7TLdP5WcUQ-1
+X-Mimecast-MFC-AGG-ID: 5AxBASESPZqW7TLdP5WcUQ_1756301613
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3c79f0a57ddso2381590f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 06:33:33 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756301612; x=1756906412;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=K8z/3KgzEoz0nXpB3RNGuEeKXFHUG30ORWT5Yv+ILFU=;
+        b=cN4IMorHGrGFE1iuR+6iLSnuNXTStNUORHK5GEqLzxsMP+Yq4tOvtatW/0N2WDTWw+
+         4T6W1pK21z/SaH3Wx0M3QSg6/E2PVQnEWTB3NSfYpWu6TGkM9PgEV2CGG3koh0RCVuTD
+         PXZ5cmMALAEXJkTGoRNv8770bt/c5cEAvt8TfKIuDCLF42VkgQYbi7cy0a4lnN6gOtyZ
+         WGpdlCG08HhP+FadPkNGturv2d3iU5Ne0my5BflDnr4Co89SYKk3f24791xsy0UXFaWa
+         rnlnomyUaptqhYQFTj4oDFO+dlnRdCIOL0EwsIJzllMC0hXMzsaELuCc0sk9CUlgsT4n
+         CpKA==
+X-Forwarded-Encrypted: i=1; AJvYcCUHB6ojc2wiP2vqaR5/BdZFQCXW/BmtFfBAZbBXF6DA4VVWax3aQl3yt4K+pY5ljCsK2L4QoWwxwVV0uEo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyD1ze3VDfRMM2YLGbpfABTnf9p56HqPhyZ136CcnFocYBQxivb
+	8dIcuHYy5+iB5LFmH3eAyOys4OxirjUpOX5lDpHt0CD5BUmEV7VD03ImMGUAyPVWhaK4GEN5O8a
+	ldahmtW8vmiWf1wRzgIt9Eh2zDKrjVp9d38VMGrVk2W0C87h7QEPxsQrK6phAlfBi3A==
+X-Gm-Gg: ASbGnctCeVJWHeQTWag7wPl9MwoH6cqbAnVBRd3PAUmeEP8ybJ4gp5skf+O6B28t4M2
+	7bXpLpHGStncnUZ+IKswpZxn6zY9TCRK0btxnerfifGsodsyD1PaAbdW1ytnrPAz2jPjNnwhmU3
+	mT3YWHvDlHxTq5i2+/z+0omQma9P3DU3VlgDlJRVY4Hz/cs2aFp3UCKVk1SmAcEYO5mFP0y7WSM
+	ko2ByaCBhg+9wz1EY9yCYfUPCMyA25UofOlvlJqD2kJiZf1WEh6iWmqLnwSclxnbkE7i/b9Jsua
+	qvXSreZlUg5IwvqLc95FAq3Dbd+Rrtw=
+X-Received: by 2002:a05:6000:2281:b0:3cd:4ff9:c487 with SMTP id ffacd0b85a97d-3cd4ff9c926mr847040f8f.45.1756301612371;
+        Wed, 27 Aug 2025 06:33:32 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGpXWIRKQBLCST7L7FbqSdMsqrTEd8mC9YrfacqJgmW7hhmhY+MtE22/oJUnVDrsWnKorEEVQ==
+X-Received: by 2002:a05:6000:2281:b0:3cd:4ff9:c487 with SMTP id ffacd0b85a97d-3cd4ff9c926mr847017f8f.45.1756301611871;
+        Wed, 27 Aug 2025 06:33:31 -0700 (PDT)
+Received: from redhat.com ([185.137.39.233])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3ccac1b892bsm2973545f8f.67.2025.08.27.06.33.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 Aug 2025 06:33:31 -0700 (PDT)
+Date: Wed, 27 Aug 2025 09:33:27 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+Cc: Honglei Huang <honglei1.huang@amd.com>,
+	David Airlie <airlied@redhat.com>,
+	Gerd Hoffmann <kraxel@redhat.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Simona Vetter <simona@ffwll.ch>,
+	Gurchetan Singh <gurchetansingh@chromium.org>,
+	Chia-I Wu <olvaffe@gmail.com>, dri-devel@lists.freedesktop.org,
+	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/virtio: fix host visible memory detection in
+ virtio-gpu
+Message-ID: <20250827093320-mutt-send-email-mst@kernel.org>
+References: <20250827081231.1878248-1-honglei1.huang@amd.com>
+ <9ecf015d-d96a-40ac-a7fb-50e46c4f6e00@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 7/7] arm64: dts: ti: Add support for Kontron
- SMARC-sAM67
-To: Michael Walle <mwalle@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Vignesh
- Raghavendra <vigneshr@ti.com>,
-        Tero Kristo <kristo@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>, Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck
-	<linux@roeck-us.net>, Lee Jones <lee@kernel.org>,
-        Srinivas Kandagatla
-	<srini@kernel.org>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-hwmon@vger.kernel.org>,
-        <linux-watchdog@vger.kernel.org>
-References: <20250822131531.1366437-1-mwalle@kernel.org>
- <20250822131531.1366437-8-mwalle@kernel.org>
-Content-Language: en-US
-From: Andrew Davis <afd@ti.com>
-In-Reply-To: <20250822131531.1366437-8-mwalle@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9ecf015d-d96a-40ac-a7fb-50e46c4f6e00@collabora.com>
 
-On 8/22/25 8:15 AM, Michael Walle wrote:
-> The Kontron SMARC-sAM67 is a SMARC module which features a TI AM67 SoC.
-> It supports the following features:
->   * Quad-core AM67A94 with 1.4GHz
->   * 8 GiB RAM
->   * 64 GiB eMMC
->   * 4 MiB SPI flash for failsafe booting
->   * 4x UART
->   * 1x USB 2.0
->   * 1x USB 3.2 (or 4x USB3.2 with onboard USB 3.2 hub)
->   * 1x RTC
->   * 2x GBE
->   * 1x QSPI (with 2 chip selects)
->   * 1x SPI (with 2 chip selects)
->   * 7x I2C
->   * 4x CSI (*)
->   * 2x LVDS (or one dual-link LVDS)
->   * 1x DSI (*)
->   * 1x DP (*)
->   * onboard microcontroller for boot control, failsafe booting and
->     external watchdog
+On Wed, Aug 27, 2025 at 03:52:05PM +0300, Dmitry Osipenko wrote:
+> On 8/27/25 11:12, Honglei Huang wrote:
+> > From: Honglei Huang <Honglei1.Huang@amd.com>
+> > 
+> > Commit 206cc44588f7 ("virtio: reject shm region if length is zero")
+> > enhanced the validation in virtio_get_shm_region() by adding a check
+> > for a zero-length shared memory region.
+> > 
+> > It is performed before the underlying transport's .get_shm_region()
+> > implementation is called. This creates an issue in the virtio-gpu
+> > driver, where the `region` struct is part of a larger structure
+> > that is zero-initialized by drmm_kzalloc().
+> > 
+> > Consequently, the `len` field is 0 at the time of the check, causing
+> > virtio_get_shm_region() to return false prematurely. This prevents the
+> > host visible memory feature from being enabled, even when the device
+> > supports it.
+> > 
+> > To resolve this, this patch bypasses the inline helper and calls the
+> > underlying vdev->config->get_shm_region() function pointer directly.
+> > This ensures that the region's parameters are checked only after they
+> > have been populated by the transport, aligning with the intended logic.
+> > 
+> > Signed-off-by: Honglei Huang <Honglei1.Huang@amd.com>
+> > ---
+> >  drivers/gpu/drm/virtio/virtgpu_kms.c | 6 ++++--
+> >  1 file changed, 4 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/gpu/drm/virtio/virtgpu_kms.c b/drivers/gpu/drm/virtio/virtgpu_kms.c
+> > index 7dfb2006c561..ed5981248302 100644
+> > --- a/drivers/gpu/drm/virtio/virtgpu_kms.c
+> > +++ b/drivers/gpu/drm/virtio/virtgpu_kms.c
+> > @@ -174,8 +174,10 @@ int virtio_gpu_init(struct virtio_device *vdev, struct drm_device *dev)
+> >  	if (virtio_has_feature(vgdev->vdev, VIRTIO_GPU_F_RESOURCE_BLOB)) {
+> >  		vgdev->has_resource_blob = true;
+> >  	}
+> > -	if (virtio_get_shm_region(vgdev->vdev, &vgdev->host_visible_region,
+> > -				  VIRTIO_GPU_SHM_ID_HOST_VISIBLE)) {
+> > +	if (vgdev->vdev->config->get_shm_region &&
+> > +	    vgdev->vdev->config->get_shm_region(
+> > +		    vgdev->vdev, &vgdev->host_visible_region,
+> > +		    VIRTIO_GPU_SHM_ID_HOST_VISIBLE)) {
+> >  		if (!devm_request_mem_region(&vgdev->vdev->dev,
+> >  					     vgdev->host_visible_region.addr,
+> >  					     vgdev->host_visible_region.len,
 > 
-> (*) not yet supported by the kernel
+> Hi, virtio_get_shm_region() change has been reverted by [1]. Don't think
+> anything else needs to be done.
 > 
-> There is a base device tree and overlays which will add optional
-> features. At the moment there is one full featured variant of that
-> board whose device tree is generated during build by merging all the
-> device tree overlays.
+> [1]
+> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?h=next-20250827&id=ced17ee32a9988b8a260628e7c31a100d7dc082e
 > 
-> Signed-off-by: Michael Walle <mwalle@kernel.org>
-> ---
->   arch/arm64/boot/dts/ti/Makefile               |    6 +
->   .../dts/ti/k3-am67a-kontron-sa67-base.dts     | 1092 +++++++++++++++++
->   .../dts/ti/k3-am67a-kontron-sa67-gbe1.dtso    |   19 +
->   .../ti/k3-am67a-kontron-sa67-rtc-rv8263.dtso  |   24 +
->   4 files changed, 1141 insertions(+)
->   create mode 100644 arch/arm64/boot/dts/ti/k3-am67a-kontron-sa67-base.dts
->   create mode 100644 arch/arm64/boot/dts/ti/k3-am67a-kontron-sa67-gbe1.dtso
->   create mode 100644 arch/arm64/boot/dts/ti/k3-am67a-kontron-sa67-rtc-rv8263.dtso
+> +cc Michael Tsirkin
 > 
-> diff --git a/arch/arm64/boot/dts/ti/Makefile b/arch/arm64/boot/dts/ti/Makefile
+> Might be only good to send a stable kernel PR with that revert. I see
+> patch available only in linux-next, while stable kernels need to be
+> fixed sooner.
 
-[...]
-
-> diff --git a/arch/arm64/boot/dts/ti/k3-am67a-kontron-sa67-gbe1.dtso b/arch/arm64/boot/dts/ti/k3-am67a-kontron-sa67-gbe1.dtso
-> new file mode 100644
-> index 000000000000..4e9eb7998f38
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/ti/k3-am67a-kontron-sa67-gbe1.dtso
-> @@ -0,0 +1,19 @@
-
-DTSO files should have copyright and license here same as DTS.
-
-Andrew
-
-> +/dts-v1/;
-> +/plugin/;
-> +
-> +&cpsw3g_mdio {
-> +	#address-cells = <1>;
-> +	#size-cells = <0>;
-> +
-> +	phy1: ethernet-phy@1 {
-> +		reg = <1>;
-> +	};
-> +};
-> +
-> +&cpsw_port2 {
-> +	phy-connection-type = "rgmii-id";
-> +	phy-handle = <&phy1>;
-> +	nvmem-cells = <&base_mac_address 1>;
-> +	nvmem-cell-names = "mac-address";
-> +	status = "okay";
-> +};
-> diff --git a/arch/arm64/boot/dts/ti/k3-am67a-kontron-sa67-rtc-rv8263.dtso b/arch/arm64/boot/dts/ti/k3-am67a-kontron-sa67-rtc-rv8263.dtso
-> new file mode 100644
-> index 000000000000..c9aa15269c92
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/ti/k3-am67a-kontron-sa67-rtc-rv8263.dtso
-> @@ -0,0 +1,24 @@
-> +/dts-v1/;
-> +/plugin/;
-> +
-> +#include <dt-bindings/interrupt-controller/irq.h>
-> +
-> +&{/} {
-> +	aliases {
-> +		rtc0 = "/bus@f0000/i2c@20000000/rtc@51"; /* &rtc */
-> +		rtc1 = "/bus@f0000/bus@b00000/rtc@2b1f0000"; /* &wkup_rtc0 */
-> +	};
-> +};
-> +
-> +&main_i2c0 {
-> +	#address-cells = <1>;
-> +	#size-cells = <0>;
-> +
-> +	rtc: rtc@51 {
-> +		compatible = "microcrystal,rv8263";
-> +		reg = <0x51>;
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&rtc_pins_default>;
-> +		interrupts-extended = <&main_gpio0 36 IRQ_TYPE_EDGE_FALLING>;
-> +	};
-> +};
+sooner than what?
 
 
