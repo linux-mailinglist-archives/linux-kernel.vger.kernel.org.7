@@ -1,202 +1,102 @@
-Return-Path: <linux-kernel+bounces-787541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66AAFB377A1
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 04:15:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAE7CB377A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 04:15:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07ABB207FDA
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 02:15:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 977BE208098
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 02:15:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5914B25BF13;
-	Wed, 27 Aug 2025 02:15:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="RAFJcZv4"
-Received: from TYPPR03CU001.outbound.protection.outlook.com (mail-japaneastazon11012049.outbound.protection.outlook.com [52.101.126.49])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BADF225F995;
+	Wed, 27 Aug 2025 02:15:19 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C2C425A2D1
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 02:15:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.126.49
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756260913; cv=fail; b=Bc6zNL+U3x42+19M4SCu1benX+HpPDwGjGI+9SBoVYVEqQGtESbyeDnU8l5VSZwXFaAjiMHvAX/+m0PR/VG/MgnYNrFzS8Tpmihd1oQ2Ds3szJNYxxiUZVcteFxta1lyhSg6JaoZ13SH2SzkeeZoSQuIBhIpick7HBmR7tEfCwM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756260913; c=relaxed/simple;
-	bh=G/mZUME6iQvcWh2TCCzAPiw+61AkatH8/qdRrtlSIOY=;
-	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=UUjqoATxCKRJkcaYZqIjiZcWdtBiOimsd/1tKwxb5NuqzEqOXZnLtLK1uwY31fU9jmVR0fQUoygZdYEvFyEimmzsFnKa/QCkTe4BnsPsTy5B1gCmcCwVQSjRMLh4wmhZdPYUOn7Z9+chqgo/tKS29/TITJ86Fcu7BRRtV+hptAo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=RAFJcZv4; arc=fail smtp.client-ip=52.101.126.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=dp7YEXrQMlcD8ieSlWbCx3eQG+jwp8m286a1sYxpIQU9p2gXrsgpAsOBewACOadvgiKIOvgxeY+E3r4pidAs8ia6SUhfnO8IOCvnBdZGbZL2V6SnymwbtBTCfEnnDVtpmzprAydXFUFJ4wCZJsmRHhlKfnqQPdOOS9p/jvcvrkFX+iEF5OPTE1rcjynqs2DZQsr8t2VHCdlnaZXZH9Hvzr/ZX+OjaAVr/l12ckXfS6oLOHOt1RfdVy7wWX44zxwHfQo3SxSnJmFKFK/LEhjLFZ2ZjcM5pEbmyCJl+gmy1P55HU4s6UiVelh3BenKtXbkUK4FLTUZhhiGxHpfPXfcnw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=G/mZUME6iQvcWh2TCCzAPiw+61AkatH8/qdRrtlSIOY=;
- b=oC4l3TMXL8hgn0rrLP3W8DThdQkwdmOFps79ve+Abki/ta9Zazb7zzOCrsgrvrTfrk56dy2v7vHBV0pyRAXCuDrZxwQNkY+/xMzTmo241oy+Hn+BeGyGXv+yP7+Y0xpr8H/NSufU7r7xYl1j9W79lW5KxiPnXTGB+MtW14m8bXvb4/yek4ta+uHt8lBAYwMGfbRERM1If0becqClqta+ep8aSN7UR1S3h/you9fhGbtjcFcRbdVht7RDV7bx/kSpIBpF9dt3A8CgGP568L050NxYR62hACq6Xnrqea3dySxlmnYj06NV5hb+6cz0D/kCILi43uVPznRLIX5y1lW+SQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=G/mZUME6iQvcWh2TCCzAPiw+61AkatH8/qdRrtlSIOY=;
- b=RAFJcZv4d2sAhR3GaRHf4M4mnhcc8rpJ+jLAJkeR7PEBEkhssjv+zKlvdS2epx1RiXdisN+KBhZ32e1ZFqUN3ZLcrQCvvVelgIJ/H84w/yUvq8BtQl0070natYjndBMH88NyeC8WeucvSbtM/xx577u7hR/T+5mHvh2qJsUPTWNmSgksznzZ9btnEw6WC7o3H+pSQ3fuLV3yF93WU3n3FZJPDAAoNozDo9oe02EjkZnQXCC7PD4d5EwxB66iBsnhxys08F+NlWkXN120QDRYVW4YvW/P7IjFR3pGp3Kci00cL0e9f7FBrNIRVBXKUq/ActXzEAaAVEH+sl8D0Azr3w==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from SI2PR06MB5140.apcprd06.prod.outlook.com (2603:1096:4:1af::9) by
- SEZPR06MB5478.apcprd06.prod.outlook.com (2603:1096:101:a1::12) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9052.20; Wed, 27 Aug 2025 02:15:07 +0000
-Received: from SI2PR06MB5140.apcprd06.prod.outlook.com
- ([fe80::468a:88be:bec:666]) by SI2PR06MB5140.apcprd06.prod.outlook.com
- ([fe80::468a:88be:bec:666%5]) with mapi id 15.20.9073.010; Wed, 27 Aug 2025
- 02:15:06 +0000
-Message-ID: <eaefefb6-7ced-4c47-8bff-bae83f143b72@vivo.com>
-Date: Wed, 27 Aug 2025 10:15:03 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] accel/amdxdna: Use int instead of u32 to store error
- codes
-Content-Language: en-US
-To: Lizhi Hou <lizhi.hou@amd.com>, Min Ma <min.ma@amd.com>,
- Oded Gabbay <ogabbay@kernel.org>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <20250826072917.186638-1-rongqianfeng@vivo.com>
- <51440ea7-bbea-c890-057e-109685a72cb3@amd.com>
-From: Qianfeng Rong <rongqianfeng@vivo.com>
-In-Reply-To: <51440ea7-bbea-c890-057e-109685a72cb3@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: TYCP286CA0148.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:31b::16) To SI2PR06MB5140.apcprd06.prod.outlook.com
- (2603:1096:4:1af::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D7E925C83A
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 02:15:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756260919; cv=none; b=IeUiVMRq4MaTxPF/y0LEbNXw+cuNyhksCk8vdIb75cQXp55onRFmBJBcHYplMhU/gBdv3jPcywz3UkdHxR4NdjAJb6YKRzCBbQqDutiuQ/2Gn2fwoLeZLPEMWqh/UZjr/vcoxcJbBJcpl412QoeQVFdM9Rl58feWq4Zyw5P2JDg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756260919; c=relaxed/simple;
+	bh=t7m7Vjr0mlgsF5Zl+Zrv2/s8Ahx3RYSp4oHny4ZVA3E=;
+	h=CC:Subject:To:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=pi+KVVbKn9fPvgrzpPOSY3tZwdjxf/j39XcShNrXRG662RYWcqEh9lTFS3rs5/M3Qs7VP+dzvvfwAdpXkMNpM+KWF0yp25eoKBFpRzd2fa7VBDqthrLoeI928FJZ6ZNJ1H6tLEMFJNveg+WVe+xRm/OJrTRnUnrqgkBoaPxUE1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4cBSmB5GnYz14MLH;
+	Wed, 27 Aug 2025 10:15:06 +0800 (CST)
+Received: from dggemv705-chm.china.huawei.com (unknown [10.3.19.32])
+	by mail.maildlp.com (Postfix) with ESMTPS id 851AD1401E9;
+	Wed, 27 Aug 2025 10:15:13 +0800 (CST)
+Received: from kwepemq200018.china.huawei.com (7.202.195.108) by
+ dggemv705-chm.china.huawei.com (10.3.19.32) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 27 Aug 2025 10:15:13 +0800
+Received: from [10.67.121.177] (10.67.121.177) by
+ kwepemq200018.china.huawei.com (7.202.195.108) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 27 Aug 2025 10:15:12 +0800
+CC: <yangyicong@hisilicon.com>, <robin.murphy@arm.com>,
+	<Jonathan.Cameron@huawei.com>, <liuyonglong@huawei.com>,
+	<wanghuiqiang@huawei.com>, <prime.zeng@hisilicon.com>,
+	<hejunhao3@h-partners.com>
+Subject: Re: [PATCH v2 8/9] Documentation: hisi-pmu: Fix of minor format error
+To: Yushan Wang <wangyushan12@huawei.com>, <will@kernel.org>,
+	<mark.rutland@arm.com>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>
+References: <20250821135049.2010220-1-wangyushan12@huawei.com>
+ <20250821135049.2010220-9-wangyushan12@huawei.com>
+From: Yicong Yang <yangyicong@huawei.com>
+Message-ID: <3e19cbc9-7a23-dcde-af94-9afee42f044b@huawei.com>
+Date: Wed, 27 Aug 2025 10:15:12 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.5.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SI2PR06MB5140:EE_|SEZPR06MB5478:EE_
-X-MS-Office365-Filtering-Correlation-Id: bb338f4d-f7b1-4560-3c49-08dde50f8a34
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?dDBCU3h4K1lDU0V6cTFLb00rS0VvaEJ3dWNURngvVmU4NHEvNW8rcG9hc3Z1?=
- =?utf-8?B?Zk5yZC9TUHgxMWw1UUVzRzhXSkw3UEdHVUdHdjBBVlQ0aGFJK1prRHZJdXpV?=
- =?utf-8?B?S3gvbWNIL0ZacnF6cWU0Q2l1d05KMlBmQlpVMFA0RGlNMVRLM0pibDYyekJn?=
- =?utf-8?B?R0Joc1hzMUZlM2NFTTlzOU92OTV4RmNQdGFBUE9wMkR0SVVoMFRhN3NVRG5Z?=
- =?utf-8?B?TmtLVStIaUVDOVlLVVZMZGNHZGkzeFQwMUhXcHhDSUdkdEpIMHhFSElid3B5?=
- =?utf-8?B?NGdidjQ3OEYxbDlLMnZhYmd5RHp2RU9IQ2gvZnpNcWFtZ0dGdUI4elhEZ0dk?=
- =?utf-8?B?OEVuTFNlODFDc1pZc0hRNE96emZYQ0x0YUdGM3NGTWp2SUIzcWFESTUzWjNJ?=
- =?utf-8?B?N2JzQS9Nd0E5UGVrZEhoNjZQT0ZXNTdZY3ZqVi9QL3RjTmdJSnpNTmw1WWU4?=
- =?utf-8?B?Ui9QeUkzTEthbXBQSVY5STFGL3NIT1B2azdpY0wzSEFFYW1hUjlPR2Z5TzV1?=
- =?utf-8?B?SGtNNm1hMWwxSkFXSGR2blFTS1FtOS9UL1Y3WElHZkw0VTZDOWF1M1cxcFUr?=
- =?utf-8?B?emdzMDdaNkt0bUdjTXg2WlE1Z3Q0Ull6TmRUYzlxTnFZZUFaTWllWW1Xakcy?=
- =?utf-8?B?N1BMWDNUL1FkTExhY3lCeWt1aGMrVGovTVhJbURSN3JUZGxIVXpUNGJyV1Zw?=
- =?utf-8?B?ak9hbXJpNmNtRm9KcDcvM09TREZVM3FqMXI4QjZCVWk5NG5EaUlZNEM3SjFF?=
- =?utf-8?B?ZXNpVDVUMXByRmFpR3ZiUEpQS1lWVVRMUFZqSVNrczhpOVhZUm5rQ1F4dm45?=
- =?utf-8?B?SUlEK01xNFltcmN2YVltOVVzZUttUjZrYWp0RXY0Y25PSzI5bVB5bWdSR2ow?=
- =?utf-8?B?RHU4RGh3NzdCTkhnZ1I2NmJDOXVlZjdLcElWRkoxMzlhU1k0UG9Pa1NldkJs?=
- =?utf-8?B?TWtrYjc2cHlLOWtEUDVDTWFNVExaK0xWaGRhVlNrN0dpV0tMbHBHK3I0cUlW?=
- =?utf-8?B?N1VGVko2OHU2ejIxUy8zQnZsVDVzR0N4bGs1bmNOM25VeDZ1UGFxT3doTmZl?=
- =?utf-8?B?aXVXQlJsRDNJNjM2aU9aR1VIam84OENQQjZYTGZISUl2ZG5TQ2kzdVhJcFEy?=
- =?utf-8?B?Mk1uRXNMcFpQRHZUUWttVVZVOWtoTXZkM243MmpDdzVDL2VlWjlQRGJ3dkxl?=
- =?utf-8?B?WjQyZW1JRlczZCt0T1hOQVltZDdFQ0NCM3dyWUhRMkRDOGpvSUJoWTljNytZ?=
- =?utf-8?B?WGVWTzZhNm5oU2N2SnNiNFRjMUYzejRkOG05bEJ3OFV3ZGE5dHBsek03TkNU?=
- =?utf-8?B?dHNCNnJwb2hIMGFxM0Y1MGNtY1BwMVdmNllzMmsvbGVtUjhVdWl0ZVFZTUlE?=
- =?utf-8?B?anNjVUtKdzluZW1GZHB1ZTliMGhHSTZDQTNHdUlwcUo1d0FQNUE5eW5iODNY?=
- =?utf-8?B?UENHL2RqSWNiNS9HeDFwWnJqd3RONWU1L0g2SHVZbm9sMDR6NFUxN1FWUEVF?=
- =?utf-8?B?N2pTRjZqbjJucHgxYnZzaFpseXVhTmttU1VQVVdqL3FtYXhIUC9ZNkVEYTJN?=
- =?utf-8?B?dUtQN2lzcE5nVVk1bnlMRGZ3RzlJbGR3QW5LMmJRdk1pb1NtQk5NcDRPWFZ6?=
- =?utf-8?B?YkNta0s2OE1ZNVZnNUo0OUhOUFdIVjJHcWxjY1g3VTA4aXpNaXZIWXRwdC9F?=
- =?utf-8?B?YWlTckpzZVY2WGJGNlgwNk1EMDB2YnRkZXhjZER5QVNwVHVHRnQxKzc0aTF0?=
- =?utf-8?B?TWd3blBhVXJUT01ydHRONGVLQ2VpOSs0b1BqcnAzRGRjREZwaG14QzByZVBS?=
- =?utf-8?B?YXRMNXB2M2RTS2hzbStZQzFNYmFnUHpYTElkNVlPTlUwOFNZeTNxK3ptaUFm?=
- =?utf-8?B?a3BzeU4yVjg0SmxwTkVpMmlZY2ZCdVd5ekJQdUVHUFBLek80cDBYRlFyMEIx?=
- =?utf-8?Q?kaaUTv01xro=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SI2PR06MB5140.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Rzdka2M4TEpDNGs5WFVKaDh3QllmUmdBRnVSL05ieWRCLzlnU1VSYStpSlRI?=
- =?utf-8?B?eU82ZGlOVUdRcGlpUXlldWxJUVU4WGg4OWt3R2p4MjljWTJRWFV2L0d3aVl4?=
- =?utf-8?B?ZHNYbGtZUko5VFpqcGJFRkFQa1ZqY04zeDJKMWk5OGJOODd0S0dUWSs2V2FI?=
- =?utf-8?B?Y1ZxWGxxTjZ4OTJ0ZUFLaWFRZEZGSXBuOXdLSkVUVGJmVkNwL1phUmZaNmVi?=
- =?utf-8?B?cWtYM3hXMkpyenFsalE0bm5tc28zdjhHT0JiTXBqTmx4NlYyR1VyNHMvQWF3?=
- =?utf-8?B?RUFHejF0MGlMM0RqOEk1NnJsWU82OWplYy93dU00dkpPYUpxenowVnhFNjlH?=
- =?utf-8?B?aXZhd0V6QVNPUjh3a205VitrMmExZllGdUFDZllyRC90aEhjUmpGQ2l0Yk9D?=
- =?utf-8?B?VnJTb0NCTVJXWkEwTE0ycTRMZXY3V1F5VS9qaUxqK3dCdmhKT1lDS3kvWlRL?=
- =?utf-8?B?MFpmVkRZWk53cmxrRnJyblVnREEwQ3NLb3M4c3RSTmxVUjc2ZXRsOVl4YjRv?=
- =?utf-8?B?dzVsZGhvOGdhY3Y5TjZOaWpqdlhRZG16elFqcVYxd3J2Q2RFcVJCWHUyWmd3?=
- =?utf-8?B?UjloZE1qZWdWUUg3V25PRlF4Y0ROQXIxbXdsdEVTZFMvbTRUcnpGQ3VtcDVI?=
- =?utf-8?B?aUM1WWtRb1lLSG1sR0grN3kzbUR5ZnNMZ2NHN3RmaHhreXZDOGVkQWIvM3p5?=
- =?utf-8?B?bHcwOVNzeHliZUtuK09zQ0dTOUhVc0lrUCt5b0NTTkx5TjdnQzQrNmVaTlhD?=
- =?utf-8?B?c0F0d3NRbnM0WTR5bXJxc0FVUTRuU3JuQXp6TTlpVXVhMzBHYytIdXJQVWJ0?=
- =?utf-8?B?OXFKMnA3OVVCeEViN2R0L1dhcTVOcnBRNml0anZOL2FTU1dEb3ZMdkRCL20v?=
- =?utf-8?B?QkRtOGRaK3pSS0pYVDF4cmtlSFN5M2V0ekNBc0sxbHYxcWZsVWRUeHFiMjVQ?=
- =?utf-8?B?YjJHZ0R5d1lEYUk4ajd4dGg2K1RBMTlnL2FYOGpEdk5LcDFYcG0vVVhEcTk3?=
- =?utf-8?B?Qm8zV0FYdEF0YjEwWXAwWXN4czFmVzVXQWhWNFE2ZlZvQkZKNXMwTnlKajYx?=
- =?utf-8?B?QWkvUU1tVTZQRERjWDlYMWJPRlF5cXFZaWtSK3c1TUFScFdBQ0VuYVdTaTA1?=
- =?utf-8?B?NVVtSlNsdVBiMXUwdmlGeVRMUHA3QWk5eHJoY21Camt0UHVPMmF3NUpKSWlE?=
- =?utf-8?B?a01vY2o2K0NLRzNxS2llckJRV2lOM0EydmVIcG9PRjhrYitvSkpCcG96QnhM?=
- =?utf-8?B?VUdKMkltZURhMDlRVTcwM0pzTXVxcUJPbkdvbkJhb1YvNHM3RjJqNG9wa0tv?=
- =?utf-8?B?VXVHcDZvd2RVUUtjci9ndXBlenN2OWpVeW9lSHFMSGtJT0x3MlFQRUllL3ov?=
- =?utf-8?B?Z1pNQ3RDUjZ0YWl3OGVEdnV0L2d2dmlCck1xSktadms4NHBzdkQ3VmxCdEw5?=
- =?utf-8?B?T2c4Q3JWVXJBN1paS3FFOGY5bURXbGd2eXMrRFNoOEN4OWQ2dUNoUXlXOHlG?=
- =?utf-8?B?UWt1aDRlc21TZ25kZ0JWVGpxYmZlaDl4My9MYkpET2FhMHEweTQvaFF6aWxW?=
- =?utf-8?B?Q2Z5SDExYkx5TTZ6U05iOUtsWUdvL0ROb0FrSTUrOCtaTVlWb0xGdDU2UHo3?=
- =?utf-8?B?UERDbFhWL2JWWXlCUWQ3dkxBMk5obGErNFR2cURSQ01GL3lTVFR5SlN2MkpN?=
- =?utf-8?B?TG0vZWZsTmJza0ppTXhQVXFYb0RXTzJoc1VZYU4wSzJrNFYyK1RoclZ1UzY4?=
- =?utf-8?B?dytRcjVqQ1lYdjlMWTlkNlNNVWU5cXJDRllBWkNmWTlwZXBWM2NWMjlhcTFT?=
- =?utf-8?B?SWJaWHBoYS9HeEdZQWltZnE1cXhxMkRiSllLdXdXaWVDRXY2aDBYMktIUlA3?=
- =?utf-8?B?eitPa3ZMWEdJNE5rdnp5SGxIOFV4NytGY1AzZWM1RThqbVE4USszMWIzRldD?=
- =?utf-8?B?MkZvb1BYYkUwSG52U0ltOWNQcXpZY2NnUjFFUjZGV1krcnFiclNMTmFZYnVJ?=
- =?utf-8?B?emxDMHBlODFWbzFpTHozbzJMdU9lbks0aXd0S3RzZlQvVjR1bmlRU1dTVTJN?=
- =?utf-8?B?RkhseVhpYUxkMEo4ZUtMNWhkMHY2ZThqUnlHQlpxcWF4Y1Fta3lOZ3VXRy9T?=
- =?utf-8?Q?d5jPRYYQdi38cNpNI/J2ScQXs?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: bb338f4d-f7b1-4560-3c49-08dde50f8a34
-X-MS-Exchange-CrossTenant-AuthSource: SI2PR06MB5140.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2025 02:15:06.7552
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: B610itaZMR537gBxZ/uCBqeMebezF31jqKvVQMBagSSNVkaktE+Fo8sUO+ooglwKZSgIvGv5t1QbaSFSgkpXvg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR06MB5478
+In-Reply-To: <20250821135049.2010220-9-wangyushan12@huawei.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
+ kwepemq200018.china.huawei.com (7.202.195.108)
 
+On 2025/8/21 21:50, Yushan Wang wrote:
+> The inline path of sysfs should be placed in literal blocks to make
+> documentation look better.
+> 
+> Signed-off-by: Yushan Wang <wangyushan12@huawei.com>
 
-在 2025/8/27 0:31, Lizhi Hou 写道:
->
-> On 8/26/25 00:29, Qianfeng Rong wrote:
->> Change the 'ret' variable from u32 to int to store -EINVAL, reducing
->> potential risks such as incorrect results when comparing 'ret' with
->> error codes.
->
-> Sounds this fixes code issue. Could you add "Fixes" tag?
->
->
+Acked-by: Yicong Yang <yangyicong@hisilicon.com>
 
-The 'ret' variable stores negative error codes directly.  Storing
-error codes in u32 (an unsigned type) causes no runtime issues but is
-stylistically inconsistent and very ugly.
-
-Logical errors with 'ret' only occur when it is compared against negative
-error codes. For example:
-
-u32 ret = -EINVAL; // ret becomes an extremely large unsigned integer
-
-if (ret == -EINVAL) // This condition will never be true
-
-This patch reduces the likelihood of such issues occurring. Since it does
-not fix an existing bug, I believe there is no need to add a Fixes tag.
-
-Best regards,
-Qianfeng
-
+> ---
+>  Documentation/admin-guide/perf/hisi-pmu.rst | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/admin-guide/perf/hisi-pmu.rst b/Documentation/admin-guide/perf/hisi-pmu.rst
+> index 48992a0b8e94..a307bce2f5c5 100644
+> --- a/Documentation/admin-guide/perf/hisi-pmu.rst
+> +++ b/Documentation/admin-guide/perf/hisi-pmu.rst
+> @@ -18,9 +18,10 @@ HiSilicon SoC uncore PMU driver
+>  Each device PMU has separate registers for event counting, control and
+>  interrupt, and the PMU driver shall register perf PMU drivers like L3C,
+>  HHA and DDRC etc. The available events and configuration options shall
+> -be described in the sysfs, see:
+> +be described in the sysfs, see::
+> +
+> +/sys/bus/event_source/devices/hisi_sccl{X}_<l3c{Y}/hha{Y}/ddrc{Y}>
+>  
+> -/sys/bus/event_source/devices/hisi_sccl{X}_<l3c{Y}/hha{Y}/ddrc{Y}>.
+>  The "perf list" command shall list the available events from sysfs.
+>  
+>  Each L3C, HHA and DDRC is registered as a separate PMU with perf. The PMU
+> 
 
