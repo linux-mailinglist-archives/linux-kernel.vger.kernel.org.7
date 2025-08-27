@@ -1,412 +1,291 @@
-Return-Path: <linux-kernel+bounces-788703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AB18B388EC
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 19:53:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F2DBFB388F4
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 19:55:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33A7E6840D2
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 17:53:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 937D7685FF9
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 17:55:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D88492C3252;
-	Wed, 27 Aug 2025 17:53:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23DFE2D739B;
+	Wed, 27 Aug 2025 17:55:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="LCsWkMSc"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="g827RGIi"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2080.outbound.protection.outlook.com [40.107.93.80])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D099221FF55;
-	Wed, 27 Aug 2025 17:53:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 813161D63E4;
+	Wed, 27 Aug 2025 17:55:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.80
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756317200; cv=pass; b=MseMvGGxFLJGjreyyAXBDZxPEcf4QOy8bNn0L7/Tu00+hHGocnhSMr0Wl4uVRPDkXFQiIunU6O2s9My0Ium6yq5YF6NyKnvFoCBoEWKg1RH5SDWRrK52/6bLSiNrnM8C9Vrw+8byvPLjdekmv1KmfZsqG7kSWjq8ZqzsaR4U9Ww=
+	t=1756317315; cv=fail; b=qC28kTbofT0db8i8vcl3mgK9VcVmVhy9w/N1+dABjrdYJpd8LbIl9z0EV527HBGB91qMZZogiMX7HhymEIkhTZCoh5gZBUOq9Gsz5+WSTa7vlh7T6/Y92cvQ0PEpwgoZ/vuUOTdy3NKBe6BL1l7gZm9taGSHNADcetOC644RlOs=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756317200; c=relaxed/simple;
-	bh=FiAVdmpAd56Eo8yeLlOaWldznsJoTafgRx9VVj0nzMk=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=gAkqpiZTlSeZWqv5rl8qdfeOBqXELtOpge/Mb0Ad/U5jnQ3bzcCBXVH2WaiAethLkL+qmuAmQaumNjnf9UQWjZDxEKn20XVPDkvXRUjpySnM41LW9I2Xx8MpUM50zO+fIDY0K+yLcGXlVZMJP5NkttcjxEiUDfBQGM7Mksf0yvc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=LCsWkMSc; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1756317177; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=SFVlvlMoLih63YeCfRuKzBIkV+AUuk/QLm3VgUpXJWAmHCRq7QHlFjsEt9J3fmt0Mv7m/nhASCQDyFAjI2Afvxr8VLSEeU9HY5TLJs6mroKycJ2HwdtzLPYBNmcDt9EcymDCmURLbhg4VgJQZGM+aGeE547A3TESt8yd7ytoTUg=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1756317177; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=AnFhkcCNOfTOWgQFBiJ5K7cFdzpqzmzqvFP4oFM1Njs=; 
-	b=EIdlqEWLwRWlfX6AsZ7mJCs64+vGlYGTRREf8MlOZlDna7kuXMOi19FdBNRe9xbD0fBMKWki7bwE0vExh9d5BDeD07iHnA8F6HcKGc82E5qUtFPjdQyt4c8c4pknyTyhgslMxnZZDr14Zh4UqBk5aOtzT3kub5AgMy6zoczYA7A=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1756317177;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=AnFhkcCNOfTOWgQFBiJ5K7cFdzpqzmzqvFP4oFM1Njs=;
-	b=LCsWkMScpLH2aCcZAv0dbhhdFX8o5mDYOByE4xE4QNiN6Irwmw7b4dmM9+mwy2y0
-	XMiVHNlULO7v1oSprH+eQgDwfgi3/54ZrF6FFYHxZBxW6kIZ+X22W4Ol6OVAv2R8n9E
-	MGNfIEJ9ow4PhtsYGLWU4xQf1rMpUdXC4brKvC6M=
-Received: by mx.zohomail.com with SMTPS id 1756317173875832.4987805869289;
-	Wed, 27 Aug 2025 10:52:53 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	s=arc-20240116; t=1756317315; c=relaxed/simple;
+	bh=WVzOavFzuQhQgkJkJ1gKmyOqgZtfE8KAJFIv4l/o5xk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=tf97QHa1IOhlHUu1fB0dWlnFV6heLoqqxJBaXVMMWqdnL9BksmqwOAhP8HgslJ6T3blAfjrW0IPB8aYslQn7mfhugdUMXfY0vTtZJVzvD7/GjFrGYXMx/moRMC1we8q8/qt6Tfpsvs6KfQNyHxWb+1i144d4pZYS5EVzrX8kBK4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=g827RGIi; arc=fail smtp.client-ip=40.107.93.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=RjDSF89s8YNMUj0dWtmynEZbC7gAJ4GCh7UAvOuIigaoEbKpauUhjclW3WZICGQtIDz2rJTe4lQ8WGHKvorya7cQqOhSNRv78ow4WImkw5x2BNl1+JQ6BgyOcZ2Nl0pZoHt6IDuDEc4EvHGlaRKUTDnJCFytxtO3X89ODNk05I3bT73HCcDAh3S3Uq0FlwcL19P/l0WJBzml/eC8ICtgXr/HmrbDIvGGRT5mtkVSQBuuma3OHWUTvQcZ0eZkFeJx1NgJz7yYG3SEvKaMz37vlwQ52om1/Cxz7oLh+2Rm69SHMYMEalhWGSmb+cr4ozKqKVe0i6NAu+D2VZOag34l1w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=8ftMmDOFMjejJvDjBTrKWY03TXiMqFTDHYCYDhcRj58=;
+ b=vkFEUdIKSdDdIyFT6Pz5rLL+mcJ8Gl9LKoAnDEBM/8DAqsvHJUZyPq/F20b/zmdtT5bjZejSEo+V7jJdzhXjY4tUYRDxZhgYqYeSlFOP50C0KCbmRcrpyBLCam41ztiBs5Bb2umegfDlhxoCx7R4OzQ6wxB4uESLLQdSHU0wjBfV6xmvmP5baz0w3vd63t2i/dStMRSnmjWvaEKTlAPDo5wvlU1ehabNT2tRtIhedpgVBdQnTDNmp9o1xxXvrY3m9tjH0nCaIIZhDEKnhcEwGFJzIxFC+oaTXz69HgJ1+zV8BOc5FjydTt+kad9JWLESuVnGuCqCfo3+ZfBf0fh8Bg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=infradead.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=8ftMmDOFMjejJvDjBTrKWY03TXiMqFTDHYCYDhcRj58=;
+ b=g827RGIiwqJFVqmLBtC2Ya0/nBa4yymvYeW2hAtnYkEzJRgYVH+ZaPXMXFS/JUrDU40Emsm/zUBoAoM8dZDxKgJJkDsO7v2EaFKT+1PsTSQZHcGK79EiYKZ0n+MQ5NBNBJC8CaOoH0aKdxOAtURjWI79KeiqbEb6syNYmeIN2Fk=
+Received: from SJ2PR07CA0008.namprd07.prod.outlook.com (2603:10b6:a03:505::8)
+ by DM4PR12MB6349.namprd12.prod.outlook.com (2603:10b6:8:a4::8) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9052.24; Wed, 27 Aug 2025 17:55:10 +0000
+Received: from SJ1PEPF000023CE.namprd02.prod.outlook.com
+ (2603:10b6:a03:505:cafe::78) by SJ2PR07CA0008.outlook.office365.com
+ (2603:10b6:a03:505::8) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9073.16 via Frontend Transport; Wed,
+ 27 Aug 2025 17:55:10 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ SJ1PEPF000023CE.mail.protection.outlook.com (10.167.244.10) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.9052.8 via Frontend Transport; Wed, 27 Aug 2025 17:55:10 +0000
+Received: from kaveri.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 27 Aug
+ 2025 12:54:45 -0500
+From: Shivank Garg <shivankg@amd.com>
+To: <willy@infradead.org>, <akpm@linux-foundation.org>, <david@redhat.com>,
+	<pbonzini@redhat.com>, <shuah@kernel.org>, <seanjc@google.com>,
+	<vbabka@suse.cz>
+CC: <brauner@kernel.org>, <viro@zeniv.linux.org.uk>, <dsterba@suse.com>,
+	<xiang@kernel.org>, <chao@kernel.org>, <jaegeuk@kernel.org>, <clm@fb.com>,
+	<josef@toxicpanda.com>, <kent.overstreet@linux.dev>, <zbestahu@gmail.com>,
+	<jefflexu@linux.alibaba.com>, <dhavale@google.com>, <lihongbo22@huawei.com>,
+	<lorenzo.stoakes@oracle.com>, <Liam.Howlett@oracle.com>, <rppt@kernel.org>,
+	<surenb@google.com>, <mhocko@suse.com>, <ziy@nvidia.com>,
+	<matthew.brost@intel.com>, <joshua.hahnjy@gmail.com>, <rakie.kim@sk.com>,
+	<byungchul@sk.com>, <gourry@gourry.net>, <ying.huang@linux.alibaba.com>,
+	<apopple@nvidia.com>, <tabba@google.com>, <ackerleytng@google.com>,
+	<shivankg@amd.com>, <paul@paul-moore.com>, <jmorris@namei.org>,
+	<serge@hallyn.com>, <pvorel@suse.cz>, <bfoster@redhat.com>,
+	<vannapurve@google.com>, <chao.gao@intel.com>, <bharata@amd.com>,
+	<nikunj@amd.com>, <michael.day@amd.com>, <shdhiman@amd.com>,
+	<yan.y.zhao@intel.com>, <Neeraj.Upadhyay@amd.com>, <thomas.lendacky@amd.com>,
+	<michael.roth@amd.com>, <aik@amd.com>, <jgg@nvidia.com>,
+	<kalyazin@amazon.com>, <peterx@redhat.com>, <jack@suse.cz>,
+	<hch@infradead.org>, <cgzones@googlemail.com>, <ira.weiny@intel.com>,
+	<rientjes@google.com>, <roypat@amazon.co.uk>, <chao.p.peng@intel.com>,
+	<amit@infradead.org>, <ddutile@redhat.com>, <dan.j.williams@intel.com>,
+	<ashish.kalra@amd.com>, <gshan@redhat.com>, <jgowans@amazon.com>,
+	<pankaj.gupta@amd.com>, <papaluri@amd.com>, <yuzhao@google.com>,
+	<suzuki.poulose@arm.com>, <quic_eberman@quicinc.com>,
+	<linux-bcachefs@vger.kernel.org>, <linux-btrfs@vger.kernel.org>,
+	<linux-erofs@lists.ozlabs.org>, <linux-f2fs-devel@lists.sourceforge.net>,
+	<linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>,
+	<linux-kernel@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
+	<kvm@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+	<linux-coco@lists.linux.dev>
+Subject: [PATCH kvm-next V11 0/7] Add NUMA mempolicy support for KVM guest-memfd
+Date: Wed, 27 Aug 2025 17:52:41 +0000
+Message-ID: <20250827175247.83322-2-shivankg@amd.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
-Subject: Re: [PATCH v6 15/18] rust: block: add `GenDisk` private data support
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <20250822-rnull-up-v6-16-v6-15-ec65006e2f07@kernel.org>
-Date: Wed, 27 Aug 2025 14:52:37 -0300
-Cc: Boqun Feng <boqun.feng@gmail.com>,
- Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <lossin@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>,
- Danilo Krummrich <dakr@kernel.org>,
- Jens Axboe <axboe@kernel.dk>,
- Breno Leitao <leitao@debian.org>,
- linux-block@vger.kernel.org,
- rust-for-linux@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <F5F77953-D3B2-4A03-BEFF-D937A01A645E@collabora.com>
-References: <20250822-rnull-up-v6-16-v6-0-ec65006e2f07@kernel.org>
- <20250822-rnull-up-v6-16-v6-15-ec65006e2f07@kernel.org>
-To: Andreas Hindborg <a.hindborg@kernel.org>
-X-Mailer: Apple Mail (2.3826.700.81)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PEPF000023CE:EE_|DM4PR12MB6349:EE_
+X-MS-Office365-Filtering-Correlation-Id: be4b3d7d-3382-48fd-86b0-08dde592dd8d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|1800799024|7416014|376014|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?ykdI7UKSSiagd9uFHC0kt0JYKIN8kp69uR7ogMpa28ypxL1LcJ8UT7kDEFvE?=
+ =?us-ascii?Q?4CqyEKW8jlNCszRA12tXqJQAtDx/mQpv1zzWZgkVJcupiry9MZpPOmeSqNRC?=
+ =?us-ascii?Q?JOiQvBQxzgKK04lgeMjYNZV0/HWzh54V26F/DViE1AEBHQ2Yc/N4S2EM7oM0?=
+ =?us-ascii?Q?kCuh/4ZQ5BssUiHo0vsGeC90vcje9zcHaAtrgFQGLGrKCuM9tNSRPh1kIwlE?=
+ =?us-ascii?Q?MhJ3PDE8mvCw9rp26Dhi8vz1jtI04jsqDfNPlm6y6f7XkdQhz/lPWZieMbvQ?=
+ =?us-ascii?Q?rQXK1alrrDKHnT9yfSZ73rN/LO37W+DtnhIDMH4OApUP92KXskB9FIy60X63?=
+ =?us-ascii?Q?+LlKRPwrHiArH/ZdcEiXBy17PDlTnj1IVXZ8btkSGHUXbg3QjiclIGc4tNC7?=
+ =?us-ascii?Q?B26OEtotJxXZ3LLO4o6P1OKokagrGJBhNg7vXYeb8ZaVrvvJzX5KDlYvttiL?=
+ =?us-ascii?Q?zBAJH7jxJUC1NiieYpMhXgSgzyD0BP5zSwMF9WdB6qAbMQWImGJedhu1+06F?=
+ =?us-ascii?Q?sAFcXBuYHnTXuWp0pkyOCtq1t1jA9gw+oVduO43TdKAo3SEZ/A+wsjmhAeui?=
+ =?us-ascii?Q?DLCPsLhh1pSjCJ7yapwPF/hPaKi1Io3CFbfsXFXYsMZJug6MdB1aaBRYj8GS?=
+ =?us-ascii?Q?jko0K0NQWyXpP1g0jkEqNWa5Flp74tCvHQQ+m9gPiE/7yT4DF3sGU9H+Q/AU?=
+ =?us-ascii?Q?Fy4T1Vyp4RYY4r9kZklgeHTvLnNCUCcuhAfMAg2bH6Sn7ZUhhlfk6DhBEVaN?=
+ =?us-ascii?Q?Zwft3VzPCzLccZA2j9w85WImgklTyDCiGJh9FvWEQ6/7dqSIyYBdejxFMCG6?=
+ =?us-ascii?Q?ZrwWrGbjNr0lVwUG7TtQs8mBTR9/ISAFahzmKbfdBFvzh715WYk6QL9FRYNv?=
+ =?us-ascii?Q?hvBOjpk4Y4va4tE/okXT9rR3Hzu0YRRar4WYdB11b5RPx8cF0YI+udop0TlX?=
+ =?us-ascii?Q?fGcJyLkqSSOl0mYAMAaCCzD83BoMH+ppm2BoJaGe8DAzSyFno0ZQNY4CWOdD?=
+ =?us-ascii?Q?cjhvUd/NlzdMJ25r3Kc0UlowwLxosN4xl7uPxAstWg3AAEu7ZJTgEdOH/W0W?=
+ =?us-ascii?Q?F5VLYaYbQ2aQWY3aF/g8Mgsk05n3WmThc4LQsHSoxm+UFUGQOE93s+JtZczp?=
+ =?us-ascii?Q?SgaUzt7b5t+RCrEQv3g8kUxq0uyc1rg+6LMi2slQId9nJxXOghuutWPOe5ej?=
+ =?us-ascii?Q?SqD1+Ztzu/BkwTbQHjLTqUB6agWL5a1knyyzcmTxBf/ONOuBcDCxD3iPMG05?=
+ =?us-ascii?Q?Er1xrQG6J4TDXFvIZjyo5CkSQypOhxooVWGPW19NLvEcUZ9hCvExUr8gP6Dj?=
+ =?us-ascii?Q?Oghqrm70i3HBXVgShnhKWGCYc7omzF+mB5OWdzmtr9KC8sy1mAm9HDfnEToA?=
+ =?us-ascii?Q?OIpDjBBDqFBFLC469nmTMH26ShLmjqYEL3+ko6stnFB90hwMSIMy9gQmF6bU?=
+ =?us-ascii?Q?lCUbpehJHJcU5NQXadXJY95ni2+Co3LzMzlolhfOHHOG+vcZoKggAw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(7416014)(376014)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2025 17:55:10.0405
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: be4b3d7d-3382-48fd-86b0-08dde592dd8d
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ1PEPF000023CE.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6349
 
+This series introduces NUMA-aware memory placement support for KVM guests
+with guest_memfd memory backends. It builds upon Fuad Tabba's work (V17)
+that enabled host-mapping for guest_memfd memory [1] and can be applied
+directly applied on KVM tree [2] (branch kvm-next, base commit: a6ad5413,
+Merge branch 'guest-memfd-mmap' into HEAD)
 
+== Background == 
+KVM's guest-memfd memory backend currently lacks support for NUMA policy
+enforcement, causing guest memory allocations to be distributed across host
+nodes  according to kernel's default behavior, irrespective of any policy
+specified by the VMM. This limitation arises because conventional userspace
+NUMA control mechanisms like mbind(2) don't work since the memory isn't
+directly mapped to userspace when allocations occur.
+Fuad's work [1] provides the necessary mmap capability, and this series
+leverages it to enable mbind(2).
 
-> On 22 Aug 2025, at 09:14, Andreas Hindborg <a.hindborg@kernel.org> =
-wrote:
->=20
-> Allow users of the rust block device driver API to install private =
-data in
-> the `GenDisk` structure.
->=20
-> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
-> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
-> ---
-> drivers/block/rnull/rnull.rs       |  8 ++++---
-> rust/kernel/block/mq.rs            |  7 +++---
-> rust/kernel/block/mq/gen_disk.rs   | 32 ++++++++++++++++++++++----
-> rust/kernel/block/mq/operations.rs | 46 =
-++++++++++++++++++++++++++++++--------
-> 4 files changed, 74 insertions(+), 19 deletions(-)
->=20
-> diff --git a/drivers/block/rnull/rnull.rs =
-b/drivers/block/rnull/rnull.rs
-> index 8690ff5f974f..8255236bc550 100644
-> --- a/drivers/block/rnull/rnull.rs
-> +++ b/drivers/block/rnull/rnull.rs
-> @@ -61,14 +61,16 @@ fn new(
->             .logical_block_size(block_size)?
->             .physical_block_size(block_size)?
->             .rotational(rotational)
-> -            .build(fmt!("{}", name.to_str()?), tagset)
-> +            .build(fmt!("{}", name.to_str()?), tagset, ())
->     }
-> }
->=20
-> #[vtable]
-> impl Operations for NullBlkDevice {
-> +    type QueueData =3D ();
-> +
->     #[inline(always)]
-> -    fn queue_rq(rq: ARef<mq::Request<Self>>, _is_last: bool) -> =
-Result {
-> +    fn queue_rq(_queue_data: (), rq: ARef<mq::Request<Self>>, =
-_is_last: bool) -> Result {
->         mq::Request::end_ok(rq)
->             .map_err(|_e| kernel::error::code::EIO)
->             // We take no refcounts on the request, so we expect to be =
-able to
-> @@ -79,5 +81,5 @@ fn queue_rq(rq: ARef<mq::Request<Self>>, _is_last: =
-bool) -> Result {
->         Ok(())
->     }
->=20
-> -    fn commit_rqs() {}
-> +    fn commit_rqs(_queue_data: ()) {}
-> }
-> diff --git a/rust/kernel/block/mq.rs b/rust/kernel/block/mq.rs
-> index 98fa0d6bc8f7..6e546f4f3d1c 100644
-> --- a/rust/kernel/block/mq.rs
-> +++ b/rust/kernel/block/mq.rs
-> @@ -69,20 +69,21 @@
-> //!
-> //! #[vtable]
-> //! impl Operations for MyBlkDevice {
-> +//!     type QueueData =3D ();
-> //!
-> -//!     fn queue_rq(rq: ARef<Request<Self>>, _is_last: bool) -> =
-Result {
-> +//!     fn queue_rq(_queue_data: (), rq: ARef<Request<Self>>, =
-_is_last: bool) -> Result {
-> //!         Request::end_ok(rq);
-> //!         Ok(())
-> //!     }
-> //!
-> -//!     fn commit_rqs() {}
-> +//!     fn commit_rqs(_queue_data: ()) {}
-> //! }
-> //!
-> //! let tagset: Arc<TagSet<MyBlkDevice>> =3D
-> //!     Arc::pin_init(TagSet::new(1, 256, 1), flags::GFP_KERNEL)?;
-> //! let mut disk =3D gen_disk::GenDiskBuilder::new()
-> //!     .capacity_sectors(4096)
-> -//!     .build(format_args!("myblk"), tagset)?;
-> +//!     .build(format_args!("myblk"), tagset, ())?;
-> //!
-> //! # Ok::<(), kernel::error::Error>(())
-> //! ```
-> diff --git a/rust/kernel/block/mq/gen_disk.rs =
-b/rust/kernel/block/mq/gen_disk.rs
-> index 6b1b846874db..46ec80269970 100644
-> --- a/rust/kernel/block/mq/gen_disk.rs
-> +++ b/rust/kernel/block/mq/gen_disk.rs
-> @@ -13,6 +13,7 @@
->     static_lock_class,
->     str::NullTerminatedFormatter,
->     sync::Arc,
-> +    types::{ForeignOwnable, ScopeGuard},
-> };
-> use core::fmt::{self, Write};
->=20
-> @@ -98,7 +99,14 @@ pub fn build<T: Operations>(
->         self,
->         name: fmt::Arguments<'_>,
->         tagset: Arc<TagSet<T>>,
-> +        queue_data: T::QueueData,
->     ) -> Result<GenDisk<T>> {
-> +        let data =3D queue_data.into_foreign();
-> +        let recover_data =3D ScopeGuard::new(|| {
-> +            // SAFETY: T::QueueData was created by the call to =
-`into_foreign()` above
-> +            drop(unsafe { T::QueueData::from_foreign(data) });
-> +        });
-> +
->         // SAFETY: `bindings::queue_limits` contain only fields that =
-are valid when zeroed.
->         let mut lim: bindings::queue_limits =3D unsafe { =
-core::mem::zeroed() };
->=20
-> @@ -113,7 +121,7 @@ pub fn build<T: Operations>(
->             bindings::__blk_mq_alloc_disk(
->                 tagset.raw_tag_set(),
->                 &mut lim,
-> -                core::ptr::null_mut(),
-> +                data,
->                 static_lock_class!().as_ptr(),
->             )
->         })?;
-> @@ -167,8 +175,12 @@ pub fn build<T: Operations>(
->             },
->         )?;
->=20
-> +        recover_data.dismiss();
-> +
->         // INVARIANT: `gendisk` was initialized above.
->         // INVARIANT: `gendisk` was added to the VFS via =
-`device_add_disk` above.
-> +        // INVARIANT: `gendisk.queue.queue_data` is set to `data` in =
-the call to
-> +        // `__blk_mq_alloc_disk` above.
->         Ok(GenDisk {
->             _tagset: tagset,
->             gendisk,
-> @@ -180,9 +192,10 @@ pub fn build<T: Operations>(
-> ///
-> /// # Invariants
-> ///
-> -/// - `gendisk` must always point to an initialized and valid `struct =
-gendisk`.
-> -/// - `gendisk` was added to the VFS through a call to
-> -///   `bindings::device_add_disk`.
-> +///  - `gendisk` must always point to an initialized and valid =
-`struct gendisk`.
-> +///  - `gendisk` was added to the VFS through a call to
-> +///    `bindings::device_add_disk`.
-> +///  - `self.gendisk.queue.queuedata` is initialized by a call to =
-`ForeignOwnable::into_foreign`.
-> pub struct GenDisk<T: Operations> {
->     _tagset: Arc<TagSet<T>>,
->     gendisk: *mut bindings::gendisk,
-> @@ -194,9 +207,20 @@ unsafe impl<T: Operations + Send> Send for =
-GenDisk<T> {}
->=20
-> impl<T: Operations> Drop for GenDisk<T> {
->     fn drop(&mut self) {
-> +        // SAFETY: By type invariant of `Self`, `self.gendisk` points =
-to a valid
-> +        // and initialized instance of `struct gendisk`, and, =
-`queuedata` was
-> +        // initialized with the result of a call to
-> +        // `ForeignOwnable::into_foreign`.
-> +        let queue_data =3D unsafe { =
-(*(*self.gendisk).queue).queuedata };
-> +
->         // SAFETY: By type invariant, `self.gendisk` points to a valid =
-and
->         // initialized instance of `struct gendisk`, and it was =
-previously added
->         // to the VFS.
->         unsafe { bindings::del_gendisk(self.gendisk) };
-> +
-> +        // SAFETY: `queue.queuedata` was created by =
-`GenDiskBuilder::build` with
-> +        // a call to `ForeignOwnable::into_foreign` to create =
-`queuedata`.
-> +        // `ForeignOwnable::from_foreign` is only called here.
-> +        drop(unsafe { T::QueueData::from_foreign(queue_data) });
->     }
-> }
-> diff --git a/rust/kernel/block/mq/operations.rs =
-b/rust/kernel/block/mq/operations.rs
-> index c2b98f507bcb..6fb256f55acc 100644
-> --- a/rust/kernel/block/mq/operations.rs
-> +++ b/rust/kernel/block/mq/operations.rs
-> @@ -6,14 +6,15 @@
->=20
-> use crate::{
->     bindings,
-> -    block::mq::request::RequestDataWrapper,
-> -    block::mq::Request,
-> +    block::mq::{request::RequestDataWrapper, Request},
->     error::{from_result, Result},
->     prelude::*,
-> -    types::ARef,
-> +    types::{ARef, ForeignOwnable},
-> };
-> use core::{marker::PhantomData, sync::atomic::AtomicU64, =
-sync::atomic::Ordering};
->=20
-> +type ForeignBorrowed<'a, T> =3D <T as ForeignOwnable>::Borrowed<'a>;
-> +
-> /// Implement this trait to interface blk-mq as block devices.
-> ///
-> /// To implement a block device driver, implement this trait as =
-described in the
-> @@ -26,12 +27,20 @@
-> /// [module level documentation]: kernel::block::mq
-> #[macros::vtable]
-> pub trait Operations: Sized {
-> +    /// Data associated with the `struct request_queue` that is =
-allocated for
-> +    /// the `GenDisk` associated with this `Operations` =
-implementation.
-> +    type QueueData: ForeignOwnable;
-> +
->     /// Called by the kernel to queue a request with the driver. If =
-`is_last` is
->     /// `false`, the driver is allowed to defer committing the =
-request.
-> -    fn queue_rq(rq: ARef<Request<Self>>, is_last: bool) -> Result;
-> +    fn queue_rq(
-> +        queue_data: ForeignBorrowed<'_, Self::QueueData>,
-> +        rq: ARef<Request<Self>>,
-> +        is_last: bool,
-> +    ) -> Result;
->=20
->     /// Called by the kernel to indicate that queued requests should =
-be submitted.
-> -    fn commit_rqs();
-> +    fn commit_rqs(queue_data: ForeignBorrowed<'_, Self::QueueData>);
->=20
->     /// Called by the kernel to poll the device for completed =
-requests. Only
->     /// used for poll queues.
-> @@ -70,7 +79,7 @@ impl<T: Operations> OperationsVTable<T> {
->     ///   promise to not access the request until the driver calls
->     ///   `bindings::blk_mq_end_request` for the request.
->     unsafe extern "C" fn queue_rq_callback(
-> -        _hctx: *mut bindings::blk_mq_hw_ctx,
-> +        hctx: *mut bindings::blk_mq_hw_ctx,
->         bd: *const bindings::blk_mq_queue_data,
->     ) -> bindings::blk_status_t {
->         // SAFETY: `bd.rq` is valid as required by the safety =
-requirement for
-> @@ -88,10 +97,20 @@ impl<T: Operations> OperationsVTable<T> {
->         //    reference counted by `ARef` until then.
->         let rq =3D unsafe { Request::aref_from_raw((*bd).rq) };
->=20
-> +        // SAFETY: `hctx` is valid as required by this function.
-> +        let queue_data =3D unsafe { (*(*hctx).queue).queuedata };
-> +
-> +        // SAFETY: `queue.queuedata` was created by =
-`GenDisk::try_new()` with a
+== Implementation ==
+This series implements proper NUMA policy support for guest-memfd by:
 
-isn=E2=80=99t this set on build() ?
+1. Adding mempolicy-aware allocation APIs to the filemap layer.
+2. Introducing custom inodes (via a dedicated slab-allocated inode cache,
+   kvm_gmem_inode_info) to store NUMA policy and metadata for guest memory.
+3. Implementing get/set_policy vm_ops in guest_memfd to support NUMA
+   policy.
 
-> +        // call to `ForeignOwnable::into_pointer()` to create =
-`queuedata`.
+With these changes, VMMs can now control guest memory placement by mapping
+guest_memfd file descriptor and using mbind(2) to specify:
+- Policy modes: default, bind, interleave, or preferred
+- Host NUMA nodes: List of target nodes for memory allocation
 
-into_pointer() ?
+These Policies affect only future allocations and do not migrate existing
+memory. This matches mbind(2)'s default behavior which affects only new
+allocations unless overridden with MPOL_MF_MOVE/MPOL_MF_MOVE_ALL flags (Not
+supported for guest_memfd as it is unmovable by design).
 
-> +        // `ForeignOwnable::from_foreign()` is only called when the =
-tagset is
-> +        // dropped, which happens after we are dropped.
-> +        let queue_data =3D unsafe { T::QueueData::borrow(queue_data) =
-};
-> +
->         // SAFETY: We have exclusive access and we just set the =
-refcount above.
->         unsafe { Request::start_unchecked(&rq) };
->=20
->         let ret =3D T::queue_rq(
-> +            queue_data,
->             rq,
->             // SAFETY: `bd` is valid as required by the safety =
-requirement for
->             // this function.
-> @@ -110,9 +129,18 @@ impl<T: Operations> OperationsVTable<T> {
->     ///
->     /// # Safety
->     ///
-> -    /// This function may only be called by blk-mq C infrastructure.
-> -    unsafe extern "C" fn commit_rqs_callback(_hctx: *mut =
-bindings::blk_mq_hw_ctx) {
-> -        T::commit_rqs()
-> +    /// This function may only be called by blk-mq C infrastructure. =
-The caller
-> +    /// must ensure that `hctx` is valid.
-> +    unsafe extern "C" fn commit_rqs_callback(hctx: *mut =
-bindings::blk_mq_hw_ctx) {
-> +        // SAFETY: `hctx` is valid as required by this function.
-> +        let queue_data =3D unsafe { (*(*hctx).queue).queuedata };
-> +
-> +        // SAFETY: `queue.queuedata` was created by =
-`GenDisk::try_new()` with a
-> +        // call to `ForeignOwnable::into_pointer()` to create =
-`queuedata`.
+== Upstream Plan ==
+Phased approach as per David's guest_memfd extension overview [3] and
+community calls [4]:
 
-into_foreign()?
+Phase 1 (this series):
+1. Focuses on shared guest_memfd support (non-CoCo VMs).
+2. Builds on Fuad's host-mapping work [1].
 
-> +        // `ForeignOwnable::from_foreign()` is only called when the =
-tagset is
-> +        // dropped, which happens after we are dropped.
-> +        let queue_data =3D unsafe { T::QueueData::borrow(queue_data) =
-};
-> +        T::commit_rqs(queue_data)
->     }
->=20
->     /// This function is called by the C kernel. It is not currently
->=20
-> --=20
-> 2.47.2
->=20
->=20
->=20
+Phase2 (future work):
+1. NUMA support for private guest_memfd (CoCo VMs).
+2. Depends on SNP in-place conversion support [5].
 
-Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>
+This series provides a clean integration path for NUMA-aware memory
+management for guest_memfd and lays the groundwork for future confidential
+computing NUMA capabilities.
+
+Thanks,
+Shivank
+
+== Changelog ==
+
+- v1,v2: Extended the KVM_CREATE_GUEST_MEMFD IOCTL to pass mempolicy.
+- v3: Introduced fbind() syscall for VMM memory-placement configuration.
+- v4-v6: Current approach using shared_policy support and vm_ops (based on
+         suggestions from David [6] and guest_memfd bi-weekly upstream
+         call discussion [7]).
+- v7: Use inodes to store NUMA policy instead of file [8].
+- v8: Rebase on top of Fuad's V12: Host mmaping for guest_memfd memory.
+- v9: Rebase on top of Fuad's V13 and incorporate review comments
+- V10: Rebase on top of Fuad's V17. Use latest guest_memfd inode patch
+       from Ackerley (with David's review comments). Use newer kmem_cache_create()
+       API variant with arg parameter (Vlastimil)
+- V11: Rebase on kvm-next, remove RFC tag, use Ackerley's latest patch
+       and fix a rcu race bug during kvm module unload.
+
+[1] https://lore.kernel.org/all/20250729225455.670324-1-seanjc@google.com
+[2] https://git.kernel.org/pub/scm/virt/kvm/kvm.git/log/?h=next 
+[3] https://lore.kernel.org/all/c1c9591d-218a-495c-957b-ba356c8f8e09@redhat.com
+[4] https://docs.google.com/document/d/1M6766BzdY1Lhk7LiR5IqVR8B8mG3cr-cxTxOrAosPOk/edit?tab=t.0#heading=h.svcbod20b5ur
+[5] https://lore.kernel.org/all/20250613005400.3694904-1-michael.roth@amd.com
+[6] https://lore.kernel.org/all/6fbef654-36e2-4be5-906e-2a648a845278@redhat.com
+[7] https://lore.kernel.org/all/2b77e055-98ac-43a1-a7ad-9f9065d7f38f@amd.com
+[8] https://lore.kernel.org/all/diqzbjumm167.fsf@ackerleytng-ctop.c.googlers.com
+
+Ackerley Tng (1):
+  KVM: guest_memfd: Use guest mem inodes instead of anonymous inodes
+
+Matthew Wilcox (Oracle) (2):
+  mm/filemap: Add NUMA mempolicy support to filemap_alloc_folio()
+  mm/filemap: Extend __filemap_get_folio() to support NUMA memory
+    policies
+
+Shivank Garg (4):
+  mm/mempolicy: Export memory policy symbols
+  KVM: guest_memfd: Add slab-allocated inode cache
+  KVM: guest_memfd: Enforce NUMA mempolicy using shared policy
+  KVM: guest_memfd: selftests: Add tests for mmap and NUMA policy
+    support
+
+ fs/bcachefs/fs-io-buffered.c                  |   2 +-
+ fs/btrfs/compression.c                        |   4 +-
+ fs/btrfs/verity.c                             |   2 +-
+ fs/erofs/zdata.c                              |   2 +-
+ fs/f2fs/compress.c                            |   2 +-
+ include/linux/pagemap.h                       |  18 +-
+ include/uapi/linux/magic.h                    |   1 +
+ mm/filemap.c                                  |  23 +-
+ mm/mempolicy.c                                |   6 +
+ mm/readahead.c                                |   2 +-
+ tools/testing/selftests/kvm/Makefile.kvm      |   1 +
+ .../testing/selftests/kvm/guest_memfd_test.c  | 121 ++++++++
+ virt/kvm/guest_memfd.c                        | 262 ++++++++++++++++--
+ virt/kvm/kvm_main.c                           |   7 +-
+ virt/kvm/kvm_mm.h                             |   9 +-
+ 15 files changed, 412 insertions(+), 50 deletions(-)
+
+-- 
+2.43.0
+
+---
+== Earlier Postings ==
+v10: https://lore.kernel.org/all/20250811090605.16057-2-shivankg@amd.com  
+v9: https://lore.kernel.org/all/20250713174339.13981-2-shivankg@amd.com
+v8: https://lore.kernel.org/all/20250618112935.7629-1-shivankg@amd.com
+v7: https://lore.kernel.org/all/20250408112402.181574-1-shivankg@amd.com
+v6: https://lore.kernel.org/all/20250226082549.6034-1-shivankg@amd.com
+v5: https://lore.kernel.org/all/20250219101559.414878-1-shivankg@amd.com
+v4: https://lore.kernel.org/all/20250210063227.41125-1-shivankg@amd.com
+v3: https://lore.kernel.org/all/20241105164549.154700-1-shivankg@amd.com
+v2: https://lore.kernel.org/all/20240919094438.10987-1-shivankg@amd.com
+v1: https://lore.kernel.org/all/20240916165743.201087-1-shivankg@amd.com
 
 
