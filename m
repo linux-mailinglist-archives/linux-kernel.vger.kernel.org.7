@@ -1,70 +1,60 @@
-Return-Path: <linux-kernel+bounces-788139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788140-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC626B38037
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 12:46:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10543B3803E
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 12:48:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9431E980BB8
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 10:46:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BBEC9980A39
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 10:48:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2B4834A301;
-	Wed, 27 Aug 2025 10:46:48 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74EAF2853E3;
-	Wed, 27 Aug 2025 10:46:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 325F234A333;
+	Wed, 27 Aug 2025 10:48:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eIN265ez"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 819E81C5496;
+	Wed, 27 Aug 2025 10:48:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756291608; cv=none; b=RRhW/1c95C39oXFEgmvsymxhYTrkM8TLd2zzLr30WDfg/NMaXUwo/4F7Mqw66+KOWxXGdkyNabA+ZN02IToBpBcgsN6BgDt2pEyhZWdFJgS7XJcgA7CWGhINa/r4N6UXDq09h1Vm4O2MOIX3cpLYZwr5cUvU9E6aVXbAjJPkgRw=
+	t=1756291705; cv=none; b=QHkkj9TV8ZdYGTVxSs2GB3/KXF0qFT/5rLrQju2UdfRfxEIxfyN4GN44eBVml08PuULbDAbxfARaFce2HXyAVn7DApR/5LLBzJrnqtLUSeXUUWJZgCt/NfzsY+PD7dbIobEi30KjtFXg66sWogBmIfTQnMZ+GdGXX3x3TQjOUVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756291608; c=relaxed/simple;
-	bh=NEeFWbxSjOhaJkreE/MdcTRInyZBXBYCV9SQqK9qwfs=;
+	s=arc-20240116; t=1756291705; c=relaxed/simple;
+	bh=DMYmWN61KVuMj6xHJA0q9m7MIXo+ETDqqJfxsWK/v8Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bK2B+H0EhiRNZJRW90d5mTY3EwFZGxoK5HQpdAMaxxcD7mPbNyDMxbEMVjCMScJ8+/vhXw/k/6ZviGoblpmOmetnbQEjHrdELJFWoWDVPwnupHxojnHFCX0w9jbcHUvm/ilf85DBg2Crq+M2DOdTIg29kEdSIEHxjQmUTI0ctO4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7A1D71688;
-	Wed, 27 Aug 2025 03:46:37 -0700 (PDT)
-Received: from e133380.arm.com (e133380.arm.com [10.1.197.68])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0753D3F738;
-	Wed, 27 Aug 2025 03:46:39 -0700 (PDT)
-Date: Wed, 27 Aug 2025 11:46:37 +0100
-From: Dave Martin <Dave.Martin@arm.com>
-To: James Morse <james.morse@arm.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-acpi@vger.kernel.org, devicetree@vger.kernel.org,
-	shameerali.kolothum.thodi@huawei.com,
-	D Scott Phillips OS <scott@os.amperecomputing.com>,
-	carl@os.amperecomputing.com, lcherian@marvell.com,
-	bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
-	baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
-	Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
-	dfustini@baylibre.com, amitsinght@marvell.com,
-	David Hildenbrand <david@redhat.com>,
-	Rex Nie <rex.nie@jaguarmicro.com>, Koba Ko <kobak@nvidia.com>,
-	Shanker Donthineni <sdonthineni@nvidia.com>, fenghuay@nvidia.com,
-	baisheng.gao@unisoc.com,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Rob Herring <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
-	Rafael Wysocki <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Hanjun Guo <guohanjun@huawei.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Danilo Krummrich <dakr@kernel.org>
-Subject: Re: [PATCH 02/33] drivers: base: cacheinfo: Add helper to find the
- cache size from cpu+level
-Message-ID: <aK7iDey7LATOXIUb@e133380.arm.com>
-References: <20250822153048.2287-1-james.morse@arm.com>
- <20250822153048.2287-3-james.morse@arm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ci1WY3uqfcOGrGcFVh+4sI4S0BFm341SVCJN+f9dcnw5gPe2CDHqUEpweai/fxmoyfJPG3R9jSzGdfcRSrhxpwPUqdNHFJp2YRUYwmT1wtRwge9I1vvjEUywUVrZldZGIr1QHbohbNLZ4GcirXc5DUDwZd/xDnqncM89OH7L/Wc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eIN265ez; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25E99C4CEEB;
+	Wed, 27 Aug 2025 10:48:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756291705;
+	bh=DMYmWN61KVuMj6xHJA0q9m7MIXo+ETDqqJfxsWK/v8Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eIN265ezV7OiJZQP/8z192KwoDESRoFkVRGNGA9a/STF00PtCzS/5OHXgbs8/YI4k
+	 1j2bJeEK2rotLlJMMzkgAggFhG0pkNrctucTijjgb/mRZER84h5oI2upOK/LuVQhjB
+	 ypFdsAEMranyGAlnpm3nkx193EoYlhjViFh1nbgAtQlni2Jb6BgT6bT1dPQuPspNZd
+	 rG6NmjxasuowJzzKr6QNndOyGsQM4DKTHt4JzwyKU50Nlieb2Ii1X9GVETzxB2zZEM
+	 rncuCk3QASYaan4UHD6pvL+Y41xzTdOWCzEKDzIUdwi+GmBkf1uAPPlG3gdeleKEJP
+	 8HwDep3xAjQzg==
+Date: Wed, 27 Aug 2025 11:48:19 +0100
+From: Simon Horman <horms@kernel.org>
+To: Frederic Weisbecker <frederic@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	David Ahern <dsahern@kernel.org>, Julian Anastasov <ja@ssi.bg>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Pablo Neira Ayuso <pablo@netfilter.org>,
+	Jozsef Kadlecsik <kadlec@netfilter.org>, netdev@vger.kernel.org,
+	lvs-devel@vger.kernel.org, netfilter-devel@vger.kernel.org,
+	coreteam@netfilter.org
+Subject: Re: [PATCH net] ipvs: Fix estimator kthreads preferred affinity
+Message-ID: <20250827104819.GA26074@horms.kernel.org>
+References: <20250729120659.201095-1-frederic@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,64 +63,24 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250822153048.2287-3-james.morse@arm.com>
+In-Reply-To: <20250729120659.201095-1-frederic@kernel.org>
 
-Hi,
-
-On Fri, Aug 22, 2025 at 03:29:43PM +0000, James Morse wrote:
-> MPAM needs to know the size of a cache associated with a particular CPU.
-> The DT/ACPI agnostic way of doing this is to ask cacheinfo.
+On Tue, Jul 29, 2025 at 02:06:59PM +0200, Frederic Weisbecker wrote:
+> The estimator kthreads' affinity are defined by sysctl overwritten
+> preferences and applied through a plain call to the scheduler's affinity
+> API.
 > 
-> Add a helper to do this.
+> However since the introduction of managed kthreads preferred affinity,
+> such a practice shortcuts the kthreads core code which eventually
+> overwrites the target to the default unbound affinity.
 > 
-> Signed-off-by: James Morse <james.morse@arm.com>
+> Fix this with using the appropriate kthread's API which will carry the
+> desired affinity and maintain it across CPU hotplug events and CPU
+> isolation constraints.
 > 
-> ---
-> Changes since v1:
->  * Converted to kdoc.
->  * Simplified helper to use get_cpu_cacheinfo_level().
-> ---
->  include/linux/cacheinfo.h | 15 +++++++++++++++
->  1 file changed, 15 insertions(+)
-> 
-> diff --git a/include/linux/cacheinfo.h b/include/linux/cacheinfo.h
-> index 2dcbb69139e9..e12d6f2c6a57 100644
-> --- a/include/linux/cacheinfo.h
-> +++ b/include/linux/cacheinfo.h
-> @@ -148,6 +148,21 @@ static inline int get_cpu_cacheinfo_id(int cpu, int level)
->  	return ci ? ci->id : -1;
->  }
->  
-> +/**
-> + * get_cpu_cacheinfo_size() - Get the size of the cache.
-> + * @cpu:      The cpu that is associated with the cache.
-> + * @level:    The level of the cache as seen by @cpu.
-> + *
-> + * Callers must hold the cpuhp lock.
-> + * Returns the cache-size on success, or 0 for an error.
-> + */
+> Fixes: d1a89197589c ("kthread: Default affine kthread to its preferred NUMA node")
+> Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
 
-Nit: Maybe use the wording
+Acked-by: Simon Horman <horms@kernel.org>
 
-	cpuhp lock must be held.
-
-in the kerneldoc here, to match the other helpers it sits alongside.
-
-Otherwise, looks reasonable.
-
-> +static inline unsigned int get_cpu_cacheinfo_size(int cpu, int level)
-> +{
-> +	struct cacheinfo *ci = get_cpu_cacheinfo_level(cpu, level);
-> +
-> +	return ci ? ci->size : 0;
-> +}
-> +
-
-Orphaned function?
-
-Can fs/resctrl/rdtgroup.c:rdtgroup_cbm_to_size() be ported to use this?
-If so, this wouldn't just be dead code in this series.
-
-Cheers
----Dave
 
