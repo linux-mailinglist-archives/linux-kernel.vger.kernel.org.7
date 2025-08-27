@@ -1,110 +1,122 @@
-Return-Path: <linux-kernel+bounces-787939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2ACE1B37DD8
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 10:29:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C8E8B37DDA
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 10:30:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 851B11B63F6B
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 08:30:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 740FF460BFB
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 08:30:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91310335BCF;
-	Wed, 27 Aug 2025 08:29:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2F2B338F50;
+	Wed, 27 Aug 2025 08:30:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ATOAo0ZM"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Evxx4xCW"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 543783375BE;
-	Wed, 27 Aug 2025 08:29:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E0732F5488;
+	Wed, 27 Aug 2025 08:30:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756283348; cv=none; b=DjIvLQxgecxmLSC70ZhSFttTJqYvRmP6C7VM6FILeS34L3QTJ398MpsNnNDl3GzL7kd7lLozqfI192GanmlRl7UfqaeVeBdvUaJNM9S5DP8qmJ/Tss4C56cALMNTvWI3deKJ3FvJLdheIBr283s3eN42/Pa+EM7VJymtzoE8+os=
+	t=1756283411; cv=none; b=juv9uAPp058yiZMLbathNpKDo54/gzRkOk9AZVn9Q7yz3O6eTWdhdkGk1B8+c5T74TuChkmbXtJ50lTcq1m6TcSLdlUN9DacYSkvdBQCggAaC5mRmZrH3HbR/YS2Hc8xcla1xWHs81xeiOfyJMdFJrC2FGr0PsPLIPkfUv3oapg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756283348; c=relaxed/simple;
-	bh=jJFDqg3W1XpIlbQ+NvdZgxCYXLvPUbQ7azAswu3iDDU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=maFMiiryhz2IjGLjgg+mHXGZ+8/fEQwQwxbbPz3SQ42Mta4ZWVyrfUGfRnV+RjFjcZviJyB74vg8dfXPlZrEQNI/Eng6QSd7LSrNuuXsbAoMGw8zYa3XhqjpteSHjSPhnhWvodyraD475GHLX7ZwDcnXUy9bIcCLfdi6vDPK1NE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ATOAo0ZM; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-55ce508d4d6so5313423e87.0;
-        Wed, 27 Aug 2025 01:29:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756283344; x=1756888144; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jJFDqg3W1XpIlbQ+NvdZgxCYXLvPUbQ7azAswu3iDDU=;
-        b=ATOAo0ZMbATAAWThXPtGXYvM3scNDOjwDvxs/SG5aL9TPDUqV20+KyPx2BmoVq1uhl
-         MujSg+gVohdEuxEC/2pRZEBhfFoeDrWdqGayFVgQzz3V21y7d6AG8E+1O3/muW6WfR9N
-         jnjENqbov5VWdPmYeEeqRdyYxIxNTWXlG32pstTlPOIjMMiq7BvAuZi490JKLTu/Ukn4
-         c0oMhIS/XCu2Sw+6DnJIk2FGc6QiVadLY9C1XPoNwPeqDiqOQf11vPz2mcF6cAn2TVfu
-         kHzfjq7+avNH5AD3IGshnOBWw/JE2DgUBemkyN+oOUn4BcGRu+bvf2gne7c6Xbe7UfcH
-         /Z5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756283344; x=1756888144;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jJFDqg3W1XpIlbQ+NvdZgxCYXLvPUbQ7azAswu3iDDU=;
-        b=CxOA1RGiONj8ODSnkdwBI9b3RY4aqLnanLfbQucTY4yURRFRSW7r5++F1VwAfo1JAf
-         YiCXejLAum6wvXiOmMr+s3DbcAd/dOZHww5hisCElah66w9Oc/sTGWGbPZ7IgFu+T9Tr
-         7/dnHPSiv9bvJmnB6JK+QNM8AFDS64v3pdRIBNmJ93GJzlnQZalrXCcMzvoT8LWAPkNo
-         WW+yQIG3WpVnhKIWsmOEDsVksQq3t4XAPLn7TDKFhKEfw/ObBcfJvBN8uaQEpsZECn2O
-         OfGUQrzjdnPduvXWWv9PhWAeoQ5s7H4d68eApl1bK+vebT2icqB9mmDk69Xtw+4Gl7BF
-         2l+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXfnSZPfOtLniM2ZEy8IoywYmGaSq7hza+WeXeRnJPCJrvKqPbkXrCqBInu5YbEE15JAZovrZkPS/7uS32XhW5dPQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwhyNRXOA1jmOahWYIwHRQzteAjYbbON3HG4nWFJ7caKhGO0sAu
-	3reCzfrSWCoEZQSBNXnrV6pxiDK139b6lFf/2BJVpOU9dl09hDzMTE3o/UTOzS42zwPpRZp0bTm
-	wc9KfhFA29Iy500NDahjiqHzSq+qvB8XyIGqk
-X-Gm-Gg: ASbGncvrCM7cSA/J9aX4f4tKw5wAUfs6ZBOx0nS7lctkSDGOZo/TUb/2mmjMbOAEnhR
-	KOTSZCVk4P8WVDzXJgLfqDc1oPEEXTwAXjsF78PJ4Cd9ozM/ynOKFHWOo4Nc3xN3F5Ru6mvBARQ
-	mvU3aeJK8xc0r+0cNcxG1U/TEAXqdytfn2uUbfCJ6I6PGJiUuwnxx3mKZKn6DgYcp7TtqM+EipJ
-	E+gGMAcxMlLDLuLZw==
-X-Google-Smtp-Source: AGHT+IH2vZsJk2P6q12Hpu7iD7LUO/R96zPmhXjoFed6mZ9+n0ZpEcpsnh0U2/soyKVJyQiyrj3fngvsrSUeOr7O/w4=
-X-Received: by 2002:a05:6512:12c4:b0:55f:43ab:b214 with SMTP id
- 2adb3069b0e04-55f43abb552mr3462437e87.15.1756283344056; Wed, 27 Aug 2025
- 01:29:04 -0700 (PDT)
+	s=arc-20240116; t=1756283411; c=relaxed/simple;
+	bh=ug3wSCgAifIcIx9UtNYJHfScn3iJIoThJ91pQxKRDOM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RHJKSoS7PienCUi+mbwAVf9fmh7M9Sx9av9lxTGEnCzGjSh6P07A/vPAmk6IDQH2QhJU23CZ0vJMeX4dj2Abul4Q5InN4DqbsI17R0PWtnELYMHZmCmhJU8TE0XrApPtnOZhNfYKqmhvBSFWAn7WDn+EZ5EMUzzwcniLpJ3sE4g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Evxx4xCW; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id C073D40E00DA;
+	Wed, 27 Aug 2025 08:30:05 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id Uu35_fYwftNZ; Wed, 27 Aug 2025 08:30:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1756283402; bh=sbwN2qrGT6GexdljPB+Nyh9XLHsVDJbgKYHS+rIwOVM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Evxx4xCWEHmpRd2SkA7cyYaxuQ49hedSonLXtSPCmoaLQIzByX6Z8t3ThisQwEDAI
+	 xKXvd565rW3pVAzT0JhPoIUK1dbPEybqdLobFlVkEZ5LT43vjGWGUoxL7AC1Ug+6l2
+	 3rMuR4sTVnplGJgzi6yE+0RnS7kmkedOEQDK54+exvgRr4Qfj3hgc2IFpSRXc4V5Ja
+	 jPcakOU9mgJ1lVvnhVjEo2PkwMKv2n4N4ApDN+3WNx21du7xGbJP7gET+7ypd4gTHT
+	 0a/5D4Ac9V6VqDpTqvNuiw2zfF7uNE0TKgf9UX58CNJQycWPrL0Ok7MxnNJzINCMgy
+	 a6yHhiIdvNFgfPo87XDcUiW3PtVGI/PBmL/thZxUd2zDRiVSE46O3Vfo4jHgG659XD
+	 Ewtm6f4Rm1QuJI5fb91yTgOWfDCRlGv6htqdCNKZZD7k+Nt+PkGlhewGmMh2tNE8Q4
+	 f90u5zOC81NOkKrENfR9xIymPrEXeaY/LkNoygSNtF/0pNDmbQb3hWZAQJ4LUO7QxN
+	 IBPWwOHvZv2Bw9JQ+GXT6MD6jUc5BJbWqa9TpUMvJPlzUbbrutsJ0+/81EvUoQax+c
+	 bvdCjVfzXwLscWkGipMi7cwd4rE+Vv2dR8gzV4fkMJVZBDb4XIiDIqly4h4vcpL10m
+	 py87qX5tsnsxxe0co6O6uUA4=
+Received: from zn.tnic (pd953092e.dip0.t-ipconnect.de [217.83.9.46])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 152BF40E0185;
+	Wed, 27 Aug 2025 08:29:37 +0000 (UTC)
+Date: Wed, 27 Aug 2025 10:29:32 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>,
+	Tony Luck <tony.luck@intel.com>, pbonzini@redhat.com,
+	seanjc@google.com, vannapurve@google.com,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+	H Peter Anvin <hpa@zytor.com>, linux-edac@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+	rick.p.edgecombe@intel.com, kai.huang@intel.com,
+	reinette.chatre@intel.com, xiaoyao.li@intel.com,
+	tony.lindgren@linux.intel.com, binbin.wu@linux.intel.com,
+	ira.weiny@intel.com, isaku.yamahata@intel.com,
+	Fan Du <fan.du@intel.com>, Yazen Ghannam <yazen.ghannam@amd.com>,
+	yan.y.zhao@intel.com, chao.gao@intel.com
+Subject: Re: [PATCH RESEND V2 1/2] x86/mce: Fix missing address mask in
+ recovery for errors in TDX/SEAM non-root mode
+Message-ID: <20250827082932.GBaK7B7CdT1gd68C8T@fat_crate.local>
+References: <20250819162436.137625-1-adrian.hunter@intel.com>
+ <20250819162436.137625-2-adrian.hunter@intel.com>
+ <20250819213247.GJaKTtf1er-Ced_mzP@fat_crate.local>
+ <7c5ae62f-c4c7-41d8-af00-7a517e3ed309@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250616095315.230620-1-ubizjak@gmail.com> <175627714358.1920.14102647257754782558.tip-bot2@tip-bot2>
- <CAFULd4aZYEi02cKeS1RAL66Qs149nLys8SJfTvfHuPH3FMXJeA@mail.gmail.com> <20250827081900.GAaK6_dB-acJ_rkKk4@fat_crate.local>
-In-Reply-To: <20250827081900.GAaK6_dB-acJ_rkKk4@fat_crate.local>
-From: Uros Bizjak <ubizjak@gmail.com>
-Date: Wed, 27 Aug 2025 10:28:52 +0200
-X-Gm-Features: Ac12FXz0tOCKNvcDKMzf_1OhJZ5v5qrLuZbHPtOpAUnLuK7ZSkY4dlLBmS33J6o
-Message-ID: <CAFULd4bEE=HSRhRGgSVik87maNCqV4TcW5q5HHvfgOp1_NwGdw@mail.gmail.com>
-Subject: Re: [tip: x86/asm] x86/vdso: Fix output operand size of RDPID
-To: Borislav Petkov <bp@alien8.de>
-Cc: linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org, 
-	x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <7c5ae62f-c4c7-41d8-af00-7a517e3ed309@intel.com>
 
-On Wed, Aug 27, 2025 at 10:19=E2=80=AFAM Borislav Petkov <bp@alien8.de> wro=
-te:
->
-> On Wed, Aug 27, 2025 at 09:53:17AM +0200, Uros Bizjak wrote:
-> > The 1/2 patch is intended to be backportable
->
-> Is it fixing an actual, real life bug?
+On Wed, Aug 27, 2025 at 11:22:07AM +0300, Adrian Hunter wrote:
+> +#ifdef CONFIG_X86_MCE_INTEL
+> +static __always_inline void tdx_extract_err_addr(struct mce *m)
+> +{
+> +	if (boot_cpu_has(X86_FEATURE_TDX_HOST_PLATFORM))
+> +		m->addr &= GENMASK_ULL(boot_cpu_data.x86_phys_bits - 1, 0);
 
-No, because ".byte 0xf3,0x0f,0xc7,0xf8" encodes "RDPID %rax" on 64-bit
-targets and we are only interested in the lower 32-bits anyway.
+Right, you can stick that thing straight into mce_read_aux() since it is
+simple enough and drop the ifdeffery and use cpu_feature_enabled():
 
-So, the change only matters on the 64-bit target when mnemonic is used
-(there is no RDPID %eax" instruction), but the patch should not be
-backported for the reasons outlined in my previous message. OTOH, "LSL
-%eax,%eax" zero-extends to the full 64-bit register width on 64-bit
-targets even when 32-bit register form is used.
+mce_read_aux:
 
-Thanks,
-Uros.
+	...
+
+	/* Remove TDX KeyID from the address */
+	if (cpu_feature_enabled(X86_FEATURE_TDX_HOST_PLATFORM))
+		m->addr &= GENMASK_ULL(boot_cpu_data.x86_phys_bits - 1, 0);
+
+Something like that...
+
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
