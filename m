@@ -1,94 +1,83 @@
-Return-Path: <linux-kernel+bounces-788209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF149B38140
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 13:38:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD351B3819F
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 13:45:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63EA25E4565
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 11:38:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7ECB8461F7B
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 11:45:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 265ED2FFDF4;
-	Wed, 27 Aug 2025 11:37:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D865435E4D9;
+	Wed, 27 Aug 2025 11:40:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XwgT4qs4"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="WYzz/VNk"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEDEE2F1FC2;
-	Wed, 27 Aug 2025 11:37:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F3253570B7;
+	Wed, 27 Aug 2025 11:40:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756294677; cv=none; b=EaUFK0rdfQKCVEniHZDdon/Ibm49EZcIv77T50tLN7NpgCdRspzTrXq1rpMegTROAixJjeJ865rILVyecUOwUwb6eP6HhfFOJagz+fP8BO1p/DKd2b1RVXfAmXx5/O8Vk43fBgazfO9r5gTwMxvy3dHkjWWHqKcuxmmJZvCdooQ=
+	t=1756294830; cv=none; b=QEtB6QHnmu0dpG63O3HlMIAlHpl0/9QadMrhJQ3IlLV6Zt6SBJlXpkNTlY1mVCB2t31vblH/ZKFKtpf2plF7mjdv+HlADQInolVlzaL/aZh1Ge8wcI1WZT+EV+zrSyjkw+w49cFUnuQm5Rb9mn+V7PzuTAYgXP4WAFCmfcuGE7s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756294677; c=relaxed/simple;
-	bh=z/+MjYHvAB0rRUgcT/Wf35Fc0x/0/2URbSZSEoOmQrg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=PUi+2/0PX0fVULrjzACGxgetn5x42/B96WOJ+dbt1sE+dLW5czuou95mpvkg3Fbw50smglr/K/WAsGjo3uTSISM4WFKov+uJRVclf7faVkoGPTDKFtoVw/o9BN4at1F1taeJQH6bzpmL6KU6CAh2EGig+ZqDOKYlXBkcBrXlKsI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XwgT4qs4; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-afcb73394b4so952873766b.0;
-        Wed, 27 Aug 2025 04:37:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756294674; x=1756899474; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=r32eaeKFswPzaKVqV9ZpAu9JHYxhli10Tjd2IPM4Ep8=;
-        b=XwgT4qs4PjKhgICLCbncJqumc3JrT0iAaNweDGzGhslIIbd3DIk7XTc8UiX+w/WdK0
-         KzyQjFCXqL6uY7QP0Pp7kYxLmyCjMKXZfk+P9cKLwXKSyAB3bkaudfA1XOF86IIbzIyH
-         uCs4Y08f+m9o7soKGD5WvVV53bzjK4uk10bfQ4rhh0RopRc2Yj0CuEdHOxtb9IsZ5QwY
-         s9pNeR2Sqzj7y+Guld9T0CEs6N42w0kTsxYUNfc8jddfbN5hyDz31Ui9cG0HqAZp/L4N
-         4qYAMuFj31ieZuPEAz1YgnjGX61GwJmzeS4Fa/vS+Piuc+R4BI7Cb68rqWSSXvaNfJo9
-         obLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756294674; x=1756899474;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=r32eaeKFswPzaKVqV9ZpAu9JHYxhli10Tjd2IPM4Ep8=;
-        b=dwsClVBaSE+3U27+HFKb/metYI+XOItE0cPczbeNh0hHHFrg3xD46TUZ95H+/01W6x
-         TYg4Fu3yIyihSp2QlnpjHP303v7xMSm6pzbcRvCir98lziedfZIHVESftoMiap8UEAe3
-         UGTsfMS8fWwhhRByrBLKZSKVBEnOVnRhzRYcQ7VVnVQcT8njUbiAIVfKXBBDydDAGx45
-         V/rsXu773BV4wCWMoPdtyBGVsjI6x99dFTVmwVtDNwcS+hZx2oAmYhl/eCAf0ScW9WNa
-         KRTwJBm+R7PFIkZ2XbSgYryzqWA6N3ASgrdQxlPJ2viwQ2gQO3lsFw/3FM1Kv8JPoVLL
-         MGJw==
-X-Forwarded-Encrypted: i=1; AJvYcCUUhGqfpL0qRxUOvA0wFxaB6zecEltIaC+clpPGlQYJfa9T2WbQy4H2cj7ZQlO2JDhZ6qBrldIo8/KRi+w=@vger.kernel.org, AJvYcCWmHeQPg4+Tt+QPpqYlYvtBITgKR3snivtf6iTZ4JPZgKExzAgpMpL/130OuhRXMtVT2QiL5WiZBe0NB9E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxvhgV6mck7/puk6+Vd7n8gzT5VSmTS6SnOBUeB5e1dll5zSMEn
-	rxi57cECGb0RssotCXrRD94pVBKjmnqdGIEo6VnTBJzFTfbEYc5YqZJg
-X-Gm-Gg: ASbGncujyWJ1xEiWic2EvKbK6+m2aLeznaWRBwHuD7lBWHOF3JvkHAnKJsAbKhBu49p
-	nv07e6LvaCgSxb5quHZfWjg0c53u2TAIQj0OwqIiYWUCVT+S2TnmEfzLnCoVpftg6mJYXeoQZ14
-	qH7JB4Xi7vF1MMl59Lm+AhAqkSDPb+XeLC+oFI6uXgtZNJW4pTYI75OuMI21An7uGn+DgyOvJo8
-	uPI928Zn+zFhPU5YxkRUj2TurAL+k0P13Vu71+9gIBbMrRSLrsPA0myBWxNct3CLPO3umc2yBH6
-	O3BZLzBJXJJveS58IfLtL5u13y5AGKZ0SbnAtQXo3vKqgBjwzDOO1Ljae8/ngAIDQkolbXdGm93
-	D8aoS6AqZGj1f/XCFcKdxZnPd
-X-Google-Smtp-Source: AGHT+IGR8EZyaK0zvZKE2DEGEZzgLaMgJFG6m31NN9UyHVLso/mpVnq0cLgd5FJKlDrGZH4CYy+f2g==
-X-Received: by 2002:a17:907:2d07:b0:af9:4075:4ea5 with SMTP id a640c23a62f3a-afe28f5ba80mr1929168666b.25.1756294673889;
-        Wed, 27 Aug 2025 04:37:53 -0700 (PDT)
-Received: from xeon.. ([188.163.112.70])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afe7aad5d61sm675607866b.105.2025.08.27.04.37.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Aug 2025 04:37:53 -0700 (PDT)
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thierry Reding <treding@nvidia.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: devicetree@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v5 2/4] ARM: tegra114: add missing HOST1X device nodes
-Date: Wed, 27 Aug 2025 14:37:32 +0300
-Message-ID: <20250827113734.52162-3-clamor95@gmail.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250827113734.52162-1-clamor95@gmail.com>
-References: <20250827113734.52162-1-clamor95@gmail.com>
+	s=arc-20240116; t=1756294830; c=relaxed/simple;
+	bh=04OuqbmONElw2S4g+f5ylrXqF7i7Z4z6rw0sXfPv8M8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=JjsVeO7NlXyt5h3+jb+j5joIpAPrW1TMZfoNTdZaUYBQyq3lYDk9TnwiwEsW9jF2enYZmmqFlV3I9NwowPef+hJ69oqw5uVtRa7+dLKWT/vgtsNsCze8euSAUfvtnpcaovqNHIVHGGOlibnkevLLMfdJOmgNxe+7Kz4yJyWW/pI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=WYzz/VNk; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 963dc5ac833a11f0bd5779446731db89-20250827
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=J8gnlV72WZgKZtB2F8l1wKF5O8kipZ2VREg53WszLKc=;
+	b=WYzz/VNkYHchOMW80pcuv9pNkdYTo716dEITFN2uC2B604ZJny5I8Qnfx/9k/TIh9cEjgUtb8cDZHF2Y2wxEw81gIDLanc6QPUV2X8aIOxdrgmjYolcbD386hnmoMctuoyem3YTkewY0hxHmoe9jtNEr3e+rCSnPfw5YVL6cYnw=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.3,REQID:2c54b6e8-3156-48dc-a91f-1d35117d775f,IP:0,UR
+	L:0,TC:0,Content:0,EDM:-30,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:-30
+X-CID-META: VersionHash:f1326cf,CLOUDID:78b6ec44-18c5-4075-a135-4c0afe29f9d6,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:-5,Content:0|15|50,EDM:2,IP:n
+	il,URL:99|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0
+	,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 2,SSN|SDN
+X-CID-BAS: 2,SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULS
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: 963dc5ac833a11f0bd5779446731db89-20250827
+Received: from mtkmbs10n1.mediatek.inc [(172.21.101.34)] by mailgw01.mediatek.com
+	(envelope-from <jason-jh.lin@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1541416151; Wed, 27 Aug 2025 19:40:10 +0800
+Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
+ mtkmbs11n2.mediatek.inc (172.21.101.187) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.39; Wed, 27 Aug 2025 19:40:08 +0800
+Received: from mtksitap99.mediatek.inc (10.233.130.16) by
+ mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1258.39 via Frontend Transport; Wed, 27 Aug 2025 19:40:07 +0800
+From: Jason-JH Lin <jason-jh.lin@mediatek.com>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>,
+	Chun-Kuang Hu <chunkuang.hu@kernel.org>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>, Mauro Carvalho Chehab
+	<mchehab@kernel.org>
+CC: Matthias Brugger <matthias.bgg@gmail.com>, Nicolas Dufresne
+	<nicolas@ndufresne.ca>, Jason-JH Lin <jason-jh.lin@mediatek.com>, Nancy Lin
+	<nancy.lin@mediatek.com>, Singo Chang <singo.chang@mediatek.com>, Paul-PL
+ Chen <paul-pl.chen@mediatek.com>, Moudy Ho <moudy.ho@mediatek.com>, Xiandong
+ Wang <xiandong.wang@mediatek.com>, Sirius Wang <sirius.wang@mediatek.com>,
+	Fei Shao <fshao@chromium.org>, Chen-yu Tsai <wenst@chromium.org>,
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<dri-devel@lists.freedesktop.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-media@vger.kernel.org>,
+	Jason-jh Lin <jason-jh.lin@mediatek.corp-partner.google.com>
+Subject: [PATCH v7 00/20] Add GCE support for MT8196
+Date: Wed, 27 Aug 2025 19:37:32 +0800
+Message-ID: <20250827114006.3310175-1-jason-jh.lin@mediatek.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,97 +85,118 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-MTK: N
 
-Add nodes for devices on the HOST1X bus: VI, EPP, ISP, MSENC and TSEC.
+From: Jason-jh Lin <jason-jh.lin@mediatek.corp-partner.google.com>
 
-Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+This patch series adds support for the MediaTek MT8196 SoC in the CMDQ
+driver and related subsystems. The changes include adding compatible
+names and iommus property, updating driver data to accommodate hardware
+changes, and modifying the usage of CMDQ APIs to support non-subsys ID
+hardware.
+
 ---
- arch/arm/boot/dts/nvidia/tegra114.dtsi | 64 ++++++++++++++++++++++++++
- 1 file changed, 64 insertions(+)
 
-diff --git a/arch/arm/boot/dts/nvidia/tegra114.dtsi b/arch/arm/boot/dts/nvidia/tegra114.dtsi
-index 4caf2073c556..8600a5c52be9 100644
---- a/arch/arm/boot/dts/nvidia/tegra114.dtsi
-+++ b/arch/arm/boot/dts/nvidia/tegra114.dtsi
-@@ -47,6 +47,45 @@ host1x@50000000 {
- 
- 		ranges = <0x54000000 0x54000000 0x01000000>;
- 
-+		vi@54080000 {
-+			compatible = "nvidia,tegra114-vi";
-+			reg = <0x54080000 0x00040000>;
-+			interrupts = <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&tegra_car TEGRA114_CLK_VI>;
-+			resets = <&tegra_car 20>;
-+			reset-names = "vi";
-+
-+			iommus = <&mc TEGRA_SWGROUP_VI>;
-+
-+			status = "disabled";
-+		};
-+
-+		epp@540c0000 {
-+			compatible = "nvidia,tegra114-epp";
-+			reg = <0x540c0000 0x00040000>;
-+			interrupts = <GIC_SPI 70 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&tegra_car TEGRA114_CLK_EPP>;
-+			resets = <&tegra_car TEGRA114_CLK_EPP>;
-+			reset-names = "epp";
-+
-+			iommus = <&mc TEGRA_SWGROUP_EPP>;
-+
-+			status = "disabled";
-+		};
-+
-+		isp@54100000 {
-+			compatible = "nvidia,tegra114-isp";
-+			reg = <0x54100000 0x00040000>;
-+			interrupts = <GIC_SPI 71 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&tegra_car TEGRA114_CLK_ISP>;
-+			resets = <&tegra_car TEGRA114_CLK_ISP>;
-+			reset-names = "isp";
-+
-+			iommus = <&mc TEGRA_SWGROUP_ISP>;
-+
-+			status = "disabled";
-+		};
-+
- 		gr2d@54140000 {
- 			compatible = "nvidia,tegra114-gr2d";
- 			reg = <0x54140000 0x00040000>;
-@@ -149,6 +188,31 @@ dsib: dsi@54400000 {
- 			#address-cells = <1>;
- 			#size-cells = <0>;
- 		};
-+
-+		msenc@544c0000 {
-+			compatible = "nvidia,tegra114-msenc";
-+			reg = <0x544c0000 0x00040000>;
-+			interrupts = <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&tegra_car TEGRA114_CLK_MSENC>;
-+			resets = <&tegra_car TEGRA114_CLK_MSENC>;
-+			reset-names = "mpe";
-+
-+			iommus = <&mc TEGRA_SWGROUP_MSENC>;
-+
-+			status = "disabled";
-+		};
-+
-+		tsec@54500000 {
-+			compatible = "nvidia,tegra114-tsec";
-+			reg = <0x54500000 0x00040000>;
-+			interrupts = <GIC_SPI 50 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&tegra_car TEGRA114_CLK_TSEC>;
-+			resets = <&tegra_car TEGRA114_CLK_TSEC>;
-+
-+			iommus = <&mc TEGRA_SWGROUP_TSEC>;
-+
-+			status = "disabled";
-+		};
- 	};
- 
- 	gic: interrupt-controller@50041000 {
+Change in v7:
+1. Rename cmdq_reg_shift_addr() and cmdq_reg_revert_addr() to 
+   cmdq_convert_gce_addr() and cmdq_revert_gce_addr().
+2. Change cmdq_vm_toggle to cmdq_vm_init().
+
+Change in v6:
+1. Move the removal patches to the end of series.
+2. Fix build error for cmdq_pkt_jump_rel_temp patch.
+
+Change in RESEND v5:
+1. Separate the removal of cmdq_get_shift_pa() from [PATCH v5 03/19] to a
+   single patch [PATCH RESEND v5 10/20].
+
+Change in v5:
+1. Rebase on tag: next-20250424 + patch [1].
+2. Split adding driver data for MT8196 patch to 3 independent patch
+   and add more detail commit message to each patch.
+3. Refine passing shift_pa as the parameter in API to storing it into
+   the cmdq_pkt.
+4. Refine DMA address potential issue in cmdq mailbox driver.
+5. Change the mminfra_offset related mbox API to passing it by cmdq_pkt.
+6. Add new cmdq_pkt_write_pa() and cmdq_pkt_write_subsys() APIs to
+   replace the cmdq_pkt_write().
+
+[1] mailbox: mtk-cmdq: Refine GCE_GCTL_VALUE setting
+- https://patchwork.kernel.org/project/linux-mediatek/patch/20250421035650.441383-1-jason-jh.lin@mediatek.com/
+
+Change in v4:
+1. Remove dt-binding header and add a gce header in dts folder.
+2. Remove dot in sign-off name.
+3. Change addr type from u32 to dma_addr_t for cmdq_reg_shift_addr() and
+   cmdq_reg_revert_addr().
+
+Change in v3:
+1. Merge 2 dt-bindings pathes together and add more detail commit message.
+2. Change type u32 to phys_addr_t for pa_base of struct cmdq_client_reg.
+3. Remove cmdq_subsys_is_valid() and subsys_num in CMDQ driver.
+4. Add CMDQ_SUBSYS_INVALID to check subsys instead of using
+   cmdq_subsys_is_invalid().
+5. Make use of CMDQ_THR_SPR0 define to the parameter of CMDQ APIs.
+6. Rebase on the new MACRO in mtk-mdp3-comp.h.
+
+Change in v2:
+1. Remove the constant and fix warning in dt-bindings.
+2. Remove the pa_base parameter of CMDQ APIs and related modification.
+3. Move subsys checking to client drivers and use 2 alternative
+   CMDQ APIs to achieve the same functionality.
+
+---
+
+Jason-JH Lin (20):
+  arm64: dts: mediatek: Add GCE header for MT8196
+  mailbox: mtk-cmdq: Refine DMA address handling for the command buffer
+  mailbox: mtk-cmdq: Add cmdq private data to cmdq_pkt for generating
+    instruction
+  soc: mediatek: mtk-cmdq: Add cmdq_get_mbox_priv() in cmdq_pkt_create()
+  soc: mediatek: mtk-cmdq: Add cmdq_pkt_jump_rel_temp() for removing
+    shift_pa
+  mailbox: mtk-cmdq: Add GCE hardware virtualization configuration
+  mailbox: mtk-cmdq: Add mminfra_offset configuration for DRAM
+    transaction
+  mailbox: mtk-cmdq: Add driver data to support for MT8196
+  soc: mediatek: mtk-cmdq: Add pa_base parsing for hardware without
+    subsys ID support
+  soc: mediatek: mtk-cmdq: Add new APIs to replace cmdq_pkt_write() and
+    cmdq_pkt_write_mask()
+  soc: mediatek: mtk-cmdq: Add mminfra_offset adjustment for DRAM
+    addresses
+  soc: mediatek: Add programming flow for unsupported subsys ID hardware
+  drm/mediatek: Add programming flow for unsupported subsys ID hardware
+  media: platform: mtk-mdp3: Add programming flow for unsupported subsys
+    ID hardware
+  media: platform: mtk-mdp3: Change cmdq_pkt_jump_rel() to
+    cmdq_pkt_jump_rel_temp()
+  soc: mediatek: mtk-cmdq: Remove shift_pa parameter from
+    cmdq_pkt_jump()
+  media: platform: mtk-mdp3: Use cmdq_pkt_jump_rel() without shift_pa
+  soc: mediatek: mtk-cmdq: Remove cmdq_pkt_jump() and
+    cmdq_pkt_jump_rel_temp()
+  soc: mediatek: mtk-cmdq: Remove cmdq_pkt_write() and
+    cmdq_pkt_write_mask()
+  mailbox: mtk-cmdq: Remove unsued cmdq_get_shift_pa()
+
+ arch/arm64/boot/dts/mediatek/mt8196-gce.h     | 612 ++++++++++++++++++
+ drivers/gpu/drm/mediatek/mtk_ddp_comp.c       |  24 +-
+ drivers/mailbox/mtk-cmdq-mailbox.c            | 111 +++-
+ .../platform/mediatek/mdp3/mtk-mdp3-cmdq.c    |  16 +-
+ .../platform/mediatek/mdp3/mtk-mdp3-comp.h    |  70 +-
+ .../platform/mediatek/mdp3/mtk-mdp3-core.c    |   2 -
+ .../platform/mediatek/mdp3/mtk-mdp3-core.h    |   1 -
+ drivers/soc/mediatek/mtk-cmdq-helper.c        |  68 +-
+ drivers/soc/mediatek/mtk-mmsys.c              |  12 +-
+ drivers/soc/mediatek/mtk-mutex.c              |   8 +-
+ include/linux/mailbox/mtk-cmdq-mailbox.h      |  19 +-
+ include/linux/soc/mediatek/mtk-cmdq.h         |  83 ++-
+ 12 files changed, 937 insertions(+), 89 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt8196-gce.h
+
 -- 
-2.48.1
+2.43.0
 
 
