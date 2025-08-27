@@ -1,143 +1,184 @@
-Return-Path: <linux-kernel+bounces-788353-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD915B38340
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 15:03:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 262A9B38349
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 15:04:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC955463BBF
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 13:02:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CCC107BAFC3
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 13:02:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 187DA352080;
-	Wed, 27 Aug 2025 13:02:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5944D350D7A;
+	Wed, 27 Aug 2025 13:03:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KnMEod5P"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="CslwVnhF"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53762350D41;
-	Wed, 27 Aug 2025 13:02:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756299742; cv=none; b=cZe1+x30QRYElfyWg9YUk12AvPE0dXbWbl7tRmjS2fxFsuYAvQhEKKsUtRwUo6ES11uaxF8kikLRrzTwgOxxEaeKnhhSAEkM7WmDv8nIMWMuPZDKUFUnl2fr7ojHIowYLx9hOmNAEEze4po/1MYYKGs0W3HRI+vLl/Dvr/UuS6g=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756299742; c=relaxed/simple;
-	bh=pdaZgyDKWduWywmpNcrDzWI6wdyAlK9zHnnkATIEfsU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iPPJYgqWIPGJ6IyjuOSr+ivnTF4t39E8n5Oz3FV97BlEDDxEX378jxUqgI9EG0s+a0CiVTShU88FpOQJzaBRXRcRpi2m0njaOXofEmK6lL8bxcLhgBA90GKn5STNlDQSeIcYf7tMXQaxqABkaXORCo4SHCD1EGkf2DUPyoqkUMM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KnMEod5P; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7FCBC4CEEB;
-	Wed, 27 Aug 2025 13:02:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756299742;
-	bh=pdaZgyDKWduWywmpNcrDzWI6wdyAlK9zHnnkATIEfsU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=KnMEod5PlH1LBjVuIyG2Pq7McWbUK+zfxwPYwywj2NUEPLWhNtZdFBxgbqCdT3ESa
-	 u/OcGHJzI+igID+X/p05MEX0bwsbPcts8pbYbwW9JXN7vT7PZ+xnIAx7J+1itlXQu3
-	 Td6i8xJtFNfOxApExGN/xgNoT2BbsW7V6dbInxswySNfhSKVZ9WqVk47KON++U3sT2
-	 0YHENZqnThd2oo6DA7PW4Pi5Q4R1GBoiYSxVV4xbUvHKNSp7fo0yFVwM88pld5woJW
-	 dvL9GSnY2bAVarfVv3Zmh9yfAuMnQyAoBXjvsj4NrXG313Pk8g1u7JWKKJWeHyDgL7
-	 GSLJeBnbJB1SA==
-Message-ID: <fdc2d293-fe35-4bbd-8ea1-78baa83a4239@kernel.org>
-Date: Wed, 27 Aug 2025 15:02:18 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4B51302760;
+	Wed, 27 Aug 2025 13:03:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756299795; cv=pass; b=dZlM0VrWXZtz0hcy5SS10JprLqi3JaMZOTsPByenkSbamWOs77OLxrJjHo3HRjVwrEeRr/nlGgwvOz4psb4Q/egv646nr6wf9o/r/SdlT7WL+6SgBgV1jRImyzFRgF9D+tkWka9FDmzMyNTVPmWpovZ9r+/PvKqEDZ4rNZ4Q5xo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756299795; c=relaxed/simple;
+	bh=cE6hyLFmrH6jjJyToAUXyVeW+z60z7Zgr6CnYsE7u0E=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=J5EREN6YW7Aq8+xywVa5WWtLIJJPHat29SI1iarszomWGkSRmuzsS/hsNj/LbajIl2PdKaJ/CMXUDtSOF8g1uQxYZkLo/w/FY4GmduklemBmRFB/PLtMY9bn2640Dv2pdRLzMHLdR6yHfotZbhVN7ctp/t5MBcboTDMf0L+qvBk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=CslwVnhF; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1756299775; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=BExQClGzndmlQKTCBnyz+1S0/ZEzYWm/AJJod51VKiUhg1X+nkC/oluNU36oYkHwSAy/vxuw40F6k+fDQ5BJHxn5qMJqOel1TCNDhdCL9xPpWYbi5aN8DqeIwjA/q0v5moheWOj98+KzYvJ2Mu+KrkJGf+NwQhLaO6aj3T/DCbQ=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1756299775; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=bF7pQBFY7CqIgY8f35aNdCRUmkVlp59evzsupE6bLEM=; 
+	b=S48DMefZQ0TkOyLb/199DbWj8GB8vQ2raf75ZCoj6OulfgtfKtWFqLfLZ4Wm/pO3JFT3SONmV9VbvRsS/lnv8XkYiVSlBJvSC/5xnCOl7ts6DDCDxRboZYa/OhyYGWQFMW2742iLY/nwSODLiLTg3BuWBcvRRb9lQP0+OJKXl5w=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1756299775;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=bF7pQBFY7CqIgY8f35aNdCRUmkVlp59evzsupE6bLEM=;
+	b=CslwVnhFWFsXgAlrEq2ctLnxCqzWKx6WJVr/6KzDS539x3UMYIOPjwMQHCKhtvuo
+	k6QsUY2WMcPot2T+HHwwrghXvp7dcgmxwLjVFD5GoUHhC8EvsJvKJ9+M3hwDJtDyZnX
+	9e0v57HXvXMU86x8s3k3orNpS2/4N3M+/akJPGLg=
+Received: by mx.zohomail.com with SMTPS id 1756299774531372.8098676556684;
+	Wed, 27 Aug 2025 06:02:54 -0700 (PDT)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 1/2] dt-bindings: i3c: Add adi-i3c-master
-To: Jorge Marques <jorge.marques@analog.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Frank Li <Frank.Li@nxp.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Kees Cook <kees@kernel.org>,
- "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: linux-i3c@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, gastmaier@gmail.com,
- linux-hardening@vger.kernel.org
-References: <20250827-adi-i3c-master-v8-0-0a7c78e58bd4@analog.com>
- <20250827-adi-i3c-master-v8-1-0a7c78e58bd4@analog.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250827-adi-i3c-master-v8-1-0a7c78e58bd4@analog.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
+Subject: Re: [PATCH v6 04/18] rust: str: introduce `NullTerminatedFormatter`
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <20250822-rnull-up-v6-16-v6-4-ec65006e2f07@kernel.org>
+Date: Wed, 27 Aug 2025 10:02:38 -0300
+Cc: Boqun Feng <boqun.feng@gmail.com>,
+ Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <lossin@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ Danilo Krummrich <dakr@kernel.org>,
+ Jens Axboe <axboe@kernel.dk>,
+ Breno Leitao <leitao@debian.org>,
+ linux-block@vger.kernel.org,
+ rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <2C9D54CC-F931-41C9-967C-14EA375F9F2A@collabora.com>
+References: <20250822-rnull-up-v6-16-v6-0-ec65006e2f07@kernel.org>
+ <20250822-rnull-up-v6-16-v6-4-ec65006e2f07@kernel.org>
+To: Andreas Hindborg <a.hindborg@kernel.org>
+X-Mailer: Apple Mail (2.3826.700.81)
+X-ZohoMailClient: External
 
-On 27/08/2025 14:25, Jorge Marques wrote:
-> Add bindings doc for ADI I3C Controller IP core, a FPGA synthesizable IP
-> core that implements the MIPI I3C Basic controller specification.
-> The IP Core is versioned following Semantic Versioning 2.0.0 and
-> ADI's open-source HDL guidelines for devicetree bindings and drivers.
-> 
-> Signed-off-by: Jorge Marques <jorge.marques@analog.com>
 
-<form letter>
-This is a friendly reminder during the review process.
 
-It looks like you received a tag and forgot to add it.
+> On 22 Aug 2025, at 09:14, Andreas Hindborg <a.hindborg@kernel.org> =
+wrote:
+>=20
+> Add `NullTerminatedFormatter`, a formatter that writes a null =
+terminated
+> string to an array or slice buffer. Because this type needs to manage =
+the
+> trailing null marker, the existing formatters cannot be used to =
+implement
+> this type.
+>=20
+> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
+> ---
+> rust/kernel/str.rs | 49 =
++++++++++++++++++++++++++++++++++++++++++++++++++
+> 1 file changed, 49 insertions(+)
+>=20
+> diff --git a/rust/kernel/str.rs b/rust/kernel/str.rs
+> index 46cdc85dad63..d8326f7bc9c1 100644
+> --- a/rust/kernel/str.rs
+> +++ b/rust/kernel/str.rs
+> @@ -871,6 +871,55 @@ fn write_str(&mut self, s: &str) -> fmt::Result {
+>     }
+> }
+>=20
+> +/// A mutable reference to a byte buffer where a string can be =
+written into.
+> +///
+> +/// The buffer will be automatically null terminated after the last =
+written character.
+> +///
+> +/// # Invariants
+> +///
+> +/// * The first byte of `buffer` is always zero.
+> +/// * The length of `buffer` is at least 1.
+> +pub(crate) struct NullTerminatedFormatter<'a> {
+> +    buffer: &'a mut [u8],
+> +}
+> +
+> +impl<'a> NullTerminatedFormatter<'a> {
+> +    /// Create a new [`Self`] instance.
+> +    #[expect(dead_code)]
+> +    pub(crate) fn new(buffer: &'a mut [u8]) -> =
+Option<NullTerminatedFormatter<'a>> {
+> +        *(buffer.first_mut()?) =3D 0;
+> +
+> +        // INVARIANT:
+> +        //  - We wrote zero to the first byte above.
+> +        //  - If buffer was not at least length 1, =
+`buffer.first_mut()` would return None.
+> +        Some(Self { buffer })
+> +    }
+> +}
+> +
+> +impl Write for NullTerminatedFormatter<'_> {
+> +    fn write_str(&mut self, s: &str) -> fmt::Result {
+> +        let bytes =3D s.as_bytes();
+> +        let len =3D bytes.len();
+> +
+> +        // We want space for a zero. By type invariant, buffer length =
+is always at least 1, so no
+> +        // underflow.
+> +        if len > self.buffer.len() - 1 {
+> +            return Err(fmt::Error);
+> +        }
+> +
+> +        let buffer =3D core::mem::take(&mut self.buffer);
+> +        // We break the zero start invariant for a short while.
+> +        buffer[..len].copy_from_slice(bytes);
+> +        // INVARIANT: We checked above that buffer will have size at =
+least 1 after this assignment.
+> +        self.buffer =3D &mut buffer[len..];
+> +
+> +        // INVARIANT: We write zero to the first byte of the buffer.
+> +        self.buffer[0] =3D 0;
+> +
+> +        Ok(())
+> +    }
+> +}
+> +
+> /// An owned string that is guaranteed to have exactly one `NUL` byte, =
+which is at the end.
+> ///
+> /// Used for interoperability with kernel APIs that take C strings.
+>=20
+> --=20
+> 2.47.2
+>=20
+>=20
+>=20
 
-If you do not know the process, here is a short explanation:
-Please add Acked-by/Reviewed-by/Tested-by tags when posting new versions
-of patchset, under or above your Signed-off-by tag, unless patch changed
-significantly (e.g. new properties added to the DT bindings). Tag is
-"received", when provided in a message replied to you on the mailing
-list. Tools like b4 can help here. However, there's no need to repost
-patches *only* to add the tags. The upstream maintainer will do that for
-tags received on the version they apply.
 
-Please read:
-https://elixir.bootlin.com/linux/v6.12-rc3/source/Documentation/process/submitting-patches.rst#L577
+Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>
 
-If a tag was not added on purpose, please state why and what changed.
-</form letter>
-
-Best regards,
-Krzysztof
 
