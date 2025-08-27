@@ -1,87 +1,87 @@
-Return-Path: <linux-kernel+bounces-788844-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE6CEB38AEF
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 22:28:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C7E4B38AF4
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 22:30:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4B2D686833
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 20:27:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB04B6846C0
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 20:30:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB7F92F067E;
-	Wed, 27 Aug 2025 20:26:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 525E72EE61C;
+	Wed, 27 Aug 2025 20:30:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eqBbZXhu"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NtzPvnbM"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9002A2EF678
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 20:26:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CD272EA477
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 20:29:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756326377; cv=none; b=V5tgHWyLvogOk320vkCFdk4sp3gAzmY50TA3rP61Rk8Awz6yRWicKhsq5TGUjlY+7zxc7VvfXqso9zbBVKa0ddLgxpCIHsao9wPl4/PmXZDSnIo6HjcHLCMcAn6t13XKebUvK2SyIHDv1MOM9ZveTNoSvXF5YMinBcFV3ZoIq3w=
+	t=1756326601; cv=none; b=W8bZiXATPryGQ0tGIh6mpdlwmRD0pmHYYO5fsCNbEbnoTNu4X8EZp9wck3UKM5Gpku5XMn+bRN1Lg0EZdtAgXjwPigbu8lhAOBCHeiBG4gywa1ldfkPJ1aMObZWmYREiH+o08pCxxGg0QgvUNmig4Pgg3l/m3jdzH0G46mR+YBw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756326377; c=relaxed/simple;
-	bh=c9MI22F6zJXO9t7ul6zlheSb+XucPYJ5G9gVpeODLrs=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=fOz1Tte3AUKiGKj23eHt4u3NvTmlA/wPFwy/lvGiMc9XrU4B4ZLBHO1zylIZeyJ6Ixx2tf2bB7+m0HhkkDzd/dQb7R5ye3Jrw+w8aQFGuF9lwadSy9BRM/s/eWR6onBKxHWm/rYtqwsNTknJhJ7KI3wdS9I82etoXeXyqlJpkbo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eqBbZXhu; arc=none smtp.client-ip=170.10.129.124
+	s=arc-20240116; t=1756326601; c=relaxed/simple;
+	bh=3WZpp71n5x4YKcKUBW25iOsmt4LK+4vP3KC4Ae2BWAk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=a0Wy9thjJz7sW7BPy3qZ+LDURFXaDqovkTjugX8mZOGrRLpZKzrfYDxJs9337LSrDxj2ttETF6JWrviNmG5GbPGsUl/5Zok1Ip2+rNHHc3JdSmzOO0IxTj/I4A8Vxr4eHAdUrfimGbj9DR3mD2dABOdBnBHtGd6s85Dk0Pysb5U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NtzPvnbM; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756326374;
+	s=mimecast20190719; t=1756326599;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=AOs3uJzXX/k9jmtMpMd9nBSE+OF57uMz5ApCLqXUPO0=;
-	b=eqBbZXhulsP+kFC9+mgnY0oFvGhqU/uai0HGm3Ib4sfc56BWpuklD2G05Z6f8DCK1xPcoX
-	P5r4tp9pLeoVf1dzb4i9QkSq/HkXLPSdRjP/9W3SEpfU60SBmOkBMECxzsK2k7fZnbhAbf
-	brkJ0jeySNi8//qGPsIZ79VGvVO1NAU=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=PzokQis5ZL6qsKctP4Xs3z1Gldk6SHQ/UBTYZ2qmTrY=;
+	b=NtzPvnbMV12Oqak9U+IsqIDeG8jPTcmWhxMabJLV627fs8RTQMPH7awTa9d7UL46Ce7xkH
+	lk6aKmXJBtLHAsHJ0D7U9ErgWsV4j4TyuLtw/vJkcBTuWzr137arcwL0ekuIpTDA7hOhkg
+	MWyKFCyrtr+qrQsyhY9eksSbkTUUZ/E=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-159-AB3spdwgOtiyNMWgGu2LnA-1; Wed, 27 Aug 2025 16:26:12 -0400
-X-MC-Unique: AB3spdwgOtiyNMWgGu2LnA-1
-X-Mimecast-MFC-AGG-ID: AB3spdwgOtiyNMWgGu2LnA_1756326371
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-45b71eef08eso900595e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 13:26:12 -0700 (PDT)
+ us-mta-351-b_MLJRR3MaKqFMMFyOYvDA-1; Wed, 27 Aug 2025 16:29:56 -0400
+X-MC-Unique: b_MLJRR3MaKqFMMFyOYvDA-1
+X-Mimecast-MFC-AGG-ID: b_MLJRR3MaKqFMMFyOYvDA_1756326595
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-45b612dbc28so1343195e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 13:29:56 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756326371; x=1756931171;
+        d=1e100.net; s=20230601; t=1756326595; x=1756931395;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :references:cc:to:from:subject:user-agent:mime-version:date
+         :from:references:cc:to:subject:user-agent:mime-version:date
          :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=AOs3uJzXX/k9jmtMpMd9nBSE+OF57uMz5ApCLqXUPO0=;
-        b=tLXz5YeCm+lIKyf0NLMwwQhakvJHijvx9e8hj2AAzzA/A8vvviwOGMJQValL6w4KZV
-         1EYPfEzY0cgdXD5TNoY/xXPVliRpM9MZpUlTyRvf9YOgn2n8XoHTiEzlXTBwaLfFk9KS
-         sLtmvqVXkm8m216RgQ7IB8VrEIccMUWziDZ8gn0ixvrZ2v4sNwFk+19h2ziuTdGZ0x3c
-         iEL3orrhukfliLOcCN0YQ/7vsaKAmKgjCsrVJMVszfIlD1jOSDcdNXzJXG3veIYFwrvA
-         nQn3B4j6sFzusVZ81JL8nHS8jyXCHGHyfk03LzZpYc/VyVCQXWD4rTHLyuy1m3obgAjd
-         Uhfw==
-X-Forwarded-Encrypted: i=1; AJvYcCWdfqKR467+oqyMmIs2B3Bx5hLwBEdSqZsWX7Ty+Q/vm5ZGltA1a0FiP8/eRY4gmeo2Njp963uqsnU0gZM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4EW3cwa9l87IO96hq7EzDkLiWad2WWoFimXFGXCs420g8EVLL
-	L2cMJW4dT3T0v4uKph7f8zFEaQD6+EP2Mu2Pttrn2y72Rb4k/shZ0Dr5XpIMmZebh11XQ+TEetP
-	o30J3MvprPQtdsO4oAX3tfjs5BW8TWs+KWMnl692/jAiuTyVre/108hNlEqfjFFvjWQ==
-X-Gm-Gg: ASbGncsMRfW+s74wpAXBXHl4tZmP/0hS3zYkGhON4H+nSDDpPPAws0BzDuZWW85sIZS
-	hvJgkwVov3fix0wb2Goq3+J0FReXKzooxXBADI8v7ZZ24DtCU9z3JIq6IGKO8Q2ZzbOBZoM6rzf
-	3dyhNRRWaGkNswFUd216enB84rDFxluJtkSL0DGwkPmORw3f1jXAJmDFQ7zxLFOnuuFqS9fiwMk
-	ob9hd1o7d6UDdDsqa1uO7TVBMhf4kA6rORMYSvPsFb1IMOXEzj3SlI5WEEK+gPQ17Iv67kXO2Be
-	HMlGiXp9I2HDIfVomKtTV6L0aEOOvR5qQqmuWu9trOJL0vXrIrOjGHEV1E0AbgX5WJxBmuNYoFk
-	SbBBTOZND1Qku2eR5QnfOVQECLScgp9rx27t7QrwAhzceYflpgj453F9AIn5ixSJ6W8A=
-X-Received: by 2002:a05:600c:3ba2:b0:45b:47e1:ef70 with SMTP id 5b1f17b1804b1-45b74421339mr17480145e9.35.1756326371204;
-        Wed, 27 Aug 2025 13:26:11 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEwWSfdQZlagbLP65+8+IBTZq+moTWEKls9nquyTJI8BJWVHR6V2mwVXtGXYC9Qu2jC34+VqQ==
-X-Received: by 2002:a05:600c:3ba2:b0:45b:47e1:ef70 with SMTP id 5b1f17b1804b1-45b74421339mr17480015e9.35.1756326370811;
-        Wed, 27 Aug 2025 13:26:10 -0700 (PDT)
+        bh=PzokQis5ZL6qsKctP4Xs3z1Gldk6SHQ/UBTYZ2qmTrY=;
+        b=q996xvkLt5UUUxQer0Te6xfEpARarw9XkuaDG4mW08nXE8Y3VpnzC/laEfOUWRrRx8
+         WLFUe4B81yL2A3FIce7eiqdO3SU8cLG2PsA13mKbpHwI5H04PbHE6cURY7LQegBQIroW
+         9omHCplWo6nd3heWwR4MWnoaAf7h35MZCjierXop9exYaw0BJJtRXRDH8aSGPcplUWtP
+         kuIysyYCQ4sByc3lbK40MRiytb0O52JzuwPpedc3iAq9Z/70PJtumzvytwqBOz+xfOz0
+         R8ecCTO2pZ/p6D/ps1dLP3SxlhI3vM/7uRuZcwB6Vg/3VJvvxQSogtPsOpQ20fZjf3h3
+         cqcg==
+X-Forwarded-Encrypted: i=1; AJvYcCXtnSGuVfT054qKd01akC+R6rLZuDX+0yHe4sAAKXz5h1uOmbWmCpznk6Fud3yH3V01n+JqtVwKtheZV/o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxDHuWlYe5Se1Xc6VGewScQ1vGhVYDPAzYAl5SE4q3WRe5jxaAD
+	ILrRhyB6nueUBCE3784z+DGrrU0No/6Ug+aivqmlDL/sGREph0SP7tENAG+LTF6pjlcMh1sZW5p
+	9i+X0fQWc75PelNlYDjw3EjFh/X11B9Sh38/dJoakUaN7tFLMfkalgTodWbpzkfIi4g==
+X-Gm-Gg: ASbGnctkSYxrfIE7+069TCmgm6qwioMUzNI9hIYlR++jDRnYC2Xq2D8GfT9ncGKRDOv
+	5R9A4zao01rZGYWPMxSdT+WPmk2GHTAb3V2Opn28gWYvdKBho6zJ75famfbQtUNRbQwBpz/YAJM
+	vm/BJkNy/1tbppG3O5FF7n9dBxJxO1UsszNfrHA2KX4du81mQ4HVonVVz6gfLZYeGi27RYhme10
+	FrRsCK3eNqa7XC2P6N/jLXaN7j8C4G09tqr3ywvYhf+/AM13mmxxoBLeUFE+6eT6eDIccGeXoCy
+	m/Kpu3XGeTRFWvPnB+2amuhtb+teXLY6fZECfyqawrn7GVJsaXVnLXAk7CjkYWb1t9KbNmubuld
+	1oflIZOIYl3YE2ih1RjFA6n8sohPBdwoknqRoSwzX79uopCmWkHEO1P32lNVHOtTsT0U=
+X-Received: by 2002:a05:600c:c87:b0:459:dd34:52fb with SMTP id 5b1f17b1804b1-45b5179ebb2mr190291995e9.12.1756326595158;
+        Wed, 27 Aug 2025 13:29:55 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFRZbz0F38PgQXgnCEw95o1suaGM69HCqab1SOSSbvnFH7ZiXZ+shWII8MvVCiecn8ZaBeb2g==
+X-Received: by 2002:a05:600c:c87:b0:459:dd34:52fb with SMTP id 5b1f17b1804b1-45b5179ebb2mr190291705e9.12.1756326594730;
+        Wed, 27 Aug 2025 13:29:54 -0700 (PDT)
 Received: from ?IPV6:2003:d8:2f1f:d000:d4e1:a22e:7d95:bb63? (p200300d82f1fd000d4e1a22e7d95bb63.dip0.t-ipconnect.de. [2003:d8:2f1f:d000:d4e1:a22e:7d95:bb63])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b66c383b1sm42788865e9.3.2025.08.27.13.26.09
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b79799c81sm1683715e9.4.2025.08.27.13.29.53
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Aug 2025 13:26:10 -0700 (PDT)
-Message-ID: <4927ed52-a250-4ae8-b596-6f81020eb31a@redhat.com>
-Date: Wed, 27 Aug 2025 22:26:09 +0200
+        Wed, 27 Aug 2025 13:29:54 -0700 (PDT)
+Message-ID: <5cdd07b4-f924-4207-a8cf-09b4fc26d3d7@redhat.com>
+Date: Wed, 27 Aug 2025 22:29:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,19 +89,27 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] huge_mm.h: disallow is_huge_zero_folio(NULL)
-From: David Hildenbrand <david@redhat.com>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Max Kellermann <max.kellermann@ionos.com>
-Cc: akpm@linux-foundation.org, ziy@nvidia.com, baolin.wang@linux.alibaba.com,
- Liam.Howlett@oracle.com, npache@redhat.com, ryan.roberts@arm.com,
- dev.jain@arm.com, baohua@kernel.org, shikemeng@huaweicloud.com,
- kasong@tencent.com, nphamcs@gmail.com, bhe@redhat.com, chrisl@kernel.org,
+Subject: Re: [v3 07/11] mm/thp: add split during migration support
+To: Balbir Singh <balbirs@nvidia.com>, dri-devel@lists.freedesktop.org,
  linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <2aa3f478-9c87-4102-b83e-bf235372d834@redhat.com>
- <20250827150330.280399-1-max.kellermann@ionos.com>
- <30f52bf5-ff37-4e22-ac57-7be0b03b1f51@lucifer.local>
- <0de24b30-70ad-498f-9eac-01596c8713df@redhat.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Zi Yan <ziy@nvidia.com>,
+ Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
+ Byungchul Park <byungchul@sk.com>, Gregory Price <gourry@gourry.net>,
+ Ying Huang <ying.huang@linux.alibaba.com>,
+ Alistair Popple <apopple@nvidia.com>, Oscar Salvador <osalvador@suse.de>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
+ Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
+ Barry Song <baohua@kernel.org>, Lyude Paul <lyude@redhat.com>,
+ Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Ralph Campbell <rcampbell@nvidia.com>,
+ =?UTF-8?Q?Mika_Penttil=C3=A4?= <mpenttil@redhat.com>,
+ Matthew Brost <matthew.brost@intel.com>,
+ Francois Dugast <francois.dugast@intel.com>
+References: <20250812024036.690064-1-balbirs@nvidia.com>
+ <20250812024036.690064-8-balbirs@nvidia.com>
+From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
  xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
@@ -147,65 +155,28 @@ Autocrypt: addr=david@redhat.com; keydata=
  3iyY2Nsd7JxfKu1PRhCGwXzRw5TlfEsoRI7V9A8isUCoqE2Dzh3FvYHVeX4Us+bRL/oqareJ
  CIFqgYMyvHj7Q06kTKmauOe4Nf0l0qEkIuIzfoLJ3qr5UyXc2hLtWyT9Ir+lYlX9efqh7mOY
  qIws/H2t
-In-Reply-To: <0de24b30-70ad-498f-9eac-01596c8713df@redhat.com>
+In-Reply-To: <20250812024036.690064-8-balbirs@nvidia.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 27.08.25 22:01, David Hildenbrand wrote:
+On 12.08.25 04:40, Balbir Singh wrote:
+> Support splitting pages during THP zone device migration as needed.
+> The common case that arises is that after setup, during migrate
+> the destination might not be able to allocate MIGRATE_PFN_COMPOUND
+> pages.
 > 
->> This seems not so great.
->>
->> I really think the VM_WARN_ON_ONCE() should be in folios_put_refs() based
->> on what you've said.
-> 
-> No.
-> 
-> Everything in folio_put_refs() will dereference the folio and properly
-> crash the machine when doing something stupid.
-> 
-> This function, however, will silently swallow a "NULL" pointer.
-> 
->>
->>>
->>> Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
->>> ---
->>>    include/linux/huge_mm.h | 3 +++
->>>    1 file changed, 3 insertions(+)
->>>
->>> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
->>> index 7748489fde1b..bc9ca7798f2e 100644
->>> --- a/include/linux/huge_mm.h
->>> +++ b/include/linux/huge_mm.h
->>> @@ -2,6 +2,7 @@
->>>    #ifndef _LINUX_HUGE_MM_H
->>>    #define _LINUX_HUGE_MM_H
->>>
->>> +#include <linux/mmdebug.h> // for VM_WARN_ON_ONCE()
->>
->> Please don't do //.
->>
->> This include is suspect though, huge_mm.h is included from mm.h and thus
->> this very easily might break some arch that is weird about this stuff,
->> because a ton of stuff includes mm.h including things that might absolutely
->> baulk at mmdebug.
-> 
-> Jup. Very likely this is not required.
+> Add a new routine migrate_vma_split_pages() to support the splitting
+> of already isolated pages. The pages being migrated are already unmapped
+> and marked for migration during setup (via unmap). folio_split() and
+> __split_unmapped_folio() take additional isolated arguments, to avoid
+> unmapping and remaping these pages and unlocking/putting the folio.
 
-Took another look and including mmdebug.h should likely be fine, because 
-all it includes is really
+No detailed review, just a high-level comment: please take better care 
+of crafting your patch subjects.
 
-(1) include/linux/bug.h
-(2) include/linux/stringify.h
+This should probably be
 
-But originally, I wonder if we even need mmdebug.h or if it is already 
-implicitly included.
-
-huge_mm.h includes mm_types.h (where we already do use VM_WARN...).
-
-I assume there we get it implicitly through percpu.h, mmap_lock.h or 
-percpu.h
-
-So the include should just get dropped.
+mm/migrate_device: support splitting device folios during migration
 
 -- 
 Cheers
