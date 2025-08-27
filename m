@@ -1,180 +1,276 @@
-Return-Path: <linux-kernel+bounces-787932-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24CBAB37DC6
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 10:28:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B601DB37DCE
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 10:28:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F40CC7AE9B5
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 08:26:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 842567A29B9
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 08:27:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 046AE342CAE;
-	Wed, 27 Aug 2025 08:27:01 +0000 (UTC)
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A20923375BB;
+	Wed, 27 Aug 2025 08:27:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DHfUquFE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBA96341ABD
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 08:26:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFE9C338F48;
+	Wed, 27 Aug 2025 08:27:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756283220; cv=none; b=ip2TyPw+P4FV+Q2pO4/SqMZIcITTTnVk1zrNNvREPatW7Q9lzRLE6ltpdieHu6L6iW6pfLoKlbyX0+6aacE1Jg3vHtyKBVsAGd3PhapRdB7qtjTNkMv2gu0b26DW9ftApZbM3qZgvi4cd+rZeGCa0eAOgckUlfsF4WDgHKLYg00=
+	t=1756283222; cv=none; b=NJMrrNAVhaqxwPAwGqaqskAin+1Yui51Q4WvvCXxjeKbHWGzRZ0OJSoIOyvFcSetTMTWe9RYq6wKh6+bK8G7q89K3mIYqmWTyZfkPrXTsuPYWEwDrwXBqwjgF3YNVn/Ywbm8/wi2BwbHFi3+DNKDFh59b60CbNDNbzsNpeweb7g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756283220; c=relaxed/simple;
-	bh=v+q9Vxilok3SbfLK/5B4/q60PmqhPNOvmXaMItd00rQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=WszsBgjDiJPhAbQG9NRjIvl1LIdfhJUFpaHo2gTwEhCPHyo/5Dia9HUaU1HSmLihOBFhifUBsHZ6VmpXKoE40PCMLDQ+P3M6fTvqxNbTp7L73z+Rc1LElAFtQy5eoWIzV9nfJHjRRY1IBE6V80OKHU7jHO4u2MnUH1NONApch6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 6EEFB1FF22;
-	Wed, 27 Aug 2025 08:26:35 +0000 (UTC)
-Authentication-Results: smtp-out2.suse.de;
-	none
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5A4F813A31;
-	Wed, 27 Aug 2025 08:26:35 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id oFnDFTvBrmhNfgAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Wed, 27 Aug 2025 08:26:35 +0000
-From: Vlastimil Babka <vbabka@suse.cz>
-Date: Wed, 27 Aug 2025 10:26:37 +0200
-Subject: [PATCH v6 05/10] slab: determine barn status racily outside of
- lock
+	s=arc-20240116; t=1756283222; c=relaxed/simple;
+	bh=bNOmw1tzFH8Sl7kR3p+wUYP6U5+a6FHYIcsXQNkIydI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=P2aVPmyD0QpqiJ3WCKKQGws40cgluE6ajWCcIBm8dRD1gYPRgyP5GTTrw4OgfGQ9H2DO1GuvwMALh7FzvAPtL4QtJwKK4Vhb+McPUyhtxepWN1K4+q61hH++TC+vRxwrqlVRXsQWfSrUbJfrF1s2wRxphyEqulNGGuFoctH1apk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DHfUquFE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F816C116C6;
+	Wed, 27 Aug 2025 08:27:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756283222;
+	bh=bNOmw1tzFH8Sl7kR3p+wUYP6U5+a6FHYIcsXQNkIydI=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=DHfUquFEi6CklQ3HPSJwSpYmJybPa/3q6d6icQ1flmYboswEFJo5kvOSiYXO+36Hv
+	 0tTYd+wDYjMcFlyw3pHJUZL1Lmo1ymNrI8drFIjDrue14ar+DVFXvr04aUMWSlubMp
+	 +Ma91FtMstLyrzjbz7MiTfAp652Yd11KB3jDwBD7PpNkYICUcUMwwUl36CinrFf5w8
+	 daKMBxhy6S6E5Bj/1gqpSIRKu3DvW5GaUh3FiBoEcYfg0EbHh15ejFEVyNPeY+47ed
+	 T+7hkejNZwcVyVlBl+YBG6BkFZq7mp/rEmk/dV2VBrr5eQ02fsZ8StNh1QowYTQteK
+	 zjjgY3c+7J7KQ==
+Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
+	(envelope-from <mchehab+huawei@kernel.org>)
+	id 1urBUi-00000000uUY-12Ds;
+	Wed, 27 Aug 2025 10:27:00 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>
+Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	"Mauro Carvalho Chehab" <mchehab+huawei@kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 2/2] tools: kernel-doc: add a see also section at man pages
+Date: Wed, 27 Aug 2025 10:26:38 +0200
+Message-ID: <58c6e079ab456dd6514eba09ce3efafa10b7b6bd.1756282370.git.mchehab+huawei@kernel.org>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <cover.1756282370.git.mchehab+huawei@kernel.org>
+References: <cover.1756282370.git.mchehab+huawei@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250827-slub-percpu-caches-v6-5-f0f775a3f73f@suse.cz>
-References: <20250827-slub-percpu-caches-v6-0-f0f775a3f73f@suse.cz>
-In-Reply-To: <20250827-slub-percpu-caches-v6-0-f0f775a3f73f@suse.cz>
-To: Suren Baghdasaryan <surenb@google.com>, 
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
- Christoph Lameter <cl@gentwo.org>, David Rientjes <rientjes@google.com>
-Cc: Roman Gushchin <roman.gushchin@linux.dev>, 
- Harry Yoo <harry.yoo@oracle.com>, Uladzislau Rezki <urezki@gmail.com>, 
- linux-mm@kvack.org, linux-kernel@vger.kernel.org, rcu@vger.kernel.org, 
- maple-tree@lists.infradead.org, vbabka@suse.cz
-X-Mailer: b4 0.14.2
-X-Rspamd-Pre-Result: action=no action;
-	module=replies;
-	Message is reply to one we originated
-X-Spam-Level: 
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.00 / 50.00];
-	REPLY(-4.00)[]
-X-Rspamd-Queue-Id: 6EEFB1FF22
-X-Rspamd-Pre-Result: action=no action;
-	module=replies;
-	Message is reply to one we originated
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spam-Score: -4.00
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-The possibility of many barn operations is determined by the current
-number of full or empty sheaves. Taking the barn->lock just to find out
-that e.g. there are no empty sheaves results in unnecessary overhead and
-lock contention. Thus perform these checks outside of the lock with a
-data_race() annotated variable read and fail quickly without taking the
-lock.
+While cross-references are complex, as related ones can be on
+different files, we can at least correlate the ones that belong
+to the same file, adding a SEE ALSO section for them.
 
-Checks for sheaf availability that racily succeed have to be obviously
-repeated under the lock for correctness, but we can skip repeating
-checks if there are too many sheaves on the given list as the limits
-don't need to be strict.
+The result is not bad. See for instance:
 
-Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
-Reviewed-by: Suren Baghdasaryan <surenb@google.com>
-Reviewed-by: Harry Yoo <harry.yoo@oracle.com>
+	$ tools/docs/sphinx-build-wrapper --sphinxdirs driver-api/media -- mandocs
+	$ man Documentation/output/driver-api/man/edac_pci_add_device.9
+
+	edac_pci_add_device(9)  Kernel Hacker's Manual  edac_pci_add_device(9)
+
+	NAME
+	       edac_pci_add_device  - Insert the 'edac_dev' structure into the
+	       edac_pci global list and create sysfs entries  associated  with
+	       edac_pci structure.
+
+	SYNOPSIS
+	       int  edac_pci_add_device  (struct  edac_pci_ctl_info *pci , int
+	       edac_idx );
+
+	ARGUMENTS
+	       pci         pointer to the edac_device structure to be added to
+	                   the list
+
+	       edac_idx    A unique numeric identifier to be assigned to the
+
+	RETURN
+	       0 on Success, or an error code on failure
+
+	SEE ALSO
+	       edac_pci_alloc_ctl_info(9),          edac_pci_free_ctl_info(9),
+	       edac_pci_alloc_index(9),  edac_pci_del_device(9), edac_pci_cre‐
+	       ate_generic_ctl(9),            edac_pci_release_generic_ctl(9),
+	       edac_pci_create_sysfs(9), edac_pci_remove_sysfs(9)
+
+	August 2025               edac_pci_add_device   edac_pci_add_device(9)
+
+Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 ---
- mm/slub.c | 27 ++++++++++++++++++++-------
- 1 file changed, 20 insertions(+), 7 deletions(-)
+ scripts/lib/kdoc/kdoc_files.py  |  5 +-
+ scripts/lib/kdoc/kdoc_output.py | 84 +++++++++++++++++++++++++++++++--
+ 2 files changed, 83 insertions(+), 6 deletions(-)
 
-diff --git a/mm/slub.c b/mm/slub.c
-index c8dda640f95e7e738cf2ceb05b98d1176df6e83f..ee3a222acd6b15389a71bb47429d22b5326a4624 100644
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@ -2796,9 +2796,12 @@ static struct slab_sheaf *barn_get_empty_sheaf(struct node_barn *barn)
- 	struct slab_sheaf *empty = NULL;
- 	unsigned long flags;
+diff --git a/scripts/lib/kdoc/kdoc_files.py b/scripts/lib/kdoc/kdoc_files.py
+index 9e09b45b02fa..061c033f32da 100644
+--- a/scripts/lib/kdoc/kdoc_files.py
++++ b/scripts/lib/kdoc/kdoc_files.py
+@@ -275,7 +275,10 @@ class KernelFiles():
+                 self.config.log.warning("No kernel-doc for file %s", fname)
+                 continue
  
-+	if (!data_race(barn->nr_empty))
-+		return NULL;
+-            for arg in self.results[fname]:
++            symbols = self.results[fname]
++            self.out_style.set_symbols(symbols)
 +
- 	spin_lock_irqsave(&barn->lock, flags);
++            for arg in symbols:
+                 m = self.out_msg(fname, arg.name, arg)
  
--	if (barn->nr_empty) {
-+	if (likely(barn->nr_empty)) {
- 		empty = list_first_entry(&barn->sheaves_empty,
- 					 struct slab_sheaf, barn_list);
- 		list_del(&empty->barn_list);
-@@ -2845,6 +2848,9 @@ static struct slab_sheaf *barn_get_full_or_empty_sheaf(struct node_barn *barn)
- 	struct slab_sheaf *sheaf = NULL;
- 	unsigned long flags;
+                 if m is None:
+diff --git a/scripts/lib/kdoc/kdoc_output.py b/scripts/lib/kdoc/kdoc_output.py
+index ea8914537ba0..1eca9a918558 100644
+--- a/scripts/lib/kdoc/kdoc_output.py
++++ b/scripts/lib/kdoc/kdoc_output.py
+@@ -215,6 +215,9 @@ class OutputFormat:
  
-+	if (!data_race(barn->nr_full) && !data_race(barn->nr_empty))
-+		return NULL;
+     # Virtual methods to be overridden by inherited classes
+     # At the base class, those do nothing.
++    def set_symbols(self, symbols):
++        """Get a list of all symbols from kernel_doc"""
 +
- 	spin_lock_irqsave(&barn->lock, flags);
+     def out_doc(self, fname, name, args):
+         """Outputs a DOC block"""
  
- 	if (barn->nr_full) {
-@@ -2875,9 +2881,12 @@ barn_replace_empty_sheaf(struct node_barn *barn, struct slab_sheaf *empty)
- 	struct slab_sheaf *full = NULL;
- 	unsigned long flags;
+@@ -577,6 +580,7 @@ class ManFormat(OutputFormat):
  
-+	if (!data_race(barn->nr_full))
-+		return NULL;
+         super().__init__()
+         self.modulename = modulename
++        self.symbols = []
+ 
+         dt = None
+         tstamp = os.environ.get("KBUILD_BUILD_TIMESTAMP")
+@@ -593,6 +597,68 @@ class ManFormat(OutputFormat):
+ 
+         self.man_date = dt.strftime("%B %Y")
+ 
++    def arg_name(self, args, name):
++        """
++        Return the name that will be used for the man page.
 +
- 	spin_lock_irqsave(&barn->lock, flags);
- 
--	if (barn->nr_full) {
-+	if (likely(barn->nr_full)) {
- 		full = list_first_entry(&barn->sheaves_full, struct slab_sheaf,
- 					barn_list);
- 		list_del(&full->barn_list);
-@@ -2901,19 +2910,23 @@ barn_replace_full_sheaf(struct node_barn *barn, struct slab_sheaf *full)
- 	struct slab_sheaf *empty;
- 	unsigned long flags;
- 
-+	/* we don't repeat this check under barn->lock as it's not critical */
-+	if (data_race(barn->nr_full) >= MAX_FULL_SHEAVES)
-+		return ERR_PTR(-E2BIG);
-+	if (!data_race(barn->nr_empty))
-+		return ERR_PTR(-ENOMEM);
++        As we may have the same name on different namespaces,
++        prepend the data type for all types except functions and typedefs.
 +
- 	spin_lock_irqsave(&barn->lock, flags);
++        The doc section is special: it uses the modulename.
++        """
++
++        dtype = args.type
++
++        if dtype == "doc":
++            return self.modulename
++
++        if dtype in ["function", "typedef"]:
++            return name
++
++        return f"{dtype} {name}"
++
++    def set_symbols(self, symbols):
++        """
++        Get a list of all symbols from kernel_doc.
++
++        Man pages will uses it to add a SEE ALSO section with other
++        symbols at the same file.
++        """
++        self.symbols = symbols
++
++    def out_tail(self, fname, name, args):
++        """Adds a tail for all man pages"""
++
++        # SEE ALSO section
++        if len(self.symbols) >= 2:
++            cur_name = self.arg_name(args, name)
++
++            self.data += f'.SH "SEE ALSO"' + "\n.PP\n"
++            related = []
++            for arg in self.symbols:
++                out_name = self.arg_name(arg, arg.name)
++
++                if cur_name == out_name:
++                    continue
++
++                related.append(f"\\fB{out_name}\\fR(9)")
++
++            self.data += ",\n".join(related) + "\n"
++
++        # TODO: does it make sense to add other sections? Maybe
++        # REPORTING ISSUES? LICENSE?
++
++    def msg(self, fname, name, args):
++        """
++        Handles a single entry from kernel-doc parser.
++
++        Add a tail at the end of man pages output.
++        """
++        super().msg(fname, name, args)
++        self.out_tail(fname, name, args)
++
++        return self.data
++
+     def output_highlight(self, block):
+         """
+         Outputs a C symbol that may require being highlighted with
+@@ -618,7 +684,9 @@ class ManFormat(OutputFormat):
+         if not self.check_doc(name, args):
+             return
  
--	if (barn->nr_full >= MAX_FULL_SHEAVES) {
--		empty = ERR_PTR(-E2BIG);
--	} else if (!barn->nr_empty) {
--		empty = ERR_PTR(-ENOMEM);
--	} else {
-+	if (likely(barn->nr_empty)) {
- 		empty = list_first_entry(&barn->sheaves_empty, struct slab_sheaf,
- 					 barn_list);
- 		list_del(&empty->barn_list);
- 		list_add(&full->barn_list, &barn->sheaves_full);
- 		barn->nr_empty--;
- 		barn->nr_full++;
-+	} else {
-+		empty = ERR_PTR(-ENOMEM);
- 	}
+-        self.data += f'.TH "{self.modulename}" 9 "{self.modulename}" "{self.man_date}" "API Manual" LINUX' + "\n"
++        out_name = self.arg_name(args, name)
++
++        self.data += f'.TH "{self.modulename}" 9 "{out_name}" "{self.man_date}" "API Manual" LINUX' + "\n"
  
- 	spin_unlock_irqrestore(&barn->lock, flags);
-
+         for section, text in args.sections.items():
+             self.data += f'.SH "{section}"' + "\n"
+@@ -627,7 +695,9 @@ class ManFormat(OutputFormat):
+     def out_function(self, fname, name, args):
+         """output function in man"""
+ 
+-        self.data += f'.TH "{name}" 9 "{name}" "{self.man_date}" "Kernel Hacker\'s Manual" LINUX' + "\n"
++        out_name = self.arg_name(args, name)
++
++        self.data += f'.TH "{name}" 9 "{out_name}" "{self.man_date}" "Kernel Hacker\'s Manual" LINUX' + "\n"
+ 
+         self.data += ".SH NAME\n"
+         self.data += f"{name} \\- {args['purpose']}\n"
+@@ -671,7 +741,9 @@ class ManFormat(OutputFormat):
+             self.output_highlight(text)
+ 
+     def out_enum(self, fname, name, args):
+-        self.data += f'.TH "{self.modulename}" 9 "enum {name}" "{self.man_date}" "API Manual" LINUX' + "\n"
++        out_name = self.arg_name(args, name)
++
++        self.data += f'.TH "{self.modulename}" 9 "{out_name}" "{self.man_date}" "API Manual" LINUX' + "\n"
+ 
+         self.data += ".SH NAME\n"
+         self.data += f"enum {name} \\- {args['purpose']}\n"
+@@ -703,8 +775,9 @@ class ManFormat(OutputFormat):
+     def out_typedef(self, fname, name, args):
+         module = self.modulename
+         purpose = args.get('purpose')
++        out_name = self.arg_name(args, name)
+ 
+-        self.data += f'.TH "{module}" 9 "{name}" "{self.man_date}" "API Manual" LINUX' + "\n"
++        self.data += f'.TH "{module}" 9 "{out_name}" "{self.man_date}" "API Manual" LINUX' + "\n"
+ 
+         self.data += ".SH NAME\n"
+         self.data += f"typedef {name} \\- {purpose}\n"
+@@ -717,8 +790,9 @@ class ManFormat(OutputFormat):
+         module = self.modulename
+         purpose = args.get('purpose')
+         definition = args.get('definition')
++        out_name = self.arg_name(args, name)
+ 
+-        self.data += f'.TH "{module}" 9 "{args.type} {name}" "{self.man_date}" "API Manual" LINUX' + "\n"
++        self.data += f'.TH "{module}" 9 "{out_name}" "{self.man_date}" "API Manual" LINUX' + "\n"
+ 
+         self.data += ".SH NAME\n"
+         self.data += f"{args.type} {name} \\- {purpose}\n"
 -- 
 2.51.0
 
