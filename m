@@ -1,173 +1,96 @@
-Return-Path: <linux-kernel+bounces-787431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3ECACB3762B
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 02:42:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA0C2B37630
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 02:45:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 01C04204A97
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 00:42:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4DA13A628B
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 00:45:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C25B41A704B;
-	Wed, 27 Aug 2025 00:42:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DA001C3BEB;
+	Wed, 27 Aug 2025 00:44:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="CeRtCxN4"
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G1rU7h6U"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AD5AEACE;
-	Wed, 27 Aug 2025 00:42:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E201E199935;
+	Wed, 27 Aug 2025 00:44:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756255332; cv=none; b=fNdw/CEBDFMpdwEbqbnC6Xk0ydg9QTsa6xH9G/NmHelX/91BJwvM+JLJFZJw2ZluNiiDyHjFs1hHtB4qWcnL5CGI0PAJfPk7ytLbr4BXbKxiBbIqAGjLfw1plWDsk9xp8jwjiA0ta2+5wR0z9kOoB98RJwUvmPBMI1pSq32oGTE=
+	t=1756255499; cv=none; b=Y9LZsrOpWaqRpAee4Z8mdoDqzCxSqUDniFBVjgfgQpc0K6OpYjmk5vWIk6dQa2uloPUtZz8sW4ON7McnDPcvcQhavBY1XJjTkBH1ITMu5LgpEBxNenUhbLex29FZoGws21XHqsG5enIKis1UBNendCamgJOn81ELRTU/ZInb8d0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756255332; c=relaxed/simple;
-	bh=aWrkSc0EvEUTVz7uCJDC5DoUaqvbLy75eSYZVCTHbLI=;
-	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=QcYCAiHb5kxVu3+oi2ppPjCRbwBLHZNxuBaxJJhCuFSKNkg6eXtAdh2LeVbIuLkOBpB3/HxmdHzLyu+wb7w2imWbXWhrs/dXHhyTqAI9T+HloyjEFWynXEsb70doZapupb3zPYWfoqWjiTYiPEh1VcdFE+s7A1Fx9rIHjg3Kp2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=CeRtCxN4; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 57R0g5fB52564623, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
-	t=1756255326; bh=A1zkMaBL6G6zKXwe6drFmbj8wp4GlsPTwl9smSGEmic=;
-	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding:MIME-Version;
-	b=CeRtCxN4FUynvKN2OHau+NvGiX8m673tFu2uzrwiz4kBuDyiX3B0hJmKeUVtrcR+F
-	 T4dssHqoHk2QrtnfHYFTcL8gN5Zd1IImWKJiTAnakvde49Qm0Scbxok8fbgQZ8ULQl
-	 lHlIWamcFNtp/zwzsM1lDrA0enSm9/QdL4GkU9mD6XeTF86PqqSv7AI8acZRcHx+2q
-	 /Zi1gJrL6HYzuIUdV1Lsl6TGGGaT8Tch8Ipj24sawsTwSpjgHkSkJjIbw2sbIHNOiT
-	 07mm9Ufl3c4xzelpULKDGJFx0XMdazxQYA/24P2KsBb1qC//I39lay8UuzuaVd+Iru
-	 CNY4INJ6LObzg==
-Received: from mail.realtek.com (rtkexhmbs03.realtek.com.tw[10.21.1.53])
-	by rtits2.realtek.com.tw (8.15.2/3.13/5.93) with ESMTPS id 57R0g5fB52564623
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 27 Aug 2025 08:42:06 +0800
-Received: from RTKEXHMBS06.realtek.com.tw (10.21.1.56) by
- RTKEXHMBS03.realtek.com.tw (10.21.1.53) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.27; Wed, 27 Aug 2025 08:42:06 +0800
-Received: from RTKEXHMBS06.realtek.com.tw ([fe80::c39a:c87d:b10b:d090]) by
- RTKEXHMBS06.realtek.com.tw ([fe80::c39a:c87d:b10b:d090%10]) with mapi id
- 15.02.1544.027; Wed, 27 Aug 2025 08:42:06 +0800
-From: Ping-Ke Shih <pkshih@realtek.com>
-To: Qianfeng Rong <rongqianfeng@vivo.com>,
-        "linux-wireless@vger.kernel.org"
-	<linux-wireless@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] wifi: rtw89: use int type to store negative error codes
-Thread-Topic: [PATCH] wifi: rtw89: use int type to store negative error codes
-Thread-Index: AQHcFo1wpnnDoE003EKhdLe9btN+vLR1pnvQ
-Date: Wed, 27 Aug 2025 00:42:06 +0000
-Message-ID: <b1f89b89906a4573bb8a916ed33763b5@realtek.com>
-References: <20250826132905.501755-1-rongqianfeng@vivo.com>
-In-Reply-To: <20250826132905.501755-1-rongqianfeng@vivo.com>
-Accept-Language: en-US, zh-TW
-Content-Language: zh-TW
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1756255499; c=relaxed/simple;
+	bh=1a1QyaQ+7+wzkpm0y3qzf5fO9WxfJkJUH6TZ9QXdduE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=txzgiiXpyvhtP1A9WgOaG6qMO3ed+kWyKQDOIjHy1KepTd+SQsm5AxmffykKRtBGe4hIvd+Y9Fmmdk2rl36q0zdwXAF/jOV1KIL246pZCgd4peSUJMQSXL0zN9I7n0iKgXIcv4DhgbZFtUyUwrpdvFMae/zebvd7EvwwTDEc8NU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G1rU7h6U; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C039C4CEF1;
+	Wed, 27 Aug 2025 00:44:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756255498;
+	bh=1a1QyaQ+7+wzkpm0y3qzf5fO9WxfJkJUH6TZ9QXdduE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=G1rU7h6Utv85yzx9gTx4Xnkjq5U1KntwRpjEjms6EOiQULHohBOKRJs1pdj+RLRjf
+	 38ntPWejC4le7t29vbOMqi3EVv5v2JV5+6oNFNrY61YG6Ye/475ro0FGHi1e/sXTrU
+	 law9IhNOCx8lVfrQVCx1kqN32pPQJFc8GyO4ucHjmLOBalCIIEJXYmryIwshFN13VY
+	 9rAWrk70Sjvg9BM7UVdLKGD8euNxR5rSfryE7NVU1ttVoJyIqSWthakTHoMJtae5Kd
+	 zLy22z2pp3KvdnVCq9/O1PAqx+5wwS1XEHHnYBrBTeI/HmVgSG09c2XKsiqf/GWfKr
+	 BXWBoHK2XwNwg==
+Date: Tue, 26 Aug 2025 17:44:57 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Naveen Mamindlapalli <naveenm@marvell.com>
+Cc: <davem@davemloft.net>, <edumazet@google.com>, <pabeni@redhat.com>,
+ <horms@kernel.org>, <corbet@lwn.net>, <andrew@lunn.ch>,
+ <netdev@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net-next] docs: networking: clarify expectation of
+ persistent stats
+Message-ID: <20250826174457.56705b46@kernel.org>
+In-Reply-To: <20250825134755.3468861-1-naveenm@marvell.com>
+References: <20250825134755.3468861-1-naveenm@marvell.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Qianfeng Rong <rongqianfeng@vivo.com> wrote:
-> The 'ret' variable stores returns from other functions, which return
-> either zero on success or negative error codes on failure.  Storing
-> error codes in u32 (an unsigned type) causes no runtime issues but is
-> stylistically inconsistent and very ugly.  Change 'ret' from u32 to
-> int - this has no runtime impact.
->=20
-> Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
-> ---
->  drivers/net/wireless/realtek/rtw89/fw.c  |  7 ++++---
->  drivers/net/wireless/realtek/rtw89/mac.c | 16 ++++++++--------
->  drivers/net/wireless/realtek/rtw89/pci.c |  4 ++--
->  3 files changed, 14 insertions(+), 13 deletions(-)
->=20
-> diff --git a/drivers/net/wireless/realtek/rtw89/fw.c b/drivers/net/wirele=
-ss/realtek/rtw89/fw.c
-> index 16e59a4a486e..01d53f7c142d 100644
-> --- a/drivers/net/wireless/realtek/rtw89/fw.c
-> +++ b/drivers/net/wireless/realtek/rtw89/fw.c
-> @@ -1537,7 +1537,7 @@ static int __rtw89_fw_download_hdr(struct rtw89_dev=
- *rtwdev,
->         struct rtw89_fw_hdr *fw_hdr;
->         struct sk_buff *skb;
->         u32 truncated;
-> -       u32 ret =3D 0;
-> +       int ret =3D 0;
+On Mon, 25 Aug 2025 19:17:55 +0530 Naveen Mamindlapalli wrote:
+> -Statistics must persist across routine operations like bringing the interface
+> -down and up.
+> +Statistics are expected to persist across routine operations like bringing the
 
-Initializer is not necessary, by the way.=20
+Please don't weaken the requirement. The requirements is what it is.
 
->=20
->         skb =3D rtw89_fw_h2c_alloc_skb_with_hdr(rtwdev, len);
->         if (!skb) {
-> @@ -6826,7 +6826,8 @@ static int rtw89_fw_read_c2h_reg(struct rtw89_dev *=
-rtwdev,
->         const struct rtw89_chip_info *chip =3D rtwdev->chip;
->         struct rtw89_fw_info *fw_info =3D &rtwdev->fw;
->         const u32 *c2h_reg =3D chip->c2h_regs;
-> -       u32 ret, timeout;
-> +       u32 timeout;
-> +       int ret;
->         u8 i, val;
+> +interface down and up. This includes both standard interface statistics and
+> +driver-defined statistics reported via `ethtool -S`.
 
-Keep it in reverse X'mas tree order.
+Rest of the paragraph looks good, but I think the preferred form of
+quotations is double back ticks? Most of this doc doesn't comply but
+let's stick to double when adding new stuff.
 
->=20
->         info->id =3D RTW89_FWCMD_C2HREG_FUNC_NULL;
-> @@ -6865,7 +6866,7 @@ int rtw89_fw_msg_reg(struct rtw89_dev *rtwdev,
->                      struct rtw89_mac_h2c_info *h2c_info,
->                      struct rtw89_mac_c2h_info *c2h_info)
->  {
-> -       u32 ret;
-> +       int ret;
->=20
->         if (h2c_info && h2c_info->id !=3D RTW89_FWCMD_H2CREG_FUNC_GET_FEA=
-TURE)
->                 lockdep_assert_wiphy(rtwdev->hw->wiphy);
+> +However, this behavior is not always strictly followed, and some drivers do
+> +reset these counters to zero when the device is closed and reopened. This can
+> +lead to misinterpretation of network behavior by monitoring tools, such as
+> +SNMP, that expect monotonically increasing counters.
+> +
+> +Driver authors are expected to preserve statistics across interface down/up
+> +cycles to ensure consistent reporting and better integration with monitoring
+> +tools that consume these statistics.
 
-[...]
+This feels like too many words. How about:
 
-> @@ -3105,7 +3105,7 @@ int rtw89_mac_setup_phycap(struct rtw89_dev *rtwdev=
-)
->  static int rtw89_hw_sch_tx_en_h2c(struct rtw89_dev *rtwdev, u8 band,
->                                   u16 tx_en_u16, u16 mask_u16)
->  {
-> -       u32 ret;
-> +       int ret;
-
-Please move below to be reverse X'mas tree order.
-
->         struct rtw89_mac_c2h_info c2h_info =3D {0};
->         struct rtw89_mac_h2c_info h2c_info =3D {0};
->         struct rtw89_h2creg_sch_tx_en *sch_tx_en =3D &h2c_info.u.sch_tx_e=
-n;
-
-(move here)
-
-[...]
-
-> @@ -4158,7 +4158,7 @@ static int rtw89_pci_lv1rst_stop_dma_ax(struct rtw8=
-9_dev *rtwdev)
->=20
->  static int rtw89_pci_lv1rst_start_dma_ax(struct rtw89_dev *rtwdev)
->  {
-> -       u32 ret;
-> +       int ret;
->=20
->         if (rtwdev->chip->chip_id =3D=3D RTL8852C)
->                 return 0;
-
-
-The last statement of this function is 'return ret;', but actually it can
-just be 'return 0;'. Please change it by the way.=20
-
-
+Note that the following legacy drivers do not comply with this requirement
+and cannot be fixed without breaking existing users:
+ - driver1
+ - driver2
+ ...
+-- 
+pw-bot: cr
 
