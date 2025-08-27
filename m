@@ -1,184 +1,105 @@
-Return-Path: <linux-kernel+bounces-788882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47E16B38BB6
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 23:53:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04A22B38BA1
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 23:47:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 08227165222
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 21:53:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4E0216E17D
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 21:47:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4CCC30DEC4;
-	Wed, 27 Aug 2025 21:53:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9033E2F0C76;
+	Wed, 27 Aug 2025 21:47:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PLQ0qBjX"
-Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com [209.85.221.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BP2txcJj"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8C0730CDB2;
-	Wed, 27 Aug 2025 21:53:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67ACA30DEB4
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 21:47:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756331592; cv=none; b=t3HP1uEAKBx1ovdad9yoreT7ktMZBE+mikD5k4RrmYsU/kebo4Yu7aO2C+LVVaClKg4/Y1kYpu/57SQF/asOueQPakrdjjoCpnGnb/PsFBQzsfUJqFeyYzP111pmcqaxwuXEC0PGD6+PWF2SRss4XJsKoEPyHzVVqdxQ8ZYubiA=
+	t=1756331230; cv=none; b=eGfO0ibbBWgrsnVz+d2FymISp24leVHG2YQ8U9BnTYbY7nITZNATmz6hwVclsBq1TW4/hlBU3Gwxd0cwZSLBdzq0T9rTctckaWhoB8Aq0yD8uDHD1CmKXNHvh0ugiZNTNyPRTVh9wuMejnBojvI45CxQYAQfNx1ThK87dd1byBs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756331592; c=relaxed/simple;
-	bh=JmD+WMWxUegH+EbXCwoviJ0ZlvUZdbPJnTN1DfD7jJU=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 Mime-Version:Content-Type; b=KzzFNdCSRAmRkhAz/4+sCt0Kjr3382kQ8UaT0nNymRlNnMvhzkIdZbVYOYETl4LHx5o4+6tMrjqWgzG66rXgsFiDnMd/P42wpHK/O7d1lwlp52HQTANbk3lUolGYn/Ydpn/Z/zRWbkdbNSofbJ1S9CCb6ANQTdyKG4R6NSWUyAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PLQ0qBjX; arc=none smtp.client-ip=209.85.221.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f180.google.com with SMTP id 71dfb90a1353d-54475262383so337635e0c.0;
-        Wed, 27 Aug 2025 14:53:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756331589; x=1756936389; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=olLihN7iGE+H0GKDuBA0F38F7thEW/DNGdW0yAxA+Eo=;
-        b=PLQ0qBjXUORp3GTcsPW0gapF00d0fQYeGAeuZcv7vYZcbpNDJNOpw4KbY5XvSQaPf8
-         vLRQf5LlMrQAndlCCZXm9ucJcjbtNNWCfjVdTInR2yC9oGQ3L+nBgvbcf4ZeOhS+cdkY
-         4uRfs4KCR0HMtUkRrtGrZPASTnJahlnBc3hjx8N1ap9ALjwW6vnfErDewFBjv24Y1iW6
-         cm53Xq5UQqiIUfuZ1JGDsgMtHq/t3qWhmEUJiIKGr/EtRCujKcqRDgCyuGExwdZqxfAT
-         KS18LNVmtscyHN9kWwk/ROALoQVsJ2locKBEUD/z9U3oN2ExoVJ2rYrQ6jOzAfRdLwkT
-         KTMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756331589; x=1756936389;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=olLihN7iGE+H0GKDuBA0F38F7thEW/DNGdW0yAxA+Eo=;
-        b=FfSkxF2/l7msY+UzCnZRI44qbzoU9n6WHt4fCKtHlW85Bh69yLIWdnrumZ8lfiOSVh
-         jFUQC9H/2IbS2vEsinN157PW49HucW7GzTY0VxbTf7eLDyhJvyP3huaxr+lai+Ni1+SX
-         f+b2d0QSRPXx20zZyzFQsttbQhH0X/8KCOqms71YfJiR+7R9RSxXktSmZTZkNTVhpNTb
-         Ilzn2dQhU2DdgxX4Ql0Z5ll40mE/z5Q72LY1OYUPij3mutiScS40J780/TomwgWiohSa
-         BJ5u+MeEhhc3bE/Xyrvb9K0lJ2n6XAbQyCLPNMro7DedSk8SPSgvAcA0MQaCnhXrePB2
-         dqSA==
-X-Forwarded-Encrypted: i=1; AJvYcCU61aj4p/rY7H3q4PO2xTrKsJ17/PyVrtHJfRMoEG+2haGmq3nYzZYhG5DPo13rb5JV0Rtew1W/0Cldz+4=@vger.kernel.org, AJvYcCW+YMEYPHwi4aq0l+5KmiOpoWcbw8+w68Jzk/SLSjORuhkT2ub72x3EuSQ6eBnEQWWLYqBzjR9H@vger.kernel.org
-X-Gm-Message-State: AOJu0YwrSw2rpyKOdrfxbsd5ghLMHJNIE5zt9VMhF899UcwzxpOLqbiR
-	DqpASfmRAw/AcKYPnwxksgFBT1vkZK4S098eaccVK2y42/RzjoJiWY7usfLcFg==
-X-Gm-Gg: ASbGncvFqt2OWmsl7IzQNCUnNPGwHDX/LSyzlcc8OwYggTNTOcP7y/4NprNVFMtmlOk
-	v/Rx3Ybb2UizW8ejGGw9GpWV2lL2f3vsbnwEAtLLFKaBb0lDTXKTVP2talAT6ijxLRvcT/RCVtF
-	vrvCq1Bkn7Y92SCPVvZHyV9Qic/gOqhHO3Q++Q9z3EN6R2ajNS8PX1oYPZT2Zldh1V3QzDVqZ9U
-	An9wTeP+DUBZUiO4IhkEnz/3rUvU1HY+8M22tZtrLx64Yi761yMTOsBNQjRro+iqc7Nwjw0i98n
-	6AVwY4jYEy99un6Pf4X3IAS1hSMVhIAc/OMfCCzNcAmhWww4Fz+YUDSb0PKPiQvfa5Y96DqYvyw
-	cIwCpwj6lXFLgmjM/88NKypapbj3yqAc8v0yrkAGd8K08fSBZLhoss2+lgPYG/oZa3sWnYcTyDX
-	1lbA==
-X-Google-Smtp-Source: AGHT+IH74uxSZvh5SzFH2g6KUcNiA/0oo+dw0XHY5TfWmNp2WlhPOzDO87TvjOEuvaalF9IooO2OOw==
-X-Received: by 2002:a05:6122:4686:b0:542:97fa:2b17 with SMTP id 71dfb90a1353d-54297fa3821mr4075321e0c.9.1756331589512;
-        Wed, 27 Aug 2025 14:53:09 -0700 (PDT)
-Received: from gmail.com (141.139.145.34.bc.googleusercontent.com. [34.145.139.141])
-        by smtp.gmail.com with UTF8SMTPSA id 71dfb90a1353d-5443005c642sm1502305e0c.20.2025.08.27.14.53.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Aug 2025 14:53:08 -0700 (PDT)
-Date: Wed, 27 Aug 2025 17:53:08 -0400
-From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-To: Xin Zhao <jackzxcui1989@163.com>, 
- willemdebruijn.kernel@gmail.com, 
- edumazet@google.com, 
- ferenc@fejes.dev
-Cc: davem@davemloft.net, 
- kuba@kernel.org, 
- pabeni@redhat.com, 
- horms@kernel.org, 
- netdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Xin Zhao <jackzxcui1989@163.com>
-Message-ID: <willemdebruijn.kernel.e7f6fdfe20e3@gmail.com>
-In-Reply-To: <20250827150131.2193485-1-jackzxcui1989@163.com>
-References: <20250827150131.2193485-1-jackzxcui1989@163.com>
-Subject: Re: [PATCH net-next v8] net: af_packet: Use hrtimer to do the retire
- operation
+	s=arc-20240116; t=1756331230; c=relaxed/simple;
+	bh=9RW8zXdpdVYAVUqtLZZ63zwdMXfvo4c5jZhmHZV/++Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=d2S48rL/9RLwdjI+SP+MoUN3WbBdE30QuF/poVN3HwNy64hmo1gW8iiQmYXkGms92Cs/VdbwfSGSbsgtRg9EG9hDsXThoXSbSWxVz3oJChyTtMbvM1DqOMvW9O6gpnajNurIS0zkSQv+P4fO3k4jH4SUrljbMMbCiens/OzOrZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BP2txcJj; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756331229; x=1787867229;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=9RW8zXdpdVYAVUqtLZZ63zwdMXfvo4c5jZhmHZV/++Q=;
+  b=BP2txcJjZMHp2cr+g6iHM0Xw3Mouy/S0/eIiYnfcB6Besp0GK/mcmasx
+   7VBbzYH4h1fCiEskFesNTo54kHFZUMHTiCPvKrfygDBFUmnYiZdaMwlD7
+   aekhi7as5wBD94jHFp5lWRtOOwOKcksvfJjntCFKXUTPVnr5a/ac7t9sO
+   j4RByLLHggb7D0svN+IeEg9jzSkzuC7H2BRDljPLriF5OlpALHAg5ORz1
+   Ru/EuYs5f1GbIs8rYCbMlNpiIto2izHhS363wD1KLlh2JvmSi0K6MmPxe
+   kLCFYGW8xhoFyeCk8tT/7mfN7HcJruHqc1nT0J4TXMaIljTrpD79eLPyP
+   A==;
+X-CSE-ConnectionGUID: lyTrm3gJSWCa94BZCCiglQ==
+X-CSE-MsgGUID: 4RPmvp1VSyu6nQ8UdFtNJQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11535"; a="76192225"
+X-IronPort-AV: E=Sophos;i="6.18,217,1751266800"; 
+   d="scan'208";a="76192225"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2025 14:47:08 -0700
+X-CSE-ConnectionGUID: OzumYTkkRFipllJ6o2zpgg==
+X-CSE-MsgGUID: ILq6xhTLS6uAnu5M0StACA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,217,1751266800"; 
+   d="scan'208";a="170764828"
+Received: from ranerica-svr.sc.intel.com ([172.25.110.23])
+  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2025 14:47:08 -0700
+Date: Wed, 27 Aug 2025 14:53:18 -0700
+From: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: ricardo.neri@intel.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] genirq/debugfs: Fix a typo in IRQ effective affinity
+Message-ID: <20250827215318.GA28201@ranerica-svr.sc.intel.com>
+References: <20250812-rneri-irq-debugfs-typo-v1-1-f29777b4024d@linux.intel.com>
+ <87ikievsh3.ffs@tglx>
+ <20250825231054.GA25222@ranerica-svr.sc.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250825231054.GA25222@ranerica-svr.sc.intel.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 
-Xin Zhao wrote:
-> In a system with high real-time requirements, the timeout mechanism of
-> ordinary timers with jiffies granularity is insufficient to meet the
-> demands for real-time performance. Meanwhile, the optimization of CPU
-> usage with af_packet is quite significant. Use hrtimer instead of timer
-> to help compensate for the shortcomings in real-time performance.
-> In HZ=100 or HZ=250 system, the update of TP_STATUS_USER is not real-time
-> enough, with fluctuations reaching over 8ms (on a system with HZ=250).
-> This is unacceptable in some high real-time systems that require timely
-> processing of network packets. By replacing it with hrtimer, if a timeout
-> of 2ms is set, the update of TP_STATUS_USER can be stabilized to within
-> 3 ms.
+On Mon, Aug 25, 2025 at 04:10:54PM -0700, Ricardo Neri wrote:
+> On Sat, Aug 23, 2025 at 07:49:12PM +0200, Thomas Gleixner wrote:
+> > On Tue, Aug 12 2025 at 14:00, Ricardo Neri wrote:
+> > > Fix a typo in the line that prints the effective affinity of the IRQ.
+> > 
+> > It's not a typo. It's intentionally shortened to make the output
+> > tabular, which makes it more readable.
 > 
-> Signed-off-by: Xin Zhao <jackzxcui1989@163.com>
+> Ah, I didn't see it this way.
 > 
-> ---
-> Changes in v8:
-> - Delete delete_blk_timer field, as suggested by Willem de Bruijn,
->   hrtimer_cancel will check and wait until the timer callback return and ensure
->   enter enter callback again;
-> - Simplify the logic related to setting timeout, as suggestd by Willem de Bruijn.
->   Currently timer callback just restarts itself unconditionally, so delete the
->  'out:' label, do not forward hrtimer in prb_open_block, call hrtimer_forward_now
->   directly and always return HRTIMER_RESTART. The only special case is when
->   prb_open_block is called from tpacket_rcv. That would set the timeout further
->   into the future than the already queued timer. An earlier timeout is not
->   problematic. No need to add complexity to avoid that.
+> > 
+> > If you want 'effective' then please adjust 'affinity:' with an extra
+> > space so it stays that way.
+> 
+> Sure. I can do this.
 
-This simplifies the timer logic tremendously. I like this direction a lot.
+I looked again at my proposed change. I would need to adjust 10 more lines
+besides 'affinity:' to keep the alignment. Adjusting a couple of lines
+would not pollute history much. Adjusting multiple lines would do more harm
+than good, IMO.
+
+Unless you think otherwise, I do not plan to pursue this change further.
  
->  static void prb_setup_retire_blk_timer(struct packet_sock *po)
-> @@ -603,9 +592,10 @@ static void prb_setup_retire_blk_timer(struct packet_sock *po)
->  	struct tpacket_kbdq_core *pkc;
->  
->  	pkc = GET_PBDQC_FROM_RB(&po->rx_ring);
-> -	timer_setup(&pkc->retire_blk_timer, prb_retire_rx_blk_timer_expired,
-> -		    0);
-> -	pkc->retire_blk_timer.expires = jiffies;
-> +	hrtimer_setup(&pkc->retire_blk_timer, prb_retire_rx_blk_timer_expired,
-> +		      CLOCK_MONOTONIC, HRTIMER_MODE_REL_SOFT);
-> +	hrtimer_start(&pkc->retire_blk_timer, pkc->interval_ktime,
-> +		      HRTIMER_MODE_REL_SOFT);
-
-Since this is only called from init_prb_bdqc, we can further remove
-this whole function and move the two hrtimer calls to the parent.
-
->  }
->  
->  static int prb_calc_retire_blk_tmo(struct packet_sock *po,
-> @@ -672,11 +662,10 @@ static void init_prb_bdqc(struct packet_sock *po,
->  	p1->last_kactive_blk_num = 0;
->  	po->stats.stats3.tp_freeze_q_cnt = 0;
->  	if (req_u->req3.tp_retire_blk_tov)
-> -		p1->retire_blk_tov = req_u->req3.tp_retire_blk_tov;
-> +		p1->interval_ktime = ms_to_ktime(req_u->req3.tp_retire_blk_tov);
->  	else
-> -		p1->retire_blk_tov = prb_calc_retire_blk_tmo(po,
-> -						req_u->req3.tp_block_size);
-> -	p1->tov_in_jiffies = msecs_to_jiffies(p1->retire_blk_tov);
-> +		p1->interval_ktime = ms_to_ktime(prb_calc_retire_blk_tmo(po,
-> +						req_u->req3.tp_block_size));
->  	p1->blk_sizeof_priv = req_u->req3.tp_sizeof_priv;
->  	rwlock_init(&p1->blk_fill_in_prog_lock);
->  
-> @@ -686,16 +675,6 @@ static void init_prb_bdqc(struct packet_sock *po,
->  	prb_open_block(p1, pbd);
->  }
->  
-> -/*  Do NOT update the last_blk_num first.
-> - *  Assumes sk_buff_head lock is held.
-> - */
-> -static void _prb_refresh_rx_retire_blk_timer(struct tpacket_kbdq_core *pkc)
-> -{
-> -	mod_timer(&pkc->retire_blk_timer,
-> -			jiffies + pkc->tov_in_jiffies);
-> -	pkc->last_kactive_blk_num = pkc->kactive_blk_num;
-
-last_kactive_blk_num is now only updated on prb_open_block. It still
-needs to be updated on each timer callback? To see whether the active
-block did not change since the last callback.
+BR,
+Ricardo
 
