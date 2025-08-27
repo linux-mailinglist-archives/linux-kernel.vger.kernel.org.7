@@ -1,184 +1,104 @@
-Return-Path: <linux-kernel+bounces-788369-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CA4EB38370
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 15:12:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3E4DB3837B
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 15:13:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B04446196D
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 13:12:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1525C1BA6E3A
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 13:13:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 128B6352074;
-	Wed, 27 Aug 2025 13:12:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KRLt6OIO"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9053C356903;
+	Wed, 27 Aug 2025 13:12:53 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A45BF212D83
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 13:12:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 846623568F4;
+	Wed, 27 Aug 2025 13:12:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756300345; cv=none; b=TxDrl/nufZf5Ri1T9LS+MxHlhP67btWNHbvHP/G7XJ8vkFyF4SDNbl1k4eVy1XDd5oJDH/m2X3XdhklOhGDrg2laOR5eyMvUosa+gLg0VasA50zOQ4yOf9it1RNehtFTOYFCBnGlh4ApoKGvoR7KxhwIfTUC17JGpCXAgSjvLoo=
+	t=1756300373; cv=none; b=mL1EWMYO2y9ETApgn6fUT8b9i8OMypyhQIQYP6N02ZRFEAm0KGR9ktmgRHs2S9sR6DzhFoDnqtDW9/vOIvhJvwo1nq00n83v+hLS2F2156rEsu3IOGRiNPuPS3tbLcMbKS3UyfGntVevTXyvy1DgdK0BTjFqcrCTDZGVCMcrF/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756300345; c=relaxed/simple;
-	bh=wWgdQ19EGsKqy61U2HJjYn18KusjjHaNd+N0E7bCBB8=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=Hnp6H2hxEr2zZpsX4VDeNCJKK/5UKocsbP/quVA8cHpvILbfAmShYUyZ4lPj8/n2Bib1lyznWLPIP/v4ZO+XUyUBMWbLC5vBWaHmDV9u+OGI5Ms0o5kP8rRRF0gqlsf9rS0ZP7DtlsssdFUpSnuZlXhVx24nTBpLWaDFRsXQxbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=KRLt6OIO; arc=none smtp.client-ip=209.85.128.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-45b72ef3455so2236525e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 06:12:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756300342; x=1756905142; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=M/qj0KIxW19sF8WYNMWnzatZZJgCn+BfMx+Tm/YHX/8=;
-        b=KRLt6OIOKjVIGyZQ7m5KeZcI0LlIyNdTvaOctPE8K4201YDfdM0e6d9ZutFbzZO7wQ
-         A+8ViBNWAve1NlVxTcT8KeBBGNEAfRMZRd9DETYmUxgqOfzPtOQjKMQowSr1+t8x1y8h
-         qVec1l+F7Jl5BOnEodFlCmjkCmatPwjOwiv55oW5aKA8A9EfC5WkiKYYnK1zCJbBWAy3
-         LeLLZNjhNXcYTlcWh2V07KTWKsld17XQ2+CYHdv3t9QEV80HabFMSnHTBf6ndAa2swoR
-         O778ojvFelWds2Mj6S9OwlP+20tSnSc3QY9GiibvyMHRroyqAr9f8cNW1ZJPMTPuMi1n
-         DD4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756300342; x=1756905142;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=M/qj0KIxW19sF8WYNMWnzatZZJgCn+BfMx+Tm/YHX/8=;
-        b=O030rIoe8OwkUXix4RPjgBJEzw95zPc/Bi10dMWAFsYr13DJ8nZKVVttKWJwX3oFnF
-         M1cdBaFPw+kpkUY+Z8XdLtLs5uns5fn51Dx+YSogzNu9tEons7t554gAyxtmyXJdFFqG
-         wm43CDUXVo+7EXj8ybf3GmOdGuxahMX5v/HOebs3i3zYjZirkl+2xpEsDOCUuMZLSHKC
-         cahUB6ow6Sam13eryxHGP+qubpvGdSejZUJJG6coSDwwUVbuCwvsDd1UgvQ2jo0q/Xkw
-         J1P8twwlUFNIVoC2AcbL8FRfCnMiDNyPiRe+Hvd2MpktIM2k8ON/mS0pfTbvJqvw1rSi
-         2SvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWc6XGOm/jgKGliBtbcVqiDAW3XigOYid4aRdsQJ4dO02pA9takVow1i63n+o74SUaP7pboN9s69WBPkL8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YypJPZ7azEXhvJXAqGQoGG5ARTdNW/IwGAXWyYBVLhPA/QBzzRs
-	IDwD5NO7vzcgYvEub5sXYd00CipuEW+aCC/d/4/9xm3Z7LvU9GLJeSUvZYDtdQ5SvHDk+2dkWda
-	y40eQ0Tuuqycq8NqQxw==
-X-Google-Smtp-Source: AGHT+IHVNAAr6r5+Sc9GkH6RCMEf2jv4KsDL+gLsBCc26wh6BssKXaIo+LMJNL2lUuU+ghV6Ys4ZoghECk17F8E=
-X-Received: from wmbip38.prod.google.com ([2002:a05:600c:a6a6:b0:458:c0b7:b936])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:4450:b0:45b:74fc:d6ec with SMTP id 5b1f17b1804b1-45b74fcd8a2mr4734675e9.8.1756300341900;
- Wed, 27 Aug 2025 06:12:21 -0700 (PDT)
-Date: Wed, 27 Aug 2025 13:12:16 +0000
+	s=arc-20240116; t=1756300373; c=relaxed/simple;
+	bh=+uv436ZvhvjOixHkoNDPdMJI97DOGCQz1dNzxx4mvXQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kR8xLEZ6LECSWDFdyPbTrH+d+uJEtcf1mmJnbEk/oxjoRZhP8zr3AdPBVfxNdb0QDoRR1MsFb0AkWxGg5Q4zclOabIwWa6YguNaxbsF5Q4DY/9UrQ6sxgjdom7iSGvSwsnQqEmyCsSA8FJAq7RqViD3yvE391zYFNt7whDaUMVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 82c61d1e834711f0b29709d653e92f7d-20250827
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:5482d7ce-db50-4d91-b0a5-567abaf46e3a,IP:0,U
+	RL:0,TC:0,Content:-5,EDM:25,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
+	N:release,TS:20
+X-CID-META: VersionHash:6493067,CLOUDID:6b8b5b57a0f5a140a5af0f0d041c62fe,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|50,EDM:5,IP:nil,URL
+	:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SP
+	R:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 82c61d1e834711f0b29709d653e92f7d-20250827
+Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
+	(envelope-from <zhangheng@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 77905796; Wed, 27 Aug 2025 21:12:40 +0800
+Received: from mail.kylinos.cn (localhost [127.0.0.1])
+	by mail.kylinos.cn (NSMail) with SMTP id 94D14E008FAA;
+	Wed, 27 Aug 2025 21:12:40 +0800 (CST)
+X-ns-mid: postfix-68AF0448-3679222
+Received: from kylin-pc.. (unknown [172.25.130.133])
+	by mail.kylinos.cn (NSMail) with ESMTPA id 90FDDE008FA3;
+	Wed, 27 Aug 2025 21:12:38 +0800 (CST)
+From: Zhang Heng <zhangheng@kylinos.cn>
+To: axboe@kernel.dk,
+	phasta@kernel.org,
+	andriy.shevchenko@linux.intel.com,
+	broonie@kernel.org,
+	lizetao1@huawei.com,
+	viro@zeniv.linux.org.uk,
+	fourier.thomas@gmail.com,
+	anuj20.g@samsung.com
+Cc: linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Zhang Heng <zhangheng@kylinos.cn>
+Subject: [PATCH v3] block: mtip32xx: Remove excess code in mtip_pci_probe
+Date: Wed, 27 Aug 2025 21:12:27 +0800
+Message-ID: <20250827131228.2826678-1-zhangheng@kylinos.cn>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-B4-Tracking: v=1; b=H4sIAC8Er2gC/x3MQQqAIBBA0avErBNMjKKrRIjpWANh4UQE4t2Tl
- m/xfwbGRMgwNRkSPsR0xoqubcDtNm4oyFeDkqqXoxpEoAONZeMM30ms2mt0VjvUEmpzJQz0/r9 5KeUD8izZol8AAAA=
-X-Change-Id: 20250827-file_as_c_str-b4d4eca4ce40
-X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2971; i=aliceryhl@google.com;
- h=from:subject:message-id; bh=wWgdQ19EGsKqy61U2HJjYn18KusjjHaNd+N0E7bCBB8=;
- b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBorwQ0SweBT52ZKqzEy9Ic1TSli1rd7xjmeOxZ3
- Rtip6cBfIyJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCaK8ENAAKCRAEWL7uWMY5
- Ri5BD/43dy44+pzK34gqb4BEHKa+p5nEaIqfUjGDWTJ6fRUk/Pjh+T9olj2AMAaORkQLqDRX78r
- MZsHcy0h358g7XLoTGnYQZwdjAwXSmYP+Hgsdn9Pu3MbeAD0okEhqBKblDzXtgQ539YOJJL3SA3
- WF/YPsNjQe5f240BvOvbuxnusXAYtxihSq/dDrNISqYvBU/ksQ3EM9Hm+wiO6umm6f+BwLRNNaA
- mSbwAZUp7TH4Pv/wXiG9sdwUAeqjVewLuTbdMH9Gg+7DgddtEr2zlahpkoKFp1XpGRGlXxHJ/TM
- tJz41EPpdS430qOohanPKm+kIuKzD9+ovJEXgMxLZWGnyLg2akmVUhwMt0qKh9RojNy8toKRKnR
- 2rY6fbPU1PHkdyrYQJT9AOuS65Yne1iAM4wK5ud4A/e0LsS8mTZpeM5QztG3kV2vpFVPY14NK36
- FHXA9PM1QVb0rhlz81MVM7RFZs/P4dKiAuJQPpOfaAgoaTUeZjKKrLgGYf7J4yKt4mPfngCD/hs
- sDLruYFuakvq90/VNzz0w1sK0TqQQ8PARlUFNkvIFiObIRBLu2016Okm9Aw1/voSjHfK+Q5ogOt
- nD9xFCh0LSn9GP8/m3i5Qg3qHRkH3z2XbSI57Ez+9LlJ4OILPwdO/hDGWnOW4SjN6AsDeEqNB8n 8DXSb/0ZjdPOfjQ==
-X-Mailer: b4 0.14.2
-Message-ID: <20250827-file_as_c_str-v1-1-d3f5a3916a9c@google.com>
-Subject: [PATCH] rust: use the new name Location::file_as_c_str() in rustc 1.91.0+
-From: Alice Ryhl <aliceryhl@google.com>
-To: Miguel Ojeda <ojeda@kernel.org>
-Cc: Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?q?Bj=C3=B6rn_Roy_Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, Alice Ryhl <aliceryhl@google.com>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 
-As part of the stabilization of Location::file_with_nul(), it was
-brought up that the with_nul() suffix usually means something else in
-Rust APIs, so the API is being renamed prior to stabilization. Thus,
-adjust Linux to use the new name on new rustc versions.
+In the error exit function of the iomap_err in mtip_pci_probe,
+pci_set_drvdata(pdev, NULL) and return can be removed without
+affecting the code execution
 
-Link: https://www.github.com/rust-lang/rust/pull/145928 [1]
-Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+Signed-off-by: Zhang Heng <zhangheng@kylinos.cn>
 ---
-This hasn't been merged upstream yet. It shouldn't be merged until that
-happens.
----
- init/Kconfig       |  3 +++
- rust/kernel/lib.rs | 15 +++++++++------
- 2 files changed, 12 insertions(+), 6 deletions(-)
+ drivers/block/mtip32xx/mtip32xx.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/init/Kconfig b/init/Kconfig
-index 83632025121937527523f5977a493bd3ae24ed9f..e7459cbea6ca800e56a1e54423e399b689557885 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -145,6 +145,9 @@ config RUSTC_HAS_UNNECESSARY_TRANSMUTES
- config RUSTC_HAS_FILE_WITH_NUL
- 	def_bool RUSTC_VERSION >= 108900
- 
-+config RUSTC_HAS_FILE_AS_C_STR
-+	def_bool RUSTC_VERSION >= 109100
-+
- config PAHOLE_VERSION
- 	int
- 	default $(shell,$(srctree)/scripts/pahole-version.sh $(PAHOLE))
-diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-index ed53169e795c0badf548025a57f946fa18bc73e3..604069b1bd5c373d2ad8419872a358a8d01d0bb5 100644
---- a/rust/kernel/lib.rs
-+++ b/rust/kernel/lib.rs
-@@ -296,7 +296,7 @@ macro_rules! asm {
- 
- /// Gets the C string file name of a [`Location`].
- ///
--/// If `file_with_nul()` is not available, returns a string that warns about it.
-+/// If `Location::file_as_c_str()` is not available, returns a string that warns about it.
- ///
- /// [`Location`]: core::panic::Location
- ///
-@@ -310,8 +310,8 @@ macro_rules! asm {
- ///     let caller = core::panic::Location::caller();
- ///
- ///     // Output:
--///     // - A path like "rust/kernel/example.rs" if file_with_nul() is available.
--///     // - "<Location::file_with_nul() not supported>" otherwise.
-+///     // - A path like "rust/kernel/example.rs" if `file_as_c_str()` is available.
-+///     // - "<Location::file_as_c_str() not supported>" otherwise.
- ///     let caller_file = file_from_location(caller);
- ///
- ///     // Prints out the message with caller's file name.
-@@ -326,14 +326,17 @@ macro_rules! asm {
- /// ```
- #[inline]
- pub fn file_from_location<'a>(loc: &'a core::panic::Location<'a>) -> &'a core::ffi::CStr {
--    #[cfg(CONFIG_RUSTC_HAS_FILE_WITH_NUL)]
-+    #[cfg(CONFIG_RUSTC_HAS_FILE_AS_C_STR)]
-+    {
-+        loc.file_as_c_str()
-+    }
-+    #[cfg(all(CONFIG_RUSTC_HAS_FILE_WITH_NUL, not(CONFIG_RUSTC_HAS_FILE_AS_C_STR)))]
-     {
-         loc.file_with_nul()
-     }
--
-     #[cfg(not(CONFIG_RUSTC_HAS_FILE_WITH_NUL))]
-     {
-         let _ = loc;
--        c"<Location::file_with_nul() not supported>"
-+        c"<Location::file_as_c_str() not supported>"
-     }
+diff --git a/drivers/block/mtip32xx/mtip32xx.c b/drivers/block/mtip32xx/m=
+tip32xx.c
+index 8fc7761397bd..2c33c1dfc39d 100644
+--- a/drivers/block/mtip32xx/mtip32xx.c
++++ b/drivers/block/mtip32xx/mtip32xx.c
+@@ -3840,8 +3840,6 @@ static int mtip_pci_probe(struct pci_dev *pdev,
+=20
+ iomap_err:
+ 	kfree(dd);
+-	pci_set_drvdata(pdev, NULL);
+-	return rv;
+ done:
+ 	return rv;
  }
-
----
-base-commit: c17b750b3ad9f45f2b6f7e6f7f4679844244f0b9
-change-id: 20250827-file_as_c_str-b4d4eca4ce40
-
-Best regards,
--- 
-Alice Ryhl <aliceryhl@google.com>
+--=20
+2.47.1
 
 
