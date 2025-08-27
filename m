@@ -1,114 +1,150 @@
-Return-Path: <linux-kernel+bounces-788161-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788164-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13F98B38080
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 13:05:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1F55B3808C
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 13:08:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70700189D98E
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 11:05:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 712393BD03C
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 11:08:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75B8734DCFD;
-	Wed, 27 Aug 2025 11:04:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEFE334DCE0;
+	Wed, 27 Aug 2025 11:07:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="y7CglR45"
-Received: from mail-ed1-f73.google.com (mail-ed1-f73.google.com [209.85.208.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="7wv4BqlE"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EAA02C08CA
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 11:04:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDA571FA178;
+	Wed, 27 Aug 2025 11:07:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756292691; cv=none; b=AnzbXwUARpX/zwPNqO8sljZvAmJL/dhH0bYV8HoVp8QivSlovu/NtEnyBNEIyrvwB3BmVp1ubxiV9ylpF0R0lQtACHpJtNLCWWQ2FybIImfcwrjij8K1/b+arArZmrDeYrTWc/jgr9XSs3ZVDKhaEzazVO0nqDXrqKfW8snqdIo=
+	t=1756292865; cv=none; b=FfMNHD23J+dx7joA/sroxqCa31TwhCSrsU4f72zV33Ru79RECBneZlfYKXiSyHvMTBxsOE7ShOYsAiJ8aqK486N6sn7eJmTO0iPNojHIgpWwHd/hUUTfICQTdU61XHtdNVLNiCT3sljKJ1D2KPBseZPAgqYlRfHfLqUc1uPDoN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756292691; c=relaxed/simple;
-	bh=9Kd9r8EWcGhXM9Z0go2oGM47zU0PnGfjgD38W5EqGLo=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=HNrtg1w6y4NquKFSeCxJG3iqy0QoDWo8MCqOHVPZ8NRmL3zTnCY8mFMGJHxVUYBZ9hcv81mJmRPEQm7V0ohIOe6r/UExtyiiYUFomFi3F8QCW2yQ06F5nTehO8bHDRgULb1KAtshxEpJIfsfp85oce4SpgWyMHc0JRxFaVVDR0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=y7CglR45; arc=none smtp.client-ip=209.85.208.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com
-Received: by mail-ed1-f73.google.com with SMTP id 4fb4d7f45d1cf-61c524e33d9so3409545a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 04:04:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756292688; x=1756897488; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=nf4CiXWHDpJDlUPbhGw995yPVPVvyqVPHVSb+srJYto=;
-        b=y7CglR45+wclbtO8eHXbKeSdReA96QxHd++QE5gcPamd5qmaJNGj3Ve7b3PYASfAKt
-         2cGRSXa3Yol7eIboCw9v+3CGZWAauyY/qyh5nvzjZWOZh6++/PzjXI4GkTcgD80eNraF
-         51Yv4OCgU4kviycu/EU4x5PmV3mb0GxSpvmCywlzHprhywEm5hCMYDDVgVDixLiwpB8f
-         kBDfp+0XfU3+gbdK5A014b0TJkIVAGCmELQLWzcA2wgSVdJRuHDBwcVUBWlCkWEiGDkc
-         QELi+mOlXjDPXa05vIw+PIVwmIiRB6v6WYxIf2VWPuiuWsz/F3zYmppVqfanRCVtkGsK
-         vCjg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756292688; x=1756897488;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nf4CiXWHDpJDlUPbhGw995yPVPVvyqVPHVSb+srJYto=;
-        b=JRwm4VzgbohetgfYtUPWjx/FdtoJ8vVLBEbg4avBLh4N7hLKV2VUwitOb0plivuQKC
-         s+50klOC8djPikSzyHHINwq6hLRRnmiN5cMCJEXmm/cHQLkCfEgO5SXTAMqipRbI6308
-         J6pxSJo1ZEw5fIQDUD7B+lZLIZeKfHZ8mKy0/JmjBikyGxX5mivXd5P3KGxvWyV89ui/
-         J++uwqD8MKCugJVyq4sd16W7vQ8d5oAViJn1rKQ+2bTUQsO242d2j8kWflseSKunK5Ok
-         ovGeT0j3LoizmSVG8JAoNeyOeBFWRSbOHSpt5TDygqq6l9MkzOXKPNTUsAfIwFgBwtOB
-         29VA==
-X-Gm-Message-State: AOJu0YzFfzWq2wZPuL011sI/fke+7vFpf6V7S6dGm/xucj5b+u9VwlFS
-	FUKmvYa9sEOKH19T+2m2sg0dAh+bqanFgp3a8QP6xcP4NDEoSz8VPAMFBL8k+z//AoNzwOkKm4B
-	DhY71FPIIsaI8jQ==
-X-Google-Smtp-Source: AGHT+IHrZXwCVvuqupUKpT95XmcWj4Xa/7qE/DbFzWdo9LcsAOtZKdLGvcR+C3sRuAOM6hlRZPCPsneY5yWc2w==
-X-Received: from edbes5.prod.google.com ([2002:a05:6402:3805:b0:61c:8c63:a94d])
- (user=jackmanb job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6402:50d1:b0:61c:b951:adb with SMTP id 4fb4d7f45d1cf-61cb9510f08mr777554a12.9.1756292688190;
- Wed, 27 Aug 2025 04:04:48 -0700 (PDT)
-Date: Wed, 27 Aug 2025 11:04:43 +0000
-In-Reply-To: <20250827-b4-vma-no-atomic-h-v1-0-5d3a94ae670f@google.com>
+	s=arc-20240116; t=1756292865; c=relaxed/simple;
+	bh=E8razsN2CaYngWDYKNr7kDo+Q9Mhr1B4Q82JBBWUqSM=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=seZSZDaBERHvRJSmgPoV4dwUiH+oQ7VByx5nn5WJXem5tEVnQVxsNUv6GUuiBdyru36m8T6Rs0rMT/6Fjlf9nY80uVRK9i6xWtzihJ+ge2qLbH//GIBttpzv87j4XLIGEKhEd4nfnfVq+Zl7tNZnX4/EsTF8fixOF+PlYD3pn74=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=7wv4BqlE; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57RA4cGb026189;
+	Wed, 27 Aug 2025 13:07:13 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=selector1; bh=gChpukKe/Co4j4eyT56FMO
+	0lc9aier7sQ6umEpqMPig=; b=7wv4BqlEGcf8Adj3Tl5KlzJClyjpur32grL9Cr
+	AufZtlaYRTrNopWfDqw9lduzT5fSc3+wkQ6aTTbcKdDCqGXP2IHAVZsvH0dOvWfz
+	N2dyRJ7Ese0M053XZd1OpbmPA1a0FCprP5SWvKrV+ivHCd1stclQjcZZ8Fkg8y96
+	ASGvBgVT98r0xXebyHJXXrlH/xzgz6yX88XJ9w+h9eRMzUJa1B1UjcmDw76Phw32
+	a++WzuI1j085Lw8pZbCjzq5FG3h7PEx13wKqVTrGLm7PhB59GkzVtMN71IzBdi3M
+	UAVNE+rm1gbXHiqLZaieOlUTBo+etozvD0ePR/HcILy57gDQ==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 48qq745m9a-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 27 Aug 2025 13:07:13 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 4594240047;
+	Wed, 27 Aug 2025 13:05:58 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 8A10A546F2C;
+	Wed, 27 Aug 2025 13:05:02 +0200 (CEST)
+Received: from localhost (10.252.21.245) by SHFDAG1NODE1.st.com (10.75.129.69)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.57; Wed, 27 Aug
+ 2025 13:05:02 +0200
+From: Gatien Chevallier <gatien.chevallier@foss.st.com>
+Subject: [PATCH net-next v3 0/2] net: stmmac: allow generation of flexible
+ PPS relative to MAC time
+Date: Wed, 27 Aug 2025 13:04:57 +0200
+Message-ID: <20250827-relative_flex_pps-v3-0-673e77978ba2@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250827-b4-vma-no-atomic-h-v1-0-5d3a94ae670f@google.com>
-X-Mailer: b4 0.14.2
-Message-ID: <20250827-b4-vma-no-atomic-h-v1-3-5d3a94ae670f@google.com>
-Subject: [PATCH 3/3] tools: testing: Support EXTRA_CFLAGS in shared.mk
-From: Brendan Jackman <jackmanb@google.com>
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>
-Cc: linux-kernel@vger.kernel.org, maple-tree@lists.infradead.org, 
-	linux-mm@kvack.org, Brendan Jackman <jackmanb@google.com>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAFnmrmgC/23N0QrCIBgF4FcZXudwOmfrqveIGGa/TVg6VGQx9
+ u6ZdFGwy8PhfGdFAbyBgE7VijwkE4yzObBDhdQo7QOwueeMKKGcCMqwh0lGk2DQEyzDPAespaT
+ 6pqQ+Mo7ybvagzVLMC7IQsYUlomtuRhOi869ylprSf912x00NJpgJJTsuBGNdf9YuhDrEWrln8
+ RL9Nfo9g34M4JowTrlq+b+xbdsb3n2FJQIBAAA=
+X-Change-ID: 20250723-relative_flex_pps-faa2fbcaf835
+To: Andrew Lunn <andrew+netdev@lunn.ch>,
+        "David S. Miller"
+	<davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC: <netdev@vger.kernel.org>, <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>,
+        Gatien Chevallier
+	<gatien.chevallier@foss.st.com>
+X-Mailer: b4 0.14.2
+X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-27_02,2025-08-26_01,2025-03-28_01
 
-This allows the user to set cflags when building tests that use this
-shared build infrastructure.
+When doing some testing on stm32mp2x platforms(MACv5), I noticed that
+the command previously used with a MACv4 for genering a PPS signal:
+echo "0 0 0 1 1" > /sys/class/ptp/ptp0/period
+did not work.
 
-For example, it enables building with -Werror so that patch-check
-scripts will fail:
+This is because the arguments passed through this command must contain
+the start time at which the PPS should be generated, relative to the
+MAC system time. For some reason, a time set in the past seems to work
+with a MACv4.
 
-	make -C tools/testing/vma -j EXTRA_CFLAGS=-Werror
+Because passing such an argument is tedious, consider that any time
+set in the past is an offset regarding the MAC system time. This way,
+this does not impact existing scripts and the past time use case is
+handled. Edit: But maybe that's not important and we can just change
+the default behavior to this.
 
-Signed-off-by: Brendan Jackman <jackmanb@google.com>
+Example to generate a flexible PPS signal that has a 1s period 3s
+relative to when the command was entered:
+
+echo "0 3 0 1 1" > /sys/class/ptp/ptp0/period
+
+Signed-off-by: Gatien Chevallier <gatien.chevallier@foss.st.com>
 ---
- tools/testing/shared/shared.mk | 1 +
- 1 file changed, 1 insertion(+)
+Changes in v3:
+- Fix warning on braces for the switch case.
+- Link to v2: https://lore.kernel.org/r/20250729-relative_flex_pps-v2-0-3e5f03525c45@foss.st.com
 
-diff --git a/tools/testing/shared/shared.mk b/tools/testing/shared/shared.mk
-index 937aaa7623320da1085a8e0f43f6a728ddd3ab1c..5bcdf26c8a9d51ab2cbd264f2f8a7445d7c036e3 100644
---- a/tools/testing/shared/shared.mk
-+++ b/tools/testing/shared/shared.mk
-@@ -4,6 +4,7 @@ include ../../scripts/Makefile.arch
- CFLAGS += -I../shared -I. -I../../include -I../../arch/$(SRCARCH)/include \
- 	  -I../../../lib -g -Og -Wall \
- 	  -D_LGPL_SOURCE -fsanitize=address -fsanitize=undefined
-+CFLAGS += $(EXTRA_CFLAGS)
- LDFLAGS += -fsanitize=address -fsanitize=undefined
- LDLIBS += -lpthread -lurcu
- LIBS := slab.o find_bit.o bitmap.o hweight.o vsprintf.o
+Changes in v2:
+- Drop STMMAC_RELATIVE_FLEX_PPS config switch
+- Add PTP reference clock in stm32mp13x SoCs
+- Link to v1: https://lore.kernel.org/r/20250724-relative_flex_pps-v1-0-37ca65773369@foss.st.com
 
+---
+Gatien Chevallier (2):
+      drivers: net: stmmac: handle start time set in the past for flexible PPS
+      ARM: dts: stm32: add missing PTP reference clocks on stm32mp13x SoCs
+
+ arch/arm/boot/dts/st/stm32mp131.dtsi             |  2 ++
+ arch/arm/boot/dts/st/stm32mp133.dtsi             |  2 ++
+ drivers/net/ethernet/stmicro/stmmac/stmmac_ptp.c | 35 +++++++++++++++++++++++-
+ 3 files changed, 38 insertions(+), 1 deletion(-)
+---
+base-commit: 242041164339594ca019481d54b4f68a7aaff64e
+change-id: 20250723-relative_flex_pps-faa2fbcaf835
+
+Best regards,
 -- 
-2.50.1
+Gatien Chevallier <gatien.chevallier@foss.st.com>
 
 
