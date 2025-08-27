@@ -1,112 +1,192 @@
-Return-Path: <linux-kernel+bounces-788365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A519B38366
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 15:10:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C17CEB3836D
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 15:11:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E99E94621DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 13:10:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6737B46194F
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 13:11:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B911350D5D;
-	Wed, 27 Aug 2025 13:09:58 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16A2833F9;
-	Wed, 27 Aug 2025 13:09:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756300197; cv=none; b=UbD3FHhLom6zVjlm9wnRYRrzRDJm9jjkv3WUwbA/m79f/Jr5SHYKlRKcQoaWbB9oB4+vKwREstPpVYKeb7EJOhagS6SxQVMITXp9DTX9RdNR2jCY7/ujnGsmwCyS/kvEtme8zYH8WKDqEyA/Ph2QvqJhFYj7lD19q5nomjUYHrU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756300197; c=relaxed/simple;
-	bh=D3+PuIC2hj+Z79JjrDH0FHlZ91TH9OUwHrcIMtATjIo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gzCq9j55BJCjMurgGaG/Lh+Qw6lTp9um/5R+RXSbBrw5xRts1YkgiFNtq1jkVYpYH5f/hSMfgagFnylG+5QG5sS7/5XGWgWX0p9d44rfD6/AMl+yHL3lRHpr+w0Puzd9KdDsv6m8ZrVdYy2qx82j/XTrkxGDPTRdVQBggyymSn4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2DF141688;
-	Wed, 27 Aug 2025 06:09:47 -0700 (PDT)
-Received: from donnerap.manchester.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 119673F694;
-	Wed, 27 Aug 2025 06:09:53 -0700 (PDT)
-Date: Wed, 27 Aug 2025 14:09:38 +0100
-From: Andre Przywara <andre.przywara@arm.com>
-To: Chen-Yu Tsai <wens@kernel.org>
-Cc: Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej@kernel.org>, Samuel
- Holland <samuel@sholland.org>, linux-sunxi@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Mikhail Kalashnikov <iuncuim@gmail.com>
-Subject: Re: [PATCH] arm64: dts: allwinner: t527: orangepi-4a: Limit eMMC
- clock to 75 MHz
-Message-ID: <20250827140924.1340417f@donnerap.manchester.arm.com>
-In-Reply-To: <20250821132935.2070398-1-wens@kernel.org>
-References: <20250821132935.2070398-1-wens@kernel.org>
-Organization: ARM
-X-Mailer: Claws Mail 3.18.0 (GTK+ 2.24.32; aarch64-unknown-linux-gnu)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 405A7352080;
+	Wed, 27 Aug 2025 13:11:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="arVqRPe2"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B5CE2BD5B0;
+	Wed, 27 Aug 2025 13:11:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756300282; cv=pass; b=YdfTmoBu4AGerFHPygiZsFiTvlLBrCPcUzqMcxasTUAtqr9KPsZE6xp6Qa3EFpK3j/v93hiF3rL1ba25dleuGb17xjiQpFm/GdaudxkWENKsFiJLZ/Fvz1FWSBkSqsVycZLocynl/6ACNGWg7drBCeHvJRSsr9pWPKVCTfkx0BU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756300282; c=relaxed/simple;
+	bh=Yvmv4LbBWz5GniQhQN1h1ApaRtyRX5BoN3NMWW/xzwk=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=g7RkllFL0vfQjPQfdt6n8LzaXAEu65aKK/1+sGAikeWWqLmTMopydEgOA/MnPSRaqS7TMIHa3803rK7CUl3NAVxWsmLXJw4K/3/PcBRsrHXBKDE3K2oVNs0EOHYT37DF75+RH9Rm0LCDw9e5fWxGZB2OoMbUW6TOjZVgaEDVJAw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=arVqRPe2; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1756300260; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=UlzUuCrKnOgVIkRfgBTpU9ZUn+PClJ7hsW0Rwx4mrCONVALOllpUe2DgJmG1AZhdarF4ThRKSgnoLHILI/xEilGMpUjWJw6OvDTRejUF+OgDIS8yQcAMIvAsfTNE6stcUVnXi8j3t/qOcYFbGIrZiUZ1M4aP7S5Ah7MmAImU1Gw=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1756300260; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=HK0ZqpOuG/yp/CXp5WnROsRN8hQcZfbbwtHP9VHBdLU=; 
+	b=kKYVZynYuYwH0ATJIQ3EJKriIVS4MGPnTZeO1e8PD1FqJBPKNv+pAjkHHZQk056dH7OwViK7UpnwDCtrHizBJnH+h7749GXcaVZA4mPcrUq8sueZAqy2G75L3BeLwHtO8uA2j7ggBqZbNoOg2rLbs7BsYf2ilckB4N6Txs+c0OE=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1756300260;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=HK0ZqpOuG/yp/CXp5WnROsRN8hQcZfbbwtHP9VHBdLU=;
+	b=arVqRPe27KqFgAgW/mFu8S59xCGpz8nf+al9MJ7+2+nw1RHPyzXqqqrVCD9SfZy5
+	7Zl5aswT6nS5qxZB1d6TrFLQjtdsRJOXGfnD3KWcRz1Q0ud1oMsICbDoyxt2UVfZFO8
+	KvewZvGlpakCQeFZTbRV2X4I6Ayo3usZ5HpaU5P8=
+Received: by mx.zohomail.com with SMTPS id 1756300258363744.5903240691605;
+	Wed, 27 Aug 2025 06:10:58 -0700 (PDT)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
+Subject: Re: [PATCH v6 05/18] rust: str: introduce `kstrtobool` function
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <20250822-rnull-up-v6-16-v6-5-ec65006e2f07@kernel.org>
+Date: Wed, 27 Aug 2025 10:10:42 -0300
+Cc: Boqun Feng <boqun.feng@gmail.com>,
+ Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <lossin@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ Danilo Krummrich <dakr@kernel.org>,
+ Jens Axboe <axboe@kernel.dk>,
+ Breno Leitao <leitao@debian.org>,
+ linux-block@vger.kernel.org,
+ rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <A97ECEE6-25A7-45ED-8547-527AC4362BA6@collabora.com>
+References: <20250822-rnull-up-v6-16-v6-0-ec65006e2f07@kernel.org>
+ <20250822-rnull-up-v6-16-v6-5-ec65006e2f07@kernel.org>
+To: Andreas Hindborg <a.hindborg@kernel.org>
+X-Mailer: Apple Mail (2.3826.700.81)
+X-ZohoMailClient: External
 
-On Thu, 21 Aug 2025 21:29:35 +0800
-Chen-Yu Tsai <wens@kernel.org> wrote:
 
-Hi Chen-Yu,
 
-> From: Chen-Yu Tsai <wens@csie.org>
-> 
-> The eMMC on the Orange Pi 4A doesn't function correctly at full speed
-> of 150 MHz under HS200 mode. Either the traces on the board or module
-> aren't great, or the SoC's internal delays are incorrect. Tuning the
-> pin drive strength did not help.
-> 
-> After some experimenting, 75 MHz was found to be stable enough. Use this
-> as the maximum frequency for now.
-> 
-> Fixes: de713ccb9934 ("arm64: dts: allwinner: t527: Add OrangePi 4A board")
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+> On 22 Aug 2025, at 09:14, Andreas Hindborg <a.hindborg@kernel.org> =
+wrote:
+>=20
+> Add a Rust wrapper for the kernel's `kstrtobool` function that =
+converts
+> common user inputs into boolean values.
+>=20
+> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
 > ---
->  arch/arm64/boot/dts/allwinner/sun55i-t527-orangepi-4a.dts | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/arch/arm64/boot/dts/allwinner/sun55i-t527-orangepi-4a.dts b/arch/arm64/boot/dts/allwinner/sun55i-t527-orangepi-4a.dts
-> index c52d09cf0888..fb5311a46c2e 100644
-> --- a/arch/arm64/boot/dts/allwinner/sun55i-t527-orangepi-4a.dts
-> +++ b/arch/arm64/boot/dts/allwinner/sun55i-t527-orangepi-4a.dts
-> @@ -160,6 +160,7 @@ &mmc2 {
->  	mmc-ddr-1_8v;
->  	mmc-hs200-1_8v;
->  	non-removable;
-> +	max-frequency = <75000000>;
+> rust/kernel/str.rs | 57 =
+++++++++++++++++++++++++++++++++++++++++++++++++++++++
+> 1 file changed, 57 insertions(+)
+>=20
+> diff --git a/rust/kernel/str.rs b/rust/kernel/str.rs
+> index d8326f7bc9c1..d070c0bd86c3 100644
+> --- a/rust/kernel/str.rs
+> +++ b/rust/kernel/str.rs
+> @@ -4,6 +4,7 @@
+>=20
+> use crate::{
+>     alloc::{flags::*, AllocError, KVec},
+> +    error::Result,
+>     fmt::{self, Write},
+>     prelude::*,
+> };
+> @@ -920,6 +921,62 @@ fn write_str(&mut self, s: &str) -> fmt::Result {
+>     }
+> }
+>=20
+> +/// Convert common user inputs into boolean values using the kernel's =
+`kstrtobool` function.
+> +///
+> +/// This routine returns `Ok(bool)` if the first character is one of =
+'YyTt1NnFf0', or
+> +/// \[oO\]\[NnFf\] for "on" and "off". Otherwise it will return =
+`Err(EINVAL)`.
+> +///
+> +/// # Examples
+> +///
+> +/// ```
+> +/// # use kernel::{c_str, str::kstrtobool};
+> +///
+> +/// // Lowercase
+> +/// assert_eq!(kstrtobool(c_str!("true")), Ok(true));
+> +/// assert_eq!(kstrtobool(c_str!("tr")), Ok(true));
+> +/// assert_eq!(kstrtobool(c_str!("t")), Ok(true));
+> +/// assert_eq!(kstrtobool(c_str!("twrong")), Ok(true));
+> +/// assert_eq!(kstrtobool(c_str!("false")), Ok(false));
+> +/// assert_eq!(kstrtobool(c_str!("f")), Ok(false));
+> +/// assert_eq!(kstrtobool(c_str!("yes")), Ok(true));
+> +/// assert_eq!(kstrtobool(c_str!("no")), Ok(false));
+> +/// assert_eq!(kstrtobool(c_str!("on")), Ok(true));
+> +/// assert_eq!(kstrtobool(c_str!("off")), Ok(false));
+> +///
+> +/// // Camel case
+> +/// assert_eq!(kstrtobool(c_str!("True")), Ok(true));
+> +/// assert_eq!(kstrtobool(c_str!("False")), Ok(false));
+> +/// assert_eq!(kstrtobool(c_str!("Yes")), Ok(true));
+> +/// assert_eq!(kstrtobool(c_str!("No")), Ok(false));
+> +/// assert_eq!(kstrtobool(c_str!("On")), Ok(true));
+> +/// assert_eq!(kstrtobool(c_str!("Off")), Ok(false));
+> +///
+> +/// // All caps
+> +/// assert_eq!(kstrtobool(c_str!("TRUE")), Ok(true));
+> +/// assert_eq!(kstrtobool(c_str!("FALSE")), Ok(false));
+> +/// assert_eq!(kstrtobool(c_str!("YES")), Ok(true));
+> +/// assert_eq!(kstrtobool(c_str!("NO")), Ok(false));
+> +/// assert_eq!(kstrtobool(c_str!("ON")), Ok(true));
+> +/// assert_eq!(kstrtobool(c_str!("OFF")), Ok(false));
+> +///
+> +/// // Numeric
+> +/// assert_eq!(kstrtobool(c_str!("1")), Ok(true));
+> +/// assert_eq!(kstrtobool(c_str!("0")), Ok(false));
+> +///
+> +/// // Invalid input
+> +/// assert_eq!(kstrtobool(c_str!("invalid")), Err(EINVAL));
+> +/// assert_eq!(kstrtobool(c_str!("2")), Err(EINVAL));
+> +/// ```
+> +pub fn kstrtobool(string: &CStr) -> Result<bool> {
+> +    let mut result: bool =3D false;
+> +
+> +    // SAFETY: `string` is a valid null-terminated C string, and =
+`result` is a valid
+> +    // pointer to a bool that we own.
+> +    let ret =3D unsafe { bindings::kstrtobool(string.as_char_ptr(), =
+&mut result) };
+> +
+> +    kernel::error::to_result(ret).map(|()| result)
+> +}
+> +
+> /// An owned string that is guaranteed to have exactly one `NUL` byte, =
+which is at the end.
+> ///
+> /// Used for interoperability with kernel APIs that take C strings.
+>=20
+> --=20
+> 2.47.2
+>=20
+>=20
+>=20
 
-I am not a big fan of this change, as it looks like we are papering over
-something. I think the BSP runs it as a higher frequency just fine, can
-you check that? Traditionally the BSP uses HS400, IIRC, maybe we should
-finally bite the bullet and enable that?
-
-Mikhail has some other assorted changes to beat his WalnutPi into
-submission, among others a slight increase of the voltage, both I/O (1.9V)
-and supply (3.4V). Also he increased the pins driving capability to 40mA,
-did you try that?
-
-On my boards I tried to lower the frequency as well, but didn't get
-consistent results, though there was *some* improvement (at least probed
-the block device and read the partition table). And I needed to go much
-lower (40 MHz), so I wonder if this is all related to some bigger
-underlying issue.
-
-Cheers,
-Andre
-
->  	vmmc-supply = <&reg_cldo3>;
->  	vqmmc-supply = <&reg_cldo1>;
->  	status = "okay";
+Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>
 
 
