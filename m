@@ -1,253 +1,181 @@
-Return-Path: <linux-kernel+bounces-788803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D05F5B38A7D
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 21:51:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79E55B38A80
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 21:52:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 859053B176B
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 19:51:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7863F1C2104B
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 19:52:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9FA72F0692;
-	Wed, 27 Aug 2025 19:51:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4027D2F1FEC;
+	Wed, 27 Aug 2025 19:51:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b="bV99w4WB"
-Received: from LO2P265CU024.outbound.protection.outlook.com (mail-uksouthazon11021101.outbound.protection.outlook.com [52.101.95.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ReEA9Zq0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 168682857C7;
-	Wed, 27 Aug 2025 19:51:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.95.101
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756324288; cv=fail; b=rsPVvSxvaszHneLgnIWUx2m2YfLOCGXbMJmPRSO/azk3f9q9Tc2rsFQ7zN34FRWsadkcrK3Vpk2mlBaN7p0WR3ugATr61dJh6vYvIAHYcRFrFxWMGylT+jh+gRbd6c1713iCVy4r6SP20ker5wDaijFBmHK1Rgtg+mPGqgmwURE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756324288; c=relaxed/simple;
-	bh=8UjPnizeoFYhp51TvjBuZjZ9+QG5ViuIOqJvbGD67uI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=C1rrWPTFJXEWexkVN5ARqLnxPkv3A9c+fIWRZY1z9/j4aDMBlIgWbyGIMZaslhadJNHr8d0fyQwK0hc9mSqGKgfSMO9GJGZxzGhRd2G3EllISbVgHEQbgbgKgK0zI96UpKaQT2l/BqnLlbXQISTLdloaQcB4+tUjWqmJ0yxozz8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=garyguo.net; spf=pass smtp.mailfrom=garyguo.net; dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b=bV99w4WB; arc=fail smtp.client-ip=52.101.95.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=garyguo.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=garyguo.net
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=gvOa3BXAD8RNNlF2qnGOLIHrpR32SXLTqYpB8QbKomFcGEoNNVKaht/ceNWmGkz8weT76wCXVNAHnPHtTwH8ntaQCB0zXmLy0MiExUbk9aZ/O+6h82dyZp0cvRZJlMP0mKuDBUdHGT+9ox81/CjtDgH4gyoeGIFgRimmwPn6YGTuz3gI0bTFC9pUrLu8TIZMjTxsTZK7DDjpztyRAbnL3lYNFKGO2hFjHyoVPDN+dHP/W5di6eq723afQLQqi+ZcTVpM+UwOvqqGAlDnC7GxGLtjR6+0y/fs1TurS2qgTkWmbaxxu2/7CWRop6c6z85+LsCGZASuyfu6hSQInvRcpA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=LciB2SeKJxvq2CK5yDT/dZISis/hhy/3hh12PvKez70=;
- b=rHbz26C1RKA1ltudRDf1n4LDCoqcK5zdTIx3CY/Iyt9ZGmRHED+KBRX+TmOU+qvRzsqcRa9OeNI13cdBeBAT2PuhayLOykkGAsLg2e4OVBijBVdjqnvihoPmS9e9Lmzo1yjMFDcInKgwd8EM8oTh0sPnBB9FMYceUFzjdZsaLeO/fokoIY/wMc5zp+SaCerV31Hc8uTuEsIU6QkGbBN3amhtbn+0bizi94kdgXUR+TBklgwnjhoDNxC5geq4efA4mY1Hr0eDQQgmhZsVGFnKvSgEWQb9WpjGUzAJqM9NPiieFh0mVq1M16GLTW8l32qaJ4WlQHkXDLeZ4xGYvvOp/g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=garyguo.net; dmarc=pass action=none header.from=garyguo.net;
- dkim=pass header.d=garyguo.net; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=garyguo.net;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LciB2SeKJxvq2CK5yDT/dZISis/hhy/3hh12PvKez70=;
- b=bV99w4WBwWEY2o+NcqsEznUSGfocuqHREpaajkC8i8tJ4mDW0r6jJEqSPqNR/YzjslFFNOqRaNvn3Qb/ZFcSt2FjZc9Fp8I1bma4rHyaZ6wOqbey0feRICrCwT8qM3u3HHEFqa2NnlBJBMuCD0vE6Ln/YdwSIgYo5TLog7A9ut4=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=garyguo.net;
-Received: from LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:253::10)
- by CWLP265MB6035.GBRP265.PROD.OUTLOOK.COM (2603:10a6:400:1d1::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.15; Wed, 27 Aug
- 2025 19:51:23 +0000
-Received: from LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
- ([fe80::1818:a2bf:38a7:a1e7]) by LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
- ([fe80::1818:a2bf:38a7:a1e7%4]) with mapi id 15.20.9052.019; Wed, 27 Aug 2025
- 19:51:23 +0000
-Date: Wed, 27 Aug 2025 20:51:21 +0100
-From: Gary Guo <gary@garyguo.net>
-To: "Benno Lossin" <lossin@kernel.org>
-Cc: "Gary Guo" <gary@kernel.org>, "Miguel Ojeda" <ojeda@kernel.org>, "Alex
- Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>,
- =?UTF-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, "Andreas
- Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
- "Trevor Gross" <tmgross@umich.edu>, "Danilo Krummrich" <dakr@kernel.org>,
- "Will Deacon" <will@kernel.org>, "Peter Zijlstra" <peterz@infradead.org>,
- "Mark Rutland" <mark.rutland@arm.com>, "Tamir Duberstein"
- <tamird@gmail.com>, "Francesco Zardi" <frazar00@gmail.com>, "Antonio
- Hickey" <contact@antoniohickey.com>, <rust-for-linux@vger.kernel.org>,
- "David Gow" <davidgow@google.com>, <linux-block@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 4/5] rust: block: convert `block::mq` to use
- `Refcount`
-Message-ID: <20250827205121.59e4cc32.gary@garyguo.net>
-In-Reply-To: <DC0AUNNAKGJI.4KX0TW6LG83Y@kernel.org>
-References: <20250723233312.3304339-1-gary@kernel.org>
-	<20250723233312.3304339-5-gary@kernel.org>
-	<DC0AUNNAKGJI.4KX0TW6LG83Y@kernel.org>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO4P265CA0080.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:2bd::10) To LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:253::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F58A2F0C68;
+	Wed, 27 Aug 2025 19:51:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756324291; cv=none; b=aSCTBp/aGDFq5yq9r1h/9xEj9f3z8MtuAtFPhtrTllpgPfJNczUbc1hEZB5fZBbrsIwo/swhHI3aBtJ/In88m52HZqs6Lo/oxX++tBVzh6KA9IiMNDMwii5zkNfCTjfqKMs/XLy2qGSdhvua7qsm+OM2ySWs8UgaEie8t9CfLtw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756324291; c=relaxed/simple;
+	bh=82UQhmrO9VqhrHSeeXILn7KguxmPjIRuFSlL2METmeU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=iDmS5kOG342N3eLIOMMsL9WkM9O+bw3jEaSUNRu7v9hmoL2ylYqwdZI9bFUDZU9x2duta8Ge6UWiyeSiiXVYBvD6XHLYBfkK9VOrm/WUVvWi4E2kCboTS1SmXgNPnvNHgOb+LoPMVyGzde2sd18Nn2ZaEhZtvYBWPAaAmchW2Xg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ReEA9Zq0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D37A8C4CEEB;
+	Wed, 27 Aug 2025 19:51:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756324291;
+	bh=82UQhmrO9VqhrHSeeXILn7KguxmPjIRuFSlL2METmeU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=ReEA9Zq0Smzl/tR6X+fDiY+pBpWtoFzbZr1nfb1oZG4/+EmVMCd0G3WyGmYIK4nqc
+	 7nTrHMJWX+X3HvE++wluC81vgLGj/qJvrPE5MlnuBUNnnoC31GThxaxIMXp9HS44Py
+	 mNmky4320th2VrLIuiTmEqvzA+M0pKvg/2Wpidim6vYVvu0eg0e6sgkU5/xqPH1HXx
+	 Q2GS+MGpAfl9Ohb9VnlGFM+dDA+gjP5wYGjxP7gMat5wPBTojJvAA9BsaRNcNzpuqB
+	 qZrq0Jdwjoaun1PfljnL1a/vMx/Cm479mTM1epNynST9NbkpHUlLQqIh08QzfsazZh
+	 z1EGRTdYirA/Q==
+Date: Wed, 27 Aug 2025 14:51:29 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>
+Cc: Alex Deucher <alexander.deucher@amd.com>,
+	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+	D Scott Phillips <scott@os.amperecomputing.com>,
+	Rio Liu <rio@r26.me>, Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Markus Elfring <Markus.Elfring@web.de>,
+	LKML <linux-kernel@vger.kernel.org>, stable@vger.kernel.org
+Subject: Re: [PATCH v3 3/3] PCI: Fix failure detection during resource resize
+Message-ID: <20250827195129.GA898951@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LO2P265MB5183:EE_|CWLP265MB6035:EE_
-X-MS-Office365-Filtering-Correlation-Id: 07f5a367-5d9b-4f08-f595-08dde5a31a1f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|7416014|376014|366016|10070799003|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?GXGOMdkuXSIk1+TOad/1guqVaM/2CSRU7Fq5ZByKNHr+s1GsIExic2BwM66k?=
- =?us-ascii?Q?LrnZgE2CRH6oJZWP0xB0oKGjJbRY9JvUEtwGjrWYZ9JwlqO3BroDfyBUtAvh?=
- =?us-ascii?Q?D8RWYwFbbjOataGHrbkAzHii7WofEApS/64gJtTL7ON/CnijcSMygdCh6MYu?=
- =?us-ascii?Q?xOcOAzmexci8l3HYW/slpBpVzqAV/T8RHcLArqj97IOujEJY+sdsZGCKx8Zz?=
- =?us-ascii?Q?FON6ZB/Dum91qcc4dstjFyz1DZlI/UHcjD9CDaMk95LFzTxQq5UmOsx/jOsI?=
- =?us-ascii?Q?GFV08Gi24cZUhCqFwCeDvxarNykoh6nduJY42bUCveENdB+xCcah45DYeu2R?=
- =?us-ascii?Q?PUaENKLdaX5FrtUYGM6IPT8fAankTxkow5z5uPIEeaiYZkwlNYkEU3IkPDlz?=
- =?us-ascii?Q?gR7cV3fAzNvLz4gzDvrJSm3+RT91k1HgWs3LYiF2TOV6b0bByGOpMxkwWVJN?=
- =?us-ascii?Q?XqYeWCriwsHFhJJWhmeNVn5JfQhTgmdV4yUe4VQZFHNdE2tH/SyNjkArINsu?=
- =?us-ascii?Q?aR3LgOuUfMte9zqHyha9YKrHURyJX/aDFoBKhXQcGsn1dTiaIVqL1ednincb?=
- =?us-ascii?Q?V+eTzIlZKIQrwG0FLpUqtHBis4c25iKvusQSin4wnN3PJ55AXKLYgMfHdKU5?=
- =?us-ascii?Q?dzX9rOT1sIDMxVKDsTUSSnFCZgCcICFFx3PUBHN8Xey//gNJjUGJ80cOa53u?=
- =?us-ascii?Q?F0Dp9j/DYss9+NLJq51uLiQq8ikW0dyxG7LybnmywhCMFQ9WXINkbr3FlSN5?=
- =?us-ascii?Q?1K+toSDah7+iXGLna7iawJvr3BGaQbinlvXe3ub1t5QidwhEx+nm+zSF4CrD?=
- =?us-ascii?Q?2K2RaYFTi+uigro5Lfr2ErEqNlw4j/XWx7QBBhPLidpzq+Z1qMpCg5JYcm8c?=
- =?us-ascii?Q?ssJ8WsDXCzCUiJ3/t0XlEY0VihwXtUuzT9Zz32oSz1xcGMv49fJwrWUizNAu?=
- =?us-ascii?Q?jwcL4ZFaBccomlHywQ9UmVuKzymKLJqg3hq1RcDjRAJ6PYNCGNAillXA40oK?=
- =?us-ascii?Q?rB9Op4eZ2LUhiEimra8q3NRogCoaPTQj7t5z2enfZULJcR6lq9hP/gthb4kj?=
- =?us-ascii?Q?yDnlkYzMnpyihRFO5FPMRmH7Sn0A8cfiaHxBfW8jnfnK/wcSDQTZN9s3tKea?=
- =?us-ascii?Q?O5cZXETfK9hEwjeUCU9bpyigpqXplp6YpbcZK795QrHCXHmm4PZi3u6o9Syw?=
- =?us-ascii?Q?EeCMvzqv+2mgITvV4afk9cvaQ3AROiKvF34cMS8SRxmz4IkFTMArOmlRbFZV?=
- =?us-ascii?Q?6KZ7wB8TAOfk7qWlUsKpMLh6/nn+ehLTn2fqbG9mp0zm2XL3K1y8Pot/k7P5?=
- =?us-ascii?Q?kG9TLNU95+8obXSfQNDAK3ExbdjJUh3daLpIe4Y7EWVQrG+Cq9Q9RYmAkEaY?=
- =?us-ascii?Q?4zKylyhAA16kBCzNy8AEyD48qAf68Shr9EH5ZMlfXT8g7U0lCLAvLOtHkG3U?=
- =?us-ascii?Q?i66zC9Vdrv0=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016)(10070799003)(7053199007);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?M6h+TPrPQKgA8uNYUQHKyWzVktE7C+X3Wa3tEsmAs/BiyW7jizrSdzYi5xht?=
- =?us-ascii?Q?IcvUXT2to6I0tZIrsB0EQZqD7JiqEZo+lqeTdKvA0mpcqb/r/z3pjYcEjKdK?=
- =?us-ascii?Q?yyF9owUwi9TnhCvlAlaspIV7q74JY3EY9+B6O2LijTpVRpS8XOnTs1XnMhyo?=
- =?us-ascii?Q?sSFTLaSkQ2zK0MbOQFTl/tRNN5c5/zjzY8fl2sBnFMAS37SzsKYDFQ1oPGWP?=
- =?us-ascii?Q?yYsWDta9InXRf2AECPoWyPjcOFCaliy6zJCHkSwMXJIxPL/ITV1kNQF7h3Cw?=
- =?us-ascii?Q?BzyZkFbJdAbbltMn4KPORPsENRIvfhdmfkKLUVvf6CSC1zkIx/BqAM2tNiRS?=
- =?us-ascii?Q?zdaBfSPKJ26Z33KviZ+anKgqJhrw+UPq9EeO+8DRn8GKofoifU1P3ltjP58d?=
- =?us-ascii?Q?FVPcuEs/VJFE8gNA63cTNY3dUGCmseeLH7G1NMNOlNjpO+79Slac+r1qyVIO?=
- =?us-ascii?Q?mkcc3hNUjCm1x2AH3+FG2+Q1D2aE5yPoXMP0Olt8dJhxJQ5Gz0pY1hjIJnGf?=
- =?us-ascii?Q?5Voum534QcqlviLvjRPiHrAuS/JIG5balIWSzIFmz62TqvZDUZDWlIwGU/QC?=
- =?us-ascii?Q?tfrpYp0L2l8NtyYy3/MIAmFQEF40MIFFRL5CEGA15AyZV6O35E1Zd9PIa3bc?=
- =?us-ascii?Q?b1HzUM33ssoy/qn4WCWZvEHOxFJL9M2ECmLNkfLYFoa8GBOb1csPM2ajIh6x?=
- =?us-ascii?Q?7L5fPvJUiZXmu5Z6oYMgogE1R012PDmz0SkqvaXtYjOWDXaIUM15z5NdWGSo?=
- =?us-ascii?Q?+7zkW6tYVw9Jz6UhtLFymiA1vC3nPm+uTviM0nf1kC3M1PbYgBer7T66XGbm?=
- =?us-ascii?Q?4S7P5atM8QQHWxwe+4uT0e70A6tzo1zlB9k4VqOvk7mbo0Vzou82+J+arxMI?=
- =?us-ascii?Q?wDLizEOXGy+/DJM83h9PFKqfme0Z/c9d0GZZc7t5Fs+hpBRzN/51kmkd3cFU?=
- =?us-ascii?Q?v2OlgeMsl5gmwmH/nezvYRP8egS+6RK5FG+n7ApCjiv8pQ2NrSDcWOGHanUv?=
- =?us-ascii?Q?Qh8I77H8NcfoXZx/+/wbs3zSL9LfkgkGe+v7MSo3Ze4SeNuaty2AhNwZ1ZSj?=
- =?us-ascii?Q?DFGKZRy93hG4oIQTzr+5Ntym5zMlOh2H/boadwImhFQ1Ou2FS1NjdxKCvIJG?=
- =?us-ascii?Q?ekILjyGd4NswR9z/xtdu0kU5bChxTn+tK1kpDAJ1G+AIWJaHjFrlpw1eNmVd?=
- =?us-ascii?Q?oLCtlVbSdhJd2O2BUQbK4bI+0O/dZjjwJ2agBo/az4fpxt75ZBFochgPMGpx?=
- =?us-ascii?Q?OAgN1AUZJhJnf8Z9Jq39N29jsEmYpNuMHQumgeB558QUESYLeNMNuE0olsV8?=
- =?us-ascii?Q?1qbXa0Jbly54Bh6+ASwm/hrQ9IeBqP89W90AeWKt8l1RIbcfI4XlgDdXSdD8?=
- =?us-ascii?Q?Uo2AVW+6kMF+zuYWUUN9s8r02lm8OmJD0Og0eM2US8rAyyg2Ls62VGID6lMH?=
- =?us-ascii?Q?SjQgVRMr1gt2RdRv4550EMILIX7CU/AOerCWpU+57eWRrrACk5nJImrL4xvf?=
- =?us-ascii?Q?JMRNfR5FVjZipWSIuni/wvdilKJ3p0NfLwuuyL5HiCYL4g+y8fAG0ANDcQrX?=
- =?us-ascii?Q?zpWyok2kH08CcI84vd/t7WJhhgoWLhd3KBfckg8HNOVapZ/rVLij1guIJ2GS?=
- =?us-ascii?Q?Ng=3D=3D?=
-X-OriginatorOrg: garyguo.net
-X-MS-Exchange-CrossTenant-Network-Message-Id: 07f5a367-5d9b-4f08-f595-08dde5a31a1f
-X-MS-Exchange-CrossTenant-AuthSource: LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2025 19:51:23.8479
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: bbc898ad-b10f-4e10-8552-d9377b823d45
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Miqg524gPfzkyUJ7J1kfGtTzuKxi1+AqtoU4I3QLY+Dl92wrjSlS7iRPKygGxZDnjMQQn7kkbYgs+b046hpj7w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CWLP265MB6035
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <a821c043-a07f-5727-938a-c32a7efb671a@linux.intel.com>
 
-On Tue, 12 Aug 2025 10:17:44 +0200
-"Benno Lossin" <lossin@kernel.org> wrote:
-
-> On Thu Jul 24, 2025 at 1:32 AM CEST, Gary Guo wrote:
-> > From: Gary Guo <gary@garyguo.net>
-> >
-> > Currently there's a custom reference counting in `block::mq`, which uses
-> > `AtomicU64` Rust atomics, and this type doesn't exist on some 32-bit
-> > architectures. We cannot just change it to use 32-bit atomics, because
-> > doing so will make it vulnerable to refcount overflow. So switch it to
-> > use the kernel refcount `kernel::sync::Refcount` instead.
-> >
-> > There is an operation needed by `block::mq`, atomically decreasing
-> > refcount from 2 to 0, which is not available through refcount.h, so
-> > I exposed `Refcount::as_atomic` which allows accessing the refcount
-> > directly.
-> >
-> > Tested-by: David Gow <davidgow@google.com>
-> > Acked-by: Andreas Hindborg <a.hindborg@kernel.org>
-> > Signed-off-by: Gary Guo <gary@garyguo.net>  
+On Tue, Aug 26, 2025 at 03:51:25PM +0300, Ilpo Järvinen wrote:
+> Adding Alex & Christian as they might be able to shed light on the amdgpu 
+> side, but I think the problem still starts from 
+> pci_reassign_bridge_resources().
 > 
-> Reviewed-by: Benno Lossin <lossin@kernel.org>
-> 
-> > ---
-> >  rust/kernel/block/mq/operations.rs |  7 ++--
-> >  rust/kernel/block/mq/request.rs    | 63 ++++++++----------------------
-> >  rust/kernel/sync/refcount.rs       | 14 +++++++
-> >  3 files changed, 34 insertions(+), 50 deletions(-)  
-> 
-> > diff --git a/rust/kernel/sync/refcount.rs b/rust/kernel/sync/refcount.rs
-> > index 3ff4585326b41..a9b24c6b2f8a7 100644
-> > --- a/rust/kernel/sync/refcount.rs
-> > +++ b/rust/kernel/sync/refcount.rs
-> > @@ -4,6 +4,8 @@
-> >  //!
-> >  //! C header: [`include/linux/refcount.h`](srctree/include/linux/refcount.h)
-> >  
-> > +use core::sync::atomic::AtomicI32;
-> > +
-> >  use crate::build_assert;
-> >  use crate::types::Opaque;
-> >  
-> > @@ -34,6 +36,18 @@ fn as_ptr(&self) -> *mut bindings::refcount_t {
-> >          self.0.get()
-> >      }
-> >  
-> > +    /// Get the underlying atomic counter that backs the refcount.
-> > +    ///
-> > +    /// NOTE: This will be changed to LKMM atomic in the future.  
-> 
-> Can we discourage using this function a bit more in the docs? At least
-> point people to try other ways before reaching for this, since it allows
-> overflowing & doesn't warn on saturate etc.
+> On Mon, 25 Aug 2025, Bjorn Helgaas wrote:
+> > On Fri, Aug 22, 2025 at 03:33:59PM +0300, Ilpo Järvinen wrote:
+> > > Since the commit 96336ec70264 ("PCI: Perform reset_resource() and build
+> > > fail list in sync") the failed list is always built and returned to let
+> > > the caller decide what to do with the failures. The caller may want to
+> > > retry resource fitting and assignment and before that can happen, the
+> > > resources should be restored to their original state (a reset
+> > > effectively clears the struct resource), which requires returning them
+> > > on the failed list so that the original state remains stored in the
+> > > associated struct pci_dev_resource.
+> > > 
+> > > Resource resizing is different from the ordinary resource fitting and
+> > > assignment in that it only considers part of the resources. This means
+> > > failures for other resource types are not relevant at all and should be
+> > > ignored. As resize doesn't unassign such unrelated resources, those
+> > > resource ending up into the failed list implies assignment of that
+> > > resource must have failed before resize too. The check in
+> > > pci_reassign_bridge_resources() to decide if the whole assignment is
+> > > successful, however, is based on list emptiness which will cause false
+> > > negatives when the failed list has resources with an unrelated type.
+> > > 
+> > > If the failed list is not empty, call pci_required_resource_failed()
+> > > and extend it to be able to filter on specific resource types too (if
+> > > provided).
+> > > 
+> > > Calling pci_required_resource_failed() at this point is slightly
+> > > problematic because the resource itself is reset when the failed list
+> > > is constructed in __assign_resources_sorted(). As a result,
+> > > pci_resource_is_optional() does not have access to the original
+> > > resource flags. This could be worked around by restoring and
+> > > re-reseting the resource around the call to pci_resource_is_optional(),
+> > > however, it shouldn't cause issue as resource resizing is meant for
+> > > 64-bit prefetchable resources according to Christian König (see the
+> > > Link which unfortunately doesn't point directly to Christian's reply
+> > > because lore didn't store that email at all).
+> > > 
+> > > Fixes: 96336ec70264 ("PCI: Perform reset_resource() and build fail list in sync")
+> > > Link: https://lore.kernel.org/all/c5d1b5d8-8669-5572-75a7-0b480f581ac1@linux.intel.com/
+> > > Reported-by: D Scott Phillips <scott@os.amperecomputing.com>
+> > > Closes: https://lore.kernel.org/all/86plf0lgit.fsf@scott-ph-mail.amperecomputing.com/
+> > 
+> > I'm trying to connect this fix with the Asynchronous SError Interrupt
+> > crash that Scott reported here.  From the call trace:
+> > 
+> >   ...
+> >   arm64_serror_panic+0x6c/0x90
+> >   do_serror+0x58/0x60
+> >   el1h_64_error_handler+0x38/0x60
+> >   el1h_64_error+0x84/0x88
+> >   _raw_spin_lock_irqsave+0x34/0xb0 (P)
+> >   amdgpu_ih_process+0xf0/0x150 [amdgpu]
+> >   amdgpu_irq_handler+0x34/0xa0 [amdgpu]
+> >   __handle_irq_event_percpu+0x60/0x248
+> >   handle_irq_event+0x4c/0xc0
+> >   handle_fasteoi_irq+0xa0/0x1c8
+> >   handle_irq_desc+0x3c/0x68
+> >   generic_handle_domain_irq+0x24/0x40
+> >   __gic_handle_irq_from_irqson.isra.0+0x15c/0x260
+> >   gic_handle_irq+0x28/0x80
+> >   call_on_irq_stack+0x24/0x30
+> >   do_interrupt_handler+0x88/0xa0
+> >   el1_interrupt+0x44/0xd0
+> >   el1h_64_irq_handler+0x18/0x28
+> >   el1h_64_irq+0x84/0x88
+> >   amdgpu_device_rreg.part.0+0x4c/0x190 [amdgpu] (P)
+> >   amdgpu_device_rreg+0x24/0x40 [amdgpu]
+> > 
+> > I guess something happened in amdgpu_device_rreg() that caused an
+> > interrupt, maybe a bogus virtual address for a register?
+> ...
 
-Would this additional doc comment be good enough for you?
-
-/// NOTE: usage of this function is discouraged unless there is no way
-/// to achieve the desired result using APIs in `refcount.h`. If an API
-/// in `refcount.h` does not currently contain a binding, please
-/// consider adding a binding for it instead.
-
-Best,
-Gary
-
-
+> > And then amdgpu_ih_process() did something that caused the SError?  Or
+> > since it seems to be asynchronous, maybe the amdgpu_ih_process()
+> > connection is coincidental and the SError was a consequence of
+> > something else?
+> > 
+> > I'd like to have a bread crumb here in the commit log that connects
+> > this fix with something a user might see, but I don't know what that
+> > would look like.
 > 
-> ---
-> Cheers,
-> Benno
-> 
-> > +    #[inline]
-> > +    pub fn as_atomic(&self) -> &AtomicI32 {
-> > +        let ptr = self.0.get().cast();
-> > +        // SAFETY: `refcount_t` is a transparent wrapper of `atomic_t`, which is an atomic 32-bit
-> > +        // integer that is layout-wise compatible with `AtomicI32`. All values are valid for
-> > +        // `refcount_t`, despite some of the values being considered saturated and "bad".
-> > +        unsafe { &*ptr }
-> > +    }
-> > +
-> >      /// Set a refcount's value.
-> >      #[inline]
-> >      pub fn set(&self, value: i32) {  
-> 
+> I'm sorry I don't know the answer, the amdgpu code is too unfamiliar 
+> territory, maybe Alex or Christian has some idea and can pinpoint us to 
+> what to look at.
 
+Do we know what the PCIe controller is here?  Is there a public
+datasheet for it?
+
+I've seen other issues that make me wonder if some controllers work
+like this:
+
+  - PCIe error occurs on read or write transaction
+
+  - PCIe write dropped or read completed by the controller
+    synthesizing ~0 data to CPU
+
+  - PCIe controller signals Asynchronous SError as a result of the
+    error
+
+But I guess even if the above happens, I can't explain why the PCIe
+error would occur in the first place.  Scott didn't mention anything
+like an FLR.  But maybe if we actually got as far as programming
+something bogus in a BAR, a read might get no response (or two
+responses).
+
+I would assume there should be something logged in the AER Capability,
+but I don't think we've looked at that yet.  The AER interrupt is also
+asynchronous, so not surprising that this panic could happen before
+handling it.
+
+Bjorn
 
