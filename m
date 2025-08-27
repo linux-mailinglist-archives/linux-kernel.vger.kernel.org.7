@@ -1,276 +1,238 @@
-Return-Path: <linux-kernel+bounces-787933-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787936-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B601DB37DCE
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 10:28:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5950FB37DD3
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 10:29:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 842567A29B9
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 08:27:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 34F8D460C73
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 08:29:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A20923375BB;
-	Wed, 27 Aug 2025 08:27:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DHfUquFE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF810345755;
+	Wed, 27 Aug 2025 08:27:07 +0000 (UTC)
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFE9C338F48;
-	Wed, 27 Aug 2025 08:27:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45B5E345729
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 08:27:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756283222; cv=none; b=NJMrrNAVhaqxwPAwGqaqskAin+1Yui51Q4WvvCXxjeKbHWGzRZ0OJSoIOyvFcSetTMTWe9RYq6wKh6+bK8G7q89K3mIYqmWTyZfkPrXTsuPYWEwDrwXBqwjgF3YNVn/Ywbm8/wi2BwbHFi3+DNKDFh59b60CbNDNbzsNpeweb7g=
+	t=1756283227; cv=none; b=nR9G+P0X4augXiEEXb2KHYQuMwmJmzmNLr+mIWNHqKSUmrrBuN48pe0Vv7VOpZSZP46LfBSVAewYh99IuRbqxcgpz1DoVb0V6TN8oQEWCzOolHNfta2WgMRl70NLAb38hRDiiVfHUiWeiWu0kOvbTW1M830SSg0wMemwGdD9dVA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756283222; c=relaxed/simple;
-	bh=bNOmw1tzFH8Sl7kR3p+wUYP6U5+a6FHYIcsXQNkIydI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=P2aVPmyD0QpqiJ3WCKKQGws40cgluE6ajWCcIBm8dRD1gYPRgyP5GTTrw4OgfGQ9H2DO1GuvwMALh7FzvAPtL4QtJwKK4Vhb+McPUyhtxepWN1K4+q61hH++TC+vRxwrqlVRXsQWfSrUbJfrF1s2wRxphyEqulNGGuFoctH1apk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DHfUquFE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F816C116C6;
-	Wed, 27 Aug 2025 08:27:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756283222;
-	bh=bNOmw1tzFH8Sl7kR3p+wUYP6U5+a6FHYIcsXQNkIydI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=DHfUquFEi6CklQ3HPSJwSpYmJybPa/3q6d6icQ1flmYboswEFJo5kvOSiYXO+36Hv
-	 0tTYd+wDYjMcFlyw3pHJUZL1Lmo1ymNrI8drFIjDrue14ar+DVFXvr04aUMWSlubMp
-	 +Ma91FtMstLyrzjbz7MiTfAp652Yd11KB3jDwBD7PpNkYICUcUMwwUl36CinrFf5w8
-	 daKMBxhy6S6E5Bj/1gqpSIRKu3DvW5GaUh3FiBoEcYfg0EbHh15ejFEVyNPeY+47ed
-	 T+7hkejNZwcVyVlBl+YBG6BkFZq7mp/rEmk/dV2VBrr5eQ02fsZ8StNh1QowYTQteK
-	 zjjgY3c+7J7KQ==
-Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
-	(envelope-from <mchehab+huawei@kernel.org>)
-	id 1urBUi-00000000uUY-12Ds;
-	Wed, 27 Aug 2025 10:27:00 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>
-Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	"Mauro Carvalho Chehab" <mchehab+huawei@kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 2/2] tools: kernel-doc: add a see also section at man pages
+	s=arc-20240116; t=1756283227; c=relaxed/simple;
+	bh=wL2lljEY+hDmA1zB6plYdZUpdOhGswBfzWMyZKQkAiI=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=cXI1QBMApW1oUlNluEqEWhMcU5AkPqBdDGNyDO/zymAgx60ToTKAXF8nvRM3D2ISlv/YArsJutHmc/L4y6HaZ/60NP26N/1jrqU6BuY849ObTvxtz0jR1gKdbZ/fcZbvi4qc6h/qdDB3FZzrPqmZ97+hWPHnZz2WMYmaZJGEcug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 8CABB1FF23;
+	Wed, 27 Aug 2025 08:26:35 +0000 (UTC)
+Authentication-Results: smtp-out2.suse.de;
+	none
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6CA6E13310;
+	Wed, 27 Aug 2025 08:26:35 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id cLlDGjvBrmhNfgAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Wed, 27 Aug 2025 08:26:35 +0000
+From: Vlastimil Babka <vbabka@suse.cz>
 Date: Wed, 27 Aug 2025 10:26:38 +0200
-Message-ID: <58c6e079ab456dd6514eba09ce3efafa10b7b6bd.1756282370.git.mchehab+huawei@kernel.org>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <cover.1756282370.git.mchehab+huawei@kernel.org>
-References: <cover.1756282370.git.mchehab+huawei@kernel.org>
+Subject: [PATCH v6 06/10] slab: skip percpu sheaves for remote object
+ freeing
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250827-slub-percpu-caches-v6-6-f0f775a3f73f@suse.cz>
+References: <20250827-slub-percpu-caches-v6-0-f0f775a3f73f@suse.cz>
+In-Reply-To: <20250827-slub-percpu-caches-v6-0-f0f775a3f73f@suse.cz>
+To: Suren Baghdasaryan <surenb@google.com>, 
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+ Christoph Lameter <cl@gentwo.org>, David Rientjes <rientjes@google.com>
+Cc: Roman Gushchin <roman.gushchin@linux.dev>, 
+ Harry Yoo <harry.yoo@oracle.com>, Uladzislau Rezki <urezki@gmail.com>, 
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org, rcu@vger.kernel.org, 
+ maple-tree@lists.infradead.org, vbabka@suse.cz
+X-Mailer: b4 0.14.2
+X-Rspamd-Pre-Result: action=no action;
+	module=replies;
+	Message is reply to one we originated
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.00 / 50.00];
+	REPLY(-4.00)[]
+X-Rspamd-Queue-Id: 8CABB1FF23
+X-Rspamd-Pre-Result: action=no action;
+	module=replies;
+	Message is reply to one we originated
+X-Spam-Score: -4.00
 
-While cross-references are complex, as related ones can be on
-different files, we can at least correlate the ones that belong
-to the same file, adding a SEE ALSO section for them.
+Since we don't control the NUMA locality of objects in percpu sheaves,
+allocations with node restrictions bypass them. Allocations without
+restrictions may however still expect to get local objects with high
+probability, and the introduction of sheaves can decrease it due to
+freed object from a remote node ending up in percpu sheaves.
 
-The result is not bad. See for instance:
+The fraction of such remote frees seems low (5% on an 8-node machine)
+but it can be expected that some cache or workload specific corner cases
+exist. We can either conclude that this is not a problem due to the low
+fraction, or we can make remote frees bypass percpu sheaves and go
+directly to their slabs. This will make the remote frees more expensive,
+but if if's only a small fraction, most frees will still benefit from
+the lower overhead of percpu sheaves.
 
-	$ tools/docs/sphinx-build-wrapper --sphinxdirs driver-api/media -- mandocs
-	$ man Documentation/output/driver-api/man/edac_pci_add_device.9
+This patch thus makes remote object freeing bypass percpu sheaves,
+including bulk freeing, and kfree_rcu() via the rcu_free sheaf. However
+it's not intended to be 100% guarantee that percpu sheaves will only
+contain local objects. The refill from slabs does not provide that
+guarantee in the first place, and there might be cpu migrations
+happening when we need to unlock the local_lock. Avoiding all that could
+be possible but complicated so we can leave it for later investigation
+whether it would be worth it. It can be expected that the more selective
+freeing will itself prevent accumulation of remote objects in percpu
+sheaves so any such violations would have only short-term effects.
 
-	edac_pci_add_device(9)  Kernel Hacker's Manual  edac_pci_add_device(9)
-
-	NAME
-	       edac_pci_add_device  - Insert the 'edac_dev' structure into the
-	       edac_pci global list and create sysfs entries  associated  with
-	       edac_pci structure.
-
-	SYNOPSIS
-	       int  edac_pci_add_device  (struct  edac_pci_ctl_info *pci , int
-	       edac_idx );
-
-	ARGUMENTS
-	       pci         pointer to the edac_device structure to be added to
-	                   the list
-
-	       edac_idx    A unique numeric identifier to be assigned to the
-
-	RETURN
-	       0 on Success, or an error code on failure
-
-	SEE ALSO
-	       edac_pci_alloc_ctl_info(9),          edac_pci_free_ctl_info(9),
-	       edac_pci_alloc_index(9),  edac_pci_del_device(9), edac_pci_cre‐
-	       ate_generic_ctl(9),            edac_pci_release_generic_ctl(9),
-	       edac_pci_create_sysfs(9), edac_pci_remove_sysfs(9)
-
-	August 2025               edac_pci_add_device   edac_pci_add_device(9)
-
-Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Reviewed-by: Harry Yoo <harry.yoo@oracle.com>
+Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
 ---
- scripts/lib/kdoc/kdoc_files.py  |  5 +-
- scripts/lib/kdoc/kdoc_output.py | 84 +++++++++++++++++++++++++++++++--
- 2 files changed, 83 insertions(+), 6 deletions(-)
+ mm/slab_common.c |  7 +++++--
+ mm/slub.c        | 42 ++++++++++++++++++++++++++++++++++++------
+ 2 files changed, 41 insertions(+), 8 deletions(-)
 
-diff --git a/scripts/lib/kdoc/kdoc_files.py b/scripts/lib/kdoc/kdoc_files.py
-index 9e09b45b02fa..061c033f32da 100644
---- a/scripts/lib/kdoc/kdoc_files.py
-+++ b/scripts/lib/kdoc/kdoc_files.py
-@@ -275,7 +275,10 @@ class KernelFiles():
-                 self.config.log.warning("No kernel-doc for file %s", fname)
-                 continue
+diff --git a/mm/slab_common.c b/mm/slab_common.c
+index 2d806e02568532a1000fd3912db6978e945dcfa8..08f5baee1309e5b5f10a22b8b3b0a09dfb314419 100644
+--- a/mm/slab_common.c
++++ b/mm/slab_common.c
+@@ -1623,8 +1623,11 @@ static bool kfree_rcu_sheaf(void *obj)
  
--            for arg in self.results[fname]:
-+            symbols = self.results[fname]
-+            self.out_style.set_symbols(symbols)
-+
-+            for arg in symbols:
-                 m = self.out_msg(fname, arg.name, arg)
+ 	slab = folio_slab(folio);
+ 	s = slab->slab_cache;
+-	if (s->cpu_sheaves)
+-		return __kfree_rcu_sheaf(s, obj);
++	if (s->cpu_sheaves) {
++		if (likely(!IS_ENABLED(CONFIG_NUMA) ||
++			   slab_nid(slab) == numa_mem_id()))
++			return __kfree_rcu_sheaf(s, obj);
++	}
  
-                 if m is None:
-diff --git a/scripts/lib/kdoc/kdoc_output.py b/scripts/lib/kdoc/kdoc_output.py
-index ea8914537ba0..1eca9a918558 100644
---- a/scripts/lib/kdoc/kdoc_output.py
-+++ b/scripts/lib/kdoc/kdoc_output.py
-@@ -215,6 +215,9 @@ class OutputFormat:
+ 	return false;
+ }
+diff --git a/mm/slub.c b/mm/slub.c
+index ee3a222acd6b15389a71bb47429d22b5326a4624..b37e684457e7d14781466c0086d1b64df2fd8e9d 100644
+--- a/mm/slub.c
++++ b/mm/slub.c
+@@ -472,6 +472,7 @@ struct slab_sheaf {
+ 	};
+ 	struct kmem_cache *cache;
+ 	unsigned int size;
++	int node; /* only used for rcu_sheaf */
+ 	void *objects[];
+ };
  
-     # Virtual methods to be overridden by inherited classes
-     # At the base class, those do nothing.
-+    def set_symbols(self, symbols):
-+        """Get a list of all symbols from kernel_doc"""
-+
-     def out_doc(self, fname, name, args):
-         """Outputs a DOC block"""
+@@ -5744,7 +5745,7 @@ static void rcu_free_sheaf(struct rcu_head *head)
+ 	 */
+ 	__rcu_free_sheaf_prepare(s, sheaf);
  
-@@ -577,6 +580,7 @@ class ManFormat(OutputFormat):
+-	barn = get_node(s, numa_mem_id())->barn;
++	barn = get_node(s, sheaf->node)->barn;
  
-         super().__init__()
-         self.modulename = modulename
-+        self.symbols = []
+ 	/* due to slab_free_hook() */
+ 	if (unlikely(sheaf->size == 0))
+@@ -5827,10 +5828,12 @@ bool __kfree_rcu_sheaf(struct kmem_cache *s, void *obj)
  
-         dt = None
-         tstamp = os.environ.get("KBUILD_BUILD_TIMESTAMP")
-@@ -593,6 +597,68 @@ class ManFormat(OutputFormat):
+ 	rcu_sheaf->objects[rcu_sheaf->size++] = obj;
  
-         self.man_date = dt.strftime("%B %Y")
+-	if (likely(rcu_sheaf->size < s->sheaf_capacity))
++	if (likely(rcu_sheaf->size < s->sheaf_capacity)) {
+ 		rcu_sheaf = NULL;
+-	else
++	} else {
+ 		pcs->rcu_free = NULL;
++		rcu_sheaf->node = numa_mem_id();
++	}
  
-+    def arg_name(self, args, name):
-+        """
-+        Return the name that will be used for the man page.
-+
-+        As we may have the same name on different namespaces,
-+        prepend the data type for all types except functions and typedefs.
-+
-+        The doc section is special: it uses the modulename.
-+        """
-+
-+        dtype = args.type
-+
-+        if dtype == "doc":
-+            return self.modulename
-+
-+        if dtype in ["function", "typedef"]:
-+            return name
-+
-+        return f"{dtype} {name}"
-+
-+    def set_symbols(self, symbols):
-+        """
-+        Get a list of all symbols from kernel_doc.
-+
-+        Man pages will uses it to add a SEE ALSO section with other
-+        symbols at the same file.
-+        """
-+        self.symbols = symbols
-+
-+    def out_tail(self, fname, name, args):
-+        """Adds a tail for all man pages"""
-+
-+        # SEE ALSO section
-+        if len(self.symbols) >= 2:
-+            cur_name = self.arg_name(args, name)
-+
-+            self.data += f'.SH "SEE ALSO"' + "\n.PP\n"
-+            related = []
-+            for arg in self.symbols:
-+                out_name = self.arg_name(arg, arg.name)
-+
-+                if cur_name == out_name:
-+                    continue
-+
-+                related.append(f"\\fB{out_name}\\fR(9)")
-+
-+            self.data += ",\n".join(related) + "\n"
-+
-+        # TODO: does it make sense to add other sections? Maybe
-+        # REPORTING ISSUES? LICENSE?
-+
-+    def msg(self, fname, name, args):
-+        """
-+        Handles a single entry from kernel-doc parser.
-+
-+        Add a tail at the end of man pages output.
-+        """
-+        super().msg(fname, name, args)
-+        self.out_tail(fname, name, args)
-+
-+        return self.data
-+
-     def output_highlight(self, block):
-         """
-         Outputs a C symbol that may require being highlighted with
-@@ -618,7 +684,9 @@ class ManFormat(OutputFormat):
-         if not self.check_doc(name, args):
-             return
+ 	local_unlock(&s->cpu_sheaves->lock);
  
--        self.data += f'.TH "{self.modulename}" 9 "{self.modulename}" "{self.man_date}" "API Manual" LINUX' + "\n"
-+        out_name = self.arg_name(args, name)
+@@ -5856,7 +5859,11 @@ static void free_to_pcs_bulk(struct kmem_cache *s, size_t size, void **p)
+ 	struct slab_sheaf *main, *empty;
+ 	bool init = slab_want_init_on_free(s);
+ 	unsigned int batch, i = 0;
++	void *remote_objects[PCS_BATCH_MAX];
++	unsigned int remote_nr = 0;
++	int node = numa_mem_id();
+ 
++next_remote_batch:
+ 	while (i < size) {
+ 		struct slab *slab = virt_to_slab(p[i]);
+ 
+@@ -5866,7 +5873,15 @@ static void free_to_pcs_bulk(struct kmem_cache *s, size_t size, void **p)
+ 		if (unlikely(!slab_free_hook(s, p[i], init, false))) {
+ 			p[i] = p[--size];
+ 			if (!size)
+-				return;
++				goto flush_remote;
++			continue;
++		}
 +
-+        self.data += f'.TH "{self.modulename}" 9 "{out_name}" "{self.man_date}" "API Manual" LINUX' + "\n"
++		if (unlikely(IS_ENABLED(CONFIG_NUMA) && slab_nid(slab) != node)) {
++			remote_objects[remote_nr] = p[i];
++			p[i] = p[--size];
++			if (++remote_nr >= PCS_BATCH_MAX)
++				goto flush_remote;
+ 			continue;
+ 		}
  
-         for section, text in args.sections.items():
-             self.data += f'.SH "{section}"' + "\n"
-@@ -627,7 +695,9 @@ class ManFormat(OutputFormat):
-     def out_function(self, fname, name, args):
-         """output function in man"""
- 
--        self.data += f'.TH "{name}" 9 "{name}" "{self.man_date}" "Kernel Hacker\'s Manual" LINUX' + "\n"
-+        out_name = self.arg_name(args, name)
+@@ -5934,6 +5949,15 @@ static void free_to_pcs_bulk(struct kmem_cache *s, size_t size, void **p)
+ 	 */
+ fallback:
+ 	__kmem_cache_free_bulk(s, size, p);
 +
-+        self.data += f'.TH "{name}" 9 "{out_name}" "{self.man_date}" "Kernel Hacker\'s Manual" LINUX' + "\n"
++flush_remote:
++	if (remote_nr) {
++		__kmem_cache_free_bulk(s, remote_nr, &remote_objects[0]);
++		if (i < size) {
++			remote_nr = 0;
++			goto next_remote_batch;
++		}
++	}
+ }
  
-         self.data += ".SH NAME\n"
-         self.data += f"{name} \\- {args['purpose']}\n"
-@@ -671,7 +741,9 @@ class ManFormat(OutputFormat):
-             self.output_highlight(text)
+ #ifndef CONFIG_SLUB_TINY
+@@ -6025,8 +6049,14 @@ void slab_free(struct kmem_cache *s, struct slab *slab, void *object,
+ 	if (unlikely(!slab_free_hook(s, object, slab_want_init_on_free(s), false)))
+ 		return;
  
-     def out_enum(self, fname, name, args):
--        self.data += f'.TH "{self.modulename}" 9 "enum {name}" "{self.man_date}" "API Manual" LINUX' + "\n"
-+        out_name = self.arg_name(args, name)
+-	if (!s->cpu_sheaves || !free_to_pcs(s, object))
+-		do_slab_free(s, slab, object, object, 1, addr);
++	if (s->cpu_sheaves && likely(!IS_ENABLED(CONFIG_NUMA) ||
++				     slab_nid(slab) == numa_mem_id())) {
++		if (likely(free_to_pcs(s, object))) {
++			return;
++		}
++	}
 +
-+        self.data += f'.TH "{self.modulename}" 9 "{out_name}" "{self.man_date}" "API Manual" LINUX' + "\n"
++	do_slab_free(s, slab, object, object, 1, addr);
+ }
  
-         self.data += ".SH NAME\n"
-         self.data += f"enum {name} \\- {args['purpose']}\n"
-@@ -703,8 +775,9 @@ class ManFormat(OutputFormat):
-     def out_typedef(self, fname, name, args):
-         module = self.modulename
-         purpose = args.get('purpose')
-+        out_name = self.arg_name(args, name)
- 
--        self.data += f'.TH "{module}" 9 "{name}" "{self.man_date}" "API Manual" LINUX' + "\n"
-+        self.data += f'.TH "{module}" 9 "{out_name}" "{self.man_date}" "API Manual" LINUX' + "\n"
- 
-         self.data += ".SH NAME\n"
-         self.data += f"typedef {name} \\- {purpose}\n"
-@@ -717,8 +790,9 @@ class ManFormat(OutputFormat):
-         module = self.modulename
-         purpose = args.get('purpose')
-         definition = args.get('definition')
-+        out_name = self.arg_name(args, name)
- 
--        self.data += f'.TH "{module}" 9 "{args.type} {name}" "{self.man_date}" "API Manual" LINUX' + "\n"
-+        self.data += f'.TH "{module}" 9 "{out_name}" "{self.man_date}" "API Manual" LINUX' + "\n"
- 
-         self.data += ".SH NAME\n"
-         self.data += f"{args.type} {name} \\- {purpose}\n"
+ #ifdef CONFIG_MEMCG
+
 -- 
 2.51.0
 
