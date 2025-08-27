@@ -1,86 +1,96 @@
-Return-Path: <linux-kernel+bounces-788640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788641-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED987B387B3
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 18:23:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54B7AB387B8
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 18:24:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AED3A361FBC
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 16:23:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD8EC3624C9
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 16:24:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D5E4247299;
-	Wed, 27 Aug 2025 16:23:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B0992741A6;
+	Wed, 27 Aug 2025 16:24:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="yUVsO3Q5"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2062.outbound.protection.outlook.com [40.107.93.62])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h+CzF/Kz"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3AE42116E9
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 16:23:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.62
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756311818; cv=fail; b=qAI9KcpZev4SSPjVFDOQjP4wsJDmwbn7lc/nr5h4C3ICFp5SyO2qfsII62+3qln1zZW57gJPAc1DGFhz+0MasEhK1P7CeMH6Kw3xjOHhNfYWz/VkKL37AaStIGZBk63hpWm0nsBd5/+v93znk/i9PXPot+b4yjpl8KlGjnIB+TU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756311818; c=relaxed/simple;
-	bh=+mJ2q9sVI6LvS7WqmCRyw+91AVXisNm9sL9Ds/2P7m8=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hbCne7CzsswJiUmarc8ML7uPzpcR8fDC2Aj9top0h1MboJkT83tW7RSWEHNLWMquQ7u9JIA79qqXELS9e1HayTMfvtAC3bQ+6Ae7FsqDJsOMI4aKcPiWLQP1epQFyuGa3s0aj3KLzIL6mr5F/lul2FXABg1WSs8TsSITMb+8du8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=yUVsO3Q5; arc=fail smtp.client-ip=40.107.93.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=IvZmiS4VhuwLgdLLy3BvbxB9gT+v9JbFAP2d+KAT5ceHCMJEmIe390VbUr4ek+eyFKl9JR+tcZRsLKrqwuQ5cDSB1pTiqNa1LynIbF6awBzkyopmKWzOFXCOB03U7HoOYiAN/KBz4wIMwMEQBYkFtK/pP4wQUbQZUrD+MXvRA+wPlLkmQL00zQ/K5n0+IRWN3xZHZC9GyW6CZ8JfGOk4eFu7xMYMbOp18nL56k4EFrEL9PFMo1asQoOLx34tVbsVZ8wJM20A50UJXgTgACRY2jWvOjBVE+JpOZkrpKAJQZNc9xuRHd/BX/+Kw1im5xLgxIF6hHBKh/fdoRFIFfudTA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=cSlMfVJgK1kCQy16IH7cJ/lNQlKNpj7UVqgBefCFFKM=;
- b=s8Qi0vadwLpaif29c3DyV1tw0V9D2ttWHQ0yK+0WF/ukXM/K1/cVTFy2qEiu1cDa8H51316GizjJWkHAox8ZkM0IcUSJUBXam2jSha7a97Ayb0jTTerNBcvb+BGGs7tPSlWiGiDUwtNFztqmzziGOrNngjSU1ykK6zvbu5PVFbKBqVTIqM0HnSdtpe4WV/Ldd0ItVNZBtQrqaqlz1/76E5BneJU++9wjzCI8DGD3aeqxXPa44sqh7UtIrcIHWyYzZ87DJ03uQ9QueZ1dzFP1ENW8ETR7kj5Rj71tYEGR+3GOiegPGK+7iS1240hu2Dtf6tz0X2T2bVJcnG5al++WPQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=nvidia.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=cSlMfVJgK1kCQy16IH7cJ/lNQlKNpj7UVqgBefCFFKM=;
- b=yUVsO3Q5ImEtRGndEaEHquIPXQzBZVmi+ybDVRX7/Ng7Owp/dUdmU0K+muCl33DRMxPSg4g/wQNn9MfpnrEFdYThFwLzjpBSt3LGCjpLCUF0SkS26mrIWi9litruTW1WhTUW1otj3Dq1a0jCZbuX9ipG4yvKBkCn2ID5dopaAHI=
-Received: from SN7PR04CA0204.namprd04.prod.outlook.com (2603:10b6:806:126::29)
- by PH8PR12MB7304.namprd12.prod.outlook.com (2603:10b6:510:217::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.21; Wed, 27 Aug
- 2025 16:23:32 +0000
-Received: from SA2PEPF00003F66.namprd04.prod.outlook.com
- (2603:10b6:806:126:cafe::c5) by SN7PR04CA0204.outlook.office365.com
- (2603:10b6:806:126::29) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9073.16 via Frontend Transport; Wed,
- 27 Aug 2025 16:23:32 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- SA2PEPF00003F66.mail.protection.outlook.com (10.167.248.41) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.9073.11 via Frontend Transport; Wed, 27 Aug 2025 16:23:32 +0000
-Received: from purico-ed03host.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 27 Aug
- 2025 11:23:26 -0500
-From: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
-To: <jgg@nvidia.com>, <nicolinc@nvidia.com>
-CC: <linux-kernel@vger.kernel.org>, <robin.murphy@arm.com>, <will@kernel.org>,
-	<joro@8bytes.org>, <kevin.tian@intel.com>, <jsnitsel@redhat.com>,
-	<vasant.hegde@amd.com>, <iommu@lists.linux.dev>, <santosh.shukla@amd.com>,
-	<sairaj.arunkodilkar@amd.com>, <jon.grimm@amd.com>,
-	<prashanthpra@google.com>, <wvw@google.com>, <wnliu@google.com>,
-	<gptran@google.com>, <kpsingh@google.com>, Suravee Suthikulpanit
-	<suravee.suthikulpanit@amd.com>
-Subject: [PATCH v3] iommu/amd: Add support for hw_info for iommu capability query
-Date: Wed, 27 Aug 2025 16:23:09 +0000
-Message-ID: <20250827162309.50401-1-suravee.suthikulpanit@amd.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC847225795;
+	Wed, 27 Aug 2025 16:24:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756311868; cv=none; b=FiotETmbpQD9aVyH4QxIGR7nB4Ca+M3X6hlwXU6pLGyiBphiauOO0JLeFs8l6fpq3eG+AMRNAf9cOijBMPR8iZNn9aUNsTB8BUjVsJVMH4VFP4zxjP83we4n1kVyclY8K436nwCS6AYQbZsiQtq3C/kpmutxDDVPWLHMik8PC6M=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756311868; c=relaxed/simple;
+	bh=q11WpxUFhvO/esftWBjREbWcgHoEc2c9tkJDBH8/zR0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=JuDC9EenPdzfuTwJtOgWJIgzczq04b9O8SI6UImFXQd96v1qOeKzZ5joBbwcVL5RS0BxcbkAyOaj6vpXuX5tTigfbV+hhfF3/g1wM+s1aiEPItmcPsfKWBJfD/gmh+fS713U/GXXUK/UE0zS6RyWnWDeGUkBzljibnAKBfA7Pn0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h+CzF/Kz; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-45a1ac7c066so272635e9.1;
+        Wed, 27 Aug 2025 09:24:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756311865; x=1756916665; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LtqLPxSOjNA92P/67aisgS/1EtyVsOb1fQUkLLE6hBg=;
+        b=h+CzF/KznTaAhJh1K00NKb93FUuELQiXJgZxyvtQhHIKauSINLkQcACLdpM9tZN04V
+         sia6UQetSFUJ3kakbZHxJNyGRn3lcipb5NcfKKJZAcqLva2KLl9cnRQ6qp2k6UkYuShC
+         bpMaV5jVqYteUKSHzkeystmdPnuWOpDrj1Ppt8n5RJGDMts9WRB3loLz/lzF0nbI10YP
+         r2VZPKPqoUlPfhv7DhqlryqWSY0oMFsQP3uBJWqOwvFPJ+s/jnutnWMIFJsHhinupqen
+         mxOfaWL76P1rkyvJckx8HjFwUPjbRY+jNA2+oQXkKlG/ldPGhGESsbfFdyGTXEo7s4gp
+         CbSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756311865; x=1756916665;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LtqLPxSOjNA92P/67aisgS/1EtyVsOb1fQUkLLE6hBg=;
+        b=TwHoAizEVQ7UxgaWtcy8sxXF3vdgMoqTUpMELcfD5Ing7/fU/nb7xzjh4wXjEjYLMh
+         4nHvcXPtrxEsYMFhwDJwefQmvcXAOC5X/ch/pBeLM3bcHm/VkwJvjkjlNmsmnDseu2+7
+         KzYyn1BUmBH4ZBXyE84IVcCXK/8MTiWEBUNIz7fzYdQ2boG7p9//wWXthsyklhUd3FwP
+         1BgV7LqnNaxVlOWYa13gbGCeH+HgSpROw1jhRQ5EkW2vdymWP2KAmBDc45g3cRqbMNUd
+         3D93sFflOFT+esTe56BecVB1Af0HOHdZx3kxlOz95xm9XWV/o3VmvpCgvafN2kBZwDRK
+         jisg==
+X-Forwarded-Encrypted: i=1; AJvYcCU3yAR41IljPMva1O9Vc9+EWvFE1dHLsLJYu7VjthGgU986q3vQ/5bNGb4aUR/WyjHqYOJcBJSQD18ZoA==@vger.kernel.org, AJvYcCUhZbUNI0RQUvi5WoZsTp/sd7BlNneHSeKM5phD7mJbq6N7Uf8LZphNBz2qvoJ4wjNp1/U3UjGUOBYBlH7T@vger.kernel.org, AJvYcCV1auSobla00bfJzj4w4mW6oxPRcMB9iqK6rIhELDOxSgbRtJEeEKt93nZKgQhtYWU5RbBNZqFRnutiDQ==@vger.kernel.org, AJvYcCWgju3K2MpfHd9N6+l/XknIfoArmtPhANKGrhvNnSpF9Mwj83M03hQvYHc7pPn33L1EyxVX35Bw98Ci@vger.kernel.org, AJvYcCXwiMCrKpeST+SKu66bJNod5e4D8ORUM3aAEgFCrBEAs4byoAUzTjIsnNsbTQbjBWHS72KYkCt97ptoOBHtJw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUwHXiaPo4nMYuQFHjblflS2SPONKjbshkekCna8l74q4B5QNx
+	a1+CSIRFhUkA1Z5Wub9h8uJTm4Bst6BRCDuO5FfHc0yyL9st3TgFqE3A
+X-Gm-Gg: ASbGnctqn1aduZFKdMSOA96oFRX948oQFr1ot66TTkSsPkiAmMdsCr3+EzK3MpaOg0x
+	zvSWpd5v3+p7sUreLEyj19GVQ8rgpCJvh/ulTCd2xAPymRVKRjZw1IG+hUM2fJbtz9LOwMOBOG4
+	P30S44L7bWUM0ok9X4dBNkNjZdQIxmLMCmR5zaT2RzcADCFWiN1DeHsJA5Zn+6Gm0EgRm6lEJJT
+	K1QE6pWQS3f/ksQnXQ9d9qyZe+BxXj3voHOVO4yjLQ5IaIAf2bvgZ6Mf7QVH0FQYODDYYedYFcu
+	OpTL4vs3EIUsl97hYEK5ck4BqO8vC0jrgTbE4XetDo1aE4EqCiGVPUI/b52OsHObEjqPPA4gxMh
+	/NPGWs+2nAN6p7X/HFI6mqyGxKUM+jcuj1oIM+Rfo9uBZkEGs
+X-Google-Smtp-Source: AGHT+IEb47YJOUw2T2IjYN+oZreDcC2dDxETmr3b+2Z7K0zidaTMTBRhE+jy8CSfkhHRAmxsQjuE8A==
+X-Received: by 2002:a05:600c:1554:b0:455:f7d5:1224 with SMTP id 5b1f17b1804b1-45b6870ddcamr51991355e9.9.1756311864769;
+        Wed, 27 Aug 2025 09:24:24 -0700 (PDT)
+Received: from f.. (cst-prg-2-200.cust.vodafone.cz. [46.135.2.200])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c70e4ba44fsm21078170f8f.5.2025.08.27.09.24.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 Aug 2025 09:24:24 -0700 (PDT)
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: brauner@kernel.org
+Cc: viro@zeniv.linux.org.uk,
+	jack@suse.cz,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	josef@toxicpanda.com,
+	kernel-team@fb.com,
+	amir73il@gmail.com,
+	linux-btrfs@vger.kernel.org,
+	linux-ext4@vger.kernel.org,
+	linux-xfs@vger.kernel.org,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: [PATCH] fs: revamp iput()
+Date: Wed, 27 Aug 2025 18:24:09 +0200
+Message-ID: <20250827162410.4110657-1-mjguzik@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250827-kraut-anekdote-35789fddbb0b@brauner>
+References: <20250827-kraut-anekdote-35789fddbb0b@brauner>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,221 +98,117 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA2PEPF00003F66:EE_|PH8PR12MB7304:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2a61dd26-5c07-4ddc-3885-08dde586107d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|7416014|376014|13003099007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?l8deieMX7Jlx70hW462f7JCw/SoD2z/8EJhxD1MjxbIXIb0gP7zZ32oX4z/L?=
- =?us-ascii?Q?2nTTL8Y7pkeaWfoVFr4JYgVApRgfFPmIs8Ga+trwLoG/F2ZZ8SN200WHV/WS?=
- =?us-ascii?Q?v2FK2WPxXVNKEy1+vY12n9Wpr3NhpSmtf0ByRcThRHNB8+sdtArcgMt7TfK9?=
- =?us-ascii?Q?uJ6Y6dpyYtSG6c9iAOjsw2KRMG+HWQ8yKLP14ib+a7Dp64AL2Itld8GgXuOK?=
- =?us-ascii?Q?ERPnibQKOkWCBq5HnRR8YWSDAgacp1uEMvI8pWNB8xySQbjWIM6o+WbJmLNd?=
- =?us-ascii?Q?iVIUPmThDWu8swRBOONH+WGrRVkPktNv6nTFSVSzwCu8VqhjM9tD1gV8Eemx?=
- =?us-ascii?Q?fIC85a5Ii8HByxyfNxIKw0jjhfzfOosGUwEFbNoVJUzjaXnwTYdcZSN6Y50h?=
- =?us-ascii?Q?k7x4X8vKeZnAqM7m0YJ60Yo3AiGJX2BjTDTp2EERMJXVOsAoRSgFrZ+vKRVE?=
- =?us-ascii?Q?g8fVdnw8O215kbF9w0jgJTKnHeuTTbWIb3a2T+bgeXm+sSlgxFkJeDVoSy5N?=
- =?us-ascii?Q?4jTrOI7XgrTa1Gr8R9YCw/fTRi1dm2eW/pxqc83mSQ6zocUsLmUMv5G8vfO0?=
- =?us-ascii?Q?bUxhwMVcQHXbDBJs8/2j1OywcrlseVqXxMWSFBwQKn0NvCCbwX4N0eRTuMIT?=
- =?us-ascii?Q?bBcAjogKkkVAJ0QDjU3OsJ+v3IWzHLE0V86ZjDxw5Wyhho1f2b0FRHcnIfh+?=
- =?us-ascii?Q?WYp1omL7EQd7d5xp46Mh1GEZ5yf8y4VG5myE4dSTKeAexrrWrg7MigQduI6T?=
- =?us-ascii?Q?ntoX0CF6TmRKrQBmsNLkLq6yM43G+PGszy6bFWyNRCZ19S5vIp9s4GEoVda4?=
- =?us-ascii?Q?l+YfFT18Z45Ah19+w139jj0q5nBS0Udw6i/N+2tLftXMfU8kiXLLP3ezs+hS?=
- =?us-ascii?Q?Hst8rnd+LfUy6hwRktsm+hTCXDytLbqRwx69dVVFGRjNdIogA7mXcJ5gDhvJ?=
- =?us-ascii?Q?M7dV+KqKB59svmfOoIR/dLUiorlTyT9/JG4bj9aTpqQcoEBGGOg5xiJOcEgj?=
- =?us-ascii?Q?ympHp8uQzN8ECY89BIb8Sb5N2LtNxlTgYTHi6w1OlEUVmtbIe5a8BHq3eZ5i?=
- =?us-ascii?Q?izJwJzkadVQcpyN8yRocHyjGzsV64Oh2VfzYNX7Cz8iDx21MUGOfX+NUeTMz?=
- =?us-ascii?Q?j5sM/bhcYHMWyyO2PxMr0CaCL17ohdjymQlZtA62Wuv5BGSKm0vk03TaZQE+?=
- =?us-ascii?Q?FOLxAOlsjiyNTT0TJR3wJgOY6XfBClSg3R9b+KgARzBAazRSehJtkGxEbgVn?=
- =?us-ascii?Q?CWAAfB+DVoXHX8Thmn1jxAwJVtQvQCsI9rOADd283Yul2pAeBPqvptxxe/e4?=
- =?us-ascii?Q?I3MSBgU30MXvXe1MR6Qhh54u0LfRbbgRHjJ1LL/rXNbqKh7bnBeYvnhv85gY?=
- =?us-ascii?Q?ZT92BlRh7gkhWkIanK8Rtt71RtWETHsyxsr2zTYc737X7J6KL4kuKfPLNpkh?=
- =?us-ascii?Q?RG2wFEWSiJPC6HWGbfMzEqHaZC3aOwJUleF468kRwxUAmqFzdd5LL0XVISi2?=
- =?us-ascii?Q?PsUEvAAPsnOeNt8oEN+4elvmZy/wOV4Y2pkFkBMfaRtic4awdul3Eu/n7w?=
- =?us-ascii?Q?=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(7416014)(376014)(13003099007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2025 16:23:32.0843
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2a61dd26-5c07-4ddc-3885-08dde586107d
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SA2PEPF00003F66.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB7304
 
-AMD IOMMU Extended Feature (EFR) and Extended Feature 2 (EFR2) registers
-specify features supported by each IOMMU hardware instance.
-The IOMMU driver checks each feature-specific bits before enabling
-each feature at run time.
+The material change is I_DIRTY_TIME handling without a spurious ref
+acquire/release cycle.
 
-For IOMMUFD, the hypervisor passes the raw value of amd_iommu_efr and
-amd_iommu_efr2 to VMM via iommufd IOMMU_DEVICE_GET_HW_INFO ioctl.
+While here a bunch of smaller changes:
+1. predict there is an inode -- bpftrace suggests one is passed vast
+   majority of the time
+2. convert BUG_ON into VFS_BUG_ON_INODE
+3. assert on ->i_count
+4. assert ->i_lock is not held
+5. flip the order of I_DIRTY_TIME and nlink count checks as the former
+   is less likely to be true
 
-Reviewed-by: Nicolin Chen <nicolinc@nvidia.com>
-Signed-off-by: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+I verified atomic_read(&inode->i_count) does not show up in asm if
+debug is disabled.
+
+Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
 ---
-Change in v3:
- * Remove extern
- * Fix link to IOMMU spec
- * Update kdoc
 
-Change in v2:
- * Do not mask the EFR/EFR2 and simply return the value reported by hardware
- * Move amd_iommufd_hw_info() to drivers/iommu/amd/iommufd.c
- * Also support IOMMU_HW_INFO_TYPE_DEFAULT
+The routine kept annoying me, so here is a further revised variant.
 
- drivers/iommu/amd/Makefile   |  2 +-
- drivers/iommu/amd/iommu.c    |  2 ++
- drivers/iommu/amd/iommufd.c  | 34 ++++++++++++++++++++++++++++++++++
- drivers/iommu/amd/iommufd.h  | 11 +++++++++++
- include/uapi/linux/iommufd.h | 20 ++++++++++++++++++++
- 5 files changed, 68 insertions(+), 1 deletion(-)
- create mode 100644 drivers/iommu/amd/iommufd.c
- create mode 100644 drivers/iommu/amd/iommufd.h
+I verified this compiles, but I still cannot runtime test. I'm sorry for
+that.  My signed-off is conditional on a good samaritan making sure it
+works :)
 
-diff --git a/drivers/iommu/amd/Makefile b/drivers/iommu/amd/Makefile
-index 59c04a67f398..b74384465594 100644
---- a/drivers/iommu/amd/Makefile
-+++ b/drivers/iommu/amd/Makefile
-@@ -1,3 +1,3 @@
- # SPDX-License-Identifier: GPL-2.0-only
--obj-y += iommu.o init.o quirks.o io_pgtable.o io_pgtable_v2.o ppr.o pasid.o
-+obj-y += iommu.o init.o quirks.o io_pgtable.o io_pgtable_v2.o ppr.o pasid.o iommufd.o
- obj-$(CONFIG_AMD_IOMMU_DEBUGFS) += debugfs.o
-diff --git a/drivers/iommu/amd/iommu.c b/drivers/iommu/amd/iommu.c
-index eb348c63a8d0..344364ef94f8 100644
---- a/drivers/iommu/amd/iommu.c
-+++ b/drivers/iommu/amd/iommu.c
-@@ -42,6 +42,7 @@
- #include <uapi/linux/iommufd.h>
- 
- #include "amd_iommu.h"
-+#include "iommufd.h"
- #include "../dma-iommu.h"
- #include "../irq_remapping.h"
- #include "../iommu-pages.h"
-@@ -3040,6 +3041,7 @@ static const struct iommu_dirty_ops amd_dirty_ops = {
- 
- const struct iommu_ops amd_iommu_ops = {
- 	.capable = amd_iommu_capable,
-+	.hw_info = amd_iommufd_hw_info,
- 	.blocked_domain = &blocked_domain,
- 	.release_domain = &release_domain,
- 	.identity_domain = &identity_domain.domain,
-diff --git a/drivers/iommu/amd/iommufd.c b/drivers/iommu/amd/iommufd.c
-new file mode 100644
-index 000000000000..08deccf9d35a
---- /dev/null
-+++ b/drivers/iommu/amd/iommufd.c
-@@ -0,0 +1,34 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (C) 2025 Advanced Micro Devices, Inc.
-+ */
-+
-+#include <linux/iommu.h>
-+
-+#include "iommufd.h"
-+#include "amd_iommu.h"
-+#include "amd_iommu_types.h"
-+
-+void *amd_iommufd_hw_info(struct device *dev, u32 *length, u32 *type)
-+{
-+	struct iommu_hw_info_amd *hwinfo;
-+
-+	if (*type != IOMMU_HW_INFO_TYPE_DEFAULT &&
-+	    *type != IOMMU_HW_INFO_TYPE_AMD)
-+		return ERR_PTR(-EOPNOTSUPP);
-+
-+	hwinfo = kzalloc(sizeof(*hwinfo), GFP_KERNEL);
-+	if (!hwinfo)
-+		return ERR_PTR(-ENOMEM);
-+
-+	*length = sizeof(*hwinfo);
-+	*type = IOMMU_HW_INFO_TYPE_AMD;
-+
-+	hwinfo->efr = amd_iommu_efr;
-+	hwinfo->efr2 = amd_iommu_efr2;
-+
-+	pr_debug("%s: efr=%#llx, efr2=%#llx\n", __func__,
-+		 hwinfo->efr, hwinfo->efr2);
-+
-+	return hwinfo;
-+}
-diff --git a/drivers/iommu/amd/iommufd.h b/drivers/iommu/amd/iommufd.h
-new file mode 100644
-index 000000000000..992fc5cba21b
---- /dev/null
-+++ b/drivers/iommu/amd/iommufd.h
-@@ -0,0 +1,11 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * Copyright (C) 2025 Advanced Micro Devices, Inc.
-+ */
-+
-+#ifndef AMD_IOMMUFD_H
-+#define AMD_IOMMUFD_H
-+
-+void *amd_iommufd_hw_info(struct device *dev, u32 *length, u32 *type);
-+
-+#endif /* AMD_IOMMUFD_H */
-diff --git a/include/uapi/linux/iommufd.h b/include/uapi/linux/iommufd.h
-index c218c89e0e2e..6ec6b82674ac 100644
---- a/include/uapi/linux/iommufd.h
-+++ b/include/uapi/linux/iommufd.h
-@@ -613,6 +613,24 @@ struct iommu_hw_info_tegra241_cmdqv {
- 	__u8 __reserved;
- };
- 
-+/**
-+ * struct iommu_hw_info_amd - AMD IOMMU device info
-+ *
-+ * @efr : Value of AMD IOMMU Extended Feature Register (EFR) reported by hardware
-+ * @efr2: Value of AMD IOMMU Extended Feature 2 Register (EFR2) reported by hardware
-+ *
-+ * Please See description of these registers in the following sections of
-+ * the AMD I/O Virtualization Technology (IOMMU) Specification.
-+ * (https://docs.amd.com/v/u/en-US/48882_3.10_PUB)
-+ *
-+ * - MMIO Offset 0030h IOMMU Extended Feature Register
-+ * - MMIO Offset 01A0h IOMMU Extended Feature 2 Register
-+ */
-+struct iommu_hw_info_amd {
-+	__aligned_u64 efr;
-+	__aligned_u64 efr2;
-+};
-+
- /**
-  * enum iommu_hw_info_type - IOMMU Hardware Info Types
-  * @IOMMU_HW_INFO_TYPE_NONE: Output by the drivers that do not report hardware
-@@ -622,6 +640,7 @@ struct iommu_hw_info_tegra241_cmdqv {
-  * @IOMMU_HW_INFO_TYPE_ARM_SMMUV3: ARM SMMUv3 iommu info type
-  * @IOMMU_HW_INFO_TYPE_TEGRA241_CMDQV: NVIDIA Tegra241 CMDQV (extension for ARM
-  *                                     SMMUv3) info type
-+ * @IOMMU_HW_INFO_TYPE_AMD: AMD IOMMU info type
+diff compared to the thing I sent "informally":
+- if (unlikely(!inode))
+- asserts
+- slightly reworded iput_final commentary
+- unlikely() on the second I_DIRTY_TIME check
+
+Given the revamp I think it makes sense to attribute the change to me,
+hence a "proper" mail.
+
+The thing surviving from the submission by Josef is:
++       if (atomic_add_unless(&inode->i_count, -1, 1))
++               return;
+
+And of course he is the one who brought up the spurious refcount trip in
+the first place.
+
+I'm happy with Reported-by, Co-developed-by or whatever other credit
+as you guys see fit.
+
+That aside I think it would be nice if NULL inodes passed to iput
+became illegal, but that's a different story for another day.
+
+ fs/inode.c | 46 +++++++++++++++++++++++++++++++++++-----------
+ 1 file changed, 35 insertions(+), 11 deletions(-)
+
+diff --git a/fs/inode.c b/fs/inode.c
+index 01ebdc40021e..01a554e11279 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -1908,20 +1908,44 @@ static void iput_final(struct inode *inode)
   */
- enum iommu_hw_info_type {
- 	IOMMU_HW_INFO_TYPE_NONE = 0,
-@@ -629,6 +648,7 @@ enum iommu_hw_info_type {
- 	IOMMU_HW_INFO_TYPE_INTEL_VTD = 1,
- 	IOMMU_HW_INFO_TYPE_ARM_SMMUV3 = 2,
- 	IOMMU_HW_INFO_TYPE_TEGRA241_CMDQV = 3,
-+	IOMMU_HW_INFO_TYPE_AMD = 4,
- };
+ void iput(struct inode *inode)
+ {
+-	if (!inode)
++	if (unlikely(!inode))
+ 		return;
+-	BUG_ON(inode->i_state & I_CLEAR);
++
+ retry:
+-	if (atomic_dec_and_lock(&inode->i_count, &inode->i_lock)) {
+-		if (inode->i_nlink && (inode->i_state & I_DIRTY_TIME)) {
+-			atomic_inc(&inode->i_count);
+-			spin_unlock(&inode->i_lock);
+-			trace_writeback_lazytime_iput(inode);
+-			mark_inode_dirty_sync(inode);
+-			goto retry;
+-		}
+-		iput_final(inode);
++	lockdep_assert_not_held(&inode->i_lock);
++	VFS_BUG_ON_INODE(inode->i_state & I_CLEAR, inode);
++	/*
++	 * Note this assert is technically racy as if the count is bogusly
++	 * equal to one, then two CPUs racing to further drop it can both
++	 * conclude it's fine.
++	 */
++	VFS_BUG_ON_INODE(atomic_read(&inode->i_count) < 1, inode);
++
++	if (atomic_add_unless(&inode->i_count, -1, 1))
++		return;
++
++	if ((inode->i_state & I_DIRTY_TIME) && inode->i_nlink) {
++		trace_writeback_lazytime_iput(inode);
++		mark_inode_dirty_sync(inode);
++		goto retry;
+ 	}
++
++	spin_lock(&inode->i_lock);
++	if (unlikely((inode->i_state & I_DIRTY_TIME) && inode->i_nlink)) {
++		spin_unlock(&inode->i_lock);
++		goto retry;
++	}
++
++	if (!atomic_dec_and_test(&inode->i_count)) {
++		spin_unlock(&inode->i_lock);
++		return;
++	}
++
++	/*
++	 * iput_final() drops ->i_lock, we can't assert on it as the inode may
++	 * be deallocated by the time the call returns.
++	 */
++	iput_final(inode);
+ }
+ EXPORT_SYMBOL(iput);
  
- /**
 -- 
-2.34.1
+2.43.0
 
 
