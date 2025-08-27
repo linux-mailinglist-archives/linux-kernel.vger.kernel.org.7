@@ -1,52 +1,52 @@
-Return-Path: <linux-kernel+bounces-788787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83E0AB38A48
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 21:38:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB3E1B38A4A
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 21:38:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 482503B8E68
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 19:38:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A83517B8FD6
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 19:36:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D392F2ED858;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F070C2EDD65;
 	Wed, 27 Aug 2025 19:38:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h8kFIKaw"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jtWwGdaZ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38B85212546;
-	Wed, 27 Aug 2025 19:38:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 548E32E1EF8;
+	Wed, 27 Aug 2025 19:38:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756323490; cv=none; b=Ic3O3DH9qDrcggip4W7d+Jg2huUmXhPujUy60FsVgzrv4puEKU1MRdibO25a0AkvvXpM8mk8QWtiHBH6uDBQPZz4G/zTpKkK+p7ghXg2iXGYcxnlVTNWPuDp/Wo2OEok64wjmTrNCiH10hP56Lvqh7g95PP9sHqtRH3YXk9UlZY=
+	t=1756323490; cv=none; b=pPh2to7qZ3zBHDVt6LaXhpMEMzGlmD1XaU2uMfTDAxMm6/R40HGKLT3eRSrT07RTLadwPcmbRcsFfGFlZX6kFac+hXfcBz/na+CjcQ6d+jTDpfZxiAwdt6OoRTTH2Ed5uXygP43xkRe0DIjjGhoqSGSzSFmHqXstnFx+0+Hr8CM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1756323490; c=relaxed/simple;
-	bh=nLJGoGeuqPkpzEuh03+jK8eWmMrjjG2N95dLqjOBEos=;
+	bh=XDdKCPGd0kRh2NlKCKevM7GKfZ9idx+4b4m4/KfGZEo=;
 	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=udrT2jQOd8B+OsNQVqbds5zdK8gVherseB6d0Ho671OQ6cc/jA/YarZiZPNgUmwa9laExexSxoZk7Nc+a1YPu9q6hDuQDlcv9WG7tEG7kSH2NJdD+bl627QifLNvXmY2z4HMOSgraOUTAQQwdOOxIEyxGtN2ut+ppQm4Pj/kD3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h8kFIKaw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BBD1AC4CEF4;
+	 Content-Type; b=CXrdiEYh1mZd++F4dmvcb+uojc2KDm6xlj5u46jTC/tocNHmSo6+fX9ym6BWJPwtW/2g9nh6ccuu8YjSwttuDepz6i8jFkcCKblfTtLN1TXbls9VFj6RG81CtrpP23VoTbWUOnaS5QquYMN0R4Mz88BuKarmZW8RSo4FBuwaBxw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jtWwGdaZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E57EDC4CEF7;
 	Wed, 27 Aug 2025 19:38:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756323489;
-	bh=nLJGoGeuqPkpzEuh03+jK8eWmMrjjG2N95dLqjOBEos=;
+	s=k20201202; t=1756323490;
+	bh=XDdKCPGd0kRh2NlKCKevM7GKfZ9idx+4b4m4/KfGZEo=;
 	h=Date:From:To:Cc:Subject:References:From;
-	b=h8kFIKawVBefXiWwzK9U0GbpGATeURNrmRnjKY35827ph1AG5BoEtOyXyBej0rean
-	 EWslgMF+3HLPR52ud7P67taYAMrjSVKZfjYYvLNeGxet25/w1IYW4wzKi6cMkQCMpV
-	 MZBjW//eFdcS17k5j4r7G1Fj9/vQiErnSuIW8/KAyJcNnKhUz/tqJG/8ZJQlvy7Spq
-	 ZfNpJVmM7wHRJQWXKlVQzl7vQlf5G+UQqJEYev9KFgmyp9xPWgvgTEitiyG78sftFh
-	 iKGKaV9rFwsMC7t5SwnqnBa6ProY42HiuaDSjs8IQPCr9NuAahopAd6yP58xlvi05b
-	 BRc6Wm3jQW9jw==
+	b=jtWwGdaZypyMMFSp5IWwJiqMMGGLwvwQ+cSbhFpa2dazi7Y5UvOyn8FohuPsJc3fI
+	 r53geUNtdH0JFCN8hT5mxQkmIMAXJlmuLg+Tx2bVR/qAxy2jTONyM+GAWUeOlfKUmP
+	 ua9k3js+TMc12L3tOrMgknj+CDq8HxqUuE3DqTCmuINi5Mrdd9+9fdlOMXxNJo4Ny5
+	 RGCcPV76mFeP/h5AhgC5w4V1Mcwa0eo0w115qCqp8wg7PtIaWw45tejhsMmFSFzWH2
+	 LDU1fDuWaScDwsorJKwprY1eR//vH+va8goKCMrOtuNeG5BlPP4/sPbfPNsKT63RZR
+	 aj/rJOvEcyJXw==
 Received: from rostedt by gandalf with local (Exim 4.98.2)
 	(envelope-from <rostedt@kernel.org>)
-	id 1urLyW-00000003jGq-24ik;
+	id 1urLyW-00000003jHL-2mXc;
 	Wed, 27 Aug 2025 15:38:28 -0400
-Message-ID: <20250827193828.347397433@kernel.org>
+Message-ID: <20250827193828.514833400@kernel.org>
 User-Agent: quilt/0.68
-Date: Wed, 27 Aug 2025 15:36:45 -0400
+Date: Wed, 27 Aug 2025 15:36:46 -0400
 From: Steven Rostedt <rostedt@kernel.org>
 To: linux-kernel@vger.kernel.org,
  linux-trace-kernel@vger.kernel.org,
@@ -62,7 +62,7 @@ Cc: Masami Hiramatsu <mhiramat@kernel.org>,
  Peter Zijlstra <peterz@infradead.org>,
  Linus Torvalds <torvalds@linux-foundation.org>,
  Josh Poimboeuf <jpoimboe@kernel.org>
-Subject: [PATCH v2 1/2] unwind_user/x86: Enable frame pointer unwinding on x86
+Subject: [PATCH v2 2/2] unwind deferred/x86: Do not defer stack tracing for compat tasks
 References: <20250827193644.527334838@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -72,49 +72,85 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 
-From: Josh Poimboeuf <jpoimboe@kernel.org>
+From: Steven Rostedt <rostedt@goodmis.org>
 
-Use ARCH_INIT_USER_FP_FRAME to describe how frame pointers are unwound
-on x86, and enable CONFIG_HAVE_UNWIND_USER_FP accordingly so the
-unwind_user interfaces can be used.
+Currently compat tasks are not supported. If a deferred user space stack
+trace is requested on a compat task, it should fail and return an error so
+that the profiler can use an alternative approach (whatever it uses
+today).
 
-Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
+Add a arch_unwind_can_defer() macro that is called in
+unwind_deferred_request(). Have x86 define it to a function that makes
+sure that the current task is running in 64bit mode, and if it is not, it
+returns false. This will cause unwind_deferred_request() to error out and
+the caller can use the current method of user space stack tracing.
+
 Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 ---
- arch/x86/Kconfig                   |  1 +
- arch/x86/include/asm/unwind_user.h | 11 +++++++++++
- 2 files changed, 12 insertions(+)
- create mode 100644 arch/x86/include/asm/unwind_user.h
+Changes since v1: https://lore.kernel.org/20250820190639.843442474@kernel.org
 
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 58d890fe2100..8f94c58d4de8 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -299,6 +299,7 @@ config X86
- 	select HAVE_SYSCALL_TRACEPOINTS
- 	select HAVE_UACCESS_VALIDATION		if HAVE_OBJTOOL
- 	select HAVE_UNSTABLE_SCHED_CLOCK
-+	select HAVE_UNWIND_USER_FP		if X86_64
- 	select HAVE_USER_RETURN_NOTIFIER
- 	select HAVE_GENERIC_VDSO
- 	select VDSO_GETRANDOM			if X86_64
+- Added #include <linux/compat.h> to use user_64bit_mode() in
+  unwind_user.h. When adding this to the ftrace code, it failed to build
+  due to the missing header.
+
+ arch/x86/include/asm/unwind_user.h | 12 ++++++++++++
+ include/linux/unwind_deferred.h    |  5 +++++
+ kernel/unwind/deferred.c           |  3 +++
+ 3 files changed, 20 insertions(+)
+
 diff --git a/arch/x86/include/asm/unwind_user.h b/arch/x86/include/asm/unwind_user.h
-new file mode 100644
-index 000000000000..8597857bf896
---- /dev/null
+index 8597857bf896..0cef2e3b08c8 100644
+--- a/arch/x86/include/asm/unwind_user.h
 +++ b/arch/x86/include/asm/unwind_user.h
-@@ -0,0 +1,11 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _ASM_X86_UNWIND_USER_H
-+#define _ASM_X86_UNWIND_USER_H
+@@ -2,6 +2,18 @@
+ #ifndef _ASM_X86_UNWIND_USER_H
+ #define _ASM_X86_UNWIND_USER_H
+ 
++#ifdef CONFIG_IA32_EMULATION
++#include <linux/compat.h>
++/* Currently compat mode is not supported for deferred stack trace */
++static inline bool arch_unwind_can_defer(void)
++{
++	struct pt_regs *regs = task_pt_regs(current);
 +
-+#define ARCH_INIT_USER_FP_FRAME							\
-+	.cfa_off	= (s32)sizeof(long) *  2,				\
-+	.ra_off		= (s32)sizeof(long) * -1,				\
-+	.fp_off		= (s32)sizeof(long) * -2,				\
-+	.use_fp		= true,
++	return user_64bit_mode(regs);
++}
++# define arch_unwind_can_defer	arch_unwind_can_defer
++#endif /* CONFIG_IA32_EMULATION */
 +
-+#endif /* _ASM_X86_UNWIND_USER_H */
+ #define ARCH_INIT_USER_FP_FRAME							\
+ 	.cfa_off	= (s32)sizeof(long) *  2,				\
+ 	.ra_off		= (s32)sizeof(long) * -1,				\
+diff --git a/include/linux/unwind_deferred.h b/include/linux/unwind_deferred.h
+index 26122d00708a..0124865aaab4 100644
+--- a/include/linux/unwind_deferred.h
++++ b/include/linux/unwind_deferred.h
+@@ -16,6 +16,11 @@ struct unwind_work {
+ 	int				bit;
+ };
+ 
++/* Architectures can add a test to not defer unwinding */
++#ifndef arch_unwind_can_defer
++# define arch_unwind_can_defer()	(true)
++#endif
++
+ #ifdef CONFIG_UNWIND_USER
+ 
+ enum {
+diff --git a/kernel/unwind/deferred.c b/kernel/unwind/deferred.c
+index dc6040aae3ee..3601b2efe48d 100644
+--- a/kernel/unwind/deferred.c
++++ b/kernel/unwind/deferred.c
+@@ -237,6 +237,9 @@ int unwind_deferred_request(struct unwind_work *work, u64 *cookie)
+ 
+ 	*cookie = 0;
+ 
++	if (!arch_unwind_can_defer())
++		return -EINVAL;
++
+ 	if ((current->flags & (PF_KTHREAD | PF_EXITING)) ||
+ 	    !user_mode(task_pt_regs(current)))
+ 		return -EINVAL;
 -- 
 2.50.1
 
