@@ -1,72 +1,161 @@
-Return-Path: <linux-kernel+bounces-787865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B7C8B37C72
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 09:57:25 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12FE1B37C9D
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 09:58:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CFED1BA0172
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 07:57:45 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C97C24E0F12
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 07:58:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7510B321426;
-	Wed, 27 Aug 2025 07:57:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C42F322523;
+	Wed, 27 Aug 2025 07:58:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=bitology.eu header.i=@bitology.eu header.b="n+pitTRN"
-Received: from smtp.domeneshop.no (smtp.domeneshop.no [194.63.252.55])
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="wx3V3gZx"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E650D18DB01
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 07:57:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.63.252.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A135C321457;
+	Wed, 27 Aug 2025 07:58:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756281438; cv=none; b=oIDwBcdBSoW9UAoNlMvbyXl9qfGANs+i/uQyCNnKVwhhmhQKpATNDW6nlcImeu+PvwFe3YEcrI+StsFJ3ajQSqU494dfLg1zE89R/dRyzfiuDDDGPQf4ya+r8fskmTsPQJVFP6hbKk6QNpG8wfJWZp3BGszoF5i5W+bLfCPbxg0=
+	t=1756281516; cv=none; b=Uos4gaGrV8J+ZsC34IYO7F94yjSlj8e0caAIH8D7y75igXAQ1SWmUWgKc/MG9iJhvGbgF+Te+ac8YeG+SsjVDVU56pQ4UA2Fk+4Zva41gcwGt1+H52wJNdAAr6523sVRAPrAV8/sqiX5WQBxoLLW9fjPn8K4PNosT6L9jgHBj6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756281438; c=relaxed/simple;
-	bh=8iAgX0sYCl+R5/2X5xJgUxFEnhdPlRhG/mLBJuD38YM=;
-	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=qtTMfO64iGcOWLTFiv3GEvyeOxYgdZfSLLlEl6GQAi7niLcZy3XgkoEJg2uRJ0wLILOkzoPuA3BRmI4G0X4+LzmI9gt/agHf1hhuFdvF5CtZtLs8gUxkgxTB2wQCHRWU3mPh4NoONNeNOh+sY0RJ9W+vn913L3xIiW8dF7kA9K0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bitology.eu; spf=pass smtp.mailfrom=bitology.eu; dkim=pass (2048-bit key) header.d=bitology.eu header.i=@bitology.eu header.b=n+pitTRN; arc=none smtp.client-ip=194.63.252.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bitology.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bitology.eu
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=bitology.eu
-	; s=ds202506; h=Content-Transfer-Encoding:Content-Type:Subject:From:To:
-	MIME-Version:Date:Message-ID:From:Sender:Reply-To:Subject:Date:Message-ID:To:
-	Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=8iAgX0sYCl+R5/2X5xJgUxFEnhdPlRhG/mLBJuD38YM=; b=n+pitTRNJleL5hSRmpEncpjJYv
-	rEMZ9fDzUnMXamBixl1DDeGbbfbstYVQuxd1WEEARJpKZViYkhKyTGsnFwnmQr595DA08qWgAlxJO
-	XQ6Er7pHQrSPqTr2ImyeVe/zMeK5nW2zeRuKbRa9wHSK78arGmAjT2MBOUDLjdndlHaMjPqI2cE1T
-	iLD+gLL+M8cqrHtkNFL5oWKo7DLe/Dlek0aSuW9LOH/uvJbZ2hBdBk3kwsHMr5QEXhGYkVKFwC9On
-	UMiUBjjgX7sXw80DZw1mshdWAbjGY60f4gYYI4NKOFemStdW2ToeuOUuGCCZwEldWXcWEqz88hfG5
-	gnLUD4zA==;
-Received: from smtp
-	by smtp.domeneshop.no with esmtpsa (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	id 1urB1u-0077xH-Pn
-	for linux-kernel@vger.kernel.org;
-	Wed, 27 Aug 2025 09:57:14 +0200
-Message-ID: <dffb8686-0e9f-4429-b82f-5499783318a0@bitology.eu>
-Date: Wed, 27 Aug 2025 09:57:13 +0200
+	s=arc-20240116; t=1756281516; c=relaxed/simple;
+	bh=uJQ6mSMA7ygeA5oFmyppBb4E1ANB4bt0CH+tDHmNVhk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=FDH0WLI315E929ZsvP8JabPhl8XJ2nPlCPITpzh4/ez082DyA269Tm5z/ccoY3pzyV3gRky0wn9wWiMWOgbWJlJLz74zP669KHGSeohd+N56NIzabaGuP+dAR0CBlK0Saz43tuL2z61Zu2EZibvfDGrX538gdAtvBMtTIwdnbeI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=wx3V3gZx; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
+	bh=uJQ6mSMA7ygeA5oFmyppBb4E1ANB4bt0CH+tDHmNVhk=; b=wx3V3gZxVatzbagZOgxagDXMFS
+	DbqD+upnRWY4VW0FHtPO/Ndv+DXLpODD94PrK/9DLjH8vLBGEQ3OLMT/aUxW6ZqLmjqOwg1fxqwox
+	vjq06D2iO4V/KKRRgEVqhUMfuZMhlWKgZwrvAL+8D9VC6XyhW3OxzYtz5kMWvK3+YkiKP17ZKoAN1
+	PsU3gG2oT3sat8dFVC5XO7K7upNYFqUzfRPGrWQ5yhelFaccH7Bvp49FQAWHq3CHwUYVgTZkUjkGG
+	+Plafk3ayemfPfDEvLfUCRGu5WAwmPASOTC1Yn6OUQirf5YAacGQsQfmRs3mo0NXYTjXfS98Lf962
+	+1H2LB/g==;
+Received: from [213.244.170.152] (helo=phil.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1urB2j-0003FB-Nv; Wed, 27 Aug 2025 09:58:05 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: Yury Norov <yury.norov@gmail.com>,
+ Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+ Jaehoon Chung <jh80.chung@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>,
+ Shreeya Patel <shreeya.patel@collabora.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Sandy Huang <hjc@rock-chips.com>,
+ Andy Yan <andy.yan@rock-chips.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
+ Nicolas Frattaroli <frattaroli.nicolas@gmail.com>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Shawn Lin <shawn.lin@rock-chips.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ Krzysztof =?UTF-8?B?V2lsY3p5xYRza2k=?= <kwilczynski@kernel.org>,
+ Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>,
+ Bjorn Helgaas <bhelgaas@google.com>, Chanwoo Choi <cw00.choi@samsung.com>,
+ MyungJoo Ham <myungjoo.ham@samsung.com>,
+ Kyungmin Park <kyungmin.park@samsung.com>, Qin Jian <qinjian@cqplus1.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+ Nathan Chancellor <nathan@kernel.org>,
+ Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+ Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
+ Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Cc: kernel@collabora.com, linux-kernel@vger.kernel.org,
+ linux-mmc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-media@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-phy@lists.infradead.org,
+ linux-sound@vger.kernel.org, netdev@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com, linux-pci@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-clk@vger.kernel.org, llvm@lists.linux.dev,
+ Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Subject:
+ Re: [PATCH v3 17/20] PCI: dw-rockchip: Switch to FIELD_PREP_WM16 macro
+Date: Wed, 27 Aug 2025 09:58:04 +0200
+Message-ID: <5730130.X9hSmTKtgW@phil>
+In-Reply-To: <20250825-byeword-update-v3-17-947b841cdb29@collabora.com>
+References:
+ <20250825-byeword-update-v3-0-947b841cdb29@collabora.com>
+ <20250825-byeword-update-v3-17-947b841cdb29@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: linux-kernel@vger.kernel.org
-From: =?UTF-8?Q?Ywe_C=C3=A6rlyn?= <bit-budi@bitology.eu>
-Subject: Moved Channel (Fair Pau Philosophy, Low Jitter)
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-Moved channel to: https://www.youtube.com/@Budi-Bitstreams_OS
+Am Montag, 25. August 2025, 10:28:37 Mitteleurop=C3=A4ische Sommerzeit schr=
+ieb Nicolas Frattaroli:
+> The era of hand-rolled HIWORD_UPDATE macros is over.
+>=20
+> Like many other Rockchip drivers, pcie-dw-rockchip brings with it its
+> very own flavour of HIWORD_UPDATE. It's occasionally used without a
+> constant mask, which complicates matters. HIWORD_UPDATE_BIT is a
+> confusingly named addition, as it doesn't update the bit, it actually
+> sets all bits in the value to 1. HIWORD_DISABLE_BIT is similarly
+> confusing; it disables several bits at once by using the value as a mask
+> and the inverse of value as the value, and the "disabling only these"
+> effect comes from the hardware actually using the mask. The more obvious
+> approach would've been HIWORD_UPDATE(val, 0) in my opinion.
+>=20
+> This is part of the motivation why this patch uses hw_bitfield.h's
+> FIELD_PREP_WM16 instead, where possible. FIELD_PREP_WM16 requires a
+> constant bit mask, which isn't possible where the irq number is used to
+> generate a bit mask. For that purpose, we replace it with a more robust
+> macro than what was there but that should also bring close to zero
+> runtime overhead: we actually mask the IRQ number to make sure we're not
+> writing garbage.
+>=20
+> For the remaining bits, there also are some caveats. For starters, the
+> PCIE_CLIENT_ENABLE_LTSSM and PCIE_CLIENT_DISABLE_LTSSM were named in a
+> manner that isn't quite truthful to what they do. Their modification
+> actually spans not just the LTSSM bit but also another bit, flipping
+> only the LTSSM one, but keeping the other (which according to the TRM
+> has a reset value of 0) always enabled. This other bit is reserved as of
+> the IP version RK3588 uses at least, and I have my doubts as to whether
+> it was meant to be set, and whether it was meant to be set in that code
+> path. Either way, it's confusing.
+>=20
+> Replace it with just writing either 1 or 0 to the LTSSM bit, using the
+> new FIELD_PREP_WM16 macro from hw_bitfield.h, which grants us the
+> benefit of better compile-time error checking.
+>=20
+> The change of no longer setting the reserved bit doesn't appear to
+> change the behaviour on RK3568 in RC mode, where it's not marked as
+> reserved.
+>=20
+> PCIE_CLIENT_RC_MODE/PCIE_CLIENT_EP_MODE was another field that wasn't
+> super clear on what the bit field modification actually is. As far as I
+> can tell, switching to RC mode doesn't actually write the correct value
+> to the field if any of its bits have been set previously, as it only
+> updates one bit of a 4 bit field.
+>=20
+> Replace it by actually writing the full values to the field, using the
+> new FIELD_PREP_WM16 macro, which grants us the benefit of better
+> compile-time error checking.
+>=20
+> This patch was tested on RK3588 (PCIe3 x4 controller), RK3576 (PCIe2 x1
+> controller) and RK3568 (PCIe x2 controller), all in RC mode.
+>=20
+> Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+> Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
 
-Some 9x media + history and refutations on playlists.
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
 
-Light!
 
 
