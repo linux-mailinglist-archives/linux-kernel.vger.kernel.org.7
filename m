@@ -1,49 +1,64 @@
-Return-Path: <linux-kernel+bounces-787720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787721-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87460B37A3C
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 08:21:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EED5B37A3F
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 08:22:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3CE7D7219AF
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 06:21:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 071D77219C9
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 06:22:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6FEF268C40;
-	Wed, 27 Aug 2025 06:21:50 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6D362DA75A;
+	Wed, 27 Aug 2025 06:22:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gXDA9Nil"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 363B728E7
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 06:21:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8279A2BE027;
+	Wed, 27 Aug 2025 06:22:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756275710; cv=none; b=YnxXMNxH+WN59IRr+F+o23naP4+jcoA3U2tUG/LCN2evphWe7p36iloDvjkrG+HrL933enEepPgRN9yICp/Qlf3M0ybqMtW6GO6NTsKFEw+hLZr74w97my5hk61gqXAcuSDlPY8CtFP61N8RQWIhzKYixE2opps6UmIuwomHQM4=
+	t=1756275736; cv=none; b=BmjQv/aPE83aKq34XrJRIZFl5Z1vgENmIyU+1519z/Huob8QuOPaIdCkz849Ya3U3G85D0eaqE5ENaAne+s9OYOUv8w/sKS9JjpSuDrMBFFUaWZJl6hAwRwliyI526I6JXr+YrG1RUEEZjkYfukD3FyWbi2APObsdNd8Q5dsrJA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756275710; c=relaxed/simple;
-	bh=qkUIUlq5HFOeb/0xRuJpsy0OFYcAYQqv4Etjukxf/yM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=ItlIaMW5Ylldd3e0fu47sV5djDLmWH0rQQ3PgVptnLaVT/DY3TC+dzjyy7ILMWBeUpdL7phB3UyeIYPykWMN+FLuSprUAM9m7cMcsKscIRNjNLJOTBhLB4p2B2lmc+sI9XCCn3XKZrYA2ivJVigX/6A3++cwYzSKIRsM8Xxkd4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4cBZDW4XS3z14Mbr;
-	Wed, 27 Aug 2025 14:21:31 +0800 (CST)
-Received: from dggemv705-chm.china.huawei.com (unknown [10.3.19.32])
-	by mail.maildlp.com (Postfix) with ESMTPS id 7E6A918049C;
-	Wed, 27 Aug 2025 14:21:38 +0800 (CST)
-Received: from kwepemn100008.china.huawei.com (7.202.194.111) by
- dggemv705-chm.china.huawei.com (10.3.19.32) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 27 Aug 2025 14:21:38 +0800
-Received: from [10.67.120.139] (10.67.120.139) by
- kwepemn100008.china.huawei.com (7.202.194.111) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 27 Aug 2025 14:21:37 +0800
-Message-ID: <9465540b-44da-4f53-a8e9-97a648a0c023@huawei.com>
-Date: Wed, 27 Aug 2025 14:21:37 +0800
+	s=arc-20240116; t=1756275736; c=relaxed/simple;
+	bh=ghqyHuxRn2YZ182BMZRUnoAXRhnwuthZ2gQmVN6HRL8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jHbPKEgrytBIkMjQxTfVvq9vn+lgnswjC3oVb4awIHb2gMgyPC2RICoZV49HG4smBNNchKMlRfS4qrBR+WuUqhtqFzX8r03GrLjrIfdbOmKbIiedHmqrFfhLs+b9SHI7Fp7KN820/y8P4vB6Zl9BWvqw3FYWkVdJm5ce4dw3BMU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gXDA9Nil; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756275735; x=1787811735;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=ghqyHuxRn2YZ182BMZRUnoAXRhnwuthZ2gQmVN6HRL8=;
+  b=gXDA9NilouEZJlf/QPHqsP00Ty4TVn5YuhCnBF6PsPIqyJW8AT6Jn5pg
+   s3ERZJjMzUttPGkndsz8qGA+Ah2UZptOOxrO+LaLCUGjwAL6M1Uw1Yzon
+   CBnbUOs2mwwq3XevUhCDMgv9j4zGWeja5/YlI9PIcgxSJNnYLuxldhjxY
+   e2F0mc9zqmoE9uKJ/PWN/APtON62BKkIC82xVHUYK5IyuS0Slly5cXUMo
+   Dnapr7tFQSlFObF43S4rS6COzgHskoisHVEWfdsc3/hV9gjMGurj79HJO
+   I+kRjjOaxuUcHJU0Fq5uQcEKoQrBFNfkddfdPXkJsmjyfzO1HYbGbCHiU
+   w==;
+X-CSE-ConnectionGUID: wLsczntMRZeiRMyDnmWmxQ==
+X-CSE-MsgGUID: e3+WSjyeQ36nx4HIwjQ15Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11534"; a="62167177"
+X-IronPort-AV: E=Sophos;i="6.18,214,1751266800"; 
+   d="scan'208";a="62167177"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2025 23:22:13 -0700
+X-CSE-ConnectionGUID: gRB1mM8XS+GLSYvJNO1mxw==
+X-CSE-MsgGUID: b5KA2KaPRzStWr4+UE8efw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,214,1751266800"; 
+   d="scan'208";a="169942757"
+Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.238.14]) ([10.124.238.14])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2025 23:22:07 -0700
+Message-ID: <6fe55bc3-dd79-4f7d-9927-7d4f40f7b246@intel.com>
+Date: Wed, 27 Aug 2025 14:22:03 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,116 +66,101 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 7/9] drivers/perf: hisi: Add support for L3C PMU v3
-To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-CC: <will@kernel.org>, <mark.rutland@arm.com>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<robin.murphy@arm.com>, <yangyicong@huawei.com>, <liuyonglong@huawei.com>,
-	<wanghuiqiang@huawei.com>, <prime.zeng@hisilicon.com>,
-	<hejunhao3@h-partners.com>
-References: <20250821135049.2010220-1-wangyushan12@huawei.com>
- <20250821135049.2010220-8-wangyushan12@huawei.com>
- <20250826141235.000028b8@huawei.com>
+Subject: Re: [PATCH v2] KVM: TDX: Force split irqchip for TDX at irqchip
+ creation time
+To: Sagi Shahar <sagis@google.com>, Sean Christopherson <seanjc@google.com>,
+ Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ Binbin Wu <binbin.wu@linux.intel.com>, Ira Weiny <ira.weiny@intel.com>,
+ "H. Peter Anvin" <hpa@zytor.com>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, x86@kernel.org
+References: <20250827011726.2451115-1-sagis@google.com>
 Content-Language: en-US
-From: wangyushan <wangyushan12@huawei.com>
-In-Reply-To: <20250826141235.000028b8@huawei.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+From: Xiaoyao Li <xiaoyao.li@intel.com>
+In-Reply-To: <20250827011726.2451115-1-sagis@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
- kwepemn100008.china.huawei.com (7.202.194.111)
 
+On 8/27/2025 9:17 AM, Sagi Shahar wrote:
+> TDX module protects the EOI-bitmap which prevents the use of in-kernel
+> I/O APIC. See more details in the original patch [1]
+> 
+> The current implementation already enforces the use of split irqchip for
+> TDX but it does so at the vCPU creation time which is generally to late
+> to fallback to split irqchip.
+> 
+> This patch follows Sean's recomendation from [2] and move the check if
+> I/O APIC is supported for the VM at irqchip creation time.
+> 
+> [1] https://lore.kernel.org/lkml/20250222014757.897978-11-binbin.wu@linux.intel.com/
+> [2] https://lore.kernel.org/lkml/aK3vZ5HuKKeFuuM4@google.com/
+> 
+> Suggested-by: Sean Christopherson <seanjc@google.com>
+> Signed-off-by: Sagi Shahar <sagis@google.com>
+> ---
+>   arch/x86/include/asm/kvm_host.h | 1 +
+>   arch/x86/kvm/vmx/tdx.c          | 6 ++++++
+>   arch/x86/kvm/x86.c              | 9 +++++++++
+>   3 files changed, 16 insertions(+)
+> 
+> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+> index f19a76d3ca0e..6a4019d3a184 100644
+> --- a/arch/x86/include/asm/kvm_host.h
+> +++ b/arch/x86/include/asm/kvm_host.h
+> @@ -1357,6 +1357,7 @@ struct kvm_arch {
+>   	u8 vm_type;
+>   	bool has_private_mem;
+>   	bool has_protected_state;
+> +	bool has_protected_eoi;
+>   	bool pre_fault_allowed;
+>   	struct hlist_head *mmu_page_hash;
+>   	struct list_head active_mmu_pages;
+> diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
+> index 66744f5768c8..9637d9da1af1 100644
+> --- a/arch/x86/kvm/vmx/tdx.c
+> +++ b/arch/x86/kvm/vmx/tdx.c
+> @@ -658,6 +658,12 @@ int tdx_vm_init(struct kvm *kvm)
+>   	 */
+>   	kvm->max_vcpus = min_t(int, kvm->max_vcpus, num_present_cpus());
+>   
+> +	/*
+> +	 * TDX Module doesn't allow the hypervisor to modify the EOI-bitmap,
+> +	 * i.e. all EOIs are accelerated and never trigger exits.
+> +	 */
+> +	kvm->arch.has_protected_eoi = true;
 
+I prefer putting it along with the lines
 
-On 8/26/2025 9:12 PM, Jonathan Cameron wrote:
-> On Thu, 21 Aug 2025 21:50:47 +0800
-> Yushan Wang <wangyushan12@huawei.com> wrote:
->
->> From: Yicong Yang <yangyicong@hisilicon.com>
->>
->> This patch adds support for L3C PMU v3. The v3 L3C PMU supports
->> an extended events space which can be controlled in up to 2 extra
->> address spaces with separate overflow interrupts. The layout
->> of the control/event registers are kept the same. The extended events
->> with original ones together cover the monitoring job of all transactions
->> on L3C.
->>
->> The extended events is specified with `ext=[1|2]` option for the
->> driver to distinguish, like below:
->>
->> perf stat -e hisi_sccl0_l3c0_0/event=<event_id>,ext=1/
->>
->> Currently only event option using config bit [7, 0]. There's
->> still plenty unused space. Make ext using config [16, 17] and
->> reserve bit [15, 8] for event option for future extension.
->>
->> With the capability of extra counters, number of counters for HiSilicon
->> uncore PMU could reach up to 24, the usedmap is extended accordingly.
->>
->> The hw_perf_event::event_base is initialized to the base MMIO
->> address of the event and will be used for later control,
->> overflow handling and counts readout.
->>
->> We still make use of the Uncore PMU framework for handling the
->> events and interrupt migration on CPU hotplug. The framework's
->> cpuhp callback will handle the event migration and interrupt
->> migration of orginial event, if PMU supports extended events
->> then the interrupt of extended events is migrated to the same
->> CPU choosed by the framework.
->>
->> A new HID of HISI0215 is used for this version of L3C PMU.
->>
->> Signed-off-by: Yicong Yang <yangyicong@hisilicon.com>
->> Co-developed-by: Yushan Wang <wangyushan12@huawei.com>
->> Signed-off-by: Yushan Wang <wangyushan12@huawei.com>
-> One minor formatting thing I missed in internal reviews. With that
-> tidied up (check other patches for this as well)
->
-> Acked-by: Jonathan Cameron <jonathan.cameron@huawei.com>
->
->>   
->>   static void hisi_l3c_pmu_stop_counters(struct hisi_pmu *l3c_pmu)
->>   {
->> +	struct hisi_l3c_pmu *hisi_l3c_pmu = to_hisi_l3c_pmu(l3c_pmu);
->> +	unsigned long *used_mask = l3c_pmu->pmu_events.used_mask;
->> +	unsigned long bit = find_first_bit(used_mask, l3c_pmu->num_counters);
->>   	u32 val;
->> +	int i;
->>   
->>   	/*
->> -	 * Clear perf_enable bit in L3C_PERF_CTRL register to stop counting
->> -	 * for all enabled counters.
->> +	 * Check if any counter belongs to the normal range (instead of ext
->> +	 * range). If so, stop it.
->>   	 */
->> -	val = readl(l3c_pmu->base + L3C_PERF_CTRL);
->> -	val &= ~(L3C_PERF_CTRL_EN);
->> -	writel(val, l3c_pmu->base + L3C_PERF_CTRL);
->> +	if (bit < L3C_NR_COUNTERS) {
->> +		val = readl(l3c_pmu->base + L3C_PERF_CTRL);
->> +		val &= ~(L3C_PERF_CTRL_EN);
-> Brackets not adding anything here and inconsistently applied.
-> Please clean these up.
+	kvm->arch.has_protected_state = true;
+	kvm->arch.has_private_mem = true;
 
-Sure, sorry for the noises.
+Otherwise,
 
-Will fix that and look for other similar issues in the patches.
+Reviewed-by: Xiaoyao Li <xiaoyao.li@intel.com>
 
-Thanks!
-
->> +		writel(val, l3c_pmu->base + L3C_PERF_CTRL);
->> +	}
->> +
->> +	/* If not, do stop it on ext ranges. */
->> +	for (i = 0; i < hisi_l3c_pmu->ext_num; i++) {
->> +		bit = find_next_bit(used_mask, L3C_NR_COUNTERS * (i + 2),
->> +				    L3C_NR_COUNTERS * (i + 1));
->> +		if (L3C_CNTR_EXT(bit) != i + 1)
->> +			continue;
->> +
->> +		val = readl(hisi_l3c_pmu->ext_base[i] + L3C_PERF_CTRL);
->> +		val &= ~L3C_PERF_CTRL_EN;
->> +		writel(val, hisi_l3c_pmu->ext_base[i] + L3C_PERF_CTRL);
->> +	}
->>   }
+>   	kvm_tdx->state = TD_STATE_UNINITIALIZED;
+>   
+>   	return 0;
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index a1c49bc681c4..57b4d5ba2568 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -6966,6 +6966,15 @@ int kvm_arch_vm_ioctl(struct file *filp, unsigned int ioctl, unsigned long arg)
+>   		if (irqchip_in_kernel(kvm))
+>   			goto create_irqchip_unlock;
+>   
+> +		/*
+> +		 * Disallow an in-kernel I/O APIC if the VM has protected EOIs,
+> +		 * i.e. if KVM can't intercept EOIs and thus can't properly
+> +		 * emulate level-triggered interrupts.
+> +		 */
+> +		r = -ENOTTY;
+> +		if (kvm->arch.has_protected_eoi)
+> +			goto create_irqchip_unlock;
+> +
+>   		r = -EINVAL;
+>   		if (kvm->created_vcpus)
+>   			goto create_irqchip_unlock;
 
 
