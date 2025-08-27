@@ -1,159 +1,202 @@
-Return-Path: <linux-kernel+bounces-788361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF8A1B3835E
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 15:08:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C69B1B3835B
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 15:07:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0A4477B7EDB
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 13:05:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 893497C6414
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 13:07:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55FAC350835;
-	Wed, 27 Aug 2025 13:07:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="Tvr0mgAA"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C6B335206D;
+	Wed, 27 Aug 2025 13:07:35 +0000 (UTC)
+Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0ED127F015
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 13:07:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EACFA303CAE
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 13:07:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756300038; cv=none; b=FSaXgUZPaP2h8UTdEGuKbXE6PdBn6clk/Q7rKm7wjf1pkqkBp7Bqmr9+Sq85VWacRwtGQQD5m9D4FXrbGhPNAk0G9NwRNjUsYPbgNhk+6TmnOmnmGG2rFybunJylYWRptzdp8mzzjxXKH0Zw6kNGrj0dmd72Znv08EYrNG2PocI=
+	t=1756300054; cv=none; b=dG0cEo4N7zSxeSCgoYn6MGabzvegYXddD1tp5djbWfARF4HEtPv3Ym2sOpiOy8r6AbyLbWYP1Jyw1C5mcAElbFl80SbTiJ1JBpyWoaQOkKfe1JwVKYmDh7DeZckVTIGh1nMiu39apM0ZECBa3PaGKhjj90QItuJrWOfy7fM5qww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756300038; c=relaxed/simple;
-	bh=r46sxghsdUJZJ6GLwvQoKgsx8dPdky40SaTysjkFops=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YYITGUOIoQH9bVWQKhWfXoi9srzHvg/ragFWKFppIWtzH/HJPXO6wnQJe2s+lXxoqwtyt/MWPfbv7AZu+G8zRnSUfsfxKWEtw+xyv99gGfzDYUf4AqG3nR1R1ExBrAbuA1yB61NVxQlMV4A3i6w/YmLIlnVJH0ciXulr7Lnin7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=Tvr0mgAA; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-45a1abf5466so5938605e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 06:07:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1756300034; x=1756904834; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=dF5o810a7PTnN/8SbUBia77j9hgRZWPVI3vIEvBDyv8=;
-        b=Tvr0mgAAOsPnBkFSDunMF0Mv2nZW974WfrdBZjZpk7KsAARyzF5igmsZqaVcboL1pA
-         dpqvKZrZI7KSfdyVjSZir97vfyU8+Wi4LsgXQwBX9afwVlAj3Zl+9U94VoB6p3/eLv1t
-         /z3IUAt7049ce12gYG01Tyu4QtlY49TRi0LiAR6bWR4Ue+s6eG+Lk2p2QOms+fPvLU1x
-         VYr7fnWprmEKCfmk0pzkHwvbslN748dEP2Ucv5lua8HTkj4jQ78tPYPMn7IdiXWPFXzB
-         KW4cM/zrP1cRQ7yzQwVmGXQU0nPX2hwP2isXP/mxxmUiww+3YaFfZewDdoRRC5oFR62P
-         /cWg==
+	s=arc-20240116; t=1756300054; c=relaxed/simple;
+	bh=uhZEyNjpgt2nKhG1FnpuwlfVRtd/DA2+sMMguQJJMic=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=kNfrRKhFvZhzezXlhx6hOVOu2lls14Sxlcek5kQ9tQJ3zm5Y42yBLxkxmip5pLQXgMaqpdxSNJIJaq0oLMg/qugMhWsJGm0KaDz7qocQPLEMQXOln/vsHYMemm+YK7b+B+kWJjVYdhyIijTKBtsvsXfzJbN5zkuZihD/5KhDsNs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3ecc8a40bd1so87445885ab.1
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 06:07:32 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756300034; x=1756904834;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dF5o810a7PTnN/8SbUBia77j9hgRZWPVI3vIEvBDyv8=;
-        b=AnDtt66PhMAV9/ROE15lshN4PUa86pHD4lcX+R8wP8wuMUp740BifGBPCWsoUc6lKT
-         RhFKk1bRLITx8U+Ykrc64AhbIIDLZZt0WE9pLSdB3Gn/ExyhGkGa/n+jHXNHfQFH1Vsm
-         OSz1DbjhN9BhS7b1zOxpkC/ZOjk4leY9Ha4fmEzTGrJpmImYmmp6UlN7WkeS9caTeJdl
-         hMHOgtfM/tCy1z1QS68uAzbg7gOcUSARVCxW7ZCtUPDNyVnquxmyYQOoRguZ+oS9E0Yl
-         h2KqhIc3e0G5qgo1ead97/eTwM+7mUVLl0I0zOh9ZtlNHV+Wqx2x3A+4JPxqZkYSn+ah
-         9YcA==
-X-Forwarded-Encrypted: i=1; AJvYcCXrab9C8C2OvJ3XPsyzEZRo49c1BMvqmuAMEaKzbZPpmZf75b21wENj+cMAmj7oJ6SAelma7jIXbJUw9nQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxpGqETCoVpCUgN2nszRvhA61+4fZ0xivakGvHbJSmarQGODu9I
-	DP/xUGTrvlots0hwfMkKtczpGQlrLlHxiDHbpApzXGQW5PK2xTbFSIFWQMoYsOoLSno=
-X-Gm-Gg: ASbGnctslp02/Knz8crtiwvCt85gD8UpyTQmKHzcwh2gJrJeyhOOdMi2AHRwA32Gyxb
-	PSwS6E+gFlhYaZqNYgNNa7BAil2wxCHZQ1c9RqfDWNyjyW6XG307f2E3JLtWjyiPCZntk516Qg6
-	jmfw0qbNhmU1EoTl9exgO6Bbn8sTel0iwQ4PiEGMxSJISr68V7Yvci8NEL2ZwNF4Gb3Vf3IyaKB
-	czaoiRvvXXJXAfAQzLnlJRASeE9aSFiVz7ezIDP5Davt13zgMcqCR8jSpWqd3smPk63UZFk2rV7
-	CDTIFNyybCB4v+1I7hn8NDZz9apeFzDYiW2oePCRmEj4OiMFSMwGHpx5p/YeVUmJx5rM/NSucOy
-	EDa2kFdGdr44Ty78=
-X-Google-Smtp-Source: AGHT+IHP5mFK9hwcrvF5KKKcJ/uDrEKW0UmrkI7N5sUM5zs07mDFAfytcdN1ohOxsnSGj6LjjgrjMA==
-X-Received: by 2002:a05:600c:1ca6:b0:456:2139:456a with SMTP id 5b1f17b1804b1-45b697f4b48mr42946795e9.15.1756300033643;
-        Wed, 27 Aug 2025 06:07:13 -0700 (PDT)
-Received: from localhost ([2620:10d:c092:600::1:9e53])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3c70e4ba1eesm21772390f8f.2.2025.08.27.06.07.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Aug 2025 06:07:12 -0700 (PDT)
-Date: Wed, 27 Aug 2025 14:07:05 +0100
-From: Johannes Weiner <hannes@cmpxchg.org>
-To: Vitaly Wool <vitaly.wool@konsulko.se>
-Cc: rust-for-linux <rust-for-linux@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Vlastimil Babka <vbabka@suse.cz>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	Bjorn Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Trevor Gross <tmgross@umich.edu>,
-	Yosry Ahmed <yosry.ahmed@linux.dev>, Nhat Pham <nphamcs@gmail.com>,
-	linux-mm@kvack.org
-Subject: Re: [PATCH v4 0/2] rust: zpool: add abstraction for zpool drivers
-Message-ID: <20250827130705.GA7480@cmpxchg.org>
-References: <20250823130420.867133-1-vitaly.wool@konsulko.se>
- <20250826124454.GA1502@cmpxchg.org>
- <CB3E7E9C-2192-4C60-B79A-932AD6CB005A@konsulko.se>
+        d=1e100.net; s=20230601; t=1756300052; x=1756904852;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=VqAAZ2PNKYljta7EnxR4rGO0uElyvx3egJwvBQhHbdA=;
+        b=xJz8fQP6wh4uiuyBj8g7iwapRqmAEWuNyeepdbkIYwAuJXl6bV850JB3tUvAWbylF0
+         XpVxngobLTlLYSoVeEuMQhALTvWyPPdw2S3XQkaGP3XtzLdI9i9OiDan45bfrOYINHcI
+         B3eVpkjre88ARh//fHxgq4GcRDuu2CXSM5ggyWdj/j9BkFCRlp4i1AUkOwfiX6B0CidJ
+         OI6mbJVKqvXrBabjIO+NXl/X27DrbHBCvREaFgkU3mOKA4CtyRDsMXJIfHBCz0jSNwI4
+         BwjBmGw6B3BMDSlc5QI98aELHT/XumnoO4oEp+OubtkDeJ/+tl+r3xl1dm8CMDU2lZes
+         b3aA==
+X-Forwarded-Encrypted: i=1; AJvYcCXqqq3baVV6cLhHjogslNGz80OLptD/MQPMfg8QA68odv9kzAFBW6L2LzYnPDxDotd2nVCmTcY/y26mCbU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywp1r4IMpauAlSb1gdDDFWTL30Th/rrN1EUfMvddDhuWsi4zPy0
+	WqGhUj11xbfvqgXFhawJx3dS35Wo56i9ziVkaD9+mWl3c/VNl0ia9aoAVuQuI+ojfdWtELdRf67
+	XaHSQ3VpDqmx0a61kTpPVBvtgCuTIT7RCWspbmPdVSmpoVm581ko5xA3nU+4=
+X-Google-Smtp-Source: AGHT+IEqs+daARbh9yMs35OsmplpX2B5BTuI9FVSQSDfBuhtSnWgP2j53rMkalQByvr/nOab0ANgDGAkdG0Vxgcbi+gNsSs4qV5l
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CB3E7E9C-2192-4C60-B79A-932AD6CB005A@konsulko.se>
+X-Received: by 2002:a05:6e02:18cb:b0:3eb:2b11:441d with SMTP id
+ e9e14a558f8ab-3eb2b1146bdmr213821075ab.15.1756300051987; Wed, 27 Aug 2025
+ 06:07:31 -0700 (PDT)
+Date: Wed, 27 Aug 2025 06:07:31 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68af0313.a70a0220.3cafd4.0020.GAE@google.com>
+Subject: [syzbot] [block?] [ext4?] [btrfs?] INFO: rcu detected stall in
+ sys_mount (8)
+From: syzbot <syzbot+4507914ec56d21bb39ed@syzkaller.appspotmail.com>
+To: brauner@kernel.org, clm@fb.com, dsterba@suse.com, jack@suse.cz, 
+	josef@toxicpanda.com, linux-block@vger.kernel.org, 
+	linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Aug 26, 2025 at 04:56:46PM +0200, Vitaly Wool wrote:
-> 
-> 
-> > On Aug 26, 2025, at 2:44 PM, Johannes Weiner <hannes@cmpxchg.org> wrote:
-> > 
-> > On Sat, Aug 23, 2025 at 03:04:19PM +0200, Vitaly Wool wrote:
-> >> Zpool is a common frontend for memory storage pool implementations.
-> >> These pools are typically used to store compressed memory objects,
-> >> e. g. for Zswap, the lightweight compressed cache for swap pages.
-> >> 
-> >> This patch provides the interface to use Zpool in Rust kernel code,
-> >> thus enabling Rust implementations of Zpool allocators for Zswap.
-> > 
-> > The zpool indirection is on its way out.
-> > 
-> > When you submitted an alternate allocator backend recently, the
-> > resounding feedback from the zswap maintainers was that improvements
-> > should happen to zsmalloc incrementally. It is a lot of code and has a
-> > lot of features that go beyond allocation strategy. We do not want to
-> > fork it and fragment this space again with niche, incomplete backends.
-> > 
-> > It's frustrating that you not only ignored this, but then went ahead
-> > and made other people invest their time and effort into this as well.
-> > 
-> 
-> I don’t think we have a consensus on that.
-> 
-> And zblock is, after some additional improvements, just better than
-> zsmalloc in all meaningful aspects, let alone the simplicity. It is
-> fas easier to implement in Rust than zsmalloc, too. Besides, zram is
-> a good candidate to be rewritten in Rust as well and after that is
-> done, zblock will be even safer and faster. So while not being
-> “incomplete", it’s zsmalloc that is becoming a niche backend moving
-> forward, and I would argue that it could make more sense to
-> eventually obsolete *it* rather than the zpool API.
+Hello,
 
-That's your opinion, and I disagree with all of these claims. I would
-also be surprised if you found much alignment on this with the other
-folks who develop and use these features on a daily basis.
+syzbot found the following issue on:
 
-That being said, by all means, you can propose alternate
-allocators. But you don't need the zpool API for that. Just provide
-alternate implementations of the "zs_*" API and make it compile-time
-selectable.
+HEAD commit:    8f5ae30d69d7 Linux 6.17-rc1
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+console output: https://syzkaller.appspot.com/x/log.txt?x=16a85ef0580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8c5ac3d8b8abfcb
+dashboard link: https://syzkaller.appspot.com/bug?extid=4507914ec56d21bb39ed
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+userspace arch: arm64
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1455a462580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12229462580000
 
-As it stands, it's hard to justify the almost 700 lines of code to
-support *runtime-switching* of zswap backends when there is only one
-backend in-tree (and even you suggest there should only be one, albeit
-a different one).
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/18a2e4bd0c4a/disk-8f5ae30d.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/3b5395881b25/vmlinux-8f5ae30d.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/e875f4e3b7ff/Image-8f5ae30d.gz.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/47be3ab62135/mount_6.gz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+4507914ec56d21bb39ed@syzkaller.appspotmail.com
+
+watchdog: BUG: soft lockup - CPU#1 stuck for 23s! [syz.0.563:8489]
+Modules linked in:
+irq event stamp: 251614
+hardirqs last  enabled at (251613): [<ffff80008b028df8>] __raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:151 [inline]
+hardirqs last  enabled at (251613): [<ffff80008b028df8>] _raw_spin_unlock_irqrestore+0x38/0x98 kernel/locking/spinlock.c:194
+hardirqs last disabled at (251614): [<ffff80008b001cbc>] __el1_irq arch/arm64/kernel/entry-common.c:650 [inline]
+hardirqs last disabled at (251614): [<ffff80008b001cbc>] el1_interrupt+0x24/0x54 arch/arm64/kernel/entry-common.c:668
+softirqs last  enabled at (251590): [<ffff8000803d88a0>] softirq_handle_end kernel/softirq.c:425 [inline]
+softirqs last  enabled at (251590): [<ffff8000803d88a0>] handle_softirqs+0xaf8/0xc88 kernel/softirq.c:607
+softirqs last disabled at (251581): [<ffff800080022028>] __do_softirq+0x14/0x20 kernel/softirq.c:613
+CPU: 1 UID: 0 PID: 8489 Comm: syz.0.563 Not tainted 6.17.0-rc1-syzkaller-g8f5ae30d69d7 #0 PREEMPT 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/30/2025
+pstate: 83400005 (Nzcv daif +PAN -UAO +TCO +DIT -SSBS BTYPE=--)
+pc : skip_mnt_tree fs/namespace.c:-1 [inline]
+pc : commit_tree fs/namespace.c:1201 [inline]
+pc : attach_recursive_mnt+0x1414/0x19f0 fs/namespace.c:2716
+lr : skip_mnt_tree fs/namespace.c:1184 [inline]
+lr : commit_tree fs/namespace.c:1201 [inline]
+lr : attach_recursive_mnt+0x1430/0x19f0 fs/namespace.c:2716
+sp : ffff8000a0de7960
+x29: ffff8000a0de7a60 x28: ffff0000df3956c0 x27: dfff800000000000
+x26: ffff0000d65d31c0 x25: ffff0000d65d3180 x24: ffff0000d931d600
+x23: ffff0000df3956c0 x22: ffff0000df395500 x21: ffff0000d65d2e41
+x20: ffff0000f39e5ab0 x19: ffff0000f39e5ab0 x18: 1fffe000337a0688
+x17: ffff0001fea8c8b0 x16: ffff80008afd3190 x15: 0000000000000002
+x14: 1fffe0001be72ae1 x13: 0000000000000000 x12: 0000000000000000
+x11: ffff60001be72ae3 x10: 0000000000ff0100 x9 : 0000000000000000
+x8 : 0000000000000000 x7 : 0000000000000000 x6 : 0000000000000000
+x5 : 0000000000000001 x4 : 0000000000000008 x3 : 0000000000000000
+x2 : 0000000000000008 x1 : ffff0000d65d31c0 x0 : ffff0000f39e5aa8
+Call trace:
+ skip_mnt_tree fs/namespace.c:-1 [inline] (P)
+ commit_tree fs/namespace.c:1201 [inline] (P)
+ attach_recursive_mnt+0x1414/0x19f0 fs/namespace.c:2716 (P)
+ graft_tree+0x134/0x184 fs/namespace.c:2862
+ do_loopback+0x334/0x3e8 fs/namespace.c:3037
+ path_mount+0x4cc/0xde0 fs/namespace.c:4114
+ do_mount fs/namespace.c:4133 [inline]
+ __do_sys_mount fs/namespace.c:4344 [inline]
+ __se_sys_mount fs/namespace.c:4321 [inline]
+ __arm64_sys_mount+0x3e8/0x468 fs/namespace.c:4321
+ __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+ invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
+ el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
+ do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
+ el0_svc+0x58/0x180 arch/arm64/kernel/entry-common.c:879
+ el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:898
+ el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:596
+Sending NMI from CPU 1 to CPUs 0:
+NMI backtrace for cpu 0
+CPU: 0 UID: 0 PID: 6164 Comm: udevd Not tainted 6.17.0-rc1-syzkaller-g8f5ae30d69d7 #0 PREEMPT 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/30/2025
+pstate: 83400005 (Nzcv daif +PAN -UAO +TCO +DIT -SSBS BTYPE=--)
+pc : __sanitizer_cov_trace_pc+0x80/0x84 kernel/kcov.c:235
+lr : path_init+0xdc0/0xe98 fs/namei.c:2537
+sp : ffff8000a43e7740
+x29: ffff8000a43e77a0 x28: dfff800000000000 x27: 1fffe00018f95664
+x26: ffff0000c7cab320 x25: 0000000000000101 x24: 1ffff0001487cf5b
+x23: ffff80008f745840 x22: ffff8000a43e7adc x21: 0000000000000100
+x20: ffff8000a43e7aa0 x19: 0000000000032fab x18: 0000000000000000
+x17: 0000000000000000 x16: ffff80008b007230 x15: 0000000000000001
+x14: 1ffff00011ee8b08 x13: 0000000000000000 x12: 0000000000000000
+x11: ffff700011ee8b09 x10: 0000000000ff0100 x9 : 0000000000000000
+x8 : ffff0000d8babd00 x7 : ffff800080daa4c4 x6 : 0000000000000000
+x5 : 0000000000000000 x4 : 0000000000000000 x3 : ffff800080da8a84
+x2 : 0000000000000000 x1 : 0000000000000004 x0 : 0000000000000001
+Call trace:
+ __sanitizer_cov_trace_pc+0x80/0x84 kernel/kcov.c:235 (P)
+ path_openat+0x13c/0x2c40 fs/namei.c:4041
+ do_filp_open+0x18c/0x36c fs/namei.c:4073
+ do_sys_openat2+0x11c/0x1b4 fs/open.c:1435
+ do_sys_open fs/open.c:1450 [inline]
+ __do_sys_openat fs/open.c:1466 [inline]
+ __se_sys_openat fs/open.c:1461 [inline]
+ __arm64_sys_openat+0x120/0x158 fs/open.c:1461
+ __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+ invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
+ el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
+ do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
+ el0_svc+0x58/0x180 arch/arm64/kernel/entry-common.c:879
+ el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:898
+ el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:596
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
