@@ -1,97 +1,79 @@
-Return-Path: <linux-kernel+bounces-788050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD469B37F2C
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 11:48:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C510BB37F2F
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 11:48:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 891C5177D37
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 09:48:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91253201C91
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 09:48:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B1622D4B71;
-	Wed, 27 Aug 2025 09:48:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6121283FDF;
+	Wed, 27 Aug 2025 09:48:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="CYbXcZK5"
-Received: from out30-119.freemail.mail.aliyun.com (out30-119.freemail.mail.aliyun.com [115.124.30.119])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HhxesxhQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EB238F48;
-	Wed, 27 Aug 2025 09:48:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.119
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 091EF25B1DA;
+	Wed, 27 Aug 2025 09:48:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756288102; cv=none; b=e4tmmV3uGEhwYrMknbAbUF3c3xmAtY4FaIdfr6R+PG9GtSSyleAd8Qa3MzEjw0E0HOYIUIIqSrgruNNMvF5HDbKxWLPwcNcuS4cM25Ktd89U7MsOm89epf1A/Yw7uWM/euR68svxsPqM/AGFLCVI6ivt+U6DUHBBqczNlD6cI7E=
+	t=1756288120; cv=none; b=hB+LfU7cHG4JOmv5CNphKrR6hindjbMSq/P+gaSbwHBfZwHTJNrDWM5v5VmhAzNHWwPFYNRwpUoeWPJ5jtMvqTiO+nJTGJ7FVRAL8q+z6YBkQw6pG7833wJ1LKNYkBvXcplodhRuSdpfD3h5mGxusy6eFR+kFwuQtndOHRrAVuA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756288102; c=relaxed/simple;
-	bh=+w2RGnieQf6fF7AYdvNbK7tdl8lTwQYl3t6wdcQBQVc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SNplj3Q33KETfE5xROgqhD48YWQpaJ+s8ZwcfC3BBeop49hsAR/n3A3LM0gZc5NdbxxaOR1BFYKCFtVCYTYE10Imgv0mM6Y+4aqTiYkDd8sRhvsuono3BGsjlbIJiU13f/KJhhvas0PPR3+p5D17E9wtBBcRAC3phiEThztSbyY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=CYbXcZK5; arc=none smtp.client-ip=115.124.30.119
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1756288089; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=yI9aY3kCrwJbkAALJF4/YaEOmckx3mMDHOyqA2RjXOY=;
-	b=CYbXcZK5+EOEXc180ee1iIQ6SP0fuw89NwPqXZdSGWKIT0jHHmEgChdxrgREHK+/q2XhCIPdfs6BTxchCxch3siaRXiJZlfUFm0wP5hzvK5TOPn+UsumFND6ciM3xmiS45mSulbD9/jKDNaJSYeOTJ50fo+UP70HbAXhKguuTQU=
-Received: from 30.221.131.253(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WmicQLC_1756288088 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Wed, 27 Aug 2025 17:48:08 +0800
-Message-ID: <d820951e-f5df-4ddb-a657-5f0cc7c3493a@linux.alibaba.com>
-Date: Wed, 27 Aug 2025 17:48:07 +0800
+	s=arc-20240116; t=1756288120; c=relaxed/simple;
+	bh=xgFUmk0qJHnFdUv6YfFFZde1Uqh5rKr8K5dZmrz2Zdg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NKat4BXM0Pkmyf/t3K4A0VE8cEt8slCnboFToQuZYeuVewnZr7Yt7/zRi1oPJZuHJznPpEYnHFDaT/BJacaOM1sfwwUdL1GWfysiMkUkqztFkuuco13+eSPlfbg+Zd6nrTXF7V9CG0v32yrFtCdgEczt6KH5sc2Cpb4CafaH2W4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HhxesxhQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84182C4CEEB;
+	Wed, 27 Aug 2025 09:48:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756288119;
+	bh=xgFUmk0qJHnFdUv6YfFFZde1Uqh5rKr8K5dZmrz2Zdg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HhxesxhQBdgHVDjJjPK3seJGASH33TAolppJltgS7D7tARpsuGklonYhRw0JVPTkZ
+	 EGAAGWf7YwTO80NTcG8LruhzNkNAVPUUq3yKho3ldk5bgD0tqRmfJrsJw40d2aLdPc
+	 Gv3PdFRj1ypMI8tuevjfsUoxq0kkGKbWAK1lMJ+qufCXj3npPElB7/FefLmZhoIKv9
+	 b5/DH1ifSsE5G7RgKhR8bi9FzKx4J/bFf1XCve57FpeDqkjmjuRrcbjHhx5yambpQV
+	 x/5Q0Dsd3HHFaut3HW7htZptk9UJ4Gt3IA7Il7AyAft0ZpidMXQuI1TLc7z0CzhpGU
+	 JxZyVNqezNe3w==
+Received: from johan by xi.lan with local (Exim 4.98.2)
+	(envelope-from <johan@kernel.org>)
+	id 1urClX-000000002Id-0Vze;
+	Wed, 27 Aug 2025 11:48:27 +0200
+Date: Wed, 27 Aug 2025 11:48:27 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
+	Gregory CLEMENT <gregory.clement@bootlin.com>,
+	=?utf-8?B?VGjDqW8=?= Lebrun <theo.lebrun@bootlin.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] reset: eyeq: fix OF node leak
+Message-ID: <aK7Ua3GRBKSFC7Xu@hovoldconsulting.com>
+References: <20250708085613.15823-1-johan@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] initrd: support erofs as initrd
-To: Askar Safin <safinaskar@zohomail.com>
-Cc: Byron Stanoszek <gandalf@winds.org>, Christoph Hellwig <hch@lst.de>,
- gregkh <gregkh@linuxfoundation.org>,
- "julian.stecklina" <julian.stecklina@cyberus-technology.de>,
- linux-fsdevel <linux-fsdevel@vger.kernel.org>,
- linux-kernel <linux-kernel@vger.kernel.org>, rafael <rafael@kernel.org>,
- torvalds <torvalds@linux-foundation.org>, viro <viro@zeniv.linux.org.uk>,
- =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
- Christian Brauner <brauner@kernel.org>
-References: <20250321050114.GC1831@lst.de>
- <20250825182713.2469206-1-safinaskar@zohomail.com>
- <20250826075910.GA22903@lst.de>
- <a54ced51-280e-cc9d-38e4-5b592dd9e77b@winds.org>
- <6b77eda9-142e-44fa-9986-77ac0ed5382f@linux.alibaba.com>
- <198ead62fff.fc7d206346787.2754614060206901867@zohomail.com>
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-In-Reply-To: <198ead62fff.fc7d206346787.2754614060206901867@zohomail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250708085613.15823-1-johan@kernel.org>
 
-
-
-On 2025/8/27 17:22, Askar Safin wrote:
->   ---- On Tue, 26 Aug 2025 19:32:34 +0400  Gao Xiang <hsiangkao@linux.alibaba.com> wrote ---
->   > I completely agree with that point. However, since EROFS is a
->   > block-based filesystem (Thanks to strictly block alignment, meta(data)
->   > can work efficiently on both block-addressed storage
->   > devices and byte-addressed memory devices. Also if the fsblock size
+On Tue, Jul 08, 2025 at 10:56:13AM +0200, Johan Hovold wrote:
+> Make sure to drop the OF node reference taken when probing the auxiliary
+> device when the device is later unbound.
 > 
-> As I said previously, just put your erofs image to initramfs
-> (or to disk) and then (in your initramfs init) create ramdisk out of it
-> or loop mount it (both ramdisks and loop devices are block devices).
-> 
-> This way you will have erofs on top of block device.
-> 
-> And you will not depend on initrd. (Again: I plan to remove initial ramdisk
-> support, not ramdisk support per se.)
+> Fixes: 487b1b32e317 ("reset: eyeq: add platform driver")
+> Cc: Théo Lebrun <theo.lebrun@bootlin.com>
+> Signed-off-by: Johan Hovold <johan@kernel.org>
 
-It doesn't work if end users put `init` into erofs image and sign
-the whole erofs initram images with their certifications.
+Can this one be picked up?
 
-And it doesn't have any relationship with cpio because users need
-signed image and load from memory.
-
-Thanks,
-Gao Xiang
+Johan
 
