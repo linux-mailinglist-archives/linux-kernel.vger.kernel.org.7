@@ -1,93 +1,92 @@
-Return-Path: <linux-kernel+bounces-788202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 653ECB38130
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 13:36:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 03A80B38132
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 13:37:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E8DD461A4F
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 11:36:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0AA7016AF14
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 11:37:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B0F12BEFF2;
-	Wed, 27 Aug 2025 11:36:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57C9C2FE041;
+	Wed, 27 Aug 2025 11:36:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hS1kii+C"
-Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UeKwvRDT"
+Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 228E92FC01D
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 11:36:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E7CE2FE052
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 11:36:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756294585; cv=none; b=Ld0HthPbecgaUjgsZWRigU7lXp0CkXkXnsbkDh55u/PAUvWefAR70JvyBCbSdp1efDMpLZZJLeKnkzd0bRdaysq96gyVB9wPCYrh0P8TEjbINi9qdvnqHadW3NNTe+EfO0PKYTTct8yTTtb+2QLKoiHW4QPdjgDMyXgjwd3UL5Y=
+	t=1756294589; cv=none; b=rAB+hR4GdvXP3RrNy9CJHZgw4QalDmpUlpY4P9Fre6/yh97roFr35nf50R0p+ppF6M5qlhvAmJtjgeHX1BqPefL6LzIfGyBnciJ/pcWdMh5bSBmZnl799MCzhlMC1z4EygkZLyEzP004ZFLTKt9zId3UE0xxJSYrG9NemW56ypM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756294585; c=relaxed/simple;
-	bh=O3eitJuzRgWQvGyLZYLhgSYK9bUuaYTEpUnbx2RI3Cw=;
+	s=arc-20240116; t=1756294589; c=relaxed/simple;
+	bh=7DgWi9Ar+muJh7bUEGthi/goU1MbjaIxX928e0R2ZyA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LvjRmhvki3E7Waqfkh0UufEum+Gw1FC70v1rhWsfly7c7umV9vL/63JC0x3MFGs1Gpqf2A8vNxETQUFjq61KUe0F6PFVVYgqsj0jQWrB3k0hxjg/0YX/3mKtd/RMfkCdEih3x4AFjek7suob0KpHVkzqaEpo0M6u8ZKoNaeF8YM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hS1kii+C; arc=none smtp.client-ip=209.85.128.179
+	 To:Cc:Content-Type; b=faZ5STSW231b/5MarS0TqDOVPHORpmIbpS5CP+rVOu8L/2X0moXJyvugbTy0+i0wH9cjlbSopTE44kOfpFchnZec74Tp+MQEQiACdH4o8m9qLHRb9FzJsbWsmmkeioNHYbi4qPauy8LQG6uNEANWCil4S/19SJp2IW+5fi65sbw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UeKwvRDT; arc=none smtp.client-ip=209.85.219.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-71fd1f94ad9so55185027b3.1
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 04:36:23 -0700 (PDT)
+Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e95380515bbso887120276.0
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 04:36:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756294583; x=1756899383; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1756294586; x=1756899386; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=k2Qz3JJGsL9D4wGHU3rCYyDRlWinL/Eb1in8wszcbu8=;
-        b=hS1kii+CvdC/RmnaEcVeTvbT/J+l3vql5gZL5cEMtV6joyCIL1LB6eqY8S28VyGocX
-         cTI0ci4rJT1sbVUs+EYO21VR+M6DwiyiCE/Zn7NyT3TELcpxIm5c07W+V/uHANZZViy8
-         1YyaNyILwCifDiuzWq13tKM/ZLPnxOMOqUJpv/9zdGGSEJUav16gibZCB9S6ajWQx7V6
-         zpyO6N3uBFwtmXEXWdJkpSEoT6mhXuz2oFIhqHmNHzGhkv8RHWj6SIE4ee1+RG/w8qmj
-         dBhx05qRb9h7T9opu3ev+XKY6/Y7OqsE9s+yat7cmsTpCZm69UNZkm2beLPOng+8khVj
-         Cb6w==
+        bh=GshhcYtt+o3ZDmIcVaau5etE7AshjqQLUOLJ46sR/Z0=;
+        b=UeKwvRDT2oRFHLNUWCjPWr7frmH9RCtwRGfpX3jS8x/OZXj+vFkDmXHLeKdi/2OWL3
+         ll+zInzmqzlrfNbM+Okov4Kxc2QS4hxm9lzG0DM737NRsjvhCew46n/Ii6749na/3rGP
+         8gmtmEK2yvhnYFlSIOpH6aa4XASNTwsz+TjcHhfThDw8wK/wFQK++4xCJf2sS9MYzCwO
+         UAYWuTfGNuSN5izqp+VuJYtdPvgeMS/x3lKsWYmTmhA5j6Wjl++EV9narUTvWYZ/tDOR
+         jvNUmNnAPnH6x8QoZGA/l9OG++GQsv6H7MfD9pM+bEZ2G56Hbcu0tw2BlHvbwmf/afcv
+         2I4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756294583; x=1756899383;
+        d=1e100.net; s=20230601; t=1756294586; x=1756899386;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=k2Qz3JJGsL9D4wGHU3rCYyDRlWinL/Eb1in8wszcbu8=;
-        b=v845VvrppusoKn2Z5qBJe/qXSYJhJNfi0kEAvRTgIPpQKEu5XQCypjCveGzCQjV6ne
-         958RnzlDOK2NTktfU6Gc5CnZ1F7T402XJ4TjdL/K//5H6LYwD/rZnSdRaSCGGORx2oeb
-         G/vQmxSDSDppCZAzqvog0LjSeE91YlUGTbAA3Oo/P+DMw018NCcp9Cit9m6AnJkna6AB
-         fgYIEA0CK3IE8jGd5wdAh16TJnmMZyKbej4Y55rWkI6x67sobh2SufIHrPdC54V+a5K5
-         UXCjs52NlxGkwxjm5i5f4QClmCxul8EzUMk/unbPQ0DDKm7eGWJIrMtfHj3ROhTqAiXF
-         aC+w==
-X-Forwarded-Encrypted: i=1; AJvYcCWSImqdD457SkKqVjpO4LHxwGgZ7NGiVOTTVXssgCPWgdHD2HM7+XvGi9IqmqOJPMm1r/rq6AfS17vEC+Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywt58dUuNb+d4A9pqUQrXNOMs1Y29ablBNZDsjAUz50+qwe0ehn
-	PmbLjI6iiclTy1wdc60i3iD5siLHQpMoHmLHH5FEfY3w8gWMFyjCox3OTVhMQIDjZMvP2Mmc302
-	4gsgXUhlsLItuu5tLU86MiW5/X9bDX/A/noU5BlBWhw==
-X-Gm-Gg: ASbGncsCtQXI+SNmOjQiUGVNANsMA+7zvGP6x1K1kjHXO8nTbOtB+RWq3cI2PFd7Wcb
-	/SPUpOqAuAOE+WvU7akG2rSQg2Yq1mAQjOdMhjSUHomjUlkOathj2rBvIH/XgxYtpPaXGWOMLmf
-	41MR8L5J+KtNulzYBd0UMqeLYy94j8+fwogwKJ07LSKYDXot2fNwJ2vtxt9Fne0ctEzsEIpdjRV
-	rnUwCU=
-X-Google-Smtp-Source: AGHT+IEvLsgiZP7XEk06VdymfjjP/GKZtm7qPUIkTeqQ/AIuhvAjkYwilz8JYTzsvz85xP1BdCKItz/6+FVSXGE/AUY=
-X-Received: by 2002:a05:690c:f8c:b0:720:b0b0:e4fc with SMTP id
- 00721157ae682-720b0b0ecd0mr124195827b3.47.1756294582929; Wed, 27 Aug 2025
- 04:36:22 -0700 (PDT)
+        bh=GshhcYtt+o3ZDmIcVaau5etE7AshjqQLUOLJ46sR/Z0=;
+        b=NiHc0rEvCeOQh7CFOkG6Cn+HJBAQVXAeYe9FoncHnXzWNVgkYVq6Q2d2cbOKhBs060
+         +S7F7Ev381qfSOD8eOEsZiy+o17eCKkvZJFxyO7v+66I0S+ZEyLSpRfCJQ8b8Lrz7+IG
+         DyN6SPkoilvFOt7hMVj8QnftgLR4BA/4PA6K/XCpDK04NONUZiLBf2z6bgPG/ltuOFlV
+         cT20AEMWlohTN+kaBM4/KI4IYaHG4tmcLD2oBopyhTjDjh8o/dYZDkvlvv1f4k8bjbYG
+         V4CyJMKmHs9KljmO7cxTcMNLZ/dKEV5RclYhS2lG90n24xAFA7sq9rU9ycVcCe8srd/f
+         RLKw==
+X-Forwarded-Encrypted: i=1; AJvYcCWqhP0mLF8B3LF1ziVCh1Z5yDLGxjEo1O4X9rygMS7E4abZ/5Z7PZ/iQCoiYtxbi4rp6/gG3FNkKkxmjtk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXC4fAkU4wg9uepC4PoE0ZY9H68j4wp+T+tj7x5sGCsSsdVQ1j
+	1LCscAAwl1c7LeXTSZ5k480QBNgKMA/SmZ/FaFwvxSO7TdDunMLKGxph0qnHVxRbDTUoMy30gYy
+	REK8iZBp+gc3KMI6jabCcq5hlF90835p6g8I1oo4Gig==
+X-Gm-Gg: ASbGncvjd36f7eDSQXTbz5gEhwlPLw1h12r5gQUAIxPqh5pJiMDKWxVq8B8/RGhz+3r
+	73FHxVx+RRzkoweNGUxFEW0WN1pNVRjE83INkqwYQgL2TLWbHoO18HJWVFxr7UM4ef8AfWWy0pM
+	dnu8WhbPkIc49Se/1wkZFqY4zuc3a8eAsfPvn7w9YbXBwuYZvkPVI9AGjHODSWZISWANzHocvKN
+	6qVscg=
+X-Google-Smtp-Source: AGHT+IEwpDhJVx3Yl2d4M0O6aQEx5FPVAE8W+0jG/YLPEbLIVnOLY5mPjFCLx+9t9be+kKBCeaxYCmRkzaS3+hd6ajY=
+X-Received: by 2002:a05:690c:9502:b0:71b:9230:1bc3 with SMTP id
+ 00721157ae682-72132cd7acamr49387147b3.19.1756294585993; Wed, 27 Aug 2025
+ 04:36:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250827101506.927787-1-claudiu.beznea.uj@bp.renesas.com>
-In-Reply-To: <20250827101506.927787-1-claudiu.beznea.uj@bp.renesas.com>
+References: <20250827101612.928008-1-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20250827101612.928008-1-claudiu.beznea.uj@bp.renesas.com>
 From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Wed, 27 Aug 2025 13:35:45 +0200
-X-Gm-Features: Ac12FXyeLWZsA4yj1i4EFlwBfynQt-VM2iAbtltGQ9rN5JyNKFyZEGRlO6FWsGE
-Message-ID: <CAPDyKFq1VAuk-8jT+FzmeOqt4EawJ13e+KhFBVzTqY6QukgYzg@mail.gmail.com>
-Subject: Re: [PATCH] soundwire: bus: Drop dev_pm_domain_detach() call
+Date: Wed, 27 Aug 2025 13:35:50 +0200
+X-Gm-Features: Ac12FXyr06qQfHVq879XFdF-xg_WMRp0LQVO_ATADMZ9_YryOAf4pgR4STFneVc
+Message-ID: <CAPDyKFq7xLJfFBZe2UPfErmntfSSo5kt6UpNQs4+vjWFcMK9rA@mail.gmail.com>
+Subject: Re: [PATCH] spi: Drop dev_pm_domain_detach() call
 To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: vkoul@kernel.org, yung-chuan.liao@linux.intel.com, 
-	pierre-louis.bossart@linux.dev, rafael@kernel.org, 
-	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
+Cc: broonie@kernel.org, rafael@kernel.org, linux-spi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
 	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 27 Aug 2025 at 12:15, Claudiu <claudiu.beznea@tuxon.dev> wrote:
+On Wed, 27 Aug 2025 at 12:16, Claudiu <claudiu.beznea@tuxon.dev> wrote:
 >
 > From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 >
@@ -112,30 +111,41 @@ Uffe
 
 
 > ---
->  drivers/soundwire/bus_type.c | 3 ---
->  1 file changed, 3 deletions(-)
+>  drivers/spi/spi.c | 10 +++-------
+>  1 file changed, 3 insertions(+), 7 deletions(-)
 >
-> diff --git a/drivers/soundwire/bus_type.c b/drivers/soundwire/bus_type.c
-> index bc1e653080d9..91e70cb46fb5 100644
-> --- a/drivers/soundwire/bus_type.c
-> +++ b/drivers/soundwire/bus_type.c
-> @@ -114,7 +114,6 @@ static int sdw_drv_probe(struct device *dev)
+> diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
+> index a388f372b27a..f95c4304df8e 100644
+> --- a/drivers/spi/spi.c
+> +++ b/drivers/spi/spi.c
+> @@ -427,15 +427,13 @@ static int spi_probe(struct device *dev)
+>         if (spi->irq < 0)
+>                 spi->irq = 0;
 >
->         ret = drv->probe(slave, id);
->         if (ret) {
-> -               dev_pm_domain_detach(dev, false);
->                 ida_free(&slave->bus->slave_ida, slave->index);
+> -       ret = dev_pm_domain_attach(dev, PD_FLAG_ATTACH_POWER_ON);
+> +       ret = dev_pm_domain_attach(dev, PD_FLAG_ATTACH_POWER_ON |
+> +                                       PD_FLAG_DETACH_POWER_OFF);
+>         if (ret)
 >                 return ret;
->         }
-> @@ -180,8 +179,6 @@ static int sdw_drv_remove(struct device *dev)
->         if (drv->remove)
->                 ret = drv->remove(slave);
 >
-> -       dev_pm_domain_detach(dev, false);
-> -
->         ida_free(&slave->bus->slave_ida, slave->index);
+> -       if (sdrv->probe) {
+> +       if (sdrv->probe)
+>                 ret = sdrv->probe(spi);
+> -               if (ret)
+> -                       dev_pm_domain_detach(dev, true);
+> -       }
 >
 >         return ret;
+>  }
+> @@ -446,8 +444,6 @@ static void spi_remove(struct device *dev)
+>
+>         if (sdrv->remove)
+>                 sdrv->remove(to_spi_device(dev));
+> -
+> -       dev_pm_domain_detach(dev, true);
+>  }
+>
+>  static void spi_shutdown(struct device *dev)
 > --
 > 2.43.0
 >
