@@ -1,95 +1,181 @@
-Return-Path: <linux-kernel+bounces-788943-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788946-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A56DB38E4F
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 00:24:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEB51B38E50
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 00:24:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E4043A835D
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 22:23:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BCE4936146A
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 22:24:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39C6B313E09;
-	Wed, 27 Aug 2025 22:20:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07E0A311C01;
+	Wed, 27 Aug 2025 22:22:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kWAS25Fq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XVbfkhct"
+Received: from mail-il1-f202.google.com (mail-il1-f202.google.com [209.85.166.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80127313526;
-	Wed, 27 Aug 2025 22:20:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFECA2BEFF3
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 22:22:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756333203; cv=none; b=McmLkAM04OQEYu3X5csPfpoHxKyMZ0r0vMKOVvwp/Sez5CrJxwVAtw6Y9DEhpGXbO2SURrfe6xLWBTN+RHDlDxbtRi6Y5zRvzticGahK+zDv85kczwt09qW4+xrktrJQYuePJFnTImVqDYUrPA76PcYNkvf8KfLQ+tes9wL/7AA=
+	t=1756333368; cv=none; b=Qb+21KZE0g5A7Gv1xgRTUIab6mY8iYCRa0pJLj3OGkEpIGFBkfCYLxTUj0f9Sw80Y5xdM8sm/D59xQnX2x+CQf0+4IYsaPmJBqxTvYes/ktuODcTAnwYW35gzU8rW9OEyiAmjSDVsRgBMerdJX9SewRSvmEfVLfataLs1FUWBss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756333203; c=relaxed/simple;
-	bh=cy2khPxLpItODCFBrKIM3F5DgwZlLBfRmoxGnVBSQFo=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=YP4ZrXSrEPtNrNPxkeZXQ3hR+ygbZNAQhN3+D2HzqZOMF5LGigbhKOmMMkSGkyC4l5robhmBfWVkmrjAd3YY3kKnP4GV3z4e4pkj5KqWCnu6N1ge+hIwt2cBYOWUu4/fiVyoUl63Kcc92ZsbckPave7OAwcbEnbDy6eCCIFN0Kg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kWAS25Fq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9638C4CEF6;
-	Wed, 27 Aug 2025 22:20:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756333202;
-	bh=cy2khPxLpItODCFBrKIM3F5DgwZlLBfRmoxGnVBSQFo=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=kWAS25FqyZcgmY1/znTdZBEulGD0XvAHkeO4MeCoLe4iZqjvbz81SDRxgt0laT47y
-	 l/Ax05tswEmCrdsNNO2lAzbYydRdFtwyOBWYAnHwNkPW+us57gZRs1JSZ8atihwRE5
-	 TR6M7moZTwkxr3CElf8OT4VsxE9jUaQUa40B+K7QOIIIvK4XN3nKNSGJLC63gh4lRT
-	 nrRMGjwWvkKWsDY+h6iUdhZieDXLF2JdEURQe3Ij2+BNTqWR146692soMtiweUH9nX
-	 vUFLifOiazPg2meGbhHo8fxbYaReEa/gxu0iDNt59TxRs31xnxnytd2tcWEwznQA39
-	 YqER4K5lG22cw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70C2F383BF76;
-	Wed, 27 Aug 2025 22:20:10 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1756333368; c=relaxed/simple;
+	bh=+626KgpfrJ+FogqMQ8fyiAgAJgp9+vpE4BpVHswrI+4=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=JEIAJScVdDBr1Xu1hxHQiv8uRZgiZCoWfTiLF1J4QTOJg+GP9fLazbUvy1KqtwC2mSyV93sWaB1KOfhXfbYpi/KQfYiwNKsxaCM1/Yjxs4gSlKONVGJSUHRB8efIIbYn+vdlP1LlthXbPtJ/jaMg96rc6+/Hps4fbZGPlAe3884=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--nkapron.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XVbfkhct; arc=none smtp.client-ip=209.85.166.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--nkapron.bounces.google.com
+Received: by mail-il1-f202.google.com with SMTP id e9e14a558f8ab-3f05a805d9bso9226395ab.2
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 15:22:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1756333365; x=1756938165; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=QRpuOHUSK85pD9q1UCfsgWeV3fHjpk944owcc57Z0q8=;
+        b=XVbfkhct6vdhevQFW3alDJOz9Wlp+fEi72bEtewV3GMdUiR3CmVdUgmoMuV3IUc3VK
+         +zTGXiBxijkLMh1iQGAl/i/5mP8Gk6YZPtALmbacDzdWLpExXysdDORRNNcmMXr7s+KR
+         ijxRoOjxwiJJGjJyLDbbT6s/gfXJw91WYpsJpqL352UeDxhCzbOfiW+6hSHBift1lwJo
+         2jb9QQyM9p5fsUuDWvh5DBzPe5sFw7fa9XvRBQRhIo3hayFdx2lzwwkNEYio5PWdyXmW
+         LsxoCGDDmmGv6Hkwltux+vhSa/PQzHooAT4jdJH1bOLCEIgUTiCzFYwG29iOMr16/pQa
+         xzgw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756333365; x=1756938165;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=QRpuOHUSK85pD9q1UCfsgWeV3fHjpk944owcc57Z0q8=;
+        b=V24cb35+akMWJELhcvqEEfP3lnH83XPxQ9ynp8shlKZvedjud8e8EDoTHoCF5TR8BC
+         I+JNxEI6f1dNTjvEkt9KanNvyDZ3W1278eFRqttbb0bLBCO918BIxOQk/KAwTHcJMD1+
+         82ZRj50EYkqIw6KpG+sw6/SjMuktG86iN17fPT4aO9naWUqiKarEhBbScjXvnDiXhps5
+         XFvtCQ9LCmyvHG/mnXLn9OBhEdk9T1HE51jA0zvYL6ZA1kvfWkJzVGEIbVKfCP4i6Ehc
+         3VB7Bol+PMkX7n0C9Hl/k4AykBOrY6tsg1ul89dERtRE22l54T/sIfv6u6AvsgMmSt21
+         oW0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCW3bymRwerD5Vs1b65XGtIABPcE9+vgeTh/wv0B2FkL/JuuYDuCrBCGX8EYjYTqKrkrigaZj3I9aS/xMIU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzaQC5QdaJcFCVxivzaKS3RVIkx79IsvSbviyH2W2EjpnRiWzFl
+	a4GJd0soAseKAaunqziIzSrJ0WY8pWNRfGE1EymH3heIPPZWBGfL18A96l5w4XOGrdF4ZqHwMCY
+	Z/S997YM6Vw==
+X-Google-Smtp-Source: AGHT+IF/dsncTx9pRy3JGAb5S1g0KuTjPUJJ9aYqA7rq42Lm8oxywmAYxoJnsNPFUm6Yu0fJ/ZUFICxo9wGv
+X-Received: from jabfa12.prod.google.com ([2002:a05:6638:618c:b0:503:6331:8c2])
+ (user=nkapron job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6e02:3cc9:b0:3ef:ae37:528c
+ with SMTP id e9e14a558f8ab-3efae375302mr68853255ab.17.1756333364995; Wed, 27
+ Aug 2025 15:22:44 -0700 (PDT)
+Date: Wed, 27 Aug 2025 22:22:20 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v2] selftests/bpf: Fix typos and grammar in test sources
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <175633320899.857353.7740828137657688567.git-patchwork-notify@kernel.org>
-Date: Wed, 27 Aug 2025 22:20:08 +0000
-References: <20250826125746.17983-1-slopixelz@gmail.com>
-In-Reply-To: <20250826125746.17983-1-slopixelz@gmail.com>
-To: Shubham Sharma <slopixelz@gmail.com>
-Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
- martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
- yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
- sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, mykolal@fb.com,
- shuah@kernel.org, bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.0.318.gd7df087d1a-goog
+Message-ID: <20250827222224.1648500-1-nkapron@google.com>
+Subject: [PATCH v2 1/2] selinux: enable per-file labeling for functionfs
+From: Neill Kapron <nkapron@google.com>
+To: Paul Moore <paul@paul-moore.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
+	Ondrej Mosnacek <omosnace@redhat.com>
+Cc: Neill Kapron <nkapron@google.com>, kernel-team@android.com, 
+	linux-kernel@vger.kernel.org, selinux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hello:
+This patch adds support for genfscon per-file labeling of functionfs
+files as well as support for userspace to apply labels after new
+functionfs endpoints are created.
 
-This patch was applied to bpf/bpf-next.git (master)
-by Andrii Nakryiko <andrii@kernel.org>:
+This allows for separate labels and therefore access control on a
+per-endpoint basis. An example use case would be for the default
+endpoint EP0 used as a restricted control endpoint, and additional
+usb endpoints to be used by other more permissive domains.
 
-On Tue, 26 Aug 2025 18:27:46 +0530 you wrote:
-> From: Shubham Sharma <slopixelz@gmail.com>
-> 
-> Fixed the spelling typo and checked other BPF selftests sources for similar typos.
-> 
-> Follow-up to patch series 990629
-> 
-> v2:Instead of sending multiple tiny patches for minor comment fixes, combined them into a single pass across the affected files.
-> 
-> [...]
+It should be noted that if there are multiple functionfs mounts on a
+system, genfs file labels will apply to all mounts, and therefore will not
+likely be as useful as the userspace relabeling portion of this patch -
+the addition to selinux_is_genfs_special_handling().
 
-Here is the summary with links:
-  - [v2] selftests/bpf: Fix typos and grammar in test sources
-    https://git.kernel.org/bpf/bpf-next/c/d3abefe89740
+This patch introduces the functionfs_seclabel policycap to maintain
+existing functionfs genfscon behavior unless explicitly enabled.
 
-You are awesome, thank you!
+Signed-off-by: Neill Kapron <nkapron@google.com>
+
+Changes since v1:
+- Add functionfs_seclabel policycap
+- Move new functionality to the end of existing lists
+---
+ security/selinux/hooks.c                   | 8 ++++++--
+ security/selinux/include/policycap.h       | 1 +
+ security/selinux/include/policycap_names.h | 1 +
+ security/selinux/include/security.h        | 6 ++++++
+ 4 files changed, 14 insertions(+), 2 deletions(-)
+
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index e474cd7398ef..333bb6cba25e 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -476,7 +476,9 @@ static int selinux_is_genfs_special_handling(struct super_block *sb)
+ 		!strcmp(sb->s_type->name, "rootfs") ||
+ 		(selinux_policycap_cgroupseclabel() &&
+ 		 (!strcmp(sb->s_type->name, "cgroup") ||
+-		  !strcmp(sb->s_type->name, "cgroup2")));
++		  !strcmp(sb->s_type->name, "cgroup2"))) ||
++		(selinux_policycap_functionfs_seclabel() &&
++		 !strcmp(sb->s_type->name, "functionfs"));
+ }
+ 
+ static int selinux_is_sblabel_mnt(struct super_block *sb)
+@@ -741,7 +743,9 @@ static int selinux_set_mnt_opts(struct super_block *sb,
+ 	    !strcmp(sb->s_type->name, "binder") ||
+ 	    !strcmp(sb->s_type->name, "bpf") ||
+ 	    !strcmp(sb->s_type->name, "pstore") ||
+-	    !strcmp(sb->s_type->name, "securityfs"))
++	    !strcmp(sb->s_type->name, "securityfs") ||
++	    (selinux_policycap_functionfs_seclabel() &&
++	     strcmp(sb->s_type->name, "functionfs")))
+ 		sbsec->flags |= SE_SBGENFS;
+ 
+ 	if (!strcmp(sb->s_type->name, "sysfs") ||
+diff --git a/security/selinux/include/policycap.h b/security/selinux/include/policycap.h
+index 7405154e6c42..135a969f873c 100644
+--- a/security/selinux/include/policycap.h
++++ b/security/selinux/include/policycap.h
+@@ -17,6 +17,7 @@ enum {
+ 	POLICYDB_CAP_NETLINK_XPERM,
+ 	POLICYDB_CAP_NETIF_WILDCARD,
+ 	POLICYDB_CAP_GENFS_SECLABEL_WILDCARD,
++	POLICYDB_CAP_FUNCTIONFS_SECLABEL,
+ 	__POLICYDB_CAP_MAX
+ };
+ #define POLICYDB_CAP_MAX (__POLICYDB_CAP_MAX - 1)
+diff --git a/security/selinux/include/policycap_names.h b/security/selinux/include/policycap_names.h
+index d8962fcf2ff9..ff8882887651 100644
+--- a/security/selinux/include/policycap_names.h
++++ b/security/selinux/include/policycap_names.h
+@@ -20,6 +20,7 @@ const char *const selinux_policycap_names[__POLICYDB_CAP_MAX] = {
+ 	"netlink_xperm",
+ 	"netif_wildcard",
+ 	"genfs_seclabel_wildcard",
++	"functionfs_seclabel",
+ };
+ /* clang-format on */
+ 
+diff --git a/security/selinux/include/security.h b/security/selinux/include/security.h
+index 7f19972f7922..0f954a40d3fc 100644
+--- a/security/selinux/include/security.h
++++ b/security/selinux/include/security.h
+@@ -203,6 +203,12 @@ static inline bool selinux_policycap_netlink_xperm(void)
+ 		selinux_state.policycap[POLICYDB_CAP_NETLINK_XPERM]);
+ }
+ 
++static inline bool selinux_policycap_functionfs_seclabel(void)
++{
++	return READ_ONCE(
++		selinux_state.policycap[POLICYDB_CAP_FUNCTIONFS_SECLABEL]);
++}
++
+ struct selinux_policy_convert_data;
+ 
+ struct selinux_load_state {
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.51.0.318.gd7df087d1a-goog
 
 
