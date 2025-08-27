@@ -1,182 +1,149 @@
-Return-Path: <linux-kernel+bounces-788654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A45CB38826
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 18:59:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C588CB3882C
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 19:01:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4BE9F1741C4
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 16:59:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 755E54642ED
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 17:01:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6018C2ED871;
-	Wed, 27 Aug 2025 16:59:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AFAD2EF66E;
+	Wed, 27 Aug 2025 17:00:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Pf7/0Js9"
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="BnZyVOKc"
+Received: from out-188.mta1.migadu.com (out-188.mta1.migadu.com [95.215.58.188])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17ED22BE65E;
-	Wed, 27 Aug 2025 16:59:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBF8B227B9F
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 17:00:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756313965; cv=none; b=r2oi0gSI9irEGSQeWhPkpAZe9fVnp2ZnXRw0F4u9Ed6LQIjBnrTS0YypAMaFWjSHZiZ2si4qv1On5Gsm5cCaOs0ujI1QYztlJNYXJBMuzET6oCAQTJwNxicPCzjkNzwVs9sCJrmmozr5+k8N8/7N+a0CG0isJPmB6GIWbayVh8U=
+	t=1756314046; cv=none; b=XfNok27QZ9mnxfIGqKLtTifn4Qgdzg7J/Rr6vVjNuydspH75MOeXN9jf9O54DrrPLTQyDbZWzOz40CKZNQp20E6kllRTyv/Aezd2AmjcCLF0ZOSj98stR1ibLnvEqtBHpaXE0KHPGI1lCRSiVnHWaBPhfjT1lhOmeeVeWGXm5qI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756313965; c=relaxed/simple;
-	bh=HP+oCFjbaV0ErYQHYOSOr3F3umYVDZHj90JBCgWCcms=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qIvMdXL2aP2v/bzQdVJIKI/Y9ZWXRdyNW560ii21ibwt2KTiGvfC1LcaCeEihbBDEjR120qEgvQ1n0utLobbOU2Kri7llQndnjbIM+WYRztLY+aPg9BlVUAxMeDseA9VAyr9dL5t6BqViJ9qlqWWsvcBHlHp59oUZM7WFmla+78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Pf7/0Js9; arc=none smtp.client-ip=209.85.208.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-3366f66a04cso424171fa.1;
-        Wed, 27 Aug 2025 09:59:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756313962; x=1756918762; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=cSz+0Jdl3rsxgIMqjiE4eLITB/Ptqi8xoIkjq9Q3i9w=;
-        b=Pf7/0Js9wTzUbA2z9j1s0We4psrMER+tLAPobYT1Uzur7QQR2hxzkJL6SIZaCkRpyr
-         w0bEYYDQXU377H4/trsEniu3lKkDLdddYLuMkZrAeA9YNihsGnmSBHkZQr+e0qI/3JIK
-         n2NZUmbXNiwzYYqAFp8DCLW22VfdO7/lh+5TgG1hIpWVlwIL9jCaCGuzk4Og1P1cjWOc
-         yamlOUyOSAxDaF0N9w4lK3tya9CAmHFBFSB1aBS8c3JeZAt0EMbsPpWGgRmT73XDCkbU
-         JKOEPG98pX1Qd89EIVAVIFHuiDZCN8bPc6Oax7u02yUihzLtuTLAstJWLM8lvS9mBbOm
-         fjhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756313962; x=1756918762;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cSz+0Jdl3rsxgIMqjiE4eLITB/Ptqi8xoIkjq9Q3i9w=;
-        b=Z2UHbZQQYFhnAjEFn+9q5xU36xXyqiRxvkk85DUNFY+N+mgdf/JU4I0pGM+4p33Rvs
-         jYN4MWYiNJxX5C+VPFfUSnu9YO6yPwruGXmRFSPtCldceTqV/OpMVX+Jkx3eCGqjBAUs
-         NuRUe5LK4/+KqDz8tLK1HKqpTv+ABxVAGvYPDgISsB7bC4sF/8jq3POJpi4PYqWbOn3c
-         qBbe8sIFvPggj4ioOb01nKICgkBSi+MENWiiyAJH/p7QPtMfgysGRJxX1GrmEf+qYJhJ
-         hqR/tGIV8HTjnN8zwXaXrU5FwK7ZE2Hfn9dTKvYjqovd+tlznLw79ANU6kHC7AANWKor
-         rQ6A==
-X-Forwarded-Encrypted: i=1; AJvYcCUdpn0dhMcBQ+tCH0oNc5b76ZJA5+QqZuYFhZwQxrJWtX/HMpVkJsAmt5bkwseehCwj5i2yCCe0NUWr@vger.kernel.org, AJvYcCUwg6yK+H5GckWR4Vx8Sw5pBzLPHhsab2sO3wROGMNnxUcN5o/BK+BwsedAyMr7aDkY1pg=@vger.kernel.org, AJvYcCVZR65+YMzi9fFsW/8VIKYkLYkuJGcBwwRz1zQ4JA0jniHn6TEcKJO1Mx3LTa2YiWci9yGlX0dJOS9bjpNwRgMmmtmT@vger.kernel.org, AJvYcCXTFe14OJKe/TxdFgwXZVfKeTqLo5lD9SMrN4Ivwr3zxF23re/5xuXLNUMgjVlel+BTvqgTcLCLkPYultSZZw==@vger.kernel.org, AJvYcCXUL+gLHCNVWJspvaxv1bEreKzmqGXQGhGRb4u2GtYQLPc0rtj6KKXbiXCT6a/4y+cFL6drwBS3TKpL1Wnw@vger.kernel.org, AJvYcCXfTETBDKEpCzfIDz2I51gCSDpsWLBkOzxTrP+TvAUI5jopTuZPLlBcRToOIiXNNqP/mqt546XNQLzUSQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/lvOZ2PAfasnZtt5sk80EN915m+AF8QkdmUrzGu9jz+3LJ63R
-	Ev+Uk9fRoTSYQb7t7Wrc/Xn+vv+QZz27g0ceezp4H5ppuFZLbWYo/5D/
-X-Gm-Gg: ASbGncu1tgUGWeXBLTJEH0ZV3nJwZLfv2iKFlZsDuU42ZmkRLSZI2ojSWEG1T1AibKq
-	pPj5cmYzaZDKXd+Pu0PMtTKVxIB4lcues6uMBMvwJMUBE7YnSIfzSDxPlVPrgIwHzfhikbEvFZL
-	ZNGOTSzBLewkzWwBH/FhsON7SunEy3joyhNS2iXwruuizfMNK5+qIuOsnlXhODMxDbg1B/rajBl
-	w2MD6uiW7igXDagOws1AX9pxJnNle1+XAIbprKNsFNy35JU99r/wX/Fd7IPj+i6Sj1HxnAs8s/J
-	csEwSWQxAajHYy+mbYl2IRFi6BRNOZdEPE1/hWnjDfGtWrXK9h8erw9o1GcFVutIRfqohp52GQ9
-	xaWAE6hoXrvDl+SJ/wFsa7dhwMQ4+P+Kvfl/xe0hDlmv/cpBJvMiJ
-X-Google-Smtp-Source: AGHT+IG4BeCx/VIPO9rnbCc0YcRdZMlua4eVbdX3PpKt/fKDdzrBfr7yiiTFTWfK/4UfPVTpR7vpyQ==
-X-Received: by 2002:a2e:be03:0:b0:336:7eed:2f8f with SMTP id 38308e7fff4ca-3367eed3c67mr29987221fa.32.1756313961794;
-        Wed, 27 Aug 2025 09:59:21 -0700 (PDT)
-Received: from pc636 (host-90-233-205-219.mobileonline.telia.com. [90.233.205.219])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3365e5da244sm27443611fa.58.2025.08.27.09.59.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Aug 2025 09:59:21 -0700 (PDT)
-From: Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
-Date: Wed, 27 Aug 2025 18:59:16 +0200
-To: Kees Cook <kees@kernel.org>
-Cc: Uladzislau Rezki <urezki@gmail.com>, Mike Rapoport <rppt@kernel.org>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Harry Yoo <harry.yoo@oracle.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	"David S . Miller" <davem@davemloft.net>,
-	Andreas Larsson <andreas@gaisler.com>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Peter Xu <peterx@redhat.com>, David Hildenbrand <david@redhat.com>,
-	Zi Yan <ziy@nvidia.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
-	Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
-	Xu Xin <xu.xin16@zte.com.cn>,
-	Chengming Zhou <chengming.zhou@linux.dev>,
-	Hugh Dickins <hughd@google.com>, Vlastimil Babka <vbabka@suse.cz>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>, Rik van Riel <riel@surriel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>, John Hubbard <jhubbard@nvidia.com>,
-	Muchun Song <muchun.song@linux.dev>,
-	Oscar Salvador <osalvador@suse.de>, Jann Horn <jannh@google.com>,
-	Pedro Falcato <pfalcato@suse.de>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Qi Zheng <zhengqi.arch@bytedance.com>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, kvm@vger.kernel.org,
-	sparclinux@vger.kernel.org, linux-sgx@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	nvdimm@lists.linux.dev, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] mm: update core kernel code to use vm_flags_t
- consistently
-Message-ID: <aK85ZPVwBIv-sH85@pc636>
-References: <cover.1750274467.git.lorenzo.stoakes@oracle.com>
- <d1588e7bb96d1ea3fe7b9df2c699d5b4592d901d.1750274467.git.lorenzo.stoakes@oracle.com>
- <aIgSpAnU8EaIcqd9@hyeyoo>
- <73764aaa-2186-4c8e-8523-55705018d842@lucifer.local>
- <aIkVRTouPqhcxOes@pc636>
- <69860c97-8a76-4ce5-b1d6-9d7c8370d9cd@lucifer.local>
- <aJCRXVP-ZFEPtl1Y@pc636>
- <aJHQ9XCLtibFjt93@kernel.org>
- <aJItxJNfn8B2JBbn@pc636>
- <202508251436.762035B@keescook>
+	s=arc-20240116; t=1756314046; c=relaxed/simple;
+	bh=9yqufHvxMyqOIuBjpYx/ib/8sJw+wS8Coz+Mudh6V4c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EbP8lRMA/8lFs14W3mjsuZBq8h9LW4HHOE3X/0tboROKpXw+Hnmfu0afkE7NniVot63bj8fT5OquNrnB6q6ow0ME8GuZhA1PF+MqMttcFRqyFSuwoz+q481SrXD/TYxV5jvS/BteuTFDp/tujai2A4HiZOM/VUsKx/2OBMEYn+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=BnZyVOKc; arc=none smtp.client-ip=95.215.58.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <a3dabb42-efb5-4aea-8bf8-b3d5ae26dfa1@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1756314032;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MQB/6JVMGJQhxdK5s0Uv3W7F4OgykgH3Ou1OA3AP5Y4=;
+	b=BnZyVOKc0NcNLarruwwAHzn5UmenXPlIhhYZuCnflHrxe23c1TDsaNxyXgcjd0IVH2gFPy
+	b35nkqWPRPgvGzGes8DbFsVDbmlaC/kqS3pwpTnaB+Yu8TILtgdWPg+MY74EN4CbgHW8No
+	ON9WhcLpsDOvhEi19s8QZ836ZkzOkxk=
+Date: Wed, 27 Aug 2025 10:00:10 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <202508251436.762035B@keescook>
+Subject: Re: [PATCH] bpf: Mark kfuncs as __noclone
+Content-Language: en-GB
+To: Eduard Zingerman <eddyz87@gmail.com>, Andrea Righi <arighi@nvidia.com>,
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ Andrii Nakryiko <andrii@kernel.org>
+Cc: Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, David Vernet <void@manifault.com>,
+ bpf@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250822140553.46273-1-arighi@nvidia.com>
+ <86de1bf6-83b0-4d31-904b-95af424a398a@linux.dev>
+ <45c49b4eedc6038d350f61572e5eed9f183b781b.camel@gmail.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yonghong Song <yonghong.song@linux.dev>
+In-Reply-To: <45c49b4eedc6038d350f61572e5eed9f183b781b.camel@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, Aug 25, 2025 at 02:37:11PM -0700, Kees Cook wrote:
-> On Tue, Aug 05, 2025 at 06:13:56PM +0200, Uladzislau Rezki wrote:
-> > I agree. Also it can be even moved under vmalloc.c. There is only one
-> > user which needs it globally, it is usercopy.c. It uses find_vmap_area()
-> > which is wrong. See:
-> > 
-> > <snip>
-> > 	if (is_vmalloc_addr(ptr) && !pagefault_disabled()) {
-> > 		struct vmap_area *area = find_vmap_area(addr);
-> > 
-> > 		if (!area)
-> > 			usercopy_abort("vmalloc", "no area", to_user, 0, n);
-> > 
-> > 		if (n > area->va_end - addr) {
-> > 			offset = addr - area->va_start;
-> > 			usercopy_abort("vmalloc", NULL, to_user, offset, n);
-> > 		}
-> > 		return;
-> > 	}
-> > <snip>
-> > 
-> > we can add a function which just assign va_start, va_end as input
-> > parameters and use them in the usercopy.c. 
-> 
-> Yes please! I'd must rather use some exported validation routine than
-> having it hand-coded in usercopy.c. :)
-> 
-I will do it :)
 
---
-Uladzislau Rezki
+
+On 8/26/25 10:02 PM, Eduard Zingerman wrote:
+> On Tue, 2025-08-26 at 13:17 -0700, Yonghong Song wrote:
+>
+> [...]
+>
+>> I tried with gcc14 and can reproduced the issue described in the above.
+>> I build the kernel like below with gcc14
+>>     make KCFLAGS='-O3' -j
+>> and get the following build error
+>>     WARN: resolve_btfids: unresolved symbol bpf_strnchr
+>>     make[2]: *** [/home/yhs/work/bpf-next/scripts/Makefile.vmlinux:91: vmlinux] Error 255
+>>     make[2]: *** Deleting file 'vmlinux'
+>> Checking the symbol table:
+>>      22276: ffffffff81b15260   249 FUNC    LOCAL  DEFAULT    1 bpf_strnchr.cons[...]
+>>     235128: ffffffff81b1f540   296 FUNC    GLOBAL DEFAULT    1 bpf_strnchr
+>> and the disasm code:
+>>     bpf_strnchr:
+>>       ...
+>>
+>>     bpf_strchr:
+>>       ...
+>>       bpf_strnchr.constprop.0
+>>       ...
+>>
+>> So in symbol table, we have both bpf_strnchr.constprop.0 and bpf_strnchr.
+>> For such case, pahole will skip func bpf_strnchr hence the above resolve_btfids
+>> failure.
+>>
+>> The solution in this patch can indeed resolve this issue.
+> It looks like instead of adding __noclone there is an option to
+> improve pahole's filtering of ambiguous functions.
+> Abstractly, there is nothing wrong with having a clone of a global
+> function that has undergone additional optimizations. As long as the
+> original symbol exists, everything should be fine.
+
+Right. The generated code itself is totally fine. The problem is
+currently pahole will filter out bpf_strnchr since in the symbol table
+having both bpf_strnchr and bpf_strnchr.constprop.0. It there is
+no explicit dwarf-level signature in dwarf for bpf_strnchr.constprop.0.
+(For this particular .constprop.0 case, it is possible to derive the
+  signature. but it will be hard for other suffixes like .isra).
+The current pahole will have strip out suffixes so the function
+name is 'bpf_strnchr' which covers bpf_strnchr and bpf_strnchr.constprop.0.
+Since two underlying signature is different, the 'bpf_strnchr'
+will be filtered out.
+
+I am actually working to improve such cases in llvm to address
+like foo() and foo.<...>() functions and they will have their
+own respective functions. We will discuss with gcc folks
+about how to implement similar approaches in gcc.
+
+
+>
+> Since kfuncs are global, this should guarantee that the compiler does not
+> change their signature, correct? Does this also hold for LTO builds?
+
+Yes, the original signature will not changed. This holds for LTO build
+and global variables/functions will not be renamed.
+
+> If so, when pahole sees a set of symbols like [foo, foo.1, foo.2, ...],
+
+The compiler needs to emit the signature in dwarf for foo.1, foo.2, etc. and this
+is something I am working on.
+
+> with 'foo' being global and the rest local, then there is no real need
+> to filter out 'foo'.
+
+I think the current __noclone approach is okay as the full implementation
+for signature changes (foo, foo.1, ...) might takes a while for both llvm
+and gcc.
+
+>
+> Wdyt?
+>
+> [...]
+
 
