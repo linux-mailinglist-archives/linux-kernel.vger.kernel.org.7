@@ -1,80 +1,92 @@
-Return-Path: <linux-kernel+bounces-788783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788788-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70574B38A3F
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 21:36:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEC5AB38A49
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 21:38:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3CF112069F9
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 19:36:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7C0D680D44
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 19:38:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09B752EC576;
-	Wed, 27 Aug 2025 19:35:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D39B32ED85E;
+	Wed, 27 Aug 2025 19:38:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YJxVAz7z"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JN4D6+OC"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BF9E2E1EF8;
-	Wed, 27 Aug 2025 19:35:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38BF22D481D;
+	Wed, 27 Aug 2025 19:38:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756323354; cv=none; b=J5mBu0x2HBdMQUf3ORHbp3jMJ+vQpQyBZkgQe69+ekabOrXE7Kfwav0sgnbdYlA4mwfTVBSB+QTbYhbRsbrGhYd2EV+GMBlexkn6HniBS940GC/su/nSFVZUzMBh3htFuwvRb4mEHoWZm+dGs40JiV/ZmQGlHiejsGyjWFgAPn4=
+	t=1756323490; cv=none; b=PjuEiBOlLQJrR/hFUNwvoUcO1ka2eXq9mLeNH8Aq3UKJdeMLip58VIsIr9AJhYh3T7d5JlewDqklu6+p4HDGqYHDKqw5ujfu8E9xrmM1HJoIYlIs0HBzOT1E+RkZDODn6EBz5UewS9Au6Gt1OiSQJxOp0GS3St/tsI3DsaHHYyY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756323354; c=relaxed/simple;
-	bh=SJr3fUSj8KlK6TPxxNCOrQqv5Fz+mjuAW5MjX7hMj3s=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=iJsfnjHbQskCGHI1QpcVHtvDps7k87BdH1Iq1lExhLtCBybt7lx9j2GfLodtNCHo4UGluotx+ObUBSo791GfGYCJdwQDCswfRcjx1f0iz5bufNiEz/MBFU9eOLzwyli/UPVzaORoGGgJEfAphOh2Na3jaLfl0LoggcdPG6TG6Hk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YJxVAz7z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1294C4CEEB;
-	Wed, 27 Aug 2025 19:35:51 +0000 (UTC)
+	s=arc-20240116; t=1756323490; c=relaxed/simple;
+	bh=ZImEaWvq1/Y6zubm2SDsVXejBSlaS+jZK0Km2/7ysSo=;
+	h=Message-ID:Date:From:To:Cc:Subject; b=SQydDGnN5edSAUziXohJVskT5CizMjAtNpinZfbx7WoWInT2csdeEk9wETZHH8jB9TtMvvDgGcyxTnENVuTltXLgze4nxUl/X9H4puRs/r0SFC8RIKbal+0eA0mPXEU+rMqsEvbM9Q+xxk2wmRK16F+bdqOr1535Kz4RCDPe7F8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JN4D6+OC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7A33C4CEEB;
+	Wed, 27 Aug 2025 19:38:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756323351;
-	bh=SJr3fUSj8KlK6TPxxNCOrQqv5Fz+mjuAW5MjX7hMj3s=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=YJxVAz7z1OicMRG7IzdbGoVbWLn5TZgnUoLbnWlrBg+MpmA02GWlh58QppVMv4tc5
-	 /+O64a0EBZVh/ZkehBnE+9SOf8hSodQkGgXdL5K+udlIvAL+v+OhdrnI7KToOLlrCb
-	 Ln1gSt5QwY+koOsHLR9uYoTz28jUgkOmaE43/fjkXlOXU0T4E2iIOZWnMeR40YIEwP
-	 ELgtH6pZqLusGRTD4dP0R8qWF414FgFo3+vwnPmpYE/M2VyoFzt3fIAVdshk4H+6OZ
-	 AmrAeroxiZrwM6o5DDauQWcLogX7kAqBPUGm3ux2PYGCF8Z993LLpniVYtBmeMceCu
-	 YGnbOG9Xqrgyg==
-Date: Wed, 27 Aug 2025 14:35:50 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Johan Hovold <johan+linaro@kernel.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-	Manivannan Sadhasivam <mani@kernel.org>, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/3] PCI/pwrctrl: Fix device and OF node leaks
-Message-ID: <20250827193550.GA898664@bhelgaas>
+	s=k20201202; t=1756323489;
+	bh=ZImEaWvq1/Y6zubm2SDsVXejBSlaS+jZK0Km2/7ysSo=;
+	h=Date:From:To:Cc:Subject:From;
+	b=JN4D6+OCqwZoK6/MoMpia8m7QeQg+QUFqYKjlP6DqVkD3KaXVIx7ju1ng9HRAuIwp
+	 6LxSo+DaUkqk9KFHnVa6yV+ljHZ9M9CpBJ8jvIJQtQU4O6HvG/6VKxvXG5L2VQfI9L
+	 GiPriCpG7OLfEO4ZoUxf8fzWSFtK1srGSzBGxqQvEPvsop3fPGHuojyvX6rDcg/1fJ
+	 /zzsrLAWCIMGcbgV/6Webtp4k6RYBH7gMOqXYlZ/pmsE2VANKmrptlqfbG5JBtscR2
+	 Tk2xHFjR9esZ5X4+qVM8MNh8HtIpHT3YrBZ+n1TlvHcARRiO/TMHCRsDqJyR4WBOKK
+	 510Ya+fm/Q2+g==
+Received: from rostedt by gandalf with local (Exim 4.98.2)
+	(envelope-from <rostedt@kernel.org>)
+	id 1urLyW-00000003jGL-1M5E;
+	Wed, 27 Aug 2025 15:38:28 -0400
+Message-ID: <20250827193644.527334838@kernel.org>
+User-Agent: quilt/0.68
+Date: Wed, 27 Aug 2025 15:36:44 -0400
+From: Steven Rostedt <rostedt@kernel.org>
+To: linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org,
+ x86@kernel.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Josh Poimboeuf <jpoimboe@kernel.org>
+Subject: [PATCH v2 0/2] x86: Enable the deferred unwinding infrastructure
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250721153609.8611-1-johan+linaro@kernel.org>
 
-On Mon, Jul 21, 2025 at 05:36:06PM +0200, Johan Hovold wrote:
-> This series fixes some pwrctrl device and OF node leaks spotted while
-> discussing the recent pwrctrl-related (ASPM and probe) regressions on
-> Qualcomm platforms.
-> 
-> Johan
-> 
-> 
-> Johan Hovold (3):
->   PCI/pwrctrl: Fix device leak at registration
->   PCI/pwrctrl: Fix device and OF node leak at bus scan
->   PCI/pwrctrl: Fix device leak at device stop
-> 
->  drivers/pci/bus.c    | 14 +++++++++-----
->  drivers/pci/probe.c  | 19 ++++++++++++++++---
->  drivers/pci/remove.c |  2 ++
->  3 files changed, 27 insertions(+), 8 deletions(-)
+This enables deferred unwinding for x86.
 
-Applied to pci/pwrctrl for v6.18, thanks, Johan!
+Changes since v1: https://lore.kernel.org/linux-trace-kernel/20250820190546.172023727@kernel.org
+
+- Added #include <linux/compat.h> to use user_64bit_mode() in
+  unwind_user.h. When adding this to the ftrace code, it failed to build
+  due to the missing header.
+
+Josh Poimboeuf (1):
+      unwind_user/x86: Enable frame pointer unwinding on x86
+
+Steven Rostedt (1):
+      unwind deferred/x86: Do not defer stack tracing for compat tasks
+
+----
+ arch/x86/Kconfig                   |  1 +
+ arch/x86/include/asm/unwind_user.h | 23 +++++++++++++++++++++++
+ include/linux/unwind_deferred.h    |  5 +++++
+ kernel/unwind/deferred.c           |  3 +++
+ 4 files changed, 32 insertions(+)
+ create mode 100644 arch/x86/include/asm/unwind_user.h
 
