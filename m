@@ -1,95 +1,391 @@
-Return-Path: <linux-kernel+bounces-788619-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788621-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 515FFB3875D
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 18:08:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E210B38764
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 18:08:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12DA13A9CE8
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 16:08:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 197FF1B25EEA
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 16:09:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AE99340D81;
-	Wed, 27 Aug 2025 16:08:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A15934A332;
+	Wed, 27 Aug 2025 16:08:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MFmaoO5+"
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MMC4TSSS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1064F3176E3;
-	Wed, 27 Aug 2025 16:08:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4757E34572A;
+	Wed, 27 Aug 2025 16:08:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756310886; cv=none; b=KT2hwtWuylie7mok407gDKkYUG1jcPmF7eA2iFTo6FhDxkNimCNeDzC1RToWU/1O9JL8audujVtEZm0z14M+5bkCgfzQTtyCJWlwellcegKzwnlcA9VWIdu+0Q0vspFT1ZVQ1aRpPoQI+4VF1JRvsWyh5+LaIr0iXMXIi4I+V6A=
+	t=1756310905; cv=none; b=fB1oc98HL51wqGefYjJQg3mQLu9E5rfMfZy2oAHSwoLDMhhGHuzPAO5+HD52aj4hKwNAx18KZvn0ub1vwdK5nCm+4M+UFcQXBCmMlgYuRTgl+OvObrv6mLDusi7/x7oBKxPFZZZc0iNTbiFRyMNRjrIrGRho/XXTVDul1tuMXUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756310886; c=relaxed/simple;
-	bh=Eo8mcJx96u8VH4jn7nXN0WzI3pTAqmoosY5GMUzgLRE=;
+	s=arc-20240116; t=1756310905; c=relaxed/simple;
+	bh=sByO5WXVMLJSSxDN3MeLMu9UcOAS25+M3YCbGrOAQ5w=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FLyoTs9fqdy1fYU7CfsbzyYhBw+siGwQe4ncwqjQXEbfVPivaE863PPQbpzQdobDreDoX/0bAQgoDiG+gTyJCPAaDmxeDi6eEwnA88te6SQ3mya4B1uwDgq9Thczs2FYQbdms6Prd8JJgkh3Pd2JHYws1X2oVHaYCpaceYOytxY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MFmaoO5+; arc=none smtp.client-ip=209.85.128.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-71d603cebd9so74521267b3.1;
-        Wed, 27 Aug 2025 09:08:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756310884; x=1756915684; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Eo8mcJx96u8VH4jn7nXN0WzI3pTAqmoosY5GMUzgLRE=;
-        b=MFmaoO5+fLMye4h/UhcJYvtYkeHfeU6TgIAVELKkNYf35va7RiUQ1WH2/toWcgMRBP
-         qXfcEdcETUhighjx8zWTL4Pzp7+Jx4UP4qNu04ZKW5S3nBAmmAa6G/CpmnTq8IPAZAST
-         TQkoZMRBQuvWdljNKWrPwToxRXbMA+UWtdfZNAt5XgF3Qn5nyGHyrWwGfC1NgWxE+Rq1
-         GUFoxdfV7XcL1lvniWNseY8vGTIUroxcEMznLClwGrby2TRNCJO7LlRKBag2bmByAnwR
-         9Rsw8omveYdtlYtMbfSnFAcRN17Ztoq8C9rFR4orQXg1Zh+TgNZbTU96vWk5CFR+ZP8u
-         AyQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756310884; x=1756915684;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Eo8mcJx96u8VH4jn7nXN0WzI3pTAqmoosY5GMUzgLRE=;
-        b=asBw/H6yJk8C3jk67skURG+9nhqtO8dhwV0j/A6WMcQNYNVnovzQrH1h41EJjZpLSM
-         ZdLONZF2WqBqOp1RiKDsBKsHOI57RqFdm3ox0rwEVZiJlr4mzL80rw+9DWytjRJoQZLw
-         Az+dnExyQ0fDwMFSR36U7RGDIf8FWm0UyAwPgYMF5t1TiFJ5dW3KlfS4K6BF4cNC22qh
-         kDkZbm1+srata7Jd1MMuSDGCt2BZpRMHpkQuOCE57n0TokPdTdVU1b/dZZgEdNa/o4Db
-         p9OCRJ35lZ3bU6Izgruhv8Vqyl0cj04fisH2nwC6Hhmxbiy8mLbQR24eo/Lv4JMnlJYT
-         rfrw==
-X-Forwarded-Encrypted: i=1; AJvYcCWWBdqN6WWFSplcgL4UrnF0nbdTbc6cUb0BJQ/xuO1sbgAb8QmvKymgmr077JgMqXBxWWlYbaZUl7YMvB2Mqdc=@vger.kernel.org, AJvYcCX+iJKX/btPt5+S6sbXy1cEIFHndxWkZ37KNAksL5Y9KuBOLPypxlFi2ZDH3dgDPG5yPpNzqcHgsx1/Lg==@vger.kernel.org, AJvYcCXyxswLIMdcoJi92gUIi4eIqEYCEfhFfuKRjdRDTRRt5eUVyp/Kmtr5VnF/6hVe+5YMqgJpkhwsc/n129zx@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+vgtZ0fpI6D5C8PeaEfU3aW/EQtX+Hbxp9ouGaRfANgjAGAl2
-	iwZ6QOwXiEj0h0Nz4d1Les7kjLSYn17eWlA2HlB0zGbRtHgXTPwt1f3d8gN9e8cB1yHKPMKVKWC
-	LGGXEqh8KHQRqnPbxc6ppouRgvBVYG8vCOawk
-X-Gm-Gg: ASbGncug8/9RL3sHe618hWdBkBEBIKlUCiI+gAb2DPlBFpB6dxlFu/xFlmcgLht1ADN
-	hVmKTy6CWvMhyGxbUWAUvtxnna4wUo3iOspcp6xx+flhcEVAeD4jlgWql9CHmblVHpUkIUWTXV6
-	vjqnbdzqv/BpExCDtUzwpfl6aITzN50ELmHWYVU2UM5Ln+Y4vRm0o8uiLqcrHlaOmIR13gpVT9a
-	s5SD7nm6m+FKCH8wVs=
-X-Google-Smtp-Source: AGHT+IHhWZApQJf8beg6UJ/2XJqt2rVIO9kFhrGWCFb2fQ3i7gedFrTgbIzKalZ4+LrpLfrbEVLJsP9EpBLFSK6366k=
-X-Received: by 2002:a05:690c:f86:b0:720:5fbc:20c2 with SMTP id
- 00721157ae682-7205fbc3779mr151770777b3.36.1756310883816; Wed, 27 Aug 2025
- 09:08:03 -0700 (PDT)
+	 To:Cc:Content-Type; b=I68V4IjogclBJLQQn6wV7AR477BLhJdd/P4M2K+M0XYRiczylj3kftbsJ5/Oxp+YHab3cuEnhdXc+o0rRF6ZRMibIVomBROtyKkSZYRJPc9ART1rJraxsC4uKgDKshdC6k6o00F2oDpKd7ZUtPugfi7FVjFslkUl34YfCnKQsXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MMC4TSSS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C1D1C4CEF7;
+	Wed, 27 Aug 2025 16:08:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756310905;
+	bh=sByO5WXVMLJSSxDN3MeLMu9UcOAS25+M3YCbGrOAQ5w=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=MMC4TSSSu0gXxL4Xcm7X3P68mdlGtOVNaOUXqEkqauTCJaC69a+L0bQxVQbRgtXGq
+	 SkT3Gv2cksFGq/iw94AvcaWLpUkzhvcRSO98cLdogA9MEk9XrrrxUAu6EvNUWbM1H8
+	 O2VsF5b44CPXlCRl+ByGwtG74gLqzixxneUbLtsiUlzsE6vLd3T2touX3/CnRUuzfw
+	 hIsqZB4PBosbJ2oU9rQr1s6rJrJBpSRO5crWqj6pSKiCh2C3FXMCrSMnm0odlb9hDF
+	 RsvTboBtoaKObT9D3An99UG9ksxMKJX+z5swvRAFAwYI/unEmKwDJK9tN+ega/V47n
+	 zwMnGXkDh6scw==
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-61cb9e039d9so1475993a12.1;
+        Wed, 27 Aug 2025 09:08:25 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUWXN8OglpcI3mhroJN2H6qprKD0dQhUAYDkwZFvLPlskyInGISXsAUCrqt/H9u/rtM8HTZEM0Otpj7CA==@vger.kernel.org, AJvYcCWYDFwitoRObOxg3zYTfE70xuoVEMTpoB438MuotkY95J61Gebj0BAzHXD0vYrsPCgeP4Lkhpy3eVKD@vger.kernel.org
+X-Gm-Message-State: AOJu0YzXxSTfKblUbEbwTc5EIXcv93OUH6IcyzBaJwqVvADG7YPZy1/+
+	daGmL7Dc05MvLuwb5tbzgLPVvY55xl2/RX8ojYmpQcOnC21xkxLSIwHB8uHVEFpHm7dzcO+3PpI
+	3ry9gqfSHKhsTHuuq5oiEebo11KR6ow==
+X-Google-Smtp-Source: AGHT+IFqv6Ng7UWtLQz1bQpYXPMLfkZ5AljMlpdSdbuChrj1GMfasDer/vKIdWdJCxDi5ORdTh7uVMDCQ1ElScMXa1s=
+X-Received: by 2002:a05:6402:27cc:b0:61c:91c1:37e2 with SMTP id
+ 4fb4d7f45d1cf-61c91c13befmr5963193a12.16.1756310903622; Wed, 27 Aug 2025
+ 09:08:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <aK6hbQLyQlvlySf8@kspp> <020f8c5c-c9e4-4ad0-8052-a0b182ded92c@suse.de>
-In-Reply-To: <020f8c5c-c9e4-4ad0-8052-a0b182ded92c@suse.de>
-From: Justin Tee <justintee8345@gmail.com>
-Date: Wed, 27 Aug 2025 09:07:41 -0700
-X-Gm-Features: Ac12FXzYmfdpT-7M3izWgMiP6gup4wu_VmM5HZxYKNrgGaT92_htX_7P3pXBtm4
-Message-ID: <CABPRKS_O7HSvb2-R2B7O64SYmy=n+-E6GdViQG5GwGv3S=8iSg@mail.gmail.com>
-Subject: Re: [PATCH v2] scsi: fc: Avoid -Wflex-array-member-not-at-end warnings
-To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: Hannes Reinecke <hare@suse.de>, Justin Tee <justin.tee@broadcom.com>, 
-	James Smart <james.smart@broadcom.com>, Dick Kennedy <dick.kennedy@broadcom.com>, 
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, 
-	"Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+References: <20250822153048.2287-1-james.morse@arm.com> <20250822153048.2287-15-james.morse@arm.com>
+In-Reply-To: <20250822153048.2287-15-james.morse@arm.com>
+From: Rob Herring <robh@kernel.org>
+Date: Wed, 27 Aug 2025 11:08:10 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqK5HZdyq_6rQibtmDE_H=gy+3aeCSCioA5MHR5+Gh_drQ@mail.gmail.com>
+X-Gm-Features: Ac12FXwmDxRL-eFGpQpbfwfUyBdCUvSfzx1ak3V0nyRWrqa9LPLYA6NMV2maEUo
+Message-ID: <CAL_JsqK5HZdyq_6rQibtmDE_H=gy+3aeCSCioA5MHR5+Gh_drQ@mail.gmail.com>
+Subject: Re: [PATCH 14/33] arm_mpam: Add cpuhp callbacks to probe MSC hardware
+To: James Morse <james.morse@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-acpi@vger.kernel.org, devicetree@vger.kernel.org, 
+	shameerali.kolothum.thodi@huawei.com, 
+	D Scott Phillips OS <scott@os.amperecomputing.com>, carl@os.amperecomputing.com, 
+	lcherian@marvell.com, bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com, 
+	baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>, 
+	Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com, dfustini@baylibre.com, 
+	amitsinght@marvell.com, David Hildenbrand <david@redhat.com>, 
+	Rex Nie <rex.nie@jaguarmicro.com>, Dave Martin <dave.martin@arm.com>, 
+	Koba Ko <kobak@nvidia.com>, Shanker Donthineni <sdonthineni@nvidia.com>, fenghuay@nvidia.com, 
+	baisheng.gao@unisoc.com, Jonathan Cameron <jonathan.cameron@huawei.com>, 
+	Rohit Mathew <rohit.mathew@arm.com>, Rafael Wysocki <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo <guohanjun@huawei.com>, 
+	Sudeep Holla <sudeep.holla@arm.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Danilo Krummrich <dakr@kernel.org>, Lecopzer Chen <lecopzerc@nvidia.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Justin Tee <justin.tee@broadcom.com>
+On Fri, Aug 22, 2025 at 10:32=E2=80=AFAM James Morse <james.morse@arm.com> =
+wrote:
+>
+> Because an MSC can only by accessed from the CPUs in its cpu-affinity
+> set we need to be running on one of those CPUs to probe the MSC
+> hardware.
+>
+> Do this work in the cpuhp callback. Probing the hardware will only
+> happen before MPAM is enabled, walk all the MSCs and probe those we can
+> reach that haven't already been probed.
+>
+> Later once MPAM is enabled, this cpuhp callback will be replaced by
+> one that avoids the global list.
+>
+> Enabling a static key will also take the cpuhp lock, so can't be done
+> from the cpuhp callback. Whenever a new MSC has been probed schedule
+> work to test if all the MSCs have now been probed.
+>
+> CC: Lecopzer Chen <lecopzerc@nvidia.com>
+> Signed-off-by: James Morse <james.morse@arm.com>
+> ---
+>  drivers/resctrl/mpam_devices.c  | 144 +++++++++++++++++++++++++++++++-
+>  drivers/resctrl/mpam_internal.h |   8 +-
+>  2 files changed, 147 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/resctrl/mpam_devices.c b/drivers/resctrl/mpam_device=
+s.c
+> index 5baf2a8786fb..9d6516f98acf 100644
+> --- a/drivers/resctrl/mpam_devices.c
+> +++ b/drivers/resctrl/mpam_devices.c
+> @@ -4,6 +4,7 @@
+>  #define pr_fmt(fmt) "%s:%s: " fmt, KBUILD_MODNAME, __func__
+>
+>  #include <linux/acpi.h>
+> +#include <linux/atomic.h>
+>  #include <linux/arm_mpam.h>
+>  #include <linux/cacheinfo.h>
+>  #include <linux/cpu.h>
+> @@ -21,6 +22,7 @@
+>  #include <linux/slab.h>
+>  #include <linux/spinlock.h>
+>  #include <linux/types.h>
+> +#include <linux/workqueue.h>
+>
+>  #include <acpi/pcc.h>
+>
+> @@ -39,6 +41,16 @@ struct srcu_struct mpam_srcu;
+>  /* MPAM isn't available until all the MSC have been probed. */
+>  static u32 mpam_num_msc;
+>
+> +static int mpam_cpuhp_state;
+> +static DEFINE_MUTEX(mpam_cpuhp_state_lock);
+> +
+> +/*
+> + * mpam is enabled once all devices have been probed from CPU online cal=
+lbacks,
+> + * scheduled via this work_struct. If access to an MSC depends on a CPU =
+that
+> + * was not brought online at boot, this can happen surprisingly late.
+> + */
+> +static DECLARE_WORK(mpam_enable_work, &mpam_enable);
+> +
+>  /*
+>   * An MSC is a physical container for controls and monitors, each identi=
+fied by
+>   * their RIS index. These share a base-address, interrupts and some MMIO
+> @@ -78,6 +90,22 @@ LIST_HEAD(mpam_classes);
+>  /* List of all objects that can be free()d after synchronise_srcu() */
+>  static LLIST_HEAD(mpam_garbage);
+>
+> +static u32 __mpam_read_reg(struct mpam_msc *msc, u16 reg)
+> +{
+> +       WARN_ON_ONCE(reg > msc->mapped_hwpage_sz);
+> +       WARN_ON_ONCE(!cpumask_test_cpu(smp_processor_id(), &msc->accessib=
+ility));
 
-Regards,
-Justin
+These either make __mpam_read_reg uninlined or add 2 checks to every
+register read. Neither seems very good.
+
+> +
+> +       return readl_relaxed(msc->mapped_hwpage + reg);
+> +}
+> +
+> +static inline u32 _mpam_read_partsel_reg(struct mpam_msc *msc, u16 reg)
+> +{
+> +       lockdep_assert_held_once(&msc->part_sel_lock);
+
+Similar thing here.
+
+> +       return __mpam_read_reg(msc, reg);
+> +}
+> +
+> +#define mpam_read_partsel_reg(msc, reg)        _mpam_read_partsel_reg(ms=
+c, MPAMF_##reg)
+> +
+>  #define init_garbage(x)        init_llist_node(&(x)->garbage.llist)
+>
+>  static struct mpam_vmsc *
+> @@ -511,9 +539,84 @@ int mpam_ris_create(struct mpam_msc *msc, u8 ris_idx=
+,
+>         return err;
+>  }
+>
+> -static void mpam_discovery_complete(void)
+
+It is annoying to review things which disappear in later patches...
+
+
+> +static int mpam_msc_hw_probe(struct mpam_msc *msc)
+> +{
+> +       u64 idr;
+> +       int err;
+> +
+> +       lockdep_assert_held(&msc->probe_lock);
+> +
+> +       mutex_lock(&msc->part_sel_lock);
+> +       idr =3D mpam_read_partsel_reg(msc, AIDR);
+
+I don't think AIDR access depends on PART_SEL.
+
+> +       if ((idr & MPAMF_AIDR_ARCH_MAJOR_REV) !=3D MPAM_ARCHITECTURE_V1) =
+{
+> +               pr_err_once("%s does not match MPAM architecture v1.x\n",
+> +                           dev_name(&msc->pdev->dev));
+> +               err =3D -EIO;
+> +       } else {
+> +               msc->probed =3D true;
+> +               err =3D 0;
+> +       }
+> +       mutex_unlock(&msc->part_sel_lock);
+> +
+> +       return err;
+> +}
+> +
+> +static int mpam_cpu_online(unsigned int cpu)
+>  {
+> -       pr_err("Discovered all MSC\n");
+> +       return 0;
+> +}
+> +
+> +/* Before mpam is enabled, try to probe new MSC */
+> +static int mpam_discovery_cpu_online(unsigned int cpu)
+> +{
+> +       int err =3D 0;
+> +       struct mpam_msc *msc;
+> +       bool new_device_probed =3D false;
+> +
+> +       mutex_lock(&mpam_list_lock);
+> +       list_for_each_entry(msc, &mpam_all_msc, glbl_list) {
+> +               if (!cpumask_test_cpu(cpu, &msc->accessibility))
+> +                       continue;
+> +
+> +               mutex_lock(&msc->probe_lock);
+> +               if (!msc->probed)
+> +                       err =3D mpam_msc_hw_probe(msc);
+> +               mutex_unlock(&msc->probe_lock);
+> +
+> +               if (!err)
+> +                       new_device_probed =3D true;
+> +               else
+> +                       break; // mpam_broken
+> +       }
+> +       mutex_unlock(&mpam_list_lock);
+> +
+> +       if (new_device_probed && !err)
+> +               schedule_work(&mpam_enable_work);
+> +
+> +       return err;
+> +}
+> +
+> +static int mpam_cpu_offline(unsigned int cpu)
+> +{
+> +       return 0;
+> +}
+> +
+> +static void mpam_register_cpuhp_callbacks(int (*online)(unsigned int onl=
+ine),
+> +                                         int (*offline)(unsigned int off=
+line))
+> +{
+> +       mutex_lock(&mpam_cpuhp_state_lock);
+> +       if (mpam_cpuhp_state) {
+> +               cpuhp_remove_state(mpam_cpuhp_state);
+> +               mpam_cpuhp_state =3D 0;
+> +       }
+> +
+> +       mpam_cpuhp_state =3D cpuhp_setup_state(CPUHP_AP_ONLINE_DYN, "mpam=
+:online",
+> +                                            online, offline);
+> +       if (mpam_cpuhp_state <=3D 0) {
+> +               pr_err("Failed to register cpuhp callbacks");
+> +               mpam_cpuhp_state =3D 0;
+> +       }
+> +       mutex_unlock(&mpam_cpuhp_state_lock);
+>  }
+>
+>  static int mpam_dt_count_msc(void)
+> @@ -772,7 +875,7 @@ static int mpam_msc_drv_probe(struct platform_device =
+*pdev)
+>         }
+>
+>         if (!err && fw_num_msc =3D=3D mpam_num_msc)
+> -               mpam_discovery_complete();
+> +               mpam_register_cpuhp_callbacks(&mpam_discovery_cpu_online,=
+ NULL);
+>
+>         if (err && msc)
+>                 mpam_msc_drv_remove(pdev);
+> @@ -795,6 +898,41 @@ static struct platform_driver mpam_msc_driver =3D {
+>         .remove =3D mpam_msc_drv_remove,
+>  };
+>
+> +static void mpam_enable_once(void)
+> +{
+> +       mpam_register_cpuhp_callbacks(mpam_cpu_online, mpam_cpu_offline);
+> +
+> +       pr_info("MPAM enabled\n");
+> +}
+> +
+> +/*
+> + * Enable mpam once all devices have been probed.
+> + * Scheduled by mpam_discovery_cpu_online() once all devices have been c=
+reated.
+> + * Also scheduled when new devices are probed when new CPUs come online.
+> + */
+> +void mpam_enable(struct work_struct *work)
+> +{
+> +       static atomic_t once;
+> +       struct mpam_msc *msc;
+> +       bool all_devices_probed =3D true;
+> +
+> +       /* Have we probed all the hw devices? */
+> +       mutex_lock(&mpam_list_lock);
+> +       list_for_each_entry(msc, &mpam_all_msc, glbl_list) {
+> +               mutex_lock(&msc->probe_lock);
+> +               if (!msc->probed)
+> +                       all_devices_probed =3D false;
+> +               mutex_unlock(&msc->probe_lock);
+> +
+> +               if (!all_devices_probed)
+> +                       break;
+> +       }
+> +       mutex_unlock(&mpam_list_lock);
+> +
+> +       if (all_devices_probed && !atomic_fetch_inc(&once))
+> +               mpam_enable_once();
+> +}
+> +
+>  /*
+>   * MSC that are hidden under caches are not created as platform devices
+>   * as there is no cache driver. Caches are also special-cased in
+> diff --git a/drivers/resctrl/mpam_internal.h b/drivers/resctrl/mpam_inter=
+nal.h
+> index 6e0982a1a9ac..a98cca08a2ef 100644
+> --- a/drivers/resctrl/mpam_internal.h
+> +++ b/drivers/resctrl/mpam_internal.h
+> @@ -49,6 +49,7 @@ struct mpam_msc {
+>          * properties become read-only and the lists are protected by SRC=
+U.
+>          */
+>         struct mutex            probe_lock;
+> +       bool                    probed;
+>         unsigned long           ris_idxs[128 / BITS_PER_LONG];
+>         u32                     ris_max;
+>
+> @@ -59,14 +60,14 @@ struct mpam_msc {
+>          * part_sel_lock protects access to the MSC hardware registers th=
+at are
+>          * affected by MPAMCFG_PART_SEL. (including the ID registers that=
+ vary
+>          * by RIS).
+> -        * If needed, take msc->lock first.
+> +        * If needed, take msc->probe_lock first.
+
+Humm. I think this belongs in patch 10.
+
+>          */
+>         struct mutex            part_sel_lock;
+>
+>         /*
+>          * mon_sel_lock protects access to the MSC hardware registers tha=
+t are
+>          * affeted by MPAMCFG_MON_SEL.
+> -        * If needed, take msc->lock first.
+> +        * If needed, take msc->probe_lock first.
+>          */
+>         struct mutex            outer_mon_sel_lock;
+>         raw_spinlock_t          inner_mon_sel_lock;
+> @@ -147,6 +148,9 @@ struct mpam_msc_ris {
+>  extern struct srcu_struct mpam_srcu;
+>  extern struct list_head mpam_classes;
+>
+> +/* Scheduled work callback to enable mpam once all MSC have been probed =
+*/
+> +void mpam_enable(struct work_struct *work);
+> +
+>  int mpam_get_cpumask_from_cache_id(unsigned long cache_id, u32 cache_lev=
+el,
+>                                    cpumask_t *affinity);
+>
+> --
+> 2.20.1
+>
 
