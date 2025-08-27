@@ -1,156 +1,208 @@
-Return-Path: <linux-kernel+bounces-787688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 809E1B379B5
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 07:18:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B193B379BB
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 07:22:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C6B6684FB6
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 05:18:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 48FEC20430F
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 05:22:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90FAD30F53E;
-	Wed, 27 Aug 2025 05:18:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="LIP2ZCZ4"
-Received: from r3-22.sinamail.sina.com.cn (r3-22.sinamail.sina.com.cn [202.108.3.22])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DB9230F944;
+	Wed, 27 Aug 2025 05:21:53 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14A0123CE
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 05:18:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A8841C8606;
+	Wed, 27 Aug 2025 05:21:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756271927; cv=none; b=LzFtHUOezaKBJxPp9xROPUiHd73bWh/dSQhNx5PtBv/CnoyEv7EtW4ZKA18Lv58lWCvvuHxslxWTZx2UHGP4d6PK4cS6J//mMv+/BheyTiFTB3N7hRYaj8hbh3IiTdNnryAHgByrb+IDMf5Mau5Ol78842t3ARhpL8sBG28uwxU=
+	t=1756272112; cv=none; b=Qh5bVGCaSM0yB3q3ybZ2GQ7x5zEyX5EHjSn8h44pQJ/uTpox5vmf0eYACypqhomUBkOp4Cc2T9SRzgtWVCNXSYo8wRdLQBqRocTr4gnqsWnYA9RnIiWRu2WRdoCvSZ8EIOQjiUX6WhqXNFg276Gf/Nm/sGyV3mdVUQ9WhenH5X8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756271927; c=relaxed/simple;
-	bh=ZfBCUJVACqWQM/0EYBDLQqd1x8o6r1ROjnvhRIwi27s=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=oTz6H9xkZGEcVCn7bt/1nz51MzUetXoWoYxImjXtwPW9o4bIsd6u5QwRn6dBUbTwP81q7+D88sgILzIQNjzpxg0Txyi+XRDIL+RTZ/lc3NHB3ZPPIQoz3i2NwuLQJTdYdRrCTYtI/bJ9N+ZysCHrWF/qVzIDJhdykqwFtB7lGMM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=LIP2ZCZ4; arc=none smtp.client-ip=202.108.3.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1756271922;
-	bh=hJcS9m8VlcOPpMTLgwAyv/K4N38i5CP/2R9gVFfEtM4=;
-	h=From:Subject:Date:Message-ID;
-	b=LIP2ZCZ4MtIaRQrrRLEr/RKCUkgBZBNOPmaAe7Ndiv2FPyR5lOJXSG0PMLlFDADG7
-	 i+axOfeeebD0VV8HRGl1vSrbnBW/yJjl1fJaMbDJitmtMyF7kxtm+QnztXJh9TiNk8
-	 25et+574LkM+QmZ3YTb4EK2HHoWnsM4tFpRfXA34=
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
-	by sina.com (10.54.253.33) with ESMTP
-	id 68AE9527000032AC; Wed, 27 Aug 2025 13:18:33 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 4586986685370
-X-SMAIL-UIID: 39959DF5C4E047568ED31FCF40867A52-20250827-131833-1
-From: Hillf Danton <hdanton@sina.com>
-To: syzbot <syzbot+a25ee9d20d31e483ba7b@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [net?] KASAN: slab-use-after-free Write in __xfrm_state_delete
-Date: Wed, 27 Aug 2025 13:18:21 +0800
-Message-ID: <20250827051822.5784-1-hdanton@sina.com>
-In-Reply-To: <68ab6633.050a0220.37038e.0079.GAE@google.com>
-References: 
+	s=arc-20240116; t=1756272112; c=relaxed/simple;
+	bh=VRExz2y98Y4Bks79KG62576slKCC55TnEApk2y1mwr8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tIoi6M2AwxybqbpN8FbmxuGC8FwZbC5JgWsOgZWrB8e8vfYxXFTwuiHDmkkFwttWXtkfWP8gepo3QdJi5IY5Unve19ebj+zWwmSmTatCwoRRULQwx/c9OlupSCObHyzzFDDtuCYY87g9e319J89rKCOISGuepNfMZ3ICqdJgTz4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: b68a31cc830511f0b29709d653e92f7d-20250827
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:34726253-5bea-4e9b-b07f-349fa0556763,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:6493067,CLOUDID:f8fed63546234af68ef13bd91ef320cf,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102,TC:nil,Content:0|52,EDM:
+	-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,
+	AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: b68a31cc830511f0b29709d653e92f7d-20250827
+Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
+	(envelope-from <zhangzihuan@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 1509111154; Wed, 27 Aug 2025 13:21:40 +0800
+Received: from mail.kylinos.cn (localhost [127.0.0.1])
+	by mail.kylinos.cn (NSMail) with SMTP id A2851E008FAA;
+	Wed, 27 Aug 2025 13:21:40 +0800 (CST)
+X-ns-mid: postfix-68AE95E4-5407809
+Received: from [172.25.120.24] (unknown [172.25.120.24])
+	by mail.kylinos.cn (NSMail) with ESMTPA id 0D64DE008FA3;
+	Wed, 27 Aug 2025 13:21:25 +0800 (CST)
+Message-ID: <773da273-4ab7-4672-b4d7-f9c560f3fccc@kylinos.cn>
+Date: Wed, 27 Aug 2025 13:21:25 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 15/18] powercap: dtpm_cpu: Use
+ __free(put_cpufreq_policy) for policy reference
+To: "Rafael J . wysocki" <rafael@kernel.org>,
+ Viresh Kumar <viresh.kumar@linaro.org>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Sean Christopherson <seanjc@google.com>, Paolo Bonzini
+ <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>, Markus Mayer
+ <mmayer@broadcom.com>, Florian Fainelli <florian.fainelli@broadcom.com>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Krzysztof Kozlowski
+ <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>,
+ MyungJoo Ham <myungjoo.ham@samsung.com>,
+ Kyungmin Park <kyungmin.park@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>,
+ Jani Nikula <jani.nikula@linux.intel.com>,
+ Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+ Rodrigo Vivi <rodrigo.vivi@intel.com>, Tvrtko Ursulin
+ <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Daniel Lezcano <daniel.lezcano@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>,
+ Eduardo Valentin <edubezval@gmail.com>, Keerthy <j-keerthy@ti.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: zhenglifeng <zhenglifeng1@huawei.com>, "H . Peter Anvin" <hpa@zytor.com>,
+ Zhang Rui <rui.zhang@intel.com>, Len Brown <lenb@kernel.org>,
+ Nicholas Piggin <npiggin@gmail.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Lukasz Luba <lukasz.luba@arm.com>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Beata Michalska <beata.michalska@arm.com>, Fabio Estevam
+ <festevam@gmail.com>, Pavel Machek <pavel@kernel.org>,
+ Sumit Gupta <sumitg@nvidia.com>,
+ Prasanna Kumar T S M <ptsm@linux.microsoft.com>,
+ Sudeep Holla <sudeep.holla@arm.com>, Yicong Yang <yangyicong@hisilicon.com>,
+ linux-pm@vger.kernel.org, x86@kernel.org, kvm@vger.kernel.org,
+ linux-acpi@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-tegra@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org, imx@lists.linux.dev,
+ linux-omap@vger.kernel.org, linux-mediatek@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20250827023202.10310-1-zhangzihuan@kylinos.cn>
+ <20250827035056.353772-1-zhangzihuan@kylinos.cn>
+From: Zihuan Zhang <zhangzihuan@kylinos.cn>
+In-Reply-To: <20250827035056.353772-1-zhangzihuan@kylinos.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
 
-> Date: Sun, 24 Aug 2025 12:21:23 -0700	[thread overview]
-> syzbot has found a reproducer for the following issue on:
-> 
-> HEAD commit:    b1c92cdf5af3 Merge branch 'net-wangxun-complete-ethtool-co..
-> git tree:       net-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=1411b062580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=67b99ceb67d33475
-> dashboard link: https://syzkaller.appspot.com/bug?extid=a25ee9d20d31e483ba7b
-> compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14221862580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=159fba34580000
+=E5=9C=A8 2025/8/27 11:50, Zihuan Zhang =E5=86=99=E9=81=93:
 
-#syz test
-
---- x/include/net/xfrm.h
-+++ y/include/net/xfrm.h
-@@ -202,6 +202,7 @@ struct xfrm_state {
- 
- 	refcount_t		refcnt;
- 	spinlock_t		lock;
-+	int deleted;
- 
- 	u32			pcpu_num;
- 	struct xfrm_id		id;
---- x/net/xfrm/xfrm_state.c
-+++ y/net/xfrm/xfrm_state.c
-@@ -615,6 +615,7 @@ static void xfrm_state_gc_destroy(struct
- 		put_page(x->xfrag.page);
- 	xfrm_dev_state_free(x);
- 	security_xfrm_state_free(x);
-+	xfrm_state_delete(x);
- 	xfrm_state_free(x);
- }
- 
-@@ -812,10 +813,16 @@ int __xfrm_state_delete(struct xfrm_stat
- 	struct net *net = xs_net(x);
- 	int err = -ESRCH;
- 
--	if (x->km.state != XFRM_STATE_DEAD) {
--		x->km.state = XFRM_STATE_DEAD;
-+	for (;;) {
-+		if (x->km.state != XFRM_STATE_DEAD)
-+			x->km.state = XFRM_STATE_DEAD;
- 
- 		spin_lock(&net->xfrm.xfrm_state_lock);
-+		if (x->deleted) {
-+			spin_unlock(&net->xfrm.xfrm_state_lock);
-+			return 0;
-+		}
-+		x->deleted++;
- 		list_del(&x->km.all);
- 		hlist_del_rcu(&x->bydst);
- 		hlist_del_rcu(&x->bysrc);
-@@ -929,22 +936,28 @@ int xfrm_state_flush(struct net *net, u8
- 	err = -ESRCH;
- 	for (i = 0; i <= net->xfrm.state_hmask; i++) {
- 		struct xfrm_state *x;
-+		bool dead;
- restart:
- 		hlist_for_each_entry(x, net->xfrm.state_bydst+i, bydst) {
- 			if (!xfrm_state_kern(x) &&
- 			    xfrm_id_proto_match(x->id.proto, proto)) {
--				xfrm_state_hold(x);
-+				dead = x->km.state == XFRM_STATE_DEAD;
- 				spin_unlock_bh(&net->xfrm.xfrm_state_lock);
- 
--				err = xfrm_state_delete(x);
-+				if (dead) {
-+			flush:
-+					schedule_work(&xfrm_state_gc_work);
-+					flush_work(&xfrm_state_gc_work);
-+					spin_lock_bh(&net->xfrm.xfrm_state_lock);
-+					goto restart;
-+				}
-+				err = 0;
- 				xfrm_audit_state_delete(x, err ? 0 : 1,
- 							task_valid);
- 				xfrm_state_put(x);
- 				if (!err)
- 					cnt++;
--
--				spin_lock_bh(&net->xfrm.xfrm_state_lock);
--				goto restart;
-+				goto flush;
- 			}
- 		}
- 	}
---
+> Replace the manual cpufreq_cpu_put() with __free(put_cpufreq_policy)
+> annotation for policy references. This reduces the risk of reference
+> counting mistakes and aligns the code with the latest kernel style.
+>
+> No functional change intended.
+>
+> Signed-off-by: Zihuan Zhang <zhangzihuan@kylinos.cn>
+> ---
+>   drivers/powercap/dtpm_cpu.c | 24 +++++++-----------------
+>   1 file changed, 7 insertions(+), 17 deletions(-)
+>
+> diff --git a/drivers/powercap/dtpm_cpu.c b/drivers/powercap/dtpm_cpu.c
+> index 99390ec1481f..65117569d0f3 100644
+> --- a/drivers/powercap/dtpm_cpu.c
+> +++ b/drivers/powercap/dtpm_cpu.c
+> @@ -144,19 +144,16 @@ static int update_pd_power_uw(struct dtpm *dtpm)
+>   static void pd_release(struct dtpm *dtpm)
+>   {
+>   	struct dtpm_cpu *dtpm_cpu =3D to_dtpm_cpu(dtpm);
+> -	struct cpufreq_policy *policy;
+> +	struct cpufreq_policy *policy __free(put_cpufreq_policy);
+>  =20
+>   	if (freq_qos_request_active(&dtpm_cpu->qos_req))
+>   		freq_qos_remove_request(&dtpm_cpu->qos_req);
+>  =20
+>   	policy =3D cpufreq_cpu_get(dtpm_cpu->cpu);
+> -	if (policy) {
+> +	if (policy)
+>   		for_each_cpu(dtpm_cpu->cpu, policy->related_cpus)
+>   			per_cpu(dtpm_per_cpu, dtpm_cpu->cpu) =3D NULL;
+>  =20
+> -		cpufreq_cpu_put(policy);
+> -	}
+> -
+>   	kfree(dtpm_cpu);
+>   }
+>  =20
+> @@ -192,7 +189,7 @@ static int cpuhp_dtpm_cpu_online(unsigned int cpu)
+>   static int __dtpm_cpu_setup(int cpu, struct dtpm *parent)
+>   {
+>   	struct dtpm_cpu *dtpm_cpu;
+> -	struct cpufreq_policy *policy;
+> +	struct cpufreq_policy *policy __free(put_cpufreq_policy);
+>   	struct em_perf_state *table;
+>   	struct em_perf_domain *pd;
+>   	char name[CPUFREQ_NAME_LEN];
+> @@ -207,16 +204,12 @@ static int __dtpm_cpu_setup(int cpu, struct dtpm =
+*parent)
+>   		return 0;
+>  =20
+>   	pd =3D em_cpu_get(cpu);
+> -	if (!pd || em_is_artificial(pd)) {
+> -		ret =3D -EINVAL;
+> -		goto release_policy;
+> -	}
+> +	if (!pd || em_is_artificial(pd))
+> +		return -EINVAL;
+>  =20
+>   	dtpm_cpu =3D kzalloc(sizeof(*dtpm_cpu), GFP_KERNEL);
+> -	if (!dtpm_cpu) {
+> -		ret =3D -ENOMEM;
+> -		goto release_policy;
+> -	}
+> +	if (!dtpm_cpu)
+> +		return -ENOMEM;
+>  =20
+>   	dtpm_init(&dtpm_cpu->dtpm, &dtpm_ops);
+>   	dtpm_cpu->cpu =3D cpu;
+> @@ -239,7 +232,6 @@ static int __dtpm_cpu_setup(int cpu, struct dtpm *p=
+arent)
+>   	if (ret < 0)
+>   		goto out_dtpm_unregister;
+>  =20
+> -	cpufreq_cpu_put(policy);
+>   	return 0;
+>  =20
+>   out_dtpm_unregister:
+> @@ -251,8 +243,6 @@ static int __dtpm_cpu_setup(int cpu, struct dtpm *p=
+arent)
+>   		per_cpu(dtpm_per_cpu, cpu) =3D NULL;
+>   	kfree(dtpm_cpu);
+>  =20
+> -release_policy:
+> -	cpufreq_cpu_put(policy);
+>   	return ret;
+>   }
+>  =20
+I accidentally sent a duplicate patch in the series.
+Please ignore the extra one, sorry for the noise.
 
