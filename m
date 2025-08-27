@@ -1,114 +1,302 @@
-Return-Path: <linux-kernel+bounces-788635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78B48B387A5
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 18:19:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B098DB387A8
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 18:20:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 455A4200067
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 16:19:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60EED1887F37
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 16:20:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8EE5221FC6;
-	Wed, 27 Aug 2025 16:19:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="kRQ4X/VM"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DE6A2116E9
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 16:19:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9115E26AA93;
+	Wed, 27 Aug 2025 16:19:45 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC98022F177;
+	Wed, 27 Aug 2025 16:19:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756311581; cv=none; b=qaRv97Lfci/A4jEVMWWxh0/GKc4hTLEtFt6sT45CXqEnOiVcZDD6YgN2gZDKEOxtwywKUyGsfXN6kIOo0h7/q9v2tYMyBAYjSMykJnBh+vHgvY9aHx68gh2RA9B/UREyaeNQUBfYugpUX1sshLKwKggeVXN7kDGgmac8EzeFnH0=
+	t=1756311585; cv=none; b=J2RQl40JTZyS15c+KqsPycuJKdyOkz/pd7VVHXs+TDu5Yljet/Vpsu1anQ7voAWNfpe0OL+oH+fSaXzU/9P1tS1NyDZgfhnpFuQAAD6E/zPXlG1Nf02rXkA+GbKUz4m+a+EBaeQslhuilx4dCXO7NJ2OrAMw/BY7dLObT1Soi8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756311581; c=relaxed/simple;
-	bh=3s8bXXoivjIzQPKuvc7/X3X+0XhuF3Ct3mOZI7JDsMM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Us4bmOyexWYGBAK2uDt3goDzWWlBUDAeTQdy8wjwJTCb0iBVkbsilcGWH/wWy20M8Dp7ioJa94JeLW0iL+CtKOTC3vtspfrXHzJqUh/gJxYvf4lX+vaH2nrQEgcpmRo8kmdXyIEEWtWN2ixEr+ZuEWzYnrbvPnNSZ4PG/pocaMA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=kRQ4X/VM; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 260C440E015D;
-	Wed, 27 Aug 2025 16:19:37 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id MzNTIKyuC-QO; Wed, 27 Aug 2025 16:19:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1756311573; bh=0mTubuDuBOdzn3vuvCYOukqWpIN+hiaMClsl75yAPoI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kRQ4X/VMJskIPT2KlgQTYpdZPqJEwRDGdWIIkcKWbWUh7NfTGjoyXAh876bGCtKmy
-	 lLTO2ifQ+XURQ0i0BUav6Etkr2qdn3xij5x4OjfcnlcYTdh134qB2OGzEr/d79KFRF
-	 9Rok8SN2jkUCgEb00yUYIVz1scBSBs6BCB3Nvm3dHHfhQOivNMrOh3rhTWBBTyrGUZ
-	 Vrp4L61VqC+cM+gsmxZ7td5YjTqNAYiE/0T4HMllT0cUFL9uwKHV/UOyzHMZnRep6E
-	 Nelroo5FctYoZokbIq7jMZNK+ShYl49XuNovSEBtG8/1U7P7Eqw1LfdleoEUB4bWxD
-	 uziACtwzDEHLm2HL4vlkBOlkWg7jTBFRlawuCZsZrrsXp9YmDfkfC5iiDOKYy2xTpY
-	 t66siDQ84kQxjznjaLS5Cbfi4sMOmsuLMZ/V5kgdfutKsxx66kR2f730OO+mbiTB+I
-	 GMTjRnWAQVGSAhjruXicp9tCJ+YENMPYQNICeIamyGi5TN+CsLnRLFTcfvP4rcsWSk
-	 lb7Adp3blycVezm9a1RHsM8KNMS9ROCI9L7FzmvX42n+ieiXVadBgpO3vh4nVzebb8
-	 u8fJx5YzI4OjG9SF9rh466zbEa5KAK5+lApQvrNFtfS2JerwamVqGzU0jAjmEOe76R
-	 gaJ66XluCC21eGY7IKEJkQTE=
-Received: from zn.tnic (pd953092e.dip0.t-ipconnect.de [217.83.9.46])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id ABE6D40E00DD;
-	Wed, 27 Aug 2025 16:19:23 +0000 (UTC)
-Date: Wed, 27 Aug 2025 18:19:22 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: "Kaplan, David" <David.Kaplan@amd.com>
-Cc: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"x86@kernel.org" <x86@kernel.org>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 4/5] x86/bugs: Add attack vector controls for SSB
-Message-ID: <20250827161922.GMaK8wCgjLqqVvHqSw@fat_crate.local>
-References: <7vo33zwvn2wz74fg7wuflrr2gnhlkn7hwaziuzkk7brrp2morh@ltbtredcwb5x>
- <20250827102754.GHaK7dqivnNnQsWGeS@fat_crate.local>
- <20250827110403.GFaK7mIxwsQ9IF7ML8@fat_crate.local>
- <LV3PR12MB92655023C50A92BE30D7A8049438A@LV3PR12MB9265.namprd12.prod.outlook.com>
- <20250827142225.GIaK8UoYo-rnR9T2OD@fat_crate.local>
- <LV3PR12MB9265934929BC29E635C39EDD9438A@LV3PR12MB9265.namprd12.prod.outlook.com>
- <20250827153358.GJaK8lZm3cggYDbw2C@fat_crate.local>
- <LV3PR12MB9265ABD1B81D759A618A20029438A@LV3PR12MB9265.namprd12.prod.outlook.com>
- <20250827161159.GKaK8uTy8aW6Xl7UCr@fat_crate.local>
- <LV3PR12MB926507DF8A992FA953F22E099438A@LV3PR12MB9265.namprd12.prod.outlook.com>
+	s=arc-20240116; t=1756311585; c=relaxed/simple;
+	bh=xBM+loesgjbHRQ22XIXRGQwNrGCfWcfwc3CKKmZVUrk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=amDHtCCcwpNDFCUPd4i46YKIPDfg8xmfYuCLoSJNswr/7oC4/j7PfHAngsdok6cBSnkg2ySAEsmGg9ebmcMMx5c+L3OWtS1oeDakBGQoUtrGvHAA2sIPKrvIHvhp8lVkGdMLRx0aTS/9+l8V1RMEMJIzxHUeM0LfoJZOzfPX6ko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BE2E9152B;
+	Wed, 27 Aug 2025 09:19:33 -0700 (PDT)
+Received: from [10.1.196.46] (e134344.arm.com [10.1.196.46])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CEF773F738;
+	Wed, 27 Aug 2025 09:19:36 -0700 (PDT)
+Message-ID: <1c20a5b2-2afe-4084-9494-a994e1a275b7@arm.com>
+Date: Wed, 27 Aug 2025 17:19:35 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <LV3PR12MB926507DF8A992FA953F22E099438A@LV3PR12MB9265.namprd12.prod.outlook.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 19/33] arm_mpam: Reset MSC controls from cpu hp callbacks
+To: James Morse <james.morse@arm.com>, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-acpi@vger.kernel.org,
+ devicetree@vger.kernel.org
+Cc: shameerali.kolothum.thodi@huawei.com,
+ D Scott Phillips OS <scott@os.amperecomputing.com>,
+ carl@os.amperecomputing.com, lcherian@marvell.com,
+ bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
+ baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
+ Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
+ dfustini@baylibre.com, amitsinght@marvell.com,
+ David Hildenbrand <david@redhat.com>, Rex Nie <rex.nie@jaguarmicro.com>,
+ Dave Martin <dave.martin@arm.com>, Koba Ko <kobak@nvidia.com>,
+ Shanker Donthineni <sdonthineni@nvidia.com>, fenghuay@nvidia.com,
+ baisheng.gao@unisoc.com, Jonathan Cameron <jonathan.cameron@huawei.com>,
+ Rob Herring <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
+ Rafael Wysocki <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo
+ <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Danilo Krummrich <dakr@kernel.org>
+References: <20250822153048.2287-1-james.morse@arm.com>
+ <20250822153048.2287-20-james.morse@arm.com>
+From: Ben Horgan <ben.horgan@arm.com>
+Content-Language: en-US
+In-Reply-To: <20250822153048.2287-20-james.morse@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Aug 27, 2025 at 04:15:18PM +0000, Kaplan, David wrote:
-> LGTM.  Just make sure to update the commit description since it no longer is
-> adding an AUTO mitigation.
+Hi James,
 
-I have this now:
+On 8/22/25 16:30, James Morse wrote:
+> When a CPU comes online, it may bring a newly accessible MSC with
+> it. Only the default partid has its value reset by hardware, and
+> even then the MSC might not have been reset since its config was
+> previously dirtyied. e.g. Kexec.
+> 
+> Any in-use partid must have its configuration restored, or reset.
+> In-use partids may be held in caches and evicted later.
+> 
+> MSC are also reset when CPUs are taken offline to cover cases where
+> firmware doesn't reset the MSC over reboot using UEFI, or kexec
+> where there is no firmware involvement.
+> 
+> If the configuration for a RIS has not been touched since it was
+> brought online, it does not need resetting again.
+> 
+> To reset, write the maximum values for all discovered controls.
+> 
+> CC: Rohit Mathew <Rohit.Mathew@arm.com>
+> Signed-off-by: James Morse <james.morse@arm.com>
+> ---
+> Changes since RFC:
+>  * Last bitmap write will always be non-zero.
+>   * Dropped READ_ONCE() - teh value can no longer change.
+> ---
+>  drivers/resctrl/mpam_devices.c  | 121 ++++++++++++++++++++++++++++++++
+>  drivers/resctrl/mpam_internal.h |   8 +++
+>  2 files changed, 129 insertions(+)
+> 
+> diff --git a/drivers/resctrl/mpam_devices.c b/drivers/resctrl/mpam_devices.c
+> index bb62de6d3847..c1f01dd748ad 100644
+> --- a/drivers/resctrl/mpam_devices.c
+> +++ b/drivers/resctrl/mpam_devices.c
+> @@ -7,6 +7,7 @@
+>  #include <linux/atomic.h>
+>  #include <linux/arm_mpam.h>
+>  #include <linux/bitfield.h>
+> +#include <linux/bitmap.h>
+>  #include <linux/cacheinfo.h>
+>  #include <linux/cpu.h>
+>  #include <linux/cpumask.h>
+> @@ -849,8 +850,115 @@ static int mpam_msc_hw_probe(struct mpam_msc *msc)
+>  	return 0;
+>  }
+>  
+> +static void mpam_reset_msc_bitmap(struct mpam_msc *msc, u16 reg, u16 wd)
+> +{
+> +	u32 num_words, msb;
+> +	u32 bm = ~0;
+> +	int i;
+> +
+> +	lockdep_assert_held(&msc->part_sel_lock);
+> +
+> +	if (wd == 0)
+> +		return;
+> +
+> +	/*
+> +	 * Write all ~0 to all but the last 32bit-word, which may
+> +	 * have fewer bits...
+> +	 */
+> +	num_words = DIV_ROUND_UP(wd, 32);
+> +	for (i = 0; i < num_words - 1; i++, reg += sizeof(bm))
+> +		__mpam_write_reg(msc, reg, bm);
+> +
+> +	/*
+> +	 * ....and then the last (maybe) partial 32bit word. When wd is a
+> +	 * multiple of 32, msb should be 31 to write a full 32bit word.
+> +	 */
+> +	msb = (wd - 1) % 32;
+> +	bm = GENMASK(msb, 0);
+> +	__mpam_write_reg(msc, reg, bm);
+> +}
+> +
+> +static void mpam_reset_ris_partid(struct mpam_msc_ris *ris, u16 partid)
+> +{
+> +	u16 bwa_fract = MPAMCFG_MBW_MAX_MAX;
+> +	struct mpam_msc *msc = ris->vmsc->msc;
+> +	struct mpam_props *rprops = &ris->props;
+> +
+> +	mpam_assert_srcu_read_lock_held();
+> +
+> +	mutex_lock(&msc->part_sel_lock);
+> +	__mpam_part_sel(ris->ris_idx, partid, msc);
+> +
+> +	if (mpam_has_feature(mpam_feat_cpor_part, rprops))
+> +		mpam_reset_msc_bitmap(msc, MPAMCFG_CPBM, rprops->cpbm_wd);
+> +
+> +	if (mpam_has_feature(mpam_feat_mbw_part, rprops))
+> +		mpam_reset_msc_bitmap(msc, MPAMCFG_MBW_PBM, rprops->mbw_pbm_bits);
+> +
+> +	if (mpam_has_feature(mpam_feat_mbw_min, rprops))
+> +		mpam_write_partsel_reg(msc, MBW_MIN, 0);
+> +
+> +	if (mpam_has_feature(mpam_feat_mbw_max, rprops))
+> +		mpam_write_partsel_reg(msc, MBW_MAX, bwa_fract);
+MPAMCFG_MBW_MAX_MAX can be used directly instead of bwa_fract.
+> +
+> +	if (mpam_has_feature(mpam_feat_mbw_prop, rprops))
+> +		mpam_write_partsel_reg(msc, MBW_PROP, bwa_fract);
+Shouldn't this reset to 0? STRIDEM1 is a cost.
+> +	mutex_unlock(&msc->part_sel_lock);
+> +}
+> +
+> +static void mpam_reset_ris(struct mpam_msc_ris *ris)
+> +{
+> +	u16 partid, partid_max;
+> +
+> +	mpam_assert_srcu_read_lock_held();
+> +
+> +	if (ris->in_reset_state)
+> +		return;
+> +
+> +	spin_lock(&partid_max_lock);
+> +	partid_max = mpam_partid_max;
+> +	spin_unlock(&partid_max_lock);
+> +	for (partid = 0; partid < partid_max; partid++)
+> +		mpam_reset_ris_partid(ris, partid);
+> +}
+> +
+> +static void mpam_reset_msc(struct mpam_msc *msc, bool online)
+> +{
+> +	int idx;
+> +	struct mpam_msc_ris *ris;
+> +
+> +	mpam_assert_srcu_read_lock_held();
+> +
+> +	mpam_mon_sel_outer_lock(msc);
+> +	idx = srcu_read_lock(&mpam_srcu);
+> +	list_for_each_entry_srcu(ris, &msc->ris, msc_list, srcu_read_lock_held(&mpam_srcu)) {
+> +		mpam_reset_ris(ris);
+> +
+> +		/*
+> +		 * Set in_reset_state when coming online. The reset state
+> +		 * for non-zero partid may be lost while the CPUs are offline.
+> +		 */
+> +		ris->in_reset_state = online;
+> +	}
+> +	srcu_read_unlock(&mpam_srcu, idx);
+> +	mpam_mon_sel_outer_unlock(msc);
+> +}
+> +
+>  static int mpam_cpu_online(unsigned int cpu)
+>  {
+> +	int idx;
+> +	struct mpam_msc *msc;
+> +
+> +	idx = srcu_read_lock(&mpam_srcu);
+> +	list_for_each_entry_srcu(msc, &mpam_all_msc, glbl_list, srcu_read_lock_held(&mpam_srcu)) {
+> +		if (!cpumask_test_cpu(cpu, &msc->accessibility))
+> +			continue;
+> +
+> +		if (atomic_fetch_inc(&msc->online_refs) == 0)
+> +			mpam_reset_msc(msc, true);
+> +	}
+> +	srcu_read_unlock(&mpam_srcu, idx);
+> +
+>  	return 0;
+>  }
+>  
+> @@ -886,6 +994,19 @@ static int mpam_discovery_cpu_online(unsigned int cpu)
+>  
+>  static int mpam_cpu_offline(unsigned int cpu)
+>  {
+> +	int idx;
+> +	struct mpam_msc *msc;
+> +
+> +	idx = srcu_read_lock(&mpam_srcu);
+> +	list_for_each_entry_srcu(msc, &mpam_all_msc, glbl_list, srcu_read_lock_held(&mpam_srcu)) {
+> +		if (!cpumask_test_cpu(cpu, &msc->accessibility))
+> +			continue;
+> +
+> +		if (atomic_dec_and_test(&msc->online_refs))
+> +			mpam_reset_msc(msc, false);
+> +	}
+> +	srcu_read_unlock(&mpam_srcu, idx);
+> +
+>  	return 0;
+>  }
+>  
+> diff --git a/drivers/resctrl/mpam_internal.h b/drivers/resctrl/mpam_internal.h
+> index a2b0ff411138..466d670a01eb 100644
+> --- a/drivers/resctrl/mpam_internal.h
+> +++ b/drivers/resctrl/mpam_internal.h
+> @@ -5,6 +5,7 @@
+>  #define MPAM_INTERNAL_H
+>  
+>  #include <linux/arm_mpam.h>
+> +#include <linux/atomic.h>
+>  #include <linux/cpumask.h>
+>  #include <linux/io.h>
+>  #include <linux/llist.h>
+> @@ -43,6 +44,7 @@ struct mpam_msc {
+>  	struct pcc_mbox_chan	*pcc_chan;
+>  	u32			nrdy_usec;
+>  	cpumask_t		accessibility;
+> +	atomic_t		online_refs;
+>  
+>  	/*
+>  	 * probe_lock is only take during discovery. After discovery these
+> @@ -248,6 +250,7 @@ struct mpam_msc_ris {
+>  	u8			ris_idx;
+>  	u64			idr;
+>  	struct mpam_props	props;
+> +	bool			in_reset_state;
+>  
+>  	cpumask_t		affinity;
+>  
+> @@ -267,6 +270,11 @@ struct mpam_msc_ris {
+>  extern struct srcu_struct mpam_srcu;
+>  extern struct list_head mpam_classes;
+>  
+> +static inline void mpam_assert_srcu_read_lock_held(void)
+> +{
+> +	WARN_ON_ONCE(!srcu_read_lock_held((&mpam_srcu)));
+> +}
+> +
+>  /* System wide partid/pmg values */
+>  extern u16 mpam_partid_max;
+>  extern u8 mpam_pmg_max;
 
-"Attack vector controls for SSB were missed in the initial attack vector series.
-The default mitigation for SSB requires user-space opt-in so it is only
-relevant for user->user attacks.  Check with attack vector controls when
-the command is auto - i.e., no explicit user selection has been done."
+Thanks,
 
-Thx.
+Ben
 
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
 
