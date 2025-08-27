@@ -1,138 +1,139 @@
-Return-Path: <linux-kernel+bounces-788588-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788589-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88DFAB386DF
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 17:44:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E79BB386E2
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 17:45:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 468AD680BE2
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 15:44:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04C5F46304F
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 15:45:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4CF32D24B7;
-	Wed, 27 Aug 2025 15:44:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9F1F2DFA5B;
+	Wed, 27 Aug 2025 15:45:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="I13VXSyI"
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HEKV1W0z"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42E831EDA1B
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 15:44:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CA702D6E5C
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 15:45:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756309483; cv=none; b=cMJnlaUeXvSKA2mFHtPbVhqsktnl3s0GqGX43ZR1S8pDTaRmWcMdhSJAsqxeRgQbHstw4ryJrxj06Px0aZf5RPOw3ruOv7GYL24eNKNgOYvbTKGqNPgiGsSxT0ZZ3oT9ut1KK6IzZ5gAHV3mfL/+fDvVDpxVMHtysp5gXKR/bh8=
+	t=1756309528; cv=none; b=R+Bg1u8ULtHVoZAaLNTabTPssLpdLtZbBetGy5g7Sm7v3aatlAvZDNAVmoITLdO9Gj4Yv+rgli5IH9WhJdBjzTCwm8PObaoy+9snQuzAbl9NXf7veR1Pz2Zs17JCUV66cGysQqYUK+2nEdHXqkgAvDQ9PU29e9Anp6GkSxNo1y0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756309483; c=relaxed/simple;
-	bh=rOeeqnagp/kimBo7niDZKaNkGgfAol231nv+Qe0ju68=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=gwxqVXu8IHwylE1RbVMYNSj4zAqWH5vfMnJ3Qmt6TVx/bB48vLo0n2MxcprMauES5qk2jIgfizoJYtfhs3C/y6xDH6Hahfk9kVWSgmtOP/rntF7dOSFI/Rz58ZT09CzAoN5AW7l0QEr6MZFh4CcWgJbEiPnzc9/hb9BCf2mqstM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=I13VXSyI; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
-	Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:Content-Description:
-	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=Nx0NfdZIXd3w2ztZfHLlGP0CZq+OgC0+TPI1KTMVEjo=; b=I13VXSyIbKJYLdfN+wGQEy8/nx
-	L+AQuUQTdDduTAl7KATddG8t40cktKPpdoMNiX5mLIcmU19L/8QBSJH8WloneHPzP66SehT339IkR
-	T5aAn3mEIzypvvw9Dl2YJIdkjNr9ihr3dJdpBTMUWVRdCe6v/xS/mXVTloYyF0ACYW03jGV5O2kka
-	JHsCNw12+oDAMJwdUHtmXHOTATD2HL+wGD5VC2VJhdlRviSIkUBlU00ZsX7Foryz87ykY1cYCyUhv
-	nkuvf5lRj5zeNzZQm7qG8vAwXUUJOPLFIWVPyxJK+6vu7ZE4drkRWPppGn6u5gzGWxsCvstTC4EC8
-	KAsX/DuA==;
-Received: from [187.57.78.222] (helo=steammachine)
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1urIKD-002VQb-E5; Wed, 27 Aug 2025 17:44:37 +0200
-From: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	linux-kernel@vger.kernel.org
-Cc: Darren Hart <dvhart@infradead.org>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	Ingo Molnar <mingo@redhat.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Waiman Long <longman@redhat.com>,
-	kernel-dev@igalia.com,
-	=?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
-Subject: [PATCH] selftests/futex: Fix futex_numa_mpol's memory out of range subtest
-Date: Wed, 27 Aug 2025 12:44:20 -0300
-Message-ID: <20250827154420.1292208-1-andrealmeid@igalia.com>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1756309528; c=relaxed/simple;
+	bh=/p97CHZTchgZ2x/w77sCPBCAKYLVfRuzWu9KdaEGTW4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bmHKdOd0FsmpDoPI+EV95yAxNfwr7eRm18O4NDJ7k1hZtC3zWHcfV5LvjOZpzOU8eQYNf5e0FjuNX0uB8TcoWhnxkfgdJNt10vF47JrSRW7RMkpm3te5+HfUW3hI9lnUGkanzOHM5JiX2BrZHh2Os1eErHu5xkPB0SW7msSvw10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HEKV1W0z; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756309525;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BDqVhSeK1e71j8vG7CPDHZkgMbyJjBHY6Iqx2foqFvE=;
+	b=HEKV1W0zWY3TKZKr56tGZ+rXCx+n60O6/vpc3uysTGflLm6l0UpNKw+7rw9TdT4IS2sWS5
+	wEvPRscaTQZ3lypCsUL3xIlDwNjOOoJaSGVjXeGyWFxfI1BUZcTq2rmQDtmv66pFZc3jZt
+	fjuG2veJYIxtTARGzGqEm2ByNbxzeGU=
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
+ [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-562-y21-L0h3OE2FB9iGB2DbDg-1; Wed, 27 Aug 2025 11:45:23 -0400
+X-MC-Unique: y21-L0h3OE2FB9iGB2DbDg-1
+X-Mimecast-MFC-AGG-ID: y21-L0h3OE2FB9iGB2DbDg_1756309522
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7f2942a1aa1so279077785a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 08:45:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756309522; x=1756914322;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BDqVhSeK1e71j8vG7CPDHZkgMbyJjBHY6Iqx2foqFvE=;
+        b=oZc+o3wYrnYYlAmHRxM7Bx+M+l4El9ysszlCul0mn+G7jMPaKOEd0QMiAwSIZlzXf8
+         TvImz0iVFed26y8cffglN5X2yLDqCSGy/aLzhyTZXrxxTP6ZmqsjX+QplGvGDoK/p3zK
+         g2wa8qPMSPDt8lMPKHKIjw3GdpkkhT3AEcL+zcnguWK1R5BlSJuuOJJf/LhLc8RpfzCf
+         2ERxJNfTfTYBDTdHijmmqu3UaSbGpyJqtZ6LdB/j/mPmkYpo2b8XegWQaPLIkgSjrrTY
+         MUikR+va8RRpUVWLeMlZykQ4NwJVKQdXicJLAQpYOQT2lY2iL2mLs1nqBWrlpdSrSEvz
+         nkBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUWFPqsOQVN3gte7ceAJ/AJCCejw2/TCefig5eWSGmUBwxvgnpt1nHxNP956baFNhzLwhbvQVL4SV1vCxM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyrnYck9lvVaUvFrjjAhiose0iWAoGMmx79jquoURtpFUHXUIDD
+	P2HXE87sbXAmcNPSE3ChncUvbdo033WD3vRF5lPIucPYBjSoDt4VSMRS43KEV45fVL0U6My6ZSa
+	/iM2107EHw2v+S3Z9AUxd8Wf3GKUcK0scww/Wq4gJjKf+S75vwujGFIpnpdBffHmlnQ==
+X-Gm-Gg: ASbGncvVtLUI9rJ9pYLpIrlO4yk3lGLDYmwGe8wPo+p/BOTlVfiWvfGsQyM7cVeBmz/
+	qgfjUJCGYSlW6wbLtmOiKUJQZaPvQacSBJmNB+5W0PPfZaUmLJmvj7hmJE7qmZyDc7yQikvmSm3
+	5/j4pO8BfLSXvrQltvvn3v5wGCeWlqh8/Y05OZKDSbWpchj82jt++aK1txeILZjO3dRG1LyT9me
+	XNzDaT51LRJIHVJvZEa6qFZqt5nkQeyV0QD/xeyGwviedAJxhEsD33c5ibO+FWeWbyCcUg4kLut
+	V/OsmApt5CFxdDL6GGGL6exADXBvdWPxF+LYAIEiyxgUdelgrKT+Yhz+N4gHiyQIhQTIRf2Mwxo
+	mV9c3XI3Eqx3++3qTXe4=
+X-Received: by 2002:a05:620a:3709:b0:7e6:9753:d959 with SMTP id af79cd13be357-7f58d941f00mr677233285a.4.1756309522436;
+        Wed, 27 Aug 2025 08:45:22 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEmUGjZymg97kwzbvc9Ng0QsbL1xmqeZFpXH0SyMzHjWziskdn6bTnadHzycYk8K6ZKteAcMQ==
+X-Received: by 2002:a05:620a:3709:b0:7e6:9753:d959 with SMTP id af79cd13be357-7f58d941f00mr677228485a.4.1756309521893;
+        Wed, 27 Aug 2025 08:45:21 -0700 (PDT)
+Received: from x1 (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b2b8de632csm94044401cf.36.2025.08.27.08.45.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 Aug 2025 08:45:21 -0700 (PDT)
+Date: Wed, 27 Aug 2025 11:45:19 -0400
+From: Brian Masney <bmasney@redhat.com>
+To: Peng Fan <peng.fan@nxp.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Cristian Marussi <cristian.marussi@arm.com>,
+	Marco Felsch <m.felsch@pengutronix.de>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 1/3] clk: Introduce clk_hw_set_spread_spectrum
+Message-ID: <aK8oD6HNw131avjI@x1>
+References: <20250812-clk-ssc-version1-v1-0-cef60f20d770@nxp.com>
+ <20250812-clk-ssc-version1-v1-1-cef60f20d770@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250812-clk-ssc-version1-v1-1-cef60f20d770@nxp.com>
+User-Agent: Mutt/2.2.14 (2025-02-20)
 
-The "Memory out of range" subtest works by pointing the futex pointer
-to the memory exactly after the allocated map (futex_ptr + mem_size).
-This address is out of the allocated range for futex_ptr, but depending
-on the memory layout, it might be pointing to a valid memory address of
-the process. In order to make this test deterministic, create a "buffer
-zone" with PROT_NONE just before allocating the valid futex_ptr memory,
-to make sure that futex_ptr + mem_size falls into a memory address that
-will return an invalid access error.
+On Tue, Aug 12, 2025 at 08:17:05PM +0800, Peng Fan wrote:
+> Add clk_hw_set_spread_spectrum to configure a clock to enable spread
+> spectrum feature. set_spread_spectrum ops is added for clk drivers to
+> have their own hardware specific implementation.
+> 
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> ---
+>  drivers/clk/clk.c            | 32 ++++++++++++++++++++++++++++++++
+>  include/linux/clk-provider.h | 29 +++++++++++++++++++++++++++++
+>  2 files changed, 61 insertions(+)
+> 
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index b821b2cdb155331c85fafbd2fac8ab3703a08e4d..48c7a301b72b30fd824dae7ada2c44ee84d40867 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -2802,6 +2802,38 @@ int clk_set_max_rate(struct clk *clk, unsigned long rate)
+>  }
+>  EXPORT_SYMBOL_GPL(clk_set_max_rate);
+>  
+> +int clk_hw_set_spread_spectrum(struct clk_hw *hw, unsigned int modfreq_hz,
+> +			       unsigned int spread_bp, unsigned int method)
+                                                       ^^^^^^^^^^^^
+Should this be 'enum clk_ssc_method'?
 
-Fixes: 3163369407ba ("selftests/futex: Add futex_numa_mpol")
-Signed-off-by: André Almeida <andrealmeid@igalia.com>
----
-This patch comes from this series:
-https://lore.kernel.org/lkml/20250704-tonyk-robust_test_cleanup-v1-13-c0ff4f24c4e1@igalia.com/
----
- .../futex/functional/futex_numa_mpol.c          | 17 ++++++++++++++++-
- 1 file changed, 16 insertions(+), 1 deletion(-)
+Also can you add kernel docs for all of the parameters? I know it's
+documented on 'struct clk_spread_spectrum' below.
 
-diff --git a/tools/testing/selftests/futex/functional/futex_numa_mpol.c b/tools/testing/selftests/futex/functional/futex_numa_mpol.c
-index a9ecfb2d3932..1eb3e67d999b 100644
---- a/tools/testing/selftests/futex/functional/futex_numa_mpol.c
-+++ b/tools/testing/selftests/futex/functional/futex_numa_mpol.c
-@@ -143,7 +143,7 @@ int main(int argc, char *argv[])
- {
- 	struct futex32_numa *futex_numa;
- 	int mem_size, i;
--	void *futex_ptr;
-+	void *futex_ptr, *buffer_zone;
- 	int c;
- 
- 	while ((c = getopt(argc, argv, "chv:")) != -1) {
-@@ -168,6 +168,17 @@ int main(int argc, char *argv[])
- 	ksft_set_plan(1);
- 
- 	mem_size = sysconf(_SC_PAGE_SIZE);
-+
-+	/*
-+	 * The "Memory out of range" test depends on having a pointer to an
-+	 * invalid address. To make this test deterministic, and to not depend
-+	 * on the memory layout of the process, create a "buffer zone" with
-+	 * PROT_NONE just before the valid memory (*futex_ptr).
-+	 */
-+	buffer_zone = mmap(NULL, mem_size, PROT_NONE, MAP_PRIVATE | MAP_ANONYMOUS, 0, 0);
-+	if (buffer_zone == MAP_FAILED)
-+		ksft_exit_fail_msg("mmap() for %d bytes failed\n", mem_size);
-+
- 	futex_ptr = mmap(NULL, mem_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, 0, 0);
- 	if (futex_ptr == MAP_FAILED)
- 		ksft_exit_fail_msg("mmap() for %d bytes failed\n", mem_size);
-@@ -229,6 +240,10 @@ int main(int argc, char *argv[])
- 			}
- 		}
- 	}
-+
-+	munmap(buffer_zone, mem_size);
-+	munmap(futex_ptr, mem_size);
-+
- 	ksft_test_result_pass("NUMA MPOL tests passed\n");
- 	ksft_finished();
- 	return 0;
--- 
-2.50.1
+What do you think about having this function take that struct instead as
+a parameter to match what's on the clk op?
+
+Brian
 
 
