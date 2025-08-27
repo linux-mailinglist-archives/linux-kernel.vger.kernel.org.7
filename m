@@ -1,59 +1,61 @@
-Return-Path: <linux-kernel+bounces-787855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B3E5B37C3C
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 09:52:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D81AB37C3D
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 09:52:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB1D417F638
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 07:52:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A4953BF42A
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 07:52:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65310261596;
-	Wed, 27 Aug 2025 07:52:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D9903218C5;
+	Wed, 27 Aug 2025 07:52:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fdBr6Pht"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eGLTUZnj"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 447A231A06B
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 07:52:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F36B1A9F86
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 07:52:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756281151; cv=none; b=HJ7Vl4w8lVU17mykRY83orDL37nuJJXIJcc0g0ARWuEGqNDjcZNKpXmF2NwlcZF2Fssg0Muwss//NZI4RJKofMHsGHRusF8QmtjUZ6euNUTX4qyTXjnMuw1o9vyfXsEieT1CNIdCd+BRVx5aCf3mZORZWiDG4pKEDE3TIV1NuiE=
+	t=1756281153; cv=none; b=lwlZe+uSdjDSXP/dUk+Q+zFfsjAjQxdaCQHGtiR3w8OmsYRT6WQ3n6oo/Y9rYU8XMHbXVeMOUsJyAWU60tZr4lhffGCfZDo5dDpvLbQABminAUnqrdamdK3W7DZnAgMAC6wLJGzwf/DKP+EGlDzaHItUTVeB3WPkixKnpowPBXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756281151; c=relaxed/simple;
-	bh=dg56cDVzVKF5RZZcfZmiI2WJCoLUQN9GcG/PmKry18c=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Xcp6SBzvPZqKplqJryD4NpSyStU4x9+WKJUGBu2/Nvk3x9bNO3ism9XnwnQd/QyYAIfp9qk2gL2karUwkBaBnTzYAx3m+xP8qD2GlrPuM94JDvb5jg4U1rDoea+veS0HwHNXKxoQNYkCRO+nUshX5xVxv/3zVvolA7RA8O8joHo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fdBr6Pht; arc=none smtp.client-ip=170.10.133.124
+	s=arc-20240116; t=1756281153; c=relaxed/simple;
+	bh=iVW3IChNpZl/VMlOl7LK5ge0dqszegrsunrYVh40Uhg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=AuhDHGOHMh7GWz9qJH7DLKjwLu1EfniEd96JWcAx2pvsM1qDXeDpL5wQ9WwLDOroEON3wb0NYikR+P40QXUnFqcbA+0Q+dSIzOHocOm+bjzBc+qZ0o4fBDLtGAiSy3VXDqBYUhpLqBnaWHMUG30+ZOzyN3iio8he0pAv1QFD0hg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eGLTUZnj; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756281149;
+	s=mimecast20190719; t=1756281150;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=N6SntE+UiHIpGFBxOP3k+c2SCeNJCrXgtm7HmQ15Vds=;
-	b=fdBr6PhtQNqMREnAC2FEfyBPO5yo3E9tVOk+TZ46q6kXF79xoz+NCjVKwC1o1F6quEWfyV
-	osUP73Fnpt7SKNk9SclAUWbQYm0wIikISG1c48t5rXxeJGjWiVSibSZDEf/KczyTG3S1/9
-	R3I+htpA/QZ9JEicqKdS4Yp7I7rdp6g=
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=setaN7UuCRHebEKosEpjDVQatSVNSFpocE9Z9Esxu08=;
+	b=eGLTUZnj0QptxiT4BqhTaKzNnErCA2AnwgDplZkPyyIbq0tqm+RbMpaIBpYVg+H8hs5FVp
+	SEZFsVK/hHYqQwZ5LnO9WxIGk1StFyRhExUiQ6HbBpMnDjKMz/C+irxsLmZuRMKhStn9Qj
+	IBnBU7Uep2t4mgFX8aUwcqRziR2soOw=
 Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-76-iZHGTYBHNge45eseCba7nw-1; Wed,
- 27 Aug 2025 03:52:25 -0400
-X-MC-Unique: iZHGTYBHNge45eseCba7nw-1
-X-Mimecast-MFC-AGG-ID: iZHGTYBHNge45eseCba7nw_1756281140
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-691-dWY_aDrQNrWEH9T31cU6tg-1; Wed,
+ 27 Aug 2025 03:52:29 -0400
+X-MC-Unique: dWY_aDrQNrWEH9T31cU6tg-1
+X-Mimecast-MFC-AGG-ID: dWY_aDrQNrWEH9T31cU6tg_1756281147
 Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5354319560B4;
-	Wed, 27 Aug 2025 07:52:20 +0000 (UTC)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0489819541A0;
+	Wed, 27 Aug 2025 07:52:27 +0000 (UTC)
 Received: from dell-per7425-02.rhts.eng.pek2.redhat.com (dell-per7425-02.rhts.eng.pek2.redhat.com [10.73.116.18])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4A23E180044F;
-	Wed, 27 Aug 2025 07:52:13 +0000 (UTC)
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1DEF2180044F;
+	Wed, 27 Aug 2025 07:52:20 +0000 (UTC)
 From: Chunyu Hu <chuhu@redhat.com>
 To: akpm@linux-foundation.org,
 	david@redhat.com,
@@ -68,9 +70,11 @@ Cc: linux-kselftest@vger.kernel.org,
 	surenb@google.com,
 	mhocko@suse.com,
 	chuhu@redhat.com
-Subject: [PATCH 0/2] Fix va_high_addr_switch.sh test failure
-Date: Wed, 27 Aug 2025 15:52:07 +0800
-Message-ID: <20250827075209.2347015-1-chuhu@redhat.com>
+Subject: [PATCH 1/2] selftests/mm: fix hugepages cleanup too early
+Date: Wed, 27 Aug 2025 15:52:08 +0800
+Message-ID: <20250827075209.2347015-2-chuhu@redhat.com>
+In-Reply-To: <20250827075209.2347015-1-chuhu@redhat.com>
+References: <20250827075209.2347015-1-chuhu@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,20 +84,74 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-The two patches fix the va_high_addr_switch.sh test failure on x86_64.
-Patch 1 fixes the hugepages setup issue that nr_hugepages is reset too
-early in run_vmtests.sh and break the later va_high_addr_switch testing.
-Patch 2 fixes the test failure caused by the hint addr align method change
-in hugetlb_get_unmapped_area().
+The nr_hugepgs variable is used to keep the original nr_hugepages at the
+hugepage setup step at test beginning. After userfaultfd test, a cleaup is
+executed, both /sys/kernel/mm/hugepages/hugepages-*/nr_hugepages and
+/proc/sys//vm/nr_hugepages are reset to 'original' value before userfaultfd
+test starts.
 
-Chunyu Hu (2):
-  selftests/mm: fix hugepages cleanup too early
-  selftests/mm: fix va_high_addr_switch.sh failure on x86_64
+Issue here is the value used to restore /proc/sys/vm/nr_hugepages is
+nr_hugepgs which is the initial value before the vm_runtests.sh runs, not
+the value before userfaultfd test starts. 'va_high_addr_swith.sh' tests
+runs after that will possibly see no hugepages available for test, and got
+EINVAL when mmap(HUGETLB), making the result invalid.
 
- tools/testing/selftests/mm/run_vmtests.sh        | 9 +++++++--
- tools/testing/selftests/mm/va_high_addr_switch.c | 4 ++--
- 2 files changed, 9 insertions(+), 4 deletions(-)
+And before pkey tests, nr_hugepgs is changed to be used as a temp variable
+to save nr_hugepages before pkey test, and restore it after pkey tests
+finish. The original nr_hugepages value is not tracked anymore, so no way
+to restore it after all tests finish.
 
+Add a new variable nr_hugepgs_origin to save the original nr_hugepages, and
+and restore it to nr_hugepages after all tests finish. And change to use
+the nr_hugepgs variable to save the /proc/sys/vm/nr_hugeages after hugepage
+setup, it's also the value before userfaultfd test starts, and the correct
+value to be restored after userfaultfd finishes. The va_high_addr_switch.sh
+broken will be resolved.
+
+Signed-off-by: Chunyu Hu <chuhu@redhat.com>
+---
+ tools/testing/selftests/mm/run_vmtests.sh | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/tools/testing/selftests/mm/run_vmtests.sh b/tools/testing/selftests/mm/run_vmtests.sh
+index 471e539d82b8..f1a7ad3ec6a7 100755
+--- a/tools/testing/selftests/mm/run_vmtests.sh
++++ b/tools/testing/selftests/mm/run_vmtests.sh
+@@ -172,13 +172,13 @@ fi
+ 
+ # set proper nr_hugepages
+ if [ -n "$freepgs" ] && [ -n "$hpgsize_KB" ]; then
+-	nr_hugepgs=$(cat /proc/sys/vm/nr_hugepages)
++	nr_hugepgs_origin=$(cat /proc/sys/vm/nr_hugepages)
+ 	needpgs=$((needmem_KB / hpgsize_KB))
+ 	tries=2
+ 	while [ "$tries" -gt 0 ] && [ "$freepgs" -lt "$needpgs" ]; do
+ 		lackpgs=$((needpgs - freepgs))
+ 		echo 3 > /proc/sys/vm/drop_caches
+-		if ! echo $((lackpgs + nr_hugepgs)) > /proc/sys/vm/nr_hugepages; then
++		if ! echo $((lackpgs + nr_hugepgs_origin)) > /proc/sys/vm/nr_hugepages; then
+ 			echo "Please run this test as root"
+ 			exit $ksft_skip
+ 		fi
+@@ -189,6 +189,7 @@ if [ -n "$freepgs" ] && [ -n "$hpgsize_KB" ]; then
+ 		done < /proc/meminfo
+ 		tries=$((tries - 1))
+ 	done
++	nr_hugepgs=$(cat /proc/sys/vm/nr_hugepages)
+ 	if [ "$freepgs" -lt "$needpgs" ]; then
+ 		printf "Not enough huge pages available (%d < %d)\n" \
+ 		       "$freepgs" "$needpgs"
+@@ -532,6 +533,10 @@ CATEGORY="page_frag" run_test ./test_page_frag.sh aligned
+ 
+ CATEGORY="page_frag" run_test ./test_page_frag.sh nonaligned
+ 
++if [ "${HAVE_HUGEPAGES}" = 1 ]; then
++	echo "$nr_hugepgs_origin" > /proc/sys/vm/nr_hugepages
++fi
++
+ echo "SUMMARY: PASS=${count_pass} SKIP=${count_skip} FAIL=${count_fail}" | tap_prefix
+ echo "1..${count_total}" | tap_output
+ 
 -- 
 2.49.0
 
