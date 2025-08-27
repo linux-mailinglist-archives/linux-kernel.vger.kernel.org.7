@@ -1,83 +1,101 @@
-Return-Path: <linux-kernel+bounces-788415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44D6DB38408
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 15:50:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7439B3840B
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 15:50:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2B3D3B385A
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 13:50:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99B653B75A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 13:50:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB3BC35337D;
-	Wed, 27 Aug 2025 13:50:19 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4327C3568E4;
+	Wed, 27 Aug 2025 13:50:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="sY5nVMfX"
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B99B72EACEF
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 13:50:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97773342C92;
+	Wed, 27 Aug 2025 13:50:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756302619; cv=none; b=NjZj/NQrz7IGUUBZp0NEzk2boKdNR0lYiy8RZtwYvbSObW+DE24KOVPorA9bhysYrk0uKWj8iHvkhdDD4tJVpJnkHQGfpwtOcMzNUfDdM9PjyFDpn5h+qpFjC/KIWk7dclI22OqpmlU0tTrD1wf3IqKi4WCNIV7I939wgibsLE8=
+	t=1756302626; cv=none; b=cL4YqtB8W5C6WpTguPXUnukcIxm4s/gNvGMwip+6bEmbvZ7GVwXXp6m0X4yv5bufJA5EYT7FKmJG3fn8BSbtaCInFFqVSi2knjYFQkGV1NAOCHG/GRXgl9X/nrvuO1G7RUThaMjCFCMudaR5GwLiuws4jxAd2fuTrDuCnSrxceo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756302619; c=relaxed/simple;
-	bh=Zdmsj9SJdrQFmm972+bz9ZasMmLt557MLazdFFeMkM0=;
+	s=arc-20240116; t=1756302626; c=relaxed/simple;
+	bh=WNl6MYR9rNqQEB6pJqeDUpDq4nhgXnNkqkm0DWk19LY=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=YWzQ5+5BM3Fv1KFiv34UZhN32bFNf+cc/8V+NUnWz70az3fhYrjPbqHsP2iVIs2AWOSofBCWOCeC0QCfLXiq/qLoD1GsAI4O7zaE0zXza4Ndzo9zIOMhHKXlrM4X37TMlAceVgT3GGcop4RlM9ii4pOfvd9Dr+k2m/zkK2XD8M0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1urGXF-0006Sp-5X; Wed, 27 Aug 2025 15:49:57 +0200
-Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1urGXE-002P33-29;
-	Wed, 27 Aug 2025 15:49:56 +0200
-Received: from pza by lupine with local (Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1urGXE-000K0a-1w;
-	Wed, 27 Aug 2025 15:49:56 +0200
-Message-ID: <2dc22b0a8f1dbad283786e0ab99e78d7468695d5.camel@pengutronix.de>
-Subject: Re: [PATCH] reset: eyeq: fix OF node leak
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Johan Hovold <johan@kernel.org>, Vladimir Kondratiev
-	 <vladimir.kondratiev@mobileye.com>, Gregory CLEMENT
-	 <gregory.clement@bootlin.com>, =?ISO-8859-1?Q?Th=E9o?= Lebrun
-	 <theo.lebrun@bootlin.com>
-Cc: linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Wed, 27 Aug 2025 15:49:56 +0200
-In-Reply-To: <20250708085613.15823-1-johan@kernel.org>
-References: <20250708085613.15823-1-johan@kernel.org>
+	 Content-Type:MIME-Version; b=gAQuJHjighvefToMMC3MpayRviON0fgL2p575Y1yWt/eRtt13c/KByDBJTKRXbLynOL4q5+BzeOP2iegeL41wM85ag4kubU3Jtq7u4Q9B60wEWhjL4EOdTX2W5MnvbqgajV6ikIv4tDiVvP48W/INH5DrcObvarc83+c8LvTBaM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=sY5nVMfX; arc=none smtp.client-ip=80.241.56.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4cBmBH2tnvz9ty9;
+	Wed, 27 Aug 2025 15:50:15 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1756302615; h=from:from:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xq7djjTrndkPysRUhthmE0pGPVdil1mhiHwibAnEooo=;
+	b=sY5nVMfXQvsefqhG5hrlz5fRXu5SfI/+U54PX6DUIm+HWva1miogWC0r1gTz3rhtPFNb8k
+	IFUVHitI7m8fF2iz3C5FnWxUF6MYmAdfqD5Q+zjXmUedz53qO1KvKi7geYS7yvh9AcO0gX
+	amnil/ELi7sWpxPNV6+W3AE18IcQfIsAT42GZgZ3WjUFs2tPQMn6pojpcSXFyzHgu2OCvK
+	Y1K/ySJvrjXSfc5vMAKOZL9h9S8apgDgXhe/Uai++6tMPc1V49BYEibikL3W6rkhwHJhuF
+	/phOF95bmJucT1aivDAaJ4ZWwUKCRtrGtaXsJTX5v8/+r/KqDGAu80NOJ1AOtw==
+Message-ID: <09ef0b44eef45a534fc3230e9dfaeebb36a08e44.camel@mailbox.org>
+Subject: Re: [PATCH v3] block: mtip32xx: Remove excess code in mtip_pci_probe
+From: Philipp Stanner <phasta@mailbox.org>
+Reply-To: phasta@kernel.org
+To: Zhang Heng <zhangheng@kylinos.cn>, axboe@kernel.dk, phasta@kernel.org, 
+ andriy.shevchenko@linux.intel.com, broonie@kernel.org, lizetao1@huawei.com,
+  viro@zeniv.linux.org.uk, fourier.thomas@gmail.com, anuj20.g@samsung.com
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Wed, 27 Aug 2025 15:50:10 +0200
+In-Reply-To: <20250827131228.2826678-1-zhangheng@kylinos.cn>
+References: <20250827131228.2826678-1-zhangheng@kylinos.cn>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+X-MBO-RS-META: jmaydpqrntpb93yqagc63dkczaknj4ei
+X-MBO-RS-ID: 381079d6b0d0c6983af
 
-On Di, 2025-07-08 at 10:56 +0200, Johan Hovold wrote:
-> Make sure to drop the OF node reference taken when probing the auxiliary
-> device when the device is later unbound.
+On Wed, 2025-08-27 at 21:12 +0800, Zhang Heng wrote:
+> In the error exit function of the iomap_err in mtip_pci_probe,
+> pci_set_drvdata(pdev, NULL) and return can be removed without
+> affecting the code execution
 >=20
-> Fixes: 487b1b32e317 ("reset: eyeq: add platform driver")
-> Cc: Th=C3=A9o Lebrun <theo.lebrun@bootlin.com>
-> Signed-off-by: Johan Hovold <johan@kernel.org>
+> Signed-off-by: Zhang Heng <zhangheng@kylinos.cn>
 
-Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+Reviewed-by: Philipp Stanner <phasta@kernel.org>
 
-regards
-Philipp
+> ---
+> =C2=A0drivers/block/mtip32xx/mtip32xx.c | 2 --
+> =C2=A01 file changed, 2 deletions(-)
+>=20
+> diff --git a/drivers/block/mtip32xx/mtip32xx.c b/drivers/block/mtip32xx/m=
+tip32xx.c
+> index 8fc7761397bd..2c33c1dfc39d 100644
+> --- a/drivers/block/mtip32xx/mtip32xx.c
+> +++ b/drivers/block/mtip32xx/mtip32xx.c
+> @@ -3840,8 +3840,6 @@ static int mtip_pci_probe(struct pci_dev *pdev,
+> =C2=A0
+> =C2=A0iomap_err:
+> =C2=A0	kfree(dd);
+> -	pci_set_drvdata(pdev, NULL);
+> -	return rv;
+> =C2=A0done:
+> =C2=A0	return rv;
+> =C2=A0}
+
 
