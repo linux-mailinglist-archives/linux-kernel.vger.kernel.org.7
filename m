@@ -1,181 +1,263 @@
-Return-Path: <linux-kernel+bounces-787547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1293B377AF
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 04:23:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 17371B377B1
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 04:24:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DFED71B6553D
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 02:24:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1153C1B655F9
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 02:24:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED3E02737E7;
-	Wed, 27 Aug 2025 02:23:52 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D436273D65;
+	Wed, 27 Aug 2025 02:24:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IHL3GrFU"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58BEE27707;
-	Wed, 27 Aug 2025 02:23:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77DDB2727F4;
+	Wed, 27 Aug 2025 02:24:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756261432; cv=none; b=GkeXB2AphecP+3xUTomZk3uQtec0neNQ+viDdj43RbN6II5jg6Y24moGGu4SU+R9ClmrUXww76X7ZyvTDbzsbPWlnDZDfhlnUSTaoP7DNYv/0IxxDKwQEMqwTgu/Z0q6FOsuPl+VZ4sovLUNzkrM+ZAzUHyW5Xnc1Ou5nJ6aaso=
+	t=1756261454; cv=none; b=PDMiD67Cp+1DWH5dO5AO/EgCpiC8Xw4/EqPiuYhH4YWU2ZCqIyQmSTHPC7Bpqdsz+DHIA+mMW1CAE0L7bcQSxhT66pkllLbhhfMQAiurIcCuGyHdnFrsvDwrO2XmHAG0eFcYcRTbghg1bE1kxtWICk/CxVHpqof59m+aE/HYuh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756261432; c=relaxed/simple;
-	bh=AKi9/OHy1tHN9Xiukj7H9Mq4C66I06orms63TzLZEnw=;
+	s=arc-20240116; t=1756261454; c=relaxed/simple;
+	bh=9O5covZ/PBS82MTmAF2q8dcGpYCmRc/sVWncSnvYRAc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IWsBth+owypdPUXgv0t/BPAQZot1GAHlM/0teR3wOYs4VxG/7I3H2c5yQdfoglFr7LKRIKj73LuzUeHJHZIgur/UIeMe4eUvshN9757XUn0OdV2tTpHiV5m0cYoclTFht0bCAwuBt1HCKmK2KwK71OpSF5gRwJKsq+JpXCDZxQI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cBSyD0LSRzYQtM6;
-	Wed, 27 Aug 2025 10:23:48 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 8FD1A1A0F22;
-	Wed, 27 Aug 2025 10:23:46 +0800 (CST)
-Received: from [10.174.179.247] (unknown [10.174.179.247])
-	by APP4 (Coremail) with SMTP id gCh0CgAncY0wbK5ougC0AQ--.46889S3;
-	Wed, 27 Aug 2025 10:23:46 +0800 (CST)
-Message-ID: <e1212545-2013-775d-e3a8-07b3be2cfc00@huaweicloud.com>
-Date: Wed, 27 Aug 2025 10:23:44 +0800
+	 In-Reply-To:Content-Type; b=Uc/hZjDmBQ5U+hYeCeVmXiuFSKI8IodCipwVYJOaf3wjXv12bThf1H/+7Zo1WpydCDvWE15TOeRjz60MJMvB57WSHt9imItwEmmiX6r0FhPnikWf3yQ/taH2uWAVisQZbeIw2XU6qKk6YTpyVLDKcJvnonCLB17KbjkRdXUOo3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IHL3GrFU; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756261452; x=1787797452;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=9O5covZ/PBS82MTmAF2q8dcGpYCmRc/sVWncSnvYRAc=;
+  b=IHL3GrFU71EtLWAs/UsgYpliZhdM87YxbfeYNz6xp280lvp/52dNGEQN
+   5r6SSHD1eH84JHlCcj63d+XimrppfRzsG5SZiWIRKaCAr2cpVZy4gg+If
+   ZddpGgetsUP2fjDbGnIqKjwDPAulQsZqbO/Sjx+GiQe6Jll/I5jeo14bJ
+   6MlFsXITA1qUEKeMJpn0sgfYMeWrVjU16j//x5y96u9KSM4l4bIigv/dc
+   bsDipghXlAccqdPA2Mwr8LwwGhxi650rsOuw5ouFpEU4Ic+qqi0U70cFQ
+   Vmg0bZv+w1jyfOrNen2QK7Dqmt+N+Nab56ZPpRmCXfkuG2CU5DEAFLVOY
+   w==;
+X-CSE-ConnectionGUID: GeH7whp2QmClJTTD1RdwSQ==
+X-CSE-MsgGUID: ux3Apb4yTiyUYfJwHnuDuQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11534"; a="68779100"
+X-IronPort-AV: E=Sophos;i="6.18,214,1751266800"; 
+   d="scan'208";a="68779100"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2025 19:24:11 -0700
+X-CSE-ConnectionGUID: WiWP+sYRRXuPPsYnRF+O5w==
+X-CSE-MsgGUID: 5Epv/vZMTfa56PB0r65XfQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,214,1751266800"; 
+   d="scan'208";a="206893613"
+Received: from binbinwu-mobl.ccr.corp.intel.com (HELO [10.124.233.111]) ([10.124.233.111])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2025 19:24:06 -0700
+Message-ID: <2a97db5e-ee82-43b0-a148-e4af1b93ca10@linux.intel.com>
+Date: Wed, 27 Aug 2025 10:24:03 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH v2] efivarfs: Fix slab-out-of-bounds in efivarfs_d_compare
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: jk@ozlabs.org, linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
- yangerkun@huawei.com, yi.zhang@huawei.com
-References: <20250819090802.2258766-1-linan666@huaweicloud.com>
- <CAMj1kXHvEOTHHshS9uoL4RSZgJZgd9OR9qzPHYJ5xW2Vgeefcg@mail.gmail.com>
-From: Li Nan <linan666@huaweicloud.com>
-In-Reply-To: <CAMj1kXHvEOTHHshS9uoL4RSZgJZgd9OR9qzPHYJ5xW2Vgeefcg@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 14/19] KVM: selftests: Add helpers to init TDX memory
+ and finalize VM
+To: Yan Zhao <yan.y.zhao@intel.com>, Sagi Shahar <sagis@google.com>
+Cc: linux-kselftest@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+ Shuah Khan <shuah@kernel.org>, Sean Christopherson <seanjc@google.com>,
+ Ackerley Tng <ackerleytng@google.com>, Ryan Afranji <afranji@google.com>,
+ Andrew Jones <ajones@ventanamicro.com>,
+ Isaku Yamahata <isaku.yamahata@intel.com>,
+ Erdem Aktas <erdemaktas@google.com>,
+ Rick Edgecombe <rick.p.edgecombe@intel.com>,
+ Roger Wang <runanwang@google.com>, Oliver Upton <oliver.upton@linux.dev>,
+ "Pratik R. Sampat" <pratikrajesh.sampat@amd.com>,
+ Reinette Chatre <reinette.chatre@intel.com>, Ira Weiny
+ <ira.weiny@intel.com>, Chao Gao <chao.gao@intel.com>,
+ Chenyi Qiang <chenyi.qiang@intel.com>, linux-kernel@vger.kernel.org,
+ kvm@vger.kernel.org
+References: <20250821042915.3712925-1-sagis@google.com>
+ <20250821042915.3712925-15-sagis@google.com>
+ <aKwhchKBV1ts+Jhm@yzhao56-desk.sh.intel.com>
+ <CAAhR5DGZnrpW8u9Y0O+EFLJJsbTVO6mdrh4jbG4CrFgR13Y60g@mail.gmail.com>
+ <aK0IxsvmlNvc/u7j@yzhao56-desk.sh.intel.com>
+Content-Language: en-US
+From: Binbin Wu <binbin.wu@linux.intel.com>
+In-Reply-To: <aK0IxsvmlNvc/u7j@yzhao56-desk.sh.intel.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgAncY0wbK5ougC0AQ--.46889S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7tw1DXrykAryrGw1UZw1kKrg_yoW5JF1Dpr
-	WrG3WxKFZ5Xw1jy3yFvFn7Ja4jgan2qr43XFsFqr12gF97Wr1fWrZFgw1Y9Fyqvr18Xayk
-	Wayqg3Waka13Aa7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU90b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487
-	Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aV
-	AFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxk0xIA0c2IEe2xF
-	o4CEbIxvr21lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
-	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
-	zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
-	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
-	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIda
-	VFxhVjvjDU0xZFpf9x07UMnQUUUUUU=
-X-CM-SenderInfo: polqt0awwwqx5xdzvxpfor3voofrz/
 
 
 
-在 2025/8/26 21:32, Ard Biesheuvel 写道:
-> On Tue, 19 Aug 2025 at 11:16, <linan666@huaweicloud.com> wrote:
->>
->> From: Li Nan <linan122@huawei.com>
->>
->> Observed on kernel 6.6 (present on master as well):
->>
->>    BUG: KASAN: slab-out-of-bounds in memcmp+0x98/0xd0
->>    Call trace:
->>     kasan_check_range+0xe8/0x190
->>     __asan_loadN+0x1c/0x28
->>     memcmp+0x98/0xd0
->>     efivarfs_d_compare+0x68/0xd8
->>     __d_lookup_rcu_op_compare+0x178/0x218
->>     __d_lookup_rcu+0x1f8/0x228
->>     d_alloc_parallel+0x150/0x648
->>     lookup_open.isra.0+0x5f0/0x8d0
->>     open_last_lookups+0x264/0x828
->>     path_openat+0x130/0x3f8
->>     do_filp_open+0x114/0x248
->>     do_sys_openat2+0x340/0x3c0
->>     __arm64_sys_openat+0x120/0x1a0
->>
->> If dentry->d_name.len < EFI_VARIABLE_GUID_LEN , 'guid' can become
->> negative, leadings to oob. The issue can be triggered as below:
->>
->>    T1                    T2
->>    lookup_open
->>     ->lookup
->>      simple_lookup
->>       d_add
->>       // invalid dentry is added to hash list
->>
->>                          lookup_open
->>                           d_alloc_parallel
->>                            __d_lookup_rcu
->>                             __d_lookup_rcu_op_compare
->>                              hlist_bl_for_each_entry_rcu
->>                              // invalid dentry can be retrieved
->>                               ->d_compare
->>                                efivarfs_d_compare
->>
->> Fix it by checking len before cmp.
->>
->> Fixes: da27a24383b2 ("efivarfs: guid part of filenames are case-insensitive")
->> Signed-off-by: Li Nan <linan122@huawei.com>
->> Signed-off-by: Wu Guanghao <wuguanghao3@huawei.com>
->> ---
->> v2: optimize commit message
->>
-> 
-> Thanks for the fix, and for the elaborate description.
-> 
-> IIUC, two parallel lookups using an invalid filename can reproduce this?
-> 
+On 8/26/2025 9:07 AM, Yan Zhao wrote:
+> On Mon, Aug 25, 2025 at 02:02:00PM -0500, Sagi Shahar wrote:
+>> On Mon, Aug 25, 2025 at 3:41 AM Yan Zhao <yan.y.zhao@intel.com> wrote:
+>>> On Wed, Aug 20, 2025 at 09:29:07PM -0700, Sagi Shahar wrote:
+>>>> From: Ackerley Tng <ackerleytng@google.com>
+>>>>
+>>>> TDX protected memory needs to be measured and encrypted before it can be
+>>>> used by the guest. Traverse the VM's memory regions and initialize all
+>>>> the protected ranges by calling KVM_TDX_INIT_MEM_REGION.
+>>>>
+>>>> Once all the memory is initialized, the VM can be finalized by calling
+>>>> KVM_TDX_FINALIZE_VM.
+>>>>
+>>>> Signed-off-by: Ackerley Tng <ackerleytng@google.com>
+>>>> Co-developed-by: Erdem Aktas <erdemaktas@google.com>
+>>>> Signed-off-by: Erdem Aktas <erdemaktas@google.com>
+>>>> Co-developed-by: Sagi Shahar <sagis@google.com>
+>>>> Signed-off-by: Sagi Shahar <sagis@google.com>
+>>>> ---
+>>>>   .../selftests/kvm/include/x86/tdx/tdx_util.h  |  2 +
+>>>>   .../selftests/kvm/lib/x86/tdx/tdx_util.c      | 97 +++++++++++++++++++
+>>>>   2 files changed, 99 insertions(+)
+>>>>
+>>>> diff --git a/tools/testing/selftests/kvm/include/x86/tdx/tdx_util.h b/tools/testing/selftests/kvm/include/x86/tdx/tdx_util.h
+>>>> index a2509959c7ce..2467b6c35557 100644
+>>>> --- a/tools/testing/selftests/kvm/include/x86/tdx/tdx_util.h
+>>>> +++ b/tools/testing/selftests/kvm/include/x86/tdx/tdx_util.h
+>>>> @@ -71,4 +71,6 @@ void vm_tdx_load_common_boot_parameters(struct kvm_vm *vm);
+>>>>   void vm_tdx_load_vcpu_boot_parameters(struct kvm_vm *vm, struct kvm_vcpu *vcpu);
+>>>>   void vm_tdx_set_vcpu_entry_point(struct kvm_vcpu *vcpu, void *guest_code);
+>>>>
+>>>> +void vm_tdx_finalize(struct kvm_vm *vm);
+>>>> +
+>>>>   #endif // SELFTESTS_TDX_TDX_UTIL_H
+>>>> diff --git a/tools/testing/selftests/kvm/lib/x86/tdx/tdx_util.c b/tools/testing/selftests/kvm/lib/x86/tdx/tdx_util.c
+>>>> index d8eab99d9333..4024587ed3c2 100644
+>>>> --- a/tools/testing/selftests/kvm/lib/x86/tdx/tdx_util.c
+>>>> +++ b/tools/testing/selftests/kvm/lib/x86/tdx/tdx_util.c
+>>>> @@ -274,3 +274,100 @@ void vm_tdx_init_vm(struct kvm_vm *vm, uint64_t attributes)
+>>>>
+>>>>        free(init_vm);
+>>>>   }
+>>>> +
+>>>> +static void tdx_init_mem_region(struct kvm_vm *vm, void *source_pages,
+>>>> +                             uint64_t gpa, uint64_t size)
+>>>> +{
+>>>> +     uint32_t metadata = KVM_TDX_MEASURE_MEMORY_REGION;
+>>>> +     struct kvm_tdx_init_mem_region mem_region = {
+>>>> +             .source_addr = (uint64_t)source_pages,
+>>>> +             .gpa = gpa,
+>>>> +             .nr_pages = size / PAGE_SIZE,
+>>>> +     };
+>>>> +     struct kvm_vcpu *vcpu;
+>>>> +
+>>>> +     vcpu = list_first_entry_or_null(&vm->vcpus, struct kvm_vcpu, list);
+>>>> +
+>>>> +     TEST_ASSERT((mem_region.nr_pages > 0) &&
+>>>> +                 ((mem_region.nr_pages * PAGE_SIZE) == size),
+>>>> +                 "Cannot add partial pages to the guest memory.\n");
+>>>> +     TEST_ASSERT(((uint64_t)source_pages & (PAGE_SIZE - 1)) == 0,
+>>>> +                 "Source memory buffer is not page aligned\n");
+>>>> +     vm_tdx_vcpu_ioctl(vcpu, KVM_TDX_INIT_MEM_REGION, metadata, &mem_region);
+>>>> +}
+>>>> +
+>>>> +static void tdx_init_pages(struct kvm_vm *vm, void *hva, uint64_t gpa,
+>>>> +                        uint64_t size)
+>>>> +{
+>>>> +     void *scratch_page = calloc(1, PAGE_SIZE);
+>>>> +     uint64_t nr_pages = size / PAGE_SIZE;
+>>>> +     int i;
+>>>> +
+>>>> +     TEST_ASSERT(scratch_page,
+>>>> +                 "Could not allocate memory for loading memory region");
+>>>> +
+>>>> +     for (i = 0; i < nr_pages; i++) {
+>>>> +             memcpy(scratch_page, hva, PAGE_SIZE);
+>>>> +
+>>>> +             tdx_init_mem_region(vm, scratch_page, gpa, PAGE_SIZE);
+>>>> +
+>>>> +             hva += PAGE_SIZE;
+>>>> +             gpa += PAGE_SIZE;
+>>>> +     }
+>>>> +
+>>>> +     free(scratch_page);
+>>>> +}
+>>>> +
+>>>> +static void load_td_private_memory(struct kvm_vm *vm)
+>>>> +{
+>>>> +     struct userspace_mem_region *region;
+>>>> +     int ctr;
+>>>> +
+>>>> +     hash_for_each(vm->regions.slot_hash, ctr, region, slot_node) {
+>>>> +             const struct sparsebit *protected_pages = region->protected_phy_pages;
+>>>> +             const vm_paddr_t gpa_base = region->region.guest_phys_addr;
+>>>> +             const uint64_t hva_base = region->region.userspace_addr;
+>>>> +             const sparsebit_idx_t lowest_page_in_region = gpa_base >> vm->page_shift;
+>>>> +
+>>>> +             sparsebit_idx_t i;
+>>>> +             sparsebit_idx_t j;
+>>>> +
+>>>> +             if (!sparsebit_any_set(protected_pages))
+>>>> +                     continue;
+>>>> +
+>>>> +             sparsebit_for_each_set_range(protected_pages, i, j) {
+>>>> +                     const uint64_t size_to_load = (j - i + 1) * vm->page_size;
+>>>> +                     const uint64_t offset =
+>>>> +                             (i - lowest_page_in_region) * vm->page_size;
+>>>> +                     const uint64_t hva = hva_base + offset;
+>>>> +                     const uint64_t gpa = gpa_base + offset;
+>>>> +
+>>>> +                     vm_set_memory_attributes(vm, gpa, size_to_load,
+>>>> +                                              KVM_MEMORY_ATTRIBUTE_PRIVATE);
+>>>> +
+>>>> +                     /*
+>>>> +                      * Here, memory is being loaded from hva to gpa. If the memory
+>>>> +                      * mapped to hva is also used to back gpa, then a copy has to be
+>>>> +                      * made just for loading, since KVM_TDX_INIT_MEM_REGION ioctl
+>>>> +                      * cannot encrypt memory in place.
+>>>> +                      *
+>>>> +                      * To determine if memory mapped to hva is also used to back
+>>>> +                      * gpa, use a heuristic:
+>>>> +                      *
+>>>> +                      * If this memslot has guest_memfd, then this memslot should
+>>>> +                      * have memory backed from two sources: hva for shared memory
+>>>> +                      * and gpa will be backed by guest_memfd.
+>>>> +                      */
+>>>> +                     if (region->region.guest_memfd == -1)
+>>> Why to pass !guest_memfd region to tdx_init_mem_region()?
+>>>
+>> Not sure I understand your comment.
+>  From the implementation of tdx_init_pages(), it also invokes
+> tdx_init_mem_region(), which further invokes ioctl KVM_TDX_INIT_MEM_REGION.
+>
+> However, if the region is with guest_memfd == -1, the ioctl
+> KVM_TDX_INIT_MEM_REGION should fail as kvm_gmem_populate() won't succeed.
+>
+> So, I'm wondering why there's a need to for the case of
+> "region->region.guest_memfd == -1".
+>
+> Or anything I missed?
+I had the same question in v8
+https://lore.kernel.org/lkml/4b7e7099-79da-4178-8f16-6780d8137ae1@linux.intel.com/
 
-Thansk for your review.
+I guess the code path for non-guest_memfd is due to some old versions of TDX KVM
+code before upstream. Currently, KVM doesn't support private memory from
+non-guest_memfd backed memory.
 
-Yes, the filename is invalid. I'll add that to the commit message in the 
-next version.
-
->>   fs/efivarfs/super.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/fs/efivarfs/super.c b/fs/efivarfs/super.c
->> index 23ff4e873651..c30d758e303a 100644
->> --- a/fs/efivarfs/super.c
->> +++ b/fs/efivarfs/super.c
->> @@ -152,7 +152,7 @@ static int efivarfs_d_compare(const struct dentry *dentry,
->>   {
->>          int guid = len - EFI_VARIABLE_GUID_LEN;
->>
-> 
-> Could we do a separate
-> 
-> if (guid <= 0)
->    return 1;
-> 
-> here, with a comment describing how that condition might become true?
-> 
-
-Okay, I will update it in v3.
-
->> -       if (name->len != len)
->> +       if (name->len != len || len <= EFI_VARIABLE_GUID_LEN)
-> 
-> ... and drop this change.
-> 
->>                  return 1;
->>
->>          /* Case-sensitive compare for the variable name */
->> --
->> 2.39.2
->>
->>
-
--- 
-Thanks,
-Nan
+>
+>>>> +                             tdx_init_pages(vm, (void *)hva, gpa, size_to_load);
+>>>> +                     else
+>>>> +                             tdx_init_mem_region(vm, (void *)hva, gpa, size_to_load);
+>>>> +             }
+>>>> +     }
+>>>> +}
+>>>> +
+>>>> +void vm_tdx_finalize(struct kvm_vm *vm)
+>>>> +{
+>>>> +     load_td_private_memory(vm);
+>>>> +     vm_tdx_vm_ioctl(vm, KVM_TDX_FINALIZE_VM, 0, NULL);
+>>>> +}
+>>>> --
+>>>> 2.51.0.rc1.193.gad69d77794-goog
+>>>>
+>>>>
 
 
