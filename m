@@ -1,184 +1,162 @@
-Return-Path: <linux-kernel+bounces-788765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A4F5B38A06
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 21:07:56 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F2F7B38A0C
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 21:08:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3D2B462D72
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 19:07:55 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 43E904E1B2E
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 19:08:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 526E52D8DAA;
-	Wed, 27 Aug 2025 19:07:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D31252D97A1;
+	Wed, 27 Aug 2025 19:08:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="pONYcV+y"
-Received: from smtp-42ab.mail.infomaniak.ch (smtp-42ab.mail.infomaniak.ch [84.16.66.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="q7IXFfMq"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B802D2D3220
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 19:07:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1B7E2C08B2
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 19:08:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756321670; cv=none; b=KyIQYzHYW/4uK3Mruc3jK3hEQBhy5CVnkzCntsOEHG4QRv7EwY4axA0MjOE/Q2ui5M67fKVkbDejnw6tZxyguanuW+NddiZO0aZp+FNidJ26uePgxRPJkhdrQb8Dw/ol8/icXlphuFTDZ3tAOGk2do8NuiIAr6m5TY8ru9HFMj4=
+	t=1756321712; cv=none; b=d2TakS4enWUOc00kcZR3h+MNLuQiopxmsZfMHGERKeR3PFpEfKPvr2J7cj6Pw7pGtvgPRTc/NdcTjyKkIV30hHAu3DWy8APdccmAhs/TbAie0z7bVbJpDd3TzROzkUfb1mde+/HIyO11JU8Vkkjj/+3jpJRtS0jpKqTc3ov61YE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756321670; c=relaxed/simple;
-	bh=yX4JaxYCqw7dNQZwvPW9Tw6mUMQKXHiEjTBjE5noi8s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uEf/fckLFvqYr5G5vtlYA+LDTpY+xGn+YY/ws7Xm7JJazXWy0IiiqTg5cjTtWyQcUc678/gO/YaXxdRH7x1hnp8lZEK205QdHcOQJje1Y3adHcFqXM1VsohSLxuVo7PhyhyKdzlIBYMtNKBgoWj+hy0p/1j0QcAB2hR+xx8TXe4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=pONYcV+y; arc=none smtp.client-ip=84.16.66.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-4-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10::a6c])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4cBvDX2wjWzd0K;
-	Wed, 27 Aug 2025 21:07:40 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1756321660;
-	bh=25MkTZUYf918F1U+hOS4n8oVEnZ1pOr2pnn7VTbbS7M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pONYcV+yus1UGCmv8aS92t7WD2FIBajAKgTy8ZCr+p5H6crAPU4gpTYYYwcYmn+FV
-	 HteEXLrnzALkVP+3LLs6eec4R8QTSZxF9pOxXpxUIcjJh6TlRD38kIjMqBOyQx+G87
-	 nKanc1siKvNLTQFi15PK9i3tBDcP0Bmczs216KSk=
-Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4cBvDV2XqRz7Kg;
-	Wed, 27 Aug 2025 21:07:38 +0200 (CEST)
-Date: Wed, 27 Aug 2025 21:07:35 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Andy Lutomirski <luto@kernel.org>
-Cc: Theodore Ts'o <tytso@mit.edu>, Christian Brauner <brauner@kernel.org>, 
-	Al Viro <viro@zeniv.linux.org.uk>, Kees Cook <keescook@chromium.org>, 
-	Paul Moore <paul@paul-moore.com>, Serge Hallyn <serge@hallyn.com>, Arnd Bergmann <arnd@arndb.de>, 
-	Christian Heimes <christian@python.org>, Dmitry Vyukov <dvyukov@google.com>, 
-	Elliott Hughes <enh@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
-	Florian Weimer <fweimer@redhat.com>, Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Jordan R Abrahams <ajordanr@google.com>, 
-	Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, Luca Boccassi <bluca@debian.org>, 
-	Matt Bobrowski <mattbobrowski@google.com>, Miklos Szeredi <mszeredi@redhat.com>, 
-	Mimi Zohar <zohar@linux.ibm.com>, Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>, 
-	Robert Waite <rowait@microsoft.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
-	Scott Shell <scottsh@microsoft.com>, Steve Dower <steve.dower@python.org>, 
-	Steve Grubb <sgrubb@redhat.com>, kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org
-Subject: Re: [RFC PATCH v1 0/2] Add O_DENY_WRITE (complement AT_EXECVE_CHECK)
-Message-ID: <20250827.Fuo1Iel1pa7i@digikod.net>
-References: <20250822170800.2116980-1-mic@digikod.net>
- <20250826-skorpion-magma-141496988fdc@brauner>
- <20250826.aig5aiShunga@digikod.net>
- <20250826123041.GB1603531@mit.edu>
- <20250826.iewie7Et5aiw@digikod.net>
- <CALCETrW=V9vst_ho2Q4sQUJ5uZECY5h7TnF==sG4JWq8PsWb8Q@mail.gmail.com>
+	s=arc-20240116; t=1756321712; c=relaxed/simple;
+	bh=+k4VXeI8suH6W9b8aCrYCg9/tr59Qoyt9aULAPVos2Y=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=Fj69KTXfJEYbP1tx1wQF3adagR6w2u6LgYZDwsIcvFP6Dj93NYZjL99uO6O+RG+NUFbAi8VFJ2+1cAXZI7zdz712AlfMCz4N8wB/OR2QYBcGDwsZ9QYPh3yZFWXNpwBwzmC+kPaNuO9Djr8xNe3EtGOHxqDyhZnLKPr4vCt+OVo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=q7IXFfMq; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-244581c62faso1602895ad.2
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 12:08:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1756321709; x=1756926509; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=xcAuR7T4RT9zVVlNI8n4izXJVHOx6F3XBKP4ipgVkd0=;
+        b=q7IXFfMqfZUEwAvBS2MBd7wdExUgqn0Omh3h0hhBA1IRECufM7SWLQxlbYYKivQDsA
+         6sW/2MHIB+N4rfeoxR8kkwrp866Be5g5MAmvzNZJEzKclKG57i1sgm9b16eUzD0jEnlC
+         Ry643j/uFNFbtqC4ed1iSKptE+fyvA6JVopqjZ8806ip1vS/TPggGwha9YWEe0ShYW36
+         MvYSU8+uQegXc+sULnwdLL2J/exaEdumkmOgj3geoxjN7nvqyKBe+XrgZGZHNYdBaAqy
+         n5rOU6s8PBFGhg6Fo2vtDSwys2VJawgeFNii3Q92KNQbHJ3OVDyUWN5si3pGWzaHEEAe
+         6bGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756321709; x=1756926509;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xcAuR7T4RT9zVVlNI8n4izXJVHOx6F3XBKP4ipgVkd0=;
+        b=Lr3kj1NP6TSSta8trsCtvSx2Lszi9vFd6QAWs3TuvAE/SJduI+m1jBq6gVbA5C+a3h
+         kh2C7UatQMcXWS94Gu1qQTDS00bfQQJL4S65ukZ6TErfeP4maExp1HJTV28x+m6Fsc15
+         DmPCdN3fid8FycoFTKIVhRHtZVtpOa92qrqHW63Ed8AOONR+L8VoNjNOMFCTQDFCwi+x
+         kMxDyZwpWKJ0uisU0rsFtFACB0EL5MDD6Hrngz/hWjHcPmi+BYLTk9BQzBqKXAdg3cG6
+         LmxVnj0bPI0syIVci4EAQCHCtDlpidvBrdJvn8fAJ8T+i6tfu9tPJ/32JoR9YRgdeB2n
+         FTXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWuu6N6jI/At5/B/kwjJIkOmtoNecZbqwFKcIgVDqg/oIL9OzGQ7+mncYxYI3OEUc2avyAGShvPeLfiFhg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywzluw57mGh46TQ1DJ5plCqawzVwCrZj9Jq9yMnW8LSm0PCEBw4
+	dE9J01nX13MIfWTgKYcjTEInRCFNPoLlLFHXk2ZpVJirexTnFr82ivYumNVCqlDzFK3yIfx1PFV
+	mBHc84w==
+X-Google-Smtp-Source: AGHT+IEhMKtArTIDLxa8v26TStyUxDN5gA5Xm0VZUdjAbdj2048YQG+Bwtxlg063uyONmGMwUmly8Ow2VrA=
+X-Received: from plgn18.prod.google.com ([2002:a17:902:f612:b0:248:b2cc:8b2])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:cf08:b0:248:a4e2:e6d6
+ with SMTP id d9443c01a7336-248a4f2333bmr41703845ad.39.1756321709348; Wed, 27
+ Aug 2025 12:08:29 -0700 (PDT)
+Date: Wed, 27 Aug 2025 12:08:27 -0700
+In-Reply-To: <aK7Ji3kAoDaEYn3h@yzhao56-desk.sh.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CALCETrW=V9vst_ho2Q4sQUJ5uZECY5h7TnF==sG4JWq8PsWb8Q@mail.gmail.com>
-X-Infomaniak-Routing: alpha
+Mime-Version: 1.0
+References: <20250827000522.4022426-1-seanjc@google.com> <20250827000522.4022426-10-seanjc@google.com>
+ <aK7Ji3kAoDaEYn3h@yzhao56-desk.sh.intel.com>
+Message-ID: <aK9Xqy0W1ghonWUL@google.com>
+Subject: Re: [RFC PATCH 09/12] KVM: TDX: Fold tdx_mem_page_record_premap_cnt()
+ into its sole caller
+From: Sean Christopherson <seanjc@google.com>
+To: Yan Zhao <yan.y.zhao@intel.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Michael Roth <michael.roth@amd.com>, Ira Weiny <ira.weiny@intel.com>, 
+	Vishal Annapurve <vannapurve@google.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>
+Content-Type: text/plain; charset="us-ascii"
 
-On Wed, Aug 27, 2025 at 10:35:28AM -0700, Andy Lutomirski wrote:
-> On Tue, Aug 26, 2025 at 10:47 AM Mickaël Salaün <mic@digikod.net> wrote:
-> >
-> > On Tue, Aug 26, 2025 at 08:30:41AM -0400, Theodore Ts'o wrote:
-> > > Is there a single, unified design and requirements document that
-> > > describes the threat model, and what you are trying to achieve with
-> > > AT_EXECVE_CHECK and O_DENY_WRITE?  I've been looking at the cover
-> > > letters for AT_EXECVE_CHECK and O_DENY_WRITE, and the documentation
-> > > that has landed for AT_EXECVE_CHECK and it really doesn't describe
-> > > what *are* the checks that AT_EXECVE_CHECK is trying to achieve:
-> > >
-> > >    "The AT_EXECVE_CHECK execveat(2) flag, and the
-> > >    SECBIT_EXEC_RESTRICT_FILE and SECBIT_EXEC_DENY_INTERACTIVE
-> > >    securebits are intended for script interpreters and dynamic linkers
-> > >    to enforce a consistent execution security policy handled by the
-> > >    kernel."
-> >
-> > From the documentation:
-> >
-> >   Passing the AT_EXECVE_CHECK flag to execveat(2) only performs a check
-> >   on a regular file and returns 0 if execution of this file would be
-> >   allowed, ignoring the file format and then the related interpreter
-> >   dependencies (e.g. ELF libraries, script’s shebang).
-> >
-> > >
-> > > Um, what security policy?
-> >
-> > Whether the file is allowed to be executed.  This includes file
-> > permission, mount point option, ACL, LSM policies...
-> 
-> This needs *waaaaay* more detail for any sort of useful evaluation.
-> Is an actual credible security policy rolling dice?  Asking ChatGPT?
-> Looking at security labels?  Does it care who can write to the file,
-> or who owns the file, or what the file's hash is, or what filesystem
-> it's on, or where it came from?  Does it dynamically inspect the
-> contents?  Is it controlled by an unprivileged process?
+On Wed, Aug 27, 2025, Yan Zhao wrote:
+> On Tue, Aug 26, 2025 at 05:05:19PM -0700, Sean Christopherson wrote:
+> > @@ -1641,14 +1618,30 @@ static int tdx_sept_set_private_spte(struct kvm *kvm, gfn_t gfn,
+> >  		return -EIO;
+> >  
+> >  	/*
+> > -	 * Read 'pre_fault_allowed' before 'kvm_tdx->state'; see matching
+> > -	 * barrier in tdx_td_finalize().
+> > +	 * Ensure pre_fault_allowed is read by kvm_arch_vcpu_pre_fault_memory()
+> > +	 * before kvm_tdx->state.  Userspace must not be allowed to pre-fault
+> > +	 * arbitrary memory until the initial memory image is finalized.  Pairs
+> > +	 * with the smp_wmb() in tdx_td_finalize().
+> >  	 */
+> >  	smp_rmb();
+> > -	if (likely(kvm_tdx->state == TD_STATE_RUNNABLE))
+> > -		return tdx_mem_page_aug(kvm, gfn, level, pfn);
+> >  
+> > -	return tdx_mem_page_record_premap_cnt(kvm, gfn, level, pfn);
+> > +	/*
+> > +	 * If the TD isn't finalized/runnable, then userspace is initializing
+> > +	 * the VM image via KVM_TDX_INIT_MEM_REGION.  Increment the number of
+> > +	 * pages that need to be initialized via TDH.MEM.PAGE.ADD (PAGE.ADD
+> > +	 * requires a pre-existing S-EPT mapping).  KVM_TDX_FINALIZE_VM checks
+> > +	 * the counter to ensure all mapped pages have been added to the image,
+> > +	 * to prevent running the TD with uninitialized memory.
+> To prevent the mismatch between mirror EPT and the S-EPT?
 
-AT_EXECVE_CHECK only does the same checks as done by other execveat(2)
-calls, but without actually executing the file/fd.
+No?  Because KVM bumps the count when installing the S-EPT and decrements it
+on AUG, so I don't see how nr_premapped guards against M-EPT vs. S-EPT issues?
 
-> 
-> I can easily come up with security policies for which DENYWRITE is
-> completely useless.  I can come up with convoluted and
-> not-really-credible policies where DENYWRITE is important, but I'm
-> honestly not sure that those policies are actually useful.  I'm
-> honestly a bit concerned that AT_EXECVE_CHECK is fundamentally busted
-> because it should have been parametrized by *what format is expected*
-> -- it might be possible to bypass a policy by executing a perfectly
-> fine Python script using bash, for example.
+> e.g., Before KVM_TDX_FINALIZE_VM, if userspace performs a zap after the
+> TDH.MEM.PAGE.ADD, the page will be removed from the S-EPT. The count of
+> nr_premapped will not change after the successful TDH.MEM.RANGE.BLOCK and
+> TDH.MEM.PAGE.REMOVE.
 
-There have been a lot of bikesheding for the AT_EXECVE_CHECK patch
-series, and a lot of discussions too (you where part of them).  We ended
-up with this design, which is simple and follows the kernel semantic
-(requested by Linus).
+Eww.  It would be nice to close that hole, but I suppose it's futile, e.g. the
+underlying problem is unexpectedly removing pages from the initial, whether the
+VMM is doing stupid things before vs. after FINALIZE doesn't really matter.
 
-> 
-> I genuinely have not come up with a security policy that I believe
-> makes sense that needs AT_EXECVE_CHECK and DENYWRITE.  I'm not saying
-> that such a policy does not exist -- I'm saying that I have not
-> thought of such a thing after a few minutes of thought and reading
-> these threads.
+> As a result, the TD will still run with uninitialized memory.
 
-A simple use case is for systems that wants to enforce a
-write-xor-execute policy e.g., thanks to mount point options.
+No?  Because BLOCK+REMOVE means there are no valid S-EPT mappings.  There's a
+"hole" that the guest might not expect, but that hole will trigger an EPT
+violation and only get "filled" if the guest explicitly accepts an AUG'd page.
 
-> 
-> 
-> > > And then on top of it, why can't you do these checks by modifying the
-> > > script interpreters?
-> >
-> > The script interpreter requires modification to use AT_EXECVE_CHECK.
-> >
-> > There is no other way for user space to reliably check executability of
-> > files (taking into account all enforced security
-> > policies/configurations).
-> >
-> 
-> As mentioned above, even AT_EXECVE_CHECK does not obviously accomplish
-> this goal.  If it were genuinely useful, I would much, much prefer a
-> totally different API: a *syscall* that takes, as input, a file
-> descriptor of something that an interpreter wants to execute and a
-> whole lot of context as to what that interpreter wants to do with it.
-> And I admit I'm *still* not convinced.
+Side topic, why does KVM tolerate tdh_mem_page_add() failure?  IIUC, playing
+nice with tdh_mem_page_add() failure necessitates both the
+tdx_is_sept_zap_err_due_to_premap() craziness and the check in tdx_td_finalize()
+that all pending pages have been consumed.
 
-As mentioned above, AT_EXECVE_CHECK follows the kernel semantic. Nothing
-fancy.
+What reasonable use case is there for gracefully handling tdh_mem_page_add() failure?
 
-> 
-> Seriously, consider all the unending recent attacks on LLMs an
-> inspiration.  The implications of viewing an image, downscaling the
-> image, possibly interpreting the image as something containing text,
-> possibly following instructions in a given language contained in the
-> image, etc are all wildly different.  A mechanism for asking for
-> general permission to "consume this image" is COMPLETELY MISSING THE
-> POINT.  (Never mind that the current crop of LLMs seem entirely
-> incapable of constraining their own use of some piece of input, but
-> that's a different issue and is besides the point here.)
+If there is a need to handle failure, I gotta imagine it's only for the -EBUSY
+case.  And if it's only for -EBUSY, why can't that be handled by retrying in
+tdx_vcpu_init_mem_region()?  If tdx_vcpu_init_mem_region() guarantees that all
+pages mapped into the S-EPT are ADDed, then it can assert that there are no
+pending pages when it completes (even if it "fails"), and similarly
+tdx_td_finalize() can KVM_BUG_ON/WARN_ON the number of pending pages being
+non-zero.
 
-You're asking about what should we consider executable.  This is a good
-question, but AT_EXECVE_CHECK is there to answer another question: would
-the kernel execute it or not?
+> > +	 */
+> > +	if (unlikely(kvm_tdx->state != TD_STATE_RUNNABLE)) {
+> > +		if (KVM_BUG_ON(kvm->arch.pre_fault_allowed, kvm))
+> > +			return -EIO;
+> > +
+> > +		atomic64_inc(&kvm_tdx->nr_premapped);
+> > +		return 0;
+> > +	}
+> > +
+> > +	return tdx_mem_page_aug(kvm, gfn, level, pfn);
+> >  }
+> >  
+> >  static int tdx_sept_drop_private_spte(struct kvm *kvm, gfn_t gfn,
+> > -- 
+> > 2.51.0.268.g9569e192d0-goog
+> > 
 
