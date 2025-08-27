@@ -1,93 +1,84 @@
-Return-Path: <linux-kernel+bounces-787870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787871-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25EFDB37CAB
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 10:01:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BF09B37CB2
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 10:02:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF9DE1B2794A
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 08:01:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E335C200F6B
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 08:02:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9528C21B9C8;
-	Wed, 27 Aug 2025 08:00:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A146331A55C;
+	Wed, 27 Aug 2025 08:02:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="VhIluC/q"
-Received: from fout-b4-smtp.messagingengine.com (fout-b4-smtp.messagingengine.com [202.12.124.147])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YiAMRB1e"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F110A32145D;
-	Wed, 27 Aug 2025 08:00:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2014A2D320E
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 08:02:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756281649; cv=none; b=byTtz/nn+/CFUX9b5mkRJudEf4v6h5HNVn2ocM/hBf9C5mvQS0wd71leNR9VYyt9vBUJ8AwOtuLXb5SnBWqyVUPSV1luCc3/Tf72CQUrYhE5iqQKOBF/hrRX1eUWb0cBMwSP1jCqe09oXdzgqdlT24ib+TxPhp7gSkbeyueorgk=
+	t=1756281771; cv=none; b=FNNXs3FbL4UusYUf9KJAMF3FmFl/ctUr+W8Hmfur+ayyxRVKoX9p3zj9EkdJ7E+kaAzOO78lubdQcllJ1Jsv5IfZ5b+xY5/yPhcqWxW+slohaTMyz5n2l9FTxTrBSjD6m2UFo53M+bFFZNqVuw9G/ttGigM4Tu/Hcl4UFYzTo3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756281649; c=relaxed/simple;
-	bh=IFI5IEqviMYeGQz8mOqLXuunI+6V5VvCW77dx4CtKE0=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=pfx18cM/lPfcnC0Zr+POrjmwOJwbqjEUd3U5svUZCBCiQeKeiJYkqwB7pcbUDcR5NGGRfFrZrvnrO1nJ+eIOE5qqt4Rn+RrTu9ZzHA5VrP7TK2alKm7SuFDyuqBVh5y236lDx1tVo18oOCC8LkcmVx8fg1+PQer26/ypQhzadlo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=VhIluC/q; arc=none smtp.client-ip=202.12.124.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
-	by mailfout.stl.internal (Postfix) with ESMTP id 90B8E1D001BB;
-	Wed, 27 Aug 2025 04:00:46 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-03.internal (MEProxy); Wed, 27 Aug 2025 04:00:46 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1756281646; x=1756368046; bh=giTxXPs34nsMyod8hLGAXg4/KSFcikyw3c2
-	iZ7B+EA8=; b=VhIluC/qxy2tWVsuRpQXSYOidID3ehfAKR/oY3TN9YD5fmsPeWH
-	AJYDdw79T8EplszNM5LYjFSAEQqb7qZcRu3uXNa6dzoDKJtiNsABRule+z/WMyGo
-	cENu9SbbBBQmq4+fzZPid55RKzK0qeQ0pBdHHB8J5Ok1L9DY/Pq/QYIt/8v53PbF
-	1Ich36NiLcUOc8FvxffdYJs+wLtGwNkjEVVZoVCBwYc7SeDI7vw8+Cxg29tof1yV
-	i+hN4eV3/eBgO2WficlNBQQXXypZGizJG+u1A4RfXmfnwH0ixsPHLKlQ31toftig
-	w9VdKRnATyiE/1zd0XjTO0oV6ok3Ei4VrRQ==
-X-ME-Sender: <xms:LbuuaKKqLjE-z3j7_APGsA1o5_u7H4Q-7QYD8ZvuLs9Hn_uGPLvbFA>
-    <xme:LbuuaKx20p6NOddJbukWc_Q8yyJVvSs6QYZNzOoxI55SZ4GFGArcoFcK454VaJw5c
-    ErAb0O0oXXYwAc0oNE>
-X-ME-Received: <xmr:LbuuaCLirzssA8kvtY0bwx6KRjT91wqt4ulLXTTRsbInD7rG3za3Sz_8E6IFil-t9335L6PY8pDEeT9At2sRXYV87ZF05VhVtlA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddujeejiedvucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepfffhvfevufgjkfhfgggtsehttdertddttddvnecuhfhrohhmpefhihhnnhcuvfhh
-    rghinhcuoehfthhhrghinheslhhinhhugidqmheikehkrdhorhhgqeenucggtffrrghtth
-    gvrhhnpeelueehleehkefgueevtdevteejkefhffekfeffffdtgfejveekgeefvdeuheeu
-    leenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehfth
-    hhrghinheslhhinhhugidqmheikehkrdhorhhgpdhnsggprhgtphhtthhopeduuddpmhho
-    uggvpehsmhhtphhouhhtpdhrtghpthhtoheplhgrnhgtvgdrhigrnhhgsehlihhnuhigrd
-    guvghvpdhrtghpthhtohepuggrvhhiugdrlhgrihhghhhtrdhlihhnuhigsehgmhgrihhl
-    rdgtohhmpdhrtghpthhtoheprghkphhmsehlihhnuhigqdhfohhunhgurghtihhonhdroh
-    hrghdprhgtphhtthhopehgvggvrhhtsehlihhnuhigqdhmieekkhdrohhrghdprhgtphht
-    thhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtph
-    htthhopehmhhhirhgrmhgrtheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepohgrkhes
-    hhgvlhhsihhnkhhinhgvthdrfhhipdhrtghpthhtohepphgvthgvrhiisehinhhfrhgrug
-    gvrggurdhorhhgpdhrtghpthhtohepshhtrggslhgvsehvghgvrhdrkhgvrhhnvghlrdho
-    rhhg
-X-ME-Proxy: <xmx:LbuuaJXvMDLRRVpCE54t9f8Wc22szdDwQL7b_12KtYMBXmbo42S5nQ>
-    <xmx:LbuuaFZLoyZzP3wFelgHd-mmpKVUVGTzj8V_STfFX_mdUTu1HT7foA>
-    <xmx:LbuuaAyRz_hhRGQXnSJNv8tLSsVC8pThuqjw3qhuo5qILJcpzU-rvQ>
-    <xmx:LbuuaF3Hb74zdX5pOOd-2DD_hsp6EBEFY5VPFTJkfvhLU4Dcvpg2HQ>
-    <xmx:LruuaGAhtVdB-WvB9v7Bglg8fKf8x3nAsB7tFMHCc2YBeGXDZEu9Av1d>
-Feedback-ID: i58a146ae:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 27 Aug 2025 04:00:43 -0400 (EDT)
-Date: Wed, 27 Aug 2025 18:00:43 +1000 (AEST)
-From: Finn Thain <fthain@linux-m68k.org>
-To: Lance Yang <lance.yang@linux.dev>
-cc: David Laight <david.laight.linux@gmail.com>, akpm@linux-foundation.org, 
-    geert@linux-m68k.org, linux-kernel@vger.kernel.org, mhiramat@kernel.org, 
-    oak@helsinkinet.fi, peterz@infradead.org, stable@vger.kernel.org, 
-    will@kernel.org, Lance Yang <ioworker0@gmail.com>
-Subject: Re: [PATCH] atomic: Specify natural alignment for atomic_t
-In-Reply-To: <b199a90c-4a7f-42bf-9d17-d96f63bb5e62@linux.dev>
-Message-ID: <312ba353-6b4e-c3ef-40ce-a9dddf3275a3@linux-m68k.org>
-References: <7d9554bfe2412ed9427bf71ce38a376e06eb9ec4.1756087385.git.fthain@linux-m68k.org> <20250825032743.80641-1-ioworker0@gmail.com> <c8851682-25f1-f594-e30f-5b62e019d37b@linux-m68k.org> <96ae7afc-c882-4c3d-9dea-3e2ae2789caf@linux.dev>
- <5a44c60b-650a-1f8a-d5cb-abf9f0716817@linux-m68k.org> <4e7e7292-338d-4a57-84ec-ae7427f6ad7c@linux.dev> <20250825130715.3a1141ed@pumpkin> <b199a90c-4a7f-42bf-9d17-d96f63bb5e62@linux.dev>
+	s=arc-20240116; t=1756281771; c=relaxed/simple;
+	bh=FLTLlRj2l99VLo6DxkctWbbapbGFjWXzr0jrRSqXp5A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZQiKIadEeJuhhokB4Uz3+BQ+ZAYNUHKNY+KmLewGXDxIQWkRv3oiivJssc4P8BGNQM/ok6DdlFXNjwN2Ygu1JkdgCEON36ELJ7ziOaLUKAuUszuKUSVAuFuGEzhE529c7CoJZO2y7GpfYecKFKtQ0SAXx4GlhkuV3NdxpRKwIQA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YiAMRB1e; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3b9edf4cf6cso5232910f8f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 01:02:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1756281767; x=1756886567; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=KDBYQofHZrYl10kQ9PzJbTY770l6maNuIETUuPQwgh8=;
+        b=YiAMRB1e5J/XAIbEb27hOsFoOBG3doXwhGqNfNc05kHqtjLRDjI47DXgyAmCysac6y
+         OiSzxDjDeP390rTiOlWEWBWbyK882iMUpKjvMYzPGLEILNsYcHBPgy9xfFXH6gbyxZIO
+         CHovtHQiiL4PSXfBQkhSPgxyws9yJPeJLR2K5M9/X8fx7gYv1raGUZvW3Z8m2c3Y+CMO
+         lkqKjFuJal2f0Vvpqj6YtqxD4OhftXH+IK9M4bVaurG+jZkvgk2/64lspIoV8S76JKJf
+         /aOViHEtwJ3ukqfgkNiLaYj+Vy7oXY3q6OUjNcjWHozUalYMi0CZM2lWO044PQIFgZXl
+         W0Hg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756281767; x=1756886567;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KDBYQofHZrYl10kQ9PzJbTY770l6maNuIETUuPQwgh8=;
+        b=xO9ANm90UTWjgmjZIpXEmIAbbgbZlYUcfTFKeHlByrWAz8D8rfcT3ySfhYrM1uRrjR
+         TVHOKK00Lb0OlLYz/wKkbl5NE0+xocT1Mt6/zEWAhGiJPeenCWxK0dd1nNhFwsqMlPz2
+         uR2YtA+GVMx5sq+LX25Ocmvwx6dZyWBUTsdz8Gr7fZAMrvcp9b01DJt4+XVnIGLeaUb7
+         gtm+TWTnhBvHbVOkvQSD9tiJ8ojW9wDvVc/CzliEjD1K/Z1+pqIL5bvSxJyf6y7qT5sY
+         p1b+OnKlVq4uLJ518eCNUvG3kX+YZI/3ujIHDDVchDh3YpurlMTsyALBIWXxEEhq9jAc
+         QlUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVsxZtHjbccNzb0FWmwjEeWNJimKB0S4qJ6pGlb8lFs4KaoSUb1aCU18CtxTtYtxFLagg93hnj0W6FgXOI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzkT2EaiMSS4zfUG5lU+1Ekj436DRXoQBhXbZshE13zOUlW73AC
+	CumJUS+v2OyBpunQwlHJfhYxkFXlJGAshKumMZrBrYNaieScigK6PQE/hVmLQK3NiiY=
+X-Gm-Gg: ASbGncva7geQlDKTSNDG3zeXmbPmkx/JB7y8s4IXvB/XMjev+8Oq7zedEDXtccAGwnf
+	pHxdSFWviu0uyZpG6enFKqOw53zvNoOzSBSSENuzRhMdVFDcX/8aTPGCMA6ii4Kb7HJFWlKwsID
+	6d0IMMIFqMtY2wekPx+z0ch7RzNIoqB54Ofqwq3sHszNB7dzYpor1sHTMgYOJbHwZ/v8I7No4j6
+	UHbhxSzT2n66ITQJzBLrJOTJZM1+I+2/QFKSok1SwM+xJNvIUjXubQqpyYNN+JvDgIpqertyDkc
+	W7TF1DW8RTfT/Ci9M5VcRQTymHdbxT5IbNQLijuulMYPnVOb/iCZy6o5pB+KSoE4Iu5aVU3zr1J
+	rtN223RQqIB2T3q8+HGLWzXxJtrs=
+X-Google-Smtp-Source: AGHT+IF6Rlth0CMRJNdIQHC/Hhgq3FdizOsAb3JDfqJzuNPw+A8sYYuExQ63wUeMcxziaJJlxQPtDg==
+X-Received: by 2002:a05:6000:40dc:b0:3b9:14f2:7eed with SMTP id ffacd0b85a97d-3cc22e34bc6mr2220251f8f.56.1756281767311;
+        Wed, 27 Aug 2025 01:02:47 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3c70f14372fsm19327876f8f.28.2025.08.27.01.02.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 Aug 2025 01:02:46 -0700 (PDT)
+Date: Wed, 27 Aug 2025 11:02:40 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Xichao Zhao <zhao.xichao@vivo.com>
+Cc: gregkh@linuxfoundation.org, linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] staging: rtl8723bs: drop redundant conversion to bool
+Message-ID: <aK67oBH4cQ10C4A6@stanley.mountain>
+References: <20250827031500.91732-1-zhao.xichao@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -95,27 +86,40 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250827031500.91732-1-zhao.xichao@vivo.com>
 
-
-On Mon, 25 Aug 2025, Lance Yang wrote:
-
-> > 
-> > More problematic is that, IIRC, m68k kmalloc() allocates 16bit aligned 
-> > memory. This has broken other things in the past. I doubt that 
-> > increasing the alignment to 32bits would make much difference to the 
-> > kernel memory footprint.
+On Wed, Aug 27, 2025 at 11:15:00AM +0800, Xichao Zhao wrote:
+> The result of integer comparison already evaluates to bool. No need for
+> explicit conversion.
 > 
-> @Finn Given this new information, how about we just apply the runtime 
-> check fix for now?
-
-New information? No, that's just hear-say.
-
-> Since we plan to remove the entire pointer-encoding scheme later anyway, 
-> a minimal and targeted change could be the logical choice. It's easy and 
-> safe to backport, and it cleanly stops the warnings from all sources 
-> without introducing new risks - exactly what we need for stable kernels.
+> No functional impact.
 > 
+> Signed-off-by: Xichao Zhao <zhao.xichao@vivo.com>
+> ---
+>  drivers/staging/rtl8723bs/core/rtw_mlme.c        | 6 +++---
+>  drivers/staging/rtl8723bs/os_dep/osdep_service.c | 4 ++--
+>  2 files changed, 5 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/staging/rtl8723bs/core/rtw_mlme.c b/drivers/staging/rtl8723bs/core/rtw_mlme.c
+> index 692d0c2b766d..570c99192d3f 100644
+> --- a/drivers/staging/rtl8723bs/core/rtw_mlme.c
+> +++ b/drivers/staging/rtl8723bs/core/rtw_mlme.c
+> @@ -1597,7 +1597,7 @@ inline bool rtw_is_scan_deny(struct adapter *adapter)
+>  {
+>  	struct mlme_priv *mlmepriv = &adapter->mlmepriv;
+>  
+> -	return (atomic_read(&mlmepriv->set_scan_deny) != 0) ? true : false;
+> +	return (atomic_read(&mlmepriv->set_scan_deny) != 0);
 
-Well, that's up to you, of course. If you want my comment, I'd only ask 
-whether or not the bug is theoretical (outside of m68k).
+
+mlmepriv->set_scan_deny is either 0 or 1 so it's cleaner to just do:
+
+	return atomic_read(&mlmepriv->set_scan_deny);
+
+(avoids the double negative).
+
+regards,
+dan carpenter
+
 
