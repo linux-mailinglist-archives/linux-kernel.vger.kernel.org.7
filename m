@@ -1,151 +1,167 @@
-Return-Path: <linux-kernel+bounces-787578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9101AB37839
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 04:41:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BA38B37840
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 04:42:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4BD11175684
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 02:41:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D3D2117420B
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 02:42:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EA0B2D0274;
-	Wed, 27 Aug 2025 02:41:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="O15W6Ajv"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F15CD2D323E;
+	Wed, 27 Aug 2025 02:42:32 +0000 (UTC)
+Received: from OS8PR02CU002.outbound.protection.outlook.com (mail-japanwestazon11022120.outbound.protection.outlook.com [40.107.75.120])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB6FF2773F7
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 02:41:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756262483; cv=none; b=Lu6Lac56N2w2caaYR06dQz3lRZYYbKb7t/0XTtJCuoFhMkxXx+zwar9SCyoLtjygOxUuaBc4repFW/Yq1uXZDXHQVCwtRn2amDERhnMKiAbIiPibirrhfXfWX8mV4thjxYnfGCuqjdDVLtSx07o4AtoPRaCeYk/zrHSxQwseguk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756262483; c=relaxed/simple;
-	bh=tGB21+KeiOGIRb/mkNVHXqw7dsiXeK8y5OMn7Rxp4yE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ikDPKxHqUUC+bZFknygcsgm+DjyrQ3x9kVpvtT5ggiZK4se2uURrdcSRNCpWKTyRVBSOrrtxk03X85oqLN5gtzCL9Vr/24631mq5slAgwRxCSx6M9Mtn+cv8yGdinr15+C1Ai64gIoROvsD+Fypw9K1itaBkZCp84G9JLiZUlqM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=O15W6Ajv; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-24639fbdd87so4346415ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 19:41:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1756262480; x=1756867280; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BjxEgqnJro7lL9LezaBDUakZcT0q5OR/PsDrwklypb4=;
-        b=O15W6Ajv28IMhMGIl2qCL10KU8h/lRbkcpGYvgP57VsaAC5jojOjIew6T6A20MghKw
-         /O+XVOamRhGbQDkQq041r3PIVuRSO3Baj2gHSC43FwWQlG2mp2WetCNlpyUsf8oFUyK6
-         lTLV1vCFgoVEouLhuSzfoD6+HyLlr4JWGxMch9nloziS5aF4jw6+PnjmQhRjF2Au21jf
-         +Wju8Bb2+HmUbLv5X3kCsQuZfn2X6X7IcAjQ95psuSi13GFvS+kETsh2w3PV17xSIcvH
-         985lgDTxwBZ/5kI22VkDZeVQMxaq8X9cbxqMjJJSABIM3c611o4DvNu5et6MU6nZPJc8
-         BZLQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756262480; x=1756867280;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BjxEgqnJro7lL9LezaBDUakZcT0q5OR/PsDrwklypb4=;
-        b=ReGUAw/2AMbfB7eRRH1lhkbMfEfCCLZWTOWQVsAYnzoAWZSywgDz+Rx+L4dymwERIS
-         mccpMPeEXDSPi7YrI3Hpi1eZcu4KYO2TCRwTrlaEUQG8/FjkzMDC+U2LNGP9Jaa/KIyL
-         Gp9RZLao+Ch4xHuvVrsQQ+SuMFpUQQ0bfm2jWNH5nvAF6MD9DSNjVrcfaIuJmBlQn8lc
-         WcpJs8CNsd/D1PcuPx0v2pV7yONsulf2RnqSZABxKmXF4kqQnlylMVC8jAmcaL2SzMF/
-         le0sqXfzBF4M5Z+dmdrd+1Ey0UyJ50LiI7Z+ejPuv9dWDM/XmPlcLl2ZaDrpmcezlO1N
-         QSJw==
-X-Forwarded-Encrypted: i=1; AJvYcCVHUYrTmORSEMaVHmzTe6pA/o8ogtWrc1ag0+srZ7ACiORU4siKAA4XJcwCoNel4NtBSb6Oq+YE2gy3Mxk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzE0LkMkyps6ah9g0LREy1xfwkMwpZABlQ6SD4utDuntQFQVGpP
-	+We2iatAVo9ejCC8sSUW5/XX7ePa46/WljY4fUudviCs2nJkdXsHWLBtamOunuJ1UgAvc15TaCR
-	31nZ3m7eA0PcVTiZn6KQDcUmJScgFXuEzPLOoyT1yXQ==
-X-Gm-Gg: ASbGncuYLAIjpzfTUP3GUez/JW17XtMf74Wne/YdBvxLp35FH2LqnBBnAzQ7HjMR5+i
-	0GImjKQN55IY0+DI/OvIr1mnVl5mgxKjS6o85cJak1ZGfKFgJkh99Gji6HUdcyCE9UhyXyygjMh
-	C/2s6vjbHdBzpWxZ2hs4g3QxWJl81bv+hZI76m8sRt+zuKENiuTRCNwnbkq1gE/L4Sfi/oV59mP
-	F1WRXnihaubNfUdTbxWWhSr9gX0mlEz56TX2vC/vY3r4qGXHFq2rAQG9S8=
-X-Google-Smtp-Source: AGHT+IFPzhubzZRBaSf6ZK7EERQAGuZTZeLwtvw9GV2o/YId4xoUhbtPFhevcDJ7OY1DRqDVEbOGIVoPvPf8Q3kVeug=
-X-Received: by 2002:a17:902:e548:b0:234:9fe1:8fc6 with SMTP id
- d9443c01a7336-248753a2436mr47264125ad.18.1756262479947; Tue, 26 Aug 2025
- 19:41:19 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA4F628BAB6;
+	Wed, 27 Aug 2025 02:42:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.75.120
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756262552; cv=fail; b=errA1EEs0IjY2UsvL/uy/tpkNfAccbwQC9sVw9qW/kQmGtF3EudPjBEKt2KnJbRlSzQl+Ysm/lpxiKG9yIcQKioaldVa7XP43LfPmd0XzkNSiL/DS3662TFxqlPOCUfTmP2d4mHNr3iuEU2RpyUYrI9agi209L+r9pS118geF4w=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756262552; c=relaxed/simple;
+	bh=bpigb9gqw2DHVrc3Uemeh6V9K1h0LgC5+Ny3Bd/Ae28=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZcmX4n/O1Eel5MB5abKL8nf4VNZy8wiL23kaDhiSgx4hjwv2WejKomv030dGGovxRUN/Nk+IR3pcH85M8ISYPFzOW8cvMT4VPxFZlni/WMae7BQYkBfeVg16ktqQR3KUAWPMbbd76Maw7QTJm4SZkhNpOUN7YsZKWNCkySXZs1I=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com; spf=pass smtp.mailfrom=cixtech.com; arc=fail smtp.client-ip=40.107.75.120
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cixtech.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=woiP0SQK33IvRH65mX5VhKJ/STylv6oirlQa5qCmBEKzmIJMnW8DYllfW0PXpN6NTFKwDQ9A+JLcPDLqjviMLOFSZUitPtKQuSPXUWDXofQBCKwxWOedWM6znp69PB7LCdqTlisxD0ogIWB4xDaFef+J940s5RB95rO0i2mhLsbVz6K9OdZLqtLKtNQsDtZSBoCZLQpDPvpHuK4akYZ6uicQYKWQF6hTVI60oz0Z3pCj+kaF/+3925rwN9tAs/kOByJIraryX7ohFu4VgcGy7EVeFoVg/PzaY5IVQpfh1W/Zs0AcaUrjGi4JOG7OvCp3tLEZAY7uwge4z+TxYgTqSw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=6e+/puKfrOJUXwbMVGyHJaCNu1mqtUB0u9H5cPXqFsk=;
+ b=pl/l6Vxhr4eFTj3thO75KtCeHV+Om7NnUFyErXgga7zBsTBzF14Kvs710JvHKfEzLa+R71IG0ljXPfrAD5BTCEohZKc0s/g8J+KgNhNm2OMwn73fSEJ5mpZRFIK+Ep6zquSFp+SydZ9E4fKvH//m/JfVoBf+VGF7zg6eTWYWlyfMF3YDmoQA+boxj+5lnS6lullBkW6AohkGpq7r2HbJEHNQ7EUfGW9R8x8wV4uX2Yt6EQq3iYkxlxrrwdlRvoSGyG0/DGdOs8NdtldHxppUqZhOcpMkfq3ohOwEz5cGs/kWtDC17SaD8VZPDouLni+jBf8Yk06qLwx//bgshQ3scw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 222.71.101.198) smtp.rcpttodomain=cixtech.com smtp.mailfrom=cixtech.com;
+ dmarc=bestguesspass action=none header.from=cixtech.com; dkim=none (message
+ not signed); arc=none (0)
+Received: from TY4P286CA0048.JPNP286.PROD.OUTLOOK.COM (2603:1096:405:36e::9)
+ by TYSPR06MB6526.apcprd06.prod.outlook.com (2603:1096:400:481::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.20; Wed, 27 Aug
+ 2025 02:42:26 +0000
+Received: from TY2PEPF0000AB85.apcprd03.prod.outlook.com
+ (2603:1096:405:36e:cafe::eb) by TY4P286CA0048.outlook.office365.com
+ (2603:1096:405:36e::9) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9073.15 via Frontend Transport; Wed,
+ 27 Aug 2025 02:42:26 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 222.71.101.198)
+ smtp.mailfrom=cixtech.com; dkim=none (message not signed)
+ header.d=none;dmarc=bestguesspass action=none header.from=cixtech.com;
+Received-SPF: Pass (protection.outlook.com: domain of cixtech.com designates
+ 222.71.101.198 as permitted sender) receiver=protection.outlook.com;
+ client-ip=222.71.101.198; helo=smtprelay.cixcomputing.com; pr=C
+Received: from smtprelay.cixcomputing.com (222.71.101.198) by
+ TY2PEPF0000AB85.mail.protection.outlook.com (10.167.253.5) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9073.11 via Frontend Transport; Wed, 27 Aug 2025 02:42:25 +0000
+Received: from localhost.localdomain (unknown [172.16.64.196])
+	by smtprelay.cixcomputing.com (Postfix) with ESMTPSA id E0E8041C0142;
+	Wed, 27 Aug 2025 10:42:22 +0800 (CST)
+From: Gary Yang <gary.yang@cixtech.com>
+To: linus.walleij@linaro.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org
+Cc: linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	cix-kernel-upstream@cixtech.com,
+	Gary Yang <gary.yang@cixtech.com>
+Subject: [PATCH 0/3] Add pinctrl support for Sky1
+Date: Wed, 27 Aug 2025 10:42:19 +0800
+Message-ID: <20250827024222.588082-1-gary.yang@cixtech.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250826145740.92276-1-luxu.kernel@bytedance.com>
- <20250826-dullness-seventy-c93e7c8479d0@spud> <CAPYmKFuZ5y=q-tpmgMzGFEy6y=UPDf5vLg4gS8VAEkAKBr6BmQ@mail.gmail.com>
-In-Reply-To: <CAPYmKFuZ5y=q-tpmgMzGFEy6y=UPDf5vLg4gS8VAEkAKBr6BmQ@mail.gmail.com>
-From: Xu Lu <luxu.kernel@bytedance.com>
-Date: Wed, 27 Aug 2025 10:41:08 +0800
-X-Gm-Features: Ac12FXywUMzcZzcq7obnXHI4n0aD8CBNXv6CPZzr0eD00j5rqXvalTtJvc8l_Wo
-Message-ID: <CAPYmKFu52h_n_NkD=LhVscjp-RWvai8eAO29D=ZXTtXgB_Msbw@mail.gmail.com>
-Subject: Re: [External] Re: [RFC PATCH 0/4] riscv: Add Zalasr ISA exntesion support
-To: Conor Dooley <conor@kernel.org>
-Cc: paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu, 
-	alex@ghiti.fr, ajones@ventanamicro.com, brs@rivosinc.com, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TY2PEPF0000AB85:EE_|TYSPR06MB6526:EE_
+Content-Type: text/plain
+X-MS-Office365-Filtering-Correlation-Id: baf268f1-dfcf-4062-aa89-08dde5135b7b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|1800799024|36860700013|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?FnhujdRg53+u/FoGmN2itPsgZD9UnB2PyjUoVOk/us4dJGMFRxq0NLGCJSIy?=
+ =?us-ascii?Q?Hv+e7jybrh8uvRDou5DOpqnruRvE6VC4EsX7IJ5G00NLGhouTv2cKrZ+0KDQ?=
+ =?us-ascii?Q?7plul8XA5MBtTdd3zjgi9o4r89VBhaEkBX66I/k6Xw1ckewmb6xcrTtx6pxS?=
+ =?us-ascii?Q?5berZGl5alU6FwNU9FdCdEw+dwjLDiN5wFrYF4j9tTVedkw8ApfzvDkpBpCr?=
+ =?us-ascii?Q?7OjodTDc3dq499eN7LTIdV0d0K9NvWGv/yk8LbgWwg8DR9uVrV8W8tKZGf3e?=
+ =?us-ascii?Q?drTdHgpgQKbfkEQ3hRVkMPHobV4Kur8ECpla2W5yH0n1vCcUeYKv0mv/pmD5?=
+ =?us-ascii?Q?URSn6zbEpIY2rbJW+x24CK5B+s/KU/0jyTxcL18MPKxOMXObi9mkMvpW5puZ?=
+ =?us-ascii?Q?EV1r/BPKNvL/lkuAcr9xyQMEj62kXzsLjjqAt6r2pBqwAsBZBHrcbDsy1Ouw?=
+ =?us-ascii?Q?gtqlwPZuEng+ONBnmvFs0lGx4l0bSKBzccRxtZrO8gsLAT7Lu1RM31pEQqtk?=
+ =?us-ascii?Q?2SceUh4lycVtAXVs/qwefGI6k9Qy2+GUh2kwk/K2H5ejCvPKddgniJZ9Z/JG?=
+ =?us-ascii?Q?gFabHO/K2acCIMPeYNDCiOdRhk89zeTeWMTv3ASBoC4xCdlmbV5l8UrHQYhc?=
+ =?us-ascii?Q?UY/RGm1t1egpr4dBBxrch2JQqDViKVx6iI8qpXrarkTmGmGULN/2i5K9x42w?=
+ =?us-ascii?Q?75OFV8ZqFi8p/lAvwKAKSQ1w9WTpY4C9J5vjRvusto6JUShDrdoZqvwdz2ak?=
+ =?us-ascii?Q?rb3aIubMbYTb5Fq7qeLuxY3bPT3d3nhI0PYB1wFEXHt7QPvO4AkPOoWdBada?=
+ =?us-ascii?Q?J/LAf8Nm46yrQ3cySkNeTsYx0N6CK1wmKFQcSnHgOwTN+o+6aln6YdogoM1p?=
+ =?us-ascii?Q?K99qyADRFe8b254BbP6QQx/4s2gqlKy2Ybi0RBI56IgidBhv3gZOeb8xko3j?=
+ =?us-ascii?Q?1WEpHmLy+wU+TCguJyPDmIaJoiImoMKVE7ucssYEneTwf+CvVnEbqinPc5bm?=
+ =?us-ascii?Q?e8OSdoHcqbc7kik7nA8NxE3piFW+qh1Y4zmXDTjSRMMmdAuLJiLO8xj3NOXo?=
+ =?us-ascii?Q?bjwbZ6HyVBbG2gMWahSAlh2bXlEi5n0Vz3bNYHw2DDi3zEGkKtFkVKE88++z?=
+ =?us-ascii?Q?LJ2M/buyhHn8NoDfVr/CbNnavye0JMSAiZxBuHWHeppjxFCnbs9TyKBQWseL?=
+ =?us-ascii?Q?vr8RSHJip6IZLsSo53B00O/u1yEbjODliTHiczBC77Ce388B0Vjrgjf3QB4Q?=
+ =?us-ascii?Q?WNTRI1PqelGshM9/s7jQ+ZPsNafs2i5zbXcmXxVpSHqYyLQl/faaHNmR0Wib?=
+ =?us-ascii?Q?9QH/qfw2XTdyj0TUSlP+FcdYcqyxLYZgxx0sb6adBYd29wKVRnCQw5kiSibK?=
+ =?us-ascii?Q?6HL14aG6buAW7mPdVYRW4bcciuUeZJFxLxuugSBea2HH9+B0MxUchOqjAp3r?=
+ =?us-ascii?Q?kvLD8K68bW2xFKfQzGKRMvDUUARIxrwmdX8Nj1gw6Rq6bReeAlwOgZiD8Auv?=
+ =?us-ascii?Q?jLibKoAGAR0V87nXMRgJtV/cQMvK1TitN3TX?=
+X-Forefront-Antispam-Report:
+	CIP:222.71.101.198;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:smtprelay.cixcomputing.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(36860700013)(376014);DIR:OUT;SFP:1102;
+X-OriginatorOrg: cixtech.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2025 02:42:25.4387
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: baf268f1-dfcf-4062-aa89-08dde5135b7b
+X-MS-Exchange-CrossTenant-Id: 0409f77a-e53d-4d23-943e-ccade7cb4811
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0409f77a-e53d-4d23-943e-ccade7cb4811;Ip=[222.71.101.198];Helo=[smtprelay.cixcomputing.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	TY2PEPF0000AB85.apcprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYSPR06MB6526
 
-On Wed, Aug 27, 2025 at 10:26=E2=80=AFAM Xu Lu <luxu.kernel@bytedance.com> =
-wrote:
->
-> Hi Conor,
->
-> On Wed, Aug 27, 2025 at 1:46=E2=80=AFAM Conor Dooley <conor@kernel.org> w=
-rote:
-> >
-> > On Tue, Aug 26, 2025 at 10:57:36PM +0800, Xu Lu wrote:
-> > > This patch adds support for the Zalasr ISA extension, which supplies =
-the
-> > > real load acquire/store release instructions.
-> > >
-> > > The specification can be found here:
-> > > https://github.com/riscv/riscv-zalasr/blob/main/chapter2.adoc
-> >
-> > Why is this an RFC?
->
-> There is still some code using fence to simulate real
-> load-acquire/store-release insns. For example, RISCV_ACQUIRE_BARRIER
-> and RISCV_RELEASE_BARRIER, etc. I will resend a formal patch series
-> after I modify them.
+patch 1: add Cix pinctrl driver which needs to support pinmux and pinconfigs
+patch 2: add Cix pinctrl nodes and header file
+patch 3: add yaml docs
 
-Or maybe I will skip such code as they have different semantics with
-load-acquire/store-release as there is no need to load or store any
-data.
+Gary Yang (3):
+  pinctrl: cix: Add pin-controller support for sky1
+  dt-bindings: pinctrl: Add cix,sky1-pinctrl
+  arm64: dts: cix: Add pinctrl nodes for sky1
 
->
-> > Is the RFC tag related to how you have not CCed all relevant mailing
-> > lists and maintainers?
->
-> Sorry about this. I will recheck the maintainer list next time.
->
-> Best regards,
-> Xu Lu
->
-> >
-> > Cheers,
-> > Conor.
-> >
-> > >
-> > > Xu Lu (4):
-> > >   riscv: add ISA extension parsing for Zalasr
-> > >   dt-bindings: riscv: Add Zalasr ISA extension description
-> > >   riscv: Instroduce Zalasr instructions
-> > >   riscv: Use Zalasr for smp_load_acquire/smp_store_release
-> > >
-> > >  .../devicetree/bindings/riscv/extensions.yaml |  5 ++
-> > >  arch/riscv/include/asm/barrier.h              | 79 ++++++++++++++++-=
---
-> > >  arch/riscv/include/asm/hwcap.h                |  1 +
-> > >  arch/riscv/include/asm/insn-def.h             | 79 +++++++++++++++++=
-++
-> > >  arch/riscv/kernel/cpufeature.c                |  1 +
-> > >  5 files changed, 154 insertions(+), 11 deletions(-)
-> > >
-> > > --
-> > > 2.20.1
-> > >
+ .../bindings/pinctrl/cix,sky1-pinctrl.yaml    |  77 +++
+ arch/arm64/boot/dts/cix/sky1-orion-o6.dts     |  28 +
+ arch/arm64/boot/dts/cix/sky1.dtsi             |  10 +
+ drivers/pinctrl/Kconfig                       |   1 +
+ drivers/pinctrl/Makefile                      |   1 +
+ drivers/pinctrl/cix/Kconfig                   |  14 +
+ drivers/pinctrl/cix/Makefile                  |   4 +
+ drivers/pinctrl/cix/pinctrl-sky1-base.c       | 622 ++++++++++++++++++
+ drivers/pinctrl/cix/pinctrl-sky1.c            | 502 ++++++++++++++
+ drivers/pinctrl/cix/pinctrl-sky1.h            |  55 ++
+ include/dt-bindings/pinctrl/pads-sky1.h       | 592 +++++++++++++++++
+ 11 files changed, 1906 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/cix,sky1-pinctrl.yaml
+ create mode 100644 drivers/pinctrl/cix/Kconfig
+ create mode 100644 drivers/pinctrl/cix/Makefile
+ create mode 100644 drivers/pinctrl/cix/pinctrl-sky1-base.c
+ create mode 100644 drivers/pinctrl/cix/pinctrl-sky1.c
+ create mode 100644 drivers/pinctrl/cix/pinctrl-sky1.h
+ create mode 100644 include/dt-bindings/pinctrl/pads-sky1.h
+
+-- 
+2.49.0
+
 
