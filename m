@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-787437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED231B3763D
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 02:50:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EA7AB3763F
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 02:50:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E3EB3A4F31
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 00:50:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FF583A6BA1
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 00:50:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 293E01D9324;
-	Wed, 27 Aug 2025 00:50:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B7E51EB9E3;
+	Wed, 27 Aug 2025 00:50:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ack80bo6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SV2F8WEH"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 765211C9DE5;
-	Wed, 27 Aug 2025 00:50:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0059C1E379B;
+	Wed, 27 Aug 2025 00:50:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756255801; cv=none; b=AUM8A6iqrACiYTXAChkG51h0SrzwJ0tVTnvE9V8wts3vv72d10Iy3J7xOuNJvyAaMl2Np9uUg9eGdNcQtkAjKG8HlXUKlLygrjKmAGyRHZNBpAKFX30Sp1UUPVFXj32OhB0hDjPxtm5Xl39BPm3Kh94a3GZgm2FQaogbt4wCeb0=
+	t=1756255803; cv=none; b=bXNrDD+9gB/O/XYupcWjneC5LZO5NeKb4FtcgY30sa9RtW+N2lHl2DOAg5aoT2E3Arrgk6rrkLrSSBlFruLUmgbVhvigslO6QJfUV9wLpjKDjczbNUi3+aLraOY51em8IbzQ8bb5w5+5gNJGJdNJ3f9j4mjE0AC2rZ6WF2PPRFg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756255801; c=relaxed/simple;
-	bh=+H8klAL/riVemsqz8qkZr7HZoKVNZhLlkM/cfFsoVQk=;
+	s=arc-20240116; t=1756255803; c=relaxed/simple;
+	bh=CQaDDNSjYYm1p+D1z7840AsenzbKhqC6l5s2Z9N3SJY=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=fS7XcbYEHLEIajWxMF4f5u9cqTTvj6P3ofhK5jQvnXrSVfttDTfkhXFdklsWSW9sP+ggWBbh3VTPqvbJKJ+DgpWKk0R6X2gvmmZK/RzUrhVwS+PINIFy5KcrYgCZzfnIQm98AifnwsnUDqhkxgmFhItDpQmOHp+Os3HQgAJQLDQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ack80bo6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 882C4C4CEF1;
-	Wed, 27 Aug 2025 00:50:00 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=B1AaoX1dKIPPzIDTOtXkdZsmjeZa+AG7tWmT8W5ePomUxsL1r3Tr96VtSL2sbhX+LjPs7k8sm6FI24F5KJY3bzysRXwiymR6q1t32eJQ6XqCXRJE+FRMvsXUrpICUgkNcX81Exukm1e9mzgDCxXGouppxebGoJbV+LyDXSPKG2Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SV2F8WEH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E680C4CEF4;
+	Wed, 27 Aug 2025 00:50:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756255800;
-	bh=+H8klAL/riVemsqz8qkZr7HZoKVNZhLlkM/cfFsoVQk=;
+	s=k20201202; t=1756255802;
+	bh=CQaDDNSjYYm1p+D1z7840AsenzbKhqC6l5s2Z9N3SJY=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=Ack80bo6LQWq3uUJ8w7681ZznOUvpLebslYjDe10sX5MS/xuw/1wlNJyl1T8Ey7R+
-	 f8F9RWUuA/qFYZRKyO+KGUvN7qQN5hVrg30+VzVJiQ2uzuvUNF21FaoalrJxmK3P8a
-	 Zd7VMzdXK2vibCf8bnABjFa8M45ESXSCxB+MQk14dltY8RnA9Fx4dPhiiX+gRbiBPP
-	 Wvf8FA9FRSowbJbP/tOL/UFEEQx5CTK+7kG45nMMPYryJLeRgoFKzPU+wuaEwb4YAz
-	 GdrS1MivYnrsHV2bfkZoiLbFr1ZZa+oMb8yTCqZp6h94sIvmGbjT+4xDCTD4EQGUX9
-	 lhLdQVkL5FnLQ==
+	b=SV2F8WEH6LM/D7k/3jUH50bd1fHP4Svm1M4+FPZWkuvuDIm+ap/O8CBucoaNKV+tP
+	 SVGwRySkP+GlFw55f3795TOQJLydi7jNfwmgx4725aHV/qi6pU5srNGK1YgcCluxcp
+	 qJGi78C+yCQsE58QWgwZJzJhnHbe0zJ1RlWRZ/Ncz+yJqrSkeK9Vcbrru/1MAvO37i
+	 vV1V+BJcwjS/6iPRez4ObDLBkZ6KEAJrbNKFr43MOuChZUqoUygtoBHCqXhmIBwG0b
+	 FGpF6JuYW5XMjgghCmFnzy6Do7ID/7FYrzaJ2+VDSsSdjqBBXmayjb49OTW56z4c4n
+	 V65dElSdbQIiw==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 3415B383BF70;
-	Wed, 27 Aug 2025 00:50:09 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70EB7383BF70;
+	Wed, 27 Aug 2025 00:50:11 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,38 +51,39 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net] net: macb: Fix offset error in gem_update_stats
+Subject: Re: [PATCH] MAINTAINERS: Update maintainer information for Altera
+ Triple
+ Speed Ethernet Driver
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <175625580800.152740.10775103761853498420.git-patchwork-notify@kernel.org>
-Date: Wed, 27 Aug 2025 00:50:08 +0000
-References: <20250825172134.681861-1-sean.anderson@linux.dev>
-In-Reply-To: <20250825172134.681861-1-sean.anderson@linux.dev>
-To: Sean Anderson <sean.anderson@linux.dev>
+ <175625581039.152740.16923465181327272688.git-patchwork-notify@kernel.org>
+Date: Wed, 27 Aug 2025 00:50:10 +0000
+References: <20250825071321.30131-1-boon.khai.ng@altera.com>
+In-Reply-To: <20250825071321.30131-1-boon.khai.ng@altera.com>
+To: Boon Khai Ng <boon.khai.ng@altera.com>
 Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
  kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
- claudiu.beznea@tuxon.dev, nicolas.ferre@microchip.com,
- linux-kernel@vger.kernel.org
+ linux-kernel@vger.kernel.org, matthew.gerlach@altera.com
 
 Hello:
 
 This patch was applied to netdev/net.git (main)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Mon, 25 Aug 2025 13:21:34 -0400 you wrote:
-> hw_stats now has only one variable for tx_octets/rx_octets, so we should
-> only increment p once, not twice. This would cause the statistics to be
-> reported under the wrong categories in `ethtool -S --all-groups` (which
-> uses hw_stats) but not `ethtool -S` (which uses ethtool_stats).
+On Mon, 25 Aug 2025 15:13:21 +0800 you wrote:
+> The previous maintainer, Joyce Ooi, is no longer with the company,
+> and her email is no longer reachable. As a result, the maintainer
+> information for the Altera Triple Speed Ethernet Driver has been updated.
 > 
-> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
-> Fixes: f6af690a295a ("net: cadence: macb: Report standard stats")
+> Changes:
+> - Replaced Joyce Ooi's email with Boon Khai Ng's email address.
+> - Kept the component's status as "Maintained".
 > 
 > [...]
 
 Here is the summary with links:
-  - [net] net: macb: Fix offset error in gem_update_stats
-    https://git.kernel.org/netdev/net/c/16c8a3a67ec7
+  - MAINTAINERS: Update maintainer information for Altera Triple Speed Ethernet Driver
+    https://git.kernel.org/netdev/net/c/d9b0ca1334d8
 
 You are awesome, thank you!
 -- 
