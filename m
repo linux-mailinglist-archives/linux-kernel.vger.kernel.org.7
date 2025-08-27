@@ -1,186 +1,222 @@
-Return-Path: <linux-kernel+bounces-788692-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3063B388C9
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 19:45:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 165BFB388DC
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 19:47:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 531F468541C
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 17:45:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DA52D7AB110
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 17:46:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08BF4278143;
-	Wed, 27 Aug 2025 17:45:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7F682D191E;
+	Wed, 27 Aug 2025 17:47:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nqWg0qOk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="WCafXPJO"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BB034086A
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 17:45:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0D1A1D63E4;
+	Wed, 27 Aug 2025 17:47:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756316716; cv=none; b=F21SCtlbTrk09GgUjh5mtzMRYwMptwJJRO5SimE0lUuyMj4PHat6QkYazEBpoMWGZErtNEMSJj2wmOEkM3EXbph/zmE1ivRXxvpRgxdQ63U1H2PFXiOp3zzpI5OWjMVGkdnxFP9s+Q7fUhBqr2MimSvuB09NbrJ6jBBYf2Y0BeU=
+	t=1756316849; cv=none; b=ah8YyToiurddwAwV88Kg6Y/6gZY1u2psTnTijtxmFZpTtddnBXHUa1hNHhCNVZW9oD2TCkAMA6plPbDgf0p3kvdTKoDRCUAzlIsT5t9JGIrbo82nSlxKmIO/HUnJCWTNLhYQaVvdvjszOctj7LjDVeMb43mKDMvAIQZGXNs3iWc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756316716; c=relaxed/simple;
-	bh=xNXfkQNLNU/BZsp01k5SlSuBU7HR3c29BlOg7gV0ovI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=uWvWOrgnY9x6q/Q802onmaT21r13JvbvNf3XsHMDlJyyKO3JvlH8KMlR0ncKD8IxDV3KYo72NmbQoJq8pGhfk0+ZmlwoJkjgabb4br0mT4VflWkk9PNmJo3EHsxRFnSs3XJ3sLroScYk5pspEIAydlJMQgZxHZfBh4sduoP1gWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nqWg0qOk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2842C4CEEB;
-	Wed, 27 Aug 2025 17:45:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756316715;
-	bh=xNXfkQNLNU/BZsp01k5SlSuBU7HR3c29BlOg7gV0ovI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=nqWg0qOkA4M0KvkNSQboRV2/gRMhu963zpbZfFBU2EnOYYCph/tVq8MRRXEQDbrWl
-	 UsQEm5EVyNNG0rC9qwR/AORLxw/UPyO3C8fed3sVLzafRYnpt4iFMUFOvk83HWoBpK
-	 zl5Sn9VPzhDXM7NqXgauYnK9bvSBe4kQNdG8EI71huvvoL/i79zARblG2+zgpOyNxy
-	 CtFtvuNlWHHS8b6eeG4y36AMQACsyvOYiRYExF8Al2418ipTmSkxBWOKQ4wwRFKXnc
-	 CBLBkSXX8+HWGTVhRS4DwS0b/KkDSITU2MHY0Xuv6GG6z5OKDXJIg6DdPsqEwXtpuG
-	 ZxZkFU/pvlbww==
-From: SeongJae Park <sj@kernel.org>
-To: Chris Li <chrisl@kernel.org>
-Cc: SeongJae Park <sj@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Chengming Zhou <chengming.zhou@linux.dev>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Nhat Pham <nphamcs@gmail.com>,
-	Yosry Ahmed <yosry.ahmed@linux.dev>,
-	kernel-team@meta.com,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	Takero Funaki <flintglass@gmail.com>,
-	David Hildenbrand <david@redhat.com>,
-	Baoquan He <bhe@redhat.com>,
-	Barry Song <baohua@kernel.org>,
-	Kairui Song <kasong@tencent.com>
-Subject: Re: [PATCH v5] mm/zswap: store <PAGE_SIZE compression failed page as-is
-Date: Wed, 27 Aug 2025 10:45:13 -0700
-Message-Id: <20250827174513.47171-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <CACePvbWzyqJJxP8BFXS_NDLcXCz-YXkt8eYBxv3CER9RpnJVXA@mail.gmail.com>
-References: 
+	s=arc-20240116; t=1756316849; c=relaxed/simple;
+	bh=lEcdqu2a+OP1F9LbMBMvjjMFWRmlLVjtcmctavk5V3U=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=LDdw7YU+G9lPygt+BlOegFrz7b2YNoQGDp0gPFSGODBScXzrzCqKFC1HjZVziQVK0JVd3Ekbq8r3amh6RChSVTW8Ji9xG/aSsjIym+JBkQrVCM12BLZu2lTbikOP7auNZbGkB/6I+4IbcslWKSvnyP46F1grme0Kggzcf0SZXd4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=WCafXPJO; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1756316844;
+	bh=lEcdqu2a+OP1F9LbMBMvjjMFWRmlLVjtcmctavk5V3U=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=WCafXPJOFiplTO2V2yviBr7RAf4OM4nvQSvyNI/pA7Z6KxlhdfDTRPyk1CMx2pBrs
+	 +KZiKS5ZSWTT0bCfwcAWKFcNWxxEJixi2kPMUMh2CJAJR5+t0HQfU7UO2VSColHnEN
+	 pCbwf7uh5RBvJxtZjJ2jKLv3JuGm1HvV/HN7o0yZ6mAqsvNfL6/Pdt5jDZO0hjT0mS
+	 XP/4Y9x4tyJp9m+uVk//AMeqL/J/7DBHJTihyAaiETsOJuB4/OcinY3Lp+5lSmmn6m
+	 TkqQ+Sj5S07E/0tioqNPkwLsw3gUtU6JMGIJ4ehtwwgvBiuWvo6citKES5EInzFNxI
+	 ctIl/EOQMkwyA==
+Received: from [IPv6:2606:6d00:11:5a76::c41] (unknown [IPv6:2606:6d00:11:5a76::c41])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: nicolas)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id DA40A17E04D6;
+	Wed, 27 Aug 2025 19:47:23 +0200 (CEST)
+Message-ID: <008c8848cfe829d91dc56156653a5856b05d6bad.camel@collabora.com>
+Subject: Re: [PATCH] media: verisilicon: Explicitly disable all encoder
+ ioctls for decoders
+From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+To: Paul Kocialkowski <paulk@sys-base.io>
+Cc: linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, Benjamin Gaignard
+ <benjamin.gaignard@collabora.com>,  Philipp Zabel <p.zabel@pengutronix.de>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>
+Date: Wed, 27 Aug 2025 13:47:21 -0400
+In-Reply-To: <aK8uRrlbMWZsA88Q@shepard>
+References: <20250826190416.1287089-1-paulk@sys-base.io>
+	 <ee7416c9db2128ab1a8c1bbdc7cd231da21e5b53.camel@collabora.com>
+	 <aK8uRrlbMWZsA88Q@shepard>
+Autocrypt: addr=nicolas.dufresne@collabora.com; prefer-encrypt=mutual;
+ keydata=mDMEaCN2ixYJKwYBBAHaRw8BAQdAM0EHepTful3JOIzcPv6ekHOenE1u0vDG1gdHFrChD
+ /e0J05pY29sYXMgRHVmcmVzbmUgPG5pY29sYXNAbmR1ZnJlc25lLmNhPoicBBMWCgBEAhsDBQsJCA
+ cCAiICBhUKCQgLAgQWAgMBAh4HAheABQkJZfd1FiEE7w1SgRXEw8IaBG8S2UGUUSlgcvQFAmibrjo
+ CGQEACgkQ2UGUUSlgcvQlQwD/RjpU1SZYcKG6pnfnQ8ivgtTkGDRUJ8gP3fK7+XUjRNIA/iXfhXMN
+ abIWxO2oCXKf3TdD7aQ4070KO6zSxIcxgNQFtDFOaWNvbGFzIER1ZnJlc25lIDxuaWNvbGFzLmR1Z
+ nJlc25lQGNvbGxhYm9yYS5jb20+iJkEExYKAEECGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4
+ AWIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaCyyxgUJCWX3dQAKCRDZQZRRKWBy9ARJAP96pFmLffZ
+ smBUpkyVBfFAf+zq6BJt769R0al3kHvUKdgD9G7KAHuioxD2v6SX7idpIazjzx8b8rfzwTWyOQWHC
+ AAS0LU5pY29sYXMgRHVmcmVzbmUgPG5pY29sYXMuZHVmcmVzbmVAZ21haWwuY29tPoiZBBMWCgBBF
+ iEE7w1SgRXEw8IaBG8S2UGUUSlgcvQFAmibrGYCGwMFCQll93UFCwkIBwICIgIGFQoJCAsCBBYCAw
+ ECHgcCF4AACgkQ2UGUUSlgcvRObgD/YnQjfi4+L8f4fI7p1pPMTwRTcaRdy6aqkKEmKsCArzQBAK8
+ bRLv9QjuqsE6oQZra/RB4widZPvphs78H0P6NmpIJ
+Organization: Collabora Canada
+Content-Type: multipart/signed; micalg="pgp-sha512";
+	protocol="application/pgp-signature"; boundary="=-AiVj62IW9eUVFUuKYG9Q"
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-
-On Wed, 27 Aug 2025 10:33:38 -0700 Chris Li <chrisl@kernel.org> wrote:
-
-> On Wed, Aug 27, 2025 at 9:18 AM SeongJae Park <sj@kernel.org> wrote:
-> >
-> > On Tue, 26 Aug 2025 08:52:35 -0700 Chris Li <chrisl@kernel.org> wrote:
-> >
-> > > Hi SeongJae,
-> > >
-> > > I did another pass review on it. This time with the editor so I saw
-> > > more source code context and had more feedback.
-> > > Mostly just nitpicks. See the detailed comments below.
-> >
-> > Thank you for your review!
-> 
-> Thank you for the good work.
-> 
-> >
-> > >
-> > > On Fri, Aug 22, 2025 at 12:08 PM SeongJae Park <sj@kernel.org> wrote:
-[...]
-> > """
-> > --- a/mm/zswap.c
-> > +++ b/mm/zswap.c
-> > @@ -952,6 +952,7 @@ static bool zswap_compress(struct page *page, struct zswap_entry *entry,
-> >         struct zpool *zpool;
-> >         gfp_t gfp;
-> >         u8 *dst;
-> > +       bool dst_need_unmap = false;
-> 
-> A bit nitpicky. That variable name is too long as a C local variable.
-> We want local auto variables to be short and sweet. That is why you
-> have "dst" rather than  "u8 *destination_compressed_buffer;"
-> The local variable name is too long and it can hurt the reading as well.
-> Can we have something shorter? e.g. "mapped" or "has_map"
-
-I agree your points, and thank you for suggestions.  I will take "mapped".
-
-[...]
-> > > > @@ -1007,6 +1031,14 @@ static bool zswap_decompress(struct zswap_entry *entry, struct folio *folio)
-> > > >         acomp_ctx = acomp_ctx_get_cpu_lock(entry->pool);
-> > > >         obj = zpool_obj_read_begin(zpool, entry->handle, acomp_ctx->buffer);
-> > > >
-> > > > +       /* zswap entries of length PAGE_SIZE are not compressed. */
-> > > > +       if (entry->length = PAGE_SIZE) {
-> > > > +               memcpy_to_folio(folio, 0, obj, entry->length);
-> > >
-> > > The following read_end() followed by acomp unlock() duplicates the
-> > > normal decompress ending sequence. It will create complications when
-> > > we modify the normal ending sequence in the future, we need to match
-> > > it here.How about just goto the ending sequence and share the same
-> > > return path as normal:
-> > >
-> > >  +                  goto read_done;
-> > >
-> > > Then insert the read_done label at ending sequence:
-> > >
-> > >         dlen = acomp_ctx->req->dlen;
-> > >
-> > > + read_done:
-> > >         zpool_obj_read_end(zpool, entry->handle, obj);
-> > >         acomp_ctx_put_unlock(acomp_ctx);
-> >
-> > I agree your concern and this looks good to me :)
-> >
-> > >
-> > > If you adopt that, you also will need to init the comp_ret to "0"
-> > > instead of no init value in the beginning of the function:
-> > >
-> > >         struct crypto_acomp_ctx *acomp_ctx;
-> > > -        int decomp_ret, dlen;
-> > > +       int decomp_ret = 0, dlen;
-> > >         u8 *src, *obj;
-> >
-> > We may also need to initialize 'dlen' as PAGE_SIZE ?
-> 
-> If there is a code path can lead to dlen use not initialized value? If
-> not then we don't have to assign it.
-
-The success return path of zswap_decompress() checks dlen together with
-decomp_ret as below.  So I think we need to initialize dlen, too.  Please let
-me know if I'm missing something.
-
-    if (!decomp_ret && dlen == PAGE_SIZE)
-            return true;
-
-[...]
-> > Thank you for your kind review and nice suggestions!  Since the change is
-> > simple, I will post a fixup patch as reply to this, for adopting your
-> > suggestions with my additional changes (adding dst_need_unmap bool variable on
-> > zswap_compress(), and initializing dlen on zswap_decompress()) if you have no
-> > objection or different suggestions for the my addition of the changes.  Please
-> > let me know if you have any concern or other suggestions for my suggested
-> > additional changes.
-> 
-> I am fine with a fix up patch or a new version. Does not matter to me
-> in the slightest. I care more about the final landing code itself more
-> than which vehicle to carry the code.  Assume you do all those fix up
-> you mention above, you can have my Ack in your fix up:
-> 
-> Acked-by: Chris Li <chrisl@kernel.org>
-
-Thank you, Chris!
-
-I will post the fixup by tomorrow morning (Pacific time) unless I
-hear other opinions or find my mistakes on the above plan by tonight.
 
 
-Thanks,
-SJ
+--=-AiVj62IW9eUVFUuKYG9Q
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-[...]
+Le mercredi 27 ao=C3=BBt 2025 =C3=A0 18:11 +0200, Paul Kocialkowski a =C3=
+=A9crit=C2=A0:
+> Hi Nicolas,
+>=20
+> On Wed 27 Aug 25, 10:30, Nicolas Dufresne wrote:
+> > Hi Paul,
+> >=20
+> > Le mardi 26 ao=C3=BBt 2025 =C3=A0 21:04 +0200, Paul Kocialkowski a =C3=
+=A9crit=C2=A0:
+> > > Call the dedicated v4l2_disable_ioctl helper instead of manually
+> > > checking whether the current context is an encoder for the selection
+> > > ioctls.
+> > >=20
+> > > Signed-off-by: Paul Kocialkowski <paulk@sys-base.io>
+> > > ---
+> > > =C2=A0drivers/media/platform/verisilicon/hantro_drv.c=C2=A0 | 2 ++
+> > > =C2=A0drivers/media/platform/verisilicon/hantro_v4l2.c | 6 ++----
+> > > =C2=A02 files changed, 4 insertions(+), 4 deletions(-)
+> > >=20
+> > > diff --git a/drivers/media/platform/verisilicon/hantro_drv.c
+> > > b/drivers/media/platform/verisilicon/hantro_drv.c
+> > > index 4cc9d00fd293..6fb28a6293e7 100644
+> > > --- a/drivers/media/platform/verisilicon/hantro_drv.c
+> > > +++ b/drivers/media/platform/verisilicon/hantro_drv.c
+> > > @@ -916,6 +916,8 @@ static int hantro_add_func(struct hantro_dev *vpu=
+,
+> > > unsigned int funcid)
+> > > =C2=A0		vpu->decoder =3D func;
+> > > =C2=A0		v4l2_disable_ioctl(vfd, VIDIOC_TRY_ENCODER_CMD);
+> > > =C2=A0		v4l2_disable_ioctl(vfd, VIDIOC_ENCODER_CMD);
+> > > +		v4l2_disable_ioctl(vfd, VIDIOC_G_SELECTION);
+> > > +		v4l2_disable_ioctl(vfd, VIDIOC_S_SELECTION);
+> >=20
+> > Disabling this IOCTL for JPEG is fine, but for VP8, H.264, HEVC, VP9 an=
+d
+> > AV1, it
+> > is pretty much mandatory. Otherwise your stream will advertise the padd=
+ed
+> > dimentions and there would be no way to tell it that what is the croppi=
+ng
+> > window
+> > for bitstream generation purpose.
+>=20
+> Maybe the lack of context around the patch doesn't make it clear, but thi=
+s is
+> to disable the ioctls for decoders (not encoders), which don't need to us=
+e the
+> selection API. This keeps the ioctls enabled and available for all encode=
+rs.
+
+My bad, miss-read. I think you could reduce the confusion with a subject li=
+ne
+that is narrower:
+
+  media: verisilicon: Explicitly disable SELECTION API ioctl for decoders
+
+And you can add:
+
+Reviewed-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+
+cheers,
+Nicolas
+
+>=20
+> > Considering you are looking forward adding H.264 encoding, do you reall=
+y
+> > want
+> > to apply this fix ?
+>=20
+> I am well aware that this is required to setup the crop in the coded bits=
+tream
+> and I am definitely using it in my encoding work :)
+>=20
+> Cheers,
+>=20
+> Paul
+>=20
+> >=20
+> > Nicolas
+> >=20
+> > > =C2=A0	}
+> > > =C2=A0
+> > > =C2=A0	video_set_drvdata(vfd, vpu);
+> > > diff --git a/drivers/media/platform/verisilicon/hantro_v4l2.c
+> > > b/drivers/media/platform/verisilicon/hantro_v4l2.c
+> > > index 6bcd892e7bb4..fcf3bd9bcda2 100644
+> > > --- a/drivers/media/platform/verisilicon/hantro_v4l2.c
+> > > +++ b/drivers/media/platform/verisilicon/hantro_v4l2.c
+> > > @@ -663,8 +663,7 @@ static int vidioc_g_selection(struct file *file, =
+void
+> > > *priv,
+> > > =C2=A0	struct hantro_ctx *ctx =3D file_to_ctx(file);
+> > > =C2=A0
+> > > =C2=A0	/* Crop only supported on source. */
+> > > -	if (!ctx->is_encoder ||
+> > > -	=C2=A0=C2=A0=C2=A0 sel->type !=3D V4L2_BUF_TYPE_VIDEO_OUTPUT)
+> > > +	if (sel->type !=3D V4L2_BUF_TYPE_VIDEO_OUTPUT)
+> > > =C2=A0		return -EINVAL;
+> > > =C2=A0
+> > > =C2=A0	switch (sel->target) {
+> > > @@ -696,8 +695,7 @@ static int vidioc_s_selection(struct file *file, =
+void
+> > > *priv,
+> > > =C2=A0	struct vb2_queue *vq;
+> > > =C2=A0
+> > > =C2=A0	/* Crop only supported on source. */
+> > > -	if (!ctx->is_encoder ||
+> > > -	=C2=A0=C2=A0=C2=A0 sel->type !=3D V4L2_BUF_TYPE_VIDEO_OUTPUT)
+> > > +	if (sel->type !=3D V4L2_BUF_TYPE_VIDEO_OUTPUT)
+> > > =C2=A0		return -EINVAL;
+> > > =C2=A0
+> > > =C2=A0	/* Change not allowed if the queue is streaming. */
+>=20
+>=20
+
+--=-AiVj62IW9eUVFUuKYG9Q
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaK9EqQAKCRDZQZRRKWBy
+9FYjAPwPd/zFoJGIGFBIfHR0pz6/cOmKMiZBS3H36aKdnxgEcwEAoXkLM1W7gRMj
+f9EOhuIcaTgvl9DoPvirUdwt3UkXBg8=
+=Eb1b
+-----END PGP SIGNATURE-----
+
+--=-AiVj62IW9eUVFUuKYG9Q--
 
