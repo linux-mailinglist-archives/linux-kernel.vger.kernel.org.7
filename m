@@ -1,134 +1,127 @@
-Return-Path: <linux-kernel+bounces-787766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787767-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EC67B37AB9
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 08:47:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DF7CB37AC6
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 08:49:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9FACC5E0B87
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 06:47:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E170D3A889A
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 06:49:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2D1C317709;
-	Wed, 27 Aug 2025 06:45:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="fvw3vL1s";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="mtlKV4bc"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD774306D52;
+	Wed, 27 Aug 2025 06:49:54 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABDEB3128C6;
-	Wed, 27 Aug 2025 06:45:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00C9EC133
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 06:49:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756277150; cv=none; b=ir6Puw6QR7ulJgxBFzix60wYXPICd5Ak+x+9UUF3vk6q91ZWOjXcdjDscJIuOvKZy99eesj7fYUW1UVfcmGuf7tQsLYeKzxXOh2D3M71GBEZhqqWVNe9W+PINufshgTAQZNlMHgm12yOBRCYAmMh2/7tqXXBCF/3wNZ6cNAKJyg=
+	t=1756277394; cv=none; b=KiTU4cUzlncr0sWKHOJKEfMCQLRaMvxtmfL0FotwxRqUOsBG3hU78tW1qnuJhtvc+ZvIqU2VV7u8p4o693JFG7Z6zbZuPtcNHEYWfsJb9xOykxFAk3gr28aWEzqwcb5TW9UxxtTJs3/a0a1cdNOVGJ34/ksNf6rUk9X32KeudBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756277150; c=relaxed/simple;
-	bh=6BQaJnfc+VeXx9pqUKikP9gRxfnxmQcrCE1IqHuNQI8=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=HVrd6E0rAuoMg2Tdn8hsuVCgYORVPzD28R8Xkcp9kggB3Fvcgxua1FvYnAp6O6uAo1pqqOgWXS3Uj4+q5cCQaX2pn4Xwg4zDlraPwSMaIcKOVrVLLSRme8xjekl6+PlR+aXbIefxp1X3q1AWt++zIen0ubEJYmkp+80dhx2/T1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=fvw3vL1s; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=mtlKV4bc; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 27 Aug 2025 06:45:45 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1756277147;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xumVyvfDkUqJmbn6mIXLh63w5l6Dse9Gox7N3tdT+ew=;
-	b=fvw3vL1spLXuT8yPsAJLb2V8Hv+srIeiYNXmjERtu34cB2lVmnGbMIisxxNEigggByaIlG
-	bHe70OhmqHbwzZO543+GAgT5PidNRLJTtirmyD2B6D4wZJ5urAL1oc9nEro3vUHxWbbg1r
-	gk38FC26Of7yMgacxaNngQM7upXhiR9nru1hqe5xFRTAPu5Z9u5OnD5oj0eIPXM8ahIMft
-	IZu0ReB5C7POS9FqLJ2njmESycJd5TZe+qYbGFXZWiiTtv/Tk0RD6qdL/BJUIi96Y1Dr+9
-	AaTHaUJv2/eFR6q/WWvVsQGrUXjHoRJH+H7HoqSOGM2htXsBJiNGY7EMJz0l+Q==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1756277147;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xumVyvfDkUqJmbn6mIXLh63w5l6Dse9Gox7N3tdT+ew=;
-	b=mtlKV4bcMbYNibcFBHVr2jWS0OzkYZx1j2fTRkg7//xzv0v8aFttUQv3c5I1JhHUbfPdPz
-	OD/GYeJE8sLu5NBw==
-From: "tip-bot2 for Uros Bizjak" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: x86/cleanups] x86/sgx: Use ENCLS mnemonic in <kernel/cpu/sgx/encls.h>
-Cc: Uros Bizjak <ubizjak@gmail.com>, "Borislav Petkov (AMD)" <bp@alien8.de>,
- Jarkko Sakkinen <jarkko@kernel.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250616085716.158942-1-ubizjak@gmail.com>
-References: <20250616085716.158942-1-ubizjak@gmail.com>
+	s=arc-20240116; t=1756277394; c=relaxed/simple;
+	bh=cN9WodH6UzItS7IuiKoI+vOQ/ew3Fp9JtyW4sEt5cmY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=iX8fupc5nbYjavUiMY+x3FrOhaAw4CADaFwbxdhIfmHSqE6baTgKTLlZwSG/T4c+YD+BfCSOj48/3iFxkGOVV8F4EuumdSNPvWeh8xf4Q/rR/mE2eJ9w5/FrVmzVPRI8b2opulD5L8E8mztAAac7Mxj6J/CUqPFyFqZstjtv4cQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4cBZr1520mztTZ4;
+	Wed, 27 Aug 2025 14:48:49 +0800 (CST)
+Received: from dggpemf500016.china.huawei.com (unknown [7.185.36.197])
+	by mail.maildlp.com (Postfix) with ESMTPS id 5DB1A180087;
+	Wed, 27 Aug 2025 14:49:47 +0800 (CST)
+Received: from huawei.com (10.175.104.170) by dggpemf500016.china.huawei.com
+ (7.185.36.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 27 Aug
+ 2025 14:49:46 +0800
+From: Wang Liang <wangliang74@huawei.com>
+To: <giometti@enneenne.com>, <mschmidt@redhat.com>, <calvin@wbinvd.org>,
+	<gregkh@linuxfoundation.org>
+CC: <yuehaibing@huawei.com>, <zhangchangzhong@huawei.com>,
+	<wangliang74@huawei.com>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH] pps: fix warning in pps_register_cdev when register device fail
+Date: Wed, 27 Aug 2025 14:50:10 +0800
+Message-ID: <20250827065010.3208525-1-wangliang74@huawei.com>
+X-Mailer: git-send-email 2.33.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <175627714549.1920.13829887049245292535.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
+ dggpemf500016.china.huawei.com (7.185.36.197)
 
-The following commit has been merged into the x86/cleanups branch of tip:
+Similar to previous commit 2a934fdb01db ("media: v4l2-dev: fix error
+handling in __video_register_device()"), the release hook should be set
+before device_register(). Otherwise, when device_register() return error
+and put_device() try to callback the release function, the below warning
+may happen.
 
-Commit-ID:     13bdfb53aa04eeb8022af87288c5bc0a5d13a834
-Gitweb:        https://git.kernel.org/tip/13bdfb53aa04eeb8022af87288c5bc0a5d1=
-3a834
-Author:        Uros Bizjak <ubizjak@gmail.com>
-AuthorDate:    Mon, 16 Jun 2025 10:56:30 +02:00
-Committer:     Borislav Petkov (AMD) <bp@alien8.de>
-CommitterDate: Mon, 25 Aug 2025 17:28:43 +02:00
+  ------------[ cut here ]------------
+  WARNING: CPU: 1 PID: 4760 at drivers/base/core.c:2567 device_release+0x1bd/0x240 drivers/base/core.c:2567
+  Modules linked in:
+  CPU: 1 UID: 0 PID: 4760 Comm: syz.4.914 Not tainted 6.17.0-rc3+ #1 NONE
+  RIP: 0010:device_release+0x1bd/0x240 drivers/base/core.c:2567
+  Call Trace:
+   <TASK>
+   kobject_cleanup+0x136/0x410 lib/kobject.c:689
+   kobject_release lib/kobject.c:720 [inline]
+   kref_put include/linux/kref.h:65 [inline]
+   kobject_put+0xe9/0x130 lib/kobject.c:737
+   put_device+0x24/0x30 drivers/base/core.c:3797
+   pps_register_cdev+0x2da/0x370 drivers/pps/pps.c:402
+   pps_register_source+0x2f6/0x480 drivers/pps/kapi.c:108
+   pps_tty_open+0x190/0x310 drivers/pps/clients/pps-ldisc.c:57
+   tty_ldisc_open+0xa7/0x120 drivers/tty/tty_ldisc.c:432
+   tty_set_ldisc+0x333/0x780 drivers/tty/tty_ldisc.c:563
+   tiocsetd drivers/tty/tty_io.c:2429 [inline]
+   tty_ioctl+0x5d1/0x1700 drivers/tty/tty_io.c:2728
+   vfs_ioctl fs/ioctl.c:51 [inline]
+   __do_sys_ioctl fs/ioctl.c:598 [inline]
+   __se_sys_ioctl fs/ioctl.c:584 [inline]
+   __x64_sys_ioctl+0x194/0x210 fs/ioctl.c:584
+   do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+   do_syscall_64+0x5f/0x2a0 arch/x86/entry/syscall_64.c:94
+   entry_SYSCALL_64_after_hwframe+0x76/0x7e
+   </TASK>
 
-x86/sgx: Use ENCLS mnemonic in <kernel/cpu/sgx/encls.h>
+Before commit c79a39dc8d06 ("pps: Fix a use-after-free"),
+pps_register_cdev() call device_create() to create pps->dev, which will
+init dev->release to device_create_release(). Now the comment is outdated,
+just remove it.
 
-Current minimum required version of binutils is 2.30, which supports ENCLS
-instruction mnemonic.
-
-Replace the byte-wise specification of ENCLS with this proper mnemonic.
-
-No functional change intended.
-
-Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
-Link: https://lore.kernel.org/20250616085716.158942-1-ubizjak@gmail.com
+Fixes: c79a39dc8d06 ("pps: Fix a use-after-free")
+Signed-off-by: Wang Liang <wangliang74@huawei.com>
 ---
- arch/x86/kernel/cpu/sgx/encls.h | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/pps/pps.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/sgx/encls.h b/arch/x86/kernel/cpu/sgx/encls.h
-index 99004b0..42a088a 100644
---- a/arch/x86/kernel/cpu/sgx/encls.h
-+++ b/arch/x86/kernel/cpu/sgx/encls.h
-@@ -68,7 +68,7 @@ static inline bool encls_failed(int ret)
- 	({							\
- 	int ret;						\
- 	asm volatile(						\
--	"1: .byte 0x0f, 0x01, 0xcf;\n\t"			\
-+	"1: encls\n"						\
- 	"2:\n"							\
- 	_ASM_EXTABLE_TYPE(1b, 2b, EX_TYPE_FAULT_SGX)		\
- 	: "=3Da"(ret)						\
-@@ -111,8 +111,8 @@ static inline bool encls_failed(int ret)
- 	({							\
- 	int ret;						\
- 	asm volatile(						\
--	"1: .byte 0x0f, 0x01, 0xcf;\n\t"			\
--	"   xor %%eax,%%eax;\n"					\
-+	"1: encls\n\t"						\
-+	"xor %%eax,%%eax\n"					\
- 	"2:\n"							\
- 	_ASM_EXTABLE_TYPE(1b, 2b, EX_TYPE_FAULT_SGX)		\
- 	: "=3Da"(ret), "=3Db"(rbx_out)				\
+diff --git a/drivers/pps/pps.c b/drivers/pps/pps.c
+index 9463232af8d2..0d2d57250575 100644
+--- a/drivers/pps/pps.c
++++ b/drivers/pps/pps.c
+@@ -383,13 +383,11 @@ int pps_register_cdev(struct pps_device *pps)
+ 	pps->dev.devt = MKDEV(pps_major, pps->id);
+ 	dev_set_drvdata(&pps->dev, pps);
+ 	dev_set_name(&pps->dev, "pps%d", pps->id);
++	pps->dev.release = pps_device_destruct;
+ 	err = device_register(&pps->dev);
+ 	if (err)
+ 		goto free_idr;
+ 
+-	/* Override the release function with our own */
+-	pps->dev.release = pps_device_destruct;
+-
+ 	pr_debug("source %s got cdev (%d:%d)\n", pps->info.name, pps_major,
+ 		 pps->id);
+ 
+-- 
+2.33.0
+
 
