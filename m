@@ -1,172 +1,287 @@
-Return-Path: <linux-kernel+bounces-788809-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788810-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACAC9B38A8E
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 21:57:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 461E1B38A95
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 21:58:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6265F7C36F8
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 19:57:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46F011BA3225
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 19:58:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E09E2EE61C;
-	Wed, 27 Aug 2025 19:57:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 604C62EF678;
+	Wed, 27 Aug 2025 19:58:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="d5LlrHtm"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DtiXuZ1r"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C9462D24B2
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 19:57:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D02C327144E
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 19:57:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756324636; cv=none; b=F6BdzEN5xRCbu9XWnbbwC0RJlM2J+GQesBO8ENo6gu99iZV6arrLmSEAtwJugMSYCk8fVYmRMzfc+k2eTLeSUPKEpMxqSHZZ7d8dpusMfXXwgpElg6EHQ5GEWN/3yaPrCQXeVB2VbUydNWSlIO0JLWz1dWH/JAp4s9Lr9syft+s=
+	t=1756324679; cv=none; b=LGv1qXK7DXznwcOQPKu8se//z8xgyr2+0Qr+1XrgwwQGafJjp22p7ByAAhvHuotU71Ns6t5LUtCQY4pBh+VoUbtyOXJcv9HK/O3thvfJSD/QKJDIfllOTC3+VnjA+q8AdA9zLEvofGdgaC1rAJXtsCvuE+5Tvfn3F1t1xqxcCP0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756324636; c=relaxed/simple;
-	bh=j65qgSbcORyR6mUhxelh/nAXSvHcmnZ7Hmr1KsAs19Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EYnWRHGFuly6Zdv2fZAJE6t9G45NM/DOFDYJDgPpcO/t7PPQhcuscH934uQhSLrOGxGAFeElpPJB45xEbn+nc3f0H3bvgcDnNn4Ex6IKUwftG5N4+/Oa01H60czdke9Ma7xkgLV2hKoWnj8uZdIsQQ2q4DCiqts4bCpynIRBjJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=d5LlrHtm; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756324632;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=WeO0im/QGecZr0be3griSovPXhUrYcztVBMRyg2pzV8=;
-	b=d5LlrHtmhs9/xkVo2glGMwloqYTRs0u3pRs4oJIrf1YUWJ70shWY86p21OHh+BznV/Nkit
-	mNsHcsCn1OSolKne/F5+H5tEad3NLHxu5LRMy+DWu93LVpCvoPoK1n4XNVFMH9rxO1WdFX
-	Ez/perLuphiLIO5RiJUkUU4O70cY7Yg=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-488-H5tmT3gmM82zN2QJgOO4xg-1; Wed, 27 Aug 2025 15:57:10 -0400
-X-MC-Unique: H5tmT3gmM82zN2QJgOO4xg-1
-X-Mimecast-MFC-AGG-ID: H5tmT3gmM82zN2QJgOO4xg_1756324629
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3c7aa4cf187so114263f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 12:57:10 -0700 (PDT)
+	s=arc-20240116; t=1756324679; c=relaxed/simple;
+	bh=tqc7EOF5eomKNHHU7yUgg+YlKF5JE4kiwS9b9etUKfY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JUdXBp0uiDM2BDzRI8wtFaqzQkKAdDVeGuZvIGdZY2jz7V0BMAb+aX/920Iy6dp7vmW3mUNjcN1NmPnJdNJ/7YX7IkYfxTpA/dVgA7DdG6orVKAuduuMuYKUUmXshl0wEsBeP0OuEq5Qz8J2NHr0MYYtzODIeb5JiyJXARLv1X4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DtiXuZ1r; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-24687bbe3aaso358565ad.2
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 12:57:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756324677; x=1756929477; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rjV0DwmZIW1py3fMx22hVqowrh1QvW3z5IOWwwuGuQ8=;
+        b=DtiXuZ1rmD0q+4zoCjXMSFZrbL4mxeYf46N76lFGM2zXCs2vCZIx1Zf1z5XRDz870X
+         ZVqEpaCjqTgc7Jk6lZIa/dH4b+zUqL1AMiia2tWIIV5IXQlhnVZNdrv3g6N1XkKvap/l
+         xTiPNsROk++xgd2vVyqNiX97wtKUkCy+TUZ4sqoCILwsjHK/rk4FZYBoSZdWKa/MmAD3
+         qSKVyGSVhqWwtdZDFTWsbICU4DZbrWxwjOFQbYM323hbABJCw7G/nb8FmKmFmsctEhva
+         BmrJRjWMXAamGy0VWdmU2HDOqaHzdjUkhi+Jh1+Pll/htRdhHT6YJWp5N4dFNWeqFTLg
+         9rgw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756324629; x=1756929429;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=WeO0im/QGecZr0be3griSovPXhUrYcztVBMRyg2pzV8=;
-        b=IcdzHKsp9LIHUAR4pVGqghYl0f7Wr7zfOuo+cB0RtQeO/SIJuibMGbKQmg9xdVzQ1l
-         x4Uktg+bYyR2Xdds20uJRc2wZk7leQiJd9jaitgOGiLZukc4h+4hZ75rAyuloq1eVF3/
-         rLoUT+T+IT/gCkrvli3YgQKl5NI4WstCBm+5vkfIjE1nbjQMfT9Yl+9wiFtf6FCcBx67
-         3NSTjw8rC+2Kw2LWXbckDyLub8M9HV1Yajt/p4rQNG/7Dg8q84HXMnrnwzKdmLaPc48+
-         VGR4Bru5zDwlKPZQeC07tsfMy5TpZEb7Hy7ZMR1Tk1lv+IWNk8RKbtzQGIs48MZpNnzX
-         z1wQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWH4g3oPrrsaKccwT/cXti/K/fSr3vviHoEOnIEClf7CsUTs2Ci9P1N7ps/0/YIxpvx0FGqxxi5cp+SLHU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyfu+OvGjyG5ntyrZ2hvKjzKtxrvWTt83m3hS8dPVc6fnf4225U
-	Y/71uM2J2cwngZUaTr8gLwGu630IDCbVkiNjs8JySIczJEuEIJyPUuPrsuhevf9ONIRrTLpoY+g
-	0mSIE++cbWKtYmxMIsN2wYQeapqDzhRWad1CAMuORW/wo/jlhZBS4qom6YdwTx/3/mWnGbwPmhz
-	Hg
-X-Gm-Gg: ASbGncvda5wrG/DcMrO6LDj1aHiJ7f5qaOYHWkveiGZgKHay7DsjgDH7O+aqJkOy3iF
-	+H+pNzdBWV2DBt8G1SaLFxu1Ak+g0KNKnaDgKOMlyaMn+GhqVPdrQTk8E8sZj6ZZTlacJOm2KmD
-	xK1heCtihSKGVrCTYRJXoGi0b+axpMoJXB6GVUHyB64sPtNVFym5eixsdupeKP29LuV5AIcaDKR
-	qJTPCD878agwxQ87ZybcaR4syTqTO3L2scHN2wpzKlATaeUfJCaj7xONFXXm82/v3mM3MGU1Tqe
-	fx+nMoEGl6rMT8AjBxPrrsrToI1kJf8w900CZnt8Wpd7C/yqiLEUj6UrLy2HOtws9drUu6c=
-X-Received: by 2002:a5d:5f4a:0:b0:3ca:5708:2b0a with SMTP id ffacd0b85a97d-3ca57082f7bmr6237660f8f.4.1756324629118;
-        Wed, 27 Aug 2025 12:57:09 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGw8SR9bQ8n/6/JMeWtNWjuCDZmep5VhDu+OqVpD982EgtQAreXteDUKqZxzqH1dML5SdFe7g==
-X-Received: by 2002:a5d:5f4a:0:b0:3ca:5708:2b0a with SMTP id ffacd0b85a97d-3ca57082f7bmr6237649f8f.4.1756324628685;
-        Wed, 27 Aug 2025 12:57:08 -0700 (PDT)
-Received: from [192.168.3.141] (p4ff1fc83.dip0.t-ipconnect.de. [79.241.252.131])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3cb901975adsm7882053f8f.8.2025.08.27.12.57.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Aug 2025 12:57:07 -0700 (PDT)
-Message-ID: <345d49d2-5b6b-4307-824b-5167db737ad2@redhat.com>
-Date: Wed, 27 Aug 2025 21:57:05 +0200
+        d=1e100.net; s=20230601; t=1756324677; x=1756929477;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rjV0DwmZIW1py3fMx22hVqowrh1QvW3z5IOWwwuGuQ8=;
+        b=flTwA4PqKs/egqe+WifTDRbdIDLM3v4EPu4jBOihXu8dLjkhGnpnS2zGazBMLOyrfV
+         /9jdwHKkNmzyLlknUYzSIJVZujlEipyNaaTiyVLY/AF/t/kYOys4UXHQKdrqsTH9iTNB
+         fi3TTPDfXJcOQS5syfmhZXARAI/f3GvPfWYG5QxAqMzUptn0yIAKOZ36cilV1SQhn51W
+         AfALKjFpV47tm9HXGjWpN5BYRDUlJFDEOTTuiB729J2ls2pMLKUe8WmsEIjwok4250C+
+         BmtGhOw8/aze2SScgcASOoczo90Q43lutRU04RQEUtxk1Wr1SHeRn11oin5b6+5wBZLV
+         /4xw==
+X-Forwarded-Encrypted: i=1; AJvYcCW6hC42eZ4GdwLZKzcdJDC5mrKWra6MBzxW5gxdoq7c8D679nYkiqgKr5gAYw0U1KQzDlY6CjXJJEtinQI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyo/Esj1JfT0IoxBX5vRSTiob78WXx6C3cgeugGSf4LN/N0QYWM
+	Z1SKz9Ma/qWwpVq/DgJ3zeMj1ef0HF34DyZQ+gj9mL+u7dSrUqbNJaHRHhrqAT/YlZ4jnAJA8Tt
+	1lBAUdgsVQFUqEgXhdi5GTVqWKgeQbBw=
+X-Gm-Gg: ASbGncsHx0A21RXs/omHxk1qG0bIMMs/xBL0QRgNq5PT0b5tvWB40mf+Ql9tzOZ/K3k
+	q7heLc2EQuYhlY7Pssxjy/3DK9Uc5gUWlucDscIPLkx73p0+alYEp70V985QOPWyr5iLFw4cDV6
+	zfXFhiR8GnBzBxL9M8d/HHgWFvC+UkSn+Y1FqStKSkg3HTV1Y0C1VUEc+llg7VT1LjSOqOrxL26
+	G1IlAU=
+X-Google-Smtp-Source: AGHT+IEEV1DocwEWc3jKPYLKt97a8Md11hVsuQXJBA2qHl6dQpH2Wq0GDXOFqg4EKfvaY1b+PH9cdtggpz40TZcPqPY=
+X-Received: by 2002:a17:902:c409:b0:248:a01f:a549 with SMTP id
+ d9443c01a7336-248a01fa7aamr20750765ad.11.1756324676898; Wed, 27 Aug 2025
+ 12:57:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm: fix lockdep issues in writeback handling
-To: Marek Szyprowski <m.szyprowski@samsung.com>,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- Miklos Szeredi <mszeredi@redhat.com>, Joanne Koong <joannelkoong@gmail.com>
-References: <CGME20250826131210eucas1p21a27a684042f37080b7a19599f479b7a@eucas1p2.samsung.com>
- <20250826130948.1038462-1-m.szyprowski@samsung.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <20250826130948.1038462-1-m.szyprowski@samsung.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250824115051.32988-1-mittalyugansh1@gmail.com>
+In-Reply-To: <20250824115051.32988-1-mittalyugansh1@gmail.com>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Wed, 27 Aug 2025 15:57:45 -0400
+X-Gm-Features: Ac12FXxqZBGDhYUXeE_2vpNsyc1MPHvuZvg50t-1nPjCv4vA8bIXi2lV2R6gGM0
+Message-ID: <CADnq5_MoWjH2j_VyTEvDmYSKQ2Tfjo-B4som9Fwsb6r_dPo4xA@mail.gmail.com>
+Subject: Re: [PATCH] atomfirmware.h: fix multiple spelling mistakes
+To: Yugansh Mittal <mittalyugansh1@gmail.com>
+Cc: alexander.deucher@amd.com, christian.koenig@amd.com, airlied@gmail.com, 
+	simona@ffwll.ch, amd-gfx@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 26.08.25 15:09, Marek Szyprowski wrote:
-> Commit 167f21a81a9c ("mm: remove BDI_CAP_WRITEBACK_ACCT") removed
-> BDI_CAP_WRITEBACK_ACCT flag and refactored code that depend on it.
-> Unfortunately it also moved some variable intialization out of guarded
-> scope in writeback handling, what triggers a true lockdep warning. Fix
-> this by moving initialization to the proper place.
+Applied.  Thanks!
 
-Nasty
+Alex
 
-> 
-> Fixes: 167f21a81a9c ("mm: remove BDI_CAP_WRITEBACK_ACCT")
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+On Sun, Aug 24, 2025 at 7:28=E2=80=AFPM Yugansh Mittal <mittalyugansh1@gmai=
+l.com> wrote:
+>
+> This patch corrects several typographical errors in atomfirmware.h.
+> The fixes improve readability and maintain consistency in the codebase.
+> No functional changes are introduced.
+>
+> Corrected terms include:
+> - aligment    =E2=86=92 alignment
+> - Offest      =E2=86=92 Offset
+> - defintion   =E2=86=92 definition
+> - swithing    =E2=86=92 switching
+> - calcualted  =E2=86=92 calculated
+> - compability =E2=86=92 compatibility
+> - intenal     =E2=86=92 internal
+> - sequece     =E2=86=92 sequence
+> - indiate     =E2=86=92 indicate
+> - stucture    =E2=86=92 structure
+> - regiser     =E2=86=92 register
+>
+> Signed-off-by: Yugansh Mittal <mittalyugansh1@gmail.com>
 > ---
-
-Acked-by: David Hildenbrand <david@redhat.com>
-
--- 
-Cheers
-
-David / dhildenb
-
+>  drivers/gpu/drm/amd/include/atomfirmware.h | 30 +++++++++++-----------
+>  1 file changed, 15 insertions(+), 15 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/amd/include/atomfirmware.h b/drivers/gpu/drm=
+/amd/include/atomfirmware.h
+> index 5c86423c2..3d083010e 100644
+> --- a/drivers/gpu/drm/amd/include/atomfirmware.h
+> +++ b/drivers/gpu/drm/amd/include/atomfirmware.h
+> @@ -211,7 +211,7 @@ atom_bios_string          =3D "ATOM"
+>  };
+>  */
+>
+> -#pragma pack(1)                          /* BIOS data must use byte alig=
+ment*/
+> +#pragma pack(1)                          /* BIOS data must use byte alig=
+nment*/
+>
+>  enum atombios_image_offset{
+>    OFFSET_TO_ATOM_ROM_HEADER_POINTER          =3D 0x00000048,
+> @@ -255,8 +255,8 @@ struct atom_rom_header_v2_2
+>    uint16_t subsystem_vendor_id;
+>    uint16_t subsystem_id;
+>    uint16_t pci_info_offset;
+> -  uint16_t masterhwfunction_offset;      //Offest for SW to get all comm=
+and function offsets, Don't change the position
+> -  uint16_t masterdatatable_offset;       //Offest for SW to get all data=
+ table offsets, Don't change the position
+> +  uint16_t masterhwfunction_offset;      //Offset for SW to get all comm=
+and function offsets, Don't change the position
+> +  uint16_t masterdatatable_offset;       //Offset for SW to get all data=
+ table offsets, Don't change the position
+>    uint16_t reserved;
+>    uint32_t pspdirtableoffset;
+>  };
+> @@ -453,7 +453,7 @@ struct atom_dtd_format
+>    uint8_t   refreshrate;
+>  };
+>
+> -/* atom_dtd_format.modemiscinfo defintion */
+> +/* atom_dtd_format.modemiscinfo definition */
+>  enum atom_dtd_format_modemiscinfo{
+>    ATOM_HSYNC_POLARITY    =3D 0x0002,
+>    ATOM_VSYNC_POLARITY    =3D 0x0004,
+> @@ -678,7 +678,7 @@ struct lcd_info_v2_1
+>    uint32_t reserved1[8];
+>  };
+>
+> -/* lcd_info_v2_1.panel_misc defintion */
+> +/* lcd_info_v2_1.panel_misc definition */
+>  enum atom_lcd_info_panel_misc{
+>    ATOM_PANEL_MISC_FPDI            =3D0x0002,
+>  };
+> @@ -716,7 +716,7 @@ enum atom_gpio_pin_assignment_gpio_id {
+>    /* gpio_id pre-define id for multiple usage */
+>    /* GPIO use to control PCIE_VDDC in certain SLT board */
+>    PCIE_VDDC_CONTROL_GPIO_PINID =3D 56,
+> -  /* if PP_AC_DC_SWITCH_GPIO_PINID in Gpio_Pin_LutTable, AC/DC swithing =
+feature is enable */
+> +  /* if PP_AC_DC_SWITCH_GPIO_PINID in Gpio_Pin_LutTable, AC/DC switching=
+ feature is enable */
+>    PP_AC_DC_SWITCH_GPIO_PINID =3D 60,
+>    /* VDDC_REGULATOR_VRHOT_GPIO_PINID in Gpio_Pin_LutTable, VRHot feature=
+ is enable */
+>    VDDC_VRHOT_GPIO_PINID =3D 61,
+> @@ -734,7 +734,7 @@ enum atom_gpio_pin_assignment_gpio_id {
+>  struct atom_gpio_pin_lut_v2_1
+>  {
+>    struct  atom_common_table_header  table_header;
+> -  /*the real number of this included in the structure is calcualted by u=
+sing the (whole structure size - the header size)/size of atom_gpio_pin_lut=
+  */
+> +  /*the real number of this included in the structure is calculated by u=
+sing the (whole structure size - the header size)/size of atom_gpio_pin_lut=
+  */
+>    struct  atom_gpio_pin_assignment  gpio_pin[];
+>  };
+>
+> @@ -997,7 +997,7 @@ enum atom_connector_layout_info_mini_type_def {
+>
+>  enum atom_display_device_tag_def{
+>    ATOM_DISPLAY_LCD1_SUPPORT            =3D 0x0002, //an embedded display=
+ is either an LVDS or eDP signal type of display
+> -  ATOM_DISPLAY_LCD2_SUPPORT                           =3D 0x0020, //seco=
+nd edp device tag 0x0020 for backward compability
+> +  ATOM_DISPLAY_LCD2_SUPPORT            =3D 0x0020, //second edp device t=
+ag 0x0020 for backward compatibility
+>    ATOM_DISPLAY_DFP1_SUPPORT            =3D 0x0008,
+>    ATOM_DISPLAY_DFP2_SUPPORT            =3D 0x0080,
+>    ATOM_DISPLAY_DFP3_SUPPORT            =3D 0x0200,
+> @@ -1011,7 +1011,7 @@ struct atom_display_object_path_v2
+>  {
+>    uint16_t display_objid;                  //Connector Object ID or Misc=
+ Object ID
+>    uint16_t disp_recordoffset;
+> -  uint16_t encoderobjid;                   //first encoder closer to the=
+ connector, could be either an external or intenal encoder
+> +  uint16_t encoderobjid;                   //first encoder closer to the=
+ connector, could be either an external or internal encoder
+>    uint16_t extencoderobjid;                //2nd encoder after the first=
+ encoder, from the connector point of view;
+>    uint16_t encoder_recordoffset;
+>    uint16_t extencoder_recordoffset;
+> @@ -1023,7 +1023,7 @@ struct atom_display_object_path_v2
+>  struct atom_display_object_path_v3 {
+>         uint16_t display_objid; //Connector Object ID or Misc Object ID
+>         uint16_t disp_recordoffset;
+> -       uint16_t encoderobjid; //first encoder closer to the connector, c=
+ould be either an external or intenal encoder
+> +       uint16_t encoderobjid; //first encoder closer to the connector, c=
+ould be either an external or internal encoder
+>         uint16_t reserved1; //only on USBC case, otherwise always =3D 0
+>         uint16_t reserved2; //reserved and always =3D 0
+>         uint16_t reserved3; //reserved and always =3D 0
+> @@ -3547,7 +3547,7 @@ struct atom_voltage_object_header_v4{
+>  enum atom_voltage_object_mode
+>  {
+>     VOLTAGE_OBJ_GPIO_LUT              =3D  0,        //VOLTAGE and GPIO L=
+ookup table ->atom_gpio_voltage_object_v4
+> -   VOLTAGE_OBJ_VR_I2C_INIT_SEQ       =3D  3,        //VOLTAGE REGULATOR =
+INIT sequece through I2C -> atom_i2c_voltage_object_v4
+> +   VOLTAGE_OBJ_VR_I2C_INIT_SEQ       =3D  3,        //VOLTAGE REGULATOR =
+INIT sequence through I2C -> atom_i2c_voltage_object_v4
+>     VOLTAGE_OBJ_PHASE_LUT             =3D  4,        //Set Vregulator Pha=
+se lookup table ->atom_gpio_voltage_object_v4
+>     VOLTAGE_OBJ_SVID2                 =3D  7,        //Indicate voltage c=
+ontrol by SVID2 ->atom_svid2_voltage_object_v4
+>     VOLTAGE_OBJ_EVV                   =3D  8,
+> @@ -3585,7 +3585,7 @@ struct atom_gpio_voltage_object_v4
+>  {
+>     struct atom_voltage_object_header_v4 header;  // voltage mode =3D VOL=
+TAGE_OBJ_GPIO_LUT or VOLTAGE_OBJ_PHASE_LUT
+>     uint8_t  gpio_control_id;                     // default is 0 which i=
+ndicate control through CG VID mode
+> -   uint8_t  gpio_entry_num;                      // indiate the entry nu=
+mbers of Votlage/Gpio value Look up table
+> +   uint8_t  gpio_entry_num;                      // indicate the entry n=
+umbers of Votlage/Gpio value Look up table
+>     uint8_t  phase_delay_us;                      // phase delay in unit =
+of micro second
+>     uint8_t  reserved;
+>     uint32_t gpio_mask_val;                         // GPIO Mask value
+> @@ -4507,8 +4507,8 @@ struct amd_acpi_description_header{
+>  struct uefi_acpi_vfct{
+>    struct   amd_acpi_description_header sheader;
+>    uint8_t  tableUUID[16];    //0x24
+> -  uint32_t vbiosimageoffset; //0x34. Offset to the first GOP_VBIOS_CONTE=
+NT block from the beginning of the stucture.
+> -  uint32_t lib1Imageoffset;  //0x38. Offset to the first GOP_LIB1_CONTEN=
+T block from the beginning of the stucture.
+> +  uint32_t vbiosimageoffset; //0x34. Offset to the first GOP_VBIOS_CONTE=
+NT block from the beginning of the structure.
+> +  uint32_t lib1Imageoffset;  //0x38. Offset to the first GOP_LIB1_CONTEN=
+T block from the beginning of the structure.
+>    uint32_t reserved[4];      //0x3C
+>  };
+>
+> @@ -4540,7 +4540,7 @@ struct gop_lib1_content {
+>  /*
+>    **********************************************************************=
+*****
+>                     Scratch Register definitions
+> -  Each number below indicates which scratch regiser request, Active and
+> +  Each number below indicates which scratch register request, Active and
+>    Connect all share the same definitions as display_device_tag defines
+>    **********************************************************************=
+*****
+>  */
+> --
+> 2.43.0
+>
 
