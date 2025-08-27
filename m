@@ -1,164 +1,270 @@
-Return-Path: <linux-kernel+bounces-788985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788986-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 692B7B38F46
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 01:28:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D6A4B38F4A
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 01:31:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2488C46479A
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 23:28:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E8141775D1
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 23:31:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5EF83115AD;
-	Wed, 27 Aug 2025 23:28:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FE5630FF13;
+	Wed, 27 Aug 2025 23:31:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="lLviqIgO"
-Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XG59mOeT"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 248B9301006
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 23:28:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 446F730CDA5;
+	Wed, 27 Aug 2025 23:31:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756337330; cv=none; b=j1dLJaxF8IJ3A3vq/QDJqG0nG7+1dIntUEaPbNCylQE1QWrOrKcWZ6nPrOZWXnqgEJK3NwYSvwFiEU35McydFcYNVJAC0B2EvsGvdwK0Rxwxs/7HbJLRCLyxWjehtMZvjyA87tOq1P5UD4L67WXR4XeqAZSmTfgx8SYeQ/27jrA=
+	t=1756337511; cv=none; b=SWnQusBQoyRCNJZ+iLkRudrPrk3JluxkTU1nuBB0BBsH9INeY/pP1Xfh5Q0LJeUtlS7ojweRx4nHXCBIdjbFhxst360wjDwM0ebzoC81BwuM29TS6a/cbqtVPJNBp25Jo9XOHZ684iKo/kb7SBS/nEE+6+nfguyDxpJ8sZtNvqU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756337330; c=relaxed/simple;
-	bh=+7Ma31QPJuiP41MxYJS91rDyqDomjD/mryM4vXlEuCQ=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=GEtiPXmcao9nYxrFhJjI9ilF6reSvhA8gPnqNiChcVy+/2umJn3Mgflo2iD6JC2HD+cO5ycw4EMsM37t6wWv3DcbKlg/QjYuenNmJWUYzoMaG9O1RyAXHy5k2cteYVs9OF1/sf9XDBc5tIwwigbyRyj83tCZfWQPWHbiVAIdu04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=lLviqIgO; arc=none smtp.client-ip=202.36.163.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
-Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 8CC772C03CC;
-	Thu, 28 Aug 2025 11:28:38 +1200 (NZST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-	s=mail181024; t=1756337318;
-	bh=+7Ma31QPJuiP41MxYJS91rDyqDomjD/mryM4vXlEuCQ=;
-	h=From:To:CC:Subject:Date:References:In-Reply-To:From;
-	b=lLviqIgOQ3lY7PbD6MOn2/VbOvR90fp0riV5Dn2uX8qFHIothCBCV4JNJLwOseucl
-	 RMwg0wapvxZSzE3DOHdvp7F09zZJ8rwpv4vIlKDhh/mjW764Lg3yQDJxI8Zcx9x8a4
-	 7ALSayV1pO84jR9h18s7qlLHt4jCHCit6IUXUndRg5KTMGhI6U9XTdatxHS0wV1xwm
-	 WLQTGkVxVZ941hR1+IsjcmWQwRfY42GTtlf8X7EwkrJMiUcjV1WUxkfqRUJ3jU184L
-	 4NNnBxF1Fc24X4TME84K2eIvjv7UQQ+wYwJAst6XVQ3hW5t+eEbLLrKk1p1u1Hb7I2
-	 gLAOFnyYrCO2g==
-Received: from svr-chch-ex2.atlnz.lc (Not Verified[2001:df5:b000:bc8::76]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
-	id <B68af94a60001>; Thu, 28 Aug 2025 11:28:38 +1200
-Received: from svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8::76) by
- svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8::76) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14; Thu, 28 Aug 2025 11:28:38 +1200
-Received: from svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567]) by
- svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567%15]) with mapi id
- 15.02.1544.014; Thu, 28 Aug 2025 11:28:38 +1200
-From: Chris Packham <Chris.Packham@alliedtelesis.co.nz>
-To: Guenter Roeck <linux@roeck-us.net>
-CC: "jdelvare@suse.com" <jdelvare@suse.com>, "robh@kernel.org"
-	<robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-	"conor+dt@kernel.org" <conor+dt@kernel.org>, "linux-hwmon@vger.kernel.org"
-	<linux-hwmon@vger.kernel.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 2/2] hwmon: (ina238) Add support for INA780
-Thread-Topic: [PATCH v2 2/2] hwmon: (ina238) Add support for INA780
-Thread-Index: AQHcCBFCT9dgOoAuzUOPUPjlGL2uJ7R1/1AAgAB8A4A=
-Date: Wed, 27 Aug 2025 23:28:38 +0000
-Message-ID: <d371f4c2-d328-49ca-a3f3-b23b1fee68ee@alliedtelesis.co.nz>
-References: <20250808030510.552724-1-chris.packham@alliedtelesis.co.nz>
- <20250808030510.552724-3-chris.packham@alliedtelesis.co.nz>
- <4381440d-cd92-40df-bf4b-53ba629abc0c@roeck-us.net>
-In-Reply-To: <4381440d-cd92-40df-bf4b-53ba629abc0c@roeck-us.net>
-Accept-Language: en-NZ, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <D6DC519EDDC74143BF6F58E8466721F8@alliedtelesis.co.nz>
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1756337511; c=relaxed/simple;
+	bh=Pr43rHlgjc0vSumPG28l+hqGsoMuQh0VkZmhV6Con9Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=A3OkKhzjR91pDHvXRVTApQawYHNfTC8NfNkQFK4EkiQaZNXt84IaUMmkMfMt7MtfQLN541+sphZd0A91fipL8pzekSallknE9QOcAkUEJMv3dQ1W7girLVvx5sh3Atk2/4Fw8ZsJ9+RuNwf2NWjRHJSrKdcmesPgKJgXWVBYaWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XG59mOeT; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756337509; x=1787873509;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=Pr43rHlgjc0vSumPG28l+hqGsoMuQh0VkZmhV6Con9Q=;
+  b=XG59mOeTMQoaR1AKRgM+mBg6/u0UiBLaVpx/T6CFF6j20bm/2Mfjo4eR
+   rRS5JwRrKzKgRndP91r7Kizgl7NFVoPLqnmFxSBDAUJr6pe341czqOAW0
+   QpmUi2/7SmfOHwP1koX9itg8ENVZ7Cr8msGLPApC0FdPRB/IttBo4J5Vd
+   PtBZ3TQt+o9RbNQO/CbQn/bD8EnCHndp6YWPM+QpKWzWu95j+AtxvfxHi
+   d5vx55ERboQG/wT1W/nX2QN+9WUkDxj0bxDDdwzsuuLzZpKhtfiIDmDI0
+   uIYMA7oux1VdXHtGCRwfcgFZ5inXN87a7vhYZU5mSX1I8FYhvKPq/74qA
+   w==;
+X-CSE-ConnectionGUID: jsR7ccOSQ/C/kPiqd7JAgQ==
+X-CSE-MsgGUID: uTMRhxC0QhuAePUJVKNMlA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="62435912"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="62435912"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2025 16:31:48 -0700
+X-CSE-ConnectionGUID: zaImdtF3S8OAJ9Z6jJHR+A==
+X-CSE-MsgGUID: I6MVNWUsRsaN0YvnkC6GBA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,217,1751266800"; 
+   d="scan'208";a="169214043"
+Received: from dwesterg-mobl1.amr.corp.intel.com (HELO [10.125.109.56]) ([10.125.109.56])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2025 16:31:48 -0700
+Message-ID: <400cf9ab-de3f-4e8a-ab0a-4ac68c534bb8@intel.com>
+Date: Wed, 27 Aug 2025 16:31:47 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SEG-SpamProfiler-Analysis: v=2.4 cv=Yo+sRJYX c=1 sm=1 tr=0 ts=68af94a6 a=Xf/6aR1Nyvzi7BryhOrcLQ==:117 a=xqWC_Br6kY4A:10 a=75chYTbOgJ0A:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=RJhZdRoedsqvXEVZLXIA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-SEG-SpamProfiler-Score: 0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/1] iommu/sva: Invalidate KVA range on kernel TLB
+ flush
+To: Baolu Lu <baolu.lu@linux.intel.com>, "Tian, Kevin"
+ <kevin.tian@intel.com>, Jason Gunthorpe <jgg@nvidia.com>
+Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+ Robin Murphy <robin.murphy@arm.com>, Jann Horn <jannh@google.com>,
+ Vasant Hegde <vasant.hegde@amd.com>, Alistair Popple <apopple@nvidia.com>,
+ Peter Zijlstra <peterz@infradead.org>, Uladzislau Rezki <urezki@gmail.com>,
+ Jean-Philippe Brucker <jean-philippe@linaro.org>,
+ Andy Lutomirski <luto@kernel.org>, "Lai, Yi1" <yi1.lai@intel.com>,
+ "iommu@lists.linux.dev" <iommu@lists.linux.dev>,
+ "security@kernel.org" <security@kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "stable@vger.kernel.org" <stable@vger.kernel.org>, vishal.moola@gmail.com,
+ Matthew Wilcox <willy@infradead.org>
+References: <20250806052505.3113108-1-baolu.lu@linux.intel.com>
+ <d646d434-f680-47a3-b6b9-26f4538c1209@intel.com>
+ <20250806155223.GV184255@nvidia.com>
+ <d02cb97a-7cea-4ad3-82b3-89754c5278ad@intel.com>
+ <20250806160904.GX184255@nvidia.com>
+ <62d21545-9e75-41e3-89a3-f21dda15bf16@intel.com>
+ <4a8df0e8-bd5a-44e4-acce-46ba75594846@linux.intel.com>
+ <20250807195154.GO184255@nvidia.com>
+ <BN9PR11MB52762A47B347C99F0C0E4C288C2FA@BN9PR11MB5276.namprd11.prod.outlook.com>
+ <87bfc80e-258e-4193-a56c-3096608aec30@linux.intel.com>
+ <BN9PR11MB52766165393F7DD8209DA45A8C32A@BN9PR11MB5276.namprd11.prod.outlook.com>
+ <e321d374-38a7-4f60-b991-58458a2761b9@linux.intel.com>
+ <9a649ff4-55fe-478a-bfd7-f3287534499a@intel.com>
+ <b0f613ce-7aad-4b1d-b6a1-4acc1d6c489e@linux.intel.com>
+ <dde6d861-daa3-49ed-ad4f-ff9dcaf1f2b8@linux.intel.com>
+ <b57d7b97-8110-47c5-9c7a-516b7b535ce9@intel.com>
+ <c69950ee-660b-4f51-9277-522470d0ce5d@linux.intel.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <c69950ee-660b-4f51-9277-522470d0ce5d@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-SGkgR3VudGVyLA0KDQpPbiAyOC8wOC8yMDI1IDA0OjA0LCBHdWVudGVyIFJvZWNrIHdyb3RlOg0K
-PiBDaGlzLA0KPg0KPiBPbiBGcmksIEF1ZyAwOCwgMjAyNSBhdCAwMzowNToxMFBNICsxMjAwLCBD
-aHJpcyBQYWNraGFtIHdyb3RlOg0KPj4gQWRkIHN1cHBvcnQgZm9yIHRoZSBUSSBJTkE3ODAgRGln
-aXRhbCBQb3dlciBNb25pdG9yLiBUaGUgSU5BNzgwIHVzZXMNCj4+IEVaU2h1bnQodG0pIHRlY2hu
-b2xvZ3ksIHdoaWNoIG1lYW5zIHRoZXJlIGFyZSBmaXhlZCBMU0IgY29udmVyc2lvbnMgZm9yDQo+
-PiBhIG51bWJlciBvZiBmaWVsZHMgcmF0aGVyIHRoYW4gbmVlZGluZyB0byBiZSBjYWxpYnJhdGVk
-Lg0KPj4NCj4+IFNpZ25lZC1vZmYtYnk6IENocmlzIFBhY2toYW0gPGNocmlzLnBhY2toYW1AYWxs
-aWVkdGVsZXNpcy5jby5uej4NCj4gUGxlYXNlIHNlbmQgbWUgYSByZWdpc3RlciBkdW1wIGZvciB0
-aGUgY2hpcCBzbyBJIGNhbiBhZGQgdW5pdCB0ZXN0IGNvZGUNCj4gZm9yIGl0cyBzdXBwb3J0IGJ5
-IHRoZSBkcml2ZXIuDQoNClN1cmUuIEkgdXNlZCB0aGUgZm9sbG93aW5nIHNjcmlwdCB0byBkdW1w
-IHRoZSByZWdpc3RlcnMNCg0KY2F0IDw8RU9GIHwgd2hpbGUgcmVhZCBhZGRyIGxlbjsgZG8gcHJp
-bnRmICIlMng6ICIgJGFkZHI7IGkyY2dldCAteSAtZiAxIA0KMHg0MCAkYWRkciBpICRsZW47IGRv
-bmUNCjB4MCAyDQoweDEgMg0KMHg1IDINCjB4NiAyDQoweDcgMg0KMHg4IDMNCjB4OSA1DQoweGEg
-NQ0KMHhiIDINCjB4YyAyDQoweGQgMg0KMHhlIDMNCjB4ZiAyDQoweDEwIDINCjB4MTEgMg0KMHgz
-ZSAyDQpFT0YNCg0KT24gYW4gdW5jb25maWd1cmVkIElOQTc4MEEgd2l0aCBubyBsb2FkIGp1c3Qg
-YWZ0ZXIgcmVzZXQNCg0KIMKgMDogMHgwMCAweDMwDQogwqAxOiAweGZiIDB4NjgNCiDCoDU6IDB4
-MDAgMHgwMA0KIMKgNjogMHgwYiAweDAwDQogwqA3OiAweDAwIDB4MDANCiDCoDg6IDB4MDAgMHgw
-MCAweDAwDQogwqA5OiAweDAwIDB4MDAgMHgwMCAweDAwIDB4MDANCiDCoGE6IDB4ZmYgMHhmZiAw
-eGZmIDB4ZmYgMHg1Yg0KIMKgYjogMHgwMCAweDAzDQogwqBjOiAweDdmIDB4ZmYNCiDCoGQ6IDB4
-ODAgMHgwMA0KIMKgZTogMHg3ZiAweGZmIDB4ZmYNCiDCoGY6IDB4MDAgMHgwMA0KMTA6IDB4N2Yg
-MHhmMA0KMTE6IDB4ZmYgMHhmZg0KM2U6IDB4NTQgMHg0OQ0KDQpPbiBhIElOQTc4MEEgd2l0aCBu
-byBsb2FkDQoNCiDCoDA6IDB4MDAgMHgzMA0KIMKgMTogMHhmYiAweDZhDQogwqA1OiAweDAwIDB4
-MDANCiDCoDY6IDB4MGIgMHgwMA0KIMKgNzogMHgwMCAweDAwDQogwqA4OiAweDAwIDB4MDAgMHgw
-MA0KIMKgOTogMHgwMCAweDAwIDB4MDAgMHgwMCAweDAwDQogwqBhOiAweGZmIDB4ZmYgMHhmZiAw
-eGZmIDB4ZDgNCiDCoGI6IDB4MjAgMHgwMw0KIMKgYzogMHg3ZiAweGZmDQogwqBkOiAweDgwIDB4
-MDANCiDCoGU6IDB4N2YgMHhmZiAweGZmDQogwqBmOiAweDAwIDB4MDANCjEwOiAweDdmIDB4ZjAN
-CjExOiAweGZmIDB4ZmYNCjNlOiAweDU0IDB4NDkNCg0KY29ycmVzcG9uZGluZyBsbS1zZW5zb3Jz
-IG91dHB1dA0KDQppbmE3ODAtaTJjLTEtNDANCkFkYXB0ZXI6IGkyYy0wLW11eCAoY2hhbl9pZCAw
-KQ0KaW4wOsKgIMKgIMKgIMKgIMKgIMKgMC4wMCBWwqAgKG1pbiA9wqAgKzAuMDAgViwgbWF4ID0g
-KzEwMi40MCBWKQ0KdGVtcDE6wqAgwqAgwqAgwqAgKzIyLjAgQ8KgIChoaWdoID0gKzI1NS45IEMp
-DQpwb3dlcjE6wqAgwqAgwqAgwqAgMC4wMCBXwqAgKG1heCA9wqAgwqAyLjA2IGtXKQ0KZW5lcmd5
-MTrCoCDCoCDCoCDCoDAuMDAgSg0KY3VycjE6wqAgwqAgwqAgwqAgwqAwLjAwIEHCoCAobWluID0g
-LTc4LjY0IEEsIG1heCA9ICs3OC42NA0KDQpPbiBhIElOQTc4MEEgd2l0aCAxMFYsIDRBIGxvYWQN
-Cg0KIMKgMDogMHgwMCAweDMwDQogwqAxOiAweGZiIDB4NmENCiDCoDU6IDB4MGQgMHg3NQ0KIMKg
-NjogMHgwYiAweDIwDQogwqA3OiAweDA2IDB4NWYNCiDCoDg6IDB4MDEgMHg1NyAweDBhDQogwqA5
-OiAweDAwIDB4MDAgMHgwMyAweDk0IDB4Y2QNCiDCoGE6IDB4MDAgMHgwMCAweDExIDB4NGIgMHhh
-YQ0KIMKgYjogMHgyMCAweDAzDQogwqBjOiAweDdmIDB4ZmYNCiDCoGQ6IDB4ODAgMHgwMA0KIMKg
-ZTogMHg3ZiAweGZmIDB4ZmYNCiDCoGY6IDB4MDAgMHgwMA0KMTA6IDB4N2YgMHhmMA0KMTE6IDB4
-ZmYgMHhmZg0KM2U6IDB4NTQgMHg0OQ0KDQpjb3JyZXNwb25kaW5nIGxtLXNlbnNvcnMgb3V0cHV0
-DQoNCmluYTc4MC1pMmMtMS00MA0KQWRhcHRlcjogaTJjLTAtbXV4IChjaGFuX2lkIDApDQppbjA6
-wqAgwqAgwqAgwqAgwqAgMTAuNzcgVsKgIChtaW4gPcKgICswLjAwIFYsIG1heCA9ICsxMDIuNDAg
-VikNCnRlbXAxOsKgIMKgIMKgIMKgICsyMi4yIEPCoCAoaGlnaCA9ICsyNTUuOSBDKQ0KcG93ZXIx
-OsKgIMKgIMKgIMKgNDIuMDYgbVcgKG1heCA9wqAgwqAyLjA2IGtXKQ0KZW5lcmd5MTrCoCDCoCDC
-oCDCoDIuODAgSg0KY3VycjE6wqAgwqAgwqAgwqAgwqAzLjkxIEHCoCAobWluID0gLTc4LjY0IEEs
-IG1heCA9ICs3OC42NCBBKQ0KDQpBbmQgZm9yIGdvb2QgbWVhc3VyZSBhIHdvcmQtd2lzZSBkdW1w
-IChzYW1lIGNvbmZpZyBhbmQgbG9hZCBhcyBhYm92ZSkNCg0KW3Jvb3RAbGludXhib3ggfl0jIGky
-Y2R1bXAgLXkgLWYgMSAweDQwIHcNCiDCoCDCoCDCoDAsOMKgIDEsOcKgIDIsYcKgIDMsYsKgIDQs
-Y8KgIDUsZMKgIDYsZcKgIDcsZg0KMDA6IDMwMDAgNmFmYiBmZmZmIGZmZmYgZmZmZiA3NjBkIDMw
-MGIgNWEwNg0KMDg6IDU1MDEgMDAwMCAwMDAwIDAzMjAgZmY3ZiAwMDgwIGZmN2YgMDAwMA0KMTA6
-IGYwN2YgZmZmZiBmZmZmIGZmZmYgZmZmZiBmZmZmIGZmZmYgZmZmZg0KMTg6IGZmZmYgZmZmZiBm
-ZmZmIGZmZmYgZmZmZiBmZmZmIGZmZmYgZmZmZg0KMjA6IGZmZmYgZmZmZiBmZmZmIGZmZmYgZmZm
-ZiBmZmZmIGZmZmYgZmZmZg0KMjg6IGZmZmYgZmZmZiBmZmZmIGZmZmYgZmZmZiBmZmZmIGZmZmYg
-ZmZmZg0KMzA6IGZmZmYgZmZmZiBmZmZmIGZmZmYgZmZmZiAwMDAwIGZmZmYgZmZmZg0KMzg6IGZm
-ZmYgZmZmZiBmZmZmIGZmZmYgZmZmZiBmZmZmIDQ5NTQgNjIyNw0KNDA6IDMwMDAgNmFmYiBmZmZm
-IGZmZmYgZmZmZiA3NjBkIDMwMGIgNWEwNg0KNDg6IDU1MDEgMDAwMCAwMDAwIDAzMjAgZmY3ZiAw
-MDgwIGZmN2YgMDAwMA0KNTA6IGYwN2YgZmZmZiBmZmZmIGZmZmYgZmZmZiBmZmZmIGZmZmYgZmZm
-Zg0KNTg6IGZmZmYgZmZmZiBmZmZmIGZmZmYgZmZmZiBmZmZmIGZmZmYgZmZmZg0KNjA6IGZmZmYg
-ZmZmZiBmZmZmIGZmZmYgZmZmZiBmZmZmIGZmZmYgZmZmZg0KNjg6IGZmZmYgZmZmZiBmZmZmIGZm
-ZmYgZmZmZiBmZmZmIGZmZmYgZmZmZg0KNzA6IGZmZmYgZmZmZiBmZmZmIGZmZmYgZmZmZiAwMDAw
-IGZmZmYgZmZmZg0KNzg6IGZmZmYgZmZmZiBmZmZmIGZmZmYgZmZmZiBmZmZmIDQ5NTQgNjIyNw0K
-ODA6IDMwMDAgNmFmYiBmZmZmIGZmZmYgZmZmZiA3NjBkIDMwMGIgNWEwNg0KODg6IDU1MDEgMDAw
-MCAwMDAwIDAzMjAgZmY3ZiAwMDgwIGZmN2YgMDAwMA0KOTA6IGYwN2YgZmZmZiBmZmZmIGZmZmYg
-ZmZmZiBmZmZmIGZmZmYgZmZmZg0KOTg6IGZmZmYgZmZmZiBmZmZmIGZmZmYgZmZmZiBmZmZmIGZm
-ZmYgZmZmZg0KYTA6IGZmZmYgZmZmZiBmZmZmIGZmZmYgZmZmZiBmZmZmIGZmZmYgZmZmZg0KYTg6
-IGZmZmYgZmZmZiBmZmZmIGZmZmYgZmZmZiBmZmZmIGZmZmYgZmZmZg0KYjA6IGZmZmYgZmZmZiBm
-ZmZmIGZmZmYgZmZmZiAwMDAwIGZmZmYgZmZmZg0KYjg6IGZmZmYgZmZmZiBmZmZmIGZmZmYgZmZm
-ZiBmZmZmIDQ5NTQgNjIyNw0KYzA6IDMwMDAgNmFmYiBmZmZmIGZmZmYgZmZmZiA3NjBkIDMwMGIg
-NWEwNg0KYzg6IDU1MDEgMDAwMCAwMDAwIDAzMjAgZmY3ZiAwMDgwIGZmN2YgMDAwMA0KZDA6IGYw
-N2YgZmZmZiBmZmZmIGZmZmYgZmZmZiBmZmZmIGZmZmYgZmZmZg0KZDg6IGZmZmYgZmZmZiBmZmZm
-IGZmZmYgZmZmZiBmZmZmIGZmZmYgZmZmZg0KZTA6IGZmZmYgZmZmZiBmZmZmIGZmZmYgZmZmZiBm
-ZmZmIGZmZmYgZmZmZg0KZTg6IGZmZmYgZmZmZiBmZmZmIGZmZmYgZmZmZiBmZmZmIGZmZmYgZmZm
-Zg0KZjA6IGZmZmYgZmZmZiBmZmZmIGZmZmYgZmZmZiAwMDAwIGZmZmYgZmZmZg0KZjg6IGZmZmYg
-ZmZmZiBmZmZmIGZmZmYgZmZmZiBmZmZmIDQ5NTQgNjIyNw0K
+On 8/27/25 03:58, Baolu Lu wrote:
+> Following the insights above, I wrote the code as follows. Does it look
+> good?
+
+I'd really prefer an actual diff that compiles. Because:
+
+> #ifdef CONFIG_ASYNC_PGTABLE_FREE
+> /* a 'struct ptdesc' that needs its destructor run */
+> #define ASYNC_PGTABLE_FREE_DTOR    BIT(NR_PAGEFLAGS)
+
+This doesn't work, does it? Don't you need to _allocate_ a new bit?
+Wouldn't this die a hilariously horrible death if NR_PAGEFLAGS==64? ;)
+
+Also, I'm pretty sure you can't just go setting random bits in this
+because it aliases with page flags.
+
+...
+> static void kernel_pgtable_work_func(struct work_struct *work)
+> {
+>     struct ptdesc *ptdesc, *next;
+>     LIST_HEAD(page_list);
+> 
+>     spin_lock(&kernel_pgtable_work.lock);
+>     list_splice_tail_init(&kernel_pgtable_work.list, &page_list);
+>     spin_unlock(&kernel_pgtable_work.lock);
+> 
+>     iommu_sva_invalidate_kva_range(0, TLB_FLUSH_ALL);
+> 
+>     list_for_each_entry_safe(ptdesc, next, &page_list, pt_list) {
+>         list_del(&ptdesc->pt_list);
+>         if (ptdesc->__page_flags & ASYNC_PGTABLE_FREE_DTOR)
+>             pagetable_dtor_free(ptdesc);
+>         else
+>             __free_page(ptdesc_page(ptdesc));
+>     }
+> }
+What I had in mind was that kernel_pgtable_work_func() only does:
+
+	__free_pages(page, compound_order(page));
+
+All of the things that queue gunk to the list do the legwork of making
+the work_func() simple. This also guides them toward proving a single,
+compound page because _they_ have to do the work if they don't want
+something simple.
+
+> void kernel_pgtable_async_free_dtor(struct ptdesc *ptdesc)
+> {
+>     spin_lock(&kernel_pgtable_work.lock);
+>     ptdesc->__page_flags |= ASYNC_PGTABLE_FREE_DTOR;
+>     list_add(&ptdesc->pt_list, &kernel_pgtable_work.list);
+>     spin_unlock(&kernel_pgtable_work.lock);
+> 
+>     schedule_work(&kernel_pgtable_work.work);
+> }
+> 
+> void kernel_pgtable_async_free_page_list(struct list_head *list)
+> {
+>     spin_lock(&kernel_pgtable_work.lock);
+>     list_splice_tail(list, &kernel_pgtable_work.list);
+>     spin_unlock(&kernel_pgtable_work.lock);
+> 
+>     schedule_work(&kernel_pgtable_work.work);
+> }
+> 
+> void kernel_pgtable_async_free_page(struct page *page)
+> {
+>     spin_lock(&kernel_pgtable_work.lock);
+>     list_add(&page_ptdesc(page)->pt_list, &kernel_pgtable_work.list);
+>     spin_unlock(&kernel_pgtable_work.lock);
+> 
+>     schedule_work(&kernel_pgtable_work.work);
+> }
+
+I wouldn't have three of these, I'd have _one_. If you want to free a
+bunch of pages, then just call it a bunch of times. This is not
+performance critical.
+
+Oh, and the ptdesc flag shouldn't be for "I need to be asynchronously
+freed". All kernel PTE pages should ideally set it at allocation so you
+can do this:
+
+static inline void pagetable_free(struct ptdesc *pt)
+{
+        struct page *page = ptdesc_page(pt);
+
+	if (ptdesc->some_field | PTDESC_KERNEL)
+		kernel_pgtable_async_free_page(page);
+	else
+	        __free_pages(page, compound_order(page));
+}
+
+The folks that, today, call pagetable_dtor_free() don't have to do
+_anything_ at free time. They just set the PTDESC_KERNEL bit at
+allocation time.
+
+See how that code reads? "If you have a kernel page table page, you must
+asynchronously free it." That's actually meaningful.
+
+I'm pretty sure the lower 24 bits of ptdesc->__page_type are free. So
+I'd just do this:
+
+#define PTDESC_TYPE_KERNEL BIT(0)
+
+Then, something needs to set:
+
+	ptdesc->__page_type |= PTDESC_TYPE_KERNEL;
+
+That could happen as late as here:
+
+static inline void pte_free_kernel(struct mm_struct *mm, pte_t *pte)
+{
+	struct ptdesc *ptdesc = virt_to_ptdesc(pte);
+
+	// here 	
+
+        pagetable_dtor_free(ptdesc);
+}
+
+Or as early as ptdesc allocation/constructor time. Then you check for
+PTDESC_TYPE_KERNEL in pagetable_free().
 
