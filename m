@@ -1,245 +1,268 @@
-Return-Path: <linux-kernel+bounces-787903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6165B37D7E
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 10:19:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C135B37D85
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 10:20:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8361A1881D97
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 08:20:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D8BB1883D00
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 08:20:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5371232C31D;
-	Wed, 27 Aug 2025 08:19:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51C8B192B84;
+	Wed, 27 Aug 2025 08:20:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="jjdis1Qu"
-Received: from smtp-42ac.mail.infomaniak.ch (smtp-42ac.mail.infomaniak.ch [84.16.66.172])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="C8lTI42y"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2085.outbound.protection.outlook.com [40.107.223.85])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B10AC335BDF;
-	Wed, 27 Aug 2025 08:19:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756282761; cv=none; b=kbYs2tdQxfBJdVAjTw2KaoXQfSF4knjCX8GFyhOa32Zk8B8GZKUJC5iE9m4q/bLJGed+TuylkW7PzPgBCwkMBZS+8MP/TOdPZJDj6VhTjrjyLNWJl+fmflMQRxWTTZhtAo4LLfUhN7urUJDV+cdaMqp/h0CgPOlHy0XVgolwusA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756282761; c=relaxed/simple;
-	bh=gI1X7KsZrPQIrHtJfD1zn3jIOolE5jpfPeyAUn6mEW4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YqEFBy9u/7WgDjocfWa8T4KjuLMyJ5kFGOEzYGrfv2HhCVUC0zibmEcLutXymWSxMzzdqbaaqoYXxydANxFkpPuQC0rT9b4jUHAM8CFZdwCJASCo8M4W/SWEkpPsGWSZUlhLM+MWsC5IFusLE+JK1IVcTsf3493x0KdUSjLY+QM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=jjdis1Qu; arc=none smtp.client-ip=84.16.66.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4cBcrM4z0lzCkJ;
-	Wed, 27 Aug 2025 10:19:15 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1756282755;
-	bh=toU/MfmFzXJ+2y3ESqzpN6MTCJZdk0nfw014Fyth6jQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jjdis1QuD6EGLVMqk5x5Eqi4WCbGWTKMe3u+WytjDqScf3h2jgDofnGhfxsglXYxh
-	 VZEpde/gvALXRCoqrCJB16KFZFOc0gXzmjSUr41kHsoFmfCIi8O/i7XVSfP+pn238p
-	 6YT95xfcmM7HycFucbmIXQ8Tf6I2FSRnkCzkMdnc=
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4cBcrL4v85z7gf;
-	Wed, 27 Aug 2025 10:19:14 +0200 (CEST)
-Date: Wed, 27 Aug 2025 10:19:14 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Jeff Xu <jeffxu@chromium.org>
-Cc: Jeff Xu <jeffxu@google.com>, Andy Lutomirski <luto@amacapital.net>, 
-	Jann Horn <jannh@google.com>, Al Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Kees Cook <keescook@chromium.org>, 
-	Paul Moore <paul@paul-moore.com>, Serge Hallyn <serge@hallyn.com>, 
-	Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Christian Heimes <christian@python.org>, Dmitry Vyukov <dvyukov@google.com>, 
-	Elliott Hughes <enh@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
-	Florian Weimer <fweimer@redhat.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Jordan R Abrahams <ajordanr@google.com>, Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, 
-	Luca Boccassi <bluca@debian.org>, Matt Bobrowski <mattbobrowski@google.com>, 
-	Miklos Szeredi <mszeredi@redhat.com>, Mimi Zohar <zohar@linux.ibm.com>, 
-	Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>, Robert Waite <rowait@microsoft.com>, 
-	Roberto Sassu <roberto.sassu@huawei.com>, Scott Shell <scottsh@microsoft.com>, 
-	Steve Dower <steve.dower@python.org>, Steve Grubb <sgrubb@redhat.com>, 
-	kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org
-Subject: Re: [RFC PATCH v1 1/2] fs: Add O_DENY_WRITE
-Message-ID: <20250827.ieRaeNg4pah3@digikod.net>
-References: <20250822170800.2116980-1-mic@digikod.net>
- <20250822170800.2116980-2-mic@digikod.net>
- <CAG48ez1XjUdcFztc_pF2qcoLi7xvfpJ224Ypc=FoGi-Px-qyZw@mail.gmail.com>
- <20250824.Ujoh8unahy5a@digikod.net>
- <CALCETrWwd90qQ3U2nZg9Fhye6CMQ6ZF20oQ4ME6BoyrFd0t88Q@mail.gmail.com>
- <20250825.mahNeel0dohz@digikod.net>
- <CALmYWFv90uzq0J76+xtUFjZxDzR2rYvrFbrr5Jva5zdy_dvoHA@mail.gmail.com>
- <20250826.eWi6chuayae4@digikod.net>
- <CABi2SkUJ1PDm_uri=4o+C13o5wFQD=xA7zVKU-we+unsEDm3dw@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62FFF3314AC
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 08:20:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.85
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756282830; cv=fail; b=jLQ9YbcuMQ6MT3wY8r3j6N1wkqOgM/JMWLhxSBOyFv/6o04FtuLZF3yINHV9EE6wFfQ8vlWRlDnsNjDIkVEa1mDMdpwQIWOJC2VBTGZjG3jLVV/Spu+HfEZ1NDt94Dh9CnQiIO97kbArM5nK9a76P3SyalDt3J0zUeW7MKXkpJA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756282830; c=relaxed/simple;
+	bh=MzjqXcp8wjVUh7H2pGaPljPEcuJh2ZCiIDkb+6Wr4fw=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=V7ja0FhZx/iPugg+XLdr9njBhRUQylRhfPACMJLRxtuynxvWmZZ8JxT2qOIqJTJAQGoPAX8HiaiCJG8I8j4WjS4R7kBx8+YV/+9GFwWwvmPN8+80VhsAxAOX6kbS+7aYIrM8D3yIULazOn3dhjK4rSPHDYCgvzsj8P7GkVrvh6o=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=C8lTI42y; arc=fail smtp.client-ip=40.107.223.85
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=qG4uOH2l02Uy9Ew77QQvZxd40fZnvUILyayJT3q3JPkJEsvnYSUupt649gvwLys9dzVvG0LVhrAZ+7IhRz5Eri78NCO8HdRjyjxoEHW6PKn5pqodMg4vlZmgmyIDg5LcuZpcMlf29qYWxJRSj4GLXduLczYT4KHqIzH8E4xB5U8r9PnGNaj9c7Jxbk/EUOkqcYumazCUvWRpm/l/hOzUaydre5ZrbhM+Q/690iL/JJrcIF1bNTFDAVYmJ7cYkhmGLSUVm8lVUneh0r6NenxQzADVD6ZC5kwRdYwdnHxvhQGKCZEXNQP/ZAjhqiBCZGIwmE+hEnNfLi1LnP7J56O+gA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=uwaw+1FQWiwZZ4A3OQyTUUVqPIEetmehb6UpjmnAULo=;
+ b=SEyydP9ZyyR35cbA2e3mAhyvAFuRXNvP+xN3vRdI80AsYGDyFYGP03AoyICcRuR7HH1vF4yM7EaGyp0Z3dHeSI77bWwAuCfKZbRTHLiHKh2g9sK7inrFpY9PdE6an39aT1of1eTdeqF+s1w9wAEXhszUOV78vW5jJiJjlaSefGW+U/OW8jM2cV8bg6Wkb84a0yGL+zkMsps8EOiJwyNyckMiM10Z+jwFj3JaQw2452+RCk5Qw5uBcPrO7X7hGjlhx4wuLbHgk8W2y1gvnRNkDPjqtpErRJnCYwlcjIIqq2IfejWDE7hCxT3esMNsX4QieMW9g6plub0I42wEG4yBbQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=uwaw+1FQWiwZZ4A3OQyTUUVqPIEetmehb6UpjmnAULo=;
+ b=C8lTI42ygut3n2DlJEkHHBtQ0x46HR9Aofza85CnjaEr9wYoQf2v5IjdK5Qtj8Ay2bB4kDJAfV9T7PTe7N9fLGZT9zPgSzGm2RFH4MMZ4qti35SlyXLoySYQBSz8QTl+xhZQnDXnHBGTYUPKTe9M83ph70hIpQJQiSDeG2mqS+hG0wnfgta6W3hDouDmfK5+qpvbhW7nVLDJb+EshM+oJ0F9NJfKNxfNsAjB3nD8t769nzM4tzNab5Z9wbR0rqpO3kflIPHk2ZyuWGDzwdstQL17r0wp1a33voIpOAXT/JnCh85sOs5gsXC+cZ2IVI05kt9rpSyRa1FSOLUK0XoPJw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from IA1PR12MB7709.namprd12.prod.outlook.com (2603:10b6:208:423::15)
+ by DS2PR12MB9592.namprd12.prod.outlook.com (2603:10b6:8:27c::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.21; Wed, 27 Aug
+ 2025 08:20:24 +0000
+Received: from IA1PR12MB7709.namprd12.prod.outlook.com
+ ([fe80::5312:ce8b:bdf5:aa31]) by IA1PR12MB7709.namprd12.prod.outlook.com
+ ([fe80::5312:ce8b:bdf5:aa31%5]) with mapi id 15.20.8989.018; Wed, 27 Aug 2025
+ 08:20:24 +0000
+From: Alistair Popple <apopple@nvidia.com>
+To: dri-devel@lists.freedesktop.org,
+	dakr@kernel.org,
+	acourbot@nvidia.com
+Cc: Alistair Popple <apopple@nvidia.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	John Hubbard <jhubbard@nvidia.com>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	Timur Tabi <ttabi@nvidia.com>,
+	linux-kernel@vger.kernel.org,
+	nouveau@lists.freedesktop.org
+Subject: [PATCH 00/10] gpu: nova-core: Boot GSP to RISC-V active
+Date: Wed, 27 Aug 2025 18:19:57 +1000
+Message-ID: <20250827082015.959430-1-apopple@nvidia.com>
+X-Mailer: git-send-email 2.47.2
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: ME3P282CA0123.AUSP282.PROD.OUTLOOK.COM
+ (2603:10c6:220:1ca::18) To IA1PR12MB7709.namprd12.prod.outlook.com
+ (2603:10b6:208:423::15)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CABi2SkUJ1PDm_uri=4o+C13o5wFQD=xA7zVKU-we+unsEDm3dw@mail.gmail.com>
-X-Infomaniak-Routing: alpha
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: IA1PR12MB7709:EE_|DS2PR12MB9592:EE_
+X-MS-Office365-Filtering-Correlation-Id: 25e6c521-0131-4a73-d3cd-08dde5429204
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|1800799024|366016|376014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Q1QyZTlYVlcwRERXd1NHaTNQRkdET3Z0OER3T2Q4SWtJcUtEK3FGK2hGaTM2?=
+ =?utf-8?B?dWhnREYzM3M2NWpVcHY1R1ZTWmRHM040U1ZiMWZ5ZmRiWXRVSXp0VEhOUzNX?=
+ =?utf-8?B?bll0aGhUWnhOME9ickZZdEU2NkRyRnFWaWUwZFZVSTVLMGxIei9BUzVNcWRV?=
+ =?utf-8?B?K0IyTGlOSU9iVmt6Yk5tSmliUFREZml5ZEFheHQ0WVFIalg5bFZKOXMwUFYv?=
+ =?utf-8?B?MzgvSHlTaE5xeG83YXVDbTdTS3ArYUgrOXdFS2dZVmNndWsxN2JJaXlERzBZ?=
+ =?utf-8?B?c2lad1k1M1VLaTkwdE1HaWVsR0pDTiszM2srL2FONkdlbldBbThsSEV6VStH?=
+ =?utf-8?B?dlpPZDl2SGRhaHd5emlXaUoxVUl0YmJMeWcwSkFLV1lBMUt3ckQyMSt4R1c1?=
+ =?utf-8?B?NnZCMWxtYk4rVTFGTStYVWdOS1pkTlpHZUgrTjJLRUpxcUFoNUFkMWZtSnZq?=
+ =?utf-8?B?NE52eHEwVjlKeE5nZ2pUVVE0eE52U0hDWWQvb1ZJd0hUa3JLVElMejNoV1ht?=
+ =?utf-8?B?a0hVdlh3aXFXb1pqWExRR1FqZTNtbHo2cUgwZmdISnFjbjZaYklUbGswTDJk?=
+ =?utf-8?B?amVIeTZ0M2l6M1VCeTNPcGhoMmc0Z282Q3NDRVdDR21TMnczR011MkxKVzBl?=
+ =?utf-8?B?OUdtS1I0RHpjanBPSkJGU1dNaWdmbEhpR3NqNHJVVGRKSTJQY0ZlSDB2alNt?=
+ =?utf-8?B?amtoL2tRYUhvUUdPU1duczF4Z29vMGd3d1RZdi9XNjh0ek5VL3E0a2k3SWNQ?=
+ =?utf-8?B?Uzd5MllXWTJRSUpKdVhnYXdwOG55U2g3V3B0RzM0SkNsMUg2K1hvMkcxNU1K?=
+ =?utf-8?B?SnNDZVU5N0V4aHNZWVB0NzBYekk5WFNoQVJvY2htSXo3a0RIWkRHQnBUTnlp?=
+ =?utf-8?B?UXFmdG1mWjlmb0RqVUsvb1NXTlpJN0tKZlB6QUc4TDkvbUVENGQyNHlJVXpo?=
+ =?utf-8?B?NGtXd3M5MVVGMkxlalNoVlhkRW5OejBlbTlPWjJ0U3B0djU0N3hQMGdpT2dJ?=
+ =?utf-8?B?c0J3TUxYMUVxREJOanhyTzM5amZLSTh2Ulc4aTBxUi9YZHJIaW81VCt0Umdv?=
+ =?utf-8?B?SWlXdkt0elp3YTIrWUZaSnNzSEdiNjRYVlRQaEFZbTVxVWZxME9aZCtlRk9z?=
+ =?utf-8?B?bzd4VHZZNzZSeHQ4NHRDMFl5am1GekhzU2dJSzFQRnd2bGhyd2IwWWMvTUFR?=
+ =?utf-8?B?SThZU2dIYXkrN1d0N2hRbkVvY1FpenhLWEQ4cjFSUE0yZGdhQmVQQjZtQjY0?=
+ =?utf-8?B?MytHb241QTdZdkYrMmFwVE1tNzY4aHlkcWJwTmVlSmNkdDVuTjROSm9EZjhX?=
+ =?utf-8?B?U1Bld2RPU0x6bUtrS3h5dVVaakVyTnNUMmNENEtsVkIzajdsSFNLRWljV1Nx?=
+ =?utf-8?B?aVZid0puM0Y2TXpJQklZbFlEczRja1c5MHlObFRtU3JObW1kYUZXSUF2QzN1?=
+ =?utf-8?B?V3JuVVJsY3NvSktGUFNXckIwUktabnhNQW9Ra1k4SlFzSm95U1EvelV1OWUy?=
+ =?utf-8?B?Uk4reER0aFB6WFRKN1lqREpYUUdtOURpOTZhc0lJdms0Y1UvUDRuczdQSGt3?=
+ =?utf-8?B?SkdoVGFEM1dhUkJ1Y09kbEF0Mys5VWJOYTdLWGFrd0FuenlBRmZnTVBsNi9W?=
+ =?utf-8?B?UUJTU0pCS1RQQW1ybXI0elFVbjRWMDhyWlBzRitKSVpFQi9LUzFaK01NKytY?=
+ =?utf-8?B?UU5nM1NaSGJ4V0p2Rll4RFdzRnFKVTJ1NXlxdHJHS2d2WFpDc0x6QmVIVXlk?=
+ =?utf-8?B?c1RpSjNuWkFNVVRFTDFyeUhkK1lWejVCTmlhTnlwRmJJWkEvbnBXWmU2WmxK?=
+ =?utf-8?B?bUd3V0p2NVRHUjBOMUtzbmFUZ2xucFhSMlNIc3MyK3ZQL3dhamZkOWlpVmlv?=
+ =?utf-8?B?aVZBdVBaeEdhTWkvR2pWOTluY0tJT3g4aFRzYlowVXliWWoyd3ZLaTlGc3pD?=
+ =?utf-8?Q?3DeF9KuBAYE=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA1PR12MB7709.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(366016)(376014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?R0poRTk0QzErTnliWXd2RTg2eXBtVEdpUlNqUGx1WURxU2txTTExa0swMUhx?=
+ =?utf-8?B?WjEyYjV5cXhwTjU2bGY1T2t2eERrT054cWx4QjNZcmJyWXhnN3F0OWRuVTZI?=
+ =?utf-8?B?N1ZhZVVwL0x3clUrUDQ1YVJwWHRCZ0o1YVRTSERBME4vL3lZbmNqREZjUzUw?=
+ =?utf-8?B?N29RQ3h6cnE1Uy9GMGJXd2VrcG9xa3oybHhMWmxIWklFZ29IdkwyNTErTE1D?=
+ =?utf-8?B?VVd6WGFIaHB5cnhTSjV4K0hzQ3ZWMURHeUR4bkYxRS92R0hJSnNoY1BQa3gy?=
+ =?utf-8?B?Yi9kNWRBRUZQbmNvbGRuVEdIMW5vRE5IcHJaYzRyYWNMYVVmNUpzSTVWVEpL?=
+ =?utf-8?B?a204VFVJM051TVJxTWw1RjM5bE50M1NvaDNTK1hMQitoWHA4eXhIQ3RBdDJ3?=
+ =?utf-8?B?SDR2M0FBajR6RGxiQlhqck5kWnNiTUQ4S0tZOW5rWTN2MzhycnYrcXdkc2s1?=
+ =?utf-8?B?aURGT05kTVhwbW9QSjhxQkp0SWozN0JtT1hlWndTV0VCR25PeUtyYzB0RER2?=
+ =?utf-8?B?TFpLbFNCYk1sZ2Y2cmV2SUpqWWF2RXMwWUcxdkpCaTFWWmlwMFJhSmFGZGlE?=
+ =?utf-8?B?MTBQL2N2T2E2LzFMTXM2U1lTcGUzeWF0S0N4U2hHNVJYQ2NVeThtMlYrSHkw?=
+ =?utf-8?B?alpCZnV1Vnptc3lrR3ZkOFNZTlRmRUpBeWVSc3lxMEczK2Rubk5BU2tQQnBw?=
+ =?utf-8?B?emp4ZUlJNEdEUVpJVWJXaWs1TXdFck5Tb1BLZWdzNUMwSCtTc1ZIejgvSlNo?=
+ =?utf-8?B?VU5KWUFmdlBYbzlBYmlmTXVUZmt0Rk5sdkMxOVRoQU9KR280ZWFURFlUaEVh?=
+ =?utf-8?B?Q0NCS21FTUZtZjBVcHRBVGdRMVFWZ1p1M1V3TTVJbnJZWHFyMkh0OFNLajd3?=
+ =?utf-8?B?L1FCRm11dExUcXJlUDE3bXRTaXRvSjRIaXYzWDJEekEzYkoxQnpjczdQMDdN?=
+ =?utf-8?B?UzhzK2x4YjJsa2VjZSswWmc3WTdLWTZONTlQRVZsbXhRczN2QUFGR1pBTTVY?=
+ =?utf-8?B?UTE4RFUrSGJQY3NUMGtuME0rV2VXZ0FxYkxnbE9EcnNOMGE3SCtubGVNK05r?=
+ =?utf-8?B?WWM3UDliWkx0TDRsUS9NcEF1WFJHOW40SXV2ZXdzd1VxTEhHeStINTFYQWtX?=
+ =?utf-8?B?MnFrZUFrV3JYRFhFajdaYnc5eFVjNFRHazFhU3N3bHVxdERwbW81aVRaTEZJ?=
+ =?utf-8?B?cWVVTzRRY1hWK0M2WXREU25TQ2pieVlGRUdGaU5CTVA5ZmM0c1lFRlFTSGVi?=
+ =?utf-8?B?bjgvbXR1UnNheFg2Q0ZETWhSQlhLaGNNMDNkQnBDQUNrOTJFSjd4cEMvb2Fi?=
+ =?utf-8?B?T1BjN2lOUTY1bi8rbit2c2YzZlRQZW1oa0RuVWluZHR4WVRJbHg4ZHM1WnZz?=
+ =?utf-8?B?bWlLMXhPVkM1UjVqMnJ6NERxZ05XTnVBYlRMdFBqSld5d0p6WjVlWG5UZ05r?=
+ =?utf-8?B?Z0xaNUp3TDhKak5mSU1sRXNXRjNzY0FFT2t2QTJNWnFOOTJIL3V5MHA0VWIx?=
+ =?utf-8?B?WHhJUUlsWCtmNkZRZ2RPSGlEWUgyRkRNQmtsQUtkVExHQitkVEZDMUJYYVV6?=
+ =?utf-8?B?WVZ0RzRkd2ZNQjNXT1dRSHhsN3c0RTZ0YVFseTNZdU4rN29RWDQzOXV6YUxH?=
+ =?utf-8?B?cjBaRERwKzJKS0xYZXlTYWRyUjhMeVhRb2FmajhETTZLN2M0Z2lrV1QxNVVP?=
+ =?utf-8?B?UE5DTU5OVk1JYnFSL2RSYzlYRkhSWTNGbHBaMUZrMGZkY0pWUm1ROVpFUkJ2?=
+ =?utf-8?B?ckRLS1phcnBVUzA5VlI2eFdhd0pTZnZrSmc3WWpMODZPOXlqZE1VMVk2OXlt?=
+ =?utf-8?B?L29IN05vSC9FYjdkS0xuSU1JeXB5TjJYMEFKVjZDN3d4dlNyNjhHRkQxSlNP?=
+ =?utf-8?B?QXZlUGZET2NRRW9xY3NETnVzQXNJQmpkc3MxaTRGZUNqV0tQa094dlc4SEMv?=
+ =?utf-8?B?NjhxSzYxSGJJc08zaEFyYkpRMmh4NUFhUktkNTQ4VXB5ZlpqcmU2bmdrT2NR?=
+ =?utf-8?B?L0c4dVdkeCtYRk1ONlVTMWFGcjNucUZoRmdrbE5Ic28reEtWWTVvTnJCR1RZ?=
+ =?utf-8?B?bmswSldLeFdNcExpTVdsU0J2M3BHak5oRVBSUkI0Y2t0cXg1MlZWNDRvT2Vu?=
+ =?utf-8?Q?XEB/wlMfv3iMcy+CjgcdYRm7d?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 25e6c521-0131-4a73-d3cd-08dde5429204
+X-MS-Exchange-CrossTenant-AuthSource: IA1PR12MB7709.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2025 08:20:24.0665
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: dbFOkcOnwlSAibLhQ9nmwNJCffWgKcALyb1nGF+GqSD8i1j3jQ40NGHHxP8FcFShWkCPU8cMSQ/zcyVsMQo4vw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS2PR12MB9592
 
-On Tue, Aug 26, 2025 at 01:29:55PM -0700, Jeff Xu wrote:
-> Hi Mickaël
-> 
-> On Tue, Aug 26, 2025 at 5:39 AM Mickaël Salaün <mic@digikod.net> wrote:
-> >
-> > On Mon, Aug 25, 2025 at 10:57:57AM -0700, Jeff Xu wrote:
-> > > Hi Mickaël
-> > >
-> > > On Mon, Aug 25, 2025 at 2:31 AM Mickaël Salaün <mic@digikod.net> wrote:
-> > > >
-> > > > On Sun, Aug 24, 2025 at 11:04:03AM -0700, Andy Lutomirski wrote:
-> > > > > On Sun, Aug 24, 2025 at 4:03 AM Mickaël Salaün <mic@digikod.net> wrote:
-> > > > > >
-> > > > > > On Fri, Aug 22, 2025 at 09:45:32PM +0200, Jann Horn wrote:
-> > > > > > > On Fri, Aug 22, 2025 at 7:08 PM Mickaël Salaün <mic@digikod.net> wrote:
-> > > > > > > > Add a new O_DENY_WRITE flag usable at open time and on opened file (e.g.
-> > > > > > > > passed file descriptors).  This changes the state of the opened file by
-> > > > > > > > making it read-only until it is closed.  The main use case is for script
-> > > > > > > > interpreters to get the guarantee that script' content cannot be altered
-> > > > > > > > while being read and interpreted.  This is useful for generic distros
-> > > > > > > > that may not have a write-xor-execute policy.  See commit a5874fde3c08
-> > > > > > > > ("exec: Add a new AT_EXECVE_CHECK flag to execveat(2)")
-> > > > > > > >
-> > > > > > > > Both execve(2) and the IOCTL to enable fsverity can already set this
-> > > > > > > > property on files with deny_write_access().  This new O_DENY_WRITE make
-> > > > > > >
-> > > > > > > The kernel actually tried to get rid of this behavior on execve() in
-> > > > > > > commit 2a010c41285345da60cece35575b4e0af7e7bf44.; but sadly that had
-> > > > > > > to be reverted in commit 3b832035387ff508fdcf0fba66701afc78f79e3d
-> > > > > > > because it broke userspace assumptions.
-> > > > > >
-> > > > > > Oh, good to know.
-> > > > > >
-> > > > > > >
-> > > > > > > > it widely available.  This is similar to what other OSs may provide
-> > > > > > > > e.g., opening a file with only FILE_SHARE_READ on Windows.
-> > > > > > >
-> > > > > > > We used to have the analogous mmap() flag MAP_DENYWRITE, and that was
-> > > > > > > removed for security reasons; as
-> > > > > > > https://man7.org/linux/man-pages/man2/mmap.2.html says:
-> > > > > > >
-> > > > > > > |        MAP_DENYWRITE
-> > > > > > > |               This flag is ignored.  (Long ago—Linux 2.0 and earlier—it
-> > > > > > > |               signaled that attempts to write to the underlying file
-> > > > > > > |               should fail with ETXTBSY.  But this was a source of denial-
-> > > > > > > |               of-service attacks.)"
-> > > > > > >
-> > > > > > > It seems to me that the same issue applies to your patch - it would
-> > > > > > > allow unprivileged processes to essentially lock files such that other
-> > > > > > > processes can't write to them anymore. This might allow unprivileged
-> > > > > > > users to prevent root from updating config files or stuff like that if
-> > > > > > > they're updated in-place.
-> > > > > >
-> > > > > > Yes, I agree, but since it is the case for executed files I though it
-> > > > > > was worth starting a discussion on this topic.  This new flag could be
-> > > > > > restricted to executable files, but we should avoid system-wide locks
-> > > > > > like this.  I'm not sure how Windows handle these issues though.
-> > > > > >
-> > > > > > Anyway, we should rely on the access control policy to control write and
-> > > > > > execute access in a consistent way (e.g. write-xor-execute).  Thanks for
-> > > > > > the references and the background!
-> > > > >
-> > > > > I'm confused.  I understand that there are many contexts in which one
-> > > > > would want to prevent execution of unapproved content, which might
-> > > > > include preventing a given process from modifying some code and then
-> > > > > executing it.
-> > > > >
-> > > > > I don't understand what these deny-write features have to do with it.
-> > > > > These features merely prevent someone from modifying code *that is
-> > > > > currently in use*, which is not at all the same thing as preventing
-> > > > > modifying code that might get executed -- one can often modify
-> > > > > contents *before* executing those contents.
-> > > >
-> > > > The order of checks would be:
-> > > > 1. open script with O_DENY_WRITE
-> > > > 2. check executability with AT_EXECVE_CHECK
-> > > > 3. read the content and interpret it
-> > > >
-> > > I'm not sure about the O_DENY_WRITE approach, but the problem is worth solving.
-> > >
-> > > AT_EXECVE_CHECK is not just for scripting languages. It could also
-> > > work with bytecodes like Java, for example. If we let the Java runtime
-> > > call AT_EXECVE_CHECK before loading the bytecode, the LSM could
-> > > develop a policy based on that.
-> >
-> > Sure, I'm using "script" to make it simple, but this applies to other
-> > use cases.
-> >
-> That makes sense.
-> 
-> > >
-> > > > The deny-write feature was to guarantee that there is no race condition
-> > > > between step 2 and 3.  All these checks are supposed to be done by a
-> > > > trusted interpreter (which is allowed to be executed).  The
-> > > > AT_EXECVE_CHECK call enables the caller to know if the kernel (and
-> > > > associated security policies) allowed the *current* content of the file
-> > > > to be executed.  Whatever happen before or after that (wrt.
-> > > > O_DENY_WRITE) should be covered by the security policy.
-> > > >
-> > > Agree, the race problem needs to be solved in order for AT_EXECVE_CHECK.
-> > >
-> > > Enforcing non-write for the path that stores scripts or bytecodes can
-> > > be challenging due to historical or backward compatibility reasons.
-> > > Since AT_EXECVE_CHECK provides a mechanism to check the file right
-> > > before it is used, we can assume it will detect any "problem" that
-> > > happened before that, (e.g. the file was overwritten). However, that
-> > > also imposes two additional requirements:
-> > > 1> the file doesn't change while AT_EXECVE_CHECK does the check.
-> >
-> > This is already the case, so any kind of LSM checks are good.
-> >
-> May I ask how this is done? some code in do_open_execat() does this ?
-> Apologies if this is a basic question.
+This series builds on top of Alex's series[1] to continue initialising the GSP
+into a state where it becomes active and it starts communicating with the host.
 
-do_open_execat() calls exe_file_deny_write_access()
+It includes patches to initialise several important data structures required to
+boot the GSP. The biggest change is the implementation of the command/message
+circular queue used to establish communication between GSP and host.
 
-> 
-> > > 2>The file content kept by the process remains unchanged after passing
-> > > the AT_EXECVE_CHECK.
-> >
-> > The goal of this patch was to avoid such race condition in the case
-> > where executable files can be updated.  But in most cases it should not
-> > be a security issue (because processes allowed to write to executable
-> > files should be trusted), but this could still lead to bugs (because of
-> > inconsistent file content, half-updated).
-> >
-> There is also a time gap between:
-> a> the time of AT_EXECVE_CHECK
-> b> the time that the app opens the file for execution.
-> right ? another potential attack path (though this is not the case I
-> mentioned previously).
+This is required to configure and boot the GSP. However this series does not
+get the GSP to a fully active state. Instead it gets it to a state where the GSP
+sends a message to the host with a sequence of instructions which need running
+to get to the active state. A subsequent series will implement processing of
+this message and allow the GSP to get to the fully active state.
 
-As explained in the documentation, to avoid this specific race
-condition, interpreters should open the script once, check the FD with
-AT_EXECVE_CHECK, and then read the content with the same FD.
+A full tree including the prerequisites for this patch series is available at
+https://github.com/apopple-nvidia/linux/tree/nova-core-for-upstream.
 
-> 
-> For the case I mentioned previously, I have to think more if the race
-> condition is a bug or security issue.
-> IIUC, two solutions are discussed so far:
-> 1> the process could write to fs to update the script.  However, for
-> execution, the process still uses the copy that passed the
-> AT_EXECVE_CHECK. (snapshot solution by Andy Lutomirski)
+[1] - https://lore.kernel.org/rust-for-linux/dc18894e-09d3-4088-9be0-22c2070b61f4@nvidia.com/T/
 
-Yes, the snapshot solution would be the best, but I guess it would rely
-on filesystems to support this feature.
+To: dri-devel@lists.freedesktop.org
+To: Danilo Krummrich <dakr@kernel.org>
+To: Alexandre Courbot <acourbot@nvidia.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>
+Cc: Alex Gaynor <alex.gaynor@gmail.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>
+Cc: Gary Guo <gary@garyguo.net>
+Cc: Björn Roy Baron <bjorn3_gh@protonmail.com>
+Cc: Benno Lossin <lossin@kernel.org>
+Cc: Andreas Hindborg <a.hindborg@kernel.org>
+Cc: Alice Ryhl <aliceryhl@google.com>
+Cc: Trevor Gross <tmgross@umich.edu>
+Cc: David Airlie <airlied@gmail.com>
+Cc: Simona Vetter <simona@ffwll.ch>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Cc: Maxime Ripard <mripard@kernel.org>
+Cc: Thomas Zimmermann <tzimmermann@suse.de>
+Cc: John Hubbard <jhubbard@nvidia.com>
+Cc: Joel Fernandes <joelagnelf@nvidia.com>
+Cc: Timur Tabi <ttabi@nvidia.com>
+Cc: linux-kernel@vger.kernel.org
+Cc: nouveau@lists.freedesktop.org
 
-> or 2> the process blocks the write while opening the file as read only
-> and executing the script. (this seems to be the approach of this
-> patch).
+Alistair Popple (7):
+  gpu: nova-core: Set correct DMA mask
+  gpu: nova-core: Create initial GspSharedMemObjects
+  gpu: nova-core: gsp: Create wpr metadata
+  gpu: nova-core: gsp: Add GSP command queue handling
+  gpu: nova-core: gsp: Create rmargs
+  gpu: nova-core: gsp: Create RM registry and sysinfo commands
+  gpu: nova-core: gsp: Boot GSP
 
-Yes, and this is not something we want anymore.
+Joel Fernandes (3):
+  gpu: nova-core: Add a slice-buffer (sbuffer) datastructure
+  gpu: nova-core: falcon: Add support to check if RISC-V is active
+  gpu: nova-core: falcon: Add support to write firmware version
 
-> 
-> I wonder if there are other ideas.
+ drivers/gpu/nova-core/driver.rs               |   8 +-
+ drivers/gpu/nova-core/falcon.rs               |  16 +
+ drivers/gpu/nova-core/fb.rs                   |   1 -
+ drivers/gpu/nova-core/firmware.rs             |   6 +-
+ drivers/gpu/nova-core/firmware/gsp.rs         |   1 -
+ drivers/gpu/nova-core/firmware/riscv.rs       |   9 +-
+ drivers/gpu/nova-core/gpu.rs                  |  60 +-
+ drivers/gpu/nova-core/gsp.rs                  | 237 +++++-
+ drivers/gpu/nova-core/gsp/cmdq.rs             | 701 ++++++++++++++++++
+ drivers/gpu/nova-core/gsp/commands.rs         | 201 +++++
+ drivers/gpu/nova-core/nova_core.rs            |   1 +
+ drivers/gpu/nova-core/nvfw.rs                 |  59 ++
+ .../gpu/nova-core/nvfw/r570_144_bindings.rs   | 501 +++++++++++++
+ drivers/gpu/nova-core/regs.rs                 |  15 +
+ drivers/gpu/nova-core/sbuffer.rs              | 188 +++++
+ 15 files changed, 1991 insertions(+), 13 deletions(-)
+ create mode 100644 drivers/gpu/nova-core/gsp/cmdq.rs
+ create mode 100644 drivers/gpu/nova-core/gsp/commands.rs
+ create mode 100644 drivers/gpu/nova-core/sbuffer.rs
 
-I don't see other efficient ways do give the same guarantees.
+-- 
+2.47.2
+
 
