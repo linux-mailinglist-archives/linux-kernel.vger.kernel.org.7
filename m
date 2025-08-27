@@ -1,168 +1,205 @@
-Return-Path: <linux-kernel+bounces-788557-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788558-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADD76B3865D
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 17:20:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D37A5B3865A
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 17:20:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BBCDC98415B
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 15:19:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68312464B50
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 15:19:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9C0F2749E2;
-	Wed, 27 Aug 2025 15:16:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7A0F2877ED;
+	Wed, 27 Aug 2025 15:16:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Az4gRDNC"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="tQrILEOn"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EBCF27FD5D
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 15:16:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BD8427FD5D;
+	Wed, 27 Aug 2025 15:16:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756307792; cv=none; b=SRinh4UVYIUPJ7oWn/mprev4LbMuCscdaS1yphcWg6qZc3c4o70LTaI5MxkAeDfOwCwUHnhN8HdH/DrQvZ/eeSdnVoqlx4PBQxeZMQPkLbk0to//6DkacydSSg93LK64hq3xfJE6OYieiTONUh1eZqZCX0H7SPaoaPE0lDDDzao=
+	t=1756307812; cv=none; b=EmNdd/xyGVhV+YZV7WBocUJRO5SDSX1NPvYA0ngBgEXJawRFcp+5JbdLl+VfDofG8EYf7P53azZg2n+LvGxVPeBtV2oJ+FtLUSKQXXI+/rtyPOYtMJAvFCz3jRMVP5535mbpQWBnSpWIQ0EgcKtiXY2ZCfqOtpY1kg2pVQCXKIM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756307792; c=relaxed/simple;
-	bh=wZ+bwOJpQxI9Tze06XtG+N15eOiS0Q81ytrRTouxzWE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=bsZPQgBoNr8E4I2sthv0o1mbqj3K2DF5m6fIO6ePaMWMi9u2iZpT7Qc5pqSA1KEnguPYZZlQqImeBuHEzuJ8cakZhYxj2LqamY5ZX1Pea/AS4ytGPKdgt6BdU4j337fcG+4Uzw5m2tXzXBVcqpOTmrcdCPy77zgNwQilV3K0bRQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Az4gRDNC; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756307789;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=imIf6RzY7hAhYgovS6Iof1LvghCiP7y7dj/G/jXCBLs=;
-	b=Az4gRDNCBEem4I2PtCYgQTVqOyueuB0y08HziEAqAovjVyybet+9Z8nGUL9UmcJ6X52XQI
-	q7GodT2sQ5hIQAgitbCGD28C9c1QawBvr83487FqL3LbOMQfaZ8jl6XcZRdN7OVKPpQ3iH
-	BfPuhc+sDWoQIdHN6OBobLnBulHT24U=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-177-oLaUAu4ePBWrZwrZVbM0XA-1; Wed, 27 Aug 2025 11:16:28 -0400
-X-MC-Unique: oLaUAu4ePBWrZwrZVbM0XA-1
-X-Mimecast-MFC-AGG-ID: oLaUAu4ePBWrZwrZVbM0XA_1756307787
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-45a1b05d8d0so48734585e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 08:16:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756307787; x=1756912587;
-        h=content-transfer-encoding:mime-version:message-id:date:references
-         :in-reply-to:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=imIf6RzY7hAhYgovS6Iof1LvghCiP7y7dj/G/jXCBLs=;
-        b=vFJabZemJh/ulw0qnv7hO//MjAOUHzYA5aIqOcllpszNS6DgoTrWfaCEDLr+eiaR0D
-         iwXbJLbzI+vPMDGS1BW6Xdm1AQELnK8s+3ZyO8SNXxq9TDQqJ6mJB50SH5f8UEmCOBjd
-         vqQSntxHgjyvuvFEHrSS/ewL9iZLU4xAIK5SdL6ioDb4WsohwwV8H6K1Fc7gMWS7xtEp
-         VAuWy6qbQhZNUfzs6P++0pgo4u7ZWcAboQCcBBMPvI9pRaH3XBQ8iwpY5IOhMR8JKdxg
-         XhQwQi/COMf1BLAGf35zwigHfSniGkdSiykFTkiE63RBSSQC1RQ/6eEcqlk7HlcnOjiy
-         VRIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXHqMsuKX7SJV+AaCQlaRzVNQ83+EUPdM8Ggm5Ag/zmWEJAaa1rVU30/ayqIjoJ6o2MxbUBf7iTUZB5VuI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YysJ7VlHhjhBN66gqGqJsDiGi9Dr1EubL51s4a6JE4l42ZaM3mu
-	rC1skZgj0plYGEqGrFE6MzfpRIXm5g7g62dtf1CAVQyVAsz31+N9pxqSE3c7sc7DkJ0UM82iuqa
-	2kziLrW4nGhGVC7kvRwyg31F/2Sa9lgRJLALRgCirrcB2K+0RzknysYr9WVHxliLf3A==
-X-Gm-Gg: ASbGncui3ix8i5RPAQ0qGrcJxk7YnNLMSRGOVwLNX71bNDM82cy8t/l/U6t2EM4abHU
-	8LGf0gb3QsA9Y5Ephgy1zB8X13qBWypzPbddB3DNTSBT8KOaOCTG04Y6fDJIF2UFvgL3+IyAXLd
-	n/93A4sULTeqH78lNxdBeYa2pX1ZK6zWLKAr5oIk57R8eeaUkXKwyB3Rgr0gDSP7KPiSP7VesmZ
-	Sw7Mcrl8ZypGJcaIeEt5r8sj4JjtGuLyABVKYR7rBoR4if6o+5EQDyod2w066Tc2Ga3MzKw2F4a
-	491HBBZW1bqhD4l5ljWaIXk5oS92SgVaNKWTji5mIi/6yxK5+7WiQjXC+f84xIgnE4qQLSAKVO+
-	HjM26HtU6c4ILjD+afxUINPwQ
-X-Received: by 2002:a05:6000:430d:b0:3cb:46fc:8eaa with SMTP id ffacd0b85a97d-3cb46fc8fe4mr5753646f8f.31.1756307786815;
-        Wed, 27 Aug 2025 08:16:26 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEyvMK+M7e2Xw//rir10/NPKq9s7nd6+EFamXp8genZqqejzStqxle2mu6EzM/YI9h9a7m2mA==
-X-Received: by 2002:a05:6000:430d:b0:3cb:46fc:8eaa with SMTP id ffacd0b85a97d-3cb46fc8fe4mr5753624f8f.31.1756307786299;
-        Wed, 27 Aug 2025 08:16:26 -0700 (PDT)
-Received: from vschneid-thinkpadt14sgen2i.remote.csb (213-44-135-146.abo.bbox.fr. [213.44.135.146])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3cd8bb9ee97sm498259f8f.27.2025.08.27.08.16.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Aug 2025 08:16:25 -0700 (PDT)
-From: Valentin Schneider <vschneid@redhat.com>
-To: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>, Aaron Lu
- <ziqianlu@bytedance.com>
-Cc: Ben Segall <bsegall@google.com>, K Prateek Nayak
- <kprateek.nayak@amd.com>, Peter Zijlstra <peterz@infradead.org>, Chengming
- Zhou <chengming.zhou@linux.dev>, Josh Don <joshdon@google.com>, Ingo
- Molnar <mingo@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>,
- Xi Wang <xii@google.com>, linux-kernel@vger.kernel.org, Juri Lelli
- <juri.lelli@redhat.com>, Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>, Mel Gorman <mgorman@suse.de>, Chuyi
- Zhou <zhouchuyi@bytedance.com>, Jan Kiszka <jan.kiszka@siemens.com>,
- Florian Bezdeka <florian.bezdeka@siemens.com>, Songtang Liu
- <liusongtang@bytedance.com>, Tejun Heo <tj@kernel.org>
-Subject: Re: [PATCH v3 4/5] sched/fair: Task based throttle time accounting
-In-Reply-To: <u2ri72fqvzlyvwxmaez3l6mbgtkvzmg36ylzc4k2qhvjcdiup5@7ogshyljqoot>
-References: <20250715071658.267-1-ziqianlu@bytedance.com>
- <20250715071658.267-5-ziqianlu@bytedance.com>
- <xhsmhbjociso8.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
- <20250819093427.GC38@bytedance>
- <u2ri72fqvzlyvwxmaez3l6mbgtkvzmg36ylzc4k2qhvjcdiup5@7ogshyljqoot>
-Date: Wed, 27 Aug 2025 17:16:24 +0200
-Message-ID: <xhsmhiki8lrqv.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+	s=arc-20240116; t=1756307812; c=relaxed/simple;
+	bh=mOV+nWXhghC+6OaXr13EUm4ZGN4mHYeKxrBdFRkt1RM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sFkHQBoeT9SUJ9yVHDsx32ym9hd3CFvg+g3dgONiwWQcGveEcQ4bsGeFYaBWN1DqUiTrmbQXuUuz4h5VwoP05KVoV2e5qNv51N/4UwM9GjCHy6CZwwRnwa7kLVYTNI92Ce6XQVPvZV90bUYzBIdlYoYF3yoPrKftVswAm3ifOQA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=tQrILEOn; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57R7wpnL011849;
+	Wed, 27 Aug 2025 15:16:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=SPyx11geBrvCeW8/DE+b27cLGdioY2
+	twq7XbikpR9hU=; b=tQrILEOnkv2ygrRG3IyrCMGcoKLVm+C7kU+2PbwLRdD9xc
+	k+zwwxhG3qr4s/HFsObRELXYawLhEKRj3ltaBYe1cHFLEoud0wzvNM+r0Wzk5hMk
+	e3NPwuIZ+E/lA3yqqvf2hJ8jc9KW05gfWA4++ZKt3CvGFrrxQ2iF7Kjvck70i+sY
+	zyoS6OJZ3FGu20LMFB3teNdc3yHh7kYS6KsjCdOurGRGRu46e9ixLnd/QAsDsVWT
+	KnMmdrU37hV8/uSUj5Qx3tKQ5Uej02bM7nO1/VznvitGD+95vCDkFsBbFBWpNe7A
+	+ximIn47kMLCHslR5Wa1+gjIKGf2YVxilLBZZRrg==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48q5584tyh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 27 Aug 2025 15:16:42 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 57RFGgVX001288;
+	Wed, 27 Aug 2025 15:16:42 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48q5584tyc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 27 Aug 2025 15:16:42 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 57RCPxFe002473;
+	Wed, 27 Aug 2025 15:16:41 GMT
+Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 48qt6mgahc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 27 Aug 2025 15:16:41 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 57RFGdWA38666592
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 27 Aug 2025 15:16:39 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 2463D2004E;
+	Wed, 27 Aug 2025 15:16:39 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id DD3D120040;
+	Wed, 27 Aug 2025 15:16:36 +0000 (GMT)
+Received: from li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com (unknown [9.39.23.211])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Wed, 27 Aug 2025 15:16:36 +0000 (GMT)
+Date: Wed, 27 Aug 2025 20:46:34 +0530
+From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+To: Zorro Lang <zlang@redhat.com>
+Cc: fstests@vger.kernel.org, Ritesh Harjani <ritesh.list@gmail.com>,
+        djwong@kernel.org, john.g.garry@oracle.com, tytso@mit.edu,
+        linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-ext4@vger.kernel.org
+Subject: Re: [PATCH v5 02/12] common/rc: Add _require_fio_version helper
+Message-ID: <aK8hUqdee-JFcFHn@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+References: <cover.1755849134.git.ojaswin@linux.ibm.com>
+ <955d47b2534d9236adbd2bbd13598bbd1da8fc04.1755849134.git.ojaswin@linux.ibm.com>
+ <20250825160801.ffktqauw2o6l5ql3@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250825160801.ffktqauw2o6l5ql3@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: d02U5Q3hom6xqs3PZk50E5KMp5ujhhzo
+X-Proofpoint-ORIG-GUID: 00srl8NFDJ-SUUPFIpEZKfq2C8CLAwNd
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIzMDAyMSBTYWx0ZWRfXzU/FxPxWV0P6
+ 2hwQiSOLB/vjx4nk+bTJyGT8MGii3+ZjEOZnyJb01w/UJ1S/AKOgcG67CH1ulmF67o9kQK4K1Xc
+ Lol2JdhQEvv7wSeJHOUVsBdNRPJ0MGixviP01yc5FUUzdXdP0YIiOFTwl5L1MOovEg3UjwMHpRz
+ 5yDgylgLQ4BDRud4OhT9wDKC+YY954F6+8k1zrxZFSX9vcP7kRh4VGEFrCEYuYhBoqU0GlcqWH1
+ DpspFAEpy4fhrvOhc+C3lzISvQDwmlHTIIg3NyaDlzPJzuyhHtYUjhtsa0noqsbrjA0EhTHrw/K
+ ijcGDxOHO6oHVEShn9YXo++MlbfHZs5GvbSoufzQ0uBkuNyjoV2gA2g3pMAEjdUvyvbhEfariqm
+ QMsf9fYf
+X-Authority-Analysis: v=2.4 cv=A8ZsP7WG c=1 sm=1 tr=0 ts=68af215a cx=c_pps
+ a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
+ a=kj9zAlcOel0A:10 a=2OwXVqhp2XgA:10 a=VnNF1IyMAAAA:8 a=eC5F5FB79jDbC9rVOvkA:9
+ a=CjuIK1q_8ugA:10
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-27_03,2025-08-26_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 adultscore=0 priorityscore=1501 suspectscore=0 clxscore=1015
+ spamscore=0 impostorscore=0 malwarescore=0 bulkscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508230021
 
-On 26/08/25 16:10, Michal Koutn=C3=BD wrote:
-> Hello.
->
-> On Tue, Aug 19, 2025 at 05:34:27PM +0800, Aaron Lu <ziqianlu@bytedance.co=
-m> wrote:
->> Got it, does the below added words make this clear?
->>
->>     With task based throttle model, the previous way to check cfs_rq's
->>     nr_queued to decide if throttled time should be accounted doesn't wo=
-rk
->>     as expected, e.g. when a cfs_rq which has a single task is throttled,
->>     that task could later block in kernel mode instead of being dequeued=
- on
->>     limbo list and account this as throttled time is not accurate.
->>
->>     Rework throttle time accounting for a cfs_rq as follows:
->>     - start accounting when the first task gets throttled in its hierarc=
-hy;
->>     - stop accounting on unthrottle.
->>
->>     Note that there will be a time gap between when a cfs_rq is throttled
->>     and when a task in its hierarchy is actually throttled. This account=
-ing
->>     mechanism only started accounting in the latter case.
->
-> Do I understand it correctly that this rework doesn't change the
-> cumulative amount of throttled_time in cpu.stat.local but the value gets
-> updated only later?
->
+On Tue, Aug 26, 2025 at 12:08:01AM +0800, Zorro Lang wrote:
+> On Fri, Aug 22, 2025 at 01:32:01PM +0530, Ojaswin Mujoo wrote:
+> > The main motivation of adding this function on top of _require_fio is
+> > that there has been a case in fio where atomic= option was added but
+> > later it was changed to noop since kernel didn't yet have support for
+> > atomic writes. It was then again utilized to do atomic writes in a later
+> > version, once kernel got the support. Due to this there is a point in
+> > fio where _require_fio w/ atomic=1 will succeed even though it would
+> > not be doing atomic writes.
+> > 
+> > Hence, add an explicit helper to ensure tests to require specific
+> > versions of fio to work past such issues.
+> 
+> Actually I'm wondering if fstests really needs to care about this. This's
+> just a temporary issue of fio, not kernel or any fs usespace program. Do
+> we need to add a seperated helper only for a temporary fio issue? If fio
+> doesn't break fstests running, let it run. Just the testers install proper
+> fio (maybe latest) they need. What do you and others think?
+> 
+> Thanks,
+> Zorro
 
-No, so currently when a cfs_rq runs out of quota, all of its tasks
-instantly get throttled, synchronously with that we record the time at
-which it got throttled and use that to report how long it was throttled
-(cpu.stat.local).
+Hey Zorro,
 
-What this is doing is separating running out of quota and actually
-throttling the tasks. When a cfs_rq runs out of quota, we "mark" its tasks
-to throttle themselves whenever they next exit the kernel. We record the
-throttled time (cpu.stat.local) as the time between the first
-to-be-throttled task exiting the kernel and the unthrottle/quota
-replenishment.
+Sure I'm okay with not keeping the helper and letting the user make sure
+the fio version is correct.
 
-IOW, this is inducing a (short) delay between a cfs_rq running out of quota
-and we starting to account for its cumulative throttled time.
+@John, does that sound okay?
 
-Hopefully that was somewhat clear.
-
-> I'd say such little shifts are OK [1]. What should be avoided is
-> changing the semantics so that throttled_time time would scale with the
-> number of tasks inside the cgroup (assuming a single cfs_rq, i.e. number
-> of tasks on the cfs_rq).
->
-
-Yeah that's fine we don't do that.
-
+Regards,
+ojaswin
+> 
+> > 
+> > Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+> > ---
+> >  common/rc | 32 ++++++++++++++++++++++++++++++++
+> >  1 file changed, 32 insertions(+)
+> > 
+> > diff --git a/common/rc b/common/rc
+> > index 35a1c835..f45b9a38 100644
+> > --- a/common/rc
+> > +++ b/common/rc
+> > @@ -5997,6 +5997,38 @@ _max() {
+> >  	echo $ret
+> >  }
+> >  
+> > +# Check the required fio version. Examples:
+> > +#   _require_fio_version 3.38 (matches 3.38 only)
+> > +#   _require_fio_version 3.38+ (matches 3.38 and above)
+> > +#   _require_fio_version 3.38- (matches 3.38 and below)
+> > +_require_fio_version() {
+> > +	local req_ver="$1"
+> > +	local fio_ver
+> > +
+> > +	_require_fio
+> > +	_require_math
+> > +
+> > +	fio_ver=$(fio -v | cut -d"-" -f2)
+> > +
+> > +	case "$req_ver" in
+> > +	*+)
+> > +		req_ver=${req_ver%+}
+> > +		test $(_math "$fio_ver >= $req_ver") -eq 1 || \
+> > +			_notrun "need fio >= $req_ver (found $fio_ver)"
+> > +		;;
+> > +	*-)
+> > +		req_ver=${req_ver%-}
+> > +		test $(_math "$fio_ver <= $req_ver") -eq 1 || \
+> > +			_notrun "need fio <= $req_ver (found $fio_ver)"
+> > +		;;
+> > +	*)
+> > +		req_ver=${req_ver%-}
+> > +		test $(_math "$fio_ver == $req_ver") -eq 1 || \
+> > +			_notrun "need fio = $req_ver (found $fio_ver)"
+> > +		;;
+> > +	esac
+> > +}
+> > +
+> >  ################################################################################
+> >  # make sure this script returns success
+> >  /bin/true
+> > -- 
+> > 2.49.0
+> > 
+> 
 
