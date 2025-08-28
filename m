@@ -1,133 +1,124 @@
-Return-Path: <linux-kernel+bounces-790469-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790470-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03A91B3A795
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 19:17:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 481ECB3A797
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 19:17:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF2641C87013
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 17:17:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E992C565FED
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 17:16:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F6673375B6;
-	Thu, 28 Aug 2025 17:16:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38FFB334732;
+	Thu, 28 Aug 2025 17:16:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lXMjNa1O"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VqJAJsdC"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50CDC1A5BBC;
-	Thu, 28 Aug 2025 17:16:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17B842192FA;
+	Thu, 28 Aug 2025 17:16:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756401384; cv=none; b=trPAYKml3PfVK3na9ZnXshGz8L9r3+YW8JBnITvd9SsohqeHdGHRbBGUM4MiL3NifLLQH/cJL57BTZsTblCtB+Jdyp9289j3SDXZsGEGv++qu2Jp+mU2tvDz8g8tWHrPLv3pOBCrCwXdnPJGOCfdo2tHVvdkItrce0Jgwkix75k=
+	t=1756401412; cv=none; b=oTCLDUZXm522rTm+90TS52u4oznzmwB31s5awh7Ph9EBz4DQue/PUH10kT9y52n9ZrOC/DgUJFbjvskDEV2uQEf5TVzVlmSMbL04EhM8tGgmhL3DORvrC8EGcmGigmfL4Gy+xQAiLF22AG4cXgKrbKl7pgEou36SiXFWeK6iesQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756401384; c=relaxed/simple;
-	bh=Kmt4M/Z2w+PlibUTUari/qi5WTPoz/7V3tEAWMttjcs=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=hWIBbbR6mJAfFQfU0UZ3pHkUGoH6rYU1u1FWFp04F4Z/nCoRDkTQN0QsParaZCkELL0lT4DJzpW4JN602EZw8itlYqraKE4BnTTfiBSURtiJihCN6IE/ac79DhBtTwRrmcFhO589yfNpWngwmaj0jJg9zuJdjdXvxYrkYNpSYX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lXMjNa1O; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DE76C4CEF4;
-	Thu, 28 Aug 2025 17:16:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756401383;
-	bh=Kmt4M/Z2w+PlibUTUari/qi5WTPoz/7V3tEAWMttjcs=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=lXMjNa1OLazCVKdubqEGCO/lXhyt1mqLJQfntrNgnF2MeIfopD2JSL24bzM3r9g9r
-	 2FQ23qtLYZLlOH1o3RU26+tDTfmBIwux0hZ2dKZe/xQpgbAQud8uJWbM0fsG+dMUdm
-	 vuO8pvW/zTg9XPl2CMq9Z8VxXu5j9D0/OjmzDW/WoUCZae0+h9u1t6E1C5SEkwh5S6
-	 NiPEA3+OmmoeyhCYFFjVSDB0YGXiGktNmSWf4gX+mqBVSG5R/MRlGpN6c5OR5n+hbw
-	 y4YzH8G2J8JZrbEx1Ub9PxBMWtap5lkFUZqod4nTSCoJBR5XHfFeXcOEwGeXkdFT2B
-	 CJQt+pQ4f0P9g==
-Date: Thu, 28 Aug 2025 12:16:22 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Christian Bruel <christian.bruel@foss.st.com>
-Cc: lpieralisi@kernel.org, kwilczynski@kernel.org, mani@kernel.org,
-	robh@kernel.org, bhelgaas@google.com, krzk+dt@kernel.org,
-	conor+dt@kernel.org, mcoquelin.stm32@gmail.com,
-	alexandre.torgue@foss.st.com, linus.walleij@linaro.org,
-	corbet@lwn.net, p.zabel@pengutronix.de, shradha.t@samsung.com,
-	mayank.rana@oss.qualcomm.com, namcao@linutronix.de,
-	qiang.yu@oss.qualcomm.com, thippeswamy.havalige@amd.com,
-	inochiama@gmail.com, quic_schintav@quicinc.com,
-	johan+linaro@kernel.org, linux-pci@vger.kernel.org,
+	s=arc-20240116; t=1756401412; c=relaxed/simple;
+	bh=ovsbqp3NMEVweN+CsPpCOuh7ZLk28Mh4tRydqyeYxIU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qA61WoVDdHWJ0ac9t29YfV15PPngIHIxnpc8Vx62hWLcKOaDOUYw+osoOasaiAbg3+mO3qjyFcUKiNNXUm9Fh9epm0N+88BeAj8X0z7reWH5zg8NaSCJBrRQ5VXhge+Gl+SrQbpYWkjQJ9EBXWpH6SgM+rZGHfLvAAqjXc2YjQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VqJAJsdC; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-45b55ed86b9so6854825e9.0;
+        Thu, 28 Aug 2025 10:16:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756401409; x=1757006209; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=fFLbqb99XY/4p3kGQ/FKtOO9I8ts9rQ7PGKFEyAjmE0=;
+        b=VqJAJsdCRXmZyZxcUhH0kWfQmhyg4sOzd7uil+XfvR+kz5gnjsKIAVOkZcodqrcybc
+         ik1rpWxg/fBgM6Qqhd+FPfoCfMRHylwSIcUC6hFWuZ6eRkCFEn8TYiRSE1rB84Dxnr6U
+         dEB0ULp2JnZGmv3S9SqEG8NZfPgEBFu275gCIBE2KxGcxZdx2Ttbu64px4dui9OJGWXq
+         Ab93UEm57LSFwUQWqEdMT85lXeXS6r189Zc5CRJriMi8lw7G9sV/mskIKV3mKGYeJ1Nx
+         YpRN5u9We1FoiLU3kSPj6Cvsi8vJu2LQ1wWr50lEr3kH6u7UXqFy1zDml2bGYX5/u37m
+         F/JA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756401409; x=1757006209;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fFLbqb99XY/4p3kGQ/FKtOO9I8ts9rQ7PGKFEyAjmE0=;
+        b=ZWo34AMX3+PE5fYqlt3LjNoeQCXC8X+GUzPm5o1TxnzKv7/cevZiKwqTem+A+u6DOK
+         StE5r3/wtbQQOygMTGY4U0Nw1cdFdTPpozQgPoD9EzYVwd6NpnQX5fOROPN3C04zHmzY
+         RRsQxeiPVrhJMLnGzLzqvryIcinnZ4XTX49yt0u6bGZ7gtXrMfp2NmVy7LtK0dLsl+2A
+         HC2/zXUU31bIGEe+TldcbUrfqVMZ8kR6HVySGBppu3bGO1mGrIOie9vZPDWYrUZfpZMz
+         QAJ7h3XgR/gzFhAZdYzqGymPQf7mFrWUoeJFEralwKh7iwM+G613npCD5U8fd6YhLRYe
+         LqdA==
+X-Forwarded-Encrypted: i=1; AJvYcCW2b6moJ0nMiwOsjFUtw51UY7st38Sr/FNKsDr04N5LgkkT2iOdY9/h48Ga+HgFXjyn5ZtOOxr0SW5O@vger.kernel.org, AJvYcCXrlosVwAdEYGkWQgF1kEZFgC2cD5V2XeXeODERp0f3gFv5fan/JPMjbGKFkhXIgQG6Mz+kqOykhzs5nWy/@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5z9DM6+EjLWiZc29WMbJ1WzTqSE0lAyp+VavlVkrPtN0A2xKi
+	qc500jT5RmBXdcs7XCkDSXFjJ0LVtkgUcLpOYJ+TygnGmopOqGwOIAUL
+X-Gm-Gg: ASbGncsydPGWc/Giz67hwl/mAEMZdIZLmGq4Bx/yHEmTANZlivW1KmDsjSyfLIFr9hz
+	o76tEcZoJLI8N7tKkd/i4T+wpxHKXlwsX/VzhRCHev6FYIjNrRARcFrCTQ0pdzv5mIT+7slhqhC
+	VWXDhsi9dkmVYV52ZqnguMHYKR5ccmvDZmXJAAiU1uhtAguc8S1DWqVb3kMHvtwHNfhOkfSRYKj
+	XrJ5Oymk78w0TOG/EzKvRYSEgqbclqLauD/HZcYw+BfB8nlp6A5M3Tlt+iA97o50dx7vV0VdMMw
+	yH/3rKtRjSqNdftCaUTXdsQi4DWIHj9OtoYXZUcBJBqwGIGHMpLKjFP+CMg1knFuwZOlKax1nJr
+	OFBjSL1wglSclUU6rdPUarMaLpOO6YQ7/ctfz/YVntHclgGLS
+X-Google-Smtp-Source: AGHT+IHf2zrhqkImFnC2Ql49KDCTShn9uK3ZVmRNtWFi3YICQvp5eHq+etZ8QeXQZIfouCJFRYZXPg==
+X-Received: by 2002:a05:600c:4f12:b0:459:dde3:1a37 with SMTP id 5b1f17b1804b1-45b66343ea2mr95635395e9.25.1756401409276;
+        Thu, 28 Aug 2025 10:16:49 -0700 (PDT)
+Received: from toolbox.. ([87.200.95.144])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b6f30fe02sm80653665e9.18.2025.08.28.10.16.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Aug 2025 10:16:48 -0700 (PDT)
+From: Christian Hewitt <christianshewitt@gmail.com>
+To: Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
 	devicetree@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH v13 06/11] PCI: stm32: Add PCIe Endpoint support for
- STM32MP25
-Message-ID: <20250828171622.GA945192@bhelgaas>
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: Alex Bee <knaerzche@gmail.com>
+Subject: [PATCH] arm64: dts: rockchip: add USB3 on Beelink A1
+Date: Thu, 28 Aug 2025 17:16:45 +0000
+Message-Id: <20250828171645.3830437-1-christianshewitt@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9133348a-f6a4-4425-98e2-a784a7620b3a@foss.st.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Aug 28, 2025 at 02:12:57PM +0200, Christian Bruel wrote:
-> On 8/27/25 20:58, Bjorn Helgaas wrote:
-> > On Wed, Aug 20, 2025 at 09:54:06AM +0200, Christian Bruel wrote:
-> > > Add driver to configure the STM32MP25 SoC PCIe Gen1 2.5GT/s or Gen2 5GT/s
-> > > controller based on the DesignWare PCIe core in endpoint mode.
-> > 
-> > > +static void stm32_pcie_perst_deassert(struct dw_pcie *pci)
-> > > +{
-> > > +	struct stm32_pcie *stm32_pcie = to_stm32_pcie(pci);
-> > > +	struct device *dev = pci->dev;
-> > > +	struct dw_pcie_ep *ep = &pci->ep;
-> > > +	int ret;
-> > > +
-> > > +	dev_dbg(dev, "PERST de-asserted by host\n");
-> > > +
-> > > +	ret = pm_runtime_resume_and_get(dev);
-> > > +	if (ret < 0) {
-> > > +		dev_err(dev, "Failed to resume runtime PM: %d\n", ret);
-> > > +		return;
-> > > +	}
-> > > +
-> > > +	ret = stm32_pcie_enable_resources(stm32_pcie);
-> > > +	if (ret) {
-> > > +		dev_err(dev, "Failed to enable resources: %d\n", ret);
-> > > +		goto err_pm_put_sync;
-> > > +	}
-> > > +
-> > > +	/*
-> > > +	 * Need to reprogram the configuration space registers here because the
-> > > +	 * DBI registers were incorrectly reset by the PHY RCC during phy_init().
-> > 
-> > Is this incorrect reset of DBI registers a software issue or some kind
-> > of hardware erratum that might be fixed someday?  Or maybe it's just a
-> > characteristic of the hardware and thus not really "incorrect"?
-> > 
-> > I do see that qcom_pcie_perst_deassert() in pcie-qcom-ep.c also calls
-> > dw_pcie_ep_init_registers() in the qcom_pcie_ep_perst_irq_thread()
-> > path.
-> > 
-> > So does pex_ep_event_pex_rst_deassert() (pcie-tegra194.c) in the
-> > tegra_pcie_ep_pex_rst_irq() path.
-> > 
-> > But as far as I can tell, none of the other dwc drivers need this, so
-> > maybe it's something to do with the glue around the DWC core?
-> 
-> The RCC PHY reset is connected to the Synopsys cold reset logic, which
-> explains why the registers need to be restored. This point has been
-> addressed in the reference manual.
+From: Alex Bee <knaerzche@gmail.com>
 
-OK.  I dropped "incorrectly" from the comment because I think future
-readers will wonder about whether or how this could be fixed, and it
-sounds like it's just a feature of the hardware that we need to deal
-with.
+Enable USB3 for the Beelink A1 set-top box.
 
-> > > +	 */
-> > > +	ret = dw_pcie_ep_init_registers(ep);
-> > > +	if (ret) {
-> > > +		dev_err(dev, "Failed to complete initialization: %d\n", ret);
-> > > +		goto err_disable_resources;
-> > > +	}
-> 
+Signed-off-by: Alex Bee <knaerzche@gmail.com>
+Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
+---
+ arch/arm64/boot/dts/rockchip/rk3328-a1.dts | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/rockchip/rk3328-a1.dts b/arch/arm64/boot/dts/rockchip/rk3328-a1.dts
+index b276a29bdd85..632b0b22c52f 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3328-a1.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3328-a1.dts
+@@ -381,6 +381,11 @@ &usb_host0_ehci {
+ 	status = "okay";
+ };
+ 
++&usbdrd3 {
++	dr_mode = "host";
++	status = "okay";
++};
++
+ &vop {
+ 	status = "okay";
+ };
+-- 
+2.34.1
+
 
