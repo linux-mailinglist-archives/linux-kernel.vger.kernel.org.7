@@ -1,118 +1,124 @@
-Return-Path: <linux-kernel+bounces-789255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44F26B392D4
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 07:18:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B3F8B392DA
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 07:23:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2DC657B0B08
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 05:16:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DB5B1BA5B59
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 05:24:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4D2C1C5D77;
-	Thu, 28 Aug 2025 05:17:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52A68265298;
+	Thu, 28 Aug 2025 05:23:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="L9/jxTjE"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="UtCBv87A"
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C715347C3
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 05:17:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C51D347C3;
+	Thu, 28 Aug 2025 05:23:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756358271; cv=none; b=c1ixoM2z1hb4TBgfvTQJ08VUnlMNrYGyZl9XG0jO0ufTAwmQ0n60AsBinu+uZztlbE3yx/SRmBqY+dmVohs9uawa+1oJ6HMpd9hnrnSOPoVQTQXR3q87giomTg0bl1OytkwDgjsIyL2MkHJ84oGc24VkJzpES2r/FelNo5FKTXs=
+	t=1756358615; cv=none; b=j7aXC6uQ4o6WCytq+YKP1Ycw1vzaGbZS/p02IkcTIz2SDL8zmaZtotwDSlY14A7crka4cM4iq9CCU/XWEncRieZ2ul8KQsQIX/JoxBbfs6w9RvCu7CUW5+QZfemuNjZ7LJagdS2c2CcK+2bm/2askfgLN2FsJLJ2/1k3Y2JpMc8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756358271; c=relaxed/simple;
-	bh=EGKR/UbP9HoOguKRcZDGqIF4moN4Gv+faof7Hpxn1OE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NlX8tWI3j2lwpGMAgj6+GNd84XbYJyg7F/RNst7wXWV9vnr6po9yMPt75FJU5AEqpvRLvsl54oq18dVUMkd7yQBjrP4W6ZStg2qE5ium4SKp3Ih8Bq+h7xnK27NNpPWKXJm2bti7k8ptWCZf8umTUi436T1ymbYjYaWWUqDhnHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=L9/jxTjE; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-afcb731caaaso71787466b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 22:17:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google; t=1756358266; x=1756963066; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OG1WuC2hheSyViU3tcDLma/6gW2kIJ97ZTkGB1ykit0=;
-        b=L9/jxTjEft45Kbcg64X+zpQDdpkPZIlINI6v++11a+dMeSovOH+yQv70zodCcm9IjF
-         d6d1Hkjf9mN3pGdOqCYaEOqnDor3ihUDH1FQvyA/4hNFsWufuj8+84vb/WvNlfhk8oXx
-         tREOaUlkNs6LIhqkHbhFt5pKrDJOlgWspq3ZZGSgh8TrS8IvTYvNeDxwBsVw9n7hC/6Y
-         9pSG4fHjFRKVmX02OoPfr9OyP7D3V0oEYA6hxz35ZgsniYncJubwbiWe05X18efypjvo
-         akjgYCKGLxTSvliNMD0YEfBfEKudUxvbMZg32uqHtuPTRImIYPuLV5V4jswzdWDWp1tn
-         KF5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756358266; x=1756963066;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OG1WuC2hheSyViU3tcDLma/6gW2kIJ97ZTkGB1ykit0=;
-        b=GRc/qttAbPaB0V3+upSF+kiuCBMJqjRycq0uyApiovzYbOA3knW1U1xecWJKmtaTwc
-         HR8kfpaRwVcvf+KktBbUUJ9QSY95AvGcyItB7A+zYoDK/+/+pIpM2nzjXzhpHEBWMe47
-         wqmiMSA7jLzyTLiDWCVG4rhz3bfNSqiMmAE/yeG3WrB9lltzDhpzFyNJkVqtYMWAhxW0
-         mulRWMWvQNQkhYpEQDnL2GgHXTqKtD+s8ncaTNr/v58RneYyMdv+QlZir366fUgKAmMY
-         Wgz8tKJMaXYbfPKsa7MoMZZm79wKXw1qIwKVL/A49Z9stTz99u0qbNM5TyQvUv0yLX+s
-         0pIg==
-X-Forwarded-Encrypted: i=1; AJvYcCUyOhue/5FVGmo0eiI/rYoXI9SCwCzdqfaPdEy4IlBFIBrJghuXGAAgYP4uaLJZCeU+cvXmv11nEyjctcc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzWrHELpOYQ7lV3/p1EXvruqU0yChOEOUxs324B56Kc4jITUgOw
-	9OJzVlCOj0MlUstmLlf57SIM2OeKzt13cykH1TyHNgmWXufMOcGplqePq9dWvKiBd03f31a7UeG
-	kqj+rYHo9pE4KT1IUZITju8gcjIhFi5MUC4zT7saiLg==
-X-Gm-Gg: ASbGncuLp8sJGlr+HHhMYVLT9vYzlD5xjPsxUPomkDdNDeqsyHq1kf5IYPvhzD01xF6
-	uSiLZVgT88CSswWEyu7yMvhMovuBvB5sEZNnY96UMlUw4XdK6R8gjfUrvo8vfGU+7UWACR0dcj8
-	EU31PykgCgW9L6JzD8i9mn82syO/MHqNfQN1gnsqYK7Grw/HVzci/XtIfl0mXZNAK6vipHpMKMv
-	8t1rfXLMlj3iOmqPOwl0N7uLkzUW1AaO7o=
-X-Google-Smtp-Source: AGHT+IF8LgvafHMV8UZau80cAyTYYRm10wxMO3zhQW42jodfKJ3LU2Dgpe9FDWXWK2r4Ls++4xgpcdwiUyG7ZsKp2eE=
-X-Received: by 2002:a17:907:928a:b0:afe:eb48:2a3a with SMTP id
- a640c23a62f3a-afeeb482f03mr57033966b.65.1756358266579; Wed, 27 Aug 2025
- 22:17:46 -0700 (PDT)
+	s=arc-20240116; t=1756358615; c=relaxed/simple;
+	bh=MPv9upYSfnuMVEjCiBx+rrWvB2IX5FK6oSbWZnwJQG8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ocRslrXBJ6FxX2oysKvfiPjigYaGg84t6uu9uwqOoh/1JyjTcjks8lVqKQ+ce5U2jP0IjuvNFGtG97e/zMo1uJH4dd4q7eI209GKsliYg3XtSDkLjN4o5aFwZ2EQu1+bDQFuv9UMt9KLj+wLSBAwb/JQ3jlNwNhqtZ23ZhAKHKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=UtCBv87A; arc=none smtp.client-ip=198.47.23.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57S5MV2N1933390;
+	Thu, 28 Aug 2025 00:22:31 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1756358551;
+	bh=dSYTJRLUiaKEblrv6ghM/tLJvlJ4dpZF50LtDEoi190=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=UtCBv87A9YotW4e0Kpza0rumkfMUe9aQQ2p9MoF0eYg5POwikHGkZbX+Bgu53YtPl
+	 p8n7XbPCMDlm58CbFqlzv2bgVsdB+NixoVNm0fZShswC4fxgoQzAiNyJrEwswLNAUY
+	 megeYWaaIVmdw5gPZcFB9aQ8bE4jkUQdD9mhYxx4=
+Received: from DLEE101.ent.ti.com (dlee101.ent.ti.com [157.170.170.31])
+	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57S5MUZR2661524
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Thu, 28 Aug 2025 00:22:30 -0500
+Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 28
+ Aug 2025 00:22:29 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE111.ent.ti.com
+ (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Thu, 28 Aug 2025 00:22:29 -0500
+Received: from [172.24.231.152] (danish-tpc.dhcp.ti.com [172.24.231.152])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57S5ML1t072116;
+	Thu, 28 Aug 2025 00:22:22 -0500
+Message-ID: <0651d5a9-dd02-4936-94b8-834bd777003c@ti.com>
+Date: Thu, 28 Aug 2025 10:52:21 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <2aa3f478-9c87-4102-b83e-bf235372d834@redhat.com>
- <20250827150330.280399-1-max.kellermann@ionos.com> <20250827165309.44e465ff214e45f1a6665b24@linux-foundation.org>
-In-Reply-To: <20250827165309.44e465ff214e45f1a6665b24@linux-foundation.org>
-From: Max Kellermann <max.kellermann@ionos.com>
-Date: Thu, 28 Aug 2025 07:17:35 +0200
-X-Gm-Features: Ac12FXz7j6ZCD1KpPsfv9iOBu4iKeV--Ltb4TvtOolpiU2Niwq5q2UQwxZ1pFaQ
-Message-ID: <CAKPOu+_EfTBxh7xpaRdypD-hnqAbgj-bSdMTZE4uafqMudxBRg@mail.gmail.com>
-Subject: Re: [PATCH v2] huge_mm.h: disallow is_huge_zero_folio(NULL)
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: david@redhat.com, lorenzo.stoakes@oracle.com, ziy@nvidia.com, 
-	baolin.wang@linux.alibaba.com, Liam.Howlett@oracle.com, npache@redhat.com, 
-	ryan.roberts@arm.com, dev.jain@arm.com, baohua@kernel.org, 
-	shikemeng@huaweicloud.com, kasong@tencent.com, nphamcs@gmail.com, 
-	bhe@redhat.com, chrisl@kernel.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v9 0/5] Add driver for 1Gbe network chips from
+ MUCSE
+To: Dong Yibo <dong100@mucse.com>, <andrew+netdev@lunn.ch>,
+        <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+        <pabeni@redhat.com>, <horms@kernel.org>, <corbet@lwn.net>,
+        <gur.stavi@huawei.com>, <maddy@linux.ibm.com>, <mpe@ellerman.id.au>,
+        <lee@trager.us>, <gongfan1@huawei.com>, <lorenzo@kernel.org>,
+        <geert+renesas@glider.be>, <Parthiban.Veerasooran@microchip.com>,
+        <lukas.bulwahn@redhat.com>, <alexanderduyck@fb.com>,
+        <richardcochran@gmail.com>, <kees@kernel.org>, <gustavoars@kernel.org>,
+        <rdunlap@infradead.org>, <vadim.fedorenko@linux.dev>
+CC: <netdev@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-hardening@vger.kernel.org>
+References: <20250828025547.568563-1-dong100@mucse.com>
+Content-Language: en-US
+From: MD Danish Anwar <danishanwar@ti.com>
+In-Reply-To: <20250828025547.568563-1-dong100@mucse.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Thu, Aug 28, 2025 at 1:53=E2=80=AFAM Andrew Morton <akpm@linux-foundatio=
-n.org> wrote:
-> OK, but it remains the case that we have seen code which calls
-> is_huge_zero_folio() prior to the initialization of huge_zero_folio.
->
-> Is this a bug?  I think so.  Should we be checking for recurrences of
-> this bug?
+Hi Dong Yibo,
 
-Why do you believe it's a bug? To me, as a newbie here, such a call
-seems perfectly fine; please explain.
+On 28/08/25 8:25 am, Dong Yibo wrote:
+> Hi maintainers,
+> 
+> This patch series is v9 to introduce support for MUCSE N500/N210 1Gbps
+> Ethernet controllers. I divide codes into multiple series, this is the
+> first one which only register netdev without true tx/rx functions.
+> 
+> Changelog:
+> v8 -> v9:
+> 1. update function description format '@return' to 'Return' 
+> 2. update 'negative on failure' to 'negative errno on failure'
+> 
+> links:
+> v8: https://lore.kernel.org/netdev/20250827034509.501980-1-dong100@mucse.com/
+> v7: https://lore.kernel.org/netdev/20250822023453.1910972-1-dong100@mucse.com
+> v6: https://lore.kernel.org/netdev/20250820092154.1643120-1-dong100@mucse.com/
+> v5: https://lore.kernel.org/netdev/20250818112856.1446278-1-dong100@mucse.com/
+> v4: https://lore.kernel.org/netdev/20250814073855.1060601-1-dong100@mucse.com/
+> v3: https://lore.kernel.org/netdev/20250812093937.882045-1-dong100@mucse.com/
+> v2: https://lore.kernel.org/netdev/20250721113238.18615-1-dong100@mucse.com/
+> v1: https://lore.kernel.org/netdev/20250703014859.210110-1-dong100@mucse.com/
 
-> Also, sigh.  I do dislike seeing VM_WARN_ON_ONCE() in an inline
-> function - heaven knows how much bloat that adds.  Defconfig
-> mm/huge_memory.o (which has three calls) grows by 80 bytes so I guess
-> that's livable with.
+Please wait for at least 24 hours before posting a new version. You
+posted v8 yesterday and most folks won't have noticed v8 by now or they
+maybe looking to give comments on v8. But before they could do that you
+posted v9.
 
-Oh, how is this possible? defconfig has CONFIG_DEBUG_VM=3Dn and that
-means VM_WARN_ON_ONCE() is just BUILD_BUG_ON_INVALID() which should
-generate no code at all.
-Here on my computer (aarch64 with GCC 14), the size (and the
-disassembly) is exactly the same. This confirms what David Hildenbrand
-predicted.
-Are you seeing some compiler weirdness, maybe?
+Keep good amount of gaps between the series so that more folks can look
+at it. 24 hours is the minimum.
+
+-- 
+Thanks and Regards,
+Danish
+
 
