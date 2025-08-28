@@ -1,79 +1,64 @@
-Return-Path: <linux-kernel+bounces-790468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1B68B3A78D
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 19:16:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03A91B3A795
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 19:17:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 205A2A01F4F
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 17:16:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF2641C87013
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 17:17:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DD25341AA3;
-	Thu, 28 Aug 2025 17:15:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F6673375B6;
+	Thu, 28 Aug 2025 17:16:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fnmNyIm6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lXMjNa1O"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56272340D90;
-	Thu, 28 Aug 2025 17:15:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50CDC1A5BBC;
+	Thu, 28 Aug 2025 17:16:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756401325; cv=none; b=HjTueI1GQffMoqMsbKBaacZXY+wB6ruHntr5Jy31qu1wWQN8Z/SN9HY0XipUxo86Y40rqOM3+1C88EyfZ4MeOJvTHbO4R8fbst95nG2jmyrDjPYM8/ayFPdPfIsi1e++IaQdMPiw0cpTVm8Kes5RBcl7/UKNohC/LxTDr5XYRKo=
+	t=1756401384; cv=none; b=trPAYKml3PfVK3na9ZnXshGz8L9r3+YW8JBnITvd9SsohqeHdGHRbBGUM4MiL3NifLLQH/cJL57BTZsTblCtB+Jdyp9289j3SDXZsGEGv++qu2Jp+mU2tvDz8g8tWHrPLv3pOBCrCwXdnPJGOCfdo2tHVvdkItrce0Jgwkix75k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756401325; c=relaxed/simple;
-	bh=ou3iD8shgadPVxQRtF41FaHPfXiCub7fMhAggBLVXMc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CIK1BTXrRUzIbeO8wFyOuRuBiD4ndwXhbtS+o9mCWHAKjuJkjWoM9BLrVjoqHm6iODw67pBqn6VPkXymOXOivAFl8E7dbE5J7W0Qy5C2oJxYWzHyMOAJh87t6trgYWvLxC1BHhID6z3PXChBEh9iTC14EKEiOJP1zYGmTP2Sif0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fnmNyIm6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A72BC4CEF4;
-	Thu, 28 Aug 2025 17:15:23 +0000 (UTC)
+	s=arc-20240116; t=1756401384; c=relaxed/simple;
+	bh=Kmt4M/Z2w+PlibUTUari/qi5WTPoz/7V3tEAWMttjcs=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=hWIBbbR6mJAfFQfU0UZ3pHkUGoH6rYU1u1FWFp04F4Z/nCoRDkTQN0QsParaZCkELL0lT4DJzpW4JN602EZw8itlYqraKE4BnTTfiBSURtiJihCN6IE/ac79DhBtTwRrmcFhO589yfNpWngwmaj0jJg9zuJdjdXvxYrkYNpSYX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lXMjNa1O; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DE76C4CEF4;
+	Thu, 28 Aug 2025 17:16:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756401324;
-	bh=ou3iD8shgadPVxQRtF41FaHPfXiCub7fMhAggBLVXMc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fnmNyIm6kveacQ6zFjHwSr/ld+cbNXoqmfCrawHp1gvsXVCDDljqqxTV+b1zApRgH
-	 5lcwKbYEv5XvzJ74pZRRlHz4xMMdbU2hypSAtpXWfDMqRVbb/qc2SqQSSCNqbZ1peQ
-	 BdR01HGV590kQ600i1NoQpXCyGOYKnHeIsk3mGhcH3PGq+tQybbYkfchgS5mr5H49F
-	 IvJGdW2sSi79scStsbkC/ihQucpNHR67O3EvTjBCfBwOnwU2YHvQc3Mh/Yo09lKjUz
-	 oioVDuGo8iH8GapTPxpdVPh2h5wOe61XtWreqwSjOT2z6hU8npwTgtY7JSO24epBr/
-	 2W6Y4P8WQ/UJw==
-Date: Thu, 28 Aug 2025 11:15:20 -0600
-From: Keith Busch <kbusch@kernel.org>
-To: Leon Romanovsky <leon@kernel.org>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
-	Jason Gunthorpe <jgg@nvidia.com>,
-	Abdiel Janulgue <abdiel.janulgue@gmail.com>,
-	Alexander Potapenko <glider@google.com>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Christoph Hellwig <hch@lst.de>, Danilo Krummrich <dakr@kernel.org>,
-	iommu@lists.linux.dev, Jason Wang <jasowang@redhat.com>,
-	Jens Axboe <axboe@kernel.dk>, Joerg Roedel <joro@8bytes.org>,
-	Jonathan Corbet <corbet@lwn.net>, Juergen Gross <jgross@suse.com>,
-	kasan-dev@googlegroups.com, linux-block@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, linux-nvme@lists.infradead.org,
-	linuxppc-dev@lists.ozlabs.org, linux-trace-kernel@vger.kernel.org,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>, rust-for-linux@vger.kernel.org,
-	Sagi Grimberg <sagi@grimberg.me>,
-	Stefano Stabellini <sstabellini@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	virtualization@lists.linux.dev, Will Deacon <will@kernel.org>,
-	xen-devel@lists.xenproject.org
-Subject: Re: [PATCH v4 15/16] block-dma: properly take MMIO path
-Message-ID: <aLCOqIaoaKUEOdeh@kbusch-mbp>
-References: <cover.1755624249.git.leon@kernel.org>
- <642dbeb7aa94257eaea71ec63c06e3f939270023.1755624249.git.leon@kernel.org>
- <aLBzeMNT3WOrjprC@kbusch-mbp>
- <20250828165427.GB10073@unreal>
+	s=k20201202; t=1756401383;
+	bh=Kmt4M/Z2w+PlibUTUari/qi5WTPoz/7V3tEAWMttjcs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=lXMjNa1OLazCVKdubqEGCO/lXhyt1mqLJQfntrNgnF2MeIfopD2JSL24bzM3r9g9r
+	 2FQ23qtLYZLlOH1o3RU26+tDTfmBIwux0hZ2dKZe/xQpgbAQud8uJWbM0fsG+dMUdm
+	 vuO8pvW/zTg9XPl2CMq9Z8VxXu5j9D0/OjmzDW/WoUCZae0+h9u1t6E1C5SEkwh5S6
+	 NiPEA3+OmmoeyhCYFFjVSDB0YGXiGktNmSWf4gX+mqBVSG5R/MRlGpN6c5OR5n+hbw
+	 y4YzH8G2J8JZrbEx1Ub9PxBMWtap5lkFUZqod4nTSCoJBR5XHfFeXcOEwGeXkdFT2B
+	 CJQt+pQ4f0P9g==
+Date: Thu, 28 Aug 2025 12:16:22 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Christian Bruel <christian.bruel@foss.st.com>
+Cc: lpieralisi@kernel.org, kwilczynski@kernel.org, mani@kernel.org,
+	robh@kernel.org, bhelgaas@google.com, krzk+dt@kernel.org,
+	conor+dt@kernel.org, mcoquelin.stm32@gmail.com,
+	alexandre.torgue@foss.st.com, linus.walleij@linaro.org,
+	corbet@lwn.net, p.zabel@pengutronix.de, shradha.t@samsung.com,
+	mayank.rana@oss.qualcomm.com, namcao@linutronix.de,
+	qiang.yu@oss.qualcomm.com, thippeswamy.havalige@amd.com,
+	inochiama@gmail.com, quic_schintav@quicinc.com,
+	johan+linaro@kernel.org, linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: Re: [PATCH v13 06/11] PCI: stm32: Add PCIe Endpoint support for
+ STM32MP25
+Message-ID: <20250828171622.GA945192@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,45 +67,67 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250828165427.GB10073@unreal>
+In-Reply-To: <9133348a-f6a4-4425-98e2-a784a7620b3a@foss.st.com>
 
-On Thu, Aug 28, 2025 at 07:54:27PM +0300, Leon Romanovsky wrote:
-> On Thu, Aug 28, 2025 at 09:19:20AM -0600, Keith Busch wrote:
-> > On Tue, Aug 19, 2025 at 08:36:59PM +0300, Leon Romanovsky wrote:
-> > > diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
-> > > index 09b99d52fd36..283058bcb5b1 100644
-> > > --- a/include/linux/blk_types.h
-> > > +++ b/include/linux/blk_types.h
-> > > @@ -387,6 +387,7 @@ enum req_flag_bits {
-> > >  	__REQ_FS_PRIVATE,	/* for file system (submitter) use */
-> > >  	__REQ_ATOMIC,		/* for atomic write operations */
-> > >  	__REQ_P2PDMA,		/* contains P2P DMA pages */
-> > > +	__REQ_MMIO,		/* contains MMIO memory */
-> > >  	/*
-> > >  	 * Command specific flags, keep last:
-> > >  	 */
-> > > @@ -420,6 +421,7 @@ enum req_flag_bits {
-> > >  #define REQ_FS_PRIVATE	(__force blk_opf_t)(1ULL << __REQ_FS_PRIVATE)
-> > >  #define REQ_ATOMIC	(__force blk_opf_t)(1ULL << __REQ_ATOMIC)
-> > >  #define REQ_P2PDMA	(__force blk_opf_t)(1ULL << __REQ_P2PDMA)
-> > > +#define REQ_MMIO	(__force blk_opf_t)(1ULL << __REQ_MMIO)
+On Thu, Aug 28, 2025 at 02:12:57PM +0200, Christian Bruel wrote:
+> On 8/27/25 20:58, Bjorn Helgaas wrote:
+> > On Wed, Aug 20, 2025 at 09:54:06AM +0200, Christian Bruel wrote:
+> > > Add driver to configure the STM32MP25 SoC PCIe Gen1 2.5GT/s or Gen2 5GT/s
+> > > controller based on the DesignWare PCIe core in endpoint mode.
 > > 
-> > Now that my integrity metadata DMA series is staged, I don't think we
-> > can use REQ flags like this because data and metadata may have different
-> > mapping types. I think we should add a flags field to the dma_iova_state
-> > instead.
+> > > +static void stm32_pcie_perst_deassert(struct dw_pcie *pci)
+> > > +{
+> > > +	struct stm32_pcie *stm32_pcie = to_stm32_pcie(pci);
+> > > +	struct device *dev = pci->dev;
+> > > +	struct dw_pcie_ep *ep = &pci->ep;
+> > > +	int ret;
+> > > +
+> > > +	dev_dbg(dev, "PERST de-asserted by host\n");
+> > > +
+> > > +	ret = pm_runtime_resume_and_get(dev);
+> > > +	if (ret < 0) {
+> > > +		dev_err(dev, "Failed to resume runtime PM: %d\n", ret);
+> > > +		return;
+> > > +	}
+> > > +
+> > > +	ret = stm32_pcie_enable_resources(stm32_pcie);
+> > > +	if (ret) {
+> > > +		dev_err(dev, "Failed to enable resources: %d\n", ret);
+> > > +		goto err_pm_put_sync;
+> > > +	}
+> > > +
+> > > +	/*
+> > > +	 * Need to reprogram the configuration space registers here because the
+> > > +	 * DBI registers were incorrectly reset by the PHY RCC during phy_init().
+> > 
+> > Is this incorrect reset of DBI registers a software issue or some kind
+> > of hardware erratum that might be fixed someday?  Or maybe it's just a
+> > characteristic of the hardware and thus not really "incorrect"?
+> > 
+> > I do see that qcom_pcie_perst_deassert() in pcie-qcom-ep.c also calls
+> > dw_pcie_ep_init_registers() in the qcom_pcie_ep_perst_irq_thread()
+> > path.
+> > 
+> > So does pex_ep_event_pex_rst_deassert() (pcie-tegra194.c) in the
+> > tegra_pcie_ep_pex_rst_irq() path.
+> > 
+> > But as far as I can tell, none of the other dwc drivers need this, so
+> > maybe it's something to do with the glue around the DWC core?
 > 
-> Before integrity metadata code was merged, the assumption was that request is
-> only one type or p2p or host. Is it still holding now?
+> The RCC PHY reset is connected to the Synopsys cold reset logic, which
+> explains why the registers need to be restored. This point has been
+> addressed in the reference manual.
 
-I don't think that was ever the case. Metadata is allocated
-independently of the data payload, usually by the kernel in
-bio_integrity_prep() just before dispatching the request. The bio may
-have a p2p data payload, but the integrity metadata is just a kmalloc
-buf in that path.
+OK.  I dropped "incorrectly" from the comment because I think future
+readers will wonder about whether or how this could be fixed, and it
+sounds like it's just a feature of the hardware that we need to deal
+with.
 
-> And we can't store in dma_iova_state() as HMM/RDMA code works in page-based
-> granularity and one dma_iova_state() can mix different types.
-
-I see.
+> > > +	 */
+> > > +	ret = dw_pcie_ep_init_registers(ep);
+> > > +	if (ret) {
+> > > +		dev_err(dev, "Failed to complete initialization: %d\n", ret);
+> > > +		goto err_disable_resources;
+> > > +	}
+> 
 
