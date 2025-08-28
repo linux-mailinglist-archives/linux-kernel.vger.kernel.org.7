@@ -1,133 +1,197 @@
-Return-Path: <linux-kernel+bounces-789183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789170-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D83B0B39204
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 04:59:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2D12B391E5
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 04:53:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 860E3465381
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 02:59:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C82041C21265
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 02:54:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 093F23002C7;
-	Thu, 28 Aug 2025 02:58:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="KwtwZNgz"
-Received: from out203-205-221-245.mail.qq.com (out203-205-221-245.mail.qq.com [203.205.221.245])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83EA926A0A6;
+	Thu, 28 Aug 2025 02:53:46 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6C16277036;
-	Thu, 28 Aug 2025 02:58:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE7AA1A9FB8
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 02:53:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756349928; cv=none; b=oP/JjBEJ49caXAWk2bf4CqsZVSS5pJ89L1GhjPEGY70PRNGdDhHlTeVGKmzFpwiga0uaiAvkpt9WJ9aTIVvqcK+so9UrODE01gYm4j1nW8+pUfkHO1PvoA+ufkBKpXaCWjzcXrWuD6NxYGKPp4IlcvJjFLabfZIgAxY/6JWhHw0=
+	t=1756349626; cv=none; b=l7T2TUKTv7iRjR7jp5Q59EbVr1vqr6hUyyRe+xFv/KiWWBjyeU04z/S9WkbcZYpxRa9o2PepJuWrURmcCn10DSJbnAAQwomhdSF0QiIV/pav7qOp+YRqqbewea8CUEuPOOdfkTyYxBqtR6C7+D01L5qETwgB2hea1ctVBNZkizo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756349928; c=relaxed/simple;
-	bh=9MlaewShrzwNP5cMPLBFY2qQOGWyYpp79Q4CAVUza28=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=X1z8F44HpTreXVRguFdF0ES/0HSh47bhlajMt9GMFL2fjPOhVmNkQuS6XKIv8tF0S0h2iUJeSJnvNBSwp4Jb5+mPbnUdUk7Yeoa261pmCT9Hq64qELKQMJ58rqaEGdDPNWxSwTGY2/XqiUjiUagr97SNF1CLOyNyN+i/TtrEKWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=KwtwZNgz; arc=none smtp.client-ip=203.205.221.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-	s=s201512; t=1756349617;
-	bh=qD7BGCwe3Vj4PWN7gaUtbqxYjKU5h/fA619lif8uTXA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=KwtwZNgzcaF5Zxzb5vzCdl5pQyvLnSNmA1usWFZWBb5mdma6flLH32hzPz0ze60m5
-	 z4OWvhEJ/MqsGsw1SJPXZytu1wHzKTv5Iuoo/tQQQWfQo77s2LEZm9644QNjj6LMqX
-	 6f1SY9GSDF+rLoUsTy3I4dvxtuzMKKQKkQROMR4A=
-Received: from NUC10 ([39.156.73.10])
-	by newxmesmtplogicsvrsza36-0.qq.com (NewEsmtp) with SMTP
-	id D5E218EC; Thu, 28 Aug 2025 10:53:30 +0800
-X-QQ-mid: xmsmtpt1756349610tsimvv81o
-Message-ID: <tencent_DF4DA83EEBFB9246E5E3357BB40911CCA005@qq.com>
-X-QQ-XMAILINFO: MRb64KOzELYunc+ptYJ5Xg5rHPjjOlJVdWadpg+EZmUNNsWzuK8Ia1lYURXZ8O
-	 fI3rkxQNjSl9NJGmnpcPAPTLtSEtV9bLyp+lobNjHJmfRKqKBLky2r7yVxHhp/trrRjezlfnINNV
-	 L/Re3JsnuzrtGpTQu8Qa00msL9/2kuL76dH0vDHM+SvpzDNFI3aH3U9YAM5dYhr7zYVhssq31cKs
-	 VcPVyxbaj3cjrKL8cSsfkPDM0myuzfudTa83FBfUJSnQsBmK0nbBbLqQLm6pz5Y4sMmcB1rMXJGU
-	 I1K9sQ0SOxeMR64TM20TQ9VjWDkqZ7F8NCHWAW4KUT4mwBgMls7ypD1Bf2dwwlhlloebAxeqXGpV
-	 7IzDdaRglNjs4nlrVE5+0IW3YIQZphTjmVb0FLa8XoZqgUocWUeO/zpVEu9o5Q5l5MUeskTucrl0
-	 4a6+Tj2LpH90WGth9RKl6/Oj+95TC7mEVgZv7lQHXUwkVe+P56lJhA84kj/d3oUB/x5lM748mR2R
-	 TGeozq+cZBWZ7B9mQSGVSLZ3+25p0/ozfmnydscxdbU5GTH5o2KdtNm1MVun+5UZFn8GB8rvjc4D
-	 RTiXUNoWr00C+7rPgPm+wbMt5nLvtNQSrZzpMc11dQNITTIhT804MZXhl6wSvN6TR9iTplVH8LTZ
-	 g5+CSJkYWyezg6J9t8GLlvpHAA4tSJzqAyg64+CbRnXZxxdG9MGrDM8aJXEWqkv5TXb/nnPYak97
-	 /fkpNps91sMEOwJ8ztcSe7eNpcQRyLt7hSV3nasoSjkqQexgFlFgYVdN5ZXWQeXVGEFI/53tm5FF
-	 ZrEhCiElRefm4eK3OFNvsE8F82jpiuXFYjiC5JSbrYMce1ydsjw716jRj2tflltRDmjG0uv/ttbM
-	 A0OUr7PTN0hIsWT4X0YxS0DyJbk13q8C8IqPYH/v7t012aGdigdRslQtZs/9zNb8Arcxt5rTFOBP
-	 qI3hdpQAKiWnB+nZutCHnI0eGz4siSB70OgVHTomywiHAYx0qHXJzOyQkni4/5wsBsVse+FTPdsx
-	 S5Pce6MdVCs3keMuDzUYbPJEWrAyp+avy7liQ4/QufurC756S7iW6ptlx/Rlg=
-X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
-From: Rong Tao <rtoax@foxmail.com>
-To: andrii.nakryiko@gmail.com,
-	ast@kernel.org,
-	daniel@iogearbox.net
-Cc: rtoax@foxmail.com,
-	Rong Tao <rongtao@cestc.cn>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>,
-	Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Mykola Lysenko <mykolal@fb.com>,
-	Shuah Khan <shuah@kernel.org>,
-	Viktor Malik <vmalik@redhat.com>,
-	bpf@vger.kernel.org (open list:BPF [GENERAL] (Safe Dynamic Programs and Tools)),
-	linux-kernel@vger.kernel.org (open list),
-	linux-kselftest@vger.kernel.org (open list:KERNEL SELFTEST FRAMEWORK)
-Subject: [bpf-next v2 1/2] bpf/helpers: bpf_strnstr: Exact match length
-Date: Thu, 28 Aug 2025 10:53:13 +0800
-X-OQ-MSGID: <e37d08a0e813eed1bc82777e11f3335a0c7672e7.1756348926.git.rongtao@cestc.cn>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <cover.1756348926.git.rongtao@cestc.cn>
-References: <cover.1756348926.git.rongtao@cestc.cn>
+	s=arc-20240116; t=1756349626; c=relaxed/simple;
+	bh=XejjMWQvqMA6S6v/A5hcw+aTDg74LgrkSGYh851/Z50=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=Dknfaazj0bf5XLgIN9tjF/cAhE7lQBfIl0L+HehUZ7OfnL+4kAULobogihzwD2gh2J3rxmCAcqChiMvrAWnPVvDKX3Ce9pVlT4kPrYPlfbv0GA5zt1cpRk2ahmwdIrU6RgvB5OmU2uddkDGAmQ0OP6UvMoxHwSqRuhrk5acum4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.234])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4cC5T52Wwpz2CgHR;
+	Thu, 28 Aug 2025 10:49:13 +0800 (CST)
+Received: from dggemv705-chm.china.huawei.com (unknown [10.3.19.32])
+	by mail.maildlp.com (Postfix) with ESMTPS id 91C2114025A;
+	Thu, 28 Aug 2025 10:53:39 +0800 (CST)
+Received: from kwepemq500010.china.huawei.com (7.202.194.235) by
+ dggemv705-chm.china.huawei.com (10.3.19.32) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 28 Aug 2025 10:53:39 +0800
+Received: from [10.173.125.236] (10.173.125.236) by
+ kwepemq500010.china.huawei.com (7.202.194.235) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 28 Aug 2025 10:53:38 +0800
+Subject: Re: [PATCH v3] mm/memory-failure: fix
+ VM_BUG_ON_PAGE(PagePoisoned(page)) when unpoison memory
+To: David Hildenbrand <david@redhat.com>, <akpm@linux-foundation.org>
+CC: <nao.horiguchi@gmail.com>, <linux-mm@kvack.org>,
+	<linux-kernel@vger.kernel.org>
+References: <20250826075710.278412-1-linmiaohe@huawei.com>
+ <5eb5dbc1-274a-4932-8c77-8000509deadb@redhat.com>
+From: Miaohe Lin <linmiaohe@huawei.com>
+Message-ID: <0f0a190a-9a69-dbfe-6964-a0574cb5fc8d@huawei.com>
+Date: Thu, 28 Aug 2025 10:53:38 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+In-Reply-To: <5eb5dbc1-274a-4932-8c77-8000509deadb@redhat.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
+ kwepemq500010.china.huawei.com (7.202.194.235)
 
-From: Rong Tao <rongtao@cestc.cn>
+On 2025/8/26 18:58, David Hildenbrand wrote:
+> On 26.08.25 09:57, Miaohe Lin wrote:
+>> When I did memory failure tests, below panic occurs:
+>>
+>> page dumped because: VM_BUG_ON_PAGE(PagePoisoned(page))
+>> kernel BUG at include/linux/page-flags.h:616!
+>> Oops: invalid opcode: 0000 [#1] PREEMPT SMP NOPTI
+>> CPU: 3 PID: 720 Comm: bash Not tainted 6.10.0-rc1-00195-g148743902568 #40
+>> RIP: 0010:unpoison_memory+0x2f3/0x590
+>> RSP: 0018:ffffa57fc8787d60 EFLAGS: 00000246
+>> RAX: 0000000000000037 RBX: 0000000000000009 RCX: ffff9be25fcdc9c8
+>> RDX: 0000000000000000 RSI: 0000000000000027 RDI: ffff9be25fcdc9c0
+>> RBP: 0000000000300000 R08: ffffffffb4956f88 R09: 0000000000009ffb
+>> R10: 0000000000000284 R11: ffffffffb4926fa0 R12: ffffe6b00c000000
+>> R13: ffff9bdb453dfd00 R14: 0000000000000000 R15: fffffffffffffffe
+>> FS:  00007f08f04e4740(0000) GS:ffff9be25fcc0000(0000) knlGS:0000000000000000
+>> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>> CR2: 0000564787a30410 CR3: 000000010d4e2000 CR4: 00000000000006f0
+>> Call Trace:
+>>   <TASK>
+>>   unpoison_memory+0x2f3/0x590
+>>   simple_attr_write_xsigned.constprop.0.isra.0+0xb3/0x110
+>>   debugfs_attr_write+0x42/0x60
+>>   full_proxy_write+0x5b/0x80
+>>   vfs_write+0xd5/0x540
+>>   ksys_write+0x64/0xe0
+>>   do_syscall_64+0xb9/0x1d0
+>>   entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>> RIP: 0033:0x7f08f0314887
+>> RSP: 002b:00007ffece710078 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+>> RAX: ffffffffffffffda RBX: 0000000000000009 RCX: 00007f08f0314887
+>> RDX: 0000000000000009 RSI: 0000564787a30410 RDI: 0000000000000001
+>> RBP: 0000564787a30410 R08: 000000000000fefe R09: 000000007fffffff
+>> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000009
+>> R13: 00007f08f041b780 R14: 00007f08f0417600 R15: 00007f08f0416a00
+>>   </TASK>
+>> Modules linked in: hwpoison_inject
+>> ---[ end trace 0000000000000000 ]---
+>> RIP: 0010:unpoison_memory+0x2f3/0x590
+>> RSP: 0018:ffffa57fc8787d60 EFLAGS: 00000246
+>> RAX: 0000000000000037 RBX: 0000000000000009 RCX: ffff9be25fcdc9c8
+>> RDX: 0000000000000000 RSI: 0000000000000027 RDI: ffff9be25fcdc9c0
+>> RBP: 0000000000300000 R08: ffffffffb4956f88 R09: 0000000000009ffb
+>> R10: 0000000000000284 R11: ffffffffb4926fa0 R12: ffffe6b00c000000
+>> R13: ffff9bdb453dfd00 R14: 0000000000000000 R15: fffffffffffffffe
+>> FS:  00007f08f04e4740(0000) GS:ffff9be25fcc0000(0000) knlGS:0000000000000000
+>> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>> CR2: 0000564787a30410 CR3: 000000010d4e2000 CR4: 00000000000006f0
+>> Kernel panic - not syncing: Fatal exception
+>> Kernel Offset: 0x31c00000 from 0xffffffff81000000 (relocation range: 0xffffffff80000000-0xffffffffbfffffff)
+>> ---[ end Kernel panic - not syncing: Fatal exception ]---
+>>
+>> The root cause is that unpoison_memory() tries to check the PG_HWPoison
+>> flags of an uninitialized page. So VM_BUG_ON_PAGE(PagePoisoned(page)) is
+>> triggered. This can be reproduced by below steps:
+>> 1.Offline memory block:
+>>   echo offline > /sys/devices/system/memory/memory12/state
+>> 2.Get offlined memory pfn:
+>>   page-types -b n -rlN
+>> 3.Write pfn to unpoison-pfn
+>>   echo <pfn> > /sys/kernel/debug/hwpoison/unpoison-pfn
+>>
+>> This scene can be identified by pfn_to_online_page() returning NULL.
+>> And ZONE_DEVICE pages are never expected, so we can simply fail if
+>> pfn_to_online_page() == NULL to fix the bug.
+>>
+>> Suggested-by: David Hildenbrand <david@redhat.com>
+>> Signed-off-by: Miaohe Lin <linmiaohe@huawei.com>
+> 
+> Similar to
+> 
+> commit 96c804a6ae8c59a9092b3d5dd581198472063184
+> Author: David Hildenbrand <david@redhat.com>
+> Date:   Fri Oct 18 20:19:23 2019 -0700
+> 
+>     mm/memory-failure.c: don't access uninitialized memmaps in memory_failure()
+>         We should check for pfn_to_online_page() to not access uninitialized
+>     memmaps.  Reshuffle the code so we don't have to duplicate the error
+>     message.
+>         Link: http://lkml.kernel.org/r/20191009142435.3975-3-david@redhat.com
+>     Signed-off-by: David Hildenbrand <david@redhat.com>
+>     Fixes: f1dd2cd13c4b ("mm, memory_hotplug: do not associate hotadded memory to zones until online")      [visible after d0dc12e86b319]
+>     Acked-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+>     Cc: Michal Hocko <mhocko@kernel.org>
+>     Cc: <stable@vger.kernel.org>    [4.13+]
+>     Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+>     Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+> 
+> We should likely just use the exact same Fixes:
+> 
+> Fixes: f1dd2cd13c4b ("mm, memory_hotplug: do not associate hotadded memory to zones until online")      [visible after d0dc12e86b319]
+> 
 
-strnstr should not treat the ending '\0' of s2 as a matching character,
-otherwise the parameter 'len' will be meaningless, for example:
+Thanks for your information. Will add it in next version.
 
-    1. bpf_strnstr("openat", "open", 4) = -ENOENT
-    2. bpf_strnstr("openat", "open", 5) = 0
+> 
+> Not sure about CCing stable. This is a pure debugging feature (depends on DEBUG_KERNEL),
+> and someone really has to trigger it manually to provoke this. So I would not CC stable.
+> 
+>> ---
+>> v2:
+>>    Use pfn_to_online_page per David. Thanks.
+>> v3:
+>>    Simply fail if pfn_to_online_page() == NULL per David. Thanks.
+>> ---
+>>   mm/memory-failure.c | 4 +++-
+>>   1 file changed, 3 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
+>> index c15ffee7d32b..212620308028 100644
+>> --- a/mm/memory-failure.c
+>> +++ b/mm/memory-failure.c
+>> @@ -2572,7 +2572,9 @@ int unpoison_memory(unsigned long pfn)
+>>       if (!pfn_valid(pfn))
+>>           return -ENXIO;
+>>   -    p = pfn_to_page(pfn);
+>> +    p = pfn_to_online_page(pfn);
+>> +    if (!p)
+>> +        return -EIO;
+> 
+> I think we can just drop the pfn_valid() check now. pfn_to_online_page() implies a pfn_valid() check.
+> 
 
-This patch makes (1) return 0, indicating a successful match.
+Will do.
 
-Signed-off-by: Rong Tao <rongtao@cestc.cn>
----
- kernel/bpf/helpers.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/kernel/bpf/helpers.c b/kernel/bpf/helpers.c
-index 401b4932cc49..ced7132980fe 100644
---- a/kernel/bpf/helpers.c
-+++ b/kernel/bpf/helpers.c
-@@ -3672,10 +3672,12 @@ __bpf_kfunc int bpf_strnstr(const char *s1__ign, const char *s2__ign, size_t len
- 
- 	guard(pagefault)();
- 	for (i = 0; i < XATTR_SIZE_MAX; i++) {
--		for (j = 0; i + j < len && j < XATTR_SIZE_MAX; j++) {
-+		for (j = 0; i + j <= len && j < XATTR_SIZE_MAX; j++) {
- 			__get_kernel_nofault(&c2, s2__ign + j, char, err_out);
- 			if (c2 == '\0')
- 				return i;
-+			if (i + j == len)
-+				break;
- 			__get_kernel_nofault(&c1, s1__ign + j, char, err_out);
- 			if (c1 == '\0')
- 				return -ENOENT;
--- 
-2.51.0
-
+Thanks.
+.
 
