@@ -1,120 +1,108 @@
-Return-Path: <linux-kernel+bounces-790683-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D56DFB3ABB8
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 22:37:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4A9EB3ABB5
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 22:37:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA260564E93
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 20:37:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 61C434618CA
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 20:37:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C08B298CD7;
-	Thu, 28 Aug 2025 20:37:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C27A9288515;
+	Thu, 28 Aug 2025 20:36:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vCFdQEt2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QVPEKu+n"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E56422882C5;
-	Thu, 28 Aug 2025 20:37:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ACAB284B2F
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 20:36:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756413441; cv=none; b=SWdDfwnA8X0DRvPZoYY8tbAl4AakDIkf7nzSSmrMZC7WYjiQVnrfl+Te3NYzCG9wg5Qn8UJMnK6Cc1H/vL3rlytLxi3ho/x8lstfvZqz2zDvidxXdkYef2rYvGV6KyAyqDj6qqs6fYYr+su0KEZLeKUQEtbUtD31j46oBuCmjk0=
+	t=1756413413; cv=none; b=NI/BK6EdSAQAgAGFY3lDe6dK2W0D/FYqUJw6z/Tnm2SGd1xTlc8ppO5N5k5BZyP6CW/9ZN9/tI7HUvDxcJMch2oA+joc/g949B6/9UQJziXQxUUGnIYqXoDyBGHPYo9tdPU4afWhRVFlQS67YXfnr21nbjXGgHUmQjSddQM8cKs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756413441; c=relaxed/simple;
-	bh=6peswoOhdw7dXI0cwkW9pPp7bgdjqqT10/tl3qs06UY=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=eiOTuTFBWPHRVPUmXJ7zdK3c3I3CRgsc2kE2Rj7Bdy6ymwtJmjczgp9XQD4wTySZZNa4xU09YaXrUb+rU90GCAs9qf2X7d9O8g31PptZty7GdUPrd7hQPsmEqQBKRWQhTJyYf/aeaAqnbnsBf0Qg53jPB8gtSestIajemmi6sPE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vCFdQEt2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78220C4CEFA;
-	Thu, 28 Aug 2025 20:37:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756413440;
-	bh=6peswoOhdw7dXI0cwkW9pPp7bgdjqqT10/tl3qs06UY=;
-	h=Date:From:To:Cc:Subject:References:From;
-	b=vCFdQEt2fAjKXh9vIK+lJTWXS/p72u6+hE2OqBO5ccAYuseJC+nxE/bohoa0t5GY8
-	 hSSZH5i4luo+NfXXUrKRIMTdOS0KbQ0tvP5Ga11Nl9ARzpjfQSFFUwF2ECmtWECQQG
-	 JfuSQxD2N+/RFM5x2O+tIG1wBuvv64oavaoK/fKZ6Ubkcy7i0tJ5jsu9vaZ+H38/Rn
-	 smgvYv9+nQh/gn68hnufhIoU8T/axbjTF/Ij/uyRJzS+FpwUdR6Ct8pEFE7ycvQV1G
-	 sh8sm6ZuM8DSJkkM+R+i75ieSVSLiYgCI12VWfEggqGzTL5VOUzQqf86CFgJZj+5Ic
-	 ljDWLHGCe01TA==
-Received: from rostedt by gandalf with local (Exim 4.98.2)
-	(envelope-from <rostedt@kernel.org>)
-	id 1urjNN-00000004JTH-30eM;
-	Thu, 28 Aug 2025 16:37:41 -0400
-Message-ID: <20250828203741.571495248@kernel.org>
-User-Agent: quilt/0.68
-Date: Thu, 28 Aug 2025 16:35:58 -0400
-From: Steven Rostedt <rostedt@kernel.org>
-To: linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Arnd Bergmann <arnd@arndb.de>,
- Masahiro Yamada <masahiroy@kernel.org>,
- Nathan Chancellor <nathan@kernel.org>,
- Nicolas Schier <nicolas.schier@linux.dev>,
- Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
- Catalin Marinas <catalin.marinas@arm.com>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Randy Dunlap <rdunlap@infradead.org>,
- Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: [PATCH v8 3/3] tracepoint: Do not warn for unused event that is exported
-References: <20250828203555.783399758@kernel.org>
+	s=arc-20240116; t=1756413413; c=relaxed/simple;
+	bh=rUfxaTF48nEGUV10uSSzXEUdMJvhSqNtA2pbhDCY+h4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NuT9yHRy6Yhi/WeiEbvvzz9UIkQPFQZYSVyfsUimda86i1f/Z+tVSbYtHBhnCoXo/LzgnicShKunxDsLCjPaUQB6cYuvQuTsMEU/qYgeqrqjjNRyxngNjhLt+J0k4ZCjqQEE00yL6HtNhF29ct8XsSv7651122dhq5W0IoCbtZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QVPEKu+n; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756413410;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=iMSYCMOvfWZn97rU63Rxs44+GYsNMV+1UH9H7cieIcw=;
+	b=QVPEKu+ni3Be/+fD1CRQmnsnEfusYrdVGq9A6rYemVWKQNHiYHRKuFUrGcQwZYld+A/4c8
+	yZNqK2QdccFb86N1tVr2S+V6J/t8jEZs2iydVXkVkVy6y8fN/9Rs+q5A47lwB2DX5QRzZa
+	3J+c2FSI3K73VNBzg5ej3ec+f7aqbqE=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-530-yAxcOyiTNdaCtDJoEL_0TA-1; Thu,
+ 28 Aug 2025 16:36:47 -0400
+X-MC-Unique: yAxcOyiTNdaCtDJoEL_0TA-1
+X-Mimecast-MFC-AGG-ID: yAxcOyiTNdaCtDJoEL_0TA_1756413406
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3EEB918003FD;
+	Thu, 28 Aug 2025 20:36:45 +0000 (UTC)
+Received: from omen.home.shazbot.org (unknown [10.22.64.127])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id D58691800447;
+	Thu, 28 Aug 2025 20:36:42 +0000 (UTC)
+From: Alex Williamson <alex.williamson@redhat.com>
+To: alex.williamson@redhat.com
+Cc: kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	Alex Mastro <amastro@fb.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: [PATCH] docs: proc.rst: Fix VFIO Device title formatting
+Date: Thu, 28 Aug 2025 14:36:24 -0600
+Message-ID: <20250828203629.283418-1-alex.williamson@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-From: Steven Rostedt <rostedt@goodmis.org>
+Title underline is one character too short.
 
-There are a few generic events that may only be used by modules. They are
-defined and then set with EXPORT_TRACEPOINT*(). Mark events that are
-exported as being used, even though they still waste memory in the kernel
-proper.
-
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+Cc: Alex Mastro <amastro@fb.com>
+Cc: Jonathan Corbet <corbet@lwn.net>
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Closes: https://lore.kernel.org/all/20250828123035.2f0c74e7@canb.auug.org.au
+Fixes: 1e736f148956 ("vfio/pci: print vfio-device syspath to fdinfo")
+Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
 ---
- include/linux/tracepoint.h | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/include/linux/tracepoint.h b/include/linux/tracepoint.h
-index 71d2e085c49e..ec6827d00d79 100644
---- a/include/linux/tracepoint.h
-+++ b/include/linux/tracepoint.h
-@@ -223,8 +223,8 @@ static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
+To be applied through vfio next branch.
+
+ Documentation/filesystems/proc.rst | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesystems/proc.rst
+index ed8d23b677ca..ff09f668cdeb 100644
+--- a/Documentation/filesystems/proc.rst
++++ b/Documentation/filesystems/proc.rst
+@@ -2167,7 +2167,7 @@ where 'size' is the size of the DMA buffer in bytes. 'count' is the file count o
+ the DMA buffer file. 'exp_name' is the name of the DMA buffer exporter.
  
- #ifdef CONFIG_TRACEPOINT_WARN_ON_UNUSED
- # define TRACEPOINT_CHECK(name)						\
--	static const char __used __section("__tracepoint_check") __trace_check[] = \
--		#name;
-+	static const char __used __section("__tracepoint_check")	\
-+	__trace_check_##name[] = #name;
- #else
- # define TRACEPOINT_CHECK(tname)
- #endif
-@@ -381,10 +381,12 @@ static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
- 	__DEFINE_TRACE_EXT(_name, NULL, PARAMS(_proto), PARAMS(_args));
+ VFIO Device files
+-~~~~~~~~~~~~~~~~
++~~~~~~~~~~~~~~~~~
  
- #define EXPORT_TRACEPOINT_SYMBOL_GPL(name)				\
-+	TRACEPOINT_CHECK(name)						\
- 	EXPORT_SYMBOL_GPL(__tracepoint_##name);				\
- 	EXPORT_SYMBOL_GPL(__traceiter_##name);				\
- 	EXPORT_STATIC_CALL_GPL(tp_func_##name)
- #define EXPORT_TRACEPOINT_SYMBOL(name)					\
-+	TRACEPOINT_CHECK(name)						\
- 	EXPORT_SYMBOL(__tracepoint_##name);				\
- 	EXPORT_SYMBOL(__traceiter_##name);				\
- 	EXPORT_STATIC_CALL(tp_func_##name)
+ ::
+ 
 -- 
-2.50.1
-
+2.51.0
 
 
