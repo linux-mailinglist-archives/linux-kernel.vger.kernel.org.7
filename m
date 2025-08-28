@@ -1,121 +1,120 @@
-Return-Path: <linux-kernel+bounces-790425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54512B3A6FE
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 18:54:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7323BB3A704
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 18:55:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15FAB3AEBF3
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 16:54:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49BF11C245BD
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 16:55:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51A33327797;
-	Thu, 28 Aug 2025 16:54:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D3A03314AE;
+	Thu, 28 Aug 2025 16:54:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tk8fhy3a"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Utug3C4q"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2440E239591;
-	Thu, 28 Aug 2025 16:54:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AE01239591;
+	Thu, 28 Aug 2025 16:54:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756400069; cv=none; b=C1lR8GZ1FULk4USshPpyr0RMqVvInV7XIApFY7vyLyYsg2aFLqFo5OZfAVDIoJW0+3rKAKvlqdK7yDdbjrhEnj/5z0lxnQMwR7hSwDsa8+jS4WzKvNzGgBRkHqKaWEmV5nHoRujJv521HwvVc0Gr28uhFkOATHV7RR2/b6MDJiE=
+	t=1756400074; cv=none; b=OKy3t5IInbTn4MzacZ50x4alKaB9QW3aidx2/kM8lGpm6YqCkSeW6ON0tzYdgb6TnhXNgdNBoxbfZslP4YZZzOOgBJT5kPHUPXuGft/Xb+fffDyuh2EaSWnYGPLyxiy8DrOMAWX/iAUdEghJhEgjSVt1BRExO2gzr/Bunkg1cvA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756400069; c=relaxed/simple;
-	bh=viNyCIWqe5KCLAeA6tui7LQ8rd69iw2R5ocI3n/Zj9U=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=F5gwdIDZjUr17JIAdpiOlIOWcK4Najv++eOka0mTqcVomCdsgpCYEKBDVFGOua6ouqutUP6dsSFyT2ypeEOh70fIrt6IsCNUOOik83olaxr/AznJQPOi+wPUjIbOf0qctq6bhI4puos6Lr7y0aFsbghukiJUd594iBjg0DvzEa0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Tk8fhy3a; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-45b4d89217aso7535355e9.2;
-        Thu, 28 Aug 2025 09:54:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756400065; x=1757004865; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=o/S9spYbGe0FPlB/C0yhWG1tadTkgGdkbhIgR1f5N4Q=;
-        b=Tk8fhy3aPiJSbq3SYwCV0AjA8VigiD1WxG1u4eyvzr7kITgXDzw9DXqMPsuEH8RVy0
-         y12XX08MGKUMFC96ejnIu/w0FC97p3RODcd+Ut0bfdf045BhL0dDVtKQ62W/rIkcQ8eR
-         2JTMhfRT61ftgG4hqJN5U1UxLLqKl9Ucj0D1poSC1FYowJOFEyiQbbrw2SO/miJRpJlp
-         apSYCyFaKmVMZsLPKDa4V4wcpCGTq3w6BY9lVB6FhBR4IYcQRzjKdo45cYTA/deecLrF
-         9L1dy3W24gGKOEIBFK5LrUpKACmpKM5oDASsBVX752r4LBdYCCNzfeiw/KnO/tnhL2yS
-         n5sQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756400065; x=1757004865;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=o/S9spYbGe0FPlB/C0yhWG1tadTkgGdkbhIgR1f5N4Q=;
-        b=omdAPDAi6l1nhpzLMu/iIB8nJaho5bOZyistGQHGIrmp5ov/XVAl2mfQ4VTba6d49s
-         bi4AORaMr1+mg3keUB4MjC8cKCaYjMycewYOUCdrseXHJ9gFQb53J67Bkx5ab5pbqJLP
-         D7/aH9mKvLVxRha6Y83enETJ1VK03gyfHBVuL/w+k3Ibgoyq+O6n2oIaF/1YNUVWkxPl
-         nOouZ/3pVe7Ynz1cPPoJbD9ya25skPbFoq89NoHWT9E3G0cD6zgVBw1W/g4fJSx77zHW
-         vtyBUJ93BxFr2Vb5Sq5l5fdfgd3lA3PK1ViGNeJ8DGNVifki34QxIjxOuuyw88h5rrBI
-         fcyg==
-X-Forwarded-Encrypted: i=1; AJvYcCUidOFDcuVVrHIX1tIs5Msm8qbR9D0P5Luhreyn0zeYQ05/PyfM4MyEmgLZfJyTssnS9N9KwVZy1Q7H@vger.kernel.org, AJvYcCWngTs5cL5uw0t7EbT1CODHrEas+cXUFw/qQfthGwJ6cChx6nOWNCIBOzdplxZWKC7+0tuwF6qTN+m+dDse@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKwHq/2C23o0ouyJSnSGAqNmIUGH/j2FmkCIj+/EqS7hcV7RvH
-	OFo/8afxMvDxg2MaxjQ4pAQo1Ek/XDlRRkgL8XJH4GIurZIH8K0Z4JH6
-X-Gm-Gg: ASbGncuKLKnLSVymZr5AuxyYsOfxylC6MfmEi8Gyxj7O5WvaBhBv/pIpz8iaTj3uprH
-	4/9IdwH15ft0lZZa2XKtlDM0XsKkpq6RCmQcdpDsVPOmGtNMaGk0iFOhrjTNebobxx8oY0EeWnN
-	RQVWYe7y6jmD7YqQ55oeYI0sCoy4nMb6ekp+19tSedYC3vvL4G14aDGG3eNov69Z3UN+9ksmLuT
-	vf3R1tl95R3IVjhQv5ArDVTx/6mnofUaYXpRgzlTZNLyYNKbrsnoIKjmvetwfHwjVkEkUJO0AJa
-	LP5O/8YIbPD7uMY4Z5XcYlFip3UM137f0Xba7V5NCTPMGsm6S+aGHAx/kLdMnHxrcyIJ2z8LW+Y
-	th8Hu03r3n17yBG2UYQnrA99MPis=
-X-Google-Smtp-Source: AGHT+IFM9OS5cZ7H0ceO2f7sAP8sszHuEF9xmtBJC46ZU809/y4cnHB22I6xxBweh71b6M2mv9XnsA==
-X-Received: by 2002:a05:600c:a46:b0:456:19be:5e8 with SMTP id 5b1f17b1804b1-45b517d459dmr207436525e9.20.1756400065247;
-        Thu, 28 Aug 2025 09:54:25 -0700 (PDT)
-Received: from toolbox.. ([87.200.95.144])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3cf34491a7fsm11393f8f.57.2025.08.28.09.54.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Aug 2025 09:54:24 -0700 (PDT)
-From: Christian Hewitt <christianshewitt@gmail.com>
-To: Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: Alex Bee <knaerzche@gmail.com>
-Subject: [PATCH] ARM: dts: rockchip: add CEC pinctrl to rk3288-miqi
-Date: Thu, 28 Aug 2025 16:54:21 +0000
-Message-Id: <20250828165421.3829740-1-christianshewitt@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1756400074; c=relaxed/simple;
+	bh=3QSqWFwhLXFpgIQB1AhDzeFYEFSsyOykW/t8YMcdvDs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RtLva3nkQcBVWZrKbjaVkcaNP2AXxkRrdw24eElLjoB8BLpR/OhRAd5RUIz3utUW+Gtl1XsgcygMs64/IlEBHSIOomAMF0/0IAVL0Qc6+MX+yrFdc04F01pNrBZrmiXSMd6o5kOIzprIOkiYCYWfxRPpyOFWskguSH6lzLMEm68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Utug3C4q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6C34C4CEED;
+	Thu, 28 Aug 2025 16:54:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756400072;
+	bh=3QSqWFwhLXFpgIQB1AhDzeFYEFSsyOykW/t8YMcdvDs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Utug3C4qHAngGkUPRUqPcVpMv2skHSOiyTR1dzioCxiyV/N0D3D3xwLMN4kKVhjRg
+	 R1e3GaQ66/QDlvAbclIdn1b0xrBO+DODu7rLesJ54dZQOJ+qr4UwXmhZorK6X6L1pe
+	 /mKnN3THYo/PX+SSQI5FBBXcz4a8pvxXQG8iBycA9jlkdj9zJMMNMWOCxqVVHcRMG0
+	 jrJGkyKqRduB/ujzl45UowCIqtVEnLBTqm/vLH4mWU4+vwRxIYccg9OHedq9aiILZs
+	 hmuixBFk7xqznER0ERf4UjMVjXknV66U4Y9wYKKHbgLQRBDuheIDJSUa9AzDEN/7Pr
+	 p4K8MwEWQi7/w==
+Date: Thu, 28 Aug 2025 19:54:27 +0300
+From: Leon Romanovsky <leon@kernel.org>
+To: Keith Busch <kbusch@kernel.org>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
+	Jason Gunthorpe <jgg@nvidia.com>,
+	Abdiel Janulgue <abdiel.janulgue@gmail.com>,
+	Alexander Potapenko <glider@google.com>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Christoph Hellwig <hch@lst.de>, Danilo Krummrich <dakr@kernel.org>,
+	iommu@lists.linux.dev, Jason Wang <jasowang@redhat.com>,
+	Jens Axboe <axboe@kernel.dk>, Joerg Roedel <joro@8bytes.org>,
+	Jonathan Corbet <corbet@lwn.net>, Juergen Gross <jgross@suse.com>,
+	kasan-dev@googlegroups.com, linux-block@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, linux-nvme@lists.infradead.org,
+	linuxppc-dev@lists.ozlabs.org, linux-trace-kernel@vger.kernel.org,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>, rust-for-linux@vger.kernel.org,
+	Sagi Grimberg <sagi@grimberg.me>,
+	Stefano Stabellini <sstabellini@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	virtualization@lists.linux.dev, Will Deacon <will@kernel.org>,
+	xen-devel@lists.xenproject.org
+Subject: Re: [PATCH v4 15/16] block-dma: properly take MMIO path
+Message-ID: <20250828165427.GB10073@unreal>
+References: <cover.1755624249.git.leon@kernel.org>
+ <642dbeb7aa94257eaea71ec63c06e3f939270023.1755624249.git.leon@kernel.org>
+ <aLBzeMNT3WOrjprC@kbusch-mbp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aLBzeMNT3WOrjprC@kbusch-mbp>
 
-From: Alex Bee <knaerzche@gmail.com>
+On Thu, Aug 28, 2025 at 09:19:20AM -0600, Keith Busch wrote:
+> On Tue, Aug 19, 2025 at 08:36:59PM +0300, Leon Romanovsky wrote:
+> > diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
+> > index 09b99d52fd36..283058bcb5b1 100644
+> > --- a/include/linux/blk_types.h
+> > +++ b/include/linux/blk_types.h
+> > @@ -387,6 +387,7 @@ enum req_flag_bits {
+> >  	__REQ_FS_PRIVATE,	/* for file system (submitter) use */
+> >  	__REQ_ATOMIC,		/* for atomic write operations */
+> >  	__REQ_P2PDMA,		/* contains P2P DMA pages */
+> > +	__REQ_MMIO,		/* contains MMIO memory */
+> >  	/*
+> >  	 * Command specific flags, keep last:
+> >  	 */
+> > @@ -420,6 +421,7 @@ enum req_flag_bits {
+> >  #define REQ_FS_PRIVATE	(__force blk_opf_t)(1ULL << __REQ_FS_PRIVATE)
+> >  #define REQ_ATOMIC	(__force blk_opf_t)(1ULL << __REQ_ATOMIC)
+> >  #define REQ_P2PDMA	(__force blk_opf_t)(1ULL << __REQ_P2PDMA)
+> > +#define REQ_MMIO	(__force blk_opf_t)(1ULL << __REQ_MMIO)
+> 
+> Now that my integrity metadata DMA series is staged, I don't think we
+> can use REQ flags like this because data and metadata may have different
+> mapping types. I think we should add a flags field to the dma_iova_state
+> instead.
 
-Enable CEC control on the HDMI port for MiQi.
+Before integrity metadata code was merged, the assumption was that request is
+only one type or p2p or host. Is it still holding now?
 
-Signed-off-by: Alex Bee <knaerzche@gmail.com>
-Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
----
- arch/arm/boot/dts/rockchip/rk3288-miqi.dts | 2 ++
- 1 file changed, 2 insertions(+)
+And we can't store in dma_iova_state() as HMM/RDMA code works in page-based
+granularity and one dma_iova_state() can mix different types.
 
-diff --git a/arch/arm/boot/dts/rockchip/rk3288-miqi.dts b/arch/arm/boot/dts/rockchip/rk3288-miqi.dts
-index 20df626547bd..a5f5c6d38f80 100644
---- a/arch/arm/boot/dts/rockchip/rk3288-miqi.dts
-+++ b/arch/arm/boot/dts/rockchip/rk3288-miqi.dts
-@@ -145,6 +145,8 @@ &gpu {
- 
- &hdmi {
- 	ddc-i2c-bus = <&i2c5>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&hdmi_cec_c0>;
- 	status = "okay";
- };
- 
--- 
-2.34.1
+Thanks
 
+> 
 
