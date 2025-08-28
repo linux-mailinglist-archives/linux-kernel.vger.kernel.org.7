@@ -1,135 +1,91 @@
-Return-Path: <linux-kernel+bounces-790230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 621AEB3A2C0
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 16:53:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21CA7B3A2F0
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 16:57:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 81DE47AC413
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 14:52:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC5F216CA6D
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 14:54:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52F4E313540;
-	Thu, 28 Aug 2025 14:53:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B704D313E0A;
+	Thu, 28 Aug 2025 14:54:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uVMSpbPL"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="NGzwkZWd"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 129C226C3A4
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 14:53:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 984F43101C6;
+	Thu, 28 Aug 2025 14:54:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756392819; cv=none; b=HGoNtiB2kOh3Lm+DoXXU+Hv/mpYiu+HmhzVCNNyJXAiPg5djW9R37urz4Bei5BxMktfVGE3Ynr4thw2vNXBDqpzTmg/dcpD2/S4AAO1ktNSfojXxcb2ZaS3y2ZYJHy/Z20uog8sTXlRY9iYfnw7sy+UzYSgoPcOJo9GnfqcfjF4=
+	t=1756392844; cv=none; b=QV26cH5ERGMB+7MRfMD6Z/H1wwlI1JW3eA1hv1qcgzVrkkeCf2FNTmK56ehrz3hWB5Nm5LW7qcCOIeUPt0nxq6Ni5a76Y+QBDI0NCupJnRNzYtnMg0TLLpVyzroXw/Y43hHVRpA2ng4XMbvWcXpLT/nWZaWak9OX2K3eiVaU92E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756392819; c=relaxed/simple;
-	bh=/DJCTdY3b1P2Or2NvSx10h8mL8R7PGDv7zdfJNYKi88=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qsqRL2N1ns907fDSIZZkLEnIz3l4LtJrZDMFX0o8UtWcXtROigc8XMbGTlkoXC4ceXezixmVUhozCaqZSclk9H04hBdIy10ubdrC63aPuLa2+KJJwkBV7t83KQ36Nz/I+YiR5qDxuWrpBvRffHI48u1XQywwFpB/xfj/j/PH7h8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uVMSpbPL; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-55f34d792c4so183377e87.3
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 07:53:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756392816; x=1756997616; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RgRsIq6h9IQubkV0Zd6BIst1A8E0nIWsW8u9giQ2ZLk=;
-        b=uVMSpbPLwEREKSdUhOsR9H6bvbCJ6YjXSHgVQm9tfQG9uoEaHo71GR/LTCuyCi1Q/b
-         z175iwtHVFEZGkNAXUfDcwR+ADQDCJbEsv9ikPHpGEZ7GVe0XgYKgQ6+++Xt0xOxBrUK
-         xBYmSQYFAY69xQNzvCF32LhUCvlnnNcX/vU6eWspr7Tt1y4TUKq4GAtxCOpmUAYi1XIM
-         DHQrMI6zni813zf56hgzP/6/76MDUwz050IsSae64ruk8lJW13Hri2lcexax6XeJUbm/
-         iSW5OGeaxHV6hK1GKiwxmGvokZ4Q10/YkgFUAjT2s7BtXx2GRUZwvl0og80XoyQ/zJYZ
-         R0xg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756392816; x=1756997616;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=RgRsIq6h9IQubkV0Zd6BIst1A8E0nIWsW8u9giQ2ZLk=;
-        b=mXyRM33NQ0T4Y1dxvhNZ9dhrK1WK5IW5uVj17jWHrWjlr+yNMLuISut3eKOVTi3SQO
-         0okr34jFCMdj2M6zLVsEnqTlnl2aWcIa+emIJB2wE1IIkssBgqrV57QCkaRWx9r0645A
-         VwyzttpwD02adRzb2Igops5BZkO6ePIldcMlm22wEwAG2aSQEZA02fx+J/9ieKY1KyJb
-         WxVhRHdnxf3fr0Nb3Jt5WLSW2/sHEsYqQxfZf1GPzAmh9FSGOhKrlMtDsI0So5WpIXYx
-         jkaFZThBEumPaSbPfb1m/dymTHUriyVpJth61o5L7Z33NzqLMu+rL+E3hOY85u7YZ/W/
-         SVCg==
-X-Forwarded-Encrypted: i=1; AJvYcCX7nDJqccTTkEbPoHplarcK5o3Mryv1LYbcvLYxX4trJ72Mj25ViTlrVj4aXkiOEPpYcM9H57NxshLunHI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwcF1PZDtNLHcmWmnQVHIpQ2QKeM4z//Fwf+/+ZCSfggnuMvMwx
-	IHT59OBJu+OuAGVU1LSX+qlp0LZVWNC0aufBkIHp3YfykmY4qZHwyQFCzDyxqir7eAw=
-X-Gm-Gg: ASbGncvc5YUfZU8dbGuzG6bqDQz8+LVwMSIP6ekLv/tw6wzICWIbIfKAI/lSk74mLiE
-	i95diG7MBwAumdSX3pCkxwEH6ndwFalIFxEYlWPQlswfVe8DnBlyw/tOV3HH1YK7whKr3MIP3v6
-	qEdeaLzmAMR2lK1eDIdTuiqw/GqKKoV0/Hs1Td1WSxKWbM+otfhPlSKWlJKgvHI6Wq6nj7hPjWk
-	Bwf5T7z6GBm76daJGpDWtoHnd/6AUedn0DBrDBY1f5a7BNY7OaMLtrm+oKLgZK5wo7xtKPrDy/H
-	khBe37aBZ23FBpObJ0IrX95EqgUbjgI1iHlfV8p2NB3yTwbMksvMFrcK6iA3z4getRVZ091Fkx7
-	iW9O4IVKj3NGHGa4brZSr5L37CsbLYKvBRxsU4Z0JkJK97SPNcJYZa7e/eHQZiQInSWLhuLzcbm
-	6O1hdGcg9ov1Y=
-X-Google-Smtp-Source: AGHT+IGSuI6V+Kke1CGBKIzaGvPw1P+D1NcZ65uMuJ+zPiHBgCmf2jcWw97duRvN9bxsU4rWcf1vCg==
-X-Received: by 2002:a05:6512:12d1:b0:55f:4e46:8979 with SMTP id 2adb3069b0e04-55f4e468ad1mr1956400e87.8.1756392816152;
-        Thu, 28 Aug 2025 07:53:36 -0700 (PDT)
-Received: from [192.168.1.100] (88-112-128-43.elisa-laajakaista.fi. [88.112.128.43])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55f63098450sm227908e87.60.2025.08.28.07.53.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 28 Aug 2025 07:53:35 -0700 (PDT)
-Message-ID: <17cd27d4-c881-4b88-9a28-555527546bbe@linaro.org>
-Date: Thu, 28 Aug 2025 17:53:27 +0300
+	s=arc-20240116; t=1756392844; c=relaxed/simple;
+	bh=gp62qsA5sCP4pj8FC79K4xeX06tKfClCajJqWLJ9abQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aSGCp2ibWqf6Ex81w45RXTAGwdhigaG6kXa/f7xpunSIRF0oQwviHvHu9VQgWOifp0lnQqmQXPIuw0dRDnSn5LGfke6XaKhKjUgs7TLqzxkHypvMoNfKmOMEIJgn4cM6ObO5B63AfDx9Xn70aXMnwwR2pGcANaqIKfzno6o6OaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=NGzwkZWd; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=63fVgPj0dBu19FzzCkTktPqPtLpDcCZYhJHlKuiK014=; b=NGzwkZWd3jUW+MVaoOX2lFIM5Y
+	jmBb/Ikm2qiKcf2l5ll36mpL87G1rh1GhTRXX6mxM9T0NwBFvGFse5LMniR+4P3Izaj51rm3ry1Li
+	KqNwMJ5gY6PdfVqquMKO7UYJ5fj4h+G1f7d9myCc1DV3I+RLJjaTvQ2lUJaRRXCHSwTvmDxs5bhjY
+	6BgJlM/k1Cf1kL+ytgAfWZLHFrTBGuQdJ8CD2UQjNeAZcsbjH38uSTdOs6JwYs7obwFG0cHOR1xub
+	+hWOFWFCMct8D2+Bei4ytIaa6qLfmdPVWmgJWnvOnRC/63IjhI2MtLOpzaqcaE5SAV17KsmOhT6cQ
+	ZffuRfqQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1ure0i-0000000BRXD-3HRg;
+	Thu, 28 Aug 2025 14:53:56 +0000
+Date: Thu, 28 Aug 2025 15:53:56 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
+Cc: David Hildenbrand <david@redhat.com>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Paul Moore <paul@paul-moore.com>,
+	Stephen Smalley <stephen.smalley.work@gmail.com>,
+	Ondrej Mosnacek <omosnace@redhat.com>, selinux@vger.kernel.org
+Subject: Re: [PATCH v2 7/7] virtio_balloon: Stop calling page_address() in
+ free_pages()
+Message-ID: <aLBthEcK1rDPQLrE@casper.infradead.org>
+References: <20250826205617.1032945-1-vishal.moola@gmail.com>
+ <20250826205617.1032945-8-vishal.moola@gmail.com>
+ <5ee2b684-94d9-40be-b01c-b0538ced33bc@redhat.com>
+ <aK9Ogjn71JoOM3w3@fedora>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] media: dt-bindings: ovti,ov2680: Use
- unevaluatedProperties for endpoint
-To: Frank Li <Frank.Li@nxp.com>, Rui Miguel Silva <rmfrfs@gmail.com>,
- Hans de Goede <hansg@kernel.org>, Mauro Carvalho Chehab
- <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>,
- "open list:OMNIVISION OV2680 SENSOR DRIVER" <linux-media@vger.kernel.org>,
- "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
- <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-Cc: imx@lists.linux.dev
-References: <20250827194919.82725-1-Frank.Li@nxp.com>
-From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-In-Reply-To: <20250827194919.82725-1-Frank.Li@nxp.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aK9Ogjn71JoOM3w3@fedora>
 
-On 8/27/25 22:49, Frank Li wrote:
-> The endpoint ref to /schemas/media/video-interfaces.yaml#, so replace
-> additionalProperties with unevaluatedProperties to allow use common
-> properties.
-> 
-> Fix below CHECK_DTBS warnings:
->    arch/arm/boot/dts/nxp/imx/imx7s-warp.dtb: camera@36 (ovti,ov2680): port:endpoint: 'clock-lanes', 'data-lanes' do not match any of the regexes: '^pinctrl-[0-9]+$'
-> 	from schema $id: http://devicetree.org/schemas/media/i2c/ovti,ov2680.yaml
-> 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
->   Documentation/devicetree/bindings/media/i2c/ovti,ov2680.yaml | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/media/i2c/ovti,ov2680.yaml b/Documentation/devicetree/bindings/media/i2c/ovti,ov2680.yaml
-> index 634d3b821b8c7..ec5c40684b6bd 100644
-> --- a/Documentation/devicetree/bindings/media/i2c/ovti,ov2680.yaml
-> +++ b/Documentation/devicetree/bindings/media/i2c/ovti,ov2680.yaml
-> @@ -58,7 +58,7 @@ properties:
->       properties:
->         endpoint:
->           $ref: /schemas/media/video-interfaces.yaml#
-> -        additionalProperties: false
-> +        unevaluatedProperties: false
->   
->           properties:
->             link-frequencies: true
+On Wed, Aug 27, 2025 at 11:29:22AM -0700, Vishal Moola (Oracle) wrote:
+> I imagine theres more of these lingering in the kernel, but theres so
+> many callers and I only looked for the ones that were calling
+> page_address() inline :(.
 
-Reviewed-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+There's only 841 callers of free_page() and free_pages()!
 
--- 
-Best wishes,
-Vladimir
+It's a bit of a disease we have, to be honest,  Almost all of
+them should be using kmalloc() instead.  To pick on one at random,
+sel_read_bool() in security/selinux/selinuxfs.c is the implementation
+of read() for some file in selinux.  All it's trying to do is output two
+numbers, so it allocates an entire page of memory, prints two numbers
+to it (while being VERY CAREFUL not to overflow the buffer!) and copies
+the buffer to userspace.
+
+It should just use kmalloc.  Oh, and it should avoid leaking the buffer
+if security_get_bool_value() returns an error.
+
 
