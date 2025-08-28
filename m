@@ -1,138 +1,233 @@
-Return-Path: <linux-kernel+bounces-789772-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE2E3B39A67
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 12:40:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0362B39A5A
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 12:39:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BFEE682CCF
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 10:38:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 130887BBD33
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 10:37:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4895530E85C;
-	Thu, 28 Aug 2025 10:36:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1698730DD03;
+	Thu, 28 Aug 2025 10:36:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EI7KTp8P"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CJexTDOv"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAC4830C624;
-	Thu, 28 Aug 2025 10:36:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9919430DD25;
+	Thu, 28 Aug 2025 10:36:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756377376; cv=none; b=GYthD3XFuJQmHG7EBQ1zGTpB2M5osfNprwX1EsE16wwlemr6pkZpir74O+MpHIanTiPVgk4kYpdo+A8bGST7wGFVTZZkYJamp+32esO8KP2F9S6qFwERI5cSJ3Kfd58CK1pFjBw98ftdk9o8CR6YvYH3bnGlLx9TALCLWnak8lc=
+	t=1756377384; cv=none; b=dTxkVtCFq4OQ153hb9EZXIUmp+hrObi8/cR9e92OTFka1GI7h2V86Bx3VxWxa6HGu5Li+I5CJVmWckSvu6CUYwf8YsLJ/wVE/CLYNBVDiH7GmaHJHogef1x0EX3GK74fAmjcaF97WXQS6TVdAr7WL74qM1mbY/KqONpE/NByHt8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756377376; c=relaxed/simple;
-	bh=Q++vDmJGmmqheRrUrP0W8dSS7fcanjr4UJG7gMXFg6o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E7DDjoJPCp8LD1C60kAwgxpCgiay8rN3pnCh2v47+bHZ+M129APzGpuKgIoUrei4PQLe+fYhYxjdjZAuuQ9MNNasBCUTMoX7HMRtSy7JLRc4UZNBrEehT3jmT+sSDBm5hLm2VMEcyGht5odhEWAD+BfmCJx4383Vl6PZoodAGCI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EI7KTp8P; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1756377384; c=relaxed/simple;
+	bh=JmfXJoWVhregF+rcZc/FumkUUaVUaPaqquYwPH3lYLM=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=RBoU0lcZEDn8SrCXCMgkRCcnuwTWH92mALk/6mMQND/szm+xjeV+3izrL/lySlHPsG9xRRCmlgW13z1WaZwDbkrGo6Kdx1fQJw4ynJ3lZKZJ/R/8YfWRtNGicQJes4BkaiOR+CAZ/Vtz1DeeQqo5WDjDdvBaiF5bw2jBPmfgl/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CJexTDOv; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756377375; x=1787913375;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Q++vDmJGmmqheRrUrP0W8dSS7fcanjr4UJG7gMXFg6o=;
-  b=EI7KTp8Pkv/KuGNq6iMaeNGcX7oZqe/zW0XobJEVyWN6WEk4vnqBfXxZ
-   iR20JrwF36o2mPO7G/MpIAHjbxliRSqsbdufmH34IGVbtRN7ZNnmQnMrH
-   Bmc1hq9BtGcCgdqArDgwKAfiUyPDLb0ZTKSiCLbeDRcTk7G4QYTpOK4cB
-   5PhY8Y2wsjCNyzZ3FO0PHyELe5DM2RFeVNLhA3pwoxKpsAnwAgxiByMF0
-   6Lm1GGW2hF502wVVSTkez5qADgmkrdekkt+yKjbcZb6+gTdCnJlIXWVwZ
-   TtAKFU5P4QyV3V68l4Su9p5PYjQh9DfLDyQd0/eI3Xv0qMiUivx0vYr5i
-   g==;
-X-CSE-ConnectionGUID: J+9phYcOT5ihtlS0WasbOg==
-X-CSE-MsgGUID: 8TSymqXeTmC3pFCMFRhIJg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11535"; a="62465683"
+  t=1756377382; x=1787913382;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=JmfXJoWVhregF+rcZc/FumkUUaVUaPaqquYwPH3lYLM=;
+  b=CJexTDOvXMTBlOlR3nrhaoLGvoDhWalXLSx32xRuHtnSYRxSVpEekfe7
+   cjk3qMWj7+pDpGfozpEJusckjhTkwm9AALrFfOj7CwaX1Ln6XjmDr9D7d
+   dklgCHlYV1GctqNQttd2CcWtdQAwqd1Iozth8sFvt6fEhQoJKFWpa/h7y
+   qA3ezH4HgAm8LgKX2wIOTTvWIO86SlmEkMqAHJlcpDxSDKdjIxNy2YRTR
+   chAjcu+R+QHgxrmIEKvZ1IXbjBQmNhPCDWgNLPoA++1XVjd6/Iv7TGeIl
+   hQplDElKOMoNIAwj26QxqEA9y6axlEDt8lbs3duEUKTM/qPB0EWSlXUZS
+   A==;
+X-CSE-ConnectionGUID: zB3G/j06Q8+OCJ5FaKiTzg==
+X-CSE-MsgGUID: MO++2n9FQoCCHJhu0ezSqg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11535"; a="57840517"
 X-IronPort-AV: E=Sophos;i="6.18,217,1751266800"; 
-   d="scan'208";a="62465683"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2025 03:36:14 -0700
-X-CSE-ConnectionGUID: 0KXzwk6SSTqEhED/Xo7AIg==
-X-CSE-MsgGUID: uo1IoHNKR1Gi41sgQk9IWg==
+   d="scan'208";a="57840517"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2025 03:36:22 -0700
+X-CSE-ConnectionGUID: d2Vb2AWnRVSNbi9Es7Hv+Q==
+X-CSE-MsgGUID: gFYAEwc7QGeDNyJLJw1YCQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.18,217,1751266800"; 
-   d="scan'208";a="200992693"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by fmviesa001.fm.intel.com with ESMTP; 28 Aug 2025 03:36:08 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1urZzC-000TeJ-18;
-	Thu, 28 Aug 2025 10:36:06 +0000
-Date: Thu, 28 Aug 2025 18:35:21 +0800
-From: kernel test robot <lkp@intel.com>
-To: Bobby Eshleman <bobbyeshleman@gmail.com>,
-	Stefano Garzarella <sgarzare@redhat.com>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Stefan Hajnoczi <stefanha@redhat.com>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
-	"K. Y. Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
-	Bryan Tan <bryan-bt.tan@broadcom.com>,
-	Vishnu Dasa <vishnu.dasa@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
-Cc: oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org,
-	virtualization@lists.linux.dev, linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-	linux-hyperv@vger.kernel.org,
-	Bobby Eshleman <bobbyeshleman@gmail.com>, berrange@redhat.com
-Subject: Re: [PATCH net-next v5 4/9] vsock/loopback: add netns support
-Message-ID: <202508281824.3XZiIgxs-lkp@intel.com>
-References: <20250827-vsock-vmtest-v5-4-0ba580bede5b@meta.com>
+   d="scan'208";a="170249195"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.99])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2025 03:36:19 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Thu, 28 Aug 2025 13:36:16 +0300 (EEST)
+To: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+cc: Hans de Goede <hdegoede@redhat.com>, platform-driver-x86@vger.kernel.org, 
+    LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] platform/x86/intel-uncore-freq: Present unique domain
+ ID per package
+In-Reply-To: <20250825214336.410962-1-srinivas.pandruvada@linux.intel.com>
+Message-ID: <1fc59985-e56f-24dd-1015-95d4c2b8d6e7@linux.intel.com>
+References: <20250825214336.410962-1-srinivas.pandruvada@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250827-vsock-vmtest-v5-4-0ba580bede5b@meta.com>
+Content-Type: text/plain; charset=US-ASCII
 
-Hi Bobby,
+On Mon, 25 Aug 2025, Srinivas Pandruvada wrote:
 
-kernel test robot noticed the following build warnings:
+> In partitioned systems, the domain ID is unique in the partition and a
+> package can have multiple partitions.
+> 
+> Some user-space tools, such as turbostat, assume the domain ID is unique
+> per package. These tools map CPU power domains, which are unique to a
+> package. However, this approach does not work in partitioned systems.
+> 
+> There is no architectural definition of "partition" to present to user
+> space.
+> 
+> To support these tools, set the domain_id to be unique per package. For
+> compute die IDs, uniqueness can be achieved using the platform info
+> cdie_mask, mirroring the behavior observed in non-partitioned systems.
+> 
+> For IO dies, which lack a direct CPU relationship, any unique logical
+> ID can be assigned. Here domain IDs for IO dies are configured after all
+> compute domain IDs. During the probe, keep the index of the next IO
+> domain ID after the last IO domain ID of the current partition. Since
+> CPU packages are symmetric, partition information is same for all
+> packages.
+> 
+> The Intel Speed Select driver has already implemented a similar change
+> to make the domain ID unique, with compute dies listed first, followed
+> by I/O dies.
+> 
+> Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+> ---
+> v2:
+> - Add some comments
+> - Change update_domain_id() to set_domian_id() to set domain_id instead of update
+> - cluster_info->uncore_data.domain_id += * is changed to add multiple steps to
+> get to this equation
+> - Handle case when only when no compute dies in partition 
+> 
+>  .../uncore-frequency/uncore-frequency-tpmi.c  | 76 ++++++++++++++++++-
+>  1 file changed, 75 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/platform/x86/intel/uncore-frequency/uncore-frequency-tpmi.c b/drivers/platform/x86/intel/uncore-frequency/uncore-frequency-tpmi.c
+> index cb4905bad89b..a30a99048db9 100644
+> --- a/drivers/platform/x86/intel/uncore-frequency/uncore-frequency-tpmi.c
+> +++ b/drivers/platform/x86/intel/uncore-frequency/uncore-frequency-tpmi.c
+> @@ -369,6 +369,79 @@ static void uncore_set_agent_type(struct tpmi_uncore_cluster_info *cluster_info)
+>  	cluster_info->uncore_data.agent_type_mask = FIELD_GET(UNCORE_AGENT_TYPES, status);
+>  }
+>  
+> +#define MAX_PARTITIONS	2
+> +
+> +/* IO domain ID start index for a partition */
+> +static u8 io_die_start[MAX_PARTITIONS];
+> +
+> +/* Next IO domain ID index after the current partition IO die IDs */
+> +static u8 io_die_index_next;
+> +
+> +/* Lock to protect io_die_start, io_die_index_next */
+> +static DEFINE_MUTEX(domain_lock);
+> +
+> +static void set_domain_id(int id,  int num_resources,
+> +			  struct oobmsm_plat_info *plat_info,
+> +			  struct tpmi_uncore_cluster_info *cluster_info)
+> +{
+> +	u8 part_io_index = 0, cdie_range, pkg_io_index, max_dies;
+> +
+> +	if (plat_info->partition >= MAX_PARTITIONS) {
+> +		cluster_info->uncore_data.domain_id = id;
+> +		return;
+> +	}
+> +
+> +	if (cluster_info->uncore_data.agent_type_mask & AGENT_TYPE_CORE) {
+> +		cluster_info->uncore_data.domain_id = cluster_info->cdie_id;
+> +		return;
+> +	}
+> +
+> +	/* Unlikely but cdie_mask may have holes, so take range */
+> +	cdie_range = fls(plat_info->cdie_mask) - ffs(plat_info->cdie_mask) + 1;
+> +	max_dies = topology_max_dies_per_package();
+> +
+> +	/*
+> +	 * If the CPU doesn't enumerate dies, then just current cdie range
+> +	 * the max.
 
-[auto build test WARNING on 242041164339594ca019481d54b4f68a7aaff64e]
+This sound broken grammar to my non-native ear. Did you mean:
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Bobby-Eshleman/vsock-a-per-net-vsock-NS-mode-state/20250828-083629
-base:   242041164339594ca019481d54b4f68a7aaff64e
-patch link:    https://lore.kernel.org/r/20250827-vsock-vmtest-v5-4-0ba580bede5b%40meta.com
-patch subject: [PATCH net-next v5 4/9] vsock/loopback: add netns support
-config: nios2-randconfig-001-20250828 (https://download.01.org/0day-ci/archive/20250828/202508281824.3XZiIgxs-lkp@intel.com/config)
-compiler: nios2-linux-gcc (GCC) 8.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250828/202508281824.3XZiIgxs-lkp@intel.com/reproduce)
+..., then just use current cdie range as the max.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508281824.3XZiIgxs-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> net/vmw_vsock/af_vsock.c:137:35: warning: 'vsock_net_callbacks' defined but not used [-Wunused-variable]
-    static struct vsock_net_callbacks vsock_net_callbacks;
-                                      ^~~~~~~~~~~~~~~~~~~
+?
 
 
-vim +/vsock_net_callbacks +137 net/vmw_vsock/af_vsock.c
+> +	 */
+> +	if (cdie_range > max_dies)
+> +		max_dies = cdie_range;
+> +
+> +	guard(mutex)(&domain_lock);
+> +
+> +	if (!io_die_index_next)
+> +		io_die_index_next = max_dies;
+> +
+> +	if (!io_die_start[plat_info->partition]) {
+> +		io_die_start[plat_info->partition] = io_die_index_next;
+> +		/*
+> +		 * number of IO dies = num_resources - cdie_range. Hence
+> +		 * next partition io_die_index_next is set after IO dies
+> +		 * in the current partition.
+> +		 */
+> +		io_die_index_next += (num_resources - cdie_range);
+> +	}
+> +
+> +	/*
+> +	 * Index from IO die start within the partition:
+> +	 * This is the first valid domain after the cdies. If there are
+> +	 * no cdies in a partition just start from 0.
+> +	 * For example the current resource index 5 and cdies end at
+> +	 * index 3 (cdie_cnt = 4). Then the io only index 5 - 4 = 1.
+> +	 */
+> +	if (cdie_range)
 
-   136	
- > 137	static struct vsock_net_callbacks vsock_net_callbacks;
-   138	static DEFINE_MUTEX(vsock_net_callbacks_lock);
-   139	
+"start from 0" sounds a bit alarming to me as if that condition could 
+happen also after starting, that is, more than once within a partition 
+which would result in using part_io_index = 0 twice?
+
+> +		part_io_index = id - cdie_range;
+> +
+> +	/*
+> +	 * Add to the IO die start index for this partition in this package
+> +	 * to make unique in the package.
+> +	 */
+> +	pkg_io_index = io_die_start[plat_info->partition] + part_io_index;
+> +
+> +	/* Assign this to domain ID */
+> +	cluster_info->uncore_data.domain_id = pkg_io_index;
+> +}
+> +
+>  /* Callback for sysfs read for TPMI uncore values. Called under mutex locks. */
+>  static int uncore_read(struct uncore_data *data, unsigned int *value, enum uncore_index index)
+>  {
+> @@ -605,11 +678,12 @@ static int uncore_probe(struct auxiliary_device *auxdev, const struct auxiliary_
+>  			cluster_info->uncore_data.package_id = pkg;
+>  			/* There are no dies like Cascade Lake */
+>  			cluster_info->uncore_data.die_id = 0;
+> -			cluster_info->uncore_data.domain_id = i;
+>  			cluster_info->uncore_data.cluster_id = j;
+>  
+>  			set_cdie_id(i, cluster_info, plat_info);
+>  
+> +			set_domain_id(i, num_resources, plat_info, cluster_info);
+> +
+>  			cluster_info->uncore_root = tpmi_uncore;
+>  
+>  			if (TPMI_MINOR_VERSION(pd_info->ufs_header_ver) >= UNCORE_ELC_SUPPORTED_VERSION)
+> 
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+ i.
+
 
