@@ -1,172 +1,164 @@
-Return-Path: <linux-kernel+bounces-789228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D03A3B39274
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 06:10:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC206B39275
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 06:12:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 845E67C6220
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 04:10:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 694C37C660B
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 04:12:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE06D25B1DA;
-	Thu, 28 Aug 2025 04:10:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD220264A9E;
+	Thu, 28 Aug 2025 04:12:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OXD82Ye5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CXamJRPv"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0806C1C8606;
-	Thu, 28 Aug 2025 04:10:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 212681C8606;
+	Thu, 28 Aug 2025 04:12:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756354253; cv=none; b=Jgw/w6gJwiFG/0cpKMx3qZxrlCHnNCS68ns/arxapWG8SB/YsR5XIFL1kzVG1ugrHTLHN7xqPa592vGCjHcls81XK+3M5q0oFCq13o0++KRE36RPJzb0GClFcnZOUyBxmwOFy603vE6utWSLjeEMC9tl+4Ze8+iUIeAjDaPK1ds=
+	t=1756354347; cv=none; b=WyUNIqzR6Qpta/b0IbknM4/AlSBXB0/1gJU9lxNj1FJrzadbwz7kUD+z44GnevRezUrQrwV9gytwX1PdcZMqwnneBMGIzkv9zovAKvZm0dbtWi4kVF7TYw+OCsqYhNEMpUn/2DLwm8nGHxVcoqjAEwqkzfnief0jnhoHVm5G0Bg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756354253; c=relaxed/simple;
-	bh=Pni7gwm2Fih+x+CwuJerBVTL9CsbWshBAuOHEybmPig=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=DmFUbW3cEzsrMR3ZjoylBv7KKZiNq+THaSf9c0aG7iVJo5fhnjMn0wokLIbY1IEoNgftMQcE79lMnMe0uLlor8OAD2MxIoK+JsJLT3NILp8EJotrJliuKwHJ0JHxjUM5t9BUPM+ArSPBfgAH7yqYHTqa0oaQHBwj4JIgm6hnewE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OXD82Ye5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB2ECC4CEEB;
-	Thu, 28 Aug 2025 04:10:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756354252;
-	bh=Pni7gwm2Fih+x+CwuJerBVTL9CsbWshBAuOHEybmPig=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=OXD82Ye5muAMyno8BiCwFQ3ri6cxsVNk2VA2yh9hPq3yM2ijQF6OEF8xb6IyNjwZ9
-	 tROktiyxgtiCUx25Jaardt22HPr7/L/wIfYZsBCdSEQLifY05vwsYpyqvToeJvscj4
-	 FQi2XHcmsuIpnl38zAyZKNks8nrPhf8LO3b4LNVX4QUcxwsj+O8mW10R1r8hELMWUT
-	 hhhQi9P70wRWAfiAQHjnQ72te/+iNdUakfN6V8eEOLYZaeziF7h+YdwcUBmnskU1yT
-	 qeQzYKVFz+BgqULyIzDZNnuiNjffI0n0FyhT/WVLZb0Bd5CraZ4qUPhhX5zamH9SIH
-	 uQ9tDKA9oE7vQ==
-Date: Thu, 28 Aug 2025 13:10:49 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Mike Rapoport <rppt@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Borislav Petkov
- <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, Ingo Molnar
- <mingo@redhat.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, Masami
- Hiramatsu <mhiramat@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
- Steven Rostedt <rostedt@goodmis.org>, Thomas Gleixner <tglx@linutronix.de>,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- linux-trace-kernel@vger.kernel.org, x86@kernel.org
-Subject: Re: [PATCH] init/main.c: fix boot time tracing crash
-Message-Id: <20250828131049.3feb168ab25f564b8e3b24e6@kernel.org>
-In-Reply-To: <20250824130759.1732736-1-rppt@kernel.org>
-References: <20250824130759.1732736-1-rppt@kernel.org>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1756354347; c=relaxed/simple;
+	bh=WN89Uo3RwVaX0q4mCLZ6TaHBINalBhQLUUPa5dXyflY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Tuzi1fYSnFDh5XAGJ/EOUzr7k7hxMD4ecPBg8zdyeBHe25yfGvXfaUKjb31xmOP1JdQI/pklA5Ba/4uOKQpFz5Ysp0HuJLsTvNQxcHxDBz05fRT3ayRMvGUW3XFz9n3E86W+d9GXJs9I5E3DhJWWb8y7YmWNBj4fFPBOm/gMxkA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CXamJRPv; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-24646202152so6365105ad.0;
+        Wed, 27 Aug 2025 21:12:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756354344; x=1756959144; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=xM3vptnVaXVwDy7ybty4eLADeK4TA37sWiFwhTzXlgE=;
+        b=CXamJRPvvnrNNcLB+R5Jc0b/bCpPRMizwpMqm94MdjcCR2Q0wW9AXhjhTQosSHkZMh
+         xVdL3jZyrVTjymUX8iZ/f9iSbfZYg0X4wGDVFQKDtFMvYKEoPykS1gtdwy+L3zNcg6MU
+         y+1rSWklhxUW7D9haVf4oGidle21HZGrFyhzs4XE14sBroCFQqhyxcY69PHzsNvjo/yZ
+         VEEnw0o2Y64BE7sO1jF5mXy8sEJ1bqt3rVsaBtEhxJ56+0WbX7982kqeC28Hl0ClAM/m
+         7LImdHh4c7rfV6c9LLD/Z6BL9BXe8Vej3RcknOJqY69SwHCt5tc9jPeUbpOWGejHo7VZ
+         qZzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756354344; x=1756959144;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xM3vptnVaXVwDy7ybty4eLADeK4TA37sWiFwhTzXlgE=;
+        b=ColTRm+nFvpiHnlGo/YVYaRrjzYA9vw1AWt0A41pgUfMhO2F+1E7lR4+DuRQljrZJa
+         8yBTzTEjWwqpRJ+sIw83T8pNwtBZjybpaGySXk/A/HcjhMRH6j5IJKhCT/rp6DWdyA27
+         Fn3sICJWxWJ0NgF+BejsoYPAnEErbfcx8B9uS7ZY1h1N84i59YdRqNF/P20Go2pkL/Hs
+         BNpN3ZfYreDYlLE5egB/IbBo7AhyatnoMlgwH6E+MJVd4ale+ASzak6+fOZrxHIlBiEl
+         fPv7yiBedH0RWkKrPLNO7i+e8MlDoE48TUi+fqoxlV1hXmvXw2tBQjVuCkE7Hs46PhFJ
+         5Wrw==
+X-Forwarded-Encrypted: i=1; AJvYcCVFkEXtS/aFam70kKIBgbq3xlO9nti+bPa63KLo2x7Je1mCiylQQruWhCpeTYHqxbU7ZkZiS3BqXd8=@vger.kernel.org, AJvYcCVfR7QaqRsHFXIJ0MjRQctDNzppScByhyXSar7q5zOZFO5XCG4ZolTl/RCe50RHE2Q3D1CDxDXIYWzq@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/JE3BHHfG+y/i6pX6ckToTOv+Yr9bHpHp/km9HHc1qjUhsz0+
+	QSkS5/QL/pPTlQQ/fSyqAH7+ncNungmyfk4bhkSTBBXEUaBD2/TvXqqW
+X-Gm-Gg: ASbGncu1MOWAJcBaLav8+CqYeY3rpOM3wkmUFmJxbURnvn27EnSgAObDuJWoEuakrif
+	mi9ZUgtGIwy1QKt9rtf0qbzAf4hOureFVCjtcW3otiwE2KRXx6ay9ND55y/Xv72mwj5SpoD/L0J
+	k7AfZT4jpkt2aoTOqpO49ULZnkoO9XgGkCQNbQPTmrBMhSfzQxYgeu/Sxvb7KdG9ZnOO1WnQCTf
+	1u40fmmGs8sq5VRTVPOMzpPUUsilbPpPIeVn3YZ4FsxI0ki8WRKGH8HJVq1QKCEzIZb88NPZ0k7
+	/Rc5+AVMuY5qPj6htHzS5bERaCsT/iO9yRzzv+NXvhIPVhCdVHjTjyn95cOvJN5zBgSZMutIna8
+	NP6wGsEIQ/a8Y1X36vkOVqHh9dw==
+X-Google-Smtp-Source: AGHT+IHZ21AbUNmQHZ4t298crnlzLeXMfJjiOdcDaX0sZfTOfM2/+k1g3zkljInt0QdEyTrliIkz8A==
+X-Received: by 2002:a17:902:f64f:b0:246:8bdd:17d7 with SMTP id d9443c01a7336-2468bdd1bfcmr188200135ad.13.1756354344110;
+        Wed, 27 Aug 2025 21:12:24 -0700 (PDT)
+Received: from archie.me ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-248d4e362d4sm8938915ad.148.2025.08.27.21.12.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 Aug 2025 21:12:21 -0700 (PDT)
+Received: by archie.me (Postfix, from userid 1000)
+	id 595784027828; Thu, 28 Aug 2025 11:12:18 +0700 (WIB)
+Date: Thu, 28 Aug 2025 11:12:18 +0700
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Documentation <linux-doc@vger.kernel.org>,
+	Linux Kernel Workflows <workflows@vger.kernel.org>,
+	Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+	Fox Foster <fox@tardis.ed.ac.uk>,
+	Federico Vaga <federico.vaga@vaga.pv.it>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Stephen Rothwell <sfr@canb.auug.org.au>,
+	Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
+	Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH v2] Documentation: management-style: Reword "had better
+ known the details" phrase
+Message-ID: <aK_XIoncppxWp7sB@archie.me>
+References: <20250827044848.17374-1-bagasdotme@gmail.com>
+ <87wm6p9v8l.fsf@trenco.lwn.net>
+ <20250827113312.62162725@foz.lan>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-
-On Sun, 24 Aug 2025 16:07:59 +0300
-Mike Rapoport <rppt@kernel.org> wrote:
-
-> From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
-> 
-> Steven Rostedt reported a crash with "ftrace=function" kernel command
-> line:
-> 
-> [    0.159269] BUG: kernel NULL pointer dereference, address: 000000000000001c
-> [    0.160254] #PF: supervisor read access in kernel mode
-> [    0.160975] #PF: error_code(0x0000) - not-present page
-> [    0.161697] PGD 0 P4D 0
-> [    0.162055] Oops: Oops: 0000 [#1] SMP PTI
-> [    0.162619] CPU: 0 UID: 0 PID: 0 Comm: swapper Not tainted 6.17.0-rc2-test-00006-g48d06e78b7cb-dirty #9 PREEMPT(undef)
-> [    0.164141] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
-> [    0.165439] RIP: 0010:kmem_cache_alloc_noprof (mm/slub.c:4237)
-> [ 0.166186] Code: 90 90 90 f3 0f 1e fa 0f 1f 44 00 00 55 48 89 e5 41 57 41 56 41 55 41 54 49 89 fc 53 48 83 e4 f0 48 83 ec 20 8b 05 c9 b6 7e 01 <44> 8b 77 1c 65 4c 8b 2d b5 ea 20 02 4c 89 6c 24 18 41 89 f5 21 f0
-> [    0.168811] RSP: 0000:ffffffffb2e03b30 EFLAGS: 00010086
-> [    0.169545] RAX: 0000000001fff33f RBX: 0000000000000000 RCX: 0000000000000000
-> [    0.170544] RDX: 0000000000002800 RSI: 0000000000002800 RDI: 0000000000000000
-> [    0.171554] RBP: ffffffffb2e03b80 R08: 0000000000000004 R09: ffffffffb2e03c90
-> [    0.172549] R10: ffffffffb2e03c90 R11: 0000000000000000 R12: 0000000000000000
-> [    0.173544] R13: ffffffffb2e03c90 R14: ffffffffb2e03c90 R15: 0000000000000001
-> [    0.174542] FS:  0000000000000000(0000) GS:ffff9d2808114000(0000) knlGS:0000000000000000
-> [    0.175684] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [    0.176486] CR2: 000000000000001c CR3: 000000007264c001 CR4: 00000000000200b0
-> [    0.177483] Call Trace:
-> [    0.177828]  <TASK>
-> [    0.178123] mas_alloc_nodes (lib/maple_tree.c:176 (discriminator 2) lib/maple_tree.c:1255 (discriminator 2))
-> [    0.178692] mas_store_gfp (lib/maple_tree.c:5468)
-> [    0.179223] execmem_cache_add_locked (mm/execmem.c:207)
-> [    0.179870] execmem_alloc (mm/execmem.c:213 mm/execmem.c:313 mm/execmem.c:335 mm/execmem.c:475)
-> [    0.180397] ? ftrace_caller (arch/x86/kernel/ftrace_64.S:169)
-> [    0.180922] ? __pfx_ftrace_caller (arch/x86/kernel/ftrace_64.S:158)
-> [    0.181517] execmem_alloc_rw (mm/execmem.c:487)
-> [    0.182052] arch_ftrace_update_trampoline (arch/x86/kernel/ftrace.c:266 arch/x86/kernel/ftrace.c:344 arch/x86/kernel/ftrace.c:474)
-> [    0.182778] ? ftrace_caller_op_ptr (arch/x86/kernel/ftrace_64.S:182)
-> [    0.183388] ftrace_update_trampoline (kernel/trace/ftrace.c:7947)
-> [    0.184024] __register_ftrace_function (kernel/trace/ftrace.c:368)
-> [    0.184682] ftrace_startup (kernel/trace/ftrace.c:3048)
-> [    0.185205] ? __pfx_function_trace_call (kernel/trace/trace_functions.c:210)
-> [    0.185877] register_ftrace_function_nolock (kernel/trace/ftrace.c:8717)
-> [    0.186595] register_ftrace_function (kernel/trace/ftrace.c:8745)
-> [    0.187254] ? __pfx_function_trace_call (kernel/trace/trace_functions.c:210)
-> [    0.187924] function_trace_init (kernel/trace/trace_functions.c:170)
-> [    0.188499] tracing_set_tracer (kernel/trace/trace.c:5916 kernel/trace/trace.c:6349)
-> [    0.189088] register_tracer (kernel/trace/trace.c:2391)
-> [    0.189642] early_trace_init (kernel/trace/trace.c:11075 kernel/trace/trace.c:11149)
-> [    0.190204] start_kernel (init/main.c:970)
-> [    0.190732] x86_64_start_reservations (arch/x86/kernel/head64.c:307)
-> [    0.191381] x86_64_start_kernel (??:?)
-> [    0.191955] common_startup_64 (arch/x86/kernel/head_64.S:419)
-> [    0.192534]  </TASK>
-> [    0.192839] Modules linked in:
-> [    0.193267] CR2: 000000000000001c
-> [    0.193730] ---[ end trace 0000000000000000 ]---
-> 
-> The crash happens because on x86 ftrace allocations from execmem require
-> maple tree to be initialized.
-> 
-> Move maple tree initialization that depends only on slab availability
-> earlier in boot so that it will happen right after mm_core_init().
-> 
-
-Looks good to me.
-
-Reviewed-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-
-Thanks,
-
-> Fixes: 5d79c2be5081 ("x86/ftrace: enable EXECMEM_ROX_CACHE for ftrace allocations")
-> Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-> ---
->  init/main.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/init/main.c b/init/main.c
-> index 0ee0ee7b7c2c..5753e9539ae6 100644
-> --- a/init/main.c
-> +++ b/init/main.c
-> @@ -956,6 +956,7 @@ void start_kernel(void)
->  	sort_main_extable();
->  	trap_init();
->  	mm_core_init();
-> +	maple_tree_init();
->  	poking_init();
->  	ftrace_init();
->  
-> @@ -973,7 +974,6 @@ void start_kernel(void)
->  		 "Interrupts were enabled *very* early, fixing it\n"))
->  		local_irq_disable();
->  	radix_tree_init();
-> -	maple_tree_init();
->  
->  	/*
->  	 * Set up housekeeping before setting up workqueues to allow the unbound
-> 
-> base-commit: c17b750b3ad9f45f2b6f7e6f7f4679844244f0b9
-> -- 
-> 2.50.1
-> 
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="3kp2UqL1B3tlnqWW"
+Content-Disposition: inline
+In-Reply-To: <20250827113312.62162725@foz.lan>
 
 
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+--3kp2UqL1B3tlnqWW
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, Aug 27, 2025 at 11:33:12AM +0200, Mauro Carvalho Chehab wrote:
+> As a non-native English speaker, "had better know" looks really
+> weird on my eyes, as, at least for me, "know" is a verb.
+>=20
+> Heh, I just discovered today by looking on a dictionary:
+>=20
+> 	https://dictionary.cambridge.org/dictionary/english/know
+>=20
+> That know can informally be used as a noun (a shortcut for
+> knowledge?).
+>=20
+> For me as a non-native English speaker, when one writes:
+>=20
+> 	They "most likely know"		(know here is a verb)
+>=20
+> or:
+> 	They "had better knowledge"	(knowledge is a name)
+>=20
+> Things become clearer.
+>=20
+> Heh:
+>=20
+> 	They "had better know the details better than you"
+>=20
+> the "better" word is used twice, and yeah, this is requires more
+> fluency in English for a non-native speaker to get what it says.
+>=20
+> Considering that "know" (noun) seems to be a shortcut
+> for "knowledge", what about:
+>=20
+> 	They "had better knowledge about the details than you"
+
+That can be alternative.
+
+Thanks.
+
+--=20
+An old man doll... just what I always wanted! - Clara
+
+--3kp2UqL1B3tlnqWW
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCaK/XHQAKCRD2uYlJVVFO
+o49WAPsEAvJcJNYwU4d66ZTyPkrKkSJhDiFl0sLolEoQljcXvgD/YN+6gGbmw7bA
+QRtPBYIm0VgoI8+XNqa98l9ImkRrBw4=
+=evxw
+-----END PGP SIGNATURE-----
+
+--3kp2UqL1B3tlnqWW--
 
