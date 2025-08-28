@@ -1,97 +1,162 @@
-Return-Path: <linux-kernel+bounces-789045-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76E54B3903B
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 02:50:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8DF3B39045
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 02:53:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C887D3B4098
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 00:50:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 992181C20119
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 00:53:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69FD81A2547;
-	Thu, 28 Aug 2025 00:50:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 025041C4A13;
+	Thu, 28 Aug 2025 00:53:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bBDH3p+P"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="IjykoAQq"
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4A4C13EFF3;
-	Thu, 28 Aug 2025 00:49:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7116A3FC2;
+	Thu, 28 Aug 2025 00:53:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756342199; cv=none; b=sysCplvEC0jXoZodJ4IcQtgxmkNwB/a3YgttjhdfQr6qO24PJZz47F3RrpkQF8Krs9QLqJxq5Qp2GVyzuazdCyrN2Vj8QHSAt8XhEMFw/LFYVc6kGLjelGqo+Yl+ac0LSgjHF+y+378TeQS8WQ2MtUkjD5cUrkZ/61Um7gBGQQU=
+	t=1756342389; cv=none; b=Tg/eDV/d1GEploKvDHSbsfsms2UG6JTdLGnCd7JE4MQHTlcPlRAHpohrMs4GgUCE5tw1vancN05yHjHSd4Dc+qOqSxlEt59C3RPWylcViE0l+MuIvTuAQ6jTsJAgJAX6rIFCFGXKq+bKiHSqbLXEK79XczhMiAln9Q0e91xqEwA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756342199; c=relaxed/simple;
-	bh=qOJT2O/P45y1TMQ19RbfaBGaSVM7euzDXVZ+E+zezvU=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=dJY2y3BYjj49p6Hpd3K/4GD+lAoCZewNy5nNuXvvAQTkXhsFdC84AE0dYTHGUv6equ3U8+6MnzusHAGKN43IiO7srh+vv0uyPyZ2K40k+6HXp3C3PVYjP+UmftYQw8uQFp6cTLgWP6PidJHAAr+caHx0L+Pay/6UA79YIzf+92Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bBDH3p+P; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35693C4CEEB;
-	Thu, 28 Aug 2025 00:49:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756342199;
-	bh=qOJT2O/P45y1TMQ19RbfaBGaSVM7euzDXVZ+E+zezvU=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=bBDH3p+P2+FEn+Axe0gXs9DyscQRI25EcxY6ZamYBueHYgiipm+bu40cS4vHRJVbF
-	 pwURqylxH5UeYXNkrsEhUXq7+2OtEL2//QQaA64bwX0ZVIzJh7vW3KsayshGZvy6qD
-	 ChOn5xOdeid2fYzrkzxeCds/qt6MIz9h8GH0CSnoE0IeLniZ4d9kDJfyE0u4Om9DjO
-	 2cf6HnuyQIJAuhzqlL2AlY+7n+tBwMMOwa0qSME8WPXAQpp3jZJv762qFcb64QKpQ0
-	 doEEKsUtArrp87qIiocyiVnkttzQixC79vQT9/I2xegnqQwdv5thNMn67b14qr3OUc
-	 mhex8l5fOce/g==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADE08383BF76;
-	Thu, 28 Aug 2025 00:50:07 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1756342389; c=relaxed/simple;
+	bh=gQf+PWyp6TnihmKGlYeBwS7O4NsUMz9RyWp5vamaK7k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rgevz27IskneTFawO0kSjhyxIVvR+DZdiZweMSnovyK0t1oR9A5Yywgy3DKMq/NH6Y+fYUUC2f9JdyNOka87i8qI6wrJCf2ucHEO77+NNJtMNRgomfP136MT0gDVKxk0odgeHy2u8mDlGk/1D1iyzidiTX7KK1TATz021fdAXu8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=IjykoAQq; arc=none smtp.client-ip=80.241.56.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4cC2v30ggvz9tQQ;
+	Thu, 28 Aug 2025 02:53:03 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
+	t=1756342383;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+nkOVSTJeGMrXnWxpGpCSqeWsWiSvBuOe+MZ2w3etRU=;
+	b=IjykoAQqWYQXRZz4Xn49InWy8P9wskh17pgP4b5aQ35Z4D48ODkQay3K09Nob+X0BaCp5w
+	jx41jaJ3Pf4M4/zNR86ugRZyrBFQBOmqAz7N2Vc8wnCBwbhJfmrepDjg2a+QwFGu5MtyM3
+	AZXaxFlqcyiBbZF1N0gw0ePo6/JX/AlNJNc5i0mNd1z0ywmkgvv10Xcl264sTwtfm5HIf6
+	Bhk1QJuKol+hI+LYmKQY1NzQfmoU56kcgEdeZ0FMIn4FxaccZTisU/zeeS7124dztDMfsg
+	CAVgyvvwhy1GjpX3yvVhmPcNAIVUgynEHOeMCnvZTjgATZFrlOa2yqTcEls94w==
+Authentication-Results: outgoing_mbo_mout;
+	dkim=none;
+	spf=pass (outgoing_mbo_mout: domain of cyphar@cyphar.com designates 2001:67c:2050:b231:465::2 as permitted sender) smtp.mailfrom=cyphar@cyphar.com
+Date: Thu, 28 Aug 2025 10:52:42 +1000
+From: Aleksa Sarai <cyphar@cyphar.com>
+To: Andy Lutomirski <luto@kernel.org>
+Cc: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, 
+	Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, 
+	Kees Cook <keescook@chromium.org>, Paul Moore <paul@paul-moore.com>, 
+	Serge Hallyn <serge@hallyn.com>, Arnd Bergmann <arnd@arndb.de>, 
+	Christian Heimes <christian@python.org>, Dmitry Vyukov <dvyukov@google.com>, 
+	Elliott Hughes <enh@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
+	Florian Weimer <fweimer@redhat.com>, Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Jordan R Abrahams <ajordanr@google.com>, 
+	Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, Luca Boccassi <bluca@debian.org>, 
+	Matt Bobrowski <mattbobrowski@google.com>, Miklos Szeredi <mszeredi@redhat.com>, 
+	Mimi Zohar <zohar@linux.ibm.com>, Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>, 
+	Robert Waite <rowait@microsoft.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
+	Scott Shell <scottsh@microsoft.com>, Steve Dower <steve.dower@python.org>, 
+	Steve Grubb <sgrubb@redhat.com>, kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org
+Subject: Re: [RFC PATCH v1 0/2] Add O_DENY_WRITE (complement AT_EXECVE_CHECK)
+Message-ID: <2025-08-28-alert-groggy-mugs-lapse-IWqeR7@cyphar.com>
+References: <20250822170800.2116980-1-mic@digikod.net>
+ <20250826-skorpion-magma-141496988fdc@brauner>
+ <20250826.aig5aiShunga@digikod.net>
+ <2025-08-27-obscene-great-toy-diary-X1gVRV@cyphar.com>
+ <CALCETrWHKga33bvzUHnd-mRQUeNXTtXSS8Y8+40d5bxv-CqBhw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next] net: stmmac: sun8i: drop unneeded default syscon
- value
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <175634220652.891202.7808539694253002110.git-patchwork-notify@kernel.org>
-Date: Thu, 28 Aug 2025 00:50:06 +0000
-References: <20250825172055.19794-1-andre.przywara@arm.com>
-In-Reply-To: <20250825172055.19794-1-andre.przywara@arm.com>
-To: Andre Przywara <andre.przywara@arm.com>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, mcoquelin.stm32@gmail.com,
- alexandre.torgue@foss.st.com, wens@csie.org, samuel@sholland.org,
- jernej.skrabec@gmail.com, clabbe.montjoie@gmail.com, paulk@sys-base.io,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-sunxi@lists.linux.dev
-
-Hello:
-
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Mon, 25 Aug 2025 18:20:55 +0100 you wrote:
-> For some odd reason we were very jealous about the value of the EMAC
-> clock register from the syscon block, insisting on a reset value and
-> only doing read-modify-write operations on that register, even though we
-> pretty much know the register layout.
-> This already led to a basically redundant entry for the H6, which only
-> differs by that value. We seem to have the same situation with the new
-> A523 SoC, which again is compatible to the A64, but has a different
-> syscon reset value.
-> 
-> [...]
-
-Here is the summary with links:
-  - [net-next] net: stmmac: sun8i: drop unneeded default syscon value
-    https://git.kernel.org/netdev/net-next/c/330355191a2d
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="t3uldpk5vmc35wcr"
+Content-Disposition: inline
+In-Reply-To: <CALCETrWHKga33bvzUHnd-mRQUeNXTtXSS8Y8+40d5bxv-CqBhw@mail.gmail.com>
+X-Rspamd-Queue-Id: 4cC2v30ggvz9tQQ
 
 
+--t3uldpk5vmc35wcr
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [RFC PATCH v1 0/2] Add O_DENY_WRITE (complement AT_EXECVE_CHECK)
+MIME-Version: 1.0
+
+On 2025-08-27, Andy Lutomirski <luto@kernel.org> wrote:
+> On Wed, Aug 27, 2025 at 5:14=E2=80=AFPM Aleksa Sarai <cyphar@cyphar.com> =
+wrote:
+> >
+> > On 2025-08-26, Micka=C3=ABl Sala=C3=BCn <mic@digikod.net> wrote:
+> > > On Tue, Aug 26, 2025 at 11:07:03AM +0200, Christian Brauner wrote:
+> > > > Nothing has changed in that regard and I'm not interested in stuffi=
+ng
+> > > > the VFS APIs full of special-purpose behavior to work around the fa=
+ct
+> > > > that this is work that needs to be done in userspace. Change the ap=
+ps,
+> > > > stop pushing more and more cruft into the VFS that has no business
+> > > > there.
+> > >
+> > > It would be interesting to know how to patch user space to get the sa=
+me
+> > > guarantees...  Do you think I would propose a kernel patch otherwise?
+> >
+> > You could mmap the script file with MAP_PRIVATE. This is the *actual*
+> > protection the kernel uses against overwriting binaries (yes, ETXTBSY is
+> > nice but IIRC there are ways to get around it anyway).
+>=20
+> Wait, really?  MAP_PRIVATE prevents writes to the mapping from
+> affecting the file, but I don't think that writes to the file will
+> break the MAP_PRIVATE CoW if it's not already broken.
+
+Oh I guess you're right -- that's news to me. And from mmap(2):
+
+> MAP_PRIVATE
+> [...] It is unspecified whether changes made to the file after the
+> mmap() call are visible in the mapped region.
+
+But then what is the protection mechanism (in the absence of -ETXTBSY)
+that stops you from overwriting the live text of a binary by just
+writing to it?
+
+I would need to go trawling through my old scripts to find the
+reproducer that let you get around -ETXTBSY (I think it involved
+executable memfds) but I distinctly remember that even if you overwrote
+the binary you would not see the live process's mapped mm change value.
+(Ditto for the few kernels when we removed -ETXTBSY.) I found this
+surprising, but assumed that it was because of MAP_PRIVATE.
+
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+https://www.cyphar.com/
+
+--t3uldpk5vmc35wcr
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJEEABYKADkWIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCaK+oWhsUgAAAAAAEAA5t
+YW51MiwyLjUrMS4xMSwyLDIACgkQKJf60rfpRG9YOwD+IgeIsIsIT209gc6p0UJ+
+RpiujJ3PHk79u8piCbNs9GIA/2I0ge/RGvNochLLI17BW1sMdgZdclwN/rf+cUxC
+cnwF
+=FhJ0
+-----END PGP SIGNATURE-----
+
+--t3uldpk5vmc35wcr--
 
