@@ -1,156 +1,150 @@
-Return-Path: <linux-kernel+bounces-790156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790157-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D2BAB3A185
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 16:25:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45018B3A192
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 16:26:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA2905835DE
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 14:18:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C594583A12
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 14:18:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C43B03126CC;
-	Thu, 28 Aug 2025 14:06:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC77D313544;
+	Thu, 28 Aug 2025 14:07:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gfQIf4iI"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="mbPJ1Yx+";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="PBc8L4n2"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C324418FC92;
-	Thu, 28 Aug 2025 14:06:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4503030DECC;
+	Thu, 28 Aug 2025 14:07:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756389985; cv=none; b=nufmR8ChHgg0YWTnc6WTfIEZXE7rDGxD4ltri9UiDV0q5maAcLHXwMXYq50eTBu+Nh2WEwbEhzv93lwn687ZFy5Ni2+UfUb7pQFO+PZIltbdi5E7G5OHYEdELaiPFQQLrqghv8331Uq0LYozlFGHEwTQi8jzu1xhJEb8K4tmdOQ=
+	t=1756390058; cv=none; b=VtYZ75/+9zBfcoC4yoAvmb05Lc4xRKb8VU8UifQiqDAXafD2i0OORYVW2iOlp4OVzyUaFVQa+TYUWEJg1lVmPv05b0tx3L1NZOft6n7PAaxb7ZRuYK4tZbtX3XKPznxzO4tG30a+nGjhDsuUn3p7wrKjFE4Y4dvLiJWZ95EikRg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756389985; c=relaxed/simple;
-	bh=B/siCNsmCwDQeXpu3CoMuywLNybWqg95GF25BmBeqh8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=C3ZuuKxatwC71F50397yuA7paNAHKkdCVzgz4TtTHhj4YCp84/C6lPPAMERx0D4Xz0Ky7amEC7e1Sb0/8PaS3723dCVIi/ninO6em0IXZMMNAK/J5KLerrDCIX2yg6wvfcghFohEuc6mzq1daeVH6oP5MHy3BMOdY6zF7sGabX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gfQIf4iI; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756389983; x=1787925983;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=B/siCNsmCwDQeXpu3CoMuywLNybWqg95GF25BmBeqh8=;
-  b=gfQIf4iI+J4Cg2aDAKA2nIvA2txDZzeo+YdDPsdZ6/acCLgMJAt2gheU
-   p5LMYstxL2uluxg1vZ3ILi3iUsUWEUATjMWJDsfyHB9NaanlgqCEqzlB3
-   8NBPFE/iI5Y6jsRLuouA/rKsrqY/vTIS043iDiF1QcYU2sTC7mLXqu3S5
-   JlmCm0gKRhTJOHH+CLxgfOKCAOGj6vtONK5FApTU0R39prDDJqTm3RKSh
-   mirBe8xFUehOCj23jCzfjGz5qLYE4qUWygaHB3NmgNa2MHMlUhvXOWE4o
-   aDTY1GWzP+xewK89F/WCzyjooG8p6PRR7hULXGPlx1u+9Oxf/yjwIttLn
-   A==;
-X-CSE-ConnectionGUID: 5VCgn782Qiqq9TAZssmKwQ==
-X-CSE-MsgGUID: hwYoIk2+TFW3/GAIJljClA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11536"; a="58761027"
-X-IronPort-AV: E=Sophos;i="6.18,217,1751266800"; 
-   d="scan'208";a="58761027"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2025 07:06:22 -0700
-X-CSE-ConnectionGUID: t6gOAOP+TACRhUM6B+ICGA==
-X-CSE-MsgGUID: 8xq7RtMETomLkqQZxpW0+A==
-X-ExtLoop1: 1
-Received: from fpallare-mobl4.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.245.135])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2025 07:06:19 -0700
-Received: from punajuuri.localdomain (unknown [192.168.240.130])
-	by kekkonen.fi.intel.com (Postfix) with ESMTP id E44B411F9D4;
-	Thu, 28 Aug 2025 17:06:16 +0300 (EEST)
-Received: from sailus by punajuuri.localdomain with local (Exim 4.98.2)
-	(envelope-from <sakari.ailus@linux.intel.com>)
-	id 1urdGb-0000000DOiq-3Rlx;
-	Thu, 28 Aug 2025 17:06:17 +0300
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: David Lechner <dlechner@baylibre.com>,
-	=?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	linux-iio@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-Subject: [PATCH v5 1/1] iio: dac: Remove redundant pm_runtime_mark_last_busy() calls
-Date: Thu, 28 Aug 2025 17:06:17 +0300
-Message-ID: <20250828140617.3193288-1-sakari.ailus@linux.intel.com>
-X-Mailer: git-send-email 2.47.2
+	s=arc-20240116; t=1756390058; c=relaxed/simple;
+	bh=0TLMJRiI/UBNgFNnLAwEExo5cJU9wBAQPRJq7dbl3Rc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=FgfkKHBUv0GS8m5S2ikNs7fTrkRJ+MvFSSvcUfWOZCcD9RN2QVBFQ3uRHfv7gnjd2Kyr2R9gLzLGW1MBMvop0xmkIcWeeeUELAheMF+stcEdqcb/AESZCMyAgfuzx+PB5jDS9EFiAFB8e5i/ddc7wtkAyaUzhUPlK9juRzwGYQU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=mbPJ1Yx+; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=PBc8L4n2 reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1756390054; x=1787926054;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=1V2dgEATYXD7sLHkpBfeFtMXcoUFuQpVI/5dmTO6fOI=;
+  b=mbPJ1Yx++nAwWLWtwwGo6FprX0O0n72ANLWIS8FRBInzYM4he2Jb9+Nh
+   V+CY+gzL9u9gvUN8SARsmBspjDMztUFHbDstKtZVBHlu/wfhQhEnIQOya
+   Nxjv6ApacQyenkUUaDWKGjDV43nxMwlKALxBDNGSzF2Ok+VCAT7jD0pgk
+   Ma3iZvAabWSGeMxkpoVqNlCN6quE2jf1+a+0sEG7b43eXqGcxd3yz7Ibr
+   LfSrOeOjYnKJgeER/eIqtNO4xSZfdmr1fCjO9rHmHC3z435rXCcscK56p
+   /OAcgoQmWAu84BMzPOzI5EeSAvpm1khjDRwnEAzkmjE/cI3t4Va3DaiYx
+   Q==;
+X-CSE-ConnectionGUID: pHIbrKnbSsKPwmnNNZy+LA==
+X-CSE-MsgGUID: +kq5miZWSmG0hV68Kjnfvw==
+X-IronPort-AV: E=Sophos;i="6.18,217,1751234400"; 
+   d="scan'208";a="45959276"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 28 Aug 2025 16:07:27 +0200
+X-CheckPoint: {68B0629F-1-299FBAB0-EF52EDE7}
+X-MAIL-CPID: D8BC9AACF274DEF507CE904D865E66A7_5
+X-Control-Analysis: str=0001.0A002112.68B0629F.0093,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 239DA16140B;
+	Thu, 28 Aug 2025 16:07:22 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1756390042;
+	h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=1V2dgEATYXD7sLHkpBfeFtMXcoUFuQpVI/5dmTO6fOI=;
+	b=PBc8L4n2+UqzRt0GCBaXASsqPkdRKWAw1BS9bjZHK8maHprA+naG8rD4liFKZN3LoVQ8e4
+	2W9JkWdY3ebNt5VCFFAoS/MhKYNwlRnWe8nd+0UkmP1AI+XAJEIqYb+XCVLXgfNkOFQpV6
+	dIBulO6lUgH0LT1kDMr2cSzBvPnW9KHr6N9F5fB1vR9kUuzaS9lY/hj3pnFKm7AxV/GYWG
+	YAcdNWEzdz/WZPYn9xdqCnOAXdmeDcZAxKqU+TDFZ/p7w/xjmQN5wPL6HohuTziKIUnWS1
+	83AHlTctXZMjB1UbDSYo/mZTxPgDZTQ3DIOT2wrozk8JL9Awfeh7+dRxKSAQ4A==
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: Shawn Guo <shawnguo@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ linux-arm-kernel@lists.infradead.org
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+ Frank Li <Frank.Li@nxp.com>, Frank Li <Frank.Li@nxp.com>
+Subject: Re: [PATCH v3 0/4] ARM: dts: clean up most ls1021a CHECK_DTB warning
+Date: Thu, 28 Aug 2025 16:07:20 +0200
+Message-ID: <3571725.QJadu78ljV@steina-w>
+Organization: TQ-Systems GmbH
+In-Reply-To: <20250822-ls1021a_dts_warning-v3-0-6b611a2f23a4@nxp.com>
+References: <20250822-ls1021a_dts_warning-v3-0-6b611a2f23a4@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
+X-Last-TLS-Session-Version: TLSv1.3
 
-pm_runtime_put_autosuspend(), pm_runtime_put_sync_autosuspend(),
-pm_runtime_autosuspend() and pm_request_autosuspend() now include a call
-to pm_runtime_mark_last_busy(). Remove the now-reduntant explicit call to
-pm_runtime_mark_last_busy().
+Hi,
 
-Also clean up error handling in stm32_dac_set_enable_state().
+Am Freitag, 22. August 2025, 16:49:57 CEST schrieb Frank Li:
+> clean up most ls1021a CHECK_DTB warning.
+>=20
+> Old uboot check esdhc@1560000. The new uboot already switch to check both
+> esdhc@1560000 and mmc@1560000. So we can rename it now.
+>=20
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
 
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
----
-since v4:
+=46or the whole series:
+Reviewed-by: Alexander Stein <alexander.stein@ew.tq-group.com>
 
-- Rework error handling.
+> ---
+> Changes in v3:
+> - rebase guoshawn/imx/dt tree. Remove patches that were already merged.
+> - Link to v2: https://lore.kernel.org/r/20250820-ls1021a_dts_warning-v2-0=
+=2D2e39648a32b7@nxp.com
+>=20
+> Changes in v2:
+> - squash rename to flash patches
+> - remove duplicate patches already post in
+> https://lore.kernel.org/linux-devicetree/20250725061339.266125-1-alexande=
+r.stein@ew.tq-group.com/
+> - Link to v1: https://lore.kernel.org/r/20250818-ls1021a_dts_warning-v1-0=
+=2D7a79b6b4a0e2@nxp.com
+>=20
+> ---
+> Frank Li (4):
+>       ARM: dts: ls1021a: Rename node name nor to flash
+>       ARM: dts: ls1021a: Rename 'mdio-mux-emi1' to 'mdio-mux@54'
+>       ARM: dts: ls1021a: Rename esdhc@1560000 to mmc@1560000
+>       ARM: dts: ls1021a-tsn: Remove redundant #address-cells for ethernet=
+=2Dswitch@1
+>=20
+>  arch/arm/boot/dts/nxp/ls/ls1021a-qds.dts | 8 ++++----
+>  arch/arm/boot/dts/nxp/ls/ls1021a-tsn.dts | 2 --
+>  arch/arm/boot/dts/nxp/ls/ls1021a-twr.dts | 2 +-
+>  arch/arm/boot/dts/nxp/ls/ls1021a.dtsi    | 2 +-
+>  4 files changed, 6 insertions(+), 8 deletions(-)
+> ---
+> base-commit: 75ad5f47c58aee30248d294a58c8ee52e079a8e3
+> change-id: 20250818-ls1021a_dts_warning-fff933bd83da
+>=20
+> Best regards,
+> --
+> Frank Li <Frank.Li@nxp.com>
+>=20
+>=20
+>=20
 
- drivers/iio/dac/stm32-dac.c | 19 +++++--------------
- 1 file changed, 5 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/iio/dac/stm32-dac.c b/drivers/iio/dac/stm32-dac.c
-index 344388338d9b..b860e18d52a1 100644
---- a/drivers/iio/dac/stm32-dac.c
-+++ b/drivers/iio/dac/stm32-dac.c
-@@ -82,9 +82,11 @@ static int stm32_dac_set_enable_state(struct iio_dev *indio_dev, int ch,
- 
- 	ret = regmap_update_bits(dac->common->regmap, STM32_DAC_CR, msk, en);
- 	mutex_unlock(&dac->lock);
--	if (ret < 0) {
-+	if (ret) {
- 		dev_err(&indio_dev->dev, "%s failed\n", str_enable_disable(en));
--		goto err_put_pm;
-+		if (enable)
-+			pm_runtime_put_autosuspend(dev);
-+		return ret;
- 	}
- 
- 	/*
-@@ -95,20 +97,10 @@ static int stm32_dac_set_enable_state(struct iio_dev *indio_dev, int ch,
- 	if (en && dac->common->hfsel)
- 		udelay(1);
- 
--	if (!enable) {
--		pm_runtime_mark_last_busy(dev);
-+	if (!enable)
- 		pm_runtime_put_autosuspend(dev);
--	}
- 
- 	return 0;
--
--err_put_pm:
--	if (enable) {
--		pm_runtime_mark_last_busy(dev);
--		pm_runtime_put_autosuspend(dev);
--	}
--
--	return ret;
- }
- 
- static int stm32_dac_get_value(struct stm32_dac *dac, int channel, int *val)
-@@ -349,7 +341,6 @@ static int stm32_dac_probe(struct platform_device *pdev)
- 	if (ret)
- 		goto err_pm_put;
- 
--	pm_runtime_mark_last_busy(dev);
- 	pm_runtime_put_autosuspend(dev);
- 
- 	return 0;
--- 
-2.47.2
+=2D-=20
+TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
+Amtsgericht M=FCnchen, HRB 105018
+Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
+http://www.tq-group.com/
+
 
 
