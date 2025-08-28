@@ -1,139 +1,138 @@
-Return-Path: <linux-kernel+bounces-790678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A4D8B3ABB3
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 22:34:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A68AB3ABB9
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 22:37:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40478685F8B
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 20:34:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34296A0392C
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 20:37:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 418562877D6;
-	Thu, 28 Aug 2025 20:33:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C8DB299927;
+	Thu, 28 Aug 2025 20:37:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jmC/Ge7i"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J3Tg56tH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F369330CD84;
-	Thu, 28 Aug 2025 20:33:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B93802877D6;
+	Thu, 28 Aug 2025 20:37:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756413234; cv=none; b=H4oWx1KRqcg9GdaWS16S3/ikztEhXlvQEH9ZXAVq3oi/84kMJbohskiDV2jvl+uZi22KJOBI+z+SjhFHdtOrV36aGeCZMRMvjHNbwb3UA1yPtU4EOI34uE/xoo9WtIq6JkbxJZKfhQE2JNC5LzphIGWJeE63YbwkvFqFbAMW+kg=
+	t=1756413440; cv=none; b=KcLIG1G3eYq6opCB8v52MSrsodvxApcAIIAUkd5qy8Ow90Hl7TeuXCLx6eM5hrONgbA6xFU9MsM9vYhxGcg6L8WFawl5FsR1zAXxkSEkNR1FKqhOizyZZfxCi/b9h/SmsUbc4pS9TfWLmUif0N+TJ4ke74DgPylrVc+7QDci5tY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756413234; c=relaxed/simple;
-	bh=oD5veRPeSKOUCJz6lmXPx51TmD7FNK/BfadlJ2sFV/c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ti0sirwvrFnGHOy3b8Rutbpx9vb+UTGbwGRzUuCvh+qBJaPcD+9e4/+8mJSgXjqCKnm6AXqIoDTghks3P5UM+7jYCY0ybClHiygs5fEzuiGy+jF8PDoH72x04MOq0niKKVNCgdcYEKuWrFJyMbxm7yYtgJxqx5SZBsWmJaVbBco=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jmC/Ge7i; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-afe7584b6c1so16995766b.0;
-        Thu, 28 Aug 2025 13:33:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756413231; x=1757018031; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=fkaYxjYHvoyzrzNQ+/rmfpF/F2e2Gc7qf9aPUXa1ing=;
-        b=jmC/Ge7i9UN/z2uPZ175uEURCBh+400ikO8pQ0NWe6dYb4lwetsYFBhB9qGVTwuryq
-         Qp4G8fP5uZa4IHveOyABxkIms8bcw9cQWSmO6OmQBRJV+4ifC6t6J8RNtttBkb7HaMv2
-         sOs0UW5GawDjlzotiOq3ZrErDAOqdpYKVBmoKk+dVotoLL8rk5r1bh2S3XKW5bz0gV6E
-         6gCFJqBbtOWWynHSwEtopVBZa5zKXem+Ed6EST8A0mgMA+eUFtc9t8+ILkot2LGXI5+e
-         AOIg2HQ4XbfIVC9rF4ZmWjyZMtXyese4VEK0IWyI3srXp/rokvHKmr+g6uFiMeuTX8v1
-         /nzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756413231; x=1757018031;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fkaYxjYHvoyzrzNQ+/rmfpF/F2e2Gc7qf9aPUXa1ing=;
-        b=i8XWshhCXWYEhJF1IvnIZ99+gZ13dWR2oqutdmTpcTrMqHcv9CpZ7Ti7LfytJbWav4
-         YKbD5w0y9L8sMNtLG0WBaj/TbJruN6yHVvBFKmMvDwOzDSRRix6LZLP7kfXFU5I8wbzZ
-         /Dx1sYLa3Kzz5xb7TkxUnX/QcqrV9q6DQN/AAKa3nOr9WjSTECl1Tki3jP83mzxzhT4E
-         aovVy9xGukqjRaQScelY7Rn8U0cMwZWcg0O4IuzxT1/x7bgB+4QBBTKO7CpGWXL7laCm
-         MV+bQj1Xudd7MoYDlTT2lsE/YTjQ+Fn9lEDQUJyo75cA3EdMSupDFEU7DaXENd8gCDYd
-         nVvw==
-X-Forwarded-Encrypted: i=1; AJvYcCUgkUyUZ3Ri8i9SpSM4lzhdk+2cZ5IVfi1m8ot/8p722G9Cr/XOlGResQbsTbuEFw8klgJbErRC@vger.kernel.org, AJvYcCVwpYzO9PMXxNrMSz2KEFbhYrDXGe8/Pyzo0FQOO/ISqz+lAzNP0rd+yBI4+D4mDmQ8LeNsMuBofYesWYo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCDUDuqLQeou96zlxGHwxLRy0HXhUg3n/z1TM/R9a4HEJ+CEEv
-	6kLyEM/WTrNKU/toqtfi3OwpxlT9hzG14n/GWSwKcT1DKlQtqqGYol4v
-X-Gm-Gg: ASbGncuuJSgkTzU7m1PHWq2CvR7vsyHrYFw6GGiLiDURUTAfA3p6i5Nph4PX5D3Gnng
-	vAkJr5MHIrTMfce7jKAiY9kJoytmMM2R2vT9zwPFiTMc/GQtMXWrBMh5TZTtsmww2Mf8ETiiMPC
-	RY9qcFix730UHwedVbZW3lidmVk17DvMqcljp1ciF0+KTtJEqWDPJkddy/CNSyyUuvx7aNpf49X
-	KH4B22EHjEpxhHhp4tpuEBED+C66MJB1/T8HIMY6y9Jox221+rGw655pqfYSezaaoBVfbKp7diP
-	4s12POgAINTpfcHjKlqL3LBLU3fGYR5Av+RkJFMBszbOxz+RgX+bb2mNJKoa/tOemLQrZ9BDgT2
-	AZASnC5x4XvarxwqI4HAf5Pf5CA==
-X-Google-Smtp-Source: AGHT+IGq1Wu31vL5Hgrcu1MlSAJ9ffpGygD8tF4/ClTyANhncYBDOA9LcfdbNdkxJ7KXh89tW72reQ==
-X-Received: by 2002:a17:907:970c:b0:afe:ae6c:4141 with SMTP id a640c23a62f3a-afeae6c482fmr492993566b.2.1756413231015;
-        Thu, 28 Aug 2025 13:33:51 -0700 (PDT)
-Received: from skbuf ([2a02:2f04:d005:3b00:2cf6:b150:1dce:5f2e])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afefca08b17sm34359766b.35.2025.08.28.13.33.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Aug 2025 13:33:48 -0700 (PDT)
-Date: Thu, 28 Aug 2025 23:33:46 +0300
-From: Vladimir Oltean <olteanv@gmail.com>
-To: Daniel Golle <daniel@makrotopia.org>
-Cc: Andrew Lunn <andrew@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Hauke Mehrtens <hauke@hauke-m.de>,
-	Russell King <linux@armlinux.org.uk>, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org, Andreas Schirm <andreas.schirm@siemens.com>,
-	Lukas Stockmann <lukas.stockmann@siemens.com>,
-	Alexander Sverdlin <alexander.sverdlin@siemens.com>,
-	Peter Christen <peter.christen@siemens.com>,
-	Avinash Jayaraman <ajayaraman@maxlinear.com>,
-	Bing tao Xu <bxu@maxlinear.com>, Liang Xu <lxu@maxlinear.com>,
-	Juraj Povazanec <jpovazanec@maxlinear.com>,
-	"Fanni (Fang-Yi) Chan" <fchan@maxlinear.com>,
-	"Benny (Ying-Tsan) Weng" <yweng@maxlinear.com>,
-	"Livia M. Rosu" <lrosu@maxlinear.com>,
-	John Crispin <john@phrozen.org>
-Subject: Re: [PATCH net-next v2 1/6] net: dsa: lantiq_gswip: move to
- dedicated folder
-Message-ID: <20250828203346.eqe5bzk52pcizqt5@skbuf>
-References: <cover.1756228750.git.daniel@makrotopia.org>
- <ceb75451afb48ee791a2585463d718772b2cf357.1756228750.git.daniel@makrotopia.org>
+	s=arc-20240116; t=1756413440; c=relaxed/simple;
+	bh=nPb9r5xc48msrxBmpoagi+qom8Er+5KVlPdst7SNsto=;
+	h=Message-ID:Date:From:To:Cc:Subject; b=Zm6hjhfZQ5Pdk/lcxsteR+C7jwnzfDcfC2P33+3c8OtJdyFY85Ns9cxBirW/pg+etpY+cZslkn0teOg0VgHeFvTgemqE7AC5uvUn3CwCEgsf0kIlrTxwQp8ZGIi14ME4nAkJqsP7chmC9LQT+HDDg2g5+oHO4nVl5C0NOz5H+7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J3Tg56tH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29F17C4CEEB;
+	Thu, 28 Aug 2025 20:37:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756413440;
+	bh=nPb9r5xc48msrxBmpoagi+qom8Er+5KVlPdst7SNsto=;
+	h=Date:From:To:Cc:Subject:From;
+	b=J3Tg56tH/gP1+BJeR1dMNQg94rkArS6dXg7MsP9JC1c6J2mLuS8lJmO8wh5FDmsvJ
+	 IOpjVkfYsu0BHLpgxkSV8Nwf/b7I8FTpdNBwBHiOdmiMYXOxLvCwB7IMN37igcG8pR
+	 NGH5IyP5EjC3TZFXQS5U58p9kyNx06kG0XFqVCqe7j69vUEfHosak25ZBrk+s8POii
+	 JyxOwomvg9EmTQMR6qKAvdzrT38F723Of6ZIr6x7ATwC9oLGJYCAnB9gYb7bxVvvf/
+	 wayXKjqouE4+Io68ZV24MrvWUXaAbh0jS/5wid3rgI0vyWFTrvGcXqiNrRRu5JfX78
+	 LEVr/Cco1euCw==
+Received: from rostedt by gandalf with local (Exim 4.98.2)
+	(envelope-from <rostedt@kernel.org>)
+	id 1urjNN-00000004JRl-0qhX;
+	Thu, 28 Aug 2025 16:37:41 -0400
+Message-ID: <20250828203555.783399758@kernel.org>
+User-Agent: quilt/0.68
+Date: Thu, 28 Aug 2025 16:35:55 -0400
+From: Steven Rostedt <rostedt@kernel.org>
+To: linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Arnd Bergmann <arnd@arndb.de>,
+ Masahiro Yamada <masahiroy@kernel.org>,
+ Nathan Chancellor <nathan@kernel.org>,
+ Nicolas Schier <nicolas.schier@linux.dev>,
+ Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+ Catalin Marinas <catalin.marinas@arm.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Randy Dunlap <rdunlap@infradead.org>,
+ Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: [PATCH v8 0/3] tracepoints: Add warnings for unused tracepoints and trace events
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ceb75451afb48ee791a2585463d718772b2cf357.1756228750.git.daniel@makrotopia.org>
 
-On Wed, Aug 27, 2025 at 12:05:28AM +0100, Daniel Golle wrote:
-> Move the lantiq_gswip driver to its own folder and update
-> MAINTAINERS file accordingly.
-> This is done ahead of extending the driver to support the MaxLinear
-> GSW1xx series of standalone switch ICs, which includes adding a bunch
-> of files.
-> 
-> Signed-off-by: Daniel Golle <daniel@makrotopia.org>
-> ---
-> v2: move driver to its own folder
-> 
->  MAINTAINERS                                 | 3 +--
->  drivers/net/dsa/Kconfig                     | 8 +-------
->  drivers/net/dsa/Makefile                    | 2 +-
->  drivers/net/dsa/lantiq/Kconfig              | 7 +++++++
->  drivers/net/dsa/lantiq/Makefile             | 1 +
->  drivers/net/dsa/{ => lantiq}/lantiq_gswip.c | 0
->  drivers/net/dsa/{ => lantiq}/lantiq_gswip.h | 0
->  drivers/net/dsa/{ => lantiq}/lantiq_pce.h   | 0
->  8 files changed, 11 insertions(+), 10 deletions(-)
->  create mode 100644 drivers/net/dsa/lantiq/Kconfig
->  create mode 100644 drivers/net/dsa/lantiq/Makefile
->  rename drivers/net/dsa/{ => lantiq}/lantiq_gswip.c (100%)
->  rename drivers/net/dsa/{ => lantiq}/lantiq_gswip.h (100%)
->  rename drivers/net/dsa/{ => lantiq}/lantiq_pce.h (100%)
+Every trace event can take up to 5K of memory in text and metadata regardless
+if they are used or not. Trace events should not be created if they are not
+used.  Currently there's several events in the kernel that are defined
+but unused, either because their callers were removed without removing the
+trace event with it, or a config hides the trace event caller but not the
+trace event itself. And in some cases, trace events were simply added but were
+never called for whatever reason. The number of unused trace events continues
+to grow.
 
-I don't have a problem with this patch per se, but it will make it
-harder to avoid conflicts for the known and unsubmitted bug fixes, like:
-https://github.com/dangowrt/linux/commit/c7445039b965e1a6aad1a4435e7efd4b7cb30f5b
-https://github.com/dangowrt/linux/commit/48d5cac46fc95a826b5eb49434a3a68b75a8ae1a
-which I haven't found the time to submit (sorry). Are we okay with that?
+This patch series aims to fix this.
+
+The first patch moves the elf parsing out of sorttable.c so that it can be
+used by other tooling.
+
+The second patch creates a new program to run during build called
+tracepoint-update (note this may be extended to do other tracepoint
+modifications in the future). It also creates a new section called
+__tracepoint_check, where all callers of a tracepoint creates a variable
+that is placed in this section with the name of the tracepoint they use.
+The scripts/tracepoint-update.c is used to find tracepoints that are defined
+but not used which would mean they would not be in the __tracepoint_check
+section. It sorts the names from that section, and then reads the
+__tracepoint_strings section that has all compiled in tracepoint names. It
+makes sure that every tracepoint is found in the check section and if not, it
+prints a warning message about it.  This lists the missing tracepoints at
+build time.
+
+The third patch adds EXPORT_TRACEPOINT() to the __tracepoint_check section as
+well. There was several locations that adds tracepoints in the kernel proper
+that are only used in modules. It was getting quite complex trying to move
+things around that I just decided to make any tracepoint in a
+EXPORT_TRACEPOINT "used". I'm using the analogy of static and global
+functions. An unused static function gets a warning but an unused global one
+does not.
+
+Changes since v7: https://lore.kernel.org/all/20250825231301.433412523@kernel.org/
+
+- Removed accidentally added .PRECIOUS from Makefile.vmlinux (Nicolas Schier)
+    
+- Fixed some comment issues (Randy Dunlap)
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
+unused-tracepoints/core
+
+Head SHA1: d2bdb5b9bb9047849016b7862741282900665a08
+
+
+Steven Rostedt (3):
+      sorttable: Move ELF parsing into scripts/elf-parse.[ch]
+      tracing: Add a tracepoint verification check at build time
+      tracepoint: Do not warn for unused event that is exported
+
+----
+ include/asm-generic/vmlinux.lds.h |   1 +
+ include/linux/tracepoint.h        |  12 +
+ kernel/trace/Kconfig              |  10 +
+ scripts/Makefile                  |   6 +
+ scripts/elf-parse.c               | 198 ++++++++++++++++
+ scripts/elf-parse.h               | 305 ++++++++++++++++++++++++
+ scripts/link-vmlinux.sh           |   4 +
+ scripts/sorttable.c               | 477 +++-----------------------------------
+ scripts/tracepoint-update.c       | 232 ++++++++++++++++++
+ 9 files changed, 802 insertions(+), 443 deletions(-)
+ create mode 100644 scripts/elf-parse.c
+ create mode 100644 scripts/elf-parse.h
+ create mode 100644 scripts/tracepoint-update.c
 
