@@ -1,80 +1,128 @@
-Return-Path: <linux-kernel+bounces-790605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790607-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABBC9B3AABC
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 21:19:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A8B6B3AAC0
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 21:20:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB3521C86D3E
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 19:19:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA1C0580BA6
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 19:20:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20C452036E9;
-	Thu, 28 Aug 2025 19:18:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 425D620013A;
+	Thu, 28 Aug 2025 19:20:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rnyknhac"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nbC/Jkf1"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77F5D2566;
-	Thu, 28 Aug 2025 19:18:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 581552566;
+	Thu, 28 Aug 2025 19:20:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756408727; cv=none; b=hmU/BgVvG98mDFN7LjHN77INXFkN0rCqk5cF8jo9Oatyp3ton/yoSn/iJB4rE4JIJLXPE6bdQfWq/nFgUUR4gJzEYEpbadax+Yu9oRMtai4DhZks9ndJNVf9lSicoG2oxmJ9/EpJa2X7vhL8/aiUWrfijrtR1xflJj7lL1uwdvI=
+	t=1756408802; cv=none; b=TLbnFrbvPdQEgq43rUKAoqzluGxtULZtIJDuuC7D1VbHbTIEXcIQ5CqVGJTdsjUhltDqhvtdFHfDUq80lliV6BArUAZHa2xFs4hQ7gpaTnbrN/eCfOgmJB6UErLarS9tPfCP/wJx22FB6EvGK/d13pX5zAAl28TZHHTT+5N6Gfc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756408727; c=relaxed/simple;
-	bh=LH6AezsFH2q8tyoFIG5AafkQxCdiqL+l8zIp+QJhOzc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N7laaTJCHsxR2CmkyN/oUFGM7tCy34OVUS1I+lN9gHdtrsL8CtLnIqdDcMoD59EiBS7mpribcg+vJZwKl053fb80JGqKscJ8JGQqL1FwI8iGudV4TEymslF1pCYYgMiwNrVm3oQ6iY0KiX3Ajn2JbEVAM16jbuYlw9AxamlwNQs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rnyknhac; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1ADEC4CEEB;
-	Thu, 28 Aug 2025 19:18:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756408727;
-	bh=LH6AezsFH2q8tyoFIG5AafkQxCdiqL+l8zIp+QJhOzc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rnyknhacP6qCuqPNt7MzsAqUyqUOhd65DLpkW8Hg0l1cWsNq91ANU7FCRFEJhxx5T
-	 dEkAYrIR6f4H4VKE+8d832o0ORHofu15vxzDPaZOQN8iQs8hqZZZZ0X0Unz25nc8TU
-	 GP5ORre0ZHC2VExTc1BX2RsFzAEIClWsM3x6ZQxgmxne3+ipFmsDr1+zY2qAzbF/YJ
-	 8+/6GH/qsLqbU1bd2Dv95bFPSSqOpfH7uIPrMXNEzsERcW31g/YOTxccWXnDEI/7mT
-	 yS86rv50XdeGbo9AH8CLZsbQsTkcFzXWx71zohNiv5YjSFE9s1hIOEJmGM//h+y1rH
-	 sta4Xws5OlFNA==
-Date: Thu, 28 Aug 2025 20:18:43 +0100
-From: Simon Horman <horms@kernel.org>
-To: Miaoqian Lin <linmq006@gmail.com>
-Cc: Karsten Keil <isdn@linux-pingi.de>, Laura Abbott <labbott@redhat.com>,
-	"David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mISDN: Fix memory leak in dsp_hwec_enable()
-Message-ID: <20250828191843.GH31759@horms.kernel.org>
-References: <20250828081457.36061-1-linmq006@gmail.com>
+	s=arc-20240116; t=1756408802; c=relaxed/simple;
+	bh=+Gb1pM2FWWlHFqIquLSo5LGWbYvDJRPv78VZs4wpMkU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=STb+cQXCv9WH8mCzt4dl5iqFii5MGR+vqcZLNUoeaeDl36UL31HbCkRMGhjlOotKTeIqxK67MNLPc+MShV76+6nI+V8eWHswEhWL2pxYMepuSR7cgcHf/cs7eXvx/Lk0HRcyzTNy534sRvyeT1Bd/WoESS3UWkO9g33vwGFJheE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nbC/Jkf1; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-770d7dafacdso1471289b3a.0;
+        Thu, 28 Aug 2025 12:20:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756408800; x=1757013600; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=rZbjfWviaulURxlkGSeLlj9jt8Nutzfq8t7eym7kFBU=;
+        b=nbC/Jkf1fzBB2C2/4nyzCMtX2L6+YqsMLAc9tDtkWtw4b+cGGaNPQMIVVK6dMe9zxM
+         4Lbmt6ufBgQcDJBn4tATbRXJgPqiCSa/NOwwFl/juDd+Jmn6wxpyZgVZlRi3fvzSdfH7
+         M2DSH7+lenrHKYTQWSFvJLluWcVabnVimRw3srHKgsI0J//BiXuOohlQv0v3tRDyBzYo
+         OulzfctkcKJA0zk+jht9LRf+Hpv/3f2bKW4DK8uz7dM2uVCdRaLlIWdV5x2T655AXBcv
+         sxB3Wqjd3IAJLg2OpAty4kkA09RMpywgtcWFF/UKINShxu6IuD3FJT4gvj7rVtkgggts
+         viNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756408800; x=1757013600;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rZbjfWviaulURxlkGSeLlj9jt8Nutzfq8t7eym7kFBU=;
+        b=TgJNJx2K3WtZ9M8TVdeDdRofsiVqgMjw7uKnIVQPNRvHohvtM4kV+cL/z5cz2+MSKn
+         LsJJvK56WymatXF0VH16qiP/47KQa2Yc5Q8dlHHzCX95lIwYkmDzeFJrJJuZfK8v5/iH
+         afIIUzEov0+4LWaUjH9LA5M5AzJt6JIVkUzFJrlGiDLj9pbEfzVzCcffwOwc7xOrtOYK
+         +wkHif9VqlIiTBiioSHOVyI8bcs1EtRiRUpSzlpepferSi1SYwhvgqwqS15nrCzmNR7a
+         WXbfx7K4tYQ+u5BCXc/3+naHGSDbDJg+Q/1ItvGzzyyzxfbvD6XGyhYvqnjlt2lMew0L
+         Qg0g==
+X-Forwarded-Encrypted: i=1; AJvYcCU1+n5kNyCFZTj85SNij08sXRiUD4nDVvqD7fY0WprjaVDuA7+A2jvGWTuuLHHaOlBsr4YKgY1+3EHz@vger.kernel.org, AJvYcCXs1yr3GzQuWj8AAL5xx6qF5z+XZQ9pI8QNg9wsm+q7HQIIi8QQTJytMhymNX7iRhMM6SzEAi/Bs2q0jAuc@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyx6WngYKz6itiu/y1U1/SoePnPdOMpl8MdjAhl5jUAVdhEx6Xx
+	lviAiRatV0uZP+V2cGLcJBt897rdbNiIzWA857PZ7tsa6N543xfjREzt
+X-Gm-Gg: ASbGncu6b9IDjFv1AvrOMA++stAId1L10d79bK+46giPGPcuIXIqPf5ydSYX61uoPTY
+	UWJAE1vsc2KDeLDc6p5+rl4U59aAW/1BatSuEdApQSHws0mPRieZZx7cwMFlluNam7V6FaZsbc1
+	na/oSqfprXj1vyMh287i5RM9Vr9ZHGS79tfmvyZZ2jvhEmbjigMbVNXjz9pOQki0sMoG8pfqbWy
+	+6FWKGQv+Kmn8RltQg4prFK4RUenFHcCSGr0vts2d9KRvN1FHS8YEQjXoVo673ocSdCMaiYeNp8
+	AFqncsPmgj9vCy0xvG8bcqG16ckrTovmGlVjxH2fEnW2ODo/5iprMR/gX+KWlTzrnsRkL9ndWJd
+	KiCZ6pQzguIjVVVNGefQ8MpkGxPNCn1rNFzwi5LtGhTBs+/RzECHvxtYECsy5KmN/a3c4Ko2+ow
+	==
+X-Google-Smtp-Source: AGHT+IFl0Y7QVNFLHZ4+59lfeBIT6/YxI9xoelqYIcxzWB8l82ikCQufFR5vCyV+4qWGUnp07K1Vxw==
+X-Received: by 2002:a05:6a00:a07:b0:76e:2eff:7ae9 with SMTP id d2e1a72fcca58-7702fa086d4mr31412743b3a.12.1756408800483;
+        Thu, 28 Aug 2025 12:20:00 -0700 (PDT)
+Received: from visitorckw-System-Product-Name.. ([140.113.216.168])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7722a4e1ca7sm194268b3a.71.2025.08.28.12.19.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Aug 2025 12:20:00 -0700 (PDT)
+From: Kuan-Wei Chiu <visitorckw@gmail.com>
+To: bp@alien8.de,
+	tony.luck@intel.com
+Cc: james.morse@arm.com,
+	mchehab@kernel.org,
+	rric@kernel.org,
+	shiju.jose@huawei.com,
+	jonathan.cameron@huawei.com,
+	jserv@ccns.ncku.edu.tw,
+	linux-edac@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Kuan-Wei Chiu <visitorckw@gmail.com>
+Subject: [PATCH] EDAC: Fix wrong executable file modes for C source files
+Date: Fri, 29 Aug 2025 03:19:54 +0800
+Message-Id: <20250828191954.903125-1-visitorckw@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250828081457.36061-1-linmq006@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Aug 28, 2025 at 04:14:57PM +0800, Miaoqian Lin wrote:
-> dsp_hwec_enable() allocates dup pointer by kstrdup(arg),
-> but then it updates dup variable by strsep(&dup, ",").
-> As a result when it calls kfree(dup), the dup variable may be
-> a modified pointer that no longer points to the original allocated
-> memory, causing a memory leak.
-> 
-> The issue is the same pattern as fixed in commit c6a502c22999
-> ("mISDN: Fix memory leak in dsp_pipeline_build()").
+Three EDAC source files were mistakenly marked as executable in
+commit 1e14ea901dc8 ("EDAC: Initialize EDAC features sysfs attributes").
 
-Thanks for noting this, it was quite helpful to me.
+These are plain C source files and should not carry the executable bit.
+Correcting their modes follows the principle of least privilege and
+avoids unnecessary execute permissions in the repository.
 
-> 
-> Fixes: 9a4381618262 ("mISDN: Remove VLAs")
-> Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
+Fixes: 1e14ea901dc8 ("EDAC: Initialize EDAC features sysfs attributes")
+Signed-off-by: Kuan-Wei Chiu <visitorckw@gmail.com>
+---
+ drivers/edac/ecs.c        | 0
+ drivers/edac/mem_repair.c | 0
+ drivers/edac/scrub.c      | 0
+ 3 files changed, 0 insertions(+), 0 deletions(-)
+ mode change 100755 => 100644 drivers/edac/ecs.c
+ mode change 100755 => 100644 drivers/edac/mem_repair.c
+ mode change 100755 => 100644 drivers/edac/scrub.c
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+diff --git a/drivers/edac/ecs.c b/drivers/edac/ecs.c
+old mode 100755
+new mode 100644
+diff --git a/drivers/edac/mem_repair.c b/drivers/edac/mem_repair.c
+old mode 100755
+new mode 100644
+diff --git a/drivers/edac/scrub.c b/drivers/edac/scrub.c
+old mode 100755
+new mode 100644
+-- 
+2.34.1
 
 
