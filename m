@@ -1,55 +1,79 @@
-Return-Path: <linux-kernel+bounces-789312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D9F6B393CB
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 08:32:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A4DDB393DD
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 08:34:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 028641BA35C3
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 06:32:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CBCB68618A
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 06:34:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3788E27B32F;
-	Thu, 28 Aug 2025 06:32:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A71A527816E;
+	Thu, 28 Aug 2025 06:34:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="cZrdyiRO"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 001DA17B425;
-	Thu, 28 Aug 2025 06:32:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="f6JqcjoN"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A6C117B425;
+	Thu, 28 Aug 2025 06:34:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756362739; cv=none; b=Q8H0UJDUWHtUh6wiZBIyFTuK2JCW9DqB08qq8lob39qCinfkffUJGed0biVOGEan7gQXMhULqBYEvrDlNZM401WUVTFqfbw6hKDJ+Jn0xPdMR5/7UDhcl7NtSUS16mPwPSE28HOB5LAtbwpyEpNVF4AtoS9iVg3WN5q21R70GQs=
+	t=1756362853; cv=none; b=YEN9jVYFrgZN1oGJrlBNqcB1K4s5z0COMZmvauC2Z9t1WIUm3NFUnWaspk1KSfQ9A6esUk/8JZsSeQu0Ua877zEwA197YFXssUH8PK96PRPP7nmvX8u3dC7Z2pfwDKFo+n/HbUZq6VTQdq65Jqv2I0O05bTlTrYFjGTlj8mfveI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756362739; c=relaxed/simple;
-	bh=7rhTBLdOBL1ZcmArUlm9G2/jw6VLrvN/y3W2MZXrteQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ErPUCMY05KpGXp4BPpCGYOZhhKjr+s9qmKjwcDMn3Dwnk+HbC1BHo2e9rMd4V07ZxuD8sxkv5Ia+pcy31X3OhTnx/ZNrLK/llN/rSNQlpPz5vkrZTpaYnAiyA8BE2MQE42DmaPDd4qkUQWSrVk8Mnjw0pZcY/mBTiRhlrW5kMbA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=cZrdyiRO; arc=none smtp.client-ip=117.135.210.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=h6
-	uansIoRh2ttY4nSptlrm8mbudszCdhTQg6STrAZIM=; b=cZrdyiRO3WARmTOoI+
-	tHSciq6R1WMYR0eFj1Q5BWy5grjDH5gVoe7Iq2sMMvIHcKl0aPA/w6h6uu2lbRPm
-	kDdTbhC0gdSprpJOC9COTRHYcX5ZCxjIOL+wnif1qpXzH757CXPb/YUdy1dpS3aP
-	q1qzVZXCoxk7JQuN7gacPffM8=
-Received: from zhaoxin-MS-7E12.. (unknown [])
-	by gzga-smtp-mtada-g0-1 (Coremail) with SMTP id _____wD3__jM969obuQnFA--.34403S2;
-	Thu, 28 Aug 2025 14:31:41 +0800 (CST)
-From: Xin Zhao <jackzxcui1989@163.com>
-To: willemdebruijn.kernel@gmail.com,
-	edumazet@google.com,
-	ferenc@fejes.dev
-Cc: davem@davemloft.net,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	horms@kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v8] net: af_packet: Use hrtimer to do the retire operation
-Date: Thu, 28 Aug 2025 14:31:40 +0800
-Message-Id: <20250828063140.2747329-1-jackzxcui1989@163.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1756362853; c=relaxed/simple;
+	bh=XXs7jk6xzSEBZU958NV6zlmgJxBqMpIrd5rXCKYwiQ8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=cwGs+OeIQ1WVhzrUkRyPwDzde4cEecz2HbRSoNac0W5xI8Gh2ULTRRJYiZOJ5HrtV5sl8yJimbm6Esm+3o7Hk6d6MvEjchkcZ3z3OMcXCGvOl72QqLJELYbG4ZyTh9Sanu2PuQ08QFLvRxDCKqIjTAmm9AOJtevEjeONBtsmX4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=f6JqcjoN; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: f8495da883d811f0b33aeb1e7f16c2b6-20250828
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=ULhWCMRnfloXSUOUb5D++K1tzuZ3+YXJYVeiwkdjmeI=;
+	b=f6JqcjoN6QKY3SrBy1St1yNmmlv8yJpC8apS75UVln/BaoZ2EKqBgYv0j6k1NA4opNEDt/HwCVagFd3+vsZ/38RrVJvWX16rdNtzuqR2OxTqO7oWuVjAcB0H5qJA0f38TCHmqqAD9KucZD5NxMDgn5CGkjoUmFziV1fp6JsBBuY=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.3,REQID:5d86f7b4-7348-4f7e-be94-79e9417123f9,IP:0,UR
+	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
+	elease,TS:0
+X-CID-META: VersionHash:f1326cf,CLOUDID:f777b26d-c2f4-47a6-876f-59a53e9ecc6e,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:-5,Content:0|15|50,EDM:-3,IP:
+	nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,L
+	ES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 2,SSN|SDN
+X-CID-BAS: 2,SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: f8495da883d811f0b33aeb1e7f16c2b6-20250828
+Received: from mtkmbs13n2.mediatek.inc [(172.21.101.108)] by mailgw02.mediatek.com
+	(envelope-from <paul-pl.chen@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1737505082; Thu, 28 Aug 2025 14:33:55 +0800
+Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
+ MTKMBS14N2.mediatek.inc (172.21.101.76) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.39; Thu, 28 Aug 2025 14:33:53 +0800
+Received: from mtksitap99.mediatek.inc (10.233.130.16) by
+ mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1258.39 via Frontend Transport; Thu, 28 Aug 2025 14:33:53 +0800
+From: Paul Chen <paul-pl.chen@mediatek.com>
+To: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+	<chunkuang.hu@kernel.org>, <angelogioacchino.delregno@collabora.com>
+CC: <matthias.bgg@gmail.com>, <p.zabel@pengutronix.de>,
+	<jason-jh.lin@mediatek.com>, <nancy.lin@mediatek.com>,
+	<singo.chang@mediatek.com>, <xiandong.wang@mediatek.com>,
+	<sirius.wang@mediatek.com>, <paul-pl.chen@mediatek.com>,
+	<sunny.shen@mediatek.com>, <fshao@chromium.org>, <treapking@chromium.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<dri-devel@lists.freedesktop.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-arm-kernel@lists.infradead.org>,
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>, Krzysztof Kozlowski
+	<krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 01/19] dt-bindings: arm: mediatek: mmsys: add compatible for MT8196
+Date: Thu, 28 Aug 2025 14:31:52 +0800
+Message-ID: <20250828063327.3475747-1-paul-pl.chen@mediatek.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,182 +81,55 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3__jM969obuQnFA--.34403S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW3GF1DAw13ZrW5Cr4DXw45Awb_yoW3Gw4Upa
-	y5Cry7Gwnrua10gr4xXwnrZr13uws8Ars8Grs5WFn3AF98KryfJay29ry5WFWSyFZxZrZr
-	Zr48J3y5A3Z5GrDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UHCJQUUUUU=
-X-CM-SenderInfo: pmdfy650fxxiqzyzqiywtou0bp/1tbiRwG3Cmiv8Bq5EgAAs9
+Content-Type: text/plain
 
-On Thu, 2025-08-28 at 5:53 +0800, Willem wrote:
+From: Nancy Lin <nancy.lin@mediatek.com>
 
-> > Changes in v8:
-> > - Delete delete_blk_timer field, as suggested by Willem de Bruijn,
-> >   hrtimer_cancel will check and wait until the timer callback return and ensure
-> >   enter enter callback again;
-> > - Simplify the logic related to setting timeout, as suggestd by Willem de Bruijn.
-> >   Currently timer callback just restarts itself unconditionally, so delete the
-> >  'out:' label, do not forward hrtimer in prb_open_block, call hrtimer_forward_now
-> >   directly and always return HRTIMER_RESTART. The only special case is when
-> >   prb_open_block is called from tpacket_rcv. That would set the timeout further
-> >   into the future than the already queued timer. An earlier timeout is not
-> >   problematic. No need to add complexity to avoid that.
-> 
-> This simplifies the timer logic tremendously. I like this direction a lot.
+In previous SoCs, a single HW pipeline was an independent mmsys,
+which included the OVL module, PQ module, and display interface
+module.
 
-Thanks. :)
+In the 8196, to increase the flexibility of pipeline connection
+and control, the OVL module on a single HW pipeline was separated
+into two mmsys, namely ovlsys0 and ovlsys1. The PQ module was also
+separated into a dispsys0, and the display interface module was
+separated into a dispsys1. Additionally, display power-related
+settings are controlled through vdiso-ao.
 
-> 
-> >  static void prb_setup_retire_blk_timer(struct packet_sock *po)
-> > @@ -603,9 +592,10 @@ static void prb_setup_retire_blk_timer(struct packet_sock *po)
-> >  	struct tpacket_kbdq_core *pkc;
-> > 
-> >  	pkc = GET_PBDQC_FROM_RB(&po->rx_ring);
-> > -	timer_setup(&pkc->retire_blk_timer, prb_retire_rx_blk_timer_expired,
-> > -		    0);
-> > -	pkc->retire_blk_timer.expires = jiffies;
-> > +	hrtimer_setup(&pkc->retire_blk_timer, prb_retire_rx_blk_timer_expired,
-> > +		      CLOCK_MONOTONIC, HRTIMER_MODE_REL_SOFT);
-> > +	hrtimer_start(&pkc->retire_blk_timer, pkc->interval_ktime,
-> > +		      HRTIMER_MODE_REL_SOFT);
-> 
-> Since this is only called from init_prb_bdqc, we can further remove
-> this whole function and move the two hrtimer calls to the parent.
+For example:
+The primary path and external path of the display both use
+ovlsys0 -> dispsys0 -> dispsys1, forming a pipeline.
 
-Okay, I will move hrtimer_setup and hrtimer_start into init_prb_bdqc in PATCH v9.
+The third path of the display uses ovlsys1 -> dispsys0 -> dispsys1,
+forming another pipeline.
 
-I do not move the prb_shutdown_retire_blk_timer into packet_set_ring either, because
-in packet_set_ring, there is no existing pointer for tpacket_kbdq_core. If move the
-logic of prb_shutdown_retire_blk_timer into packet_set_ring, we need to add the
-tpacket_kbdq_core pointer conversion logic in packet_set_ring, I think it is not
-necessary.
+Therefore, the 8196 needs to add 5 compatible string to support
+mmsys for MT8196.
 
-> >  }
-> > 
-> >  static int prb_calc_retire_blk_tmo(struct packet_sock *po,
-> > @@ -672,11 +662,10 @@ static void init_prb_bdqc(struct packet_sock *po,
-> >  	p1->last_kactive_blk_num = 0;
-> >  	po->stats.stats3.tp_freeze_q_cnt = 0;
-> >  	if (req_u->req3.tp_retire_blk_tov)
-> > -		p1->retire_blk_tov = req_u->req3.tp_retire_blk_tov;
-> > +		p1->interval_ktime = ms_to_ktime(req_u->req3.tp_retire_blk_tov);
-> >  	else
-> > -		p1->retire_blk_tov = prb_calc_retire_blk_tmo(po,
-> > -						req_u->req3.tp_block_size);
-> > -	p1->tov_in_jiffies = msecs_to_jiffies(p1->retire_blk_tov);
-> > +		p1->interval_ktime = ms_to_ktime(prb_calc_retire_blk_tmo(po,
-> > +						req_u->req3.tp_block_size));
-> >  	p1->blk_sizeof_priv = req_u->req3.tp_sizeof_priv;
-> >  	rwlock_init(&p1->blk_fill_in_prog_lock);
-> > 
-> > @@ -686,16 +675,6 @@ static void init_prb_bdqc(struct packet_sock *po,
-> >  	prb_open_block(p1, pbd);
-> >  }
-> > 
-> > -/*  Do NOT update the last_blk_num first.
-> > - *  Assumes sk_buff_head lock is held.
-> > - */
-> > -static void _prb_refresh_rx_retire_blk_timer(struct tpacket_kbdq_core *pkc)
-> > -{
-> > -	mod_timer(&pkc->retire_blk_timer,
-> > -			jiffies + pkc->tov_in_jiffies);
-> > -	pkc->last_kactive_blk_num = pkc->kactive_blk_num;
-> 
-> last_kactive_blk_num is now only updated on prb_open_block. It still
-> needs to be updated on each timer callback? To see whether the active
-> block did not change since the last callback.
+Signed-off-by: Nancy Lin <nancy.lin@mediatek.com>
+Signed-off-by: Paul-pl Chen <paul-pl.chen@mediatek.com>
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ .../devicetree/bindings/arm/mediatek/mediatek,mmsys.yaml     | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-Since prb_open_block is executed once during the initialization, after initialization,
-both last_kactive_blk_num and kactive_blk_num have the same value, which is 0. After
-initialization, if the value of kactive_blk_num remains unchanged, it is meaningless
-to assign the value of kactive_blk_num to last_kactive_blk_num. I searched through
-all the places in the code that can modify kactive_blk_num, and found that there is
-only one place, which is in prb_close_block. This means that after executing
-prb_close_block, we need to update last_kactive_blk_num at the corresponding places
-where it should be updated. Since I did not modify this logic under the tpacket_rcv
-scenario, I only need to check the logic in the hrtimer callback.
-
-Upon inspection, I did find an issue. When tpacket_rcv calls __packet_lookup_frame_in_block,
-it subsequently calls prb_retire_current_block, which in turn calls prb_close_block,
-resulting in an update to kactive_blk_num. After executing prb_retire_current_block,
-function __packet_lookup_frame_in_block calls prb_dispatch_next_block, it may not
-execute prb_open_block. If prb_open_block is not executed, this will lead to an
-inconsistency between last_kactive_blk_num and kactive_blk_num. At this point, the
-hrtimer callback will check whether pkc->last_kactive_blk_num == pkc->kactive_blk_num,
-which will evaluate to false, thus causing the current logic to differ from the original
-logic. However, at this time, it is still necessary to update last_kactive_blk_num.
-
-On the other hand, I also carefully checked the original implementation of
-prb_retire_rx_blk_timer_expired and found that in the original hrtimer callback,
-last_kactive_blk_num is updated in all cases. Therefore, I need to perform this update
-before exiting the sk_receive_queue lock.
-
-In addition, in PATCH v9, I will also remove the refresh_timer label and change the only
-instance where goto is used, to an if-else implementation, so that the 'refresh_timer:'
-label is no longer needed.
-
-The new implementation of prb_retire_rx_blk_timer_expired:
-
-static enum hrtimer_restart prb_retire_rx_blk_timer_expired(struct hrtimer *t)
-{
-	struct packet_sock *po =
-		timer_container_of(po, t, rx_ring.prb_bdqc.retire_blk_timer);
-	struct tpacket_kbdq_core *pkc = GET_PBDQC_FROM_RB(&po->rx_ring);
-	unsigned int frozen;
-	struct tpacket_block_desc *pbd;
-
-	spin_lock(&po->sk.sk_receive_queue.lock);
-
-	frozen = prb_queue_frozen(pkc);
-	pbd = GET_CURR_PBLOCK_DESC_FROM_CORE(pkc);
-
-	/* We only need to plug the race when the block is partially filled.
-	 * tpacket_rcv:
-	 *		lock(); increment BLOCK_NUM_PKTS; unlock()
-	 *		copy_bits() is in progress ...
-	 *		timer fires on other cpu:
-	 *		we can't retire the current block because copy_bits
-	 *		is in progress.
-	 *
-	 */
-	if (BLOCK_NUM_PKTS(pbd)) {
-		/* Waiting for skb_copy_bits to finish... */
-		write_lock(&pkc->blk_fill_in_prog_lock);
-		write_unlock(&pkc->blk_fill_in_prog_lock);
-	}
-
-	if (pkc->last_kactive_blk_num == pkc->kactive_blk_num) {
-		if (!frozen) {
-			if (BLOCK_NUM_PKTS(pbd)) {
-				/* Not an empty block. Need retire the block. */
-				prb_retire_current_block(pkc, po, TP_STATUS_BLK_TMO);
-				prb_dispatch_next_block(pkc, po);
-			}
-		} else {
-			/* Case 1. Queue was frozen because user-space was
-			 *	   lagging behind.
-			 */
-			if (!prb_curr_blk_in_use(pbd)) {
-			       /* Case 2. queue was frozen,user-space caught up,
-				* now the link went idle && the timer fired.
-				* We don't have a block to close.So we open this
-				* block and restart the timer.
-				* opening a block thaws the queue,restarts timer
-				* Thawing/timer-refresh is a side effect.
-				*/
-				prb_open_block(pkc, pbd);
-			}
-		}
-	}
-
-	pkc->last_kactive_blk_num = pkc->kactive_blk_num;
-	hrtimer_forward_now(&pkc->retire_blk_timer, pkc->interval_ktime);
-	spin_unlock(&po->sk.sk_receive_queue.lock);
-	return HRTIMER_RESTART;
-}
-
-
-Thanks
-Xin Zhao
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.yaml b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.yaml
+index 3f4262e93c78..5f244a8f6a47 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.yaml
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.yaml
+@@ -39,6 +39,11 @@ properties:
+               - mediatek,mt8195-vdosys1
+               - mediatek,mt8195-vppsys0
+               - mediatek,mt8195-vppsys1
++              - mediatek,mt8196-dispsys0
++              - mediatek,mt8196-dispsys1
++              - mediatek,mt8196-ovlsys0
++              - mediatek,mt8196-ovlsys1
++              - mediatek,mt8196-vdisp-ao
+               - mediatek,mt8365-mmsys
+           - const: syscon
+ 
+-- 
+2.45.2
 
 
