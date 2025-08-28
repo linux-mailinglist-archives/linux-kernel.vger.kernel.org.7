@@ -1,152 +1,133 @@
-Return-Path: <linux-kernel+bounces-789936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03889B39CE8
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 14:20:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4114EB39CF7
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 14:21:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6CCE3BCF2A
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 12:20:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0418F1C8332D
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 12:20:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1E8A30FC20;
-	Thu, 28 Aug 2025 12:19:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E79C30F950;
+	Thu, 28 Aug 2025 12:19:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="uCgKNvwH"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O4Wem/hC"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D824C14A4DB;
-	Thu, 28 Aug 2025 12:19:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82FAC30F533;
+	Thu, 28 Aug 2025 12:19:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756383551; cv=none; b=dB0b1opLYyvKyhJQwWXq5zFj9UtgqUlTtinPY+19OeYhBDJumox7bEUAnZLfpYIQsecCJC7FiXSxFxsHgCKX8rWsE8pH8P1OVhppXOLD4a1hHNnoN7LEGY3s3ovdXGlyOq5DqvJrqNja6/cz5Kwc9kR7Hlov3SVLyCG7C4awt4o=
+	t=1756383552; cv=none; b=XhNNjCGys9l7IQKOkocEE/9lV6Cff3vYZhf0F4NTrMknMenXL9QmDKZ9hH+I/i8vpubcviykvtL5f5b9OyEiaUElLSgBRr5QwOw3QDjE4tsUADt6nOAdpuPjq3wWdrOXnEfJhnmZM7HhnR/vM00QyRw8ybKeNNnhCtuz+UVeCL4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756383551; c=relaxed/simple;
-	bh=ccpa80jN/iMnUOp1zdyvmwWqvlXwzc3tg8RBfAhf8iU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VigoTyKDON4xcGNWkYuN98YwObPuF2UMXqfNyalki5Xxa9WmyfKaSvmDeJbKB0IWSufM7Tthf4Iebvum00XhUK3vk7e57HO1JkkT8+2wCh9Og2JDiCTPh8r5KzDBRwsfPnGch4UAa6rf7aCfZrMTKF7CQs4PMzFtyjakEMejmNk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=uCgKNvwH; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
-	bh=gRhjEBrevYYfktmYdx+YKcry9xJxHMto6KG5iP6elAE=; b=uCgKNvwHN4Qm9UCbBdv+J4UNw8
-	ncy3IW3c63C2jS60Brsl3Ew8ECK6sFq1KxS0SBwam+tzQu+R11/NrUFUAbi+V6e/GSgIGWCevOFtc
-	KiO4xdtiWcayAN+5IGdiO2cO9/Z5bs8JDuqn9Jycf2aWrzQlbeXyRQQvIR9MxIzlr6uqQTt+j6NH2
-	EmNuI39YK4f1yfzA54Puy52LikT4a7gAaUEWyjsHIQChJCSN01GUsqAQNeclaxLJj0jMIpDFMxzAZ
-	W5ea7x2H+niHckX61ns3OCw7/4sN2wxVfM3Y+oZj6M2/10UD5H9hEsIL6ykk6JnZJhmYD/ikuFDxu
-	Jf4DvZoA==;
-Received: from [185.205.242.134] (helo=phil.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1urbai-0007hz-0a; Thu, 28 Aug 2025 14:18:56 +0200
-From: Heiko Stuebner <heiko@sntech.de>
-To: Thomas Zimmermann <tzimmermann@suse.de>,
- Maxime Ripard <mripard@kernel.org>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
- Andy Yan <andyshrk@163.com>, hjc@rock-chips.com, naoki@radxa.com,
- stephen@radxa.com, cristian.ciocaltea@collabora.com,
- neil.armstrong@linaro.org, Laurent.pinchart@ideasonboard.com,
- yubing.zhang@rock-chips.com, krzk+dt@kernel.org, devicetree@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
- robh@kernel.org, sebastian.reichel@collabora.com,
- Andy Yan <andy.yan@rock-chips.com>
-Subject: Re: [PATCH v7 00/10] Add support for RK3588 DisplayPort Controller
-Date: Thu, 28 Aug 2025 14:18:55 +0200
-Message-ID: <6614832.V25eIC5XRa@phil>
-In-Reply-To: <20250828-tangible-wakeful-coati-ec27d1@houat>
-References:
- <20250822063959.692098-1-andyshrk@163.com>
- <d040da3e-501f-45d8-bcbb-95fa77e94a59@suse.de>
- <20250828-tangible-wakeful-coati-ec27d1@houat>
+	s=arc-20240116; t=1756383552; c=relaxed/simple;
+	bh=9sw4X+qUd8JUdWsAC1P/xLMNchdiZnhRop75D3e2gDs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=EL97NMY+0mDouGOYYSV3QtmDjh3lMXoTW9fZpQF8fHvdALJLsvc/KgiYWND9EG+duyy4Hn2EZempm08sqvK9nN/F4GJXaiETSdgVU79BQ21hc1/i5BzrJ3Ff0bVlBshiODjkBLNUlZAP0irGhtr4vp0E+brj26+UapxMIq4gls4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O4Wem/hC; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-77033293ed8so806761b3a.0;
+        Thu, 28 Aug 2025 05:19:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756383551; x=1756988351; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=0Zp4VYS8itoLdeTelGLKi9B3V/A9JQoltmcgrd+WL9Y=;
+        b=O4Wem/hCXhf78dpyCArKA6u++m3+3pt6jhls275EpCDQCcKkEdfKzG94byTzYaVRI5
+         Obcof8kLuVA3OED5KptvEmt37YqRWj8sizatcc+qsR9DoC8KEd9Pf/IdHnB3s9edXn9C
+         ypxlDk/WNw/bZExjIhSfOEMXQks/31JFgvDAWdbrpvZAnpH3x+qOgqciiMUPJlSgJIHA
+         JUVlAiptWutt0aLaL23FC+XCFMOtC+tgEZbxSIfKLQez7VJDj4DWm2YrLLEQYUK/R2YW
+         48Zs45KsJzM7Fr0z2L/O2XF9SsmVhEf+qTa2j8yzRBUXw2tZs6PQsgE134OEG1PaumaV
+         TpxQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756383551; x=1756988351;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0Zp4VYS8itoLdeTelGLKi9B3V/A9JQoltmcgrd+WL9Y=;
+        b=h3OjU87vZT8pNNcWUddt/X7GaXp3EjYYG2L+Hootn6NP0lt+betWkHT62KUTO2yMrF
+         6eNf448xYgOsCSucpkXox4HmrbfoiiojORla9PRtlAAdm0NspP7WOtDxT21G3MA9iBVu
+         6TBOHwkbFhvepIcbqn6Ubo0VU2cSoDG2u02AOJwDunFteJEFfr0eOMak5ijCT0POr/5Y
+         JW49L7vw3L6s3JMCcvh4jEp7Vf5em3AwOAAZQ29jlHURccPJVYakTr8mMZJjRSa5OgBk
+         ow5KMiWO14BaBDtkY9hWag0M9ADVfQPxjo1+KyFK5ZX19ngB9n258TpJK2M7XcHBdqN8
+         kIOA==
+X-Forwarded-Encrypted: i=1; AJvYcCUu5JwoThJKBI96TeRp41iME2XGKQwnxLLQR5zAv2eXzbhyRs/8ONCcxm9H9XxCpINnKc3VymYS@vger.kernel.org, AJvYcCVabPnATDW7ypzGnctvN/wpdysQrp3Gt22TIBgR8YpP6z0D0zZNl8L3b/MBtfQ1URK033pBkTMwPxR6CLc=@vger.kernel.org, AJvYcCXIzYm8sTNqAD+TfaW+zHxqFcI/hz3VKfAwubzj0GP/+F4kkfscFBB+ZIXYokNN7r3iqyKxA2qiPAH5Rg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVum55zqagSOd6qM0eAEutcqGIhDAd9ZbIh6/1teOucFhjACuD
+	kLchSWJgfiCY7t0ksv3BiaLeKl+Z6/PqzBLrUKKV3eZT8SZMB2AWTUoj
+X-Gm-Gg: ASbGncvO4lS9NPSAsL60iaVY68etOqGjHpkE5l4xNXjtFOqvruLWBM+96oTZUG5O8DA
+	YjNCG0sToNeA9pIySjyVK4sTA5ojG2bLtOsXrmLKIt6mD8KhFtZL5gZ4yi7YftWjMIVhrdrjSpe
+	bhl77rus1dazLbNZEwIxfsPp0PuBIMlE4LPBAPy7a8aLDyHbSZlDUeADLr8dsvLf154EV5/i/Vw
+	C6cWn7KnQHxwLjgg0j/QUlL2vcPhhIpPWhB+d9Fd1+hDCQ8l9gOtexPbCyfss5yQuwJ3ZvL8Luh
+	jy7E+vCjOF9loq1h5uxHh2ys6lKDjxZgFNHWes+q2TtOpFiKL1Rwn1CIMwh9dX7NOKBJqjYnm30
+	lU4IVqRscwZH4kEpDHf1LcNoucrqpPKDdicnh4ndX0xo16k8OT0N0I4SXaz0yexbrOX+dYsB5fC
+	Ke
+X-Google-Smtp-Source: AGHT+IHEe4FLByihqr9w/1GzWFbbPnWny/7RgwyYCkPFEmkn/72HVrjrD5CJ72uVORV4OF0Fjru4oQ==
+X-Received: by 2002:a05:6a00:84e:b0:770:5683:cc58 with SMTP id d2e1a72fcca58-7705683cd5emr20974700b3a.25.1756383550556;
+        Thu, 28 Aug 2025 05:19:10 -0700 (PDT)
+Received: from localhost.localdomain ([112.97.57.188])
+        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-770b5bed408sm12199218b3a.18.2025.08.28.05.19.05
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Thu, 28 Aug 2025 05:19:10 -0700 (PDT)
+From: Miaoqian Lin <linmq006@gmail.com>
+To: Tariq Toukan <tariqt@nvidia.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org,
+	linux-rdma@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: linmq006@gmail.com
+Subject: [PATCH v3] eth: mlx4: Fix IS_ERR() vs NULL check bug in mlx4_en_create_rx_ring
+Date: Thu, 28 Aug 2025 20:18:58 +0800
+Message-Id: <20250828121858.67639-1-linmq006@gmail.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-Am Donnerstag, 28. August 2025, 10:05:28 Mitteleurop=C3=A4ische Sommerzeit =
-schrieb Maxime Ripard:
-> On Thu, Aug 28, 2025 at 09:50:34AM +0200, Thomas Zimmermann wrote:
-> > Hi
-> >=20
-> > Am 28.08.25 um 00:24 schrieb Dmitry Baryshkov:
-> > > On Fri, Aug 22, 2025 at 02:39:44PM +0800, Andy Yan wrote:
-> > > > From: Andy Yan <andy.yan@rock-chips.com>
-> > > >=20
-> > > >=20
-> > > > There are two DW DPTX based DisplayPort Controller on rk3588 which
-> > > > are compliant with the DisplayPort Specification Version 1.4 with
-> > > > the following features:
-> > > >=20
-> > > > * DisplayPort 1.4a
-> > > > * Main Link: 1/2/4 lanes
-> > > > * Main Link Support 1.62Gbps, 2.7Gbps, 5.4Gbps and 8.1Gbps
-> > > > * AUX channel 1Mbps
-> > > > * Single Stream Transport(SST)
-> > > > * Multistream Transport (MST)
-> > > > * Type-C support (alternate mode)
-> > > > * HDCP 2.2, HDCP 1.3
-> > > > * Supports up to 8/10 bits per color component
-> > > > * Supports RBG, YCbCr4:4:4, YCbCr4:2:2, YCbCr4:2:0
-> > > > * Pixel clock up to 594MHz
-> > > > * I2S, SPDIF audio interface
-> > > >=20
-> > > > The current version of this patch series only supports basic displa=
-y outputs.
-> > > > I conducted tests with DP0 in 1080p and 4K@60 YCbCr4:2:0 modes; the=
- ALT/Type-C
-> > > > mode was tested on Rock 5B, DP1 was tested on Rock 5 ITX by Stephen=
- and Piotr.
-> > > > HDCP and audio features remain unimplemented.
-> > > > For RK3588, it's only support SST, while in the upcoming RK3576, it=
- can support
-> > > > MST output.
-> > > >=20
-> > > [skipped changelog]
-> > >=20
-> > > > Andy Yan (10):
-> > > >    dt-bindings: display: rockchip: Add schema for RK3588 DPTX Contr=
-oller
-> > > >    drm/bridge: synopsys: Add DW DPTX Controller support library
-> > > >    drm/rockchip: Add RK3588 DPTX output support
-> > > >    MAINTAINERS: Add entry for DW DPTX Controller bridge
-> > > I tried pushing patches 1-4, but got the following error:
-> > >=20
-> > > dim: ERROR: 5a68dcf5837a ("MAINTAINERS: Add entry for DW DPTX Control=
-ler bridge"): Mandatory Maintainer Acked-by missing., aborting
-> > >=20
-> > > I'm not sure how to handle MAINTAINERS changes (or whether it's fine =
-for
-> > > me or not), so I will probably push patches 1-3 in a few days, if nob=
-ody
-> > > beats me (or unless somebody points out a correct process for
-> > > MAINTAINERS changes).
-> >=20
-> > That warning has been added recently to make sure that patches do not g=
-et in
-> > without sufficient review. It's overly pedantic, though.
->=20
-> It's not "overly pedantic", it follows the contribution rules. I'd argue
-> that, if anything, we've been overly tolerant with that kind of
-> practices.
->=20
-> We do have a bug with handling MAINTAINERS changes at the moment. But
-> everything else shouldn't be ignored: either patch MAINTAINERS to
-> reflect the actual contribution path, or get the maintainers Ack.
+Replace NULL check with IS_ERR() check after calling page_pool_create()
+since this function returns error pointers (ERR_PTR).
+Using NULL check could lead to invalid pointer dereference.
 
-$ scripts/get_maintainer.pl MAINTAINERS
-linux-kernel@vger.kernel.org (open list)
+Fixes: 8533b14b3d65 ("eth: mlx4: create a page pool for Rx")
+Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
+----
+Changes in v3:
+- fix IS_ERR
+Changes in v2:
+- use err = PTR_ERR(ring->pp);
+v1 link: https://lore.kernel.org/all/20250805025057.3659898-1-linmq006@gmail.com
+v2 link: https://lore.kernel.org/all/20250828065050.21954-1-linmq006@gmail.com
+---
+ drivers/net/ethernet/mellanox/mlx4/en_rx.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-MAINTAINERS does not have a maintainer though, to Ack a patch changing it
-
+diff --git a/drivers/net/ethernet/mellanox/mlx4/en_rx.c b/drivers/net/ethernet/mellanox/mlx4/en_rx.c
+index 92a16ddb7d86..13666d50b90f 100644
+--- a/drivers/net/ethernet/mellanox/mlx4/en_rx.c
++++ b/drivers/net/ethernet/mellanox/mlx4/en_rx.c
+@@ -267,8 +267,10 @@ int mlx4_en_create_rx_ring(struct mlx4_en_priv *priv,
+ 	pp.dma_dir = priv->dma_dir;
+ 
+ 	ring->pp = page_pool_create(&pp);
+-	if (!ring->pp)
++	if (IS_ERR(ring->pp)) {
++		err = PTR_ERR(ring->pp);
+ 		goto err_ring;
++	}
+ 
+ 	if (xdp_rxq_info_reg(&ring->xdp_rxq, priv->dev, queue_index, 0) < 0)
+ 		goto err_pp;
+-- 
+2.39.5 (Apple Git-154)
 
 
