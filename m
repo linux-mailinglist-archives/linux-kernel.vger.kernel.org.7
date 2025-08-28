@@ -1,181 +1,167 @@
-Return-Path: <linux-kernel+bounces-789008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9CB4B38F97
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 02:07:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F1E7B38FA4
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 02:14:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B469D189CC27
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 00:07:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2753D460337
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 00:14:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B00318E3F;
-	Thu, 28 Aug 2025 00:07:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA5BE28DB3;
+	Thu, 28 Aug 2025 00:14:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pEOrfLvE"
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="ko6VF2kA"
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED4A7101DE
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 00:07:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A218A23CB;
+	Thu, 28 Aug 2025 00:14:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756339635; cv=none; b=bJKJE0N6NBxrm1teDMX7aieYyzjgwRtk1dlKWRskHQjXmtK12IDDb905tKJ44YuCAj72Ek3DGeAXtTRASmpkG7UMusuRbZpwpCW80hm6nGEgY6huJYHd61z/3ngFta+ipOJ6jj/GJCZ4364Ajx1iFwIt2e9smpk8CdqkkuHRDds=
+	t=1756340074; cv=none; b=pMLh8QZeM04j6tK1apKoBvWquaUcLR/bvwR1XfCDhKU6vNz1sNbpSewrV6C5M/NbAETFJnDoQZWHgtxb6aLvWS8os15of97QmO4mQ/sQIKS+Hi147OTww2/yC69o+PezTMjhaKoJR5l+bcXC1gX+wKvP88bmClQj23kemtSQhZ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756339635; c=relaxed/simple;
-	bh=EKG1cKzLKUKkjt9t7eG2R6R8dZd2IX10aS64SIZ7J1s=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=PU2RNfviLHlGMNQp9QVd+Wyvmv458u4ZZqYTTViXL73sqmyqhVpk6b3WfNElRCvgGUFsX68TIOeN9QLfuP8iMU0b4AcObDS6CpBxoCGQccY+YLulbU8UGaM4WI0HIyjl0HWMAQQ+tyh7K73hlcMrPF83CDE49OzC8+CaynOl0Lo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pEOrfLvE; arc=none smtp.client-ip=209.85.210.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-7720ac7c788so315115b3a.3
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 17:07:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756339633; x=1756944433; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=t579SF/wnMrFK0E/9c31FaYDCwaoHad3snclUWLCz6M=;
-        b=pEOrfLvEG+tA9aBtoX3JCX4cTyDzZ4jRCFcoCv0UmE6J50Me+QuqdqsL3rvq6H87Fd
-         at/ct0mVLB+xuM9LkQQJUy5Kg4FDBqsjfU9rIzv/oSmTRt7oa9/u5k7XlYMG+kbZCtFE
-         4nu7AP8zB4/GgEwH0gZzVBni+NgiU6crkVvF/f25+QOVfgAb7hFL0CQiHFd9AJouzhL5
-         zG0XhSd5A2GtGhWva52o7vnwN+Pvxl5bz8WpW0utAnGue9zB1oz8obDlI/VeVBkpVkxN
-         YGtywCWOMC22SO56GVboqe17O7gtlBafbRA8g7K9qKZHGlgjVJ6kblItR1MSBw7KIDw5
-         r9fQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756339633; x=1756944433;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=t579SF/wnMrFK0E/9c31FaYDCwaoHad3snclUWLCz6M=;
-        b=hKz8dvy5xXadbFLv6/2S8n+Pu17Q+ep66tb7S15BUQOkzeoafojsakm9F6aeJ7HAkX
-         C7OSH9AduTXt4IlI9qaMMpFiQSEtIZPDw7exRhXsxo1ihrARI6vwEE9lj73Hl3l+/bnp
-         +7dkjMYRYf1diT8hkSnoFvAFrk1rN8cDh+ORihCodca0SBJl5/am7k3xCJLLND84GOCw
-         YBXXOeZV7xQVdYhHxUYMLIYyk/bEzroVEBAbWxVrc0HTKs7vEX6KlteAcQ8mcAtFxwuq
-         G1idSNr7K+Vm7YKQ3KrRQQanR/QL7X19sKyuBoEphzhwe2Lt3Sic+rn4ZiLNxoySY0M1
-         35DQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWV477HfNZnlh9QDOahuYbtuhXgn9ymCFxEmHbUiJ7wus9LQDwt08T9jd5ZAjj3KepPMlkCDv8ycMs6UXs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YytknU2deaR9TFpwNYT+LqGPRD+OvzyehuPZ1OaNsUk2KZHZ9QF
-	BHTBvQsmyoQdoBINN0qgDmG2pCGQ+sZmeJoqeCFL8IoQTwQTypLHdxuj2ordPMqGl2xiIy40YIt
-	p+uD3qg==
-X-Google-Smtp-Source: AGHT+IETLC27C6TI91VObBy0J9hrR5myKvHDcaHo0xSKLRonIs5n9tEC5WogkS6LO7SOJpU1fDydbpJ3DGk=
-X-Received: from pgdo2.prod.google.com ([2002:a63:9202:0:b0:b4c:40fc:9518])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:7286:b0:243:ae10:2433
- with SMTP id adf61e73a8af0-243ae1026c0mr944532637.40.1756339633137; Wed, 27
- Aug 2025 17:07:13 -0700 (PDT)
-Date: Wed, 27 Aug 2025 17:07:11 -0700
-In-Reply-To: <aKc61y0_tvGLmieC@google.com>
+	s=arc-20240116; t=1756340074; c=relaxed/simple;
+	bh=vR+P7v6+Ct20eU7awFHLXQjrBuYS+LxOz2wJgbna1rE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hy14mTVsFcg9fPAqD0Q4da7GP2ZCQMDLtiu0otgCLIUvUd95b/jRXvfqNaHF9wKi94rNDl4nDdDhkjtGLzX+BPB/we7UbL4x+cLs6HUnQCD5ooDeNmfgl1QTxYdRVVTn+te4ofnm6fDZ67+7VZVyJT7Bucof3JFapXXtQTmlwnk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=ko6VF2kA; arc=none smtp.client-ip=80.241.56.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4cC22W3nCMz9tSp;
+	Thu, 28 Aug 2025 02:14:27 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
+	t=1756340067;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7PK3Ez1Rfnej7jNOPYQs5y3Mm6w6Khoe08rct6ODjuA=;
+	b=ko6VF2kAjcFV7/loAFG3DijKDdEZnWAtqyqZx+AM6VAnZjb1ZghYykty/sdRM4Z84qHq7G
+	Vt+lgdCqKZkwdNjUQkGH5Tt3q5zsG5t9TFRidcCvLdRy93pl5L1y1mPIyvpYl7/XsyvEPb
+	4W1bn1ZNCnyPWikIrT9pwa/G8ySTKhRBr0b7NM90oYn2k3dqdpgtl03kgYZ4Gsl9Q5OjYE
+	RXyIhGD8eglc5O/AnEurlOOObC5p660YfCXGnUfjHpYiAhlJL+eqcidEw+p9UgJKIsiw5m
+	rCTYOh5LQf2S3+nhRH2KFDc577NbG8zpFjrFhqYk3dqXKSejYKBBmEYjhSaBFw==
+Authentication-Results: outgoing_mbo_mout;
+	dkim=none;
+	spf=pass (outgoing_mbo_mout: domain of cyphar@cyphar.com designates 2001:67c:2050:b231:465::202 as permitted sender) smtp.mailfrom=cyphar@cyphar.com
+Date: Thu, 28 Aug 2025 10:14:00 +1000
+From: Aleksa Sarai <cyphar@cyphar.com>
+To: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+Cc: Christian Brauner <brauner@kernel.org>, 
+	Al Viro <viro@zeniv.linux.org.uk>, Kees Cook <keescook@chromium.org>, 
+	Paul Moore <paul@paul-moore.com>, Serge Hallyn <serge@hallyn.com>, 
+	Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Christian Heimes <christian@python.org>, Dmitry Vyukov <dvyukov@google.com>, 
+	Elliott Hughes <enh@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
+	Florian Weimer <fweimer@redhat.com>, Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Jordan R Abrahams <ajordanr@google.com>, 
+	Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, Luca Boccassi <bluca@debian.org>, 
+	Matt Bobrowski <mattbobrowski@google.com>, Miklos Szeredi <mszeredi@redhat.com>, 
+	Mimi Zohar <zohar@linux.ibm.com>, Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>, 
+	Robert Waite <rowait@microsoft.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
+	Scott Shell <scottsh@microsoft.com>, Steve Dower <steve.dower@python.org>, 
+	Steve Grubb <sgrubb@redhat.com>, kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org
+Subject: Re: [RFC PATCH v1 0/2] Add O_DENY_WRITE (complement AT_EXECVE_CHECK)
+Message-ID: <2025-08-27-obscene-great-toy-diary-X1gVRV@cyphar.com>
+References: <20250822170800.2116980-1-mic@digikod.net>
+ <20250826-skorpion-magma-141496988fdc@brauner>
+ <20250826.aig5aiShunga@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <550a730d-07db-46d7-ac1a-b5b7a09042a6@linux.intel.com>
- <aIeX0GQh1Q_4N597@google.com> <ad616489-1546-4f6a-9242-a719952e19b6@linux.intel.com>
- <CAGtprH9EL0=Cxu7f8tD6rEvnpC7uLAw6jKijHdFUQYvbyJgkzA@mail.gmail.com>
- <20641696-242d-4fb6-a3c1-1a8e7cf83b18@linux.intel.com> <697aa804-b321-4dba-9060-7ac17e0a489f@linux.intel.com>
- <aKYMQP5AEC2RkOvi@google.com> <d84b792e-8d26-49c2-9e7c-04093f554f8a@linux.intel.com>
- <f1ec8527-322d-4bdb-9a38-145fd9f28e4b@linux.intel.com> <aKc61y0_tvGLmieC@google.com>
-Message-ID: <aK-dr2W7UoA65jM2@google.com>
-Subject: Re: [PATCH 0/2] x86/kvm: Force legacy PCI hole as WB under SNP/TDX
-From: Sean Christopherson <seanjc@google.com>
-To: Binbin Wu <binbin.wu@linux.intel.com>
-Cc: Vishal Annapurve <vannapurve@google.com>, Nikolay Borisov <nik.borisov@suse.com>, 
-	Jianxiong Gao <jxgao@google.com>, "Borislav Petkov (AMD)" <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, Dionna Glaze <dionnaglaze@google.com>, 
-	"H. Peter Anvin" <hpa@zytor.com>, jgross@suse.com, 
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>, pbonzini@redhat.com, 
-	Peter Gonda <pgonda@google.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Tom Lendacky <thomas.lendacky@amd.com>, Vitaly Kuznetsov <vkuznets@redhat.com>, x86@kernel.org, 
-	Rick Edgecombe <rick.p.edgecombe@intel.com>, jiewen.yao@intel.com
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="4tazkxltbygkcgo4"
+Content-Disposition: inline
+In-Reply-To: <20250826.aig5aiShunga@digikod.net>
+X-Rspamd-Queue-Id: 4cC22W3nCMz9tSp
+
+
+--4tazkxltbygkcgo4
+Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+Subject: Re: [RFC PATCH v1 0/2] Add O_DENY_WRITE (complement AT_EXECVE_CHECK)
+MIME-Version: 1.0
 
-On Thu, Aug 21, 2025, Sean Christopherson wrote:
-> On Thu, Aug 21, 2025, Binbin Wu wrote:
-> > On 8/21/2025 11:30 AM, Binbin Wu wrote:
-> > > Variable MTRR has requirement for range size and alignment:
-> > > For ranges greater than 4 KBytes, each range must be of length 2^n an=
-d its base
-> > > address must be aligned on a 2^n boundary, where n is a value equal t=
-o or
-> > > greater than 12. The base-address alignment value cannot be less than=
- its length.
-> >=20
-> > Wait, Linux kernel converts MTRR register values to MTRR state (base an=
-d size) and
-> > cache it for later lookups (refer to map_add_var()). I.e., in Linux ker=
-nel,
-> > only the cached state will be used.
-> >=20
-> > These MTRR register values are never programmed when using
-> > guest_force_mtrr_state() , so even the values doesn't meet the requirem=
-ent
-> > from hardware perspective, Linux kernel can still get the right base an=
-d
-> > size.
+On 2025-08-26, Micka=EBl Sala=FCn <mic@digikod.net> wrote:
+> On Tue, Aug 26, 2025 at 11:07:03AM +0200, Christian Brauner wrote:
+> > Nothing has changed in that regard and I'm not interested in stuffing
+> > the VFS APIs full of special-purpose behavior to work around the fact
+> > that this is work that needs to be done in userspace. Change the apps,
+> > stop pushing more and more cruft into the VFS that has no business
+> > there.
 >=20
-> Yeah.  I forget what happens if the ranges don't meet the power-of-2 requ=
-irements,
-> but the mask+match logic should work jus tfine.
->=20
-> > No bothering to force the base and size alignment.
-> > But a comment would be helpful.
-> > Also, BIT(11) could be replaced by MTRR_PHYSMASK_V.
->=20
-> Ha!  I spent a good 5 minutes looking for a #define couldn't find one.  W=
-hat a
-> bizarre name...
->=20
-> > How about:
-> > diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
-> > index 90097df4eafd..a9582ffc3088 100644
-> > --- a/arch/x86/kernel/kvm.c
-> > +++ b/arch/x86/kernel/kvm.c
-> > @@ -934,9 +934,15 @@ static void kvm_sev_hc_page_enc_status(unsigned lo=
-ng pfn, int npages, bool enc)
-> > =C2=A0static void __init kvm_init_platform(void)
-> > =C2=A0{
-> > =C2=A0 =C2=A0 =C2=A0 =C2=A0 u64 tolud =3D e820__end_of_low_ram_pfn() <<=
- PAGE_SHIFT;
-> > +=C2=A0 =C2=A0 =C2=A0 =C2=A0/*
-> > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 * The range's base address and size may no=
-t meet the alignment
-> > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 * requirement for variable MTRR. However, =
-Linux guest never
-> > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 * programs MTRRs when forcing guest MTRR s=
-tate, no bothering to
-> > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 * enforce the base and range size alignmen=
-t.
-> > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 */
-> > =C2=A0 =C2=A0 =C2=A0 =C2=A0 struct mtrr_var_range pci_hole =3D {
-> > =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 .base_lo =3D to=
-lud | X86_MEMTYPE_UC,
-> > -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0.mask_lo =3D (u=
-32)(~(SZ_4G - tolud - 1)) | BIT(11),
-> > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0.mask_lo =3D (u=
-32)(~(SZ_4G - tolud - 1)) | MTRR_PHYSMASK_V,
-> > =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 .mask_hi =3D (B=
-IT_ULL(boot_cpu_data.x86_phys_bits) - 1) >> 32,
-> > =C2=A0 =C2=A0 =C2=A0 =C2=A0 };
-> >=20
-> >=20
-> > I tested it in my setup, it can fix the issue of TPM driver failure wit=
-h the
-> > modified ACPI table for TPM in QEMU.
-> >=20
-> >=20
-> > Hi Vishal,
-> > Could you test it with google's VMM?
->=20
-> Vishal is OOO for a few days.  I pinged our internal bug tracker, I'll fi=
-nd
-> someone to test.
+> It would be interesting to know how to patch user space to get the same
+> guarantees...  Do you think I would propose a kernel patch otherwise?
 
-Got confirmation this fixes the vTPM woes with Google's VMM.  v2 incoming..=
-.
+You could mmap the script file with MAP_PRIVATE. This is the *actual*
+protection the kernel uses against overwriting binaries (yes, ETXTBSY is
+nice but IIRC there are ways to get around it anyway). Of course, most
+interpreters don't mmap their scripts, but this is a potential solution.
+If the security policy is based on validating the script text in some
+way, this avoids the TOCTOU.
+
+Now, in cases where you have IMA or something and you only permit signed
+binaries to execute, you could argue there is a different race here (an
+attacker creates a malicious script, runs it, and then replaces it with
+a valid script's contents and metadata after the fact to get
+AT_EXECVE_CHECK to permit the execution). However, I'm not sure that
+this is even possible with IMA (can an unprivileged user even set
+security.ima?). But even then, I would expect users that really need
+this would also probably use fs-verity or dm-verity that would block
+this kind of attack since it would render the files read-only anyway.
+
+This is why a more detailed threat model of what kinds of attacks are
+relevant is useful. I was there for the talk you gave and subsequent
+discussion at last year's LPC, but I felt that your threat model was
+not really fleshed out at all. I am still not sure what capabilities you
+expect the attacker to have nor what is being used to authenticate
+binaries (other than AT_EXECVE_CHECK). Maybe I'm wrong with my above
+assumptions, but I can't know without knowing what threat model you have
+in mind, *in detail*.
+
+For example, if you are dealing with an attacker that has CAP_SYS_ADMIN,
+there are plenty of ways for an attacker to execute their own code
+without using interpreters (create a new tmpfs with fsopen(2) for
+instance). Executable memfds are even easier and don't require
+privileges on most systems (yes, you can block them with vm.memfd_noexec
+but CAP_SYS_ADMIN can disable that -- and there's always fsopen(2) or
+mount(2)).
+
+(As an aside, it's a shame that AT_EXECVE_CHECK burned one of the
+top-level AT_* bits for a per-syscall flag -- the block comment I added
+in b4fef22c2fb9 ("uapi: explain how per-syscall AT_* flags should be
+allocated") was meant to avoid this happening but it seems you and the
+reviewers missed that...)
+
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+https://www.cyphar.com/
+
+--4tazkxltbygkcgo4
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJEEABYKADkWIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCaK+fRBsUgAAAAAAEAA5t
+YW51MiwyLjUrMS4xMSwyLDIACgkQKJf60rfpRG+uowD/Sqmo+gatXLeikpI5XmZo
+OTzPamUQKF6Qc1cYyy2INK8BAPK2BcHkJfcGbfBSjW2CshX9cc5oZuhvWEtz4TDD
+XzYA
+=FdMM
+-----END PGP SIGNATURE-----
+
+--4tazkxltbygkcgo4--
 
