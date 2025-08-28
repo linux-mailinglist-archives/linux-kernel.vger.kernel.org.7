@@ -1,138 +1,121 @@
-Return-Path: <linux-kernel+bounces-789871-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3048B39BF1
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 13:48:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25E07B39BF8
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 13:50:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 353761892D0F
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 11:48:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E5D83AA231
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 11:50:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 030A630DEA6;
-	Thu, 28 Aug 2025 11:48:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B29BE30EF89;
+	Thu, 28 Aug 2025 11:50:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="GMFupP5I"
-Received: from r3-19.sinamail.sina.com.cn (r3-19.sinamail.sina.com.cn [202.108.3.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="PkWx0Cdo"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B73A191F6A
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 11:48:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2B6D30E0F3
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 11:50:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756381703; cv=none; b=lcKJ2KHi1aJw2y9lXPn82oXSCY+jr0DdFCf0TQnx3INE5kMfuSutLqnh3DuYpl9wO3hPlByWSG7yzxicDL1I0/vG4YKY3iLDrXG+5KhJnaoVaWcGEV9MO7NEmp9LSUWUjn/49MWletSSxbcKWjx6ERejzLi62JirkdjIjEJXLck=
+	t=1756381807; cv=none; b=m54nI/MET92QY0wDmeTaQDWhawBc/q8IeHrscska5yUAX18ejW2+en1ZQrJXr3OoXEWleUcxC3tjLKdSCESnPmJVYXdRhvKEha6tn7rUZRCwmjmzUmYtNVY0E6GiEe2ewXBvLkjc9SqpER9HjEaBwtCHHbHmO0S5ldt7Gfm2vps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756381703; c=relaxed/simple;
-	bh=afpSC4cmjWRzckLpMEpAKGiYuCxs0nC3dBOrmMrgb3s=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=sedv1usqCpsZuvcvYrYAHl32tnWYS04pFyt15MZg4uyknKyRKyzyaSUIm0085Il2Hro9UOWO/MQkve+YASzpHxYG7ViXnpNzgBHfcGjBM6BMWMICYo2W4FxzNlIX44NnRuJh8x8XO7hC9uY9iSuBM/FLzTprqClClv02JcqC6Rg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=GMFupP5I; arc=none smtp.client-ip=202.108.3.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1756381697;
-	bh=JbkEXeQUYOPWbe4S1ypa1iSdTM3ldviuhRFwkWxcLcA=;
-	h=From:Subject:Date:Message-ID;
-	b=GMFupP5IYY0wtO9RagsEPIFpEHlXg447AuhVCDe1OH0LnfH6qvwnQPcDiR5oMM1Sn
-	 HOIx//R4AbwrAvuasEncEAL8w90Y3AuKJgVi2+OgYUfPPcpasyZSocN7An7hp/zzcB
-	 9WZs4KnTMQtULwRAYKeIG3QdWcrm4D0Mp3q7sROI=
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
-	by sina.com (10.54.253.32) with ESMTP
-	id 68B041F500005B2A; Thu, 28 Aug 2025 19:48:07 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 1281104456989
-X-SMAIL-UIID: 6B635EDDC3124B7D975639503F1E0C9D-20250828-194807-1
-From: Hillf Danton <hdanton@sina.com>
-To: syzbot <syzbot+69c74d38464686431506@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [mm?] WARNING in copy_process
-Date: Thu, 28 Aug 2025 19:47:54 +0800
-Message-ID: <20250828114755.5981-1-hdanton@sina.com>
-In-Reply-To: <68af9193.a00a0220.2929dc.0006.GAE@google.com>
-References: 
+	s=arc-20240116; t=1756381807; c=relaxed/simple;
+	bh=/wf8U5IKj+z3YPZwIzpnehBZFZealmv3pS9JcwfsdIY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DIkeRbhm5iXYAtKNcH468RUg9EkIDoAb32yJhzroM6qOOi8JCbyofifyaD6uQkdA8mvEY9V/aPvlX1QE2xDfsYvuY5R2rLZOIRHsYO7r5T6UpsIFts6cggqKhEim07ct7arcemne6pFabcUsHXN0k//dH0p12RJ2CgRW82rO4Vc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=PkWx0Cdo; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-76e4f2e4c40so860214b3a.2
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 04:50:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1756381803; x=1756986603; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=HjwNXVfVIbch6ui2Lije+o4C0nxjdug1cxVSvsXhRV8=;
+        b=PkWx0CdoSUkpozQkkN6b92dwJk6kGsB1oNuweji4vy5hAxK2eDby7hQUzqD6kA25zx
+         HHu2rvl6eWPo4+rguJVqtQIIyKwqoccph2UKkCaaV4Fjem9AOkS9XjZByqYm14DwLB9z
+         8KArWmMz1rIyOyK5AxJ+SqQBMSMqhbm87s7h758FUzwl3BqKaPrdo+nsa+lFeoxt2jU9
+         ZueFOpD8pdaMj6YTzpoNqHI8yAQ8HW4uJcgYG8du1kv9VhwTXufMlA8yn5cFAbdU5ZX9
+         899uRtUgKnfTP5nmrXNJkxkKw69tbYK5CJSbpuUyZXe6OUWczHQFScQkQQADPY0VJ4+Y
+         v1Uw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756381803; x=1756986603;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HjwNXVfVIbch6ui2Lije+o4C0nxjdug1cxVSvsXhRV8=;
+        b=KwfMZ65VGEOlqj7VBEOOpuIJKy6qGLzF7ArZ5GRx34C9+FGii1t+GnoFr5YvASxTpf
+         eoEo/UBLrPOOuFdvg4A0E6heiDdRWdEIl6RF2i3aZfDtZCvFAqmTe2nieAuTAAba/7bX
+         tuffDEpYZUdPhAXDMVF34sDshMrKSaRmv20kgJklJ5V8Me8hlQXQMvznOLjHCaKQE/Gr
+         IyamyCOfO0aoRgWfyAsGHycQUc+2BpbYHnXFPmnWOuJ05/W0ZTGVwRIJPNfucBFthkKU
+         EvDOErT2gtcvVW302w4b3D7ObIP/K3Q+7qiP9LwlMEtqP7S8GmwpH2VjHNmK0Rp2HcRK
+         jTig==
+X-Forwarded-Encrypted: i=1; AJvYcCVb0pm6pCshdbU8V7+fW4d0i7Yn0d65Ah61MISZ2zXfBNgdUBKrXyCymYmDs+xTRu/Don2Kiimd1syZnnc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGpweLNc/eEg2axjaEFdaIgqXOLK/GYm7itPOoKVQF2358WVzi
+	StN82g1sCYL0zq4Bc9HPpZRJbqlLpalHZqvoZx8Hj7F3XeeN9ij3smfomyMaRB2h+Jo=
+X-Gm-Gg: ASbGncvwD63zgWCmjtnDAgFt9Xvngh/KmgaOKfpZiAe3AuX2GT9Jj8nWgXPDTV0Wki1
+	+iTBX/EOIyuhbnQRvVCHi1C4ExL9AHI+TQ2RYMYspTVvxGk07bgKJ36og4YC7DnWb2YOObXT/2z
+	obqzuX0lkjVXGPC2rxONrBRr+4nG8mxPo6wNKrXGe9zW4I4GTl91TIZDyzCXan1zcScX3HZBXzy
+	s+SzLV0oGIRFVsdWN553PbeiVbaZ8mp/bstlk4QuoliE8LqQcZvjLsyiJATfbsQSZEZtpxbX1IM
+	+9dB4fPcGzDun5uq/Tr2tm5w6Lj2bioHsbV1qND1aiDK+SL4RBeR/J9mZX7HQuLRzM7AX7Yn1UB
+	Rpf6rZuK+7zgDN/kvXNcj
+X-Google-Smtp-Source: AGHT+IGezOevIvE7/Nrz9LwifFeXlERPcAuSJuc4DRgcIe+ZiJiG+BpjvRh20H6Ivk7bP2zeqoIoMA==
+X-Received: by 2002:a05:6a00:4b55:b0:76b:fab4:6456 with SMTP id d2e1a72fcca58-7702fadbb34mr29937177b3a.21.1756381802961;
+        Thu, 28 Aug 2025 04:50:02 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-771fb852dedsm7163605b3a.88.2025.08.28.04.50.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 28 Aug 2025 04:50:02 -0700 (PDT)
+Message-ID: <3aba1ff4-4e8b-4f34-b300-5e7aeb18ec15@kernel.dk>
+Date: Thu, 28 Aug 2025 05:50:01 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] io_uring/kbuf: fix infinite loop in
+ io_kbuf_inc_commit()
+To: Qingyue Zhang <chunzhennn@qq.com>
+Cc: aftern00n@qq.com, io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <8f4a4090-78ed-4cf1-bd73-7ae73fff8b90@kernel.dk>
+ <tencent_2DDD243AE6E04DB6288696AC252D1B46EF06@qq.com>
+From: Jens Axboe <axboe@kernel.dk>
+Content-Language: en-US
+In-Reply-To: <tencent_2DDD243AE6E04DB6288696AC252D1B46EF06@qq.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-> Date: Wed, 27 Aug 2025 16:15:31 -0700	[thread overview]
-> syzbot has found a reproducer for the following issue on:
+On 8/27/25 9:27 PM, Qingyue Zhang wrote:
+> Thanks for taking care of this report!
 > 
-> HEAD commit:    7fa4d8dc380f Add linux-next specific files for 20250821
-> git tree:       linux-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=1036def0580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=ae76068823a236b3
-> dashboard link: https://syzkaller.appspot.com/bug?extid=69c74d38464686431506
-> compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13595c62580000
+> Regarding tags, it would be nice to add a 
+> 'Reported-by: Suoxing Zhang <aftern00n@qq.com>'
+> tag too, as this report and reproducer are
+> developed by both of us.
 
-#syz test
+Done!
 
---- x/mm/oom_kill.c
-+++ y/mm/oom_kill.c
-@@ -997,6 +997,8 @@ static void __oom_kill_process(struct ta
- 		queue_oom_reaper(victim);
- 
- 	mmdrop(mm);
-+	write_lock_irq(&tasklist_lock);
-+	write_unlock_irq(&tasklist_lock);
- 	put_task_struct(victim);
- }
- 
-@@ -1031,6 +1033,8 @@ static void oom_kill_process(struct oom_
- 		mark_oom_victim(victim);
- 		queue_oom_reaper(victim);
- 		task_unlock(victim);
-+		write_lock_irq(&tasklist_lock);
-+		write_unlock_irq(&tasklist_lock);
- 		put_task_struct(victim);
- 		return;
- 	}
---- x/mm/page-writeback.c
-+++ y/mm/page-writeback.c
-@@ -3014,7 +3014,7 @@ bool __folio_end_writeback(struct folio
- 
- 	if (mapping && mapping_use_writeback_tags(mapping)) {
- 		struct inode *inode = mapping->host;
--		struct bdi_writeback *wb = inode_to_wb(inode);
-+		struct bdi_writeback *wb;
- 		unsigned long flags;
- 
- 		xa_lock_irqsave(&mapping->i_pages, flags);
-@@ -3022,6 +3022,7 @@ bool __folio_end_writeback(struct folio
- 		__xa_clear_mark(&mapping->i_pages, folio_index(folio),
- 					PAGECACHE_TAG_WRITEBACK);
- 
-+		wb = inode_to_wb(inode);
- 		wb_stat_mod(wb, WB_WRITEBACK, -nr);
- 		__wb_writeout_add(wb, nr);
- 		if (!mapping_tagged(mapping, PAGECACHE_TAG_WRITEBACK)) {
-@@ -3054,7 +3055,7 @@ void __folio_start_writeback(struct foli
- 	if (mapping && mapping_use_writeback_tags(mapping)) {
- 		XA_STATE(xas, &mapping->i_pages, folio_index(folio));
- 		struct inode *inode = mapping->host;
--		struct bdi_writeback *wb = inode_to_wb(inode);
-+		struct bdi_writeback *wb;
- 		unsigned long flags;
- 		bool on_wblist;
- 
-@@ -3065,6 +3066,7 @@ void __folio_start_writeback(struct foli
- 		on_wblist = mapping_tagged(mapping, PAGECACHE_TAG_WRITEBACK);
- 
- 		xas_set_mark(&xas, PAGECACHE_TAG_WRITEBACK);
-+		wb = inode_to_wb(inode);
- 		wb_stat_mod(wb, WB_WRITEBACK, nr);
- 		if (!on_wblist) {
- 			wb_inode_writeback_start(wb);
---
+> And absolutely, please feel free to use our 
+> reproducer for a test case! I'm glad it can 
+> be useful. Your version with idiomatic 
+> liburing looks great.
+
+Perfect, will do.
+
+> This is my first contribution to the Linux 
+> Kernel, and I really appreciate your patience 
+> and quick responses throughout this process!
+
+Let's hope it's the first of many!
+
+-- 
+Jens Axboe
 
