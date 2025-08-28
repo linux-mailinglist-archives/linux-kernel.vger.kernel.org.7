@@ -1,216 +1,126 @@
-Return-Path: <linux-kernel+bounces-790420-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790422-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD9A6B3A6F4
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 18:51:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED129B3A6F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 18:51:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B48BD1C20C62
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 16:51:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 01C8F1C81EB9
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 16:51:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32D08334712;
-	Thu, 28 Aug 2025 16:50:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1529F32C303;
+	Thu, 28 Aug 2025 16:51:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I3l5eAof"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="LF+gGwKi"
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D48132C332;
-	Thu, 28 Aug 2025 16:50:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 962823043D9;
+	Thu, 28 Aug 2025 16:51:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756399824; cv=none; b=ZhfgCEeR/Bcnz7e7CqzHIeID7phXkt6MmWLPlY2kGpVU5cJXcDRX8azF2YSFNT5tbyabt17I1yBItUmuZuf8U4LaLSL8ekScCUsCvVqQU5B2U/zns4nPpl8WHrIfJfw0MK2CflQatvZR0ZEcVZm7Ilq0rJu8lnJUfri7f4bUSvk=
+	t=1756399892; cv=none; b=qSWNZbVwbmybEJsRp0y0YX27o6HvJbcPUlpJocRr1ii/2cyRxYNZnjwaFA7CZco8H2R3VDexO29go/ng0DIJ1joe8q9Ejy6rJ5O1kgh2Ad9a+7J9LrxjBEUdiKMc7f8iry3MvwJblfvEG3DXMktgEoYyI8G+QlAYIKgRLC0eiDg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756399824; c=relaxed/simple;
-	bh=IGvGL3xrGi8LRSSXlXVajh0KweHQZQyiZR1tI/deIew=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CdvfP6pttYnEzVq3HguHa9WeQYqGWhQGCfrxstc6i0VzyWWf4oLVwpUZ3oq+VoSAEyGIzgY2vbO2Tw6aFZm6+j1nZnMI5CgIK/wOJvfDHes+NGCLZkU2mmGrUe+q4upzHEA1oFSwND0m0nPinfUUh8cOUi5ph6L8rt6sArd3u+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I3l5eAof; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A89BDC4CEEB;
-	Thu, 28 Aug 2025 16:50:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756399824;
-	bh=IGvGL3xrGi8LRSSXlXVajh0KweHQZQyiZR1tI/deIew=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=I3l5eAofOsHzQ7Q+tzaiPrnYZnk6sa7+CEvTqnCMPJr2EMEVbDrRo5oDGpuh5rO4z
-	 eABFyzb0kg27zKzG1QDgbGO8z11DG0VrrXR8EdCCxjKUjn2m6VI4Z4Udojm0xdovjs
-	 /EsMyoq4/1mfHnOFLvHAfFrRXG+tSrczF5EtYhU0gke2SzV0QgMETe66b6AtJ0OXmw
-	 9UNe8juyZLsrcInRDPg0QCW+DCDBbjIBEia2jn0ouOAKwAwUGAEu+BhS/LU5N/P2sw
-	 zFB5oii7V63mkVaohjW0raR9Epk7xpf/1f9ADerx2FC8Fxy9ISfx7/uTBVn8vpvGoM
-	 xD+h8wEZ4xlqA==
-Message-ID: <906411e5-4354-4670-bd84-640a5b47a2bd@kernel.org>
-Date: Thu, 28 Aug 2025 11:50:21 -0500
+	s=arc-20240116; t=1756399892; c=relaxed/simple;
+	bh=PVupvUbljqqv0l5EpslMuDT5j7QU3Ufuil+d3qdB5eA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Ol2PGLoY+s/BmD/liaOQG9LREab5n6GwJkopSssU803o3vBICx7NgeCyxtuIdYmCxkVDYj6UPVEgT0IGYWgsmVTCXOPiqL76GXm5zREz8t1Rq4chlVufM3choiIKKSLKDwpRxVXzI7tYHF5RfU4iEWpXNABVzYvjst0+bvwpKTg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=LF+gGwKi; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 111BA4E40BB1;
+	Thu, 28 Aug 2025 16:51:23 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id BCAB960303;
+	Thu, 28 Aug 2025 16:51:22 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 6EEC81C22DDE9;
+	Thu, 28 Aug 2025 18:50:43 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1756399881; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=01CLvL+opovfhfkSRyspjEXFZkfbj0TTItWEljkWyHE=;
+	b=LF+gGwKiR4u1aF8x9V/r/FYoaEYM5yIMM4utgdSxggzuD4ceJXDH52EapVHz1dRavntVmb
+	Z/4leyNDKQ3csKFk80uvyyd/e5syNpIg1IV1Xyf2kelhcKowKrG3NfsAdB9M+WJVPpnYd+
+	d85Egg6pS5815TGmco9Nynhhhkjzgm1QF9rqUeHeBm59SlAjT1Fupc4Mnn5VODa3tirg8U
+	n8wDXL4666720TL3hBZMVmYjB9PvgYgev95Id+9yn+IXQE2JDHZq4nbJ8lDujkGkQ/M/oF
+	+wZyBzXCBG/NU6Lt30oQqy+shG9EVxYj5ClTuzgIhroq74/O8htu/GlXU16KSA==
+Date: Thu, 28 Aug 2025 18:50:37 +0200
+From: Kory Maincent <kory.maincent@bootlin.com>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: "Message-ID :" <cover.1752076293.git.mchehab+huawei@kernel.org>, Linux
+ Doc Mailing List <linux-doc@vger.kernel.org>, "Akira Yokosawa"
+ <akiyks@gmail.com>, "Breno Leitao" <leitao@debian.org>, "David S. Miller"
+ <davem@davemloft.net>, "Donald Hunter" <donald.hunter@gmail.com>, "Eric
+ Dumazet" <edumazet@google.com>, "Ignacio Encinas Rubio"
+ <ignacio@iencinas.com>, "Jakub Kicinski" <kuba@kernel.org>, "Jan Stancek"
+ <jstancek@redhat.com>, "Jonathan Corbet" <corbet@lwn.net>, "Marco Elver"
+ <elver@google.com>, "Paolo Abeni" <pabeni@redhat.com>, "Randy Dunlap"
+ <rdunlap@infradead.org>, "Ruben Wauters" <rubenru09@aol.com>, "Shuah Khan"
+ <skhan@linuxfoundation.org>, "Simon Horman" <horms@kernel.org>,
+ joel@joelfernandes.org, linux-kernel-mentees@lists.linux.dev,
+ linux-kernel@vger.kernel.org, lkmm@lists.linux.dev, netdev@vger.kernel.org,
+ peterz@infradead.org, stern@rowland.harvard.edu
+Subject: Re: [PATCH v10 06/14] docs: use parser_yaml extension to handle
+ Netlink specs
+Message-ID: <20250828185037.07873d04@kmaincent-XPS-13-7390>
+In-Reply-To: <4c97889f0674b69f584dedc543a879d227ef5de0.1753718185.git.mchehab+huawei@kernel.org>
+References: <cover.1753718185.git.mchehab+huawei@kernel.org>
+	<4c97889f0674b69f584dedc543a879d227ef5de0.1753718185.git.mchehab+huawei@kernel.org>
+Organization: bootlin
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 7/7] Documentation: add documentation of AMD isp 4
- driver
-To: Bin Du <Bin.Du@amd.com>, mchehab@kernel.org, hverkuil@xs4all.nl,
- laurent.pinchart+renesas@ideasonboard.com, bryan.odonoghue@linaro.org,
- sakari.ailus@linux.intel.com, prabhakar.mahadev-lad.rj@bp.renesas.com,
- linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- sultan@kerneltoast.com
-Cc: pratap.nirujogi@amd.com, benjamin.chan@amd.com, king.li@amd.com,
- gjorgji.rosikopulos@amd.com, Phil.Jawich@amd.com, Dominic.Antony@amd.com,
- richard.gong@amd.com, anson.tsao@amd.com,
- Svetoslav Stoilov <Svetoslav.Stoilov@amd.com>
-References: <20250828100811.95722-1-Bin.Du@amd.com>
- <20250828100811.95722-7-Bin.Du@amd.com>
-Content-Language: en-US
-From: Mario Limonciello <superm1@kernel.org>
-In-Reply-To: <20250828100811.95722-7-Bin.Du@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Last-TLS-Session-Version: TLSv1.3
 
-Just two small nits to me.
+Le Mon, 28 Jul 2025 18:01:59 +0200,
+Mauro Carvalho Chehab <mchehab+huawei@kernel.org> a =C3=A9crit :
 
-On 8/28/25 5:08 AM, Du, Bin wrote:
-> Add documentation for AMD isp 4 and describe the main components
+> Instead of manually calling ynl_gen_rst.py, use a Sphinx extension.
+> This way, no .rst files would be written to the Kernel source
+> directories.
+>=20
+> We are using here a toctree with :glob: property. This way, there
+> is no need to touch the netlink/specs/index.rst file every time
+> a new Netlink spec is added/renamed/removed.
 
-Probably should be "ISP"
+...
 
-> 
-> Co-developed-by: Svetoslav Stoilov <Svetoslav.Stoilov@amd.com>
-> Signed-off-by: Svetoslav Stoilov <Svetoslav.Stoilov@amd.com>
-> Signed-off-by: Bin Du <Bin.Du@amd.com>
+> diff --git a/Documentation/networking/index.rst
+> b/Documentation/networking/index.rst index ac90b82f3ce9..b7a4969e9bc9 100=
+644
+> --- a/Documentation/networking/index.rst
+> +++ b/Documentation/networking/index.rst
+> @@ -57,7 +57,7 @@ Contents:
+>     filter
+>     generic-hdlc
+>     generic_netlink
+> -   netlink_spec/index
+> +   ../netlink/specs/index
 
-Reviewed-by: Mario Limonciello (AMD) <superm1@kernel.org>
+Faced a doc build warning that say netlink_spec/index.rst is not used.
 
-> ---
->   Documentation/admin-guide/media/amdisp4-1.rst | 66 +++++++++++++++++++
->   Documentation/admin-guide/media/amdisp4.dot   |  8 +++
->   .../admin-guide/media/v4l-drivers.rst         |  1 +
->   MAINTAINERS                                   |  2 +
->   4 files changed, 77 insertions(+)
->   create mode 100644 Documentation/admin-guide/media/amdisp4-1.rst
->   create mode 100644 Documentation/admin-guide/media/amdisp4.dot
-> 
-> diff --git a/Documentation/admin-guide/media/amdisp4-1.rst b/Documentation/admin-guide/media/amdisp4-1.rst
-> new file mode 100644
-> index 000000000000..a5ed78912d0f
-> --- /dev/null
-> +++ b/Documentation/admin-guide/media/amdisp4-1.rst
-> @@ -0,0 +1,66 @@
-> +.. SPDX-License-Identifier: GPL-2.0
-> +
-> +.. include:: <isonum.txt>
-> +
-> +====================================
-> +AMD Image Signal Processor (amdisp4)
-> +====================================
-> +
-> +Introduction
-> +============
-> +
-> +This file documents the driver for the AMD ISP4 that is part of
-> +AMD Ryzen AI Max 385 SoC.
+$ git grep netlink_spec
+Documentation/networking/mptcp.rst:netlink_spec/mptcp_pm.rst.
+Documentation/translations/zh_CN/networking/index.rst:*   netlink_spec/index
 
-It's in 390 too isn't it?
+I think we can remove the whole directory and change these, right?
 
-Maybe it's better to say:
-Ryzen AI Max 300 Series
+Also got a doc build warning that says netlink/specs/index is not existing =
+even
+if it exists. Maybe a sphinx parsing issue ?!
 
-That's what 
-https://www.amd.com/en/products/processors/laptop/ryzen/ai-300-series/amd-ryzen-ai-max-plus-395.html 
-uses after all.
-
-> +
-> +The driver is located under drivers/media/platform/amd/isp4 and uses
-> +the Media-Controller API.
-> +
-> +Topology
-> +========
-> +
-> +.. _amdisp4_topology_graph:
-> +
-> +.. kernel-figure:: amdisp4.dot
-> +     :alt:   Diagram of the media pipeline topology
-> +     :align: center
-> +
-> +
-> +
-> +The driver has 1 sub-device:
-> +
-> +- isp: used to resize and process bayer raw frames in to yuv.
-> +
-> +The driver has 1 video device:
-> +
-> +- capture video device: capture device for retrieving images.
-> +
-> +
-> +  - ISP4 Image Signal Processing Subdevice Node
-> +
-> +-----------------------------------------------
-> +
-> +The isp4 is represented as a single V4L2 subdev, the sub-device does not
-> +provide interface to the user space. The sub-device is connected to one video node
-> +(isp4_capture) with immutable active link. The isp entity is connected
-> +to sensor pad 0 and receives the frames using CSI-2 protocol. The sub-device is
-> +also responsible to configure CSI2-2 receiver.
-> +The sub-device processes bayer raw data from the connected sensor and output
-> +them to different YUV formats. The isp also has scaling capabilities.
-> +
-> +  - isp4_capture - Frames Capture Video Node
-> +
-> +--------------------------------------------
-> +
-> +Isp4_capture is a capture device to capture frames to memory.
-> +This entity is the DMA engine that write the frames to memory.
-> +The entity is connected to isp4 sub-device.
-> +
-> +Capturing Video Frames Example
-> +==============================
-> +
-> +.. code-block:: bash
-> +
-> +         # set the links
-> +
-> +         # start streaming:
-> +         v4l2-ctl "-d" "/dev/video0" "--set-fmt-video=width=1920,height=1080,pixelformat=NV12" "--stream-mmap" "--stream-count=10"
-> diff --git a/Documentation/admin-guide/media/amdisp4.dot b/Documentation/admin-guide/media/amdisp4.dot
-> new file mode 100644
-> index 000000000000..a4c2f0cceb30
-> --- /dev/null
-> +++ b/Documentation/admin-guide/media/amdisp4.dot
-> @@ -0,0 +1,8 @@
-> +digraph board {
-> +	rankdir=TB
-> +	n00000001 [label="{{<port0> 0} | amd isp4\n | {<port1> 1}}", shape=Mrecord, style=filled, fillcolor=green]
-> +	n00000001:port1 -> n00000004 [style=bold]
-> +	n00000004 [label="Preview\n/dev/video0", shape=box, style=filled, fillcolor=yellow]
-> +	n0000000a [label="{{} | ov05c10 22-0010\n/dev/v4l-subdev0 | {<port0> 0}}", shape=Mrecord, style=filled, fillcolor=green]
-> +	n0000000a:port0 -> n00000001:port0 [style=bold]
-> +}
-> diff --git a/Documentation/admin-guide/media/v4l-drivers.rst b/Documentation/admin-guide/media/v4l-drivers.rst
-> index 3bac5165b134..6027416e5373 100644
-> --- a/Documentation/admin-guide/media/v4l-drivers.rst
-> +++ b/Documentation/admin-guide/media/v4l-drivers.rst
-> @@ -9,6 +9,7 @@ Video4Linux (V4L) driver-specific documentation
->   .. toctree::
->   	:maxdepth: 2
->   
-> +	amdisp4-1
->   	bttv
->   	c3-isp
->   	cafe_ccic
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 7724620896e7..72ef7c77d881 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -1139,6 +1139,8 @@ M:	Nirujogi Pratap <pratap.nirujogi@amd.com>
->   L:	linux-media@vger.kernel.org
->   S:	Maintained
->   T:	git git://linuxtv.org/media.git
-> +F:	Documentation/admin-guide/media/amdisp4-1.rst
-> +F:	Documentation/admin-guide/media/amdisp4.dot
->   F:	drivers/media/platform/amd/Kconfig
->   F:	drivers/media/platform/amd/Makefile
->   F:	drivers/media/platform/amd/isp4/Kconfig
-
+Regards,
+--=20
+K=C3=B6ry Maincent, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
 
