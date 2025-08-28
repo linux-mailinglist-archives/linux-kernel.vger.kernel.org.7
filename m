@@ -1,128 +1,119 @@
-Return-Path: <linux-kernel+bounces-790704-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790705-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EECDB3ABEF
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 22:49:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 648B1B3ABF1
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 22:50:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F3B0D464796
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 20:49:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2CB434646C2
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 20:50:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3958288CA3;
-	Thu, 28 Aug 2025 20:49:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7802E287273;
+	Thu, 28 Aug 2025 20:49:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hauke-m.de header.i=@hauke-m.de header.b="RX4KbHN3"
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZaW0as3o"
+Received: from mail-ua1-f50.google.com (mail-ua1-f50.google.com [209.85.222.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ACB2223DDD;
-	Thu, 28 Aug 2025 20:49:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7708327B330;
+	Thu, 28 Aug 2025 20:49:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756414170; cv=none; b=J/DTQvdyFvgLJ8afd4UdQxiCGSPKPNqJEhRULSANakBAZqSNkQwuaIWdfUjOUOK9z2/dNz4PyBFOgsl0RyMo+J7jiBzNy2dSCJ9I/0gGt6/qzhxCb3/22QO9oD0caXp89VN2Iekn8tn7mtS8S+XIx5z5aZJhvAxWNg7t6f7dQ8Y=
+	t=1756414196; cv=none; b=k01QTYJNvH+AxKjPtgtP5YWpZ2+YRvQVya0MHcP5dLkAWK/V8Pc+58vWGK2aGpVLkYud5BPkl4Grn3iEJG1LJIFMuMjFy2VE68RS9ZeCnDIytW1hVFuq6FFEL1h/v79BXqrMMU0uIaz6sq0nxFGyMQr1/K4koZyFnnQB6VYmOEc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756414170; c=relaxed/simple;
-	bh=60RN57SGarUcCCrX/TgVHaS61AJnubtnaonWIdw6dIs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tdNgSqEiCses8kJzVdYtR+I9jTXzMewS1p3qtdKgX1Xk8IF+Bv1QRS8C3scNkhDwrXI/kfgpVZoXL6dBsgq+JAPXdWfDTNfKZSS6gOT1YlT94/PIEqQhukhnhdLCihsmcc/+AnBkxDlGZccf1rMQkVKiqd2vY3S/G+E9AY8Ppfc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hauke-m.de; spf=pass smtp.mailfrom=hauke-m.de; dkim=pass (2048-bit key) header.d=hauke-m.de header.i=@hauke-m.de header.b=RX4KbHN3; arc=none smtp.client-ip=80.241.56.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hauke-m.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hauke-m.de
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4cCYRS12VYz9t8b;
-	Thu, 28 Aug 2025 22:49:24 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hauke-m.de; s=MBO0001;
-	t=1756414164;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qlZ2XbwdvlkwmUWUwXcI0lT7GL/8wshwLL1RS5RPjS8=;
-	b=RX4KbHN39cp5epK12ihpg3Bc1lzIKYRm7O5qpW88PvCqihSyBcE9DOLxfbDLCfoeEOXLhm
-	G4EBaYcwjxl0LQ8UaCl/T0m6YB8u5LhSQakXtYgCZgnFwhn/xIKcitIJ0gvG8w0m0cWWxq
-	M9Qh/hk2l+bdX2MC0PM1eIS9yPpyXbrhv2o9ppXoqcSzY7523/8L943+som6YdSa6mm2zN
-	0o1n0OAmpdxCnZnLvKXGJmdu7YWmUA3CF4qSzusRIhghKTiTZRrhj9iXbJrNojJZ0hYD48
-	Ak56s78FPK3fnMTk0otE4dajqM3jvLZZWTVVjvqbK/FTA/nFMrTuC71jTFp/1A==
-Authentication-Results: outgoing_mbo_mout;
-	dkim=none;
-	spf=pass (outgoing_mbo_mout: domain of hauke@hauke-m.de designates 2001:67c:2050:b231:465::202 as permitted sender) smtp.mailfrom=hauke@hauke-m.de
-Message-ID: <3eecb73c-7c6c-4813-af0d-244156e358af@hauke-m.de>
-Date: Thu, 28 Aug 2025 22:49:18 +0200
+	s=arc-20240116; t=1756414196; c=relaxed/simple;
+	bh=veR2SQh2z5y+h+WW1lnue1B2yyXYDzqgFVL48myKhm8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=oIPlhbHVTaVoZtA38Km/SgPo54P0grUovhiZpolqBJO/eRnLxcCNVvHGVoDyVCKOuWElkbChtIr9UEzEcl+S7Aqsh7XBhPv1zbgdGj5wEJSSMaTuL4Cf4ao//jENPmgJFjcOcmo63ixExab8GlxGuxhzU9M8EMV2EL09sSh5Ubg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZaW0as3o; arc=none smtp.client-ip=209.85.222.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f50.google.com with SMTP id a1e0cc1a2514c-89436ff60d8so163748241.3;
+        Thu, 28 Aug 2025 13:49:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756414194; x=1757018994; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=bZpI0BRZvxKAohM5OkqdJ9VFIBo5CJBt+2/fgm3a/D0=;
+        b=ZaW0as3ontrxP914C+8q4sir/MDV0NSrQ9kxN2zVwxd+kqfDTILKGfnu0cDRwvI9B7
+         ztEvcvI+38JKYfMeHBrTHY2rvFOcIfZvnSBhwPqQUuvZEzhzH4n4Pp6h9uPWa7yoxedd
+         OXU4FgHMWm/Zvunlm8DWhqbB/uk3HfEolwJ0bw8t9jra3Q1QCFwmtXP9rm9jPP2I+B9U
+         ZdJq+rIyvEfPhn72kEGLPxpbSV07gVMfWsXsGMjG1QtjicR1xEmP8xdq1TvmtXccUZoO
+         kno93ujOxfcg13yr2teQ6p+4vqh8uFh0RMHEtglpf+2B5tFGq4NY5gC2O2JTPvxFNeYj
+         vcDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756414194; x=1757018994;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bZpI0BRZvxKAohM5OkqdJ9VFIBo5CJBt+2/fgm3a/D0=;
+        b=Ujf2JcdzD6MpoEbnbjEc2Dd8dWo8Rw96CiSjdwAiN7m5y2oVrmUTKJgWVosyH/ykJQ
+         7wGKvh2rSAsHe782UdL/pBQtTJK09lP0Z4l2xMWoAmIGOaGcz5lWXHwe96PV5fMVmNbB
+         qYe1GkgngE8rzP5diHVRWalZkry5rnJ5FoTvm6Y2NjORBmTYCyjEpc9RduaICjoDxAY4
+         0YvGY7oSsqRXgcQGbvkP0LUJ5WNAZSfNc0rgkbQQDQf8DFaK1G0fvk+Xp/7qVrUG0mYQ
+         HKbBf/B4kaIIakwiuRUAXNBHbquwWwtv4VSxp65dH4SiKSISFF69c8oqv9pRCA/giMns
+         n9rg==
+X-Forwarded-Encrypted: i=1; AJvYcCVSXpMSVa8rzBZPjv3p77gI7vKFNKvf3O6g9TCMS9le2wmXCbDbCP1Tvv+p5A8XWY8Xb4nCyt9SvqS1@vger.kernel.org, AJvYcCXo6Nz1LaX5YCLZHC0we7yLqfkI4YloTv1e3zcVChSBVaM50727MdzRCnhLMByOxlm862XV8vAyz8RJVvsv@vger.kernel.org
+X-Gm-Message-State: AOJu0YzV1kFJZsSRHZA5vukBl9TVHXpcd9lAI+Q7rK3RfsVbuMumOsOS
+	1bDDcD8oL+xFXc+uHesO2D5DTMBublX6vZD4xVtJ1ZHmfypnUxrFeipBE8IuJ9pD1oQ=
+X-Gm-Gg: ASbGncvuK7UGYGWaGXPMyNF3kYq7aM7tvk8l45GVR3FNm8DFjC57WkVkBNCPEDAo5Qo
+	J0/70Nz8h1BXpI66dsJIkmKRi34rlrIKdNRpLVZlyvd2rRcfAabTuexsBzTXAlmSLNqYZMVeU2/
+	w1tKWVS4G3o6vVaJPnWoJxS9s8xRIh6C8Bi3R01uTWs+Spp58N7DR/yYX9pGeACjLR9S0J0PCJq
+	fKnNTZtRSIiNlVEHBVR5HWpr6ZkR1zER4YzRMuSFt8WzVKUSmjKdltJjJpPLDXfL+48GpBcaleX
+	TS/WcTffE1sE+J/Fgb7B8LZ0ObtGG2A4An75VU+SOMXGluuL2Nvabie6JYajC13ezs+3oWs/1Kd
+	HUJDzV5QYGo9u4vUkeZ0c+mRdHft0pICy
+X-Google-Smtp-Source: AGHT+IHWG58zfchGNc3M7OQVL2FeGr6cH+l+BtTZKb9NbWepXyoxVvPBHnF2ABxCrOAu849XBO0kfQ==
+X-Received: by 2002:a05:6102:3e27:b0:519:534a:6c34 with SMTP id ada2fe7eead31-51d0f712858mr8805746137.34.1756414194237;
+        Thu, 28 Aug 2025 13:49:54 -0700 (PDT)
+Received: from archlinux ([179.110.125.177])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-89438a05fcesm232134241.10.2025.08.28.13.49.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Aug 2025 13:49:53 -0700 (PDT)
+From: =?UTF-8?q?Eric=20Gon=C3=A7alves?= <ghatto404@gmail.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	=?UTF-8?q?Eric=20Gon=C3=A7alves?= <ghatto404@gmail.com>
+Subject: [PATCH] arm64: dts: qcom: starqltechn: remove extra empty line
+Date: Thu, 28 Aug 2025 20:49:28 +0000
+Message-ID: <20250828204929.35402-1-ghatto404@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH net-next v2 1/6] net: dsa: lantiq_gswip: move to dedicated
- folder
-To: Vladimir Oltean <olteanv@gmail.com>, Daniel Golle <daniel@makrotopia.org>
-Cc: Andrew Lunn <andrew@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Russell King <linux@armlinux.org.uk>,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
- Andreas Schirm <andreas.schirm@siemens.com>,
- Lukas Stockmann <lukas.stockmann@siemens.com>,
- Alexander Sverdlin <alexander.sverdlin@siemens.com>,
- Peter Christen <peter.christen@siemens.com>,
- Avinash Jayaraman <ajayaraman@maxlinear.com>, Bing tao Xu
- <bxu@maxlinear.com>, Liang Xu <lxu@maxlinear.com>,
- Juraj Povazanec <jpovazanec@maxlinear.com>,
- "Fanni (Fang-Yi) Chan" <fchan@maxlinear.com>,
- "Benny (Ying-Tsan) Weng" <yweng@maxlinear.com>,
- "Livia M. Rosu" <lrosu@maxlinear.com>, John Crispin <john@phrozen.org>
-References: <cover.1756228750.git.daniel@makrotopia.org>
- <ceb75451afb48ee791a2585463d718772b2cf357.1756228750.git.daniel@makrotopia.org>
- <20250828203346.eqe5bzk52pcizqt5@skbuf>
-Content-Language: en-US
-From: Hauke Mehrtens <hauke@hauke-m.de>
-In-Reply-To: <20250828203346.eqe5bzk52pcizqt5@skbuf>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 4cCYRS12VYz9t8b
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 8/28/25 22:33, Vladimir Oltean wrote:
-> On Wed, Aug 27, 2025 at 12:05:28AM +0100, Daniel Golle wrote:
->> Move the lantiq_gswip driver to its own folder and update
->> MAINTAINERS file accordingly.
->> This is done ahead of extending the driver to support the MaxLinear
->> GSW1xx series of standalone switch ICs, which includes adding a bunch
->> of files.
->>
->> Signed-off-by: Daniel Golle <daniel@makrotopia.org>
->> ---
->> v2: move driver to its own folder
->>
->>   MAINTAINERS                                 | 3 +--
->>   drivers/net/dsa/Kconfig                     | 8 +-------
->>   drivers/net/dsa/Makefile                    | 2 +-
->>   drivers/net/dsa/lantiq/Kconfig              | 7 +++++++
->>   drivers/net/dsa/lantiq/Makefile             | 1 +
->>   drivers/net/dsa/{ => lantiq}/lantiq_gswip.c | 0
->>   drivers/net/dsa/{ => lantiq}/lantiq_gswip.h | 0
->>   drivers/net/dsa/{ => lantiq}/lantiq_pce.h   | 0
->>   8 files changed, 11 insertions(+), 10 deletions(-)
->>   create mode 100644 drivers/net/dsa/lantiq/Kconfig
->>   create mode 100644 drivers/net/dsa/lantiq/Makefile
->>   rename drivers/net/dsa/{ => lantiq}/lantiq_gswip.c (100%)
->>   rename drivers/net/dsa/{ => lantiq}/lantiq_gswip.h (100%)
->>   rename drivers/net/dsa/{ => lantiq}/lantiq_pce.h (100%)
-> 
-> I don't have a problem with this patch per se, but it will make it
-> harder to avoid conflicts for the known and unsubmitted bug fixes, like:
-> https://github.com/dangowrt/linux/commit/c7445039b965e1a6aad1a4435e7efd4b7cb30f5b
-> https://github.com/dangowrt/linux/commit/48d5cac46fc95a826b5eb49434a3a68b75a8ae1a
-> which I haven't found the time to submit (sorry). Are we okay with that?
+Remove empty white line ine starqltechn device tree at the end of
+max77705_charger node.
 
-I think git cherry-pick will still work.
+Signed-off-by: Eric Gonçalves <ghatto404@gmail.com>
+---
+ arch/arm64/boot/dts/qcom/sdm845-samsung-starqltechn.dts | 1 -
+ 1 file changed, 1 deletion(-)
 
-I would like to have these fixes also in the stable kernel, if cherry 
-pick does not work you can also send modified version to linux stable.
+diff --git a/arch/arm64/boot/dts/qcom/sdm845-samsung-starqltechn.dts b/arch/arm64/boot/dts/qcom/sdm845-samsung-starqltechn.dts
+index 03b63b987a18..9eeb4b807465 100644
+--- a/arch/arm64/boot/dts/qcom/sdm845-samsung-starqltechn.dts
++++ b/arch/arm64/boot/dts/qcom/sdm845-samsung-starqltechn.dts
+@@ -633,7 +633,6 @@ max77705_charger: charger@69 {
+ 		monitored-battery = <&battery>;
+ 		interrupt-parent = <&pm8998_gpios>;
+ 		interrupts = <11 IRQ_TYPE_LEVEL_LOW>;
+-
+ 	};
+ 
+ 	fuel-gauge@36 {
+-- 
+2.50.1
 
-Hauke
 
