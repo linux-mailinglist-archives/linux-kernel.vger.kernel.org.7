@@ -1,155 +1,131 @@
-Return-Path: <linux-kernel+bounces-790739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790740-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CF66B3AC6D
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 23:06:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A2E5B3AC70
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 23:06:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0D56173FC5
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 21:05:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4053A7C7E92
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 21:06:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C8D330F552;
-	Thu, 28 Aug 2025 21:01:18 +0000 (UTC)
-Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C10112D6409;
+	Thu, 28 Aug 2025 21:02:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="JcBLfOTU"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 901DB29ACC0;
-	Thu, 28 Aug 2025 21:01:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BABF305075
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 21:02:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756414878; cv=none; b=QTqNnjJSUjoU3Qb6rYsgkiiIzXnbiEUFU5zxWrGCnyfcSWWElUxN+oQ0x9VeH+gjjPxcaAhFRuYovLku2IR0iyI3ebBxnsXftzBbgHKuTIdFHbyTQ/agsSkjhEJrVhtsM6KUoc+Qi0mol9sHTEeQhh6d/IlrHaZiKu9X9QRJn5w=
+	t=1756414952; cv=none; b=LaxXSsfnQ8+5hvQRcygefLwQSJM1dSvnyXneb5xxP9ed3fIZ0outCDxfz+SpnJ+BlygYsmBboVJD68sSRbAw9M1gCaIhPHfDFB+pXTH2xVhbVTCtYoV/q4WOXPI7sQ2glbRbh+RD+AE0cJMDoM9/RVbvqkIWQZDb8qTtUGbI1x4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756414878; c=relaxed/simple;
-	bh=6fkQFSGQvqVzVgsB612AOtefqBcF6RpXwcdHFKAEcMM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=prATWFMGa4AvuUVoyRyklW74gRF4niHRLRmQOzVpZSwFTvPl0+jZR2y3FXCj8flr+u8rhgBD2vIBgjNssUJoWXLZUpi46ZSNpxoEPP98fNl2LYT3i/YrbBA3hlciiggqUwWBMajIvR6CdlmvomDS+damYOKNm1fUTupa7VXssWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com; spf=pass smtp.mailfrom=mail.hallyn.com; arc=none smtp.client-ip=178.63.66.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.hallyn.com
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-	id A988F201; Thu, 28 Aug 2025 16:01:07 -0500 (CDT)
-Date: Thu, 28 Aug 2025 16:01:07 -0500
-From: "Serge E. Hallyn" <serge@hallyn.com>
-To: Andy Lutomirski <luto@kernel.org>
-Cc: Aleksa Sarai <cyphar@cyphar.com>,
-	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-	Christian Brauner <brauner@kernel.org>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Kees Cook <keescook@chromium.org>, Paul Moore <paul@paul-moore.com>,
-	Serge Hallyn <serge@hallyn.com>, Arnd Bergmann <arnd@arndb.de>,
-	Christian Heimes <christian@python.org>,
-	Dmitry Vyukov <dvyukov@google.com>, Elliott Hughes <enh@google.com>,
-	Fan Wu <wufan@linux.microsoft.com>,
-	Florian Weimer <fweimer@redhat.com>, Jann Horn <jannh@google.com>,
-	Jeff Xu <jeffxu@google.com>, Jonathan Corbet <corbet@lwn.net>,
-	Jordan R Abrahams <ajordanr@google.com>,
-	Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-	Luca Boccassi <bluca@debian.org>,
-	Matt Bobrowski <mattbobrowski@google.com>,
-	Miklos Szeredi <mszeredi@redhat.com>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>,
-	Robert Waite <rowait@microsoft.com>,
-	Roberto Sassu <roberto.sassu@huawei.com>,
-	Scott Shell <scottsh@microsoft.com>,
-	Steve Dower <steve.dower@python.org>,
-	Steve Grubb <sgrubb@redhat.com>,
-	kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Re: [RFC PATCH v1 0/2] Add O_DENY_WRITE (complement AT_EXECVE_CHECK)
-Message-ID: <aLDDk4x7QBKxLmoi@mail.hallyn.com>
-References: <20250822170800.2116980-1-mic@digikod.net>
- <20250826-skorpion-magma-141496988fdc@brauner>
- <20250826.aig5aiShunga@digikod.net>
- <2025-08-27-obscene-great-toy-diary-X1gVRV@cyphar.com>
- <CALCETrWHKga33bvzUHnd-mRQUeNXTtXSS8Y8+40d5bxv-CqBhw@mail.gmail.com>
+	s=arc-20240116; t=1756414952; c=relaxed/simple;
+	bh=+uhGjh7Bn3uOymHdOEWWzg7tt6DiT6h7ooyNGhpADVQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=S7RxjJo02PEyqceQYGi/Od5SR+dcbohbCqdwg6oXMkHhC8B8FJrH9eqdWBRP7lsqKJAMDy8/tJoq4ltr8ZJFmYZeEOU2mv6CGBwY7OYiSjZWbFxkYKX0lBsbrSEn78z672B0heYQQnb59Tz6dbk96NvXToPHnvs0jgkNAGhTL54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=JcBLfOTU; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1756414946;
+	bh=n1G3l3//V3/ZMhJKkM/EbLpc11PG2PTLkGdW4WQeIYc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=JcBLfOTUBPHP/Z0EzP9AhF9TR3uPHdo9FDKKBVowPVhRA1GOn1aFZgWjNcwIZlArP
+	 YX15lAxxH/mDDNfFvmzE+FC5jnlX9S42sVc6q7cULlnm9mSUtoMBCeJqH0kJFOOZPY
+	 /gp+roJC83mBw/ALdEKbyA81VmddPg1hxwX+ix9B8VYWQRWtQqZvRaSSh1spJ36v6y
+	 YW1vAUCTIdTcTXNbFJXPv7kJ/KTFpeumtul4P8DWOphXXuRo9dq9oZXnKkidUrR68F
+	 yz9XMSfziK0RDno2otrN25xmcGlJ6f9Ttkg55PBJs3VcXIY+HwFXkbC5xEd6UAn74I
+	 5rtTc9h7YUhWg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4cCYkT37Rvz4wfq;
+	Fri, 29 Aug 2025 07:02:25 +1000 (AEST)
+Date: Fri, 29 Aug 2025 07:02:24 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Steven Rostedt <rostedt@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Andrew Morton
+ <akpm@linux-foundation.org>, Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [for-next][PATCH 0/3] tracing: Trigger a warning on build if a
+ tracepoint is defined but unused
+Message-ID: <20250829070224.503ddc8a@canb.auug.org.au>
+In-Reply-To: <20250828182754.733989525@kernel.org>
+References: <20250828182754.733989525@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CALCETrWHKga33bvzUHnd-mRQUeNXTtXSS8Y8+40d5bxv-CqBhw@mail.gmail.com>
+Content-Type: multipart/signed; boundary="Sig_/k6.s4V9GhcxwPSBgRWnSwy6";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Wed, Aug 27, 2025 at 05:32:02PM -0700, Andy Lutomirski wrote:
-> On Wed, Aug 27, 2025 at 5:14 PM Aleksa Sarai <cyphar@cyphar.com> wrote:
-> >
-> > On 2025-08-26, Mickaël Salaün <mic@digikod.net> wrote:
-> > > On Tue, Aug 26, 2025 at 11:07:03AM +0200, Christian Brauner wrote:
-> > > > Nothing has changed in that regard and I'm not interested in stuffing
-> > > > the VFS APIs full of special-purpose behavior to work around the fact
-> > > > that this is work that needs to be done in userspace. Change the apps,
-> > > > stop pushing more and more cruft into the VFS that has no business
-> > > > there.
-> > >
-> > > It would be interesting to know how to patch user space to get the same
-> > > guarantees...  Do you think I would propose a kernel patch otherwise?
-> >
-> > You could mmap the script file with MAP_PRIVATE. This is the *actual*
-> > protection the kernel uses against overwriting binaries (yes, ETXTBSY is
-> > nice but IIRC there are ways to get around it anyway).
-> 
-> Wait, really?  MAP_PRIVATE prevents writes to the mapping from
-> affecting the file, but I don't think that writes to the file will
-> break the MAP_PRIVATE CoW if it's not already broken.
-> 
-> IPython says:
-> 
-> In [1]: import mmap, tempfile
-> 
-> In [2]: f = tempfile.TemporaryFile()
-> 
-> In [3]: f.write(b'initial contents')
-> Out[3]: 16
-> 
-> In [4]: f.flush()
-> 
-> In [5]: map = mmap.mmap(f.fileno(), f.tell(), flags=mmap.MAP_PRIVATE,
-> prot=mmap.PROT_READ)
-> 
-> In [6]: map[:]
-> Out[6]: b'initial contents'
-> 
-> In [7]: f.seek(0)
-> Out[7]: 0
-> 
-> In [8]: f.write(b'changed')
-> Out[8]: 7
-> 
-> In [9]: f.flush()
-> 
-> In [10]: map[:]
-> Out[10]: b'changed contents'
+--Sig_/k6.s4V9GhcxwPSBgRWnSwy6
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-That was surprising to me, however, if I split the reader
-and writer into different processes, so
+Hi Steven,
 
-P1:
-f = open("/tmp/3", "w")
-f.write('initial contents')
-f.flush()
+On Thu, 28 Aug 2025 14:27:54 -0400 Steven Rostedt <rostedt@kernel.org> wrot=
+e:
+>
+> I built this against all archs in my tree (26 of them) with a allyesconfi=
+g.
+> Unfortunately, only 10 build successfully with that (they all build
+> successfully with defconfig and this option with tracing enabled). This
+> detected 178 unique tracepoints that are defined and not used:
+>=20
+> $ grep '^warning:' /work/autotest/cross-unused-traceevnts.log | sort -u |=
+wc -l
+> 178
+>=20
+> Among them, 78 tracepoints were created and never referenced.
+>=20
+> $ grep '^warning:' /work/autotest/cross-unused-traceevents.log | sort -u =
+|cut -d"'" -f2 |
+>     while read a ; do if ! git grep -q trace_$a ; then echo $a; fi ; done=
+ | wc -l
+> 78
+>=20
+> The 100 remaining are likely in strange #ifdef CONFIG combinations where =
+an
+> allyesconfig defines the tracepoint but doesn't enable the code that uses
+> them.
 
-P2:
-import mmap
-f = open("/tmp/3", "r")
-map = mmap.mmap(f.fileno(), f.tell(), flags=mmap.MAP_PRIVATE, prot=mmap.PROT_READ)
+[Pretending to be Linus :-)]
 
-Back to P1:
-f.seek(0)
-f.write('changed')
+So, have you fixed up the 178 new warnings you know about?  I cannot
+possibly do that, or even notify the offenders.  Please do that before
+adding this code to linux-next.
 
-Back to P2:
-map[:]
+But, really, these known warnings can just make it so much harder to
+notice new ones.
+--=20
+Cheers,
+Stephen Rothwell
 
-Then P2 gives me:
+--Sig_/k6.s4V9GhcxwPSBgRWnSwy6
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-b'initial contents'
+-----BEGIN PGP SIGNATURE-----
 
--serge
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmiww+AACgkQAVBC80lX
+0GxH7Af+PI41gk/is+FpGOfBJDFaasIeXr4ZDlczAaI5kkS4C+72BM4wtcyPgJpe
+4CB13SjYMl7NcT+BxGa7JeQl2Ab+ipt6ZcUfAp+mlsz7Pew5S0xMBwCHx0JMMptY
+udB+Y8o76dV9ddAiBAn7ROWtqZ67sUUaEHnCJ8ylBnK5PabgcnwVvqTWbcMAfwnk
+GDblBg+M/EUNqv7h+egNLASbFxbifUHK2KAkyYcC5znWyK+YIX6we0dBznBdMHOL
+lSUgbgUn/bcxt+xd8AUMpb0AGJsGhVD0j/T785XlT+eETH1E1ZiIo0lVMa5qJH5e
+7EfNxZJ60uwb4KVqQfeQrMioMc34Kg==
+=k72E
+-----END PGP SIGNATURE-----
+
+--Sig_/k6.s4V9GhcxwPSBgRWnSwy6--
 
