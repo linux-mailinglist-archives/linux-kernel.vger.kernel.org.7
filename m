@@ -1,92 +1,92 @@
-Return-Path: <linux-kernel+bounces-790037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1AC8B39E9A
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 15:20:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D349B39E9C
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 15:21:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AD193A630A
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 13:20:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE2503B20D0
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 13:20:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60E06313E2A;
-	Thu, 28 Aug 2025 13:19:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08DA53148B4;
+	Thu, 28 Aug 2025 13:19:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="XydmUfww"
-Received: from mail-yw1-f227.google.com (mail-yw1-f227.google.com [209.85.128.227])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="aHagub5n"
+Received: from mail-yw1-f225.google.com (mail-yw1-f225.google.com [209.85.128.225])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 093C2313E0D
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 13:19:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.227
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 701A6313E2D
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 13:19:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.225
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756387146; cv=none; b=OnvKg5cN2stN2nTypKgKDwh7WrSfxjMQ87tL0RmRkslO6pKZ8HYe310FggsFMyxf8Mqkh5RHkvAcvk8cOGLz/weDiqx4gOks7xyYtGX2VbGnG7J871MVpvLOPZbevl3Y0J2Y+SM9K5zxK9PH/C53Qcx5gCIl2hUJZEom/ktFlKk=
+	t=1756387152; cv=none; b=LpkYhwoqslDg2/gGHY67c7zmnTSpTL9Bv8zr8D/dtPIITgyd3lF/rM2QgtEC4bPVtSoRy/K+If2LoRzbGoGhxyvwrNEMM+/OzGm8BkVR0nIeJmFJGXkMpgd9FKFlfB6FNrHUfNo89DvRbttUa16dnj1E3doqxPN7uDdzfWcI8Q0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756387146; c=relaxed/simple;
-	bh=mqc66Rd4OFHB8FGSet61CfCkE0/bn5eSG3iApS1it/o=;
+	s=arc-20240116; t=1756387152; c=relaxed/simple;
+	bh=H7JoMIILAhGUgjcUXQyHFBWQ8k2DHQByyC1Q5/bQTDQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=kp5qFJWpULPpzFvwjly63BzyFKLqYLuYOvy2zcTAcHVU4ZbF0WtJGOfZcnGKW+3WUkMae2q5m0dj72J3Ve79dMrUaYsDc1AvecmAa7jL1t5RaVp50NPuBFW7uUma2v4L1DqA9HoTBoYtEcGhdVaJqbA9/YTBZzXQBZP1D1Ohh28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=XydmUfww; arc=none smtp.client-ip=209.85.128.227
+	 MIME-Version; b=tCBDbZHFfzwoxdAyMWjC+1su4m/qVX0avJ5Ab9ncKRNSb9xibMb/YCp0n4HlEOk//M4Hepcu2bEJqSH/VmzbpVFVg6vKiexo/vPrQhxNjviOgeZQApzXRAJ+S+hGhQkiPRg3COQxzp8X9/ZLHl5a/Pj6ULRqcY6LCQW08wsJt6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=aHagub5n; arc=none smtp.client-ip=209.85.128.225
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-yw1-f227.google.com with SMTP id 00721157ae682-71d603a9cfaso6196187b3.1
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 06:19:04 -0700 (PDT)
+Received: by mail-yw1-f225.google.com with SMTP id 00721157ae682-71d6014810fso7071477b3.0
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 06:19:09 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756387144; x=1756991944;
+        d=1e100.net; s=20230601; t=1756387148; x=1756991948;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:dkim-signature
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ntJGYEUiuBh9zZugRw94xx78BQdVs+C9ZGQw3nQQ1EI=;
-        b=BH7Uk7HaIkucLnuxnEGdmZDkV4dEoMj7I02EbXgSaTKticPbaFcaPAxNeQWEgN/18w
-         WWLK+Dbc1iV3nC1OrCxWr/zEIrTjqUqG/VEHXJM8Qp9jW+YpaS9eqTCBMb+dR9ThfprP
-         rt7r1axPvg/UOfzthz/GxDq2JqIVohG/W/zIo3ecm4MjbciSCNVUS3/9xp5dRqgB2imh
-         wSpwwqqzVfcNs4iZhhSzieWu/m6lnPjvn6wwxTtGqlXZLVWb2+5GuZODQofyyx4x0B5v
-         5mno56NqHAr+n58nx2RoCcwrHRRpv+/QRWmgqe2T2FaBYeTT2XHHI0T21ABc8ewQkOuU
-         TIjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVvnA1E13PpVqsuHHO14Fl6g4yCQBCTIR6iVCIpujNRHNd+JQm0roqQEhoOMuJM59auz15vUDSUg8luOBs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNDc/1/Xen9mnABLLeqtn5J2CJwWkLiN8j6UF2rbj12UTm3LVd
-	UwmHF5ddRkg/FRp+vRQFNaixJpHePQmj0WM/AldZGIqj9p6OXcLWAkKTfyyjwGNANb5/DWIjRoe
-	JGnx0OBXQXnGQ6ZlhhYKUlQt7lmhtKpBewADXWsZNz0yIWusQuzUgz+/rqtF3CFDJ5hETEL03Se
-	DzmI1R7kNQTAVg+rIn2sQDPRSyzIBpaxpy0d4NK+LKOK6KpzjZDFhHER2RakF+iHO/6vd6ZtjAt
-	bpNRk4cvp0wqXxZbkC8qqBZ5Q==
-X-Gm-Gg: ASbGncsTzSdpELP/BHhQsM/MCEgseFe5toUKD2NGsswN+/sdRPrahA9bp48NoQMOIMj
-	P7jo9abn6PXPrIUb2Xj3yKU2k+/fZrbJeo0WnQEnP/Nhcjf2L29wIrWHKTnSIZBk9UWnQxZT9qR
-	CbhEslpaOhDoB1i3GuytJ9GVfmSc7snOopbofSJ6vKI+B8qzuEUv25yF7qR4J6FhH6wIICyf0W8
-	9oOgsX3FC7aqqEO9VSgyvULljErN9KLPjvPJOYtxk2ypBch/0Gx87zyLMI3Q4KnD/8yRdp7ROlJ
-	dBVjlEqJQFDj606k+pZpf1U5kK12tfE6/85TKi5zf20bH2T1SJUS+nVgd/5WqwqfJF2FYB4zPcH
-	CKPb/jaUNI6uO8yP1Je2b66EWKSR5zxCkbbzu6xHFxaQecYGAjNo+gVEPWoNBKq9ccHU+FQoZin
-	3+KVgfLtKC
-X-Google-Smtp-Source: AGHT+IE2tYrSbcguGnvIoVaoNAIbFVFdjmyKCUp3ZGJoC+zdT9F9ExhSFqow4whRjZV4SAvQqn3r2atP1ya9
-X-Received: by 2002:a05:690c:9a11:b0:71a:a9c:30de with SMTP id 00721157ae682-71fdc418f92mr306376687b3.41.1756387143695;
-        Thu, 28 Aug 2025 06:19:03 -0700 (PDT)
-Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com (address-144-49-247-122.dlp.protect.broadcom.com. [144.49.247.122])
-        by smtp-relay.gmail.com with ESMTPS id 00721157ae682-721127164desm6186107b3.29.2025.08.28.06.19.03
+        bh=R/9NtnykLFlbdwq/BFwbqCg1JY7GaLggRNo0Kw7S3VI=;
+        b=HjFToYtRRLiv9c1gzR8HLlCFrprWEk0pvd1Q4MgS0Qkq6MCqTCK6xcvPauA30Gs/iC
+         GUArntIOtXUdESd4oOBkDxzHVDlHjnXGueuss51v3Xo3y5p+tuBth1Z/SLR5j+I+PWm+
+         e6z6YidzO5lEqprpoInK1e8BWeUzpMWTAQmqwEe9R0LC/5m1NpXJCreo6HFK/05uyD3Q
+         UNMi6UTmjelva/RTT0hDGfYlvHL05+sssIP3xIcGOjdzgPY01r0YVUyDvmkqXv+Itgj0
+         o6TduHPg6gXT84D9x4nqU7yftetrAcp39g8NI99YhzDZPojVAHNrd0R65A8TQxxA6gsT
+         aS0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXwLMg0FrvPp7udTbzzXgS7aZT8CWViQ3zAGea1hWgY2O5U9imySDq5plCtDM9qnvf/opegK+uqGPxvgaY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVZJdeUURzyBMftnkchvYKWv+bmG9WMZhRQKAcsnr6fGN9ucf5
+	/rJP8p8UCSl18drJaQilLzDD20ByAm/EP5B5qXz2gCLcB4CBYNFlZHQBEsIlOa0a4w8siiM3zEJ
+	UqAWMr4nliadEeXsyskKHqSFT99VZdEBeUIRtcCQQ7QOJ624ByGyvOCNxzjfNyQIGzzL+gUlXYT
+	22CGSvHyXvHY6pRjoGC4NPBlB5a5xDot3yTcho/lOWvUgdkV9dY9KYPvRpfor8B0ZTkrwqrfXOU
+	IrFOOvsNNPPWeSM1DDqsGBI6g==
+X-Gm-Gg: ASbGnctVY3vFyNawsuMcM5pCebgHRCMN2wfPvjUNi7H3WueTvd0kA4C23hNkh77D+bD
+	UyNpLuEQsN7d4G5p+0JgBXF93CV4HzDKoIYfxB+7VK0PVvvOHQTsgpz69WvKZTZFRHtpX4wAfVj
+	hErI8jpywTlMD2zuCMBtpMEYk80CGs7/T8WrPIDyJO0HuhtEaPsrWZcglL/mB4rH6TsxRDF/w/E
+	U/EECIbjHG4CgeDAWC5BLuhFVjvn2clxXm8oRpd8icSrlYUPCIk70Fkb7ka0ewqfIMjokUZWVGL
+	6/tzFo9upTTBBUwm3KzCRZiIm6Q5zkp5H7ehntw76R8AieNel2xyYYcX96S5G8tFYW8k6RWGr9o
+	3zwVyfpkMn3q9oMN8MEurepr5fmc6kq3gWmvLD05o7+3I6RIsd4oJi9wmn+lC8G5rfjJJ+3TyKH
+	NDy5AKK2rj
+X-Google-Smtp-Source: AGHT+IG8yfS2NI8OPhywdJp91PjIZNpU9lPHM/urwUAxmn9s2mcJOKLRtbuIpiWnvxYN/Y/6+7/fKTLBjDWp
+X-Received: by 2002:a05:690c:9c0e:b0:71a:234c:aaa8 with SMTP id 00721157ae682-71fdc2b0946mr283528047b3.2.1756387148089;
+        Thu, 28 Aug 2025 06:19:08 -0700 (PDT)
+Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com (address-144-49-247-100.dlp.protect.broadcom.com. [144.49.247.100])
+        by smtp-relay.gmail.com with ESMTPS id 00721157ae682-71ff16a43a5sm9453047b3.10.2025.08.28.06.19.07
         for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 28 Aug 2025 06:19:03 -0700 (PDT)
+        Thu, 28 Aug 2025 06:19:08 -0700 (PDT)
 X-Relaying-Domain: broadcom.com
 X-CFilter-Loop: Reflected
-Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-246fbc9a3ecso12154255ad.3
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 06:19:03 -0700 (PDT)
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-2445803f0cfso12358035ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 06:19:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1756387142; x=1756991942; darn=vger.kernel.org;
+        d=broadcom.com; s=google; t=1756387147; x=1756991947; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ntJGYEUiuBh9zZugRw94xx78BQdVs+C9ZGQw3nQQ1EI=;
-        b=XydmUfwwB25yXWptwl+fwKnIpJX//TfmwQmvcqMKaa8TujlMLSrrujXg6Q2Vx9KXyM
-         DeAabsIWm3LyqsXXKLl4Mp0GAgneeZP3cyfRnFw7FMc7XAJMfEWPkPC2kG+PiQ1lMMT+
-         kiKpvj9bOuITXaVwdmcxtztkkXDZ1NxRF3F8E=
-X-Forwarded-Encrypted: i=1; AJvYcCXN5b/4yz3kzQHOH0Eel0KbdWHSZpZ3HqKOdUvBALE5k+dny7f1gsy5YHoQjpfwOdanVn6mfFjExSA+7po=@vger.kernel.org
-X-Received: by 2002:a17:902:d4cc:b0:248:c963:8e67 with SMTP id d9443c01a7336-248c9639169mr54493755ad.41.1756387142250;
-        Thu, 28 Aug 2025 06:19:02 -0700 (PDT)
-X-Received: by 2002:a17:902:d4cc:b0:248:c963:8e67 with SMTP id d9443c01a7336-248c9639169mr54493245ad.41.1756387141711;
-        Thu, 28 Aug 2025 06:19:01 -0700 (PDT)
+        bh=R/9NtnykLFlbdwq/BFwbqCg1JY7GaLggRNo0Kw7S3VI=;
+        b=aHagub5newfmYfUftcXrXpTIaVB2prJS3YwIdO5TQYsNTYhkJ4jCxDwR3AeZnvKB6k
+         S4ONQyE24LgTRB0FwP5B48Aug7gM204wo5WW3/B7AtxfVM97AxbtiK7ENBe7+Dy92rgP
+         NUsREo34vhHAXSa+uvOQQI2hAEmMDk/oNHL7g=
+X-Forwarded-Encrypted: i=1; AJvYcCULbvypCWuyjWo1qoHMZxM/uD2sD8GVDGsamokuS59YIUD4qvr47E/wK+o8uR01fsdksVOicF3XzU3Xrx4=@vger.kernel.org
+X-Received: by 2002:a17:903:240e:b0:248:df64:ec6a with SMTP id d9443c01a7336-248df64fa0fmr27643645ad.15.1756387146772;
+        Thu, 28 Aug 2025 06:19:06 -0700 (PDT)
+X-Received: by 2002:a17:903:240e:b0:248:df64:ec6a with SMTP id d9443c01a7336-248df64fa0fmr27643165ad.15.1756387146310;
+        Thu, 28 Aug 2025 06:19:06 -0700 (PDT)
 Received: from hyd-csg-thor2-h1-server2.dhcp.broadcom.net ([192.19.203.250])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-248b6a16ae3sm36468705ad.137.2025.08.28.06.18.57
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-248b6a16ae3sm36468705ad.137.2025.08.28.06.19.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Aug 2025 06:19:01 -0700 (PDT)
+        Thu, 28 Aug 2025 06:19:05 -0700 (PDT)
 From: Bhargava Marreddy <bhargava.marreddy@broadcom.com>
 To: davem@davemloft.net,
 	edumazet@google.com,
@@ -102,9 +102,9 @@ Cc: netdev@vger.kernel.org,
 	Bhargava Marreddy <bhargava.marreddy@broadcom.com>,
 	Vikas Gupta <vikas.gupta@broadcom.com>,
 	Rajashekar Hudumula <rajashekar.hudumula@broadcom.com>
-Subject: [v5, net-next 2/9] bng_en: Add initial support for CP and NQ rings
-Date: Thu, 28 Aug 2025 18:45:40 +0000
-Message-ID: <20250828184547.242496-3-bhargava.marreddy@broadcom.com>
+Subject: [v5, net-next 3/9] bng_en: Introduce VNIC
+Date: Thu, 28 Aug 2025 18:45:41 +0000
+Message-ID: <20250828184547.242496-4-bhargava.marreddy@broadcom.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20250828184547.242496-1-bhargava.marreddy@broadcom.com>
 References: <20250828184547.242496-1-bhargava.marreddy@broadcom.com>
@@ -117,581 +117,229 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
 
-Allocate CP and NQ related data structures and add support to
-associate NQ and CQ rings. Also, add the association of NQ, NAPI,
-and interrupts.
+Add the VNIC-specific structures and DMA memory necessary to support
+UC/MC and RSS functionality.
 
 Signed-off-by: Bhargava Marreddy <bhargava.marreddy@broadcom.com>
 Reviewed-by: Vikas Gupta <vikas.gupta@broadcom.com>
 Reviewed-by: Rajashekar Hudumula <rajashekar.hudumula@broadcom.com>
 ---
- drivers/net/ethernet/broadcom/bnge/bnge.h     |   1 +
- .../net/ethernet/broadcom/bnge/bnge_netdev.c  | 434 ++++++++++++++++++
- .../net/ethernet/broadcom/bnge/bnge_netdev.h  |  12 +
- .../net/ethernet/broadcom/bnge/bnge_resc.c    |   2 +-
- 4 files changed, 448 insertions(+), 1 deletion(-)
+ .../net/ethernet/broadcom/bnge/bnge_netdev.c  | 129 ++++++++++++++++++
+ .../net/ethernet/broadcom/bnge/bnge_netdev.h  |  30 ++++
+ 2 files changed, 159 insertions(+)
 
-diff --git a/drivers/net/ethernet/broadcom/bnge/bnge.h b/drivers/net/ethernet/broadcom/bnge/bnge.h
-index 2d3b2fd57be4..07df86f0061f 100644
---- a/drivers/net/ethernet/broadcom/bnge/bnge.h
-+++ b/drivers/net/ethernet/broadcom/bnge/bnge.h
-@@ -219,5 +219,6 @@ static inline bool bnge_is_agg_reqd(struct bnge_dev *bd)
- }
- 
- bool bnge_aux_registered(struct bnge_dev *bd);
-+u16 bnge_aux_get_msix(struct bnge_dev *bd);
- 
- #endif /* _BNGE_H_ */
 diff --git a/drivers/net/ethernet/broadcom/bnge/bnge_netdev.c b/drivers/net/ethernet/broadcom/bnge/bnge_netdev.c
-index 947072707e64..dd56e8b5eee9 100644
+index dd56e8b5eee9..59357b89ac29 100644
 --- a/drivers/net/ethernet/broadcom/bnge/bnge_netdev.c
 +++ b/drivers/net/ethernet/broadcom/bnge/bnge_netdev.c
-@@ -27,6 +27,225 @@
- #define BNGE_RING_TO_TC(bd, tx)		\
- 	((tx) / (bd)->tx_nr_rings_per_tc)
- 
-+#define BNGE_TC_TO_RING_BASE(bd, tc)	\
-+	((tc) * (bd)->tx_nr_rings_per_tc)
-+
-+static void bnge_free_nq_desc_arr(struct bnge_nq_ring_info *nqr)
-+{
-+	struct bnge_ring_struct *ring = &nqr->ring_struct;
-+
-+	kfree(nqr->desc_ring);
-+	nqr->desc_ring = NULL;
-+	ring->ring_mem.pg_arr = NULL;
-+	kfree(nqr->desc_mapping);
-+	nqr->desc_mapping = NULL;
-+	ring->ring_mem.dma_arr = NULL;
-+}
-+
-+static void bnge_free_cp_desc_arr(struct bnge_cp_ring_info *cpr)
-+{
-+	struct bnge_ring_struct *ring = &cpr->ring_struct;
-+
-+	kfree(cpr->desc_ring);
-+	cpr->desc_ring = NULL;
-+	ring->ring_mem.pg_arr = NULL;
-+	kfree(cpr->desc_mapping);
-+	cpr->desc_mapping = NULL;
-+	ring->ring_mem.dma_arr = NULL;
-+}
-+
-+static int bnge_alloc_nq_desc_arr(struct bnge_nq_ring_info *nqr, int n)
-+{
-+	nqr->desc_ring = kcalloc(n, sizeof(*nqr->desc_ring), GFP_KERNEL);
-+	if (!nqr->desc_ring)
-+		return -ENOMEM;
-+
-+	nqr->desc_mapping = kcalloc(n, sizeof(*nqr->desc_mapping), GFP_KERNEL);
-+	if (!nqr->desc_mapping)
-+		return -ENOMEM;
-+
-+	return 0;
-+}
-+
-+static int bnge_alloc_cp_desc_arr(struct bnge_cp_ring_info *cpr, int n)
-+{
-+	cpr->desc_ring = kcalloc(n, sizeof(*cpr->desc_ring), GFP_KERNEL);
-+	if (!cpr->desc_ring)
-+		return -ENOMEM;
-+
-+	cpr->desc_mapping = kcalloc(n, sizeof(*cpr->desc_mapping), GFP_KERNEL);
-+	if (!cpr->desc_mapping)
-+		return -ENOMEM;
-+
-+	return 0;
-+}
-+
-+static void bnge_free_nq_arrays(struct bnge_net *bn)
-+{
-+	struct bnge_dev *bd = bn->bd;
-+	int i;
-+
-+	for (i = 0; i < bd->nq_nr_rings; i++) {
-+		struct bnge_napi *bnapi = bn->bnapi[i];
-+
-+		bnge_free_nq_desc_arr(&bnapi->nq_ring);
-+	}
-+}
-+
-+static int bnge_alloc_nq_arrays(struct bnge_net *bn)
-+{
-+	struct bnge_dev *bd = bn->bd;
-+	int i;
-+
-+	for (i = 0; i < bd->nq_nr_rings; i++) {
-+		struct bnge_napi *bnapi = bn->bnapi[i];
-+		int rc;
-+
-+		rc = bnge_alloc_nq_desc_arr(&bnapi->nq_ring, bn->cp_nr_pages);
-+		if (rc)
-+			return rc;
-+	}
-+
-+	return 0;
-+}
-+
-+static void bnge_free_nq_tree(struct bnge_net *bn)
-+{
-+	struct bnge_dev *bd = bn->bd;
-+	int i;
-+
-+	if (!bn->bnapi)
-+		return;
-+
-+	for (i = 0; i < bd->nq_nr_rings; i++) {
-+		struct bnge_napi *bnapi = bn->bnapi[i];
-+		struct bnge_nq_ring_info *nqr;
-+		struct bnge_ring_struct *ring;
-+		int j;
-+
-+		nqr = &bnapi->nq_ring;
-+		ring = &nqr->ring_struct;
-+
-+		bnge_free_ring(bd, &ring->ring_mem);
-+
-+		if (!nqr->cp_ring_arr)
-+			continue;
-+
-+		for (j = 0; j < nqr->cp_ring_count; j++) {
-+			struct bnge_cp_ring_info *cpr = &nqr->cp_ring_arr[j];
-+
-+			ring = &cpr->ring_struct;
-+			bnge_free_ring(bd, &ring->ring_mem);
-+			bnge_free_cp_desc_arr(cpr);
-+		}
-+		kfree(nqr->cp_ring_arr);
-+		nqr->cp_ring_arr = NULL;
-+		nqr->cp_ring_count = 0;
-+	}
-+}
-+
-+static int alloc_one_cp_ring(struct bnge_net *bn,
-+			     struct bnge_cp_ring_info *cpr)
-+{
-+	struct bnge_ring_mem_info *rmem;
-+	struct bnge_ring_struct *ring;
-+	struct bnge_dev *bd = bn->bd;
-+	int rc;
-+
-+	rc = bnge_alloc_cp_desc_arr(cpr, bn->cp_nr_pages);
-+	if (rc) {
-+		bnge_free_cp_desc_arr(cpr);
-+		return -ENOMEM;
-+	}
-+	ring = &cpr->ring_struct;
-+	rmem = &ring->ring_mem;
-+	rmem->nr_pages = bn->cp_nr_pages;
-+	rmem->page_size = HW_CMPD_RING_SIZE;
-+	rmem->pg_arr = (void **)cpr->desc_ring;
-+	rmem->dma_arr = cpr->desc_mapping;
-+	rmem->flags = BNGE_RMEM_RING_PTE_FLAG;
-+	rc = bnge_alloc_ring(bd, rmem);
-+	if (rc) {
-+		bnge_free_ring(bd, rmem);
-+		bnge_free_cp_desc_arr(cpr);
-+	}
-+
-+	return rc;
-+}
-+
-+static int bnge_alloc_nq_tree(struct bnge_net *bn)
-+{
-+	struct bnge_dev *bd = bn->bd;
-+	int i, j, rc, ulp_msix;
-+	int tcs = 1;
-+
-+	ulp_msix = bnge_aux_get_msix(bd);
-+	for (i = 0, j = 0; i < bd->nq_nr_rings; i++) {
-+		bool sh = !!(bd->flags & BNGE_EN_SHARED_CHNL);
-+		struct bnge_napi *bnapi = bn->bnapi[i];
-+		struct bnge_nq_ring_info *nqr;
-+		struct bnge_cp_ring_info *cpr;
-+		struct bnge_ring_struct *ring;
-+		int cp_count = 0, k;
-+		int rx = 0, tx = 0;
-+
-+		if (!bnapi)
-+			continue;
-+
-+		nqr = &bnapi->nq_ring;
-+		nqr->bnapi = bnapi;
-+		ring = &nqr->ring_struct;
-+
-+		rc = bnge_alloc_ring(bd, &ring->ring_mem);
-+		if (rc)
-+			return rc;
-+
-+		ring->map_idx = ulp_msix + i;
-+
-+		if (i < bd->rx_nr_rings) {
-+			cp_count++;
-+			rx = 1;
-+		}
-+
-+		if ((sh && i < bd->tx_nr_rings) ||
-+		    (!sh && i >= bd->rx_nr_rings)) {
-+			cp_count += tcs;
-+			tx = 1;
-+		}
-+
-+		nqr->cp_ring_arr = kcalloc(cp_count, sizeof(*cpr),
-+					   GFP_KERNEL);
-+		if (!nqr->cp_ring_arr)
-+			return -ENOMEM;
-+
-+		nqr->cp_ring_count = cp_count;
-+
-+		for (k = 0; k < cp_count; k++) {
-+			cpr = &nqr->cp_ring_arr[k];
-+			rc = alloc_one_cp_ring(bn, cpr);
-+			if (rc)
-+				return rc;
-+
-+			cpr->bnapi = bnapi;
-+			cpr->cp_idx = k;
-+			if (!k && rx) {
-+				bn->rx_ring[i].rx_cpr = cpr;
-+				cpr->cp_ring_type = BNGE_NQ_HDL_TYPE_RX;
-+			} else {
-+				int n, tc = k - rx;
-+
-+				n = BNGE_TC_TO_RING_BASE(bd, tc) + j;
-+				bn->tx_ring[n].tx_cpr = cpr;
-+				cpr->cp_ring_type = BNGE_NQ_HDL_TYPE_TX;
-+			}
-+		}
-+		if (tx)
-+			j++;
-+	}
-+
-+	return 0;
-+}
-+
- static bool bnge_separate_head_pool(struct bnge_rx_ring_info *rxr)
- {
- 	return rxr->need_head_pool || PAGE_SIZE > BNGE_RX_PAGE_SIZE;
-@@ -216,10 +435,19 @@ static int bnge_alloc_tx_rings(struct bnge_net *bn)
+@@ -435,6 +435,122 @@ static int bnge_alloc_tx_rings(struct bnge_net *bn)
  	return 0;
  }
  
-+static void bnge_free_ring_grps(struct bnge_net *bn)
++static void bnge_free_vnic_attributes(struct bnge_net *bn)
 +{
-+	kfree(bn->grp_info);
-+	bn->grp_info = NULL;
++	struct pci_dev *pdev = bn->bd->pdev;
++	struct bnge_vnic_info *vnic;
++	int i;
++
++	if (!bn->vnic_info)
++		return;
++
++	for (i = 0; i < bn->nr_vnics; i++) {
++		vnic = &bn->vnic_info[i];
++
++		kfree(vnic->uc_list);
++		vnic->uc_list = NULL;
++
++		if (vnic->mc_list) {
++			dma_free_coherent(&pdev->dev, vnic->mc_list_size,
++					  vnic->mc_list, vnic->mc_list_mapping);
++			vnic->mc_list = NULL;
++		}
++
++		if (vnic->rss_table) {
++			dma_free_coherent(&pdev->dev, vnic->rss_table_size,
++					  vnic->rss_table,
++					  vnic->rss_table_dma_addr);
++			vnic->rss_table = NULL;
++		}
++
++		vnic->rss_hash_key = NULL;
++		vnic->flags = 0;
++	}
 +}
 +
++static int bnge_alloc_vnic_attributes(struct bnge_net *bn)
++{
++	struct bnge_dev *bd = bn->bd;
++	struct bnge_vnic_info *vnic;
++	int i, rc = 0, size;
++
++	for (i = 0; i < bn->nr_vnics; i++) {
++		vnic = &bn->vnic_info[i];
++
++		if (vnic->flags & BNGE_VNIC_UCAST_FLAG) {
++			int mem_size = (BNGE_MAX_UC_ADDRS - 1) * ETH_ALEN;
++
++			if (mem_size > 0) {
++				vnic->uc_list = kmalloc(mem_size, GFP_KERNEL);
++				if (!vnic->uc_list) {
++					rc = -ENOMEM;
++					goto out;
++				}
++			}
++		}
++
++		if (vnic->flags & BNGE_VNIC_MCAST_FLAG) {
++			vnic->mc_list_size = BNGE_MAX_MC_ADDRS * ETH_ALEN;
++			vnic->mc_list =
++				dma_alloc_coherent(bd->dev,
++						   vnic->mc_list_size,
++						   &vnic->mc_list_mapping,
++						   GFP_KERNEL);
++			if (!vnic->mc_list) {
++				rc = -ENOMEM;
++				goto out;
++			}
++		}
++
++		/* Allocate rss table and hash key */
++		size = L1_CACHE_ALIGN(BNGE_MAX_RSS_TABLE_SIZE);
++
++		vnic->rss_table_size = size + HW_HASH_KEY_SIZE;
++		vnic->rss_table = dma_alloc_coherent(bd->dev,
++						     vnic->rss_table_size,
++						     &vnic->rss_table_dma_addr,
++						     GFP_KERNEL);
++		if (!vnic->rss_table) {
++			rc = -ENOMEM;
++			goto out;
++		}
++
++		vnic->rss_hash_key = ((void *)vnic->rss_table) + size;
++		vnic->rss_hash_key_dma_addr = vnic->rss_table_dma_addr + size;
++	}
++
++	return 0;
++
++out:
++	return rc;
++}
++
++static int bnge_alloc_vnics(struct bnge_net *bn)
++{
++	int num_vnics;
++
++	/* Allocate only 1 VNIC for now
++	 * Additional VNICs will be added based on RFS/NTUPLE in future patches
++	 */
++	num_vnics = 1;
++
++	bn->vnic_info = kcalloc(num_vnics, sizeof(struct bnge_vnic_info),
++				GFP_KERNEL);
++	if (!bn->vnic_info)
++		return -ENOMEM;
++
++	bn->nr_vnics = num_vnics;
++
++	return 0;
++}
++
++static void bnge_free_vnics(struct bnge_net *bn)
++{
++	kfree(bn->vnic_info);
++	bn->vnic_info = NULL;
++	bn->nr_vnics = 0;
++}
++
+ static void bnge_free_ring_grps(struct bnge_net *bn)
+ {
+ 	kfree(bn->grp_info);
+@@ -443,11 +559,13 @@ static void bnge_free_ring_grps(struct bnge_net *bn)
+ 
  static void bnge_free_core(struct bnge_net *bn)
  {
++	bnge_free_vnic_attributes(bn);
  	bnge_free_tx_rings(bn);
  	bnge_free_rx_rings(bn);
-+	bnge_free_nq_tree(bn);
-+	bnge_free_nq_arrays(bn);
-+	bnge_free_ring_grps(bn);
+ 	bnge_free_nq_tree(bn);
+ 	bnge_free_nq_arrays(bn);
+ 	bnge_free_ring_grps(bn);
++	bnge_free_vnics(bn);
  	kfree(bn->tx_ring_map);
  	bn->tx_ring_map = NULL;
  	kfree(bn->tx_ring);
-@@ -307,6 +535,10 @@ static int bnge_alloc_core(struct bnge_net *bn)
+@@ -535,6 +653,10 @@ static int bnge_alloc_core(struct bnge_net *bn)
  		txr->bnapi = bnapi2;
  	}
  
-+	rc = bnge_alloc_nq_arrays(bn);
++	rc = bnge_alloc_vnics(bn);
 +	if (rc)
 +		goto err_free_core;
 +
- 	bnge_init_ring_struct(bn);
- 
- 	rc = bnge_alloc_rx_rings(bn);
-@@ -317,13 +549,198 @@ static int bnge_alloc_core(struct bnge_net *bn)
+ 	rc = bnge_alloc_nq_arrays(bn);
+ 	if (rc)
+ 		goto err_free_core;
+@@ -553,6 +675,13 @@ static int bnge_alloc_core(struct bnge_net *bn)
  	if (rc)
  		goto err_free_core;
  
-+	rc = bnge_alloc_nq_tree(bn);
++	bn->vnic_info[BNGE_VNIC_DEFAULT].flags |= BNGE_VNIC_RSS_FLAG |
++						  BNGE_VNIC_MCAST_FLAG |
++						  BNGE_VNIC_UCAST_FLAG;
++	rc = bnge_alloc_vnic_attributes(bn);
 +	if (rc)
 +		goto err_free_core;
 +
  	return 0;
  
  err_free_core:
- 	bnge_free_core(bn);
-+
-+	return rc;
-+}
-+
-+static int bnge_cp_num_to_irq_num(struct bnge_net *bn, int n)
-+{
-+	struct bnge_napi *bnapi = bn->bnapi[n];
-+	struct bnge_nq_ring_info *nqr;
-+
-+	nqr = &bnapi->nq_ring;
-+
-+	return nqr->ring_struct.map_idx;
-+}
-+
-+static irqreturn_t bnge_msix(int irq, void *dev_instance)
-+{
-+	/* NAPI scheduling to be added in a future patch */
-+	return IRQ_HANDLED;
-+}
-+
-+static void bnge_setup_msix(struct bnge_net *bn)
-+{
-+	struct net_device *dev = bn->netdev;
-+	struct bnge_dev *bd = bn->bd;
-+	int len, i;
-+
-+	len = sizeof(bd->irq_tbl[0].name);
-+	for (i = 0; i < bd->nq_nr_rings; i++) {
-+		int map_idx = bnge_cp_num_to_irq_num(bn, i);
-+		char *attr;
-+
-+		if (bd->flags & BNGE_EN_SHARED_CHNL)
-+			attr = "TxRx";
-+		else if (i < bd->rx_nr_rings)
-+			attr = "rx";
-+		else
-+			attr = "tx";
-+
-+		snprintf(bd->irq_tbl[map_idx].name, len, "%s-%s-%d", dev->name,
-+			 attr, i);
-+		bd->irq_tbl[map_idx].handler = bnge_msix;
-+	}
-+}
-+
-+static int bnge_set_real_num_queues(struct bnge_net *bn)
-+{
-+	struct net_device *dev = bn->netdev;
-+	struct bnge_dev *bd = bn->bd;
-+	int rc;
-+
-+	rc = netif_set_real_num_tx_queues(dev, bd->tx_nr_rings);
-+	if (rc)
-+		return rc;
-+
-+	return netif_set_real_num_rx_queues(dev, bd->rx_nr_rings);
-+}
-+
-+static int bnge_setup_interrupts(struct bnge_net *bn)
-+{
-+	struct bnge_dev *bd = bn->bd;
-+
-+	if (!bd->irq_tbl) {
-+		if (bnge_alloc_irqs(bd))
-+			return -ENODEV;
-+	}
-+
-+	bnge_setup_msix(bn);
-+
-+	return bnge_set_real_num_queues(bn);
-+}
-+
-+static int bnge_request_irq(struct bnge_net *bn)
-+{
-+	struct bnge_dev *bd = bn->bd;
-+	int i, rc;
-+
-+	rc = bnge_setup_interrupts(bn);
-+	if (rc) {
-+		netdev_err(bn->netdev, "bnge_setup_interrupts err: %d\n", rc);
-+		return rc;
-+	}
-+	for (i = 0; i < bd->nq_nr_rings; i++) {
-+		int map_idx = bnge_cp_num_to_irq_num(bn, i);
-+		struct bnge_irq *irq = &bd->irq_tbl[map_idx];
-+
-+		rc = request_irq(irq->vector, irq->handler, 0, irq->name,
-+				 bn->bnapi[i]);
-+		if (rc)
-+			break;
-+
-+		netif_napi_set_irq_locked(&bn->bnapi[i]->napi, irq->vector);
-+		irq->requested = 1;
-+
-+		if (zalloc_cpumask_var(&irq->cpu_mask, GFP_KERNEL)) {
-+			int numa_node = dev_to_node(&bd->pdev->dev);
-+
-+			irq->have_cpumask = 1;
-+			cpumask_set_cpu(cpumask_local_spread(i, numa_node),
-+					irq->cpu_mask);
-+			rc = irq_set_affinity_hint(irq->vector, irq->cpu_mask);
-+			if (rc) {
-+				netdev_warn(bn->netdev,
-+					    "Set affinity failed, IRQ = %d\n",
-+					    irq->vector);
-+				break;
-+			}
-+		}
-+	}
-+
- 	return rc;
- }
- 
-+static int bnge_napi_poll(struct napi_struct *napi, int budget)
-+{
-+	int work_done = 0;
-+
-+	/* defer NAPI implementation to next patch series */
-+	napi_complete_done(napi, work_done);
-+
-+	return work_done;
-+}
-+
-+static void bnge_init_napi(struct bnge_net *bn)
-+{
-+	struct bnge_dev *bd = bn->bd;
-+	struct bnge_napi *bnapi;
-+	int i;
-+
-+	for (i = 0; i < bd->nq_nr_rings; i++) {
-+		bnapi = bn->bnapi[i];
-+		netif_napi_add_config(bn->netdev, &bnapi->napi, bnge_napi_poll,
-+				      bnapi->index);
-+	}
-+}
-+
-+static void bnge_del_napi(struct bnge_net *bn)
-+{
-+	struct bnge_dev *bd = bn->bd;
-+	int i;
-+
-+	if (!bn->bnapi)
-+		return;
-+
-+	for (i = 0; i < bd->rx_nr_rings; i++)
-+		netif_queue_set_napi(bn->netdev, i, NETDEV_QUEUE_TYPE_RX, NULL);
-+	for (i = 0; i < bd->tx_nr_rings; i++)
-+		netif_queue_set_napi(bn->netdev, i, NETDEV_QUEUE_TYPE_TX, NULL);
-+
-+	for (i = 0; i < bd->nq_nr_rings; i++) {
-+		struct bnge_napi *bnapi = bn->bnapi[i];
-+
-+		__netif_napi_del(&bnapi->napi);
-+	}
-+
-+	/* Wait for RCU grace period after removing NAPI instances */
-+	synchronize_net();
-+}
-+
-+static void bnge_free_irq(struct bnge_net *bn)
-+{
-+	struct bnge_dev *bd = bn->bd;
-+	struct bnge_irq *irq;
-+	int i;
-+
-+	if (!bd->irq_tbl || !bn->bnapi)
-+		return;
-+
-+	for (i = 0; i < bd->nq_nr_rings; i++) {
-+		int map_idx = bnge_cp_num_to_irq_num(bn, i);
-+
-+		irq = &bd->irq_tbl[map_idx];
-+		if (irq->requested) {
-+			if (irq->have_cpumask) {
-+				irq_set_affinity_hint(irq->vector, NULL);
-+				free_cpumask_var(irq->cpu_mask);
-+				irq->have_cpumask = 0;
-+			}
-+			free_irq(irq->vector, bn->bnapi[i]);
-+		}
-+
-+		irq->requested = 0;
-+	}
-+}
-+
- static int bnge_open_core(struct bnge_net *bn)
- {
- 	struct bnge_dev *bd = bn->bd;
-@@ -343,8 +760,22 @@ static int bnge_open_core(struct bnge_net *bn)
- 		return rc;
- 	}
- 
-+	bnge_init_napi(bn);
-+	rc = bnge_request_irq(bn);
-+	if (rc) {
-+		netdev_err(bn->netdev, "bnge_request_irq err: %d\n", rc);
-+		goto err_del_napi;
-+	}
-+
- 	set_bit(BNGE_STATE_OPEN, &bd->state);
-+
- 	return 0;
-+
-+err_del_napi:
-+	bnge_del_napi(bn);
-+	bnge_free_core(bn);
-+
-+	return rc;
- }
- 
- static netdev_tx_t bnge_start_xmit(struct sk_buff *skb, struct net_device *dev)
-@@ -371,6 +802,9 @@ static void bnge_close_core(struct bnge_net *bn)
- 	struct bnge_dev *bd = bn->bd;
- 
- 	clear_bit(BNGE_STATE_OPEN, &bd->state);
-+	bnge_free_irq(bn);
-+	bnge_del_napi(bn);
-+
- 	bnge_free_core(bn);
- }
- 
 diff --git a/drivers/net/ethernet/broadcom/bnge/bnge_netdev.h b/drivers/net/ethernet/broadcom/bnge/bnge_netdev.h
-index 92bae665f59c..8041951da187 100644
+index 8041951da187..7c56786f5a71 100644
 --- a/drivers/net/ethernet/broadcom/bnge/bnge_netdev.h
 +++ b/drivers/net/ethernet/broadcom/bnge/bnge_netdev.h
-@@ -133,6 +133,9 @@ enum {
+@@ -178,6 +178,8 @@ struct bnge_net {
  
- #define BNGE_NET_EN_TPA		(BNGE_NET_EN_GRO | BNGE_NET_EN_LRO)
- 
-+#define BNGE_NQ_HDL_TYPE_RX	0x00
-+#define BNGE_NQ_HDL_TYPE_TX	0x01
-+
- struct bnge_net {
- 	struct bnge_dev		*bd;
- 	struct net_device	*netdev;
-@@ -172,6 +175,10 @@ struct bnge_net {
- 
- 	u16				*tx_ring_map;
- 	enum dma_data_direction		rx_dir;
-+
-+	/* grp_info indexed by napi/nq index */
-+	struct bnge_ring_grp_info	*grp_info;
-+	int				total_irqs;
+ 	/* grp_info indexed by napi/nq index */
+ 	struct bnge_ring_grp_info	*grp_info;
++	struct bnge_vnic_info		*vnic_info;
++	int				nr_vnics;
+ 	int				total_irqs;
  };
  
- #define BNGE_DEFAULT_RX_RING_SIZE	511
-@@ -223,6 +230,8 @@ struct bnge_cp_ring_info {
- 	dma_addr_t		*desc_mapping;
- 	struct tx_cmp		**desc_ring;
- 	struct bnge_ring_struct	ring_struct;
-+	u8			cp_ring_type;
-+	u8			cp_idx;
+@@ -302,4 +304,32 @@ struct bnge_napi {
+ 	struct bnge_tx_ring_info	*tx_ring[BNGE_MAX_TXR_PER_NAPI];
  };
  
- struct bnge_nq_ring_info {
-@@ -230,6 +239,9 @@ struct bnge_nq_ring_info {
- 	dma_addr_t		*desc_mapping;
- 	struct nqe_cn		**desc_ring;
- 	struct bnge_ring_struct	ring_struct;
++#define INVALID_STATS_CTX_ID	-1
++#define BNGE_VNIC_DEFAULT	0
++#define BNGE_MAX_UC_ADDRS	4
 +
-+	int				cp_ring_count;
-+	struct bnge_cp_ring_info	*cp_ring_arr;
- };
- 
- struct bnge_rx_ring_info {
-diff --git a/drivers/net/ethernet/broadcom/bnge/bnge_resc.c b/drivers/net/ethernet/broadcom/bnge/bnge_resc.c
-index c79a3607a1b7..5597af1b3b7c 100644
---- a/drivers/net/ethernet/broadcom/bnge/bnge_resc.c
-+++ b/drivers/net/ethernet/broadcom/bnge/bnge_resc.c
-@@ -46,7 +46,7 @@ static int bnge_aux_get_dflt_msix(struct bnge_dev *bd)
- 	return min_t(int, roce_msix, num_online_cpus() + 1);
- }
- 
--static u16 bnge_aux_get_msix(struct bnge_dev *bd)
-+u16 bnge_aux_get_msix(struct bnge_dev *bd)
- {
- 	if (bnge_is_roce_en(bd))
- 		return bd->aux_num_msix;
++struct bnge_vnic_info {
++	u8		*uc_list;
++	dma_addr_t	rss_table_dma_addr;
++	__le16		*rss_table;
++	dma_addr_t	rss_hash_key_dma_addr;
++	u64		*rss_hash_key;
++	int		rss_table_size;
++#define BNGE_RSS_TABLE_ENTRIES		64
++#define BNGE_RSS_TABLE_SIZE		(BNGE_RSS_TABLE_ENTRIES * 4)
++#define BNGE_RSS_TABLE_MAX_TBL		8
++#define BNGE_MAX_RSS_TABLE_SIZE			\
++	(BNGE_RSS_TABLE_SIZE * BNGE_RSS_TABLE_MAX_TBL)
++
++	u8		*mc_list;
++	int		mc_list_size;
++	int		mc_list_count;
++	dma_addr_t	mc_list_mapping;
++#define BNGE_MAX_MC_ADDRS	16
++
++	u32		flags;
++#define BNGE_VNIC_RSS_FLAG	1
++#define BNGE_VNIC_MCAST_FLAG	4
++#define BNGE_VNIC_UCAST_FLAG	8
++};
+ #endif /* _BNGE_NETDEV_H_ */
 -- 
 2.47.3
 
