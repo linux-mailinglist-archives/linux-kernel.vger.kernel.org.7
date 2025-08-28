@@ -1,1886 +1,236 @@
-Return-Path: <linux-kernel+bounces-789590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789582-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48914B397C3
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 11:02:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45129B397A0
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 10:59:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD4A05E7604
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 09:01:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0DBDD171D44
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 08:59:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B96A530103E;
-	Thu, 28 Aug 2025 09:00:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FE3C2EBBB7;
+	Thu, 28 Aug 2025 08:59:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="stjXSj6i"
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DJyhdxTs"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3382A301006
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 08:59:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 315AD2E8882
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 08:59:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756371598; cv=none; b=Hgjo2QEnWhhkrTjQDJc0tNeLcS9jol7i3MtgFYnbZjqPkGy8/QM/McG8YpAaCKnsBx314QHApQaGTyIQuI2HdfaITdGjNq5KDF+LAxb9Dx6npwq2A2wqZcexov7Aiq+PsUU/3CburIWvBr7AXHViBo3V+jBMO3G4SrUSAfElG8w=
+	t=1756371568; cv=none; b=fHVinUYAk+Rhy3qMrrclhrFGHOVSpDINOR2iquCWYNF2b7zX3PLES7K+gDvI34Tj7ds3Eey1+JnD86jiSz2EnUYBgGg9T+9USTbWezu0yDxhLlWhJDjD3ctdB41+CgY53G/KnujZN93lk6sxM7V80gSN/BzYlo79W3149Q1/VCA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756371598; c=relaxed/simple;
-	bh=nBnM34H0NCSSRZgVkirV8RClzulMWKYLmBBgSxIhxmU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=RTz8BjZrm0qFmn41nUoCnVBmSgxSEZ/OSvma7YJLZqy30ze6+v8H8WG6kiXvcKe1dZ9XIsQdMAS9qe1ITGmyPEMwX38RTBqHqTb3EA0f+sASfFGEzGX0aIQ2tONF/KTyjnxhkng2gc1dkrqOvlYUudK+FDpvLZnkjhYFF9duGPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=stjXSj6i; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250828085952epoutp031af7c1e37f206bad96652b10edfe94a0~f4qhrEROc0097500975epoutp03w
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 08:59:52 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250828085952epoutp031af7c1e37f206bad96652b10edfe94a0~f4qhrEROc0097500975epoutp03w
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1756371592;
-	bh=jes6gf+irf75vpBoJyNVdGaamBw9Mu9AFsZXy++CCv8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=stjXSj6ih+OuHr+OEMXMy3Bl33wFUjZNIy/y212Jc8vZ63kfc9wSrgQ9gjGcW+UaF
-	 dhS1WlyhV9IpiHYdyM9S6myCCCd7fusqXb0xlSLANBJYr3bnL8IYhHkA+hsl5pDKM/
-	 4gZ8v2PSvGbZOTwuM/SAmruI0CZv7EZSBe1F3o68=
-Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
-	20250828085951epcas5p1c8fa299fbc654795e340eda4d92e3f58~f4qgpL9_Q2857728577epcas5p1r;
-	Thu, 28 Aug 2025 08:59:51 +0000 (GMT)
-Received: from epcas5p2.samsung.com (unknown [182.195.38.94]) by
-	epsnrtp03.localdomain (Postfix) with ESMTP id 4cCFhk3t0Bz3hhT7; Thu, 28 Aug
-	2025 08:59:50 +0000 (GMT)
-Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20250828085949epcas5p2a39a61925893e78ae8b70902fc7f4c20~f4qfD9XVT1971219712epcas5p2S;
-	Thu, 28 Aug 2025 08:59:49 +0000 (GMT)
-Received: from cheetah.samsungds.net (unknown [107.109.115.53]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250828085946epsmtip2557bb01c02d6a7b52839e2271079e394~f4qcTv53T0248202482epsmtip2y;
-	Thu, 28 Aug 2025 08:59:46 +0000 (GMT)
-From: Inbaraj E <inbaraj.e@samsung.com>
-To: rmfrfs@gmail.com, laurent.pinchart@ideasonboard.com, martink@posteo.de,
-	kernel@puri.sm, mchehab@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de
-Cc: kernel@pengutronix.de, festevam@gmail.com, linux-media@vger.kernel.org,
-	devicetree@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org, pankaj.dubey@samsung.com,
-	ravi.patel@samsung.com, shradha.t@samsung.com, Inbaraj E
-	<inbaraj.e@samsung.com>
-Subject: [PATCH v3 7/7] media: fsd-csis: Add FSD CSIS video capture
- interface support
-Date: Thu, 28 Aug 2025 14:29:11 +0530
-Message-ID: <20250828085911.81266-8-inbaraj.e@samsung.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250828085911.81266-1-inbaraj.e@samsung.com>
+	s=arc-20240116; t=1756371568; c=relaxed/simple;
+	bh=mv6f08Qw5SA9ziG/QS7GDYllGSYFnyc0Lhyyo9B1qlM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=B+J78GFgVJik1F5lUwPYwh+Pu1Osi50ODE+jzgJQhTpBiuE9kLQHaLeMxxrJUKWv/rIzEWNkwvyLIqJwb3LrWFBxUycD9PbsJekErq80U1bbf2ba0xNvE5wCgDzJDta+dMBCaOTPlZqtB/5cugNRWjK2HlSg8V7kF0egEiVnLps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DJyhdxTs; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756371565;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=qGBV0trfmwtCdsO1on6+SbThI8fH1bwSfxhJY1VBlnI=;
+	b=DJyhdxTsBPMmdT9t+iJaDI3ghMFopdgI5d/oX5HfnilKVgLu63V0VS0v6Xs7KsD2FjsaCi
+	U5q0cfIcN95HiDoZNxFFT/wv8wQGEqbu/OVYzqHmU59dCXK2P+o9pKnd+OhbeFS2xuyiXz
+	GEF878+eHQ1s8V5Xx7vaAQOF0bBHSkk=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-481-Wz-IvInBPGKiQPAh8MWpWQ-1; Thu, 28 Aug 2025 04:59:24 -0400
+X-MC-Unique: Wz-IvInBPGKiQPAh8MWpWQ-1
+X-Mimecast-MFC-AGG-ID: Wz-IvInBPGKiQPAh8MWpWQ_1756371563
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-45a1ad21752so3754435e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 01:59:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756371563; x=1756976363;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qGBV0trfmwtCdsO1on6+SbThI8fH1bwSfxhJY1VBlnI=;
+        b=YKewKfent1Pn37ea7VZmduzbqaLO7X5vseQ1lRHtmDJF7bGZx3gGrarzSetMZTYHmq
+         xya0I9kbfjuIBRjr2SVhTeRwu3BwYGq2wTMa3aQ+yFp4f8mFIMAz0eyZp7ixnUO00itS
+         c8cDtCJBaRISq72m7fZyivsjrYT1o5Jy5KI+dB8ca7AkeNUXpMP2/NhFK3R2j++iJDHP
+         LyrpQwwK2s+NUWgdzvOohecjLRAgbRl+OO65MZ2GsUx1UNFUE6LaEiDv+v0bDyx54i8s
+         O8+c7QpI3Q4ZfbNH+i5wxunIO04nu1Z7ujH0SyYdOayFpSSU4AFpr4Tc72Wp7b8SAVyQ
+         Njrg==
+X-Forwarded-Encrypted: i=1; AJvYcCU4vRdCBlW/g3dEnCXK4/YD6nnu0Eiv6sNAsEh8KayOAVmj4RbS72HOmzBQD9uPGvbhp0Kkf5sqCTWzm8g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxnJvoKgSLr1qWe8YOC3vvMH6mr05bxuOnrpaduwAQ09MIJrKKQ
+	jw7pGkKPj+VBeg63OKhGUVRBOkvbgWXk2+peVAZB+vHHQuZR4f7Cdpn0T3LWre60kpVqEuz6dxZ
+	/LwjUxYMwbHYSvGNz7WC3ovHN+4ThugcoaeKhv/xERk7a9DqVemLA1avBPVCQH284vw==
+X-Gm-Gg: ASbGnctF9eMw8A7OBfxY3py5q+caU5MiqcR6CSkeWDkwfxxfwLzMAJ/WqXUEMGqvHEK
+	/+HDYfw3ZANiBUmXBQPG4Q0mF6jjVLbG/XNPy6Y+uqrP4mFH1gxwXvvkMEKZdMZT3uXnGGEdUTn
+	log3aLKfoPtqMa3cpecDUaolBHY9hoviYpRKoozb8fYbmpxryYaGYKxo+t0YdpDIiliv+5EoPda
+	zcnh7E6YOA/+pSAyf1JxbhGcpWMiFamOW+JoINh36CuHMSa/4N66cOr14OwuWpuCw/1YKMrB1bD
+	eTA7o2pmKa8yjCygwB5F+o3a9i8fOPZai68EyoyskaE5wqkGyGDV/iOL791R6WPpHmtsLC0mG9i
+	1mMGmM1wi0YJD0PdXBPUxjCnw94PvPrq45FhY98a7uxkPcUyDZKXM7JZscUsXvc6NlDU=
+X-Received: by 2002:a05:600c:5246:b0:458:6f13:aa4a with SMTP id 5b1f17b1804b1-45b68b79262mr80522965e9.6.1756371562828;
+        Thu, 28 Aug 2025 01:59:22 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFWdyMtBKjr7hAqURhS0tLFjeTMjbDj3wWx/dBhhAh6ZZbIaTVjgJ+6cEX3TylMiqVoySxXmw==
+X-Received: by 2002:a05:600c:5246:b0:458:6f13:aa4a with SMTP id 5b1f17b1804b1-45b68b79262mr80522605e9.6.1756371562368;
+        Thu, 28 Aug 2025 01:59:22 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f28:c100:2225:10aa:f247:7b85? (p200300d82f28c100222510aaf2477b85.dip0.t-ipconnect.de. [2003:d8:2f28:c100:2225:10aa:f247:7b85])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3cd8bb9ee97sm3403595f8f.27.2025.08.28.01.59.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 28 Aug 2025 01:59:21 -0700 (PDT)
+Message-ID: <a0d1d889-c711-494b-a85a-33cbde4688ba@redhat.com>
+Date: Thu, 28 Aug 2025 10:59:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20250828085949epcas5p2a39a61925893e78ae8b70902fc7f4c20
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-541,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250828085949epcas5p2a39a61925893e78ae8b70902fc7f4c20
-References: <20250828085911.81266-1-inbaraj.e@samsung.com>
-	<CGME20250828085949epcas5p2a39a61925893e78ae8b70902fc7f4c20@epcas5p2.samsung.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm/gup: Drain batched mlock folio processing before
+ attempting migration
+To: Hugh Dickins <hughd@google.com>, Will Deacon <will@kernel.org>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ Keir Fraser <keirf@google.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+ John Hubbard <jhubbard@nvidia.com>, Frederick Mayle <fmayle@google.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Peter Xu <peterx@redhat.com>,
+ Rik van Riel <riel@surriel.com>, Vlastimil Babka <vbabka@suse.cz>,
+ Ge Yang <yangge1116@126.com>
+References: <20250815101858.24352-1-will@kernel.org>
+ <c5bac539-fd8a-4db7-c21c-cd3e457eee91@google.com>
+ <aKMrOHYbTtDhOP6O@willie-the-truck> <aKM5S4oQYmRIbT3j@willie-the-truck>
+ <9e7d31b9-1eaf-4599-ce42-b80c0c4bb25d@google.com>
+ <8376d8a3-cc36-ae70-0fa8-427e9ca17b9b@google.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <8376d8a3-cc36-ae70-0fa8-427e9ca17b9b@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The Tesla FSD CSIS IP bundles video capture interface to capture frames
-from MIPI-CSI2 bus.
+On 28.08.25 10:47, Hugh Dickins wrote:
+> On Sun, 24 Aug 2025, Hugh Dickins wrote:
+>> On Mon, 18 Aug 2025, Will Deacon wrote:
+>>> On Mon, Aug 18, 2025 at 02:31:42PM +0100, Will Deacon wrote:
+>>>> On Fri, Aug 15, 2025 at 09:14:48PM -0700, Hugh Dickins wrote:
+>>>>> I think replace the folio_test_mlocked(folio) part of it by
+>>>>> (folio_test_mlocked(folio) && !folio_test_unevictable(folio)).
+>>>>> That should reduce the extra calls to a much more reasonable
+>>>>> number, while still solving your issue.
+>>>>
+>>>> Alas, I fear that the folio may be unevictable by this point (which
+>>>> seems to coincide with the readahead fault adding it to the LRU above)
+>>>> but I can try it out.
+>>>
+>>> I gave this a spin but I still see failures with this change.
+>>
+>> Many thanks, Will, for the precisely relevant traces (in which,
+>> by the way, mapcount=0 really means _mapcount=0 hence mapcount=1).
+>>
+>> Yes, those do indeed illustrate a case which my suggested
+>> (folio_test_mlocked(folio) && !folio_test_unevictable(folio))
+>> failed to cover.  Very helpful to have an example of that.
+>>
+>> And many thanks, David, for your reminder of commit 33dfe9204f29
+>> ("mm/gup: clear the LRU flag of a page before adding to LRU batch").
+>>
+>> Yes, I strongly agree with your suggestion that the mlock batch
+>> be brought into line with its change to the ordinary LRU batches,
+>> and agree that doing so will be likely to solve Will's issue
+>> (and similar cases elsewhere, without needing to modify them).
+>>
+>> Now I just have to cool my head and get back down into those
+>> mlock batches.  I am fearful that making a change there to suit
+>> this case will turn out later to break another case (and I just
+>> won't have time to redevelop as thorough a grasp of the races as
+>> I had back then).  But if we're lucky, applying that "one batch
+>> at a time" rule will actually make it all more comprehensible.
+>>
+>> (I so wish we had spare room in struct page to keep the address
+>> of that one batch entry, or the CPU to which that one batch
+>> belongs: then, although that wouldn't eliminate all uses of
+>> lru_add_drain_all(), it would allow us to efficiently extract
+>> a target page from its LRU batch without a remote drain.)
+>>
+>> I have not yet begun to write such a patch, and I'm not yet sure
+>> that it's even feasible: this mail sent to get the polite thank
+>> yous out of my mind, to help clear it for getting down to work.
+> 
+> It took several days in search of the least bad compromise, but
+> in the end I concluded the opposite of what we'd intended above.
+> 
+> There is a fundamental incompatibility between my 5.18 2fbb0c10d1e8
+> ("mm/munlock: mlock_page() munlock_page() batch by pagevec")
+> and Ge Yang's 6.11 33dfe9204f29
+> ("mm/gup: clear the LRU flag of a page before adding to LRU batch").
+> 
+> It turns out that the mm/swap.c folio batches (apart from lru_add)
+> are all for best-effort, doesn't matter if it's missed, operations;
+> whereas mlock and munlock are more serious.  Probably mlock could
+> be (not very satisfactorily) converted, but then munlock?  Because
+> of failed folio_test_clear_lru()s, it would be far too likely to
+> err on either side, munlocking too soon or too late.
+> 
+> I've concluded that one or the other has to go.  If we're having
+> a beauty contest, there's no doubt that 33dfe9204f29 is much nicer
+> than 2fbb0c10d1e8 (which is itself far from perfect).  But functionally,
+> I'm afraid that removing the mlock/munlock batching will show up as a
+> perceptible regression in realistic workloadsg; and on consideration,
+> I've found no real justification for the LRU flag clearing change.
 
-This driver exposes video device file to userspace for frame capture and
-a media device file to configure camera pipeline.
+Just to understand what you are saying: are you saying that we will go 
+back to having a folio being part of multiple LRU caches? :/ If so, I 
+really rally hope that we can find another way and not go back to that 
+old handling.
 
-Signed-off-by: Inbaraj E <inbaraj.e@samsung.com>
----
- MAINTAINERS                                   |    8 +
- drivers/media/platform/samsung/Kconfig        |    1 +
- drivers/media/platform/samsung/Makefile       |    1 +
- .../media/platform/samsung/fsd-csis/Kconfig   |   18 +
- .../media/platform/samsung/fsd-csis/Makefile  |    3 +
- .../platform/samsung/fsd-csis/fsd-csis.c      | 1690 +++++++++++++++++
- 6 files changed, 1721 insertions(+)
- create mode 100644 drivers/media/platform/samsung/fsd-csis/Kconfig
- create mode 100644 drivers/media/platform/samsung/fsd-csis/Makefile
- create mode 100644 drivers/media/platform/samsung/fsd-csis/fsd-csis.c
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index c5171a5dcba6..4d86fe921ca8 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -3334,6 +3334,14 @@ S:	Maintained
- F:	Documentation/devicetree/bindings/media/samsung,s5p-mfc.yaml
- F:	drivers/media/platform/samsung/s5p-mfc/
- 
-+TESLA FSD BRIDGE DRIVER
-+M:	Inbaraj E <inbaraj.e@samsung.com>
-+L:	linux-samsung-soc@vger.kernel.org (moderated for non-subscribers)
-+L:	linux-media@vger.kernel.org
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/media/tesla,fsd-csis-media.yaml
-+F:	drivers/media/platform/samsung/fsd-csis/fsd-csis.c
-+
- ARM/SOCFPGA ARCHITECTURE
- M:	Dinh Nguyen <dinguyen@kernel.org>
- S:	Maintained
-diff --git a/drivers/media/platform/samsung/Kconfig b/drivers/media/platform/samsung/Kconfig
-index 0e34c5fc1dfc..4cebe2ae24a3 100644
---- a/drivers/media/platform/samsung/Kconfig
-+++ b/drivers/media/platform/samsung/Kconfig
-@@ -4,6 +4,7 @@ comment "Samsung media platform drivers"
- 
- source "drivers/media/platform/samsung/exynos-gsc/Kconfig"
- source "drivers/media/platform/samsung/exynos4-is/Kconfig"
-+source "drivers/media/platform/samsung/fsd-csis/Kconfig"
- source "drivers/media/platform/samsung/s3c-camif/Kconfig"
- source "drivers/media/platform/samsung/s5p-g2d/Kconfig"
- source "drivers/media/platform/samsung/s5p-jpeg/Kconfig"
-diff --git a/drivers/media/platform/samsung/Makefile b/drivers/media/platform/samsung/Makefile
-index 21fea3330e4b..fde1b9626713 100644
---- a/drivers/media/platform/samsung/Makefile
-+++ b/drivers/media/platform/samsung/Makefile
-@@ -1,6 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0-only
- obj-y += exynos-gsc/
- obj-y += exynos4-is/
-+obj-y += fsd-csis/
- obj-y += s3c-camif/
- obj-y += s5p-g2d/
- obj-y += s5p-jpeg/
-diff --git a/drivers/media/platform/samsung/fsd-csis/Kconfig b/drivers/media/platform/samsung/fsd-csis/Kconfig
-new file mode 100644
-index 000000000000..64ae57f81d22
---- /dev/null
-+++ b/drivers/media/platform/samsung/fsd-csis/Kconfig
-@@ -0,0 +1,18 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+#
-+# FSD MIPI CSI-2 Rx controller configurations
-+
-+config VIDEO_TESLA_FSD_CSIS
-+	tristate "FSD SoC MIPI-CSI2 media controller driver"
-+	depends on VIDEO_DEV && VIDEO_V4L2_SUBDEV_API
-+	depends on HAS_DMA
-+	depends on ARCH_TESLA_FSD
-+	select VIDEOBUF2_DMA_CONTIG
-+	select V4L2_FWNODE
-+	help
-+	  This is a video4linux2 driver for TESLA FSD SoC MIPI-CSI2 Rx.
-+	  The driver provides interface for capturing frames.
-+
-+	  To compile this driver as a module, choose M here. The module
-+	  will be called fsd-csis.
-+
-diff --git a/drivers/media/platform/samsung/fsd-csis/Makefile b/drivers/media/platform/samsung/fsd-csis/Makefile
-new file mode 100644
-index 000000000000..754d628770b0
---- /dev/null
-+++ b/drivers/media/platform/samsung/fsd-csis/Makefile
-@@ -0,0 +1,3 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+
-+obj-$(CONFIG_VIDEO_TESLA_FSD_CSIS) += fsd-csis.o
-diff --git a/drivers/media/platform/samsung/fsd-csis/fsd-csis.c b/drivers/media/platform/samsung/fsd-csis/fsd-csis.c
-new file mode 100644
-index 000000000000..c3029433eb27
---- /dev/null
-+++ b/drivers/media/platform/samsung/fsd-csis/fsd-csis.c
-@@ -0,0 +1,1690 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (c) 2022-2025 Samsung Electronics Co., Ltd.
-+ *             https://www.samsung.com
-+ *
-+ * TESLA FSD CSIS V4L2 Capture driver for TESLA FSD SoC.
-+ */
-+
-+#include <linux/clk.h>
-+#include <linux/pm_runtime.h>
-+#include <linux/regmap.h>
-+#include <media/v4l2-device.h>
-+#include <media/v4l2-ioctl.h>
-+#include <media/videobuf2-dma-contig.h>
-+#include <media/v4l2-mc.h>
-+
-+#define FSD_CSIS_DMA_COHERENT_MASK_SIZE		32
-+#define FSD_CSIS_NB_MIN_CH			2
-+#define FSD_CSIS_NB_VC				4
-+#define FSD_CSIS_MEDIA_NUM_PADS			2
-+#define FSD_CSIS_NB_DMA_OUT_CH			8
-+#define FSD_CSIS_MAX_VC				4
-+#define FSD_CSIS_NB_CLOCK			2
-+#define FSD_CSIS_NB_OF_BUFS_ON_DMA_CHANNELS	2
-+#define FSD_CSIS_DMA_LINE_ALIGN_SIZE		128
-+#define FSD_CSIS_DMA_CH_OFFSET			0x100
-+
-+/**
-+ * (Interrupt Source & mask register 1)
-+ */
-+#define FSD_CSIS_DMA_OTF_OVERLAP_MASK	GENMASK(17, 14)
-+#define FSD_CSIS_DMA_ABORT_DONE_MASK	BIT(13)
-+#define FSD_CSIS_DMA_ERROR_MASK		BIT(12)
-+#define FSD_CSIS_INT_SRC1_ERR_ALL_MASK	(FSD_CSIS_DMA_ERROR_MASK | \
-+					FSD_CSIS_DMA_ABORT_DONE_MASK | \
-+					FSD_CSIS_DMA_ERROR_MASK)
-+#define FDS_CSIS_DMA_FRM_END_MASK	GENMASK(11, 8)
-+#define FSD_CSIS_DMA_FRM_START_MASK	GENMASK(7, 4)
-+#define FSD_CSIS_LINE_END_MASK		GENMASK(3, 0)
-+#define FSD_CSIS_DMA_CH0_MASK		0x4111U
-+
-+/* DMA Reg offsets */
-+#define FSD_CSIS_DMA0_CTRL	0x0
-+#define FSD_CSIS_DMA_CTRL(vc)	(FSD_CSIS_DMA0_CTRL + (vc) * FSD_CSIS_DMA_CH_OFFSET)
-+#define FSD_CSIS_DMA_DISABLE	BIT(0)
-+
-+#define FSD_CSIS_DMA0_FMT	0x4
-+#define FSD_CSIS_DMA_FMT(vc)	(FSD_CSIS_DMA0_FMT + (vc) * FSD_CSIS_DMA_CH_OFFSET)
-+#define FSD_CSIS_DMA_DIM	BIT(15)
-+#define FSD_CSIS_DMA_DUMP	BIT(13)
-+
-+#define FSD_CSIS_DMA0_ADDR1     0x10
-+#define FSD_CSIS_DMA_ADDR1(vc)	(FSD_CSIS_DMA0_ADDR1 + (vc) * FSD_CSIS_DMA_CH_OFFSET)
-+
-+#define FSD_CSIS_DMA0_ACT_CTRL		0x30
-+#define FSD_CSIS_DMA_ACT_CTRL(vc)	(FSD_CSIS_DMA0_ACT_CTRL + (vc) * FSD_CSIS_DMA_CH_OFFSET)
-+#define FSD_CSIS_ACTIVE_DMA_PACK_MASK		GENMASK(17, 16)
-+#define FSD_CSIS_ACTIVE_DMA_PACK(n)		((n) << 16)
-+#define FSD_CSIS_ACTIVE_DMA_FRAMEPTR_MASK	GENMASK(4, 2)
-+
-+#define FSD_CSIS_DMA_ERR_CODE		0x404
-+#define FSD_CSIS_DMAFIFO_FULL_MASK	BIT_MASK(5)
-+#define FSD_CSIS_TRXFIFO_FULL_MASK	BIT_MASK(4)
-+
-+#define FSD_CSIS_DMA_CLK_CTRL			0x408
-+#define FSD_CSIS_DMA_CLK_GATE_TRAIL_MASK	GENMASK(4, 1)
-+#define FSD_CSIS_DMA_CLK_GATE_TRAIL(n)		((n) << 1)
-+#define FSD_CSIS_DMA_CLK_GATE_EN		BIT(0)
-+
-+enum CSIS_DMA_PACK {
-+	DMA_PACK_NORMAL,
-+	DMA_PACK_10,
-+	DMA_PACK_12,
-+	DMA_PACK_14,
-+	DMA_PACK_18,
-+	DMA_PACK_20,
-+};
-+
-+static const char * const fsd_csis_clk_id[] = {
-+	"aclk",
-+	"pclk",
-+};
-+
-+struct fsd_csis_pixfmt {
-+	u32 fourcc;
-+	const u32 *codes;
-+	int bpp;
-+	bool is_yuv;
-+};
-+
-+struct fsd_csis_vb2_buffer {
-+	struct vb2_v4l2_buffer vb;
-+	struct list_head list;
-+	const struct fsd_csis_pixfmt *fmt;
-+	unsigned long sequence_num;
-+};
-+
-+struct fsd_csis {
-+	struct device *dev;
-+	const struct fsd_csis_info *info;
-+	struct clk_bulk_data *clks;
-+	struct clk *pll;
-+	struct media_device mdev;
-+	struct v4l2_device v4l2_dev;
-+	struct v4l2_async_notifier notifier;
-+	struct media_pipeline pipe;
-+
-+	/* source node */
-+	struct {
-+		struct v4l2_subdev *subdev;
-+		struct media_pad *pad;
-+	} source;
-+
-+	/* Internal subdev */
-+	struct {
-+		struct v4l2_subdev sd;
-+		struct media_pad pad[FSD_CSIS_MEDIA_NUM_PADS];
-+	} subdev;
-+
-+	struct video_device *vdev;
-+	struct media_pad vdev_pad;
-+	struct vb2_queue q;
-+	/* Protect vdev operation */
-+	struct mutex vdev_mutex;
-+	void __iomem *dma_base;
-+	int irq;
-+	u64 frame_addr[FSD_CSIS_NB_DMA_OUT_CH];
-+	struct fsd_csis_vb2_buffer *frame[FSD_CSIS_NB_DMA_OUT_CH];
-+	struct v4l2_pix_format vdev_fmt;
-+	const struct fsd_csis_pixfmt *vdev_cc;
-+	struct v4l2_rect vdev_compose;
-+	u32 num_reqbufs;
-+	u8 prev_dma_ptr;
-+	u8 current_dma_ptr;
-+	u8 number_of_ready_bufs;
-+	u32 prev_frame_counter;
-+	u32 current_frame_counter;
-+	unsigned int num_active_fmt;
-+	struct list_head ready_q;
-+	/* Protect ready_q */
-+	spinlock_t q_lock;
-+	/* Protect DMA channel register's */
-+	spinlock_t dma_reg_lock;
-+	unsigned int current_vc;
-+	unsigned long sequence;
-+	u32 dma_error;
-+	int is_streaming;
-+};
-+
-+static inline u32 get_bits(u32 value, u32 mask)
-+{
-+	return (((value) & (mask)) >> (ffs(mask) - 1));
-+}
-+
-+static inline u32 bytes_per_line(u32 width, int bpp)
-+{
-+	return (ALIGN((width * bpp), FSD_CSIS_DMA_LINE_ALIGN_SIZE) >> 3);
-+}
-+
-+static inline uint8_t fsd_csis_current_dma_ptr(struct fsd_csis *csis)
-+
-+{
-+	return (readl(csis->dma_base + FSD_CSIS_DMA_ACT_CTRL(csis->current_vc))
-+			& 0x01C) >> 2;
-+}
-+
-+#define FSD_CSIS_MODULE_NAME	"fsd-csis"
-+#define FSD_CSIS_MODULE_VERSION	"0.0.1"
-+
-+#define FSD_CSIS_DEF_MBUS_CODE		MEDIA_BUS_FMT_RGB888_1X24
-+#define FSD_CSIS_DEF_PIX_FORMAT		V4L2_PIX_FMT_RGB24
-+#define FSD_CSIS_DEF_PIX_WIDTH		1280
-+#define FSD_CSIS_DEF_PIX_HEIGHT		964
-+
-+#define FSD_CSIS_PAD_SINK	0
-+#define FSD_CSIS_PAD_SRC	1
-+#define FSD_CSIS_PADS_NUM	2
-+
-+#define FSD_CSIS_BUS_FMTS(fmt...) ((const u32[]) {fmt, 0 })
-+
-+static const struct v4l2_mbus_framefmt fsd_csis_default_format = {
-+	.width = 640,
-+	.height = 480,
-+	.code = MEDIA_BUS_FMT_UYVY8_1X16,
-+	.field = V4L2_FIELD_NONE,
-+};
-+
-+static const struct fsd_csis_pixfmt pixel_formats[] = {
-+	/* YUV formats start here */
-+	{
-+		.fourcc = V4L2_PIX_FMT_UYVY,
-+		.codes  = FSD_CSIS_BUS_FMTS(MEDIA_BUS_FMT_UYVY8_2X8,
-+					    MEDIA_BUS_FMT_UYVY8_1X16),
-+		.is_yuv    = true,
-+		.bpp    = 16,
-+	}, {
-+		.fourcc = V4L2_PIX_FMT_YUYV,
-+		.codes  = FSD_CSIS_BUS_FMTS(MEDIA_BUS_FMT_YUYV8_2X8,
-+					   MEDIA_BUS_FMT_YUYV8_1X16),
-+		.is_yuv    = true,
-+		.bpp    = 16,
-+	}, {
-+		.fourcc = V4L2_PIX_FMT_SBGGR8,
-+		.codes  = FSD_CSIS_BUS_FMTS(MEDIA_BUS_FMT_SBGGR8_1X8),
-+		.bpp    = 8,
-+	}, {
-+		.fourcc = V4L2_PIX_FMT_SGBRG8,
-+		.codes  = FSD_CSIS_BUS_FMTS(MEDIA_BUS_FMT_SGBRG8_1X8),
-+		.bpp    = 8,
-+	}, {
-+		.fourcc = V4L2_PIX_FMT_SGRBG8,
-+		.codes  = FSD_CSIS_BUS_FMTS(MEDIA_BUS_FMT_SGRBG8_1X8),
-+		.bpp    = 8,
-+	}, {
-+		.fourcc = V4L2_PIX_FMT_SRGGB8,
-+		.codes  = FSD_CSIS_BUS_FMTS(MEDIA_BUS_FMT_SRGGB8_1X8),
-+		.bpp    = 8,
-+	}, {
-+		.fourcc = V4L2_PIX_FMT_SBGGR10,
-+		.codes  = FSD_CSIS_BUS_FMTS(MEDIA_BUS_FMT_SBGGR10_1X10),
-+		.bpp    = 16,
-+	}, {
-+		.fourcc = V4L2_PIX_FMT_SGBRG10,
-+		.codes  = FSD_CSIS_BUS_FMTS(MEDIA_BUS_FMT_SGBRG10_1X10),
-+		.bpp    = 16,
-+	}, {
-+		.fourcc = V4L2_PIX_FMT_SGRBG10,
-+		.codes  = FSD_CSIS_BUS_FMTS(MEDIA_BUS_FMT_SGRBG10_1X10),
-+		.bpp    = 16,
-+	}, {
-+		.fourcc = V4L2_PIX_FMT_SRGGB10,
-+		.codes  = FSD_CSIS_BUS_FMTS(MEDIA_BUS_FMT_SRGGB10_1X10),
-+		.bpp    = 16,
-+	}, {
-+		.fourcc = V4L2_PIX_FMT_SBGGR12,
-+		.codes  = FSD_CSIS_BUS_FMTS(MEDIA_BUS_FMT_SBGGR12_1X12),
-+		.bpp    = 16,
-+	}, {
-+		.fourcc = V4L2_PIX_FMT_SGBRG12,
-+		.codes  = FSD_CSIS_BUS_FMTS(MEDIA_BUS_FMT_SGBRG12_1X12),
-+		.bpp    = 16,
-+	}, {
-+		.fourcc = V4L2_PIX_FMT_SGRBG12,
-+		.codes  = FSD_CSIS_BUS_FMTS(MEDIA_BUS_FMT_SGRBG12_1X12),
-+		.bpp    = 16,
-+	}, {
-+		.fourcc = V4L2_PIX_FMT_SRGGB12,
-+		.codes  = FSD_CSIS_BUS_FMTS(MEDIA_BUS_FMT_SRGGB12_1X12),
-+		.bpp    = 16,
-+	}, {
-+		.fourcc = V4L2_PIX_FMT_SBGGR14,
-+		.codes  = FSD_CSIS_BUS_FMTS(MEDIA_BUS_FMT_SBGGR14_1X14),
-+		.bpp    = 16,
-+	}, {
-+		.fourcc = V4L2_PIX_FMT_SGBRG14,
-+		.codes  = FSD_CSIS_BUS_FMTS(MEDIA_BUS_FMT_SGBRG14_1X14),
-+		.bpp    = 16,
-+	}, {
-+		.fourcc = V4L2_PIX_FMT_SGRBG14,
-+		.codes  = FSD_CSIS_BUS_FMTS(MEDIA_BUS_FMT_SGRBG14_1X14),
-+		.bpp    = 16,
-+	}, {
-+		.fourcc = V4L2_PIX_FMT_SRGGB14,
-+		.codes  = FSD_CSIS_BUS_FMTS(MEDIA_BUS_FMT_SRGGB14_1X14),
-+		.bpp    = 16,
-+	}, {
-+		.fourcc = V4L2_PIX_FMT_GREY,
-+		.codes  = FSD_CSIS_BUS_FMTS(MEDIA_BUS_FMT_Y8_1X8),
-+		.bpp    = 8,
-+	}, {
-+		.fourcc = V4L2_PIX_FMT_Y10,
-+		.codes  = FSD_CSIS_BUS_FMTS(MEDIA_BUS_FMT_Y10_1X10),
-+		.bpp    = 16,
-+	}, {
-+		.fourcc = V4L2_PIX_FMT_Y12,
-+		.codes  = FSD_CSIS_BUS_FMTS(MEDIA_BUS_FMT_Y12_1X12),
-+		.bpp    = 16,
-+	}, {
-+		.fourcc = V4L2_PIX_FMT_Y14,
-+		.codes  = FSD_CSIS_BUS_FMTS(MEDIA_BUS_FMT_Y14_1X14),
-+		.bpp    = 16,
-+	}, {
-+		.fourcc	= V4L2_PIX_FMT_RGB24,
-+		.codes	= FSD_CSIS_BUS_FMTS(MEDIA_BUS_FMT_RGB888_1X24),
-+		.bpp	= 24,
-+	}
-+};
-+
-+static void fsd_csis_dma_enable(struct fsd_csis *csis, bool en_dma)
-+{
-+	unsigned int dma_ctrl, vc = csis->current_vc;
-+
-+	dma_ctrl = readl(csis->dma_base + FSD_CSIS_DMA_CTRL(vc));
-+	dma_ctrl |= FSD_CSIS_DMA_DISABLE;
-+
-+	if (en_dma)
-+		dma_ctrl &= ~FSD_CSIS_DMA_DISABLE;
-+
-+	writel(dma_ctrl, csis->dma_base + FSD_CSIS_DMA_CTRL(vc));
-+}
-+
-+static void fsd_csis_set_dma_clk(struct fsd_csis *csis)
-+{
-+	unsigned int dma_clk_ctrl;
-+
-+	dma_clk_ctrl = readl(csis->dma_base + FSD_CSIS_DMA_CLK_CTRL);
-+
-+	dma_clk_ctrl &= ~FSD_CSIS_DMA_CLK_GATE_EN;
-+	dma_clk_ctrl &= ~FSD_CSIS_DMA_CLK_GATE_TRAIL_MASK;
-+	dma_clk_ctrl |= FSD_CSIS_DMA_CLK_GATE_TRAIL(0x7);
-+
-+	writel(dma_clk_ctrl, csis->dma_base + FSD_CSIS_DMA_CLK_CTRL);
-+}
-+
-+static void fsd_csis_set_pack(struct fsd_csis *csis, u32 vc,
-+			      enum CSIS_DMA_PACK dma_pack)
-+{
-+	u32 dma_fmt;
-+
-+	dma_fmt = readl(csis->dma_base + FSD_CSIS_DMA_CTRL(vc));
-+	dma_fmt &= ~FSD_CSIS_ACTIVE_DMA_PACK_MASK;
-+	dma_fmt |= FSD_CSIS_ACTIVE_DMA_PACK(dma_pack);
-+	writel(dma_fmt, csis->dma_base + FSD_CSIS_DMA_CTRL(vc));
-+}
-+
-+static void fsd_csis_set_dma_dump(struct fsd_csis *csis, unsigned int vc,
-+				  bool set_dump)
-+{
-+	u32 dma_fmt;
-+
-+	dma_fmt = readl(csis->dma_base + FSD_CSIS_DMA_CTRL(vc));
-+	dma_fmt &= ~FSD_CSIS_DMA_DUMP;
-+
-+	if (set_dump)
-+		dma_fmt |= FSD_CSIS_DMA_DUMP;
-+
-+	writel(dma_fmt, csis->dma_base + FSD_CSIS_DMA_CTRL(vc));
-+}
-+
-+static void fsd_csis_set_dma_dimension(struct fsd_csis *csis, u32 vc, bool set_dim)
-+{
-+	u32 dma_fmt;
-+
-+	dma_fmt = readl(csis->dma_base + FSD_CSIS_DMA_FMT(vc));
-+	dma_fmt &= ~FSD_CSIS_DMA_DIM;
-+
-+	if (set_dim)
-+		dma_fmt |= FSD_CSIS_DMA_DIM;
-+
-+	writel(dma_fmt, csis->dma_base + FSD_CSIS_DMA_FMT(vc));
-+}
-+
-+static void fsd_csis_set_dma_format(struct fsd_csis *csis,
-+				    const struct fsd_csis_pixfmt *cc)
-+{
-+	unsigned int fourcc = cc->fourcc;
-+
-+	switch (fourcc) {
-+	case V4L2_PIX_FMT_SBGGR10:
-+	case V4L2_PIX_FMT_SGBRG10:
-+	case V4L2_PIX_FMT_SGRBG10:
-+	case V4L2_PIX_FMT_SRGGB10:
-+		fsd_csis_set_pack(csis, csis->current_vc, DMA_PACK_10);
-+		break;
-+	case V4L2_PIX_FMT_SBGGR12:
-+	case V4L2_PIX_FMT_SGBRG12:
-+	case V4L2_PIX_FMT_SGRBG12:
-+	case V4L2_PIX_FMT_SRGGB12:
-+		fsd_csis_set_pack(csis, csis->current_vc, DMA_PACK_12);
-+		break;
-+	case V4L2_PIX_FMT_SBGGR14P:
-+		fsd_csis_set_pack(csis, csis->current_vc, DMA_PACK_14);
-+		break;
-+	case V4L2_PIX_FMT_BGR666:
-+		fsd_csis_set_pack(csis, csis->current_vc, DMA_PACK_18);
-+		break;
-+	case V4L2_PIX_FMT_UYVY:
-+		fsd_csis_set_pack(csis, csis->current_vc, DMA_PACK_NORMAL);
-+		break;
-+	default:
-+		dev_err(csis->dev, "Set DMA format %x not supported\n", fourcc);
-+		break;
-+	}
-+
-+	fsd_csis_set_dma_dump(csis, csis->current_vc, false);
-+	fsd_csis_set_dma_dimension(csis, csis->current_vc, false);
-+}
-+
-+static inline struct fsd_csis *notifier_to_csis(struct v4l2_async_notifier *n)
-+{
-+	return container_of(n, struct fsd_csis, notifier);
-+}
-+
-+static int fsd_csis_queue_setup(struct vb2_queue *vq,
-+				unsigned int *nbuffers, unsigned int *nplanes,
-+				unsigned int sizes[],
-+				struct device *alloc_devs[])
-+{
-+	struct fsd_csis *csis = vb2_get_drv_priv(vq);
-+	struct v4l2_pix_format *pix = &csis->vdev_fmt;
-+	unsigned int size = pix->sizeimage;
-+
-+	if (*nplanes) {
-+		if (sizes[0] < size)
-+			return -EINVAL;
-+		size = sizes[0];
-+	}
-+
-+	*nplanes = 1;
-+	sizes[0] = size;
-+
-+	dev_info(csis->dev, "nbuffers %d size %d\n", *nbuffers, sizes[0]);
-+
-+	return 0;
-+}
-+
-+static int fsd_csis_buffer_prepare(struct vb2_buffer *vb)
-+{
-+	struct fsd_csis *csis = vb2_get_drv_priv(vb->vb2_queue);
-+	struct fsd_csis_vb2_buffer *buf = container_of(vb, struct fsd_csis_vb2_buffer,
-+			vb.vb2_buf);
-+	struct v4l2_pix_format *pix = &csis->vdev_fmt;
-+
-+	if (WARN_ON(!csis->vdev_cc))
-+		return -EINVAL;
-+
-+	if (vb2_plane_size(vb, 0) < pix->sizeimage) {
-+		dev_info(csis->dev, "Data will not fit into plane (%lu < %u)\n",
-+			 vb2_plane_size(vb, 0), pix->sizeimage);
-+		return -EINVAL;
-+	}
-+
-+	vb2_set_plane_payload(&buf->vb.vb2_buf, 0, pix->sizeimage);
-+
-+	return 0;
-+}
-+
-+static void fsd_csis_buffer_queue(struct vb2_buffer *vb)
-+{
-+	unsigned long flags;
-+	struct fsd_csis *csis = vb2_get_drv_priv(vb->vb2_queue);
-+	struct fsd_csis_vb2_buffer *buf =
-+		container_of(vb, struct fsd_csis_vb2_buffer, vb.vb2_buf);
-+
-+	spin_lock_irqsave(&csis->q_lock, flags);
-+	list_add_tail(&buf->list, &csis->ready_q);
-+	buf->sequence_num = csis->sequence++;
-+	spin_unlock_irqrestore(&csis->q_lock, flags);
-+}
-+
-+static void fsd_csis_dma_set_vid_base_addr(struct fsd_csis *csis, int frm_no,
-+					   unsigned long addr)
-+{
-+	unsigned int dma_addr;
-+	unsigned long flags;
-+
-+	dma_addr = FSD_CSIS_DMA_ADDR1(csis->current_vc);
-+	dma_addr = dma_addr + (frm_no * 4);
-+	spin_lock_irqsave(&csis->dma_reg_lock, flags);
-+	writel(addr, csis->dma_base + dma_addr);
-+	spin_unlock_irqrestore(&csis->dma_reg_lock, flags);
-+}
-+
-+static void fsd_csis_add_to_ring_buffer(struct fsd_csis *csis,
-+					struct fsd_csis_vb2_buffer *buf,
-+					uint8_t index)
-+{
-+	u8 modulo_addr;
-+	unsigned int i;
-+
-+	for (i = 0; i < FSD_CSIS_NB_DMA_OUT_CH;
-+			i += FSD_CSIS_NB_OF_BUFS_ON_DMA_CHANNELS) {
-+		modulo_addr = (index + i) % FSD_CSIS_NB_DMA_OUT_CH;
-+		csis->frame[modulo_addr] = buf;
-+		csis->frame_addr[modulo_addr] =
-+			vb2_dma_contig_plane_dma_addr(&buf->vb.vb2_buf, 0);
-+		fsd_csis_dma_set_vid_base_addr(csis, modulo_addr,
-+					       csis->frame_addr[modulo_addr]);
-+	}
-+}
-+
-+static int fsd_csis_get_vc(struct fsd_csis *csis)
-+{
-+	struct v4l2_mbus_frame_desc fd = { };
-+	struct media_pad *remote_pad;
-+	int ret;
-+
-+	remote_pad = media_pad_remote_pad_unique(&csis->subdev.pad[FSD_CSIS_PAD_SINK]);
-+	ret = v4l2_subdev_call(csis->source.subdev, pad, get_frame_desc, remote_pad->index, &fd);
-+	if (ret < 0 && ret != -ENOIOCTLCMD) {
-+		dev_err(csis->dev, "get_frame_desc failed on source subdev\n");
-+		return ret;
-+	}
-+
-+	/* If remote subdev does not implement ..get_frame_desc default to VC0 */
-+	if (ret == -ENOIOCTLCMD)
-+		return 0;
-+
-+	if (!fd.num_entries) {
-+		dev_err(csis->dev, "get_frame_desc returned zero entries\n");
-+		return -EINVAL;
-+	}
-+
-+	return fd.entry[0].bus.csi2.vc;
-+}
-+
-+static int fsd_csis_start_streaming(struct vb2_queue *q, unsigned int count)
-+{
-+	struct fsd_csis *csis = vb2_get_drv_priv(q);
-+	struct fsd_csis_vb2_buffer *buf, *tmp;
-+	unsigned long flags;
-+	u8 i;
-+	int ret;
-+
-+	mutex_lock(&csis->mdev.graph_mutex);
-+
-+	ret = __video_device_pipeline_start(csis->vdev, &csis->pipe);
-+	if (ret)
-+		goto err_unlock;
-+
-+	ret = fsd_csis_get_vc(csis);
-+
-+	if (ret < 0)
-+		goto err_unlock;
-+
-+	csis->current_vc = ret;
-+
-+	ret = v4l2_subdev_enable_streams(&csis->subdev.sd, FSD_CSIS_PAD_SRC,
-+					 BIT(0));
-+	if (ret) {
-+		dev_err(csis->dev, "stream on failed in subdev\n");
-+		goto err_stop;
-+	}
-+
-+	mutex_unlock(&csis->mdev.graph_mutex);
-+	fsd_csis_set_dma_clk(csis);
-+	fsd_csis_set_dma_format(csis, csis->vdev_cc);
-+
-+	for (i = 0; i < FSD_CSIS_NB_OF_BUFS_ON_DMA_CHANNELS; i++) {
-+		spin_lock_irqsave(&csis->q_lock, flags);
-+		if (list_empty(&csis->ready_q)) {
-+			spin_unlock_irqrestore(&csis->q_lock, flags);
-+			dev_err(csis->dev, "Failed to fill buffer address!\n");
-+			return -EIO;
-+		}
-+
-+		buf = list_entry(csis->ready_q.next, struct fsd_csis_vb2_buffer, list);
-+		list_del(&buf->list);
-+		fsd_csis_add_to_ring_buffer(csis, buf, i);
-+		spin_unlock_irqrestore(&csis->q_lock, flags);
-+	}
-+
-+	fsd_csis_dma_enable(csis, true);
-+
-+	return 0;
-+err_stop:
-+	v4l2_subdev_disable_streams(&csis->subdev.sd, FSD_CSIS_PAD_SRC,
-+				    BIT(0));
-+	__video_device_pipeline_stop(csis->vdev);
-+err_unlock:
-+	mutex_unlock(&csis->mdev.graph_mutex);
-+
-+	spin_lock_irqsave(&csis->q_lock, flags);
-+	list_for_each_entry_safe(buf, tmp, &csis->ready_q, list) {
-+		list_del(&buf->list);
-+		vb2_buffer_done(&buf->vb.vb2_buf, VB2_BUF_STATE_QUEUED);
-+	}
-+	spin_unlock_irqrestore(&csis->q_lock, flags);
-+
-+	dev_err(csis->dev, "pipeline start failed with %d\n", ret);
-+	return ret;
-+}
-+
-+/**
-+ * fsd_stop_streaming() - stop streaming for CSI context
-+ * @q: pointer to vb2_queue in use
-+ * Return: none
-+ */
-+static void fsd_csis_stop_streaming(struct vb2_queue *q)
-+{
-+	unsigned long flags;
-+	struct fsd_csis *csis = vb2_get_drv_priv(q);
-+	struct fsd_csis_vb2_buffer *buf, *tmp;
-+	unsigned int timeout_cnt = 0;
-+	int i;
-+	void __iomem *dma_act_ctrl = 0;
-+
-+	fsd_csis_dma_enable(csis, false);
-+
-+	dma_act_ctrl = csis->dma_base + FSD_CSIS_DMA_ACT_CTRL(csis->current_vc);
-+
-+	while ((readl(dma_act_ctrl) & 0x1) == 0x0) {
-+		if (timeout_cnt > 50) {
-+			dev_dbg(csis->dev, "DMA did not finish in 500ms.\n");
-+			break;
-+		}
-+		usleep_range(10000, 20000); /* Wait min 10ms, max 20ms */
-+		timeout_cnt++;
-+	}
-+
-+	mutex_lock(&csis->mdev.graph_mutex);
-+	v4l2_subdev_disable_streams(&csis->subdev.sd, FSD_CSIS_PAD_SRC,
-+				    BIT(0));
-+	__video_device_pipeline_stop(csis->vdev);
-+	mutex_unlock(&csis->mdev.graph_mutex);
-+	/*
-+	 * If still DMA operation exists after disabled irq, it will
-+	 * update dma_done part in interrupt source register. For next
-+	 * streaming session, this could be interpreted as current session's
-+	 * first frame done. To prevent this incorrect dma_done receiving,
-+	 * clearing interrupt source register here.
-+	 */
-+
-+	/* Release all active buffers */
-+	spin_lock_irqsave(&csis->q_lock, flags);
-+	list_for_each_entry_safe(buf, tmp, &csis->ready_q, list) {
-+		list_del(&buf->list);
-+		vb2_buffer_done(&buf->vb.vb2_buf, VB2_BUF_STATE_ERROR);
-+	}
-+	spin_unlock_irqrestore(&csis->q_lock, flags);
-+
-+	for (i = 0; i < FSD_CSIS_NB_OF_BUFS_ON_DMA_CHANNELS; i++) {
-+		buf = csis->frame[i];
-+		if (buf)
-+			vb2_buffer_done(&buf->vb.vb2_buf, VB2_BUF_STATE_ERROR);
-+	}
-+}
-+
-+static int fsd_csis_video_open(struct file *file)
-+{
-+	struct fsd_csis *csis = video_drvdata(file);
-+	int ret;
-+	struct vb2_queue *q = &csis->q;
-+
-+	if (vb2_is_busy(q)) {
-+		dev_err(csis->dev, "device busy\n");
-+		return -EBUSY;
-+	}
-+
-+	ret = pm_runtime_resume_and_get(csis->dev);
-+	if (ret < 0)
-+		return ret;
-+
-+	ret = v4l2_fh_open(file);
-+
-+	if (ret) {
-+		dev_err(csis->dev, "v4l2_fh_open failed\n");
-+		goto err;
-+	}
-+
-+	return ret;
-+
-+err:
-+	pm_runtime_put(csis->dev);
-+	return ret;
-+}
-+
-+static void fsd_csis_irq_worker(struct fsd_csis *csis)
-+{
-+	struct fsd_csis_vb2_buffer *buf_from;
-+	struct fsd_csis_vb2_buffer *buf_to;
-+	struct v4l2_subdev *subdev = csis->source.subdev;
-+	u8 i;
-+	void __iomem *dma_act_ctrl;
-+	unsigned long flags;
-+
-+	dma_act_ctrl = csis->dma_base + FSD_CSIS_DMA_ACT_CTRL(csis->current_vc);
-+	csis->current_dma_ptr = readl(dma_act_ctrl);
-+	csis->current_dma_ptr = get_bits(csis->current_dma_ptr,
-+					 FSD_CSIS_ACTIVE_DMA_FRAMEPTR_MASK);
-+
-+	v4l2_subdev_call(subdev, core, command, 5,
-+			 &csis->current_frame_counter);
-+
-+	if (csis->dma_error) {
-+		dev_err(csis->dev, "prev_dma: %d, cur_dma: %d, prev_frm: %d, cur_frm: %d\n",
-+			csis->prev_dma_ptr, csis->current_dma_ptr, csis->prev_frame_counter,
-+			csis->current_frame_counter);
-+		csis->prev_dma_ptr = csis->current_dma_ptr;
-+		goto update_prev_counters;
-+	}
-+
-+	if (csis->current_dma_ptr >= csis->prev_dma_ptr)
-+		csis->number_of_ready_bufs =
-+			csis->current_dma_ptr - csis->prev_dma_ptr;
-+	else
-+		csis->number_of_ready_bufs =
-+			FSD_CSIS_NB_DMA_OUT_CH - csis->prev_dma_ptr
-+			+ csis->current_dma_ptr;
-+
-+	if (csis->number_of_ready_bufs >= FSD_CSIS_NB_OF_BUFS_ON_DMA_CHANNELS ||
-+	    ((csis->current_frame_counter - csis->prev_frame_counter)
-+	    >= FSD_CSIS_NB_DMA_OUT_CH)) {
-+		/* In case of CSIS_NB_OF_BUFS_ON_DMA_CHANNELS or CSIS_NUM_DMA_OUT_CH number
-+		 * of frames delays or more, set how many recent frames are ready to be read
-+		 * in the next interrupt. This cannot be more than
-+		 * CSIS_NB_OF_BUFS_ON_DMA_CHANNELS-1 frames.
-+		 */
-+		csis->number_of_ready_bufs = FSD_CSIS_NB_OF_BUFS_ON_DMA_CHANNELS - 1;
-+		csis->prev_dma_ptr = (csis->current_dma_ptr -
-+					FSD_CSIS_NB_OF_BUFS_ON_DMA_CHANNELS)
-+					& (FSD_CSIS_NB_DMA_OUT_CH - 1);
-+		dev_err(csis->dev, "interrupt delayed %d frames\n",
-+			csis->number_of_ready_bufs);
-+	}
-+
-+	if (csis->number_of_ready_bufs == 0) {
-+		dev_err(csis->dev, "Interrupt burst number_of_ready_bufs: %d\n",
-+			csis->number_of_ready_bufs);
-+		goto update_prev_counters;
-+	} else {
-+		if (csis->number_of_ready_bufs > 1) {
-+			/*
-+			 * Interrupt has been missed. Do not populate DMA_ACT_CTRL pointer.
-+			 * Notify buffers ready until (DMA_ACT_CTRL - 1) pointer.
-+			 * Because,the delayed interrupt might be arrived in DMA active
-+			 * time.
-+			 */
-+			csis->number_of_ready_bufs--;
-+			dev_err(csis->dev, "interrupt got delayed %d frames\n",
-+				csis->number_of_ready_bufs);
-+		}
-+	}
-+
-+	for (i = 0; i < csis->number_of_ready_bufs; i++) {
-+		bool is_same_modulo;
-+
-+		csis->prev_dma_ptr = (csis->prev_dma_ptr + 1) % FSD_CSIS_NB_DMA_OUT_CH;
-+		is_same_modulo = !((csis->prev_dma_ptr - (csis->current_dma_ptr + 1)) %
-+					FSD_CSIS_NB_OF_BUFS_ON_DMA_CHANNELS);
-+
-+		spin_lock_irqsave(&csis->q_lock, flags);
-+
-+		/*
-+		 * Before dequeuing buffer from DMA at least
-+		 * one buffer should be ready in vb2_queue
-+		 */
-+		if (list_empty(&csis->ready_q)) {
-+			spin_unlock_irqrestore(&csis->q_lock, flags);
-+			csis->prev_dma_ptr = csis->current_dma_ptr;
-+			goto update_prev_counters;
-+
-+		} else {
-+			buf_from = list_entry(csis->ready_q.next,
-+					      struct fsd_csis_vb2_buffer, list);
-+			list_del(&buf_from->list);
-+		}
-+
-+		spin_unlock_irqrestore(&csis->q_lock, flags);
-+
-+		buf_to = csis->frame[csis->prev_dma_ptr];
-+
-+		if (is_same_modulo) {
-+			if (csis->current_dma_ptr != fsd_csis_current_dma_ptr(csis)) {
-+				spin_lock_irqsave(&csis->q_lock, flags);
-+				list_add_tail(&buf_from->list, &csis->ready_q);
-+				spin_unlock_irqrestore(&csis->q_lock, flags);
-+				continue;
-+			}
-+		}
-+
-+		fsd_csis_add_to_ring_buffer(csis, buf_from, csis->prev_dma_ptr);
-+
-+		if (buf_to) {
-+			buf_to->vb.vb2_buf.timestamp = ktime_get_ns();
-+			vb2_buffer_done(&buf_to->vb.vb2_buf,
-+					VB2_BUF_STATE_DONE);
-+		}
-+	}
-+
-+update_prev_counters:
-+	csis->prev_frame_counter = csis->current_frame_counter;
-+}
-+
-+static irqreturn_t csis_irq_handler(int irq_csis, void *data)
-+{
-+	struct fsd_csis *csis = data;
-+	struct v4l2_subdev *subdev = csis->source.subdev;
-+	unsigned int int_src1 = 0x0;
-+	unsigned int int1_err = 0x0;
-+	unsigned int dma_error = 0x0, dma_err_code = 0x0, dma_error_vc = 0x0;
-+	unsigned int err = 0x0;
-+	unsigned int dma_frame_end = 0x0, dma_frame_end_vc = 0x0;
-+	int i;
-+
-+	v4l2_subdev_call(subdev, core, command, 2, &int_src1);
-+	int1_err = get_bits(int_src1, FSD_CSIS_INT_SRC1_ERR_ALL_MASK);
-+
-+	dma_frame_end = get_bits(int_src1, FDS_CSIS_DMA_FRM_END_MASK);
-+
-+	if (int1_err) {
-+		err = get_bits(int_src1, FSD_CSIS_DMA_OTF_OVERLAP_MASK);
-+		if (err)
-+			dev_err(csis->dev, "DMA OTF OVERLAP %x\n", err);
-+
-+		dma_error = get_bits(int_src1, FSD_CSIS_DMA_ERROR_MASK);
-+
-+		if (dma_error) {
-+			dev_err(csis->dev, "DMA ERROR %x\n", dma_error);
-+			dma_err_code = readl(csis->dma_base + FSD_CSIS_DMA_ERR_CODE);
-+			dev_err(csis->dev, "Error code %x", dma_err_code);
-+		}
-+	}
-+
-+	if (dma_frame_end || dma_error) {
-+		for (i = 0; i < FSD_CSIS_MAX_VC; i++) {
-+			dma_frame_end_vc = (dma_frame_end >> i) & 0x01;
-+			if (dma_error) {
-+				dma_error_vc = int_src1 & (FSD_CSIS_DMA_CH0_MASK << i);
-+				dma_error_vc |= ((dma_err_code & (FSD_CSIS_DMAFIFO_FULL_MASK |
-+								FSD_CSIS_TRXFIFO_FULL_MASK |
-+								0x01 << i)) << 18);
-+			}
-+
-+			if (dma_frame_end_vc || dma_error_vc) {
-+				csis->dma_error = dma_error_vc;
-+				fsd_csis_irq_worker(csis);
-+			}
-+		}
-+	}
-+
-+	v4l2_subdev_call(subdev, core, command, 3, &int_src1);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static int fsd_csis_video_release(struct file *file)
-+{
-+	struct fsd_csis *csis = video_drvdata(file);
-+	int ret;
-+
-+	ret = vb2_fop_release(file);
-+
-+	if (ret)
-+		return ret;
-+
-+	pm_runtime_put(csis->dev);
-+
-+	return ret;
-+}
-+
-+static int fsd_csis_video_querycap(struct file *file, void *priv,
-+				   struct v4l2_capability *cap)
-+{
-+	struct fsd_csis *csis = video_drvdata(file);
-+
-+	strscpy(cap->driver, FSD_CSIS_MODULE_NAME, sizeof(cap->driver));
-+	strscpy(cap->card, FSD_CSIS_MODULE_NAME, sizeof(cap->card));
-+
-+	snprintf(cap->bus_info, sizeof(cap->bus_info),
-+		 "platform:%s", dev_name(csis->dev));
-+	return 0;
-+}
-+
-+static int fsd_csis_video_enum_fmt_vid_cap(struct file *file, void *priv,
-+					   struct v4l2_fmtdesc *f)
-+{
-+	unsigned int index = f->index;
-+	unsigned int i;
-+
-+	for (i = 0; i < ARRAY_SIZE(pixel_formats); i++) {
-+		const struct fsd_csis_pixfmt *fmt = &pixel_formats[i];
-+
-+		if (f->mbus_code) {
-+			unsigned int j;
-+
-+			if (!fmt->codes)
-+				continue;
-+
-+			for (j = 0; fmt->codes[j]; j++) {
-+				if (f->mbus_code == fmt->codes[j])
-+					break;
-+			}
-+
-+			if (!fmt->codes[j])
-+				continue;
-+		}
-+
-+		if (index == 0) {
-+			f->pixelformat = fmt->fourcc;
-+			return 0;
-+		}
-+
-+		index--;
-+	}
-+
-+	return -EINVAL;
-+}
-+
-+/*
-+ * Search in the pixel_formats[] array for an entry with the given fourcc
-+ * return it.
-+ */
-+static const struct fsd_csis_pixfmt *fsd_csis_find_pixel_format(u32 fourcc)
-+{
-+	const struct fsd_csis_pixfmt *fmt;
-+	unsigned int i;
-+
-+	for (i = 0; i < ARRAY_SIZE(pixel_formats); i++) {
-+		fmt = &pixel_formats[i];
-+
-+		if (fmt->fourcc == fourcc)
-+			return fmt;
-+	}
-+
-+	return NULL;
-+}
-+
-+/*
-+ * Search in the pixel_formats[] array for an entry with the given media
-+ * bus code and return it.
-+ */
-+static const struct fsd_csis_pixfmt *fsd_csis_find_mbus_format(u32 code)
-+{
-+	unsigned int i;
-+
-+	for (i = 0; i < ARRAY_SIZE(pixel_formats); i++) {
-+		const struct fsd_csis_pixfmt *fmt = &pixel_formats[i];
-+		unsigned int j;
-+
-+		if (!fmt->codes)
-+			continue;
-+
-+		for (j = 0; fmt->codes[j]; j++) {
-+			if (code == fmt->codes[j])
-+				return fmt;
-+		}
-+	}
-+
-+	return NULL;
-+}
-+
-+static int fsd_csis_mbus_fmt_to_pix_fmt(struct v4l2_pix_format *pix,
-+					const struct v4l2_mbus_framefmt *mbus,
-+					const struct fsd_csis_pixfmt *cc)
-+{
-+	u32 width;
-+	u32 stride;
-+
-+	if (!cc) {
-+		cc = fsd_csis_find_mbus_format(mbus->code);
-+		if (!cc)
-+			return -EINVAL;
-+	}
-+
-+	/* Round up width for minimum burst size */
-+	width = round_up(mbus->width, 8);
-+
-+	/* Round up stride for IDMAC line start address alignment */
-+	stride = round_up((width * cc->bpp) >> 3, 8);
-+
-+	pix->width = width;
-+	pix->height = mbus->height;
-+	pix->pixelformat = cc->fourcc;
-+	pix->colorspace = mbus->colorspace;
-+	pix->xfer_func = mbus->xfer_func;
-+	pix->ycbcr_enc = mbus->ycbcr_enc;
-+	pix->quantization = mbus->quantization;
-+	pix->field = mbus->field;
-+	pix->bytesperline = stride;
-+	pix->sizeimage = stride * pix->height;
-+
-+	return 0;
-+}
-+
-+static const struct fsd_csis_pixfmt
-+	*__fsd_csis_video_try_fmt_vid_cap(struct fsd_csis *csis,
-+					  struct v4l2_pix_format *pixfmt)
-+{
-+	struct v4l2_mbus_framefmt fmt_src;
-+	const struct fsd_csis_pixfmt *cc;
-+	struct v4l2_rect *compose = &csis->vdev_compose;
-+
-+	/*
-+	 * Find the pixel format, default to the first supported format if not
-+	 * found.
-+	 */
-+	cc = fsd_csis_find_pixel_format(pixfmt->pixelformat);
-+
-+	if (!cc) {
-+		pixfmt->pixelformat = FSD_CSIS_DEF_PIX_FORMAT;
-+		pixfmt->height = FSD_CSIS_DEF_PIX_HEIGHT;
-+		pixfmt->width = FSD_CSIS_DEF_PIX_WIDTH;
-+		pixfmt->colorspace = V4L2_COLORSPACE_SRGB;
-+		pixfmt->field = V4L2_FIELD_NONE;
-+		cc = fsd_csis_find_pixel_format(pixfmt->pixelformat);
-+	}
-+
-+	v4l2_fill_mbus_format(&fmt_src, pixfmt, cc->codes[0]);
-+	fsd_csis_mbus_fmt_to_pix_fmt(pixfmt, &fmt_src, cc);
-+
-+	compose->width = fmt_src.width;
-+	compose->height = fmt_src.height;
-+
-+	csis->vdev_fmt = *pixfmt;
-+	return cc;
-+}
-+
-+static int fsd_csis_video_try_fmt_vid_cap(struct file *file, void *fh,
-+					  struct v4l2_format *f)
-+{
-+	struct fsd_csis *csis = video_drvdata(file);
-+
-+	__fsd_csis_video_try_fmt_vid_cap(csis, &f->fmt.pix);
-+	return 0;
-+}
-+
-+static int fsd_csis_video_s_fmt_vid_cap(struct file *file, void *priv,
-+					struct v4l2_format *f)
-+{
-+	struct fsd_csis *csis = video_drvdata(file);
-+	struct v4l2_subdev *sd = &csis->subdev.sd;
-+	const struct fsd_csis_pixfmt *cc;
-+	struct vb2_queue *q = &csis->q;
-+	int ret;
-+	struct v4l2_subdev_format fmt = {
-+		.which = V4L2_SUBDEV_FORMAT_ACTIVE,
-+		.pad = 0,
-+	};
-+
-+	if (vb2_is_busy(q)) {
-+		dev_err(csis->dev, "%s queue busy\n", __func__);
-+		return -EBUSY;
-+	}
-+
-+	cc = __fsd_csis_video_try_fmt_vid_cap(csis, &f->fmt.pix);
-+	v4l2_fill_mbus_format(&fmt.format, &f->fmt.pix, cc->codes[0]);
-+	ret = v4l2_subdev_call(sd, pad, set_fmt, sd->active_state, &fmt);
-+
-+	if (ret < 0) {
-+		dev_err(csis->dev, "subdev format set failed %d\n", ret);
-+		return ret;
-+	}
-+
-+	csis->vdev_cc = cc;
-+	csis->vdev_fmt = f->fmt.pix;
-+	return 0;
-+}
-+
-+static int fsd_csis_video_g_fmt_vid_cap(struct file *file, void *priv,
-+					struct v4l2_format *f)
-+{
-+	struct fsd_csis *csis = video_drvdata(file);
-+
-+	f->fmt.pix = csis->vdev_fmt;
-+
-+	return 0;
-+}
-+
-+static const struct vb2_ops fsd_csis_video_qops = {
-+	.queue_setup            = fsd_csis_queue_setup,
-+	.buf_prepare            = fsd_csis_buffer_prepare,
-+	.buf_queue              = fsd_csis_buffer_queue,
-+	.start_streaming        = fsd_csis_start_streaming,
-+	.stop_streaming         = fsd_csis_stop_streaming,
-+	.wait_prepare           = vb2_ops_wait_prepare,
-+	.wait_finish            = vb2_ops_wait_finish,
-+};
-+
-+static const struct v4l2_ioctl_ops fsd_csis_video_ioctl_ops = {
-+	.vidioc_querycap      = fsd_csis_video_querycap,
-+
-+	.vidioc_enum_fmt_vid_cap  = fsd_csis_video_enum_fmt_vid_cap,
-+
-+	.vidioc_try_fmt_vid_cap   = fsd_csis_video_try_fmt_vid_cap,
-+	.vidioc_s_fmt_vid_cap     = fsd_csis_video_s_fmt_vid_cap,
-+	.vidioc_g_fmt_vid_cap     = fsd_csis_video_g_fmt_vid_cap,
-+
-+	.vidioc_reqbufs       = vb2_ioctl_reqbufs,
-+	.vidioc_querybuf      = vb2_ioctl_querybuf,
-+	.vidioc_qbuf          = vb2_ioctl_qbuf,
-+	.vidioc_expbuf        = vb2_ioctl_expbuf,
-+	.vidioc_dqbuf         = vb2_ioctl_dqbuf,
-+	.vidioc_prepare_buf   = vb2_ioctl_prepare_buf,
-+	.vidioc_create_bufs   = vb2_ioctl_create_bufs,
-+	.vidioc_streamon      = vb2_ioctl_streamon,
-+	.vidioc_streamoff     = vb2_ioctl_streamoff,
-+};
-+
-+/**
-+ * V4L2 File operations
-+ */
-+static const struct v4l2_file_operations fsd_csis_video_fops = {
-+	.owner          = THIS_MODULE,
-+	.open           = fsd_csis_video_open,
-+	.release        = fsd_csis_video_release,
-+	.read           = vb2_fop_read,
-+	.poll           = vb2_fop_poll,
-+	.unlocked_ioctl = video_ioctl2,
-+	.mmap           = vb2_fop_mmap,
-+};
-+
-+static int fsd_csi_notify_bound(struct v4l2_async_notifier *notifier,
-+				struct v4l2_subdev *subdev,
-+				struct v4l2_async_connection *asd)
-+{
-+	struct fsd_csis *csis = notifier_to_csis(notifier);
-+	struct media_pad *sink = &csis->subdev.pad[FSD_CSIS_PAD_SINK];
-+	struct media_pad *source;
-+	int ret;
-+
-+	dev_dbg(csis->dev, "Hooked csis subdevice: %s to parent\n",
-+		subdev->name);
-+
-+	ret = v4l2_create_fwnode_links_to_pad(subdev, sink, MEDIA_LNK_FL_ENABLED);
-+
-+	if (ret)
-+		return ret;
-+
-+	source = media_pad_remote_pad_unique(sink);
-+	if (IS_ERR(source)) {
-+		dev_err(csis->dev, "No connected source pad\n");
-+		return PTR_ERR(source);
-+	}
-+
-+	csis->source.subdev = subdev;
-+	csis->source.pad = source;
-+
-+	return 0;
-+}
-+
-+static const struct v4l2_async_notifier_operations fsd_csi_notify_ops = {
-+	.bound = fsd_csi_notify_bound,
-+};
-+
-+static const struct media_device_ops fsd_csis_media_ops = {
-+	.link_notify = v4l2_pipeline_link_notify,
-+};
-+
-+static const struct media_entity_operations fsd_csis_entity_ops = {
-+	.link_validate  = v4l2_subdev_link_validate,
-+	.get_fwnode_pad = v4l2_subdev_get_fwnode_pad_1_to_1,
-+};
-+
-+static int fsd_csis_media_dev_init(struct fsd_csis *csis)
-+{
-+	int ret;
-+
-+	strscpy(csis->mdev.model, "fsd-csis-media", sizeof(csis->mdev.model));
-+	csis->mdev.ops = &fsd_csis_media_ops;
-+	csis->mdev.dev = csis->dev;
-+
-+	csis->v4l2_dev.mdev = &csis->mdev;
-+	strscpy(csis->v4l2_dev.name, "fsd-csis-media",
-+		sizeof(csis->v4l2_dev.name));
-+	snprintf(csis->mdev.bus_info, sizeof(csis->mdev.bus_info),
-+		 "platform:%s", dev_name(csis->mdev.dev));
-+
-+	media_device_init(&csis->mdev);
-+
-+	ret = v4l2_device_register(csis->dev, &csis->v4l2_dev);
-+
-+	if (ret < 0) {
-+		v4l2_err(&csis->v4l2_dev,
-+			 "Failed to register v4l2_device: %d\n", ret);
-+		goto cleanup;
-+	}
-+
-+	return 0;
-+
-+cleanup:
-+	media_device_cleanup(&csis->mdev);
-+
-+	return ret;
-+}
-+
-+static void fsd_csis_media_cleanup(struct fsd_csis *csis)
-+{
-+	v4l2_device_unregister(&csis->v4l2_dev);
-+	media_device_unregister(&csis->mdev);
-+	v4l2_subdev_cleanup(&csis->subdev.sd);
-+	media_device_cleanup(&csis->mdev);
-+}
-+
-+static int fsd_csis_video_init(struct fsd_csis *csis)
-+{
-+	struct video_device *vdev;
-+	struct vb2_queue *vq;
-+	int ret;
-+
-+	mutex_init(&csis->vdev_mutex);
-+	INIT_LIST_HEAD(&csis->ready_q);
-+	spin_lock_init(&csis->q_lock);
-+	spin_lock_init(&csis->dma_reg_lock);
-+
-+	/* Allocate and initialize the video device.*/
-+	vdev = video_device_alloc();
-+	if (!vdev)
-+		return -ENOMEM;
-+
-+	vdev->fops = &fsd_csis_video_fops;
-+	vdev->ioctl_ops = &fsd_csis_video_ioctl_ops;
-+	vdev->minor = -1;
-+	vdev->release = video_device_release;
-+	vdev->device_caps = V4L2_CAP_VIDEO_CAPTURE | V4L2_CAP_STREAMING;
-+	vdev->lock = &csis->vdev_mutex;
-+	vdev->queue = &csis->q;
-+
-+	snprintf(vdev->name, sizeof(vdev->name), "%s capture", csis->subdev.sd.name);
-+
-+	video_set_drvdata(vdev, csis);
-+	csis->vdev = vdev;
-+
-+	/* Initialize the video device pad. */
-+	csis->vdev_pad.flags = MEDIA_PAD_FL_SINK;
-+
-+	ret = media_entity_pads_init(&vdev->entity, 1, &csis->vdev_pad);
-+	if (ret) {
-+		video_device_release(vdev);
-+		return ret;
-+	}
-+
-+	/* Initialize the vb2 queue. */
-+	vq = &csis->q;
-+	vq->type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-+	vq->io_modes = VB2_MMAP | VB2_USERPTR | VB2_DMABUF;
-+	vq->drv_priv = csis;
-+	vq->buf_struct_size = sizeof(struct fsd_csis_vb2_buffer);
-+	vq->ops = &fsd_csis_video_qops;
-+	vq->mem_ops = &vb2_dma_contig_memops;
-+	vq->timestamp_flags = V4L2_BUF_FLAG_TIMESTAMP_MONOTONIC;
-+	vq->lock = &csis->vdev_mutex;
-+	vq->min_reqbufs_allocation = FSD_CSIS_NB_OF_BUFS_ON_DMA_CHANNELS + 1;
-+	vq->min_queued_buffers = FSD_CSIS_NB_MIN_CH;
-+	vq->dev = csis->dev;
-+
-+	ret = vb2_queue_init(vq);
-+	if (ret) {
-+		dev_err(csis->dev, "vb2_queue_init failed\n");
-+		video_device_release(vdev);
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static void fsd_csis_video_init_format(struct fsd_csis *csis)
-+{
-+	csis->vdev_fmt.width = FSD_CSIS_DEF_PIX_WIDTH;
-+	csis->vdev_fmt.height = FSD_CSIS_DEF_PIX_HEIGHT;
-+	csis->vdev_fmt.pixelformat = FSD_CSIS_DEF_PIX_FORMAT;
-+	csis->vdev_fmt.colorspace = V4L2_COLORSPACE_SRGB;
-+	csis->vdev_fmt.field = V4L2_FIELD_NONE;
-+
-+	csis->vdev_cc = fsd_csis_find_pixel_format(csis->vdev_fmt.pixelformat);
-+
-+	csis->vdev_fmt.bytesperline = bytes_per_line(FSD_CSIS_DEF_PIX_WIDTH,
-+						     csis->vdev_cc->bpp);
-+	csis->vdev_fmt.sizeimage = csis->vdev_fmt.bytesperline *
-+					csis->vdev_fmt.height;
-+}
-+
-+static int fsd_csis_video_register(struct fsd_csis *csis)
-+{
-+	struct v4l2_subdev *sd = &csis->subdev.sd;
-+	struct v4l2_device *v4l2_dev = sd->v4l2_dev;
-+	struct video_device *vdev = csis->vdev;
-+	int ret;
-+
-+	vdev->v4l2_dev = v4l2_dev;
-+
-+	/* Initialize the default format and compose rectangle. */
-+	fsd_csis_video_init_format(csis);
-+
-+	/* Register the video device. */
-+	ret = video_register_device(vdev, VFL_TYPE_VIDEO, -1);
-+	if (ret) {
-+		dev_err(csis->dev, "Failed to register video device\n");
-+		return ret;
-+	}
-+
-+	dev_info(csis->dev, "Registered %s as /dev/%s\n", vdev->name,
-+		 video_device_node_name(vdev));
-+
-+	/* Create the link from the CSI subdev to the video device. */
-+	ret = media_create_pad_link(&sd->entity, FSD_CSIS_PAD_SRC,
-+				    &vdev->entity, 0, MEDIA_LNK_FL_IMMUTABLE |
-+				    MEDIA_LNK_FL_ENABLED);
-+	if (ret) {
-+		dev_err(csis->dev, "failed to create link to device node\n");
-+		video_unregister_device(vdev);
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static void fsd_csis_video_unregister(struct fsd_csis *csis)
-+{
-+	media_entity_cleanup(&csis->vdev->entity);
-+	video_unregister_device(csis->vdev);
-+}
-+
-+static int fsd_csis_registered(struct v4l2_subdev *sd)
-+{
-+	struct fsd_csis *csis = v4l2_get_subdevdata(sd);
-+	int ret;
-+
-+	ret = fsd_csis_video_init(csis);
-+	if (ret)
-+		return ret;
-+
-+	ret = fsd_csis_video_register(csis);
-+	if (ret)
-+		return ret;
-+
-+	ret = v4l2_device_register_subdev_nodes(&csis->v4l2_dev);
-+	if (ret)
-+		goto err_unregister;
-+
-+	ret = media_device_register(&csis->mdev);
-+	if (ret)
-+		goto err_unregister;
-+
-+	return 0;
-+
-+err_unregister:
-+	fsd_csis_video_unregister(csis);
-+
-+	return ret;
-+}
-+
-+static void fsd_csis_unregistered(struct v4l2_subdev *sd)
-+{
-+	struct fsd_csis *csis = v4l2_get_subdevdata(sd);
-+
-+	fsd_csis_video_unregister(csis);
-+}
-+
-+static int fsd_csis_sd_set_fmt(struct v4l2_subdev *sd,
-+			       struct v4l2_subdev_state *sd_state,
-+			       struct v4l2_subdev_format *sdformat)
-+{
-+	struct fsd_csis *csis = v4l2_get_subdevdata(sd);
-+	struct v4l2_subdev *subdev = csis->source.subdev;
-+	struct v4l2_mbus_framefmt *fmt;
-+	const struct fsd_csis_pixfmt *cc;
-+
-+	if (sdformat->which == V4L2_SUBDEV_FORMAT_ACTIVE && csis->is_streaming)
-+		return -EBUSY;
-+
-+	if (sdformat->pad == FSD_CSIS_PAD_SRC)
-+		return v4l2_subdev_get_fmt(sd, sd_state, sdformat);
-+
-+	if (sdformat->pad != FSD_CSIS_PAD_SINK)
-+		return -EINVAL;
-+
-+	cc = fsd_csis_find_mbus_format(sdformat->format.code);
-+	if (!cc)
-+		cc = fsd_csis_find_mbus_format(FSD_CSIS_DEF_MBUS_CODE);
-+
-+	fmt = v4l2_subdev_state_get_format(sd_state, sdformat->pad);
-+
-+	fmt->code = cc->codes[0];
-+	fmt->width = sdformat->format.width;
-+	fmt->height = sdformat->format.height;
-+	fmt->field = V4L2_FIELD_NONE;
-+
-+	sdformat->format = *fmt;
-+
-+	/* Propagate the format from sink to source. */
-+	fmt = v4l2_subdev_state_get_format(sd_state, FSD_CSIS_PAD_SRC);
-+	*fmt = sdformat->format;
-+
-+	return v4l2_subdev_call(subdev, pad, set_fmt, subdev->active_state, sdformat);
-+}
-+
-+static int __fsd_csis_sd_set_routing(struct v4l2_subdev *sd,
-+				     struct v4l2_subdev_state *state,
-+				     struct v4l2_subdev_krouting *routing)
-+{
-+	struct v4l2_subdev_route *route;
-+	int ret;
-+
-+	ret = v4l2_subdev_routing_validate(sd, routing,
-+					   V4L2_SUBDEV_ROUTING_ONLY_1_TO_1);
-+	if (ret)
-+		return ret;
-+
-+	ret = v4l2_subdev_set_routing(sd, state, routing);
-+	if (ret)
-+		return ret;
-+
-+	for_each_active_route(&state->routing, route) {
-+		const struct v4l2_mbus_framefmt *def_fmt;
-+		struct v4l2_mbus_framefmt *fmt;
-+
-+		def_fmt = &fsd_csis_default_format;
-+
-+		fmt = v4l2_subdev_state_get_format(state, route->sink_pad,
-+						   route->sink_stream);
-+		*fmt = *def_fmt;
-+		fmt = v4l2_subdev_state_get_format(state, route->source_pad,
-+						   route->source_stream);
-+		*fmt = *def_fmt;
-+	}
-+
-+	return 0;
-+}
-+
-+static int fsd_csis_sd_set_routing(struct v4l2_subdev *sd,
-+				   struct v4l2_subdev_state *state,
-+				   enum v4l2_subdev_format_whence which,
-+				   struct v4l2_subdev_krouting *routing)
-+{
-+	struct fsd_csis *csis = v4l2_get_subdevdata(sd);
-+
-+	if (which == V4L2_SUBDEV_FORMAT_ACTIVE && csis->is_streaming)
-+		return -EBUSY;
-+
-+	return __fsd_csis_sd_set_routing(sd, state, routing);
-+}
-+
-+static int fsd_csis_sd_enable_streams(struct v4l2_subdev *sd,
-+				      struct v4l2_subdev_state *state,
-+				      u32 pad, u64 streams_mask)
-+{
-+	struct fsd_csis *csis = v4l2_get_subdevdata(sd);
-+
-+	return v4l2_subdev_enable_streams(csis->source.subdev,
-+					FSD_CSIS_PAD_SRC, BIT(0));
-+}
-+
-+static int fsd_csis_sd_disable_streams(struct v4l2_subdev *sd,
-+				       struct v4l2_subdev_state *state,
-+				       u32 pad, u64 streams_mask)
-+{
-+	struct fsd_csis *csis = v4l2_get_subdevdata(sd);
-+
-+	return v4l2_subdev_disable_streams(csis->source.subdev,
-+					FSD_CSIS_PAD_SRC, BIT(0));
-+}
-+
-+static int fsd_csis_init_state(struct v4l2_subdev *sd,
-+			       struct v4l2_subdev_state *state)
-+{
-+	struct v4l2_subdev_route routes[] = {
-+		{
-+			.sink_pad = FSD_CSIS_PAD_SINK,
-+			.sink_stream = 0,
-+			.source_pad = FSD_CSIS_PAD_SRC,
-+			.source_stream = 0,
-+			.flags = V4L2_SUBDEV_ROUTE_FL_ACTIVE,
-+		},
-+	};
-+
-+	struct v4l2_subdev_krouting routing = {
-+		.len_routes = ARRAY_SIZE(routes),
-+		.num_routes = ARRAY_SIZE(routes),
-+		.routes = routes,
-+	};
-+
-+	return __fsd_csis_sd_set_routing(sd, state, &routing);
-+}
-+
-+static const struct v4l2_subdev_internal_ops fsd_csis_internal_ops = {
-+	.init_state	= fsd_csis_init_state,
-+	.registered	= fsd_csis_registered,
-+	.unregistered	= fsd_csis_unregistered,
-+};
-+
-+static const struct v4l2_subdev_pad_ops fsd_csis_pad_ops = {
-+	.get_fmt		= v4l2_subdev_get_fmt,
-+	.set_fmt		= fsd_csis_sd_set_fmt,
-+	.set_routing		= fsd_csis_sd_set_routing,
-+	.enable_streams		= fsd_csis_sd_enable_streams,
-+	.disable_streams	= fsd_csis_sd_disable_streams,
-+};
-+
-+static const struct v4l2_subdev_ops fsd_csis_subdev_ops = {
-+	.pad = &fsd_csis_pad_ops,
-+};
-+
-+static int fsd_csis_media_init(struct fsd_csis *csis)
-+{
-+	struct v4l2_subdev *sd = &csis->subdev.sd;
-+	int ret, i;
-+
-+	/* add media device */
-+	ret = fsd_csis_media_dev_init(csis);
-+	if (ret)
-+		return ret;
-+
-+	v4l2_subdev_init(sd, &fsd_csis_subdev_ops);
-+	v4l2_set_subdevdata(sd, csis);
-+	sd->internal_ops = &fsd_csis_internal_ops;
-+	sd->entity.ops = &fsd_csis_entity_ops;
-+	sd->entity.function = MEDIA_ENT_F_VID_IF_BRIDGE;
-+	sd->dev = csis->dev;
-+	sd->owner = THIS_MODULE;
-+	sd->flags = V4L2_SUBDEV_FL_HAS_DEVNODE;
-+	snprintf(sd->name, sizeof(sd->name), "csis");
-+
-+	for (i = 0; i < FSD_CSIS_PADS_NUM; i++)
-+		csis->subdev.pad[i].flags = (i == FSD_CSIS_PAD_SINK) ?
-+			MEDIA_PAD_FL_SINK : MEDIA_PAD_FL_SOURCE;
-+
-+	ret = media_entity_pads_init(&sd->entity, FSD_CSIS_PADS_NUM,
-+				     csis->subdev.pad);
-+
-+	if (ret)
-+		goto error;
-+
-+	ret = v4l2_subdev_init_finalize(sd);
-+	if (ret)
-+		goto error;
-+
-+	ret = v4l2_device_register_subdev(&csis->v4l2_dev, sd);
-+	if (ret)
-+		goto error;
-+
-+	return 0;
-+error:
-+	fsd_csis_media_cleanup(csis);
-+	return ret;
-+}
-+
-+static int fsd_csis_async_register(struct fsd_csis *csis)
-+{
-+	struct v4l2_async_connection *asd;
-+	struct fwnode_handle *ep;
-+	int ret;
-+
-+	v4l2_async_nf_init(&csis->notifier, &csis->v4l2_dev);
-+
-+	ep = fwnode_graph_get_endpoint_by_id(dev_fwnode(csis->dev), 0, 0,
-+					     FWNODE_GRAPH_ENDPOINT_NEXT);
-+
-+	if (ep) {
-+		asd = v4l2_async_nf_add_fwnode_remote(&csis->notifier, ep,
-+						      struct v4l2_async_connection);
-+		fwnode_handle_put(ep);
-+
-+		if (IS_ERR(asd)) {
-+			ret = PTR_ERR(asd);
-+			/* OK if asd already exists */
-+			if (ret != -EEXIST)
-+				goto error;
-+		}
-+	}
-+
-+	csis->notifier.ops = &fsd_csi_notify_ops;
-+
-+	ret = v4l2_async_nf_register(&csis->notifier);
-+	if (ret)
-+		goto error;
-+
-+	return 0;
-+
-+error:
-+	v4l2_async_nf_cleanup(&csis->notifier);
-+	return ret;
-+}
-+
-+static int fsd_csis_clk_get(struct fsd_csis *csis)
-+{
-+	int i;
-+
-+	csis->clks = devm_kcalloc(csis->dev, FSD_CSIS_NB_CLOCK, sizeof(*csis->clks), GFP_KERNEL);
-+
-+	if (!csis->clks)
-+		return -ENOMEM;
-+
-+	for (i = 0; i < FSD_CSIS_NB_CLOCK; i++)
-+		csis->clks[i].id = fsd_csis_clk_id[i];
-+
-+	return devm_clk_bulk_get(csis->dev, FSD_CSIS_NB_CLOCK, csis->clks);
-+}
-+
-+static int fsd_csis_runtime_suspend(struct device *dev)
-+{
-+	struct fsd_csis *csis = dev_get_drvdata(dev);
-+
-+	clk_bulk_disable_unprepare(FSD_CSIS_NB_CLOCK, csis->clks);
-+
-+	return 0;
-+}
-+
-+static int fsd_csis_runtime_resume(struct device *dev)
-+{
-+	struct fsd_csis *csis = dev_get_drvdata(dev);
-+
-+	return clk_bulk_prepare_enable(FSD_CSIS_NB_CLOCK, csis->clks);
-+}
-+
-+static const struct dev_pm_ops fsd_csis_pm_ops = {
-+	SET_RUNTIME_PM_OPS(fsd_csis_runtime_suspend, fsd_csis_runtime_resume,
-+			   NULL)
-+};
-+
-+static int fsd_csis_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct fsd_csis *csis;
-+	int ret = 0;
-+	int irq;
-+
-+	csis = devm_kzalloc(dev, sizeof(*csis), GFP_KERNEL);
-+	if (!csis)
-+		return -ENOMEM;
-+
-+	csis->dev = dev;
-+	csis->info = of_device_get_match_data(dev);
-+
-+	csis->dma_base = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(csis->dma_base))
-+		return PTR_ERR(csis->dma_base);
-+
-+	irq = platform_get_irq(pdev, 0);
-+	if (irq < 0)
-+		return irq;
-+
-+	ret = devm_request_irq(dev, irq,
-+			       csis_irq_handler, IRQF_SHARED, pdev->name, csis);
-+
-+	ret = fsd_csis_clk_get(csis);
-+	if (ret < 0)
-+		return ret;
-+
-+	pm_runtime_enable(dev);
-+	if (!pm_runtime_enabled(dev)) {
-+		ret = fsd_csis_runtime_resume(dev);
-+		if (ret < 0)
-+			return ret;
-+	}
-+
-+	platform_set_drvdata(pdev, csis);
-+
-+	csis->pll = devm_clk_get_enabled(dev, "pll");
-+	if (IS_ERR(csis->pll)) {
-+		dev_err(dev, "Failed to enable pll\n");
-+		return PTR_ERR(csis->pll);
-+	}
-+
-+	ret = fsd_csis_media_init(csis);
-+	if (ret)
-+		return ret;
-+
-+	ret = fsd_csis_async_register(csis);
-+	if (ret)
-+		goto err_media_cleanup;
-+
-+	return 0;
-+
-+err_media_cleanup:
-+	fsd_csis_media_cleanup(csis);
-+
-+	return ret;
-+}
-+
-+static void fsd_csis_remove(struct platform_device *pdev)
-+{
-+	struct fsd_csis *csis = platform_get_drvdata(pdev);
-+
-+	fsd_csis_media_cleanup(csis);
-+
-+	v4l2_async_nf_unregister(&csis->notifier);
-+	v4l2_async_nf_cleanup(&csis->notifier);
-+	v4l2_async_unregister_subdev(&csis->subdev.sd);
-+
-+	if (!pm_runtime_enabled(csis->dev))
-+		fsd_csis_runtime_suspend(csis->dev);
-+
-+	pm_runtime_disable(csis->dev);
-+	pm_runtime_set_suspended(csis->dev);
-+}
-+
-+static const struct of_device_id fsd_csis_of_match[] = {
-+	{ .compatible = "tesla,fsd-csis-media", },
-+	{ },
-+};
-+
-+MODULE_DEVICE_TABLE(of, fsd_csis_of_match);
-+
-+static struct platform_driver fsd_csis_driver = {
-+	.probe		= fsd_csis_probe,
-+	.remove		= fsd_csis_remove,
-+	.driver		= {
-+		.name		= FSD_CSIS_MODULE_NAME,
-+		.of_match_table = fsd_csis_of_match,
-+		.pm		= &fsd_csis_pm_ops,
-+	},
-+};
-+
-+module_platform_driver(fsd_csis_driver);
-+
-+MODULE_DESCRIPTION("FSD CSIS Video Capture Driver");
-+MODULE_AUTHOR("Inbaraj E <inbaraj.e@samsung.com>");
-+MODULE_LICENSE("GPL");
-+
 -- 
-2.49.0
+Cheers
+
+David / dhildenb
 
 
