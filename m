@@ -1,102 +1,138 @@
-Return-Path: <linux-kernel+bounces-790632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DD5DB3AB1B
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 21:56:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 286D3B3AB1F
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 21:57:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F01A6173C23
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 19:56:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CC06E7B1E69
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 19:55:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B561527E05F;
-	Thu, 28 Aug 2025 19:56:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C65427D77B;
+	Thu, 28 Aug 2025 19:57:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NwYD5Jv+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kNzv9GTB"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 178E82356D2;
-	Thu, 28 Aug 2025 19:56:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 016781D6188;
+	Thu, 28 Aug 2025 19:57:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756411003; cv=none; b=Wq3hLhev2VlUTH4I+Zoj6XN0dsL3z3oSo1qmPjOrKZvGzFLyQGeUzBt/s1PJw//DgOTUfPBeSTrfQFS2qlwtlrCsHtWaGdN1XOhaagJrrhwFMLKiT0owoLsd+emIEb1gHbo6Y9yGtCF4BC0mfrhYrCGaPhB+HcUpsaoMnTYI2xc=
+	t=1756411041; cv=none; b=rd7W/j4bcjkzbtGfmK5Hxbua1BpxaIfxUtM3+/XhLos//vAgVQLEYzQ0ZLAVithjn4OjfeSQXcK5FTXJEUEFajG2f3oTqCvazvlrM6azJ9AKWx8ojKRn6ICSuisjcmOXIwhCanCpHKVQMrmamw1AYz3zCh/ZzYqyPBgxPR/N9Kg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756411003; c=relaxed/simple;
-	bh=jZLDYkrwDKsVdAImEhREQM4BnFPCcFh7iYu2y1RSPUo=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=nS96Ug64YAWlQBKc4tLEx68PpUa2UA0FKX6oyQdX3XO3pLMjDjYjPvtZMb+7X4hEPBlAmj13hbUf7mlkOum/bKXlmWBkuaClhHrI6d+gdpqLJt+3kWIB+dmTZdNDPd6gbL6+YNu+vPywdeQi8amNybuQpHh0dfKjllNRSGt2/EQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NwYD5Jv+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8688EC4CEEB;
-	Thu, 28 Aug 2025 19:56:42 +0000 (UTC)
+	s=arc-20240116; t=1756411041; c=relaxed/simple;
+	bh=J9p1+SFkJ1DD0HNbdzfpG7QiXzTQqNC+170Di7UX3P8=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=tbPqo8wVaD25LKwPHo9pbFhrPDOqk9Cnu6D3I0lK1zudAVzyUWcBJnJg6NSFDr0HdTeypRQeTkctp66amMyjyp1ihDBQNAeR8/sOOhVOtGQuKkn2RBMYy11iv6I0DtnFC9o88tZObsgBloeuhqM8C4P6yknCqE3YGUl0tSVsR0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kNzv9GTB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AFA52C4CEEB;
+	Thu, 28 Aug 2025 19:57:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756411002;
-	bh=jZLDYkrwDKsVdAImEhREQM4BnFPCcFh7iYu2y1RSPUo=;
-	h=From:Date:Subject:To:Cc:From;
-	b=NwYD5Jv+POWCmmQ4yLoFuk+6+90khAmq496wB0MVGNaNcSv8hCo8W0WpyEL4416d7
-	 hefFq+/VHNIk5Rfkvu/A96xQVV2PskfIpo/fqOK6uDiEOSS8MfKWg7zpFhSC6nvrBX
-	 QcacnIgKd8i/J2UFA2BFcgUi5cWWp/eFJu4OZjUGuHzaWY91AEEEr1o0rEcogOWw9j
-	 ggv2j5qs75SCH8uQZ8l2TY0YJjGtu1lDZAMIRzshr1KsYd8x3oLQx3faHho1ftPtIP
-	 o27ujLKdcLVG32K5TDng9AWKyecgCo4aSj+N8zmTBBu4l4YjYe5hmRIS3Cj19NttSJ
-	 CqMDkEcYHOLjw==
-Received: by mail-oa1-f51.google.com with SMTP id 586e51a60fabf-30ccebcc7e4so571725fac.3;
-        Thu, 28 Aug 2025 12:56:42 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVP2lKNo3EFxkJ3oe9EIPiTonsWX217VT14eRJyn4nhqD3q5yFRDfHGeagjDohH2OIbfiyX7EnjjebUamM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/td5/cPtLuOrMIkd5scoCpvfcwL0wpvLMrHpfsCJNi6yPMfnj
-	zU+Vf8iiuFkxUU/I9BJbaYh1jMgdtTxx/WYSoQ7IsP3swJxWUqe9jeg2ECnJ7YlqBQuU6xJFl7k
-	PoLwgYTP1J/AmmW/3AXPPNwtBqhRXYCo=
-X-Google-Smtp-Source: AGHT+IGHC0+gOP0QuFr17bNBCpnewHs7q7ed1TYwBzQhcnl4fFhC38rdnd/Z+7RhlL3A7fzZ3TDf8JYdxvqgiBMlbHY=
-X-Received: by 2002:a05:6870:c98f:b0:30b:d2f7:5dca with SMTP id
- 586e51a60fabf-314dcda20d9mr14609705fac.35.1756411001785; Thu, 28 Aug 2025
- 12:56:41 -0700 (PDT)
+	s=k20201202; t=1756411040;
+	bh=J9p1+SFkJ1DD0HNbdzfpG7QiXzTQqNC+170Di7UX3P8=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=kNzv9GTBNQw2jmLbuHmLZwNm2lSRbeCVYQ8MZyO7IT4qf+br2F68+vMxaR6PNdrzP
+	 1X8X0YEiamcGhGG5GXHBcCW2ncGrs7CQPvsiFVeqoty2ZhrZWX6KKUqTb1euHHcpFK
+	 hvNF9FUDlhjdu6iXqa9yuH3uvKsCEtzjc6vevSa33siMTlemYmawxKt9LWn88KvvST
+	 I/UmSsYXKQ0d3l3m9a00ZXevKDezOezVyGqdrNfZ+QsbxdznbjMk4PejknKbcxmI6g
+	 c5/Sn98//btbhZVl+z/Mn6tPawLn61Rp78bs0COCJhcQuX/9Bciwn3q+DOYVwvDRPM
+	 ZuEU5ofQTpT/g==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 28 Aug 2025 21:56:29 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0i8kCoBSOd8=-SO2WR-b1=zCC0jGHgDOq-LrnHixGjudQ@mail.gmail.com>
-X-Gm-Features: Ac12FXxY8RrlwxbIY96QIL-Gl1T6C4AgvVMqOCSAg82mWvl-SACxRbdUkG1tTjo
-Message-ID: <CAJZ5v0i8kCoBSOd8=-SO2WR-b1=zCC0jGHgDOq-LrnHixGjudQ@mail.gmail.com>
-Subject: [GIT PULL] Power management fix for v6.17-rc4
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linux PM <linux-pm@vger.kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 28 Aug 2025 21:57:16 +0200
+Message-Id: <DCEBQZ7WA1KI.1G8TNWH32QWG@kernel.org>
+Subject: Re: gpu: nova-core: arm32 build errors
+Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Alexandre Courbot"
+ <acourbot@nvidia.com>, "David Airlie" <airlied@gmail.com>, "Simona Vetter"
+ <simona@ffwll.ch>, <nouveau@lists.freedesktop.org>,
+ <dri-devel@lists.freedesktop.org>, <rust-for-linux@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+To: "Miguel Ojeda" <miguel.ojeda.sandonis@gmail.com>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <20250828160247.37492-1-ojeda@kernel.org>
+ <b680c343-ba97-4eb4-b426-56e318dce492@kernel.org>
+ <DCEB1J2P3MZS.3IGXEYP0MAC5H@kernel.org>
+ <CANiq72mkPqFnb4ztiCokE6+ntVSmgOTgERshg-4SMmLboFOqNg@mail.gmail.com>
+In-Reply-To: <CANiq72mkPqFnb4ztiCokE6+ntVSmgOTgERshg-4SMmLboFOqNg@mail.gmail.com>
 
-Hi Linus,
+On Thu Aug 28, 2025 at 9:31 PM CEST, Miguel Ojeda wrote:
+> On Thu, Aug 28, 2025 at 9:24=E2=80=AFPM Danilo Krummrich <dakr@kernel.org=
+> wrote:
+>>
+>> Maybe I spoke too soon, it's actually pretty painful to keep 32-bit
+>> compatibility, even though it would be nice for testing purposes.
+>>
+>> I'll paste the diff to fix it below, I think that makes it obvious why I=
+ say
+>> that.
+>>
+>> Instead, we should really just depend on CONFIG_64BIT (which implies
+>> ARCH_DMA_ADDR_T_64BIT).
+>
+> Yeah, it isn't great.
+>
+> If it were just that, maybe it it is worth it (and a `DmaAddress`
+> newtype, not just a typedef, could perhaps be nice anyway?)
 
-Please pull from the tag
+What do you have in mind what the newtype can do?
 
- git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
- pm-6.17-rc4
+I assume the idea is to make it provide methods {to,from}_u64, where to_u64=
+()
+has to be fallible? This would be an improvement, but not really solve the =
+issue
+entirely.
 
-with top-most commit e246518aa24f1460902725e97d0abf574aec6ade
+The annoying part really is
 
- PM: sleep: annotate RCU list iterations
+	pub(super) fn read_sysmem_flush_page_ga100(bar: &Bar0) -> DmaAddress {
+	    let addr =3D u64::from(regs::NV_PFB_NISO_FLUSH_SYSMEM_ADDR::read(bar).=
+adr_39_08())
+	        << FLUSH_SYSMEM_ADDR_SHIFT
+	        | u64::from(regs::NV_PFB_NISO_FLUSH_SYSMEM_ADDR_HI::read(bar).adr_=
+63_40())
+	            << FLUSH_SYSMEM_ADDR_SHIFT_HI;
+=09
+	    addr.try_into().unwrap_or_else(|_| {
+	        kernel::warn_on!(true);
+=09
+	        0
+	    })
+	}
 
-on top of commit 1b237f190eb3d36f52dffe07a40b5eb210280e00
+i.e. when we read a u64 from registers, but we know that what we've orignal=
+ly
+written there is a DmaAddress, so we can assume that a cast to DmaAddress i=
+s
+fine.
 
- Linux 6.17-rc3
+But this really depends on driver specific semantics.
 
-to receive a power management fix for 6.17-rc4.
+> but if
+> you think it will become increasingly painful later, then it may be
+> best to focus on what matters.
 
-This adds missing locking annotations to two recently introduced
-list_for_each_entry_rcu() loops in the core device suspend/resume
-code (Johannes Berg).
+We'll have a couple more such cases for sure; I think being able to assume =
+that
+DmaAddress is always 64-bit will result in simpler and less distracting cod=
+e.
 
-Thanks!
+But if we can come up with a good idea to deal with this with a DmaAddress =
+type;
+I'm open to that.
 
+> It is unlikely there is going to be actual users on a 32-bit platform, ri=
+ght?
 
----------------
-
-Johannes Berg (1):
-      PM: sleep: annotate RCU list iterations
-
----------------
-
- drivers/base/power/main.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Yeah, I doubt that someone could think it's a great idea to run a Turing+ G=
+PU on
+some 32-bit machine.
 
