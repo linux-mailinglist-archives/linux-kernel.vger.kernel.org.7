@@ -1,144 +1,251 @@
-Return-Path: <linux-kernel+bounces-790625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D9ABB3AB08
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 21:40:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DCAFB3AB0B
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 21:43:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFC4A3AE7BD
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 19:40:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1CDC3AE933
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 19:43:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF93027A135;
-	Thu, 28 Aug 2025 19:40:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E89627AC44;
+	Thu, 28 Aug 2025 19:43:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="t6CpH4J3"
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="V4F2xMoQ"
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1E2C20ADF8
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 19:40:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE521278E7E
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 19:43:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756410024; cv=none; b=DqkChoUWmX90GsBfd8GMvrzYjh+1f565kdA2HqHL7IekZ029RjgyZbgkl6V2yygp8QIyNk161ecd00k59OlOVo/DPoQ89SWxnukv8M8qEHwH2hNeNRHlS6U2dOVdfQE2n57oKywB6I5uzF5ZXZLZrL5RRE6vvPH/mfTAsD7c2rU=
+	t=1756410230; cv=none; b=hBD8TTRV2wx3mmsDADECjV7rAMaFo16QytWRvziYCaF2fT7uKkyYjLl3JoTC5xnhRRaZDOFX0F3FHFfNd1vKYj9YBCPagn0DaU67cYXpR1KU0P2gSfhKK9cK+Q2t3fvw3NIwaGIb3R7z5tlZk/ulAv/ZnaHW8dNDjoFSIyJo+pc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756410024; c=relaxed/simple;
-	bh=sOweL7MC1afeJEVQ1CAY29hh8rwCDAUVRUF14Il1LA4=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=piSXpxvJR5NOhnVl8uxzN5WSjjqUMWnrOb3hEvH3xtfD5ZfeFcEA0GIQ0vXwqpkGSbf0NgTll686XSXZmAWosIEnmy7GCQr9XmPaXHxRD94WB6tZQtv1FfDo8FVRHFemrzCqcm5jl2hP0vU3VovlzazJ/RCGL2Cc4ILdZ57h5TY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=t6CpH4J3; arc=none smtp.client-ip=209.85.215.201
+	s=arc-20240116; t=1756410230; c=relaxed/simple;
+	bh=TnMTKIT2RLMSunGpSoNftY6dzd5Bjjd45dNhptClb9o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rc4zSK4bIW2tY7N30tWa8RxArVtiNHd2/jMMclMdx/11q5VKX9CUz6XdiEBiFojJdYwV/vzlLd8kB/g25a9D+EcGvM4msk464zIa4IF5vrN07d82eaagaRuF45/G5SaW8SV84SYBXIVon3iVGDmRE9DM/0dt6OMP6JiTx65TuoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=V4F2xMoQ; arc=none smtp.client-ip=209.85.160.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b4c2c09a760so1007031a12.2
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 12:40:22 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4b28184a8b3so15733071cf.1
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 12:43:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756410022; x=1757014822; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fq5jKUl0c1/qCP5zM9srpRStKM40NBvkFf/O/1jAlyY=;
-        b=t6CpH4J3sj6zwJ7oH5fy9ATEgMymQrTG+k71c9VG/xiF+hGCEezGpWOvi851q6mIrB
-         xmcnB2MidZcoJpFEBYW8oEbcxFNy/vUNpaATOqCEGKwy2U5gBEWtjbOv44+SgjbzKVka
-         Cnhg97dsU74fZ1c+AVebuqdOlTSI4xdiUwsfxdgE1BCKavIRV65SwyIYOMlk3+Qy8M+y
-         z24bds+r44+iBnOX9puxUTn85TkKVFacS/Nag7FeyjlN80Ehe6ZP23rdSJV6h7H2XViC
-         NIWMtPuQSmUindJO1wfAOZ2gsw/uaXSxj/CJz4tBE0jLimkjjDNrYxYJOhTsbvFJt6/o
-         0XlA==
+        d=google.com; s=20230601; t=1756410228; x=1757015028; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LvWP1EIagvNp91g+RgveNhCCrgjH/IPh927YjhaOu4c=;
+        b=V4F2xMoQ6I0s/KGuhe45bcPTloJdW0zPEs3vpzcWwbLiHUVx9Mginec2Os6XcdfC7b
+         xXAbvLQt4p0ixB0akGEuVZQKH4RiGaWWmGixqAZxwFeAThdvmmx0JGK+bSp5+dD68oMs
+         CQO3y2CYVd2ZX3rIjYUmQQ3mE1MiSfRApO5xhCKsjmJeLBZPCj0HWd+Zx4bK286NJTSR
+         S98GS2udBvZUbgQ/pY5XqHrGsby1Axo90Y9o2NKOd+g17NSUiX2benh7ijXRcHgMBFmy
+         EFkglSAVLS7hpdDNlFqD27EpV87BXtUBxkp97eZ52ZC+WNfyA+Bc6GgHkYZLFA6KvmAl
+         NMHw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756410022; x=1757014822;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=fq5jKUl0c1/qCP5zM9srpRStKM40NBvkFf/O/1jAlyY=;
-        b=Qtceyf1jBrnmgoYmmW64+iYc+HYPYFy2Qfjht1M2T1fPupQWEphVU+S+mgVD5QBiay
-         umdH9v9moJb61VqUjKnwsAedcd+u+Ya5IVV8Nre21OGvgn9zcyUMJFeDv9fRmhlOO7hA
-         yVH23tpKLlQCi91bYnu2B1kMcGowlznZpTKVVP2WrrDV2fe0n6at3wpHuJ3MsYRYe5Uh
-         yA6ATk4c70ghNPP3dQUeeQOYtIz1SotjlBcTSAfNGnkXK9CixlVwwZ6FaeXeIlQqlZuI
-         KCuW1F5Hr4t6o2KAfOtToKJptaiwWALJoE4Luz26smMD20Ig/5dDwLZjtdBzGtoH2QG6
-         wIvw==
-X-Forwarded-Encrypted: i=1; AJvYcCWTzfAKJGGd6tNEyPCD6oHei/S2nP1DLxh+SbLJjAgoVzEWYuyhlTtKmEI+lOwEbuiQAx7JtflbAmPBi1A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNHtVOLMFcqrVlpADczcfxrusdr5vnH+zaYYJqdWarN3bHumBx
-	dlhAyP64Nyak2DbXAEGnU4S8XMQERcD2IQRC44x9xDWw7zuZzBlpF2kHXov4gS0GFi8kze/0L2E
-	ZoN5f2Q==
-X-Google-Smtp-Source: AGHT+IGgX7CXXMdV/d7Hx1tAtW4pSPXY7GO3K/pyEZYQikr1kxkeTskIwgkgfd0X3N4nMikwbaNNINqN5pg=
-X-Received: from pgnm20.prod.google.com ([2002:a63:7d54:0:b0:b4c:1c02:2564])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:3947:b0:220:4750:133a
- with SMTP id adf61e73a8af0-24340bc7f40mr36103172637.25.1756410022083; Thu, 28
- Aug 2025 12:40:22 -0700 (PDT)
-Date: Thu, 28 Aug 2025 12:40:20 -0700
-In-Reply-To: <aK/1+Al99CoTKzKH@yzhao56-desk.sh.intel.com>
+        d=1e100.net; s=20230601; t=1756410228; x=1757015028;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LvWP1EIagvNp91g+RgveNhCCrgjH/IPh927YjhaOu4c=;
+        b=aFTIOHd4iEv8mARGTzlap6OtqTw6c4dEKzD47tQybymcIdinl0vrhdIDDhACfhiUhK
+         5ku0gkUDe5PBl6ZSpCLu23Bjr6IDIgdFV7CfYZngCTWLNmyp5KyImpD9IDt0uRt1f8dF
+         4Rxak4fA2T5qgWhWWqZzCStz4GB3H0kICQ8RXWsDIWJ2TAiZFDzQ5uOD8mbVHMfeTy19
+         5FZV2wg0tg8JGxgudxq1QrSjCvFgg+Q8hgZHYXMFwYUWL/Xt5ye24ufWApan0zCNhJ7W
+         JwvExISaBX2yEON7R2KAW/78kTHo0+2IrlQUAI12zYltS375eQOtiFI+Iix6pYA0vIzB
+         1M4g==
+X-Forwarded-Encrypted: i=1; AJvYcCV5cVdJrikGGG7u77SmYKyrY1MOpPWn8M3idMrMPr4PRYXbjyQObyVmtqzTJ2uEP4jpg2qd/PKQyhWwq08=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7PyjQ6cCwUAYdFIn7YivtRBG9ZAwOBBDTmHcWkpv7fC4Lldg2
+	MrA0+NP4RazUIU9hdVyoMrRfi86jJegA6UtLflIe/Ae5vy55ltn4LqwKefgz/sUacn3Alsmliym
+	ANVip7ZZSyC6oS7lhKGY99WGhcqqxNsLhnjGPX+Sz
+X-Gm-Gg: ASbGncsENplRZwhMETK/Z0T7O8NXcN5PSQ1yKkWe/b9cpsZ3lbuSQfaoiHhJg7x+gtp
+	Xdfm6BUJ9StCqg5Tg9CAJCPoh/kkSYlmw5R/eOrmXfmIMYMqX0WJWdLL2oR30xyrGHjE25/Yjf7
+	rN7HqNaxUg9H8E/wjaNuA1xhz1qjxvYJRUhg+P8Oz5KhwPj9EpD8Tg/e4s/zj44OUq0eiY44x50
+	vZlXNKwXPO8Og==
+X-Google-Smtp-Source: AGHT+IG3jqv6msRFu+wEOd5ve7eXnVNwLNaZG7weV85QwzfVsC478io88x5SFE5xNO0tXiiGPcYr0WhENxml0Xs4ZBA=
+X-Received: by 2002:a05:622a:5597:b0:4b2:8ac4:ef84 with SMTP id
+ d75a77b69052e-4b2aab4d13fmr298360151cf.83.1756410227277; Thu, 28 Aug 2025
+ 12:43:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250827000522.4022426-1-seanjc@google.com> <20250827000522.4022426-3-seanjc@google.com>
- <aK7BBen/EGnSY1ub@yzhao56-desk.sh.intel.com> <4c292519bf58d503c561063d4c139ab918ed3304.camel@intel.com>
- <6bb76ce318651fcae796be57b77e10857eb73879.camel@intel.com> <aK/1+Al99CoTKzKH@yzhao56-desk.sh.intel.com>
-Message-ID: <aLCwpNygeC64Bkra@google.com>
-Subject: Re: [RFC PATCH 02/12] KVM: x86/mmu: Add dedicated API to map
- guest_memfd pfn into TDP MMU
-From: Sean Christopherson <seanjc@google.com>
-To: Yan Zhao <yan.y.zhao@intel.com>
-Cc: Rick P Edgecombe <rick.p.edgecombe@intel.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
-	"pbonzini@redhat.com" <pbonzini@redhat.com>, Vishal Annapurve <vannapurve@google.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"michael.roth@amd.com" <michael.roth@amd.com>, Ira Weiny <ira.weiny@intel.com>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+References: <20250828-b4-tcp-ao-md5-rst-finwait2-v2-0-653099bea5c1@arista.com> <20250828-b4-tcp-ao-md5-rst-finwait2-v2-1-653099bea5c1@arista.com>
+In-Reply-To: <20250828-b4-tcp-ao-md5-rst-finwait2-v2-1-653099bea5c1@arista.com>
+From: Eric Dumazet <edumazet@google.com>
+Date: Thu, 28 Aug 2025 12:43:36 -0700
+X-Gm-Features: Ac12FXyimLdPLId8dmfUxJvcMZz-eM27JZ-f2qMJtzFIaoF1YxDltULDxGWjeeo
+Message-ID: <CANn89iKVQ=c8zxm0MqR7ycR1RFbKqObEPEJrpWCfxH4MdVf3Og@mail.gmail.com>
+Subject: Re: [PATCH net-next v2 1/2] tcp: Destroy TCP-AO, TCP-MD5 keys in .sk_destruct()
+To: dima@arista.com
+Cc: Neal Cardwell <ncardwell@google.com>, Kuniyuki Iwashima <kuniyu@google.com>, 
+	"David S. Miller" <davem@davemloft.net>, David Ahern <dsahern@kernel.org>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	Bob Gilligan <gilligan@arista.com>, Salam Noureddine <noureddine@arista.com>, 
+	Dmitry Safonov <0x7f454c46@gmail.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 28, 2025, Yan Zhao wrote:
-> On Thu, Aug 28, 2025 at 09:26:50AM +0800, Edgecombe, Rick P wrote:
-> > On Wed, 2025-08-27 at 17:54 -0700, Rick Edgecombe wrote:
-> > > >=20
-> > > > Then, what about setting
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 .max_level =3D PG_LEVEL_4K,
-> > > > directly?
-> > > >=20
-> > > > Otherwise, the "(KVM_BUG_ON(level !=3D PG_LEVEL_4K, kvm)" would be =
-triggered
-> > > > in
-> > > > tdx_sept_set_private_spte().
-> > >=20
-> > > Yes this fails to boot a TD. With max_level =3D PG_LEVEL_4K it passes=
- the full
-> > > tests. I don't think it's ideal to encode PAGE.ADD details here thoug=
-h.
-> > >=20
-> > > But I'm not immediately clear what is going wrong. The old struct
-> > > kvm_page_fault
-> > > looks pretty similar. Did you root cause it?
-> >
-> > Oh, duh. Because we are passing in the PFN now so it can't know the siz=
-e.=C2=A0So
-> > it's not about PAGE.ADD actually.
-> Right, it's because the previous kvm_tdp_map_page() updates fault->max_le=
-vel in
-> kvm_mmu_faultin_pfn_private() by checking the private_max_mapping_level h=
-ook.
->=20
-> However, private_max_mapping_level() skips the faultin step and goes stra=
-ight
-> to kvm_tdp_mmu_map().
->=20
-> > Sill, how about calling the function kvm_tdp_mmu_map_private_pfn_4k(), =
-or
-> > passing in the level?
-> Looks [1] can also address this issue. Not sure which one Sean prefers.
->=20
-> [1] https://lore.kernel.org/all/20250729225455.670324-15-seanjc@google.co=
-m
+On Thu, Aug 28, 2025 at 1:15=E2=80=AFAM Dmitry Safonov via B4 Relay
+<devnull+dima.arista.com@kernel.org> wrote:
+>
+> From: Dmitry Safonov <dima@arista.com>
+>
+> Currently there are a couple of minor issues with destroying the keys
+> tcp_v4_destroy_sock():
+>
+> 1. The socket is yet in TCP bind buckets, making it reachable for
+>    incoming segments [on another CPU core], potentially available to send
+>    late FIN/ACK/RST replies.
+>
+> 2. There is at least one code path, where tcp_done() is called before
+>    sending RST [kudos to Bob for investigation]. This is a case of
+>    a server, that finished sending its data and just called close().
+>
+>    The socket is in TCP_FIN_WAIT2 and has RCV_SHUTDOWN (set by
+>    __tcp_close())
+>
+>    tcp_v4_do_rcv()/tcp_v6_do_rcv()
+>      tcp_rcv_state_process()            /* LINUX_MIB_TCPABORTONDATA */
+>        tcp_reset()
+>          tcp_done_with_error()
+>            tcp_done()
+>              inet_csk_destroy_sock()    /* Destroys AO/MD5 keys */
+>      /* tcp_rcv_state_process() returns SKB_DROP_REASON_TCP_ABORT_ON_DATA=
+ */
+>    tcp_v4_send_reset()                  /* Sends an unsigned RST segment =
+*/
+>
+>    tcpdump:
+> > 22:53:15.399377 00:00:b2:1f:00:00 > 00:00:01:01:00:00, ethertype IPv4 (=
+0x0800), length 74: (tos 0x0, ttl 64, id 33929, offset 0, flags [DF], proto=
+ TCP (6), length 60)
+> >     1.0.0.1.34567 > 1.0.0.2.49848: Flags [F.], seq 2185658590, ack 3969=
+644355, win 502, options [nop,nop,md5 valid], length 0
+> > 22:53:15.399396 00:00:01:01:00:00 > 00:00:b2:1f:00:00, ethertype IPv4 (=
+0x0800), length 86: (tos 0x0, ttl 64, id 51951, offset 0, flags [DF], proto=
+ TCP (6), length 72)
+> >     1.0.0.2.49848 > 1.0.0.1.34567: Flags [.], seq 3969644375, ack 21856=
+58591, win 128, options [nop,nop,md5 valid,nop,nop,sack 1 {2185658590:21856=
+58591}], length 0
+> > 22:53:16.429588 00:00:b2:1f:00:00 > 00:00:01:01:00:00, ethertype IPv4 (=
+0x0800), length 60: (tos 0x0, ttl 64, id 0, offset 0, flags [DF], proto TCP=
+ (6), length 40)
+> >     1.0.0.1.34567 > 1.0.0.2.49848: Flags [R], seq 2185658590, win 0, le=
+ngth 0
+> > 22:53:16.664725 00:00:b2:1f:00:00 > 00:00:01:01:00:00, ethertype IPv4 (=
+0x0800), length 74: (tos 0x0, ttl 64, id 0, offset 0, flags [DF], proto TCP=
+ (6), length 60)
+> >     1.0.0.1.34567 > 1.0.0.2.49848: Flags [R], seq 2185658591, win 0, op=
+tions [nop,nop,md5 valid], length 0
+> > 22:53:17.289832 00:00:b2:1f:00:00 > 00:00:01:01:00:00, ethertype IPv4 (=
+0x0800), length 74: (tos 0x0, ttl 64, id 0, offset 0, flags [DF], proto TCP=
+ (6), length 60)
+> >     1.0.0.1.34567 > 1.0.0.2.49848: Flags [R], seq 2185658591, win 0, op=
+tions [nop,nop,md5 valid], length 0
+>
+>   Note the signed RSTs later in the dump - those are sent by the server
+>   when the fin-wait socket gets removed from hash buckets, by
+>   the listener socket.
+>
+> Instead of destroying AO/MD5 info and their keys in inet_csk_destroy_sock=
+(),
+> slightly delay it until the actual socket .sk_destruct(). As shutdown'ed
+> socket can yet send non-data replies, they should be signed in order for
+> the peer to process them. Now it also matches how AO/MD5 gets destructed
+> for TIME-WAIT sockets (in tcp_twsk_destructor()).
+>
+> This seems optimal for TCP-MD5, while for TCP-AO it seems to have an
+> open problem: once RST get sent and socket gets actually destructed,
+> there is no information on the initial sequence numbers. So, in case
+> this last RST gets lost in the network, the server's listener socket
+> won't be able to properly sign another RST. Nothing in RFC 1122
+> prescribes keeping any local state after non-graceful reset.
+> Luckily, BGP are known to use keep alive(s).
+>
+> While the issue is quite minor/cosmetic, these days monitoring network
+> counters is a common practice and getting invalid signed segments from
+> a trusted BGP peer can get customers worried.
+>
+> Investigated-by: Bob Gilligan <gilligan@arista.com>
+> Signed-off-by: Dmitry Safonov <dima@arista.com>
+> ---
+>  include/net/tcp.h   |  4 ++++
+>  net/ipv4/tcp.c      | 27 +++++++++++++++++++++++++++
+>  net/ipv4/tcp_ipv4.c | 33 ++++++++-------------------------
+>  net/ipv6/tcp_ipv6.c |  8 ++++++++
+>  4 files changed, 47 insertions(+), 25 deletions(-)
+>
+> diff --git a/include/net/tcp.h b/include/net/tcp.h
+> index 2936b8175950faa777f81f3c6b7230bcc375d772..0009c26241964b54aa93bc1b8=
+6158050d96c2c98 100644
+> --- a/include/net/tcp.h
+> +++ b/include/net/tcp.h
+> @@ -1931,6 +1931,7 @@ tcp_md5_do_lookup_any_l3index(const struct sock *sk=
+,
+>  }
+>
+>  #define tcp_twsk_md5_key(twsk) ((twsk)->tw_md5_key)
+> +void tcp_md5_destruct_sock(struct sock *sk);
+>  #else
+>  static inline struct tcp_md5sig_key *
+>  tcp_md5_do_lookup(const struct sock *sk, int l3index,
+> @@ -1947,6 +1948,9 @@ tcp_md5_do_lookup_any_l3index(const struct sock *sk=
+,
+>  }
+>
+>  #define tcp_twsk_md5_key(twsk) NULL
+> +static inline void tcp_md5_destruct_sock(struct sock *sk)
+> +{
+> +}
+>  #endif
+>
+>  int tcp_md5_alloc_sigpool(void);
+> diff --git a/net/ipv4/tcp.c b/net/ipv4/tcp.c
+> index 9bc8317e92b7952871f07ae11a9c2eaa7d3a9e65..927233ee7500e0568782ae4a3=
+860af56d1476acd 100644
+> --- a/net/ipv4/tcp.c
+> +++ b/net/ipv4/tcp.c
+> @@ -412,6 +412,33 @@ static u64 tcp_compute_delivery_rate(const struct tc=
+p_sock *tp)
+>         return rate64;
+>  }
+>
+> +#ifdef CONFIG_TCP_MD5SIG
+> +static void tcp_md5sig_info_free_rcu(struct rcu_head *head)
+> +{
+> +       struct tcp_md5sig_info *md5sig;
+> +
+> +       md5sig =3D container_of(head, struct tcp_md5sig_info, rcu);
+> +       kfree(md5sig);
+> +       static_branch_slow_dec_deferred(&tcp_md5_needed);
+> +       tcp_md5_release_sigpool();
+> +}
+> +
+> +void tcp_md5_destruct_sock(struct sock *sk)
+> +{
+> +       struct tcp_sock *tp =3D tcp_sk(sk);
+> +
+> +       if (tp->md5sig_info) {
+> +               struct tcp_md5sig_info *md5sig;
+> +
+> +               md5sig =3D rcu_dereference_protected(tp->md5sig_info, 1);
+> +               tcp_clear_md5_list(sk);
+> +               call_rcu(&md5sig->rcu, tcp_md5sig_info_free_rcu);
+> +               rcu_assign_pointer(tp->md5sig_info, NULL);
 
-That won't fix this issue though, becuase @fault will be valid and so max_l=
-evel
-will still be KVM_MAX_HUGEPAGE_LEVEL.  Which is by design, the intent in th=
-at
-flow is that KVM should have gotten the level when getting the pfn from gme=
-m.
+I would move this line before call_rcu(&md5sig->rcu, tcp_md5sig_info_free_r=
+cu),
+otherwise the free could happen before the clear, and an UAF could occur.
 
-IIUC, this particular flow _must_ map at 4KiB, so I think forcing PG_LEVEL_=
-4k is
-the right solution.
+It is not absolutely clear if this function runs under rcu_read_lock(),
+and even if it is currently safe, this could change in the future.
+
+Other than that :
+
+Reviewed-by: Eric Dumazet <edumazet@google.com>
 
