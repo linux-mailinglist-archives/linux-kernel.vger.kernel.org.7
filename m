@@ -1,129 +1,157 @@
-Return-Path: <linux-kernel+bounces-790639-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E4D4B3AB34
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 22:01:41 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1AA6B3AB38
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 22:02:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC398173773
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 20:01:35 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9B2734E499D
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 20:02:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6141B258EF5;
-	Thu, 28 Aug 2025 20:01:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A486627CCE0;
+	Thu, 28 Aug 2025 20:01:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bl6VdbE4"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Aj/zIdXi"
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67F4011187
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 20:01:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E9ED11187
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 20:01:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756411289; cv=none; b=nORAuJlaMv9A2WrUj2G2NkMiHuzNoIQu5P1IXcLo9wpdvALkAeJ+T92n7/ijWxfrZaPuWJ0mPK2TMCOGAIyeU1BKNF0xQePl/km/NzHkzp3x6FVuv3da1IpmG7kpNey1sQvQaqGDXrRIQoSKTYH0rBINLwfOzGO2R3+ypbr0bSM=
+	t=1756411318; cv=none; b=UV8CQf4nDxKF1pwyBoqUxlpmCQH7dSBZ+fzYk0XWkI3teaKarxM+yGWKbGSAQHfymuSTuDcUhjlaw1NnI2dkGhhEiACnDfoWyHgDPE7KK5OOIfC8L2zPXd8Maw6TzpBV1VQGWX3Ken2oHiHDfjPs9nHGoDUWo5FM30VV/THvToc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756411289; c=relaxed/simple;
-	bh=wYeCqqVUC6w77K1AciZD4diNIIglWHzDxrq0IrZT66Y=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version; b=CcwVhNdMr112afZWweBU22yz7+1KtpveTeiTRDzxagTY0FwZYT12g6kEGxSTtXLdSvi6gw7FPb0PiPe8qjqLKkmBepXX7QhCJ9p4TopmzjTmDORzR0nmzrPPDZG3kY0sEa5RtOlGjAN5HHscIdhsxdIW9fhl3xflMqvSxqKID6Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bl6VdbE4; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-7720f23123dso1369941b3a.2
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 13:01:27 -0700 (PDT)
+	s=arc-20240116; t=1756411318; c=relaxed/simple;
+	bh=oFN7wNXWLeYqEKNIevToJQ/RzV8ZlgtiskiMxC59NR4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rY0Fl7v6AstCsVY2s/30TBy12zGZHpU2FRFLuafVVvlKg0pe3qhyKPXo5OJdIgsXZXgU+9mYpmLAyt05a+c4YQOWE4fa5c5koLb8z3ZXVxFFdq9rtJyYkwytaw78WHxC7HEsifRNgerW1fJwu9FR2iVGN+JAFVpmYOz5tArsa64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Aj/zIdXi; arc=none smtp.client-ip=209.85.215.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-b4717543ed9so973325a12.3
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 13:01:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756411286; x=1757016086; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=DoX+D3KaxG6mhPRJt1jiYUNQEj7P2IZ5gRQ1rTq/NJ4=;
-        b=bl6VdbE4FVygHIUs+iSDg0xGj7oyt0ErFzR446moJFT1lxmh8K8hZ+3sM24BYsxLzs
-         xx3AJmgnxvU+eLGw61c147mBzZjSUITeY8+CeQHzW0EvZcJ972l1ktXJy+IoV6j6+8HK
-         3esl/u7+LrNwEuPkzDtGhuvxIxSBtHiH5Y718gKgx3kUMmoeLebk+YyAfiNrlT+wtcfn
-         km6gu8l1SkSggCQL++9LhObowhY6A6aYxUCxM6WCsoAwyYfs8LkIdmm0pFk6dHpre488
-         SAFCPXMpWIdwbMUjAUKBAwQu/kx4odQ6JCUD8qqrbLdaj9pfRwsbhBVaRQz5wYGXEpD9
-         Ls1A==
+        d=chromium.org; s=google; t=1756411315; x=1757016115; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=phR9doI5X4q1LR98gybIzZyU1kdJD+t4ijHV2CMLbUI=;
+        b=Aj/zIdXinEHD9VWJVQyaxdHA1AEVnfZS1PfPz/Bbe3byufLPQKQVtJY1hsM5+Ej1l0
+         rJwsOfAEqa0ZiOu7oiXbjDVsdsO1dyzJ1XccuIIYxiFhFNf/YYCcwAr8PHOCPeyf8E3e
+         2WdUI50wmVl8zyun3MvRq8VyfzLu76yke29ck=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756411286; x=1757016086;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DoX+D3KaxG6mhPRJt1jiYUNQEj7P2IZ5gRQ1rTq/NJ4=;
-        b=I59WJ/mB3/MSo5F/yarahELi+cy4IK/6/C4/bVjHm6iNsTgplWT4RilKbwh3aadCrM
-         mM+SuEpYruvP5hzYDcTxB/8otvthDTGhUFsnJjXATXgHG/ojWu9fqq+E0mIumY3ju9ga
-         Ca7P1b7w0UOhLU5eHt3767W+e4dPaatLPi6NLQ059lmyMP9RpUXkBrogpKYL9Re4j5R7
-         A0TOkoq33/GY6mSuBRGUlLmb37eJndPyeccj/0wRhpl4+XpjpFFOxLPI6nII0yzkU23m
-         tPzHoIEgWYFI0gOKNuImRs1RlQdZyUzalGMu/ehlkvwyy9YJO3XviUdQ1rJOJ39BSMCC
-         3sFg==
-X-Forwarded-Encrypted: i=1; AJvYcCXk/GvXo7oPkP/xdmofkNUUmjZEgGlSNeH/w1sK9FZ8hx2iFacUS3RoHL6rcczEHoZ/clwkB6WlcrmIRRw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzAZ9lQiRglsoC5GbYYPk4TYrOAWZoLSj8q1azSYMqgIkP4s7Dz
-	Zbgf/CYDHRK5GgwCsTxmbH65mnP5Hvu0XiFP1iphdqsmKNcSgJ4MkHma
-X-Gm-Gg: ASbGncuNprUtaSYjtp8/sdf67IsUuxn+6KJS4/qNtnvIBh0kOTCp1QsW8m0eZz3qftU
-	pLCaQEGMDYmthloONwWK/H52kQDJ557vs67GiZFckYRBoqqVdXnksmkrv03goufYdrar3iV73VA
-	QYTQI8mFZ6BftDp+M/ntakgnrAaOmVI0dCdIUG1lC9Z0RjD0mn+bJWF1lYNVekX1+n2FxiEKXXY
-	3iT8FXCK/Mb/dHSLiI0XbhXiMgQmS6XdN8oM+GWx/1VcuN3SZlQXpMjMxr4ePXFMgJQcHm1zs72
-	UB7piWF7CRlN4Fx6pc89tjGPL8wl8sHw0st2uZl6upwvf3l4U8Kxr0kNTmL7CmkgZaF5rWMPh94
-	t14xMWSU9fuEOvWNLlf1kZqiav/JcfBGNSBAqjD7cIMJNcLAX56SXlw==
-X-Google-Smtp-Source: AGHT+IG3iIFJQWz+lf0lUAPD1+rtke3zrgqOtQQFIlzOWjMf2Xm3ZfvP61CcKTGB/JPPwSX1rFi7+g==
-X-Received: by 2002:a05:6a20:7290:b0:23e:19fd:e18f with SMTP id adf61e73a8af0-24340daf747mr33344878637.35.1756411285859;
-        Thu, 28 Aug 2025 13:01:25 -0700 (PDT)
-Received: from localhost (185.3.125.34.bc.googleusercontent.com. [34.125.3.185])
-        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-7722a2af911sm279861b3a.23.2025.08.28.13.01.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Aug 2025 13:01:25 -0700 (PDT)
-From: Chia-I Wu <olvaffe@gmail.com>
-To: Boris Brezillon <boris.brezillon@collabora.com>,
-	Steven Price <steven.price@arm.com>,
-	Liviu Dudau <liviu.dudau@arm.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/panthor: check bo offset alignment in vm bind
-Date: Thu, 28 Aug 2025 13:01:16 -0700
-Message-ID: <20250828200116.3532255-1-olvaffe@gmail.com>
-X-Mailer: git-send-email 2.51.0.318.gd7df087d1a-goog
+        d=1e100.net; s=20230601; t=1756411315; x=1757016115;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=phR9doI5X4q1LR98gybIzZyU1kdJD+t4ijHV2CMLbUI=;
+        b=vK/2kKVR/KIXLTDJDFU2kpDAkEcBkwlFjO3FjWZ0ZNFLxmOVjkKMRMcl35g3+I1W7L
+         j8gW4waZGGbY8Nfo59y9hPTYFiOqBZk5ArFZuIOUzC9OaOVQTsBuyZ7dLC56DvvY587u
+         UOzDcdCrtXqhFxZDMAJfSIWEnJ9zqu8P/5vrWBJRVJNKW4GkzsELg51MrSGiinrt7VH0
+         tzNtQb24FVOoaWzmSY+XQQEJabfJGxxiqH2+1fkC8WmasoHb8tR6aic7GN0WzFHoGYuK
+         Y3u8SWw/WjlfoPEYoh+sNVxWeA1LLxEbhi13J1vTZgjYiGW0o1Thffz0yaVIBL/NRS6x
+         OXTg==
+X-Forwarded-Encrypted: i=1; AJvYcCWzEeoSyQNGuJoK1kdFs7E55uxgSlZ00YdFiN+Uv8ZnhlAjiaLqxXVcBQQhRyUmvjllZjF60FcqnyvCoWU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzz/8ML3NMkvOhU7Z1LXoMaiEG5aY3cutcq16I09H/b7eyZQKa5
+	mHQ/4nGi6momhe/TGvqkclDtGCEhuccO5sxx7aUNSeubjDDJ8IYPc3+oLtvOvS5cBQblrVIj4Hw
+	cuqQ=
+X-Gm-Gg: ASbGnctsV6sPx51t+OQXrwguG6QjlDPnf/c7qa7OgliFQNf93IK8Ena63XqOcgHGTzn
+	rrzN3dbtzfQ3oTEA7WEaO4SLOLVlv0e3rMxDE9TJfZ0YLy0D/3vsnaJvfM8UCuyakN4W63YJ3DL
+	17U+N5RnsRwThauFdShurfhGnCzmamxJ2Jz7v8/gb27vozS01KHvfE/Qw6+XfqXgODPZehsd1nO
+	zAnlHQKdjWFg1Su8yH6pg3i5F4m+hgpVeQsfkbu1U19/HeE1ejGWEWnbVT/Ki8eXjZJ6EVGoB2z
+	1If2Q6ctmKWC9Uz+5ojOtcTmWEI2r71Gasw0FfK1HZJtwN2mQZzbaDhW3pNDb/mI7yWE+9EUSJs
+	PaYIGP3O5pVbPur6vb1NAkK3Se0tsAMVrhs6NkX7eImAjiK3KhsfG909Xeo0FBe0H9ZFm56k=
+X-Google-Smtp-Source: AGHT+IGRMI2y6ukLzuxA0A2Y52962J0xzxUUU/p9/lxC5pAaBaeFe2iw+3odm0xYYkw4AIuMGBT6Hw==
+X-Received: by 2002:a17:903:13c8:b0:248:6d1a:430f with SMTP id d9443c01a7336-2486d1a46b2mr149396845ad.25.1756411314801;
+        Thu, 28 Aug 2025 13:01:54 -0700 (PDT)
+Received: from localhost ([2a00:79e0:2e14:7:2893:df0f:26ec:df00])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-24905da3be1sm3479885ad.69.2025.08.28.13.01.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 28 Aug 2025 13:01:53 -0700 (PDT)
+Date: Thu, 28 Aug 2025 13:01:51 -0700
+From: Brian Norris <briannorris@chromium.org>
+To: manivannan.sadhasivam@oss.qualcomm.com
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+	Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
+	Oliver O'Halloran <oohall@gmail.com>, Will Deacon <will@kernel.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Rob Herring <robh@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+	Philipp Zabel <p.zabel@pengutronix.de>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	Niklas Cassel <cassel@kernel.org>,
+	Wilfred Mallawa <wilfred.mallawa@wdc.com>,
+	Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
+	Lukas Wunner <lukas@wunner.de>
+Subject: Re: [PATCH v6 0/4] PCI: Add support for resetting the Root Ports in
+ a platform specific way
+Message-ID: <aLC1rzdTVoN56Phc@google.com>
+References: <20250715-pci-port-reset-v6-0-6f9cce94e7bb@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250715-pci-port-reset-v6-0-6f9cce94e7bb@oss.qualcomm.com>
 
-Fail early from panthor_vm_bind_prepare_op_ctx instead of late from
-ops->map_pages.
+On Tue, Jul 15, 2025 at 07:51:03PM +0530, Manivannan Sadhasivam via B4 Relay wrote:
+> Hi,
+> 
+> Currently, in the event of AER/DPC, PCI core will try to reset the slot (Root
+> Port) and its subordinate devices by invoking bridge control reset and FLR. But
+> in some cases like AER Fatal error, it might be necessary to reset the Root
+> Ports using the PCI host bridge drivers in a platform specific way (as indicated
+> by the TODO in the pcie_do_recovery() function in drivers/pci/pcie/err.c).
+> Otherwise, the PCI link won't be recovered successfully.
+> 
+> So this series adds a new callback 'pci_host_bridge::reset_root_port' for the
+> host bridge drivers to reset the Root Port when a fatal error happens.
+> 
+> Also, this series allows the host bridge drivers to handle PCI link down event
+> by resetting the Root Ports and recovering the bus. This is accomplished by the
+> help of the new 'pci_host_handle_link_down()' API. Host bridge drivers are
+> expected to call this API (preferrably from a threaded IRQ handler) with
+> relevant Root Port 'pci_dev' when a link down event is detected for the port.
+> The API will reuse the pcie_do_recovery() function to recover the link if AER
+> support is enabled, otherwise it will directly call the reset_root_port()
+> callback of the host bridge driver (if exists).
+> 
+> For reference, I've modified the pcie-qcom driver to call
+> pci_host_handle_link_down() API with Root Port 'pci_dev' after receiving the
+> LINK_DOWN global_irq event and populated 'pci_host_bridge::reset_root_port()'
+> callback to reset the Root Port. Since the Qcom PCIe controllers support only
+> a single Root Port (slot) per controller instance, the API is going to be
+> invoked only once. For multi Root Port controllers, the controller driver is
+> expected to detect the Root Port that received the link down event and call
+> the pci_host_handle_link_down() API with 'pci_dev' of that Root Port.
+> 
+> Testing
+> -------
+> 
+> I've lost access to my test setup now. So Krishna (Cced) will help with testing
+> on the Qcom platform and Wilfred or Niklas should be able to test it on Rockchip
+> platform. For the moment, this series is compile tested only.
 
-Signed-off-by: Chia-I Wu <olvaffe@gmail.com>
-Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
----
- drivers/gpu/drm/panthor/panthor_mmu.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+For the series:
 
-diff --git a/drivers/gpu/drm/panthor/panthor_mmu.c b/drivers/gpu/drm/panthor/panthor_mmu.c
-index bad720f23eb70..6dec4354e3789 100644
---- a/drivers/gpu/drm/panthor/panthor_mmu.c
-+++ b/drivers/gpu/drm/panthor/panthor_mmu.c
-@@ -1222,7 +1222,7 @@ static int panthor_vm_prepare_map_op_ctx(struct panthor_vm_op_ctx *op_ctx,
- 	    (flags & DRM_PANTHOR_VM_BIND_OP_TYPE_MASK) != DRM_PANTHOR_VM_BIND_OP_TYPE_MAP)
- 		return -EINVAL;
- 
--	/* Make sure the VA and size are aligned and in-bounds. */
-+	/* Make sure the VA and size are in-bounds. */
- 	if (size > bo->base.base.size || offset > bo->base.base.size - size)
- 		return -EINVAL;
- 
-@@ -2447,7 +2447,7 @@ panthor_vm_bind_prepare_op_ctx(struct drm_file *file,
- 	int ret;
- 
- 	/* Aligned on page size. */
--	if (!IS_ALIGNED(op->va | op->size, vm_pgsz))
-+	if (!IS_ALIGNED(op->va | op->size | op->bo_offset, vm_pgsz))
- 		return -EINVAL;
- 
- 	switch (op->flags & DRM_PANTHOR_VM_BIND_OP_TYPE_MASK) {
--- 
-2.51.0.318.gd7df087d1a-goog
+Tested-by: Brian Norris <briannorris@chromium.org>
 
+I've tested the whole thing on Qualcomm SC7280 Herobrine systems with
+NVMe. After adding a debugfs node to control toggling PERST, I can force
+the link to reset, and see it recover and resume NVMe traffic.
+
+I've tested the first two on Pixel phones, using a non-upstream
+DWC-based driver that I'm working on getting in better shape. (We've
+previously supported a custom link-error API setup instead.) I'd love to
+see this available upstream.
+
+Regards,
+Brian
 
