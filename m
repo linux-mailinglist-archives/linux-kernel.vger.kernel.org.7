@@ -1,111 +1,186 @@
-Return-Path: <linux-kernel+bounces-789822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7481B39B25
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 13:12:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 648AAB39B26
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 13:12:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF9C23637E4
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 11:12:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2901B36243D
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 11:12:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0596130DD32;
-	Thu, 28 Aug 2025 11:12:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31D4930E840;
+	Thu, 28 Aug 2025 11:12:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="CnDG0qTn"
-Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="vWvSY7kp"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2055.outbound.protection.outlook.com [40.107.237.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CB0030DD29
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 11:11:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756379522; cv=none; b=I6SEq5+7USEUnkHaaDOdis+uB5c80VwAuFWZAAMXDtSKVDuqrhBbWBQwjW+T9R6mfTwwgj46N1D4//oEb5NrLKEYIXB/SNBfA51FtOdYSX9gCUzvmteM8RR7R/XwxoWVubsvCLuFAUofl7dHyAXeK7VSNfgMmvOd5Ug7sJt2KdY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756379522; c=relaxed/simple;
-	bh=azVT6OyX17mJ1mLSMWuru5qH6So32sdeLByBxjRBfgU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GXtNjzJ21pMQQdsDkGTQkn7SI62eTxbTruYNoHVE2WlFFYEF3SB/+4MMU48ckqSXSDRoju32E5s1da+OWskD4lWou17WrPkDhTqBjRqC2Sxs/HFz5lAYGP2V8gXPZlEAuviAs528oo1U8iRa7WMNWapwoia41XzO1QrbmQEV56I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=CnDG0qTn; arc=none smtp.client-ip=91.218.175.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <25ff983c-8479-4c2e-9afc-2a3befedabb0@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1756379516;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3IXxPSrRxO339QcDyVUwSO1LP7tYTXUUNNhlUINf988=;
-	b=CnDG0qTnaRMloKRTbTSYCakSn5XmfRrARG6tNq8n5gwCsObaWhfkxM4SLVB+IDWuwY0iIX
-	dgT2ejDDe7wM0F4dyfpODdaz5RC/Cbh5Z4kXMsRYci1rnlyENpSmZM1lZz6EmF4XzX/zDN
-	ACQFl2SdexFK5QqpTo6teYPxNUJcJ8I=
-Date: Thu, 28 Aug 2025 12:11:36 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 082F830ACFF;
+	Thu, 28 Aug 2025 11:12:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.55
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756379525; cv=fail; b=OuCCiwUjQha/aO3oy2fpV79YgUo8IB9QHbxcT4rN789fIAUxJtpJXbpuZy77ERN2nYbxStbOAd96uc9tK/YSaPAH8QcjwP/Qa3J+TLU8hVNqgBxdIjPCYy0LSBpWGxSm4ADjfO+y3iLFzTJUTGlFnEpSTQ/p75eW3Fdtk6M9QMw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756379525; c=relaxed/simple;
+	bh=LUybeevfvDar4RfDPkewye/fvfF450Txirnpz3FD9mo=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ikxZjiN/F6x0n6zAWwZ+scf0o+Wq5yKoI5o/eZ9Zf42tRdaqgWjzz/Hh/dIEVfqlSwyqQwziLyO977u9RHpVDeRcfNOQzDaGNnUVeInCqGy0Qa1Vo8iW3EUU2f2knjuKwWGMhf/z5zkphSb/mVKVJB4qr3bigfKuhgPy77dINY8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=vWvSY7kp; arc=fail smtp.client-ip=40.107.237.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=tWvvNxlF0KeuHWWfpgBK9/l+OfHYYlJAGoPQ0GfnP1EFXtYiw+qMxdN5G4PYbr37G6OyVczgpWNlWNZRwhm1gM9RY82oGoC6axx7ODYyPUai0BPVExFCmTr63Ekqc9im9wA26gxK52wiPX5b0N8ogqeTM4IwyD2zjPFk4FhjSgzXaiJLywzfVWMBCx189Om86t4Xcm6HL0OeZAnUPskdx4kLpG0Tz3W8rf/jgzg/fu5kXrEmX43lyCaqUhWUqX0uaYABD8n8FGd8oJD2LoWsrsrDRHu5JHs8m6ah8bWfzP8vwHJk+9udZ9Q7mP9dQVXQazBEEja3veNPccG54vMi4g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=JsthVE1stRrAm9roQk6UnvPsA7eOZNTyUJ0nFFZCAso=;
+ b=uGCk5gtfQKerHhrqA2GSpFevvITvcKjZS4jFl6xwbBZmm1Bt6rldgrN6me89nwlwYMb7Pc73LLWRgZq01TnpsQGOroxWkH85lPTyBFwsIwgn+niiEwOm6eoijuo0JJCKc/+X1DHnwMSKP3WyqZviPfFJzYd2Au1j5k4MGfhyQ85J0RswqbrWIakekTsU33QRs3MfDPSd8Z6HZpzUptJNcTxtitktKcSgTjvd2+Sj+jpsyaLOlOlU93pKMNHQDEbdY00Av3fhpAkvClTyb/dJyYROVogjDXRaCZblBBe8KoBPrevyvg8vhDSQiN2fIPBe6XNPZ9/YYH6iW8k/H8gHqQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=JsthVE1stRrAm9roQk6UnvPsA7eOZNTyUJ0nFFZCAso=;
+ b=vWvSY7kppScPp72WZPvIbKvI4G2F1zhUepLqzgcB6SlYhhhbiW3gRgLob5e+nMSNcA5kDKH8TW+k8GygAySiLdsaID7eicLyttDRivCmP3lsFYuMHAR+ikGilH5uMs1BQUiAaaKJNsAcZuydsOvQrkeGynMwxf/dbXMybtNmGdU=
+Received: from BN1PR14CA0002.namprd14.prod.outlook.com (2603:10b6:408:e3::7)
+ by IA1PR12MB9061.namprd12.prod.outlook.com (2603:10b6:208:3ab::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.20; Thu, 28 Aug
+ 2025 11:11:57 +0000
+Received: from BL6PEPF0001AB56.namprd02.prod.outlook.com
+ (2603:10b6:408:e3:cafe::2) by BN1PR14CA0002.outlook.office365.com
+ (2603:10b6:408:e3::7) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9073.17 via Frontend Transport; Thu,
+ 28 Aug 2025 11:11:57 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
+Received: from SATLEXMB03.amd.com (165.204.84.17) by
+ BL6PEPF0001AB56.mail.protection.outlook.com (10.167.241.8) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.9052.8 via Frontend Transport; Thu, 28 Aug 2025 11:11:57 +0000
+Received: from Satlexmb09.amd.com (10.181.42.218) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 28 Aug
+ 2025 06:11:56 -0500
+Received: from BLR-L-NUPADHYA.xilinx.com (10.180.168.240) by
+ satlexmb09.amd.com (10.181.42.218) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.1748.10; Thu, 28 Aug 2025 04:11:50 -0700
+From: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+To: <linux-kernel@vger.kernel.org>
+CC: <bp@alien8.de>, <tglx@linutronix.de>, <mingo@redhat.com>,
+	<dave.hansen@linux.intel.com>, <Thomas.Lendacky@amd.com>, <nikunj@amd.com>,
+	<Santosh.Shukla@amd.com>, <Vasant.Hegde@amd.com>,
+	<Suravee.Suthikulpanit@amd.com>, <David.Kaplan@amd.com>, <x86@kernel.org>,
+	<hpa@zytor.com>, <peterz@infradead.org>, <seanjc@google.com>,
+	<pbonzini@redhat.com>, <kvm@vger.kernel.org>, <huibo.wang@amd.com>,
+	<naveen.rao@amd.com>, <francescolavra.fl@gmail.com>, <tiala@microsoft.com>
+Subject: [PATCH v10 09/18] x86/sev: Initialize VGIF for secondary vCPUs for Secure AVIC
+Date: Thu, 28 Aug 2025 16:41:41 +0530
+Message-ID: <20250828111141.208920-1-Neeraj.Upadhyay@amd.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250828070334.208401-1-Neeraj.Upadhyay@amd.com>
+References: <20250828070334.208401-1-Neeraj.Upadhyay@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH net] ptp: ocp: fix use-after-free bugs causing by
- ptp_ocp_watchdog
-To: Duoming Zhou <duoming@zju.edu.cn>
-Cc: netdev@vger.kernel.org, pabeni@redhat.com, kuba@kernel.org,
- edumazet@google.com, davem@davemloft.net, andrew+netdev@lunn.ch,
- jonathan.lemon@gmail.com, richardcochran@gmail.com,
- linux-kernel@vger.kernel.org
-References: <20250828082949.28189-1-duoming@zju.edu.cn>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-In-Reply-To: <20250828082949.28189-1-duoming@zju.edu.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To satlexmb09.amd.com
+ (10.181.42.218)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL6PEPF0001AB56:EE_|IA1PR12MB9061:EE_
+X-MS-Office365-Filtering-Correlation-Id: ac430e56-1284-4d9d-5ccf-08dde623b3dc
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|376014|7416014|36860700013|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?b7S5npuvGvUgjqIE+7H2MP+VFVfCMSpbcvLeAVGHImG886GGKrWXQceWU5c2?=
+ =?us-ascii?Q?haNoujk6B6O+CKmVM8KCYVoGgoS577TOVKxx1fWZNBAdbc00FaBBnBh4eHfN?=
+ =?us-ascii?Q?CQ/4d8LwvhLxTlDFpF8afHC5KXuIvLoh4k4HAMkWCWZ6/dSx0nJ2i4IQluwu?=
+ =?us-ascii?Q?jT+PxGMQM0EVqa2797ciCtLA01PeJLcYBZPaAOzofDFePDUGzLDJTK/0pva0?=
+ =?us-ascii?Q?r2kO79GrRDSWoON7PB/jG0mM3/8RLTUrX7a04j9QeGDWagWfJpzHGmRMuya5?=
+ =?us-ascii?Q?lQ2/Nd5y/qnyp6f49xmXj9AkewmiUlmQ4/Ihz2GKu3yl2T4eVIUPTNdzm3lr?=
+ =?us-ascii?Q?BlE4hDueV0+WUgmHGz2TXXKK8RdRNXXwjkojXUzKAV34JbGzRCqkU/KQRbdL?=
+ =?us-ascii?Q?xjM/h5gaFT0jcJ/zcKn78nK1qOxvFBbJLfK0Qzv3EqzZ9NyUTIp4dmBc8xLM?=
+ =?us-ascii?Q?7p/i+nM3fKfK22HSRmpknQXMmdkdDnW07JDwUasKcSTcvjCPrzeZ0WDpsGJn?=
+ =?us-ascii?Q?eB4yMr6CvkzAeK6Rxw6bgNsnslcaRvxI9e4Ls6vN4VDj7jBKasDJZ+bPty/1?=
+ =?us-ascii?Q?AAljbBlWa5UgL63qIC3QepXb75bf91YFuKYpeXvBz/OD25aydWxEqnEAdT0r?=
+ =?us-ascii?Q?VPLsGnY1xH/MrfYKKrwi+4W3mKbkyNAGEAEiIe6DpUVJPsmg9T0VVIp+oFMM?=
+ =?us-ascii?Q?v3rUePuyInPQJGSUGp8Gc5jyB4+o29dzCVAZraCq1omP/qR+HgW8P8x7VtB0?=
+ =?us-ascii?Q?1prJ23pVkS7ory4pqJpxk0McOxLozV8ygr6mRpLj2hGJB+3/jxUyCtp5+vb3?=
+ =?us-ascii?Q?7fQS9fcXVXfwQds1AhfaCN1LrUEgRYtAOHBC0l37utbg2ItGG6mpwdNe0qK6?=
+ =?us-ascii?Q?R3xUy3cXJLr5hwaH1Dr/duPuaiD1mOGiMi//tQF/djByInD5oTTiOcUpEwbu?=
+ =?us-ascii?Q?ovFBsV950mJgqAESDuEXvuEWnngloSvZ7WBf93oGBf+tMXY0rNSzCE3SBT/+?=
+ =?us-ascii?Q?KdDOMRBMlRp7E4d372GaKHsb5hJPNNIAFW1oNS7GTSyiIXMdsHKUqh4PBchY?=
+ =?us-ascii?Q?GgZaiV613YFcqfoe9Dyo2dKhFNUL3H/58OpRnlt3NFVBYBRCcWHV+nAdLjeP?=
+ =?us-ascii?Q?xE19J96Dkh9Tf9R8SVQj88zPkFGYKvBRdFVAD9BngdwpkHgZ7mIWks5Tpy5Y?=
+ =?us-ascii?Q?HkGCXqtJ1EkwmJ+wtOf+u5YeIl4k0FrtqiVliXWpOIADFoNTZK8pyXJgoikf?=
+ =?us-ascii?Q?6mfJpRGWiihFJxBJfzCnexP6r3rokDh8MQp0krc0NOCJFSn+6aZSuU89QNwt?=
+ =?us-ascii?Q?5dL8StEdwvJ0FlI+/VMJ49i+3Y+HzS6IPkl3tc9RBzt3CXqDWxDIi6Vupd1p?=
+ =?us-ascii?Q?1YN3uVNG22aIZqJUlIvYElc+NKli8dpuDg3DtOJV2NG8wTN2fZd9Fige/g2h?=
+ =?us-ascii?Q?yaE6pZc93sdCW+8jTSohQoywWkaJJzgZdJlwMSm5IFDLv4T8DHu/R+C3KT+/?=
+ =?us-ascii?Q?hukpwAquv5tF3vit8OqmEst/2e+dkHVJeOVr?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(376014)(7416014)(36860700013)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Aug 2025 11:11:57.1846
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: ac430e56-1284-4d9d-5ccf-08dde623b3dc
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BL6PEPF0001AB56.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB9061
 
-On 28/08/2025 09:29, Duoming Zhou wrote:
-> The ptp_ocp_detach() only shuts down the watchdog timer if it is
-> pending. However, if the timer handler is already running, the
-> timer_delete_sync() is not called. This leads to race conditions
-> where the devlink that contains the ptp_ocp is deallocated while
-> the timer handler is still accessing it, resulting in use-after-free
-> bugs. The following details one of the race scenarios.
-> 
-> (thread 1)                           | (thread 2)
-> ptp_ocp_remove()                     |
->    ptp_ocp_detach()                   | ptp_ocp_watchdog()
->      if (timer_pending(&bp->watchdog))|   bp = timer_container_of()
->        timer_delete_sync()            |
->                                       |
->    devlink_free(devlink) //free       |
->                                       |   bp-> //use
-> 
-> Resolve this by unconditionally calling timer_delete_sync() to ensure
-> the timer is reliably deactivated, preventing any access after free.
-> 
-> Fixes: 773bda964921 ("ptp: ocp: Expose various resources on the timecard.")
-> Signed-off-by: Duoming Zhou <duoming@zju.edu.cn>
+From: Kishon Vijay Abraham I <kvijayab@amd.com>
 
-Reviewed-by: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+Virtual GIF (VGIF) providing masking capability for when virtual
+interrupts (virtual maskable interrupts, virtual NMIs) can be taken by
+the guest vCPU. Secure AVIC hardware reads VGIF state from the vCPU's
+VMSA. So, set VGIF for secondary CPUs (the configuration for boot CPU is
+done by the hypervisor), to unmask delivery of virtual interrupts  to
+the vCPU.
 
-> ---
->   drivers/ptp/ptp_ocp.c | 3 +--
->   1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/ptp/ptp_ocp.c b/drivers/ptp/ptp_ocp.c
-> index d39073dc4072..4e1286ce05c9 100644
-> --- a/drivers/ptp/ptp_ocp.c
-> +++ b/drivers/ptp/ptp_ocp.c
-> @@ -4557,8 +4557,7 @@ ptp_ocp_detach(struct ptp_ocp *bp)
->   	ptp_ocp_debugfs_remove_device(bp);
->   	ptp_ocp_detach_sysfs(bp);
->   	ptp_ocp_attr_group_del(bp);
-> -	if (timer_pending(&bp->watchdog))
-> -		timer_delete_sync(&bp->watchdog);
-> +	timer_delete_sync(&bp->watchdog);
->   	if (bp->ts0)
->   		ptp_ocp_unregister_ext(bp->ts0);
->   	if (bp->ts1)
+Signed-off-by: Kishon Vijay Abraham I <kvijayab@amd.com>
+Reviewed-by: Tianyu Lan <tiala@microsoft.com>
+Signed-off-by: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+---
+Changes since v9:
+ - Commit log update.
+
+ arch/x86/coco/sev/core.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/arch/x86/coco/sev/core.c b/arch/x86/coco/sev/core.c
+index da9fa9d7254b..37b1d41e68d0 100644
+--- a/arch/x86/coco/sev/core.c
++++ b/arch/x86/coco/sev/core.c
+@@ -974,6 +974,9 @@ static int wakeup_cpu_via_vmgexit(u32 apic_id, unsigned long start_ip, unsigned
+ 	vmsa->x87_ftw		= AP_INIT_X87_FTW_DEFAULT;
+ 	vmsa->x87_fcw		= AP_INIT_X87_FCW_DEFAULT;
+ 
++	if (cc_platform_has(CC_ATTR_SNP_SECURE_AVIC))
++		vmsa->vintr_ctrl	|= V_GIF_MASK;
++
+ 	/* SVME must be set. */
+ 	vmsa->efer		= EFER_SVME;
+ 
+-- 
+2.34.1
 
 
