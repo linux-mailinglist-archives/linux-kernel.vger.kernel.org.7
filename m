@@ -1,65 +1,54 @@
-Return-Path: <linux-kernel+bounces-790232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21CA7B3A2F0
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 16:57:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FB3AB3A2D3
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 16:55:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC5F216CA6D
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 14:54:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75E3A3A5092
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 14:54:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B704D313E0A;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DAF33128C8;
 	Thu, 28 Aug 2025 14:54:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="NGzwkZWd"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U3/dMkL2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 984F43101C6;
-	Thu, 28 Aug 2025 14:54:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF9CF3126C7;
+	Thu, 28 Aug 2025 14:54:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756392844; cv=none; b=QV26cH5ERGMB+7MRfMD6Z/H1wwlI1JW3eA1hv1qcgzVrkkeCf2FNTmK56ehrz3hWB5Nm5LW7qcCOIeUPt0nxq6Ni5a76Y+QBDI0NCupJnRNzYtnMg0TLLpVyzroXw/Y43hHVRpA2ng4XMbvWcXpLT/nWZaWak9OX2K3eiVaU92E=
+	t=1756392844; cv=none; b=sGSpbGwbBUxxb3boSjHhI5oza7ehm+JU27eSI3Fdy6Mtc1N5k3Ig2wVb4dnVsXv1rk7Nq4t0lfJvXCQ+5zMAvZ58IfXeaTtQWHzm4JEPb45IkWErkAlqAxkmfEcdZG4ajhDFWWFSrD8GDxlruio9HHY96SqfRoNn+pijcF0NTjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1756392844; c=relaxed/simple;
-	bh=gp62qsA5sCP4pj8FC79K4xeX06tKfClCajJqWLJ9abQ=;
+	bh=m7DbKa5nL0/l/h4kStB22h0PHHL/c9TtGgkpRT1CwFk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aSGCp2ibWqf6Ex81w45RXTAGwdhigaG6kXa/f7xpunSIRF0oQwviHvHu9VQgWOifp0lnQqmQXPIuw0dRDnSn5LGfke6XaKhKjUgs7TLqzxkHypvMoNfKmOMEIJgn4cM6ObO5B63AfDx9Xn70aXMnwwR2pGcANaqIKfzno6o6OaU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=NGzwkZWd; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=63fVgPj0dBu19FzzCkTktPqPtLpDcCZYhJHlKuiK014=; b=NGzwkZWd3jUW+MVaoOX2lFIM5Y
-	jmBb/Ikm2qiKcf2l5ll36mpL87G1rh1GhTRXX6mxM9T0NwBFvGFse5LMniR+4P3Izaj51rm3ry1Li
-	KqNwMJ5gY6PdfVqquMKO7UYJ5fj4h+G1f7d9myCc1DV3I+RLJjaTvQ2lUJaRRXCHSwTvmDxs5bhjY
-	6BgJlM/k1Cf1kL+ytgAfWZLHFrTBGuQdJ8CD2UQjNeAZcsbjH38uSTdOs6JwYs7obwFG0cHOR1xub
-	+hWOFWFCMct8D2+Bei4ytIaa6qLfmdPVWmgJWnvOnRC/63IjhI2MtLOpzaqcaE5SAV17KsmOhT6cQ
-	ZffuRfqQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1ure0i-0000000BRXD-3HRg;
-	Thu, 28 Aug 2025 14:53:56 +0000
-Date: Thu, 28 Aug 2025 15:53:56 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
-Cc: David Hildenbrand <david@redhat.com>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Paul Moore <paul@paul-moore.com>,
-	Stephen Smalley <stephen.smalley.work@gmail.com>,
-	Ondrej Mosnacek <omosnace@redhat.com>, selinux@vger.kernel.org
-Subject: Re: [PATCH v2 7/7] virtio_balloon: Stop calling page_address() in
- free_pages()
-Message-ID: <aLBthEcK1rDPQLrE@casper.infradead.org>
-References: <20250826205617.1032945-1-vishal.moola@gmail.com>
- <20250826205617.1032945-8-vishal.moola@gmail.com>
- <5ee2b684-94d9-40be-b01c-b0538ced33bc@redhat.com>
- <aK9Ogjn71JoOM3w3@fedora>
+	 Content-Type:Content-Disposition:In-Reply-To; b=narecj7uA3yMVwAuSW+dAZ29hqr+o8x8elgTuUu1c7O1ywMl81fOxKoWszRvwHFtikL2u3HZUkrMCEYYkDDy1BCyJHxcayRkDY2nOhtbzF2z7tjBbGictxnjfU5Vv9OM4vO3sSWIBQP40HL5mgWY/yMPCUKqnpSzBFS+iipNhVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U3/dMkL2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6BE16C4CEEB;
+	Thu, 28 Aug 2025 14:54:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756392841;
+	bh=m7DbKa5nL0/l/h4kStB22h0PHHL/c9TtGgkpRT1CwFk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=U3/dMkL2cuy5yroFBqYyQ61iRC8Tauq4yidehrDsfj6WVwgQbMSYv8ZXKUX7z4/qL
+	 AmyASZXoT+ejQ42z0edgv3o9ecNh5ZygL6zJZdaGI69WL66tkchTqb9GeU02hWPEh/
+	 KkXir5k3p2hI3gVzEIECg7En3TONYSRGB377PiMSSXQFL8qZoog7aYhzPd720uQ5XB
+	 owQ5l4zlELlxI+byPMAwljWd5nZ4lc/pHoy5u/wee/Kq4EQO/5dGEv5HNmthrYij06
+	 KqLJDrd6/ErMCRBVkU5JDyf5uxFaEJJbcWR83n+cmcRLlyofjZ9uY8vfHLuX9Havjs
+	 44drH1fMRJQSQ==
+Date: Thu, 28 Aug 2025 07:54:00 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Marcelo Moreira <marcelomoreira1905@gmail.com>
+Cc: cem@kernel.org, linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	skhan@linuxfoundation.org,
+	linux-kernel-mentees@lists.linuxfoundation.org
+Subject: Re: [PATCH v3] xfs: Replace strncpy with memcpy
+Message-ID: <20250828145400.GH8096@frogsfrogsfrogs>
+References: <20250827221830.23032-1-marcelomoreira1905@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,24 +57,50 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aK9Ogjn71JoOM3w3@fedora>
+In-Reply-To: <20250827221830.23032-1-marcelomoreira1905@gmail.com>
 
-On Wed, Aug 27, 2025 at 11:29:22AM -0700, Vishal Moola (Oracle) wrote:
-> I imagine theres more of these lingering in the kernel, but theres so
-> many callers and I only looked for the ones that were calling
-> page_address() inline :(.
+On Wed, Aug 27, 2025 at 07:17:07PM -0300, Marcelo Moreira wrote:
+> The changes modernizes the code by aligning it with current kernel best
+> practices. It improves code clarity and consistency, as strncpy is deprecated
+> as explained in Documentation/process/deprecated.rst. This change does
+> not alter the functionality or introduce any behavioral changes.
+> 
+> Suggested-by: Dave Chinner <david@fromorbit.com>
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> Reviewed-by: Carlos Maiolino <cmaiolino@redhat.com>
+> Signed-off-by: Marcelo Moreira <marcelomoreira1905@gmail.com>
 
-There's only 841 callers of free_page() and free_pages()!
+memcpy is fine, the repair code determines the new target length via
+strnlen(bufsize) later on so we'll continue to fix the "non-null
+characters after the zero terminator" case.
 
-It's a bit of a disease we have, to be honest,  Almost all of
-them should be using kmalloc() instead.  To pick on one at random,
-sel_read_bool() in security/selinux/selinuxfs.c is the implementation
-of read() for some file in selinux.  All it's trying to do is output two
-numbers, so it allocates an entire page of memory, prints two numbers
-to it (while being VERY CAREFUL not to overflow the buffer!) and copies
-the buffer to userspace.
+Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 
-It should just use kmalloc.  Oh, and it should avoid leaking the buffer
-if security_get_bool_value() returns an error.
+--D
 
+> ---
+> Changes since v2:
+> - Fixing some errors in the commit message.
+> Link to v2: https://lore.kernel.org/linux-kernel-mentees/CAPZ3m_iNj2zwpAovv3BTz8gNp5XzdxSRHBFonM9sJvaSjYVBeg@mail.gmail.com/T/#t
+> 
+>  fs/xfs/scrub/symlink_repair.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/xfs/scrub/symlink_repair.c b/fs/xfs/scrub/symlink_repair.c
+> index 953ce7be78dc..5902398185a8 100644
+> --- a/fs/xfs/scrub/symlink_repair.c
+> +++ b/fs/xfs/scrub/symlink_repair.c
+> @@ -185,7 +185,7 @@ xrep_symlink_salvage_inline(
+>  		return 0;
+>  
+>  	nr = min(XFS_SYMLINK_MAXLEN, xfs_inode_data_fork_size(ip));
+> -	strncpy(target_buf, ifp->if_data, nr);
+> +	memcpy(target_buf, ifp->if_data, nr);
+>  	return nr;
+>  }
+>  
+> -- 
+> 2.50.1
+> 
+> 
 
