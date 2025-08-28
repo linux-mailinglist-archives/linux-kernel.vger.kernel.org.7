@@ -1,203 +1,177 @@
-Return-Path: <linux-kernel+bounces-790860-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790861-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CE9DB3AE6C
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 01:28:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96492B3AE6F
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 01:32:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9CA717A715B
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 23:27:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 343BC9844A0
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 23:32:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14E812D12F3;
-	Thu, 28 Aug 2025 23:28:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3D382D6406;
+	Thu, 28 Aug 2025 23:32:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JbkJ0SQF"
-Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="L/xo1I/7"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDEAA7082D;
-	Thu, 28 Aug 2025 23:28:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1D571C84DE
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 23:32:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756423727; cv=none; b=uPu7EdFndz8OLhChS7zh4g+TBAcnWuC6nnZeZvGSHX35VJIMkIrxvXrsz9XgpORXCe51PZgXHh7HZYv3CwKoUrYnAu8aStOxJL9L6IIRIZeNGhNVcvN28pX462gdwEL/fIqmxa491YLAYS8xDjXu92iqM4n6d+Kj/Uun/BQBQ2w=
+	t=1756423929; cv=none; b=Nzst2VE/YWpQZxCqHZl7T53g9SAoQ4AYzIzTPak2oDnBn+iUO3KFeSGC/ALMf42QPzXyaVAr3vsq0kpei3eMplO8asBhI9UjIFVRSdBSPMbymmNOtiEUQ2AgKJLQqY8dEai7iZYNYMMKqhdfok63fnnJg7Bg3HpdivnOeYX6sqA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756423727; c=relaxed/simple;
-	bh=ddB5ltz052A0NgyWpdONDu99T4ypYNf+rbcFEGWBC6U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=af6YKkqKpPmMHZMlUnvEcI/DcBail3CkXyxTjO2R+CJo/mAMGxfvpVqI9TmNTP2paZeCmBtmq2wWuJyqDCYj4Pt9lXzZU2yAOmkNa0EaERlYJlZxv1SHnHMl1LNMmqQiOwcEpuZpwjbmtkzOBx+oFBeTSs/d8xHOyEpsd3DwEiE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JbkJ0SQF; arc=none smtp.client-ip=209.85.222.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7f8ea864d68so146265185a.0;
-        Thu, 28 Aug 2025 16:28:45 -0700 (PDT)
+	s=arc-20240116; t=1756423929; c=relaxed/simple;
+	bh=9vDtAA4+lwAqsGeIXMf7YE8I/fa3B0bsI9jCNNLIt8U=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=NJSKoF/gtBidFtvuAJsofcNKVOFMsRK4u5QSyFeiFYblthr7jKkwXJZRR31HDLtCN3ypcHwdA27Wo1OZnn0vH+hzPyxbIMYt6o4LireCTRnfEgZqBNd3uO2yiRDSU/m3EBlrNyx/a2QhBUdLEZRW3RWipwaoZ+TC7tfZupQd1oU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=L/xo1I/7; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-327b289e8easo1165397a91.1
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 16:32:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756423725; x=1757028525; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=g5xAEZzGkKzOekVqIS4rKLRu5l7Wsy0HGBRxwvDh6Sc=;
-        b=JbkJ0SQF58bxxeS7rfzfQlOSKp3WlVr+iBzUPWi9pCnIjdA0PQTNkCnP9L8KGmNheV
-         6V5oEJTJR+OlghzmcFkN98QVX3BdA9FmY59DDjTC5YQ+7Siv6x6erwrgqyJOwk/w6UwH
-         KM0EVRvZ78aKt7T1Tl/wA9TC4BPvD0iDS0mJYV39dQpft4LWzDrfP49Uv5XwY0kM0y/h
-         C3kJffQ8x/efceAgXNBRWeWOERwlmHbp5eR0IkhFVLT94H+R5TQm5cNHEWUaJoFKE38N
-         uh+IZls1dNhMKg0tEVvr07BIgEK8GkjJhAs5Af2P5HD9VeaGAhkqKd0fwN7r+XtlzySp
-         yJxQ==
+        d=google.com; s=20230601; t=1756423927; x=1757028727; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3s7x7ZntxOINAcUHXGWjzDAQ0CfG/hBAnbKE7u0wyBQ=;
+        b=L/xo1I/7042o+809zRrzUzKV02EmsAF40b0ezgi9lXASqIkwiRDXLpc4gEHRLdpngN
+         cRrm3N8CFO1IRiMGMu8OIJT82PJylO8xv+t+oirA52jjhf+OqTngIBlrWSe5wb0iCZXu
+         IEuSM96c/fO8P77JPLNATfpEKstrupjcQ5Nzgeh4J9SbQlcPE5lzkhss0WO6yY4i7CjM
+         o7w8n3cuGSpUo1QObyVwP+dpWzIH7omyfmgN3SFoAta7U9tz2BQHcpAmsksYiGgwkh4H
+         mLtks7ewSJs1yQ0lvvmwLYzja1djo4QhnIDM4c8yzDy9Ue/+M7kgS5ujb/MOkjiDow1a
+         wHXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756423725; x=1757028525;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=g5xAEZzGkKzOekVqIS4rKLRu5l7Wsy0HGBRxwvDh6Sc=;
-        b=KyaeJ9zHju0mDLS97qH3a4ayvjM6J0EIuXuUZvZ7cO/cr8ZjiaFWPaly/A/sbo0Cq1
-         ohejGs/Yf1+Tf6QywZux8oo8MzT5VJ6lFr36zv4OC6Xwt0vh3liBWju+TVNgfpNvrKk+
-         YJyPJu60le2isknP9q+WtbvM4sEn3oSnJuw2iO0NOf9nHpQiRkec2dk2GgOA/tzJivvU
-         Q5YxBTZd2UTKCXgD3sI6mtaDlzHKo2yfK2XiGy4oeSGHEOSIsd7Y3EVXAmszS5IF2HAC
-         2Is6HF07YLzWeiOpkQpE8eAspNmmHPZs2jiEoaiVbK2YaG1i29gL9O70v7nL0phYIudY
-         jSXg==
-X-Forwarded-Encrypted: i=1; AJvYcCVjTmVOzIZ+l5+N58YY1jNw4RFRiRo/Gn2jg/KApHp7G7aO4osLc9Ag9MNE9iqQ+e53POl9y4qRk+qoRUk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwneOC6JhMQ3J+BLahr6OZvNhkXSh4/UY4HiEXdp/zp4G69Onr5
-	jkOOCSsloaeFhI1ErMBiIKtC6v39OaSFPTavWVHxNrL2XUXyActGEHxqlVxjEAx5GDK0GX6lu4S
-	pB8UqK10vhlzq8Z37aQuLUytw1m6/6rT8AMrw
-X-Gm-Gg: ASbGncuJENieg+hCSwhl4b5CuQ4bWHelCP1nvt/KxEseoYVUEfsiwDlQltM2AVyeITz
-	iiCdt6eEji+jVhbVB1AptDx3o+oAaBSijktYQndu+blju0Qi7ZTXDeW8N8WS29GNz1cPpwZccUx
-	x4UJd/wtXTIwkOIq+C2DJ8yI8w9WfvyuVw28Bvu3dZm7hnio7kVRIEMYw8QPr5XIbSMO+uL/F14
-	Gmx1QjJ+hPm/nEvCg==
-X-Google-Smtp-Source: AGHT+IG9dqf0v9B4cNprbTA7zUMYBwOa7Uq6IGQrFQsG5rT3a7SmZdhcZHPObNG9JdyxtkduL8KD+Nlyyk3kPIqkw2Q=
-X-Received: by 2002:a05:620a:3913:b0:7fb:d5c5:a4df with SMTP id
- af79cd13be357-7fbd5c5a6b0mr253670785a.34.1756423724471; Thu, 28 Aug 2025
- 16:28:44 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1756423927; x=1757028727;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=3s7x7ZntxOINAcUHXGWjzDAQ0CfG/hBAnbKE7u0wyBQ=;
+        b=tJjhHE0l3aObA1OfLWs/T5PdNOKoBzJlS2bBMvAFr8iRcO/6OAIifiW5jmUiVX6AhT
+         mrKKu+yl1L74jsKGUB9QQvtYMdqA4RklWacqZlcYIc7J/r4ZZmceuOlFG4/Hvd0Vez3H
+         tmbEcsa0TSqgX/gHJq7Aw9mnc3MWc+5S0KEeORaz25rIv/4cUMjUzMBnV0C5p5nBIbAc
+         u9uxoxd5Evpe6w/YvUe2S70Ji6HJrcsPh/936Y8ViFm4/MRTstrTAc4erxKyWq+edZOC
+         mKVGrbBjCcWCR/fd5JdUDClIsyAL2ErQr8rLK2YoPFSBFe/sap2gXrB1h8SnooHt3lQH
+         DyHg==
+X-Gm-Message-State: AOJu0Yy8r8AqIcHd0rY8ae6P8jgb7FoArXTpdHquj5JeyLcwdyff86+q
+	uhPJmYQLK0nhPJTTZDlpZwU5baLc2ZhHIuaoeMld3CYki0UtFH5BhjRXbcDDtXC795Ypls58cEd
+	gAquG/Q==
+X-Google-Smtp-Source: AGHT+IGm5PXVW+/HSToHQbcSx7l89Pa+l1pX/Blng7NNUGGHaw1L2hsscDZ5/k8V2r1pcR+kt4QrfsU6X7A=
+X-Received: from pjx8.prod.google.com ([2002:a17:90b:5688:b0:327:5037:f8c2])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:518c:b0:325:9829:db4f
+ with SMTP id 98e67ed59e1d1-3259829dde3mr23072750a91.21.1756423926905; Thu, 28
+ Aug 2025 16:32:06 -0700 (PDT)
+Date: Thu, 28 Aug 2025 16:32:05 -0700
+In-Reply-To: <77076b24-c503-40e8-9459-ede808074f0f@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250801043642.8103-1-kanchana.p.sridhar@intel.com>
- <20250801043642.8103-23-kanchana.p.sridhar@intel.com> <CAGsJ_4xRij-Vz_-dmL44YLvaQrYLKKnw7O_Skedrxj_YxuaT5Q@mail.gmail.com>
- <PH7PR11MB8121532CE4368DF5BAA6D46DC939A@PH7PR11MB8121.namprd11.prod.outlook.com>
- <CAGsJ_4xMuLPy3+mAxzOj6SfnFZaDf+B=WkmbrCNqv8gvK080Fw@mail.gmail.com>
- <PH7PR11MB8121B86E65349F5CF854CA57C939A@PH7PR11MB8121.namprd11.prod.outlook.com>
- <CAGsJ_4zt9zQFh1mz6gpQOCWBOjz1osN9jTd62uKGf865vRwuLA@mail.gmail.com>
- <PH7PR11MB8121C1B5965584AA8E59C0B7C938A@PH7PR11MB8121.namprd11.prod.outlook.com>
- <CAGsJ_4zjPxSjrSomm3E3gOuW+AqiTKwUHJ34q9m9aJb3y3vEKw@mail.gmail.com> <PH7PR11MB81211DD54822167C6BA238D5C93BA@PH7PR11MB8121.namprd11.prod.outlook.com>
-In-Reply-To: <PH7PR11MB81211DD54822167C6BA238D5C93BA@PH7PR11MB8121.namprd11.prod.outlook.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Fri, 29 Aug 2025 11:28:33 +1200
-X-Gm-Features: Ac12FXymL-oJOFhtfchGYmwxY8_PFVTDmAseMPSDCZcsDDSfx-7l2g2_r4lHbbs
-Message-ID: <CAGsJ_4xy3mksbwj61qnNrSpcFgkanEK0tCzJcjQgVF-oAyXe8A@mail.gmail.com>
-Subject: Re: [PATCH v11 22/24] mm: zswap: Allocate pool batching resources if
- the compressor supports batching.
-To: "Sridhar, Kanchana P" <kanchana.p.sridhar@intel.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, 
-	"hannes@cmpxchg.org" <hannes@cmpxchg.org>, "yosry.ahmed@linux.dev" <yosry.ahmed@linux.dev>, 
-	"nphamcs@gmail.com" <nphamcs@gmail.com>, "chengming.zhou@linux.dev" <chengming.zhou@linux.dev>, 
-	"usamaarif642@gmail.com" <usamaarif642@gmail.com>, "ryan.roberts@arm.com" <ryan.roberts@arm.com>, 
-	"ying.huang@linux.alibaba.com" <ying.huang@linux.alibaba.com>, 
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>, 
-	"senozhatsky@chromium.org" <senozhatsky@chromium.org>, 
-	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>, 
-	"herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>, "davem@davemloft.net" <davem@davemloft.net>, 
-	"clabbe@baylibre.com" <clabbe@baylibre.com>, "ardb@kernel.org" <ardb@kernel.org>, 
-	"ebiggers@google.com" <ebiggers@google.com>, "surenb@google.com" <surenb@google.com>, 
-	"Accardi, Kristen C" <kristen.c.accardi@intel.com>, "Gomes, Vinicius" <vinicius.gomes@intel.com>, 
-	"Feghali, Wajdi K" <wajdi.k.feghali@intel.com>, "Gopal, Vinodh" <vinodh.gopal@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+References: <20250821223630.984383-1-xin@zytor.com> <20250821223630.984383-7-xin@zytor.com>
+ <2dd8c323-7654-4a28-86f1-d743b70d10b1@zytor.com> <aK340-6yIE_qujUm@google.com>
+ <c45a7c91-e393-4f71-8b22-aef6486aaa9e@zytor.com> <aK4yXT9y5YHeEWkb@google.com>
+ <5b1c5f80-bbe1-4294-8ede-5e097e8feda1@zytor.com> <77076b24-c503-40e8-9459-ede808074f0f@zytor.com>
+Message-ID: <aLDm9YID-r5WWcD9@google.com>
+Subject: Re: [PATCH v6 06/20] KVM: VMX: Set FRED MSR intercepts
+From: Sean Christopherson <seanjc@google.com>
+To: Xin Li <xin@zytor.com>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
+	linux-doc@vger.kernel.org, pbonzini@redhat.com, corbet@lwn.net, 
+	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
+	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, luto@kernel.org, 
+	peterz@infradead.org, andrew.cooper3@citrix.com, chao.gao@intel.com, 
+	hch@infradead.org
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 
-> >
-> > If ZSWAP_MAX_BATCH_SIZE is set to 8 and there is no hardware batching,
-> > compression is done with a step size of 1. If the hardware step size is=
- 4,
-> > compression occurs in two steps. If the hardware step size is 6, the fi=
-rst
-> > compression uses a step size of 6, and the second uses a step size of 2=
-.
-> > Do you think this will work?
->
-> Hi Barry,
->
-> This would be non-optimal from code simplicity and latency perspectives.
-> One of the benefits of using the hardware accelerator's "batch parallelis=
-m"
-> is cost amortization across the batch. We might lose this benefit if we m=
-ake
-> multiple calls to zswap_compress() to ask the hardware accelerator to
-> batch compress in smaller batches. Compression throughput would also
-> be sub-optimal.
+On Wed, Aug 27, 2025, Xin Li wrote:
+> On 8/27/2025 3:24 PM, Xin Li wrote:
+> > On 8/26/2025 3:17 PM, Sean Christopherson wrote:
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (!kvm_cpu_cap_has(X8=
+6_FEATURE_SHSTK))
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+ wrmsrns(MSR_IA32_FRED_SSP0, vmx->msr_guest_fred_ssp0);
+> > > FWIW, if we can't get an SDM change, don't bother with RDMSR/WRMSRNS,=
+ just
+> > > configure KVM to intercept accesses.=C2=A0 Then in kvm_set_msr_common=
+(), pivot on
+> > > X86_FEATURE_SHSTK, e.g.
+> >=20
+> >=20
+> > Intercepting is a solid approach: it ensures the guest value is fully
+> > virtual and does not affect the hardware FRED SSP0 MSR.=C2=A0 Of course=
+ the code
+> > is also simplified.
+> >=20
+> >=20
+> > >=20
+> > > =C2=A0=C2=A0=C2=A0=C2=A0case MSR_IA32_U_CET:
+> > > =C2=A0=C2=A0=C2=A0=C2=A0case MSR_IA32_PL0_SSP ... MSR_IA32_PL3_SSP:
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (!kvm_cpu_cap_has(X86_F=
+EATURE_SHSTK)) {
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 WA=
+RN_ON_ONCE(msr !=3D MSR_IA32_FRED_SSP0);
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 vc=
+pu->arch.fred_rsp0_fallback =3D data;
+>=20
+> Putting fred_rsp0_fallback in struct kvm_vcpu_arch reminds me one thing:
+>=20
+> We know AMD will do FRED and follow the FRED spec for bare metal, but
+> regarding virtualization of FRED, I have no idea how it will be done on
+> AMD, so I keep the KVM FRED code in VMX files, e.g., msr_guest_fred_rsp0 =
+is
+> defined in struct vcpu_vmx, and saved/restored in vmx.c.
 
-I guess it wouldn=E2=80=99t be an issue if both ZSWAP_MAX_BATCH_SIZE and
-pool->compr_batch_size are powers of two. As you mentioned, we still
-gain improvement with ZSWAP_MAX_BATCH_SIZE batching even when
-pool->compr_batch_size =3D=3D 1, by compressing pages one by one but
-batching other work such as zswap_entries_cache_alloc_batch() ?
+The problem is that if you do that, then the handling of MSR_IA32_PL0_SSP t=
+akes
+completely different paths depending on vendor, theoretically on hardware, =
+and
+on guest CPUID model.  That makes it _really_ difficult to understand how P=
+L0_SSP
+is emulated by KVM.
 
->
-> In my patch-series, the rule is simple: if an algorithm has specified a
-> batch-size, carve out the folio by that "batch-size" # of pages to be
-> compressed as a batch in zswap_compress(). This custom batch-size
-> is capped at ZSWAP_MAX_BATCH_SIZE.
->
-> If an algorithm has not specified a batch-size, the default batch-size
-> is 1. In this case, carve out the folio by ZSWAP_MAX_BATCH_SIZE
-> # of pages to be compressed as a batch in zswap_compress().
+And I actually think that's moot anyways.  KVM _always_ needs to emulated M=
+SR
+accesses in software, and the whole goofy PL0_SSP behavior is a bare metal =
+quirk,
+not a virtualization quirk.  So unless AMD defines different architecture (=
+which
+is certainly possible), AMD will also need arch.fred_rsp0_fallback.
 
-Yes, I understand your rule. However, having two global variables is still
-somewhat confusing. It might be clearer to use a single variable with a
-comment, since one variable can clearly determine the value of the other.
+> It is a future task to make common KVM FRED code for Intel and AMD.
 
-Can we get the batch_size at runtime based on pool->compr_batch_size?
+No, this is not how I want to approach hardware enabling.  KVM needs to gua=
+rd
+against false advertising, e.g. ensure likely-to-be-common CPUID features a=
+re
+explicitly cleared in the other vendor.  But deliberately burying code that=
+'s
+vendor agnostic in whatever vendor support happens to come along first isn'=
+t
+necessary by any means, and is usually a net negative in the grand scheme, =
+and
+often in a big way.
 
-/*
- * If hardware compression supports batching, we use the hardware step size=
-.
- * Otherwise, we use ZSWAP_MAX_BATCH_SIZE for batching, but still compress
- * one page at a time.
- */
-batch_size =3D pool->compr_batch_size > 1 ? pool->compr_batch_size :
-             ZSWAP_MAX_BATCH_SIZE;
+E.g. in this case, if arch.fred_rsp0_fallback ends up being unnecessary for=
+ AMD,
+we probably don't even need to do anything, KVM will just have a field that=
+'s
+only used on Intel because the quirky scenario can't be reached on AMD.
 
-We probably don=E2=80=99t need this if both pool->compr_batch_size and
-ZSWAP_MAX_BATCH_SIZE are powers of two?
-
->
-> >
-> > I don=E2=80=99t quite understand why you want to save
-> > ZSWAP_MAX_BATCH_SIZE - X resources, since even without hardware
-> > batching
-> > you are still allocating all ZSWAP_MAX_BATCH_SIZE resources. This is th=
-e
-> > case for all platforms except yours.
->
-> Not sure I understand.. Just to clarify, this is not done to save on reso=
-urces,
-> rather for the reasons stated above.
->
-> We are already saving on resources by only allocating only
-> "pool->compr_batch_size" number of resources
-> (*not* ZSWAP_MAX_BATCH_SIZE resources):
->
->         pool->compr_batch_size =3D min(ZSWAP_MAX_BATCH_SIZE,
->                                      crypto_acomp_batch_size(acomp_ctx->a=
-comp));
->
-> For non-Intel platforms, this means only 1 dst buffer is allocated, as
-> explained in the commit log for this patch.
-
-you are right. I misunderstood your code :-)
-
->
-> " A "u8 compr_batch_size" member is added to "struct zswap_pool", as per
-> Yosry's suggestion. pool->compr_batch_size is set as the minimum of the
-> compressor's max batch-size and ZSWAP_MAX_BATCH_SIZE. Accordingly, it
-> proceeds to allocate the necessary compression dst buffers in the
-> per-CPU acomp_ctx."
-
-This is fine, but it still doesn=E2=80=99t provide a strong reason for havi=
-ng
-two global variables when one can fully determine the value of the other.
-
-Thanks
-Barry
+But if we bury the code in VMX, then the _best_ case scenario is that KVM c=
+arries
+a weird split of responsibility in perpetuity (happy path handled in x86.c,=
+ rare
+sad path handled in vmx.c).  And the worst case scenario is that we carry t=
+he
+weird split for some time, and then have to undo all of it when AMD support=
+ comes
+along.  Actually, the worst case scenario is that we forget about the VMX c=
+ode
+and re-implement the same thing in svm.c.
 
