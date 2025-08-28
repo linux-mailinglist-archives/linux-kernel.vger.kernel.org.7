@@ -1,93 +1,174 @@
-Return-Path: <linux-kernel+bounces-789152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74B22B391AF
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 04:32:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E760B391B6
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 04:33:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4688D1753E3
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 02:32:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8EF2D3AEDDB
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 02:33:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96FDF226D04;
-	Thu, 28 Aug 2025 02:32:04 +0000 (UTC)
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1BE4253F39;
+	Thu, 28 Aug 2025 02:33:13 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AF1A1C01
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 02:32:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14CEF1C01;
+	Thu, 28 Aug 2025 02:33:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756348324; cv=none; b=nsn0D3BXxdxGqSEKQxT3zcQ62WmO5ObbatfVBwvh7ah+eIQvB2s3lxMw2sVXw4UKj3z912BdROdrfELbRCQhOASP+AIZCd5KDCM2CZXmAEgyQn1HY8wWBUKI3rv2zbgMKF85K/4fyXqtN8TIvOtWbyfzDMNH4zcx7DiROBPDv9g=
+	t=1756348393; cv=none; b=qdQwRnG7ZRTW0FD4CrqYNHyD5vx2DxFGZSPQocFhga+M1BL3SiH7TfC+VQgo5ha3UhlEM5v4q14tne4LQMnCW7cO/s4jd9mFFhPyCelaH0Fx5vuNq1B8k0ofEJXTQpR5a8qcxHImoGdT+ePtLjUV4UCRZv9CgfCfng6ajpc/zuU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756348324; c=relaxed/simple;
-	bh=E2e1HE+0Wd4ZP6WtuDKMSe82Vya7T6c9PFVzu8LaOfE=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=I6V4x3+jfORvzgJFTg+o83iHV+fUVbIEOxGHS0EBMwNC4E/4W0WJ30f8uvwfUCmaU29EvnY8PBMYDJMWh14fAnvvSv2ct1/sVVhNKm2NBcv8BXiBgMxQNqx7RulgdlZwVCwy+g+RmpZa/q0hkrNkauNqG5A92+yZS31lxW/7mWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.234])
-	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4cC56M3ZxMz27j3Z;
+	s=arc-20240116; t=1756348393; c=relaxed/simple;
+	bh=a96c67ue2iadTZlK8+Yj568Jo90zgVFy17g6x/9BkaU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QlKfrw6q4GgAs4aILQxDp08sveGD9zeO5KLfKp05I/qKSoTNejiwI5wwR7ZHhWFLBh1qzmcvqyHgWVf89O4u21KX5KHASHiLrzPm9Qdoj7XwVGGIz+AkbYp78C5CkVl004fUgn5wj3Pfv7mpP4HtfczyZFBiTw6gwo3uki0IeMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 502860d683b711f0b29709d653e92f7d-20250828
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:bbfdf95e-1728-4506-9bc0-05a18e21652f,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:6493067,CLOUDID:f93684e576c78dc40936662dca05dad7,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102,TC:nil,Content:0|52,EDM:
+	-3,IP:nil,URL:99|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA
+	:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULS
+X-UUID: 502860d683b711f0b29709d653e92f7d-20250828
+Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
+	(envelope-from <zhangzihuan@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 469337678; Thu, 28 Aug 2025 10:32:59 +0800
+Received: from mail.kylinos.cn (localhost [127.0.0.1])
+	by mail.kylinos.cn (NSMail) with SMTP id 4C11EE008FAC;
 	Thu, 28 Aug 2025 10:32:59 +0800 (CST)
-Received: from dggemv712-chm.china.huawei.com (unknown [10.1.198.32])
-	by mail.maildlp.com (Postfix) with ESMTPS id C04BB14025A;
-	Thu, 28 Aug 2025 10:31:52 +0800 (CST)
-Received: from kwepemq500010.china.huawei.com (7.202.194.235) by
- dggemv712-chm.china.huawei.com (10.1.198.32) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 28 Aug 2025 10:31:52 +0800
-Received: from [10.173.125.236] (10.173.125.236) by
- kwepemq500010.china.huawei.com (7.202.194.235) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 28 Aug 2025 10:31:51 +0800
-Subject: Re: [PATCH] Revert "hugetlb: make hugetlb depends on SYSFS or SYSCTL"
-To: Andrew Morton <akpm@linux-foundation.org>
-CC: <muchun.song@linux.dev>, <osalvador@suse.de>, <david@redhat.com>,
-	<linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>
-References: <20250826030955.2898709-1-linmiaohe@huawei.com>
- <20250826203552.b4340b12b16a374396f49343@linux-foundation.org>
-From: Miaohe Lin <linmiaohe@huawei.com>
-Message-ID: <0138514f-c580-c066-c16d-2a0b207e0604@huawei.com>
-Date: Thu, 28 Aug 2025 10:31:51 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.0
+X-ns-mid: postfix-68AFBFDB-172902359
+Received: from [172.25.120.24] (unknown [172.25.120.24])
+	by mail.kylinos.cn (NSMail) with ESMTPA id ADF7BE008FAB;
+	Thu, 28 Aug 2025 10:32:47 +0800 (CST)
+Message-ID: <6f6c1e35-101d-4ef1-ac6e-5db337ccdd84@kylinos.cn>
+Date: Thu, 28 Aug 2025 10:32:46 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20250826203552.b4340b12b16a374396f49343@linux-foundation.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
- kwepemq500010.china.huawei.com (7.202.194.235)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 01/18] arm64: topology: Use __free(put_cpufreq_policy)
+ for policy reference
+To: Sudeep Holla <sudeep.holla@arm.com>, Ben Horgan <ben.horgan@arm.com>
+Cc: "Rafael J . wysocki" <rafael@kernel.org>,
+ Viresh Kumar <viresh.kumar@linaro.org>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Sean Christopherson <seanjc@google.com>, Paolo Bonzini
+ <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>, Markus Mayer
+ <mmayer@broadcom.com>, Florian Fainelli <florian.fainelli@broadcom.com>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Krzysztof Kozlowski
+ <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>,
+ MyungJoo Ham <myungjoo.ham@samsung.com>,
+ Kyungmin Park <kyungmin.park@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>,
+ Jani Nikula <jani.nikula@linux.intel.com>,
+ Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+ Rodrigo Vivi <rodrigo.vivi@intel.com>, Tvrtko Ursulin
+ <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Daniel Lezcano <daniel.lezcano@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>,
+ Eduardo Valentin <edubezval@gmail.com>, Keerthy <j-keerthy@ti.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ zhenglifeng <zhenglifeng1@huawei.com>, "H . Peter Anvin" <hpa@zytor.com>,
+ Zhang Rui <rui.zhang@intel.com>, Len Brown <lenb@kernel.org>,
+ Nicholas Piggin <npiggin@gmail.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Lukasz Luba <lukasz.luba@arm.com>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Beata Michalska <beata.michalska@arm.com>, Fabio Estevam
+ <festevam@gmail.com>, Pavel Machek <pavel@kernel.org>,
+ Sumit Gupta <sumitg@nvidia.com>,
+ Prasanna Kumar T S M <ptsm@linux.microsoft.com>,
+ Yicong Yang <yangyicong@hisilicon.com>, linux-pm@vger.kernel.org,
+ x86@kernel.org, kvm@vger.kernel.org, linux-acpi@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
+ intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+ imx@lists.linux.dev, linux-omap@vger.kernel.org,
+ linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250827023202.10310-1-zhangzihuan@kylinos.cn>
+ <20250827023202.10310-2-zhangzihuan@kylinos.cn>
+ <70f4c2ce-1dbd-4596-af78-bca1cdbbb581@arm.com>
+ <1756341899099493.57.seg@mailgw.kylinos.cn>
+From: Zihuan Zhang <zhangzihuan@kylinos.cn>
+In-Reply-To: <1756341899099493.57.seg@mailgw.kylinos.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
 
-On 2025/8/27 11:35, Andrew Morton wrote:
-> On Tue, 26 Aug 2025 11:09:55 +0800 Miaohe Lin <linmiaohe@huawei.com> wrote:
-> 
->> Commit f8142cf94d47 ("hugetlb: make hugetlb depends on SYSFS or SYSCTL")
->> added dependency on SYSFS or SYSCTL but hugetlb can be used without SYSFS
->> or SYSCTL. So this dependency is wrong and should be removed.
+
+=E5=9C=A8 2025/8/27 17:17, Sudeep Holla =E5=86=99=E9=81=93:
+> On Wed, Aug 27, 2025 at 09:30:13AM +0100, Ben Horgan wrote:
+>> Hi Zihuan,
 >>
->> This reverts commit f8142cf94d4737ea0c3baffb3b9bad8addcb9b6b.
-> 
-> f8142cf94d47 said:
-> 
->     If CONFIG_SYSFS and CONFIG_SYSCTL are both undefined, hugetlb
->     doesn't work now as there's no way to set max huge pages.  Make
->     sure at least one of the above configs is defined to make hugetlb
->     works as expected.
-> 
-> So there is now a way to set max huge pages?  A reference tot he
-> commit which made f8142cf94d47 unneeded might be helpful?
+>> On 8/27/25 03:31, Zihuan Zhang wrote:
+>>> Replace the manual cpufreq_cpu_put() with __free(put_cpufreq_policy)
+>>> annotation for policy references. This reduces the risk of reference
+>>> counting mistakes and aligns the code with the latest kernel style.
+>>>
+>>> No functional change intended.
+>>>
+>>> Signed-off-by: Zihuan Zhang <zhangzihuan@kylinos.cn>
+>>> ---
+>>>   arch/arm64/kernel/topology.c | 9 +++------
+>>>   1 file changed, 3 insertions(+), 6 deletions(-)
+>>>
+>>> diff --git a/arch/arm64/kernel/topology.c b/arch/arm64/kernel/topolog=
+y.c
+>>> index 5d07ee85bdae..e3cb6d54f35b 100644
+>>> --- a/arch/arm64/kernel/topology.c
+>>> +++ b/arch/arm64/kernel/topology.c
+>>> @@ -307,17 +307,16 @@ int arch_freq_get_on_cpu(int cpu)
+>>>   		 */
+>>>   		if (!housekeeping_cpu(cpu, HK_TYPE_TICK) ||
+>>>   		    time_is_before_jiffies(last_update + msecs_to_jiffies(AMU_SAM=
+PLE_EXP_MS))) {
+>>> -			struct cpufreq_policy *policy =3D cpufreq_cpu_get(cpu);
+>>> +			struct cpufreq_policy *policy __free(put_cpufreq_policy);
+>> Based on the guidance, in include/linux/cleanup.h, I would expect the
+>> assignment to be done on this line.
+>>
+>> "...the recommendation is to always define and assign variables in one
+>>   * statement and not group variable definitions at the top of the
+>>   * function when __free() is used."
+>>
+> Agreed. I did something similar recently and there was a code path wher=
+e
+> variable wasn't initialised and ended up with freeing unassigned pointe=
+r.
+> So it is more than just a recommendation sometimes.
+>
+Thanks a lot for your suggestions.
 
-The commit is just wrong. It overlooked the scenario of using hugetlb through boot parameters
-when it was submitted.
+We are also considering introducing a WITH_CPUFREQ_POLICY wrapper to=20
+encapsulate the cpufreq_cpu_get/put usage, so that the release order=20
+won=E2=80=99t be accidentally changed.
 
-Thanks.
-.
+Link:=20
+https://lore.kernel.org/all/874d821e-8ea3-40ac-921b-c19bb380a456@kylinos.=
+cn/
+
+Do you have any suggestions or preferences on this direction?
+
+
 
