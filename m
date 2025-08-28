@@ -1,397 +1,122 @@
-Return-Path: <linux-kernel+bounces-789220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE9E0B3925B
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 06:02:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D486B3926C
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 06:07:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 88A63367A0A
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 04:02:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 149B67C5D08
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 04:07:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C193721A444;
-	Thu, 28 Aug 2025 04:02:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35B2B25A2B5;
+	Thu, 28 Aug 2025 04:07:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="OXPsxrb8"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2060.outbound.protection.outlook.com [40.107.92.60])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TURctcGd"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 746241D6BB;
-	Thu, 28 Aug 2025 04:02:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.60
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756353735; cv=fail; b=ccBb1TWOTkLIKKhRpl2XjFh03/KO55FoiXEuJmnQ1Pfph2IFYtVjCIqSlDIMo7YHevOlP9Vm3bIsPGI2n0VMCDMu5p2UH5faW30J62FIc0YVeeW9/ClkYFdIaJNkqoI3Q7ieKxfivJzAufcN+j9r9UQyT2WFXkXMQiQzZXktO00=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756353735; c=relaxed/simple;
-	bh=/zMB2XIsuUJnsvPeYFYXa7ll8DLTxF0iJxiLt786cTw=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=d/lhV9aaPMkJMX61lwoq049ZFYk6j6cEXwBKZxTegTyVnOnWmAMoqeCkrgdrFes0nWGrSCi8WzX1zji7NCNQmfZgQc6Wd21kDyYA4hhHC85j+OUf5yoHtqL0IXDOryjdZZU2Gy1P88iol1PfKqA0rIHzVhahsAXeaO8MlDH04l0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=OXPsxrb8; arc=fail smtp.client-ip=40.107.92.60
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=rpmvfNJsFz2652iifUWiDSh7R33l5s5UuqSSilEPbfPITYrj3Cc7tEVoPZb7FQoZv4dVZ17HuPByQPNNsltFEfxQO/rHQ6hJpli5seNiUrZvcYU6pgUXJh+QWK+uiBLGMkrvUzy/BUkjA417G9wIMkEahnAu2HCjktu3YfVpNtpW7KZEMWUTMD6crBN4kEih4mg9iA6uuma/91j5fejfVXwHAZ1oRHNCj8qHXR/3cC4TjCg6zoOouJCUGV2179jhrZErt8czCkQyUn1BBCrpiukleb0FaOru6F0VbkUImeeELRLSRuxzBLgqWEZ2O+xaT4dKiiuUxihNYG9RdaIWeg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=iQn+abn6UWVuDtflzr2nyunSID63h5vAGnvPT7yLfIA=;
- b=AMca7LkBTOJHEMqWS5LE6c4qcnFr2pjoEdOfnBpxKJHv0MxL3bbr/0yyGET85NZj02E75cxzouYMgrR6oTWfU4ihzeeTZodqe4BjG7bhFt/0ga/5xPV5mK3u1eIgb+NkM43IDEqee8pKpDJWWjaPfHUaFlP4RRWYJRsoZajcARyPiRhiftOP0AXmu39f9JTJVBDbTWE6XHbafyBLkaXqerwjHNPUme55qQbjEJ22HgCy/cQ7c3wBObYD6HmGJQpckJ0K7JZOCdPeE8gE8BSKCW0XscHqmmOjuh8q2H+S7ONFF78oK8EqIM9Elaj/BCfdHukPqSBVpdoljJMoU7/3cA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=iQn+abn6UWVuDtflzr2nyunSID63h5vAGnvPT7yLfIA=;
- b=OXPsxrb8DcxWAjux/YL1Ypnauxc8DkbDmLshnDkgNFC1dyjGUIG1+iFubDOy7zccky+4V+UicowxR9Nm5Wizxq9P7/c0dV+djxu5kTeXfmfQLep8bhUz68NjdKKFl8td1wsPEkFvDatXtjQhf4uRz7B3kKh0EL8+qV0o61M3Ogad9OvpvxHSzq1gVb0/ZNTpOF4ko0/Av1054fmTLQEk9rOglmgaDXnyyTNVqVTSOq0C9qIJde/wFEWtM0OfyIhEWMqccKU+fo/hgMVHq+ZJfo/v/UQ0YjxdHLAQPHPWWojdlRONu1aD0ws5pvFP5n+xjFAySrmduAt/cM/kiMc+4A==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from LV2PR12MB5968.namprd12.prod.outlook.com (2603:10b6:408:14f::7)
- by CY5PR12MB6081.namprd12.prod.outlook.com (2603:10b6:930:2b::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.13; Thu, 28 Aug
- 2025 04:02:02 +0000
-Received: from LV2PR12MB5968.namprd12.prod.outlook.com
- ([fe80::e6dd:1206:6677:f9c4]) by LV2PR12MB5968.namprd12.prod.outlook.com
- ([fe80::e6dd:1206:6677:f9c4%6]) with mapi id 15.20.9073.010; Thu, 28 Aug 2025
- 04:02:02 +0000
-Message-ID: <407bf89c-0488-40e4-91f7-440610b6a906@nvidia.com>
-Date: Wed, 27 Aug 2025 21:01:59 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 5/8] gpu: nova-core: firmware: process and prepare the
- GSP firmware
-To: Alexandre Courbot <acourbot@nvidia.com>, Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>,
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>
-Cc: Alistair Popple <apopple@nvidia.com>,
- Joel Fernandes <joelagnelf@nvidia.com>, Timur Tabi <ttabi@nvidia.com>,
- rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
- nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-References: <20250826-nova_firmware-v2-0-93566252fe3a@nvidia.com>
- <20250826-nova_firmware-v2-5-93566252fe3a@nvidia.com>
-Content-Language: en-US
-From: John Hubbard <jhubbard@nvidia.com>
-In-Reply-To: <20250826-nova_firmware-v2-5-93566252fe3a@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SJ0PR13CA0065.namprd13.prod.outlook.com
- (2603:10b6:a03:2c4::10) To LV2PR12MB5968.namprd12.prod.outlook.com
- (2603:10b6:408:14f::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 380741E500C
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 04:07:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756354027; cv=none; b=XIyqYlAopr2/L5Y5f8qNaToYmr61Lukw1mcAX10fX26E5I3p0VPyQYthgQdCvHjoQwtpGmAP28tmDbSElwhL6T6DaML9Y6diWh//vFdSvtv4apbCbmkBvB6JfeT3rYyrbHqj4cdpR5AUM2YGJGXimVGS+ZYoOrUPeVSXwqA97EM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756354027; c=relaxed/simple;
+	bh=nCQ3pwttBtXCBlCj0GOYSR/MEaVgQ0DVFQSM3EtHDOE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nj80Rkawe7stxEoU4nFrfWWcqXdLMMRXctu4vrsbPxxL3LQDdOkgriTDnDTDSwurG3RBP+AbUU0L1BeQbVshpTFTHQVnSxEz3M1NHCUMiAg1P//gQtmisbl6AsyeubTn8IfTIChIOz6uycVxjwrRm6t+a9vyTkpLvzYZxYPszxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TURctcGd; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-248681b5892so104915ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 21:07:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1756354024; x=1756958824; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=LKxx3AHJzssWTQS4qsQitsY+pTv4aEpgVk4Q3F8J/ZQ=;
+        b=TURctcGd7/OT3GB+FhtLzGrXYiVeLj95JykT057tFA6V9TI38QswcM76Ma9Wzp3noK
+         +u0KFdp19gahoJbyzBYtkMzBEtxkNU+1fv/kLJi9cPiYYdd7vFdlzDua7NdcgtKcRjR6
+         G7dj883ixRixlOuokVz/ofuYz24d8QGIGc9bt20mIjJTu4+mEKleAi5xKOpdZnEiuMab
+         g4h11VTO6aZTb39u40HX5P38Iz8FjqLtoV0zKPjc5g9XFKXVoezaw3eddWvDHFKWjBkL
+         KQsURFMcv9s4lgmdts5BSbfxRnWiBn7kTBtQap3zYaFZ3UWTW4U+BuU66eqA7z6IisF/
+         XWQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756354024; x=1756958824;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LKxx3AHJzssWTQS4qsQitsY+pTv4aEpgVk4Q3F8J/ZQ=;
+        b=hsKzYLCdKPYsKG4gd2G2odOhMRUhCWkB4JU64mBR0fJCQdIgnhOHuAyH1YQfPlPmuh
+         FMwf7yyDBYuWYAGNIY2//PUZg6T45GTb7GG+tlH5oudcXwgrIl+2f5S5Gs5X/4RIQS9H
+         qTWmnn+QB810gBPh8ZPO45paAt+JgPDtTk1e8GitbW/nRC/hJIOZLyXf4AYUlPGaudTF
+         YjGdo0haETxqjv1C9+rP+NRfWM+7rtklnz9NwbzvLSUkOiOy9OA+fzp74cXG3y+j/AOU
+         vLI++YF8qe7yJ60ylU+QDEL9Rs0GHss0fBYx9i40sqOzKxuAZwv62eNFstjQiYWI2CFn
+         /4PA==
+X-Forwarded-Encrypted: i=1; AJvYcCVbcFpaB+7YkF4/CvgKZYDr0mSQIP9Wbz5RBnCOhzMnN8oM29vN8VSyOc1sPMB6242V89GZeyBEUcSSQI0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3hg6wrY66cldDWj/0f0FFLeqMetciA4OTZnifMWdxQnJV05jO
+	txl5Pl2mL4R3YiZ45S9E+h1pHEH/v0Izkyqlm65fwhUo/EV1zpq+2QQahQdrxO7sxg==
+X-Gm-Gg: ASbGncuxl+os7aVBn/81xAYOiAl11Ae7ft2y1H8X2h8Fss/pk93e713wjVFc+sT15qm
+	ndSSqESr+oKC5JwrMiCtRN6v3yh7qiw73WcH++KdseDqsXlm+2Ftbblk5/jrn9VSharYYVripZW
+	cOWFCbWDui4SrfDR/fRhoCgFpTDVFcdLpNoCPssKtsGKQE3YUWYliJlxeiU8fmeFeviGYGKPY8V
+	z3RoBhUS/cLxFnLP4vAhbr1yHFkstFeKyKbf/ZcIqP6+LNKjZI5oo9KoHqRg87zxYY6WH87IWTL
+	c1EGOb+OXGWHge4QziRG6Rog7zsPTGGdRs0Z2XPW30FrN2PAIxKZvOGAu2Zw0WgCWOap+2lR9Dz
+	vN48nUQdXKejBLdX7okcOwx2QZYtpEIntbHzp+NGVWSgp2UYytwZI8myxMN0d6a9cLlb+oysd
+X-Google-Smtp-Source: AGHT+IEhJaXUpm/3jABKEO0/i+uPSd6jtOc8RtyaMS8Pll7cTZNJiHYF2mPDEp+IH3Qy4jST8wMAwA==
+X-Received: by 2002:a17:903:2348:b0:248:a039:b6e3 with SMTP id d9443c01a7336-248a039be4emr5139285ad.10.1756354024077;
+        Wed, 27 Aug 2025 21:07:04 -0700 (PDT)
+Received: from google.com (3.32.125.34.bc.googleusercontent.com. [34.125.32.3])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b49cb88f4e5sm12850589a12.1.2025.08.27.21.07.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 Aug 2025 21:07:03 -0700 (PDT)
+Date: Thu, 28 Aug 2025 04:06:58 +0000
+From: Carlos Llamas <cmllamas@google.com>
+To: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
+	Pedro Falcato <pfalcato@suse.de>, kernel-team@android.com,
+	linux-kernel@vger.kernel.org,
+	"open list:MEMORY MAPPING" <linux-mm@kvack.org>
+Subject: Re: [PATCH] mm/mremap: fix regression in vrm->new_addr check
+Message-ID: <aK_V4sOUOIpEhFC-@google.com>
+References: <20250828032653.521314-1-cmllamas@google.com>
+ <xpxoxn25fzhahdyvjp2vgmcnek6oot2hhvb5niz3tw7au46eno@cixyid6ywf27>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV2PR12MB5968:EE_|CY5PR12MB6081:EE_
-X-MS-Office365-Filtering-Correlation-Id: b227aa56-405e-40d5-ef74-08dde5e7a4bb
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|1800799024|376014|366016|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?MFArdldmYmg5WnNZbmxZZnFEc0ppb3hrTmdiU1dNVVN1WG1la05zV1N1RTYw?=
- =?utf-8?B?cDNrbmNmaDZUbUVkczBqQlFGYjFQZWY3UUNRemgxSEJoRHlwTmhuT3lDRndj?=
- =?utf-8?B?WHFUaEx3UzdJeDE3VGR3eFAxdUVKMUlqc1NQaUF3dVpvUENuSWppSEN0RnhB?=
- =?utf-8?B?MWh1eFBNK0xHbFNQc2UrMGV0U21mc1dCTjVQR3Q5eUd3bDZyQ3FyNm5FSXVB?=
- =?utf-8?B?T0RlNUlkN1g1Ui9NbUNHdFhESmhMQnZJTU56WCtxNTI3NGRTaDI2QVhZS2xm?=
- =?utf-8?B?cVB0VnpZYWJYZTVIbHljSjR0YXhNR3RiR09IUDlIMjBnd2JYN0VPdWRDV0d5?=
- =?utf-8?B?Q3Mrcnl3OUJuTGxDL29zeXBoU2Zsbm8rdEsraS94NW1ieW5tYVpaTnQxWDJW?=
- =?utf-8?B?UTU1QXBHbnNCV2ZBK2ZnUllGT3BKNkRpeFVjTWpZVDltTDhKemkzMnNDKy9p?=
- =?utf-8?B?dmY3Q3lGQ3dySVRSWjZ3RlIweVJHZ21GWEhGdVpvTVFsN21uTTZMVURCa0Jw?=
- =?utf-8?B?aXpXRTFhQ3ZXSGhQcXRzb0R1QUdJbDM5Z1hiYjJNVFBtS3I0dHpCcWJZWUpU?=
- =?utf-8?B?OG9ZYjl5Mko4ZDVlc2pFTWVYempnLzQ5cjdEa0tuTDRFdU1ncXduRzZrb05u?=
- =?utf-8?B?TUMvUWxlNUs5dDRmck5yY2NVVERUd1pab0ZKZTk4SW9GSHQ3UDdvV3ExVzU4?=
- =?utf-8?B?YmtpK242UnlZUjVRWjRtN2pRcGkvQkpIT3FPc1V2bTcvQyszTkN3VURPQ0NR?=
- =?utf-8?B?MG03dWw3endqSjBmMUI4NURBV3RiZlRLN1E2SVptQTloTFJraUNxNEdxV1do?=
- =?utf-8?B?Y2NucFdCQlZsRkJzcm5xWTFkbTR3WXBBcUhUMEhTV2QzcnAzNU9tY3Y1K0M4?=
- =?utf-8?B?VHkySC9oRFIxU0VSNVZXaUVpaXo4MlB5VjZBRGxlYWh0MkRsclZ4SDJmMU1N?=
- =?utf-8?B?QTVEaDdIdjdRd0YyeFNGbEl2eC9mZ3I5dHFBOTBRdUhmRjdSdjhDVDlMSEdQ?=
- =?utf-8?B?ZWNqb2JMdHJzdy84eGIxV2R4WUJoengrUituNmxqL2JDQjRCcUdIbW5UV2w5?=
- =?utf-8?B?MXVLSy9QZVZVRVlXeE4xY3JycHFCZ2IzRlVnMDQ0RkNBd3NPTmQwbktjNUdh?=
- =?utf-8?B?SjBiUFdUTC9IRUlJWm5lUnRGNE9LWGl1alRhdlZKT284Y2JacS9tYWhXaEdG?=
- =?utf-8?B?eHJzanlsUEhEUXkrWlhySGhJNFF4SGw4eXNLT1Y4Z2w2K1dGUUNlbWE2Vm1h?=
- =?utf-8?B?aDRxVWhrL2tQZnQ5R3NGWkhGMTZtbXY1UkRCNzhiU0crcUNmVEdiTy9iRWs2?=
- =?utf-8?B?bEpTVk9pZFdNNnRIU1ZEUUVEUHBXQythT1VSTDRJUm9WYTZzUjc2VWFaNHZT?=
- =?utf-8?B?R2grYWlWQlFqY0xxUnh0RzVQOHZkL2J2emM3VDdMM2pjWlFkQ3BhRUxiTERw?=
- =?utf-8?B?Z2M3OFpOeGJzSklBWEVFQUZWNmVDNVdEQkxtbFlSeVFKalg3L2Fkek51UXNK?=
- =?utf-8?B?KzZyeU5BVjZxeGsyNU96RFlzdEVFZ1N2N1lyZXN2blM0bW0va3hGTlY1aFdL?=
- =?utf-8?B?RVJkRkR6MEFuTGlBZVlNMnlOc3ROTnB2M2UrbWVPMjJwblJ6WVJrektRYSs0?=
- =?utf-8?B?eFVjQ0xxQWJ4RFB0RVhQd290NkRrT1dNQmZEWjBkRzBHU0lHeDVtajZkY3E5?=
- =?utf-8?B?L29jWXBlUFNzam5IekxzUGFRK0RWcTE2ZkEwYnpPcjBTUnU5eDBuczRGclJZ?=
- =?utf-8?B?OStLbHY4aXQ5T29zQUUxK3FZditGOXVsQ0RtSkQvUGl4d0Y4N3pPYno2L3cw?=
- =?utf-8?B?UHJvdjBuYzZJd2NLMndYa2ZjSGc2aVdwbFpBUGJUVm5qZWlBQ2xaMDlQQ09M?=
- =?utf-8?B?UVBQMHpEODFHSmFiYWxoWUVUbzlmRjdOTlVHVVU1SDVUSVl1d3BKTUdaYncy?=
- =?utf-8?B?VElhS0tNWGNhbHJ2M1dpZFFaU0x3VHZjRXdqeURBUnhUNVhHQjlUazFFVlUv?=
- =?utf-8?B?OXpxUnlRbUNnPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV2PR12MB5968.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(376014)(366016)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?R25Vd2pHcGhsU2Z2RWZZbHRBZnpialZ0RGpLK1dONEZ3NStGN3loZHN4Vncv?=
- =?utf-8?B?Vm5VTXg5bEFEZS9ReWtCRmJVallTU2RhWXlNcnBQS2FjYzdDYmpPbDZXNmtB?=
- =?utf-8?B?dlRhTWx2SEpvY1BJbWljWmZNY25yTTNwZWlOT2FKT1Y1d1RHbmFzQmNLOUhn?=
- =?utf-8?B?YVNkM0RTYzl2SHFBdXF2eGRKZkxHTmlPSTRxdWFKYkZNVkhTUUliS3hCcFFM?=
- =?utf-8?B?QmJGbll1bmx1SG9SK0d1NlJkdWlNSTMrbXJoM1FsbmduZjltVU5DRllqamN2?=
- =?utf-8?B?ZDZ5NWxsMUoyQm9sLzlKN1Uvb3hnVTVpaDBURTVXeWxTU25jU2Z2cHJWcDg5?=
- =?utf-8?B?TDZOaHFOS0VzdzQwSXVneDUxbkQ5WmxYZlo1amZOZzRXS2tleHIrdUhpd24v?=
- =?utf-8?B?MzEyZldxcnJuLzc1bG1GcWFZdGNxWnVIR2dIQm0xMFpqTTZsZmhnNmRZdHVT?=
- =?utf-8?B?UkVPVjU0VWZieER2VkgxaGFOODlwSkg0U0JITWlTQnlLNTZjeTRYb1JhSm9y?=
- =?utf-8?B?a09udVFzV0tBN2ppdXRFSzFCY3poUHFUUk1jNGpDaVNwdDdzSEd0QmVvZ1Y4?=
- =?utf-8?B?QzBiWWxtZ2VsTXJjNWcyOEJtMlVBNlF0OU1WRERKMGpjUDdrVXk1ZDBGMzYx?=
- =?utf-8?B?NS8yYnIwb0NNSEFTcGhGZWIrMGZabXhHR2dSYWwwS1BCTDcxZkw3MXdHK2tI?=
- =?utf-8?B?Yk9TSzBWTHFWMHFycEhDWklDRmcwMUU2ZDVWTzJvemRNcVhLUjIxeVJhdjlh?=
- =?utf-8?B?TWIvZXZ3bUIzLzk0ckoyTkgwNW54WGpKc1dXWVhkN2ExR0lDSmRYYzJpS29V?=
- =?utf-8?B?TkZpYW5tWmhOWk04RldMQmxnSGRMZlNESU41Z1pCa3oyQnMyVmxnK1ZoMkto?=
- =?utf-8?B?N0VEeDdvUGJaQUFtQW5lOUNDMGs1SER0czRvQ3RXancxNWhXR1UwQXJNQmRP?=
- =?utf-8?B?S1VDdmNkbU9paThlMjNzYmFBSzZYcDNnT21IaDEwUzVVZmN5ZXd6bmhtc1ha?=
- =?utf-8?B?Q2U0elVRZTVSbnJvK25XLzlzSTU0Zkd5RmRtaGlIMTh4L3d0Y2VJMXJOd3pZ?=
- =?utf-8?B?eEhvNDQ4a1lVVG4ram1raEt6OGVIZWNmTmtTbFBNM1gwSHZlcmhjVE5SeSt3?=
- =?utf-8?B?QzhiMHlyQ3UvVlA4TU9CNjRvVHhFWDRoZHRCQllrM2F0UHBjUjVWRU54U3Jz?=
- =?utf-8?B?WXVuckwrWXVIQVdzTVc3MWkzL05ua2d0SXhwSzFlNnp0aGlQYkJKQitrUTdy?=
- =?utf-8?B?cXFmMW5ZU05kWTkwdTlOZTRXQTg2UVhYSzlIbnRWbjh6c3F2SUtGVm1WMldr?=
- =?utf-8?B?YVEyUStBV000Q21hVWtFdkxVbFJwMEhwSTdrcnBBY3FBN1NqcDJnVUhkU29n?=
- =?utf-8?B?WkQ1d1NhTCs4OGZrSWdPVzB5elJpNTVYNVU4dnpHYXdqNkV6NTkzMVZXK3F1?=
- =?utf-8?B?NW9EVmJ2YjEvOTh6dFlUcVViZ1p1VCtVMk5RS3FUOTJLTW15eVRQUGNtZk80?=
- =?utf-8?B?Z3d1WjhRQWdSeXJWMFRIRU1ZNlZkN3RpLzdEaTlCcHJvbGl6YmpCdVFBZ3Jk?=
- =?utf-8?B?cExFa3B0dXcxZmtScTVNVkU0TWR2UWJjM1pWUXZOblpkQ0l1aWRXZkdTTlB3?=
- =?utf-8?B?RHdMaXNiYXZmUDYvM2JiUm9sRVBzRGpBU3VYendLRDBKTklEeU9QeHE1a3k2?=
- =?utf-8?B?eGR6SSt5aXVidFF3ZjZwOUxTbCs4RFNXVDZaWWVlMWFDbW5pNVRmLzZOMWo2?=
- =?utf-8?B?eE9lb1FXYzBZdmZHcmExYkx6MEtUQjJjcEJZOU5uUEdMLzlGWkJYTnlTL3Z1?=
- =?utf-8?B?N0xJWWh6UFI3TzFad2VGWmdEVHZEazQrS2JhMWlYQXgwMUVOcjJtQTFQWHpa?=
- =?utf-8?B?QWRxZTB5bmk1cG4vVSsrekFkeGpEb3ZlMEJpNUhUMDNtZ3hoOVo5UGdRVHpP?=
- =?utf-8?B?QnFwckd1WTdyRW1pTkRVa2s2cDJQNGVKa3NmLzlVZENlWE9YNmtad1YzWUJn?=
- =?utf-8?B?a2h1bmVwb3czOUphT1BCaDVyK0dRN29YcjFYbkEwendMd0Z5dUp0M2ltVzMv?=
- =?utf-8?B?VFpxRE1XcW5YZlN6MmFVaG44TDdjUG5yVjBLNEpXZ2RXRnA1TGJlTk82WWxX?=
- =?utf-8?Q?h/cdextXkBLLn0XBgwkX/aCsL?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b227aa56-405e-40d5-ef74-08dde5e7a4bb
-X-MS-Exchange-CrossTenant-AuthSource: LV2PR12MB5968.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Aug 2025 04:02:02.3223
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: P7n2xc80Y1NboDhL+fknKFip8ZqxuDdW/F+/9LHRctzTk0Nn9CNTcGQaGlpvyqLRY1j7fQ7xGsu46fpq8yT7xw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6081
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <xpxoxn25fzhahdyvjp2vgmcnek6oot2hhvb5niz3tw7au46eno@cixyid6ywf27>
 
-On 8/25/25 9:07 PM, Alexandre Courbot wrote:
-> The GSP firmware is a binary blob that is verified, loaded, and run by
-> the GSP bootloader. Its presentation is a bit peculiar as the GSP
-> bootloader expects to be given a DMA address to a 3-levels page table
-> mapping the GSP firmware at address 0 of its own address space.
+On Wed, Aug 27, 2025 at 11:43:39PM -0400, Liam R. Howlett wrote:
+> * Carlos Llamas <cmllamas@google.com> [250827 23:27]:
+> > Commit 3215eaceca87 ("mm/mremap: refactor initial parameter sanity
+> > checks") moved the sanity check for vrm->new_addr from mremap_to() to
+> > check_mremap_params().
+> > 
+> > However, this caused a regression as vrm->new_addr is now checked even
+> > when MREMAP_FIXED and MREMAP_DONTUNMAP flags are not specified. In this
+> > case, vrm->new_addr can be garbage and create unexpected failures.
+> > 
+> > Fix this by moving the new_addr check after the vrm_implies_new_addr()
+> > guard. This ensures that the new_addr is only checked when the user has
+> > specified one explicitly.
+> > 
+> > Fixes: 3215eaceca87 ("mm/mremap: refactor initial parameter sanity checks")
+> > Signed-off-by: Carlos Llamas <cmllamas@google.com>
 > 
-> Prepare such a structure containing the DMA-mapped firmware as well as
-> the DMA-mapped page tables, and a way to obtain the DMA handle of the
-> level 0 page table.
-> 
-> As we are performing the required ELF section parsing and radix3 page
-> table building, remove these items from the TODO file.
-> 
-> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
-> ---
->  Documentation/gpu/nova/core/todo.rst  |  17 -----
->  drivers/gpu/nova-core/firmware.rs     | 110 +++++++++++++++++++++++++++++++-
->  drivers/gpu/nova-core/firmware/gsp.rs | 117 ++++++++++++++++++++++++++++++++++
->  drivers/gpu/nova-core/gsp.rs          |   4 ++
->  drivers/gpu/nova-core/nova_core.rs    |   1 +
->  5 files changed, 229 insertions(+), 20 deletions(-)
- 
-Code looks good. Or more accurately, it's working on my machine, and
-I think I understand it, aside from the SG Table internals.
+> I assume this showed up with clang?
 
-The documentation on the whole "radix 3" aspect is too light though, so
-I've created some that you can add in if you agree with it.
+Right.
 
-...
-> diff --git a/drivers/gpu/nova-core/firmware/gsp.rs b/drivers/gpu/nova-core/firmware/gsp.rs
-...
-> +/// A device-mapped firmware with a set of (also device-mapped) pages tables mapping the firmware
-> +/// to the start of their own address space, also known as a `Radix3` firmware.
-
-I'd like to replace the above two lines with something like this:
-
-/// GSP firmware with 3-level radix page tables for the GSP bootloader.
-///
-/// The bootloader expects firmware to be mapped starting at address 0 in GSP's virtual address
-/// space:
-///
-/// ```text
-/// Level 0:  1 page, 1 entry         -> points to first level 1 page
-/// Level 1:  Multiple pages/entries  -> each entry points to a level 2 page
-/// Level 2:  Multiple pages/entries  -> each entry points to a firmware page
-/// ```
-///
-/// Each page is 4KB, each entry is 8 bytes (64-bit DMA address).
-/// Also known as "Radix3" firmware.
-
-
-> +#[pin_data]
-> +pub(crate) struct GspFirmware {
-
-And then a slightly higher-level set of inline comments will help
-developers, I think:
-
-> +    /// The GSP firmware inside a [`VVec`], device-mapped via a SG table.
-> +    #[pin]
-> +    fw: SGTable<Owned<VVec<u8>>>,
-> +    /// The level 2 page table, mapping [`Self::fw`] at its beginning.
-
-Instead, how about:
-
-      /// Level 2 page table(s) whose entries contain DMA addresses of firmware pages.
-
-> +    #[pin]
-> +    lvl2: SGTable<Owned<VVec<u8>>>,
-> +    /// The level 1 page table, mapping [`Self::lvl2`] at its beginning.
-
-       /// Level 1 page table(s) whose entries contain DMA addresses of level 2 pages.
-
-> +    #[pin]
-> +    lvl1: SGTable<Owned<VVec<u8>>>,
-> +    /// The level 0 page table, mapping [`Self::lvl1`] at its beginning.
-
-       /// Level 0 page table (single 4KB page) with one entry: DMA address of first level 1 page.
-
-> +    lvl0: DmaObject,
-> +    /// Size in bytes of the firmware contained in [`Self::fw`].
-> +    pub size: usize,
-> +}
-> +
-> +impl GspFirmware {
-> +    /// Maps the GSP firmware image `fw` into `dev`'s address-space, and creates the page tables
-> +    /// expected by the GSP bootloader to load it.
-> +    pub(crate) fn new<'a>(
-> +        dev: &'a device::Device<device::Bound>,
-> +        fw: &'a [u8],
-> +    ) -> impl PinInit<Self, Error> + 'a {
-> +        try_pin_init!(&this in Self {
-> +            fw <- {
-> +                // Move the firmware into a vmalloc'd vector and map it into the device address
-> +                // space.
-> +                VVec::with_capacity(fw.len(), GFP_KERNEL)
-> +                .and_then(|mut v| {
-> +                    v.extend_from_slice(fw, GFP_KERNEL)?;
-> +                    Ok(v)
-> +                })
-> +                .map_err(|_| ENOMEM)
-> +                .map(|v| SGTable::new(dev, v, DataDirection::ToDevice, GFP_KERNEL))?
-> +            },
-> +            lvl2 <- {
-
-Why must we use a strange vowel-removal algorithm for these vrbl nms? I'll let you have
-a few extra characters and you can spell out "level2"...
-
-> +                // Allocate the level 2 page table, map the firmware onto it, and map it into the
-> +                // device address space.
-> +                // SAFETY: `this` is a valid pointer, and `fw` has been initialized.
-> +                let fw_sg_table = unsafe { &(*this.as_ptr()).fw };
-> +                VVec::<u8>::with_capacity(
-> +                    fw_sg_table.iter().count() * core::mem::size_of::<u64>(),
-> +                    GFP_KERNEL,
-> +                )
-> +                .map_err(|_| ENOMEM)
-> +                .and_then(|lvl2| map_into_lvl(fw_sg_table, lvl2))
-> +                .map(|lvl2| SGTable::new(dev, lvl2, DataDirection::ToDevice, GFP_KERNEL))?
-> +            },
-> +            lvl1 <- {
-> +                // Allocate the level 1 page table, map the level 2 page table onto it, and map it
-> +                // into the device address space.
-> +                // SAFETY: `this` is a valid pointer, and `lvl2` has been initialized.
-> +                let lvl2_sg_table = unsafe { &(*this.as_ptr()).lvl2 };
-> +                VVec::<u8>::with_capacity(
-> +                    lvl2_sg_table.iter().count() * core::mem::size_of::<u64>(),
-> +                    GFP_KERNEL,
-> +                )
-> +                .map_err(|_| ENOMEM)
-> +                .and_then(|lvl1| map_into_lvl(lvl2_sg_table, lvl1))
-> +                .map(|lvl1| SGTable::new(dev, lvl1, DataDirection::ToDevice, GFP_KERNEL))?
-> +            },
-> +            lvl0: {
-> +                // Allocate the level 0 page table as a device-visible DMA object, and map the
-> +                // level 1 page table onto it.
-> +                // SAFETY: `this` is a valid pointer, and `lvl1` has been initialized.
-> +                let lvl1_sg_table = unsafe { &(*this.as_ptr()).lvl1 };
-> +                let mut lvl0 = DmaObject::new(dev, GSP_PAGE_SIZE)?;
-> +                // SAFETY: we are the only owner of this newly-created object, making races
-> +                // impossible.
-> +                let lvl0_slice = unsafe { lvl0.as_slice_mut(0, GSP_PAGE_SIZE) }?;
-> +                lvl0_slice[0..core::mem::size_of::<u64>()].copy_from_slice(
-> +                    #[allow(clippy::useless_conversion)]
-> +                    &(u64::from(lvl1_sg_table.iter().next().unwrap().dma_address())).to_le_bytes(),
-> +                );
-> +
-> +                lvl0
-> +            },
-> +            size: fw.len(),
-> +        })
-> +    }
-> +
-> +    #[expect(unused)]
-> +    /// Returns the DMA handle of the level 0 page table.
-> +    pub(crate) fn lvl0_dma_handle(&self) -> DmaAddress {
-> +        self.lvl0.dma_handle()
-> +    }
-> +}
-> +
-> +/// Create a linear mapping the device mapping of the buffer described by `sg_table` into `dst`.
-
-How about this:
-
-/// Build a page table from a scatter-gather list.
-///
-/// Takes each DMA-mapped region from `sg_table` and writes page table entries
-/// for all 4KB pages within that region. For example, a 16KB SG entry becomes
-/// 4 consecutive page table entries.
-
-> +fn map_into_lvl(sg_table: &SGTable<Owned<VVec<u8>>>, mut dst: VVec<u8>) -> Result<VVec<u8>> {
-> +    for sg_entry in sg_table.iter() {
-> +        // Number of pages we need to map.
-> +        let num_pages = (sg_entry.dma_len() as usize).div_ceil(GSP_PAGE_SIZE);
-> +
-> +        for i in 0..num_pages {
-> +            let entry = sg_entry.dma_address() + (i as u64 * GSP_PAGE_SIZE as u64);
-> +            dst.extend_from_slice(&entry.to_le_bytes(), GFP_KERNEL)?;
-> +        }
-> +    }
-> +
-> +    Ok(dst)
-> +}
-> diff --git a/drivers/gpu/nova-core/gsp.rs b/drivers/gpu/nova-core/gsp.rs
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..a0e7ec5f6c9c959d57540b3ebf4b782f2e002b08
-> --- /dev/null
-> +++ b/drivers/gpu/nova-core/gsp.rs
-> @@ -0,0 +1,4 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +pub(crate) const GSP_PAGE_SHIFT: usize = 12;
-> +pub(crate) const GSP_PAGE_SIZE: usize = 1 << GSP_PAGE_SHIFT;
-> diff --git a/drivers/gpu/nova-core/nova_core.rs b/drivers/gpu/nova-core/nova_core.rs
-> index cb2bbb30cba142265b354c9acf70349a6e40759e..fffcaee2249fe6cd7f55a7291c1e44be42e791d9 100644
-> --- a/drivers/gpu/nova-core/nova_core.rs
-> +++ b/drivers/gpu/nova-core/nova_core.rs
-> @@ -9,6 +9,7 @@
->  mod firmware;
->  mod gfw;
->  mod gpu;
-> +mod gsp;
->  mod regs;
->  mod util;
->  mod vbios;
-> 
-
-thanks,
--- 
-John Hubbard
-
+The specific test that broke on our end was this:
+https://android.googlesource.com/platform/bionic/+/HEAD/tests/__cxa_atexit_test.cpp
+Although I'm not exactly sure how __cxa_atexit() implementation uses
+mremap() underneath.
 
