@@ -1,262 +1,130 @@
-Return-Path: <linux-kernel+bounces-790772-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F3DDB3ACD4
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 23:39:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA4ECB3ACD6
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 23:42:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EACF2583CF8
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 21:39:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD2AF5679D6
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 21:42:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0659E2C08D6;
-	Thu, 28 Aug 2025 21:39:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 078E62C08A8;
+	Thu, 28 Aug 2025 21:42:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="acnOw0HF"
-Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com [209.85.221.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S/vkktAM"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 711BF265CAD;
-	Thu, 28 Aug 2025 21:39:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B109D233149;
+	Thu, 28 Aug 2025 21:42:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756417185; cv=none; b=QXPFsGWonc8PPc+5pE0hBjVo03O6CRNy0tkXxqUOQ/jbYAgrpgF3aiMUjX7VMC1VSnhrNPUsXQk7/S664vMZaw/J1kgHa/TuRms8y6WYlszRNMUZkz0zysVuHel+sVHdFuQW20CggmWlJ9g5/jSlzP0jKZ6gpMi/8m4QrL1vALE=
+	t=1756417360; cv=none; b=sq6LP4Mi/KceWwLCj1vYr+41H9M3oQObaeE01NXCEe20BupYmQU/8OIstGi2+bFLZeYH4m2uh6Nnlio+FqwoBr3gdAU/I05/K3UvAAyGHuT7pn5eKdsuLmGHORdhInFJHRh7+YKzCYiGMmc3pxvWagV36qvB+bBw/ugG5yrB8TA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756417185; c=relaxed/simple;
-	bh=2KkWaDBRS33p7HdwYM8eCBIZQvlmy9NRnHCc7OAPd0g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RVmub1CB37yWT4rq3zckt7xotfSoPSs3rGXC0vZvWP5hQvKWvg0ucWMWgsQ/MivV+/1+Cyog6y0kk33cuKY0KnqVfvvwbBuqAYJRjK8hbCUi5KrM2e3BZsfD38clPEGIO6iNBRPl8u1VW9RbAVX8xkSYaUE98v8dsmf857dRc4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=acnOw0HF; arc=none smtp.client-ip=209.85.221.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1756417360; c=relaxed/simple;
+	bh=xjr5vpGJs1J/e7rC+/meiCErZfsT4MdioSkHrPuOXCs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CvdyorkTrxAPuBR8LqZUyG6U+3j/BBhiV5C3GSSvJ7pDyx3Bsi8SXtRleZSjz1bge228HREZMm+Rvf/9gUgJ81iQqP6kqnYrZtzvF1DkHpN+4oergZzg1mLiGCIwlIXLZ4yHpAcHaW4PFteE5KWtjEEXpP7vcCyhI0YPHI3eyqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S/vkktAM; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f175.google.com with SMTP id 71dfb90a1353d-54479be00edso560248e0c.2;
-        Thu, 28 Aug 2025 14:39:43 -0700 (PDT)
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-770593ba164so1247952b3a.3;
+        Thu, 28 Aug 2025 14:42:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756417182; x=1757021982; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=egeVb4jL6h5nFyN9xRw5wQS4OVht2YfrG8JsM55WIk4=;
-        b=acnOw0HFcLCfQ7qj6IJRR53gYKxPVJuwItrfiQpJsKyhBw16PyedPZxkvw7NB2H+eF
-         9flYZXLbxEaanv1ZpGV8+Id6UdEqylw1PeEfYNYwRrLLpvG0hh2l5ga/GocXmAV75jHp
-         4bSm7UTwQsPUwWvSB5EEIw1bvcxeicaBeYcBkFkpx+0UbFjwdyRXRHTJQDir2ma66/aL
-         QGO7EbG6Nyju7ScyMHTWtbymtJWNwcvHcA/nXJ2xaJyUSoOcjbdZbe2RFQl9gBSSgc/1
-         Zdlmcxr33YkDYNIxq9Kw51cJ2PhtF5SHJCwnKBEtOmjD8YRO8PW3q72j6e6abWkNIip3
-         ZfVQ==
+        d=gmail.com; s=20230601; t=1756417358; x=1757022158; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UH9yk2TefOta60JYDpWqpgDhndjOgYlNivFhyfwD81I=;
+        b=S/vkktAMBHQZsU/e1jhtjlvTwOInpCsTLoOoxcCOnRnVVjcJYoKnxEarC39aVLZT/N
+         EQMMe7TOwjwalQErbS2P6tZt/SY/+6Ys0PfeoMdGPj1eZYgnvYKYdPqOyzQOYgy7XWJ6
+         26NDb9smkpDcDFD1UBtK0ykVJeD2TEwQVSkn6Piq6ozkyDr5sBX41BT1UK5uV85FNnfj
+         KcRZpaaqa59ejsm2vn75HzbP+sbEBEPdNFBfdNpu3zo8wNWoy8xMIEeLlyp4wrkEMFbJ
+         uVouSfQg4OxJs83aPgcf7nwQYkKvAptOsNNAqyt++swuMdJW8QlXGmhJhsFueYGtSxL4
+         sYLQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756417182; x=1757021982;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1756417358; x=1757022158;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=egeVb4jL6h5nFyN9xRw5wQS4OVht2YfrG8JsM55WIk4=;
-        b=K/qAcxK62ZaCGIB1AAf0bLumHJ8BOMtFE5cXRf4JlfLrmKD7RBLj4pmOqR9YG73hep
-         mG5Nb9Sq4v9T3Q1lzyx856JDL27MRF6rczKtc0ti7c5LAbLkjRQtRN5GLPmVLvxxx0WQ
-         hsXiptCjwZdFJAfSPLqM7rs6EZx/aDbNqThU6gwpOlDps/DJ1AKl2Lt/jT5nsb/XCTd6
-         SkSM0lT7+i8It9O6kRMJMoWw/ls4D0AV63TxTMP/IPokVZJ5Z4p532zqNTsVbAY6Pdpy
-         fZsTt1dHNId7eHvNqomSAbAA7AbqAfdSaHIAZXX7b3ucvrLMB4EjTfkg0OveJMzvjwE9
-         pKfg==
-X-Forwarded-Encrypted: i=1; AJvYcCUfMno33jax2s/nIWUOQdqwaa1Xsi3nRoeV/OvDiiSrbfUpY0SvdyuWHCL/k3+AWbx5T0wUBf5FJqypYxY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz63/xq832FGLCXoNQFVgb0VQdoZcKZlc6E1G9Wf/19uIGT87Wn
-	cZKFCDKECz80yqUezjYBDdXitX5jhtNGNz8cmcL6jDdQftK8zJJ/3OtWIldE06JyGmZusB1lA6A
-	p07QmzEmXJ6H5pnU7e4a7aKPNR//tryU=
-X-Gm-Gg: ASbGncvTWzhtD2JNMk44AZ7s9ciacXTtLkLzzyUf87LF8DVYhZ4VbDi7/nmcNOZGGH3
-	s1ZimVO1aVKnGF7B17nOGQpMC58KAcnlx89kEIZO1vNfn+5mGOxwNiGGpSDEB44VNC6ov0cDMKn
-	Xp7ce0wfVrinYqP5yxOlYToEwsRNSQkwZKcYs0HEDUrfRFrT180qKegqrNkdJJl7VMn6KaQjFne
-	IbjS9ukc9dS1T7J0ck0v7bB1U7R
-X-Google-Smtp-Source: AGHT+IHie7MOkNsj8efrQCm04ILQxwbVuLefNNdiQWU7MzTGW0l35HwAhXQIlJpyb1p2xzNAzusa/ZuPiM79Z7UDlew=
-X-Received: by 2002:a05:6102:5e86:b0:523:b5c8:2b0b with SMTP id
- ada2fe7eead31-523b5d7ac6dmr4910509137.12.1756417182085; Thu, 28 Aug 2025
- 14:39:42 -0700 (PDT)
+        bh=UH9yk2TefOta60JYDpWqpgDhndjOgYlNivFhyfwD81I=;
+        b=bgbMlDcySsllOKe913COrs5KFG//QUlB1bG4ONf5sS5iUV90+15ZwcnRJxAUvG/+Sn
+         Z4tevBcEBn0goJQE4YT4AFFm2sEQ9GucU0x2xQITSIlKXzJqIm+RyoiTqb1pwVTrr+QO
+         u5m8Qk83pnGbGBpjYJD9uMuf8gLDU6MGBsAxEF1jK/xQGkCxNpjq7KVjMAyS22hrzyoK
+         VYuFvJpX3TKQsbQawLaN2hnjpMsIZyacCKl7QxzWISYxUJ18Z9TrlYgDPu/IMUUMGL+C
+         efr5INkSrcecU0GHz7wkhSCfYmrF54kaMJP87cZL4TwX1yGwtGUAmcCi43cFXXrLu4W5
+         V/iw==
+X-Forwarded-Encrypted: i=1; AJvYcCUTcWRPTPtl5lzz5rNe5ZGBtUaHQ1xnLFdaLdL4Jwf025n0qH+CaIldG6QbvdG2W2bRLxPCEqwcbGKcBA==@vger.kernel.org, AJvYcCWM29rnZuzqhRwrqWVpV39A2uieAkP4ks+kCzx6+9SCFjqEX09gQ4hC0nepEkxRWN+juXOd3JXvft0HqbJk@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzg7deuYNkiylgLlRY3PA3/e7SWMpDWJDCLUMRjQZrPb0X7VTFz
+	KvdsPtNCpa/0aAQA3OYLVbmFn+W8mYxQY33QUO1nxZYBHrEx3wKCgoz1
+X-Gm-Gg: ASbGnctN2zb/UqNKfNt1eF3XiE1tS6WR+2BpudptlwRhVYEr6edJMYS4nmOjiJWBP5c
+	YDXdiI5WAR+ohS7DJjmdDe7alhbLodU5rgwvVVF3TAyXLn72StrsHEUNZmzByJpEyQ6lxTy5qzk
+	u8nMxbWSRB6FXwEZZG0bFWb0Vbqe3wyG54dSFbtDisYfgAaSQUndmlaYqdfZVJtFQv3Y68E40+R
+	LJbQsFEgAbI7PjXY4THo9KA2VmnMeQjwlZWRl4ROgJfjUw9qREBAv154i1dxX5X9YEB1ynbuMVg
+	AlC0t3NyUsi2YB3LGYd8u/FyfrXm8UrMlcLrMQqtBO1sUazVIgoagqrpmel2dgkIfJ8aLJJA0xc
+	tRiu93giwZCPtVGFvI9+6X4qZxppktIzSoMo=
+X-Google-Smtp-Source: AGHT+IFbmPeOe2DEWj5n1YBIu2SCDkJ5FxtzV5CUXT9pOd/gpNsxXld2ouUQ9eJ48pUXXbLHarUVQw==
+X-Received: by 2002:a05:6a20:3943:b0:243:a4de:d9a with SMTP id adf61e73a8af0-243a4de1259mr8475947637.44.1756417357923;
+        Thu, 28 Aug 2025 14:42:37 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3276fcd48cesm6119880a91.19.2025.08.28.14.42.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Aug 2025 14:42:37 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Thu, 28 Aug 2025 14:42:36 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Sohil Mehta <sohil.mehta@intel.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>, linux-hwmon@vger.kernel.org,
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
+	Zhang Rui <rui.zhang@intel.com>,
+	Dave Hansen <dave.hansen@intel.com>, x86@kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] hwmon: (coretemp) Replace x86_model checks with VFM
+ ones
+Message-ID: <9f1fbf32-fd37-420c-82bc-a43e6d5ef57a@roeck-us.net>
+References: <20250828201729.1145420-1-sohil.mehta@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250801043642.8103-1-kanchana.p.sridhar@intel.com>
- <20250801043642.8103-23-kanchana.p.sridhar@intel.com> <CAGsJ_4xRij-Vz_-dmL44YLvaQrYLKKnw7O_Skedrxj_YxuaT5Q@mail.gmail.com>
- <PH7PR11MB8121532CE4368DF5BAA6D46DC939A@PH7PR11MB8121.namprd11.prod.outlook.com>
- <CAGsJ_4xMuLPy3+mAxzOj6SfnFZaDf+B=WkmbrCNqv8gvK080Fw@mail.gmail.com>
- <PH7PR11MB8121B86E65349F5CF854CA57C939A@PH7PR11MB8121.namprd11.prod.outlook.com>
- <CAGsJ_4zt9zQFh1mz6gpQOCWBOjz1osN9jTd62uKGf865vRwuLA@mail.gmail.com> <PH7PR11MB8121C1B5965584AA8E59C0B7C938A@PH7PR11MB8121.namprd11.prod.outlook.com>
-In-Reply-To: <PH7PR11MB8121C1B5965584AA8E59C0B7C938A@PH7PR11MB8121.namprd11.prod.outlook.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Fri, 29 Aug 2025 09:39:30 +1200
-X-Gm-Features: Ac12FXwKgcdDELJZzuofq3TYBazdJbuunzZRTQMwHeFHqBjqIkT5JByIMca79Ik
-Message-ID: <CAGsJ_4zjPxSjrSomm3E3gOuW+AqiTKwUHJ34q9m9aJb3y3vEKw@mail.gmail.com>
-Subject: Re: [PATCH v11 22/24] mm: zswap: Allocate pool batching resources if
- the compressor supports batching.
-To: "Sridhar, Kanchana P" <kanchana.p.sridhar@intel.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, 
-	"hannes@cmpxchg.org" <hannes@cmpxchg.org>, "yosry.ahmed@linux.dev" <yosry.ahmed@linux.dev>, 
-	"nphamcs@gmail.com" <nphamcs@gmail.com>, "chengming.zhou@linux.dev" <chengming.zhou@linux.dev>, 
-	"usamaarif642@gmail.com" <usamaarif642@gmail.com>, "ryan.roberts@arm.com" <ryan.roberts@arm.com>, 
-	"ying.huang@linux.alibaba.com" <ying.huang@linux.alibaba.com>, 
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>, 
-	"senozhatsky@chromium.org" <senozhatsky@chromium.org>, 
-	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>, 
-	"herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>, "davem@davemloft.net" <davem@davemloft.net>, 
-	"clabbe@baylibre.com" <clabbe@baylibre.com>, "ardb@kernel.org" <ardb@kernel.org>, 
-	"ebiggers@google.com" <ebiggers@google.com>, "surenb@google.com" <surenb@google.com>, 
-	"Accardi, Kristen C" <kristen.c.accardi@intel.com>, "Gomes, Vinicius" <vinicius.gomes@intel.com>, 
-	"Feghali, Wajdi K" <wajdi.k.feghali@intel.com>, "Gopal, Vinodh" <vinodh.gopal@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250828201729.1145420-1-sohil.mehta@intel.com>
 
-On Wed, Aug 27, 2025 at 12:06=E2=80=AFPM Sridhar, Kanchana P
-<kanchana.p.sridhar@intel.com> wrote:
->
->
-> > -----Original Message-----
-> > From: Barry Song <21cnbao@gmail.com>
-> > Sent: Monday, August 25, 2025 10:17 PM
-> > To: Sridhar, Kanchana P <kanchana.p.sridhar@intel.com>
-> > Cc: linux-kernel@vger.kernel.org; linux-mm@kvack.org;
-> > hannes@cmpxchg.org; yosry.ahmed@linux.dev; nphamcs@gmail.com;
-> > chengming.zhou@linux.dev; usamaarif642@gmail.com;
-> > ryan.roberts@arm.com; ying.huang@linux.alibaba.com; akpm@linux-
-> > foundation.org; senozhatsky@chromium.org; linux-crypto@vger.kernel.org;
-> > herbert@gondor.apana.org.au; davem@davemloft.net;
-> > clabbe@baylibre.com; ardb@kernel.org; ebiggers@google.com;
-> > surenb@google.com; Accardi, Kristen C <kristen.c.accardi@intel.com>;
-> > Gomes, Vinicius <vinicius.gomes@intel.com>; Feghali, Wajdi K
-> > <wajdi.k.feghali@intel.com>; Gopal, Vinodh <vinodh.gopal@intel.com>
-> > Subject: Re: [PATCH v11 22/24] mm: zswap: Allocate pool batching resour=
-ces
-> > if the compressor supports batching.
-> >
-> > > > > > [...]
-> > > > > > >
-> > > > > > > +       /*
-> > > > > > > +        * Set the unit of compress batching for large folios=
-, for quick
-> > > > > > > +        * retrieval in the zswap_compress() fast path:
-> > > > > > > +        * If the compressor is sequential (@pool->compr_batc=
-h_size is
-> > 1),
-> > > > > > > +        * large folios will be compressed in batches of
-> > > > > > ZSWAP_MAX_BATCH_SIZE
-> > > > > > > +        * pages, where each page in the batch is compressed
-> > sequentially.
-> > > > > > > +        * We see better performance by processing the folio =
-in batches
-> > of
-> > > > > > > +        * ZSWAP_MAX_BATCH_SIZE, due to cache locality of wor=
-king
-> > set
-> > > > > > > +        * structures.
-> > > > > > > +        */
-> > > > > > > +       pool->batch_size =3D (pool->compr_batch_size > 1) ?
-> > > > > > > +                               pool->compr_batch_size :
-> > ZSWAP_MAX_BATCH_SIZE;
-> > > > > > > +
-> > > > > > >         zswap_pool_debug("created", pool);
-> > > > > > >
-> > > > > > >         return pool;
-> > > > > > >
-> > > > > >
-> > > > > > It=E2=80=99s hard to follow =E2=80=94 you add batch_size and co=
-mpr_batch_size in this
-> > > > > > patch, but only use them in another. Could we merge the related
-> > changes
-> > > > > > into one patch instead of splitting them into several that don=
-=E2=80=99t work
-> > > > > > independently?
-> > > > >
-> > > > > Hi Barry,
-> > > > >
-> > > > > Thanks for reviewing the code and for your comments! Sure, I can =
-merge
-> > > > > this patch with the next one. I was trying to keep the changes
-> > modularized
-> > > > > to a) zswap_cpu_comp_prepare(), b) zswap_store() and c)
-> > > > zswap_compress()
-> > > > > so the changes are broken into smaller parts, but I can see how t=
-his can
-> > > > > make the changes appear disjointed.
-> > > > >
-> > > > > One thing though: the commit logs for each of the patches will
-> > > > > also probably need to be merged, since I have tried to explain th=
-e
-> > > > > changes in detail.
-> > > >
-> > > > It=E2=80=99s fine to merge the changelog and present the story as a=
- whole. Do we
-> > >
-> > > Sure.
-> > >
-> > > > really need both pool->batch_size and pool->compr_batch_size? I ass=
-ume
-> > > > pool->batch_size =3D pool->compr_batch_size if HW supports batch;
-> > otherwise
-> > > > pool->compr_batch_size =3D 1.
-> > >
-> > > Actually not exactly. We have found value in compressing in batches o=
-f
-> > > ZSWAP_MAX_BATCH_SIZE even for software compressors. Latency benefits
-> > > from cache locality of working-set data. Hence the approach that we h=
-ave
-> > > settled on is pool->batch_size =3D ZSWAP_MAX_BATCH_SIZE if
-> > > the compressor does not support batching (i.e., if pool->compr_batch_=
-size is
-> > 1).
-> > > If it does, then pool->batch_size =3D pool->compr_batch_size.
-> >
-> > I understand that even without a hardware batch, you can still
-> > have some software batching that excludes compression.
-> >
-> > However, based on the code below, it looks like
-> > pool->compr_batch_size is almost always either equal to
-> > pool->batch_size or 1:
-> >
-> > +       pool->compr_batch_size =3D min(ZSWAP_MAX_BATCH_SIZE,
-> > +                                    crypto_acomp_batch_size(acomp_ctx-=
->acomp));
->
-> I would like to explain some of the considerations in coming up with this
-> approach:
->
-> 1) The compression algorithm gets to decide an optimal batch-size.
->     For a hardware accelerator such as IAA, this value could be different
->     than ZSWAP_MAX_BATCH_SIZE.
->
-> 2) ZSWAP_MAX_BATCH_SIZE acts as a limiting factor to the # of acomp_ctx
->     per-CPU resources that will be allocated in zswap_cpu_comp_prepare();
->     as per Yosry's suggestion. This helps limit the memory overhead for
->     batching algorithms.
->
-> 3) If a batching algorithm works with a batch size "X" , where
->      1 < X < ZSWAP_MAX_BATCH_SIZE, two things need to happen:
->      a) We want to only allocate "X" per-CPU resources.
->      b) We want to process the folio in batches of "X", not ZSWAP_MAX_BAT=
-CH_SIZE
->           to avail of the benefits of hardware parallelism. This is the c=
-ompression
->           step size you also mention.
->           In particular, we cannot treat batch_size as ZSWAP_MAX_BATCH_SI=
-ZE,
->           and send a batch of ZSWAP_MAX_BATCH_SIZE pages to zswap_compres=
-s()
->           in this case. For e.g., what if the compress step-size is 6, bu=
-t the new
->           zswap_store_pages() introduced in patch 23 sends 8 pages to
->           zswap_compress() because ZSWAP_MAX_BATCH_SIZE is set to 8?
->           The code in zswap_compress() could get quite messy, which will =
-impact
->           latency.
+On Thu, Aug 28, 2025 at 01:17:29PM -0700, Sohil Mehta wrote:
+> From: Dave Hansen <dave.hansen@linux.intel.com>
+> 
+> Intel CPUs have been using Family 6 for a while. The Family-model checks
+> in the coretemp driver implicitly assume Family 6. With the upcoming
+> Family 18 and 19 models, some of these checks fall apart.
+> 
+> While reading the temperature target MSR, cpu_has_tjmax() performs model
+> checks only to determine if a device warning should be printed. Instead
+> of expanding the checks, get rid of the function and print the warning
+> once unconditionally if the MSR read fails. The checks aren't worth
+> preventing a single line warning to dmesg.
+> 
+> Update the rest of the x86_model checks with VFM ones to make them more
+> robust. This automatically covers the upcoming Family 18 and 19 as well
+> as any future extended families.
+> 
+> Add a code comment to reflect that none of the CPUs in Family 5 or
+> Family 15 set X86_FEATURE_DTHERM. The VFM checks do not impact these
+> CPUs since the driver does not load on them.
+> 
+> Missing-signoff: Dave Hansen <dave.hansen@linux.intel.com>
+> Signed-off-by: Sohil Mehta <sohil.mehta@intel.com>
 
-If ZSWAP_MAX_BATCH_SIZE is set to 8 and there is no hardware batching,
-compression is done with a step size of 1. If the hardware step size is 4,
-compression occurs in two steps. If the hardware step size is 6, the first
-compression uses a step size of 6, and the second uses a step size of 2.
-Do you think this will work?
+Checkpatch really doesn't like that:
 
-I don=E2=80=99t quite understand why you want to save
-ZSWAP_MAX_BATCH_SIZE - X resources, since even without hardware batching
-you are still allocating all ZSWAP_MAX_BATCH_SIZE resources. This is the
-case for all platforms except yours.
+ERROR: Missing Signed-off-by: line by nominal patch author 'Dave Hansen <dave.hansen@linux.intel.com>'
 
-Thanks
-Barry
+Never mind, applied anyway.
+
+Guenter
 
