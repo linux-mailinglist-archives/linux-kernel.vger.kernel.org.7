@@ -1,105 +1,123 @@
-Return-Path: <linux-kernel+bounces-789512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789514-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8459EB39692
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 10:15:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92365B39694
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 10:15:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A06146811C
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 08:14:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C6E6B7A9830
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 08:14:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4863D2D979B;
-	Thu, 28 Aug 2025 08:13:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 063F62E0921;
+	Thu, 28 Aug 2025 08:15:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="l/oj5KD7"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L5pm+NUo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3B0BEEBB;
-	Thu, 28 Aug 2025 08:13:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 531BA287250;
+	Thu, 28 Aug 2025 08:15:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756368830; cv=none; b=P6h+yIskyWyokseRK+16isREtDiRsXyWefQlxAWkXJc7c4zlk6dVqV3lzkJrHaHIyO2rw+DPhtQwqTih//i4zzd+kNUPhG2PgxHJRjH+iA3WK94mixMOtr+kUyhdVV9knNGwzD4tho2yowtRREkFgB/oxG7EF97GtgxoI2ykSCQ=
+	t=1756368919; cv=none; b=Aes0aKYOU3nnxtWwX0iSFlMDiT7nq3Us9I2YJpee4PzvpmaDmB5gJ80btIyc0mh1HAIpRDAo8RonDu1c5j0Mpn6RZNqsS9XC5mKJHASTG1XyXJhoyRJtYaqH8PtEmQkL7GLIPYWZ5KOFi6pK9bwD0ltgtuYNS83V+ZoRDZzQFig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756368830; c=relaxed/simple;
-	bh=0ec3aHc9rTQHwxagpGPLyfaYrEpAbfy9iYUSC/Xfnt8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cCJXxYn/e0xmZqRVtA+BorNtmZsadfA2cHQ/KuGbF0qfAxTX3g9blnDXDgx5vuRbtonfAndPUZeyepKgI1hHdBj5es6H/Jt/3R9SaHg4OrpznCYf+j+gsdjItEq0DZR5lNSADEfegXF79kJ23jI/AtP//szywf4RdBD6d4nT3aU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=l/oj5KD7; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756368829; x=1787904829;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=0ec3aHc9rTQHwxagpGPLyfaYrEpAbfy9iYUSC/Xfnt8=;
-  b=l/oj5KD7g5UFinr3wbJnHpV/+iS3wuUUVnMWHl3qCUFY/Z6KMwXiGuqu
-   iIRk/BkQUyZyU+psZ1ka62ndPZgu6Vm++El/aWOHGpEjNwtqfSo6hnAIT
-   Ihi1dniE9c9TZxrxcfZpXPTzv5InTGDyKMVgOIO0X6ZUwDWMh7icoItCH
-   +FiybSDHkZYS4imFzp1rZm74R0IDzrxUQtah46fipmkPlWhK5kJ4I87kR
-   syIO5XGccgBUb7KTGmn/FsSOGUroOUq/m8ayzoDpKRLshsUMBaX2cCEfL
-   aOyCpUtxOaiqMhQMiW7N+ZZIkGksvS3WvxzGUVgD2/0TiFl3WEkLNpx/+
-   w==;
-X-CSE-ConnectionGUID: kakF3BcyQW+fZCDIXn7rqA==
-X-CSE-MsgGUID: wTZQ1/qZQqechapROMxoTQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="58572826"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="58572826"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2025 01:13:48 -0700
-X-CSE-ConnectionGUID: 8SrWHMtZT7aMaJCdAOfRng==
-X-CSE-MsgGUID: C+8UEnoeRVqsgr8OOcL9fg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,217,1751266800"; 
-   d="scan'208";a="169573392"
-Received: from black.igk.intel.com ([10.91.253.5])
-  by fmviesa007.fm.intel.com with ESMTP; 28 Aug 2025 01:13:46 -0700
-Received: by black.igk.intel.com (Postfix, from userid 1001)
-	id 0879094; Thu, 28 Aug 2025 10:13:45 +0200 (CEST)
-Date: Thu, 28 Aug 2025 10:13:45 +0200
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-To: Daniel Tang <danielzgtg.opensource@gmail.com>
-Cc: linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Subject: Re: [PATCH v2] acpi: TAD: Add missing sysfs_remove_group for
- ACPI_TAD_RT
-Message-ID: <20250828081345.GV476609@black.igk.intel.com>
-References: <7674021.TlGXAFRqVo@daniel-desktop3>
- <20250828051203.GU476609@black.igk.intel.com>
- <2881298.hMirdbgypa@daniel-desktop3>
+	s=arc-20240116; t=1756368919; c=relaxed/simple;
+	bh=g2lTC5uR3MixSy5OjRk19PLAva0CsX5zTwQHzepZbuo=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=QJMb5YaOqIuW8v5FPwRYwl+WkEkpne9NN/UTn/ZKW/v9BG+yTA6qhGEAo1BMNlXnxdb/p3nNYHadPejGbenpLzyqZ/F3wt+OXL1SiZBcEPTezFaP+fOOP4Tdknq2UVu10Tat67NZZHNrb8Vxf5F//v8D+A8uB+JR85I//KiniBk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L5pm+NUo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id E0492C4CEEB;
+	Thu, 28 Aug 2025 08:15:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756368918;
+	bh=g2lTC5uR3MixSy5OjRk19PLAva0CsX5zTwQHzepZbuo=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=L5pm+NUorNK7RlsnfgRY57fexSWZtZ86S/hxzUdnTMhIVikYE7ouQgKNVZedOY+XS
+	 DP/fJltNaecDDU5g9aT/HDaIk6iRAAx6a7vMXWGMh/2Bbh47qAYIjB+XtXrakD3FgF
+	 rFXR9iHFg01sI99iFLJxbF7I4vgwjy3cZ3Kwyhyr5tljqtWQuyQvmUJigvB4HSEiB5
+	 h2LfXgcpVVvZNeKOggu7SHLEOhRZlBB0Uu+ofwAttHpZUNeLd+UVZdY9r/yZi3O7lK
+	 abRlWfuoQ/oXF3D3tWzSMubTh2a/acYownnJfjmYcrwV98dUyyp0QRgeCHYsnuuW1l
+	 fnzGg0WIpzBwQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEE46C8303F;
+	Thu, 28 Aug 2025 08:15:18 +0000 (UTC)
+From: Dmitry Safonov via B4 Relay <devnull+dima.arista.com@kernel.org>
+Subject: [PATCH net-next v2 0/2] tcp: Destroy TCP-AO, TCP-MD5 keys in
+ .sk_destruct()
+Date: Thu, 28 Aug 2025 09:14:54 +0100
+Message-Id: <20250828-b4-tcp-ao-md5-rst-finwait2-v2-0-653099bea5c1@arista.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <2881298.hMirdbgypa@daniel-desktop3>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAP4PsGgC/42OywrCMBBFf0Vm7Wg7NhJc+R/SRR5TO4smkoSqS
+ P/dtODe5eVwDvcDmZNwhsvuA4lnyRJDHbTfgRtNuDOKrxuoIdVoIrQdFvdAE3HyClMuOEh4Gim
+ EfD6R7bwelPZQA4/Eg7y2+A0CFwz8KtBXYk1mtMkEN67xHztORsJqjpJLTO/t1dxu/j8H5hYbJ
+ KVJ+UYr7+zVpFoyBxcn6Jdl+QIgS8R77wAAAA==
+X-Change-ID: 20250822-b4-tcp-ao-md5-rst-finwait2-e632b4d8f58d
+To: Eric Dumazet <edumazet@google.com>, 
+ Neal Cardwell <ncardwell@google.com>, Kuniyuki Iwashima <kuniyu@google.com>, 
+ "David S. Miller" <davem@davemloft.net>, David Ahern <dsahern@kernel.org>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Simon Horman <horms@kernel.org>
+Cc: Bob Gilligan <gilligan@arista.com>, 
+ Salam Noureddine <noureddine@arista.com>, 
+ Dmitry Safonov <0x7f454c46@gmail.com>, netdev@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Dmitry Safonov <dima@arista.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1756368907; l=1439;
+ i=dima@arista.com; s=20250521; h=from:subject:message-id;
+ bh=g2lTC5uR3MixSy5OjRk19PLAva0CsX5zTwQHzepZbuo=;
+ b=VHzkVgPWkQAsGqXS0y+DD9MzNSRlIzE0DydTew6QZyFJtvhFDmrHzXWjU1CR6rNpvo2QwEIS7
+ q21CXRCAIf+BxwWt7tX5OrnjvOuwLoG6XwygthuEvAywQQUoKKhdVWN
+X-Developer-Key: i=dima@arista.com; a=ed25519;
+ pk=/z94x2T59rICwjRqYvDsBe0MkpbkkdYrSW2J1G2gIcU=
+X-Endpoint-Received: by B4 Relay for dima@arista.com/20250521 with
+ auth_id=405
+X-Original-From: Dmitry Safonov <dima@arista.com>
+Reply-To: dima@arista.com
 
-On Thu, Aug 28, 2025 at 01:38:14AM -0400, Daniel Tang wrote:
-> Previously, after `rmmod acpi_tad`, `modprobe acpi_tad` would fail
-> with this dmesg:
-> 
-> sysfs: cannot create duplicate filename '/devices/platform/ACPI000E:00/time'
-> Call Trace:
->  <TASK>
->  dump_stack_lvl+0x6c/0x90
->  dump_stack+0x10/0x20
->  sysfs_warn_dup+0x8b/0xa0
->  sysfs_add_file_mode_ns+0x122/0x130
->  internal_create_group+0x1dd/0x4c0
->  sysfs_create_group+0x13/0x20
->  acpi_tad_probe+0x147/0x1f0 [acpi_tad]
->  platform_probe+0x42/0xb0
->  </TASK>
-> acpi-tad ACPI000E:00: probe with driver acpi-tad failed with error -17
-> 
-> Fixes: 3230b2b3c1ab ("ACPI: TAD: Add low-level support for real time capability")
-> Signed-off-by: Daniel Tang <danielzgtg.opensource@gmail.com>
+On one side a minor/cosmetic issue, especially nowadays when
+TCP-AO/TCP-MD5 signature verification failures aren't logged to dmesg.
 
-Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Yet, I think worth addressing for two reasons:
+- unsigned RST gets ignored by the peer and the connection is alive for
+  longer (keep-alive interval)
+- netstat counters increase and trace events report that trusted BGP peer
+  is sending unsigned/incorrectly signed segments, which can ring alarm
+  on monitoring.
+
+Signed-off-by: Dmitry Safonov <dima@arista.com>
+---
+Changes in v2:
+- Fixed TCP-MD5 ifdeffery (Reported-by: Victor Nogueira)
+- Call proper destructor for inet_ipv6 (Reported-by: syzbot@syzkaller.appspotmail.com)
+- Link to v1: https://lore.kernel.org/r/20250822-b4-tcp-ao-md5-rst-finwait2-v1-0-25825d085dcb@arista.com
+
+---
+Dmitry Safonov (2):
+      tcp: Destroy TCP-AO, TCP-MD5 keys in .sk_destruct()
+      tcp: Free TCP-AO/TCP-MD5 info/keys without RCU
+
+ include/net/tcp.h        |  4 ++++
+ net/ipv4/tcp.c           | 16 ++++++++++++++++
+ net/ipv4/tcp_ao.c        |  5 ++---
+ net/ipv4/tcp_ipv4.c      | 37 ++++++++++---------------------------
+ net/ipv4/tcp_minisocks.c | 19 +++++--------------
+ net/ipv6/tcp_ipv6.c      |  8 ++++++++
+ 6 files changed, 45 insertions(+), 44 deletions(-)
+---
+base-commit: d4854be4ec21dad23907c0fbc3389c3a394ebf67
+change-id: 20250822-b4-tcp-ao-md5-rst-finwait2-e632b4d8f58d
+
+Best regards,
+-- 
+Dmitry Safonov <dima@arista.com>
+
+
 
