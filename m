@@ -1,135 +1,122 @@
-Return-Path: <linux-kernel+bounces-789319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789311-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A4DDB393DD
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 08:34:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9250CB393C9
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 08:32:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CBCB68618A
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 06:34:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 59CB3205BFA
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 06:32:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A71A527816E;
-	Thu, 28 Aug 2025 06:34:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A231124A046;
+	Thu, 28 Aug 2025 06:32:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="f6JqcjoN"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="b/WxGr7+";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="HCWS8eRt"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A6C117B425;
-	Thu, 28 Aug 2025 06:34:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B21013DDAA
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 06:32:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756362853; cv=none; b=YEN9jVYFrgZN1oGJrlBNqcB1K4s5z0COMZmvauC2Z9t1WIUm3NFUnWaspk1KSfQ9A6esUk/8JZsSeQu0Ua877zEwA197YFXssUH8PK96PRPP7nmvX8u3dC7Z2pfwDKFo+n/HbUZq6VTQdq65Jqv2I0O05bTlTrYFjGTlj8mfveI=
+	t=1756362736; cv=none; b=WaimKZokfq4MufZO21y3gsgoyrUv6EYfk/r9pwoaYVz4a6o7DOysOJWqiKWxUaD0JfcUitsXZlhWsxca/GkBktcPAaF9ByRPTHw1NhCL9nx661+sqRbmxon2Ci1eGtEpb9DU5tm2LPQOcxGmnSgLXdsezuDCK/7bnLDkaKnF46Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756362853; c=relaxed/simple;
-	bh=XXs7jk6xzSEBZU958NV6zlmgJxBqMpIrd5rXCKYwiQ8=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=cwGs+OeIQ1WVhzrUkRyPwDzde4cEecz2HbRSoNac0W5xI8Gh2ULTRRJYiZOJ5HrtV5sl8yJimbm6Esm+3o7Hk6d6MvEjchkcZ3z3OMcXCGvOl72QqLJELYbG4ZyTh9Sanu2PuQ08QFLvRxDCKqIjTAmm9AOJtevEjeONBtsmX4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=f6JqcjoN; arc=none smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: f8495da883d811f0b33aeb1e7f16c2b6-20250828
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=ULhWCMRnfloXSUOUb5D++K1tzuZ3+YXJYVeiwkdjmeI=;
-	b=f6JqcjoN6QKY3SrBy1St1yNmmlv8yJpC8apS75UVln/BaoZ2EKqBgYv0j6k1NA4opNEDt/HwCVagFd3+vsZ/38RrVJvWX16rdNtzuqR2OxTqO7oWuVjAcB0H5qJA0f38TCHmqqAD9KucZD5NxMDgn5CGkjoUmFziV1fp6JsBBuY=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.3.3,REQID:5d86f7b4-7348-4f7e-be94-79e9417123f9,IP:0,UR
-	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
-	elease,TS:0
-X-CID-META: VersionHash:f1326cf,CLOUDID:f777b26d-c2f4-47a6-876f-59a53e9ecc6e,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:-5,Content:0|15|50,EDM:-3,IP:
-	nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,L
-	ES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 2,SSN|SDN
-X-CID-BAS: 2,SSN|SDN,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: f8495da883d811f0b33aeb1e7f16c2b6-20250828
-Received: from mtkmbs13n2.mediatek.inc [(172.21.101.108)] by mailgw02.mediatek.com
-	(envelope-from <paul-pl.chen@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1737505082; Thu, 28 Aug 2025 14:33:55 +0800
-Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
- MTKMBS14N2.mediatek.inc (172.21.101.76) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.39; Thu, 28 Aug 2025 14:33:53 +0800
-Received: from mtksitap99.mediatek.inc (10.233.130.16) by
- mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1258.39 via Frontend Transport; Thu, 28 Aug 2025 14:33:53 +0800
-From: Paul Chen <paul-pl.chen@mediatek.com>
-To: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-	<chunkuang.hu@kernel.org>, <angelogioacchino.delregno@collabora.com>
-CC: <matthias.bgg@gmail.com>, <p.zabel@pengutronix.de>,
-	<jason-jh.lin@mediatek.com>, <nancy.lin@mediatek.com>,
-	<singo.chang@mediatek.com>, <xiandong.wang@mediatek.com>,
-	<sirius.wang@mediatek.com>, <paul-pl.chen@mediatek.com>,
-	<sunny.shen@mediatek.com>, <fshao@chromium.org>, <treapking@chromium.org>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<dri-devel@lists.freedesktop.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-arm-kernel@lists.infradead.org>,
-	<Project_Global_Chrome_Upstream_Group@mediatek.com>, Krzysztof Kozlowski
-	<krzysztof.kozlowski@linaro.org>
-Subject: [PATCH 01/19] dt-bindings: arm: mediatek: mmsys: add compatible for MT8196
-Date: Thu, 28 Aug 2025 14:31:52 +0800
-Message-ID: <20250828063327.3475747-1-paul-pl.chen@mediatek.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1756362736; c=relaxed/simple;
+	bh=b/6wVIc2eK9oO/vtAOEBW9WbL9AC2Yb6EtMmDI2rGvI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=f5WPrz9sHplAf9MeknulaplhJJJnrohN7xsuhoY/3uneg+u9bUwe3xRGJxMveaKpp8wIltOPKWuhNlcyl4htlWzu6nBUxpCVD+unLUiHDCGrhptk3qAACy4CczI3HlaVCNwN7i6ozOKqEjVM2ds0Tq7+lVmHLqe1SovTzr0QP9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=b/WxGr7+; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=HCWS8eRt; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 28 Aug 2025 08:32:11 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1756362732;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zeXvl9rWyQ+AyXYarOAzt5ngzr4AnZGT+81doiYne2s=;
+	b=b/WxGr7+3JU7anpOWZatoNobPZdpln6pspZGgFv5QoSPqvYnVfAcRBAdF9bJLGGy1f98bk
+	1E+5/YQ1AfVtmrLhEYTVc4F23lkp3JIziFDmKsbCkaADBX3zdGSyiQ/1WqXpxrmRBLZ5VA
+	Tg9EKRn1ZYBLnP8856qQKbVlToHx4GE+Js12KFmdsjbhnw4upq8kb33tqY5SvfmCvEiq/C
+	kS2AYCr2W3uj9ZBvVEvcfp0zt3OgLVl8b/hfqPvj64hDgm/buA6uW96mN7DSDNlibA3676
+	oOnsSIdxOnPamH3Na7+/QD0bwad4EEJzWoJZzCjkNMBXEEljQCQBA812yUrdag==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1756362732;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zeXvl9rWyQ+AyXYarOAzt5ngzr4AnZGT+81doiYne2s=;
+	b=HCWS8eRtKadzblK0l11lpueI9CqURbTlQqEHWQ/erwU0PZyAvGSmgI0gHQ41pk+/c8LK/E
+	zPjUyb60OuN248Dg==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Waiman Long <llong@redhat.com>
+Cc: =?utf-8?B?QW5kcsOp?= Almeida <andrealmeid@igalia.com>,
+	linux-kernel@vger.kernel.org, Darren Hart <dvhart@infradead.org>,
+	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Borislav Petkov <bp@alien8.de>, kernel-dev@igalia.com
+Subject: Re: [PATCH] selftests/futex: Fix futex_numa_mpol's memory out of
+ range subtest
+Message-ID: <20250828063211.h-gpZAEb@linutronix.de>
+References: <20250827154420.1292208-1-andrealmeid@igalia.com>
+ <9d4c0d27-0ebd-4c6d-af38-d32ef420fde4@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <9d4c0d27-0ebd-4c6d-af38-d32ef420fde4@redhat.com>
 
-From: Nancy Lin <nancy.lin@mediatek.com>
+On 2025-08-27 13:58:50 [-0400], Waiman Long wrote:
+> On 8/27/25 11:44 AM, Andr=C3=A9 Almeida wrote:
+> > --- a/tools/testing/selftests/futex/functional/futex_numa_mpol.c
+> > +++ b/tools/testing/selftests/futex/functional/futex_numa_mpol.c
+> > @@ -168,6 +168,17 @@ int main(int argc, char *argv[])
+> >   	ksft_set_plan(1);
+> >   	mem_size =3D sysconf(_SC_PAGE_SIZE);
+> > +
+> > +	/*
+> > +	 * The "Memory out of range" test depends on having a pointer to an
+> > +	 * invalid address. To make this test deterministic, and to not depend
+> > +	 * on the memory layout of the process, create a "buffer zone" with
+> > +	 * PROT_NONE just before the valid memory (*futex_ptr).
+> > +	 */
+> > +	buffer_zone =3D mmap(NULL, mem_size, PROT_NONE, MAP_PRIVATE | MAP_ANO=
+NYMOUS, 0, 0);
+> > +	if (buffer_zone =3D=3D MAP_FAILED)
+> > +		ksft_exit_fail_msg("mmap() for %d bytes failed\n", mem_size);
+> > +
+> >   	futex_ptr =3D mmap(NULL, mem_size, PROT_READ | PROT_WRITE, MAP_PRIVA=
+TE | MAP_ANONYMOUS, 0, 0);
+> >   	if (futex_ptr =3D=3D MAP_FAILED)
+> >   		ksft_exit_fail_msg("mmap() for %d bytes failed\n", mem_size);
+>=20
+> This patch makes the assumption that consecutive mmap() calls will alloca=
+te
+> pages consecutively downward from a certain address. I don't know if this
+> assumption will be valid in all cases. I think it will be safer to just
+> allocate the 2-page memory block and then change the 2nd page protection =
+to
+> PROT_NONE to make it a guard page.
 
-In previous SoCs, a single HW pipeline was an independent mmsys,
-which included the OVL module, PQ module, and display interface
-module.
+You shouldn't make any assumption about mmap()'s returned pointer unless
+you pass it as the addr argument and expect it to be followed.
+Using two pages and making the second a guard page sounds sane.
 
-In the 8196, to increase the flexibility of pipeline connection
-and control, the OVL module on a single HW pipeline was separated
-into two mmsys, namely ovlsys0 and ovlsys1. The PQ module was also
-separated into a dispsys0, and the display interface module was
-separated into a dispsys1. Additionally, display power-related
-settings are controlled through vdiso-ao.
+> Cheers,
+> Longman
 
-For example:
-The primary path and external path of the display both use
-ovlsys0 -> dispsys0 -> dispsys1, forming a pipeline.
-
-The third path of the display uses ovlsys1 -> dispsys0 -> dispsys1,
-forming another pipeline.
-
-Therefore, the 8196 needs to add 5 compatible string to support
-mmsys for MT8196.
-
-Signed-off-by: Nancy Lin <nancy.lin@mediatek.com>
-Signed-off-by: Paul-pl Chen <paul-pl.chen@mediatek.com>
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- .../devicetree/bindings/arm/mediatek/mediatek,mmsys.yaml     | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.yaml b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.yaml
-index 3f4262e93c78..5f244a8f6a47 100644
---- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.yaml
-+++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.yaml
-@@ -39,6 +39,11 @@ properties:
-               - mediatek,mt8195-vdosys1
-               - mediatek,mt8195-vppsys0
-               - mediatek,mt8195-vppsys1
-+              - mediatek,mt8196-dispsys0
-+              - mediatek,mt8196-dispsys1
-+              - mediatek,mt8196-ovlsys0
-+              - mediatek,mt8196-ovlsys1
-+              - mediatek,mt8196-vdisp-ao
-               - mediatek,mt8365-mmsys
-           - const: syscon
- 
--- 
-2.45.2
-
+Sebastian
 
