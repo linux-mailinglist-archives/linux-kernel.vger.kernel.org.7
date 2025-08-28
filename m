@@ -1,391 +1,276 @@
-Return-Path: <linux-kernel+bounces-789601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77783B39801
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 11:18:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4980FB39761
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 10:45:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2730B7ADCC9
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 09:16:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A2F7189AA86
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 08:46:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFCD52F84F;
-	Thu, 28 Aug 2025 09:17:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D8682BE642;
+	Thu, 28 Aug 2025 08:45:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="ZVeDCsU7"
-Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2055.outbound.protection.outlook.com [40.107.101.55])
+	dkim=pass (1024-bit key) header.d=valinux.co.jp header.i=@valinux.co.jp header.b="bYWfbzto"
+Received: from TY3P286CU002.outbound.protection.outlook.com (mail-japaneastazon11010007.outbound.protection.outlook.com [52.101.229.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F06C426D4EB;
-	Thu, 28 Aug 2025 09:17:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 545281C01
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 08:45:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.229.7
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756372669; cv=fail; b=u7JosGsWzt8NMMk+JzI0L12oMLN5pofge6BAUfloOBEsnUdrGEr0TFkpS/gwr3BFRz/ZL0UB4U60riU7xFQ8XpJbEsZECL9vyIDTZMlLtuS61pBlkQPLiJ2I6tZNf+jeem3RzvKfivI1CssEOgQiu97dFDb2sCc0XE2fVBIoL9k=
+	t=1756370736; cv=fail; b=B6UkX/OzjqTMxwsFmnWzyYFi/MhWKvgp1CsvVR7oElq2D5/SBs4mkrt1gC05F4/vJo6T8E10mYv76ba0sqyIEzqpEwuLVVGSN0Ia4BgUGHO1Qm8BdvE7NQkKhYZvAKMAB1cNpbgfue7Drm59HTuMC969x5djSK71eU84vO56eNY=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756372669; c=relaxed/simple;
-	bh=urtqQysZ02JmxXHaMNZYLoUPK5OsX/kpkCdn+GbEEMg=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=bLJDtpdis8DZxFoucSBwE/QiThriJ2fr0c2k3jn4thCkNbMRBACbCHR4Q2TBdIfcTcnJW0I6HNAh+tcyKgvaYNas5f8iV/h2rrsruD9mZ59sSKe+CiRx58cX2zmkFbA7eJnGnqjcZNYzOMaSnh0Mlb22Cx3kUlVJBJpCSqdpXMw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=ZVeDCsU7; arc=fail smtp.client-ip=40.107.101.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	s=arc-20240116; t=1756370736; c=relaxed/simple;
+	bh=5aLRV+wgwAWpuZ2cvxlWUG8caJyzpPN9XzhEq0Q2yWk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=AifIDRw5B0QNd3S8za9oeO5yio2yxvmC+ynPYCn1X59fFwkqcMjmVgNzAhGDlOYC1JgoodgzTQ33LjUa9U4UbshdgwDdWIzyuRw8SSkzRM3NNDXGtmY2k8v86c6hNDjhLbxHSuGE+5JyEdZhtKqymooriqnHgDVr48/CXzP5o8o=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=valinux.co.jp; spf=pass smtp.mailfrom=valinux.co.jp; dkim=pass (1024-bit key) header.d=valinux.co.jp header.i=@valinux.co.jp header.b=bYWfbzto; arc=fail smtp.client-ip=52.101.229.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=valinux.co.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=valinux.co.jp
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Lc0nzR4q718+9FAmdaQa3RsU2xQN3NZ8Wg8f5f3S8xfTCoOQeM/kaHCubAPJTlvjQEnk3gXk1nqUXnFn1fqlEpxCjFErecCubJ5OHzgJIKs2pdQulTF/krHY+Jrxu1X6Cjv6k9FgO+dl/cXURY7C3CAQu8vE+DJrnbGFoEtvwM2Sf/Q++HgCgBr0R42RqDsuWz/ArgeNElNgNPPrEwestyFx7Dq9hwkRLVZp+Sot1p6/YxlAmMgJ06c6A2jKRWPLKtVLsYLi0rgX4O+FuGpt57fWfBwepFx3Rgco+NtqA4kQmrhDBt52sUD6OvQLt6rnbp4qQCbLcBH/tY/8NagjNw==
+ b=nY19IKiq/TS+gm4xyKZQoMww0cdbb/sxW0aXqd7aJIHI2JFzvRuvoqbA+rOryLzKvNrkn0jY2YPpubSlTsfeShs9kYhcs32ydl+ZynUtl5IJgtxhsV2JC4xHP7HYrcIEcPR6tchAfwd+qbjcM/p8eh+nGZi6Ug5ltDWwYrePDqCyDsNH8C9CjgqEKVdTXQHln1z/qsdXsW6L8IsQBXz8TCC2c4QIaLayVtOY52TwAwa8Sv00SsxnrVf5BuvJDmY35gB+9Nw0sT0qCJDlFhfsF/uoH0jKoJioUuYHJ0TMC+lxqg4eMu1mqwry6t2oAYV9zJl1JWrCBy/a74/ITuTStw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=DLxVZ3sJvbVJ7+yBPnAEUieQGTrl5VIy0BJ5vQ1cSvY=;
- b=YbQgVpWksfz+h68Cmi3XbJmimxJesGyYoyk4fR9Q/9mZuL7r9STJxEY5tKgafZc0rx/CesnplEnkz58wl3CL4a1m3PrJ4KfewiICrYiq/PrBj7qOjH53TvcKaVtioq0A39KEthl/PaAkczsRJ1JkdNJi7XC20ymZhdbAkaxr8cv5pVpm3WfuH3V29aXg6Gfcx0OQlkoKyvQ4p2oshShfVMDFeYenpGwiuky60zMZxV5AyclnowJeGfaKI9BUWCr2RvblqdG1U2wLx/f8bYV5qXlFf6ystRmnwk7xSuG6luMbQ6YOWz1yH9vBp+B8+WbJYQI4tKMux4XWAP98/kr37Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ bh=411DjGnlOoCasSlo5p1YCXGIsl+51VxnzAEP+HB7vPs=;
+ b=k+7gMkTqUPth3fIMJO26cfc/WYyEAZJdb5+9YJYKp8ap/SHqglcdEMwWk0qskCOSFcFcgv/RQng22h47mHIgMXhnvTJT1CmhEGLfvOs3Af+XNJx/ofAXs7w+4NlRhjoTd6sEXlq8YsrIndj6bGK11K4ujMI46GAVevY51hquO05CnFIvRoGFhoQX7ttpz2GDQLLZurUHYlr7wTY8Bqew99GqBaDdHpNGa74KqPVsZPwi9u2TUUGcNqGln5q8G6giSrC9M0p3YNbpD/Bdkzc9Ev5/TyCpC5+TE8DvC+sf4sSVadppqV4YMOUYpSxMTV18HkXcFwABKAYVvu1An2TOlg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=valinux.co.jp; dmarc=pass action=none
+ header.from=valinux.co.jp; dkim=pass header.d=valinux.co.jp; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=valinux.co.jp;
+ s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DLxVZ3sJvbVJ7+yBPnAEUieQGTrl5VIy0BJ5vQ1cSvY=;
- b=ZVeDCsU76VExz5vdNKf6B9LTLYYbxzQi4CewcnVXkNKWFpf9qSZX6oSImfNinLBOeHeNiZWf9A73hG0pl57W/sVWSdI8MCpSs2f6K5U9TQB9CpGQjIz9ATziRiiiisr1RDxg9QgRwy7Xz/OJwfQtMkWYZCkxTzmtfobVsleAf9Q=
-Received: from CH0PR08CA0008.namprd08.prod.outlook.com (2603:10b6:610:33::13)
- by CY5PR12MB6298.namprd12.prod.outlook.com (2603:10b6:930:21::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.15; Thu, 28 Aug
- 2025 09:17:35 +0000
-Received: from CH2PEPF000000A0.namprd02.prod.outlook.com
- (2603:10b6:610:33:cafe::f6) by CH0PR08CA0008.outlook.office365.com
- (2603:10b6:610:33::13) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9073.18 via Frontend Transport; Thu,
- 28 Aug 2025 09:17:35 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- CH2PEPF000000A0.mail.protection.outlook.com (10.167.244.26) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.9052.8 via Frontend Transport; Thu, 28 Aug 2025 09:17:35 +0000
-Received: from Satlexmb09.amd.com (10.181.42.218) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 28 Aug
- 2025 03:45:29 -0500
-Received: from 555e2b870847.amd.com (10.180.168.240) by satlexmb09.amd.com
- (10.181.42.218) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.1748.10; Thu, 28 Aug
- 2025 01:45:24 -0700
-From: Bin Du <Bin.Du@amd.com>
-To: <mchehab@kernel.org>, <hverkuil@xs4all.nl>,
-	<laurent.pinchart+renesas@ideasonboard.com>, <bryan.odonoghue@linaro.org>,
-	<sakari.ailus@linux.intel.com>, <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	<linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<sultan@kerneltoast.com>
-CC: <pratap.nirujogi@amd.com>, <benjamin.chan@amd.com>, <king.li@amd.com>,
-	<gjorgji.rosikopulos@amd.com>, <Phil.Jawich@amd.com>,
-	<Dominic.Antony@amd.com>, <mario.limonciello@amd.com>,
-	<richard.gong@amd.com>, <anson.tsao@amd.com>, <bin.du@amd.com>, Bin Du
-	<Bin.Du@amd.com>
-Subject: [PATCH v3 0/7] Add AMD ISP4 driver
-Date: Thu, 28 Aug 2025 16:45:00 +0800
-Message-ID: <20250828084507.94552-1-Bin.Du@amd.com>
-X-Mailer: git-send-email 2.34.1
+ bh=411DjGnlOoCasSlo5p1YCXGIsl+51VxnzAEP+HB7vPs=;
+ b=bYWfbztoiuwkyA1RHOy9NXJ6aQgxAhq19UsFDPZxeHMt7sGkF12nxU9wTYvpc2rKzI8V9VOjnuIt/W0IfrKNZ7gnQpOFzw55LeHEekaxoZvm4POV7YqT8i8N0A7QbGzGBIB3qK0isd6FLrTrYdMKCwQ585hjod0QBdcxhN5mrqs=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=valinux.co.jp;
+Received: from OSZP286MB0982.JPNP286.PROD.OUTLOOK.COM (2603:1096:604:fe::6) by
+ TY3P286MB3582.JPNP286.PROD.OUTLOOK.COM (2603:1096:400:3ad::9) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9052.21; Thu, 28 Aug 2025 08:45:30 +0000
+Received: from OSZP286MB0982.JPNP286.PROD.OUTLOOK.COM
+ ([fe80::fb9b:13f3:8329:52e3]) by OSZP286MB0982.JPNP286.PROD.OUTLOOK.COM
+ ([fe80::fb9b:13f3:8329:52e3%5]) with mapi id 15.20.9052.019; Thu, 28 Aug 2025
+ 08:45:28 +0000
+Date: Thu, 28 Aug 2025 17:45:21 +0900
+From: Koichiro Den <den@valinux.co.jp>
+To: Marc Zyngier <maz@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, tglx@linutronix.de, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] irqchip/gic-v3-its: Fix invalid wait context lockdep
+ report
+Message-ID: <s2soy7omtrouwk6hdrpcmid526cy7gsh6eopvt52hd77lqi5jd@yovvnge7grt6>
+References: <20250827073848.1410315-1-den@valinux.co.jp>
+ <86h5xtdj6m.wl-maz@kernel.org>
+ <pkfekcmetqyoj7rwvr77kisu7ok7bc6srq5maoydisnsk4bnyy@wimnw744lp5t>
+ <86cy8fev72.wl-maz@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <86cy8fev72.wl-maz@kernel.org>
+X-ClientProxiedBy: TYCP286CA0153.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:383::15) To OSZP286MB0982.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:604:fe::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To satlexmb09.amd.com
- (10.181.42.218)
-X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PEPF000000A0:EE_|CY5PR12MB6298:EE_
-X-MS-Office365-Filtering-Correlation-Id: 95ebf81c-804e-46fa-3eef-08dde613ba04
+X-MS-TrafficTypeDiagnostic: OSZP286MB0982:EE_|TY3P286MB3582:EE_
+X-MS-Office365-Filtering-Correlation-Id: 60cd4f38-b46c-4679-7295-08dde60f39d4
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|82310400026|36860700013|1800799024|13003099007;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016|10070799003;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?U6o4IHgUzy0r73XbF0EvFdCwL5k0qMLMK7EA+1+exSy6nv2xA+QJcK6W8Eom?=
- =?us-ascii?Q?krtTIPZdW5WiqRuLCN5WqN6uaTm+lL8y+S2FIaf1p005kepu2l3BXlOjoIP9?=
- =?us-ascii?Q?KgcpXYojehO88JA2b2LY75s5U+LEQDgzA9bsbMEATxehoizhfLFd+2dnqr31?=
- =?us-ascii?Q?K+zwj9ZczjZrrnekZtGASk7lEhtlMbYA8Pwrs5eGGH8vBrofX6Sv4CrXUsgP?=
- =?us-ascii?Q?Bbm06x4rA42DY65evJsrwdYMsi/tWeidBqaJVI5mFPdTSG3zCUI443E0jSqZ?=
- =?us-ascii?Q?g8xyeMiEpr9ffVQND9IKGj251bVx9vCxla1Mkf3ndYLbW8YytiZjAGp3aU4J?=
- =?us-ascii?Q?PhRGCivmMZLHrb3mUk1YB60fWmlhy1rD8MgaWs46gTLSo92KRO0yMp01ze2s?=
- =?us-ascii?Q?2x/BwuR+fzuGpmk69hXw5CWh5CcunwUrmU29MEzhPrHXNkY2w2VqCtX5VfNQ?=
- =?us-ascii?Q?TvJeR/YUZu93+bYh1ZlEucwkixYBXirXgQPyZTVJWwf34FNtwt2S0SyYhPOk?=
- =?us-ascii?Q?AP9os9C++wX7VsRXAprSS7lNRwi8lU9QslZ6YaRJtWHztbtAhad0tNpZayvh?=
- =?us-ascii?Q?Isql6/gVdVJOLYxHQhwFMLitPr5X93r7+dG0Zs2l2IeoDcSqE51LI5ffK4R9?=
- =?us-ascii?Q?R3YiuxeCvm/E3zgcVMqe6L43lVeKOX/rEYc+yHqopxKi7rkKmH/RJOlTOs5D?=
- =?us-ascii?Q?2Q98k/8ijBn6Xy3iFjIpowXU6+aGPDXwJef+cULoHlJsY9rjaLVwN/mhCKZi?=
- =?us-ascii?Q?ljmJseKUskzdXoF7/2QuKnB4W7Q/zIQ0AZqPPV+rRmXfqgk35ISm9L1KkcBh?=
- =?us-ascii?Q?v8U5z+JSbPjnOkg1ILatKRw1fHA1dWyFHISQUwFEUNLv6JhT5jwOqPAIIKJq?=
- =?us-ascii?Q?zM42lJLcmFqCa8hjqCQIUEnZXVdmRQD8ILIqeRCQbVlkUDSBuEcvgVdgSyj6?=
- =?us-ascii?Q?yHqgNUYU5oF6A9GoHlfb8FX43+cIs+e0NGGqjy5kvN2doDwfdHsMEpKcY7N5?=
- =?us-ascii?Q?n0qJ8LKTFgJYfz8RfvsCeLASDsWD+EXlrMToeCafFnFCHYvE0Ws0Y227564k?=
- =?us-ascii?Q?ovC80BFE7c1ef90RbSEAEEs11wPvbJLzZnLmMp8LqcL6QX79/MghQB6ZgB4L?=
- =?us-ascii?Q?T9Db5I96fvhURPflVyGeMJPbJO2dOrmPSm5yYk8f8B4yodifT23+eLP1EE0G?=
- =?us-ascii?Q?84Zhe5kpghqghgNu1lf9y3U9KTJe+Xb4hf9X90gXwlc/d6mD2Zd+9vBIyJqd?=
- =?us-ascii?Q?9VN9aZNhi55i5SBPxc9rzkJfZ9kf3A0w//lKIHPGTdxPijvjbSmmXTZrtOPP?=
- =?us-ascii?Q?EnppyNUQbAfWK3preuvJLQAGFduv1J5o7bJ0fAqpI/lJgk0BBcnMnafXF9As?=
- =?us-ascii?Q?1V/oJCkeeOKWpeHxDIvWdNCXqrl0JoraTiRzdHoevZa6jMjzd8om7tb313Yj?=
- =?us-ascii?Q?hscZYy5IeMjH6kh+CFdTVQVpxPEiJc60trsE1dppHcoucvMMjizMXw=3D=3D?=
+	=?us-ascii?Q?wCOBPFTR8yzxpGpQlB4auHiczUuiPrD2jRGJRorPLiBRaE/Rn3TVRF8VR5zL?=
+ =?us-ascii?Q?gK2tBf6OTKR5eY+DNqOQbx4D8zfnHxVM/cDX8gRiGND68Fi/+6kUIJHU6stN?=
+ =?us-ascii?Q?9TWd5y+gayKZ0wbtqqkoI+c4adO5T3ObbFiUwB4hSjmza2j2NTlDXEnbuagd?=
+ =?us-ascii?Q?6Lw72x7KR18Tw+0kTBJ1xvdEuFqHNFaQXIPtOAJyq0lXXgC1o8fG4Ye7fnzN?=
+ =?us-ascii?Q?0kFlt9CPTlysD9Wy1MiLc8L79oah1IBBui37NHROxygm5qWJo3oN35KlGOD9?=
+ =?us-ascii?Q?8h0nPwoA2c/z+hp8F/3WSZxR1DkVjUz8Af/YvG/+Yh7Min5RXDfYwgC4XZzI?=
+ =?us-ascii?Q?iZYyzA5ghxRhXKZFFmHuN1H2tFCT6sVlW7plg9wP3bZgSHGOM3BYxraZOfmr?=
+ =?us-ascii?Q?qk4kHd+ZyFbFcoAV67gVxhLKFkPyIS2lltgV2Dd93AaLTLIQYjoRL53P5yRo?=
+ =?us-ascii?Q?i1t5MXcNbTr8AybK9w+ETUpPBUdTstNSBQR7mkEHP1zZ4MADjJDJDpeeUJAe?=
+ =?us-ascii?Q?EsTxwlcmtCrlS10zWpzWgBkfcYmkb9ALGS9y9uBEckC4uKIe1l+VfJN0s73T?=
+ =?us-ascii?Q?Us+NGda7SwKQrVHD8iFlgaMPGuq2JzipufqJUHCQH/KombNwdU1P3yPOuuoC?=
+ =?us-ascii?Q?9D6KRcbgPQ3+6KJ89AN2xmsHj6yWv26yFtWpAQNhvIVMOJ7SyQesL/1MI5Jt?=
+ =?us-ascii?Q?hphSWtwpLG6OyjSCVQJUngpYxHhWDgKKh891f7viA0NlP9IiWlULnQXXuntD?=
+ =?us-ascii?Q?mMoXsMwwkBd0lKTqWHJeAt+wTKRZhFK1WpZ1hheVLMlG6TYJhdMI4zlPd2OQ?=
+ =?us-ascii?Q?unHkAMlN5LwB0Qgo51baY6Av0trzEhbIQTcpfs8ZWMxqfmJS5+STLfMLkaa0?=
+ =?us-ascii?Q?vvTwB442p3qopSMtGJVfKPJZv6qrKV8Kc9Xs42aSw+0yaCVDWBjIZez/fy3t?=
+ =?us-ascii?Q?Vthv3Zpa+OTLAqI9/JIgXVeGDJSvqr05t2FnWAfQAjB22He8WEPhub/PSeYc?=
+ =?us-ascii?Q?P1y3oprp6CZhNeL1IGd9TXhU32ZwZbplhp4WSK5uyn4ADcqkgbDkn3QmvTqq?=
+ =?us-ascii?Q?rFpsiNYY38ZdzraSHGX1gQJBaBnoZ+1XkFJpn/UUoBoznB1Nt1qawRTupyz4?=
+ =?us-ascii?Q?sYckzA2+qFPpMpZdurVB8b158FhjfR+z2W3N36D2Y3YWdloshIqWe4qgaiD7?=
+ =?us-ascii?Q?ctBfpouM2S9s7wcDTYc5du0wGIv/IEkDAPYDT5M7L49bp5pHa5f6Ipj+Zz0x?=
+ =?us-ascii?Q?bM1lN2P+ZPiIquTKvfE6xwkZwx8HcJO24yG5sK+ZLfur4+9E0nxdzbmx4W/9?=
+ =?us-ascii?Q?wvzcO/1PWbmBU+yV5F+9uF9K+CxR+f/VgDTNBGVFDSUtBLd9QHBrpgR5fGpD?=
+ =?us-ascii?Q?qZdDYqZh+TbrHUzwoICB7l56AwqXC9mI7t8nCim9vYPPeYkC9JO9zVE2rcS1?=
+ =?us-ascii?Q?iMJPWRoAxv4=3D?=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(82310400026)(36860700013)(1800799024)(13003099007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Aug 2025 09:17:35.5551
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OSZP286MB0982.JPNP286.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(10070799003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?2mdpFIdd8pINFBrmyVuVPucCPPvURMNZBnfHGmvOIAPZNjLLzbvQ6DffIgw0?=
+ =?us-ascii?Q?VGvaAJ+5mvJ1Q98f2C7GX04YLafNHzQzJ+clrN8VN7qvUShulPgBWa7rSIpu?=
+ =?us-ascii?Q?dUrRemee2523U1J5cG4Bu4KgpkLDbhQVAB9InCoBdGo/HAiJMH3jiZwU4ih2?=
+ =?us-ascii?Q?IiNjvmnMLqrLDcXvCWAm2FZwk1iKzgMFcM3VpC8X08ttiNHeUkwZWR939rtH?=
+ =?us-ascii?Q?nxTu6sXqHnldS+s3jKDzWsDGABoVjmF+IlhuqI68Lsw3a7If4KzMaD5SClbi?=
+ =?us-ascii?Q?FcsOHenKfdrwfm2XNDIRm1s2owPOKgtxTTuheuTIdLR5luLB4GU8PapvyLjr?=
+ =?us-ascii?Q?PFoK7krvMEK5ysIrQdlbQaVBPAPTI6bVQemT7NvFUIaHmG8yFfl443S2tyfK?=
+ =?us-ascii?Q?R4qqBy+/b9bGQYGZpB6XhGmgiQzEFwS1hoa8emJ5yly2/3KemU+5pnTPv1tD?=
+ =?us-ascii?Q?x68EyDGR21YzlwH8UjkQ0nBEc10FVvThQzAuaMPGUG08rcGmN67NeeRqA9ua?=
+ =?us-ascii?Q?lT6mMMG95gzBshnJsaAp4PZLBeYdq9FnwTDwqyRKX3JQ2JssfYA70tQrom/Q?=
+ =?us-ascii?Q?PbiHK/KiK1EL7rEAQYadiN58Ao2p97xN0EZfgXIaMQbCpeUushBCxznuUEhX?=
+ =?us-ascii?Q?K2Z09XE+SKUiV9xRwh7GRFk+qNeMXo8Ui3rGBp4InvLjRKh3d3GFES9HTY2X?=
+ =?us-ascii?Q?PnmttWo9qvoeSZku/BdNtOWtZL8MYn5PhcYvaeRVa+hqiuxhh+SXRIsBcltS?=
+ =?us-ascii?Q?8YJ2GowQNJYyTDhmZfXJ+wEN84RsWRqr9dYATUm5DaWo0rryxKgom4Mf35od?=
+ =?us-ascii?Q?7z9uD8oMDvpQs8q4EAcVRmBRMLK21Afs2OUOc7kjqXBW3Mo9OPb3kzNYKTgs?=
+ =?us-ascii?Q?qhh9Flrvo3bqJcGKOPHLW9tIkSq7ovUZBYwUTTeog4fRy2LEWcHt073Serzf?=
+ =?us-ascii?Q?uGhs0rDra70EIanVVGQNgHuozZ+kzKZly/vS0PoSMBmfIaauoRBSBmor0egu?=
+ =?us-ascii?Q?LPQf4CYyiqP7k+Em0v5aDhusw0H3DeaIGWv5EtLjhU60eaI7kmU2yrhjSvCq?=
+ =?us-ascii?Q?bIzhUV22l9hk+bMqXQ+df5t5tZqDxvJTaImhuUpQQD7LsFOQ1z4I9No1H7bk?=
+ =?us-ascii?Q?AyIUtwNYudZLt7tfOAiqOLdzdd0ReIwhVmCykwhHwVMC2SPJi839iOpTL5du?=
+ =?us-ascii?Q?ant0CFwnZ1gBEdRgHGzK5rQ+USYUPPN3qe+Qz8uv60Ita9GmFH+TgwIaBOmA?=
+ =?us-ascii?Q?2vaBVSVl+dw9Iii1tg4lBnI5efxroV8C7WGuqJJH476LFdBy9mRjWFS0ULY+?=
+ =?us-ascii?Q?vLitnCgyCabrsxS6tbdQ4ppxwP5C3E6dp9JXEtdpcUuaGFpIn6TQpeh+H4Kh?=
+ =?us-ascii?Q?1JonPb2lNjmJaKvUTLhwb/nLxuuIVAweVnvycpk+FvoA36rCF+JS1SwZtNzD?=
+ =?us-ascii?Q?7D9OdsN/nMH7gehyJej0CBI3CHO8MQpoQnI8Z9bnB/ZgbS+C/fpBCe+44CoN?=
+ =?us-ascii?Q?u+jgUHNwF7AJ2fDLQEafbVb+EmdGBbKLrYntRv9s4eGdZr+cp+pb6G9LBHG0?=
+ =?us-ascii?Q?zzz+2Bo5I3ysi+Pty/p2fDca53HqrsdO2UJZ5ukpeEx/YL5tKw+El80wIiEo?=
+ =?us-ascii?Q?B6N1ScYVa3tuAuZRmQHRZis=3D?=
+X-OriginatorOrg: valinux.co.jp
+X-MS-Exchange-CrossTenant-Network-Message-Id: 60cd4f38-b46c-4679-7295-08dde60f39d4
+X-MS-Exchange-CrossTenant-AuthSource: OSZP286MB0982.JPNP286.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Aug 2025 08:45:28.7658
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 95ebf81c-804e-46fa-3eef-08dde613ba04
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CH2PEPF000000A0.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6298
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 7a57bee8-f73d-4c5f-a4f7-d72c91c8c111
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 2lbPlfb3dcrKXz7vCXHp6FiePZGfca+SDW8wOyHD/UIceNDgxb9CMKpOUHdF8loF0kf0wnt7tv6ulUPlSd1n1g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY3P286MB3582
 
-Hello,
+On Thu, Aug 28, 2025 at 08:56:01AM +0100, Marc Zyngier wrote:
+> On Thu, 28 Aug 2025 04:09:00 +0100,
+> Koichiro Den <den@valinux.co.jp> wrote:
+> > 
+> > On Wed, Aug 27, 2025 at 01:48:33PM +0100, Marc Zyngier wrote:
+> > > On Wed, 27 Aug 2025 08:38:48 +0100,
+> > > Koichiro Den <den@valinux.co.jp> wrote:
+> > > > 
+> > > > its_irq_set_vcpu_affinity() always runs under a raw_spin_lock wait
+> > > > context, so calling kcalloc there is not permitted and RT-unsafe since
+> > > > ___slab_alloc() may acquire a local lock. The below is the actual
+> > > > lockdep report observed:
+> > > > 
+> > > >   =============================
+> > > >   [ BUG: Invalid wait context ]
+> > > >   6.16.0-rc3-irqchip-next-7e28bba92c5c+ #1 Tainted: G S
+> > > >   -----------------------------
+> > > >   qemu-system-aar/2129 is trying to lock:
+> > > >   ffff0085b74f2178 (batched_entropy_u32.lock){..-.}-{3:3}, at: get_random_u32+0x9c/0x708
+> > > >   other info that might help us debug this:
+> > > >   context-{5:5}
+> > > >   6 locks held by qemu-system-aar/2129:
+> > > >    #0: ffff0000b84a0738 (&vdev->igate){+.+.}-{4:4}, at: vfio_pci_core_ioctl+0x40c/0x748 [vfio_pci_core]
+> > > >    #1: ffff8000883cef68 (lock#6){+.+.}-{4:4}, at: irq_bypass_register_producer+0x64/0x2f0
+> > > >    #2: ffff0000ac0df960 (&its->its_lock){+.+.}-{4:4}, at: kvm_vgic_v4_set_forwarding+0x224/0x6f0
+> > > >    #3: ffff000086dc4718 (&irq->irq_lock#3){....}-{2:2}, at: kvm_vgic_v4_set_forwarding+0x288/0x6f0
+> > > >    #4: ffff0001356200c8 (&irq_desc_lock_class){-.-.}-{2:2}, at: __irq_get_desc_lock+0xc8/0x158
+> > > >    #5: ffff00009eae4850 (&dev->event_map.vlpi_lock){....}-{2:2}, at: its_irq_set_vcpu_affinity+0x8c/0x528
+> > > >   ...
+> > > >   Call trace:
+> > > >    show_stack+0x30/0x98 (C)
+> > > >    dump_stack_lvl+0x9c/0xd0
+> > > >    dump_stack+0x1c/0x34
+> > > >    __lock_acquire+0x814/0xb40
+> > > >    lock_acquire.part.0+0x16c/0x2a8
+> > > >    lock_acquire+0x8c/0x178
+> > > >    get_random_u32+0xd4/0x708
+> > > >    __get_random_u32_below+0x20/0x80
+> > > >    shuffle_freelist+0x5c/0x1b0
+> > > >    allocate_slab+0x15c/0x348
+> > > >    new_slab+0x48/0x80
+> > > >    ___slab_alloc+0x590/0x8b8
+> > > >    __slab_alloc.isra.0+0x3c/0x80
+> > > >    __kmalloc_noprof+0x174/0x520
+> > > >    its_vlpi_map+0x834/0xce0
+> > > >    its_irq_set_vcpu_affinity+0x21c/0x528
+> > > >    irq_set_vcpu_affinity+0x160/0x1b0
+> > > >    its_map_vlpi+0x90/0x100
+> > > >    kvm_vgic_v4_set_forwarding+0x3c4/0x6f0
+> > > >    kvm_arch_irq_bypass_add_producer+0xac/0x108
+> > > >    __connect+0x138/0x1b0
+> > > >    irq_bypass_register_producer+0x16c/0x2f0
+> > > >    vfio_msi_set_vector_signal+0x2c0/0x5a8 [vfio_pci_core]
+> > > >    vfio_msi_set_block+0x8c/0x120 [vfio_pci_core]
+> > > >    vfio_pci_set_msi_trigger+0x120/0x3d8 [vfio_pci_core]
+> > > 
+> > > Huh. I guess this is due to RT not being completely compatible with
+> > > GFP_ATOMIC...  Why you'd want RT and KVM at the same time is beyond
+> > > me, but hey.
+> > 
+> > For the record, I didn't run KVM on RT, though I still believe it's better
+> > to conform to the wait context rule and avoid triggering the lockdep
+> > splat.
+> 
+> Then I don't understand how you get this, because I have not seen it
+> so far.
+> 
+> > 
+> > I don't know if there are any plans which make kmalloc with GFP_ATOMIC
+> > workable under a stricter wait context (getting rid of the local lock
+> > in some way?), but I think it would be nicer.
+> 
+> GFP_ATOMIC is documented as being compatible with raw spinlocks in the
+> absence of RT, making the above trace pretty odd.
 
-AMD ISP4 is the AMD image processing gen 4 which can be found in HP ZBook Ultra G1a 14 inch Mobile Workstation PC ( Ryzen AI Max 385)
-(https://ubuntu.com/certified/202411-36043)
-This patch series introduces the initial driver support for the AMD ISP4.
+I got the report on my ARM64 env with CONFIG_PROVE_LOCKING=y, which
+leads to CONFIG_PROVE_RAW_LOCK_NESTING=y on ARM64. And this report says
+that it was trying to acquire a local_lock_t (LD_WAIT_CONFIG) while any
+raw_spinlock_t (LD_WAIT_SPIN) being held.
+So I still believe we're on the same page; while I got the report on
+non-RT, the report just pre-warns the danger for RT. There's no
+immediate harm on non-RT.
 
-Patch summary:
-- Powers up/off and initializes ISP HW
-- Configures and kicks off ISP FW
-- Interacts with APP using standard V4l2 interface by video node
-- Controls ISP HW and interacts with ISP FW to do image processing
-- Support enum/set output image format and resolution
-- Support queueing buffer from app and dequeueing ISP filled buffer to App
-- It supports libcamera ver0.2 SimplePipeline
-- It is verified on qv4l2, cheese and qcam
-- It is verified together with following patches
-	platform/x86: Add AMD ISP platform config (https://lore.kernel.org/all/20250514215623.522746-1-pratap.nirujogi@amd.com/)
-	pinctrl: amd: isp411: Add amdisp GPIO pinctrl (https://github.com/torvalds/linux/commit/e97435ab09f3ad7b6a588dd7c4e45a96699bbb4a)
-	drm/amd/amdgpu: Add GPIO resources required for amdisp (https://gitlab.freedesktop.org/agd5f/linux/-/commit/ad0f5966ed8297aa47b3184192b00b7379ae0758)
+> 
+> > 
+> > > 
+> > > >   ...
+> > > > 
+> > > > To avoid this, simply pre-allocate vlpi_maps when creating an ITS v4
+> > > > device with LPIs allcation. The trade-off is some wasted memory
+> > > > depending on nr_lpis, if none of those LPIs are never upgraded to VLPIs.
+> > > >
+> > > > An alternative would be to move the vlpi_maps allocation out of
+> > > > its_map_vlpi() and introduce a two-stage prepare/commit flow, allowing a
+> > > > caller (KVM in the lockdep splat shown above) to do the allocation
+> > > > outside irq_set_vcpu_affinity(). However, this would unnecessarily add
+> > > > complexity.
+> > > 
+> > > That's debatable. It is probably fine for now, but if this was to
+> > > grow, we'd need to revisit this.
+> > 
+> > Just curious but do you have any plans to replace the current
+> > irq_set_vcpu_affinity() approach with something else?
+> 
+> Who knows. This is the Linux kernel, everything changes all the time
+> without the need for a good reason. More significantly, the amount of
+> *data* being associated with a VLPI could become much higher in the
+> future, and add more unnecessary allocation.
 
-AMD ISP4 Key features:
-- Processes bayer raw data from the connected sensor and output them to different YUV formats
-- Downscale input image to different output image resolution
-- Pipeline to do image processing on the input image including demosaic, denoise, 3A, etc
+Alright, thank you.
 
-----------
+-Koichiro
 
-Changes v2 -> v3:
-
-- All the dependent patches in other modules (drm/amd/amdgpu, platform/x86, pinctrl/amd) merged on upstream mainline kernel (https://github.com/torvalds/linux) v6.17.
-- Removed usage of amdgpu structs in ISP driver. Added helper functions in amdgpu accepting opaque params from ISP driver to allocate and release ISP GART buffers.
-- Moved sensor and MIPI phy control entirely into ISP FW instead of the previous hybrid approach controlling sensor from both FW and x86 (sensor driver).
-- Removed phy configuration and sensor binding as x86 (sensor driver) had relinquished the sensor control for ISP FW. With this approach the driver will be exposed as web camera like interface.
-- New FW with built-in sensor driver is submitted on upstream linux-firmware repo (https://gitlab.com/kernel-firmware/linux-firmware/).
-- Please note the new FW submitted is not directly compatible with OEM Kernel ISP4.0 (https://github.com/amd/Linux_ISP_Kernel/tree/4.0) and the previous ISP V2 patch series.
-- If intend to use the new FW, please rebuild OEM ISP4.0 Kernel with CONFIG_VIDEO_OV05C10=N and CONFIG_PINCTRL_AMDISP=Y.
-- Included critical fixes from Sultan Alsawaf branch (https://github.com/kerneltoast/kernel_x86_laptop.git) related to managing lifetime of isp buffers.
-      media: amd: isp4: Add missing refcount tracking to mmap memop
-      media: amd: isp4: Don't put or unmap the dmabuf when detaching
-      media: amd: isp4: Don't increment refcount when dmabuf export fails
-      media: amd: isp4: Fix possible use-after-free in isp4vid_vb2_put()
-      media: amd: isp4: Always export a new dmabuf from get_dmabuf memop
-      media: amd: isp4: Fix implicit dmabuf lifetime tracking
-      media: amd: isp4: Fix possible use-after-free when putting implicit dmabuf
-      media: amd: isp4: Simplify isp4vid_get_dmabuf() arguments
-      media: amd: isp4: Move up buf->vaddr check in isp4vid_get_dmabuf()
-      media: amd: isp4: Remove unused userptr memops
-      media: amd: isp4: Add missing cleanup on error in isp4vid_vb2_alloc()
-      media: amd: isp4: Release queued buffers on error in start_streaming
-- Addressed all code related upstream comments
-- Fix typo errors and other cosmetic issue.
-
-
-Changes v1 -> v2:
-
-- Fix media CI test errors and valid warnings
-- Reduce patch number in the series from 9 to 8 by merging MAINTAINERS adding patch to the first patch
-- In patch 5
-	- do modification to use remote endpoint instead of local endpoint
-	- use link frequency and port number as start phy parameter instead of extra added phy-id and phy-bit-rate property of endpoint
-
-----------
-
-It passes v4l2 compliance test, the test reports for:
-
-(a) amd_isp_capture device /dev/video0
-
-Compliance test for amd_isp_capture device /dev/video0:
--------------------------------------------------------
-
-atg@atg-HP-PV:~/bin$ ./v4l2-compliance -d /dev/video0
-v4l2-compliance 1.29.0-5348, 64 bits, 64-bit time_t
-v4l2-compliance SHA: 75e3f0e2c2cb 2025-03-17 18:12:17
-
-Compliance test for amd_isp_capture device /dev/video0:
-
-Driver Info:
-        Driver name      : amd_isp_capture
-        Card type        : amd_isp_capture
-        Bus info         : platform:amd_isp_capture
-        Driver version   : 6.14.0
-        Capabilities     : 0xa4200001
-                Video Capture
-                I/O MC
-                Streaming
-                Extended Pix Format
-                Device Capabilities
-        Device Caps      : 0x24200001
-                Video Capture
-                I/O MC
-                Streaming
-                Extended Pix Format
-Media Driver Info:
-        Driver name      : amd_isp_capture
-        Model            : amd_isp41_mdev
-        Serial           :
-        Bus info         : platform:amd_isp_capture
-        Media version    : 6.14.0
-        Hardware revision: 0x00000000 (0)
-        Driver version   : 6.14.0
-Interface Info:
-        ID               : 0x03000005
-        Type             : V4L Video
-Entity Info:
-        ID               : 0x00000003 (3)
-        Name             : Preview
-        Function         : V4L2 I/O
-        Pad 0x01000004   : 0: Sink
-          Link 0x02000007: from remote pad 0x1000002 of entity 'amd isp4' (Image Signal Processor): Data, Enabled, Immutable
-
-Required ioctls:
-        test MC information (see 'Media Driver Info' above): OK
-        test VIDIOC_QUERYCAP: OK
-        test invalid ioctls: OK
-
-Allow for multiple opens:
-        test second /dev/video0 open: OK
-        test VIDIOC_QUERYCAP: OK
-        test VIDIOC_G/S_PRIORITY: OK
-        test for unlimited opens: OK
-
-Debug ioctls:
-        test VIDIOC_DBG_G/S_REGISTER: OK (Not Supported)
-        test VIDIOC_LOG_STATUS: OK (Not Supported)
-
-Input ioctls:
-        test VIDIOC_G/S_TUNER/ENUM_FREQ_BANDS: OK (Not Supported)
-        test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
-        test VIDIOC_S_HW_FREQ_SEEK: OK (Not Supported)
-        test VIDIOC_ENUMAUDIO: OK (Not Supported)
-        test VIDIOC_G/S/ENUMINPUT: OK
-        test VIDIOC_G/S_AUDIO: OK (Not Supported)
-        Inputs: 1 Audio Inputs: 0 Tuners: 0
-
-Output ioctls:
-        test VIDIOC_G/S_MODULATOR: OK (Not Supported)
-        test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
-        test VIDIOC_ENUMAUDOUT: OK (Not Supported)
-        test VIDIOC_G/S/ENUMOUTPUT: OK (Not Supported)
-        test VIDIOC_G/S_AUDOUT: OK (Not Supported)
-        Outputs: 0 Audio Outputs: 0 Modulators: 0
-
-Input/Output configuration ioctls:
-        test VIDIOC_ENUM/G/S/QUERY_STD: OK (Not Supported)
-        test VIDIOC_ENUM/G/S/QUERY_DV_TIMINGS: OK (Not Supported)
-        test VIDIOC_DV_TIMINGS_CAP: OK (Not Supported)
-        test VIDIOC_G/S_EDID: OK (Not Supported)
-
-Control ioctls (Input 0):
-        test VIDIOC_QUERY_EXT_CTRL/QUERYMENU: OK (Not Supported)
-        test VIDIOC_QUERYCTRL: OK (Not Supported)
-        test VIDIOC_G/S_CTRL: OK (Not Supported)
-        test VIDIOC_G/S/TRY_EXT_CTRLS: OK (Not Supported)
-        test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: OK (Not Supported)
-        test VIDIOC_G/S_JPEGCOMP: OK (Not Supported)
-        Standard Controls: 0 Private Controls: 0
-
-Format ioctls (Input 0):
-        test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK
-        test VIDIOC_G/S_PARM: OK
-        test VIDIOC_G_FBUF: OK (Not Supported)
-        test VIDIOC_G_FMT: OK
-        test VIDIOC_TRY_FMT: OK
-        test VIDIOC_S_FMT: OK
-        test VIDIOC_G_SLICED_VBI_CAP: OK (Not Supported)
-        test Cropping: OK (Not Supported)
-        test Composing: OK (Not Supported)
-        test Scaling: OK (Not Supported)
-
-Codec ioctls (Input 0):
-        test VIDIOC_(TRY_)ENCODER_CMD: OK (Not Supported)
-        test VIDIOC_G_ENC_INDEX: OK (Not Supported)
-        test VIDIOC_(TRY_)DECODER_CMD: OK (Not Supported)
-
-Buffer ioctls (Input 0):
-        test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: OK
-        test CREATE_BUFS maximum buffers: OK
-        test VIDIOC_REMOVE_BUFS: OK
-        test VIDIOC_EXPBUF: OK
-        test Requests: OK (Not Supported)
-        test blocking wait: OK
-
-Total for amd_isp_capture device /dev/video0: 49, Succeeded: 49, Failed: 0, Warnings: 0
-
-Please review and provide feedback.
-
-Many thanks,
-
-Bin Du (7):
-  media: platform: amd: Introduce amd isp4 capture driver
-  media: platform: amd: low level support for isp4 firmware
-  media: platform: amd: Add isp4 fw and hw interface
-  media: platform: amd: isp4 subdev and firmware loading handling added
-  media: platform: amd: isp4 video node and buffers handling added
-  media: platform: amd: isp4 debug fs logging and  more descriptive
-    errors
-  Documentation: add documentation of AMD isp 4 driver
-
- Documentation/admin-guide/media/amdisp4-1.rst |   66 +
- Documentation/admin-guide/media/amdisp4.dot   |    8 +
- .../admin-guide/media/v4l-drivers.rst         |    1 +
- MAINTAINERS                                   |   25 +
- drivers/media/platform/Kconfig                |    1 +
- drivers/media/platform/Makefile               |    1 +
- drivers/media/platform/amd/Kconfig            |    3 +
- drivers/media/platform/amd/Makefile           |    3 +
- drivers/media/platform/amd/isp4/Kconfig       |   13 +
- drivers/media/platform/amd/isp4/Makefile      |   10 +
- drivers/media/platform/amd/isp4/isp4.c        |  237 ++++
- drivers/media/platform/amd/isp4/isp4.h        |   26 +
- drivers/media/platform/amd/isp4/isp4_debug.c  |  272 ++++
- drivers/media/platform/amd/isp4/isp4_debug.h  |   41 +
- .../platform/amd/isp4/isp4_fw_cmd_resp.h      |  314 +++++
- drivers/media/platform/amd/isp4/isp4_hw_reg.h |  125 ++
- .../media/platform/amd/isp4/isp4_interface.c  |  972 +++++++++++++
- .../media/platform/amd/isp4/isp4_interface.h  |  149 ++
- drivers/media/platform/amd/isp4/isp4_subdev.c | 1198 ++++++++++++++++
- drivers/media/platform/amd/isp4/isp4_subdev.h |  133 ++
- drivers/media/platform/amd/isp4/isp4_video.c  | 1213 +++++++++++++++++
- drivers/media/platform/amd/isp4/isp4_video.h  |   87 ++
- 22 files changed, 4898 insertions(+)
- create mode 100644 Documentation/admin-guide/media/amdisp4-1.rst
- create mode 100644 Documentation/admin-guide/media/amdisp4.dot
- create mode 100644 drivers/media/platform/amd/Kconfig
- create mode 100644 drivers/media/platform/amd/Makefile
- create mode 100644 drivers/media/platform/amd/isp4/Kconfig
- create mode 100644 drivers/media/platform/amd/isp4/Makefile
- create mode 100644 drivers/media/platform/amd/isp4/isp4.c
- create mode 100644 drivers/media/platform/amd/isp4/isp4.h
- create mode 100644 drivers/media/platform/amd/isp4/isp4_debug.c
- create mode 100644 drivers/media/platform/amd/isp4/isp4_debug.h
- create mode 100644 drivers/media/platform/amd/isp4/isp4_fw_cmd_resp.h
- create mode 100644 drivers/media/platform/amd/isp4/isp4_hw_reg.h
- create mode 100644 drivers/media/platform/amd/isp4/isp4_interface.c
- create mode 100644 drivers/media/platform/amd/isp4/isp4_interface.h
- create mode 100644 drivers/media/platform/amd/isp4/isp4_subdev.c
- create mode 100644 drivers/media/platform/amd/isp4/isp4_subdev.h
- create mode 100644 drivers/media/platform/amd/isp4/isp4_video.c
- create mode 100644 drivers/media/platform/amd/isp4/isp4_video.h
-
--- 
-2.34.1
-
+> 
+> 	M.
+> 
+> -- 
+> Without deviation from the norm, progress is not possible.
 
