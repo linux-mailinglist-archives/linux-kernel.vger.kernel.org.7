@@ -1,209 +1,357 @@
-Return-Path: <linux-kernel+bounces-789190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7721B39217
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 05:08:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73DCAB39218
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 05:09:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF1951BA7D89
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 03:08:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B2625E71B4
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 03:09:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E761C261B9A;
-	Thu, 28 Aug 2025 03:08:07 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16CFC261B96;
+	Thu, 28 Aug 2025 03:09:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=valinux.co.jp header.i=@valinux.co.jp header.b="kuwESRfF"
+Received: from OS0P286CU010.outbound.protection.outlook.com (mail-japanwestazon11011037.outbound.protection.outlook.com [40.107.74.37])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FF261AAE17
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 03:08:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756350487; cv=none; b=FIqWIWE2pO63B2Q2XyIndqvN9l5CLNQXnXG6xUWdz/Q3wrynP+vSiMumcxAxnyyVYFIgA16NOnN29ZDpzG5LpW2GyYlbGELX4eCnlQ3YsOiDaDpU0uXW5JwJ6/xqiHLegcmZSOnnvhbFfTxYLu66HUNYEh+KX/CZVO2yYOZQjGo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756350487; c=relaxed/simple;
-	bh=OBbafKjywxsHzUmzz7M30RIkaRAUiga+jtQnihqR7OM=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=LcOzppsuoVOGv52OCJL16p6VzerfJmwz/pMn/P16qJL5aaykbPeJqdITuThNDuae3KXfy9agVcJI6DeUvm7RqtssJznIQE0qIkI9+dumGrYCLk50mCm9WAJu6RxNUQHRVwU90KAqJ4vTwFsJeN+nkNbblH6hAcz1TNj4uN+5ea8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3ed0ba44c8fso6612585ab.0
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 20:08:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756350484; x=1756955284;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0TXKpfxtZp9jkmD7us5ryt1CIrtYffoFxVz1qHqpMAQ=;
-        b=QbPXtnR9bXeSNhMW2Wz3TtqITAodgbHWg6L4Q10KqXoLp64Hz+F6Kivc+qYCkVD/sO
-         1SJzwv0aPWedZ+c41jN+vJnd3JIY0yDlKlfaf4QrgdLlTpgkKYtucf5qrOzhphhTJUPB
-         1ECaK16nfSBxcp50SofehYGMy9M8q1gFyhwDogqsdZw2fyuqmTv/lYNKxIrWb/wI+7WY
-         RKtmYptIOF67Ng2wnxPr4MqZLKyXJ7GAE7wNrZKrEKY/ONyD9TS6QiMPm3cVlKaWJBmz
-         97eHZYhpnCv75e64Xl71mxFlksTvIU/tr2buXXMoD1OVgmYd1I4VtYHuw9Rclt467FIw
-         Svhw==
-X-Forwarded-Encrypted: i=1; AJvYcCVONUxIdRxh0qnUDLcSfvoJ1W0M0N2jGN7ThHLzOSaMYWOjWvxThQYKsjlt2AFwdpL+quOVRLNhUDF0xTs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwuMbaK02R/ohw2y/E5TJJhfoP0G/ORkQ1Z0GkTOPpMqnQigWM+
-	l5qzt2CH5CIOB0xRQPI0RtKNS2r3qK6SM4LjEBOe8Y35o21l/a2erv+URPljQ+C+rNzTqqO5kAu
-	8znvdWrsc0KFGADhXdiZmjCMMIuzmsiosQKRccuFeGrDhtbPtb20Kv5dA1DA=
-X-Google-Smtp-Source: AGHT+IEPuR8A0UA8gO/hIpyRFoadj9hlTadDGlYI1oxtjuED3HjI5ASMsvXdT2lctHcmObUwe+jaR4bFkEO4keiiAnwKaSSTSrKr
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A21721AAE17
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 03:09:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.74.37
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756350550; cv=fail; b=pqkOI+ih4NKDWFvZWFj8ICZs5XZRNTTMPcmfvAYjo8hvJZ4EHR3QQ7O7H2AFs1CKTKLGYz7SIfCdie8/4+JiNfQ70f57mpzblJCd/CWE9e2daTYm84kM0IZWGe09NNaG8WqXV+NaNOSIJzSrMNT29S90l4BSSuJ8teiOz297Tvw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756350550; c=relaxed/simple;
+	bh=I4sy2oUnHFd2AU74jyT8b9NIFehgnJCaWAHzo6lky3o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=IbzpWC4oHphNylTR8qQndFeYXuKIC/FCZ88YUx+/2Fh0h7Zp0l9mKfWwOF4JAnutn5nyqR85KgyuIBnv8uSkmn5fnAPgA8IjU8u0Kkm7Zc4gXWoacbnSJj/aoM7H//SXfyODc/KgfdtVCgAzILk+g9aUgFLbwnqKvCX00snMs4I=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=valinux.co.jp; spf=pass smtp.mailfrom=valinux.co.jp; dkim=pass (1024-bit key) header.d=valinux.co.jp header.i=@valinux.co.jp header.b=kuwESRfF; arc=fail smtp.client-ip=40.107.74.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=valinux.co.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=valinux.co.jp
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=sxdLbAkPZwddjuAAJwahlHl80X8Jvks9wNdKbI9KtaB9Pa85HJ4obFd7tes4udiSAzm31YsNwTH8FMeZkIjzo6jun93SFgARC8MrV3+DvdFMYK2VJVIvuS6ln4e04aGQQ7x2hXxOY1cMjQ1rduggloURViRLm6Ybl/qrqd3stYYXILirMkfEkMTt3jczOQkWpd1cfp0oWR/Bk0XbY/TKzWuwMb+MXlyXhUZaRuMbY4Su51TNhWgsf+SK7XXfcv24OWGDz4w43XrcWKnH1c1a7bJtz95D88Szr/qKX4wD99lBS0TXpCjVzVR8EfrKqqkoVCmm3EhFX2oF1EcTa0LIGg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=hJhw0qxM/LAU71EEZ5AbPC52nLOGrUVertbown/9J5I=;
+ b=rNhMlb+aqG5+95vX4jyE8IkvtJTnFc4JLx1g2i2YPg1aJHutaPaIOmRMb1PHzVfp/1H9PK6FABeg73GU0K8EDqWf6U50VqKsomUERZLyocZD32GWHiyiHtNYg+67qLOU9quIhvWD3VarZcmDqIwMQ3JiqS/vlQI8ZSzcy7pOZFpeOwwP5ne+cPtToDdS+jBfp8obvOsr4OKKGDE8318EqlYh7mHM5aZ+wrAHrknqPo7P7zMh6AjaXp5lFZ6hCmiE77ob1JvMvYncQ7y7PGRno23+P8qBkASQB92AoCDD39X22HJtDS6qQK7A5h/2Z0AD6lioP8A3E3ku0/DgNpREFw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=valinux.co.jp; dmarc=pass action=none
+ header.from=valinux.co.jp; dkim=pass header.d=valinux.co.jp; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=valinux.co.jp;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hJhw0qxM/LAU71EEZ5AbPC52nLOGrUVertbown/9J5I=;
+ b=kuwESRfF7OKrmZxYRNKzpALhBS/ZzwXtsMpqqhgmIYuQSQgIWCybnXGKjImpVGMXT6vOJi5qb0CMLCcI+Q6Io3oL4ucVXVx+7awWqDbTLZRPFi/KHMHNXlLthdlU1tUkPlu0xILb2JOErqYFBDytz7EOuJFpBFOPsgypFXr9JCI=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=valinux.co.jp;
+Received: from OSZP286MB0982.JPNP286.PROD.OUTLOOK.COM (2603:1096:604:fe::6) by
+ OS3P286MB3212.JPNP286.PROD.OUTLOOK.COM (2603:1096:604:20c::9) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9052.21; Thu, 28 Aug 2025 03:09:05 +0000
+Received: from OSZP286MB0982.JPNP286.PROD.OUTLOOK.COM
+ ([fe80::fb9b:13f3:8329:52e3]) by OSZP286MB0982.JPNP286.PROD.OUTLOOK.COM
+ ([fe80::fb9b:13f3:8329:52e3%5]) with mapi id 15.20.9052.019; Thu, 28 Aug 2025
+ 03:09:02 +0000
+Date: Thu, 28 Aug 2025 12:09:00 +0900
+From: Koichiro Den <den@valinux.co.jp>
+To: Marc Zyngier <maz@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, tglx@linutronix.de, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] irqchip/gic-v3-its: Fix invalid wait context lockdep
+ report
+Message-ID: <pkfekcmetqyoj7rwvr77kisu7ok7bc6srq5maoydisnsk4bnyy@wimnw744lp5t>
+References: <20250827073848.1410315-1-den@valinux.co.jp>
+ <86h5xtdj6m.wl-maz@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <86h5xtdj6m.wl-maz@kernel.org>
+X-ClientProxiedBy: TYCP286CA0072.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:31a::20) To OSZP286MB0982.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:604:fe::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1aa2:b0:3f1:f2:1a47 with SMTP id
- e9e14a558f8ab-3f100f21bb3mr32320155ab.31.1756350484705; Wed, 27 Aug 2025
- 20:08:04 -0700 (PDT)
-Date: Wed, 27 Aug 2025 20:08:04 -0700
-In-Reply-To: <zfqc3duhgtcevsjaulyn23ckgg5oyuiyprruichcbthhqtknqa@vgfjpy6dyu7k>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68afc814.050a0220.8762d.0005.GAE@google.com>
-Subject: Re: [syzbot] [mm?] INFO: rcu detected stall in sys_munmap (2)
-From: syzbot <syzbot+8785aaf121cfb2141e0d@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, jannh@google.com, liam.howlett@oracle.com, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, lorenzo.stoakes@oracle.com, 
-	pfalcato@suse.de, syzkaller-bugs@googlegroups.com, vbabka@suse.cz
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: OSZP286MB0982:EE_|OS3P286MB3212:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3b5faffa-096c-4b06-080f-08dde5e03d67
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|10070799003|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Rb1lfzZunrRLlmseeSYB2HC4tukgLJMyHuibOgwU4e4Gq8IWldQdd9qcYwx8?=
+ =?us-ascii?Q?VCmvG7WwgiMUG4MECDVlY0q8U8TiVF/2tFwpz+hUpQYiInMbnYt5hn3UgcI2?=
+ =?us-ascii?Q?qhOFJOOgSQ/qXue1EWBdGox6UbsjMLAC8pVh8I5TBsuDaAb9L74iMbtgIR9z?=
+ =?us-ascii?Q?Uu9n2PuwGZJQheI8kziBlUWCK4H5kYWJgsvwxl80tXEJC+xHJHtt+db0LNhv?=
+ =?us-ascii?Q?u/bAG0qrwvc2J8SDqPz5Mqts96TbRlFRPgAWUHl5ov0u+loXWuYP8zfbU0AU?=
+ =?us-ascii?Q?BgfAxte8MtZb93aaxgnsxtB7Comedy7Bdg+Dr/wX0ic3cc2Kh+H/7YwIzsWR?=
+ =?us-ascii?Q?9V2r9vKYjIfqeuplyr8Nd13eWBc6RvxJ/ipFVu8Z5PnpuvQGfyIO4t0rWgz5?=
+ =?us-ascii?Q?MgHzhrYzUDjvFrbEeJYErAwazmUIgTNmMEgnmwYAIuji0ViH+JODbLIOP30M?=
+ =?us-ascii?Q?7IZHxVlGA+tdw/074BJVH8G4YBum1x1VNT0nQ/Vj6JIrOlwvY21782a4xO3o?=
+ =?us-ascii?Q?XrintdEyQBg1bRTcKxRURUzNr7y1Ey0M64/3GaXDjlUIzNPkSi8h837CpVWF?=
+ =?us-ascii?Q?NqKVlzuVL9H64abTOT4Z0iuVpJrKG8mgzzZEcZYqSKVkYfjyAV+gJGWxwcoq?=
+ =?us-ascii?Q?fzihj4k0Y5b6kHzOwVYhSji5m0mJJT18My/NcIpIARzQ/orvbqPAGBQOfaiB?=
+ =?us-ascii?Q?rd5X8r1/nh9wy+okcaLIsbELD/xbLDTeJhXk6zDzoIfpCUTuH/8HygFdNZPg?=
+ =?us-ascii?Q?UJ53Lie55lVDmweIXxQOFp1ZedP66CaIvIFEMYhZC+35a8xN6XghhVMCiOW2?=
+ =?us-ascii?Q?44STkELjVqRp/86SutrsobJEbjx0cHiuUfS6K0ng8rcZL5baAZGAYlGpri6b?=
+ =?us-ascii?Q?rBRzfRMrYr2l/bev/F+bvcgT9ZFpHEDz/NOEQvPkuCOY5xSa0stjXqJ4+R7K?=
+ =?us-ascii?Q?hByE4HQtfVmCV6URr7e2sL1DS9qCDN0dVPsn+oxxkboGjdJuqnoFBKroahp9?=
+ =?us-ascii?Q?nJCMjpTAuoxutGdBEv1cqBNhJoDcaub524Hgpy3oRdbrfLKlB1df4QCve6yb?=
+ =?us-ascii?Q?AcQBUsNX82U+LWWw0fvHWO6vwWLN4PP/hOoKbHGXWjU2uZe3b2/7HMbMcDOQ?=
+ =?us-ascii?Q?uE9cI9Dl2YLUcyvf/RQm/QoiDMsYlzAeAd9NbAu2m/1gWqoprYzZ3g1zMkq2?=
+ =?us-ascii?Q?hQdl3Renp7iJSoXeyb8jY5ieacYdM0TpmniYKFvIPR9CYlQF1A9GpybAU43O?=
+ =?us-ascii?Q?mmDZYszbSuQPtSBM+FLEsqwpPvRZXIK9fJF+CGBwbTSXFWBTIOHjn0W9B70c?=
+ =?us-ascii?Q?Y2fE6g29L+dD2pSnLdKP/AoK28Lhh+4CQJTImBFerR8POeb+tlFvbnImbLW5?=
+ =?us-ascii?Q?eKPysJIBoZptotfreNXV8hXi8WTE7I1Mpo9zkFn80r04xZTSxL1BUROl4sWa?=
+ =?us-ascii?Q?H8rV1/k6ocQ=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OSZP286MB0982.JPNP286.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?bPeYSZUv7f/sl9BBArtC9yra85Zz+ay3EqPJKWXE4VfmXTywMnoTGYmIS7Tp?=
+ =?us-ascii?Q?aSqC+rCtW/blrp4vq4RJ1aGROEkfcoyBXzgLgesDnXsNEG1ywUMEdr9Ckq33?=
+ =?us-ascii?Q?mb14XSKmbAo0fY/Z7Wyf+gtZ69FSBuQuj43BiDRxc5Bk9mI1eihDucmh8xDU?=
+ =?us-ascii?Q?bAPdsRaSbkzjBB4Ge86JqXQFF9Kt08ronoDTUF6gpDNeP+T6++hyzGz2cUTJ?=
+ =?us-ascii?Q?Vr8UtqnwSyNrV63eLrocialf264I7y+aEna07Bp4QX9XVSqWz/+4srHbZCFq?=
+ =?us-ascii?Q?exNAaD+h1/yqoCDILsSM8UMvdiJoNfM2gydS2+JdxmVZD8IWilInHnZj2t3H?=
+ =?us-ascii?Q?Wf+15QvcYzf40TJGjjqMuE57fcTnDxyU9LIqoyYk8SMht6zvVw57JMfH9SHP?=
+ =?us-ascii?Q?iQYfyklEYxrkxsfI0wjjWZAQa+sED5bk/7HruZwOrHPrXwNfYZLS3faveDGF?=
+ =?us-ascii?Q?xV4AD6ADrID4iXwYgRiVKDZJnJpZUqrSM833/XgAH2QKB24bekV/fOKfwxXj?=
+ =?us-ascii?Q?Xc87Ev8JTUT8l7viK85I96J4Fl1TxckRCgBqZSjUiAipj+EmGDOi026lCY8N?=
+ =?us-ascii?Q?hSIgNWScuVHehNXdJdKWasucUy3PDTruJzDRKrg/y9LiQZcbr2WelXwaD3dl?=
+ =?us-ascii?Q?UAKjmCu4NXD/DB6K+pQsvhN1ZxBPW0FiNjoQhgg2fLwdDECI//v1xbQwOc8K?=
+ =?us-ascii?Q?MmXV9dyavjJPRS2Sg+1j4EmD5hC4lzD9YJHOShG28a7pmWIBGmw0rAfThC4A?=
+ =?us-ascii?Q?e1EDPx7rwhMh9f54sE98Bfkir0YSOgprnCfRHxhmhbxgbfdbgip3XbmXQTLp?=
+ =?us-ascii?Q?fSbZ8UT7kklylrLVkPXOjeQOAfeMt3nFQGKKBuhkW0ZBVz18N4UozepLHWgR?=
+ =?us-ascii?Q?GKPni9H3AicugfTKktSpsIKpQtcYwT5gw1zH0AGDD/ZBsaEXnkqwiUkt0RGR?=
+ =?us-ascii?Q?0BbzvEDVIXcOAQ9RDyCNAKtKrTMSdIavJXWWstj/IFIa/r3Ab9ssm9YbWF1R?=
+ =?us-ascii?Q?BEOGitj8ypyfpl/RhH0mPfCCfcK4y7ag6HYgHClQ5wWUaaAvBsyaw9RqJVT4?=
+ =?us-ascii?Q?X2mfyUmlKWnutK0vnEl5YN/KieO3d3jSn8JDgliK2NcitRXHAqn7e4CWeFQ0?=
+ =?us-ascii?Q?HT8Qhph1ITstB+cAIIRq7zG94G5WwjSWKG1vZ5bKa7HYCU0oqgCKsI6zlkeC?=
+ =?us-ascii?Q?CrjafZNlx9YTZukuIJDx94YtZfUoODEJwPmnYyBPicH0LSvmlDEz0rZq5kuh?=
+ =?us-ascii?Q?NC68FhNzfn5Hp4IXLdkBRooijfvwjTSZSedTxVijuR9BN+cfD86xxVnjktoK?=
+ =?us-ascii?Q?qTFdX0+6AV55gG9jFEr2Uc8/EQdGU64FBDYaTIGfKRdWF7TK+Ex43Zxwd6iY?=
+ =?us-ascii?Q?daMtg3/+xuoyCN6z1h1Nb7q6Z5W4Yca4Apf/pkXOGNUJrFgmV9t++6ScKeKs?=
+ =?us-ascii?Q?OL4bohs3gBZY1oTJSw6LI4M1xIwGBm+5i+2iTZMN3IvFqYm0BHQ8lwffdUYG?=
+ =?us-ascii?Q?BQQyes2N9kh6oH7ygUGxfrl6H7PQe3PD4Y4IEycOFzw6ve5LU4FKIb6lIrcK?=
+ =?us-ascii?Q?Yg3pSHhKKNogWdEObAeu2buKLH/losya2pjVqqnMSqTerk3aCJjUkv8lukkf?=
+ =?us-ascii?Q?ZjXHjLyO7XfMkiU7fc+PKyA=3D?=
+X-OriginatorOrg: valinux.co.jp
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3b5faffa-096c-4b06-080f-08dde5e03d67
+X-MS-Exchange-CrossTenant-AuthSource: OSZP286MB0982.JPNP286.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Aug 2025 03:09:02.6725
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 7a57bee8-f73d-4c5f-a4f7-d72c91c8c111
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 1RDNklZ51zztAfHLfFnxTWsuH8ql9PVZR21Opfpke2wpKKwXvK/WKX+xs8Yd6X5zzMer3GZsHmqanJnimSYdqg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS3P286MB3212
 
-Hello,
+On Wed, Aug 27, 2025 at 01:48:33PM +0100, Marc Zyngier wrote:
+> On Wed, 27 Aug 2025 08:38:48 +0100,
+> Koichiro Den <den@valinux.co.jp> wrote:
+> > 
+> > its_irq_set_vcpu_affinity() always runs under a raw_spin_lock wait
+> > context, so calling kcalloc there is not permitted and RT-unsafe since
+> > ___slab_alloc() may acquire a local lock. The below is the actual
+> > lockdep report observed:
+> > 
+> >   =============================
+> >   [ BUG: Invalid wait context ]
+> >   6.16.0-rc3-irqchip-next-7e28bba92c5c+ #1 Tainted: G S
+> >   -----------------------------
+> >   qemu-system-aar/2129 is trying to lock:
+> >   ffff0085b74f2178 (batched_entropy_u32.lock){..-.}-{3:3}, at: get_random_u32+0x9c/0x708
+> >   other info that might help us debug this:
+> >   context-{5:5}
+> >   6 locks held by qemu-system-aar/2129:
+> >    #0: ffff0000b84a0738 (&vdev->igate){+.+.}-{4:4}, at: vfio_pci_core_ioctl+0x40c/0x748 [vfio_pci_core]
+> >    #1: ffff8000883cef68 (lock#6){+.+.}-{4:4}, at: irq_bypass_register_producer+0x64/0x2f0
+> >    #2: ffff0000ac0df960 (&its->its_lock){+.+.}-{4:4}, at: kvm_vgic_v4_set_forwarding+0x224/0x6f0
+> >    #3: ffff000086dc4718 (&irq->irq_lock#3){....}-{2:2}, at: kvm_vgic_v4_set_forwarding+0x288/0x6f0
+> >    #4: ffff0001356200c8 (&irq_desc_lock_class){-.-.}-{2:2}, at: __irq_get_desc_lock+0xc8/0x158
+> >    #5: ffff00009eae4850 (&dev->event_map.vlpi_lock){....}-{2:2}, at: its_irq_set_vcpu_affinity+0x8c/0x528
+> >   ...
+> >   Call trace:
+> >    show_stack+0x30/0x98 (C)
+> >    dump_stack_lvl+0x9c/0xd0
+> >    dump_stack+0x1c/0x34
+> >    __lock_acquire+0x814/0xb40
+> >    lock_acquire.part.0+0x16c/0x2a8
+> >    lock_acquire+0x8c/0x178
+> >    get_random_u32+0xd4/0x708
+> >    __get_random_u32_below+0x20/0x80
+> >    shuffle_freelist+0x5c/0x1b0
+> >    allocate_slab+0x15c/0x348
+> >    new_slab+0x48/0x80
+> >    ___slab_alloc+0x590/0x8b8
+> >    __slab_alloc.isra.0+0x3c/0x80
+> >    __kmalloc_noprof+0x174/0x520
+> >    its_vlpi_map+0x834/0xce0
+> >    its_irq_set_vcpu_affinity+0x21c/0x528
+> >    irq_set_vcpu_affinity+0x160/0x1b0
+> >    its_map_vlpi+0x90/0x100
+> >    kvm_vgic_v4_set_forwarding+0x3c4/0x6f0
+> >    kvm_arch_irq_bypass_add_producer+0xac/0x108
+> >    __connect+0x138/0x1b0
+> >    irq_bypass_register_producer+0x16c/0x2f0
+> >    vfio_msi_set_vector_signal+0x2c0/0x5a8 [vfio_pci_core]
+> >    vfio_msi_set_block+0x8c/0x120 [vfio_pci_core]
+> >    vfio_pci_set_msi_trigger+0x120/0x3d8 [vfio_pci_core]
+> 
+> Huh. I guess this is due to RT not being completely compatible with
+> GFP_ATOMIC...  Why you'd want RT and KVM at the same time is beyond
+> me, but hey.
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-INFO: rcu detected stall in corrupted
+For the record, I didn't run KVM on RT, though I still believe it's better
+to conform to the wait context rule and avoid triggering the lockdep splat.
 
-rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
-rcu: 	Tasks blocked on level-0 rcu_node (CPUs 0-1): P5218/1:b..l
-rcu: 	(detected by 0, t=10502 jiffies, g=10417, q=327 ncpus=2)
-task:udevd           state:R  running task     stack:26640 pid:5218  tgid:5218  ppid:1      task_flags:0x400140 flags:0x00004002
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5357 [inline]
- __schedule+0x1190/0x5de0 kernel/sched/core.c:6961
- preempt_schedule_irq+0x51/0x90 kernel/sched/core.c:7288
- irqentry_exit+0x36/0x90 kernel/entry/common.c:197
- asm_sysvec_reschedule_ipi+0x1a/0x20 arch/x86/include/asm/idtentry.h:707
-RIP: 0010:lock_acquire+0x30/0x350 kernel/locking/lockdep.c:5828
-Code: 4d 89 cf 41 56 41 89 f6 41 55 41 89 d5 41 54 45 89 c4 55 89 cd 53 48 89 fb 48 83 ec 38 65 48 8b 05 0d 79 3e 12 48 89 44 24 30 <31> c0 66 90 65 8b 05 29 79 3e 12 83 f8 07 0f 87 bc 02 00 00 89 c0
-RSP: 0018:ffffc90003d0f530 EFLAGS: 00000286
-RAX: 4b548df46ee33600 RBX: ffffffff8e5c11e0 RCX: 0000000000000002
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffffffff8e5c11e0
-RBP: 0000000000000002 R08: 0000000000000000 R09: 0000000000000000
-R10: ffffc90003d0f618 R11: 00000000000135a3 R12: 0000000000000000
-R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
- rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
- rcu_read_lock include/linux/rcupdate.h:841 [inline]
- class_rcu_constructor include/linux/rcupdate.h:1155 [inline]
- unwind_next_frame+0xd1/0x20a0 arch/x86/kernel/unwind_orc.c:479
- arch_stack_walk+0x94/0x100 arch/x86/kernel/stacktrace.c:25
- stack_trace_save+0x8e/0xc0 kernel/stacktrace.c:122
- kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
- kasan_save_track+0x14/0x30 mm/kasan/common.c:68
- kasan_save_free_info+0x3b/0x60 mm/kasan/generic.c:576
- poison_slab_object mm/kasan/common.c:243 [inline]
- __kasan_slab_free+0x60/0x70 mm/kasan/common.c:275
- kasan_slab_free include/linux/kasan.h:233 [inline]
- slab_free_hook mm/slub.c:2417 [inline]
- slab_free mm/slub.c:4680 [inline]
- kfree+0x2b4/0x4d0 mm/slub.c:4879
- tomoyo_realpath_from_path+0x19f/0x6e0 security/tomoyo/realpath.c:286
- tomoyo_get_realpath security/tomoyo/file.c:151 [inline]
- tomoyo_path_perm+0x274/0x460 security/tomoyo/file.c:822
- security_inode_getattr+0x116/0x290 security/security.c:2377
- vfs_getattr fs/stat.c:259 [inline]
- vfs_statx_path fs/stat.c:299 [inline]
- vfs_statx+0x121/0x3f0 fs/stat.c:356
- vfs_fstatat+0x7b/0xf0 fs/stat.c:375
- __do_sys_newfstatat+0x97/0x120 fs/stat.c:542
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xcd/0x4c0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f47f6d11b0a
-RSP: 002b:00007ffd84c35818 EFLAGS: 00000246 ORIG_RAX: 0000000000000106
-RAX: ffffffffffffffda RBX: 0000559b20c5e418 RCX: 00007f47f6d11b0a
-RDX: 00007ffd84c35820 RSI: 0000559b20c4cef3 RDI: 00000000ffffff9c
-RBP: 0000559b5aa6d668 R08: 00063d641a57c867 R09: 00007f47f7457000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
-R13: 00007ffd84c35820 R14: 0000000000000000 R15: 00063d641a57c867
- </TASK>
-rcu: rcu_preempt kthread starved for 966 jiffies! g10417 f0x0 RCU_GP_WAIT_FQS(5) ->state=0x0 ->cpu=1
-rcu: 	Unless rcu_preempt kthread gets sufficient CPU time, OOM is now expected behavior.
-rcu: RCU grace-period kthread stack dump:
-task:rcu_preempt     state:R  running task     stack:28936 pid:16    tgid:16    ppid:2      task_flags:0x208040 flags:0x00004000
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5357 [inline]
- __schedule+0x1190/0x5de0 kernel/sched/core.c:6961
- __schedule_loop kernel/sched/core.c:7043 [inline]
- schedule+0xe7/0x3a0 kernel/sched/core.c:7058
- schedule_timeout+0x123/0x290 kernel/time/sleep_timeout.c:99
- rcu_gp_fqs_loop+0x1ea/0xb00 kernel/rcu/tree.c:2083
- rcu_gp_kthread+0x270/0x380 kernel/rcu/tree.c:2285
- kthread+0x3c2/0x780 kernel/kthread.c:463
- ret_from_fork+0x5d7/0x6f0 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
-rcu: Stack dump where RCU GP kthread last ran:
-Sending NMI from CPU 0 to CPUs 1:
-NMI backtrace for cpu 1
-CPU: 1 UID: 0 PID: 6556 Comm: syz.1.23 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
-RIP: 0010:arch_static_branch arch/x86/include/asm/jump_label.h:36 [inline]
-RIP: 0010:native_write_msr arch/x86/include/asm/msr.h:139 [inline]
-RIP: 0010:wrmsrq arch/x86/include/asm/msr.h:199 [inline]
-RIP: 0010:native_apic_msr_write arch/x86/include/asm/apic.h:212 [inline]
-RIP: 0010:native_apic_msr_write+0x28/0x40 arch/x86/include/asm/apic.h:206
-Code: 90 90 f3 0f 1e fa 8d 87 30 ff ff ff 83 e0 ef 74 20 89 f8 83 e0 ef 83 f8 20 74 16 c1 ef 04 31 d2 89 f0 8d 8f 00 08 00 00 0f 30 <66> 90 c3 cc cc cc cc c3 cc cc cc cc 89 f6 31 d2 89 cf e9 b1 4d ae
-RSP: 0018:ffffc900031479f0 EFLAGS: 00000046
-RAX: 000000000000003e RBX: ffff8880b8523a00 RCX: 0000000000000838
-RDX: 0000000000000000 RSI: 000000000000003e RDI: 0000000000000038
-RBP: 000000000000003e R08: 0000000000000005 R09: 000000000000003f
-R10: 0000000000000020 R11: ffffffff9b0d2580 R12: dffffc0000000000
-R13: 0000000000000000 R14: 0000000000000020 R15: ffffed10170a4745
-FS:  0000555558775500(0000) GS:ffff8881247bc000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000c00732e000 CR3: 0000000077210000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- apic_write arch/x86/include/asm/apic.h:405 [inline]
- lapic_next_event+0x10/0x20 arch/x86/kernel/apic/apic.c:416
- clockevents_program_min_delta+0x173/0x3a0 kernel/time/clockevents.c:248
- clockevents_program_event+0x2a6/0x380 kernel/time/clockevents.c:336
- tick_program_event+0xa9/0x140 kernel/time/tick-oneshot.c:44
- __hrtimer_reprogram kernel/time/hrtimer.c:685 [inline]
- __hrtimer_reprogram kernel/time/hrtimer.c:659 [inline]
- hrtimer_reprogram+0x27b/0x450 kernel/time/hrtimer.c:868
- hrtimer_start_range_ns+0x9d4/0xfc0 kernel/time/hrtimer.c:1330
- __posixtimer_deliver_signal kernel/time/posix-timers.c:322 [inline]
- posixtimer_deliver_signal+0x30d/0x6b0 kernel/time/posix-timers.c:348
- dequeue_signal+0x307/0x520 kernel/signal.c:660
- get_signal+0x602/0x26d0 kernel/signal.c:2914
- arch_do_signal_or_restart+0x8f/0x7d0 arch/x86/kernel/signal.c:337
- exit_to_user_mode_loop+0x84/0x110 kernel/entry/common.c:40
- exit_to_user_mode_prepare include/linux/irq-entry-common.h:225 [inline]
- syscall_exit_to_user_mode_work include/linux/entry-common.h:175 [inline]
- syscall_exit_to_user_mode include/linux/entry-common.h:210 [inline]
- do_syscall_64+0x3f6/0x4c0 arch/x86/entry/syscall_64.c:100
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f5114d8ebe9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffcc5e18098 EFLAGS: 00000246
-RAX: fffffffffffffffc RBX: 00000000000231ee RCX: 00007f5114d8ebe9
-RDX: 0000000000000000 RSI: 0000000000000080 RDI: 00007f5114fb5fac
-RBP: 0000000000000032 R08: 00007f5115bce000 R09: 00000012c5e1838f
-R10: 00007ffcc5e18190 R11: 0000000000000246 R12: 00007f5114fb5fac
-R13: 00007ffcc5e18190 R14: 0000000000023220 R15: 00007ffcc5e181b0
- </TASK>
+I don't know if there are any plans which make kmalloc with GFP_ATOMIC
+workable under a stricter wait context (getting rid of the local lock
+in some way?), but I think it would be nicer.
 
+> 
+> >   ...
+> > 
+> > To avoid this, simply pre-allocate vlpi_maps when creating an ITS v4
+> > device with LPIs allcation. The trade-off is some wasted memory
+> > depending on nr_lpis, if none of those LPIs are never upgraded to VLPIs.
+> >
+> > An alternative would be to move the vlpi_maps allocation out of
+> > its_map_vlpi() and introduce a two-stage prepare/commit flow, allowing a
+> > caller (KVM in the lockdep splat shown above) to do the allocation
+> > outside irq_set_vcpu_affinity(). However, this would unnecessarily add
+> > complexity.
+> 
+> That's debatable. It is probably fine for now, but if this was to
+> grow, we'd need to revisit this.
 
-Tested on:
+Just curious but do you have any plans to replace the current
+irq_set_vcpu_affinity() approach with something else?
 
-commit:         a1617343 skip the validate_mm() for stall test
-git tree:       git://git.infradead.org/users/jedix/linux-maple.git no_validate
-console output: https://syzkaller.appspot.com/x/log.txt?x=13441fbc580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d4703ac89d9e185a
-dashboard link: https://syzkaller.appspot.com/bug?extid=8785aaf121cfb2141e0d
-compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+> 
+> > Fixes: d011e4e654d7 ("irqchip/gic-v3-its: Add VLPI map/unmap operations")
+> 
+> No. This code predates RT being merged, and this problem cannot occur
+> before RT.
 
-Note: no patches were applied.
+I'll drop this in v2.
+
+> 
+> > Signed-off-by: Koichiro Den <den@valinux.co.jp>
+> > ---
+> >  drivers/irqchip/irq-gic-v3-its.c | 36 ++++++++++++++++++--------------
+> >  1 file changed, 20 insertions(+), 16 deletions(-)
+> > 
+> > diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
+> > index 467cb78435a9..b933be8ddc51 100644
+> > --- a/drivers/irqchip/irq-gic-v3-its.c
+> > +++ b/drivers/irqchip/irq-gic-v3-its.c
+> > @@ -1923,19 +1923,10 @@ static int its_vlpi_map(struct irq_data *d, struct its_cmd_info *info)
+> >  	if (!info->map)
+> >  		return -EINVAL;
+> >  
+> > -	if (!its_dev->event_map.vm) {
+> > -		struct its_vlpi_map *maps;
+> > -
+> > -		maps = kcalloc(its_dev->event_map.nr_lpis, sizeof(*maps),
+> > -			       GFP_ATOMIC);
+> > -		if (!maps)
+> > -			return -ENOMEM;
+> > -
+> > +	if (!its_dev->event_map.vm)
+> >  		its_dev->event_map.vm = info->map->vm;
+> > -		its_dev->event_map.vlpi_maps = maps;
+> > -	} else if (its_dev->event_map.vm != info->map->vm) {
+> > +	else if (its_dev->event_map.vm != info->map->vm)
+> >  		return -EINVAL;
+> > -	}
+> >  
+> >  	/* Get our private copy of the mapping information */
+> >  	its_dev->event_map.vlpi_maps[event] = *info->map;
+> > @@ -2010,10 +2001,8 @@ static int its_vlpi_unmap(struct irq_data *d)
+> >  	 * Drop the refcount and make the device available again if
+> >  	 * this was the last VLPI.
+> >  	 */
+> > -	if (!--its_dev->event_map.nr_vlpis) {
+> > +	if (!--its_dev->event_map.nr_vlpis)
+> >  		its_dev->event_map.vm = NULL;
+> > -		kfree(its_dev->event_map.vlpi_maps);
+> > -	}
+> >  
+> >  	return 0;
+> >  }
+> > @@ -3469,6 +3458,7 @@ static struct its_device *its_create_device(struct its_node *its, u32 dev_id,
+> >  {
+> >  	struct its_device *dev;
+> >  	unsigned long *lpi_map = NULL;
+> > +	struct its_vlpi_map *vlpi_maps;
+> >  	unsigned long flags;
+> >  	u16 *col_map = NULL;
+> >  	void *itt;
+> > @@ -3497,16 +3487,28 @@ static struct its_device *its_create_device(struct its_node *its, u32 dev_id,
+> >  
+> >  	if (alloc_lpis) {
+> >  		lpi_map = its_lpi_alloc(nvecs, &lpi_base, &nr_lpis);
+> > -		if (lpi_map)
+> > +		if (lpi_map) {
+> >  			col_map = kcalloc(nr_lpis, sizeof(*col_map),
+> >  					  GFP_KERNEL);
+> > +
+> > +			/*
+> > +			 * Pre-allocate vlpi_maps to avoid slab allocation
+> > +			 * under the strict raw spinlock wait context of
+> > +			 * irq_set_vcpu_affinity. This could waste memory
+> > +			 * if no vlpi map is ever created.
+> > +			 */
+> > +			if (is_v4(its) && nr_lpis > 0)
+> > +				vlpi_maps = kcalloc(nr_lpis, sizeof(*vlpi_maps),
+> > +						    GFP_KERNEL);
+> > +		}
+> >  	} else {
+> >  		col_map = kcalloc(nr_ites, sizeof(*col_map), GFP_KERNEL);
+> >  		nr_lpis = 0;
+> >  		lpi_base = 0;
+> >  	}
+> >  
+> > -	if (!dev || !itt || !col_map || (!lpi_map && alloc_lpis)) {
+> > +	if (!dev || !itt || !col_map ||
+> > +	    (alloc_lpis && (!lpi_map || (is_v4(its) && !vlpi_maps)))) {
+> 
+> This needs to be collapsed into a single boolean evaluated with the
+> pointer being NULL.
+
+Right, I'll add and use something like:
+
+  bool prealloc_vlpis_maps = alloc_lpis && is_v4(its);
+
+If that's not the intended direction, please let me know.
+BTW, I noticed I forgot to initialize vlpi_maps. I'll fix that as well.
+
+> 
+> >  		kfree(dev);
+> >  		itt_free_pool(itt, sz);
+> >  		bitmap_free(lpi_map);
+> 
+> Where are you freeing vlpi_maps if on the failure path??
+
+Thanks for catching this, I'll fix this in v2.
+
+Thanks for the review!
+
+-Koichiro
+
+> 
+> Thanks,
+> 
+> 	M.
+> 
+> -- 
+> Without deviation from the norm, progress is not possible.
 
