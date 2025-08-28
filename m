@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-790453-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FE47B3A75C
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 19:13:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADF56B3A75D
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 19:13:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E61B81898CCC
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 17:13:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6ED1A9854F5
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 17:13:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8472A338F2E;
-	Thu, 28 Aug 2025 17:12:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B93733CE9C;
+	Thu, 28 Aug 2025 17:12:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jaUpxdvz"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ShoWSbxe"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB8BF3375C3;
-	Thu, 28 Aug 2025 17:12:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF96A338F5C;
+	Thu, 28 Aug 2025 17:12:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756401169; cv=none; b=T1Gj4fRIhWcXkrOCEmCwAavEQI8RkDhMLO2b4ib30cP86niqgz5SK0lX3j7sbzteY3irHulEDbXyjCKMwahrpO2uIHkHwcI+cZkm2dsjtRxhJqNj5fDjx6oysWueV9gW0SiQMsBoiuzUYZMXcghgaYyTAX8RMkbxuURDU6yruKY=
+	t=1756401170; cv=none; b=imfa5gq3seBjyasEvR+qmEvTd//X5+BlhDFCmYAx47076PgPT4zMYvY8hr5ID48Lgi9VGDx7yBJf1aZfoixFve5CsiMRJUMkhRK0NmTif3A+Rpf7JHob8T2FrNYEU5mQV77HrQGDGNXfYy9mlgGYJSiXZR7EPui0iXESP+9IPIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756401169; c=relaxed/simple;
-	bh=V00Ezz8Ti9dBe1Ak1a5KDdHP0ELwfwe8yMUv7LlWbPg=;
+	s=arc-20240116; t=1756401170; c=relaxed/simple;
+	bh=/viP4eNKlIp3xNvGENLPiu9ygdeBlYDEw/GbgmbYmHU=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Eh1iaQuGYLdcKp7GF8n5i2pZ2+2f0CfbtLNJc80sH3lw29069LLIwtQ9UW/SrWcpEX6qN+uRPQuiSOBlIXz/R6dF/a0tHhcBqwYOuuBo6MOlfCeoPxifZlgvVykTnvT2L8U5nhUh84y5sxRbgR0S9K55R9yv20zjBSdB4Z9eOiQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jaUpxdvz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66073C4CEED;
-	Thu, 28 Aug 2025 17:12:48 +0000 (UTC)
+	 MIME-Version; b=dkG7uiWMeKMJxzadHNoxFKQu7QeExBQtUSElCcZeKMfkuMCofRqzHVv4E4XQZQgg9eSKo/v4rhM9IVNK6bIBxsa9jB1SfgYcMvv8vRYQchrun7EFalSjYSPXriZf5U+XvmBFFtIu4++c5kUFjpjpbXFxlSUHUVrOxad1K+8tMDI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ShoWSbxe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6DED1C4CEEB;
+	Thu, 28 Aug 2025 17:12:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756401168;
-	bh=V00Ezz8Ti9dBe1Ak1a5KDdHP0ELwfwe8yMUv7LlWbPg=;
+	s=k20201202; t=1756401169;
+	bh=/viP4eNKlIp3xNvGENLPiu9ygdeBlYDEw/GbgmbYmHU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=jaUpxdvzwwym0dlXeMFT+KGkRyAyLcOmfh1XaxJ6PQ2LFMXvXYB06OBDEQdbjg4o/
-	 fF9cV3X0q+tdhnJaLYSTQ6gPIeQX615Jskmq5ZEqz3AgoKz87zh8HndeImZRRCQ9JO
-	 Z7sCkYsdwdS92Q5unjCX+cvUTbu2ynw9OTkrdmDQ9YCuF9vN0WQHKVnKlav/EYb+cA
-	 ZOhCiPJhMHs0k2UD0Obf7mN2rq4gQsEwYt/icehBaA5sz3A+83wEcDg0BzFhQ9q9q1
-	 xYEv36Vn+4vPlN8grelrrG3aVTrfKo3cSkBDOC54Eq3tOzdDG4GHkeY9wwfmTxBjmf
-	 T5+YPJY6kiyJg==
+	b=ShoWSbxe/VvRANS1E4btJRQii4QhZd4/DyUYBSCTQIJf+/FMvp59isNQLoZyRyWt0
+	 /wRnFM9kYrcNo+SdHTDNCzwhIYfMoH/Opof0rlgrAxwNB7U4E+vdyPYfjgJ3R13Hwb
+	 /OVKiFSvOuap6k0V6h/XNSqen2Gt98MzZkp9J/7vJCtSWZFqSVQ1hDNcsvjWW92eN4
+	 1tk38a9xbnwiNQErYYyxtmHetcl99oox3epZiEWoElrPgQZbZf+lIN/l6xeis+GEZ+
+	 HikmhBENmXwOZk3CbzDeLf/UpEF8EJOtrDrmnls8ylJgkXQ5xH8c4wVMvTHHvCo6Ok
+	 wuljHjyCK4eRg==
 From: SeongJae Park <sj@kernel.org>
 To: Andrew Morton <akpm@linux-foundation.org>
 Cc: SeongJae Park <sj@kernel.org>,
@@ -49,9 +49,9 @@ Cc: SeongJae Park <sj@kernel.org>,
 	linux-mm@kvack.org,
 	wangkefeng.wang@huawei.com,
 	zuoze1@huawei.com
-Subject: [PATCH v3 01/11] mm/damon/core: add damon_ctx->addr_unit
-Date: Thu, 28 Aug 2025 10:12:32 -0700
-Message-Id: <20250828171242.59810-2-sj@kernel.org>
+Subject: [PATCH v3 02/11] mm/damon/paddr: support addr_unit for access monitoring
+Date: Thu, 28 Aug 2025 10:12:33 -0700
+Message-Id: <20250828171242.59810-3-sj@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250828171242.59810-1-sj@kernel.org>
 References: <20250828171242.59810-1-sj@kernel.org>
@@ -63,72 +63,105 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-In some cases, some of the real address that handled by the underlying
-operations set cannot be handled by DAMON since it uses only 'unsinged
-long' as the address type.  Using DAMON for physical address space
-monitoring of 32 bit ARM devices with large physical address extension
-(LPAE) is one example[1].
-
-Add a parameter name 'addr_unit' to core layer to help such cases.
-DAMON core API callers can set it as the scale factor that will be used
-by the operations set for translating the core layer's addresses to the
-real address by multiplying the parameter value to the core layer
-address.  Support of the parameter is up to each operations set layer.
-The support from the physical address space operations set (paddr) will
-be added with following commits.
-
-[1] https://lore.kernel.org/20250408075553.959388-1-zuoze1@huawei.com
+Add support of addr_unit paramer for access monitoing operations of
+paddr.
 
 Signed-off-by: SeongJae Park <sj@kernel.org>
 Signed-off-by: Quanmin Yan <yanquanmin1@huawei.com>
 Reviewed-by: SeongJae Park <sj@kernel.org>
 ---
- include/linux/damon.h | 3 ++-
- mm/damon/core.c       | 3 +++
- 2 files changed, 5 insertions(+), 1 deletion(-)
+ mm/damon/paddr.c | 32 +++++++++++++++++++++-----------
+ 1 file changed, 21 insertions(+), 11 deletions(-)
 
-diff --git a/include/linux/damon.h b/include/linux/damon.h
-index d01bfee80bd6..6fa52f7495d9 100644
---- a/include/linux/damon.h
-+++ b/include/linux/damon.h
-@@ -746,7 +746,7 @@ struct damon_attrs {
-  * Accesses to other fields must be protected by themselves.
-  *
-  * @ops:	Set of monitoring operations for given use cases.
-- *
-+ * @addr_unit:	Scale factor for core to ops address conversion.
-  * @adaptive_targets:	Head of monitoring targets (&damon_target) list.
-  * @schemes:		Head of schemes (&damos) list.
-  */
-@@ -788,6 +788,7 @@ struct damon_ctx {
- 	struct mutex kdamond_lock;
+diff --git a/mm/damon/paddr.c b/mm/damon/paddr.c
+index 0b67d9321460..d497373c2bd2 100644
+--- a/mm/damon/paddr.c
++++ b/mm/damon/paddr.c
+@@ -18,7 +18,13 @@
+ #include "../internal.h"
+ #include "ops-common.h"
  
- 	struct damon_operations ops;
-+	unsigned long addr_unit;
- 
- 	struct list_head adaptive_targets;
- 	struct list_head schemes;
-diff --git a/mm/damon/core.c b/mm/damon/core.c
-index 5ac1433860a3..acea2964b9cc 100644
---- a/mm/damon/core.c
-+++ b/mm/damon/core.c
-@@ -544,6 +544,8 @@ struct damon_ctx *damon_new_ctx(void)
- 	ctx->attrs.min_nr_regions = 10;
- 	ctx->attrs.max_nr_regions = 1000;
- 
-+	ctx->addr_unit = 1;
+-static void damon_pa_mkold(unsigned long paddr)
++static phys_addr_t damon_pa_phys_addr(
++		unsigned long addr, unsigned long addr_unit)
++{
++	return (phys_addr_t)addr * addr_unit;
++}
 +
- 	INIT_LIST_HEAD(&ctx->adaptive_targets);
- 	INIT_LIST_HEAD(&ctx->schemes);
++static void damon_pa_mkold(phys_addr_t paddr)
+ {
+ 	struct folio *folio = damon_get_folio(PHYS_PFN(paddr));
  
-@@ -1245,6 +1247,7 @@ int damon_commit_ctx(struct damon_ctx *dst, struct damon_ctx *src)
- 			return err;
- 	}
- 	dst->ops = src->ops;
-+	dst->addr_unit = src->addr_unit;
- 
- 	return 0;
+@@ -29,11 +35,12 @@ static void damon_pa_mkold(unsigned long paddr)
+ 	folio_put(folio);
  }
+ 
+-static void __damon_pa_prepare_access_check(struct damon_region *r)
++static void __damon_pa_prepare_access_check(struct damon_region *r,
++		unsigned long addr_unit)
+ {
+ 	r->sampling_addr = damon_rand(r->ar.start, r->ar.end);
+ 
+-	damon_pa_mkold(r->sampling_addr);
++	damon_pa_mkold(damon_pa_phys_addr(r->sampling_addr, addr_unit));
+ }
+ 
+ static void damon_pa_prepare_access_checks(struct damon_ctx *ctx)
+@@ -43,11 +50,11 @@ static void damon_pa_prepare_access_checks(struct damon_ctx *ctx)
+ 
+ 	damon_for_each_target(t, ctx) {
+ 		damon_for_each_region(r, t)
+-			__damon_pa_prepare_access_check(r);
++			__damon_pa_prepare_access_check(r, ctx->addr_unit);
+ 	}
+ }
+ 
+-static bool damon_pa_young(unsigned long paddr, unsigned long *folio_sz)
++static bool damon_pa_young(phys_addr_t paddr, unsigned long *folio_sz)
+ {
+ 	struct folio *folio = damon_get_folio(PHYS_PFN(paddr));
+ 	bool accessed;
+@@ -62,23 +69,25 @@ static bool damon_pa_young(unsigned long paddr, unsigned long *folio_sz)
+ }
+ 
+ static void __damon_pa_check_access(struct damon_region *r,
+-		struct damon_attrs *attrs)
++		struct damon_attrs *attrs, unsigned long addr_unit)
+ {
+-	static unsigned long last_addr;
++	static phys_addr_t last_addr;
+ 	static unsigned long last_folio_sz = PAGE_SIZE;
+ 	static bool last_accessed;
++	phys_addr_t sampling_addr = damon_pa_phys_addr(
++			r->sampling_addr, addr_unit);
+ 
+ 	/* If the region is in the last checked page, reuse the result */
+ 	if (ALIGN_DOWN(last_addr, last_folio_sz) ==
+-				ALIGN_DOWN(r->sampling_addr, last_folio_sz)) {
++				ALIGN_DOWN(sampling_addr, last_folio_sz)) {
+ 		damon_update_region_access_rate(r, last_accessed, attrs);
+ 		return;
+ 	}
+ 
+-	last_accessed = damon_pa_young(r->sampling_addr, &last_folio_sz);
++	last_accessed = damon_pa_young(sampling_addr, &last_folio_sz);
+ 	damon_update_region_access_rate(r, last_accessed, attrs);
+ 
+-	last_addr = r->sampling_addr;
++	last_addr = sampling_addr;
+ }
+ 
+ static unsigned int damon_pa_check_accesses(struct damon_ctx *ctx)
+@@ -89,7 +98,8 @@ static unsigned int damon_pa_check_accesses(struct damon_ctx *ctx)
+ 
+ 	damon_for_each_target(t, ctx) {
+ 		damon_for_each_region(r, t) {
+-			__damon_pa_check_access(r, &ctx->attrs);
++			__damon_pa_check_access(
++					r, &ctx->attrs, ctx->addr_unit);
+ 			max_nr_accesses = max(r->nr_accesses, max_nr_accesses);
+ 		}
+ 	}
 -- 
 2.39.5
 
