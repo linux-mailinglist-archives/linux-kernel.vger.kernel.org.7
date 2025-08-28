@@ -1,51 +1,47 @@
-Return-Path: <linux-kernel+bounces-789232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 318D0B39284
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 06:19:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 780A9B39294
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 06:28:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC23998179D
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 04:19:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3D01D7B6165
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 04:26:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B1E020459A;
-	Thu, 28 Aug 2025 04:19:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC61C266576;
+	Thu, 28 Aug 2025 04:27:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Jxrqicmr"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MDOpy7Q7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC16330CD97;
-	Thu, 28 Aug 2025 04:18:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2A6830CD97;
+	Thu, 28 Aug 2025 04:27:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756354743; cv=none; b=hoiV64t6xtd9ay+z5Vc9DmVzkFp60PRBjhUGJh5tLE2Sdx8f5hvCNNF2RJ8kOa4/zWNYzC2yvA2JM/kRYJpAzBjwyBm3dYwTJENdIF9fgMCUIUshD/YQ7eai8pf/5HZX4Qtn65x17TKyU7jmVqKk1MoVIMfqGvVq1SPiq7iNP/0=
+	t=1756355265; cv=none; b=r2UIBl3fzj8XOTo2LGZrcrtlQ5xoTTX7n40oXyt42m/Zre12gLcN2OxXDNg11r+Y0obdizIwa7c9u9+4SQ9FXexUpr9XRdZGx6WpdXThBMzhcHJv4LFnIDAfueEeW2sR3hJT+KYvNGuP4KzVUqnWV0n2HJtFT86pabw6Aq8El+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756354743; c=relaxed/simple;
-	bh=xjPLySpG4Cqaeo6i2PBc0ZZuCTZhuQ8xsn5W87rGIfI=;
+	s=arc-20240116; t=1756355265; c=relaxed/simple;
+	bh=hUnNfjGCPEWmiNNGGLZKDOsScYWj511icwVWbnrMbSE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BZTApYfjYM7ty9Bps9DaR+5WV00BnMsCraLCgkgB6aoaQwRnjiNM3kDoHjy8muzQl7jANCeilQyQvhjaQS4tPHlu0pPYywPSkZ3ZP40OjgoYTpvxJLZvm85CjN49R06H4sU+4oDEtviOVleL4ZOL7Poeq0dfLR/vPi9UCXq0Uzo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Jxrqicmr; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=oNuKGPPg3hK4HshhqAcAMhnyXLVAApIs8OiHECNh8HI=; b=Jxrqicmr34AlSRZm6wMJCkBKeM
-	jb5arR1aO4fzHXN+p+DugR/B14WdMERJjWS421KwWRNphNYZChZemDsy/qt9iJrxqzlcY/6oK9jy9
-	5ayTR31bi/ca+WCeGlW2se+eijA7w/XPHxHFugWBCmgu6bnUtDONXZ7hUPP+S3No9mYPd4ZujRI3b
-	u35wIsfMD2hVid31dSLIVJL/8I0//XFm0AFL6qqfyupnKLFZTBk2VEwoTESYncMRfAFXt5d+QA4qR
-	qxULy7IF7SfLZXJNcl90loJGBvz8h56udLj5VQKmQCmu8C6C2IaXrECV/vh4cml5rrRwy20O9fFQ1
-	YQaR/LQw==;
-Received: from [50.53.25.54] (helo=[192.168.254.17])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1urU6D-00000000Dyq-2i21;
-	Thu, 28 Aug 2025 04:18:57 +0000
-Message-ID: <d0070beb-f6fd-477c-a315-a2c6db99c227@infradead.org>
-Date: Wed, 27 Aug 2025 21:18:57 -0700
+	 In-Reply-To:Content-Type; b=gE86G8YGZBmkIG9k7GPXf1bScrcjGn4WEPmcPw/M1D9uGUWwf3Ghr3OEmcgTmCtyC0BhnkTHq05Wiou0SvFFyZLlbkdajwARCMNLB9eqW+I76kO7xduMb1y64kHuctDWVi/bnJ63PN+jjUz85QjUFYtwE37hqwKAmHR8nU0AS4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MDOpy7Q7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33984C4CEEB;
+	Thu, 28 Aug 2025 04:27:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756355264;
+	bh=hUnNfjGCPEWmiNNGGLZKDOsScYWj511icwVWbnrMbSE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=MDOpy7Q7+PtjV9ZnI/+71mkZCJrWQwTtFvdW0afXONz8h7wR9ImGTrV4WCC7mXn2B
+	 7EbOn3HGpIWLqjjSjwF8rGcKZhPtc4Gfky+zbxOUAt8Kl+cAXdXSfuUaya8Zvy1ya1
+	 F1mYHsgG9WcnDg0zKq2bACZzcl/UPORrd7FsCsy3qdsnuRy8wAbqlzxL98joSNwLF6
+	 w9WMn87Hpnp8f8IF6pk5vnsO7wQiX+Ib8XV+pManWrp62VQ4CdQPenZjvMUQSDERoQ
+	 eOJ33fQuGDSZ49Qcix6/vKNOIhOhF/f6epJTEq5OJkbiyKYIE1xM/FteX3oGbk+Ymp
+	 Up7jZQPpsB0CA==
+Message-ID: <c39104cf-f066-45d8-a13c-cad558312b6e@kernel.org>
+Date: Thu, 28 Aug 2025 13:24:45 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,69 +49,53 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] Documentation: management-style: Reword "had better
- known the details" phrase
-To: Bagas Sanjaya <bagasdotme@gmail.com>,
- Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
- Jonathan Corbet <corbet@lwn.net>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Documentation <linux-doc@vger.kernel.org>,
- Linux Kernel Workflows <workflows@vger.kernel.org>,
- =?UTF-8?Q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
- Fox Foster <fox@tardis.ed.ac.uk>, Federico Vaga <federico.vaga@vaga.pv.it>,
- Stephen Rothwell <sfr@canb.auug.org.au>,
- Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
- Matthew Wilcox <willy@infradead.org>
-References: <20250827044848.17374-1-bagasdotme@gmail.com>
- <87wm6p9v8l.fsf@trenco.lwn.net> <20250827113312.62162725@foz.lan>
- <aK_XIoncppxWp7sB@archie.me>
+Subject: Re: [PATCH v1 24/36] ata: libata-eh: drop nth_page() usage within SG
+ entry
+To: David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org
+Cc: Niklas Cassel <cassel@kernel.org>, Alexander Potapenko
+ <glider@google.com>, Andrew Morton <akpm@linux-foundation.org>,
+ Brendan Jackman <jackmanb@google.com>, Christoph Lameter <cl@gentwo.org>,
+ Dennis Zhou <dennis@kernel.org>, Dmitry Vyukov <dvyukov@google.com>,
+ dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+ iommu@lists.linux.dev, io-uring@vger.kernel.org,
+ Jason Gunthorpe <jgg@nvidia.com>, Jens Axboe <axboe@kernel.dk>,
+ Johannes Weiner <hannes@cmpxchg.org>, John Hubbard <jhubbard@nvidia.com>,
+ kasan-dev@googlegroups.com, kvm@vger.kernel.org,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>, linux-arm-kernel@axis.com,
+ linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
+ linux-ide@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-mips@vger.kernel.org, linux-mmc@vger.kernel.org, linux-mm@kvack.org,
+ linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
+ linux-scsi@vger.kernel.org, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Marco Elver <elver@google.com>, Marek Szyprowski <m.szyprowski@samsung.com>,
+ Michal Hocko <mhocko@suse.com>, Mike Rapoport <rppt@kernel.org>,
+ Muchun Song <muchun.song@linux.dev>, netdev@vger.kernel.org,
+ Oscar Salvador <osalvador@suse.de>, Peter Xu <peterx@redhat.com>,
+ Robin Murphy <robin.murphy@arm.com>, Suren Baghdasaryan <surenb@google.com>,
+ Tejun Heo <tj@kernel.org>, virtualization@lists.linux.dev,
+ Vlastimil Babka <vbabka@suse.cz>, wireguard@lists.zx2c4.com, x86@kernel.org,
+ Zi Yan <ziy@nvidia.com>
+References: <20250827220141.262669-1-david@redhat.com>
+ <20250827220141.262669-25-david@redhat.com>
+From: Damien Le Moal <dlemoal@kernel.org>
 Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <aK_XIoncppxWp7sB@archie.me>
+Organization: Western Digital Research
+In-Reply-To: <20250827220141.262669-25-david@redhat.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-
-
-On 8/27/25 9:12 PM, Bagas Sanjaya wrote:
-> On Wed, Aug 27, 2025 at 11:33:12AM +0200, Mauro Carvalho Chehab wrote:
->> As a non-native English speaker, "had better know" looks really
->> weird on my eyes, as, at least for me, "know" is a verb.
->>
->> Heh, I just discovered today by looking on a dictionary:
->>
->> 	https://dictionary.cambridge.org/dictionary/english/know
->>
->> That know can informally be used as a noun (a shortcut for
->> knowledge?).
->>
->> For me as a non-native English speaker, when one writes:
->>
->> 	They "most likely know"		(know here is a verb)
->>
->> or:
->> 	They "had better knowledge"	(knowledge is a name)
->>
->> Things become clearer.
->>
->> Heh:
->>
->> 	They "had better know the details better than you"
->>
->> the "better" word is used twice, and yeah, this is requires more
->> fluency in English for a non-native speaker to get what it says.
->>
->> Considering that "know" (noun) seems to be a shortcut
->> for "knowledge", what about:
->>
->> 	They "had better knowledge about the details than you"
+On 8/28/25 7:01 AM, David Hildenbrand wrote:
+> It's no longer required to use nth_page() when iterating pages within a
+> single SG entry, so let's drop the nth_page() usage.
 > 
-> That can be alternative.
+> Cc: Damien Le Moal <dlemoal@kernel.org>
+> Cc: Niklas Cassel <cassel@kernel.org>
+> Signed-off-by: David Hildenbrand <david@redhat.com>
 
-Nope, afraid not. Just leave it as is or (I think) 2 people have suggested
-something like "They should know better about the details than you".
+Acked-by: Damien Le Moal <dlemoal@kernel.org>
 
 -- 
-~Randy
-
+Damien Le Moal
+Western Digital Research
 
