@@ -1,196 +1,166 @@
-Return-Path: <linux-kernel+bounces-789278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789280-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0E49B39345
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 07:50:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6767B39354
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 07:51:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F0EA1B2029D
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 05:50:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6F1437AF47D
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 05:49:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C31827702E;
-	Thu, 28 Aug 2025 05:50:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06FF2277CB9;
+	Thu, 28 Aug 2025 05:51:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kerneltoast.com header.i=@kerneltoast.com header.b="ConIoOJW"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AjqTzMII"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 113C94A02
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 05:50:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2EED13DDAA;
+	Thu, 28 Aug 2025 05:51:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756360208; cv=none; b=b3GBJqg4yrdxiDt0S8JRwYJadwjOE8Vsrv6svp2BNsDR8Fvgn9YWavhoGjcieT5g9VUMtX+8q3e/Z8xTmdFlcpPbZ89mqCuj2W38r6fGNbAQhsWWePf74/otspMXwyu1OFvmthDsPbaFMODELtnzwTuxww6vaOXo+QNuWXUU9LY=
+	t=1756360279; cv=none; b=MuWdNRtohCJ9oa9c67YTZyvKh1E1ZtUAwYE9zwXY5mf6GDmipU4HssnWkAdIzgKInx3D/vJjB6wBJzHYaAy7UPwhHTseWJ6zgCDdZCjdRYuQCqcpuFdyxkhEizozTuw1c4Zbnxdv7VSOLoKsbL4OVn6UOdmybrWOaLE9SzpI58A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756360208; c=relaxed/simple;
-	bh=F0gkpNpiTEA2wABFko6DKyFJdU7crFTml9Ubyssko00=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nueNELiZsBDZkRdoTx3NGRK2tTbJIuccJY4JYsfAKotburcg2ZQYwiBfUgHK+vJMUpg49VnaoLHv5ps4CDHzkN9wmYXZXgJQbdLNBr3Fwgn9ghz4KLYOPCdHZHayOVUEFnGFoWwIjYOIrQoPJljs4BrNRLh7WzX7Wqg7M7PYHc8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kerneltoast.com; spf=pass smtp.mailfrom=kerneltoast.com; dkim=pass (2048-bit key) header.d=kerneltoast.com header.i=@kerneltoast.com header.b=ConIoOJW; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kerneltoast.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kerneltoast.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-7721b8214d4so176113b3a.2
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 22:50:06 -0700 (PDT)
+	s=arc-20240116; t=1756360279; c=relaxed/simple;
+	bh=+pfpRU6cabBtHkFAx6wTGtIX59QJm0xSyvDCbivVAgc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Iq0AUkSG/4qspBh6+kmnS5DKeWeQvFdKxyMv63QyrYVXYvPKLTPUtU07mljoY9KaiIRqvecLcIE1N8oeyNHV+i2xAD1BFqGXeEYI5qftlIY711XM4c6axSth/WOW9HErXuwjibPJGXteV8+iRMctpR4eDjzdF/LA7W2E/8hhjz0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AjqTzMII; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-afeba8e759eso70755866b.3;
+        Wed, 27 Aug 2025 22:51:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kerneltoast.com; s=google; t=1756360206; x=1756965006; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=u1s4FfqRKDOUWN6Ld/CL91P0ePv7wl1zC5Joy8ipjYI=;
-        b=ConIoOJWE6I9s+0oBxsnSrEpXZB2owDrzho3YXHUEiDujHGUSLTe59ltmdOCL3MPAD
-         Elh0h9EZRRVkPD3L1rn+zVeh4S4cNyNp3PsTRrqJfdEaf3hfe0r7tXTw4+os3BFbztf1
-         Mn1RSIm1JkFpw6zw7RrwyRHB25Djlwi8BCPc5+KDAy2jgJwX3QngBBKZa3jJXJvHo/g0
-         rg2d2mUwL5q9rqmg9yk5tSaD1R1pun2lLQD6XxOxRhrhkMBD17hv8W2kZMcs1MrPs1JO
-         weDWSXlgabGgKmICgfCKbxYi2xxFFHbn9DmAXsN25DxUWtsOGsKMzrMol43wOvg+k29L
-         3adA==
+        d=gmail.com; s=20230601; t=1756360275; x=1756965075; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=hFya9Xxo8UcEycSGJ2X5jKskyF1P+mQblpuWkIk96ag=;
+        b=AjqTzMIIn0T55ZEjtO1JoRQI+lgIJQh9DzGGg14ckWSP6Az2W7P23FubbXPM3tFS+P
+         okvnY//Im0zSo0NWHFV+1lyOrWsASAKGogLwDDjMJUTEZjQ3SqYFCSuPtDUj8UNI1HTo
+         ptQE8o2ovKQVBOuAJQX5Z/MuFEreETjRPoBqiFGntDVSAhqQUmFkXvP2dL9s5cYxgib3
+         eDUfxBMk2J/2HCZjITs/EObu57TLvEBKDJM/+Ckd1tJ2aM47HAz4IW5oPmPyvTHX9Ssj
+         9MJfeO82Ar29xbNnoCp3vLkHgObkK87lo6BkMMqPJGCEPCrA+S5G6kCM5BskMtqZz/sK
+         qdvQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756360206; x=1756965006;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=u1s4FfqRKDOUWN6Ld/CL91P0ePv7wl1zC5Joy8ipjYI=;
-        b=lA6BQKWbQXywxftNE10YdGTo3qO9/tyNNpkoZEt9WSyrWSjNSXlsQ9LUp4L/EI9R3R
-         AHxbPgP0JuYdh1sq6Hlypf+ON0s96A8EiukaHGf1qCrGfL1/A3lzZHHotmGOvvrp+Ud8
-         WoVHLIKTq9qAQLW8eIISLtcQ3CTEhvPeFgUHByrjHNLSySh2vGjtXAn276N788Eu5YCj
-         sgHINAA8JtIQI8JwWewlTwXG6eYsC1OEvidqmip7s6nV6nrsq3mvAYveqJ010DGWgIdS
-         ZLEblKOqNxgpc3NuH7Z9jI9psBhnPpYAAtFzrrFw72dnvKVRZcJDKEor002NJVQL7G+N
-         3riw==
-X-Forwarded-Encrypted: i=1; AJvYcCXOdEIpXjdkhxCMtcaW5MR3dnW0+A5SYfxVMHEUOgHkoxyCYpdEzyDg0CuPktU31sg81EpCl7vwvshvl60=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzwqEIY6BopQWxMvF6Tj9+rWa40CnJNjZC2UHd+YHUTvfoyIbZV
-	k58PATe+kRTD/+J93/yMLZkm2i+5gBYgbqnvTGBzoYV6AIhK3GE7fB5wdVlhdtu5Mxhy
-X-Gm-Gg: ASbGnctizdPEcqBwwFxaYjBiS+kkyRHHu+BoPn09qyFWzVZMVj87UPK5d7SSrifgWKL
-	P6p92LEUWx8w0IL1S/0M7ocC4Po4/d6CUax2pLw4uPVXgl9mVlFXHHdxop7WWvANWL2EnXGe3Oh
-	VW545z+UpfceGPHtYIsoO2CpNyvN8gCRjjjugFHzJ4Ma9LbEvPSJF1ExtJhY7X00tP94MTG/VcG
-	IuCmImWcj4AKyKvkf4VyyyerFxIvXN5cR5uF9hLSVJKAQMoNBIdAeWN4F62DVMgGpmZqSzAzyps
-	OijxBwqa1bcLcCJfgOcwKCuUELd7ij/BJ1XaxRqzwiQpYg1LQIPo0nu5TIZ9uw6/d/h7BbVYVnI
-	Fmf5+trJ7eDXfQF+XFIiOybPDZk5RNm1/Dn47
-X-Google-Smtp-Source: AGHT+IGyFcmlu9PKZJuAXUZ2eaBHMjKG5KuS6pBlBz7RSeJq2X0th+9YOl3Ouks4QwXCuEFP+j4z5w==
-X-Received: by 2002:a05:6a21:99a7:b0:240:15d2:aa7c with SMTP id adf61e73a8af0-24340cd2e3amr39325394637.36.1756360206173;
-        Wed, 27 Aug 2025 22:50:06 -0700 (PDT)
-Received: from sultan-box ([142.147.89.218])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b49d48ebe53sm11687013a12.53.2025.08.27.22.50.04
+        d=1e100.net; s=20230601; t=1756360275; x=1756965075;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hFya9Xxo8UcEycSGJ2X5jKskyF1P+mQblpuWkIk96ag=;
+        b=hsO8xu488WHcmQ5MbyR4KTleq0D2IJjQphRgINLQAO1rn+709ZALYO7CCSnJbBGZvJ
+         Y1BMluKYmE1i+T3xUGSeeclo4HU95BdXa9WYQT0DkAdF+XJESthCJpmxZimMh7doWF65
+         2P5O5s6RgEckjfBIva03nfXsfNNwNIAtB0pfSZz7ZETkvgEOju7nX/h/ExnRHbtig0Kv
+         zdcU3W8en2yYcf4Ec+pv1wRUW/Kn7gAVV5pPcoCouQ4x37soTqobOATlZ6jNB+G/XG4+
+         eEqL1U83Ew03NwmNb8R28FDSMy7BgJT3NKo0I7EVCRS+lVF7FSXx/3hR201Ex0+mm1XY
+         QkAg==
+X-Forwarded-Encrypted: i=1; AJvYcCUxi5oKvYRTtsXNARWQhLnzEG27djX4ZlM78VU/3/zwA1sawtLunFdrpXAVF3JUIZdQGaQc4X0nObOHTcy8@vger.kernel.org, AJvYcCVyYl4QrjYeXv5wZjnyvpdIm3wTm2R5+ChfS8pV4sQgq7ytGPypIoEHZ29EUh7rY3SJrdPV56AYLIRSLzE=@vger.kernel.org, AJvYcCXq4+Y5FGl8TYO36iSat+fddOiOYmNW0NLOWxnqUwjs0wE1sZ/oVTXYhPG2ozjuTAbXNZhA+ylREXp2@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzi64K4AeeR3l8MdNumo4WgE69bsiwdHdkHqNFp0vEmtq8Ah80G
+	iNN2g4zg1SFdEayGH0fmc6ibqhLaFcIanLEn3AzZ/iAZlrPl4BUzJeXb
+X-Gm-Gg: ASbGncu95TGPDBy4SmaqBadA6euO6UQad/FM3BZNwXQPE2unH1V/NA9zD3zcNBkUQv8
+	Vd8NSiLmIRnwXXPPLtBeDviSot5aeZo4RGHBqdzK7JX6LgmDqwrS1TENloTlAYsUzqK66fuTaiz
+	fll4OQJVfZM0NjJjtvjHvMhK6zkGKOyspQ1atHGCQQmjqaBig8oDsiYuuXqq6vMp+eE7SzKHd98
+	fliJKTLZyGRlt8t3s2/u8h9n7+SejU6ZpEGDExUW5279PxfMmUDMvaJw9TP6I2Z9CF2Io5FIl2t
+	BTO7DmuMk7nCeuI9ISyuoTEcbu7ae2ScJGit4nAIOBnEh4sTxCA5bvZiEYXbdXO4nQA+oQQYxL2
+	aEtHCFppSuCTexA==
+X-Google-Smtp-Source: AGHT+IGkbSKUmtKl+t2HMM8Z0djNlIXB5RaRs8RVann/Uman2nhF1Cd2k7tfpmn06Wjx1rXIkPsv0g==
+X-Received: by 2002:a17:907:9725:b0:afe:c7a3:c6a5 with SMTP id a640c23a62f3a-afec7a3c889mr448362566b.26.1756360274724;
+        Wed, 27 Aug 2025 22:51:14 -0700 (PDT)
+Received: from xeon.. ([188.163.112.70])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afe72c35ebdsm927942666b.7.2025.08.27.22.51.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Aug 2025 22:50:05 -0700 (PDT)
-Date: Wed, 27 Aug 2025 22:50:02 -0700
-From: Sultan Alsawaf <sultan@kerneltoast.com>
-To: "Du, Bin" <bin.du@amd.com>
-Cc: "mchehab@kernel.org" <mchehab@kernel.org>,
-	"hverkuil@xs4all.nl" <hverkuil@xs4all.nl>,
-	"laurent.pinchart+renesas@ideasonboard.com" <laurent.pinchart+renesas@ideasonboard.com>,
-	"bryan.odonoghue@linaro.org" <bryan.odonoghue@linaro.org>,
-	"sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>,
-	"prabhakar.mahadev-lad.rj@bp.renesas.com" <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"Nirujogi, Pratap" <Pratap.Nirujogi@amd.com>,
-	"Chan, Benjamin (Koon Pan)" <Benjamin.Chan@amd.com>,
-	"Li, King" <King.Li@amd.com>,
-	"Rosikopulos, Gjorgji" <Gjorgji.Rosikopulos@amd.com>,
-	"Jawich, Phil" <Phil.Jawich@amd.com>,
-	"Antony, Dominic" <Dominic.Antony@amd.com>,
-	"Limonciello, Mario" <Mario.Limonciello@amd.com>,
-	"Gong, Richard" <Richard.Gong@amd.com>,
-	"Tsao, Anson" <anson.tsao@amd.com>
-Subject: Re: [PATCH v2 0/8] Add AMD ISP4 driver
-Message-ID: <aK_uCunEww-I5Jd7@sultan-box>
-References: <20250618091959.68293-1-Bin.Du@amd.com>
- <aJ2H6CIyZvN8W2sS@sultan-box>
- <ed9deffd-296c-465b-ad8a-314ed0968390@amd.com>
- <aKfqVNk_WSEeBxlz@sultan-box>
- <1633b6cd-c84f-4cac-9f87-9dbfd0d2847c@amd.com>
+        Wed, 27 Aug 2025 22:51:14 -0700 (PDT)
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+To: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Zhang Rui <rui.zhang@intel.com>,
+	Lukasz Luba <lukasz.luba@arm.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Thierry Reding <treding@nvidia.com>,
+	Mikko Perttunen <mperttunen@nvidia.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: linux-pm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v5 0/6] thermal: tegra: add SOCTHERM support for Tegra114
+Date: Thu, 28 Aug 2025 08:50:58 +0300
+Message-ID: <20250828055104.8073-1-clamor95@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1633b6cd-c84f-4cac-9f87-9dbfd0d2847c@amd.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Aug 27, 2025 at 06:30:14PM +0800, Du, Bin wrote:
-> On 8/22/2025 11:56 AM, Sultan Alsawaf wrote:
-> > On Fri, Aug 22, 2025 at 10:23:48AM +0800, Du, Bin wrote:
-> > > On 8/14/2025 2:53 PM, Sultan Alsawaf wrote:
-> > > > On Wed, Jun 18, 2025 at 05:19:51PM +0800, Bin Du wrote:
-> > > > > AMD ISP4 Key features:
-> > > > > - Processes bayer raw data from the connected sensor and output them to different YUV formats
-> > > > > - Downscale input image to different output image resolution
-> > > > > - Pipeline to do image processing on the input image including demosaic, denoise, 3A, etc
-> > > > 
-> > > > BTW, another problem I have which I would love some help with: may I get the FW
-> > > > commands for setting basic 3A parameters?
-> > > > 
-> > > > It seems like the default AE mode does frame-averaging, which is really
-> > > > unsuitable for video calls on the webcam. My face is really underexposed as a
-> > > > result during the daytime because there's a lot of ambient light in the
-> > > > background.
-> > > > 
-> > > > The webcam on this laptop also has a very wide field of view, which makes my
-> > > > face appear small and shows too much of the background. This also exacerbates
-> > > > the AE problem.
-> > > > 
-> > > > I'm thinking CMD_ID_SET_ZOOM would fix the FOV problem, and then either
-> > > > CMD_ID_AE_SET_MODE to change the AE mode or CMD_ID_AE_SET_REGION to set the AE
-> > > > ROI would fix the exposure problem. What do you think?
-> > > > 
-> > > > Thanks,
-> > > > Sultan
-> > > 
-> > > Thanks Sultan for the suggestion, sorry for the late response because we
-> > > spent some time internally to discuss the feasibility.
-> > 
-> > Thanks for looking into this!
-> > 
-> > > Yes, it's really good suggestion. Because current V4l2 doesn't have standard
-> > > ioctl for like region setting, to support it, besides adding FW command, new
-> > > customized ioctl also needs be added and no existing APP can benefit from
-> > > it. So our idea is not to add them to our current upstream driver, but we
-> > > would be really glad to help you to enable them locally with dedicated
-> > > thread, suppose it can help to improve the IQ with correct input setting
-> > > like the correct ROI region, but we aren't sure because we didn't do that
-> > > before on Linux and would really expect your test result and feedback.
-> > 
-> > I'm happy to help develop this and even help write the code. :)
-> 
-> Thank you very much for your consistent help, that's invaluable.
+SOCTHERM is thermal sensor and thermal throttling controller found in Tegra
+SoC starting from Tegra114. Existing Tegra124 setup is mostly compatible
+with Tegra114 and needs only a few slight adjustmets of fuse calibration
+process.
 
-Of course! :)
+---
+Changes in v2:
+- no changes, resend.
 
-> > For advanced functions that don't have a standard V4L2 control, maybe we can set
-> > some defaults in the driver to improve the experience for front-facing cameras,
-> > i.e. webcams.
-> >
-> > Depending on the features exposed by FW, maybe setting a ROI for AE isn't
-> > necessary. Is it possible for the FW to do face detection and set 3A according
-> > to the face landmarks/ROI?
-> 
-> Oh, so sad, our FW doesn't embed algorithm to do face detection. :(
+Changes in v3:
+- expanded desciption of "thermal: tegra: soctherm-fuse: parametrize
+  configuration further" commit
+- changes title of "thermal: tegra: soctherm-fuse: parametrize
+  configuration further" to "thermal: tegra: soctherm-fuse: prepare
+  calibration for Tegra114 support"
+- Tegra11x > Tegra114 and Tegra12x > Tegra124
+- ft and cp shift bits dropped
+- clarified tegra114 precision
+- lower_precision > use_lower_precision
+- nominal calibration ft and cp hardcoded into SoC specific structures
+- added tegra114-soctherm header into dt-bindings
 
-Ah, that's unfortunate. :(
+Changes in v4:
+- fixed Tegra124/132/210 cp mask
+- dropped TEGRA114_SOCTHERM_SENSOR_NUM from header
+- TEGRA_SOCTHERM_THROT_LEVEL_ made SoC specific
+- adjusted soctherm node and inclusions in tegra114.dtsi
+- dropped use_lower_presision and nominal_calib_cp options
 
-> > I think a lot of useful functionality can be put upstream just through V4L2,
-> > like V4L2_CID_EXPOSURE_METERING to control the AE mode.
-> 
-> Yes, that's feasible, the consideration is if we add support to control AE
-> mode, as a complete solution, then we have to add support to set again and
-> exposure time in manual mode by FW command , besides that, extra work is
-> also needed from QA to develop new testcases, all these together will cost
-> more time. So, our current plan is first to upstream a version with basic
-> functions, after that, we can submit incremental patches to add more
-> features. Does it make sense?
+Changes in v5:
+- fixed CPU and GPU hotspot offset values
+- added static_assert()s to assert the TEGRA114_* and TEGRA124_*
+  counterparts are equal
+---
 
-Yes, I understand.
+Svyatoslav Ryhel (6):
+  soc: tegra: fuse: add Tegra114 nvmem cells and fuse lookups
+  dt-bindings: thermal: Document Tegra114 SOCTHERM Thermal Management
+    System
+  thermal: tegra: soctherm-fuse: prepare calibration for Tegra114
+    support
+  dt-bindings: thermal: add Tegra114 soctherm header
+  thermal: tegra: add Tegra114 specific SOCTHERM driver
+  ARM: tegra: Add SOCTHERM support on Tegra114
 
-For now, what about just changing the default AE mode to center-weighted? I
-think this would produce a big IQ improvement since the typical usecase for the
-webcam is to show your face in the center of the frame. This change could even
-be made in the firmware instead of the driver.
+ .../thermal/nvidia,tegra124-soctherm.yaml     |   2 +
+ arch/arm/boot/dts/nvidia/tegra114.dtsi        | 197 +++++++++++++++++
+ drivers/soc/tegra/fuse/fuse-tegra30.c         | 122 ++++++++++
+ drivers/thermal/tegra/Makefile                |   1 +
+ drivers/thermal/tegra/soctherm-fuse.c         |  18 +-
+ drivers/thermal/tegra/soctherm.c              |  13 ++
+ drivers/thermal/tegra/soctherm.h              |  11 +-
+ drivers/thermal/tegra/tegra114-soctherm.c     | 209 ++++++++++++++++++
+ drivers/thermal/tegra/tegra124-soctherm.c     |   4 +
+ drivers/thermal/tegra/tegra132-soctherm.c     |   4 +
+ drivers/thermal/tegra/tegra210-soctherm.c     |   4 +
+ .../dt-bindings/thermal/tegra114-soctherm.h   |  19 ++
+ 12 files changed, 597 insertions(+), 7 deletions(-)
+ create mode 100644 drivers/thermal/tegra/tegra114-soctherm.c
+ create mode 100644 include/dt-bindings/thermal/tegra114-soctherm.h
 
-Or alternatively, HDR could be enabled by default.
+-- 
+2.48.1
 
-What do you think?
-
-Thanks,
-Sultan
 
