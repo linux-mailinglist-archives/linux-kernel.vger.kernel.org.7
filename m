@@ -1,154 +1,256 @@
-Return-Path: <linux-kernel+bounces-790252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D6BDB3A365
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 17:04:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 274BFB3A36D
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 17:04:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82CED189B671
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 15:03:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 072749837E0
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 15:01:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 618401A5B8B;
-	Thu, 28 Aug 2025 15:02:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F2E824E4C6;
+	Thu, 28 Aug 2025 15:01:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=networkplumber-org.20230601.gappssmtp.com header.i=@networkplumber-org.20230601.gappssmtp.com header.b="DIBZydPO"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bIn/xymO"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA53E23E356
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 15:02:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756393338; cv=none; b=Z/apzYVmZzdAo7IOEOV+uk2VN6BK7DhSiA7lygwMBrMsW3jhS3KYUCPDjZwCwWVt3QIQ/5P2lZNhsZ680THyQkt4JFMqx7E4P1PzSCnH/lJMtCE37c7Lq0t5qUOdrKyJ8Ww6kqSg1hAeNI71j6oMcC2O3dBcF5uIdmMgo2qokKQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756393338; c=relaxed/simple;
-	bh=q6ddUStciG6COxuYJZfg8lpo+NvTrwyMon53V2tvsSo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aVACYqsCAZRyrbWpzflvafNvZZY0ZvWbMS5t0QgCN7Bqd+NtSUpECgBx+ydu4YrTf7JSlMpV43Peme37giOQWw+bLGKfgxKcKZLafrJc7RhhPoaoKRdtQbFfSWjIklL0PZ3hDmq6lfTELqAK3p21aOsAcmDflvs/TqXB+6rMsoY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=networkplumber.org; spf=pass smtp.mailfrom=networkplumber.org; dkim=pass (2048-bit key) header.d=networkplumber-org.20230601.gappssmtp.com header.i=@networkplumber-org.20230601.gappssmtp.com header.b=DIBZydPO; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=networkplumber.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=networkplumber.org
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-45b7c01a708so2655825e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 08:02:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1756393335; x=1756998135; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KR3uP2tHoxqPBYsBUj0fZf6IIWL0ISvbw8NHKPCMuLc=;
-        b=DIBZydPOsLtYqzLkO5V2cscKUyt9QiRGHTxG0b175y12FobA7TPzmTVzXfen/Kjnez
-         OzxvzUUMgGqERyCKNeFGVgw7ND7W7LvaF4lzb9ZL/43U7XQg6T/MCX4aWgR2Jcj/j2Jr
-         Ga5L5x/nezpdaTJKCE620wUBG276q/HLluF25AEHdEcR9HYwLS4b4jMqIKUKVzP9xFY6
-         3C5hSBd5f42z8J7xfcnps1BsuwmYrf9DIReCNGwCWGcIQ6ym+EYBTthgLI2q4LVN/RVs
-         VIvK1J9JeQCTu0wZm2n+ze6bb8jc0N1A8WeMTsLm0lXA6PPMWu0wBrJfpUcI6DxY/WL5
-         cmNw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756393335; x=1756998135;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KR3uP2tHoxqPBYsBUj0fZf6IIWL0ISvbw8NHKPCMuLc=;
-        b=TSJqb/G0iL7ADS4xkWSQTv0SN/qSibVfuobmIgLw5ZclS27Ye3q6mSkjqyFDyeeaGK
-         wAMcf8Xu7do68goy6BQ7NLsDxDhjNy53GdtUqcs5+iXt2yQpRd3c7QHI3DL/gxN/pM9X
-         RtTtVvjKDFmwFBrDq+LsmFVNXptqug9P119fFz0/mHoKHYJp+LS1BUjXgTyyhk+5yxEl
-         AYU01KlOQ9kNaDUiVqSFU4tyreH5eyx1vZOQa2qYXHDmVfBpEPV8l5+arJbItyCxVxrk
-         qspGpZ/6hUMsjYN0TmayG13+uXcc2UqkpKxCkYiMUnNJ9jgSaxFiH7c77E/p68zxLT4U
-         cQ7g==
-X-Forwarded-Encrypted: i=1; AJvYcCXiRBwMY1P8B3coON4vEXBKa0xRmdsM52BN/8qY7ZodftoAQHW/xh3ogZRu9X1EC1flxTFBZfl2CXvVa0s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYR5qF7m7u5W/H00nHE1kNNFdf/JcEqM+zoIOUcqwW+kxKHn69
-	psoNK89UorNz3S+Tc1hPkcMNjbOcNKhjJe1s9i7qbKsHrSrP9rmJozKChzS7K+g+HkU=
-X-Gm-Gg: ASbGnctoMamweepFSw6nsHhgvizkdXR/xto3nBQXLytqwvh0jk9vBNs1UONaeqlnc/N
-	ou0w3N4IEZk1Rn/ZzCF8Vk9PR1WyjOBKuVh2bOWW+xkxSbIeJdoG2WbkMAJvJh/lyMEiNFMLmuZ
-	IwuOHPzDtOIu0TykEYQ76/6jjkjmnXi1BHLamqkEnRQEFwogoGfNVOkSo3/VFtDQ4WG4uL1ZPSZ
-	FjNtFqou3SwUVaUNXLVpN0L+/F3aNLLOzQROf4h6iOBcJEevwUL0Gse21EUXZEOhz4wpBGZt6CF
-	lPkdhxO1+josezRFjGe5kzfFztuvMSt2/g6MAA7WyEbSH4wnI2Fi+3KzyZl2AiVYdclZwGexyxq
-	wrgphzLjjF2Ma8uOqJc1enixnM2LX4lQu+hp6RVVq6s5dlw5mWDgUJfckzlA9WBwaMpul6zPpcY
-	E=
-X-Google-Smtp-Source: AGHT+IGCT8QE0tuRPEr2sAjHd9Ua1F6DWShmwMCiVJhOf9bjKN9y/GnaNC2XNjeXc9uY7L7xQutnhA==
-X-Received: by 2002:a05:600c:3589:b0:45b:765a:a8ff with SMTP id 5b1f17b1804b1-45b765aaa1emr30253045e9.11.1756393334627;
-        Thu, 28 Aug 2025 08:02:14 -0700 (PDT)
-Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b797dd66dsm35576975e9.20.2025.08.28.08.02.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Aug 2025 08:02:14 -0700 (PDT)
-Date: Thu, 28 Aug 2025 08:02:07 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Naman Jain <namjain@linux.microsoft.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "K . Y . Srinivasan"
- <kys@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu
- <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
- linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org, Michael Kelley
- <mhklinux@outlook.com>, Long Li <longli@microsoft.com>,
- stable@vger.kernel.org
-Subject: Re: [PATCH v2] uio_hv_generic: Let userspace take care of interrupt
- mask
-Message-ID: <20250828080207.6d9d3426@hermes.local>
-In-Reply-To: <20250828044200.492030-1-namjain@linux.microsoft.com>
-References: <20250828044200.492030-1-namjain@linux.microsoft.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D58D9259C98;
+	Thu, 28 Aug 2025 15:01:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756393266; cv=fail; b=qICqaAJdtloFJLKORYGfenYKMR1VOAHuxWugQdIBjfRxPLvdY4wRlp3eKFUqanen3VhOQ+7gMRWC7ypzOSINjeefUoPHuFlUAeJOh6zKI5VvmxPlmpbIz2pKMVYLYtLYMcjOymj53Ehrf8C58eKL0BVJd4yC6N1PRGFp8ZQ57C0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756393266; c=relaxed/simple;
+	bh=arNo/h/9jeqMjrDT8zmYwUeDrKyEaFpy0W32EVJzncc=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=NYcV2LFKV7hV0Yx+ukmGjDA8/CKumWacSo6kw+5YgMk42UYpb2rTADtNcyxG7asQ2AoLm0aE9gLdBcy3Q3sFQfSSLmsY5d6AdWrwEw6oAXiD1TJDFyZBClm/HhyIDQwWzosxH95PsjE6NkNRCm5F0YfUBXa7cTRvMl4CBwO4hcI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bIn/xymO; arc=fail smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756393264; x=1787929264;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=arNo/h/9jeqMjrDT8zmYwUeDrKyEaFpy0W32EVJzncc=;
+  b=bIn/xymOotU7nf3q6vcndDCmW9EfIvR82hwtRoNHd8SqIT4y4hXVAQif
+   65LpeUiSyrBC0KWDttUoxnta6Tc2BbpMKmDawJNyO84w4GTruM10hO/uR
+   0G2appZwdPQ1vipUnijT9rySqggRSSLw/xAdiO0wk9c5hgt7Zci5wLxcy
+   jIlLyzpl+PPsLPXBfZkI7rFFonhkMlcF3uiRNpfTGlva8POp2k9gPSDiu
+   GGOHTbNs+IQ7rPK6IToZPJowpmjyGxMf+Ma7C872RKGMf+wNMoCpVjnnQ
+   ITiJokrYPnBs1n9EnN17q8gIfmyCsth7dqOFoPJTlvAHUc/ekiVPtUnAh
+   g==;
+X-CSE-ConnectionGUID: KnIlLSh5QIOraJGgzUzp9g==
+X-CSE-MsgGUID: jdEKjcR5TsynhmUjfOORvw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11536"; a="62309976"
+X-IronPort-AV: E=Sophos;i="6.18,217,1751266800"; 
+   d="scan'208";a="62309976"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2025 08:01:03 -0700
+X-CSE-ConnectionGUID: jptHXTkoSY+r3sAyboMAaw==
+X-CSE-MsgGUID: HYZcFs3kR/C/aZyhkrqBLA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,217,1751266800"; 
+   d="scan'208";a="175408277"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2025 08:01:03 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Thu, 28 Aug 2025 08:01:02 -0700
+Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17 via Frontend Transport; Thu, 28 Aug 2025 08:01:02 -0700
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (40.107.93.75) by
+ edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Thu, 28 Aug 2025 08:01:01 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=UFtYUm6cr0m3ZC8GlizgocF07skRl1LTUOWlivPAOejVukRPYPje3g/JFogIV0GSIZj0AQ9yCYAXsW/0xnD8o87gzrTHcqTjsZ9UZjbCrrHF4y5VyLrilJzE4Nun0h7pC9SkqUJhGF4mJv67rL2rLfDZ2a6rFQFkPUcLM04d0hKE78DeI+VJWw/52N69KY+8JzXAqxFaxNjwz2/Yic3fSIV5VWwu1nOlyjPzxxN9g3iMAlNgY/DLhr+iC1LUYj0eJdNKZabeGGFFxruAtGIdKvO2bgWvE62BuSz5C2tbopKBFdCl3+SgKXTaiH5EcicaR6/RjhlC4WrBJ0F5sfUfbA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=7kovXJ48y/HzIOYnO846RoUir5N5zdq1Tg9NmB9XnS4=;
+ b=cpWk4WBHxCaM468eDZuo6NWEg43cT2437lDHWRJb0JwFYozwy57ytb2g6K78fa4dE5bpt2W6h3kVwL6Vuk8qbrgHFHjgBAWMMxHffJdYn6FJR5l6NfCAeMlAzMswgsoLIeKowZFQjc1OGaV7yFTDzWwXO8hm8J+0ZPJTfnkX2M4z3hjNGW08oE8caJSOUrIeXn41ch2h2MmYiif8wMZSrQBfQgK3/lTZrxsnVLcNRoTUZuluiYtdRjDi5pEcekGlNR0UNThuCrGgDAUA+pzO0FLNF6JZJW0T3c0BZDL8NKcykT2gdEJCDQi2SFhi9c4wXllYcf7SqAA0upBh/CBAiA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from PH3PPF9E162731D.namprd11.prod.outlook.com
+ (2603:10b6:518:1::d3c) by DM4PR11MB7279.namprd11.prod.outlook.com
+ (2603:10b6:8:109::8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.21; Thu, 28 Aug
+ 2025 15:00:55 +0000
+Received: from PH3PPF9E162731D.namprd11.prod.outlook.com
+ ([fe80::bbd5:541c:86ba:3efa]) by PH3PPF9E162731D.namprd11.prod.outlook.com
+ ([fe80::bbd5:541c:86ba:3efa%7]) with mapi id 15.20.9052.019; Thu, 28 Aug 2025
+ 15:00:54 +0000
+Date: Thu, 28 Aug 2025 10:02:41 -0500
+From: Ira Weiny <ira.weiny@intel.com>
+To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini
+	<pbonzini@redhat.com>
+CC: <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Michael Roth
+	<michael.roth@amd.com>, Yan Zhao <yan.y.zhao@intel.com>, Ira Weiny
+	<ira.weiny@intel.com>, Vishal Annapurve <vannapurve@google.com>, "Rick
+ Edgecombe" <rick.p.edgecombe@intel.com>
+Subject: Re: [RFC PATCH 07/12] KVM: TDX: Avoid a double-KVM_BUG_ON() in
+ tdx_sept_zap_private_spte()
+Message-ID: <68b06f9131be5_211482942e@iweiny-mobl.notmuch>
+References: <20250827000522.4022426-1-seanjc@google.com>
+ <20250827000522.4022426-8-seanjc@google.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250827000522.4022426-8-seanjc@google.com>
+X-ClientProxiedBy: MW4P221CA0024.NAMP221.PROD.OUTLOOK.COM
+ (2603:10b6:303:8b::29) To PH3PPF9E162731D.namprd11.prod.outlook.com
+ (2603:10b6:518:1::d3c)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH3PPF9E162731D:EE_|DM4PR11MB7279:EE_
+X-MS-Office365-Filtering-Correlation-Id: de24cbf4-8e3e-4921-3fc9-08dde643aff6
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024|7053199007;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?2lhIMEfSA8Wt08bAD8GXpV0PT8/C6wh7ACmTHQvWdI5pgAQCgk3oGvi2C1Uk?=
+ =?us-ascii?Q?HJJI/w7JPH1DK5zm8xLEL27mCaqHGm6IhIjn3TTDNecVQD6Dq3mhtjcyY170?=
+ =?us-ascii?Q?oC3k9t87o9vbpzEeNB8B4qJCWg1FlyDcQmqUU7o4xbU2Up2GDvhFa2X4BP/u?=
+ =?us-ascii?Q?PGFqwo4ql5k8WRbfj3nLWwck0LhYedPdaSUTmmeSb8h52P1kABMTmVrStW6T?=
+ =?us-ascii?Q?V6ONedTOkBoPYz8LsrWgdR/Ia3Wsfhcbokn4w15p6pRBUiOz1lSwGbSl51xJ?=
+ =?us-ascii?Q?Rzgn2YuusgP4CcHpxXwHIbA0DKUSFyGcMoVppRc+1gySdmUlYhmxJoe5H2W+?=
+ =?us-ascii?Q?TeyehRq/7TYYSrqXpB682cdDSmI2EyajHC5QDocFvA8w7KSCJ7tKW7PlhtHL?=
+ =?us-ascii?Q?XxlvSBVKJj+ELqbkHTSkrGz9IWLIVw8KELF6eY39mBIPCTJ1X8ff0xAEpWSH?=
+ =?us-ascii?Q?wfuHEfQToqYcBn5XDqP25I8A3ZKRpsAD6HhrkH7o92yP4EEWomF7D85ek0vo?=
+ =?us-ascii?Q?/bTi2zDjLDd+H8EjqgLX1Xmazj57qnfybVQvEeD5YP71cxnlZvm4nWNcEqa5?=
+ =?us-ascii?Q?nvB4tq3SOzS9T/7jPVRTwJiD1l5XGPZxD6bsKBCT1n1uNL3O3x7eDCFay96v?=
+ =?us-ascii?Q?Mm/X8mscwaw2cpIHhNSc/DOPSOI2vnMS9AgqCrUv0eTUkfpjJMdfKLOX2ec7?=
+ =?us-ascii?Q?A9HbIxF2SOaeG+mEfrSaRaPlWZl+q/+c0Dsn6ZM5iV19mA8ijy7zxrfyNqvT?=
+ =?us-ascii?Q?MVMhwmf9M/ESBGtRRSopKiz9fiBSKN7X6fLG5nDb4qGvHUoYxlpOXluNjodm?=
+ =?us-ascii?Q?tvvtGGEmjoK/JE3R4ben+rFZvEBJo9bEugxFXfVQn9EjkFJ6rXDB/cwXgQXx?=
+ =?us-ascii?Q?HhjW3E3wSehzDIgpFYfBIyLmi1XWeaut5zdEV5GxZI/SjG+AuZNRCJj3v2hn?=
+ =?us-ascii?Q?f7lnUqqxQpWKDRZUCRKoyPrJ3gLbS0eyI/hQ1FD8jojGab1XC1hFZoE+nVpo?=
+ =?us-ascii?Q?GDalcGN1cNcUfFt+nQmt020NcsSYKd9uYuriI99MJbhMC66KeFzZX0Kci/BE?=
+ =?us-ascii?Q?DuIOFdZ4gD+zZ3FnM4M8vN3rmA69pdS4MGXcPCu+1Q6lrjBIYoQBkbRdf2cY?=
+ =?us-ascii?Q?Yl45ynHxtfTwlezbAyL93Jr91sdkQyCp4HCGo15f2RVjnaRTx7bR5LlUAo/3?=
+ =?us-ascii?Q?R4633ijtEXaOtj950OvwRq39dB8JjSGrlPt4iXsS9UOKZP/iQ7ogHBte/Ngy?=
+ =?us-ascii?Q?DNpWR9qfRtAHCGEkY8+zLS+UARuTT1RZrAhgBBDzLW8um2SvFP+qBfz5uf3a?=
+ =?us-ascii?Q?tmbIT0e+CZO6IZItyoBnGpa0NxGxDTDCaacxHJz/or9mlNRI8n/xorciVWFA?=
+ =?us-ascii?Q?lrCltS34HSktEIzss5u9Ec74KlcVaqcLwo9aVfojHYNbedRsLYe3GJD0K/ZW?=
+ =?us-ascii?Q?3Jy6xsppOss=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH3PPF9E162731D.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?xQXyFuB9W4pa2l+WRYkEwIj41k+wPGQb/DFfweIg5RRtJkqeYnhkvi8BY/FV?=
+ =?us-ascii?Q?YwRg+ZMkBSdgSVPYO+1flhWUSFOMEI37IrXYe+QIZ7Qbn/UeYjk1i3HEuInR?=
+ =?us-ascii?Q?vjDlgkhsw9o7+dt/UjIDnyenvH+JuIJmiJEfnQKrpFrM7kaHRO1laqLcmR29?=
+ =?us-ascii?Q?5zYA5g9khaHe5QTW6oAYuVbfyt1hMYMrfn3ns6nKcVUh7M/MDvw47LnLpt6z?=
+ =?us-ascii?Q?jmgqfS5/JcUZtFvNB6oheJE07EJ2pUVvs9pJbf1Dk7U8F9n8JLR/ncKWaFmv?=
+ =?us-ascii?Q?fz7UWdM61W4Ipz4dwCK0bxjj9xuTrwjwfek8KnPZx+hjT2Dkn3s1/OwHgRdX?=
+ =?us-ascii?Q?l3XFQJrgaXX6Qjiui/MdWAa5tUDCOS/geqppkZR3vW2N8nC7n0LY77fLQNPh?=
+ =?us-ascii?Q?yBfBjVDh8XNxpbwKML7baDmcOJlaDoO2YlcQcYy8uwRYtNfT6D+ySFGTBK0m?=
+ =?us-ascii?Q?U+YQ4L9+Rc8C9n3P+SQxkh5rdHX9zb6UkumOrSHbzgzpHQf285WlndPy9jSc?=
+ =?us-ascii?Q?TKsxLBLaR82dURGfzmaWnGJ1FckU8QVUejQOr5EW0zorEjRIASw/JhI0+7mp?=
+ =?us-ascii?Q?6ebOIOgFxvxyX9KHXr0N7Qxz077UMMns5Gc2OldNMo41Wr5A+at0iXcR4lXF?=
+ =?us-ascii?Q?nkSbqMXPdcCnA1BIwiGqEqgYMnKO5jTIroPmf9lxxFkLIbiQoNxiuPD4EXbQ?=
+ =?us-ascii?Q?MYf+/s2HcznrlehuD9VlBnkOgBzD19hFXrRy30FFdCh4A22VScpe3fPqAxQS?=
+ =?us-ascii?Q?jsyjVrs8OFolSZTCslhIC//81iJIIkuLSnL8tH/yDsMZ7uA8iUkjbEbbCu8W?=
+ =?us-ascii?Q?tENVHjRcoDN+O2cBoG0bz7+qRsRvnQmarbE0LYspLcAxLGbG+GbKM07hCNLq?=
+ =?us-ascii?Q?AtYres8JyHatXiODFcICv9vwmgIMBiUacQlWTIqIXLSKGZAoX0XZdaPCcs6/?=
+ =?us-ascii?Q?kQFfHkGzmE9QKoezty4ZfxUPr2lGuSNVHH2cSH/Anx4g2kOYU113n9vgl4Pv?=
+ =?us-ascii?Q?D7W/w23TynN7UA3UeTrvcVmKx/9DJPAONpdqr/4vbtIhu/FFrF8KtF21Kgt2?=
+ =?us-ascii?Q?xCE+d4I0euzEQhVXz5lLqCCtegYXWzARlplFy3VyqNs71wBcoBljIRuRd5aV?=
+ =?us-ascii?Q?3cJIm7rWaHdKVfA9Hg5ObQQyCcKwq3yodCuLOjXOPZFMnQnaA1j0zmwXD6Nt?=
+ =?us-ascii?Q?gCy0oGj9My1cyKHGS1oupQMpafCdMlPVdkzfvS/DdWR669eKT5JlYj0pQSGy?=
+ =?us-ascii?Q?AqDckpbCtyde+k4OnDNXZO0CPxGfzI2I76l9lha/eD88QFdmDJSO/9aJ3ii+?=
+ =?us-ascii?Q?yFAZ0/RHOe4uKLYQ05g5LpFhEUzbF1XoQaC/MLwJp86J+c4HL0GeJ/q4RHbW?=
+ =?us-ascii?Q?/7+pPNFtz0BsOrurOApB2eaXWZMyluPJWSn8jTB+lGL7TRDAil35I2kNTUrt?=
+ =?us-ascii?Q?bXc2gR7bx5rVfqmki4N6pdLdm4u41BhCBF84y08WRUkImtlFkU5YnLjDnekm?=
+ =?us-ascii?Q?4v2SWhMVFsAdyDTVJ639Hmdm4rF2YWCgLyFxHnnvJ7WrmA08vy2fi+DCYHRP?=
+ =?us-ascii?Q?xbra0Xg/oSPVWdf4AF6Zv8xsM3Zv0Td07UICwMGN?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: de24cbf4-8e3e-4921-3fc9-08dde643aff6
+X-MS-Exchange-CrossTenant-AuthSource: PH3PPF9E162731D.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Aug 2025 15:00:54.7875
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: i2wwpId3ZO8w879MQsYuT2+rTQL/iBZHkiw7oloe5o46eVl9FsVDgWxEmsQK2PU6S3md6vpeHGtH2r6iQ7zh6g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR11MB7279
+X-OriginatorOrg: intel.com
 
-On Thu, 28 Aug 2025 10:12:00 +0530
-Naman Jain <namjain@linux.microsoft.com> wrote:
+Sean Christopherson wrote:
+> Return -EIO immediately from tdx_sept_zap_private_spte() if the number of
+> to-be-added pages underflows, so that the following "KVM_BUG_ON(err, kvm)"
+> isn't also triggered.  Isolating the check from the "is premap error"
+> if-statement will also allow adding a lockdep assertion that premap errors
+> are encountered if and only if slots_lock is held.
+> 
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
+> ---
+>  arch/x86/kvm/vmx/tdx.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
+> index ef4ffcad131f..88079e2d45fb 100644
+> --- a/arch/x86/kvm/vmx/tdx.c
+> +++ b/arch/x86/kvm/vmx/tdx.c
+> @@ -1773,8 +1773,10 @@ static int tdx_sept_zap_private_spte(struct kvm *kvm, gfn_t gfn,
+>  		err = tdh_mem_range_block(&kvm_tdx->td, gpa, tdx_level, &entry, &level_state);
+>  		tdx_no_vcpus_enter_stop(kvm);
+>  	}
+> -	if (tdx_is_sept_zap_err_due_to_premap(kvm_tdx, err, entry, level) &&
+> -	    !KVM_BUG_ON(!atomic64_read(&kvm_tdx->nr_premapped), kvm)) {
+> +	if (tdx_is_sept_zap_err_due_to_premap(kvm_tdx, err, entry, level)) {
+> +		if (KVM_BUG_ON(!atomic64_read(&kvm_tdx->nr_premapped), kvm))
+> +			return -EIO;
 
-> Remove the logic to set interrupt mask by default in uio_hv_generic
-> driver as the interrupt mask value is supposed to be controlled
-> completely by the user space. If the mask bit gets changed
-> by the driver, concurrently with user mode operating on the ring,
-> the mask bit may be set when it is supposed to be clear, and the
-> user-mode driver will miss an interrupt which will cause a hang.
->=20
-> For eg- when the driver sets inbound ring buffer interrupt mask to 1,
-> the host does not interrupt the guest on the UIO VMBus channel.
-> However, setting the mask does not prevent the host from putting a
-> message in the inbound ring buffer.=C2=A0So let=E2=80=99s assume that hap=
-pens,
-> the host puts a message into the ring buffer but does not interrupt.
->=20
-> Subsequently, the user space code in the guest sets the inbound ring
-> buffer interrupt mask to 0, saying =E2=80=9CHey, I=E2=80=99m ready for in=
-terrupts=E2=80=9D.
-> User space code then calls pread() to wait for an interrupt.
-> Then one of two things happens:
->=20
-> * The host never sends another message. So the pread() waits forever.
-> * The host does send another message. But because there=E2=80=99s already=
- a
->   message in the ring buffer, it doesn=E2=80=99t generate an interrupt.
->   This is the correct behavior, because the host should only send an
->   interrupt when the inbound ring buffer transitions from empty to
->   not-empty. Adding an additional message to a ring buffer that is not
->   empty is not supposed to generate an interrupt on the guest.
->   Since the guest is waiting in pread() and not removing messages from
->   the ring buffer, the pread() waits forever.
->=20
-> This could be easily reproduced in hv_fcopy_uio_daemon if we delay
-> setting interrupt mask to 0.
->=20
-> Similarly if hv_uio_channel_cb() sets the interrupt_mask to 1,
-> there=E2=80=99s a race condition. Once user space empties the inbound ring
-> buffer, but before user space sets interrupt_mask to 0, the host could
-> put another message in the ring buffer but it wouldn=E2=80=99t interrupt.
-> Then the next pread() would hang.
->=20
-> Fix these by removing all instances where interrupt_mask is changed,
-> while keeping the one in set_event() unchanged to enable userspace
-> control the interrupt mask by writing 0/1 to /dev/uioX.
->=20
-> Fixes: 95096f2fbd10 ("uio-hv-generic: new userspace i/o driver for VMBus")
-> Suggested-by: John Starks <jostarks@microsoft.com>
-> Signed-off-by: Naman Jain <namjain@linux.microsoft.com>
-> Cc: <stable@vger.kernel.org>
+Won't this -EIO cause the KVM_BUG_ON on in remove_external_spte() to fire too?
 
-Makes sense. I think the logic got carried over from uio.
-Does it need to make sure interrupt is masked by default to avoid
-races at startup?
+static void remove_external_spte(struct kvm *kvm, gfn_t gfn, u64 old_spte,
+                                 int level)
+{
+	...
+	ret = kvm_x86_call(remove_external_spte)(kvm, gfn, level, old_pfn);
+	KVM_BUG_ON(ret, kvm);
+}
+
+
+This patch is better than 3 bug ons but wouldn't it be better to make both
+KVM_BUG_ON's internal errors or debug?
+
+Something like this:
+
+diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
+index 4920ee8ad773..83065f3fe605 100644
+--- a/arch/x86/kvm/vmx/tdx.c
++++ b/arch/x86/kvm/vmx/tdx.c
+@@ -1774,14 +1774,16 @@ static int tdx_sept_zap_private_spte(struct kvm *kvm, gfn_t gfn,
+                tdx_no_vcpus_enter_stop(kvm);
+        }
+        if (tdx_is_sept_zap_err_due_to_premap(kvm_tdx, err, entry, level)) {
+-               if (KVM_BUG_ON(!atomic64_read(&kvm_tdx->nr_premapped), kvm))
++               if (!atomic64_read(&kvm_tdx->nr_premapped)) {
++                       pr_err("nr_premapped underflow\n");
+                        return -EIO;
++               }
+ 
+                atomic64_dec(&kvm_tdx->nr_premapped);
+                return 0;
+        }
+ 
+-       if (KVM_BUG_ON(err, kvm)) {
++       if (err) {
+                pr_tdx_error_2(TDH_MEM_RANGE_BLOCK, err, entry, level_state);
+                return -EIO;
+        }
 
