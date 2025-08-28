@@ -1,141 +1,115 @@
-Return-Path: <linux-kernel+bounces-789121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57DB2B3916C
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 04:03:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59B82B39168
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 04:03:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B85B01C24DCD
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 02:03:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A70E768300A
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 02:03:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4B4D6FC5;
-	Thu, 28 Aug 2025 02:03:14 +0000 (UTC)
-Received: from smtpbgeu2.qq.com (smtpbgeu2.qq.com [18.194.254.142])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74FB4241674;
+	Thu, 28 Aug 2025 02:03:01 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C45023D7DD;
-	Thu, 28 Aug 2025 02:03:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.194.254.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDDA919ABC6;
+	Thu, 28 Aug 2025 02:02:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756346594; cv=none; b=i02D86PljFIzG63Nv3Kk4KIv7ZSgnjq2PJ7RABBSfUyL5TyDopWZIcjzdDhLvCSOSl+09loRZ9htb6+D9EvaeUrpGwUwDDISfgG/9KlTghxIm/Fr6VLWVW6S5kiNLsUjxihL9LzLtxREuq977eQ2k0uELJLXBTDbBtPL+v06azA=
+	t=1756346581; cv=none; b=RksJnHjVhHy6ooYfFs3Fr7HUAx7Us5meVuRMHDgAaQOI/r1zdlDUU1DZ9aiqA/EWeKfGwVv8Eco7U/0NdT6SPM52+UTIXdMXtMVzSsIDN4eT6cOKbfcwzlG42T7pkyVNp3F+QgMJ6SLP0ZtJoFH4KmMLd9vOxVgRRMTRsJXke7E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756346594; c=relaxed/simple;
-	bh=UjmKbCyMJJ9zmz7zbM1buwduN9e6eT2BXp7RuIqNz5E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lVH4YMDbQ6YQR3CNNbN7V/g/vZ5j2Lpna0g6e4i/jxkfB/8nVVjov5FKSWxuacEkny8Ts4XKwsGg5mG/aP0FE6Dbh0x8aPLZcrTYRX2KtxEPHiUdHaAjbvHBxrmmtlZ2MZAL9iGreH1zldW/hASEalo0Pr7f87AaPErqQuhidEs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com; spf=pass smtp.mailfrom=mucse.com; arc=none smtp.client-ip=18.194.254.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mucse.com
-X-QQ-mid: zesmtpsz8t1756346568t07ceae18
-X-QQ-Originating-IP: lzFI7TXL1SrYTlvNNRGAzC/pQJsFNUanN24gowoDYvM=
-Received: from localhost ( [203.174.112.180])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Thu, 28 Aug 2025 10:02:46 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 13552423620670666961
-Date: Thu, 28 Aug 2025 10:02:46 +0800
-From: Yibo Dong <dong100@mucse.com>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Vadim Fedorenko <vadim.fedorenko@linux.dev>, andrew+netdev@lunn.ch,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, horms@kernel.org, corbet@lwn.net,
-	gur.stavi@huawei.com, maddy@linux.ibm.com, mpe@ellerman.id.au,
-	danishanwar@ti.com, lee@trager.us, gongfan1@huawei.com,
-	lorenzo@kernel.org, geert+renesas@glider.be,
-	Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
-	alexanderduyck@fb.com, richardcochran@gmail.com, kees@kernel.org,
-	gustavoars@kernel.org, netdev@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH net-next v7 4/5] net: rnpgbe: Add basic mbx_fw support
-Message-ID: <0254B5B3B54BEDD3+20250828020246.GA567033@nic-Precision-5820-Tower>
-References: <20250822023453.1910972-1-dong100@mucse.com>
- <20250822023453.1910972-5-dong100@mucse.com>
- <316f57e3-5953-4db6-84aa-df9278461d30@linux.dev>
- <82E3BE49DB4195F0+20250826013113.GA6582@nic-Precision-5820-Tower>
- <bbdabd48-61c0-46f9-bf33-c49d6d27ffb0@linux.dev>
- <8C1007761115185D+20250826110539.GA461663@nic-Precision-5820-Tower>
- <bd1d77b2-c218-4dce-bbf6-1cbdecabb30b@lunn.ch>
- <05B2D818DB1348E6+20250827014211.GA469112@nic-Precision-5820-Tower>
- <a61b6cdb-0f20-480c-877a-68c920e76ae2@lunn.ch>
+	s=arc-20240116; t=1756346581; c=relaxed/simple;
+	bh=mYAnP+HruVA69djouFy3l2Jw0RHQipvEnoSFqJXv/No=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=VWz/1NQd5CTyq9ITxZO/WXc+bt7oRos7nFT0WZ7n7N6sdAW1rUG0GJjW1GjLnuUydJhWX00EJ/BXNQQlrMksWA8DH08BzKgPYhsAYUn9SRlnnYyPjQG3Upuwn05TN4x/GK64FXnBxy6+OmUVmx8FzHfd3XvwCshpKIN3xYsBQr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.214])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4cC4LY5T8Nz2CgPF;
+	Thu, 28 Aug 2025 09:58:29 +0800 (CST)
+Received: from kwepemf100007.china.huawei.com (unknown [7.202.181.221])
+	by mail.maildlp.com (Postfix) with ESMTPS id EA3F51A016C;
+	Thu, 28 Aug 2025 10:02:55 +0800 (CST)
+Received: from [10.67.109.184] (10.67.109.184) by
+ kwepemf100007.china.huawei.com (7.202.181.221) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 28 Aug 2025 10:02:55 +0800
+Message-ID: <d759c163-9673-48e5-bd6b-49446511b7e0@huawei.com>
+Date: Thu, 28 Aug 2025 10:02:54 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a61b6cdb-0f20-480c-877a-68c920e76ae2@lunn.ch>
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpsz:mucse.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: NDW+fwfL9uPK+yfA2yzy39yfPIHT+4VZCovv/DT/qdT08dLhgMR/A5LA
-	N9FMC+com0nZFrWOnixmhRTZNJwZ4wCaPBSUYJPNxCxk4cP8ze8L9ZMFU17olkoZ5qSxLZz
-	2Jhiw46Kb7c3CqJkoxtSfoqtDGdw2XffGm6bvkscIA78J/l19sr6SQePquSy5YZl0sRCvpM
-	X6/ADOVw1KJS6JfhcRvhLhXlTbUyRhUntTQ+zjjAECWsS8UEPXWNDR9miFGv8K5XHddS7ah
-	K6DDeum3WT4D6IAbU2cQTC66QDe8YPgoo8TFV09H1gOn7RpYahmeH/ikG1DfGWj01TMXqkD
-	Wc0h5RzQK98F/2JWzg4bpKwg2vAtcP9N9t78GSIl6E8og1xfGVMbJ9gohcoI+gvmBCHqoIv
-	ZUp5h+PSbY98bljUG3n0M2XsCRpJkRYxleh+5j2BwNE+at2Vbhmd0B1hQ8PJ4iApelA9gpZ
-	dDEjChNfEXugTuYOl8UYtpOXqLWcmZs0bFJ8yiSM5XvysBLiLNlCnRrqG8i5Ss1sQbkPQpk
-	CtlHobMY7Z5uBjdUknCZ3qVeP6aZZqcHnQQqzaF18ka5dqpqi68/ynj02tsllzZ/1y6kqND
-	RIomX0ndiPH0YjWvzcQGLbsjDuisf/MoxkTOSuP2JlVylFpEozLS41cQl7ophbsiaXbH6aU
-	JivlmLdbL8AH39Z0qjSyjF82ZaO+fBbksXYnr7+iFX+P33GoFGWRGbqAxUGvL70+s2q4IpF
-	VqOdTwxhm6Fiw9IkPSRuJI3D8o0e9EjJgDL5+0v6qWoVUUi8g01QcWxKQ8t3adxtzzRa8VT
-	RNuCaEWJtEDb/VZTpUV/TzajamYaRP60OxIg3IOKnATiPLpB2QqPCNZbdGSefdm2Lpnws+q
-	i1L1JqNcm4SeJfw7rxVXKHqgFJpK0T0AkuLc3jK67adMipmfOqz/MFXwtq/yqAZNmQYuKf3
-	BJhA0jy31DQ6RuuEYv2XewI/Zt/7eKm9lC6GBClgq2Eh6i1VBrordsVAC3YFEY05fuKQyHY
-	luSKF8J/wInTnk6nRD6MQyfWTlpIcw3GEs49CF5A==
-X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
-X-QQ-RECHKSPAM: 0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] tracing: Fix missing errno when zero parser->idx in
+ trace_pid_write
+Content-Language: en-US
+To: Pu Lehui <pulehui@huaweicloud.com>, <rostedt@goodmis.org>,
+	<mhiramat@kernel.org>, <mathieu.desnoyers@efficios.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-trace-kernel@vger.kernel.org>
+References: <20250821071721.3609109-1-pulehui@huaweicloud.com>
+From: Pu Lehui <pulehui@huawei.com>
+In-Reply-To: <20250821071721.3609109-1-pulehui@huaweicloud.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
+ kwepemf100007.china.huawei.com (7.202.181.221)
 
-On Wed, Aug 27, 2025 at 09:54:58PM +0200, Andrew Lunn wrote:
-> > I try to explain the it:
-> > 
-> > driver-->fw, we has two types request:
-> > 1. without response, such as mucse_mbx_ifinsmod
-> > 2. with response, such as mucse_fw_get_macaddr
-> > 
-> > fw --> driver, we has one types request:
-> > 1. link status (link speed, duplex, pause status...)
-> 
-> Is the firmware multi threaded? By that, i mean can there be two
-> request/responses going on at once?
-> 
-> I'm assuming not.
 
-No, fw is single threaded.
+
+On 2025/8/21 15:17, Pu Lehui wrote:
+> From: Pu Lehui <pulehui@huawei.com>
+> 
+> When trace_get_user in trace_pid_write parses an only space, the
+> !trace_parser_loaded branch will break with no errno, causing
+> tr->filtered_pids to still be assigned with pid_list, which may trigger
+> potential problems.
+
+Gentle ping~
+
+Hi all, Is this commit looks proper?
 
 > 
-> So there appears to be four use cases:
+> This patch will also silence the fault injection syzkaller warning in
+> tracepoint_add_func [0]. We can reproduce the warning by following the
+> steps below:
+> 1. echo 8 >> set_event_notrace_pid. Let tr->filtered_pids owns one pid
+>     and register sched_switch tracepoint.
+> 2. echo ' ' >> set_event_pid, and perform fault injection during chunk
+>     allocation of trace_pid_list_alloc. Let pid_list with no pid and
+> assign to tr->filtered_pids.
+> 3. echo ' ' >> set_event_pid. Let pid_list is NULL and assign to
+>     tr->filtered_pids.
+> 4. echo 9 >> set_event_pid, will trigger the double register
+>     sched_switch tracepoint warning.
 > 
-> 1) Fire and forget, request without response.
-> 2) Request with a response
-> 3) Link state change from the firmware
-> 4) Race condition: Request/response and link state change at the same time.
+> Link: https://lore.kernel.org/all/67cb890e.050a0220.d8275.022e.GAE@google.com [0]
+> Fixes: b27f266f74fb ("tracing: Fix return value of trace_pid_write()")
+> Signed-off-by: Pu Lehui <pulehui@huawei.com>
+> ---
+>   kernel/trace/trace.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> Again, assuming the firmware is single threaded, there must be a big
-> mutex around the message box so there can only be one thread doing any
-> sort of interaction with the firmware.
-> 
-> Since there can only be one thread waiting for the response, the
-> struct completion can be a member of the message box. The thread
-> waiting for a response uses wait_for_completion(mbx->completion).
-> 
-> The interrupt handler can look at the type of message it got from the
-> firmware. If it is a link state, process it, and exit. If it is
-> anything else, complete(mbx->completion) and exit.
-> 
-> I don't see the need for any sort of cookie.
-
-Got it, I will try in patch which adds irq handler in the future.
-
-> 
->   Andrew
-> 
-
-Thanks for your feedback.
-
+> diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+> index 8d8935ed416d..feeb7eb71318 100644
+> --- a/kernel/trace/trace.c
+> +++ b/kernel/trace/trace.c
+> @@ -853,10 +853,10 @@ int trace_pid_write(struct trace_pid_list *filtered_pids,
+>   		ubuf += ret;
+>   		cnt -= ret;
+>   
+> +		ret = -EINVAL;
+>   		if (!trace_parser_loaded(&parser))
+>   			break;
+>   
+> -		ret = -EINVAL;
+>   		if (kstrtoul(parser.buffer, 0, &val))
+>   			break;
+>   
 
