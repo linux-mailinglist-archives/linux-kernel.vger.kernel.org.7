@@ -1,162 +1,94 @@
-Return-Path: <linux-kernel+bounces-790063-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790064-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75CC6B39EE7
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 15:29:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C596B39EE5
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 15:29:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 29208563D84
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 13:28:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C0A09866CF
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 13:29:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1CAC311C01;
-	Thu, 28 Aug 2025 13:28:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C531B312831;
+	Thu, 28 Aug 2025 13:29:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="swzObivg"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XAJ7C4XE"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D62A13126C7;
-	Thu, 28 Aug 2025 13:28:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B991311C01;
+	Thu, 28 Aug 2025 13:28:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756387727; cv=none; b=i5AKNQN02GTnxqavsnK+yL/8rspj7f5Tciptw1y/gqBggEM1M4saaqLX8Pc4pnP5EhJwn4aFcjc8VMKQFCYZdsocLSOu8TBe/uFyyTmaVpX2xtD13mErrVwq3iGlZ+kyoIDovOhhv/jbPGQ8+L1xIXZZNNWBaB/UDwcKhebflj8=
+	t=1756387740; cv=none; b=IIAztaoA9msKVJHUqiqdgqrBnS6L6JntLWmKY6ROCVounKhYORbCIIhvPo5lMndmAly/v5lIVgSCvLpCx4R+4t3sDMxOvxiIolcta/GOBokwulsFMJoMjW3nQT97aQhLzHj3AC2g6mmp7so9tCqOdVGANZv4pNE2KahsBOb6Zds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756387727; c=relaxed/simple;
-	bh=DfHHBD/rVjjrqh5NmASHX+RFHIrOFeXwQ0K0sXIKM0I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Rhg+h0+HrshOQSzoPAcuUXzkdxkrok0FehnpXlhvGanR2rHDHMqnpCnbNTlhXGcH9sFscqAIsQxvuCeq9ez7y4XjjUGvzhTE9CJicEPzyYAw67nbw5TjH+a9D6lubzgXZk2g83hRYJH22KlYqRxzRHvTX8F3aOLb3MxBLGDxkbE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=swzObivg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7455AC4CEF6;
-	Thu, 28 Aug 2025 13:28:47 +0000 (UTC)
+	s=arc-20240116; t=1756387740; c=relaxed/simple;
+	bh=a8JHIINtiWA7YVZdVb+yiDyViWRKkCnZbCDfad+OfkE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PGXWCwQhkFBFBodw8Hdbwfq7VYnVEwFbz39miJSE/3U3HOY8SvO5JDp/hqI3B9u8TTXAAhAo99HqYhU8UDR0lDZJYShAN0Mj9CstSIT0V1MrjtXzLYfoWTO5/Qwk2Hot+rgmbLPXXCzmUoNOm/AVJC4RNKYtpHYmqwzm39Ksu5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XAJ7C4XE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C386DC4CEEB;
+	Thu, 28 Aug 2025 13:28:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756387727;
-	bh=DfHHBD/rVjjrqh5NmASHX+RFHIrOFeXwQ0K0sXIKM0I=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=swzObivgRxQ1txTRZOLUVqeNZa30HWFK/E0loDw51gF1fYkBfgiRHVViLErwUbGe4
-	 tah2ih40TeRH5TbGU+fURSCilcEw5fk41YCdMnlDI0U8Jpcam/U9UCHfEqIlzTGREW
-	 3v8+EbjwRBduKZzUn/PyAKWN2kLXYqbKyQfbp9ISsuVdl/eaB8rluloH/3teYGMe9n
-	 1e1sURGOAzbO/5ASZVMVH+OAr/GiWXRBcnKRsUM+V9W0D76ONMZAfLCyV8izrF7hEP
-	 yvMMk0HtP087rudOTF4ljFhubq3lh0QsfCPEzSJt5qPximNFO9taD7TmHaRgKixx41
-	 FqYxNmc/mB/Mw==
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-afcb6856dfbso177681966b.1;
-        Thu, 28 Aug 2025 06:28:47 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUD3lXzQswU50K18Rq7taLEsEFK8CJynBslgO8harZcr4k7ic02WVCthwOnbos0CkHheURNy7IZLWESX0gk@vger.kernel.org, AJvYcCVvaaPEmNYwDL338240en4ewfghfPF3m+y//G8dlKE7xvEaBOmF1XcRK3GMy/TeqS2lMtABYQwCDFs3YA==@vger.kernel.org, AJvYcCVxekRMzinIDJMiHG6tzr6ibr9CGXKEy+L9gyTN+FJia4P13BAVoPHoHkVhudv8M3AqZRzAZ/ZsR4Yo@vger.kernel.org
-X-Gm-Message-State: AOJu0YzvU+noegVizUZeCEb72L7E4b7M109eaxZ0dHfL/oMXjrkDKxUE
-	7UR9v0RcBTTLltsXegWh1OwUZJ36f1hQP6EhsqkqrV7WfCq7eVNIkIA04nSybXpF5DRLGuAi3t7
-	kbEvLsmxtOjh/b9ZTTtLeJInV8Jl1wA==
-X-Google-Smtp-Source: AGHT+IFgWx3EjxiuyoE9wirR/dDT7Hm9AlZ1rldwPD7NWFyqMumFqslPy2Yia23VX1xN9hg0OQGKXYTedeYDgzaTElM=
-X-Received: by 2002:a17:907:1c1c:b0:af9:a381:aee1 with SMTP id
- a640c23a62f3a-afeafecae85mr812402766b.0.1756387726034; Thu, 28 Aug 2025
- 06:28:46 -0700 (PDT)
+	s=k20201202; t=1756387739;
+	bh=a8JHIINtiWA7YVZdVb+yiDyViWRKkCnZbCDfad+OfkE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XAJ7C4XE0ZXw76nxlPEtvNTBUmvJeTzCKTEWNuTX6fKVrtxYpwPpsbT8P/MuAbhka
+	 YcK7pv3obRVjgGkGDzyrXRXztXDrK8PomcYr3dMeoIPtY7rhsuDWNmPNlOcBEF9KbG
+	 H96oZ58SUzM33hc1xMwkgpeBDNNQxafdzrK1JFHPxcDQBcm1rzPHDVi+9cVPAATQEt
+	 0u/Rrj5PANgAH1sFUhtLBQEtLbtdC45w/083xh485TZ/v8DG3w8Xpzda64WTh3xKzl
+	 8gW0lgdqCC/jDuNj5puNzGssG5oInTct4gU3A/Fnmh6nkp4sl6NL5Q2guHNBJm1ecs
+	 JCBiMUxOd2hVQ==
+Date: Thu, 28 Aug 2025 14:28:55 +0100
+From: Simon Horman <horms@kernel.org>
+To: Liao Yuanhong <liaoyuanhong@vivo.com>
+Cc: Igor Russkikh <irusskikh@marvell.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	"open list:AQUANTIA ETHERNET DRIVER (atlantic)" <netdev@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] net: aquantia: Remove redundant ternary operators
+Message-ID: <20250828132855.GM10519@horms.kernel.org>
+References: <20250827095836.431248-1-liaoyuanhong@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1756104334.git.christophe.leroy@csgroup.eu> <17636607f2beac3b64c87b3bec035fa27ce8d195.1756104334.git.christophe.leroy@csgroup.eu>
-In-Reply-To: <17636607f2beac3b64c87b3bec035fa27ce8d195.1756104334.git.christophe.leroy@csgroup.eu>
-From: Rob Herring <robh@kernel.org>
-Date: Thu, 28 Aug 2025 08:28:33 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqKFvVQTVXV8mWX0z1=hd3nLDzLXq-0G_0bshMCvQ5kVvA@mail.gmail.com>
-X-Gm-Features: Ac12FXxDhqNf1LWnckP7L04gabZFe5TqvyzgYXr11IYk9xaITt-kXXAUX9A3-yw
-Message-ID: <CAL_JsqKFvVQTVXV8mWX0z1=hd3nLDzLXq-0G_0bshMCvQ5kVvA@mail.gmail.com>
-Subject: Re: [PATCH v3 5/6] dt-bindings: soc: fsl: qe: Add support of IRQ in
- QE GPIO
-To: Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: Qiang Zhao <qiang.zhao@nxp.com>, Linus Walleij <linus.walleij@linaro.org>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
-	linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250827095836.431248-1-liaoyuanhong@vivo.com>
 
-On Mon, Aug 25, 2025 at 2:20=E2=80=AFAM Christophe Leroy
-<christophe.leroy@csgroup.eu> wrote:
->
-> In the QE, a few GPIOs are IRQ capable. Similarly to
-> commit 726bd223105c ("powerpc/8xx: Adding support of IRQ in MPC8xx
-> GPIO"), add IRQ support to QE GPIO.
->
-> Add property 'fsl,qe-gpio-irq-mask' similar to
-> 'fsl,cpm1-gpio-irq-mask' that define which of the GPIOs have IRQs.
+On Wed, Aug 27, 2025 at 05:58:33PM +0800, Liao Yuanhong wrote:
+> For ternary operators in the form of "a ? true : false", if 'a' itself
+> returns a boolean result, the ternary operator can be omitted. Remove
+> redundant ternary operators to clean up the code.
+> 
+> Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
 
-Why do you need to know this? The ones that have interrupts will be
-referenced by an 'interrupts' property somewhere.
+Quoting documentation:
 
-> Here is an exemple for port B of mpc8323 which has IRQs for
+  Clean-up patches
+  ~~~~~~~~~~~~~~~~
 
-typo
+  Netdev discourages patches which perform simple clean-ups, which are not in
+  the context of other work. For example:
 
-> GPIOs PB7, PB9, PB25 and PB27.
->
->         qe_pio_b: gpio-controller@1418 {
->                 compatible =3D "fsl,mpc8323-qe-pario-bank";
->                 reg =3D <0x1418 0x18>;
->                 interrupts =3D <4 5 6 7>;
->                 interrupt-parent =3D <&qepic>;
->                 gpio-controller;
->                 #gpio-cells =3D <2>;
->                 fsl,qe-gpio-irq-mask =3D <0x01400050>;
->         };
+  * Addressing ``checkpatch.pl`` warnings
+  * Addressing :ref:`Local variable ordering<rcs>` issues
+  * Conversions to device-managed APIs (``devm_`` helpers)
 
-You are missing #interrupt-cells and interrupt-controller properties.
+  This is because it is felt that the churn that such changes produce comes
+  at a greater cost than the value of such clean-ups.
 
-With multiple new properties, this should be converted to schema first.
+  Conversely, spelling and grammar fixes are not discouraged.
 
->
-> Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
-> ---
->  .../bindings/soc/fsl/cpm_qe/qe/par_io.txt     | 19 +++++++++++++++++++
->  1 file changed, 19 insertions(+)
->
-> diff --git a/Documentation/devicetree/bindings/soc/fsl/cpm_qe/qe/par_io.t=
-xt b/Documentation/devicetree/bindings/soc/fsl/cpm_qe/qe/par_io.txt
-> index 09b1b05fa677..829fe9a3d70c 100644
-> --- a/Documentation/devicetree/bindings/soc/fsl/cpm_qe/qe/par_io.txt
-> +++ b/Documentation/devicetree/bindings/soc/fsl/cpm_qe/qe/par_io.txt
-> @@ -32,6 +32,15 @@ Required properties:
->    "fsl,mpc8323-qe-pario-bank".
->  - reg : offset to the register set and its length.
->  - gpio-controller : node to identify gpio controllers.
-> +Optional properties:
-> +- fsl,qe-gpio-irq-mask : For banks having interrupt capability this item=
- tells
-> +  which ports have an associated interrupt (ports are listed in the same=
- order
-> +  as in QE ports registers)
-> +- interrupts : This property provides the list of interrupt for each GPI=
-O having
-> +  one as described by the fsl,cpm1-gpio-irq-mask property. There should =
-be as
-> +  many interrupts as number of ones in the mask property. The first inte=
-rrupt in
-> +  the list corresponds to the most significant bit of the mask.
-> +- interrupt-parent : Parent for the above interrupt property.
->
->  Example:
->         qe_pio_a: gpio-controller@1400 {
-> @@ -42,6 +51,16 @@ Example:
->                 gpio-controller;
->           };
->
-> +       qe_pio_b: gpio-controller@1418 {
-> +               #gpio-cells =3D <2>;
-> +               compatible =3D "fsl,mpc8323-qe-pario-bank";
-> +               reg =3D <0x1418 0x18>;
-> +               interrupts =3D <4 5 6 7>;
-> +               fsl,qe-gpio-irq-mask =3D <0x01400050>;
-> +               interrupt-parent =3D <&qepic>;
-> +               gpio-controller;
-> +         };
-> +
->         qe_pio_e: gpio-controller@1460 {
->                 #gpio-cells =3D <2>;
->                 compatible =3D "fsl,mpc8360-qe-pario-bank",
-> --
-> 2.49.0
->
+See: https://www.kernel.org/doc/html/next/process/maintainer-netdev.html#clean-up-patches
+--
+pw-bot: cr
+
 
