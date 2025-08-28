@@ -1,176 +1,156 @@
-Return-Path: <linux-kernel+bounces-789219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7233DB39256
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 05:51:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0338B3925D
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 06:03:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CD971B23997
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 03:51:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F8A57C048D
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 04:03:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBF13252906;
-	Thu, 28 Aug 2025 03:51:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 993E123BD1F;
+	Thu, 28 Aug 2025 04:03:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="BXrS92y3"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ite.com.tw header.i=@ite.com.tw header.b="NXsN2ifY"
+Received: from ironport.ite.com.tw (219-87-157-213.static.tfn.net.tw [219.87.157.213])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A89830CD8A
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 03:51:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6066113957E;
+	Thu, 28 Aug 2025 04:03:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=219.87.157.213
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756353075; cv=none; b=Bprz0QWHBcZE4NJNxAxxk53TTPyyJZcr6VoAnWZmiGlErlzQcztpUQGczjC///WY2PPz2KwjRkgz35KPEcCIFjyJcP5u22fUn2F9ghn1OIgKlMv7mhBscPWIiA4bMxI655evAwzzTYIRGLXA/nxyPIVdC0JMkUWqZVKNukEN2sk=
+	t=1756353806; cv=none; b=DRqpG9oUWxRRX6JvSyeTu0j+QtTz9MuEMVa11UnQUsqpgqFsZB8gpREPkJHoZsmRcyVro/ZSyWsIN5HwO5UjhOL+TuiXqGACxZAy8NudJRRQT1BKZvL5KgFmHeXJ9Rs7OBrDl+xj8MWArkCDBmU7cUJK2EUJ27mHxFBlRTESo/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756353075; c=relaxed/simple;
-	bh=4bNShKzKYloFeLrPR2pun7N/Jfy76WaYB+K6q91keWg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZsCw/jSJulpb/LgyOLYXovYErmZzn4L7BVoaPRnEXJZ6m7NJ/FD18SjL6vkyjqCFfaROgAXMKIbYNHYt05wR2uyQAu6w3yFoa1B5ouxxvTi8xMQF5xKQJ0oAIsaqSjNPpYEX1acVRADNgITIXsOKF7YsHNTqULsXVu+GVy76SUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=BXrS92y3; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-248df8d82e2so964255ad.3
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 20:51:12 -0700 (PDT)
+	s=arc-20240116; t=1756353806; c=relaxed/simple;
+	bh=ZiCpOPIDp8CIyXPezc/kfJZESu91544+TFydq1LGiDk=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=V11GANafqLWdOsK8Ru39WFN7Mtxbb2IZr2FxBpzCSzkNdp0Gk52/vPxP3I/z8mmyvNd7FCj9JpANZ4C5Iq5vaf6aCJpJpRLkzM6teSZVbtlremr8cxg443HGYuGVdej+vXsvm1v0Yda7cjg90y1fcHgLKvnPcSe1rsfjBCzGp3I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ite.com.tw; spf=pass smtp.mailfrom=ite.com.tw; dkim=pass (2048-bit key) header.d=ite.com.tw header.i=@ite.com.tw header.b=NXsN2ifY; arc=none smtp.client-ip=219.87.157.213
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ite.com.tw
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ite.com.tw
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1756353072; x=1756957872; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Y4APYOBN7m40I1K2td0CwAVZ2zwd3LkalBks3ZKfrL0=;
-        b=BXrS92y3PUKhggRTR0t7SKFAxwc4YCfIvw+Nglp3CU3z/TJwJZ2yUx+x2AxFq+GGxZ
-         HljRGI2zahYJWNKmfKq0szg8yfnKlj17Mn+maVPgUnT4DLjAWc8hW7weJu+VlXAVLSw5
-         Dy7rWTcl3trU987R5ObNjBUC0DsJySs/CnU6SRzrBxOut9STLZo3i9ZCerPT/X2MTPjh
-         n5L0UI0c2mJqwytTvNVUGtRaZbbQBtwRzFfSF/30/k5Mbw5lj7O98abdYUzM5q9P++S2
-         GtTyLxYZmjs0YQw5J/sb1ncviHlFpY1tFqmNjMWWdC6Cw+2uZKySOHH9l9FbC/Ni9i+x
-         Ow4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756353072; x=1756957872;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Y4APYOBN7m40I1K2td0CwAVZ2zwd3LkalBks3ZKfrL0=;
-        b=TLtFEYHLtbmVl9cGPZTLzCq7TQXobuldzw4f4pmdGCUEPQp24mvv4Am5XlOGb3mD66
-         SLW8hOaVPBMHw2iB9ArzfJhx8nb7mz5WQPiettpvUCGrhhSSyjjOkm0T7qxoNHWTW7wU
-         qRu9d0ofC6/5JtYR8NSKd0tf3NzB4vGrfJ0ltYAP0Y7zquMzTeBxbcuM0pGTojaQCfeW
-         2MjImyvuaSI8OBEFQM1SLjnQLSyC5JgNe48pbkICC3MUVS3hk3PyWkVFERCFFosLuekb
-         uU0+ou681Hzg/jML3PujjhrQcLN4SllGRYE33gEzK/qLdwBCJEtbQ7Ko/HAce/PlcqsK
-         DPHg==
-X-Forwarded-Encrypted: i=1; AJvYcCUBznCf1n/tMVyVXdqae8j3E4J6OprQ9aPdirqOxq6VI6JxvDGjO7ePhmvCS4OiAgAAb/Mr1o1e7SFFtpg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyAleBz3kAEAJU3vMCY2lSBb96Fhu5TSmpeVET54vgrx8mXgGHS
-	PJDcq6poCL1sB/gs+ZYS6fUDD+OQrcvp0taLdrmtvYXXo84EHo75dbSpGozw31WOYw==
-X-Gm-Gg: ASbGnctnoMA5AB+TmEqYrhRL/V9XHz8ZHXAM2l3RLw9M26IOE5PmWTiBjm/HVLjeOBV
-	+meOs94LouKb0ZGhNZkGIIRzvtnY3GmweaGcZ+o12bwMDmijGN0PBsaUO7FMqtJ0l/OiX7qEQWi
-	BzHwecjBJbzRJieaqdYhdKWuxsC3/nQQ5CIqD59CIkgSRvped1VAeekTs9hgkqNPlxbqpIMQqg0
-	pEqSahy5DkFgU402n7ebnfCauWxf0rHQMXiGBHoaFvKSncHIxy1Cy4A8oX6i/jx3K+bu5KiNQy+
-	NYg68x52fT6fOcT+3Pd8yAoowxKG1OmdPk9Y0imTONT/gyFV15pGsgwmpg2dX4rigxo/JNofLQp
-	3/jv7Ok+/5qOuXvYvVsZljzbU9mHrkGHdO9MO4+ypL6MJNdjwXQ==
-X-Google-Smtp-Source: AGHT+IEtqnrt5/Ql7DIRG+zCE16ygkcuydJFljVN0dP8z3YrApUelOfj88zKZHX4scP5rUUGUXV3RA==
-X-Received: by 2002:a17:902:dacc:b0:248:96af:518 with SMTP id d9443c01a7336-24896af07d5mr66448905ad.59.1756353071595;
-        Wed, 27 Aug 2025 20:51:11 -0700 (PDT)
-Received: from bytedance ([61.213.176.56])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-327ab0dbe86sm804817a91.21.2025.08.27.20.51.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Aug 2025 20:51:11 -0700 (PDT)
-Date: Thu, 28 Aug 2025 11:50:52 +0800
-From: Aaron Lu <ziqianlu@bytedance.com>
-To: Valentin Schneider <vschneid@redhat.com>
-Cc: Ben Segall <bsegall@google.com>,
-	K Prateek Nayak <kprateek.nayak@amd.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Chengming Zhou <chengming.zhou@linux.dev>,
-	Josh Don <joshdon@google.com>, Ingo Molnar <mingo@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Xi Wang <xii@google.com>, linux-kernel@vger.kernel.org,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>, Mel Gorman <mgorman@suse.de>,
-	Chuyi Zhou <zhouchuyi@bytedance.com>,
-	Jan Kiszka <jan.kiszka@siemens.com>,
-	Florian Bezdeka <florian.bezdeka@siemens.com>,
-	Songtang Liu <liusongtang@bytedance.com>
-Subject: Re: [PATCH v3 3/5] sched/fair: Switch to task based throttle model
-Message-ID: <20250828035052.GA35@bytedance>
-References: <20250715071658.267-1-ziqianlu@bytedance.com>
- <20250715071658.267-4-ziqianlu@bytedance.com>
- <xhsmhv7myp46n.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
- <20250808101330.GA75@bytedance>
- <xhsmhsei2ox4o.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+  d=ite.com.tw; s=dkim;
+  h=from:subject:date:message-id:mime-version:
+   content-transfer-encoding:to:cc;
+  bh=sBxzpMj4gtCGPy2USEQt4AlBG9MoUUY80bEM/tcQSeU=;
+  b=NXsN2ifYe3bBEovmuJpAIaunoAQ3dBFaatwmuiuWM1ogyPkgg1nbFjCr
+   vbEAdOHgxcJW3NWtRa2xsTeFnYQGJoGh8EbAoc2hrzWr22sKvDsCCDYsg
+   Kg+UCsflemxKYdToaE3moRygWKfub59q+dSalxx7rXiGEiBRlKGG2Nx0b
+   b+Dgc+XJq3H9sWMUAkBz+jaOnEb4FXfxGtsJ38K2ToK2Bn8agJi+5QqAm
+   2P05rDOy8JFVTCxIHdpeSg+AdvBnqdZmOQw+JfLyx9BkqD5glltJpceeI
+   y+PjbaoQksOmhafNOC5HmTVlEUCQQ0Wu9mGk+ITiQ4eK9lmgHWK4OrDpk
+   A==;
+X-CSE-ConnectionGUID: 4Kbe1zDfTIyv5PT/lgWhMw==
+X-CSE-MsgGUID: ixMMyBRzSrCTfHFkp2INGw==
+Received: from unknown (HELO mse.ite.com.tw) ([192.168.35.30])
+  by ironport.ite.com.tw with ESMTP; 28 Aug 2025 12:02:12 +0800
+Received: from CSBMAIL1.internal.ite.com.tw (CSBMAIL1.internal.ite.com.tw [192.168.65.58])
+	by mse.ite.com.tw with ESMTP id 57S428ct028000;
+	Thu, 28 Aug 2025 12:02:08 +0800 (+08)
+	(envelope-from Pet.Weng@ite.com.tw)
+Received: from [127.0.1.1] (192.168.72.40) by CSBMAIL1.internal.ite.com.tw
+ (192.168.65.58) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 28 Aug
+ 2025 12:02:07 +0800
+From: Pet Weng <pet.weng@ite.com.tw>
+Subject: [PATCH v2 0/3] Add ITE IT61620 MIPI DSI to HDMI bridge driver
+Date: Thu, 28 Aug 2025 12:01:17 +0800
+Message-ID: <20250828-it61620-0714-v2-0-586f5934d5f8@ite.com.tw>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <xhsmhsei2ox4o.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAI3Ur2gC/3XMQQ7CIBCF4as0s5aGQaTWlfcwXbR0sLOwGCBV0
+ 3B3kb3JbL5J3r9DpMAU4dLsEGjjyH4tUIcG7DKudxI8F4OS6iQ71IKTQaOkqBgnXc6Sc6qHMnk
+ GcvyuudtQvHBMPnxqfcPf909oQyHFsTOIRs9y6s9XTtRa/2jTC4ac8xdcbzSXqQAAAA==
+X-Change-ID: 20250714-it61620-0714-ab4ab4ceff29
+To: Andrzej Hajda <andrzej.hajda@intel.com>,
+        Neil Armstrong
+	<neil.armstrong@linaro.org>,
+        Robert Foss <rfoss@kernel.org>,
+        Laurent Pinchart
+	<Laurent.pinchart@ideasonboard.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Jernej
+ Skrabec <jernej.skrabec@gmail.com>,
+        Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC: <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Hermes Wu <hermes.Wu@ite.com.tw>,
+        Kenneth
+ Hung <kenneth.Hung@ite.com.tw>,
+        Pet Weng <pet.weng@ite.com.tw>, Pin-yen Lin
+	<treapking@google.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1756353731; l=1955;
+ i=pet.weng@ite.com.tw; s=20250702; h=from:subject:message-id;
+ bh=ZiCpOPIDp8CIyXPezc/kfJZESu91544+TFydq1LGiDk=;
+ b=f8vNAqg7ftRLxlQWMj81RlR0KSSrfPViSmxa8L2ZyCceuf8gW9/p0DP58RdW+vzhu5Lnu00a9
+ miEBMZvzpCQDAYTfMN6Q9XFfGBSgzvjS6BpYSWpZhzOwYDf9MZvwNcU
+X-Developer-Key: i=pet.weng@ite.com.tw; a=ed25519;
+ pk=wd08uBtTLb93x2ixbKVNsxiZPdMh1Ov4z5klodh2bqo=
+X-ClientProxiedBy: CSBMAIL1.internal.ite.com.tw (192.168.65.58) To
+ CSBMAIL1.internal.ite.com.tw (192.168.65.58)
+X-TM-SNTS-SMTP:
+	323AFBC42FEAB12407C38FBEDEF9EF64357E22719BEC9D6B83D36B23E47712F52002:8
+X-MAIL:mse.ite.com.tw 57S428ct028000
 
-On Fri, Aug 08, 2025 at 01:45:11PM +0200, Valentin Schneider wrote:
-> On 08/08/25 18:13, Aaron Lu wrote:
-> > On Fri, Aug 08, 2025 at 11:12:48AM +0200, Valentin Schneider wrote:
-... ...
-> >> > +	if (throttled_hierarchy(cfs_rq) &&
-> >> > +	    !task_current_donor(rq_of(cfs_rq), p)) {
-> >> > +		list_add(&p->throttle_node, &cfs_rq->throttled_limbo_list);
-> >> > +		return true;
-> >> > +	}
-> >> > +
-> >> > +	/* we can't take the fast path, do an actual enqueue*/
-> >> > +	p->throttled = false;
-> >> 
-> >> So we clear p->throttled but not p->throttle_node? Won't that cause issues
-> >> when @p's previous cfs_rq gets unthrottled?
-> >> 
-> >
-> > p->throttle_node is already removed from its previous cfs_rq at dequeue
-> > time in dequeue_throttled_task().
-> >
-> > This is done so because in enqueue time, we may not hold its previous
-> > rq's lock so can't touch its previous cfs_rq's limbo list, like when
-> > dealing with affinity changes.
-> >
-> 
-> Ah right, the DQ/EQ_throttled_task() functions are when DQ/EQ is applied to an
-> already-throttled task and it does the right thing.
-> 
-> Does this mean we want this as enqueue_throttled_task()'s prologue?
-> 
->   /* @p should have gone through dequeue_throttled_task() first */
->   WARN_ON_ONCE(!list_empty(&p->throttle_node));
->
+This patch series adds support for the ITE IT61620 MIPI DSI to HDMI 
+bridge chip.
 
-While adding this change to the new version, I remembered this
-enqueue_throttled_task() also gets called for tasks that are going to be
-unthrottled on unthrottle path, i.e.
+The IT61620 is an I2C-controlled bridge that receives MIPI DSI input 
+and outputs HDMI signals. A single-port MIPI DSI input is converted to 
+an HDMI 1.4 output. This series introduces:
+- A device tree binding YAML file describing the hardware
+- A new DRM bridge driver implementing the basic functionality
+- A MAINTAINERS entry for the driver
 
-unthrottle_cfs_rq() -> tg_unthrottle_up() -> enqueue_task_fair()
+Signed-off-by: Pet Weng <pet.weng@ite.com.tw>
+---
+Changes in v2:
+- Call the sha1() library function instead of using the crypto_shash
+  "sha1" in patch 2.
+- Rewrite it61620_hdmi_ddc_wait() with readx_poll_timeout() in patch 2.	[Pin-yen]
+- Rewrite it61620_hdmi_hdcp_wait_ksv_list() with readx_poll_timeout() in
+  patch 2.
+- Replace interrupts-extended with interrupts in patch 1.		[Rob]
+- Replace dsi-lanes with the standard property data-lanes from the graph
+  binding.								[Rob]
+- Replace "#/$defs/port-base" with "#/properties/port" in patch 1.	[Rob]
+- Drop unused labels and "hdmi" for the node name.			[Rob]
+- Drop status in patch 1.						[Rob]
+- Link to v1: https://lore.kernel.org/r/20250714-it61620-0714-v1-0-3761164d0b98@ite.com.tw
 
-because task's throttled flag is not cleared yet(but throttle_node is
-removed from the limbo list so the above warn still works as expected).
+---
+Pet Weng (3):
+      dt-binding: display: Add ITE IT61620 MIPI DSI to HDMI bridge
+      drm/bridge: Add ITE IT61620 MIPI DSI to HDMI bridge driver
+      MAINTAINERS: Add entry for ITE IT61620 MIPI to HDMI bridge driver
 
-I didn't clear p->throttled in tg_unthrottle_up() before calling
-enqueue_task_fair() because enqueue_throttled_task() will take care of
-that but now I look at it, I think it is better to clear p->throttled
-before calling enqueue_task_fair(): this saves some cycles by skipping
-enqueue_throttled_task() for these unthrottled tasks and
-enqueue_throttled_task() only has to deal with migrated throttled task.
-This feels cleaner and more efficient. I remember Prateek also suggested
-this before but I couldn't find his email now, not sure if I remembered
-wrong.
+ .../bindings/display/bridge/ite,it61620.yaml       |  143 +
+ MAINTAINERS                                        |    8 +
+ drivers/gpu/drm/bridge/Kconfig                     |   19 +
+ drivers/gpu/drm/bridge/Makefile                    |    1 +
+ drivers/gpu/drm/bridge/ite-it61620.c               | 2944 ++++++++++++++++++++
+ 5 files changed, 3115 insertions(+)
+---
+base-commit: 2862348dd4f8d9271ad4fd195fa9b81546db95f3
+change-id: 20250714-it61620-0714-ab4ab4ceff29
 
-Any way, just a note that I'm going to make below changes to the next
-version, let me know if this doesn't look right, thanks.
+Best regards,
+-- 
+Pet Weng <pet.weng@ite.com.tw>
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 785a15caffbcc..df8dc389af8e1 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -5904,6 +5904,7 @@ static int tg_unthrottle_up(struct task_group *tg, void *data)
- 	/* Re-enqueue the tasks that have been throttled at this level. */
- 	list_for_each_entry_safe(p, tmp, &cfs_rq->throttled_limbo_list, throttle_node) {
- 		list_del_init(&p->throttle_node);
-+		p->throttled = false;
- 		enqueue_task_fair(rq_of(cfs_rq), p, ENQUEUE_WAKEUP);
- 	}
- 
 
