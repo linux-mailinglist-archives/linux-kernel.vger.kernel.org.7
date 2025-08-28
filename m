@@ -1,253 +1,113 @@
-Return-Path: <linux-kernel+bounces-789810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D0B8B39AFF
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 13:05:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37788B39B24
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 13:12:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 438261885CA3
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 11:06:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBF74360171
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 11:12:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3D0530E0C3;
-	Thu, 28 Aug 2025 11:05:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D1BA30DEAB;
+	Thu, 28 Aug 2025 11:12:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Jht5DGNm"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="ZzptfstS"
+Received: from out162-62-58-216.mail.qq.com (out162-62-58-216.mail.qq.com [162.62.58.216])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1147430DD39;
-	Thu, 28 Aug 2025 11:05:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5357721D3EE;
+	Thu, 28 Aug 2025 11:11:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.216
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756379122; cv=none; b=Oxa24xbSuqSHUFW/dN8uDDpZePttZKxOOgKQYgJarGmhYXYzUG5wCJjlMug7VGIUSM1KuZrP2jE2CoVtl70H4gi6NLrPQcIoBUN1hWmqwDY2LNjMMjWgSciLGaE6kkARxfOkBjHVKcmESuh6w9cdF5JX1ctl6UU7ATVsFotvd1I=
+	t=1756379519; cv=none; b=ocVqWE6E/7rrNOIOFQCxCuAiRImtNYarJZO9DTiSc1Jnzlleo5sP4bzSQZiD2YJUw3tQU/gajOBAdNAYAmat9YOExhDpwhTRWN3z5Gu+5IHvI21hyYQZhn4nKvCPoXHCZLTJXTIgTsMDLhzk8onib8kEWY8zyYzmnUrodHdR/H0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756379122; c=relaxed/simple;
-	bh=mqeKXy8uMfNWh+NWLomeK5bdnLxYj7mZ0K6eeuy24AE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oPycgqUh1q3uwGrRonr+ziuHGHJxFuK0U3HPFDBsYT2zBuP0D/exNy9Jl92m9pQhC9edsXqmpABJjdwnAKDhBepHUvHC4H97nQM3ZD8HWltCwKB/+jeeJgI8hvwUVskpfgrJa+4A/4Dd4u2OHm/RdXXnPuEnmcUhTaVnrNPseOk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Jht5DGNm; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756379120; x=1787915120;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=mqeKXy8uMfNWh+NWLomeK5bdnLxYj7mZ0K6eeuy24AE=;
-  b=Jht5DGNmlEPS6apoJDpVUEQj1mBRguI3RdnJBuvUNhYf82MKUM29J+TR
-   GkaZguZeyd27wAZBYjCWJ+7IkxCPkPBa10f86zuyjjhTgdNdR6NNRa9Ua
-   1AgQIK/VQoy/7nfPEd1v284p4O/Lr4uqSNIaNhz20XT4MBahrL2N2qYwz
-   DuIB/iW81i5+T9MKZnvgILLYa3YbJeLGNdp0QF9kRA7oM/JKW0gvFfVMj
-   2mYBWYSKsPSR2jQamqwEHcgLG6fisU5KYFVULPkXXy15S5LI32Afm/0Kc
-   bvgjdbzcmqZs4lmMrCHu+PyQOVph39/QI4XoDU+Sc3IYmlFeF4e45oZIh
-   g==;
-X-CSE-ConnectionGUID: l+DwmFMJRLimNrs8IaJDuw==
-X-CSE-MsgGUID: 4k8D1GYDS3Wap/PavrUKRQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11535"; a="58575789"
-X-IronPort-AV: E=Sophos;i="6.18,217,1751266800"; 
-   d="scan'208";a="58575789"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2025 04:05:18 -0700
-X-CSE-ConnectionGUID: D8e8zTdSTIKZnt/blpTSyg==
-X-CSE-MsgGUID: L1YI7WELR2eZJAeBG6teIA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,217,1751266800"; 
-   d="scan'208";a="207229710"
-Received: from kuha.fi.intel.com ([10.237.72.152])
-  by orviesa001.jf.intel.com with SMTP; 28 Aug 2025 04:05:14 -0700
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Thu, 28 Aug 2025 14:05:13 +0300
-Date: Thu, 28 Aug 2025 14:05:13 +0300
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To: Anjelique Melendez <anjelique.melendez@oss.qualcomm.com>
-Cc: gregkh@linuxfoundation.org, lumag@kernel.org, neil.armstrong@linaro.org,
-	johan+linaro@kernel.org, quic_bjorande@quicinc.com,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] usb: typec: ucsi_glink: Increase buffer size to
- support UCSI v2
-Message-ID: <aLA36Ttc3CawHBIZ@kuha.fi.intel.com>
-References: <20250827201241.3111857-1-anjelique.melendez@oss.qualcomm.com>
- <20250827201241.3111857-3-anjelique.melendez@oss.qualcomm.com>
+	s=arc-20240116; t=1756379519; c=relaxed/simple;
+	bh=NPxx/ey2tXKTRsHU1SUjCV4ADg0ZhVLhJz4gBqVmG84=;
+	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=NsmECoFov+aKCDnfxRqnMht6m35ygctPP0+ls9edOxSks5zw7dZ/C/tDSw/jhLFmkLctqHn1dFUlqgJSYYYbvizm0f2jsx6kzzbV/4l+Iml8Sj571C39fewNfhYWE+Obc0xhD9s6sXZQHMDQFUYhFD0rni0YNOCjd0di6seSwOc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=ZzptfstS; arc=none smtp.client-ip=162.62.58.216
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
+	s=s201512; t=1756379205;
+	bh=BcVs6RdP2pVoj2tAX1f2LpjoEbkeuktpGmJZui03meQ=;
+	h=From:To:Cc:Subject:Date;
+	b=ZzptfstStfO6aAXbq/AEKgn2QZUMn7vegJfZY4yz3ZnNphXtntqy9vxSbQzHtu0cm
+	 akJFo2ITBYBmWF2mtaPur9QTN0sOzDq6uNpg1q7j0ZuUl57Ogr3o+l6oMqHtJV9h9E
+	 BqkyrpzRcPWfF6Nh51HDScp5Y0oFHYlNsCDBNiJg=
+Received: from NUC10 ([39.156.73.10])
+	by newxmesmtplogicsvrszb42-0.qq.com (NewEsmtp) with SMTP
+	id 1A914CDB; Thu, 28 Aug 2025 19:06:41 +0800
+X-QQ-mid: xmsmtpt1756379201tzxa3pir2
+Message-ID: <tencent_8B8FEE211A1A0009ED67855EA2AAECBDE20A@qq.com>
+X-QQ-XMAILINFO: NAtipnnbTPeaZftIKjm/rzpYqAps5Bu6jLMD80w4t5M+CXEhckWTv5o7AbnL5p
+	 f5CsG5CvIxXXyvoyRAsTNAzbjXQOoWeDfqffw4Q3JtCd79pHyEm3+D5XoKRS6KT+qCsmRLY89iL0
+	 ArrfBA6oCIdFkGbrtfqMu08UGDGSPC7TS5RLtGl4vQLXdSAdWytqFL3WjjQZU9ntQfWlXlYNiiR9
+	 j67iuVdY07/ASW5afemUwE3hhVP+jhUOogECLpggCetT0Q9slMFHRfHECLVZVSmH+dfRdyzu58Ml
+	 meB3+u9Z7nXKJ7syeEhK887iWP90QUwOa6ffsDJXLGimxZku8iZ01cQbOpoAMt0eCVI1cJIbc5gi
+	 NW8FrPbT296tHhOpbZ2hGaG1gk3J3HuPXa2YfhdJ6yq4nVwJIXSD5ULEGcypmvkTRhTKsFKTHqDH
+	 z+wpRb6S2YIjHj90ZSQFS+J1QsOQV3pNuQVkX0bphRazjurtvow1IjXOSpli3jTkpmYG0GtV5kDW
+	 ofOSPo3bm/Z4dUyXtfMK4Wmn+5IAGSM3KG3NV7W6uzkYmZwedUWwk+2PlW/5BFw47GTzwskSuQ3M
+	 TGl8yE+v1actqPHz34+anKqJK0Xawu3Eoo7bYAhjhR+JuTEAu0W79Hj7FdaZ1OcxvgsbescUqMP7
+	 p3e2ZJPVCea942MWOGHlC6pc8BEfOoIud+VRlkdsJiPomGgKqlXrts93pH2V3nugxw1ib9p4w44o
+	 +KdII4yjcnPKBHfCu2HnBlPfStYeIe1An+opThrqTgNTRKAKU+qhZDjEers24myxBDVynXrzSltk
+	 hFB6nTQDVxd69SVy35fhY1amJdhqvQLBFqH/W4s5fEq0g+Xj/8IV9kerlU3afBmDgDC+an7VT4Nq
+	 wYuq6yCoiC53QU5tL0e5s5XlYiQvidXE+ETysv+qo99yEXXFL58iyh7yb1hFgk7kD5+1Ltvc6MSG
+	 UosnqVUWbuzcU3x594CDIjTOasoXEXnRq653xwTdURTV8q9RKV1SHheSlSJM8q52fAkhy0xXV9Ru
+	 Kwkdj+fh/DdxQ/GKqs0gx/+1bZZGtWH+w+K8eyJUMv34SJDMFyDnJl9qsSXO8=
+X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
+From: Rong Tao <rtoax@foxmail.com>
+To: andrii.nakryiko@gmail.com,
+	ast@kernel.org,
+	daniel@iogearbox.net,
+	vmalik@redhat.com
+Cc: Rong Tao <rtoax@foxmail.com>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Mykola Lysenko <mykolal@fb.com>,
+	Shuah Khan <shuah@kernel.org>,
+	Rong Tao <rongtao@cestc.cn>,
+	bpf@vger.kernel.org (open list:BPF [GENERAL] (Safe Dynamic Programs and Tools)),
+	linux-kernel@vger.kernel.org (open list),
+	linux-kselftest@vger.kernel.org (open list:KERNEL SELFTEST FRAMEWORK)
+Subject: [PATCH bpf-next v3 0/2] Fix bpf_strnstr len error
+Date: Thu, 28 Aug 2025 19:06:26 +0800
+X-OQ-MSGID: <cover.1756378974.git.rtoax@foxmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250827201241.3111857-3-anjelique.melendez@oss.qualcomm.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Aug 27, 2025 at 01:12:41PM -0700, Anjelique Melendez wrote:
-> UCSI v2 specification has increased the MSG_IN and MSG_OUT size from
-> 16 bytes to 256 bytes each for the message exchange between OPM and PPM
-> This makes the total buffer size increase from 48 bytes to 528 bytes.
-> Update the buffer size to support this increase.
-> 
-> Signed-off-by: Anjelique Melendez <anjelique.melendez@oss.qualcomm.com>
-> ---
->  drivers/usb/typec/ucsi/ucsi_glink.c | 85 +++++++++++++++++++++++++----
->  1 file changed, 75 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/usb/typec/ucsi/ucsi_glink.c b/drivers/usb/typec/ucsi/ucsi_glink.c
-> index 1f9f0d942c1a..fc12569ec520 100644
-> --- a/drivers/usb/typec/ucsi/ucsi_glink.c
-> +++ b/drivers/usb/typec/ucsi/ucsi_glink.c
-> @@ -16,10 +16,10 @@
->  
->  #define PMIC_GLINK_MAX_PORTS		3
->  
-> -#define UCSI_BUF_SIZE                   48
-> +#define UCSI_BUF_V1_SIZE		(UCSI_MESSAGE_OUT + (UCSI_MESSAGE_OUT - UCSI_MESSAGE_IN))
-> +#define UCSI_BUF_V2_SIZE		(UCSIv2_MESSAGE_OUT + (UCSIv2_MESSAGE_OUT - UCSI_MESSAGE_IN))
->  
->  #define MSG_TYPE_REQ_RESP               1
-> -#define UCSI_BUF_SIZE                   48
->  
->  #define UC_NOTIFY_RECEIVER_UCSI         0x0
->  #define UC_UCSI_READ_BUF_REQ            0x11
-> @@ -32,13 +32,25 @@ struct ucsi_read_buf_req_msg {
->  
->  struct __packed ucsi_read_buf_resp_msg {
->  	struct pmic_glink_hdr   hdr;
-> -	u8                      buf[UCSI_BUF_SIZE];
-> +	u8                      buf[UCSI_BUF_V1_SIZE];
-> +	u32                     ret_code;
-> +};
-> +
-> +struct __packed ucsi_v2_read_buf_resp_msg {
-> +	struct pmic_glink_hdr   hdr;
-> +	u8                      buf[UCSI_BUF_V2_SIZE];
->  	u32                     ret_code;
->  };
+Fix bpf_strnstr() wrong 'len' parameter, bpf_strnstr("open", "open", 4)
+should return 0 instead of -ENOENT.
 
-Couldn't you just make a union inside that original struct
-ucsi_read_buf_resp_msg?
+Rong Tao (2):
+  bpf/helpers: bpf_strnstr: Exact match length
+  selftests/bpf: Add tests for bpf_strnstr
 
->  struct __packed ucsi_write_buf_req_msg {
->  	struct pmic_glink_hdr   hdr;
-> -	u8                      buf[UCSI_BUF_SIZE];
-> +	u8                      buf[UCSI_BUF_V1_SIZE];
-> +	u32                     reserved;
-> +};
-> +
-> +struct __packed ucsi_v2_write_buf_req_msg {
-> +	struct pmic_glink_hdr   hdr;
-> +	u8                      buf[UCSI_BUF_V2_SIZE];
->  	u32                     reserved;
->  };
+ kernel/bpf/helpers.c                                      | 4 +++-
+ tools/testing/selftests/bpf/progs/string_kfuncs_success.c | 4 +++-
+ 2 files changed, 6 insertions(+), 2 deletions(-)
 
-Ditto for the ucsi_write_buf_req_msg.
-
-> @@ -72,7 +84,7 @@ struct pmic_glink_ucsi {
->  	bool ucsi_registered;
->  	bool pd_running;
->  
-> -	u8 read_buf[UCSI_BUF_SIZE];
-> +	u8 read_buf[UCSI_BUF_V2_SIZE];
->  };
->  
->  static int pmic_glink_ucsi_read(struct ucsi *__ucsi, unsigned int offset,
-> @@ -131,18 +143,34 @@ static int pmic_glink_ucsi_read_message_in(struct ucsi *ucsi, void *val, size_t
->  static int pmic_glink_ucsi_locked_write(struct pmic_glink_ucsi *ucsi, unsigned int offset,
->  					const void *val, size_t val_len)
->  {
-> -	struct ucsi_write_buf_req_msg req = {};
-> +	struct ucsi_v2_write_buf_req_msg req = {};
-> +	size_t len, max_buf_len;
->  	unsigned long left;
->  	int ret;
->  
->  	req.hdr.owner = PMIC_GLINK_OWNER_USBC;
->  	req.hdr.type = MSG_TYPE_REQ_RESP;
->  	req.hdr.opcode = UC_UCSI_WRITE_BUF_REQ;
-> +
-> +	if (ucsi->ucsi->version >= UCSI_VERSION_2_0) {
-> +		max_buf_len = UCSI_BUF_V2_SIZE;
-> +		len = sizeof(req);
-> +	} else if (ucsi->ucsi->version) {
-> +		max_buf_len = UCSI_BUF_V1_SIZE;
-> +		len = sizeof(struct ucsi_write_buf_req_msg);
-> +	} else {
-> +		dev_err(ucsi->dev, "UCSI version not set\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	if (offset + val_len > max_buf_len)
-> +		return -EINVAL;
-> +
->  	memcpy(&req.buf[offset], val, val_len);
->  
->  	reinit_completion(&ucsi->write_ack);
->  
-> -	ret = pmic_glink_send(ucsi->client, &req, sizeof(req));
-> +	ret = pmic_glink_send(ucsi->client, &req, len);
->  	if (ret < 0) {
->  		dev_err(ucsi->dev, "failed to send UCSI write request: %d\n", ret);
->  		return ret;
-> @@ -216,12 +244,49 @@ static const struct ucsi_operations pmic_glink_ucsi_ops = {
->  
->  static void pmic_glink_ucsi_read_ack(struct pmic_glink_ucsi *ucsi, const void *data, int len)
->  {
-> -	const struct ucsi_read_buf_resp_msg *resp = data;
-> +	u32 ret_code, buf_len, max_len;
-> +	u8 *buf;
-> +
-> +	if (ucsi->ucsi->version) {
-> +		if (ucsi->ucsi->version >= UCSI_VERSION_2_0) {
-> +			max_len = sizeof(struct ucsi_v2_read_buf_resp_msg);
-> +			buf = ((struct ucsi_v2_read_buf_resp_msg *)data)->buf;
-> +			buf_len = UCSI_BUF_V2_SIZE;
-> +		} else {
-> +			max_len = sizeof(struct ucsi_read_buf_resp_msg);
-> +			buf = ((struct ucsi_read_buf_resp_msg *)data)->buf;
-> +			buf_len = UCSI_BUF_V1_SIZE;
-> +		}
-> +	} else if (!ucsi->ucsi->version && !ucsi->ucsi_registered) {
-
-ucsi->ucsi->version will never be set in this else condition,
-so no need to check it, no?
-
-> +		/*
-> +		 * If UCSI version is not known yet because device is not registered, choose buffer
-> +		 * size which best fits incoming data
-> +		 */
-> +		if (len > sizeof(struct pmic_glink_hdr) + UCSI_BUF_V2_SIZE) {
-> +			max_len = sizeof(struct ucsi_v2_read_buf_resp_msg);
-> +			buf = ((struct ucsi_v2_read_buf_resp_msg *)data)->buf;
-> +			buf_len = UCSI_BUF_V2_SIZE;
-> +		} else {
-> +			max_len = sizeof(struct ucsi_read_buf_resp_msg);
-> +			buf = ((struct ucsi_read_buf_resp_msg *)data)->buf;
-> +			buf_len = UCSI_BUF_V1_SIZE;
-> +		}
-> +	} else {
-> +		dev_err(ucsi->dev, "UCSI version not set\n");
-> +		return;
-> +	}
-
-I don't really see when you could enter that else statement?
-
-> -	if (resp->ret_code)
-> +	if (len > max_len)
-> +		return;
-> +
-> +	if (buf_len > len - sizeof(struct pmic_glink_hdr) - sizeof(u32))
-> +		buf_len = len - sizeof(struct pmic_glink_hdr) - sizeof(u32);
-> +
-> +	memcpy(&ret_code, buf + sizeof(struct pmic_glink_hdr) + buf_len, sizeof(u32));
-> +	if (ret_code)
->  		return;
->  
-> -	memcpy(ucsi->read_buf, resp->buf, UCSI_BUF_SIZE);
-> +	memcpy(ucsi->read_buf, buf, buf_len);
->  	complete(&ucsi->read_ack);
->  }
-
-thanks,
-
+---
+v3: Fix selftests/bpf error in v2, sorry about that;
+v2: Follow Andrii Nakryiko's advise, fix the 'wrong fix';
+    https://lore.kernel.org/lkml/tencent_DF4DA83EEBFB9246E5E3357BB40911CCA005@qq.com/
+v1: https://lore.kernel.org/lkml/tencent_65E5988AD52BEC280D22964189505CD6ED06@qq.com/
 -- 
-heikki
+2.51.0
+
 
