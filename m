@@ -1,201 +1,253 @@
-Return-Path: <linux-kernel+bounces-789809-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789810-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59B04B39AF9
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 13:05:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D0B8B39AFF
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 13:05:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5BF177AF49D
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 11:03:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 438261885CA3
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 11:06:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B836230C624;
-	Thu, 28 Aug 2025 11:05:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3D0530E0C3;
+	Thu, 28 Aug 2025 11:05:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="dkzNktIe"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Jht5DGNm"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A57C262FE4
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 11:05:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1147430DD39;
+	Thu, 28 Aug 2025 11:05:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756379117; cv=none; b=AAKQjl1zR0jOlqrlwN9Az4YBo3DuJiGTTGJYfCvagEbWhr2qXcrJ68bBHyhB7uoFi+WNjlBy/NwMK4+7n4v6u2SAqOmEsVwO1IdnllH1BjKkolwnvGuR4FJqLP6qGZku0iaKPTyP2FNJZL/OfJBIw8+eYMMH3jbY7POTWQDmEeM=
+	t=1756379122; cv=none; b=Oxa24xbSuqSHUFW/dN8uDDpZePttZKxOOgKQYgJarGmhYXYzUG5wCJjlMug7VGIUSM1KuZrP2jE2CoVtl70H4gi6NLrPQcIoBUN1hWmqwDY2LNjMMjWgSciLGaE6kkARxfOkBjHVKcmESuh6w9cdF5JX1ctl6UU7ATVsFotvd1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756379117; c=relaxed/simple;
-	bh=e03dVCkvTvpanWPDwCJj9vnAVCkN3SPLyZbfuEJYznY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IhHzl8iaUtUi5g90YSfE50+ZIjENq8o1N5ujKKEQS/kNYN59YT+RVWFRJuhpsdPtw0W+SpEAgcLn6afO1TgcwwqoOEc2nGbJw39eXKF4WQIUuf5IVu+mKkqyS0J4dNGnllPzPzBYBd2b1RrNSzk4dH5g6bOjAPsUdsC49XbbpO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=dkzNktIe; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57SAE5bu007248
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 11:05:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	GWz4EmxyWXf7dXG5o/SW5rNMyyXGmYaGBN9NZMKjXjw=; b=dkzNktIes08QLczO
-	hlxo3ShN3hIS6b4EPWNK7XpY0ycS08KtG+q8doSF83aKpqd8BIjg9xWQfREPwSgH
-	MQNIkYh6KYv64gvNZgoCoJKybu/BjmFW3o+p7V0K78upoKCyHZ2Bw2f6Ak14MLdK
-	HGUgeeSx5sYiI6+kuCH31IWr/5fNHnVVi4iPifl//6dCEHs2spk8IfxR3r96dODv
-	jfXHjwiWOdPTWCYQT7zTp+2bCJqHQQ8Xs1ZProWWlP3TLDlGCvVlz7COfXqLDPhD
-	2gtdzc08CYCrgXLmuh8p25hghTl8KsKLuHAfPfMY1dahPyKzPoDYFu7Jqxb5PZrK
-	EVWzdw==
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48tn67g4j9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 11:05:14 +0000 (GMT)
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-70a9f55eb56so16836536d6.2
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 04:05:14 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756379113; x=1756983913;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GWz4EmxyWXf7dXG5o/SW5rNMyyXGmYaGBN9NZMKjXjw=;
-        b=W2rAA6aVVKqak2OdArOgl46WJzUmty30uvC9FQgwKG3lhUY/IE4e0TWwMT/bheHcg1
-         ZtUmXLekKJX3ORhBf2ReFHqT9Sh2kOAhOVOEO363beoN/dO1LL8Yn5hvbC3geJr47ifV
-         /rUwF3vKZdVtW9JA6SaTvSOa8s6i1ayB7i5fymkJn48JqsrzwSBYZxABKr/GD8A75vqC
-         8ESrJvgEXo64YMtoyp5KAMalKnhBfk9UOBSGtQXkpD4j2L65y8DZui9t9kBbC4m6vLkV
-         Cd8jDgRissG8P1fOO8HlqLqoZcx3HHAul1tFZTK941jeQNMnvVSnAorjGZLPF7MsfKaO
-         pm/w==
-X-Forwarded-Encrypted: i=1; AJvYcCWkCcNPwD+bLtmgSM7K7GCsNrsYxU8Z6wQVE7RED1BfVqh1DGxlGhc4ZkWrblQi6B9xTDw73ZyUB4kQVU4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3E0ytjTJmq14/164MgBVr9pwILuInyZiDQBpITfO+0j3qmXYn
-	MLQ7ODItfKtzFzr/PZqbXSsNK5PAXO07ghnvgQpZoTWcb7xYD0S5szalc/9piD10SBwKthU45ed
-	wKRdp8gMQCqsB60haz3QtJQVQKDEyIzhE5PHmCr9IaKJWXXwNqNyF1EGGOsgqYQ1d4Bc=
-X-Gm-Gg: ASbGncvX+G96/jJqmD4e+SWlFM91/uK3Kf3DmYRSDmLhh5GBO0Nmoat6/7n/1fB3LMx
-	7Q+xDe/8ZzkUlBl9SrWgaz/bTXdz53/3DFcNnMvg964j49XkZs/3vb8TRhl2WF/YcQ9ogqVMwbc
-	Tu6igMzM3CoAogdGDNCr3eiEryShle226GZLAHJ65ttdXlIGdtfKOfMvnZnan9irrhksixta6jj
-	ej5ll7/HKmtR6JS8zRJt8HWsOfGFPzCGcyf+bL3dw4pP1Xg4a+O5At9uZT3oMiYZBYD7BGO8OiY
-	UX215sDEjSBjATNC8Vq2PINuBDmrqRukjSQH8UULEkLj0n8tHX13Kkh00n3Cb7P3RVd9HeLEDeO
-	Il63eEKPVAF/gsZoIUu4weV2GLfPkr7NHL3HMWxbMowA=
-X-Received: by 2002:a05:6214:1312:b0:70d:9291:bdd8 with SMTP id 6a1803df08f44-70d97109866mr271525626d6.30.1756379113185;
-        Thu, 28 Aug 2025 04:05:13 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGLnBHAxYeOFUCjvzXXjJoPfriPl5kZ9soekFn2bdbrOltVRygzUC2PVtjW1wYnOgDWaHGQnQ==
-X-Received: by 2002:a05:6214:1312:b0:70d:9291:bdd8 with SMTP id 6a1803df08f44-70d97109866mr271524786d6.30.1756379112368;
-        Thu, 28 Aug 2025 04:05:12 -0700 (PDT)
-Received: from ?IPV6:2001:14ba:a0c3:3a00::4c9? (2001-14ba-a0c3-3a00--4c9.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::4c9])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3365e5da244sm30163331fa.58.2025.08.28.04.05.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 28 Aug 2025 04:05:10 -0700 (PDT)
-Message-ID: <28b33851-24eb-428f-b046-b145342fd982@oss.qualcomm.com>
-Date: Thu, 28 Aug 2025 14:05:09 +0300
+	s=arc-20240116; t=1756379122; c=relaxed/simple;
+	bh=mqeKXy8uMfNWh+NWLomeK5bdnLxYj7mZ0K6eeuy24AE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oPycgqUh1q3uwGrRonr+ziuHGHJxFuK0U3HPFDBsYT2zBuP0D/exNy9Jl92m9pQhC9edsXqmpABJjdwnAKDhBepHUvHC4H97nQM3ZD8HWltCwKB/+jeeJgI8hvwUVskpfgrJa+4A/4Dd4u2OHm/RdXXnPuEnmcUhTaVnrNPseOk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Jht5DGNm; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756379120; x=1787915120;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=mqeKXy8uMfNWh+NWLomeK5bdnLxYj7mZ0K6eeuy24AE=;
+  b=Jht5DGNmlEPS6apoJDpVUEQj1mBRguI3RdnJBuvUNhYf82MKUM29J+TR
+   GkaZguZeyd27wAZBYjCWJ+7IkxCPkPBa10f86zuyjjhTgdNdR6NNRa9Ua
+   1AgQIK/VQoy/7nfPEd1v284p4O/Lr4uqSNIaNhz20XT4MBahrL2N2qYwz
+   DuIB/iW81i5+T9MKZnvgILLYa3YbJeLGNdp0QF9kRA7oM/JKW0gvFfVMj
+   2mYBWYSKsPSR2jQamqwEHcgLG6fisU5KYFVULPkXXy15S5LI32Afm/0Kc
+   bvgjdbzcmqZs4lmMrCHu+PyQOVph39/QI4XoDU+Sc3IYmlFeF4e45oZIh
+   g==;
+X-CSE-ConnectionGUID: l+DwmFMJRLimNrs8IaJDuw==
+X-CSE-MsgGUID: 4k8D1GYDS3Wap/PavrUKRQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11535"; a="58575789"
+X-IronPort-AV: E=Sophos;i="6.18,217,1751266800"; 
+   d="scan'208";a="58575789"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2025 04:05:18 -0700
+X-CSE-ConnectionGUID: D8e8zTdSTIKZnt/blpTSyg==
+X-CSE-MsgGUID: L1YI7WELR2eZJAeBG6teIA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,217,1751266800"; 
+   d="scan'208";a="207229710"
+Received: from kuha.fi.intel.com ([10.237.72.152])
+  by orviesa001.jf.intel.com with SMTP; 28 Aug 2025 04:05:14 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Thu, 28 Aug 2025 14:05:13 +0300
+Date: Thu, 28 Aug 2025 14:05:13 +0300
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: Anjelique Melendez <anjelique.melendez@oss.qualcomm.com>
+Cc: gregkh@linuxfoundation.org, lumag@kernel.org, neil.armstrong@linaro.org,
+	johan+linaro@kernel.org, quic_bjorande@quicinc.com,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v3 2/2] usb: typec: ucsi_glink: Increase buffer size to
+ support UCSI v2
+Message-ID: <aLA36Ttc3CawHBIZ@kuha.fi.intel.com>
+References: <20250827201241.3111857-1-anjelique.melendez@oss.qualcomm.com>
+ <20250827201241.3111857-3-anjelique.melendez@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 01/14] dt-bindings: display/msm: dp-controller: Add
- sm6150
-To: Xiangxu Yin <xiangxu.yin@oss.qualcomm.com>
-Cc: Rob Clark <robin.clark@oss.qualcomm.com>,
-        Dmitry Baryshkov <lumag@kernel.org>,
-        Abhinav Kumar
- <abhinav.kumar@linux.dev>,
-        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Kuogee Hsieh <quic_khsieh@quicinc.com>, Vinod Koul <vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>, linux-arm-msm@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-phy@lists.infradead.org, fange.zhang@oss.qualcomm.com,
-        yongxing.mou@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, quic_lliu6@quicinc.com
-References: <20250820-add-displayport-support-for-qcs615-platform-v3-0-a43bd25ec39c@oss.qualcomm.com>
- <20250820-add-displayport-support-for-qcs615-platform-v3-1-a43bd25ec39c@oss.qualcomm.com>
- <75ra2ofecqu6tid6kr4hnyuztpl6jjaq2ksyquafyajhq2sa4d@4tkggrdqky7y>
- <8918feef-219e-4e69-8901-367189f5066d@oss.qualcomm.com>
-Content-Language: en-US
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-In-Reply-To: <8918feef-219e-4e69-8901-367189f5066d@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODI4MDA4NSBTYWx0ZWRfXzLQfjPC5axEN
- kT0pJdMA2CJrM4pg332/Fv4sVMLX/+ixqd8P6bdBAxH23u+bKzMIril49Y3+GL+6ZFIv8Lc7vZ7
- 8TD8OmzDMc0qC6c8ZeSSmEJETFKAHY1RlH21XijFiH6tva10APHwSr3GN1wZutyw9kzYHeDQWzw
- yiT25MIe0ngMh12IvQOgnVvvR+WCQ1Msf48gPoXuLpDo//1Fcuvyzk0CJvW6z5Cvx7Xn/n0JPww
- ZCfCXbcfuzKRF6Ll4o36k8zg7+CwJjB6/I8fH+8OggzA5FOJ3l0MDyw4QmFFM8Gy1KJYLPUEi77
- ldKqobmnGY+IOckTHiTGSZyMkL1GyqzRgWpzhkbs0ysWeoUNlhEisA5aPfNow77d1sF67fEGwMu
- fAbzWKpD
-X-Proofpoint-GUID: OmicsU5rO7tLDHDDoP6DHGjXcZaJoMAJ
-X-Proofpoint-ORIG-GUID: OmicsU5rO7tLDHDDoP6DHGjXcZaJoMAJ
-X-Authority-Analysis: v=2.4 cv=P7c6hjAu c=1 sm=1 tr=0 ts=68b037ea cx=c_pps
- a=7E5Bxpl4vBhpaufnMqZlrw==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=KSO3TaR41uafEWVwNF4A:9 a=3ZKOabzyN94A:10
- a=QEXdDO2ut3YA:10 a=pJ04lnu7RYOZP9TFuWaZ:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-28_03,2025-08-28_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 bulkscore=0 clxscore=1015 impostorscore=0 priorityscore=1501
- adultscore=0 phishscore=0 malwarescore=0 spamscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508280085
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250827201241.3111857-3-anjelique.melendez@oss.qualcomm.com>
 
-On 28/08/2025 07:51, Xiangxu Yin wrote:
+On Wed, Aug 27, 2025 at 01:12:41PM -0700, Anjelique Melendez wrote:
+> UCSI v2 specification has increased the MSG_IN and MSG_OUT size from
+> 16 bytes to 256 bytes each for the message exchange between OPM and PPM
+> This makes the total buffer size increase from 48 bytes to 528 bytes.
+> Update the buffer size to support this increase.
 > 
-> On 8/20/2025 6:18 PM, Dmitry Baryshkov wrote:
->> On Wed, Aug 20, 2025 at 05:34:43PM +0800, Xiangxu Yin wrote:
->>> Add DisplayPort controller for Qualcomm SM6150 SoC.
->>> While SM6150 currently shares the same configuration as SC7180,
->>> its hardware capabilities differ. Explicitly listing it ensures clarity
->>> and avoids potential issues if SC7180 support evolves in the future.
->> I assume, it has no MST support. Am I right?
+> Signed-off-by: Anjelique Melendez <anjelique.melendez@oss.qualcomm.com>
+> ---
+>  drivers/usb/typec/ucsi/ucsi_glink.c | 85 +++++++++++++++++++++++++----
+>  1 file changed, 75 insertions(+), 10 deletions(-)
 > 
-> 
->  From sm6150 ipcat, I found MST-related registers and pixel1 clk definition.
+> diff --git a/drivers/usb/typec/ucsi/ucsi_glink.c b/drivers/usb/typec/ucsi/ucsi_glink.c
+> index 1f9f0d942c1a..fc12569ec520 100644
+> --- a/drivers/usb/typec/ucsi/ucsi_glink.c
+> +++ b/drivers/usb/typec/ucsi/ucsi_glink.c
+> @@ -16,10 +16,10 @@
+>  
+>  #define PMIC_GLINK_MAX_PORTS		3
+>  
+> -#define UCSI_BUF_SIZE                   48
+> +#define UCSI_BUF_V1_SIZE		(UCSI_MESSAGE_OUT + (UCSI_MESSAGE_OUT - UCSI_MESSAGE_IN))
+> +#define UCSI_BUF_V2_SIZE		(UCSIv2_MESSAGE_OUT + (UCSIv2_MESSAGE_OUT - UCSI_MESSAGE_IN))
+>  
+>  #define MSG_TYPE_REQ_RESP               1
+> -#define UCSI_BUF_SIZE                   48
+>  
+>  #define UC_NOTIFY_RECEIVER_UCSI         0x0
+>  #define UC_UCSI_READ_BUF_REQ            0x11
+> @@ -32,13 +32,25 @@ struct ucsi_read_buf_req_msg {
+>  
+>  struct __packed ucsi_read_buf_resp_msg {
+>  	struct pmic_glink_hdr   hdr;
+> -	u8                      buf[UCSI_BUF_SIZE];
+> +	u8                      buf[UCSI_BUF_V1_SIZE];
+> +	u32                     ret_code;
+> +};
+> +
+> +struct __packed ucsi_v2_read_buf_resp_msg {
+> +	struct pmic_glink_hdr   hdr;
+> +	u8                      buf[UCSI_BUF_V2_SIZE];
+>  	u32                     ret_code;
+>  };
 
-Then please describe MST as the main difference between SM6150 and 
-SC7180 (which doesn't have MST).
+Couldn't you just make a union inside that original struct
+ucsi_read_buf_resp_msg?
 
-Also this needs to be rebased on top of the MST bindings. I've picked up 
-the latest posted revision, but basing on the on-list discussion I might 
-need to drop it and post another iteration.
+>  struct __packed ucsi_write_buf_req_msg {
+>  	struct pmic_glink_hdr   hdr;
+> -	u8                      buf[UCSI_BUF_SIZE];
+> +	u8                      buf[UCSI_BUF_V1_SIZE];
+> +	u32                     reserved;
+> +};
+> +
+> +struct __packed ucsi_v2_write_buf_req_msg {
+> +	struct pmic_glink_hdr   hdr;
+> +	u8                      buf[UCSI_BUF_V2_SIZE];
+>  	u32                     reserved;
+>  };
 
-> 
-> According to the hardware spec, MST is supported, but due to limitations in clock and pipe resources,
-> 
-> the maximum concurrency capability is restricted to 1920x1200@60 + 1280x720@60.
-> 
-> 
->>> Signed-off-by: Xiangxu Yin <xiangxu.yin@oss.qualcomm.com>
->>> ---
->>>   Documentation/devicetree/bindings/display/msm/dp-controller.yaml | 1 +
->>>   1 file changed, 1 insertion(+)
->>>
->>> diff --git a/Documentation/devicetree/bindings/display/msm/dp-controller.yaml b/Documentation/devicetree/bindings/display/msm/dp-controller.yaml
->>> index 9923b065323bbab99de5079b674a0317f3074373..996d0132e084d401db85014a1a4e445d00d62ed8 100644
->>> --- a/Documentation/devicetree/bindings/display/msm/dp-controller.yaml
->>> +++ b/Documentation/devicetree/bindings/display/msm/dp-controller.yaml
->>> @@ -27,6 +27,7 @@ properties:
->>>             - qcom,sc8280xp-dp
->>>             - qcom,sc8280xp-edp
->>>             - qcom,sdm845-dp
->>> +          - qcom,sm6150-dp
->>>             - qcom,sm8350-dp
->>>             - qcom,sm8650-dp
->>>         - items:
->>>
->>> -- 
->>> 2.34.1
->>>
+Ditto for the ucsi_write_buf_req_msg.
 
+> @@ -72,7 +84,7 @@ struct pmic_glink_ucsi {
+>  	bool ucsi_registered;
+>  	bool pd_running;
+>  
+> -	u8 read_buf[UCSI_BUF_SIZE];
+> +	u8 read_buf[UCSI_BUF_V2_SIZE];
+>  };
+>  
+>  static int pmic_glink_ucsi_read(struct ucsi *__ucsi, unsigned int offset,
+> @@ -131,18 +143,34 @@ static int pmic_glink_ucsi_read_message_in(struct ucsi *ucsi, void *val, size_t
+>  static int pmic_glink_ucsi_locked_write(struct pmic_glink_ucsi *ucsi, unsigned int offset,
+>  					const void *val, size_t val_len)
+>  {
+> -	struct ucsi_write_buf_req_msg req = {};
+> +	struct ucsi_v2_write_buf_req_msg req = {};
+> +	size_t len, max_buf_len;
+>  	unsigned long left;
+>  	int ret;
+>  
+>  	req.hdr.owner = PMIC_GLINK_OWNER_USBC;
+>  	req.hdr.type = MSG_TYPE_REQ_RESP;
+>  	req.hdr.opcode = UC_UCSI_WRITE_BUF_REQ;
+> +
+> +	if (ucsi->ucsi->version >= UCSI_VERSION_2_0) {
+> +		max_buf_len = UCSI_BUF_V2_SIZE;
+> +		len = sizeof(req);
+> +	} else if (ucsi->ucsi->version) {
+> +		max_buf_len = UCSI_BUF_V1_SIZE;
+> +		len = sizeof(struct ucsi_write_buf_req_msg);
+> +	} else {
+> +		dev_err(ucsi->dev, "UCSI version not set\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	if (offset + val_len > max_buf_len)
+> +		return -EINVAL;
+> +
+>  	memcpy(&req.buf[offset], val, val_len);
+>  
+>  	reinit_completion(&ucsi->write_ack);
+>  
+> -	ret = pmic_glink_send(ucsi->client, &req, sizeof(req));
+> +	ret = pmic_glink_send(ucsi->client, &req, len);
+>  	if (ret < 0) {
+>  		dev_err(ucsi->dev, "failed to send UCSI write request: %d\n", ret);
+>  		return ret;
+> @@ -216,12 +244,49 @@ static const struct ucsi_operations pmic_glink_ucsi_ops = {
+>  
+>  static void pmic_glink_ucsi_read_ack(struct pmic_glink_ucsi *ucsi, const void *data, int len)
+>  {
+> -	const struct ucsi_read_buf_resp_msg *resp = data;
+> +	u32 ret_code, buf_len, max_len;
+> +	u8 *buf;
+> +
+> +	if (ucsi->ucsi->version) {
+> +		if (ucsi->ucsi->version >= UCSI_VERSION_2_0) {
+> +			max_len = sizeof(struct ucsi_v2_read_buf_resp_msg);
+> +			buf = ((struct ucsi_v2_read_buf_resp_msg *)data)->buf;
+> +			buf_len = UCSI_BUF_V2_SIZE;
+> +		} else {
+> +			max_len = sizeof(struct ucsi_read_buf_resp_msg);
+> +			buf = ((struct ucsi_read_buf_resp_msg *)data)->buf;
+> +			buf_len = UCSI_BUF_V1_SIZE;
+> +		}
+> +	} else if (!ucsi->ucsi->version && !ucsi->ucsi_registered) {
+
+ucsi->ucsi->version will never be set in this else condition,
+so no need to check it, no?
+
+> +		/*
+> +		 * If UCSI version is not known yet because device is not registered, choose buffer
+> +		 * size which best fits incoming data
+> +		 */
+> +		if (len > sizeof(struct pmic_glink_hdr) + UCSI_BUF_V2_SIZE) {
+> +			max_len = sizeof(struct ucsi_v2_read_buf_resp_msg);
+> +			buf = ((struct ucsi_v2_read_buf_resp_msg *)data)->buf;
+> +			buf_len = UCSI_BUF_V2_SIZE;
+> +		} else {
+> +			max_len = sizeof(struct ucsi_read_buf_resp_msg);
+> +			buf = ((struct ucsi_read_buf_resp_msg *)data)->buf;
+> +			buf_len = UCSI_BUF_V1_SIZE;
+> +		}
+> +	} else {
+> +		dev_err(ucsi->dev, "UCSI version not set\n");
+> +		return;
+> +	}
+
+I don't really see when you could enter that else statement?
+
+> -	if (resp->ret_code)
+> +	if (len > max_len)
+> +		return;
+> +
+> +	if (buf_len > len - sizeof(struct pmic_glink_hdr) - sizeof(u32))
+> +		buf_len = len - sizeof(struct pmic_glink_hdr) - sizeof(u32);
+> +
+> +	memcpy(&ret_code, buf + sizeof(struct pmic_glink_hdr) + buf_len, sizeof(u32));
+> +	if (ret_code)
+>  		return;
+>  
+> -	memcpy(ucsi->read_buf, resp->buf, UCSI_BUF_SIZE);
+> +	memcpy(ucsi->read_buf, buf, buf_len);
+>  	complete(&ucsi->read_ack);
+>  }
+
+thanks,
 
 -- 
-With best wishes
-Dmitry
+heikki
 
