@@ -1,168 +1,236 @@
-Return-Path: <linux-kernel+bounces-789405-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84320B3950B
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 09:22:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66419B3950E
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 09:22:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C86F1C2599D
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 07:22:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 238DA1625D5
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 07:22:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CBB7269CF1;
-	Thu, 28 Aug 2025 07:21:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3B972D0274;
+	Thu, 28 Aug 2025 07:22:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P3P6rik2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="TcbUNeG/";
+	dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="lPJ11e5h"
+Received: from mailrelay-egress16.pub.mailoutpod3-cph3.one.com (mailrelay-egress16.pub.mailoutpod3-cph3.one.com [46.30.212.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D8C31C861E;
-	Thu, 28 Aug 2025 07:21:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA56925782D
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 07:22:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.30.212.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756365680; cv=none; b=e406n6xlgoh44vowxDAyKhpzgPDQOs2aQGmBfj9Qq+LBnj9Pam1CqYJk7HTaUYSS1/61wspdiSTpKETjXOA25hZiu6giedIBevF9lO87JlO/E47Ocf0sTWqu3Kg8cnbUCVa4P19H2kEakjS6vYQ6lIfz4Q14lpfoxttV9IlYIpM=
+	t=1756365729; cv=none; b=sMxGdfd8GuThJMUzge/WJxPvpx9n4ozLJw1vjl9KFcafCNB40VCM9S3Vy5TWyg3MoQCmA6K46u3wmP2RX32hY+KlJZRBXgPeFFLRhwow1Jrkmd0wMuBMe/+GSNY25QzquLBApv45RK5u1gzYBbW8XUaevnrQf3XHyOgeQjj7u8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756365680; c=relaxed/simple;
-	bh=C7/duUHB1jzTe2zoRwJGPq9tnOYsk04M/lnKM6Lw4jw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XWXxilYOr7zfaFxfaG8BqduxMte0OHv5QZf2jAu6qSzCbEEgYtuVyetgDcLIVH5glDbYOZMWK+XOUqOzP89eN2TP8GwZFeWA35U+LkO8yW/M2O47u3YUcZKRE1zsilhvtkhr6bxznz9BTSKXj7DguWS5MXaw0RMQuKse7Bre6Bg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P3P6rik2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6A4FC4CEF5;
-	Thu, 28 Aug 2025 07:21:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756365679;
-	bh=C7/duUHB1jzTe2zoRwJGPq9tnOYsk04M/lnKM6Lw4jw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=P3P6rik2V+dAnat9eWuSvAQFs7ROQol0qfl7mXX/2cUYI+C7QRP3XNCAjTFTXOboX
-	 PnGh4LwLXGdtC/lBzkP3HHTgLg4rsEUWyyc9GJT6llTjHe+2h8KOlurSZnUiJw3NW7
-	 qKwPWdsXnTrtZmXRScitgLnU7lvFVln3pfXq+R+VNtWe5rSbPPMi2iORZuC/qKAp5S
-	 3fe04bSwMQR8OaSYcElHlHSfQVwB6Zb3HSUqkl5IfcwdDCl1ZwfSrzEWyOB1KGcrlw
-	 JUhlVcCM4Av5WDpYuP6k5h/vdvl0/1bLz8dvd0y2eUBSbWa12OIyuKGJ2VR5zTU1an
-	 L77vfQGsfA4Og==
-Date: Thu, 28 Aug 2025 10:21:00 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Alexander Potapenko <glider@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Brendan Jackman <jackmanb@google.com>,
-	Christoph Lameter <cl@gentwo.org>, Dennis Zhou <dennis@kernel.org>,
-	Dmitry Vyukov <dvyukov@google.com>, dri-devel@lists.freedesktop.org,
-	intel-gfx@lists.freedesktop.org, iommu@lists.linux.dev,
-	io-uring@vger.kernel.org, Jason Gunthorpe <jgg@nvidia.com>,
-	Jens Axboe <axboe@kernel.dk>, Johannes Weiner <hannes@cmpxchg.org>,
-	John Hubbard <jhubbard@nvidia.com>, kasan-dev@googlegroups.com,
-	kvm@vger.kernel.org, "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-arm-kernel@axis.com, linux-arm-kernel@lists.infradead.org,
-	linux-crypto@vger.kernel.org, linux-ide@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-mips@vger.kernel.org,
-	linux-mmc@vger.kernel.org, linux-mm@kvack.org,
-	linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
-	linux-scsi@vger.kernel.org,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Marco Elver <elver@google.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Michal Hocko <mhocko@suse.com>, Muchun Song <muchun.song@linux.dev>,
-	netdev@vger.kernel.org, Oscar Salvador <osalvador@suse.de>,
-	Peter Xu <peterx@redhat.com>, Robin Murphy <robin.murphy@arm.com>,
-	Suren Baghdasaryan <surenb@google.com>, Tejun Heo <tj@kernel.org>,
-	virtualization@lists.linux.dev, Vlastimil Babka <vbabka@suse.cz>,
-	wireguard@lists.zx2c4.com, x86@kernel.org, Zi Yan <ziy@nvidia.com>
-Subject: Re: [PATCH v1 13/36] mm/hugetlb: cleanup
- hugetlb_folio_init_tail_vmemmap()
-Message-ID: <aLADXP89cp6hAq0q@kernel.org>
-References: <20250827220141.262669-1-david@redhat.com>
- <20250827220141.262669-14-david@redhat.com>
+	s=arc-20240116; t=1756365729; c=relaxed/simple;
+	bh=WUueKzjbbqRI8uNwdF9+KLT8gmKFIXZLY8N7awD/wlA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=P+Zw56AjQCPy6kuJBP0IqupezyU6tSMtDtLQt8Vg+4u68ewhgbR9SloOCVypbtVYu3GaPeNVHEhTgw33LFT/AYL9Ut5GJOuAkTZScf0AgSdqU0N1w+FZsUyGqo27Y0QHDq4MN3hynVMWd4jSQ+rjtC7HBcezL/TqhPEqZSU4WoI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se; spf=none smtp.mailfrom=konsulko.se; dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=TcbUNeG/; dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=lPJ11e5h; arc=none smtp.client-ip=46.30.212.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=konsulko.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1756365723; x=1756970523;
+	d=konsulko.se; s=rsa2;
+	h=content-transfer-encoding:content-type:in-reply-to:from:references:cc:to:
+	 subject:mime-version:date:message-id:from;
+	bh=2YfXwIt8uRuB24ocvEdwemGPCWUZNGhB6pqOxsa3SJ0=;
+	b=TcbUNeG/Qd6OqSN287cQTmdl55p7z84ZIkeCBkDU3GIILprGfzuQ7Ik4bXeFOv5u5dMucEA1leH/j
+	 u6cMu3yYFuMD3hFGcoBfWcAhlbyuEhYQ0cqzPQaCFNjQ63UC8RCPmIE50Ghz1kJL8CkHrCpeSGyKaQ
+	 rEhzod0zsmBxDSfysQl6qGN4xyjljeiYJ95M4UBdX2D3Wg7h3hjGXEOpFY+jqbMhS/2V5KtflkrWL+
+	 G3UQY0+4SJzUMooFb5K18Gfkbwiov48Zm4WP8mCtvkWcqHKKcmEYAn2pnLDNLdu+EVz4ZJh7ZQ30mk
+	 lAmWsyPAVc0z5D1GXMGnPyczzYxeZSQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1756365723; x=1756970523;
+	d=konsulko.se; s=ed2;
+	h=content-transfer-encoding:content-type:in-reply-to:from:references:cc:to:
+	 subject:mime-version:date:message-id:from;
+	bh=2YfXwIt8uRuB24ocvEdwemGPCWUZNGhB6pqOxsa3SJ0=;
+	b=lPJ11e5hy9upngoLEXivO2ahV4GaS+cyXshxFqcORIa094aD9pjodBkqBSAZmjvmhhngAHoeXGbfK
+	 FEge1gOAg==
+X-HalOne-ID: b09ec1ec-83df-11f0-80cc-f3c0f7fef5ee
+Received: from [192.168.10.245] (host-95-203-16-218.mobileonline.telia.com [95.203.16.218])
+	by mailrelay4.pub.mailoutpod2-cph3.one.com (Halon) with ESMTPSA
+	id b09ec1ec-83df-11f0-80cc-f3c0f7fef5ee;
+	Thu, 28 Aug 2025 07:22:02 +0000 (UTC)
+Message-ID: <9c63dda1-0a4b-4131-a5e7-12ad2e88c6d6@konsulko.se>
+Date: Thu, 28 Aug 2025 09:22:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250827220141.262669-14-david@redhat.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/2] rust: zpool: add abstraction for zpool drivers
+To: Benno Lossin <lossin@kernel.org>
+Cc: rust-for-linux <rust-for-linux@vger.kernel.org>,
+ LKML <linux-kernel@vger.kernel.org>, Uladzislau Rezki <urezki@gmail.com>,
+ Danilo Krummrich <dakr@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
+ Vlastimil Babka <vbabka@suse.cz>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>, Miguel Ojeda
+ <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+ Bjorn Roy Baron <bjorn3_gh@protonmail.com>,
+ Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>,
+ Johannes Weiner <hannes@cmpxchg.org>, Yosry Ahmed <yosry.ahmed@linux.dev>,
+ Nhat Pham <nphamcs@gmail.com>, linux-mm@kvack.org
+References: <20250823130420.867133-1-vitaly.wool@konsulko.se>
+ <20250823130522.867263-1-vitaly.wool@konsulko.se>
+ <DCCIRTHGQFNX.1M8GXO4TYA7DF@kernel.org>
+ <DFA3B588-3650-42DA-8875-7AB7D20A2BCA@konsulko.se>
+ <DCDC2M7N28X2.3Q8XYNEDOGK6A@kernel.org>
+Content-Language: en-US
+From: Vitaly Wool <vitaly.wool@konsulko.se>
+In-Reply-To: <DCDC2M7N28X2.3Q8XYNEDOGK6A@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu, Aug 28, 2025 at 12:01:17AM +0200, David Hildenbrand wrote:
-> We can now safely iterate over all pages in a folio, so no need for the
-> pfn_to_page().
+
+
+On 8/27/25 17:59, Benno Lossin wrote:
+> On Wed Aug 27, 2025 at 4:24 PM CEST, Vitaly Wool wrote:
+>>
+>>
+>>> On Aug 26, 2025, at 7:02 PM, Benno Lossin <lossin@kernel.org> wrote:
+>>>
+>>> On Sat Aug 23, 2025 at 3:05 PM CEST, Vitaly Wool wrote:
+>>>> +pub trait ZpoolDriver {
+>>>> +    /// Opaque Rust representation of `struct zpool`.
+>>>> +    type Pool: ForeignOwnable;
+>>>
+>>> I think this is the same question that Danilo asked a few versions ago,
+>>> but why do we need this? Why can't we just use `Self` instead?
+>>
+>> It’s convenient to use it in the backend implementation, like in the toy example supplied in the documentation part:
+>>
+>> +/// struct MyZpool {
+>> +///     name: &'static CStr,
+>> +///     bytes_used: AtomicU64,
+>> +/// }
+>> …
+>> +/// impl ZpoolDriver for MyZpoolDriver {
+>> +///     type Pool = KBox<MyZpool>;
+>>
+>> Does that make sense?
 > 
-> Also, as we already force the refcount in __init_single_page() to 1,
-> we can just set the refcount to 0 and avoid page_ref_freeze() +
-> VM_BUG_ON. Likely, in the future, we would just want to tell
-> __init_single_page() to which value to initialize the refcount.
+> No, why can't it just be like this:
 > 
-> Further, adjust the comments to highlight that we are dealing with an
-> open-coded prep_compound_page() variant, and add another comment explaining
-> why we really need the __init_single_page() only on the tail pages.
+>      struct MyZpool {
+>          name: &'static CStr,
+>          bytes_used: AtomicU64,
+>      }
+>      
+>      struct MyZpoolDriver;
+>      
+>      impl ZpoolDriver for MyZpoolDriver {
+>          type Error = Infallible;
+>      
+>          fn create(name: &'static CStr) -> impl PinInit<Self, Self::Error> {
+>              MyZpool { name, bytes_used: AtomicU64::new(0) }
+>          }
+>      
+>          fn malloc(&mut self, size: usize, gfp: Flags, _nid: NumaNode) -> Result<usize> {
+>              let mut pow: usize = 0;
+>              for n in 6..=PAGE_SHIFT {
+>                  if size <= 1 << n {
+>                      pow = n;
+>                      break;
+>                  }
+>              }
+>              match pow {
+>                  0 => Err(EINVAL),
+>                  _ => {
+>                      let vec = KVec::<u64>::with_capacity(1 << (pow - 3), gfp)?;
+>                      let (ptr, _len, _cap) = vec.into_raw_parts();
+>                      self.bytes_used.fetch_add(1 << pow, Ordering::Relaxed);
+>                      Ok(ptr as usize | (pow - 6))
+>                  }
+>              }
+>          }
+>      
+>          unsafe fn free(&self, handle: usize) {
+>              let n = (handle & 0x3F) + 3;
+>              let uptr = handle & !0x3F;
+>      
+>              // SAFETY:
+>              // - uptr comes from handle which points to the KVec allocation from `alloc`.
+>              // - size == capacity and is coming from the first 6 bits of handle.
+>              let vec = unsafe { KVec::<u64>::from_raw_parts(uptr as *mut u64, 1 << n, 1 << n) };
+>              drop(vec);
+>              self.bytes_used.fetch_sub(1 << (n + 3), Ordering::Relaxed);
+>          }
+>      
+>          unsafe fn read_begin(&self, handle: usize) -> NonNull<u8> {
+>              let uptr = handle & !0x3F;
+>              // SAFETY: uptr points to a memory area allocated by KVec
+>              unsafe { NonNull::new_unchecked(uptr as *mut u8) }
+>          }
+>      
+>          unsafe fn read_end(&self, _handle: usize, _handle_mem: NonNull<u8>) {}
+>      
+>          unsafe fn write(&self, handle: usize, handle_mem: NonNull<u8>, mem_len: usize) {
+>              let uptr = handle & !0x3F;
+>              // SAFETY: handle_mem is a valid non-null pointer provided by zpool, uptr points to
+>              // a KVec allocated in `malloc` and is therefore also valid.
+>              unsafe {
+>                  copy_nonoverlapping(handle_mem.as_ptr().cast(), uptr as *mut c_void, mem_len)
+>              };
+>          }
+>      
+>          fn total_pages(&self) -> u64 {
+>              self.bytes_used.load(Ordering::Relaxed) >> PAGE_SHIFT
+>          }
+>      }
+
+It can indeed but then the ZpoolDriver trait will have to be extended 
+with functions like into_raw() and from_raw(), because zpool expects 
+*mut c_void, so on the Adapter side it will look like
+
+     extern "C" fn create_(name: *const c_uchar, gfp: u32) -> *mut c_void {
+         // SAFETY: the memory pointed to by name is guaranteed by zpool 
+to be a valid string
+         let pool = unsafe { T::create(CStr::from_char_ptr(name), 
+Flags::from_raw(gfp)) };
+         match pool {
+             Err(_) => null_mut(),
+             Ok(p) => T::into_raw(p).cast(),
+         }
+     }
+
+The question is, why does this make it better?
+
+> Also using a `usize` as a handle seems like a bad idea. Use a newtype
+> wrapper of usize instead. You can also not implement `Copy` and thus get
+> rid of one of the safety requirements of the `free` function. Not sure
+> if we can remove the other one as well using more type system magic, but
+> we could try.
+
+Thanks, I'll surely look into this.
+
+>>>> +
+>>>> +    /// Create a pool.
+>>>> +    fn create(name: &'static CStr, gfp: Flags) -> Result<Self::Pool>;
+>>>> +
+>>>> +    /// Destroy the pool.
+>>>> +    fn destroy(pool: Self::Pool);
+>>>
+>>> This should just be done via the normal `Drop` trait?
+>>
+>> Let me check if I’m getting you right here. I take what you are suggesting is that we require that Pool implements Drop trait and then just do something like:
+>>
+>>      extern "C" fn destroy_(pool: *mut c_void) {
+>>          // SAFETY: The pointer originates from an `into_foreign` call.
+>>          unsafe { drop(T::Pool::from_foreign(pool)) }
+>>      }
+>>
+>> Is that understanding correct?
 > 
-> Note that the current code was likely problematic, but we never ran into
-> it: prep_compound_tail() would have been called with an offset that might
-> exceed a memory section, and prep_compound_tail() would have simply
-> added that offset to the page pointer -- which would not have done the
-> right thing on sparsemem without vmemmap.
+> Yes, but you don't need to require the type to implement drop.
 > 
-> Signed-off-by: David Hildenbrand <david@redhat.com>
 > ---
->  mm/hugetlb.c | 20 ++++++++++++--------
->  1 file changed, 12 insertions(+), 8 deletions(-)
-> 
-> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-> index 4a97e4f14c0dc..1f42186a85ea4 100644
-> --- a/mm/hugetlb.c
-> +++ b/mm/hugetlb.c
-> @@ -3237,17 +3237,18 @@ static void __init hugetlb_folio_init_tail_vmemmap(struct folio *folio,
->  {
->  	enum zone_type zone = zone_idx(folio_zone(folio));
->  	int nid = folio_nid(folio);
-> +	struct page *page = folio_page(folio, start_page_number);
->  	unsigned long head_pfn = folio_pfn(folio);
->  	unsigned long pfn, end_pfn = head_pfn + end_page_number;
-> -	int ret;
-> -
-> -	for (pfn = head_pfn + start_page_number; pfn < end_pfn; pfn++) {
-> -		struct page *page = pfn_to_page(pfn);
->  
-> +	/*
-> +	 * We mark all tail pages with memblock_reserved_mark_noinit(),
-> +	 * so these pages are completely uninitialized.
+> Cheers,
+> Benno
 
-                             ^ not? ;-)
-
-> +	 */
-> +	for (pfn = head_pfn + start_page_number; pfn < end_pfn; page++, pfn++) {
->  		__init_single_page(page, pfn, zone, nid);
->  		prep_compound_tail((struct page *)folio, pfn - head_pfn);
-> -		ret = page_ref_freeze(page, 1);
-> -		VM_BUG_ON(!ret);
-> +		set_page_count(page, 0);
->  	}
->  }
->  
-> @@ -3257,12 +3258,15 @@ static void __init hugetlb_folio_init_vmemmap(struct folio *folio,
->  {
->  	int ret;
->  
-> -	/* Prepare folio head */
-> +	/*
-> +	 * This is an open-coded prep_compound_page() whereby we avoid
-> +	 * walking pages twice by initializing/preparing+freezing them in the
-> +	 * same go.
-> +	 */
->  	__folio_clear_reserved(folio);
->  	__folio_set_head(folio);
->  	ret = folio_ref_freeze(folio, 1);
->  	VM_BUG_ON(!ret);
-> -	/* Initialize the necessary tail struct pages */
->  	hugetlb_folio_init_tail_vmemmap(folio, 1, nr_pages);
->  	prep_compound_head((struct page *)folio, huge_page_order(h));
->  }
-> -- 
-> 2.50.1
-> 
-
--- 
-Sincerely yours,
-Mike.
 
