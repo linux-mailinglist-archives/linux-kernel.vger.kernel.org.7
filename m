@@ -1,175 +1,305 @@
-Return-Path: <linux-kernel+bounces-790159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790158-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00C07B3A115
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 16:19:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B83DB3A15B
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 16:23:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B4FF1C84CBB
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 14:19:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9290A083D0
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 14:19:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAD59315764;
-	Thu, 28 Aug 2025 14:09:10 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23AF320DD52;
-	Thu, 28 Aug 2025 14:09:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6E65314B79;
+	Thu, 28 Aug 2025 14:08:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rr/qeR5j"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB031313E23
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 14:08:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756390150; cv=none; b=hqZXoLNoFUM+FqCLifDCGBt3jKtku/5MMI/NzgZmWtNsuEOdwnOspo8XAyeHGx5yPnZ1tjpGl7aBXvlgBZQyrjxICuJrjiRIELdZFi+YVGk1fceL5lmILOQ9qok2UoiM/DB/okqqkj5EqvdaJLg8iGTLDFVC3fJbeweLaRVv2wk=
+	t=1756390134; cv=none; b=XQ08SKMrTmW2hv6D877GXPm3TLUI1ZN4MiNL4Bgpz0vUtK2O/HTc7UgXxMDztjDZZH7h7oh2VEcslRkk6k2SYHj8wU341Oq0INiYvjHZtdwdrXLwP5hgIZkRRHpuiJ2LOaz+/bMLrW+prazjyavL0S8zAqVCGUhVZhp92hlDUlg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756390150; c=relaxed/simple;
-	bh=9lBWETV5L/TU142h0CIOLyDQrqk/HobWCZgRjMj0yoo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GMyLB5sg9Czf+NSPzBmyLUqO0IEFcmmntOs8ViT6wFH5QqTFiIjiC9aYeN4mnlSQ/1L3n/kukzSLcPB/BHxF/t417U0nUJ9IeUnEaaR4ZuxpPEDBuvMRqYGAgd8TWezWsvN/U9uOt0/CdmGA9JyutH5U2DEFm99wzfvhLBQjhxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EDFA11688;
-	Thu, 28 Aug 2025 07:08:58 -0700 (PDT)
-Received: from e133380.arm.com (e133380.arm.com [10.1.197.68])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BE0943F694;
-	Thu, 28 Aug 2025 07:09:01 -0700 (PDT)
-Date: Thu, 28 Aug 2025 15:08:45 +0100
-From: Dave Martin <Dave.Martin@arm.com>
-To: James Morse <james.morse@arm.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-acpi@vger.kernel.org, devicetree@vger.kernel.org,
-	D Scott Phillips OS <scott@os.amperecomputing.com>,
-	carl@os.amperecomputing.com, lcherian@marvell.com,
-	bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
-	baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
-	Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
-	dfustini@baylibre.com, amitsinght@marvell.com,
-	David Hildenbrand <david@redhat.com>,
-	Rex Nie <rex.nie@jaguarmicro.com>, Koba Ko <kobak@nvidia.com>,
-	Shanker Donthineni <sdonthineni@nvidia.com>, fenghuay@nvidia.com,
-	baisheng.gao@unisoc.com,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Rob Herring <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
-	Rafael Wysocki <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Hanjun Guo <guohanjun@huawei.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Danilo Krummrich <dakr@kernel.org>
-Subject: Re: [PATCH 01/33] cacheinfo: Expose the code to generate a cache-id
- from a device_node
-Message-ID: <aLBi7dmFd7+Bqu/j@e133380.arm.com>
-References: <20250822153048.2287-1-james.morse@arm.com>
- <20250822153048.2287-2-james.morse@arm.com>
- <aK7h6seHNWs5rO9Q@e133380.arm.com>
- <17675117-79ef-42e3-9c21-4bc46e73d6b1@arm.com>
+	s=arc-20240116; t=1756390134; c=relaxed/simple;
+	bh=C7zRn/VrsJaJr88AosGaBzTL5/NEtxOqaD+YET6/KOw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NWk1jszvITIvx0X8VYWScNPqm/RFDGG5M8UEPzTlB3TKUFL31vdPdfSMlGaYlC7Ip3TriLcbNLly6YQivx/qY32c0MRNY83UExI6FZN+rrZC9I30sm42rchy40msfAht0qtX9MGlx0i+nrpN2e1TQdD1h7fapUE6b8nMun/Up4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rr/qeR5j; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-afcb73394b4so143686766b.0
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 07:08:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1756390130; x=1756994930; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Y/I5abWNDNo4EBfij41U+MSxFH8HWMmL5CHi8kMoycQ=;
+        b=rr/qeR5jZgWS/rbCoTh0nMiXtp9xj/DKlSLT19ZaWuM0lgjXeJACVu1pdaZP3WRis1
+         rNxT6HCkvXHzAR+S2970oCX+c0SIpohhAevMvZFnRYCvXOTs8PCV60ItXCkXp5teDLU5
+         eXEdUCNsFIqJPkNrLwVSjoJKvQegXmXbsHOj85GPhOxkw6eV0PHJJFQK9FKoAocQiZx4
+         uMWyGZ3gJob6qxoLq0ebHqR2KRmx3qCwe5gxqMOA3ab9MOmnxiAHia261J/7FI8Q9BWq
+         yts0V4X2VHCCIdXjGZROSCdOyn28TSnmH9/xgxEzi0zsMXzrYuKgHWmxDg0ZwaMlWR2p
+         RaeA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756390130; x=1756994930;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Y/I5abWNDNo4EBfij41U+MSxFH8HWMmL5CHi8kMoycQ=;
+        b=RKDUUDd32wQeManJkiVUjfaKPXTspyl2IuIMUukBsra4vvijIrgTa50R3p274LpCGH
+         9DgAqC+ZLvajU8Svl+ee8IY16rcSdZO9ic2hJyLc26G8BPDcti83zgHN1empyGXUFFfJ
+         52jQdBIVvxwmvKYby0McxDmEIUcxCRqSIZHcB2nfGgZrC54JJ007/jFT3XsYq2nAuFKl
+         aDoEYOXuwrshLgXnD0JW9SeISKcIour788i+aOzf42m4FCc+hTLSkzVXHv1c1JFUFAXK
+         357eewu4jgpjYIVjAJgFFr/xYR4YW1dVQGSsB5j2ijsDarcz3ZHfJl1PtB7SZ1ssMtT9
+         Ha6w==
+X-Forwarded-Encrypted: i=1; AJvYcCVAUwNURRDxttwwVWZnyAszgJeHAsfrk9ubBwbt+AsCS6hsuF1Q22yPV5MfWSK1rC3xzDhzW/gcJgoRbK4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzV7Ai2HnlFs8d4hIVX5mfG2T8oAdrGPY570Osd2ekCKxn93xcY
+	JsZDBiH2zfXLFBHAX+ys9VxUUN8qCMAXvC7n2bWkNwn24XQYNWHwPPi57YpKdWsNWOg=
+X-Gm-Gg: ASbGncs674riXF3yjNqGL+LEpgIeSRlsTNPbbsY/5Lbm6w9Tdp+ZU40bwwugv7zjWnu
+	GzrHrW6mnNHH0r3fI6N8ZH2CAeqSNwrHE+1Nz9ysTHoEsmt1bFdKV3Kle2aFHoDwwKv37rH83zY
+	7U8A7Pci5CGTg+pehS6xuOpjEn6qNvVYtFoyy4lDhYmpmxrjibzPEDPlpe9ILRKKDLLKaxh6ZxF
+	HaDFCtxTIXd5UDb4cEDRJKELq9wbCmKx3LIhRkrFkRDoeECsfqxHQRpGkklohd2TafwZwt/B6J4
+	bnO5HWV72qx86sNs6qRRAcBudJFJX8T8hEppW9KiO2EveiMOhLwOryDhXJSv+kWWWqcYc4xJeqY
+	WBfARrzRV74UniGckkPY6syLX1hbaB8qFH5kCYsbB8YtdFbN4WxdrtNvd6hJfb4cpIrUrKXBKwf
+	4Fov0=
+X-Google-Smtp-Source: AGHT+IHN82XFu68/fEKA3udTLRRIIvxajvSPhjBeGGRAN6IcAlWeL50Yku5UnjGbIWRGKBGVvUPHpQ==
+X-Received: by 2002:a17:907:97c7:b0:afe:97eb:4327 with SMTP id a640c23a62f3a-afe97eb470emr1149862766b.20.1756390129962;
+        Thu, 28 Aug 2025 07:08:49 -0700 (PDT)
+Received: from [10.41.150.230] ([77.241.232.17])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61cf65b3d7asm207720a12.41.2025.08.28.07.08.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 28 Aug 2025 07:08:49 -0700 (PDT)
+Message-ID: <82f447d1-89ae-450f-813e-02c3d8228895@linaro.org>
+Date: Thu, 28 Aug 2025 16:08:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <17675117-79ef-42e3-9c21-4bc46e73d6b1@arm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v10 06/13] media: rockchip: add a driver for the rockchip
+ camera interface
+To: Michael Riesch <michael.riesch@collabora.com>,
+ Mehdi Djait <mehdi.djait@linux.intel.com>,
+ Maxime Chevallier <maxime.chevallier@bootlin.com>,
+ =?UTF-8?Q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ Gerald Loacker <gerald.loacker@wolfvision.net>,
+ Markus Elfring <Markus.Elfring@web.de>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring
+ <robh+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+ Kever Yang <kever.yang@rock-chips.com>,
+ Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+ Sebastian Reichel <sebastian.reichel@collabora.com>,
+ Collabora Kernel Team <kernel@collabora.com>,
+ Paul Kocialkowski <paulk@sys-base.io>,
+ Alexander Shiyan <eagle.alexander923@gmail.com>,
+ Val Packett <val@packett.cool>, Rob Herring <robh@kernel.org>,
+ Philipp Zabel <p.zabel@pengutronix.de>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, Mehdi Djait <mehdi.djait@bootlin.com>
+References: <20240220-rk3568-vicap-v10-0-62d8a7b209b4@collabora.com>
+ <20240220-rk3568-vicap-v10-6-62d8a7b209b4@collabora.com>
+ <3b4173cb-655d-48ea-b86a-a036f666cf40@linaro.org>
+ <23ccc744-745d-4a31-a79c-2d64bf1ed43d@collabora.com>
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Content-Language: en-US
+In-Reply-To: <23ccc744-745d-4a31-a79c-2d64bf1ed43d@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi James,
+On 28/08/2025 12:03, Michael Riesch wrote:
+> Hi Bryan,
+> 
+> Thanks for your comments :-)
+> 
+> On 8/26/25 08:21, Bryan O'Donoghue wrote:
+>> On 19/08/2025 00:25, Michael Riesch via B4 Relay wrote:
+> 
+> [...]
+> 
+>>> +
+>>> +static void rkcif_dvp_stop_streaming(struct rkcif_stream *stream)
+>>> +{
+>>> +    struct rkcif_device *rkcif = stream->rkcif;
+>>> +    u32 val;
+>>> +
+>>> +    val = rkcif_dvp_read(rkcif, RKCIF_DVP_CTRL);
+>>
+>> This dvp_read stuff looks a bit funny to me, you have a lookup which can
+>> return 0 for unknown registers.
+>>
+>> Probably not the case with a control register like this one but, for
+>> argument sake if RKCIF_DVP_CTRL was not a valid register i.e.
+>> rkcif_dvp_read() would return 0 and you'd still act on that data to
+>> write back to an unkown register.
+> 
+> ...which would then hit the same check in rkcif_dvp_write and simply
+> return without writing anything. Also, the WARN_ON_ONCE in the lookup
+> would complain and indicate that the driver developer made some mistake.
+> I hope that the driver developer is thus nudged towards fixing the code
+> they wrote.
+> 
+>> Would you not be better off having say callbacks to contain cases where
+>> registers are potentially not present
+>>
+>> ops->update_maybe_not_present_reg();
+>>
+>> followed by writes to registers that would alawys be there ?
+> 
+> I'll think about that in more detail, but right now my thoughts are that
+> if any of the registers below are not valid, this piece of hardware is
+> pretty useless and there is something rotten in the driver. Thus, we
+> complain loudly to the developer.
+The developer is you though :)
 
-On Wed, Aug 27, 2025 at 06:11:25PM +0100, James Morse wrote:
-> Hi Dave,
-> 
-> On 27/08/2025 11:46, Dave Martin wrote:
-> > On Fri, Aug 22, 2025 at 03:29:42PM +0000, James Morse wrote:
-> >> The MPAM driver identifies caches by id for use with resctrl. It
-> >> needs to know the cache-id when probe-ing, but the value isn't set
-> >> in cacheinfo until device_initcall().
-> >>
-> >> Expose the code that generates the cache-id. The parts of the MPAM
-> >> driver that run early can use this to set up the resctrl structures
-> >> before cacheinfo is ready in device_initcall().
-> 
-> > Why can't the MPAM driver just consume the precomputed cache-id
-> > information?
-> 
-> Because it would need to wait until cacheinfo was ready, and it would still
-> need a way of getting the cache-id for caches where all the CPUs are offline.
-> 
-> The resctrl glue code has a waitqueue to wait for device_initcall_sync(), but that is
-> asynchronous to driver probing, its triggered by the schedule_work() from the cpuhp
-> callbacks. This bit is about the driver's use, which just gets probed whenever the core
-> code feels like it.
-> 
-> I toyed with always using cacheinfo for everything, and just waiting - but the MPAM driver
-> already has to parse the PPTT to find the information it needs on ACPI platforms, so the
-> wait would only happen on DT.
-> 
-> It seemed simpler to grab what the value would be, instead of waiting (or probe defer) -
-> especially as this is also needed for caches where all the CPUs are offline.
-> 
-> (I'll add the offline-cpus angle to the commit message)
+Anyway seems a bit weird to me to return invalid registers, you trust 
+yourself right ?
 
-Ack
-
-> > Possible reasons are that the MPAM driver probes too early,
+>>> +    rkcif_dvp_write(rkcif, RKCIF_DVP_CTRL,
+>>> +            val & (~RKCIF_CTRL_ENABLE_CAPTURE));
+>>> +    rkcif_dvp_write(rkcif, RKCIF_DVP_INTEN, 0x0);
+>>> +    rkcif_dvp_write(rkcif, RKCIF_DVP_INTSTAT, 0x3ff);
+>>> +    rkcif_dvp_write(rkcif, RKCIF_DVP_FRAME_STATUS, 0x0);
+>>> +
+>>> +    stream->stopping = false;
+>>> +}
+>>> +
+>>> +static void rkcif_dvp_reset_stream(struct rkcif_device *rkcif)
+>>> +{
+>>> +    u32 ctl = rkcif_dvp_read(rkcif, RKCIF_DVP_CTRL);
+>>> +
+>>> +    rkcif_dvp_write(rkcif, RKCIF_DVP_CTRL,
+>>> +            ctl & (~RKCIF_CTRL_ENABLE_CAPTURE));
+>>> +    rkcif_dvp_write(rkcif, RKCIF_DVP_CTRL, ctl |
+>>> RKCIF_CTRL_ENABLE_CAPTURE);
+>>> +}
+>>> +
+>>> +static void rkcif_dvp_set_crop(struct rkcif_stream *stream, u16 left,
+>>> u16 top)
+>>> +{
+>>> +    struct rkcif_device *rkcif = stream->rkcif;
+>>> +    u32 val;
+>>> +
+>>> +    val = RKCIF_XY_COORD(left, top);
+>>> +    rkcif_dvp_write(rkcif, RKCIF_DVP_CROP, val);
+>>> +}
+>>> +
+>>> +irqreturn_t rkcif_dvp_isr(int irq, void *ctx)
+>>> +{
+>>> +    struct device *dev = ctx;
+>>> +    struct rkcif_device *rkcif = dev_get_drvdata(dev);
+>>> +    struct rkcif_stream *stream;
+>>> +    u32 intstat, lastline, lastpix, cif_frmst;
+>>> +    irqreturn_t ret = IRQ_NONE;
+>>> +
+>>> +    if (!rkcif->match_data->dvp)
+>>> +        return ret;
+>>
+>> Wouldn't you be better off conditionally registering your ISR if
+>> match_data->dvp is true instead ?
 > 
-> yup,
+> As you have surely seen, the ISR is shared between all interfaces, i.e.,
+> DVP and MIPI. Now the currently supported models all have a DVP and your
+> suggestion would work. However, I think the RK3562 VICAP can be easily
+> supported by this driver but does not feature a DVP (several MIPI
+> interfaces, though). In this case match_data->dvp evaluates to false but
+> still there is the need to register the ISR.
+
+Why not have separate ISRs then with shared code calling into a function ?
+
+An ISR in my mind should fire for hardware we have a clear idea about 
+and only do so in exceptional (pun intended) circumstances.
+
+So I'd suggest two ISRs calling into whatever shared code you deem 
+necessary as opposed to NULL checking in your ISR.
 > 
-> > or that it
-> > must parse the PPTT directly (which is true) and needs to label caches
-> > consistently with the way the kernel does it.
+>>
+>>> +
+>>> +    intstat = rkcif_dvp_read(rkcif, RKCIF_DVP_INTSTAT);
+>>> +    cif_frmst = rkcif_dvp_read(rkcif, RKCIF_DVP_FRAME_STATUS);
+>>> +    lastline = RKCIF_FETCH_Y(rkcif_dvp_read(rkcif,
+>>> RKCIF_DVP_LAST_LINE));
+>>> +    lastpix = RKCIF_FETCH_Y(rkcif_dvp_read(rkcif, RKCIF_DVP_LAST_PIX));
+>>> +
+>>> +    if (intstat & RKCIF_INTSTAT_FRAME_END) {
+>>> +        rkcif_dvp_write(rkcif, RKCIF_DVP_INTSTAT,
+>>> +                RKCIF_INTSTAT_FRAME_END_CLR |
+>>> +                RKCIF_INTSTAT_LINE_END_CLR);
+>>> +
+>>> +        stream = &rkcif->interfaces[RKCIF_DVP].streams[RKCIF_ID0];
+>>> +
+>>> +        if (stream->stopping) {
+>>> +            rkcif_dvp_stop_streaming(stream);
+>>> +            wake_up(&stream->wq_stopped);
+>>> +            ret = IRQ_HANDLED;
+>>> +            goto out;
+>>> +        }
+>>> +
+>>> +        if (lastline != stream->pix.height) {
+>>> +            v4l2_err(&rkcif->v4l2_dev,
+>>> +                 "bad frame, irq:%#x frmst:%#x size:%dx%d\n",
+>>> +                 intstat, cif_frmst, lastpix, lastline);
+>>> +
+>>> +            rkcif_dvp_reset_stream(rkcif);
+>>> +        }
+>>> +
+>>> +        rkcif_stream_pingpong(stream);
+>>> +
+>>> +        ret = IRQ_HANDLED;
+>>> +    }
+>>> +out:
+>>> +    return ret;
+>>> +}
+>>> +
+>>> +int rkcif_dvp_register(struct rkcif_device *rkcif)
+>>> +{
+>>> +    struct rkcif_interface *interface;
+>>> +    unsigned int streams_num;
+>>> +    int ret;
+>>> +
+>>> +    if (!rkcif->match_data->dvp)
+>>> +        return 0;
+>>
+>> If you don't register the device when match_data->dvp is false, then I
+>> think you can relax the carry-on checks elsewhere on match_data->dvp,
+>> not including dvp_unregister
 > 
-> It needs to match what will be exposed to user-space from cacheinfo.
-> This isn't about the PPTT, its the value that is generated for DT systems.
-
-Right -- confused myself there.  From the point of view of this series,
-the usage scenario isn't clear at this point.
-
-> The driver has to know if its ACPI or DT to call the appropriate thing to get cache-ids
-> before cacheinfo is ready.
-
-I see.  This might be worth stating in the commit message.
-
-> >> diff --git a/drivers/base/cacheinfo.c b/drivers/base/cacheinfo.c
-> >> index 613410705a47..f6289d142ba9 100644
-> >> --- a/drivers/base/cacheinfo.c
-> >> +++ b/drivers/base/cacheinfo.c
-> >> @@ -207,11 +207,10 @@ static bool match_cache_node(struct device_node *cpu,
-> >>  #define arch_compact_of_hwid(_x)	(_x)
-> >>  #endif
-> >>  
-> >> -static void cache_of_set_id(struct cacheinfo *this_leaf,
-> >> -			    struct device_node *cache_node)
-> >> +unsigned long cache_of_calculate_id(struct device_node *cache_node)
-> >>  {
-> >>  	struct device_node *cpu;
-> >> -	u32 min_id = ~0;
-> >> +	unsigned long min_id = ~0UL;
+> +1 I'll review all instances of this check.
 > 
-> > Why the change of type here?
+>> The rest of the file as I breifly skim it looks OK to me, its a bit big
+>> though.
+>>
+>> Would it be possible to break this patch up a little bit ? Might make it
+>> easier for other reviewers to give an SoB for smaller chunks.
 > 
-> This is a hang over from Rob's approach of making the cache-id 64 bit.
-
-Ah, right.
-
-(I have assumed that 0xffffffff is never going to clash with a valid
-value.)
-
-> > This does mean that 0xffffffff can now be generated as a valid cache-id,
-> > but if that is necessary then this patch is also fixing a bug in the
-> > code -- but the commit message doesn't say anything about that.
-> > 
-> > For a patch that is just exposing an internal result, it may be
-> > better to keep the original type.  ~(u32)0 is already used as an
-> > exceptional value.
+> I suppose what I could do is split this up into five patches, as the
+> commit message already outlines:
 > 
-> Yup, I'll fix that.
+> 1) add a basic driver (no-op skeleton only)
+> 2) abstraction for the ping-pong scheme to allow for future extensions
+> 3) abstraction for the INTERFACE and CROP parts to allow for future
+>     extensions
+> 4) support for the PX30 VIP
+> 5) support for the RK3568 VICAP DVP
+> 
+> Please note that in this case I would rework the patch for a final
+> (this-time-really-final) time and drop this elaborate co-developed-by
+> list, as the patch in question will then have nothing to do it all with
+> anything what was before v2 of this series.
 
-OK -- it works either way, of course, but this should make the patch a
-little less noisy.
+I'll leave that up to you, I'll still review your v11 but, a slightly 
+smaller single patch to digest would be appreciated.
 
-Cheers
----Dave
+---
+bod
 
