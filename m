@@ -1,167 +1,132 @@
-Return-Path: <linux-kernel+bounces-789009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F1E7B38FA4
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 02:14:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02B8EB38FAB
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 02:16:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2753D460337
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 00:14:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7CA5316CAD3
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 00:16:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA5BE28DB3;
-	Thu, 28 Aug 2025 00:14:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 363E618BC0C;
+	Thu, 28 Aug 2025 00:16:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="ko6VF2kA"
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xGKBFOaE"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A218A23CB;
-	Thu, 28 Aug 2025 00:14:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B7F4645
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 00:16:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756340074; cv=none; b=pMLh8QZeM04j6tK1apKoBvWquaUcLR/bvwR1XfCDhKU6vNz1sNbpSewrV6C5M/NbAETFJnDoQZWHgtxb6aLvWS8os15of97QmO4mQ/sQIKS+Hi147OTww2/yC69o+PezTMjhaKoJR5l+bcXC1gX+wKvP88bmClQj23kemtSQhZ4=
+	t=1756340199; cv=none; b=ZZLWI5onByEgs5DstEvDvLPI6I9Hr2CaeZa3rDnZjdbCRI/zFbpsg+vv0e9Y1Uq5BlBEvCp11DWPDerB/DRuGiEI7P/A6d+NN6cmAzmLv2h6ivfINQhIbA5PM+p2PuLf+mvOyDbCC2U/pDZ/EViZwWfQj5+YYL17bouBK5XYpso=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756340074; c=relaxed/simple;
-	bh=vR+P7v6+Ct20eU7awFHLXQjrBuYS+LxOz2wJgbna1rE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hy14mTVsFcg9fPAqD0Q4da7GP2ZCQMDLtiu0otgCLIUvUd95b/jRXvfqNaHF9wKi94rNDl4nDdDhkjtGLzX+BPB/we7UbL4x+cLs6HUnQCD5ooDeNmfgl1QTxYdRVVTn+te4ofnm6fDZ67+7VZVyJT7Bucof3JFapXXtQTmlwnk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=ko6VF2kA; arc=none smtp.client-ip=80.241.56.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4cC22W3nCMz9tSp;
-	Thu, 28 Aug 2025 02:14:27 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
-	t=1756340067;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7PK3Ez1Rfnej7jNOPYQs5y3Mm6w6Khoe08rct6ODjuA=;
-	b=ko6VF2kAjcFV7/loAFG3DijKDdEZnWAtqyqZx+AM6VAnZjb1ZghYykty/sdRM4Z84qHq7G
-	Vt+lgdCqKZkwdNjUQkGH5Tt3q5zsG5t9TFRidcCvLdRy93pl5L1y1mPIyvpYl7/XsyvEPb
-	4W1bn1ZNCnyPWikIrT9pwa/G8ySTKhRBr0b7NM90oYn2k3dqdpgtl03kgYZ4Gsl9Q5OjYE
-	RXyIhGD8eglc5O/AnEurlOOObC5p660YfCXGnUfjHpYiAhlJL+eqcidEw+p9UgJKIsiw5m
-	rCTYOh5LQf2S3+nhRH2KFDc577NbG8zpFjrFhqYk3dqXKSejYKBBmEYjhSaBFw==
-Authentication-Results: outgoing_mbo_mout;
-	dkim=none;
-	spf=pass (outgoing_mbo_mout: domain of cyphar@cyphar.com designates 2001:67c:2050:b231:465::202 as permitted sender) smtp.mailfrom=cyphar@cyphar.com
-Date: Thu, 28 Aug 2025 10:14:00 +1000
-From: Aleksa Sarai <cyphar@cyphar.com>
-To: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-Cc: Christian Brauner <brauner@kernel.org>, 
-	Al Viro <viro@zeniv.linux.org.uk>, Kees Cook <keescook@chromium.org>, 
-	Paul Moore <paul@paul-moore.com>, Serge Hallyn <serge@hallyn.com>, 
-	Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Christian Heimes <christian@python.org>, Dmitry Vyukov <dvyukov@google.com>, 
-	Elliott Hughes <enh@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
-	Florian Weimer <fweimer@redhat.com>, Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Jordan R Abrahams <ajordanr@google.com>, 
-	Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, Luca Boccassi <bluca@debian.org>, 
-	Matt Bobrowski <mattbobrowski@google.com>, Miklos Szeredi <mszeredi@redhat.com>, 
-	Mimi Zohar <zohar@linux.ibm.com>, Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>, 
-	Robert Waite <rowait@microsoft.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
-	Scott Shell <scottsh@microsoft.com>, Steve Dower <steve.dower@python.org>, 
-	Steve Grubb <sgrubb@redhat.com>, kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org
-Subject: Re: [RFC PATCH v1 0/2] Add O_DENY_WRITE (complement AT_EXECVE_CHECK)
-Message-ID: <2025-08-27-obscene-great-toy-diary-X1gVRV@cyphar.com>
-References: <20250822170800.2116980-1-mic@digikod.net>
- <20250826-skorpion-magma-141496988fdc@brauner>
- <20250826.aig5aiShunga@digikod.net>
+	s=arc-20240116; t=1756340199; c=relaxed/simple;
+	bh=DRQULrR+FB4VYruNOuA3H9WZd2yskdckg89UGJxtXNI=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=h+GRyYHWM8jNjpMT/jppSoWrkzS3acfMRRdt7xP5+FvrWMR42D4yCzP5BFtTvE/MjWyYfkRM74MwWwayEirFijS76htaK3iJdK0I9HNhJRM1lH1Gp6DgVDeJaPfL0vWsvQH3NwOB9hPJa3jzfcviZ+Iy3Mgn/kyCmaEo5vpzF64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xGKBFOaE; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-2461c537540so4778115ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 17:16:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1756340197; x=1756944997; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gN/JTBUQGojSDyUMvLZLw43SnOlQ5Fr1I8L6kd4ekdw=;
+        b=xGKBFOaErHGPI+jd+8sUXO1g/7PTjCoW7j/fS9gLGoC+YZZdPCq9apo7Fv9m+v1DAT
+         z8p+6OOqXY5mpiEjO0neHwD4vWQiKKxDIt3omaj4wF0NA493KLmDYKJJDDid/69m7CxH
+         e4gwk6vm6PrZG0T7cp40skGw9ah9KIhQrPLKeb51jX4o3r/R/WbDO4L6rzhVMNN17p/H
+         1ERDLGiprqX6k9FmWJKM6x81CGdo7WuBsDEip4OAkDqeXH2UrihYUV0WVxLyD0yH1Y9X
+         LaIb5AJAQtw33HyxbBIoJdXwmPFTUnxw72MrEsijSlsAwq8oCioLRUi4UITAOsMP2f1E
+         EuSQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756340197; x=1756944997;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=gN/JTBUQGojSDyUMvLZLw43SnOlQ5Fr1I8L6kd4ekdw=;
+        b=QVUvDRtFkiN/vU0/uo3R3OuJ+5AqFlXo6X6zRKPVceYm5XSXuuXARkfLy3ZJfvJfeR
+         bl8rOy6z3aLTDz9dnmKKxegdnP7W7sQadZCuAu8lVKP9qIeztOB2mCr7/0rpqOn65qmX
+         4U7duqffFm87lTb0od9P+vXueCpee+OSkGartjwgiGksAQ41Fu6gm1QOfqzpWCoACsFo
+         MgyMmtGKLI9z1WqPD0b+sRSblu4tMUa7o3EVstNBqQ32uIXe2XmJWHZCYFTy8ULHYop/
+         JfqSyPm050SNPRj91kcxs2xG7rFB5D+eR4sKPOQtPks79VTW1xmolbZofUGAs0wSvE3D
+         2bTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVWk8WYADP6SmrM8D4ycLtKvNDmA6CuOXKUBuAHo2V5CDB4lFUL762LOAIlPODUCOiy4yFMzFTWp+hJkwc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxek1RYmypU5iNjXOkLr6TjbQTQKZNKp132tPdoiRB4jGrTgf48
+	pla0PY8EXreZcnJUOfyvfBD8L7JIETZBJA4e69Fx2nA8yhAHQ3MNSeh3600qQhZE8owrTsd4Qvu
+	WhxfzYA==
+X-Google-Smtp-Source: AGHT+IEeaZ+vZ1azz2+/JevayRHNowIgRsI1vZgWUZcfRT1k7jmZ4DcsJTv92NsfT4neFY+yGzMEa3j4/Ro=
+X-Received: from pjxx6.prod.google.com ([2002:a17:90b:58c6:b0:324:ed49:6c92])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:94e:b0:246:ae6e:e5db
+ with SMTP id d9443c01a7336-246ae6ee847mr198532435ad.42.1756340196775; Wed, 27
+ Aug 2025 17:16:36 -0700 (PDT)
+Date: Wed, 27 Aug 2025 17:16:35 -0700
+In-Reply-To: <20250827201059.EmmdDFB_@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="4tazkxltbygkcgo4"
-Content-Disposition: inline
-In-Reply-To: <20250826.aig5aiShunga@digikod.net>
-X-Rspamd-Queue-Id: 4cC22W3nCMz9tSp
-
-
---4tazkxltbygkcgo4
-Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
-Content-Disposition: inline
+Mime-Version: 1.0
+References: <20250827194107.4142164-1-seanjc@google.com> <20250827201059.EmmdDFB_@linutronix.de>
+Message-ID: <aK-f45qszH2VEzV7@google.com>
+Subject: Re: [PATCH v2 0/3] vhost_task: Fix a bug where KVM wakes an exited task
+From: Sean Christopherson <seanjc@google.com>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, "Michael S. Tsirkin" <mst@redhat.com>, 
+	Jason Wang <jasowang@redhat.com>, kvm@vger.kernel.org, virtualization@lists.linux.dev, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [RFC PATCH v1 0/2] Add O_DENY_WRITE (complement AT_EXECVE_CHECK)
-MIME-Version: 1.0
 
-On 2025-08-26, Micka=EBl Sala=FCn <mic@digikod.net> wrote:
-> On Tue, Aug 26, 2025 at 11:07:03AM +0200, Christian Brauner wrote:
-> > Nothing has changed in that regard and I'm not interested in stuffing
-> > the VFS APIs full of special-purpose behavior to work around the fact
-> > that this is work that needs to be done in userspace. Change the apps,
-> > stop pushing more and more cruft into the VFS that has no business
-> > there.
+On Wed, Aug 27, 2025, Sebastian Andrzej Siewior wrote:
+> On 2025-08-27 12:41:04 [-0700], Sean Christopherson wrote:
+> > Michael,
 >=20
-> It would be interesting to know how to patch user space to get the same
-> guarantees...  Do you think I would propose a kernel patch otherwise?
+> Sean,
+>=20
+> would the bellow work by chance? It is a quick shot but it looks
+> symmetrical=E2=80=A6
 
-You could mmap the script file with MAP_PRIVATE. This is the *actual*
-protection the kernel uses against overwriting binaries (yes, ETXTBSY is
-nice but IIRC there are ways to get around it anyway). Of course, most
-interpreters don't mmap their scripts, but this is a potential solution.
-If the security policy is based on validating the script text in some
-way, this avoids the TOCTOU.
+Gah, sorry, I flagged your earlier mail and then forgot to circle back to i=
+t
+(for whatever reason, I didn't entirely grok what you were suggesting).
 
-Now, in cases where you have IMA or something and you only permit signed
-binaries to execute, you could argue there is a different race here (an
-attacker creates a malicious script, runs it, and then replaces it with
-a valid script's contents and metadata after the fact to get
-AT_EXECVE_CHECK to permit the execution). However, I'm not sure that
-this is even possible with IMA (can an unprivileged user even set
-security.ima?). But even then, I would expect users that really need
-this would also probably use fs-verity or dm-verity that would block
-this kind of attack since it would render the files read-only anyway.
+> diff --git a/kernel/vhost_task.c b/kernel/vhost_task.c
+> index bc738fa90c1d6..27107dcc1cbfe 100644
+> --- a/kernel/vhost_task.c
+> +++ b/kernel/vhost_task.c
+> @@ -100,6 +100,7 @@ void vhost_task_stop(struct vhost_task *vtsk)
+>  	 * freeing it below.
+>  	 */
+>  	wait_for_completion(&vtsk->exited);
+> +	put_task_struct(vtsk->task);
+>  	kfree(vtsk);
+>  }
+>  EXPORT_SYMBOL_GPL(vhost_task_stop);
+> @@ -148,7 +149,7 @@ struct vhost_task *vhost_task_create(bool (*fn)(void =
+*),
+>  		return ERR_CAST(tsk);
+>  	}
+> =20
+> -	vtsk->task =3D tsk;
+> +	vtsk->task =3D get_task_struct(tsk);
+>  	return vtsk;
+>  }
+>  EXPORT_SYMBOL_GPL(vhost_task_create);
 
-This is why a more detailed threat model of what kinds of attacks are
-relevant is useful. I was there for the talk you gave and subsequent
-discussion at last year's LPC, but I felt that your threat model was
-not really fleshed out at all. I am still not sure what capabilities you
-expect the attacker to have nor what is being used to authenticate
-binaries (other than AT_EXECVE_CHECK). Maybe I'm wrong with my above
-assumptions, but I can't know without knowing what threat model you have
-in mind, *in detail*.
+Nice!  This fixes things too.  Either solution works for me.  Or maybe do b=
+oth?
+Attempting to wake a task that vhost_task knows has exited (is exiting?) is=
+ a
+bit gross, but even with that hardening, guarding against UAF is very nice =
+to
+have too.
 
-For example, if you are dealing with an attacker that has CAP_SYS_ADMIN,
-there are plenty of ways for an attacker to execute their own code
-without using interpreters (create a new tmpfs with fsopen(2) for
-instance). Executable memfds are even easier and don't require
-privileges on most systems (yes, you can block them with vm.memfd_noexec
-but CAP_SYS_ADMIN can disable that -- and there's always fsopen(2) or
-mount(2)).
-
-(As an aside, it's a shame that AT_EXECVE_CHECK burned one of the
-top-level AT_* bits for a per-syscall flag -- the block comment I added
-in b4fef22c2fb9 ("uapi: explain how per-syscall AT_* flags should be
-allocated") was meant to avoid this happening but it seems you and the
-reviewers missed that...)
-
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-https://www.cyphar.com/
-
---4tazkxltbygkcgo4
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJEEABYKADkWIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCaK+fRBsUgAAAAAAEAA5t
-YW51MiwyLjUrMS4xMSwyLDIACgkQKJf60rfpRG+uowD/Sqmo+gatXLeikpI5XmZo
-OTzPamUQKF6Qc1cYyy2INK8BAPK2BcHkJfcGbfBSjW2CshX9cc5oZuhvWEtz4TDD
-XzYA
-=FdMM
------END PGP SIGNATURE-----
-
---4tazkxltbygkcgo4--
+Tested-by: Sean Christopherson <seanjc@google.com>
 
