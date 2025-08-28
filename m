@@ -1,148 +1,116 @@
-Return-Path: <linux-kernel+bounces-790777-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91176B3ACDF
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 23:44:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AC43B3ACE1
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 23:45:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50AC9567B40
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 21:44:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1BB163B1610
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 21:45:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EDD32BEC34;
-	Thu, 28 Aug 2025 21:44:47 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A44A2C08A8;
-	Thu, 28 Aug 2025 21:44:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E59662C236C;
+	Thu, 28 Aug 2025 21:44:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CVpa1Ybv"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE54C2D0621
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 21:44:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756417487; cv=none; b=STkKXhhqKBtj/NxfmBxik/33bp0nIL9vfSu5YgnnZx3XCPAalzlGwqf8ITS2RHJ+qNleDs01mFmC4mf6GnvyM+zT8aVh9xSuhRMy/EmYo7IG9ZJGH3chWMIcFBPgZmlQDxXiYxCVwBJW2KMznXGPbJpFLbZJ15uoREB7moTij58=
+	t=1756417491; cv=none; b=BJuqwSdaCXTzjl/FE1S05FVAi3KJXGE1l7JTwGcTC0OiRz5tkWILiO2XUypnTGWHvN5h1I+QTqOcPMJvGilQ/35e2OHo3r/TT2UgLxEi3CmUpfTPLvB4gvu2kqBAkHgrRF5nLumHKgo8jCS3Od+58o414uA6Pi50vBKkFkpivfw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756417487; c=relaxed/simple;
-	bh=D0Iy2kssQWepKr3rrvAwXGm8QXT4WEE6XtWLMJ/4ooU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=W3OHY2sHQMUvwLhcF8K4zpz8S3s1PAhBIEfCZiaXkKGDMKqX/y9dbTjkH9+258hk4IHxlta5Z3T43qKg7Gp21lr/oJMETxZg92+LXTlHvnsSa/dN/BlKEOtUqCXtDWegw7t920Ijgzu8tEmIX500lZaYKY1ZKvbgOLw+OCXamuM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1B0461655;
-	Thu, 28 Aug 2025 14:44:35 -0700 (PDT)
-Received: from [10.57.58.232] (unknown [10.57.58.232])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AB5A53F738;
-	Thu, 28 Aug 2025 14:44:42 -0700 (PDT)
-Message-ID: <39dccf98-41da-4c54-a200-50f367cd0147@arm.com>
-Date: Thu, 28 Aug 2025 22:44:41 +0100
+	s=arc-20240116; t=1756417491; c=relaxed/simple;
+	bh=C/NpCg6q+vxXwOPCq6cYFuoORDyx7dzEq5rtn+awqfg=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=deXB1gRJzWcycidnixYMPjTzaUQiOM+5Roj6CN8I9i12m3YclLCubTBJd56HM14So0HVptJLh8R8l2UVpYOfGnNQU3HAlFFzgxguXXM64EcNGUWDGTycy2Oos7km7m53lX8CCB2X/sWV0zgGIKN++1ZOTIHpGPCG7Br/klxxGoo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CVpa1Ybv; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-24458264c5aso12727835ad.3
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 14:44:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1756417488; x=1757022288; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=vrxdZgxba4gYN2q1LfvvmxDmvnNjBkbi5Nna+w3+iic=;
+        b=CVpa1YbvGlAOJAZoUCUPXiK5C5LRzsBF8HxPJm+nnqRFC5QVTDD8cl7VCghmaT35JP
+         AP3S7JitcBsosLq4asuJNk2XEDa2cPdIcB7jhpJ7mPmGP0ZMKtslhEcbd02zLVhAeK80
+         RlR7qets1pWx62cfNK3h40uAYrw4a0etiNXZW98N3ypMbd50+Tqh4cnSjPD80yrEhMNx
+         n3c0Mig7s87UNkNMHjHR3J8yVr5KIViSEYjxrVrYz5pej7CuNzpv3k+lkuO019wvuSHR
+         MQgwhmeq0p3TvbSQsBEJaJRnjs3w9CQJJ3RefEOxnuGtG6xZOOriuq+6NgDoKTiAMyJW
+         g4GA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756417488; x=1757022288;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vrxdZgxba4gYN2q1LfvvmxDmvnNjBkbi5Nna+w3+iic=;
+        b=ftaXcB72bU1Q+DEj/Wqo22dSdZ+J3qF5ooCekwr8rPiVHxU/4cSLbffw9XZ8YYeiMW
+         fM/qd2SMeKPnLfLonVxH1vKTWmEDgfqxMzK3936IRt0CwPJsvijF7YFmmWvTIsuPrlM3
+         +Xqe8IUhE7qoUxLnvOMX1sUuXt98i8nB2fTQ1NrcpQ/tOvbTO1spTaHEK3sd7N7mJP/C
+         g882ImyiPeUUagxz2uXDOHpYm1zpeb6MmMZ9Rl4GUJ0WJ9mYp2dhTLokdvuuAiT7/8CP
+         FzPqhlhsYqv3jq8cwCbrlOvpFGfuiTOQG16Cfosgf2i2OIAVQje1HfcNtonMAviV8uM0
+         zQuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUoSAthZSwAwf4S1XfvmXvENM7SksCvCWdIt7Ym2knm05gmNyq9xAh3hW7zuwdI/jWgORWyfedgoIs++44=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwEpBOvpott++zp7EV+Ttm/rq9sokjawpX30AjSal4xQrFqfbnq
+	mnll5xaDm4JDFKKAWjIGchlmBcHfFdfDmJv4upmi/1V+iJVqa+FaKDkX8O8/IUYAf5Uo/hXlGQf
+	tf61guA==
+X-Google-Smtp-Source: AGHT+IE8RKoOo7e7EmVuEAWOQVAwVrB5fsqejrtInrkSfOjrEAAlIzUAzdG3kcZqamJyLYTzumlKG+S7FHE=
+X-Received: from plqs24.prod.google.com ([2002:a17:902:a518:b0:248:a265:c642])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:1acc:b0:246:6442:19e4
+ with SMTP id d9443c01a7336-246644231c4mr266145675ad.58.1756417488033; Thu, 28
+ Aug 2025 14:44:48 -0700 (PDT)
+Date: Thu, 28 Aug 2025 14:44:46 -0700
+In-Reply-To: <fcfafa17b29cd24018c3f18f075a9f83b7f2f6e6.camel@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Revert "intel_idle: Rescan "dead" SMT siblings during,
- initialization"
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: linux-pm <linux-pm@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Artem Bityutskiy <artem.bityutskiy@linux.intel.com>
-References: <724616a2-6374-4ba3-8ce3-ea9c45e2ae3b@arm.com>
- <CAJZ5v0gGchbaQWRq39JbrX8chca7uefef763coJeup+vUOfyCw@mail.gmail.com>
- <CAJZ5v0h=OG-wgcZBD8mZ51+kb7j3yeDZQt9XfO=fdasLRgQkEg@mail.gmail.com>
- <CAJZ5v0jdMHd7cRktE8xsQZMTkSK44LZCyFdWzDVLcasvfhJP-g@mail.gmail.com>
-Content-Language: en-US
-From: Christian Loehle <christian.loehle@arm.com>
-In-Reply-To: <CAJZ5v0jdMHd7cRktE8xsQZMTkSK44LZCyFdWzDVLcasvfhJP-g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20250827000522.4022426-1-seanjc@google.com> <20250827000522.4022426-10-seanjc@google.com>
+ <aK7Ji3kAoDaEYn3h@yzhao56-desk.sh.intel.com> <aK9Xqy0W1ghonWUL@google.com>
+ <aK/sdr2OQqYv9DBZ@yzhao56-desk.sh.intel.com> <aLCJ0UfuuvedxCcU@google.com> <fcfafa17b29cd24018c3f18f075a9f83b7f2f6e6.camel@intel.com>
+Message-ID: <aLDNzk-QaAlfff0C@google.com>
+Subject: Re: [RFC PATCH 09/12] KVM: TDX: Fold tdx_mem_page_record_premap_cnt()
+ into its sole caller
+From: Sean Christopherson <seanjc@google.com>
+To: Rick P Edgecombe <rick.p.edgecombe@intel.com>
+Cc: Yan Y Zhao <yan.y.zhao@intel.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
+	"pbonzini@redhat.com" <pbonzini@redhat.com>, Vishal Annapurve <vannapurve@google.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"michael.roth@amd.com" <michael.roth@amd.com>, Ira Weiny <ira.weiny@intel.com>
+Content-Type: text/plain; charset="us-ascii"
 
-On 8/28/25 20:06, Rafael J. Wysocki wrote:
-> On Thu, Aug 28, 2025 at 6:13 PM Rafael J. Wysocki <rafael@kernel.org> wrote:
->>
->> On Thu, Aug 28, 2025 at 4:44 PM Rafael J. Wysocki <rafael@kernel.org> wrote:
->>>
->>> On Thu, Aug 28, 2025 at 4:26 PM Christian Loehle
->>> <christian.loehle@arm.com> wrote:
->>>>
->>>> This reverts commit a430c11f401589a0f4f57fd398271a5d85142c7a.
->>>>
->>>> Calling arch_cpu_rescan_dead_smt_siblings() in intel_idle_init with
->>>> boot parameter nosmt and maxcpus active hotplugged boot-offline CPUs
->>>> in (and leave them online) which weren't supposed to be online.
->>>>
->>>> With the revert and nosmt and maxcpus=12 on a raptor lake:
->>>> cpu     online  capacity
->>>> cpu0    1       1009
->>>> cpu1    0       -
->>>> cpu2    1       1009
->>>> cpu3    0       -
->>>> cpu4    1       1009
->>>> cpu5    0       -
->>>> cpu6    1       1009
->>>> cpu7    0       -
->>>> cpu8    1       1024
->>>> cpu9    0       -
->>>> cpu10   1       1024
->>>> cpu11   0       -
->>>> cpu12   1       1009
->>>> cpu13   0       -
->>>> cpu14   1       1009
->>>> cpu15   0       -
->>>> cpu16   1       623
->>>> cpu17   1       623
->>>> cpu18   1       623
->>>> cpu19   1       623
->>>> cpu20   0       -
->>>> cpu21   0       -
->>>> cpu22   0       -
->>>> cpu23   0       -
->>>>
->>>> Previously:
->>>> cpu     online  capacity
->>>> cpu0    1       1009
->>>> cpu1    0       -
->>>> cpu2    1       1009
->>>> cpu3    0       -
->>>> cpu4    1       1009
->>>> cpu5    0       -
->>>> cpu6    1       1009
->>>> cpu7    0       -
->>>> cpu8    1       1024
->>>> cpu9    0       -
->>>> cpu10   1       1024
->>>> cpu11   0       -
->>>> cpu12   1       1009
->>>> cpu13   0       -
->>>> cpu14   1       1009
->>>> cpu15   0       -
->>>> cpu16   1       623
->>>> cpu17   1       623
->>>> cpu18   1       623
->>>> cpu19   1       623
->>>> cpu20   1       623
->>>> cpu21   1       623
->>>> cpu22   1       623
->>>> cpu23   1       623
->>>>
->>>> Signed-off-by: Christian Loehle <christian.loehle@arm.com>
->>>> ---
->>>> Rafael, I don't immediately see how to fix this properly so I won't
->>>> try to, feel free to treat this as a bug report.
->>>
->>> Sure, thanks for reporting this!
->>>
->>> Well, I think that cpuhp_smt_enable() is missing a check.  It looks to
->>> me like it should do the topology_is_primary_thread(cpu) check like
->>> cpuhp_smt_disable().
->>>
->>> I'll cut a test patch for this later.
->>
->> Something like the attached one, perhaps.  I haven't tested it yet,
->> but I'll do that later.
-> 
-> Works here AFAICS, but my test system is not hybrid.
+On Thu, Aug 28, 2025, Rick P Edgecombe wrote:
+> It's unfortunate we didn't have the gmem mmap() support then. Otherwise we could
+> have just encrypted it in place.
 
-Yep, on my end as well, thanks!
-Tested-by: Christian Loehle <christian.loehle@arm.com>
+Yeah, hindsight is definitely 20/20 on that front.  Though I suspect that we'd
+never have landed anything if we tried to go straight to support mmap().
+
+> Otherwise, I'm really glad to see these cleanups/scrutiny. I kind of got the
+> impression that you wanted to see less TDX churn for a bit.
+
+Heh, believe me, I'm not exactly ecstatic to dive into this.  But, I don't want
+to just ignore it, because some of these quirks/warts are already getting in the
+way of new development, and if I/we delay such clean ups, the pain is only going
+to get worse (and the total cost will be much higher).
+
+Fatigue is a bit of a problem for me, but the biggest issue really is just lack
+of cycles (the quick feedback and testing y'all are providing helps tremendously
+on that front).  And lack of cycles should be mitigated to some extent as I
+(re)familiarize myself with the code; I recognized most of the concepts, but
+there are definitely a few places where I'm completely lost, and that makes
+reviewing things like dynamic PAMT and hugepage support excrutiatingly slow.
+
+> The fact is, the TDX base support still needs more work like this.
+
+IMO, the most important things to address are cases where the design choices we
+made turned out to be suboptimal, i.e. where the behavior itself is problematic.
+Code cleanups are definitely welcome too, but my priority is polishing the core
+design.
 
