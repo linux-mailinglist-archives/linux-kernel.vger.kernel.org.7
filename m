@@ -1,660 +1,179 @@
-Return-Path: <linux-kernel+bounces-789551-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A825B39735
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 10:39:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5810AB39739
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 10:40:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 15A551B23FAC
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 08:40:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1798E202AA5
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 08:40:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68DEC2E091C;
-	Thu, 28 Aug 2025 08:39:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBE342EB840;
+	Thu, 28 Aug 2025 08:39:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="OD0KBnfJ"
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="Cny0Vp/x"
+Received: from OS8PR02CU002.outbound.protection.outlook.com (mail-japanwestazon11012056.outbound.protection.outlook.com [40.107.75.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F281E32C8B
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 08:39:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756370389; cv=none; b=iob2zdgyZ0FWvAr5O7yd6sHIFLGRvBoffY7P4oVXgV6QZUzeDJZwk11kRq8Q0QDBB9LedSP1Rn2zrkzNV2iMQOcv5D+OJ2fCh3c8XuRTSlZexqRC8b8hc0dyh+ElZRyPM+c0si4FqelCOzqwf15rg7uiDh2huU7p38BCPoU9spM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756370389; c=relaxed/simple;
-	bh=RfExItHsHPu8D8FulhvugXdGpFPx7m7HpJLuoMR0nVY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:
-	 References; b=iHQ9zwvnJSH/ATvDCdXxubIFDwXpcjEV5sC3f9eJKj3euZG/ueTKV6u5mPvW9x23rxA2UkznMSWUkiI5RSbrMynio3oNkwd+DSWufnhYUnZVxyQhhfk8UTcFca9qYgnC4e1Vh/jsg68tSeX9X1wDIFiegiKMocY960wlc1mGfo4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=OD0KBnfJ; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250828083938epoutp04ec00cec832ee052dacdd7f375daa6569~f4Y26su8p0614906149epoutp04h
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 08:39:38 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250828083938epoutp04ec00cec832ee052dacdd7f375daa6569~f4Y26su8p0614906149epoutp04h
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1756370378;
-	bh=pImoRDS3pa3G80rNm7NY0vzMH0ovbewcwmQ3GzyNIJk=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=OD0KBnfJWEdjon3M/fuPM/DdXCaJ/RsSb56XaTzJL6qJOINn+DfQ31sAa1LY9ce9V
-	 O7pdBh4bzTwUzbqL+v3K89E6TnR7vyroGeyakjhUWv0JjyCbEFnTtK6uCHQoCCFWRv
-	 yb6vQh2YG+4VeEAytQXgL2s6OmIXaM9/cbO7BhNs=
-Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPS id
-	20250828083937epcas5p2cfdc1ab63546f02b4b6ae3fe2022af4f~f4Y2WLuWH0455804558epcas5p2L;
-	Thu, 28 Aug 2025 08:39:37 +0000 (GMT)
-Received: from epcas5p1.samsung.com (unknown [182.195.38.87]) by
-	epsnrtp04.localdomain (Postfix) with ESMTP id 4cCFFN6t6Qz6B9mC; Thu, 28 Aug
-	2025 08:39:36 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-	20250828083936epcas5p3d2e5ec402bd00dae08c11d8cc7246896~f4Y0o3laA0819308193epcas5p3p;
-	Thu, 28 Aug 2025 08:39:36 +0000 (GMT)
-Received: from cheetah.samsungds.net (unknown [107.109.115.53]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20250828083934epsmtip1b1a947a422fa0d8fe1705a2a1c1dfec6~f4YzAy47L3118031180epsmtip1q;
-	Thu, 28 Aug 2025 08:39:34 +0000 (GMT)
-From: Inbaraj E <inbaraj.e@samsung.com>
-To: alim.akhtar@samsung.com, linux-fsd@tesla.com, krzk@kernel.org,
-	robh@kernel.org, conor+dt@kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	pankaj.dubey@samsung.com, ravi.patel@samsung.com, shradha.t@samsung.com,
-	Inbaraj E <inbaraj.e@samsung.com>
-Subject: [v3] arm64: dts: fsd: Add CSIS nodes
-Date: Thu, 28 Aug 2025 14:09:26 +0530
-Message-ID: <20250828083926.16849-1-inbaraj.e@samsung.com>
-X-Mailer: git-send-email 2.49.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B08C2E5D17;
+	Thu, 28 Aug 2025 08:39:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.75.56
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756370394; cv=fail; b=pgneqgsM1ZHealFo8l9fNJNzZ3HZYpTCW9uVK5SPCI1gHjtc2PKwhUvhW+5AcgVuQNUpNI8GcGOudDmADuqSRJBYU+WVYq9fbL7JWKx+Ih6Lq1Q0YRYqihdih4evsqFf9iMARIajucHv1gq0xikoM+P+lvALZxis7gHVrw3qK+o=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756370394; c=relaxed/simple;
+	bh=U6nvUUNC3soUgS0EjQZIthNuy2a4l4d279uNSkbu5VU=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=VBZzCSq/jjwgh+TnZLjKkfyKAvoawdmPvwF+Xq49e3g4WMJ4QAinl0ovRVuSQf/A9n3F8zv7pzQKoOhuLUsbmFPJjWK7dM6LJzKQpcJ3g36QpqfiSSWDEnDUH7bulDearCnv55s/uRjQdAskoq4veeUcfx5cLECJyN4Sw74yZ8s=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=Cny0Vp/x; arc=fail smtp.client-ip=40.107.75.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=QNw7O9s/nEEnSD1T8PDDWMqxv3ZBXXT4Kpjsz2IYfG6Walhh9bBvslO+l52s0pY/fjellxo06Hb/UxYetaJb5uLrzWJMHPMEBHW6A2JtBNwOyd6n0fuR/FFhtT8reIUpLLyAGy89dP748GbnpJOx9hHL5mNfrC2lGHZdlnMi3pIPhxTNGQU4igwB7e/gwYNf/nVOg7iijnL3mZee+KhMqdGRr11+HHMZ/GlY1QRSnqGM10mX3RKsXdxXrJDlfVL1f+ZsrREV5mg69/5aOthmjnWojgPGqhHK4c9DElv5ygxQ2p6emXN4R+MeH+GpJXSOcJyyeW7XiFfXPOfcc4uxcw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=rYHdquyT3smQUz8GfV3IKsIUY9xhkqwg2jj4PaHVvV8=;
+ b=Ys3cEmzFtMUYyJnHpOwxfm5MtwL+2gFHR2CDwyrr9QMT7KLtdWqpYuID86zROJJs+tl/kq7wn+VBFIo+OYqjhoskGbAIWoG8QjCSQTikMb5k40W+WSGsFwcvoDLztO/7ylMT8gyj1O6qUbdY7/ceC2znANZ4oNE3rtHFhxCgyu6MynwD7m5TEi1zGIw4UDeSN1kJ5XYg2JX/xsFCvNwBU45ER3mWAJJjB7AfPc0PGx97bJs2cHhWmhhTsSGCM34qZKtXnzcKIQ1gBJcZE3I2E1AdkNQ366ts3feYe8hsSzzGjae5va+aa8iinne2IwjztviCQA4gFUE+ZZfFbV1Pow==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=rYHdquyT3smQUz8GfV3IKsIUY9xhkqwg2jj4PaHVvV8=;
+ b=Cny0Vp/x7HCuu0UjkoKPguB089WrqQoSosMlasIwzQT84j4lgP3YdevdJEieKlPdHa1qAYtYO8rZK5ACZpyCiOPGX6tMDFRPsUGXMU8/Sh6RUJEaxHOlChGvgwGaA1xOrpHr4ylRtfDfl72K6SUH5JwvzaYiUGwU7T+W1vywy6863suL6oNyT6UTm+1pU1xIU0lj+V9JG5ULKI5wpwpXUQ7Uw6kPNpOFebDChiXCHgD7IZN4dhryka4kPd6xd3KE+870GsvMetx4xgjiwolejqB/0NCYfQZM7OJpTHEBhu/dXZ15WbrNMwtqLGGn0QY4mkOF1qft4sMPFm38GjwtuQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SEZPR06MB5576.apcprd06.prod.outlook.com (2603:1096:101:c9::14)
+ by TYSPR06MB6573.apcprd06.prod.outlook.com (2603:1096:400:482::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.21; Thu, 28 Aug
+ 2025 08:39:49 +0000
+Received: from SEZPR06MB5576.apcprd06.prod.outlook.com
+ ([fe80::5c0a:2748:6a72:99b6]) by SEZPR06MB5576.apcprd06.prod.outlook.com
+ ([fe80::5c0a:2748:6a72:99b6%7]) with mapi id 15.20.9073.014; Thu, 28 Aug 2025
+ 08:39:49 +0000
+From: Liao Yuanhong <liaoyuanhong@vivo.com>
+To: Stefano Garzarella <sgarzare@redhat.com>,
+	virtualization@lists.linux.dev (open list:VM SOCKETS (AF_VSOCK)),
+	netdev@vger.kernel.org (open list:VM SOCKETS (AF_VSOCK)),
+	linux-kernel@vger.kernel.org (open list)
+Cc: Liao Yuanhong <liaoyuanhong@vivo.com>
+Subject: [PATCH net-next v2] vsock/test: Remove redundant semicolons
+Date: Thu, 28 Aug 2025 16:39:38 +0800
+Message-Id: <20250828083938.400872-1-liaoyuanhong@vivo.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SI2PR06CA0016.apcprd06.prod.outlook.com
+ (2603:1096:4:186::22) To SEZPR06MB5576.apcprd06.prod.outlook.com
+ (2603:1096:101:c9::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20250828083936epcas5p3d2e5ec402bd00dae08c11d8cc7246896
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-541,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250828083936epcas5p3d2e5ec402bd00dae08c11d8cc7246896
-References: <CGME20250828083936epcas5p3d2e5ec402bd00dae08c11d8cc7246896@epcas5p3.samsung.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SEZPR06MB5576:EE_|TYSPR06MB6573:EE_
+X-MS-Office365-Filtering-Correlation-Id: c8d9435a-d5b4-4a38-3df7-08dde60e7303
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|52116014|376014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?h7VRz0r18l8GpPjkOvj4YjkuSYlGZc8CmglXGfNULKU7NsSLx/CB/ORwhV0K?=
+ =?us-ascii?Q?9/qJdw+SXcxZe+2pylVMsuKIrG5B4BMyjKLAl3qsC0jwcyx+/0cVKTJKcCbJ?=
+ =?us-ascii?Q?3j/PCSIuQUZU3jOuiwwEUpkZCvpgmv+L8yjS3bih1hS8l9VNysmxszENNXlX?=
+ =?us-ascii?Q?2eqneJPmf2AG5e1SvaF0t3LxdZsql2ZO9rCFP9UJpIUTlPY5M/MRR2RSu0rc?=
+ =?us-ascii?Q?O+dUyHQxY+L/RU4euoAuWbZVf89rRdSNI14UfREc2fLOWySVodjGA6yDepSs?=
+ =?us-ascii?Q?vjYWnA2lB+YRnJtE+YZRrBRdqLR+D6rzfOak/sb8JUe6Y15fbL5c91O+D+fY?=
+ =?us-ascii?Q?U6Y7Ym8RgT1pk7keErYNQdilu6jAKGzErAEodIJ0DBTnZYbX/ficBO4OGTFX?=
+ =?us-ascii?Q?CdzrVvs+moKAURVi5EkdamqCINi7aw8zmO/BoQYfFNAf9G5WSFPc/QH/y548?=
+ =?us-ascii?Q?MnMj4fU1+Ge2IvadFyzAN07ZABExzDcgp6ChoPZutdCdSN0/54NoYwOmMd96?=
+ =?us-ascii?Q?J42Txuxh5fIVikpa69BhM7uBWAJvtXy9GqC53D7y+nzadweMCuogfUxjgFyZ?=
+ =?us-ascii?Q?9lGpJwECyYljrVHAat4SFNNH+G/tJJ+nYmBhn4z7Cd+s1nE4QpSI2sH+YQfe?=
+ =?us-ascii?Q?0Jl3sejlPlKT+bchORytToSatA9y0qdZGfqsAMYz6m7080qPe4ennTavV5Y8?=
+ =?us-ascii?Q?1Ieroe76dDSyjDvI2pJE7PfsunGvrG+P517eXUvVPwJTBKC64KLez8tIp8dV?=
+ =?us-ascii?Q?S6tLuZbhjsx91RtSOQgrpOvIf6IrGlWd/Q92Mpu+nEAQBRYJSA76yDKIr3bp?=
+ =?us-ascii?Q?1yc1EdMCSmGXqlX39JlMF0w9/z0D9+COZL3ood3V3zQciuQ1bmubPMSL1XHn?=
+ =?us-ascii?Q?PsKKfLVgLUDQbCEScJChXsHuMpCqII1HpFTGRhxNhdoVVtX+KDefQr9VaceD?=
+ =?us-ascii?Q?VTLjeJ9nSWySn5gubwR2SprHCiQelVpA8u7kNBb4pa+HAY1B41IjxECTDbgi?=
+ =?us-ascii?Q?8hyaRv4gB04tYXlEC2yHKJecC6OqLWGpRqk4DobvQKzvjA0h+QP8eEsMXv+S?=
+ =?us-ascii?Q?Yy5m1cwG0nzlMWfNpXLQvq65mxDN79SmWSNdNQKbp+kAfBAxyIXtnZOY/USv?=
+ =?us-ascii?Q?faapZRWnxT4iDxxlNVKr9LQ6E2GFMkBEViYQCADk6yqBr+ATZkGLc4L5YFD7?=
+ =?us-ascii?Q?wJ3IjQKrFTGZ4HMmofUigJHLKJFhtVEuC8ouANmplw2XqRoc6Oe0jmq6hY9Y?=
+ =?us-ascii?Q?bTZNdm91jrgexekPKNe8GzjeZ8TZKoezfg3TJjcM4WXBbwwHH5DSY4T2o07H?=
+ =?us-ascii?Q?In4wU2HbvQzwEhjr3uWYssOXsarATN8vSISn3A/9h0BKSnrl5pTzQq4JDGQB?=
+ =?us-ascii?Q?bq8SdjEbVmDl7oOFOKGZVXQsbG2H+0rZPG/Pxi3UvgouPo4iUfbTwkIzK8wC?=
+ =?us-ascii?Q?GMp/bLknI0YqIw2ojRSLrbyvH3uCvY/LYpkO23Od7guOp1o+ReDfMA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5576.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(52116014)(376014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?5wirUiqmTXq+3OgCRbTwNaRx5PW3wA9+4NR+xfKBELsUBY1cwE9Bfp8xxI7+?=
+ =?us-ascii?Q?MWXA6CSSwVYEyLQsLSGV2YSi7Xfh8sfNxPB2mb7UOM4v+yhqlKKAay07oJC6?=
+ =?us-ascii?Q?ptvK58+1CzmVmnkI+g6hQP/yuQOc82mUBmD3a05xyNmZL4Lifkaxp4lq9fTB?=
+ =?us-ascii?Q?QNoX8f+RgOtwm7Duc2vmCbnGHa0Y7/iX8mqHJW3PlV/eKh6rO9jfLXbqa7CQ?=
+ =?us-ascii?Q?yEHHKGZj6f61QyUYwTKWnTESaL0staGMieQnD6Y50G+U7qshJX5WSUzqOfFl?=
+ =?us-ascii?Q?SLc/XQVU/1/WablopDxi7CJxjW9YeAs5WXtyxgDojfrgHhZYPuW7y0keT0pj?=
+ =?us-ascii?Q?r1M8tOAqUdC0MmYMrcMbOCaQfQYlNGGsVencMlng/UKgJf8Wle0Pxw6RZtzP?=
+ =?us-ascii?Q?47L3M5mxzh136ve3OozkE4vtlXInPTthJaTCpMwyPhbA5gEfgKvburq/i6EZ?=
+ =?us-ascii?Q?Ek29mBaP9eWO12nqdE8SJKNDcGbqjXrw5SXorECaGzsXUPaIeKHHzYYgYK6h?=
+ =?us-ascii?Q?VvHF/uVor/yQ2wlwAF6mMSG6oYXZb0LVZ0VefVs/4VO1JiSbggwJ8BE5ba7K?=
+ =?us-ascii?Q?/sjlVEkJUQQdktdYHy54085A105grJpxhVr/Ac5e6HL0cXcvK31YHgo0Ln3x?=
+ =?us-ascii?Q?FljddGnH8/KBGvIPrQGQ1rCyW5E8vnVDEB8eigSE6GDZUXB5GIb6ifDJSnrp?=
+ =?us-ascii?Q?Iz54d0+Q0eRAECnOZf4x/A6Df4xHgg+4nXWdBcSM0CyC4LSBhtr4mhNx09JX?=
+ =?us-ascii?Q?pSOldGm7P8cpoT0WpD1WPcO9VfU8DdL6/Jk5/jCk9AQtuv/hBI+2mGbd0dmd?=
+ =?us-ascii?Q?1ukdcOn0HQFxAXO30ALjS94rzvur3gpK1LM5klf1c69mOWWN10mc5T6nm2gy?=
+ =?us-ascii?Q?Xb0e3rvv9OBFyQQErBF7OpcEbAfDP2jUraaEnNXFqanTvdlquoQWFWQ33Bh7?=
+ =?us-ascii?Q?cCBkAkyLQslEKbvAP7XAoRIjuzaVIXx3hM/iEsMkIPJQzBcty1QG/PZwLJhf?=
+ =?us-ascii?Q?2o+XUn8cRwrBe8QK+nVz/+DLLYD/JFq96WABPZI94kPbqoBiztLeURdBGhAe?=
+ =?us-ascii?Q?DsE70K7s9+fdFUz9m5UKkNhwo3bHLu+ckQt4fWEkym/hRtBaK9LxmkfOL8fF?=
+ =?us-ascii?Q?EQUoVYLT3P6lfyOsoSfbjEKTTZWHhlAhxuhQzRPwXP1DPyG27uJLJ5M7R17Z?=
+ =?us-ascii?Q?0zzl/RXKIGt5U7L+xLvDFRmkhgy63Nguti2eXozI2mG+SbS2PIQ5qtE0cVJj?=
+ =?us-ascii?Q?Tnez96JQfC6KFy1Zs8SE3ImR55VfBQjfJ2lDF4kB95LI5BsObxIiUQ9SbTuO?=
+ =?us-ascii?Q?5ZLfiVNmAOfqtC6eLH3cNTeOUvGkrkOubmgVAAQ1ZCfOLcyB450Ci75dVROv?=
+ =?us-ascii?Q?fCgccQldBlFBBaLRwbAtLAE/s2U6DdTBVq5TEakfAS6wXuU4eDlebowbBKxv?=
+ =?us-ascii?Q?SPrtVR2QXaO8LdRXjNDG4lDZ1Mw/kFRLf+xdwJFpnAwt8naKh1/sct4HCnQb?=
+ =?us-ascii?Q?R5N5kM/phYRmmjhxaLufFJIYmLVpAyMmZbavBQOmIxfGrX2U9v2db2NTtvc9?=
+ =?us-ascii?Q?btU0iAYS64gF/K2E4cZNQ4tHGxiihSn9LKOARIX4?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c8d9435a-d5b4-4a38-3df7-08dde60e7303
+X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5576.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Aug 2025 08:39:49.3017
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: leDrRKnxvjl6UAqnQ5bvz6ySxkMGM35cjm5C2+tbgK1m9D4eC9JIzacaLf0dvr8+Cpkx0+Le1WK80AgBvqP0eA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYSPR06MB6573
 
-The Tesla FSD SoC CSIS IP bundles MIPI CSI-2 link controller and video
-capture interface. Add nodes describing the MIPI CSI-2 link controller
-and video capture interface.
+Remove unnecessary semicolons.
 
-Signed-off-by: Inbaraj E <inbaraj.e@samsung.com>
+Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
 ---
+Changes in v2:
+	- Remove fixes tag.
+---
+ tools/testing/vsock/util.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Changes since v2:
-- Changed generic node name
-- Fixed node ordering
-
-Here is patch link for v2:
-https://lore.kernel.org/linux-media/20250814140943.22531-1-inbaraj.e@samsung.com/
-
-This patch is dependent on below patchset
-https://lore.kernel.org/linux-media/20250822002734.23516-1-laurent.pinchart@ideasonboard.com/T/#t
-
- arch/arm64/boot/dts/tesla/fsd.dtsi | 540 +++++++++++++++++++++++++++++
- 1 file changed, 540 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/tesla/fsd.dtsi b/arch/arm64/boot/dts/tesla/fsd.dtsi
-index a5ebb3f9b18f..22afcf5a5dda 100644
---- a/arch/arm64/boot/dts/tesla/fsd.dtsi
-+++ b/arch/arm64/boot/dts/tesla/fsd.dtsi
-@@ -485,6 +485,546 @@ sysreg_cam: system-controller@12630000 {
- 			reg = <0x0 0x12630000 0x0 0x500>;
- 		};
+diff --git a/tools/testing/vsock/util.c b/tools/testing/vsock/util.c
+index 7b861a8e997a..d843643ced6b 100644
+--- a/tools/testing/vsock/util.c
++++ b/tools/testing/vsock/util.c
+@@ -756,7 +756,6 @@ void setsockopt_ull_check(int fd, int level, int optname,
+ fail:
+ 	fprintf(stderr, "%s  val %llu\n", errmsg, val);
+ 	exit(EXIT_FAILURE);
+-;
+ }
  
-+		mipicsi0: csi@12640000 {
-+			compatible = "tesla,fsd-mipi-csi2";
-+			reg = <0x0 0x12640000 0x0 0x124>;
-+			interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clock_csi CAM_CSI0_0_IPCLKPORT_I_ACLK>,
-+				<&clock_csi CAM_CSI0_0_IPCLKPORT_I_PCLK>;
-+			clock-names = "aclk", "pclk";
-+			tesla,syscon-csis = <&sysreg_cam 0x40c>;
-+			fsl,num-channels = <4>;
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+
-+					mipi_csis_0_out: endpoint {
-+						remote-endpoint = <&csis_in_0>;
-+					};
-+				};
-+			};
-+		};
-+
-+		csis0: csis@12641000 {
-+			compatible = "tesla,fsd-csis-media";
-+			reg = <0x0 0x12641000 0x0 0x44c>;
-+			interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clock_csi CAM_CSI0_0_IPCLKPORT_I_ACLK>,
-+				<&clock_csi CAM_CSI0_0_IPCLKPORT_I_PCLK>,
-+				<&clock_csi CAM_CSI_PLL>;
-+			clock-names = "aclk", "pclk", "pll";
-+			iommus = <&smmu_isp 0x0 0x0>;
-+
-+			port {
-+				csis_in_0: endpoint {
-+					remote-endpoint = <&mipi_csis_0_out>;
-+				};
-+			};
-+		};
-+
-+		mipicsi1: csi@12650000 {
-+			compatible = "tesla,fsd-mipi-csi2";
-+			reg = <0x0 0x12650000 0x0 0x124>;
-+			interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clock_csi CAM_CSI0_1_IPCLKPORT_I_ACLK>,
-+				<&clock_csi CAM_CSI0_1_IPCLKPORT_I_PCLK>;
-+			clock-names = "aclk", "pclk";
-+			tesla,syscon-csis = <&sysreg_cam 0x40c>;
-+			fsl,num-channels = <4>;
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+
-+					mipi_csis_1_out: endpoint {
-+						remote-endpoint = <&csis_in_1>;
-+					};
-+				};
-+			};
-+		};
-+
-+		csis1: csis@12651000 {
-+			compatible = "tesla,fsd-csis-media";
-+			reg = <0x0 0x12651000 0x0 0x44c>;
-+			interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clock_csi CAM_CSI0_1_IPCLKPORT_I_ACLK>,
-+				<&clock_csi CAM_CSI0_1_IPCLKPORT_I_PCLK>,
-+				<&clock_csi CAM_CSI_PLL>;
-+			clock-names = "aclk", "pclk", "pll";
-+			iommus = <&smmu_isp 0x0 0x0>;
-+
-+			port {
-+				csis_in_1: endpoint {
-+					remote-endpoint = <&mipi_csis_1_out>;
-+				};
-+			};
-+		};
-+
-+		mipicsi2: csi@12660000 {
-+			compatible = "tesla,fsd-mipi-csi2";
-+			reg = <0x0 0x12660000 0x0 0x124>;
-+			interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clock_csi CAM_CSI0_2_IPCLKPORT_I_ACLK>,
-+				<&clock_csi CAM_CSI0_2_IPCLKPORT_I_PCLK>;
-+			clock-names = "aclk", "pclk";
-+			tesla,syscon-csis = <&sysreg_cam 0x40c>;
-+			fsl,num-channels = <4>;
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+
-+					mipi_csis_2_out: endpoint {
-+						remote-endpoint = <&csis_in_2>;
-+					};
-+				};
-+			};
-+		};
-+
-+		csis2: csis@12661000 {
-+			compatible = "tesla,fsd-csis-media";
-+			reg = <0x0 0x12661000 0x0 0x44c>;
-+			interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clock_csi CAM_CSI0_2_IPCLKPORT_I_ACLK>,
-+				<&clock_csi CAM_CSI0_2_IPCLKPORT_I_PCLK>,
-+				<&clock_csi CAM_CSI_PLL>;
-+			clock-names = "aclk", "pclk", "pll";
-+			iommus = <&smmu_isp 0x0 0x0>;
-+
-+			port {
-+				csis_in_2: endpoint {
-+					remote-endpoint = <&mipi_csis_2_out>;
-+				};
-+			};
-+		};
-+
-+		mipicsi3: csi@12670000 {
-+			compatible = "tesla,fsd-mipi-csi2";
-+			reg = <0x0 0x12670000 0x0 0x124>;
-+			interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clock_csi CAM_CSI0_3_IPCLKPORT_I_ACLK>,
-+				<&clock_csi CAM_CSI0_3_IPCLKPORT_I_PCLK>;
-+			clock-names = "aclk", "pclk";
-+			tesla,syscon-csis = <&sysreg_cam 0x40c>;
-+			fsl,num-channels = <4>;
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+
-+					mipi_csis_3_out: endpoint {
-+						remote-endpoint = <&csis_in_3>;
-+					};
-+				};
-+			};
-+		};
-+
-+		csis3: csis@12671000 {
-+			compatible = "tesla,fsd-csis-media";
-+			reg = <0x0 0x12671000 0x0 0x44c>;
-+			interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clock_csi CAM_CSI0_3_IPCLKPORT_I_ACLK>,
-+				<&clock_csi CAM_CSI0_3_IPCLKPORT_I_PCLK>,
-+				<&clock_csi CAM_CSI_PLL>;
-+			clock-names = "aclk", "pclk", "pll";
-+			iommus = <&smmu_isp 0x0 0x0>;
-+
-+			port {
-+				csis_in_3: endpoint {
-+					remote-endpoint = <&mipi_csis_3_out>;
-+				};
-+			};
-+		};
-+
-+		mipicsi4: csi@12680000 {
-+			compatible = "tesla,fsd-mipi-csi2";
-+			reg = <0x0 0x12680000 0x0 0x124>;
-+			interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clock_csi CAM_CSI1_0_IPCLKPORT_I_ACLK>,
-+				<&clock_csi CAM_CSI1_0_IPCLKPORT_I_PCLK>;
-+			clock-names = "aclk", "pclk";
-+			tesla,syscon-csis = <&sysreg_cam 0x40c>;
-+			fsl,num-channels = <4>;
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+
-+					mipi_csis_4_out: endpoint {
-+						remote-endpoint = <&csis_in_4>;
-+					};
-+				};
-+			};
-+		};
-+
-+		csis4: csis@12681000 {
-+			compatible = "tesla,fsd-csis-media";
-+			reg = <0x0 0x12681000 0x0 0x44c>;
-+			interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clock_csi CAM_CSI1_0_IPCLKPORT_I_ACLK>,
-+				<&clock_csi CAM_CSI1_0_IPCLKPORT_I_PCLK>,
-+				<&clock_csi CAM_CSI_PLL>;
-+			clock-names = "aclk", "pclk", "pll";
-+			iommus = <&smmu_isp 0x0 0x0>;
-+
-+			port {
-+				csis_in_4: endpoint {
-+					remote-endpoint = <&mipi_csis_4_out>;
-+				};
-+			};
-+		};
-+
-+		mipicsi5: csi@12690000 {
-+			compatible = "tesla,fsd-mipi-csi2";
-+			reg = <0x0 0x12690000 0x0 0x124>;
-+			interrupts = <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clock_csi CAM_CSI1_1_IPCLKPORT_I_ACLK>,
-+				<&clock_csi CAM_CSI1_1_IPCLKPORT_I_PCLK>;
-+			clock-names = "aclk", "pclk";
-+			tesla,syscon-csis = <&sysreg_cam 0x40c>;
-+			fsl,num-channels = <4>;
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+
-+					mipi_csis_5_out: endpoint {
-+						remote-endpoint = <&csis_in_5>;
-+					};
-+				};
-+			};
-+		};
-+
-+		csis5: csis@12691000 {
-+			compatible = "tesla,fsd-csis-media";
-+			reg = <0x0 0x12691000 0x0 0x44c>;
-+			interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clock_csi CAM_CSI1_1_IPCLKPORT_I_ACLK>,
-+				<&clock_csi CAM_CSI1_1_IPCLKPORT_I_PCLK>,
-+				<&clock_csi CAM_CSI_PLL>;
-+			clock-names = "aclk", "pclk", "pll";
-+			iommus = <&smmu_isp 0x0 0x0>;
-+
-+			port {
-+				csis_in_5: endpoint {
-+					remote-endpoint = <&mipi_csis_5_out>;
-+				};
-+			};
-+		};
-+
-+		mipicsi6: csi@126a0000 {
-+			compatible = "tesla,fsd-mipi-csi2";
-+			reg = <0x0 0x126a0000 0x0 0x124>;
-+			interrupts = <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clock_csi CAM_CSI1_2_IPCLKPORT_I_ACLK>,
-+				<&clock_csi CAM_CSI1_2_IPCLKPORT_I_PCLK>;
-+			clock-names = "aclk", "pclk";
-+			tesla,syscon-csis = <&sysreg_cam 0x40c>;
-+			fsl,num-channels = <4>;
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+
-+					mipi_csis_6_out: endpoint {
-+						remote-endpoint = <&csis_in_6>;
-+					};
-+				};
-+			};
-+		};
-+
-+		csis6: csis@126a1000 {
-+			compatible = "tesla,fsd-csis-media";
-+			reg = <0x0 0x126a1000 0x0 0x44c>;
-+			interrupts = <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clock_csi CAM_CSI1_2_IPCLKPORT_I_ACLK>,
-+				<&clock_csi CAM_CSI1_2_IPCLKPORT_I_PCLK>,
-+				<&clock_csi CAM_CSI_PLL>;
-+			clock-names = "aclk", "pclk", "pll";
-+			iommus = <&smmu_isp 0x0 0x0>;
-+
-+			port {
-+				csis_in_6: endpoint {
-+					remote-endpoint = <&mipi_csis_6_out>;
-+				};
-+			};
-+		};
-+
-+		mipicsi7: csi@126b0000 {
-+			compatible = "tesla,fsd-mipi-csi2";
-+			reg = <0x0 0x126b0000 0x0 0x124>;
-+			interrupts = <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clock_csi CAM_CSI1_3_IPCLKPORT_I_ACLK>,
-+				<&clock_csi CAM_CSI1_3_IPCLKPORT_I_PCLK>;
-+			clock-names = "aclk", "pclk";
-+			tesla,syscon-csis = <&sysreg_cam 0x40c>;
-+			fsl,num-channels = <4>;
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+
-+					mipi_csis_7_out: endpoint {
-+						remote-endpoint = <&csis_in_7>;
-+					};
-+				};
-+			};
-+		};
-+
-+		csis7: csis@126b1000 {
-+			compatible = "tesla,fsd-csis-media";
-+			reg = <0x0 0x126b1000 0x0 0x44c>;
-+			interrupts = <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clock_csi CAM_CSI1_3_IPCLKPORT_I_ACLK>,
-+				<&clock_csi CAM_CSI1_3_IPCLKPORT_I_PCLK>,
-+				<&clock_csi CAM_CSI_PLL>;
-+			clock-names = "aclk", "pclk", "pll";
-+			iommus = <&smmu_isp 0x0 0x0>;
-+
-+			port {
-+				csis_in_7: endpoint {
-+					remote-endpoint = <&mipi_csis_7_out>;
-+				};
-+			};
-+		};
-+
-+		mipicsi8: csi@126c0000 {
-+			compatible = "tesla,fsd-mipi-csi2";
-+			reg = <0x0 0x126c0000 0x0 0x124>;
-+			interrupts = <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clock_csi CAM_CSI2_0_IPCLKPORT_I_ACLK>,
-+				<&clock_csi CAM_CSI2_0_IPCLKPORT_I_PCLK>;
-+			clock-names = "aclk", "pclk";
-+			tesla,syscon-csis = <&sysreg_cam 0x40c>;
-+			fsl,num-channels = <4>;
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+
-+					mipi_csis_8_out: endpoint {
-+						remote-endpoint = <&csis_in_8>;
-+					};
-+				};
-+			};
-+		};
-+
-+		csis8: csis@126c1000 {
-+			compatible = "tesla,fsd-csis-media";
-+			reg = <0x0 0x126c1000 0x0 0x44c>;
-+			interrupts = <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clock_csi CAM_CSI2_0_IPCLKPORT_I_ACLK>,
-+				<&clock_csi CAM_CSI2_0_IPCLKPORT_I_PCLK>,
-+				<&clock_csi CAM_CSI_PLL>;
-+			clock-names = "aclk", "pclk", "pll";
-+			iommus = <&smmu_isp 0x0 0x0>;
-+
-+			port {
-+				csis_in_8: endpoint {
-+					remote-endpoint = <&mipi_csis_8_out>;
-+				};
-+			};
-+		};
-+
-+		mipicsi9: csi@126d0000 {
-+			compatible = "tesla,fsd-mipi-csi2";
-+			reg = <0x0 0x126d0000 0x0 0x124>;
-+			interrupts = <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clock_csi CAM_CSI2_1_IPCLKPORT_I_ACLK>,
-+				<&clock_csi CAM_CSI2_1_IPCLKPORT_I_PCLK>;
-+			clock-names = "aclk", "pclk";
-+			tesla,syscon-csis = <&sysreg_cam 0x40c>;
-+			fsl,num-channels = <4>;
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+
-+					mipi_csis_9_out: endpoint {
-+						remote-endpoint = <&csis_in_9>;
-+					};
-+				};
-+			};
-+		};
-+
-+		csis9: csis@126d1000 {
-+			compatible = "tesla,fsd-csis-media";
-+			reg = <0x0 0x126d1000 0x0 0x44c>;
-+			interrupts = <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clock_csi CAM_CSI2_1_IPCLKPORT_I_ACLK>,
-+				<&clock_csi CAM_CSI2_1_IPCLKPORT_I_PCLK>,
-+				<&clock_csi CAM_CSI_PLL>;
-+			clock-names = "aclk", "pclk", "pll";
-+			iommus = <&smmu_isp 0x0 0x0>;
-+
-+			port {
-+				csis_in_9: endpoint {
-+					remote-endpoint = <&mipi_csis_9_out>;
-+				};
-+			};
-+		};
-+
-+		mipicsi10: csi@126e0000 {
-+			compatible = "tesla,fsd-mipi-csi2";
-+			reg = <0x0 0x126e0000 0x0 0x124>;
-+			interrupts = <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clock_csi CAM_CSI2_2_IPCLKPORT_I_ACLK>,
-+				<&clock_csi CAM_CSI2_2_IPCLKPORT_I_PCLK>;
-+			clock-names = "aclk", "pclk";
-+			tesla,syscon-csis = <&sysreg_cam 0x40c>;
-+			fsl,num-channels = <4>;
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+
-+					mipi_csis_10_out: endpoint {
-+						remote-endpoint = <&csis_in_10>;
-+					};
-+				};
-+			};
-+		};
-+
-+		csis10: csis@126e1000 {
-+			compatible = "tesla,fsd-csis-media";
-+			reg = <0x0 0x126e1000 0x0 0x44c>;
-+			interrupts = <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clock_csi CAM_CSI2_2_IPCLKPORT_I_ACLK>,
-+				<&clock_csi CAM_CSI2_2_IPCLKPORT_I_PCLK>,
-+				<&clock_csi CAM_CSI_PLL>;
-+			clock-names = "aclk", "pclk", "pll";
-+			iommus = <&smmu_isp 0x0 0x0>;
-+
-+			port {
-+				csis_in_10: endpoint {
-+					remote-endpoint = <&mipi_csis_10_out>;
-+				};
-+			};
-+		};
-+
-+		mipicsi11: csi@126f0000 {
-+			compatible = "tesla,fsd-mipi-csi2";
-+			reg = <0x0 0x126f0000 0x0 0x124>;
-+			interrupts = <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clock_csi CAM_CSI2_3_IPCLKPORT_I_ACLK>,
-+				<&clock_csi CAM_CSI2_3_IPCLKPORT_I_PCLK>;
-+			clock-names = "aclk", "pclk";
-+			tesla,syscon-csis = <&sysreg_cam 0x40c>;
-+			fsl,num-channels = <4>;
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+
-+					mipi_csis_11_out: endpoint {
-+						remote-endpoint = <&csis_in_11>;
-+					};
-+				};
-+			};
-+		};
-+
-+		csis11: csis@126f1000 {
-+			compatible = "tesla,fsd-csis-media";
-+			reg = <0x0 0x126f1000 0x0 0x44c>;
-+			interrupts = <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clock_csi CAM_CSI2_3_IPCLKPORT_I_ACLK>,
-+				<&clock_csi CAM_CSI2_3_IPCLKPORT_I_PCLK>,
-+				<&clock_csi CAM_CSI_PLL>;
-+			clock-names = "aclk", "pclk", "pll";
-+			iommus = <&smmu_isp 0x0 0x0>;
-+
-+			port {
-+				csis_in_11: endpoint {
-+					remote-endpoint = <&mipi_csis_11_out>;
-+				};
-+			};
-+		};
-+
- 		clock_mfc: clock-controller@12810000 {
- 			compatible = "tesla,fsd-clock-mfc";
- 			reg = <0x0 0x12810000 0x0 0x3000>;
+ /* Set "int" socket option and check that it's indeed set */
 -- 
-2.49.0
+2.34.1
 
 
