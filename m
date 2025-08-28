@@ -1,105 +1,89 @@
-Return-Path: <linux-kernel+bounces-789166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79E07B391DA
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 04:49:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AE85DB391DB
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 04:49:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB8D21B27C08
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 02:49:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D414E1888804
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 02:50:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE219269CE5;
-	Thu, 28 Aug 2025 02:49:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D355D269D16;
+	Thu, 28 Aug 2025 02:49:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="BjOwvKp2"
-Received: from out203-205-221-240.mail.qq.com (out203-205-221-240.mail.qq.com [203.205.221.240])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="AacTSgpz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E038B26656F;
-	Thu, 28 Aug 2025 02:49:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.240
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3746D26656F
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 02:49:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756349350; cv=none; b=qMNjy0s8dBjJDV+Coa0C3+yN9ydBQRn7UOO14ZpVM1KPsQsIQcHjB4hjBhMw4g1uxlos/JLlA8C5ZoxkcucQAO+vwGyN6OO5H18wbkQY/hop4bhxdZikJ1bYt6/NOTZpPvLWYHa/5Mj3PBTKIrNuUphszkIkG4VmUmvHEJFoLfU=
+	t=1756349375; cv=none; b=M1X8G9/JKbva0ni7tN9DB678KRCHAg4LAr+VBWap4ZycLsXEv/6sjD1amZtWERK1LsmBx0eOs3Cs+Gyj1bRDmKKs/uK95wi7v8JO2k71/w3iBJgVDDtOdkbuUh68qEFDGdPA4cEfaNNX84ckn27wC930QApUQbi/nNIPtj6hF40=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756349350; c=relaxed/simple;
-	bh=+l5e+yZnrGb3bXqlnKyTSIz+c5M4ZmAuIqGgc+mW4VA=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=prqEmXozc3qi1nSWtCK4w/tXqqAN2mxL6WWIvEYg+WSMafu2O0QlctswS2S1GV7ZYzGt6ws9I1QpNRio7YmO3c6WYrXn0qL5hfTyCRZ2b1GSJqSiSnHT7179qi5vPJ/NCGmKLdNwTMPdZER2ahFtzz6qTYUCDBzlh9nYYsA2DYo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=BjOwvKp2; arc=none smtp.client-ip=203.205.221.240
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1756349342; bh=wmxu5LdA4rSDqEgxjg7PndpXoLI6R/s5pWckpsaV7Jw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=BjOwvKp27KlH4ro0yMKuL9WopRiXAkcUECgETJpsDs6GA5t6896y1AyX/v6UIpVcW
-	 VBOWNtDql8TI8jyvLCQjsnLk2mP58AvkDVFGSbYTcVT4pKJIUj0QoQ0SS4/sgUD/JB
-	 iOgijMk6fsZYZX3RP6lR3uiVs+bfsYcEovH2KFyg=
-Received: from nebula-bj.localdomain ([223.104.40.195])
-	by newxmesmtplogicsvrszb20-0.qq.com (NewEsmtp) with SMTP
-	id C4034847; Thu, 28 Aug 2025 10:49:00 +0800
-X-QQ-mid: xmsmtpt1756349340tedrwvlve
-Message-ID: <tencent_87B68C160DC3F4AE06BD6DF0349B1B235E05@qq.com>
-X-QQ-XMAILINFO: N/WmRbclY25GPlzj1Z0LI/Ag6NEpRiU5iY4Ga3CnwRNO0WjvXFHZtwhHVNO60g
-	 z6Q/2jKadRpV2ypZboB/5Frged9JmLXNFEUInjql2WHdeI+GaBagCAs8RuBCIs5so3qKKM8dclG6
-	 lkFztEWYTSJ1yqe1Ne0Q3IbC/4S7btKyNs7/xK0smHejzBhoiiIb0mn7tgkfSG337FE9i31RAurj
-	 SgnTAOsN82yg/NbOWO/XHjiN/S3QK4wxzUs8EDIdqdQe37DrmqNs9n8TgKUHhZMcpxVi6Gq2qdym
-	 KN0iIqmH+q/ToTOxLBWvmK940Bt15usztKTq2bBDjQLWu+j0s3NTzOqo4frkqrDfVtUIiiaMc6my
-	 pwVAHmKpHWQJZutzKW4flvJ+b8E03K+0f6+684vpUQaCGz63TC+OoxEBWEwwt4l+OtEwODy5WSu8
-	 LdQpy2pIO4M5bfTKHBdnvJtWpA66zJVm+oPd6wv8nlHwoNanvZvy7zCAIcUTc88n6M2VKrTPCmbz
-	 NzOLBcV0lsZIFXQUT+hw5uWJPV0fKKZvl33buMKNQ0n3K6W1n8Fos1mzeQDvoVwM/SX6+dl542Yh
-	 ZQIgWGM2t91hSAmj9nhPIx2fkIiINtyikmjsFHp8g3WrVMnZFT3m663WOWSmGkpuHmdaQZE40U7T
-	 ECz3LVI6K6OZbQYcdV8AwotGAbaeluHA4Ua1zg9a4PHC5IkejHXwsLr4dNRiYzDbjFHCt17A2fkg
-	 KbLKLB015yvc8GdAWHL9dxJFW4lJZCTKoUJ9H2NVLoiEeTX1tgYPvJIX2g/nlM8l/beWmBXA7Spl
-	 C2MpGGR+zSAZ7wBghOTu0pe9gPj97r/guizHd2zHRkzBugXcumpbivENvSuC2T8TQR5zNxXQHQ8O
-	 HfHeaPC3ziMQPl6kPHqnkjBdC1mqH+tLrIUFq2wR5D1v/0Ffk4J3y34xZ46bA9PKQxo2k8kSl7YD
-	 la+JEvIMYLazffWgKxZvll7rKxGlclz87GYN6GdUCLXRT79huTf10Q+yIte3vXXrsjlU8O5VEN85
-	 3CBcEQx7wpCnAGZxmNxzir/YBug6XwzUZYpXCS9AW6DJisZTtuV3PNVWAFlpUb5atkqersaQ==
-X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
-From: Qingyue Zhang <chunzhennn@qq.com>
-To: axboe@kernel.dk
-Cc: aftern00n@qq.com,
-	chunzhennn@qq.com,
-	io-uring@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] io_uring/kbuf: fix infinite loop in io_kbuf_inc_commit()
-Date: Thu, 28 Aug 2025 10:49:00 +0800
-X-OQ-MSGID: <20250828024900.76080-1-chunzhennn@qq.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <8abaf4ad-d457-422d-9e9e-932cab2588e6@kernel.dk>
-References: <8abaf4ad-d457-422d-9e9e-932cab2588e6@kernel.dk>
+	s=arc-20240116; t=1756349375; c=relaxed/simple;
+	bh=MY12FLgHJvDO8ZWuSX9iiKYIYofyf+wiN9Q7AGKJHTs=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=Vk4PhlPREG9XeK3p+SIQJ08IxoO3T7xiXYaUvXO82ErWbjNporplYym/2dekgIAXwa9nkSxr3JXsfqLZvR2qIF0uPtm24fgF98O5Sve9rdqha+RviQZJ/j8ijNK4sp+/R9YyUzw8hobf0dJjAC/ru3JDP097Jfz45dZq3QMH8bg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=AacTSgpz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4D77C4CEEB;
+	Thu, 28 Aug 2025 02:49:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1756349375;
+	bh=MY12FLgHJvDO8ZWuSX9iiKYIYofyf+wiN9Q7AGKJHTs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=AacTSgpzIB8RE6dH17Zp/HcjWv29c1bx6rPALNeUjF0fsPcoc8wCkBSjEn2pJz6Tt
+	 CxbciPpAX5WkmVvXhjDXrMj1kDhLHlZlvrfrNlWBKp+NgXW5uEdfnW0/WRynJLwzXZ
+	 JpgK0vmR6luiag+OecOwILbQyzDBQl7D9fkx7zPs=
+Date: Wed, 27 Aug 2025 19:49:34 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Miaohe Lin <linmiaohe@huawei.com>
+Cc: <muchun.song@linux.dev>, <osalvador@suse.de>, <david@redhat.com>,
+ <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] Revert
+ "hugetlb: make hugetlb depends on SYSFS or SYSCTL"
+Message-Id: <20250827194934.f30fe19856fc343005c9703f@linux-foundation.org>
+In-Reply-To: <0138514f-c580-c066-c16d-2a0b207e0604@huawei.com>
+References: <20250826030955.2898709-1-linmiaohe@huawei.com>
+	<20250826203552.b4340b12b16a374396f49343@linux-foundation.org>
+	<0138514f-c580-c066-c16d-2a0b207e0604@huawei.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, 27 Aug 2025 20:08:05 -0600, Jens Axboe wrote:
-> I don't think there's anything wrong with the looping and stopping at
-> the other end is of course a safe guard, but couldn't we just abort the
-> loop if we see a 0 sized buffer? At that point we know the buffer is
-> invalid, or the kernel is buggy, and it'd be saner to stop at that
-> point. Something ala:
+On Thu, 28 Aug 2025 10:31:51 +0800 Miaohe Lin <linmiaohe@huawei.com> wrote:
+
+> On 2025/8/27 11:35, Andrew Morton wrote:
+> > On Tue, 26 Aug 2025 11:09:55 +0800 Miaohe Lin <linmiaohe@huawei.com> wrote:
+> > 
+> >> Commit f8142cf94d47 ("hugetlb: make hugetlb depends on SYSFS or SYSCTL")
+> >> added dependency on SYSFS or SYSCTL but hugetlb can be used without SYSFS
+> >> or SYSCTL. So this dependency is wrong and should be removed.
+> >>
+> >> This reverts commit f8142cf94d4737ea0c3baffb3b9bad8addcb9b6b.
+> > 
+> > f8142cf94d47 said:
+> > 
+> >     If CONFIG_SYSFS and CONFIG_SYSCTL are both undefined, hugetlb
+> >     doesn't work now as there's no way to set max huge pages.  Make
+> >     sure at least one of the above configs is defined to make hugetlb
+> >     works as expected.
+> > 
+> > So there is now a way to set max huge pages?  A reference tot he
+> > commit which made f8142cf94d47 unneeded might be helpful?
 > 
+> The commit is just wrong. It overlooked the scenario of using hugetlb through boot parameters
+> when it was submitted.
 > 
-> diff --git a/io_uring/kbuf.c b/io_uring/kbuf.c
-> index 394037d3f2f6..19a8bde5e1e1 100644
-> --- a/io_uring/kbuf.c
-> +++ b/io_uring/kbuf.c
-> @@ -42,7 +42,8 @@ static bool io_kbuf_inc_commit(struct io_buffer_list *bl, int len)
->  		buf_len = READ_ONCE(buf->len);
->  		this_len = min_t(u32, len, buf_len);
->  		buf_len -= this_len;
-> -		if (buf_len) {
-> +		/* Stop looping for invalid buffer length of 0 */
-> +		if (buf_len || !this_len) {
->  			buf->addr += this_len;
->  			buf->len = buf_len;
->  			return false;
 
-Good idea, it looks nice to me.
-
+OK.  Could we please have a description of the user-visible effect and
+a decision on whether we should backport the fix?
 
