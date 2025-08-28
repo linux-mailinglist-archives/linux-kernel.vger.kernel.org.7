@@ -1,321 +1,340 @@
-Return-Path: <linux-kernel+bounces-790121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F03FB39FBC
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 16:05:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04FFFB39FC5
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 16:05:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC40A17C2FB
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 14:03:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 43588461F07
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 14:04:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 509DE315786;
-	Thu, 28 Aug 2025 14:01:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C251930FC20;
+	Thu, 28 Aug 2025 14:01:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="gYk6nLn8"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE1A0314B6D;
-	Thu, 28 Aug 2025 14:01:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
+	dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b="ADBZJVwB";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Y8cluWGN"
+Received: from flow-a7-smtp.messagingengine.com (flow-a7-smtp.messagingengine.com [103.168.172.142])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6E9C204C1A;
+	Thu, 28 Aug 2025 14:01:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756389669; cv=none; b=h7CGXaUAKCsemnOiRqe09oNk/EQvzExwdk3q84TgbXgpw1RkU2wpVQ26Vb486CcoP0gmWZe/0Crx/tQ7Sqz3+S5Q6D8un1OuM2nkdDBJ7IbbTvjkKHX7+F/wEDga0li12NCCbNTHMmh2E67tGKIacANR+SJ3PkVTGyf15Iz0EWs=
+	t=1756389703; cv=none; b=GRzgPBuork5j/x/wKs5taG03cRUGbgLLsvdjvo3lhTGNuytSiwKeXNoFNnb7yw7MOWluPEL9iiFABkGq66z7BK1dM7VcpbCg67KG4qwH8ut+MiGczel8nnGukskhtyaCf8qeY/ng5WVHt/iz21gPDU+kcwsWGVUOTCSFjy5+VDY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756389669; c=relaxed/simple;
-	bh=0HdXn0oWPQJLvm3LmIBrLtXwSSURIQZmY51cwVRT7JI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=IR3KQOYBf/2rf+K7LZh6dffPDSYWreiEO060hdmyzi/RVq6GPhYE4Q5I7Fhsy5ao/jTLBdeer5yGuYtv62ejLVXBsfW1jDeMi1mdRR4eXw+QydOwVpbOJFqhAcWAniMP5MS8zQL0Rmo1UhfeFm+3m9Vx5+Zuy5UJrGdUIrkTW8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=gYk6nLn8; arc=none smtp.client-ip=117.135.210.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=Fn
-	imcfeSmrx4hkmRg5SDhYi4VffXu8gWahR80/T54CQ=; b=gYk6nLn8N4ziDubYIv
-	ZjUGd6XANFq2U/BzQ0PcxYNu0xrHEvefQmAO6sPk1AYmFh4VKMth+NjXBKCejRT2
-	MANYa8WiZbpXoUKJc/IMsYmDWLklqgxD7/2V67Bi5Th06JVr3i3V1U3JDgv3s6t8
-	WPDHZEpuUqysGpCYvBn5o2ey0=
-Received: from localhost.localdomain (unknown [])
-	by gzga-smtp-mtada-g0-0 (Coremail) with SMTP id _____wAXJYwNYbBoRejWEw--.829S7;
-	Thu, 28 Aug 2025 22:00:49 +0800 (CST)
-From: Hans Zhang <18255117159@163.com>
-To: lpieralisi@kernel.org,
-	bhelgaas@google.com,
-	mani@kernel.org,
-	kwilczynski@kernel.org
-Cc: robh@kernel.org,
-	jingoohan1@gmail.com,
-	cassel@kernel.org,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Hans Zhang <18255117159@163.com>
-Subject: [PATCH v5 13/13] PCI: tegra194: Refactor code by using dw_pcie_*_dword()
-Date: Thu, 28 Aug 2025 21:59:51 +0800
-Message-Id: <20250828135951.758100-14-18255117159@163.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250828135951.758100-1-18255117159@163.com>
-References: <20250828135951.758100-1-18255117159@163.com>
+	s=arc-20240116; t=1756389703; c=relaxed/simple;
+	bh=rreEJehO7CQ2EprUn7hNBtTVr7RiGsX/VW4AoAEZkNg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=P1zFU3ZtwyQs+BsaRc+D5Ic4Fb3dBJOuskJo/1fDto4A71bN5WHOYlgNn4dd7kzAJqrFUirW4LtvHU1s6D+CRa6R+jippmJPlituPpyocWf9F8d2H4Q4PFEbUmyXzSVzT6sOnyrvG3MKOK61pW5oLwpF2Coi5IsyU7GqBOVuiME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net; spf=pass smtp.mailfrom=jannau.net; dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b=ADBZJVwB; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Y8cluWGN; arc=none smtp.client-ip=103.168.172.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jannau.net
+Received: from phl-compute-09.internal (phl-compute-09.internal [10.202.2.49])
+	by mailflow.phl.internal (Postfix) with ESMTP id CB2F91380311;
+	Thu, 28 Aug 2025 10:01:39 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-09.internal (MEProxy); Thu, 28 Aug 2025 10:01:39 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jannau.net; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:message-id:mime-version:reply-to
+	:subject:subject:to:to; s=fm2; t=1756389699; x=1756396899; bh=Bd
+	iqgki9cBkiwn3KTMZOlcoUGn7D1IeQeuemnuB1DqA=; b=ADBZJVwB4Q6sZ2Tw/e
+	UbkB4Wrz/99ItsY/cXgDy3pARv2tZyvq3eA67YQMrxtL10ntel0P19EW5lfS6gnd
+	BPOOZBA19X+G5FPHe3ewOoOzMNkE8ENCcLdf8+85K0iMn9vjg1jhDnh7aM028SfQ
+	60HVD8Tr5ZQzZIJDnZn2xBFX3z2qKxHxe4DFpueI/eoJ1BVQ/M17rm2bjyCF+3iJ
+	KMGRG2a5AdPVhoSQ3QlTOzlh9abmuJwK4vPsAsjwubZoV7kO6GoX91pLL5geoFSN
+	Qz7mRFTYqqxlN7pzNM1brzC6BnE6JIJjp8Z4YOzVVkpq9F2OW1AN6uebTYoau9XU
+	XUpA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
+	:subject:to:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm1; t=1756389699; x=1756396899; bh=Bdiqgki9cBkiwn3KTMZOlcoUGn7D
+	1IeQeuemnuB1DqA=; b=Y8cluWGNlt+Uz2XFNr9E3UaVSakcSODI6MXhvYf9esOa
+	3lP9Ynr4gRAY9QJJ1pVqV1dlI7Tyxo9ZORseBCPIXckru7h29mDcOF2L74A4dTHY
+	87ilbFJwtVi6y9bR/cLDuEXCuMjT+IZKjsZGU93fQsNC3vHQu8zrPFL+SO68jX/6
+	RRvOfSuHbi7p8sdlSuMN6X/OwqFDhx2Eiodq8iowY1eQc4A5xuUZwqYsuFcu99lf
+	KLfmB1NM8Z2VsPdYq5Atz728uKGsLYmzi/i4Xq6vxdxOJZ6Zde3ub+HQ5zofMjYD
+	piHfnrATsF0lSI6ER4TXMEkhaO+HwY/i6gqWbUHrAw==
+X-ME-Sender: <xms:P2GwaIBHlvJAMQds1A_f2aHM4mQA0EyIuA_BsXOnNe-kI-LktVHNjA>
+    <xme:P2GwaB9VXWu9Bu1dUXm9NttsUwXZHLlpJ4t6G6lGapW-6MjVQvhWyJfG2n_wu5jIZ
+    rdFWdCX96UACfEycEg>
+X-ME-Received: <xmr:P2GwaEgkkj056qkioG7x2_3w5bo8GJlfrF3XjnnIcwaWn8H3QfyXjuSmvkyuKEbQGvl4EBLyq42Miz09_K1VIdESN97yMWNeFwPWtA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddukeduvdduucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhephffufffkgggtgffvvefosehtjeertdertdejnecuhfhrohhmpeflrghnnhgvucfi
+    rhhunhgruhcuoehjsehjrghnnhgruhdrnhgvtheqnecuggftrfgrthhtvghrnhepueelgf
+    fhfedvgeelfeduuefhfefhjeeihfffueefjeeihffhheeuteeuvdeuhffhnecuffhomhgr
+    ihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
+    epmhgrihhlfhhrohhmpehjsehjrghnnhgruhdrnhgvthdpnhgspghrtghpthhtohepieeg
+    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehlihhnuhigqdhgphhiohesvhhgvg
+    hrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehjohhhrghnnhgvshesshhiphhsohhl
+    uhhtihhonhhsrdhnvghtpdhrtghpthhtohepphgvrhgvgiesphgvrhgvgidrtgiipdhrtg
+    hpthhtohepvhhkohhulheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidq
+    figrthgthhguohhgsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhgvth
+    htvghnihhssehophgvnhgsshgurdhorhhgpdhrtghpthhtohepkhgsuhhstghhsehkvghr
+    nhgvlhdrohhrghdprhgtphhtthhopehsrghgihesghhrihhmsggvrhhgrdhmvgdprhgtph
+    htthhopehlihhnuhigqdhivdgtsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:P2GwaJudJdM0u5W3UFLTkwba72c3hxydpGCRSdvg6L3GHTxSpqmkHg>
+    <xmx:P2GwaMjP22YfAokDZ7PeUmZ7uVN_AmQvyw2X-sSklEiDS0YbGpaW4Q>
+    <xmx:P2GwaL1D4aijQkGv_-yO9gyqMkCknikU6rQgPnQTL5K4KCRTL5r2qA>
+    <xmx:P2GwaIUYbVgPIREMiLBzTmfL0cEnIlg2N0KuvkxKULoD58jCwzg3UQ>
+    <xmx:Q2GwaNj1a3girAXO08ZsA7h_-HySJf0B0nmH2fYIqgXUj1uKEhfqm3_d>
+Feedback-ID: i47b949f6:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 28 Aug 2025 10:01:34 -0400 (EDT)
+From: Janne Grunau <j@jannau.net>
+Subject: [PATCH 00/37] arm64: Add initial device trees for Apple M2
+ Pro/Max/Ultra devices
+Date: Thu, 28 Aug 2025 16:01:19 +0200
+Message-Id: <20250828-dt-apple-t6020-v1-0-507ba4c4b98e@jannau.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wAXJYwNYbBoRejWEw--.829S7
-X-Coremail-Antispam: 1Uf129KBjvJXoW3ur47Xw15Gr1xXrWUKryfWFg_yoWDCF4xpF
-	1jy3sYyF1UJF1vvrZFya4kXF1YkrZI9r47WanxKrnava1kAry7XayvvasFqFn7GFWxtFW5
-	Kw40yFy7CFy5XrUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pinmR8UUUUU=
-X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiOhu3o2iwWw2U9gAAsZ
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAC9hsGgC/0XMywrCMBCF4Vcps3Ygk9JL+irSRZxONCCxJrEop
+ e9usAWX/4HzrZAkekkwVCtEWXzyj1CCThXwzYaroJ9Kg1a6UT0RThntPN8Fc6u0Qqobw2IuTks
+ H5TRHcf79A8/j3lGer+LmffyzQ3Wg9SEWOn0CY4vU4USOiXvjOrbDomHcti8Y5BwsrQAAAA==
+X-Change-ID: 20250811-dt-apple-t6020-1359ce9bf2e7
+To: Sven Peter <sven@kernel.org>, Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+  Neal Gompa <neal@gompa.dev>, Rob Herring <robh@kernel.org>,
+  Krzysztof Kozlowski <krzk+dt@kernel.org>,
+  Conor Dooley <conor+dt@kernel.org>, Hector Martin <marcan@marcan.st>,
+  "Rafael J. Wysocki" <rafael@kernel.org>,
+  Viresh Kumar <viresh.kumar@linaro.org>,
+  Thomas Gleixner <tglx@linutronix.de>, Joerg Roedel <joro@8bytes.org>,
+  Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+  Linus Walleij <linus.walleij@linaro.org>,
+  Mark Kettenis <kettenis@openbsd.org>,
+ Andi Shyti <andi.shyti@kernel.org>,
+  Jassi Brar <jassisinghbrar@gmail.com>,
+  Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+  Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>,
+  David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+  Sasha Finkelstein <fnkl.kernel@gmail.com>,
+  Marcel Holtmann <marcel@holtmann.org>,
+  Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+  Johannes Berg <johannes@sipsolutions.net>,
+ van Spriel <arend@broadcom.com>,  Lee Jones <lee@kernel.org>,
+  =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+  Stephen Boyd <sboyd@kernel.org>,
+ Wim Van Sebroeck <wim@linux-watchdog.org>,
+  Guenter Roeck <linux@roeck-us.net>,
+  Michael Turquette <mturquette@baylibre.com>,
+  =?utf-8?q?Martin_Povi=C5=A1er?= <povik+lin@cutebit.org>,
+  Vinod Koul <vkoul@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+  Mark Brown <broonie@kernel.org>, Marc Zyngier <maz@kernel.org>,
+  Ulf Hansson <ulf.hansson@linaro.org>, Keith Busch <kbusch@kernel.org>,
+  Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
+  Sagi Grimberg <sagi@grimberg.me>, Jaroslav Kysela <perex@perex.cz>,
+  Takashi Iwai <tiwai@suse.com>
+Cc: asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-pm@vger.kernel.org, iommu@lists.linux.dev, linux-gpio@vger.kernel.org, 
+ linux-i2c@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+ linux-bluetooth@vger.kernel.org, linux-wireless@vger.kernel.org, 
+ linux-pwm@vger.kernel.org, linux-watchdog@vger.kernel.org, 
+ linux-clk@vger.kernel.org, dmaengine@vger.kernel.org, 
+ linux-sound@vger.kernel.org, linux-spi@vger.kernel.org, 
+ linux-nvme@lists.infradead.org, Janne Grunau <j@jannau.net>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=10250; i=j@jannau.net;
+ s=yk2024; h=from:subject:message-id;
+ bh=rreEJehO7CQ2EprUn7hNBtTVr7RiGsX/VW4AoAEZkNg=;
+ b=owGbwMvMwCW2UNrmdq9+ahrjabUkhowNiebim8+dC13+IPl31+8UrzaOtTM8FZJ+Ory07o5id
+ yo+d7ioo5SFQYyLQVZMkSVJ+2UHw+oaxZjaB2Ewc1iZQIYwcHEKwEQSuhj+GZU9tTFeNPdAgvqc
+ g/HzFZqeFsQ+WWb74M6mpT41W3q2sjH8j9nrU/hRbcU6i4Kc/591/3XsXllT0PWYXajBcPrXPTw
+ 8HAA=
+X-Developer-Key: i=j@jannau.net; a=openpgp;
+ fpr=8B336A6BE4E5695E89B8532B81E806F586338419
 
-Tegra194 PCIe driver contains extensive manual bit manipulation across
-interrupt handling, ASPM configuration, and controller initialization.
-The driver implements complex read-modify-write sequences with explicit
-bit masking, leading to verbose and hard-to-maintain code.
+This series adds device trees for Apple's M2 Pro, Max and Ultra based
+devices. The M2 Pro (t6020), M2 Max (t6021) and M2 Ultra (t6022) SoCs
+follow design of the t600x family so copy the structure of SoC *.dtsi
+files.
 
-Refactor interrupt handling, ASPM setup, capability configuration, and
-controller initialization using dw_pcie_*_dword(). Replace
-multi-step register modifications with single helper calls, eliminating
-intermediate variables and reducing code size by ~75 lines. For CDMA
-error handling, initialize the value variable to zero before setting
-status bits.
+t6020 is a cut-down version of t6021, so the former just includes the
+latter and disables the missing bits.
 
-This comprehensive refactoring significantly improves code readability
-and maintainability. Standardizing on the helper ensures consistent
-register access patterns across all driver components and reduces the
-risk of bit manipulation errors in this complex controller driver.
+t6022 is two connected t6021 dies. The implementation seems to use
+t6021 and disables blocks based on whether it is useful to carry
+multiple instances. The disabled blocks are mostly on the second die.
+MMIO addresses on the second die have a constant offset. The interrupt
+controller is multi-die aware. This setup can be represented in the
+device tree with two top level "soc" nodes. The MMIO offset is applied
+via "ranges" and devices are included with preprocessor macros to make
+the node labels unique and to specify the die number for the interrupt
+definition.
 
-Signed-off-by: Hans Zhang <18255117159@163.com>
+The devices itself are very similar to their M1 Pro, M1 Max and M1 Ultra
+counterparts. The existing device templates are SoC agnostic so the new
+devices can reuse them and include their t602{0,1,2}.dtsi file. The
+minor differences in pinctrl and gpio numbers can be easily adjusted.
+
+With the t602x SoC family Apple introduced two new devices:
+
+The M2 Pro Mac mini is similar to the larger M1 and M2 Max Mac Studio. The
+missing SDHCI card reader and two front USB3.1 type-c ports and their
+internal USB hub can be easily deleted.
+
+The M2 Ultra Mac Pro (tower and rack-mount cases) differs from all other
+devices but may share some bits with the M2 Ultra Mac Studio. The PCIe
+implementation on the M2 Ultra in the Mac Pro differs slightly. Apple
+calls the PCIe controller "apcie-ge" in their device tree. The
+implementation seems to be mostly compatible with the base t6020 PCIe
+controller. The main difference is that there is only a single port with
+with 8 or 16 PCIe Gen4 lanes. These ports connect to a Microchip
+Switchtec PCIe switch with 100 lanes to which all internal PCIe devices
+and PCIe slots connect too.
+
+This series does not include PCIe support for the Mac Pro for two
+reasons:
+- the linux switchtec driver fails to probe and the downstream PCIe
+  connections come up as PCIe Gen1
+- some of the internal devices require PERST# and power control to come
+  up. Since the device are connected via the PCIe switch the PCIe
+  controller can not do this. The PCI slot pwrctrl can be utilized for
+  power control but misses integration with PERST# as proposed in [1].
+
+This series depends on "[PATCH v2 0/5] Apple device tree sync from
+downstream kernel" [2] due to the reuse of the t600x device templates
+(patch dependencies and DT compilation) and 4 page table level support
+in apple-dart and io-pgtable-dart [3] since the dart instances report
+42-bit IAS (IOMMU device attach fails without the series).
+
+After discussion with the devicetree maintainers we agreed to not extend
+lists with the generic compatibles anymore [1]. Instead either the first
+compatible SoC or t8103 is used as fallback compatible supported by the
+drivers. t8103 is used as default since most drivers and bindings were
+initially written for M1 based devices.
+
+The series adds those fallback compatibles to drivers where necessary,
+annotates the SoC lists for generic compatibles as "do not extend" and
+adds t6020 per-SoC compatibles.
+
+[1]: https://lore.kernel.org/linux-pci/20250819-pci-pwrctrl-perst-v1-0-4b74978d2007@oss.qualcomm.com/
+[2]: https://lore.kernel.org/asahi/20250823-apple-dt-sync-6-17-v2-0-6dc0daeb4786@jannau.net/
+[3]: https://lore.kernel.org/asahi/20250821-apple-dart-4levels-v2-0-e39af79daa37@jannau.net/
+[4]: https://lore.kernel.org/asahi/12ab93b7-1fc2-4ce0-926e-c8141cfe81bf@kernel.org/
+
+Signed-off-by: Janne Grunau <j@jannau.net>
 ---
- drivers/pci/controller/dwc/pcie-tegra194.c | 122 ++++++++-------------
- 1 file changed, 47 insertions(+), 75 deletions(-)
+Hector Martin (3):
+      arm64: dts: apple: Add initial t6020/t6021/t6022 DTs
+      arm64: dts: apple: Add J414 and J416 Macbook Pro device trees
+      arm64: dts: apple: Add J180d (Mac Pro, M2 Ultra, 2023) device tree
 
-diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
-index 4f26086f25da..f89dde9071cd 100644
---- a/drivers/pci/controller/dwc/pcie-tegra194.c
-+++ b/drivers/pci/controller/dwc/pcie-tegra194.c
-@@ -378,9 +378,8 @@ static irqreturn_t tegra_pcie_rp_irq_handler(int irq, void *arg)
- 			val |= APPL_CAR_RESET_OVRD_CYA_OVERRIDE_CORE_RST_N;
- 			appl_writel(pcie, val, APPL_CAR_RESET_OVRD);
- 
--			val = dw_pcie_readl_dbi(pci, PCIE_LINK_WIDTH_SPEED_CONTROL);
--			val |= PORT_LOGIC_SPEED_CHANGE;
--			dw_pcie_writel_dbi(pci, PCIE_LINK_WIDTH_SPEED_CONTROL, val);
-+			dw_pcie_set_dword(pci, PCIE_LINK_WIDTH_SPEED_CONTROL,
-+					  PORT_LOGIC_SPEED_CHANGE);
- 		}
- 	}
- 
-@@ -610,20 +609,14 @@ static struct pci_ops tegra_pci_ops = {
- #if defined(CONFIG_PCIEASPM)
- static void disable_aspm_l11(struct tegra_pcie_dw *pcie)
- {
--	u32 val;
--
--	val = dw_pcie_readl_dbi(&pcie->pci, pcie->cfg_link_cap_l1sub);
--	val &= ~PCI_L1SS_CAP_ASPM_L1_1;
--	dw_pcie_writel_dbi(&pcie->pci, pcie->cfg_link_cap_l1sub, val);
-+	dw_pcie_clear_dword(&pcie->pci, pcie->cfg_link_cap_l1sub,
-+			    PCI_L1SS_CAP_ASPM_L1_1);
- }
- 
- static void disable_aspm_l12(struct tegra_pcie_dw *pcie)
- {
--	u32 val;
--
--	val = dw_pcie_readl_dbi(&pcie->pci, pcie->cfg_link_cap_l1sub);
--	val &= ~PCI_L1SS_CAP_ASPM_L1_2;
--	dw_pcie_writel_dbi(&pcie->pci, pcie->cfg_link_cap_l1sub, val);
-+	dw_pcie_clear_dword(&pcie->pci, pcie->cfg_link_cap_l1sub,
-+			    PCI_L1SS_CAP_ASPM_L1_2);
- }
- 
- static inline u32 event_counter_prog(struct tegra_pcie_dw *pcie, u32 event)
-@@ -697,18 +690,18 @@ static void init_host_aspm(struct tegra_pcie_dw *pcie)
- 			   PCIE_RAS_DES_EVENT_COUNTER_CONTROL, val);
- 
- 	/* Program T_cmrt and T_pwr_on values */
--	val = dw_pcie_readl_dbi(pci, pcie->cfg_link_cap_l1sub);
--	val &= ~(PCI_L1SS_CAP_CM_RESTORE_TIME | PCI_L1SS_CAP_P_PWR_ON_VALUE);
--	val |= (pcie->aspm_cmrt << 8);
-+	val = (pcie->aspm_cmrt << 8);
- 	val |= (pcie->aspm_pwr_on_t << 19);
--	dw_pcie_writel_dbi(pci, pcie->cfg_link_cap_l1sub, val);
-+	dw_pcie_clear_and_set_dword(pci, pcie->cfg_link_cap_l1sub,
-+				    PCI_L1SS_CAP_CM_RESTORE_TIME |
-+				    PCI_L1SS_CAP_P_PWR_ON_VALUE,
-+				    val);
- 
- 	/* Program L0s and L1 entrance latencies */
--	val = dw_pcie_readl_dbi(pci, PCIE_PORT_AFR);
--	val &= ~PORT_AFR_L0S_ENTRANCE_LAT_MASK;
--	val |= (pcie->aspm_l0s_enter_lat << PORT_AFR_L0S_ENTRANCE_LAT_SHIFT);
-+	val = (pcie->aspm_l0s_enter_lat << PORT_AFR_L0S_ENTRANCE_LAT_SHIFT);
- 	val |= PORT_AFR_ENTER_ASPM;
--	dw_pcie_writel_dbi(pci, PCIE_PORT_AFR, val);
-+	dw_pcie_clear_and_set_dword(pci, PCIE_PORT_AFR,
-+				    PORT_AFR_L0S_ENTRANCE_LAT_MASK, val);
- }
- 
- static void init_debugfs(struct tegra_pcie_dw *pcie)
-@@ -860,9 +853,8 @@ static void config_gen3_gen4_eq_presets(struct tegra_pcie_dw *pcie)
- 		dw_pcie_writeb_dbi(pci, offset + i, val);
- 	}
- 
--	val = dw_pcie_readl_dbi(pci, GEN3_RELATED_OFF);
--	val &= ~GEN3_RELATED_OFF_RATE_SHADOW_SEL_MASK;
--	dw_pcie_writel_dbi(pci, GEN3_RELATED_OFF, val);
-+	dw_pcie_clear_dword(pci, GEN3_RELATED_OFF,
-+			    GEN3_RELATED_OFF_RATE_SHADOW_SEL_MASK);
- 
- 	val = dw_pcie_readl_dbi(pci, GEN3_EQ_CONTROL_OFF);
- 	val &= ~GEN3_EQ_CONTROL_OFF_PSET_REQ_VEC;
-@@ -870,10 +862,9 @@ static void config_gen3_gen4_eq_presets(struct tegra_pcie_dw *pcie)
- 	val &= ~GEN3_EQ_CONTROL_OFF_FB_MODE;
- 	dw_pcie_writel_dbi(pci, GEN3_EQ_CONTROL_OFF, val);
- 
--	val = dw_pcie_readl_dbi(pci, GEN3_RELATED_OFF);
--	val &= ~GEN3_RELATED_OFF_RATE_SHADOW_SEL_MASK;
--	val |= (0x1 << GEN3_RELATED_OFF_RATE_SHADOW_SEL_SHIFT);
--	dw_pcie_writel_dbi(pci, GEN3_RELATED_OFF, val);
-+	dw_pcie_clear_and_set_dword(pci, GEN3_RELATED_OFF,
-+				    GEN3_RELATED_OFF_RATE_SHADOW_SEL_MASK,
-+				    0x1 << GEN3_RELATED_OFF_RATE_SHADOW_SEL_SHIFT);
- 
- 	val = dw_pcie_readl_dbi(pci, GEN3_EQ_CONTROL_OFF);
- 	val &= ~GEN3_EQ_CONTROL_OFF_PSET_REQ_VEC;
-@@ -882,17 +873,14 @@ static void config_gen3_gen4_eq_presets(struct tegra_pcie_dw *pcie)
- 	val &= ~GEN3_EQ_CONTROL_OFF_FB_MODE;
- 	dw_pcie_writel_dbi(pci, GEN3_EQ_CONTROL_OFF, val);
- 
--	val = dw_pcie_readl_dbi(pci, GEN3_RELATED_OFF);
--	val &= ~GEN3_RELATED_OFF_RATE_SHADOW_SEL_MASK;
--	dw_pcie_writel_dbi(pci, GEN3_RELATED_OFF, val);
-+	dw_pcie_clear_dword(pci, GEN3_RELATED_OFF,
-+			    GEN3_RELATED_OFF_RATE_SHADOW_SEL_MASK);
- }
- 
- static int tegra_pcie_dw_host_init(struct dw_pcie_rp *pp)
- {
- 	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
- 	struct tegra_pcie_dw *pcie = to_tegra_pcie(pci);
--	u32 val;
--	u16 val_16;
- 
- 	pp->bridge->ops = &tegra_pci_ops;
- 
-@@ -900,32 +888,25 @@ static int tegra_pcie_dw_host_init(struct dw_pcie_rp *pp)
- 		pcie->pcie_cap_base = dw_pcie_find_capability(&pcie->pci,
- 							      PCI_CAP_ID_EXP);
- 
--	val = dw_pcie_readl_dbi(pci, PCI_IO_BASE);
--	val &= ~(IO_BASE_IO_DECODE | IO_BASE_IO_DECODE_BIT8);
--	dw_pcie_writel_dbi(pci, PCI_IO_BASE, val);
-+	dw_pcie_clear_dword(pci, PCI_IO_BASE, IO_BASE_IO_DECODE |
-+			    IO_BASE_IO_DECODE_BIT8);
- 
--	val = dw_pcie_readl_dbi(pci, PCI_PREF_MEMORY_BASE);
--	val |= CFG_PREF_MEM_LIMIT_BASE_MEM_DECODE;
--	val |= CFG_PREF_MEM_LIMIT_BASE_MEM_LIMIT_DECODE;
--	dw_pcie_writel_dbi(pci, PCI_PREF_MEMORY_BASE, val);
-+	dw_pcie_set_dword(pci, PCI_PREF_MEMORY_BASE,
-+			  CFG_PREF_MEM_LIMIT_BASE_MEM_DECODE |
-+			  CFG_PREF_MEM_LIMIT_BASE_MEM_LIMIT_DECODE);
- 
- 	dw_pcie_writel_dbi(pci, PCI_BASE_ADDRESS_0, 0);
- 
- 	/* Enable as 0xFFFF0001 response for RRS */
--	val = dw_pcie_readl_dbi(pci, PORT_LOGIC_AMBA_ERROR_RESPONSE_DEFAULT);
--	val &= ~(AMBA_ERROR_RESPONSE_RRS_MASK << AMBA_ERROR_RESPONSE_RRS_SHIFT);
--	val |= (AMBA_ERROR_RESPONSE_RRS_OKAY_FFFF0001 <<
--		AMBA_ERROR_RESPONSE_RRS_SHIFT);
--	dw_pcie_writel_dbi(pci, PORT_LOGIC_AMBA_ERROR_RESPONSE_DEFAULT, val);
-+	dw_pcie_clear_and_set_dword(pci, PORT_LOGIC_AMBA_ERROR_RESPONSE_DEFAULT,
-+				    AMBA_ERROR_RESPONSE_RRS_MASK << AMBA_ERROR_RESPONSE_RRS_SHIFT,
-+				    AMBA_ERROR_RESPONSE_RRS_OKAY_FFFF0001 <<
-+				    AMBA_ERROR_RESPONSE_RRS_SHIFT);
- 
- 	/* Clear Slot Clock Configuration bit if SRNS configuration */
--	if (pcie->enable_srns) {
--		val_16 = dw_pcie_readw_dbi(pci, pcie->pcie_cap_base +
--					   PCI_EXP_LNKSTA);
--		val_16 &= ~PCI_EXP_LNKSTA_SLC;
--		dw_pcie_writew_dbi(pci, pcie->pcie_cap_base + PCI_EXP_LNKSTA,
--				   val_16);
--	}
-+	if (pcie->enable_srns)
-+		dw_pcie_clear_dword(pci, pcie->pcie_cap_base + PCI_EXP_LNKSTA,
-+				    PCI_EXP_LNKSTA_SLC);
- 
- 	config_gen3_gen4_eq_presets(pcie);
- 
-@@ -937,17 +918,13 @@ static int tegra_pcie_dw_host_init(struct dw_pcie_rp *pp)
- 		disable_aspm_l12(pcie);
- 	}
- 
--	if (!pcie->of_data->has_l1ss_exit_fix) {
--		val = dw_pcie_readl_dbi(pci, GEN3_RELATED_OFF);
--		val &= ~GEN3_RELATED_OFF_GEN3_ZRXDC_NONCOMPL;
--		dw_pcie_writel_dbi(pci, GEN3_RELATED_OFF, val);
--	}
-+	if (!pcie->of_data->has_l1ss_exit_fix)
-+		dw_pcie_clear_dword(pci, GEN3_RELATED_OFF,
-+				    GEN3_RELATED_OFF_GEN3_ZRXDC_NONCOMPL);
- 
--	if (pcie->update_fc_fixup) {
--		val = dw_pcie_readl_dbi(pci, CFG_TIMER_CTRL_MAX_FUNC_NUM_OFF);
--		val |= 0x1 << CFG_TIMER_CTRL_ACK_NAK_SHIFT;
--		dw_pcie_writel_dbi(pci, CFG_TIMER_CTRL_MAX_FUNC_NUM_OFF, val);
--	}
-+	if (pcie->update_fc_fixup)
-+		dw_pcie_set_dword(pci, CFG_TIMER_CTRL_MAX_FUNC_NUM_OFF,
-+				  0x1 << CFG_TIMER_CTRL_ACK_NAK_SHIFT);
- 
- 	clk_set_rate(pcie->core_clk, GEN4_CORE_CLK_FREQ);
- 
-@@ -1018,9 +995,8 @@ static int tegra_pcie_dw_start_link(struct dw_pcie *pci)
- 		reset_control_deassert(pcie->core_rst);
- 
- 		offset = dw_pcie_find_ext_capability(pci, PCI_EXT_CAP_ID_DLF);
--		val = dw_pcie_readl_dbi(pci, offset + PCI_DLF_CAP);
--		val &= ~PCI_DLF_EXCHANGE_ENABLE;
--		dw_pcie_writel_dbi(pci, offset + PCI_DLF_CAP, val);
-+		dw_pcie_clear_dword(pci, offset + PCI_DLF_CAP,
-+				    PCI_DLF_EXCHANGE_ENABLE);
- 
- 		tegra_pcie_dw_host_init(pp);
- 		dw_pcie_setup_rc(pp);
-@@ -1847,11 +1823,9 @@ static void pex_ep_event_pex_rst_deassert(struct tegra_pcie_dw *pcie)
- 
- 	reset_control_deassert(pcie->core_rst);
- 
--	if (pcie->update_fc_fixup) {
--		val = dw_pcie_readl_dbi(pci, CFG_TIMER_CTRL_MAX_FUNC_NUM_OFF);
--		val |= 0x1 << CFG_TIMER_CTRL_ACK_NAK_SHIFT;
--		dw_pcie_writel_dbi(pci, CFG_TIMER_CTRL_MAX_FUNC_NUM_OFF, val);
--	}
-+	if (pcie->update_fc_fixup)
-+		dw_pcie_set_dword(pci, CFG_TIMER_CTRL_MAX_FUNC_NUM_OFF,
-+				  0x1 << CFG_TIMER_CTRL_ACK_NAK_SHIFT);
- 
- 	config_gen3_gen4_eq_presets(pcie);
- 
-@@ -1863,11 +1837,9 @@ static void pex_ep_event_pex_rst_deassert(struct tegra_pcie_dw *pcie)
- 		disable_aspm_l12(pcie);
- 	}
- 
--	if (!pcie->of_data->has_l1ss_exit_fix) {
--		val = dw_pcie_readl_dbi(pci, GEN3_RELATED_OFF);
--		val &= ~GEN3_RELATED_OFF_GEN3_ZRXDC_NONCOMPL;
--		dw_pcie_writel_dbi(pci, GEN3_RELATED_OFF, val);
--	}
-+	if (!pcie->of_data->has_l1ss_exit_fix)
-+		dw_pcie_clear_dword(pci, GEN3_RELATED_OFF,
-+				    GEN3_RELATED_OFF_GEN3_ZRXDC_NONCOMPL);
- 
- 	pcie->pcie_cap_base = dw_pcie_find_capability(&pcie->pci,
- 						      PCI_CAP_ID_EXP);
+Janne Grunau (34):
+      dt-bindings: arm: apple: Add t6020x compatibles
+      dt-bindings: arm: apple: apple,pmgr: Add t6020-pmgr compatible
+      pmdomain: apple: Add "apple,t8103-pmgr-pwrstate"
+      dt-bindings: power: apple,pmgr-pwrstate: Add t6020 compatible
+      dt-bindings: cpufreq: apple,cluster-cpufreq: Add t6020 compatible
+      dt-bindings: interrupt-controller: apple,aic2: Add apple,t6020-aic compatible
+      dt-bindings: iommu: dart: Add apple,t6020-dart compatible
+      pinctrl: apple: Add "apple,t8103-pinctrl" as compatible
+      dt-bindings: pinctrl: apple,pinctrl: Add apple,t6020-pinctrl compatible
+      dt-bindings: i2c: apple,i2c: Add apple,t6020-i2c compatible
+      dt-bindings: mailbox: apple,mailbox: Add t6020 compatible
+      dt-bindings: gpu: apple,agx: Add agx-{g14s,g14c,g14d} compatibles
+      dt-bindings: iommu: apple,sart: Add apple,t6020-sart compatible
+      nvme-apple: Add "apple,t8103-nvme-ans2" as compatible
+      dt-bindings: nvme: apple: Add apple,t6020-nvme-ans2 compatible
+      dt-bindings: net: bcm4377-bluetooth: Add BCM4388 compatible
+      dt-bindings: net: bcm4329-fmac: Add BCM4388 PCI compatible
+      mfd: macsmc: Add "apple,t8103-smc" compatible
+      dt-bindings: mfd: apple,smc: Add t6020-smc compatible
+      dt-bindings: pwm: apple,s5l-fpwm: Add t6020-fpwm compatible
+      spmi: apple: Add "apple,t8103-spmi" compatible
+      dt-bindings: spmi: apple,spmi: Add t6020-spmi compatible
+      watchdog: apple: Add "apple,t8103-wdt" compatible
+      dt-bindings: watchdog: apple,wdt: Add t6020-wdt compatible
+      clk: clk-apple-nco: Add "apple,t8103-nco" compatible
+      dt-bindings: clock: apple,nco: Add t6020-nco compatible
+      dmaengine: apple-admac: Add "apple,t8103-admac" compatible
+      dt-bindings: dma: apple,admac: Add t6020-admac compatible
+      ASoC: apple: mca: Add "apple,t8103-mca" compatible
+      ASoC: dt-bindings: apple,mca: Add t6020-mca compatible
+      spi: apple: Add "apple,t8103-spi" compatible
+      spi: dt-bindings: apple,spi: Add t6020-spi compatible
+      arm64: dts: apple: Add ethernet0 alias for J375 template
+      arm64: dts: apple: Add J474s, J475c and J475d device trees
+
+ Documentation/devicetree/bindings/arm/apple.yaml   |   39 +-
+ .../devicetree/bindings/arm/apple/apple,pmgr.yaml  |   33 +-
+ .../devicetree/bindings/clock/apple,nco.yaml       |   17 +-
+ .../bindings/cpufreq/apple,cluster-cpufreq.yaml    |    3 +
+ .../devicetree/bindings/dma/apple,admac.yaml       |   17 +-
+ .../devicetree/bindings/gpu/apple,agx.yaml         |    6 +
+ .../devicetree/bindings/i2c/apple,i2c.yaml         |   27 +-
+ .../bindings/interrupt-controller/apple,aic2.yaml  |    1 +
+ .../devicetree/bindings/iommu/apple,dart.yaml      |   14 +-
+ .../devicetree/bindings/iommu/apple,sart.yaml      |    4 +-
+ .../devicetree/bindings/mailbox/apple,mailbox.yaml |    1 +
+ .../devicetree/bindings/mfd/apple,smc.yaml         |   17 +-
+ .../net/bluetooth/brcm,bcm4377-bluetooth.yaml      |    1 +
+ .../bindings/net/wireless/brcm,bcm4329-fmac.yaml   |    1 +
+ .../devicetree/bindings/nvme/apple,nvme-ans.yaml   |   29 +-
+ .../devicetree/bindings/pinctrl/apple,pinctrl.yaml |   27 +-
+ .../bindings/power/apple,pmgr-pwrstate.yaml        |   27 +-
+ .../devicetree/bindings/pwm/apple,s5l-fpwm.yaml    |    3 +-
+ .../devicetree/bindings/sound/apple,mca.yaml       |   17 +-
+ .../devicetree/bindings/spi/apple,spi.yaml         |   16 +-
+ .../devicetree/bindings/spmi/apple,spmi.yaml       |   17 +-
+ .../devicetree/bindings/watchdog/apple,wdt.yaml    |   27 +-
+ arch/arm64/boot/dts/apple/Makefile                 |    8 +
+ arch/arm64/boot/dts/apple/t600x-j375.dtsi          |    1 +
+ arch/arm64/boot/dts/apple/t6020-j414s.dts          |   26 +
+ arch/arm64/boot/dts/apple/t6020-j416s.dts          |   26 +
+ arch/arm64/boot/dts/apple/t6020-j474s.dts          |   47 +
+ arch/arm64/boot/dts/apple/t6020.dtsi               |   22 +
+ arch/arm64/boot/dts/apple/t6021-j414c.dts          |   26 +
+ arch/arm64/boot/dts/apple/t6021-j416c.dts          |   26 +
+ arch/arm64/boot/dts/apple/t6021-j475c.dts          |   37 +
+ arch/arm64/boot/dts/apple/t6021.dtsi               |   69 +
+ arch/arm64/boot/dts/apple/t6022-j180d.dts          |  121 ++
+ arch/arm64/boot/dts/apple/t6022-j475d.dts          |   42 +
+ arch/arm64/boot/dts/apple/t6022-jxxxd.dtsi         |   38 +
+ arch/arm64/boot/dts/apple/t6022.dtsi               |  347 +++
+ arch/arm64/boot/dts/apple/t602x-common.dtsi        |  465 ++++
+ arch/arm64/boot/dts/apple/t602x-die0.dtsi          |  577 +++++
+ arch/arm64/boot/dts/apple/t602x-dieX.dtsi          |  129 ++
+ arch/arm64/boot/dts/apple/t602x-gpio-pins.dtsi     |   81 +
+ arch/arm64/boot/dts/apple/t602x-j414-j416.dtsi     |   45 +
+ arch/arm64/boot/dts/apple/t602x-j474-j475.dtsi     |   38 +
+ arch/arm64/boot/dts/apple/t602x-nvme.dtsi          |   42 +
+ arch/arm64/boot/dts/apple/t602x-pmgr.dtsi          | 2268 ++++++++++++++++++++
+ drivers/clk/clk-apple-nco.c                        |    1 +
+ drivers/dma/apple-admac.c                          |    1 +
+ drivers/mfd/macsmc.c                               |    1 +
+ drivers/nvme/host/apple.c                          |    1 +
+ drivers/pinctrl/pinctrl-apple-gpio.c               |    1 +
+ drivers/pmdomain/apple/pmgr-pwrstate.c             |    1 +
+ drivers/spi/spi-apple.c                            |    1 +
+ drivers/spmi/spmi-apple-controller.c               |    1 +
+ drivers/watchdog/apple_wdt.c                       |    1 +
+ sound/soc/apple/mca.c                              |    1 +
+ 54 files changed, 4722 insertions(+), 113 deletions(-)
+---
+base-commit: 50ee15a27ec4cc41e99ee5e9011de7875569cd52
+change-id: 20250811-dt-apple-t6020-1359ce9bf2e7
+prerequisite-change-id: 20250813-apple-dt-sync-6-17-d1fc1c89f7ca:v2
+prerequisite-patch-id: 1405c7c78139704a4cbeb1adc67786b2c7971a3f
+prerequisite-patch-id: 65865050e9e7427bac04f47d0b7927aacaac19bd
+prerequisite-patch-id: 9240e5f435fb3406e77b4e4e9b02eb3d52e660e6
+prerequisite-patch-id: c16715c9a9fcb396b7e4365fd767b05604b8de81
+prerequisite-patch-id: a675ad20c2b427a021dafb5d6c8716497741604c
+
+Best regards,
 -- 
-2.49.0
+Janne Grunau <j@jannau.net>
 
 
