@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-790179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6121CB3A1E5
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 16:32:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D493B3A1AC
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 16:27:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFE863B2532
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 14:26:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A54111B21AB1
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 14:27:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B3462D29C7;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7918230F957;
 	Thu, 28 Aug 2025 14:26:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DK6o2o7h"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AP8lt6oN"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F328227B83;
-	Thu, 28 Aug 2025 14:26:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFF8424169F;
+	Thu, 28 Aug 2025 14:26:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756391201; cv=none; b=Kb9DEcIy4BQyyoYfmG1/xH8g38n6X0MSeTushNXmswVR9Pgr1oKJH0Ze1Qp9pnQnUIjO80VIwhBLn4rbglazLq1xzGZ3rTqnMnqT6GiEExaUCtCTtI/637atYC5jIH6RjrJAoCE6J2vvMDgoSBYT5Hp81ZhZ3cusLLw24Eh1EoE=
+	t=1756391201; cv=none; b=i8MlsM/mhKAihAbpjDx6RWJQaJy2FbtJwA9ASe/azu6M2pFfPHdcTjMHicecURhgDeC63Ngxrfb4mC0VLqx4H8RrVJRcN0LHjUACfFcEBdIZsDRgVJyqPItgNkQ1AaEsxglv2BAdY3LaoPj+pfeu1bB46Cfp7J1n2akFAF9Y0gE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1756391201; c=relaxed/simple;
-	bh=nZTT535RfyXPcNBRflR/RKIqbWf0jF5aESO8lp2wvoc=;
+	bh=/IznsUAvnTndT5Ot+jQYWMWwYARY3EbdfbzmC6jzSlQ=;
 	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=Dxum7ckWOUnMXghjDtqBL0074posI5M93m3ukyGC9KIpv25CPjVUGfZtabDn+bnhgb4BY2JCQS1RZqZCEws71B1fWxx2ErVutWPvrgLE7SbWmXO4MmBnqSldwLuKzfN/SZqgwBAAawiJq/gHmqg+F6ZEhc+MhyQ5srBWmLATs5Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DK6o2o7h; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 762C8C4CEFA;
-	Thu, 28 Aug 2025 14:26:40 +0000 (UTC)
+	 Message-Id:Subject; b=GV+T4ICRflr3wxiweflHipHPnaE4tvgwxp5tuYoyFowoL24x74SkeB4L7PEbfjQYTyupsKQT4B7IECBQKCHJ4msaIbnm2DH4J1Kqxk+i/EFg3dK6L8nMJfN4yR7Rj6S9aHyWXirbEu2jqQAQZXAPR4D5trGHNOsKuvDlFox6dVE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AP8lt6oN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83172C4CEF5;
+	Thu, 28 Aug 2025 14:26:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756391200;
-	bh=nZTT535RfyXPcNBRflR/RKIqbWf0jF5aESO8lp2wvoc=;
+	s=k20201202; t=1756391201;
+	bh=/IznsUAvnTndT5Ot+jQYWMWwYARY3EbdfbzmC6jzSlQ=;
 	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=DK6o2o7hQb39YCj7Se7T/Oaju7Jz9DdnSK69P2J5Y4v3z4pv5/NiVgd61NkEzUZpv
-	 lo63HA7tMPXLmj3TqV07fCRCN6ktOnIbGPUfnmEIeTlt3VUiykXK/CbITsSBXTHbSN
-	 YLUmsoSOqdPmZ8kOnhkUZ6zXmUsz9etsCxMraTWv8vKeufvGLiZeiay9YbEmDT6fnV
-	 UMnpx3+IA1LDg8ozja/LlNWJpLxA2Xk8CW3OoAZawG5Y4VsFne0QQbXzjkzuKP4Hig
-	 tX3xzQ8pYlyPY3LVpeQECcVwtBxsfQZCf6VdM1Hd5tfyZ79mp7/Gq3UdicBvVJ5vHC
-	 PniYkScWUDr/Q==
-Date: Thu, 28 Aug 2025 09:26:39 -0500
+	b=AP8lt6oNDNEW43O0TspzpzGxfmWb0Unt+HwIL0fZGkcgjLVE4xDXm1eHFkKh2bISZ
+	 zf5mmnXHb/LjDY8GFTmCJiQXbMEUx621Rs3kBM/1KhQXuKU3hJ4shui6gRClRVfPk/
+	 MdDreZm4o/R70j3QJ18s2XbFblkXbG6k36J9B0dgNDs9+nQPCB2mlOwBFQxfvdcQP5
+	 LS+PicAo4cGNz/yJLkEFyExmKkenULDuVN7KOrWNfznpDPcKgz+Q8PNabCL1I0AkEv
+	 D645Sy1zsAQpxZWFfin/9GBj3nigmEc7dwaybTNMlR2saPu5mRhKsqRVRxlEfa3951
+	 w3tq4L4/jcSDA==
+Date: Thu, 28 Aug 2025 09:26:40 -0500
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,39 +50,23 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: conor+dt@kernel.org, pankaj.dubey@samsung.com, alim.akhtar@samsung.com, 
- krzk@kernel.org, devicetree@vger.kernel.org, linux-fsd@tesla.com, 
- linux-arm-kernel@lists.infradead.org, shradha.t@samsung.com, 
- ravi.patel@samsung.com, linux-kernel@vger.kernel.org, 
- linux-samsung-soc@vger.kernel.org
-To: Inbaraj E <inbaraj.e@samsung.com>
-In-Reply-To: <20250828083926.16849-1-inbaraj.e@samsung.com>
-References: <CGME20250828083936epcas5p3d2e5ec402bd00dae08c11d8cc7246896@epcas5p3.samsung.com>
- <20250828083926.16849-1-inbaraj.e@samsung.com>
-Message-Id: <175639108979.1621797.4942360795464575731.robh@kernel.org>
-Subject: Re: [v3] arm64: dts: fsd: Add CSIS nodes
+Cc: linux-kernel@vger.kernel.org, conor+dt@kernel.org, jonathanh@nvidia.com, 
+ thierry.reding@gmail.com, krzk+dt@kernel.org, linux-tegra@vger.kernel.org, 
+ devicetree@vger.kernel.org
+To: Kartik Rajput <kkartik@nvidia.com>
+In-Reply-To: <20250828102803.497871-1-kkartik@nvidia.com>
+References: <20250828102803.497871-1-kkartik@nvidia.com>
+Message-Id: <175639109042.1621859.15536493695388543442.robh@kernel.org>
+Subject: Re: [PATCH] arm64: tegra: Add I2C nodes for Tegra264
 
 
-On Thu, 28 Aug 2025 14:09:26 +0530, Inbaraj E wrote:
-> The Tesla FSD SoC CSIS IP bundles MIPI CSI-2 link controller and video
-> capture interface. Add nodes describing the MIPI CSI-2 link controller
-> and video capture interface.
+On Thu, 28 Aug 2025 15:58:03 +0530, Kartik Rajput wrote:
+> Add I2C nodes for Tegra264.
 > 
-> Signed-off-by: Inbaraj E <inbaraj.e@samsung.com>
+> Signed-off-by: Kartik Rajput <kkartik@nvidia.com>
 > ---
-> 
-> Changes since v2:
-> - Changed generic node name
-> - Fixed node ordering
-> 
-> Here is patch link for v2:
-> https://lore.kernel.org/linux-media/20250814140943.22531-1-inbaraj.e@samsung.com/
-> 
-> This patch is dependent on below patchset
-> https://lore.kernel.org/linux-media/20250822002734.23516-1-laurent.pinchart@ideasonboard.com/T/#t
-> 
->  arch/arm64/boot/dts/tesla/fsd.dtsi | 540 +++++++++++++++++++++++++++++
->  1 file changed, 540 insertions(+)
+>  arch/arm64/boot/dts/nvidia/tegra264.dtsi | 225 +++++++++++++++++++++++
+>  1 file changed, 225 insertions(+)
 > 
 
 
@@ -107,32 +91,23 @@ This patch series was applied (using b4) to base:
 If this is not the correct base, please add 'base-commit' tag
 (or use b4 which does this automatically)
 
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/tesla/' for 20250828083926.16849-1-inbaraj.e@samsung.com:
+New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/nvidia/' for 20250828102803.497871-1-kkartik@nvidia.com:
 
-arch/arm64/boot/dts/tesla/fsd-evb.dtb: /soc@0/csi@12640000: failed to match any schema with compatible: ['tesla,fsd-mipi-csi2']
-arch/arm64/boot/dts/tesla/fsd-evb.dtb: /soc@0/csis@12641000: failed to match any schema with compatible: ['tesla,fsd-csis-media']
-arch/arm64/boot/dts/tesla/fsd-evb.dtb: /soc@0/csi@12650000: failed to match any schema with compatible: ['tesla,fsd-mipi-csi2']
-arch/arm64/boot/dts/tesla/fsd-evb.dtb: /soc@0/csis@12651000: failed to match any schema with compatible: ['tesla,fsd-csis-media']
-arch/arm64/boot/dts/tesla/fsd-evb.dtb: /soc@0/csi@12660000: failed to match any schema with compatible: ['tesla,fsd-mipi-csi2']
-arch/arm64/boot/dts/tesla/fsd-evb.dtb: /soc@0/csis@12661000: failed to match any schema with compatible: ['tesla,fsd-csis-media']
-arch/arm64/boot/dts/tesla/fsd-evb.dtb: /soc@0/csi@12670000: failed to match any schema with compatible: ['tesla,fsd-mipi-csi2']
-arch/arm64/boot/dts/tesla/fsd-evb.dtb: /soc@0/csis@12671000: failed to match any schema with compatible: ['tesla,fsd-csis-media']
-arch/arm64/boot/dts/tesla/fsd-evb.dtb: /soc@0/csi@12680000: failed to match any schema with compatible: ['tesla,fsd-mipi-csi2']
-arch/arm64/boot/dts/tesla/fsd-evb.dtb: /soc@0/csis@12681000: failed to match any schema with compatible: ['tesla,fsd-csis-media']
-arch/arm64/boot/dts/tesla/fsd-evb.dtb: /soc@0/csi@12690000: failed to match any schema with compatible: ['tesla,fsd-mipi-csi2']
-arch/arm64/boot/dts/tesla/fsd-evb.dtb: /soc@0/csis@12691000: failed to match any schema with compatible: ['tesla,fsd-csis-media']
-arch/arm64/boot/dts/tesla/fsd-evb.dtb: /soc@0/csi@126a0000: failed to match any schema with compatible: ['tesla,fsd-mipi-csi2']
-arch/arm64/boot/dts/tesla/fsd-evb.dtb: /soc@0/csis@126a1000: failed to match any schema with compatible: ['tesla,fsd-csis-media']
-arch/arm64/boot/dts/tesla/fsd-evb.dtb: /soc@0/csi@126b0000: failed to match any schema with compatible: ['tesla,fsd-mipi-csi2']
-arch/arm64/boot/dts/tesla/fsd-evb.dtb: /soc@0/csis@126b1000: failed to match any schema with compatible: ['tesla,fsd-csis-media']
-arch/arm64/boot/dts/tesla/fsd-evb.dtb: /soc@0/csi@126c0000: failed to match any schema with compatible: ['tesla,fsd-mipi-csi2']
-arch/arm64/boot/dts/tesla/fsd-evb.dtb: /soc@0/csis@126c1000: failed to match any schema with compatible: ['tesla,fsd-csis-media']
-arch/arm64/boot/dts/tesla/fsd-evb.dtb: /soc@0/csi@126d0000: failed to match any schema with compatible: ['tesla,fsd-mipi-csi2']
-arch/arm64/boot/dts/tesla/fsd-evb.dtb: /soc@0/csis@126d1000: failed to match any schema with compatible: ['tesla,fsd-csis-media']
-arch/arm64/boot/dts/tesla/fsd-evb.dtb: /soc@0/csi@126e0000: failed to match any schema with compatible: ['tesla,fsd-mipi-csi2']
-arch/arm64/boot/dts/tesla/fsd-evb.dtb: /soc@0/csis@126e1000: failed to match any schema with compatible: ['tesla,fsd-csis-media']
-arch/arm64/boot/dts/tesla/fsd-evb.dtb: /soc@0/csi@126f0000: failed to match any schema with compatible: ['tesla,fsd-mipi-csi2']
-arch/arm64/boot/dts/tesla/fsd-evb.dtb: /soc@0/csis@126f1000: failed to match any schema with compatible: ['tesla,fsd-csis-media']
+arch/arm64/boot/dts/nvidia/tegra264-p3971-0089+p3834-0008.dtb: /bus@0/i2c@c600000: failed to match any schema with compatible: ['nvidia,tegra264-i2c']
+arch/arm64/boot/dts/nvidia/tegra264-p3971-0089+p3834-0008.dtb: /bus@0/i2c@c610000: failed to match any schema with compatible: ['nvidia,tegra264-i2c']
+arch/arm64/boot/dts/nvidia/tegra264-p3971-0089+p3834-0008.dtb: /bus@8100000000/i2c@c410000: failed to match any schema with compatible: ['nvidia,tegra264-i2c']
+arch/arm64/boot/dts/nvidia/tegra264-p3971-0089+p3834-0008.dtb: /bus@8100000000/i2c@c420000: failed to match any schema with compatible: ['nvidia,tegra264-i2c']
+arch/arm64/boot/dts/nvidia/tegra264-p3971-0089+p3834-0008.dtb: /bus@8100000000/i2c@c430000: failed to match any schema with compatible: ['nvidia,tegra264-i2c']
+arch/arm64/boot/dts/nvidia/tegra264-p3971-0089+p3834-0008.dtb: /bus@8100000000/i2c@c630000: failed to match any schema with compatible: ['nvidia,tegra264-i2c']
+arch/arm64/boot/dts/nvidia/tegra264-p3971-0089+p3834-0008.dtb: /bus@8100000000/i2c@c640000: failed to match any schema with compatible: ['nvidia,tegra264-i2c']
+arch/arm64/boot/dts/nvidia/tegra264-p3971-0089+p3834-0008.dtb: /bus@8100000000/i2c@c650000: failed to match any schema with compatible: ['nvidia,tegra264-i2c']
+arch/arm64/boot/dts/nvidia/tegra264-p3971-0089+p3834-0008.dtb: /bus@8100000000/i2c@c670000: failed to match any schema with compatible: ['nvidia,tegra264-i2c']
+arch/arm64/boot/dts/nvidia/tegra264-p3971-0089+p3834-0008.dtb: /bus@8100000000/i2c@c680000: failed to match any schema with compatible: ['nvidia,tegra264-i2c']
+arch/arm64/boot/dts/nvidia/tegra264-p3971-0089+p3834-0008.dtb: /bus@8100000000/i2c@c690000: failed to match any schema with compatible: ['nvidia,tegra264-i2c']
+arch/arm64/boot/dts/nvidia/tegra264-p3971-0089+p3834-0008.dtb: /bus@8100000000/i2c@c6a0000: failed to match any schema with compatible: ['nvidia,tegra264-i2c']
+arch/arm64/boot/dts/nvidia/tegra264-p3971-0089+p3834-0008.dtb: /bus@8100000000/i2c@c6b0000: failed to match any schema with compatible: ['nvidia,tegra264-i2c']
+arch/arm64/boot/dts/nvidia/tegra264-p3971-0089+p3834-0008.dtb: /bus@8100000000/i2c@c6c0000: failed to match any schema with compatible: ['nvidia,tegra264-i2c']
+arch/arm64/boot/dts/nvidia/tegra264-p3971-0089+p3834-0008.dtb: /bus@8100000000/i2c@c6d0000: failed to match any schema with compatible: ['nvidia,tegra264-i2c']
 
 
 
