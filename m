@@ -1,133 +1,207 @@
-Return-Path: <linux-kernel+bounces-789937-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4114EB39CF7
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 14:21:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0285BB39D28
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 14:23:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0418F1C8332D
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 12:20:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8F883B3441
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 12:23:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E79C30F950;
-	Thu, 28 Aug 2025 12:19:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D748530F7FB;
+	Thu, 28 Aug 2025 12:23:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O4Wem/hC"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="lEqh6r5k"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82FAC30F533;
-	Thu, 28 Aug 2025 12:19:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8940D30E844
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 12:23:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756383552; cv=none; b=XhNNjCGys9l7IQKOkocEE/9lV6Cff3vYZhf0F4NTrMknMenXL9QmDKZ9hH+I/i8vpubcviykvtL5f5b9OyEiaUElLSgBRr5QwOw3QDjE4tsUADt6nOAdpuPjq3wWdrOXnEfJhnmZM7HhnR/vM00QyRw8ybKeNNnhCtuz+UVeCL4=
+	t=1756383813; cv=none; b=TbJ7aLECCHn1aMm1ymyt2zNG8nLvr2L1JrZF4IsBJxzKazEPqm1SsAu9c799kMaxNO0AnbWkgAtDVqVJ4FSwYAp1d4nHU771D8ZKJwOl7Bdo2H5Yj7EjPNQoLw/4ovJwdXYt5H7xi8GCHE83daef0vH+tBQpEPXg4oPbyX3/2F8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756383552; c=relaxed/simple;
-	bh=9sw4X+qUd8JUdWsAC1P/xLMNchdiZnhRop75D3e2gDs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=EL97NMY+0mDouGOYYSV3QtmDjh3lMXoTW9fZpQF8fHvdALJLsvc/KgiYWND9EG+duyy4Hn2EZempm08sqvK9nN/F4GJXaiETSdgVU79BQ21hc1/i5BzrJ3Ff0bVlBshiODjkBLNUlZAP0irGhtr4vp0E+brj26+UapxMIq4gls4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O4Wem/hC; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-77033293ed8so806761b3a.0;
-        Thu, 28 Aug 2025 05:19:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756383551; x=1756988351; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=0Zp4VYS8itoLdeTelGLKi9B3V/A9JQoltmcgrd+WL9Y=;
-        b=O4Wem/hCXhf78dpyCArKA6u++m3+3pt6jhls275EpCDQCcKkEdfKzG94byTzYaVRI5
-         Obcof8kLuVA3OED5KptvEmt37YqRWj8sizatcc+qsR9DoC8KEd9Pf/IdHnB3s9edXn9C
-         ypxlDk/WNw/bZExjIhSfOEMXQks/31JFgvDAWdbrpvZAnpH3x+qOgqciiMUPJlSgJIHA
-         JUVlAiptWutt0aLaL23FC+XCFMOtC+tgEZbxSIfKLQez7VJDj4DWm2YrLLEQYUK/R2YW
-         48Zs45KsJzM7Fr0z2L/O2XF9SsmVhEf+qTa2j8yzRBUXw2tZs6PQsgE134OEG1PaumaV
-         TpxQ==
+	s=arc-20240116; t=1756383813; c=relaxed/simple;
+	bh=5rst5fLTWaEIat1RpzokmV/+HPWeZg8AWqo4Gx9BXE0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rTO3DLb7fr1a2ru8o9RTzIwe0wxjI36v3aZojdUm9ut5j3v6FxGj5UEtDUGppCLDFhsFgxzElxt2SpnGGJnhCUV+eoM7Rfm+74eGECzSzeyW+rVC+pV0tviktebdFSyxggTO+MIrT+ivf8D8fNbGy2pebMsbT7Mv9kEHtrdwi0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=lEqh6r5k; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57S5T0Os031340
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 12:23:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=EZu3KAVGHFsCh5fcuvT4HNuU
+	yEv0CABTxKzQNvPe8HE=; b=lEqh6r5kDbGIOqdjj/UUeO1VQnWeHw6ZOHqUXe8S
+	xdjs+71XDJ9AeneQUq0QqbEJKTLgms/37VK433Wo0+s213skyBBJ4PwSscu1dx1M
+	C0FWdSIq/oftTYPJ/Zkz33+B/vWd2PCmxurYCE2IRVRq//CLL8Kem5AYPudQeLcp
+	tMMdpogw5W2kzSb6UKOFNx291VMf2JLdVhFGgxO2wOgxToDbIwIyeb43cfw6Detg
+	4F6Fic7QqlAEshq+5nGutOLD4AoH9aqH4OWKduT4c5B+EY3mI7FB6LTHF5bOU7CU
+	ML3/8Gr+dxcQheO2M6W1+4+wZjoHkCr45bOeOPtJ2ltOWQ==
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48q615r382-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 12:23:30 +0000 (GMT)
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-248eec89618so3748785ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 05:23:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756383551; x=1756988351;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0Zp4VYS8itoLdeTelGLKi9B3V/A9JQoltmcgrd+WL9Y=;
-        b=h3OjU87vZT8pNNcWUddt/X7GaXp3EjYYG2L+Hootn6NP0lt+betWkHT62KUTO2yMrF
-         6eNf448xYgOsCSucpkXox4HmrbfoiiojORla9PRtlAAdm0NspP7WOtDxT21G3MA9iBVu
-         6TBOHwkbFhvepIcbqn6Ubo0VU2cSoDG2u02AOJwDunFteJEFfr0eOMak5ijCT0POr/5Y
-         JW49L7vw3L6s3JMCcvh4jEp7Vf5em3AwOAAZQ29jlHURccPJVYakTr8mMZJjRSa5OgBk
-         ow5KMiWO14BaBDtkY9hWag0M9ADVfQPxjo1+KyFK5ZX19ngB9n258TpJK2M7XcHBdqN8
-         kIOA==
-X-Forwarded-Encrypted: i=1; AJvYcCUu5JwoThJKBI96TeRp41iME2XGKQwnxLLQR5zAv2eXzbhyRs/8ONCcxm9H9XxCpINnKc3VymYS@vger.kernel.org, AJvYcCVabPnATDW7ypzGnctvN/wpdysQrp3Gt22TIBgR8YpP6z0D0zZNl8L3b/MBtfQ1URK033pBkTMwPxR6CLc=@vger.kernel.org, AJvYcCXIzYm8sTNqAD+TfaW+zHxqFcI/hz3VKfAwubzj0GP/+F4kkfscFBB+ZIXYokNN7r3iqyKxA2qiPAH5Rg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwVum55zqagSOd6qM0eAEutcqGIhDAd9ZbIh6/1teOucFhjACuD
-	kLchSWJgfiCY7t0ksv3BiaLeKl+Z6/PqzBLrUKKV3eZT8SZMB2AWTUoj
-X-Gm-Gg: ASbGncvO4lS9NPSAsL60iaVY68etOqGjHpkE5l4xNXjtFOqvruLWBM+96oTZUG5O8DA
-	YjNCG0sToNeA9pIySjyVK4sTA5ojG2bLtOsXrmLKIt6mD8KhFtZL5gZ4yi7YftWjMIVhrdrjSpe
-	bhl77rus1dazLbNZEwIxfsPp0PuBIMlE4LPBAPy7a8aLDyHbSZlDUeADLr8dsvLf154EV5/i/Vw
-	C6cWn7KnQHxwLjgg0j/QUlL2vcPhhIpPWhB+d9Fd1+hDCQ8l9gOtexPbCyfss5yQuwJ3ZvL8Luh
-	jy7E+vCjOF9loq1h5uxHh2ys6lKDjxZgFNHWes+q2TtOpFiKL1Rwn1CIMwh9dX7NOKBJqjYnm30
-	lU4IVqRscwZH4kEpDHf1LcNoucrqpPKDdicnh4ndX0xo16k8OT0N0I4SXaz0yexbrOX+dYsB5fC
-	Ke
-X-Google-Smtp-Source: AGHT+IHEe4FLByihqr9w/1GzWFbbPnWny/7RgwyYCkPFEmkn/72HVrjrD5CJ72uVORV4OF0Fjru4oQ==
-X-Received: by 2002:a05:6a00:84e:b0:770:5683:cc58 with SMTP id d2e1a72fcca58-7705683cd5emr20974700b3a.25.1756383550556;
-        Thu, 28 Aug 2025 05:19:10 -0700 (PDT)
-Received: from localhost.localdomain ([112.97.57.188])
-        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-770b5bed408sm12199218b3a.18.2025.08.28.05.19.05
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Thu, 28 Aug 2025 05:19:10 -0700 (PDT)
-From: Miaoqian Lin <linmq006@gmail.com>
-To: Tariq Toukan <tariqt@nvidia.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org,
-	linux-rdma@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: linmq006@gmail.com
-Subject: [PATCH v3] eth: mlx4: Fix IS_ERR() vs NULL check bug in mlx4_en_create_rx_ring
-Date: Thu, 28 Aug 2025 20:18:58 +0800
-Message-Id: <20250828121858.67639-1-linmq006@gmail.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+        d=1e100.net; s=20230601; t=1756383809; x=1756988609;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EZu3KAVGHFsCh5fcuvT4HNuUyEv0CABTxKzQNvPe8HE=;
+        b=OrwAG59H+4r/UJE/nSGQSvvDSI54UJISzU8IApd7EP0bWUjFl4UZEIoTJDM1dh9qZL
+         yZBzgtE/DuneojseZJXyS408KOydFeJPbfZ7NgR2+pA1spkjRJD2jTHjD7EAeFSN8NNK
+         kiIc3JpZT1YicEbY2DZ8pyvxOPEpvLPbShw61nA5qy7eWhLqfd/vBGdaRhkHwlseIV6D
+         fTQajH3GXwD8+s3I5Ja24rtzfmO2nlYiDLNqBuu4Dhn4q5TgdO1EHPGSG4CTRBnNl99Y
+         qU6466cIKiZ0C+P6cX2BF/C3HY8o0JxRa7vrEZNnO2sHbMYEAqwQHju6KHpjYMT7WF57
+         15lQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUxmj9hcASyUd3r1kcRPsVG/EljOaqY6UDDY64mnUpEBYfYz25dHMr0NTlU/Q/qs0RKaz4Jr97yKO4sGrg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxmanKO0n67MNw0U35C19BqhXhhgfHVhXY1bwdbdTjKL7Y+Mk/2
+	PRoiP4mUjZz3gwaeToyCLMXxfeFX1+nAvdehLVSsPhb79zKCghhmOnkb/oUXMVGkElbH2HmlaQt
+	cRG4ye8f1NTzaY4+wPuFA/WNrxJuKVVgC/jcCddJRZUlSTyh7qePTF/m30MKwnzDZzHSMuiJkyd
+	Y=
+X-Gm-Gg: ASbGncvEoc/53u18ZZlf3hJpnL1FQUjfSD4hapmuKcFaaALCBJw/mAGKFHSJNw6DSl0
+	+3tiV0tlVCGuncAJ03WHpquqSdd2q4nxcSqBtkumX3WO5fr56JbyuyvfjL66zxh9Kp6eRDnPn5S
+	zxW9X3pFe1xrxwPyskEsAWDk0H80un9X/zDo6NGiODyQqjphXiAhMXjMazI40mox+jViCsmxD81
+	kV6Ya4465dWkfRQih0MgV6RK/+ApLRqicRrmmN7nuxUa7Uvy8SRL7AdsdpWmV3FIJfe7vTl//po
+	ZV350Y/Y59iYLzI2W7NHBrEXMk/kJ+ma/5k4AS4gl57GHGZQ5D70m0ZTJVWmR5t5hjgb
+X-Received: by 2002:a17:902:ef0f:b0:244:214f:13b7 with SMTP id d9443c01a7336-2462efb04c7mr311698195ad.53.1756383808743;
+        Thu, 28 Aug 2025 05:23:28 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFlXTQuslcdRCvIsbREyFEnJ6/4MjqDDqTAmmAr9yqeBhBNxc3DV53rEdm/A47zsJg9ygUrMg==
+X-Received: by 2002:a17:902:ef0f:b0:244:214f:13b7 with SMTP id d9443c01a7336-2462efb04c7mr311697655ad.53.1756383808215;
+        Thu, 28 Aug 2025 05:23:28 -0700 (PDT)
+Received: from hu-wasimn-hyd.qualcomm.com ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2466885ed72sm149774835ad.92.2025.08.28.05.23.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Aug 2025 05:23:27 -0700 (PDT)
+Date: Thu, 28 Aug 2025 17:53:20 +0530
+From: Wasim Nazir <wasim.nazir@oss.qualcomm.com>
+To: Bjorn Andersson <andersson@kernel.org>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Richard Cochran <richardcochran@gmail.com>, kernel@oss.qualcomm.com,
+        linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        netdev@vger.kernel.org,
+        Viken Dadhaniya <viken.dadhaniya@oss.qualcomm.com>,
+        Sushrut Shree Trivedi <quic_sushruts@quicinc.com>,
+        Nirmesh Kumar Singh <quic_nkumarsi@quicinc.com>,
+        Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>,
+        Mohd Ayaan Anwar <quic_mohdayaa@quicinc.com>,
+        Dikshita Agarwal <quic_dikshita@quicinc.com>,
+        Monish Chunara <quic_mchunara@quicinc.com>,
+        Vishal Kumar Pal <quic_vispal@quicinc.com>
+Subject: Re: [PATCH 3/5] arm64: dts: qcom: lemans-evk: Extend peripheral and
+ subsystem support
+Message-ID: <aLBKOH2nSkiNppwQ@hu-wasimn-hyd.qualcomm.com>
+References: <20250826-lemans-evk-bu-v1-0-08016e0d3ce5@oss.qualcomm.com>
+ <20250826-lemans-evk-bu-v1-3-08016e0d3ce5@oss.qualcomm.com>
+ <uvdrqzpqc5vki6sh5f7phktuk47egtmfuw3jjvoakrbyhqxwvt@obao75mbrtti>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <uvdrqzpqc5vki6sh5f7phktuk47egtmfuw3jjvoakrbyhqxwvt@obao75mbrtti>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIzMDAzNCBTYWx0ZWRfX7Tb5Hzh7fT/M
+ pz+y1uOobCrSaS1ncTx08UiqzwCLdG3S8bbqaEz7bkT+QQYoCqRcoLHkwtKQkfs5ck2Ye6u3iVM
+ G7W0lrh4X2gEEfiOCBaiH5NPbazIuKfQhiGDdvIZ0J/LplM+tL29AxmdzVq2Uzq7d+QxLZm5Pv8
+ v6egeMhoec4buaRYtk94meERU5GsA6PMQLziqhnLVuotTo6sb+FuhXm7vNo+s0VQkurD0AFM0nt
+ 0uw9yvxcXD++PcjHh41SyPHYp2btH28L7vtOwVCt+LoVhKIcyKBkwsesJSa2cJ880tQO3+jZu+X
+ frBVubXgs+hp41WQzZbgCJaaL++8KIfDKsFkcu+j2RF6EPNnQ9A+koMj5z+xEwSL5iAq1570mOE
+ DKcbItK+
+X-Proofpoint-GUID: 5npbWrOvVdDIlLzhcM6dQ1-ESlw8Nefj
+X-Authority-Analysis: v=2.4 cv=K+AiHzWI c=1 sm=1 tr=0 ts=68b04a42 cx=c_pps
+ a=IZJwPbhc+fLeJZngyXXI0A==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=kj9zAlcOel0A:10 a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=COk6AnOGAAAA:8
+ a=cJrhKfuPXHnoPuS3F2EA:9 a=CjuIK1q_8ugA:10 a=uG9DUKGECoFWVXl0Dc02:22
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: 5npbWrOvVdDIlLzhcM6dQ1-ESlw8Nefj
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-28_03,2025-08-28_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 suspectscore=0 bulkscore=0 clxscore=1015 adultscore=0
+ impostorscore=0 priorityscore=1501 phishscore=0 spamscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508230034
 
-Replace NULL check with IS_ERR() check after calling page_pool_create()
-since this function returns error pointers (ERR_PTR).
-Using NULL check could lead to invalid pointer dereference.
+On Wed, Aug 27, 2025 at 06:06:04PM -0500, Bjorn Andersson wrote:
+> On Tue, Aug 26, 2025 at 11:51:02PM +0530, Wasim Nazir wrote:
+> > Enhance the Qualcomm Lemans EVK board file to support essential
+> > peripherals and improve overall hardware capabilities, as
+> > outlined below:
+> >   - Enable GPI (Generic Peripheral Interface) DMA-0/1/2 and QUPv3-0/2
+> >     controllers to facilitate DMA and peripheral communication.
+> >   - Add support for PCIe-0/1, including required regulators and PHYs,
+> >     to enable high-speed external device connectivity.
+> >   - Integrate the TCA9534 I/O expander via I2C to provide 8 additional
+> >     GPIO lines for extended I/O functionality.
+> >   - Enable the USB0 controller in device mode to support USB peripheral
+> >     operations.
+> >   - Activate remoteproc subsystems for supported DSPs such as Audio DSP,
+> >     Compute DSP-0/1 and Generic DSP-0/1, along with their corresponding
+> >     firmware.
+> >   - Configure nvmem-layout on the I2C EEPROM to store data for Ethernet
+> >     and other consumers.
+> >   - Enable the QCA8081 2.5G Ethernet PHY on port-0 and expose the
+> >     Ethernet MAC address via nvmem for network configuration.
+> >     It depends on CONFIG_QCA808X_PHY to use QCA8081 PHY.
+> >   - Add support for the Iris video decoder, including the required
+> >     firmware, to enable video decoding capabilities.
+> >   - Enable SD-card slot on SDHC.
+> 
+> I know I asked for you to lump things together in the initial
+> contribution to provide as much features as possible in that initial
+> patch, but now that is in place and this patch really is a bunch of
+> independent logical changes and this commit message reads much more like
+> a cover letter...
+> 
+> > 
+> > Co-developed-by: Viken Dadhaniya <viken.dadhaniya@oss.qualcomm.com>
+> > Signed-off-by: Viken Dadhaniya <viken.dadhaniya@oss.qualcomm.com>
+> > Co-developed-by: Sushrut Shree Trivedi <quic_sushruts@quicinc.com>
+> > Signed-off-by: Sushrut Shree Trivedi <quic_sushruts@quicinc.com>
+> > Co-developed-by: Nirmesh Kumar Singh <quic_nkumarsi@quicinc.com>
+> > Signed-off-by: Nirmesh Kumar Singh <quic_nkumarsi@quicinc.com>
+> > Co-developed-by: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
+> > Signed-off-by: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
+> > Co-developed-by: Mohd Ayaan Anwar <quic_mohdayaa@quicinc.com>
+> > Signed-off-by: Mohd Ayaan Anwar <quic_mohdayaa@quicinc.com>
+> > Co-developed-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
+> > Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
+> > Co-developed-by: Monish Chunara <quic_mchunara@quicinc.com>
+> > Signed-off-by: Monish Chunara <quic_mchunara@quicinc.com>
+> > Co-developed-by: Vishal Kumar Pal <quic_vispal@quicinc.com>
+> > Signed-off-by: Vishal Kumar Pal <quic_vispal@quicinc.com>
+> > Signed-off-by: Wasim Nazir <wasim.nazir@oss.qualcomm.com>
+> 
+> And I don't think you all wrote this patch, you probably all wrote
+> individual pieces and then one of you created the actual patch?
+> 
+> The important part is that we don't want 9 different patch series
+> floating around with unmet dependencies and relying on me to try to
+> stitch them together.
+> 
+> But if you could do what you did for patch 2, 4, and 5 for logical
+> chunks of this change, that would be excellent (i.e. you collect the
+> individual patches, you add your signed-off-by, and you send them all
+> together).
 
-Fixes: 8533b14b3d65 ("eth: mlx4: create a page pool for Rx")
-Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
-----
-Changes in v3:
-- fix IS_ERR
-Changes in v2:
-- use err = PTR_ERR(ring->pp);
-v1 link: https://lore.kernel.org/all/20250805025057.3659898-1-linmq006@gmail.com
-v2 link: https://lore.kernel.org/all/20250828065050.21954-1-linmq006@gmail.com
----
- drivers/net/ethernet/mellanox/mlx4/en_rx.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Sure Bjorn, I will split it in next version of the same series.
 
-diff --git a/drivers/net/ethernet/mellanox/mlx4/en_rx.c b/drivers/net/ethernet/mellanox/mlx4/en_rx.c
-index 92a16ddb7d86..13666d50b90f 100644
---- a/drivers/net/ethernet/mellanox/mlx4/en_rx.c
-+++ b/drivers/net/ethernet/mellanox/mlx4/en_rx.c
-@@ -267,8 +267,10 @@ int mlx4_en_create_rx_ring(struct mlx4_en_priv *priv,
- 	pp.dma_dir = priv->dma_dir;
- 
- 	ring->pp = page_pool_create(&pp);
--	if (!ring->pp)
-+	if (IS_ERR(ring->pp)) {
-+		err = PTR_ERR(ring->pp);
- 		goto err_ring;
-+	}
- 
- 	if (xdp_rxq_info_reg(&ring->xdp_rxq, priv->dev, queue_index, 0) < 0)
- 		goto err_pp;
+
 -- 
-2.39.5 (Apple Git-154)
-
+Regards,
+Wasim
 
