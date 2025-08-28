@@ -1,174 +1,176 @@
-Return-Path: <linux-kernel+bounces-790352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55165B3A5D7
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 18:13:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2FF3B3A5DF
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 18:14:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 639F31896589
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 16:13:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 48E4F566854
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 16:13:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDD862DFA3C;
-	Thu, 28 Aug 2025 16:13:22 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AB612D23B6;
-	Thu, 28 Aug 2025 16:13:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1E602D838F;
+	Thu, 28 Aug 2025 16:13:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mnciu72V"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3543823B61B;
+	Thu, 28 Aug 2025 16:13:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756397602; cv=none; b=ef1JcG3SZH7ykuTGzrKBTsZXkOrgm9tZ5UqcHpGdzELX+MuLQylpa0DnXx77gbUXci/4cy4fCXeA6vEP68vTrHKA1f9CjRIaLegE66c94axGOU0rPXe8lWg8CoGgkLMz31kbnOZxUIVlMUONSUdJyWm00o/w8NJMBHXXe0uZ5kA=
+	t=1756397619; cv=none; b=lu2sr86u+nSzBPlrr+huRvh5poIwYYNh095f0UEX4s6jua7CJixxb72Qqgmfzkw/vZyfmpRXhO232NngXouGy3DQcIhMg8KMydbE3Wafb1+rwq3x/7YztWi8CiVj3PCOr7lJYPr+RE++LatJO2xW/8+OhJoIwNNI/pC0mCMDEOQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756397602; c=relaxed/simple;
-	bh=O2M2ewyT9BTwMaGPRohrg857neoQ+0bApEVjgrSurBA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dmZUv0pmUMh91LtOTnbWgHoKSSyfYNypCCPCsanimTfesxD+ZYFANFo/9nwdHLx4txX6rddIDxaVZ9WWV+Sb2MCcMUnHh2SAAiwdpfdo3kmE5AsetwYsVn9kzIAulVU5tyP3kxLp0qnR3zq8/d4HegwKFkiypccqroUtKHW9mt0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 89BC41688;
-	Thu, 28 Aug 2025 09:13:11 -0700 (PDT)
-Received: from [10.1.196.46] (e134344.arm.com [10.1.196.46])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 688EE3F694;
-	Thu, 28 Aug 2025 09:13:14 -0700 (PDT)
-Message-ID: <8635e616-79b7-4d7d-a8b8-aa76ba027bc4@arm.com>
-Date: Thu, 28 Aug 2025 17:13:13 +0100
+	s=arc-20240116; t=1756397619; c=relaxed/simple;
+	bh=RDJvXt0gHoOuSxP+lJjqy7yfVQ6BnAWOklvP4EWrXqo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=q2nGkwsLLQAk9Z9YBFOs/75lJRhlxgot6RRSRk9MLzPUvpu3JYJx1EFrBd5lPnHaQ4atEf6881hZ6Ywx9uz/AE673DcKb4oylNfp6X5m3n8UbTTmf728/DM4e1vqEm4s56mWewKvo1/mZyWfUaxHHZenquUFUnA86hAe1bitPA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mnciu72V; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1C08C4CEEB;
+	Thu, 28 Aug 2025 16:13:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756397618;
+	bh=RDJvXt0gHoOuSxP+lJjqy7yfVQ6BnAWOklvP4EWrXqo=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=mnciu72VRwBeos1UdgZI0CSoArAtKb4+qQxEjGI67WUwf9q0pANwo8/eTsCV0Wc0A
+	 WmfoJjYw0m3NVqE7gSzkx06BmuTepMH6WMFc89ERwzcy0pU3zK55sW2Y9Fb5Ml+dmc
+	 Tr8n8kN8DSCf24w8C/frerbRwJvqsTtY0nqQ9ct/0QFMJVDTQZKxy2M3afbWI8oaAF
+	 /Whazu8Xmo7SyH2Bif9c8zDnPPg8Ot+O347lLVv1sOi2EJwollZjzgGYuvEtths0t7
+	 7zCsunf4atngdzscG4zGcgL5hpxiQQ3/+bvzmMi8YSjzPkZ0fkLmWGVGEjsODu8DF9
+	 33i1/2Jb51Tdg==
+Received: by mail-oa1-f51.google.com with SMTP id 586e51a60fabf-30ccea94438so871371fac.2;
+        Thu, 28 Aug 2025 09:13:38 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXeGebe6E53yhVopisVq+otfwRWB7mVGb26WLN/svges0Y3ITDB3qO4gtqpE9S0LEgTfN5CN9cl/7bcIdw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7UJrzbYrNo1BRHHlKK7avnQb2+UJc+9rhAa9+Ytvd9pQSUzeO
+	AkSan0NpNIbzyJBJ6TBFRhQ4PXzsFm+YgBCIl7Byw02Ih6ZxzORGm8q23A58LPWR1cmxDtvTGZR
+	ChZ1ZnXRca5cz17DciVYdgKWirUnY8ho=
+X-Google-Smtp-Source: AGHT+IEgT+W9iIpK4oA2lHxw/ap8HkJip0M9BUV5YEGoXypRtQm1T9qZ+IifWC26ZsfEtn210buM3MFAW90tm940nEA=
+X-Received: by 2002:a05:6871:314c:b0:315:9a70:9cea with SMTP id
+ 586e51a60fabf-3159a709f97mr1577222fac.10.1756397617952; Thu, 28 Aug 2025
+ 09:13:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 20/33] arm_mpam: Add a helper to touch an MSC from any CPU
-To: James Morse <james.morse@arm.com>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-acpi@vger.kernel.org,
- devicetree@vger.kernel.org
-Cc: shameerali.kolothum.thodi@huawei.com,
- D Scott Phillips OS <scott@os.amperecomputing.com>,
- carl@os.amperecomputing.com, lcherian@marvell.com,
- bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
- baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
- Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
- dfustini@baylibre.com, amitsinght@marvell.com,
- David Hildenbrand <david@redhat.com>, Rex Nie <rex.nie@jaguarmicro.com>,
- Dave Martin <dave.martin@arm.com>, Koba Ko <kobak@nvidia.com>,
- Shanker Donthineni <sdonthineni@nvidia.com>, fenghuay@nvidia.com,
- baisheng.gao@unisoc.com, Jonathan Cameron <jonathan.cameron@huawei.com>,
- Rob Herring <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
- Rafael Wysocki <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo
- <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
- Will Deacon <will@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Danilo Krummrich <dakr@kernel.org>
-References: <20250822153048.2287-1-james.morse@arm.com>
- <20250822153048.2287-21-james.morse@arm.com>
-From: Ben Horgan <ben.horgan@arm.com>
-Content-Language: en-US
-In-Reply-To: <20250822153048.2287-21-james.morse@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <724616a2-6374-4ba3-8ce3-ea9c45e2ae3b@arm.com> <CAJZ5v0gGchbaQWRq39JbrX8chca7uefef763coJeup+vUOfyCw@mail.gmail.com>
+In-Reply-To: <CAJZ5v0gGchbaQWRq39JbrX8chca7uefef763coJeup+vUOfyCw@mail.gmail.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 28 Aug 2025 18:13:26 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0h=OG-wgcZBD8mZ51+kb7j3yeDZQt9XfO=fdasLRgQkEg@mail.gmail.com>
+X-Gm-Features: Ac12FXwk4apAy_3bRye5EWVBMxU_GQpslLu1N4CI4UKrQJqqZYIRMylLwmBeKT4
+Message-ID: <CAJZ5v0h=OG-wgcZBD8mZ51+kb7j3yeDZQt9XfO=fdasLRgQkEg@mail.gmail.com>
+Subject: Re: [PATCH] Revert "intel_idle: Rescan "dead" SMT siblings during, initialization"
+To: Christian Loehle <christian.loehle@arm.com>
+Cc: linux-pm <linux-pm@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	Artem Bityutskiy <artem.bityutskiy@linux.intel.com>
+Content-Type: multipart/mixed; boundary="0000000000001a692d063d6f30c8"
 
-Hi James,
+--0000000000001a692d063d6f30c8
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 8/22/25 16:30, James Morse wrote:
-> Resetting RIS entries from the cpuhp callback is easy as the
-> callback occurs on the correct CPU. This won't be true for any other
-> caller that wants to reset or configure an MSC.
-> 
-> Add a helper that schedules the provided function if necessary.
-> Prevent the cpuhp callbacks from changing the MSC state by taking the
-> cpuhp lock.
-At first, I thought this was referring to something done in the patch.
-Consider changing to something like:
+On Thu, Aug 28, 2025 at 4:44=E2=80=AFPM Rafael J. Wysocki <rafael@kernel.or=
+g> wrote:
+>
+> On Thu, Aug 28, 2025 at 4:26=E2=80=AFPM Christian Loehle
+> <christian.loehle@arm.com> wrote:
+> >
+> > This reverts commit a430c11f401589a0f4f57fd398271a5d85142c7a.
+> >
+> > Calling arch_cpu_rescan_dead_smt_siblings() in intel_idle_init with
+> > boot parameter nosmt and maxcpus active hotplugged boot-offline CPUs
+> > in (and leave them online) which weren't supposed to be online.
+> >
+> > With the revert and nosmt and maxcpus=3D12 on a raptor lake:
+> > cpu     online  capacity
+> > cpu0    1       1009
+> > cpu1    0       -
+> > cpu2    1       1009
+> > cpu3    0       -
+> > cpu4    1       1009
+> > cpu5    0       -
+> > cpu6    1       1009
+> > cpu7    0       -
+> > cpu8    1       1024
+> > cpu9    0       -
+> > cpu10   1       1024
+> > cpu11   0       -
+> > cpu12   1       1009
+> > cpu13   0       -
+> > cpu14   1       1009
+> > cpu15   0       -
+> > cpu16   1       623
+> > cpu17   1       623
+> > cpu18   1       623
+> > cpu19   1       623
+> > cpu20   0       -
+> > cpu21   0       -
+> > cpu22   0       -
+> > cpu23   0       -
+> >
+> > Previously:
+> > cpu     online  capacity
+> > cpu0    1       1009
+> > cpu1    0       -
+> > cpu2    1       1009
+> > cpu3    0       -
+> > cpu4    1       1009
+> > cpu5    0       -
+> > cpu6    1       1009
+> > cpu7    0       -
+> > cpu8    1       1024
+> > cpu9    0       -
+> > cpu10   1       1024
+> > cpu11   0       -
+> > cpu12   1       1009
+> > cpu13   0       -
+> > cpu14   1       1009
+> > cpu15   0       -
+> > cpu16   1       623
+> > cpu17   1       623
+> > cpu18   1       623
+> > cpu19   1       623
+> > cpu20   1       623
+> > cpu21   1       623
+> > cpu22   1       623
+> > cpu23   1       623
+> >
+> > Signed-off-by: Christian Loehle <christian.loehle@arm.com>
+> > ---
+> > Rafael, I don't immediately see how to fix this properly so I won't
+> > try to, feel free to treat this as a bug report.
+>
+> Sure, thanks for reporting this!
+>
+> Well, I think that cpuhp_smt_enable() is missing a check.  It looks to
+> me like it should do the topology_is_primary_thread(cpu) check like
+> cpuhp_smt_disable().
+>
+> I'll cut a test patch for this later.
 
-Callers should take the cpuhp lock to prevent the cpuhp callbacks from
-changing the MSC state.
+Something like the attached one, perhaps.  I haven't tested it yet,
+but I'll do that later.
 
-Regardless, this looks good to me.
+--0000000000001a692d063d6f30c8
+Content-Type: text/x-patch; charset="US-ASCII"; name="kernel-cpu-enable-smt.patch"
+Content-Disposition: attachment; filename="kernel-cpu-enable-smt.patch"
+Content-Transfer-Encoding: base64
+Content-ID: <f_mevlqqj80>
+X-Attachment-Id: f_mevlqqj80
 
-Reviewed-by: Ben Horgan <ben.horgan@arm.com>
-
-> 
-> Signed-off-by: James Morse <james.morse@arm.com>
-> ---
->  drivers/resctrl/mpam_devices.c | 37 +++++++++++++++++++++++++++++++---
->  1 file changed, 34 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/resctrl/mpam_devices.c b/drivers/resctrl/mpam_devices.c
-> index c1f01dd748ad..759244966736 100644
-> --- a/drivers/resctrl/mpam_devices.c
-> +++ b/drivers/resctrl/mpam_devices.c
-> @@ -906,20 +906,51 @@ static void mpam_reset_ris_partid(struct mpam_msc_ris *ris, u16 partid)
->  	mutex_unlock(&msc->part_sel_lock);
->  }
->  
-> -static void mpam_reset_ris(struct mpam_msc_ris *ris)
-> +/*
-> + * Called via smp_call_on_cpu() to prevent migration, while still being
-> + * pre-emptible.
-> + */
-> +static int mpam_reset_ris(void *arg)
->  {
->  	u16 partid, partid_max;
-> +	struct mpam_msc_ris *ris = arg;
->  
->  	mpam_assert_srcu_read_lock_held();
->  
->  	if (ris->in_reset_state)
-> -		return;
-> +		return 0;
->  
->  	spin_lock(&partid_max_lock);
->  	partid_max = mpam_partid_max;
->  	spin_unlock(&partid_max_lock);
->  	for (partid = 0; partid < partid_max; partid++)
->  		mpam_reset_ris_partid(ris, partid);
-> +
-> +	return 0;
-> +}
-> +
-> +/*
-> + * Get the preferred CPU for this MSC. If it is accessible from this CPU,
-> + * this CPU is preferred. This can be preempted/migrated, it will only result
-> + * in more work.
-> + */
-> +static int mpam_get_msc_preferred_cpu(struct mpam_msc *msc)
-> +{
-> +	int cpu = raw_smp_processor_id();
-> +
-> +	if (cpumask_test_cpu(cpu, &msc->accessibility))
-> +		return cpu;
-> +
-> +	return cpumask_first_and(&msc->accessibility, cpu_online_mask);
-> +}
-> +
-> +static int mpam_touch_msc(struct mpam_msc *msc, int (*fn)(void *a), void *arg)
-> +{
-> +	lockdep_assert_irqs_enabled();
-> +	lockdep_assert_cpus_held();
-> +	mpam_assert_srcu_read_lock_held();
-> +
-> +	return smp_call_on_cpu(mpam_get_msc_preferred_cpu(msc), fn, arg, true);
->  }
->  
->  static void mpam_reset_msc(struct mpam_msc *msc, bool online)
-> @@ -932,7 +963,7 @@ static void mpam_reset_msc(struct mpam_msc *msc, bool online)
->  	mpam_mon_sel_outer_lock(msc);
->  	idx = srcu_read_lock(&mpam_srcu);
->  	list_for_each_entry_srcu(ris, &msc->ris, msc_list, srcu_read_lock_held(&mpam_srcu)) {
-> -		mpam_reset_ris(ris);
-> +		mpam_touch_msc(msc, &mpam_reset_ris, ris);
->  
->  		/*
->  		 * Set in_reset_state when coming online. The reset state
-
-Thanks,
-
-Ben
-
+LS0tCiBrZXJuZWwvY3B1LmMgfCAgICA3ICsrKysrKysKIDEgZmlsZSBjaGFuZ2VkLCA3IGluc2Vy
+dGlvbnMoKykKCi0tLSBhL2tlcm5lbC9jcHUuYworKysgYi9rZXJuZWwvY3B1LmMKQEAgLTI3MTAs
+NiArMjcxMCwxMyBAQAogCWNwdV9tYXBzX3VwZGF0ZV9iZWdpbigpOwogCWNwdV9zbXRfY29udHJv
+bCA9IENQVV9TTVRfRU5BQkxFRDsKIAlmb3JfZWFjaF9wcmVzZW50X2NwdShjcHUpIHsKKwkJLyoK
+KwkJICogQXZvaWQgYWNjaWRlbnRhbGx5IG9ubGluaW5nIHByaW1hcnkgdGhyZWFkIENQVXMgdGhh
+dCBoYXZlCisJCSAqIGJlZW4gdGFrZW4gb2ZmbGluZS4KKwkJICovCisJCWlmICh0b3BvbG9neV9p
+c19wcmltYXJ5X3RocmVhZChjcHUpKQorCQkJY29udGludWU7CisKIAkJLyogU2tpcCBvbmxpbmUg
+Q1BVcyBhbmQgQ1BVcyBvbiBvZmZsaW5lIG5vZGVzICovCiAJCWlmIChjcHVfb25saW5lKGNwdSkg
+fHwgIW5vZGVfb25saW5lKGNwdV90b19ub2RlKGNwdSkpKQogCQkJY29udGludWU7Cg==
+--0000000000001a692d063d6f30c8--
 
