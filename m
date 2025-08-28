@@ -1,126 +1,87 @@
-Return-Path: <linux-kernel+bounces-789933-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1ED8B39CE3
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 14:20:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E2CBB39CE9
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 14:20:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9888A7BC5C6
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 12:18:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E93561B26727
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 12:20:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B97F930F550;
-	Thu, 28 Aug 2025 12:17:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CUq7qxQE"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ECB72DF6F4;
+	Thu, 28 Aug 2025 12:18:06 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52DF930FC04
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 12:17:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DE19312819
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 12:18:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756383455; cv=none; b=P6CICeGiG5TR0TSbu3FKLfa48y38puSP4S9UqCkzZmt2HW17QcJHP3QLDAWEqCigc938PBMlySiA93fttxhIzRjYAcdvIp9Pxf1wAwNEcpxAjDUGO3KRi5Ms0XQ8KBxHMyzygH9fSSWToPb4BeUqlRkFIgxSlVs1sunpy4JJUM8=
+	t=1756383486; cv=none; b=sR9QothyecmeHc+t0NgjYYUN8xa3ZvTzWPYk6wwBgJ6XI8A2MDysS8AuejCxn8Ks9YU/bD4ZmCTnc5uOpdaUqlA0Vtd/4BwegP/he+p4sSucHeHjBghmGyz58Inw0vQuS/s1VSp+PK/omfzyuty+6SYG+ofADwy6j3uxZV76ZHA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756383455; c=relaxed/simple;
-	bh=c8L6HSo/zN3rXMUH3ZqsTsqpBeaIloN4bIJIfK/qhXQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ap/oW8UU6Zzh+tRlad0+mvVFsxD3gT+Ie1ZzIuimcD4SxNi595soVur8TbZMaS4K4FpwS22MjmsAGVYtqIQ8R1fQfgbd1jR+yUW7ZkITV7XptyMmGU5qeog5axyuUHfWbkoVm1sTSOYNixKCtQxgkezt94062U4s61bs+VFCim4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CUq7qxQE; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756383452;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XWaOgO4jpoluN2Qx6CVMt0VGgcSixW+/nMYe+GAjQss=;
-	b=CUq7qxQE/A7YhDXw68MgXBKi+MxZkLY1zrbqMlmKQOZpa1UdFa6i4jNUGDGSQlq+VyJZ56
-	VGbILMZ1EdlVNbPgyKEbYs0xAuxWH4S20J+Yk6c6Sib5YkeKWC5+qB1mB/MgeVLFIc6/rj
-	Bz83+EiUstabcLNyob7YIe4+vp9lrfA=
-Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
- [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-311-ko2gdAgSMQKj38Nx_q--7Q-1; Thu, 28 Aug 2025 08:17:30 -0400
-X-MC-Unique: ko2gdAgSMQKj38Nx_q--7Q-1
-X-Mimecast-MFC-AGG-ID: ko2gdAgSMQKj38Nx_q--7Q_1756383450
-Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-afe81959cb4so62215766b.3
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 05:17:30 -0700 (PDT)
+	s=arc-20240116; t=1756383486; c=relaxed/simple;
+	bh=iOuaKF1dNbboduL/nL8OpyfvwOgutM/lVkzdd5cm3PQ=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=d+QLWLmklASL5v6FE/v1LVF9bFXoi43/2DbL1gzwznve1KrUuUzPeVvUYTPHBNbKvPL9tw9HB2oxR3BM4KLb4yY2+vKop04CE8SX9hM7x76jRrNsvfoFeCCyHtHGQQleWClXglofKyyptIy+yK6nHmGnyUs6ACg14IaDNfREKLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3eea931c037so25224695ab.0
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 05:18:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756383449; x=1756988249;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XWaOgO4jpoluN2Qx6CVMt0VGgcSixW+/nMYe+GAjQss=;
-        b=UoCoIh9E4WFfgJLDZFY1X7XkRHhnUJNGNlXSQRbsgAxnL2I2QFCat0Pcx7+vfOX5Yl
-         oxJWVKl2uGFydblSahfWc7fbEWPo2drRiSnUrSG6yLKAuf4OPtKkklr6XL+ly8BWycqb
-         OKVh545odGW0K3/lp5oEz5wZykUIeL3vb+pR7a7IsENiXcTb0Ie6b7yW+HG6ZHEnHUww
-         l/96cK74kzFghwb4AnKO/5KzT7RR2TnLKMhGA3tqN5cRsD7FvkENvOHgUwefS/BoSnHN
-         12OmX/q/7EvmhKnx7c6Hx3Xgc0ZBULsZCN0hyPAs471H9LYCSHvKR/VY9PtFMzktbhGK
-         Ofrg==
-X-Forwarded-Encrypted: i=1; AJvYcCXaQYJKtOF4RkFtKtS7LVBylaTqH/z3RoTL/xnpLtfjoFFFS45HfHoCgK0evRlvZxB3Fgu8CRUIY3+Qb8s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YywI5pYD7hKfoAGHCYP29eUxNTHKK77DNLtqMx0PB/5f9IUkiyd
-	enSs8HGo/f4FVCyQ93YwD3K8ssZL97sfUImd6flqhhLZqR9Zzf4BLobHXsDHshHwf2l4n1DJXV9
-	JizdRUmEVf1ocG2Inr8BTW6dZF5lgOQMWO6NnZL4BtoBVHOfEU4J+vKZbVCaC+v6iy/Ebs+NIv2
-	jyMRwEbaGHY0r9qKXIJYdX+GJnV9JhppT2cPi1xe5l0xUJsK/xNTI=
-X-Gm-Gg: ASbGncsqswSmUOlnNdwgiIs6VufZp5JoNpDYo8/ET5aQnL1Idq3NJbwnrXnvkqbrB+h
-	N6EE0Ftk3c8CCb5wWQQvJM7NnzbHvZCFfw6O2TPBonJqM+qheNOHQwk0+GsKrdRwPQFZc3n7Fjc
-	vB2lgzzez7Dg9DiRLmkaI=
-X-Received: by 2002:a17:906:5a8d:b0:afe:9e58:754d with SMTP id a640c23a62f3a-afe9e587a44mr706157466b.64.1756383449314;
-        Thu, 28 Aug 2025 05:17:29 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEC1NApuk3PreLppjRFJa8Sx4eXldlrKGys952/ULp5a27DqEMQZaYlRXXz/vQZczNt3zV7J2vH1LrA1VhXB2Y=
-X-Received: by 2002:a17:906:5a8d:b0:afe:9e58:754d with SMTP id
- a640c23a62f3a-afe9e587a44mr706154866b.64.1756383448779; Thu, 28 Aug 2025
- 05:17:28 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1756383484; x=1756988284;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=A6y42r4UWmGPFciOY77c2je+m3ndimMjmMLvFBVeH1k=;
+        b=osy+l1GLx9xggwUMy5wF1VsRkAekbzcQSN4PVD/DUJ+s7lgD3te3vaYnorwkbmqYZi
+         lcekZfWk/DLkzPR5YMqy9JvISTE7hXm6YAKflQ7AIoDdE4QdToudH0CnGTTPFPvzfN8t
+         VO1FVvfHoxe1VaOmW09h+wFpZsIkABHTIZP7jvkOswEBGMG48SCf433na5x3QwkjE3TY
+         4JNiR90Xl0f9ScktYwfQ9xJwUKg0+Qf9R4hoLnaczv2O1TnwLs+wnhD73sKWNzcTvfRq
+         zBXCbbvQPmegUfwp8AAHEEqorVLZbVFYOocTCVrVf0PyfUSvLiFvM1xunHI2WMH62Z8N
+         IH5A==
+X-Forwarded-Encrypted: i=1; AJvYcCXTqaNtoRzgJj54anIdG0coWlco6+nDCtr/qD+Bzbe5vueSD1yUDvZ+shbqZKoSeEUFm+RtMSemFo7kvGo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyia07bU1DJLtX+dMzaqXtFZ5IFGgkgfqThw7rTd9exBQekAkiR
+	gOq6JB1HjNr1cZ/SzCHrfnMnZ/kNNzCWFuqdfoI3w9qMx7fHWbXr/McvzTRUf6Zm1U9hATCE5vM
+	JEBktdjLOn/EyDmhVSUoA+hQOX63Lnr2hNkBOS/PDS/puWY6o6h+P0tCBiLE=
+X-Google-Smtp-Source: AGHT+IEZOnalZCmI58HXdruc8D3MRyh/f3UUrFI3lDaW6leqEiaH32dsi9AapXpOdwvs5P+ZRf1n+S1namnobrH7XAugHUhcFrKT
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1755018581.git.ipravdin.official@gmail.com> <358400afe299a82806e9969570cd3009621bcd8c.1755018581.git.ipravdin.official@gmail.com>
-In-Reply-To: <358400afe299a82806e9969570cd3009621bcd8c.1755018581.git.ipravdin.official@gmail.com>
-From: Tomas Glozar <tglozar@redhat.com>
-Date: Thu, 28 Aug 2025 14:17:17 +0200
-X-Gm-Features: Ac12FXzIu27PrjYZAW398ij3mtMrwSHWcJpQFNT-nJzeNWxfQFJ1-m0bEKi5keE
-Message-ID: <CAP4=nvTfYc5YmzYAoNEw7z4sjFEf3ANa7eFMXfmvp6kGxtS63Q@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] rtla: fix buffer overflow in actions_parse
-To: Ivan Pravdin <ipravdin.official@gmail.com>
-Cc: rostedt@goodmis.org, corbet@lwn.net, linux-trace-kernel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+X-Received: by 2002:a05:6e02:1d99:b0:3f1:a5b9:4a32 with SMTP id
+ e9e14a558f8ab-3f1a5b94bf4mr15170655ab.1.1756383483799; Thu, 28 Aug 2025
+ 05:18:03 -0700 (PDT)
+Date: Thu, 28 Aug 2025 05:18:03 -0700
+In-Reply-To: <20250828114755.5981-1-hdanton@sina.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68b048fb.a00a0220.1337b0.0007.GAE@google.com>
+Subject: Re: [syzbot] [mm?] WARNING in copy_process
+From: syzbot <syzbot+69c74d38464686431506@syzkaller.appspotmail.com>
+To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-=C3=BAt 12. 8. 2025 v 19:21 odes=C3=ADlatel Ivan Pravdin
-<ipravdin.official@gmail.com> napsal:
->
-> Currently, tests 3 and 13-22 in tests/timerlat.t fail with error:
->
->     *** buffer overflow detected ***: terminated
->     timeout: the monitored command dumped core
->
-> The result of running `sudo make check` is
->
->     tests/timerlat.t (Wstat: 0 Tests: 22 Failed: 11)
->       Failed tests:  3, 13-22
->     Files=3D3, Tests=3D34, 140 wallclock secs ( 0.07 usr  0.01 sys + 27.6=
-3 cusr
->     27.96 csys =3D 55.67 CPU)
->     Result: FAIL
->
+Hello,
 
-Interestingly, I don't get this failure on my machine. Maybe due to
-some compiler difference, the buffer overflow is not caught. Thank you
-for the fix. Since the "signal" field is next to the buffer, and is
-written after the strcpy, this might corrupt the PID number reading
-for a command like:
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-$ rtla timerlat hist -D --on-threshold signal,num=3D2,pid=3D42
+Reported-by: syzbot+69c74d38464686431506@syzkaller.appspotmail.com
+Tested-by: syzbot+69c74d38464686431506@syzkaller.appspotmail.com
 
-Reviewed-by: Tomas Glozar <tglozar@redhat.com>
+Tested on:
 
-Tomas
+commit:         8cd53fb4 Add linux-next specific files for 20250828
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=13053ef0580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e373077dd6283453
+dashboard link: https://syzkaller.appspot.com/bug?extid=69c74d38464686431506
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=16a93ef0580000
 
+Note: testing is done by a robot and is best-effort only.
 
