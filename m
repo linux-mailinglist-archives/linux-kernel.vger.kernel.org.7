@@ -1,147 +1,86 @@
-Return-Path: <linux-kernel+bounces-790400-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790401-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24082B3A68F
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 18:40:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BF165B3A692
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 18:40:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C3BC1889D27
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 16:39:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8624E18920ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 16:39:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E546932C30D;
-	Thu, 28 Aug 2025 16:35:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E31F3314C1;
+	Thu, 28 Aug 2025 16:35:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F+vNHOAI"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rxKuNtwQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A08C5322C89;
-	Thu, 28 Aug 2025 16:35:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56EF8322C89;
+	Thu, 28 Aug 2025 16:35:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756398909; cv=none; b=LdsFk+fkGUXImJrtvx6qVqyevWbAo0CXsnQ6K3ENSs/bBCAyC854ezSTvBKXMhu5GU6sFhFidMdBXfctQJxtl2mg54mrI4GqdCk5Jco5ssUfC0OwzEd5+WTwtImLuBXqv3Sj0BCazQDYlrh9owTSmVzOatVUbrn1uDlODjGXQsY=
+	t=1756398930; cv=none; b=JE7vnfjwdiPnh7GWTo2kbBv7xstFaemhrauTVndF13D5miIy2FBraW3uPpdBtW+dPD7MVyxNi3BTiETb8YzxsxYJKICVM2C5lqVUUaIFyhXweajd7N1qPKGVtECY+HgzwIF7QePDZDhsFr2x8BIUKDmlP/lsNyVPoo1mfplnq58=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756398909; c=relaxed/simple;
-	bh=bS4L1PKhv0i/jNUiUgHI1hHlj1jlqL4YZVVWfFOTjlg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=XJ9o85ebeiuKCjN8z7Zq9pllF58qu0Gkq8IlCZg/Ob7Ovd4cx76zcWARFYqipkH5bEHdSbn7YaOizJdh5kS4E1JGBsr/E9r9U+UjxtxbPAdKcn/ktSsHtjziCslfw3yL0H8Yl+3yRhcGrUfx9k2vctGxpYWMopOcpnM1MZmjIqg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F+vNHOAI; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-45b4d89217aso7388525e9.2;
-        Thu, 28 Aug 2025 09:35:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756398906; x=1757003706; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=JfYQ5wQeWPqj3q6NX8K9M3CLRkWa1reIgFJFV3niqMA=;
-        b=F+vNHOAIrrgkcvorhUtI1MmHaNN5IkC/eYYl8+aUfD5+t4FdK1UV9Q9StCtxYI9MyU
-         dHu2+MvnEyTiu9XNfjx4iAqMb3nAggVwRUpGerMWIMV2iUilXTzyGScHUEicdG/dTxt8
-         sO+E0xE56xjExjMYgou33g24XoOBfdVSmV34q8YrqafMxsHQoKreXsg/tkjX123BBrzE
-         88B7B8korFchrdqB2Otx8H2hOAA+jsjVnfN5zFBZr0chLmLjwr066OkMHRkmxqNtYNRp
-         qlUZkwOPM/ZTFu8qzbmZLniaLFU87MkKOmbuaMcw/Zf+8sTG2Gqh6RkMAowruQghEgRw
-         QVLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756398906; x=1757003706;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=JfYQ5wQeWPqj3q6NX8K9M3CLRkWa1reIgFJFV3niqMA=;
-        b=gFxck6bXRrlHwEKG1ZWIChJQ+Jq/0ercQrmZGgCPivbvbnPaYM81JWANzOUM4lCax4
-         8PwZXVF3/hjxj1iBxKrYAzSTBwib57tBFcrKICg+rBbADrW9hu9Dhrn8vXdV2BqvXUVj
-         Sraf78Mo3nVKJ0b+Uc4UylqHXo0Rz//78LqMRsCMSwTeUpv68TBPxKF8BWBJhSXinYZU
-         QnFl9cYZdcIBoQc+FAlmX8reUMJ8Phxa+d0JSEcKq8kjd2zfpgdeIIrYKtwr0o4pzH7i
-         P7grLFZn3SR82zRDe8iKMmZLSFeOjRqQIe+RX6yoHodLtT6fx7zFO9rrKZv484A4cQPc
-         gzXg==
-X-Forwarded-Encrypted: i=1; AJvYcCU6DldoCN9eDac1vBx5cQBoL6z2dnqnGfOiHUK9Ro5sLWwcSxO65W5x7zpl4q7bGI4WiaCFBOhrLhQWIrzW@vger.kernel.org, AJvYcCV3TE7f/Ag2P36/KjsrJXCnazyQHR9pA0VUDHjyJXFXwEhXyzsmPCeJJCeF9TP73rznsgwCmLub3gop@vger.kernel.org
-X-Gm-Message-State: AOJu0YynYDgIcUUPuJBpkqtFyqkUpWNZHJKVWOI7J8RJBAJGIItA//t+
-	eMn72QS813Ke5OZ/iLL8wIcW81Gq6HH5kI9GN6brFuopaQWBUUWVeUF8
-X-Gm-Gg: ASbGncv9rPpvVm/aAFd2wze/4zwqVUvvaQfZXJNiDgn/eSSsYa0f2a9ifCLwlXpiU+m
-	cHvFDguGT9HFXQTHgpSViG8ACD3qC5gXxkQcT6qZW1vraRxonlprhvrQLHVDSR/nlKHmAKkHyyN
-	aAT9kDLW3cQzQPSumvEL80FiLc/UrtK8RYM8WDBKevECOKiz3Bcqkhp8p3ysnv2/f9/TiOeRodo
-	0Y23mMAO4vrxzfuHjEp/4dXk63Gye3dNXFCOpawyXzTilA6useZnPinAVXXHuh/imvP1pA1QnbU
-	4Yt7AfWKNYvPtSk99Ye7NpASDNEoSfjeHWde0zBgSh2XWxzXPxmGdk1bUxsvBkZ9VtwfWmNcidy
-	qEjq9llpCI7/QVoyc4IycMNKwRXlN3sTMgH02Ww==
-X-Google-Smtp-Source: AGHT+IHTw1bI2QA56HfNvV10B5zkkRdlJjRVGOQb4dNonItwDze8Jpvoj6Zs4dslyNbDt2NCzDeisQ==
-X-Received: by 2002:a05:600c:3583:b0:45b:7e68:c6a3 with SMTP id 5b1f17b1804b1-45b7e68c7admr2936725e9.16.1756398905752;
-        Thu, 28 Aug 2025 09:35:05 -0700 (PDT)
-Received: from toolbox.. ([87.200.95.144])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b66c383b1sm61069365e9.3.2025.08.28.09.35.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Aug 2025 09:35:05 -0700 (PDT)
-From: Christian Hewitt <christianshewitt@gmail.com>
-To: Rob Herring <robh+dt@kernel.org>,
+	s=arc-20240116; t=1756398930; c=relaxed/simple;
+	bh=u/YoKxRzlJtVqSxZvRdsOO8F4FWrrfLyCosH+wkjmbg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=HohVc+Q421dPXRrk+sDznCx+C0sWBUeXQykPau787Nps0nwa5TjTWxk1KooSno+v8Lb5Wen4Muxhk3tM9zE9hMkNMvhFLpOZhvzCeFqoRyXc3wP/zYVMe8t79Eka5tFJty/dtqMfRx3p6LPsQjgGFfVTZmnzVf+5f5Hd9clpgdA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rxKuNtwQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0CD2C4CEEB;
+	Thu, 28 Aug 2025 16:35:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756398929;
+	bh=u/YoKxRzlJtVqSxZvRdsOO8F4FWrrfLyCosH+wkjmbg=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=rxKuNtwQlpEupBZf+uzSpFmxGro1bKVymgEm/RNGjj7tGAPsN1SBu2Shv0DTYuVpF
+	 vplQtAYpSSns+bx89QmkoNlpj3BnTuY9l6jK7irBaViXxUrFwnPnmFob1k3HfBsVg2
+	 Rf+YUIrZXgHLU9bg2VnKpQm9b1NN/YCZUIjeyoxY9ZKJ7P329od5z0wtSp9g3ZLURe
+	 utGcGyswOLY8HQKF8pAaxIY9OoVtBdKaZycJyFZso3ALcVr9GTliROsmMUu4uI7jL0
+	 BdsVnwFcqvYh5h6EobnklPjvnMdsPtTQpAzo9XfHOioKb+QTbyC2CN/+D4gcA/jUcr
+	 YFwQmr7indN2w==
+From: Conor Dooley <conor@kernel.org>
+To: Conor Dooley <conor@kernel.org>
+Cc: Conor Dooley <conor.dooley@microchip.com>,
+	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Ben Zong-You Xie <ben717@andestech.com>,
 	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Cc: Alex Bee <knaerzche@gmail.com>
-Subject: [PATCH] ARM: dts: rockchip: add HDMI audio to rk3288-miqi
-Date: Thu, 28 Aug 2025 16:35:01 +0000
-Message-Id: <20250828163501.3829226-1-christianshewitt@gmail.com>
-X-Mailer: git-send-email 2.34.1
+Subject: Re: [PATCH v1] dt-bindings: cache: ax45mp: add 2048 as a supported cache-sets value
+Date: Thu, 28 Aug 2025 17:35:20 +0100
+Message-ID: <20250828-payback-suggest-f1cf62b3f051@spud>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250827-negligee-kinship-7832ba58deba@spud>
+References: <20250827-negligee-kinship-7832ba58deba@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=500; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=JX3w7EgTTKDSnT97jv6N1X/YhkPDkl/o1BzRKrboV24=; b=owGbwMvMwCVWscWwfUFT0iXG02pJDBkbWr0kHh/Y5XJ9o5bZWqNmxUPGof/2G7MvUrXq21XBb 69RbLmyo5SFQYyLQVZMkSXxdl+L1Po/Ljuce97CzGFlAhnCwMUpABNRkGRkWPhPV+DxPzveF1rl S+Ti8l5u+2BYHnRW9ML+Limbpv1yjYwMxzJNdJuPxsrZH2S76OfELnapN2b9Ws2matYQKf+dXyY zAwA=
+X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
 Content-Transfer-Encoding: 8bit
 
-From: Alex Bee <knaerzche@gmail.com>
+From: Conor Dooley <conor.dooley@microchip.com>
 
-Add the sound and i2s nodes to enable HDMI audio output on
-the MiQi board.
+On Wed, 27 Aug 2025 19:03:44 +0100, Conor Dooley wrote:
+> The QiLai implementation of this cache controller uses a cache-sets of
+> 2048, and mandates it in an if/else block - but the definition of the
+> property only permits 1024. Add 2048 as an option, and deny its use
+> outside of the QiLai.
+> 
+> 
 
-Signed-off-by: Alex Bee <knaerzche@gmail.com>
-Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
----
- arch/arm/boot/dts/rockchip/rk3288-miqi.dts | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+Applied to riscv-cache-for-next, thanks!
 
-diff --git a/arch/arm/boot/dts/rockchip/rk3288-miqi.dts b/arch/arm/boot/dts/rockchip/rk3288-miqi.dts
-index dd42f8d31f70..20df626547bd 100644
---- a/arch/arm/boot/dts/rockchip/rk3288-miqi.dts
-+++ b/arch/arm/boot/dts/rockchip/rk3288-miqi.dts
-@@ -78,6 +78,21 @@ vcc_sys: regulator-vsys {
- 		regulator-always-on;
- 		regulator-boot-on;
- 	};
-+
-+	sound {
-+		compatible = "simple-audio-card";
-+		simple-audio-card,format = "i2s";
-+		simple-audio-card,name = "HDMI";
-+		simple-audio-card,mclk-fs = <512>;
-+
-+		simple-audio-card,codec {
-+			sound-dai = <&hdmi>;
-+		};
-+
-+		simple-audio-card,cpu {
-+			sound-dai = <&i2s>;
-+		};
-+	};
- };
- 
- &cpu0 {
-@@ -283,6 +298,11 @@ &i2c5 {
- 	status = "okay";
- };
- 
-+&i2s {
-+	#sound-dai-cells = <0>;
-+	status = "okay";
-+};
-+
- &io_domains {
- 	status = "okay";
- 
--- 
-2.34.1
+[1/1] dt-bindings: cache: ax45mp: add 2048 as a supported cache-sets value
+      https://git.kernel.org/conor/c/4fab69dd1fa5
 
+Thanks,
+Conor.
 
