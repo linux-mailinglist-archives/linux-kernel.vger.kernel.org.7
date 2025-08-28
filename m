@@ -1,317 +1,246 @@
-Return-Path: <linux-kernel+bounces-790428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08137B3A709
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 18:56:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3ABF6B3A70D
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 18:56:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B757EA0006D
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 16:56:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBD1B3A996C
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 16:56:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 130EC32BF3A;
-	Thu, 28 Aug 2025 16:56:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="fO9geonm"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B18382517AA;
-	Thu, 28 Aug 2025 16:56:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB74632BF42;
+	Thu, 28 Aug 2025 16:56:42 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69508322DD1;
+	Thu, 28 Aug 2025 16:56:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756400193; cv=none; b=jL/aCWCHhO30Wv/nsWFKMwY2TaXXlep0fGKYubFgJ5xD/UghZVrIlv+98VJh7/q1pVP0Gm3kaurp0/ZBzD8R2EIHJtzLCNqAHIx0AF34xJIYGzhAJzAiNPMnc4DwX+RIe/2rF4qPcol/dSPYP/08mc5S1HghGULlUtGDG/ZtAW8=
+	t=1756400202; cv=none; b=Un7RyI0kXQH7lUBEgYoeHrSPZJPcjBkVqFHXHvX2p0kzxQVanDsxB7xKD1KxPDdWdrMOGlB3/Jlqwta5Yv1u8srf8k367qcF6LouqviaaSunC1V0Jqz1RRgtk+3CRtxzT6HUY+NEp27aN3EOkUhwCnGyxz2j+TJppPOlbd/cClU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756400193; c=relaxed/simple;
-	bh=DkgsLM/Jrugxtp/cZ2IhJgTMoE22UgeKhR3pETo8rZ4=;
+	s=arc-20240116; t=1756400202; c=relaxed/simple;
+	bh=TXzUNJXtueCL1Gu1Xs8lUA47SZJ0mUPPgR+YxMi31fw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S/v3zxZhbpxY1QWtuoMk5h/i4FIhSOg0dDzFaxovuLnvWNNYOx1379WofbEeRG52FnVJxqMvPZ7mWwro/tfHHl1ab3QSihFumVdI+EI1Zu4Wut05hyk4Yl5QKnGG12uqIDy/JH4J2Stob9nBdx3TuXX/uWK6/oyJYPLj5zpI7cc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=fO9geonm; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (212-76-243-235.access.telenet.be [212.76.243.235])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id F3A6E1809;
-	Thu, 28 Aug 2025 18:55:22 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1756400123;
-	bh=DkgsLM/Jrugxtp/cZ2IhJgTMoE22UgeKhR3pETo8rZ4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fO9geonm8A2vRmXRXsEGpekF67LrMjSUv8eBPyek4JYM8n0cTB2myv+5gLN0rgsvg
-	 QnXdOfnoFuJe58Xat1FaL7mrwFPoabUaYQMS8qFmRNgIQo/NznFCYZnXToMr+vvSmE
-	 RW1PPT/kxfs7nz2OSui+8+ZPDSacT3e7zWQqExw8=
-Date: Thu, 28 Aug 2025 18:56:05 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Bin Du <Bin.Du@amd.com>
-Cc: mchehab@kernel.org, hverkuil@xs4all.nl, bryan.odonoghue@linaro.org,
-	sakari.ailus@linux.intel.com,
-	prabhakar.mahadev-lad.rj@bp.renesas.com,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	sultan@kerneltoast.com, pratap.nirujogi@amd.com,
-	benjamin.chan@amd.com, king.li@amd.com, gjorgji.rosikopulos@amd.com,
-	Phil.Jawich@amd.com, Dominic.Antony@amd.com,
-	mario.limonciello@amd.com, richard.gong@amd.com, anson.tsao@amd.com
-Subject: Re: [PATCH v3 0/7] Add AMD ISP4 driver
-Message-ID: <20250828165605.GA9916@pendragon.ideasonboard.com>
-References: <20250828084507.94552-1-Bin.Du@amd.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=dpYszfxSxoMjmoauuYQKDChgNbl/F27gX3hDRrccxADHoaVWQzzWLtEjDpHG6DdD0W7dqICcFD4rggRqZ3hCOKi/VKoF7EzFrYTNcjMKI3fWlzTalPl6yCs4NpFa9Se9oUROKOHCaCjY2kS5OKWhSTbxoKxrHhIwjWVl20bR5nE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 269EB1688;
+	Thu, 28 Aug 2025 09:56:30 -0700 (PDT)
+Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D576C3F738;
+	Thu, 28 Aug 2025 09:56:35 -0700 (PDT)
+Date: Thu, 28 Aug 2025 17:56:30 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: David Gow <davidgow@google.com>
+Cc: Marie Zhussupova <marievic@google.com>, marievictoria875@gmail.com,
+	rmoar@google.com, shuah@kernel.org, brendan.higgins@linux.dev,
+	elver@google.com, dvyukov@google.com, lucas.demarchi@intel.com,
+	thomas.hellstrom@linux.intel.com, rodrigo.vivi@intel.com,
+	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
+	kasan-dev@googlegroups.com, intel-xe@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: [PATCH v4 0/7] kunit: Refactor and extend KUnit's parameterized
+ testing framework
+Message-ID: <aLCKPieOlM8dD858@J2N7QTR9R3>
+References: <20250826091341.1427123-1-davidgow@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250828084507.94552-1-Bin.Du@amd.com>
+In-Reply-To: <20250826091341.1427123-1-davidgow@google.com>
 
-Hi Bin Bu,
+On Tue, Aug 26, 2025 at 05:13:30PM +0800, David Gow wrote:
+> Hi all,
+> 
+> This is a new version of Marie's patch series, with a couple of extra
+> fixes squashed in, notably:
+> - drm/xe/tests: Fix some additional gen_params signatures
+> https://lore.kernel.org/linux-kselftest/20250821135447.1618942-1-davidgow@google.com/
+> - kunit: Only output a test plan if we're using kunit_array_gen_params
+> https://lore.kernel.org/linux-kselftest/20250821135447.1618942-2-davidgow@google.com/
+> 
+> These should fix the issues found in linux-next here:
+> https://lore.kernel.org/linux-next/20250818120846.347d64b1@canb.auug.org.au/
+> 
+> These changes only affect patches 3 and 4 of the series, the others are
+> unchanged from v3.
+> 
+> Thanks, everyone, and sorry for the inconvenience!
 
-Have you sent out the cover letter only ? I haven't received the rest of
-the series, and it's not found on lore.kernel.org either.
+Thanks for this!
 
-On Thu, Aug 28, 2025 at 04:45:00PM +0800, Bin Du wrote:
-> Hello,
-> 
-> AMD ISP4 is the AMD image processing gen 4 which can be found in HP ZBook Ultra G1a 14 inch Mobile Workstation PC ( Ryzen AI Max 385)
-> (https://ubuntu.com/certified/202411-36043)
-> This patch series introduces the initial driver support for the AMD ISP4.
-> 
-> Patch summary:
-> - Powers up/off and initializes ISP HW
-> - Configures and kicks off ISP FW
-> - Interacts with APP using standard V4l2 interface by video node
-> - Controls ISP HW and interacts with ISP FW to do image processing
-> - Support enum/set output image format and resolution
-> - Support queueing buffer from app and dequeueing ISP filled buffer to App
-> - It supports libcamera ver0.2 SimplePipeline
-> - It is verified on qv4l2, cheese and qcam
-> - It is verified together with following patches
-> 	platform/x86: Add AMD ISP platform config (https://lore.kernel.org/all/20250514215623.522746-1-pratap.nirujogi@amd.com/)
-> 	pinctrl: amd: isp411: Add amdisp GPIO pinctrl (https://github.com/torvalds/linux/commit/e97435ab09f3ad7b6a588dd7c4e45a96699bbb4a)
-> 	drm/amd/amdgpu: Add GPIO resources required for amdisp (https://gitlab.freedesktop.org/agd5f/linux/-/commit/ad0f5966ed8297aa47b3184192b00b7379ae0758)
-> 
-> AMD ISP4 Key features:
-> - Processes bayer raw data from the connected sensor and output them to different YUV formats
-> - Downscale input image to different output image resolution
-> - Pipeline to do image processing on the input image including demosaic, denoise, 3A, etc
-> 
-> ----------
-> 
-> Changes v2 -> v3:
-> 
-> - All the dependent patches in other modules (drm/amd/amdgpu, platform/x86, pinctrl/amd) merged on upstream mainline kernel (https://github.com/torvalds/linux) v6.17.
-> - Removed usage of amdgpu structs in ISP driver. Added helper functions in amdgpu accepting opaque params from ISP driver to allocate and release ISP GART buffers.
-> - Moved sensor and MIPI phy control entirely into ISP FW instead of the previous hybrid approach controlling sensor from both FW and x86 (sensor driver).
-> - Removed phy configuration and sensor binding as x86 (sensor driver) had relinquished the sensor control for ISP FW. With this approach the driver will be exposed as web camera like interface.
-> - New FW with built-in sensor driver is submitted on upstream linux-firmware repo (https://gitlab.com/kernel-firmware/linux-firmware/).
-> - Please note the new FW submitted is not directly compatible with OEM Kernel ISP4.0 (https://github.com/amd/Linux_ISP_Kernel/tree/4.0) and the previous ISP V2 patch series.
-> - If intend to use the new FW, please rebuild OEM ISP4.0 Kernel with CONFIG_VIDEO_OV05C10=N and CONFIG_PINCTRL_AMDISP=Y.
-> - Included critical fixes from Sultan Alsawaf branch (https://github.com/kerneltoast/kernel_x86_laptop.git) related to managing lifetime of isp buffers.
->       media: amd: isp4: Add missing refcount tracking to mmap memop
->       media: amd: isp4: Don't put or unmap the dmabuf when detaching
->       media: amd: isp4: Don't increment refcount when dmabuf export fails
->       media: amd: isp4: Fix possible use-after-free in isp4vid_vb2_put()
->       media: amd: isp4: Always export a new dmabuf from get_dmabuf memop
->       media: amd: isp4: Fix implicit dmabuf lifetime tracking
->       media: amd: isp4: Fix possible use-after-free when putting implicit dmabuf
->       media: amd: isp4: Simplify isp4vid_get_dmabuf() arguments
->       media: amd: isp4: Move up buf->vaddr check in isp4vid_get_dmabuf()
->       media: amd: isp4: Remove unused userptr memops
->       media: amd: isp4: Add missing cleanup on error in isp4vid_vb2_alloc()
->       media: amd: isp4: Release queued buffers on error in start_streaming
-> - Addressed all code related upstream comments
-> - Fix typo errors and other cosmetic issue.
-> 
-> 
-> Changes v1 -> v2:
-> 
-> - Fix media CI test errors and valid warnings
-> - Reduce patch number in the series from 9 to 8 by merging MAINTAINERS adding patch to the first patch
-> - In patch 5
-> 	- do modification to use remote endpoint instead of local endpoint
-> 	- use link frequency and port number as start phy parameter instead of extra added phy-id and phy-bit-rate property of endpoint
-> 
-> ----------
-> 
-> It passes v4l2 compliance test, the test reports for:
-> 
-> (a) amd_isp_capture device /dev/video0
-> 
-> Compliance test for amd_isp_capture device /dev/video0:
-> -------------------------------------------------------
-> 
-> atg@atg-HP-PV:~/bin$ ./v4l2-compliance -d /dev/video0
-> v4l2-compliance 1.29.0-5348, 64 bits, 64-bit time_t
-> v4l2-compliance SHA: 75e3f0e2c2cb 2025-03-17 18:12:17
-> 
-> Compliance test for amd_isp_capture device /dev/video0:
-> 
-> Driver Info:
->         Driver name      : amd_isp_capture
->         Card type        : amd_isp_capture
->         Bus info         : platform:amd_isp_capture
->         Driver version   : 6.14.0
->         Capabilities     : 0xa4200001
->                 Video Capture
->                 I/O MC
->                 Streaming
->                 Extended Pix Format
->                 Device Capabilities
->         Device Caps      : 0x24200001
->                 Video Capture
->                 I/O MC
->                 Streaming
->                 Extended Pix Format
-> Media Driver Info:
->         Driver name      : amd_isp_capture
->         Model            : amd_isp41_mdev
->         Serial           :
->         Bus info         : platform:amd_isp_capture
->         Media version    : 6.14.0
->         Hardware revision: 0x00000000 (0)
->         Driver version   : 6.14.0
-> Interface Info:
->         ID               : 0x03000005
->         Type             : V4L Video
-> Entity Info:
->         ID               : 0x00000003 (3)
->         Name             : Preview
->         Function         : V4L2 I/O
->         Pad 0x01000004   : 0: Sink
->           Link 0x02000007: from remote pad 0x1000002 of entity 'amd isp4' (Image Signal Processor): Data, Enabled, Immutable
-> 
-> Required ioctls:
->         test MC information (see 'Media Driver Info' above): OK
->         test VIDIOC_QUERYCAP: OK
->         test invalid ioctls: OK
-> 
-> Allow for multiple opens:
->         test second /dev/video0 open: OK
->         test VIDIOC_QUERYCAP: OK
->         test VIDIOC_G/S_PRIORITY: OK
->         test for unlimited opens: OK
-> 
-> Debug ioctls:
->         test VIDIOC_DBG_G/S_REGISTER: OK (Not Supported)
->         test VIDIOC_LOG_STATUS: OK (Not Supported)
-> 
-> Input ioctls:
->         test VIDIOC_G/S_TUNER/ENUM_FREQ_BANDS: OK (Not Supported)
->         test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
->         test VIDIOC_S_HW_FREQ_SEEK: OK (Not Supported)
->         test VIDIOC_ENUMAUDIO: OK (Not Supported)
->         test VIDIOC_G/S/ENUMINPUT: OK
->         test VIDIOC_G/S_AUDIO: OK (Not Supported)
->         Inputs: 1 Audio Inputs: 0 Tuners: 0
-> 
-> Output ioctls:
->         test VIDIOC_G/S_MODULATOR: OK (Not Supported)
->         test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
->         test VIDIOC_ENUMAUDOUT: OK (Not Supported)
->         test VIDIOC_G/S/ENUMOUTPUT: OK (Not Supported)
->         test VIDIOC_G/S_AUDOUT: OK (Not Supported)
->         Outputs: 0 Audio Outputs: 0 Modulators: 0
-> 
-> Input/Output configuration ioctls:
->         test VIDIOC_ENUM/G/S/QUERY_STD: OK (Not Supported)
->         test VIDIOC_ENUM/G/S/QUERY_DV_TIMINGS: OK (Not Supported)
->         test VIDIOC_DV_TIMINGS_CAP: OK (Not Supported)
->         test VIDIOC_G/S_EDID: OK (Not Supported)
-> 
-> Control ioctls (Input 0):
->         test VIDIOC_QUERY_EXT_CTRL/QUERYMENU: OK (Not Supported)
->         test VIDIOC_QUERYCTRL: OK (Not Supported)
->         test VIDIOC_G/S_CTRL: OK (Not Supported)
->         test VIDIOC_G/S/TRY_EXT_CTRLS: OK (Not Supported)
->         test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: OK (Not Supported)
->         test VIDIOC_G/S_JPEGCOMP: OK (Not Supported)
->         Standard Controls: 0 Private Controls: 0
-> 
-> Format ioctls (Input 0):
->         test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK
->         test VIDIOC_G/S_PARM: OK
->         test VIDIOC_G_FBUF: OK (Not Supported)
->         test VIDIOC_G_FMT: OK
->         test VIDIOC_TRY_FMT: OK
->         test VIDIOC_S_FMT: OK
->         test VIDIOC_G_SLICED_VBI_CAP: OK (Not Supported)
->         test Cropping: OK (Not Supported)
->         test Composing: OK (Not Supported)
->         test Scaling: OK (Not Supported)
-> 
-> Codec ioctls (Input 0):
->         test VIDIOC_(TRY_)ENCODER_CMD: OK (Not Supported)
->         test VIDIOC_G_ENC_INDEX: OK (Not Supported)
->         test VIDIOC_(TRY_)DECODER_CMD: OK (Not Supported)
-> 
-> Buffer ioctls (Input 0):
->         test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: OK
->         test CREATE_BUFS maximum buffers: OK
->         test VIDIOC_REMOVE_BUFS: OK
->         test VIDIOC_EXPBUF: OK
->         test Requests: OK (Not Supported)
->         test blocking wait: OK
-> 
-> Total for amd_isp_capture device /dev/video0: 49, Succeeded: 49, Failed: 0, Warnings: 0
-> 
-> Please review and provide feedback.
-> 
-> Many thanks,
-> 
-> Bin Du (7):
->   media: platform: amd: Introduce amd isp4 capture driver
->   media: platform: amd: low level support for isp4 firmware
->   media: platform: amd: Add isp4 fw and hw interface
->   media: platform: amd: isp4 subdev and firmware loading handling added
->   media: platform: amd: isp4 video node and buffers handling added
->   media: platform: amd: isp4 debug fs logging and  more descriptive
->     errors
->   Documentation: add documentation of AMD isp 4 driver
-> 
->  Documentation/admin-guide/media/amdisp4-1.rst |   66 +
->  Documentation/admin-guide/media/amdisp4.dot   |    8 +
->  .../admin-guide/media/v4l-drivers.rst         |    1 +
->  MAINTAINERS                                   |   25 +
->  drivers/media/platform/Kconfig                |    1 +
->  drivers/media/platform/Makefile               |    1 +
->  drivers/media/platform/amd/Kconfig            |    3 +
->  drivers/media/platform/amd/Makefile           |    3 +
->  drivers/media/platform/amd/isp4/Kconfig       |   13 +
->  drivers/media/platform/amd/isp4/Makefile      |   10 +
->  drivers/media/platform/amd/isp4/isp4.c        |  237 ++++
->  drivers/media/platform/amd/isp4/isp4.h        |   26 +
->  drivers/media/platform/amd/isp4/isp4_debug.c  |  272 ++++
->  drivers/media/platform/amd/isp4/isp4_debug.h  |   41 +
->  .../platform/amd/isp4/isp4_fw_cmd_resp.h      |  314 +++++
->  drivers/media/platform/amd/isp4/isp4_hw_reg.h |  125 ++
->  .../media/platform/amd/isp4/isp4_interface.c  |  972 +++++++++++++
->  .../media/platform/amd/isp4/isp4_interface.h  |  149 ++
->  drivers/media/platform/amd/isp4/isp4_subdev.c | 1198 ++++++++++++++++
->  drivers/media/platform/amd/isp4/isp4_subdev.h |  133 ++
->  drivers/media/platform/amd/isp4/isp4_video.c  | 1213 +++++++++++++++++
->  drivers/media/platform/amd/isp4/isp4_video.h  |   87 ++
->  22 files changed, 4898 insertions(+)
->  create mode 100644 Documentation/admin-guide/media/amdisp4-1.rst
->  create mode 100644 Documentation/admin-guide/media/amdisp4.dot
->  create mode 100644 drivers/media/platform/amd/Kconfig
->  create mode 100644 drivers/media/platform/amd/Makefile
->  create mode 100644 drivers/media/platform/amd/isp4/Kconfig
->  create mode 100644 drivers/media/platform/amd/isp4/Makefile
->  create mode 100644 drivers/media/platform/amd/isp4/isp4.c
->  create mode 100644 drivers/media/platform/amd/isp4/isp4.h
->  create mode 100644 drivers/media/platform/amd/isp4/isp4_debug.c
->  create mode 100644 drivers/media/platform/amd/isp4/isp4_debug.h
->  create mode 100644 drivers/media/platform/amd/isp4/isp4_fw_cmd_resp.h
->  create mode 100644 drivers/media/platform/amd/isp4/isp4_hw_reg.h
->  create mode 100644 drivers/media/platform/amd/isp4/isp4_interface.c
->  create mode 100644 drivers/media/platform/amd/isp4/isp4_interface.h
->  create mode 100644 drivers/media/platform/amd/isp4/isp4_subdev.c
->  create mode 100644 drivers/media/platform/amd/isp4/isp4_subdev.h
->  create mode 100644 drivers/media/platform/amd/isp4/isp4_video.c
->  create mode 100644 drivers/media/platform/amd/isp4/isp4_video.h
+I had a go at converting some of my aarch64 instruction encoding tests
+over to this, and having the ability to dynamically generate the params
+array before iterating over the case makes that much easier to handle.
 
--- 
-Regards,
+FWIW, for the series:
 
-Laurent Pinchart
+Acked-by: Mark Rutland <mark.rutland@arm.com>
+
+I'll see about getting those converted over and posted once this is in.
+
+Mark.
+
+> 
+> Cheers,
+> -- David
+> 
+> ---
+> 
+> Hello!
+> 
+> KUnit offers a parameterized testing framework, where tests can be
+> run multiple times with different inputs. However, the current
+> implementation uses the same `struct kunit` for each parameter run.
+> After each run, the test context gets cleaned up, which creates
+> the following limitations:
+> 
+> a. There is no way to store resources that are accessible across
+>    the individual parameter runs.
+> b. It's not possible to pass additional context, besides the previous
+>    parameter (and potentially anything else that is stored in the current
+>    test context), to the parameter generator function.
+> c. Test users are restricted to using pre-defined static arrays
+>    of parameter objects or generate_params() to define their
+>    parameters. There is no flexibility to make a custom dynamic
+>    array without using generate_params(), which can be complex if
+>    generating the next parameter depends on more than just the single
+>    previous parameter.
+> 
+> This patch series resolves these limitations by:
+> 
+> 1. [P 1] Giving each parameterized run its own `struct kunit`. It will
+>    remove the need to manage state, such as resetting the `test->priv`
+>    field or the `test->status_comment` after every parameter run.
+> 
+> 2. [P 1] Introducing parameterized test context available to all
+>    parameter runs through the parent pointer of type `struct kunit`.
+>    This context won't be used to execute any test logic, but will
+>    instead be used for storing shared resources. Each parameter run
+>    context will have a reference to that parent instance and thus,
+>    have access to those resources.
+> 
+> 3. [P 2] Introducing param_init() and param_exit() functions that can
+>    initialize and exit the parameterized test context. They will run once
+>    before and after the parameterized test. param_init() can be used to add
+>    resources to share between parameter runs, pass parameter arrays, and
+>    any other setup logic. While param_exit() can be used to clean up
+>    resources that were not managed by the parameterized test, and
+>    any other teardown logic.
+> 
+> 4. [P 3] Passing the parameterized test context as an additional argument
+>    to generate_params(). This provides generate_params() with more context,
+>    making parameter generation much more flexible. The generate_params()
+>    implementations in the KCSAN and drm/xe tests have been adapted to match
+>    the new function pointer signature.
+> 
+> 5. [P 4] Introducing a `params_array` field in `struct kunit`. This will
+>    allow the parameterized test context to have direct storage of the
+>    parameter array, enabling features like using dynamic parameter arrays
+>    or using context beyond just the previous parameter. This will also
+>    enable outputting the KTAP test plan for a parameterized test when the
+>    parameter count is available.
+> 
+> Patches 5 and 6 add examples tests to lib/kunit/kunit-example-test.c to
+> showcase the new features and patch 7 updates the KUnit documentation
+> to reflect all the framework changes.
+> 
+> Thank you!
+> -Marie
+> 
+> ---
+> 
+> Changes in v4:
+> 
+> Link to v3 of this patch series:
+> https://lore.kernel.org/linux-kselftest/20250815103604.3857930-1-marievic@google.com/
+> 
+> - Fixup the signatures of some more gen_params functions in the drm/xe
+>   driver.
+> - Only print a KTAP test plan if a parameterised test is using the
+>   built-in kunit_array_gen_params generating function, fixing the issues
+>   with generator functions which skip array elements.
+> 
+> Changes in v3:
+> 
+> Link to v2 of this patch series:
+> https://lore.kernel.org/all/20250811221739.2694336-1-marievic@google.com/
+> 
+> - Added logic for skipping the parameter runs and updating the test statistics
+>   when parameterized test initialization fails.
+> - Minor changes to the documentation.
+> - Commit message formatting.
+> 
+> Changes in v2:
+> 
+> Link to v1 of this patch series:
+> https://lore.kernel.org/all/20250729193647.3410634-1-marievic@google.com/
+> 
+> - Establish parameterized testing terminology:
+>    - "parameterized test" will refer to the group of all runs of a single test
+>      function with different parameters.
+>    - "parameter run" will refer to the execution of the test case function with
+>      a single parameter.
+>    - "parameterized test context" is the `struct kunit` that holds the context
+>      for the entire parameterized test.
+>    - "parameter run context" is the `struct kunit` that holds the context of the
+>      individual parameter run.
+>    - A test is defined to be a parameterized tests if it was registered with a
+>      generator function.
+> - Make comment edits to reflect the established terminology.
+> - Require users to manually pass kunit_array_gen_params() to
+>   KUNIT_CASE_PARAM_WITH_INIT() as the generator function, unless they want to
+>   provide their own generator function, if the parameter array was registered
+>   in param_init(). This is to be consistent with the definition of a
+>   parameterized test, i.e. generate_params() is never NULL if it's
+>   a parameterized test.
+> - Change name of kunit_get_next_param_and_desc() to
+>   kunit_array_gen_params().
+> - Other minor function name changes such as removing the "__" prefix in front
+>   of internal functions.
+> - Change signature of get_description() in `struct params_array` to accept
+>   the parameterized test context, as well.
+> - Output the KTAP test plan for a parameterized test when the parameter count
+>   is available.
+> - Cover letter was made more concise.
+> - Edits to the example tests.
+> - Fix bug of parameterized test init/exit logic being done outside of the
+>   parameterized test check.
+> - Fix bugs identified by the kernel test robot.
+> 
+> ---
+> 
+> Marie Zhussupova (7):
+>   kunit: Add parent kunit for parameterized test context
+>   kunit: Introduce param_init/exit for parameterized test context
+>     management
+>   kunit: Pass parameterized test context to generate_params()
+>   kunit: Enable direct registration of parameter arrays to a KUnit test
+>   kunit: Add example parameterized test with shared resource management
+>     using the Resource API
+>   kunit: Add example parameterized test with direct dynamic parameter
+>     array setup
+>   Documentation: kunit: Document new parameterized test features
+> 
+>  Documentation/dev-tools/kunit/usage.rst | 342 +++++++++++++++++++++++-
+>  drivers/gpu/drm/xe/tests/xe_pci.c       |  14 +-
+>  drivers/gpu/drm/xe/tests/xe_pci_test.h  |   9 +-
+>  include/kunit/test.h                    |  95 ++++++-
+>  kernel/kcsan/kcsan_test.c               |   2 +-
+>  lib/kunit/kunit-example-test.c          | 217 +++++++++++++++
+>  lib/kunit/test.c                        |  94 +++++--
+>  rust/kernel/kunit.rs                    |   4 +
+>  8 files changed, 740 insertions(+), 37 deletions(-)
+> 
+> -- 
+> 2.51.0.261.g7ce5a0a67e-goog
+> 
 
