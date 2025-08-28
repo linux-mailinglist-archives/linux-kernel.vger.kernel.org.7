@@ -1,130 +1,224 @@
-Return-Path: <linux-kernel+bounces-789523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DCDCB396C3
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 10:20:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E502B396CB
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 10:22:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E53271BA41D6
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 08:20:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E77C6464E20
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 08:22:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A52DC2E06EA;
-	Thu, 28 Aug 2025 08:19:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C5592D97A6;
+	Thu, 28 Aug 2025 08:22:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cU1qQXHO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A2aGbqeP"
+Received: from mail-yb1-f195.google.com (mail-yb1-f195.google.com [209.85.219.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 081921F4162;
-	Thu, 28 Aug 2025 08:19:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7CE22D6E7C
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 08:22:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756369183; cv=none; b=Ihds7nNlQnaZuU2+2LGCUYXlJFQv7Bw9zQf0Ce99hQFgLsxQZOrvryVyJ3pK+GGY908lm6rHnV3wczHtnqQpBeqG9Oqph+YEGPIoT/sk2aWgbb1r3GVUmawq1CFzNutz3qrgbRdGydJpAnTAxTKkBDj0aqqbN29W5J1fe9FIqV0=
+	t=1756369362; cv=none; b=fjhP2YfJJ44SYcq3WS5wcDSU9LhTObxHpV6MfuKrME0zInY7GzENW0IFrG/Yfqol2Wizdc1boXKAAHJeJ+emI46CeMZu29CLP2z653cwp10lEO37IEoB+6IWTVdN4q0NCzqpSHxC2BJ7TeeedzqmO6IzGXd+xAoWyrcatcrVr7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756369183; c=relaxed/simple;
-	bh=vpmhZ/BYgeL0lpRK+9nXFK6vdfF+/Xs5Wi9tJd36oz0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=PEpKeHgg+n+DCg498hduTDsh1R6tV+rZCjaFZuReJoYKfzJho4G00yPs07mY5Cz7jC4a9UMqSacyJAOnU9JMNrxv511FVtB5HbKNMVcvTRdjNUj2Ph6QrAFNZQlfPNg4zFXRU8PhHLXP1YCSqj2A+F/QwQcBdln+Crh0YkWfulA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cU1qQXHO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39532C4CEEB;
-	Thu, 28 Aug 2025 08:19:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756369182;
-	bh=vpmhZ/BYgeL0lpRK+9nXFK6vdfF+/Xs5Wi9tJd36oz0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=cU1qQXHOJOCqzk11O7vUeUhhKuSChzzT3cSwJ6lDf6nO85AzlReArl6PZcK6NUzJz
-	 upq/uZs24GYlSUijV5eeDnm3VYMMJc0QqDJ03E/5WvBhKSW0jyakllq6Mb8kH5HHMa
-	 0s+t/FyXe6Xx7rO+4rehR1ZeUwRAOJVQsu1l/DayprsYz3OgY1+fZzIECslGOjRZOH
-	 8OgwwDvy385bE5H6ojQCn6AjJz6zuL6yLy85OxqyOjA1+txNqW7mtal/6TyGRvpnMT
-	 59cLrjo3fcL5+zD6MTgJOHPr8kD93aUA4xYw8YlF+RdFqKI+ABuTEGvrCy1gdXOTVk
-	 0RpmBOsezBiGA==
-X-Mailer: emacs 30.2 (via feedmail 11-beta-1 I)
-From: Aneesh Kumar K.V <aneesh.kumar@kernel.org>
-To: Arto Merilainen <amerilainen@nvidia.com>, dan.j.williams@intel.com
-Cc: linux-kernel@vger.kernel.org, bhelgaas@google.com, aik@amd.com,
-	lukas@wunner.de, Samuel Ortiz <sameo@rivosinc.com>,
-	Yilun Xu <yilun.xu@linux.intel.com>, linux-pci@vger.kernel.org,
-	linux-coco@lists.linux.dev
-Subject: Re: [PATCH v4 07/10] PCI/IDE: Add IDE establishment helpers
-In-Reply-To: <21903f51-1ed0-41a4-a8c8-cfa78ce6093d@nvidia.com>
-References: <20250717183358.1332417-1-dan.j.williams@intel.com>
- <20250717183358.1332417-8-dan.j.williams@intel.com>
- <9683c850-3152-4da5-97f1-3e86ba39e8d3@nvidia.com>
- <6896333756c9f_184e1f100ef@dwillia2-xfh.jf.intel.com.notmuch>
- <21903f51-1ed0-41a4-a8c8-cfa78ce6093d@nvidia.com>
-Date: Thu, 28 Aug 2025 13:49:32 +0530
-Message-ID: <yq5azfbjq2nf.fsf@kernel.org>
+	s=arc-20240116; t=1756369362; c=relaxed/simple;
+	bh=OguTCqAGhd0jJkn6Ix2Fvo1ieQFOhvRQl9Ap5adHE4g=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=tQTehMDgwFEBCUHSyOg49G07f/6MYdVhuLjzZUEzaybCWl3jkyg/wtmKUZ4SkRAyjWv34Z2TQbJJob+Kg4C5iJc2vvx6F7WsozuYxxnvoqvRHJFh98B+kSeSrDTW0q9kQ/E50tWrrs9IUMy1ZNKpP0VaXitI0A9njj7tz6+gbig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A2aGbqeP; arc=none smtp.client-ip=209.85.219.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f195.google.com with SMTP id 3f1490d57ef6-e970b511046so93006276.0
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 01:22:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756369360; x=1756974160; darn=vger.kernel.org;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=qiGPM+suLwP4dkp89SR/0dFOvLXVoBhrGyxfdVbyG80=;
+        b=A2aGbqePx+ZcYxbrQ2p2IlLotsmi6i5pNz5SrfJkMKYIKiuf+7etasEz+0dOtVPWLQ
+         aIjzspFdBJGt5gsywhruOOLWNgfOxQjO8HQVwlOHZDPlMjwczK+dEUB7kpxFL3bK1AqB
+         d4FiSg3R9kno1TgaInXgigb3xBqOd2uNI1wESXAuJeowD6p2S+CN4QxFq2CNQeulr/2y
+         eqsq9MWCiwusuUHkFoSOc58ICGCBa+iIUp71Oa5Vba4r7bAoz/7Wtf0Cgvjq0QRZvhp8
+         rU87wGo6bUEGqQiA92bclsOqEuJJpeyDvA0WwzvabtsAAvsq8HD5/8UPph4Sd5X0/fAs
+         beNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756369360; x=1756974160;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=qiGPM+suLwP4dkp89SR/0dFOvLXVoBhrGyxfdVbyG80=;
+        b=vMnch5DGShrUtZ0mvnbgJ/jLQGYzdVZfNIfcR33t1YjMu9AAiOHora9Gln5umr8/eF
+         HKUKi5JEAF1ZwEuhmKORmLk4lX7ufJCj1LN852g0UKjej0xBv9d14P3VrFmowAUHwyRl
+         v/s9Q4sAi8JoUwPTDMaZQHcCRQEbzOfir8yzrv7X9fYmQO3SME533fyuiFqk7KzXyMiT
+         gSEfUT/rWczJuhrjDZGnbqnNYyhpP4g34zpO4Cyvt+IcReSaOmwfMwVR67aSl1GgxwCr
+         qYa/fl+BW//WvJ34z7B6SAvneTAJnuQ7bZk4ITvZwO+s8I6prb/gxojndJfby58bQN+r
+         7M0w==
+X-Gm-Message-State: AOJu0YxZvKr7CjfH9Hl/q5SfcXcR2saU9bLoYmVrmVC7XSLDe95RK+TS
+	j9jD0ekchTNYYh+T2BQTau+6QTmcxNO8PRAap2tYmTr0Wj2oKMcZ4WTJ5sQmgpKwhZlv4mDQwed
+	lGYKzVTuS63f1j9CjFmEsOPaYyzMn1fL/5XPbkcjOzA==
+X-Gm-Gg: ASbGncvn5bQPpIeAvd/13D9uI92+Kcz+mrf5rYGXCNYNQeLHyUr5ZlbdH0QrPDvdMH2
+	vczh9EJFSVzh4GNMq+BVDYb11KXEy8U8U1kXChgQXgDQ52ORo7bcgt13SmB53wIbMrofTnorNoC
+	z8Zk4JAzPVebCRc+SEQvs7fRA35Zz8kx6I1lpaM3ibNnNnV4L4onxOeG37/522orLGjKKcfKn1q
+	DWL04cFOB/ZvE714nhV1AhZfvvtLZx7WYjEkR02lP9zlGKO5z31
+X-Google-Smtp-Source: AGHT+IGpO98Ar+rSy2BeS0gKApO+vSumveBXzeFdbqlz3iXCfvH7VbmHDNB00pMDHAFnn1M4eaGFm7TMsDNEGDq7Lkg=
+X-Received: by 2002:a05:6902:2b91:b0:e95:d920:208d with SMTP id
+ 3f1490d57ef6-e95d9202f4bmr17648328276.43.1756369359492; Thu, 28 Aug 2025
+ 01:22:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+From: Amit <amitchoudhary0523@gmail.com>
+Date: Thu, 28 Aug 2025 13:52:27 +0530
+X-Gm-Features: Ac12FXzj8IIOVSZPHdnIQpTe2yXDtApCd7zPHtKdwlT19chkee11nCnrw8xE-JU
+Message-ID: <CAFf+5zg91=Ei-L-XxroiTQKqVwpG+hVSU5ahOkEuWB0_A1WqbA@mail.gmail.com>
+Subject: Signal handler example (Three files: signal_handler_example.c,
+ compile_signal_handler_example.sh, and ReadMe.txt).
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Arto Merilainen <amerilainen@nvidia.com> writes:
+Signal handler example (Three files: signal_handler_example.c,
+compile_signal_handler_example.sh, and ReadMe.txt).
 
-> On 8.8.2025 20.26, dan.j.williams@intel.com wrote:
->> Arto Merilainen wrote:
->>> The first revision of this patch had address association register
->>> programming but it has since been removed. Could you comment if there is
->>> a reason for this change?
->> 
->> We chatted about it around this point in the original review thread [1].
->> tl;dr SEV-TIO and TDX Connect did not see a strict need for it. However,
->> the expectation was always to circle back and revive it if it turned out
->> later to be required.
->
-> Thank you for the reference. I suppose it is ok to rely on the default 
-> streams on the first iteration, and add a follow-up patch in the ARM CCA 
-> device assignment support series in case it is the only architecture 
-> that depends on them.
->
->> 
->>> Some background: This might be problematic for ARM CCA. I recall seeing
->>> a comment stating that the address association register programming can
->>> be skipped on some architectures (e.g., apparently AMD uses a separate
->>> table that contains the StreamID) but on ARM CCA the StreamID
->>> association AFAIK happens through these registers.
->> 
->> Can you confirm and perhaps work with Aneesh to propose an incremental
->> patch to add that support back? It might be something that we let the
->> low level TSM driver control. Like an additional address association
->> object that can be attached to 'struct pci_ide' by the low level TSM
->> driver.
->
-> Aneesh, could you perhaps extend the IDE driver by adding the RP address 
-> association register programming in the next revision of the DA support 
-> series?
->
+------------------------------------
+signal_handler_example.c
+------------------------------------
 
-Sure, I can add that change as part of next update. 
+/*
+ * License:
+ *
+ * This file has been released under "unlicense" license
+ * (https://unlicense.org).
+ *
+ * This is free and unencumbered software released into the public domain.
+ *
+ * Anyone is free to copy, modify, publish, use, compile, sell, or distribute
+ * this software, either in source code form or as a compiled binary, for any
+ * purpose, commercial or non-commercial, and by any means.
+ *
+ * For more information about this license, please visit - https://unlicense.org
+ */
 
->
-> I think the EP side programming won't be relevant until we get to the 
-> P2P use-cases.
->
->> 
->> The messy part is sparse device MMIO layout vs limited association
->> blocks and this is where SEV-TIO and TDX Connect have other mechanisms
->> to do that stream-id association.
->
-> Despite the potential sparsity, I think there needs to be only three 
-> address association register blocks per SEL_IDE block: The routing is 
-> based on the type-1 configuration space header which defines only three 
-> ranges (32bit BAR, 64bit BAR, IO). When enabling IDE between an RP and 
-> an EP, the SEL_IDE address association registers in the RP can be 
-> programmed with the same ranges used in the type-1 header in the switch 
-> upstream from the EP.
->
-> That said, if the RP implements less than three address association 
-> registers per SEL_SID, this scheme won't work.
->
-> (I vaguely recall that the PCIe spec might forbid IORd/IOWr TLPs when 
-> selective IDE streams are used so the limit might in fact be two instead 
-> three...)
->
-> - R2
+/*
+ * Author: Amit Choudhary
+ * Email: amitchoudhary0523 AT gmail DOT com
+ */
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <string.h>
+#include <signal.h>
+
+// Function prototype for gcc flag -Werror-implicit-function-declaration.
+void signal_handler_function(int signum);
+
+void signal_handler_function(int signum)
+{
+
+    static long count = 0;
+
+    count = count + 1;
+
+    printf("\n");
+    printf("--------------------------------------------------------------\n");
+    printf("%s(): \"\"SIGNAL HANDLER FUNCTION CALLED\"\".\n", __FUNCTION__);
+    printf("This process has woken up because the signal \"SIGUSR1\" (signal"
+           " number %d) was received.\n", signum);
+    printf("Now, this process will again go back to sleep.\n");
+    printf("This signal handler has been called \"%ld\" %s till now.\n",
+           count, (count > 1) ? "times" : "time");
+    printf("--------------------------------------------------------------\n");
+
+    return;
+
+} // end of function signal_handler_function()
+
+int main(void)
+{
+
+    struct sigaction sa;
+    pid_t mypid = -1;
+    int retval = -1;
+
+    memset(&sa, 0, sizeof(sa));
+
+    sa.sa_handler = signal_handler_function;
+
+    retval = sigaction(SIGUSR1, &sa, NULL);
+
+    if (retval < 0) {
+        printf("\n%s(): Error: sigaction() returned error. Signal handler was"
+               " not installed. Exiting...\n", __FUNCTION__);
+        exit(EXIT_FAILURE);
+    }
+
+    printf("\n%s(): Signal handler installed successfully.\n", __FUNCTION__);
+
+    mypid = getpid();
+
+    while(1) {
+        printf("\n%s(): The pid of this process is %d.\n", __FUNCTION__, mypid);
+        printf("\n%s(): This process is going to sleep. This process will wake"
+               " up when the signal \"SIGUSR1\" (signal number 10) will be"
+               " received. If any other signal is received then the results are"
+               " undefined.\n", __FUNCTION__);
+        pause();
+    }
+
+    return 0;
+
+} // end of function main()
+
+-------------------------------------------------
+compile_signal_handler_example.sh
+-------------------------------------------------
+
+#!/bin/bash
+
+set -x
+
+rm -f signal_handler_example.out
+
+gcc -Wall -Werror -Wextra -Wundef -Wunreachable-code -Winit-self
+-Wparentheses -Wconversion -Wsign-conversion -Wsign-compare
+-Werror-implicit-function-declaration -Wmissing-prototypes
+-Wmissing-declarations -Wformat-security signal_handler_example.c -o
+signal_handler_example.out
+
+----------------
+ReadMe.txt
+----------------
+
+File "signal_handler_example.c" gives an example of how to install a user
+defined signal handler that will override the signal handler provided by the
+system for that signal.
+
+In this file, we install a signal handler for the signal "SIGUSR1" (signal
+number 10).
+
+This program, on startup, goes to sleep waiting for the signal "SIGUSR1". When
+the signal "SIGUSR1" is sent to this program, this program wakes up and the
+user's signal handler function is called. After the signal handler function
+returns, this program again goes back to sleep waiting for the signal "SIGUSR1".
+This goes on in an endless loop until the user terminates the program.
+
+If any other signal is sent to this program then the results are undefined.
+
+You can send the signal "SIGUSR1" to this program by running the following
+command in a terminal shell (bash, etc.):
+
+            kill -10 pid_of_this_program
+
+So, if the pid of this program is 14753, then you can send "SIGUSR1" signal to
+this program as follows:
+
+            kill -10 14753
+
+This program prints its pid on the output screen, so you can use that pid
+directly, instead of grepping the output of "ps -aef".
+
+---- End of ReadMe ----
 
