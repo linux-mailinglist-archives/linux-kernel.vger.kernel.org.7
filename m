@@ -1,391 +1,125 @@
-Return-Path: <linux-kernel+bounces-789887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BA85B39C2B
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 14:05:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B167FB39C28
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 14:05:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4513C5E1F57
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 12:05:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EADE8189E0A0
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 12:05:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF6D730F80C;
-	Thu, 28 Aug 2025 12:05:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A918730F922;
+	Thu, 28 Aug 2025 12:05:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="PlGJWxQT";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="lRS4+ulU"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="dXfse24o"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EB5030F95B
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 12:05:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756382711; cv=fail; b=TB33LDp/qQ6uvu8B+1neu8Kf/2XOfkE1i1x5+geHgHKXudEHiG84C/bKa5eBPjVomFMuvfIa0BQPzAida5f8n3lITvXoMQBqe1iZCiwEV/HSnEkFjdVadcVh6VbpTbQVYsvAsXD4O1I1tKhqmRtJIcRH9gp4ApBjdRGIg73riRI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756382711; c=relaxed/simple;
-	bh=EX8Qafo9xdxkcXJGkFi8Ro3XTZzJQSn4CUMjm4ZJv5M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=qbsAE42hVjBiPW6l0n29Kc6FgMtQqC/+9GdSr2zT0leCg9LlByKzN4P24YtRN6Z3lDyz7Nydd/wDXLyo75rLeSNB3s4dh6TIovI4WmrNFqruWiaycIuVAzSMZ8XTQcouUOOM8TKBTlWzS738MZ6321aYk6y6cNIYoo8DBKTV5zg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=PlGJWxQT; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=lRS4+ulU; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57S8tnVu007151;
-	Thu, 28 Aug 2025 12:04:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2025-04-25; bh=coNWY6ibyhNB3Fq+q+gt/RcYSIDX0R8rxbyizCtGSR8=; b=
-	PlGJWxQTxzruevzHlzOWeBi5wpXMR7u/03lZ3pzgdQiENMUupPZQ1l3AgZlNubKL
-	XmhyH3aHPiY6D8NmLAZF7dYSQS76ouI8iPFU9ev3yYspErcLDmGOi/wDBJUiAkJW
-	M0aB3H88wDNlsigNeAdNDZIeUjojp+6RmptWny3wWyBD/icx5d/Y8DNlxC6v6YCU
-	chWE/J36iXM07sEECRrFNz6KmRNbukQWKDWI/2EMWQi8D9kre9Sb5pzqycxNyFq0
-	QLCRm2+ngpv7FveM+cimS7D3sJhhl/eDcAhIEVHUr6XVQhhVBd4Tm+2DUL7+Ju9v
-	xDkkWRnCszspLNO+Vt2XxA==
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 48q6790c51-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 28 Aug 2025 12:04:51 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 57SAVA2x012229;
-	Thu, 28 Aug 2025 12:04:50 GMT
-Received: from nam04-mw2-obe.outbound.protection.outlook.com (mail-mw2nam04on2070.outbound.protection.outlook.com [40.107.101.70])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 48q43bsafc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 28 Aug 2025 12:04:50 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=fu2dIfZfybe1BDiKmYnFHGMe5kWKaseRprjy8w0tKUE2ksIV/A3WdcQh2mrkM9rqrEPVked0ZSSOfMjPEVEvlWXnB6oJ66dKDtH6+Eh0cV3pzkPCo+58T1tugWxEu+Q+C1VpQOqdO/h34J+29MSF5c9zuUtcwkph/LbYmmiKaacq7h+ha86cAQ4LQ4kAYDu/ByiEoLBNjqiwXtQ5dDSZrqs5qekRUCxMvA3AX8E1gJbDwW2uz1B5CRhqTF6NoeFL+EgAlZKwuBP8FXx9ITFFyC0RlfiYdLBKEVejnlOtrfMaHAyWReBotCPprdmEPXfW2N1mb3M6zWMPRAos9L14JA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=coNWY6ibyhNB3Fq+q+gt/RcYSIDX0R8rxbyizCtGSR8=;
- b=cnddhN614CZ1IgTRfPsbO/p+Vr8sRIu2yc/AP2jheS1cperbLHR1ZQuMzdjA/ZzCyYdpQ5j+Yqb/5Mqx5Sw9ScAsXKrcSd25wYqG20pfGoDhu9YA/pU+jAaoK0lSpHqDBnAFRveXv9LSEF2YQotMVXcnfIe1HB33a22Koc7UVKhmwH0OH4gHi9BmuinwMLJ62gKTqCirBW7ZvLJEsM/kp/yuOy4RoUl+Lzk2b9aIxlV4QMI1NJOltavE1BV7+n8sMZHsSr4zffVs6AFfjgVlT2i7Pp1mIibqkG05EUHzPZiyGL4fYe8tCDauZYwktAPgjoMQPXgFTGpLI7f9PDfJ9g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=coNWY6ibyhNB3Fq+q+gt/RcYSIDX0R8rxbyizCtGSR8=;
- b=lRS4+ulUV4MwGFSv3m8zwpvXyfcuXsqVGtYAyORU1Fldw5xoI8iX5QsOi5RPlETjCnBJltnfqDPs0y36mMinePv+w0tT84OWxvy9IDf5EJRfwLe2q8ccN8News5FHfLQKv5OSKpu7Eq2DztixU7C3HEm0Wx5ElK3rCr8eN/R1FA=
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
- by IA1PR10MB6217.namprd10.prod.outlook.com (2603:10b6:208:3a6::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.17; Thu, 28 Aug
- 2025 12:04:41 +0000
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2%5]) with mapi id 15.20.9052.019; Thu, 28 Aug 2025
- 12:04:39 +0000
-Date: Thu, 28 Aug 2025 13:04:36 +0100
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: Lokesh Gidra <lokeshgidra@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Harry Yoo <harry.yoo@oracle.com>, Zi Yan <ziy@nvidia.com>,
-        Barry Song <21cnbao@gmail.com>,
-        "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
-        Peter Xu <peterx@redhat.com>, Suren Baghdasaryan <surenb@google.com>,
-        Kalesh Singh <kaleshsingh@google.com>,
-        android-mm <android-mm@google.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Jann Horn <jannh@google.com>, Rik van Riel <riel@surriel.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        "Liam R. Howlett" <Liam.Howlett@oracle.com>
-Subject: Re: [DISCUSSION] Unconditionally lock folios when calling rmap_walk()
-Message-ID: <a0350dd8-748b-41d5-899e-1505bd2b2e80@lucifer.local>
-References: <CA+EESO4Z6wtX7ZMdDHQRe5jAAS_bQ-POq5+4aDx5jh2DvY6UHg@mail.gmail.com>
- <dc92aef8-757f-4432-923e-70d92d13fb37@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <dc92aef8-757f-4432-923e-70d92d13fb37@redhat.com>
-X-ClientProxiedBy: GV2PEPF0000383A.SWEP280.PROD.OUTLOOK.COM
- (2603:10a6:144:1:0:5:0:a) To DM4PR10MB8218.namprd10.prod.outlook.com
- (2603:10b6:8:1cc::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5919F30F54D;
+	Thu, 28 Aug 2025 12:04:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756382700; cv=none; b=GFfwaDO6Z7HAaKXNyocGXcNem48Sn6bwokQjN0SrGP2cYUThXR5Nc1bpDTTm8LYTRWVikhTSgfcoWBCHjsamlfopl8VK/5QmJqw6FNHjsey7WFFtRw4QWdAfc76Wygy2LUFKbkxiTyZHGLNGJc4kootcD0jCRzguODsnEqbGidM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756382700; c=relaxed/simple;
+	bh=hui+EEJxD/vnvKdapGOPLoICemUL0PTzMfP7GQy58oY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=dL+2JyGaS/BdnpLZfaaJ4I088fwj1SgJ/SoEMB94Juy3kYFYe391w0bPLJC9IPcksG+hE0W3lFY3y6ZnnTkZKmJw3lF14xtQ1mrRrbW6G+q/qDH05EgmuF4TC8U8O3msdxWGbf89PqigxnP/kiHcazDR7JymzesRgmoBhfy9B1w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=dXfse24o; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
+	bh=vPdymbaCqau+yaCWSCW4KLmPAF+HpjkM+g2fCUR5lNY=; b=dXfse24ojcLjDHCLcShxSynjgY
+	N3lUpTszTBimpfq/1btLaJ5GmD2APYQLHOXc4DgzbEXb/MrcIWlyZKL4lIS5mG2MbF9glnlRmfRhT
+	me0SSegWwB5BxdHbpsmlFCgvJy4VgoZkLTtUjvjksXVm1Y5lpTDUhCqGkrtdFHe3gcKFAoCpOFIJB
+	764/UBax1SXtRp8cspT1503G4cSGfPKToIyaS7joNn/ldwsScvHDynbipeCcaulw9057Sxg6kDz1q
+	h+pciZ0fW0BLrTeIMjqZoALd147RFdPQjJFZhWNZCYLVAIUIAbdZM+Dcpq+pna1EeX7feXmYmg3ih
+	kyFo7bBQ==;
+Received: from [185.205.242.134] (helo=phil.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1urbMy-0005X1-Ex; Thu, 28 Aug 2025 14:04:44 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Hide Hako <opi5plus@bcc.bai.ne.jp>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-sound@vger.kernel.org, Hide Hako <opi5plus@bcc.bai.ne.jp>
+Subject:
+ Re: [PATCH v2] arm64: dts: rockchip: Enables sound output from the audio jack
+ on OrangePI5 Plus
+Date: Thu, 28 Aug 2025 14:04:43 +0200
+Message-ID: <9820114.4vTCxPXJkl@phil>
+In-Reply-To: <20250826134456.9636-2-opi5plus@bcc.bai.ne.jp>
+References: <20250826134456.9636-2-opi5plus@bcc.bai.ne.jp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|IA1PR10MB6217:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8aea8be7-73ad-4f89-479f-08dde62b10cb
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?cDBnV0E5blJoWFd6Rk9ZOHRIcXFQbGNiZkh6S2xmVTI4SWoyeUlNYWZSODlx?=
- =?utf-8?B?MzBjRTZhLzFNdlU4VXNDY1F5S0NMeXVmb2psYmkxSVhhODZyNXRPNk4rTEla?=
- =?utf-8?B?UEM2ODNEcFZ4eHl3SklDeDNZNGRxazlWQ0tCb040aG91L081eTY1STUzbU4y?=
- =?utf-8?B?QUsyTnM3RkNtYU1pVVBaMTR0NVlsVWFRUTFZRFpTdEtBY2tkRFR5RW1TOTFF?=
- =?utf-8?B?cW1lNVNvWFFHblp3bldER3hLeE5IZ2Y1ODdYSFp1TzB3aUQrRU5aajV4SDNs?=
- =?utf-8?B?NnQwRkVJSk5uUmUvZzJRdVBQaVVFQ2hCNzFnTDk0VXhZTk1raU5kNGV0aE85?=
- =?utf-8?B?b3ZhTEM3Y0VQZ2tieXNIOVRlNXUvRHdMSDhvZWZzcmtEYy9yVWVvOUVXL2ht?=
- =?utf-8?B?M09Idlg4bjZoOFJlOGJhS3NVWG1kM2ljN3lCaVJjY2VEMEIrLzlsNmRoWERv?=
- =?utf-8?B?VGROTFlIOTFDdXpTLzVONmlYdW5jbWtPcVhnK0syS2VyaDEwa3VodzQvRkRk?=
- =?utf-8?B?OWhoMlpLM1krNkhHc3k2cjVnWE95K3FlcVBlN0xXV2JCK0NjZzlrbFczT1dr?=
- =?utf-8?B?TDNMM213Ymtia0FYVmlKZU85dStOSGZhSE01SFhTK09RSUlOakwzbE84NFRQ?=
- =?utf-8?B?SDZqeWMvWXNubldCVXBWZytzVUVKa05JUEQ0R0NLTkUva1YzNndwK0dHeWRl?=
- =?utf-8?B?QTNOcy85QVh2cVRscEsyMFdXN1lDQTdtZjJETmsyNFkvbC9UMGlMTTFMZ3JL?=
- =?utf-8?B?dFAxS0p6cHRpMklWeHVhNHN2OEczTjFkTHhITXU1ckI0YllqY0N1c2ZkQlFS?=
- =?utf-8?B?RWFQYUszNDc4VlI4bEJoQy9xcmpEU1oxd3hMbWJmQjBzb2lMYVl0L05aM095?=
- =?utf-8?B?NiswZTd6YjdwMVlSQjAwSzdDMWY4QU9vdkJsS1V4cXQ0UW5RL1U0YUtHbTk5?=
- =?utf-8?B?N25tSzRZYTlmRWRkMkZkSjdlemduUnlRTHBlazUwZE9zZFB5QmFqbTNIbmV6?=
- =?utf-8?B?ME9hR0l6eUFiZDNYQnpHTmJjTXlxZWpFQnVna0hja1lwRjYrY3N1T0ZTc0Q3?=
- =?utf-8?B?YUJjbTdGNmxnaTJNUGVTMFlxbno1MmpFL0twOFp3dFBzbFhjM2JYU0JEQmFW?=
- =?utf-8?B?TGl2alo3d3JST3IxVjRPbFE1MkJNdHJpWnJTVkZlVWdPTTVnWXc3dGRNaGVw?=
- =?utf-8?B?VkRyQXdBTWhVejNYNEdjR0NkRUlRelQzMnNKUmdVb3hyWHprcTBqL1AyV21W?=
- =?utf-8?B?ZTcwWUlKTHN6eGNSbmZjODdQazc3eHdTN1l1NHhqN3FpL25raG1jZlg0RlVt?=
- =?utf-8?B?WHhQSU1HYnFDdHV3ODNLWi9ZM2tpQXYvZW9BQ2NkRGVoOEt5bmtTVmJsZW1v?=
- =?utf-8?B?a1FuMGVGb0VjTk1kcUVCYzFUOWx2UVlKMGNMYVZLSmI1aVU0dHVzd0MyRUc2?=
- =?utf-8?B?cXg2N3hrQ2J4WitDMVVHV2dhMDFTb1lUeElEQ3NNa0hhQUwwM29hVXdCRmM5?=
- =?utf-8?B?RUxOUmRLTFBjU1dKN2NjWGN2VEswQkZQaU5USkZHMHk3L3RLMHd5ZFFjdzg3?=
- =?utf-8?B?Lzd0bzN0RnYwRStaU0pEQ0x1aHJvTzhPM2pSZThyUTk1elVBMGFWaDdHYU9P?=
- =?utf-8?B?RlU0czF5YVJIMjhvUVZ0UThSVHl6K2dHeUVBQjJ3SlJZRnZQR2F1REdLQnFF?=
- =?utf-8?B?Um5IZGd1RWs4NWRXVVhRb0hSSTdKQUNkaFpmU0tWMGNBMHRkZEU1SFRZRFJS?=
- =?utf-8?B?NDl1Q1Ixc0g3SGl5RjNOQys0ZnpBTGhkZFNFR05xaGowd2E4Q2FEQ3h1V09U?=
- =?utf-8?B?a2M0QTUwTzlCdVN2UmVIbjZhdGZXK1ZEOUpsRGRLdmorWFdRK0Y5NmRvdW9m?=
- =?utf-8?B?NGNZL0NKQXkzdkRNM2RJa1JGTWl1YUx4Q0dCNXZzMS9iclFzaXAxbnY1czZ5?=
- =?utf-8?Q?nvSXpyU7xPQ=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?dTNESm1SVlU4WWkyd25yQ1BIbWlxM2twTU5wNGJPU3JjR2wvTWNwb0hEZEg3?=
- =?utf-8?B?SHlDUER1WDcxMTFHVUxsQ0FzcEs5TlYrZCtsVGVwT2lwb20xaTlYb1g0NXE1?=
- =?utf-8?B?Q1YwSUptenM1Sm5XZW9PMXpzT29IbWl5dFAvTERkTFl1V2NWeDVOVHhrOGRw?=
- =?utf-8?B?QmFCTXlxYW5qS3VtNExsYWIrTkNzbWF3TDcvQ0orM0MveWlkS21XdTJ1TkdR?=
- =?utf-8?B?STVKRHhDL296bU1IVmJQZExQaXc4U1RFTmRIeHMvd1dZRFNKTHdoSmFxaTR2?=
- =?utf-8?B?ek5BNDNzR09qV2UwOE9aL0RKNTM3MndTbU1HVnZlNmgycnZMU0UzRVJiSkZZ?=
- =?utf-8?B?WGZzREFDOXk5OFJqVjhJUlNUR3NoMHFjRlBPYjEvRTh0UzNXMDMwcW9GbW0x?=
- =?utf-8?B?aDhScVRPNE1UV1VGWHhTdThFOEZMcTR5NG5uM0xyakpoMjhzN0tZeDMwY1pq?=
- =?utf-8?B?SDF0YVB2OFlzRFlGZTI5WERPRThJODhWN1kzZWVNNEFLNUpKb3htOEhTVStJ?=
- =?utf-8?B?WWRPZHVJY1padFlGZEx5WFYrZ0pjWmNld2d3RDRycGtMakV1cHl3dENWVldN?=
- =?utf-8?B?U3RyR2RkVEZoQzI1cEFYWjZoRGF2TFdUcTJBMWJPREZ0QmZPV1NYejNzbSsv?=
- =?utf-8?B?YVF2Z3A4M01HdHFDNHJJQjI5N25QbndkT2JpRG01YTFtL3E3UDBDU2VlUC9i?=
- =?utf-8?B?cXVOMW1oeG9zVDR0MHM3b0h6SVN2TVVRZGVqOG5zb2JzRHNXTXFtOVlmVWxm?=
- =?utf-8?B?OTJwMDZuMWNDWUpDai9OQWQ0UE4rMnBXZzN1UnJKeDNUNXh4dVRPc1ROQzZ1?=
- =?utf-8?B?dldobDRlMW5YQUtwZFFyaytkN25iT2VzWDNoS2VKRkRJZ3NEU2x6bUJVSS9o?=
- =?utf-8?B?NDArUE11djEvUnJySlRQa3c3a1puKzhhZzFrb3BmWkQzZXQ2QlM4SkIxeEdz?=
- =?utf-8?B?NUNza0hwalZ6UnJML00rNkZyTlF5MlpYVCtIM204LzdSMnB0bTBmQzl6RHZI?=
- =?utf-8?B?VW43bGdjNnRtMkd5SUw0U1U1NVh4ZHVHSTlvaUYwbXZONTcvS0lQUjgzbE9Y?=
- =?utf-8?B?eHo3RkhhTUNlcFl0YjluSFJRWUxQNVVRRVB4U0hiMTFhQVJObUxCTVZzR0JE?=
- =?utf-8?B?Yy9ndGJiMm9MSGNDWi9UMHI3RVBwWnlLaFF5OFpmbytsZGtPeWhyQTdyc3po?=
- =?utf-8?B?L2hGWGhQZXNHNThxRHI2SklDSFBIZkxpYTZwemFDV2hDSjhOTVJqa05CMTJM?=
- =?utf-8?B?YTg1QjdvSTVMdFBtUktsaklzVzBKc1N0MEpKY3d1ZFpyZ0l5aXJ3KzFaT1JQ?=
- =?utf-8?B?WEhnSGVESFMxdlpBUnZya0hFcXlLMmRDRTlSZlkyVDJTWFdERmVveHREaWlr?=
- =?utf-8?B?YVBLVVAzSVdRTlNkQk4rRGxvOURKczV4eUNENWxWeFVoalgvd2hRQ2ZNSWU3?=
- =?utf-8?B?U1FzRmp4VXJmcHJFVVpnQ2lNeURLZXBOYzBzdjROME1HbkRqYWtpSERKN0Zn?=
- =?utf-8?B?UFZSYi9SWGpkVEJaTFExM0xSV3pqRStXeFpnTUMwTDN4RVJucmY5VzFrdTdu?=
- =?utf-8?B?MlZmdUZ6OU9PWExmc0RUdzB3dUlRTGFJUGhLR0I0Z2NINDFCcVZQZEZvcW00?=
- =?utf-8?B?S3lLV3JoZTFDeHJMckMrNTRPZHdBUjZOTEgyZFVLWVpqZFcwbVpRUnRsUUdV?=
- =?utf-8?B?aW5Bd29LVkhBTWs5RTJZci9vYWNncGs0aDQvOHVLSEt4ZVhIODJwM2VnNDdF?=
- =?utf-8?B?Z0lXNVR5d2xoUjVaYmk3ZXJwVjQrRUJURmZnZGRzZVhMTE54M2E0ME9nWURF?=
- =?utf-8?B?NlhxUk1mTkVNZkhsa0FlYmc4TEFDVWdzZVNHV3NMMDdBSEovSFl6azlRMkxL?=
- =?utf-8?B?c0ttOVViWUUzWjdKdlZIZGhOOU8wUnhxUzk5RkloRS85TlNKMGFNdnZ5NGZO?=
- =?utf-8?B?TStKTFk0MUZraEIyaWE2NWFKS0o0R0tRZS9JdXZvaWxPRjFBVFlkeEdnSi9V?=
- =?utf-8?B?bjRuRVgvU2wzc0x5VVZ3V3BPdWd0VUFEWG9BUWdyekNLMnh3dGdVUXg3T0Fq?=
- =?utf-8?B?b3hqZktiMGdxbWlsdERtNWlqbmRSOUxXOVh3TWRhUzd6ZGJwenZSc1F5QzVx?=
- =?utf-8?B?OHQxNDMzNnVMRnNrMG54TmNEOUFWYzdMQ3VrYUo5L0JMRUtYN0hmb3duYkVS?=
- =?utf-8?B?alE9PQ==?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	zLHMItHQqYUlV9QX/L7bztxZh8by/E37jrBoDWaqtKid8DPlARkF2W0864caaFalOkNE8f5VPDkKT4v1nlkfj8fw0X+nfaM7IOW+HnL2nwj2YOK0wczUk83IhTMMckCB318RMiqX+C6erLkijdzvCmGpwCs1s1KzkeBUPoUaNN//mzHDh3bCyUIKjUPrwJ6sEjBIRADUQ+0unDznRYKohP1wbV5IbYloyx7MIFH64lCdR4j827snllS/fYg0jO7llUxCEIKwWrVosrnWwfbM7sHzKAEskL36j9V9OGfVJFC4GolC6+EXJ6P4k5OwPpK8USmJsNTsrSqHd7eU9t0sSCmXJgHs1PcDNIhtGkXMWOa0PyaxPbdKUb7YiByn0OCxEqYtBRM7iWGMkc8APfX4sf89PG9ZWqSoAH1OzIwbbTl5hoN86yTonueHieRjr6SW2URGlr6arw6P4mbzqzkpMEVVJtWBikgu90UpY9KFnsHWPuLq4umONUDAJlaBDKffuIxVr2R3U6944732ZRCk/EpOQSh/RLISxBd1GSMX05VLoVxUYHrsLxXVySrkMz2oho3AaW4JE4lNaYfoGbsQrMGFcVomE5NlgUYLUczKSy4=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8aea8be7-73ad-4f89-479f-08dde62b10cb
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Aug 2025 12:04:39.8019
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: D5+IXPVq1blGLYYQUdnD60rusFlkUR0IgHfDH6Fzbo4XgaHbrip6YnAsyPpFCvmdLSjQ6cCkBN46RUP/kisarx7gOzdwUaX4YbF/ttQlJ+U=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR10MB6217
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-28_03,2025-08-28_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 malwarescore=0 bulkscore=0
- adultscore=0 mlxlogscore=999 spamscore=0 phishscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2508110000
- definitions=main-2508280101
-X-Proofpoint-GUID: gMCAg35lKNjOESre4HteQ__xJWFNQSjj
-X-Proofpoint-ORIG-GUID: gMCAg35lKNjOESre4HteQ__xJWFNQSjj
-X-Authority-Analysis: v=2.4 cv=NrLRc9dJ c=1 sm=1 tr=0 ts=68b045e3 b=1 cx=c_pps
- a=qoll8+KPOyaMroiJ2sR5sw==:117 a=qoll8+KPOyaMroiJ2sR5sw==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
- a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=2OwXVqhp2XgA:10 a=GoEa3M9JfhUA:10 a=XIiHZLNihtKFslvas5kA:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 cc=ntf awl=host:12069
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIzMDAzNSBTYWx0ZWRfXwzZlGv4Wrv6A
- FZUUeBfe9FUXI8UGRskiY9r8nq3E2jHDA3waZHIL+FB+1UZpNZAq/BJsd1X+xG/ckExm/+JVGof
- vieIfbyL36Q/MvwIfW5r2OgihyazVbis7we3DDSBxwFL3pWvAstRPOKsOXZuRu89t5Nc/4Eh2y9
- yC/e7DsNbo7zJHpAf1CpRdK8z0pKxKazE439Bk2qFVx5TEjQWNL8Wm99jCLVP2YFrZ4WTW2Z5Rm
- Euf+5k5haHc027CmifJagVwTrzT8Vhf3gfJFFM8H/GJlCHHW2JVj6PnwOZdBfaO2u5WkvQisogj
- m4XinZtHAAkzIiZ6MYonPXXXPQnrlPl8w9grvRJEdqAI1fyEjXQA8/rECOrjYRaLG/Gibg9REye
- wJ635pQrYtjg5LSSsMTEIZMPsYw8Nw==
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-On Mon, Aug 25, 2025 at 05:19:05PM +0200, David Hildenbrand wrote:
-> On 22.08.25 19:29, Lokesh Gidra wrote:
-> > Hi all,
-> >
-> > Currently, some callers of rmap_walk() conditionally avoid try-locking
-> > non-ksm anon folios. This necessitates serialization through anon_vma
-> > write-lock elsewhere when folio->mapping and/or folio->index (fields
-> > involved in rmap_walk()) are to be updated. This hurts scalability due
-> > to coarse granularity of the lock. For instance, when multiple threads
-> > invoke userfaultfd’s MOVE ioctl simultaneously to move distinct pages
-> > from the same src VMA, they all contend for the corresponding
-> > anon_vma’s lock. Field traces for arm64 android devices reveal over
-> > 30ms of uninterruptible sleep in the main UI thread, leading to janky
-> > user interactions.
-> >
-> > Among all rmap_walk() callers that don’t lock anon folios,
-> > folio_referenced() is the most critical (others are
-> > page_idle_clear_pte_refs(), damon_folio_young(), and
-> > damon_folio_mkold()). The relevant code in folio_referenced() is:
-> >
-> > if (!is_locked && (!folio_test_anon(folio) || folio_test_ksm(folio))) {
-> >          we_locked = folio_trylock(folio);
-> >          if (!we_locked)
-> >                  return 1;
-> > }
-> >
-> > It’s unclear why locking anon_vma exclusively (when updating
-> > folio->mapping, like in uffd MOVE) is beneficial over walking rmap
-> > with folio locked. It’s in the reclaim path, so should not be a
-> > critical path that necessitates some special treatment, unless I’m
-> > missing something.
-> >
-> > Therefore, I propose simplifying the locking mechanism by ensuring the
-> > folio is locked before calling rmap_walk().
->
-> Essentially, what you mean is roughly:
->
-> diff --git a/mm/rmap.c b/mm/rmap.c
-> index 34333ae3bd80f..0800e73c0796e 100644
-> --- a/mm/rmap.c
-> +++ b/mm/rmap.c
-> @@ -1005,7 +1005,7 @@ int folio_referenced(struct folio *folio, int is_locked,
->         if (!folio_raw_mapping(folio))
->                 return 0;
-> -       if (!is_locked && (!folio_test_anon(folio) || folio_test_ksm(folio))) {
-> +       if (!is_locked) {
->                 we_locked = folio_trylock(folio);
->                 if (!we_locked)
->                         return 1;
->
->
-> The downside of that change is that ordinary (!ksm) folios will observe being locked
+Hi Hide Hako,
 
-Well anon folios, I guess this is what you meant :)
+Am Dienstag, 26. August 2025, 15:44:57 Mitteleurop=C3=A4ische Sommerzeit sc=
+hrieb Hide Hako:
+> Currently, analog sound is not output from the audio jack.
+> This patch allows you to select analog headphones in alsamixer.
+> Works with kernel 6.16.1, but not 6.17-rc1.
+>=20
+> Points of concern:
+> 6.16.1 kernel with ubuntu 25.04 Setting -> Sound -> Output Device
+>  I select Speakers Built-in Audio, the sound will be output from the audi=
+o jack.
+>=20
+> Changes since v1:
+> - As pointed out by Jimmy, the file to be modified has been changed
+>   from rk3588-orangepi-5.dtsi to rk3588-orangepi-5-plus.dts.
 
-> when we are actually only trying to asses if they were referenced.
->
-> Does it matter?
+All of what Maud said, but also I think this deserves some
 
-Also another downside is we try lock and abort if we fail, so we've made this
-conditional on that.
+=46ixes: 236d225e1ee7 ("arm64: dts: rockchip: Add board device tree for rk3=
+588-orangepi-5-plus")
 
-But surely this is going to impact reclaim performance esp. under heavy memory
-pressure? It is at least a trylock.
+tag + could do the subject as=20
+  "arm64: dts: rockchip: Fix sound output from the audio jack on OrangePI5 =
+Plus"
 
-It's dangerous waters, and I'd really want some detailed data + analysis to
-prove the point here, I don't think theorising about it is enough.
+because this really sounds like it fixes functionality to is supposed
+to be working :-)
 
->
-> I can only speculate that it might have been very relevant before
-> 6c287605fd56 ("mm: remember exclusively mapped anonymous pages with PG_anon_exclusive").
->
-> Essentially any R/O fault would have resulted in us copying the page, simply because
-> there is concurrent folio_referenced() happening.
 
-Fun.
+Thanks a lot
+Heiko
 
-Thing is we now have to consider _every case_ where a contention might cause an
-issue.
+> Signed-off-by: Hide Hako <opi5plus@bcc.bai.ne.jp>
+> ---
+>  arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-plus.dts | 1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-plus.dts b/ar=
+ch/arm64/boot/dts/rockchip/rk3588-orangepi-5-plus.dts
+> index 121e4d1c3..44bb15951 100644
+> --- a/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-plus.dts
+> +++ b/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-plus.dts
+> @@ -78,6 +78,7 @@ &analog_sound {
+>  	pinctrl-0 =3D <&hp_detect>;
+>  	simple-audio-card,aux-devs =3D <&speaker_amp>, <&headphone_amp>;
+>  	simple-audio-card,hp-det-gpios =3D <&gpio1 RK_PD3 GPIO_ACTIVE_LOW>;
+> +	simple-audio-card,pin-switches =3D "Speaker", "Headphones";
+>  	simple-audio-card,widgets =3D
+>  		"Microphone", "Onboard Microphone",
+>  		"Microphone", "Microphone Jack",
+>=20
 
-One thing I _was_ concerned about was:
 
-- uffd move locks folios
-- now folio_referenced() 'fails' returning 1
 
-But case 2 is only in shrink_active_list() which uses this as a boolean...
 
-OK so maybe fine for this one.
-
-I really do also hate that any future callers are going to possibly be confused
-about how this function works, but I guess it was already 'weird' for
-file-backed/KSM.
-
-So the issue remains really - folio lock contention as a result of this.
-
-It's one thing to theorise, but you may be forgetting something... and then
-we've changed an absolutely core thing to suit a niche UFFD use case.
-
-I do wonder if we can identify this case and handle things differently.
-
-Perhaps even saying 'try and get the rmap lock, but if there's "too much"
-contention, grab the folio lock.
-
->
-> Before 09854ba94c6a ("mm: do_wp_page() simplification") that wasn't an issue, but
-> it would have meant that the write fault would be stuck until folio_referenced()
-> would be done, which is also suboptimal.
->
-> So likely, avoiding grabbing the folio lock was beneficial.
->
->
-> Today, this would only affect R/O pages after fork (PageAnonExclusive not set).
-
-Hm probably less of a problem that.
-
->
->
-> Staring at shrink_active_list()->folio_referenced(), we isolate the folio first
-> (grabbing reference+clearing LRU), so do_wp_page()->wp_can_reuse_anon_folio()
-> would already refuse to reuse immediately, because it would spot a raised reference.
-> The folio lock does not make a difference anymore.
-
-folio_check_references() we're good with anyway as folio already locked.
-
-So obviously shrink_active_list() is the only caller we really care about.
-
-That at least reduces this case, but we then have to deal with the fact we're
-contending this lock elsewhere.
-
->
->
-> Is there any other anon-specific (!ksm) folio locking? Nothing exciting comes to mind,
-> except maybe some folio splitting or khugepaged that maybe would have to wait.
->
-> But khugepaged would already also fail to isolate these folios, so probably it's not that
-> relevant anymore ...
-
-This is it... there's a lot of possibilities and we need to tread extremely
-carefully.
-
-if we could find a way to make uffd deal with this one way or another (or
-possibly - detecting heavy anon vma lock contention) maybe that'd be
-better... but then adding more complexity obv.
-
->
-> --
-> Cheers
->
-> David / dhildenb
->
-
-I mean having said all the above and also in other thread - I am open to being
-convinced I'm wrong and this is ok.
-
-Obviously removing the complicated special case for anon would _in general_ be
-nice, it's just very sensitive stuff :)
-
-Cheers, Lorenzo
 
