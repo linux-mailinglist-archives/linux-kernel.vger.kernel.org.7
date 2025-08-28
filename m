@@ -1,169 +1,144 @@
-Return-Path: <linux-kernel+bounces-789324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75528B393ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 08:40:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEBB7B393F2
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 08:41:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20177367460
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 06:40:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2AF14189985F
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 06:41:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9C7027A448;
-	Thu, 28 Aug 2025 06:40:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B2F027A477;
+	Thu, 28 Aug 2025 06:41:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="GDg5Ts2G"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ssY/JVvB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CEE013DDAA;
-	Thu, 28 Aug 2025 06:40:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DDFB1F3B96;
+	Thu, 28 Aug 2025 06:41:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756363232; cv=none; b=tBsnOMkO+bD3sFShIWDhMOns1eaPQ3AFkhPhzPfxOrMjtlDveRZODbcEvydBrEubq2wj+AJy+GH3/DJYCkObWe5rdu4auQjNGVjveu8z+ZpqgNjXUBu3TBBjNhJWrpF6l7HrfQB8B5MfGSdQAdauZn4LpOzD3PnZjopSlYJf9PM=
+	t=1756363273; cv=none; b=VjNM+5o0Lkvpz4HwQ4eSpPOSJZn7pNwNzTj5uEXTxFqB8Gns16Ui4XIL8DOdXbQqS8N3rvrqD0iZ7/ZXd1OknxAccpMrD79Jsa9bs7L0W2ofM+Orr2RGj7hUm0FmnwMvlUiKaAntqGCAHh4TwSsG6io5lncFB6qeZQ0wpZyb+9s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756363232; c=relaxed/simple;
-	bh=wVanGn2pOTKHqPky1Y3RQndB0p77FejtrPuOmSQtWXM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kN1b3twvtO++se7QZFKao731ykkIMt6F3HOTTyLcmI57WBA74lW+t3vakAUgY3frcNSapnp4b8NTIgxFnBohQGllos/LShBj9AgBM0q5tZ6dpvLb3QMER7WqHnIdDH7y4DSh5YANfgXawPDjJiOWHg4i1U9QMNEZ5iNYZ4LavI0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=GDg5Ts2G; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from ideasonboard.com (mob-5-90-54-205.net.vodafone.it [5.90.54.205])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id F08C11189;
-	Thu, 28 Aug 2025 08:39:22 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1756363163;
-	bh=wVanGn2pOTKHqPky1Y3RQndB0p77FejtrPuOmSQtWXM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GDg5Ts2G+3SlSwd1DcTVyPe05wCOclNLYfI0by+1CIhtKcUiytaUcNbQt4TCmAkSH
-	 afr4efv5omdyQ7OeyCsyhqAbCvXop7zDtxlw930UqS+yBrYMUUJG1EygDPKLp4qOil
-	 /Apjqspkq/xvM4xy5rIN11hIFtoX+IoMZibZBIHM=
-Date: Thu, 28 Aug 2025 08:40:22 +0200
-From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-To: Qianfeng Rong <rongqianfeng@vivo.com>
-Cc: Jacopo Mondi <jacopo.mondi@ideasonboard.com>, 
-	Jacopo Mondi <jacopo@jmondi.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	"open list:MT9V111 APTINA CAMERA SENSOR" <linux-media@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/5] media: i2c: mt9v111: fix incorrect type for ret
-Message-ID: <bceety6ir4doadxo7zeixc3vve5faewtqhofsilkcjcbppwu4p@zdis66vyayi2>
-References: <20250827123916.504189-1-rongqianfeng@vivo.com>
- <20250827123916.504189-3-rongqianfeng@vivo.com>
- <xbmwlnflzhfhapyt5dinqqsdurxgu5imlqixudopb7z32eteth@cs7hulza54e3>
- <411e9db5-5339-4527-bb3d-473b339a6572@vivo.com>
- <x3wogjf6vgpkisdhg3abzrx7v7zktmdnfmqeih5kosszmagqfs@oh3qxrgzkikf>
- <8cf9d7a6-9950-4086-8b81-ddaa68639410@vivo.com>
+	s=arc-20240116; t=1756363273; c=relaxed/simple;
+	bh=uvHu6Jg79leQgc5jk+P0upBRR7e35i0RjdRkQJjRmlQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bqMWUk3Eii7W+DawpE9AAp3cJxft7aN6yKsahfavwimeFzEjtmcaajAVMp39IKLuAWn6cwn6MOzG89HnvSCQCkPy2f29hpzfs3AT1XU2f8rBpy3a4/H1mgr0gKs3b59cOopIXVTofN3JPGkL3qo7M3HEZFZwpAwbKnyhlqk8maQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ssY/JVvB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05431C4CEEB;
+	Thu, 28 Aug 2025 06:41:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756363273;
+	bh=uvHu6Jg79leQgc5jk+P0upBRR7e35i0RjdRkQJjRmlQ=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=ssY/JVvBNfWl105pUHJ0nbujbLoxaxFh/J/Ji3i+k64d/MGbdOI2tw1U87Xm4pk1c
+	 m1+0y6C1DoMc3x/Xk05rJLdK1VZqR1VTyENVOWDDP18bJZE0iWyr/8pRBM8mY0X7kA
+	 7+8cGk10anS3LzHWvCSbHO2E0afCM7FsQ9lDl0ELbyQkC5zh+SS4CRY25nUP4BPxDj
+	 r7Avu9NFK3U4MhkrToESNy7fsz65MDi59a08+6iCcjNi8fhXrKd2AQ09OvHzTJyQkL
+	 u2PfmPh/HRJ3rdUcFa+DXAnUBbQ6m4bd6GK7vMBOOShQKE7LZGLC1PCKcHBk2ABnl7
+	 wGRctEJhFDt1g==
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-55f469ad067so686509e87.0;
+        Wed, 27 Aug 2025 23:41:12 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUf7QLRHyk/7jXJKtF6y+f1ey8tBnmBvSGKZXjIKKbAc6UEIMBepw10eVULpH7hL/zX+Cw39bIWAK4=@vger.kernel.org, AJvYcCW+YWHzN42ItijhZVkMq19RIi8555iZqCBqQjjPFAqwypzmwznUHBMexShlS4rP5U/NldC5Wg8HgIezjKRI@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFSx3HxIDSe0Wh8NaaX9J6omyAGNqzfEvji/WZ7cg3qL8nmUiS
+	wbzvUDQJhVEj6xKmqqlC3f5OMj016pENExOAy+ECcKnp7dyg+D9PiCnlF2AXkdlYHDzAqm/eLnW
+	19XzVSLd0NnOiIjS4T0dxKVwqQOewruA=
+X-Google-Smtp-Source: AGHT+IGIPB3Xwu5a+WuD6+HvR4o83E1B+3tbp1ucafhr7r/LxwN8bXumQLhhX6t1f/58D5YIZ8b+Lf9G0cQsN9SUqNI=
+X-Received: by 2002:a05:6512:b20:b0:55f:4bc6:a5e3 with SMTP id
+ 2adb3069b0e04-55f4f4c6addmr2576297e87.24.1756363271372; Wed, 27 Aug 2025
+ 23:41:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <8cf9d7a6-9950-4086-8b81-ddaa68639410@vivo.com>
+References: <20250827073954.2046464-1-linan666@huaweicloud.com>
+In-Reply-To: <20250827073954.2046464-1-linan666@huaweicloud.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Thu, 28 Aug 2025 08:40:59 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXGa7X41H5Eip+WMt3WX2HoPzoxDXHgR-4-616jhHY0NeQ@mail.gmail.com>
+X-Gm-Features: Ac12FXxQN8DGxG4NlH0R8Z2i-FbHWj_fTdIO6j7nCyCbuAF9m0x4nRxJJN3VoKQ
+Message-ID: <CAMj1kXGa7X41H5Eip+WMt3WX2HoPzoxDXHgR-4-616jhHY0NeQ@mail.gmail.com>
+Subject: Re: [PATCH v3] efivarfs: Fix slab-out-of-bounds in efivarfs_d_compare
+To: linan666@huaweicloud.com
+Cc: jk@ozlabs.org, matt.fleming@intel.com, linux-efi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, yangerkun@huawei.com, yi.zhang@huawei.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Qianfeng
+On Wed, 27 Aug 2025 at 09:48, <linan666@huaweicloud.com> wrote:
+>
+> From: Li Nan <linan122@huawei.com>
+>
+> Observed on kernel 6.6 (present on master as well):
+>
+>   BUG: KASAN: slab-out-of-bounds in memcmp+0x98/0xd0
+>   Call trace:
+>    kasan_check_range+0xe8/0x190
+>    __asan_loadN+0x1c/0x28
+>    memcmp+0x98/0xd0
+>    efivarfs_d_compare+0x68/0xd8
+>    __d_lookup_rcu_op_compare+0x178/0x218
+>    __d_lookup_rcu+0x1f8/0x228
+>    d_alloc_parallel+0x150/0x648
+>    lookup_open.isra.0+0x5f0/0x8d0
+>    open_last_lookups+0x264/0x828
+>    path_openat+0x130/0x3f8
+>    do_filp_open+0x114/0x248
+>    do_sys_openat2+0x340/0x3c0
+>    __arm64_sys_openat+0x120/0x1a0
+>
+> If dentry->d_name.len < EFI_VARIABLE_GUID_LEN , 'guid' can become
+> negative, leadings to oob. The issue can be triggered by parallel
+> lookups using invalid filename:
+>
+>   T1                    T2
+>   lookup_open
+>    ->lookup
+>     simple_lookup
+>      d_add
+>      // invalid dentry is added to hash list
+>
+>                         lookup_open
+>                          d_alloc_parallel
+>                           __d_lookup_rcu
+>                            __d_lookup_rcu_op_compare
+>                             hlist_bl_for_each_entry_rcu
+>                             // invalid dentry can be retrieved
+>                              ->d_compare
+>                               efivarfs_d_compare
+>                               // oob
+>
+> Fix it by checking 'guid' before cmp.
+>
+> Fixes: da27a24383b2 ("efivarfs: guid part of filenames are case-insensitive")
+> Signed-off-by: Li Nan <linan122@huawei.com>
+> Signed-off-by: Wu Guanghao <wuguanghao3@huawei.com>
+> ---
+> v3: Check guid directly, add comment. Emphasize 'invalid filename' in
+>     commit message.
+>
+>  fs/efivarfs/super.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+>
+> diff --git a/fs/efivarfs/super.c b/fs/efivarfs/super.c
+> index c4a139911356..4bb4002e3cdf 100644
+> --- a/fs/efivarfs/super.c
+> +++ b/fs/efivarfs/super.c
+> @@ -152,6 +152,10 @@ static int efivarfs_d_compare(const struct dentry *dentry,
+>  {
+>         int guid = len - EFI_VARIABLE_GUID_LEN;
+>
+> +       /* Parallel lookups may produce a temporary invalid filename */
+> +       if (guid <= 0)
+> +               return 1;
+> +
+>         if (name->len != len)
+>                 return 1;
+>
 
-On Thu, Aug 28, 2025 at 10:08:07AM +0800, Qianfeng Rong wrote:
->
-> 在 2025/8/28 0:24, Jacopo Mondi 写道:
-> > [You don't often get email from jacopo.mondi@ideasonboard.com. Learn why this is important at https://aka.ms/LearnAboutSenderIdentification ]
-> >
-> > Hi Qianfeng
-> >
-> > On Wed, Aug 27, 2025 at 11:41:26PM +0800, Qianfeng Rong wrote:
-> > > 在 2025/8/27 20:58, Jacopo Mondi 写道:
-> > > > [You don't often get email from jacopo.mondi@ideasonboard.com. Learn why this is important at https://aka.ms/LearnAboutSenderIdentification ]
-> > > >
-> > > > Hi Qianfeng
-> > > >
-> > > > On Wed, Aug 27, 2025 at 08:39:10PM +0800, Qianfeng Rong wrote:
-> > > > > Change "ret" from unsigned int to int type in mt9v111_calc_frame_rate()
-> > > > > to store negative error codes or zero returned by __mt9v111_hw_reset()
-> > > > > and other functions.
-> > > > >
-> > > > > Storing the negative error codes in unsigned type, doesn't cause an issue
-> > > > > at runtime but it's ugly as pants.
-> > > > >
-> > > > > No effect on runtime.
-> > > > well, I'm not sure that's true.
-> > > >
-> > > > The code goes as
-> > > >
-> > > >           ret = __mt9v111_hw_reset(mt9v111);
-> > > >           if (ret == -EINVAL)
-> > > >                   ret = __mt9v111_sw_reset(mt9v111);
-> > > >           if (ret)
-> > > >                   return ret;
-> > > >
-> > > > And if ret is unsigned the condition ret == -EINVAL will never be met.
-> > > >
-> > > > I guess this actually fixes a bug, doesn't it ?
-> > > > You can add:
-> > > >
-> > > > Cc: stable@vger.kernel.org
-> > > > Fixes: aab7ed1c3927 ("media: i2c: Add driver for Aptina MT9V111")
-> > > > Reviewed-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-> > > >
-> > > > Thanks
-> > > >     j
-> > > I have written a test program on the arm64 platform:
-> > >
-> > > unsigned int ret = -ENOMEM;
-> > >
-> > > if (ret == -ENOMEM)
-> > >      pr_info("unsigned int ret(%u) == -ENOMEM\n", ret);
-> > > else
-> > >      pr_info("unsigned int ret(%u) != -ENOMEM\n", ret);
-> > >
-> > > Output log is: unsigned int ret(4294967284) == -ENOMEM
-> > Indeed, I was very wrong and ignoring the C integer promotion rules.
-> >
-> > If I read right the "6.3.1.8 Usual arithmetic conversions" section of
-> > the C11 specs I found freely available online (ISO/IEC 9899:201x), in
-> > particular:
-> >
-> > if the operand that has unsigned integer type has rank greater or
-> > equal to the rank of the type of the other operand, then the operand with
-> > signed integer type is converted to the type of the operand with unsigned
-> > integer type.
-> >
-> > Indeed the above doesn't introduce any functional change (as the
-> > 'rank' of an unsigned int is the same as the one of an int [1])
-> >
-> > I would anyway consider it at least a "logical" fix, as comparing an
-> > unsigned int to a negative error code is misleading for the reader at
-> > the least.
-> >
-> > Thanks anyway for testing.
-> >
-> > [1] Section "6.3.1.1"
-> > The rank of any unsigned integer type shall equal the rank of the corresponding
-> > signed integer type, if any.
->
->
-> Thank you for letting me know about this.  It's a great learning experience
-> through our discussions-cheers!
->
-> Do I still need to submit the v2 version with the following additions?
->
-> Cc: stable@vger.kernel.org
-> Fixes: aab7ed1c3927 ("media: i2c: Add driver for Aptina MT9V111")
-> Reviewed-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-
-I would do so anyway, yes.
-
-For sure you can keep my tag ;)
-
-Cheers!
-
->
-> Best regards,
-> Qianfeng
->
-> >
+Queued up as a fix now - thanks.
 
