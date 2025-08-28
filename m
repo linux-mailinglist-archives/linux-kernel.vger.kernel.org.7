@@ -1,126 +1,218 @@
-Return-Path: <linux-kernel+bounces-790466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790467-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B527B3A77C
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 19:15:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DA9EB3A780
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 19:16:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 10F44565A50
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 17:15:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AA4F97BBF5F
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 17:14:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB0A433A000;
-	Thu, 28 Aug 2025 17:14:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 772B433CEBC;
+	Thu, 28 Aug 2025 17:15:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="S+WQdnQy"
-Received: from out30-100.freemail.mail.aliyun.com (out30-100.freemail.mail.aliyun.com [115.124.30.100])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EJzdxybn"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08F5533472C;
-	Thu, 28 Aug 2025 17:14:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4725340D81
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 17:15:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756401288; cv=none; b=u0Gm2WsAXXV8E/hpGhzt4thO98U48fKFpUZMH90IChD2BGMmPmdb2O0jhHkl6rNSGWIHRhLe++UaxCkzfN3kG0MDKScq1rWD0A9T28KLOra2DlyZ0SCwGm3tvXO++nLsgD2rK+KIRxpVDdENmSNAc3qB2BSpYpRZB+0EMdc9Rww=
+	t=1756401321; cv=none; b=IobPqaZqHgtcAm0a02kMkIV2sWbHtxesTiSddvPm/njxwDpOxQKMMsqo3tnNqAXlVMAgOdFwxt1h3gfjZP0DcnZlUA63B9GFQ/EmNDGAxt9V5CcKCDQWirp8rSUQ7q/HT+aqBw6s4RtPkqBOFXOqYcQl31WaKz0KgF2tQDQRG2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756401288; c=relaxed/simple;
-	bh=MgagqO04WNpGnv0g/dC0qVqo90USVfsxVor7K5+LQuI=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=IdfK/65YwEFzn94TZpAp6Vz/kedd9sIpkaPGZsnKkorRMLsTgQkTfeAM2IJpF6cW3By5bLyxxIHqDZcsJenOXnK3Wko0vigFZjtU7qi7NmmQ12fmhBytUQiFlc+8upbVgIoMiTsQXMMC41v483HOdNkfVB5PONvST5gjZEn+PbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=S+WQdnQy; arc=none smtp.client-ip=115.124.30.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1756401276; h=Message-ID:Date:MIME-Version:Subject:From:To:Content-Type;
-	bh=VtPnvvvsuIuz+8aE9dOMXXrNjYoyMry3R9OySyeN1ks=;
-	b=S+WQdnQyBkEDIowKVqEc0u3ZTTNICR1I367XsuFBvS37Tz7KaUmjUfkFwGeKzClviRfPfrAoI/5a00CnwQ8Plv1kiL3fk6XWszlF03PsmD/8ezn+ZbQN3gbzveLCU8juIvWjUbOm6kbotK2vcqt1J8uoE/PcUwmzP/Sr9zhf5bU=
-Received: from 30.180.0.242(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0Wmnpluh_1756401274 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Fri, 29 Aug 2025 01:14:36 +0800
-Message-ID: <79315382-5ba8-42c1-ad03-5cb448b23b72@linux.alibaba.com>
-Date: Fri, 29 Aug 2025 01:14:34 +0800
+	s=arc-20240116; t=1756401321; c=relaxed/simple;
+	bh=tjLq4yotJVvrKtVjK5XLYb7jE1fQQx1FF/sxrbky9es=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=BP6BiVXVlINbZdUjizqIR2C2mk/pirZJYbQpewDDr8WtLvSOoEmVF2qf0MG8BFPqjM0nqDhvHXXZplCK+Hm6X7Hyjup9xY/8IbLOW8AoRQx2CUQraxnSdTM+jZs363hyFQeHF+ciFjj23RTKW/f7wxRHp4A9AzhCdjMB0uwi0xU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=EJzdxybn; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-32769224506so1196725a91.2
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 10:15:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1756401319; x=1757006119; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=g/D1R1ws5ojuN4WG3pCUGyU24UMqyGj6lojr+YSYQ0c=;
+        b=EJzdxybnyxlQrk6qJR558wtNekNbgws953L2pneIZYbmyp9tAmsnaz2aSuhIUBM5zr
+         yym6Q3hOD+h86ma+8fB5UYxWC0FsSh8WsgByN6NGuhj5XPnYnWvTGq97mGOESOdqxB8M
+         UO5/YFoyUcXdWdRme2wq/ulZFp8KXOMX/N5wcNQCirgFPfS9pE37lzw+nKFk5IrmnDbO
+         G5sw2Dwq2cicHF4lperkYSyAoX2g6OycdnZ1FjYe/p8IEgXy13BJvrhiJGJwM3VA8ugT
+         uPqiFjyVbr8N6oCUmphfD2rJa6OFoETW3Ncm5ZacDEJ+l20U+VrrmUTHcEPjkrroNkNZ
+         4tIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756401319; x=1757006119;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=g/D1R1ws5ojuN4WG3pCUGyU24UMqyGj6lojr+YSYQ0c=;
+        b=BMhtolp9zpA6bm/7cj7GwowcjCLK8TBxpKeZtPy/w4c0Bl4Bo0IBBGRM2dhKexXDLY
+         yjDT6tEj+zLvGLaXxSuCDLK521oqeXnPYcBm8/+Pzf6HREDAEypwXyk3gpxTMgmqH3Y7
+         nPOXa5CbNFHWekNKkiE9lCgKjNrPq4hU3l7c2DarZRFW1zb3pGVGH0c0Pakf5KUQ/BPW
+         OhcI9srE3eBYyqW7rIt4w2MmPR6anoGAjbMk7vl1gYIzaLScBGacESKk+ory2LZr0ChW
+         dwJ9NV0JlM+y6WJn6NrDUMpncttXMkOPdiz9J+86Y8YOB5Izd/0OADwiYQYQHPuiWT8G
+         UmuA==
+X-Forwarded-Encrypted: i=1; AJvYcCV0iMIB0GrHKPc3Nn/V2r3gRdXorp0t8FWKwpQDWa1rWXR35uugdGrQS6WIn8L5JfmPhSVzKQ0m0mDzr90=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyW06gvK5tQFSGrfO+zi4EgpzvBF5/FMIlVt70mIfyIAdQlTdjf
+	gshEZanXixtsoZXnRWP8Rhz6us7AwvNoEs6jR2cyUdnsioYNRAKtUTSGlnMfVTaC7jViVrvu+Oi
+	LQLRJJQ==
+X-Google-Smtp-Source: AGHT+IEgfCMAj/kPGbx0Dj2C82B+XByTzBEnlSaJgGQHGzaozLp7T19v0PG28aEIfyLg5E6WkydfWYNcBOM=
+X-Received: from pjhk31.prod.google.com ([2002:a17:90a:4ca2:b0:327:9b90:7a79])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:1dc3:b0:327:cec7:b8c6
+ with SMTP id 98e67ed59e1d1-327cec7cb53mr1738031a91.32.1756401318775; Thu, 28
+ Aug 2025 10:15:18 -0700 (PDT)
+Date: Thu, 28 Aug 2025 10:15:17 -0700
+In-Reply-To: <874d821e-8ea3-40ac-921b-c19bb380a456@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] initrd: support erofs as initrd
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-To: Askar Safin <safinaskar@zohomail.com>
-Cc: Byron Stanoszek <gandalf@winds.org>, Christoph Hellwig <hch@lst.de>,
- gregkh <gregkh@linuxfoundation.org>,
- "julian.stecklina" <julian.stecklina@cyberus-technology.de>,
- linux-fsdevel <linux-fsdevel@vger.kernel.org>,
- linux-kernel <linux-kernel@vger.kernel.org>, rafael <rafael@kernel.org>,
- torvalds <torvalds@linux-foundation.org>, viro <viro@zeniv.linux.org.uk>,
- =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
- Christian Brauner <brauner@kernel.org>
-References: <20250321050114.GC1831@lst.de>
- <20250825182713.2469206-1-safinaskar@zohomail.com>
- <20250826075910.GA22903@lst.de>
- <a54ced51-280e-cc9d-38e4-5b592dd9e77b@winds.org>
- <6b77eda9-142e-44fa-9986-77ac0ed5382f@linux.alibaba.com>
- <198ead62fff.fc7d206346787.2754614060206901867@zohomail.com>
- <d820951e-f5df-4ddb-a657-5f0cc7c3493a@linux.alibaba.com>
- <81788d65-968a-4225-ba1b-8ede4deb0f61@linux.alibaba.com>
- <198f1915a27.10415eef562419.6441525173245870022@zohomail.com>
- <18d15255-2a6f-4fe8-bbf7-c4e5cc51692c@linux.alibaba.com>
-In-Reply-To: <18d15255-2a6f-4fe8-bbf7-c4e5cc51692c@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20250827023202.10310-1-zhangzihuan@kylinos.cn>
+ <20250827023202.10310-3-zhangzihuan@kylinos.cn> <aK8Sd30K64mbN1Nt@google.com> <874d821e-8ea3-40ac-921b-c19bb380a456@kylinos.cn>
+Message-ID: <aLCOpfNkcQN9P-Wa@google.com>
+Subject: Re: [PATCH v2 02/18] KVM: x86: Use __free(put_cpufreq_policy) for
+ policy reference
+From: Sean Christopherson <seanjc@google.com>
+To: Zihuan Zhang <zhangzihuan@kylinos.cn>
+Cc: "Rafael J . wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
+	Markus Mayer <mmayer@broadcom.com>, Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, 
+	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, 
+	Chanwoo Choi <cw00.choi@samsung.com>, Jani Nikula <jani.nikula@linux.intel.com>, 
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, 
+	Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Daniel Lezcano <daniel.lezcano@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, 
+	Eduardo Valentin <edubezval@gmail.com>, Keerthy <j-keerthy@ti.com>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	zhenglifeng <zhenglifeng1@huawei.com>, "H . Peter Anvin" <hpa@zytor.com>, Zhang Rui <rui.zhang@intel.com>, 
+	Len Brown <lenb@kernel.org>, Nicholas Piggin <npiggin@gmail.com>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, Lukasz Luba <lukasz.luba@arm.com>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Beata Michalska <beata.michalska@arm.com>, 
+	Fabio Estevam <festevam@gmail.com>, Pavel Machek <pavel@kernel.org>, Sumit Gupta <sumitg@nvidia.com>, 
+	Prasanna Kumar T S M <ptsm@linux.microsoft.com>, Sudeep Holla <sudeep.holla@arm.com>, 
+	Yicong Yang <yangyicong@hisilicon.com>, linux-pm@vger.kernel.org, x86@kernel.org, 
+	kvm@vger.kernel.org, linux-acpi@vger.kernel.org, 
+	linuxppc-dev@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, 
+	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+	imx@lists.linux.dev, linux-omap@vger.kernel.org, 
+	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, Aug 28, 2025, Zihuan Zhang wrote:
+> > Hmm, this is technically buggy.  __free() won't invoke put_cpufreq_poli=
+cy() until
+> > policy goes out of scope, and so using __free() means the code is effec=
+tively:
+> >=20
+> > 		if (IS_ENABLED(CONFIG_CPU_FREQ)) {
+> > 			struct cpufreq_policy *policy;
+> > 			int cpu;
+> >=20
+> > 			cpu =3D get_cpu();
+> > 			policy =3D cpufreq_cpu_get(cpu);
+> > 			if (policy && policy->cpuinfo.max_freq)
+> > 				max_tsc_khz =3D policy->cpuinfo.max_freq;
+> > 			put_cpu();
+> >=20
+> > 			if (policy)
+> > 				cpufreq_cpu_put(policy);
+> > 		}
 
+...
 
-On 2025/8/29 01:00, Gao Xiang wrote:
-> 
-> 
-> On 2025/8/29 00:44, Askar Safin wrote:
->>   ---- On Wed, 27 Aug 2025 13:58:02 +0400  Gao Xiang <hsiangkao@linux.alibaba.com> wrote ---
->>   > The additional cpio extraction destroys bit-for-bit identical data
->>   > protection, or some other new verification approach is needed for
->>   > initramfs tmpfs.
->>
->> Put erofs to initramfs and sign whole thing.
->>
->> Also: initramfs's are concatenatable.
->> So, you can put erofs to cpio and sign the result.
->> And then concatenate that cpio with another cpio (with init).
->>
->> Also, you can put erofs to cpio, then sign this thing, and then add init to kernel
->> built-in cpio (via INITRAMFS_SOURCE).
-> 
-> Which part of the running system check the cpio signature.
+> Yes, this will indeed change the execution order.
+> Can you accept that?=20
 
-Anyway, built-in cpio may resolve the issue (honestly, I've never tried
-this feature), but I'm not sure all users would like to use this way to
-bind the customized `init` to the kernel.
+No, because it's buggy.
 
-Again, I don't have any strong opinion to kill initrd entirely because
-I think initdax may be more efficient and I don't have any time to work
-on this part -- it's unrelated to my job.
+> Personally, I don=E2=80=99t think it=E2=80=99s ideal either.
+>=20
+> 		if (IS_ENABLED(CONFIG_CPU_FREQ)) {
+>  			int cpu;
+> 			cpu =3D get_cpu();
+> 			{
+> 				struct cpufreq_policy *policy __free(put_cpufreq_policy) =3D cpufreq_=
+cpu_get(cpu);
+> 				if (policy && policy->cpuinfo.max_freq)
+> 					max_tsc_khz =3D policy->cpuinfo.max_freq;
+> 			}
+> 			put_cpu();
+>=20
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 }
+>=20
+> Other places may also have the same issue,
+>=20
+> maybe we should consider introducing a macro to handle this properly,
+> so that initialization and cleanup are well defined without changing
+> the existing order unexpected.
+>=20
+> like this:
+>=20
+> #define WITH_CPUFREQ_POLICY(cpu) {\
+>=20
+> for(struct cpufreq_policy *policy __free(put_cpufreq_policy) =3D  \
+> 			cpufreq_cpu_get(cpu);			\
+> 			policy;)
+>=20
+> Then Use it:
+>=20
+> 		if (IS_ENABLED(CONFIG_CPU_FREQ)) {
+>  			int cpu;
+> 			cpu =3D get_cpu();
+> 			WITH_CPUFREQ_POLICY(cpu){
+> 				if (policy->cpuinfo.max_freq)
+> 					max_tsc_khz =3D policy->cpuinfo.max_freq;
+> 			}
+> 			put_cpu();
 
-Personally I just don't understand why cpio stands out considering it
-even the format itself doesn't support xattrs and more.
+This all feels very forced, in the sense that we have a shiny new tool and =
+are
+trying to use it everywhere without thinking critically about whether or no=
+t
+doing so is actually an improvement.
 
-Thanks,
-Gao Xiang
+At a glance, this is literally the only instance in the entire kernel where=
+ the
+CPU to use is grabbed immediately before the policy.
+=20
+  $ git grep -B 20 cpufreq_cpu_get | grep -e get_cpu -e smp_processor_id
+  arch/x86/kvm/x86.c-			cpu =3D get_cpu();
+  drivers/cpufreq/cppc_cpufreq.c-static int cppc_get_cpu_power(struct devic=
+e *cpu_dev,
+  drivers/cpufreq/cppc_cpufreq.c-static int cppc_get_cpu_cost(struct device=
+ *cpu_dev, unsigned long KHz,
+  drivers/cpufreq/mediatek-cpufreq-hw.c-mtk_cpufreq_get_cpu_power(struct de=
+vice *cpu_dev, unsigned long *uW,
 
-> 
-> Why users need some cpio format (which even cannot be random accessed)
-> since it already contains a real filesystem, also which part check the
-> signature of `init` itself before `init` runs?  IOWs, why `init` in
-> cpio can be trusted to run?
-> 
-> Why users need to extract the whole cpio to tmpfs just for some data
-> part in the erofs? even some data is never used?
-> 
-> Why the initrd memory cannot be used directly as the dax filesystem
-> instead of copying to tmpfs instead?
-> 
-> Thanks,
-> Gao Xiang
+Probably because KVM's usage is rather bizarre and honestly kind of dumb.  =
+But
+KVM has had this behavior for 15+ years, so as weird as it is, I'm not incl=
+ined
+to change it without a really, really strong reason to do so, e.g. to itera=
+te
+over all CPUs or something.
 
+So given that this is the only intance of the problem patter, I think it ma=
+kes
+sense to leave KVM as-is, and not spend a bunch of time trying to figure ou=
+t how
+to make KVM's usage play nice with __free().
 
