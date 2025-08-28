@@ -1,200 +1,177 @@
-Return-Path: <linux-kernel+bounces-789665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789659-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F128B398D3
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 11:52:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AF6CB398C3
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 11:50:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC7765E05ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 09:52:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8BF451B26653
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 09:51:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56D492F363A;
-	Thu, 28 Aug 2025 09:51:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4CBB2EDD59;
+	Thu, 28 Aug 2025 09:50:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mff.cuni.cz header.i=@mff.cuni.cz header.b="MUVDZN2i"
-Received: from smtp1.ms.mff.cuni.cz (smtp-in1.ms.mff.cuni.cz [195.113.20.234])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VtsLfDMM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 791572EF66E;
-	Thu, 28 Aug 2025 09:51:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.113.20.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E42D725E44D;
+	Thu, 28 Aug 2025 09:50:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756374705; cv=none; b=HKPtCxU5tDBi85kmDsnnP4nJj7JfYDy5M+y8//33X3D8XhrKVLnwFKeT0KXHHX/E7NBou0/CEzk/gJRNLf1H8uJLYek5NDw8PcViRkmggbjWuY/suwGamiZWh2iz6/e288HdfTs+1RCLayNyDVo6ZwZxGmIzX5zbojFl1vtFSbg=
+	t=1756374647; cv=none; b=TcZ5ZLuVdLO4eRM1DDr3ONnJOB71mdw0F6PM4F/FV038kuKx+KbaLnMGY7xsbXkjXrt0YJN8PwnthL1Utt2YPVRipH89hqNpAVETxcFQ3AGs0+WSDMlQ+UoNUpXMy1L9yXC2T2SJ2rt3uXVqCOzfXkAD6QQ+0zEN3ARih7AWUcY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756374705; c=relaxed/simple;
-	bh=TskH+7GDDut36drXu3SgCZtTHGjWiJr+vY2lVLri/UE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=io3P1O5qqaxqOvWC0OqOJfa6NYI8uqj1ZZzFYXmPRYZP7qH1Rz4I0tHDrF4fnrNZuATAmf6vZGtTb0oUE7+UL+0s1JyyJZs+vBz2sI6tyCo1wJkyoAvrDmxb2txyKGnOsqGYmjl6pqRqu9SGC16IIOpFJDIFWfZjwFRIJfjyb5w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=matfyz.cz; spf=pass smtp.mailfrom=matfyz.cz; dkim=pass (2048-bit key) header.d=mff.cuni.cz header.i=@mff.cuni.cz header.b=MUVDZN2i; arc=none smtp.client-ip=195.113.20.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=matfyz.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=matfyz.cz
-X-SubmittedBy: id balejk@matfyz.cz subject /postalCode=110+2000/O=Univerzita+20Karlova/street=Ovocn+5CxC3+5CxBD+20trh+20560/5/ST=Praha,+20Hlavn+5CxC3+5CxAD+20m+5CxC4+5Cx9Bsto/C=CZ/CN=Karel+20Balej/emailAddress=balejk@matfyz.cz
-	serial F5FD910E8FE2121B897F7E55B84E351D
-	issued by /C=NL/O=GEANT+20Vereniging/CN=GEANT+20Personal+20CA+204
-	auth type TLS.CUNI
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mff.cuni.cz;
-	s=submission; t=1756374655; x=1757674655;
-	bh=vepzPBjYXSUFrYqzyS7A/BpKb61T6nS2eQf0DEUW5nM=; h=From;
-	b=MUVDZN2iNt1PiRmodgpTFDAbxAKL1QrEsMFcxjJ7epGCyeqYpCkPiSbtFbgdBwzZq
-	 2AkNMtp4SNHshqGaIay29Fi6/6NMqXPK7qF4sc9wvFtoyzRgvb3tbMV/Qzr0Opghdo
-	 JCo/4KPGQK33BmMov+OPJ90Qy0dBRebBKPHLuWdH9JVmB0pd7zt+7PwvvvXAN5CFiV
-	 avdNQg6njbH+roGFommiwaHRUaRq1y/z174WHdeeumf9VLU6xrt0LAAm6G4P+m7/fD
-	 WCu9Li6PfOY2sB9XfnyM8XRfmtFo+Y1TT08Qi9bBhEg6ttaieo4iWpo2fkgJAZaJHj
-	 L3ndID46aW0SQ==
-Received: from localhost (internet5.mraknet.com [185.200.108.250])
-	(authenticated)
-	by smtp1.ms.mff.cuni.cz (8.16.1/8.16.1) with ESMTPS id 57S9osTn046282
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=OK);
-	Thu, 28 Aug 2025 11:50:55 +0200 (CEST)
-	(envelope-from balejk@matfyz.cz)
-From: Karel Balej <balejk@matfyz.cz>
-To: linux-mmc@vger.kernel.org, ulf.hansson@linaro.org,
-        =?UTF-8?q?Duje=20Mihanovi=C4=87?= <duje@dujemihanovic.xyz>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
-        Karel Balej <balejk@matfyz.cz>
-Subject: [PATCH v2 3/3] arm64: dts: samsung,coreprimevelte: add SDIO
-Date: Thu, 28 Aug 2025 11:49:04 +0200
-Message-ID: <20250828095028.24503-4-balejk@matfyz.cz>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20250828095028.24503-1-balejk@matfyz.cz>
-References: <20250828095028.24503-1-balejk@matfyz.cz>
+	s=arc-20240116; t=1756374647; c=relaxed/simple;
+	bh=nsd/srhjb2GA1BGIBjZu6MLWkDZmOCy2pcy5zHmDL74=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZVKgl0PvZuXD4tAhn7tkkYDKi00pQkeXJx9S2jVFzf2T/7CqFuvQJB9DsJAdHJxCrkr7xMKup4nsJjHi5zZPuksJggTeWuSA84+PdfqNfM4bs8LfVvSxuw72HFflfmucOaceB52SrLwp9fCzDg7K7SKP5nze5YteENkie5skcXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VtsLfDMM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2032C4CEEB;
+	Thu, 28 Aug 2025 09:50:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756374646;
+	bh=nsd/srhjb2GA1BGIBjZu6MLWkDZmOCy2pcy5zHmDL74=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VtsLfDMMLPSn8X7FB1qyNCklBXX9jl5VJY1SBRcbhOVICoFXA67QPx/qy7W6dd3vD
+	 yfVYCeZ9qxnPjnysPEtIFtXsq9TpqQ7ht02VkXWKJSH5mhi7sLsK8f6czjwjLvDknI
+	 EM7JLLbBT14GmJfNk3pIinT5sdlwUfUTxOOuJcXPVeVRMUQIKLsvsdrWX0j4LVT7gq
+	 SCz62qpwpxFqTRTlUURPRhZQBzchubGPagz85CseSPu0lif/72BG8k0aV+YX0q1VLD
+	 e4NAgp3YEZ2oeqsVUxXVdVb/8ObVWHiurodKtnBRh0zfOBY24G5vDUPm3Vou9eV7r2
+	 4uhT7unkY+MBg==
+Date: Thu, 28 Aug 2025 12:50:19 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
+Cc: sohil.mehta@intel.com, baohua@kernel.org, david@redhat.com,
+	kbingham@kernel.org, weixugc@google.com, Liam.Howlett@oracle.com,
+	alexandre.chartre@oracle.com, kas@kernel.org, mark.rutland@arm.com,
+	trintaeoitogc@gmail.com, axelrasmussen@google.com,
+	yuanchu@google.com, joey.gouly@arm.com, samitolvanen@google.com,
+	joel.granados@kernel.org, graf@amazon.com,
+	vincenzo.frascino@arm.com, kees@kernel.org, ardb@kernel.org,
+	thiago.bauermann@linaro.org, glider@google.com, thuth@redhat.com,
+	kuan-ying.lee@canonical.com, pasha.tatashin@soleen.com,
+	nick.desaulniers+lkml@gmail.com, vbabka@suse.cz,
+	kaleshsingh@google.com, justinstitt@google.com,
+	catalin.marinas@arm.com, alexander.shishkin@linux.intel.com,
+	samuel.holland@sifive.com, dave.hansen@linux.intel.com,
+	corbet@lwn.net, xin@zytor.com, dvyukov@google.com,
+	tglx@linutronix.de, scott@os.amperecomputing.com,
+	jason.andryuk@amd.com, morbo@google.com, nathan@kernel.org,
+	lorenzo.stoakes@oracle.com, mingo@redhat.com, brgerst@gmail.com,
+	kristina.martsenko@arm.com, bigeasy@linutronix.de, luto@kernel.org,
+	jgross@suse.com, jpoimboe@kernel.org, urezki@gmail.com,
+	mhocko@suse.com, ada.coupriediaz@arm.com, hpa@zytor.com,
+	leitao@debian.org, peterz@infradead.org, wangkefeng.wang@huawei.com,
+	surenb@google.com, ziy@nvidia.com, smostafa@google.com,
+	ryabinin.a.a@gmail.com, ubizjak@gmail.com, jbohac@suse.cz,
+	broonie@kernel.org, akpm@linux-foundation.org,
+	guoweikang.kernel@gmail.com, pcc@google.com, jan.kiszka@siemens.com,
+	nicolas.schier@linux.dev, will@kernel.org, andreyknvl@gmail.com,
+	jhubbard@nvidia.com, bp@alien8.de, x86@kernel.org,
+	linux-doc@vger.kernel.org, linux-mm@kvack.org, llvm@lists.linux.dev,
+	linux-kbuild@vger.kernel.org, kasan-dev@googlegroups.com,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v5 07/19] mm: x86: Untag addresses in EXECMEM_ROX related
+ pointer arithmetic
+Message-ID: <aLAmW-UV6hv9k1LT@kernel.org>
+References: <cover.1756151769.git.maciej.wieczor-retman@intel.com>
+ <c773559ea60801f3a5ca01171ea2ac0f9b0da56a.1756151769.git.maciej.wieczor-retman@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c773559ea60801f3a5ca01171ea2ac0f9b0da56a.1756151769.git.maciej.wieczor-retman@intel.com>
 
-Set some basic properties of the SDIO card of the samsung,coreprimevelte
-smartphone.
+On Mon, Aug 25, 2025 at 10:24:32PM +0200, Maciej Wieczor-Retman wrote:
+> ARCH_HAS_EXECMEM_ROX was re-enabled in x86 at Linux 6.14 release.
+> Related code has multiple spots where page virtual addresses end up used
+> as arguments in arithmetic operations. Combined with enabled tag-based
+> KASAN it can result in pointers that don't point where they should or
+> logical operations not giving expected results.
+> 
+> vm_reset_perms() calculates range's start and end addresses using min()
+> and max() functions. To do that it compares pointers but some are not
+> tagged - addr variable is, start and end variables aren't.
+> 
+> within() and within_range() can receive tagged addresses which get
+> compared to untagged start and end variables.
+> 
+> Reset tags in addresses used as function arguments in min(), max(),
+> within().
+> 
+> execmem_cache_add() adds tagged pointers to a maple tree structure,
+> which then are incorrectly compared when walking the tree. That results
+> in different pointers being returned later and page permission violation
+> errors panicking the kernel.
+> 
+> Reset tag of the address range inserted into the maple tree inside
+> execmem_cache_add().
+> 
+> Signed-off-by: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
+> ---
+> Changelog v5:
+> - Remove the within_range() change.
+> - arch_kasan_reset_tag -> kasan_reset_tag.
+> 
+> Changelog v4:
+> - Add patch to the series.
+> 
+>  mm/execmem.c | 2 +-
+>  mm/vmalloc.c | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/mm/execmem.c b/mm/execmem.c
+> index 0822305413ec..f7b7bdacaec5 100644
+> --- a/mm/execmem.c
+> +++ b/mm/execmem.c
+> @@ -186,7 +186,7 @@ static DECLARE_WORK(execmem_cache_clean_work, execmem_cache_clean);
+>  static int execmem_cache_add_locked(void *ptr, size_t size, gfp_t gfp_mask)
+>  {
+>  	struct maple_tree *free_areas = &execmem_cache.free_areas;
+> -	unsigned long addr = (unsigned long)ptr;
+> +	unsigned long addr = (unsigned long)kasan_reset_tag(ptr);
 
-The SDIO is used as an interface for WiFi, Bluetooth and FM radio
-serviced by the Marvell 88W8777 (SD8777) chipset. Support for this
-chipset is currently not in-tree because the firmware is not available
-in linux-firmware, however it is possible to trivially run it
-out-of-tree using the mwifiex and Marvell Bluetooth drivers with some
-caveats.
+Thinking more about it, we anyway reset tag in execmem_alloc() and return
+untagged pointer to the caller. Let's just move kasan_reset_tag() to
+execmem_vmalloc() so that we always use untagged pointers. Seems more
+robust to me.
 
-Link: https://lore.kernel.org/r/20231029111807.19261-1-balejk@matfyz.cz/
-Signed-off-by: Karel Balej <balejk@matfyz.cz>
----
+>  	MA_STATE(mas, free_areas, addr - 1, addr + 1);
+>  	unsigned long lower, upper;
+>  	void *area = NULL;
+> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+> index 6dbcdceecae1..c93893fb8dd4 100644
+> --- a/mm/vmalloc.c
+> +++ b/mm/vmalloc.c
+> @@ -3322,7 +3322,7 @@ static void vm_reset_perms(struct vm_struct *area)
+>  	 * the vm_unmap_aliases() flush includes the direct map.
+>  	 */
+>  	for (i = 0; i < area->nr_pages; i += 1U << page_order) {
+> -		unsigned long addr = (unsigned long)page_address(area->pages[i]);
+> +		unsigned long addr = (unsigned long)kasan_reset_tag(page_address(area->pages[i]));
 
-Notes:
-    v2:
-    - Drop the sdh2 pinctrl configuration which was originally included by
-      accident.
-    - Drop broken-cd on the node as it's ignored with non-removable (thank
-      you to Duje for pointing this out).
+This is not strictly related to execemem, there may other users of
+VM_FLUSH_RESET_PERMS.
 
- .../mmp/pxa1908-samsung-coreprimevelte.dts    | 72 +++++++++++++++++++
- 1 file changed, 72 insertions(+)
+Regardless, I wonder how this works on arm64 with tags enabled?
 
-diff --git a/arch/arm64/boot/dts/marvell/mmp/pxa1908-samsung-coreprimevelte.dts b/arch/arm64/boot/dts/marvell/mmp/pxa1908-samsung-coreprimevelte.dts
-index 0ac1a24dc410..81806f655c88 100644
---- a/arch/arm64/boot/dts/marvell/mmp/pxa1908-samsung-coreprimevelte.dts
-+++ b/arch/arm64/boot/dts/marvell/mmp/pxa1908-samsung-coreprimevelte.dts
-@@ -10,6 +10,7 @@ / {
- 	aliases {
- 		mmc0 = &sdh2; /* eMMC */
- 		mmc1 = &sdh0; /* SD card */
-+		mmc2 = &sdh1; /* SDIO */
- 		serial0 = &uart0;
- 	};
- 
-@@ -286,6 +287,69 @@ sdh0_pins_2: sdh0-pins-2 {
- 		pinctrl-single,input-schmitt-enable = <0x40 0 0x40 0x40>;
- 		pinctrl-single,low-power-mode = <0x208 0x388>;
- 	};
-+
-+	sdh1_pins_0: sdh1-pins-0 {
-+		pinctrl-single,pins = <
-+			0x170 1
-+			0x174 1
-+			0x178 1
-+			0x17c 1
-+			0x180 1>;
-+		pinctrl-single,drive-strength = <0x1000 0x1800>;
-+		pinctrl-single,bias-pullup = <0 0xc000 0 0xc000>;
-+		pinctrl-single,bias-pulldown = <0 0xa000 0 0xa000>;
-+		pinctrl-single,input-schmitt = <0 0x30>;
-+		pinctrl-single,input-schmitt-enable = <0x40 0 0x40 0x40>;
-+		pinctrl-single,low-power-mode = <0 0x388>;
-+	};
-+
-+	sdh1_pins_1: sdh1-pins-1 {
-+		pinctrl-single,pins = <0x184 1>;
-+		pinctrl-single,drive-strength = <0 0x1800>;
-+		pinctrl-single,bias-pullup = <0 0xc000 0 0xc000>;
-+		pinctrl-single,bias-pulldown = <0 0xa000 0 0xa000>;
-+		pinctrl-single,input-schmitt = <0 0x30>;
-+		pinctrl-single,input-schmitt-enable = <0x40 0 0x40 0x40>;
-+		pinctrl-single,low-power-mode = <0x208 0x388>;
-+	};
-+
-+	sdh1_pins_2: sdh1-pins-2 {
-+		pinctrl-single,pins = <0xec 0>;
-+		pinctrl-single,drive-strength = <0x1000 0x1800>;
-+		pinctrl-single,bias-pullup = <0x8000 0x8000 0 0xc000>;
-+		pinctrl-single,bias-pulldown = <0x8000 0x8000 0 0xa000>;
-+		pinctrl-single,input-schmitt = <0 0x30>;
-+		pinctrl-single,input-schmitt-enable = <0x40 0 0x40 0x40>;
-+		pinctrl-single,low-power-mode = <0 0x388>;
-+	};
-+
-+	sdh1_fast_pins_0: sdh1-fast-pins-0 {
-+		pinctrl-single,pins = <
-+			0x170 1
-+			0x174 1
-+			0x178 1
-+			0x17c 1
-+			0x180 1
-+		>;
-+		pinctrl-single,drive-strength = <0x1800 0x1800>;
-+		pinctrl-single,bias-pullup = <0 0xc000 0 0xc000>;
-+		pinctrl-single,bias-pulldown = <0 0xa000 0 0xa000>;
-+		pinctrl-single,input-schmitt = <0 0x30>;
-+		pinctrl-single,input-schmitt-enable = <0x40 0 0x40 0x40>;
-+		pinctrl-single,low-power-mode = <0 0x388>;
-+	};
-+
-+	sdh1_fast_pins_1: sdh1-fast-pins-1 {
-+		pinctrl-single,pins = <
-+			0x184 1
-+		>;
-+		pinctrl-single,drive-strength = <0x1800 0x1800>;
-+		pinctrl-single,bias-pullup = <0 0xc000 0 0xc000>;
-+		pinctrl-single,bias-pulldown = <0 0xa000 0 0xa000>;
-+		pinctrl-single,input-schmitt = <0 0x30>;
-+		pinctrl-single,input-schmitt-enable = <0x40 0 0x40 0x40>;
-+		pinctrl-single,low-power-mode = <0x208 0x388>;
-+	};
- };
- 
- &uart0 {
-@@ -367,3 +431,11 @@ &sdh0 {
- 	vmmc-supply = <&ldo14>;
- 	vqmmc-supply = <&ldo6>;
- };
-+
-+&sdh1 {
-+	pinctrl-names = "default", "state_uhs";
-+	pinctrl-0 = <&sdh1_pins_0 &sdh1_pins_1 &sdh1_pins_2>;
-+	pinctrl-1 = <&sdh1_fast_pins_0 &sdh1_fast_pins_1 &sdh1_pins_2>;
-+	bus-width = <4>;
-+	non-removable;
-+};
+Also, it's not the only place in the kernel that does (unsigned
+long)page_address(page). Do other sites need to reset the tag as well?
+
+>  
+>  		if (addr) {
+>  			unsigned long page_size;
+> -- 
+> 2.50.1
+> 
+
 -- 
-2.51.0
-
+Sincerely yours,
+Mike.
 
