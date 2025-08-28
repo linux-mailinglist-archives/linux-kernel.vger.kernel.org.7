@@ -1,87 +1,88 @@
-Return-Path: <linux-kernel+bounces-789582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45129B397A0
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 10:59:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08241B397BD
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 11:02:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0DBDD171D44
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 08:59:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7E4A363C70
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 09:01:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FE3C2EBBB7;
-	Thu, 28 Aug 2025 08:59:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E33E2218ADD;
+	Thu, 28 Aug 2025 09:00:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DJyhdxTs"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KKmHf0Y8"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 315AD2E8882
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 08:59:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39817DF58
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 09:00:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756371568; cv=none; b=fHVinUYAk+Rhy3qMrrclhrFGHOVSpDINOR2iquCWYNF2b7zX3PLES7K+gDvI34Tj7ds3Eey1+JnD86jiSz2EnUYBgGg9T+9USTbWezu0yDxhLlWhJDjD3ctdB41+CgY53G/KnujZN93lk6sxM7V80gSN/BzYlo79W3149Q1/VCA=
+	t=1756371612; cv=none; b=KiuHpnn/Fm6ofF1DMTu+B0PaTOM+5+croRPABRr8w6scsB+yLBqjmChz0S13JocP9N8yMmWbYvaA4D2Qn468L5Lh0o8dAzqhivNF9f0Pu4B+PSzJvn2nPHwkeckYt2NrS8r7wO+KtC0I5mWg3r0CbFg2WKZwlNjkOBP3M0BNxyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756371568; c=relaxed/simple;
-	bh=mv6f08Qw5SA9ziG/QS7GDYllGSYFnyc0Lhyyo9B1qlM=;
+	s=arc-20240116; t=1756371612; c=relaxed/simple;
+	bh=v0om4jDSPSBL39d1MkwU0Qib+2cpdw/90S8KoJo/BHM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=B+J78GFgVJik1F5lUwPYwh+Pu1Osi50ODE+jzgJQhTpBiuE9kLQHaLeMxxrJUKWv/rIzEWNkwvyLIqJwb3LrWFBxUycD9PbsJekErq80U1bbf2ba0xNvE5wCgDzJDta+dMBCaOTPlZqtB/5cugNRWjK2HlSg8V7kF0egEiVnLps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DJyhdxTs; arc=none smtp.client-ip=170.10.129.124
+	 In-Reply-To:Content-Type; b=NatqCCvK19rZlBx0aEgWn3crva0QK5VxN0SRrIzjl/9iRE2z3XhMoK0Ao3HHsfVTgPKHEce3x3HJvHkzDXjcDbSeRl+ouY+gID54XV7aTYdtoPkRdGlBGW+Yq6hq+hwiSn6jICyFSK3vOkZ+tndwReS8Y3zEE9KK0Oh7A96KKxM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KKmHf0Y8; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756371565;
+	s=mimecast20190719; t=1756371609;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=qGBV0trfmwtCdsO1on6+SbThI8fH1bwSfxhJY1VBlnI=;
-	b=DJyhdxTsBPMmdT9t+iJaDI3ghMFopdgI5d/oX5HfnilKVgLu63V0VS0v6Xs7KsD2FjsaCi
-	U5q0cfIcN95HiDoZNxFFT/wv8wQGEqbu/OVYzqHmU59dCXK2P+o9pKnd+OhbeFS2xuyiXz
-	GEF878+eHQ1s8V5Xx7vaAQOF0bBHSkk=
+	bh=B+eUQDQFyI827IMsBZ4ENEU8Lk0pMUb22YeE9OodMQU=;
+	b=KKmHf0Y85ifd0C08uVNrEDcF7b9mdEK4IXijnZ8sKIKLxuAIdK3DKp9aZuRjUykTrJa1AJ
+	4B76n+BKsj2MYXKEC4yhqz/TAMzYFYFihYsibgYcr+kknKwSJ9TIiLBbKdhy4WhkzPV13Z
+	0l2kqPUV1YeUuTR+0Zjo7IiMG6kS1k4=
 Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
  [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-481-Wz-IvInBPGKiQPAh8MWpWQ-1; Thu, 28 Aug 2025 04:59:24 -0400
-X-MC-Unique: Wz-IvInBPGKiQPAh8MWpWQ-1
-X-Mimecast-MFC-AGG-ID: Wz-IvInBPGKiQPAh8MWpWQ_1756371563
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-45a1ad21752so3754435e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 01:59:23 -0700 (PDT)
+ us-mta-203-HOUvN1RONf-NdNQZ45Ytgg-1; Thu, 28 Aug 2025 05:00:02 -0400
+X-MC-Unique: HOUvN1RONf-NdNQZ45Ytgg-1
+X-Mimecast-MFC-AGG-ID: HOUvN1RONf-NdNQZ45Ytgg_1756371601
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-45a15f10f31so11903125e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 02:00:01 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756371563; x=1756976363;
+        d=1e100.net; s=20230601; t=1756371601; x=1756976401;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
          :from:references:cc:to:subject:user-agent:mime-version:date
          :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=qGBV0trfmwtCdsO1on6+SbThI8fH1bwSfxhJY1VBlnI=;
-        b=YKewKfent1Pn37ea7VZmduzbqaLO7X5vseQ1lRHtmDJF7bGZx3gGrarzSetMZTYHmq
-         xya0I9kbfjuIBRjr2SVhTeRwu3BwYGq2wTMa3aQ+yFp4f8mFIMAz0eyZp7ixnUO00itS
-         c8cDtCJBaRISq72m7fZyivsjrYT1o5Jy5KI+dB8ca7AkeNUXpMP2/NhFK3R2j++iJDHP
-         LyrpQwwK2s+NUWgdzvOohecjLRAgbRl+OO65MZ2GsUx1UNFUE6LaEiDv+v0bDyx54i8s
-         O8+c7QpI3Q4ZfbNH+i5wxunIO04nu1Z7ujH0SyYdOayFpSSU4AFpr4Tc72Wp7b8SAVyQ
-         Njrg==
-X-Forwarded-Encrypted: i=1; AJvYcCU4vRdCBlW/g3dEnCXK4/YD6nnu0Eiv6sNAsEh8KayOAVmj4RbS72HOmzBQD9uPGvbhp0Kkf5sqCTWzm8g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxnJvoKgSLr1qWe8YOC3vvMH6mr05bxuOnrpaduwAQ09MIJrKKQ
-	jw7pGkKPj+VBeg63OKhGUVRBOkvbgWXk2+peVAZB+vHHQuZR4f7Cdpn0T3LWre60kpVqEuz6dxZ
-	/LwjUxYMwbHYSvGNz7WC3ovHN+4ThugcoaeKhv/xERk7a9DqVemLA1avBPVCQH284vw==
-X-Gm-Gg: ASbGnctF9eMw8A7OBfxY3py5q+caU5MiqcR6CSkeWDkwfxxfwLzMAJ/WqXUEMGqvHEK
-	/+HDYfw3ZANiBUmXBQPG4Q0mF6jjVLbG/XNPy6Y+uqrP4mFH1gxwXvvkMEKZdMZT3uXnGGEdUTn
-	log3aLKfoPtqMa3cpecDUaolBHY9hoviYpRKoozb8fYbmpxryYaGYKxo+t0YdpDIiliv+5EoPda
-	zcnh7E6YOA/+pSAyf1JxbhGcpWMiFamOW+JoINh36CuHMSa/4N66cOr14OwuWpuCw/1YKMrB1bD
-	eTA7o2pmKa8yjCygwB5F+o3a9i8fOPZai68EyoyskaE5wqkGyGDV/iOL791R6WPpHmtsLC0mG9i
-	1mMGmM1wi0YJD0PdXBPUxjCnw94PvPrq45FhY98a7uxkPcUyDZKXM7JZscUsXvc6NlDU=
-X-Received: by 2002:a05:600c:5246:b0:458:6f13:aa4a with SMTP id 5b1f17b1804b1-45b68b79262mr80522965e9.6.1756371562828;
-        Thu, 28 Aug 2025 01:59:22 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFWdyMtBKjr7hAqURhS0tLFjeTMjbDj3wWx/dBhhAh6ZZbIaTVjgJ+6cEX3TylMiqVoySxXmw==
-X-Received: by 2002:a05:600c:5246:b0:458:6f13:aa4a with SMTP id 5b1f17b1804b1-45b68b79262mr80522605e9.6.1756371562368;
-        Thu, 28 Aug 2025 01:59:22 -0700 (PDT)
+        bh=B+eUQDQFyI827IMsBZ4ENEU8Lk0pMUb22YeE9OodMQU=;
+        b=tPBJ+JRct9ed+q3UlQ9Zp0pNhZhXYuPPPlpfLAubw7Pih5MvTgHA3cnVTERZZJcf1t
+         vojK4Dx3Pl7Q19fgpdQaKGlZ9Bw5q6tGG8lsxUcEhDyVEVO3MW+zzqgba4bwKy+iMy6d
+         fHrOOqsOCiTqB/1p11DiFcFcXVDDWGENuKHBBI9lBf8kvXNY42bu8cgmaXZ7iJ06arXb
+         rnY4JRx+p5KXAaXu8DvfCoQXCjCkIB9OF6LNP+o9Z8CgaWE+VKTJQQ0KKDOO5+wcmFvU
+         J2U8TaIt6UrKo05Rzx0+9g6YfiMaEWelW4U+fPhZe+AUjkFFpgDLEN2vHNPaRK5nB/Nf
+         FMhg==
+X-Forwarded-Encrypted: i=1; AJvYcCXFjNPaNMV5k9lIg8J8OvgTzKJmLeYhdRrRZ1K34wiK2/Xd2p9nXosMVg12D+zRDWovkqLh2u+Hw6m8kzo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkpeQ2L37yUbojl5FABS6xcZ//unc6XZader+gJ+YqTeGYeLCM
+	sWAygRPjeTnfJEUzu3XctX/f46kD0M4tFcAxAc+vO04WSNQyUllHpsaZ49V3E0XVou9v/NYdL6n
+	/AA4Nmsm8nAYMZ8KLNbg0gHiZ7yGfld3E1Omj+Wk7VapDDSaDi5srIfiQZge0iLllcWPQjSrf8L
+	FRdIw=
+X-Gm-Gg: ASbGncvEWdVUaHFVMc3syRdFKFL7+Z3bIErBbMLzMMeGJWMmwLGP68itz6kkcKCtTeP
+	4OLNu0k4qugOv2aqdfa/iE5WCHJllwX/S0pGsuaASblBGoLeDxyjp9c2PJkwRbngASjId8f5BZ6
+	JWEsohGfBSmm8kdzlrLgjlelkP2DM+bgm02zMXdMOn96np40bpgFGkDzx549xaNGIprkuXDbnxo
+	tZS4uTIremblqhGhe+L5ISBiOwaIBnA9dBsoDjmmWki1K3T7IqvfJ88MWm2pAIKeJ2C8r6abmKd
+	2nED8m830pt7YXpiSf1fkwEhNsIiuD2nxyyR/xsOxuc0dULls0VGnP2j93XZNch11ocS4J6ZSvI
+	hY0yrKLk9v48qa8EXQ9GwnMcc4mMh/9UW2tTQcqtbuCKxjOeCtzeYlIyqkYfpylB6dDA=
+X-Received: by 2002:a5d:5f45:0:b0:3ca:239:a035 with SMTP id ffacd0b85a97d-3cbb15ca238mr6207347f8f.19.1756371600737;
+        Thu, 28 Aug 2025 02:00:00 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEvwQCgZ8qwfbAqaBgA/aLm0dXyJcnKm4aS+HC66ZpgjjAawtJHBXG0suiuLiXZ7k/g7a1tkQ==
+X-Received: by 2002:a5d:5f45:0:b0:3ca:239:a035 with SMTP id ffacd0b85a97d-3cbb15ca238mr6207326f8f.19.1756371600241;
+        Thu, 28 Aug 2025 02:00:00 -0700 (PDT)
 Received: from ?IPV6:2003:d8:2f28:c100:2225:10aa:f247:7b85? (p200300d82f28c100222510aaf2477b85.dip0.t-ipconnect.de. [2003:d8:2f28:c100:2225:10aa:f247:7b85])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3cd8bb9ee97sm3403595f8f.27.2025.08.28.01.59.20
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3cc50050c4esm7308849f8f.25.2025.08.28.01.59.59
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 28 Aug 2025 01:59:21 -0700 (PDT)
-Message-ID: <a0d1d889-c711-494b-a85a-33cbde4688ba@redhat.com>
-Date: Thu, 28 Aug 2025 10:59:20 +0200
+        Thu, 28 Aug 2025 01:59:59 -0700 (PDT)
+Message-ID: <8a0e1bb1-ab6f-4ba0-952f-e540ac5bd55d@redhat.com>
+Date: Thu, 28 Aug 2025 10:59:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,20 +90,11 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm/gup: Drain batched mlock folio processing before
- attempting migration
-To: Hugh Dickins <hughd@google.com>, Will Deacon <will@kernel.org>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- Keir Fraser <keirf@google.com>, Jason Gunthorpe <jgg@ziepe.ca>,
- John Hubbard <jhubbard@nvidia.com>, Frederick Mayle <fmayle@google.com>,
- Andrew Morton <akpm@linux-foundation.org>, Peter Xu <peterx@redhat.com>,
- Rik van Riel <riel@surriel.com>, Vlastimil Babka <vbabka@suse.cz>,
- Ge Yang <yangge1116@126.com>
-References: <20250815101858.24352-1-will@kernel.org>
- <c5bac539-fd8a-4db7-c21c-cd3e457eee91@google.com>
- <aKMrOHYbTtDhOP6O@willie-the-truck> <aKM5S4oQYmRIbT3j@willie-the-truck>
- <9e7d31b9-1eaf-4599-ce42-b80c0c4bb25d@google.com>
- <8376d8a3-cc36-ae70-0fa8-427e9ca17b9b@google.com>
+Subject: Re: [PATCH v4] mm/memory-failure: fix
+ VM_BUG_ON_PAGE(PagePoisoned(page)) when unpoison memory
+To: Miaohe Lin <linmiaohe@huawei.com>, akpm@linux-foundation.org
+Cc: nao.horiguchi@gmail.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <20250828024618.1744895-1-linmiaohe@huawei.com>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -149,84 +141,81 @@ Autocrypt: addr=david@redhat.com; keydata=
  3iyY2Nsd7JxfKu1PRhCGwXzRw5TlfEsoRI7V9A8isUCoqE2Dzh3FvYHVeX4Us+bRL/oqareJ
  CIFqgYMyvHj7Q06kTKmauOe4Nf0l0qEkIuIzfoLJ3qr5UyXc2hLtWyT9Ir+lYlX9efqh7mOY
  qIws/H2t
-In-Reply-To: <8376d8a3-cc36-ae70-0fa8-427e9ca17b9b@google.com>
+In-Reply-To: <20250828024618.1744895-1-linmiaohe@huawei.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 28.08.25 10:47, Hugh Dickins wrote:
-> On Sun, 24 Aug 2025, Hugh Dickins wrote:
->> On Mon, 18 Aug 2025, Will Deacon wrote:
->>> On Mon, Aug 18, 2025 at 02:31:42PM +0100, Will Deacon wrote:
->>>> On Fri, Aug 15, 2025 at 09:14:48PM -0700, Hugh Dickins wrote:
->>>>> I think replace the folio_test_mlocked(folio) part of it by
->>>>> (folio_test_mlocked(folio) && !folio_test_unevictable(folio)).
->>>>> That should reduce the extra calls to a much more reasonable
->>>>> number, while still solving your issue.
->>>>
->>>> Alas, I fear that the folio may be unevictable by this point (which
->>>> seems to coincide with the readahead fault adding it to the LRU above)
->>>> but I can try it out.
->>>
->>> I gave this a spin but I still see failures with this change.
->>
->> Many thanks, Will, for the precisely relevant traces (in which,
->> by the way, mapcount=0 really means _mapcount=0 hence mapcount=1).
->>
->> Yes, those do indeed illustrate a case which my suggested
->> (folio_test_mlocked(folio) && !folio_test_unevictable(folio))
->> failed to cover.  Very helpful to have an example of that.
->>
->> And many thanks, David, for your reminder of commit 33dfe9204f29
->> ("mm/gup: clear the LRU flag of a page before adding to LRU batch").
->>
->> Yes, I strongly agree with your suggestion that the mlock batch
->> be brought into line with its change to the ordinary LRU batches,
->> and agree that doing so will be likely to solve Will's issue
->> (and similar cases elsewhere, without needing to modify them).
->>
->> Now I just have to cool my head and get back down into those
->> mlock batches.  I am fearful that making a change there to suit
->> this case will turn out later to break another case (and I just
->> won't have time to redevelop as thorough a grasp of the races as
->> I had back then).  But if we're lucky, applying that "one batch
->> at a time" rule will actually make it all more comprehensible.
->>
->> (I so wish we had spare room in struct page to keep the address
->> of that one batch entry, or the CPU to which that one batch
->> belongs: then, although that wouldn't eliminate all uses of
->> lru_add_drain_all(), it would allow us to efficiently extract
->> a target page from its LRU batch without a remote drain.)
->>
->> I have not yet begun to write such a patch, and I'm not yet sure
->> that it's even feasible: this mail sent to get the polite thank
->> yous out of my mind, to help clear it for getting down to work.
+On 28.08.25 04:46, Miaohe Lin wrote:
+> When I did memory failure tests, below panic occurs:
 > 
-> It took several days in search of the least bad compromise, but
-> in the end I concluded the opposite of what we'd intended above.
+> page dumped because: VM_BUG_ON_PAGE(PagePoisoned(page))
+> kernel BUG at include/linux/page-flags.h:616!
+> Oops: invalid opcode: 0000 [#1] PREEMPT SMP NOPTI
+> CPU: 3 PID: 720 Comm: bash Not tainted 6.10.0-rc1-00195-g148743902568 #40
+> RIP: 0010:unpoison_memory+0x2f3/0x590
+> RSP: 0018:ffffa57fc8787d60 EFLAGS: 00000246
+> RAX: 0000000000000037 RBX: 0000000000000009 RCX: ffff9be25fcdc9c8
+> RDX: 0000000000000000 RSI: 0000000000000027 RDI: ffff9be25fcdc9c0
+> RBP: 0000000000300000 R08: ffffffffb4956f88 R09: 0000000000009ffb
+> R10: 0000000000000284 R11: ffffffffb4926fa0 R12: ffffe6b00c000000
+> R13: ffff9bdb453dfd00 R14: 0000000000000000 R15: fffffffffffffffe
+> FS:  00007f08f04e4740(0000) GS:ffff9be25fcc0000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 0000564787a30410 CR3: 000000010d4e2000 CR4: 00000000000006f0
+> Call Trace:
+>   <TASK>
+>   unpoison_memory+0x2f3/0x590
+>   simple_attr_write_xsigned.constprop.0.isra.0+0xb3/0x110
+>   debugfs_attr_write+0x42/0x60
+>   full_proxy_write+0x5b/0x80
+>   vfs_write+0xd5/0x540
+>   ksys_write+0x64/0xe0
+>   do_syscall_64+0xb9/0x1d0
+>   entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7f08f0314887
+> RSP: 002b:00007ffece710078 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+> RAX: ffffffffffffffda RBX: 0000000000000009 RCX: 00007f08f0314887
+> RDX: 0000000000000009 RSI: 0000564787a30410 RDI: 0000000000000001
+> RBP: 0000564787a30410 R08: 000000000000fefe R09: 000000007fffffff
+> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000009
+> R13: 00007f08f041b780 R14: 00007f08f0417600 R15: 00007f08f0416a00
+>   </TASK>
+> Modules linked in: hwpoison_inject
+> ---[ end trace 0000000000000000 ]---
+> RIP: 0010:unpoison_memory+0x2f3/0x590
+> RSP: 0018:ffffa57fc8787d60 EFLAGS: 00000246
+> RAX: 0000000000000037 RBX: 0000000000000009 RCX: ffff9be25fcdc9c8
+> RDX: 0000000000000000 RSI: 0000000000000027 RDI: ffff9be25fcdc9c0
+> RBP: 0000000000300000 R08: ffffffffb4956f88 R09: 0000000000009ffb
+> R10: 0000000000000284 R11: ffffffffb4926fa0 R12: ffffe6b00c000000
+> R13: ffff9bdb453dfd00 R14: 0000000000000000 R15: fffffffffffffffe
+> FS:  00007f08f04e4740(0000) GS:ffff9be25fcc0000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 0000564787a30410 CR3: 000000010d4e2000 CR4: 00000000000006f0
+> Kernel panic - not syncing: Fatal exception
+> Kernel Offset: 0x31c00000 from 0xffffffff81000000 (relocation range: 0xffffffff80000000-0xffffffffbfffffff)
+> ---[ end Kernel panic - not syncing: Fatal exception ]---
 > 
-> There is a fundamental incompatibility between my 5.18 2fbb0c10d1e8
-> ("mm/munlock: mlock_page() munlock_page() batch by pagevec")
-> and Ge Yang's 6.11 33dfe9204f29
-> ("mm/gup: clear the LRU flag of a page before adding to LRU batch").
+> The root cause is that unpoison_memory() tries to check the PG_HWPoison
+> flags of an uninitialized page. So VM_BUG_ON_PAGE(PagePoisoned(page)) is
+> triggered. This can be reproduced by below steps:
+> 1.Offline memory block:
+>   echo offline > /sys/devices/system/memory/memory12/state
+> 2.Get offlined memory pfn:
+>   page-types -b n -rlN
+> 3.Write pfn to unpoison-pfn
+>   echo <pfn> > /sys/kernel/debug/hwpoison/unpoison-pfn
 > 
-> It turns out that the mm/swap.c folio batches (apart from lru_add)
-> are all for best-effort, doesn't matter if it's missed, operations;
-> whereas mlock and munlock are more serious.  Probably mlock could
-> be (not very satisfactorily) converted, but then munlock?  Because
-> of failed folio_test_clear_lru()s, it would be far too likely to
-> err on either side, munlocking too soon or too late.
+> This scene can be identified by pfn_to_online_page() returning NULL.
+> And ZONE_DEVICE pages are never expected, so we can simply fail if
+> pfn_to_online_page() == NULL to fix the bug.
 > 
-> I've concluded that one or the other has to go.  If we're having
-> a beauty contest, there's no doubt that 33dfe9204f29 is much nicer
-> than 2fbb0c10d1e8 (which is itself far from perfect).  But functionally,
-> I'm afraid that removing the mlock/munlock batching will show up as a
-> perceptible regression in realistic workloadsg; and on consideration,
-> I've found no real justification for the LRU flag clearing change.
+> Fixes: f1dd2cd13c4b ("mm, memory_hotplug: do not associate hotadded memory to zones until online")
+> Suggested-by: David Hildenbrand <david@redhat.com>
+> Signed-off-by: Miaohe Lin <linmiaohe@huawei.com>
+> ---
 
-Just to understand what you are saying: are you saying that we will go 
-back to having a folio being part of multiple LRU caches? :/ If so, I 
-really rally hope that we can find another way and not go back to that 
-old handling.
+Acked-by: David Hildenbrand <david@redhat.com>
 
 -- 
 Cheers
