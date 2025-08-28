@@ -1,239 +1,159 @@
-Return-Path: <linux-kernel+bounces-790707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF194B3AC02
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 22:52:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AA9BB3AC08
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 22:53:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 79CCA4670CB
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 20:52:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D02A72009EF
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 20:53:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AC7E2BEC20;
-	Thu, 28 Aug 2025 20:52:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01AC129D292;
+	Thu, 28 Aug 2025 20:53:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="g74fWGpj"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="JyEQ7a43"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 279872BE653
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 20:51:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756414321; cv=none; b=KapHCVjv+fpFh/lah7V1RtFCtpa1JLpdgu2Lfz+mSSL36lUY0/UzRxiZZgpBJ0/E5ipcPVk+BlZbf/LGVWOdZVyp8pFxl5WR0G3TpvmoG4p/iFBvLu4raUOHXUt6hYQf4m9tXdcSe/NsXxm0FOrS8AnMWpCqddwCUTIITg41g2A=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756414321; c=relaxed/simple;
-	bh=2ucm0soIRFTqQyMyRZNn1dLd48MxmtIvrqQi2CirSwg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RfjSmxC5mhbtIIYugGaX97dpvXtQGLIXHnzuklTEccqTAHJF3yukJvcuH4uDT4bcRhR02pr7+EK3BwPR4yuJWY+wDh+ilUWy0Y35hm9aw/PqH+bl+VlvhvuomLaJRAIsfwNTKatODQ49iY0PFyipnCIFR4upOB1nUrHRLCDvJDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=g74fWGpj; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756414319;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=TWFVCA1eidbRWe4Mvk+B7obYKckT+mqN7M8LbBoJEjM=;
-	b=g74fWGpjToOMwdvgq6iOZYx4jQFd80CGlIh4G+B7qDbME6jjpMj0O0qQ9mdFo58EpkiLDk
-	FXbM+G6UCnVyLSALC7VA+ChoMExHkntBCxEk8CpBg+C/GKb+Iid2yD60gqu20/OnPqVyMX
-	7Rmfhqpod8HziB8SkIoWse4/2UXgKBM=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-390-au32kWWUPdqv7JjUmQRt5Q-1; Thu, 28 Aug 2025 16:51:52 -0400
-X-MC-Unique: au32kWWUPdqv7JjUmQRt5Q-1
-X-Mimecast-MFC-AGG-ID: au32kWWUPdqv7JjUmQRt5Q_1756414311
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-45b612dbc28so9257935e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 13:51:51 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756414311; x=1757019111;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TWFVCA1eidbRWe4Mvk+B7obYKckT+mqN7M8LbBoJEjM=;
-        b=kxDCdJZWCJe1IrHGzQVdS8G/avQl6jChhPhT55/DBhg0SAztBuikNoteNZa7AljwE+
-         gKetblPGU30MbAPM9R3kYbpyF7vY1nZ9OOst1jJFvix+NJYEUIB+//w6aG6ivI8a1kU9
-         GFcmePnb1R2W5/RQKLJvHDPaMXvyuhJH/s1124W/W20x7rs+5Fj9JhrgBgnR9DhU0CSt
-         tqqheO79ZV/g63TTmylmT4Z96Ok4QHIoUf0l1dyAHMkTuG5XePqfrW+rI9Xug3rGOP0f
-         nYCFAI+kqGSwG/xXCQf+sOJcpz8h2Sf2+Rcp2EKtTynR6NCDq4gHcQB/cj+Pljjl1OJr
-         hHoA==
-X-Gm-Message-State: AOJu0YygMT7qmmiWFLH/p8GQH7GOppd/d36vi2UyxbjCI1Sd+xAd9khn
-	Pm+eP0Z4lnK/TXF0ukdB6jTqLMiCmsd+G/msiEUFTc+k3nI4Hb6leVIoa91o6FQ7tzZje21BT1I
-	iOh1QPwbkNqe4xIWTYlFYUt1ntwCLwAAvH01rj1Z3teEULr1hs0NqnX7oWuSCX+lpKQ==
-X-Gm-Gg: ASbGnctBlbCErwkS675rjUTJI/RZ9yiZxjd7orH9B5CZ81SzRgfmLf+sadQ6vFG0JIs
-	l1+KFxne/tGgEKbS3FXvSo3OHtyNilrNUKkTEHkMB3A4Q6jGm3nbz6n0tpzVWHd1VrY4Vbar2x2
-	quKB4WwVPf/RKYHnsUrYkq6vpmQgXANsH+SY2rbNegroI+kM9Rl+2Pv7+6G9AP+5x18Kbq0heNP
-	AVgy7pNLdjVSCtdhsNpBk7KoKOl5+Hc7l8jw0W37V8zu00x+mIQh2Yj40GS0/iQ1HqXhjMPTvm/
-	G6nFRjWhtgjwZIMdA7G4lw+4Fr7lWZwiCvlZKIFtKx62lDVKCOulizohBjGfLO/RTJIjIqm5j/N
-	N5l3hr2flqn0R7uElarRskgOrJPZAUIyFN8dPUMcjx/JNvdAs7IMCuqUVJiiUClUjVnE=
-X-Received: by 2002:a05:600c:c491:b0:45b:4d47:5559 with SMTP id 5b1f17b1804b1-45b517dadd6mr212976035e9.36.1756414310792;
-        Thu, 28 Aug 2025 13:51:50 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEBxEpIi+OizhCOrvRivNgDFtglg6ujTEy6gKjCh35xHRfgibjOrf5BEosBm4/LLfFcliwoKA==
-X-Received: by 2002:a05:600c:c491:b0:45b:4d47:5559 with SMTP id 5b1f17b1804b1-45b517dadd6mr212975405e9.36.1756414310334;
-        Thu, 28 Aug 2025 13:51:50 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f28:c100:2225:10aa:f247:7b85? (p200300d82f28c100222510aaf2477b85.dip0.t-ipconnect.de. [2003:d8:2f28:c100:2225:10aa:f247:7b85])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b7df3ff72sm8506805e9.1.2025.08.28.13.51.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 28 Aug 2025 13:51:49 -0700 (PDT)
-Message-ID: <2be7db96-2fa2-4348-837e-648124bd604f@redhat.com>
-Date: Thu, 28 Aug 2025 22:51:46 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC21728B7DE;
+	Thu, 28 Aug 2025 20:53:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756414394; cv=pass; b=GIlr6nSKJrzs+6FuB7X/gmYI+f3A5NexmhD9X+UQADmuNfkbxI8ZAcGpithRS+DRMB1hzXDjTEYCLYvHk5PMUCTIXK5muCb957lBChXHd2OaRXbBTxlWB7ZD/fG9wPrKgfdYCzxHzw3WTmH6m4oDLqgCbNRCdRAV78lDv9tcKQk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756414394; c=relaxed/simple;
+	bh=vDunwPYJgo4ywCXcXrQF7egra/P6DcOk4+niTP6ZbJA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ke5NiHUgCRVsrTJs/h1Gk1RwrAkld+ldoby1NxOOzaU0D0d2hFxY+pZxPx6DCNRXXGGA8d7EODo+U8jy8oG4gQYfCWbfEdpPtr+7aM4fvV7luCa0VRMyRKyTYUxHXKv0P+m51z437pLyBZUzsePEYagr35X+JNuGNhMVP8pABUc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=JyEQ7a43; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1756414368; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=KnHGhlddVHc+Ul0o/4/sVcxB5ADdTKVy/09RbIUd/xtYjoM6WLzdl3nZ30Z3Oq/Q7LekSfkk+3c5tQLLy7HCBZsUoA6eCU5nXraz9ZlcM33Fay1hdB0dOIM2wu7upaciGqBKXVf+kebZVLm7yciKzJEgBQJBoW0oDej71RzSUqI=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1756414368; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=lTmcpQUvJeTYz+ofWSSP4Sk1n42n24d3ktOgHwMIRiU=; 
+	b=m+uw8gjSMXxIvFrbP3NUQoKAeop+JHkc/z3y+B95FPwHpxFB4sDD4yuU0FP4wcni2ULlJyCfC2nFYtJNkCiBuiYoRmphK7+wLJnPw3WvR1eCNPyehpX7qqnnxbx7voY3WHxRYQx1dT8zDpn9Nhjh4OVbLNlxoVHulYOeBtZVQIs=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1756414368;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=From:From:Subject:Subject:Date:Date:Message-Id:Message-Id:MIME-Version:Content-Type:Content-Transfer-Encoding:To:To:Cc:Cc:Reply-To;
+	bh=lTmcpQUvJeTYz+ofWSSP4Sk1n42n24d3ktOgHwMIRiU=;
+	b=JyEQ7a432mWg8+iRcIt+9NeY5TIVb8+I6u4ZNj8C/RXpLSMVcd9R893OKayv5Nos
+	dyL3RdUYinmGVlR3vubCr5KCflmqa+yJQWINYaIyRvC1B0LLyBcWn75d3h7/xAzqCcx
+	CPqrJx2fl59OxC3FPmDyAbxOcxuE0DsK4RErQxJo=
+Received: by mx.zohomail.com with SMTPS id 1756414365050778.3062359015115;
+	Thu, 28 Aug 2025 13:52:45 -0700 (PDT)
+From: Daniel Almeida <daniel.almeida@collabora.com>
+Subject: [PATCH v2 0/3] Groundwork for Lock<T> when T is pinned
+Date: Thu, 28 Aug 2025 17:52:16 -0300
+Message-Id: <20250828-lock-t-when-t-is-pinned-v2-0-b067c4b93fd6@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 20/36] mips: mm: convert __flush_dcache_pages() to
- __flush_dcache_folio_pages()
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: linux-kernel@vger.kernel.org,
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
- Alexander Potapenko <glider@google.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Brendan Jackman <jackmanb@google.com>, Christoph Lameter <cl@gentwo.org>,
- Dennis Zhou <dennis@kernel.org>, Dmitry Vyukov <dvyukov@google.com>,
- dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
- iommu@lists.linux.dev, io-uring@vger.kernel.org,
- Jason Gunthorpe <jgg@nvidia.com>, Jens Axboe <axboe@kernel.dk>,
- Johannes Weiner <hannes@cmpxchg.org>, John Hubbard <jhubbard@nvidia.com>,
- kasan-dev@googlegroups.com, kvm@vger.kernel.org,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Linus Torvalds <torvalds@linux-foundation.org>, linux-arm-kernel@axis.com,
- linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
- linux-ide@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-mips@vger.kernel.org, linux-mmc@vger.kernel.org, linux-mm@kvack.org,
- linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
- linux-scsi@vger.kernel.org, Marco Elver <elver@google.com>,
- Marek Szyprowski <m.szyprowski@samsung.com>, Michal Hocko <mhocko@suse.com>,
- Mike Rapoport <rppt@kernel.org>, Muchun Song <muchun.song@linux.dev>,
- netdev@vger.kernel.org, Oscar Salvador <osalvador@suse.de>,
- Peter Xu <peterx@redhat.com>, Robin Murphy <robin.murphy@arm.com>,
- Suren Baghdasaryan <surenb@google.com>, Tejun Heo <tj@kernel.org>,
- virtualization@lists.linux.dev, Vlastimil Babka <vbabka@suse.cz>,
- wireguard@lists.zx2c4.com, x86@kernel.org, Zi Yan <ziy@nvidia.com>
-References: <20250827220141.262669-1-david@redhat.com>
- <20250827220141.262669-21-david@redhat.com>
- <ea74f0e3-bacf-449a-b7ad-213c74599df1@lucifer.local>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <ea74f0e3-bacf-449a-b7ad-213c74599df1@lucifer.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAIDBsGgC/x2M0QpAQBAAf0X7bOtaJ/Er8sBZbLR0J9Tl312ep
+ nmYiRDYCwdosgieLwmyaxLKM3BLrzOjjMmBDJWmKgxuu1vxxHthTZCAh6jyiFSTrWxpbO8GSPX
+ heZLnP7fd+37OtDfhaQAAAA==
+X-Change-ID: 20250730-lock-t-when-t-is-pinned-292474504acb
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+ Will Deacon <will@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, 
+ Waiman Long <longman@redhat.com>, Miguel Ojeda <ojeda@kernel.org>, 
+ Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+ Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+ Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+ Danilo Krummrich <dakr@kernel.org>
+Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+ Daniel Almeida <daniel.almeida@collabora.com>
+X-Mailer: b4 0.14.2
+X-ZohoMailClient: External
 
-On 28.08.25 18:57, Lorenzo Stoakes wrote:
-> On Thu, Aug 28, 2025 at 12:01:24AM +0200, David Hildenbrand wrote:
->> Let's make it clearer that we are operating within a single folio by
->> providing both the folio and the page.
->>
->> This implies that for flush_dcache_folio() we'll now avoid one more
->> page->folio lookup, and that we can safely drop the "nth_page" usage.
->>
->> Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
->> Signed-off-by: David Hildenbrand <david@redhat.com>
->> ---
->>   arch/mips/include/asm/cacheflush.h | 11 +++++++----
->>   arch/mips/mm/cache.c               |  8 ++++----
->>   2 files changed, 11 insertions(+), 8 deletions(-)
->>
->> diff --git a/arch/mips/include/asm/cacheflush.h b/arch/mips/include/asm/cacheflush.h
->> index 5d283ef89d90d..8d79bfc687d21 100644
->> --- a/arch/mips/include/asm/cacheflush.h
->> +++ b/arch/mips/include/asm/cacheflush.h
->> @@ -50,13 +50,14 @@ extern void (*flush_cache_mm)(struct mm_struct *mm);
->>   extern void (*flush_cache_range)(struct vm_area_struct *vma,
->>   	unsigned long start, unsigned long end);
->>   extern void (*flush_cache_page)(struct vm_area_struct *vma, unsigned long page, unsigned long pfn);
->> -extern void __flush_dcache_pages(struct page *page, unsigned int nr);
->> +extern void __flush_dcache_folio_pages(struct folio *folio, struct page *page, unsigned int nr);
-> 
-> NIT: Be good to drop the extern.
+It's currently impossible to have a pinned struct within the Lock<T> type.
+This is problematic, because drivers might want to do this for various
+reasons, specially as they grow in complexity.
 
-I think I'll leave the one in, though, someone should clean up all of 
-them in one go.
+A trivial example is:
 
-Just imagine how the other functions would think about the new guy 
-showing off here. :)
+struct Foo {
+  #[pin]
+  bar: Mutex<Bar>,
+  #[pin]
+  p: PhantomPinned,
+}
 
-> 
->>
->>   #define ARCH_IMPLEMENTS_FLUSH_DCACHE_PAGE 1
->>   static inline void flush_dcache_folio(struct folio *folio)
->>   {
->>   	if (cpu_has_dc_aliases)
->> -		__flush_dcache_pages(&folio->page, folio_nr_pages(folio));
->> +		__flush_dcache_folio_pages(folio, folio_page(folio, 0),
->> +					   folio_nr_pages(folio));
->>   	else if (!cpu_has_ic_fills_f_dc)
->>   		folio_set_dcache_dirty(folio);
->>   }
->> @@ -64,10 +65,12 @@ static inline void flush_dcache_folio(struct folio *folio)
->>
->>   static inline void flush_dcache_page(struct page *page)
->>   {
->> +	struct folio *folio = page_folio(page);
->> +
->>   	if (cpu_has_dc_aliases)
->> -		__flush_dcache_pages(page, 1);
->> +		__flush_dcache_folio_pages(folio, page, folio_nr_pages(folio));
-> 
-> Hmmm, shouldn't this be 1 not folio_nr_pages()? Seems that the original
-> implementation only flushed a single page even if contained within a larger
-> folio?
+struct Bar {
+  #[pin]
+  baz: Mutex<Baz>,
+  #[pin]
+  p: PhantomPinned,
+}
 
-Yes, reworked it 3 times and messed it up during the last rework. Thanks!
+Note that Bar is pinned, so having it in a Mutex makes it impossible to
+instantiate a Foo that pins the Bar in bar. This is specially undesirable,
+since Foo is already pinned, and thus, it could trivially enforce that its
+bar field is pinned as well.
 
+This can be trivially solved by using Pin<KBox<Bar>> instead of
+structurally pinning, at the cost of an extra (completely unneeded)
+allocation and ugly syntax.
+
+This series lays out the groundwork to make the above possible without any
+extra allocations.
+
+- Patch 1 constrains the DerefMut implementation for safety reasons
+- Patch 2 structurally pins the 'data' field in Lock<T>
+- Patch 3 adds an accessor to retrieve a Pin<&mut T>
+
+Note that this is just the beginning of the work needed to make a Pin<&mut
+T> actually useful due to pin projections being currently unsupported.
+
+In other words, it is currently impossible (even with the current patch) to
+do this:
+
+let mut data: MutexGuard<'_, Data> = mutex.lock();
+let mut data: Pin<&mut Data> = data.as_mut();
+let foo = &mut data.foo; // <- won't compile
+
+The above is something that Benno is working on.
+
+Thanks Boqun, Benno and the rest of the team for brainstorming the issue
+and for and laying out a series of steps to implement a solution.
+
+Changes in v2:
+
+- Rebased on v6.17-rc3
+- Collected tags
+- Swap the order between patches 1 and 2
+- Mention that it's easier to go through DerefMut if T:Unpin in patch 3
+- Un-indent the example in patch 3, also make it prettier by adding
+  links
+- Link to v1: https://lore.kernel.org/rust-for-linux/20250730-lock-t-when-t-is-pinned-v1-0-1b97d5f28aa2@collabora.com/
+
+---
+Daniel Almeida (3):
+      rust: lock: guard: add T: Unpin bound to DerefMut
+      rust: lock: pin the inner data
+      rust: lock: add a Pin<&mut T> accessor
+
+ rust/kernel/sync/lock.rs        | 41 +++++++++++++++++++++++++++++++++++++----
+ rust/kernel/sync/lock/global.rs |  5 ++++-
+ 2 files changed, 41 insertions(+), 5 deletions(-)
+---
+base-commit: 1b237f190eb3d36f52dffe07a40b5eb210280e00
+change-id: 20250730-lock-t-when-t-is-pinned-292474504acb
+
+Best regards,
 -- 
-Cheers
-
-David / dhildenb
+Daniel Almeida <daniel.almeida@collabora.com>
 
 
