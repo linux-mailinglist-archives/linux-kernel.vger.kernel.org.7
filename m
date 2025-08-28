@@ -1,103 +1,144 @@
-Return-Path: <linux-kernel+bounces-790624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4582FB3AB07
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 21:39:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D9ABB3AB08
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 21:40:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A15F1C8509F
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 19:39:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFC4A3AE7BD
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 19:40:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 482F027932E;
-	Thu, 28 Aug 2025 19:39:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF93027A135;
+	Thu, 28 Aug 2025 19:40:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="DHOiU0Rf"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="t6CpH4J3"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCD64BA4A;
-	Thu, 28 Aug 2025 19:39:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1E2C20ADF8
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 19:40:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756409958; cv=none; b=m1yivnbokhJi21fz7uLoZswxj3TzNQlLoKeZ1fZO1JSZkEjqwk8iqXspOUzv4uONedmDYbK4X8MGuQKGWhmm4rU0X9tP1W7raUSVRACjTOFu0auR1Gn64ytPd4mzJ5lnj8xvwfNbjdPHVlbPHJR6rMFehdk5aan34jhwSmNCtQA=
+	t=1756410024; cv=none; b=DqkChoUWmX90GsBfd8GMvrzYjh+1f565kdA2HqHL7IekZ029RjgyZbgkl6V2yygp8QIyNk161ecd00k59OlOVo/DPoQ89SWxnukv8M8qEHwH2hNeNRHlS6U2dOVdfQE2n57oKywB6I5uzF5ZXZLZrL5RRE6vvPH/mfTAsD7c2rU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756409958; c=relaxed/simple;
-	bh=n9smJLaGwjwyLu9jP8h0rg16ZUeLHxL4JmcMy5/9VhA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O8gR+wQsR6HjjWTG5LbjuiBh014AGG1q/Taek0pv7yzN6oXaLhm90AVElBpm1EtAbN2Y7HdUGvuUhq0H9Dw+yo2GkebEvqm9IvZ/Zfp9KrBYSgC4ZkA0DxeDuADJygBvE+7n04BtsYZUhv1neXh5z1I1EH2kiaQTMAkTH/e00og=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=DHOiU0Rf; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=v0HLm4Rkc9mc8pIoHGGmMtBul2U6DF9EY18ORPTxBvo=; b=DHOiU0Rfia4BPRmnMFrDQXNqb4
-	gTj+QFWmUTTAmPglXHhY75fIN3Cm+GVdHxMVwFUxjQDauiqdbH7JBhUHqdhu+1y+6Y+dBbjUv2Ln5
-	IIqKNcQ3sQyXArvZ8mJR4saI+YFQsP8WiU6hKA6CXFNYUexX2cKDWAOws8qVaiMOxi359+fp3BvJQ
-	7BQGsQx5rOXXtuQq1NrLBESb/YGCmFNYxC/km7OdjVQxxsySbXq6VUkoou8+d5/v5wg/aLELcTIcr
-	ZNc2t6+JPCuklnw5FhG7OB2us/s/w2PCNrNPr1f0DRIyPGsa7VY7hUP+tJXikBCJ0YavlMOkXcnxF
-	CE8nCGDQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uriSd-0000000FgyN-3vT6;
-	Thu, 28 Aug 2025 19:39:03 +0000
-Date: Thu, 28 Aug 2025 20:39:03 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: Jason Gunthorpe <jgg@nvidia.com>, "Tian, Kevin" <kevin.tian@intel.com>,
-	Baolu Lu <baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
-	Jann Horn <jannh@google.com>, Vasant Hegde <vasant.hegde@amd.com>,
-	Alistair Popple <apopple@nvidia.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Jean-Philippe Brucker <jean-philippe@linaro.org>,
-	Andy Lutomirski <luto@kernel.org>, "Lai, Yi1" <yi1.lai@intel.com>,
-	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
-	"security@kernel.org" <security@kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"stable@vger.kernel.org" <stable@vger.kernel.org>,
-	"vishal.moola@gmail.com" <vishal.moola@gmail.com>
-Subject: Re: [PATCH v3 1/1] iommu/sva: Invalidate KVA range on kernel TLB
- flush
-Message-ID: <aLCwVwjWe07Ievno@casper.infradead.org>
-References: <b0f613ce-7aad-4b1d-b6a1-4acc1d6c489e@linux.intel.com>
- <dde6d861-daa3-49ed-ad4f-ff9dcaf1f2b8@linux.intel.com>
- <b57d7b97-8110-47c5-9c7a-516b7b535ce9@intel.com>
- <c69950ee-660b-4f51-9277-522470d0ce5d@linux.intel.com>
- <400cf9ab-de3f-4e8a-ab0a-4ac68c534bb8@intel.com>
- <ee44764b-b9fe-431d-8b84-08fce6b5df75@linux.intel.com>
- <BN9PR11MB5276FCF7D5182D711E135BB78C3BA@BN9PR11MB5276.namprd11.prod.outlook.com>
- <d88f4f9f-6112-431c-948e-5f48181972aa@intel.com>
- <20250828191057.GG7333@nvidia.com>
- <ba372b0d-beba-4564-a8a8-84318e5d1238@intel.com>
+	s=arc-20240116; t=1756410024; c=relaxed/simple;
+	bh=sOweL7MC1afeJEVQ1CAY29hh8rwCDAUVRUF14Il1LA4=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=piSXpxvJR5NOhnVl8uxzN5WSjjqUMWnrOb3hEvH3xtfD5ZfeFcEA0GIQ0vXwqpkGSbf0NgTll686XSXZmAWosIEnmy7GCQr9XmPaXHxRD94WB6tZQtv1FfDo8FVRHFemrzCqcm5jl2hP0vU3VovlzazJ/RCGL2Cc4ILdZ57h5TY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=t6CpH4J3; arc=none smtp.client-ip=209.85.215.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b4c2c09a760so1007031a12.2
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 12:40:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1756410022; x=1757014822; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fq5jKUl0c1/qCP5zM9srpRStKM40NBvkFf/O/1jAlyY=;
+        b=t6CpH4J3sj6zwJ7oH5fy9ATEgMymQrTG+k71c9VG/xiF+hGCEezGpWOvi851q6mIrB
+         xmcnB2MidZcoJpFEBYW8oEbcxFNy/vUNpaATOqCEGKwy2U5gBEWtjbOv44+SgjbzKVka
+         Cnhg97dsU74fZ1c+AVebuqdOlTSI4xdiUwsfxdgE1BCKavIRV65SwyIYOMlk3+Qy8M+y
+         z24bds+r44+iBnOX9puxUTn85TkKVFacS/Nag7FeyjlN80Ehe6ZP23rdSJV6h7H2XViC
+         NIWMtPuQSmUindJO1wfAOZ2gsw/uaXSxj/CJz4tBE0jLimkjjDNrYxYJOhTsbvFJt6/o
+         0XlA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756410022; x=1757014822;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=fq5jKUl0c1/qCP5zM9srpRStKM40NBvkFf/O/1jAlyY=;
+        b=Qtceyf1jBrnmgoYmmW64+iYc+HYPYFy2Qfjht1M2T1fPupQWEphVU+S+mgVD5QBiay
+         umdH9v9moJb61VqUjKnwsAedcd+u+Ya5IVV8Nre21OGvgn9zcyUMJFeDv9fRmhlOO7hA
+         yVH23tpKLlQCi91bYnu2B1kMcGowlznZpTKVVP2WrrDV2fe0n6at3wpHuJ3MsYRYe5Uh
+         yA6ATk4c70ghNPP3dQUeeQOYtIz1SotjlBcTSAfNGnkXK9CixlVwwZ6FaeXeIlQqlZuI
+         KCuW1F5Hr4t6o2KAfOtToKJptaiwWALJoE4Luz26smMD20Ig/5dDwLZjtdBzGtoH2QG6
+         wIvw==
+X-Forwarded-Encrypted: i=1; AJvYcCWTzfAKJGGd6tNEyPCD6oHei/S2nP1DLxh+SbLJjAgoVzEWYuyhlTtKmEI+lOwEbuiQAx7JtflbAmPBi1A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyNHtVOLMFcqrVlpADczcfxrusdr5vnH+zaYYJqdWarN3bHumBx
+	dlhAyP64Nyak2DbXAEGnU4S8XMQERcD2IQRC44x9xDWw7zuZzBlpF2kHXov4gS0GFi8kze/0L2E
+	ZoN5f2Q==
+X-Google-Smtp-Source: AGHT+IGgX7CXXMdV/d7Hx1tAtW4pSPXY7GO3K/pyEZYQikr1kxkeTskIwgkgfd0X3N4nMikwbaNNINqN5pg=
+X-Received: from pgnm20.prod.google.com ([2002:a63:7d54:0:b0:b4c:1c02:2564])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:3947:b0:220:4750:133a
+ with SMTP id adf61e73a8af0-24340bc7f40mr36103172637.25.1756410022083; Thu, 28
+ Aug 2025 12:40:22 -0700 (PDT)
+Date: Thu, 28 Aug 2025 12:40:20 -0700
+In-Reply-To: <aK/1+Al99CoTKzKH@yzhao56-desk.sh.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ba372b0d-beba-4564-a8a8-84318e5d1238@intel.com>
+Mime-Version: 1.0
+References: <20250827000522.4022426-1-seanjc@google.com> <20250827000522.4022426-3-seanjc@google.com>
+ <aK7BBen/EGnSY1ub@yzhao56-desk.sh.intel.com> <4c292519bf58d503c561063d4c139ab918ed3304.camel@intel.com>
+ <6bb76ce318651fcae796be57b77e10857eb73879.camel@intel.com> <aK/1+Al99CoTKzKH@yzhao56-desk.sh.intel.com>
+Message-ID: <aLCwpNygeC64Bkra@google.com>
+Subject: Re: [RFC PATCH 02/12] KVM: x86/mmu: Add dedicated API to map
+ guest_memfd pfn into TDP MMU
+From: Sean Christopherson <seanjc@google.com>
+To: Yan Zhao <yan.y.zhao@intel.com>
+Cc: Rick P Edgecombe <rick.p.edgecombe@intel.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
+	"pbonzini@redhat.com" <pbonzini@redhat.com>, Vishal Annapurve <vannapurve@google.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"michael.roth@amd.com" <michael.roth@amd.com>, Ira Weiny <ira.weiny@intel.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 28, 2025 at 12:31:40PM -0700, Dave Hansen wrote:
-> On 8/28/25 12:10, Jason Gunthorpe wrote:
-> >> The biggest single chunk of code is defining ptdesc_*_kernel(). The rest
-> >> of it is painfully simple.
-> > Seems not great to be casting ptdesc to folio just to use
-> > folio_set_referenced(), I'm pretty sure that is no the direction
-> > things are going in..
-> 
-> Ideally, the ptdesc->__page_flags fields would have their own set of
-> macros just like folios do, right? Alas, I was too lazy to go to the
-> trouble of conjuring those up for this single bit.
+On Thu, Aug 28, 2025, Yan Zhao wrote:
+> On Thu, Aug 28, 2025 at 09:26:50AM +0800, Edgecombe, Rick P wrote:
+> > On Wed, 2025-08-27 at 17:54 -0700, Rick Edgecombe wrote:
+> > > >=20
+> > > > Then, what about setting
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 .max_level =3D PG_LEVEL_4K,
+> > > > directly?
+> > > >=20
+> > > > Otherwise, the "(KVM_BUG_ON(level !=3D PG_LEVEL_4K, kvm)" would be =
+triggered
+> > > > in
+> > > > tdx_sept_set_private_spte().
+> > >=20
+> > > Yes this fails to boot a TD. With max_level =3D PG_LEVEL_4K it passes=
+ the full
+> > > tests. I don't think it's ideal to encode PAGE.ADD details here thoug=
+h.
+> > >=20
+> > > But I'm not immediately clear what is going wrong. The old struct
+> > > kvm_page_fault
+> > > looks pretty similar. Did you root cause it?
+> >
+> > Oh, duh. Because we are passing in the PFN now so it can't know the siz=
+e.=C2=A0So
+> > it's not about PAGE.ADD actually.
+> Right, it's because the previous kvm_tdp_map_page() updates fault->max_le=
+vel in
+> kvm_mmu_faultin_pfn_private() by checking the private_max_mapping_level h=
+ook.
+>=20
+> However, private_max_mapping_level() skips the faultin step and goes stra=
+ight
+> to kvm_tdp_mmu_map().
+>=20
+> > Sill, how about calling the function kvm_tdp_mmu_map_private_pfn_4k(), =
+or
+> > passing in the level?
+> Looks [1] can also address this issue. Not sure which one Sean prefers.
+>=20
+> [1] https://lore.kernel.org/all/20250729225455.670324-15-seanjc@google.co=
+m
 
-There's a bunch of "Ideally" in ptdesc, but I'm equially too lazy to do
-that before I've proven everything works great with slab and/or folios.
-It'll have to be changed no matter which way we do it, so as long as
-it's obvious where needs to be changed, it's fine.  I deem this
-"good enough for now".
+That won't fix this issue though, becuase @fault will be valid and so max_l=
+evel
+will still be KVM_MAX_HUGEPAGE_LEVEL.  Which is by design, the intent in th=
+at
+flow is that KVM should have gotten the level when getting the pfn from gme=
+m.
+
+IIUC, this particular flow _must_ map at 4KiB, so I think forcing PG_LEVEL_=
+4k is
+the right solution.
 
