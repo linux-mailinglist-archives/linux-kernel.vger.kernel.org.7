@@ -1,191 +1,421 @@
-Return-Path: <linux-kernel+bounces-789082-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35A43B39100
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 03:19:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48E7AB39106
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 03:20:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6C533A7A02
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 01:19:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4B6EE7A4F3F
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 01:19:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F60F218EB1;
-	Thu, 28 Aug 2025 01:18:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 991041F5834;
+	Thu, 28 Aug 2025 01:20:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="SO/zxCy3"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2081.outbound.protection.outlook.com [40.107.93.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kNHyIatq"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BD1D1F0E2E;
-	Thu, 28 Aug 2025 01:18:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.81
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756343911; cv=fail; b=QLUYAQD2O9K/s2S/dyeF2i36HXe0mB8YjtP12ue+K6JA3yjghxyaPU/TMVDDt3UezkC5hXZIpNQ/1tIWCUioE15oNDZcs2a6auT/Jk5tATSIg9WTTp/Ad5KvJzNZlipKS+01QTDgI+bgH6aRMgBLgb5kfOdr04fZqHl7RD7XVGo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756343911; c=relaxed/simple;
-	bh=DgEraQjk8YvfJrjcJEr5399iQMrdwzTLvXj7SbaLvVo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=GPuoxuBr2I97IMDxruhEbN/kdvH0KCK/mLZDQoy06C+lAe7+yI03FGV575HPK6jHmrBlkpGKcGYwIkCqKnxK67KFQbUMzDPc0qA6RAwXqerAzpsC4FGRi9/kZxy8yQtl0IWYvGmyM5RszoJIwQJYU8klPq3e6MFqOjEXfytKvjI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=SO/zxCy3; arc=fail smtp.client-ip=40.107.93.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=RP5KFazG5jt0wRDpY5RUlYPJeRQ1i0iTWQTsu5rAGB2yMLjhWiVNoubqnQJHdxkskQr6MjSNLPf5R/l4aaR3lzokPPXe8nujnQmUh76tpFy5CJVR+vhLSpyktA+OuNjMey6gn8aJ2czUXLqiSiRJDwhHasDGDD60wnLqM0mzb+6QbBCvpUDAkIVLi6bg+qAKZF5W7S0RPNLkqW9dPKPeO34pWbUCrZTHMroC31wgqHo6SDrh1/fR3t9ZhHQvsIRd5MQ9/H7uoiUnCkY8nXgCt4nL3M6ck9yEC2piTIJaEKOlCyxeCY9noZcGQNEUxlceBmJjkM/Lr5TCxZ05T8sQuQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=f0z0GspihNSSfeTybTglosJQYVAZScewsE15DFtKC2Q=;
- b=UHIvvRpYJgCfQ8VxeuBp+qe/WcxTzkoUEZQ4lLDhu5MT6gmLBN365eKTRAGk1ODbqH4jGRif8jdQgeIW5687g36hU9gyXuBk7tbesjnzcOYgNTX0+twhOgWCN1ucY8BnfHtt0HZKO9NIWvCS9UKIZc1gdcFHWd92stchW8cuyy7VP1GxIMBw5nN93+1+3YNKwKQwfmJKjwOQuinAgw0z8Ypbhi8gW0BWSRVX8cuwUstiJG7ocIF2Z7sPuLmowmuW9xtz5dnp3viJ+c3SNJMqe8jj0PUxvkVNk/ISDAPBfGQi/pdfurm+ElPbdYoGakhDng3XezUeZt2Ld1nzAQwHhw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=f0z0GspihNSSfeTybTglosJQYVAZScewsE15DFtKC2Q=;
- b=SO/zxCy3z5A3QFClcXnl2nRRmlxyAuQq3KUZ1lVjnvKat0sHUNXcuoX/ngp/uhEPVg0b1WnrroH1x3PW+49bZrNru52SvkMCm4Z6AhrF3h+Wpj1CKhmV1TQapWv0LRyBXyO5z6mXsPowN0Bm0rkJ4dro015BCukp4iE5w5LcSGCmHm+HOFbBTFVvf/GJXcOQ73PSH5J/oA0Z5P3GItwhUIvCEHEqYJ1hzA6eYoV6VXJR+aeYJKsCVzmuLLRLFVNi6tlFPFJaxsGiF8y4TsaAHpvlhJ1X+X9xQHfEMPwfIY5w/KwAJIIxPZ28llaBJbdUvViNNVdwydDANydZC5vj8Q==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
- DS0PR12MB7825.namprd12.prod.outlook.com (2603:10b6:8:14d::13) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9052.21; Thu, 28 Aug 2025 01:18:26 +0000
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::5189:ecec:d84a:133a]) by DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::5189:ecec:d84a:133a%6]) with mapi id 15.20.9052.019; Thu, 28 Aug 2025
- 01:18:26 +0000
-From: Zi Yan <ziy@nvidia.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Alexander Potapenko <glider@google.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Brendan Jackman <jackmanb@google.com>, Christoph Lameter <cl@gentwo.org>,
- Dennis Zhou <dennis@kernel.org>, Dmitry Vyukov <dvyukov@google.com>,
- dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
- iommu@lists.linux.dev, io-uring@vger.kernel.org,
- Jason Gunthorpe <jgg@nvidia.com>, Jens Axboe <axboe@kernel.dk>,
- Johannes Weiner <hannes@cmpxchg.org>, John Hubbard <jhubbard@nvidia.com>,
- kasan-dev@googlegroups.com, kvm@vger.kernel.org,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Linus Torvalds <torvalds@linux-foundation.org>, linux-arm-kernel@axis.com,
- linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
- linux-ide@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-mips@vger.kernel.org, linux-mmc@vger.kernel.org, linux-mm@kvack.org,
- linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
- linux-scsi@vger.kernel.org, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Marco Elver <elver@google.com>, Marek Szyprowski <m.szyprowski@samsung.com>,
- Michal Hocko <mhocko@suse.com>, Mike Rapoport <rppt@kernel.org>,
- Muchun Song <muchun.song@linux.dev>, netdev@vger.kernel.org,
- Oscar Salvador <osalvador@suse.de>, Peter Xu <peterx@redhat.com>,
- Robin Murphy <robin.murphy@arm.com>, Suren Baghdasaryan <surenb@google.com>,
- Tejun Heo <tj@kernel.org>, virtualization@lists.linux.dev,
- Vlastimil Babka <vbabka@suse.cz>, wireguard@lists.zx2c4.com, x86@kernel.org
-Subject: Re: [PATCH v1 16/36] hugetlbfs: cleanup folio in
- adjust_range_hwpoison()
-Date: Wed, 27 Aug 2025 21:18:21 -0400
-X-Mailer: MailMate (2.0r6272)
-Message-ID: <22900121-30DB-4A1B-88A2-E3D158E009E2@nvidia.com>
-In-Reply-To: <20250827220141.262669-17-david@redhat.com>
-References: <20250827220141.262669-1-david@redhat.com>
- <20250827220141.262669-17-david@redhat.com>
-Content-Type: text/plain
-X-ClientProxiedBy: MN2PR06CA0025.namprd06.prod.outlook.com
- (2603:10b6:208:23d::30) To DS7PR12MB9473.namprd12.prod.outlook.com
- (2603:10b6:8:252::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E23FE523A;
+	Thu, 28 Aug 2025 01:20:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756344034; cv=none; b=PdAAxjvhvkIpz2Afwqg+CfQTGzCkPNZbesztUSWEd597AtQgoKUCQXGvS5/CV8vss2+xWjIr/l+YIoCRTahYsReHCEm1UNYPqzKV9YEtHudnyVS/fy8BlPw5f97laJ2/846PufVZX06pBWVA6tvokO7TIPI8BxCRg60WapnyPdY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756344034; c=relaxed/simple;
+	bh=KVQ9jhSuIGwlWzl1T2A5LzckWKt6aeTzj7RhzSOBQzk=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=dpod4OiUvqDqc6SsDd4cMZWB6gs7lBVrWUYPgCDuDtTKXG8kDJs3ybsjZV6C3b2VWIyJ8j7Oxe9QllFpcESRqESclhCqvMXm561QbFCoE7VtFBktXT6gH39wBQakBfr9JR4czq3ItL7riEIgwpvz2NlFW4iNblOKFz6PICo+QJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kNHyIatq; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-7720f23123dso442419b3a.2;
+        Wed, 27 Aug 2025 18:20:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756344032; x=1756948832; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=bD6RGeZjK9NgE8HepDzM77xqMEuOk7DRuN9l+Ring9k=;
+        b=kNHyIatqrHY4yrw5pJNAc7YcaKl2W9nBKI0CK08q8gxAt0L2eiogz1RTzMl1FfAqsu
+         DQ+sbHzrLTQYbhHkw816UyqexLfXasN59cPxEsPSKfRjse+BklWh/7K37dtZ53bspM1s
+         3Ve6I7coUR6lfGaTd6sPTklW0dmbcjFF7z8/1H+dj19rPc0lK5cPmJV0a15hfsG8lBXC
+         Efa+BtQ+TbkpRHptb/LdSS6zge4nlsTWyUAZdr3X6Gfr5f6hJZCW1+AU7VoVlkzhJP5l
+         Axia730/4YVdKSypnr06tyA8epQGw1R8ZlYSsX/rk0om4rJ8gdlEbf8s4bxdjDf/nWan
+         gp8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756344032; x=1756948832;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=bD6RGeZjK9NgE8HepDzM77xqMEuOk7DRuN9l+Ring9k=;
+        b=CY7CdSWGK4tBGHccxfaF6nGTTohbkXzr9cpDLjkLuCa5Nj7ATmaf5W6XrlOkQMAkd+
+         RDy6eFeuMT9r7Ulaml3flNgulJdGzfINL9tzWzb1+f7DhD9QpTUVBeXPvJsyupSt1MA6
+         7D8SI7/O1I2WX050cfnG6kL2il6MqXbB5ApKVROIK6aaOIRLmkm1eZJQ5R2a4ZZ8Eehv
+         65wbxcd+xh3DnfLxzNdaaRVhadWBvumQGxwJGzfernZFLWL74s8GfMK2nHjpz5OZp+l2
+         p51hSzGC8gHVepo0f66Y7SJLISnuWfMo+D4u+a1ycsRLrnJijUoeepoG58mETBxy648a
+         tiYA==
+X-Forwarded-Encrypted: i=1; AJvYcCVDiauCr4PUu9vfqbSUXuAglGMqb3XOBgL2lUfo58E1Sy+uI3MDTQUGyfPE1vLHIbHtvWJjea0Xn6y3XIE=@vger.kernel.org, AJvYcCVseMVDrSI42IKEVMRar7pjTC4QQul5BUj1rubZ7z3R8vVaXz90efFlbi95wHjqwu6zV0Qdn+tE@vger.kernel.org
+X-Gm-Message-State: AOJu0YyadfzGWNjZCtQ0BKqenhfW1NOleUIJf+gQeRSIipibj6zLMeEB
+	7b2rctQP4thcckhf75124+iCeO3czptzG/wXvDdqbeAUMdpCL2w1uuZLfUl3cxWcGk0=
+X-Gm-Gg: ASbGncvp68dzsRUvwiRF7jPcN2Q1uKL0Y1YahKkfiyE8B1DPzmXMm4RPqaZVaA7tPIi
+	b6jSXa2GPQzNR6TqPbed6QkTOZhQTPR9k+V5lfVNFM/mScQko58x55ibfIBf96cMvip/Phv+0yO
+	I8DP+mE/lP5l65BNekEk9yTF6IRoGCVHgVmtwjmKN2xCMSiRXMXIG4BSp/fAJQ8aoQep6TlI4Sd
+	7UNbliCtVMsiU7BHW6BwgVOUYQrpZbURMYgFofD8YuxuCeLwZx4KJ85wpr2kl+viQZBJJWfzIBu
+	Vlk5TOOQ1T5sINo1Z2juGfr8JEESWf8pGC/PFg4cYkroZ24b1g0pHq9RDrXg/bM2Cabyb1jXVoN
+	OSwFjCFX51zLpMCE=
+X-Google-Smtp-Source: AGHT+IGHbEbdc80JHLt22SbiQ2XiiJXYxLgzqh5cDMa3fJsrwZ7G+RbV29Dpo04JmDsWXoL4XspXVw==
+X-Received: by 2002:a05:6a20:a106:b0:21a:eabb:ab93 with SMTP id adf61e73a8af0-24340bce27dmr32170801637.6.1756344032030;
+        Wed, 27 Aug 2025 18:20:32 -0700 (PDT)
+Received: from gmail.com ([223.166.86.185])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b4a8b7b301csm9122626a12.35.2025.08.27.18.20.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 Aug 2025 18:20:31 -0700 (PDT)
+From: Qingfang Deng <dqfext@gmail.com>
+To: Michal Ostrowski <mostrows@earthlink.net>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net-next v3 1/2] pppoe: remove rwlock usage
+Date: Thu, 28 Aug 2025 09:20:16 +0800
+Message-ID: <20250828012018.15922-1-dqfext@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|DS0PR12MB7825:EE_
-X-MS-Office365-Filtering-Correlation-Id: 011d6e5f-b108-4c67-6566-08dde5d0c9c4
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|7416014|376014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?anuDnOeBHohnJ67dJqfsbZG2Om5PvfX2R/G0mJZJutrEWiFCJsCoNoNBTXyW?=
- =?us-ascii?Q?Rx1OGMepNnj7VQdMMoT0k7OkLbyZr1gHVvLBYUjMqnYuIgMujFcsg0S6hVTe?=
- =?us-ascii?Q?bzR7Ici2ncRdLv6Z8w1JKbAdT/5SxJs2vjEm6eQBOapBZHH6pTX4qr7Q4fDl?=
- =?us-ascii?Q?FOj77WVwottXVSharV18MyL4eXuFdEUCQ8my6kHchU6qrwjwZq1hIxE0nzdW?=
- =?us-ascii?Q?w91lfBgk9xI8RWHAGwTkwVWHMuloM+LIM5dU+M67FjH2hcWOQWjmBpbTvgGG?=
- =?us-ascii?Q?GkTVQa7cYY2FB+ghC/pDnT44NMsVeiwOSuFTANIuXMbt13Yj2uWAbauO+/Gh?=
- =?us-ascii?Q?TVzM2bGiwFDVcGAJHR50HjSgCqGDKlsROhurpiOn1SE51l+QCutcvTDPn8cF?=
- =?us-ascii?Q?8rwhcDp/6QD/mOy6TeILTGBmDp4GQjhowCx2QrkGxcLBUL0xBZnob9hKr8fe?=
- =?us-ascii?Q?wAYiWhqGcsOzoSnAlZAc4eVB3w9I7BKQQX1YwZ0RaiL7LF5Fizf0w2lyv2ek?=
- =?us-ascii?Q?9t+zxb5WTK6umfui9Ofu2xuL9eFds7tMW5hz5VDbDYRQS6Wjr7lWvsGe0AiR?=
- =?us-ascii?Q?zZnLOIU2g7QZ4ypzDRvdCAkqU93inPkFUjfolL7LS4/rQbKi6uoBFEl+4FWK?=
- =?us-ascii?Q?XuQFXy+LH0hbotWnxMYBQLSD0w/w9Wpdt7adacB8qLn/fndN5wV2MwqCda6X?=
- =?us-ascii?Q?ZbjI3p2rKEBvsYc7ni+p9GEpPG5YfQgiAeTgqUO9ug0rFOGR9jg7XHcyt/Gn?=
- =?us-ascii?Q?6Y7eSQ2OdXQa1c7wPjunC0/Shnn/zr1OxTDP2/zl91sxmrhhrfqh9JdN+5mD?=
- =?us-ascii?Q?J+SEl96fE/LqLmAPrIIXH0qbRIx5GtRqbwORM32K4SArsBFNcmFnfSn4jZO1?=
- =?us-ascii?Q?sxLixGlpueCTjj9dkz78e2/H1I5ZIm+oFqMSAyariDHrC7C7dUnp4TlT6Pzn?=
- =?us-ascii?Q?CkNvy0oQb3VIL6XGHZjB9r0oMzmJdqE1CZsxTVpTrEzKjQLh9QtuBKlvwT2f?=
- =?us-ascii?Q?qB7XqnsFQsJFGfAk4Qt9/usPAQArZ2RWRc/S4RQBFbMQyoLm/YziX0phPFEB?=
- =?us-ascii?Q?SA+h9yZ4phYgY4madHtpR0FGTW7h0KhfOkJKPzjGT4RAHzj0wgRWKI4kGKb3?=
- =?us-ascii?Q?GYzAhPVZ1DqSYuaSgl+MQEw43YVrD7dv/852/3c1Atx7/hOck3Bznh/UTBpW?=
- =?us-ascii?Q?TUcns7lE5UkL2Xsi+Hjssr+2/NS61gmhxboqIsVeErciZMN1TQciROeM5dBJ?=
- =?us-ascii?Q?srVs0FffB504LHiJH/u+ykPhLFaA2dkH/fu6qRXXVLRhegHzVkObgc7JeoIY?=
- =?us-ascii?Q?L1Lsh81F7hgncghVIxaUJocmHCiXRHkQkhRb9uqm0f1IEYAKv7HUftdJQtvP?=
- =?us-ascii?Q?PuptyPRpzwmqVHCC2gJJCpo7CUmRBWlUomx5wlnjMWSfXKGTEUnYOHYpkrGZ?=
- =?us-ascii?Q?cXt9GYvfqVo=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?iorvuWOtIzYyTz1Y5tdMMXd4HQLh73OM8fEEUVhaCmYH+a3Fwm/nwXXAbYpw?=
- =?us-ascii?Q?zZ0y1Z3YhMqi0S+ghhB7C5/cnQKvPSHYGkl+HF10VtayOYFw3iQzALbJW4wo?=
- =?us-ascii?Q?pYegPGgjaMSqDDOtlOk4dsou35D/5WCGZV5s4sguq4dYRK6RbfD1aToVmctx?=
- =?us-ascii?Q?axyE4LRVgUxSiun0WCndPOTIndKRmTAKMvCMuSbS8PJKYVU2EyCxRu4/4qh+?=
- =?us-ascii?Q?TumGsAjcqY7vCnaDVlwuZHG5b/VrsGKs+bimUB09vZXq4LpcxISdXoQwJRWc?=
- =?us-ascii?Q?2RjN8IV0G+EQmOahufcFwKxZAgogkp/eSbnfgnZVgJP10SK98e1FtGNic6hv?=
- =?us-ascii?Q?FAXnClYBjWZqR9+rpOjfAGDk495pdgW+rHAifqxt6wgbDO1akIlHA8KBXONW?=
- =?us-ascii?Q?NVjEgPdX/JU6k8dOwHhVyjTYI+uDT8FMavojfaiEA8EDvcUrw0T9a+uStEOD?=
- =?us-ascii?Q?U82IijIw9IDkN+hLEyiDxa+xQHzSLkfGKD8w/GHtXFAO3ByGGXVmhAq9M0oO?=
- =?us-ascii?Q?GkpCNZr4/qayC3wlb3vFYQ5SFoGoNZ7Qpql7Er5DuzKHZEf3YWLRzZlKjvfa?=
- =?us-ascii?Q?8hPXLuXsDHKMGHbr6hHUKXTg1KldFH+y5XJejBJtTlODsRRw2Co/JzD6aM/d?=
- =?us-ascii?Q?3kIjf/jIKAZ/muS9votPMhf5tt4bTee7IHmur4dwux8Qf6HlXDEoAQyj07Y4?=
- =?us-ascii?Q?gDkUgKugZ55IdL5d5r61I1E4lmojpC3bWGuZQvCPhiJSYkXyLMYdKzcAEAVb?=
- =?us-ascii?Q?pT0C624l9s1VQtcgfzPq+m9fdVtuQ2IKzbQlxGyyoj6na0QQZnfICcJv3zRY?=
- =?us-ascii?Q?VkgwXGO0Ij8+qhkoWH+0im0X7W5/WL2Ijck4fKtjzDxLnsY/XkjgHGCa6xte?=
- =?us-ascii?Q?7zT8Ys8FZUd/KZ9BiuqLQciO46tal6/qL0Vf9vQSjFt3OMYkHIyZeEOfydq7?=
- =?us-ascii?Q?aMsvG5c276Qp7DH75alL4y7WA1KmeYhA8LeIfZN+sER1eGz6bPxTlroQwhoK?=
- =?us-ascii?Q?BAC75rSWWGBjTE7YE1ZbGQDR2Uz8N9d+XtPjYydyz++qAJr5upYBouiol7go?=
- =?us-ascii?Q?RaLNaA2wJEzf1d5r4uS7KUzu5Cqkjd9Ak/bPhlIVrdhWC7qqixYmt+dy77QO?=
- =?us-ascii?Q?I+NmXQtRnb8E3rrHJsDvHRsXCIQYAekr4J7ckmX6EIbpYHcBueVAWvRV38CQ?=
- =?us-ascii?Q?5JekFs2UKbU1cLnKGJuM/R3c5Tvpz/srbrZcu7GHHb7ZcAeRxOjPvTyyppB5?=
- =?us-ascii?Q?6S0mpd5xyNopp/XNmyESEpTnLhQ2xr1uBNXdceXmwuXw2uapGscVRyl8DG02?=
- =?us-ascii?Q?wFiQoQg0PA6YGjxiHzghYhQRjDfvI3/7DxrGr9bzgrELZbdei6SEP6+QwfE/?=
- =?us-ascii?Q?N3wzIpbcTCyKyz+mb3sEtLZS9RurDFdRV21Wy3t8qL/vtngaB5EqjRQiDy3R?=
- =?us-ascii?Q?7WH/3i7ikwq94x/4dn3eB1kS3XiGAiqsfZdzKDxZ9uYoKta1pwOT4MiqhYDU?=
- =?us-ascii?Q?DCC/NXY6ENfbLLd0BtNu/Wly45mwvkbn09u7zWYyWxUH9mMCmITO2N5b/vjY?=
- =?us-ascii?Q?J3ofjQx9O3HVICBIjwo7bsNUClembdhtDvQiI8Z3?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 011d6e5f-b108-4c67-6566-08dde5d0c9c4
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Aug 2025 01:18:25.9047
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: UF0Ue62x+n8oaTn5s9htiLbTjQUtfbOemw40/1mhrxlnWfwDqqZWaepMNo7yAr8j
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB7825
+Content-Transfer-Encoding: 8bit
 
-On 27 Aug 2025, at 18:01, David Hildenbrand wrote:
+Like ppp_generic.c, convert the PPPoE socket hash table to use RCU for
+lookups and a spinlock for updates. This removes rwlock usage and allows
+lockless readers on the fast path.
 
-> Let's cleanup and simplify the function a bit.
->
-> Signed-off-by: David Hildenbrand <david@redhat.com>
-> ---
->  fs/hugetlbfs/inode.c | 33 +++++++++++----------------------
->  1 file changed, 11 insertions(+), 22 deletions(-)
->
-LGTM. Reviewed-by: Zi Yan <ziy@nvidia.com>
+- Mark hash table and list pointers as __rcu.
+- Use spin_lock() to protect writers.
+- Readers use rcu_dereference() under rcu_read_lock(). All known callers
+  of get_item() already hold the RCU read lock, so no additional locking
+  is needed.
+- get_item() now uses refcount_inc_not_zero() instead of sock_hold() to
+  safely take a reference. This prevents crashes if a socket is already
+  in the process of being freed (sk_refcnt == 0).
+- Set SOCK_RCU_FREE to defer socket freeing until after an RCU grace
+  period.
+- Move skb_queue_purge() into sk_destruct callback to ensure purge
+  happens after an RCU grace period.
 
---
-Best Regards,
-Yan, Zi
+Signed-off-by: Qingfang Deng <dqfext@gmail.com>
+---
+v3:
+ Move skb_queue_purge() into sk_destruct callback.
+ Link to v2: https://lore.kernel.org/netdev/20250827023045.25002-1-dqfext@gmail.com/
+v2:
+ Use refcount_inc_not_zero() in get_item() to avoid taking a reference of
+ a zero refcount socket.
+ Link to v1: https://lore.kernel.org/netdev/20250826023346.26046-1-dqfext@gmail.com/
+
+ drivers/net/ppp/pppoe.c  | 94 ++++++++++++++++++++++------------------
+ include/linux/if_pppox.h |  2 +-
+ 2 files changed, 54 insertions(+), 42 deletions(-)
+
+diff --git a/drivers/net/ppp/pppoe.c b/drivers/net/ppp/pppoe.c
+index 410effa42ade..54522b26b728 100644
+--- a/drivers/net/ppp/pppoe.c
++++ b/drivers/net/ppp/pppoe.c
+@@ -100,8 +100,8 @@ struct pppoe_net {
+ 	 * as well, moreover in case of SMP less locking
+ 	 * controversy here
+ 	 */
+-	struct pppox_sock *hash_table[PPPOE_HASH_SIZE];
+-	rwlock_t hash_lock;
++	struct pppox_sock __rcu *hash_table[PPPOE_HASH_SIZE];
++	spinlock_t hash_lock;
+ };
+ 
+ /*
+@@ -162,13 +162,13 @@ static struct pppox_sock *__get_item(struct pppoe_net *pn, __be16 sid,
+ 	int hash = hash_item(sid, addr);
+ 	struct pppox_sock *ret;
+ 
+-	ret = pn->hash_table[hash];
++	ret = rcu_dereference(pn->hash_table[hash]);
+ 	while (ret) {
+ 		if (cmp_addr(&ret->pppoe_pa, sid, addr) &&
+ 		    ret->pppoe_ifindex == ifindex)
+ 			return ret;
+ 
+-		ret = ret->next;
++		ret = rcu_dereference(ret->next);
+ 	}
+ 
+ 	return NULL;
+@@ -177,19 +177,20 @@ static struct pppox_sock *__get_item(struct pppoe_net *pn, __be16 sid,
+ static int __set_item(struct pppoe_net *pn, struct pppox_sock *po)
+ {
+ 	int hash = hash_item(po->pppoe_pa.sid, po->pppoe_pa.remote);
+-	struct pppox_sock *ret;
++	struct pppox_sock *ret, *first;
+ 
+-	ret = pn->hash_table[hash];
++	first = rcu_dereference_protected(pn->hash_table[hash], lockdep_is_held(&pn->hash_lock));
++	ret = first;
+ 	while (ret) {
+ 		if (cmp_2_addr(&ret->pppoe_pa, &po->pppoe_pa) &&
+ 		    ret->pppoe_ifindex == po->pppoe_ifindex)
+ 			return -EALREADY;
+ 
+-		ret = ret->next;
++		ret = rcu_dereference_protected(ret->next, lockdep_is_held(&pn->hash_lock));
+ 	}
+ 
+-	po->next = pn->hash_table[hash];
+-	pn->hash_table[hash] = po;
++	RCU_INIT_POINTER(po->next, first);
++	rcu_assign_pointer(pn->hash_table[hash], po);
+ 
+ 	return 0;
+ }
+@@ -198,20 +199,24 @@ static void __delete_item(struct pppoe_net *pn, __be16 sid,
+ 					char *addr, int ifindex)
+ {
+ 	int hash = hash_item(sid, addr);
+-	struct pppox_sock *ret, **src;
++	struct pppox_sock *ret, __rcu **src;
+ 
+-	ret = pn->hash_table[hash];
++	ret = rcu_dereference_protected(pn->hash_table[hash], lockdep_is_held(&pn->hash_lock));
+ 	src = &pn->hash_table[hash];
+ 
+ 	while (ret) {
+ 		if (cmp_addr(&ret->pppoe_pa, sid, addr) &&
+ 		    ret->pppoe_ifindex == ifindex) {
+-			*src = ret->next;
++			struct pppox_sock *next;
++
++			next = rcu_dereference_protected(ret->next,
++							 lockdep_is_held(&pn->hash_lock));
++			rcu_assign_pointer(*src, next);
+ 			break;
+ 		}
+ 
+ 		src = &ret->next;
+-		ret = ret->next;
++		ret = rcu_dereference_protected(ret->next, lockdep_is_held(&pn->hash_lock));
+ 	}
+ }
+ 
+@@ -225,11 +230,9 @@ static inline struct pppox_sock *get_item(struct pppoe_net *pn, __be16 sid,
+ {
+ 	struct pppox_sock *po;
+ 
+-	read_lock_bh(&pn->hash_lock);
+ 	po = __get_item(pn, sid, addr, ifindex);
+-	if (po)
+-		sock_hold(sk_pppox(po));
+-	read_unlock_bh(&pn->hash_lock);
++	if (po && !refcount_inc_not_zero(&sk_pppox(po)->sk_refcnt))
++		po = NULL;
+ 
+ 	return po;
+ }
+@@ -258,9 +261,9 @@ static inline struct pppox_sock *get_item_by_addr(struct net *net,
+ static inline void delete_item(struct pppoe_net *pn, __be16 sid,
+ 					char *addr, int ifindex)
+ {
+-	write_lock_bh(&pn->hash_lock);
++	spin_lock(&pn->hash_lock);
+ 	__delete_item(pn, sid, addr, ifindex);
+-	write_unlock_bh(&pn->hash_lock);
++	spin_unlock(&pn->hash_lock);
+ }
+ 
+ /***************************************************************************
+@@ -276,14 +279,16 @@ static void pppoe_flush_dev(struct net_device *dev)
+ 	int i;
+ 
+ 	pn = pppoe_pernet(dev_net(dev));
+-	write_lock_bh(&pn->hash_lock);
++	spin_lock(&pn->hash_lock);
+ 	for (i = 0; i < PPPOE_HASH_SIZE; i++) {
+-		struct pppox_sock *po = pn->hash_table[i];
++		struct pppox_sock *po = rcu_dereference_protected(pn->hash_table[i],
++								  lockdep_is_held(&pn->hash_lock));
+ 		struct sock *sk;
+ 
+ 		while (po) {
+ 			while (po && po->pppoe_dev != dev) {
+-				po = po->next;
++				po = rcu_dereference_protected(po->next,
++							       lockdep_is_held(&pn->hash_lock));
+ 			}
+ 
+ 			if (!po)
+@@ -300,7 +305,7 @@ static void pppoe_flush_dev(struct net_device *dev)
+ 			 */
+ 
+ 			sock_hold(sk);
+-			write_unlock_bh(&pn->hash_lock);
++			spin_unlock(&pn->hash_lock);
+ 			lock_sock(sk);
+ 
+ 			if (po->pppoe_dev == dev &&
+@@ -320,11 +325,12 @@ static void pppoe_flush_dev(struct net_device *dev)
+ 			 */
+ 
+ 			BUG_ON(pppoe_pernet(dev_net(dev)) == NULL);
+-			write_lock_bh(&pn->hash_lock);
+-			po = pn->hash_table[i];
++			spin_lock(&pn->hash_lock);
++			po = rcu_dereference_protected(pn->hash_table[i],
++						       lockdep_is_held(&pn->hash_lock));
+ 		}
+ 	}
+-	write_unlock_bh(&pn->hash_lock);
++	spin_unlock(&pn->hash_lock);
+ }
+ 
+ static int pppoe_device_event(struct notifier_block *this,
+@@ -528,6 +534,11 @@ static struct proto pppoe_sk_proto __read_mostly = {
+ 	.obj_size = sizeof(struct pppox_sock),
+ };
+ 
++static void pppoe_destruct(struct sock *sk)
++{
++	skb_queue_purge(&sk->sk_receive_queue);
++}
++
+ /***********************************************************************
+  *
+  * Initialize a new struct sock.
+@@ -542,11 +553,13 @@ static int pppoe_create(struct net *net, struct socket *sock, int kern)
+ 		return -ENOMEM;
+ 
+ 	sock_init_data(sock, sk);
++	sock_set_flag(sk, SOCK_RCU_FREE);
+ 
+ 	sock->state	= SS_UNCONNECTED;
+ 	sock->ops	= &pppoe_ops;
+ 
+ 	sk->sk_backlog_rcv	= pppoe_rcv_core;
++	sk->sk_destruct		= pppoe_destruct;
+ 	sk->sk_state		= PPPOX_NONE;
+ 	sk->sk_type		= SOCK_STREAM;
+ 	sk->sk_family		= PF_PPPOX;
+@@ -599,7 +612,6 @@ static int pppoe_release(struct socket *sock)
+ 	sock_orphan(sk);
+ 	sock->sk = NULL;
+ 
+-	skb_queue_purge(&sk->sk_receive_queue);
+ 	release_sock(sk);
+ 	sock_put(sk);
+ 
+@@ -681,9 +693,9 @@ static int pppoe_connect(struct socket *sock, struct sockaddr *uservaddr,
+ 		       &sp->sa_addr.pppoe,
+ 		       sizeof(struct pppoe_addr));
+ 
+-		write_lock_bh(&pn->hash_lock);
++		spin_lock(&pn->hash_lock);
+ 		error = __set_item(pn, po);
+-		write_unlock_bh(&pn->hash_lock);
++		spin_unlock(&pn->hash_lock);
+ 		if (error < 0)
+ 			goto err_put;
+ 
+@@ -1052,11 +1064,11 @@ static inline struct pppox_sock *pppoe_get_idx(struct pppoe_net *pn, loff_t pos)
+ 	int i;
+ 
+ 	for (i = 0; i < PPPOE_HASH_SIZE; i++) {
+-		po = pn->hash_table[i];
++		po = rcu_dereference(pn->hash_table[i]);
+ 		while (po) {
+ 			if (!pos--)
+ 				goto out;
+-			po = po->next;
++			po = rcu_dereference(po->next);
+ 		}
+ 	}
+ 
+@@ -1065,19 +1077,19 @@ static inline struct pppox_sock *pppoe_get_idx(struct pppoe_net *pn, loff_t pos)
+ }
+ 
+ static void *pppoe_seq_start(struct seq_file *seq, loff_t *pos)
+-	__acquires(pn->hash_lock)
++	__acquires(RCU)
+ {
+ 	struct pppoe_net *pn = pppoe_pernet(seq_file_net(seq));
+ 	loff_t l = *pos;
+ 
+-	read_lock_bh(&pn->hash_lock);
++	rcu_read_lock();
+ 	return l ? pppoe_get_idx(pn, --l) : SEQ_START_TOKEN;
+ }
+ 
+ static void *pppoe_seq_next(struct seq_file *seq, void *v, loff_t *pos)
+ {
+ 	struct pppoe_net *pn = pppoe_pernet(seq_file_net(seq));
+-	struct pppox_sock *po;
++	struct pppox_sock *po, *next;
+ 
+ 	++*pos;
+ 	if (v == SEQ_START_TOKEN) {
+@@ -1085,14 +1097,15 @@ static void *pppoe_seq_next(struct seq_file *seq, void *v, loff_t *pos)
+ 		goto out;
+ 	}
+ 	po = v;
+-	if (po->next)
+-		po = po->next;
++	next = rcu_dereference(po->next);
++	if (next)
++		po = next;
+ 	else {
+ 		int hash = hash_item(po->pppoe_pa.sid, po->pppoe_pa.remote);
+ 
+ 		po = NULL;
+ 		while (++hash < PPPOE_HASH_SIZE) {
+-			po = pn->hash_table[hash];
++			po = rcu_dereference(pn->hash_table[hash]);
+ 			if (po)
+ 				break;
+ 		}
+@@ -1103,10 +1116,9 @@ static void *pppoe_seq_next(struct seq_file *seq, void *v, loff_t *pos)
+ }
+ 
+ static void pppoe_seq_stop(struct seq_file *seq, void *v)
+-	__releases(pn->hash_lock)
++	__releases(RCU)
+ {
+-	struct pppoe_net *pn = pppoe_pernet(seq_file_net(seq));
+-	read_unlock_bh(&pn->hash_lock);
++	rcu_read_unlock();
+ }
+ 
+ static const struct seq_operations pppoe_seq_ops = {
+@@ -1149,7 +1161,7 @@ static __net_init int pppoe_init_net(struct net *net)
+ 	struct pppoe_net *pn = pppoe_pernet(net);
+ 	struct proc_dir_entry *pde;
+ 
+-	rwlock_init(&pn->hash_lock);
++	spin_lock_init(&pn->hash_lock);
+ 
+ 	pde = proc_create_net("pppoe", 0444, net->proc_net,
+ 			&pppoe_seq_ops, sizeof(struct seq_net_private));
+diff --git a/include/linux/if_pppox.h b/include/linux/if_pppox.h
+index ff3beda1312c..db45d6f1c4f4 100644
+--- a/include/linux/if_pppox.h
++++ b/include/linux/if_pppox.h
+@@ -43,7 +43,7 @@ struct pppox_sock {
+ 	/* struct sock must be the first member of pppox_sock */
+ 	struct sock sk;
+ 	struct ppp_channel chan;
+-	struct pppox_sock	*next;	  /* for hash table */
++	struct pppox_sock __rcu	*next;	  /* for hash table */
+ 	union {
+ 		struct pppoe_opt pppoe;
+ 		struct pptp_opt  pptp;
+-- 
+2.43.0
+
 
