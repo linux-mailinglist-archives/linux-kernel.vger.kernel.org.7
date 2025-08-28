@@ -1,217 +1,182 @@
-Return-Path: <linux-kernel+bounces-789384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789388-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C4D4B394BF
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 09:10:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CC07B394CB
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 09:12:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0D2957AAD14
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 07:09:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 551A116450B
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 07:11:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA0722DECA1;
-	Thu, 28 Aug 2025 07:08:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7619F2EDD63;
+	Thu, 28 Aug 2025 07:09:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="k75Br01P"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2043.outbound.protection.outlook.com [40.107.93.43])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="vrC87pxx"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 596BB2D739F;
-	Thu, 28 Aug 2025 07:08:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.43
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756364926; cv=fail; b=nUdupQDavsUapg3sAo2D3JUs/PeolNrj26eD81vNqraCHhP2klgaPQDI4Nhd2U+KU/xrboWsP78ZY1iFzBJSNlwZmgzfwc08qh97gMxv37EgXIYoRN+5OuRF3AA6fbkgDh3b4cYw0F+Hh4ZJbY0rsHBPI6o/TLlVirNGodZHgsE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756364926; c=relaxed/simple;
-	bh=CU6WZNWRsesa+yym5A7SAn7qVT0wrWTNHZ2cNN1iX2w=;
-	h=Content-Type:Date:Message-Id:To:Cc:Subject:From:References:
-	 In-Reply-To:MIME-Version; b=MalBmpx26U0Bsib74pp5jeoD8hHmafWTO7ugYtELn8XIaULKfQsaclJoIvlbywGVQViTXvgXQVs0dzoHqyLfq8kmhi+pGHWds2EbY96Tz5m4j8jfV6SmC1rA9eO1b2i6p5uIQmckOMfjsQwbbaGU/t281M81aDWLEPGe8uUsMbc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=k75Br01P; arc=fail smtp.client-ip=40.107.93.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=kH5/WBbw8HUJOCgnXGVZTcHeVkg9dwJYnVedaLLtd2cLsb/XHZzprKoxg9lPaTo4fjljH5pmBHPbK+qK9lK5L70l03D8P00sWLuV3aw71hfxTIQ0pelPVp5vQymhiFvXuLjwgSn0a0UETIqRHED1gdEh6butbLLtjmT4EgZRqF8du98HWmdzAqeHh+icRTl2Xe8xxbJeMQl4hJ0B/ugCFH4bz2nzmpt+0CZK65Ukl2J5etQ18DtLj9A61OBlC7xAW5z3KxImoWPL/AeCRJdHtsR+pS9arS+tOjAlrKT/vu/xZvI/kDkAKXrGaChVIWlg7ryg9w85XfPUqvNizIS7Vw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Qtzbal4fOIER9YPHikOPiYQ+1nw8swuUyoVQ+DPKWIM=;
- b=jacIIhryeRcwP9EHoF2S7SaFSLvCVD1AQqDZAzbfhL7zPBh6QdiZU8OI1ksNueZusxtCqP6iW8jq9ouXhUBcjxu+h5xHiQO++xWqn8nFImNhN1bgz7FjQIxnXl7zUpBm1g0Cd5O5HcmReUmwOElThpAm0Ox9m6AD0oaeAnhD0ijN6k2trRRyvgNzUjWoxx+LPxOM4kShQ18QOaCiJDfKYixhWil4qy4vuBzGDivsLTeA8s29gj+GDj6fGHHMN27eQIeuemywlcOyQkLqIz1Va5+2Gk2VIkxeZXqV3ASMR9Pa8Mp61ePuCq/rGCjA4UTWCw2sCZt/VbMlrVUykBFdiA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Qtzbal4fOIER9YPHikOPiYQ+1nw8swuUyoVQ+DPKWIM=;
- b=k75Br01P5EIB0IukUcu9nuHa/OzTqddTEojB9EVNKzqlt911NmNMTo7mn8bplqh6Ac84/oxV8LrIga2zKETNE0eQCYvRN7XIgHvbW4RG1sxiTxidkYMIpuuLU4cM/P0XRK3Lzl7qCOekDYBrFag/mQ8Ue70i7d6KUEzilNy5Mc2swAhxQiwV5ZoDQj19IgIvqYcRepdygjK4Ccg/hj7jf7YjBW6H79qGckGnX5StaUIdFlRDlhNov9cbLxnxNpTeh1jqbRJegbkUaOQpgaJBJ/DI2sy+MmCtqZO8bDbomwFuoa8T84yP82X8tsJHbNP1mpoEgbPtLOYTAHoKlzWROQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
- by BN7PPF915F74166.namprd12.prod.outlook.com (2603:10b6:40f:fc02::6d9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.17; Thu, 28 Aug
- 2025 07:08:33 +0000
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::6e37:569f:82ee:3f99]) by CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::6e37:569f:82ee:3f99%3]) with mapi id 15.20.9052.019; Thu, 28 Aug 2025
- 07:08:33 +0000
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 28 Aug 2025 16:08:29 +0900
-Message-Id: <DCDVECIAW1NI.2J8SHDVJLY7V5@nvidia.com>
-To: "John Hubbard" <jhubbard@nvidia.com>, "Miguel Ojeda" <ojeda@kernel.org>,
- "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>,
- "Gary Guo" <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
- Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
- "Trevor Gross" <tmgross@umich.edu>, "Danilo Krummrich" <dakr@kernel.org>,
- "David Airlie" <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>,
- "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>, "Maxime Ripard"
- <mripard@kernel.org>, "Thomas Zimmermann" <tzimmermann@suse.de>
-Cc: "Alistair Popple" <apopple@nvidia.com>, "Joel Fernandes"
- <joelagnelf@nvidia.com>, "Timur Tabi" <ttabi@nvidia.com>,
- <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <nouveau@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>
-Subject: Re: [PATCH v2 2/8] gpu: nova-core: firmware: add support for common
- firmware header
-From: "Alexandre Courbot" <acourbot@nvidia.com>
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a-dirty
-References: <20250826-nova_firmware-v2-0-93566252fe3a@nvidia.com>
- <20250826-nova_firmware-v2-2-93566252fe3a@nvidia.com>
- <9adb92d4-6063-4032-bf76-f98dcfe2c824@nvidia.com>
- <DCD2VJ1WJW2O.VM7E4PD3DFYO@nvidia.com>
- <2532f8a1-83ba-4f72-aae7-9d810eda417a@nvidia.com>
-In-Reply-To: <2532f8a1-83ba-4f72-aae7-9d810eda417a@nvidia.com>
-X-ClientProxiedBy: TYCP286CA0202.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:385::10) To CH2PR12MB3990.namprd12.prod.outlook.com
- (2603:10b6:610:28::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C95E32ED141;
+	Thu, 28 Aug 2025 07:09:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756364984; cv=none; b=r4l/HkptwptWXeBBsOfnRX/e4P5f3+66YjoNbUx5qYfZpsaOkZO9Vam+piNqohhjT5pWN34a0FQR3S5yklhHnvaoouF/QZZDwuBr8wt9uwqStYtw1vrNxGRchWC44WV28uHv+4eGmxPHTAKqM8U+Yj/0uHkSKnmHf+1zzL0O300=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756364984; c=relaxed/simple;
+	bh=SPpp1RH7FHS64BgwJSfDV6et5//09GHoAwf6X9+I1DE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Abz8pDUG0x7mzoN1Y83+ugiZPmTn5PcOAT0Yw0kH1TfyufHNNJxzOTC/NccwNdM2nyCup6MZnrzwmZz8/K9nzx5x7n7eezadUSVvgzsNhxUj4a2wZKeNo4LGLJYdPtXpBh5oAD6x79SfinmKrUpPP9cNriL7CPbW0E7QJVKhOUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=vrC87pxx; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57S78ocR1469076;
+	Thu, 28 Aug 2025 02:08:50 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1756364930;
+	bh=ihg1BqVIXwVeX9/5XhJYutDohKn1RcCO31Zmkb28TWc=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=vrC87pxxwnmX9RRUWlyB+u8ioWabgUci7PEOqwdSoGj0irRa8c/0JtiI+yVNgUh0/
+	 YGX8K+ShW9zZVi0OUwNGG9g9F97Ihp5HHxTjRXl020k7MwXfY3/7F8uxDmb7IjyIf6
+	 aXsl/3I7QOJ973cI8RD2HXZXzxo/Z+X6/B9++OAI=
+Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
+	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57S78od32715100
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Thu, 28 Aug 2025 02:08:50 -0500
+Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 28
+ Aug 2025 02:08:50 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE111.ent.ti.com
+ (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Thu, 28 Aug 2025 02:08:50 -0500
+Received: from [172.24.231.152] (danish-tpc.dhcp.ti.com [172.24.231.152])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57S78hLu209555;
+	Thu, 28 Aug 2025 02:08:44 -0500
+Message-ID: <da2a0a37-8334-477a-8468-c4baebadf6df@ti.com>
+Date: Thu, 28 Aug 2025 12:38:43 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|BN7PPF915F74166:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0eac0ab6-463b-4d5e-6880-08dde601b278
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|376014|7416014|1800799024|10070799003|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?bkEzbHZNTmxZMnF2dmplWUVhaVRIakRLd21IeVVibnhMejdqaXQzTE8vYjBw?=
- =?utf-8?B?NlZHZ28wS1BzVUh5UVIxNXBpQWpFQnh1VFcxWm05ZWEvRkpOZmVETlUySTkz?=
- =?utf-8?B?bUxXbDI2OHpxZ2hIMmZpZkZuVXVZL1pMUk43YUkvcHZiWGJrSjFCNDlNcmp3?=
- =?utf-8?B?YWlodGxXVzVLS3huSFVSSTU2ZTRzNUJjRkJIY0VGQld4NGpKV0pxZkF1MVRG?=
- =?utf-8?B?NVk0ZnMzQS9nRzJENkNDV2srYzZCVEZrbWR6Y1o5dnpiWXVWN0xCbVZZS2Rq?=
- =?utf-8?B?MHpLZy9BQmczZHYxZjc3RlF2WXZ0N1NmQmNSd0wrbVdESlpqNFovaytZeElP?=
- =?utf-8?B?bFBtcVBjME9WNUV6TVBSeUFqT3Z0K09yUHVOcjZQWExUMmUwNDhFZStlRENX?=
- =?utf-8?B?OUdiS0VJOTllSUNZQ1dMeWlDaC80aXRtWnF2ZWtKaEQ0T2sxeEIrSGtZbVUz?=
- =?utf-8?B?bkVYM0pFRFY5TDluQWJEdGdkSVErbXgwTE8yY2lrbit4K0ZtQlY5SXFSOHpF?=
- =?utf-8?B?NmV2WVBrMlgvNE9uLzU2M09lb3NIdmZnVVVLL1RpZ0RJSVkvYklpR25Jejlj?=
- =?utf-8?B?NHVVOWp5ajRvdU9rRGVobVFvUkRQMkNRYVpnK0szU1RLOEgxSXllNEVwTnU1?=
- =?utf-8?B?VFljSUtydzNJYWQ0S3IyRmFrSTI1ZDNsRmJHK1BOUnVJeDZ4SWF1RW5JZUNJ?=
- =?utf-8?B?aG0xU1JHZDJpcmJtTjZyWVBDWTV0N2g4SUM4SHBQNHhrZXBqU1EzcnlWWjh0?=
- =?utf-8?B?dktqQ2V5MEx4TmtHZ0x6ZTlkc1k5NHFMbURGZjdpNGx6M0RIN1pmczZBNE1y?=
- =?utf-8?B?dnh6eTArKzNmUUQ2MEJBSWpCTzNvSTRCQWlRaVRiYXM1ZDVqN3FQcFc5NS9z?=
- =?utf-8?B?VEZWQWxMRzVmVjlKZnA2akE1Uk4xRWpwTkNFbHpmL1hadkF6czdOYTJkeXkr?=
- =?utf-8?B?Uit2dTB5Z0NxMEFEV0tWbStWRnVZK2N0RmpmVE5XUk1YRFI1NmFKaDFIMDlC?=
- =?utf-8?B?alhvdE90Z01ocytIOWU4NHhmK2J5ZzBnaDRNTld6TmRhUzAvSHhkUzVGNHlX?=
- =?utf-8?B?VDNVdHdjaDRJOWk1bjB3bWx1TmNWK3Y0UjVCK1NkNGdQMUxKMTA1WkZTZ244?=
- =?utf-8?B?dzdqeUtvRVVXRjFiamVuSGpYS29lQ3NBdUFBS1VoQlA2YWxpS3V0VXFhbkht?=
- =?utf-8?B?VWJEL3A3N0JqZ0F2aVZEd2ljdlJmSnNEdFcxd3hoV05XOERsSWJDN1lsbkN3?=
- =?utf-8?B?bXdWYjN4elc0N05SRHVmQ2l1N3RWdERYMlliUXNCbloxMXNMbG9WRWdTK05l?=
- =?utf-8?B?ZC96RnZVNDRsLzA4THZVQ0pobkEzTGtsdEdDOWlpa0JWTlBlV2lzQ2xIeGRT?=
- =?utf-8?B?Y3FaUkUzNnNjMmhFODI5eEo4N1BhL3NKVThUTWt5UlFKOUZacENuR0dZbmtD?=
- =?utf-8?B?YnhyN1I0bE5PSklibG9hVUZsUDBXbTJ3OFZ0NVVvRmk4ME5BNzYwQ043K3NW?=
- =?utf-8?B?ei9JaU0xb3Nydk5YRzJFNlRrYmJkRFVINFRSb3N5K1JOZnNmT1MyTkk2QXA4?=
- =?utf-8?B?c0t4VGtCdTI1bm5vY3FnUW05UXZyMllRTFIzbXRQY2p2aWV6anBZRVE1cldN?=
- =?utf-8?B?b1k1emlkWGN0VUxPaDNHa25ORldIMlNMMk9pUmNZYWZmT2xlUEoxcmpjcWJh?=
- =?utf-8?B?ZDh3OUdQcEU3TDhFVGxIbTQ0UDNUOUdsWUZmbkxJdjJYK3dCWkFkNWk1UENh?=
- =?utf-8?B?WVYvRFY1SlhRdUljV3dBa29lR2NQaklyQlFXZFcrZkZsQXE5UXE5KzM2Tmp4?=
- =?utf-8?B?eHU4SUpuQ3plU3l4M2dhVXFZYlNCcm5YU21mSlNCR3hrU3BZUkU0UHJUVGs1?=
- =?utf-8?B?YWNOaEVjVFNyK0laNUNHaGxDNndTSmJwdk5Kc0RMa1Y2dnFoMEwyOGxvTk9O?=
- =?utf-8?B?dld6M0lZTUpYUWx3N2w3cVBqbm1PbEY5enQ5cDdpVjJPcWdud29yRFFzZ2g2?=
- =?utf-8?B?ZWVWWk1NbW13PT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024)(10070799003)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?eENHN1dGV1MvYUxMTWRRNjVVYmY1R2YwNjgreHAvdWVjYnVlQ2lkcGVuTFFF?=
- =?utf-8?B?aCtiSndhUzFXY3l6Q2kxc1l6OTJqU3lZM0U0U2hiZE95cVZYcFdtSzJZcTkz?=
- =?utf-8?B?cmk4L0x2QXJucG1MdXJNZmVIUnYwK2ZqbnFBdGp5RVo5Rk9EM0xIeVZFZW1k?=
- =?utf-8?B?MTkyRjBsU1J6UkdxbXFDRG9QL2ZTcHNsU3lYRjMrQlVGUWFrODNaVFY0dmlX?=
- =?utf-8?B?bStEM0FrVWhndUZ3RStJVk5kTlNKcmpNa253VUpmNC9CYnpBWC94RkN3SGZU?=
- =?utf-8?B?M2xiNWtrcFUvQkMyOE5TRXM3a1gyYURmM1IxaWxEZ3hzbFFXLzJsMGJ5N240?=
- =?utf-8?B?TnRXNjZuT216UGRML3JrWmRvRDJzSDJxSStZS3lHbWk2aXFtdWY4V3dBZ3Zt?=
- =?utf-8?B?YVc0ZlR5RXdtdjFRa0dDQmJhMzFBSXIrQ3UzVlh4QmpnQVNVU2hJbHdrVGZ6?=
- =?utf-8?B?b1hpV3ppTk0xUEZTTkhKR3NBbjFjc1pxZHA2TXVoZC8xM3RMbFE3NlZWaEdY?=
- =?utf-8?B?WVpaOU5Zc3NuVFJFaHkxNzYvQ0NrRHhtdUhBbWhlbnZIdklBcG82WURuSmwy?=
- =?utf-8?B?dnV6cnpZYUlkVWNwTTdFSng3SFhGcmNpaUpEOTZIYWR6bFh5SXVNNFc0QUFB?=
- =?utf-8?B?clFGdWJrNDRNd3pSUGtZYjhjdHZkU09pUTMyVEt0bWFPVTEyWjRHaWtybXQz?=
- =?utf-8?B?SWxjYmI2eXZWNW9lNE9YbDE5T1lYUm91c01HVmpVQStrR1p3YUxWSHZKbkJN?=
- =?utf-8?B?WHVKNUg4eWoxSzltc1hHWCtxcUZIS2ViK1N0WEY2OThTNUVIaCtSdUM0YUJk?=
- =?utf-8?B?SmJOZVlVenlQOXRKNGZIU3kvb0R1eHBSbTNuK3Z4dVQxZFlDdU1TMS8xQXlz?=
- =?utf-8?B?bVVIdU5jMzlGVWpsZTJOZVJnM05Mbnk5WmJuL0VqU21SRXYwTTJHSkIvcG1q?=
- =?utf-8?B?OHM0c3J1cXY5SDcyNC9vTDN1SDhVRHIwQ2w4M3J3dFVyUmtBczN1K0pLSWZ3?=
- =?utf-8?B?ZnpMUlFKdE9EbHNtam10S1IzT0FRcFVlTWd4ZmltUC8vOTJGM29LcFUyZ1pI?=
- =?utf-8?B?MUg3U2JyU25ic0tpQjZDb0dHdHA4dzdaUHJpOUk5UU5ZVG9qUjhzTDdWamtD?=
- =?utf-8?B?dk1TY2c0ZXVYeU9SZjZ4aGR6WkRmVkRmVkhXRjJ6cTErRjVadklDUnNsWW1r?=
- =?utf-8?B?T3B0bUd0S1FOemxLbFNMNE5hWkl2K2l6UG9VUU9mU3Z2ZnFKMlJwU2gva0tv?=
- =?utf-8?B?RlRLZW1BS2FIMm5BbWhOY2o4Y0piZTFTOEFkbXB6RWU2dTVNQnEyWjZsbVdG?=
- =?utf-8?B?UGlkOEVoSktIdS9qVWZ5WTBseFNzdW5UTWVhMlpSMmRqS3hpMXFhNkhHNjRM?=
- =?utf-8?B?UHN4YnErS2F5RS8yWUtJU0l6TE1sd3ZaaFBlYTNIREYxaXFiWWxuN3Y1VW5Q?=
- =?utf-8?B?WWs3T3gwN1VDOGFIMHFURG1aV1hqb0h6RnM5c2d4YktGeVRUMHNQaTU1bVRF?=
- =?utf-8?B?aU9GZmVxUDBGajN1WFFqbTVsT0Mvd1Jub1p4bVFxcVFZSWhCQXRoRER4MzFJ?=
- =?utf-8?B?S2JBMk0xTFBzRlY0RXJMMEw3Y29hSnF2Nm9jUXlRanZXZ3NieWdEZERFMmFY?=
- =?utf-8?B?bnljRGZKSHB4L2NjcWoyazArd2VZd0FEY1ZEQ3VlOU5EMVVJY2QyZWt3UTJG?=
- =?utf-8?B?RThpWUdFU1J0WWZjWFErbzJHVVhOWE9nWkl4bjgrcUcrMlBSYTFiVFNOd2Qx?=
- =?utf-8?B?bW9LZlo2Y0dVZzhnWGJGWUxnbnhlSG5WRGZZeS9ISkRZZ2ZHN1lyWTYzb0ZB?=
- =?utf-8?B?dm5BSHpkNk9TaXJmMkJKTm9hU1RBYklYb1NPM1haVkgxcmNnTTdHMzJOZ3hT?=
- =?utf-8?B?NWVmbGxxWlZ5R3FGUkFFZnZPNE1mTTIvcmlMeVRVYm5WK3lKUVhNenZZTThz?=
- =?utf-8?B?NU55YkdSbXVDcFRsT01nYVVCT2J4Um96UG11emVRK2d6Q2h5T1E2OE1oTnpW?=
- =?utf-8?B?QThJaEd1NWMvTnV5Tm9lNXVnU0FObTI5M2dGa21iRnY4QndIeGM5WU1ESHZ4?=
- =?utf-8?B?MUMvY09pbFlpNzdMUmw5djFabjFJcnJvNHEwNGU2bU15MDliMFpFSHJDdjJh?=
- =?utf-8?B?OVZWTFpYd3JESnhMOTlKNzdNaVRjZEJObFZ3NDY1Y2dCbWUwbXJOSW1pZE1U?=
- =?utf-8?Q?kGpM8a1Dmh1a+4ll3F0DynxMHbd/1jj5PK7CmPz0LCEK?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0eac0ab6-463b-4d5e-6880-08dde601b278
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Aug 2025 07:08:33.1195
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: hVWvbHgqnzWlim6BHUGC47qWyqtrK3nEKMCS5RLDR2K6+J/V5Z01szN0mHl+JTP6Iw9OmfgQFs1VUxKRjgbFWw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7PPF915F74166
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next 1/5] net: rpmsg-eth: Add Documentation for
+ RPMSG-ETH Driver
+To: Andrew Lunn <andrew@lunn.ch>
+CC: "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet
+	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni
+	<pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
+        Jonathan Corbet
+	<corbet@lwn.net>, Andrew Lunn <andrew+netdev@lunn.ch>,
+        Mengyuan Lou
+	<mengyuanlou@net-swift.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Madhavan
+ Srinivasan <maddy@linux.ibm.com>,
+        Fan Gong <gongfan1@huawei.com>, Lee Trager
+	<lee@trager.us>,
+        Lorenzo Bianconi <lorenzo@kernel.org>,
+        Geert Uytterhoeven
+	<geert+renesas@glider.be>,
+        Lukas Bulwahn <lukas.bulwahn@redhat.com>,
+        Parthiban Veerasooran <Parthiban.Veerasooran@microchip.com>,
+        <netdev@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20250723080322.3047826-1-danishanwar@ti.com>
+ <20250723080322.3047826-2-danishanwar@ti.com>
+ <81273487-a450-4b28-abcc-c97273ca7b32@lunn.ch>
+ <b61181e5-0872-402c-b91b-3626302deaeb@ti.com>
+ <0a002a5b-9f1a-4972-8e1c-fa9244cec180@lunn.ch>
+Content-Language: en-US
+From: MD Danish Anwar <danishanwar@ti.com>
+In-Reply-To: <0a002a5b-9f1a-4972-8e1c-fa9244cec180@lunn.ch>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Thu Aug 28, 2025 at 6:50 AM JST, John Hubbard wrote:
-> On 8/27/25 1:47 AM, Alexandre Courbot wrote:
->> On Wed Aug 27, 2025 at 10:34 AM JST, John Hubbard wrote:
->> <snip>
->>>> +    /// Returns the data payload of the firmware, or `None` if the da=
-ta range is out of bounds of
->>>> +    /// the firmware image.
->>>> +    fn data(&self) -> Option<&[u8]> {
->>>> +        let fw_start =3D self.hdr.data_offset as usize;
->>>> +        let fw_size =3D self.hdr.data_size as usize;
+
+
+On 24/07/25 10:07 pm, Andrew Lunn wrote:
+>> Linux first send a rpmsg request with msg type = RPMSG_ETH_REQ_SHM_INFO
+>> i.e. requesting for the shared memory info.
+>>
+>> Once firmware recieves this request it sends response with below fields,
+>>
+>> 	num_pkt_bufs, buff_slot_size, base_addr, tx_offset, rx_offset
+>>
+>> In the device tree, while reserving the shared memory for rpmsg_eth
+>> driver, the base address and the size of the shared memory block is
+>> mentioned. I have mentioned that in the documentation as well
+> 
+> If it is in device tree, why should Linux ask for the base address and
+> length? That just seems like a source of errors, and added complexity.
+> 
+> In general, we just trust DT. It is a source of truth. So i would
+> delete all this backwards and forwards and just use the values from
+> DT. Just check the magic numbers are in place.
+> 
+
+Sure. I will make this change in v2.
+
+>> The same `base_addr` is used by firmware for the shared memory. During
+>> the rpmsg callback, firmware shares this `base_addr` and during
+>> rpmsg_eth_validate_handshake() driver checks if the base_addr shared by
+>> firmware is same as the one described in DT or not. Driver only proceeds
+>> if it's same.
+> 
+> So there is a big assumption here. That both are sharing the same MMU,
+> or maybe IOMMU. Or both CPUs have configured their MMU/IOMMU so that
+> the pages appear at the same physical address. I think this is a
+> problem, and the design should avoid anything which makes this
+> assumptions. The data structures within the share memory should only
+> refer to offsets from the base of the shared memory, not absolute
+> values. Or an index into the table of buffers, 0..N.
+> 
+>>>> +2. **HEAD Pointer**:
 >>>> +
->>>> +        self.fw.get(fw_start..fw_start + fw_size)
+>>>> +   - Tracks the start of the buffer for packet transmission or reception.
+>>>> +   - Updated by the producer (host or remote processor) after writing a packet.
 >>>
->>> This worries me a bit, because we never checked that these bounds
->>> are reasonable: within the range of the firmware, and not overflowing
->>> (.checked_add() for example), that sort of thing.
+>>> Is this a pointer, or an offset from the base address? Pointers get
+>>> messy when you have multiple address spaces involved. An offset is
+>>> simpler to work with. Given that the buffers are fixed size, it could
+>>> even be an index.
 >>>
->>> Thoughts?
->>=20
->> `get` returns `None` if the requested slice is out of bounds, so there
->> should be no risk of panicking here.
->
-> I was wondering about the bounds themselves, though. Couldn't they
-> be wrong? (Do we care?)
+>>
+>> Below are the structure definitions.
+>>
+>> struct rpmsg_eth_shared_mem {
+>> 	struct rpmsg_eth_shm_index *head;
+>> 	struct rpmsg_eth_shm_buf *buf;
+>> 	struct rpmsg_eth_shm_index *tail;
+>> } __packed;
+>>
+>> struct rpmsg_eth_shm_index {
+>> 	u32 magic_num;
+>> 	u32 index;
+>> }  __packed;
+> 
+> So index is the index into the array of fixed size buffers. That is
+> fine, it is not a pointer, so you don't need to worry about address
+> spaces. However, head and tail are pointers, so for those you do need
+> to worry about address spaces. But why do you even need them? Just put
+> the indexes directly into rpmsg_eth_shared_mem. The four index values
+> can be in the first few words of the shared memory, fixed offset from
+> the beginning, KISS.
+> 
 
-Not sure what you mean by wrong bounds here? Do you mean what if the
-header data is incorrect?
+I will drop all these pointers and use a offset based approach in v2.
+
+Thanks for the feedback.
+
+-- 
+Thanks and Regards,
+Danish
+
 
