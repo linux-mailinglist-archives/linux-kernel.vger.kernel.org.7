@@ -1,286 +1,117 @@
-Return-Path: <linux-kernel+bounces-789968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83472B39D7C
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 14:40:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D829B39D84
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 14:41:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C62CE7B13BC
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 12:38:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22F8798605E
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 12:41:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D11FD30F944;
-	Thu, 28 Aug 2025 12:40:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F25D830F7FF;
+	Thu, 28 Aug 2025 12:40:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Y6UUSVoF"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="CEieVCQL"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2194F307493;
-	Thu, 28 Aug 2025 12:40:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64D0C30F818
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 12:40:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756384821; cv=none; b=OolGtr1ZiMIKCG2Jbtj9wg7FdXmvnE+/uLRCXILxM6cCNNwBWGekwRlosUuAORFT47AtCQXmQuV5rMFu/gl/4oHdrWROnaPU/9raa1lHSG8nuvHEzJkMbNlHFxIJt+r+CuaLbrUvkf1XXG4Nygiv1U5O64UbZPLyqeh2fgqj4mw=
+	t=1756384844; cv=none; b=ZVeaSlIXqP6Zz6X7k5KqRsjNcsfHQOhZi3mOc9mhFt6UoO28plcPkFWmbGiGwhY4Gd6flK/QJoHTDUh9hNjw8+ULpzyNzSUJBvnow7q3n6azE9dzkUZsFOiKV0qHTeDqHmNr/ncnq6Zg+TDSIbdM1aWUep67mFGLzwp6DM0wydA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756384821; c=relaxed/simple;
-	bh=2VmTLH+GUpJ9OuIxl1JVogVGrELPLutOGpHuVKBzArk=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=j+084XHk6pjvTU8U6rZc6b4sOzFsthlG+C8MYlzwdESwDkKAM5oVfrUMXdoHMzX1kELTg0YKD8mOhiscwF2noAR1svy4fmF1bMxufCi/yb3m/MYXiGf9HeqoUgJQOctsy4IqT4iM0jp6h20SXoe7OceuKbUaLAbKE02E8zmDnH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Y6UUSVoF; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756384819; x=1787920819;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=2VmTLH+GUpJ9OuIxl1JVogVGrELPLutOGpHuVKBzArk=;
-  b=Y6UUSVoF5VmA4/pE7zZSxojleiROVDjNC0ZKag8CVhsAbEoNjQ/pRRJE
-   B/+ykElTNmCcGqFhuNk97ThOUCFyJ7idqWJsOcpJZsZJzX2HU5NXTQJFT
-   uadOf/ZH0c9cxDd5xjG/2fvo4wZjbsgsIf2KTqiCJPjoafEdrVZ21RANy
-   ttk4oYPexJdNUOaci+dnJQ5I+fo+S0QKoMk8JBRBBkASXBV1yD+yQnKsl
-   pF+rSH7y1VQ7NDLdz6r13Gvugt6TkM4tuwJmhWL7rsMl5xjclmf80o9ux
-   xQi5i5JhGyFZUINsnPDpZEum+vf2Cy+GJEyqZgSY3cNeamrTOSkXOc0k2
-   A==;
-X-CSE-ConnectionGUID: p4PyXm5hSTCk6GccuJ2v8Q==
-X-CSE-MsgGUID: PtI5XezbRuyq2ujh3qODTQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11535"; a="57850356"
-X-IronPort-AV: E=Sophos;i="6.18,217,1751266800"; 
-   d="scan'208";a="57850356"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2025 05:40:17 -0700
-X-CSE-ConnectionGUID: usVPx47uS2y4byRhi9nU5A==
-X-CSE-MsgGUID: RhTMv+oyQSaFJsHHsSXriw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,217,1751266800"; 
-   d="scan'208";a="169350485"
-Received: from puneetse-mobl.amr.corp.intel.com ([10.125.109.99])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2025 05:40:17 -0700
-Message-ID: <f1d159766f721aa11ce4b989b91c96a89eed3eeb.camel@linux.intel.com>
-Subject: Re: [PATCH v2] platform/x86/intel-uncore-freq: Present unique
- domain ID per package
-From: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>
-To: Ilpo =?ISO-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: Hans de Goede <hdegoede@redhat.com>,
- platform-driver-x86@vger.kernel.org,  LKML <linux-kernel@vger.kernel.org>
-Date: Thu, 28 Aug 2025 05:40:14 -0700
-In-Reply-To: <1fc59985-e56f-24dd-1015-95d4c2b8d6e7@linux.intel.com>
-References: <20250825214336.410962-1-srinivas.pandruvada@linux.intel.com>
-	 <1fc59985-e56f-24dd-1015-95d4c2b8d6e7@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3-0ubuntu1 
+	s=arc-20240116; t=1756384844; c=relaxed/simple;
+	bh=trSlbet/QuueBs9xQCBBEcGeeBLPyPlp1BPEQPaV1q0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NuVhVkqhlx1c915XY3v5N2gHo31h2SnEDzefaR0eWWa8+3KdPzG8N0/oc4ikvnhGHmMVaTAo+p+POCLR6OENpU5W2POfpYl4P67txwJgMNMp+JHqUuaSXhZJFvojiKuFQadOj14bomLIn/O517NnaCYVlcPMsl4TZRMl1Q6T8DA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=CEieVCQL; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-afcb7322da8so160049866b.0
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 05:40:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ionos.com; s=google; t=1756384841; x=1756989641; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=trSlbet/QuueBs9xQCBBEcGeeBLPyPlp1BPEQPaV1q0=;
+        b=CEieVCQLgb/s9cx9H5/4Ikd9djvc20IWSEKSQMb3rFHDNpZWVeiH7DMZfvI4EJqRUT
+         1cuc8LnkzItpJ+MZIhCdO3ydGgP9s/RYYjE4LwJwdX3jgPAc43Ya44H/coBxAMxO6uyj
+         eXzxpP1BUPJX4Qn5Sq/RBlObutecHoK7ymd9RGBiHBnDss4E8Zh0A2IvdGlxw4LVjTu/
+         usJTs1DtdD1O9/r5rCilagUewoUhc2Tx4kxl96eu7HIJZrv61XKABh2uurZgdgFNzhjP
+         Vz5LbrxCipVlEbQS8WNIHo5p0WIm86IUyB8i1yNphNWGzgLsPTKepxRGbaa/oGXBxKbv
+         zuEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756384841; x=1756989641;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=trSlbet/QuueBs9xQCBBEcGeeBLPyPlp1BPEQPaV1q0=;
+        b=Vi0WIV/MmSQwdI/4XNNFgLiAhRwhE/0Rct0ulg7zzAQibACNTMMF9NDF/R3QZ3StFg
+         ELzpPt4Pza2sT9+iH5VcIxXIWJsGJoOdUA/PWTiIMT1PZ2spY0k0qcdEC7ManY6tL1dS
+         ct95UWybNTAvXqid/0+OcO6OWQVB/WaET3LCTsWjHTth+r2h4LIWEIlV9ukQ6SyZy03V
+         cGqDQ6ljYdHHcpjUi3gabV33JvtZccZ9EKDnDi2h+19OXuSDnJkggDI6vpXcEZ65VEiv
+         WDmzTMz4mhA6wM3VIGucTyMof9FcICjU3SarbrTnGXvHuBIfFH4ZzgmhYLVi466z+yM4
+         Lchg==
+X-Forwarded-Encrypted: i=1; AJvYcCXRJ6LYVV8NBd6qu+g3nRZA2kmSx2oRnRU2FmhgPCTYwQkzOO5dOHsPs5bb3vfQVoDFSDA2N5lBYiWG4uw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLrnj8D/40q1EXKv4ECIGEwCLPx0FD4XxIkU32644vmBxx1qO2
+	Qs4bC5zu7gkFEG2Y7vB6yyZ8SvQpMgOGsoON+idUuKXwOIjNeK7POT94iG87u3Yjgeic54u9Z9a
+	FUHaVciRn+R+62md7DIRmYPxqpg95lDnaazg5t33tiA==
+X-Gm-Gg: ASbGncv1vOnKLVbvR+8BUQdndwbAX5m3Qk1uVzIGNWl1k62wk/XYXNH0klayAuTdo9y
+	CjyW/nS4sYCl8lp5QxGC/4LkulC5omAx4rJLJ3dLz/BUsyspce9VnO7fDEXiCaQKw9kVbXcCIic
+	p5GNg4Mngn/dJz4WdISv4GKWJTVI7HKcQ7369RwPLCMcjNJuEkAxz6TvkD1C3Hvz0l2/a57fPwM
+	dKuyqhvqjRWPRCO1a4/MNOwojje+uq6uUc=
+X-Google-Smtp-Source: AGHT+IG8bYx4wIXfIdcPfZhiB4fk8x1jfzQ79t0ZECOBclW3p4Or6CJiYYn5dcoy89VV/Q824U7zbSHINWxTvm92/XY=
+X-Received: by 2002:a17:907:dac:b0:ae3:f524:b51 with SMTP id
+ a640c23a62f3a-afe28ffcee8mr2305659766b.10.1756384840560; Thu, 28 Aug 2025
+ 05:40:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20250827192233.447920-1-max.kellermann@ionos.com>
+ <c688a2f6-375e-4a00-8d44-6a833e3d30ef@lucifer.local> <27a21510-e9e8-4eb2-9e26-618c103d49c6@redhat.com>
+In-Reply-To: <27a21510-e9e8-4eb2-9e26-618c103d49c6@redhat.com>
+From: Max Kellermann <max.kellermann@ionos.com>
+Date: Thu, 28 Aug 2025 14:40:29 +0200
+X-Gm-Features: Ac12FXyF-XXXzaswyonUogGJ99vkSxahZWLwoczFyKONaWpaCVV1M_vCYlT-A6M
+Message-ID: <CAKPOu+8DbXY6wT_8gcqLDpyZEg0=En6wOYtHX_VkUvZ_oOLHSg@mail.gmail.com>
+Subject: Re: [PATCH] mm: add `const` to lots of pointer parameters
+To: David Hildenbrand <david@redhat.com>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, akpm@linux-foundation.org, 
+	Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org, surenb@google.com, 
+	mhocko@suse.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 2025-08-28 at 13:36 +0300, Ilpo J=C3=A4rvinen wrote:
-> On Mon, 25 Aug 2025, Srinivas Pandruvada wrote:
->=20
-> > In partitioned systems, the domain ID is unique in the partition
-> > and a
-> > package can have multiple partitions.
-> >=20
-> > Some user-space tools, such as turbostat, assume the domain ID is
-> > unique
-> > per package. These tools map CPU power domains, which are unique to
-> > a
-> > package. However, this approach does not work in partitioned
-> > systems.
-> >=20
-> > There is no architectural definition of "partition" to present to
-> > user
-> > space.
-> >=20
-> > To support these tools, set the domain_id to be unique per package.
-> > For
-> > compute die IDs, uniqueness can be achieved using the platform info
-> > cdie_mask, mirroring the behavior observed in non-partitioned
-> > systems.
-> >=20
-> > For IO dies, which lack a direct CPU relationship, any unique
-> > logical
-> > ID can be assigned. Here domain IDs for IO dies are configured
-> > after all
-> > compute domain IDs. During the probe, keep the index of the next IO
-> > domain ID after the last IO domain ID of the current partition.
-> > Since
-> > CPU packages are symmetric, partition information is same for all
-> > packages.
-> >=20
-> > The Intel Speed Select driver has already implemented a similar
-> > change
-> > to make the domain ID unique, with compute dies listed first,
-> > followed
-> > by I/O dies.
-> >=20
-> > Signed-off-by: Srinivas Pandruvada
-> > <srinivas.pandruvada@linux.intel.com>
-> > ---
-> > v2:
-> > - Add some comments
-> > - Change update_domain_id() to set_domian_id() to set domain_id
-> > instead of update
-> > - cluster_info->uncore_data.domain_id +=3D * is changed to add
-> > multiple steps to
-> > get to this equation
-> > - Handle case when only when no compute dies in partition=20
-> >=20
-> > =C2=A0.../uncore-frequency/uncore-frequency-tpmi.c=C2=A0 | 76
-> > ++++++++++++++++++-
-> > =C2=A01 file changed, 75 insertions(+), 1 deletion(-)
-> >=20
-> > diff --git a/drivers/platform/x86/intel/uncore-frequency/uncore-
-> > frequency-tpmi.c b/drivers/platform/x86/intel/uncore-
-> > frequency/uncore-frequency-tpmi.c
-> > index cb4905bad89b..a30a99048db9 100644
-> > --- a/drivers/platform/x86/intel/uncore-frequency/uncore-frequency-
-> > tpmi.c
-> > +++ b/drivers/platform/x86/intel/uncore-frequency/uncore-frequency-
-> > tpmi.c
-> > @@ -369,6 +369,79 @@ static void uncore_set_agent_type(struct
-> > tpmi_uncore_cluster_info *cluster_info)
-> > =C2=A0	cluster_info->uncore_data.agent_type_mask =3D
-> > FIELD_GET(UNCORE_AGENT_TYPES, status);
-> > =C2=A0}
-> > =C2=A0
-> > +#define MAX_PARTITIONS	2
-> > +
-> > +/* IO domain ID start index for a partition */
-> > +static u8 io_die_start[MAX_PARTITIONS];
-> > +
-> > +/* Next IO domain ID index after the current partition IO die IDs
-> > */
-> > +static u8 io_die_index_next;
-> > +
-> > +/* Lock to protect io_die_start, io_die_index_next */
-> > +static DEFINE_MUTEX(domain_lock);
-> > +
-> > +static void set_domain_id(int id,=C2=A0 int num_resources,
-> > +			=C2=A0 struct oobmsm_plat_info *plat_info,
-> > +			=C2=A0 struct tpmi_uncore_cluster_info
-> > *cluster_info)
-> > +{
-> > +	u8 part_io_index =3D 0, cdie_range, pkg_io_index, max_dies;
-> > +
-> > +	if (plat_info->partition >=3D MAX_PARTITIONS) {
-> > +		cluster_info->uncore_data.domain_id =3D id;
-> > +		return;
-> > +	}
-> > +
-> > +	if (cluster_info->uncore_data.agent_type_mask &
-> > AGENT_TYPE_CORE) {
-> > +		cluster_info->uncore_data.domain_id =3D
-> > cluster_info->cdie_id;
-> > +		return;
-> > +	}
-> > +
-> > +	/* Unlikely but cdie_mask may have holes, so take range */
-> > +	cdie_range =3D fls(plat_info->cdie_mask) - ffs(plat_info-
-> > >cdie_mask) + 1;
-> > +	max_dies =3D topology_max_dies_per_package();
-> > +
-> > +	/*
-> > +	 * If the CPU doesn't enumerate dies, then just current
-> > cdie range
-> > +	 * the max.
->=20
-> This sound broken grammar to my non-native ear. Did you mean:
->=20
-> ..., then just use current cdie range as the max.
->=20
-> ?
-Yes, I have swallowed "as" in my non native year!
+> On 28.08.25 14:24, Lorenzo Stoakes wrote:
+> > On Wed, Aug 27, 2025 at 09:22:33PM +0200, Max Kellermann wrote:
+> >> For improved const-correctness.
+> >
+> > 'const-correctness' in C is extremely weak.
 
->=20
->=20
-> > +	 */
-> > +	if (cdie_range > max_dies)
-> > +		max_dies =3D cdie_range;
-> > +
-> > +	guard(mutex)(&domain_lock);
-> > +
-> > +	if (!io_die_index_next)
-> > +		io_die_index_next =3D max_dies;
-> > +
-> > +	if (!io_die_start[plat_info->partition]) {
-> > +		io_die_start[plat_info->partition] =3D
-> > io_die_index_next;
-> > +		/*
-> > +		 * number of IO dies =3D num_resources - cdie_range.
-> > Hence
-> > +		 * next partition io_die_index_next is set after
-> > IO dies
-> > +		 * in the current partition.
-> > +		 */
-> > +		io_die_index_next +=3D (num_resources - cdie_range);
-> > +	}
-> > +
-> > +	/*
-> > +	 * Index from IO die start within the partition:
-> > +	 * This is the first valid domain after the cdies. If
-> > there are
-> > +	 * no cdies in a partition just start from 0.
-> > +	 * For example the current resource index 5 and cdies end
-> > at
-> > +	 * index 3 (cdie_cnt =3D 4). Then the io only index 5 - 4 =3D
-> > 1.
-> > +	 */
-> > +	if (cdie_range)
->=20
-> "start from 0" sounds a bit alarming to me as if that condition could
-> happen also after starting, that is, more than once within a
-> partition=20
-> which would result in using part_io_index =3D 0 twice?
-You are correct. This is possible to create configuration like this. I
-will remove this check.
+"const correctness" is a commonly used term for this concept, and I
+find your arguments against const-correctness "extremely weak". I
+don't think discussing the benefits of const-correctness is worth the
+time; the concept is trivial enough, and if you don't already agree,
+there is no way I can convince you. Let's agree to disagree.
 
-Thanks,
-Srinivas
+On Thu, Aug 28, 2025 at 2:29=E2=80=AFPM David Hildenbrand <david@redhat.com=
+> wrote:
+> I recall that Willy did some more targeted conversions of that kind in th=
+e past regarding folios.
 
->=20
-> > +		part_io_index =3D id - cdie_range;
-> > +
-> > +	/*
-> > +	 * Add to the IO die start index for this partition in
-> > this package
-> > +	 * to make unique in the package.
-> > +	 */
-> > +	pkg_io_index =3D io_die_start[plat_info->partition] +
-> > part_io_index;
-> > +
-> > +	/* Assign this to domain ID */
-> > +	cluster_info->uncore_data.domain_id =3D pkg_io_index;
-> > +}
-> > +
-> > =C2=A0/* Callback for sysfs read for TPMI uncore values. Called under
-> > mutex locks. */
-> > =C2=A0static int uncore_read(struct uncore_data *data, unsigned int
-> > *value, enum uncore_index index)
-> > =C2=A0{
-> > @@ -605,11 +678,12 @@ static int uncore_probe(struct
-> > auxiliary_device *auxdev, const struct auxiliary_
-> > =C2=A0			cluster_info->uncore_data.package_id =3D
-> > pkg;
-> > =C2=A0			/* There are no dies like Cascade Lake */
-> > =C2=A0			cluster_info->uncore_data.die_id =3D 0;
-> > -			cluster_info->uncore_data.domain_id =3D i;
-> > =C2=A0			cluster_info->uncore_data.cluster_id =3D j;
-> > =C2=A0
-> > =C2=A0			set_cdie_id(i, cluster_info, plat_info);
-> > =C2=A0
-> > +			set_domain_id(i, num_resources, plat_info,
-> > cluster_info);
-> > +
-> > =C2=A0			cluster_info->uncore_root =3D tpmi_uncore;
-> > =C2=A0
-> > =C2=A0			if (TPMI_MINOR_VERSION(pd_info-
-> > >ufs_header_ver) >=3D UNCORE_ELC_SUPPORTED_VERSION)
-> >=20
->=20
+And I found many more commits adding "const" to pointer parameters.
+That shows this kind of patch is acceptable in the Linux kernel.
 
+> I would appreciate similarly doing it in logical chunks.
+
+So you suggest splitting the patch into many? I can do that, but will
+it be merged then, or will Lorenzo be able block it? Will further
+const-correctness changes from others (e.g. Willy) be rejected, too?
 
