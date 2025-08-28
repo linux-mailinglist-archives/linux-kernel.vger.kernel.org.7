@@ -1,143 +1,276 @@
-Return-Path: <linux-kernel+bounces-789755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE44DB39A01
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 12:33:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6669DB39A03
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 12:33:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7FCA1C235CD
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 10:32:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55BBE7C48BD
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 10:32:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9457A30C61E;
-	Thu, 28 Aug 2025 10:31:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FDB827991C;
+	Thu, 28 Aug 2025 10:31:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="j+ikrmBE"
-Received: from out30-98.freemail.mail.aliyun.com (out30-98.freemail.mail.aliyun.com [115.124.30.98])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="OSAIudBw"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DFB030C616
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 10:30:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9761187346
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 10:31:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756377064; cv=none; b=gLqy5W4fC9W8uuZbTbOxtl0PP+VjMcGQ0ghZKXbURfRE/5Z+A2xJ7rkJWnfeDVCZE45Q3p4cdtukBgCb9WOV55K02QflA8fcOtH/GoC/m7GnM9f6HxGtXZmFP9l51s++tWiYJQUP+SQf/3nlJ5Uq+F54Zwxvl35W439SOghMC9E=
+	t=1756377113; cv=none; b=JdkoJU3i7+5dA4ctQZUF3nkJ+O5k5+c1FBZa4S6jNuD6qYegDU5XH0hfcw40evBm/hGHgzWPFQPTUFTNH0JQKXPPeKtPhsj2vkxKOOI3GEJwEEYA7tOO2BSDvAB2YGY7OSWob/In+WX6Q+bs1W0A98YJnGSLNEqR6mgqNqjhw9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756377064; c=relaxed/simple;
-	bh=5Cm4Q5y6uqLhfWD3Jz701KdZsCnWtf0jsdufxtM3Nm8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HaXFNLTtnOkorTyh93BOAHqh1OX6uWLA4MWOQQh7zfDBPyqLwSwTDqLLiVUXnex85+Zw5lj1qtTv8MvcWUdhJUHJYLGSE6UrTEPcwEO+V2YoRoDBF/2Cu6Uxr10yPdXsp49R8ILuOGCZAcbhqH0cIxRVfq5Lmcq0EJ1swOM5bv4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=j+ikrmBE; arc=none smtp.client-ip=115.124.30.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1756377057; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=h3HUDLwwcHzYbAtlolpUh3esRybaOlr+CrGOLxJ95c8=;
-	b=j+ikrmBEP8ZYhE+03wVw4upUAKWj1MJS1TvW+j3M7q2cishSwsbp0LV5QRKPC1yto7Q4ZBUuDAouICEztyOc1gIhS2kL2QmoFtnzpNerBIXCTyBux02zhzi5birIJXaUAhCgghRUfUnVghLQPZz38OBqeZ76QIzOB7UUHB0Ab0Q=
-Received: from 30.74.128.191(mailfrom:tongweilin@linux.alibaba.com fp:SMTPD_---0Wmmy9ac_1756377056 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Thu, 28 Aug 2025 18:30:57 +0800
-Message-ID: <9a02a229-96da-45cc-a0fa-ae5344faa540@linux.alibaba.com>
-Date: Thu, 28 Aug 2025 18:30:56 +0800
+	s=arc-20240116; t=1756377113; c=relaxed/simple;
+	bh=tMosiq+ds7fp5y+WKEytetzY4ZZNGU0P/rB2j6Ht9Ug=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qpqbuoXutTDK9XZbrESd0HiAicV4NzqFWkO5sUpfJcOGYGz4PuNssL7knLpoTWkS7EfGdh5zfhsofC82cdiuEcAi4MdL5iPIO+GWzernmcx63QDsf9orTlixk6jmaCRaW+7pvL3pmb81hMxRcCAGLHp9MFRpVzKxGs7f+3OoblY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=OSAIudBw; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57S9NMtZ004946
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 10:31:50 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	l9WiOKIOlKJ7PLAZcqgHAvc4Wt1A+B1/zu8MBNbx8lw=; b=OSAIudBwJveiw/KV
+	bOkh+Lon975z9UF0xiN2gKFOLlWcReO3R8+asuYkddXIDIhyIBADKZq0IP4RJmqD
+	cHGfOch2wRBKkyDfhAd8sud7zxYGe4HQ0ywkkBFkHqoBK7bbj18VJrVy2QRjZoYq
+	HoemJuTYDzEviS0XVVzqdIIBK8OEsopK+/qlk1KUtcwTOzuxwbKj2uMmAE9rkdp9
+	MZRxzYNAg2Vz7oErr9wdf4OonV60WjSMUnTv9aWt/CYneMnDut6zQfJBjv6quu5l
+	ypEy4f+KJl5EWmzw+xpznHGm5a5ujNH2smyh+uVIkNGv6ZNxBPzRaGA5ZJfuaN/U
+	gHou4w==
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48tbpghmq7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 10:31:50 +0000 (GMT)
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-70dfcc58904so858856d6.1
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 03:31:50 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756377110; x=1756981910;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=l9WiOKIOlKJ7PLAZcqgHAvc4Wt1A+B1/zu8MBNbx8lw=;
+        b=VFy2gVQ4dmMqXtNI3dcceeITHXIZEi/5U0ZsYiCtno+7J/jP8IHRhIN5rGHk+r79Yp
+         VuPZY5y8K6ffUKZY/qKeLFkf8Fj+YsyvFNFU2NEtMiFcghMw95JS7fOj13/brvpY/uSd
+         jx7BmOQRCuhevqXmy7dlXunI24V1VY5zhDPE8mKVmXY9AP8GCzXtd9ycvBGRpaDC5hhn
+         7zXsVT6T8brUU2C/EOSpvmYaInLrHAYWDJkSus3V47KDxdH2RoG+QF3DJmGyFQmcfO1J
+         Ut2RZpyc0ag606RAZ5EJpeTNGl7LAzDRxE8c57CRnA8+NRLGNVwPGwh3NTSIhA9MY3Zv
+         U6PA==
+X-Forwarded-Encrypted: i=1; AJvYcCUuYuKiQLlEDV2OBLewwLY1Cc/DGXmJhKP3y2460Gz6WC1o3WvjSZoeoqn+15JelLF8WMgxR3IIKBbSyaY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YydRztC3VQvwBdy/hClivfojLXCwnWunEZVgYDWMu2GOk1uzruS
+	GAwHuCHAtT4+RsE0P6gsNaVquzxyg7ZrJsmLCcGVEP/MZFb3t78d6iswaLo/fw+xQgexckDlD5L
+	xTbqACxoDMYiK+6qhF+OZJQwWG4BvZ9kerXPgBLB7BFO+gzjtHuSinbSYqlwhfFWXQm4=
+X-Gm-Gg: ASbGncvoJtF83ktWBWZpgEJ10rFFBWsUa/dELY9BrIN4locN9zgZQw9cQtxL+EWWpM+
+	EzUQVVUIN89be7xR7mFi+mVYCqxPaBra0CMtJAueAe5f1+pFlOA8lbQ/QACcVp180IO8+ODuBTA
+	95NI0tqcUqmSJeDa6Xssy1CI1hb7eLUwkQueFN3ajBH3Kzw06atPHKIwQRTbpignG6lwzggcMiz
+	7h605rc9fHLg8PTou/EOtvLm6OTO8DjrZ+7mTmtsgBLmc9PSpGuQ9RI62w7XtW0h19zQM7UtNF7
+	t3N9/zku4yzF8XEtbFQbbmCifUYOteIRS7mBb7cy3UvmcPkwv4Eu6nHl4ylzTcXgF0cVaFo/2q+
+	KA6JR3MT/ONn5QlfIiEl3o/1QoYpR8RLEXoM/ZS6lnm2El+Gu8LPb
+X-Received: by 2002:a05:6214:ca9:b0:705:c148:26a0 with SMTP id 6a1803df08f44-70d971e4c3cmr256141086d6.31.1756377109610;
+        Thu, 28 Aug 2025 03:31:49 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGabGDuV7RH7XtiHw/GVFS0TL++vOcS9epnGu7rG9+RKZF6r7predeBwqVI57sChDQW8QANRg==
+X-Received: by 2002:a05:6214:ca9:b0:705:c148:26a0 with SMTP id 6a1803df08f44-70d971e4c3cmr256140626d6.31.1756377109029;
+        Thu, 28 Aug 2025 03:31:49 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55f35c0221dsm3168701e87.7.2025.08.28.03.31.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Aug 2025 03:31:48 -0700 (PDT)
+Date: Thu, 28 Aug 2025 13:31:45 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Ram Prakash Gupta <quic_rampraka@quicinc.com>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Sachin Gupta <quic_sachgupt@quicinc.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>, linux-arm-msm@vger.kernel.org,
+        linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        quic_cang@quicinc.com, quic_nguyenb@quicinc.com,
+        quic_bhaskarv@quicinc.com, quic_mapa@quicinc.com,
+        quic_nitirawa@quicinc.com, quic_sartgarg@quicinc.com
+Subject: Re: [PATCH V2 2/2] mmc: sdhci-msm: Rectify DLL programming sequence
+ for SDCC
+Message-ID: <nvgm2jeyhabxdhurcflc2gu4vdk2zjfoba22mc6j3d7azxdicz@ln5pu676b3lf>
+References: <769268c2-9a7f-4b6e-aabd-a6cf5a744d5b@quicinc.com>
+ <d5ykzwuk3wrwycol3wpeontfp5t7h7vfrfcxnmxei3qs74xsp7@ihtzne5wbytf>
+ <81323b02-a7be-847a-b973-ca0cdb906558@quicinc.com>
+ <p7o2ykmpghx5jqagpkhd2rfqgizcdagn366rltyn4gmbmnmpje@vcygaqcaowkn>
+ <82d11cf6-bfed-9b73-c697-c692d1c7e02d@quicinc.com>
+ <1f910d65-de34-424d-adf9-7669c22afeaa@oss.qualcomm.com>
+ <bb85f33a-17e4-3c7f-57ce-c4d67b7d655b@quicinc.com>
+ <jybd2m25jtg35yocf77e23ytbvrlt5d2f6jjscdyxilpk75tx3@na3u4h2vdweu>
+ <ec1b0c96-3069-5937-7bc4-cbce0a4c4ec2@quicinc.com>
+ <335a0397-59e3-ad65-5e75-0bb7f399be66@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC] mm: Use pr_warn_once() for min_free_kbytes warning
-To: Michal Hocko <mhocko@suse.com>
-Cc: akpm@linux-foundation.org, linux-mm@kvack.org, vbabka@suse.cz,
- surenb@google.com, jackmanb@google.com, hannes@cmpxchg.org, ziy@nvidia.com,
- linux-kernel@vger.kernel.org, baolin.wang@linux.alibaba.com
-References: <20250828030602.204332-1-tongweilin@linux.alibaba.com>
- <aK_7GKJ4BWjye4tZ@tiehlicka>
- <35e0a580-ae78-4485-b285-7f71f91e046d@linux.alibaba.com>
- <aLAj-itGT9DD3SU3@tiehlicka>
- <9639adfe-13ba-4c27-8ba6-8bf3e2190450@linux.alibaba.com>
- <aLAq5TaqdR7GQB6J@tiehlicka>
-Content-Language: en-US
-From: Weilin Tong <tongweilin@linux.alibaba.com>
-In-Reply-To: <aLAq5TaqdR7GQB6J@tiehlicka>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <335a0397-59e3-ad65-5e75-0bb7f399be66@quicinc.com>
+X-Proofpoint-GUID: IHF_Ab7e47epqbie6bufi_be1bnqqdV4
+X-Proofpoint-ORIG-GUID: IHF_Ab7e47epqbie6bufi_be1bnqqdV4
+X-Authority-Analysis: v=2.4 cv=G7gcE8k5 c=1 sm=1 tr=0 ts=68b03016 cx=c_pps
+ a=oc9J++0uMp73DTRD5QyR2A==:117 a=xqWC_Br6kY4A:10 a=8nJEP1OIZ-IA:10
+ a=2OwXVqhp2XgA:10 a=DmG7qftGFCsyeU4zcA4A:9 a=3ZKOabzyN94A:10
+ a=wPNLvfGTeEIA:10 a=iYH6xdkBrDN1Jqds4HTS:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODI3MDE5OSBTYWx0ZWRfX2tuO6XvPOxvm
+ TGnKqk5agmW7Ya38S5cMX8U9/aKwL7t/kI082bvneQ0f4XjARK7raPh70jpSenSOJOHpfQSvDCi
+ x1/ACLxXNw8zrMckbodkBLREfQczXWM86jy74ABQBTg6+pVfpc25NoWvFURc2Z7o9CaGAAqVqQW
+ c/2e7RSqDZkiMo2ga+keIQu1I4p8xnFrUtk6+ZDc42h77qjIDL1OeLZ/+QDacUdU73USEempnHX
+ VDarlLynXUspoijg4Nkp555ECxPbcxLFrq20lYXyAUY54/mV6uhY4mpjYuFsWfOcgYGJDE5NZto
+ 4rETYtPsRs0DeLWBoKoxKdEM5m6YV0yRb8vvZngp5AdvEmXEfimrNgfy6FaVoF4QlP64xEI8/Dj
+ /Wt58wGh
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-28_03,2025-08-28_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 phishscore=0 priorityscore=1501 adultscore=0 impostorscore=0
+ bulkscore=0 suspectscore=0 clxscore=1015 spamscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508270199
+
+On Thu, Aug 28, 2025 at 01:30:21PM +0530, Ram Prakash Gupta wrote:
+> 
+> On 8/21/2025 7:45 PM, Ram Prakash Gupta wrote:
+> > On 8/9/2025 3:10 PM, Dmitry Baryshkov wrote:
+> >> On Thu, Aug 07, 2025 at 01:28:28AM +0530, Ram Prakash Gupta wrote:
+> >>> On 7/31/2025 7:49 PM, Dmitry Baryshkov wrote:
+> >>>> On 31/07/2025 14:46, Ram Prakash Gupta wrote:
+> >>>>> On 7/30/2025 11:26 PM, Dmitry Baryshkov wrote:
+> >>>>>> On Wed, Jul 23, 2025 at 03:43:37PM +0530, Ram Prakash Gupta wrote:
+> >>>>>>> On 1/22/2025 3:20 PM, Dmitry Baryshkov wrote:
+> >>>>>>>> On Wed, Jan 22, 2025 at 02:57:59PM +0530, Sachin Gupta wrote:
+> >>>>>>>>> On 1/7/2025 8:38 PM, Dmitry Baryshkov wrote:
+> >>>>>>>>>> On Tue, Jan 07, 2025 at 11:13:32AM +0530, Sachin Gupta wrote:
+> >>>>>>>>>>> On 12/27/2024 12:23 AM, Dmitry Baryshkov wrote:
+> >>>>>>>>>>>> On Thu, Dec 26, 2024 at 11:22:40AM +0530, Sachin Gupta wrote:
+> >>>>>>>>>>>>> On 12/19/2024 11:24 AM, Dmitry Baryshkov wrote:
+> >>>>>>>>>>>>>> On Wed, Dec 18, 2024 at 02:40:57PM +0530, Sachin Gupta wrote:
+> >>>>>>>>>>>>>>> +
+> >>>>>>>>>>>>>>> +static unsigned int sdhci_msm_get_clk_rate(struct sdhci_host *host, u32 req_clk)
+> >>>>>>>>>>>>>>> +{
+> >>>>>>>>>>>>>>> +    struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+> >>>>>>>>>>>>>>> +    struct sdhci_msm_host *msm_host = sdhci_pltfm_priv(pltfm_host);
+> >>>>>>>>>>>>>>> +    struct clk *core_clk = msm_host->bulk_clks[0].clk;
+> >>>>>>>>>>>>>>> +    unsigned int sup_clk;
+> >>>>>>>>>>>>>>> +
+> >>>>>>>>>>>>>>> +    if (req_clk < sdhci_msm_get_min_clock(host))
+> >>>>>>>>>>>>>>> +        return sdhci_msm_get_min_clock(host);
+> >>>>>>>>>>>>>>> +
+> >>>>>>>>>>>>>>> +    sup_clk = clk_round_rate(core_clk, clk_get_rate(core_clk));
+> >>>>>>>>>>>>>>> +
+> >>>>>>>>>>>>>>> +    if (host->clock != msm_host->clk_rate)
+> >>>>>>>>>>>>>>> +        sup_clk = sup_clk / 2;
+> >>>>>>>>>>>>>>> +
+> >>>>>>>>>>>>>>> +    return sup_clk;
+> >>>>>>>>>>>>>> Why?
+> >>>>>>>>>>>>> Sorry, I did not understand your question. Can you please explain in detail.
+> >>>>>>>>>>>> Please explain the maths. You get the rate from the clock, then you
+> >>>>>>>>>>>> round it, but it is the rate that has just been returned, so there
+> >>>>>>>>>>>> should be no need to round it. And after that there a division by two
+> >>>>>>>>>>>> for some reason. So I've asked for an explanation for that code.
+> >>>>>>>>>>>>
+> >>>>>>>>>>> clk_round_rate is used in case of over clocking issue we can round it to the
+> >>>>>>>>>>> usable frequency.
+> >>>>>>>>>> If it is a frequency _returned_ by the clock driver, why do you need to
+> >>>>>>>>>> round it? It sounds like that freq should be usable anyway.
+> >>>>>>>>>>
+> >>>>>>>>> I agree, rounding will be taken care by clock driver. Will remove in my next
+> >>>>>>>>> patch.
+> >>>>>>>>>
+> >>>>>>>>>>> Divide by 2 is used as for HS400 the tuning happens in
+> >>>>>>>>>>> HS200 mode only so to update the frequency to 192 Mhz.
+> >>>>>>>>>> Again, is it really 192 MHz? Or 19.2 MHz?
+> >>>>>>>>>> Also if it is for HS400, then shouldn't /2 be limited to that mode?
+> >>>>>>>>>>
+> >>>>>>>>> Yes, It is 192 MHz.
+> >>>>>>>> Good, thanks for the confirmation.
+> >>>>>>>>
+> >>>>>>>>> As part of eMMC Init, driver will try to init with the best mode supported
+> >>>>>>>>> by controller and device. In this case it is HS400 mode, But as part of
+> >>>>>>>>> HS400 mode, we perform Tuning in HS200 mode only where we need to configure
+> >>>>>>>>> half of the clock.
+> >>>>>>>> This isn't an answer to the question. Let me rephrase it for you: if the
+> >>>>>>>> /2 is only used for HS400, why should it be attempted in all other
+> >>>>>>>> modes? Please limit the /2 just to HS400.
+> >>>>>>> Hi Dmitry,
+> >>>>>>>
+> >>>>>>> like updated earlier by Sachin, HS400 tuning happens in HS200 mode, so if
+> >>>>>>> we try to use "ios->timing == MMC_TIMING_MMC_HS400" that wont help, as at
+> >>>>>>> this stage timing can be MMC_TIMING_MMC_HS200/MMC_TIMING_MMC_HS400 for
+> >>>>>>> hs200 tuning and hs400 selection. In this case we must divide clk by 2
+> >>>>>>> to get 192MHz and we find this as host->clock wont be equal to
+> >>>>>>> msm_host->clk_rate.
+> >>>>>> What are host->clock and msm_host->clk_rate at this point?
+> >>>>>> What is the host->flags value? See sdhci_msm_hc_select_mode().
+> >>>>> There are 2 paths which are traced to this function when card initializes
+> >>>>> in HS400 mode, please consider below call stack in 2 paths
+> >>>>>
+> >>>>> sdhci_msm_configure_dll
+> >>>>> sdhci_msm_dll_config
+> >>>>> sdhci_msm_execute_tuning
+> >>>>> mmc_execute_tuning
+> >>>>> mmc_init_card
+> >>>>> _mmc_resume
+> >>>>> mmc_runtime_resume
+> >>>>>
+> >>>>> with values of host->clock as 200000000 & msm_host-clk_rate as 400000000
+> >>>> Please check the rates explicitly in the code rather than just checking that they are not equal.
+> >>> in function msm_get_clock_mult_for_bus_mode(), clk multiplier returns 2, with HS400
+> >>> DDR52 and DDR50 modes which is called from sdhci_msm_set_clock() and
+> >>> sdhci_msm_execute_tuning. And in sdhci_msm_execute_tuning(), we are calling
+> >>> sdhci_msm_dll_config() when SDHCI_HS400_TUNING is set and this flag is cleared
+> >>> immediately after return. And sdhci_msm_dll_config() is called after that.
+> >>>
+> >>> Now when the card is supporting HS400 mode, then from mmc_hs200_tuning(),
+> >>> sdhci_prepare_hs400_tuning is getting called, and there SDHCI_HS400_TUNING
+> >>> flag is set, and clock set is multiplying the clk rate by 2 in below call stack
+> >>>
+> >>> msm_set_clock_rate_for_bus_mode
+> >>> sdhci_msm_execute_tuning
+> >>> mmc_execute_tuning
+> >>> mmc_init_card
+> >>>
+> >>> so this clk rate is doubling only with HS400 mode selection and while setting up
+> >>> dll in HS400 dll configuration path sup_clk need to divide by 2 as msm_host->clk_rate
+> >>> is twice the host->clock as mentioned above.
+> >> I don't see how it's relevant. I'm asking you to check for the rate
+> >> values explicitly in the driver code rather than just checking that
+> >> rateA != rateB. You might error out if rateA != rateB and they are not
+> >> 192 MHz / 384 MHz
+> > ok I see, but I got one another alternate to this, I can try use similar checks used in
+> > function msm_get_clock_mult_for_bus_mode(), ios.timing == MMC_TIMING_MMC_HS400 
+> > host->flags & SDHCI_HS400_TUNING, but for this I ll have to move check
+> > host->flags &= ~SDHCI_HS400_TUNING in function sdhci_msm_execute_tuning () at the bottom
+> > of this function, this will make code more readable and consistent to checks at other
+> > places but I am testing it right now and will update.
+> >
+> > If this doesn't work then I ll explicitly use the rate value in check.
+> >
+> > Thanks,
+> > Ram
+> 
+> Hi Dmitry,
+> 
+> adding checks for ios.timing == MMC_TIMING_MMC_HS400 && host->flags & SDHCI_HS400_TUNING
+> serves the same purpose for dividing the clk when mode is hs400 and hs400_tuning flag is
+> set, and clk value checks can be avoided now.
+> 
+> With this HS200, HS400, HS400ES modes of eMMC is tested.
+> 
+> so if this approach looks good to you, then I would like to proceed with next patchset.
+
+LGTM.
 
 
-åœ¨ 2025/8/28 18:09, Michal Hocko å†™é“:
-> On Thu 28-08-25 17:48:54, Weilin Tong wrote:
->> åœ¨ 2025/8/28 17:40, Michal Hocko å†™é“:
->>> On Thu 28-08-25 17:23:40, Weilin Tong wrote:
->>>> åœ¨ 2025/8/28 14:45, Michal Hocko å†™é“:
->>>>
->>>>> On Thu 28-08-25 11:06:02, Weilin Tong wrote:
->>>>>> When min_free_kbytes is user-configured, increasing system memory via memory
->>>>>> hotplug may trigger multiple recalculations of min_free_kbytes. This results
->>>>>> in excessive warning messages flooding the kernel log if several memory blocks
->>>>>> are added in a short period.
->>>>>>
->>>>>> Sample dmesg output before optimization:
->>>>>> ...
->>>>>> [ 1303.897214] min_free_kbytes is not updated to 126529 because user defined value 1048576 is preferred
->>>>>> [ 1303.960498] min_free_kbytes is not updated to 126529 because user defined value 1048576 is preferred
->>>>>> [ 1303.970116] min_free_kbytes is not updated to 126529 because user defined value 1048576 is preferred
->>>>>> [ 1303.979709] min_free_kbytes is not updated to 126529 because user defined value 1048576 is preferred
->>>>>> [ 1303.989254] min_free_kbytes is not updated to 126529 because user defined value 1048576 is preferred
->>>>>> [ 1303.999122] min_free_kbytes is not updated to 126529 because user defined value 1048576 is preferred
->>>>>> [ 1304.008644] min_free_kbytes is not updated to 126529 because user defined value 1048576 is preferred
->>>>>> [ 1304.018537] min_free_kbytes is not updated to 126529 because user defined value 1048576 is preferred
->>>>>> [ 1304.028054] min_free_kbytes is not updated to 126529 because user defined value 1048576 is preferred
->>>>>> [ 1304.037615] min_free_kbytes is not updated to 126529 because user defined value 1048576 is preferred
->>>>>> ...
->>>>>>
->>>>>> Replace pr_warn() with pr_warn_once() to ensure only one warning is printed,
->>>>>> preventing large volumes of repeated log entries and improving log readability.
->>>>> pr_warn_once seems too aggressive as we could miss useful events. On the
->>>>> other hand I agree that repeating the same message for each memory block
->>>>> onlining is not really helpful. Would it make sense to only pr_warn when
->>>>> new_min_free_kbytes differs from the previous one we have warned for?
->>>> Thanks for your feedback!
->>>>
->>>> The dmesg output above comes from hotplugging a large amount of memory into
->>>> ZONE_MOVABLE, where new_min_free_kbytes does not actually change, resulting
->>>> in repeated warnings with identical messages.
->>> Yes, this is clear from the changelog
->>>
->>>> However, if memory is hotplugged into ZONE_NORMAL (such as pmem-type
->>>> memory), new_min_free_kbytes changes on each operation, so we still get a
->>>> large number of warningsâ€”even though the value is different each time.
->>> We can check whether the value has changed considerably.
->>>
->>>> If the concern is missing useful warnings, pr_warn_ratelimited() would be an
->>>> acceptable alternative, as it can reduce log spam without completely
->>>> suppressing potentially important messages. However I still think that
->>>> printing the warning once is sufficient to alert the user about the
->>>> overridden configuration, especially since this is not a particularly
->>>> critical warning.
->>> The thing is that kernel log buffer can easily overflow and you can lose
->>> those messages over time, especially for system with a large uptime -
->>> which is far from uncommon.
->>>
->>> I am not entirely enthusiastic about rate limiting because that is time
->>> rather than even driven. Anyway, if you can make ratelimiting work for
->>> your usecase, then no objection from me but I would rather make the
->>> reporting more useful than hack around it.
->> I agree with your suggestion.
->>
->> With respect to your suggestion that â€œwe can check whether the value has
->> changed considerablyâ€ I would like to seek your advice on how to define what
->> constitutes a significant change in this context. Do you have any
->> recommended criteria or thresholds for determining when a difference in
->> min_free_kbytes should trigger a warning?
-> No really. Certainly increasing min_free_kbytes by 1% would be barely
-> noticeable but 10% might show some difference. This will likely need to
-> be tuned on real life usecases so start with something and we can tune
-> that based on future usecases.
->
-Understood, thank you for your suggestion.
-
-I'm also looking forward to additional discussion and input from the 
-community.
-
+-- 
+With best wishes
+Dmitry
 
