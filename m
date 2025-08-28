@@ -1,108 +1,103 @@
-Return-Path: <linux-kernel+bounces-790368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90FDEB3A621
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 18:23:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4851B3A617
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 18:22:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A4F317A3F9
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 16:22:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5E44683CDA
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 16:22:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83FF132A3C8;
-	Thu, 28 Aug 2025 16:21:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDE8F326D7C;
+	Thu, 28 Aug 2025 16:21:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="c4pMTDT/"
-Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iozSEQxX"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE3A0322533
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 16:21:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4D2F321F53;
+	Thu, 28 Aug 2025 16:21:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756398080; cv=none; b=IltbOOGlZ+JF0xtoktCEm+rxRB/xn33fjQAWsnxYktZCgA4dZBNzaPdEaLgMwCnxwe02Prb+rmf4s2DE5HIozPdMqk+NoZKcjXrL8qtmWwZhuXqDF5SIO9sXcfZvUMdUGdhr3CTCxn7ROwQCOG9CaNYnY6b8yzxDvhzp1i3lkMw=
+	t=1756398080; cv=none; b=o+8fqjhcWi81YzrhJXN4XVGLtUJvODE/LRPtasSYZvdPmyubgnSu7yTTzeBOmYHJlY/0mo2lxVINTm4dk9Gf/ThCiiI12mgzQe1CPwBCWwUr7159SjcKgWOeXJ3aIJgAs4D8N/WFaF+qYiL5UU+mdtilbpIq9JC8BgCfGT3+eKs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1756398080; c=relaxed/simple;
-	bh=qaScglVdLkmBjdsY7s6rKxKcwdhmSMloq1688MUvmAg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BgQNL7k7vYc6sjq+JlXgQTFl22CsnOAFWPxhni+bZxKwE7ESBI9zmFLdOokHzAfUN2Lg25/9hEIr12WeJvVbjaFzd/lM3f7tH60IFFSXpYOsccWq8TaFupJVVOzWNzjwi1IFbIrv0UqeZ9GBCQM+JL7sy/vT7TNWMq+1uQYrtek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=c4pMTDT/; arc=none smtp.client-ip=95.215.58.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1756398074;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=f70fYPGkkJTsgVx7HK1J427mMW4St4qFeIp7z2HZ/Qc=;
-	b=c4pMTDT/ZxVl1oFrsnaKMrZLJ6cMlqG6U5WbhZkod6cBK9m3UD6PdQuho3W9gtJ8enHrqh
-	wBdIpsmKcmbhSXyppmELEYSOL5xO9IqsMgR+NcDs9FUFUQhyTjFSt3gqeQgpSguEFLxpPn
-	t5DcdPvEUtR+CmO7mpXS+oMA0duz2hM=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Peter Rosin <peda@axentia.se>,
-	Thorsten Blum <thorsten.blum@linux.dev>,
-	Kees Cook <kees@kernel.org>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH RESEND] mux: Realign struct mux_chip to save 8 bytes
-Date: Thu, 28 Aug 2025 18:21:01 +0200
-Message-ID: <20250828162105.4299-1-thorsten.blum@linux.dev>
+	bh=YwuiUsz+P8AATREFYLW14z1WuL0G237X/TVpTrOl7GE=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=SdDlegs4S1yWHsLtaSGHi79yQKNUxkyaFuDoRxq3Oj4y95NZo7zLSZZql3nD4XxbwnXbrFNRf1Jf1pFwbZvXhVxngcMs0JT56uiJN22okjv0xpfZ8i7mCrWLYC3RPmw83kHIM9Fp1YXD2TXnY/t76kS8myyOm500mvWVFhjAR4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iozSEQxX; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756398078; x=1787934078;
+  h=from:to:cc:in-reply-to:references:subject:message-id:
+   date:mime-version:content-transfer-encoding;
+  bh=YwuiUsz+P8AATREFYLW14z1WuL0G237X/TVpTrOl7GE=;
+  b=iozSEQxX+v36eYLzaL1mpWZtGzCM1bufrzB8QvPQ/AdZxXwYH2hGXIfp
+   sGEA4GWMNB+81gbI9iQ6tInl5iawBWXH4zHQ8eQgSKZlp43eoqAhg9/Vo
+   NcIvKpYkqaleF+HbRBd9kTLUNbyljyFavPxU9+lpRK5q2gh6voodprINF
+   KQZeB9HmCqIYRWxLlhrtzuYh40aeUNWOIqQWVKu4aVKkFDIzqAFSvErMC
+   LCrGceT5//JGBG5JH1Y6iq3IS7LJQWYwLBYqrALJ/OBgHeIL8d/RgMkxr
+   yjmgNSgLpMoNjNEjype1twI696pyI9cONKD34NKad8FtbNwzODJVZMcKF
+   w==;
+X-CSE-ConnectionGUID: evNjdfR0TjO4bn0r/O9Jbg==
+X-CSE-MsgGUID: iW5QUTEuToKlm/QMmm49sQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11536"; a="70114246"
+X-IronPort-AV: E=Sophos;i="6.18,220,1751266800"; 
+   d="scan'208";a="70114246"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2025 09:21:17 -0700
+X-CSE-ConnectionGUID: 9xQMODj0TouGF7h4jGjmrA==
+X-CSE-MsgGUID: j/n9pne9Tu+gohnM7lWEmg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,220,1751266800"; 
+   d="scan'208";a="170066123"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.99])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2025 09:21:15 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+To: hansg@kernel.org, kuba@kernel.org, edip@medip.dev
+Cc: platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250814204529.18467-4-edip@medip.dev>
+References: <20250814204529.18467-4-edip@medip.dev>
+Subject: Re: [PATCH v2] platform/x86: hp-wmi: Add support for Fn+P hotkey
+Message-Id: <175639807009.20700.4627166069727617723.b4-ty@linux.intel.com>
+Date: Thu, 28 Aug 2025 19:21:10 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13.0
 
-Reduce mux_chip's struct size by 8 bytes by realigning its members.
+On Thu, 14 Aug 2025 23:45:32 +0300, edip@medip.dev wrote:
 
-pahole output before:
+> Add support for the Fn+P hotkey found on newer HP Victus (and probably
+> newer Omen) laptops. This hotkey is intended for use with Omen Gaming Hub
+> to change the performance profile (see [1]).
+> 
+> Pressing Fn+P under linux produced the following warning in dmesg:
+> 
+> > hp_wmi: Unknown event_id - 27 - 0x7
+> 
+> [...]
 
-  /* size: 752, cachelines: 12, members: 5 */
-  /* sum members: 744, holes: 2, sum holes: 8 */
-  /* member types with bit paddings: 1, total: 1 bit */
-  /* paddings: 1, sum paddings: 3 */
-  /* last cacheline: 48 bytes */
 
-and after:
+Thank you for your contribution, it has been applied to my local
+review-ilpo-fixes branch. Note it will show up in the public
+platform-drivers-x86/review-ilpo-fixes branch only once I've pushed my
+local branch there, which might take a while.
 
-  /* size: 744, cachelines: 12, members: 5 */
-  /* member types with bit paddings: 1, total: 1 bit */
-  /* paddings: 1, sum paddings: 3 */
-  /* last cacheline: 40 bytes */
+The list of commits applied:
+[1/1] platform/x86: hp-wmi: Add support for Fn+P hotkey
+      commit: 23408874e90ee299ab731bc0e0a9b3339dfc3c6e
 
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
- include/linux/mux/driver.h | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
-
-diff --git a/include/linux/mux/driver.h b/include/linux/mux/driver.h
-index e58e59354e23..8e912399cf3b 100644
---- a/include/linux/mux/driver.h
-+++ b/include/linux/mux/driver.h
-@@ -56,16 +56,15 @@ struct mux_control {
- /**
-  * struct mux_chip -	Represents a chip holding mux controllers.
-  * @controllers:	Number of mux controllers handled by the chip.
-- * @dev:		Device structure.
-  * @id:			Used to identify the device internally.
-+ * @dev:		Device structure.
-  * @ops:		Mux controller operations.
-  * @mux:		Array of mux controllers that are handled.
-  */
- struct mux_chip {
- 	unsigned int controllers;
--	struct device dev;
- 	int id;
--
-+	struct device dev;
- 	const struct mux_control_ops *ops;
- 	struct mux_control mux[] __counted_by(controllers);
- };
--- 
-2.50.1
+--
+ i.
 
 
