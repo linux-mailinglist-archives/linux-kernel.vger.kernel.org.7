@@ -1,140 +1,148 @@
-Return-Path: <linux-kernel+bounces-789756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF08BB399FE
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 12:33:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58DCEB39A00
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 12:33:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B72C985537
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 10:32:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E57BD1B252CA
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 10:32:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 548F430DD11;
-	Thu, 28 Aug 2025 10:31:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 584F530C355;
+	Thu, 28 Aug 2025 10:30:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gYhc/lEP"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Cdngxen0"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6FE530C617;
-	Thu, 28 Aug 2025 10:31:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBEC030BB9B
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 10:30:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756377066; cv=none; b=pyDCzskQ/rlBe0nLpgO1lznwf3il99yb0cBhzYscIuXPuIO0hGX0Cg+Ww8qcMGspVDaIJtCCDB3z3wgeob0EIiwojYBdeEqBSwElvlG5b8MCJebpMHyulN4WbX5Ck9Mb/vx+lszvbG7zexumlD+HzEvrayyOjNdIA2Vf7Ubcn3c=
+	t=1756377049; cv=none; b=E0G7KKXJVhyiJ9VrCeawJbDIQq249jfckeWpi/HFjjIvhy6RS3fIZE5pzlAhDVg/Lj0ZEkCgn5lIN2xHcYF0cvOAMA+uaDQcuh5qdTw8OTq5vJwoO0SKTeh/gw4pZBedAAMXSyG/ill8+sSfHeTAy7Tg5mf40EfbhfqQnKQDBrI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756377066; c=relaxed/simple;
-	bh=W0brpwimq9RkxLnZXWt+xsI20F1lkIh4nfqFZz88N2c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=q/0zPj0Y7MAfEF9kDTXUvc6Z5FSVHBscd865ib/ICRKQK5bjA17ELBTUqxuA9ZswIixCe0iFw71GUXfe6w1fg/ilfQdQK5oai6GezXy13rCrNOGzqmR29SRYdS/mNmGMXBh4FgU536rcuP34g8GLXIU9IZsHy4kReE5ylYjBaFQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gYhc/lEP; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-45b65469a5bso7186285e9.0;
-        Thu, 28 Aug 2025 03:31:04 -0700 (PDT)
+	s=arc-20240116; t=1756377049; c=relaxed/simple;
+	bh=nFrvEIERFAvwyT9kdcHXUPvc32k5PlGxOwgN8YIcKAw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DdtIG2hI5vfjdq/8M6uTY0Ktcm3aFpiUJpTze4+b4fn64PpzZCbMDh9lkOyedHAhvWos25ddYxlpmR+QhupZz4hLO7IZ94Z8hi+gnjq/u0ZS2t5yhKn+Vqk1uYTUa+g35qMSphTVD2xL4ZVkfZ9eplmMHAqSZQnuW/UbVci65y0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Cdngxen0; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-55f439b393eso38089e87.0
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 03:30:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756377063; x=1756981863; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=W0brpwimq9RkxLnZXWt+xsI20F1lkIh4nfqFZz88N2c=;
-        b=gYhc/lEPgoeuV4IYpzdr4x04bJZpWoeQ4IMNXCyDX/KaZMubRvLCAReqboDRNhLxVa
-         6yXpXK90U9VmXb8LqwZlIH9fF7lPhdhw60W454H1m2+kCBTACKx8x129p6d/FuqRTdyS
-         2A9SMCMKONQGKMmDdGqZ3OikVyMJttHWvGMgRcFHK09Od2c07Rdq3puXKf9LM3TqGcsK
-         zs0nfkL6z7ycXPpnymffuRAZr+pv2V7np1zd27hid6hYTuYpq4Daf5lyDK2EvjI5LnFD
-         epSURh4K7jAeHtSi8xvkQVMAlncQc5dn9CfPsCO0sY7arKOeQl2ZWCxdcOIG3tYt84Sa
-         N2Eg==
+        d=linaro.org; s=google; t=1756377046; x=1756981846; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=t4Kw4U85mgfg3dN5KJcd7BuidBkgxZ4ucMLd7EmPUzg=;
+        b=Cdngxen0DlNBpeTbqnj71ypJwaCLfj2Ugw35eFyzET6Zr2qCpNbrattqEPjdmyAkIT
+         fEhWl61HCluyLeWmDgjDSd12n35iVuUGPPut8MnNVfZkZdvBhn6hNPKdAE6elisdnMFH
+         jRK8mosYqPsdNRPtOun07TINfWQrQZCKS3Iq73Wq5yLn2YFgYG55zLjZYNUfbMUGR1/O
+         Vik8BagHntQvvl41m1aEchBKOqztCx0iVTH8gfAKrX68wH0Ju2pfFWkZN0IrfJpiFx8T
+         KbCcYcoApWfBQfa47GIZ+QKLnS1jMkmvqesWg43j1CW+7PfoVy2QKVeuBvZn5b7BOfS1
+         n3Ag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756377063; x=1756981863;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=W0brpwimq9RkxLnZXWt+xsI20F1lkIh4nfqFZz88N2c=;
-        b=Agvsjaye5iF9uxCqRoAVvgigv87iT48maoicixvQIw5opwM3nFBr/x8/CWOhsfud4r
-         SlpOgYkKuoCpzxBcNyuGcnfO2TwRdh1Ezrvivkc1J52fvBlGO2AaQm1eOy3kkvaAZSIy
-         rLOvjK7LLGi58tPz2/Wvkr6zFsuVc+IFUqx3dWYZnQdep4IOzrKoCO860iAZKZQpPBhj
-         28eUMcOvDi+SSYJnHW+c1YDmLDEdjWYG3MQ4f5Xhlt8Rt2+28vXQHQcfPNqn5/gLYEwo
-         It21N9CBgjKsc0ADqP921vmbVWwPIVtZJXjlq0qAYnC9S1DgCngJ/qHJepdw4L+H6WLx
-         tlVA==
-X-Forwarded-Encrypted: i=1; AJvYcCUWrB1wi9FU2+DBRIcIjdNktYdk3iOXImdUfWQr982kkUHE33LpmiRmr+wTqNLa6RL+tVkms6X166jMJARKMNoABmI=@vger.kernel.org, AJvYcCVW3DIN21nyg2QeX/acB9hayrm0vYnR2/Fw0Bcgy7qZH2544WwpcXvZWdjobxO7o0fcWukgrq2aeZNO/gE=@vger.kernel.org, AJvYcCWGFYdfXUILOR+b29MbX0UYv8mOo+zdRPV5oLm07x7wTNFVogsGj2pjCUxws6ZsYYJKNnzjvVJJ@vger.kernel.org
-X-Gm-Message-State: AOJu0YxfY0Ax1SPf9H5xpxhBGZGJ2PIT7SuYAwbFG4JzgtTsm3UsGz6F
-	kZ70jv84jjVQBYZuGdQoPGfMBbgbeJLz6ErZNnBiEH4m0rBbBT0D6ob05mhQ430tNPcv9ysl96i
-	M6qoeZROhyrhPHG5aMvX/gMhxsJODlXk=
-X-Gm-Gg: ASbGncuF8sabw9ki8DjtU9u+FwcvWT8ozAYERTFQvIFAaZxTpPTYggvOEAkhucdyLde
-	b1u1hsv8pcF7RlSwa/2tbXj26QfDOuCy2bWQHR4nTswNF26NvfrJytWvC36LWGIAgTcb1Q3jeri
-	92s1PnZsWgZLCx2byiDViUZD7CHdDkvmQ4rkfeFv5LSP1VEww645s+bROtZH7sloxEU04iqmj7Z
-	5R/SJvkCFO3qLcIDh3aRASXvpaVyVa6oSAnKyiB/7U1LLCi8TI=
-X-Google-Smtp-Source: AGHT+IFyVC/+WRvh9JSxqdAQ/yLSaR52foVl4syPkfiy2XxLVMaaq4Qor6K0FPWwwUei3BmQyyvtU7RrYrfEpFEUV6Y=
-X-Received: by 2002:a05:600c:c0d1:20b0:459:dd16:ddde with SMTP id
- 5b1f17b1804b1-45b517c5ddamr139088735e9.23.1756377062866; Thu, 28 Aug 2025
- 03:31:02 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1756377046; x=1756981846;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=t4Kw4U85mgfg3dN5KJcd7BuidBkgxZ4ucMLd7EmPUzg=;
+        b=C6uKessZS7hzvpbjJVTxatQtF9Svpnv8xMZiWCge6RpIZ8m4sbsPp2xXKP4gw3HYM5
+         RqcxgL8A73GdNmrLNjr+YAAQjRSLCnxNAnaR75bBFX93tyKbS8fY9MG7qbWVRBvxjbAt
+         GMO1+fzeRY25Y/Rj6dkNaZEtAGXqcXQQYDGAuo1VZP6gq7XX80PxSLjEiuNwQDA31oSE
+         z1YWy+vttr2ocw3VROqgCyvLquQb/atK99S/74AqSIbLQaDD8A+hnok2q8g99xVUKf00
+         x79WnfNBoLSOi4W1chnPqBCrGQP38IoW6KTDASnN8PGWbncGQqqgVBSppNkO+xCOoKGd
+         0RNw==
+X-Forwarded-Encrypted: i=1; AJvYcCWPjYo6VqStKzB2+SCkcAnM0r2FflSJCKOyhW6iHbbc0aZ5tJuD0lU4UBhuIGJWJzw5l/I9D8pYn1DDEXk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+1DcO6lgpCgge82PN4Qa9MZFqJEDv4LqQpdTMHf2o9CmdFCjM
+	ToC2Fnn5M502TzBirtcK8BRYn2JbLfsRK5u1j9QmknSnSLRYvzngawuNFrvz7l5mod0=
+X-Gm-Gg: ASbGncswLmV7BUYNkcIeKXNTMu46LzXF505rOjCECJeVidQ0IizSUb5p/smZpJOcT1u
+	KD8Jvhvm1CdZK5iC79WC+KeYza3xG7x15ORam7drWPTM6RjhyzASv8VYF8fb2G3IZSW1ioYCmhs
+	OXtU5C0uphdzQxSF8UjmMxd61iN7yIu7fWen7UqqvSElBbqfywGEVuCP+Uxq9eKe7ju57R+PTBN
+	oF8ObcW960daxTnTqJZXXJSGDuruGuyrk7X14p0dkceU6swO2DS91jtsOQDnJDULAj6UNdqWw45
+	nTOGsKJTfkCWpfPTPVjXxkeo/l5P0m1PhXjXUVRgVmZbq7y6MAljnmgFUpIFnr6I/rxFrcTz22W
+	6X/6ccMBWsfciHl1DtfmsQYkiR//45jH9ZLDOoHaxlTn+pGxsgOQCPMmJjdTwVmsunDtJXHw44n
+	jwUUI=
+X-Google-Smtp-Source: AGHT+IEtZ/FN1eZE/NpbPi7cNF8sNnh7uAwwZYEG2CH9o5wOOOAXUfYTY775jJvav0K0prTgFk9doA==
+X-Received: by 2002:a05:6512:108d:b0:55f:63c8:7e32 with SMTP id 2adb3069b0e04-55f63c887camr104573e87.5.1756377045890;
+        Thu, 28 Aug 2025 03:30:45 -0700 (PDT)
+Received: from localhost (c-85-229-7-191.bbcust.telenor.se. [85.229.7.191])
+        by smtp.gmail.com with UTF8SMTPSA id 2adb3069b0e04-55f35c998b7sm3215305e87.107.2025.08.28.03.30.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Aug 2025 03:30:45 -0700 (PDT)
+From: Anders Roxell <anders.roxell@linaro.org>
+To: shuah@kernel.org,
+	brauner@kernel.org
+Cc: linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	dan.carpenter@linaro.org,
+	arnd@arndb.de,
+	benjamin.copeland@linaro.org,
+	Anders Roxell <anders.roxell@linaro.org>
+Subject: [PATCH] selftests/filesystems: Skip file_stressor test on NFS root
+Date: Thu, 28 Aug 2025 12:30:42 +0200
+Message-ID: <20250828103042.1412850-1-anders.roxell@linaro.org>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250820170913.2037049-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <aLAumWuFtJrSi7Mv@ninjato>
-In-Reply-To: <aLAumWuFtJrSi7Mv@ninjato>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Thu, 28 Aug 2025 11:30:36 +0100
-X-Gm-Features: Ac12FXyHaokmLJu5YM6HMP59keuCAro7VX_D6vTPjs3n4hnWie2deZuKhM3_Lhc
-Message-ID: <CA+V-a8ufD4uH=9FYz+-MCeCVZb53Hja5s=LNhcr3Psi6o0yBWw@mail.gmail.com>
-Subject: Re: [PATCH net-next v2] net: pcs: rzn1-miic: Correct MODCTRL register offset
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <clement.leger@bootlin.com>, 
-	Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, 
-	Russell King <linux@armlinux.org.uk>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, linux-renesas-soc@vger.kernel.org, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, stable@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Wolfram,
+The file_stressor test creates directories in the root filesystem and
+performs mount namespace operations that can fail on NFS root filesystems
+due to network filesystem restrictions and permission limitations.
 
-On Thu, Aug 28, 2025 at 11:25=E2=80=AFAM Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
->
-> On Wed, Aug 20, 2025 at 06:09:13PM +0100, Prabhakar wrote:
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >
-> > Correct the Mode Control Register (MODCTRL) offset for RZ/N MIIC.
-> > According to the R-IN Engine and Ethernet Peripherals Manual (Rev.1.30)
-> > [0], Table 10.1 "Ethernet Accessory Register List", MODCTRL is at offse=
-t
-> > 0x8, not 0x20 as previously defined.
-> >
-> > Offset 0x20 actually maps to the Port Trigger Control Register (PTCTRL)=
-,
-> > which controls PTP_MODE[3:0] and RGMII_CLKSEL[4]. Using this incorrect
-> > definition prevented the driver from configuring the SW_MODE[4:0] bits
-> > in MODCTRL, which control the internal connection of Ethernet ports. As
-> > a result, the MIIC could not be switched into the correct mode, leading
-> > to link setup failures and non-functional Ethernet ports on affected
-> > systems.
-> >
-> > [0] https://www.renesas.com/en/document/mah/rzn1d-group-rzn1s-group-rzn=
-1l-group-users-manual-r-engine-and-ethernet-peripherals?r=3D1054571
-> >
-> > Fixes: 7dc54d3b8d91 ("net: pcs: add Renesas MII converter driver")
-> > Cc: stable@kernel.org
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
->
-> I had a look now. Because the bootloader of my N1D board already set up
-> MODCTRL correctly, this write to the wrong register went unnoticed. I
-> verified that the now correctly written value (depending on DT config)
-> matches the value previously set by the bootloader. As a result,
-> everything keeps working. We were lucky. Or unlucky. Depending how you
-> look at it.
->
-Thank you for testing it. I'll send a v3 soon with `net-next` dropped
-from the subject.
+Add NFS root filesystem detection using statfs() to check for
+NFS_SUPER_MAGIC and skip the test gracefully when running on NFS root,
+providing a clear message about why the test was skipped.
 
-Cheers,
-Prabhakar
+This prevents spurious test failures in CI environments that use NFS
+root while preserving the test's ability to catch SLAB_TYPESAFE_BY_RCU
+related bugs on local filesystems where it can run properly.
+
+Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+---
+ tools/testing/selftests/filesystems/file_stressor.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/tools/testing/selftests/filesystems/file_stressor.c b/tools/testing/selftests/filesystems/file_stressor.c
+index 01dd89f8e52f..b9dfe0b6b125 100644
+--- a/tools/testing/selftests/filesystems/file_stressor.c
++++ b/tools/testing/selftests/filesystems/file_stressor.c
+@@ -10,12 +10,14 @@
+ #include <string.h>
+ #include <sys/stat.h>
+ #include <sys/mount.h>
++#include <sys/vfs.h>
+ #include <unistd.h>
+ 
+ #include "../kselftest_harness.h"
+ 
+ #include <linux/types.h>
+ #include <linux/mount.h>
++#include <linux/magic.h>
+ #include <sys/syscall.h>
+ 
+ static inline int sys_fsopen(const char *fsname, unsigned int flags)
+@@ -58,8 +60,13 @@ FIXTURE(file_stressor) {
+ 
+ FIXTURE_SETUP(file_stressor)
+ {
++	struct statfs sfs;
+ 	int fd_context;
+ 
++	/* Skip test if root filesystem is NFS */
++	if (statfs("/", &sfs) == 0 && sfs.f_type == NFS_SUPER_MAGIC)
++		SKIP(return, "Test requires local root filesystem, NFS root detected");
++
+ 	ASSERT_EQ(unshare(CLONE_NEWNS), 0);
+ 	ASSERT_EQ(mount(NULL, "/", NULL, MS_SLAVE | MS_REC, NULL), 0);
+ 	ASSERT_EQ(mkdir("/slab_typesafe_by_rcu", 0755), 0);
+-- 
+2.50.1
+
 
