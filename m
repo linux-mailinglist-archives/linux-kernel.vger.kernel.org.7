@@ -1,138 +1,132 @@
-Return-Path: <linux-kernel+bounces-790633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 286D3B3AB1F
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 21:57:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4B06B3AB20
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 21:57:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CC06E7B1E69
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 19:55:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7AFFB36004B
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 19:57:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C65427D77B;
-	Thu, 28 Aug 2025 19:57:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CD4C27CCC7;
+	Thu, 28 Aug 2025 19:57:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kNzv9GTB"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K/BAhaEa"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 016781D6188;
-	Thu, 28 Aug 2025 19:57:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87C412356D2;
+	Thu, 28 Aug 2025 19:57:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756411041; cv=none; b=rd7W/j4bcjkzbtGfmK5Hxbua1BpxaIfxUtM3+/XhLos//vAgVQLEYzQ0ZLAVithjn4OjfeSQXcK5FTXJEUEFajG2f3oTqCvazvlrM6azJ9AKWx8ojKRn6ICSuisjcmOXIwhCanCpHKVQMrmamw1AYz3zCh/ZzYqyPBgxPR/N9Kg=
+	t=1756411046; cv=none; b=WU2hsAWT/3TBu0ln6Q6plci3xE1a5IXgFsgj9ZiKSUxH2tprTamJqBOra18un2giRRRg9wQdYZB9pRDWEfS4A0OusCJ6/uMIferVm4gVI44Nvd4FYljL9U9nhPBJu1ydjF8NGLjnS2xehVePzRajPppEfVCbZZGN0bsnTU91K/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756411041; c=relaxed/simple;
-	bh=J9p1+SFkJ1DD0HNbdzfpG7QiXzTQqNC+170Di7UX3P8=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=tbPqo8wVaD25LKwPHo9pbFhrPDOqk9Cnu6D3I0lK1zudAVzyUWcBJnJg6NSFDr0HdTeypRQeTkctp66amMyjyp1ihDBQNAeR8/sOOhVOtGQuKkn2RBMYy11iv6I0DtnFC9o88tZObsgBloeuhqM8C4P6yknCqE3YGUl0tSVsR0U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kNzv9GTB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AFA52C4CEEB;
-	Thu, 28 Aug 2025 19:57:18 +0000 (UTC)
+	s=arc-20240116; t=1756411046; c=relaxed/simple;
+	bh=US+02qZRGEe9Qt2oFtidirMsz0sKMTA744j/8cWkjPQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cK0N6AqN1eTzBwcTKu7+SsvuS4CVuLJtmPLp9Q3PRb8wSGFdqBj6pcC47cC3yxRbQdmy++DwFSLoODI2+ddAEEdAqZlSuzDPTHdR8iUHt7UQ44ko+GgjNzIdJttWdtgqYRUIyZIx8SE7WpDFVB3Ewz2+aUyE3w+FUEKXZbJGLzI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K/BAhaEa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D761FC4CEEB;
+	Thu, 28 Aug 2025 19:57:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756411040;
-	bh=J9p1+SFkJ1DD0HNbdzfpG7QiXzTQqNC+170Di7UX3P8=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=kNzv9GTBNQw2jmLbuHmLZwNm2lSRbeCVYQ8MZyO7IT4qf+br2F68+vMxaR6PNdrzP
-	 1X8X0YEiamcGhGG5GXHBcCW2ncGrs7CQPvsiFVeqoty2ZhrZWX6KKUqTb1euHHcpFK
-	 hvNF9FUDlhjdu6iXqa9yuH3uvKsCEtzjc6vevSa33siMTlemYmawxKt9LWn88KvvST
-	 I/UmSsYXKQ0d3l3m9a00ZXevKDezOezVyGqdrNfZ+QsbxdznbjMk4PejknKbcxmI6g
-	 c5/Sn98//btbhZVl+z/Mn6tPawLn61Rp78bs0COCJhcQuX/9Bciwn3q+DOYVwvDRPM
-	 ZuEU5ofQTpT/g==
+	s=k20201202; t=1756411046;
+	bh=US+02qZRGEe9Qt2oFtidirMsz0sKMTA744j/8cWkjPQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=K/BAhaEaSBIrAwDDYjUWwuRfGluR0L8XQrEenJb4Xgz9CTHxaaBOIJMqA/QWaUBgQ
+	 2bJL89QLhTfFGey7KAAP4X3qRhNxYTdvncNI08vfYTniZqPQasv15C9xs5Q4eJE3Nr
+	 jFNiP+CNkxmRkw9psRHf+fObxMbEIslMDSTH/kCpqn2bDwxAjL80d1McyOWbadhz0W
+	 R6uR62etwXnRhUvPJ7g9hRQd4NPHUdyyjCpy7iCmPvDxP2FWPAg4DYKXnfQEafXMR/
+	 IvIUisKmrcDNcdR+lNccCYjNKaDuYbOAJidxcCmLJn+dZ/taG4xVC5LGHcwc/0QbM0
+	 AiABJbHmC3DzQ==
+Date: Thu, 28 Aug 2025 16:57:23 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Dmitry Vyukov <dvyukov@google.com>
+Cc: Namhyung Kim <namhyung@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Ian Rogers <irogers@google.com>,
+	James Clark <james.clark@linaro.org>, Jiri Olsa <jolsa@kernel.org>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH 1/1] Revert "perf hist: Fix bogus profiles when filters
+ are enabled"
+Message-ID: <aLC0o8Shis3FSIuI@x1>
+References: <aKYEpf7xp3NnkBWm@x1>
+ <CACT4Y+YX-ROx0cW4pkDnqbdfbigVycwPLwO12RNbbtX9-Qp73A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 28 Aug 2025 21:57:16 +0200
-Message-Id: <DCEBQZ7WA1KI.1G8TNWH32QWG@kernel.org>
-Subject: Re: gpu: nova-core: arm32 build errors
-Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Alexandre Courbot"
- <acourbot@nvidia.com>, "David Airlie" <airlied@gmail.com>, "Simona Vetter"
- <simona@ffwll.ch>, <nouveau@lists.freedesktop.org>,
- <dri-devel@lists.freedesktop.org>, <rust-for-linux@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
-To: "Miguel Ojeda" <miguel.ojeda.sandonis@gmail.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <20250828160247.37492-1-ojeda@kernel.org>
- <b680c343-ba97-4eb4-b426-56e318dce492@kernel.org>
- <DCEB1J2P3MZS.3IGXEYP0MAC5H@kernel.org>
- <CANiq72mkPqFnb4ztiCokE6+ntVSmgOTgERshg-4SMmLboFOqNg@mail.gmail.com>
-In-Reply-To: <CANiq72mkPqFnb4ztiCokE6+ntVSmgOTgERshg-4SMmLboFOqNg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACT4Y+YX-ROx0cW4pkDnqbdfbigVycwPLwO12RNbbtX9-Qp73A@mail.gmail.com>
 
-On Thu Aug 28, 2025 at 9:31 PM CEST, Miguel Ojeda wrote:
-> On Thu, Aug 28, 2025 at 9:24=E2=80=AFPM Danilo Krummrich <dakr@kernel.org=
-> wrote:
->>
->> Maybe I spoke too soon, it's actually pretty painful to keep 32-bit
->> compatibility, even though it would be nice for testing purposes.
->>
->> I'll paste the diff to fix it below, I think that makes it obvious why I=
- say
->> that.
->>
->> Instead, we should really just depend on CONFIG_64BIT (which implies
->> ARCH_DMA_ADDR_T_64BIT).
->
-> Yeah, it isn't great.
->
-> If it were just that, maybe it it is worth it (and a `DmaAddress`
-> newtype, not just a typedef, could perhaps be nice anyway?)
+On Wed, Aug 20, 2025 at 06:14:08PM -0700, Dmitry Vyukov wrote:
+> On Wed, 20 Aug 2025 at 10:23, Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
 
-What do you have in mind what the newtype can do?
+> > This reverts commit 8b4799e4f0f40a4ec737bf870aa38d06288bf0fb.
 
-I assume the idea is to make it provide methods {to,from}_u64, where to_u64=
-()
-has to be fallible? This would be an improvement, but not really solve the =
-issue
-entirely.
+> > Not combining entries in 'perf top', so we're getting multiple lines for
+> > the same symbol, with the same address.
 
-The annoying part really is
+> > To test it, simply run 'perf top', then do /acpi to see just symbols
+> > starting with acpi_ and notice that there are various lines with the
+> > same symbol, press V to see the address and its the same.
+ 
+> With this revert, does it show 1 entry but with a wrong percent?
 
-	pub(super) fn read_sysmem_flush_page_ga100(bar: &Bar0) -> DmaAddress {
-	    let addr =3D u64::from(regs::NV_PFB_NISO_FLUSH_SYSMEM_ADDR::read(bar).=
-adr_39_08())
-	        << FLUSH_SYSMEM_ADDR_SHIFT
-	        | u64::from(regs::NV_PFB_NISO_FLUSH_SYSMEM_ADDR_HI::read(bar).adr_=
-63_40())
-	            << FLUSH_SYSMEM_ADDR_SHIFT_HI;
-=09
-	    addr.try_into().unwrap_or_else(|_| {
-	        kernel::warn_on!(true);
-=09
-	        0
-	    })
-	}
+Unsure, I have not investigated it further, just noticed the strange
+output with multiple entries for the same symbol, bisected and doing the
+revert found what looks like a familiar output.
 
-i.e. when we read a u64 from registers, but we know that what we've orignal=
-ly
-written there is a DmaAddress, so we can assume that a cast to DmaAddress i=
-s
-fine.
+It is possible that the familiar output is problematic, but I haven't
+dig deeper so far.
 
-But this really depends on driver specific semantics.
+Since it is a change of behaviour, can we apply the revert and continue
+the discussion from that point?
 
-> but if
-> you think it will become increasingly painful later, then it may be
-> best to focus on what matters.
+'perf top' decays histogram entries, which is in addition to the
+"static" processing done in 'perf report', maybe this is a problem that
+is there since forever but statistically, by means of decaying, goes
+away and only now we're noticing? Merits investigation.
 
-We'll have a couple more such cases for sure; I think being able to assume =
-that
-DmaAddress is always 64-bit will result in simpler and less distracting cod=
-e.
+- Arnaldo
 
-But if we can come up with a good idea to deal with this with a DmaAddress =
-type;
-I'm open to that.
-
-> It is unlikely there is going to be actual users on a 32-bit platform, ri=
-ght?
-
-Yeah, I doubt that someone could think it's a great idea to run a Turing+ G=
-PU on
-some 32-bit machine.
+> I am not sure why there are 2 entries for the same symbol, but if we
+> merge them, we can sum of percents. Is it the right thing to do?
+> 
+> > Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+> > ---
+> >  tools/perf/util/hist.c | 11 +----------
+> >  1 file changed, 1 insertion(+), 10 deletions(-)
+> >
+> > diff --git a/tools/perf/util/hist.c b/tools/perf/util/hist.c
+> > index 64ff427040c34112..f3f64aff9b882303 100644
+> > --- a/tools/perf/util/hist.c
+> > +++ b/tools/perf/util/hist.c
+> > @@ -1391,16 +1391,7 @@ hist_entry__cmp_impl(struct perf_hpp_list *hpp_list, struct hist_entry *left,
+> >         struct hists *hists = left->hists;
+> >         struct perf_hpp_fmt *fmt;
+> >         perf_hpp_fmt_cmp_t *fn;
+> > -       int64_t cmp;
+> > -
+> > -       /*
+> > -        * Never collapse filtered and non-filtered entries.
+> > -        * Note this is not the same as having an extra (invisible) fmt
+> > -        * that corresponds to the filtered status.
+> > -        */
+> > -       cmp = (int64_t)!!left->filtered - (int64_t)!!right->filtered;
+> > -       if (cmp)
+> > -               return cmp;
+> > +       int64_t cmp = 0;
+> >
+> >         perf_hpp_list__for_each_sort_list(hpp_list, fmt) {
+> >                 if (ignore_dynamic && perf_hpp__is_dynamic_entry(fmt) &&
+> > --
+> > 2.50.1
+> >
 
