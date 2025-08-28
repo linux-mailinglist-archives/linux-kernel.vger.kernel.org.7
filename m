@@ -1,166 +1,131 @@
-Return-Path: <linux-kernel+bounces-789771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16C3AB39A3B
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 12:38:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CF0CB39A0D
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 12:35:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 35E1A7B517B
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 10:36:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F86018931FB
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 10:33:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC31F3112A0;
-	Thu, 28 Aug 2025 10:34:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3662C30BB92;
+	Thu, 28 Aug 2025 10:33:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ooZnDxoY"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xe0HND/Q"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 698993101DC;
-	Thu, 28 Aug 2025 10:34:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88886187346;
+	Thu, 28 Aug 2025 10:33:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756377292; cv=none; b=XVDYrJTSwznpbIrx/Fe2rvS/rGHYCOzP6AH+42kCoAM35kAc/pDp5g/9M21RaRlhQ07LnTbgsOquOxHrsAqXprhnBKQbsIVRNbpisFKre9BRzakwxtKx98Fk0kqNXPk7LLwowlTmv4aieSorQecwFg0hWTYfjba9Sm7GxG242+w=
+	t=1756377186; cv=none; b=aImH5sHBoQGn+RDYvxUkmaqapURQJifmJ41u5LrtNZXf06hIVn9FJA1atGWmyxwgJcm3+yfSwYmY6SNK86IxdvJ0gI0PWcg19dVzWENSvMDiK9LUabxwN7pybIAR4bfTLC4vi49vLf2zJwwY0IQvpFTTzQU8KcUTy0N9UgdvZbg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756377292; c=relaxed/simple;
-	bh=fnZWzDDTTDEeBhEL/SWi3sXl1ujwKnlewazpL/KxiIY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=khufGenTrsuu/NzQdiUymrvk6pxRn3Pxbk3+3WRh745Nv0NXw01qur/RToaN7VG+KY8g4fhGFcTq4dJh6RSork7TFiNrr2XFHhc1G//kUOBr4E8Ln1mi9QLquZYfNQ6dviY2y0zWkGc3H1SXVfEfEunREgn9J9Ndt9/MZMA9Gno=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ooZnDxoY; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57S61Y0R030523;
-	Thu, 28 Aug 2025 10:34:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Y1yWgRltFJNThhSeNnr24vonmIf66fXtjWEcKmCdkMs=; b=ooZnDxoYtsFEDTc/
-	ZKNklLem5AgMSdydlYa3TW/QsvEHYADpYnP1FV5fVQK8zmV1zEVxzHMhB7nw2F8k
-	KVPH7s8qR7UzIW4JiUohCzez+nP04Hk/plwByoxANpODCXH+KD+n71MPgpVBMVSM
-	EfWf5rWXdQErtMaVOSo/b1oaIIlN0wNUhw2cfMW6nISyJ8EhaLqMUf2HqkLa/XLH
-	UsQN8ItVvXXqlao2L07LWRV7Vt7mNDBjU4E3CNE0vyqoEVLjzJ/QzVxR4i2QvJMe
-	oayMXrplBKjdczarTX5XNzmAuiRRalohg3DbufoO0Ut/xMx/DdrMUiLSKpjWeAwt
-	x1xFgQ==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48q5unyqx8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 28 Aug 2025 10:34:37 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 57SAYaIX009292
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 28 Aug 2025 10:34:36 GMT
-Received: from nsssdc-sh01-lnx.ap.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.24; Thu, 28 Aug 2025 03:34:30 -0700
-From: Luo Jie <quic_luoj@quicinc.com>
-Date: Thu, 28 Aug 2025 18:32:23 +0800
-Subject: [PATCH v4 10/10] arm64: defconfig: Build NSS clock controller
- driver for IPQ5424
+	s=arc-20240116; t=1756377186; c=relaxed/simple;
+	bh=ApaRwpJeqb99ibXDe3dtLn8mCDS3zrygAvunHsREGr4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ynf6dIIho+/5tf4Mxrxv+O5c8FwAHBMmk1EmfEPVOvCtb8GoKV78MlTzcbHjW8OtpVPqWd+EOXQJQm9rLNksbWNy+35WU0fJ+lnJsxYbhGjgttW0uMg0Ln2UIiyRGXKaL82/j1aVgqveZi91VEA/gv5B5MVUJUnDFbAMR08/48I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xe0HND/Q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7BD44C4CEEB;
+	Thu, 28 Aug 2025 10:33:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756377186;
+	bh=ApaRwpJeqb99ibXDe3dtLn8mCDS3zrygAvunHsREGr4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Xe0HND/Qwks2jszGWekVHOQjyj8NWBMyOky2BTPU21LUfvhuQf48DAs4FhKGtQRkt
+	 StQhX62q5huazo0L39Z43I2isj3Pi+k8l9lf2mKFVBvSC922kotnryEubQ9KnZOMxN
+	 SJBuiSYG+iCYrtfzChQcq/5FPzzjf4/P57S6ogPCoWYeOJo9bP+08kevOZdWaex212
+	 oO59BInnittt8Uv6j9Ct5xUy9oCgappCgd43OdKMuZW/WgPu3r6IpU4yLSWfTcY+Z+
+	 5VJGKslNTyQBWSUfUayq+5mEwqtWm+2e+cxcBRTFAqVUvajQY+E6xWaOGH+yAp894k
+	 frPFamw6H8Awg==
+Date: Thu, 28 Aug 2025 11:33:02 +0100
+From: Simon Horman <horms@kernel.org>
+To: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
+Cc: intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+	anthony.l.nguyen@intel.com, przemyslaw.kitszel@intel.com,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Aleksandr Loktionov <aleksandr.loktionov@intel.com>
+Subject: Re: [PATCH iwl-next v1] ice: add support for unmanaged dpll on E830
+ NIC
+Message-ID: <20250828103302.GZ10519@horms.kernel.org>
+References: <20250826153118.2129807-1-arkadiusz.kubalewski@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20250828-qcom_ipq5424_nsscc-v4-10-cb913b205bcb@quicinc.com>
-References: <20250828-qcom_ipq5424_nsscc-v4-0-cb913b205bcb@quicinc.com>
-In-Reply-To: <20250828-qcom_ipq5424_nsscc-v4-0-cb913b205bcb@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "Varadarajan
- Narayanan" <quic_varada@quicinc.com>,
-        Georgi Djakov <djakov@kernel.org>, "Rob
- Herring" <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        "Conor
- Dooley" <conor+dt@kernel.org>,
-        Anusha Rao <quic_anusha@quicinc.com>,
-        "Manikanta Mylavarapu" <quic_mmanikan@quicinc.com>,
-        Devi Priya
-	<quic_devipriy@quicinc.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        "Richard
- Cochran" <richardcochran@gmail.com>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski@linaro.org>,
-        <netdev@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <quic_kkumarcs@quicinc.com>, <quic_linchen@quicinc.com>,
-        <quic_leiwei@quicinc.com>, <quic_pavir@quicinc.com>,
-        <quic_suruchia@quicinc.com>, Luo Jie
-	<quic_luoj@quicinc.com>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1756377205; l=836;
- i=quic_luoj@quicinc.com; s=20250209; h=from:subject:message-id;
- bh=fnZWzDDTTDEeBhEL/SWi3sXl1ujwKnlewazpL/KxiIY=;
- b=QqoRsoE3aSZB7IMCaaRQ+SWfy9305NzoUFxWZ9tv5hjB5SCuPWKG5x65dkSX0FW22K/DmjHYU
- c1BXiLMU5RIAYNVwABYjP7LV8p3eVNg2gfAVBitbwLg7K4Q0fnSnIKN
-X-Developer-Key: i=quic_luoj@quicinc.com; a=ed25519;
- pk=pzwy8bU5tJZ5UKGTv28n+QOuktaWuriznGmriA9Qkfc=
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: Jaa7YkFiUQJ3JfNIWHgZEilIZTpZOk2M
-X-Proofpoint-ORIG-GUID: Jaa7YkFiUQJ3JfNIWHgZEilIZTpZOk2M
-X-Authority-Analysis: v=2.4 cv=JJo7s9Kb c=1 sm=1 tr=0 ts=68b030bd cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=KKAkSRfTAAAA:8
- a=COk6AnOGAAAA:8 a=ikIlBLl75NxfxiEf-eQA:9 a=QEXdDO2ut3YA:10
- a=cvBusfyB2V15izCimMoJ:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIzMDAzMSBTYWx0ZWRfX5sqGnZ3NCw8g
- nIjG1uRXk46rA0m9oYCnzlKnEIMt81+H7Jjf2CG6CwrbQ2zoGoRCgJXWsrVDSbYnywQzy59R9qh
- 289eNnIMWILoie0r44+zNbYDd8MOM5pvI2XvcOY8oIgOlkEj2raCVxnKEl3XSG6eACB0Kqgk1Xh
- DqjQLm5VYyzrL8Dn+43qgbZGpwa4zxgc4G9y3gRzKy6VxNr7PNk0eVMojEV2QqBZXEvQ2eO7BPb
- QnDfXFmcP6Uh0GIiIr5roS0NSLwqNHwrWhnE2r0EQ8/hSPon0dm2Y5gdG8L3ldnzpqowulSBzAa
- XxzmyoVhaz6txmOVGAdaZ+Zv6zTqgX6UOa71+XQOo0kpmiSHLEEyVW76s9qD2mxTLrarcMiRZg0
- qabs+CtA
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-28_03,2025-08-28_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 adultscore=0 bulkscore=0 spamscore=0 impostorscore=0
- malwarescore=0 clxscore=1015 priorityscore=1501 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508230031
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250826153118.2129807-1-arkadiusz.kubalewski@intel.com>
 
-NSS clock controller is needed for supplying clocks and resets to the
-networking blocks for the Ethernet functions on the IPQ5424 platforms.
+On Tue, Aug 26, 2025 at 05:31:18PM +0200, Arkadiusz Kubalewski wrote:
 
-All boards based on the IPQ5424 SoC will require this driver to be enabled.
+...
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
----
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+> diff --git a/drivers/net/ethernet/intel/ice/ice_dpll.c b/drivers/net/ethernet/intel/ice/ice_dpll.c
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index acb6807d3461..013325255119 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -1379,6 +1379,7 @@ CONFIG_IPQ_GCC_5424=y
- CONFIG_IPQ_GCC_6018=y
- CONFIG_IPQ_GCC_8074=y
- CONFIG_IPQ_GCC_9574=y
-+CONFIG_IPQ_NSSCC_5424=m
- CONFIG_IPQ_NSSCC_9574=m
- CONFIG_MSM_GCC_8916=y
- CONFIG_MSM_MMCC_8994=m
+...
 
--- 
-2.34.1
+> +/**
+> + * ice_dpll_init_info_unmanaged - init dpll information for unmanaged dpll
+> + * @pf: board private structure
+> + *
+> + * Acquire (from HW) and set basic dpll information (on pf->dplls struct).
+> + * For unmanaged dpll mode.
+> + *
+> + * Return:
+> + * * 0 - success
+> + * * negative - init failure reason
+> + */
+> +static int ice_dpll_init_info_unmanaged(struct ice_pf *pf)
+> +{
+> +	struct ice_dplls *d = &pf->dplls;
+> +	struct ice_dpll *de = &d->eec;
+> +	int ret = 0;
+> +
+> +	d->clock_id = ice_generate_clock_id(pf);
+> +	d->num_inputs = ice_cgu_get_pin_num(&pf->hw, true);
+> +	d->num_outputs = ice_cgu_get_pin_num(&pf->hw, false);
+> +	ice_dpll_lock_state_init_unmanaged(pf);
+> +
+> +	d->inputs = kcalloc(d->num_inputs, sizeof(*d->inputs), GFP_KERNEL);
+> +	if (!d->inputs)
+> +		return -ENOMEM;
+> +
+> +	ret = ice_dpll_init_pins_info(pf, ICE_DPLL_PIN_TYPE_INPUT);
+> +	if (ret)
+> +		goto deinit_info;
+> +
+> +	d->outputs = kcalloc(d->num_outputs, sizeof(*d->outputs), GFP_KERNEL);
+> +	if (!d->outputs)
 
+Hi Arkadiusz,
+
+I think the following is needed here:
+
+		err = -ENOMEM;
+
+Flagged by Smatch.
+
+> +		goto deinit_info;
+> +
+> +	ret = ice_dpll_init_pins_info(pf, ICE_DPLL_PIN_TYPE_OUTPUT);
+> +	if (ret)
+> +		goto deinit_info;
+> +
+> +	de->mode = DPLL_MODE_AUTOMATIC;
+> +	dev_dbg(ice_pf_to_dev(pf), "%s - success, inputs:%u, outputs:%u\n",
+> +		__func__, d->num_inputs, d->num_outputs);
+> +	return 0;
+> +deinit_info:
+> +	dev_err(ice_pf_to_dev(pf), "%s - fail: d->inputs:%p, d->outputs:%p\n",
+> +		__func__, d->inputs, d->outputs);
+> +	ice_dpll_deinit_info(pf);
+> +	return ret;
+> +}
+
+...
 
