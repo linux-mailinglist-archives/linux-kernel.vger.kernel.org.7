@@ -1,91 +1,110 @@
-Return-Path: <linux-kernel+bounces-789203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789204-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00C50B39234
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 05:28:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FE4AB39235
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 05:29:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2DBBD1C23A3D
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 03:28:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 370BD3680A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 03:29:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6076C2494C2;
-	Thu, 28 Aug 2025 03:28:15 +0000 (UTC)
-Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [160.30.148.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7875D24729A;
+	Thu, 28 Aug 2025 03:29:23 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2B2521171D;
-	Thu, 28 Aug 2025 03:28:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=160.30.148.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F31613957E
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 03:29:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756351695; cv=none; b=ndEUUSTvvHOaEWWvvvcIbgKJaiZOYF4XTDDDq0+CoeDrxw4VAep3twlT84ueBfqFupmjBu+rgt97A32o4av4HLPBUgs6z7wj+tqYuTLNvK31YqGIImOuYfndJXAEqH1PBicUnWEQPkUjl4MGz7JXN2X7UPm1NFcgR781CujbTNw=
+	t=1756351763; cv=none; b=panPdhtIufclAlJx4WRLTPtEuRGorLo5gwYwlRwXK/BUaebI16TAJWIokvmECYUP5rMBRXeQ4UN81JaABGysd/fjAS2d/p0L4pqr+2kxZ6jnQxRf7m7zRp9PtrKhQM/WL88ViYavXNymvEuB2389Giswr5kcB4GUBVoYsEcJNrc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756351695; c=relaxed/simple;
-	bh=vWT0vrcOJ51bj0i0t0ohp1YwUgvZjAG2sI8ZvQQnGRg=;
-	h=Date:Message-ID:In-Reply-To:References:Mime-Version:From:To:Cc:
-	 Subject:Content-Type; b=sMf66lyytW3UX/V2odU0QrN6VPoJ3NsMbPq3U7jHxauqi2/utQUn/CPw7LFKiXRUOKVyzH+8t2wk/sfJ0VHa46zZJPYTpBGZvkMIr62t2uGLwXq45oI82sBOzT9ofF2nNFe7FAogrfxyv7qiPSHBbZHgJfODgSxmyW0Vqp2bvDo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=160.30.148.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4cC6L23C0fz5PM37;
-	Thu, 28 Aug 2025 11:28:10 +0800 (CST)
-Received: from xaxapp05.zte.com.cn ([10.99.98.109])
-	by mse-fl2.zte.com.cn with SMTP id 57S3RovQ072338;
-	Thu, 28 Aug 2025 11:27:50 +0800 (+08)
-	(envelope-from xu.xin16@zte.com.cn)
-Received: from mapi (xaxapp02[null])
-	by mapi (Zmail) with MAPI id mid32;
-	Thu, 28 Aug 2025 11:27:51 +0800 (CST)
-Date: Thu, 28 Aug 2025 11:27:51 +0800 (CST)
-X-Zmail-TransId: 2afa68afccb7355-bd9af
-X-Mailer: Zmail v1.0
-Message-ID: <20250828112751947nPp0i9WwI02rU1BNa3FTt@zte.com.cn>
-In-Reply-To: <20250814203052841vWATRXU4pnku526u5TwPn@zte.com.cn>
-References: 20250814201129510XielEwRpr4QXPx_XBtkhv@zte.com.cn,20250814203052841vWATRXU4pnku526u5TwPn@zte.com.cn
+	s=arc-20240116; t=1756351763; c=relaxed/simple;
+	bh=2DAMS8UamfAmgDWytrRVeaR3OugUaL05hWERfjjl5Do=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=Wmts184Yukq1ccmlqX6xb25xN9lvaLgscvTfEa7PmSNdEGwZfMpcfEd2thsbRuLZHmwgmRp6pKFsXMylbNrMgnLqfrcBRjS3UQuTTnZG+wHAxVvegtJRjuCc/9SdMlJQTB22JIkCSDSvSReDV0zDkLOV9I7utgYjRYU6Qg2CVH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4cC6Fy6m2fz69cS;
+	Thu, 28 Aug 2025 11:24:38 +0800 (CST)
+Received: from dggemv706-chm.china.huawei.com (unknown [10.3.19.33])
+	by mail.maildlp.com (Postfix) with ESMTPS id 348C418048E;
+	Thu, 28 Aug 2025 11:29:15 +0800 (CST)
+Received: from kwepemq500010.china.huawei.com (7.202.194.235) by
+ dggemv706-chm.china.huawei.com (10.3.19.33) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 28 Aug 2025 11:29:14 +0800
+Received: from [10.173.125.236] (10.173.125.236) by
+ kwepemq500010.china.huawei.com (7.202.194.235) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 28 Aug 2025 11:29:14 +0800
+Subject: Re: [PATCH] Revert "hugetlb: make hugetlb depends on SYSFS or SYSCTL"
+To: Andrew Morton <akpm@linux-foundation.org>
+CC: <muchun.song@linux.dev>, <osalvador@suse.de>, <david@redhat.com>,
+	<linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>
+References: <20250826030955.2898709-1-linmiaohe@huawei.com>
+ <20250826203552.b4340b12b16a374396f49343@linux-foundation.org>
+ <0138514f-c580-c066-c16d-2a0b207e0604@huawei.com>
+ <20250827194934.f30fe19856fc343005c9703f@linux-foundation.org>
+From: Miaohe Lin <linmiaohe@huawei.com>
+Message-ID: <a770f778-81c2-3325-b44d-43a95134c189@huawei.com>
+Date: Thu, 28 Aug 2025 11:29:13 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: <xu.xin16@zte.com.cn>
-To: <wang.yaxin@zte.com.cn>, <alexs@kernel.org>
-Cc: <wang.yaxin@zte.com.cn>, <si.yanteng@linux.dev>, <corbet@lwn.net>,
-        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <yang.yang29@zte.com.cn>, <fan.yu9@zte.com.cn>, <he.peilin@zte.com.cn>,
-        <tu.qiang35@zte.com.cn>, <qiu.yutan@zte.com.cn>,
-        <zhang.yunkai@zte.com.cn>
-Subject: =?UTF-8?B?UmU6IFtQQVRDSCA0LzQgdjJdIERvY3MvemhfQ046IFRyYW5zbGF0ZSB0aW1lc3RhbXBpbmcucnN0IHRvIFNpbXBsaWZpZWQgQ2hpbmVzZQ==?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl2.zte.com.cn 57S3RovQ072338
-X-TLS: YES
-X-SPF-DOMAIN: zte.com.cn
-X-ENVELOPE-SENDER: xu.xin16@zte.com.cn
-X-SPF: None
-X-SOURCE-IP: 10.5.228.133 unknown Thu, 28 Aug 2025 11:28:10 +0800
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 68AFCCCA.000/4cC6L23C0fz5PM37
+MIME-Version: 1.0
+In-Reply-To: <20250827194934.f30fe19856fc343005c9703f@linux-foundation.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
+ kwepemq500010.china.huawei.com (7.202.194.235)
 
-> From: Wang Yaxin <wang.yaxin@zte.com.cn>
+On 2025/8/28 10:49, Andrew Morton wrote:
+> On Thu, 28 Aug 2025 10:31:51 +0800 Miaohe Lin <linmiaohe@huawei.com> wrote:
 > 
-> translate the "timestamping.rst" into Simplified Chinese.
+>> On 2025/8/27 11:35, Andrew Morton wrote:
+>>> On Tue, 26 Aug 2025 11:09:55 +0800 Miaohe Lin <linmiaohe@huawei.com> wrote:
+>>>
+>>>> Commit f8142cf94d47 ("hugetlb: make hugetlb depends on SYSFS or SYSCTL")
+>>>> added dependency on SYSFS or SYSCTL but hugetlb can be used without SYSFS
+>>>> or SYSCTL. So this dependency is wrong and should be removed.
+>>>>
+>>>> This reverts commit f8142cf94d4737ea0c3baffb3b9bad8addcb9b6b.
+>>>
+>>> f8142cf94d47 said:
+>>>
+>>>     If CONFIG_SYSFS and CONFIG_SYSCTL are both undefined, hugetlb
+>>>     doesn't work now as there's no way to set max huge pages.  Make
+>>>     sure at least one of the above configs is defined to make hugetlb
+>>>     works as expected.
+>>>
+>>> So there is now a way to set max huge pages?  A reference tot he
+>>> commit which made f8142cf94d47 unneeded might be helpful?
+>>
+>> The commit is just wrong. It overlooked the scenario of using hugetlb through boot parameters
+>> when it was submitted.
+>>
 > 
-> Update the translation through commit d5c17e36549c
-> ("docs: networking: timestamping: improve stacked PHC sentence")
-> 
-> Signed-off-by: Wang Yaxin <wang.yaxin@zte.com.cn>
-> Signed-off-by: Sun yuxi <sun.yuxi@zte.com.cn>
-> ---
->  .../translations/zh_CN/networking/index.rst   |   2 +-
->  .../zh_CN/networking/timestamping.rst         | 674 ++++++++++++++++++
->  2 files changed, 675 insertions(+), 1 deletion(-)
->  create mode 100644 Documentation/translations/zh_CN/networking/timestamping.rst
+> OK.  Could we please have a description of the user-visible effect and
+> a decision on whether we should backport the fix?
 
-Reviewed-by: xu xin <xu.xin16@zte.com.cn>
+For users with CONFIG_SYSFS or CONFIG_SYSCTL on, there should be no difference.
+For users have CONFIG_SYSFS and CONFIG_SYSCTL both undefined, hugetlbfs can still
+works perfectly well through cmdline except a possible kismet warning[1] when select
+CONFIG_HUGETLBFS. IMHO, it might not worth a backport.
+
+
+[1]: https://lore.kernel.org/all/5c99458f-4a91-485f-8a35-3618a992e2e4@csgroup.eu/
+
+Thanks.
+.
 
