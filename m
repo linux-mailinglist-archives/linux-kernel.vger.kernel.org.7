@@ -1,127 +1,149 @@
-Return-Path: <linux-kernel+bounces-789168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC740B391DE
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 04:50:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B19CB391E3
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 04:51:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A2213461F14
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 02:50:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1BB7A1C21275
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 02:51:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DB8C26A08F;
-	Thu, 28 Aug 2025 02:50:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Ex5P+M77"
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB8FB1A9FB8;
+	Thu, 28 Aug 2025 02:51:13 +0000 (UTC)
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EC9518C03F
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 02:50:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A40C18C03F;
+	Thu, 28 Aug 2025 02:51:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756349431; cv=none; b=lm4EsucUc2BlF3FAkbTEMa2xXyIa9LuhISLgJmRANOFdPDNF6uyAg7FQXe9kyo6bw8TJV8njvodjyK4imr4yzKTlulQEFck/Rlc3cTsHSZl0pfB8gRe+gay3vywAEb1B8Loq2c/TLlZVvnG5JmvFq1cHyypzlpLwoOwnonCpMMU=
+	t=1756349473; cv=none; b=ZipZNPyRLMPHxqTZblTpZwloEC/8HNKFPfS++No7x6B3PW/YZMcZp18S0ckdg1YF8wN7aIdlFqq+KrUxYejoLxbL20AvBUkbJRIKgFztvjBSVldvjnMGa6tr0eVGaoYVom4BwG8CGEJDtjB/5j6OBQLvZrO9AITVWPc17u+u5c0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756349431; c=relaxed/simple;
-	bh=UIefXmkkwDn7msQkQbZM7yZZpmCmufplx9uC9EFw3ig=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fNMFqk+Ni00Pcve5XuXMqQxI8zqzQuJbcbPGPCJWF8oq4Lt1oMT1KHuriOtj5HVP1bAt4EvIFTy117l/05nK7BCGV7Ex3hZrhSBZWV2vXy3h3IDVQme4j2DBqLQMeMQ0N1OZs7hv1U1YyLJ6lvnYbtQiz1t8A/VmuTX54JgEF2s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Ex5P+M77; arc=none smtp.client-ip=209.85.215.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-b4c1ed55930so493058a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 19:50:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1756349426; x=1756954226; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=EKFhfPBKU5aFdDy6tHlTA21oqL3oEJD1QCVMEEaNa0Y=;
-        b=Ex5P+M77LR/8PuPgkqPQFMzWtjPPtD1crXQCwhhUEY40JPmAplMveU3yNB1R5LPSCV
-         azavNCqgt/FaUfZmaTWFwc7c0FkO6eSHKs+Cl1U+DNvjIbaPasJS1p8Vs2GBNaZrlIgo
-         JvM3ELkPhr+IrB5VDn4WGjyXq38b254XlzXzGb/NzSaowWJGtM9Qdg2RHm104v9xolXk
-         3cfpK+y+dEmb5y8uyf6m1+65wIMv+y5Yl9uzdi7ypL/rhGrqzh9zQI7I93i5Sq0z8WOM
-         HDASTh+eNokCrDAHAu9j5akrc4DctSY+uGJDJy+wV5z/rM2Z78Mi8GQFS3JvvVhwS30D
-         kJpw==
+	s=arc-20240116; t=1756349473; c=relaxed/simple;
+	bh=Tr8fRegpwWz9Z2Jl9ViCSuc9Ne2scbBZyW6N5v6Io8g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mSPWQCt8bOMR1Pi+yghKRRMKRb6T2ielNqBBrhCWqv/dYW6f/Qlx2lkymMTUShVz1f+sPMAgCsRkpESr8mG3pgwpJ8mmAt6NlzvSo08cVY/i1cMat9WwKL6AgesYLErg39qez/ByciF7vBbfS64xQljhNF6SPLsIsrpxtylcFis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gompa.dev; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gompa.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-6188b7550c0so661344a12.2;
+        Wed, 27 Aug 2025 19:51:11 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756349426; x=1756954226;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EKFhfPBKU5aFdDy6tHlTA21oqL3oEJD1QCVMEEaNa0Y=;
-        b=tw7qO3x70VeFZAbdWU69psVaynahe2/8zH/wSvTTR4QKCIRe19/Kuz9Xzzn/G65YL5
-         uM/r88Qn7DCrpWPPRkvYHdMSdz2dpzCPq5j3PUQOc3dg5Teuy1C6Mky2juUslgLACUIJ
-         CcvGrOuSPW2zKqS796UlspN4p4vUb5OdI8AhRV0SvTgAjWlJcI49fiPvRofKRIM3qgL3
-         580Xy7XUayD9WB8RCHBsxBsLKoT6chZjUJf0J37PM/J69lwumIlXCrWOjuESnlTOdv/X
-         P14+jRLHl8pTDgRd5LAYQm6z3+ntwcXridvZx6GA4ctnq2ALW6EpLz2sFmG3dh/fzle/
-         xbQA==
-X-Forwarded-Encrypted: i=1; AJvYcCXa1EgEad4t0B72saQmf3FWAo4ALzQHmOtNo7+5peq5ZIGrwHDX0kS4j1/lCzML6ySGFxhnnPxIj31p3k4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzClRtUy5Ls1EMmn/0xJgi+qhLXbZ122+YaErMExcAcumFqChLD
-	/oqa9y7+pIS1P1cNgKnjqtyDeqguLWtUZVC08pUUmCz4Y+lSlxbZ2YY3lev0LANT+mg=
-X-Gm-Gg: ASbGncsxXsQE2/fDDdgd/ROKwNBjWflyxm/kmfrIRm1lzKPu02ooJkPq2zThV1jW3Gc
-	Lbtd2JTsaccNi+w1+o+4J9s8sxGMcBSPBk0twMkBVqPBHLsGJ2eaGRqFrwTmANutO7hne4ohng6
-	cm/o+xwlNOt54fxaxUu9pn4Q7pS5yNSMApYb+LKlHMUVeuJfl3wmYZYsWLx8J7pz9GXprMCU0jH
-	GlpVcGeN4rH3rLRDPeG/MSSb9+XAFJILoJ3P16JBZCEYrAHzoIrqo7rt4MMHM+DSVUd28m1qGNF
-	YnSHSyfWxIJJwQfQPSOHHbnoxeVYRtP54n/2yppoFfALazP0bwXc4Rg1RT626dXv3yVUxy0NVxH
-	X8HBEdj2YWmEiIn7t3Uii
-X-Google-Smtp-Source: AGHT+IF/97+1Ccx7YoDUnrBy72ODTzV6Lkd87S50kMzYOgYq3bil/9cBOlNAli1Lqsf0X0I8sew71g==
-X-Received: by 2002:a17:902:fc47:b0:246:9a5f:839f with SMTP id d9443c01a7336-2469a5f8594mr205144055ad.21.1756349426384;
-        Wed, 27 Aug 2025 19:50:26 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b49cb88fac4sm12713923a12.9.2025.08.27.19.50.25
+        d=1e100.net; s=20230601; t=1756349469; x=1756954269;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Tr8fRegpwWz9Z2Jl9ViCSuc9Ne2scbBZyW6N5v6Io8g=;
+        b=JEZI1mBp1IDwc2S6Hti6/jWlj9vypr6TysGeKkiN0Y2LqvYbddB7f8Zl/acZRRQi+/
+         t/YyoY3mBDuFJic8g43/IYQPr65GoSmTnc/cyfUK0C7JPHxxZDztCII0ANukd4Cxlo+J
+         6ygq2PHD1BkvSQrqgUoDyKA0tdn1LyNFVEJlEz9KIvAF5idvsmV/QAcBuesTw6GnoBUu
+         N+v5goSb46CNvKFdCko8oDKV13TwurU8PVyfN91Sh0R7rceJcBkq/IWWuckJ5IkWYbWQ
+         xgk7k3c8lWMY4Lasay7O9UxWT2rV/7eG9hTkFKXKkMzLZpPBNqCXDEkgWT+e+rbw1v3N
+         BZFw==
+X-Forwarded-Encrypted: i=1; AJvYcCVTLnCD0DFtjma2EDDc/5vGWY7+hksRLtQAOjRy2ctIR1ICAcoHzLjS8aWViXbKfFM0j/n2YMZG7CI2RqKB@vger.kernel.org, AJvYcCVbZpjO6hl9/efDf2Km7P/FqLKoRnjtz1YvayVBmsihO7/N+HOIfYxc4I6cLAzeQyLPj6/myKksgwUvE6I=@vger.kernel.org, AJvYcCW0ABObZbZGBe8CN04X6LlyIaCr2Bk1KjELSaBGZjZaCgilv+eAN+5DW9mcpKiQl+ZFH7R/a8QB5qx0@vger.kernel.org, AJvYcCXMs0zv7Lz8GtgEvWtchWtc4uA+D9+reS8lCg9Azf4kIq/WuoQCvd7F+rhxibmi18URSv7WKAynEni17y8=@vger.kernel.org, AJvYcCXllsk/C83Vz4Hngh3Cf6nGWAicIpWrw6GQHmRB7s8RDCKCuSQjcyXDA+wKrYMKKQkztvhWNHBSXqzP@vger.kernel.org
+X-Gm-Message-State: AOJu0YzIgHbaX90Z+iyBaiamr4J4hRIQnh2hqr6C8AyOzSDP+JML/zq9
+	EC3/U//AnmKqgyIrqwrZXTvPv0omQpx/KMpZ2NcKLiXhFpEcyKdKl4jfKRM7gOdjjDY=
+X-Gm-Gg: ASbGncvGybZ3DCXLHiAz9yo1uYAkitwThg5wafFc/ADwoo2FdwUX5oy/p3ibNQSHKjF
+	DrJBKXcis26r3vvjUKyNfF7qyG1BXumv+RzanF1+BGoHm5BrU2AcngghgWWwlEKOrPbO7nSoEgr
+	YqHoL1lHuXILmwX4vHwL+3h2i74TJYs4qGzN038DAJoKEkQdrlsdBAs+D+bB3p5Ps69D3EkJW07
+	uQUNryBd0O4QNGAOoEDv4fXcQTY77Pj9j/QyfJonKo08fMsboYQZA8OL/ODK64KrPO/st16IrBs
+	xoMTRzBG57FOmP8uF6mfpqN0ydwLmZgoouBidmkCqTxORwDQqpTzUrvJaCJXw9eAnDpzHVIDsPF
+	WF5XSryvQKgxpj7RTS8xwrSH5r2bugEt7xL8zmVgGScRdU9IrL1vMAW9Z3yk3DLrT8g1tY1GeZy
+	z0yYPO/OT7Vm7kB7WdV7k=
+X-Google-Smtp-Source: AGHT+IGdoSA6ptpVbDbcC1qJbeVhBGVVizt1XnHNTzPZ1dTjQe/jiSRrDykc85FWrsgAwBnqtfuTZw==
+X-Received: by 2002:a17:907:7212:b0:afe:8eb8:91f with SMTP id a640c23a62f3a-afe8eb896d8mr1013305866b.52.1756349469319;
+        Wed, 27 Aug 2025 19:51:09 -0700 (PDT)
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com. [209.85.208.42])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61cc7d858e1sm1180804a12.20.2025.08.27.19.51.09
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Aug 2025 19:50:25 -0700 (PDT)
-Message-ID: <8ed15a17-618f-4277-afc3-934939292060@kernel.dk>
-Date: Wed, 27 Aug 2025 20:50:24 -0600
+        Wed, 27 Aug 2025 19:51:09 -0700 (PDT)
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-61c4f73cf20so819502a12.0;
+        Wed, 27 Aug 2025 19:51:09 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU/hNYtmswRgiJJ8O10ti+oVkkVZ7W49QpKjsFYUzg0tWQLS5vQzJDFcC09uGavnSU5ab/7yB+qcKno/js=@vger.kernel.org, AJvYcCU0XdtmSRrcn0eHFELzrorDsMubCsWyc8Onz1FGOE/w3Yb/2hG/e7Yp+D4R0MyLMURWPQ6Y6hMtcLCqttTR@vger.kernel.org, AJvYcCUgeSpvNQYF4LxF8gK+u8qCff5OJJzVGKckWq+hKXY7hs3BH6vIP+hjZ7zkwoKnzlTK1WdaCFtk/Vk+@vger.kernel.org, AJvYcCWU2SJ+aTDHjd74at0UzOjlJg3tIFTbXk9Pd+qIvLKOO8ySdBprXStCkP4Oa8h38pK1V/9wscGrFp+w@vger.kernel.org, AJvYcCXzQOShJuE8dFgejdzmcur3WOn60ZqLkYwstVmpe7u+phRSYfk0yEYL8dlAShH7bbHiE65QCIju3eK+SUQ=@vger.kernel.org
+X-Received: by 2002:a17:906:4786:b0:ae0:ad5c:4185 with SMTP id
+ a640c23a62f3a-afe295c1d7cmr2038306966b.57.1756349468922; Wed, 27 Aug 2025
+ 19:51:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] io_uring/kbuf: fix infinite loop in
- io_kbuf_inc_commit()
-To: Qingyue Zhang <chunzhennn@qq.com>
-Cc: aftern00n@qq.com, io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <8abaf4ad-d457-422d-9e9e-932cab2588e6@kernel.dk>
- <tencent_87B68C160DC3F4AE06BD6DF0349B1B235E05@qq.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <tencent_87B68C160DC3F4AE06BD6DF0349B1B235E05@qq.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250827-macsmc-subdevs-v2-0-ce5e99d54c28@gmail.com>
+ <cff7c8d0-cdd8-4ba5-864a-936a059624d8@roeck-us.net> <CAHgNfTx32B4p6U8Z+dy02jWdQhW0uR3ytovc5u-3bE8kNk=p4Q@mail.gmail.com>
+In-Reply-To: <CAHgNfTx32B4p6U8Z+dy02jWdQhW0uR3ytovc5u-3bE8kNk=p4Q@mail.gmail.com>
+From: Neal Gompa <neal@gompa.dev>
+Date: Wed, 27 Aug 2025 22:50:32 -0400
+X-Gmail-Original-Message-ID: <CAEg-Je_iyVc-VAUAZa8MNwhBqc301R4qTbKghYqJiw--5+DvwQ@mail.gmail.com>
+X-Gm-Features: Ac12FXxvfDB4kcNEaDqCMIyxqJYPH_rJJ8_AlceL3uhtx24kHMPD9Nj5WNKrAVg
+Message-ID: <CAEg-Je_iyVc-VAUAZa8MNwhBqc301R4qTbKghYqJiw--5+DvwQ@mail.gmail.com>
+Subject: Re: [PATCH v2 00/11] mfd: macsmc: add rtc, hwmon and hid subdevices
+To: James Calligeros <jcalligeros99@gmail.com>
+Cc: Guenter Roeck <linux@roeck-us.net>, Sven Peter <sven@kernel.org>, Janne Grunau <j@jannau.net>, 
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>, Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Jean Delvare <jdelvare@suse.com>, 
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>, asahi@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org, 
+	linux-hwmon@vger.kernel.org, linux-input@vger.kernel.org, 
+	Mark Kettenis <kettenis@openbsd.org>, Hector Martin <marcan@marcan.st>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 8/27/25 8:49 PM, Qingyue Zhang wrote:
-> On Wed, 27 Aug 2025 20:08:05 -0600, Jens Axboe wrote:
->> I don't think there's anything wrong with the looping and stopping at
->> the other end is of course a safe guard, but couldn't we just abort the
->> loop if we see a 0 sized buffer? At that point we know the buffer is
->> invalid, or the kernel is buggy, and it'd be saner to stop at that
->> point. Something ala:
->>
->>
->> diff --git a/io_uring/kbuf.c b/io_uring/kbuf.c
->> index 394037d3f2f6..19a8bde5e1e1 100644
->> --- a/io_uring/kbuf.c
->> +++ b/io_uring/kbuf.c
->> @@ -42,7 +42,8 @@ static bool io_kbuf_inc_commit(struct io_buffer_list *bl, int len)
->>  		buf_len = READ_ONCE(buf->len);
->>  		this_len = min_t(u32, len, buf_len);
->>  		buf_len -= this_len;
->> -		if (buf_len) {
->> +		/* Stop looping for invalid buffer length of 0 */
->> +		if (buf_len || !this_len) {
->>  			buf->addr += this_len;
->>  			buf->len = buf_len;
->>  			return false;
-> 
-> Good idea, it looks nice to me.
+On Wed, Aug 27, 2025 at 6:07=E2=80=AFPM James Calligeros
+<jcalligeros99@gmail.com> wrote:
+>
+> On Wed, Aug 27, 2025 at 11:47=E2=80=AFPM Guenter Roeck <linux@roeck-us.ne=
+t> wrote:
+> > > ---
+> > > Changes in v2:
+> > > - Added Rob's R-b tag to RTC DT binding
+> > > - Removed redundant nesting from hwmon DT binding
+> > > - Dedpulicated property definitions in hwmon DT schema
+> > > - Made label a required property for hwmon DT nodes
+> > > - Clarified semantics in hwmon DT schema definitions
+> > > - Split mfd tree changes into separate commits
+> > > - Fixed numerous style errors in hwmon driver
+> > > - Addressed Guenter's initial feedback on the hwmon driver
+> >
+> > Don't you think that is a bit useless ? You might as well say "Addresse=
+d
+> > feedback comments" and be done with the change log.
+> >
+> > Guenter
+>
+> I don't think this warrants a v3, so hopefully the amended
+> changelog below will suffice.
+>
+> ---
+> Changes in v2:
+> - Added Rob's R-b tag to RTC DT binding
+> - Removed redundant nesting from hwmon DT binding
+> - Dedpulicated property definitions in hwmon DT schema
+> - Made label a required property for hwmon DT nodes
+> - Clarified semantics in hwmon DT schema definitions
+> - Split mfd tree changes into separate commits
+> - Fixed numerous style errors in hwmon driver
+> - Removed log messages sysfs read/write functions in hwmon driver
+> - Removed ignored errors from hwmon driver
+> - Removed uses of dev_err for non-errors in hwmon driver
+> - Made it more obvious that a number of hwmon fan properties are optional
+> - Modified hwmon driver to reflect DT schema changes
+> - Added compatible property to hwmon node
+> - Link to v1: https://lore.kernel.org/r/20250819-macsmc-subdevs-v1-0-57df=
+6c3e5f19@gmail.com
+>
 
-I'll send it out, I amended the commit message a bit too.
+Series LGTM.
 
--- 
-Jens Axboe
+Reviewed-by: Neal Gompa <neal@gompa.dev>
 
+
+
+--=20
+=E7=9C=9F=E5=AE=9F=E3=81=AF=E3=81=84=E3=81=A4=E3=82=82=E4=B8=80=E3=81=A4=EF=
+=BC=81/ Always, there's only one truth!
 
