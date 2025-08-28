@@ -1,91 +1,62 @@
-Return-Path: <linux-kernel+bounces-790773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA4ECB3ACD6
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 23:42:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A4898B3ACD9
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 23:43:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD2AF5679D6
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 21:42:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71D315679D1
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 21:43:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 078E62C08A8;
-	Thu, 28 Aug 2025 21:42:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 383152C08A8;
+	Thu, 28 Aug 2025 21:43:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S/vkktAM"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UClqFzwt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B109D233149;
-	Thu, 28 Aug 2025 21:42:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BD132BEC34;
+	Thu, 28 Aug 2025 21:43:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756417360; cv=none; b=sq6LP4Mi/KceWwLCj1vYr+41H9M3oQObaeE01NXCEe20BupYmQU/8OIstGi2+bFLZeYH4m2uh6Nnlio+FqwoBr3gdAU/I05/K3UvAAyGHuT7pn5eKdsuLmGHORdhInFJHRh7+YKzCYiGMmc3pxvWagV36qvB+bBw/ugG5yrB8TA=
+	t=1756417384; cv=none; b=ZV19HTCLf0/M7o/PsvX5kfpl10LNgN1FhWabuxxwaObqokjSA6wEvOEElhdki3kgHSN+F/yVvSfsFS17eoxvvRcx0JyaH9EuQQVCLfDA9mTPPmjLTDsgJI1Vks/o05SRzGXaSCWr/soJKOFxfjf/+U+ANbY2HxnDrexu84tNf/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756417360; c=relaxed/simple;
-	bh=xjr5vpGJs1J/e7rC+/meiCErZfsT4MdioSkHrPuOXCs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CvdyorkTrxAPuBR8LqZUyG6U+3j/BBhiV5C3GSSvJ7pDyx3Bsi8SXtRleZSjz1bge228HREZMm+Rvf/9gUgJ81iQqP6kqnYrZtzvF1DkHpN+4oergZzg1mLiGCIwlIXLZ4yHpAcHaW4PFteE5KWtjEEXpP7vcCyhI0YPHI3eyqA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S/vkktAM; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-770593ba164so1247952b3a.3;
-        Thu, 28 Aug 2025 14:42:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756417358; x=1757022158; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UH9yk2TefOta60JYDpWqpgDhndjOgYlNivFhyfwD81I=;
-        b=S/vkktAMBHQZsU/e1jhtjlvTwOInpCsTLoOoxcCOnRnVVjcJYoKnxEarC39aVLZT/N
-         EQMMe7TOwjwalQErbS2P6tZt/SY/+6Ys0PfeoMdGPj1eZYgnvYKYdPqOyzQOYgy7XWJ6
-         26NDb9smkpDcDFD1UBtK0ykVJeD2TEwQVSkn6Piq6ozkyDr5sBX41BT1UK5uV85FNnfj
-         KcRZpaaqa59ejsm2vn75HzbP+sbEBEPdNFBfdNpu3zo8wNWoy8xMIEeLlyp4wrkEMFbJ
-         uVouSfQg4OxJs83aPgcf7nwQYkKvAptOsNNAqyt++swuMdJW8QlXGmhJhsFueYGtSxL4
-         sYLQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756417358; x=1757022158;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UH9yk2TefOta60JYDpWqpgDhndjOgYlNivFhyfwD81I=;
-        b=bgbMlDcySsllOKe913COrs5KFG//QUlB1bG4ONf5sS5iUV90+15ZwcnRJxAUvG/+Sn
-         Z4tevBcEBn0goJQE4YT4AFFm2sEQ9GucU0x2xQITSIlKXzJqIm+RyoiTqb1pwVTrr+QO
-         u5m8Qk83pnGbGBpjYJD9uMuf8gLDU6MGBsAxEF1jK/xQGkCxNpjq7KVjMAyS22hrzyoK
-         VYuFvJpX3TKQsbQawLaN2hnjpMsIZyacCKl7QxzWISYxUJ18Z9TrlYgDPu/IMUUMGL+C
-         efr5INkSrcecU0GHz7wkhSCfYmrF54kaMJP87cZL4TwX1yGwtGUAmcCi43cFXXrLu4W5
-         V/iw==
-X-Forwarded-Encrypted: i=1; AJvYcCUTcWRPTPtl5lzz5rNe5ZGBtUaHQ1xnLFdaLdL4Jwf025n0qH+CaIldG6QbvdG2W2bRLxPCEqwcbGKcBA==@vger.kernel.org, AJvYcCWM29rnZuzqhRwrqWVpV39A2uieAkP4ks+kCzx6+9SCFjqEX09gQ4hC0nepEkxRWN+juXOd3JXvft0HqbJk@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzg7deuYNkiylgLlRY3PA3/e7SWMpDWJDCLUMRjQZrPb0X7VTFz
-	KvdsPtNCpa/0aAQA3OYLVbmFn+W8mYxQY33QUO1nxZYBHrEx3wKCgoz1
-X-Gm-Gg: ASbGnctN2zb/UqNKfNt1eF3XiE1tS6WR+2BpudptlwRhVYEr6edJMYS4nmOjiJWBP5c
-	YDXdiI5WAR+ohS7DJjmdDe7alhbLodU5rgwvVVF3TAyXLn72StrsHEUNZmzByJpEyQ6lxTy5qzk
-	u8nMxbWSRB6FXwEZZG0bFWb0Vbqe3wyG54dSFbtDisYfgAaSQUndmlaYqdfZVJtFQv3Y68E40+R
-	LJbQsFEgAbI7PjXY4THo9KA2VmnMeQjwlZWRl4ROgJfjUw9qREBAv154i1dxX5X9YEB1ynbuMVg
-	AlC0t3NyUsi2YB3LGYd8u/FyfrXm8UrMlcLrMQqtBO1sUazVIgoagqrpmel2dgkIfJ8aLJJA0xc
-	tRiu93giwZCPtVGFvI9+6X4qZxppktIzSoMo=
-X-Google-Smtp-Source: AGHT+IFbmPeOe2DEWj5n1YBIu2SCDkJ5FxtzV5CUXT9pOd/gpNsxXld2ouUQ9eJ48pUXXbLHarUVQw==
-X-Received: by 2002:a05:6a20:3943:b0:243:a4de:d9a with SMTP id adf61e73a8af0-243a4de1259mr8475947637.44.1756417357923;
-        Thu, 28 Aug 2025 14:42:37 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3276fcd48cesm6119880a91.19.2025.08.28.14.42.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Aug 2025 14:42:37 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Thu, 28 Aug 2025 14:42:36 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Sohil Mehta <sohil.mehta@intel.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>, linux-hwmon@vger.kernel.org,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Dave Hansen <dave.hansen@intel.com>, x86@kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] hwmon: (coretemp) Replace x86_model checks with VFM
- ones
-Message-ID: <9f1fbf32-fd37-420c-82bc-a43e6d5ef57a@roeck-us.net>
-References: <20250828201729.1145420-1-sohil.mehta@intel.com>
+	s=arc-20240116; t=1756417384; c=relaxed/simple;
+	bh=LgIHZN3qg8ENhN8nHf8+6R2L+PO544XykwdVWD06Rro=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=bYfO9CEgjuSwupEU9PaCtvfVEKhVW24leusnXOe4vb4eRwP5BLcB3sxWiTCr5NSm0Q/FfgyWDUw46i3b4OggWwNRIe1U/i19hE82lRsgIBBe/qD/TnR+0f71WOTIUdeH/w44C4DDdx9X7j7QtwvHeKvEiKBLhXV3QeMtGcoOIKU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UClqFzwt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4E11C4CEEB;
+	Thu, 28 Aug 2025 21:43:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756417384;
+	bh=LgIHZN3qg8ENhN8nHf8+6R2L+PO544XykwdVWD06Rro=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=UClqFzwtdRXYQgijZAOhJNtFzQO/PGPWgPKqDIuodjKEwk6u38DsfoMzuvN1Kw6rE
+	 MGgkWYbzbRpsf9hQM3n4+PezvoKR4QmL/aDNEihv2cwlm2ALDztq8lql+ilv0EDaxh
+	 XFRCFeNcYgpSMIWTj50l3wsO4uUte9dNgwYi7MulK9Srj+CCbfgOpWyC4syvtmSqtW
+	 URYSbtlDtzwWufGyeXvIVslcW3Z4C7Cf7xt7FCBnkkmZ6VbXJKajlZ569c9bnNirQ2
+	 2TO3jgimZJzXZ/17tgmqiTg3JRPGDC2sdtkZKfRqxVsfvrtS4BsvxZNMCBPrStgF6A
+	 HdFcOTA01vnWg==
+Date: Thu, 28 Aug 2025 16:43:02 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Chen Wang <unicornxw@gmail.com>
+Cc: kwilczynski@kernel.org, u.kleine-koenig@baylibre.com,
+	aou@eecs.berkeley.edu, alex@ghiti.fr, arnd@arndb.de,
+	bwawrzyn@cisco.com, bhelgaas@google.com, unicorn_wang@outlook.com,
+	conor+dt@kernel.org, 18255117159@163.com, inochiama@gmail.com,
+	kishon@kernel.org, krzk+dt@kernel.org, lpieralisi@kernel.org,
+	mani@kernel.org, palmer@dabbelt.com, paul.walmsley@sifive.com,
+	robh@kernel.org, s-vadapalli@ti.com, tglx@linutronix.de,
+	thomas.richard@bootlin.com, sycamoremoon376@gmail.com,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-riscv@lists.infradead.org,
+	sophgo@lists.linux.dev, rabenda.cn@gmail.com, chao.wei@sophgo.com,
+	xiaoguang.xing@sophgo.com, fengchun.li@sophgo.com
+Subject: Re: [PATCH 2/5] PCI: cadence: Fix NULL pointer error for ops
+Message-ID: <20250828214302.GA968773@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,37 +65,100 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250828201729.1145420-1-sohil.mehta@intel.com>
+In-Reply-To: <fca633eb6d667a90f875cdf1263fcea2bcc2c969.1756344464.git.unicorn_wang@outlook.com>
 
-On Thu, Aug 28, 2025 at 01:17:29PM -0700, Sohil Mehta wrote:
-> From: Dave Hansen <dave.hansen@linux.intel.com>
+On Thu, Aug 28, 2025 at 10:17:17AM +0800, Chen Wang wrote:
+> From: Chen Wang <unicorn_wang@outlook.com>
 > 
-> Intel CPUs have been using Family 6 for a while. The Family-model checks
-> in the coretemp driver implicitly assume Family 6. With the upcoming
-> Family 18 and 19 models, some of these checks fall apart.
+> ops of struct cdns_pcie may be NULL, direct use
+> will result in a null pointer error.
 > 
-> While reading the temperature target MSR, cpu_has_tjmax() performs model
-> checks only to determine if a device warning should be printed. Instead
-> of expanding the checks, get rid of the function and print the warning
-> once unconditionally if the MSR read fails. The checks aren't worth
-> preventing a single line warning to dmesg.
+> Add checking of pcie->ops before using it.
 > 
-> Update the rest of the x86_model checks with VFM ones to make them more
-> robust. This automatically covers the upcoming Family 18 and 19 as well
-> as any future extended families.
-> 
-> Add a code comment to reflect that none of the CPUs in Family 5 or
-> Family 15 set X86_FEATURE_DTHERM. The VFM checks do not impact these
-> CPUs since the driver does not load on them.
-> 
-> Missing-signoff: Dave Hansen <dave.hansen@linux.intel.com>
-> Signed-off-by: Sohil Mehta <sohil.mehta@intel.com>
+> Fixes: 40d957e6f9eb ("PCI: cadence: Add support to start link and verify link status")
 
-Checkpatch really doesn't like that:
+Do you observe this NULL pointer dereference with an existing driver?
 
-ERROR: Missing Signed-off-by: line by nominal patch author 'Dave Hansen <dave.hansen@linux.intel.com>'
+If this is only to make it possible to add a new driver that doesn't
+supply a pcie->ops pointer, it doesn't need a Fixes: tag because
+there's not a problem with existing drivers and this change would not
+need to be backported.
 
-Never mind, applied anyway.
+If it *is* a problem with an existing driver, please point out which
+one.
 
-Guenter
+> Signed-off-by: Chen Wang <unicorn_wang@outlook.com>
+> ---
+>  drivers/pci/controller/cadence/pcie-cadence-host.c | 2 +-
+>  drivers/pci/controller/cadence/pcie-cadence.c      | 4 ++--
+>  drivers/pci/controller/cadence/pcie-cadence.h      | 6 +++---
+>  3 files changed, 6 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/cadence/pcie-cadence-host.c b/drivers/pci/controller/cadence/pcie-cadence-host.c
+> index 59a4631de79f..fffd63d6665e 100644
+> --- a/drivers/pci/controller/cadence/pcie-cadence-host.c
+> +++ b/drivers/pci/controller/cadence/pcie-cadence-host.c
+> @@ -531,7 +531,7 @@ static int cdns_pcie_host_init_address_translation(struct cdns_pcie_rc *rc)
+>  	cdns_pcie_writel(pcie, CDNS_PCIE_AT_OB_REGION_PCI_ADDR1(0), addr1);
+>  	cdns_pcie_writel(pcie, CDNS_PCIE_AT_OB_REGION_DESC1(0), desc1);
+>  
+> -	if (pcie->ops->cpu_addr_fixup)
+> +	if (pcie->ops && pcie->ops->cpu_addr_fixup)
+>  		cpu_addr = pcie->ops->cpu_addr_fixup(pcie, cpu_addr);
+>  
+>  	addr0 = CDNS_PCIE_AT_OB_REGION_CPU_ADDR0_NBITS(12) |
+> diff --git a/drivers/pci/controller/cadence/pcie-cadence.c b/drivers/pci/controller/cadence/pcie-cadence.c
+> index 70a19573440e..61806bbd8aa3 100644
+> --- a/drivers/pci/controller/cadence/pcie-cadence.c
+> +++ b/drivers/pci/controller/cadence/pcie-cadence.c
+> @@ -92,7 +92,7 @@ void cdns_pcie_set_outbound_region(struct cdns_pcie *pcie, u8 busnr, u8 fn,
+>  	cdns_pcie_writel(pcie, CDNS_PCIE_AT_OB_REGION_DESC1(r), desc1);
+>  
+>  	/* Set the CPU address */
+> -	if (pcie->ops->cpu_addr_fixup)
+> +	if (pcie->ops && pcie->ops->cpu_addr_fixup)
+>  		cpu_addr = pcie->ops->cpu_addr_fixup(pcie, cpu_addr);
+>  
+>  	addr0 = CDNS_PCIE_AT_OB_REGION_CPU_ADDR0_NBITS(nbits) |
+> @@ -123,7 +123,7 @@ void cdns_pcie_set_outbound_region_for_normal_msg(struct cdns_pcie *pcie,
+>  	}
+>  
+>  	/* Set the CPU address */
+> -	if (pcie->ops->cpu_addr_fixup)
+> +	if (pcie->ops && pcie->ops->cpu_addr_fixup)
+>  		cpu_addr = pcie->ops->cpu_addr_fixup(pcie, cpu_addr);
+>  
+>  	addr0 = CDNS_PCIE_AT_OB_REGION_CPU_ADDR0_NBITS(17) |
+> diff --git a/drivers/pci/controller/cadence/pcie-cadence.h b/drivers/pci/controller/cadence/pcie-cadence.h
+> index 1d81c4bf6c6d..2f07ba661bda 100644
+> --- a/drivers/pci/controller/cadence/pcie-cadence.h
+> +++ b/drivers/pci/controller/cadence/pcie-cadence.h
+> @@ -468,7 +468,7 @@ static inline u32 cdns_pcie_ep_fn_readl(struct cdns_pcie *pcie, u8 fn, u32 reg)
+>  
+>  static inline int cdns_pcie_start_link(struct cdns_pcie *pcie)
+>  {
+> -	if (pcie->ops->start_link)
+> +	if (pcie->ops && pcie->ops->start_link)
+>  		return pcie->ops->start_link(pcie);
+>  
+>  	return 0;
+> @@ -476,13 +476,13 @@ static inline int cdns_pcie_start_link(struct cdns_pcie *pcie)
+>  
+>  static inline void cdns_pcie_stop_link(struct cdns_pcie *pcie)
+>  {
+> -	if (pcie->ops->stop_link)
+> +	if (pcie->ops && pcie->ops->stop_link)
+>  		pcie->ops->stop_link(pcie);
+>  }
+>  
+>  static inline bool cdns_pcie_link_up(struct cdns_pcie *pcie)
+>  {
+> -	if (pcie->ops->link_up)
+> +	if (pcie->ops && pcie->ops->link_up)
+>  		return pcie->ops->link_up(pcie);
+>  
+>  	return true;
+> -- 
+> 2.34.1
+> 
 
