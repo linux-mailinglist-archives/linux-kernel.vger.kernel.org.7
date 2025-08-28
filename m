@@ -1,160 +1,309 @@
-Return-Path: <linux-kernel+bounces-789713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C54E5B39985
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 12:20:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04057B39994
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 12:23:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B3C73B9299
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 10:20:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2A3407B2D1D
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 10:20:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61E292701D1;
-	Thu, 28 Aug 2025 10:20:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACC5F30BB81;
+	Thu, 28 Aug 2025 10:22:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Voa9vrjz"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="icFu/Zru"
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45EB626FD9D
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 10:19:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2870930ACFA
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 10:22:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756376401; cv=none; b=di/KP9FWeFxsq/13gRcx7UT7PaN/C11CfzRTV5sxFqfrAITm38LjRhi9uG9GNPoVE22adn5kKMJHXt6VPvMtfbVmplW8qM4QeAlJI/3+hNwhxb3RXay2A3BiIh0W/RCQP+HsAg//vi36R49dsWPvB0NwNSHijVniaBDWKOXt1/s=
+	t=1756376538; cv=none; b=jimxPiG3YPmKaIQDuMjiq0q8Ow/Afk9XwcvdP+wiD2qkcDugd8ydDnFXjDRQ4MZqd/e8GPL4tOioCxxDu/t6bCSyZFJ9ODQvMVWe3taX5pY9mkH56vI3iAhXx+act9oRJSebm1apsneZ3vazD8trf9n1WAlSYt/yE8gcFeVeoAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756376401; c=relaxed/simple;
-	bh=C1DYH4kVeKuTMIZnOmx1ZxMHuw47TEaonNH+ssfuphc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HUxyGklysbV+6up9shzLmghGnnbxkZzMt+ism7Ilm2aUT+Ko6kAGlVY3VmxTGoBeyzGRfISSLrvxih+Q3sryzEQWuMyBwM+d20QUjrFAlbugGTGWl/N9dj8OFczbkV0ZWpC2krYTC7uVfPDVo0ikAECe2nnejVXKBlQPg/g+6nE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Voa9vrjz; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756376399;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mBAEoFNbmswFsnSxAIv1w+pBcSdXwLgSTS2jwoutXlw=;
-	b=Voa9vrjzTwnIk1XnGe0lK5O7Py9HAgFReyjhQI8T2ENUvOwdCMAYApkR2u8qqCHwm/Lrga
-	V0b52jm5rnnRZkuWWLsCFA6eM2mfUE0n542QTNDJRVdnSv5eW3Qu9LuQGiWr9odywSypQE
-	sBqvdrMI8uPMDsJs2fltZeeNteUCdEA=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-264-K0osWPgaPPSDpY-Ym5leeQ-1; Thu, 28 Aug 2025 06:19:57 -0400
-X-MC-Unique: K0osWPgaPPSDpY-Ym5leeQ-1
-X-Mimecast-MFC-AGG-ID: K0osWPgaPPSDpY-Ym5leeQ_1756376396
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-45a1b0c5377so3674395e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 03:19:57 -0700 (PDT)
+	s=arc-20240116; t=1756376538; c=relaxed/simple;
+	bh=FtKlDX1cC88prd0nVVZDQ8wnFvM762DE57wJ6XlZHQg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fJvdg8ZSwuGH0IHXA9uLMzpNTVBqzMyWjdvI9u78vQ9Ev9jjdmEM+Bv2kUxFwd6xOWefY2j1dvSatf55Fey8v/SsBPLDwAvAQAWXnPDGdArIYHasNIx7IMZsJQNcToettEOB5igLj/2meE568rK/E3lutkZ1E5jjKB3h69g3wO8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=icFu/Zru; arc=none smtp.client-ip=209.85.160.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4b2f497c230so305661cf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 03:22:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1756376535; x=1756981335; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=zAt+br+G9Lon3yOcD2uCT+F1HP2hGvD0BFIJ9EDkS/w=;
+        b=icFu/Zrupc4MpC4ulYgyL+DJ+DLSDkt9iV+NrrvKH5jwz2IE145sj347VL1MlW5t96
+         9Y29JiwUSY2U7gQDytet+gViF4GTzqF+B7ZYxeM7LmnOiwG+5/h971Ha0nxpv4yA7vgG
+         CDCKU6umlc0eJACUDRUEUaSrslttXioulIYp1fJcPUJ2OcR1HvrwtDBnNvHM/Fr8cTjc
+         P1lvae5yzBnM0FV6YfH+q5w7Zbx8b7Eu3oKeSORHr3nSIbsidQYDhmEr1TSz0oqx/Pss
+         P+GURGPmX0kvsFV71ssql3LZCiHF3L03pO7sOzsrGkg5v17CXXAXl75nZqzZT6C32sbq
+         +y/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756376396; x=1756981196;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mBAEoFNbmswFsnSxAIv1w+pBcSdXwLgSTS2jwoutXlw=;
-        b=pIcHQ0mKyUmwtSYAEZ+yTZRqeiyvNeukarYI9J9gA/I0i9IjzICxROIxNhRvFXOp4I
-         e0xr67cnJqWlzBRKTCojG85hoxH4fqZSbBFilZgmmRPBTykJE/jFVxwBEfmUmRkaH1xH
-         3ytp56xyEp1n6JOHf2ymO5USeQWrFig6llruckFiMuEeqYoHIRhhh/HTzHUK5q5fBii1
-         hI+tTAZG8VPdy1ty4P2w3SG9nEW1QWuEfGT0hH0MDRbcRCtsjBgOyZR54tICPOSo597z
-         324nKl9O8RZ9CCtFKaKvFlaRWC4b9SzgmGynVVmTy1Hudq5vJKv/tL0WUoUSHiGLnGXv
-         K5zg==
-X-Forwarded-Encrypted: i=1; AJvYcCU3VaphCPp1hXpxuc5CkwtAqLSRlAzrnv8/yYLiqQd6SolWuEWOGfJ2E/UsDkPV2V0WGIYiCIiT0oav43A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwIuhfOdj81kdvp80C3ggyXKT04dV4st3Kr0MoNh8cUOdN/433n
-	WrFce6uOMotJeg911UQqtzzi6gZ9TzTRamS+lQFEkvKm7R0//4cTOeVn1xj92ByP1byxYC4p0zk
-	5Tp3Mtv5TB1h0gEnMlVdBk4Go4+0TJZwwUT4drkz25JioOddP7OdAKIwgwNbi+tbGFA==
-X-Gm-Gg: ASbGncttMo7KdFgctzhE1I3E9U+lSq7xIgN+cVp5coHRH8jdwZ+PX/mnzaZE3XU51Uf
-	vvReKPFk9M6qae8U9Pqh/c3EpJuBUvvX337tkQbwGxm2cw5tDAJrSOfDeP/uzqZRespKxP1A6Yf
-	4EuHEXUyDNCopDbXKd9E9usquW66R4UE3a5l3FxFIS8JnSM6MticxIArU9DNpA9D2LrkBquNmiN
-	RWp5KSAnT7uQkgxInB7+pJtqoyjb7v5HEFAyZzpw6+qzlPS41lzl+u7eKRo+v+MA50IpNGasBBk
-	jRiWLsDD187Xw/+ErcbDXooIIMps+xtN
-X-Received: by 2002:a05:600c:a47:b0:456:1824:4808 with SMTP id 5b1f17b1804b1-45b517cfe66mr169732945e9.32.1756376396482;
-        Thu, 28 Aug 2025 03:19:56 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHRzvWTBo2GxDcNnrIlhFHzO2y1QKjqd6ebF9+adqAAZUSWw06wXWnWxmDIghxndloNXqg0Zg==
-X-Received: by 2002:a05:600c:a47:b0:456:1824:4808 with SMTP id 5b1f17b1804b1-45b517cfe66mr169732795e9.32.1756376396123;
-        Thu, 28 Aug 2025 03:19:56 -0700 (PDT)
-Received: from redhat.com ([2a0d:6fc0:1515:7300:62e6:253a:2a96:5e3])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b79799c33sm26094735e9.5.2025.08.28.03.19.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Aug 2025 03:19:55 -0700 (PDT)
-Date: Thu, 28 Aug 2025 06:19:52 -0400
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Haixu Cui <quic_haixcui@quicinc.com>
-Cc: andriy.shevchenko@intel.com, harald.mommer@oss.qualcomm.com,
-	quic_msavaliy@quicinc.com, broonie@kernel.org,
-	virtio-dev@lists.linux.dev, viresh.kumar@linaro.org,
-	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	hdanton@sina.com, qiang4.zhang@linux.intel.com,
-	alex.bennee@linaro.org, quic_ztu@quicinc.com
-Subject: Re: [PATCH v4 2/3] virtio-spi: Add virtio-spi.h
-Message-ID: <20250828061943-mutt-send-email-mst@kernel.org>
-References: <20250820084944.84505-1-quic_haixcui@quicinc.com>
- <20250820084944.84505-3-quic_haixcui@quicinc.com>
- <20250821044231-mutt-send-email-mst@kernel.org>
- <42806aa8-8cf1-476e-b775-50859fe0e7f1@quicinc.com>
+        d=1e100.net; s=20230601; t=1756376535; x=1756981335;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zAt+br+G9Lon3yOcD2uCT+F1HP2hGvD0BFIJ9EDkS/w=;
+        b=Oof4orO4MqQqOCNyROAXPUz4Ebp6wFV/BcT9117cnadRiKqqE6N/xp/4mugW2RkS4J
+         phzwDiG88WsC5UMOHzmKq27DZgDeI6LFSumzZxsu1ok0A6JXxdXej5nwyFPv+uWrUuUj
+         hyrSeeuY23E0V4dgAyHODs3rh11OojI+kshkGOUltBHpWzcPGM5C4+N9s3/nw+d1f0ZJ
+         Guvmunrrhuc8klZq2Sf8a20VZKx1lvHGJEo4yBK+za9Nvl01zHf8z0XVhz4ZMaoo/Jg7
+         PQp0K/q6n1v2dIlpUtUJVjUuh3yxtbHIGQ+JSfp8mFbemwzVeTqqWQrefZ6Mple6MuBZ
+         38Lg==
+X-Forwarded-Encrypted: i=1; AJvYcCVaiKcMghecIt+4Z571z/8Ec1UqszWCDEp48asLCrcUT3a+/yNkQjE8Td4eCVt1Uxw35+S+bkzJeJHOiaY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzal9zCSNkD/ScrCDKRmxkRldMQ2Jdr/RCtkx1hupNK3JCOWXHb
+	5P/DQMNb2Qy1MJ5uGTHwoE7vS678VdiIlO7mELTfU4s5eO3bGSvuBvnxYWRBn6OBxpil6NHQREl
+	oRfUBAJOCOeWjdvk2+AWbGTvtBfJ54KFMvKrL1ddO
+X-Gm-Gg: ASbGncu3kHOm2NlzlNCo66QXQXMQL9hnN9Om7jkMIItrS0rjnj1HrFhb4DIvtPqtP/C
+	DYlW9JYUU0bL3qGpiKxDSUwh9bqa1YViC+BzE3T5sGGPBu9JmU3wQQI3c4icmYFPF5Ye2qM7ui8
+	lDTx4Nin0q6St2sEueznN00r+hJefooVZaoGZxvn9RjPMZYCYkM1W2khlAKUD+LCHouBe81xHen
+	1xXkqSsLja6x8FtKzsghGSriw==
+X-Google-Smtp-Source: AGHT+IENYaxKywEJVnhRd53PlyB2PEFU36G7mSwHHBh3QnGvBJswRyDjryZtJh3goBAjur1DAoDs201z525n5fnLFR0=
+X-Received: by 2002:a05:622a:5143:b0:4b2:9b79:e700 with SMTP id
+ d75a77b69052e-4b2ea8688bdmr14440241cf.4.1756376534543; Thu, 28 Aug 2025
+ 03:22:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <42806aa8-8cf1-476e-b775-50859fe0e7f1@quicinc.com>
+References: <20250828093902.2719-1-roypat@amazon.co.uk> <20250828093902.2719-4-roypat@amazon.co.uk>
+In-Reply-To: <20250828093902.2719-4-roypat@amazon.co.uk>
+From: Fuad Tabba <tabba@google.com>
+Date: Thu, 28 Aug 2025 11:21:38 +0100
+X-Gm-Features: Ac12FXxQhIbmHWE_IVdh_SbAhoCZMe-hp6nPpbqQbsT5jXtNkVhWc6QqYibQkV8
+Message-ID: <CA+EHjTxOmDJkwjSvAUr2O4yqEkyqeQ=_p3E5Uj5yQrPW7Qz_HA@mail.gmail.com>
+Subject: Re: [PATCH v5 03/12] mm: introduce AS_NO_DIRECT_MAP
+To: "Roy, Patrick" <roypat@amazon.co.uk>
+Cc: "david@redhat.com" <david@redhat.com>, "seanjc@google.com" <seanjc@google.com>, 
+	"ackerleytng@google.com" <ackerleytng@google.com>, "pbonzini@redhat.com" <pbonzini@redhat.com>, 
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
+	"kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, 
+	"rppt@kernel.org" <rppt@kernel.org>, "will@kernel.org" <will@kernel.org>, "vbabka@suse.cz" <vbabka@suse.cz>, 
+	"Cali, Marco" <xmarcalx@amazon.co.uk>, "Kalyazin, Nikita" <kalyazin@amazon.co.uk>, 
+	"Thomson, Jack" <jackabt@amazon.co.uk>, "Manwaring, Derek" <derekmn@amazon.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Aug 25, 2025 at 05:12:44PM +0800, Haixu Cui wrote:
-> 
-> On 8/21/2025 4:42 PM, Michael S. Tsirkin wrote:
-> > On Wed, Aug 20, 2025 at 04:49:43PM +0800, Haixu Cui wrote:
-> > > Add virtio-spi.h header for virtio SPI.
-> > > 
-> > > Signed-off-by: Haixu Cui <quic_haixcui@quicinc.com>
-> > > ---
-> > >   MAINTAINERS                     |   5 +
-> > >   include/uapi/linux/virtio_spi.h | 185 ++++++++++++++++++++++++++++++++
-> > >   2 files changed, 190 insertions(+)
-> > >   create mode 100644 include/uapi/linux/virtio_spi.h
-> > > 
-> > > diff --git a/MAINTAINERS b/MAINTAINERS
-> > > index daf520a13bdf..3e289677ca18 100644
-> > > --- a/MAINTAINERS
-> > > +++ b/MAINTAINERS
-> > > @@ -26760,6 +26760,11 @@ S:	Maintained
-> > >   F:	include/uapi/linux/virtio_snd.h
-> > >   F:	sound/virtio/*
-> > > +VIRTIO SPI DRIVER
-> > > +M:	Haixu Cui <quic_haixcui@quicinc.com>
-> > > +S:	Maintained
-> > > +F:	include/uapi/linux/virtio_spi.h
-> > > +
-> > 
-> > I would add a mailing list:
-> > 
-> > virtualization@lists.linux-foundation.org
-> > 
-> > 
-> 
-> Hi Michael,
-> 
-> Thank you for the suggestion to add a mailing list to the MAINTAINERS entry.
-> 
-> I noticed that other VIRTIO drivers, such as VIRTIO BALLOON, are currently
-> using virtualization@lists.linux.dev rather than
-> virtualization@lists.linux-foundation.org.
-> 
-> Just to confirm—should I use virtualization@lists.linux.dev for consistency,
-> or is virtualization@lists.linux-foundation.org the updated preferred list?
-> 
-> Appreciate your guidance!
-> 
-> Best regards,
-> Haixu Cui
+Hi Patrick,
 
+On Thu, 28 Aug 2025 at 10:39, Roy, Patrick <roypat@amazon.co.uk> wrote:
+>
+> Add AS_NO_DIRECT_MAP for mappings where direct map entries of folios are
+> set to not present . Currently, mappings that match this description are
+> secretmem mappings (memfd_secret()). Later, some guest_memfd
+> configurations will also fall into this category.
+>
+> Reject this new type of mappings in all locations that currently reject
+> secretmem mappings, on the assumption that if secretmem mappings are
+> rejected somewhere, it is precisely because of an inability to deal with
+> folios without direct map entries, and then make memfd_secret() use
+> AS_NO_DIRECT_MAP on its address_space to drop its special
+> vma_is_secretmem()/secretmem_mapping() checks.
+>
+> This drops a optimization in gup_fast_folio_allowed() where
+> secretmem_mapping() was only called if CONFIG_SECRETMEM=y. secretmem is
+> enabled by default since commit b758fe6df50d ("mm/secretmem: make it on
+> by default"), so the secretmem check did not actually end up elided in
+> most cases anymore anyway.
+>
+> Use a new flag instead of overloading AS_INACCESSIBLE (which is already
+> set by guest_memfd) because not all guest_memfd mappings will end up
+> being direct map removed (e.g. in pKVM setups, parts of guest_memfd that
+> can be mapped to userspace should also be GUP-able, and generally not
+> have restrictions on who can access it).
+>
+> Signed-off-by: Patrick Roy <roypat@amazon.co.uk>
+> ---
+>  include/linux/pagemap.h   | 16 ++++++++++++++++
+>  include/linux/secretmem.h | 18 ------------------
+>  lib/buildid.c             |  4 ++--
+>  mm/gup.c                  | 14 +++-----------
+>  mm/mlock.c                |  2 +-
+>  mm/secretmem.c            |  6 +-----
+>  6 files changed, 23 insertions(+), 37 deletions(-)
+>
+> diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+> index 12a12dae727d..b52b28ae4636 100644
+> --- a/include/linux/pagemap.h
+> +++ b/include/linux/pagemap.h
+> @@ -211,6 +211,7 @@ enum mapping_flags {
+>                                    folio contents */
+>         AS_INACCESSIBLE = 8,    /* Do not attempt direct R/W access to the mapping */
+>         AS_WRITEBACK_MAY_DEADLOCK_ON_RECLAIM = 9,
+> +       AS_NO_DIRECT_MAP = 10,  /* Folios in the mapping are not in the direct map */
+>         /* Bits 16-25 are used for FOLIO_ORDER */
+>         AS_FOLIO_ORDER_BITS = 5,
+>         AS_FOLIO_ORDER_MIN = 16,
+> @@ -346,6 +347,21 @@ static inline bool mapping_writeback_may_deadlock_on_reclaim(struct address_spac
+>         return test_bit(AS_WRITEBACK_MAY_DEADLOCK_ON_RECLAIM, &mapping->flags);
+>  }
+>
+> +static inline void mapping_set_no_direct_map(struct address_space *mapping)
+> +{
+> +       set_bit(AS_NO_DIRECT_MAP, &mapping->flags);
+> +}
+> +
+> +static inline bool mapping_no_direct_map(struct address_space *mapping)
+> +{
+> +       return test_bit(AS_NO_DIRECT_MAP, &mapping->flags);
+> +}
+> +
+> +static inline bool vma_is_no_direct_map(const struct vm_area_struct *vma)
+> +{
+> +       return vma->vm_file && mapping_no_direct_map(vma->vm_file->f_mapping);
+> +}
+> +
 
-virtualization@lists.linux.dev
+Any reason vma is const whereas mapping in the function that it calls
+(defined above it) isn't?
 
-Same as others.
+Cheers,
+/fuad
 
+>  static inline gfp_t mapping_gfp_mask(struct address_space * mapping)
+>  {
+>         return mapping->gfp_mask;
+> diff --git a/include/linux/secretmem.h b/include/linux/secretmem.h
+> index e918f96881f5..0ae1fb057b3d 100644
+> --- a/include/linux/secretmem.h
+> +++ b/include/linux/secretmem.h
+> @@ -4,28 +4,10 @@
+>
+>  #ifdef CONFIG_SECRETMEM
+>
+> -extern const struct address_space_operations secretmem_aops;
+> -
+> -static inline bool secretmem_mapping(struct address_space *mapping)
+> -{
+> -       return mapping->a_ops == &secretmem_aops;
+> -}
+> -
+> -bool vma_is_secretmem(struct vm_area_struct *vma);
+>  bool secretmem_active(void);
+>
+>  #else
+>
+> -static inline bool vma_is_secretmem(struct vm_area_struct *vma)
+> -{
+> -       return false;
+> -}
+> -
+> -static inline bool secretmem_mapping(struct address_space *mapping)
+> -{
+> -       return false;
+> -}
+> -
+>  static inline bool secretmem_active(void)
+>  {
+>         return false;
+> diff --git a/lib/buildid.c b/lib/buildid.c
+> index c4b0f376fb34..33f173a607ad 100644
+> --- a/lib/buildid.c
+> +++ b/lib/buildid.c
+> @@ -65,8 +65,8 @@ static int freader_get_folio(struct freader *r, loff_t file_off)
+>
+>         freader_put_folio(r);
+>
+> -       /* reject secretmem folios created with memfd_secret() */
+> -       if (secretmem_mapping(r->file->f_mapping))
+> +       /* reject secretmem folios created with memfd_secret() or guest_memfd() */
+> +       if (mapping_no_direct_map(r->file->f_mapping))
+>                 return -EFAULT;
+>
+>         r->folio = filemap_get_folio(r->file->f_mapping, file_off >> PAGE_SHIFT);
+> diff --git a/mm/gup.c b/mm/gup.c
+> index adffe663594d..8c988e076e5d 100644
+> --- a/mm/gup.c
+> +++ b/mm/gup.c
+> @@ -1234,7 +1234,7 @@ static int check_vma_flags(struct vm_area_struct *vma, unsigned long gup_flags)
+>         if ((gup_flags & FOLL_SPLIT_PMD) && is_vm_hugetlb_page(vma))
+>                 return -EOPNOTSUPP;
+>
+> -       if (vma_is_secretmem(vma))
+> +       if (vma_is_no_direct_map(vma))
+>                 return -EFAULT;
+>
+>         if (write) {
+> @@ -2751,7 +2751,6 @@ static bool gup_fast_folio_allowed(struct folio *folio, unsigned int flags)
+>  {
+>         bool reject_file_backed = false;
+>         struct address_space *mapping;
+> -       bool check_secretmem = false;
+>         unsigned long mapping_flags;
+>
+>         /*
+> @@ -2763,14 +2762,6 @@ static bool gup_fast_folio_allowed(struct folio *folio, unsigned int flags)
+>                 reject_file_backed = true;
+>
+>         /* We hold a folio reference, so we can safely access folio fields. */
+> -
+> -       /* secretmem folios are always order-0 folios. */
+> -       if (IS_ENABLED(CONFIG_SECRETMEM) && !folio_test_large(folio))
+> -               check_secretmem = true;
+> -
+> -       if (!reject_file_backed && !check_secretmem)
+> -               return true;
+> -
+>         if (WARN_ON_ONCE(folio_test_slab(folio)))
+>                 return false;
+>
+> @@ -2812,8 +2803,9 @@ static bool gup_fast_folio_allowed(struct folio *folio, unsigned int flags)
+>          * At this point, we know the mapping is non-null and points to an
+>          * address_space object.
+>          */
+> -       if (check_secretmem && secretmem_mapping(mapping))
+> +       if (mapping_no_direct_map(mapping))
+>                 return false;
+> +
+>         /* The only remaining allowed file system is shmem. */
+>         return !reject_file_backed || shmem_mapping(mapping);
+>  }
+> diff --git a/mm/mlock.c b/mm/mlock.c
+> index a1d93ad33c6d..0def453fe881 100644
+> --- a/mm/mlock.c
+> +++ b/mm/mlock.c
+> @@ -474,7 +474,7 @@ static int mlock_fixup(struct vma_iterator *vmi, struct vm_area_struct *vma,
+>
+>         if (newflags == oldflags || (oldflags & VM_SPECIAL) ||
+>             is_vm_hugetlb_page(vma) || vma == get_gate_vma(current->mm) ||
+> -           vma_is_dax(vma) || vma_is_secretmem(vma) || (oldflags & VM_DROPPABLE))
+> +           vma_is_dax(vma) || vma_is_no_direct_map(vma) || (oldflags & VM_DROPPABLE))
+>                 /* don't set VM_LOCKED or VM_LOCKONFAULT and don't count */
+>                 goto out;
+>
+> diff --git a/mm/secretmem.c b/mm/secretmem.c
+> index 422dcaa32506..a2daee0e63a5 100644
+> --- a/mm/secretmem.c
+> +++ b/mm/secretmem.c
+> @@ -134,11 +134,6 @@ static int secretmem_mmap_prepare(struct vm_area_desc *desc)
+>         return 0;
+>  }
+>
+> -bool vma_is_secretmem(struct vm_area_struct *vma)
+> -{
+> -       return vma->vm_ops == &secretmem_vm_ops;
+> -}
+> -
+>  static const struct file_operations secretmem_fops = {
+>         .release        = secretmem_release,
+>         .mmap_prepare   = secretmem_mmap_prepare,
+> @@ -206,6 +201,7 @@ static struct file *secretmem_file_create(unsigned long flags)
+>
+>         mapping_set_gfp_mask(inode->i_mapping, GFP_HIGHUSER);
+>         mapping_set_unevictable(inode->i_mapping);
+> +       mapping_set_no_direct_map(inode->i_mapping);
+>
+>         inode->i_op = &secretmem_iops;
+>         inode->i_mapping->a_ops = &secretmem_aops;
+> --
+> 2.50.1
+>
 
