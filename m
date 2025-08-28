@@ -1,192 +1,147 @@
-Return-Path: <linux-kernel+bounces-790732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790734-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C4DFB3AC5C
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 23:04:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E809BB3AC61
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 23:04:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 778763BD8CB
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 21:03:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A27B93B6DA6
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 21:04:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E267035083C;
-	Thu, 28 Aug 2025 21:00:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 963E3353365;
+	Thu, 28 Aug 2025 21:00:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fA/5k6G4"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AIXy+EWr"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48E5434DCC1
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 21:00:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A44F7352090;
+	Thu, 28 Aug 2025 21:00:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756414823; cv=none; b=KT7mYuAAeqgqkonlEacFjGM7YbuBI2fwp3LhftqjSF9xkQGL+FBgA7aE/O767f4glVYLisF/9GqCsNJfJsU0P8AzZ2MoaL0LSIAhRimUyds3QNChG53w8kawHn2LEYKjKb5J7sBWMYzI4tjvGiHUajiWP6TDNypkucad7ZKzM2U=
+	t=1756414831; cv=none; b=eI7mY/9PTzn/YLYUZPRo3qyRih2Zddtt6T7bLT05gowOCjEpV5DFVtx702hJcUf8ymgAPGBmkHPT4zAEdd4o90uzxO9NAkoUopZVv7dBXOwQapKwHrKKCjjaow3pJ0JNTn8yH0pmx4fSbpXEF+5QKCoxsP7Fg5NZCDJNDOTAciM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756414823; c=relaxed/simple;
-	bh=+xEm1cx0Za+w4remSJITWJkTW+VbWCnkQCc2NlPwg8c=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=IpwmP8g35VaR+2dUPbRAlwBuOck0TFKGvimenHBT78hyPAx8gO1MRoq7hSzd3C4ca9tZLrCgHPvGlnTyUidwCMJ0yxnprz/ULRCjOY9x1oCVfYf4BZfiStRuOEBXBgTFrbAhwqJonFQ684uhqTPp30gSrgbs/ZYh8MHVzcnrlc8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fA/5k6G4; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-3278bb34a68so1376884a91.0
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 14:00:21 -0700 (PDT)
+	s=arc-20240116; t=1756414831; c=relaxed/simple;
+	bh=UrtKpeO3llBQn6sGqd9y8iFW/cjpJgGXJC9q1AX2zbA=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=uhXkRmRGMF4PuInHjyUqyokdmI5t5SmodWW3OWtGD+V70fXMQSk2vBu25k/hsGr4dWSFtfLr2aHPlxax0dEtGhFS1wKGSaMJ7Z3YUpyGjfhYV1LV1o95n5VMuAG8xRqkaKJYyCFXkfnDCSRgDEx6x6EGo8GeQA8sTnz3lDlwq+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AIXy+EWr; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-45b618b7d33so11626615e9.1;
+        Thu, 28 Aug 2025 14:00:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756414820; x=1757019620; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ywdWof/ViNLzNyQnGzMNgX5MxQlIKaomEnBSwE0zixA=;
-        b=fA/5k6G48HqAd2zWvkU77wycKv6f/KkVzgr91XGtyHPSD6s71kuaQwVWAtgrb8BZud
-         iT3HXRKZcgsQz67CWcQIcAWjWI9Arb82Hs7atv72shYw/gvBAcTMt3nj3fnQuZyRcI6e
-         b1La49oeRxfngB/1Vf/dHwAkdJaAT0w6XsPT+tJiUm9PONu0mitI63/wvIoM6tNUX5jp
-         K62MlM5i6O4iRBahKncUIpVGZsemqYSdkJPYrwPKZ8Hno/wwD4j5F7oSkzortKnsyzxr
-         qrJrrytHubhC6OuFRCJy7b+0fuDC/DBsrzUVoAY/dlXd4i8KQSCdvEGiJfwE6bUywD0L
-         KeHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756414820; x=1757019620;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+        d=gmail.com; s=20230601; t=1756414828; x=1757019628; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:references
+         :in-reply-to:user-agent:subject:cc:to:from:date:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=ywdWof/ViNLzNyQnGzMNgX5MxQlIKaomEnBSwE0zixA=;
-        b=LlSK65IElvDoittSfNqCRHoWMfMmwz1cNjYNImRAq14QCSyShrid/qlj6p/FfPUA0K
-         HNcaObuz54SaglNl9Vck63gre5KeSq6XhcxAUoqIQzRxJX9dzB6o2/BkcWi0+Jxn32Z/
-         cMuBoOHThRNGXSAC3yFfD6YI44S60hbBm0riPa6qGE+S9pLQf5LDZfjkeGmXL9KIhwkJ
-         QtvAOCckOy0NOLtap+BFgMVUm4h1q90BP5PZSz2bvQ7NyaKN2vhkxapUqPkHo5rslENv
-         b4BhFp7G0drWVxTc8WYWtZkX8bG7W+BJr2uGiLCZeiik8RvqSHeh3D11Qz/T7hOipayy
-         iG1g==
-X-Forwarded-Encrypted: i=1; AJvYcCVPosXrge5mT34mXRqZbsbRfoxPIWUqbXrxlmX7yPUFiosYEwhv+2JZmCNvaYI2dkpymrKhz9fdyiKxRRs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZATb7HRq4IMWSyPYS7fzjRP+HqwvGsaJDDMPVc86yzQ/l6dBu
-	9lvgqVmGrR71ljp/Uj6hshMsYF+53XKMtP2F/NAcYwhJW6MEOrSd+rpIYAP2eZWWrmt8iKlJynb
-	fcqAtaw==
-X-Google-Smtp-Source: AGHT+IG+QyF/t7KC5aK5T2G3ygycA1ZpfEYMtGoJlRF0YIZ0ow0p0GS7c1QyR7lKrY/u0oeusLhkpekSx9c=
-X-Received: from pjv12.prod.google.com ([2002:a17:90b:564c:b0:312:ea08:fa64])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:58cb:b0:321:6ac:532b
- with SMTP id 98e67ed59e1d1-32517b2cfb3mr32451938a91.35.1756414820632; Thu, 28
- Aug 2025 14:00:20 -0700 (PDT)
-Date: Thu, 28 Aug 2025 14:00:18 -0700
-In-Reply-To: <9e55a0e767317d20fc45575c4ed6dafa863e1ca0.camel@intel.com>
+        bh=UrtKpeO3llBQn6sGqd9y8iFW/cjpJgGXJC9q1AX2zbA=;
+        b=AIXy+EWrUucJcLRYtTx8+OHAN4177XDPks5BBckGdwE+zFA4/vSv3pLuHS/zBZIyq0
+         hAisY745rqvD4LQ1Xssub2MRiwvMNZG+DrYpRDRON2YSH3kw+2I7EiDeJHA0pysvS0OY
+         dRJGKccpXLnpetW44TG0Lcr5u95P9rVC1vsK8Rf4owGgDCmww3rgFqz8ySYLFYZP48ji
+         gW2D/2ZazMiz86fGkx8LI7+miogmb23eO1iyLLa9Lh1vMMq/TbIGlusFjR/aNJUBDOcZ
+         Jrlms6Gs/E39+VUFTZgwZy5wspibPLsHHriwP3nCJ4Gqx0/cndwxZzuMCfETNegyAIld
+         vw1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756414828; x=1757019628;
+        h=content-transfer-encoding:mime-version:message-id:references
+         :in-reply-to:user-agent:subject:cc:to:from:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=UrtKpeO3llBQn6sGqd9y8iFW/cjpJgGXJC9q1AX2zbA=;
+        b=aklKClz7pqrzBOm2VZyf5rXirQW8x2qtr8uGG5AjjYbwQIloA/RgxKYYku4CuTcOtI
+         VOaHuarPiVj9UAJO6ORzA3DSX+VSuzSns/34DgO9mnIXLMY7Zs08LTmFN8/1TsBqigT9
+         srJVLslVkGOyJvkSAwnZCsxWwSjqF7kWPSUjbKsxQWy/7J2K/l+TSDy5o48l4zy0NnlB
+         vZqMfUjMJAEy03A2zEZplcJanejWDLMJ3h7TnTAuGbLWeIWDsvxhmu3LGKJup1hgRwMS
+         aMcP6Gv4Q2FnG+fadGjQVK5p/pOVPZjeSt95lsJCfnYR7jf799g4KQts00UVMH+k3Y3t
+         cOyA==
+X-Forwarded-Encrypted: i=1; AJvYcCVNjZpGKJkT+g8Nzo3RmjgJXcmF/VYTRDUxJgEGimROmF/VlZVIkg/DboudFjkms0oGrXc=@vger.kernel.org, AJvYcCWPh3HXTJYyp+CWw9D5vrAw5TGyTDUE5SRu0ThWuyH4ehrvGCVyPf5gOVGe29Q28OZdXm30O9Moh3EWkkoV@vger.kernel.org, AJvYcCX5QOK8qijc2PxWMz2YKMRdIfGIxpLrjR8h9khXh5/sVgycsYEnOQZjKPQc4SsppHOB2NEp9VATsOoyOOmI4K5U1wx+@vger.kernel.org
+X-Gm-Message-State: AOJu0YzV+EY0hTTx/z/JvliS3AYh0aEVTlObFgfhd5fQ0r9ln9F53TU9
+	jE+AFaIkOUglEI9LSXNhkPtNjpxUTPab2LXbeItE2dsyatwJUymUYlOQ
+X-Gm-Gg: ASbGncu0GNyy6i+RLBDjiE9msO0ZYzT3obrnIbpTnQLKLmpS8emTGpX/JGsYLpTX2P5
+	MlCMRH0aD99OT3A3zD1VP9omZWIVZn+rs5l4F2wHT6Hjh8lhGQSXRSGbtu4F8BJrlbExjIoIb6x
+	VZScicsp0rqvG4nGUXhJilfIBsBronEhH3bvjzk5LK0fBQZgkDzfKl1CDRFpVUNK8ryjHBdoR1e
+	7yGvnQ6RTphnttETtn2HobJ8Gjt/IETY6F7m5Ob1Tie52phXq0Lh21kM+JgpWTdsgKoiIfa9pJt
+	AQ7INTZ6BF5BUcE9g9Y6DsQc/9GUljlcB80QTpxPocM9XPW+9gAJRjOjI4bqoqXiqNNLglOKkm9
+	w6olPhsgvSG11xtk5HB+PKnR91WE78m0ZG+RdsxwLcJNccbXK
+X-Google-Smtp-Source: AGHT+IHm01eYfbSzPrRUG/fxP6I2oxrrCmv9eiKXNm7/Hz/jeQZpSNVcECbSVXjHrS8axA74wdvFxg==
+X-Received: by 2002:a05:600c:154f:b0:456:1560:7c63 with SMTP id 5b1f17b1804b1-45b5179cf31mr205890405e9.3.1756414827621;
+        Thu, 28 Aug 2025 14:00:27 -0700 (PDT)
+Received: from ehlo.thunderbird.net ([185.255.128.130])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b7e7f14bbsm9520155e9.8.2025.08.28.14.00.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 28 Aug 2025 14:00:26 -0700 (PDT)
+Date: Thu, 28 Aug 2025 18:00:22 -0300
+From: Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+To: Steven Rostedt <rostedt@kernel.org>
+CC: Linus Torvalds <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org, x86@kernel.org,
+ Masami Hiramatsu <mhiramat@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Josh Poimboeuf <jpoimboe@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Andrii Nakryiko <andrii@kernel.org>, Indu Bhagat <indu.bhagat@oracle.com>,
+ "Jose E. Marchesi" <jemarch@gnu.org>,
+ Beau Belgrave <beaub@linux.microsoft.com>, Jens Remus <jremus@linux.ibm.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Florian Weimer <fweimer@redhat.com>, Sam James <sam@gentoo.org>,
+ Kees Cook <kees@kernel.org>, Carlos O'Donell <codonell@redhat.com>
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v6_5/6=5D_tracing=3A_Show_inode_and_devi?=
+ =?US-ASCII?Q?ce_major=3Aminor_in_deferred_user_space_stacktrace?=
+User-Agent: Thunderbird for Android
+In-Reply-To: <20250828165139.15a74511@batman.local.home>
+References: <20250828180300.591225320@kernel.org> <20250828180357.223298134@kernel.org> <CAHk-=wi0EnrBacWYJoUesS0LXUprbLmSDY3ywDfGW94fuBDVJw@mail.gmail.com> <D7C36F69-23D6-4AD5-AED1-028119EAEE3F@gmail.com> <CAHk-=wiBUdyV9UdNYEeEP-1Nx3VUHxUb0FQUYSfxN1LZTuGVyg@mail.gmail.com> <20250828161718.77cb6e61@batman.local.home> <583E1D73-CED9-4526-A1DE-C65567EA779D@gmail.com> <20250828165139.15a74511@batman.local.home>
+Message-ID: <F8A0C174-F51B-40A4-8DC5-C75B8706BE74@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250827000522.4022426-1-seanjc@google.com> <20250827000522.4022426-7-seanjc@google.com>
- <11edfb8db22a48d2fe1c7a871f50fc07b77494d8.camel@intel.com>
- <aLCsM6DShlGDxPOd@google.com> <9e55a0e767317d20fc45575c4ed6dafa863e1ca0.camel@intel.com>
-Message-ID: <aLDDYo-b5ES-KBWW@google.com>
-Subject: Re: [RFC PATCH 06/12] KVM: TDX: Return -EIO, not -EINVAL, on a
- KVM_BUG_ON() condition
-From: Sean Christopherson <seanjc@google.com>
-To: Rick P Edgecombe <rick.p.edgecombe@intel.com>
-Cc: "kvm@vger.kernel.org" <kvm@vger.kernel.org>, "pbonzini@redhat.com" <pbonzini@redhat.com>, 
-	Vishal Annapurve <vannapurve@google.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Yan Y Zhao <yan.y.zhao@intel.com>, 
-	"michael.roth@amd.com" <michael.roth@amd.com>, Ira Weiny <ira.weiny@intel.com>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 28, 2025, Rick P Edgecombe wrote:
-> On Thu, 2025-08-28 at 12:21 -0700, Sean Christopherson wrote:
-> > Generally speaking, the number of KVM_BUG_ON()s is fine.=C2=A0 What we =
-can do though
-> > is reduce the amount of boilerplate and the number of paths the propaga=
-te a SEAMCALL
-> > err through multiple layers, e.g. by eliminating single-use helpers (wh=
-ich is made
-> > easier by reducing boilerplate and thus lines of code).
-> >=20
-> > Concretely, if we combine the KVM_BUG_ON() usage with pr_tdx_error():
-> >=20
-> > #define __TDX_BUG_ON(__err, __fn_str, __kvm, __fmt, __args...)			\
-> > ({										\
-> > 	struct kvm *_kvm =3D (__kvm);						\
-> > 	bool __ret =3D !!(__err);							\
-> > 										\
-> > 	if (WARN_ON_ONCE(__ret && (!_kvm || !_kvm->vm_bugged))) {		\
-> > 		if (_kvm)							\
-> > 			kvm_vm_bugged(_kvm);					\
-> > 		pr_err_ratelimited("SEAMCALL " __fn_str " failed: 0x%llx"	\
-> > 				=C2=A0=C2=A0 __fmt "\n",=C2=A0 __err,=C2=A0 __args);=C2=A0		\
-> > 	}									\
-> > 	unlikely(__ret);							\
-> > })
-> >=20
-> > #define TDX_BUG_ON(__err, __fn, __kvm)				\
-> > 	__TDX_BUG_ON(__err, #__fn, __kvm, "%s", "")
-> >=20
-> > #define TDX_BUG_ON_1(__err, __fn, __rcx, __kvm)			\
-> > 	__TDX_BUG_ON(__err, #__fn, __kvm, ", rcx 0x%llx", __rcx)
-> >=20
-> > #define TDX_BUG_ON_2(__err, __fn, __rcx, __rdx, __kvm)		\
-> > 	__TDX_BUG_ON(__err, #__fn, __kvm, ", rcx 0x%llx, rdx 0x%llx", __rcx, _=
-_rdx)
-> >=20
-> > #define TDX_BUG_ON_3(__err, __fn, __rcx, __rdx, __r8, __kvm)	\
-> > 	__TDX_BUG_ON(__err, #__fn, __kvm, ", rcx 0x%llx, rdx 0x%llx, r8 0x%llx=
-", __rcx, __rdx, __r8)
->=20
-> In general sounds good. But there it's a bit strange to specify them rcx,=
- rdx,
-> etc in a general helper. This is fallout from the existing chain of stran=
-ge
-> naming:
->=20
-> For example tdh_mem_range_block() plucks them from those registers and ca=
-lls
-> them ext_err1 due to their conditional meaning. Then KVM gives them some =
-more
-> meaning with 'entry' and 'level_state". Then prints them out as original
-> register names. How about keeping the KVM names, like:
->=20
-> #define TDX_BUG_ON_2(__err, __fn, arg1, arg2, __kvm)		\
-> 	__TDX_BUG_ON(__err, #__fn, __kvm, ", " #arg1 " 0x%llx, " #arg2 "
-> 0x%llx", arg1, arg2)
->=20
-> so you get: entry: 0x00 level:0xF00
 
-Ooh, nice, I'll tack on a patch.
 
-> I *think* there is a way to make this work like var args and have a singl=
-e
-> function, but it becomes impossible for people to read.
+On August 28, 2025 5:51:39 PM GMT-03:00, Steven Rostedt <rostedt@kernel=2E=
+org> wrote:
+>On Thu, 28 Aug 2025 17:27:37 -0300
+>Arnaldo Carvalho de Melo <arnaldo=2Emelo@gmail=2Ecom> wrote:
+>
+>> >I would love to have a hash to use=2E The next patch does the mapping
+>> >of the inode numbers to their path name=2E It can =20
+>>=20
+>> The path name is a nice to have detail, but a content based hash is
+>> what we want, no?
+>>=20
+>> Tracing/profiling has to be about contents of files later used for
+>> analysis, and filenames provide no guarantee about that=2E
+>
+>I could add the build id to the inode_cache as well (which I'll rename
+>to file_cache)=2E
+>
+>Thus, the user stack trace will just have the offset and a hash value
+>that will be match the output of the file_cache event which will have
+>the path name and a build id (if one exists)=2E
+>
+>Would that work?
 
-Heh, and would probably take two months to decipher the compiler errors in =
-order
-to get it working :-)
+Probably=2E
 
-> > And a macro to handle retry when kicking vCPUs out of the guest:
-> >=20
-> > #define tdh_do_no_vcpus(tdh_func, kvm, args...)					\
-> > ({										\
-> > 	struct kvm_tdx *__kvm_tdx =3D to_kvm_tdx(kvm);				\
-> > 	u64 __err;								\
-> > 										\
-> > 	lockdep_assert_held_write(&kvm->mmu_lock);				\
->=20
-> There is a functional change=20
+This "if it is available" question is valid, but since 2016 it's is more o=
+f a "did developers disabled it explicitly?"
 
-Ugh, I missed that.  I'll do a prep change to make that explicit.
+If my "googling" isn't wrong, GNU LD defaults to generating a build ID in =
+ELF images since 2011 and clang's companion since 2016=2E
 
-> in that the lock assert is not required if BUSY
-> avoidance can be guaranteed to not happen. I don't think it should be nee=
-ded
-> today. I guess it's probably better to not rely on hitting rare races to =
-catch
-> an issue like that.
+So making it even more available than what the BPF guys did long ago and p=
+erf piggybacked on at some point, by having it cached, on request?, in some=
+ 20 bytes alignment hole in task_struct that would be only used when profil=
+ing/tracing may be amenable=2E
 
-But that's not actually what the code does.  The lockdep assert won't trip =
-because
-KVM never removes S-EPT entries under read-lock:
-
-		if (is_mirror_sp(sp)) {
-			KVM_BUG_ON(shared, kvm);
-			remove_external_spte(kvm, gfn, old_spte, level);
-		}
-
-Not because KVM actually guarantees -EBUSY is avoided.  So the current code=
- is
-flawed, it just doesn't cause problems.
+- Arnaldo=20
 
