@@ -1,155 +1,153 @@
-Return-Path: <linux-kernel+bounces-789566-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73FE2B3976B
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 10:48:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D375EB39779
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 10:49:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA272367BD6
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 08:48:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A7DDD463359
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 08:49:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6C5A2EBB87;
-	Thu, 28 Aug 2025 08:48:21 +0000 (UTC)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CBF22EB846;
+	Thu, 28 Aug 2025 08:48:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="YV+8xV04"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05FDF2874E7;
-	Thu, 28 Aug 2025 08:48:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 619582EBBA9
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 08:48:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756370901; cv=none; b=Fy+4YKIcyTTKFSG8PC04HFQJWrQ/DApJdwjzVsM9mcIIlBJgFDLHzdS+UXdlr9UsM9pyx49SsT7WsgKaySAMHa4Smn+FiozPgmld0L7LaQkPIJOW0V7ur+Cm5OLjM1oEH3GkjE5GDNgIOGPyaWV800he1A8C+zSsknJsU54NldU=
+	t=1756370909; cv=none; b=tSvWHm1v8KdlKtspYDMjp+VVsQepNvukmabARXEJmqceToySDyd4Piz9RakIMzIZ66APlfCDqPaw/OlCBUoq+TwdSpXVPztF0vUa9k1e7aqnwCXbR9lOzqs4qZA7C5VrHGIiZLmd38y0m5AhJ3AEa+gNbmVDkNbPd4jvAWjEk6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756370901; c=relaxed/simple;
-	bh=5uErrrV3rp6pA/pHEkzJKprTkfL5j3WOFyZrL2Ec1jM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=DS27suJ7Dn50F7YrtTAjEn0XupghttLr8A1GnVWmy9ZITkd8pQGsFGS8zGthGKvG3dk25+kOF2/GpUCAWpx7UTKyIdT9epDdxdo2v7jkoul6cIhyIR+e8vF6cHY1KiEy1+ctdJu/RAj+jsmeT8basBAkWVg7CQ+NFm77DKVyAOk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from [127.0.0.2] (unknown [114.241.87.235])
-	by APP-01 (Coremail) with SMTP id qwCowADHt6u4F7BoPuLFDw--.34750S7;
-	Thu, 28 Aug 2025 16:47:55 +0800 (CST)
-From: Vivian Wang <wangruikang@iscas.ac.cn>
-Date: Thu, 28 Aug 2025 16:47:53 +0800
-Subject: [PATCH net-next v8 5/5] riscv: dts: spacemit: Add Ethernet support
- for Jupiter
+	s=arc-20240116; t=1756370909; c=relaxed/simple;
+	bh=/uk4qpjQH4Gut7f4XSF24X/bv9Y9SrG4nDtgHQgsgTA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=d1cYoyqWi7b0yIDYj5DZEMyVSm4C5hI/dn3Cj5SWHH4HopEPK3asEu/wou+6qbBlkwTICju9yub2n+sCc3J7yFXTji9ClRgqOyJFEPQVKJEC1UlHJnpkz36yDpZhfRMnVlAK7tedh68MyXNEeyDN5GrS7NnivcwRVQxqd/5gYZk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=YV+8xV04; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-619487c8865so3476577a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 01:48:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ionos.com; s=google; t=1756370906; x=1756975706; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=po5t56gupEUroA6hj2hKHRirq45/Eh6BqU6ENRqwXCo=;
+        b=YV+8xV04eDVjKkFYFLEH64a9GWuoC0+Wc3WHkSnQfxQsvZe49YYtznepby1Z3SCxDy
+         Apa+Hp22PORqOTT+CFEfw83y+e1gDRb7OQmAWySJEJBZqJqshSCjM8zAGM60grprvf+Y
+         5n7J5MDC7GBhDb/gOHWaAUWkTqB1K11vr1zxFhPbr/5XY7yrrGdP6gdzbbgchjm+VaIH
+         sRZ0Xgf8/rIWU4u4mAoYtPCBystS0QD7ubYMjGAbZve7FqKuHkiWNzUZrW9lDR5Vr0zk
+         m9fEw/jzTSw+KspnuO7kao+1YFod0nSlkF/Jrk+3quGSg7LLGFAQ/3APnHGgdbXPQYzb
+         +Bvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756370906; x=1756975706;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=po5t56gupEUroA6hj2hKHRirq45/Eh6BqU6ENRqwXCo=;
+        b=DQDEqWXqXT9m2tH1bzIqBxJvvNKRWh3xaN5+226LmjNTAQwX+YSjttaycko3MGbN6/
+         pIGOLlAb5R5yAI4xoGa95LCmdqxxrl/v5dx2A2BfYQ1vtaPJbgFv+6S8udcVaTn59T1+
+         ZmDgD3vWdTZflhphPxNBI8MRwBYwEoUqiAinUt3jTELdUPCFHTvNTqRLCFjzoMq+LFVh
+         cY94bRjpoL3FgnyQU/wsB+shi26zKoUGBnrDS8sTRI2k0ydGQ9WAQpgJiNAmTEV0WklS
+         qvFUKWkUGGmPJ6Lm6KKePFhyvnvKiyhIhSSf4rIz1oc3tDsubS0UcjWbTB9v61Rcr0s0
+         cVuw==
+X-Forwarded-Encrypted: i=1; AJvYcCUOMOM/V87m3ZaNmuf9Bj33S8ZRl/MXf0apteUDmuo7i11ENDmLv4SPTy3HEN2HM5snuNnqwBVM/JZB3kE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwhkG9rXzNwrBqBKKqRXuGM5/X/V7JhLnIhRLSl2aROhsOHucnM
+	iqdMapZbVAWEUnZna7QRdzNziPNfWyQVzV58UU4W4Qlei6vs9w+Van+aq6yXPhs5a0g=
+X-Gm-Gg: ASbGncsqu5zPeC36ZMI9xsVjqx+IoluvXvBYzJSRphWC+9a4szWtqUG+QOuPM7EMW3J
+	MoW06+Nw7+b7o3L0Lz7uUq6vzWRmRo5YyFFrKXJ2DrNyUfm1sVIViJKVWuN2PESvo8iUFI80oBh
+	6GFmWhG3iFXGY6uv5M9fnW2lASsydpZQH95QRbQqjJEUHZLWBMlQGK3PTuTgmdN/pAC+lYo5nro
+	37QQFWbU/KAXehLPUghbync/k7O3/iySoYUBJP7W9S/OTCog3lNUg8EO3oyARW6k6D/FG8MkJX3
+	NKKQEYO2nfQfPTI1J3VvigllJXnEi9PBGGVM+gslVC5JwiHvnHWTfuxLWcxpSmzca6WFeL3QkNc
+	Qx58iB76MH+Z5EhVeJz475K0IcoWpsLs3zXVjNZG21tMmDZuHpbHBweZZPzAqLo9oAEV+jK7yDX
+	CB6ElHQsSyUUg+dkosaMABbfMhYE1r4de0
+X-Google-Smtp-Source: AGHT+IEwSMufyxIazeK4EN6r3xqwf4pSdVAWUgiAPZLRoOf/5DVGbNYWNx+rE4X+wLoHpKnHe4pjbQ==
+X-Received: by 2002:a17:907:6e89:b0:af9:23b:9f9 with SMTP id a640c23a62f3a-afeafecbe4cmr668160966b.24.1756370905526;
+        Thu, 28 Aug 2025 01:48:25 -0700 (PDT)
+Received: from raven.intern.cm-ag (p200300dc6f1d0f00023064fffe740809.dip0.t-ipconnect.de. [2003:dc:6f1d:f00:230:64ff:fe74:809])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afe90c8f85fsm697372366b.8.2025.08.28.01.48.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Aug 2025 01:48:25 -0700 (PDT)
+From: Max Kellermann <max.kellermann@ionos.com>
+To: akpm@linux-foundation.org,
+	david@redhat.com,
+	lorenzo.stoakes@oracle.com,
+	ziy@nvidia.com,
+	baolin.wang@linux.alibaba.com,
+	Liam.Howlett@oracle.com,
+	npache@redhat.com,
+	ryan.roberts@arm.com,
+	dev.jain@arm.com,
+	baohua@kernel.org,
+	shikemeng@huaweicloud.com,
+	kasong@tencent.com,
+	nphamcs@gmail.com,
+	bhe@redhat.com,
+	chrisl@kernel.org,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Cc: Max Kellermann <max.kellermann@ionos.com>
+Subject: [PATCH v3] huge_mm.h: disallow is_huge_zero_folio(NULL)
+Date: Thu, 28 Aug 2025 10:48:20 +0200
+Message-ID: <20250828084820.570118-1-max.kellermann@ionos.com>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <0de24b30-70ad-498f-9eac-01596c8713df@redhat.com>
+References: <0de24b30-70ad-498f-9eac-01596c8713df@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250828-net-k1-emac-v8-5-e9075dd2ca90@iscas.ac.cn>
-References: <20250828-net-k1-emac-v8-0-e9075dd2ca90@iscas.ac.cn>
-In-Reply-To: <20250828-net-k1-emac-v8-0-e9075dd2ca90@iscas.ac.cn>
-To: Andrew Lunn <andrew+netdev@lunn.ch>, Jakub Kicinski <kuba@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>, 
- Vivian Wang <wangruikang@iscas.ac.cn>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Paolo Abeni <pabeni@redhat.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
- Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
- Alexandre Ghiti <alex@ghiti.fr>
-Cc: Vivian Wang <uwu@dram.page>, 
- Vadim Fedorenko <vadim.fedorenko@linux.dev>, 
- Junhui Liu <junhui.liu@pigmoral.tech>, Simon Horman <horms@kernel.org>, 
- Maxime Chevallier <maxime.chevallier@bootlin.com>, netdev@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-riscv@lists.infradead.org, 
- spacemit@lists.linux.dev, linux-kernel@vger.kernel.org
-X-Mailer: b4 0.14.2
-X-CM-TRANSID:qwCowADHt6u4F7BoPuLFDw--.34750S7
-X-Coremail-Antispam: 1UD129KBjvJXoW7Kw43Gw1ftrWfAF43Cr45Jrb_yoW8WFW8pa
-	y3CFsaqFZ7Cr1fKw43Zr9F9F13Ga95GrWkC3y3uF1rJ3yIvFZ0vw1ftw1xtr1DGrW5X34Y
-	vr1IyFyxurnFkw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUmS14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
-	kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
-	z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F
-	4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq
-	3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7
-	IYx2IY67AKxVWUXVWUAwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4U
-	M4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2
-	kIc2xKxwCY1x0262kKe7AKxVW8ZVWrXwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkE
-	bVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67
-	AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUCVW8JwCI
-	42IY6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF
-	4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBI
-	daVFxhVjvjDU0xZFpf9x0pRJ3kZUUUUU=
-X-CM-SenderInfo: pzdqw2pxlnt03j6l2u1dvotugofq/
+Content-Transfer-Encoding: 8bit
 
-Milk-V Jupiter uses an RGMII PHY for each port and uses GPIO for PHY
-reset.
+Calling is_huge_zero_folio(NULL) should not be legal - it makes no
+sense, and a different (theoretical) implementation may dereference
+the pointer.  But currently, lacking any explicit documentation, this
+call is possible.
 
-Signed-off-by: Vivian Wang <wangruikang@iscas.ac.cn>
-Reviewed-by: Yixun Lan <dlan@gentoo.org>
+But if somebody really passes NULL, the function should not return
+true - this isn't the huge zero folio after all!  However, if the
+`huge_zero_folio` hasn't been allocated yet, it's NULL, and
+is_huge_zero_folio(NULL) just happens to return true, which is a lie.
+
+This weird side effect prevented me from reproducing a kernel crash
+that occurred when the elements of a folio_batch were NULL - since
+folios_put_refs() skips huge zero folios, this sometimes causes a
+crash, but sometimes does not.  For debugging, it is better to reveal
+such bugs reliably and not hide them behind random preconditions like
+"has the huge zero folio already been created?"
+
+To improve detection of such bugs, David Hildenbrand suggested adding
+a VM_WARN_ON_ONCE().
+
+Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
 ---
- arch/riscv/boot/dts/spacemit/k1-milkv-jupiter.dts | 46 +++++++++++++++++++++++
- 1 file changed, 46 insertions(+)
+v1->v2: using VM_WARN_ON_ONCE() instead of checking huge_zero_folio
+v2->v3: use "!" to check NULL; removed the #include
+---
+ include/linux/huge_mm.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/riscv/boot/dts/spacemit/k1-milkv-jupiter.dts b/arch/riscv/boot/dts/spacemit/k1-milkv-jupiter.dts
-index 4483192141049caa201c093fb206b6134a064f42..c5933555c06b66f40e61fe2b9c159ba0770c2fa1 100644
---- a/arch/riscv/boot/dts/spacemit/k1-milkv-jupiter.dts
-+++ b/arch/riscv/boot/dts/spacemit/k1-milkv-jupiter.dts
-@@ -20,6 +20,52 @@ chosen {
- 	};
- };
+diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+index 7748489fde1b..96ac47603d97 100644
+--- a/include/linux/huge_mm.h
++++ b/include/linux/huge_mm.h
+@@ -479,6 +479,8 @@ extern unsigned long huge_zero_pfn;
  
-+&eth0 {
-+	phy-handle = <&rgmii0>;
-+	phy-mode = "rgmii-id";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&gmac0_cfg>;
-+	rx-internal-delay-ps = <0>;
-+	tx-internal-delay-ps = <0>;
-+	status = "okay";
+ static inline bool is_huge_zero_folio(const struct folio *folio)
+ {
++	VM_WARN_ON_ONCE(!folio);
 +
-+	mdio-bus {
-+		#address-cells = <0x1>;
-+		#size-cells = <0x0>;
-+
-+		reset-gpios = <&gpio K1_GPIO(110) GPIO_ACTIVE_LOW>;
-+		reset-delay-us = <10000>;
-+		reset-post-delay-us = <100000>;
-+
-+		rgmii0: phy@1 {
-+			reg = <0x1>;
-+		};
-+	};
-+};
-+
-+&eth1 {
-+	phy-handle = <&rgmii1>;
-+	phy-mode = "rgmii-id";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&gmac1_cfg>;
-+	rx-internal-delay-ps = <0>;
-+	tx-internal-delay-ps = <250>;
-+	status = "okay";
-+
-+	mdio-bus {
-+		#address-cells = <0x1>;
-+		#size-cells = <0x0>;
-+
-+		reset-gpios = <&gpio K1_GPIO(115) GPIO_ACTIVE_LOW>;
-+		reset-delay-us = <10000>;
-+		reset-post-delay-us = <100000>;
-+
-+		rgmii1: phy@1 {
-+			reg = <0x1>;
-+		};
-+	};
-+};
-+
- &uart0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&uart0_2_cfg>;
-
+ 	return READ_ONCE(huge_zero_folio) == folio;
+ }
+ 
 -- 
-2.50.1
+2.47.2
 
 
