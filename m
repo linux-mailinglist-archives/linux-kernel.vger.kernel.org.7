@@ -1,185 +1,78 @@
-Return-Path: <linux-kernel+bounces-789148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3055B391A7
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 04:23:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 805E5B391A8
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 04:30:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CA633B508E
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 02:23:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44F8F367968
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 02:30:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 931FA246BB8;
-	Thu, 28 Aug 2025 02:23:01 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 822E91E487
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 02:22:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2E4C252906;
+	Thu, 28 Aug 2025 02:30:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G4mXf21R"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5220F24469E;
+	Thu, 28 Aug 2025 02:30:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756347781; cv=none; b=tRyuqm4ndcKwrWt9XKspwlMnV1OTr/1Uopwk7+rUvLevWtiopGpZ+dndc0Lh6ohm2qHw9nXbYevNU/aI01zmseZHMkY6TelY1u2pTMqE2TcFiJplfIB4iIQSssUmnKEfkXpI01QzF059KfgYrjxU2l8aujSjf6KfGr330XT4P0M=
+	t=1756348206; cv=none; b=l1Z3v7El+fj5kwzn9ZPXU0f9Qq0HsMGwhItnkqJ9OHzrjrX490ePigu9sze2g/bQMA/F/oZsK7j0bFDeY9tKc7zg1S+ubBw7s6fwG5DB2nxuRYEU/alxTvCPd9q7u8ZQ+cawXvRG7IsOfggc/zDrpBQSa5rS/Ct+d2kaKURnnKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756347781; c=relaxed/simple;
-	bh=NkAaXmAH+8IwbZ5OpWpV2Au7PU2nD1XGZ3GP1CJalSU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Bl+hCYnygWOyaQX9oJCjV+jwoIJGD6bDWvjRr8BaEm+d2X+G3AIV+opSx90YfkIDMAkb+J43+0XQLEkGnekjmexvztOl0SwQxQ16/lZ4Q4jHoNYtQmXP3U894EuCzZ0kHbmZdBFDQZLYR/FHQbUXp6VNtDxrxHbPp7aXsJ6WEPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 11D8115A1;
-	Wed, 27 Aug 2025 19:22:49 -0700 (PDT)
-Received: from [10.163.68.247] (unknown [10.163.68.247])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A61BD3F738;
-	Wed, 27 Aug 2025 19:22:54 -0700 (PDT)
-Message-ID: <7302615c-e190-43ac-bc29-e82d7b048403@arm.com>
-Date: Thu, 28 Aug 2025 07:52:51 +0530
+	s=arc-20240116; t=1756348206; c=relaxed/simple;
+	bh=Gjxv2YrpjZ/n5CKwhXCSM0jptEQWCLDhbqlR9OJhNnI=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=rrCHzp2lZlXmuszR/DMiisY67H56+IEtH8AYa81j1jX9UkZ58XiYNRch9OO0w0s7cl7fAQwqN3YCmww02dM92ke1PTOnKQeXF4Z2TPCZ2hUhYv2d6NZE2yZfWjEaLNHRkRANdUprO+mqvZJPtcEBuNROYV5p8CJClPez85my8hM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G4mXf21R; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE456C4CEEB;
+	Thu, 28 Aug 2025 02:30:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756348205;
+	bh=Gjxv2YrpjZ/n5CKwhXCSM0jptEQWCLDhbqlR9OJhNnI=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=G4mXf21R229mz5oyH8zhuu79sjERZbMVJfxUyi8vJs9MA9RXKFQ19Jmja2e7INenA
+	 FjkdZIqx+Dbb2dWcIrwDdRBfwI8W48kPFLg+vHUys5jqkGEnyAvWPq+8ZhlPfSQlmB
+	 lHoi9a6y1MlFrlfQo8OHLwiLwY+nFnI9mb8ChR5b2H6QRuH6HVrMUYlhFv5HTboBqP
+	 bbE2J4Eg/MXvEeLxbexb75b/LC1Q1gWcsIlEI07C3f0pKzeP1s+lBG7/4dZqqJ2Stt
+	 1lxi+Ppxy7Gr/ox7nnGK1DP6LfMliEdIBrXpMe/WnPlff74HF0l7jbhJTBoSWHYzT/
+	 MczmTmB1rG7+w==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 375B6383BF76;
+	Thu, 28 Aug 2025 02:30:14 +0000 (UTC)
+Subject: Re: [GIT PULL] perf-tools fixes for v6.17-rc4
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20250827234817.4156091-1-namhyung@kernel.org>
+References: <20250827234817.4156091-1-namhyung@kernel.org>
+X-PR-Tracked-List-Id: <linux-perf-users.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20250827234817.4156091-1-namhyung@kernel.org>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools.git tags/perf-tools-fixes-for-v6.17-2025-08-27
+X-PR-Tracked-Commit-Id: 2c369d91d0933aaff96b6b807b22363e6a38a625
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 07d9df80082b8d1f37e05658371b087cb6738770
+Message-Id: <175634821340.914261.15053069721892327124.pr-tracker-bot@kernel.org>
+Date: Thu, 28 Aug 2025 02:30:13 +0000
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Arnaldo Carvalho de Melo <acme@kernel.org>, Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC 3/3] arm64/ptdump: Add ARM64_PTDUMP_CONSOLE
-To: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>,
- linux-arm-kernel@lists.infradead.org
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Mark Brown <broonie@kernel.org>, Ryan Roberts <ryan.roberts@arm.com>,
- Mark Rutland <mark.rutland@arm.com>, linux-kernel@vger.kernel.org
-References: <20250818091436.938517-1-anshuman.khandual@arm.com>
- <20250818091436.938517-4-anshuman.khandual@arm.com>
- <87bjo2qe5w.fsf@gmail.com>
-Content-Language: en-US
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <87bjo2qe5w.fsf@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-On 26/08/25 9:16 PM, Ritesh Harjani (IBM) wrote:
-> Anshuman Khandual <anshuman.khandual@arm.com> writes:
-> 
->> Enable early kernel page table dump for debug purpose when required via new
->> config ARM64_PDUMP_CONSOLE. This calls existing ptdump_walk() early on just
->> after ptdump has been initialized with ptdump_init().
-> 
-> I happen to stumble upon this while looking for something else related
-> to ptdump and was curious to understand where this will be really
-> useful? 
-> 
-> So instead of dumping it via cat /sys/kernel/debug/kernel_page_tables,
-> this will dump at early boot during arch setup and before start_kernel().
+The pull request you sent on Wed, 27 Aug 2025 16:48:17 -0700:
 
-Right, primarily before vmalloc() space gets crowded. Also this provides
-an opportunity to do a diff between early boot and after boot kernel page
-table states.
-> 
-> I was curious, since this anyway gets enabled only in debug kernels.
-> There we can always just boot with minimal busybox image which can jump
-> to shell quickly and dump the kernel page tables, correct?
+> git://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools.git tags/perf-tools-fixes-for-v6.17-2025-08-27
 
-Here the kernel page table dump could happen earlier than that as well.
-> 
-> Also is ARM64_PTDUMP_CONSOLE config option added on purpose? A kernel cmdline
-> like early_ptdump=yes|1|true could come much handy, right?
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/07d9df80082b8d1f37e05658371b087cb6738770
 
-Currently this is just for arm64 platform but could be enabled in general
-for other platforms as well. Yes, early_ptdump=yes|1|true will be useful
-as well. ARM64_PTDUMP_CONSOLE just build guards the additional code. But
-if required cmdline option "early_ptdump=" could just provide the runtime
-switch and then this could always be built enabled on CONFIG_PTDUMP.
-> 
-> (Since I am fixing few issues on powerpc ptdump - hence was just curious
-> to know whether this can come useful for me too or not :) )
+Thank you!
 
-This feature could be extended in general to other platforms. Let me know
-if you find this useful for powerpc.
-> 
-> Thanks!
-> -ritesh
-> 
->>
->> Suggested-by: Ryan Roberts <ryan.roberts@arm.com>
->> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
->> ---
->>  arch/arm64/Kconfig.debug        | 12 ++++++++++++
->>  arch/arm64/include/asm/ptdump.h |  7 +++++++
->>  arch/arm64/kernel/setup.c       |  1 +
->>  arch/arm64/mm/ptdump.c          |  7 +++++++
->>  4 files changed, 27 insertions(+)
->>
->> diff --git a/arch/arm64/Kconfig.debug b/arch/arm64/Kconfig.debug
->> index 265c4461031f..0f8af0dd0f4c 100644
->> --- a/arch/arm64/Kconfig.debug
->> +++ b/arch/arm64/Kconfig.debug
->> @@ -20,4 +20,16 @@ config ARM64_RELOC_TEST
->>  	depends on m
->>  	tristate "Relocation testing module"
->>  
->> +config ARM64_PTDUMP_CONSOLE
->> +	bool "Dump early kernel page table"
->> +	depends on DEBUG_KERNEL
->> +	depends on ARCH_HAS_PTDUMP
->> +	select PTDUMP
->> +	help
->> +	  Enable this option to dump early kernel page table entries during
->> +	  boot using the PTDUMP framework. This helps in examining kernel's
->> +	  page table mapping entries and their attributes etc.
->> +
->> +	  If in doubt, say N.
->> +
->>  source "drivers/hwtracing/coresight/Kconfig"
->> diff --git a/arch/arm64/include/asm/ptdump.h b/arch/arm64/include/asm/ptdump.h
->> index 27e774134e7f..81dc53ca9643 100644
->> --- a/arch/arm64/include/asm/ptdump.h
->> +++ b/arch/arm64/include/asm/ptdump.h
->> @@ -74,8 +74,15 @@ void __init ptdump_debugfs_register(struct ptdump_info *info, const char *name);
->>  static inline void ptdump_debugfs_register(struct ptdump_info *info,
->>  					   const char *name) { }
->>  #endif /* CONFIG_PTDUMP_DEBUGFS */
->> +
->> +#ifdef CONFIG_ARM64_PTDUMP_CONSOLE
->> +void __init arm64_kernel_pgtable_dump(void);
->> +#else
->> +static inline void __init arm64_kernel_pgtable_dump(void) { }
->> +#endif /* CONFIG_ARM64_PTDUMP_CONSOLE */
->>  #else
->>  static inline void __init ptdump_init(void) { }
->> +static inline void __init arm64_kernel_pgtable_dump(void) { }
->>  static inline void note_page(struct ptdump_state *pt_st, unsigned long addr,
->>  			     int level, pteval_t val) { }
->>  static inline void note_page_pte(struct ptdump_state *st, unsigned long addr, pte_t pte) { }
->> diff --git a/arch/arm64/kernel/setup.c b/arch/arm64/kernel/setup.c
->> index 0a3812c8e177..86bf7607d304 100644
->> --- a/arch/arm64/kernel/setup.c
->> +++ b/arch/arm64/kernel/setup.c
->> @@ -361,6 +361,7 @@ void __init __no_sanitize_address setup_arch(char **cmdline_p)
->>  	init_bootcpu_ops();
->>  	smp_init_cpus();
->>  	smp_build_mpidr_hash();
->> +	arm64_kernel_pgtable_dump();
->>  
->>  #ifdef CONFIG_ARM64_SW_TTBR0_PAN
->>  	/*
->> diff --git a/arch/arm64/mm/ptdump.c b/arch/arm64/mm/ptdump.c
->> index c78e6b496dea..f6d22462add6 100644
->> --- a/arch/arm64/mm/ptdump.c
->> +++ b/arch/arm64/mm/ptdump.c
->> @@ -407,6 +407,13 @@ void __init ptdump_init(void)
->>  	ptdump_initialize();
->>  }
->>  
->> +#ifdef CONFIG_ARM64_PTDUMP_CONSOLE
->> +void __init arm64_kernel_pgtable_dump(void)
->> +{
->> +	ptdump_walk(CONSOLE, &kernel_ptdump_info);
->> +}
->> +#endif
->> +
->>  static int __init ptdump_debugfs_init(void)
->>  {
->>  	ptdump_debugfs_register(&kernel_ptdump_info, "kernel_page_tables");
->> -- 
->> 2.25.1
-
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
