@@ -1,66 +1,87 @@
-Return-Path: <linux-kernel+bounces-789187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7044EB39210
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 05:01:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2210EB391FE
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 04:58:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25A81980933
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 03:01:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 80ABE464F7D
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 02:58:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77CA125CC42;
-	Thu, 28 Aug 2025 03:01:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E3382EFDAF;
+	Thu, 28 Aug 2025 02:57:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="WXQRp7fC"
-Received: from out203-205-221-233.mail.qq.com (out203-205-221-233.mail.qq.com [203.205.221.233])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="kbi20Lr+"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A6111E1DF2;
-	Thu, 28 Aug 2025 03:01:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E7412EA741
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 02:57:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756350097; cv=none; b=K861rZqxygfDgALbbaTsEkL86vDW4dBXrtvolFih/DGzRKTv3QrYVuU57HbXt702eh/aQYcicUQ6p0YuM8Tl9Vk4yJebZcCCqoPNkt+DX46RMe9ir6fhGw5iwbAmZOqM3Irn6AOmsJ/Ma1uxXLH9xera372vtEvHI83+KC9Nf2s=
+	t=1756349873; cv=none; b=XQy/3jEpFLCOUo1AstiT1j8Fv5ZQvexcrkfkpjmr7L2flyGBH6ynfwWXN4Kesgp+H8gOX5pNlHQtdXzE6TepyZQitfDVJVfJthuxv8AVswJhFPl4dZ+I8Zu1gqxTyKwHizjX7BPKEv7oh+R/cM1hlBn0mrR2DTRPBUd40gXri8I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756350097; c=relaxed/simple;
-	bh=kbpMvqBy89EU5abWhqd8q8RzotmgbmPsNuzS5ETak+M=;
+	s=arc-20240116; t=1756349873; c=relaxed/simple;
+	bh=tCept4cbc/MaNNvuOftpkH1x/HrsKm53+aYvSBoxkr0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oz8ZLszq1Me+YMYzourJCl+zSVseCrrpFTEj0UuENdwZ0tp/Zk/oQ1muDC9lichf/1uiGEogxVG+ryGzI5Ojl9GAx3TL0atyFiRFXsjqEanX9r1HToP1NkB0nWqOgkGWClASxnJSoyaO/X4xNUpCR1fFHkKTYUN1H4A4CYRlGVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=WXQRp7fC; arc=none smtp.client-ip=203.205.221.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-	s=s201512; t=1756349791;
-	bh=8n1wZcIHNzwg934W9DUCGLByjL9f9WgFoS8AoMdttMs=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=WXQRp7fCDETqZ9hYxvxQRq9wyeWX2e9PthHt+f6cu5n1AedeQRbX9tFZTnaZL1xsE
-	 Bm2lZG1RAaSxEDQgcdN//XXQFOk0s7e0ECRB4Ons2WbqZYkE75TzUs/I7C1k9NxaJJ
-	 uN2OdGWDdWcm6mc3EVYbXpZKuSCDnIEHdn+FDFms=
-Received: from [10.56.52.9] ([39.156.73.10])
-	by newxmesmtplogicsvrszb42-0.qq.com (NewEsmtp) with SMTP
-	id E163D484; Thu, 28 Aug 2025 10:56:22 +0800
-X-QQ-mid: xmsmtpt1756349782tmu8u1h6f
-Message-ID: <tencent_8E830DF8843CB38A2F4354FC5E3146651009@qq.com>
-X-QQ-XMAILINFO: MoH7Vt6T4pB2q+9UHtYJFMOqHHoFZsvbrVlUPMmMCvUEbPq21z8CDNoQkfV9q1
-	 muplOkm3XPBO6LAJhCxhpBp0F24/Zi0DunNWWBK+7glGdr0vB9nj4RQCYrqJZH8Q0x9XDAisVV6E
-	 q2lqjiePybmA0IeyHY7suk6DrT7iVdXPpIrCGdW/qM7lgx+eK2KSZfEr5QAtaVXyILe5bkHRv2q+
-	 /Nyh1ydPmiK9TK9+Q+CGBtgLzGkvMMMVUZKZSQlLMQA+OZPeE8hPCw0ZJVy0Xb372RrZ53cRiYBM
-	 F2RJaV7n7IgEDJXWFf74ioE2MhgyJQKvrmeIVsJBBizbL/HwQZXtSs838bF8OKWbQqUAmb1R9yjg
-	 TtRNlIhsBXg/wXrhstB/ZzlCYjiePcLA860zULbhqq1oQVyBJErdQRDnVtqRvFB1SxpPmGntmiaH
-	 XKxgk3IFHtuBJc/uCpXmQMNxVjBRqT8TPK4RQ4d0jGCzkI5gEaJs/LlnWIItqNsiMVmIBp58NJKK
-	 E+LQvLuZB3f1Y4cqvkpc+50mxz5RXwl55rhEYu28wgb/K0HlrepT7qKWpKSzBzoGK8ebCckDNfu1
-	 sHIztPaQFQNTSTj8Sxx2Ebu0qhGAUFx4wwyHfFEVZx1/Zur0MHIeYPtSR9gmu3q6zJDKKMt/L7Zu
-	 scxhwlTpKmCyeWN3+JBMFKHgJe5CFX1pUVjr1H+rJ8K3HnalQ9egCby+Y3YgldUXDPbo8R15Mbzh
-	 0a7nlUZ/EiP32yO9XH+I3aJwFcuGNuq5OSKR71VJfr1d4PE5hZgocnj1tjslJ6aABM7+QeEVyiwB
-	 d73noUGFx15yRBe/R6jLfo7HGq5SlrUXW2wmoxN8rN2YStBKxuD4bA/HwE8lBY+OFvSBUF8nubkL
-	 55t1ieoN2N5uAmjKPfBmuEa5FpSNMYSfB44rV8YW30O51F0GCfBCg2mhbQpCs5YZ6bAXyh6StiHO
-	 7ynMNO+v1TdzyFTXoufZYZB39JXFz8++eL4RnKwzDHGxY24qxhdksA10FVBhX0z2Cz27GXG+V5vy
-	 jtgUfmy8dJXihRcfpicpbbeSz7eGIlaUVF6QAoUcKsbg8w2/x/qWwjzePTynXWEvSNpQ0pVyQcT2
-	 HsBevljh0LmCz+q2g=
-X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
-X-OQ-MSGID: <fada38a0-f344-4873-a1df-2dcbe16a27de@foxmail.com>
-Date: Thu, 28 Aug 2025 10:56:20 +0800
+	 In-Reply-To:Content-Type; b=QmeaqADN6CGlNGVEjpledoaXNYBtsDCsHkPqnNnQTmAWOjSUTccJfEc4fnMULsyNQbMWVIAiO9CVSdMh3KA8taGSjLvcCTwYWI27aIKDP6XzsqnB7Jz2JVq9UPHpBRg/IZB9fQimuPfxoV+WHMefG3MvSFHH9CA1mAZYPPw6z2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=kbi20Lr+; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57RGHAaP030209
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 02:57:50 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	JVszMljYD5j4gBrasjeb/5znK9oOZEjvYSTgQBHRx44=; b=kbi20Lr+BaxvV3fv
+	HX4n2PRqgU/FATOMnc8aKpUuAqPAeg/2ZWe+vGIuaBASeJeGK2toncdhk6J6RZWY
+	I9bnOJbp8gnw8ye1PH2WEQTYz+ypH51ichPEUABM9ezu7Ri68qNmCliSmwWrkLEI
+	cfTk0sUpJXhoRXqzIsGNrDFmHWOZxTl9Tauu6hN1IVCNePkNP53ZIxgsQtsNdtXd
+	6wQFpzi5fohkpqEbxzbCch2XjagV0cGo7+daIVN5inZtXFwWw/xHj/ZrODTiUcvQ
+	aFzwcCjNE316aB6HEWJTKP8uTzOAEHX+O921hlShBYCk2Xf0+zlLwva+D1B1LYAg
+	yffWHQ==
+Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48q5unxg0m-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 02:57:49 +0000 (GMT)
+Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-24457ef983fso10360485ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 19:57:49 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756349869; x=1756954669;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JVszMljYD5j4gBrasjeb/5znK9oOZEjvYSTgQBHRx44=;
+        b=MyrmN9WvbLdv5l5ml46/eP5u+RXqbwACxBdO5YOFnKCrE/gkr9QUOFp4wKwTKHsRMP
+         eUXTe1n7i5yTguoz/VgFIfrVniKZqdTstPVCnYIKrfESID/BxtMMq/s8BLl3L0FQeqLA
+         wjrJKJodWK+ZPhLg3FAe4x/cXmvtiVt7ilSguUv8F+m5uyQDoa0zA+c94yT3sONawl6F
+         UCxGP0VLb7qmZZk6IsTOWfxa38agRjrfWyMAExaeFHDfqb4oWZVdPxKfiQUrwcAWn5bN
+         GWLOxXIyaa0xMg2Md3RQbkP059hWWRGi4mJVCk432ZAf0UrPDrWuQQzvAu+9D6rPd5WK
+         F3/A==
+X-Forwarded-Encrypted: i=1; AJvYcCVKgnSTugHRXqEY1a7UXkWhxd7KLSZZ/T8s2yUFqWTvYRJ9LhC4y2AUnby3ZMeOtqY8+XRlNL6Uki3o87w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YylKWZrELnqmkNCuejmB2yB+a2fnurC/Ae9scSOtQgwhMEOZ14O
+	KdX7jiVHpC3c4hW3ULvuLKnoWyF026/O/SUxbS5jtbBRG6vTD3U/ZppEqFmdVyt4cIPR6A4Eax6
+	Z6/GsHISWuPy+o5FWxFi5tR9Y3Tvzh1Xoe8eQBoNW1rdpN+O0s5h9UHst3T/tMhLMHuY=
+X-Gm-Gg: ASbGncvwrCVjV50mCCLPpwNQBcnRDs3a2qEG4SRpoIYrnyIlUpY2IAneD8pZeUOiFMa
+	w48JUG+yRXBgoPTciOpGQHNXgkiXA3uDjC+YWjYqaaP762F0NmMvlrSbQ7mU8ShL6ZDCqh+2Owc
+	Od2cZ0fl7ayv8mQlDAHk59TU/DhhjaGI5GCu2CNYhZ4dCxE/PYLgGrTqoUf87SqU6Nr8GNxscVC
+	+uRS4xyCrpOA9ZWT2YuXO+HtLYGp4AyKTGS8oVViIrAS/uW8YhtyXR78bXAe1HFwzv401oYnyDD
+	/f0wxfu6av2+MZpHe6ZR/fqHN6Agh6GORWoQY4FnDH1N6uRtfYlaEKhXa1Xsfrt0aRVXzUK9e2a
+	o0ITPsZwvKZkkoztb/jgTCXbdAHJa63Fpohw=
+X-Received: by 2002:a17:902:d58b:b0:248:bcc5:d1b2 with SMTP id d9443c01a7336-248bcc5d379mr42830435ad.32.1756349868596;
+        Wed, 27 Aug 2025 19:57:48 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFPDTyJMIGDxlyKpgyZ1liFR82SkKrEtzGC4gPqxT5AbPz+li0JlRxHkrYbz7/XOZEMKrf6vg==
+X-Received: by 2002:a17:902:d58b:b0:248:bcc5:d1b2 with SMTP id d9443c01a7336-248bcc5d379mr42830225ad.32.1756349868142;
+        Wed, 27 Aug 2025 19:57:48 -0700 (PDT)
+Received: from [10.249.30.180] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77054bb0c46sm11600288b3a.41.2025.08.27.19.57.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 27 Aug 2025 19:57:47 -0700 (PDT)
+Message-ID: <0c2a4877-d63b-4650-b7d4-a06a2730c73c@oss.qualcomm.com>
+Date: Thu, 28 Aug 2025 10:57:41 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,102 +89,127 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH bpf-next] bpf/helpers: bpf_strnstr: Exact match length
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>,
- Viktor Malik <vmalik@redhat.com>
-Cc: ast@kernel.org, daniel@iogearbox.net, rongtao@cestc.cn,
- Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau
- <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>,
- Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>,
- "open list:BPF [GENERAL] (Safe Dynamic Programs and Tools)"
- <bpf@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-References: <tencent_65E5988AD52BEC280D22964189505CD6ED06@qq.com>
- <CAEf4BzaMUEPjix29JjiYCt1JmWcz97gemSpXL9iD9Gc-g+yZYw@mail.gmail.com>
+Subject: Re: [PATCH v7 2/2] arm64: dts: qcom: Add display support for QCS615
+ RIDE board
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        xiangxu.yin@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com,
+        Li Liu <li.liu@oss.qualcomm.com>
+References: <20250827-add-display-support-for-qcs615-platform-v7-0-917c3de8f9ca@oss.qualcomm.com>
+ <20250827-add-display-support-for-qcs615-platform-v7-2-917c3de8f9ca@oss.qualcomm.com>
+ <yutyrfb73wbxlweoq3mc6ezyqr56snzmznw3k6mcbc56fpfayg@3h5jwymlo3ol>
 Content-Language: en-US
-From: Rong Tao <rtoax@foxmail.com>
-In-Reply-To: <CAEf4BzaMUEPjix29JjiYCt1JmWcz97gemSpXL9iD9Gc-g+yZYw@mail.gmail.com>
+From: Fange Zhang <fange.zhang@oss.qualcomm.com>
+In-Reply-To: <yutyrfb73wbxlweoq3mc6ezyqr56snzmznw3k6mcbc56fpfayg@3h5jwymlo3ol>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: 3ZEea8y6Ns-4BP7kxdKUeGn2rYLl3-b9
+X-Proofpoint-ORIG-GUID: 3ZEea8y6Ns-4BP7kxdKUeGn2rYLl3-b9
+X-Authority-Analysis: v=2.4 cv=JJo7s9Kb c=1 sm=1 tr=0 ts=68afc5ad cx=c_pps
+ a=cmESyDAEBpBGqyK7t0alAg==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8
+ a=EUspDBNiAAAA:8 a=qAPg_OCVEOE_nEQcmFUA:9 a=QEXdDO2ut3YA:10
+ a=1OuFwYUASf3TG4hYMiVC:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIzMDAzMSBTYWx0ZWRfX5O6U62rmep3l
+ 5Vy8khqi4zUHhXerUhRszUvVOZaD5Vag0gN0P2OWNjmG2ZTLz+piKK+dEPs0lksMsRz1ufBK3cm
+ A4yPAyC3i3rE+T1O9wW8l7xEhJkx1E7jGZm7Lhk10Cxhkep2RmAWXYwIj1NUzGFMdBbjdijaD7X
+ rQdHG95uiqUROWt44JUMXhDr3+Jt6L+p6zDZkyrngGGqrwmuGsLtxgbCeEpkSYeM2eXEgg91QKv
+ MrWV/dq9oqR8PQ/ezf5zw1x50jb8kgVPBT/SVC2DkzrgAKVyBX5XjtlIvg42b4VqtXWhckqYDI8
+ tKIku8L/u50qN7Jt77C600m0PuDvm8Nx/C3ou6GeBYQnwCtoTL+oWqBkf35NSM62VTDd03KbGbU
+ 2lHZC2zb
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-28_01,2025-08-26_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 adultscore=0 bulkscore=0 spamscore=0 impostorscore=0
+ malwarescore=0 clxscore=1015 priorityscore=1501 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508230031
 
 
-On 8/28/25 06:35, Andrii Nakryiko wrote:
-> cc'ing Viktor as well
->
-> On Tue, Aug 26, 2025 at 9:29 PM Rong Tao <rtoax@foxmail.com> wrote:
->> From: Rong Tao <rongtao@cestc.cn>
+
+On 8/28/2025 4:01 AM, Dmitry Baryshkov wrote:
+> On Wed, Aug 27, 2025 at 09:08:39PM +0800, Fange Zhang wrote:
+>> From: Li Liu <li.liu@oss.qualcomm.com>
 >>
->> strnstr should not treat the ending '\0' of s2 as a matching character,
->> otherwise the parameter 'len' will be meaningless, for example:
+>> Add display MDSS and DSI configuration for QCS615 RIDE board.
+>> QCS615 has a DP port, and DP support will be added in a later patch.
 >>
->>      1. bpf_strnstr("openat", "open", 4) = -ENOENT
->>      2. bpf_strnstr("openat", "open", 5) = 0
-> please add these cases to the tests
->
->> This patch makes (1) return 0, indicating a successful match.
->>
->> Signed-off-by: Rong Tao <rongtao@cestc.cn>
+>> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+>> Signed-off-by: Li Liu <li.liu@oss.qualcomm.com>
+>> Signed-off-by: Fange Zhang <fange.zhang@oss.qualcomm.com>
 >> ---
->>   kernel/bpf/helpers.c | 2 ++
->>   1 file changed, 2 insertions(+)
+>>   arch/arm64/boot/dts/qcom/qcs615-ride.dts | 150 +++++++++++++++++++++++++++++++
+>>   1 file changed, 150 insertions(+)
 >>
->> diff --git a/kernel/bpf/helpers.c b/kernel/bpf/helpers.c
->> index 401b4932cc49..65bd0050c560 100644
->> --- a/kernel/bpf/helpers.c
->> +++ b/kernel/bpf/helpers.c
->> @@ -3681,6 +3681,8 @@ __bpf_kfunc int bpf_strnstr(const char *s1__ign, const char *s2__ign, size_t len
->>                                  return -ENOENT;
->>                          if (c1 != c2)
->>                                  break;
->> +                       if (j == len - 1)
->> +                               return i;
-> But this seems like a wrong fix. The API assumes that s2 is
-Thanks a lot Andrii Nakryiko, I just submit V2, please review.
-> well-formed zero-terminated string, and so we shouldn't just randomly
-> truncate it. Along the examples above, what will happen to
-> bpf_strnstr("openat", "open", 3)? With your fix it will return
-> success, right? But it shouldn't, IMO, because "open" wasn't really
-> found in the first 3 characters of, effectively, "ope".
->
-> We should also test bpf_strnstr("", "", 0)... ;)
->
->
-> So maybe something like this (but I haven't really tested it):
->
->
-> diff --git a/kernel/bpf/helpers.c b/kernel/bpf/helpers.c
-> index 401b4932cc49..ced7132980fe 100644
-> --- a/kernel/bpf/helpers.c
-> +++ b/kernel/bpf/helpers.c
-> @@ -3672,10 +3672,12 @@ __bpf_kfunc int bpf_strnstr(const char
-> *s1__ign, const char *s2__ign, size_t len
->
->          guard(pagefault)();
->          for (i = 0; i < XATTR_SIZE_MAX; i++) {
-> -               for (j = 0; i + j < len && j < XATTR_SIZE_MAX; j++) {
-> +               for (j = 0; i + j <= len && j < XATTR_SIZE_MAX; j++) {
->                          __get_kernel_nofault(&c2, s2__ign + j, char, err_out);
->                          if (c2 == '\0')
->                                  return i;
-> +                       if (i + j == len)
-> +                               break;
-It's works fine, thanks.
->                          __get_kernel_nofault(&c1, s1__ign + j, char, err_out);
->                          if (c1 == '\0')
->                                  return -ENOENT;
->
->
-> pw-bot: cr
->
->
->>                  }
->>                  if (j == XATTR_SIZE_MAX)
->>                          return -E2BIG;
->> --
->> 2.51.0
->>
->>
+>> diff --git a/arch/arm64/boot/dts/qcom/qcs615-ride.dts b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
+>> index e663343df75d59481786192cde647017a83c4191..f6e0c82cf85459d8989332497ded8b6ea3670c76 100644
+>> --- a/arch/arm64/boot/dts/qcom/qcs615-ride.dts
+>> +++ b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
+>> @@ -39,6 +39,76 @@ xo_board_clk: xo-board-clk {
+>>   		};
+>>   	};
+>>   
+>> +	dp-dsi0-connector {
+>> +		compatible = "dp-connector";
+>> +		label = "DSI0";
+>> +		type = "mini";
+>> +
+>> +		port {
+>> +			dp_dsi0_connector_in: endpoint {
+>> +				remote-endpoint = <&dsi2dp_bridge_out>;
+>> +			};
+>> +		};
+>> +	};
+>> +
+>> +	vreg_12p0: vreg-12p0-regulator {
+> 
+> I should be more carefull when doing reviews. I thought that it was
+> pointed out already and didn't some of the obvious things...
+> 
+> First of all, the nodes are sorted. By the name, not by the label.
+> Second, there are already regulators in this file. Why are the new nodes
+> not following the existing pattern and why are they not placed at a
+> proper place?
+
+Initially, we referred to 
+https://patchwork.kernel.org/project/linux-arm-msm/patch/20250604071851.1438612-3-quic_amakhija@quicinc.com/ 
+as a reference, but its node ordering seems a bit unconventional.
+
+Would this revised ordering be acceptable?
+
+...
++ dp-dsi0-connector
+
+vreg_conn_1p8: regulator-conn-1p8
+vreg_conn_pa: regulator-conn-pa
+regulator-usb2-vbus
+
++ vreg_12p0: vreg-12p0-regulator
++ vreg_1p0: vreg-1p0-regulator
++ vreg_1p8: vreg-1p8-regulator
++ vreg_3p0: vreg-3p0-regulator
++ vreg_5p0: vreg-5p0-regulator
+wcn6855-pmu
+...
+
+> 
+> 
+> [.... skipped all defined regulators ...]
+> 
+>> +	};
+>> +
+>>   	vreg_conn_1p8: regulator-conn-1p8 {
+> 
+> Tadam! It's even a part of the patch.
+> 
+>>   		compatible = "regulator-fixed";
+>>   		regulator-name = "vreg_conn_1p8";
+> 
 
 
