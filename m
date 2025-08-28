@@ -1,130 +1,144 @@
-Return-Path: <linux-kernel+bounces-789356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C47DBB3943C
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 08:51:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A604B3943D
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 08:52:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 869713A568D
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 06:51:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F3A14178093
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 06:52:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0EB727B4EE;
-	Thu, 28 Aug 2025 06:51:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20AA42765F3;
+	Thu, 28 Aug 2025 06:52:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O8BwCKXl"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z0bgw7Qr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 056032797B7;
-	Thu, 28 Aug 2025 06:51:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B32013957E;
+	Thu, 28 Aug 2025 06:52:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756363869; cv=none; b=QpYz/E8h4Hrc7uF3pJEbVGm/daEbhN8DVY8MrWSx+d1QLJ+3bN0MPadqedrD+fjivnOXnHnZLTsq3R+XAT2i+QEY5wySWF1MB1p17JGA1oU2gr728OKtHX8BLql6kmLz7ev5nZT9iBtkAURQgo1EuUX+rjI9sqGDg0gkrKkwGiQ=
+	t=1756363924; cv=none; b=QIchLcpNkafHypHtqlG2o0bkIzofOa9PcRyrl7T9UOqC2muuyoCFdRak3WcVEb1/ro7S0SW0u1dnQ+ZOKdFia0D/FuJo7PFFUbsPwVCgu0/fSZ0vkWkNm8qZayW9U3D30r3iBkwfYKHZIXPNXxZ7R9r3DW8VuAoXPopQHee00YY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756363869; c=relaxed/simple;
-	bh=UAo3JV7GcRkxO2b2K9+QuSbEAtC0O3QgoXSeSZ5al4A=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tEGs1c6IpGHyUflvRWW7gk+yaWFKkvk8q0YrHgjLRBqTdbuHx2nqm6PNlGaL6NxB8CsG/tlIoWGc1BO5Bo4D0n0oESK5yUE3Xp+4eeZqkKNDVtqNPiSbx5RY4TJJEV6MXVlV72lhxirGtCM9I1wotMF4xCiS015+sH6vBfrdLaI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O8BwCKXl; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-323267bc2eeso494583a91.1;
-        Wed, 27 Aug 2025 23:51:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756363867; x=1756968667; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=CIMdp+BGDSNuOjdemBoiNkjyZntQ+XVi4yTlgnNJQek=;
-        b=O8BwCKXlTMOyV2DjnvC1WTRQn7emkMjL8MamXT91L6yntUEl9hL7lYaDLKyLAKlAzo
-         vWZCI5x2/KePafAKGz1MYfqOVbrRSxA7haZDAMhKor6eknsv2iSsz+FxjdEx2XVJjowI
-         WeqJZkva+twaErv+MPUsWtrc/0eWuhKOoXzatz/7iO16CHRq9IyOxwoOCjTI7Z8ocO6y
-         +9z/W7jnrELPp+tiLfugsiWvpMqZG5ixxT6DUXK4l/2JaqXKAcrA4TiwANd11P/+JdBc
-         T2Ip8fxDmCZwucrxblluSQ1ps4h/lBfTqlF7Re7PKoocCZZjc95wqVEBw5O/bGedU2Io
-         Rhnw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756363867; x=1756968667;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=CIMdp+BGDSNuOjdemBoiNkjyZntQ+XVi4yTlgnNJQek=;
-        b=deGhWjJ88aq8971ZOYwCmU7+G6x/NKGPF9+I5wmRX22JM2Zctd8Pa5o7HSVJPCh5l+
-         DXmLC0bkReAPhNzRSYwrTP1TVDJiE/ZGMy3hmif2VT40uthPDOflQVrAY2z+3MXUZ4xH
-         h7N0nWEbsu9h7H59xtE42jweSPpb9hhr5KWfDhU948bMw/3xSwPdMHtld4M7RkfshP6D
-         nhnWvBZp0bucLH+zLMyMnprJuitZIC3+BQSCUy2z4sx/vAa/PICKRe/SSrtpeXETnXmG
-         48o6vJefBAV720/BhCFCaAyvtR9nXTqbEGfhdbd8TMHx3hC6LeREgScsOydQO2HH/F4+
-         tnew==
-X-Forwarded-Encrypted: i=1; AJvYcCUbXYiuY+5k4BQrOZFugpNzh2s7D6LAjub0n3e1kSy+yMIgTrCDi1TfMVKS7mLTKzmzYVRjxJrVam4I+Q==@vger.kernel.org, AJvYcCVlJiYAwtMjyAmCAFeYm+QjDGi1GhEByH3gFSEm7F8xNes9v31QxUHmXYKZlp2682E6PxaAnOqXwoYXQe8=@vger.kernel.org, AJvYcCVrFvRNedX2nU0eG5OEyIClVEGT5liG1dAcoeIGVisgSqACf/fIRvOsognPCy/a8cTuAwdj0b08@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9glAFVrF3gWa4WQLP80+uPAFn7nmvyhdCuS5H9hVTnI9fySfy
-	kfpVTc1GLFhPU0ut9cFv2FEZJh8fAxdR2dLBYIyKsrAV89oaoJh3gxQx
-X-Gm-Gg: ASbGnctl9PPWzRDPBfUVeDho5EICogspeGW8vgDOPyk2Y2++ZBeUIvgV7cvkrZRGTAS
-	B+greG9BkKD/VoGxgdDiAyo4wH9eAiGwxJPsZymuPwtnz/Bu8+KgzGrToiG466CNeMMEo+7M5Xi
-	Qrhc1SBJmT442Te8ZV213oyIX67a4GSMaSeV7dxmz9U6xNhitBcRvfSmPkJLsjFmtRmKQ6j2vqq
-	Rq4I7bQ6I7pWo37Bo0V/dRcUe76WSDRVThueyKtUtw9Jxfae0+Fe/y5kaVKSY3hXCBrb7LclDYl
-	m9h+7xXAHY72JVmqGt4JRej1NzdgpXucrZq5pG48q2RCnRZcMBbXSX1kN4dLiIchh+Yua1XKeXH
-	1wxuaugVaJ/wz31UxxT3uRgMZrKjRZ6qlIsRgGxTHKK9Aq4HqLol0RtQuFYU2rzfe836B1gRlwG
-	HUDYyXk462ooKJ/BStmb0qbQ==
-X-Google-Smtp-Source: AGHT+IGfOtD167eT2rfVxdwTsipYluXjtiJ+7zWRk+PvDr4kGjQIu1tk2hHrrYSKDlWpn9+KTJC/JQ==
-X-Received: by 2002:a17:90b:2f87:b0:31f:8723:d128 with SMTP id 98e67ed59e1d1-32517b2db8fmr28547178a91.34.1756363867201;
-        Wed, 27 Aug 2025 23:51:07 -0700 (PDT)
-Received: from localhost.localdomain ([112.97.57.188])
-        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-32753e58618sm2642250a91.2.2025.08.27.23.50.57
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Wed, 27 Aug 2025 23:51:06 -0700 (PDT)
-From: Miaoqian Lin <linmq006@gmail.com>
-To: Tariq Toukan <tariqt@nvidia.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org,
-	linux-rdma@vger.kernel.org,
+	s=arc-20240116; t=1756363924; c=relaxed/simple;
+	bh=fCVOV/aa9kx2YHBGI2L4+nLbGmu/QgZ/y4517/LJAMU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=e+YxYvawtnCpns+WGESwbfXlw4YLW1zrDnrgyBtBkMhWaaK9YrL+TAM4sl18gMNAueyCqj+R4TrJFtVSA9dxAAaD9BdAI4zvSMm3cUFWz83GLieff00YECMbxcLEUa8XAvsQxVuuAHfUkYTIEmPn1+yiJgwdpLXy3u6q9n8MOuU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z0bgw7Qr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81CCFC4CEEB;
+	Thu, 28 Aug 2025 06:52:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756363924;
+	bh=fCVOV/aa9kx2YHBGI2L4+nLbGmu/QgZ/y4517/LJAMU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Z0bgw7Qr3AD2hv+fsiJGK8Ys6ytPdZ7CMfQua6XlwiwoBuwGF0scXSJqL7UxqTSbS
+	 +lhEMGZojY5wQpppzYa9rkNolKrSZ5ikVGA5hhYSygWZSYiBD3ErGekt6ao27wELb8
+	 oL7FNWkSj+SrI7gpEJ56hrqqHSR5JCVtWu3r0HE5gNCNqcgB74gyCNuB5IwjVH3ezL
+	 3Q51xbTuMPb3c1rA/2d7W09u0R8mKU/3sMyWiVi6Ic5AxjpuEu0gzlX3Xuj/UlbyQu
+	 OQ/jcKSxHmC0NSS3CJn1+05V/S12KsKjS2s5tqDy58HqLUsUiBacUqCkVnC7W6/raN
+	 sHuFtgg2u0tsQ==
+Date: Wed, 27 Aug 2025 23:52:02 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Zecheng Li <zecheng@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Xu Liu <xliuprof@google.com>, linux-perf-users@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Cc: linmq006@gmail.com
-Subject: [PATCH v2] eth: mlx4: Fix IS_ERR() vs NULL check bug in mlx4_en_create_rx_ring
-Date: Thu, 28 Aug 2025 14:50:50 +0800
-Message-Id: <20250828065050.21954-1-linmq006@gmail.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+Subject: Re: [PATCH v2 01/10] perf dwarf-aux: Use signed variable types in
+ match_var_offset
+Message-ID: <aK_8kt5Yf9MDoPdu@google.com>
+References: <20250825195412.223077-1-zecheng@google.com>
+ <20250825195412.223077-2-zecheng@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250825195412.223077-2-zecheng@google.com>
 
-Replace NULL check with IS_ERR() check after calling page_pool_create()
-since this function returns error pointers (ERR_PTR).
-Using NULL check could lead to invalid pointer dereference.
+On Mon, Aug 25, 2025 at 07:54:03PM +0000, Zecheng Li wrote:
+> match_var_offset compares address offsets to determine if an access
+> falls within a variable's bounds. The offsets involved for those
+> relative to base registers from DW_OP_breg can be negative.
+> 
+> The current implementation uses unsigned types (u64) for these offsets,
+> which rejects almost all negative values.
 
-Fixes: 8533b14b3d65 ("eth: mlx4: create a page pool for Rx")
-Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
-----
-Changes in v2:
-use err = PTR_ERR(ring->pp);
-v1 link: https://lore.kernel.org/all/20250805025057.3659898-1-linmq006@gmail.com
----
- drivers/net/ethernet/mellanox/mlx4/en_rx.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Right, I thought it cannot get negative offsets except for stack access
+(e.g. fbreg).  But it turns out that container_of() trick can generate
+them with optimizing compilers.
 
-diff --git a/drivers/net/ethernet/mellanox/mlx4/en_rx.c b/drivers/net/ethernet/mellanox/mlx4/en_rx.c
-index 92a16ddb7d86..4728960c2c4e 100644
---- a/drivers/net/ethernet/mellanox/mlx4/en_rx.c
-+++ b/drivers/net/ethernet/mellanox/mlx4/en_rx.c
-@@ -267,8 +267,10 @@ int mlx4_en_create_rx_ring(struct mlx4_en_priv *priv,
- 	pp.dma_dir = priv->dma_dir;
- 
- 	ring->pp = page_pool_create(&pp);
--	if (!ring->pp)
-+	if (!ring->pp) {
-+		err = PTR_ERR(ring->pp);
- 		goto err_ring;
-+	}
- 
- 	if (xdp_rxq_info_reg(&ring->xdp_rxq, priv->dev, queue_index, 0) < 0)
- 		goto err_pp;
--- 
-2.39.5 (Apple Git-154)
+> 
+> Change the signature of match_var_offset to use signed types (s64). This
+> ensures correct behavior when addr_offset or addr_type are negative.
+> 
+> Signed-off-by: Zecheng Li <zecheng@google.com>
 
+I've confirmed it produced slightly better results on my test sets.
+
+Reviewed-by: Namhyung Kim <namhyung@kernel.org>
+
+Thanks,
+Namhyung
+
+> ---
+>  tools/perf/util/dwarf-aux.c | 11 ++++++-----
+>  1 file changed, 6 insertions(+), 5 deletions(-)
+> 
+> diff --git a/tools/perf/util/dwarf-aux.c b/tools/perf/util/dwarf-aux.c
+> index 559c953ca172..920054425578 100644
+> --- a/tools/perf/util/dwarf-aux.c
+> +++ b/tools/perf/util/dwarf-aux.c
+> @@ -1388,18 +1388,19 @@ struct find_var_data {
+>  #define DWARF_OP_DIRECT_REGS  32
+>  
+>  static bool match_var_offset(Dwarf_Die *die_mem, struct find_var_data *data,
+> -			     u64 addr_offset, u64 addr_type, bool is_pointer)
+> +			     s64 addr_offset, s64 addr_type, bool is_pointer)
+>  {
+>  	Dwarf_Die type_die;
+>  	Dwarf_Word size;
+> +	s64 offset = addr_offset - addr_type;
+>  
+> -	if (addr_offset == addr_type) {
+> +	if (offset == 0) {
+>  		/* Update offset relative to the start of the variable */
+>  		data->offset = 0;
+>  		return true;
+>  	}
+>  
+> -	if (addr_offset < addr_type)
+> +	if (offset < 0)
+>  		return false;
+>  
+>  	if (die_get_real_type(die_mem, &type_die) == NULL)
+> @@ -1414,11 +1415,11 @@ static bool match_var_offset(Dwarf_Die *die_mem, struct find_var_data *data,
+>  	if (dwarf_aggregate_size(&type_die, &size) < 0)
+>  		return false;
+>  
+> -	if (addr_offset >= addr_type + size)
+> +	if ((u64)offset >= size)
+>  		return false;
+>  
+>  	/* Update offset relative to the start of the variable */
+> -	data->offset = addr_offset - addr_type;
+> +	data->offset = offset;
+>  	return true;
+>  }
+>  
+> -- 
+> 2.51.0.261.g7ce5a0a67e-goog
+> 
 
