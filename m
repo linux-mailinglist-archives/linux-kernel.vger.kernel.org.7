@@ -1,141 +1,355 @@
-Return-Path: <linux-kernel+bounces-790648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790649-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FD03B3AB50
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 22:12:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2553DB3AB52
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 22:13:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A4D737B7674
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 20:11:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5F23A00FF0
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 20:13:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5983E283FE9;
-	Thu, 28 Aug 2025 20:12:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5529A284B2F;
+	Thu, 28 Aug 2025 20:13:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="mm+O8DMb";
-	dkim=permerror (0-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="41ahrUPU"
-Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [85.215.255.53])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QZymd4LP"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F05C72571DD;
-	Thu, 28 Aug 2025 20:12:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=85.215.255.53
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756411967; cv=pass; b=PHyolhIHRtsDxTSHIGd3DJyn6PW1nTTRFmOZcPbDuBinDtqlaC0yLYqYZARsUsawYXm+eIH5ogQj1N6cVjpDe4PaAPSjhMevmdkNA74By4rktW9rs+svX+l3qzOfJiEwH9VFGSeTBbUNxpqr+I6ARh4I1z4JH8a0CZhUpErO0nA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756411967; c=relaxed/simple;
-	bh=sujAEBpJxPjxhtjKUx+ja1aGWF8z5yDtaVg78NxOtbg=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=IT16r8SwfTUvzLhOsQxY+RyjnRyE5iif2W8Ve4XaQ+FZsdrg3tGqWufGeyhK62l0TmPPz9fovNSAVa4JTtbaXt+Ta9f6C8t9KTcY06p1APwA4gcmFfFc5jE46MtqnS4lAl6fvgzHBADxMaKpG4fZhdR/vZY/3C8AO2PK3jRMI/g=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=goldelico.com; spf=pass smtp.mailfrom=goldelico.com; dkim=pass (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b=mm+O8DMb; dkim=permerror (0-bit key) header.d=goldelico.com header.i=@goldelico.com header.b=41ahrUPU; arc=pass smtp.client-ip=85.215.255.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=goldelico.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goldelico.com
-ARC-Seal: i=1; a=rsa-sha256; t=1756411931; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=qHyCgw0HXKSqYCYTFeL8rHR84yNnKYbRLS9fwuvkC+FzvJtqZVQd09P7rXmr0ykFkK
-    Jzmny8lYjDDx/yglt27k1jQLG0jxy7DFDTlrnSeOvV6h1C5mLnIZterjMQayzIUOL0uQ
-    jSo59a/qG8XmhdU+6IP6UXbuB2S3d6Dn1ip2WGdNRpDEfAP/jo9/kciCABwQG7pPj9f8
-    55z/Wwk/+X8Zj6Fcuz2l5OGy6EpZPKpmDJv3AlTix+hihpGbQQj8EQNYGyLBkfyvglwJ
-    vs5KvAKhtAKyKnOEz9oc3wZi+cik9U4N69+o2uO1gwA1Ts8WYsbgybP1vt/B/rXYiwgf
-    3n6Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1756411931;
-    s=strato-dkim-0002; d=strato.com;
-    h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:Cc:Date:
-    From:Subject:Sender;
-    bh=KbRCLVSjf9/WslBZgDdGCzMFH5RfGIaJX1KwUJL3xeQ=;
-    b=JcnT7hH+dQ3VgIbrwgC9230CjQOXJhfXgze4uJhtGS7uVOgWqh9pAGfM7Yumi3IVCK
-    AwDgceZfw17zTrkgeJwmUcjJmCkNNY0qgvf/YJwNlvljvGotc+UE9ByEBUmRSrV85lac
-    7ifeyQJgxghd1TxpyAzr0n1OioMZhexJusuQMhdAFqXVTWoY+mPsu+cyVytlnU0/JjLW
-    hXEVIGbOTpy2ywNYtqoLmIVPWXUhdHhHMY2B9gS7L2gIKdyjvMcGrd+ZqsHVX/rSBUYA
-    RRfasSjWBpNzZSp2a/o5Un9p41k4lFn1XCpfKpYGn3g1DNRdQM+Nibg25AYPcifPY4GS
-    MzDw==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo01
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1756411931;
-    s=strato-dkim-0002; d=goldelico.com;
-    h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:Cc:Date:
-    From:Subject:Sender;
-    bh=KbRCLVSjf9/WslBZgDdGCzMFH5RfGIaJX1KwUJL3xeQ=;
-    b=mm+O8DMbblNBUSngETBftyXk2v//FwjHtXBVDbLcWvAxV9npWbE1RovaKT9K7WpgOb
-    O0iu4KAxTWD25ftEQMVHBRY2FHlshi8+HReDITsTa7/f9dXxf4Q0YK6Imzq0gbOK2AnD
-    u4I/yR8bNwPfhFQ1NkW8UAbLtQ91JS40+Z8sbwIz2De5JakGL4gm2dCtbs9OAuRmagj3
-    sf9EXN+gH3xUFyuC4WUkzU6LbjYw7d44dwmliC/q7Kq5GYf4ExUCkoTO6XiKBxdX4nQo
-    iwY3V8UT7Dy/NTRee95Ubm6+kGzoTppgZQBSvfQrqxegjPOmKNYQ0/v5yXPXzRPq/dJy
-    jElg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1756411931;
-    s=strato-dkim-0003; d=goldelico.com;
-    h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:Cc:Date:
-    From:Subject:Sender;
-    bh=KbRCLVSjf9/WslBZgDdGCzMFH5RfGIaJX1KwUJL3xeQ=;
-    b=41ahrUPUv5+PK0PR7qc/azE41VvqlABzxNZW63qkXILU+mi2fYmQL3dmwYdTXYuML+
-    YPTtbKfN2yUt67VydXBQ==
-X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9qVpwcQVkPW4I1HrT3poOmsiN2w31h2+GBVG4/sHBcUyJsCRpvmGv"
-Received: from smtpclient.apple
-    by smtp.strato.de (RZmta 52.1.2 AUTH)
-    with ESMTPSA id Q307a417SKCApus
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve X9_62_prime256v1 with 256 ECDH bits, eq. 3072 bits RSA))
-	(Client did not present a certificate);
-    Thu, 28 Aug 2025 22:12:10 +0200 (CEST)
-Content-Type: text/plain;
-	charset=us-ascii
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A28628151E
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 20:13:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756411989; cv=none; b=NeT3dwo4QUyJE46UlJBtlosJ1dk4gHc1Sg9neZHZZQDv0XBwgCloTr8TLN0kiEs+7j1/qtFl94wPDtDGP2szkixYdE0PasObnHzSDxjbxQx+LyhcAc5j3EI9EVdnIxS6azr8NkoG56FMeBamuYEcWzZ/0+ZfRktucUxQqeoXZxY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756411989; c=relaxed/simple;
+	bh=eOx9yJckJEK3i44YjsqE+CulCUJZ/fl/i9aml48b5Ww=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cDWezPt8NYKFnGWxlwlWXZvLcrNBvSwWxqWxbmhrFvYx6im0ukXyXN1d0buhqDDe6FNCs798e5V8IEyME0c9II/wynTqIgkQsowU1inJsPJ7vVp6g9GF3BmQ9+E0NEr3uXx7G9bto03gjCtxiOf35Va6BnZxDFOhiLBf+CC5/pA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QZymd4LP; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756411985;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=6CKebG25zZ7Qh5eUzDGh3RpuZ+KtDVV8aoTCmVYURho=;
+	b=QZymd4LP1heqkGSvt7MLrCWwhE8zjYp2Ah6zU+14JMHXfChxsDvA0/iC+sbRCPO6w10J+1
+	10NMFqJCoevlWgFbFLxNfWBZzEB722d5BRkjY8PVKPmSEFxE4Wr2GNb6BpchcSuZdoYMAk
+	Ts8aDUc52HRwvV51ekl0Q2VPQWkOdU4=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-226-2dlmgIVzMfurqdaiMrVWxA-1; Thu, 28 Aug 2025 16:13:04 -0400
+X-MC-Unique: 2dlmgIVzMfurqdaiMrVWxA-1
+X-Mimecast-MFC-AGG-ID: 2dlmgIVzMfurqdaiMrVWxA_1756411983
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-45a1b05d8d0so9440265e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 13:13:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756411983; x=1757016783;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6CKebG25zZ7Qh5eUzDGh3RpuZ+KtDVV8aoTCmVYURho=;
+        b=NmAhnGseSx2y9QoCXifIe9/inEjp80FUxp3yGOJb3ke1vayYPuUIuXWIgaRLFhYczX
+         IqR2mvGTJSYmQoi+0UcqzywOKbMIyDEqwNDym/RlzFUAl+rdkcFCzRrj554T0zhKyqnF
+         5WIdGLtkJZ+yM1pAr0GC9jEInwnfZRWCd8R7Q1VOrMRhz9z0prBFEpSXkUanYzfsViRN
+         tYZmThsDz/r5l1cYv5nWCRJBhyVNjfliczEBMrH6X0rHVEVizQd59FXRLu2o21FQwhB5
+         ARdBmFjnNAPwQizboR0Kh/LQTrQUiEgMKq9dCfjqbv/5Id6UU//jY0jcj5xVBk2uYBy5
+         jAqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVu5M0rMVmqtRYFbk8ruVXQXgJ9OCKOubTJADgzGi0TYwWQ+hxn+X4d9P76Oepb4XJGst+SoZOe0X/9te0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6BH4SmkZ/UeGGMo/nkOxsxgll/4nKIvHar++1Qqbz2oEq0vAK
+	5c5PB4Z2Blr3QFfQQqxKW+ODPmY4mKfI0UH4bEUY8sGUiD6MVXkR4X7zkFq0nZmqlv+yAeFgAvz
+	LRMRaZjVwlXQsq93ubbYV9lD1Qwfnl4GGl2PLmtfalyWK/Pg/jM/Y3Kcd3CxmuGT1o2nrEhLs9A
+	==
+X-Gm-Gg: ASbGncsH5YYYwZsde1Afi0P4bpQ9k45/i51ahvqRp/KELuC2YwTxAChSF9te2eDZAyw
+	k4skKOG3aBZgc8Fppdrr992gmfNlsRlNSWNnb6KUG0uyLyNcXozIeNJ4xESHNE1NbGOKwmmCzZy
+	cbQMRVKOe10qWvNWYOLh2evIgEhOVpKJ+e2W3JaIdwvsy7aGC631O7rXRoeRHk/lZPCliijYYYA
+	4fdJ/51vmRO0zzIcA74ZVsrbaLVjYxpg0z5pnvpJ4avag/Ah7KVviU8doHQ5xehfXOFe1rjf9sh
+	HxSVnDl4opT7qgPahcg1EqxSTAJiwjJ/b1NnHYol46In2S9DrHRGCtyUJ72a18Ppl/AcloEul7O
+	1JsO1sorVLrxPg3KHobA2zdxju5alacDYLtD8ECXgVA00RYNqan4UXTPfejqVd3TSj+c=
+X-Received: by 2002:a05:600c:45d4:b0:458:f70d:ebdd with SMTP id 5b1f17b1804b1-45b5179eb97mr298531065e9.16.1756411982758;
+        Thu, 28 Aug 2025 13:13:02 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFYlg6U6YWP3KKWPLKnc1b8KsAr3EP3vAhz8qoffX84clo1bvTszS2+UY9ViAz8ohcbnuHyZQ==
+X-Received: by 2002:a05:600c:45d4:b0:458:f70d:ebdd with SMTP id 5b1f17b1804b1-45b5179eb97mr298530685e9.16.1756411982211;
+        Thu, 28 Aug 2025 13:13:02 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f28:c100:2225:10aa:f247:7b85? (p200300d82f28c100222510aaf2477b85.dip0.t-ipconnect.de. [2003:d8:2f28:c100:2225:10aa:f247:7b85])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b6ee66bddsm88856345e9.0.2025.08.28.13.12.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 28 Aug 2025 13:12:58 -0700 (PDT)
+Message-ID: <00d58bba-7695-4f72-8ebd-d2db23fccec3@redhat.com>
+Date: Thu, 28 Aug 2025 22:12:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
-Subject: Re: [PATCH v2 0/2] power: supply: bq27xxx: bug fixes
-From: "H. Nikolaus Schaller" <hns@goldelico.com>
-In-Reply-To: <20250828202421.57bbbd2c@akair>
-Date: Thu, 28 Aug 2025 22:11:59 +0200
-Cc: Sebastian Reichel <sre@kernel.org>,
- Jerry Lv <Jerry.Lv@axis.com>,
- =?utf-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>,
- linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- letux-kernel@openphoenux.org,
- stable@vger.kernel.org,
- kernel@pyra-handheld.com
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <34413DBE-C225-4335-A0C8-B7E0DE53BF32@goldelico.com>
-References: <cover.1755945297.git.hns@goldelico.com>
- <20250828202421.57bbbd2c@akair>
-To: Andreas Kemnade <andreas@kemnade.info>
-X-Mailer: Apple Mail (2.3826.700.81)
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [v3 02/11] mm/thp: zone_device awareness in THP handling code
+To: Matthew Brost <matthew.brost@intel.com>, Balbir Singh <balbirs@nvidia.com>
+Cc: dri-devel@lists.freedesktop.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
+ Zi Yan <ziy@nvidia.com>, Joshua Hahn <joshua.hahnjy@gmail.com>,
+ Rakie Kim <rakie.kim@sk.com>, Byungchul Park <byungchul@sk.com>,
+ Gregory Price <gourry@gourry.net>, Ying Huang
+ <ying.huang@linux.alibaba.com>, Alistair Popple <apopple@nvidia.com>,
+ Oscar Salvador <osalvador@suse.de>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
+ Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
+ Barry Song <baohua@kernel.org>, Lyude Paul <lyude@redhat.com>,
+ Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Ralph Campbell <rcampbell@nvidia.com>,
+ =?UTF-8?Q?Mika_Penttil=C3=A4?= <mpenttil@redhat.com>,
+ Francois Dugast <francois.dugast@intel.com>
+References: <20250812024036.690064-1-balbirs@nvidia.com>
+ <20250812024036.690064-3-balbirs@nvidia.com>
+ <aLC2bfpIQo/a22gr@lstrano-desk.jf.intel.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <aLC2bfpIQo/a22gr@lstrano-desk.jf.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+
+On 28.08.25 22:05, Matthew Brost wrote:
+> On Tue, Aug 12, 2025 at 12:40:27PM +1000, Balbir Singh wrote:
+>> Make THP handling code in the mm subsystem for THP pages aware of zone
+>> device pages. Although the code is designed to be generic when it comes
+>> to handling splitting of pages, the code is designed to work for THP
+>> page sizes corresponding to HPAGE_PMD_NR.
+>>
+>> Modify page_vma_mapped_walk() to return true when a zone device huge
+>> entry is present, enabling try_to_migrate() and other code migration
+>> paths to appropriately process the entry. page_vma_mapped_walk() will
+>> return true for zone device private large folios only when
+>> PVMW_THP_DEVICE_PRIVATE is passed. This is to prevent locations that are
+>> not zone device private pages from having to add awareness. The key
+>> callback that needs this flag is try_to_migrate_one(). The other
+>> callbacks page idle, damon use it for setting young/dirty bits, which is
+>> not significant when it comes to pmd level bit harvesting.
+>>
+>> pmd_pfn() does not work well with zone device entries, use
+>> pfn_pmd_entry_to_swap() for checking and comparison as for zone device
+>> entries.
+>>
+>> Support partial unmapping of zone device private entries, which happens
+>> via munmap(). munmap() causes the device private entry pmd to be split,
+>> but the corresponding folio is not split. Deferred split does not work for
+>> zone device private folios due to the need to split during fault
+>> handling. Get migrate_vma_collect_pmd() to handle this case by splitting
+>> partially unmapped device private folios.
+>>
+>> Cc: Andrew Morton <akpm@linux-foundation.org>
+>> Cc: David Hildenbrand <david@redhat.com>
+>> Cc: Zi Yan <ziy@nvidia.com>
+>> Cc: Joshua Hahn <joshua.hahnjy@gmail.com>
+>> Cc: Rakie Kim <rakie.kim@sk.com>
+>> Cc: Byungchul Park <byungchul@sk.com>
+>> Cc: Gregory Price <gourry@gourry.net>
+>> Cc: Ying Huang <ying.huang@linux.alibaba.com>
+>> Cc: Alistair Popple <apopple@nvidia.com>
+>> Cc: Oscar Salvador <osalvador@suse.de>
+>> Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+>> Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
+>> Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+>> Cc: Nico Pache <npache@redhat.com>
+>> Cc: Ryan Roberts <ryan.roberts@arm.com>
+>> Cc: Dev Jain <dev.jain@arm.com>
+>> Cc: Barry Song <baohua@kernel.org>
+>> Cc: Lyude Paul <lyude@redhat.com>
+>> Cc: Danilo Krummrich <dakr@kernel.org>
+>> Cc: David Airlie <airlied@gmail.com>
+>> Cc: Simona Vetter <simona@ffwll.ch>
+>> Cc: Ralph Campbell <rcampbell@nvidia.com>
+>> Cc: Mika Penttilä <mpenttil@redhat.com>
+>> Cc: Matthew Brost <matthew.brost@intel.com>
+>> Cc: Francois Dugast <francois.dugast@intel.com>
+>>
+>> Signed-off-by: Matthew Brost <matthew.brost@intel.com>
+>> Signed-off-by: Balbir Singh <balbirs@nvidia.com>
+>> ---
+>>   include/linux/rmap.h    |   2 +
+>>   include/linux/swapops.h |  17 ++++
+>>   lib/test_hmm.c          |   2 +-
+>>   mm/huge_memory.c        | 214 +++++++++++++++++++++++++++++++---------
+>>   mm/migrate_device.c     |  47 +++++++++
+>>   mm/page_vma_mapped.c    |  13 ++-
+>>   mm/pgtable-generic.c    |   6 ++
+>>   mm/rmap.c               |  24 ++++-
+>>   8 files changed, 272 insertions(+), 53 deletions(-)
+>>
+>> diff --git a/include/linux/rmap.h b/include/linux/rmap.h
+>> index 6cd020eea37a..dfb7aae3d77b 100644
+>> --- a/include/linux/rmap.h
+>> +++ b/include/linux/rmap.h
+>> @@ -927,6 +927,8 @@ struct page *make_device_exclusive(struct mm_struct *mm, unsigned long addr,
+>>   #define PVMW_SYNC		(1 << 0)
+>>   /* Look for migration entries rather than present PTEs */
+>>   #define PVMW_MIGRATION		(1 << 1)
+>> +/* Look for device private THP entries */
+>> +#define PVMW_THP_DEVICE_PRIVATE	(1 << 2)
+>>   
+>>   struct page_vma_mapped_walk {
+>>   	unsigned long pfn;
+>> diff --git a/include/linux/swapops.h b/include/linux/swapops.h
+>> index 64ea151a7ae3..2641c01bd5d2 100644
+>> --- a/include/linux/swapops.h
+>> +++ b/include/linux/swapops.h
+>> @@ -563,6 +563,7 @@ static inline int is_pmd_migration_entry(pmd_t pmd)
+>>   {
+>>   	return is_swap_pmd(pmd) && is_migration_entry(pmd_to_swp_entry(pmd));
+>>   }
+>> +
+>>   #else  /* CONFIG_ARCH_ENABLE_THP_MIGRATION */
+>>   static inline int set_pmd_migration_entry(struct page_vma_mapped_walk *pvmw,
+>>   		struct page *page)
+>> @@ -594,6 +595,22 @@ static inline int is_pmd_migration_entry(pmd_t pmd)
+>>   }
+>>   #endif  /* CONFIG_ARCH_ENABLE_THP_MIGRATION */
+>>   
+>> +#if defined(CONFIG_ZONE_DEVICE) && defined(CONFIG_ARCH_ENABLE_THP_MIGRATION)
+>> +
+>> +static inline int is_pmd_device_private_entry(pmd_t pmd)
+>> +{
+>> +	return is_swap_pmd(pmd) && is_device_private_entry(pmd_to_swp_entry(pmd));
+>> +}
+>> +
+>> +#else /* CONFIG_ZONE_DEVICE && CONFIG_ARCH_ENABLE_THP_MIGRATION */
+>> +
+>> +static inline int is_pmd_device_private_entry(pmd_t pmd)
+>> +{
+>> +	return 0;
+>> +}
+>> +
+>> +#endif /* CONFIG_ZONE_DEVICE && CONFIG_ARCH_ENABLE_THP_MIGRATION */
+>> +
+>>   static inline int non_swap_entry(swp_entry_t entry)
+>>   {
+>>   	return swp_type(entry) >= MAX_SWAPFILES;
+>> diff --git a/lib/test_hmm.c b/lib/test_hmm.c
+>> index 761725bc713c..297f1e034045 100644
+>> --- a/lib/test_hmm.c
+>> +++ b/lib/test_hmm.c
+>> @@ -1408,7 +1408,7 @@ static vm_fault_t dmirror_devmem_fault(struct vm_fault *vmf)
+>>   	 * the mirror but here we use it to hold the page for the simulated
+>>   	 * device memory and that page holds the pointer to the mirror.
+>>   	 */
+>> -	rpage = vmf->page->zone_device_data;
+>> +	rpage = folio_page(page_folio(vmf->page), 0)->zone_device_data;
+>>   	dmirror = rpage->zone_device_data;
+>>   
+>>   	/* FIXME demonstrate how we can adjust migrate range */
+>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+>> index 9c38a95e9f09..2495e3fdbfae 100644
+>> --- a/mm/huge_memory.c
+>> +++ b/mm/huge_memory.c
+>> @@ -1711,8 +1711,11 @@ int copy_huge_pmd(struct mm_struct *dst_mm, struct mm_struct *src_mm,
+>>   	if (unlikely(is_swap_pmd(pmd))) {
+>>   		swp_entry_t entry = pmd_to_swp_entry(pmd);
+>>   
+>> -		VM_BUG_ON(!is_pmd_migration_entry(pmd));
+>> -		if (!is_readable_migration_entry(entry)) {
+>> +		VM_WARN_ON(!is_pmd_migration_entry(pmd) &&
+>> +				!is_pmd_device_private_entry(pmd));
+>> +
+>> +		if (is_migration_entry(entry) &&
+>> +			is_writable_migration_entry(entry)) {
+>>   			entry = make_readable_migration_entry(
+>>   							swp_offset(entry));
+>>   			pmd = swp_entry_to_pmd(entry);
+>> @@ -1722,6 +1725,32 @@ int copy_huge_pmd(struct mm_struct *dst_mm, struct mm_struct *src_mm,
+>>   				pmd = pmd_swp_mkuffd_wp(pmd);
+>>   			set_pmd_at(src_mm, addr, src_pmd, pmd);
+>>   		}
+>> +
+>> +		if (is_device_private_entry(entry)) {
+>> +			if (is_writable_device_private_entry(entry)) {
+>> +				entry = make_readable_device_private_entry(
+>> +					swp_offset(entry));
+>> +				pmd = swp_entry_to_pmd(entry);
+>> +
+>> +				if (pmd_swp_soft_dirty(*src_pmd))
+>> +					pmd = pmd_swp_mksoft_dirty(pmd);
+>> +				if (pmd_swp_uffd_wp(*src_pmd))
+>> +					pmd = pmd_swp_mkuffd_wp(pmd);
+>> +				set_pmd_at(src_mm, addr, src_pmd, pmd);
+>> +			}
+>> +
+>> +			src_folio = pfn_swap_entry_folio(entry);
+>> +			VM_WARN_ON(!folio_test_large(src_folio));
+>> +
+>> +			folio_get(src_folio);
+>> +			/*
+>> +			 * folio_try_dup_anon_rmap_pmd does not fail for
+>> +			 * device private entries.
+>> +			 */
+>> +			VM_WARN_ON(folio_try_dup_anon_rmap_pmd(src_folio,
+>> +					  &src_folio->page, dst_vma, src_vma));
+> 
+> VM_WARN_ON compiles out in non-debug builds. I hit this running the
+> fork self I shared with a non-debug build.
 
 
+folio_try_dup_anon_rmap_pmd() will never fail for 
+folio_is_device_private(folio) -- unless something is deeply messed up 
+that we wouldn't identify this folio as being device-private.
 
-> Am 28.08.2025 um 20:24 schrieb Andreas Kemnade <andreas@kemnade.info>:
->=20
-> Am Sat, 23 Aug 2025 12:34:55 +0200
-> schrieb "H. Nikolaus Schaller" <hns@goldelico.com>:
->=20
->> PATCH V2 2025-08-23 12:33:18:
->> Changes:
->> * improved commit description of main fix
->> * new patch: adds a restriction of historical no-battery-detection =
-logic to the bq27000 chip
->>=20
->> PATCH V1 2025-07-21 14:46:09:
->>=20
->>=20
->> H. Nikolaus Schaller (2):
->>  power: supply: bq27xxx: fix error return in case of no bq27000 hdq
->>    battery
->>  power: supply: bq27xxx: restrict no-battery detection to bq27000
->>=20
-> hmm, is the order correct? To me to be bisectable, should it be turned
-> around? Maybe Sebastian just can do that while picking it.
+Can you elaborate, what were you able to trigger, and in what kind of 
+environment?
 
-Well, it is to decide which of the two fuel gauges fix first...
+-- 
+Cheers
 
-The bq27000 is working again after the first one and the bq27z561 is no =
-longer influenced after the second.
-
-BR,
-Nikolaus
+David / dhildenb
 
 
