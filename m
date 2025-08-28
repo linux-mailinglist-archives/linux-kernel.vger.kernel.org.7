@@ -1,130 +1,107 @@
-Return-Path: <linux-kernel+bounces-789992-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F756B39DF0
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 14:59:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC444B39DF5
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 15:00:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C17F61BA4C17
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 12:59:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9536E1896A33
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 13:00:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0950310636;
-	Thu, 28 Aug 2025 12:59:26 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09EA730FC3C;
+	Thu, 28 Aug 2025 13:00:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GrHdgpmx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90761264623;
-	Thu, 28 Aug 2025 12:59:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E43D86337;
+	Thu, 28 Aug 2025 13:00:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756385966; cv=none; b=DRjm8FVGtv5QOIND5ua2hHN8bWeBmyFVdiNI8+ll583ZUYZqTz0Otnu4vB419TftD05RhVkW0Q8ttDg9ey1UZd8x8lMe4/m9maXIDsqTormQrGPdP3IcNH/7+Z9wcyuDU/kz7XpkIFZDkLPV3+VR9D/ta5mpOz/0f1cJql4WO0M=
+	t=1756386012; cv=none; b=s8T6e5W5PBkiY6j9XX+k1KzrVL84MtCdRmzoYqBKLroRpkkR34zCKpREyW7Q16Bzitge75nLa9mlIqUG0UX+X6Gyb7iOnS2X1iWdlKzWpSACNIemdnsRvsbQpG8dz/1DHxw43kJxB6OkyXubfZ0pRTZx/7FD8+b4RVnKFoqxCOM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756385966; c=relaxed/simple;
-	bh=vBCWjkfrSux2aJceCBnGfEdia0w9pV1fl3FB/9Iq144=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Wuyj3N8epSr0/dqUrzrVbf6wUpqBwTdbrGF7ha9IO1M71Je6hTZJ0Wf0uG2j8PFS1faU+DTEq2gCEDE9xcfQZI0d3n6Q0z5IzpL5li7citeUmN9PLGipcNH4aeoRHp1CePzOKngydqJ69Gm9BrBqbOC9tpyfMgwzB1CKKueD/14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=hisilicon.com; spf=pass smtp.mailfrom=h-partners.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=hisilicon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=h-partners.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4cCM0v32R3z14Mm2;
-	Thu, 28 Aug 2025 20:59:11 +0800 (CST)
-Received: from kwepemk200007.china.huawei.com (unknown [7.202.194.73])
-	by mail.maildlp.com (Postfix) with ESMTPS id D2D77140123;
-	Thu, 28 Aug 2025 20:59:18 +0800 (CST)
-Received: from [10.67.121.172] (10.67.121.172) by
- kwepemk200007.china.huawei.com (7.202.194.73) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 28 Aug 2025 20:59:18 +0800
-Message-ID: <2b2b530f-6f29-429a-8549-f2fef8d14c24@hisilicon.com>
-Date: Thu, 28 Aug 2025 20:59:04 +0800
+	s=arc-20240116; t=1756386012; c=relaxed/simple;
+	bh=rX0j8rIu7l1wKKVnMUgdtQN5WgVXsm2ecMpja6Lgwos=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NO8qxoE/rhV1pG1blCeceqf0OFBWcO4KoV7aP4l7E3Vww3ZG+rvqb7c2q1bve9gPM0BK5i346tdUuedHAcFnPvNRhiOYSJ2twpqIGnibwSFMmmG50QZQMRZjyJgAlq2nAFRLQShVcSpExnjvBtZUw0jpoWd6cYcJb7moEMTiLpQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GrHdgpmx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42F0EC4CEF5;
+	Thu, 28 Aug 2025 13:00:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756386011;
+	bh=rX0j8rIu7l1wKKVnMUgdtQN5WgVXsm2ecMpja6Lgwos=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GrHdgpmxiEiN799FqNTj74ysbOc87fJ3Jd97uGB8oKnEXqJR4K+cmLP0lwF/NktKQ
+	 ORQ4m7i57lSYQZvbvfZEpQUHptwdYHXlOKTOfAEuvqHnKaSRQmWIrADPICVvfnW/zm
+	 J8koj+uCjYo9XzRA5Bm7tphKL9k/EyA7jOrxaEG3IgS/9qV11iGXSmo2hWCM15JN8G
+	 ffHQK57wBNPG0liccYzGGyrgOQBUoFteB13Jq0Whnw5n4Z6XEaLyjISincIwW4E67J
+	 fTvQFuNOlDZ0Urab+n3NeVEzvRK6emPQFghhXw9cp0Az6jZdDS+TB9yFckTJzwNciY
+	 P53urWk7SYuAA==
+Date: Thu, 28 Aug 2025 18:30:00 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Lukas Wunner <lukas@wunner.de>, 
+	Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	chaitanya chundru <quic_krichai@quicinc.com>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, cros-qcom-dts-watchers@chromium.org, 
+	Jingoo Han <jingoohan1@gmail.com>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	Krzysztof Wilczy??ski <kwilczynski@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, quic_vbadigan@quicnic.com, amitk@kernel.org, 
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, jorge.ramirez@oss.qualcomm.com, 
+	linux-arm-kernel@lists.infradead.org, Dmitry Baryshkov <lumag@kernel.org>, 
+	Shawn Anastasio <sanastasio@raptorengineering.com>, Timothy Pearson <tpearson@raptorengineering.com>
+Subject: Re: [PATCH v6 7/9] PCI: Add pcie_link_is_active() to determine if
+ the link is active
+Message-ID: <zzrgt2dgkyap2dacmh4afg7yf2jrwohg3qkocgep3shehnzpli@4jggy6ged6pe>
+References: <20250828-qps615_v4_1-v6-0-985f90a7dd03@oss.qualcomm.com>
+ <20250828-qps615_v4_1-v6-7-985f90a7dd03@oss.qualcomm.com>
+ <aLBMdeZbsplpPIsX@wunner.de>
+ <r2bhgghyunfcy5ppjcvxm746kzh7vyhsnbphlw4pj52wxtuxru@qzy7earmlnjf>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] uacce: fix for cdev memory leak
-To: Zhangfei Gao <zhangfei.gao@linaro.org>, Chenghai Huang
-	<huangchenghai2@huawei.com>
-CC: <gregkh@linuxfoundation.org>, <wangzhou1@hisilicon.com>,
-	<linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>,
-	<linux-crypto@vger.kernel.org>, <fanghao11@huawei.com>,
-	<shenyang39@huawei.com>, <qianweili@huawei.com>, <liulongfang@huawei.com>
-References: <20250822103904.3776304-1-huangchenghai2@huawei.com>
- <20250822103904.3776304-2-huangchenghai2@huawei.com>
- <CABQgh9GwQ6mB1q12X8pci=QTCw4R7f4CXLkwMfT-VvGeM+qqkw@mail.gmail.com>
-From: "linwenkai (C)" <linwenkai6@hisilicon.com>
-In-Reply-To: <CABQgh9GwQ6mB1q12X8pci=QTCw4R7f4CXLkwMfT-VvGeM+qqkw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
- kwepemk200007.china.huawei.com (7.202.194.73)
+In-Reply-To: <r2bhgghyunfcy5ppjcvxm746kzh7vyhsnbphlw4pj52wxtuxru@qzy7earmlnjf>
 
+On Thu, Aug 28, 2025 at 03:48:26PM GMT, Dmitry Baryshkov wrote:
+> On Thu, Aug 28, 2025 at 02:32:53PM +0200, Lukas Wunner wrote:
+> > On Thu, Aug 28, 2025 at 05:39:04PM +0530, Krishna Chaitanya Chundru wrote:
+> > > Add pcie_link_is_active() a common API to check if the PCIe link is active,
+> > > replacing duplicate code in multiple locations.
+> > > 
+> > > Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+> > > Signed-off-by: Shawn Anastasio <sanastasio@raptorengineering.com>
+> > > Signed-off-by: Timothy Pearson <tpearson@raptorengineering.com>
+> > 
+> > I think the submitter of the patch (who will become the git commit author)
+> > needs to come last in the Signed-off-by chain.
+> 
+> Not quite... The git commit author is the author of the commit and
+> usually the _first_ person in the SoB list. Then the patch is being
+> handled by several other people which leave their SoBs. The final SoB is
+> usually an entry from the maintainer who applied the patch to the Git.
+> 
 
-在 2025/8/25 16:20, Zhangfei Gao 写道:
-> On Fri, 22 Aug 2025 at 18:39, Chenghai Huang <huangchenghai2@huawei.com> wrote:
->> From: Wenkai Lin <linwenkai6@hisilicon.com>
->>
->> If adding uacce cdev to the system fails, it could be due to two
->> reasons: either the device's devt exists when the failure occurs,
->> or the device_add operation fails. In the latter case, cdev_del
->> will be executed, but in the former case, it will not, leading to a
->> resource leak. Therefore, it is necessary to perform the cdev_del
->> action during abnormal exit.
->>
->> Fixes: 015d239ac014 ("uacce: add uacce driver")
->> Signed-off-by: Wenkai Lin <linwenkai6@hisilicon.com>
->> Signed-off-by: Chenghai Huang <huangchenghai2@huawei.com>
->> ---
->>   drivers/misc/uacce/uacce.c | 11 ++++++++++-
->>   1 file changed, 10 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/misc/uacce/uacce.c b/drivers/misc/uacce/uacce.c
->> index 42e7d2a2a90c..3604f722ed60 100644
->> --- a/drivers/misc/uacce/uacce.c
->> +++ b/drivers/misc/uacce/uacce.c
->> @@ -519,6 +519,8 @@ EXPORT_SYMBOL_GPL(uacce_alloc);
->>    */
->>   int uacce_register(struct uacce_device *uacce)
->>   {
->> +       int ret;
->> +
->>          if (!uacce)
->>                  return -ENODEV;
->>
->> @@ -529,7 +531,14 @@ int uacce_register(struct uacce_device *uacce)
->>          uacce->cdev->ops = &uacce_fops;
->>          uacce->cdev->owner = THIS_MODULE;
->>
->> -       return cdev_device_add(uacce->cdev, &uacce->dev);
->> +       ret = cdev_device_add(uacce->cdev, &uacce->dev);
->> +       if (ret) {
->> +               cdev_del(uacce->cdev);
-> Can cdev_del be called multi-times? since cdev_device_add may call
-> cdev_device_add itself.
-> Does this introduce another issue?
->
-> Not understand the case: "either the device's devt exists when the
-> failure occurs,"
-> Looks it is cdev_device_add itself issue, or need add check
-> if (uacce->dev.devt)
->   cdev_del(uacce->cdev);
-> how about other drivers' behavior.
+Still, the submitter's s-o-b should come last to clearly represent the history.
+This patch was initially authored by Krishna, submitted by two other folks, and
+now Krishna is again submitting it again.
 
-When devt is non-zero, there is still no way to distinguish whether cdev_del
+So even if it results in dual s-o-b tag, I think it would be canonically
+correct.
 
-has been executed internally, which might be a  restriction of 
-cdev_device_add.
+- Mani
 
-Other drivers often use cdev_init, which does not require consideration
-
-of memory leak, perhaps uacce should use this method too, the plan is to
-
-modify it in v2.
-
-> Thanks
+-- 
+மணிவண்ணன் சதாசிவம்
 
