@@ -1,248 +1,164 @@
-Return-Path: <linux-kernel+bounces-789480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 989F2B3961E
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 10:01:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D28BB39624
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 10:05:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4C423621D2
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 08:01:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D00A93650B7
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 08:05:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E81732D0274;
-	Thu, 28 Aug 2025 08:01:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF3572D73A7;
+	Thu, 28 Aug 2025 08:05:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="XNe5x4ex";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="z9iUOAsJ";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="tgbWUcm8";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="J7PBkZLx"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gMnagQH3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83BF826AABE
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 08:01:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 320D6849C;
+	Thu, 28 Aug 2025 08:05:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756368105; cv=none; b=fOvvJ22wvSpdpxNu4azE/gLK4AotLKQg5KiKEnTYC/a1i5t9PK9pcgKbHLY28gymv2bBlZMYYI5j3A4yl/TQimpRDiRUpk7Uw75PhBUOCfs2zlGDngI8ggOSuhQbWdbGYvrTd9rxlw6QDT6iB9R/8USpvj+X1Vk2ehXG9FkFSdg=
+	t=1756368333; cv=none; b=mnukpXu/YT7Vzbuoda0DrUNtC9eHaJHzM/B3RbW8j/NmDurHp4aTTv4GwHBTsRGKd8KkODe00dJZZb37AgCtIzpdbzjBtESZqjxmgoLODnz3T1WHHA8I0rkP2a20Imfk7HQD+TD40oW3Bgcaiy1LQeBOFUU7wT+hvC97Kl6KC5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756368105; c=relaxed/simple;
-	bh=W+RSXIZI4aBoVU4PbDJ2mSNTsDYJruBBjbUelu4DtOA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JTF99qYQdFGzlpfYx1cnEKPdzjGGvTDo2C0B7PdrGjO35nxnC5TMhZBlDwyYtMhaLyH0wZTRuS1qRK7aaI8STdtZS6ehdbbfLe7tDY61F64hUa8aMaJV9tlyS6VNPOYx7d0JQHbE/ARTnnx+LgTN7tK0riM0NRJsGms/lOC7EoM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=XNe5x4ex; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=z9iUOAsJ; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=tgbWUcm8; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=J7PBkZLx; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 092E320A99;
-	Thu, 28 Aug 2025 08:01:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1756368101; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=G6ItBYEouCLq/APyaYGz19HWEDks/RPcsNJulNZZBW8=;
-	b=XNe5x4ex2WUGvQtkfsbIYtJQ3IH2zM6qHyqHThn0UYC8T8coXxexpjEFSEwY/dISzW64Ux
-	F7u7yMzxH844gbXNtShA9cB8MjRoTtlUU6MRZ+py/PE27jY8BaitaAHjD9qTmFvUeWZJBX
-	rM6FzKEooofps4ui7WGO1D/lknC4KRg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1756368101;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=G6ItBYEouCLq/APyaYGz19HWEDks/RPcsNJulNZZBW8=;
-	b=z9iUOAsJdTzWYhANDkwS2QMmzhAijjYCquLMvoCRp2bovKTzEhwNC2/y441NTxNUiGAYGR
-	n6CspIhXnZAa4jCA==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=tgbWUcm8;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=J7PBkZLx
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1756368100; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=G6ItBYEouCLq/APyaYGz19HWEDks/RPcsNJulNZZBW8=;
-	b=tgbWUcm8aXE6IbO44BqEo/dyWOa0pZGE6wmTeINWA4fqk+EFvE28gGjRhhv/bh/kB/1JMC
-	OCd4WLF2C43AVNWLqX6tUUkAOlgwpvijZJ2cJGs3TaG/wUV3KFB9xqag2Ox+XA6uwmMF/K
-	PXtgtXvle+Rdn5pR4Qzd0XzKC42jyic=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1756368100;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=G6ItBYEouCLq/APyaYGz19HWEDks/RPcsNJulNZZBW8=;
-	b=J7PBkZLxBRYzfT+UZHT2ZgTZvS5r2T5yVK+B7QrMTVGk7JMHcP/klQWzb5Z3pslTvPB4Qh
-	yRRH8JAOr4WEQRCA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B803F13326;
-	Thu, 28 Aug 2025 08:01:39 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id qiDJK+MMsGg9IgAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Thu, 28 Aug 2025 08:01:39 +0000
-Message-ID: <e58c8482-bd11-4111-b912-daf8b43ebb15@suse.cz>
-Date: Thu, 28 Aug 2025 10:01:39 +0200
+	s=arc-20240116; t=1756368333; c=relaxed/simple;
+	bh=Szqu3ISPHcSpDClnU/NQVEOhbXjcDa2CwfQfHM2oTVQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O8Zb6dzDh24W9tMOp09sWMCtj+ox7TIaVPGyyfMm+YEprsy66VXhyOzQ30awEtqtXSVxL2CULsPFexXZXcYmLkOd955kNHRMY3syR2A8vEuQYbpDLsP7WyQA0du9oqLavyLCGNEBtylgdpqvSlbKlWwuE/JNto78Q8N9kapHv3I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gMnagQH3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37569C4CEEB;
+	Thu, 28 Aug 2025 08:05:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756368331;
+	bh=Szqu3ISPHcSpDClnU/NQVEOhbXjcDa2CwfQfHM2oTVQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gMnagQH3MSE3OCmKYpRsd8lUsxpc8Ung8Xj9N13IShaXG1JpVQ17BGz/vZbJ8ayia
+	 JATXdShQIFwJtWM16pujBqztN/HTAHa1eI1ruO392vGQ5bcnBpM/XVuQPAhLb+epfg
+	 l+vq7JbmIEiI0o7x/Jv6L4M7n+VVeNbukGTI3/GpD9kQYUwecJAhxnypY82JF2OpgN
+	 OpDKH2Xbm6L24Rh++PCS5s0FIDKVW188ch6qzc0yfxjVB+EvXvlGjVysaI9/dnMl9w
+	 EBrj1g+TwpS5VfAtcAXeVX4ofcMrlcOTM6deJOEiGJCGib96kXayOKOspPBjlGlk7s
+	 hAB3OigOpxutA==
+Date: Thu, 28 Aug 2025 10:05:28 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Thomas Zimmermann <tzimmermann@suse.de>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
+	Andy Yan <andyshrk@163.com>, heiko@sntech.de, hjc@rock-chips.com, naoki@radxa.com, 
+	stephen@radxa.com, cristian.ciocaltea@collabora.com, neil.armstrong@linaro.org, 
+	Laurent.pinchart@ideasonboard.com, yubing.zhang@rock-chips.com, krzk+dt@kernel.org, 
+	devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org, 
+	robh@kernel.org, sebastian.reichel@collabora.com, 
+	Andy Yan <andy.yan@rock-chips.com>
+Subject: Re: [PATCH v7 00/10] Add support for RK3588 DisplayPort Controller
+Message-ID: <20250828-tangible-wakeful-coati-ec27d1@houat>
+References: <20250822063959.692098-1-andyshrk@163.com>
+ <bochli5u37mhc6eup7h2oz3yeignofbbj4k5nrvm2k7zf6f4ov@t2sje4gmveqa>
+ <d040da3e-501f-45d8-bcbb-95fa77e94a59@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 02/10] slab: add opt-in caching layer of percpu sheaves
-To: Thorsten Leemhuis <linux@leemhuis.info>,
- Suren Baghdasaryan <surenb@google.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Christoph Lameter <cl@gentwo.org>, David Rientjes <rientjes@google.com>
-Cc: Roman Gushchin <roman.gushchin@linux.dev>,
- Harry Yoo <harry.yoo@oracle.com>, Uladzislau Rezki <urezki@gmail.com>,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
- maple-tree@lists.infradead.org,
- Linux Next Mailing List <linux-next@vger.kernel.org>,
- Stephen Rothwell <sfr@canb.auug.org.au>,
- Alexei Starovoitov <alexei.starovoitov@gmail.com>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-References: <20250827-slub-percpu-caches-v6-0-f0f775a3f73f@suse.cz>
- <20250827-slub-percpu-caches-v6-2-f0f775a3f73f@suse.cz>
- <9f61c814-0d39-46f2-a540-cc9c0e716cf6@leemhuis.info>
-Content-Language: en-US
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- m6M14QORSWTLRg==
-In-Reply-To: <9f61c814-0d39-46f2-a540-cc9c0e716cf6@leemhuis.info>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 092E320A99
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[16];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[linux.dev,oracle.com,gmail.com,kvack.org,vger.kernel.org,lists.infradead.org,canb.auug.org.au,linutronix.de];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Score: -3.01
-
-On 8/28/25 09:43, Thorsten Leemhuis wrote:
-> On 27.08.25 10:26, Vlastimil Babka wrote:
->> Specifying a non-zero value for a new struct kmem_cache_args field
->> sheaf_capacity will setup a caching layer of percpu arrays called
->> sheaves of given capacity for the created cache.
->> 
->> Allocations from the cache will allocate via the percpu sheaves (main or
->> spare) as long as they have no NUMA node preference. Frees will also
->> put the object back into one of the sheaves.
->> [...]
-> 
-> This patch showed up in linux-next today and from a *quick* glance at
-> things I suspect it might be the reason why my daily next rpm builds for
-> Fedora failed today like this:
-
-Hi, thanks for the report.
-> ""
-> In file included from ./include/linux/spinlock.h:63,
->                  from ./include/linux/mmzone.h:8,
->                  from ./include/linux/gfp.h:7,
->                  from ./include/linux/mm.h:7,
->                  from mm/slub.c:13:
-> mm/slub.c: In function ‘__pcs_replace_empty_main’:
-> mm/slub.c:4727:64: error: ‘local_trylock_t’ {aka ‘__seg_gs struct spinlock’} has no member named ‘llock’; did you mean ‘lock’?
->  4727 |         lockdep_assert_held(this_cpu_ptr(&s->cpu_sheaves->lock.llock));
->       |                                                                ^~~~~
-> ./include/linux/lockdep.h:392:61: note: in definition of macro ‘lockdep_assert_held’
->   392 | #define lockdep_assert_held(l)                  do { (void)(l); } while (0)
->       |                                                             ^
-> [...]
-> mm/slub.c:5653:29: note: in expansion of macro ‘this_cpu_ptr’
->  5653 |         lockdep_assert_held(this_cpu_ptr(&s->cpu_sheaves->lock.llock));
->       |                             ^~~~~~~~~~~~
-> make[3]: *** [scripts/Makefile.build:287: mm/slub.o] Error 1
-> make[2]: *** [scripts/Makefile.build:556: mm] Error 2
-> make[2]: *** Waiting for unfinished jobs....
-> make[1]: *** [/builddir/build/BUILD/kernel-6.17.0-build/kernel-next-20250828/linux-6.17.0-0.0.next.20250828.432.vanilla.fc44.x86_64/Makefile:2017: .] Error 2
-> make: *** [Makefile:256: __sub-make] Error 2
-> ""
-> 
-> Full log: https://download.copr.fedorainfracloud.org/results/@kernel-vanilla/next/fedora-rawhide-x86_64/09498568-next-next-all/builder-live.log.gz
-
-Oh so I assume the .config here has both LOCKDEP and PREEMPT_RT?
-I tried to make lockdep_assert_held() with trylock but forgot about the RT
-difference. The solution is Alexei's patch
-
-https://lore.kernel.org/all/20250718021646.73353-2-
-alexei.starovoitov@gmail.com/
-
-Wonder if I can just fast-track it to here from that series?
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="ymx6junihpockhkm"
+Content-Disposition: inline
+In-Reply-To: <d040da3e-501f-45d8-bcbb-95fa77e94a59@suse.de>
 
 
+--ymx6junihpockhkm
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v7 00/10] Add support for RK3588 DisplayPort Controller
+MIME-Version: 1.0
+
+On Thu, Aug 28, 2025 at 09:50:34AM +0200, Thomas Zimmermann wrote:
+> Hi
+>=20
+> Am 28.08.25 um 00:24 schrieb Dmitry Baryshkov:
+> > On Fri, Aug 22, 2025 at 02:39:44PM +0800, Andy Yan wrote:
+> > > From: Andy Yan <andy.yan@rock-chips.com>
+> > >=20
+> > >=20
+> > > There are two DW DPTX based DisplayPort Controller on rk3588 which
+> > > are compliant with the DisplayPort Specification Version 1.4 with
+> > > the following features:
+> > >=20
+> > > * DisplayPort 1.4a
+> > > * Main Link: 1/2/4 lanes
+> > > * Main Link Support 1.62Gbps, 2.7Gbps, 5.4Gbps and 8.1Gbps
+> > > * AUX channel 1Mbps
+> > > * Single Stream Transport(SST)
+> > > * Multistream Transport (MST)
+> > > * Type-C support (alternate mode)
+> > > * HDCP 2.2, HDCP 1.3
+> > > * Supports up to 8/10 bits per color component
+> > > * Supports RBG, YCbCr4:4:4, YCbCr4:2:2, YCbCr4:2:0
+> > > * Pixel clock up to 594MHz
+> > > * I2S, SPDIF audio interface
+> > >=20
+> > > The current version of this patch series only supports basic display =
+outputs.
+> > > I conducted tests with DP0 in 1080p and 4K@60 YCbCr4:2:0 modes; the A=
+LT/Type-C
+> > > mode was tested on Rock 5B, DP1 was tested on Rock 5 ITX by Stephen a=
+nd Piotr.
+> > > HDCP and audio features remain unimplemented.
+> > > For RK3588, it's only support SST, while in the upcoming RK3576, it c=
+an support
+> > > MST output.
+> > >=20
+> > [skipped changelog]
+> >=20
+> > > Andy Yan (10):
+> > >    dt-bindings: display: rockchip: Add schema for RK3588 DPTX Control=
+ler
+> > >    drm/bridge: synopsys: Add DW DPTX Controller support library
+> > >    drm/rockchip: Add RK3588 DPTX output support
+> > >    MAINTAINERS: Add entry for DW DPTX Controller bridge
+> > I tried pushing patches 1-4, but got the following error:
+> >=20
+> > dim: ERROR: 5a68dcf5837a ("MAINTAINERS: Add entry for DW DPTX Controlle=
+r bridge"): Mandatory Maintainer Acked-by missing., aborting
+> >=20
+> > I'm not sure how to handle MAINTAINERS changes (or whether it's fine for
+> > me or not), so I will probably push patches 1-3 in a few days, if nobody
+> > beats me (or unless somebody points out a correct process for
+> > MAINTAINERS changes).
+>=20
+> That warning has been added recently to make sure that patches do not get=
+ in
+> without sufficient review. It's overly pedantic, though.
+
+It's not "overly pedantic", it follows the contribution rules. I'd argue
+that, if anything, we've been overly tolerant with that kind of
+practices.
+
+We do have a bug with handling MAINTAINERS changes at the moment. But
+everything else shouldn't be ignored: either patch MAINTAINERS to
+reflect the actual contribution path, or get the maintainers Ack.
+
+> If you're confident that you have R-bs from enough relevant people,
+> push the patches with 'dim -f' to ignore the warning.
+
+And let's not just advise that either.
+
+Maxime
+
+--ymx6junihpockhkm
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaLANyAAKCRAnX84Zoj2+
+dvcTAX9rZO7QwXxbtcVqDnn23mh2i9KEU6GCe3pKfMrxhyxr/xeu+2p/6ozBtwvy
+dnuUOUwBgO9N54kfuFqmTdfZIBhi2RTQ4iuHn4jAnfkBH1wkyB6OhyEze6gnXwEZ
+eUsIzifPzw==
+=bTVf
+-----END PGP SIGNATURE-----
+
+--ymx6junihpockhkm--
 
