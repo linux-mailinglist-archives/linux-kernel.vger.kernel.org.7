@@ -1,159 +1,243 @@
-Return-Path: <linux-kernel+bounces-790697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34755B3ABD8
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 22:42:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83B40B3ABDB
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 22:43:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71FA5189CD30
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 20:43:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39A483AAB19
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 20:43:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFCA429BD90;
-	Thu, 28 Aug 2025 20:42:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8119928A705;
+	Thu, 28 Aug 2025 20:43:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="UAHRav38"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F/+mfYbE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19FC3284B27;
-	Thu, 28 Aug 2025 20:42:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B302C30CD84;
+	Thu, 28 Aug 2025 20:43:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756413760; cv=none; b=oz0Fwsr/JI+umV6O/fUmGfpSkBZ+dDEpXfQlujUyZMulhL3TEAyLQGbRpB0l7IRpP1e2dkuIl2PBKLxSRFxpcVKEk9p1AwhPeb+w3wnaCf0P1j5V5Kf9pMzqW34QTweNSLBD9Ag8oIJmquUpxbBlfFS9iSX6ncQh5Z4yszWb0xM=
+	t=1756413828; cv=none; b=KGK9FCo+lNFZlvKa6am59+RuPBpTfBX4E7noT6KbNA/0U4VWU/2mjU9qGN3ZMBjl2dT7BxTSHX1nJG6t+nzzQLNLGYtRlGGkSRHSpPAk+Wf5EsnBuHEv1OEqC7gPsIPKn7MuUB6rcDl90twUnat45+opw30feOCbclhGSslNhd4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756413760; c=relaxed/simple;
-	bh=4L7eKGL54LP7Lf3fSBhvcekiiQKwAWjLf8ThdR3NxB0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=N6EKtGtDJYZpctN4xn08wzmvxxEXcdDlU8zQBHppiMj7u9jyzTEULHX+jVg8wjjcIrF7QI3QEAzTQyRR4JC8R81SNXbIRHq7wegZdPewA5K79t2DxtzFN7JsVdNDy7Mdq5uj5hFDOjy3dFjklCfhqcOPTQGZ+zpX0Bt0pEKwKPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=UAHRav38; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1756413756;
-	bh=4L7eKGL54LP7Lf3fSBhvcekiiQKwAWjLf8ThdR3NxB0=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=UAHRav38wbcZEZOREgrZ5rzOOynsg2Vk5lhGRCLQLXfw4cKFFib2uHc/oG8V+aKIx
-	 fbqvIL5NLJF3Gpw5/vSvi24tuxbonGn4PY2Kkqp/H8cFIMn4s26MlDYPPaskhClafb
-	 a+oMDF5yJghYCGEfycqLDxVPdQeFoIcmQjdlpaluhc9vX6zwHDxlUjFhqieRg00taU
-	 B8VogDMz/KgyLzCq1w4ZEYYKUSA3Z9gmDYMpPuS569McgvX07Lwkf1h5jUHaaU8bk0
-	 q8IZWHJK8V6cRY53IVlDrLEDmfmm8gSFYVfbaIhTtN058H0uKtvYmBSYRk/QVlm+q2
-	 YBE38sd+4L6Zw==
-Received: from [IPv6:2606:6d00:11:5a76::5ac] (unknown [IPv6:2606:6d00:11:5a76::5ac])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: nicolas)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 64B2117E0CF8;
-	Thu, 28 Aug 2025 22:42:35 +0200 (CEST)
-Message-ID: <5065e67544ae9255b2136a6cd73cbb9ffd08e3fb.camel@collabora.com>
-Subject: Re: [PATCH v2 4/4] Documentation: media: Document
- V4L2_H264_DECODE_PARAM_FLAG_PFRAME/BFRAME
-From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
-To: Paul Kocialkowski <paulk@sys-base.io>, linux-media@vger.kernel.org, 
+	s=arc-20240116; t=1756413828; c=relaxed/simple;
+	bh=9OG6MHQINNqki86DnbuxmZ50GZWpKYnNnMkT4UtGkNk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=eMiVnq7zX+so2xAIYS+VuucxdYiKPtG8eWtBSXrf0SfUrKsSqtPgkK6bi+KE5H1GC7D3NzwXPp0u0I1LOVdH/EjnJk0neCrpD5gaDuyEKU9Rw4m6u9p5Xhx2L5XANdl9MKh1R2hOYqURXyOndDv2R8k2gvbVmfRGpG9Db9M3wr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F/+mfYbE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11542C4CEEB;
+	Thu, 28 Aug 2025 20:43:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756413827;
+	bh=9OG6MHQINNqki86DnbuxmZ50GZWpKYnNnMkT4UtGkNk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=F/+mfYbEVKNaMv6wmv9iOLiW6X1tFo55QGDtGAo/s7L8fkAjhOp2QIwupb7y4rMgq
+	 6TzjQBWntE783uyTD60sBXz/ggobniVcOF3mXkV3/gEIG785nvLCIlcndLL16XoWzG
+	 nlborw10PnMiV+k2Z83FJkDCTNfhLud6dIVHpYuzdrVkBDV4crFjmYeIChSbG/SbNx
+	 +00e3SRq4kEIElZ6iOD/MMXsUh9otC0TPeIl9ULrh7g2pSVfc6HbQa803IZC2mG2A+
+	 MAY1mcZ+O0AQXA+WpBfAMfgPVEAAmF+jqoeYmK7PEV72aFeXqsU4ESVHnEI7zIA6Yu
+	 aU0HYjd9TC0MQ==
+Date: Thu, 28 Aug 2025 15:43:45 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: "David E. Box" <david.e.box@linux.intel.com>
+Cc: rafael@kernel.org, bhelgaas@google.com, vicamo.yang@canonical.com,
+	kenny@panix.com, ilpo.jarvinen@linux.intel.com,
+	nirmal.patel@linux.intel.com, mani@kernel.org,
+	linux-pm@vger.kernel.org, linux-pci@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil
-	 <hverkuil@xs4all.nl>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Date: Thu, 28 Aug 2025 16:42:32 -0400
-In-Reply-To: <20250824180735.765587-5-paulk@sys-base.io>
-References: <20250824180735.765587-1-paulk@sys-base.io>
-	 <20250824180735.765587-5-paulk@sys-base.io>
-Autocrypt: addr=nicolas.dufresne@collabora.com; prefer-encrypt=mutual;
- keydata=mDMEaCN2ixYJKwYBBAHaRw8BAQdAM0EHepTful3JOIzcPv6ekHOenE1u0vDG1gdHFrChD
- /e0J05pY29sYXMgRHVmcmVzbmUgPG5pY29sYXNAbmR1ZnJlc25lLmNhPoicBBMWCgBEAhsDBQsJCA
- cCAiICBhUKCQgLAgQWAgMBAh4HAheABQkJZfd1FiEE7w1SgRXEw8IaBG8S2UGUUSlgcvQFAmibrjo
- CGQEACgkQ2UGUUSlgcvQlQwD/RjpU1SZYcKG6pnfnQ8ivgtTkGDRUJ8gP3fK7+XUjRNIA/iXfhXMN
- abIWxO2oCXKf3TdD7aQ4070KO6zSxIcxgNQFtDFOaWNvbGFzIER1ZnJlc25lIDxuaWNvbGFzLmR1Z
- nJlc25lQGNvbGxhYm9yYS5jb20+iJkEExYKAEECGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4
- AWIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaCyyxgUJCWX3dQAKCRDZQZRRKWBy9ARJAP96pFmLffZ
- smBUpkyVBfFAf+zq6BJt769R0al3kHvUKdgD9G7KAHuioxD2v6SX7idpIazjzx8b8rfzwTWyOQWHC
- AAS0LU5pY29sYXMgRHVmcmVzbmUgPG5pY29sYXMuZHVmcmVzbmVAZ21haWwuY29tPoiZBBMWCgBBF
- iEE7w1SgRXEw8IaBG8S2UGUUSlgcvQFAmibrGYCGwMFCQll93UFCwkIBwICIgIGFQoJCAsCBBYCAw
- ECHgcCF4AACgkQ2UGUUSlgcvRObgD/YnQjfi4+L8f4fI7p1pPMTwRTcaRdy6aqkKEmKsCArzQBAK8
- bRLv9QjuqsE6oQZra/RB4widZPvphs78H0P6NmpIJ
-Organization: Collabora Canada
-Content-Type: multipart/signed; micalg="pgp-sha512";
-	protocol="application/pgp-signature"; boundary="=-lValZJkHsUrv43G3L0AC"
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+Subject: Re: [PATCH V3 1/2] PCI/ASPM: Add host-bridge API to override default
+ ASPM/CLKPM link state
+Message-ID: <20250828204345.GA958461@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250825203542.3502368-1-david.e.box@linux.intel.com>
 
+On Mon, Aug 25, 2025 at 01:35:22PM -0700, David E. Box wrote:
+> Synthetic PCIe hierarchies, such as those created by Intel VMD, are not
+> enumerated by firmware and do not receive BIOS-provided ASPM or CLKPM
+> defaults. Devices in such domains may therefore run without the intended
+> power management.
+> 
+> Add a host-bridge mechanism that lets controller drivers supply their own
+> defaults. A new aspm_default_link_state field in struct pci_host_bridge is
+> set via pci_host_set_default_pcie_link_state(). During link initialization,
+> if this field is non-zero, ASPM and CLKPM defaults come from it instead of
+> BIOS.
+> 
+> This enables drivers like VMD to align link power management with platform
+> expectations and avoids embedding controller-specific quirks in ASPM core
+> logic.
 
---=-lValZJkHsUrv43G3L0AC
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+I think this kind of sidesteps the real issue.  Drivers for host
+controllers or PCI devices should tell us about *broken* things, but
+not about things advertised by the hardware and available for use.
 
-Le dimanche 24 ao=C3=BBt 2025 =C3=A0 20:07 +0200, Paul Kocialkowski a =C3=
-=A9crit=C2=A0:
-> These flags are meant for a very specific use-case, add a mention of it.
->=20
-> Signed-off-by: Paul Kocialkowski <paulk@sys-base.io>
+The only documented policy controls I'm aware of for ASPM are:
+
+  - FADT "PCIe ASPM Controls" bit ("if set, OS must not enable ASPM
+    control on this platform")
+
+  - _OSC negotiation for control of the PCIe Capability (OS is only
+    allowed to write PCI_EXP_LNKCTL if platform has granted control to
+    the OS)
+
+I think what we *should* be doing is enabling ASPM when it's
+advertised, subject to those platform policy controls and user choices
+like CONFIG_PCIEASPM_PERFORMANCE/POWERSAVE/etc and sysfs attributes.
+
+So basically I think link->aspm_default should be PCIE_LINK_STATE_ALL
+without drivers doing anything at all.  Maybe we have to carve out
+exceptions, e.g., "VMD hierarchies are exempt from _OSC," or "devices
+on x86 systems before 2026 can't enable more ASPM than BIOS did," or
+whatever.  Is there any baby step we can make in that direction?
+
+This feels a little scary, so feel free to convince me it can't be
+done :)
+
+> Link: https://patchwork.ozlabs.org/project/linux-pci/patch/20250720190140.2639200-1-david.e.box%40linux.intel.com/
+> Signed-off-by: David E. Box <david.e.box@linux.intel.com>
+> Tested-by: Manivannan Sadhasivam <mani@kernel.org>
+> Reviewed-by: Rafael J. Wysocki (Intel) <rafael@kernel.org>
 > ---
-> =C2=A0.../userspace-api/media/v4l/ext-ctrls-codec-stateless.rst | 8 +++++=
-+--
-> =C2=A01 file changed, 6 insertions(+), 2 deletions(-)
->=20
-> diff --git a/Documentation/userspace-api/media/v4l/ext-ctrls-codec-statel=
-ess.rst b/Documentation/userspace-api/media/v4l/ext-ctrls-codec-stateless.r=
-st
-> index 0da635691fdc..de1e3873385c 100644
-> --- a/Documentation/userspace-api/media/v4l/ext-ctrls-codec-stateless.rst
-> +++ b/Documentation/userspace-api/media/v4l/ext-ctrls-codec-stateless.rst
-> @@ -618,10 +618,14 @@ Stateless Codec Control ID
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -
-> =C2=A0=C2=A0=C2=A0=C2=A0 * - ``V4L2_H264_DECODE_PARAM_FLAG_PFRAME``
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - 0x00000008
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - All submitted slices for the frame are =
-P slices. This is a compability
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 flag required for decoders th=
-at only support decoding such frames, but
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 should not be required for sl=
-ice-based decoders.
-
-Seems to match the comment in Tegra driver, and related to a hardware
-limitation. Shall we also recommend not to use this unless similar limitati=
-on
-exists ?
-
-Note that mix of P and I, or, B and I, should still work on Tegra, its mixi=
-ng P
-and B that will fail since one of the reference list will be missing. At le=
-ast,
-this is my understanding.
-
-Nicolas
-
-> =C2=A0=C2=A0=C2=A0=C2=A0 * - ``V4L2_H264_DECODE_PARAM_FLAG_BFRAME``
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - 0x00000010
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - All submitted slices for the frame are =
-B slices. This is a compability
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 flag required for decoders th=
-at only support decoding such frames, but
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 should not be required for sl=
-ice-based decoders.
-> =C2=A0
-> =C2=A0.. raw:: latex
-> =C2=A0
-
---=-lValZJkHsUrv43G3L0AC
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaLC/OQAKCRDZQZRRKWBy
-9JjtAQCT0AE/Vs9U8O+KaUh1qw6aB8BbYFDjkxOlrZZk25FPpQD/XVEZOc1kVdFy
-NsYX7DCRZJ7PzA3mkDkhUEzEMotq5gw=
-=4NKf
------END PGP SIGNATURE-----
-
---=-lValZJkHsUrv43G3L0AC--
+> Changes in V3:
+>   -- Changed pci_host_get_default_pcie_link_state() argument name from
+>      parent to dev.
+>   -- Applied changelog tags
+> 
+> Changes in V2:
+> 
+>   -- Host field name changed to aspm_default_link_state.
+>   -- Added get/set functions for aspm_default_link_state. Only the
+>      setter is exported. Added a kernel-doc describing usage and
+>      particulars around meaning of 0.
+> 
+> Changes in V1 from RFC:
+> 
+>   -- Rename field to aspm_dflt_link_state since it stores
+>      PCIE_LINK_STATE_XXX flags, not a policy enum.
+>   -- Move the field to struct pci_host_bridge since it's being applied to
+>      the entire host bridge per Mani's suggestion.
+>   -- During testing noticed that clkpm remained disabled and this was
+>      also handled by the formerly used pci_enable_link_state(). Add a
+>      check in pcie_clkpm_cap_init() as well to enable clkpm during init.
+> 
+>  drivers/pci/pcie/aspm.c | 42 +++++++++++++++++++++++++++++++++++++++--
+>  include/linux/pci.h     |  9 +++++++++
+>  2 files changed, 49 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/pci/pcie/aspm.c b/drivers/pci/pcie/aspm.c
+> index 919a05b97647..851ca3d68e55 100644
+> --- a/drivers/pci/pcie/aspm.c
+> +++ b/drivers/pci/pcie/aspm.c
+> @@ -373,6 +373,39 @@ static void pcie_set_clkpm(struct pcie_link_state *link, int enable)
+>  	pcie_set_clkpm_nocheck(link, enable);
+>  }
+>  
+> +/**
+> + * pci_host_set_default_pcie_link_state - set controller-provided default ASPM/CLKPM mask
+> + * @host: host bridge on which to apply the defaults
+> + * @state: PCIE_LINK_STATE_XXX flags
+> + *
+> + * Allows a PCIe controller driver to specify the default ASPM and/or
+> + * Clock Power Management (CLKPM) link state mask that will be used
+> + * for links under this host bridge during ASPM/CLKPM capability init.
+> + *
+> + * The value is consumed in pcie_aspm_cap_init() and pcie_clkpm_cap_init()
+> + * to override the firmware-discovered defaults.
+> + *
+> + * Interpretation of aspm_default_link_state:
+> + *   - Nonzero: bitmask of PCIE_LINK_STATE_* values to be used as defaults
+> + *   - Zero:    no override provided; ASPM/CLKPM defaults fall back to
+> + *              values discovered in hardware/firmware
+> + *
+> + * Note: zero is always treated as "unset", not as "force ASPM/CLKPM off".
+> + */
+> +void pci_host_set_default_pcie_link_state(struct pci_host_bridge *host,
+> +					  unsigned int state)
+> +{
+> +	host->aspm_default_link_state = state;
+> +}
+> +EXPORT_SYMBOL_GPL(pci_host_set_default_pcie_link_state);
+> +
+> +static u32 pci_host_get_default_pcie_link_state(struct pci_dev *dev)
+> +{
+> +	struct pci_host_bridge *host = pci_find_host_bridge(dev->bus);
+> +
+> +	return host ? host->aspm_default_link_state : 0;
+> +}
+> +
+>  static void pcie_clkpm_cap_init(struct pcie_link_state *link, int blacklist)
+>  {
+>  	int capable = 1, enabled = 1;
+> @@ -394,7 +427,10 @@ static void pcie_clkpm_cap_init(struct pcie_link_state *link, int blacklist)
+>  			enabled = 0;
+>  	}
+>  	link->clkpm_enabled = enabled;
+> -	link->clkpm_default = enabled;
+> +	if (pci_host_get_default_pcie_link_state(link->pdev) & PCIE_LINK_STATE_CLKPM)
+> +		link->clkpm_default = 1;
+> +	else
+> +		link->clkpm_default = enabled;
+>  	link->clkpm_capable = capable;
+>  	link->clkpm_disable = blacklist ? 1 : 0;
+>  }
+> @@ -866,7 +902,9 @@ static void pcie_aspm_cap_init(struct pcie_link_state *link, int blacklist)
+>  	}
+>  
+>  	/* Save default state */
+> -	link->aspm_default = link->aspm_enabled;
+> +	link->aspm_default = pci_host_get_default_pcie_link_state(parent);
+> +	if (!link->aspm_default)
+> +		link->aspm_default = link->aspm_enabled;
+>  
+>  	/* Setup initial capable state. Will be updated later */
+>  	link->aspm_capable = link->aspm_support;
+> diff --git a/include/linux/pci.h b/include/linux/pci.h
+> index 59876de13860..8947cbaf9fa6 100644
+> --- a/include/linux/pci.h
+> +++ b/include/linux/pci.h
+> @@ -620,6 +620,10 @@ struct pci_host_bridge {
+>  	unsigned int	size_windows:1;		/* Enable root bus sizing */
+>  	unsigned int	msi_domain:1;		/* Bridge wants MSI domain */
+>  
+> +#ifdef CONFIG_PCIEASPM
+> +	unsigned int	aspm_default_link_state;	/* Controller-provided default */
+> +#endif
+> +
+>  	/* Resource alignment requirements */
+>  	resource_size_t (*align_resource)(struct pci_dev *dev,
+>  			const struct resource *res,
+> @@ -1849,6 +1853,8 @@ int pci_disable_link_state(struct pci_dev *pdev, int state);
+>  int pci_disable_link_state_locked(struct pci_dev *pdev, int state);
+>  int pci_enable_link_state(struct pci_dev *pdev, int state);
+>  int pci_enable_link_state_locked(struct pci_dev *pdev, int state);
+> +void pci_host_set_default_pcie_link_state(struct pci_host_bridge *host,
+> +					  unsigned int state);
+>  void pcie_no_aspm(void);
+>  bool pcie_aspm_support_enabled(void);
+>  bool pcie_aspm_enabled(struct pci_dev *pdev);
+> @@ -1861,6 +1867,9 @@ static inline int pci_enable_link_state(struct pci_dev *pdev, int state)
+>  { return 0; }
+>  static inline int pci_enable_link_state_locked(struct pci_dev *pdev, int state)
+>  { return 0; }
+> +static inline void
+> +pci_host_set_default_pcie_link_state(struct pci_host_bridge *host,
+> +				     unsigned int state) { }
+>  static inline void pcie_no_aspm(void) { }
+>  static inline bool pcie_aspm_support_enabled(void) { return false; }
+>  static inline bool pcie_aspm_enabled(struct pci_dev *pdev) { return false; }
+> 
+> base-commit: c17b750b3ad9f45f2b6f7e6f7f4679844244f0b9
+> -- 
+> 2.43.0
+> 
 
