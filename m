@@ -1,128 +1,127 @@
-Return-Path: <linux-kernel+bounces-790476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C9E7B3A7CD
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 19:23:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 59AB3B3A7D2
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 19:23:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8DA917A4821
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 17:21:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 760757A7D76
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 17:21:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 647763376BC;
-	Thu, 28 Aug 2025 17:22:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A07233CEA6;
+	Thu, 28 Aug 2025 17:22:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="1gEKM/4C"
-Received: from 003.mia.mailroute.net (003.mia.mailroute.net [199.89.3.6])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NniPVCL7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DA78176ADB;
-	Thu, 28 Aug 2025 17:22:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84CB12264B2;
+	Thu, 28 Aug 2025 17:22:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756401770; cv=none; b=gx9HA4n0irOYksnk8db7/jh1M4g5CQS41zIvKU7N/oeBDQuIVlbPRmEJp7MmyAmtAh6vkYftJv8V2apAUbj6+6UoyDD3tgVy6PzRcMg3S51CYcajRfQPcUjSaQX3FgZ6QlTvGjg2whDawfjjmQSl5AIzHU+hQZ8hiZ7QuatySQ4=
+	t=1756401775; cv=none; b=DHp6EBqWXOCKPOpJ4yV/HcXPdVIZ+AdVG3/ym+A5v1RktZfWwAez69ufUGLbSfo5dtKsud6n+P+zoZR6FyBi7McqV8DmtDNuLpPOaEHFFJ/7F/xBgFnLY+m4n18eNqO9uN+iNWnGXB2w2e9Sx/pDP5cNCEz/cqw2Dv7YYHX4DGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756401770; c=relaxed/simple;
-	bh=C/gaTXy/0JJk7IW23NxiY1BKmydsHm3y9ndN33TgeAg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Hd+vQDZvKfNIXYtltESMx6WR6g11N0dNQ3Gk4fMYIEo/5ePEOinT/Bt7a6gyza9ZxWINSh9Hlw3TLVLv/SFhsWSf4+CE36xGlriEDCjdIBnnCRrJq/Vx1yw8o0YcSOBZYaybTwiBIS04PW0q4fyJuRXxJz23zTxtWcZxQb39mrM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=1gEKM/4C; arc=none smtp.client-ip=199.89.3.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 003.mia.mailroute.net (Postfix) with ESMTP id 4cCSs36WM0zlgqxy;
-	Thu, 28 Aug 2025 17:22:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1756401765; x=1758993766; bh=C/gaTXy/0JJk7IW23NxiY1BK
-	mydsHm3y9ndN33TgeAg=; b=1gEKM/4CY6RyW3OdXjJPaTq1TkHT+ExfLr+9Ib5T
-	2S5wHT1ITqnJFQUs3XXqGc0OFT0DWnLFIVzElfHyzK9pV7cdj/j7GdCZiXbw58ft
-	FDQrzD4MOJ9JnmdcSJ4eZJTIqWrfzUdh9jt+PJZSBJhZOEz5MuqGexiINFr0CARR
-	PUldR39rOaOlpwbU7tPQ57ykVX5kaZ5CFuJmhnp2pCtO2TxlZLMRlPaRKSS3k/rc
-	tEWaztWOJE8y7JVnuyk7i4u3h4l+o63BXQwxnfM/Ju0GbNLqVxhagMvqv5onwPQ7
-	SDse7ap3anu8g7eCWyxb4E0PpG1iM2fUdXCXyK1qr/YcNw==
-X-Virus-Scanned: by MailRoute
-Received: from 003.mia.mailroute.net ([127.0.0.1])
- by localhost (003.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id LeCwucKU7Rnb; Thu, 28 Aug 2025 17:22:45 +0000 (UTC)
-Received: from [172.20.6.188] (unknown [208.98.210.68])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 003.mia.mailroute.net (Postfix) with ESMTPSA id 4cCSrk656mzlgqxj;
-	Thu, 28 Aug 2025 17:22:29 +0000 (UTC)
-Message-ID: <cf203807-77ab-463c-b0b0-4a1cec891fe6@acm.org>
-Date: Thu, 28 Aug 2025 10:22:28 -0700
+	s=arc-20240116; t=1756401775; c=relaxed/simple;
+	bh=D64Dcw+3Q7Bhw7cRL3Mx51sKXxd32kG6A6P2l/nGXPI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=FafkJa0bY9kuEfeINYH/pXw93JbhhRFvA8fR0nqzbToYx6aHI3qKhBJE6nbA3DO7r7Lnox6GChdmVskLMkWdF4jqWoPwW6Xtb9lHhpTaQ6/2ubYDhnCDsjvGnE5R3zr6aoNBnJxPixmOMtVIzrcqgaUT5wozYK+K49wMyRQ21V8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NniPVCL7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7B7EC4CEF5;
+	Thu, 28 Aug 2025 17:22:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756401775;
+	bh=D64Dcw+3Q7Bhw7cRL3Mx51sKXxd32kG6A6P2l/nGXPI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=NniPVCL70CJLdBOdxQoW1jaUw3KHNNjTpnByZBXqpMVCAZP6eWtTCp1uK0XEEB00u
+	 kuHZ0awF3fnjhHf6IH6lJMdKgqVDcRh42ivtIHDLmJRs8ttBqcFf87Jy2jplZeLM3o
+	 zV9PXCeb/dnaMbPIH0VPYOJ5JKvIpMI2uV6RRVexO3ZmIZaS4mStzp7Wgt12uDwPOi
+	 Z6/VxNFYcJG2ZtfnAevv1gZT+T0kUpAtm+74fTBX9TXUh7C6HM99sp/lHozeiLbFng
+	 gEsXq5bQHE6s2jopMhGWOQsPuHfUhZtsa+Fmx1U8CkEtQcw9dUK3tYt6YoW7TAwc35
+	 /2mMgE9BOicQg==
+Date: Thu, 28 Aug 2025 12:22:53 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Christian Bruel <christian.bruel@foss.st.com>
+Cc: lpieralisi@kernel.org, kwilczynski@kernel.org, mani@kernel.org,
+	robh@kernel.org, bhelgaas@google.com, krzk+dt@kernel.org,
+	conor+dt@kernel.org, mcoquelin.stm32@gmail.com,
+	alexandre.torgue@foss.st.com, linus.walleij@linaro.org,
+	corbet@lwn.net, p.zabel@pengutronix.de, shradha.t@samsung.com,
+	mayank.rana@oss.qualcomm.com, namcao@linutronix.de,
+	qiang.yu@oss.qualcomm.com, thippeswamy.havalige@amd.com,
+	inochiama@gmail.com, quic_schintav@quicinc.com,
+	johan+linaro@kernel.org, linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: Re: [PATCH v13 06/11] PCI: stm32: Add PCIe Endpoint support for
+ STM32MP25
+Message-ID: <20250828172253.GA949714@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V3 1/4] ufs: dt-bindings: Document gear and rate limit
- properties
-To: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>, alim.akhtar@samsung.com,
- avri.altman@wdc.com, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, mani@kernel.org, James.Bottomley@HansenPartnership.com,
- martin.petersen@oracle.com
-Cc: linux-scsi@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-References: <20250826150855.7725-1-quic_rdwivedi@quicinc.com>
- <20250826150855.7725-2-quic_rdwivedi@quicinc.com>
- <9944c595-da68-43c0-8364-6a8665a0fc3f@acm.org>
- <8d705694-498a-4592-b93a-7df6a1dd5211@quicinc.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <8d705694-498a-4592-b93a-7df6a1dd5211@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250820075411.1178729-7-christian.bruel@foss.st.com>
 
-On 8/28/25 9:45 AM, Ram Kumar Dwivedi wrote:
-> On 26-Aug-25 9:05 PM, Bart Van Assche wrote:
->> On 8/26/25 8:08 AM, Ram Kumar Dwivedi wrote:
->>> +=C2=A0 limit-rate:
->>> +=C2=A0=C2=A0=C2=A0 $ref: /schemas/types.yaml#/definitions/uint32
->>> +=C2=A0=C2=A0=C2=A0 enum: [1, 2]
->>> +=C2=A0=C2=A0=C2=A0 default: 2
->>> +=C2=A0=C2=A0=C2=A0 description:
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Restricts the UFS controller to Rate =
-A (1) or Rate B (2) for both
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 TX and RX directions, often required =
-in automotive environments due
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 to hardware limitations.
->>
->> As far as I know no numeric values are associated with these rates in
->> the UFSHCI 4.1 standard nor in any of the previous versions of this
->> standard. Does the .yaml syntax support something like "enum: [A, B]"?
-> Hi Bart,
->=20
-> As per the MIPI UniPro spec:
->=20
-> In Section 5.7.12.3.2, the hs_series is defined as:
-> hs_series =3D Flags[3] + 1;
->=20
-> In Section 5.7.7.1, Flags[3] is described as:
-> Set to =E2=80=980=E2=80=99 for Series A and =E2=80=981=E2=80=99 for Ser=
-ies B (PA_HSSeries).
->=20
-> While issuing the DME command from the UFS driver to set the rate,
-> the values 1 and 2 are passed as arguments for Rate A and Rate B
-> respectively. Additionally, the hs_rate variable is of type u32.
+On Wed, Aug 20, 2025 at 09:54:06AM +0200, Christian Bruel wrote:
+> Add driver to configure the STM32MP25 SoC PCIe Gen1 2.5GT/s or Gen2 5GT/s
+> controller based on the DesignWare PCIe core in endpoint mode.
+> ...
 
-Hi Ram,
+> +static int stm32_pcie_start_link(struct dw_pcie *pci)
+> +{
+> +	struct stm32_pcie *stm32_pcie = to_stm32_pcie(pci);
+> +	int ret;
+> +
+> +	if (stm32_pcie->link_status == STM32_PCIE_EP_LINK_ENABLED) {
+> +		dev_dbg(pci->dev, "Link is already enabled\n");
+> +		return 0;
+> +	}
 
-Thanks for having looked this up.
+While looking at the "incorrectly reset" comment, I noticed
+stm32_pcie->link_status and wondered why it exists.  It looks like
+it's only used in stm32_pcie_start_link() and stm32_pcie_stop_link(),
+and I don't see similar tracking in other drivers.
 
-Since it is much more common to refer to these rates as "Rate A" and
-"Rate B" rather than using numbers for these rates, please change the
-enumeration labels into something like "Rate_A" and "Rate_B".
+It feels a little racy because the link might go down for reasons
+other than calling stm32_pcie_stop_link().
 
-Thanks,
-
-Bart.
+> +	dev_dbg(pci->dev, "Enable link\n");
+> +
+> +	ret = stm32_pcie_enable_link(pci);
+> +	if (ret) {
+> +		dev_err(pci->dev, "PCIe cannot establish link: %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	enable_irq(stm32_pcie->perst_irq);
+> +
+> +	stm32_pcie->link_status = STM32_PCIE_EP_LINK_ENABLED;
+> +
+> +	return 0;
+> +}
+> +
+> +static void stm32_pcie_stop_link(struct dw_pcie *pci)
+> +{
+> +	struct stm32_pcie *stm32_pcie = to_stm32_pcie(pci);
+> +
+> +	if (stm32_pcie->link_status == STM32_PCIE_EP_LINK_DISABLED) {
+> +		dev_dbg(pci->dev, "Link is already disabled\n");
+> +		return;
+> +	}
+> +
+> +	dev_dbg(pci->dev, "Disable link\n");
+> +
+> +	disable_irq(stm32_pcie->perst_irq);
+> +
+> +	stm32_pcie_disable_link(pci);
+> +
+> +	stm32_pcie->link_status = STM32_PCIE_EP_LINK_DISABLED;
+> +}
 
