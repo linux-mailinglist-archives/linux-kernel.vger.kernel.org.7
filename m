@@ -1,166 +1,234 @@
-Return-Path: <linux-kernel+bounces-789926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78A15B39CC3
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 14:18:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61246B39CCF
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 14:19:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D8611626F4
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 12:17:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C268017CB9F
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 12:18:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04FF531CA56;
-	Thu, 28 Aug 2025 12:11:07 +0000 (UTC)
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1FDB310628;
+	Thu, 28 Aug 2025 12:11:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RqiFCK55"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F708314B6D;
-	Thu, 28 Aug 2025 12:11:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C391530F537
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 12:11:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756383066; cv=none; b=n11RKXLcGHRHLuPIQNhLli2I/fPHnrOtNtFeXMoXbs4nfAWRCkwex5Afo/Npm1oACjseMtGIhXw6InQkwbzCUYOUzVaJxSH4xhIbDzZnW6/wrNEbZ+kjJKbZKQ1dWfHIYdOg11gDTiP+uLzQPtvfWTUaCCIRLLejNJlH/woyaPA=
+	t=1756383095; cv=none; b=BLVEFyTVqRWjiYYQ4f6bx8VcAHggObWfxn/+OCSBP59+Fa91USaO4oZ4EPvLuRpW0Q6Lg6j/93GpYthn46jOXrxWtC4ud0mPjzdsrNJMpAyi8ragtG4nBmnQKs+EghiOgksVqlL/HCHrZrbWtChzsTPXcH6koC4dMQH6DBramOE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756383066; c=relaxed/simple;
-	bh=9gPhIC0jDpWXohbffyiAu2Q16GprIW3MokPQ1OBOe00=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=msj7urzcoGCsZXjDP6r0Tdr01E/oJuiX+javMz3AaHYFJSliEtIrkeXOJK5lbIjsel5GH/jd2b2IovfbxFwWldPNuC+huUjpgv08eU/sfjJt9avDuL5oErKDi6lIiqxp8Txo7JZ5kTWi4CFLWesd2xJT1i2rpDh2v5EfT3IR+wU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4cCKrC2r6CzdcHL;
-	Thu, 28 Aug 2025 20:06:35 +0800 (CST)
-Received: from kwepemf100013.china.huawei.com (unknown [7.202.181.12])
-	by mail.maildlp.com (Postfix) with ESMTPS id 04CA6140123;
-	Thu, 28 Aug 2025 20:11:02 +0800 (CST)
-Received: from DESKTOP-62GVMTR.china.huawei.com (10.174.189.55) by
- kwepemf100013.china.huawei.com (7.202.181.12) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 28 Aug 2025 20:11:00 +0800
-From: Fan Gong <gongfan1@huawei.com>
-To: Fan Gong <gongfan1@huawei.com>, Zhu Yikai <zhuyikai1@h-partners.com>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "David S.
- Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
- Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman
-	<horms@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
-	<linux-doc@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, Bjorn Helgaas
-	<helgaas@kernel.org>, luosifu <luosifu@huawei.com>, Xin Guo
-	<guoxin09@huawei.com>, Shen Chenyang <shenchenyang1@hisilicon.com>, Zhou
- Shuai <zhoushuai28@huawei.com>, Wu Like <wulike1@huawei.com>, Shi Jing
-	<shijing34@huawei.com>, Meny Yossefi <meny.yossefi@huawei.com>, Gur Stavi
-	<gur.stavi@huawei.com>, Lee Trager <lee@trager.us>, Michael Ellerman
-	<mpe@ellerman.id.au>, Vadim Fedorenko <vadim.fedorenko@linux.dev>, Suman
- Ghosh <sumang@marvell.com>, Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Joe Damato <jdamato@fastly.com>, Christophe JAILLET
-	<christophe.jaillet@wanadoo.fr>
-Subject: [PATCH net-next v02 14/14] hinic3: Fix code style (Missing a blank line before return)
-Date: Thu, 28 Aug 2025 20:10:20 +0800
-Message-ID: <7ede06e5314dd62037c078f0bd50a4c49e3cf9ab.1756378721.git.zhuyikai1@h-partners.com>
-X-Mailer: git-send-email 2.51.0.windows.1
-In-Reply-To: <cover.1756378721.git.zhuyikai1@h-partners.com>
-References: <cover.1756378721.git.zhuyikai1@h-partners.com>
+	s=arc-20240116; t=1756383095; c=relaxed/simple;
+	bh=2ktMdNY3k61aPA2/lm50+GCes4gOy0DJDNPYFQGl4fs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QFrfRa9cyMvH+D9ef0MDtYrY/ddM6Q9/3YggO09Hl0AzEOoM+P5fQD+o7q5FZc9UGc1fLKHEtvWIe2dyl79UR3PPEbkhiqCse6xSiiVRkvrqi/0a6V+jD3WWJReESHvr6UPJYtwU8HBjUBirDyl5KzUqTeJg+hyaC6vakf8rAqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RqiFCK55; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756383092;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2UGqflFI8eChQOA7+GEyiXkR47jGjc2vCRu3os6QQyo=;
+	b=RqiFCK55xQ3Jm/wvajwYwQjgzNFaA7s7iLPZC6dDj3HWhaWm1pxjuRvPr7Pl5eC3cZRBxw
+	CKG8O765B28Scexey72stgNX9xjUZnZZxUTMdK+0JVxelNDuv8+wqyz79p29xbFbP6RIuB
+	VULPrx9RjhUEynqAHKEsCarymxvM1FU=
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
+ [209.85.216.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-661-HvE7iTQMN-SxwpBnaCxjLw-1; Thu, 28 Aug 2025 08:11:30 -0400
+X-MC-Unique: HvE7iTQMN-SxwpBnaCxjLw-1
+X-Mimecast-MFC-AGG-ID: HvE7iTQMN-SxwpBnaCxjLw_1756383089
+Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-325e31cece1so1402992a91.2
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 05:11:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756383089; x=1756987889;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2UGqflFI8eChQOA7+GEyiXkR47jGjc2vCRu3os6QQyo=;
+        b=LsUZ69JpqFsf2iywtAv+4cdluqtnlqJQdg9mhSTAoQK/fvkqh/TwwQNKzp3sxTY7+C
+         O0IuSBM6eWMbuX5qYO3GX4n75pGF1MucRfP1gTuzjwTghvr1L3fIOCT8WBc6HqXF6IHO
+         GGE2u6+sZbCDUy20sxMJ1LGNdkMOD345KY2pZPhbzm/54ab7/5QkQFLoL1UASde5UYIW
+         o2yP42hzENxeZyDrtBR95y/S/DvF0BsYhj9GMG3VM5A7pZ/hmtXkBvhov34G2Xf1YZJf
+         r31V3GUf4lvgyQqrj7i5n/qWSVwddPGu3cSbtwIrvSxrjLWQ/wAxh6aBS087pmcsb7cR
+         3+nQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXeTsjN0WaRsNzl9ydqOlRtgRyN9kl01lI3fF6tXp7ziDo6DGUPpQmhO/0jc+dYMFlnOfEEE5HJ7Z2h5oE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzsqIAUqnlx54JV6HJ/QrfMEKj2KrHPG23SpjVuhWnsBnmOVGy2
+	f5lVvOznkcsc2dtKCc+yhblH40pQgci0gaoBU09k3o7a9jSTKBb7Dbja+b04x31hkPJdjOcZH0C
+	wHfH4Yh4Eyax++SNO5MSBNi0qDb3d3m0sg7H1ROinUtUsqNj4pi2GKHxPrQ//6jzrBqKZiW/iPn
+	sTG5fm6pBxHqmZFp1kdf8iZcVmIYOTncV9QWQn0u7y
+X-Gm-Gg: ASbGncsi5UYSQQZATauV/IlNyxCIZnXJsY8dHBgzMeTIL37VSUaPgy+PmszcWk4RAFH
+	0SZevrpdwn9JDwIFhsrr2iLtalgUxfhABF/7xayTo9Ph2Asx0g9xJjpVjttOuvEFmWRMpZWmZ1F
+	/tlhrY1XllIMPaRj4MnVVl3g==
+X-Received: by 2002:a17:90b:4ec7:b0:31f:42e8:a896 with SMTP id 98e67ed59e1d1-32518b8233amr27589479a91.34.1756383088814;
+        Thu, 28 Aug 2025 05:11:28 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG/1VuJO7sOj+w9DbBPxn7h7VRP4y4KKuh9IZVK6bmCJgpn+KrmoXKNVFrzEshD5AQ6z5yFNiOU64bGtA72s9Y=
+X-Received: by 2002:a17:90b:4ec7:b0:31f:42e8:a896 with SMTP id
+ 98e67ed59e1d1-32518b8233amr27589439a91.34.1756383088324; Thu, 28 Aug 2025
+ 05:11:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
- kwepemf100013.china.huawei.com (7.202.181.12)
+References: <20250827075209.2347015-1-chuhu@redhat.com> <20250827075209.2347015-2-chuhu@redhat.com>
+ <87956f34-e6b0-4d03-b30e-56be4f6b84f1@redhat.com>
+In-Reply-To: <87956f34-e6b0-4d03-b30e-56be4f6b84f1@redhat.com>
+From: Chunyu Hu <chuhu@redhat.com>
+Date: Thu, 28 Aug 2025 20:11:17 +0800
+X-Gm-Features: Ac12FXy5i29Lv7D_Qeef2pLLf4cwbU_o5j8qeJDX_02H1KqJvRXEd1sgycpMGA0
+Message-ID: <CAKJHmxy_zT7kT5mz85OAbThcjYHHKoMRNwkdh8m+i94keQR2BQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] selftests/mm: fix hugepages cleanup too early
+To: David Hildenbrand <david@redhat.com>
+Cc: akpm@linux-foundation.org, shuah@kernel.org, linux-mm@kvack.org, 
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, vbabka@suse.cz, 
+	rppt@kernel.org, surenb@google.com, mhocko@suse.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Fix code style of missing a blank line before return.
+On Wed, Aug 27, 2025 at 7:41=E2=80=AFPM David Hildenbrand <david@redhat.com=
+> wrote:
+>
+> On 27.08.25 09:52, Chunyu Hu wrote:
+> > The nr_hugepgs variable is used to keep the original nr_hugepages at th=
+e
+> > hugepage setup step at test beginning. After userfaultfd test, a cleaup=
+ is
+> > executed, both /sys/kernel/mm/hugepages/hugepages-*/nr_hugepages and
+> > /proc/sys//vm/nr_hugepages are reset to 'original' value before userfau=
+ltfd
+> > test starts.
+> >
+> > Issue here is the value used to restore /proc/sys/vm/nr_hugepages is
+> > nr_hugepgs which is the initial value before the vm_runtests.sh runs, n=
+ot
+> > the value before userfaultfd test starts. 'va_high_addr_swith.sh' tests
+> > runs after that will possibly see no hugepages available for test, and =
+got
+> > EINVAL when mmap(HUGETLB), making the result invalid.
+> >
+> > And before pkey tests, nr_hugepgs is changed to be used as a temp varia=
+ble
+> > to save nr_hugepages before pkey test, and restore it after pkey tests
+> > finish. The original nr_hugepages value is not tracked anymore, so no w=
+ay
+> > to restore it after all tests finish.
+> >
+> > Add a new variable nr_hugepgs_origin to save the original nr_hugepages,=
+ and
+> > and restore it to nr_hugepages after all tests finish. And change to us=
+e
+> > the nr_hugepgs variable to save the /proc/sys/vm/nr_hugeages after huge=
+page
+> > setup, it's also the value before userfaultfd test starts, and the corr=
+ect
+> > value to be restored after userfaultfd finishes. The va_high_addr_switc=
+h.sh
+> > broken will be resolved.
+> >
+> > Signed-off-by: Chunyu Hu <chuhu@redhat.com>
+> > ---
+> >   tools/testing/selftests/mm/run_vmtests.sh | 9 +++++++--
+> >   1 file changed, 7 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/tools/testing/selftests/mm/run_vmtests.sh b/tools/testing/=
+selftests/mm/run_vmtests.sh
+> > index 471e539d82b8..f1a7ad3ec6a7 100755
+> > --- a/tools/testing/selftests/mm/run_vmtests.sh
+> > +++ b/tools/testing/selftests/mm/run_vmtests.sh
+> > @@ -172,13 +172,13 @@ fi
+> >
+> >   # set proper nr_hugepages
+> >   if [ -n "$freepgs" ] && [ -n "$hpgsize_KB" ]; then
+> > -     nr_hugepgs=3D$(cat /proc/sys/vm/nr_hugepages)
+> > +     nr_hugepgs_origin=3D$(cat /proc/sys/vm/nr_hugepages)
+>
+> I'd call this "orig_nr_hugepgs".
 
-Co-developed-by: Xin Guo <guoxin09@huawei.com>
-Signed-off-by: Xin Guo <guoxin09@huawei.com>
-Co-developed-by: Zhu Yikai <zhuyikai1@h-partners.com>
-Signed-off-by: Zhu Yikai <zhuyikai1@h-partners.com>
-Signed-off-by: Fan Gong <gongfan1@huawei.com>
----
- drivers/net/ethernet/huawei/hinic3/hinic3_lld.c     | 5 +++++
- drivers/net/ethernet/huawei/hinic3/hinic3_nic_cfg.c | 1 +
- drivers/net/ethernet/huawei/hinic3/hinic3_tx.c      | 2 ++
- 3 files changed, 8 insertions(+)
+Hi David,
 
-diff --git a/drivers/net/ethernet/huawei/hinic3/hinic3_lld.c b/drivers/net/ethernet/huawei/hinic3/hinic3_lld.c
-index 10477fb9cc34..3db8241a3b0c 100644
---- a/drivers/net/ethernet/huawei/hinic3/hinic3_lld.c
-+++ b/drivers/net/ethernet/huawei/hinic3/hinic3_lld.c
-@@ -122,6 +122,7 @@ static int hinic3_attach_aux_devices(struct hinic3_hwdev *hwdev)
- 			goto err_del_adevs;
- 	}
- 	mutex_unlock(&pci_adapter->pdev_mutex);
-+
- 	return 0;
- 
- err_del_adevs:
-@@ -133,6 +134,7 @@ static int hinic3_attach_aux_devices(struct hinic3_hwdev *hwdev)
- 		}
- 	}
- 	mutex_unlock(&pci_adapter->pdev_mutex);
-+
- 	return -ENOMEM;
- }
- 
-@@ -154,6 +156,7 @@ struct hinic3_hwdev *hinic3_adev_get_hwdev(struct auxiliary_device *adev)
- 	struct hinic3_adev *hadev;
- 
- 	hadev = container_of(adev, struct hinic3_adev, adev);
-+
- 	return hadev->hwdev;
- }
- 
-@@ -335,6 +338,7 @@ static int hinic3_probe_func(struct hinic3_pcidev *pci_adapter)
- 
- err_out:
- 	dev_err(&pdev->dev, "PCIe device probe function failed\n");
-+
- 	return err;
- }
- 
-@@ -367,6 +371,7 @@ static int hinic3_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- 
- err_out:
- 	dev_err(&pdev->dev, "PCIe device probe failed\n");
-+
- 	return err;
- }
- 
-diff --git a/drivers/net/ethernet/huawei/hinic3/hinic3_nic_cfg.c b/drivers/net/ethernet/huawei/hinic3/hinic3_nic_cfg.c
-index 9349b8a314ae..979f47ca77f9 100644
---- a/drivers/net/ethernet/huawei/hinic3/hinic3_nic_cfg.c
-+++ b/drivers/net/ethernet/huawei/hinic3/hinic3_nic_cfg.c
-@@ -112,6 +112,7 @@ int hinic3_set_port_mtu(struct net_device *netdev, u16 new_mtu)
- 	struct hinic3_hwdev *hwdev = nic_dev->hwdev;
- 
- 	func_tbl_cfg.mtu = new_mtu;
-+
- 	return hinic3_set_function_table(hwdev, BIT(L2NIC_FUNC_TBL_CFG_MTU),
- 					 &func_tbl_cfg);
- }
-diff --git a/drivers/net/ethernet/huawei/hinic3/hinic3_tx.c b/drivers/net/ethernet/huawei/hinic3/hinic3_tx.c
-index dea882260b11..92c43c05e3f2 100644
---- a/drivers/net/ethernet/huawei/hinic3/hinic3_tx.c
-+++ b/drivers/net/ethernet/huawei/hinic3/hinic3_tx.c
-@@ -116,6 +116,7 @@ static int hinic3_tx_map_skb(struct net_device *netdev, struct sk_buff *skb,
- 	}
- 	dma_unmap_single(&pdev->dev, dma_info[0].dma, dma_info[0].len,
- 			 DMA_TO_DEVICE);
-+
- 	return err;
- }
- 
-@@ -601,6 +602,7 @@ netdev_tx_t hinic3_xmit_frame(struct sk_buff *skb, struct net_device *netdev)
- 
- err_drop_pkt:
- 	dev_kfree_skb_any(skb);
-+
- 	return NETDEV_TX_OK;
- }
- 
--- 
-2.43.0
+Thank you for your review and valuable feedback. I will rename it with
+a v2 and resend the two patches. Do you have suggestions on patch 2?
+
+>
+> But it's a shame that the naming is then out of sync with nr_size_hugepgs=
+?
+
+nr_size_hugepgs is for uffd-wp-mremap, the test need all sizes hugepages,
+it's used to save and restore the nr_hugepagees of all sizes of hugepages,
+it's a test case setup, not like nr_hugepgs which is a global/general setup=
+.
+They are not the same kind, maybe they don't need to be aligned...
+
+>
+>
+> >       needpgs=3D$((needmem_KB / hpgsize_KB))
+> >       tries=3D2
+> >       while [ "$tries" -gt 0 ] && [ "$freepgs" -lt "$needpgs" ]; do
+> >               lackpgs=3D$((needpgs - freepgs))
+> >               echo 3 > /proc/sys/vm/drop_caches
+> > -             if ! echo $((lackpgs + nr_hugepgs)) > /proc/sys/vm/nr_hug=
+epages; then
+> > +             if ! echo $((lackpgs + nr_hugepgs_origin)) > /proc/sys/vm=
+/nr_hugepages; then
+> >                       echo "Please run this test as root"
+> >                       exit $ksft_skip
+> >               fi
+> > @@ -189,6 +189,7 @@ if [ -n "$freepgs" ] && [ -n "$hpgsize_KB" ]; then
+> >               done < /proc/meminfo
+> >               tries=3D$((tries - 1))
+> >       done
+> > +     nr_hugepgs=3D$(cat /proc/sys/vm/nr_hugepages)
+> >       if [ "$freepgs" -lt "$needpgs" ]; then
+> >               printf "Not enough huge pages available (%d < %d)\n" \
+> >                      "$freepgs" "$needpgs"
+> > @@ -532,6 +533,10 @@ CATEGORY=3D"page_frag" run_test ./test_page_frag.s=
+h aligned
+> >
+> >   CATEGORY=3D"page_frag" run_test ./test_page_frag.sh nonaligned
+> >
+> > +if [ "${HAVE_HUGEPAGES}" =3D 1 ]; then
+> > +     echo "$nr_hugepgs_origin" > /proc/sys/vm/nr_hugepages
+> > +fi
+>
+> FWIW, I think the tests should maybe be doing that
+> (save+configure+restore) themselves, like we do with THP settings through=
+.
+>
+> thp_save_settings()
+> thp_write_settings()
+>
+> and friends.
+>
+> This is not really something run_vmtests.sh should bother with.
+>
+> A bigger rework, though ...
+
+Totally agree, with the c interface to do that is better. then the
+vm_runtest.sh would  be clean. It's a bigger rework outside of this topic..=
+.
+
+>
+> --
+> Cheers
+>
+> David / dhildenb
+>
+
+
+--
+----
+Thanks,
+Chunyu Hu
 
 
