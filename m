@@ -1,162 +1,300 @@
-Return-Path: <linux-kernel+bounces-789047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789046-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8DF3B39045
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 02:53:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53BCEB3903F
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 02:53:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 992181C20119
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 00:53:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09B233B24A9
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 00:53:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 025041C4A13;
-	Thu, 28 Aug 2025 00:53:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB30372626;
+	Thu, 28 Aug 2025 00:53:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="IjykoAQq"
-Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="AxwgS449"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7116A3FC2;
-	Thu, 28 Aug 2025 00:53:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E0803FC2
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 00:52:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756342389; cv=none; b=Tg/eDV/d1GEploKvDHSbsfsms2UG6JTdLGnCd7JE4MQHTlcPlRAHpohrMs4GgUCE5tw1vancN05yHjHSd4Dc+qOqSxlEt59C3RPWylcViE0l+MuIvTuAQ6jTsJAgJAX6rIFCFGXKq+bKiHSqbLXEK79XczhMiAln9Q0e91xqEwA=
+	t=1756342379; cv=none; b=YA8A5PaHyQlW/pPqhnmjLNJOwJm2jrhKembxlL4lw+4GF9mD60u6/Ig80Ghdh6UxXAvQMbcxz9eXxRoCTzp9hIBRPbNr9a6vW2kAPCcprJaUtPqyMoDEC+2BFBQNnUaDug2dmu6hNatdOmLp42tWbu1u0Pn+nzGrUeOJCjRVjoU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756342389; c=relaxed/simple;
-	bh=gQf+PWyp6TnihmKGlYeBwS7O4NsUMz9RyWp5vamaK7k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rgevz27IskneTFawO0kSjhyxIVvR+DZdiZweMSnovyK0t1oR9A5Yywgy3DKMq/NH6Y+fYUUC2f9JdyNOka87i8qI6wrJCf2ucHEO77+NNJtMNRgomfP136MT0gDVKxk0odgeHy2u8mDlGk/1D1iyzidiTX7KK1TATz021fdAXu8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=IjykoAQq; arc=none smtp.client-ip=80.241.56.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4cC2v30ggvz9tQQ;
-	Thu, 28 Aug 2025 02:53:03 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
-	t=1756342383;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+nkOVSTJeGMrXnWxpGpCSqeWsWiSvBuOe+MZ2w3etRU=;
-	b=IjykoAQqWYQXRZz4Xn49InWy8P9wskh17pgP4b5aQ35Z4D48ODkQay3K09Nob+X0BaCp5w
-	jx41jaJ3Pf4M4/zNR86ugRZyrBFQBOmqAz7N2Vc8wnCBwbhJfmrepDjg2a+QwFGu5MtyM3
-	AZXaxFlqcyiBbZF1N0gw0ePo6/JX/AlNJNc5i0mNd1z0ywmkgvv10Xcl264sTwtfm5HIf6
-	Bhk1QJuKol+hI+LYmKQY1NzQfmoU56kcgEdeZ0FMIn4FxaccZTisU/zeeS7124dztDMfsg
-	CAVgyvvwhy1GjpX3yvVhmPcNAIVUgynEHOeMCnvZTjgATZFrlOa2yqTcEls94w==
-Authentication-Results: outgoing_mbo_mout;
-	dkim=none;
-	spf=pass (outgoing_mbo_mout: domain of cyphar@cyphar.com designates 2001:67c:2050:b231:465::2 as permitted sender) smtp.mailfrom=cyphar@cyphar.com
-Date: Thu, 28 Aug 2025 10:52:42 +1000
-From: Aleksa Sarai <cyphar@cyphar.com>
-To: Andy Lutomirski <luto@kernel.org>
-Cc: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, 
-	Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, 
-	Kees Cook <keescook@chromium.org>, Paul Moore <paul@paul-moore.com>, 
-	Serge Hallyn <serge@hallyn.com>, Arnd Bergmann <arnd@arndb.de>, 
-	Christian Heimes <christian@python.org>, Dmitry Vyukov <dvyukov@google.com>, 
-	Elliott Hughes <enh@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
-	Florian Weimer <fweimer@redhat.com>, Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Jordan R Abrahams <ajordanr@google.com>, 
-	Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, Luca Boccassi <bluca@debian.org>, 
-	Matt Bobrowski <mattbobrowski@google.com>, Miklos Szeredi <mszeredi@redhat.com>, 
-	Mimi Zohar <zohar@linux.ibm.com>, Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>, 
-	Robert Waite <rowait@microsoft.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
-	Scott Shell <scottsh@microsoft.com>, Steve Dower <steve.dower@python.org>, 
-	Steve Grubb <sgrubb@redhat.com>, kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org
-Subject: Re: [RFC PATCH v1 0/2] Add O_DENY_WRITE (complement AT_EXECVE_CHECK)
-Message-ID: <2025-08-28-alert-groggy-mugs-lapse-IWqeR7@cyphar.com>
-References: <20250822170800.2116980-1-mic@digikod.net>
- <20250826-skorpion-magma-141496988fdc@brauner>
- <20250826.aig5aiShunga@digikod.net>
- <2025-08-27-obscene-great-toy-diary-X1gVRV@cyphar.com>
- <CALCETrWHKga33bvzUHnd-mRQUeNXTtXSS8Y8+40d5bxv-CqBhw@mail.gmail.com>
+	s=arc-20240116; t=1756342379; c=relaxed/simple;
+	bh=hP9AtsgfQq95XL8KbbOQiBOjpvpmewmOKS0x/w8n5QE=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=mm+U2Zbf8gWmysfwOsysJBBEFZaWbboRvx+dYLXTi+h7vdbsRgBAXJLQV+eLuFJhrhi39NyVIAp0d+ZV8vlPBoeGUEP0cgn9B2QxtWYIerMJhSRnCtDUQoAC6PpEUHl959GSK8W05il1fJBQ3Xs8vKSsQXorjliiVu6rpSVQsoQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=AxwgS449; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-32326e72dfbso550136a91.3
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 17:52:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1756342377; x=1756947177; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:reply-to:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=irNn6RHlqL0J00QTOKsI47MRlXNhAxvQVf7HLq/M30Q=;
+        b=AxwgS449n6TUv3o0Qb08VPGKeq7S8z8YjoIsQ9sGPYY1i56Ka01KiTpe+G1tSgP46B
+         RtoqFe/K9YFswrLksQ/wxdRI4mguA3M5xxb+5bU3IVlNJ1ia0AFbZKTPg9EcH+ZE8Dx8
+         9t1yL0CV0iY8ZEelZyDIvAoyO8viHPX91LL7CSd2jX+aQMW1c9LlFhjR62uGctuLpdjv
+         1XzzNkSHRe6jfEgoWeXH4QHnFCLXxf9W9lA16np1XWxY9ZPCF3Cidc0ktxPJgcxwX6Rl
+         gNDFaP1Q8BSgJdZxUSskrmHrTKnr+3Dky9/8ILo1vgXoXphp5CFZPXFZJ8g4Xm5AMFV4
+         UUnQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756342377; x=1756947177;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:reply-to:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=irNn6RHlqL0J00QTOKsI47MRlXNhAxvQVf7HLq/M30Q=;
+        b=Dwd8ccliyZ50jvUWYaGuqe07M/N4ol1uzN8T3JpIL9l3yJIy8IvGj2O2soih5p+H8r
+         I6CiVGjxOkqtOqCzVPMzPNH4PtlLJLx2FVTe9g4Mk/Z7lRRNwEyZo2oDal0bVpoAmEJr
+         K4Pbr7oH7LkG8+etgFGFRxVcWjBJbG6m02fG99LM45wTDnrTUPLFdyuafAHRIOFMkBEy
+         //KRY6B7jifDnmLgh2PxfF/cfbjuFYirfWm7m4D1yPrvdyqH0kvMxJiugtFgHVlQ8ZBm
+         E5Rqu0JlvSMrcgBSDBgHHppswJX5GO9ZT9TS/wADARxdF0b64KW1x2faSj11WGNbymar
+         Wnow==
+X-Forwarded-Encrypted: i=1; AJvYcCXTDM56jvGEJhmEtTz942gINYtOt3m/XcjfDjWvLKHfTq+v1E+L43KboOjSdxjs2GEOrqfQe9jHBiiYEkg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxh+4g8lHCNXxT6fMtQxgfOw49G8dWb3SDFhdPAfmWSapI9Wyiu
+	6+wswn5MEhS6XwTKonbouFerF4j3bYV7tKkls205JfxWiSOsEzibml0NGZN1skYfAcdrWCPOIQy
+	aGNbXTg==
+X-Google-Smtp-Source: AGHT+IHt7P0JRuIxkyuhMtcRuoYgVEa/bjXE8XDrfVMIIpj6JBOODrH9g1XtpZ/DNC/LKBu7QAscZ/Ixosk=
+X-Received: from pjbsw12.prod.google.com ([2002:a17:90b:2c8c:b0:323:25d2:22db])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3948:b0:325:46f4:4f6e
+ with SMTP id 98e67ed59e1d1-32546f450b5mr22920425a91.32.1756342376735; Wed, 27
+ Aug 2025 17:52:56 -0700 (PDT)
+Reply-To: Sean Christopherson <seanjc@google.com>
+Date: Wed, 27 Aug 2025 17:52:49 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="t3uldpk5vmc35wcr"
-Content-Disposition: inline
-In-Reply-To: <CALCETrWHKga33bvzUHnd-mRQUeNXTtXSS8Y8+40d5bxv-CqBhw@mail.gmail.com>
-X-Rspamd-Queue-Id: 4cC2v30ggvz9tQQ
-
-
---t3uldpk5vmc35wcr
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.0.268.g9569e192d0-goog
+Message-ID: <20250828005249.39339-1-seanjc@google.com>
+Subject: [PATCH v2] x86/kvm: Force legacy PCI hole to UC when overriding MTRRs
+ for TDX/SNP
+From: Sean Christopherson <seanjc@google.com>
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Peter Gonda <pgonda@google.com>, Vitaly Kuznetsov <vkuznets@redhat.com>, 
+	Tom Lendacky <thomas.lendacky@amd.com>, 
+	"=?UTF-8?q?J=C3=BCrgen=20Gro=C3=9F?=" <jgross@suse.com>, Korakit Seemakhupt <korakit@google.com>, Jianxiong Gao <jxgao@google.com>, 
+	Nikolay Borisov <nik.borisov@suse.com>, Binbin Wu <binbin.wu@linux.intel.com>, 
+	Sean Christopherson <seanjc@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [RFC PATCH v1 0/2] Add O_DENY_WRITE (complement AT_EXECVE_CHECK)
-MIME-Version: 1.0
 
-On 2025-08-27, Andy Lutomirski <luto@kernel.org> wrote:
-> On Wed, Aug 27, 2025 at 5:14=E2=80=AFPM Aleksa Sarai <cyphar@cyphar.com> =
-wrote:
-> >
-> > On 2025-08-26, Micka=C3=ABl Sala=C3=BCn <mic@digikod.net> wrote:
-> > > On Tue, Aug 26, 2025 at 11:07:03AM +0200, Christian Brauner wrote:
-> > > > Nothing has changed in that regard and I'm not interested in stuffi=
-ng
-> > > > the VFS APIs full of special-purpose behavior to work around the fa=
-ct
-> > > > that this is work that needs to be done in userspace. Change the ap=
-ps,
-> > > > stop pushing more and more cruft into the VFS that has no business
-> > > > there.
-> > >
-> > > It would be interesting to know how to patch user space to get the sa=
-me
-> > > guarantees...  Do you think I would propose a kernel patch otherwise?
-> >
-> > You could mmap the script file with MAP_PRIVATE. This is the *actual*
-> > protection the kernel uses against overwriting binaries (yes, ETXTBSY is
-> > nice but IIRC there are ways to get around it anyway).
->=20
-> Wait, really?  MAP_PRIVATE prevents writes to the mapping from
-> affecting the file, but I don't think that writes to the file will
-> break the MAP_PRIVATE CoW if it's not already broken.
+When running as an SNP or TDX guest under KVM, force the legacy PCI hole,
+i.e. memory between Top of Lower Usable DRAM and 4GiB, to be mapped as UC
+via a forced variable MTRR range.
 
-Oh I guess you're right -- that's news to me. And from mmap(2):
+In most KVM-based setups, legacy devices such as the HPET and TPM are
+enumerated via ACPI.  ACPI enumeration includes a Memory32Fixed entry, and
+optionally a SystemMemory descriptor for an OperationRegion, e.g. if the
+device needs to be accessed via a Control Method.
 
-> MAP_PRIVATE
-> [...] It is unspecified whether changes made to the file after the
-> mmap() call are visible in the mapped region.
+If a SystemMemory entry is present, then the kernel's ACPI driver will
+auto-ioremap the region so that it can be accessed at will.  However, the
+ACPI spec doesn't provide a way to enumerate the memory type of
+SystemMemory regions, i.e. there's no way to tell software that a region
+must be mapped as UC vs. WB, etc.  As a result, Linux's ACPI driver always
+maps SystemMemory regions using ioremap_cache(), i.e. as WB on x86.
 
-But then what is the protection mechanism (in the absence of -ETXTBSY)
-that stops you from overwriting the live text of a binary by just
-writing to it?
+The dedicated device drivers however, e.g. the HPET driver and TPM driver,
+want to map their associated memory as UC or WC, as accessing PCI devices
+using WB is unsupported.
 
-I would need to go trawling through my old scripts to find the
-reproducer that let you get around -ETXTBSY (I think it involved
-executable memfds) but I distinctly remember that even if you overwrote
-the binary you would not see the live process's mapped mm change value.
-(Ditto for the few kernels when we removed -ETXTBSY.) I found this
-surprising, but assumed that it was because of MAP_PRIVATE.
+On bare metal and non-CoCO, the conflicting requirements "work" as firmware
+configures the PCI hole (and other device memory) to be UC in the MTRRs.
+So even though the ACPI mappings request WB, they are forced to UC due to
+the kernel properly handling the MTRR overrides, and thus are compatible
+with the drivers' requested WC/UC-.
 
+With force WB MTRRs on SNP and TDX guests, the ACPI mappings get their
+requested WB if the ACPI mappings are established before the dedicated
+driver code attempts to initialize the device.  E.g. if acpi_init()
+runs before the corresponding device driver is probed, ACPI's WB mapping
+will "win", and result in the driver's ioremap() failing because the
+existing WB mapping isn't compatible with the requested WC/UC-.
+
+E.g. when a TPM is emulated by the hypervisor (ignoring the security
+implications of relying on what is allegedly an untrusted entity to store
+measurements), the TPM driver will request UC and fail:
+
+  [  1.730459] ioremap error for 0xfed40000-0xfed45000, requested 0x2, got =
+0x0
+  [  1.732780] tpm_tis MSFT0101:00: probe with driver tpm_tis failed with e=
+rror -12
+
+Note, the '0x2' and '0x0' values refer to "enum page_cache_mode", not x86's
+memtypes (which frustratingly are an almost pure inversion; 2 =3D=3D WB, 0 =
+=3D=3D UC).
+E.g. tracing mapping requests for TPM TIS yields:
+
+ Mapping TPM TIS with req_type =3D 0
+ WARNING: CPU: 22 PID: 1 at arch/x86/mm/pat/memtype.c:530 memtype_reserve+0=
+x2ab/0x460
+ Modules linked in:
+ CPU: 22 UID: 0 PID: 1 Comm: swapper/0 Tainted: G        W           6.16.0=
+-rc7+ #2 VOLUNTARY
+ Tainted: [W]=3DWARN
+ Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Go=
+ogle 05/29/2025
+ RIP: 0010:memtype_reserve+0x2ab/0x460
+  __ioremap_caller+0x16d/0x3d0
+  ioremap_cache+0x17/0x30
+  x86_acpi_os_ioremap+0xe/0x20
+  acpi_os_map_iomem+0x1f3/0x240
+  acpi_os_map_memory+0xe/0x20
+  acpi_ex_system_memory_space_handler+0x273/0x440
+  acpi_ev_address_space_dispatch+0x176/0x4c0
+  acpi_ex_access_region+0x2ad/0x530
+  acpi_ex_field_datum_io+0xa2/0x4f0
+  acpi_ex_extract_from_field+0x296/0x3e0
+  acpi_ex_read_data_from_field+0xd1/0x460
+  acpi_ex_resolve_node_to_value+0x2ee/0x530
+  acpi_ex_resolve_to_value+0x1f2/0x540
+  acpi_ds_evaluate_name_path+0x11b/0x190
+  acpi_ds_exec_end_op+0x456/0x960
+  acpi_ps_parse_loop+0x27a/0xa50
+  acpi_ps_parse_aml+0x226/0x600
+  acpi_ps_execute_method+0x172/0x3e0
+  acpi_ns_evaluate+0x175/0x5f0
+  acpi_evaluate_object+0x213/0x490
+  acpi_evaluate_integer+0x6d/0x140
+  acpi_bus_get_status+0x93/0x150
+  acpi_add_single_object+0x43a/0x7c0
+  acpi_bus_check_add+0x149/0x3a0
+  acpi_bus_check_add_1+0x16/0x30
+  acpi_ns_walk_namespace+0x22c/0x360
+  acpi_walk_namespace+0x15c/0x170
+  acpi_bus_scan+0x1dd/0x200
+  acpi_scan_init+0xe5/0x2b0
+  acpi_init+0x264/0x5b0
+  do_one_initcall+0x5a/0x310
+  kernel_init_freeable+0x34f/0x4f0
+  kernel_init+0x1b/0x200
+  ret_from_fork+0x186/0x1b0
+  ret_from_fork_asm+0x1a/0x30
+  </TASK>
+
+The above traces are from a Google-VMM based VM, but the same behavior
+happens with a QEMU based VM that is modified to add a SystemMemory range
+for the TPM TIS address space.
+
+The only reason this doesn't cause problems for HPET, which appears to
+require a SystemMemory region, is because HPET gets special treatment via
+x86_init.timers.timer_init(), and so gets a chance to create its UC-
+mapping before acpi_init() clobbers things.  Disabling the early call to
+hpet_time_init() yields the same behavior for HPET:
+
+  [  0.318264] ioremap error for 0xfed00000-0xfed01000, requested 0x2, got =
+0x0
+
+Hack around the ACPI gap by forcing the legacy PCI hole to UC when
+overriding the (virtual) MTRRs for CoCo guest, so that ioremap handling
+of MTRRs naturally kicks in and forces the ACPI mappings to be UC.
+
+Note, the requested/mapped memtype doesn't actually matter in terms of
+accessing the device.  In practically every setup, legacy PCI devices are
+emulated by the hypervisor, and accesses are intercepted and handled as
+emulated MMIO, i.e. never access physical memory and thus don't have an
+effective memtype.
+
+Even in a theoretical setup where such devices are passed through by the
+host, i.e. point at real MMIO memory, it is KVM's (as the hypervisor)
+responsibility to force the memory to be WC/UC, e.g. via EPT memtype
+under TDX or real hardware MTRRs under SNP.  Not doing so cannot work,
+and the hypervisor is highly motivated to do the right thing as letting
+the guest access hardware MMIO with WB would likely result in a variety
+of fatal #MCs.
+
+In other words, forcing the range to be UC is all about coercing the
+kernel's tracking into thinking that it has established UC mappings, so
+that the ioremap code doesn't reject mappings from e.g. the TPM driver and
+thus prevent the driver from loading and the device from functioning.
+
+Note #2, relying on guest firmware to handle this scenario, e.g. by setting
+virtual MTRRs and then consuming them in Linux, is not a viable option, as
+the virtual MTRR state is managed by the untrusted hypervisor, and because
+OVMF at least has stopped programming virtual MTRRs when running as a TDX
+guest.
+
+Link: https://lore.kernel.org/all/8137d98e-8825-415b-9282-1d2a115bb51a@linu=
+x.intel.com
+Fixes: 8e690b817e38 ("x86/kvm: Override default caching mode for SEV-SNP an=
+d TDX")
+Cc: stable@vger.kernel.org
+Cc: Peter Gonda <pgonda@google.com>
+Cc: Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: J=C3=BCrgen Gro=C3=9F <jgross@suse.com>
+Cc: Korakit Seemakhupt <korakit@google.com>
+Cc: Jianxiong Gao <jxgao@google.com>
+Cc: Nikolay Borisov <nik.borisov@suse.com>
+Suggested-by: Binbin Wu <binbin.wu@linux.intel.com>
+Signed-off-by: Sean Christopherson <seanjc@google.com>
+---
+
+v2: Force the PCI hole to be UC via synthetic variable MTRR range instead
+    of hijacking is_untracked_pat_range() (which was horrific and apparentl=
+y
+    didn't work). [Binbin]
+
+v1:
+ - https://lore.kernel.org/all/20250201005048.657470-1-seanjc@google.com
+ - https://lore.kernel.org/all/CAMGD6P1Q9tK89AjaPXAVvVNKtD77-zkDr0Kmrm29+e=
+=3Di+R+33w@mail.gmail.com
+
+ arch/x86/kernel/kvm.c | 21 +++++++++++++++++++--
+ 1 file changed, 19 insertions(+), 2 deletions(-)
+
+diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
+index 8ae750cde0c6..57379698015e 100644
+--- a/arch/x86/kernel/kvm.c
++++ b/arch/x86/kernel/kvm.c
+@@ -933,6 +933,19 @@ static void kvm_sev_hc_page_enc_status(unsigned long p=
+fn, int npages, bool enc)
+=20
+ static void __init kvm_init_platform(void)
+ {
++	u64 tolud =3D PFN_PHYS(e820__end_of_low_ram_pfn());
++	/*
++	 * Note, hardware requires variable MTRR ranges to be power-of-2 sized
++	 * and naturally aligned.  But when forcing guest MTRR state, Linux
++	 * doesn't program the forced ranges into hardware.  Don't bother doing
++	 * the math to generate a technically-legal range.
++	 */
++	struct mtrr_var_range pci_hole =3D {
++		.base_lo =3D tolud | X86_MEMTYPE_UC,
++		.mask_lo =3D (u32)(~(SZ_4G - tolud - 1)) | MTRR_PHYSMASK_V,
++		.mask_hi =3D (BIT_ULL(boot_cpu_data.x86_phys_bits) - 1) >> 32,
++	};
++
+ 	if (cc_platform_has(CC_ATTR_GUEST_MEM_ENCRYPT) &&
+ 	    kvm_para_has_feature(KVM_FEATURE_MIGRATION_CONTROL)) {
+ 		unsigned long nr_pages;
+@@ -982,8 +995,12 @@ static void __init kvm_init_platform(void)
+ 	kvmclock_init();
+ 	x86_platform.apic_post_init =3D kvm_apic_init;
+=20
+-	/* Set WB as the default cache mode for SEV-SNP and TDX */
+-	guest_force_mtrr_state(NULL, 0, MTRR_TYPE_WRBACK);
++	/*
++	 * Set WB as the default cache mode for SEV-SNP and TDX, with a single
++	 * UC range for the legacy PCI hole, e.g. so that devices that expect
++	 * to get UC/WC mappings don't get surprised with WB.
++	 */
++	guest_force_mtrr_state(&pci_hole, 1, MTRR_TYPE_WRBACK);
+ }
+=20
+ #if defined(CONFIG_AMD_MEM_ENCRYPT)
+
+base-commit: 1b237f190eb3d36f52dffe07a40b5eb210280e00
 --=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-https://www.cyphar.com/
+2.51.0.268.g9569e192d0-goog
 
---t3uldpk5vmc35wcr
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJEEABYKADkWIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCaK+oWhsUgAAAAAAEAA5t
-YW51MiwyLjUrMS4xMSwyLDIACgkQKJf60rfpRG9YOwD+IgeIsIsIT209gc6p0UJ+
-RpiujJ3PHk79u8piCbNs9GIA/2I0ge/RGvNochLLI17BW1sMdgZdclwN/rf+cUxC
-cnwF
-=FhJ0
------END PGP SIGNATURE-----
-
---t3uldpk5vmc35wcr--
 
