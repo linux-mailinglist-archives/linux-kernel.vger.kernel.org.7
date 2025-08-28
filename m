@@ -1,106 +1,155 @@
-Return-Path: <linux-kernel+bounces-790738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9789B3AC68
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 23:05:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CF66B3AC6D
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 23:06:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 983355E712E
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 21:05:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0D56173FC5
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 21:05:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 359972DC323;
-	Thu, 28 Aug 2025 21:01:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AsCzelU7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C8D330F552;
+	Thu, 28 Aug 2025 21:01:18 +0000 (UTC)
+Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B797299A94;
-	Thu, 28 Aug 2025 21:01:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 901DB29ACC0;
+	Thu, 28 Aug 2025 21:01:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756414860; cv=none; b=aVAzMvZwP3MRLHP0LLS0XS/dhdbsSjPMZbUnftb0PusWF0gf9eFqqsbeUTAqK65mqcZbNib6/r4kIMdPgcDpgvc/SI/TijeKPUicFTxlzMlg9nRROUGLubGDR5qc9JOUrlVfLRwm06He222MO5o+fcCSUrH+lHn9/o7LB7U1M5Y=
+	t=1756414878; cv=none; b=QTqNnjJSUjoU3Qb6rYsgkiiIzXnbiEUFU5zxWrGCnyfcSWWElUxN+oQ0x9VeH+gjjPxcaAhFRuYovLku2IR0iyI3ebBxnsXftzBbgHKuTIdFHbyTQ/agsSkjhEJrVhtsM6KUoc+Qi0mol9sHTEeQhh6d/IlrHaZiKu9X9QRJn5w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756414860; c=relaxed/simple;
-	bh=5irYHIaOSLtfrL3dC6NTgTbspmjfB5YRutxHPAIurJY=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=qTkSc8SpQB3Xhrkc5NK9Qx91RixcUmFZOsTLrIiJDQWHHLsa0IwFSm0AfLfw46IpEEHDrcq8wCBIy+0TZLYro537kFHHBFP1MuJli2v63Uo6e+nNbmz0NQIpP6LJ6WaAZFjYJu6C7HQWol8HYRyAiedAp8sh+azIaVw7DyTeOBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AsCzelU7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40E61C4CEF5;
-	Thu, 28 Aug 2025 21:00:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756414860;
-	bh=5irYHIaOSLtfrL3dC6NTgTbspmjfB5YRutxHPAIurJY=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=AsCzelU71JSWT71qkQ/6atyY3DOFW72fuxUcKIFJcrV2yr23brhHn9ejfNiOUSCdy
-	 cnRcFAeF34fkbPlfprs+eimAGBTSo9C3HUUz92QWcGMArM7XmUpIRT8UI8anwSkOOy
-	 mDiy5m5onfBbPV9Em6EUAlBdMtLOKHO7D+WUcaJwEP52pKkivVQqDBMPz+X3TJyRhR
-	 NyQPXsvJZvMfxRCDFkjPk8W4FzKHaouvnH+iYnCYCOFMU//MN4UaOFqnCCFR170gWB
-	 drcGVWf6A8OfPb7BusnRiyg0axfIMMWKiIUXMMPcQ/rZq8r+8nXFUxmlYzJRMHrB/J
-	 SWPny1TWZ2VkA==
-From: Mark Brown <broonie@kernel.org>
-To: linux-spi@vger.kernel.org, Rosen Penev <rosenp@gmail.com>
-Cc: j4g8y7@gmail.com, linux-kernel@vger.kernel.org
-In-Reply-To: <20250826212413.15065-1-rosenp@gmail.com>
-References: <20250826212413.15065-1-rosenp@gmail.com>
-Subject: Re: [PATCHv2 0/3] add COMPILE_TEST support
-Message-Id: <175641485903.364382.15277195547103842587.b4-ty@kernel.org>
-Date: Thu, 28 Aug 2025 23:00:59 +0200
+	s=arc-20240116; t=1756414878; c=relaxed/simple;
+	bh=6fkQFSGQvqVzVgsB612AOtefqBcF6RpXwcdHFKAEcMM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=prATWFMGa4AvuUVoyRyklW74gRF4niHRLRmQOzVpZSwFTvPl0+jZR2y3FXCj8flr+u8rhgBD2vIBgjNssUJoWXLZUpi46ZSNpxoEPP98fNl2LYT3i/YrbBA3hlciiggqUwWBMajIvR6CdlmvomDS+damYOKNm1fUTupa7VXssWA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com; spf=pass smtp.mailfrom=mail.hallyn.com; arc=none smtp.client-ip=178.63.66.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.hallyn.com
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+	id A988F201; Thu, 28 Aug 2025 16:01:07 -0500 (CDT)
+Date: Thu, 28 Aug 2025 16:01:07 -0500
+From: "Serge E. Hallyn" <serge@hallyn.com>
+To: Andy Lutomirski <luto@kernel.org>
+Cc: Aleksa Sarai <cyphar@cyphar.com>,
+	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+	Christian Brauner <brauner@kernel.org>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Kees Cook <keescook@chromium.org>, Paul Moore <paul@paul-moore.com>,
+	Serge Hallyn <serge@hallyn.com>, Arnd Bergmann <arnd@arndb.de>,
+	Christian Heimes <christian@python.org>,
+	Dmitry Vyukov <dvyukov@google.com>, Elliott Hughes <enh@google.com>,
+	Fan Wu <wufan@linux.microsoft.com>,
+	Florian Weimer <fweimer@redhat.com>, Jann Horn <jannh@google.com>,
+	Jeff Xu <jeffxu@google.com>, Jonathan Corbet <corbet@lwn.net>,
+	Jordan R Abrahams <ajordanr@google.com>,
+	Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+	Luca Boccassi <bluca@debian.org>,
+	Matt Bobrowski <mattbobrowski@google.com>,
+	Miklos Szeredi <mszeredi@redhat.com>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>,
+	Robert Waite <rowait@microsoft.com>,
+	Roberto Sassu <roberto.sassu@huawei.com>,
+	Scott Shell <scottsh@microsoft.com>,
+	Steve Dower <steve.dower@python.org>,
+	Steve Grubb <sgrubb@redhat.com>,
+	kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: Re: [RFC PATCH v1 0/2] Add O_DENY_WRITE (complement AT_EXECVE_CHECK)
+Message-ID: <aLDDk4x7QBKxLmoi@mail.hallyn.com>
+References: <20250822170800.2116980-1-mic@digikod.net>
+ <20250826-skorpion-magma-141496988fdc@brauner>
+ <20250826.aig5aiShunga@digikod.net>
+ <2025-08-27-obscene-great-toy-diary-X1gVRV@cyphar.com>
+ <CALCETrWHKga33bvzUHnd-mRQUeNXTtXSS8Y8+40d5bxv-CqBhw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-a9b2a
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CALCETrWHKga33bvzUHnd-mRQUeNXTtXSS8Y8+40d5bxv-CqBhw@mail.gmail.com>
 
-On Tue, 26 Aug 2025 14:24:10 -0700, Rosen Penev wrote:
-> Allows the buildbots to test compilation. The driver has nothing
-> architecture specific.
+On Wed, Aug 27, 2025 at 05:32:02PM -0700, Andy Lutomirski wrote:
+> On Wed, Aug 27, 2025 at 5:14 PM Aleksa Sarai <cyphar@cyphar.com> wrote:
+> >
+> > On 2025-08-26, Mickaël Salaün <mic@digikod.net> wrote:
+> > > On Tue, Aug 26, 2025 at 11:07:03AM +0200, Christian Brauner wrote:
+> > > > Nothing has changed in that regard and I'm not interested in stuffing
+> > > > the VFS APIs full of special-purpose behavior to work around the fact
+> > > > that this is work that needs to be done in userspace. Change the apps,
+> > > > stop pushing more and more cruft into the VFS that has no business
+> > > > there.
+> > >
+> > > It would be interesting to know how to patch user space to get the same
+> > > guarantees...  Do you think I would propose a kernel patch otherwise?
+> >
+> > You could mmap the script file with MAP_PRIVATE. This is the *actual*
+> > protection the kernel uses against overwriting binaries (yes, ETXTBSY is
+> > nice but IIRC there are ways to get around it anyway).
 > 
-> v2: change to patch series and add extra patches
+> Wait, really?  MAP_PRIVATE prevents writes to the mapping from
+> affecting the file, but I don't think that writes to the file will
+> break the MAP_PRIVATE CoW if it's not already broken.
 > 
-> Rosen Penev (3):
->   spi: rb4xx: depend on OF
->   spi: rb4xx: add COMPILE_TEST support
->   spi: rb4xx: use devm for clk_prepare_enable
+> IPython says:
 > 
-> [...]
+> In [1]: import mmap, tempfile
+> 
+> In [2]: f = tempfile.TemporaryFile()
+> 
+> In [3]: f.write(b'initial contents')
+> Out[3]: 16
+> 
+> In [4]: f.flush()
+> 
+> In [5]: map = mmap.mmap(f.fileno(), f.tell(), flags=mmap.MAP_PRIVATE,
+> prot=mmap.PROT_READ)
+> 
+> In [6]: map[:]
+> Out[6]: b'initial contents'
+> 
+> In [7]: f.seek(0)
+> Out[7]: 0
+> 
+> In [8]: f.write(b'changed')
+> Out[8]: 7
+> 
+> In [9]: f.flush()
+> 
+> In [10]: map[:]
+> Out[10]: b'changed contents'
 
-Applied to
+That was surprising to me, however, if I split the reader
+and writer into different processes, so
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+P1:
+f = open("/tmp/3", "w")
+f.write('initial contents')
+f.flush()
 
-Thanks!
+P2:
+import mmap
+f = open("/tmp/3", "r")
+map = mmap.mmap(f.fileno(), f.tell(), flags=mmap.MAP_PRIVATE, prot=mmap.PROT_READ)
 
-[1/3] spi: rb4xx: depend on OF
-      commit: c73c378dc05ba8060558b9b50e37f3afa4763ea1
-[2/3] spi: rb4xx: add COMPILE_TEST support
-      commit: f18f0ac5331f8f13737e87cc1416837fb5b27b0a
-[3/3] spi: rb4xx: use devm for clk_prepare_enable
-      commit: ff9a7857b7848227788f113d6dc6a72e989084e0
+Back to P1:
+f.seek(0)
+f.write('changed')
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+Back to P2:
+map[:]
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+Then P2 gives me:
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+b'initial contents'
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+-serge
 
