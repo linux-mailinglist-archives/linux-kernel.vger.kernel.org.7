@@ -1,255 +1,118 @@
-Return-Path: <linux-kernel+bounces-789254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71793B392D2
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 07:13:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44F26B392D4
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 07:18:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 31B83367534
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 05:13:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2DC657B0B08
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 05:16:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8956E266B40;
-	Thu, 28 Aug 2025 05:13:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4D2C1C5D77;
+	Thu, 28 Aug 2025 05:17:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="X4i9/Qd1"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="L9/jxTjE"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC516625;
-	Thu, 28 Aug 2025 05:13:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C715347C3
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 05:17:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756357999; cv=none; b=c0zF0YiC//4NQ8NbvA1G7PjjwegB5RI+CVWlOMxgGyBq01eF/WEmTOxZeGt7ZnQBDRCSUKQw+Pf4erLWy/y71qfWHr1TyXFdr9hv40YoK865Dpdsw+5y/wENNXUxQdzwo9tiYfPUkAMJoEkFrEpGPYPAe+bxBcu033Bz9MJA51Y=
+	t=1756358271; cv=none; b=c1ixoM2z1hb4TBgfvTQJ08VUnlMNrYGyZl9XG0jO0ufTAwmQ0n60AsBinu+uZztlbE3yx/SRmBqY+dmVohs9uawa+1oJ6HMpd9hnrnSOPoVQTQXR3q87giomTg0bl1OytkwDgjsIyL2MkHJ84oGc24VkJzpES2r/FelNo5FKTXs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756357999; c=relaxed/simple;
-	bh=RdH2Rux1sOiizM3vNvepmnn6PqPqGfisycYQFxLQlkA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=rrCHeLjyaT6ktE0GguvBpNdhJ3UqLE8IeoZDMeKNNfzLf7mDffQdxqgSrCeYk/HvALVMY+BI17A2xdVxXVmofsgFi8fvWyVIrGYWtfk7zerla3GCtPe2cVuosoVFzlMAiBkDO7gLQ14AypD+VEUsrCX+s/6q6RoUJiTAJ9D/AKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=X4i9/Qd1; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57RGawaU023126;
-	Thu, 28 Aug 2025 05:13:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	/qvTagzu8vimTKgFWMFQ837YKk2zZ64eNnHxfuURlbo=; b=X4i9/Qd1i/mMhsQn
-	R4BizDokdLQsMvboSGz/6s7kLONDca1t0AXxmVSZQxZ0yF6ZE6UDixdTmvFopMD4
-	aDdSa3PdLo1pduejo2xlPLQh8zUBYIpeZJ8QqQxoQugnLvIF1duDoHG39dpQOWky
-	PgSjfrSs9CgUF/rWbNdF7rWBhn5K1sZ0w822ft0fUDx5vOPLQ4R17E9cjqwfF7v+
-	HjIjaoozag5w4WZzDG3yhNgfD6McY36U19+0KIXWPf4S1w89jBQZstNZYfdVMpz9
-	/6cCA5hi1qcklEzyOjPdPNBE4DvJbsKQhM0l7gCd9dN8Ze1g7eercGiJcJjlZSAY
-	CKG7aw==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48q5y5prqc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 28 Aug 2025 05:13:12 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 57S5DBnO011303
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 28 Aug 2025 05:13:11 GMT
-Received: from [10.216.30.145] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.24; Wed, 27 Aug
- 2025 22:13:04 -0700
-Message-ID: <8ac9c98a-5184-4b5a-93d6-a30ba6f20696@quicinc.com>
-Date: Thu, 28 Aug 2025 10:43:01 +0530
+	s=arc-20240116; t=1756358271; c=relaxed/simple;
+	bh=EGKR/UbP9HoOguKRcZDGqIF4moN4Gv+faof7Hpxn1OE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NlX8tWI3j2lwpGMAgj6+GNd84XbYJyg7F/RNst7wXWV9vnr6po9yMPt75FJU5AEqpvRLvsl54oq18dVUMkd7yQBjrP4W6ZStg2qE5ium4SKp3Ih8Bq+h7xnK27NNpPWKXJm2bti7k8ptWCZf8umTUi436T1ymbYjYaWWUqDhnHU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=L9/jxTjE; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-afcb731caaaso71787466b.0
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 22:17:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ionos.com; s=google; t=1756358266; x=1756963066; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OG1WuC2hheSyViU3tcDLma/6gW2kIJ97ZTkGB1ykit0=;
+        b=L9/jxTjEft45Kbcg64X+zpQDdpkPZIlINI6v++11a+dMeSovOH+yQv70zodCcm9IjF
+         d6d1Hkjf9mN3pGdOqCYaEOqnDor3ihUDH1FQvyA/4hNFsWufuj8+84vb/WvNlfhk8oXx
+         tREOaUlkNs6LIhqkHbhFt5pKrDJOlgWspq3ZZGSgh8TrS8IvTYvNeDxwBsVw9n7hC/6Y
+         9pSG4fHjFRKVmX02OoPfr9OyP7D3V0oEYA6hxz35ZgsniYncJubwbiWe05X18efypjvo
+         akjgYCKGLxTSvliNMD0YEfBfEKudUxvbMZg32uqHtuPTRImIYPuLV5V4jswzdWDWp1tn
+         KF5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756358266; x=1756963066;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OG1WuC2hheSyViU3tcDLma/6gW2kIJ97ZTkGB1ykit0=;
+        b=GRc/qttAbPaB0V3+upSF+kiuCBMJqjRycq0uyApiovzYbOA3knW1U1xecWJKmtaTwc
+         HR8kfpaRwVcvf+KktBbUUJ9QSY95AvGcyItB7A+zYoDK/+/+pIpM2nzjXzhpHEBWMe47
+         wqmiMSA7jLzyTLiDWCVG4rhz3bfNSqiMmAE/yeG3WrB9lltzDhpzFyNJkVqtYMWAhxW0
+         mulRWMWvQNQkhYpEQDnL2GgHXTqKtD+s8ncaTNr/v58RneYyMdv+QlZir366fUgKAmMY
+         Wgz8tKJMaXYbfPKsa7MoMZZm79wKXw1qIwKVL/A49Z9stTz99u0qbNM5TyQvUv0yLX+s
+         0pIg==
+X-Forwarded-Encrypted: i=1; AJvYcCUyOhue/5FVGmo0eiI/rYoXI9SCwCzdqfaPdEy4IlBFIBrJghuXGAAgYP4uaLJZCeU+cvXmv11nEyjctcc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWrHELpOYQ7lV3/p1EXvruqU0yChOEOUxs324B56Kc4jITUgOw
+	9OJzVlCOj0MlUstmLlf57SIM2OeKzt13cykH1TyHNgmWXufMOcGplqePq9dWvKiBd03f31a7UeG
+	kqj+rYHo9pE4KT1IUZITju8gcjIhFi5MUC4zT7saiLg==
+X-Gm-Gg: ASbGncuLp8sJGlr+HHhMYVLT9vYzlD5xjPsxUPomkDdNDeqsyHq1kf5IYPvhzD01xF6
+	uSiLZVgT88CSswWEyu7yMvhMovuBvB5sEZNnY96UMlUw4XdK6R8gjfUrvo8vfGU+7UWACR0dcj8
+	EU31PykgCgW9L6JzD8i9mn82syO/MHqNfQN1gnsqYK7Grw/HVzci/XtIfl0mXZNAK6vipHpMKMv
+	8t1rfXLMlj3iOmqPOwl0N7uLkzUW1AaO7o=
+X-Google-Smtp-Source: AGHT+IF8LgvafHMV8UZau80cAyTYYRm10wxMO3zhQW42jodfKJ3LU2Dgpe9FDWXWK2r4Ls++4xgpcdwiUyG7ZsKp2eE=
+X-Received: by 2002:a17:907:928a:b0:afe:eb48:2a3a with SMTP id
+ a640c23a62f3a-afeeb482f03mr57033966b.65.1756358266579; Wed, 27 Aug 2025
+ 22:17:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 7/8] serial: qcom-geni: Enable PM runtime for serial
- driver
-To: Alexey Klimov <alexey.klimov@linaro.org>,
-        Krzysztof Kozlowski
-	<krzk@kernel.org>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-serial@vger.kernel.org>,
-        Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>,
-        <linux-kernel@vger.kernel.org>, <dmitry.baryshkov@oss.qualcomm.com>,
-        <psodagud@quicinc.com>, <djaggi@quicinc.com>,
-        <quic_msavaliy@quicinc.com>, <quic_vtanuku@quicinc.com>,
-        <quic_arandive@quicinc.com>, <quic_cchiluve@quicinc.com>,
-        <quic_shazhuss@quicinc.com>, Jiri Slaby
-	<jirislaby@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, <devicetree@vger.kernel.org>,
-        <bryan.odonoghue@linaro.org>, <neil.armstrong@linaro.org>,
-        <srini@kernel.org>
-References: <20250721174532.14022-1-quic_ptalari@quicinc.com>
- <20250721174532.14022-8-quic_ptalari@quicinc.com>
- <DC0D53ZTNOBU.E8LSD5E5Z8TX@linaro.org>
- <577d05d4-789b-4556-a2d2-d0ad15b2c213@quicinc.com>
- <dcad137d-8ac9-4a0b-9b64-de799536fd32@kernel.org>
- <DCC8WLEKNS8W.9GAJHQGYPZIY@linaro.org>
- <8689a8b4-75cb-4f01-ad6c-0a8367851257@kernel.org>
- <DCC9B5C7SSU2.GRI1UY0VUDHF@linaro.org>
- <890ede8a-c049-4332-8f62-5dce2fa0f77b@kernel.org>
- <5ae730f4-5337-49f8-8bec-8605a2495f37@quicinc.com>
- <DCCMFVC0DW1I.GXZVG2BQEFX7@linaro.org>
-Content-Language: en-US
-From: Praveen Talari <quic_ptalari@quicinc.com>
-In-Reply-To: <DCCMFVC0DW1I.GXZVG2BQEFX7@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIzMDAzMyBTYWx0ZWRfX/dxLkFrP7fII
- DgqFkFV0w6xXaiZb9Jz7nqxN7JdWdTkgr7dTcB/4AqHZ9QHVQmFIbTqrZokWcFZmrybPxD/rVpx
- P9I6HfwQupARS3HzzoHnMSOFAoM5Q5qmR0zZTEZ1n3e0893E3fI8abnunDNerR9d+frugpj/Ntk
- LhrHT/x7s0ueNs6d5aq5Wmbcdvst4kE0Yvjo9kjwUr4NBoS5rbr9xnVzWJABIW5MxfT1ULygqXT
- sNZBLMQMYSiF3FjF8o7uZTOQsuSNKSjobpMJiA+UbUDH6ONJZkQCcqRi2PiRPVDJ1no7WUhY/vJ
- 5RiKP/KA2ZWAbqWPpdCXn5vbIiM7rofS0KhrMGZgK3uNbXrJkdUW8RZJ80yW5WQ3w55fdl48rkK
- TCIcvV35
-X-Authority-Analysis: v=2.4 cv=Lco86ifi c=1 sm=1 tr=0 ts=68afe568 cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10
- a=eSKK9EDNxi6QHftERMcA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-Proofpoint-GUID: SPZXV7EyfVYtYqfo8aoomU8Vm0KEdJH7
-X-Proofpoint-ORIG-GUID: SPZXV7EyfVYtYqfo8aoomU8Vm0KEdJH7
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-28_01,2025-08-26_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 adultscore=0 clxscore=1015 malwarescore=0 spamscore=0
- suspectscore=0 phishscore=0 priorityscore=1501 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508230033
+References: <2aa3f478-9c87-4102-b83e-bf235372d834@redhat.com>
+ <20250827150330.280399-1-max.kellermann@ionos.com> <20250827165309.44e465ff214e45f1a6665b24@linux-foundation.org>
+In-Reply-To: <20250827165309.44e465ff214e45f1a6665b24@linux-foundation.org>
+From: Max Kellermann <max.kellermann@ionos.com>
+Date: Thu, 28 Aug 2025 07:17:35 +0200
+X-Gm-Features: Ac12FXz7j6ZCD1KpPsfv9iOBu4iKeV--Ltb4TvtOolpiU2Niwq5q2UQwxZ1pFaQ
+Message-ID: <CAKPOu+_EfTBxh7xpaRdypD-hnqAbgj-bSdMTZE4uafqMudxBRg@mail.gmail.com>
+Subject: Re: [PATCH v2] huge_mm.h: disallow is_huge_zero_folio(NULL)
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: david@redhat.com, lorenzo.stoakes@oracle.com, ziy@nvidia.com, 
+	baolin.wang@linux.alibaba.com, Liam.Howlett@oracle.com, npache@redhat.com, 
+	ryan.roberts@arm.com, dev.jain@arm.com, baohua@kernel.org, 
+	shikemeng@huaweicloud.com, kasong@tencent.com, nphamcs@gmail.com, 
+	bhe@redhat.com, chrisl@kernel.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-HI Alexey,
+On Thu, Aug 28, 2025 at 1:53=E2=80=AFAM Andrew Morton <akpm@linux-foundatio=
+n.org> wrote:
+> OK, but it remains the case that we have seen code which calls
+> is_huge_zero_folio() prior to the initialization of huge_zero_folio.
+>
+> Is this a bug?  I think so.  Should we be checking for recurrences of
+> this bug?
 
-On 8/27/2025 1:24 AM, Alexey Klimov wrote:
-> On Tue Aug 26, 2025 at 11:29 AM BST, Praveen Talari wrote:
->> Hi Alexey/Krzysztof,
->>
->>
->> On 8/26/2025 3:36 PM, Krzysztof Kozlowski wrote:
->>> On 26/08/2025 11:37, Alexey Klimov wrote:
->>>> On Tue Aug 26, 2025 at 10:21 AM BST, Krzysztof Kozlowski wrote:
->>>>> On 26/08/2025 11:18, Alexey Klimov wrote:
->>>>>>>> May i know what is testcase which you are running on target?
->>>>>>>
->>>>>>> Boot the board?
->>>>>>>
->>>>>>>> what is target?
->>>>>>>
->>>>>>> It is written in original report. Did you even read it?
->>>>>>>
->>>>>>>> Which usecase is this issue occurring in?
->>>>>>>
->>>>>>> Boot?
->>>>>>
->>>>>> FWIW, what said above by Krzysztof is correct, there is no usecase, just booting the board.
->>>>>>
->>>>> 12 days and nothing improved, right? if this was not dropped now,
->>>>> Alexey, can you send a revert? Author clearly approches stability with a
->>>>> very relaxed way and is just happy that patch was thrown over the wall
->>>>> and job is done.
->>>>>
->>>>>
->>>>> If you do not want to send revert, let me know, I will do it.
->>>>
->>>> I am okay with sending revert, just trying to see if there is any interest
->>>> in fixing this.
->>>
->>> Any interest should have happened after 1 day of reporting linux-next
->>> breakage. It has been like what? 12 days?
->>>
->>> That's typical throw the patch over the wall. Revert.
->>
->> Really sorry for the delay.
->>
->> I forgot to mention earlier that I’ve been actively investigating this
->> issue across different platform SoCs. I was able to reproduce the
->> problem on the SC7280.
->>
->> Here’s a summary of the observed behavior:
->>
->> The issue appears to originate from the qcom_geni_serial driver during
->> device runtime resume. It results in a blocked IRQ thread, which in turn
->> causes system instability.
->>
->> The call trace suggests a deadlock scenario where the IRQ
->> thread—responsible for handling wake-up events—becomes unresponsive
->> while interacting with the pinctrl subsystem.
->>
->> Specifically, the msm_pinmux_set_mux function attempts to invoke
->> disable_irq, which is problematic when called from an IRQ thread context.
->> Since the IRQ itself is a wake-up source, this leads to contention or a
->> self-deadlock situation.
->>
->> I have verified below diff and about to post it
-> 
-> Was the original patch, that introduced the regression, also created by AI tools?
-> Just trying to understand how we ended up with untested commit in -master.
-> 
-> Did you test the change below on real hardware?
+Why do you believe it's a bug? To me, as a newbie here, such a call
+seems perfectly fine; please explain.
 
-Yes, i have tested on SA7280 SOC.
+> Also, sigh.  I do dislike seeing VM_WARN_ON_ONCE() in an inline
+> function - heaven knows how much bloat that adds.  Defconfig
+> mm/huge_memory.o (which has three calls) grows by 80 bytes so I guess
+> that's livable with.
 
-Thanks,
-Praveen Talari
-> 
-> 
->> diff --git a/drivers/tty/serial/qcom_geni_serial.c
->> b/drivers/tty/serial/qcom_geni_serial.c
->> index c9c52c52a98d..cb3b4febd8c2 100644
->> --- a/drivers/tty/serial/qcom_geni_serial.c
->> +++ b/drivers/tty/serial/qcom_geni_serial.c
->> @@ -1848,16 +1848,36 @@ static int __maybe_unused
->> qcom_geni_serial_runtime_suspend(struct device *dev)
->>    {
->>           struct qcom_geni_serial_port *port = dev_get_drvdata(dev);
->>           struct uart_port *uport = &port->uport;
->> +       int ret;
->> +
->> +       ret = geni_serial_resources_off(uport);
->> +       if(ret) {
->> +               if (device_may_wakeup(dev))
->> +                       disable_irq_wake(port->wakeup_irq);
->> +       }
->>
->> -       return geni_serial_resources_off(uport);
->> +       if (device_may_wakeup(dev))
->> +               enable_irq_wake(port->wakeup_irq);
->> +
->> +       return ret;
->>    }
->>
->>    static int __maybe_unused qcom_geni_serial_runtime_resume(struct
->> device *dev)
->>    {
->>           struct qcom_geni_serial_port *port = dev_get_drvdata(dev);
->>           struct uart_port *uport = &port->uport;
->> +       int ret;
->> +
->> +       if (device_may_wakeup(dev))
->> +               disable_irq_wake(port->wakeup_irq);
->>
->> -       return geni_serial_resources_on(uport);
->> +       ret = geni_serial_resources_on(uport);
->> +       if(ret) {
->> +               if (device_may_wakeup(dev))
->> +                       enable_irq_wake(port->wakeup_irq);
->> +       }
->> +
->> +       return ret;
->>    }
-> 
-> Best regards,
-> Alexey
-> 
+Oh, how is this possible? defconfig has CONFIG_DEBUG_VM=3Dn and that
+means VM_WARN_ON_ONCE() is just BUILD_BUG_ON_INVALID() which should
+generate no code at all.
+Here on my computer (aarch64 with GCC 14), the size (and the
+disassembly) is exactly the same. This confirms what David Hildenbrand
+predicted.
+Are you seeing some compiler weirdness, maybe?
 
