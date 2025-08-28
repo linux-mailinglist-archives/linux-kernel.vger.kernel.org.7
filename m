@@ -1,149 +1,90 @@
-Return-Path: <linux-kernel+bounces-790531-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD9B9B3A9DD
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 20:21:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6587B3A9DC
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 20:21:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 766D43A8C64
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 18:20:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E66441B28400
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 18:21:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 394DC2727E2;
-	Thu, 28 Aug 2025 18:20:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8E3E2727FE;
+	Thu, 28 Aug 2025 18:20:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="De1l45m/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="mOFY1M+H";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="qMkDZJe3"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7080D261B71;
-	Thu, 28 Aug 2025 18:20:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCE322236F3
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 18:20:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756405242; cv=none; b=j1oqGMGkZ1p4Wsz4A5xz8nVCo9F16Yh4fkMfenzJUl6EKUHORYIE4lBHHqGYH11CRGSTAIFidHkYyBBGjGAtzX0r47j5RhWBvYarn5bbiitGFLjqLu1oFZCPXnVQRWOxBknG6MB5oehJ9/55tlunX8Bpj5P+fEkQEvTaPPQ9vTw=
+	t=1756405242; cv=none; b=T06lZFH/1vBGma4FTbRqwtG5Awg8a2YSb7B41/I/Ty9YQEqn3LgyoVdQhi7OZj6lN7nyKISqW8sMLmn6voWY7+mU2zFu4T/ZwFUmpCkIRkYKaz4aY8OD0D29v++oJemooVLJHFHkxacRVLRzuh7Eu3SspfAQyxdK2DGKq42VVRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1756405242; c=relaxed/simple;
-	bh=iz9VV1gAzMPnQ0XpoI9gTK9UiHAtuUmqKjOZ0ybeOYM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sMDEBvFQFRlneTJc32reYXF0IyRwYK482xGhB9NDquZeD/KJoL4OHkotg4njbEg2K3pbj75Ns1rgGKrcY6LIG8du33L1KANaBDUgQpSAOch50SQ3kt4gAVtvwd+MK0QUZ0Qlgnz4l7FI9fm/EQqrk7kKsRgPYY7+EczA4oKc38c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=De1l45m/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F9D4C4CEEB;
-	Thu, 28 Aug 2025 18:20:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756405241;
-	bh=iz9VV1gAzMPnQ0XpoI9gTK9UiHAtuUmqKjOZ0ybeOYM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=De1l45m/5M7KVIcp9kBmKtk6XcrnGIsciFRyfrVtt9usB/CG4G8oaVGHFNaLxjWLj
-	 tipblpCW2/KQZOEAKfJcG48KKypRPosjCFzswoKMAe6OL08PeM/W8oJj7mwmbMMd0e
-	 8/ihqW/fsspt1Ksv2+H7mCZTdE75kLxDoLtmWfaFDHPcFAAyC4gwCp6/wXR6WhBymU
-	 XFjUFYBJeVk0RfOShMZAJZ8e8wBnnj768+hmCTWSRbM5/rAwb/lKDy5vnTKTOD3zGq
-	 VU08WzRikoi9Z5wsIRN8vuXhdthQ1WOE8FpXDB34tX2uQsgubHWC8hG2hr/Eh66g7R
-	 Swq/oiE4a3ldA==
-Message-ID: <6e036d6a-f2d1-43d6-bb35-54467edd7ec9@kernel.org>
-Date: Thu, 28 Aug 2025 20:20:36 +0200
+	bh=XFTi5lpq+sSi55T3SeKKwHf9sQvKs+0TcUUfU2Bv1xA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fdalPzUJi7qRBtgpZ4qlypr0Ak2kKd1cmhHWOPi4xHi/S1qwcu2+jWtLxYEEhHDkcu1CGzeG9OotStgD6CPdGEif+6w1rP2gAl4UbU6sSxSnO1uz3xyB4poZXquVP+9Ufx/Merh6v4Z+jB+faxun0cpZxPteVm997391KqnIfjE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=mOFY1M+H; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=qMkDZJe3; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 28 Aug 2025 20:20:37 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1756405238;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XFTi5lpq+sSi55T3SeKKwHf9sQvKs+0TcUUfU2Bv1xA=;
+	b=mOFY1M+H4dFsHxHvOu0nun30XJgX3IExDFYgzRZ6d8Cws+csk+GhDm5m4noGHcEDDy7czR
+	L3afZKdGoGrtzbw33hUciUiScUnh8qU6xEf2suquxgbW1tmaNfELVlVqSaX9g6zqLlzByo
+	BFNrz7o+LKWAmMA5a9Eyhr04F5AQ9VPCxZX6bTyYYgH3LGHfGwX7dMSzjokk9/iYeJh/V1
+	DujSnSAfZqcsM75YHyhnhNWr8sXyQRdgOAMfT+xYJF6qBDjrq0OuvBQRyKgwj4DcINEcgw
+	lD6LOR3RYpJy/m1hkGYJuXjGOR2HMOxKNTrPDZcctQ4VCeoBFgypqlJH6WmrRQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1756405238;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XFTi5lpq+sSi55T3SeKKwHf9sQvKs+0TcUUfU2Bv1xA=;
+	b=qMkDZJe3zgoJEbY6WZ560qcwvuP775OEss5Y9w9vZeTvt8eokEg/nuHBMkHz2hmCAF/flm
+	pfJhEGJirr131FCQ==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: =?utf-8?B?QW5kcsOp?= Almeida <andrealmeid@igalia.com>
+Cc: Waiman Long <llong@redhat.com>, Darren Hart <dvhart@infradead.org>,
+	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Borislav Petkov <bp@alien8.de>, kernel-dev@igalia.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] selftests/futex: Fix futex_numa_mpol's memory out of
+ range subtest
+Message-ID: <20250828182037.qkdKVaTN@linutronix.de>
+References: <20250827154420.1292208-1-andrealmeid@igalia.com>
+ <9d4c0d27-0ebd-4c6d-af38-d32ef420fde4@redhat.com>
+ <61725722-f933-447c-a041-71b2d28e7f90@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] dt-bindings: interconnect: add clocks property to
- enable QoS on sa8775p
-To: Odelu Kukatla <odelu.kukatla@oss.qualcomm.com>,
- Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>,
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
- linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Mike Tipton <mike.tipton@oss.qualcomm.com>
-References: <20250808140300.14784-1-odelu.kukatla@oss.qualcomm.com>
- <20250808140300.14784-2-odelu.kukatla@oss.qualcomm.com>
- <90b51e31-3217-4483-bb5b-ec328665a723@kernel.org>
- <28b97952-1b67-411f-a7fb-ddd558739839@oss.qualcomm.com>
- <ac83c453-c24d-4c4d-83bc-9ed13f2f9d1e@kernel.org>
- <7d3e5cf7-4167-4005-ba4b-c1915c254705@oss.qualcomm.com>
- <00f50d92-e4ea-4805-b771-147fa5f5ebe4@kernel.org>
- <249f8109-31b1-4cb8-a5a4-b30c27b2e987@oss.qualcomm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <249f8109-31b1-4cb8-a5a4-b30c27b2e987@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <61725722-f933-447c-a041-71b2d28e7f90@igalia.com>
 
-On 28/08/2025 20:16, Odelu Kukatla wrote:
-> 
->>> QoS configuration is essential for managing latency and bandwidth across
->>> subsystems such as CPU, GPU, and multimedia engines. Without it, the
->>> system may experience performance degradation, especially under
->>
->> So how was it working for the last 2 years?
->>
-> The system may function normally without this feature. However, enabling
+On 2025-08-28 15:06:26 [-0300], Andr=C3=A9 Almeida wrote:
+> Thanks for the feedback! I will send a v2 addressing this by next week.
 
+Any objections for getting Waiman's fix in for now and your rework for
+next merge window?
 
-Huh? So you agree but keep continuing the discussion?
-
-I don't understand what we are discussing in such case, but just to
-close the topic from my side and be explicit: based on above you cannot
-break the ABI.
-
-
-> QoS helps optimize latency and bandwidth across subsystems like CPU,
-> GPU, and multimedia engines, which becomes important in high-throughput
-> scenarios.
-
-No one discussed that.
-
-
-Best regards,
-Krzysztof
+Sebastian
 
