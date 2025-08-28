@@ -1,271 +1,156 @@
-Return-Path: <linux-kernel+bounces-789529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BC97B396F3
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 10:29:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F41AB396F4
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 10:29:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D23B53A8325
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 08:29:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 855FE1C242A4
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 08:29:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E1C62E0934;
-	Thu, 28 Aug 2025 08:28:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 995122DE6F3;
+	Thu, 28 Aug 2025 08:29:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c6PROBxo"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="pGvhnLcM"
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E210527A916;
-	Thu, 28 Aug 2025 08:28:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 532931E285A
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 08:29:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756369734; cv=none; b=UZEzui34uSersGRyXNHwUHMJV7bedICMCT/Z/iynKeawKOrwioe2zgpyfhm/KgQFhPTkundBccwYAeo181Mo07QKui/trEZ6ze3MgH+3hVc9zFdLgP78qkUAoTm3qt8ZGTc7bmAyZU57fmR15KbT3LiglSHdXISPuSrkO5tVjsg=
+	t=1756369745; cv=none; b=eE0GWpBLLkbAfQf0RBsq0XSPX8HbVxIz1OfpUSt+mZzYZWCIvGwcJfJDqMGzdHxFQ8ATG3SOaU1ISGy5BLIaeY+AynYWHH7xqUKPgZbxTj+RLqs+Ui89M76HVG/tBFNgcHelsil7xSntXuWKgaFjsBRrjwpUXwXaXyYAHvO6GHE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756369734; c=relaxed/simple;
-	bh=Vwlx1B2RIxcw9WvdPojixfbJpz0CfKRwKo/O7mkUyag=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ex920fxFz4jg3rh/6Si0z6wGG0l8Nt38seHK+eJAlJLoaGZDcF69z/anNMmeDCBykhan/1ntDU26e3+bxxPpQ1g6w1JDzUjqn1oCxrIyAsdBkoPQ0xW63s4Ad/YQ1FNdqta0yYmNfBv01qqZbAkHnS1pCAijny5CwsUAKht3Xlw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c6PROBxo; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3c79f0a5c5fso550748f8f.1;
-        Thu, 28 Aug 2025 01:28:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756369731; x=1756974531; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hpesnFJVyd+1WSElG1QxZ3KYR404x+XI1vMOvjb/mRc=;
-        b=c6PROBxo7hs2bsGXFdVzgqo+Ti569vt80MEy6hXdYsmqxpGyImrWM/7BZ/eWxAKJbS
-         ID3BoR+8xIWvdFxXXD9qA4h5WEVHoLNljikXS7XvUrFYR2BMiSMLvQfhKBa5jwe78vBs
-         DhHCLS195ItUxw+/9GEBjxFd+l1Q2eYf5yP7Bf+NnGUb/NpW988PwuwtJ9nkbRkDWA5C
-         8ZkAWHO/iWYg6dXbv2CX9pW3VEjKVjbs4cwIZp3WHZQ1hMWtL9UcmybmRn4liAoZ48fR
-         AEuIBH+McPbx0gVjBPnczivwxsXXxaPC/ikUQ7+ySQR1SELReRoCEl2itJtShe2lYzr4
-         nXHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756369731; x=1756974531;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hpesnFJVyd+1WSElG1QxZ3KYR404x+XI1vMOvjb/mRc=;
-        b=BjpKwAoucSTJVKUwg3RWwTTJ+8Nf4CPJQ+1fz1CZt9NpPi9hH5dg8TQKZmCfNTMibj
-         kq+bJoeBYROb8e88qs3jUe8uGQjvDuid633wKT6K8TnR/lBR3ZpBWvos73ftzRy8BzQg
-         2e1a1fhLJhksXwt7h6TO1gC8I/gYY+7uaAawL7hSDh1LlkvNqtQn7mVxcfhGzEMLcah4
-         byo3Sn/CXCICfqeDLBZ6ztX2rfRCTHNVYtLVuLbCw4ibdI7fPmmnEegOWWwxQzHIFYf+
-         amrLNziU+X2S9bb2vOM4pcP7cJFoGUIfLE4TTLOFLC5/HwW6p36Ztie41TrazEjwXdIY
-         aaKA==
-X-Forwarded-Encrypted: i=1; AJvYcCU4csJsN9df8x9AqRm/OZ9Synd1jg/0yssg5xKuzrl7oDSlzbnl4Qs1Da3huf7RTs+vrhVIWKQk26F/nU4=@vger.kernel.org, AJvYcCVAMxLB0F/EYFNtv+JDLVd8aJbOYgyfI4vFSUxjuwuT0aenQgFS5jAdOFqzaMRcZHIgn6yw+7dImgVR@vger.kernel.org, AJvYcCVtXoNCTpe5gX46TQ/Cl5IBXG/HqetbygIiyJfONqVDCJlhnqQeLICz0+cqLO6XWeMvcoAQNWdgTXRIMTXR@vger.kernel.org, AJvYcCXRmvpSUB+KmlqNN7XPhNryMIgWtdW17FZSvkvk4EGCc82lt6x3L6ofkVYK/xlHaMHMDzj5ncHggOD/@vger.kernel.org, AJvYcCXvfzA8zOzTUrVNRAnAztRygGYnkqU0w0gD2bQlLvM69d3MYsYDJ5dBMXQUb+b2ON42onNUy1AtDmlMq1g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzEmFJlL0fpPPUxcMtgu2TM6fQ6sUePXi1oNXlGHrMu2hY+kSAv
-	iJ5IOu2yeKPzTPiMfxBi263hpGfT/JIq74uOafTUk6DFXhu5rvrKPuEnIXMtdtD+5lZbB2Iu842
-	0nOmaTmTeHUwAoJdsSc9k+JgTDdKHvWk=
-X-Gm-Gg: ASbGnctXgvCSPD0EyQQzgXWu05AiEqcylMQe2IRHrkv5UMAEZcPQ6umQSOTZJL/7OcO
-	kwD2D7PwMkT+ad/hxcxShSEDF+lOL74ImZaTZArWkGrLSCJFwhyd8KtVDruASh/tQXmq5p9rCzX
-	V8ehKxDRKQYZqmYPUGaCANKA0R/0tuUJ3reR8kBi4hgqNHh2E8+y/sQ+sH6mJPhzahdfehGT2eA
-	OLSIlMq
-X-Google-Smtp-Source: AGHT+IEJN93L6OfvheJ8qpGeyaKj7tInl9kGXKXiH50G67UoeYFDF1fUrz/n9HhBgSCb3G8VFX6qHSDcNMLXJ+92l0A=
-X-Received: by 2002:a05:6000:2404:b0:3b8:d30c:885f with SMTP id
- ffacd0b85a97d-3c5dcefe32fmr18408263f8f.53.1756369731058; Thu, 28 Aug 2025
- 01:28:51 -0700 (PDT)
+	s=arc-20240116; t=1756369745; c=relaxed/simple;
+	bh=0NTg+qwqHhGGJy7CFFSFLCIsbcG18npQ4bBDIzsClwA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=WF+XlgZ5xM9eTjF69cGREpjCbpJZZdtzjc2UQNUjZ7MFrJBzIi9EA7TAOmoa/ouf0oH/r2q+bC1LktvKRGZTBzOTmnhu4vD9QiWOb/zOfRxXVhwluaAXToetVtNiIl1KPJ/mnmWsiB1EpcqhzpVo65ERIAZu3Tshxf1WY/wymiA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=pGvhnLcM; arc=none smtp.client-ip=80.241.56.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4cCF162CCqz9tRV;
+	Thu, 28 Aug 2025 10:28:58 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1756369738; h=from:from:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nFw4tqBP0jjDKzRQjS/NUlldQwm7m+edN6Jc0V91AOY=;
+	b=pGvhnLcMdJJOvz7uVPoVJL5NlxV1ATHCFoMQlF342Y3tXZsTZnHg5aBqHUDAkki+E65ZOB
+	SL1Xrm6zDAb/6NuCfxXlA8tzfwzUJTEwVVO84frD2W2CCGYyBusZjSS/dZPCH7ObKgNLmi
+	Ey3UHF59uc1sivbCywSw1C42GivpDlPEKs63C/Bx3RXjTu06bTIYYRfniboZfO7XAaBMJj
+	ENlH3r+yp+/LirNaeTTg5YNAZf0n48o7CwWPMKSbvlmMfzd8V9ovIp2APf5nuUGdcCBaAf
+	8DHddeuPMy4HHNNgYRd7XpcaJi8IqDbIDu7tH/SXYBfBz6YabBBWN4y+/+A+Cw==
+Message-ID: <c41b717da1345bafc526ba7524b0fa24661243e2.camel@mailbox.org>
+Subject: Re: [PATCH v2] drm/sched: Document race condition in
+ drm_sched_fini()
+From: Philipp Stanner <phasta@mailbox.org>
+Reply-To: phasta@kernel.org
+To: Danilo Krummrich <dakr@kernel.org>, Philipp Stanner <phasta@kernel.org>
+Cc: Matthew Brost <matthew.brost@intel.com>, Christian
+ =?ISO-8859-1?Q?K=F6nig?= <ckoenig.leichtzumerken@gmail.com>, Maarten
+ Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
+ <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, James
+ Flowers <bold.zone2373@fastmail.com>
+Date: Thu, 28 Aug 2025 10:28:53 +0200
+In-Reply-To: <DC1BGCY1JPKJ.7BHDGBYZDYMZ@kernel.org>
+References: <20250813085654.102504-2-phasta@kernel.org>
+	 <DC1BGCY1JPKJ.7BHDGBYZDYMZ@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250819121631.84280-1-clamor95@gmail.com> <14287352.RDIVbhacDa@senjougahara>
- <CAPVz0n0kCBAh7W0R766A_dXbcM3E=EoSXemuc0_rOm+Qch-a+Q@mail.gmail.com> <1797126.QkHrqEjB74@senjougahara>
-In-Reply-To: <1797126.QkHrqEjB74@senjougahara>
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Thu, 28 Aug 2025 11:28:39 +0300
-X-Gm-Features: Ac12FXwopYF2CtbbHk1IPKIyjENT7P73gzlS4ZXYPFXyHgOEBnSGW1bYV8ES_VQ
-Message-ID: <CAPVz0n2JdRXQ7oUJqXkmGO+EPZTq3t6k8HY7pWHT3eAVXj9T3w@mail.gmail.com>
-Subject: Re: [PATCH v1 01/19] clk: tegra: init CSUS clock for Tegra20 and Tegra30
-To: Mikko Perttunen <mperttunen@nvidia.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Thierry Reding <treding@nvidia.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, 
-	Luca Ceresoli <luca.ceresoli@bootlin.com>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Dmitry Osipenko <digetx@gmail.com>, Charan Pedumuru <charan.pedumuru@gmail.com>, 
-	linux-media@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-staging@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MBO-RS-META: 93fb8p3pn7pc33koyyzxqjju885p743o
+X-MBO-RS-ID: f51ef53e48fd1a49415
 
-=D1=87=D1=82, 28 =D1=81=D0=B5=D1=80=D0=BF. 2025=E2=80=AF=D1=80. =D0=BE 11:1=
-3 Mikko Perttunen <mperttunen@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5:
->
-> On Wednesday, August 27, 2025 7:45=E2=80=AFPM Svyatoslav Ryhel wrote:
-> > =D1=81=D1=80, 27 =D1=81=D0=B5=D1=80=D0=BF. 2025=E2=80=AF=D1=80. =D0=BE =
-13:36 Mikko Perttunen <mperttunen@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5:
-> > > On Wednesday, August 27, 2025 1:32=E2=80=AFPM Svyatoslav wrote:
-> > > > 27 =D1=81=D0=B5=D1=80=D0=BF=D0=BD=D1=8F 2025=E2=80=AF=D1=80. 07:09:=
-45 GMT+03:00, Mikko Perttunen
-> > >
-> > > <mperttunen@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5:
-> > > > >On Tuesday, August 19, 2025 9:16=E2=80=AFPM Svyatoslav Ryhel wrote=
-:
-> > > > >> CSUS clock is required to be enabled on camera device configurat=
-ion
-> > > > >> or
-> > > > >> else camera module refuses to initiate properly.
-> > > > >>
-> > > > >> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> > > > >> ---
-> > > > >>
-> > > > >>  drivers/clk/tegra/clk-tegra20.c | 1 +
-> > > > >>  drivers/clk/tegra/clk-tegra30.c | 1 +
-> > > > >>  2 files changed, 2 insertions(+)
-> > > > >>
-> > > > >> diff --git a/drivers/clk/tegra/clk-tegra20.c
-> > > > >> b/drivers/clk/tegra/clk-tegra20.c index 551ef0cf0c9a..42f8150c61=
-10
-> > > > >> 100644
-> > > > >> --- a/drivers/clk/tegra/clk-tegra20.c
-> > > > >> +++ b/drivers/clk/tegra/clk-tegra20.c
-> > > > >> @@ -1043,6 +1043,7 @@ static struct tegra_clk_init_table init_ta=
-ble[]
-> > > > >> =3D {
-> > > > >>
-> > > > >>    { TEGRA20_CLK_GR3D, TEGRA20_CLK_PLL_C, 300000000, 0 },
-> > > > >>    { TEGRA20_CLK_VDE, TEGRA20_CLK_PLL_C, 300000000, 0 },
-> > > > >>    { TEGRA20_CLK_PWM, TEGRA20_CLK_PLL_P, 48000000, 0 },
-> > > > >>
-> > > > >> +  { TEGRA20_CLK_CSUS, TEGRA20_CLK_CLK_MAX, 6000000, 1 },
-> > > > >>
-> > > > >>    /* must be the last entry */
-> > > > >>    { TEGRA20_CLK_CLK_MAX, TEGRA20_CLK_CLK_MAX, 0, 0 },
-> > > > >>
-> > > > >>  };
-> > > > >>
-> > > > >> diff --git a/drivers/clk/tegra/clk-tegra30.c
-> > > > >> b/drivers/clk/tegra/clk-tegra30.c index 82a8cb9545eb..70e85e2949=
-e0
-> > > > >> 100644
-> > > > >> --- a/drivers/clk/tegra/clk-tegra30.c
-> > > > >> +++ b/drivers/clk/tegra/clk-tegra30.c
-> > > > >> @@ -1237,6 +1237,7 @@ static struct tegra_clk_init_table init_ta=
-ble[]
-> > > > >> =3D {
-> > > > >>
-> > > > >>    { TEGRA30_CLK_HDA, TEGRA30_CLK_PLL_P, 102000000, 0 },
-> > > > >>    { TEGRA30_CLK_HDA2CODEC_2X, TEGRA30_CLK_PLL_P, 48000000, 0 },
-> > > > >>    { TEGRA30_CLK_PWM, TEGRA30_CLK_PLL_P, 48000000, 0 },
-> > > > >>
-> > > > >> +  { TEGRA30_CLK_CSUS, TEGRA30_CLK_CLK_MAX, 6000000, 1 },
-> > > > >>
-> > > > >>    /* must be the last entry */
-> > > > >>    { TEGRA30_CLK_CLK_MAX, TEGRA30_CLK_CLK_MAX, 0, 0 },
-> > > > >>
-> > > > >>  };
-> > > > >
-> > > > >I looked into what this clock does and it seems to be a gate for t=
-he
-> > > > >CSUS
-> > > > >pin, which provides an output clock for camera sensors (VI MCLK).
-> > > > >Default
-> > > > >source seems to be PLLC_OUT1. It would be good to note that on the
-> > > > >commit
-> > > > >message, as I can't find any documentation about the CSUS clock
-> > > > >elsewhere.
-> > > > >
-> > > > >What is the 6MHz rate based on?
-> > > >
-> > > > 6mhz is the statistic value which I was not able to alter while tes=
-ting.
-> > > > I
-> > > > have tried 12mhz and 24mhz too but it remained 6mhz, so I left it 6=
-mhz.
-> > > >
-> > > > >Since this seems to be a clock consumed by the sensor, it seems to=
- me
-> > > > >that
-> > > > >rather than making it always on, we could point to it in the senso=
-r's
-> > > > >device tree entry.
-> > > >
-> > > > Sensor device tree uses vi_sensor as clocks source and sensor drive=
-rs
-> > > > don't
-> > > > support multiple linked clocks.
-> > >
-> > > AIUI vi_sensor is an internal clock so the sensor cannot be receiving=
- it
-> > > directly. Perhaps the sensor is actually connected to csus, and the r=
-eason
-> > > we need to enable it is to allow the vi_sensor clock to pass through =
-the
-> > > csus gate?
-> > >
-> > > That leaves the question of why the csus pad would be muxed to vi_sen=
-sor
-> > > by
-> > > default, but perhaps there's an explanation for that.
-> >
-> > From downstream T30 sources csus and vi_sensor are always called in
-> > pair (6MHz csus and 24MHz for vi_sensor), naturally I assumed that
-> > latter is used as camera reference clock since most sensors has
-> > reference clock around 24 MHz
->
-> It's possible that the csus pad is still outputting 24MHz. The pinmux opt=
-ions
-> for the csus pad are various clocks, so it would seem logical that the cl=
-ock
-> source for the pad is one of those clocks. However, on the clock framewor=
-k
-> side, the csus clock is just a gate. What I'm confused about is that sinc=
-e on
-> the clock framework side the parent of csus is currently set to clk_m, I =
-don't
-> know why setting the rate of csus would affect the output of the pad, giv=
-en
-> clk_m is not one of the options for the pinmux.
->
-> It's be good to verify the register value for the csus pinmux to see wher=
-e it
-> thinks the clock is coming from, and then check how that matches with wha=
-t we
-> are seeing.
->
+On Wed, 2025-08-13 at 14:58 +0200, Danilo Krummrich wrote:
+> On Wed Aug 13, 2025 at 10:56 AM CEST, Philipp Stanner wrote:
+> > In drm_sched_fini() all entities are marked as stopped - without taking
+> > the appropriate lock, because that would deadlock. That means that
+> > drm_sched_fini() and drm_sched_entity_push_job() can race against each
+> > other.
+> >=20
+> > This should most likely be fixed by establishing the rule that all
+> > entities associated with a scheduler must be torn down first. Then,
+> > however, the locking should be removed from drm_sched_fini() alltogethe=
+r
+> > with an appropriate comment.
+> >=20
+> > Reported-by: James Flowers <bold.zone2373@fastmail.com>
+> > Link: https://lore.kernel.org/dri-devel/20250720235748.2798-1-bold.zone=
+2373@fastmail.com/
+> > Signed-off-by: Philipp Stanner <phasta@kernel.org>
 
-TRM does not provide such data, it has only register address with
-layout for it as a plain pad control, that register has only DRVDN,
-DRVUP, SLWR and SLWF and I don't see a way to decode clock value or
-parent or anything similar. If you give me a method I will calculate
-those values.
+Applied to drm-misc-next
 
-Another theory is that maybe csus is used for VIP cameras only and
-vi_sensor is used for CSI cameras, but they both have to be on in
-order to work correctly. Csus was removed from Tegra114 along with
-VIP, might not be a coincidence. Moreover, T124 uses vi_sensor as
-camera mclk source.
+> > ---
+> > Changes in v2:
+> > =C2=A0 - Fix typo.
+> > ---
+> > =C2=A0drivers/gpu/drm/scheduler/sched_main.c | 16 ++++++++++++++++
+> > =C2=A01 file changed, 16 insertions(+)
+> >=20
+> > diff --git a/drivers/gpu/drm/scheduler/sched_main.c b/drivers/gpu/drm/s=
+cheduler/sched_main.c
+> > index 5a550fd76bf0..46119aacb809 100644
+> > --- a/drivers/gpu/drm/scheduler/sched_main.c
+> > +++ b/drivers/gpu/drm/scheduler/sched_main.c
+> > @@ -1424,6 +1424,22 @@ void drm_sched_fini(struct drm_gpu_scheduler *sc=
+hed)
+> > =C2=A0			 * Prevents reinsertion and marks job_queue as idle,
+> > =C2=A0			 * it will be removed from the rq in drm_sched_entity_fini()
+> > =C2=A0			 * eventually
+> > +			 *
+> > +			 * FIXME:
+> > +			 * This lacks the proper spin_lock(&s_entity->lock) and
+> > +			 * is, therefore, a race condition. Most notably, it
+> > +			 * can race with drm_sched_entity_push_job(). The lock
+> > +			 * cannot be taken here, however, because this would
+> > +			 * lead to lock inversion -> deadlock.
+> > +			 *
+> > +			 * The best solution probably is to enforce the life
+> > +			 * time rule of all entities having to be torn down
+> > +			 * before their scheduler. Then, however, locking could
+> > +			 * be dropped alltogether from this function.
+>=20
+> "Enforce the rule" is correct, since factually it's there, as a dependenc=
+y in
+> the code.
+>=20
+> Do we know which drivers violate this lifetime rule?
 
-Here is a fragment of Tegra124 clock tree (dumped from Mi pad 1)
+I've got no idea :(
 
-         pll_p                                 on     13  x34      40800000=
-0
-            vi_sensor2                       $ off    0   3.0      13600000=
-0
-               mclk2                         $ off    0            13600000=
-0
-            vi_sensor                        $ off    0   3.0      13600000=
-0
-               mclk                          $ off    0            13600000=
-0
+>=20
+> @Christian: What about amdgpu (for which the below was added to begin wit=
+h)?
 
-> >
-> > > > >Cheers,
-> > > > >Mikko
->
->
->
->
++1
+
+P.
+
+>=20
+> > +			 * For now, this remains a potential race in all
+> > +			 * drivers that keep entities alive for longer than
+> > +			 * the scheduler.
+> > =C2=A0			 */
+> > =C2=A0			s_entity->stopped =3D true;
+> > =C2=A0		spin_unlock(&rq->lock);
+> > --=20
+> > 2.49.0
+>=20
+
 
