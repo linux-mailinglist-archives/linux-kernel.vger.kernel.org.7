@@ -1,233 +1,150 @@
-Return-Path: <linux-kernel+bounces-789901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4130EB39C55
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 14:10:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 366CEB39C53
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 14:09:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F9F71C80918
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 12:10:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D8B9E466262
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 12:09:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 852DA30F95C;
-	Thu, 28 Aug 2025 12:09:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E8E730F7F3;
+	Thu, 28 Aug 2025 12:09:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=windriver.com header.i=@windriver.com header.b="m1Hk7Lww"
-Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AEbsDSKO"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD2D630F807
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 12:09:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.166.238
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756382978; cv=fail; b=YfiphxOiPVraIcBrVRNTsahZjbi4aCV9YDmVBHnk+H8xS00zu524bhrzkKT0LThXG3mnjrc2LNY48zpmbGHg7yO8Yev7mVdXXJkRHVXa/+eFtMBgcINThaU0Xz2z+COn2kpTqUKftj1HARLO81D0vtF6dG4pFPfKDLS6F3hPw0I=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756382978; c=relaxed/simple;
-	bh=7p16ont02QQ9ztk60wxcwuqJN9fT0g+7G2iL+PfzqMA=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=dE/R6KjEZgsrZPMqYafNOiOisNxs688se/N9WFnw36oHpbGoBy0gKQPPUGOgwAzTbbND1nwBHJsOt6l+4/uJMANYHUXfBZ0s/aS7Igdmx2Mmd441A9K1wZuqYiht94o1RFeA4/Bo/AD85E0Ub2JHQySp+h1G28PicIcc0Q5Gdvg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; dkim=pass (2048-bit key) header.d=windriver.com header.i=@windriver.com header.b=m1Hk7Lww; arc=fail smtp.client-ip=205.220.166.238
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
-Received: from pps.filterd (m0250810.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 57SBXMbT3832000;
-	Thu, 28 Aug 2025 05:08:50 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=windriver.com;
-	 h=cc:content-transfer-encoding:content-type:date:from
-	:message-id:mime-version:subject:to; s=PPS06212021; bh=22/94NztE
-	gnjDYgicP9hcVYLk6yEsoZORFt4eeLly7o=; b=m1Hk7LwwYwFzNu1GMRNsXjxYd
-	Dfnbwyqv4UoaGyoMFAYdOFPJtL6y+PPMpMC/DPJ07Ssq01JQu/zD4n1qVR9soMpu
-	8VhS6XbtroLzpHF9aKOXkjnkj3edduY6xfdvZxsyUNOkdF/uzhpmkbFF7lgW03ff
-	W3119Mh5sqsgPo2qynUUtOlj/fy/fewFyXTmdV+ETkw4tZB1p+VqzXIqqzZ9IQt+
-	BNUR9TBPLC1cULh/0wHCyUM83d6A+LkF3AvhvBWjFD2p5s2RnSjgn++rpAJSAt1X
-	dM5I8VVjakOaRxvqweLlrrMoAbLzidbHEXPwKh1MD6Pm85FNAA7BobTH0Jmyg==
-Received: from nam11-co1-obe.outbound.protection.outlook.com (mail-co1nam11on2073.outbound.protection.outlook.com [40.107.220.73])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 48q8x25pbg-1
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Thu, 28 Aug 2025 05:08:49 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Kv9NkH++MmwckGgEfE68v+IM3XpUbbF0HEMkv8zju+J8priIZxMbxi3+q2ZA7NXiDyRO89nRvD29qoR4MOgsBYqztlGvUyvMiSI2NY5MqPjBgwR2pB3MhApSIiGsddnKaG9fUSMHesJgLg53THLmwyJG4JFrh7632Z2c7GSi8ifhlLkrYxgKY5gDiBhmDobs8oAj2+rhOhKt+dv9D1aOuYa1ASWns8GxHbD50zArS3mq3ZvkzDqLFwzXO3VumU/8m8QMa9GS9zWuUqxtwYaff3/hkOBCHttjBsLjY2B4OyhwjNvJT9oA7uVM+zkJ8Yo23RxSJoc5ZaJ8USrUMBNmJg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=22/94NztEgnjDYgicP9hcVYLk6yEsoZORFt4eeLly7o=;
- b=kGMy5XQaETPBSqqxBD5bB+nPoG3wf5MOtvwsb/JuM1h8xM+aPe/QHEQ0UO2ZkR1neoZ4CBYDSYPIT6e6No8mRF/eF5FWbNzH7IYKmCFBilEw8m6A9asTd66iJNURhRNgk27vwXc3H4ZWpmm337AuzfHJWwXfw2CZL7U00QYpsAaO4VqHwzRri13nfjj4yznIWfG0b8nixrTKGcGN4y3NmrnTfaTDuPk9v9NrXDT/ZFXisidX9+ADIxygD2vjociWzyJPjLW2CR272CWt5awrSJxJIEqKfqT4DXCEusyTvY/U0c0+vUHKMVh8ja//ECbo+Kf0ovibmOEpi9A4vlcwcw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=windriver.com; dmarc=pass action=none
- header.from=windriver.com; dkim=pass header.d=windriver.com; arc=none
-Received: from DS4PPFD667CEBB6.namprd11.prod.outlook.com
- (2603:10b6:f:fc02::53) by CH3PR11MB8363.namprd11.prod.outlook.com
- (2603:10b6:610:177::14) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.20; Thu, 28 Aug
- 2025 12:08:42 +0000
-Received: from DS4PPFD667CEBB6.namprd11.prod.outlook.com
- ([fe80::6364:ea34:bd8:1f8f]) by DS4PPFD667CEBB6.namprd11.prod.outlook.com
- ([fe80::6364:ea34:bd8:1f8f%6]) with mapi id 15.20.9052.019; Thu, 28 Aug 2025
- 12:08:42 +0000
-From: Xiaolei Wang <xiaolei.wang@windriver.com>
-To: boris.brezillon@collabora.com, maarten.lankhorst@linux.intel.com,
-        mripard@kernel.org, tzimmermann@suse.de,
-        dmitry.baryshkov@oss.qualcomm.com, airlied@gmail.com, simona@ffwll.ch,
-        dmitry.osipenko@collabora.com
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] drm/gem-shmem: Use drm_gem_shmem_unpin() to unpin the backing pages for a shmem GEM
-Date: Thu, 28 Aug 2025 20:08:17 +0800
-Message-ID: <20250828120817.836415-1-xiaolei.wang@windriver.com>
-X-Mailer: git-send-email 2.43.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: TYCP286CA0333.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:38e::19) To DS4PPFD667CEBB6.namprd11.prod.outlook.com
- (2603:10b6:f:fc02::53)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2D3930FC2D
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 12:09:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756382960; cv=none; b=u3469zMpdA5yzhIS93tpyl0dm5opxXC9ijjt+DRaCxwAc4Cyg0CSAdGWFOVoIqoBb//QkMRH8IzW/lwxbvoAerQ6zM6VF8/L4jacsyO0MIIvUi7md9AJczuHwGDd3PM1pB06nBYd3qhg6hEDQRRNSSPEY0uGVlDc7YOiYub8XAU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756382960; c=relaxed/simple;
+	bh=00isV9pgMOT+EOxLZrvOcj/hyY1mQftLr8hMFssxPt8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=B1tUHgkNRKiu2j6JL/xUrMXAs88av72Qqpyy8DOsGz8EacW1Bj2MaI0ZOtC35KdhPw/634pxvZestc1aTBAgR7vdOeA3bLcFhV93b9lMkBsv8/ub/ezRTg9yAoe+kFr81JL7Rcz+MCWEc+mW5+OIove0Eau2eYJR0tZEm+TtJ6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AEbsDSKO; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756382957;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FeaggWAAFNQCZlCBo2LizV3WKfNjpyXN5B4dcdfNqIM=;
+	b=AEbsDSKOqFmI6DTnsXfX/GYoF1dzf/WSZcFtn7YJv6ZgM3/5hnep70bQJnMn8XcftEMo0M
+	at2lC5kjiZD1rKUTWbWkSc48qOp+yndWARUIZq4kPdA9SZd03qfo/IdxiCEr+3b0F4RwB5
+	D2S89AH/XpemvwKnq8tJHBPF99eF7vw=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-592-h4rSok_AP3y182jUk-5QhA-1; Thu,
+ 28 Aug 2025 08:09:14 -0400
+X-MC-Unique: h4rSok_AP3y182jUk-5QhA-1
+X-Mimecast-MFC-AGG-ID: h4rSok_AP3y182jUk-5QhA_1756382953
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3A1271800291;
+	Thu, 28 Aug 2025 12:09:12 +0000 (UTC)
+Received: from fedora (unknown [10.72.116.22])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id F11C51800447;
+	Thu, 28 Aug 2025 12:09:02 +0000 (UTC)
+Date: Thu, 28 Aug 2025 20:08:57 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Li Nan <linan666@huaweicloud.com>
+Cc: Yu Kuai <yukuai1@huaweicloud.com>, axboe@kernel.dk,
+	jianchao.w.wang@oracle.com, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, yangerkun@huawei.com,
+	yi.zhang@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
+Subject: Re: [PATCH] blk-mq: check kobject state_in_sysfs before deleting in
+ blk_mq_unregister_hctx
+Message-ID: <aLBG2VCNZEnSYxx9@fedora>
+References: <20250826084854.1030545-1-linan666@huaweicloud.com>
+ <aK5YH4Jbt3ZNngwR@fedora>
+ <3853d5bf-a561-ec2d-e063-5fbe5cf025ca@huaweicloud.com>
+ <aK5g-38izFqjPk9v@fedora>
+ <b5f385bc-5e16-2a79-f997-5fd697f2a38a@huaweicloud.com>
+ <aK69gpTnVv3TZtjg@fedora>
+ <fc587a1a-97fb-584c-c17c-13bb5e3d7a92@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS4PPFD667CEBB6:EE_|CH3PR11MB8363:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2770631d-1dda-4759-1b16-08dde62ba15a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|7416014|366016|52116014|376014|38350700014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?nSh/fWsL7wJMiDEzA41PH99Q2W7UNd5JETwe6fAaiNtW6C/OpT+/7HN/yAZJ?=
- =?us-ascii?Q?ycP8MNU8MISd4LUCOs/CQCjz/cAInq2wJqo8Lf+MoMmM2jSOx8RWz0v8oPNr?=
- =?us-ascii?Q?aomn0dlb6WYAZ6LVfSDdcKZgOiJzX2BhxSmQV5yjcn4GMyXlCw9zOSy4RhEa?=
- =?us-ascii?Q?750TihCsXXsR/fRisfODXxLAI4/HFIlc3CJsqkPStZnSGSPUNIW/9gtPf1/o?=
- =?us-ascii?Q?aAgeKU0XkJoUJPNJT7totHdUGP2dy4AWtr9DNuORSC21VZIx9krIRhj8wXzT?=
- =?us-ascii?Q?chYs/CWNxzPSEBEn7fo19+BLOfQClmAc6dGB4kZJLMMVWouW0V/cu+spnS9f?=
- =?us-ascii?Q?6ohRawCq0hYpGgHvQe1Pma6vCOF7aquF5N0qRb87hLSkTSnXgmXChCDihyU6?=
- =?us-ascii?Q?Ud9o4sl9d8b0pvy5uezGj6vMekKcV27GNMnqtu4QtGVRno/rUgQv6LZYWZDh?=
- =?us-ascii?Q?deL8Ipln9XcnMMW/orNM/kcicu6izbWQH6S44/qD3PHKrpdwC+izCueCDAQL?=
- =?us-ascii?Q?JSBeOdu24NBY5XrrsT6ADZtjfZMUx7BwyAGl+kVuycNdEEOamv9VbdxSZ9d5?=
- =?us-ascii?Q?vUh4ItswjfEyO6lv8/GhtOljWjiyDUS0NaP2Q2UVnZsl7Ml/EWkl72y+pbBJ?=
- =?us-ascii?Q?ganSrEdvN4cgSCUaX6HEsUbAVnq7iU8yUshKZ88TINKhnplFtrCK6seAVThW?=
- =?us-ascii?Q?6Eh+4D+3lSmbLRqFeuhlKN3/2NfpKCXkpMuwO1Zii2zyWtgSX4F+eGNBRRLX?=
- =?us-ascii?Q?TyxZnY2jmOXiJH6W3gDhOd1Hr7gE97TryEthOmqhZmnQzz2E2YXCwFqnM+lD?=
- =?us-ascii?Q?KhWB7qcprKubikzKO3DRV3UaLdM/Dx7VtytilbxEOdz5Uzu4BuipYGD1M22n?=
- =?us-ascii?Q?f5T78b9JmWI3tTmfD5oD+0qMt2mTKmdxYGPsRpgdLOXRJnvHIpmNATCFp3Hx?=
- =?us-ascii?Q?L1QXcZKJQlCat9ouuxA6FgIz8HuPGQ69ejm4lOT7Kd0JtxswqXg9RvSGNROp?=
- =?us-ascii?Q?F+jmo3me5EpAQ6oWggig6TtNxFCSYQayfHX6taiwu9GzS6eOE5UNu5tDSXm7?=
- =?us-ascii?Q?zPumXsVX2pl2ohLHq4jKq80gEGjM77oFfgNqnOzqeGtkJV0CwHhp4VTHtMu6?=
- =?us-ascii?Q?dPHtQvUOiZ8wt6n8q+wOZPcRLHrAcxagFM+Cbn46LfhRuGM+xWEwuRzxuwsm?=
- =?us-ascii?Q?xO2+uj7WtdOvPX+0KJdgtnbeA+KwI/N2fq6JVDmv4r5O9lDT1MuvKmQcSAw/?=
- =?us-ascii?Q?RkEqUmcZQiDJjFkkHVk11piX9ggwY+DsgaCjWo3Zmd+y513HTHn2foweyrCy?=
- =?us-ascii?Q?C2gAV7LkbV9KTTAkizczyfx/9xStf9gLv/CAnZ6nuEHwY6nPpnAnpgaPiOlM?=
- =?us-ascii?Q?w1iPvzPak5+qi+qn/UVqDCuBmapx14pRh0L3BwlnBnbw0zwQiX+oGPdjQKGy?=
- =?us-ascii?Q?IaskmgjrXaPHVWlDfnmxKVLXAC91MT53NTWG53cM38p0e68Vb3zZPQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS4PPFD667CEBB6.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(366016)(52116014)(376014)(38350700014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?YdeIH4C3ZBHsGBK8zfELPHjTDbX3CR1f8ufTgvA1HYOIFHAjZcZvBOtiWYZ8?=
- =?us-ascii?Q?nR/o9Wxa7Irt+r8O4evqvE1KAm9uL90aj2YiCBHI6pCBGfp1H3KzSU0PL6u1?=
- =?us-ascii?Q?oAztTanyPJ9leOlSLMmGyYAQsn3kZ+HH/642fnYmN4TAkdF/7/kI0sc5YW+P?=
- =?us-ascii?Q?2tpISdXeAKP/691JhrpLkJmSHo+6h/fdTxLWB6rxew3ynPyTR9fs7h5KwFJx?=
- =?us-ascii?Q?JHz7779QpJYmQBsXOt0MexdvWm17k4UFfMELfqpUqH20asmlaY+9uViuDXIY?=
- =?us-ascii?Q?MAccKwMJ64R6t5k0+B/zPinEqSUrgEtHtb8D/qKchkKPKB7qStpXmh8VRpC/?=
- =?us-ascii?Q?W4S9I2rZ1IudG4LEpOmGJRI9PuoHURJkzCmb0SZUHcdnqCWMMNV163ZfCApm?=
- =?us-ascii?Q?346COWyDS2wbEgiN6o1zADeYBvJ6jq1uhja7xliRHC1Ml1HEQ7P9ZTrTEqhG?=
- =?us-ascii?Q?IBK3r+tbS3LdTwsSGs8EE2/WXco7LfgYA7avAslrc9QHeM4fQgSVHISlCoXz?=
- =?us-ascii?Q?CLxQZvBuI8/XF+kYEC9iEcDTDD775HkDAEUNLFfMrvz6GjJfRGn9ciTSEx+J?=
- =?us-ascii?Q?trEmIt0x7qph3TxaPXpuk9nx0Av75Cpp196SMPNskFANf2R8CY5Tc/+GaFtQ?=
- =?us-ascii?Q?MXQdOvkHSDoagGN6MSqnBkLdqjUl5JxjgX0Lh+1k81+gLoIqkY86CiSaT5t4?=
- =?us-ascii?Q?y5gacelWxL0awc/YVyf+OkoeSQHaUK4+a+YkoK5l7EvnvN04Y22K6V8Hd9HB?=
- =?us-ascii?Q?RpI7Bb5yLDytaRLSSDLU2WQsff7OfJiR2tLoDQ/3GvpbzHdiTVu+PJgOjt1M?=
- =?us-ascii?Q?c4NwyqTjcerWYE/lWQjLPvUa1/3TV9sjos/wT9EieUSe9yoTvM1PSTxATr3D?=
- =?us-ascii?Q?EL4Kz8nfv4dlnWhH4qYYKItTOVpc1RjBJCU7MM1OuJrdw28IOh2JvgdfXzPs?=
- =?us-ascii?Q?+j+O0CMWQYl0d+5/CpvuL+6utY0D7dOmncxbO10LPVKtuZmBJqVOa3FNQAeg?=
- =?us-ascii?Q?DvUrdW7l8yk3uh4MsUv1obzp647dFJUkYlBhAyLeAgQoel3rpwbR0vdTMzSj?=
- =?us-ascii?Q?nh8dQ0p19gO+tPOPSCdoEMl6RXc7oRrR03uDkVzRPfuKCUH6L1wypE+DalMN?=
- =?us-ascii?Q?9y7VWp+SSHdD4X62DYoHWzIpOyMmyi6PTcPPJ1rRTx+N8stFB3vI2ZaHKRoY?=
- =?us-ascii?Q?F/2PFhcHEVgdqJFVGSD1x/h+IFpwiLjFzvuYqBGuBHLQiOkZQBtVuHEPkMD6?=
- =?us-ascii?Q?RWz2cfCj0horJ3K/Y/R8hzMwn1ZdB4JycGQuy3TzfgIoP7zObePCdsgMKE76?=
- =?us-ascii?Q?0t70JZW8YQTWwidzIVNcupcDY8fMW5VLS3rYIwjvujO8N552ao67NkSEIDBb?=
- =?us-ascii?Q?1311ajMEDTXG/FfwpMPYt3u6KodROQ3K1PYYPrfZjiiNEFO3vE2LPSKccdcK?=
- =?us-ascii?Q?Kt/u7MCAaRsQ9JevB5VrPr53AsNvzIKqlIGvHqcaK25j+pKuo5djWj+Y9AMR?=
- =?us-ascii?Q?UbIi4/O8P0PcLhj3JebgqI9Xz6eDHmFJHXGquSSM34ryQnx2Bx5k4Kkd5aWR?=
- =?us-ascii?Q?m1fkXMRQwZssTzwHEyhDO0Ni+Wgj7cVbqtbX2oWLQuTwn7zhTEjjTjshT0GA?=
- =?us-ascii?Q?HQ=3D=3D?=
-X-OriginatorOrg: windriver.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2770631d-1dda-4759-1b16-08dde62ba15a
-X-MS-Exchange-CrossTenant-AuthSource: DS4PPFD667CEBB6.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Aug 2025 12:08:42.4679
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 8ddb2873-a1ad-4a18-ae4e-4644631433be
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: QFjLM+kVAZ2uCcVmvwMLY49jObGBXYD8/2I0NKgzo24rFgDsBl9ugjLHY7x1lhaiY7SqsQ0CVSe2ihV15lZ9m7CuIOD2zZS8k+FkIS9hO0Y=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR11MB8363
-X-Proofpoint-ORIG-GUID: Ovmq-y4DDE8_ptK6oHvJ1ZkmtER8ymTw
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODI4MDEwMSBTYWx0ZWRfX1GcVyQ6NsjvU
- Rl0zmcekFTotLnoEl4gM9+4H+f6gi6E0zwFncvq3BXcrcPSdY5d+nNKMUWTS5p5Q5UJrKoH+zgb
- BYBbegvSovPM3UEGzMUUFlq28RW7pAJu0fLrKO2sk4ptytjGELe7w81xaevpwLaLs7LB7osf9c3
- jQQMHzz+R9d1AQvI2SMVWPWVLCoSySOJqgXeTf8rDoCpSD71Yp00XhjthOUo4yd1aVM2esCc+rF
- hiOFB1SqcXE1T54SEwwU4EjZSwC+IeX2mspR+PMAr25DkOSvGQlZnhSBfHEv2x8glk/GNcuhlYO
- 26ka7dNI2+CmGp/ZEWhsOSeaBWG96aRgt6BcIqFv3fUcq4SaX08qo5MAc/waXI=
-X-Authority-Analysis: v=2.4 cv=JfW8rVKV c=1 sm=1 tr=0 ts=68b046d1 cx=c_pps
- a=08oXzaogWWciT2Q7DnPvDw==:117 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19
- a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19
- a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19
- a=xqWC_Br6kY4A:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=t7CeM3EgAAAA:8
- a=QX4gbG5DAAAA:8 a=C1uUpZZ-KwEODqPgQmsA:9 a=FdTzh2GWekK77mhwV6Dw:22
- a=AbAUZ8qAyYyZVLSsDulk:22
-X-Proofpoint-GUID: Ovmq-y4DDE8_ptK6oHvJ1ZkmtER8ymTw
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-28_03,2025-08-28_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 suspectscore=0 spamscore=0 phishscore=0 malwarescore=0
- adultscore=0 bulkscore=0 impostorscore=0 priorityscore=1501
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2507300000 definitions=firstrun
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <fc587a1a-97fb-584c-c17c-13bb5e3d7a92@huaweicloud.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-Although drm_gem_shmem_free() will decrease the use count
-on the backing pages and free backing pages for a GEM object,
-the pages_pin_count count is not decremented, which results
-in a warning. Therefore, use drm_gem_shmem_unpin() to unpin
-the backing pages for a shmem GEM.
+On Thu, Aug 28, 2025 at 05:28:26PM +0800, Li Nan wrote:
+> 
+> 
+> 在 2025/8/27 16:10, Ming Lei 写道:
+> > On Wed, Aug 27, 2025 at 11:22:06AM +0800, Li Nan wrote:
+> > > 
+> > > 
+> > > 在 2025/8/27 9:35, Ming Lei 写道:
+> > > > On Wed, Aug 27, 2025 at 09:04:45AM +0800, Yu Kuai wrote:
+> > > > > Hi,
+> > > > > 
+> > > > > 在 2025/08/27 8:58, Ming Lei 写道:
+> > > > > > On Tue, Aug 26, 2025 at 04:48:54PM +0800, linan666@huaweicloud.com wrote:
+> > > > > > > From: Li Nan <linan122@huawei.com>
+> > > > > > > 
+> > > > > > > In __blk_mq_update_nr_hw_queues() the return value of
+> > > > > > > blk_mq_sysfs_register_hctxs() is not checked. If sysfs creation for hctx
+> > > > > > 
+> > > > > > Looks we should check its return value and handle the failure in both
+> > > > > > the call site and blk_mq_sysfs_register_hctxs().
+> > > > > 
+> > > > >   From __blk_mq_update_nr_hw_queues(), the old hctxs is already
+> > > > > unregistered, and this function is void, we failed to register new hctxs
+> > > > > because of memory allocation failure. I really don't know how to handle
+> > > > > the failure here, do you have any suggestions?
+> > > > 
+> > > > It is out of memory, I think it is fine to do whatever to leave queue state
+> > > > intact instead of making it `partial workable`, such as:
+> > > > 
+> > > > - try update nr_hw_queues to 1
+> > > > 
+> > > > - if it still fails, delete disk & mark queue as dead if disk is attached
+> > > > 
+> > > 
+> > > If we ignore these non-critical sysfs creation failures, the disk remains
+> > > usable with no loss of functionality. Deleting the disk seems to escalate
+> > > the error?
+> > 
+> > It is more like a workaround by ignoring the sysfs register failure. And if
+> > the issue need to be fixed in this way, you have to document it. >
+> > In case of OOM, it usually means that the system isn't usable any more.
+> > But it is NOIO allocation and the typical use case is for error recovery in
+> > nvme pci, so there may not be enough pages for noio allocation only. That is
+> > the reason for ignoring sysfs register in blk_mq_update_nr_hw_queues()?
+> > 
+> > But NVMe has been pretty fragile in this area by using non-owner queue
+> > freeze, and call blk_mq_update_nr_hw_queues() on frozen queue, so it is
+> > really necessary to take it into account?
+> 
+> I agree with your points about NOIO and NVMe.
+> 
+> I hit this issue in null_blk during fuzz testing with memory-fault
+> injection. Changing the number of hardware queues under OOM is extremely
+> rare in real-world usage. So I think adding a workaround and documenting it
+> is sufficient. What do you think?
 
-WARNING: CPU: 2 PID: 1106 at drivers/gpu/drm/drm_gem_shmem_helper.c:180 drm_gem_shmem_free+0x4d0/0x6f0
- Call trace:
-  drm_gem_shmem_free+0x4d0/0x6f0 (P)
-  drm_gem_shmem_free_wrapper+0x10/0x1c
-  __kunit_action_free+0x50/0x70
-  kunit_remove_resource+0x144/0x1e4
-  kunit_cleanup+0x64/0xfc
-  kunit_try_run_case_cleanup+0xa0/0xd4
-  kunit_generic_run_threadfn_adapter+0x80/0xec
-  kthread+0x3b8/0x6c0
-  ret_from_fork+0x10/0x20
+Looks fine for me.
 
-Fixes: 93032ae634d4 ("drm/test: add a test suite for GEM objects backed by shmem")
-Signed-off-by: Xiaolei Wang <xiaolei.wang@windriver.com>
-Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
----
 
-v1: https://patchwork.kernel.org/project/dri-devel/patch/20250827022516.2890226-1-xiaolei.wang@windriver.com/
-
-v2: compared with v1, update subject
-
- drivers/gpu/drm/tests/drm_gem_shmem_test.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/gpu/drm/tests/drm_gem_shmem_test.c b/drivers/gpu/drm/tests/drm_gem_shmem_test.c
-index 68f2c3162354..e0a9f3a917ed 100644
---- a/drivers/gpu/drm/tests/drm_gem_shmem_test.c
-+++ b/drivers/gpu/drm/tests/drm_gem_shmem_test.c
-@@ -227,6 +227,7 @@ static void drm_gem_shmem_test_get_pages_sgt(struct kunit *test)
- 		len += sg->length;
- 	}
- 
-+	drm_gem_shmem_unpin(shmem);
- 	KUNIT_EXPECT_GE(test, len, TEST_SIZE);
- }
- 
--- 
-2.43.0
+Thanks, 
+Ming
 
 
