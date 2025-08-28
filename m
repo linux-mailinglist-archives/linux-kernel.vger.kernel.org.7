@@ -1,126 +1,136 @@
-Return-Path: <linux-kernel+bounces-790422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED129B3A6F6
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 18:51:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EDA6B3A6FA
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 18:52:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 01C8F1C81EB9
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 16:51:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29EA13AEE52
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 16:52:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1529F32C303;
-	Thu, 28 Aug 2025 16:51:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D41A6322DD2;
+	Thu, 28 Aug 2025 16:52:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="LF+gGwKi"
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="D723hnXw"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 962823043D9;
-	Thu, 28 Aug 2025 16:51:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C77EA2749F1
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 16:52:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756399892; cv=none; b=qSWNZbVwbmybEJsRp0y0YX27o6HvJbcPUlpJocRr1ii/2cyRxYNZnjwaFA7CZco8H2R3VDexO29go/ng0DIJ1joe8q9Ejy6rJ5O1kgh2Ad9a+7J9LrxjBEUdiKMc7f8iry3MvwJblfvEG3DXMktgEoYyI8G+QlAYIKgRLC0eiDg=
+	t=1756399943; cv=none; b=u//pVjACAIbkibd02l42FcPEgsWzkJ/+SGUdMwbD2E1yYwbNUGxBXq/rIu86dNkphHW35NypJjYLQIpmj/6hJTbvWWozeuY0mvmnMsDtvZcqNcbZvxtQcGloE5ADiADGJhZEkU2u8rB73lXyYLn89FJzX75XjZeq09iidlnkTXw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756399892; c=relaxed/simple;
-	bh=PVupvUbljqqv0l5EpslMuDT5j7QU3Ufuil+d3qdB5eA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Ol2PGLoY+s/BmD/liaOQG9LREab5n6GwJkopSssU803o3vBICx7NgeCyxtuIdYmCxkVDYj6UPVEgT0IGYWgsmVTCXOPiqL76GXm5zREz8t1Rq4chlVufM3choiIKKSLKDwpRxVXzI7tYHF5RfU4iEWpXNABVzYvjst0+bvwpKTg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=LF+gGwKi; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 111BA4E40BB1;
-	Thu, 28 Aug 2025 16:51:23 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id BCAB960303;
-	Thu, 28 Aug 2025 16:51:22 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 6EEC81C22DDE9;
-	Thu, 28 Aug 2025 18:50:43 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1756399881; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=01CLvL+opovfhfkSRyspjEXFZkfbj0TTItWEljkWyHE=;
-	b=LF+gGwKiR4u1aF8x9V/r/FYoaEYM5yIMM4utgdSxggzuD4ceJXDH52EapVHz1dRavntVmb
-	Z/4leyNDKQ3csKFk80uvyyd/e5syNpIg1IV1Xyf2kelhcKowKrG3NfsAdB9M+WJVPpnYd+
-	d85Egg6pS5815TGmco9Nynhhhkjzgm1QF9rqUeHeBm59SlAjT1Fupc4Mnn5VODa3tirg8U
-	n8wDXL4666720TL3hBZMVmYjB9PvgYgev95Id+9yn+IXQE2JDHZq4nbJ8lDujkGkQ/M/oF
-	+wZyBzXCBG/NU6Lt30oQqy+shG9EVxYj5ClTuzgIhroq74/O8htu/GlXU16KSA==
-Date: Thu, 28 Aug 2025 18:50:37 +0200
-From: Kory Maincent <kory.maincent@bootlin.com>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: "Message-ID :" <cover.1752076293.git.mchehab+huawei@kernel.org>, Linux
- Doc Mailing List <linux-doc@vger.kernel.org>, "Akira Yokosawa"
- <akiyks@gmail.com>, "Breno Leitao" <leitao@debian.org>, "David S. Miller"
- <davem@davemloft.net>, "Donald Hunter" <donald.hunter@gmail.com>, "Eric
- Dumazet" <edumazet@google.com>, "Ignacio Encinas Rubio"
- <ignacio@iencinas.com>, "Jakub Kicinski" <kuba@kernel.org>, "Jan Stancek"
- <jstancek@redhat.com>, "Jonathan Corbet" <corbet@lwn.net>, "Marco Elver"
- <elver@google.com>, "Paolo Abeni" <pabeni@redhat.com>, "Randy Dunlap"
- <rdunlap@infradead.org>, "Ruben Wauters" <rubenru09@aol.com>, "Shuah Khan"
- <skhan@linuxfoundation.org>, "Simon Horman" <horms@kernel.org>,
- joel@joelfernandes.org, linux-kernel-mentees@lists.linux.dev,
- linux-kernel@vger.kernel.org, lkmm@lists.linux.dev, netdev@vger.kernel.org,
- peterz@infradead.org, stern@rowland.harvard.edu
-Subject: Re: [PATCH v10 06/14] docs: use parser_yaml extension to handle
- Netlink specs
-Message-ID: <20250828185037.07873d04@kmaincent-XPS-13-7390>
-In-Reply-To: <4c97889f0674b69f584dedc543a879d227ef5de0.1753718185.git.mchehab+huawei@kernel.org>
-References: <cover.1753718185.git.mchehab+huawei@kernel.org>
-	<4c97889f0674b69f584dedc543a879d227ef5de0.1753718185.git.mchehab+huawei@kernel.org>
-Organization: bootlin
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1756399943; c=relaxed/simple;
+	bh=F6F1t90tDYHI9HHx/dUs3bHIlZY2N4fRir8Q3403KXw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kIDvdbGm6WwI6b8Dr6x5f22z+2RPzeF3iQMz5YrOoi+g6JjyevJOwuP9xBetcEtuOiknbnr4Mvgc4k4Eas8tRzGS592ClVxjPn6a8FxeBsgMxeuwb/ft3z1vub5Py4JJVUwBvYu6obN9d6wKYkYENWtUpBDUnUT2kJYt1acqTBA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=D723hnXw; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756399940;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xee6NKuNIkTbreHLQ12czC3T2u1dvCFe2tAbj30qkQs=;
+	b=D723hnXweBgOEaWDLhbBgFpNCwz+rNw2Ygde2GotG3KfUqAYhOYPYuXkKfG82jZ/HZNoMI
+	iHFN4TIYRWbtV78Rd4D/6p50k+mpGc4wKTxm5q+TYNwDVNGGx6VcEIeJ0Uu4rf+x/1U7g/
+	CVNM3Ffrsk6F6Wlylfv4vQYXkMOb8zA=
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
+ [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-349-P6FrMAnVM2OgRSB5a8sgDQ-1; Thu, 28 Aug 2025 12:52:19 -0400
+X-MC-Unique: P6FrMAnVM2OgRSB5a8sgDQ-1
+X-Mimecast-MFC-AGG-ID: P6FrMAnVM2OgRSB5a8sgDQ_1756399939
+Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-70dd6d25992so26631076d6.2
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 09:52:19 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756399938; x=1757004738;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xee6NKuNIkTbreHLQ12czC3T2u1dvCFe2tAbj30qkQs=;
+        b=k2vKFxG7ZKeDIoNFt1p7lKfI4AlmJdmohnhgt+bU5bNiw/R4UOJitcPt5OYNHo4MxK
+         qcx6Ca5ENt6K+tbwFbYfESHgVkVAHDrXEcU1Kz+juL3U4r8mYRff84HdCob3lV2KEx7S
+         eT1CYEgJSywNO7DR0XBdSE+q6ITIzhLj6WrTV2zcGBoqla7PAK1HDplL5hNOs70qPRWq
+         MaPCea7l+0vV17iCh8PTFjVQNoqrKsVfyCAg5mPkyfmA87ecKL6+DHjR1Vj5dIu8L96D
+         kUCbqys9tdiwLnbzCG/aHXilH0I+xL/JYxwkEgFU1+FT0ixT1DwR1ISHbfEJrSl2JqnU
+         zKSA==
+X-Forwarded-Encrypted: i=1; AJvYcCWIi4Tw9soZypbAu2WyfpsMNWZyjQUahLXAOdEMVhFd0HB0sFwHNzxnRcpmD1S4vSVBD12pCEudaO2Fq4c=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4QtDGSZGajmW+1u8U0jSgbe8aLhR9DrJpYFeJBJ/zDZaXqwEk
+	SLjEYyv+8H9yesy5bgOW53nqAp0FBT2IhTH7bSDZaE2arv7xjET6svesdEcYs+S0Dz2sBEIaL+z
+	A/003ERcdaJRbZBdC6DRS09zz04biMC9EhD48JlryVkK2qVCwKcptUGvsytw9aHvEXyfZzVziYQ
+	==
+X-Gm-Gg: ASbGncvJSdnYB5Q302AVCQlOg+ygoB2mGCLw0/89HkE7/GCG5398/h4yh49LMIzGkBd
+	6RACO7OygdxD5CGNojUWwrcKId5XSdK101bHcWXyRBYB0mmkXMfISacE3R3zCJNVLdIAYFpGUyU
+	Zz/fBjiZSBieMQVDffTMrw/k7CSsyYjO0Obe1bZgEpzNKxrHbJ6d9ePyimwzeuX9n4BYcciJqwD
+	5Gf8dWMAbyafON55OecsOdpRIjhsWFiM+ivd8Kku6/CNlod/7yNAGjMxlkfPz8zAFK41Xp1ZoUg
+	rgs1VcqAgaV9sZSViaeJVESzoFHsWXSpZskdsP4v93ykAbYnhgTqiNGmd2wDx6eHOG46/8phQtP
+	Y/D3RwFmQqAbG96Mc2jQ=
+X-Received: by 2002:a05:6214:4004:b0:70d:91e8:6cb7 with SMTP id 6a1803df08f44-70d9725f3e3mr251186736d6.66.1756399937787;
+        Thu, 28 Aug 2025 09:52:17 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGpZ4ICMlbvyyFxhlVpeB0jL0VatrVSJLDHmA5nepySE1dAK1W4TzFTEvJOVDIu9B0SbTwIFw==
+X-Received: by 2002:a05:6214:4004:b0:70d:91e8:6cb7 with SMTP id 6a1803df08f44-70d9725f3e3mr251186526d6.66.1756399937368;
+        Thu, 28 Aug 2025 09:52:17 -0700 (PDT)
+Received: from x1 (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-70de7e0ae63sm30790536d6.52.2025.08.28.09.52.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Aug 2025 09:52:16 -0700 (PDT)
+Date: Thu, 28 Aug 2025 12:52:14 -0400
+From: Brian Masney <bmasney@redhat.com>
+To: Ryan.Wanner@microchip.com
+Cc: mturquette@baylibre.com, sboyd@kernel.org, nicolas.ferre@microchip.com,
+	alexandre.belloni@bootlin.com, claudiu.beznea@tuxon.dev,
+	varshini.rajendran@microchip.com, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	robh@kernel.org
+Subject: Re: [PATCH v3 01/32] clk: at91: pmc: add macros for clk_parent_data
+Message-ID: <aLCJPlWTHcaxUze0@x1>
+References: <cover.1752176711.git.Ryan.Wanner@microchip.com>
+ <f3ef0275345578c504b41710c67bfe1238c44c21.1752176711.git.Ryan.Wanner@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f3ef0275345578c504b41710c67bfe1238c44c21.1752176711.git.Ryan.Wanner@microchip.com>
+User-Agent: Mutt/2.2.14 (2025-02-20)
 
-Le Mon, 28 Jul 2025 18:01:59 +0200,
-Mauro Carvalho Chehab <mchehab+huawei@kernel.org> a =C3=A9crit :
+On Thu, Jul 10, 2025 at 01:06:54PM -0700, Ryan.Wanner@microchip.com wrote:
+> From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+> 
+> Add helpers to set parent_data objects in platform specific drivers.
+> 
+> Signed-off-by: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+> [ryan.wanner@microchip.com: enclose complex macro with parentheses.]
+> Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
+> ---
+>  drivers/clk/at91/pmc.h | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/drivers/clk/at91/pmc.h b/drivers/clk/at91/pmc.h
+> index 4fb29ca111f7..0b721a65b77f 100644
+> --- a/drivers/clk/at91/pmc.h
+> +++ b/drivers/clk/at91/pmc.h
+> @@ -15,6 +15,12 @@
+>  
+>  #include <dt-bindings/clock/at91.h>
+>  
+> +#define AT91_CLK_PD_NAME(n, i) ((struct clk_parent_data){ \
+> +	.hw = NULL, .name = (n), .fw_name = (n), .index = (i), \
+> +})
+> +
+> +#define AT91_CLK_PD_HW(h) ((struct clk_parent_data){ .hw = (h) })
 
-> Instead of manually calling ynl_gen_rst.py, use a Sphinx extension.
-> This way, no .rst files would be written to the Kernel source
-> directories.
->=20
-> We are using here a toctree with :glob: property. This way, there
-> is no need to touch the netlink/specs/index.rst file every time
-> a new Netlink spec is added/renamed/removed.
+If you have to spin a new series, then personally I would put a space
+before the {. I see both usages in drivers/clk/.
 
-...
+Reviewed-by: Brian Masney <bmasney@redhat.com>
 
-> diff --git a/Documentation/networking/index.rst
-> b/Documentation/networking/index.rst index ac90b82f3ce9..b7a4969e9bc9 100=
-644
-> --- a/Documentation/networking/index.rst
-> +++ b/Documentation/networking/index.rst
-> @@ -57,7 +57,7 @@ Contents:
->     filter
->     generic-hdlc
->     generic_netlink
-> -   netlink_spec/index
-> +   ../netlink/specs/index
-
-Faced a doc build warning that say netlink_spec/index.rst is not used.
-
-$ git grep netlink_spec
-Documentation/networking/mptcp.rst:netlink_spec/mptcp_pm.rst.
-Documentation/translations/zh_CN/networking/index.rst:*   netlink_spec/index
-
-I think we can remove the whole directory and change these, right?
-
-Also got a doc build warning that says netlink/specs/index is not existing =
-even
-if it exists. Maybe a sphinx parsing issue ?!
-
-Regards,
---=20
-K=C3=B6ry Maincent, Bootlin
-Embedded Linux and kernel engineering
-https://bootlin.com
 
