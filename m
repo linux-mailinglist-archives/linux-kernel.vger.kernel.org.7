@@ -1,95 +1,153 @@
-Return-Path: <linux-kernel+bounces-790057-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 903A0B39ED1
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 15:27:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D604B39ED5
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 15:27:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F2D7B1C834B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 13:26:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF0EA1C8215A
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 13:27:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A302F3126CC;
-	Thu, 28 Aug 2025 13:26:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D29642D73A1;
+	Thu, 28 Aug 2025 13:26:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I9O30dWO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="eQjSZpjV"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC72D311972;
-	Thu, 28 Aug 2025 13:26:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74F8615B54A
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 13:26:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756387571; cv=none; b=opaVmolvhfTZ0ia/9+FHofZCUAJ81MFVw88ZRb0eYYBsxYCrvKnkI0ghb4uaR7QLQeyqi1dW0Pckg/6z0pJLfBYgIthusjOiGAJSRF0MqYTefQRreLmXEo2mj9d/ib5J+wPkY/JaIbRiuzO8SI1eUldPC5hXFYOZ274lC7WKR24=
+	t=1756387619; cv=none; b=Ywld1imzwOCLVsFfn7lDZODmIozGM13ZC9BqbCBSyo2BppBYycn1iCqDCdK3ng3bG/d0Ktcya6So9qmWEZrS4z0rj7RStYNiAptxPoBFzLxpswEcjiKPjfp+Hcgy7rMdNh4RABc6ddFX9d622NPGXRMvVI8IWPpiQu6pI7lGE/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756387571; c=relaxed/simple;
-	bh=i+5Oim/HXTglyokFAvo3qzr+eTdcCWXR7N4SxzM53Xk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rf88lIl9CQCa39NuOR/XcyrDnvCsHx56Uodfpy9qHFLWQjcYHD2H2n+qHvTxQ3HcIB4Xd+MtZdYjPF7YFZWs5IIXI+Wf83lgaqYkgyAFzgSEUC1p5+VVF0Ur4+n9YE2S1nlsVr1Lsx9BEIStQr6o5lu19tYay0VzkjlBx/NmcA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I9O30dWO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74829C4CEEB;
-	Thu, 28 Aug 2025 13:26:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756387570;
-	bh=i+5Oim/HXTglyokFAvo3qzr+eTdcCWXR7N4SxzM53Xk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=I9O30dWOUUevxK2fiLQpLX/weKtJM7lgQCSaSvqZKLvY4WCME85SyqPM8/RBScTi8
-	 gCkvck458Ydx3B8xBv+prNU0JZHT6ZHiAO1cg6YrBrnN1+rqntGeqJFLYWpHW+kpGR
-	 b7Pl/KVmJ/n3957C8+9KexfmdApoa01CdWyyBuNNZ9WLiTI71pTWiqzWNMZhHH/XCV
-	 hk8KKTZIZeHD9EopC5B45VDA+XpDJ8pghmFzDdCOD/cRK6rOO+s24fK0nA1gYwNQR3
-	 byRb8Yd9bbDjCfaRseFHnzzdIyxxEl/YMfLruTEsXH7DzeQsd/cRA3HHTTDnkxDyIy
-	 zM1xYIzbPXAZg==
-Date: Thu, 28 Aug 2025 14:26:06 +0100
-From: Simon Horman <horms@kernel.org>
-To: Liao Yuanhong <liaoyuanhong@vivo.com>
-Cc: Sudarsana Kalluru <skalluru@marvell.com>,
-	Manish Chopra <manishc@marvell.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	"open list:BROADCOM BNX2X 10 GIGABIT ETHERNET DRIVER" <netdev@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] bnx2x: Remove redundant ternary operators
-Message-ID: <20250828132606.GK10519@horms.kernel.org>
-References: <20250827101514.444273-1-liaoyuanhong@vivo.com>
+	s=arc-20240116; t=1756387619; c=relaxed/simple;
+	bh=vfWvNgcav3r9QFMJfVoU8AERgLXxQbSnW2pOQXqJYpQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RzJFsWr9k0FIYhJax1Dhl4iUKtnOgqnaIg3h8AQvFvVD9y3k2T469NGcpOBZsnv2A7YPf0nyy6OHR0k8PbcXapodidDQ5Cd8wssLIgXU4Q444tnLYmfAmuGDNvvRQi3+nq8MYwvLG2rebpP1QXCGJEa+YrNm/GknZOVLN7PKYaI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=eQjSZpjV; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-55f4345cfd3so984144e87.1
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 06:26:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1756387616; x=1756992416; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UTOF6xiQv0qzQRLjdqMkKKYD5QGR1e1uQsj6mloKX+U=;
+        b=eQjSZpjV9rKP15YQ3go4WwVeY+ZnwIvipTMMTUwTRVhPQJ407h7XKrdiYzTVROtk13
+         8U3vefWj46W9q1lAheGjCgtmBFiQ/TogitDT0KsoTHUtUQE1TUspvIFHecteD7KHo3HL
+         sRmWxV2QEA4z1VRy05Hdl1k5UMEz4d74iyDwc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756387616; x=1756992416;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UTOF6xiQv0qzQRLjdqMkKKYD5QGR1e1uQsj6mloKX+U=;
+        b=F1FkTjIIALGs7cYQbcDZ8jV3vRc4eUAKLU9FU22uTMM7uYgJu1G7Q0L2yu47zKjY2p
+         tO2TYceyUUhz4xJgJ+dIoAGjGw1EMlozSh9u44hu7ZMmUYWWCN9Al7GgAB7eA8CJt8Gz
+         ASyi6CMQ1RAmssg43u8D+OAgNCNI5WRk4IIkWJGvd0Pw/2ishchbbHRT8/Bt1awhoVwc
+         ZapRUm/01FV6b++SSG+o077aUVQkucewESWIl9eKQmSUIwe4Fz3NyNuLzxn2s9P+7LYr
+         EmKsvbqZZdf8WmcWFIH8hYxuR0WCueZvcL2YnqnlhmKLp1ufYmK8JMUfDKWPiFsyFZS9
+         loOg==
+X-Forwarded-Encrypted: i=1; AJvYcCUuSSXyC+uHtvMyu0A4CkpPMPpfx73fTgTYkFRNorCVFtHWjVyReaKnum2O6SeCmKdqg9bZSuWLvZd7N80=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxbqiLmXPztTRxCeLE0zR3J2F32j23NAKuy3Zx0rVuCwbzbSltJ
+	CoKUfbY9T3gPvWboJTPFuYjmTeRkPKUirDDzcr+0HOBARmKKHEkYb0JAF/wwPVXymu409GF64oL
+	SnSss/2JBDKvlhXvgoivYBO3m6BL/1xEbhn19ftwP
+X-Gm-Gg: ASbGncs/WnTykP/697yKE2sDwwxoeMehaz+QsGDNJWWwQXDDIbUnBU1WDqRoeJ2Al4m
+	Pa58i1F+Zd4a86yAdqCj0DV9GJv3KU7TCYssPc+iJ944O8V4ohflNRFRmTyU7MqlZ6vkNTCPZg4
+	ozspW/J+D69IJwNYgycJsirtsKWuQbKltP/geyCdLWyQwdYfUCfzrXhQ/4gg+v+D0z6o23RY5mu
+	i8EU730UlR4eEhBzGJAU8IyCd44ulNXX8Z0RA==
+X-Google-Smtp-Source: AGHT+IGKaP7lckMwAVsqZkce2iGR63rMwp/YwXpHrLXd8d9BSHElcYzrrAlXcYiXDcwUU0dCjGA+bOrjwY+YJkMmFn0=
+X-Received: by 2002:a05:6512:3b97:b0:55f:4c92:f4c8 with SMTP id
+ 2adb3069b0e04-55f4f4c6b92mr2765248e87.8.1756387615553; Thu, 28 Aug 2025
+ 06:26:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250827101514.444273-1-liaoyuanhong@vivo.com>
+References: <20250214074353.1169864-1-chun-jen.tseng@mediatek.com>
+ <20250214074353.1169864-2-chun-jen.tseng@mediatek.com> <20250219054209.erwfp7sgzchaiuds@vireshk-i7>
+ <e8337c5eee0cadb797bacf26b00f1ca303c5147f.camel@mediatek.com>
+ <20250321045624.mwm2mnkqeow5uids@vireshk-i7> <2a73b5ca35692c8ffa68c9ff0df73e24a592967d.camel@mediatek.com>
+ <20250321060148.adhxjexpnm4dkpnt@vireshk-i7> <e1c2c12bace22d1803d16ecbfb32129518d87157.camel@mediatek.com>
+ <20250324054333.sgwwksawnybx3lp4@vireshk-i7> <06356a55cdb3c34dfc716349d1967f95655b0ab2.camel@mediatek.com>
+ <20250416080517.feansrkpycsynk6t@vireshk-i7>
+In-Reply-To: <20250416080517.feansrkpycsynk6t@vireshk-i7>
+From: Chen-Yu Tsai <wenst@chromium.org>
+Date: Thu, 28 Aug 2025 15:26:44 +0200
+X-Gm-Features: Ac12FXxYNpnEAlBmbtFHr64VxND_7eVbeCYS5BHUQbSiC1qF3AAnoY211E0MhhA
+Message-ID: <CAGXv+5FyR8bt16nLvS0V=_YRWM6G7V0OOpxctA+_4hVnnCjDtg@mail.gmail.com>
+Subject: Re: [PATCH v3 1/3] cpufreq: mediatek: using global lock avoid race condition
+To: Viresh Kumar <viresh.kumar@linaro.org>, 
+	"myungjoo.ham@samsung.com" <myungjoo.ham@samsung.com>, 
+	"kyungmin.park@samsung.com" <kyungmin.park@samsung.com>, "cw00.choi@samsung.com" <cw00.choi@samsung.com>
+Cc: =?UTF-8?B?Q2h1bi1KZW4gVHNlbmcgKOabvuS/iuS7gSk=?= <Chun-Jen.Tseng@mediatek.com>, 
+	"rafael@kernel.org" <rafael@kernel.org>, 
+	Project_Global_Chrome_Upstream_Group <Project_Global_Chrome_Upstream_Group@mediatek.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
+	"matthias.bgg@gmail.com" <matthias.bgg@gmail.com>, 
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, 
+	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 27, 2025 at 06:15:14PM +0800, Liao Yuanhong wrote:
-> For ternary operators in the form of "a ? true : false", if 'a' itself
-> returns a boolean result, the ternary operator can be omitted. Remove
-> redundant ternary operators to clean up the code.
-> 
-> Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
+On Wed, Apr 16, 2025 at 4:07=E2=80=AFPM Viresh Kumar <viresh.kumar@linaro.o=
+rg> wrote:
+>
+> On 14-04-25, 08:42, Chun-Jen Tseng (=E6=9B=BE=E4=BF=8A=E4=BB=81) wrote:
+> > Hi Viresh,
+> >
+> > The CCI level choose by Max_Level(LCPU & BCPU frequency) in devfreq
+> > driver.
+> > without global lock, It may choose wrong CCI level and cause system
+> > stall.
+> >
+> > I hope this flow is serial setting like, BCPU / LCPU set frequency ->
+> > set CCI level -> BCPU / LCPU set frequency -> set CCI level -> ......
+> >
+> > without global lock, it could be LCPU / BCPU set frequency -> set CCI
+> > level(during this time, it may change BCPU / LCPU frequency and cause
+> > system stall.
+> >
+> > I also can only do global lock on ccifreq_support SoC.
+>
+> As explained earlier, I don't think there is a race here. May be I am
+> wrong. And so I need a clear code path example from you, which proves
+> that there is a race here.
 
-Quoting documentation:
+Maybe a different set of eyes will help. I talked to Chun-Jen offline,
+and I'll try to explain what I understand.
 
-  Clean-up patches
-  ~~~~~~~~~~~~~~~~
+First of all, the issue lies not in cpufreq, but in the CCI devfreq,
+and how the passive devfreq governor is linked to cpufreq.
 
-  Netdev discourages patches which perform simple clean-ups, which are not in
-  the context of other work. For example:
+The CCI hardware unit on the MT8186 is sensitive to frequency changes.
+If the performance level of the CCI unit is much lower than either
+of the CPU clusters, it  will hard hang the whole system. So the CCI
+devfreq must always take into account the performance level of both
+clusters, or in other words the settings of both cpufreq policies.
 
-  * Addressing ``checkpatch.pl`` warnings
-  * Addressing :ref:`Local variable ordering<rcs>` issues
-  * Conversions to device-managed APIs (``devm_`` helpers)
+Since the cpufreq policies only serialize with themselves, it is possible
+for one policy to change and trigger a devfreq update, and when the
+CCI devfreq driver is doing its calculations, the other policy changes
+and causes a big deviation from the assumed performance levels, leaving the
+CCI into a non-matching performance level and causing a system hang.
 
-  This is because it is felt that the churn that such changes produce comes
-  at a greater cost than the value of such clean-ups.
+So I think we need to handle CPUFREQ_PRECHANGE events for the frequency
+increase direction, as well as enlarging the devfreq mutex to cover
+the CPU frequency tracking bits in the passive governor.
 
-  Conversely, spelling and grammar fixes are not discouraged.
+I hope that makes sense.
 
-See: https://www.kernel.org/doc/html/next/process/maintainer-netdev.html#clean-up-patches
---
-pw-bot: cr
 
+Thanks
+ChenYu
 
