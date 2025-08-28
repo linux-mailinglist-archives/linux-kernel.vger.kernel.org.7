@@ -1,128 +1,171 @@
-Return-Path: <linux-kernel+bounces-790561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD296B3AA3E
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 20:47:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20484B3AA3C
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 20:47:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AD52A02073
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 18:47:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60AF6A01B92
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 18:47:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43DF127933A;
-	Thu, 28 Aug 2025 18:47:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 503B8285060;
+	Thu, 28 Aug 2025 18:46:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ajgD2e4h"
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="L4MtUq57"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 006B426F2AF;
-	Thu, 28 Aug 2025 18:47:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C781D26F2AF;
+	Thu, 28 Aug 2025 18:46:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756406823; cv=none; b=Cibalcw3452VPDzl+itEiu1TGsa2QQ42m5ZdjmG78CTeQseRHln7/L+3Wfb6R0a3ZowWRROjtHj7FHdN86dYGUvGoYHq7Z/jPKCdGeYY/WwNUbIBG4wDArDlg9Ip6eRi1+7jDBiF/ADp+NhLAtJWb85xqV2+Ru5jUamwRMKTOjc=
+	t=1756406814; cv=none; b=YFqeGzbm059txh7Ts4oUFsf8GYvBdIg05b9oTef2szbmcJmm5LUwCU9+XITUMGUsNkR/2+Y22GVYTjyk7xDpIGBI1W2IMfCCzAE0MxQnoxjZqiGhHbiA8JNWBSxhtA5meJTyZ9aGURoJ39fvYR5DALS7FgS+wc9K3FjS9LT9v0A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756406823; c=relaxed/simple;
-	bh=vdhERKYfOY+T/pT2jzq6anWaCIeNTGYp5ND7/mID50U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WBwZ5GnpsZ7vmYwzwk8bPR5Xx/I4evkK/VDuquiqoBtVmtLB4h8fGi9mL6XVQXeWjg7UHvJw4I//iCcssJRjPTshOpD7xAKJeZ0MSRH12CoXgFT1dCPN3n8N2o+jMvNv0DzQYFm37MHSG37SmbjvAjx2rpuxFrE/OhIYFlSoGp4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ajgD2e4h; arc=none smtp.client-ip=209.85.208.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-336b0b3d753so5395151fa.1;
-        Thu, 28 Aug 2025 11:47:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756406820; x=1757011620; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=q1r+LpWaRtkOKvYchwIX0i0/lFLrHnDiOSxWU9T+LDA=;
-        b=ajgD2e4h1fQoJtbFyPpi98jlM/zxALGcIa8QXmymqqloyx2FfXF3L1GSdgvAGJymQJ
-         9qOGi3kdbjxN5ns6JtvHH5qE8Z715V2G61bXfeSYZfrmP0JRwiOLV+niy5FURllWaok9
-         WrD6vZpuc/kVSzXj4qvCvWjCBzzh75EGxM92jGJDafcvuGIadkKs2L84zcHYDVawIUDd
-         Cx43qxtBae14sZRoBOar7surLyTBiKsnbtxayP3bQizZv5mgTOepWC+dxxmAJC1QWcJr
-         vMzYD6kOShwKFtQJXOfqnCmGj7h3T9RBVsgdr6A4eI88VcXDDl5m/VALcBivhVmoNZUC
-         8Xww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756406820; x=1757011620;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=q1r+LpWaRtkOKvYchwIX0i0/lFLrHnDiOSxWU9T+LDA=;
-        b=TtkgpLVJpnd6UXsKwOPL1MWSk/FywvxSlXQ06g60gjUkA3L7A+NyvUkY8pS/2M+4+I
-         kXi2+qORrYpG/Y5cmCuS5EkAgiMeMtroJaDM3pjz8DvfuzNU4IOWlw7I91yBL/p9YOnf
-         70MbG7PDKnm8J0Lbifo3X8Xm+BLTOWrMeLfoCKUqwp4iesJulHxpzLN8gWRkx9QjMrio
-         TA7It1TFi//1fD83y9PcmmTxCdGt93i7z8b4APrONhDlkczXEunI9iuGi7YKnviwPuJN
-         qea5G6+ZU5+K9n/GsnbX0IBeIvmduIbhPXpl24ghhEwnLXTHgDcP0HeNJgq2bUKa6aR9
-         rUOg==
-X-Forwarded-Encrypted: i=1; AJvYcCVAYvVtX8nhVod0HeQCvQC3GC/oivC9ADGa4MCEAHwHuOXGZmaW4uX/aQ0sOWvVX3TSEEzrs6OysEc=@vger.kernel.org, AJvYcCWQeHyrhgUwM/yo4YOQGbWBl8ZCFtd1vmm2d6IsNIocjWqN7GIiClaeh1iXSYMFYB5jyw3dqi2kNk4rLLIA@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxxssu0b4WF5mwaYhsPUpy6Iyj5G41jUqLu8zus4KCZaHS+4iId
-	1JsCLsj4lBARW4cJ42YNMPrdblxzoFIJzFfMtf8fWIWER+zgyrpjOH+4a6mzAjUvjt3UzPC/Wdq
-	yy5pVfqfCkWGvTIYQ/ABtgzi65W9V/HU=
-X-Gm-Gg: ASbGncupCFXaaHKJrU9jiJ+mF66Bigey/Juw/5IS2CPo+jkAP9seQbYbSy9mXaq4vxC
-	EwbVaIUBcOyWCQhcjMgiKzZu373zkyqHoDDlcUc9j3IQJIyv9D21QKZujoPoDCukTLp+9Rf/mIg
-	ehH+yvTjQ+yrT5+1fK8S7T0xm1mLCp0EDl3ihA32rQqv6J+avxGQJ9NHCxUxdLEgx3oqM0ktj99
-	5+t5BWfYNvKpIxQV3sC/R1AlT1RrgLcuSGtIzCPIF51LBznNguH1CNUBjwkwB0=
-X-Google-Smtp-Source: AGHT+IFMC2ZGxBrZONWeNUQkwu4jL1gVEuKk1uI3/qQorZ/4xBGHg45CV+Pe/z7N00ztH3Se81uNof8UDI1QNxE+3hw=
-X-Received: by 2002:a05:651c:550:b0:32f:3e83:437d with SMTP id
- 38308e7fff4ca-33695ac0e40mr15036911fa.17.1756406819698; Thu, 28 Aug 2025
- 11:46:59 -0700 (PDT)
+	s=arc-20240116; t=1756406814; c=relaxed/simple;
+	bh=NiOs9m72QVC8+H9yXY0SO0iEkIg09FGrfMBPJT6zQIw=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=uZVijeucz+OKlTHxq9gk28FqtvpFnWgDsintKoDiqvUdkanUATgJj2OUnv+SZHEPXkBz5qgAIljAmjoSkO1YhmwjzMusC5LYb1ig6h9rAO4+P2rdh0MKLSl4svQDPpxrHIqiLhCnBHI/ckDD0U34OODasFuv9RwYGDhKQNBkj1Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=L4MtUq57; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1756406811;
+	bh=NiOs9m72QVC8+H9yXY0SO0iEkIg09FGrfMBPJT6zQIw=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=L4MtUq57cs5BOTK9aDW3QnQ7fnQ9SuQFziZbzY8k1EE4dJd/kQPNozNzV4vQ0BIqt
+	 v+ukeRzakIkzLxxjXZ6n9llCMiWKIUA0TK3wgxb5cr3q7fTd45S6l2SS4vnQ3wUHMg
+	 C/vYq0+FAD+PG7GO04HNt5QI3RInsEla+yhOSRHzs4t9nc/LR7OQH1bPAPCJB2uqgp
+	 2S6bRDg2Cc+72RoLh2A4smv+xBW/0wM/0rFMsBzP84Zk337Vb1AwFcYJFyE+ljCDS1
+	 WV2KrhsWWNz2QbOsT2LQVF+Y9KCS5aNlBMjqUFtyWgoxMheIa6cTlC18PcpLm67spN
+	 Fov9xs4Aq2uVg==
+Received: from [IPv6:2606:6d00:11:5a76::5ac] (unknown [IPv6:2606:6d00:11:5a76::5ac])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: nicolas)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 65FA217E046C;
+	Thu, 28 Aug 2025 20:46:50 +0200 (CEST)
+Message-ID: <8d4a5e5b61a5dad935d1d72f98641a6edf52c43a.camel@collabora.com>
+Subject: Re: [PATCH v2 3/4] media: uapi: v4l2-controls: Cleanup codec
+ definitions
+From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+To: Paul Kocialkowski <paulk@sys-base.io>, linux-media@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil
+	 <hverkuil@xs4all.nl>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Date: Thu, 28 Aug 2025 14:46:48 -0400
+In-Reply-To: <20250824180735.765587-4-paulk@sys-base.io>
+References: <20250824180735.765587-1-paulk@sys-base.io>
+	 <20250824180735.765587-4-paulk@sys-base.io>
+Autocrypt: addr=nicolas.dufresne@collabora.com; prefer-encrypt=mutual;
+ keydata=mDMEaCN2ixYJKwYBBAHaRw8BAQdAM0EHepTful3JOIzcPv6ekHOenE1u0vDG1gdHFrChD
+ /e0J05pY29sYXMgRHVmcmVzbmUgPG5pY29sYXNAbmR1ZnJlc25lLmNhPoicBBMWCgBEAhsDBQsJCA
+ cCAiICBhUKCQgLAgQWAgMBAh4HAheABQkJZfd1FiEE7w1SgRXEw8IaBG8S2UGUUSlgcvQFAmibrjo
+ CGQEACgkQ2UGUUSlgcvQlQwD/RjpU1SZYcKG6pnfnQ8ivgtTkGDRUJ8gP3fK7+XUjRNIA/iXfhXMN
+ abIWxO2oCXKf3TdD7aQ4070KO6zSxIcxgNQFtDFOaWNvbGFzIER1ZnJlc25lIDxuaWNvbGFzLmR1Z
+ nJlc25lQGNvbGxhYm9yYS5jb20+iJkEExYKAEECGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4
+ AWIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaCyyxgUJCWX3dQAKCRDZQZRRKWBy9ARJAP96pFmLffZ
+ smBUpkyVBfFAf+zq6BJt769R0al3kHvUKdgD9G7KAHuioxD2v6SX7idpIazjzx8b8rfzwTWyOQWHC
+ AAS0LU5pY29sYXMgRHVmcmVzbmUgPG5pY29sYXMuZHVmcmVzbmVAZ21haWwuY29tPoiZBBMWCgBBF
+ iEE7w1SgRXEw8IaBG8S2UGUUSlgcvQFAmibrGYCGwMFCQll93UFCwkIBwICIgIGFQoJCAsCBBYCAw
+ ECHgcCF4AACgkQ2UGUUSlgcvRObgD/YnQjfi4+L8f4fI7p1pPMTwRTcaRdy6aqkKEmKsCArzQBAK8
+ bRLv9QjuqsE6oQZra/RB4widZPvphs78H0P6NmpIJ
+Organization: Collabora Canada
+Content-Type: multipart/signed; micalg="pgp-sha512";
+	protocol="application/pgp-signature"; boundary="=-gpDBc0ZO2wC/a4nYEiYr"
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250827191919.1361787-1-akshayaj.lkd@gmail.com> <CAHp75VdQB673=qXBp0mPUHxQGxM=Z1CNSmEpP82OprVn++Y5uw@mail.gmail.com>
-In-Reply-To: <CAHp75VdQB673=qXBp0mPUHxQGxM=Z1CNSmEpP82OprVn++Y5uw@mail.gmail.com>
-From: Akshay Jindal <akshayaj.lkd@gmail.com>
-Date: Fri, 29 Aug 2025 00:16:47 +0530
-X-Gm-Features: Ac12FXxoQ5jjdCMvg5RcgTSxcd0BSKYFj3rzxUWDKhSKayf51bd0T1qeu9_8F9I
-Message-ID: <CAE3SzaTJTi3bHnqNbAfQ3W2jHcmhQHqa2ZtKE7=2BnP+onJv-w@mail.gmail.com>
-Subject: Re: [PATCH v2] iio: light: ltr390: Implement runtime PM support
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: anshulusr@gmail.com, jic23@kernel.org, dlechner@baylibre.com, 
-	nuno.sa@analog.com, andy@kernel.org, shuah@kernel.org, 
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+
+
+--=-gpDBc0ZO2wC/a4nYEiYr
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 28, 2025 at 7:17=E2=80=AFAM Andy Shevchenko
-<andy.shevchenko@gmail.com> wrote:
->
-> On Wed, Aug 27, 2025 at 10:19=E2=80=AFPM Akshay Jindal <akshayaj.lkd@gmai=
-l.com> wrote:
-> >
->
-> > +static int ltr390_read_raw(struct iio_dev *iio_device,
-> > +                          struct iio_chan_spec const *chan, int *val,
-> > +                          int *val2, long mask)
-> > +{
-> > +       int ret, retval;
-> > +       struct ltr390_data *data =3D iio_priv(iio_device);
-> > +       struct device *dev =3D &data->client->dev;
-> > +
-> > +       ret =3D pm_runtime_resume_and_get(dev);
-> > +       if (ret < 0)
-> > +               dev_err(dev, "runtime PM failed to resume: %d\n", ret);
->
-> If it fails, there is no point to read the value, it will be garbage
-> or even can make the bus stuck.
->
-My rationale behind this approach is that earlier ltr390_read_raw()
-had all the functionality
-of the .read_raw callback so the return value whether success or
-failure was of the core functionality.
-But now, since the core functionality has been relocated into
-__ltr390_read_raw(), I felt the return value
-ltr390_read_raw should be the return value of __ltr390_read_raw().
-Hence I thought, it will be better to
-just print dev_err for runtime PM failures and return the retval of
-__ltr390_read_raw only.
-Let me know your thoughts on this. Will make the change accordingly in
-the next version.
+Le dimanche 24 ao=C3=BBt 2025 =C3=A0 20:07 +0200, Paul Kocialkowski a =C3=
+=A9crit=C2=A0:
+> Move some fields closer to where they are used, add missing tabs
+> and remove an extra newline.
+>=20
+> Signed-off-by: Paul Kocialkowski <paulk@sys-base.io>
 
-Thanks,
-Akshay
+Reviewed-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+
+> ---
+> =C2=A0include/uapi/linux/v4l2-controls.h | 23 +++++++++++------------
+> =C2=A01 file changed, 11 insertions(+), 12 deletions(-)
+>=20
+> diff --git a/include/uapi/linux/v4l2-controls.h b/include/uapi/linux/v4l2=
+-
+> controls.h
+> index 7aef88465d04..2d30107e047e 100644
+> --- a/include/uapi/linux/v4l2-controls.h
+> +++ b/include/uapi/linux/v4l2-controls.h
+> @@ -1537,15 +1537,6 @@ struct v4l2_ctrl_h264_pred_weights {
+> =C2=A0	struct v4l2_h264_weight_factors weight_factors[2];
+> =C2=A0};
+> =C2=A0
+> -#define V4L2_H264_SLICE_TYPE_P				0
+> -#define V4L2_H264_SLICE_TYPE_B				1
+> -#define V4L2_H264_SLICE_TYPE_I				2
+> -#define V4L2_H264_SLICE_TYPE_SP				3
+> -#define V4L2_H264_SLICE_TYPE_SI				4
+> -
+> -#define V4L2_H264_SLICE_FLAG_DIRECT_SPATIAL_MV_PRED	0x01
+> -#define V4L2_H264_SLICE_FLAG_SP_FOR_SWITCH		0x02
+> -
+> =C2=A0#define V4L2_H264_TOP_FIELD_REF				0x1
+> =C2=A0#define V4L2_H264_BOTTOM_FIELD_REF			0x2
+> =C2=A0#define V4L2_H264_FRAME_REF				0x3
+> @@ -1566,8 +1557,17 @@ struct v4l2_h264_reference {
+> =C2=A0 * Maximum DPB size, as specified by section 'A.3.1 Level limits
+> =C2=A0 * common to the Baseline, Main, and Extended profiles'.
+> =C2=A0 */
+> -#define V4L2_H264_NUM_DPB_ENTRIES 16
+> -#define V4L2_H264_REF_LIST_LEN (2 * V4L2_H264_NUM_DPB_ENTRIES)
+> +#define V4L2_H264_NUM_DPB_ENTRIES		16
+> +#define V4L2_H264_REF_LIST_LEN			(2 *
+> V4L2_H264_NUM_DPB_ENTRIES)
+> +
+> +#define V4L2_H264_SLICE_TYPE_P				0
+> +#define V4L2_H264_SLICE_TYPE_B				1
+> +#define V4L2_H264_SLICE_TYPE_I				2
+> +#define V4L2_H264_SLICE_TYPE_SP				3
+> +#define V4L2_H264_SLICE_TYPE_SI				4
+> +
+> +#define V4L2_H264_SLICE_FLAG_DIRECT_SPATIAL_MV_PRED		0x01
+> +#define V4L2_H264_SLICE_FLAG_SP_FOR_SWITCH			0x02
+> =C2=A0
+> =C2=A0#define
+> V4L2_CID_STATELESS_H264_SLICE_PARAMS	(V4L2_CID_CODEC_STATELESS_BASE + 6)
+> =C2=A0/**
+> @@ -1707,7 +1707,6 @@ struct v4l2_ctrl_h264_decode_params {
+> =C2=A0	__u32 flags;
+> =C2=A0};
+> =C2=A0
+> -
+> =C2=A0/* Stateless FWHT control, used by the vicodec driver */
+> =C2=A0
+> =C2=A0/* Current FWHT version */
+
+--=-gpDBc0ZO2wC/a4nYEiYr
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaLCkGQAKCRDZQZRRKWBy
+9IhLAP9+Kl1KvWFy8AICGADxsy717zWGsfMSXOOSo2z5gOSjNAD/RRODrY6Mgbuw
+HxaSUv9DQrkeKA35nyOaYR03wk2EDQ8=
+=UPfF
+-----END PGP SIGNATURE-----
+
+--=-gpDBc0ZO2wC/a4nYEiYr--
 
