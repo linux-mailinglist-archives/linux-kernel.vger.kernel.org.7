@@ -1,47 +1,39 @@
-Return-Path: <linux-kernel+bounces-790488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E442B3A877
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 19:42:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28685B3A896
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 19:45:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0715A3BCFF6
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 17:42:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D56DE16A671
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 17:45:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7091B33CEA9;
-	Thu, 28 Aug 2025 17:41:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RW739Xh4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9766322DB3;
-	Thu, 28 Aug 2025 17:41:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B292271453;
+	Thu, 28 Aug 2025 17:45:39 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD9D322F01
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 17:45:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756402916; cv=none; b=P085f2jmjxlj+iO3QVbH3cwDkZxQUnQz6Rq7eTRNV72PnOG1NnTkZN1O3gXeM7RkxwRGK9KTCw/hSFgpHnkPn99u4Kn03VVDyas4iy583yhyoZe2Qhk+stZDLtvlTG6KdvA3vggEdm21rOQb/tDa58kcbOC6F8Ne7J0bgb3YXK8=
+	t=1756403139; cv=none; b=KURYbOffejWyl1+a5C+JAJtGuWEJjkFZ0eqqxrws3ZpbB4vMZtXZUqqbn8KfCSxshsYJCnWc/4fPjCXMetq4q8VVJ+yt60BWte55URaBCnor5qe6vP6eaJL07COXBpa933fxZRk2Nm34TWLU/WQKg9WopHD0kfpnu+tMIwY71LI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756402916; c=relaxed/simple;
-	bh=2UYNXGDieoZ95XzWgQcQITQA1YLH3BH5DbxP1Zj3114=;
+	s=arc-20240116; t=1756403139; c=relaxed/simple;
+	bh=iNsl+IAzAYmp8h/QlzABNvwx/GGLwh/vPMwYnWYOMJo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MfVgwCEQIJbFJxNyC5gytQhfFd/ceFdkcAqda8/TvBsXY8AEoHbYG197Mx9YJ7J6xt6KwJgtDXRypu+cm1k8Aio4yfH+nWXr/ilu/0wo1fyG1VQMtqLWxLllpWWw9PFKJyu7OJJlD7P4Rz3fBaEH2MGem23Ou8RGCRqzux3KmWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RW739Xh4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A73F2C4CEED;
-	Thu, 28 Aug 2025 17:41:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756402916;
-	bh=2UYNXGDieoZ95XzWgQcQITQA1YLH3BH5DbxP1Zj3114=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=RW739Xh45IPUVSlytuo2cI/g6ty1WeKTa43IsX5pNsnTlRiajWRKe8HqSuOvuAxpA
-	 1OJEu8ifJu9nUT4nt0ImxMrEin+B8tnpZyv/NVFqP10AyLwsZbLHpu/9OROY1FEOeJ
-	 mzj+Dr5oQq8fJWGM8s/wSWyyXUF5/Ezg3YgR23V2G155hVkhJcaucoPam0J4GiWW6E
-	 O9bqepTC5qee2hbj1viB9int9r1EgtMZeLvW6+rTBnyg3A9zCNq9XV+TFnhxo01sZL
-	 rU2zRahnLXgxwDLqmJ5D5dIpXX71e4LToXulw3cgmg+35LMVxcQNZempMJhxqcDrys
-	 9YPdOKzq2RW/w==
-Message-ID: <c73b16e5-bc48-493d-a1a7-06b779a7a7ab@kernel.org>
-Date: Thu, 28 Aug 2025 19:41:50 +0200
+	 In-Reply-To:Content-Type; b=inHb9ywMldAqp7smE4z1K9oE1S9d80qrIkROqwkJK+el9d/6vl36esOEyf/cbnull2v7iAbdLeHXu1q6SN1XFb05qa8oQJwgvn+/Kr7BNXw2dviXJGeY98vhWG+LOYdKctVXUuTUAMZz5oEPe0z5RL5SRsS/JJ5tVEfATlzCbqo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A8D021688;
+	Thu, 28 Aug 2025 10:45:27 -0700 (PDT)
+Received: from [10.57.91.118] (unknown [10.57.91.118])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6626B3F738;
+	Thu, 28 Aug 2025 10:45:34 -0700 (PDT)
+Message-ID: <5795892e-503e-496b-a5dd-be4776f15513@arm.com>
+Date: Thu, 28 Aug 2025 18:45:32 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,111 +41,92 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V3 1/4] ufs: dt-bindings: Document gear and rate limit
- properties
-To: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>,
- Bart Van Assche <bvanassche@acm.org>, alim.akhtar@samsung.com,
- avri.altman@wdc.com, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, mani@kernel.org, James.Bottomley@HansenPartnership.com,
- martin.petersen@oracle.com
-Cc: linux-scsi@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-References: <20250826150855.7725-1-quic_rdwivedi@quicinc.com>
- <20250826150855.7725-2-quic_rdwivedi@quicinc.com>
- <9944c595-da68-43c0-8364-6a8665a0fc3f@acm.org>
- <8d705694-498a-4592-b93a-7df6a1dd5211@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <8d705694-498a-4592-b93a-7df6a1dd5211@quicinc.com>
+Subject: Re: [RFC PATCH v6 3/4] arm64: mm: support large block mapping when
+ rodata=full
+Content-Language: en-GB
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Yang Shi <yang@os.amperecomputing.com>, will@kernel.org,
+ akpm@linux-foundation.org, Miko.Lenczewski@arm.com, dev.jain@arm.com,
+ scott@os.amperecomputing.com, cl@gentwo.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250805081350.3854670-1-ryan.roberts@arm.com>
+ <20250805081350.3854670-4-ryan.roberts@arm.com> <aLCNTsM-nn6SpfOO@arm.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <aLCNTsM-nn6SpfOO@arm.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 28/08/2025 18:45, Ram Kumar Dwivedi wrote:
+On 28/08/2025 18:09, Catalin Marinas wrote:
+> On Tue, Aug 05, 2025 at 09:13:48AM +0100, Ryan Roberts wrote:
+>> diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
+>> index abd9725796e9..f6cd79287024 100644
+>> --- a/arch/arm64/mm/mmu.c
+>> +++ b/arch/arm64/mm/mmu.c
+> [...]
+>> @@ -640,6 +857,16 @@ static inline void arm64_kfence_map_pool(phys_addr_t kfence_pool, pgd_t *pgdp) {
+>>  
+>>  #endif /* CONFIG_KFENCE */
+>>  
+>> +static inline bool force_pte_mapping(void)
+>> +{
+>> +	bool bbml2 = system_capabilities_finalized() ?
+>> +		system_supports_bbml2_noabort() : bbml2_noabort_available();
+>> +
+>> +	return (!bbml2 && (rodata_full || arm64_kfence_can_set_direct_map() ||
+>> +			   is_realm_world())) ||
+>> +		debug_pagealloc_enabled();
+>> +}
+>> +
+>>  static void __init map_mem(pgd_t *pgdp)
+>>  {
+>>  	static const u64 direct_map_end = _PAGE_END(VA_BITS_MIN);
+>> @@ -665,7 +892,7 @@ static void __init map_mem(pgd_t *pgdp)
+>>  
+>>  	early_kfence_pool = arm64_kfence_alloc_pool();
+>>  
+>> -	if (can_set_direct_map())
+>> +	if (force_pte_mapping())
+>>  		flags |= NO_BLOCK_MAPPINGS | NO_CONT_MAPPINGS;
+>>  
+>>  	/*
+>> @@ -1367,7 +1594,7 @@ int arch_add_memory(int nid, u64 start, u64 size,
+>>  
+>>  	VM_BUG_ON(!mhp_range_allowed(start, size, true));
+>>  
+>> -	if (can_set_direct_map())
+>> +	if (force_pte_mapping())
+>>  		flags |= NO_BLOCK_MAPPINGS | NO_CONT_MAPPINGS;
+>>  
+>>  	__create_pgd_mapping(swapper_pg_dir, start, __phys_to_virt(start),
 > 
-> 
-> On 26-Aug-25 9:05 PM, Bart Van Assche wrote:
->> On 8/26/25 8:08 AM, Ram Kumar Dwivedi wrote:
->>> +  limit-hs-gear:
->>> +    $ref: /schemas/types.yaml#/definitions/uint32
->>> +    minimum: 1
->>> +    maximum: 5
->>> +    default: 5
->>> +    description:
->>> +      Restricts the maximum HS gear used in both TX and RX directions,
->>> +      typically for hardware or power constraints in automotive use cases.
->>
->> The UFSHCI 5.0 spec will add gear 6 soon. So why to restrict the maximum
->> gear to 5?
->>
->>> +  limit-rate:
->>> +    $ref: /schemas/types.yaml#/definitions/uint32
->>> +    enum: [1, 2]
->>> +    default: 2
->>> +    description:
->>> +      Restricts the UFS controller to Rate A (1) or Rate B (2) for both
->>> +      TX and RX directions, often required in automotive environments due
->>> +      to hardware limitations.
->>
->> As far as I know no numeric values are associated with these rates in
->> the UFSHCI 4.1 standard nor in any of the previous versions of this
->> standard. Does the .yaml syntax support something like "enum: [A, B]"?
-> Hi Bart,
-> 
-> As per the MIPI UniPro spec:
-> 
-> In Section 5.7.12.3.2, the hs_series is defined as:
-> hs_series = Flags[3] + 1;
-> 
-> In Section 5.7.7.1, Flags[3] is described as:
-> Set to ‘0’ for Series A and ‘1’ for Series B (PA_HSSeries).
+> Not sure this works in a heterogeneous configuration.
+> bbml2_noabort_available() only checks the current/boot CPU which may
+> return true but if secondary CPUs don't have the feature, it results in
+> system_supports_bbml2_noabort() being false with force_pte_mapping()
+> also false in the early map_mem() calls.
 
-That's register value. Why are you using values as argument of actual
-meaning of rates?
+The intent is that we eagerly create a block-mapped linear map at boot if the
+boot CPU supports BBML2. If, once we have determined that a secondary CPU
+doesn't support BBML2 (and therefore the system doesn't support it) then we
+repaint the linear map using page mappings.
+
+The repainting mechanism is added in the next patch.
+
+I've tested this with heterogeneous configs and I'm confident it does work.
 
 
-Best regards,
-Krzysztof
+FYI, I actually have a new version of this ready to go - I was hoping to post
+tomorrow, subject to performance results. I thought you were implying in a
+previous mail that you weren't interested in reviewing until it was based on top
+of an -rc. Perhaps I misunderstood. Let me know if you want me to hold off on
+posting that given you are now reviewing this version.
+
+Thanks,
+Ryan
+
+> 
+> I don't see a nice solution other than making BBML2 no-abort a boot CPU
+> feature.
+> 
+
 
