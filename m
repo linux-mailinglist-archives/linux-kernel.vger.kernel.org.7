@@ -1,123 +1,93 @@
-Return-Path: <linux-kernel+bounces-789393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9119B394D3
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 09:14:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3875CB394D0
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 09:14:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6ED93ADE48
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 07:14:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D67AE3AFBD2
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 07:14:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC49F2D5427;
-	Thu, 28 Aug 2025 07:14:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84F162D640F;
+	Thu, 28 Aug 2025 07:14:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GIzhXS8P"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hnbCebaW"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 413832C3242;
-	Thu, 28 Aug 2025 07:14:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE97E2D46C0;
+	Thu, 28 Aug 2025 07:14:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756365280; cv=none; b=tHt92vjBwmtH2i/eGgQxqo+qaR5/ry/L11pgowADBqE4JyJSUjQI/Wv2fOlydyvIYP9q5b/pJoDF0vIgA87NkZIPi56B8ihvRVa/+3iSfXFDI/fz5f/fsK8lJKIeVD7a2LS1Jziq5wK5V5Bju8dL/MK0HloE2EzeSCxHyvsSL0o=
+	t=1756365261; cv=none; b=DCkfAFozAtyaY5OOb8gs914Ymqo9zHpK4El2b/TYYoRxR0Q1+LWlDVbpv/nytlB/yxt111RhbyaxGw+rJv4RBASy3jtHcmkIHJSKTAlfIw/8KNfoPkfFbayjVO50FCfYO+Vp6UyStepHhU0NWQ20TQF/3ljAV9f8Xs8TqzLniLk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756365280; c=relaxed/simple;
-	bh=u7MU8S7IUKFLA+3rSi4qDipSi5TbBda36l1aewE2udM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AWbiSWxAtKh9l84UDM91ighr3qFqgvdmqbGxKY41LMWhGKRyqSRMdHEAkQhv7M/WKXzfPdaWffG7mUDAkiarPo7LkbZKGyV6zLL7/f3z494pHb4ZHXTbSP75o/7dgjJp+DKM3r2f06Md9ksQc94ov3B9Wo+j0aoGbl69K7TFkZk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GIzhXS8P; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2CFEC4CEED;
-	Thu, 28 Aug 2025 07:14:18 +0000 (UTC)
+	s=arc-20240116; t=1756365261; c=relaxed/simple;
+	bh=y2E6jAgZ1n8UgRxjbTT0G+yEp9u8bfmkdgducgSp1d0=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
+	 References:In-Reply-To; b=RFdgHWFrn56gq9JPv6LZWFWnNKsZWMLhTWKKm1xM2HHg/pCkHbdOa2z6NYyRkYycWWa9WH1zvh5MBXOfxuWEHAd5NPLNm1tQ8nRSMIDhuky5oQWQXLEoW3msO/Y6DMTO9D+c7hImylUns7JOjB+FCKPdy6AuKsLrE27WRK0YY5c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hnbCebaW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC691C4CEEB;
+	Thu, 28 Aug 2025 07:14:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756365279;
-	bh=u7MU8S7IUKFLA+3rSi4qDipSi5TbBda36l1aewE2udM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GIzhXS8PSnxYCSsCp5sOq9LQVBuQ368mCesgVvzDRbMdYsHsF986cg37wXBeCyBMt
-	 +9JcuR+1Z6xLXbpb50R0WlQlVSU630yE+rXFA13Rz/ar7HDUsG+SQqVQ/qPuaU9PSc
-	 st0CQpt/2vSNT+yhe5uzUC96g26FsCxSN3bQiUqxds342dEEdlsQZSDrKvMBsCjaJA
-	 XbinE3bU++eTmz6yOUC9S2cjzgETY60Ju2PpaQh3yK3XNsKsgK7Dyky37zuld+l3EI
-	 PlxGGISs04ykUysfnAZ+YNhYIGKhbXLwvpl/Khe/e/KH4qf9uCyuGDTImM3somOfat
-	 y9luVBQTC6Mkg==
-Date: Thu, 28 Aug 2025 10:14:14 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Pasha Tatashin <pasha.tatashin@soleen.com>, pratyush@kernel.org,
-	jasonmiu@google.com, graf@amazon.com, changyuanl@google.com,
-	dmatlack@google.com, rientjes@google.com, corbet@lwn.net,
-	rdunlap@infradead.org, ilpo.jarvinen@linux.intel.com,
-	kanie@linux.alibaba.com, ojeda@kernel.org, aliceryhl@google.com,
-	masahiroy@kernel.org, akpm@linux-foundation.org, tj@kernel.org,
-	yoann.congal@smile.fr, mmaurer@google.com, roman.gushchin@linux.dev,
-	chenridong@huawei.com, axboe@kernel.dk, mark.rutland@arm.com,
-	jannh@google.com, vincent.guittot@linaro.org, hannes@cmpxchg.org,
-	dan.j.williams@intel.com, david@redhat.com,
-	joel.granados@kernel.org, rostedt@goodmis.org,
-	anna.schumaker@oracle.com, song@kernel.org, zhangguopeng@kylinos.cn,
-	linux@weissschuh.net, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-mm@kvack.org,
-	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com,
-	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org,
-	hpa@zytor.com, rafael@kernel.org, dakr@kernel.org,
-	bartosz.golaszewski@linaro.org, cw00.choi@samsung.com,
-	myungjoo.ham@samsung.com, yesanishhere@gmail.com,
-	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com,
-	aleksander.lobakin@intel.com, ira.weiny@intel.com,
-	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de,
-	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com,
-	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net,
-	brauner@kernel.org, linux-api@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, saeedm@nvidia.com,
-	ajayachandra@nvidia.com, parav@nvidia.com, leonro@nvidia.com,
-	witu@nvidia.com
-Subject: Re: [PATCH v3 29/30] luo: allow preserving memfd
-Message-ID: <aLABxkpPcbxyv6m_@kernel.org>
-References: <20250807014442.3829950-1-pasha.tatashin@soleen.com>
- <20250807014442.3829950-30-pasha.tatashin@soleen.com>
- <20250826162019.GD2130239@nvidia.com>
+	s=k20201202; t=1756365259;
+	bh=y2E6jAgZ1n8UgRxjbTT0G+yEp9u8bfmkdgducgSp1d0=;
+	h=Date:To:Cc:Subject:From:References:In-Reply-To:From;
+	b=hnbCebaW+/ZLccWHgtmbMBfUty5cPnUOU61XOUviSlYcgKcJWP2w5mPHSKuR8506E
+	 L7/GFGB7h1F5DvmwfHGHiGnMWwDvjXQ//Skzo75bYoAT+I7TFxP5y/M/p9P6pK4una
+	 PZf86pEZZZIbrkZB5V32KUrREe4/8VLl6MisvX7/CYjkbJjTfyOBR3glAYCuChBSsn
+	 N6fbUSv9iz+Z+FVi/ahE+E5o7L2wfZMq1VGByHcKCzQ2LvtK07YsjucUtj7/wAAJSw
+	 /+qzg+v4+1FL0QtPe/SF3UexJjGjcdAi3bysML6W7q3q2n8bp1eZeVAEaFIWaGlnqv
+	 Pl+ItArZnHVDw==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250826162019.GD2130239@nvidia.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 28 Aug 2025 09:14:14 +0200
+Message-Id: <DCDVIR91LFHQ.1C87G5A0OBJ39@kernel.org>
+To: "Alice Ryhl" <aliceryhl@google.com>, "Jesung Yang" <y.j3ms.n@gmail.com>
+Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
+ <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
+ <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
+ "Trevor Gross" <tmgross@umich.edu>, "Danilo Krummrich" <dakr@kernel.org>,
+ "Alexandre Courbot" <acourbot@nvidia.com>, <linux-kernel@vger.kernel.org>,
+ <rust-for-linux@vger.kernel.org>, <nouveau@lists.freedesktop.org>
+Subject: Re: [PATCH v2 2/5] rust: macros: extend custom `quote!()` macro
+From: "Benno Lossin" <lossin@kernel.org>
+X-Mailer: aerc 0.20.1
+References: <cover.1755235180.git.y.j3ms.n@gmail.com>
+ <948a28f26a0e9924d82eb1d8d377e3ddc7335b24.1755235180.git.y.j3ms.n@gmail.com> <CAH5fLgjyd7zNqLFT4T0_=tzcPFyw9xwZX+QTA8ShBxZ_Fa6o6Q@mail.gmail.com>
+In-Reply-To: <CAH5fLgjyd7zNqLFT4T0_=tzcPFyw9xwZX+QTA8ShBxZ_Fa6o6Q@mail.gmail.com>
 
-On Tue, Aug 26, 2025 at 01:20:19PM -0300, Jason Gunthorpe wrote:
-> On Thu, Aug 07, 2025 at 01:44:35AM +0000, Pasha Tatashin wrote:
-> 
-> > +	err = fdt_property_placeholder(fdt, "folios", preserved_size,
-> > +				       (void **)&preserved_folios);
-> > +	if (err) {
-> > +		pr_err("Failed to reserve folios property in FDT: %s\n",
-> > +		       fdt_strerror(err));
-> > +		err = -ENOMEM;
-> > +		goto err_free_fdt;
-> > +	}
-> 
-> Yuk.
-> 
-> This really wants some luo helper
-> 
-> 'luo alloc array'
-> 'luo restore array'
-> 'luo free array'
-> 
-> Which would get a linearized list of pages in the vmap to hold the
-> array and then allocate some structure to record the page list and
-> return back the u64 of the phys_addr of the top of the structure to
-> store in whatever.
-> 
-> Getting fdt to allocate the array inside the fds is just not going to
-> work for anything of size.
+On Thu Aug 28, 2025 at 8:39 AM CEST, Alice Ryhl wrote:
+> On Fri, Aug 15, 2025 at 7:32=E2=80=AFAM Jesung Yang <y.j3ms.n@gmail.com> =
+wrote:
+>> +    (@proc $v:ident $span:ident =3D=3D $($tt:tt)*) =3D> {
+>> +        $v.push(::proc_macro::TokenTree::Punct(
+>> +                ::proc_macro::Punct::new('=3D', ::proc_macro::Spacing::=
+Joint)
+>> +        ));
+>> +        $v.push(::proc_macro::TokenTree::Punct(
+>> +                ::proc_macro::Punct::new('=3D', ::proc_macro::Spacing::=
+Alone)
+>> +        ));
+>> +        quote_spanned!(@proc $v $span $($tt)*);
+>
+> Not a blocker, but if the way to implement this one is to push =3D
+> twice, then I think the pattern should just be a single =3D and then you
+> push a =3D once. The pattern can match twice to handle =3D=3D.
 
-I agree that we need a side-car structure for preserving large (potentially
-sparse) arrays, but I think it should be a part of KHO rather than LUO.
+You can't do that, since the first one needs the `Joint` spacing and the
+second one the `Alone` one. `=3D=3D` also is a single token in macro input,
+so matching only on `=3D` doesn't work.
 
--- 
-Sincerely yours,
-Mike.
+---
+Cheers,
+Benno
 
