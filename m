@@ -1,116 +1,123 @@
-Return-Path: <linux-kernel+bounces-789447-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789446-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07468B39592
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 09:40:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 905ACB3959D
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 09:41:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CAA2F683652
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 07:40:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 48B941C264E6
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 07:40:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7F4B2ED17B;
-	Thu, 28 Aug 2025 07:36:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D93B92EB876;
+	Thu, 28 Aug 2025 07:36:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FbiKZCZC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cxc1DKcp"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1751A2EB857;
-	Thu, 28 Aug 2025 07:36:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EB522D7801;
+	Thu, 28 Aug 2025 07:36:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756366590; cv=none; b=YWKOuN5OfI1/gNeVhXEwtgVPJ+eL/RnulB+EoMSMgnYs/CUe4HWb4EwUA8CHX7WG/WKL80vM989ZKCb/+8Zpa0zPHRYhOjtE3hRqJUGLJoxwNAid0LrTVrTFl7DDcgWbWDub04m0pmuqQMll2FS8NIDkvYZsU4mcpYrB/IOs/rA=
+	t=1756366587; cv=none; b=X+iFDk2XMerPCu//ZqZMUlhtFyX8oheU6Ss+Jf99bn8dTogwuGacZXYjY84CriOrc3srXWesX2liUd6gV944+8PWx2RsHIWKi6KUDED5v579eSxeqZIU0xxW/xHpZjPKVvc8MJMb+X/C4DrT/BdaudE4CyYrHP1Qkn7+lAmL3o4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756366590; c=relaxed/simple;
-	bh=eG24upzL3ZfnzWnDwgoCUkzHYlB1tE2FpKQJiSrvhP0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=n5AhGbEuZ9lT8Ysx0KYUPp7q/G5L/goLv8xWxZLwqp2QVomcNada2gE7bj1dgXWGzFKQAx+pZfPvyurjrgHb0HcHj625FlKunxc5ofZmTrZRDXlfNFKDFeXMXgAf5VKADVFaXgui6v9A/nB0YoYHyI4VAHHzwW/BdgQIlxsa5LE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FbiKZCZC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96126C4CEF6;
-	Thu, 28 Aug 2025 07:36:28 +0000 (UTC)
+	s=arc-20240116; t=1756366587; c=relaxed/simple;
+	bh=1K/qVW1RZwXvUuErhJcM8fL6vinn6Fu+vGPXQZ7rDHg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=orzT3Vmbxyg4FTc9kemzXa3sX+w0ThXyAzTV9TGSy0PqjorQm3QHJDb7MQ7dfwJFil3HB+/17r51DEHn8P7Nv9ZBsjtjEvzBTXN/rHy80BTCMY7Iid+KsTzatEXXabG4rp2TEm7QTQhuOXYv/EY2B9D43I5pbFNscct0eVP6Dhs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cxc1DKcp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39A01C4CEEB;
+	Thu, 28 Aug 2025 07:36:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756366588;
-	bh=eG24upzL3ZfnzWnDwgoCUkzHYlB1tE2FpKQJiSrvhP0=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=FbiKZCZCqwOf5zo3UzCuoo7H4lCpWhOowZo/h21ucKQjupl1hbTz6BidSEb662+c2
-	 pr3hltnMXfRDL58shWnRkoyk5mAiDkG8PIUeYu7l67uWcE1G3BiKJ5BcNabwpeDvKG
-	 sLPWtPVL2n4AMl/Ty7pRTup/K7SwVe43PtMkr/3m+I+DxJkteSwOverXa7hojslViF
-	 RDBdsDm5+UUnTj1AgaCmNklvDIRC3Z/hcUBkDVjvjjMRa8zfo6BR3fChW6YDeALR8I
-	 Aq7WFqCOCnoY/TJmZ3S7qQFQss18gGtCxMJzLHKJS5Bu+mbiMWJLOfbVUttg/xBe/j
-	 ttrif1doYeBFg==
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-33663b68b06so4209271fa.1;
-        Thu, 28 Aug 2025 00:36:28 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUwbJLsX9ioqfP488DqU9o2NyhJEUTx1vAh8cJvMZQlKSTJ/2vqyq4TJIMqLlfRcqlVGIbJEmOKYc0=@vger.kernel.org, AJvYcCXQdMuZOaNWxMl6uUFzLR70OspRWKT4CqhbJUx13/3NYGwu29jWv6WnDLDHqJq0ykfqyC769msz9zVtRKDU@vger.kernel.org
-X-Gm-Message-State: AOJu0YwIKgxiecHllUn76FQaVz1ZEoEpod1GCV8ZY9qhmQvhN3mkGumw
-	Jkauu4XXluotKs0v9YLSkQOjGG+UeqlSfGy4x0cRMoofU37zRKUIZDCAZSILeCl/jYz1nuQEcfb
-	uoykNKk/Wg4Y568lqD9Sys/DFYjdc8as=
-X-Google-Smtp-Source: AGHT+IH0vnKMJnsgtrK+zCirslWcbDAKvWEdT20oGO5PTcKxps2JEuiJiZbHx1deqXjL7jb84msPwqdPs9VyP1tITJ4=
-X-Received: by 2002:a05:651c:3255:10b0:332:4238:4f46 with SMTP id
- 38308e7fff4ca-33650d77263mr49395401fa.3.1756366586943; Thu, 28 Aug 2025
- 00:36:26 -0700 (PDT)
+	s=k20201202; t=1756366586;
+	bh=1K/qVW1RZwXvUuErhJcM8fL6vinn6Fu+vGPXQZ7rDHg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Cxc1DKcpJi0l54c6FRSm68q8cn66LDFt0AY5deSnZZNDfuVIryNjMTQyOOde8HyaH
+	 HJDxUqLmr9FnXjqqag6Vmbo717dy3KCJ3n1qr+utjH58r92T6YOHaQpJ7CY/DY4goL
+	 GqT7iD0QPzaywYSiRo1HyKojV0QqNxL55SwycGKGmWRGS0O8CfFJJ4g8tM1PDI7rwz
+	 hmC64KdU7u9DGGeHGW/izrqC0qncFNSksC7B/2zZov9VvkpqsNh6TLXvTCEhsmp0D1
+	 OuePzMXkJS1gLb5HX0JC+/9eAhlPU3WG7+wrvynoWrkoBlbelrW/jUbxNsms0CMG3K
+	 yI2o00Kf0wHqg==
+Date: Thu, 28 Aug 2025 09:36:24 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Yongxing Mou <yongxing.mou@oss.qualcomm.com>
+Cc: Rob Clark <robin.clark@oss.qualcomm.com>, 
+	Dmitry Baryshkov <lumag@kernel.org>, Abhinav Kumar <abhinav.kumar@linux.dev>, 
+	Jessica Zhang <jessica.zhang@oss.qualcomm.com>, Sean Paul <sean@poorly.run>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Kuogee Hsieh <quic_khsieh@quicinc.com>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v9 2/6] dt-bindings: display/msm: dp-controller: document
+ QCS8300 compatible
+Message-ID: <20250828-kind-crocodile-of-progress-6cbbb0@kuoka>
+References: <20250825-qcs8300_mdss-v9-0-ebda1de80ca0@oss.qualcomm.com>
+ <20250825-qcs8300_mdss-v9-2-ebda1de80ca0@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250722072708.2079165-24-ardb+git@google.com>
- <20250722072708.2079165-34-ardb+git@google.com> <20250811063026.GMaJmOAoo-PhdXcLZX@fat_crate.local>
-In-Reply-To: <20250811063026.GMaJmOAoo-PhdXcLZX@fat_crate.local>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Thu, 28 Aug 2025 09:36:15 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXHr1tcV5SpkhENANUs1Y_nvC4Wh_7Q=UN+2RPVHFC4O_Q@mail.gmail.com>
-X-Gm-Features: Ac12FXxKxl6V_V2tbiBuP85354GjoIgj9YQWQ6Nzb4u1vEVAd51t97Z68ko62N0
-Message-ID: <CAMj1kXHr1tcV5SpkhENANUs1Y_nvC4Wh_7Q=UN+2RPVHFC4O_Q@mail.gmail.com>
-Subject: Re: [PATCH v6 10/22] x86/boot: Drop redundant RMPADJUST in SEV SVSM
- presence check
-To: Borislav Petkov <bp@alien8.de>
-Cc: Ard Biesheuvel <ardb+git@google.com>, linux-kernel@vger.kernel.org, 
-	linux-efi@vger.kernel.org, x86@kernel.org, Ingo Molnar <mingo@kernel.org>, 
-	Kevin Loughlin <kevinloughlin@google.com>, Tom Lendacky <thomas.lendacky@amd.com>, 
-	Josh Poimboeuf <jpoimboe@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Nikunj A Dadhania <nikunj@amd.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250825-qcs8300_mdss-v9-2-ebda1de80ca0@oss.qualcomm.com>
 
-On Mon, 11 Aug 2025 at 08:30, Borislav Petkov <bp@alien8.de> wrote:
->
-> On Tue, Jul 22, 2025 at 09:27:19AM +0200, Ard Biesheuvel wrote:
-> > From: Ard Biesheuvel <ardb@kernel.org>
-> >
-> > snp_vmpl will be assigned a non-zero value when executing at a VMPL
-> > other than 0, and this is inferred from a call to RMPADJUST, which only
-> > works when running at VMPL0.
-> >
-> > This means that testing snp_vmpl is sufficient, and there is no need to
-> > perform the same check again.
->
-> Remind me again pls: the startup code is going to be executed unconditionally,
-> even by the decompressor, right?
->
-> Because if it is an alternative path, we can't do the below.
->
+On Mon, Aug 25, 2025 at 11:34:21AM +0800, Yongxing Mou wrote:
+> Add compatible string for the DisplayPort controller found on the
+> Qualcomm QCS8300 SoC.
+> 
+> The Qualcomm QCS8300 platform comes with one DisplayPort controller
+> that supports 4 MST streams.
+> 
+> Signed-off-by: Yongxing Mou <yongxing.mou@oss.qualcomm.com>
+> ---
+>  .../bindings/display/msm/dp-controller.yaml        | 26 +++++++++++++++++-----
+>  1 file changed, 21 insertions(+), 5 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/display/msm/dp-controller.yaml b/Documentation/devicetree/bindings/display/msm/dp-controller.yaml
+> index 68a6fd27506fda004e53174db5bcc88a29e8d2a6..4da22a211442b7abe2dc18e769d8fd14d224eb40 100644
+> --- a/Documentation/devicetree/bindings/display/msm/dp-controller.yaml
+> +++ b/Documentation/devicetree/bindings/display/msm/dp-controller.yaml
+> @@ -18,6 +18,7 @@ properties:
+>    compatible:
+>      oneOf:
+>        - enum:
+> +          - qcom,qcs8300-dp
+>            - qcom,sa8775p-dp
+>            - qcom,sc7180-dp
+>            - qcom,sc7280-dp
+> @@ -179,6 +180,7 @@ allOf:
+>            compatible:
+>              contains:
+>                enum:
+> +                - qcom,qcs8300-dp
+>                  - qcom,sa8775p-dp
+>                  - qcom,x1e80100-dp
+>        then:
+> @@ -241,11 +243,25 @@ allOf:
+>                minItems: 5
+>                maxItems: 6
+>          else:
+> -          # Default to 2 streams MST
+> -          properties:
+> -            clocks:
+> -              minItems: 6
+> -              maxItems: 6
+> +          if:
 
-The rmpadjust() call has no meaningful side effects - it is only the
-distinction between its success or failure that tells us which VMPL
-the guest is running at. The value of snp_vmpl has already been set
-based on the same criteria.
+Please do not nest if:then:if:then. It gets unreadable very fast.
 
-The decompressor is completely independent when it comes to
-initializing the SEV-SNP context, and the core kernel will redo
-everything from scratch. This is needed because the decompressor takes
-over exception handling in order to be able to handle page faults and
-lazily populate the identity mapping. IOW, the core kernel does not
-care whether the decompressor has executed and does not reuse any of
-the context that it has created.
+I don't even understand why you need this. The code does not exist in
+the next, either. That does not help.
 
-This double initialization is no longer needed when booting via EFI,
-and so once these changes are in, I will go back and resubmit some of
-my previous work that removes the call to sev_enable() from the EFI
-stub entirely. Non-EFI boot via the legacy decompressor (which
-includes kexec boot, which makes it relevant for SEV-SNP guests) will
-retain this redundant boot flow, unless we find a way to mandate a
-complete 1:1 mapping from the boot chain (which EFI already
-guarantees).
+Best regards,
+Krzysztof
+
 
