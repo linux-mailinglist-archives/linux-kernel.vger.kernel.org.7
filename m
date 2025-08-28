@@ -1,157 +1,202 @@
-Return-Path: <linux-kernel+bounces-789564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDBC6B39765
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 10:47:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43C6EB39777
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 10:49:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69626366ED0
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 08:47:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0406B7C2A2C
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 08:49:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC6C82E0B5D;
-	Thu, 28 Aug 2025 08:47:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DISUrNBa"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FC552F8BF3;
+	Thu, 28 Aug 2025 08:48:25 +0000 (UTC)
+Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A3A02BEFF6
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 08:47:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02C202EBBA9;
+	Thu, 28 Aug 2025 08:48:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756370873; cv=none; b=MXyNn8QvLL8tOD9tGGBlTfAg6uGLBvtziGO4cxoRu6I5Ya6wDBtMye+S3G6fjVGdWUQpCatz5lY0Z2KGVZfktd/tO6WVHQ4hm9Ne8ps1bvUrJJTkdhyNEvlFyCgFnLg/R4Maef+aCcq5sca+U9bwAxWpqnN4L3ouCJ4QukFCPsY=
+	t=1756370904; cv=none; b=h0dV83Q+jB9SgAypc6sTlb07OBQcXbbjB0a5li9V1IGgQa14XDJZcdB1hRSm7KVgjyMBSzt7qSnPipZOLgaqQKQxtZb2vfkq5Ys3jzNnoP3NdqVwBX9o2hzUinw9dpgtxWmjzEaqhlCuZUlbji/BOlTKjn3ezJnTDC56duJWXKg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756370873; c=relaxed/simple;
-	bh=e7O3CiQxf9rK3ygrcnuvGGjsyH5ZuDEXvl3Al7IthkA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eztu780YdGKSbNTX6SLQcsaIw2CKrc6GmVpwb4mj9b0gIUaICqAKzVqv5FSjgbICpcgT4eAwof3xHjlg1YrjoS1/8SiA+G2vEcDLmIic4446rADXgJK+AM0X7xi7iYkox2G6ZK1kIS6AtlGU3CjehdLz1zV+lpUELBq173APR+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DISUrNBa; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-45a1b065d59so4149535e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 01:47:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756370870; x=1756975670; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=8Hsk9DOGTHIa16VTkxnpvVMx5QHHrFZueYddM6GSS74=;
-        b=DISUrNBaqRgTMGtzt0D/wNUOmnF2ym7Ud//iFg0oWhjTPltBfW4w7pTTMaQwkgA9jI
-         fd38O/13X42/srQcU5m/sjxFjtpDAULFr19FxNpwB25V8sa2tGb4wly8MY6IQkxPPWNj
-         SmLoS2tn6ncawXNGX8IznX7rv2JYmYAzjcvJtv9pYfSWIquI79eLUeJQN0ids14PaAOe
-         2PIwM3X8jKTYhZ+fZDGT59jBOrrkwdr2f1kqPv9jbVQLiBo6XCgGzRmzZHoaBNljfi+R
-         ieLo0+R77Lu91HAxxen9K6WrfYFz0NSfZIUDZiYKhRj2oVU8+VtJaYXuzwvPXmBMV8Js
-         T3QQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756370870; x=1756975670;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8Hsk9DOGTHIa16VTkxnpvVMx5QHHrFZueYddM6GSS74=;
-        b=h8D40zob+7pEFD8PYrTYBJVe8dfUGNeGBvLAROKAyZoQPgWRCG0zpzDaHKZHQOCCit
-         Ae+Lbx7/tGtQgctTPB9XrxWoiWHgzJ8bclhSJigja80BLWFziBgM77YvH+BHhgCdnhXc
-         GeTAupC+waagg3U6wwG1y0j5dtlPBJdCwEWf5M0YjCOvx29DxxGNvdJGR9VtQypgUv65
-         lBdK+rYTqzp3rub1YlfOxC3rHQymLtY+I8nh7YtWL5gautkhTf21U9DXxxRmjnufa4ih
-         DoXDmNFOlVikC5yPCcwOPE4drV+XayP+cln4DJyRdDv+TtQHmObLNUe1zGAxQGBMW1/z
-         CUkg==
-X-Forwarded-Encrypted: i=1; AJvYcCXEnIpbq3sTuSQ8acRVyBtwf8pRh062eDFauKARhdd7h5BRuX7eDE6fWodvVlSuwoFDTuPETW16V1LEjLk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxiiDSdpmUa3rnLd+G3xyEfuKVgPu3S/12DyegUJmf1ZGi8p16z
-	ROFOHboo+aocoJ/NDb5CU6+mU4WHuaUmoQ76rUCpkCdNjiZZjB3rBJkj
-X-Gm-Gg: ASbGncvHcXM1SQOlouq/kr1F1CsHgdl53WMBZGmGJ9M5hKl493LxbXu2+zVIef/zVeD
-	xU0nvm+7Rktrau8GE/+AQV3V37AfupARJrcuIQ9pFG9FJQg0tKa1eyQp5cljDmreiSiz0f8U4MI
-	YnQS0bmXlecUIry6cyGuZXyxfBGqzD+q8fhkBCFZECbHjwVecjHpBL6xAVFbO3X5WzAz1H4RMuI
-	FhigHzlP2TKxPlkq4ec09naIQ4I5YdsktHRwdxLyxnSJNYsG3pGqSYVqj2Ac6KZdv24bsM7jKmB
-	/s9+91SW3oau+G2RT95rR06cX6eRBOltOgsMd20e77gTQ6yPWaUnc1+U1VyVVYl1Pti4JlllWeF
-	H/P1ksoWQe/JFRuQlo3anpr0fg/T23tfbIIPewgY=
-X-Google-Smtp-Source: AGHT+IFO8pLgjWSH39ZyRRQGsELfg8fZ4fAArTXSmMVZY3KOq7DLC8ULZtj3zAJ1AzMGuiKNKnJXcw==
-X-Received: by 2002:a05:600c:5490:b0:45b:4a98:91cf with SMTP id 5b1f17b1804b1-45b5179cfe3mr193278165e9.15.1756370869196;
-        Thu, 28 Aug 2025 01:47:49 -0700 (PDT)
-Received: from devbig569.cln6.facebook.com ([2a03:2880:31ff:74::])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3cbc6a5da6dsm9463817f8f.63.2025.08.28.01.47.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Aug 2025 01:47:48 -0700 (PDT)
-Date: Thu, 28 Aug 2025 01:47:46 -0700
-From: Yueyang Pan <pyyjason@gmail.com>
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Brendan Jackman <jackmanb@google.com>,
-	Johannes Weiner <hannes@cmpxchg.org>, Zi Yan <ziy@nvidia.com>,
-	Usama Arif <usamaarif642@gmail.com>, linux-mm@kvack.org,
-	kernel-team@meta.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 2/2] mm/show_mem: Add trylock while printing alloc info
-Message-ID: <aLAXsptN4cw05IoZ@devbig569.cln6.facebook.com>
-References: <cover.1756318426.git.pyyjason@gmail.com>
- <7e2bc96faab1a338829e549246189ad96e6c866b.1756318426.git.pyyjason@gmail.com>
- <20250827150619.4e468e68988f224f9f9bea6f@linux-foundation.org>
- <aLAUhXeRVWzLCNNd@devbig569.cln6.facebook.com>
- <c8db3486-4f13-4922-a270-1fbf61e2d782@suse.cz>
+	s=arc-20240116; t=1756370904; c=relaxed/simple;
+	bh=1K1/KOduub8/fi1QM7fmGInJrN63Ndu8ZkbOCDxLgmg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=SVGocDAZ3VA+FredTuBOaRs9QeRiHAD9P++bJm/woaKxbn7fcSoX8BkT/5AjHU/jqdYpmL4h6S/ymvBEoLVx7jBa9P8V7cMFzgqr+wF730BEcJCz7B/trbY5FAolw2DO3nDuO3G+fetF6nu8gSAXRi8oJujC/WzYP+m7k+lD7yc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from [127.0.0.2] (unknown [114.241.87.235])
+	by APP-01 (Coremail) with SMTP id qwCowADHt6u4F7BoPuLFDw--.34750S2;
+	Thu, 28 Aug 2025 16:47:52 +0800 (CST)
+From: Vivian Wang <wangruikang@iscas.ac.cn>
+Subject: [PATCH net-next v8 0/5] Add Ethernet MAC support for SpacemiT K1
+Date: Thu, 28 Aug 2025 16:47:48 +0800
+Message-Id: <20250828-net-k1-emac-v8-0-e9075dd2ca90@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c8db3486-4f13-4922-a270-1fbf61e2d782@suse.cz>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIALQXsGgC/23RzW7CMAwH8FdBOS/ISfPhctp7TDukrjOiicKar
+ mJCvPtCmURLd7Tsn/9WchGZ+8RZ7DYX0fOYcjp2pcCXjaB96D5YprbUQoO24MDJjgf5qSQfAsm
+ KFSoLyMEZUcSp55jO07Y3cRvs+DyI93un56/vsn74azchs6Tj4ZCG3WZ0W+VlT2oa3qc8HPuf6
+ aZRTdP3eFUt4kclQRK5WLNV4Jx/TZlC3gbaUjdtGvVc41LromsTbQSvtQ+41tVDe9BLXRWNqFu
+ y1oCJ1VqbuX663BTt0LVQk6H4X7Z9aFRP2bbotlWeTA02mnqt3UxrWGp3ezXFGqNusGG71n6ul
+ 18++qJtQ8piC+gCL/X1ev0FE5Lyr1MCAAA=
+X-Change-ID: 20250606-net-k1-emac-3e181508ea64
+To: Andrew Lunn <andrew+netdev@lunn.ch>, Jakub Kicinski <kuba@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>, 
+ Vivian Wang <wangruikang@iscas.ac.cn>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Paolo Abeni <pabeni@redhat.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
+ Paul Walmsley <paul.walmsley@sifive.com>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+ Alexandre Ghiti <alex@ghiti.fr>
+Cc: Vivian Wang <uwu@dram.page>, 
+ Vadim Fedorenko <vadim.fedorenko@linux.dev>, 
+ Junhui Liu <junhui.liu@pigmoral.tech>, Simon Horman <horms@kernel.org>, 
+ Maxime Chevallier <maxime.chevallier@bootlin.com>, netdev@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-riscv@lists.infradead.org, 
+ spacemit@lists.linux.dev, linux-kernel@vger.kernel.org, 
+ Conor Dooley <conor.dooley@microchip.com>, 
+ Troy Mitchell <troy.mitchell@linux.spacemit.com>, 
+ Hendrik Hamerlinck <hendrik.hamerlinck@hammernet.be>
+X-Mailer: b4 0.14.2
+X-CM-TRANSID:qwCowADHt6u4F7BoPuLFDw--.34750S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxur4kAF48AF4kCrW7AF43Wrg_yoWrtF4DpF
+	W8CrZI9wsrJrWIgFs7uw47uFyfXan5J343WF1Ut3yrXa1DAFyUArZakw43CF1UZrZ5J342
+	ya1UAF1kuFyDA3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9j14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
+	0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
+	jxv20xvE14v26r1Y6r17McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr
+	1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E8cxa
+	n2IY04v7MxkF7I0En4kS14v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4
+	AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE
+	17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMI
+	IF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4l
+	IxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvf
+	C2KfnxnUUI43ZEXa7sRRwID5UUUUU==
+X-CM-SenderInfo: pzdqw2pxlnt03j6l2u1dvotugofq/
 
-On Thu, Aug 28, 2025 at 10:41:23AM +0200, Vlastimil Babka wrote:
-> On 8/28/25 10:34, Yueyang Pan wrote:
-> > On Wed, Aug 27, 2025 at 03:06:19PM -0700, Andrew Morton wrote:
-> >> On Wed, 27 Aug 2025 11:34:23 -0700 Yueyang Pan <pyyjason@gmail.com> wrote:
-> >> 
-> >> > In production, show_mem() can be called concurrently from two
-> >> > different entities, for example one from oom_kill_process()
-> >> > another from __alloc_pages_slowpath from another kthread. This
-> >> > patch adds a mutex and invokes trylock before printing out the
-> >> > kernel alloc info in show_mem(). This way two alloc info won't
-> >> > interleave with each other, which then makes parsing easier.
-> 
-> What about the rest of the information printed by show_mem() being interleaved?
+SpacemiT K1 has two gigabit Ethernet MACs with RGMII and RMII support.
+Add devicetree bindings, driver, and DTS for it.
 
-Thanks for your feedback, Vlastimil. We cannot use trylock for the rest 
-part as node filter can be different.
-Do you think we need a lock to prevent the whole show_mem() from being 
-interleaved and to acquire it at the very beginning? Will it be too 
-heavy?
+Tested primarily on BananaPi BPI-F3. Basic TX/RX functionality also
+tested on Milk-V Jupiter.
 
-> 
-> >> > 
-> >> 
-> >> Fair enough, I guess.
-> >> 
-> >> > --- a/mm/show_mem.c
-> >> > +++ b/mm/show_mem.c
-> >> > @@ -23,6 +23,8 @@ EXPORT_SYMBOL(_totalram_pages);
-> >> >  unsigned long totalreserve_pages __read_mostly;
-> >> >  unsigned long totalcma_pages __read_mostly;
-> >> >  
-> >> > +static DEFINE_MUTEX(mem_alloc_profiling_mutex);
-> >> 
-> >> It would be a bit neater to make this local to __show_mem() - it didn't
-> >> need file scope.
-> > 
-> > Thanks for your feedback, Andrew. I will move it the next version.
-> > 
-> >> 
-> >> Also, mutex_unlock() isn't to be used from interrupt context, so
-> >> problem.
-> >> 
-> >> Something like atomic cmpxchg or test_and_set_bit could be used and
-> >> wouldn't involve mutex_unlock()'s wakeup logic, which isn't needed
-> >> here.
-> > 
-> > I was not aware of interrupt context before. I will change to test-and-set 
-> > lock in the next version.
-> 
-> Perhaps simply spinlock_t with spin_trylock()?
-> 
+I would like to note that even though some bit field names superficially
+resemble that of DesignWare MAC, all other differences point to it in
+fact being a custom design.
 
-Agreed.
+Based on SpacemiT drivers [1]. These patches are also available at:
 
-Thanks
-Pan
+https://github.com/dramforever/linux/tree/k1/ethernet/v8
+
+[1]: https://github.com/spacemit-com/linux-k1x
+
+---
+Changes in v8:
+- Use devres to do of_phy_deregister_fixed_link on probe failure or
+  remove
+- Simplified control flow in a few places with early return or continue
+- Minor changes
+  - Removed some unneeded parens in emac_configure_{tx,rx}
+- Link to v7: https://lore.kernel.org/r/20250826-net-k1-emac-v7-0-5bc158d086ae@iscas.ac.cn
+
+Changes in v7:
+- Removed scoped_guard usage
+- Renamed error handling path labels after destinations
+- Fix skb free error handling path in emac_start_xmit and emac_tx_mem_map
+- Cancel tx_timeout_task to prevent schedule_work lifetime problems
+- Minor changes:
+  - Remove unnecessary timer_delete_sync in emac_down
+  - Use dev_err_ratelimited in a few more places
+  - Cosmetic fixes in error messages
+- Link to v6: https://lore.kernel.org/r/20250820-net-k1-emac-v6-0-c1e28f2b8be5@iscas.ac.cn
+
+Changes in v6:
+- Implement pause frame support
+- Minor changes:
+  - Convert comment for emac_stats_update() into assert_spin_locked()
+  - Cosmetic fixes for some comments and whitespace
+  - emac_set_mac_addr() is now refactored
+- Link to v5: https://lore.kernel.org/r/20250812-net-k1-emac-v5-0-dd17c4905f49@iscas.ac.cn
+
+Changes in v5:
+- Rebased on v6.17-rc1, add back DTS now that they apply cleanly
+- Use standard statistics interface, handle 32-bit statistics overflow
+- Minor changes:
+  - Fix clock resource handling in emac_resume
+  - Ratelimit the message in emac_rx_frame_status
+  - Add ndo_validate_addr = eth_validate_addr
+  - Remove unnecessary parens in emac_set_mac_addr
+  - Change some functions that never fail to return void instead of int
+  - Minor rewording
+- Link to v4: https://lore.kernel.org/r/20250703-net-k1-emac-v4-0-686d09c4cfa8@iscas.ac.cn
+
+Changes in v4:
+- Resource handling on probe and remove: timer_delete_sync and
+  of_phy_deregister_fixed_link
+- Drop DTS changes and dependencies (will send through SpacemiT tree)
+- Minor changes:
+  - Remove redundant phy_stop() and setting of ndev->phydev
+  - Fix error checking for emac_open in emac_resume
+  - Fix one missed dev_err -> dev_err_probe
+  - Fix type of emac_start_xmit
+  - Fix one missed reverse xmas tree formatting
+  - Rename some functions for consistency between emac_* and ndo_*
+- Link to v3: https://lore.kernel.org/r/20250702-net-k1-emac-v3-0-882dc55404f3@iscas.ac.cn
+
+Changes in v3:
+- Refactored and simplified emac_tx_mem_map
+- Addressed other minor v2 review comments
+- Removed what was patch 3 in v2, depend on DMA buses instead
+- DT nodes in alphabetical order where appropriate
+- Link to v2: https://lore.kernel.org/r/20250618-net-k1-emac-v2-0-94f5f07227a8@iscas.ac.cn
+
+Changes in v2:
+- dts: Put eth0 and eth1 nodes under a bus with dma-ranges
+- dts: Added Milk-V Jupiter
+- Fix typo in emac_init_hw() that broke the driver (Oops!)
+- Reformatted line lengths to under 80
+- Addressed other v1 review comments
+- Link to v1: https://lore.kernel.org/r/20250613-net-k1-emac-v1-0-cc6f9e510667@iscas.ac.cn
+
+---
+Vivian Wang (5):
+      dt-bindings: net: Add support for SpacemiT K1
+      net: spacemit: Add K1 Ethernet MAC
+      riscv: dts: spacemit: Add Ethernet support for K1
+      riscv: dts: spacemit: Add Ethernet support for BPI-F3
+      riscv: dts: spacemit: Add Ethernet support for Jupiter
+
+ .../devicetree/bindings/net/spacemit,k1-emac.yaml  |   81 +
+ arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts    |   46 +
+ arch/riscv/boot/dts/spacemit/k1-milkv-jupiter.dts  |   46 +
+ arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi       |   48 +
+ arch/riscv/boot/dts/spacemit/k1.dtsi               |   22 +
+ drivers/net/ethernet/Kconfig                       |    1 +
+ drivers/net/ethernet/Makefile                      |    1 +
+ drivers/net/ethernet/spacemit/Kconfig              |   29 +
+ drivers/net/ethernet/spacemit/Makefile             |    6 +
+ drivers/net/ethernet/spacemit/k1_emac.c            | 2192 ++++++++++++++++++++
+ drivers/net/ethernet/spacemit/k1_emac.h            |  426 ++++
+ 11 files changed, 2898 insertions(+)
+---
+base-commit: 062b3e4a1f880f104a8d4b90b767788786aa7b78
+change-id: 20250606-net-k1-emac-3e181508ea64
+
+Best regards,
+-- 
+Vivian "dramforever" Wang
+
 
