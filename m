@@ -1,206 +1,315 @@
-Return-Path: <linux-kernel+bounces-790385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7BD6B3A666
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 18:34:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CCFEB3A68A
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 18:39:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12B271C8589C
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 16:34:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BACCF364AEF
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 16:38:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E29232C30C;
-	Thu, 28 Aug 2025 16:32:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0DD332BF2E;
+	Thu, 28 Aug 2025 16:33:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="L6R9G3Zy"
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=mgml.me header.i=@mgml.me header.b="YbbLTX34"
+Received: from www5210.sakura.ne.jp (www5210.sakura.ne.jp [133.167.8.150])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5BEC32BF21
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 16:32:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9276321434;
+	Thu, 28 Aug 2025 16:33:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=133.167.8.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756398771; cv=none; b=Pw0LdIlUEKTrWxrWJN4ddtam3nmmsAm6AQCuLxVoxgZQIFyuQ4aHzN5AwL77pzI1FzTb4J5z1mTBFwWeCnqiAZVLb35+cPrzj65eAjNHzbv3Txj0S3F4XjDNebvotRE867Q8tXF5XFkHoLSXd6HGrZf+0IBfewSCK3qltfvvqmc=
+	t=1756398821; cv=none; b=FvxFg5v9v4L3rmz242BBGQRPjOQKPJIsivb0TnLfanQmNFHVc7ldYedsHroEsp7lT/a7lN/Id+vpRJsQONDDXI/GOZ5hzcYJCDChD5687Gflf8Sw4SosK6UotywPo9HImUU/RD2fOd6eDXS4BF20nh7UKfBO9Jr/q5DbbdmEABA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756398771; c=relaxed/simple;
-	bh=YBplE78pEpp6hU7/jyM3np9oxxFa+EtSg2fUc2vnjwQ=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Content-Type; b=VRK0tVBBuREzXbhVLDSaBNsu9F4oG2xwIrL1jRfbbztGgX15rMd6U6Zlnwxk5DPCjk5qdwjmVZtnCg3fCl5UlFxPQvxD/VYzdezJ3Rn7wbh1pO2PQC0DtEoCkSptbqbKxmj1jMQnJ8z6xXElqortlwmxYKMHQHu6PGeWQu/7E7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=L6R9G3Zy; arc=none smtp.client-ip=209.85.210.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-76e55665b05so1018663b3a.2
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 09:32:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756398769; x=1757003569; darn=vger.kernel.org;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=o5P4wbRk3WzIuDkNqdxL6ucud/WqubVoGAHoa+p4USc=;
-        b=L6R9G3ZySLCts558/b/pLzodF1PQt3oPR15U9xmkzTCLvs1o1PEyKKM4Akne75/awR
-         T/QIvc0fuH3RsCgFseRCGPczraX0V1czeEDJ7XIKRdX11LrA3XU/rpcvZSzi36NN1mz+
-         VuJiAz+WIg8ruIu9f31Gv/ZsaDrbR7k4pShird4e+whnGYSaMmbIFMdXaipcUs8HijU+
-         XJ+ovqwO4sjnG7bElSeSv+pTsfjMuNvh8IFQuRLnXrsMxBH4+O7HgLRDwF24Dq9K2+hL
-         O+ZsSh/aHyVzYeusEvtcFxJSN/Q/YhC0x03OlECxiLEaOhFwAV5O6LJ9WbiTAh6uHd7B
-         XuuQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756398769; x=1757003569;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=o5P4wbRk3WzIuDkNqdxL6ucud/WqubVoGAHoa+p4USc=;
-        b=HAaBeVScSmc1ObR079y5Y509xkQK05LTOJi1PtHm3oyHlyM7K94XH2OhPKaU+/8zPu
-         x2Q4k4qAmnFShqcrFENFkA50KEy6cWcV9r82REKzRDxFD2MuStpi7P8qYOs/F6wgJZIA
-         YOLADUsNx33Kb9uN0eeyd9qUO2pKwJvoJqWebxEmTKu6alxhCLB9XC7ggNh8qhoaYcnI
-         hGZWZMEFYrQn288Oq+gLpZPYtHMfOf8vwl0u7e/bl2h5EV4H2GZtFrGkH7j182FcS2vH
-         /mYn40bPSTEuR3KcJ61I0CSb6tqPZXyRPkuPhzXB9gySRttMRIE2j0pPnGoayZxXY4oD
-         WAjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX0ZctlzDhgaU4tW6sOUrwfi6+qZiC8xk6saQl0tw1NQ0wlqL971/zL+ldwvaCWMOy6sIBLEWHdDHepzbY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzWKao9tQkyZ8EwbOV8aVPLMDP1XX1CXU+noeUoZ9E+FOGZxZk/
-	bytpQS/3Pnrat5e1kp/ajhdq+hok3m4fZMS7EsGFQQCYGxLygmC9BKjrHRrqsi61HIsrKyEAcy7
-	n1E9VGwNL/A==
-X-Google-Smtp-Source: AGHT+IEypyBQskDzfiovirvL4lydJ1nQWE3DbB0MCdlRWSgWBSEuewtQbU2YWIG9vHJOeGaDcwr3SQu8E0BS
-X-Received: from pfbna25.prod.google.com ([2002:a05:6a00:3e19:b0:771:e454:f2aa])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:885:b0:770:387b:7ff8
- with SMTP id d2e1a72fcca58-770387b8229mr24125790b3a.23.1756398769133; Thu, 28
- Aug 2025 09:32:49 -0700 (PDT)
-Date: Thu, 28 Aug 2025 09:32:14 -0700
-In-Reply-To: <20250828163225.3839073-1-irogers@google.com>
+	s=arc-20240116; t=1756398821; c=relaxed/simple;
+	bh=arLbQAKtlt2RHTVwY+TbgapfxKbOwTJaUXbo9RDM4nI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=EN1Bo7rO2ChEqn6GY0sqESxB9gPQd4dV3sCcd/H+yEAIL+m2Uf/I0WOiQHTlDtt9Hx5V+MGcbTJM5IWksdA2DxgMb+MGSEIxMBp5IYLhgk0ayaKI13t3Fss8nii/XrbBZ5BL0Op1R08IMP09Okq5/GzLuUJgDCmTTNYRSwuS0CY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mgml.me; spf=pass smtp.mailfrom=mgml.me; dkim=pass (2048-bit key) header.d=mgml.me header.i=@mgml.me header.b=YbbLTX34; arc=none smtp.client-ip=133.167.8.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mgml.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mgml.me
+Received: from fedora (p4276017-ipxg00p01tokaisakaetozai.aichi.ocn.ne.jp [153.201.109.17])
+	(authenticated bits=0)
+	by www5210.sakura.ne.jp (8.16.1/8.16.1) with ESMTPSA id 57SGWlxN041448
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+	Fri, 29 Aug 2025 01:32:52 +0900 (JST)
+	(envelope-from k@mgml.me)
+DKIM-Signature: a=rsa-sha256; bh=sXHbsNRkr5lLfEcO8xjuUxdzkP1GPof7NWWbYg1rOVI=;
+        c=relaxed/relaxed; d=mgml.me;
+        h=From:To:Subject:Date:Message-ID;
+        s=rs20250315; t=1756398772; v=1;
+        b=YbbLTX34unIzEXbdLcjjDXjgcZ2MiyK/22KyIlTIuJrAq/uosjs2sl/6LsC1xFfU
+         aicmtyZ03i9CJsuDnaDClmtLHl9v79ucGJz0P7fW+ohbC4by+m2XC6MM2ziFy2t7
+         NDn7A3jTJ5w2VebsySnIINUrnWFHyKUX7nydT3dP0xnNUc0mflHKfFsMtvuPpGAJ
+         IgP5/gXQNIDvCo3/Beet3QV55s7Qzilj/ENVzTvF/9vynUVQiqVNW6r5oQAEQ0tx
+         VHndTh7pN+zkS0SV4TUZryt23cTQQLkYTAHMJ6Pil8qzmtTDcQ9RrzqNDTR30+qg
+         vuN7tPFi6aducZ/kkyOnPQ==
+From: Kenta Akagi <k@mgml.me>
+To: Song Liu <song@kernel.org>, Yu Kuai <yukuai3@huawei.com>,
+        Mariusz Tkaczyk <mtkaczyk@kernel.org>,
+        Guoqing Jiang <jgq516@gmail.com>
+Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Kenta Akagi <k@mgml.me>
+Subject: [PATCH v3 1/3] md/raid1,raid10: Do not set MD_BROKEN on failfast io failure
+Date: Fri, 29 Aug 2025 01:32:14 +0900
+Message-ID: <20250828163216.4225-2-k@mgml.me>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <20250828163216.4225-1-k@mgml.me>
+References: <20250828163216.4225-1-k@mgml.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250828163225.3839073-1-irogers@google.com>
-X-Mailer: git-send-email 2.51.0.268.g9569e192d0-goog
-Message-ID: <20250828163225.3839073-5-irogers@google.com>
-Subject: [PATCH v2 04/15] perf jevents: Support copying the source json files
- to OUTPUT
-From: Ian Rogers <irogers@google.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, James Clark <james.clark@linaro.org>, 
-	Xu Yang <xu.yang_2@nxp.com>, Thomas Falcon <thomas.falcon@intel.com>, 
-	Andi Kleen <ak@linux.intel.com>, linux-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org, bpf@vger.kernel.org, 
-	Atish Patra <atishp@rivosinc.com>, Beeman Strong <beeman@rivosinc.com>, Leo Yan <leo.yan@arm.com>, 
-	Vince Weaver <vincent.weaver@maine.edu>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-The jevents command expects all json files to be organized under a
-single directory. When generating json files from scripts (to reduce
-laborious copy and paste in the json) we don't want to generate the
-json into the source directory if there is an OUTPUT directory
-specified. This change adds a GEN_JSON for this case where the
-GEN_JSON copies the JSON files to OUTPUT, only when OUTPUT is
-specified. The Makefile.perf clean code is updated to clean up this
-directory when present.
+This commit ensures that an MD_FAILFAST IO failure does not put
+the array into a broken state.
 
-This patch is part of:
-https://lore.kernel.org/lkml/20240926173554.404411-12-irogers@google.com/
-which was similarly adding support for generating json in scripts for
-the consumption of jevents.py.
+When failfast is enabled on rdev in RAID1 or RAID10,
+the array may be flagged MD_BROKEN in the following cases.
+- If MD_FAILFAST IOs to multiple rdevs fail simultaneously
+- If an MD_FAILFAST metadata write to the 'last' rdev fails
 
-Signed-off-by: Ian Rogers <irogers@google.com>
+The MD_FAILFAST bio error handler always calls md_error on IO failure,
+under the assumption that raid{1,10}_error will neither fail
+the last rdev nor break the array.
+After commit 9631abdbf406 ("md: Set MD_BROKEN for RAID1 and RAID10"),
+calling md_error on the 'last' rdev in RAID1/10 always sets
+the MD_BROKEN flag on the array.
+As a result, when failfast IO fails on the last rdev, the array
+immediately becomes failed.
+
+Normally, MD_FAILFAST IOs are not issued to the 'last' rdev, so this is
+an edge case; however, it can occur if rdevs in a non-degraded
+array share the same path and that path is lost, or if a metadata
+write is triggered in a degraded array and fails due to failfast.
+
+When a failfast metadata write fails, it is retried through the
+following sequence. If a metadata write without failfast fails,
+the array will be marked with MD_BROKEN.
+
+1. MD_SB_NEED_REWRITE is set in sb_flags by super_written.
+2. md_super_wait, called by the function executing md_super_write,
+   returns -EAGAIN due to MD_SB_NEED_REWRITE.
+3. The caller of md_super_wait (e.g., md_update_sb) receives the
+   negative return value and retries md_super_write.
+4. md_super_write issues the metadata write again,
+   this time without MD_FAILFAST.
+
+Fixes: 9631abdbf406 ("md: Set MD_BROKEN for RAID1 and RAID10")
+Signed-off-by: Kenta Akagi <k@mgml.me>
 ---
- tools/perf/Makefile.perf    | 21 ++++++++++++++++-----
- tools/perf/pmu-events/Build | 18 ++++++++++++------
- 2 files changed, 28 insertions(+), 11 deletions(-)
+ drivers/md/md.c     | 14 +++++++++-----
+ drivers/md/md.h     | 13 +++++++------
+ drivers/md/raid1.c  | 18 ++++++++++++++++--
+ drivers/md/raid10.c | 21 ++++++++++++++++++---
+ 4 files changed, 50 insertions(+), 16 deletions(-)
 
-diff --git a/tools/perf/Makefile.perf b/tools/perf/Makefile.perf
-index e2150acc2c13..cc1635335586 100644
---- a/tools/perf/Makefile.perf
-+++ b/tools/perf/Makefile.perf
-@@ -1272,9 +1272,24 @@ endif # CONFIG_PERF_BPF_SKEL
- bpf-skel-clean:
- 	$(call QUIET_CLEAN, bpf-skel) $(RM) -r $(SKEL_TMP_OUT) $(SKELETONS) $(SKEL_OUT)/vmlinux.h
+diff --git a/drivers/md/md.c b/drivers/md/md.c
+index ac85ec73a409..547b88e253f7 100644
+--- a/drivers/md/md.c
++++ b/drivers/md/md.c
+@@ -999,14 +999,18 @@ static void super_written(struct bio *bio)
+ 	if (bio->bi_status) {
+ 		pr_err("md: %s gets error=%d\n", __func__,
+ 		       blk_status_to_errno(bio->bi_status));
++		if (bio->bi_opf & MD_FAILFAST)
++			set_bit(FailfastIOFailure, &rdev->flags);
+ 		md_error(mddev, rdev);
+ 		if (!test_bit(Faulty, &rdev->flags)
+ 		    && (bio->bi_opf & MD_FAILFAST)) {
++			pr_warn("md: %s: Metadata write will be repeated to %pg\n",
++				mdname(mddev), rdev->bdev);
+ 			set_bit(MD_SB_NEED_REWRITE, &mddev->sb_flags);
+-			set_bit(LastDev, &rdev->flags);
+ 		}
+-	} else
+-		clear_bit(LastDev, &rdev->flags);
++	} else {
++		clear_bit(MD_SB_NEED_REWRITE, &mddev->sb_flags);
++	}
  
-+pmu-events-clean:
-+ifeq ($(OUTPUT),)
-+	$(call QUIET_CLEAN, pmu-events) $(RM) \
-+		pmu-events/pmu-events.c \
-+		pmu-events/metric_test.log \
-+		pmu-events/test-empty-pmu-events.c \
-+		pmu-events/empty-pmu-events.log
-+else # When an OUTPUT directory is present, clean up the copied pmu-events/arch directory.
-+	$(call QUIET_CLEAN, pmu-events) $(RM) -r $(OUTPUT)pmu-events/arch \
-+		$(OUTPUT)pmu-events/pmu-events.c \
-+		$(OUTPUT)pmu-events/metric_test.log \
-+		$(OUTPUT)pmu-events/test-empty-pmu-events.c \
-+		$(OUTPUT)pmu-events/empty-pmu-events.log
-+endif
-+
- clean:: $(LIBAPI)-clean $(LIBBPF)-clean $(LIBSUBCMD)-clean $(LIBSYMBOL)-clean $(LIBPERF)-clean \
- 		arm64-sysreg-defs-clean fixdep-clean python-clean bpf-skel-clean \
--		tests-coresight-targets-clean
-+		tests-coresight-targets-clean pmu-events-clean
- 	$(call QUIET_CLEAN, core-objs)  $(RM) $(LIBPERF_A) $(OUTPUT)perf-archive \
- 		$(OUTPUT)perf-iostat $(LANG_BINDINGS)
- 	$(Q)find $(or $(OUTPUT),.) -name '*.o' -delete -o -name '*.a' -delete -o \
-@@ -1287,10 +1302,6 @@ clean:: $(LIBAPI)-clean $(LIBBPF)-clean $(LIBSUBCMD)-clean $(LIBSYMBOL)-clean $(
- 		$(OUTPUT)FEATURE-DUMP $(OUTPUT)util/*-bison* $(OUTPUT)util/*-flex* \
- 		$(OUTPUT)util/intel-pt-decoder/inat-tables.c \
- 		$(OUTPUT)tests/llvm-src-{base,kbuild,prologue,relocation}.c \
--		$(OUTPUT)pmu-events/pmu-events.c \
--		$(OUTPUT)pmu-events/test-empty-pmu-events.c \
--		$(OUTPUT)pmu-events/empty-pmu-events.log \
--		$(OUTPUT)pmu-events/metric_test.log \
- 		$(OUTPUT)$(fadvise_advice_array) \
- 		$(OUTPUT)$(fsconfig_arrays) \
- 		$(OUTPUT)$(fsmount_arrays) \
-diff --git a/tools/perf/pmu-events/Build b/tools/perf/pmu-events/Build
-index 32f387d48908..1503a16e662a 100644
---- a/tools/perf/pmu-events/Build
-+++ b/tools/perf/pmu-events/Build
-@@ -1,7 +1,6 @@
- pmu-events-y	+= pmu-events.o
- JDIR		=  pmu-events/arch/$(SRCARCH)
--JSON		=  $(shell [ -d $(JDIR) ] &&				\
--			find $(JDIR) -name '*.json' -o -name 'mapfile.csv')
-+JSON		=  $(shell find pmu-events/arch -name *.json -o -name *.csv)
- JDIR_TEST	=  pmu-events/arch/test
- JSON_TEST	=  $(shell [ -d $(JDIR_TEST) ] &&			\
- 			find $(JDIR_TEST) -name '*.json')
-@@ -29,13 +28,20 @@ $(PMU_EVENTS_C): $(EMPTY_PMU_EVENTS_C)
- 	$(call rule_mkdir)
- 	$(Q)$(call echo-cmd,gen)cp $< $@
- else
-+# Copy checked-in json for generation.
-+$(OUTPUT)pmu-events/arch/%: pmu-events/arch/%
-+	$(call rule_mkdir)
-+	$(Q)$(call echo-cmd,gen)cp $< $@
-+
-+GEN_JSON = $(patsubst %,$(OUTPUT)%,$(JSON))
-+
- $(METRIC_TEST_LOG): $(METRIC_TEST_PY) $(METRIC_PY)
- 	$(call rule_mkdir)
- 	$(Q)$(call echo-cmd,test)$(PYTHON) $< 2> $@ || (cat $@ && false)
+ 	bio_put(bio);
  
--$(TEST_EMPTY_PMU_EVENTS_C): $(JSON) $(JSON_TEST) $(JEVENTS_PY) $(METRIC_PY) $(METRIC_TEST_LOG)
-+$(TEST_EMPTY_PMU_EVENTS_C): $(GEN_JSON) $(JSON_TEST) $(JEVENTS_PY) $(METRIC_PY) $(METRIC_TEST_LOG)
- 	$(call rule_mkdir)
--	$(Q)$(call echo-cmd,gen)$(PYTHON) $(JEVENTS_PY) none none pmu-events/arch $@
-+	$(Q)$(call echo-cmd,gen)$(PYTHON) $(JEVENTS_PY) none none $(OUTPUT)pmu-events/arch $@
+@@ -1048,7 +1052,7 @@ void md_super_write(struct mddev *mddev, struct md_rdev *rdev,
  
- $(EMPTY_PMU_EVENTS_TEST_LOG): $(EMPTY_PMU_EVENTS_C) $(TEST_EMPTY_PMU_EVENTS_C)
- 	$(call rule_mkdir)
-@@ -63,10 +69,10 @@ $(OUTPUT)%.pylint_log: %
- 	$(call rule_mkdir)
- 	$(Q)$(call echo-cmd,test)pylint "$<" > $@ || (cat $@ && rm $@ && false)
+ 	if (test_bit(MD_FAILFAST_SUPPORTED, &mddev->flags) &&
+ 	    test_bit(FailFast, &rdev->flags) &&
+-	    !test_bit(LastDev, &rdev->flags))
++	    !test_bit(MD_SB_NEED_REWRITE, &mddev->sb_flags))
+ 		bio->bi_opf |= MD_FAILFAST;
  
--$(PMU_EVENTS_C): $(JSON) $(JSON_TEST) $(JEVENTS_PY) $(METRIC_PY) $(METRIC_TEST_LOG) \
-+$(PMU_EVENTS_C): $(GEN_JSON) $(JSON_TEST) $(JEVENTS_PY) $(METRIC_PY) $(METRIC_TEST_LOG) \
-     $(EMPTY_PMU_EVENTS_TEST_LOG) $(PMU_EVENTS_MYPY_TEST_LOGS) $(PMU_EVENTS_PYLINT_TEST_LOGS)
- 	$(call rule_mkdir)
--	$(Q)$(call echo-cmd,gen)$(PYTHON) $(JEVENTS_PY) $(JEVENTS_ARCH) $(JEVENTS_MODEL) pmu-events/arch $@
-+	$(Q)$(call echo-cmd,gen)$(PYTHON) $(JEVENTS_PY) $(JEVENTS_ARCH) $(JEVENTS_MODEL) $(OUTPUT)pmu-events/arch $@
- endif
+ 	atomic_inc(&mddev->pending_writes);
+@@ -1059,7 +1063,7 @@ int md_super_wait(struct mddev *mddev)
+ {
+ 	/* wait for all superblock writes that were scheduled to complete */
+ 	wait_event(mddev->sb_wait, atomic_read(&mddev->pending_writes)==0);
+-	if (test_and_clear_bit(MD_SB_NEED_REWRITE, &mddev->sb_flags))
++	if (test_bit(MD_SB_NEED_REWRITE, &mddev->sb_flags))
+ 		return -EAGAIN;
+ 	return 0;
+ }
+diff --git a/drivers/md/md.h b/drivers/md/md.h
+index 51af29a03079..52c9fc759015 100644
+--- a/drivers/md/md.h
++++ b/drivers/md/md.h
+@@ -281,9 +281,10 @@ enum flag_bits {
+ 				 * It is expects that no bad block log
+ 				 * is present.
+ 				 */
+-	LastDev,		/* Seems to be the last working dev as
+-				 * it didn't fail, so don't use FailFast
+-				 * any more for metadata
++	FailfastIOFailure,	/* rdev with failfast IO failure
++				 * but md_error not yet completed.
++				 * If the last rdev has this flag,
++				 * error_handler must not fail the array
+ 				 */
+ 	CollisionCheck,		/*
+ 				 * check if there is collision between raid1
+@@ -331,8 +332,8 @@ struct md_cluster_operations;
+  * @MD_CLUSTER_RESYNC_LOCKED: cluster raid only, which means node, already took
+  *			       resync lock, need to release the lock.
+  * @MD_FAILFAST_SUPPORTED: Using MD_FAILFAST on metadata writes is supported as
+- *			    calls to md_error() will never cause the array to
+- *			    become failed.
++ *			    calls to md_error() with FailfastIOFailure will
++ *			    never cause the array to become failed.
+  * @MD_HAS_PPL:  The raid array has PPL feature set.
+  * @MD_HAS_MULTIPLE_PPLS: The raid array has multiple PPLs feature set.
+  * @MD_NOT_READY: do_md_run() is active, so 'array_state', ust not report that
+@@ -360,7 +361,7 @@ enum mddev_sb_flags {
+ 	MD_SB_CHANGE_DEVS,		/* Some device status has changed */
+ 	MD_SB_CHANGE_CLEAN,	/* transition to or from 'clean' */
+ 	MD_SB_CHANGE_PENDING,	/* switch from 'clean' to 'active' in progress */
+-	MD_SB_NEED_REWRITE,	/* metadata write needs to be repeated */
++	MD_SB_NEED_REWRITE,	/* metadata write needs to be repeated, do not use failfast */
+ };
  
- # pmu-events.c file is generated in the OUTPUT directory so it needs a
+ #define NR_SERIAL_INFOS		8
+diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
+index 408c26398321..8a61fd93b3ff 100644
+--- a/drivers/md/raid1.c
++++ b/drivers/md/raid1.c
+@@ -470,6 +470,7 @@ static void raid1_end_write_request(struct bio *bio)
+ 		    (bio->bi_opf & MD_FAILFAST) &&
+ 		    /* We never try FailFast to WriteMostly devices */
+ 		    !test_bit(WriteMostly, &rdev->flags)) {
++			set_bit(FailfastIOFailure, &rdev->flags);
+ 			md_error(r1_bio->mddev, rdev);
+ 		}
+ 
+@@ -1746,8 +1747,12 @@ static void raid1_status(struct seq_file *seq, struct mddev *mddev)
+  *	- recovery is interrupted.
+  *	- &mddev->degraded is bumped.
+  *
+- * @rdev is marked as &Faulty excluding case when array is failed and
+- * &mddev->fail_last_dev is off.
++ * If @rdev has &FailfastIOFailure and it is the 'last' rdev,
++ * then @mddev and @rdev will not be marked as failed.
++ *
++ * @rdev is marked as &Faulty excluding any cases:
++ *	- when @mddev is failed and &mddev->fail_last_dev is off
++ *	- when @rdev is last device and &FailfastIOFailure flag is set
+  */
+ static void raid1_error(struct mddev *mddev, struct md_rdev *rdev)
+ {
+@@ -1758,6 +1763,13 @@ static void raid1_error(struct mddev *mddev, struct md_rdev *rdev)
+ 
+ 	if (test_bit(In_sync, &rdev->flags) &&
+ 	    (conf->raid_disks - mddev->degraded) == 1) {
++		if (test_and_clear_bit(FailfastIOFailure, &rdev->flags)) {
++			spin_unlock_irqrestore(&conf->device_lock, flags);
++			pr_warn_ratelimited("md/raid1:%s: Failfast IO failure on %pg, "
++				"last device but ignoring it\n",
++				mdname(mddev), rdev->bdev);
++			return;
++		}
+ 		set_bit(MD_BROKEN, &mddev->flags);
+ 
+ 		if (!mddev->fail_last_dev) {
+@@ -2148,6 +2160,7 @@ static int fix_sync_read_error(struct r1bio *r1_bio)
+ 	if (test_bit(FailFast, &rdev->flags)) {
+ 		/* Don't try recovering from here - just fail it
+ 		 * ... unless it is the last working device of course */
++		set_bit(FailfastIOFailure, &rdev->flags);
+ 		md_error(mddev, rdev);
+ 		if (test_bit(Faulty, &rdev->flags))
+ 			/* Don't try to read from here, but make sure
+@@ -2652,6 +2665,7 @@ static void handle_read_error(struct r1conf *conf, struct r1bio *r1_bio)
+ 		fix_read_error(conf, r1_bio);
+ 		unfreeze_array(conf);
+ 	} else if (mddev->ro == 0 && test_bit(FailFast, &rdev->flags)) {
++		set_bit(FailfastIOFailure, &rdev->flags);
+ 		md_error(mddev, rdev);
+ 	} else {
+ 		r1_bio->bios[r1_bio->read_disk] = IO_BLOCKED;
+diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
+index b60c30bfb6c7..530ad6503189 100644
+--- a/drivers/md/raid10.c
++++ b/drivers/md/raid10.c
+@@ -488,6 +488,7 @@ static void raid10_end_write_request(struct bio *bio)
+ 			dec_rdev = 0;
+ 			if (test_bit(FailFast, &rdev->flags) &&
+ 			    (bio->bi_opf & MD_FAILFAST)) {
++				set_bit(FailfastIOFailure, &rdev->flags);
+ 				md_error(rdev->mddev, rdev);
+ 			}
+ 
+@@ -1995,8 +1996,12 @@ static int enough(struct r10conf *conf, int ignore)
+  *	- recovery is interrupted.
+  *	- &mddev->degraded is bumped.
+  *
+- * @rdev is marked as &Faulty excluding case when array is failed and
+- * &mddev->fail_last_dev is off.
++ * If @rdev has &FailfastIOFailure and it is the 'last' rdev,
++ * then @mddev and @rdev will not be marked as failed.
++ *
++ * @rdev is marked as &Faulty excluding any cases:
++ *	- when @mddev is failed and &mddev->fail_last_dev is off
++ *	- when @rdev is last device and &FailfastIOFailure flag is set
+  */
+ static void raid10_error(struct mddev *mddev, struct md_rdev *rdev)
+ {
+@@ -2006,6 +2011,13 @@ static void raid10_error(struct mddev *mddev, struct md_rdev *rdev)
+ 	spin_lock_irqsave(&conf->device_lock, flags);
+ 
+ 	if (test_bit(In_sync, &rdev->flags) && !enough(conf, rdev->raid_disk)) {
++		if (test_and_clear_bit(FailfastIOFailure, &rdev->flags)) {
++			spin_unlock_irqrestore(&conf->device_lock, flags);
++			pr_warn_ratelimited("md/raid10:%s: Failfast IO failure on %pg, "
++				"last device but ignoring it\n",
++				mdname(mddev), rdev->bdev);
++			return;
++		}
+ 		set_bit(MD_BROKEN, &mddev->flags);
+ 
+ 		if (!mddev->fail_last_dev) {
+@@ -2413,6 +2425,7 @@ static void sync_request_write(struct mddev *mddev, struct r10bio *r10_bio)
+ 				continue;
+ 		} else if (test_bit(FailFast, &rdev->flags)) {
+ 			/* Just give up on this device */
++			set_bit(FailfastIOFailure, &rdev->flags);
+ 			md_error(rdev->mddev, rdev);
+ 			continue;
+ 		}
+@@ -2865,8 +2878,10 @@ static void handle_read_error(struct mddev *mddev, struct r10bio *r10_bio)
+ 		freeze_array(conf, 1);
+ 		fix_read_error(conf, mddev, r10_bio);
+ 		unfreeze_array(conf);
+-	} else
++	} else {
++		set_bit(FailfastIOFailure, &rdev->flags);
+ 		md_error(mddev, rdev);
++	}
+ 
+ 	rdev_dec_pending(rdev, mddev);
+ 	r10_bio->state = 0;
 -- 
-2.51.0.268.g9569e192d0-goog
+2.50.1
 
 
