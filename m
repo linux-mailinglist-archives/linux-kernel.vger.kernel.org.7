@@ -1,104 +1,179 @@
-Return-Path: <linux-kernel+bounces-789845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8432B39B77
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 13:25:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7A3DB39B74
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 13:25:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED6C11C231D0
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 11:25:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D21B53B03F2
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 11:25:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A1A330E0C5;
-	Thu, 28 Aug 2025 11:25:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=siemens.com header.i=huaqian.li@siemens.com header.b="ppUKXa/S"
-Received: from mta-64-227.siemens.flowmailer.net (mta-64-227.siemens.flowmailer.net [185.136.64.227])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A213930E0C5;
+	Thu, 28 Aug 2025 11:24:57 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D619273D6F
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 11:25:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.64.227
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19D75273D6F;
+	Thu, 28 Aug 2025 11:24:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756380309; cv=none; b=cTX0Gb3z+EEV9LSexmxgwePIKDftHJYuCXheyhAYjgZc0puPKHF10bpqGanSM9625JysTQLYzxDeZZ8YlXgeX2NLN9/Iwk45oLxTytynkCZnenDzN9ggjT6tSnO8kpkZIVzmSAoEgWlEZrQhUEmV1nUie/sFquGaTcNPhEtzeIY=
+	t=1756380297; cv=none; b=uyv7HSncuSHDRCepbAjE3wA/K0+oXy8vZdzCfLg5vW+5cn0ADy4FUupGoI5acAa+lVXvvhEYxn9zHvuTgGSAcua9O2rHIX5SchRaMjoZNJ4zLDRmGhEwDS1s5a5E2ZjTH/iJfXWzUaSCnaTo+fdsyczApWJnqRNPc9m9vbGIgBI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756380309; c=relaxed/simple;
-	bh=gAeJYPiWvvW/0IyRkIBxLQARRkyu4B4Y9YGUAn6QIxg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=S9HCxlA+o2OQ9MTODpzaE2YwFnb/2okQtXpIwB2OoptmlCH+IYiIiveHPnSiMv8PEcINseNQV11NSL/c0wT1jBL5kx+VjKGghM4qPhC+P6/9vhn8S9KMq+a1SoWRU9FyJxkDmUdRq/2XdRukN0ZbY9m0Jwh2AmHoI1ILvwGMqic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=huaqian.li@siemens.com header.b=ppUKXa/S; arc=none smtp.client-ip=185.136.64.227
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
-Received: by mta-64-227.siemens.flowmailer.net with ESMTPSA id 20250828112457fa5f912bff00020782
-        for <linux-kernel@vger.kernel.org>;
-        Thu, 28 Aug 2025 13:24:57 +0200
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
- d=siemens.com; i=huaqian.li@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc:References:In-Reply-To;
- bh=gAeJYPiWvvW/0IyRkIBxLQARRkyu4B4Y9YGUAn6QIxg=;
- b=ppUKXa/SF25VHu0ObymsZkYC4YZ2jSnCePYE5s6U+rMfKnDLC/YmU0oyNMgEjnmnT+EFvm
- aCqIHHmfIbxEyZqMamA1nVx7Pc0PaSQmO+/9eXxjR8WkNbsyeAKvxFWXKahghSXQGpL6lH1F
- DUGQx6hvEl3TXnBrOm+Y5NcvyAdE1PWTkM8ibq+JL2GRJrJwbINYH2fCSkWDX1UjqDu2IwA0
- IeURwhammbS8kR9Zq2xaBEohFhVgfcQdivDLS+xNUo7wbiFn/z0uD5lEafZ/R/zWwPmvrC/n
- mPxk7yqSx2nGy1bmyp7LIzONckMdbUy7qfiNaBXUZaFFqXXnXN0inu/g==;
-From: huaqian.li@siemens.com
-To: mani@kernel.org,
-	arnd@arndb.de
-Cc: baocheng.su@siemens.com,
-	bhelgaas@google.com,
-	christophe.jaillet@wanadoo.fr,
-	conor+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	diogo.ivo@siemens.com,
-	helgaas@kernel.org,
-	huaqian.li@siemens.com,
-	jan.kiszka@siemens.com,
-	kristo@kernel.org,
-	krzk+dt@kernel.org,
-	kw@linux.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	lkp@intel.com,
-	lpieralisi@kernel.org,
-	nm@ti.com,
-	oe-kbuild-all@lists.linux.dev,
-	robh@kernel.org,
-	s-vadapalli@ti.com,
-	ssantosh@kernel.org,
-	vigneshr@ti.com
-Subject: Re: [PATCH v12 0/7] soc: ti: Add and use PVU on K3-AM65 for DMA
-Date: Thu, 28 Aug 2025 19:24:34 +0800
-Message-Id: <20250828112434.2310936-1-huaqian.li@siemens.com>
-In-Reply-To: <yhbjfg7dqx3xud75rhwlhq7ayqa4d6wrsan2j7ki7ri3uynpeu@hdv2o33x4hdn>
-References: <yhbjfg7dqx3xud75rhwlhq7ayqa4d6wrsan2j7ki7ri3uynpeu@hdv2o33x4hdn>
+	s=arc-20240116; t=1756380297; c=relaxed/simple;
+	bh=TXeRFLOKaqNXdI3M+wtltoVaeAc4aWofDcyk4oABMPc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cKStUZA9epik1fjQnpNpL4e/BpUkag8TyqT91DkHMSIJnIlal4Pw/JOUg3eAgrSw3v9FzDULr+8olPSXcuY/TxszeTl63uY5TYYs0heCBe75bdVeVk2E4iOgvkgipVezd87kfIYxlPDsyy89AjbAGq42q23dtgocNhTQTkWShlc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cCJw36MJ6zYQvTT;
+	Thu, 28 Aug 2025 19:24:51 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 615E91A08BE;
+	Thu, 28 Aug 2025 19:24:50 +0800 (CST)
+Received: from [10.174.179.247] (unknown [10.174.179.247])
+	by APP4 (Coremail) with SMTP id gCh0CgAncIyAPLBoCCNSAg--.3285S3;
+	Thu, 28 Aug 2025 19:24:50 +0800 (CST)
+Message-ID: <93e96f14-dfe3-6390-5a91-f28e1cdb1783@huaweicloud.com>
+Date: Thu, 28 Aug 2025 19:24:48 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [PATCH v6 md-6.18 11/11] md/md-llbitmap: introduce new lockless
+ bitmap
+To: Yu Kuai <yukuai1@huaweicloud.com>, hch@infradead.org, corbet@lwn.net,
+ agk@redhat.com, snitzer@kernel.org, mpatocka@redhat.com, song@kernel.org,
+ xni@redhat.com, hare@suse.de, colyli@kernel.org
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ dm-devel@lists.linux.dev, linux-raid@vger.kernel.org, yukuai3@huawei.com,
+ yi.zhang@huawei.com, yangerkun@huawei.com, johnny.chenyi@huawei.com
+References: <20250826085205.1061353-1-yukuai1@huaweicloud.com>
+ <20250826085205.1061353-12-yukuai1@huaweicloud.com>
+From: Li Nan <linan666@huaweicloud.com>
+In-Reply-To: <20250826085205.1061353-12-yukuai1@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Flowmailer-Platform: Siemens
-Feedback-ID: 519:519-959203:519-21489:flowmailer
+X-CM-TRANSID:gCh0CgAncIyAPLBoCCNSAg--.3285S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxGr4UAw43Jry5Xr47Cry5twb_yoW5ZrWxpw
+	sIyrn7Jrs8tr48K3sFqFyxta4SyrW8Jw13Jr15GF1vvw1q9rnIvF48WFW0q3srCry3X3Wj
+	qF4qvry8JFWDCFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUPI14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1lnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xv
+	F2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r
+	4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v
+	4I1lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7
+	AKxVW8ZVWrXwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02
+	F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_Wr
+	ylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r
+	1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0pRB
+	Vb9UUUUU=
+X-CM-SenderInfo: polqt0awwwqx5xdzvxpfor3voofrz/
 
-Hi Mani,
 
-Thanks for your offer to help with the patch series. Yes, let's proceed
-with splitting the submission:
 
-Please go ahead and take the dt-bindings through the PCI tree. That would
-be helpful to get them established early.
+在 2025/8/26 16:52, Yu Kuai 写道:
+> From: Yu Kuai <yukuai3@huawei.com>
+> 
+> Redundant data is used to enhance data fault tolerance, and the storage
+> method for redundant data vary depending on the RAID levels. And it's
+> important to maintain the consistency of redundant data.
+> 
+> Bitmap is used to record which data blocks have been synchronized and which
+> ones need to be resynchronized or recovered. Each bit in the bitmap
+> represents a segment of data in the array. When a bit is set, it indicates
+> that the multiple redundant copies of that data segment may not be
+> consistent. Data synchronization can be performed based on the bitmap after
+> power failure or readding a disk. If there is no bitmap, a full disk
+> synchronization is required.
+> 
+> Key Features:
+> 
+>   - IO fastpath is lockless, if user issues lots of write IO to the same
+>   bitmap bit in a short time, only the first write have additional overhead
+>   to update bitmap bit, no additional overhead for the following writes;
+>   - support only resync or recover written data, means in the case creating
+>   new array or replacing with a new disk, there is no need to do a full disk
+>   resync/recovery;
+> 
+> Key Concept:
+> 
+>   - State Machine:
+> 
+> Each bit is one byte, contain 6 difference state, see llbitmap_state. And
+> there are total 8 differenct actions, see llbitmap_action, can change state:
+> 
+> llbitmap state machine: transitions between states
+> 
+> |           | Startwrite | Startsync | Endsync | Abortsync|
+> | --------- | ---------- | --------- | ------- | -------  |
+> | Unwritten | Dirty      | x         | x       | x        |
+> | Clean     | Dirty      | x         | x       | x        |
+> | Dirty     | x          | x         | x       | x        |
+> | NeedSync  | x          | Syncing   | x       | x        |
+> | Syncing   | x          | Syncing   | Dirty   | NeedSync |
+> 
+> |           | Reload   | Daemon | Discard   | Stale     |
+> | --------- | -------- | ------ | --------- | --------- |
+> | Unwritten | x        | x      | x         | x         |
+> | Clean     | x        | x      | Unwritten | NeedSync  |
+> | Dirty     | NeedSync | Clean  | Unwritten | NeedSync  |
+> | NeedSync  | x        | x      | Unwritten | x         |
+> | Syncing   | NeedSync | x      | Unwritten | NeedSync  |
+> 
+> Typical scenarios:
+> 
+> 1) Create new array
+> All bits will be set to Unwritten by default, if --assume-clean is set,
+> all bits will be set to Clean instead.
+> 
+> 2) write data, raid1/raid10 have full copy of data, while raid456 doesn't and
+> rely on xor data
+> 
+> 2.1) write new data to raid1/raid10:
+> Unwritten --StartWrite--> Dirty
+> 
+> 2.2) write new data to raid456:
+> Unwritten --StartWrite--> NeedSync
+> 
+> Because the initial recover for raid456 is skipped, the xor data is not build
+> yet, the bit must set to NeedSync first and after lazy initial recover is
+> finished, the bit will finially set to Dirty(see 5.1 and 5.4);
+> 
+> 2.3) cover write
+> Clean --StartWrite--> Dirty
+> 
+> 3) daemon, if the array is not degraded:
+> Dirty --Daemon--> Clean
+> 
+> For degraded array, the Dirty bit will never be cleared, prevent full disk
+> recovery while readding a removed disk.
+> 
+> 4) discard
+> {Clean, Dirty, NeedSync, Syncing} --Discard--> Unwritten
+> 
+> 5) resync and recover
+> 
+> 5.1) common process
+> NeedSync --Startsync--> Syncing --Endsync--> Dirty --Daemon--> Clean
 
-Hi Arnd,
+There is some issue whith Dirty state:
+1. The Dirty bit will not synced when a disk is re-add.
+2. It remains Dirty even after a full recovery -- it should be Clean.
 
-Could you please take care of the driver code with the cross-dependencies
-through the arm-soc tree? The PCI controller driver has the API dependency
-with the SoC driver as Mani pointed out. Could you let me know which specific
-components of the series you would be willing to take?
-
-Best Regards,
-Li Hua Qian
+-- 
+Thanks,
+Nan
 
 
