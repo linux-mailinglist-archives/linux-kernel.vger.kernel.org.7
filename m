@@ -1,109 +1,107 @@
-Return-Path: <linux-kernel+bounces-789896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1834B39C44
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 14:09:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55CFCB39C48
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 14:09:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28C80681986
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 12:08:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6B20687981
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 12:09:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F9283101C5;
-	Thu, 28 Aug 2025 12:08:04 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0A1D30F7EA;
+	Thu, 28 Aug 2025 12:08:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AcJacZD2"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 941CA30FF30;
-	Thu, 28 Aug 2025 12:08:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D6DC30F959;
+	Thu, 28 Aug 2025 12:08:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756382883; cv=none; b=Cw1/HH2yl+j90OOJCksqwOFuZ8HVcXRVv9xV34s8k1E5cOG+ae6Usp1Ns7QV8bNVLU5Y56Nnfuewgznn7cYfj61E9UofKGXo+u1ybUvYG/8dJRod6RHAAKHScAo4jZgzICJUsm9kYOc1TblA06oAN4j2s3IhYupSsP7VVJXXqr0=
+	t=1756382887; cv=none; b=DzoK16LimNpEn+Vba2D7GzT+OO/psteAb/XxxlPDMBfgwYGAHsnuqdFdJsYK3/Ke5FqnQeDAQF3ZLaaHKbAQt5Peftu4CTm47gbFnNQURX1hU1e9RzZkrePY3h8VIoTrly2s1OOBK8yV7OgS6np+bi66FSvtOAqrUMIXnbhu278=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756382883; c=relaxed/simple;
-	bh=RTSMa+jChyeyumlcrB+4gk8hV/fLvrsg5knL9t7Fy2E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aJS6pS8S4X4MOu36UZB6QAP5zBT84RXgC1AOSlEw5A4Jz+ue6aa9RmWswDJUWh5Xs/zGMVXsepPk4kz6MvfXn7W+8bYwdapKnd7F6CQRVc37JRVRhwSwq97DpOUvGSCKEMziofo1yeQcDruBSgpul7TWi2EAMn7kZIkfxoQiqcE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cCKsr3CNbzYQvFM;
-	Thu, 28 Aug 2025 20:08:00 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 002AF1A01A2;
-	Thu, 28 Aug 2025 20:07:58 +0800 (CST)
-Received: from [10.174.179.247] (unknown [10.174.179.247])
-	by APP4 (Coremail) with SMTP id gCh0CgAXYIydRrBowpJVAg--.3954S3;
-	Thu, 28 Aug 2025 20:07:58 +0800 (CST)
-Message-ID: <5b5f598b-0aa7-c836-91bd-a1fa78371a78@huaweicloud.com>
-Date: Thu, 28 Aug 2025 20:07:57 +0800
+	s=arc-20240116; t=1756382887; c=relaxed/simple;
+	bh=fGu7UiqbNorOhv8zDirn9Y3nlFS1+FY8EBnaTT0MIJE=;
+	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=AkVxnzWJuVMlFSqYZ7Oi4P2cotdrzl6CI87UhPh5dCEStkh5GmGzxndCogAZsQeNvsyapaA/qhoxUENBF7/U/PwEHe7lCBcXDQh8StOzzuqRYpE0HTcf9R2BW1eAv/Pk2bnI7X33wpF2AbJt7YfMUeKSrpSmylrDG52WK5RnXOw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AcJacZD2; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756382886; x=1787918886;
+  h=from:to:in-reply-to:references:subject:message-id:date:
+   mime-version:content-transfer-encoding;
+  bh=fGu7UiqbNorOhv8zDirn9Y3nlFS1+FY8EBnaTT0MIJE=;
+  b=AcJacZD2v34sPtf+rH/955QuiS1gy/rfm4ixdsSQuEgo/zM8acy6jy3J
+   gs32uoEJq+omSc+wqEnZ92niV3eN3eJGCAzM3VvZHd1f9YAKyrfIrjLAo
+   /1oq/zWilJ2nQYPyta4v2ohmIUirOwhUtPGiDE97vidXTx8ZwLrwuIdte
+   GAp03ipNmx5O0r9SehqdijzFw3Y6QcxnFpcYG0uG73nTzsi3KvuwWx0Ck
+   RJ9kzwyl08o+wg0oijux+9Yt1DGMzUBBP/vFHTI9QCRd23rWKDzPDYOga
+   fEjhebnJgRW+fKy8fMBWYWkc9YHJM7/BNxjzK9jDC7TMlKDwIq9BSmp9K
+   g==;
+X-CSE-ConnectionGUID: ngFEoFpWRDCmY1rXPbs0IQ==
+X-CSE-MsgGUID: +rzwPn+oSRaVlwRxEeaZ+Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11535"; a="58749731"
+X-IronPort-AV: E=Sophos;i="6.18,217,1751266800"; 
+   d="scan'208";a="58749731"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2025 05:08:06 -0700
+X-CSE-ConnectionGUID: 4KNUiPnrRcudC5/EIZ4MuA==
+X-CSE-MsgGUID: MfSGpmeRRs+OrrmYPKLwJg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,217,1751266800"; 
+   d="scan'208";a="175375435"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.99])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2025 05:08:03 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+To: Rajneesh Bhardwaj <irenic.rajneesh@gmail.com>, 
+ David E Box <david.e.box@intel.com>, Hans de Goede <hansg@kernel.org>, 
+ platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Qianfeng Rong <rongqianfeng@vivo.com>
+In-Reply-To: <20250819135155.338380-1-rongqianfeng@vivo.com>
+References: <20250819135155.338380-1-rongqianfeng@vivo.com>
+Subject: Re: [PATCH] platform/x86/intel/pmc: use kcalloc() instead of
+ kzalloc()
+Message-Id: <175638287905.13908.5051712719471737806.b4-ty@linux.intel.com>
+Date: Thu, 28 Aug 2025 15:07:59 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH] dm vdo: Use str_plural() to simplify the code
-To: Xichao Zhao <zhao.xichao@vivo.com>, song@kernel.org, yukuai3@huawei.com
-Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250828112714.633108-1-zhao.xichao@vivo.com>
-From: Li Nan <linan666@huaweicloud.com>
-In-Reply-To: <20250828112714.633108-1-zhao.xichao@vivo.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgAXYIydRrBowpJVAg--.3954S3
-X-Coremail-Antispam: 1UD129KBjvdXoWruF4kArW3JF43AF1DJFy3CFg_yoWfZFc_Kr
-	4Iqw1aqr4kZrW0vw13Xw4IkrWrKw1kWws7uw43tr45X3sxZF98WF97ZryDZw1kWrWayF43
-	urWfA3Wxt348WjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUb3kYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20E
-	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
-	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8IcVCY1x02
-	67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l
-	5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67
-	AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07Al
-	zVAYIcxG8wCY1x0262kKe7AKxVWUAVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7x
-	kEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E
-	67AF67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCw
-	CI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1x
-	MIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIda
-	VFxhVjvjDU0xZFpf9x07jb2-nUUUUU=
-X-CM-SenderInfo: polqt0awwwqx5xdzvxpfor3voofrz/
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13.0
 
+On Tue, 19 Aug 2025 21:51:55 +0800, Qianfeng Rong wrote:
 
-
-在 2025/8/28 19:27, Xichao Zhao 写道:
-> Use the string choice helper function str_plural() to simplify the code.
+> Replace devm_kzalloc() with devm_kcalloc() in pmc_core_get_tgl_lpm_reqs().
+> As noted in the kernel documentation [1], open-coded multiplication in
+> allocator arguments is discouraged because it can lead to integer
+> overflow.
 > 
-> Signed-off-by: Xichao Zhao <zhao.xichao@vivo.com>
-> ---
->   drivers/md/raid0.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+> Using devm_kcalloc() provides built-in overflow protection, making the
+> memory allocation safer when calculating the allocation size compared
+> to explicit multiplication.
 > 
-> diff --git a/drivers/md/raid0.c b/drivers/md/raid0.c
-> index cbe2a9054cb9..a2e59a8d441f 100644
-> --- a/drivers/md/raid0.c
-> +++ b/drivers/md/raid0.c
+> [...]
 
-Why subject is 'dm vdo'? The modified file is raid0. Please check before
-sending.
 
-> @@ -41,7 +41,7 @@ static void dump_zones(struct mddev *mddev)
->   	int raid_disks = conf->strip_zone[0].nb_dev;
->   	pr_debug("md: RAID0 configuration for %s - %d zone%s\n",
->   		 mdname(mddev),
-> -		 conf->nr_strip_zones, conf->nr_strip_zones==1?"":"s");
-> +		 conf->nr_strip_zones, str_plural(conf->nr_strip_zones));
->   	for (j = 0; j < conf->nr_strip_zones; j++) {
->   		char line[200];
->   		int len = 0;
+Thank you for your contribution, it has been applied to my local
+review-ilpo-next branch. Note it will show up in the public
+platform-drivers-x86/review-ilpo-next branch only once I've pushed my
+local branch there, which might take a while.
 
--- 
-Thanks,
-Nan
+The list of commits applied:
+[1/1] platform/x86/intel/pmc: use kcalloc() instead of kzalloc()
+      commit: 55df384148396c0503cfc51a9c7177df6a423843
+
+--
+ i.
 
 
