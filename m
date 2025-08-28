@@ -1,186 +1,213 @@
-Return-Path: <linux-kernel+bounces-789823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789824-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 648AAB39B26
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 13:12:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3BD3B39B29
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 13:12:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2901B36243D
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 11:12:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AFF973B4FDC
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 11:12:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31D4930E840;
-	Thu, 28 Aug 2025 11:12:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DACCA30EF80;
+	Thu, 28 Aug 2025 11:12:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="vWvSY7kp"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2055.outbound.protection.outlook.com [40.107.237.55])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="M8bO3mpG"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 082F830ACFF;
-	Thu, 28 Aug 2025 11:12:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.55
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756379525; cv=fail; b=OuCCiwUjQha/aO3oy2fpV79YgUo8IB9QHbxcT4rN789fIAUxJtpJXbpuZy77ERN2nYbxStbOAd96uc9tK/YSaPAH8QcjwP/Qa3J+TLU8hVNqgBxdIjPCYy0LSBpWGxSm4ADjfO+y3iLFzTJUTGlFnEpSTQ/p75eW3Fdtk6M9QMw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756379525; c=relaxed/simple;
-	bh=LUybeevfvDar4RfDPkewye/fvfF450Txirnpz3FD9mo=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ikxZjiN/F6x0n6zAWwZ+scf0o+Wq5yKoI5o/eZ9Zf42tRdaqgWjzz/Hh/dIEVfqlSwyqQwziLyO977u9RHpVDeRcfNOQzDaGNnUVeInCqGy0Qa1Vo8iW3EUU2f2knjuKwWGMhf/z5zkphSb/mVKVJB4qr3bigfKuhgPy77dINY8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=vWvSY7kp; arc=fail smtp.client-ip=40.107.237.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=tWvvNxlF0KeuHWWfpgBK9/l+OfHYYlJAGoPQ0GfnP1EFXtYiw+qMxdN5G4PYbr37G6OyVczgpWNlWNZRwhm1gM9RY82oGoC6axx7ODYyPUai0BPVExFCmTr63Ekqc9im9wA26gxK52wiPX5b0N8ogqeTM4IwyD2zjPFk4FhjSgzXaiJLywzfVWMBCx189Om86t4Xcm6HL0OeZAnUPskdx4kLpG0Tz3W8rf/jgzg/fu5kXrEmX43lyCaqUhWUqX0uaYABD8n8FGd8oJD2LoWsrsrDRHu5JHs8m6ah8bWfzP8vwHJk+9udZ9Q7mP9dQVXQazBEEja3veNPccG54vMi4g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=JsthVE1stRrAm9roQk6UnvPsA7eOZNTyUJ0nFFZCAso=;
- b=uGCk5gtfQKerHhrqA2GSpFevvITvcKjZS4jFl6xwbBZmm1Bt6rldgrN6me89nwlwYMb7Pc73LLWRgZq01TnpsQGOroxWkH85lPTyBFwsIwgn+niiEwOm6eoijuo0JJCKc/+X1DHnwMSKP3WyqZviPfFJzYd2Au1j5k4MGfhyQ85J0RswqbrWIakekTsU33QRs3MfDPSd8Z6HZpzUptJNcTxtitktKcSgTjvd2+Sj+jpsyaLOlOlU93pKMNHQDEbdY00Av3fhpAkvClTyb/dJyYROVogjDXRaCZblBBe8KoBPrevyvg8vhDSQiN2fIPBe6XNPZ9/YYH6iW8k/H8gHqQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JsthVE1stRrAm9roQk6UnvPsA7eOZNTyUJ0nFFZCAso=;
- b=vWvSY7kppScPp72WZPvIbKvI4G2F1zhUepLqzgcB6SlYhhhbiW3gRgLob5e+nMSNcA5kDKH8TW+k8GygAySiLdsaID7eicLyttDRivCmP3lsFYuMHAR+ikGilH5uMs1BQUiAaaKJNsAcZuydsOvQrkeGynMwxf/dbXMybtNmGdU=
-Received: from BN1PR14CA0002.namprd14.prod.outlook.com (2603:10b6:408:e3::7)
- by IA1PR12MB9061.namprd12.prod.outlook.com (2603:10b6:208:3ab::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.20; Thu, 28 Aug
- 2025 11:11:57 +0000
-Received: from BL6PEPF0001AB56.namprd02.prod.outlook.com
- (2603:10b6:408:e3:cafe::2) by BN1PR14CA0002.outlook.office365.com
- (2603:10b6:408:e3::7) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9073.17 via Frontend Transport; Thu,
- 28 Aug 2025 11:11:57 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
-Received: from SATLEXMB03.amd.com (165.204.84.17) by
- BL6PEPF0001AB56.mail.protection.outlook.com (10.167.241.8) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.9052.8 via Frontend Transport; Thu, 28 Aug 2025 11:11:57 +0000
-Received: from Satlexmb09.amd.com (10.181.42.218) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 28 Aug
- 2025 06:11:56 -0500
-Received: from BLR-L-NUPADHYA.xilinx.com (10.180.168.240) by
- satlexmb09.amd.com (10.181.42.218) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.1748.10; Thu, 28 Aug 2025 04:11:50 -0700
-From: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
-To: <linux-kernel@vger.kernel.org>
-CC: <bp@alien8.de>, <tglx@linutronix.de>, <mingo@redhat.com>,
-	<dave.hansen@linux.intel.com>, <Thomas.Lendacky@amd.com>, <nikunj@amd.com>,
-	<Santosh.Shukla@amd.com>, <Vasant.Hegde@amd.com>,
-	<Suravee.Suthikulpanit@amd.com>, <David.Kaplan@amd.com>, <x86@kernel.org>,
-	<hpa@zytor.com>, <peterz@infradead.org>, <seanjc@google.com>,
-	<pbonzini@redhat.com>, <kvm@vger.kernel.org>, <huibo.wang@amd.com>,
-	<naveen.rao@amd.com>, <francescolavra.fl@gmail.com>, <tiala@microsoft.com>
-Subject: [PATCH v10 09/18] x86/sev: Initialize VGIF for secondary vCPUs for Secure AVIC
-Date: Thu, 28 Aug 2025 16:41:41 +0530
-Message-ID: <20250828111141.208920-1-Neeraj.Upadhyay@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250828070334.208401-1-Neeraj.Upadhyay@amd.com>
-References: <20250828070334.208401-1-Neeraj.Upadhyay@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C90E30ACFF;
+	Thu, 28 Aug 2025 11:12:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756379531; cv=none; b=pN+NhOPoUt8sRcPqsuPb7zdSaUxQG2ce4SAdtH32TRpVWApgAJzB2NEqv9NVvbF70zqu+Cn3oEN4KHOnm9VLwObyfd2rnk/dnd1ObMQ94WAw4TtHATEBaEC7BnAMQb+iq2vsPgo04DaWi4JCi/E63172VGCOBIekbzSm9yjvOFM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756379531; c=relaxed/simple;
+	bh=enPpz+S5NA4WcrnMqKzmIzvOUg4UyZY6UIMIUDD5itk=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=Bsd+77J1LAKW4On/V003olq1MqcpP6ZFbVdRLSwvtBwFAa3D2OXRgYtLQ3418jh8ZlHmAaoXPr5TExecEH+G9diyoXO+eX6CXK9WfDpHvrFQEPEahZFzyLQWG/qfbEeueoodADJx6KhYG7Up/IoaPQbjtpH9tkFVbPgnfeWmyMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=M8bO3mpG; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756379530; x=1787915530;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=enPpz+S5NA4WcrnMqKzmIzvOUg4UyZY6UIMIUDD5itk=;
+  b=M8bO3mpG8XYDfFwrzCKGYE9hbAJiPCdIs/uwdqZb/VmrBkh8uqboTYKl
+   RF6fAg7OzWfbwT7dlJFwVVBcxzLOGCD0Yw3V/CA7icYK8uotTEi+de3Q5
+   uv9bozvzikUdR3k0fMxDXXS7G19ESp0vJdXHiyVBkjsyNmOv0b9aGRXfu
+   UhB8AAe4K7qVwvbuGCkAOt+Hz980/9VDQbZDfj+FKtgsSz6lNTFZdcY0K
+   wacSPTPlmCZisZCBqTPm04w33eKWLEenD+F9lzzLWTORjuphOMp/0sK6Z
+   gFK3vn/AcYU9vs/LX8bZOYueNu91Eg5tZmAtPSMMxxljBeNWe77AOjaqy
+   w==;
+X-CSE-ConnectionGUID: BYpAnJHAQHeoS+yFv6sHOw==
+X-CSE-MsgGUID: 5tBzekpLT4SXFEaQDFxo4w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11535"; a="68918213"
+X-IronPort-AV: E=Sophos;i="6.18,217,1751266800"; 
+   d="scan'208";a="68918213"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2025 04:12:10 -0700
+X-CSE-ConnectionGUID: FYSft+80Ru2S/q5QxssThQ==
+X-CSE-MsgGUID: KFUx9/SbSxyywDuCdO00NQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,217,1751266800"; 
+   d="scan'208";a="175358714"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.99])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2025 04:12:06 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Thu, 28 Aug 2025 14:12:03 +0300 (EEST)
+To: Daniel <dany97@live.ca>
+cc: matan@svgalib.org, platform-driver-x86@vger.kernel.org, 
+    LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] platform/x86: lg-laptop: Fix WMAB call in
+ fan_mode_store
+In-Reply-To: <2fdc2487-aaae-aa3c-9aa6-0c2bf2379e5a@linux.intel.com>
+Message-ID: <d2e91809-8872-7a3f-743f-b4091e8196d2@linux.intel.com>
+References: <MN2PR06MB55982D694628BC31FD980FD2DC3DA@MN2PR06MB5598.namprd06.prod.outlook.com> <2fdc2487-aaae-aa3c-9aa6-0c2bf2379e5a@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To satlexmb09.amd.com
- (10.181.42.218)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL6PEPF0001AB56:EE_|IA1PR12MB9061:EE_
-X-MS-Office365-Filtering-Correlation-Id: ac430e56-1284-4d9d-5ccf-08dde623b3dc
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|376014|7416014|36860700013|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?b7S5npuvGvUgjqIE+7H2MP+VFVfCMSpbcvLeAVGHImG886GGKrWXQceWU5c2?=
- =?us-ascii?Q?haNoujk6B6O+CKmVM8KCYVoGgoS577TOVKxx1fWZNBAdbc00FaBBnBh4eHfN?=
- =?us-ascii?Q?CQ/4d8LwvhLxTlDFpF8afHC5KXuIvLoh4k4HAMkWCWZ6/dSx0nJ2i4IQluwu?=
- =?us-ascii?Q?jT+PxGMQM0EVqa2797ciCtLA01PeJLcYBZPaAOzofDFePDUGzLDJTK/0pva0?=
- =?us-ascii?Q?r2kO79GrRDSWoON7PB/jG0mM3/8RLTUrX7a04j9QeGDWagWfJpzHGmRMuya5?=
- =?us-ascii?Q?lQ2/Nd5y/qnyp6f49xmXj9AkewmiUlmQ4/Ihz2GKu3yl2T4eVIUPTNdzm3lr?=
- =?us-ascii?Q?BlE4hDueV0+WUgmHGz2TXXKK8RdRNXXwjkojXUzKAV34JbGzRCqkU/KQRbdL?=
- =?us-ascii?Q?xjM/h5gaFT0jcJ/zcKn78nK1qOxvFBbJLfK0Qzv3EqzZ9NyUTIp4dmBc8xLM?=
- =?us-ascii?Q?7p/i+nM3fKfK22HSRmpknQXMmdkdDnW07JDwUasKcSTcvjCPrzeZ0WDpsGJn?=
- =?us-ascii?Q?eB4yMr6CvkzAeK6Rxw6bgNsnslcaRvxI9e4Ls6vN4VDj7jBKasDJZ+bPty/1?=
- =?us-ascii?Q?AAljbBlWa5UgL63qIC3QepXb75bf91YFuKYpeXvBz/OD25aydWxEqnEAdT0r?=
- =?us-ascii?Q?VPLsGnY1xH/MrfYKKrwi+4W3mKbkyNAGEAEiIe6DpUVJPsmg9T0VVIp+oFMM?=
- =?us-ascii?Q?v3rUePuyInPQJGSUGp8Gc5jyB4+o29dzCVAZraCq1omP/qR+HgW8P8x7VtB0?=
- =?us-ascii?Q?1prJ23pVkS7ory4pqJpxk0McOxLozV8ygr6mRpLj2hGJB+3/jxUyCtp5+vb3?=
- =?us-ascii?Q?7fQS9fcXVXfwQds1AhfaCN1LrUEgRYtAOHBC0l37utbg2ItGG6mpwdNe0qK6?=
- =?us-ascii?Q?R3xUy3cXJLr5hwaH1Dr/duPuaiD1mOGiMi//tQF/djByInD5oTTiOcUpEwbu?=
- =?us-ascii?Q?ovFBsV950mJgqAESDuEXvuEWnngloSvZ7WBf93oGBf+tMXY0rNSzCE3SBT/+?=
- =?us-ascii?Q?KdDOMRBMlRp7E4d372GaKHsb5hJPNNIAFW1oNS7GTSyiIXMdsHKUqh4PBchY?=
- =?us-ascii?Q?GgZaiV613YFcqfoe9Dyo2dKhFNUL3H/58OpRnlt3NFVBYBRCcWHV+nAdLjeP?=
- =?us-ascii?Q?xE19J96Dkh9Tf9R8SVQj88zPkFGYKvBRdFVAD9BngdwpkHgZ7mIWks5Tpy5Y?=
- =?us-ascii?Q?HkGCXqtJ1EkwmJ+wtOf+u5YeIl4k0FrtqiVliXWpOIADFoNTZK8pyXJgoikf?=
- =?us-ascii?Q?6mfJpRGWiihFJxBJfzCnexP6r3rokDh8MQp0krc0NOCJFSn+6aZSuU89QNwt?=
- =?us-ascii?Q?5dL8StEdwvJ0FlI+/VMJ49i+3Y+HzS6IPkl3tc9RBzt3CXqDWxDIi6Vupd1p?=
- =?us-ascii?Q?1YN3uVNG22aIZqJUlIvYElc+NKli8dpuDg3DtOJV2NG8wTN2fZd9Fige/g2h?=
- =?us-ascii?Q?yaE6pZc93sdCW+8jTSohQoywWkaJJzgZdJlwMSm5IFDLv4T8DHu/R+C3KT+/?=
- =?us-ascii?Q?hukpwAquv5tF3vit8OqmEst/2e+dkHVJeOVr?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(376014)(7416014)(36860700013)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Aug 2025 11:11:57.1846
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: ac430e56-1284-4d9d-5ccf-08dde623b3dc
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BL6PEPF0001AB56.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB9061
+Content-Type: multipart/mixed; boundary="8323328-105747440-1756379523=:938"
 
-From: Kishon Vijay Abraham I <kvijayab@amd.com>
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Virtual GIF (VGIF) providing masking capability for when virtual
-interrupts (virtual maskable interrupts, virtual NMIs) can be taken by
-the guest vCPU. Secure AVIC hardware reads VGIF state from the vCPU's
-VMSA. So, set VGIF for secondary CPUs (the configuration for boot CPU is
-done by the hypervisor), to unmask delivery of virtual interrupts  to
-the vCPU.
+--8323328-105747440-1756379523=:938
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-Signed-off-by: Kishon Vijay Abraham I <kvijayab@amd.com>
-Reviewed-by: Tianyu Lan <tiala@microsoft.com>
-Signed-off-by: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
----
-Changes since v9:
- - Commit log update.
+On Thu, 28 Aug 2025, Ilpo J=E4rvinen wrote:
 
- arch/x86/coco/sev/core.c | 3 +++
- 1 file changed, 3 insertions(+)
+> On Fri, 22 Aug 2025, Daniel wrote:
+>=20
+> > On my LG Gram 16Z95P-K.AA75A8 (2022), writes to
+> > /sys/devices/platform/lg-laptop/fan_mode have no effect and reads alway=
+s
+> > report a status of 0.
+> >=20
+> > Disassembling the relevant ACPI tables reveals that in the call
+> >=20
+> > =09lg_wmab(dev, WM_FAN_MODE, WM_SET, x)
+> >=20
+> > the new mode is read from either the upper nibble or the lower nibble o=
+f x,
+> > depending on the value of some other EC register.  Crucially, when WMAB
+> > is called twice (once with the fan mode in the upper nibble, once with
+> > it in the lower nibble), the result of the second call can overwrite
+> > the first call.
 
-diff --git a/arch/x86/coco/sev/core.c b/arch/x86/coco/sev/core.c
-index da9fa9d7254b..37b1d41e68d0 100644
---- a/arch/x86/coco/sev/core.c
-+++ b/arch/x86/coco/sev/core.c
-@@ -974,6 +974,9 @@ static int wakeup_cpu_via_vmgexit(u32 apic_id, unsigned long start_ip, unsigned
- 	vmsa->x87_ftw		= AP_INIT_X87_FTW_DEFAULT;
- 	vmsa->x87_fcw		= AP_INIT_X87_FCW_DEFAULT;
- 
-+	if (cc_platform_has(CC_ATTR_SNP_SECURE_AVIC))
-+		vmsa->vintr_ctrl	|= V_GIF_MASK;
-+
- 	/* SVME must be set. */
- 	vmsa->efer		= EFER_SVME;
- 
--- 
-2.34.1
+Oh, one more thing. I think this would warrant a Fixes tag pointing to the=
+=20
+original commit.
 
+--
+ i.
+
+> > Fix this by calling WMAB once, with the fan mode set in both nibbles.
+> > As a bonus, the driver now supports the "Performance" mode seen in
+> > the Windows LG Control Center app (less aggressive CPU throttling, but
+> > louder fan noise and shorter battery life).  I can confirm that with
+> > this patch writing/reading the fan mode works as expected on my laptop,
+> > although I haven't tested it on any other LG laptops.
+> >=20
+> > Also, correct the documentation to reflect that a value of 0 correspond=
+s
+> > to the default mode (what the LG app calls "Optimal") and a value of 1
+> > corresponds to the silent mode.
+> >
+> > Tested-by: Daniel <dany97@live.ca>
+> > Signed-off-by: Daniel <dany97@live.ca>
+> > ---
+> >  .../admin-guide/laptops/lg-laptop.rst         |  4 ++--
+> >  drivers/platform/x86/lg-laptop.c              | 22 +++++--------------
+> >  2 files changed, 8 insertions(+), 18 deletions(-)
+> >=20
+> > diff --git a/Documentation/admin-guide/laptops/lg-laptop.rst b/Document=
+ation/admin-guide/laptops/lg-laptop.rst
+> > index 67fd6932c..c4dd534f9 100644
+> > --- a/Documentation/admin-guide/laptops/lg-laptop.rst
+> > +++ b/Documentation/admin-guide/laptops/lg-laptop.rst
+> > @@ -48,8 +48,8 @@ This value is reset to 100 when the kernel boots.
+> >  Fan mode
+> >  --------
+> > =20
+> > -Writing 1/0 to /sys/devices/platform/lg-laptop/fan_mode disables/enabl=
+es
+> > -the fan silent mode.
+> > +Writing 0/1/2 to /sys/devices/platform/lg-laptop/fan_mode sets fan mod=
+e to
+> > +Optimal/Silent/Performance respectively.
+> > =20
+> > =20
+> >  USB charge
+> > diff --git a/drivers/platform/x86/lg-laptop.c b/drivers/platform/x86/lg=
+-laptop.c
+> > index 4b57102c7..b8de6e568 100644
+> > --- a/drivers/platform/x86/lg-laptop.c
+> > +++ b/drivers/platform/x86/lg-laptop.c
+> > @@ -274,29 +274,19 @@ static ssize_t fan_mode_store(struct device *dev,
+> >  =09=09=09      struct device_attribute *attr,
+> >  =09=09=09      const char *buffer, size_t count)
+> >  {
+> > -=09bool value;
+> > +=09unsigned long value;
+> >  =09union acpi_object *r;
+> > -=09u32 m;
+> >  =09int ret;
+> > =20
+> > -=09ret =3D kstrtobool(buffer, &value);
+> > +=09ret =3D kstrtoul(buffer, 10, &value);
+> >  =09if (ret)
+> >  =09=09return ret;
+> > +=09if (value >=3D 3)
+> > +=09=09return -EINVAL;
+> > =20
+> > -=09r =3D lg_wmab(dev, WM_FAN_MODE, WM_GET, 0);
+> > +=09r =3D lg_wmab(dev, WM_FAN_MODE, WM_SET, (value << 4) | value);
+>=20
+> Is it okay to remove preserving the other bits?
+>=20
+> Please name these field with defined GENMASK() and then use FIELD_PREP()=
+=20
+> here for both fields.
+>=20
+> >  =09if (!r)
+> >  =09=09return -EIO;
+> > -
+> > -=09if (r->type !=3D ACPI_TYPE_INTEGER) {
+> > -=09=09kfree(r);
+> > -=09=09return -EIO;
+> > -=09}
+> > -
+> > -=09m =3D r->integer.value;
+> > -=09kfree(r);
+> > -=09r =3D lg_wmab(dev, WM_FAN_MODE, WM_SET, (m & 0xffffff0f) | (value <=
+< 4));
+> > -=09kfree(r);
+> > -=09r =3D lg_wmab(dev, WM_FAN_MODE, WM_SET, (m & 0xfffffff0) | value);
+> >  =09kfree(r);
+> > =20
+> >  =09return count;
+> > @@ -317,7 +307,7 @@ static ssize_t fan_mode_show(struct device *dev,
+> >  =09=09return -EIO;
+> >  =09}
+> > =20
+> > -=09status =3D r->integer.value & 0x01;
+> > +=09status =3D r->integer.value & 0x03;
+>=20
+> This looks also like a field so should be named with a define?
+>=20
+> >  =09kfree(r);
+> > =20
+> >  =09return sysfs_emit(buffer, "%d\n", status);
+> >=20
+>=20
+>=20
+--8323328-105747440-1756379523=:938--
 
