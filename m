@@ -1,200 +1,261 @@
-Return-Path: <linux-kernel+bounces-790559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790558-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52E5CB3AA39
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 20:46:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35B81B3AA35
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 20:46:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67F491C84489
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 18:47:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B24DC7C4A53
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 18:46:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DF4D32C31F;
-	Thu, 28 Aug 2025 18:46:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 585802C11F3;
+	Thu, 28 Aug 2025 18:46:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Vva89m1m"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2044.outbound.protection.outlook.com [40.107.93.44])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Yo40kvN5"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97D1C2E1C78;
-	Thu, 28 Aug 2025 18:46:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.44
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756406781; cv=fail; b=iyoKnXt+SmhCu8dqRkehTf49zLNvWnwCiQC4eQdYVp5NDSQ4I5+n/ZD2xNU5a6MJxh4gfyJ8CDzqUbNkVRMTQhXfGvTmeTCl7pQdGSXOOHEmEvKO1XYXGSlZkbLQ0Uqin4jGFe39SkFeOUyv/DPfd8l784dyEXgrLsB3+APW4ng=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756406781; c=relaxed/simple;
-	bh=SGrL/EPUA+CSICIzItkBiCCRt93NmWSRZ+Y9T6Cz58k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=lZ7s+ukLlLV5Pl2axdRy6uSjHemjibohJGBb12emZGwD8TWoxR/bGRUZvrsAFyFWOp8al42mkmARx6VuXi7Nfb1NSBKx+NTLVZvzTzQ1dXZcyxka09lSJACV3YU+iQrXUAyXLw7zJXt97uBeRN5soT+Ei8MsZmaqAQX0kYw34u4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Vva89m1m; arc=fail smtp.client-ip=40.107.93.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Wud5iMPLdT1CFtBRJBnYT8/gfL0cV4HlP+2rp/iHDXebXN5bkav3uEuq2lf7nafDXqPgETPyY5o8UtXyOimSOF2PT868kc3c0mj7WFpHBEUDnVkxksgOEZfqJZ3+YltnAZVu66qma0sNh+VmTgc0HzOBmTOtRDAPoMR1gS/0sS9liq1T5gn9hoRDsr+FwTcgv9WbaFV/aRcVVFNNZdlQCKkW3g9fd8NwRZLDl9BSsZ9zZw9O0+KXyUnCPo4WkDDi6PZdFfN4JntB7S+EPCs3HQkIwI+cKXtRincgODoKjLXykg8Ljxhu5Ly0nf9xpSvPEx+TJOvtb2desnLrlGrEgA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=YFxAui69d52phC8Uj1EGIJKpSGV+z7RZTrGiYAZuo7M=;
- b=ioMEPedLuSGEGS2I78/F7OQhtksUH0SnH2F0VOF3iyId03eSEWWjs5l0cTXbozqGiUog7UcIMdYTI0b+ywO5K8ypbj0uPcudhKOMFLVQSLTh9krLFtH+AkCwNF0PosP+27YTPPwQITi7C3UQQHA130Re3fNrYy5W0MvUbi54HKjAiJJ1kZIgoHFPPZ1uV0XbSHuNvW74eAu+rjEb2uFcMnq/CWFOghR2m+HlZN3jW9dkR7RDSVNVmx8dk84lOnFz+5GuuA82G3rRbKZiGJWwwrPGkTOcDxqS26ww0cgpjejmzHxYOUw7SJe2eAmbCkXxZlSYBrKC9lSBebFNdQEtIg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YFxAui69d52phC8Uj1EGIJKpSGV+z7RZTrGiYAZuo7M=;
- b=Vva89m1mRz78HO27zd2PeXfhZN0dBB0tt457FtvRZeWReko3CyUXFvCUWflZDe7ksIgxmPBvMvTidPCv03dGRZct5XMVU56yo8n0BKpc9s9oWOcgfZpI3q72bQKVA0gIEoOnpTw00vJ0J5oKCBlZWM7wHcEBCrSDXH688C8VIi9cSHkC92SrQTh9SyShVN+DuAC6JmOJx0I68kdf+simA2D3EkyqMtlonCmLv/RABxk/I2Twk8DLqlRPZcxVLw7e1VI3gu/QJw3mvdgKwJS2FYBt0CAwvITwlNVMHNGLRn3e5HFQHEo6GRPvHQSwV3I2LTQbgrVxJQ5HZUHxKirMrg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
- by SJ2PR12MB7846.namprd12.prod.outlook.com (2603:10b6:a03:4c9::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.20; Thu, 28 Aug
- 2025 18:46:10 +0000
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732%4]) with mapi id 15.20.9073.010; Thu, 28 Aug 2025
- 18:46:10 +0000
-Date: Thu, 28 Aug 2025 15:46:08 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Nicolin Chen <nicolinc@nvidia.com>
-Cc: Ethan Zhao <etzhao1900@gmail.com>, robin.murphy@arm.com,
-	joro@8bytes.org, bhelgaas@google.com, will@kernel.org,
-	robin.clark@oss.qualcomm.com, yong.wu@mediatek.com,
-	matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com,
-	thierry.reding@gmail.com, vdumpa@nvidia.com, jonathanh@nvidia.com,
-	rafael@kernel.org, lenb@kernel.org, kevin.tian@intel.com,
-	yi.l.liu@intel.com, baolu.lu@linux.intel.com,
-	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	linux-mediatek@lists.infradead.org, linux-tegra@vger.kernel.org,
-	linux-acpi@vger.kernel.org, linux-pci@vger.kernel.org,
-	patches@lists.linux.dev, pjaroszynski@nvidia.com, vsethi@nvidia.com,
-	helgaas@kernel.org
-Subject: Re: [PATCH v3 5/5] pci: Suspend iommu function prior to resetting a
- device
-Message-ID: <20250828184608.GF7333@nvidia.com>
-References: <cover.1754952762.git.nicolinc@nvidia.com>
- <3749cd6a1430ac36d1af1fadaa4d90ceffef9c62.1754952762.git.nicolinc@nvidia.com>
- <550635db-00ce-410e-add0-77c1a75adb11@gmail.com>
- <aKTzq6SLGB22Xq5b@Asurada-Nvidia>
- <20250821130741.GL802098@nvidia.com>
- <aKgPr3mUcIsd1iuT@Asurada-Nvidia>
- <20250822140821.GE1311579@nvidia.com>
- <aKi8EqEp1DKG+h38@Asurada-Nvidia>
- <20250828125149.GD7333@nvidia.com>
- <aLBw3UTAX6F0IOCf@Asurada-Nvidia>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aLBw3UTAX6F0IOCf@Asurada-Nvidia>
-X-ClientProxiedBy: YT4PR01CA0067.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:111::22) To CH3PR12MB8659.namprd12.prod.outlook.com
- (2603:10b6:610:17c::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B7C0277C84;
+	Thu, 28 Aug 2025 18:46:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756406778; cv=none; b=AucUEtqjj6b2svKkgq88q43hT/vIdYTxF27zvXDbGwcANExn04oLa8lJdio8CNYAwEovb8zZzq9Md0pBcwJPUcnkHnm/Ssmp0vH9hVWoS4Fri6gbz1hTOSW7x7ILotW3GybRbDssEb8nABjCeU2mxur2aXV6WWvuG5SbxcFdnCA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756406778; c=relaxed/simple;
+	bh=TNn85gzNofrDwGqDuyZxKxtM8jgfBV7+bFFQD86FPfY=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=JkH2wVFrZeHK/0tSFky0+QqxnH10zpO4fNPFIO6JQ+ik7uRSpWtY/b/d9f1Tu5rV+orxFyiQzn5WhQvNNpqw8ZWnie5rcJCoiI3gRjw5Nr+HKX6+pQ3tatRbgbnL7GkKGlEgBRKROwsYuz03+c5Qf/xqAJDMpVNxAwv99tzZ8aY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Yo40kvN5; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1756406773;
+	bh=TNn85gzNofrDwGqDuyZxKxtM8jgfBV7+bFFQD86FPfY=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=Yo40kvN5ehj2Ct7eVAW6wI3JzOUcxHeW4k76N/YcJJH/U7rAJKuhrMfZA09NHymvW
+	 KecSWa1kv6I3aYlVuTFuGtUvGQLgPnbVKVY0yY3OLxiddjhRAQrm6KnjEeTdiIqKS4
+	 G8bktGPZRauIzv/c0neE32We1Ty+NpniPM/fUpX0iYbcfaIkwYFAxZ7m09y55w3QwR
+	 UcWtH95G/dWyD8abA9PU/LMSCIwash504Efit5ZD31fHB40yGLPxtYU4yLgJHCpqC7
+	 N1Ag+Uqt1IdLiWu9aCwIKotAEtiX7JO1EYw8s4t1dkQ00XnPSWr0Gi+tTTQQCjgms/
+	 AfGfSRDdAl/ag==
+Received: from [IPv6:2606:6d00:11:5a76::5ac] (unknown [IPv6:2606:6d00:11:5a76::5ac])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: nicolas)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 9B5D017E046C;
+	Thu, 28 Aug 2025 20:46:12 +0200 (CEST)
+Message-ID: <868674ca3d248ff76ddb3855f9b0620812e103a4.camel@collabora.com>
+Subject: Re: [PATCH v2 2/4] media: uapi: Cleanup tab after define in headers
+From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+To: Paul Kocialkowski <paulk@sys-base.io>, linux-media@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil
+	 <hverkuil@xs4all.nl>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Date: Thu, 28 Aug 2025 14:46:11 -0400
+In-Reply-To: <20250824180735.765587-3-paulk@sys-base.io>
+References: <20250824180735.765587-1-paulk@sys-base.io>
+	 <20250824180735.765587-3-paulk@sys-base.io>
+Autocrypt: addr=nicolas.dufresne@collabora.com; prefer-encrypt=mutual;
+ keydata=mDMEaCN2ixYJKwYBBAHaRw8BAQdAM0EHepTful3JOIzcPv6ekHOenE1u0vDG1gdHFrChD
+ /e0J05pY29sYXMgRHVmcmVzbmUgPG5pY29sYXNAbmR1ZnJlc25lLmNhPoicBBMWCgBEAhsDBQsJCA
+ cCAiICBhUKCQgLAgQWAgMBAh4HAheABQkJZfd1FiEE7w1SgRXEw8IaBG8S2UGUUSlgcvQFAmibrjo
+ CGQEACgkQ2UGUUSlgcvQlQwD/RjpU1SZYcKG6pnfnQ8ivgtTkGDRUJ8gP3fK7+XUjRNIA/iXfhXMN
+ abIWxO2oCXKf3TdD7aQ4070KO6zSxIcxgNQFtDFOaWNvbGFzIER1ZnJlc25lIDxuaWNvbGFzLmR1Z
+ nJlc25lQGNvbGxhYm9yYS5jb20+iJkEExYKAEECGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4
+ AWIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaCyyxgUJCWX3dQAKCRDZQZRRKWBy9ARJAP96pFmLffZ
+ smBUpkyVBfFAf+zq6BJt769R0al3kHvUKdgD9G7KAHuioxD2v6SX7idpIazjzx8b8rfzwTWyOQWHC
+ AAS0LU5pY29sYXMgRHVmcmVzbmUgPG5pY29sYXMuZHVmcmVzbmVAZ21haWwuY29tPoiZBBMWCgBBF
+ iEE7w1SgRXEw8IaBG8S2UGUUSlgcvQFAmibrGYCGwMFCQll93UFCwkIBwICIgIGFQoJCAsCBBYCAw
+ ECHgcCF4AACgkQ2UGUUSlgcvRObgD/YnQjfi4+L8f4fI7p1pPMTwRTcaRdy6aqkKEmKsCArzQBAK8
+ bRLv9QjuqsE6oQZra/RB4widZPvphs78H0P6NmpIJ
+Organization: Collabora Canada
+Content-Type: multipart/signed; micalg="pgp-sha512";
+	protocol="application/pgp-signature"; boundary="=-RXPDGDOhP0P42/asDuBa"
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|SJ2PR12MB7846:EE_
-X-MS-Office365-Filtering-Correlation-Id: 844bee32-3829-4ce7-0df8-08dde66327c0
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?31oANS4M8B71LrhvSuJ7JsBdok+8eL+p1eM7dghiXV0jnIFTxg3jEBQcDwkb?=
- =?us-ascii?Q?0A17G6B/ypZWIsft1gRcOEblgAEQm4HHH/uIh+/SeQ5798xIJHXJR3c6WP3H?=
- =?us-ascii?Q?H9eKb1AS6/Cn1f4OMGXwpyKMCHhrSLgTFpa8rFJysgx7vvk9AZkOnun1Dd4V?=
- =?us-ascii?Q?48VdTwqye1V2CSr+38o3x4P14e25WtNYQdKP5FFHVon80X1J9XhBBVHgHQXN?=
- =?us-ascii?Q?dUn49sIceze9Qg4nlH9yyzxgS5XgluadhAQ2w1ZYEp4hX7Eb+d9hKNlelnFf?=
- =?us-ascii?Q?0y+zx5rYJnbAPlR6Q8gVOZ9kOKCmF3c0sk8mKGMU6+U1SId+CbKvTCuOnHwg?=
- =?us-ascii?Q?m+yWNY8Qq5ZPp7bU4jxgSwwlmfVhKsbjhIj+JSSY39mw9sds6xknMfg1J1TW?=
- =?us-ascii?Q?T3WjHMtpwyBE9i9x0biW/dlMlyOYXwabe8J7F6yiIzVU7TkW2zv6Tfb7zOKG?=
- =?us-ascii?Q?/OBTpvzlJfTTX4XkmgxHk9BAnXALJmJBXlWXhJEmqUw21fcKXgou4YKs6cPu?=
- =?us-ascii?Q?TsqXHABeGbSHJxpO6BidoTn3OR/lFjWvV88I7Xpu9YPKFZwTYlX1r7JIIqGM?=
- =?us-ascii?Q?s6X+/BAO3H0G1fvuPDK2R07cpwkUZcihLg106dovAeq6yYN42boOF+LtbWib?=
- =?us-ascii?Q?KpsuSVSzvkKdw7sBSQKbmVPxLB+TB+21sNL/Zoq69o1gHCunQWzUgdkcL/Gm?=
- =?us-ascii?Q?rTZYPTwIw507fGVrr+3c0+2LFqgeyGHrKaw7zuCh89JWEdb5NmF4MLf9Rk6/?=
- =?us-ascii?Q?5h/KB3u6H693lXdE60bGPXtIxrm5++hHNKU7z4G7tXHV3R21+g1C16Usb1Nt?=
- =?us-ascii?Q?sz5JrAFz0bFAXM/AINj/A3+OvrNNX8HPh74ek9wzMh/UHdWyy4aWh2J9aFxa?=
- =?us-ascii?Q?LNTy/yfx9iFfyM24rfxo79z8vVOe6nBhmgtZ7143vhX2/UHwluXSJ8+1/Cn9?=
- =?us-ascii?Q?d2dS+/x6+/YSXZpKXQBju12zb6TLHt5BGj+tcP2SliaaP76XkwItVmoHVajk?=
- =?us-ascii?Q?cGbyIFT1A0Vx1t9a0n1G0emgBt5o3ApQlJ3Tlfk20KSS3nGNAel7UDl0gcIM?=
- =?us-ascii?Q?yzbvIy+g7UAXS+PIIz6iZjZA3nEgac7kurHEyWcqP8XotwqCem9vNA++ACCr?=
- =?us-ascii?Q?VvCHTa/NBqy09RJHUw7S/6ZsdGxQvEk4ClL8A2UBiCd311Ted0olvHrsfuZN?=
- =?us-ascii?Q?t0IHnH98ZJvQ61nA/lMAVrnpsakCYZKSdrAxxZd0dT3IawPFZG94Zv0Xjfjr?=
- =?us-ascii?Q?9VqMgHZodb3Ufo5lDrJANTdFNvXeA+4CDZMxGAx6glGCa38kpSVdQUp/3QlI?=
- =?us-ascii?Q?k2uf3GGEtaNCm+YmOat1iaSz12tINrTkKmamVPGem2mLo5OuYkxow819leG8?=
- =?us-ascii?Q?C8NiCMdwfPuOxTHZ1A7OWLFyhqT2xlprUrzYhBmoL957DS8I0ET0XK5WEE7l?=
- =?us-ascii?Q?Yb1f0PWZvmg=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?4X9LW8DFkhJXKvVQ2ht4SyF1Mv8wGNcpaQDoKT9vZw+cnliy3Qhz0OgRRlqs?=
- =?us-ascii?Q?GPzr4YbEt/bNWlIWuH0/SeVVUmTWa2zuZMoRK2Y3sMiUdoNBvzuU2wp7+l1I?=
- =?us-ascii?Q?Uiv83xjbys99FaptkogfASlVXqM7HRqdTeSVMQjpcyCO151RRVlJc1EYg2ZR?=
- =?us-ascii?Q?mSFQBaWNWfEmRkWcEMdjnnud/iFpDs75Zy6ERrfC90JcE0OUr3IVF0V2dJBc?=
- =?us-ascii?Q?xbm+g/wIw1Nzrq1ygnfwlLf85J8ruE8UwM7M08tqiYmQVTjUi7W9HOck9M09?=
- =?us-ascii?Q?sPeXHfdOYJ92BxYCOSbKamJUYDSzFRCiJu4FpjWcFLEbqUaVwqu7hFD0GYFR?=
- =?us-ascii?Q?0bElNkYzYYeG0ukSN+K+gtw5mhckxuaz6/VIRqOIe84lZj9BIIQeYktTcwQ1?=
- =?us-ascii?Q?kXdRrmTCBrxCXAd2nB9h9qYaJ8C6be39+/WNeoc9IuWgIlwdB+WbiMnGiBiU?=
- =?us-ascii?Q?hJVVYjelpdZumsx7oA8KsJnclOyp0RFHT71Wpf5I2npUN5WKm43FhtwVTRbN?=
- =?us-ascii?Q?shPTyOGVLPYEkE+mbILgawQZ9GKCPA9YmAUapPlFSS1X0COwvQqYOXOOVrrO?=
- =?us-ascii?Q?l49DEhB0e0p8VA6luNSsOBMybCKNKqqf9rCHgOQTYKMmn/eE+C5D+M044waS?=
- =?us-ascii?Q?M4MJx4YXY0XOmhUfD4PiaFuP/jf9YFq0L5sF06y5M5k1odLZdAjKNp5i0d0l?=
- =?us-ascii?Q?67F1A0hLgegc/9/n45ef+2ncnxL9pO1a3jcl/NEHPQKpjywG9jq9Dv5WVEs3?=
- =?us-ascii?Q?RdWd2xSPzy6pDyyHQa8BZWuQ6c0XSYkc6L+o0zwoA4Lgj/pFD7Uq2sf+PU0r?=
- =?us-ascii?Q?TGnDqFO6Y9MiWOlIQN3WmwPqWGF3y1zBOx/nWjRcoHqFHTtukJ2ZZVEQbQCX?=
- =?us-ascii?Q?VEmpBpnPyAs18kPYtn+ecOK+JyVZ/TeZma5wcZT6YwvefAlPkSpTdlAtjQpX?=
- =?us-ascii?Q?2UOlpo8Hjb8NkEFb9sVDDtlYQ8ryxIragnaNHi5ay4gAWI37kbI7b1Ry5WTc?=
- =?us-ascii?Q?brEAwJE0MMWw5jUfefirMOb4u8M+nE2kv1+urpzxYv1fuI+UuVRgOFnmd4Bo?=
- =?us-ascii?Q?2yQBRCulARQmlyWof/57KZY2nGXv70vjylscXcD2qP2raQUivVDJ1d9sw3H0?=
- =?us-ascii?Q?XDss6wjSu15yJyP1CdcMoBL/oAOqlsCNDheYr2g6rzKGc3lrfl/ryN4PspB6?=
- =?us-ascii?Q?4VKm04Bu5PoQtshCLdLqhYeUDa1wn5/EjRNQIlYZSYfxkCEkpVoZnWjvEVwI?=
- =?us-ascii?Q?saXB7t8JxOANpf7ONVmM759aexIznez28XbrzfosYamY7ipHK+Jwj2yTl3s9?=
- =?us-ascii?Q?MnEnQD5B77MMCmhbnZ5SA6jiLbkURsocKhLmJ/RJXVLnZjWhdzgBXqlf+6DI?=
- =?us-ascii?Q?Py45l/d16ZRvQ7wGhpNSGkMSGeLlfkFnX2G3z8w1A5/Lx/DhPJQZDoCb/LCi?=
- =?us-ascii?Q?CrPiv1c3SXn9L7THAoTcZC2aTZrAzzwGb619jhmGV5UQ15bQRuOyXGBsvElq?=
- =?us-ascii?Q?CBRFwF+mJIm5/UtVs4HJ7XzkPCUzFnTMdGjvg7qciIPrptcF5X7E3VdncqlA?=
- =?us-ascii?Q?aLFTFlLIx9wBgMls+Lg=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 844bee32-3829-4ce7-0df8-08dde66327c0
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Aug 2025 18:46:10.1739
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: xF7d69NSc+bha40z7R1FUAMmZ534aeRpO+Q0748YkbY+KMAfWnivf5VQzKzmSSyW
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB7846
 
-On Thu, Aug 28, 2025 at 08:08:13AM -0700, Nicolin Chen wrote:
-> On Thu, Aug 28, 2025 at 09:51:49AM -0300, Jason Gunthorpe wrote:
-> > On Fri, Aug 22, 2025 at 11:50:58AM -0700, Nicolin Chen wrote:
-> > 
-> > > It feels like we need a no-fail re-attach operation, or at least an
-> > > unlikely-to-fail one. I recall years ago we tried a can_attach op
-> > > to test the compatibility but it didn't get merged. Maybe we'd need
-> > > it so that a concurrent attach can test compatibility, allowing the
-> > > re-attach in iommu_dev_reset_done() to more likely succeed.
-> > 
-> > This is probably the cleanest option to split these things
-> 
-> Yea, that could avoid failing a concurrent attach_dev during FLR
-> unless the dryrun fails, helping non-SRIOV cases too.
-> 
-> So, next version could have some new preparatory patches:
->  - Pass in old domain to attach_dev
->  - Add a can_attach_dev op
 
-I wouldn't make this more complicated, just focus on the signal device
-case here then we move on from there
+--=-RXPDGDOhP0P42/asDuBa
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Just adding can_attach_dev is big series on its own
+Le dimanche 24 ao=C3=BBt 2025 =C3=A0 20:07 +0200, Paul Kocialkowski a =C3=
+=A9crit=C2=A0:
+> Some definitions use a tab after the define keyword instead of the
+> usual single space. Replace it for better consistency.
+>=20
+> Signed-off-by: Paul Kocialkowski <paulk@sys-base.io>
 
-Jason
+Reviewed-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+
+> ---
+> =C2=A0include/uapi/linux/v4l2-controls.h | 30 +++++++++++++++------------=
+---
+> =C2=A0include/uapi/linux/videodev2.h=C2=A0=C2=A0=C2=A0=C2=A0 | 18 +++++++=
+++---------
+> =C2=A02 files changed, 24 insertions(+), 24 deletions(-)
+>=20
+> diff --git a/include/uapi/linux/v4l2-controls.h b/include/uapi/linux/v4l2=
+-
+> controls.h
+> index 4a483ff1c418..7aef88465d04 100644
+> --- a/include/uapi/linux/v4l2-controls.h
+> +++ b/include/uapi/linux/v4l2-controls.h
+> @@ -1193,7 +1193,7 @@ enum v4l2_flash_strobe_source {
+> =C2=A0#define V4L2_CID_JPEG_CLASS_BASE		(V4L2_CTRL_CLASS_JPEG |
+> 0x900)
+> =C2=A0#define V4L2_CID_JPEG_CLASS			(V4L2_CTRL_CLASS_JPEG | 1)
+> =C2=A0
+> -
+> #define	V4L2_CID_JPEG_CHROMA_SUBSAMPLING	(V4L2_CID_JPEG_CLASS_BASE + 1)
+> +#define V4L2_CID_JPEG_CHROMA_SUBSAMPLING	(V4L2_CID_JPEG_CLASS_BASE +
+> 1)
+> =C2=A0enum v4l2_jpeg_chroma_subsampling {
+> =C2=A0	V4L2_JPEG_CHROMA_SUBSAMPLING_444	=3D 0,
+> =C2=A0	V4L2_JPEG_CHROMA_SUBSAMPLING_422	=3D 1,
+> @@ -1202,15 +1202,15 @@ enum v4l2_jpeg_chroma_subsampling {
+> =C2=A0	V4L2_JPEG_CHROMA_SUBSAMPLING_410	=3D 4,
+> =C2=A0	V4L2_JPEG_CHROMA_SUBSAMPLING_GRAY	=3D 5,
+> =C2=A0};
+> -
+> #define	V4L2_CID_JPEG_RESTART_INTERVAL		(V4L2_CID_JPEG_CLASS_BASE + 2)
+> -
+> #define	V4L2_CID_JPEG_COMPRESSION_QUALITY	(V4L2_CID_JPEG_CLASS_BASE + 3)
+> +#define V4L2_CID_JPEG_RESTART_INTERVAL		(V4L2_CID_JPEG_CLASS_BASE +
+> 2)
+> +#define V4L2_CID_JPEG_COMPRESSION_QUALITY	(V4L2_CID_JPEG_CLASS_BASE +
+> 3)
+> =C2=A0
+> -
+> #define	V4L2_CID_JPEG_ACTIVE_MARKER		(V4L2_CID_JPEG_CLASS_BASE + 4)
+> -#define	V4L2_JPEG_ACTIVE_MARKER_APP0		(1 << 0)
+> -#define	V4L2_JPEG_ACTIVE_MARKER_APP1		(1 << 1)
+> -#define	V4L2_JPEG_ACTIVE_MARKER_COM		(1 << 16)
+> -#define	V4L2_JPEG_ACTIVE_MARKER_DQT		(1 << 17)
+> -#define	V4L2_JPEG_ACTIVE_MARKER_DHT		(1 << 18)
+> +#define V4L2_CID_JPEG_ACTIVE_MARKER		(V4L2_CID_JPEG_CLASS_BASE +
+> 4)
+> +#define V4L2_JPEG_ACTIVE_MARKER_APP0		(1 << 0)
+> +#define V4L2_JPEG_ACTIVE_MARKER_APP1		(1 << 1)
+> +#define V4L2_JPEG_ACTIVE_MARKER_COM		(1 << 16)
+> +#define V4L2_JPEG_ACTIVE_MARKER_DQT		(1 << 17)
+> +#define V4L2_JPEG_ACTIVE_MARKER_DHT		(1 << 18)
+> =C2=A0
+> =C2=A0
+> =C2=A0/* Image source controls */
+> @@ -1243,10 +1243,10 @@ enum v4l2_jpeg_chroma_subsampling {
+> =C2=A0#define V4L2_CID_DV_CLASS_BASE			(V4L2_CTRL_CLASS_DV | 0x900)
+> =C2=A0#define V4L2_CID_DV_CLASS			(V4L2_CTRL_CLASS_DV | 1)
+> =C2=A0
+> -
+> #define	V4L2_CID_DV_TX_HOTPLUG			(V4L2_CID_DV_CLASS_BASE + 1)
+> -
+> #define	V4L2_CID_DV_TX_RXSENSE			(V4L2_CID_DV_CLASS_BASE + 2)
+> -
+> #define	V4L2_CID_DV_TX_EDID_PRESENT		(V4L2_CID_DV_CLASS_BASE + 3)
+> -
+> #define	V4L2_CID_DV_TX_MODE			(V4L2_CID_DV_CLASS_BASE + 4)
+> +#define V4L2_CID_DV_TX_HOTPLUG			(V4L2_CID_DV_CLASS_BASE + 1)
+> +#define V4L2_CID_DV_TX_RXSENSE			(V4L2_CID_DV_CLASS_BASE + 2)
+> +#define V4L2_CID_DV_TX_EDID_PRESENT		(V4L2_CID_DV_CLASS_BASE + 3)
+> +#define V4L2_CID_DV_TX_MODE			(V4L2_CID_DV_CLASS_BASE + 4)
+> =C2=A0enum v4l2_dv_tx_mode {
+> =C2=A0	V4L2_DV_TX_MODE_DVI_D	=3D 0,
+> =C2=A0	V4L2_DV_TX_MODE_HDMI	=3D 1,
+> @@ -1267,7 +1267,7 @@ enum v4l2_dv_it_content_type {
+> =C2=A0	V4L2_DV_IT_CONTENT_TYPE_NO_ITC	=C2=A0 =3D 4,
+> =C2=A0};
+> =C2=A0
+> -
+> #define	V4L2_CID_DV_RX_POWER_PRESENT		(V4L2_CID_DV_CLASS_BASE + 100)
+> +#define V4L2_CID_DV_RX_POWER_PRESENT		(V4L2_CID_DV_CLASS_BASE +
+> 100)
+> =C2=A0#define V4L2_CID_DV_RX_RGB_RANGE		(V4L2_CID_DV_CLASS_BASE +
+> 101)
+> =C2=A0#define V4L2_CID_DV_RX_IT_CONTENT_TYPE		(V4L2_CID_DV_CLASS_BASE +
+> 102)
+> =C2=A0
+> @@ -2552,7 +2552,7 @@ struct v4l2_ctrl_hevc_scaling_matrix {
+> =C2=A0/* Stateless VP9 controls */
+> =C2=A0
+> =C2=A0#define V4L2_VP9_LOOP_FILTER_FLAG_DELTA_ENABLED	0x1
+> -#define	V4L2_VP9_LOOP_FILTER_FLAG_DELTA_UPDATE	0x2
+> +#define V4L2_VP9_LOOP_FILTER_FLAG_DELTA_UPDATE	0x2
+> =C2=A0
+> =C2=A0/**
+> =C2=A0 * struct v4l2_vp9_loop_filter - VP9 loop filter parameters
+> diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev=
+2.h
+> index 3dd9fa45dde1..64943f1a6149 100644
+> --- a/include/uapi/linux/videodev2.h
+> +++ b/include/uapi/linux/videodev2.h
+> @@ -1607,8 +1607,8 @@ struct v4l2_bt_timings {
+> =C2=A0} __attribute__ ((packed));
+> =C2=A0
+> =C2=A0/* Interlaced or progressive format */
+> -#define	V4L2_DV_PROGRESSIVE	0
+> -#define	V4L2_DV_INTERLACED	1
+> +#define V4L2_DV_PROGRESSIVE	0
+> +#define V4L2_DV_INTERLACED	1
+> =C2=A0
+> =C2=A0/* Polarities. If bit is not set, it is assumed to be negative pola=
+rity */
+> =C2=A0#define V4L2_DV_VSYNC_POS_POL	0x00000001
+> @@ -2788,15 +2788,15 @@ struct v4l2_remove_buffers {
+> =C2=A0 * Only implemented if CONFIG_VIDEO_ADV_DEBUG is defined.
+> =C2=A0 * You must be root to use these ioctls. Never use these in applica=
+tions!
+> =C2=A0 */
+> -#define	VIDIOC_DBG_S_REGISTER	 _IOW('V', 79, struct
+> v4l2_dbg_register)
+> -#define	VIDIOC_DBG_G_REGISTER	_IOWR('V', 80, struct
+> v4l2_dbg_register)
+> +#define VIDIOC_DBG_S_REGISTER	 _IOW('V', 79, struct v4l2_dbg_register)
+> +#define VIDIOC_DBG_G_REGISTER	_IOWR('V', 80, struct v4l2_dbg_register)
+> =C2=A0
+> =C2=A0#define VIDIOC_S_HW_FREQ_SEEK	 _IOW('V', 82, struct v4l2_hw_freq_se=
+ek)
+> -#define	VIDIOC_S_DV_TIMINGS	_IOWR('V', 87, struct
+> v4l2_dv_timings)
+> -#define	VIDIOC_G_DV_TIMINGS	_IOWR('V', 88, struct
+> v4l2_dv_timings)
+> -#define	VIDIOC_DQEVENT		 _IOR('V', 89, struct v4l2_event)
+> -#define	VIDIOC_SUBSCRIBE_EVENT	 _IOW('V', 90, struct
+> v4l2_event_subscription)
+> -#define	VIDIOC_UNSUBSCRIBE_EVENT _IOW('V', 91, struct
+> v4l2_event_subscription)
+> +#define VIDIOC_S_DV_TIMINGS	_IOWR('V', 87, struct v4l2_dv_timings)
+> +#define VIDIOC_G_DV_TIMINGS	_IOWR('V', 88, struct v4l2_dv_timings)
+> +#define VIDIOC_DQEVENT		 _IOR('V', 89, struct v4l2_event)
+> +#define VIDIOC_SUBSCRIBE_EVENT	 _IOW('V', 90, struct
+> v4l2_event_subscription)
+> +#define VIDIOC_UNSUBSCRIBE_EVENT _IOW('V', 91, struct
+> v4l2_event_subscription)
+> =C2=A0#define VIDIOC_CREATE_BUFS	_IOWR('V', 92, struct v4l2_create_buffer=
+s)
+> =C2=A0#define VIDIOC_PREPARE_BUF	_IOWR('V', 93, struct v4l2_buffer)
+> =C2=A0#define VIDIOC_G_SELECTION	_IOWR('V', 94, struct v4l2_selection)
+
+--=-RXPDGDOhP0P42/asDuBa
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaLCj8wAKCRDZQZRRKWBy
+9GXeAPsGMFbvbFgwtzgxYP9aUsooPkVrWV9DzKs5l2waQ6FBVwEAghEUigXpfr3j
+tQuCLK72NgyEKYrUAbZ8293eUXPsVQs=
+=6PBB
+-----END PGP SIGNATURE-----
+
+--=-RXPDGDOhP0P42/asDuBa--
 
