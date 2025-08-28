@@ -1,227 +1,194 @@
-Return-Path: <linux-kernel+bounces-790577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2026AB3AA77
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 20:59:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D699B3AA79
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 21:01:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF4963B7C26
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 18:59:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C61A1C84DD1
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 19:01:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A326D30F527;
-	Thu, 28 Aug 2025 18:59:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E629322C78;
+	Thu, 28 Aug 2025 19:00:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="arIalO2E"
-Received: from mail-io1-f100.google.com (mail-io1-f100.google.com [209.85.166.100])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XUEvG38e"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 562F724A046
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 18:59:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E0B1BA4A;
+	Thu, 28 Aug 2025 19:00:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756407563; cv=none; b=NbyvTL7A7+NoTP7fhS+9w7Kuakp6aR0WLULiTEwVs0ruorU4hWJrIGmsfduv06P0xRhCf7SrQux/1BzfmAeER4fJ0cKvlZw7GvUB/N+3zdrfK3mamYUDjzVW2/IYTk6etC2n20B+rFjRuEIaCjRYufEl8ITfXvdKH0oOUDYd4dU=
+	t=1756407655; cv=none; b=AtJtN5rQ49NLvJi0ICfy0fCE+dOguZ6b1unmDJO6IponuyMmdbJXnYtKeGo112gCoZ/ux5zACZESLKxNEiN0VGUAo574WDa9cS17CkLsVnt4x3CZvMfP9HEbzOx/IDR7eDQpJxmoWR9ynWCo5M67VLrjbDlUM10FjVg+jDUSf24=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756407563; c=relaxed/simple;
-	bh=Zmz0Aw990myHpqldRe5n7SyeapD5TSr3Pltd/LULcUI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZI6NDb4V7DZwMhXv+W4jngAwr62/r1AMyJfQTnsEGJ1gAPtignZl0NOu0S1lcMLrf06fNObcjXLxyyTml24iAWTjNqxAw7eLMzJe4iuwedQUrEfyEwKyg3RWcJHy6r91S3WiMSgz9UqADlM0a+NTKzqXernsyPn0Cj198qX9EXQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=arIalO2E; arc=none smtp.client-ip=209.85.166.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-io1-f100.google.com with SMTP id ca18e2360f4ac-88432a1ed9aso13419239f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 11:59:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756407560; x=1757012360;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:dkim-signature:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=oyaf/4BSH7hDRyvOEUvNtiGEJXHPeCfEjTWnaMhf1RY=;
-        b=CbhLldsOJymXoI0zxMQP9wwy+N0B3pkTHeJGBYCdLOzCMvyR8kNs+hKbxJ97frskGf
-         typlCNxJ52Uz0TdQyb5S4nkRYuZEFUN8wvzakqZqMBWpuUtXPJjZprecgr7d9SNiNo1g
-         VW0wDQpHPOR4LO1DS++9xBxgECNi0+gwg1wvw6aYjcPEofqkPcm/X38d91mV1716LMa6
-         3ZqMIW+dhAfi83jcGw9HOtQpoeZwMvNEwMZbN/w0t/LAOyDTQVtykmV+m1QCT3F9rSWj
-         jxVX8qco8ITcM80tHUxzXY8uWqHWiPONuVUYRp/uztVywYXHYQTCaoMl4jsHwWgRJHx2
-         c3sw==
-X-Forwarded-Encrypted: i=1; AJvYcCWkqfSlCpFw+D85SdAqVD15Mh67NeTDJa4ygfWfIR8itRzv3oUpQM8L30RhFjelJQtEhX8jSbhHe6PSH1Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzl2WvPu3rBLWSBCjMCz2PoGjBHMvgTqSPIYAAnA54vtIDgMiIz
-	F1i4ko56IB+dM8kpkNhHxJ25up7E39iX+BPjJcAlaPOosXovyERCSL0zCPWeGgZDZLvg5dD4+LS
-	mT7x4HdhbNPd5i0i2PUApYM80ljke55Bs/p/OZxAB8/uN4KZcFUGgtiM3ii6ISfgg1MykxVF0Xm
-	xzeGdWe9VwIR8pXFvU3T6hTjJH+ASarQqVddnaK+yGK3yfAL3/IkafAbHaw0dHk4KRApQOJJjrM
-	fYpjbiP0fBnfYbZrGg+FF4h
-X-Gm-Gg: ASbGncupPOQ0XemHUJ/EB1BpCSIekvt54Vq4Wp6YFFdoRQJ+k+NnV3h2Vhu52G5myGt
-	MaEMK9gM+Boo4CTq9vauxwAqXixyuzK6qhSbGHK/SNoSIgX2xQxo8SnjF93BqQVpHY5hGtj4W8+
-	KU9BwiSf8ct3uVwvViQLBiYFyP5nHBjUI6m+aPn3Q47aAcwtqDes8rD9UpYFXzKEt6QUEXByoT2
-	TX960y/kEyN5meQ4VlP/nshhhi/oYSVjqGi0B9F+XwTZyDbUMBopMeHrXX0XpI7nb4SlY+GvcfK
-	mwKtNd9IrDLUSzMHVF2dA6NguQbmwcI9oo+Wx11Smuv9gVr+vwgBKAmKLsb4jIMEqYhzgl9p59P
-	WPAq9iTtL7ovUQZYs5gsinEevbhVsQk6ctAtahToobyZDyRIBqfG4CtmsyJte96cW1AVYtebFQf
-	PDDeQr
-X-Google-Smtp-Source: AGHT+IFZiFGKQM1DvYsh+m+58wlY2vGJ6wuPSyGI4G+uNwBSnfGKIDRCC6hzB+7aWcXP3D2AzqXOpJ+tNC//
-X-Received: by 2002:a05:6602:360d:b0:87c:2a76:4cf9 with SMTP id ca18e2360f4ac-886f18f66ebmr1273836139f.1.1756407560271;
-        Thu, 28 Aug 2025 11:59:20 -0700 (PDT)
-Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com (address-144-49-247-16.dlp.protect.broadcom.com. [144.49.247.16])
-        by smtp-relay.gmail.com with ESMTPS id 8926c6da1cb9f-50d78cb0851sm8883173.19.2025.08.28.11.59.20
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 28 Aug 2025 11:59:20 -0700 (PDT)
-X-Relaying-Domain: broadcom.com
-X-CFilter-Loop: Reflected
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-70d903d0cbaso28561516d6.0
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 11:59:19 -0700 (PDT)
+	s=arc-20240116; t=1756407655; c=relaxed/simple;
+	bh=yzEqjwShKdy3e5mR1Q+9kCEEyTAmDJsObfl1FvhOcqQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=kaiH5+DhNxgYmM7T2GpPIbm6oPHVK6kzmz+wX7DNERszmnaSBCqdO0+0SZVYdNZEaP1jc3wGxEaSpd5le3kpR7niorp3Ln1zOjjXE+zFVdA9vJ2UNhsP0p6ftFkhV9cjnn3VAMswEheXryRpqilx4LzVjI2+Qc1BoBib4M/gsAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XUEvG38e; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-248ff5cabe0so2696245ad.0;
+        Thu, 28 Aug 2025 12:00:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1756407559; x=1757012359; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=oyaf/4BSH7hDRyvOEUvNtiGEJXHPeCfEjTWnaMhf1RY=;
-        b=arIalO2EwwhbefRDeg2J+cpaFaXCg9k5drQ+M07wVQiljmWJ+Wg8MOLBYZT5cwvbHt
-         /y7Dqt2Zors98fTifRTalAbdj3gi3Dt/13xkbaM+v/NLHJK5su0wOJrYUKsnyCOaf8ot
-         JbJP2kbDzrYAkb8DNw3EHmjZr/uPU86tc8cXU=
-X-Forwarded-Encrypted: i=1; AJvYcCW+o8E4fy4NzBD/6s0alANo3ZMi7jf/JQX7SxXCsasK1MNh0hlKud0DR6vSAl7YfMTAKDI6q24FbYGJvrw=@vger.kernel.org
-X-Received: by 2002:a05:6214:212e:b0:70d:c9bc:6281 with SMTP id 6a1803df08f44-70dd59c076fmr121328986d6.34.1756407559246;
-        Thu, 28 Aug 2025 11:59:19 -0700 (PDT)
-X-Received: by 2002:a05:6214:212e:b0:70d:c9bc:6281 with SMTP id 6a1803df08f44-70dd59c076fmr121328696d6.34.1756407558674;
-        Thu, 28 Aug 2025 11:59:18 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7fc0ecb87e7sm33752585a.22.2025.08.28.11.59.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 28 Aug 2025 11:59:17 -0700 (PDT)
-Message-ID: <9b69b764-5691-4bcd-8784-eb657f13a3a4@broadcom.com>
-Date: Thu, 28 Aug 2025 11:59:15 -0700
+        d=gmail.com; s=20230601; t=1756407653; x=1757012453; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=uLB2ySJxURxeJ2Prp4OMsSE1Drdas7+Ru1DscCOUHP4=;
+        b=XUEvG38eI0+y1uFQLVtcgefh+aeWM/o5nONNrlnQFycyRqc9UeVEzhjaeoHZ08RfTK
+         OETglOa0EnbSzFEuTlQjhRypB1jltOubJL+6sNWRwUnmORQDZYeKBE25LMN/8IrafgID
+         9CQPhyqY5eRZV2sYq4PSbXGZUBHOrxfmEkoZuLySwJQYh73MTyi0G4UF94IUxp0H4ydM
+         sV2e9DCRfT9iQ3heY6sUSzawSj7MKubVPZf4EceKyqpFrEuaPxXKQG+UDDdL9KsnrMwf
+         ayGaE5lUP5bnNvS3KyS/Y5T/dFJI6HDWQ4zIo+x5con9OyfvlJ5iCttQyuI8bEnOLKAf
+         xlsw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756407653; x=1757012453;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uLB2ySJxURxeJ2Prp4OMsSE1Drdas7+Ru1DscCOUHP4=;
+        b=fyg82rU+QkwckTnAUJXukGUfwAXUfw/Kp3ecFRsVQCDSTaOeO4zrtdKioB4pN3Blps
+         RnMSl0OM5LApBQffaKG0jjnt2t1ibTa/Qm1Rm5rfLU/P3GxOq0T0ji1t5RwVt0by+7vY
+         RJqTi2/NO7EFK2ewpbmJUIdscHic8LB4pJQKLD3R3FQOKviRXwi/RDV0Z1Ld7m6SSiSH
+         gphDlnAw5PEApj4EbfsHrv3YUoKeZSswhMDFIZxKsTZ1FK4Fg7htTtm/bgTkxeKmBhc3
+         DvxCRWTTijf6gyMWHolLJlLfyZ63AnL2K2z4owfqrYeTcpUJbeRuqqkUyrHmbKRgHfRD
+         +Zvw==
+X-Forwarded-Encrypted: i=1; AJvYcCUmBTqmLZPZHagKujs68tew4AwdDTQ7CHElTdecKlk0B3dLDbYc+U8HT9hRGzO3WL0Cfyd5Xh08CwnVzQQ=@vger.kernel.org, AJvYcCX0vLi7nz6k6pqn235NOdhmPtTnZ30T3aGAzwyxuKYH7p8Eg/dbLsJkcRiEJtY/HNoFQ6vOSG654lRTlc8vPPg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwgpoHSr2V3IsdPEPeKci99K1CLv4EVQjfIIOxXVaT6nN3Ej8KP
+	lQ6MMY4BMcB2FTHWwz/dmS37Yxol+37tPXbDb23fXClz0k6FT3HIo3MSEmQ5jQAg
+X-Gm-Gg: ASbGnctKsBZD2yScN05vza6KV5JzUelz66QL1u9QrU8OeiswSvFd4/kKEuMSb7YCIt1
+	AnIEWZVyZluq3j7RzqSjStVBSJGRH1swCibNKKbpQQ6u5ZFyQ/2T4tuL3jFCraainXQK6nTNFYf
+	Mlh3yJBHtaRohQtlIm40nt0GlpogcotcJr75wdCI/kn8bAFHbffsy9X3yYwqlvfBacK/n/04p6D
+	QXMLnqUl6QOS5Ngp6u4UkUYxiTk0IoBNT12t88QNlpKK1kq6WjavxYV1FKvrsAbh2Cs5glC73Wl
+	SoQ+boQOUyj7GXW4LOk2l0FrjTl/x879s26mntvcD7/GVSFoVx94zHNcTSz3CJdGFqfnBQWXUXc
+	e74sG7Mo4KnsG9b4h+t1MxXcKp655fnMVLaoUm0MxLvMWR7hV71TXa0tKW1Ps+ZYKxZQ=
+X-Google-Smtp-Source: AGHT+IHW/KVZ59F/LWisNOWscaunifwOLuUYn75v+mJnJQp4Mv7Sd2maSFNmnAHJcLWsDxVxAIVdRQ==
+X-Received: by 2002:a17:902:f78e:b0:248:d917:a57c with SMTP id d9443c01a7336-248d917aa6dmr44946385ad.40.1756407652864;
+        Thu, 28 Aug 2025 12:00:52 -0700 (PDT)
+Received: from mitchelllevy.localdomain ([174.127.224.194])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-327da8e5ad5sm405729a91.18.2025.08.28.12.00.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Aug 2025 12:00:52 -0700 (PDT)
+From: Mitchell Levy <levymitchell0@gmail.com>
+Subject: [PATCH v3 0/7] rust: Add Per-CPU Variable API
+Date: Thu, 28 Aug 2025 12:00:07 -0700
+Message-Id: <20250828-rust-percpu-v3-0-4dd92e1e7904@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [patch] net, bcmgenet: Fix locking of netpoll facing functions
-To: Mike Galbraith <efault@gmx.de>, lkml <linux-kernel@vger.kernel.org>
-Cc: Doug Berger <opendmb@gmail.com>, Breno Leitao <leitao@debian.org>
-References: <bfb21521a33b8335216ec2523bc461583ea6f7a7.camel@gmx.de>
-Content-Language: en-US
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
- xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
- M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
- JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
- PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
- KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
- AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
- IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
- ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
- bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
- Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
- tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
- TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
- zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
- WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
- IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
- U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
- 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
- pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
- MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
- IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
- gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
- obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
- N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
- CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
- C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
- wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
- EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
- fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
- MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
- 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
- 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
-In-Reply-To: <bfb21521a33b8335216ec2523bc461583ea6f7a7.camel@gmx.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
+X-B4-Tracking: v=1; b=H4sIADensGgC/22QQW7CMBBFr4K8rtHMOE5iVr1H1YVjT8BSIamdR
+ CCUu+MEKtHS5R/pva/5V5E4Bk5it7mKyFNIoTvloN42wh3sac8y+JwFARVQo5JxTIPsObp+lGy
+ p1UWjvVVKZKKP3Ibzavv4zPkQ0tDFyyqfcLmuHiQ0vzwTSpAEBrHimqjB9/3Rhq+t646LNjMaS
+ ipeGeO0aaDyZI17YpbuiX76NBT4h6XMarbgwTMqq//pq5BemZrKlnRZacLmuW++Px/5e8wLDo8
+ F5vkG/0Mdr18BAAA=
+To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+ Trevor Gross <tmgross@umich.edu>, Andrew Morton <akpm@linux-foundation.org>, 
+ Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>, 
+ Christoph Lameter <cl@linux.com>, Danilo Krummrich <dakr@kernel.org>, 
+ Benno Lossin <lossin@kernel.org>, Yury Norov <yury.norov@gmail.com>, 
+ Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Tyler Hicks <code@tyhicks.com>, linux-kernel@vger.kernel.org, 
+ rust-for-linux@vger.kernel.org, linux-mm@kvack.org, 
+ Mitchell Levy <levymitchell0@gmail.com>
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1756407651; l=3695;
+ i=levymitchell0@gmail.com; s=20240719; h=from:subject:message-id;
+ bh=yzEqjwShKdy3e5mR1Q+9kCEEyTAmDJsObfl1FvhOcqQ=;
+ b=szSZ6PnGo1rOv2lpQujKqFXCXBiX7rWi8n06tjC0VQVqwcm+sm8wUQv0Q3w2KlYaoSTSlxz2F
+ 5CveT0mdIMoAkxde7vCtqtupVWOEbUbtFz9UY0lasC+pM3SlbBXFrDH
+X-Developer-Key: i=levymitchell0@gmail.com; a=ed25519;
+ pk=n6kBmUnb+UNmjVkTnDwrLwTJAEKUfs2e8E+MFPZI93E=
 
-On 8/26/25 01:24, Mike Galbraith wrote:
-> Lockdep reports ring->lock to not be irq safe during netpoll/netconsole
-> session, resulting in a potential deadlock scenario.
-> 
->   Chain exists of:
->     &host->lock --> target_list_lock --> &ring->lock
->    Possible interrupt unsafe locking scenario:
->          CPU0                    CPU1
->          ----                    ----
->     lock(&ring->lock);
->                                  local_irq_disable();
->                                  lock(&host->lock);
->                                  lock(target_list_lock);
->     <Interrupt>
->       lock(&host->lock);
->    *** DEADLOCK ***
-> 
-> Prevent that via use of irqsave/restore spinlock variant when polling.
-> 
-> Signed-off-by: Mike Galbraith <efault@gmx.de>
+This series adds an API for declaring an using per-CPU variables from
+Rust, and it also adds support for Rust access to C per-CPU variables
+(subject to some soundness requirements). It also adds a small sample
+module, samples/rust/rust_percpu.rs, in the vein of lib/percpu_test.c.
 
-Your patch did not make it to the adequate mailing list which should be 
-at least netdev@vger.kernel.org. This is effectively a partial revert of 
-b0447ecb533270cf857ebee1133cb8ff67115423 ("net: bcmgenet: relax lock 
-constraints to reduce IRQ latency") therefore I would want Doug to chime 
-in and review this.
+---
+Signed-off-by: Mitchell Levy <levymitchell0@gmail.com>
 
-Thanks!
+---
+Changes in v3:
+- Add a `CheckedPerCpuToken` that enables usage of per-CPU variables via
+  a `&T`, allowing for a wholly safe interface when `T` allows for
+  interior mutability (Thanks Benno Lossin)
+- Add support for non-zeroable types to be used in a `DynamicPerCpu`.
+- Remove necessity for `unsafe` to get a `StaticPerCpu` from its
+  declaration (Thanks Benno Lossin)
+- Allow the declaration of static per-CPU variables of types that are
+  `!Sync`.
+- Implement `PerCpuPtr` in terms of `MaybeUninit<T>` rather than `T` so
+  as to keep all invariants in the `DynamicPerCpu` and `StaticPerCpu`
+  types --- this would also enable `PerCpuPtr` to be used in a per-CPU
+  type that does lazy initialization.
+- Link to v2: https://lore.kernel.org/r/20250712-rust-percpu-v2-0-826f2567521b@gmail.com
 
-> ---
->   drivers/net/ethernet/broadcom/genet/bcmgenet.c |   10 ++++++----
->   1 file changed, 6 insertions(+), 4 deletions(-)
-> 
-> --- a/drivers/net/ethernet/broadcom/genet/bcmgenet.c
-> +++ b/drivers/net/ethernet/broadcom/genet/bcmgenet.c
-> @@ -2022,14 +2022,15 @@ static int bcmgenet_tx_poll(struct napi_
->   		container_of(napi, struct bcmgenet_tx_ring, napi);
->   	unsigned int work_done = 0;
->   	struct netdev_queue *txq;
-> +	unsigned long flags;
->   
-> -	spin_lock(&ring->lock);
-> +	spin_lock_irqsave(&ring->lock, flags);
->   	work_done = __bcmgenet_tx_reclaim(ring->priv->dev, ring);
->   	if (ring->free_bds > (MAX_SKB_FRAGS + 1)) {
->   		txq = netdev_get_tx_queue(ring->priv->dev, ring->index);
->   		netif_tx_wake_queue(txq);
->   	}
-> -	spin_unlock(&ring->lock);
-> +	spin_unlock_irqrestore(&ring->lock, flags);
->   
->   	if (work_done == 0) {
->   		napi_complete(napi);
-> @@ -2128,6 +2129,7 @@ static netdev_tx_t bcmgenet_xmit(struct
->   	struct bcmgenet_tx_ring *ring = NULL;
->   	struct enet_cb *tx_cb_ptr;
->   	struct netdev_queue *txq;
-> +	unsigned long flags;
->   	int nr_frags, index;
->   	dma_addr_t mapping;
->   	unsigned int size;
-> @@ -2149,7 +2151,7 @@ static netdev_tx_t bcmgenet_xmit(struct
->   
->   	nr_frags = skb_shinfo(skb)->nr_frags;
->   
-> -	spin_lock(&ring->lock);
-> +	spin_lock_irqsave(&ring->lock, flags);
->   	if (ring->free_bds <= (nr_frags + 1)) {
->   		if (!netif_tx_queue_stopped(txq))
->   			netif_tx_stop_queue(txq);
-> @@ -2239,7 +2241,7 @@ static netdev_tx_t bcmgenet_xmit(struct
->   		bcmgenet_tdma_ring_writel(priv, ring->index,
->   					  ring->prod_index, TDMA_PROD_INDEX);
->   out:
-> -	spin_unlock(&ring->lock);
-> +	spin_unlock_irqrestore(&ring->lock, flags);
->   
->   	return ret;
->   
-> 
+Changes in v2:
+- Fix kernel test robot issues
+- Fix documentation error
+- Require `T: Zeroable` in the dynamic case
+- Link to v1: https://lore.kernel.org/r/20250624-rust-percpu-v1-0-9c59b07d2a9c@gmail.com
 
+Changes in v1:
+- Use wrapping_add in `PerCpuPtr::get_ref` since overflow is expected.
+- Separate the dynamic and static cases, with shared logic in a
+  `PerCpuPtr` type.
+- Implement pin-hole optimizations for numeric types
+- Don't assume `GFP_KERNEL` when allocating the `Arc` in the dynamic
+  case.
+- Link to RFC v2: https://lore.kernel.org/r/20250414-rust-percpu-v2-0-5ea0d0de13a5@gmail.com
 
+Changes in RFC v2:
+- Renamed PerCpuVariable to StaticPerCpuSymbol to be more descriptive
+- Support dynamically allocated per-CPU variables via the
+  PerCpuAllocation type. Rework statically allocated variables to use
+  this new type.
+- Make use of a token/closure-based API via the PerCpu and PerCpuToken
+  types, rather than an API based on PerCpuRef that automatically
+  Deref(Mut)'s into a &(mut) T.
+- Rebased
+- Link to RFC: https://lore.kernel.org/r/20241219-rust-percpu-v1-0-209117e822b1@gmail.com
+
+---
+Mitchell Levy (7):
+      rust: percpu: introduce a rust API for per-CPU variables
+      rust: percpu: add a rust per-CPU variable sample
+      rust: cpumask: Add a `Cpumask` iterator
+      rust: cpumask: Add getters for globally defined cpumasks
+      rust: percpu: Support non-zeroable types for DynamicPerCpu
+      rust: percpu: Add pin-hole optimizations for numerics
+      rust: percpu: cache per-CPU pointers in the dynamic case
+
+ rust/helpers/cpumask.c          |   5 +
+ rust/helpers/helpers.c          |   2 +
+ rust/helpers/percpu.c           |  20 +++
+ rust/helpers/preempt.c          |  14 ++
+ rust/kernel/cpumask.rs          |  94 ++++++++++++-
+ rust/kernel/lib.rs              |   3 +
+ rust/kernel/percpu.rs           | 239 +++++++++++++++++++++++++++++++++
+ rust/kernel/percpu/cpu_guard.rs |  35 +++++
+ rust/kernel/percpu/dynamic.rs   | 127 ++++++++++++++++++
+ rust/kernel/percpu/numeric.rs   | 128 ++++++++++++++++++
+ rust/kernel/percpu/static_.rs   | 132 +++++++++++++++++++
+ samples/rust/Kconfig            |   9 ++
+ samples/rust/Makefile           |   1 +
+ samples/rust/rust_percpu.rs     | 284 ++++++++++++++++++++++++++++++++++++++++
+ 14 files changed, 1092 insertions(+), 1 deletion(-)
+---
+base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+change-id: 20240813-rust-percpu-ea2f54b5da33
+
+Best regards,
 -- 
-Florian
+Mitchell Levy <levymitchell0@gmail.com>
+
 
