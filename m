@@ -1,155 +1,124 @@
-Return-Path: <linux-kernel+bounces-790433-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790434-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6135CB3A71A
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 18:57:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B88EEB3A71F
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 18:58:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 295CD563342
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 16:57:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BCA831BA77D2
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 16:58:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4441C3314B6;
-	Thu, 28 Aug 2025 16:57:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 428253314A0;
+	Thu, 28 Aug 2025 16:57:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BM+XGxY/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Jqsx+q2z"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CB1932A3E0;
-	Thu, 28 Aug 2025 16:57:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB3BE32C31B
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 16:57:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756400246; cv=none; b=nTVjcfz/Rhbw/X9mnsbeZ6wSB4OkKoTCRcaQ7dMdA8JPVnAG8CDP8hlV5W7Rz4I/RoWg3jsu4+qpDv6gN8Tl7CBD8DtklByJVcP5YeKhBj4CBLky9S/kezGp+o2VsMBHs7e9aCoSiPl+C6Br/O6h3amvEqzK0p+8Mant9TRg1WE=
+	t=1756400273; cv=none; b=ZNt4tvY4wAeRyNyRPrpDYvqi1tpR4+P9hFp22Gln3sJ8q9jkPczCpcdWm4ZY7+a543mlXLhflq1VDIJdQLSgV1e7ErSC3VKEW5zXGvzY8WQi++gS0yxx9nI+Hi0Zkax9Prc3t/C0fXN2D8G8+UwbIBIK3t8pzsZKgK/glkLTm4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756400246; c=relaxed/simple;
-	bh=7Bo46Qm6sbQrAz42iMDQTa+uTCurRIDADfSAfnNE0z8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=P4dnUUVX6MN64DYjBYFSKiEZM72THjcZro0m3hBDvxAHo0GP6cAo1MT7TVhslvXY3Objh0FtgHPNMTvQLsF3E75XGgd4dQOE5Vi1IpkAA8UG/eCzgPovo/1Kw+L4L/bvjukb0LrnWZMkfgLZLcqtEbKzTF0MjpKXAQBuEAdOOi0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BM+XGxY/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id E5FA6C4CEF6;
-	Thu, 28 Aug 2025 16:57:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756400246;
-	bh=7Bo46Qm6sbQrAz42iMDQTa+uTCurRIDADfSAfnNE0z8=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=BM+XGxY/JUExkVDKbOPNKYrLVcEwUI6JG/RXd4ZAgkqQKywCdbUSnH6S78CKxRuW0
-	 1sXOoAFeXpGrzAZVkvJmb/fFRPWj5HtkEA1mh3MKH6S23Cfx5RsqmSN0KOzci0KjE3
-	 94CLwmb7AhM3XOCiMR4R/8pYyKVw+uxrBYEOiIQvmJIzS7wyzHwbzez+dz/qn2VlFG
-	 tX5WHj4FRxKZkTXniP31H7odnFlexSwS6aGdvuJQ+ArZhGkiw0ZTV8V9Tutd4ytwue
-	 4PsU/XoeVSXQKh+Ek169ZQnr+9AECUC/sJdrTG7i0iMYbGaj1UvZ9fkZ7uMyH0V5If
-	 l0zflSBMddRKg==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5FDBC8303F;
-	Thu, 28 Aug 2025 16:57:25 +0000 (UTC)
-From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
-Date: Thu, 28 Aug 2025 11:57:21 -0500
-Subject: [PATCH v2 2/2] cpufreq: tegra186: Initialize all cores to max
- frequencies
+	s=arc-20240116; t=1756400273; c=relaxed/simple;
+	bh=nCg2nwi14+lPzAfgGbrrAYpMMC6kupWYt2gn0gu1knw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TvDWKJR9dovDKf+HnghjPAvqxAF6rRofYFRB1jl4MoYEPHsTF2bGHof+lWf3XwoB3OWEnQ1MfCw0eHPYuwQDIfQ5k8M2ON/HXnjwdWueInp5rKmTVGids1DMblLT7R9kYPfQ2wAbs8U3L3G6nIjnhTwFdd5pK2JKJF3EIaMN8hI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Jqsx+q2z; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-55f4468326aso182e87.1
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 09:57:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1756400270; x=1757005070; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hUlxTvNnxWvVbwi4g/Jm8/uE0pr83dkev1JUOpqywAU=;
+        b=Jqsx+q2z1/wIo0bt8Hi4q8xHj4xjEYWVOF2t+wyeqz7ErYYHJg19vNwwpy6kAJjelr
+         aE4QUfYK3E69mZ1AbBxrvvfVQdHidgMz2wHN8eLerkmksqPXm0FSDhSkTGH70Mp+widb
+         CAerc56TozjwD3M/DRaD5V3ZUW+m/ftaTK8/qjGb/m0Dbe6YYmJci9tD3AjXTIgElU+0
+         7yKTxFzhcPCh/7Is4k0Gg65yuWSsL25gvVceU4zQNeZq4Zm0QIev2LULfxyAOqWfPJ19
+         6JDo0dE70Yd6f51nGO7sfuWTsgzie7uwh+7htqHB2WDXwObBd+i1br8/AsVjnjkm+bzr
+         /wYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756400270; x=1757005070;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hUlxTvNnxWvVbwi4g/Jm8/uE0pr83dkev1JUOpqywAU=;
+        b=T5dLvtAO5ahUJAXtGPS7M1HjLd2IyRSXZHFTMZnQH8fvSIpzV0AqMKI7F9JSR5v5DG
+         M+7zN78W1a7KOfE70mBnFRUsyobU85wOJFOS4J5gZIqanknQCPUGk9JznOIXwkJ3Q6Nr
+         KMD+Kl+LknD85tCdZjQH9na0u48ve2NYe5KFNHYueCZ4uiCiCAGb0mcgHXbStgOU3acj
+         pt8Of44li2qR/LfUXoGNGBrWZ6vdOIEz434jxP4MbYw57LmUzwVPJw4y8SDF6i6AbptW
+         +MffZyiw+uNJB5xFwvJlHds5wcxt/Wc30lVKkLkHYxK1k4dwaUQ0ZGIsFZn4bztrNKQA
+         2Uqg==
+X-Forwarded-Encrypted: i=1; AJvYcCVlfsis3DMtjq0Qh1Nam/cpJTYRDXex1z/g1iX5DjE9xY4cqjeHeWANFApQ61uZXzxFwUzWgKESN6ijMCg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVF9OhUsynnKfnlckdT++Z1iJ2PgJaTHuKlLWb5bp2ZIdkdcfq
+	VAGTSZx98dpvxO/ggUztSVYLsTgP15z/Of2lAUo/YdjJzcAqSRs/XtYAJ4xOT+B1GtI5alQGPLN
+	/gRpTzNL5/Hk1FNBXYXAzXpkjMvIljK3jZk77g4K9
+X-Gm-Gg: ASbGncsRfD4PX0nuHcEk7usgwAuRNxZTpSIH7jVeC6umsTFmTi8/bsteL3G/KTlUF1J
+	u+7TA+WPMs8jWA27L1rGuDFjoKF/Ppfgfc6EKaYRP24Y6xRrQQpVluGQLL068a4aEjhZLBie0/3
+	llzi0jP70PoA01pMgLx/p7txBUUIpEjIT/wTbkdFddEye2gEbaj21nrt9cvIS0jddsc4UMn3cSa
+	6ykV45EjhYxAzasdr3Y9cjnrw==
+X-Google-Smtp-Source: AGHT+IEA+x+JHJGxAKqi3gf39h+cXrxl4F1cPaRjmHzOLyzmMNWf5vB8Aw2K6CCK2muVk+ohncKOBj10rKhlESV29Zs=
+X-Received: by 2002:a05:6512:609b:b0:55b:7c73:c5f0 with SMTP id
+ 2adb3069b0e04-55f4d3263a2mr1010554e87.2.1756400269844; Thu, 28 Aug 2025
+ 09:57:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250828-tegra186-cpufreq-fixes-v2-2-fcffe4de1e15@gmail.com>
-References: <20250828-tegra186-cpufreq-fixes-v2-0-fcffe4de1e15@gmail.com>
-In-Reply-To: <20250828-tegra186-cpufreq-fixes-v2-0-fcffe4de1e15@gmail.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>, 
- Viresh Kumar <viresh.kumar@linaro.org>, 
- Thierry Reding <thierry.reding@gmail.com>, 
- Jonathan Hunter <jonathanh@nvidia.com>, Aaron Kling <luceoscutum@gmail.com>, 
- Sumit Gupta <sumitg@nvidia.com>
-Cc: Thierry Reding <treding@nvidia.com>, linux-pm@vger.kernel.org, 
- linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Aaron Kling <webgeek1234@gmail.com>, 
- Mikko Perttunen <mperttunen@nvidia.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1756400245; l=2602;
- i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
- bh=6Wg/olsymhL3iTHVB65L4Tbz1bDTYeRv7QGuafdu3Ts=;
- b=cq59RVWvKCRsrVWPAoipifGivNEQpYMiPpNPJwrGMvU6ees48p4XzTffroZGdxWFZ0wcMrpcf
- K44ysojMCmuDXNrptjVXxKpI1NnZs9dtspMu+0VxTAAHVwdAmETTsay
-X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
- pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
-X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
- auth_id=342
-X-Original-From: Aaron Kling <webgeek1234@gmail.com>
-Reply-To: webgeek1234@gmail.com
+References: <20250828164345.116097-1-arkadiusz.kubalewski@intel.com>
+In-Reply-To: <20250828164345.116097-1-arkadiusz.kubalewski@intel.com>
+From: Mina Almasry <almasrymina@google.com>
+Date: Thu, 28 Aug 2025 09:57:37 -0700
+X-Gm-Features: Ac12FXyD8odEoc9_-KKAReVcf86GdG5H51-cMjxY6Bgpf4RvXSnT7vL1DpsIvFs
+Message-ID: <CAHS8izPU7beTCQ+nKAU=P=i1nF--DcYMcH0wM1OygpvAYi5MiA@mail.gmail.com>
+Subject: Re: [RFC PATCH v2] net: add net-device TX clock source selection framework
+To: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
+Cc: anthony.l.nguyen@intel.com, przemyslaw.kitszel@intel.com, 
+	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com, 
+	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, sdf@fomichev.me, 
+	asml.silence@gmail.com, leitao@debian.org, kuniyu@google.com, 
+	jiri@resnulli.us, aleksandr.loktionov@intel.com, ivecera@redhat.com, 
+	linux-kernel@vger.kernel.org, intel-wired-lan@lists.osuosl.org, 
+	netdev@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Aaron Kling <webgeek1234@gmail.com>
+On Thu, Aug 28, 2025 at 9:50=E2=80=AFAM Arkadiusz Kubalewski
+<arkadiusz.kubalewski@intel.com> wrote:
+> ---
+>  Documentation/netlink/specs/netdev.yaml     |  61 +++++
+>  drivers/net/ethernet/intel/ice/Makefile     |   1 +
+>  drivers/net/ethernet/intel/ice/ice.h        |   5 +
+>  drivers/net/ethernet/intel/ice/ice_lib.c    |   6 +
+>  drivers/net/ethernet/intel/ice/ice_main.c   |   6 +
+>  drivers/net/ethernet/intel/ice/ice_tx_clk.c | 100 +++++++
+>  drivers/net/ethernet/intel/ice/ice_tx_clk.h |  17 ++
+>  include/linux/netdev_tx_clk.h               |  92 +++++++
+>  include/linux/netdevice.h                   |   4 +
+>  include/uapi/linux/netdev.h                 |  18 ++
+>  net/Kconfig                                 |  21 ++
+>  net/core/Makefile                           |   1 +
+>  net/core/netdev-genl-gen.c                  |  37 +++
+>  net/core/netdev-genl-gen.h                  |   4 +
+>  net/core/netdev-genl.c                      | 287 ++++++++++++++++++++
+>  net/core/tx_clk.c                           | 218 +++++++++++++++
+>  net/core/tx_clk.h                           |  36 +++
+>  tools/include/uapi/linux/netdev.h           |  18 ++
+>  18 files changed, 932 insertions(+)
 
-During initialization, the EDVD_COREx_VOLT_FREQ registers for some cores
-are still at reset values and not reflecting the actual frequency. This
-causes get calls to fail. Set all cores to their respective max
-frequency during probe to initialize the registers to working values.
+Consider breaking up a change of this size in a patch series to make
+it a bit easier for reviewers, if it makes sense to you.
 
-Suggested-by: Mikko Perttunen <mperttunen@nvidia.com>
-Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
----
- drivers/cpufreq/tegra186-cpufreq.c | 18 +++++++++++++++---
- 1 file changed, 15 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/cpufreq/tegra186-cpufreq.c b/drivers/cpufreq/tegra186-cpufreq.c
-index 6c394b429b6182faffabf222e5af501393dbbba9..3cd42db955c1c705f9774879e34b71ae124e86d2 100644
---- a/drivers/cpufreq/tegra186-cpufreq.c
-+++ b/drivers/cpufreq/tegra186-cpufreq.c
-@@ -138,7 +138,8 @@ static struct cpufreq_driver tegra186_cpufreq_driver = {
- 
- static struct cpufreq_frequency_table *init_vhint_table(
- 	struct platform_device *pdev, struct tegra_bpmp *bpmp,
--	struct tegra186_cpufreq_cluster *cluster, unsigned int cluster_id)
-+	struct tegra186_cpufreq_cluster *cluster, unsigned int cluster_id,
-+	int *max_rate)
- {
- 	struct cpufreq_frequency_table *table;
- 	struct mrq_cpu_vhint_request req;
-@@ -218,6 +219,7 @@ static struct cpufreq_frequency_table *init_vhint_table(
- 	}
- 
- 	table[j].frequency = CPUFREQ_TABLE_END;
-+	*max_rate = num_rates - 1;
- 
- free:
- 	dma_free_coherent(bpmp->dev, sizeof(*data), virt, phys);
-@@ -229,7 +231,9 @@ static int tegra186_cpufreq_probe(struct platform_device *pdev)
- {
- 	struct tegra186_cpufreq_data *data;
- 	struct tegra_bpmp *bpmp;
--	unsigned int i = 0, err;
-+	unsigned int i = 0, err, edvd_offset;
-+	int max_rate = 0;
-+	u32 edvd_val, cpu;
- 
- 	data = devm_kzalloc(&pdev->dev,
- 			    struct_size(data, clusters, TEGRA186_NUM_CLUSTERS),
-@@ -252,11 +256,19 @@ static int tegra186_cpufreq_probe(struct platform_device *pdev)
- 	for (i = 0; i < TEGRA186_NUM_CLUSTERS; i++) {
- 		struct tegra186_cpufreq_cluster *cluster = &data->clusters[i];
- 
--		cluster->table = init_vhint_table(pdev, bpmp, cluster, i);
-+		cluster->table = init_vhint_table(pdev, bpmp, cluster, i, &max_rate);
- 		if (IS_ERR(cluster->table)) {
- 			err = PTR_ERR(cluster->table);
- 			goto put_bpmp;
- 		}
-+
-+		for (cpu = 0; cpu < ARRAY_SIZE(tegra186_cpus); cpu++) {
-+			if (data->cpus[cpu].bpmp_cluster_id == i) {
-+				edvd_val = cluster->table[max_rate].driver_data;
-+				edvd_offset = data->cpus[cpu].edvd_offset;
-+				writel(edvd_val, data->regs + edvd_offset);
-+			}
-+		}
- 	}
- 
- 	tegra186_cpufreq_driver.driver_data = data;
-
--- 
-2.50.1
-
-
+--=20
+Thanks,
+Mina
 
