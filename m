@@ -1,160 +1,179 @@
-Return-Path: <linux-kernel+bounces-789609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09404B3982B
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 11:24:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DFB1B39851
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 11:30:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE1FF7C6123
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 09:24:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7FF277B3CED
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 09:28:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 504792DF6EA;
-	Thu, 28 Aug 2025 09:24:40 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC0712F1FDA;
+	Thu, 28 Aug 2025 09:29:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="VMJyciO5"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E707B20B22
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 09:24:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BBB22F0C45;
+	Thu, 28 Aug 2025 09:29:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756373079; cv=none; b=M03M3BNKKlNvZNaL7DojXLkFGrBQpSih1Mhl9YDqBQ8kz8oPjcfzFl05gTJw7e2/eorumzeF9+4Fa81q5IpJvAeoLqJ5htRe0mziN42l8nE3sPmR9MH57tn/oWM0DSw8FG8TE1I0hJ8xKy8zmtzpELxMm7xqTF1SmXCNvkzlySY=
+	t=1756373351; cv=none; b=mnEsx2FuA3nqC+d7jaRh5vI8I1iG+CanhEi5bQdTWX1+FVA57LZFanXPwm9SKchcdm8Q1dSf8OjcuXypdKh/UyNtGs4H8WkyrZ+/8GLoxMh3ngSKIUk+eI3cAP2Z97MBH/FPP8CfgAKo617Lu3v3gLG6L+fl9DERRR790tYDADI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756373079; c=relaxed/simple;
-	bh=cAMBpNEnqZBUMOZijFi0Wg0qpCRAYmjnSgUaC98oFLM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=OSGCy9ucLc/CgVk89jOOAPrSK2QflZmFOit3JEY//5IPMKO8e0i14WauFq1wsXVVfRv5FzzEWXqAcrCHGaT2Uak+MBGRnit1lTtRu9Mep8QRZJ5f3kAbf7Llt0VC8r8HAJR4LmkQhvtkAPmEGtHgRptUXrV9cAxbKUXgjQeBCSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4cCG823FhNz2CgB1;
-	Thu, 28 Aug 2025 17:20:02 +0800 (CST)
-Received: from dggpemf500016.china.huawei.com (unknown [7.185.36.197])
-	by mail.maildlp.com (Postfix) with ESMTPS id C425A1A016C;
-	Thu, 28 Aug 2025 17:24:28 +0800 (CST)
-Received: from [10.174.176.70] (10.174.176.70) by
- dggpemf500016.china.huawei.com (7.185.36.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 28 Aug 2025 17:24:27 +0800
-Message-ID: <a390e024-6115-442f-a1f6-6ebe379ade9f@huawei.com>
-Date: Thu, 28 Aug 2025 17:24:26 +0800
+	s=arc-20240116; t=1756373351; c=relaxed/simple;
+	bh=9dsGbqg53s4ASEyIdhfo08eoyZhYeWX5cu/3oJW4coI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=VkF5ggQni9vC+nXCf2Y52JW70S7RQuoePEwIGY8JfgUbEwBDcm6xtE9z9suGKPsNtSjTbLsImWYL3Roroqsx8vCvfHZpGJbSCSmMf+SYJ9iXLnirpGGNWOj2IcTVrPkGd8s4aN0FpDUCCXLI8D8EN2qhNCnwNqSu4PB92rivz+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=VMJyciO5; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57S6XZfh014807;
+	Thu, 28 Aug 2025 09:29:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=uQtXUblv98Dz8aXT+yu+Rsdj3WnWi8qqnTj
+	9mkMM8Yg=; b=VMJyciO5ToSA4uendKoR5ezYN/C15/yZoY0pJ9KdpZMA9OItV5K
+	dH9db32Ct3Tf0KuJv10Cu1f1CcRRZKobZDsqsHuuIzdN2XXC05u/o+Z7zQK8EIMd
+	11Cvl2T9PhgDceolfEr7UmEn1UpPySx3OOT9fhd6APeyYF1R02lGVfgErBoR+JJF
+	r2B8NOFeNHUe0uzBR2P525flijg3bGFvqEpnI3gYmZs93/+5dCkkUSVgedTDasGO
+	0OAXFVmLHiVXNcJ2AeQsd0yQiBdwLZYKLb+GDPgc31yGYNjcUorIdREpry6Lnwbl
+	cs8z5DeEfHHJRUkkXtUUGavWgdKc8rmnqeQ==
+Received: from apblrppmta02.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48q5we7e43-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 28 Aug 2025 09:29:04 +0000 (GMT)
+Received: from pps.filterd (APBLRPPMTA02.qualcomm.com [127.0.0.1])
+	by APBLRPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 57S9T1jC026601;
+	Thu, 28 Aug 2025 09:29:01 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTPS id 48q6qm301x-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 28 Aug 2025 09:29:01 +0000
+Received: from APBLRPPMTA02.qualcomm.com (APBLRPPMTA02.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 57S9T1Ox026596;
+	Thu, 28 Aug 2025 09:29:01 GMT
+Received: from hu-devc-hyd-u22-c.qualcomm.com (hu-schowdhu-hyd.qualcomm.com [10.213.97.56])
+	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTPS id 57S9T15h026594
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 28 Aug 2025 09:29:01 +0000
+Received: by hu-devc-hyd-u22-c.qualcomm.com (Postfix, from userid 2365959)
+	id 947485A6; Thu, 28 Aug 2025 14:59:00 +0530 (+0530)
+From: Souradeep Chowdhury <souradeep.chowdhury@oss.qualcomm.com>
+To: Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Souradeep Chowdhury <souradeep.chowdhury@oss.qualcomm.com>,
+        Souradeep Chowdhury <quic_schowdhu@quicnc.com>,
+        Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+Subject: [PATCH v7] remoteproc: Add device awake calls in rproc boot and shutdown path
+Date: Thu, 28 Aug 2025 14:56:15 +0530
+Message-Id: <20250828092615.2114183-1-souradeep.chowdhury@oss.qualcomm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] pps: fix warning in pps_register_cdev when register
- device fail
-To: Calvin Owens <calvin@wbinvd.org>
-CC: <giometti@enneenne.com>, <mschmidt@redhat.com>,
-	<gregkh@linuxfoundation.org>, <yuehaibing@huawei.com>,
-	<zhangchangzhong@huawei.com>, <linux-kernel@vger.kernel.org>
-References: <20250827065010.3208525-1-wangliang74@huawei.com>
- <aK8lIakmj_5eoPZN@mozart.vkv.me>
-From: Wang Liang <wangliang74@huawei.com>
-In-Reply-To: <aK8lIakmj_5eoPZN@mozart.vkv.me>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
- dggpemf500016.china.huawei.com (7.185.36.197)
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: AuURT4US3g1hF0GIdCqt86MAeEHbmsC7
+X-Proofpoint-ORIG-GUID: AuURT4US3g1hF0GIdCqt86MAeEHbmsC7
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIzMDAzMyBTYWx0ZWRfXxyYC/VCGMtp0
+ QMPrDe4l9OV+yfFgLxhFM65HY/4is76pF/qTiG6uUisNlKbhri0esZdFy5+1h938wngVrjK5xuE
+ wMetKNVHF54eeu41hhlVSfkQaMuhOtFhDMWWgBHUbA9Ez913kYyHZtq8Dr1Bk3xkjIoWqVoqWp9
+ xLmqTunjgKs7wsA18ILH1txZSzY3JjucAYL7xXDncnEnAJ6T2CLRt9gXVRKn7owyd5VLHRblZJQ
+ PXUlrUkDhMEAVtMyYwAmS2PGUuZqmHeNpMb6F8gXEqLYK3N61sPMELQAjEdmGL8TYyZkr3XRF51
+ yJhuvsyEvJTNF84ZvdYsZpdM3I6ky8elemrTBA8Z4JrGqo/tTMHBmRsLBUaHUVzn/d0emb2VKWK
+ +80t9HOZ
+X-Authority-Analysis: v=2.4 cv=BJazrEQG c=1 sm=1 tr=0 ts=68b02161 cx=c_pps
+ a=Ou0eQOY4+eZoSc0qltEV5Q==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
+ a=2OwXVqhp2XgA:10 a=jGnfN1tMAAAA:8 a=EUspDBNiAAAA:8 a=Jq6zdSINm0DTzP18XioA:9
+ a=6MwZEyB11foWsxG17m01:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-28_02,2025-08-28_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 adultscore=0 priorityscore=1501 clxscore=1011 impostorscore=0
+ bulkscore=0 phishscore=0 suspectscore=0 spamscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508230033
 
+If an user stops and starts rproc by using the sysfs interface, then on
+pm suspension the firmware fails to load as the request_firmware call
+under adsp_load relies on usermodehelper process via firmware_fallback_sysfs 
+which gets frozen on pm suspension. Currently pm_awake calls are present 
+in the recovery path, add the same in start and stop path of rproc for 
+proper loading of the firmware in non-recovery path.  
 
-在 2025/8/27 23:32, Calvin Owens 写道:
-> On Wednesday 08/27 at 14:50 +0800, Wang Liang wrote:
->> Similar to previous commit 2a934fdb01db ("media: v4l2-dev: fix error
->> handling in __video_register_device()"), the release hook should be set
->> before device_register(). Otherwise, when device_register() return error
->> and put_device() try to callback the release function, the below warning
->> may happen.
->>
->>    ------------[ cut here ]------------
->>    WARNING: CPU: 1 PID: 4760 at drivers/base/core.c:2567 device_release+0x1bd/0x240 drivers/base/core.c:2567
->>    Modules linked in:
->>    CPU: 1 UID: 0 PID: 4760 Comm: syz.4.914 Not tainted 6.17.0-rc3+ #1 NONE
->>    RIP: 0010:device_release+0x1bd/0x240 drivers/base/core.c:2567
->>    Call Trace:
->>     <TASK>
->>     kobject_cleanup+0x136/0x410 lib/kobject.c:689
->>     kobject_release lib/kobject.c:720 [inline]
->>     kref_put include/linux/kref.h:65 [inline]
->>     kobject_put+0xe9/0x130 lib/kobject.c:737
->>     put_device+0x24/0x30 drivers/base/core.c:3797
->>     pps_register_cdev+0x2da/0x370 drivers/pps/pps.c:402
->>     pps_register_source+0x2f6/0x480 drivers/pps/kapi.c:108
->>     pps_tty_open+0x190/0x310 drivers/pps/clients/pps-ldisc.c:57
->>     tty_ldisc_open+0xa7/0x120 drivers/tty/tty_ldisc.c:432
->>     tty_set_ldisc+0x333/0x780 drivers/tty/tty_ldisc.c:563
->>     tiocsetd drivers/tty/tty_io.c:2429 [inline]
->>     tty_ioctl+0x5d1/0x1700 drivers/tty/tty_io.c:2728
->>     vfs_ioctl fs/ioctl.c:51 [inline]
->>     __do_sys_ioctl fs/ioctl.c:598 [inline]
->>     __se_sys_ioctl fs/ioctl.c:584 [inline]
->>     __x64_sys_ioctl+0x194/0x210 fs/ioctl.c:584
->>     do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->>     do_syscall_64+0x5f/0x2a0 arch/x86/entry/syscall_64.c:94
->>     entry_SYSCALL_64_after_hwframe+0x76/0x7e
->>     </TASK>
->>
->> Before commit c79a39dc8d06 ("pps: Fix a use-after-free"),
->> pps_register_cdev() call device_create() to create pps->dev, which will
->> init dev->release to device_create_release(). Now the comment is outdated,
->> just remove it.
-> Hi Wang,
->
-> I'm curious why pps_register_cdev() is failing, is there possibly a
-> second issue to investigate there? Or was it fault injection?
+Signed-off-by: Souradeep Chowdhury <quic_schowdhu@quicnc.com>
+Signed-off-by: Souradeep Chowdhury <souradeep.chowdhury@oss.qualcomm.com>
+Reviewed-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+---
+Changes in v7
 
+*Justify this fix by adding more details in commit message
 
-I find this issue from my local syzkaller project.
+Changes in v6
 
-Function pps_register_cdev() call the universal interface 'device_register',
-which can return error when kzalloc fail, or sysfs error, etc.
+*Add some correction to commit message
 
-Hope the above information is helpful.
+Changes in v5
 
-------
-Best regards
-Wang Liang
+*Added more details to commit description
 
->
-> Otherwise, makes perfect sense to me. I'm new to this code, so grain of
-> salt, but since I exposed it:
->
-> Reviewed-by: Calvin Owens <calvin@wbinvd.org>
->
-> Thanks,
-> Calvin
->
->> Fixes: c79a39dc8d06 ("pps: Fix a use-after-free")
->> Signed-off-by: Wang Liang <wangliang74@huawei.com>
->> ---
->>   drivers/pps/pps.c | 4 +---
->>   1 file changed, 1 insertion(+), 3 deletions(-)
->>
->> diff --git a/drivers/pps/pps.c b/drivers/pps/pps.c
->> index 9463232af8d2..0d2d57250575 100644
->> --- a/drivers/pps/pps.c
->> +++ b/drivers/pps/pps.c
->> @@ -383,13 +383,11 @@ int pps_register_cdev(struct pps_device *pps)
->>   	pps->dev.devt = MKDEV(pps_major, pps->id);
->>   	dev_set_drvdata(&pps->dev, pps);
->>   	dev_set_name(&pps->dev, "pps%d", pps->id);
->> +	pps->dev.release = pps_device_destruct;
->>   	err = device_register(&pps->dev);
->>   	if (err)
->>   		goto free_idr;
->>   
->> -	/* Override the release function with our own */
->> -	pps->dev.release = pps_device_destruct;
->> -
->>   	pr_debug("source %s got cdev (%d:%d)\n", pps->info.name, pps_major,
->>   		 pps->id);
->>   
->> -- 
->> 2.33.0
->>
+Changes in v4
+
+*Remove stability from mailing list
+*Remove the extra tab in v3
+*Change the commit description
+
+ drivers/remoteproc/remoteproc_core.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index c2cf0d277729..5d6c4e694b4c 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -1917,6 +1917,7 @@ int rproc_boot(struct rproc *rproc)
+ 		return -EINVAL;
+ 	}
+ 
++	pm_stay_awake(rproc->dev.parent);
+ 	dev = &rproc->dev;
+ 
+ 	ret = mutex_lock_interruptible(&rproc->lock);
+@@ -1961,6 +1962,7 @@ int rproc_boot(struct rproc *rproc)
+ 		atomic_dec(&rproc->power);
+ unlock_mutex:
+ 	mutex_unlock(&rproc->lock);
++	pm_relax(rproc->dev.parent);
+ 	return ret;
+ }
+ EXPORT_SYMBOL(rproc_boot);
+@@ -1991,6 +1993,7 @@ int rproc_shutdown(struct rproc *rproc)
+ 	struct device *dev = &rproc->dev;
+ 	int ret = 0;
+ 
++	pm_stay_awake(rproc->dev.parent);
+ 	ret = mutex_lock_interruptible(&rproc->lock);
+ 	if (ret) {
+ 		dev_err(dev, "can't lock rproc %s: %d\n", rproc->name, ret);
+@@ -2027,6 +2030,7 @@ int rproc_shutdown(struct rproc *rproc)
+ 	rproc->table_ptr = NULL;
+ out:
+ 	mutex_unlock(&rproc->lock);
++	pm_relax(rproc->dev.parent);
+ 	return ret;
+ }
+ EXPORT_SYMBOL(rproc_shutdown);
+-- 
+2.34.1
+
 
