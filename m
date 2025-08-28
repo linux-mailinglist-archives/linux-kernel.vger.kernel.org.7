@@ -1,370 +1,140 @@
-Return-Path: <linux-kernel+bounces-789270-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 021CEB3931E
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 07:44:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 92B20B39321
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 07:44:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BAD52461C10
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 05:44:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56BE84619BA
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 05:44:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD968272E41;
-	Thu, 28 Aug 2025 05:44:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70354273D9F;
+	Thu, 28 Aug 2025 05:44:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JZItfoCS"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DqtTM4mE"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3641270577;
-	Thu, 28 Aug 2025 05:44:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.9
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756359859; cv=fail; b=o8M4awUCIbRLyEu2WiWk2cFIPQoLi/Vo9GP10aUcdNwgASH+GnFnbEAQCvtedcuytpmYgTD1rft9Xj/CPVGUgzGNNY+0RKMZZ3TnokprL52qoiVABOsVPWg1A3MpV+xbQco9Bh0NY+J8AuU7yeM9Kmg3cCD/KfIi8CoLhLkssjc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756359859; c=relaxed/simple;
-	bh=Pm4ZIJomgLYK2P0jQdoAqZdJRKXNtAhgOygfxmNJQQ8=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=GlNYeCXmBaYLvP12ibBzEPHMZAonE3cPkxvlhNuA89aCLiomXMBOzvePJZfOWTFPRr5nJCWTl5hio+Aro8vYWbq4iOo1efo1R3OwHI6B0724Ity5GlN17kbyAKIgqcNL+PSJFKC0Fn47E7iEo7g8c+G/ydVVb/EBYJy4PttsF78=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JZItfoCS; arc=fail smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756359858; x=1787895858;
-  h=date:from:to:cc:subject:message-id:reply-to:references:
-   in-reply-to:mime-version;
-  bh=Pm4ZIJomgLYK2P0jQdoAqZdJRKXNtAhgOygfxmNJQQ8=;
-  b=JZItfoCSjuy3x3v6rWB3oZBgu3ZcNm62CXyT+a4l+ObwTjWl123AEACz
-   6Pyg4dSWMvunBAhgpwgMr3fehv0cH1QsN7W9GuPwTJIHFuAR8dt/49slz
-   3ivYE/nSRxBxGbpT3tPxyGFS02biHJa2RFQHIiqRA6vh+uz/AsirUmxqH
-   b9wtMG2zrpJnyLmhKfxp7GCO8c9X6kCbFDAF9PWOM/b6cEejzgeXtcxHi
-   0kSt4LjmUPCbZJLDC+7LX2EGFH6q+F1Vn8P/Ad6KzmjfiukIsrI1iE8/3
-   smgn/5JBP30dykh/qwaTS1oUsgkGSdXCBmYJ5CXWp6QpYHr/TZvlqNfLe
-   A==;
-X-CSE-ConnectionGUID: GPeFgSKuR3agYXWi8BE0cw==
-X-CSE-MsgGUID: OpMrwRpDT1GqvexIAZ2SYw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="81211600"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="81211600"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2025 22:44:16 -0700
-X-CSE-ConnectionGUID: +89PowjFTdKR0DosgdsYfA==
-X-CSE-MsgGUID: qZTsZ4KUTB6YoSvxmFVGVQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,217,1751266800"; 
-   d="scan'208";a="169944026"
-Received: from fmsmsx903.amr.corp.intel.com ([10.18.126.92])
-  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2025 22:44:16 -0700
-Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
- fmsmsx903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Wed, 27 Aug 2025 22:44:15 -0700
-Received: from fmsedg902.ED.cps.intel.com (10.1.192.144) by
- FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17 via Frontend Transport; Wed, 27 Aug 2025 22:44:15 -0700
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (40.107.244.69)
- by edgegateway.intel.com (192.55.55.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Wed, 27 Aug 2025 22:44:14 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=tJF7MtblbOou0l+47j7C/4sfF5I54nBEyOd6YoB3rjRR6EnRJgHvBpolyhczIxPguqYMt7ZmYmMofzyeVq+3o69TV9Y/Emj7S4xq3VzQh7nsXgtGkKhVQuNVZ24ad9/UMmeb2Vl1vgabZ8KPb0l3WTv3AWtC2QbA5HtU75RkA7oaH1ldrN6/WDYidIqzbm68e9ifFrdh6NFAF+QcoQYXn54b8JA9LRqZVfQ5yrS0eNBwgPK1qN9b/re9ioD+RwXKOaDdK8quwtg7DQFdoRSSFEhV/7MGQhU3QFhbcAyo5pWuGbF+Hjk8qfTdOGNub528576fmLkMDqeLK2Q7ZXJWnw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ODbYIWjG7d62A1zA8jLQKdQLpTQ19/Bca1XUo1jN1So=;
- b=Mc7eUi5+RHIyVs5z6vkdTcF9D8nucYRypIUFpYED1RqmGHYT/CbZaf8qaJcrevpUf9i+C/bo+SSPF9QfoPBR9krpM0+GVk3cxZoT81+xLBk1/QGbeY8mVdU0JfTxYjii3ArSfGncX01z6f1QGvEq6sK2nJfmMIY1xi57Bybn903XyAomVFHWN3gGB0eBa44GTN+/1o3n/AD3al8395CfSS25Vxxqizp15wCPi2o/3I5JhVoEofU6W5ti5rGK6LLR9kVBETXtnHnkHVZF2NGlpaM35NP0K/8NZlXCvQxc/+WSqVP8TRivtKAULsri/vBSaVZy96g6iBGZi+cuELUCJA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS7PR11MB5966.namprd11.prod.outlook.com (2603:10b6:8:71::6) by
- SJ0PR11MB4928.namprd11.prod.outlook.com (2603:10b6:a03:2d2::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.21; Thu, 28 Aug
- 2025 05:44:08 +0000
-Received: from DS7PR11MB5966.namprd11.prod.outlook.com
- ([fe80::e971:d8f4:66c4:12ca]) by DS7PR11MB5966.namprd11.prod.outlook.com
- ([fe80::e971:d8f4:66c4:12ca%7]) with mapi id 15.20.9052.013; Thu, 28 Aug 2025
- 05:44:08 +0000
-Date: Thu, 28 Aug 2025 13:43:18 +0800
-From: Yan Zhao <yan.y.zhao@intel.com>
-To: Sean Christopherson <seanjc@google.com>
-CC: Paolo Bonzini <pbonzini@redhat.com>, <kvm@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Michael Roth <michael.roth@amd.com>, "Ira
- Weiny" <ira.weiny@intel.com>, Vishal Annapurve <vannapurve@google.com>, "Rick
- Edgecombe" <rick.p.edgecombe@intel.com>
-Subject: Re: [RFC PATCH 09/12] KVM: TDX: Fold
- tdx_mem_page_record_premap_cnt() into its sole caller
-Message-ID: <aK/sdr2OQqYv9DBZ@yzhao56-desk.sh.intel.com>
-Reply-To: Yan Zhao <yan.y.zhao@intel.com>
-References: <20250827000522.4022426-1-seanjc@google.com>
- <20250827000522.4022426-10-seanjc@google.com>
- <aK7Ji3kAoDaEYn3h@yzhao56-desk.sh.intel.com>
- <aK9Xqy0W1ghonWUL@google.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <aK9Xqy0W1ghonWUL@google.com>
-X-ClientProxiedBy: SG2P153CA0027.APCP153.PROD.OUTLOOK.COM (2603:1096:4:c7::14)
- To DS7PR11MB5966.namprd11.prod.outlook.com (2603:10b6:8:71::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24C242737F3;
+	Thu, 28 Aug 2025 05:44:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756359866; cv=none; b=PFuMiqKXhGZkFKRJyGwV5+7YlfpnjF6pqJfCkrk/ed0RNcEIdJNCIfBHIq/qcjSqIHZeyH7gW6lbPH8WsesS1riGnidLrNYx8CRJnjMrxNkHp1n04sJwhexadnMOFKdZ/G1c/LxxU31CMZB5lZ+m2RW3eNR7VmNxkpMnlaB7DkY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756359866; c=relaxed/simple;
+	bh=SVm/66f36wSgvenSHIMpwxxA7rJfcYwK08iUz6qNS2c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NgKLdwn/C0Fx7f6Sw+zzOjV7GRs8jmbiGyFXU25psuOStZ75pWQAYKS4kCjYWsbVLPVBMnF35ikAvAp7OdewPbX5jtJNWIEvtSI8rZXvNnqXHrM3iMAEDQOL9Fwt4PGX5touIX8TFLK2Unb1Fj2X30Wcsd6nWz7qftuYI9X/jl4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DqtTM4mE; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-6188b5ae1e8so596411a12.0;
+        Wed, 27 Aug 2025 22:44:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756359863; x=1756964663; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=QcSGivFSD4OuXx5N66G1KDt1FmdrP6jEVEJ6HZ0n2To=;
+        b=DqtTM4mEDO7gt7S3ueSWOOzeVNFIzQtoLBGPFkuMONJGT0fC/lnTF6G+aAbjXghh0/
+         WDkNpFDJzg2JwDfbTwPXq8/X9SbsfTADT83V6LvkiRgGqkq8dwE3ubMPPQ8IaEqUxgUH
+         00y72Hl0YL5imNPmD0NR16xH/LJwoTnduQllXTGfAYfLDz74OY/Xkci4QQpeC65Zwb3S
+         El3Ym43Z7Bi9mQrbQorOV9W6f1CIEmvnNqtYZkjzu0/7x/I3Vv/KmZ45SFASVclRECWG
+         vTTNC92+QJ+cpIs/MoWdGFITHOMoBVx/DYBvDMrNu3GDNAvR3SX2xNa41MBGdxT02cFR
+         DNWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756359863; x=1756964663;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QcSGivFSD4OuXx5N66G1KDt1FmdrP6jEVEJ6HZ0n2To=;
+        b=HZZKO0ICW6rF/E7gAGboUx1c3CHZ+0V/GS8e2ROPdFFP3X+LTpBoBXA1QzLjrTbt3y
+         BytBqU8H186ph+545CgnEGv+Yj+P78fphh0WSctE2hOWSR77XGrx+nuDyvnEkH5Fw+79
+         fEbryT0R6nq8TbWZs+nDhr8tVPHO75m5sZfVQAibjtKw2Ca2CxdBxkLRNRzoPAqoS75Q
+         19g+LA1XqlG+oDV8gM+K4M9IjB6R4VfoWcGBmN508ZqzEZKhH/wThi0Cw1u6qE+6pfSl
+         O/cYNvGoyXp5FsCBrqgLZXPGIpp/R2sh2YTHq3lwQQ847QCLWJ1bXpMxJEvHkG2oFgt5
+         mJ+A==
+X-Forwarded-Encrypted: i=1; AJvYcCU3Emp9c4Vv2vmgkDG+yPt0Gw8w+CSBWAmdPyDb5IhFqtcJZFCLRjvhR+9A5g7KGUE5PVsKt9vvJqnxWts=@vger.kernel.org, AJvYcCVDy2Fhs34LfbC9tay41S/LbWYkZguACpv85Taa5cWUEILxpoN+/iRV1I+gncB/sii16L1IkbXniLnbaMBu@vger.kernel.org, AJvYcCXt1ekCVppcO66RBc/18zUKS02QfVu0nxbd5NEm/LRFG8ibphiNyrXDz9VKmMp6BO6SCAVmD5LS/94=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5U68RvDKIAzq6l98ZWUqP5DukknpB3TKCo1aIYHVsnCN+nhDD
+	SPrEyjMYfKbklXpFTsR0Msfe9PpyT9JoSm8gOvWSg7lJaq26Ma71XGyS
+X-Gm-Gg: ASbGncvGPPURLiudaF9AstRsJhHftnDOBAROakwlWkOLHYhuyNd4ovRgHH0v9B/Z12W
+	kavATmgSa1s8YW7/rNtcUMeJtcUozVCmXuoC6P2WsxsGoPBiYARvk4L/UYMu3shucnZWnwRXkG1
+	X40T5IgFUm2Dw6LlkfT3dhlRuPf4GUJFb+rfqvxTr9kEfeFgsZ66UWKubvD6kxjS0NqUr+CuEwW
+	i00w5wgE2sbwEJW7L7ZB1ApQXBtx37b2M62ynNcgHxPmuOPYsYXbIUFEOQq9oe8Fv9TGr2NmcA0
+	TModSfD+zuQ7I/qJMNV/KL0xzhQtn0VY4Fxuf+izLb1+n8GSWMPu7WWnvWU3nTLmsIss/dmxLre
+	lrbieq7ufj40OJg==
+X-Google-Smtp-Source: AGHT+IFtcxH3zxd8aYow9gXMQsfmYAfh4wBFQfjq4IBvLJ+tK7MVsPB6uKxjlRpyveKHwrvoaAe7+g==
+X-Received: by 2002:a05:6402:52ca:b0:618:afa:70f7 with SMTP id 4fb4d7f45d1cf-61c1b490275mr18123976a12.12.1756359863165;
+        Wed, 27 Aug 2025 22:44:23 -0700 (PDT)
+Received: from xeon.. ([188.163.112.70])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61cbbdac051sm2102841a12.29.2025.08.27.22.44.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 Aug 2025 22:44:22 -0700 (PDT)
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+	Thierry Reding <treding@nvidia.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Svyatoslav Ryhel <clamor95@gmail.com>,
+	Mikko Perttunen <mperttunen@nvidia.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: devicetree@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH v4 0/4] clk: tegra: add DFLL support for Tegra114
+Date: Thu, 28 Aug 2025 08:43:59 +0300
+Message-ID: <20250828054403.7112-1-clamor95@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR11MB5966:EE_|SJ0PR11MB4928:EE_
-X-MS-Office365-Filtering-Correlation-Id: 82411c50-104e-4592-b633-08dde5f5e810
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?Q4Ef/uUpHTCID72oZ6m5fERWI6gCJ4ZDChvr/qbc64bgJS4e5b0LQDV9HOzd?=
- =?us-ascii?Q?ZxLU7nNH1BUwoTsUgneN1vsjn9Yg0CjS7l24nvMMC85MCT2rWuDH6S7hPePl?=
- =?us-ascii?Q?xnIHo3I4Q2AotE/S4oNPqqp+Arcbj3iMSyo5s3EyKiICNx85JGzoOPgP+W6R?=
- =?us-ascii?Q?2FMSrdyj32xnkgpOiDNpC3bCkkKhXV9RBOVrsAVdDALv05r9ydxj/5kz+yqH?=
- =?us-ascii?Q?1QEE88Xc2mFVCjHK/MKjWOAiQBFULisXATaSxAo0H1Ba2sj2PeqvyMEY2ROl?=
- =?us-ascii?Q?ZhRGJyCwimiLmRoCWA6ZBmkvAtuQjASH2jvAqhvGFaFp4JncFUWvISuetRs0?=
- =?us-ascii?Q?FMVe1147LUhcs82o8RSAbASBVVFEjLBRd1TvmZ52tU0zYLxxD1EbOZ22P6Yy?=
- =?us-ascii?Q?bD7wwaLqdLfQqw5F07Sy40xRW/ms7EtS/Cs4V/OiUuedOrIX/F8DqRwoAr5H?=
- =?us-ascii?Q?HnV+HrRGesFCqiznc3CbI3kqvRX74eTp1w4evBxDfUyXLXDngqS+jf4YN3mJ?=
- =?us-ascii?Q?AK6ulV7s/2XkrjKAG5kQIMC3nWO7p5+lTyEBLAl30HxqCIMvy4E0cCjyh87E?=
- =?us-ascii?Q?eyd6rkKDJ8V7i/ZaqvcfJQXHa8IorcmBI84vaMmF/gSkDyKLay80Meu7jzoK?=
- =?us-ascii?Q?2E4srtI4+efRD/RPH5nL0/jjNMI3L1KIVffpTppFKW6e4Q+7nZ/MThV+nCru?=
- =?us-ascii?Q?5AyO8ymhmL9DPEa/ba/n8LM95OelZYoZl6MGQMX52q54QQwbKNgE/IkUkJqD?=
- =?us-ascii?Q?344ioPB7RzxXnpeKTrwC83MTGZ68O3mQ7Zsa0VMtGlaE2QGQmWsKfsNeI2FF?=
- =?us-ascii?Q?WPCL0tjulr7K9atSWxqH/ccdzc3K3sheDoNH2kgWBBCbvOj/Eo0tClYJZUjy?=
- =?us-ascii?Q?wj3sCJToIv16p/LLBMIGzR4nzxGS08w+8wgdAi6QNBs8OCHMSgHn4UNkK4Ib?=
- =?us-ascii?Q?65MPZquJge1z1FFrrEKLFfWOAOPCP6Ph9UVgL9/UKaaO8ja23HE3gYV5QPXh?=
- =?us-ascii?Q?ziE8Y4nC4yO9XQhhq61FURUjnvreZWSZrflrk0PyCe0Tkn3GiRRez5Y/5LKe?=
- =?us-ascii?Q?oiNapS3odaBjKKJzk86YDEkESPUGGIu2UVhFrDOYw4uFM5+09zfdQYdvY+wT?=
- =?us-ascii?Q?LQbL3xXpcwDFkL4vggPZizf2+aTSQSyTVYfhjDn9nvq33wqPdDnal0EyGB0U?=
- =?us-ascii?Q?IL5YFZV0JG1mwq1iFnhYJb7WqGjYV3LqolxZQVZ6QlBW9Glm7yE4r6OtriGO?=
- =?us-ascii?Q?D+9lwZQR2QQjmpuEy1wzT/ll0FPJF2UeffPFAPmN/SRsbEy2XcBvNn8Aq78U?=
- =?us-ascii?Q?8zmRwVhYX0yYnAVSkU5iWKKNdW+YZsbywtEj1GPMxlaogewlGCHwo7ks+r2a?=
- =?us-ascii?Q?NAnXJFb1cWs3WsCfzo5r9EnVXM2HptTwA5iADuXygBOYuQrErmY6ygT6Om//?=
- =?us-ascii?Q?rD88JJ/kM/o=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR11MB5966.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?ZHq56qoHhyZoNGM3zJSPvBos9X/1xJInDNuIm/eQf8orCSNX+IjdDcSpEvRr?=
- =?us-ascii?Q?sXXUkq/NPH9EnNdjcEIVT3uHHEKekLkz4PM9hsEBSKosMV+O6k8QS1LDyiSk?=
- =?us-ascii?Q?21Rh7pbH4bFgzA4sMXC96WIjXzhQ3Wl3TnmAA2lfwoU9fRdfU16dejAfx4DO?=
- =?us-ascii?Q?wxARfoF73Sa/vX+ufWXLfygPLUBZiLP44GsLFE5+EKJrMsrTWOnfPILO/NoF?=
- =?us-ascii?Q?xUcVnzBRlcj5QmA37CcCplI9cgt7i/ztklLx6Uc1g3Ku2qJgWGklMicbpsKi?=
- =?us-ascii?Q?sqdt0aNSxVVIcvEM2elKljj1sv8RQ/POjfhtBsSWOkEOGwxT+G18440IEG65?=
- =?us-ascii?Q?wwvjJTFijSMkxz1LxK9w6G9/y6HqWkjvL+jDz24HGQRP5vl0LrJSOA9vgxjC?=
- =?us-ascii?Q?QX3bIkr9Z9SsaElKKPOsgbLAimgXMyeAz+SxvDmczQChcvVo0hjdzTZlo002?=
- =?us-ascii?Q?iK3u0fsnn5YVO0U6HFcQNcMySCmGfVQi7OZgBM52oBtogxEsNoirFgrzKEET?=
- =?us-ascii?Q?eRQqUkkWypGB4cM8+q/5U+MWzm2eJWNTfVFLfwol1Nnum42ZS1TVc5sB83hl?=
- =?us-ascii?Q?3GZ3HZycYNaEM7czNCFCJ8BKUeDZX9v99j4O+Qve8KnTMc0cqStG/O6j5/K0?=
- =?us-ascii?Q?+9yG0VDP87pG+qxw2OXdRo5bPJ3QfF8AiGe95dWRDOfsj5UFKOd0VanE3WFC?=
- =?us-ascii?Q?/nreKNGoQWP7+ua0vKlq+oN6rwjuQ+VV5u4Qnbq9gQfjgksNLBMD/NQy9qOM?=
- =?us-ascii?Q?/ON6KspLPEdNVE+nvGdy2QpWb3DrkUSCYKP39nUWVEvlgKhrPvaNHejKoVUA?=
- =?us-ascii?Q?bOPB39a0ya4E8wPN71y44RRNhB3sZXNdkBo93/4za5Ogw/H8UaPvcQSQnwRB?=
- =?us-ascii?Q?YFz/SKhRsPiuaKSjXmu6USDja1qigKOF4hXb2zUGCgn0mH4GWhb5QS/VSM1a?=
- =?us-ascii?Q?XjaZ5tCZgjv3iWhC8wAJ3jxylGPVFMRUn2AzIQvEeHwUNTQyrMR7InHZmuFa?=
- =?us-ascii?Q?eZ07NlBsPdMFeD14bair2HdckjlRUxzXG7fuYv+S7uHipjoPp8IosCK7mIt9?=
- =?us-ascii?Q?yGheIPm0ix59R2S/GOSisOGXBzynSE3iSu/xtYHPEokg24s2vLGylI2K7nlA?=
- =?us-ascii?Q?0x6glCOQPvOucQ3TqwuhOB1QgTIX9da4S6uSeTdZETj3lcVG4WCyQFOwvsOa?=
- =?us-ascii?Q?vondHPwJz9aP8TI4bZ9o+ygWQlxRBiuCPICTo19zSeC0pkaBtH0WHDyLiT0C?=
- =?us-ascii?Q?pwzmVg2V66dnCHHQyEZ0l/xLVTlGJWgVrtLKPCJkrhnn708F6shBk4mEKnS7?=
- =?us-ascii?Q?WJUm3VO1AJrbyhWWSOws1znlzkHuaDGOq9AjO7CLizIhSkMdECRNr1b8kKGy?=
- =?us-ascii?Q?lMLQA6QnFba6c3uAi6xPpC6ogtxjbW0Xwc+i2nhHZHp/2UWGLkT4La8DPmWF?=
- =?us-ascii?Q?a1ZISo8YA4vRPnH5mW15I6CF/V+QzLDa4mUuhyyLURWgKdTTt+KwwKcssTEY?=
- =?us-ascii?Q?jWhvIdseO4pVNlhx/0FdcuGs3/rTL5pQa9I3qjf2jH5ibPS2dzsJQuz6vykV?=
- =?us-ascii?Q?xwua8BqN8FrDmrEW3aqqnZXFVFkJrYysNGfIAVHg?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 82411c50-104e-4592-b633-08dde5f5e810
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR11MB5966.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Aug 2025 05:44:08.1872
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: h+J5Asx/lE7a55mSWtJwkzyuNXxxuNA+DrMXFx8aTv4ERBIPlF0+hSwGIkPUZWzdL0jORhDPciYQDqjiw72MPg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR11MB4928
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: 8bit
 
-On Wed, Aug 27, 2025 at 12:08:27PM -0700, Sean Christopherson wrote:
-> On Wed, Aug 27, 2025, Yan Zhao wrote:
-> > On Tue, Aug 26, 2025 at 05:05:19PM -0700, Sean Christopherson wrote:
-> > > @@ -1641,14 +1618,30 @@ static int tdx_sept_set_private_spte(struct kvm *kvm, gfn_t gfn,
-> > >  		return -EIO;
-> > >  
-> > >  	/*
-> > > -	 * Read 'pre_fault_allowed' before 'kvm_tdx->state'; see matching
-> > > -	 * barrier in tdx_td_finalize().
-> > > +	 * Ensure pre_fault_allowed is read by kvm_arch_vcpu_pre_fault_memory()
-> > > +	 * before kvm_tdx->state.  Userspace must not be allowed to pre-fault
-> > > +	 * arbitrary memory until the initial memory image is finalized.  Pairs
-> > > +	 * with the smp_wmb() in tdx_td_finalize().
-> > >  	 */
-> > >  	smp_rmb();
-> > > -	if (likely(kvm_tdx->state == TD_STATE_RUNNABLE))
-> > > -		return tdx_mem_page_aug(kvm, gfn, level, pfn);
-> > >  
-> > > -	return tdx_mem_page_record_premap_cnt(kvm, gfn, level, pfn);
-> > > +	/*
-> > > +	 * If the TD isn't finalized/runnable, then userspace is initializing
-> > > +	 * the VM image via KVM_TDX_INIT_MEM_REGION.  Increment the number of
-> > > +	 * pages that need to be initialized via TDH.MEM.PAGE.ADD (PAGE.ADD
-> > > +	 * requires a pre-existing S-EPT mapping).  KVM_TDX_FINALIZE_VM checks
-> > > +	 * the counter to ensure all mapped pages have been added to the image,
-> > > +	 * to prevent running the TD with uninitialized memory.
-> > To prevent the mismatch between mirror EPT and the S-EPT?
-> 
-> No?  Because KVM bumps the count when installing the S-EPT and decrements it
-> on AUG, so I don't see how nr_premapped guards against M-EPT vs. S-EPT issues?
-Hmm, I think there must be some misunderstanding.
+DFLL is a dedicated clock source for the Fast CPU. The DFLL is based on
+a ring oscillator and translates voltage changes into frequency
+compensation changes needed to prevent the CPU from failing and is
+essential for correct CPU frequency scaling.
 
-Before userspace invokes KVM_TDX_FINALIZE_VM,
-=======
-1. the normal path (userspace invokes KVM_TDX_INIT_MEM_REGION).
-   (1) KVM holds slot_lock and filemap lock.
-   (2) KVM invokes kvm_tdp_map_page() (or kvm_tdp_mmu_map_private_pfn() in
-       patch 2).
-       KVM increases nr_premapped in tdx_sept_set_private_spte() to indicate
-       that there's a page mapped in M-EPT, while it's not yet installed in
-       S-EPT.
-   (3) KVM invokes TDH.MEM.PAGE.ADD and decreases nr_premapped, indicating the
-       page has been mapped in S-EPT too.
-       
-   As the name of nr_premapped indicates, the count means a page is pre-mapped
-   in the M-EPT, before its real mapping in the S-EPT.
-   If ADD fails in step (3), nr_premapped will not be decreased.
+---
+Changes in v2:
+- dropped 'drivers:' from commit title
+- aligned naming to Tegra114
 
-   With mere the normal path, nr_premapped should return back to 0 after all
-   KVM_TDX_INIT_MEM_REGIONs.
-      
+Changes in v3:
+- add DFLL support for Tegra 114 was split into dt header addition,
+  DFLL reset configuration and CVB tables implementation.
+- added cleaner commit message to dt header commit
+- added T210_ prefixes to Tegra210 CVB table macros
 
-2. Expected zap paths (e.g. If userspace does something strange, such as
-   removing a slot after KVM_TDX_INIT_MEM_REGION)
-   Those zap paths could be triggered by
-   1) userspace performs a page attribute conversion
-   2) userspace invokes gmem punch hole
-   3) userspace removes a slot
-   As all those paths either hold a slot_lock or a filemap lock, they can't
-   contend with tdx_vcpu_init_mem_region() (tdx_vcpu_init_mem_region holds both
-   slot_lock and internally filemap lock).
-   Consequently, those zaps must occur
-   a) before kvm_tdp_map_page() or
-   b) after TDH.MEM.PAGE.ADD.
-   For a), tdx_sept_zap_private_spte() won't not be invoked as the page is not
-           mapped in M-EPT either;
-   For b), tdx_sept_zap_private_spte() should succeed, as the BLOCK and REMOVE
-           SEAMCALLs are following the ADD.
-   nr_premapped is therere unchanged, since it does not change the consistency
-   between M-EPT and S-EPT.
+Changes in v4:
+- expanded commit message of car header adding commit
+---
 
-3. Unexpected zaps (such as kvm_zap_gfn_range()).
-   Those zaps are currently just paranoid ones. Not found in any existing paths
-   yet. i.e.,
-   We want to detect any future code or any missed code piecies, which invokes
-   kvm_zap_gfn_range() (or maybe zaps under read mmu_lock).
+Svyatoslav Ryhel (4):
+  dt-bindings: reset: add Tegra114 car header
+  clk: tegra: add DFLL DVCO reset control for Tegra114
+  clk: tegra: dfll: add CVB tables for Tegra114
+  ARM: tegra: Add DFLL clock support for Tegra114
 
-   As those zaps do not necessarily hold slot_lock or filemap lock, they may
-   ocurr after installing M-EPT and before installing S-EPT.
-   As a result, the BLOCK fails and tdx_is_sept_zap_err_due_to_premap() returns
-   true.
-   Decreasing nr_premapped here to indicate the count of pages mapped in M-EPT
-   but not in S-EPT decreases.
+ arch/arm/boot/dts/nvidia/tegra114.dtsi     |  33 +++++
+ drivers/clk/tegra/Kconfig                  |   2 +-
+ drivers/clk/tegra/clk-tegra114.c           |  30 +++-
+ drivers/clk/tegra/clk-tegra124-dfll-fcpu.c | 158 +++++++++++++++++----
+ drivers/clk/tegra/clk.h                    |   2 -
+ include/dt-bindings/reset/tegra114-car.h   |  13 ++
+ 6 files changed, 204 insertions(+), 34 deletions(-)
+ create mode 100644 include/dt-bindings/reset/tegra114-car.h
 
-   TDH.MEM.PAGE.ADD after this zap can still succeed. If this occurs, the page
-   will be mapped in S-EPT only. As KVM also decreases nr_premapped after a
-   successful TDH.MEM.PAGE.ADD, the nr_premapped will be <0 in the end.
-   So, we will be able to detect those unexpected zaps.
-   
+-- 
+2.48.1
 
-When userspace invokes KVM_TDX_FINALIZE_VM,
-=======
-The nr_premapped must be 0 before tdx_td_finalize() succeeds.
-
-The nr_premapped could be 0 if
-(1) userspace invokes KVM_TDX_INIT_MEM_REGIONs as in a normal way.
-(2) userspace never triggers any KVM_TDX_INIT_MEM_REGION.
-(3) userspace triggers KVM_TDX_INIT_MEM_REGION but zaps all initial memory
-    regions.
-
-For (2)and(3), KVM_TDX_FINALIZE_VM can still succeed. So, TD can still run with
-uninitialized memory.
-
-> > e.g., Before KVM_TDX_FINALIZE_VM, if userspace performs a zap after the
-> > TDH.MEM.PAGE.ADD, the page will be removed from the S-EPT. The count of
-> > nr_premapped will not change after the successful TDH.MEM.RANGE.BLOCK and
-> > TDH.MEM.PAGE.REMOVE.
-> 
-> Eww.  It would be nice to close that hole, but I suppose it's futile, e.g. the
-> underlying problem is unexpectedly removing pages from the initial, whether the
-> VMM is doing stupid things before vs. after FINALIZE doesn't really matter.
-Are you referring to the above "case 2 Expected zap paths"?
-
-It's equal to that userspace never triggers any KVM_TDX_INIT_MEM_REGION.
-We can't force userspace must invoke KVM_TDX_INIT_MEM_REGION after all.
-
-I don't think there's a hole from the guest point of view. See below.
-
-> > As a result, the TD will still run with uninitialized memory.
-> 
-> No?  Because BLOCK+REMOVE means there are no valid S-EPT mappings.  There's a
-> "hole" that the guest might not expect, but that hole will trigger an EPT
-> violation and only get "filled" if the guest explicitly accepts an AUG'd page.
-
-If TD runs with unintialized memory,
-- for the linux guest, it will cause TD to access unaccepted memory and get
-  killed by KVM;
-- for non-linux guest which configured with #VE, the guest will see #VE and
-  be informed of that the page must be accepted before access. Though the guest
-  should not be able to run without any initial code, but there's not any
-  security problem.
-
-
-> Side topic, why does KVM tolerate tdh_mem_page_add() failure?  IIUC, playing
-We don't. It returns -EBUSY or -EIO immediately.
-
-> nice with tdh_mem_page_add() failure necessitates both the
-> tdx_is_sept_zap_err_due_to_premap() craziness and the check in tdx_td_finalize()
-> that all pending pages have been consumed.
-
-tdx_is_sept_zap_err_due_to_premap() detects the error of BLOCK, which is caused
-by executing BLOCK before ADD.
-
-> What reasonable use case is there for gracefully handling tdh_mem_page_add() failure?
-If tdh_mem_page_add() fails, the KVM_TDX_INIT_MEM_REGION just fails.
-
-> If there is a need to handle failure, I gotta imagine it's only for the -EBUSY
-> case.  And if it's only for -EBUSY, why can't that be handled by retrying in
-> tdx_vcpu_init_mem_region()?  If tdx_vcpu_init_mem_region() guarantees that all
-I analyzed the contention status of tdh_mem_sept_add() at
-https://lore.kernel.org/kvm/20250113021050.18828-1-yan.y.zhao@intel.com.
-
-As the userspace is expected to execute KVM_TDX_INIT_MEM_REGION in only one
-vCPU, returning -EBUSY instead of retrying looks safer and easier.
-
-> pages mapped into the S-EPT are ADDed, then it can assert that there are no
-> pending pages when it completes (even if it "fails"), and similarly
-> tdx_td_finalize() can KVM_BUG_ON/WARN_ON the number of pending pages being
-> non-zero.
-tdx_td_finalize() now just returns -EINVAL in case of nr_premapped being !0.
-KVM_BUG_ON/WARN_ON should be also ok.
-
-> > > +	 */
-> > > +	if (unlikely(kvm_tdx->state != TD_STATE_RUNNABLE)) {
-> > > +		if (KVM_BUG_ON(kvm->arch.pre_fault_allowed, kvm))
-> > > +			return -EIO;
-> > > +
-> > > +		atomic64_inc(&kvm_tdx->nr_premapped);
-> > > +		return 0;
-> > > +	}
-> > > +
-> > > +	return tdx_mem_page_aug(kvm, gfn, level, pfn);
-> > >  }
-> > >  
-> > >  static int tdx_sept_drop_private_spte(struct kvm *kvm, gfn_t gfn,
-> > > -- 
-> > > 2.51.0.268.g9569e192d0-goog
-> > > 
 
