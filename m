@@ -1,74 +1,73 @@
-Return-Path: <linux-kernel+bounces-789509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE692B3968F
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 10:15:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 250AEB39688
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 10:14:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67FF2984797
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 08:13:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84CA11C26E9B
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 08:14:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 064072D8DD4;
-	Thu, 28 Aug 2025 08:11:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72D7D2D7D2E;
+	Thu, 28 Aug 2025 08:13:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="B7mFKTbn"
-Received: from TYPPR03CU001.outbound.protection.outlook.com (mail-japaneastazon11012022.outbound.protection.outlook.com [52.101.126.22])
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="g/7k0MYD"
+Received: from TYPPR03CU001.outbound.protection.outlook.com (mail-japaneastazon11012040.outbound.protection.outlook.com [52.101.126.40])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27F222D29B7
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 08:11:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.126.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCE41275872;
+	Thu, 28 Aug 2025 08:13:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.126.40
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756368716; cv=fail; b=rIOdmKUKTq3mPMNIu3sdPDtrH9D+9HgmEl4Ca15r1wzhikhmNyAvT6ulO2lAKrn/kGQxQqXkUD5Iekv/eBb3q8LT4BBK2+qUwWI7vRp2jQLzVxYLZETuAadKXwW3sjsTjvXcBUoeR19nasXDHP31EQ8v2dG3XBNndOGxNaHGo34=
+	t=1756368807; cv=fail; b=ohJqRzGQUiMdsbrdMLqx4YjHGBCykJFX6ri+xSCWD8aRvF3P54Ua3LEG8+8Gp3cCF89IPkK+R2/nwk/DAGKiognSRSjIIBhBgsOCKNCwmFXJ8tvgJBXtpBMxL5053NyCC+horWPiHXcbxn2aqQJnFUMpmqDIiRIZFLwmuIqrzGA=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756368716; c=relaxed/simple;
-	bh=zpxmstouQ1x98Gujnv02fTStir6QAxidMpf++xiI+hQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=fdfVQMFwHNbVLVN3cNAdHGiTL9UT/A6yAyEQbT7qHy8kDtd+mzMYEYVvZPt7V5WbTpe44woWXzfJoBbzrQgCcazBnFaGcESbojWCcNE+i5Ud4NmNN5XOiqIlGv8rrNcG6Hmc64Ux8GE454jfDrv07Wssza7XDeL21Ox/o0PWX0I=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=B7mFKTbn; arc=fail smtp.client-ip=52.101.126.22
+	s=arc-20240116; t=1756368807; c=relaxed/simple;
+	bh=e4dCCZRVGjqVHBBsyKarrBzhkMvVyGRwHIp4mCW4zb0=;
+	h=From:To:Subject:Date:Message-Id:Content-Type:MIME-Version; b=FTeGeVT/aVOB6sOmpKuBSlypaqDWtGt5mqqLrf8ZuFoRJq4wXt2XA3gJdT9cddSUvMUoGSceDAI8/qKeH0afnDgJtnTqwgJcmHKab+Wc5EzLGQMvRvZ5hlDpKKq9DbpgCKlVoHf6imNAfP5evwnzDCKg44lFpLojm+TbNW5O8s8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=g/7k0MYD; arc=fail smtp.client-ip=52.101.126.40
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=XIiFHQL9NVJHP7QqeEQYSrEWOQbh1hQTs1X1wV+/PM+ZvoRknUIuZYo1Z81xJe2n5O2x2PezOFckRzPcJx7cMoOrJhvL6mzgWbYqV8rGr4TS8u63iI/IoIb40+VaGa+6bOsOg0PROa4lehhpGMptA0/6OiuCW0Ypy2VX5qaHO5WcjovhHZ+XIcWmUzewZc2oETABgjaORyYgYfgkbALmMJ95Wgivv1GGVE0Yv6vmwxLxXwQi3+xsSu0snHYfSU6A2mhyw4Zgh/nC7+nkYUv0sTd+7Zs73uPjP1Q3L+WTN9E/+G2p8HTqed2/fjrc4FcrVReQxAz17pC5gxbDUImKQg==
+ b=iuM18F+1EJ5CN10DYKN3cS6YCX0W354+wmtKYi82p80cnozX9ePewWIHzdDaEKvOs2Z31/trRTMu/9hF8E+leC0/+f0vE0QyJ7iCXsDqQpaS4lEl0ENNj99oynIUojqrOsddprw7uO56yN6ExBJQoHJabJQ/qu3eJHFFk8k3WhEPl16NepfWwXS4TVzFknkG4isXAtKFJnCyHUHOn8pMhu22EPu2rG3NqsvZ3NpAWlMidgC05eXjp6qMizEHfdA4bufQI4/f86w0Th+eVCu6oneFLqvKJ79AcJYol8di0zusJahOS9nz7xmkScPJbnCAvP47wRQ68sooTr2qDus5qQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Mh8h1xd0L1uDfLaxzVzomh4ilwumZ24ynF0oiYh3bqQ=;
- b=vP8gOTwLZJem8pgPaumoZLijtYXTUwLA8FN2idqhzA3S94Bx1CNylLMnJcFZnIOZxsw7B48m6JRTI51ULQ3rPPw2DP+vALQtpY3C4ium+W9dNPHPK5C+OR3Ye0d9qPQNUq2fuF9qvjf1X7qHcd0GCwcj2ITNfsCEsRY5eT3IT/WRTOWdJtexZz+ZImfwbL91KEEdaubWNxK8jlro+sUVjM0EeZLWMFCYof700fswTQKIY3vUVA5IU9blhTf5npJDx3BSQ8uSJ7vKJ/yXXU9DEJfYM10mZCYl8B1Uz+4iWyD4QR5OAo7Fw5GWF07VLEC9cyOSrQhEJtnRimHedGX3Xg==
+ bh=/H5jID6a1W+MV2jTYfMsOCidUS2Jtf70NtLp+iWG51k=;
+ b=hdcErZARy5chxSnNaXF8h5iyXcJpczSQeEQe9aVWJZsuIc1eUADawvn9diwEnI0lbxvmFkq0HvV31ByrfLUvkmtZVd52KZ9Xff7NIq0JpEkE/V6R8nJc8l3WXK4c0c8PYNyjz6LSDhyLV26188Q/6sgi/Ukm5Za8mLIbSjUa4XUHylmdvht9Bfzt1XDQ7h9FDTKS3nB7YHT/ZHtRkcs8wvaTbHGCi2cZKLvj7iYU60na6a+gBRMQXYcbN990MLBs5jvQ8CzITvoai0GNs0dzJpiCjt+YomVgNiz1tGqc7S2l1X5Zk87EZdmiYFEnm1yOQhGmOWLVzLw2HlexJkESEw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
  dkim=pass header.d=vivo.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Mh8h1xd0L1uDfLaxzVzomh4ilwumZ24ynF0oiYh3bqQ=;
- b=B7mFKTbnM6ZlbkedX5AH0LZqyGRnGHIs7I+NIlBQWiKGhx85vGw4hRNMKsONuZNl5XHgIs5CpJh52cs3dGm99zvvR3dgSXvboETlqiTFFqpnfmTyM9gtU/uQ50S7CXsjAFaQ20D4M2kk/sPmD5zVuq8tUkmCReD8ZUd4u1sx3+tICjKsxNAgYrhM3Q29BjB5/bWOwzpocHsVQHx6rSQVH4YD2SyuxBOQz44u854XoegIWtR7Cx8c+ZBED7eG4Li6dfLxTwv3g/Ammm8U3cmgSz24xHCzRQ+hOHnJACK+otFrmjjR+3ySwWlsBBbxGWdAlWHBXsnqVkleLri1ycQJsQ==
+ bh=/H5jID6a1W+MV2jTYfMsOCidUS2Jtf70NtLp+iWG51k=;
+ b=g/7k0MYDSWVfZFD0iHF0iUJiPwNgReXhfytLe/VD9jhGLXonM4nOtrMHJeU8uM7lq/WbiNKL0lOXeizAbCghbC43FsCtDJTyZS0A+OYW7ZwQ4OuynisN2OkfWF8LHd7qc6dnF4MkBf3XDf9pfgUwH4LA+DHtIpYG8KprdsXNAM3stvR6Ks9QArRVYYr1qOErwI4aQjFtL5N4dh9IB3LBV13iqnVJN3IUZJceKSaw9XCQrE8wpNWHJDQ/OAc6x+PMI9lVvCnTvbi3ewo4x8lio5eO6anzYDcbJqq3r4NKQCbBWKJavc/RZyjiX0pUpZpvXTkuRZF9Jae4J7d746pDkw==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from SEZPR06MB5576.apcprd06.prod.outlook.com (2603:1096:101:c9::14)
- by SEYPR06MB6615.apcprd06.prod.outlook.com (2603:1096:101:172::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.16; Thu, 28 Aug
- 2025 08:11:48 +0000
-Received: from SEZPR06MB5576.apcprd06.prod.outlook.com
- ([fe80::5c0a:2748:6a72:99b6]) by SEZPR06MB5576.apcprd06.prod.outlook.com
- ([fe80::5c0a:2748:6a72:99b6%7]) with mapi id 15.20.9073.014; Thu, 28 Aug 2025
- 08:11:48 +0000
-From: Liao Yuanhong <liaoyuanhong@vivo.com>
-To: Jaegeuk Kim <jaegeuk@kernel.org>,
-	Chao Yu <chao@kernel.org>,
-	linux-f2fs-devel@lists.sourceforge.net (open list:F2FS FILE SYSTEM),
-	linux-kernel@vger.kernel.org (open list)
-Cc: Liao Yuanhong <liaoyuanhong@vivo.com>
-Subject: [PATCH v4] f2fs: Use allocate_section_policy to control write priority in multi-devices setups
-Date: Thu, 28 Aug 2025 16:11:30 +0800
-Message-Id: <20250828081130.392736-1-liaoyuanhong@vivo.com>
+Received: from SI2PR06MB5140.apcprd06.prod.outlook.com (2603:1096:4:1af::9) by
+ JH0PR06MB6602.apcprd06.prod.outlook.com (2603:1096:990:2f::13) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9073.14; Thu, 28 Aug 2025 08:13:22 +0000
+Received: from SI2PR06MB5140.apcprd06.prod.outlook.com
+ ([fe80::468a:88be:bec:666]) by SI2PR06MB5140.apcprd06.prod.outlook.com
+ ([fe80::468a:88be:bec:666%5]) with mapi id 15.20.9073.010; Thu, 28 Aug 2025
+ 08:13:22 +0000
+From: Qianfeng Rong <rongqianfeng@vivo.com>
+To: Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Qianfeng Rong <rongqianfeng@vivo.com>,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] ALSA: lx_core: use int type to store negative error codes
+Date: Thu, 28 Aug 2025 16:13:10 +0800
+Message-Id: <20250828081312.393148-1-rongqianfeng@vivo.com>
 X-Mailer: git-send-email 2.34.1
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: SG2PR01CA0192.apcprd01.prod.exchangelabs.com
- (2603:1096:4:189::21) To SEZPR06MB5576.apcprd06.prod.outlook.com
- (2603:1096:101:c9::14)
+X-ClientProxiedBy: SG2PR02CA0131.apcprd02.prod.outlook.com
+ (2603:1096:4:188::6) To SI2PR06MB5140.apcprd06.prod.outlook.com
+ (2603:1096:4:1af::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,316 +75,121 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SEZPR06MB5576:EE_|SEYPR06MB6615:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7fe74cfa-d74c-4977-b3aa-08dde60a8924
+X-MS-TrafficTypeDiagnostic: SI2PR06MB5140:EE_|JH0PR06MB6602:EE_
+X-MS-Office365-Filtering-Correlation-Id: ddad0bd0-92f5-4830-a16a-08dde60ac104
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|376014|52116014|1800799024|38350700014;
+	BCL:0;ARA:13230040|1800799024|52116014|376014|366016|38350700014;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?EnecyzuIjJ4cZ4204VCpn4EGWrpK67OaGKnKXscEhHvFycqjZWF5sgDLBwIu?=
- =?us-ascii?Q?k1MYT9uPJL8pQZCyDqsjDWjKYKURQZEzcAlbojU9/eh4TPP8WeS7OKrw/j2C?=
- =?us-ascii?Q?LXI8fjaTe5W62yDQLSlNwrR9J1SaOmkA3y4yz6FK49swPKJgPIyBIqtm/bps?=
- =?us-ascii?Q?cgS3T8tiofd7Q5CaTELzRAehgDys1SrQNYYSmcrdAC4uJxloJzA5GapKxJ9z?=
- =?us-ascii?Q?vBunu/AR41BozqhDjFqcXiEDxrf9vDofljuyXuCPnnnWhM30X4IIWiIqypm6?=
- =?us-ascii?Q?Fkly1gp+2stibpqrH1oXAoHUYSN/6A3NLf40Y8l/aJCgCoaECssORc3qLmKx?=
- =?us-ascii?Q?TaEOjeCGWI+sqvj1O3iV5f3mU2xbjtFSYoECSlxKU8KZeLEUxTEOB30ifSsE?=
- =?us-ascii?Q?y77drB9SvRoQeh35qNoqp/VQW8VxpdyY1Q2A5wmBjGlT5Z+7cn6sYXiiGmtf?=
- =?us-ascii?Q?bzxrCRIAthX86okyCkQah+3aFs4Vtpc47Br8hzoLoLLo9bP/BkUEfuqTfO31?=
- =?us-ascii?Q?2E7b9zFLonsi9Qz9O5WnhKg04R7f0nnHKpnbajIWMTVeE3+dzKuyIVj91h0K?=
- =?us-ascii?Q?ZkLeFY+etnXPz6wU1EgIxIHtt6hfsjR/iwG0uV9drATbifXbmva9raRvxXrq?=
- =?us-ascii?Q?YHEQePECJFxT7syEFfYW4TLft5HruWrdhXwb3+96B6OgEEXOX+X3Tdr+26Al?=
- =?us-ascii?Q?9FM5nustCJHMjY6nXR0VtJ2SomvhAvoxqm6yblIORfRDr7BobZIsNwKsdREQ?=
- =?us-ascii?Q?Q5PUlIjo2ULUOy9R1uhYmxISxR6u/qBRzJVk0xvM0a7HJjU7mvw0pMAqRinz?=
- =?us-ascii?Q?d5uK77vavyN5VnYtS2zcbxJRZFfqSktRxX7T0dQDXiuEkgr9hBcBZwavBPbn?=
- =?us-ascii?Q?Prj3AIUGxKKxvl6kkQQIaTSQ88cHZUbSKQI1Ys36/S/yzzQNmJ8lwZKYdQlN?=
- =?us-ascii?Q?u4xoSlnq16Ln32JE9BxQpXd/oDO/J3Flm3RErrH2ZhKbm/BemgUJNUDMYUSF?=
- =?us-ascii?Q?wSlNo3uZOlhUr5nI9s51TI1BVZi9dwHPAG4v5J5JkOWIzi7QTYdAfk7hVzdG?=
- =?us-ascii?Q?bx7UFxKHYGDaORAeWEsPu1cvTLXa8GuhypLVQCFIb0stalw5ZTAaBHW15rrP?=
- =?us-ascii?Q?KPdMmPaeN4bhIca8N7rF9bSMSXxa/0ux4Ig3tY7W6TEtXWqMS9t8tAGs56Kd?=
- =?us-ascii?Q?eTTTEd7yHTP6BbGQcjMaw77XLepkbk9U/RDgQT1jFsAMluzh4bz2z18ZjcEn?=
- =?us-ascii?Q?mUGa9nSRZAbeTZLizqjWnH13g73DepgU5k1QoI0sg7q/uCRKzEMIwthYuPVd?=
- =?us-ascii?Q?dSrLfPFMPFiZWdFoWP5G5KsbxsaRiHSM7gMsl51BljcrtmBgW+T9ZhKjzGn+?=
- =?us-ascii?Q?hbfjJlWUk2e9ZK6JuFizbf8I/lQR+C/jODp7t4oMX+Uj7m3vI0FJq4On2UQy?=
- =?us-ascii?Q?1O6aj01PDrgKVJqa7acM2M4RqREcpCNvlkegr/lefEmiAFOpYp9SFg=3D=3D?=
+	=?us-ascii?Q?nLCin3eRv8KTfivJFzsJCq+bTyld2nFNEanR4oF7tlLMI33KvGdhEgNdBq3J?=
+ =?us-ascii?Q?w6Yb0kshojVsutkqI6V/QRozi944GwfKe1+YtdOLoGw4gIUhoBSMtt71UJMW?=
+ =?us-ascii?Q?bdvpWt+z3ylI84NhC1Kk6mquAs9zxIO/ECKaya51wYFiEdC0JsuyU0DtsQZw?=
+ =?us-ascii?Q?jkCY2qru1PMwXee2yl3ekQzC6GT94i17ilK0D6P9BhzNwUnC+RD/XmEcJGV0?=
+ =?us-ascii?Q?SoJigWRYEwboeKRpCMPsKn/xD3jrzUxOqqGv2vDg2SY8LQoNS0Z3iW4BHeNv?=
+ =?us-ascii?Q?ecz5sWyKp+HumaLq4Hbn8uc0f8jWU9Hqf21Kx0Ptkpg8gPWXcX+739rVO+k5?=
+ =?us-ascii?Q?Re5HZQ454zFb70FHB9uk+ChlGqZj2MAhxf/JE8lLSMcJs7i1xdnMXl2oGdWF?=
+ =?us-ascii?Q?r7CukQzF2MGJ/fb8zX8oBPFObFoKtvNFfUhq4jUJw69a1jylXyHgpYXQa1tg?=
+ =?us-ascii?Q?SG4vkUPTCmekgMJAIF1dm2VczGqVWrI47OAqjd09CUjSHW4mOFTjiTsnqIus?=
+ =?us-ascii?Q?bKOLSzc1f6TBmkQsTl6MEp0aqaDjnVj4Tud36flws7cilvCYP1KP0q5G9jgB?=
+ =?us-ascii?Q?fBkY7sVoV7tbOcxD0+a+TX6Er06lfPqWMv3vKtLOFrG6n3dyc0GO4OX/SsJq?=
+ =?us-ascii?Q?0uNQZv/FGx3FKpfuvgUMeqYXSt8815YTGxsGMkAsVmg+INslKYE7IkHnhBnH?=
+ =?us-ascii?Q?4LlTRw+UdQDEqYWoNMkxWVF94o19oRnLbACjko50CHMCp4J5WtHAHXJom3BD?=
+ =?us-ascii?Q?+HSKexQAsWgOz4POxllMTmUg2UYvcUEf8mpIeiaq9vceys+ZdqYYBRpPEyTX?=
+ =?us-ascii?Q?bAxMOG+nOctoh0BcTlobEuPgpafttR7zoMLKC9k5Nq7O2VwNi25OgwmZQosD?=
+ =?us-ascii?Q?1XYzBJkGzU9p+TM3a7piJjXNKySgJWvEaeVPuKyOtIE3bDLpBomKnko7L8Xu?=
+ =?us-ascii?Q?ZF+dS45vszvLklm9JXsBAV+w76sZT2+OLhi+YF6t+Gcj8pV5eduEnprCyl+c?=
+ =?us-ascii?Q?Cueb6WyCAdxEIakpLf3lrDk/F8SLxVN7Tq3pASOf4UgfnAjTBkPUb6BDgjSk?=
+ =?us-ascii?Q?Z789Q/9lbPzNJW4FRiZQIe21jHbNuFN72yfamCGaXOBkwncIcFb+5wnS9ajO?=
+ =?us-ascii?Q?fB/PXhFV7wa4BLz3A5FbK/WP0sg9Cz7FjtIHoof8BRh15HqpITBnd8xMrzxO?=
+ =?us-ascii?Q?ug7d31MShIFxU+0wlO8qHTP9kwom3PLhQVFeJFCGHKUaluwyqCruHqRDECFw?=
+ =?us-ascii?Q?KQ4yY/7wLr8HkBuHoH+KfdWcbzUSE9qrx0vtPF/dmw+VqqwqtDeJbfsFm5UB?=
+ =?us-ascii?Q?QT854LZ9N7NyyVIGww4v6bWHBp65GOxhNkrTJ2W8K9+0grwKzpxdKJPZX+CS?=
+ =?us-ascii?Q?qjBOg60DiD0xraWkqGIETLOfjYZEeW1c3AsSmTeCAFNtvDY1T4z3lrTefRhl?=
+ =?us-ascii?Q?yn9pozO5ulyJWP8fj4zO0/INnxUQtg5xgk4SEQBr6IGZp0461sUc3Q=3D=3D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5576.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(52116014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SI2PR06MB5140.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(52116014)(376014)(366016)(38350700014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?jltlbmqGTNh2Bwc8UtxFIZ4nKo0/2EC98D4OquxWrThfoDiA8yrKExI1AijL?=
- =?us-ascii?Q?zhH0BPRHmdC/4xpXn4lBP5fIZsvzK0ff4wQn4G6kG9T+1Sxyhw9O1sJCnoxl?=
- =?us-ascii?Q?EIKkzCfO5fGTOnJz60/ajphsolF4aGKRPOF8B8EO7+mEV818bZqlhsEfuBgE?=
- =?us-ascii?Q?AOls1h5q+0lus8aOWZ3vgY7udosUhcssrJS2Px4fwl4+6v2tzOQ3hlH/nyB/?=
- =?us-ascii?Q?Aba3D/wVJ+yCDHn4VH6NGYaOg3u+MO/L2Ns5srO03zJo135OFdVc2B49vj+Y?=
- =?us-ascii?Q?xUwy53NmPRPbexSzyjHkwZhFzkRkApYjDnjqxi2CySx0lRo7jficLvEYy9Yr?=
- =?us-ascii?Q?qL1pBsSCNJ3em+SH6zLpFP5hNEqa8v/xXR/bqvtrFQwB3H7XNh6UsXlDMzfZ?=
- =?us-ascii?Q?1tb7Gp8JWTIQASNrDLiaMRUzhiDOaAdVhAVkwJx/L9h01UqdQzfHGIypw54N?=
- =?us-ascii?Q?443ET8n3iw9bwUZuaTuumYihbR6EDrS7IeOk+gQrkmxnGc2bZrH6eO7i9DKF?=
- =?us-ascii?Q?2B96mn6tIgAIUFsh6ocndiO2JJloHJTPB5mNPsUu+Nijw94GAzXIKTmJ8+pE?=
- =?us-ascii?Q?ZQs2m6ih2OpV6N/hons5LdIA4dwtKJamIdaAmtSsHcvGNkEJwq6icHblsA/4?=
- =?us-ascii?Q?F0BEKzCu0ztmQj21BPN1zA82zFdrvKt4osVPf9SqdEwmGYA9wOmSE+cWSuDQ?=
- =?us-ascii?Q?fmaOo26mWqMRFSJWdik0qg8SxeKRW7jrN8zqlF0IGdPN7plTbVKve10RWce8?=
- =?us-ascii?Q?SshBh83g7FzGJlWzNYD9fCPrbhLmZPu5bXu3tI2ytgCCoR+H2/qGviL7hfS1?=
- =?us-ascii?Q?tjHOnZrvcv2HPD0Z6C1MgR9xTDQ+zwx2qbYEQC0vRgewFVNGSKrJ1tiJa6ZA?=
- =?us-ascii?Q?QyvjpFMBSniKtaNN7a74v1BUzSTREFJzH4V7qk1W/vm9c4CpvQhOGjF619vw?=
- =?us-ascii?Q?57bIaV9LghuTOvqlF17qXpepxJbi5gSK7Sevlz5dLlkM0OLj7lJSyNk1Z3+v?=
- =?us-ascii?Q?UGt+vKUoDBcXzmcTG3KRN9NOcdBuFC41xi1Nv55jKln/wnhrndMxjI+ys0BC?=
- =?us-ascii?Q?bDyhRW7QKrGQxoE4jGYbx+0ThfoRJ8pea+Rx6Lllxiyno253TX4WxtYquV0f?=
- =?us-ascii?Q?IFHgZutFFEgfHS+8vvoPYw4WvL7EGD+SoCUtcveQ1ydI/DHfMpwgJqKOfZ5l?=
- =?us-ascii?Q?++UvAQJJGg2RcMtlXMPaOygbNOFRt3djBltm4sSRArplrRZnUMO6EGjd+b1J?=
- =?us-ascii?Q?86CZpshBUilAnqugAXZpwGUF8X+oyKJLFW7C7FKX1gaiJoxnw06GaNtV6eqS?=
- =?us-ascii?Q?qX/iZW976RM9dgePQ9JQDrBj42QGKrvFAHVoBuJnQ+7MzN1RzbUPvRkvoMky?=
- =?us-ascii?Q?FNXjMvutPkiyouYh4G4FoCkzVrcqXFRgo0KRFP/HBQR+A/Z7tLIf8vmDYJnT?=
- =?us-ascii?Q?3vROu4M0ixSmYcjxHRb7UhKIQL9q5hrYNhVIRB+auJC29q3O09opqbDjPVHg?=
- =?us-ascii?Q?xJys5uQrtYNHmMCwKHJ06YA1HSJYo2t1Cu0o7E3QbTOy9DjegL9oGrUemLb4?=
- =?us-ascii?Q?w/8LXLFoUAq4FLZ6nMCJDgjCSiMcy9TvdnlWUIvC?=
+	=?us-ascii?Q?N4AdQqZpmwfKvXLYbqIANM+R1Jgb9FN4+VrnQICf7TIWj2ETm0K/1YAMqbT2?=
+ =?us-ascii?Q?TC9VjSnnGhVqeBmURn28uBr8K3jRt/F+9FHo6k18HhnoPhIXI55/UMSAUOTA?=
+ =?us-ascii?Q?MGdfBlMGOVZ0ZMi6FFGyMPbxWY1otuWh+eSZaYs9wXlKmSUZgyETNiupIzp+?=
+ =?us-ascii?Q?2ZGu7IqofCVTHgUlxah/eVYH64TQmSbEtmchP31JOWr1DzqucR8PsENOmbkE?=
+ =?us-ascii?Q?Jg+uOVW4KslpmoIbp5HTSKEV7Sp5M0vWaMBAQ+7qtA8QQciDK2CyS6Oe95N/?=
+ =?us-ascii?Q?Nniq9eHt/GfDE/AGOneOFyASrEljkhfND9puPlQEguC0tki7C3ak4T+WUANL?=
+ =?us-ascii?Q?5WgpolIG426775N7xW+UdiDegF13YyRQtjfVtEc51mbAu4hEoudYvGZPeFK8?=
+ =?us-ascii?Q?bMRNmHsBD9WBc0/irpD1vOs/S/Apd7I0VI0ka5dYThaLQXtSaXQqkfkVDRtO?=
+ =?us-ascii?Q?moY/m+1YJV3GReefYEvRLeHswDI4VzYpkyV0KjClM7xFgzI5/z5Ebg9cLj0l?=
+ =?us-ascii?Q?Y4ZBy1g1FzHY2A/YBY8Ihv0LG1lXyFCd1VGnL3rH0JOSfgOfp03iV3K9P1ii?=
+ =?us-ascii?Q?E+f+gt9CDW2rErRju6GcCBkbFqKI3rg/PbnqHr4rDOKsGPWuCCPml6EURikM?=
+ =?us-ascii?Q?TICNbBcksckfJTN2pf7bF/9FQdclPHJuPjk9cyIgxvDINMDldjmT6ZPhTBjW?=
+ =?us-ascii?Q?IsQE35i/o501nBpbIbc4JkG0hNQgsmJPgpZnX1iPD9gJoY/Gk70eksBCEwnN?=
+ =?us-ascii?Q?suDi2FgMj8c4X6NSnCsNwJ51QcBHUzGcs0axTFdtPZ2a7DA9wnbGambNZ4zj?=
+ =?us-ascii?Q?AY5KrgKcIafzodbeiNTqXkkRsB/Pnwc7PNJCt5uHGCGCjMKiaW71JbCbCg0M?=
+ =?us-ascii?Q?6ExlhB+uDXQQd5/s9VPVsSxCSzdX5Cs0eLqCy82Ed2HolirM3nkDtiA0KUpl?=
+ =?us-ascii?Q?gvbsNmZxNAwOIsjv8Nj9T8EAYkEXeGaoWIzyJYRNQtDtCXdwJ8ZbwcOKrbzm?=
+ =?us-ascii?Q?mtKvHoIGj2e307cmgB82Hf11GDzmdXXT9iHBjF+guofJ2wR+m9P9sGYsx35h?=
+ =?us-ascii?Q?7RRcJf2YJVLb2gUxVhYqjSSw0oMovqR/a9U7SbDGUF6yt5JZoO+7bhVAJcfl?=
+ =?us-ascii?Q?P28XQQq7hoFtUaJYxj0bR8R8rLA8eiHk/JQ5D8q+dmL+m+gkXoEKK4sbywLY?=
+ =?us-ascii?Q?nojn1gTArrrDUSZFrExIR8luPFyCcyhO+ihjZDHoFIVw6DhjEp6SrO0Ym128?=
+ =?us-ascii?Q?00wWuLzAvUce87kYhX/dz7xh5C6pSvxkTvh3es1GvxHqb+AXhyN+tTyN2x5g?=
+ =?us-ascii?Q?b2/E7LQPYh4T6nyalXZGpy5z0AUtDXBPgVynYAVMRYYMU3Vl6B8Z4RVTF59m?=
+ =?us-ascii?Q?Q7lbFPqea/daj9ItnTjyoz7w1LkXhAfoORIGGERd6yFIdgMRe+5T4UXvw/yl?=
+ =?us-ascii?Q?CwDHO+BI5/KwQRAh7KHwRHMiPye9K5bVCkdH10g0VhMKmR9SS+ca7WJaL+ei?=
+ =?us-ascii?Q?KUVZLkjBXOD5zXBwsWZETFafW6Xkyq83hIO8xO71Vxml0csHjI+mXiHfZU9c?=
+ =?us-ascii?Q?lxasWDBkAApqar3byeUhCjdKY1Rs1bYn7CvfYR+l?=
 X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7fe74cfa-d74c-4977-b3aa-08dde60a8924
-X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5576.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ddad0bd0-92f5-4830-a16a-08dde60ac104
+X-MS-Exchange-CrossTenant-AuthSource: SI2PR06MB5140.apcprd06.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Aug 2025 08:11:48.3438
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Aug 2025 08:13:22.1536
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: W9v1abVObp1LJhyxTo/2nhN6sHUfBNcHiTqRiHmz5fjW+M6ZmsAgYeusM4d398V6edUsk9WoJPjTqv/5yWbZaQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR06MB6615
+X-MS-Exchange-CrossTenant-UserPrincipalName: ulcO5n9kPMhFCt8JPrrw1AzG0Pkmt8qT+/AVU6ybe5OVIGzuzsnWl3n15CiFTZ193qRkYpFjrbuYtywPSnhH8g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: JH0PR06MB6602
 
-Introduces two new sys nodes: allocate_section_hint and
-allocate_section_policy. The allocate_section_hint identifies the boundary
-between devices, measured in sections; it defaults to the end of the device
-for single storage setups, and the end of the first device for multiple
-storage setups. The allocate_section_policy determines the write strategy,
-with a default value of 0 for normal sequential write strategy. A value of
-1 prioritizes writes before the allocate_section_hint, while a value of 2
-prioritizes writes after it.
+Change the 'ret' variable from u16 to int to store negative error codes or
+zero returned by lx_message_send_atomic().
 
-This strategy addresses the issue where, despite F2FS supporting multiple
-devices, SOC vendors lack multi-devices support (currently only supporting
-zoned devices). As a workaround, multiple storage devices are mapped to a
-single dm device. Both this workaround and the F2FS multi-devices solution
-may require prioritizing writing to certain devices, such as a device with
-better performance or when switching is needed due to performance
-degradation near a device's end. For scenarios with more than two devices,
-sort them at mount time to utilize this feature.
+Storing the negative error codes in unsigned type, doesn't cause an issue
+at runtime but it's ugly as pants. Additionally, assigning negative error
+codes to unsigned type may trigger a GCC warning when the -Wsign-conversion
+flag is enabled.
 
-When using this feature with a single storage device, it has almost no
-impact. However, for configurations where multiple storage devices are
-mapped to the same dm device using F2FS, utilizing this feature can provide
-some optimization benefits. Therefore, I believe it should not be limited
-to just multi-devices usage.
+No effect on runtime.
 
-Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
+Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
 ---
-Changes in v4:
-	- Adjusted the initialization position of allocate_section_policy, now
-	initialized in init_sb_info().
-	- Use local variables instead of direct references to avoid race
-	conditions.
+ sound/pci/lx6464es/lx_core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Changes in v3:
-	- Refactored the implementation logic of allocate_section_policy in
-	get_new_segment(). The current version has a more coherent and readable
-	logic while maintaining nearly the same functionality.
-	- Added a validity check for allocate_section_hint in get_new_segment()
-	to prevent potential conflicts that MAIN_SECS() might cause.
-	- Adjusted the initialization position of allocate_section_hint, now
-	initialized in init_sb_info().
-
-Changes in v2:
-	- Updated the feature naming to better reflect its actual functionality.
-	- Appended patch description to clarify whether the usage should be
-	limited to multi-devices.
-	- Improved the code style.
-	- Fixed typo.
----
- Documentation/ABI/testing/sysfs-fs-f2fs | 22 ++++++++++++++++++++++
- fs/f2fs/f2fs.h                          |  8 ++++++++
- fs/f2fs/gc.c                            |  5 +++++
- fs/f2fs/segment.c                       | 17 +++++++++++++++++
- fs/f2fs/super.c                         |  4 ++++
- fs/f2fs/sysfs.c                         | 18 ++++++++++++++++++
- 6 files changed, 74 insertions(+)
-
-diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
-index ee3acc8c2cb8..b590809869ca 100644
---- a/Documentation/ABI/testing/sysfs-fs-f2fs
-+++ b/Documentation/ABI/testing/sysfs-fs-f2fs
-@@ -911,3 +911,25 @@ Description:	Used to adjust the BG_GC priority when pending IO, with a default v
- 		bggc_io_aware = 1   skip background GC if there is pending read IO
- 		bggc_io_aware = 2   don't aware IO for background GC
- 		==================  ======================================================
-+
-+What:		/sys/fs/f2fs/<disk>/allocate_section_hint
-+Date:		August 2025
-+Contact:	"Liao Yuanhong" <liaoyuanhong@vivo.com>
-+Description:	Indicates the hint section between the first device and others in multi-devices
-+		setup. It defaults to the end of the first device in sections. For a single storage
-+		device, it defaults to the total number of sections. It can be manually set to match
-+		scenarios where multi-devices are mapped to the same dm device.
-+
-+What:		/sys/fs/f2fs/<disk>/allocate_section_policy
-+Date:		August 2025
-+Contact:	"Liao Yuanhong" <liaoyuanhong@vivo.com>
-+Description:	Controls write priority in multi-devices setups. A value of 0 means normal writing.
-+		A value of 1 prioritizes writing to devices before the allocate_section_hint. A value of 2
-+		prioritizes writing to devices after the allocate_section_hint. The default is 0.
-+
-+		===========================  ==========================================================
-+		value					     description
-+		allocate_section_policy = 0  Normal writing
-+		allocate_section_policy = 1  Prioritize writing to section before allocate_section_hint
-+		allocate_section_policy = 2  Prioritize writing to section after allocate_section_hint
-+		===========================  ==========================================================
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 6cde72fce74e..7c6bfee81c61 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -162,6 +162,12 @@ enum bggc_io_aware_policy {
- 	AWARE_NONE,			/* don't aware IO for background GC */
- };
+diff --git a/sound/pci/lx6464es/lx_core.c b/sound/pci/lx6464es/lx_core.c
+index 9d95ecb299ae..a99acd1125e7 100644
+--- a/sound/pci/lx6464es/lx_core.c
++++ b/sound/pci/lx6464es/lx_core.c
+@@ -316,7 +316,7 @@ static int lx_message_send_atomic(struct lx6464es *chip, struct lx_rmh *rmh)
+ /* low-level dsp access */
+ int lx_dsp_get_version(struct lx6464es *chip, u32 *rdsp_version)
+ {
+-	u16 ret;
++	int ret;
  
-+enum device_allocation_policy {
-+	ALLOCATE_FORWARD_NOHINT,
-+	ALLOCATE_FORWARD_WITHIN_HINT,
-+	ALLOCATE_FORWARD_FROM_HINT,
-+};
-+
- /*
-  * An implementation of an rwsem that is explicitly unfair to readers. This
-  * prevents priority inversion when a low-priority reader acquires the read lock
-@@ -1856,6 +1862,8 @@ struct f2fs_sb_info {
- 	bool aligned_blksize;			/* all devices has the same logical blksize */
- 	unsigned int first_seq_zone_segno;	/* first segno in sequential zone */
- 	unsigned int bggc_io_aware;		/* For adjust the BG_GC priority when pending IO */
-+	unsigned int allocate_section_hint;	/* the boundary position between devices */
-+	unsigned int allocate_section_policy;	/* determine the section writing priority */
+ 	mutex_lock(&chip->msg_lock);
  
- 	/* For write statistics */
- 	u64 sectors_written_start;
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index 098e9f71421e..b57b8fd64747 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -2182,6 +2182,8 @@ static void update_fs_metadata(struct f2fs_sb_info *sbi, int secs)
- 	SM_I(sbi)->segment_count = (int)SM_I(sbi)->segment_count + segs;
- 	MAIN_SEGS(sbi) = (int)MAIN_SEGS(sbi) + segs;
- 	MAIN_SECS(sbi) += secs;
-+	if (sbi->allocate_section_hint > MAIN_SECS(sbi))
-+		sbi->allocate_section_hint = MAIN_SECS(sbi);
- 	FREE_I(sbi)->free_sections = (int)FREE_I(sbi)->free_sections + secs;
- 	FREE_I(sbi)->free_segments = (int)FREE_I(sbi)->free_segments + segs;
- 	F2FS_CKPT(sbi)->user_block_count = cpu_to_le64(user_block_count + blks);
-@@ -2189,6 +2191,9 @@ static void update_fs_metadata(struct f2fs_sb_info *sbi, int secs)
- 	if (f2fs_is_multi_device(sbi)) {
- 		int last_dev = sbi->s_ndevs - 1;
+@@ -330,10 +330,10 @@ int lx_dsp_get_version(struct lx6464es *chip, u32 *rdsp_version)
  
-+		sbi->allocate_section_hint = FDEV(0).total_segments /
-+					SEGS_PER_SEC(sbi);
-+
- 		FDEV(last_dev).total_segments =
- 				(int)FDEV(last_dev).total_segments + segs;
- 		FDEV(last_dev).end_blk =
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 04b0a3c1804d..e4d71755a60f 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -2774,6 +2774,8 @@ static int get_new_segment(struct f2fs_sb_info *sbi,
- 	unsigned int total_zones = MAIN_SECS(sbi) / sbi->secs_per_zone;
- 	unsigned int hint = GET_SEC_FROM_SEG(sbi, *newseg);
- 	unsigned int old_zoneno = GET_ZONE_FROM_SEG(sbi, *newseg);
-+	unsigned int alloc_policy = sbi->allocate_section_policy;
-+	unsigned int alloc_hint = sbi->allocate_section_hint;
- 	bool init = true;
- 	int i;
- 	int ret = 0;
-@@ -2807,6 +2809,21 @@ static int get_new_segment(struct f2fs_sb_info *sbi,
- 	}
- #endif
+ int lx_dsp_get_clock_frequency(struct lx6464es *chip, u32 *rfreq)
+ {
+-	u16 ret = 0;
+ 	u32 freq_raw = 0;
+ 	u32 freq = 0;
+ 	u32 frequency = 0;
++	int ret;
  
-+	/*
-+	 * Prevent allocate_section_hint from exceeding MAIN_SECS()
-+	 * due to desynchronization.
-+	 */
-+	if (alloc_policy != ALLOCATE_FORWARD_NOHINT &&
-+		alloc_hint > MAIN_SECS(sbi))
-+		alloc_hint = MAIN_SECS(sbi);
-+
-+	if (alloc_policy == ALLOCATE_FORWARD_FROM_HINT &&
-+		hint < alloc_hint)
-+		hint = alloc_hint;
-+	else if (alloc_policy == ALLOCATE_FORWARD_WITHIN_HINT &&
-+			hint >= alloc_hint)
-+		hint = 0;
-+
- find_other_zone:
- 	secno = find_next_zero_bit(free_i->free_secmap, MAIN_SECS(sbi), hint);
+ 	mutex_lock(&chip->msg_lock);
  
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index e288b7be3131..bb57c54007a3 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -4238,6 +4238,8 @@ static void init_sb_info(struct f2fs_sb_info *sbi)
- 	sbi->total_node_count = SEGS_TO_BLKS(sbi,
- 			((le32_to_cpu(raw_super->segment_count_nat) / 2) *
- 			NAT_ENTRY_PER_BLOCK));
-+	sbi->allocate_section_hint = le32_to_cpu(raw_super->section_count);
-+	sbi->allocate_section_policy = ALLOCATE_FORWARD_NOHINT;
- 	F2FS_ROOT_INO(sbi) = le32_to_cpu(raw_super->root_ino);
- 	F2FS_NODE_INO(sbi) = le32_to_cpu(raw_super->node_ino);
- 	F2FS_META_INO(sbi) = le32_to_cpu(raw_super->meta_ino);
-@@ -4752,6 +4754,8 @@ static int f2fs_scan_devices(struct f2fs_sb_info *sbi)
- 					SEGS_TO_BLKS(sbi,
- 					FDEV(i).total_segments) - 1 +
- 					le32_to_cpu(raw_super->segment0_blkaddr);
-+				sbi->allocate_section_hint = FDEV(i).total_segments /
-+							SEGS_PER_SEC(sbi);
- 			} else {
- 				FDEV(i).start_blk = FDEV(i - 1).end_blk + 1;
- 				FDEV(i).end_blk = FDEV(i).start_blk +
-diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-index 1ffaf9e74ce9..81b99c2a02a9 100644
---- a/fs/f2fs/sysfs.c
-+++ b/fs/f2fs/sysfs.c
-@@ -889,6 +889,20 @@ static ssize_t __sbi_store(struct f2fs_attr *a,
- 		return count;
- 	}
- 
-+	if (!strcmp(a->attr.name, "allocate_section_hint")) {
-+		if (t < 0 || t > MAIN_SECS(sbi))
-+			return -EINVAL;
-+		sbi->allocate_section_hint = t;
-+		return count;
-+	}
-+
-+	if (!strcmp(a->attr.name, "allocate_section_policy")) {
-+		if (t < ALLOCATE_FORWARD_NOHINT || t > ALLOCATE_FORWARD_FROM_HINT)
-+			return -EINVAL;
-+		sbi->allocate_section_policy = t;
-+		return count;
-+	}
-+
- 	*ui = (unsigned int)t;
- 
- 	return count;
-@@ -1161,6 +1175,8 @@ F2FS_SBI_GENERAL_RW_ATTR(max_victim_search);
- F2FS_SBI_GENERAL_RW_ATTR(migration_granularity);
- F2FS_SBI_GENERAL_RW_ATTR(migration_window_granularity);
- F2FS_SBI_GENERAL_RW_ATTR(dir_level);
-+F2FS_SBI_GENERAL_RW_ATTR(allocate_section_hint);
-+F2FS_SBI_GENERAL_RW_ATTR(allocate_section_policy);
- #ifdef CONFIG_F2FS_IOSTAT
- F2FS_SBI_GENERAL_RW_ATTR(iostat_enable);
- F2FS_SBI_GENERAL_RW_ATTR(iostat_period_ms);
-@@ -1398,6 +1414,8 @@ static struct attribute *f2fs_attrs[] = {
- 	ATTR_LIST(max_read_extent_count),
- 	ATTR_LIST(carve_out),
- 	ATTR_LIST(reserved_pin_section),
-+	ATTR_LIST(allocate_section_hint),
-+	ATTR_LIST(allocate_section_policy),
- 	NULL,
- };
- ATTRIBUTE_GROUPS(f2fs);
 -- 
 2.34.1
 
