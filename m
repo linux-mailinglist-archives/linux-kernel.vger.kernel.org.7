@@ -1,111 +1,132 @@
-Return-Path: <linux-kernel+bounces-790610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D57D0B3AACB
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 21:23:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C5B3B3AADB
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 21:24:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CC261BA77DB
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 19:24:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DC99683573
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 19:24:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98EB6265CCB;
-	Thu, 28 Aug 2025 19:23:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAA5E27E7C8;
+	Thu, 28 Aug 2025 19:23:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NaF1h/NY"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iSVPtDar"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DB4E20013A;
-	Thu, 28 Aug 2025 19:23:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1537527054A;
+	Thu, 28 Aug 2025 19:23:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756409018; cv=none; b=b5o3pvp5TxitptcTo+1jdhgPwtUSBwehuCX7CI4Zf1ufaKvek+Kp5t5OEhNfyU3wH9q04VxXjeARyD1LvvewB+gRSCKw4STfsTBpo9splNdynyJMaQx/07u5ly5qD8PJDV9m61Mdq1JjKpCRRmVWux/atUkXRYg9bnS3I1nXoQQ=
+	t=1756409020; cv=none; b=mIstU5gYH+dimEwUWMecvYFw8294iLcOaBnuKXnHkp+BJOh6jvzIT/Dl+rRjfW37swU6wmB3W2/zO8zlspuUXwYCJoL46eHpC68ULzDicb6ZBlh2DJkOkPwohB4WnEfrlZLpf8JxixkUaxkFONg2Sh1V2s+/7Op47e1Tiyt/By8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756409018; c=relaxed/simple;
-	bh=V63f1ex+PBQ5+O6++zEpvOMvjCSNqO1rdBSOwnvnUAk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HClh6ZoGXDshxNslUreHupgf2hjH7Jffy1nVy1sGE1t9ZnZTpHOW8blhzgpzfqCYUnrccLgF3kFmjm5VCq9IqR5YJJN9adxXCZYo3d2/lAHWKtBbPMcQW19uh5mCA7aUEJGXv8NBfqf+CXEfeOfeAzvnQ0LmQXdmHNHTC66J/1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NaF1h/NY; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756409016; x=1787945016;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=V63f1ex+PBQ5+O6++zEpvOMvjCSNqO1rdBSOwnvnUAk=;
-  b=NaF1h/NYUQDNQPWH9tazkoH98J89BxZv7C5axEmwyzDClYdgpnLS2u5h
-   MtaGC9eY7CkDM9ktWqzNpFL+q/ZjjS75UrV5VpjB/YTUtRq4AaY12ymPS
-   AM1XkvHmpW48QcsWO4Bvxmhrio/mD/6Q6warxv++tEn6Ltpp4oJs50QHe
-   nCKqOmeeRoAYPAzVKFfBZM3xE3CXet3Cl6c48hgV1fiBmBjYhpq+JVV/g
-   lXB6TNQs4PgZDqRFWMQgJpEPS93P4LcPR0LcLp6c9eY/j9twHO04kQTiB
-   W3wAFrQeTHeYsEeOy/GbCXwoKF5CFCTwI4wrMVTLTDRkxIdQL5Cl/t8V2
-   w==;
-X-CSE-ConnectionGUID: t4Md96PiRJexmvN4h/KJYw==
-X-CSE-MsgGUID: ao/JwkwRR2+h8P5SW5a0lA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11536"; a="58621884"
-X-IronPort-AV: E=Sophos;i="6.18,221,1751266800"; 
-   d="scan'208";a="58621884"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2025 12:23:35 -0700
-X-CSE-ConnectionGUID: OLqdhYEdS4yV4rxfpxcjow==
-X-CSE-MsgGUID: hdl/1B/FSTmfnhUT6JzTkw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,221,1751266800"; 
-   d="scan'208";a="169783663"
-Received: from spandruv-desk.jf.intel.com ([10.54.75.16])
-  by orviesa009.jf.intel.com with ESMTP; 28 Aug 2025 12:23:34 -0700
-From: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-To: rafael@kernel.org,
-	daniel.lezcano@linaro.org,
-	lukasz.luba@arm.com
-Cc: linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Subject: [PATCH] selftests/thermel/intel/workload_hint: Mask unsupported types
-Date: Thu, 28 Aug 2025 12:23:28 -0700
-Message-ID: <20250828192328.929742-1-srinivas.pandruvada@linux.intel.com>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1756409020; c=relaxed/simple;
+	bh=FZwL7XBHhgoAckbWlwEtMct61pGudjOnR3GfzuWKi34=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=BzZA2YOAM+zNITN54ieUpJmhj13RfeZXnGeBTq/24abm1gA+nXWuAzBksJ9aZf4jw+wEJTPy7M109kYg+ONzShxtyNq4jFSESeU1aY8Mciqd9uxsHPXdqtLBJe8XmrjW58eXYrR3XVm2BjRYMeBkZ8IPVsda3K3OcxA0JY1+wFg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iSVPtDar; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 97AFCC4CEF4;
+	Thu, 28 Aug 2025 19:23:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756409019;
+	bh=FZwL7XBHhgoAckbWlwEtMct61pGudjOnR3GfzuWKi34=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=iSVPtDarfv8Hgod18zKSRohuiR2k/w/6eDc1QupTnvwZQtaoTFVYGUj/w8PYQSHvR
+	 w9pM2xH4UPb9BaDyo3laqG/zkLoAhAL3dyLqKzHkiCDuX5CIOJA5ZURollXsfYf2/h
+	 +rFHuz9k3SuIxoRpaHg+M+0F62EeNl0WMKLqYMHYIAw9MoDPrL9sI0ulN6urdZ2R3a
+	 mUbVaKPk1BUUabPg51jxlrZhs/PH2ApSByWXCg7C/bPxxm8EbqmXyY3SxAFNKlXXFO
+	 kssnZYuZYhgVPbLH+VY+ZXOi+LH5MgKbKv2zZxozBZ2l3vlsNiPiICiEwpCIzak3JX
+	 FV/YtjSk2iVRQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BC40CA0FF7;
+	Thu, 28 Aug 2025 19:23:39 +0000 (UTC)
+From: Nickolay Goppen via B4 Relay <devnull+setotau.yandex.ru@kernel.org>
+Subject: [PATCH v4 0/3] Add SDM660 LPASS LPI TLMM
+Date: Thu, 28 Aug 2025 22:23:36 +0300
+Message-Id: <20250828-sdm660-lpass-lpi-v4-0-af4afdd52965@yandex.ru>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIALissGgC/4XNwQ6CMAyA4VchOzszug2GJ9/DeCjbkCUKZNMFQ
+ nh3Byc1Ri9N/ib9OpNgvbOBHLKZeBtdcH2XQuwyolvsLpY6k5oAA8kUCBrMrSgYvQ4YQpqOoqo
+ ZIHBV5EjS2eBt48aNPJ1Tty7cez9tH2K+bn9gMaeMMsaN1BoUcHGcsDN23PsHWbEIr4D8AkACs
+ ClLXjVSQ2k/Af4P4AkopBEoTA2VegOWZXkCxYl36zIBAAA=
+X-Change-ID: 20250824-sdm660-lpass-lpi-a8b02a23861a
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ ~postmarketos/upstreaming@lists.sr.ht, Nickolay Goppen <setotau@yandex.ru>, 
+ Richard Acayan <mailingradian@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1756409018; l=2199;
+ i=setotau@yandex.ru; s=20250815; h=from:subject:message-id;
+ bh=FZwL7XBHhgoAckbWlwEtMct61pGudjOnR3GfzuWKi34=;
+ b=a1gGoYgpK4ZQPNnQPogN3Kj0i8goX1ZnwWD6Rmv0VGgTs1Meo08YF4SbuOLptdWi58nc7KIVN
+ sABjBervZT0AQc1TZO0K10+nxUtrCOyG558kRTVY9ESg6GA2nunxBih
+X-Developer-Key: i=setotau@yandex.ru; a=ed25519;
+ pk=Og7YO6LfW+M2QfcJfjaUaXc8oOr5zoK8+4AtX5ICr4o=
+X-Endpoint-Received: by B4 Relay for setotau@yandex.ru/20250815 with
+ auth_id=492
+X-Original-From: Nickolay Goppen <setotau@yandex.ru>
+Reply-To: setotau@yandex.ru
 
-The workload hint may contain some other hints which are not defined.
-So mask out unsupported types. Currently only lower 4 bits of workload
-type hints are defined.
+This patch series adds SDM660 LPASS LPI TLMM pinctrl driver and
+introduces pin_offset field for LPI pinctrl drivers to support
+SDM660's quirky pin_offsets taken from an array with 
+predefined offsets from downstream [1].
 
-Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+[1] https://git.codelinaro.org/clo/la/kernel/msm-4.4/-/blob/LA.UM.7.2.c27-07400-sdm660.0/drivers/pinctrl/qcom/pinctrl-lpi.c#L107
+
+Signed-off-by: Nickolay Goppen <setotau@yandex.ru>
 ---
- .../selftests/thermal/intel/workload_hint/workload_hint_test.c | 3 +++
- 1 file changed, 3 insertions(+)
+Changes in v4:
+- Replaced pin_offset callback with a pin_offset field in lpi_pingroup struct
+- Introduced LPI_PINGROUP_OFFSET macro with additional pin_offset field handling
+- Introduced LPI_FLAG_USE_PREDEFINED_PIN_OFFSET flag for indicating use of predefined pin_offsets
+- Replaced an array with offsets in SDM660 LPASS LPI TLMM driver with pin_offset defined for each pin in the new pin_offset field
+- Link to v3: https://lore.kernel.org/r/20250825-sdm660-lpass-lpi-v3-0-65d4a4db298e@yandex.ru
 
-diff --git a/tools/testing/selftests/thermal/intel/workload_hint/workload_hint_test.c b/tools/testing/selftests/thermal/intel/workload_hint/workload_hint_test.c
-index ba58589a1145..3ee018bca899 100644
---- a/tools/testing/selftests/thermal/intel/workload_hint/workload_hint_test.c
-+++ b/tools/testing/selftests/thermal/intel/workload_hint/workload_hint_test.c
-@@ -133,6 +133,7 @@ int main(int argc, char **argv)
- 		} else if (ret == 0) {
- 			printf("Poll Timeout\n");
- 		} else {
-+
- 			if ((lseek(fd, 0L, SEEK_SET)) < 0) {
- 				fprintf(stderr, "Failed to set pointer to beginning\n");
- 				exit(1);
-@@ -144,6 +145,8 @@ int main(int argc, char **argv)
- 			ret = sscanf(index_str, "%d", &index);
- 			if (ret < 0)
- 				break;
-+
-+			index &= 0x0f;
- 			if (index > WORKLOAD_TYPE_MAX_INDEX)
- 				printf("Invalid workload type index\n");
- 			else
+Changes in v3:
+- Fixed compilation of LPI drivers as modules by changing pin_offset function determination logic 
+- Link to v2: https://lore.kernel.org/r/20250825-sdm660-lpass-lpi-v2-0-af7739f5c27e@yandex.ru
+
+Changes in v2:
+- Extended description of "pinctrl: qcom: Add SDM660 LPASS LPI TLMM" patch
+- Resent using b4 relay
+- Link to v1: https://lore.kernel.org/r/20250824-sdm660-lpass-lpi-v1-0-003d5cc28234@yandex.ru
+
+---
+Nickolay Goppen (2):
+      pinctrl: qcom: lpass-lpi: Add ability to use custom pin offsets
+      dt-bindings: pinctrl: qcom: Add SDM660 LPI pinctrl
+
+Richard Acayan (1):
+      pinctrl: qcom: Add SDM660 LPASS LPI TLMM
+
+ .../pinctrl/qcom,sdm660-lpass-lpi-pinctrl.yaml     |  74 ++++++++++
+ drivers/pinctrl/qcom/Kconfig                       |  10 ++
+ drivers/pinctrl/qcom/Makefile                      |   1 +
+ drivers/pinctrl/qcom/pinctrl-lpass-lpi.c           |  18 ++-
+ drivers/pinctrl/qcom/pinctrl-lpass-lpi.h           |  18 +++
+ drivers/pinctrl/qcom/pinctrl-sdm660-lpass-lpi.c    | 155 +++++++++++++++++++++
+ 6 files changed, 274 insertions(+), 2 deletions(-)
+---
+base-commit: d2798d0f96755807da0222cfc9793f2b1f38a2f1
+change-id: 20250824-sdm660-lpass-lpi-a8b02a23861a
+
+Best regards,
 -- 
-2.50.1
+Nickolay Goppen <setotau@yandex.ru>
+
 
 
