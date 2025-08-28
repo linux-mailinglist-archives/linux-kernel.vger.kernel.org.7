@@ -1,103 +1,108 @@
-Return-Path: <linux-kernel+bounces-790365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DF5FB3A610
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 18:22:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90FDEB3A621
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 18:23:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96F541C27C49
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 16:22:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A4F317A3F9
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 16:22:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1F9D322C91;
-	Thu, 28 Aug 2025 16:21:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83FF132A3C8;
+	Thu, 28 Aug 2025 16:21:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jN6ux4rW"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="c4pMTDT/"
+Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79E12321F3C;
-	Thu, 28 Aug 2025 16:21:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE3A0322533
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 16:21:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756398071; cv=none; b=IOzn27oeZRVeNK9SSxhWHX0mCa1s+3ynN4oNzD/U8ZOenNkK3vV3Rk+KcjutHeo0KhcSKtYH/Ay3zr2/W5YH2CT6IwNqZUJwpi/6fBfDn6JewMgnORY/pRWiRhQY9DWPuyZOnbVIzJyheSyG0poXhp2gniI+fuL+be8ELHO80mc=
+	t=1756398080; cv=none; b=IltbOOGlZ+JF0xtoktCEm+rxRB/xn33fjQAWsnxYktZCgA4dZBNzaPdEaLgMwCnxwe02Prb+rmf4s2DE5HIozPdMqk+NoZKcjXrL8qtmWwZhuXqDF5SIO9sXcfZvUMdUGdhr3CTCxn7ROwQCOG9CaNYnY6b8yzxDvhzp1i3lkMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756398071; c=relaxed/simple;
-	bh=ZeEpATc3yG+2ZfhU0QiMwUkrn5ohROR4JCkKzybZ1hA=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=RaiTDCRqURAosr4VyWYE7sFbhiwqhi6TxgkzmPZ+umeklMs6R+giTyCc8OmyfRPk6J3n3UvIODSG0PwPnVEmudyerq8AIbHQDiBSnYuq/3n2VfYrfh3o7dyTm42LkHazkd88vf1NQYuy3hNMjMu1dwLXiHN1wETDYyWuUhfTBzs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jN6ux4rW; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756398071; x=1787934071;
-  h=from:to:cc:in-reply-to:references:subject:message-id:
-   date:mime-version:content-transfer-encoding;
-  bh=ZeEpATc3yG+2ZfhU0QiMwUkrn5ohROR4JCkKzybZ1hA=;
-  b=jN6ux4rWSmRXOShNsKXV2d+jVvEtAXewlTYfs15PNxs4nTtrY3Dqf1un
-   5A/yt978l24xEo8mKTc4NgJk1iO4i8oEUVnZYHAc5FEixHt1xiLDbjOkK
-   YqTysc/fDiO2B7uUvRksZcVmjyERQiBYRzpMIJSa/cxvxUR//hBvZ4mQ7
-   uWsWPn+bYX40zjvxvN88jNwf95ZtEQ5FB7oD9HZu1V6aIgfe0icwMKfbt
-   mPOnaigPI6Kqt8UnKzU7SQ674PdVksvUQjfpU53upmwGSWocxOA/KGJmy
-   CF01BLafk1ouaCJpkJqVimWRRS6GI7MhM1zkdj9YpD6bjtazQl691WcDr
-   Q==;
-X-CSE-ConnectionGUID: b5nmVEtbT7aPhKOSpwmyKA==
-X-CSE-MsgGUID: DPRXOp9vSXqtPWkJSbOaYA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="58619085"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="58619085"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2025 09:21:10 -0700
-X-CSE-ConnectionGUID: 8aH4qTP6T+qWtCo7+xBgDQ==
-X-CSE-MsgGUID: b/Myq2S8TLuj0mYOIA11hw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,220,1751266800"; 
-   d="scan'208";a="175431347"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.99])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2025 09:21:06 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To: irenic.rajneesh@gmail.com, david.e.box@linux.intel.com, 
- platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-pm@vger.kernel.org, Hans de Goede <hansg@kernel.org>, 
- Li Yifan <yifan2.li@intel.com>
-Cc: xi.pardee@intel.com, Xi Pardee <xi.pardee@linux.intel.com>
-In-Reply-To: <20250826034550.2284738-1-yifan2.li@intel.com>
-References: <20250826034550.2284738-1-yifan2.li@intel.com>
-Subject: Re: [PATCH] platform/x86/intel/pmc: Add Bartlett Lake support to
- intel_pmc_core
-Message-Id: <175639806138.20700.307320901060487185.b4-ty@linux.intel.com>
-Date: Thu, 28 Aug 2025 19:21:01 +0300
+	s=arc-20240116; t=1756398080; c=relaxed/simple;
+	bh=qaScglVdLkmBjdsY7s6rKxKcwdhmSMloq1688MUvmAg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BgQNL7k7vYc6sjq+JlXgQTFl22CsnOAFWPxhni+bZxKwE7ESBI9zmFLdOokHzAfUN2Lg25/9hEIr12WeJvVbjaFzd/lM3f7tH60IFFSXpYOsccWq8TaFupJVVOzWNzjwi1IFbIrv0UqeZ9GBCQM+JL7sy/vT7TNWMq+1uQYrtek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=c4pMTDT/; arc=none smtp.client-ip=95.215.58.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1756398074;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=f70fYPGkkJTsgVx7HK1J427mMW4St4qFeIp7z2HZ/Qc=;
+	b=c4pMTDT/ZxVl1oFrsnaKMrZLJ6cMlqG6U5WbhZkod6cBK9m3UD6PdQuho3W9gtJ8enHrqh
+	wBdIpsmKcmbhSXyppmELEYSOL5xO9IqsMgR+NcDs9FUFUQhyTjFSt3gqeQgpSguEFLxpPn
+	t5DcdPvEUtR+CmO7mpXS+oMA0duz2hM=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: Peter Rosin <peda@axentia.se>,
+	Thorsten Blum <thorsten.blum@linux.dev>,
+	Kees Cook <kees@kernel.org>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH RESEND] mux: Realign struct mux_chip to save 8 bytes
+Date: Thu, 28 Aug 2025 18:21:01 +0200
+Message-ID: <20250828162105.4299-1-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, 25 Aug 2025 23:45:50 -0400, Li Yifan wrote:
+Reduce mux_chip's struct size by 8 bytes by realigning its members.
 
-> Add Bartlett Lake P-core only product support to intel_pmc_core
-> driver. Bartlett Lake hybrid product reuses Raptor Lake model name
-> so it is already enabled.
-> 
-> 
+pahole output before:
 
+  /* size: 752, cachelines: 12, members: 5 */
+  /* sum members: 744, holes: 2, sum holes: 8 */
+  /* member types with bit paddings: 1, total: 1 bit */
+  /* paddings: 1, sum paddings: 3 */
+  /* last cacheline: 48 bytes */
 
-Thank you for your contribution, it has been applied to my local
-review-ilpo-fixes branch. Note it will show up in the public
-platform-drivers-x86/review-ilpo-fixes branch only once I've pushed my
-local branch there, which might take a while.
+and after:
 
-The list of commits applied:
-[1/1] platform/x86/intel/pmc: Add Bartlett Lake support to intel_pmc_core
-      commit: 3010da6ecf2225e41a79b06bc5f4c9750a4d35cb
+  /* size: 744, cachelines: 12, members: 5 */
+  /* member types with bit paddings: 1, total: 1 bit */
+  /* paddings: 1, sum paddings: 3 */
+  /* last cacheline: 40 bytes */
 
---
- i.
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+---
+ include/linux/mux/driver.h | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/include/linux/mux/driver.h b/include/linux/mux/driver.h
+index e58e59354e23..8e912399cf3b 100644
+--- a/include/linux/mux/driver.h
++++ b/include/linux/mux/driver.h
+@@ -56,16 +56,15 @@ struct mux_control {
+ /**
+  * struct mux_chip -	Represents a chip holding mux controllers.
+  * @controllers:	Number of mux controllers handled by the chip.
+- * @dev:		Device structure.
+  * @id:			Used to identify the device internally.
++ * @dev:		Device structure.
+  * @ops:		Mux controller operations.
+  * @mux:		Array of mux controllers that are handled.
+  */
+ struct mux_chip {
+ 	unsigned int controllers;
+-	struct device dev;
+ 	int id;
+-
++	struct device dev;
+ 	const struct mux_control_ops *ops;
+ 	struct mux_control mux[] __counted_by(controllers);
+ };
+-- 
+2.50.1
 
 
