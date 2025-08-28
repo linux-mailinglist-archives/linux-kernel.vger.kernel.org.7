@@ -1,101 +1,102 @@
-Return-Path: <linux-kernel+bounces-789244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789256-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87625B392B2
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 06:50:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 104C8B392D6
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 07:20:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B91C63AA8F2
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 04:50:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0FC237B0B88
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 05:19:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52A4822576E;
-	Thu, 28 Aug 2025 04:50:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YPsMyCoN"
-Received: from mail-yb1-f195.google.com (mail-yb1-f195.google.com [209.85.219.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55181625
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 04:50:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B8EB1DE3B7;
+	Thu, 28 Aug 2025 05:20:36 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16A00347C3
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 05:20:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756356619; cv=none; b=UKAFo/r7f0jVffRQfsMNtPYQZpcY0n3ib4tMbbnZWO56t4XmNAR1My5SVEw2kLLs6m0kl5MlDGicfG3wOL4aAb4vKGg8Yx8HyUbmfcFiXFEI2cPBf8GHW4VDtH6UVEdJFWhG8AgJtGUaILo71OfboEORv9RUIywjAzar/lMEoHM=
+	t=1756358435; cv=none; b=SOY00P1oFhEEUNus7xfAdv2V9QVaAU2hxRue1LXEJgaDywKRQmluL1gtf8+WNtx596lbLVKIgMi5ojHiNbsNm+MHtwYvNFnfxIGUGMBINOBmjp+QBKPRQSSN8uTtz9JKhV02lC9b36NMiSM8EpVkwjQhUHG4VbSwe0sdl2U8UW4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756356619; c=relaxed/simple;
-	bh=GkTL7ptIOCtOYw/WcXmmg88Cm1Wk1G0BhUSsSk7xmmA=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=q6huV7Y1sgoyiNUWnCW/CeG3XRyZjTSZWrtPjrh/yR7lwCe0ADj3qN6I1UiI9yaAkCnYQy0eIKav09o/Lk9LvXI/ODduKpKdzXbzI9JbkpgOseHEqXAyR8Cr3xdsphfdp5ZDPdeO1kR9txZzOPTQ+IBT1z6C38uiy/zGiubXA6Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YPsMyCoN; arc=none smtp.client-ip=209.85.219.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f195.google.com with SMTP id 3f1490d57ef6-e96b9022f51so379842276.0
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 21:50:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756356617; x=1756961417; darn=vger.kernel.org;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=GkTL7ptIOCtOYw/WcXmmg88Cm1Wk1G0BhUSsSk7xmmA=;
-        b=YPsMyCoNy/AajE5Cx+C6buu4rf4XkCshu8NshdCnnaMyQzRbIqH+gb5QQCpqj8YHel
-         vZSlbp05L1MxZ1IIYHcaIoBnxSCVcE/Cr5Pk5YwaDX0p/jxhD3nIRStpZ8HY32UHSNz1
-         WsCDKk3Ryh9wZi/PrMsObgbILAkdSAJBesBJNQIxOx0IFW09moUjPal/jrNhQhAWP3b4
-         p0z8yqroaDNs/sgWcmYj3LSzA7O2WNFSHyefnFzuRRpew/vKQ8Gf3UBP0kpH0R9wxwk9
-         De767BlDF3lGGztOMZVzUrXaUByPvfezK2lMDupldfsVDNajM1MpVxdFkvT+Aim0iyw0
-         utdQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756356617; x=1756961417;
-        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=GkTL7ptIOCtOYw/WcXmmg88Cm1Wk1G0BhUSsSk7xmmA=;
-        b=NjPFRqVz1MuE2Yy7iB4MufJJSnNEZBUXuwRoiOcKBTZ/gP2YPH4nDr6iElvL4k+zoi
-         gLHxjA8GKd1nWtsl+oTe83ScKz1KZpvuXl+BnMfjlJ410WIYNETApL7PaZwf0VtwUYez
-         DJ0gNgTc++L3vYDgFiNrR1nduvKhIm6ihx/jV0V6zff0iYx7pucbWkVp1Nb+xvPwJHN2
-         u8ACSu1CrlnvRj2zMOm6bkfJ32puKx1//bsUCQXF62uyafzVxcbuvqi3g9ecnZfuNfUk
-         yW3U8l5AeZkiBjpHUzVDhFr75prHMeozbEnPJvrM/DtYw5PHNOzPCpHLwKAABA9sPFUE
-         FC1Q==
-X-Gm-Message-State: AOJu0Yz54sbiCFtEdInFsu9Bbd4LxrfmHRUvxAsugr0IhtEtt60F+EvV
-	Y9aT3+cJVsOt6bxwdzmgNVIPDzToqxpOgihZG1fwhVZtgovX/UE+PrTP0D/zoLtPAWT1sTbU+LF
-	VEwincG+glJxoarL9eP4t+Nh9JMjtTuVAB6R6wk8=
-X-Gm-Gg: ASbGncuc2rqBg1SItPSS8E0ivJVlrHobIHQtyDf+GNgemL0raTmep0PYbLOzXaloteg
-	Df71Iy35cdkub/sodezPrEqaDhdofDkZZg95WYWN7zpNSzDjXgonLA0siDwrcctrfvxpO4756YR
-	rB+AnrX2xEeZbtJXxxOZ3KKU3DgoFNxDTdBiKL5atePOVWTWT6ZmwcKmdxz+wslLIx9UYohGUNz
-	GakQSrJ5XreptaP2iTE6X+q+XO7qNCu4JUezuxj3Q==
-X-Google-Smtp-Source: AGHT+IEOmJhA81c2EcdAWsEOi7iISjvhpAqjZNsnUwVEGZNHkitaOAR9hKGRTV66vUFpnvBnEZaJD1NlMR06e66xoS8=
-X-Received: by 2002:a05:6902:13cf:b0:e93:3d4b:40d2 with SMTP id
- 3f1490d57ef6-e951c2e654fmr24623033276.15.1756356617250; Wed, 27 Aug 2025
- 21:50:17 -0700 (PDT)
+	s=arc-20240116; t=1756358435; c=relaxed/simple;
+	bh=aGssaD5mfKRD/M7jHhUYvOKit/yKbzr9eL8qZRi9q2I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Sez2QqAHoWm7pI7jHQpc7+LEyRWEEs/lnBgsxckANWTppUr7fuasI3DJdLXPfATpUR+QAn4XWK5TXsz5VNm2b9sWCEbxBxO4oIiVVXTedqyqIEg23HxSnUrq2qcdJGrTbcC2TMjMrpVYUTV6WUpeTvNmeM2R0gdoVQ6I/P+vUFc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4cC89c3Sp9z9sS7;
+	Thu, 28 Aug 2025 06:51:00 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id Ma-oCaIkKbZ1; Thu, 28 Aug 2025 06:51:00 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4cC89c2dhnz9sRy;
+	Thu, 28 Aug 2025 06:51:00 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 3EDDA8B764;
+	Thu, 28 Aug 2025 06:51:00 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id QunPaQfOtMZw; Thu, 28 Aug 2025 06:51:00 +0200 (CEST)
+Received: from [192.168.235.99] (unknown [192.168.235.99])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id F266E8B763;
+	Thu, 28 Aug 2025 06:50:59 +0200 (CEST)
+Message-ID: <4c7e5a00-87dd-4836-a57e-45282ddf4c0b@csgroup.eu>
+Date: Thu, 28 Aug 2025 06:50:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Amit <amitchoudhary0523@gmail.com>
-Date: Thu, 28 Aug 2025 10:20:06 +0530
-X-Gm-Features: Ac12FXxOdYXLf_hiOkWuCwue7z2smQDb9cKoHx2rcvlX5N2kpb4UDP37AGKzMJE
-Message-ID: <CAFf+5zgdRr=1a=AOJ9vc836X7Y8tvhxGqp3GLs7Amcd0ibfUPA@mail.gmail.com>
-Subject: Bash script for taking backups of your files.
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] powerpc/powernv: Rename pe_level_printk to pe_printk and
+ embed KERN_LEVEL in format
+To: Joe Perches <joe@perches.com>
+Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel <linux-kernel@vger.kernel.org>
+References: <df3a7ca31d2002ca447ab062f5b5e32ced9bec85.camel@perches.com>
+ <732ae03a-f0a7-450c-8896-e8a4975a5254@csgroup.eu>
+ <5b914354f29e58097e373dde76ee26b246a64ce6.camel@perches.com>
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+Content-Language: fr-FR
+In-Reply-To: <5b914354f29e58097e373dde76ee26b246a64ce6.camel@perches.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Bash script for taking backups of your files.
 
--------------------
-mybackup.sh
--------------------
---------------------------------------------------------------------
-#!/bin/bash
 
-backup_dir=~/backups
+Le 28/08/2025 à 02:04, Joe Perches a écrit :
+> [Vous ne recevez pas souvent de courriers de joe@perches.com. Découvrez pourquoi ceci est important à https://aka.ms/LearnAboutSenderIdentification ]
+> 
+> On Wed, 2025-08-27 at 18:42 +0200, Christophe Leroy wrote:
+>> Hi Joe
+>>
+>> Le 21/06/2019 à 07:36, Joe Perches a écrit :
+>>> Remove the separate KERN_<LEVEL> from each pe_level_printk and
+>>> instead add the KERN_<LEVEL> to the format.
+> 
+> Hello Christophe.
+> 
+> It's over 6 years since I wrote that.
+> Is that the typical review time? ;)
 
-date=`date "+%Y-%m-%d-%H-%M-%S"`
+:)
 
-set -x
+I'm trying to clean patchwork and drop stale patches that are still 
+there. At the moment we have 240 'new' patches. 88 of them are older 
+than one year, with a few older ones being almost 10 years old.
 
-cp $1 $backup_dir/$1.$date
---------------------------------------------------------------------
+> 
+> I would expect it doesn't apply anyway
+> though it should make the object size
+> a tiny bit smaller.
 
-Example: ~/mybackup.sh myfile.c
+It still applies when doing a 3-way merge indeed.
 
-----
+Christophe
 
