@@ -1,129 +1,149 @@
-Return-Path: <linux-kernel+bounces-789785-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBEA9B39AA5
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 12:51:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 666F6B39AA7
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 12:51:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 937A8171810
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 10:51:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6FF51894D68
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 10:51:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AB2430C63F;
-	Thu, 28 Aug 2025 10:51:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 074AA266581;
+	Thu, 28 Aug 2025 10:51:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b1LKAPb9"
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MCDYFqg5"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9521A266581;
-	Thu, 28 Aug 2025 10:51:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD0CF30DD04;
+	Thu, 28 Aug 2025 10:51:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756378261; cv=none; b=VFeDbPOpg3fB4y7o+XWGgCjhFSmDJpSsZ6hGXk3ItZ0PR1+w2sc1GQ6kpK2eHlD9v0g6+jHODiCh9yPiqlbwFLfuya+RZ+ujOXoCRzddYjpyOcJ4fxAo9q1kInYLZVW80i9RvhtgtPKPwmYTT3DgjESrpU4hmzfwrQCl3bQ2Dig=
+	t=1756378264; cv=none; b=K8qReS44SnzZRmC14VVJRYfunGLr87oIg3zujOUThc+aAdDmzBsADjqfYRmjqz3Nlue9P9RUAU/9/6XRw0QJ8VrNlpWiKrXpniXSq+7yBUMWYsC9kABrDdpl8Yp+LBOKJ89OuBrCgAfRLCPzBOiRkPmii1AFNnuwC3oCa67IUs8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756378261; c=relaxed/simple;
-	bh=UdSOjZUXhhlOMFn1U/XcQFWXcHL7oFM7Rsx0Cl5z8n4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MEXRmxfiU9NFWyLs+vqwdmHvL4/ef5iz5xmqQuBxG1fxwZEB1yCE/H2OGlqiBjRJLJOjgzQE6PkFnQT03dO0ApX4bzGDbdMPWMSONXOn2u0O48QNgvNOfeDXX5l/+uyr+dhP7LCZViyhuxvCheyP1C3vY/JThXHztlDbj3HJMxw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b1LKAPb9; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-32326e202e0so726132a91.2;
-        Thu, 28 Aug 2025 03:51:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756378260; x=1756983060; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=A6haENDeLWLazBhNRGKTGR+4XLRcUjQzDkBqnhzx0iY=;
-        b=b1LKAPb9uSDuwm1eiC7Ct7TWvR5zTKVlvn5SpEZONCfvDQhC0Pg4Ix91mZpcYyfkLl
-         IscYSHnP2+knqf8ovCZ9h7IfaxP9h3CDBvbN05eb230J7O+L4NjMtyTYjGmqMo6L6iDC
-         vOqWDcdUykNKKLaKGaQpnoiyJVUByhnLZGUG4GgT4doDvixTZcn3TqbGzhfoL8i8SmLE
-         A1YFZqsa3rpFYB59AD2N3BwFUE5ZfKDFv9AvWcD3ZateYn8wJiZxj7bI4EZJdf03p8So
-         HWKCDkWnYwOvd7FqDEhbu8XfSd3WEV8Qpos+E2zWr9Zmbs/ItzWKcrVp/Njj0w1BqWsO
-         Ap/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756378260; x=1756983060;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=A6haENDeLWLazBhNRGKTGR+4XLRcUjQzDkBqnhzx0iY=;
-        b=BM0uwikEPt+ZKJJBKU5GnpOJYx43bxOlHfbMljtROW+zn+P8HmyW24dITMXqzXJcX7
-         LpzFKTZtPXmA3UUMjJsX53NLdfFGDJSZEvpDovw1B27TRAF8lWDDOKjdgJFGnhvnkhGT
-         krh4b6ldJLqM/PBjlh1qvsKnuINRpEwylQYogTa2lFT5+30kawT4bYVrRD9b9yL42EHe
-         pM6dphov2oW9fYT1xQPOxVMGqp7j6f4muK6KqAze/QG+DjCiyHjCS/cs9EklVkg+DrLY
-         uFPUQuCidXZIvjFKswfWLLVyVPVs87UTJQkiWyTs+HPcfkM+VmK/FqA0Sv+McrFy/u4f
-         grGw==
-X-Forwarded-Encrypted: i=1; AJvYcCUYHb1XOdKtnKbu/BGzqe/vbKrbWDbyw2wBOm2Rugwvcyxm9r6w0YxOLljBvL+2YOdQ+hkJKRzHtkEm8t8=@vger.kernel.org, AJvYcCWBJ+SPkfb3Pe3EGraV8ivYEtedJGxv+hPjBl8f2D06oulVrdXd3mJWzM4nlzzWrj+oZSrKYINX@vger.kernel.org, AJvYcCWQqsEA/uFJqoM8T+PPjzkeL/hyE46IT7vsiWApLRexmJwBSyH0eMLtC0NdJ90k2mRbv6pK3QXY0+XXbyN/QJ+v9A==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxfn+AbbdKiU9r/I7X0ziitTMYjoCn1uQD3lIBYRlW3+GIHi+7R
-	l4j402rGtXZqkiNYk4rQQ7juyNwos3+D1/gy/2FDL8uyk0X+DffWrkZt
-X-Gm-Gg: ASbGncu3CS021i9JAUx+Fa/ne3biNHEyah+I8bYVX6cYjLHirWgX+MP8HnqsEC8XjbT
-	WHM7VGnIxGSoXNoFxe690pKqWVypDoTwnppiVRe1jBPaIuGf77vA6qZatF8sj0Btq7BQUExigU2
-	sLiHGdUy+8PVmSmXa8c4QwSS3jZftgPOwRmbv6hGbrhUZpl2qqONz9sQx/fCrqSyXgH5luN/i1W
-	Ykx4xXW2iVpF/6jt8PnDEM6c4Pg4HsaaAS4WGZdPzxtCRtfILaNz92rHdIGneJ9wt5B95oHKTEH
-	+YAWCs+tx2iFrcQ4oA9TGUprZs/zhBg0odkmJH/YfT6wdlwiS0h8GdwaVF3IUCYxo2VgqAhoVXb
-	738i8TqlbRaZPzEE4t7uUUM92Qn9WG5EhhOgFmjT0znre2wmGhHfg06B9gpOMuCcL5TjucW5u48
-	Haoa/wg99ZMd4=
-X-Google-Smtp-Source: AGHT+IFAkdvyBfr+8T6WxOlv9hNUG0+xm+ad2NnPu+INkow/PHPDQj1xrnPh5d/zvMidZUBirt8blg==
-X-Received: by 2002:a17:90b:3d89:b0:31e:f397:b5b4 with SMTP id 98e67ed59e1d1-3251744bd7amr27729748a91.22.1756378259805;
-        Thu, 28 Aug 2025 03:50:59 -0700 (PDT)
-Received: from localhost.localdomain ([112.97.61.188])
-        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-3276f592587sm4843177a91.9.2025.08.28.03.50.52
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Thu, 28 Aug 2025 03:50:59 -0700 (PDT)
-From: Miaoqian Lin <linmq006@gmail.com>
-To: Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Stephen Brennan <stephen.s.brennan@oracle.com>,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: linmq006@gmail.com,
-	stable@vger.kernel.org
-Subject: [PATCH] perf lzma: Fix return value in lzma_is_compressed()
-Date: Thu, 28 Aug 2025 18:50:47 +0800
-Message-Id: <20250828105048.55247-1-linmq006@gmail.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+	s=arc-20240116; t=1756378264; c=relaxed/simple;
+	bh=c/PUxj+uLPNIslaZ9UKyYAl/SqcMxUK3XVmgAyCTiNQ=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=Ouk1q5hAKNl0+6HIAgN6KWPz/azc8vJKtvipljmIUH3yd/hKMWWkPYcA1p8e1T0UHdFNH3NG1PlIR/ZSirk34jliUDY9no7LywOw9N3BU2Qc3Sf1OiLnjDwrOtwhFRhLVL/3Dt3c3z3NLFkOWOY69MuiZCjmyxIWYd7fotvmPI0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MCDYFqg5; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756378263; x=1787914263;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=c/PUxj+uLPNIslaZ9UKyYAl/SqcMxUK3XVmgAyCTiNQ=;
+  b=MCDYFqg5Ih8iK80vVrmATH9PEVL04klDxcLVFEuUSDuH7raB6SAiyX4v
+   fsPyioDLG/MuyyFo4r8LJOxEvhttefWY/85/c4exOXCniVHzeOn2e2O11
+   4PD+igp8XJAJvqc0HdS9ikBwwioiJrwfxozqMTlY1z+YyV8243ZzES7Og
+   T1o0z3y+UxtCgqQitXm4sXi9Gb1kO1n352rzsXUOBxAoQ+rLl/SALjUTL
+   nkJDWr0dGLurv+Z4SDbt9G4sdG3dbkcFyjjCMHb6tqLtH2GyZQ0xaWPLN
+   PjHAU46rGzULwhEArSCHzYjHappb6yexJ9uQL5kho5XnpgdGKS77nAj3O
+   g==;
+X-CSE-ConnectionGUID: dm1t04wQR165o0/hdQ6JwA==
+X-CSE-MsgGUID: m4VFK9/LSrq0ZFART558Hw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="62477227"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="62477227"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2025 03:51:02 -0700
+X-CSE-ConnectionGUID: sLwd9dEuRwy5vGLYdyP1Bg==
+X-CSE-MsgGUID: v0WK6UTrTHmIrXsv7jL3Eg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,217,1751266800"; 
+   d="scan'208";a="169377105"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.99])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2025 03:51:00 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Thu, 28 Aug 2025 13:50:56 +0300 (EEST)
+To: Mark Pearson <mpearson-lenovo@squebb.ca>
+cc: hansg@kernel.org, kean0048@gmail.com, platform-driver-x86@vger.kernel.org, 
+    LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 1/3] platform/x86: think-lmi: Add certificate GUID
+ structure
+In-Reply-To: <20250825160351.971852-2-mpearson-lenovo@squebb.ca>
+Message-ID: <a5ecc59a-65bb-a270-9642-f2c59fc958ce@linux.intel.com>
+References: <mpearson-lenovo@squebb.ca> <20250825160351.971852-1-mpearson-lenovo@squebb.ca> <20250825160351.971852-2-mpearson-lenovo@squebb.ca>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/mixed; boundary="8323328-532599953-1756378256=:938"
 
-lzma_is_compressed() returns -1 on error but is declared as bool.
-And -1 gets converted to true, which could be misleading.
-Return false instead to match the declared type.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Fixes: 4b57fd44b61b ("perf tools: Add lzma_is_compressed function")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
----
- tools/perf/util/lzma.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+--8323328-532599953-1756378256=:938
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-diff --git a/tools/perf/util/lzma.c b/tools/perf/util/lzma.c
-index bbcd2ffcf4bd..c355757ed391 100644
---- a/tools/perf/util/lzma.c
-+++ b/tools/perf/util/lzma.c
-@@ -120,7 +120,7 @@ bool lzma_is_compressed(const char *input)
- 	ssize_t rc;
- 
- 	if (fd < 0)
--		return -1;
-+		return false;
- 
- 	rc = read(fd, buf, sizeof(buf));
- 	close(fd);
--- 
-2.39.5 (Apple Git-154)
+On Mon, 25 Aug 2025, Mark Pearson wrote:
 
+> Add a certificate GUID structure to make it easier to add different
+> options for other platforms that need different GUIDs.
+>=20
+> Suggested-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
+> Signed-off-by: Mark Pearson <mpearson-lenovo@squebb.ca>
+> ---
+> Changes in v2:
+>  - split patch up into series
+> Changes in v3:
+>  - add field details to thinkpad_cert_guid declare.
+>  - add missing comma
+>  - Move null thumbprint GUID check to later in series
+>=20
+>  drivers/platform/x86/lenovo/think-lmi.c | 38 +++++++++++++++++++------
+>  1 file changed, 30 insertions(+), 8 deletions(-)
+>=20
+> diff --git a/drivers/platform/x86/lenovo/think-lmi.c b/drivers/platform/x=
+86/lenovo/think-lmi.c
+> index 0992b41b6221..a22d25f6d3c6 100644
+> --- a/drivers/platform/x86/lenovo/think-lmi.c
+> +++ b/drivers/platform/x86/lenovo/think-lmi.c
+> @@ -177,6 +177,28 @@ MODULE_PARM_DESC(debug_support, "Enable debug comman=
+d support");
+>  #define TLMI_CERT_SVC BIT(7) /* Admin Certificate Based */
+>  #define TLMI_CERT_SMC BIT(8) /* System Certificate Based */
+> =20
+> +struct tlmi_cert_guids {
+> +=09char *thumbprint;
+> +=09char *set_bios_setting;
+> +=09char *save_bios_setting;
+> +=09char *cert_to_password;
+> +=09char *clear_bios_cert;
+> +=09char *update_bios_cert;
+> +=09char *set_bios_cert;
+
+const char
+
+> +};
+> +
+> +static struct tlmi_cert_guids thinkpad_cert_guid =3D {
+
+These are not supposed to be altered, right? If so, this should be const=20
+then.
+
+> +=09.thumbprint =3D LENOVO_CERT_THUMBPRINT_GUID,
+> +=09.set_bios_setting =3D LENOVO_SET_BIOS_SETTING_CERT_GUID,
+> +=09.save_bios_setting =3D LENOVO_SAVE_BIOS_SETTING_CERT_GUID,
+> +=09.cert_to_password =3D LENOVO_CERT_TO_PASSWORD_GUID,
+> +=09.clear_bios_cert =3D LENOVO_CLEAR_BIOS_CERT_GUID,
+> +=09.update_bios_cert =3D LENOVO_UPDATE_BIOS_CERT_GUID,
+> +=09.set_bios_cert =3D LENOVO_SET_BIOS_CERT_GUID,
+> +};
+> +
+> +static struct tlmi_cert_guids *cert_guid =3D &thinkpad_cert_guid;
+
+const here as well. Please also note my comment on placement of this in=20
+patch 2.
+
+--=20
+ i.
+
+--8323328-532599953-1756378256=:938--
 
