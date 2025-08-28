@@ -1,61 +1,61 @@
-Return-Path: <linux-kernel+bounces-789583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43295B397A4
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 10:59:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0DD4B397A6
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 11:00:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F152F175153
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 08:59:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 093C23A337C
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 08:59:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D78ED2ECE9E;
-	Thu, 28 Aug 2025 08:59:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BCD52F1FE2;
+	Thu, 28 Aug 2025 08:59:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="pTvI62XZ"
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="FHkLhmcR"
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 634B22ED15A
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 08:59:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7EA92ECEAC
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 08:59:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756371573; cv=none; b=IGIg2KZVWmijPhKcLplVKlmSZCl7pexz2FrS0Ster3IJolM7G2bsSE2AKmdOV4Q3myRKCrkyYTQupIn/u9A5iWF/ztto99tysarPa4vAMtmA6zlQ3QVAOezbD4aCzhSZoL0Bk3s69oFcORZeyHh2x5p9M03l0vn3420/8nzWzIo=
+	t=1756371573; cv=none; b=Tj5jXp4TChs2apjWa+/wvofG0XOfScOwubRbWps4tTs1Gt+TULU4H22it0H/FOAuqz0P2lvBGpMJ9UEKtCCOhIsAxRz70WnNMHCWCoZqtFzTYBKDVu/Nj0SLgNMOA7sFSPBZZvOTKk3y8EdPgf4HSlSmjmgGc5vLiFc0KUGIjVA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1756371573; c=relaxed/simple;
-	bh=Rv6CyOoBS0W6yMgI9XY7ZWoTbg3KKhO83xxoSL9tWoI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:
-	 References; b=QG6H8LHIjTFTH5oE80PDUlntM+ihh75tDc58UTy34/8HW5WwUFjuaI6KH5NWd7UTVjPMOKmzVW4K4e+6zEw6ZMXBd6fMCl4KylurhnzYIrFONvtWZFKBYaWFHtVrNJf4F5akfT66tOmuRwJGMFKGsvcxoQebKLQjoGFE76OChE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=pTvI62XZ; arc=none smtp.client-ip=203.254.224.24
+	bh=dQvNhzCuQBbDzPTHUgUTSzIHMORb3jTRG7p6bMnYcPM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:MIME-Version:
+	 Content-Type:References; b=ZYWMbH6AoP45qSOKdpxIePUnyf7Zab6JAvBZd396JJPWsKte60q2G4SK6MfHBTwCd4/497vEvt6o52zi2gOrNVJupckG5SlKLjDvFJXP6LkBuT0f8+qin3dZQ0x5qluOhHm/wx5+cjYuCh6siG9Fqvy1PW5q3kF19XlzHoiIL0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=FHkLhmcR; arc=none smtp.client-ip=203.254.224.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250828085924epoutp01f749418b74e6abc92c77bf0900f689f1~f4qHSOtVU1190311903epoutp01h
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 08:59:24 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250828085924epoutp01f749418b74e6abc92c77bf0900f689f1~f4qHSOtVU1190311903epoutp01h
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250828085928epoutp0357a313f291f2d64cc75f6439b0b75148~f4qLkw9yF0107501075epoutp03l
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 08:59:28 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250828085928epoutp0357a313f291f2d64cc75f6439b0b75148~f4qLkw9yF0107501075epoutp03l
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1756371564;
-	bh=YaV1VCJbwEKqNvJ8DCaGfJQT4gOTln3mHx4bL14ILXs=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=pTvI62XZb1VR5uxk4RXbccIKcAbv1L3jmADiyjJSi9EOaOiXRVk7xwK4jzRp2wDMM
-	 ayMp1ltLEK7a6ho4Rl80ZbHDeXP6th3LjapPgPZ+fNHqXcnylVGtpwU1tHpOtwv0vD
-	 dr5oHULb4FNswNaRo2/pR46QZg1DrbvWhkIKt6eM=
-Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPS id
-	20250828085923epcas5p4276b477fa880021927a43b3304ee9b26~f4qGgLVUj1772417724epcas5p4y;
-	Thu, 28 Aug 2025 08:59:23 +0000 (GMT)
-Received: from epcas5p3.samsung.com (unknown [182.195.38.90]) by
-	epsnrtp01.localdomain (Postfix) with ESMTP id 4cCFhB3Nj9z6B9m6; Thu, 28 Aug
-	2025 08:59:22 +0000 (GMT)
+	s=mail20170921; t=1756371568;
+	bh=Nh+NV/RCQEe7YpPNjzL9CCS4Sy68m8a+56F+E9QurCM=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=FHkLhmcR1r597S1wksvh9dJ25IOlg8H66lwtNHHyS6dMC8Y25dIfXxWyuNk7xk03m
+	 kSqiVaEAPRubOUHPXOA+zMhM1y6PGGS9feTRAH3Ct1CkG71EpsOxnLqVi7gVC7P7tv
+	 zrp9m1ACpvcU9YYIvv2DZgZEKqRXAYF0T5YkFziY=
+Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
+	20250828085928epcas5p13a4867c73b3c3e4ba4afbd9dd228c504~f4qK_IiF00547205472epcas5p1w;
+	Thu, 28 Aug 2025 08:59:28 +0000 (GMT)
+Received: from epcas5p4.samsung.com (unknown [182.195.38.92]) by
+	epsnrtp02.localdomain (Postfix) with ESMTP id 4cCFhH2CZWz2SSKZ; Thu, 28 Aug
+	2025 08:59:27 +0000 (GMT)
 Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-	20250828085921epcas5p44f9371fb004fe0aa8bf68d1230e01861~f4qE65rNv1995619956epcas5p40;
-	Thu, 28 Aug 2025 08:59:21 +0000 (GMT)
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250828085926epcas5p1b82576210280fb44c6c7f02851da71c6~f4qJgV6OG0547105471epcas5p1m;
+	Thu, 28 Aug 2025 08:59:26 +0000 (GMT)
 Received: from cheetah.samsungds.net (unknown [107.109.115.53]) by
 	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250828085918epsmtip246c42f8ece911f2a426316d886ff3883~f4qCR2X9_0306303063epsmtip2U;
-	Thu, 28 Aug 2025 08:59:18 +0000 (GMT)
+	20250828085923epsmtip25f82c5e1bb289e9b9357c0b6a86fd6d4~f4qG3h2CV0309203092epsmtip2h;
+	Thu, 28 Aug 2025 08:59:23 +0000 (GMT)
 From: Inbaraj E <inbaraj.e@samsung.com>
 To: rmfrfs@gmail.com, laurent.pinchart@ideasonboard.com, martink@posteo.de,
 	kernel@puri.sm, mchehab@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
@@ -66,10 +66,11 @@ Cc: kernel@pengutronix.de, festevam@gmail.com, linux-media@vger.kernel.org,
 	linux-samsung-soc@vger.kernel.org, pankaj.dubey@samsung.com,
 	ravi.patel@samsung.com, shradha.t@samsung.com, Inbaraj E
 	<inbaraj.e@samsung.com>
-Subject: [PATCH v3 0/7] Add FSD CSIS support
-Date: Thu, 28 Aug 2025 14:29:04 +0530
-Message-ID: <20250828085911.81266-1-inbaraj.e@samsung.com>
+Subject: [PATCH v3 1/7] dt-bindings: media: nxp: Add support for FSD SoC
+Date: Thu, 28 Aug 2025 14:29:05 +0530
+Message-ID: <20250828085911.81266-2-inbaraj.e@samsung.com>
 X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250828085911.81266-1-inbaraj.e@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,87 +78,181 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20250828085921epcas5p44f9371fb004fe0aa8bf68d1230e01861
+X-CMS-MailID: 20250828085926epcas5p1b82576210280fb44c6c7f02851da71c6
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 CMS-TYPE: 105P
 cpgsPolicy: CPGSC10-541,Y
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250828085921epcas5p44f9371fb004fe0aa8bf68d1230e01861
-References: <CGME20250828085921epcas5p44f9371fb004fe0aa8bf68d1230e01861@epcas5p4.samsung.com>
+X-CMS-RootMailID: 20250828085926epcas5p1b82576210280fb44c6c7f02851da71c6
+References: <20250828085911.81266-1-inbaraj.e@samsung.com>
+	<CGME20250828085926epcas5p1b82576210280fb44c6c7f02851da71c6@epcas5p1.samsung.com>
 
-The Tesla FSD SoC includes a MIPI CSI-2 receiver IP core named CSIS
-(Camera Serial Interface Slave) IP, which is compatible with the CSIS
-IP present in NXP i.MX7 and i.MX8 SoC.
+The Tesla FSD CSIS link controller is used to configure MIPI CSI-2
+Rx link operations.
 
-The Tesla FSD SoC CSIS IP version is 4.3. This version of the CSIS IP
-bundles MIPI CSI-2 link controller and video capture interface. The MIPI
-CSI-2 link operation are integrated into the imx-mipi-csis driver, while 
-the video capture interface is implemented in the fsd-csis driver.
+The Tesla FSD SoC include a MIPI CSI-2 Rx IP core named CSIS, which is
+compatible with the CSIS IP found in NXP i.MX7 and i.MX8 SoCs. Add the
+compatible string "tesla,fsd-mipi-csi2" to support the MIPI CSI-2 Rx
+link operation on the Tesla FSD SoC.
 
-The Tesla FSD SoC contains 12 instances of CSIS IP and 3 D-PHYs, with 4
-CSIS instances sharing a single D-PHY.
+Signed-off-by: Inbaraj E <inbaraj.e@samsung.com>
+---
+ .../bindings/media/nxp,imx-mipi-csi2.yaml     | 91 +++++++++++++++----
+ 1 file changed, 71 insertions(+), 20 deletions(-)
 
-The D-PHY interface exposes only the reset through Samsung SYSREG
-controller.
-
-This patch series does the following:
-1) Add the necessary DT-binding documents.
-2) Refactor the imx-mipi-csis driver to support platform specific
-clock names and interrupt handlers through device specific data
-(struct mipi_csis_info).
-3) Add support to dynamically select the VC from the subdevice.
-4) Add Telsa FSD CSIS link controller support in imx-mipi-csis driver.
-5) Introduce a new media driver(fsd-csis) for the Telsa FSD video
-capture interface to capture frames.
-
-These patches were tested on the FSD platform using the
-capture_raw_frames application.
-
-Changes since v1:
-1. Addressed review comments from Laurent Pinchart to integrate the
-with imx-mipi-csis.c to handle the CSIS and expose it as a subdev.
-
-Here is the link to v1 patch for reference:
-https://lore.kernel.org/linux-media/7e7832c16925386b771ddb7e00e08661115aa0ea.1668963790.git.sathya@samsung.com/ 
-
-Changes since v2:
-1. Improved commit description across all the patches.
-2. Changed syscon prefix from samsung to tesla.
-3. Changed config from VIDEO_FSD_CSIS to VIDEO_TESLA_FSD_CSIS.
-4. Fixed pll clock leak in probe.
-5. Rebased the patches on top of laurent pinchart patchset.
-
-Here is the link to v2 patch for reference.
-https://lore.kernel.org/linux-media/20250814140943.22531-1-inbaraj.e@samsung.com/
-
-This patchset is dependent on following laurent pinchart patchset.
-https://lore.kernel.org/linux-media/20250822002734.23516-1-laurent.pinchart@ideasonboard.com/
-
-Inbaraj E (7):
-  dt-bindings: media: nxp: Add support for FSD SoC
-  dt-bindings: media: fsd: Add CSIS video capture interface
-  media: imx-mipi-csis: Move clk to mipi_csis_info structure
-  media: imx-mipi-csis: Move irq flag and handler to mipi_csis_info
-    structure
-  media: imx-mipi-csis: Add support for dynamic VC selection
-  media: imx-mipi-csis: Add support for Telsa FSD CSIS.
-  media: fsd-csis: Add FSD CSIS video capture interface support
-
- .../bindings/media/nxp,imx-mipi-csi2.yaml     |   91 +-
- .../bindings/media/tesla,fsd-csis-media.yaml  |   76 +
- MAINTAINERS                                   |    8 +
- drivers/media/platform/nxp/imx-mipi-csis.c    |  330 +++-
- drivers/media/platform/samsung/Kconfig        |    1 +
- drivers/media/platform/samsung/Makefile       |    1 +
- .../media/platform/samsung/fsd-csis/Kconfig   |   18 +
- .../media/platform/samsung/fsd-csis/Makefile  |    3 +
- .../platform/samsung/fsd-csis/fsd-csis.c      | 1693 +++++++++++++++++
- 9 files changed, 2161 insertions(+), 60 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/media/tesla,fsd-csis-media.yaml
- create mode 100644 drivers/media/platform/samsung/fsd-csis/Kconfig
- create mode 100644 drivers/media/platform/samsung/fsd-csis/Makefile
- create mode 100644 drivers/media/platform/samsung/fsd-csis/fsd-csis.c
+diff --git a/Documentation/devicetree/bindings/media/nxp,imx-mipi-csi2.yaml b/Documentation/devicetree/bindings/media/nxp,imx-mipi-csi2.yaml
+index 41ad5b84eaeb..39b9447fd40c 100644
+--- a/Documentation/devicetree/bindings/media/nxp,imx-mipi-csi2.yaml
++++ b/Documentation/devicetree/bindings/media/nxp,imx-mipi-csi2.yaml
+@@ -14,7 +14,7 @@ description: |-
+   The NXP i.MX7 and i.MX8 families contain SoCs that include a MIPI CSI-2
+   receiver IP core named CSIS. The IP core originates from Samsung, and may be
+   compatible with some of the Exynos4 and S5P SoCs. i.MX7 SoCs use CSIS version
+-  3.3, and i.MX8 SoCs use CSIS version 3.6.3.
++  3.3, i.MX8 SoCs use CSIS version 3.6.3 and FSD SoC uses CSIS version 4.3.
+ 
+   While the CSI-2 receiver is separate from the MIPI D-PHY IP core, the PHY is
+   completely wrapped by the CSIS and doesn't expose a control interface of its
+@@ -26,6 +26,7 @@ properties:
+       - enum:
+           - fsl,imx7-mipi-csi2
+           - fsl,imx8mm-mipi-csi2
++          - tesla,fsd-mipi-csi2
+       - items:
+           - enum:
+               - fsl,imx8mp-mipi-csi2
+@@ -38,24 +39,21 @@ properties:
+     maxItems: 1
+ 
+   clocks:
+-    minItems: 3
+-    items:
+-      - description: The peripheral clock (a.k.a. APB clock)
+-      - description: The external clock (optionally used as the pixel clock)
+-      - description: The MIPI D-PHY clock
+-      - description: The AXI clock
++    minItems: 2
++    maxItems: 4
+ 
+   clock-names:
+-    minItems: 3
+-    items:
+-      - const: pclk
+-      - const: wrap
+-      - const: phy
+-      - const: axi
++    minItems: 2
++    maxItems: 4
+ 
+   power-domains:
+     maxItems: 1
+ 
++  tesla,syscon-csis:
++    $ref: /schemas/types.yaml#/definitions/phandle-array
++    description:
++      Syscon used to hold and release the reset of MIPI D-PHY
++
+   phy-supply:
+     description: The MIPI D-PHY digital power supply
+ 
+@@ -93,7 +91,8 @@ properties:
+             properties:
+               data-lanes:
+                 description:
+-                  Note that 'fsl,imx7-mipi-csi2' only supports up to 2 data lines.
++                  Note that 'fsl,imx7-mipi-csi2' only supports up to 2 data
++                  lines.
+                 minItems: 1
+                 items:
+                   - const: 1
+@@ -115,7 +114,6 @@ required:
+   - interrupts
+   - clocks
+   - clock-names
+-  - power-domains
+   - ports
+ 
+ additionalProperties: false
+@@ -124,20 +122,73 @@ allOf:
+   - if:
+       properties:
+         compatible:
+-          contains:
+-            const: fsl,imx7-mipi-csi2
++          const: fsl,imx7-mipi-csi2
+     then:
++      properties:
++        clocks:
++          items:
++            - description: The peripheral clock (a.k.a. APB clock)
++            - description: The external clock (optionally used as the pixel
++                clock)
++            - description: The MIPI D-PHY clock
++        clock-names:
++          items:
++            - const: pclk
++            - const: wrap
++            - const: phy
++        tesla,syscon-csis: false
++        fsl,num-channels: false
+       required:
++        - power-domains
+         - phy-supply
+         - resets
+-    else:
++
++  - if:
++      properties:
++        compatible:
++          const: fsl,imx8mm-mipi-csi2
++    then:
+       properties:
+         clocks:
+-          minItems: 4
++          items:
++            - description: The peripheral clock (a.k.a. APB clock)
++            - description: The external clock (optionally used as the pixel
++                clock)
++            - description: The MIPI D-PHY clock
++            - description: The AXI clock
+         clock-names:
+-          minItems: 4
++          items:
++            - const: pclk
++            - const: wrap
++            - const: phy
++            - const: axi
++        tesla,syscon-csis: false
++        fsl,num-channels: false
+         phy-supply: false
+         resets: false
++      required:
++        - power-domains
++
++  - if:
++      properties:
++        compatible:
++          const: tesla,fsd-mipi-csi2
++    then:
++      properties:
++        clocks:
++          items:
++            - description: The peripheral clock (a.k.a. APB clock)
++            - description: The DMA clock
++        clocks-names:
++          items:
++            - const: pclk
++            - const: aclk
++        phy-supply: false
++        resets: false
++        power-domains: false
++      required:
++        - tesla,syscon-csis
++        - fsl,num-channels
+ 
+ examples:
+   - |
 -- 
 2.49.0
 
