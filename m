@@ -1,215 +1,504 @@
-Return-Path: <linux-kernel+bounces-789472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 893EEB39602
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 09:55:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 60098B39608
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 09:55:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1653336644A
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 07:54:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6171C365C5B
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 07:55:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1D7F2D9798;
-	Thu, 28 Aug 2025 07:54:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6108C2D7395;
+	Thu, 28 Aug 2025 07:55:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="M9iY5eWB"
-Received: from TYPPR03CU001.outbound.protection.outlook.com (mail-japaneastazon11012048.outbound.protection.outlook.com [52.101.126.48])
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="LrSwYwe0";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="b+JJBEoE"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BC332D7D2A;
-	Thu, 28 Aug 2025 07:54:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.126.48
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756367677; cv=fail; b=Z/75Pq+R4I0I5ksb0Tl/oT76dhtOOB2QB96jJOGB52jN5S1scFoawTt8xVY1DBctWPLzRGcyS9gnTXV9j6DC241knXifYzUyV6XvpiGUJAF6XI0ufnRM8kWpTogoMDqOk8PwvU0N77QoSUM0dCTK+hpgfgJbIyIjjYTdd4vUooY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756367677; c=relaxed/simple;
-	bh=6Z9gTnMQFVKSiUjys6UZxcO3oh61l8t9zs/LHDoSofQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Pn9qtljL6J6kbrqPbiyqY8TuYYfxKCuCZEb51gUywcOnz/kQ+uWhasdD1Fv13hY4NptcyEwiQa4XxZs44iFBYO2NoYsu6rwfzu6xCgKf2rirL4FfOwkS15pDR/YLrEV9gFxD/EFzdjw2ll4Wn6+iW15YF+qbxPZvACs5ka3rZlU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=M9iY5eWB; arc=fail smtp.client-ip=52.101.126.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=FLPkexem840dfSYZs7ZrRYsWsOF5+ZA8ke7XD+P0Hx9kLh0A5rV1vvUv9TPnVYV2kwi7gtLlF7d+eorjVsyvoVKhXibwmkW/IGREQcP3X4BlI/SPg+3H3GZz2uNyEUpnSx7vnGGrayfXJT9zjcRcftg1ynQ/MO/w2DN2icZhwQukuDgPDzbBs9RNk7nVmeztBHUK2ebAgyjYc8yavn62AmHtM9y0L3GFolPO0OV8lmO4YCCSs70G2O2eiBcwyzv2o4VZo8390w73Ms79GHcnYPoT6E2HGKKpVIEgF1fuigvo8qG4ihR1Xxb4yjlRiJWViyBIxCNWA6rPdghAJfibwA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=+exmfFy50U66Vpx636GetyUys/+/8Ndzm5Raf+BPJGs=;
- b=CFNo6cCnTmBqaWdODc3j0PC8CZ44iAsNHB+aEWGVzkbNM5BjZDgyvmGWE7GIfFJYJMC4aQIZr738dc7E3LVkyPJumYm+BldhFavU9UjVY6S6q8KCQIA+zMrbn6cCl+VpETbn57bRzHsHnYGG3qND3KWJ3YcUnEVUoyw2oczlW1dpArxVVVzun60kLDvgwUvlJMcBsfLjZ9wp5jqazLEljRPztAbr6rjgrCgmBazoHUZna/YM+/nw6+G+ZKH75o/r1+joTspuGE/a6ym4vgXvsmDUhP4A83R07nAqN6lB0uUK1HDAyYaGsTXM51hnivlnud7khpH2+XtoviykZooR5A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+exmfFy50U66Vpx636GetyUys/+/8Ndzm5Raf+BPJGs=;
- b=M9iY5eWB6Q958JIOYDfzMcVXp8qto88Joo/wLvLzEIGUhAn5gdGAjgpNdZBHEEP71+ySdotpYIUi7EZBo4Rl2Sdhu16oftRpwN0af/wSMFj663IQ/KWyUl6tFFlhbrC3hrl5sPI6wyd3nHn+eZyzgjkCqgAW7/DW/GWHO8mKoGNXDKeHpagtTmE98MoQiBZix0a/bbDhSLjQQbzudfzbZ9HlBiHPvxf1bjQL4K5uHYLWBcTbdWhr+8X9AuUd2YypliVA9Ar/7PurQoRQoDc3a1X6uOVMoEwS8i3eRcBowwnVoJsjs8ga9eHqeZKXrdQh8egn0m1zNc1S+exidOvV/w==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from SI2PR06MB5140.apcprd06.prod.outlook.com (2603:1096:4:1af::9) by
- KL1PR06MB7035.apcprd06.prod.outlook.com (2603:1096:820:11b::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.16; Thu, 28 Aug
- 2025 07:54:34 +0000
-Received: from SI2PR06MB5140.apcprd06.prod.outlook.com
- ([fe80::468a:88be:bec:666]) by SI2PR06MB5140.apcprd06.prod.outlook.com
- ([fe80::468a:88be:bec:666%5]) with mapi id 15.20.9073.010; Thu, 28 Aug 2025
- 07:54:34 +0000
-From: Qianfeng Rong <rongqianfeng@vivo.com>
-To: Srinivas Kandagatla <srini@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	linux-sound@vger.kernel.org (open list:QCOM AUDIO (ASoC) DRIVERS),
-	linux-arm-msm@vger.kernel.org (open list:QCOM AUDIO (ASoC) DRIVERS),
-	linux-kernel@vger.kernel.org (open list)
-Cc: Qianfeng Rong <rongqianfeng@vivo.com>
-Subject: [PATCH 3/3] ASoC: qcom: use int type to store negative error codes
-Date: Thu, 28 Aug 2025 15:53:59 +0800
-Message-Id: <20250828075406.386208-4-rongqianfeng@vivo.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250828075406.386208-1-rongqianfeng@vivo.com>
-References: <20250828075406.386208-1-rongqianfeng@vivo.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: TY4P301CA0019.JPNP301.PROD.OUTLOOK.COM
- (2603:1096:405:2b1::13) To SI2PR06MB5140.apcprd06.prod.outlook.com
- (2603:1096:4:1af::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C5432773D5;
+	Thu, 28 Aug 2025 07:55:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756367743; cv=none; b=IRTzw+SZy9/7lFl+xAKfh8Xo7amPch2Nfm4oGEsiGeAlw4MicmkathdYjBMDh8D63/uPUf8HNM3eINzoxdcVn3KTqnG1DlESywHSzeUeNm5Xu8Ju6+RsiHh7ws/juYcwjTPcXzA/Et2gncOQ4ecwAioJlCq8D2YtxEF3IkZr2tQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756367743; c=relaxed/simple;
+	bh=dB21VovnO+BqnjAuPsDy6yMgRCa5sL1/EBBYFLHvMBY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=aHqvkRiHFpUoTc6sbiC7ZYltaaE47EtatrVW4CWxss4XxfWMgQUMudCdOFVL0H0HGNW2CnqHYdXC0gMI5iMCvfIxBy+nnd0sCjP7mxVxI/CppJFqk2qow+YXAr7iSKwJDK+fesEQeGmgyVuzJqlaB1FB7vH7iNwlANviWlG6q0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=LrSwYwe0; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=b+JJBEoE reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1756367739; x=1787903739;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=5HwiAk4UaJ/0RnREoKOoLiBWJI8eHPDmXvmgOzLgPWo=;
+  b=LrSwYwe0yL6FYd9XaX81GXaL8eA/88ukxXxQxbWzyg812ZcISsoOd/v7
+   FrlLp+2S6skVVUgIqIguOtojNKQUAczMokOS1Qyz0moqYkbrF7nbJtudj
+   1FlxYH7DsBTMN8IZUDsyq0DWKvdQ+0xL1hAbVu3k/pARWAPW911fzAKHb
+   DDyBwAVmygjWnQmxibbW7kxxuTX9VzPSJhPylL4H1meiMBoDoVjtmXiTz
+   4nccTcFLOJCIsmD6qyXsUiYbr3qhz63u9n+9yDpzNzw6lkzqs4b+pUf77
+   ybBf4Sjfhx2GXXNmtmtWeLSeN/wkpxrKIdZxNcB39MIwQTWmOKJjoxIIq
+   Q==;
+X-CSE-ConnectionGUID: DT7/qzjVS322pF82mqZonQ==
+X-CSE-MsgGUID: Nme356ZFScCFBcwqXo/rFQ==
+X-IronPort-AV: E=Sophos;i="6.18,217,1751234400"; 
+   d="scan'208";a="45949455"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 28 Aug 2025 09:55:28 +0200
+X-CheckPoint: {68B00B70-28-820F521C-C7779E56}
+X-MAIL-CPID: F4DDEA0D02B3B61D9A99DB4722F13A30_4
+X-Control-Analysis: str=0001.0A002109.68B00B0B.0011,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 565541609FD;
+	Thu, 28 Aug 2025 09:55:20 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1756367724;
+	h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=5HwiAk4UaJ/0RnREoKOoLiBWJI8eHPDmXvmgOzLgPWo=;
+	b=b+JJBEoE5ceAFZwdG8+H/uZU0uJwXkaIxAEoC/nSuaJ+H2jKgPXXwb/8HWJ9tYpaBZdvvZ
+	NV7i4LwG/avXFqtYV6NYxfsbzz18M3kdGrSK9KV3j2pPqyJWzKWcFMgYFJ6SKuLCVQ6Q73
+	00t2CwkBomDcZR0xlOC5UueJobU2N+66yVFdZUqLM0Sr02kk3whP3+woc9laFeKQmcGVGM
+	/YPLcWHyOIhn5sN9SMwsUU8fLFCDXSWbo4JdUYa2IPBWaVmh27QJy95gjhIqxVVPbkLpu5
+	u7d57S7O+Ts6eKFwkvmQPiqs/nt/RxCi49vvt80PQX4oL1nBCHNXdaYE0S9Mvg==
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+ festevam@gmail.com, richardcochran@gmail.com, andrew+netdev@lunn.ch,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com,
+ frieder.schrempf@kontron.de, primoz.fiser@norik.com, othacehe@gnu.org,
+ Markus.Niebel@ew.tq-group.com, linux-arm-kernel@lists.infradead.org
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux@ew.tq-group.com, netdev@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com, Frank.Li@nxp.com,
+ Joy Zou <joy.zou@nxp.com>
+Subject:
+ Re: [PATCH v9 1/6] arm64: dts: freescale: move aliases from imx93.dtsi to
+ board dts
+Date: Thu, 28 Aug 2025 09:55:18 +0200
+Message-ID: <7849995.EvYhyI6sBW@steina-w>
+Organization: TQ-Systems GmbH
+In-Reply-To: <20250825091223.1378137-2-joy.zou@nxp.com>
+References:
+ <20250825091223.1378137-1-joy.zou@nxp.com>
+ <20250825091223.1378137-2-joy.zou@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SI2PR06MB5140:EE_|KL1PR06MB7035:EE_
-X-MS-Office365-Filtering-Correlation-Id: ce1d5d7f-4ae9-4dd0-cde0-08dde60820ec
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|52116014|376014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?wrjNAP3hIRz/GeA5P7aR22qnlGTXzQgNbz1/ZjYnH0w2PUx7SRdW0VtV2Hy+?=
- =?us-ascii?Q?tfjQnhftjGbZzwubOQfUl5hxcWF6SLjxE/M1CcihvZmzzFugMyJnBjlYb2Ko?=
- =?us-ascii?Q?KHbKzFOuyOREsb4kmmzajdRgG1NJKhnD+A0pdjnCi2mN+c44/TXNVtyC26hX?=
- =?us-ascii?Q?6Tg4MG/J+GdYXO8GCunwFlzzU5385qmYlRLFm8hy4aFYhxHrkJN7CmsjHp44?=
- =?us-ascii?Q?U/h1lkuJ/Bdx8Lh1wjbCm2z4qndkZIX2D68Ac5HlDTn55K6hzjj4uQUD/6LJ?=
- =?us-ascii?Q?aBjKx7i7XZEpRECyjxOaDqg9WIc2EM8GwoTQroq9bx3+3gla3zt0Y1BlDk75?=
- =?us-ascii?Q?ZTdgMYDFMAa7fjVexlopZqcemovOayPuKTFExZmsuFOjLSDH8vp/7LvW6Eks?=
- =?us-ascii?Q?qEqmvdJYhEaVbSoKbFRPbiVB8tUT1bjOHVr9eDTcSMrUCTNokl9RLl63kWS0?=
- =?us-ascii?Q?U3soSYKe5jm0oWrwqkCLwdiv4+u1RotOpkTJxwxfNcLmE0idTaFDb1MrQ78d?=
- =?us-ascii?Q?7uoVEPMop34ym9/OgQp9hSDWZJpvWPWn93EGnvK1ShGrqLONif2VJGovbsPL?=
- =?us-ascii?Q?UyQx23/VR5Cwyne9Rh/D2MCpfd2jdBm2Vft+LtXmwcrfnjDBFkq+w253y8A0?=
- =?us-ascii?Q?fnlveF8ky9RPwlv6/a7MiclEbVJbc+oZNda/RA6BDmokb7fyVgaz4Iny+D6t?=
- =?us-ascii?Q?+83u187+BXPALCbb8dyWozKjXrsr0uAy8obhYb4rZ6WhWeboHmtpuU8vLX4k?=
- =?us-ascii?Q?Okzxcj6VmMmBWaGh44mDbV2yywKidZxPlg0fbR9M0MOvNeneTOWQKM8XRqEV?=
- =?us-ascii?Q?FqY+mvzv/Yps/pTZU/0E14FxkfLGHVgSPuejZWZDHtJXsNJDCKhe/+i5AqIi?=
- =?us-ascii?Q?6zMczgO9jbXrbImJNKGcCCx7cmENZL+mBt3UazOtUfqiJv+wA4JTechxgqk6?=
- =?us-ascii?Q?pTc8WQCXSmjLVH9lIA7I3jlyE81LrDKv4mWzrTX0/7pWHsvC2kS7SSPfzAja?=
- =?us-ascii?Q?3pXDqLv7+DPQ4z0bDLawcM3H8TIxDy+3128ifDj/7j8ylcZzByEhFx3QJr3I?=
- =?us-ascii?Q?Ee8Lhz1ddjxVGZ45m7ZojC1j6W0FZ8ctyQBXonSoSvptO6Pd5NwwqkWa98lk?=
- =?us-ascii?Q?/J/D8Y+BiOEGuXN7DatTqvnhUaQA3RZhsWNH3tpoaJISDjMeuCiVS98v0WnF?=
- =?us-ascii?Q?HEppU0bW6BeXIEaEf/0kMTHs9U/FQRFRMeQ0Z1QAqbezgrQw8H49TTRRAs0J?=
- =?us-ascii?Q?wXqGrh1P0quoph85jI/wxpNcVjHYPCaoDEq1D1aYtYyR3R5o/rTZQaOE/yOk?=
- =?us-ascii?Q?CPdrChw7Ppa+OvpUaXTkfzMrxNa9MRwGErPFvb2lZEOw+Fh75uAR0hiuS7H8?=
- =?us-ascii?Q?qTX23G9RQ5MuHsEwijPSAGZJFGURVxqaY454CynvLHOpc2MgXZctwB6houmj?=
- =?us-ascii?Q?tFf9XeNWmz8CnqXhHj+uWHmvYOswse1lprXXeDTktaB0+Nxi6JgYaw=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SI2PR06MB5140.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(52116014)(376014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?g+7if/bpymBk9EYVcZEIlXcI3yLZuCx9aXPOWRcrx13lI+7nyvIiijXokjlm?=
- =?us-ascii?Q?OdX8Wot8lHbIpcifRwPx7UNHRGBRJNspCXjPmcTf9mjIvMOFgShThjKK0c/h?=
- =?us-ascii?Q?vuRI2YIxoM2yngGtX39R2AwZi+fW3I9/OljfKuDx/6K0FPsNGbFGSbvdM8ji?=
- =?us-ascii?Q?EvS/qvqnd3Pw/aBfQyY1xtBLOZMFWkzNK15B97SvLfzoOG5Jja5I2ePAeb3j?=
- =?us-ascii?Q?S+V/wpIiS0JnayE1JmuwnMA/vIEM5pLtQromZhvPQ2YdGEcnJZFC22PHAxeP?=
- =?us-ascii?Q?KE4Tzj5NbmyosNYPeBHlatYo6MND3Q+oFBqfdpBX+uRDQRIo3myunp+3OfLC?=
- =?us-ascii?Q?XWf05eoExt7t33wZKqxnQQ8QWwkxerqiixULWaM4EQkpbk/AnOFPwVoF3xni?=
- =?us-ascii?Q?Oh7mjAwRDAI13eKb+CpDvFQ+Fk6BK51X8Ef5jumicQdIWorm16uFZtxpcfv/?=
- =?us-ascii?Q?vvVnB18Gy0f/hgkYGLUifh49rI45o7yzWoRnCLFvlNt34YhsvDRJhelfEsND?=
- =?us-ascii?Q?FEjyidI4jbmnr7NH2S0T4Pxce22mIcl4OP0GHRyLH8lWtPtQc99MBbtAtN0I?=
- =?us-ascii?Q?GE/9X04W1Mvm6dlFLKYAvsKVmQLR43rPpLD3IYq2jAbyci9izakbBPSky6Zz?=
- =?us-ascii?Q?uWt+SqcSmG5hKnObQ4iYpS6J+UjAq1PlxYAzqByWCDgplhSkVuM/IQWAGI4v?=
- =?us-ascii?Q?j17Tg4WhInuTERv8W+ysCXYLYvBokubCabIRpHaO+iUd2EAntBLkl/MEX2me?=
- =?us-ascii?Q?f0dg0pQDqw+npAyJZ+hFpG5UQmYlyroo+ngoT31VJTGn5rf9xTMPbYQYHE3t?=
- =?us-ascii?Q?xobuei9LrJIeMHLucOAd2kzVSJO6Eh0Xxwaqcd5O9Klf/15mf+uD5oOddnKp?=
- =?us-ascii?Q?wfTJpbfz1lCGGAmA684mZfC/GALQUaVs1DceoiBYS15D/WLNMEqmOJiRIjZk?=
- =?us-ascii?Q?cvuEfJw1nBZTs4gnFcgdOOSQMpx1Tc+2OQ0lgToigzvYKZCh3q0dG5kK2r2h?=
- =?us-ascii?Q?jI82DTsmIrDNZm+dGpNSokeUi3FFRrEnToVF9q4xbm//Iz1MOsFx34rhY+zm?=
- =?us-ascii?Q?+j9ltC86LsjJgmmoX0UKd2XnvFZNk8L+myGkNDV/s0B/7mf233g3aa0iWXYB?=
- =?us-ascii?Q?FvekTo4o5YHjXictHtLwgcsTTfRTtUUqPWtMJdbjUtknbCXJwcHtMgWVm6Mb?=
- =?us-ascii?Q?gh0+fWzIuXmutcqf+rt/kdYIXBJuy4INzSPTwuPQDBF9N2Gn5IeZg73UgnG+?=
- =?us-ascii?Q?5ziJjB5FZORfQyKaFAlMFZIRggbcjORRG9cwpS4AWwXMo0+fFJfRIWUkMkRj?=
- =?us-ascii?Q?d9m2Mb8QdAAy/ARABVY2u+kDMvaygFIBwR7kZuBzZyEEfjX8bKUB9/IO5eUd?=
- =?us-ascii?Q?vK6rSbZLkSgTmQszML20m3MjkNGI0AUPFy9R9saUFbyqmWq5TqIOm8q1u/Hj?=
- =?us-ascii?Q?w2FVPPJ2IVdhrSp7dFVzgwV5d3VPSjxlJFylRgRMxABqjXv8QJ0kzfNULEQJ?=
- =?us-ascii?Q?6X/Dpxx3rYwpUZUmd5ix+Ad/WStYjlOQuFw/d5xU+9TsFwUQ7RWWMy5TONF1?=
- =?us-ascii?Q?OdF83wXHtvVRwNwNTm7aQTMpQH+/rcGN/MLgVBJS?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ce1d5d7f-4ae9-4dd0-cde0-08dde60820ec
-X-MS-Exchange-CrossTenant-AuthSource: SI2PR06MB5140.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Aug 2025 07:54:34.5124
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: M5b0j3LsV5np7gMQqfpbNTCYvIqSkxESqCX+Pko6HJH5T0iGgp4lMZZDwsWUwIakem/a97VGQFrb9TjIF91sRA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR06MB7035
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
+X-Last-TLS-Session-Version: TLSv1.3
 
-Change the 'ret' variable from unsigned int to int to store negative error
-codes or zero returned by regmap_field_write().
+Hi,
 
-Storing the negative error codes in unsigned type, doesn't cause an issue
-at runtime but it's ugly as pants. Additionally, assigning negative error
-codes to unsigned type may trigger a GCC warning when the -Wsign-conversion
-flag is enabled.
+Am Montag, 25. August 2025, 11:12:18 CEST schrieb Joy Zou:
+> The aliases is board level property rather than soc property, so move
+> these to each boards.
+>=20
+> Reviewed-by: Frank Li <Frank.Li@nxp.com>
+> Signed-off-by: Joy Zou <joy.zou@nxp.com>
 
-No effect on runtime.
+Reviewed-by: Alexander Stein <alexander.stein@ew.tq-group.com> # imx93-tqma=
+9352
 
-Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
----
- sound/soc/qcom/lpass-cdc-dma.c | 3 ++-
- sound/soc/qcom/lpass-hdmi.c    | 2 +-
- 2 files changed, 3 insertions(+), 2 deletions(-)
+> ---
+> Changes for v7:
+> 1. Add new patch that move aliases from imx93.dtsi to board dts.
+> 2. The aliases is board level property rather than soc property.
+>    These changes come from comments:
+>    https://lore.kernel.org/imx/4e8f2426-92a1-4c7e-b860-0e10e8dd886c@kerne=
+l.org/
+> 3. Only add aliases using to imx93 board dts.
+> ---
+>  .../boot/dts/freescale/imx93-11x11-evk.dts    | 19 +++++++++++
+>  .../boot/dts/freescale/imx93-14x14-evk.dts    | 15 ++++++++
+>  .../boot/dts/freescale/imx93-9x9-qsb.dts      | 18 ++++++++++
+>  .../dts/freescale/imx93-kontron-bl-osm-s.dts  | 21 ++++++++++++
+>  .../dts/freescale/imx93-phyboard-nash.dts     | 21 ++++++++++++
+>  .../dts/freescale/imx93-phyboard-segin.dts    |  9 +++++
+>  .../freescale/imx93-tqma9352-mba91xxca.dts    | 11 ++++++
+>  .../freescale/imx93-tqma9352-mba93xxca.dts    | 25 ++++++++++++++
+>  .../freescale/imx93-tqma9352-mba93xxla.dts    | 25 ++++++++++++++
+>  .../dts/freescale/imx93-var-som-symphony.dts  | 17 ++++++++++
+>  arch/arm64/boot/dts/freescale/imx93.dtsi      | 34 -------------------
+>  11 files changed, 181 insertions(+), 34 deletions(-)
+>=20
+> diff --git a/arch/arm64/boot/dts/freescale/imx93-11x11-evk.dts b/arch/arm=
+64/boot/dts/freescale/imx93-11x11-evk.dts
+> index e24e12f04526..44566e03be65 100644
+> --- a/arch/arm64/boot/dts/freescale/imx93-11x11-evk.dts
+> +++ b/arch/arm64/boot/dts/freescale/imx93-11x11-evk.dts
+> @@ -12,6 +12,25 @@ / {
+>  	model =3D "NXP i.MX93 11X11 EVK board";
+>  	compatible =3D "fsl,imx93-11x11-evk", "fsl,imx93";
+> =20
+> +	aliases {
+> +		ethernet0 =3D &fec;
+> +		ethernet1 =3D &eqos;
+> +		gpio0 =3D &gpio1;
+> +		gpio1 =3D &gpio2;
+> +		gpio2 =3D &gpio3;
+> +		i2c0 =3D &lpi2c1;
+> +		i2c1 =3D &lpi2c2;
+> +		i2c2 =3D &lpi2c3;
+> +		mmc0 =3D &usdhc1;
+> +		mmc1 =3D &usdhc2;
+> +		rtc0 =3D &bbnsm_rtc;
+> +		serial0 =3D &lpuart1;
+> +		serial1 =3D &lpuart2;
+> +		serial2 =3D &lpuart3;
+> +		serial3 =3D &lpuart4;
+> +		serial4 =3D &lpuart5;
+> +	};
+> +
+>  	chosen {
+>  		stdout-path =3D &lpuart1;
+>  	};
+> diff --git a/arch/arm64/boot/dts/freescale/imx93-14x14-evk.dts b/arch/arm=
+64/boot/dts/freescale/imx93-14x14-evk.dts
+> index c5d86b54ad33..da252b7c06cb 100644
+> --- a/arch/arm64/boot/dts/freescale/imx93-14x14-evk.dts
+> +++ b/arch/arm64/boot/dts/freescale/imx93-14x14-evk.dts
+> @@ -12,6 +12,21 @@ / {
+>  	model =3D "NXP i.MX93 14X14 EVK board";
+>  	compatible =3D "fsl,imx93-14x14-evk", "fsl,imx93";
+> =20
+> +	aliases {
+> +		ethernet0 =3D &fec;
+> +		ethernet1 =3D &eqos;
+> +		gpio0 =3D &gpio1;
+> +		gpio1 =3D &gpio2;
+> +		gpio2 =3D &gpio3;
+> +		i2c0 =3D &lpi2c1;
+> +		i2c1 =3D &lpi2c2;
+> +		i2c2 =3D &lpi2c3;
+> +		mmc0 =3D &usdhc1;
+> +		mmc1 =3D &usdhc2;
+> +		rtc0 =3D &bbnsm_rtc;
+> +		serial0 =3D &lpuart1;
+> +	};
+> +
+>  	chosen {
+>  		stdout-path =3D &lpuart1;
+>  	};
+> diff --git a/arch/arm64/boot/dts/freescale/imx93-9x9-qsb.dts b/arch/arm64=
+/boot/dts/freescale/imx93-9x9-qsb.dts
+> index f6f8d105b737..0852067eab2c 100644
+> --- a/arch/arm64/boot/dts/freescale/imx93-9x9-qsb.dts
+> +++ b/arch/arm64/boot/dts/freescale/imx93-9x9-qsb.dts
+> @@ -17,6 +17,24 @@ bt_sco_codec: bt-sco-codec {
+>  		compatible =3D "linux,bt-sco";
+>  	};
+> =20
+> +	aliases {
+> +		ethernet0 =3D &fec;
+> +		ethernet1 =3D &eqos;
+> +		gpio0 =3D &gpio1;
+> +		gpio1 =3D &gpio2;
+> +		gpio2 =3D &gpio3;
+> +		i2c0 =3D &lpi2c1;
+> +		i2c1 =3D &lpi2c2;
+> +		mmc0 =3D &usdhc1;
+> +		mmc1 =3D &usdhc2;
+> +		rtc0 =3D &bbnsm_rtc;
+> +		serial0 =3D &lpuart1;
+> +		serial1 =3D &lpuart2;
+> +		serial2 =3D &lpuart3;
+> +		serial3 =3D &lpuart4;
+> +		serial4 =3D &lpuart5;
+> +	};
+> +
+>  	chosen {
+>  		stdout-path =3D &lpuart1;
+>  	};
+> diff --git a/arch/arm64/boot/dts/freescale/imx93-kontron-bl-osm-s.dts b/a=
+rch/arm64/boot/dts/freescale/imx93-kontron-bl-osm-s.dts
+> index 89e97c604bd3..11dd23044722 100644
+> --- a/arch/arm64/boot/dts/freescale/imx93-kontron-bl-osm-s.dts
+> +++ b/arch/arm64/boot/dts/freescale/imx93-kontron-bl-osm-s.dts
+> @@ -14,6 +14,27 @@ / {
+>  	aliases {
+>  		ethernet0 =3D &fec;
+>  		ethernet1 =3D &eqos;
+> +		gpio0 =3D &gpio1;
+> +		gpio1 =3D &gpio2;
+> +		i2c0 =3D &lpi2c1;
+> +		i2c1 =3D &lpi2c2;
+> +		mmc0 =3D &usdhc1;
+> +		mmc1 =3D &usdhc2;
+> +		serial0 =3D &lpuart1;
+> +		serial1 =3D &lpuart2;
+> +		serial2 =3D &lpuart3;
+> +		serial3 =3D &lpuart4;
+> +		serial4 =3D &lpuart5;
+> +		serial5 =3D &lpuart6;
+> +		serial6 =3D &lpuart7;
+> +		spi0 =3D &lpspi1;
+> +		spi1 =3D &lpspi2;
+> +		spi2 =3D &lpspi3;
+> +		spi3 =3D &lpspi4;
+> +		spi4 =3D &lpspi5;
+> +		spi5 =3D &lpspi6;
+> +		spi6 =3D &lpspi7;
+> +		spi7 =3D &lpspi8;
+>  	};
+> =20
+>  	leds {
+> diff --git a/arch/arm64/boot/dts/freescale/imx93-phyboard-nash.dts b/arch=
+/arm64/boot/dts/freescale/imx93-phyboard-nash.dts
+> index 475913cf0cb9..fa5d83dee0a7 100644
+> --- a/arch/arm64/boot/dts/freescale/imx93-phyboard-nash.dts
+> +++ b/arch/arm64/boot/dts/freescale/imx93-phyboard-nash.dts
+> @@ -19,8 +19,29 @@ / {
+> =20
+>  	aliases {
+>  		ethernet1 =3D &eqos;
+> +		gpio0 =3D &gpio1;
+> +		gpio1 =3D &gpio2;
+> +		gpio2 =3D &gpio3;
+> +		gpio3 =3D &gpio4;
+> +		i2c0 =3D &lpi2c1;
+> +		i2c1 =3D &lpi2c2;
+> +		mmc0 =3D &usdhc1;
+> +		mmc1 =3D &usdhc2;
+>  		rtc0 =3D &i2c_rtc;
+>  		rtc1 =3D &bbnsm_rtc;
+> +		serial0 =3D &lpuart1;
+> +		serial1 =3D &lpuart2;
+> +		serial2 =3D &lpuart3;
+> +		serial3 =3D &lpuart4;
+> +		serial4 =3D &lpuart5;
+> +		serial5 =3D &lpuart6;
+> +		serial6 =3D &lpuart7;
+> +		spi0 =3D &lpspi1;
+> +		spi1 =3D &lpspi2;
+> +		spi2 =3D &lpspi3;
+> +		spi3 =3D &lpspi4;
+> +		spi4 =3D &lpspi5;
+> +		spi5 =3D &lpspi6;
+>  	};
+> =20
+>  	chosen {
+> diff --git a/arch/arm64/boot/dts/freescale/imx93-phyboard-segin.dts b/arc=
+h/arm64/boot/dts/freescale/imx93-phyboard-segin.dts
+> index 6f1374f5757f..802d96b19e4c 100644
+> --- a/arch/arm64/boot/dts/freescale/imx93-phyboard-segin.dts
+> +++ b/arch/arm64/boot/dts/freescale/imx93-phyboard-segin.dts
+> @@ -19,8 +19,17 @@ /{
+> =20
+>  	aliases {
+>  		ethernet1 =3D &eqos;
+> +		gpio0 =3D &gpio1;
+> +		gpio1 =3D &gpio2;
+> +		gpio2 =3D &gpio3;
+> +		gpio3 =3D &gpio4;
+> +		i2c0 =3D &lpi2c1;
+> +		i2c1 =3D &lpi2c2;
+> +		mmc0 =3D &usdhc1;
+> +		mmc1 =3D &usdhc2;
+>  		rtc0 =3D &i2c_rtc;
+>  		rtc1 =3D &bbnsm_rtc;
+> +		serial0 =3D &lpuart1;
+>  	};
+> =20
+>  	chosen {
+> diff --git a/arch/arm64/boot/dts/freescale/imx93-tqma9352-mba91xxca.dts b=
+/arch/arm64/boot/dts/freescale/imx93-tqma9352-mba91xxca.dts
+> index 9dbf41cf394b..2673d9dccbf4 100644
+> --- a/arch/arm64/boot/dts/freescale/imx93-tqma9352-mba91xxca.dts
+> +++ b/arch/arm64/boot/dts/freescale/imx93-tqma9352-mba91xxca.dts
+> @@ -27,8 +27,19 @@ aliases {
+>  		eeprom0 =3D &eeprom0;
+>  		ethernet0 =3D &eqos;
+>  		ethernet1 =3D &fec;
+> +		gpio0 =3D &gpio1;
+> +		gpio1 =3D &gpio2;
+> +		gpio2 =3D &gpio3;
+> +		gpio3 =3D &gpio4;
+> +		i2c0 =3D &lpi2c1;
+> +		i2c1 =3D &lpi2c2;
+> +		i2c2 =3D &lpi2c3;
+> +		mmc0 =3D &usdhc1;
+> +		mmc1 =3D &usdhc2;
+>  		rtc0 =3D &pcf85063;
+>  		rtc1 =3D &bbnsm_rtc;
+> +		serial0 =3D &lpuart1;
+> +		serial1 =3D &lpuart2;
+>  	};
+> =20
+>  	backlight: backlight {
+> diff --git a/arch/arm64/boot/dts/freescale/imx93-tqma9352-mba93xxca.dts b=
+/arch/arm64/boot/dts/freescale/imx93-tqma9352-mba93xxca.dts
+> index 137b8ed242a2..4760d07ea24b 100644
+> --- a/arch/arm64/boot/dts/freescale/imx93-tqma9352-mba93xxca.dts
+> +++ b/arch/arm64/boot/dts/freescale/imx93-tqma9352-mba93xxca.dts
+> @@ -28,8 +28,33 @@ aliases {
+>  		eeprom0 =3D &eeprom0;
+>  		ethernet0 =3D &eqos;
+>  		ethernet1 =3D &fec;
+> +		gpio0 =3D &gpio1;
+> +		gpio1 =3D &gpio2;
+> +		gpio2 =3D &gpio3;
+> +		gpio3 =3D &gpio4;
+> +		i2c0 =3D &lpi2c1;
+> +		i2c1 =3D &lpi2c2;
+> +		i2c2 =3D &lpi2c3;
+> +		i2c3 =3D &lpi2c4;
+> +		i2c4 =3D &lpi2c5;
+> +		mmc0 =3D &usdhc1;
+> +		mmc1 =3D &usdhc2;
+>  		rtc0 =3D &pcf85063;
+>  		rtc1 =3D &bbnsm_rtc;
+> +		serial0 =3D &lpuart1;
+> +		serial1 =3D &lpuart2;
+> +		serial2 =3D &lpuart3;
+> +		serial3 =3D &lpuart4;
+> +		serial4 =3D &lpuart5;
+> +		serial5 =3D &lpuart6;
+> +		serial6 =3D &lpuart7;
+> +		serial7 =3D &lpuart8;
+> +		spi0 =3D &lpspi1;
+> +		spi1 =3D &lpspi2;
+> +		spi2 =3D &lpspi3;
+> +		spi3 =3D &lpspi4;
+> +		spi4 =3D &lpspi5;
+> +		spi5 =3D &lpspi6;
+>  	};
+> =20
+>  	backlight_lvds: backlight {
+> diff --git a/arch/arm64/boot/dts/freescale/imx93-tqma9352-mba93xxla.dts b=
+/arch/arm64/boot/dts/freescale/imx93-tqma9352-mba93xxla.dts
+> index 219f49a4f87f..8a88c98ac05a 100644
+> --- a/arch/arm64/boot/dts/freescale/imx93-tqma9352-mba93xxla.dts
+> +++ b/arch/arm64/boot/dts/freescale/imx93-tqma9352-mba93xxla.dts
+> @@ -28,8 +28,33 @@ aliases {
+>  		eeprom0 =3D &eeprom0;
+>  		ethernet0 =3D &eqos;
+>  		ethernet1 =3D &fec;
+> +		gpio0 =3D &gpio1;
+> +		gpio1 =3D &gpio2;
+> +		gpio2 =3D &gpio3;
+> +		gpio3 =3D &gpio4;
+> +		i2c0 =3D &lpi2c1;
+> +		i2c1 =3D &lpi2c2;
+> +		i2c2 =3D &lpi2c3;
+> +		i2c3 =3D &lpi2c4;
+> +		i2c4 =3D &lpi2c5;
+> +		mmc0 =3D &usdhc1;
+> +		mmc1 =3D &usdhc2;
+>  		rtc0 =3D &pcf85063;
+>  		rtc1 =3D &bbnsm_rtc;
+> +		serial0 =3D &lpuart1;
+> +		serial1 =3D &lpuart2;
+> +		serial2 =3D &lpuart3;
+> +		serial3 =3D &lpuart4;
+> +		serial4 =3D &lpuart5;
+> +		serial5 =3D &lpuart6;
+> +		serial6 =3D &lpuart7;
+> +		serial7 =3D &lpuart8;
+> +		spi0 =3D &lpspi1;
+> +		spi1 =3D &lpspi2;
+> +		spi2 =3D &lpspi3;
+> +		spi3 =3D &lpspi4;
+> +		spi4 =3D &lpspi5;
+> +		spi5 =3D &lpspi6;
+>  	};
+> =20
+>  	backlight_lvds: backlight {
+> diff --git a/arch/arm64/boot/dts/freescale/imx93-var-som-symphony.dts b/a=
+rch/arm64/boot/dts/freescale/imx93-var-som-symphony.dts
+> index 576d6982a4a0..c789c1f24bdc 100644
+> --- a/arch/arm64/boot/dts/freescale/imx93-var-som-symphony.dts
+> +++ b/arch/arm64/boot/dts/freescale/imx93-var-som-symphony.dts
+> @@ -17,8 +17,25 @@ /{
+>  	aliases {
+>  		ethernet0 =3D &eqos;
+>  		ethernet1 =3D &fec;
+> +		gpio0 =3D &gpio1;
+> +		gpio1 =3D &gpio2;
+> +		gpio2 =3D &gpio3;
+> +		i2c0 =3D &lpi2c1;
+> +		i2c1 =3D &lpi2c2;
+> +		i2c2 =3D &lpi2c3;
+> +		i2c3 =3D &lpi2c4;
+> +		i2c4 =3D &lpi2c5;
+> +		mmc0 =3D &usdhc1;
+> +		mmc1 =3D &usdhc2;
+> +		serial0 =3D &lpuart1;
+> +		serial1 =3D &lpuart2;
+> +		serial2 =3D &lpuart3;
+> +		serial3 =3D &lpuart4;
+> +		serial4 =3D &lpuart5;
+> +		serial5 =3D &lpuart6;
+>  	};
+> =20
+> +
+>  	chosen {
+>  		stdout-path =3D &lpuart1;
+>  	};
+> diff --git a/arch/arm64/boot/dts/freescale/imx93.dtsi b/arch/arm64/boot/d=
+ts/freescale/imx93.dtsi
+> index 8a7f1cd76c76..d505f9dfd8ee 100644
+> --- a/arch/arm64/boot/dts/freescale/imx93.dtsi
+> +++ b/arch/arm64/boot/dts/freescale/imx93.dtsi
+> @@ -18,40 +18,6 @@ / {
+>  	#address-cells =3D <2>;
+>  	#size-cells =3D <2>;
+> =20
+> -	aliases {
+> -		gpio0 =3D &gpio1;
+> -		gpio1 =3D &gpio2;
+> -		gpio2 =3D &gpio3;
+> -		gpio3 =3D &gpio4;
+> -		i2c0 =3D &lpi2c1;
+> -		i2c1 =3D &lpi2c2;
+> -		i2c2 =3D &lpi2c3;
+> -		i2c3 =3D &lpi2c4;
+> -		i2c4 =3D &lpi2c5;
+> -		i2c5 =3D &lpi2c6;
+> -		i2c6 =3D &lpi2c7;
+> -		i2c7 =3D &lpi2c8;
+> -		mmc0 =3D &usdhc1;
+> -		mmc1 =3D &usdhc2;
+> -		mmc2 =3D &usdhc3;
+> -		serial0 =3D &lpuart1;
+> -		serial1 =3D &lpuart2;
+> -		serial2 =3D &lpuart3;
+> -		serial3 =3D &lpuart4;
+> -		serial4 =3D &lpuart5;
+> -		serial5 =3D &lpuart6;
+> -		serial6 =3D &lpuart7;
+> -		serial7 =3D &lpuart8;
+> -		spi0 =3D &lpspi1;
+> -		spi1 =3D &lpspi2;
+> -		spi2 =3D &lpspi3;
+> -		spi3 =3D &lpspi4;
+> -		spi4 =3D &lpspi5;
+> -		spi5 =3D &lpspi6;
+> -		spi6 =3D &lpspi7;
+> -		spi7 =3D &lpspi8;
+> -	};
+> -
+>  	cpus {
+>  		#address-cells =3D <1>;
+>  		#size-cells =3D <0>;
+>=20
 
-diff --git a/sound/soc/qcom/lpass-cdc-dma.c b/sound/soc/qcom/lpass-cdc-dma.c
-index 8106c586f68a..2dc8c75c4bf0 100644
---- a/sound/soc/qcom/lpass-cdc-dma.c
-+++ b/sound/soc/qcom/lpass-cdc-dma.c
-@@ -217,8 +217,9 @@ static int lpass_cdc_dma_daiops_hw_params(struct snd_pcm_substream *substream,
- {
- 	struct snd_soc_pcm_runtime *soc_runtime = snd_soc_substream_to_rtd(substream);
- 	struct lpaif_dmactl *dmactl = NULL;
--	unsigned int ret, regval;
-+	unsigned int regval;
- 	unsigned int channels = params_channels(params);
-+	int ret;
- 	int id;
- 
- 	switch (channels) {
-diff --git a/sound/soc/qcom/lpass-hdmi.c b/sound/soc/qcom/lpass-hdmi.c
-index ce753ebc0894..6d9795306cfa 100644
---- a/sound/soc/qcom/lpass-hdmi.c
-+++ b/sound/soc/qcom/lpass-hdmi.c
-@@ -23,7 +23,6 @@ static int lpass_hdmi_daiops_hw_params(struct snd_pcm_substream *substream,
- 	snd_pcm_format_t format = params_format(params);
- 	unsigned int rate = params_rate(params);
- 	unsigned int channels = params_channels(params);
--	unsigned int ret;
- 	int bitwidth;
- 	unsigned int word_length;
- 	unsigned int ch_sts_buf0;
-@@ -33,6 +32,7 @@ static int lpass_hdmi_daiops_hw_params(struct snd_pcm_substream *substream,
- 	unsigned int ch = 0;
- 	struct lpass_dp_metadata_ctl *meta_ctl = drvdata->meta_ctl;
- 	struct lpass_sstream_ctl *sstream_ctl = drvdata->sstream_ctl;
-+	int ret;
- 
- 	bitwidth = snd_pcm_format_width(format);
- 	if (bitwidth < 0) {
--- 
-2.34.1
+
+=2D-=20
+TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
+Amtsgericht M=FCnchen, HRB 105018
+Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
+http://www.tq-group.com/
+
 
 
