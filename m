@@ -1,119 +1,110 @@
-Return-Path: <linux-kernel+bounces-789664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C54BCB398CF
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 11:52:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68439B398DA
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 11:53:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A59A20155A
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 09:52:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3015D169CED
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 09:53:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 061672F290A;
-	Thu, 28 Aug 2025 09:51:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EFAB2ED165;
+	Thu, 28 Aug 2025 09:53:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="P9sf9fNk"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=readmodwrite-com.20230601.gappssmtp.com header.i=@readmodwrite-com.20230601.gappssmtp.com header.b="Y9C5JNPy"
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD4022F067E
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 09:51:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99DFF2ECEA2
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 09:53:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756374705; cv=none; b=FqmNaRcaDT6Zs4qcNUXbsR+sss2Mu8ORdM7MHSJoSRPpXpE3TLSTugBSWq4/n92VLwdqe510NqWYXJ71927cSV4cojXZoanbvAoXvC59/9uyMBHer/sb77EHqpZ3qcjA7/9kA9nn2ZDW2LwAGlI5nVQPY68JAwba6KD1murV2fw=
+	t=1756374790; cv=none; b=dYQx80nBCmwE3oSSR1ZGwds/zwX1xdorFmbHKUWcwdWbCAavRgjYI3LXVLwprM9l5sJPqfp2asgKJhCr9uer+UUZKN5Gt0CQx1HOOEnPh7wj7uX+bFa1bfV0N++M/9doRCkhRmZ3rn9iJjonreHVttw71llZYAnDr4q074NMz8I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756374705; c=relaxed/simple;
-	bh=KBVgzYFp4o1xKDTa2u5bq3VPLI9X1xG7F0PGV3+qckQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=EeUQA/cHoLZncUrnSwGUQ0f7wLtmvBt3kRa8COr+mgPKYJ6pAP0rnyeTAsbZtfNwXujLzephqbvGMiTcSoV6kqa1E5NrA+vFFer945mY8ae9fkwsxpvpAOUQuqNOPPW1AcyInMHC5bQQznkkMOR1dy5POxngjxbLCK/KgMPI2Kk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=P9sf9fNk; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756374704; x=1787910704;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version:content-transfer-encoding;
-  bh=KBVgzYFp4o1xKDTa2u5bq3VPLI9X1xG7F0PGV3+qckQ=;
-  b=P9sf9fNkx/xE9zrX4EbvT8fFSPvbqvU0TK9Ha0e/MnR5CjuB63psh7pJ
-   1IYYpldYpAEh2116cJhJanrxJ1CB0GKOpsHC9KLXarBFNlba+94fTerJc
-   sVuDDF49rS0X+vZd+an5p1Q9WgoXTSlkjL+WyHzYlkLAJd/5KZGEn2WgJ
-   IolyN6kc3H1FslnHs+dO3Fshyeb8DkRmtpP+IlBwVj94tVFryVGGBKyIh
-   y68TQe/n9pqEFuxkbM/XuILSm3mExa4Q+f2i86pObbkjjP9O94lS9bcKr
-   9bSV6bDc4HQ85QzqnJoNliZJOZ3rB2i9z00swJB0Fk7wMbCGj5jsJDS01
-   A==;
-X-CSE-ConnectionGUID: YHVXzJUAQxW5z4DBHh2Y3w==
-X-CSE-MsgGUID: Yx9ReSWRQMuSilwKuMSEtA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11535"; a="69231695"
-X-IronPort-AV: E=Sophos;i="6.18,217,1751266800"; 
-   d="scan'208";a="69231695"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2025 02:51:43 -0700
-X-CSE-ConnectionGUID: RDkHFOboSUKLvNYzjmhKPA==
-X-CSE-MsgGUID: 1JlfaReGS9O9kIb+GM7EYQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,217,1751266800"; 
-   d="scan'208";a="170877253"
-Received: from carterle-desk.ger.corp.intel.com (HELO localhost) ([10.245.246.10])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2025 02:51:38 -0700
-From: Jani Nikula <jani.nikula@intel.com>
-To: Ville Syrjala <ville.syrjala@linux.intel.com>, linux-kernel@vger.kernel.org
-Cc: Lucas De Marchi <lucas.demarchi@intel.com>, Dibin Moolakadan
- Subrahmanian <dibin.moolakadan.subrahmanian@intel.com>, Imre Deak
- <imre.deak@intel.com>, David Laight <david.laight.linux@gmail.com>, Geert
- Uytterhoeven <geert+renesas@glider.be>, Matt Wagantall
- <mattw@codeaurora.org>, Dejin Zheng <zhengdejin5@gmail.com>,
- intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org, Ville
- =?utf-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>, Simona Vetter
- <simona.vetter@ffwll.ch>
-Subject: Re: [PATCH v2 1/3] iopoll: Generalize read_poll_timeout() into
- poll_timeout_us()
-In-Reply-To: <20250826121859.15497-1-ville.syrjala@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20250826121859.15497-1-ville.syrjala@linux.intel.com>
-Date: Thu, 28 Aug 2025 12:51:35 +0300
-Message-ID: <c34ce332183d24ed29ed23852238fd5ca948d4f1@intel.com>
+	s=arc-20240116; t=1756374790; c=relaxed/simple;
+	bh=CVa6GmAMluDPsP+Q998eJHpdv/J8OP2iwTb/vFH8cVg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=heRqx86/RHwOAYuJ6Z3eXfQ5EVCrMp3RJEy7sT5e8gNKaKX/hwEHBSlno6kZ4wS6mHUwG72H3H9aYgJTDTOaqlYA4GlRpElOnyXAI6vg6vE4OI/Lpze1hRG5Ecj57FMjC6n1PG0vQ7fLneOhtZBl/2G15+iAsC8FGXNWAApFkoQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=readmodwrite.com; spf=none smtp.mailfrom=readmodwrite.com; dkim=pass (2048-bit key) header.d=readmodwrite-com.20230601.gappssmtp.com header.i=@readmodwrite-com.20230601.gappssmtp.com header.b=Y9C5JNPy; arc=none smtp.client-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=readmodwrite.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=readmodwrite.com
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-321cfa7ad29so1387636a91.1
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 02:53:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=readmodwrite-com.20230601.gappssmtp.com; s=20230601; t=1756374789; x=1756979589; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CVa6GmAMluDPsP+Q998eJHpdv/J8OP2iwTb/vFH8cVg=;
+        b=Y9C5JNPysytbE40N6Vha+7S53QT2lmAH9vTLgJ4Jkw4kLBnHQ9nMDqVYVUDn5RiJJ4
+         MIjWlFHo2Pe7oUsM29VOviL7wkh2GDidQZVJrxNHK+VdpTlqToySyvSTc4qqdtixfBGe
+         6n2uI7gzvNc3gWauJTxnBSwYJixbm4ZmPpcTEYWeHj4FrBaSjqc3/gbNiiXA1Cgl5i3B
+         LEPePhb9vZZg+6r0FoEz8cnRyi60Nny4quQrxUJaEBfP3syfYpbGk2lc0LEOGLHdFvpk
+         psYSvgtjSBpn9gp0NjQvYw4X58stBs71O7O7gMsCv+zkfyFpPbk3zj5jrF2Tn0KTi9Ui
+         gYDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756374789; x=1756979589;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CVa6GmAMluDPsP+Q998eJHpdv/J8OP2iwTb/vFH8cVg=;
+        b=UQVu81BL/oCNJniDFfWEAMiGRNV1qRkOVdBVHexoLj45u5hrMzN0qS1JYy51qjdFOd
+         omN769AkXZL5A35zxN5Cnv4peYPYFCgpgUn6G9pkT+u/PkoLZSBWviBaBHC0Z4p7U9ci
+         9JVBYIxt1zPVRwXusvxecj+zr9Hke0xwriB8Xw6O7QnZiOc6g2UFZU2dGppHQZo/UNL1
+         ZOpCeWSdhW1c7vlQbLjjA75hYp/4ODKU8YMGyVRl8bl0oBE7gR5kNJS6TNRiPvX+pKjl
+         styblorW88+kEdGNT/jSOmESIJVEvuXrLglnFAnfCVBoCAemhyWhfmJLifXeCPG4cnJD
+         nTcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUBrAmDezLWH/luDDgjHy2BHse5+VOrNoUEyNSnq9fxIb1YfjOCsVO4GTJxGapJzdLSs/ohoyPWas5Hrz4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzexXFLgD7wEcQEiBg7GUq1STqey5nFDUW097Chx++auCYvF2h8
+	Pl3Fjlr6jP7JftACywedN0yA/3bTox2d+2PywWNHveMCwx8J5zSkSOVlsHzHUdYqegcGpxNXdyJ
+	4gEMOwYTJmYqvaEMYOLLsbMd48Y3ZgVZsKANYw3eF0XCUG1KoAc+HxRk=
+X-Gm-Gg: ASbGncscVB3k/DdnU6BdzvJe938PTvI0c8tIiXjQT0517tC/4y7oNyYo+B2eksN+Mtl
+	dGZfiky39UNulrj3yT3pxaYFH7ITFiBlPComhDYxR5CuriMz9a883/x9M5RnZ9nTIdTbhZY0kBu
+	KAtkeviaQIwg//DbiTyTSHduewRuz/KDzt9R6aqLc9qSytnK3WDvl/9m8Jn84CGTo/6EtPgqp1w
+	Lzopr55RdpZkCgnfZfmYgq97mymtekAog==
+X-Google-Smtp-Source: AGHT+IFiPdVsknu0U0byAooRoHYi9Kg867zs/XmQado5OBM8B30B7VRf7vH1HN0s27q1gbRfKpCDHOffF2/n/I7g+k0=
+X-Received: by 2002:a17:90b:380a:b0:321:335e:19cc with SMTP id
+ 98e67ed59e1d1-3275085e80dmr10678185a91.4.1756374788898; Thu, 28 Aug 2025
+ 02:53:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+References: <20250827140149.1001557-1-matt@readmodwrite.com> <CAADnVQKs0=iM_QoP9+SN6kG3iZ8hMwqeLWrQ5S3TvBbW4dgk3g@mail.gmail.com>
+In-Reply-To: <CAADnVQKs0=iM_QoP9+SN6kG3iZ8hMwqeLWrQ5S3TvBbW4dgk3g@mail.gmail.com>
+From: Matt Fleming <matt@readmodwrite.com>
+Date: Thu, 28 Aug 2025 10:52:57 +0100
+X-Gm-Features: Ac12FXwXov8EhZrXIVQ2GFdBqP51A06NQPbDibzT34Dfary9rb9a1p7gB-p2qOQ
+Message-ID: <CAENh_SQJ4xt0rSimsHXTNDJaEqWV2P7wgh1g-bXB7iE3hHt99Q@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v5] selftests/bpf: Add LPM trie microbenchmarks
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman <eddyz87@gmail.com>, Shuah Khan <shuah@kernel.org>, 
+	kernel-team <kernel-team@cloudflare.com>, Jesper Dangaard Brouer <hawk@kernel.org>, 
+	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	bpf <bpf@vger.kernel.org>, Martin KaFai Lau <martin.lau@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, Network Development <netdev@vger.kernel.org>, 
+	Matt Fleming <mfleming@cloudflare.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, 26 Aug 2025, Ville Syrjala <ville.syrjala@linux.intel.com> wrote:
-> From: Ville Syrj=C3=A4l=C3=A4 <ville.syrjala@linux.intel.com>
+On Thu, Aug 28, 2025 at 1:30=E2=80=AFAM Alexei Starovoitov
+<alexei.starovoitov@gmail.com> wrote:
 >
-> While read_poll_timeout() & co. were originally introduced just
-> for simple I/O usage scenarios they have since been generalized to
-> be useful in more cases.
+> On Wed, Aug 27, 2025 at 7:02=E2=80=AFAM Matt Fleming <matt@readmodwrite.c=
+om> wrote:
+> > --- /dev/null
+> > +++ b/tools/testing/selftests/bpf/progs/lpm_trie_map.c
+> > @@ -0,0 +1,19 @@
+> > +/* SPDX-License-Identifier: GPL-2.0-or-later */
 >
-> However the interface is very cumbersome to use in the general case.
-> Attempt to make it more flexible by combining the 'op', 'var' and
-> 'args' parameter into just a single 'op' that the caller can fully
-> specify.
+> I fixed the tag while applying, since it should be //
+> also dropped or-later to match .h and the rest.
+> I believe that's what you meant.
 
-Thanks for the patches!
-
-Since there was no opposition now or the last time these were posted
-[1], iopoll.h is not in MAINTAINERS, and the previous changes to the
-file have gone in through various trees, I've gone ahead and merged the
-lot to drm-intel-next with Simona's IRC ack.
-
-I'll be rebasing and posting my follow-up i915 changes on top of this
-shortly.
-
-
-BR,
-Jani.
-
-
-[1] https://lore.kernel.org/r/20250702223439.19752-1-ville.syrjala@linux.in=
-tel.com
-
-
---=20
-Jani Nikula, Intel
+Yeah that's what I meant. Thanks for fixing this.
 
