@@ -1,60 +1,86 @@
-Return-Path: <linux-kernel+bounces-789406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66419B3950E
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 09:22:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 384BBB39510
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 09:24:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 238DA1625D5
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 07:22:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2BCF163DCE
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 07:24:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3B972D0274;
-	Thu, 28 Aug 2025 07:22:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A142529CB32;
+	Thu, 28 Aug 2025 07:24:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="TcbUNeG/";
-	dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="lPJ11e5h"
-Received: from mailrelay-egress16.pub.mailoutpod3-cph3.one.com (mailrelay-egress16.pub.mailoutpod3-cph3.one.com [46.30.212.3])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AE9zGshK"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA56925782D
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 07:22:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.30.212.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7508B30CDA9
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 07:24:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756365729; cv=none; b=sMxGdfd8GuThJMUzge/WJxPvpx9n4ozLJw1vjl9KFcafCNB40VCM9S3Vy5TWyg3MoQCmA6K46u3wmP2RX32hY+KlJZRBXgPeFFLRhwow1Jrkmd0wMuBMe/+GSNY25QzquLBApv45RK5u1gzYBbW8XUaevnrQf3XHyOgeQjj7u8c=
+	t=1756365867; cv=none; b=Jtqf5kJ15f6wCeNm+vyVFIB6JHkNtLRyHRmjv1ulZ02NEZy72SwXOm1oKcbrVA9DJykz9L30FHWmSVJ5LUbevfGTrSEyZmlxT3MXF0nQJkScuz8o7NIRIvNSaS0FEXrVcgSgRKBjWQZg1tIbqLw4dPRowaXSVz1JpOdr6l9BFKo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756365729; c=relaxed/simple;
-	bh=WUueKzjbbqRI8uNwdF9+KLT8gmKFIXZLY8N7awD/wlA=;
+	s=arc-20240116; t=1756365867; c=relaxed/simple;
+	bh=J7uUeWCM9kIi1DO4ms4r5uJMDYBgE3A3eXLTFPHBEBU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=P+Zw56AjQCPy6kuJBP0IqupezyU6tSMtDtLQt8Vg+4u68ewhgbR9SloOCVypbtVYu3GaPeNVHEhTgw33LFT/AYL9Ut5GJOuAkTZScf0AgSdqU0N1w+FZsUyGqo27Y0QHDq4MN3hynVMWd4jSQ+rjtC7HBcezL/TqhPEqZSU4WoI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se; spf=none smtp.mailfrom=konsulko.se; dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=TcbUNeG/; dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=lPJ11e5h; arc=none smtp.client-ip=46.30.212.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=konsulko.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1756365723; x=1756970523;
-	d=konsulko.se; s=rsa2;
-	h=content-transfer-encoding:content-type:in-reply-to:from:references:cc:to:
-	 subject:mime-version:date:message-id:from;
-	bh=2YfXwIt8uRuB24ocvEdwemGPCWUZNGhB6pqOxsa3SJ0=;
-	b=TcbUNeG/Qd6OqSN287cQTmdl55p7z84ZIkeCBkDU3GIILprGfzuQ7Ik4bXeFOv5u5dMucEA1leH/j
-	 u6cMu3yYFuMD3hFGcoBfWcAhlbyuEhYQ0cqzPQaCFNjQ63UC8RCPmIE50Ghz1kJL8CkHrCpeSGyKaQ
-	 rEhzod0zsmBxDSfysQl6qGN4xyjljeiYJ95M4UBdX2D3Wg7h3hjGXEOpFY+jqbMhS/2V5KtflkrWL+
-	 G3UQY0+4SJzUMooFb5K18Gfkbwiov48Zm4WP8mCtvkWcqHKKcmEYAn2pnLDNLdu+EVz4ZJh7ZQ30mk
-	 lAmWsyPAVc0z5D1GXMGnPyczzYxeZSQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1756365723; x=1756970523;
-	d=konsulko.se; s=ed2;
-	h=content-transfer-encoding:content-type:in-reply-to:from:references:cc:to:
-	 subject:mime-version:date:message-id:from;
-	bh=2YfXwIt8uRuB24ocvEdwemGPCWUZNGhB6pqOxsa3SJ0=;
-	b=lPJ11e5hy9upngoLEXivO2ahV4GaS+cyXshxFqcORIa094aD9pjodBkqBSAZmjvmhhngAHoeXGbfK
-	 FEge1gOAg==
-X-HalOne-ID: b09ec1ec-83df-11f0-80cc-f3c0f7fef5ee
-Received: from [192.168.10.245] (host-95-203-16-218.mobileonline.telia.com [95.203.16.218])
-	by mailrelay4.pub.mailoutpod2-cph3.one.com (Halon) with ESMTPSA
-	id b09ec1ec-83df-11f0-80cc-f3c0f7fef5ee;
-	Thu, 28 Aug 2025 07:22:02 +0000 (UTC)
-Message-ID: <9c63dda1-0a4b-4131-a5e7-12ad2e88c6d6@konsulko.se>
-Date: Thu, 28 Aug 2025 09:22:02 +0200
+	 In-Reply-To:Content-Type; b=JyJ8FGqib8iz+96pEEICACC7g1zFSO3OGahutzYtFIKoLP4kZbCJdjrRiDYLyA12pl7x0WFfhmllNnNI4IQUWvWWNQqgzkUdYShB0ADJia/vEMGbEZXYVvL5OzIe11ZpuCGYk0kwUXGLvbUX63V78kUF3SEEpz7klM4u0JatGZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AE9zGshK; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756365864;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KIR1zw390cgYTtX2NX433kPJFGlwKkihK2GJLW5eSFY=;
+	b=AE9zGshK4ENA0l3kvNMW/OwY2wnvaKbkvZoWkf+lzjZSzjCdJjcmZ1hABCPz5lSs1wJ9es
+	gKm0mku0z/w3LhqIv20Si1w5n4L5sYTeeQWyIJRvaBWXxwG+RCH/LCMyTbC+8z98IIR9VA
+	Y2vFP4HH4xQeElWmVCLY220oA1tvYlY=
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
+ [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-692-on5NYWlcPj2zcPFdzdQpkg-1; Thu, 28 Aug 2025 03:24:21 -0400
+X-MC-Unique: on5NYWlcPj2zcPFdzdQpkg-1
+X-Mimecast-MFC-AGG-ID: on5NYWlcPj2zcPFdzdQpkg_1756365861
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7f73235c84dso159089985a.3
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 00:24:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756365861; x=1756970661;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KIR1zw390cgYTtX2NX433kPJFGlwKkihK2GJLW5eSFY=;
+        b=XttUkesyEDschmA+rgj5Dx9lzyJKk4cjKV9Vqsih+TNVyArAARZXwMpdQ/HCW0lqoa
+         guHpQugvY5z+vn+UvElVtHGkCsnDEyqGwIUMAIXwHkR9neEwV929l+Yhyd8G7WrBuUWv
+         Zsm941XrAodZ2yewgcp443ZmiX2vXlgJrL0DMdLaXsffVkpEstx/LunYdmJD4KzDR+94
+         DZH9et63zjjlOQogD8NZKQczXXa3qWwktc9m9R3aoYQLLN5o70FfQiSZadV61qTLxbkv
+         0FxtykP99ZNc272pbw5y5NTiKcZbZSSIZKr7mAtNPtfWJU22O5w4TdvT4rAIw8DdI+Xi
+         W8IQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV5VHai3erK/WoPSxfSpOMwy3yIfxHHrXSthJgtlbXtKtgxR+xk+Qvbzob2+PD9xZTS02vYFsqNLrqz02I=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3FBMe6hpM8oRQJ/0uD2CmVV6H0z85cFF+q8v7zOPY+gaGC0zQ
+	gS2/4pIwRBarQ40Q/69Xtq9Gz6HZ5ivptv1hF/dKLKkNDdBdOj7A4ZhV6RMrIqBAFK9NeO2OqIz
+	DJcLmo3ml/O/fnD/e6hWxSUEuQdKJES7Dp47HFHoJ5iXw3JrQm+zrWJi7fOjbQ4HPSw==
+X-Gm-Gg: ASbGncs9sqzOHgGUwc1qMUhzWGsAjkxFMSs9r/IIgoZjEPWrA6r+2b0KIXFRSHfiYWo
+	h4wIDpIn4yo0ZS1/7IfoVMIwvwjpAXMnOSLStm5eDuPMuNmK468wmx8s32C8+5+qEFs6snKJWTC
+	PLzdvW6I2tgY/69SKVgodCY7GfXFjrpEet1d4YHLylqTOm2yR/HfkuKbbA2szEGsabd7cLMQ1+/
+	MBx1BvxHj4/8PGNy9NUhgps4AkuekIo+tg17Dok9G0qzDi8W2Qc/9hu8lUfEMrZRrjQyWvw0zbX
+	361c81rsoZ/d/YH5DeWW5FVrIYzZbzkNLSM+lz5IplX/fqPfisSw0vO6+TAxuTzSYh4ZNCygr4l
+	OCoxtOSoJgco=
+X-Received: by 2002:a05:620a:319c:b0:7e8:7eee:7d66 with SMTP id af79cd13be357-7ea1106939bmr2934884385a.40.1756365860734;
+        Thu, 28 Aug 2025 00:24:20 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEp1cXuDbg+76UtB0I0QKS7x0PTyew3GjzbR0Qln5uscmVCmSfUeQdLjlZYLQmSpwwnsixrew==
+X-Received: by 2002:a05:620a:319c:b0:7e8:7eee:7d66 with SMTP id af79cd13be357-7ea1106939bmr2934883385a.40.1756365860375;
+        Thu, 28 Aug 2025 00:24:20 -0700 (PDT)
+Received: from ?IPV6:2a0d:3344:2712:7e10:4d59:d956:544f:d65c? ([2a0d:3344:2712:7e10:4d59:d956:544f:d65c])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b306eb3110sm335911cf.7.2025.08.28.00.24.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 28 Aug 2025 00:24:19 -0700 (PDT)
+Message-ID: <646c6431-274f-4923-ab9d-bf0116645745@redhat.com>
+Date: Thu, 28 Aug 2025 09:24:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,175 +88,48 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/2] rust: zpool: add abstraction for zpool drivers
-To: Benno Lossin <lossin@kernel.org>
-Cc: rust-for-linux <rust-for-linux@vger.kernel.org>,
- LKML <linux-kernel@vger.kernel.org>, Uladzislau Rezki <urezki@gmail.com>,
- Danilo Krummrich <dakr@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
- Vlastimil Babka <vbabka@suse.cz>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>, Miguel Ojeda
- <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
- Bjorn Roy Baron <bjorn3_gh@protonmail.com>,
- Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>,
- Johannes Weiner <hannes@cmpxchg.org>, Yosry Ahmed <yosry.ahmed@linux.dev>,
- Nhat Pham <nphamcs@gmail.com>, linux-mm@kvack.org
-References: <20250823130420.867133-1-vitaly.wool@konsulko.se>
- <20250823130522.867263-1-vitaly.wool@konsulko.se>
- <DCCIRTHGQFNX.1M8GXO4TYA7DF@kernel.org>
- <DFA3B588-3650-42DA-8875-7AB7D20A2BCA@konsulko.se>
- <DCDC2M7N28X2.3Q8XYNEDOGK6A@kernel.org>
+Subject: Re: [PATCH net-next] microchip: lan865x: add ndo_eth_ioctl handler to
+ enable PHY ioctl support
+To: Parthiban Veerasooran <parthiban.veerasooran@microchip.com>,
+ andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250822085014.28281-1-parthiban.veerasooran@microchip.com>
 Content-Language: en-US
-From: Vitaly Wool <vitaly.wool@konsulko.se>
-In-Reply-To: <DCDC2M7N28X2.3Q8XYNEDOGK6A@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20250822085014.28281-1-parthiban.veerasooran@microchip.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 8/22/25 10:50 AM, Parthiban Veerasooran wrote:
+> diff --git a/drivers/net/ethernet/microchip/lan865x/lan865x.c b/drivers/net/ethernet/microchip/lan865x/lan865x.c
+> index 84c41f193561..7f586f9558ff 100644
+> --- a/drivers/net/ethernet/microchip/lan865x/lan865x.c
+> +++ b/drivers/net/ethernet/microchip/lan865x/lan865x.c
+> @@ -320,12 +320,22 @@ static int lan865x_net_open(struct net_device *netdev)
+>  	return 0;
+>  }
+>  
+> +static int lan865x_eth_ioctl(struct net_device *netdev, struct ifreq *rq,
+> +			     int cmd)
+> +{
+> +	if (!netif_running(netdev))
+> +		return -EINVAL;
+> +
+> +	return phy_mii_ioctl(netdev->phydev, rq, cmd);
+> +}
+> +
+>  static const struct net_device_ops lan865x_netdev_ops = {
+>  	.ndo_open		= lan865x_net_open,
+>  	.ndo_stop		= lan865x_net_close,
+>  	.ndo_start_xmit		= lan865x_send_packet,
+>  	.ndo_set_rx_mode	= lan865x_set_multicast_list,
+>  	.ndo_set_mac_address	= lan865x_set_mac_address,
+> +	.ndo_eth_ioctl          = lan865x_eth_ioctl,
 
+It looks like you could use directly phy_do_ioctl_running() and avoid
+some code duplication.
 
-On 8/27/25 17:59, Benno Lossin wrote:
-> On Wed Aug 27, 2025 at 4:24 PM CEST, Vitaly Wool wrote:
->>
->>
->>> On Aug 26, 2025, at 7:02 PM, Benno Lossin <lossin@kernel.org> wrote:
->>>
->>> On Sat Aug 23, 2025 at 3:05 PM CEST, Vitaly Wool wrote:
->>>> +pub trait ZpoolDriver {
->>>> +    /// Opaque Rust representation of `struct zpool`.
->>>> +    type Pool: ForeignOwnable;
->>>
->>> I think this is the same question that Danilo asked a few versions ago,
->>> but why do we need this? Why can't we just use `Self` instead?
->>
->> It’s convenient to use it in the backend implementation, like in the toy example supplied in the documentation part:
->>
->> +/// struct MyZpool {
->> +///     name: &'static CStr,
->> +///     bytes_used: AtomicU64,
->> +/// }
->> …
->> +/// impl ZpoolDriver for MyZpoolDriver {
->> +///     type Pool = KBox<MyZpool>;
->>
->> Does that make sense?
-> 
-> No, why can't it just be like this:
-> 
->      struct MyZpool {
->          name: &'static CStr,
->          bytes_used: AtomicU64,
->      }
->      
->      struct MyZpoolDriver;
->      
->      impl ZpoolDriver for MyZpoolDriver {
->          type Error = Infallible;
->      
->          fn create(name: &'static CStr) -> impl PinInit<Self, Self::Error> {
->              MyZpool { name, bytes_used: AtomicU64::new(0) }
->          }
->      
->          fn malloc(&mut self, size: usize, gfp: Flags, _nid: NumaNode) -> Result<usize> {
->              let mut pow: usize = 0;
->              for n in 6..=PAGE_SHIFT {
->                  if size <= 1 << n {
->                      pow = n;
->                      break;
->                  }
->              }
->              match pow {
->                  0 => Err(EINVAL),
->                  _ => {
->                      let vec = KVec::<u64>::with_capacity(1 << (pow - 3), gfp)?;
->                      let (ptr, _len, _cap) = vec.into_raw_parts();
->                      self.bytes_used.fetch_add(1 << pow, Ordering::Relaxed);
->                      Ok(ptr as usize | (pow - 6))
->                  }
->              }
->          }
->      
->          unsafe fn free(&self, handle: usize) {
->              let n = (handle & 0x3F) + 3;
->              let uptr = handle & !0x3F;
->      
->              // SAFETY:
->              // - uptr comes from handle which points to the KVec allocation from `alloc`.
->              // - size == capacity and is coming from the first 6 bits of handle.
->              let vec = unsafe { KVec::<u64>::from_raw_parts(uptr as *mut u64, 1 << n, 1 << n) };
->              drop(vec);
->              self.bytes_used.fetch_sub(1 << (n + 3), Ordering::Relaxed);
->          }
->      
->          unsafe fn read_begin(&self, handle: usize) -> NonNull<u8> {
->              let uptr = handle & !0x3F;
->              // SAFETY: uptr points to a memory area allocated by KVec
->              unsafe { NonNull::new_unchecked(uptr as *mut u8) }
->          }
->      
->          unsafe fn read_end(&self, _handle: usize, _handle_mem: NonNull<u8>) {}
->      
->          unsafe fn write(&self, handle: usize, handle_mem: NonNull<u8>, mem_len: usize) {
->              let uptr = handle & !0x3F;
->              // SAFETY: handle_mem is a valid non-null pointer provided by zpool, uptr points to
->              // a KVec allocated in `malloc` and is therefore also valid.
->              unsafe {
->                  copy_nonoverlapping(handle_mem.as_ptr().cast(), uptr as *mut c_void, mem_len)
->              };
->          }
->      
->          fn total_pages(&self) -> u64 {
->              self.bytes_used.load(Ordering::Relaxed) >> PAGE_SHIFT
->          }
->      }
-
-It can indeed but then the ZpoolDriver trait will have to be extended 
-with functions like into_raw() and from_raw(), because zpool expects 
-*mut c_void, so on the Adapter side it will look like
-
-     extern "C" fn create_(name: *const c_uchar, gfp: u32) -> *mut c_void {
-         // SAFETY: the memory pointed to by name is guaranteed by zpool 
-to be a valid string
-         let pool = unsafe { T::create(CStr::from_char_ptr(name), 
-Flags::from_raw(gfp)) };
-         match pool {
-             Err(_) => null_mut(),
-             Ok(p) => T::into_raw(p).cast(),
-         }
-     }
-
-The question is, why does this make it better?
-
-> Also using a `usize` as a handle seems like a bad idea. Use a newtype
-> wrapper of usize instead. You can also not implement `Copy` and thus get
-> rid of one of the safety requirements of the `free` function. Not sure
-> if we can remove the other one as well using more type system magic, but
-> we could try.
-
-Thanks, I'll surely look into this.
-
->>>> +
->>>> +    /// Create a pool.
->>>> +    fn create(name: &'static CStr, gfp: Flags) -> Result<Self::Pool>;
->>>> +
->>>> +    /// Destroy the pool.
->>>> +    fn destroy(pool: Self::Pool);
->>>
->>> This should just be done via the normal `Drop` trait?
->>
->> Let me check if I’m getting you right here. I take what you are suggesting is that we require that Pool implements Drop trait and then just do something like:
->>
->>      extern "C" fn destroy_(pool: *mut c_void) {
->>          // SAFETY: The pointer originates from an `into_foreign` call.
->>          unsafe { drop(T::Pool::from_foreign(pool)) }
->>      }
->>
->> Is that understanding correct?
-> 
-> Yes, but you don't need to require the type to implement drop.
-> 
-> ---
-> Cheers,
-> Benno
+/P
 
 
