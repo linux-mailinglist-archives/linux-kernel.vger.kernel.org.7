@@ -1,160 +1,134 @@
-Return-Path: <linux-kernel+bounces-789644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789646-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAF51B3989B
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 11:43:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A20EB398A4
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 11:44:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E12141C81F77
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 09:43:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 240F71C81FC1
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 09:44:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1EEC2EB840;
-	Thu, 28 Aug 2025 09:40:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B06C32F0C6C;
+	Thu, 28 Aug 2025 09:40:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Xs4cnsOl"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GQ4P75mu"
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F6F7207A09
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 09:40:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3D622D9787;
+	Thu, 28 Aug 2025 09:40:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756374015; cv=none; b=Lw10v6aD7JY/fblSU49nZWEJqquesx/VXN+nCXvnsA0A3DJ7zZ2N6P6j1kByTiUjVPIWoISJ5AfsYcdCBXt7Bq/Na0dT/L6uoI5KK0GENvwUGKhqQo0mnZx6NtkW6ANPn4aR7LlyZDMwc9Np7gQaQrAA4fA62nEJLMLnjZXy0kM=
+	t=1756374029; cv=none; b=WaT6fkNjy21h0qrTRRBk6RuWx6PD6wvV33bxjzFt7X/Z15gwAV4pCQBwaPhWloQ/MjUk3HECslhwg+Wt1JvJC8qNO0F8bNCwWquTYLoRj+wX49sEBDY+zGe8tuaypTPa+cTDdA+K4nmJxzFk49rza2PW9RBF1iSBsmjC0zC3h50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756374015; c=relaxed/simple;
-	bh=aDjBedOFhogle5X50+cJzkbYK2Wl5K7pUiyI+O3mWmY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b6RT0AMZZJ2SAJuTIUqEP5OMwWLtCxmnS61zynJhLoxA6Au2Uu4FKZmwpYy5gVz8i4Lb52r8jgTELWTOyg9jUdp97Xn+Rgr7RssDpP33yUWC1XRvecAlG5KgmtQxPuGDKhdN8cPC4RbbHGQBjZoCsQiNz9gY0OY+RjaqJ2y5nvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Xs4cnsOl; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3c73d3ebff0so827904f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 02:40:13 -0700 (PDT)
+	s=arc-20240116; t=1756374029; c=relaxed/simple;
+	bh=R6jxNMAjDI19J1IHRQGgmZqJDB7pJyMti4vDt5IrhUw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Uc/Lbbwd8yPXSm5N8avOsHK/jiP7hY6WuuVnj9+9paODmOefoka5za54cv6LGqJ6W2kpzbsAsD38Zv9X72uLi+QB2FeQ+VJRfY7xi4e6qkOay79QX2UlRNn5Ia8b2SCnDiegURI+fBnRDEkmcpnpCFF9jrVcs9OmujRKfoy8oEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GQ4P75mu; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-323267872f3so714856a91.1;
+        Thu, 28 Aug 2025 02:40:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1756374012; x=1756978812; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=H18ShQScvKRglRK2UXGYScgTs4Q/vE1IKwPk/BKJEEY=;
-        b=Xs4cnsOlaFR3B0WFPQ7OFgaK+quJzc4p2ybe1x9kf8uVXcDrfx+LfXIXlpA9rT9kdJ
-         S9kbHsIV4MY7JLCW9Ib5IdPh5FNgxbYd/yl6DU8EFOSUc21f54upac1eY0ofqDbVFew0
-         5UWLTEsEhWerMDSwYSzDNTlVpZa53bjOjQ4GgyDRnR0kJS5BKKTZ5cq+LsBnSwo82C6l
-         TgrgDdjuZMl3JoTw3WOL4gagarflFaOJiwZMbbWkoSjyCbHPNVhLt1/GSOyT8klwr6mH
-         K261zT8WfoRVv7uoR6EpYSiYfBabSzCiCvGAUWuMF8LxWowCN0akciQn3Z7M+ZfKFkjK
-         HfRg==
+        d=gmail.com; s=20230601; t=1756374027; x=1756978827; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=R6jxNMAjDI19J1IHRQGgmZqJDB7pJyMti4vDt5IrhUw=;
+        b=GQ4P75muGjUYUrm0Zp+8YgA9k79Aw+UT6J50VCF/ZbBvQ4WS1YSP+4QEntgZaX0AgC
+         l0Q2gQL8mWI3XuPgGwsu/+oslUhvctFNQFOvBntI5jkCOW4cZJnFdqLZRrC47GItua5p
+         i36pIzU2Z9bU5sNf9t3a8MEFGJwEBbjDf9saotQT3mQTElheQa2zqYVbANnTON3rv+St
+         wIwOsGKEQJtfAEQuBR+wLvpUjupXo9EuBVSGkDTaFRErNxjw/vGBxVmbhrBdfITJhvvy
+         Tbhyu9ZnjU2RzzsDHAgqpi+XeBTJuf7JxTvG+eFx9zOjOm/37s4CvgXgBYcVoWHMCJ/4
+         PjEw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756374012; x=1756978812;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=H18ShQScvKRglRK2UXGYScgTs4Q/vE1IKwPk/BKJEEY=;
-        b=cYg0OwEze6ygJB/zZ/wTkrHujFkZaFavG+fvxzDVzVuyVAt4N7p9Y1B/AWjbMGHbvd
-         aWiNOa2CReLlU0iq5iqZ7na8S0g7y0B2/s9pay2mIUXdwQ5md14XEyc0f0c5exN7J4xN
-         XSLnSQE7bODNqeBvZpFGWQPvkXg75wFUvBn/EAMgAmT64XfnOtRpqNhUh9Fqh9yrrxdW
-         pfTsGIRqZbLCQqilnCaCJH244CsSNKkzu8WT/xzAJ1V9mRoF3qLHz86pK+Iub4zxhJdJ
-         4FO47Re1J9lK7TP0d2PhPHhNJDRee9aVGR3FTSLy9whdzSu2MXqjr/ME+/IioYobq3/C
-         HSlw==
-X-Forwarded-Encrypted: i=1; AJvYcCWHcAoeeXYjgA/VuLQVi8+h+WOOKHSYFbOYMuqMYG60E6Pws72iFe06FwQUSjaI9GjpPdzrzxgbTpraupo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxU0aeiA5qW8qdn9Obvj91+8EZB3aPVRKsbIa/N5I/zdHiDtvTP
-	nbjuR2h3Q6DckAMhroNfdW06LKnPERtOZDwtYn7WXDDi0OukdTrEHnWwRJoMFI27u5Q=
-X-Gm-Gg: ASbGncv7cFpBvXEPnvwdUlnPXlGhYSe8eqRos3naeZdV1r4QRNN7ZOtKn66eNTSM/gD
-	8D74pJyrgD4zEiBlns4czPUM+QQDRQ3CxHZrFkq9ktGDQJ7XBe7dU6xMvMdnLIXqmweSI2BwiXc
-	Q3vhl6+XXn/s5mWEBIBH9e111L+vKRW4X4s1UZOelAzGZeuCWG1E+Nco1L3NOPREkM40bAPJU7A
-	yS272BvdDLi8xmdup5Iwjk47MyGKHXL2DxNVozw5KwQz4VLTNXXM/gE9fzcuJgqnh34BUJJ3kJX
-	oAicl+c2dsUftNX4ep4yv4Prq7R5sFmHINbqusmp4CPBlU+jZbc1m1+saNCvmRyjcpix3hpELNb
-	J6KooF00a2SxuPLW2eJyftfsZoYpOO7jDJQG7Hm1j33zLLA==
-X-Google-Smtp-Source: AGHT+IFERGYy0Bvc1+pJyr9ZQR1l+DS4FjEWsD509R+lmrVqd/10evLfD/XL9tsL/EgOd/szw8gFNA==
-X-Received: by 2002:a5d:64cc:0:b0:3b7:9d87:9808 with SMTP id ffacd0b85a97d-3cbb15ca448mr6762408f8f.15.1756374011627;
-        Thu, 28 Aug 2025 02:40:11 -0700 (PDT)
-Received: from localhost (109-81-86-254.rct.o2.cz. [109.81.86.254])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3cce1724939sm6098245f8f.26.2025.08.28.02.40.11
+        d=1e100.net; s=20230601; t=1756374027; x=1756978827;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=R6jxNMAjDI19J1IHRQGgmZqJDB7pJyMti4vDt5IrhUw=;
+        b=j0aZn1N1+zvXV/DqbyBI1IaNebOisGPmdzMLpU4XEyFP7WbBArKKaEaJ48igKOHoq7
+         d8A0FmY6b/g1Ews8zLXFo4c0Zgef0WzGMXF0X61RHDWN+LmT5ePhLO9vxUNoj67l/5dA
+         eyZDQ/IQyacAegVWD0PhpvwQe3RGAbHvpbpAOopkbtVfGcsThKEQof2YLPm9ryMePs18
+         ZoPjIu6OCA60ZjTP9m5q1nEcdbre9BAlcYk3VS2H/INHvFAF1H6zzJkWa584wkgOQawQ
+         KjwfiW6v4ZIYSfQGA52FP3IJgLjulT3Lky15S4W57ghjztZqhwL+QO6SalhHUjPA7SYE
+         iaZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU3K/C9s+fCfP8HlAuNTiaqDakFKYJ6LvIZoZIZq4VW+XwHMIW45TDHywAbEKHhcMZeUHMkBwRRz5Aas/A=@vger.kernel.org, AJvYcCVfEtBEugOUw+CY9x1cZ8f2wiF/HlqSy0IRYjGJawrsao0Y4UiDkXx6ty6SUS5Spi44yf8LjyKbL64/XINcbkvA@vger.kernel.org, AJvYcCXDUKye5n6Q6BEtB3PDLyegrO5USMobWAwDy1pAAXZIruZZTQ7s1ILNppwzojK4Dxh49yQVlOXTIl9tc0qy99D+dsG1cSKd@vger.kernel.org
+X-Gm-Message-State: AOJu0YwkBtyMkL6ddYxDJVnXIvXA0J1lmKnUgw63dozYXJgjVjVEYAQd
+	obg+0HG6RANDb8HwKWiVbVdA6eT6XgqmOahL0MoDeHDs8Pg5xYRrIyBgjeiccVWIucU=
+X-Gm-Gg: ASbGncuIyKJvioctgKDSG4c2wkNpbArWX5aCz3Xh/AAMDQYoBiC5F38JMntljZ8A4ar
+	wb28E/4V4FgjvuJlyqm7p8/vWNmdbajVb90dqoyqOzBNE2BGdlNXKZgnUxaj3/t7oKNJapzMU37
+	NojXRLHaf7FcxJ8uc0+zFKKoTZCQaYSxj+ZWCPVCIo+LDPmJbJTvlyrlYW83ttQNQyrbkCJ9s9m
+	TOUf1RE+aQrqMG3HrDaR32QtnhdpCZ1hoikrunLfxSmOVX4qouE/sxdyn7r1HytJL/TXhWyI/mJ
+	ZcQ+EEgobGjrvIFyF5K+HI7iZ2dRk7IeyGg889wtVnFAp5MooAR1L2ge2p8RnhuiOD6EiZBxmsN
+	BzyTh8WansJuQrpCj0BBeerGv1hFhEBR3dOjesViXa3/S1a25TDwEWVZ6CFaxUE8Frp0YfnqZlC
+	yI6jyK7L1t1L4BZeCNRQ==
+X-Google-Smtp-Source: AGHT+IFyJcs7VZXQO4bl1E7h+tk1g9mI2keQqRtJvL/QqXUnkVgw42POnmQAIbH/7ZuAy7kHK1BBsA==
+X-Received: by 2002:a17:90b:1649:b0:321:4182:2b9e with SMTP id 98e67ed59e1d1-32515e37410mr28758623a91.12.1756374026134;
+        Thu, 28 Aug 2025 02:40:26 -0700 (PDT)
+Received: from server.. ([103.251.57.213])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3276fcd33c1sm4518432a91.17.2025.08.28.02.40.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Aug 2025 02:40:11 -0700 (PDT)
-Date: Thu, 28 Aug 2025 11:40:10 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: Weilin Tong <tongweilin@linux.alibaba.com>
-Cc: akpm@linux-foundation.org, linux-mm@kvack.org, vbabka@suse.cz,
-	surenb@google.com, jackmanb@google.com, hannes@cmpxchg.org,
-	ziy@nvidia.com, linux-kernel@vger.kernel.org,
-	baolin.wang@linux.alibaba.com
-Subject: Re: [PATCH RFC] mm: Use pr_warn_once() for min_free_kbytes warning
-Message-ID: <aLAj-itGT9DD3SU3@tiehlicka>
-References: <20250828030602.204332-1-tongweilin@linux.alibaba.com>
- <aK_7GKJ4BWjye4tZ@tiehlicka>
- <35e0a580-ae78-4485-b285-7f71f91e046d@linux.alibaba.com>
+        Thu, 28 Aug 2025 02:40:25 -0700 (PDT)
+From: Bala-Vignesh-Reddy <reddybalavignesh9979@gmail.com>
+To: richard.weiyang@gmail.com
+Cc: Liam.Howlett@oracle.com,
+	akpm@linux-foundation.org,
+	davem@davemloft.net,
+	david@redhat.com,
+	edumazet@google.com,
+	gnoack@google.com,
+	horms@kernel.org,
+	kuba@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-security-module@vger.kernel.org,
+	lorenzo.stoakes@oracle.com,
+	mhocko@suse.com,
+	mic@digikod.net,
+	ming.lei@redhat.com,
+	pabeni@redhat.com,
+	reddybalavignesh9979@gmail.com,
+	rppt@kernel.org,
+	shuah@kernel.org,
+	skhan@linuxfoundation.org,
+	surenb@google.com,
+	vbabka@suse.cz
+Subject: Re: [PATCH 2/2] selftests: Replace relative includes with non-relative for kselftest.h and kselftest_harness.h
+Date: Thu, 28 Aug 2025 15:10:16 +0530
+Message-ID: <20250828094016.18063-1-reddybalavignesh9979@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250828081026.yx6vgphtsf4pmr3y@master>
+References: <20250828081026.yx6vgphtsf4pmr3y@master>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <35e0a580-ae78-4485-b285-7f71f91e046d@linux.alibaba.com>
 
-On Thu 28-08-25 17:23:40, Weilin Tong wrote:
-> 在 2025/8/28 14:45, Michal Hocko 写道:
-> 
-> > On Thu 28-08-25 11:06:02, Weilin Tong wrote:
-> > > When min_free_kbytes is user-configured, increasing system memory via memory
-> > > hotplug may trigger multiple recalculations of min_free_kbytes. This results
-> > > in excessive warning messages flooding the kernel log if several memory blocks
-> > > are added in a short period.
-> > > 
-> > > Sample dmesg output before optimization:
-> > > ...
-> > > [ 1303.897214] min_free_kbytes is not updated to 126529 because user defined value 1048576 is preferred
-> > > [ 1303.960498] min_free_kbytes is not updated to 126529 because user defined value 1048576 is preferred
-> > > [ 1303.970116] min_free_kbytes is not updated to 126529 because user defined value 1048576 is preferred
-> > > [ 1303.979709] min_free_kbytes is not updated to 126529 because user defined value 1048576 is preferred
-> > > [ 1303.989254] min_free_kbytes is not updated to 126529 because user defined value 1048576 is preferred
-> > > [ 1303.999122] min_free_kbytes is not updated to 126529 because user defined value 1048576 is preferred
-> > > [ 1304.008644] min_free_kbytes is not updated to 126529 because user defined value 1048576 is preferred
-> > > [ 1304.018537] min_free_kbytes is not updated to 126529 because user defined value 1048576 is preferred
-> > > [ 1304.028054] min_free_kbytes is not updated to 126529 because user defined value 1048576 is preferred
-> > > [ 1304.037615] min_free_kbytes is not updated to 126529 because user defined value 1048576 is preferred
-> > > ...
-> > > 
-> > > Replace pr_warn() with pr_warn_once() to ensure only one warning is printed,
-> > > preventing large volumes of repeated log entries and improving log readability.
-> > pr_warn_once seems too aggressive as we could miss useful events. On the
-> > other hand I agree that repeating the same message for each memory block
-> > onlining is not really helpful. Would it make sense to only pr_warn when
-> > new_min_free_kbytes differs from the previous one we have warned for?
-> Thanks for your feedback!
-> 
-> The dmesg output above comes from hotplugging a large amount of memory into
-> ZONE_MOVABLE, where new_min_free_kbytes does not actually change, resulting
-> in repeated warnings with identical messages.
+Hi Wei,
 
-Yes, this is clear from the changelog
+Thanks for testing and for your feedback.
 
-> However, if memory is hotplugged into ZONE_NORMAL (such as pmem-type
-> memory), new_min_free_kbytes changes on each operation, so we still get a
-> large number of warnings—even though the value is different each time.
+Yeah, if you try to build inside a subdirectory, the top level
+export may not apply, so CFLAGS don't get updated, and even if
+they did, the path could be pointing to wrong location.
 
-We can check whether the value has changed considerably.
+As the docs recommend, building selftest using TARGETS,
+either from kernel source or "tools/testing/selftests/"
+works fine and doesn't fail.
 
-> If the concern is missing useful warnings, pr_warn_ratelimited() would be an
-> acceptable alternative, as it can reduce log spam without completely
-> suppressing potentially important messages. However I still think that
-> printing the warning once is sufficient to alert the user about the
-> overridden configuration, especially since this is not a particularly
-> critical warning.
+If you really want to build from selftests/mm/ directory then
+defining KSFT_INCLUDES with a fallback in the Makefile will
+resolve it, but there is no need of it if we stick with "TARGETS=mm".
 
-The thing is that kernel log buffer can easily overflow and you can lose
-those messages over time, especially for system with a large uptime -
-which is far from uncommon.
+Thanks
+Bala Vignesh
 
-I am not entirely enthusiastic about rate limiting because that is time
-rather than even driven. Anyway, if you can make ratelimiting work for
-your usecase, then no objection from me but I would rather make the
-reporting more useful than hack around it.
-
--- 
-Michal Hocko
-SUSE Labs
 
