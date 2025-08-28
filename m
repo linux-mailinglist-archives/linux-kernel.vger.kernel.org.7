@@ -1,139 +1,184 @@
-Return-Path: <linux-kernel+bounces-790443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED4B1B3A743
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 19:03:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F1C6B3A745
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 19:03:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 29C2B16419A
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 17:03:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E28B3169409
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 17:03:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A9FE3218C2;
-	Thu, 28 Aug 2025 17:03:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 540FD33470B;
+	Thu, 28 Aug 2025 17:03:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="K88uUqBi"
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TsuqjLxN"
+Received: from mail-il1-f201.google.com (mail-il1-f201.google.com [209.85.166.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2AC1211706
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 17:03:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DE8B3314C4
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 17:03:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756400587; cv=none; b=FBRN+gW6TQ46Tub9LxiXmDikgqkixJgTBrD7ARWf88Pz9ngMA5HNJtNKpqBk6myw2eDwzBs5lUk90gJPyvOUZxPOWJVfusaaWmHBmFhJTATx17fqxD4ZnGp37djmYatqEeQWoCoDSEzAglaphJBfSKILDLo2MiLLTIqlVVCcS1I=
+	t=1756400612; cv=none; b=QvYoGaRNXD7uwgyuHjJ6PoBXAh1hngE/TKUNvDyaWH/cAxDxvyvKI65fHzJif253SgMHUgPbJVn7VVFGyjLV6qmZ/mb6mRvFRJfPqaFrw/X7YcdoU2juO6SsXwELQ2uDeYJSo60PMBl/E4AHIYUIWLrHL6e8xgwjw3ElSoIFhIM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756400587; c=relaxed/simple;
-	bh=lc4yQLlGQ1ALDQQJS7QLyBBBdQD7Q9TQBdMpceMI9hk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IlXK/GmEDJkcujO4M5R8NY1Oqcre86SG1RhvB635F3TbxFcLkQ2as4PTNISJf+tT293ylCLIZAnXTqzA9IjbvTj/TqsIonFRjgqd2wWxFgJhQPBiqLWB9MHzozIKm0duJRdcPmnVvxine5u4/S+Jn6FYwiStTKcOT7dSXc+2KxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=K88uUqBi; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id 49F50C8F450;
-	Thu, 28 Aug 2025 17:02:47 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id AA3DF60303;
-	Thu, 28 Aug 2025 17:03:01 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 21CAF1C22DD92;
-	Thu, 28 Aug 2025 19:02:46 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1756400580; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=4Vex+Mkvb0GemWYHmwN2TZzE127JKaTead6sfS0g/BY=;
-	b=K88uUqBiCBmZYOXjE7eaX15VQS5Y/Ibuox7+bHeNP1PTVBAlgYC+/JcBeCy6VcGGzpV4pj
-	5No3PKiewSUFyztDWjZSg+SYBIXI2j0TZhjP3cxfVJ88Mx+1bo5P2g9YaAF61MGTFZZkxo
-	D2ihndxTq0UfY28cIyiTH2qPn9Dq1nbuknrDK7XN/4dT/MWkC/sxPuZtqKHDnhflmMF3pn
-	yTMwbfDlvSzkX1GmcMlpSQ1ooW/TrcLB+VoyYLFDB6P4uBwurHDppwCnHU9e7cVR/409Wg
-	JE73AvIf6jwNIVWuXKZmfeRuk+M/VLeO/ev5PyXFvCOiExR3xWCLmP/Cwl9+kQ==
-Date: Thu, 28 Aug 2025 19:02:43 +0200
-From: Kory Maincent <kory.maincent@bootlin.com>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: "Message-ID :" <cover.1752076293.git.mchehab+huawei@kernel.org>, Linux
- Doc Mailing List <linux-doc@vger.kernel.org>, "Akira Yokosawa"
- <akiyks@gmail.com>, "Breno Leitao" <leitao@debian.org>, "David S. Miller"
- <davem@davemloft.net>, "Donald Hunter" <donald.hunter@gmail.com>, "Eric
- Dumazet" <edumazet@google.com>, "Ignacio Encinas Rubio"
- <ignacio@iencinas.com>, "Jakub Kicinski" <kuba@kernel.org>, "Jan Stancek"
- <jstancek@redhat.com>, "Jonathan Corbet" <corbet@lwn.net>, "Marco Elver"
- <elver@google.com>, "Paolo Abeni" <pabeni@redhat.com>, "Randy Dunlap"
- <rdunlap@infradead.org>, "Ruben Wauters" <rubenru09@aol.com>, "Shuah Khan"
- <skhan@linuxfoundation.org>, "Simon Horman" <horms@kernel.org>,
- joel@joelfernandes.org, linux-kernel-mentees@lists.linux.dev,
- linux-kernel@vger.kernel.org, lkmm@lists.linux.dev, netdev@vger.kernel.org,
- peterz@infradead.org, stern@rowland.harvard.edu
-Subject: Re: [PATCH v10 06/14] docs: use parser_yaml extension to handle
- Netlink specs
-Message-ID: <20250828190243.0d3f74f6@kmaincent-XPS-13-7390>
-In-Reply-To: <20250828185037.07873d04@kmaincent-XPS-13-7390>
-References: <cover.1753718185.git.mchehab+huawei@kernel.org>
-	<4c97889f0674b69f584dedc543a879d227ef5de0.1753718185.git.mchehab+huawei@kernel.org>
-	<20250828185037.07873d04@kmaincent-XPS-13-7390>
-Organization: bootlin
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1756400612; c=relaxed/simple;
+	bh=3353bcpIGRIGbopE0B7L6BZQvKmk3n9SpqVWvTWaITw=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=GtyoFz/yLs7q3R01U4bAecnOAt8r2I6UXYnyr3Xro3wgyS6FOtfcPV+MlaxZKjb255fObVb3+y04vzVQM1ar+X7RXX2jkdMDfJ7t1aYcyImNGW0fNxa5xsrs/y2iRAzJ9rOhnslpZZ2yXt88A3E+pBnqNTIqwBmZhFKZyaGFE8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--nkapron.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TsuqjLxN; arc=none smtp.client-ip=209.85.166.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--nkapron.bounces.google.com
+Received: by mail-il1-f201.google.com with SMTP id e9e14a558f8ab-3ed9502b6b3so14722325ab.3
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 10:03:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1756400609; x=1757005409; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=6KzRF6YcVTWHiQGyl40pENYDHMMfDUIGfTEGKzKBlf8=;
+        b=TsuqjLxNc+XpRp217F/nOUPW5ZrDYHl/O9RWQuXr2iCOjIgiwTcOM/Hs2kC8ceMNzq
+         lwQJ/rAawjpqzxTR2FKe69kCrqjpdx7BdWghFC+FL/PuLKyh/vrG+NODoRElhQQqEfvL
+         jY/VeVJ1G2aU0MTFRznIjUMftDYdOdOCPHsvRi+PaiNzx4GyuWQsTnM/h6Z1vXSPsJ3G
+         qQnMIAFHAk7J1tYLSaOlhFPZXIYc70au/V7R6cLBg+DdCkM9Sjf2debIbKvsbEHgmkWe
+         Gmwb0JZlXtPw3rvZY9cTg3kStpF5s70iUZqqCDWEZSYrcx5oJ3L4/IYtGceengdWcoRh
+         Fu9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756400609; x=1757005409;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=6KzRF6YcVTWHiQGyl40pENYDHMMfDUIGfTEGKzKBlf8=;
+        b=sBPD9IHeZkKRLCrsq7vM2/4CeWhpJTqe9yGqoIIw00NPaGs7732aiYZIzMp5pqWtsy
+         7pXq12U+iZd+8sqGMy7ugvlEByieZXu7R0xxp8bwFWeS+txugC/dlDEDXT64UH0zRCIr
+         SRjPWYwIjdzimTXigiefPXOand4xoDUmxaiDNUNuV9IYObrQZXMxSSZXOywJu1AaAnKc
+         M+Qj2v8gRcKGs3A/dK6RhQ+c2mdPcEijn3Cr8lSXC6IBHllI6GjbklRQ+/3WFkiWkgEK
+         vuwZdB1K2y/bQCv1h+tXQbye+ByiM86tRvkLTDQbGsJJuNuu8TthsQTE64w0KNq6udyz
+         oZRw==
+X-Forwarded-Encrypted: i=1; AJvYcCUvsYZMPHa2H7y0oEuRhmHVsZu3JcaGr4sU3Ik/65nJW1OokbydOMkVh86b8qd4zd6KTwncYCNzSOyfbEQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZ/Gb9RASlkTE0au2IlnzYx50q7jOf+4Y6jqgK16x5frLuSCb2
+	9wSPgaQYTWgxClfI3WuSSEA4a9rL0dmbGteJ2WSV+7p+Kc8kpIRfMeJGL1z/CC38Wr9s3zvenfq
+	Yl1hYw11oZA==
+X-Google-Smtp-Source: AGHT+IEQiVHUwF8AvivRZCGJJp+vt2CPWY9JRHr/WC0Avk2OOCHmNzfShFLjZYRcOHRMqt0VFH4+jSbSqylg
+X-Received: from jabkq6.prod.google.com ([2002:a05:6638:9006:b0:50d:6b6b:f5d8])
+ (user=nkapron job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6e02:1c0b:b0:3f1:a201:1b29
+ with SMTP id e9e14a558f8ab-3f1a2011c32mr30017745ab.27.1756400608604; Thu, 28
+ Aug 2025 10:03:28 -0700 (PDT)
+Date: Thu, 28 Aug 2025 17:03:15 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Last-TLS-Session-Version: TLSv1.3
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.0.318.gd7df087d1a-goog
+Message-ID: <20250828170317.2322582-1-nkapron@google.com>
+Subject: [PATCH v3] selinux: enable per-file labeling for functionfs
+From: Neill Kapron <nkapron@google.com>
+To: Paul Moore <paul@paul-moore.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
+	Ondrej Mosnacek <omosnace@redhat.com>
+Cc: Neill Kapron <nkapron@google.com>, kernel-team@android.com, selinux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Le Thu, 28 Aug 2025 18:50:37 +0200,
-Kory Maincent <kory.maincent@bootlin.com> a =C3=A9crit :
+This patch adds support for genfscon per-file labeling of functionfs
+files as well as support for userspace to apply labels after new
+functionfs endpoints are created.
 
-> Le Mon, 28 Jul 2025 18:01:59 +0200,
-> Mauro Carvalho Chehab <mchehab+huawei@kernel.org> a =C3=A9crit :
->=20
-> > Instead of manually calling ynl_gen_rst.py, use a Sphinx extension.
-> > This way, no .rst files would be written to the Kernel source
-> > directories.
-> >=20
-> > We are using here a toctree with :glob: property. This way, there
-> > is no need to touch the netlink/specs/index.rst file every time
-> > a new Netlink spec is added/renamed/removed. =20
->=20
-> ...
->=20
-> > diff --git a/Documentation/networking/index.rst
-> > b/Documentation/networking/index.rst index ac90b82f3ce9..b7a4969e9bc9 1=
-00644
-> > --- a/Documentation/networking/index.rst
-> > +++ b/Documentation/networking/index.rst
-> > @@ -57,7 +57,7 @@ Contents:
-> >     filter
-> >     generic-hdlc
-> >     generic_netlink
-> > -   netlink_spec/index
-> > +   ../netlink/specs/index =20
->=20
-> Faced a doc build warning that say netlink_spec/index.rst is not used.
->=20
-> $ git grep netlink_spec
-> Documentation/networking/mptcp.rst:netlink_spec/mptcp_pm.rst.
-> Documentation/translations/zh_CN/networking/index.rst:*   netlink_spec/in=
-dex
->=20
-> I think we can remove the whole directory and change these, right?
+This allows for separate labels and therefore access control on a
+per-endpoint basis. An example use case would be for the default
+endpoint EP0 used as a restricted control endpoint, and additional
+usb endpoints to be used by other more permissive domains.
 
-Oops just saw that is was some local leftover. This first warning get remov=
-ed
-with a clean tree.
-=20
-> Also got a doc build warning that says netlink/specs/index is not existing
-> even if it exists. Maybe a sphinx parsing issue ?!
+It should be noted that if there are multiple functionfs mounts on a
+system, genfs file labels will apply to all mounts, and therefore will not
+likely be as useful as the userspace relabeling portion of this patch -
+the addition to selinux_is_genfs_special_handling().
 
+This patch introduces the functionfs_seclabel policycap to maintain
+existing functionfs genfscon behavior unless explicitly enabled.
 
->=20
-> Regards,
+Signed-off-by: Neill Kapron <nkapron@google.com>
 
+Changes since v1:
+- Add functionfs_seclabel policycap
+- Move new functionality to the end of existing lists
 
+Changes since v2:
+- Sending as separate patches
+---
+ security/selinux/hooks.c                   | 8 ++++++--
+ security/selinux/include/policycap.h       | 1 +
+ security/selinux/include/policycap_names.h | 1 +
+ security/selinux/include/security.h        | 6 ++++++
+ 4 files changed, 14 insertions(+), 2 deletions(-)
 
---=20
-K=C3=B6ry Maincent, Bootlin
-Embedded Linux and kernel engineering
-https://bootlin.com
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index e474cd7398ef..333bb6cba25e 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -476,7 +476,9 @@ static int selinux_is_genfs_special_handling(struct super_block *sb)
+ 		!strcmp(sb->s_type->name, "rootfs") ||
+ 		(selinux_policycap_cgroupseclabel() &&
+ 		 (!strcmp(sb->s_type->name, "cgroup") ||
+-		  !strcmp(sb->s_type->name, "cgroup2")));
++		  !strcmp(sb->s_type->name, "cgroup2"))) ||
++		(selinux_policycap_functionfs_seclabel() &&
++		 !strcmp(sb->s_type->name, "functionfs"));
+ }
+ 
+ static int selinux_is_sblabel_mnt(struct super_block *sb)
+@@ -741,7 +743,9 @@ static int selinux_set_mnt_opts(struct super_block *sb,
+ 	    !strcmp(sb->s_type->name, "binder") ||
+ 	    !strcmp(sb->s_type->name, "bpf") ||
+ 	    !strcmp(sb->s_type->name, "pstore") ||
+-	    !strcmp(sb->s_type->name, "securityfs"))
++	    !strcmp(sb->s_type->name, "securityfs") ||
++	    (selinux_policycap_functionfs_seclabel() &&
++	     strcmp(sb->s_type->name, "functionfs")))
+ 		sbsec->flags |= SE_SBGENFS;
+ 
+ 	if (!strcmp(sb->s_type->name, "sysfs") ||
+diff --git a/security/selinux/include/policycap.h b/security/selinux/include/policycap.h
+index 7405154e6c42..135a969f873c 100644
+--- a/security/selinux/include/policycap.h
++++ b/security/selinux/include/policycap.h
+@@ -17,6 +17,7 @@ enum {
+ 	POLICYDB_CAP_NETLINK_XPERM,
+ 	POLICYDB_CAP_NETIF_WILDCARD,
+ 	POLICYDB_CAP_GENFS_SECLABEL_WILDCARD,
++	POLICYDB_CAP_FUNCTIONFS_SECLABEL,
+ 	__POLICYDB_CAP_MAX
+ };
+ #define POLICYDB_CAP_MAX (__POLICYDB_CAP_MAX - 1)
+diff --git a/security/selinux/include/policycap_names.h b/security/selinux/include/policycap_names.h
+index d8962fcf2ff9..ff8882887651 100644
+--- a/security/selinux/include/policycap_names.h
++++ b/security/selinux/include/policycap_names.h
+@@ -20,6 +20,7 @@ const char *const selinux_policycap_names[__POLICYDB_CAP_MAX] = {
+ 	"netlink_xperm",
+ 	"netif_wildcard",
+ 	"genfs_seclabel_wildcard",
++	"functionfs_seclabel",
+ };
+ /* clang-format on */
+ 
+diff --git a/security/selinux/include/security.h b/security/selinux/include/security.h
+index 7f19972f7922..0f954a40d3fc 100644
+--- a/security/selinux/include/security.h
++++ b/security/selinux/include/security.h
+@@ -203,6 +203,12 @@ static inline bool selinux_policycap_netlink_xperm(void)
+ 		selinux_state.policycap[POLICYDB_CAP_NETLINK_XPERM]);
+ }
+ 
++static inline bool selinux_policycap_functionfs_seclabel(void)
++{
++	return READ_ONCE(
++		selinux_state.policycap[POLICYDB_CAP_FUNCTIONFS_SECLABEL]);
++}
++
+ struct selinux_policy_convert_data;
+ 
+ struct selinux_load_state {
+-- 
+2.51.0.318.gd7df087d1a-goog
+
 
