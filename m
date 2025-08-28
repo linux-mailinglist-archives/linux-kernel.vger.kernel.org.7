@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-789726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AD37B399A9
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 12:25:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A13BB399AB
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 12:25:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49A841BA753E
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 10:25:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03DA9468160
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 10:25:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FD5230E0ED;
-	Thu, 28 Aug 2025 10:22:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B04D330E0D5;
+	Thu, 28 Aug 2025 10:22:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RWSujQ75"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sUuYbLNi"
 Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30A0F30DD07
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 10:22:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B25030BB92
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 10:22:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756376570; cv=none; b=e4/4+yhjk7S3u1kl0UXPJRcLVxjrCpoxuFTrAfw6Kh1OJ5VXBS66E4Itm596xhRZTInd4d/JaeiC06Bk41njiHop4n3WvdMP0QXtpayzWHQiJiLSasU2eZ6O+d7hHacneE/OcJLjPqd4TC4wi4G9uGOnLZ2B/KYkyuWSUsrrmAk=
+	t=1756376572; cv=none; b=GJQw3m/IU7xQMvezAj2OR2UlS1dAlUU0y0kOmNTlGX0BDbnzw4Ct5eGMtb53yUrqVijl5SUdV+3nq5qMXm80ywEO47LO0GzYYrwQLB2uK4kRpeqTr9qgn4M6KNxrZjNof4bYPAqtNThPSfUHZAmaOjJWDrl9d6mIgz4nB/KCi/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756376570; c=relaxed/simple;
-	bh=L5OPBMNERIorebPLCitdWWYXRB3zMTwpP66dKgU4iUk=;
+	s=arc-20240116; t=1756376572; c=relaxed/simple;
+	bh=G2zufqLCQn7+KfD8fnQ9mx11YDR18l1Dlw5GsKNscZY=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=JCIHFihFEC3T6OVYukV1gpKXIKzBH03EtjSrp+9cn1MM05VfM7lRA26vD06DC+cvIHZgIVuk3GPnIL5Mz2Zsh5drwxCkno8EbDg5eAPtiyVLQP5ro0rYmYNweuGZm6BpgIkwUlcP+merilckihsX5cBCUm+9RI/CdTO/2IRXsPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RWSujQ75; arc=none smtp.client-ip=209.85.128.74
+	 To:Cc:Content-Type; b=If7I9foM+weG5x/aawjtkSpHzD2lRJuplmJvzW7OszI8OBu2IajKJk5F33W3cRK5Y+xaXAWIFIQxJgmoO2M33UpjqRvp46fP4GcP+X4pqBuRqcYa3x8UFNt1S+hQEK6l6oCIHTxrUqgNvGQdN3PwmMdI1o/z+fc0gJUHT7sjnfQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=sUuYbLNi; arc=none smtp.client-ip=209.85.128.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-45a15f10f31so12499365e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 03:22:49 -0700 (PDT)
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-45b51baec92so1619175e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 03:22:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756376567; x=1756981367; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1756376569; x=1756981369; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=XaJpL8jKywahQIGYh+IMsHL6Z6ULbMaLruj54BTvvjY=;
-        b=RWSujQ75q+NBFQ9d2bRhpu65w4xBvL6BlKi/S/jw38SlVnf+sbx8Bs5dneoP3O/6Vj
-         5rhzqvBF0fH3O9EJvld2D5QlpARb0D/858OJllhwwt1bQ+mPQ7W4T33G2LqAC1sVcY9u
-         /4TbriojqaUwquj0zkRVX1DDwVQDGnqaasJviEjNRgCU6/9DOKWrUD08JlhJyVjo/jLN
-         wiyDcgX0EzULC5KXU7ZQdCQ8BjaJS6odA1SCHp/c/KEV+yIX0Nh2Ea0kvxfLr9J+RS1O
-         m2551K/bxObt8+vcGHnrnsOaNgkVoZBZfR9CAtzUtrbtRVI3xT21zu9lHoEqShue18AN
-         XLNA==
+        bh=ujXKSc+zgno0OOMX6c7Rga5ycdtxsGZotgyzuX1fels=;
+        b=sUuYbLNiUlc3YoWE5WBJpCKXQ59MeVVgXFIz8sk6iD1150VCDtP5NZcMAk4iiEeK1K
+         I231yYrMAu+e15EbafiSQSXzpjGC0DiMsfSUzK5m5+fJ0yR+xn7fnITbLw9ICtQAv8m/
+         Bg6+y4WU0sJK0fn3fFBJTQ7RpESnsa7FfxqgikC5jbEp4CSwRKMUxxN2B+1dze5XxPVx
+         ocoPHQYqc8HvibZYhJGo8y6JuJJov/huQKuXSPclOA/CXjJNUwSjC5+CRGTWK7fO2gqN
+         Bkf+idHQiHkU3hui3uwk/QcCMmQEBQfP6yr2P5NXQg1drVbHSVEyN+nb1xQw7XEmwGWF
+         +D2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756376567; x=1756981367;
+        d=1e100.net; s=20230601; t=1756376569; x=1756981369;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XaJpL8jKywahQIGYh+IMsHL6Z6ULbMaLruj54BTvvjY=;
-        b=YfzsGJJFes9wRWSRv0lCwU//bKNJwSl9SxB7+CByFh2ORxgYd2kidUxbJQgFMaFR++
-         0xH0GZz4bl3VQO3DEXW508rTNsNir95+9PhAKfMf7swRX/7+28pXDk63fWWKmw850dp/
-         QmLx3IgunZdLCeTTQbOv0vXy4EHWPX0Xa5BkHodMYNdiW+nOehDPj0FPZl2elaUgY8J/
-         SdnYEW3jfL0vYSo2uU6WaMEhnksKPakQDjnq6/qzXlu9R6gflYV9lDdyQxWNdhKhqJer
-         J5za3RBZ6M+P6AGloLY6PNi08NGYGrUsxJ+v24t0YZP01bznBxF4R68TtQyGh+lIBihi
-         fGGw==
-X-Gm-Message-State: AOJu0YyKEvEM9X0FYgkMjJ6pynMqBo2kVRM21vxWm7QjDmb8FgpgEDxn
-	MeQtEAHl9FMAwdTU3evscj0jnKIzpIu7uDVNnSBLNjey2clyTJXFqfUQjhxb9E4qCf2yGHwa6Oe
-	agVAogf47BcBwjudqfvkyH8lbrqMGsx1QU3kvkqhGH9VOGtyYBW9V/kzkAHWH0R+dRHImb6SQZS
-	v6ctVZlR6S0P21RAuDNo9QKxDvk3HNYZ2pUQ==
-X-Google-Smtp-Source: AGHT+IEhFhvZFfYqgoI+yglrrAcVCrV8WmuhsfzoUM7Gzcti1M88OdREtqQfEeL9jz0hSC/a+wtRFaO6
-X-Received: from wrbfi2.prod.google.com ([2002:a05:6000:4402:b0:3a5:7a8e:97ed])
- (user=ardb job=prod-delivery.src-stubby-dispatcher) by 2002:a5d:50c8:0:b0:3cb:fee1:de33
- with SMTP id ffacd0b85a97d-3cbfee1dea7mr5302998f8f.7.1756376567632; Thu, 28
- Aug 2025 03:22:47 -0700 (PDT)
-Date: Thu, 28 Aug 2025 12:22:14 +0200
+        bh=ujXKSc+zgno0OOMX6c7Rga5ycdtxsGZotgyzuX1fels=;
+        b=Kf2BLu5rjES8crqTCA1y8lk9AJj9dx8AunHrdasapgIZi3zb+J+B1xgC91RT4Iofvs
+         UeMXfYbhI9GpEukBjruhrSHjrLHzcF/SLu7Hoh8SZvS2YjFEdfUEndXWIoexV5pqos/4
+         d+YehaBMCRnjpgh4iS4wCfWaj4dn96CCtGYW1PttWwovSl5SrZ61ercT8HHcr7rX9wok
+         JQmJbCeniNia9Ex7uQHewy+rb8HKaXP7Vb+AbdVWE5CGXhG9yrafsMkDIm9tPWCsJ75g
+         It+7RXHVWY1yGyvMuvAWvu2xXibcAIiWS3fe9UMarTSkdQVXzVuhN9OVFlWYqH84gWDg
+         zgvQ==
+X-Gm-Message-State: AOJu0YwiBkVaiHjEtxeTQ0DMxDKHTGgdPE2lUfaqZ+0sCBZrcwTaKoH6
+	PvnMtX4kEIJuPEJyNR6IUazDz536jTsUHNqGnWFAAus127UktEf9O87xzXbgn5rWsyNzwiwSn/2
+	nU8WQb35GryrzqjAKx8BOQr8NyDdMT3+2hQOXtEp9qhDb+zs+3KzoFQh2cfC9GItFyHH4lHeHsC
+	YfzWZ2PIB5lmTB2LOrqDtsw77asnBbTmdgUQ==
+X-Google-Smtp-Source: AGHT+IELwBKJ1UROeUm4ICPfKLRu9iKkB4nXcVpVpcr3BHxSyVYVCTcIRJFBmrQ1Gj31W7uvHssJ33ov
+X-Received: from wrui11.prod.google.com ([2002:a5d:630b:0:b0:3c5:97f8:7ce7])
+ (user=ardb job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6000:2306:b0:3c8:ffcf:e01d
+ with SMTP id ffacd0b85a97d-3c8ffcfe6bbmr11059839f8f.55.1756376568911; Thu, 28
+ Aug 2025 03:22:48 -0700 (PDT)
+Date: Thu, 28 Aug 2025 12:22:15 +0200
 In-Reply-To: <20250828102202.1849035-24-ardb+git@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,15 +73,14 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250828102202.1849035-24-ardb+git@google.com>
 X-Developer-Key: i=ardb@kernel.org; a=openpgp; fpr=F43D03328115A198C90016883D200E9CA6329909
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1051; i=ardb@kernel.org;
- h=from:subject; bh=C7hRv/57XB72AG4RPN24KyXGqFt68aWMEWowtuf+WwU=;
- b=owGbwMvMwCVmkMcZplerG8N4Wi2JIWOD7o2eS1HPc8Q5dfKzTqQn3O8qsfLhsil4nXNuXsIqL
- Qmj7awdpSwMYlwMsmKKLAKz/77beXqiVK3zLFmYOaxMIEMYuDgFYCJShowMTwo/unWkb1e5+HOT
- lSCnXfHCpxG20b6/p75RTdCQSTHfychwIihNPCbec++u/a8XZTpFPtC/ISixt9b78dRb6dWvvjm xAAA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5030; i=ardb@kernel.org;
+ h=from:subject; bh=NkmNKRuvJHRR3ewqik/hXwp4Dka2MgHQ5hAg1woLvBM=;
+ b=owGbwMvMwCVmkMcZplerG8N4Wi2JIWOD7s0DeteO7X2zc4WWmFyiTKH1/9enOu62X0ibyCk2s
+ SrRTyaso5SFQYyLQVZMkUVg9t93O09PlKp1niULM4eVCWQIAxenAEzE5SbD/zDvgyxb8jzY+HMD
+ rHyXHfP05fw7Idhn1fXYI2bKy58sYmVkuM74L+1Y21uf/05/ngUUJn3vfCrWF/7p+Tqh05lsj6K 2sAAA
 X-Mailer: git-send-email 2.51.0.268.g9569e192d0-goog
-Message-ID: <20250828102202.1849035-35-ardb+git@google.com>
-Subject: [PATCH v7 11/22] x86/boot: Provide PIC aliases for 5-level paging
- related constants
+Message-ID: <20250828102202.1849035-36-ardb+git@google.com>
+Subject: [PATCH v7 12/22] x86/sev: Provide PIC aliases for SEV related data objects
 From: Ard Biesheuvel <ardb+git@google.com>
 To: linux-kernel@vger.kernel.org
 Cc: linux-efi@vger.kernel.org, x86@kernel.org, 
@@ -93,33 +92,142 @@ Content-Type: text/plain; charset="UTF-8"
 
 From: Ard Biesheuvel <ardb@kernel.org>
 
-Provide PIC aliases for the global variables related to 5-level paging,
-so that the startup code can access them in order to populate the kernel
-page tables.
+Provide PIC aliases for data objects that are shared between the SEV
+startup code and the SEV code that executes later. This is needed so
+that the confined startup code is permitted to access them.
+
+This requires some of these variables to be moved into a source file
+that is not part of the startup code, as the PIC alias is already
+implied, and exporting variables in the opposite direction is not
+supported.
+
+Move ghcb_version as well, but don't provide a PIC alias as it is not
+actually needed.
 
 Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
 ---
- arch/x86/kernel/head64.c | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/x86/boot/compressed/sev.c      |  3 ++
+ arch/x86/boot/startup/sev-shared.c  | 19 -----------
+ arch/x86/boot/startup/sev-startup.c |  9 ------
+ arch/x86/coco/sev/core.c            | 34 ++++++++++++++++++++
+ 4 files changed, 37 insertions(+), 28 deletions(-)
 
-diff --git a/arch/x86/kernel/head64.c b/arch/x86/kernel/head64.c
-index 533fcf5636fc..1bc40d0785ee 100644
---- a/arch/x86/kernel/head64.c
-+++ b/arch/x86/kernel/head64.c
-@@ -52,10 +52,13 @@ SYM_PIC_ALIAS(next_early_pgt);
- pmdval_t early_pmd_flags = __PAGE_KERNEL_LARGE & ~(_PAGE_GLOBAL | _PAGE_NX);
+diff --git a/arch/x86/boot/compressed/sev.c b/arch/x86/boot/compressed/sev.c
+index d650a314143b..6822eb4b9152 100644
+--- a/arch/x86/boot/compressed/sev.c
++++ b/arch/x86/boot/compressed/sev.c
+@@ -38,6 +38,9 @@ struct ghcb *boot_ghcb;
+ #define __BOOT_COMPRESSED
  
- unsigned int __pgtable_l5_enabled __ro_after_init;
-+SYM_PIC_ALIAS(__pgtable_l5_enabled);
- unsigned int pgdir_shift __ro_after_init = 39;
- EXPORT_SYMBOL(pgdir_shift);
-+SYM_PIC_ALIAS(pgdir_shift);
- unsigned int ptrs_per_p4d __ro_after_init = 1;
- EXPORT_SYMBOL(ptrs_per_p4d);
-+SYM_PIC_ALIAS(ptrs_per_p4d);
+ u8 snp_vmpl;
++u16 ghcb_version;
++
++u64 boot_svsm_caa_pa;
  
- unsigned long page_offset_base __ro_after_init = __PAGE_OFFSET_BASE_L4;
- EXPORT_SYMBOL(page_offset_base);
+ /* Include code for early handlers */
+ #include "../../boot/startup/sev-shared.c"
+diff --git a/arch/x86/boot/startup/sev-shared.c b/arch/x86/boot/startup/sev-shared.c
+index b86027d9a968..180f54570022 100644
+--- a/arch/x86/boot/startup/sev-shared.c
++++ b/arch/x86/boot/startup/sev-shared.c
+@@ -19,25 +19,6 @@
+ #define WARN(condition, format...) (!!(condition))
+ #endif
+ 
+-/*
+- * SVSM related information:
+- *   During boot, the page tables are set up as identity mapped and later
+- *   changed to use kernel virtual addresses. Maintain separate virtual and
+- *   physical addresses for the CAA to allow SVSM functions to be used during
+- *   early boot, both with identity mapped virtual addresses and proper kernel
+- *   virtual addresses.
+- */
+-u64 boot_svsm_caa_pa __ro_after_init;
+-
+-/*
+- * Since feature negotiation related variables are set early in the boot
+- * process they must reside in the .data section so as not to be zeroed
+- * out when the .bss section is later cleared.
+- *
+- * GHCB protocol version negotiated with the hypervisor.
+- */
+-u16 ghcb_version __ro_after_init;
+-
+ /* Copy of the SNP firmware's CPUID page. */
+ static struct snp_cpuid_table cpuid_table_copy __ro_after_init;
+ 
+diff --git a/arch/x86/boot/startup/sev-startup.c b/arch/x86/boot/startup/sev-startup.c
+index b0fc63f8dee1..138b26f14ff1 100644
+--- a/arch/x86/boot/startup/sev-startup.c
++++ b/arch/x86/boot/startup/sev-startup.c
+@@ -41,15 +41,6 @@
+ #include <asm/cpuid/api.h>
+ #include <asm/cmdline.h>
+ 
+-/* Bitmap of SEV features supported by the hypervisor */
+-u64 sev_hv_features __ro_after_init;
+-
+-/* Secrets page physical address from the CC blob */
+-u64 sev_secrets_pa __ro_after_init;
+-
+-/* For early boot SVSM communication */
+-struct svsm_ca boot_svsm_ca_page __aligned(PAGE_SIZE);
+-
+ /*
+  * Nothing shall interrupt this code path while holding the per-CPU
+  * GHCB. The backup GHCB is only for NMIs interrupting this path.
+diff --git a/arch/x86/coco/sev/core.c b/arch/x86/coco/sev/core.c
+index 9782ebe30675..b9133c825f90 100644
+--- a/arch/x86/coco/sev/core.c
++++ b/arch/x86/coco/sev/core.c
+@@ -46,6 +46,29 @@
+ #include <asm/cmdline.h>
+ #include <asm/msr.h>
+ 
++/* Bitmap of SEV features supported by the hypervisor */
++u64 sev_hv_features __ro_after_init;
++SYM_PIC_ALIAS(sev_hv_features);
++
++/* Secrets page physical address from the CC blob */
++u64 sev_secrets_pa __ro_after_init;
++SYM_PIC_ALIAS(sev_secrets_pa);
++
++/* For early boot SVSM communication */
++struct svsm_ca boot_svsm_ca_page __aligned(PAGE_SIZE);
++SYM_PIC_ALIAS(boot_svsm_ca_page);
++
++/*
++ * SVSM related information:
++ *   During boot, the page tables are set up as identity mapped and later
++ *   changed to use kernel virtual addresses. Maintain separate virtual and
++ *   physical addresses for the CAA to allow SVSM functions to be used during
++ *   early boot, both with identity mapped virtual addresses and proper kernel
++ *   virtual addresses.
++ */
++u64 boot_svsm_caa_pa __ro_after_init;
++SYM_PIC_ALIAS(boot_svsm_caa_pa);
++
+ DEFINE_PER_CPU(struct svsm_ca *, svsm_caa);
+ DEFINE_PER_CPU(u64, svsm_caa_pa);
+ 
+@@ -119,6 +142,17 @@ DEFINE_PER_CPU(struct sev_es_save_area *, sev_vmsa);
+  */
+ u8 snp_vmpl __ro_after_init;
+ EXPORT_SYMBOL_GPL(snp_vmpl);
++SYM_PIC_ALIAS(snp_vmpl);
++
++/*
++ * Since feature negotiation related variables are set early in the boot
++ * process they must reside in the .data section so as not to be zeroed
++ * out when the .bss section is later cleared.
++ *
++ * GHCB protocol version negotiated with the hypervisor.
++ */
++u16 ghcb_version __ro_after_init;
++SYM_PIC_ALIAS(ghcb_version);
+ 
+ /* For early boot hypervisor communication in SEV-ES enabled guests */
+ static struct ghcb boot_ghcb_page __bss_decrypted __aligned(PAGE_SIZE);
 -- 
 2.51.0.268.g9569e192d0-goog
 
