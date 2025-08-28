@@ -1,88 +1,129 @@
-Return-Path: <linux-kernel+bounces-790374-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790375-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9863AB3A638
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 18:27:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F26AEB3A640
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 18:28:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A4215E62E1
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 16:27:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 52CEB7B3548
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 16:27:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0355D32275B;
-	Thu, 28 Aug 2025 16:27:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5CA7322C8C;
+	Thu, 28 Aug 2025 16:28:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="oDjU0KnI"
-Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="GCQAwKkR"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 209ED32255C
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 16:27:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B25BF2236F0;
+	Thu, 28 Aug 2025 16:28:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756398424; cv=none; b=BvsIHLZUgH/snKZCB5uuhxadb4EtLTgHImsyhqymG5bBJM7Q89yDxb5ykNOkpbLG8kcD9SAThcD4GGI9TKWbs+oUH32d+IqdvwP9F0eg9z1VzNC993f6vrz42l5P1qsnyUiLK6NiZoMirb5rWv7U+tFhU/SYe2qr1C38NzZ9/Ac=
+	t=1756398511; cv=none; b=KrQw7/DtnHy5i5J97cwtGGfz/vVnNxUeH3MDDr49JVu2AuO62hxaBwD63c0MMgN2L05tjSAKi3orb/ILIrGaGOj3T24Ns0imoH4p2DVAj/glDbIU9n1hj70glxsCu+lXb5+6CB+YmSL7MLMb6cATdYKAvX3gzrMHK0Wyk57cJ2s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756398424; c=relaxed/simple;
-	bh=vhIwjMEKHDUbgyw/UEvayi72XXEgzaWVlsm5VzzTmzM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bRJes5Fn4c8T8azuz8o+qCawvwV0bql+vijpOzznL4bDm2Ofr1frnQ1dnre8Z/gUHJAIsY/cTzCL1ZFH5oSI+f5YH4DBuQBwfSv+npbkRXT7LjXe3kY/XHU20ifPawlnGDvvdmj7pHhUj5hWMa0cSN2qSA/IbgopTns1x71/Wbk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=oDjU0KnI; arc=none smtp.client-ip=91.218.175.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1756398420;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=LcTj8AYdceOqTQSQLAc0f2c7JRl5hi315MYDEFAy0FY=;
-	b=oDjU0KnIjOdCGvWRlRvKOzLEFyXpZVCQdYpa3vBU7RH7GW7zIV+8apXzo+tW9pRB2fEMew
-	P8PnkKt76JtLOUoExm5mJHbAEMVeBnuyG0wXxXfqCAwSjtYzvhRzsXJJHFsAs1jnqadTft
-	Bsb03vAzsJuLdFQ7AfD9FU/MBJdHO0s=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Alan Stern <stern@rowland.harvard.edu>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	linux-usb@vger.kernel.org,
-	usb-storage@lists.one-eyed-alien.net,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH RESEND] usb: storage: realtek_cr: Simplify residue calculation in rts51x_bulk_transport()
-Date: Thu, 28 Aug 2025 18:26:24 +0200
-Message-ID: <20250828162623.4840-3-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1756398511; c=relaxed/simple;
+	bh=UBajhvaeRHxoiwyC/7OeQSLuiuKddhveqaNdcfszHRs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=KbKGsB7lQnPqi1zLlWWC8EMvBQ3PHiYPlrsusMx/PgvTBcNi6KscqfiKvANtJrfS2gup7IFUEjsge44tLAPRkytDQWU+FE7kBrmobWEZ48VEvbI4WrikyNcC2FV9wq6PVcKXLCa75534O3JEMezS9SVoaV8JAUVA1tMoRLnNjww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=GCQAwKkR; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57SELYqs015246;
+	Thu, 28 Aug 2025 16:28:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Z9xujkxDI2+ZlBqeae4zLl53ypgiJX+WAJVI7Qh/lCU=; b=GCQAwKkR+k6o3K61
+	yer7eVOqlNCKp+Ghg/KrQgIC7C8VlTfUbQ0/l0ptnvRbgw8ZErOrtDbN/T6dS43z
+	D/NdCXBJrKtWhkpW8Xx2VzeAa5GAripl2o+F47WS0gnZ3FvUzrMMsHLE66zAVPk+
+	GjpOL0/p0BGOmZ52Slwp89YpDw0j5Ua/R64qDAXgBqfN0I/DlZZ36MrtDhrv4Zk7
+	fClCjbHtPw+3nz/gm+IyVK9wZngGvelZ1SRNPOozYUgLkJt5tVw8EufdEtcVoh/Z
+	m/cXurWSK/VcokamxaJ46S8c4rh3uDr1Bmt6o/cEhzSWkvjjo57mdBCxJvkmuOkb
+	ME993Q==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48q5we8m74-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 28 Aug 2025 16:28:17 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 57SGSGHf006381
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 28 Aug 2025 16:28:16 GMT
+Received: from [10.218.4.141] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.24; Thu, 28 Aug
+ 2025 09:28:07 -0700
+Message-ID: <3ecb49c5-0334-49cf-adaa-de5222602ec7@quicinc.com>
+Date: Thu, 28 Aug 2025 21:58:01 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V3 4/4] ufs: ufs-qcom: Add support for limiting HS gear
+ and rate
+To: Bart Van Assche <bvanassche@acm.org>, <alim.akhtar@samsung.com>,
+        <avri.altman@wdc.com>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <mani@kernel.org>,
+        <James.Bottomley@HansenPartnership.com>, <martin.petersen@oracle.com>
+CC: <linux-scsi@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>
+References: <20250826150855.7725-1-quic_rdwivedi@quicinc.com>
+ <20250826150855.7725-5-quic_rdwivedi@quicinc.com>
+ <db0a8b86-b048-489b-9b23-6987f48e9419@acm.org>
+Content-Language: en-US
+From: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
+In-Reply-To: <db0a8b86-b048-489b-9b23-6987f48e9419@acm.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: OZa3xob9yTEbKJ8a94WO2jZ-yLRy5MRt
+X-Proofpoint-ORIG-GUID: OZa3xob9yTEbKJ8a94WO2jZ-yLRy5MRt
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIzMDAzMyBTYWx0ZWRfX84xjxTih89xG
+ KV2bXXkQEIErrk6pNK9cPH+mBCg7Va5K8sjIwTk2VR/YrGGbe2mTmGf2XyClTPWpML39TshTlg3
+ 2oEugC0C/ipyQ+mp5suX3ra7oheG55xOLWc1T+JsFiJSEN1m6qkzjo4aFpOlGm6IGEqizV6uh0j
+ o1jzkZlk4zKflKNOLq65Xwn5SHTUoJw/YCpxgDF4iFFJ6C+CXhXkMJirY4r88+Qgqselst3mSFM
+ lBenIOksDKSrG+3n8blifO7BlEAQKAQi+hQbhCXf3GDGoTe4XK3vZ9hD7aKKwevjA3rd8V5kGZo
+ cuakTiDEncGKGrmc7Yss4qp9P5Uw33RBXwzXVmE73NMaJNgPtGi7ItcOtD59JImyCNjQvjw2/Xa
+ FsX/VVoh
+X-Authority-Analysis: v=2.4 cv=BJazrEQG c=1 sm=1 tr=0 ts=68b083a2 cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10
+ a=bAcsrgZfspbOT5EUBz4A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-28_04,2025-08-28_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 adultscore=0 priorityscore=1501 clxscore=1015 impostorscore=0
+ bulkscore=0 phishscore=0 suspectscore=0 spamscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508230033
 
-Simplify the calculation of 'residue' in rts51x_bulk_transport() and
-avoid unnecessarily reassigning 'residue' to itself.
 
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
- drivers/usb/storage/realtek_cr.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/usb/storage/realtek_cr.c b/drivers/usb/storage/realtek_cr.c
-index 2a6c7c567e1c..758258a569a6 100644
---- a/drivers/usb/storage/realtek_cr.c
-+++ b/drivers/usb/storage/realtek_cr.c
-@@ -261,8 +261,8 @@ static int rts51x_bulk_transport(struct us_data *us, u8 lun,
- 	 * try to compute the actual residue, based on how much data
- 	 * was really transferred and what the device tells us
- 	 */
--	if (residue)
--		residue = residue < buf_len ? residue : buf_len;
-+	if (residue > buf_len)
-+		residue = buf_len;
- 
- 	if (act_len)
- 		*act_len = buf_len - residue;
--- 
-2.50.1
+On 26-Aug-25 9:07 PM, Bart Van Assche wrote:
+> On 8/26/25 8:08 AM, Ram Kumar Dwivedi wrote:
+>> +    if (host_params->hs_tx_gear != hs_gear_old) {
+>> +        host->phy_gear = host_params->hs_tx_gear;
+>> +    }
+> 
+> The recommended style in Linux kernel code is not to surround single
+> statements with braces.
+> 
+Hi Bart,
+
+Sure, I will update it in the next patchset.
+
+Thanks,
+Ram> Thanks,
+> 
+> Bart.
 
 
