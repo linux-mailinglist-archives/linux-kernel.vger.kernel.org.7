@@ -1,125 +1,161 @@
-Return-Path: <linux-kernel+bounces-789184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789172-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C34D4B39206
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 04:59:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5F0EB391E8
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 04:56:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AB9A17AC4D2
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 02:57:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8751C980026
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 02:56:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAD2E281520;
-	Thu, 28 Aug 2025 02:59:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="M3eG66oK"
-Received: from out203-205-221-173.mail.qq.com (out203-205-221-173.mail.qq.com [203.205.221.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED01226AA91;
+	Thu, 28 Aug 2025 02:56:14 +0000 (UTC)
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6924227C158;
-	Thu, 28 Aug 2025 02:59:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFC2926A088;
+	Thu, 28 Aug 2025 02:56:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756349948; cv=none; b=oGCByzjjKpBsabYbFbWVtfKLHc/7ULVD+349u+9DKBrdFMf7KYEjpj+9ee2IKuT6dNrbXRN+iupe3mpJ3runkIJOEzfaW2j5gWnbKht2vIJjsKZUS5niRcbZ7t5EWVpJz+PLuqbEN+jb8cFh1USa6tDf3KBIFjldK/ZpLfrYYsg=
+	t=1756349774; cv=none; b=AdOiaRhWdHDrLujllm3pdEzqiOV8UdenqFr1lpKSX4IW/tFkWNepEsF/L4TxGGsFUw0tad2Y+xv5uh/FrfJL0m4HSBRaY+doJyWiPiPQamhqaoNVVIwISxHfqlqxmWy8jq/Af16sar9lzwBKSQ7mzP4vj3ESUQKCi/GbvKYhTxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756349948; c=relaxed/simple;
-	bh=c/lXw1sC5mJHaO8msACLWB4EsF+7z/nKMyb4PEdLM9k=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=mCbmYsL5xvheiChCf2NxnQsVHJQpg/p46sOP+ZGTnF47LUvWe37gf8IPBIZey48nkf9hEx5uZvWgxpF48zHMh0ZWOk1eri+u2RIFph7FmJ2wZF6YGTzOWOUJmjAfctGaM5XQloJtB1Gyr6CbMec8vK4DqiQ7Q1be8p5qmk0u7y0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=M3eG66oK; arc=none smtp.client-ip=203.205.221.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-	s=s201512; t=1756349643;
-	bh=LZVhn6BK7rxIqwcwVk6ASyAdIBsuUFL/q2EV3tE0yFg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=M3eG66oKxd5BZZ6I0RMK2O3h5lR41dbhYcYTLc9gP+93jXjllRzVAg7ipna7sQzX/
-	 cGsiqms9LMwA8a9Nm397RyZxxNbZspk+3yadBLyyPxK2eFMSYwZiDsE/WrMard5wSm
-	 p2MmHJ3J/kQ+++/yClfhuiWAaryfnecq9zqHiYvA=
-Received: from NUC10 ([39.156.73.10])
-	by newxmesmtplogicsvrsza29-0.qq.com (NewEsmtp) with SMTP
-	id D79210B2; Thu, 28 Aug 2025 10:53:57 +0800
-X-QQ-mid: xmsmtpt1756349637t0nyoi3x6
-Message-ID: <tencent_952D95A0D7B8D15C4434831621A2ACCACB07@qq.com>
-X-QQ-XMAILINFO: OeJ9zRfntlNPiKb5kbzoPQTX2LTvjSLhVNZLoM5G9/5+eucXXvBSbue5Pb2uzp
-	 8z8/QMag0I/SCKxCy28f9bwUul3wpbxsAYG4bUKBtRcqZYLEHDn4I7DnF09VYPZixmVcKTtDDqlf
-	 XzwX2+L6untt3rcWPIz1gqRYqC2qUbdLoa/JcrG+SRKNJkmboAXTwDl7pMkrFAie1IlkRgnNA8sN
-	 PNkq85b2K8gz0YD0S51LBIDR8DZLgmHnX/Ztgzt8qdBIuMv/GHDRfBmsbWanV3+duWLoL+MKM35v
-	 PCJ8u0elsOSL6xm/AobsM/b/N+BmVzOZd6RAFdVZKBo78gwNpe87Ka70V/Mj3ELpd/rKkSqlcdNl
-	 3a8eB46VeS7Q0c+6HLFW4jVsdKLuquJBhWsGcxSfGiwV7qLu/qG+8PPvtBpTBvlNHStFFXWYxrHS
-	 0JoavfvpvHEF6HndDB5oQxFlWyLJMPzrfTKCvmThG+NPmauU2DIXcjpODsngM6Bg5rBwZY8b0Piz
-	 Hv1z9bl/SsKbkVkLPYBAcWo5vURG9Vb0sS/VJ577YsyIRamwmqs7oK+CIuEIEVNPKWV91V1X9mY6
-	 AWzYM9UKiAYUF5c7i+h17N41gchmNk0FAslziS8nt/Tz6p1/N7jmymsKYXr1rgldOh9kwK5psGyI
-	 A8+XBbF5gPD6CrW9qaP3UygDTOX2Nn1wePWJ2KK2w3wGeHMNxGx7yPpW+l11mrnYQT5eVwXY6/1O
-	 N4Zz8PHXI13z4QiWOLuycOxbri8Ipa3eGZD7DEmwVmOLd9ZkwFRp+/2b4d9zny+5ixTOJ3ZqtpnU
-	 yvHLNBTupUZ2ScM4bmzUdgb0uiy4XaXq1YfAD+ITpV+uHpfmJooSrSXEpBLfMHW2brVuqQHK7EKa
-	 7zm7AiBFOPKes29ZN4fGDp80s5NugYyelohBwoCos+2/ucZHTYPyDoKjCK8gKclV6pXkKfMmtBpr
-	 jpXwIqeCcYDHFOh28JWGdmUaOa/9FNf65EW1Wd0hVwvh+xkhAvKgW8uCTMuPwQ+xJB30d0OVlkU6
-	 RHTBw3eCfI8S+MpRgfNmX1AXPFLgWBCmopEyKy7DGvOTrR7TDUdxEcpcbOjTg=
-X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
-From: Rong Tao <rtoax@foxmail.com>
-To: andrii.nakryiko@gmail.com,
-	ast@kernel.org,
-	daniel@iogearbox.net
-Cc: rtoax@foxmail.com,
-	Rong Tao <rongtao@cestc.cn>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>,
-	Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Mykola Lysenko <mykolal@fb.com>,
-	Shuah Khan <shuah@kernel.org>,
-	Viktor Malik <vmalik@redhat.com>,
-	bpf@vger.kernel.org (open list:BPF [GENERAL] (Safe Dynamic Programs and Tools)),
-	linux-kernel@vger.kernel.org (open list),
-	linux-kselftest@vger.kernel.org (open list:KERNEL SELFTEST FRAMEWORK)
-Subject: [bpf-next v2 2/2] selftests/bpf: Add tests for bpf_strnstr
-Date: Thu, 28 Aug 2025 10:53:41 +0800
-X-OQ-MSGID: <b5965757c3d14276fec1ac96bace13f05d099e43.1756348926.git.rongtao@cestc.cn>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <cover.1756348926.git.rongtao@cestc.cn>
-References: <cover.1756348926.git.rongtao@cestc.cn>
+	s=arc-20240116; t=1756349774; c=relaxed/simple;
+	bh=3Q9iEVOUz1gJksPvlCugtYW8aE3sRLkDtX7rKdL7enw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lv6S8beo2V88Jto9pkAQtibzSItsMnDM9LdtLdwGmuTVB9jCyDzShrTRTyn9vKek/0RvQREjO1oqn5Bbh38s7okLiOR31H9cGjzKhvNFOS9meh/C9oOa3SZe0p8WpsMY3JPxQtGyAdxSxaX4HoqeBkuUVz/xEQayQ4NenflfKHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gompa.dev; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gompa.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-afebe21a1c0so66533366b.1;
+        Wed, 27 Aug 2025 19:56:12 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756349771; x=1756954571;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9/sG5Ec7Hlcd6BQNqJwLka5sDq9zcWIANhRNknbwVaY=;
+        b=NVjLCKkAO2cG6XBG55NEvsPjaeLXZH40cF0qfywAyHpNPiMQrvZ0uS8lL/Wfsvbgob
+         Io0bYnqxFuKXCEyNXa/O0IgJCGJAU//Yy2kzShh09TAXwLWaR6nuceIdeo0pn5oYQwFU
+         UlY27aZPmP6ybgx8vNMJcX9sgT1IQ802Mzj7SdZ6JTp9WvzXGo1vt7VNAFtfaJTn5Gop
+         q0BWUUvidIt6TKmtp9pxKUrHEr9eOn1RetA3pl/prS6o6KV+c+LpFOSkyJYeL/rk9fF5
+         iw7xuzEkZpGjHcMY4j71z6kthjzkV9a1Kkmlnk/WpTXqM0ghpg+7Jp4LeEl3fvlwgQfW
+         p4vw==
+X-Forwarded-Encrypted: i=1; AJvYcCV0VN4DWE0UoKLbaHpL4zM5pPdTRYx3ezm2vnMYbz6yuUKBlwLWCRQnb13i+f5NEFNY4PeEj644SaIebxuX@vger.kernel.org, AJvYcCW439OM7WnrZkbPXxWBWfSb3bTzRsk/a6OtuHoNdRIqXb8HxFFdMMDJStNNh5r6PWue4TmUxg5GMKxM@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxmxb2SRsIfP44KTDBWfVMX54eTp8ibV6eCOjNZ5CTxkqhOD8T7
+	chfP09L1cersWIr1OvaWejlTbgx9Ta0eozHerOuWw7s5ConRdI3heLmSb6+l6y4+ee8=
+X-Gm-Gg: ASbGncvQXi875XHMgls4+li+7dwnfliB0UMjI0EoHbYbjNohgJXAgzgLXyjgzzm21vj
+	5X/uK500IiJQX9iC0aH4sonAOAOSuhqZpmAEKVEkAE+daXDj3hWXBr2U+KMlPesqxlcgeIbtxFC
+	aRZBZkIx3guxJETJvoOCEyVLs/NbmWutuEzWbNADDF/DL/uVObHSkvDTOPjK39ScL76Eup5T8FD
+	Bl8V5OTbLd8SctiP1aXetWVlHfp4Imgg/AK0Vxc2Z9g9CwyhiNPy82A8JF6ZLA+qan8zoRpBijD
+	qlROSUz7Ea0s9FAGvv5nrzWPOoZl0tzGhUYXv6WAIqnir5qTSjkzUueMhWcAytVe3JpRd2gCBgX
+	qUK2+xOMDnSPSQNTjkzdsEjPCKz8YZZRVlhgpwx8v8TjphU/I4ac68vY01PH0Ry9pN17N9oSJDR
+	FzVHTbhXO6
+X-Google-Smtp-Source: AGHT+IGVAo13RrRQvBt+hgRc1uaRfzs1rbCwvTCix81bOLcIrNP4esz/j8NwwaazEdwmc8FPeLF5/g==
+X-Received: by 2002:a17:907:3f9a:b0:afe:d21f:7af0 with SMTP id a640c23a62f3a-afed21f7e3cmr265415066b.14.1756349770831;
+        Wed, 27 Aug 2025 19:56:10 -0700 (PDT)
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com. [209.85.218.50])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afe8d03f981sm662259266b.60.2025.08.27.19.56.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 27 Aug 2025 19:56:10 -0700 (PDT)
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-afebe21a1c0so66531566b.1;
+        Wed, 27 Aug 2025 19:56:10 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUQV4n2gH82qyO2Ru8IapVrUaJ9ifdj9c0230o3hP/YkatMPv2JGZIdAFr/lRd45ucCuw0eF5mpF59YXVy3@vger.kernel.org, AJvYcCXyQHn8ivPTv6A+4Utc+PtCeCvlx8+1qOsYsncCYTEP/KZ66ziNwspKRdRUY+T6YpOjNcrV7yYZCepY@vger.kernel.org
+X-Received: by 2002:a17:907:7f26:b0:afe:ea46:e808 with SMTP id
+ a640c23a62f3a-afeea4747aemr33407866b.47.1756349770127; Wed, 27 Aug 2025
+ 19:56:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250823-apple-dt-sync-6-17-v2-0-6dc0daeb4786@jannau.net>
+In-Reply-To: <20250823-apple-dt-sync-6-17-v2-0-6dc0daeb4786@jannau.net>
+From: Neal Gompa <neal@gompa.dev>
+Date: Wed, 27 Aug 2025 22:55:33 -0400
+X-Gmail-Original-Message-ID: <CAEg-Je9WSJ_eyuKfZejCNCdN5g-V-7_VSW=NY=Sxc4jCJfDcJA@mail.gmail.com>
+X-Gm-Features: Ac12FXybLNW3dXUB-nTs8fEB4lNe9ODNBHdvueiT250V7fxKSinYXBh99Kd-hDc
+Message-ID: <CAEg-Je9WSJ_eyuKfZejCNCdN5g-V-7_VSW=NY=Sxc4jCJfDcJA@mail.gmail.com>
+Subject: Re: [PATCH v2 0/5] Apple device tree sync from downstream kernel
+To: Janne Grunau <j@jannau.net>
+Cc: Sven Peter <sven@kernel.org>, Alyssa Rosenzweig <alyssa@rosenzweig.io>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Mark Kettenis <kettenis@openbsd.org>, Hector Martin <marcan@marcan.st>, asahi@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Rong Tao <rongtao@cestc.cn>
+On Sat, Aug 23, 2025 at 5:49=E2=80=AFAM Janne Grunau <j@jannau.net> wrote:
+>
+> This series pulls changes from the downstream device trees which are
+> supported in upstream kernel.
+> Most importantly it fixes the PCIe description for a specific iMac model
+> (iMac M1, 2 USB-C ports, 2021). This is worked around in the downstream
+> kernel by not disabling the port. In preparation for submitting M2
+> Pro/Max/Ultra devices trees I investigated the issue on the similarly
+> affected M2 Pro Mac mini and fixed it this way.
+> It completes the Wlan/BT device nodes for t600x based devices and adds
+> the missing 15-inch Macbook Air (M2, 2023).
+>
+> Checkpatch emits following warnings:
+>
+> WARNING: DT compatible string vendor "pci14e4" appears un-documented --
+> check ./Documentation/devicetree/bindings/vendor-prefixes.yaml
+>
+> Which I chose to ignore. `vendor-prefixes.yaml` prefixes contains no
+> other mapping for PCI vendor code and the list of ignored prefixes
+> forbids extending it. Both options feel wrong though. "pci${vendor}" is
+> clearly a vendor prefix but duplicating the PCI vendor data base feels
+> wrong. `vendor-prefixes.yaml` currently does not contain and PCI vendor
+> aliases.
+>
+> Signed-off-by: Janne Grunau <j@jannau.net>
+> ---
+> Changes in v2:
+> - fixed commit subject of PATCH 2/5
+> - correct Macbook Pro (15-inch, M2) to Macbook Air
+> - added Neal's and Sven's Rb: tags
+> - Link to v1: https://lore.kernel.org/r/20250813-apple-dt-sync-6-17-v1-0-=
+209f15d10aa0@jannau.net
+>
+> ---
+> Hector Martin (2):
+>       arm64: dts: apple: t600x: Add missing WiFi properties
+>       arm64: dts: apple: t600x: Add bluetooth device nodes
+>
+> Janne Grunau (3):
+>       arm64: dts: apple: t8103-j457: Fix PCIe ethernet iommu-map
+>       dt-bindings: arm: apple: Add t8112 j415 compatible
+>       arm64: dts: apple: Add devicetreee for t8112-j415
+>
+>  Documentation/devicetree/bindings/arm/apple.yaml |  2 +
+>  arch/arm64/boot/dts/apple/Makefile               |  1 +
+>  arch/arm64/boot/dts/apple/t6000-j314s.dts        |  8 +++
+>  arch/arm64/boot/dts/apple/t6000-j316s.dts        |  8 +++
+>  arch/arm64/boot/dts/apple/t6001-j314c.dts        |  8 +++
+>  arch/arm64/boot/dts/apple/t6001-j316c.dts        |  8 +++
+>  arch/arm64/boot/dts/apple/t6001-j375c.dts        |  8 +++
+>  arch/arm64/boot/dts/apple/t6002-j375d.dts        |  8 +++
+>  arch/arm64/boot/dts/apple/t600x-j314-j316.dtsi   | 10 +++
+>  arch/arm64/boot/dts/apple/t600x-j375.dtsi        | 10 +++
+>  arch/arm64/boot/dts/apple/t8103-j457.dts         | 12 +++-
+>  arch/arm64/boot/dts/apple/t8112-j415.dts         | 80 ++++++++++++++++++=
+++++++
+>  12 files changed, 161 insertions(+), 2 deletions(-)
+> ---
+> base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+> change-id: 20250813-apple-dt-sync-6-17-d1fc1c89f7ca
+>
 
-Add two tests for bpf_strnstr():
+LGTM.
 
-    bpf_strnstr("", "", 0) = 0
-    bpf_strnstr("hello world", "hello", 5) = 0
+Reviewed-by: Neal Gompa <neal@gompa.dev>
 
-Signed-off-by: Rong Tao <rongtao@cestc.cn>
----
- tools/testing/selftests/bpf/progs/string_kfuncs_success.c | 2 ++
- 1 file changed, 2 insertions(+)
 
-diff --git a/tools/testing/selftests/bpf/progs/string_kfuncs_success.c b/tools/testing/selftests/bpf/progs/string_kfuncs_success.c
-index 46697f381878..f8fe14787b2e 100644
---- a/tools/testing/selftests/bpf/progs/string_kfuncs_success.c
-+++ b/tools/testing/selftests/bpf/progs/string_kfuncs_success.c
-@@ -30,6 +30,8 @@ __test(2) int test_strcspn(void *ctx) { return bpf_strcspn(str, "lo"); }
- __test(6) int test_strstr_found(void *ctx) { return bpf_strstr(str, "world"); }
- __test(-ENOENT) int test_strstr_notfound(void *ctx) { return bpf_strstr(str, "hi"); }
- __test(0) int test_strstr_empty(void *ctx) { return bpf_strstr(str, ""); }
-+__test(0) int test_strnstr_found(void *ctx) { return bpf_strnstr("", "", 0); }
-+__test(0) int test_strnstr_found(void *ctx) { return bpf_strnstr(str, "hello", 5); }
- __test(0) int test_strnstr_found(void *ctx) { return bpf_strnstr(str, "hello", 6); }
- __test(-ENOENT) int test_strnstr_notfound(void *ctx) { return bpf_strnstr(str, "hi", 10); }
- __test(0) int test_strnstr_empty(void *ctx) { return bpf_strnstr(str, "", 1); }
--- 
-2.51.0
-
+--=20
+=E7=9C=9F=E5=AE=9F=E3=81=AF=E3=81=84=E3=81=A4=E3=82=82=E4=B8=80=E3=81=A4=EF=
+=BC=81/ Always, there's only one truth!
 
