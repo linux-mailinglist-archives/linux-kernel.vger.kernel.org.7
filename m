@@ -1,215 +1,99 @@
-Return-Path: <linux-kernel+bounces-789801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33A2AB39ADC
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 13:02:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C24B5B39AE4
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 13:03:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 540B1984EA6
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 11:02:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6867756130C
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 11:03:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 432C130DEBB;
-	Thu, 28 Aug 2025 11:01:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7356E30E0F8;
+	Thu, 28 Aug 2025 11:02:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="HK8d0J5S"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="omqWf+bk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2E352EA170
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 11:01:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C437330BBA5;
+	Thu, 28 Aug 2025 11:02:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756378909; cv=none; b=KksT/Y7Yg58uLPQIK9DmzjFF1VzVcmbD/N+VyCTKEAYnAT3wHucyK9mZl51c03jVD6X16LLlRT4F9DNabLElM86G/Cv+EHtj67bqOaAikt97G7TFqdyj2kBgrFb5E4t95leIcrmnASHWimQfYu1itqaFt1yDDs9rlyHv07MuCN8=
+	t=1756378925; cv=none; b=Lu3ruVaeP8rj06MiBk1PIYrPXPf6dgMTR8yMgwUg9/j+qM/IGSV9EhZAUBGAHy9PkP4gJ+CwlEuCeebr/nIFhM4y6wr3V2GQxFALlDmORi74H0D1kQf6Bia7UZDW1ruB12vwA/5BE1e0MMZnuS4RawFpuiNhUNUFlLcnTyXzuSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756378909; c=relaxed/simple;
-	bh=rIzLB0jFaq1zyL507dHxGg8FNAjcdbbEzFoAW2xyOKI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WBSbZuUJrdaWZ/odhi6O2ry0EsZIZqPc0BPmytDyL5BdMgylgiB+6bY4nzRVVi5h64gfHDT37WVnDiVnxun2zfSrn21LQuue509sI2xOq2RARj+b4mHk9F2XrQJ+PjhI+CcibKSkgLEtITnUPMk2vFilwiGFkEjxmiGp5SMXbeo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=HK8d0J5S; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57S61VEB027480
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 11:01:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=1me16EcnSUCukrxgcHBWrSlm
-	42EZs4yV1yoRTh2A1HU=; b=HK8d0J5SfxyHcQDCuMJTR8s0YB5CO628d/x+4e9p
-	Gb3feT4nnT8gyJOQPUrDxyF6pIOpAZA49r23YKY50Kr5gUdHZCJDUh7gbeACD4Ez
-	M5+6iQEUI4zVZbMSqVG4tCLaDgUck7oo3EnmlncVlSP65zznzQRe6eBdHgFubwyA
-	MAyOavOeDZ4FXsS+d3B0r1d9BiycLkjzjeevAgVfi2NFSTAbk729p6J/2Wfco/Rw
-	Cj9e1tWxit+P5cwvEPCwJJ9W6k/+HUtJq3L65nLoYLnXt1m0hECglQLTdoCfkDEo
-	0MVaIVt4DriEe77MzVWSVjHh8ZorfKYa9qrL9rLA3f6Oog==
-Received: from mail-vk1-f197.google.com (mail-vk1-f197.google.com [209.85.221.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48se16xyt0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 11:01:47 +0000 (GMT)
-Received: by mail-vk1-f197.google.com with SMTP id 71dfb90a1353d-53b175b20f2so322516e0c.2
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 04:01:46 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756378906; x=1756983706;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1me16EcnSUCukrxgcHBWrSlm42EZs4yV1yoRTh2A1HU=;
-        b=FaW7YN11Gr1mGMJC6FIYjfXfA4DWgkhhCA9I1pmH/nlpcIrqd5Qvtd6WOTKRpVphwA
-         EDihEW9sqVPGTtfcCEo5VQPsjCCVPKCW1rZqR44n06X7Prv56od6fomXU+3kjZLEJGlr
-         D2ahV/N5iIPGqJeAJdgmOo/rKPxLXwn7VtunYOQ/tV3D+HJE2rPToXa5SE8+bPSfhEp+
-         0snkG0zy1gqPDRO9aEavl1Fi5pNkhLhgolvzjkML+sBuJyeVHSGmEg8YZDvga2s8XUcA
-         1DZ2xvZheTJh+e1vSRlJm11ZeqIvF+UdB2uc+iE8pXjQEotYpaWHffEKrq5Y2tR0Z5Uq
-         aQfw==
-X-Forwarded-Encrypted: i=1; AJvYcCWKOX8OpHC+s97Hoq/zqClikrDWYWvC7RkoIzzIHng25mE/JC0Jd4INOYNLcNSQawD3D0cVYTpyO/OQzrw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwkKpj89IAYiYdTs+3Vn9BlNUJea3IAlVXaTR6ABBajlKAmE0fR
-	NlcCBnSwACqMG3MTRsfmcV0ta9JJUbut0p7SAADlaewAKpIQXT6NqMNmvi/1U1EXEEHuH38Zbni
-	z5BHalzXIPjNww3F3XI1KrIBHHrd/FmlkZSRGlLdhBUFXp4yCb0eBHkxO6Vof6BksIEk=
-X-Gm-Gg: ASbGncv84vT2mcqnHRs1lEQnpeg2BCVa4qMrLGYZPlZDbJSBSONJzXI2uew4A36JO/k
-	sIDR4sR3aZuiTKmNTr37k3eXP7+JS4Jtodn+8bSyyRBbVkk9B/4EJcaDHrw3cXFGqXmax/tm32R
-	JorVWb+f/xnMQP4tiqLm5KHvJJ8GcFklBSBtQ9CIiqyUZIRhYB7zKlyilrGsyyWmIGMv1IijKRs
-	oZpDwc/XDLVw4LPbQEJbDWEEdnYmirNAOsYfJEfzR9td7Hcocs8HImZDRqkarxnEc2hLYe+JTZ/
-	OMWpmabNV7iuBvQ9Br05EU3YltS7fYQ1lBoiR2wGaCdiqexYTQ6UP448mjkcbFuBx10H+TG8rD2
-	FyHCAP8ED9+5vZFnzkKefiP5GVf7FQiEdYgn80t5BW5McoOjFKTtE
-X-Received: by 2002:a05:6102:3306:b0:4fd:35ca:6df5 with SMTP id ada2fe7eead31-51d0cbe884fmr6423707137.7.1756378905271;
-        Thu, 28 Aug 2025 04:01:45 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEc+jb+s9qKPN/JCnUMGGuKVIUQOhVIj0EszZaiGONB7yq9VeiWgb02Pqf+jRkNnzG8OrY8vg==
-X-Received: by 2002:a05:6102:3306:b0:4fd:35ca:6df5 with SMTP id ada2fe7eead31-51d0cbe884fmr6423646137.7.1756378904346;
-        Thu, 28 Aug 2025 04:01:44 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55f35c8bb19sm3189208e87.73.2025.08.28.04.01.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Aug 2025 04:01:43 -0700 (PDT)
-Date: Thu, 28 Aug 2025 14:01:41 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Sushrut Shree Trivedi <quic_sushruts@quicinc.com>
-Cc: Wasim Nazir <wasim.nazir@oss.qualcomm.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Richard Cochran <richardcochran@gmail.com>, kernel@oss.qualcomm.com,
-        linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        netdev@vger.kernel.org,
-        Viken Dadhaniya <viken.dadhaniya@oss.qualcomm.com>,
-        Nirmesh Kumar Singh <quic_nkumarsi@quicinc.com>,
-        Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>,
-        Mohd Ayaan Anwar <quic_mohdayaa@quicinc.com>,
-        Dikshita Agarwal <quic_dikshita@quicinc.com>,
-        Monish Chunara <quic_mchunara@quicinc.com>,
-        Vishal Kumar Pal <quic_vispal@quicinc.com>,
-        krishna.chundru@oss.qualcomm.com
-Subject: Re: [PATCH 3/5] arm64: dts: qcom: lemans-evk: Extend peripheral and
- subsystem support
-Message-ID: <sqntqb4mce34vkiogrr5ze4jhgfsy4cprmmfease4e2ljiq25u@uobfvzzotj3w>
-References: <20250826-lemans-evk-bu-v1-0-08016e0d3ce5@oss.qualcomm.com>
- <20250826-lemans-evk-bu-v1-3-08016e0d3ce5@oss.qualcomm.com>
- <kycmxk3qag7uigoiitzcxcak22cewdv253fazgaidjcnzgzlkz@htrh22msxteq>
- <25ea5786-1005-43e0-8985-04182d018aa0@quicinc.com>
+	s=arc-20240116; t=1756378925; c=relaxed/simple;
+	bh=oVhq1BnzHltu6MYAZKU0miuwxHCzawaJs4s8iYb7sfM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=JseHQBYVLZU3ut/x7vmjwbjr6uDMRepnDFHls15djfEyzp7my9mm9hdWJt4s2x3IuB/qiR8hIivgpw49bSkHa9SnIUQq/UznF20BcZNCjHzi8MEL5vov4XHX49rf9R7eBmsA2+IFx8IM6AaqSYep7zKKhYVB2+VvFn5F6ByJSqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=omqWf+bk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5381AC4CEEB;
+	Thu, 28 Aug 2025 11:02:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756378925;
+	bh=oVhq1BnzHltu6MYAZKU0miuwxHCzawaJs4s8iYb7sfM=;
+	h=From:To:Cc:Subject:Date:From;
+	b=omqWf+bksS3wgZQrkQ4/ofQO5bRwa9MaU09r/3tJ98Z5MpPzBuRJ3DJPnusPA4Sso
+	 otNz2SPQvj0ZqQ28RIsdTI2a4zYCAFQH/cbl0TsMkfUYDc0s9HhPSpLGnEMHwYd9hB
+	 fmgVmm+OIuV5icRbvjJcdImHFJGSgiSPLr+2ZpTdzxiDUGabkbzKMlM3oCLBIOd61M
+	 jcJKnYPblpPy8uOF/aPExF0MNRhpQKTSqkjp8VsK69yLPK1IuhrvW1MzqVzjkn901L
+	 u7UnZr7HpMcQUgeoxFQINFFvPQYA+Tc3ZgKEN2DwWcekpuZWf6mQ+fo38Ud4QaOSOc
+	 npwySVjHv9fMQ==
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+To: Linux ACPI <linux-acpi@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>,
+ Zhang Rui <rui.zhang@intel.com>
+Subject: [PATCH v1] ACPI: thermal: Get rid of a dummy local variable
+Date: Thu, 28 Aug 2025 13:02:01 +0200
+Message-ID: <13851842.uLZWGnKmhe@rafael.j.wysocki>
+Organization: Linux Kernel Development
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <25ea5786-1005-43e0-8985-04182d018aa0@quicinc.com>
-X-Proofpoint-GUID: IrmdAFtvFCDoS4H0c1lDohvYcbtP5pZ2
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODI2MDEyMCBTYWx0ZWRfX3JT6cPPG6UtP
- ksmy/B79RCwhFtCjTECT2/004vXSDAPwTc81GOZHt9fWGtheUihWunWHUdE4cVE2r2BYAL+M5r8
- yrJgTKIeliCzyX2ka1IglzVq8aueCdbg2Kx/l3tiVAY4DN1jnoz+BRvBaV8atzwR3DOc/VN0D1I
- qvu9Wkb7rwmouOh52Xns0ul/WkkSKvr/LEzjTsTfg824qg0yuPubTP+gitRClporzKf5DSl+/9H
- ALgk95wotaO3cOcpefyhFdukPyhOeebdYUCIxG+xsFCtqsz2A0SSWSEEDAZtwoCPB3DrgDsD1OL
- qnY8Fax6wqSVejVG9iwspgDFULHfqUGV4yCDAfu3T8UdUC8l4369wVKH0BIx/evUKFBt+w2wCgu
- zOiRQnUv
-X-Proofpoint-ORIG-GUID: IrmdAFtvFCDoS4H0c1lDohvYcbtP5pZ2
-X-Authority-Analysis: v=2.4 cv=CNYqXQrD c=1 sm=1 tr=0 ts=68b0371b cx=c_pps
- a=JIY1xp/sjQ9K5JH4t62bdg==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=COk6AnOGAAAA:8 a=bO8WyBFqmgISiikzXHoA:9
- a=CjuIK1q_8ugA:10 a=tNoRWFLymzeba-QzToBc:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-28_03,2025-08-28_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 impostorscore=0 priorityscore=1501 adultscore=0 spamscore=0
- phishscore=0 suspectscore=0 bulkscore=0 malwarescore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508260120
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Aug 28, 2025 at 12:05:21PM +0530, Sushrut Shree Trivedi wrote:
-> 
-> On 8/27/2025 7:05 AM, Dmitry Baryshkov wrote:
-> > On Tue, Aug 26, 2025 at 11:51:02PM +0530, Wasim Nazir wrote:
-> > > Enhance the Qualcomm Lemans EVK board file to support essential
-> > > peripherals and improve overall hardware capabilities, as
-> > > outlined below:
-> > >    - Enable GPI (Generic Peripheral Interface) DMA-0/1/2 and QUPv3-0/2
-> > >      controllers to facilitate DMA and peripheral communication.
-> > >    - Add support for PCIe-0/1, including required regulators and PHYs,
-> > >      to enable high-speed external device connectivity.
-> > >    - Integrate the TCA9534 I/O expander via I2C to provide 8 additional
-> > >      GPIO lines for extended I/O functionality.
-> > >    - Enable the USB0 controller in device mode to support USB peripheral
-> > >      operations.
-> > >    - Activate remoteproc subsystems for supported DSPs such as Audio DSP,
-> > >      Compute DSP-0/1 and Generic DSP-0/1, along with their corresponding
-> > >      firmware.
-> > >    - Configure nvmem-layout on the I2C EEPROM to store data for Ethernet
-> > >      and other consumers.
-> > >    - Enable the QCA8081 2.5G Ethernet PHY on port-0 and expose the
-> > >      Ethernet MAC address via nvmem for network configuration.
-> > >      It depends on CONFIG_QCA808X_PHY to use QCA8081 PHY.
-> > >    - Add support for the Iris video decoder, including the required
-> > >      firmware, to enable video decoding capabilities.
-> > >    - Enable SD-card slot on SDHC.
-> > > 
-> > > Co-developed-by: Viken Dadhaniya <viken.dadhaniya@oss.qualcomm.com>
-> > > Signed-off-by: Viken Dadhaniya <viken.dadhaniya@oss.qualcomm.com>
-> > > Co-developed-by: Sushrut Shree Trivedi <quic_sushruts@quicinc.com>
-> > > Signed-off-by: Sushrut Shree Trivedi <quic_sushruts@quicinc.com>
-> > > Co-developed-by: Nirmesh Kumar Singh <quic_nkumarsi@quicinc.com>
-> > > Signed-off-by: Nirmesh Kumar Singh <quic_nkumarsi@quicinc.com>
-> > > Co-developed-by: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
-> > > Signed-off-by: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
-> > > Co-developed-by: Mohd Ayaan Anwar <quic_mohdayaa@quicinc.com>
-> > > Signed-off-by: Mohd Ayaan Anwar <quic_mohdayaa@quicinc.com>
-> > > Co-developed-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
-> > > Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
-> > > Co-developed-by: Monish Chunara <quic_mchunara@quicinc.com>
-> > > Signed-off-by: Monish Chunara <quic_mchunara@quicinc.com>
-> > > Co-developed-by: Vishal Kumar Pal <quic_vispal@quicinc.com>
-> > > Signed-off-by: Vishal Kumar Pal <quic_vispal@quicinc.com>
-> > > Signed-off-by: Wasim Nazir <wasim.nazir@oss.qualcomm.com>
-> > > ---
-> > >   arch/arm64/boot/dts/qcom/lemans-evk.dts | 387 ++++++++++++++++++++++++++++++++
-> > >   1 file changed, 387 insertions(+)
-> > > 
-> > >   	status = "okay";
-> > >   };
-> > > @@ -323,14 +505,196 @@ &mdss0_dp1_phy {
-> > >   	status = "okay";
-> > >   };
-> > > +&pcie0 {
-> > > +	perst-gpios = <&tlmm 2 GPIO_ACTIVE_LOW>;
-> > > +	wake-gpios = <&tlmm 0 GPIO_ACTIVE_HIGH>;
-> > I think Mani has been asking lately to define these GPIOs inside the
-> > port rather than in the host controller.
-> 
-> Hi Dmitry,
-> 
-> For moving these to the port requires changes in the sa8775p.dtsi to change
-> phys property from controller node to port node.
-> 
-> Mani is asking to add these for newer platforms like QCS8300 not for
-> existing one's.
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-Ack, thanks for the explanation.
+The second argument of acpi_bus_update_power() can be NULL, so drop the
+power_state dummy local variable in acpi_thermal_resume() used just for
+avoiding passing NULL as the second argument to that function.
 
-The rest of the quetions are unanswered.
+No intentional functional impact.
 
--- 
-With best wishes
-Dmitry
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+ drivers/acpi/thermal.c |    8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
+
+--- a/drivers/acpi/thermal.c
++++ b/drivers/acpi/thermal.c
+@@ -924,7 +924,7 @@
+ static int acpi_thermal_resume(struct device *dev)
+ {
+ 	struct acpi_thermal *tz;
+-	int i, j, power_state;
++	int i, j;
+ 
+ 	if (!dev)
+ 		return -EINVAL;
+@@ -939,10 +939,8 @@
+ 		if (!acpi_thermal_trip_valid(acpi_trip))
+ 			break;
+ 
+-		for (j = 0; j < acpi_trip->devices.count; j++) {
+-			acpi_bus_update_power(acpi_trip->devices.handles[j],
+-					      &power_state);
+-		}
++		for (j = 0; j < acpi_trip->devices.count; j++)
++			acpi_bus_update_power(acpi_trip->devices.handles[j], NULL);
+ 	}
+ 
+ 	acpi_queue_thermal_check(tz);
+
+
+
 
