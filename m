@@ -1,248 +1,514 @@
-Return-Path: <linux-kernel+bounces-790085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790086-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E133FB39F2A
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 15:39:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F848B39F2D
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 15:39:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 774E13AE5D2
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 13:39:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9F132020DD
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 13:39:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64D743126C7;
-	Thu, 28 Aug 2025 13:39:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Z70A6z/H"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2060.outbound.protection.outlook.com [40.107.236.60])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C2F9220F2A;
+	Thu, 28 Aug 2025 13:39:33 +0000 (UTC)
+Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D85951AF0C8;
-	Thu, 28 Aug 2025 13:39:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.60
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756388348; cv=fail; b=GE7Sw64aL1vXz4beYLyuGtuqOg+rfhyuugsqHySsja+x1EKpxaU5FlSAGmYKl372T4X33UbrDMAZ1sDIxVcAZytTGub++CAkdihuJCzkeAV2i4pfjdOtLmk/vkTsxOBca/wjp3sb4ueDZQAYgdzx/diCFU4r1JVsuIVxwhH5SGI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756388348; c=relaxed/simple;
-	bh=tBrLWRymiVPNUrLRkUbqQFHYlkZaxDcmcUAkvZCD97U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=ndcqJPxQ3mANP17UjTr/8Ux/0kk31r3OwEVsaN6PiawMfSKcR8jNO5Zocfky3MYdrYU4nrVEGAd9BclJJgTGDuX14uFyxyfIt/c0dEACsowHb0oDjxmLvTRB7xOhjkd6RnGVf638Xr+DbHbK4HmXZfZtsle5il5cRtRnYAKe8LI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Z70A6z/H; arc=fail smtp.client-ip=40.107.236.60
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ev398O6wquh2AiQLxZk9PGdgprIHSlw2lsyFHLwb8nR93kzHtQZuQjIhav3rK6dmuK+bOLOqy0ukJ1OnAlJ4cy5IZGUemxjraE+fuHpFjSuNnZJ8FYrK4sASgJFkq3RNpqN2CTSlED8YXFqEg2hoSenJH2X1OrvVCkhRMF8o/0s/AehzD/K4E7ThGw9dtNdqRxYFLi7Pfo9ihRkKv87znCJ6vKKeHt7u2D3zG8bzu4MExZ8bgOQRq2+n8wAbBMauwOc/t28UazzoyB5Wn4mA7PEnDfnshvaZsCuC+t1gYX0beVcKJpCC/AzyQESl2j4H8I4u2Jkdw5gjp1tGwxbGeQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=m7AfCSXAadbxG/aew2Ojhvg4gXP7xfhklC/4unfqPHY=;
- b=trC59ke2qYBVJmiClsvssbtB4mDyban4Dp7fytHOzQbqaTwWpNik8VtUa5hGssGBz1H8pdGcjCqbf1yLkTUFE7oC3leFJYR2PUbRfG9W915s4zvgoTIG6E4nutsD0WOBhjFeyxWtkpegIgwwkqFlvI9+CAiAb70URSIpHVaAEkr50sfPu6H1l1QOJN1E4O2oOFy0VTpWGl9s4/F8Mzs0WWP9isJnzsyzUYD2Ly0YR2lfclMP0bIAa/DBU/lw+YHayHNOY/i8R0mJ/mcB6EgJeejiG8fekLB/NLiL+xerwIZRV7TA26h10kAijuibmqadbcVPhwgrdCfyY9HWhAjjHA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=m7AfCSXAadbxG/aew2Ojhvg4gXP7xfhklC/4unfqPHY=;
- b=Z70A6z/HNNeICWuf/sdzNklCgd/Cy5uQNbSeQnPp5JpQC1te/AofkwsM8juU4YC/aq6sBNNeSX5IrYYN6Adxg94dYkFurzEPmtsODMjsXIH8okOsQ/AVYfo1Di0XW8bbLJARRB/nKmSpO2XVC6OT8eiWvUeeZHUC3TB9ZBhyQasKuUu3BHLJAhsurx5Ii+gT2pNrErfzzed3JEEtiM/squA8YA7jl7gdQMA5uVPppL+xInuUmWL3xQdvzRzLm+p2anjhW4+DPWq+LTQffgLi3NUt1aVe7xtBQJH1AaTgEyM1KIq3/LcPSG9uRtfWaaHtbMlzWv07Puf5Lx6a/GW4sw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
- by PH8PR12MB7327.namprd12.prod.outlook.com (2603:10b6:510:215::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.15; Thu, 28 Aug
- 2025 13:38:59 +0000
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732%4]) with mapi id 15.20.9073.010; Thu, 28 Aug 2025
- 13:38:59 +0000
-Date: Thu, 28 Aug 2025 10:38:57 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Leon Romanovsky <leon@kernel.org>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
-	Leon Romanovsky <leonro@nvidia.com>,
-	Abdiel Janulgue <abdiel.janulgue@gmail.com>,
-	Alexander Potapenko <glider@google.com>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Christoph Hellwig <hch@lst.de>, Danilo Krummrich <dakr@kernel.org>,
-	iommu@lists.linux.dev, Jason Wang <jasowang@redhat.com>,
-	Jens Axboe <axboe@kernel.dk>, Joerg Roedel <joro@8bytes.org>,
-	Jonathan Corbet <corbet@lwn.net>, Juergen Gross <jgross@suse.com>,
-	kasan-dev@googlegroups.com, Keith Busch <kbusch@kernel.org>,
-	linux-block@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	linux-nvme@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
-	linux-trace-kernel@vger.kernel.org,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>, rust-for-linux@vger.kernel.org,
-	Sagi Grimberg <sagi@grimberg.me>,
-	Stefano Stabellini <sstabellini@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	virtualization@lists.linux.dev, Will Deacon <will@kernel.org>,
-	xen-devel@lists.xenproject.org
-Subject: Re: [PATCH v4 05/16] iommu/dma: rename iommu_dma_*map_page to
- iommu_dma_*map_phys
-Message-ID: <20250828133857.GD9469@nvidia.com>
-References: <cover.1755624249.git.leon@kernel.org>
- <66e7cc6854e4e40278b598b38e0c4d49d7fcec91.1755624249.git.leon@kernel.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <66e7cc6854e4e40278b598b38e0c4d49d7fcec91.1755624249.git.leon@kernel.org>
-X-ClientProxiedBy: YT4PR01CA0354.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:fc::14) To CH3PR12MB8659.namprd12.prod.outlook.com
- (2603:10b6:610:17c::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB374283C90
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 13:39:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756388372; cv=none; b=m3dGs/PvWKFGDYJwVhpfQCgqZqlNNOEVESQgJkI6/5e0dpD9n56fM1JUkpAmP8dW/3b7lXnn+5kbeYsZAgkWZDLWSyr4pUov72saqaNu/ghXO0PX9PG1vdgZZlt4rADeLAWJbVt8pZGRzpJcf28/QEO8OrOzb0il2w7EaDeL3z8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756388372; c=relaxed/simple;
+	bh=KLE7zDvup+oVGJY8/LDoBBs05A/xmGHvn1Hx1L1H6Io=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=NNTFEvnEGNeUZHCP5rHqHrVsOKZY5e9RZ/MqqckPoKDOZfD8d7piFS5tb9YTBiLjENATberJK8ezj7suNEiSHbePcb2OrxggiS3UtyhCZRb4TByjMfWXWku+mUiZdSViUNgmnzCI3lV+d/+1nNHi0LCxtLMVD26FOZU0w6+elOk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3ed0ba44c8fso11466685ab.0
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 06:39:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756388369; x=1756993169;
+        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
+         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QektFrnC4mN/79JbyrdXktJYYVT4Tjl+pDvNCMND5L0=;
+        b=Wi9g66BQlmdPG9L/ay/zUhJAaKo0UQLjL+fQh2qmBctrgIsgjAJubTZoOmv1ijLD1o
+         zlzWdasVNqw4NpLVlAA9Sphdn1G1XQ717Gxwzi6lL9Dt7ZvCd0bnncZD03mvm8Ms5X66
+         0BRzDoa7zV6QrMJGm16USTEBTAZwq20g/2a4wOqGJhUHlhUIL1eDWlhUy/dg3IdLOKRV
+         9+nr9k1Q3tcnPwGbggl5Uuft1VluzsmGNrS1VMskP+7nN25xacI6IpqUPTbejawvSLwR
+         HVaAP9D/ypVF0T/Da9fMpJ0KYQlBZS3t7oBosHEJUnynBmdklc+pHj/fcyQVFbsH4NKi
+         H3uw==
+X-Forwarded-Encrypted: i=1; AJvYcCXBNrfUm9TkzH9q1PWAFKks/eswvNRh5eAq4TeHxZPjAVP2f+k4sJon5GZJ5ch7558C6HbcJI6Z2x+SddM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxgJ0OpzmCwqIIHCRs4wccR+Jyxo8uJDeDsSprD4OaHlLOvx1Lf
+	vT9giZgPlCbGKZVn3z07QxER1YtCmZEqgn4IKdgW11ntxfiGQhX4aMClbdano8F9wZd0HP8bcau
+	bYuOj+VIkFfIzFHbXmqyWgKMiZ5KO/BDhJqNYuTb/IbJQqVgAuY6Xt628Z0I=
+X-Google-Smtp-Source: AGHT+IHpRdvvwiC7wzF5awAQ2gyKkapCl7Gn+lDNvDSTxrRGwC3fqd3j8GbPayOeAH9i+5nQeZbVe8xilaqcpzF4GiJHs5OInthy
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|PH8PR12MB7327:EE_
-X-MS-Office365-Filtering-Correlation-Id: 327bde10-38f8-4ed1-1028-08dde6383df7
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?qyX7RmTJFt/trf+nELkaslku7hVi97mGwRrTyOzTuAD7y7pUkhh0J2DdclFx?=
- =?us-ascii?Q?UoI6wLfE+X/fHqopVxXxaRGcrv5lq8PB2XN6qW+u6bZR3qopEDG+in5UY7+m?=
- =?us-ascii?Q?2E0NT4a01/viv0z/nVT8CLjWigxAA6NQj4LXaHRUFlxSiTVveWX+pb2TCW/n?=
- =?us-ascii?Q?IiVC5E47ShiLZKE7oY/GKFJqGUl7d1cTKxWgTgrwnltQClVlH1OvB0zV6/sd?=
- =?us-ascii?Q?jVrdQzdMQH52Ex+g7HiAVYckVQZMICHWGcWzK27Ijp53lW3SMNgwwidibE+z?=
- =?us-ascii?Q?M5ua2KznnyItj+1wsPHLmcU4J8Uk8nxhPY3RhiBd3fRMJvqaEDmUeQs4yi1n?=
- =?us-ascii?Q?QT07c8qV7ZMKCNKFdI72Iw43pjlKLG7TRaOutiQxJBeEvvZRMvZlhhNGksdN?=
- =?us-ascii?Q?Fp+fqB+TuqMtiuJL6mZFqHc0DkMK69v4fd5TBqmDUpUfm0kid2bEcc+uxkK+?=
- =?us-ascii?Q?YMYpmXFbi8BNMlJnegsCg/IxZS6sty/ZD+3IatIJ1S9UVajVFjOnE01/7mKV?=
- =?us-ascii?Q?fXKLoLRXQXDYSVmw/nk2SK7qMEnxSP8AUL0We8VexlzxcL3B0o1GmdSX5jcE?=
- =?us-ascii?Q?xgjuYc/hUoqhAtPxwsbTVnEpHie3BjoHkrcC2jP/BbzVsJKO8mcdmiNZGu3l?=
- =?us-ascii?Q?QnU99623FTBrw06pwvp+mQ2EruBFFo4P1ezXaGTBaD5sNK2mA3ue/7LC2mtf?=
- =?us-ascii?Q?dVj24FtAyFL6Y1O7aDrnk0ysOBrv0EUyCsWqsAXMkEG8XH700yZdYb7DZxvQ?=
- =?us-ascii?Q?7xBc75xC/L2jTMgqqpdhWyAjaWj4NPOZQ6EGDNA55k7nrDhIZrNAMqzMns5P?=
- =?us-ascii?Q?qwgGq29xja6R2S4+chFRryNp7vjVqnslN4f3pH/u6HMPdwmyFcr5x8Nlk/nb?=
- =?us-ascii?Q?ObYf+b9ZOjnCdRgxt5ANktUKu+3YCBqb0tXoOxtBnSUi/k30noh+8MSl2Jul?=
- =?us-ascii?Q?usSlhPZ+OmO5UoAeyub9zTorkc2I7mBamYicF09Xp0WqRs468KIr7xUjFgka?=
- =?us-ascii?Q?vFHU3b6BMo6PaGIjQsbh/432X7SAg2phxLvrey0SJ0H5LcOok3+Mnn6KWLcS?=
- =?us-ascii?Q?kfFEL/Ydfhr5jiSJU5n46DXZFcmESGPzCTVgGDkXvhX0eYDToPiYUci0+mWv?=
- =?us-ascii?Q?6Cr1nEGpyl4P0hgoZc/rV43Ge5oft7nbE1hj1BjHyn7dH+q9WdpjlHQlNjVK?=
- =?us-ascii?Q?Rg+F8OUQPFeagcs3UrRdSNj2aLvBR51AItvE7eAI4Iz6WzmeEbw0I5n7uN8o?=
- =?us-ascii?Q?wf5HUjZHS4GK9BuOikUkeCtk8iHKPeulp2eOJfGeW6OvRXuEzeM4UhURpYyr?=
- =?us-ascii?Q?hG1V7RiF0T0Q9NNsGkHrRAyKd4zRJfdsNBz7tEfHJe6vzEpg7mJTKJei54Ad?=
- =?us-ascii?Q?R2GB4jrsjdiszV6HvqUhOFWCrZdPKmj9xcCU4ua+lMWMDLEVQ/luBBjST6Wq?=
- =?us-ascii?Q?TW5gUJl5o3g=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?itLD+5DwcFtLqSk9sUyLawPtsxRiLXpuZEl99bkg/2+zesenK4WOIS5Uxp2S?=
- =?us-ascii?Q?9uskNBEKQ9g0Lcp9B/aD06akTvgAZLXkWoYZPMH295aoMV90TBaA8/qx5y5D?=
- =?us-ascii?Q?hbdsmHkfCaHoz/MiPyuWIbQKcwoRtF1aZJXKNEf5D08pastXzJ8kkEWo5hR1?=
- =?us-ascii?Q?JGTDlXYOhtuzgs+92Yph4ILubenz+ooIjdNsEhUQUp6NNxGTkxqq0Y39LtN+?=
- =?us-ascii?Q?bfmkdODMGTqo/PkPSZmaKe8rzH5USK/uVFXCRHYog1g48EVDAa8ETrp+vTVk?=
- =?us-ascii?Q?hPo+sfHsZ+2936Ra8tI3RHwdjP8wseThBVcFKDf+jJNN7X0zHsSzJwW+RCs9?=
- =?us-ascii?Q?rI5MXK/NxTdiA35QZPuCFlD0XvEi2RyO6JcW2oPvrsrI11x+nZCzvU1PMmYQ?=
- =?us-ascii?Q?VyoLmCQ/F2Ft5elp8i00RUPKOfxOyKFr8u/BXU7pw22Q63HqtpuV/6EViE//?=
- =?us-ascii?Q?FvxGKBVOvAG/8MuIcFcguLp3yl4lNoh5RU+TmKqwWx0nYFcqJ4wZC5j3asS3?=
- =?us-ascii?Q?Q5Px0T2aVAXmslrKAhwf4D5z2u+xExEL9XywmiohQ7h2C6aMLkRwPHvsUAg3?=
- =?us-ascii?Q?OYoX53IUo/DFls1qILwmuNJL0YQ0QYP1ghLzDq63WLbzC9qKTQDVAFOkq70M?=
- =?us-ascii?Q?Q8S7OzHKaEDNN7jfkzTgFBzZrM2EaTWGR6Cp6+R2CuCUcasfTvYGGEbD30CW?=
- =?us-ascii?Q?Gz6RxH0WX5H46pdV3qklBnL5esy1TGmhV/4Nr9vm1mCKZ+Ixyufo4grqve0Y?=
- =?us-ascii?Q?b+NUxqHtwl23Nl5usDMqM5JcTb2k/vpEiLjYwsUHvC57RP+ZTIRNqTF1VIaa?=
- =?us-ascii?Q?BBSfiN0tFOhQYn+gFVlw6nweL7LL/vDiQtYh/0vP9oTDzbnfW2gr+VRwEb7J?=
- =?us-ascii?Q?A8nedaqu30CcPzdfVQUlDQngfviV4PeWpjEbZOpK6PJaelTznhGIOWtvkrLS?=
- =?us-ascii?Q?2huLl4duSSDA+qZi5zM/mxo5/79aCI+aNCmimBgMFoK3lVr7WdSthv1gCvo+?=
- =?us-ascii?Q?Lsu0zqg9TuhoI31XtNsyAyutnPxMLpS0aU0nrOLFFl4S0XDS4rNsF6UqHmPL?=
- =?us-ascii?Q?DjLF7tESM8Hkc6uG0HnlGyFquu3mFiixMNfzaqK8Cnh0OCei7nxWCVLV9UKY?=
- =?us-ascii?Q?/UcVOhS4ZheTXWw1KVOPh+J5DGEAjGI3EFcUaRXPSifY1WUffLwxwVeFPblr?=
- =?us-ascii?Q?0ET3zvpDHsKI1qNq/mjDa3gC3zjHwXPyg+QUMRJqb3unk6EpeO4pYBaXmMs9?=
- =?us-ascii?Q?dRaN0qVLxlKmPgtaewwdKrLpHqNCSl5l9Huy6hXjzGOyrP+5Pif3GW4O2Ld3?=
- =?us-ascii?Q?J4pBGtD0KilojbWY7JEPPoaGzxtLMeHuxmejp4qO9IU16R8pRnbOnfWCgc1z?=
- =?us-ascii?Q?RpqatsPHmGIUt+oGcVcAFZOWRhpOlFzW/j6RtsYVyctbrnPTwXUoNiWhu+re?=
- =?us-ascii?Q?HOskqN7Bkrh7+4/JKGx730gAqPEfi47jTP3f82HrK2kXkJ2p5L6iMhBB+VqR?=
- =?us-ascii?Q?KYcnQiw2/6oYH/j2w66+5EioqdBwK/KBn8kurncSJUoxV79oDfhYzvmp5ZF7?=
- =?us-ascii?Q?KuKeTvSfTtAk/fU8j+I=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 327bde10-38f8-4ed1-1028-08dde6383df7
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Aug 2025 13:38:59.0983
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 6rfKa8rVYKwrh5cW7XkPc0kzZEP71J5rSBMbqytNTa/OLLKC3oOSgUlFk8Cj7ZoO
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB7327
+X-Received: by 2002:a05:6e02:2582:b0:3ed:256a:d680 with SMTP id
+ e9e14a558f8ab-3ed256ad943mr201056015ab.13.1756388368974; Thu, 28 Aug 2025
+ 06:39:28 -0700 (PDT)
+Date: Thu, 28 Aug 2025 06:39:28 -0700
+In-Reply-To: <681a176f.050a0220.a19a9.000c.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68b05c10.050a0220.3db4df.001c.GAE@google.com>
+Subject: Re: [syzbot] [net?] INFO: task hung in inet6_rtm_newaddr (2)
+From: syzbot <syzbot+101224300649c3eb8af4@syzkaller.appspotmail.com>
+To: davem@davemloft.net, dsahern@kernel.org, edumazet@google.com, 
+	horms@kernel.org, kuba@kernel.org, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 19, 2025 at 08:36:49PM +0300, Leon Romanovsky wrote:
-> From: Leon Romanovsky <leonro@nvidia.com>
-> 
-> Rename the IOMMU DMA mapping functions to better reflect their actual
-> calling convention. The functions iommu_dma_map_page() and
-> iommu_dma_unmap_page() are renamed to iommu_dma_map_phys() and
-> iommu_dma_unmap_phys() respectively, as they already operate on physical
-> addresses rather than page structures.
-> 
-> The calling convention changes from accepting (struct page *page,
-> unsigned long offset) to (phys_addr_t phys), which eliminates the need
-> for page-to-physical address conversion within the functions. This
-> renaming prepares for the broader DMA API conversion from page-based
-> to physical address-based mapping throughout the kernel.
-> 
-> All callers are updated to pass physical addresses directly, including
-> dma_map_page_attrs(), scatterlist mapping functions, and DMA page
-> allocation helpers. The change simplifies the code by removing the
-> page_to_phys() + offset calculation that was previously done inside
-> the IOMMU functions.
-> 
-> Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
-> ---
->  drivers/iommu/dma-iommu.c | 14 ++++++--------
->  include/linux/iommu-dma.h |  7 +++----
->  kernel/dma/mapping.c      |  4 ++--
->  kernel/dma/ops_helpers.c  |  6 +++---
->  4 files changed, 14 insertions(+), 17 deletions(-)
+syzbot has found a reproducer for the following issue on:
 
-This looks fine
+HEAD commit:    07d9df80082b Merge tag 'perf-tools-fixes-for-v6.17-2025-08.=
+.
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=3D124be634580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3Da7016efe6aaa498=
+c
+dashboard link: https://syzkaller.appspot.com/bug?extid=3D101224300649c3eb8=
+af4
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-=
+1~exp1~20250616065826.132), Debian LLD 20.1.7
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D1067dc6258000=
+0
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D16a33ef0580000
 
-Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d90=
+0f083ada3/non_bootable_disk-07d9df80.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/64a01edfb5ff/vmlinux-=
+07d9df80.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/78c915400ff9/bzI=
+mage-07d9df80.xz
 
-But related to other patches..
+IMPORTANT: if you fix the issue, please add the following tag to the commit=
+:
+Reported-by: syzbot+101224300649c3eb8af4@syzkaller.appspotmail.com
 
-iommu_dma_map_phys() ends up like this:
+INFO: task dhcpcd:5050 blocked for more than 143 seconds.
+      Not tainted syzkaller #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:dhcpcd          state:D stack:21352 pid:5050  tgid:5050  ppid:5049   t=
+ask_flags:0x400140 flags:0x00004002
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5357 [inline]
+ __schedule+0x1798/0x4cc0 kernel/sched/core.c:6961
+ __schedule_loop kernel/sched/core.c:7043 [inline]
+ schedule+0x165/0x360 kernel/sched/core.c:7058
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:7115
+ __mutex_lock_common kernel/locking/mutex.c:676 [inline]
+ __mutex_lock+0x7e6/0x1350 kernel/locking/mutex.c:760
+ rtnl_net_lock include/linux/rtnetlink.h:130 [inline]
+ inet6_rtm_newaddr+0x5b7/0xd20 net/ipv6/addrconf.c:5027
+ rtnetlink_rcv_msg+0x7cc/0xb70 net/core/rtnetlink.c:6946
+ netlink_rcv_skb+0x208/0x470 net/netlink/af_netlink.c:2552
+ netlink_unicast_kernel net/netlink/af_netlink.c:1320 [inline]
+ netlink_unicast+0x82f/0x9e0 net/netlink/af_netlink.c:1346
+ netlink_sendmsg+0x805/0xb30 net/netlink/af_netlink.c:1896
+ sock_sendmsg_nosec net/socket.c:714 [inline]
+ __sock_sendmsg+0x21c/0x270 net/socket.c:729
+ ____sys_sendmsg+0x505/0x830 net/socket.c:2614
+ ___sys_sendmsg+0x21f/0x2a0 net/socket.c:2668
+ __sys_sendmsg net/socket.c:2700 [inline]
+ __do_sys_sendmsg net/socket.c:2705 [inline]
+ __se_sys_sendmsg net/socket.c:2703 [inline]
+ __x64_sys_sendmsg+0x19b/0x260 net/socket.c:2703
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f92a9337407
+RSP: 002b:00007ffe9186d4f0 EFLAGS: 00000202 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 00007f92a92ad740 RCX: 00007f92a9337407
+RDX: 0000000000000000 RSI: 00007ffe918816d0 RDI: 0000000000000004
+RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000202 R12: 00007ffe91891900
+R13: 00007f92a92ad6c8 R14: 0000000000000048 R15: 00007ffe918816d0
+ </TASK>
+INFO: task syz-executor:5514 blocked for more than 146 seconds.
+      Not tainted syzkaller #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor    state:D stack:21480 pid:5514  tgid:5514  ppid:1      t=
+ask_flags:0x400140 flags:0x00004004
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5357 [inline]
+ __schedule+0x1798/0x4cc0 kernel/sched/core.c:6961
+ __schedule_loop kernel/sched/core.c:7043 [inline]
+ schedule+0x165/0x360 kernel/sched/core.c:7058
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:7115
+ __mutex_lock_common kernel/locking/mutex.c:676 [inline]
+ __mutex_lock+0x7e6/0x1350 kernel/locking/mutex.c:760
+ rtnl_net_lock include/linux/rtnetlink.h:130 [inline]
+ inet6_rtm_newaddr+0x5b7/0xd20 net/ipv6/addrconf.c:5027
+ rtnetlink_rcv_msg+0x7cc/0xb70 net/core/rtnetlink.c:6946
+ netlink_rcv_skb+0x208/0x470 net/netlink/af_netlink.c:2552
+ netlink_unicast_kernel net/netlink/af_netlink.c:1320 [inline]
+ netlink_unicast+0x82f/0x9e0 net/netlink/af_netlink.c:1346
+ netlink_sendmsg+0x805/0xb30 net/netlink/af_netlink.c:1896
+ sock_sendmsg_nosec net/socket.c:714 [inline]
+ __sock_sendmsg+0x21c/0x270 net/socket.c:729
+ __sys_sendto+0x3bd/0x520 net/socket.c:2228
+ __do_sys_sendto net/socket.c:2235 [inline]
+ __se_sys_sendto net/socket.c:2231 [inline]
+ __x64_sys_sendto+0xde/0x100 net/socket.c:2231
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f5fde590a7c
+RSP: 002b:00007ffe3bda8b90 EFLAGS: 00000293 ORIG_RAX: 000000000000002c
+RAX: ffffffffffffffda RBX: 00007f5fdf2e4620 RCX: 00007f5fde590a7c
+RDX: 0000000000000040 RSI: 00007f5fdf2e4670 RDI: 0000000000000003
+RBP: 0000000000000000 R08: 00007ffe3bda8be4 R09: 000000000000000c
+R10: 0000000000000000 R11: 0000000000000293 R12: 0000000000000003
+R13: 0000000000000000 R14: 00007f5fdf2e4670 R15: 0000000000000000
+ </TASK>
+INFO: task syz-executor:5523 blocked for more than 146 seconds.
+      Not tainted syzkaller #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor    state:D stack:22280 pid:5523  tgid:5523  ppid:1      t=
+ask_flags:0x400140 flags:0x00004006
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5357 [inline]
+ __schedule+0x1798/0x4cc0 kernel/sched/core.c:6961
+ __schedule_loop kernel/sched/core.c:7043 [inline]
+ schedule+0x165/0x360 kernel/sched/core.c:7058
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:7115
+ __mutex_lock_common kernel/locking/mutex.c:676 [inline]
+ __mutex_lock+0x7e6/0x1350 kernel/locking/mutex.c:760
+ rtnl_net_lock include/linux/rtnetlink.h:130 [inline]
+ inet6_rtm_newaddr+0x5b7/0xd20 net/ipv6/addrconf.c:5027
+ rtnetlink_rcv_msg+0x7cc/0xb70 net/core/rtnetlink.c:6946
+ netlink_rcv_skb+0x208/0x470 net/netlink/af_netlink.c:2552
+ netlink_unicast_kernel net/netlink/af_netlink.c:1320 [inline]
+ netlink_unicast+0x82f/0x9e0 net/netlink/af_netlink.c:1346
+ netlink_sendmsg+0x805/0xb30 net/netlink/af_netlink.c:1896
+ sock_sendmsg_nosec net/socket.c:714 [inline]
+ __sock_sendmsg+0x21c/0x270 net/socket.c:729
+ __sys_sendto+0x3bd/0x520 net/socket.c:2228
+ __do_sys_sendto net/socket.c:2235 [inline]
+ __se_sys_sendto net/socket.c:2231 [inline]
+ __x64_sys_sendto+0xde/0x100 net/socket.c:2231
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f1fe2590a7c
+RSP: 002b:00007ffecd1e35b0 EFLAGS: 00000293 ORIG_RAX: 000000000000002c
+RAX: ffffffffffffffda RBX: 00007f1fe32e4620 RCX: 00007f1fe2590a7c
+RDX: 0000000000000040 RSI: 00007f1fe32e4670 RDI: 0000000000000003
+RBP: 0000000000000000 R08: 00007ffecd1e3604 R09: 000000000000000c
+R10: 0000000000000000 R11: 0000000000000293 R12: 0000000000000003
+R13: 0000000000000000 R14: 00007f1fe32e4670 R15: 0000000000000000
+ </TASK>
+INFO: task syz-executor:5767 blocked for more than 146 seconds.
+      Not tainted syzkaller #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor    state:D stack:25096 pid:5767  tgid:5767  ppid:1      t=
+ask_flags:0x400140 flags:0x00004006
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5357 [inline]
+ __schedule+0x1798/0x4cc0 kernel/sched/core.c:6961
+ __schedule_loop kernel/sched/core.c:7043 [inline]
+ schedule+0x165/0x360 kernel/sched/core.c:7058
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:7115
+ __mutex_lock_common kernel/locking/mutex.c:676 [inline]
+ __mutex_lock+0x7e6/0x1350 kernel/locking/mutex.c:760
+ rtnl_net_lock include/linux/rtnetlink.h:130 [inline]
+ inet_rtm_newaddr+0x3b0/0x18b0 net/ipv4/devinet.c:979
+ rtnetlink_rcv_msg+0x7cc/0xb70 net/core/rtnetlink.c:6946
+ netlink_rcv_skb+0x208/0x470 net/netlink/af_netlink.c:2552
+ netlink_unicast_kernel net/netlink/af_netlink.c:1320 [inline]
+ netlink_unicast+0x82f/0x9e0 net/netlink/af_netlink.c:1346
+ netlink_sendmsg+0x805/0xb30 net/netlink/af_netlink.c:1896
+ sock_sendmsg_nosec net/socket.c:714 [inline]
+ __sock_sendmsg+0x21c/0x270 net/socket.c:729
+ __sys_sendto+0x3bd/0x520 net/socket.c:2228
+ __do_sys_sendto net/socket.c:2235 [inline]
+ __se_sys_sendto net/socket.c:2231 [inline]
+ __x64_sys_sendto+0xde/0x100 net/socket.c:2231
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fa5ffd90a7c
+RSP: 002b:00007ffd3b9be780 EFLAGS: 00000293 ORIG_RAX: 000000000000002c
+RAX: ffffffffffffffda RBX: 00007fa600ae4620 RCX: 00007fa5ffd90a7c
+RDX: 0000000000000028 RSI: 00007fa600ae4670 RDI: 0000000000000003
+RBP: 0000000000000000 R08: 00007ffd3b9be7d4 R09: 000000000000000c
+R10: 0000000000000000 R11: 0000000000000293 R12: 0000000000000003
+R13: 0000000000000000 R14: 00007fa600ae4670 R15: 0000000000000000
+ </TASK>
 
-	if (dev_use_swiotlb(dev, size, dir) &&
-	    iova_unaligned(iovad, phys, size)) {
-		if (attrs & DMA_ATTR_MMIO)
-			return DMA_MAPPING_ERROR;
+Showing all locks held in the system:
+4 locks held by kworker/0:0/9:
+4 locks held by kworker/0:1/10:
+3 locks held by kworker/u4:0/12:
+1 lock held by khungtaskd/26:
+ #0: ffffffff8e139ee0 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire inc=
+lude/linux/rcupdate.h:331 [inline]
+ #0: ffffffff8e139ee0 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock includ=
+e/linux/rcupdate.h:841 [inline]
+ #0: ffffffff8e139ee0 (rcu_read_lock){....}-{1:3}, at: debug_show_all_locks=
++0x2e/0x180 kernel/locking/lockdep.c:6775
+4 locks held by kworker/u4:2/31:
+3 locks held by kworker/u4:3/43:
+3 locks held by kworker/u4:5/62:
+4 locks held by kworker/0:2/796:
+3 locks held by kworker/u4:6/1038:
+4 locks held by kworker/u4:7/1039:
+3 locks held by kworker/u4:8/1069:
+ #0: ffff88803ef28148 ((wq_completion)ipv6_addrconf){+.+.}-{0:0}, at: proce=
+ss_one_work kernel/workqueue.c:3211 [inline]
+ #0: ffff88803ef28148 ((wq_completion)ipv6_addrconf){+.+.}-{0:0}, at: proce=
+ss_scheduled_works+0x9b4/0x17b0 kernel/workqueue.c:3319
+ #1: ffffc900025ffbc0 ((work_completion)(&(&ifa->dad_work)->work)){+.+.}-{0=
+:0}, at: process_one_work kernel/workqueue.c:3212 [inline]
+ #1: ffffc900025ffbc0 ((work_completion)(&(&ifa->dad_work)->work)){+.+.}-{0=
+:0}, at: process_scheduled_works+0x9ef/0x17b0 kernel/workqueue.c:3319
+ #2: ffffffff8f53a948 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_net_lock include/l=
+inux/rtnetlink.h:130 [inline]
+ #2: ffffffff8f53a948 (rtnl_mutex){+.+.}-{4:4}, at: addrconf_dad_work+0x112=
+/0x14b0 net/ipv6/addrconf.c:4194
+4 locks held by kworker/u4:9/1094:
+3 locks held by kworker/u4:11/3039:
+1 lock held by klogd/4741:
+1 lock held by dhcpcd/5050:
+ #0: ffffffff8f53a948 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_net_lock include/l=
+inux/rtnetlink.h:130 [inline]
+ #0: ffffffff8f53a948 (rtnl_mutex){+.+.}-{4:4}, at: inet6_rtm_newaddr+0x5b7=
+/0xd20 net/ipv6/addrconf.c:5027
+2 locks held by getty/5143:
+ #0: ffff8880339e50a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait=
++0x25/0x70 drivers/tty/tty_ldisc.c:243
+ #1: ffffc900028262f0 (&ldata->atomic_read_lock){+.+.}-{4:4}, at: n_tty_rea=
+d+0x43e/0x1400 drivers/tty/n_tty.c:2222
+4 locks held by syz-executor/5508:
+ #0: ffffffff8f59fff0 (cb_lock){++++}-{4:4}, at: genl_rcv+0x19/0x40 net/net=
+link/genetlink.c:1218
+ #1: ffffffff8f59fe08 (genl_mutex){+.+.}-{4:4}, at: genl_lock net/netlink/g=
+enetlink.c:35 [inline]
+ #1: ffffffff8f59fe08 (genl_mutex){+.+.}-{4:4}, at: genl_op_lock net/netlin=
+k/genetlink.c:60 [inline]
+ #1: ffffffff8f59fe08 (genl_mutex){+.+.}-{4:4}, at: genl_rcv_msg+0x10d/0x79=
+0 net/netlink/genetlink.c:1209
+ #2: ffffffff8f53a948 (rtnl_mutex){+.+.}-{4:4}, at: wiphy_register+0x1b8d/0=
+x28d0 net/wireless/core.c:1021
+ #3: ffff888051510768 (&rdev->wiphy.mtx){+.+.}-{4:4}, at: class_wiphy_const=
+ructor include/net/cfg80211.h:6212 [inline]
+ #3: ffff888051510768 (&rdev->wiphy.mtx){+.+.}-{4:4}, at: reg_process_self_=
+managed_hints+0xaf/0x1c0 net/wireless/reg.c:3209
+1 lock held by syz-executor/5511:
+ #0: ffffffff8f53a948 (rtnl_mutex){+.+.}-{4:4}, at: tun_detach drivers/net/=
+tun.c:634 [inline]
+ #0: ffffffff8f53a948 (rtnl_mutex){+.+.}-{4:4}, at: tun_chr_close+0x3e/0x1c=
+0 drivers/net/tun.c:3433
+1 lock held by syz-executor/5514:
+ #0: ffffffff8f53a948 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_net_lock include/l=
+inux/rtnetlink.h:130 [inline]
+ #0: ffffffff8f53a948 (rtnl_mutex){+.+.}-{4:4}, at: inet6_rtm_newaddr+0x5b7=
+/0xd20 net/ipv6/addrconf.c:5027
+3 locks held by kworker/0:4/5517:
+1 lock held by syz-executor/5521:
+ #0: ffffffff8f53a948 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_lock net/core/rtne=
+tlink.c:80 [inline]
+ #0: ffffffff8f53a948 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_nets_lock net/core=
+/rtnetlink.c:341 [inline]
+ #0: ffffffff8f53a948 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_newlink+0x8db/0x1c=
+70 net/core/rtnetlink.c:4056
+1 lock held by syz-executor/5523:
+ #0: ffffffff8f53a948 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_net_lock include/l=
+inux/rtnetlink.h:130 [inline]
+ #0: ffffffff8f53a948 (rtnl_mutex){+.+.}-{4:4}, at: inet6_rtm_newaddr+0x5b7=
+/0xd20 net/ipv6/addrconf.c:5027
+4 locks held by kworker/0:5/5655:
+ #0: ffff88803ee26148 ((wq_completion)wg-kex-wg1#4){+.+.}-{0:0}, at: proces=
+s_one_work kernel/workqueue.c:3211 [inline]
+ #0: ffff88803ee26148 ((wq_completion)wg-kex-wg1#4){+.+.}-{0:0}, at: proces=
+s_scheduled_works+0x9b4/0x17b0 kernel/workqueue.c:3319
+ #1: ffffc9000ce57bc0 ((work_completion)(&({ do { const void *__vpp_verify =
+=3D (typeof((worker) + 0))((void *)0); (void)__vpp_verify; } while (0); ({ =
+unsigned long __ptr; __ptr =3D (unsigned long) ((__typeof_unqual__(*((worke=
+r))) *)(( unsigned long)((worker)))); (typeof((__typeof_unqual__(*((worker)=
+)) *)(( unsigned long)((worker))))) (__ptr + (((__per_cpu_offset[(cpu)]))))=
+; }); })->work)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3212 =
+[inline]
+ #1: ffffc9000ce57bc0 ((work_completion)(&({ do { const void *__vpp_verify =
+=3D (typeof((worker) + 0))((void *)0); (void)__vpp_verify; } while (0); ({ =
+unsigned long __ptr; __ptr =3D (unsigned long) ((__typeof_unqual__(*((worke=
+r))) *)(( unsigned long)((worker)))); (typeof((__typeof_unqual__(*((worker)=
+)) *)(( unsigned long)((worker))))) (__ptr + (((__per_cpu_offset[(cpu)]))))=
+; }); })->work)){+.+.}-{0:0}, at: process_scheduled_works+0x9ef/0x17b0 kern=
+el/workqueue.c:3319
+ #2: ffff888058c65308 (&wg->static_identity.lock){++++}-{4:4}, at: wg_noise=
+_handshake_consume_initiation+0x150/0x900 drivers/net/wireguard/noise.c:598
+ #3: ffff88803f1f5c60 (&handshake->lock){++++}-{4:4}, at: wg_noise_handshak=
+e_consume_initiation+0x4de/0x900 drivers/net/wireguard/noise.c:632
+2 locks held by kworker/0:6/5665:
+4 locks held by kworker/0:7/5698:
+4 locks held by kworker/0:8/5727:
+4 locks held by kworker/u4:13/5741:
+2 locks held by kworker/u4:14/5742:
+3 locks held by kworker/u4:15/5743:
+3 locks held by kworker/u4:17/5746:
+1 lock held by syz.0.28/5754:
+ #0: ffffffff8f53a948 (rtnl_mutex){+.+.}-{4:4}, at: tun_detach drivers/net/=
+tun.c:634 [inline]
+ #0: ffffffff8f53a948 (rtnl_mutex){+.+.}-{4:4}, at: tun_chr_close+0x3e/0x1c=
+0 drivers/net/tun.c:3433
+3 locks held by kworker/0:10/5760:
+ #0: ffff88801a4d4148 ((wq_completion)events_power_efficient){+.+.}-{0:0}, =
+at: process_one_work kernel/workqueue.c:3211 [inline]
+ #0: ffff88801a4d4148 ((wq_completion)events_power_efficient){+.+.}-{0:0}, =
+at: process_scheduled_works+0x9b4/0x17b0 kernel/workqueue.c:3319
+ #1: ffffc9000d557bc0 ((reg_check_chans).work){+.+.}-{0:0}, at: process_one=
+_work kernel/workqueue.c:3212 [inline]
+ #1: ffffc9000d557bc0 ((reg_check_chans).work){+.+.}-{0:0}, at: process_sch=
+eduled_works+0x9ef/0x17b0 kernel/workqueue.c:3319
+ #2: ffffffff8f53a948 (rtnl_mutex){+.+.}-{4:4}, at: reg_check_chans_work+0x=
+95/0xf30 net/wireless/reg.c:2483
+1 lock held by syz-executor/5767:
+ #0: ffffffff8f53a948 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_net_lock include/l=
+inux/rtnetlink.h:130 [inline]
+ #0: ffffffff8f53a948 (rtnl_mutex){+.+.}-{4:4}, at: inet_rtm_newaddr+0x3b0/=
+0x18b0 net/ipv4/devinet.c:979
+1 lock held by syz-executor/5780:
+ #0: ffffffff8f53a948 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_net_lock include/l=
+inux/rtnetlink.h:130 [inline]
+ #0: ffffffff8f53a948 (rtnl_mutex){+.+.}-{4:4}, at: inet_rtm_newaddr+0x3b0/=
+0x18b0 net/ipv4/devinet.c:979
+1 lock held by syz-executor/5783:
+ #0: ffffffff8f53a948 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_net_lock include/l=
+inux/rtnetlink.h:130 [inline]
+ #0: ffffffff8f53a948 (rtnl_mutex){+.+.}-{4:4}, at: inet_rtm_newaddr+0x3b0/=
+0x18b0 net/ipv4/devinet.c:979
+1 lock held by syz-executor/5789:
+ #0: ffffffff8f53a948 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_net_lock include/l=
+inux/rtnetlink.h:130 [inline]
+ #0: ffffffff8f53a948 (rtnl_mutex){+.+.}-{4:4}, at: inet_rtm_newaddr+0x3b0/=
+0x18b0 net/ipv4/devinet.c:979
+1 lock held by syz-executor/5795:
+ #0: ffffffff8f53a948 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_net_lock include/l=
+inux/rtnetlink.h:130 [inline]
+ #0: ffffffff8f53a948 (rtnl_mutex){+.+.}-{4:4}, at: inet_rtm_newaddr+0x3b0/=
+0x18b0 net/ipv4/devinet.c:979
+1 lock held by syz-executor/5800:
+ #0: ffffffff8f53a948 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_net_lock include/l=
+inux/rtnetlink.h:130 [inline]
+ #0: ffffffff8f53a948 (rtnl_mutex){+.+.}-{4:4}, at: inet_rtm_newaddr+0x3b0/=
+0x18b0 net/ipv4/devinet.c:979
+1 lock held by syz-executor/5810:
+ #0: ffffffff8f53a948 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_net_lock include/l=
+inux/rtnetlink.h:130 [inline]
+ #0: ffffffff8f53a948 (rtnl_mutex){+.+.}-{4:4}, at: inet_rtm_newaddr+0x3b0/=
+0x18b0 net/ipv4/devinet.c:979
+1 lock held by syz-executor/5819:
+ #0: ffffffff8f53a948 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_net_lock include/l=
+inux/rtnetlink.h:130 [inline]
+ #0: ffffffff8f53a948 (rtnl_mutex){+.+.}-{4:4}, at: inet_rtm_newaddr+0x3b0/=
+0x18b0 net/ipv4/devinet.c:979
+1 lock held by syz-executor/5822:
+ #0: ffffffff8f53a948 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_net_lock include/l=
+inux/rtnetlink.h:130 [inline]
+ #0: ffffffff8f53a948 (rtnl_mutex){+.+.}-{4:4}, at: inet_rtm_newaddr+0x3b0/=
+0x18b0 net/ipv4/devinet.c:979
+1 lock held by syz-executor/5826:
+ #0: ffffffff8f53a948 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_net_lock include/l=
+inux/rtnetlink.h:130 [inline]
+ #0: ffffffff8f53a948 (rtnl_mutex){+.+.}-{4:4}, at: inet_rtm_newaddr+0x3b0/=
+0x18b0 net/ipv4/devinet.c:979
+4 locks held by kworker/u4:20/5832:
+ #0: ffff8880230b0148 ((wq_completion)wg-kex-wg1){+.+.}-{0:0}, at: process_=
+one_work kernel/workqueue.c:3211 [inline]
+ #0: ffff8880230b0148 ((wq_completion)wg-kex-wg1){+.+.}-{0:0}, at: process_=
+scheduled_works+0x9b4/0x17b0 kernel/workqueue.c:3319
+ #1: ffffc9000d807bc0 ((work_completion)(&peer->transmit_handshake_work)){+=
+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3212 [inline]
+ #1: ffffc9000d807bc0 ((work_completion)(&peer->transmit_handshake_work)){+=
+.+.}-{0:0}, at: process_scheduled_works+0x9ef/0x17b0 kernel/workqueue.c:331=
+9
+ #2: ffff88803f125308 (&wg->static_identity.lock){++++}-{4:4}, at: wg_noise=
+_handshake_create_initiation+0x10a/0x7e0 drivers/net/wireguard/noise.c:529
+ #3: ffff88803f1f4890 (&handshake->lock){++++}-{4:4}, at: wg_noise_handshak=
+e_create_initiation+0x11b/0x7e0 drivers/net/wireguard/noise.c:530
+1 lock held by syz-executor/5835:
+ #0: ffffffff8f53a948 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_net_lock include/l=
+inux/rtnetlink.h:130 [inline]
+ #0: ffffffff8f53a948 (rtnl_mutex){+.+.}-{4:4}, at: inet_rtm_newaddr+0x3b0/=
+0x18b0 net/ipv4/devinet.c:979
+1 lock held by syz-executor/5838:
+ #0: ffffffff8f53a948 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_net_lock include/l=
+inux/rtnetlink.h:130 [inline]
+ #0: ffffffff8f53a948 (rtnl_mutex){+.+.}-{4:4}, at: inet_rtm_newaddr+0x3b0/=
+0x18b0 net/ipv4/devinet.c:979
+1 lock held by syz-executor/5846:
+ #0: ffffffff8f53a948 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_net_lock include/l=
+inux/rtnetlink.h:130 [inline]
+ #0: ffffffff8f53a948 (rtnl_mutex){+.+.}-{4:4}, at: inet_rtm_newaddr+0x3b0/=
+0x18b0 net/ipv4/devinet.c:979
+1 lock held by syz-executor/5852:
+ #0: ffffffff8f53a948 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_net_lock include/l=
+inux/rtnetlink.h:130 [inline]
+ #0: ffffffff8f53a948 (rtnl_mutex){+.+.}-{4:4}, at: inet_rtm_newaddr+0x3b0/=
+0x18b0 net/ipv4/devinet.c:979
+1 lock held by syz-executor/5857:
+ #0: ffffffff8f53a948 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_net_lock include/l=
+inux/rtnetlink.h:130 [inline]
+ #0: ffffffff8f53a948 (rtnl_mutex){+.+.}-{4:4}, at: inet_rtm_newaddr+0x3b0/=
+0x18b0 net/ipv4/devinet.c:979
+1 lock held by syz-executor/5863:
+ #0: ffffffff8f53a948 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_net_lock include/l=
+inux/rtnetlink.h:130 [inline]
+ #0: ffffffff8f53a948 (rtnl_mutex){+.+.}-{4:4}, at: inet_rtm_newaddr+0x3b0/=
+0x18b0 net/ipv4/devinet.c:979
+3 locks held by kworker/u4:21/5864:
+1 lock held by syz-executor/5871:
+ #0: ffffffff8f53a948 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_net_lock include/l=
+inux/rtnetlink.h:130 [inline]
+ #0: ffffffff8f53a948 (rtnl_mutex){+.+.}-{4:4}, at: inet_rtm_newaddr+0x3b0/=
+0x18b0 net/ipv4/devinet.c:979
+1 lock held by syz-executor/5875:
+ #0: ffffffff8f53a948 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_net_lock include/l=
+inux/rtnetlink.h:130 [inline]
+ #0: ffffffff8f53a948 (rtnl_mutex){+.+.}-{4:4}, at: inet_rtm_newaddr+0x3b0/=
+0x18b0 net/ipv4/devinet.c:979
 
-		phys = iommu_dma_map_swiotlb(dev, phys, size, dir, attrs);
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
 
-But attrs is passed all the way down to swiotlb_tbl_map_single(),
-maybe the DMA_ATTR_MMIO check should be moved there?
+NMI backtrace for cpu 0
+CPU: 0 UID: 0 PID: 26 Comm: khungtaskd Not tainted syzkaller #0 PREEMPT(ful=
+l)=20
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16=
+.3-2~bpo12+1 04/01/2014
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+ nmi_cpu_backtrace+0x39e/0x3d0 lib/nmi_backtrace.c:113
+ nmi_trigger_cpumask_backtrace+0x17a/0x300 lib/nmi_backtrace.c:62
+ trigger_all_cpu_backtrace include/linux/nmi.h:160 [inline]
+ check_hung_uninterruptible_tasks kernel/hung_task.c:328 [inline]
+ watchdog+0xf93/0xfe0 kernel/hung_task.c:491
+ kthread+0x70e/0x8a0 kernel/kthread.c:463
+ ret_from_fork+0x3f9/0x770 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
 
-There are a few call chains with this redundancy:
 
-dma_iova_link()
- -> iommu_dma_iova_link_swiotlb
-  -> iommu_dma_iova_bounce_and_link
-   -> iommu_dma_map_swiotlb
-    -> swiotlb_tbl_map_single()
-
-iommu_dma_map_phys() 
-   -> iommu_dma_map_swiotlb
-    -> swiotlb_tbl_map_single()
-
-dma_direct_map_phys()
- -> swiotlb_map()
-  -> swiotlb_tbl_map_single()
-
-It makes alot of sense to put the check for MMIO when
-slots[].orig_addr is stored because that is the point where we start
-to require a pfn_to_page().
-
-Jason
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
