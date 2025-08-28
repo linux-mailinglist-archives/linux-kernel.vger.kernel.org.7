@@ -1,161 +1,147 @@
-Return-Path: <linux-kernel+bounces-790452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF7BCB3A759
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 19:12:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1237BB3A75B
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 19:13:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6678A207C04
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 17:12:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC8FA3AA194
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 17:13:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C86B6334738;
-	Thu, 28 Aug 2025 17:12:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CCFB338F32;
+	Thu, 28 Aug 2025 17:12:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=couthit.com header.i=@couthit.com header.b="mQpbwAPY"
-Received: from server.couthit.com (server.couthit.com [162.240.164.96])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YjBJ+byh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BA68245006;
-	Thu, 28 Aug 2025 17:12:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.240.164.96
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB8443375BE;
+	Thu, 28 Aug 2025 17:12:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756401164; cv=none; b=R7ohoiCmpopSPLmSdM7n4G0ob4NM5WLQCgTtyKvI2oqRM+5mEwveye2uMeHwQB39KC5qkE5YRWmG6GiBSBn27u+MdKcS0+ksklXS3UND0ee0QFrzae5juX18ifGZJKEQbYQrQF7rzT2clkzac/v15tscfTuByyzSt0mk2yVflT4=
+	t=1756401169; cv=none; b=ium4PCQ1AoOCjmen9gHp710XttZ9dMYrHsnl4tsHCvNfARBZeCiygVKiENpMChsJihoaBDyqgE8c06Y6gix5HdrVl1GnDyYSM7v2+BmBvnaUssJeShziIMjcr3OJ10E+bU1r4gJ078yej6MQTw2My3WInw6kHhMuB0HwnxaJCQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756401164; c=relaxed/simple;
-	bh=607nQO2d/RCimAs/OiQ2CTUxEUa/slx1dU3exOvrtZ4=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=TqtAkcxH8lO3cpGE6GvdM50dwDvDHacia+m8WYVqLuHgQ+gVKosPEewLSZ9T7GIvcGwcoBawg1lmrLQwTc/Ohra/qlUHICqwdSmmR644thaS+UmQU7wiSgmG8q8uXzo3ASrbtUuigLzCnScRM7ahuOIVJIrB5qLjcid1tzieiKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=couthit.com; spf=pass smtp.mailfrom=couthit.com; dkim=pass (2048-bit key) header.d=couthit.com header.i=@couthit.com header.b=mQpbwAPY; arc=none smtp.client-ip=162.240.164.96
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=couthit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=couthit.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=couthit.com
-	; s=default; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:
-	References:In-Reply-To:Message-ID:Cc:To:From:Date:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=3w+R1zOuJPY71/KjLfkxWemnLW1oSrZqC7s9lCEBRtY=; b=mQpbwAPYB1wWBpiNJnJ3ZURQRE
-	g9G72BFuIZwI3WmiDEtPaj4u0YDZGLQ31Eo2Kv7TzHKJoJLg7xygkX+Tr2FerBdNV5G73iaGTx1Ar
-	iZWNExlCxfCOSs8Fj2HiTADJ5OL8mL/969t6raSzp94ImYL9Bwm6YfX5wWgoRtS5Eu2MGi8yWL8uO
-	IeCZGM58IQO8A2Tz/XKnMRIM77rwwDpxOnDgzGaBU1I8kxnf8cITNdyDYX/p+Lw96tNepoBx6bV7Q
-	LCT3CQXb3/3OmY0VmPerkJ5tw4FvAbuYP3a+TG24osxDVFfkGgyDYtI6l7kJwjpndFmMHFlDRhl5f
-	V9gxXWOw==;
-Received: from [122.175.9.182] (port=8338 helo=zimbra.couthit.local)
-	by server.couthit.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.1)
-	(envelope-from <parvathi@couthit.com>)
-	id 1urgAi-00000006HIe-3TIO;
-	Thu, 28 Aug 2025 13:12:25 -0400
-Received: from zimbra.couthit.local (localhost [127.0.0.1])
-	by zimbra.couthit.local (Postfix) with ESMTPS id 1C3841781C63;
-	Thu, 28 Aug 2025 22:42:18 +0530 (IST)
-Received: from localhost (localhost [127.0.0.1])
-	by zimbra.couthit.local (Postfix) with ESMTP id D57421781F94;
-	Thu, 28 Aug 2025 22:42:17 +0530 (IST)
-Received: from zimbra.couthit.local ([127.0.0.1])
-	by localhost (zimbra.couthit.local [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id 33U0h1areI3V; Thu, 28 Aug 2025 22:42:17 +0530 (IST)
-Received: from zimbra.couthit.local (zimbra.couthit.local [10.10.10.103])
-	by zimbra.couthit.local (Postfix) with ESMTP id 796361781C63;
-	Thu, 28 Aug 2025 22:42:17 +0530 (IST)
-Date: Thu, 28 Aug 2025 22:42:17 +0530 (IST)
-From: Parvathi Pudi <parvathi@couthit.com>
-To: kuba <kuba@kernel.org>
-Cc: danishanwar <danishanwar@ti.com>, rogerq <rogerq@kernel.org>, 
-	andrew+netdev <andrew+netdev@lunn.ch>, davem <davem@davemloft.net>, 
-	edumazet <edumazet@google.com>, pabeni <pabeni@redhat.com>, 
-	robh <robh@kernel.org>, krzk+dt <krzk+dt@kernel.org>, 
-	conor+dt <conor+dt@kernel.org>, ssantosh <ssantosh@kernel.org>, 
-	richardcochran <richardcochran@gmail.com>, 
-	m-malladi <m-malladi@ti.com>, s hauer <s.hauer@pengutronix.de>, 
-	afd <afd@ti.com>, jacob e keller <jacob.e.keller@intel.com>, 
-	horms <horms@kernel.org>, johan <johan@kernel.org>, 
-	m-karicheri2 <m-karicheri2@ti.com>, s-anna <s-anna@ti.com>, 
-	glaroque <glaroque@baylibre.com>, 
-	saikrishnag <saikrishnag@marvell.com>, 
-	kory maincent <kory.maincent@bootlin.com>, 
-	diogo ivo <diogo.ivo@siemens.com>, 
-	javier carrasco cruz <javier.carrasco.cruz@gmail.com>, 
-	basharath <basharath@couthit.com>, 
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, 
-	netdev <netdev@vger.kernel.org>, 
-	devicetree <devicetree@vger.kernel.org>, 
-	linux-kernel <linux-kernel@vger.kernel.org>, 
-	Vadim Fedorenko <vadim.fedorenko@linux.dev>, 
-	ALOK TIWARI <alok.a.tiwari@oracle.com>, 
-	Bastien Curutchet <bastien.curutchet@bootlin.com>, 
-	pratheesh <pratheesh@ti.com>, Prajith Jayarajan <prajith@ti.com>, 
-	Vignesh Raghavendra <vigneshr@ti.com>, praneeth <praneeth@ti.com>, 
-	srk <srk@ti.com>, rogerq <rogerq@ti.com>, 
-	krishna <krishna@couthit.com>, pmohan <pmohan@couthit.com>, 
-	mohan <mohan@couthit.com>
-Message-ID: <1892122434.246137.1756401137255.JavaMail.zimbra@couthit.local>
-In-Reply-To: <20250827090820.12a58d22@kernel.org>
-References: <20250822132758.2771308-1-parvathi@couthit.com> <20250822144023.2772544-5-parvathi@couthit.com> <20250827090820.12a58d22@kernel.org>
-Subject: Re: [PATCH net-next v14 4/5] net: ti: icssm-prueth: Adds link
- detection, RX and TX support.
+	s=arc-20240116; t=1756401169; c=relaxed/simple;
+	bh=XMisQHBbtJ+sybKmhuOJ1thay4xxeICp3JVlocPQ0yY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=LD9uaD9uDaQxo4yEjzV5NmuEX2ciMIYqwv/z4YE+3iC9WRWCKc9Lyct9eT/mJMkoeaPMtJbS3q39VUH4F2JKv+wWrMBgbTR8iYU3F4nR7QmABBbPsUkpT3onzleRZduodqxqxesR6gECiJ8HScbAeJWGC2zO49m9KSQSMY0uuo4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YjBJ+byh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6573FC4CEEB;
+	Thu, 28 Aug 2025 17:12:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756401167;
+	bh=XMisQHBbtJ+sybKmhuOJ1thay4xxeICp3JVlocPQ0yY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=YjBJ+byhXwpLP4Nhb/QINTUZnWulaCZqKoSScXOQYIiSWNc7HmO7cgWUK9DCbhhER
+	 9ZlhUogSBYJC80pUmFoEBloHTU+emuuYJmcxdwdYcqfRm72ypvzteOE4VqPUn1y3q3
+	 YDUZkC/IB904rebcUDG/PVHxhT67w5yky0HneQLa/utuX+TLFEApV2vf3ZRUrndLaD
+	 OUy26STkYDEnMQxAE6lku0/ArwqiTnmECyMMuCTqphOWeiJvLdh9uO0i5gROgT05Rv
+	 P2gdISyoD9FiwQwtnP8wrMa8k00SgYlUgxbqp5g7iGz+L+DaS3VCyUnlnBvBmtMLEF
+	 uNCS3R8Zm2Dqg==
+From: SeongJae Park <sj@kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: SeongJae Park <sj@kernel.org>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	David Hildenbrand <david@redhat.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Mike Rapoport <rppt@kernel.org>,
+	Quanmin Yan <yanquanmin1@huawei.com>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	damon@lists.linux.dev,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	wangkefeng.wang@huawei.com,
+	zuoze1@huawei.com
+Subject: [PATCH v3 00/11] mm/damon: support ARM32 with LPAE
+Date: Thu, 28 Aug 2025 10:12:31 -0700
+Message-Id: <20250828171242.59810-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: Zimbra 8.8.15_GA_3968 (ZimbraWebClient - GC138 (Linux)/8.8.15_GA_3968)
-Thread-Topic: icssm-prueth: Adds link detection, RX and TX support.
-Thread-Index: 04+NkdyMJsTY7VdcDfyHFa/DcZsalw==
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - server.couthit.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - couthit.com
-X-Get-Message-Sender-Via: server.couthit.com: authenticated_id: smtp@couthit.com
-X-Authenticated-Sender: server.couthit.com: smtp@couthit.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Transfer-Encoding: 8bit
 
-Hi,
+Previously, DAMON's physical address space monitoring only supported
+memory ranges below 4GB on LPAE-enabled systems. This was due to
+the use of 'unsigned long' in 'struct damon_addr_range', which is
+32-bit on ARM32 even with LPAE enabled[1].
 
-> On Fri, 22 Aug 2025 20:09:16 +0530 Parvathi Pudi wrote:
->> +	struct net_device_stats *ndevstats;
-> 
->> +	ndevstats = &emac->ndev->stats;
-> 
-> Please don't use netdev stats, quoting the header:
-> 
->	struct net_device_stats	stats; /* not used by modern drivers */
-> 
-> Store the counters you need in driver's private struct and implement
-> .ndo_get_stats64
-> 
+To add DAMON support for ARM32 with LPAE enabled, a new core layer
+parameter called 'addr_unit' was introduced[2]. Operations set layer
+can translate a core layer address to the real address by multiplying
+the parameter value to the core layer address. Support of the parameter
+is up to each operations layer implementation, though. For example,
+operations set implementations for virtual address space can simply
+ignore the parameter. Add the support on paddr, which is the DAMON
+operations set implementation for the physical address space, as we have
+a clear use case for that.
 
-sure, we will verify and use the suggested approach.
+[1]https://lore.kernel.org/all/20250408075553.959388-1-zuoze1@huawei.com/
+[2]https://lore.kernel.org/all/20250416042551.158131-1-sj@kernel.org/
 
->> +	if (!pkt_info->sv_frame) {
-> 
-> sv_frame seems to always be false at this stage?
-> Maybe delete this diff if that's the case, otherwise it feels like
-> the skb_free below should be accompanied by some stat increment.
-> 
+Changes from v2
+(https://lore.kernel.org/20250822093420.2103803-1-yanquanmin1@huawei.com)
+- Fix 64bit division linking errors on certain 32bit arch configs.
+- Re-posted by SJ.
 
-Yes, We will remove this for now.
+Changes from v1
+(https://lore.kernel.org/all/20250821105159.2503894-1-yanquanmin1@huawei.com/)
+- Set dst->min_sz_region as src->min_sz_region in damon_commit_ctx().
+- Fixed the incorrect 'min_region' in the commit message.
 
->> +		skb_put(skb, actual_pkt_len);
->> +
->> +		/* send packet up the stack */
->> +		skb->protocol = eth_type_trans(skb, ndev);
->> +		netif_receive_skb(skb);
->> +	} else {
->> +		dev_kfree_skb_any(skb);
->> +	}
-> 
-> The rest LGTM.
+Changes from RFC v2
+(https://lore.kernel.org/all/20250820080623.3799131-1-yanquanmin1@huawei.com/)
+- Rename 'min_region' to 'min_sz_region'.
+- Separate the overflow prevention in damos_set_effective_quota() from
+  this series.
+- Drop RFC tag.
+
+Changes from RFC v1
+(https://lore.kernel.org/all/20250813050706.1564229-1-yanquanmin1@huawei.com/)
+- Set DAMOS_PAGEOUT, DAMOS_LRU_[DE]PRIO, DAMOS_MIGRATE_{HOT,COLD} and
+  DAMOS_STAT stat in core address unit.
+- Pass ctx->min_region value to replace the original synchronization.
+- Drop the DAMOS stats type changes, keep them as 'unsigned long' type.
+- Separate add addr_unit support for DAMON_RECLAIM and LRU_SORT from
+  this patch series.
+
+Quanmin Yan (1):
+  mm/damon: add damon_ctx->min_sz_region
+
+SeongJae Park (10):
+  mm/damon/core: add damon_ctx->addr_unit
+  mm/damon/paddr: support addr_unit for access monitoring
+  mm/damon/paddr: support addr_unit for DAMOS_PAGEOUT
+  mm/damon/paddr: support addr_unit for DAMOS_LRU_[DE]PRIO
+  mm/damon/paddr: support addr_unit for MIGRATE_{HOT,COLD}
+  mm/damon/paddr: support addr_unit for DAMOS_STAT
+  mm/damon/sysfs: implement addr_unit file under context dir
+  Docs/mm/damon/design: document 'address unit' parameter
+  Docs/admin-guide/mm/damon/usage: document addr_unit file
+  Docs/ABI/damon: document addr_unit file
+
+ .../ABI/testing/sysfs-kernel-mm-damon         |   7 ++
+ Documentation/admin-guide/mm/damon/usage.rst  |  11 +-
+ Documentation/mm/damon/design.rst             |  16 ++-
+ include/linux/damon.h                         |   7 +-
+ mm/damon/core.c                               |  70 ++++++-----
+ mm/damon/paddr.c                              | 119 +++++++++++-------
+ mm/damon/sysfs.c                              |  41 +++++-
+ mm/damon/tests/core-kunit.h                   |  21 ++--
+ mm/damon/tests/vaddr-kunit.h                  |   2 +-
+ mm/damon/vaddr.c                              |   2 +-
+ 10 files changed, 204 insertions(+), 92 deletions(-)
 
 
-Thanks and Regards
-Parvathi.
+base-commit: 398a6e2cbd43b92d9a5fa6b4020be72c2441babd
+-- 
+2.39.5
 
