@@ -1,181 +1,132 @@
-Return-Path: <linux-kernel+bounces-790724-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790715-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41AC1B3AC4D
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 23:02:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0503DB3AC28
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 23:00:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01C25A032E6
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 21:02:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45D17189EDEA
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 21:00:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1A1F341ABD;
-	Thu, 28 Aug 2025 21:00:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 936082BEC34;
+	Thu, 28 Aug 2025 20:59:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="s2w+VL1h"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ma0UHEbi"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0F2933EB1C
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 21:00:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AC7229ACD1
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 20:59:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756414808; cv=none; b=iafOOoKuMwVQ2HWCEYo1VR2uOWEr50QmTA0RsGsUx+MEK2snpyklXZBhougzU3mWa6HoT9rOdzmubiEQIeiSKwc4rW2h52zmNnKJhWcxcmW1XUmMdGXBR10CyLq6CgaPlQF0q8Q3YLcQbko0uAAnaAbpGJhOsMaXZPkDfq2OqXE=
+	t=1756414780; cv=none; b=ipcLL4MSWaV+N6Rw9pXj5ie6woQoORyQ9u5b6qxq+W6rGv4UzFAq9OA2cQ2rG1gZFsFu9TIhMrrBQtQb/Rhg5O2d/NLMiBOLcRqVPH1BK+webpKrc0k4zFwnQXf4qQ9RvDH5R9ptgZ5bN7mf4k0WRoPopnGjmU/dtYkthTcRSI4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756414808; c=relaxed/simple;
-	bh=OAN+8LPMukdu5dgxkvakBf+/9iFJXuGvrK7tSR9LUbU=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Content-Type; b=BGy4z/+CO2slz6IAH0mYMXUjGvTlXju1aR+Tum53V265HAkgMH6MHZeY0y+Wif7N7IWoLdkx8BRx36RlNCjGfstcE+3QKMz8wIoUbROUwydKh3ffJw8JogtGAgNCqcvEMvk2Qy3RrNg7zXo+7pguJ9zVxgfLQLg2u6CzxJbZLs0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=s2w+VL1h; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-246a8d8a091so28595545ad.2
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 14:00:06 -0700 (PDT)
+	s=arc-20240116; t=1756414780; c=relaxed/simple;
+	bh=nhUyagpznBFRZ9pdGyujL8snMtRV7AxzIDv/2iWCkkM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=n0kpZYPGZ4DYgP1/3tkwQ/2jrKV6+uK9B5zCc7bOfwwn3MowEWHgqvLVx0Bt3qgBHemGwax/twbdBNXodHEt+0yedDac78YoLAsESNx7qS8b0d8mxs+VBGsSGrO+gqQODlKOUtQq/SNMrLrr6HBVICJDFFefYEAPE6496p3Hw9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ma0UHEbi; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-55f4bcceed0so1636158e87.1
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 13:59:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756414806; x=1757019606; darn=vger.kernel.org;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=6dys8Aa/90XBuzSMjRwrAygLQHbdLbHxpcpKidAhuPA=;
-        b=s2w+VL1h5dXSx2Fq96FS8KHJL+QOkkv/722dSoSQAi8CvjeMM5ESgdK7zO53Ss4vLM
-         Biy969GViU/wjgyJ4Mym3OdqjJJeV/ZUAEb1nvkKo91ps9o4t985VBZ4b08z/JlSVKdA
-         DE19XewweAhlikqF4xuM8mUO5zsNOUVdjQFzwx3boabajzJ+XM/qmloLMtCEY4W2BRzm
-         ChAMZfk0uCUGN+zr2olUVNs8uoib8ThUkDOJ0A31du6ujjOS1CpTfHRzvrsNaRAgKjWA
-         IiDdlawL0yPNCEan8gBLsXBmROehZv+rYSMFo41BficXwXVdrfrfunBGs32t8enYo5QV
-         brRg==
+        d=linaro.org; s=google; t=1756414773; x=1757019573; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nhUyagpznBFRZ9pdGyujL8snMtRV7AxzIDv/2iWCkkM=;
+        b=ma0UHEbiqECEh1ErdOJKkoTyNFYpeCWAacmYShnvRQtRoLZw0bgzRlsCjg9W4G05n9
+         +tZq90pA8y2W96oo9gJz3DFMyIbReffSe0GCsxR7W4QNpvMQMajQS11gI9WjHmlS5/Mc
+         PVErZ3LQQg0yK71YfAMF89IX6GMDptM56tP2AKp+h7SkBnQ1TWOPdQw9Sv7C0qcWdwEi
+         45VtKF2ccAVKTJMbuQSGsqXuKZLPWwCdxAxB742/7pA7mmvOtBPkvL4cTNMwOKQRVi+z
+         1x0asfo3p0mDwZxQTQa+qVxw1A+GwnJGx7QDVH9uk/k80sBixcSfQgo1INWRs/KflI72
+         hnGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756414806; x=1757019606;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6dys8Aa/90XBuzSMjRwrAygLQHbdLbHxpcpKidAhuPA=;
-        b=qJkWAxpHhjP3fcbtTPrGoILuTpcwYnZOvo+rcOO9jDa0xw6K3UpxfqDvHkDK72qfXt
-         1HWn3RT8zufqT0Viz6mGUHkFO3LRwFS9P7cGU52y+yYuc+jrs31G4Q68Ee/NJjxGljJP
-         pZ4JjH3+VM+b1zq/47WodkY5hUajkR2JeGIpzuWiCZyuuAesRz+fBVfdv4kamjqjThzN
-         ELCZ4+sG906z1Zp5doRDO79xxNAuYB38IkBaFokCa5dWHBvyGcG6J+6UqcBQm25nI+3v
-         L2qxTzHFeOYl8Yj9CVA+Cge86DmpNdBJ28zVDLmUNKrit59xakZ0lHXHD44E6PC+Xw4h
-         zUaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVZ3QxS6dz1V4BGfqJPwo/rEK7oAtVPjjOprI1JcDDbQT4pcjj+dtruU4XYcnRko7fgY4NVzTTPXoBG/us=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/YeJm6Q3tcWnSStpOEQTJXnWwsyM43Uzu+MfX4mlQqOmujT3g
-	TTiMz3htUGJbJArqRuBebUdbmV+9Tt44QKsejP2HqnRKb9XlMfF5cWS3BhxYnbogxveuhCjVwBU
-	z98tYG+cweQ==
-X-Google-Smtp-Source: AGHT+IGcNCtFhdq4mrjQsHNV3i+iE7zcBUKuNgZSUJJ5JnvCwFPV38o/29+7WGktv6aOFkDV7xmYESVWKjVr
-X-Received: from plbki12.prod.google.com ([2002:a17:903:68c:b0:248:7b22:d928])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:240d:b0:248:9983:fd9c
- with SMTP id d9443c01a7336-2489983fea6mr122425635ad.57.1756414806184; Thu, 28
- Aug 2025 14:00:06 -0700 (PDT)
-Date: Thu, 28 Aug 2025 13:59:22 -0700
-In-Reply-To: <20250828205930.4007284-1-irogers@google.com>
+        d=1e100.net; s=20230601; t=1756414773; x=1757019573;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nhUyagpznBFRZ9pdGyujL8snMtRV7AxzIDv/2iWCkkM=;
+        b=SJBZS7ME+XShTyyv+FusLmapgQoPTwfGQNnLEjS94WtBCmGE+AriN9Y9jElGJ0UelL
+         1YXWhyA+sGoitMkJ0gTKEGSV6duGnP9q/4qgUEJ1Z4aEbkOM7JuzVoLbV+NNAlcWBacf
+         sd+G/CdJ3pwqFVu2rsHN+SHaIjPZpt0GaHD5Jwm+QVaTZ+dsN36sp6kQVATRU6NanAG2
+         T/c6OFcF8+lPKOC148KjVceHo/OZ+8Zntm/WXOgr6W7U+7XXUFDywDs50N8oNY+merva
+         um4KXUl1v/L2ZVroZ9rrh5yUBow4mjmtxvs8LDE0AVYBF5fD+A+CiABfjS0StxMXyABC
+         KDXw==
+X-Forwarded-Encrypted: i=1; AJvYcCUQyBZtR6Pv4nMm8d3bNoF5SvxAXF7k6djFZ3EJR87i/zuwMPIYoNJ6vLLFjOhUygDEJndtxxnD551zgDE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVfAfIDPRiV9sN7eY8vQTrq8onemDwv/XFpg956NgT87EkcNTd
+	wraysy5Hxt+FIXJTlI4Ec6itU0Wphm43tq+cG9kqgQutYAqZIqp8YeADwTE33ryMhPRA5rErXv9
+	JC7B+n/budFM2UYaXXDLwVa+rmY7s1TL7b/Zy2gW9gQ==
+X-Gm-Gg: ASbGnctYzfqIuJLGEpLGjmU8M0t9KbGMtamqO8B+V7zp5Hi3KkZjdBFgDK0q1hGWXrf
+	n+wpgxAuH5+dHIUsRyaQFUtnti57FOY4S/T4pJ8n8hKsZs5ZTrq7Nk2KUhusAXYgMbyRU0eNvY2
+	9OK+bKRRjE0Gf6iaCv/4nwr0cSXUUhDmqc+2maBSnZVeApfoG8dUXePfO32PnyoBsRFECa5BUN1
+	mYASvI=
+X-Google-Smtp-Source: AGHT+IGkAeRfSepttrAWspST3WxeFhzvmsQkOJn8zGWgyydoFU7mfe7dFpmDKHnPoU/jmN1MyfkA6699WvyfKPSV4Ms=
+X-Received: by 2002:a05:6512:6301:b0:55f:503c:d322 with SMTP id
+ 2adb3069b0e04-55f503cd585mr2344975e87.40.1756414773211; Thu, 28 Aug 2025
+ 13:59:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250828205930.4007284-1-irogers@google.com>
-X-Mailer: git-send-email 2.51.0.318.gd7df087d1a-goog
-Message-ID: <20250828205930.4007284-8-irogers@google.com>
-Subject: [PATCH v3 07/15] perf pmu: Use fd rather than FILE from new_alias
-From: Ian Rogers <irogers@google.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, James Clark <james.clark@linaro.org>, 
-	Xu Yang <xu.yang_2@nxp.com>, Thomas Falcon <thomas.falcon@intel.com>, 
-	Andi Kleen <ak@linux.intel.com>, linux-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org, bpf@vger.kernel.org, 
-	Atish Patra <atishp@rivosinc.com>, Beeman Strong <beeman@rivosinc.com>, Leo Yan <leo.yan@arm.com>, 
-	Vince Weaver <vincent.weaver@maine.edu>
+MIME-Version: 1.0
+References: <20250828-dt-apple-t6020-v1-0-507ba4c4b98e@jannau.net> <20250828-dt-apple-t6020-v1-8-507ba4c4b98e@jannau.net>
+In-Reply-To: <20250828-dt-apple-t6020-v1-8-507ba4c4b98e@jannau.net>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Thu, 28 Aug 2025 22:59:22 +0200
+X-Gm-Features: Ac12FXwdi56r5WxKQlnuWh0e5CWqxbReZCdYkWbkMywpfjpFF5zgYMlMEAzYzgg
+Message-ID: <CACRpkdbvLhTQ8EujGg9QMbuGVRDnH9ApVxVt1NdmSmPw77QXdA@mail.gmail.com>
+Subject: Re: [PATCH 08/37] pinctrl: apple: Add "apple,t8103-pinctrl" as compatible
+To: Janne Grunau <j@jannau.net>
+Cc: Sven Peter <sven@kernel.org>, Alyssa Rosenzweig <alyssa@rosenzweig.io>, Neal Gompa <neal@gompa.dev>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Hector Martin <marcan@marcan.st>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Viresh Kumar <viresh.kumar@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, 
+	Mark Kettenis <kettenis@openbsd.org>, Andi Shyti <andi.shyti@kernel.org>, 
+	Jassi Brar <jassisinghbrar@gmail.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Sasha Finkelstein <fnkl.kernel@gmail.com>, Marcel Holtmann <marcel@holtmann.org>, 
+	Luiz Augusto von Dentz <luiz.dentz@gmail.com>, Johannes Berg <johannes@sipsolutions.net>, 
+	van Spriel <arend@broadcom.com>, Lee Jones <lee@kernel.org>, 
+	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
+	Stephen Boyd <sboyd@kernel.org>, Wim Van Sebroeck <wim@linux-watchdog.org>, 
+	Guenter Roeck <linux@roeck-us.net>, Michael Turquette <mturquette@baylibre.com>, 
+	=?UTF-8?Q?Martin_Povi=C5=A1er?= <povik+lin@cutebit.org>, 
+	Vinod Koul <vkoul@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	Marc Zyngier <maz@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, Keith Busch <kbusch@kernel.org>, 
+	Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>, 
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, asahi@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, iommu@lists.linux.dev, 
+	linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linux-bluetooth@vger.kernel.org, 
+	linux-wireless@vger.kernel.org, linux-pwm@vger.kernel.org, 
+	linux-watchdog@vger.kernel.org, linux-clk@vger.kernel.org, 
+	dmaengine@vger.kernel.org, linux-sound@vger.kernel.org, 
+	linux-spi@vger.kernel.org, linux-nvme@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The FILE argument was necessary for the scanner but now that
-functionality is not being used we can switch to just using
-io__getline which should cut down on stdio buffer usage.
+On Thu, Aug 28, 2025 at 4:02=E2=80=AFPM Janne Grunau <j@jannau.net> wrote:
 
-Signed-off-by: Ian Rogers <irogers@google.com>
----
- tools/perf/util/pmu.c | 23 ++++++++++-------------
- 1 file changed, 10 insertions(+), 13 deletions(-)
+> After discussion with the devicetree maintainers we agreed to not extend
+> lists with the generic compatible "apple,pinctrl" anymore [1]. Use
+> "apple,t8103-pinctrl" as fallback compatible as it is the SoC the driver
+> and bindings were written for.
+>
+> [1]: https://lore.kernel.org/asahi/12ab93b7-1fc2-4ce0-926e-c8141cfe81bf@k=
+ernel.org/
+>
+> Signed-off-by: Janne Grunau <j@jannau.net>
 
-diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c
-index b44dfe4c73fc..818be59db2c6 100644
---- a/tools/perf/util/pmu.c
-+++ b/tools/perf/util/pmu.c
-@@ -563,7 +563,7 @@ static int update_alias(const struct pmu_event *pe,
- }
- 
- static int perf_pmu__new_alias(struct perf_pmu *pmu, const char *name,
--				const char *desc, const char *val, FILE *val_fd,
-+				const char *desc, const char *val, int val_fd,
- 			        const struct pmu_event *pe, enum event_source src)
- {
- 	struct perf_pmu_alias *alias, *old_alias;
-@@ -614,12 +614,15 @@ static int perf_pmu__new_alias(struct perf_pmu *pmu, const char *name,
- 	if (ret)
- 		return ret;
- 
--	if (!val_fd) {
-+	if (val_fd < 0) {
- 		alias->terms = strdup(val);
- 	} else {
-+		char buf[256];
-+		struct io io;
- 		size_t line_len;
- 
--		ret = getline(&alias->terms, &line_len, val_fd) < 0 ? -errno : 0;
-+		io__init(&io, val_fd, buf, sizeof(buf));
-+		ret = io__getline(&io, &alias->terms, &line_len) < 0 ? -errno : 0;
- 		if (ret) {
- 			pr_err("Failed to read alias %s\n", name);
- 			return ret;
-@@ -698,7 +701,6 @@ static int __pmu_aliases_parse(struct perf_pmu *pmu, int events_dir_fd)
- 	while ((evt_ent = io_dir__readdir(&event_dir))) {
- 		char *name = evt_ent->d_name;
- 		int fd;
--		FILE *file;
- 
- 		if (!strcmp(name, ".") || !strcmp(name, ".."))
- 			continue;
-@@ -714,17 +716,12 @@ static int __pmu_aliases_parse(struct perf_pmu *pmu, int events_dir_fd)
- 			pr_debug("Cannot open %s\n", name);
- 			continue;
- 		}
--		file = fdopen(fd, "r");
--		if (!file) {
--			close(fd);
--			continue;
--		}
- 
- 		if (perf_pmu__new_alias(pmu, name, /*desc=*/ NULL,
--					/*val=*/ NULL, file, /*pe=*/ NULL,
-+					/*val=*/ NULL, fd, /*pe=*/ NULL,
- 					EVENT_SRC_SYSFS) < 0)
- 			pr_debug("Cannot set up %s\n", name);
--		fclose(file);
-+		close(fd);
- 	}
- 
- 	pmu->sysfs_aliases_loaded = true;
-@@ -1041,7 +1038,7 @@ static int pmu_add_cpu_aliases_map_callback(const struct pmu_event *pe,
- {
- 	struct perf_pmu *pmu = vdata;
- 
--	perf_pmu__new_alias(pmu, pe->name, pe->desc, pe->event, /*val_fd=*/ NULL,
-+	perf_pmu__new_alias(pmu, pe->name, pe->desc, pe->event, /*val_fd=*/ -1,
- 			    pe, EVENT_SRC_CPU_JSON);
- 	return 0;
- }
-@@ -1090,7 +1087,7 @@ static int pmu_add_sys_aliases_iter_fn(const struct pmu_event *pe,
- 				pe->name,
- 				pe->desc,
- 				pe->event,
--				/*val_fd=*/ NULL,
-+				/*val_fd=*/ -1,
- 				pe,
- 				EVENT_SRC_SYS_JSON);
- 	}
--- 
-2.51.0.318.gd7df087d1a-goog
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
+Yours,
+Linus Walleij
 
