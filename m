@@ -1,68 +1,68 @@
-Return-Path: <linux-kernel+bounces-789952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789953-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 397D6B39D47
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 14:28:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F031B39D48
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 14:28:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CE58189AC77
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 12:28:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 280933AD6D7
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 12:28:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B48430F932;
-	Thu, 28 Aug 2025 12:28:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0831830FC14;
+	Thu, 28 Aug 2025 12:28:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TaFMVa6q"
-Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="G1CR3y5G"
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAE0A1DDF7
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 12:28:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91C2130F547
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 12:28:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756384089; cv=none; b=Nm9jvGRGm03rvktvJS+MukN9xmbq2LuQG0I+69xFI/rldnGuPivCfZ8HKxXKbUL+MpCUVvBh+V2SW+xQhZW1qdg+nbol+JMlbyrDLaUe64dIkFOWMLPQvUu0NtFPFZwPcp+pcSQEp8r4+iRTkL03xSi1hkUprCSMeqrA0HlabcM=
+	t=1756384090; cv=none; b=VIc3aZY0ruA4VjyxblWeGt7CEe91agTAkMSoum6ln2DZ/gcxPFYWzVtHaYTQK4id6s01qQLT5JjW0JHsDoShmwdTLEjA+SbjwdCddETs79E1A/4ZPTN/6+gB6tSrDRsQi1/nQiuBevOe6BsYjrLYOLpk/RT4IlyzT44MGQ1BMz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756384089; c=relaxed/simple;
-	bh=GBInbJAJRj5ONLa1gt+nD49xcbsKA8ganwjzvi5pg4c=;
+	s=arc-20240116; t=1756384090; c=relaxed/simple;
+	bh=EmboPdxeD9U1RTTfc6lvCHB2Qk6VER1hrEBN1mp8C/0=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=j7XNpa4pc8+6B0pKL62Ehutze6pFCys4SmmoTvPXjfxEUHe7eyk0sSkQzdMS2oj/CW4uwd9tHwTzbyDB3fcNI0DMivaLQtrz3YdH1o5H0QPQ+0v4dupssNNagKIsW8cfF/XLXRZ8QGnVwuenv7uQRUBeUwXpgZ6vleGdBvVTJYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TaFMVa6q; arc=none smtp.client-ip=209.85.221.73
+	 To:Cc:Content-Type; b=I4wI4kTYk4Yj7elsE+NtmmrKiYsA4eVDQA8zaplH74J1McOJezqUQa50O/+ORw2p44pfUoUMqyhwXwf9CLCUcb52mEe17cMKXtM7mgVKV7mGxYO1yc98n+eYQHGCSV7siSP9SfuLxsAIh8qoUEQTB5AVYqN6Fr10yrbiXsbErWU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=G1CR3y5G; arc=none smtp.client-ip=209.85.128.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com
-Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-3c584459d02so627173f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 05:28:07 -0700 (PDT)
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-45a1b0c5377so4554625e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 05:28:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756384086; x=1756988886; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1756384087; x=1756988887; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=NT5ndZiyJJqWCgiYx08dUhX4e7n0TWvqf6AS15EwVrA=;
-        b=TaFMVa6qC3s0EPnSfEx/WJyzKAquVDgPozdbA4YkCNTad4TpgnnmM+4fJ3AHS/22Z6
-         0jpGFDXCY1crd+rrPzs8FiVK6aXo1cSR2fq1iAuo5OJ3K5qjY9iUVx3/G5T/CpgYKGCu
-         oXKiCRxuQVZOy36b+U2VB+YVYGq5LE8GdjEl++OKo1ZuoTbnDErbK3UyP+sZYL0SYawB
-         PmFR609Fff3w9jBGms+yf/29meuBKyzxuCPJA7p8lDPx/ubRXc0xdnrys0D40eq9xH/s
-         uKjaavi4AT/acd85ztoBu+3PlY7ZklbuowtEiQ6i18XmH66KJSvqxWrqm+9bbdAsDxZs
-         rpwg==
+        bh=qm9V93bDt4mzncYEvbMk2UnVnKCadpO9FtS3vTNJKSc=;
+        b=G1CR3y5GIyvjJPXQoCPNpN/zZUMrjlSSn9E7na6aU2wTEH5AXKIibvrHGyXXzbrUNV
+         7jYcVVQ/8e1k7bUgegfOuL4q6binATc8pbstwW31Z4KiGKOaMT/wY0ECp/LndNwXW5HK
+         r+ZBPtz4S9rx60IKR+eauDkqmIDxWvClDrN68cmPyZsiJjlILezkIm/Yp1bt5NEzoRsD
+         UTsG65VH+WmTIKCT0RJOUDy4sC2XMNCiQE6I4zXirAgtrcSKCaV5imHyvcl2k2o3YleL
+         JsSwgIucNlyE9jxC0wMg0wpwp5rjFUzNPP5SNo20WETRX/HoSQe005UYmsmNO8mrJ4Tx
+         z/Hg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756384086; x=1756988886;
+        d=1e100.net; s=20230601; t=1756384087; x=1756988887;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NT5ndZiyJJqWCgiYx08dUhX4e7n0TWvqf6AS15EwVrA=;
-        b=b39MsUmqTnpeXKT3Rc2Qc4KnQ5hZmaATyR+KA567BlXQuiYOuSTJUhnJNOOqjBslAm
-         PSgtcKLW1g28/AOdO2BFkXlJ84dW4U4MhDVFpDhNO9GyWQ54XCmmhOOC11ygCs1P3+OM
-         C/CpTa5xnKQKnnwrKRR/YrM68PoDXhlaQxyXTZRupJfVPW99XQvm33sjfMY0b1y3pDsi
-         PGenK4iT480UhHl+5VSwaGFgNMfJzGBGIV/BQVod1bS//UBXWPixk8VwqqvgPtpK12L2
-         0BGxS66903dBlPilY4RhGCMusCEMYGrPfrI+vbGNVa+MZMCmvwnWNehwhnWzAWqTcNo9
-         K/kw==
-X-Gm-Message-State: AOJu0YwFLL4antSJg9Q2fAcmz2DSugNJp9qmvsbkGaY/5+oSWbtiSz8a
-	noOco0gB1OzSKRyM4QEABKF0iQpl+jnfwYU+Jb50/wLQA4caYB/kRp8kz1xiTnxGJC2gZFNJtC8
-	pB+h3fTKx4501OA==
-X-Google-Smtp-Source: AGHT+IGJWI0ZFUz+7Oag9wdtFaUSV6+VfGrApOEbus6AYfztggP4vFm0mvCRRgVub8dgHHObAbgpSPShD8KaaQ==
-X-Received: from wmbel18.prod.google.com ([2002:a05:600c:3e12:b0:45b:732e:5a16])
+        bh=qm9V93bDt4mzncYEvbMk2UnVnKCadpO9FtS3vTNJKSc=;
+        b=WyTo7XXs/eXsVTRY3Qhhiq3/syCDuez7hh5kRnJQbZo2hpPjcEIr17tF0k1LBjESxq
+         3VSxSAQj0HMUZLuQ43aTHWuIm1r3+iZynA/e9dF+zePKan0/EsEBYkeXf6+UikuDdkNt
+         i0M9VAWesbccM8YMse2T13Is2tji6mQJiP61xeebAU4xzTgKTrGM++wlIUREmSdPrGZU
+         wxPQjYuQYpqNIx8lgduJtVh/lhFz/G4NQlY7oy0hvd9fKJo2mKa20uAEvzfg8Wyy8q4+
+         WS4S12IaniV4SsYvD4ZYtBmajrBikA601TjJ1EOUK/AYJT8XBphP+TolfKb6uy646jpX
+         wetg==
+X-Gm-Message-State: AOJu0YxfNXOCUGtJPNXJJBxLUelpA3/oTzjTMIXAZtRXnmYBCj13/5IL
+	1QQdxRl5U9jZwBeXjglUiEKZGf3YEvvJJR+k392pik+XKNyYKivEzmBpT/jOq8p7YeXz7VOz6iU
+	Q6Tnmua4zBSPYCQ==
+X-Google-Smtp-Source: AGHT+IHX4/WrNzbX/FYn6VIRfFQuxMO4r/uZ6gK2OY/lKgZ1ymFGCjrrA2HbF5ORNJdD5g5bjBWjoWc/vSleOQ==
+X-Received: from wmte19.prod.google.com ([2002:a05:600c:8b33:b0:45b:73cf:2862])
  (user=jackmanb job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6000:1881:b0:3c9:24f5:470c with SMTP id ffacd0b85a97d-3c924f54bfemr12451964f8f.42.1756384086018;
- Thu, 28 Aug 2025 05:28:06 -0700 (PDT)
-Date: Thu, 28 Aug 2025 12:27:58 +0000
+ 2002:a05:600c:1f95:b0:453:78f:fa9f with SMTP id 5b1f17b1804b1-45b5179cfa5mr199709225e9.11.1756384087019;
+ Thu, 28 Aug 2025 05:28:07 -0700 (PDT)
+Date: Thu, 28 Aug 2025 12:27:59 +0000
 In-Reply-To: <20250828-b4-vma-no-atomic-h-v2-0-02d146a58ed2@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -72,8 +72,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250828-b4-vma-no-atomic-h-v2-0-02d146a58ed2@google.com>
 X-Mailer: b4 0.14.2
-Message-ID: <20250828-b4-vma-no-atomic-h-v2-1-02d146a58ed2@google.com>
-Subject: [PATCH v2 1/4] tools/include: Implement a couple of atomic_t ops
+Message-ID: <20250828-b4-vma-no-atomic-h-v2-2-02d146a58ed2@google.com>
+Subject: [PATCH v2 2/4] tools: testing: Allow importing arch headers in shared.mk
 From: Brendan Jackman <jackmanb@google.com>
 To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, Andrew Morton <akpm@linux-foundation.org>, 
 	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
@@ -82,57 +82,43 @@ Cc: linux-kernel@vger.kernel.org, maple-tree@lists.infradead.org,
 	linux-mm@kvack.org, Brendan Jackman <jackmanb@google.com>
 Content-Type: text/plain; charset="utf-8"
 
-The VMA tests need an operation equivalent to
-atomic_inc_unless_negative() to implement a fake mapping_map_writable().
-Adding it will enable them to switch to the shared atomic headers and
-simplify that fake implementation.
+There is an arch/ tree under tools. This contains some useful stuff, to
+make that available, add it to the -I flags. This requires $(SRCARCH),
+which is provided by Makefile.arch, so include that..
 
-In order to add that, also add atomic_try_cmpxchg() which can be used to
-implement it. This is copied from Documentation/atomic_t.txt. Then,
-implement atomic_inc_unless_negative() itself based on the
-raw_atomic_dec_unless_positive() in
-include/linux/atomic/atomic-arch-fallback.h.
+There still aren't that many headers so also just smush all of them into
+SHARED_DEPS instead of starting to do any header dependency hocus pocus.
 
-There's no present need for a highly-optimised version of this (nor any
-reason to think this implementation is sub-optimal on x86) so just
-implement this with generic C, no x86-specifics.
-
+Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Reviewed-by: Liam R. Howlett <Liam.Howlett@oracle.com>
+Acked-by: Pedro Falcato <pfalcato@suse.de>
 Signed-off-by: Brendan Jackman <jackmanb@google.com>
 ---
- tools/include/linux/atomic.h | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+ tools/testing/shared/shared.mk | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/tools/include/linux/atomic.h b/tools/include/linux/atomic.h
-index 01907b33537e04c5e860dd2cd61a61dfab6ea8f1..50c66ba9ada58cf05125e2e2472734bf3b0f8595 100644
---- a/tools/include/linux/atomic.h
-+++ b/tools/include/linux/atomic.h
-@@ -12,4 +12,26 @@ void atomic_long_set(atomic_long_t *v, long i);
- #define  atomic_cmpxchg_release         atomic_cmpxchg
- #endif /* atomic_cmpxchg_relaxed */
+diff --git a/tools/testing/shared/shared.mk b/tools/testing/shared/shared.mk
+index 923ee2492256b693c5cf16cc014d9d2410be5457..937aaa7623320da1085a8e0f43f6a728ddd3ab1c 100644
+--- a/tools/testing/shared/shared.mk
++++ b/tools/testing/shared/shared.mk
+@@ -1,6 +1,8 @@
+ # SPDX-License-Identifier: GPL-2.0
++include ../../scripts/Makefile.arch
  
-+static inline bool atomic_try_cmpxchg(atomic_t *ptr, int *oldp, int new)
-+{
-+	int ret, old = *oldp;
-+
-+	ret = atomic_cmpxchg(ptr, old, new);
-+	if (ret != old)
-+		*oldp = ret;
-+	return ret == old;
-+}
-+
-+static inline bool atomic_inc_unless_negative(atomic_t *v)
-+{
-+	int c = atomic_read(v);
-+
-+	do {
-+		if (unlikely(c < 0))
-+			return false;
-+	} while (!atomic_try_cmpxchg(v, &c, c + 1));
-+
-+	return true;
-+}
-+
- #endif /* __TOOLS_LINUX_ATOMIC_H */
+-CFLAGS += -I../shared -I. -I../../include -I../../../lib -g -Og -Wall \
++CFLAGS += -I../shared -I. -I../../include -I../../arch/$(SRCARCH)/include \
++	  -I../../../lib -g -Og -Wall \
+ 	  -D_LGPL_SOURCE -fsanitize=address -fsanitize=undefined
+ LDFLAGS += -fsanitize=address -fsanitize=undefined
+ LDLIBS += -lpthread -lurcu
+@@ -11,6 +13,7 @@ SHARED_DEPS = Makefile ../shared/shared.mk ../shared/*.h generated/map-shift.h \
+ 	generated/bit-length.h generated/autoconf.h \
+ 	../../include/linux/*.h \
+ 	../../include/asm/*.h \
++	../../arch/$(SRCARCH)/include/asm/*.h \
+ 	../../../include/linux/xarray.h \
+ 	../../../include/linux/maple_tree.h \
+ 	../../../include/linux/radix-tree.h \
 
 -- 
 2.50.1
