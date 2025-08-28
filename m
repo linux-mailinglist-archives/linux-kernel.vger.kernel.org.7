@@ -1,201 +1,179 @@
-Return-Path: <linux-kernel+bounces-789474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789475-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 262CEB3960C
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 09:56:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 238D5B3960D
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 09:56:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BED587C064A
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 07:56:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D86B617A948
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 07:56:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7CFA2D6E59;
-	Thu, 28 Aug 2025 07:55:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CEE92D8799;
+	Thu, 28 Aug 2025 07:56:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="F5BxorN2"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sYl2jjF8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F03A2C236C
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 07:55:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BE452C236C
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 07:56:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756367758; cv=none; b=IarfkCcvPYTw3aQhi5OMbfJ4iVqIMmW9u+8n9uqrWoJ71nLyicMYT4Zforj1WxXnrPBXsT+fkRub7YXBRU+v43vskr8SLJhjg34zh2+PVeV7P838qg//nJn1FGwix1XBQM//12Bk1UCVH++DtPWRTJ0uBkgFnK4Ux/HyiWWWemU=
+	t=1756367764; cv=none; b=Ad/6qom4GY1oDAxltxLaVG7I1Yyndb9djjgut1/l3fhMaLO2PoM3KQdHVhg/ktMmqAVtUQLlDca4Y29SU5yVWBxC5LQ0rvQXZfNST9wT2JEH1kkCrY+Oj/y6DxpsmjtMc+WYkcHlyeFzhdQEIvEOK6GR9KM0wzVKUBgyK3H8tBU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756367758; c=relaxed/simple;
-	bh=0H4B6/wnQyWhKc04n8w05M9ADN7Eyb8jMn+ZmbV/gtQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=PBxN1LSvoGSQ4TezXjUgph1YJcHyBSHqqh18fj+0NlVrORdbjm722OskOCfI5Q6p5CMe1JFRU3CY3qxo1kaLuLXb9qvXyrk2YWpARjiy+9gOIpjb0iey/J+NMV7V8wq2mTa97hAGBb2m2+fYIf/C9LQ9dXC5ZHyDiVD34didF1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=F5BxorN2; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57S6QeBC029081
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 07:55:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=bBC6W9JnECBJI7fZ7UEMXy
-	l/iD3qDlwniyIZoRzi26E=; b=F5BxorN2A+9FgxKiII2U3aAAuPytqR5XMZisuY
-	EmpJtWjvqRIyRrHRFML8q2s9xOToYhZpMYp5zQ8/tT1PpgtfVHrZIqIiW3n1iZkE
-	KkQuPHtu5NOhWJLKSh2hfZ2eCuoooeLWG0+h6HDBWTBv8fvQMeE//1MP1BgT6RfO
-	MX9gpyliPkO/1c9BQLEQRFwV6LLgJ+YDA89kbOxpeAuyluCmMzHKW7hbjNm4dtSV
-	kX7KouylD1L1O7Jyc+wHYxjmVk7j2VwbauKLU7WXhyT6dYWZKB78fRZycKWNpS7D
-	ffP1hzgzGevOod9nU8qjKwgGlURPwvxG4MuXSfB0mxTVouFw==
-Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48q5umfj86-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 07:55:56 +0000 (GMT)
-Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-2461907278dso9340005ad.3
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 00:55:56 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756367756; x=1756972556;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=bBC6W9JnECBJI7fZ7UEMXyl/iD3qDlwniyIZoRzi26E=;
-        b=ZN6oWeAQxxQFG0MvN+qnc/Eu/63w2+VyE2AazzL0ALjSmun276w01qSIZyU8bI4TUx
-         JBxXigJGMV/qtWjcycqeVbUB04XMfqyboUPFg+ashj9sNzhQv7vczcyalZJ0sk1xpob4
-         nDxtbY2I7RDj8SSnWvTpZ6uOjUit7PmNTWm+g7VF9jjP7ZRIV5TzBYdBHkwyVQqzhR4Y
-         /h2kIkTbnd0+35kb5oc26pTxFoJH3N7IhTPexRmNaeiVahBiZW1wS3byicIdYULiTeD7
-         uJQvc5kF9K2/u2lXOoh57KlQIxRUcmNAxhryl2ST5H3yF9pVhV0w46W/tbiEpSv30fAS
-         ZvFg==
-X-Forwarded-Encrypted: i=1; AJvYcCWPmU3UmDrRDGKWy8H/H+PDZe8gkoYNUhYazU3BFqcOHzOtf1bowzFgeP9eurGcKeeYXjDaByLsmHIK/Ks=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yywx9Chj2Fc2Gr4cYjmPgEs0hZxLME5pd7Yy7711PhVFMOf/f0G
-	jikTZUhuZ7UTBxP1eLraVIif7AgIlbW0WMO94bEVXfJMLWV/FrUEzrNDIX8pUnT0xvQa2kZjipR
-	LPzafmOQR3KVC+bJU9iGNwk9A507bEVVs5QJklo/q7ttFC4cmpVTI48V8LU38bRBGwTQ=
-X-Gm-Gg: ASbGnctY6BQPFPq5wvJnyACX2+SkG86jpscbHcym00uI8Sn3EmIORCqe85yoVnTMNGx
-	fS3PkpXYz0cS7zUP7LoSS54MhQkOVMr8GcZ1ybGxxOJ0aFILmAD7yhz8ET9tkh8UY2o+a3XUH6l
-	ne9sQlzDNfzd1sVsolp1xVdZYfvfu7vrNNg/gLSmHmnjsAyZDn4FuIVB/RKj01dJAbrC8FnrseO
-	Qmxh6AWpdtMg2k3FQs//W6ASqfKgFq8Gp1Z8bWexKvA/myWwZmCBU87u2Ejvgycqd8DhoJdYJfD
-	A/OGDDVvtG5d/Sf+Fex4lBNEBL97AJJJiSaIpqkIF9ODwT2rutwrVJ9jm+EtDjEhnAaAxQUIs4p
-	dKwLAbno/JJ3LQU3LH3WQZvLkqDzZhEwH6CLiiAX23pZUVDrEvT7d9YnoMR02LDf6JLu3/dcBW2
-	w=
-X-Received: by 2002:a17:902:ef50:b0:23f:adc0:8cc2 with SMTP id d9443c01a7336-2462eeabf5amr288499475ad.27.1756367755775;
-        Thu, 28 Aug 2025 00:55:55 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGa/KrLOg+padB8zxItZz6ZlcodozcmFOglriMBwzOlyMkNQFA4/ZG4ySDSBCvPSPQbqLiWlA==
-X-Received: by 2002:a17:902:ef50:b0:23f:adc0:8cc2 with SMTP id d9443c01a7336-2462eeabf5amr288499075ad.27.1756367755229;
-        Thu, 28 Aug 2025 00:55:55 -0700 (PDT)
-Received: from hu-kathirav-blr.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com. [103.229.18.19])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-248a0238408sm35472495ad.118.2025.08.28.00.55.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Aug 2025 00:55:54 -0700 (PDT)
-From: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
-Date: Thu, 28 Aug 2025 13:25:31 +0530
-Subject: [PATCH] arm64: dts: qcom: ipq5424: Add support for emergency
- download mode
+	s=arc-20240116; t=1756367764; c=relaxed/simple;
+	bh=LBFU3wJPpP1GzD1wqG5KpOWfMmOnz1g1O9lz75lM1nE=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=seVetunViM7YfGhYphbECDri8Xk8lsRvg0/f34gOuFvPBgk87F/JaZ4O/mHscaBoFDbKDvz2/1JRcDJPz3DyQ6qiDt6n4rgRlC2VL5tL5BvuZkChFaRZMH0sdA/m0IUpPAch4VSJxaqHETFtvUTAYtFQPskXIf9ZZ3UMTM/aYZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sYl2jjF8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1487EC4CEEB;
+	Thu, 28 Aug 2025 07:56:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756367764;
+	bh=LBFU3wJPpP1GzD1wqG5KpOWfMmOnz1g1O9lz75lM1nE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=sYl2jjF85JDbJk7EESItaQx9GxoAuwwBD5hfhuuTdpUUTDYI9+cSuNqbmx5a6VL+a
+	 iAdyAixrKpioIlMdVHg85cEgQDTOk1QNMkGSqp/THk1eUJs/l1abOSGQgPxkFdyGwT
+	 OJKO5j2feUyxvGE56kDhz7VTrQKDSmBJGo9QWgKvMflgephbGIdRtQgaQ0U8SCPFWV
+	 P7ANwW82O0PUUkXsKWJbUR/s6XkSLPYdVLtNi/L3gmYQXVYHRsANvIhlgNig3vxTKY
+	 dhbNpWgpg0aDRP76nJCcpCWJjjijLX+4LgwG87JbZJS1u4rT6LuuBZCED8rZ5N1ouT
+	 ZwhXUPh0tpfTw==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <maz@kernel.org>)
+	id 1urXUH-00000001A3d-3ITy;
+	Thu, 28 Aug 2025 07:56:01 +0000
+Date: Thu, 28 Aug 2025 08:56:01 +0100
+Message-ID: <86cy8fev72.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Koichiro Den <den@valinux.co.jp>
+Cc: linux-arm-kernel@lists.infradead.org,
+	tglx@linutronix.de,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] irqchip/gic-v3-its: Fix invalid wait context lockdep report
+In-Reply-To: <pkfekcmetqyoj7rwvr77kisu7ok7bc6srq5maoydisnsk4bnyy@wimnw744lp5t>
+References: <20250827073848.1410315-1-den@valinux.co.jp>
+	<86h5xtdj6m.wl-maz@kernel.org>
+	<pkfekcmetqyoj7rwvr77kisu7ok7bc6srq5maoydisnsk4bnyy@wimnw744lp5t>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250828-ipq5424-edl-v1-1-d6a403800023@oss.qualcomm.com>
-X-B4-Tracking: v=1; b=H4sIAHQLsGgC/02OQW7DIBBFr2LNuiMRDAT7KlVUDTC0SLVxGGq1i
- nL3usmmy/el//RuINwKC8zDDRrvRUpdDzi9DBA/aH1nLOlg0Epb5bXHsl2t0QY5faKPXjvSlKf
- JwfHYGufy/bC9Xp7c+Pp1SPtzhEDCGOuylD4PPiY75mAUjcrYs8vkXaDJ2/zHyUZrgyIe4X/MP
- DxSzmpCagtuEgvKj3Re3hoLd407r6k2bBxq7YLGRa+UMZRjnveTgcv9/gu6V+V09wAAAA==
-X-Change-ID: 20250828-ipq5424-edl-8c826a2af996
-To: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1756367751; l=2558;
- i=kathiravan.thirumoorthy@oss.qualcomm.com; s=20230906;
- h=from:subject:message-id; bh=0H4B6/wnQyWhKc04n8w05M9ADN7Eyb8jMn+ZmbV/gtQ=;
- b=5b8q6LZgiwQ2P+RhxRAHanaVk6I/Bs7cE1KA9CvzQqkiDYCCOx7MFmrNiSfKwYoe0QVDQhKm2
- rNDFSOKU6/ICBDqoev/w7LqrNi2enBxgmHnq9hZZ1Fev/+lnp1IyOfT
-X-Developer-Key: i=kathiravan.thirumoorthy@oss.qualcomm.com; a=ed25519;
- pk=xWsR7pL6ch+vdZ9MoFGEaP61JUaRf0XaZYWztbQsIiM=
-X-Authority-Analysis: v=2.4 cv=VtIjA/2n c=1 sm=1 tr=0 ts=68b00b8c cx=c_pps
- a=MTSHoo12Qbhz2p7MsH1ifg==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
- a=cPK0JmkEVUuaBPUXAAcA:9 a=QEXdDO2ut3YA:10 a=GvdueXVYPmCkWapjIL-Q:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIzMDAzMiBTYWx0ZWRfX2bfw2wUZ0jqi
- hXUhZjIhUyeRLndZM6Hzk+DdUNF3ieAI0rK4f9YvVSBuUb3N3ZhJ5f6+N35ebENfKG+CZSg3lVo
- XpTmu7FTewV2bYuxghOJ0bDrIiAFTNO6kq0NGndDtYWBmJhPDV4Tm67eTpSXzC9jnhcgetb2KXR
- nOKn2/IFytk4LGFP7151/hr+obtbIKuWV/RCn+fNq14xYfqHRgkFNSfxQT+yyIomHEA+VON994L
- zA9s8leerBXkdPjxaLm/uCaWjNHW1LsJn2eB/BbSP04vAYCB+TgAEidcrY3cDb0Eaz4CECrM7Wa
- 8HGyOApME+GfxNhT6TNU1N72bAucsii0x0Sn9WbQAsS+G4xq9vVKRj3SwaD9RgqrDGJm6WAQ3iT
- P/blcD7Z
-X-Proofpoint-GUID: 5u91n_klIn3T_g3ymGOeX6Xvdk0MUTfC
-X-Proofpoint-ORIG-GUID: 5u91n_klIn3T_g3ymGOeX6Xvdk0MUTfC
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-28_02,2025-08-28_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 phishscore=0 priorityscore=1501 impostorscore=0 bulkscore=0
- suspectscore=0 malwarescore=0 adultscore=0 spamscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508230032
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: den@valinux.co.jp, linux-arm-kernel@lists.infradead.org, tglx@linutronix.de, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-Enable support for the vendor-specific SYSTEM_RESET2 reset in PSCI reboot
-modes. Using "edl" as the reboot mode will reboot the device into emergency
-download mode, allowing image loading via the USB interface at the Primary
-Boot Loader (PBL) stage.
+On Thu, 28 Aug 2025 04:09:00 +0100,
+Koichiro Den <den@valinux.co.jp> wrote:
+> 
+> On Wed, Aug 27, 2025 at 01:48:33PM +0100, Marc Zyngier wrote:
+> > On Wed, 27 Aug 2025 08:38:48 +0100,
+> > Koichiro Den <den@valinux.co.jp> wrote:
+> > > 
+> > > its_irq_set_vcpu_affinity() always runs under a raw_spin_lock wait
+> > > context, so calling kcalloc there is not permitted and RT-unsafe since
+> > > ___slab_alloc() may acquire a local lock. The below is the actual
+> > > lockdep report observed:
+> > > 
+> > >   =============================
+> > >   [ BUG: Invalid wait context ]
+> > >   6.16.0-rc3-irqchip-next-7e28bba92c5c+ #1 Tainted: G S
+> > >   -----------------------------
+> > >   qemu-system-aar/2129 is trying to lock:
+> > >   ffff0085b74f2178 (batched_entropy_u32.lock){..-.}-{3:3}, at: get_random_u32+0x9c/0x708
+> > >   other info that might help us debug this:
+> > >   context-{5:5}
+> > >   6 locks held by qemu-system-aar/2129:
+> > >    #0: ffff0000b84a0738 (&vdev->igate){+.+.}-{4:4}, at: vfio_pci_core_ioctl+0x40c/0x748 [vfio_pci_core]
+> > >    #1: ffff8000883cef68 (lock#6){+.+.}-{4:4}, at: irq_bypass_register_producer+0x64/0x2f0
+> > >    #2: ffff0000ac0df960 (&its->its_lock){+.+.}-{4:4}, at: kvm_vgic_v4_set_forwarding+0x224/0x6f0
+> > >    #3: ffff000086dc4718 (&irq->irq_lock#3){....}-{2:2}, at: kvm_vgic_v4_set_forwarding+0x288/0x6f0
+> > >    #4: ffff0001356200c8 (&irq_desc_lock_class){-.-.}-{2:2}, at: __irq_get_desc_lock+0xc8/0x158
+> > >    #5: ffff00009eae4850 (&dev->event_map.vlpi_lock){....}-{2:2}, at: its_irq_set_vcpu_affinity+0x8c/0x528
+> > >   ...
+> > >   Call trace:
+> > >    show_stack+0x30/0x98 (C)
+> > >    dump_stack_lvl+0x9c/0xd0
+> > >    dump_stack+0x1c/0x34
+> > >    __lock_acquire+0x814/0xb40
+> > >    lock_acquire.part.0+0x16c/0x2a8
+> > >    lock_acquire+0x8c/0x178
+> > >    get_random_u32+0xd4/0x708
+> > >    __get_random_u32_below+0x20/0x80
+> > >    shuffle_freelist+0x5c/0x1b0
+> > >    allocate_slab+0x15c/0x348
+> > >    new_slab+0x48/0x80
+> > >    ___slab_alloc+0x590/0x8b8
+> > >    __slab_alloc.isra.0+0x3c/0x80
+> > >    __kmalloc_noprof+0x174/0x520
+> > >    its_vlpi_map+0x834/0xce0
+> > >    its_irq_set_vcpu_affinity+0x21c/0x528
+> > >    irq_set_vcpu_affinity+0x160/0x1b0
+> > >    its_map_vlpi+0x90/0x100
+> > >    kvm_vgic_v4_set_forwarding+0x3c4/0x6f0
+> > >    kvm_arch_irq_bypass_add_producer+0xac/0x108
+> > >    __connect+0x138/0x1b0
+> > >    irq_bypass_register_producer+0x16c/0x2f0
+> > >    vfio_msi_set_vector_signal+0x2c0/0x5a8 [vfio_pci_core]
+> > >    vfio_msi_set_block+0x8c/0x120 [vfio_pci_core]
+> > >    vfio_pci_set_msi_trigger+0x120/0x3d8 [vfio_pci_core]
+> > 
+> > Huh. I guess this is due to RT not being completely compatible with
+> > GFP_ATOMIC...  Why you'd want RT and KVM at the same time is beyond
+> > me, but hey.
+> 
+> For the record, I didn't run KVM on RT, though I still believe it's better
+> to conform to the wait context rule and avoid triggering the lockdep
+> splat.
 
-Signed-off-by: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
----
-Depends-on:
-https://lore.kernel.org/linux-arm-msm/20250815-arm-psci-system_reset2-vendor-reboots-v14-10-37d29f59ac9a@oss.qualcomm.com/
----
- arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts | 6 ++++++
- arch/arm64/boot/dts/qcom/ipq5424.dtsi       | 2 +-
- 2 files changed, 7 insertions(+), 1 deletion(-)
+Then I don't understand how you get this, because I have not seen it
+so far.
 
-diff --git a/arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts b/arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts
-index 738618551203b9fb58ee3d6f7b7a46b38eea4bf4..b47b0be41a61438c922b1e29d9a2ebc37fca2d70 100644
---- a/arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts
-+++ b/arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts
-@@ -108,6 +108,12 @@ &pcie3_phy {
- 	status = "okay";
- };
- 
-+&psci {
-+	reboot-mode {
-+		mode-edl = <0 0x1>;
-+	};
-+};
-+
- &qusb_phy_0 {
- 	vdd-supply = <&vreg_misc_0p925>;
- 	vdda-pll-supply = <&vreg_misc_1p8>;
-diff --git a/arch/arm64/boot/dts/qcom/ipq5424.dtsi b/arch/arm64/boot/dts/qcom/ipq5424.dtsi
-index 67877fbbdf3a0dcb587e696ed4241f1075000366..8f2ee755d2cc406374faf9e76b0d409d159a7b12 100644
---- a/arch/arm64/boot/dts/qcom/ipq5424.dtsi
-+++ b/arch/arm64/boot/dts/qcom/ipq5424.dtsi
-@@ -184,7 +184,7 @@ pmu-dsu {
- 		cpus = <&cpu0>, <&cpu1>, <&cpu2>, <&cpu3>;
- 	};
- 
--	psci {
-+	psci: psci {
- 		compatible = "arm,psci-1.0";
- 		method = "smc";
- 	};
+> 
+> I don't know if there are any plans which make kmalloc with GFP_ATOMIC
+> workable under a stricter wait context (getting rid of the local lock
+> in some way?), but I think it would be nicer.
 
----
-base-commit: 8cd53fb40a304576fa86ba985f3045d5c55b0ae3
-change-id: 20250828-ipq5424-edl-8c826a2af996
-prerequisite-change-id: 20250709-arm-psci-system_reset2-vendor-reboots-46c80044afcf:v14
-prerequisite-patch-id: 38f76a48b6b824f3fa8d8cbc05ae76b43ce79556
-prerequisite-patch-id: ae7ae183210708f64fb3ff4f097de3c8af31680a
-prerequisite-patch-id: 5ba323084ac74aa744696b54ff0c17d34e26b7de
-prerequisite-patch-id: 3a2cedabc1bff24067dc224b2c077373c08b39a0
-prerequisite-patch-id: e30b97929026120277585907cde2dc000a25a621
-prerequisite-patch-id: e3ff400e6c72e835612b733b5573b01b045e7336
-prerequisite-patch-id: 50e081a2a21166aee74af428934bc3b52d3cf43b
-prerequisite-patch-id: a0148031385883a309dc165fac299d3eb5d4bcd4
-prerequisite-patch-id: 3c0f5c0e93261f6dab1d9e7293a1a28ef64e2a66
-prerequisite-patch-id: bb68380b11f9e868eacb0db9f97cc5f3ae8aa29a
+GFP_ATOMIC is documented as being compatible with raw spinlocks in the
+absence of RT, making the above trace pretty odd.
 
-Best regards,
+> 
+> > 
+> > >   ...
+> > > 
+> > > To avoid this, simply pre-allocate vlpi_maps when creating an ITS v4
+> > > device with LPIs allcation. The trade-off is some wasted memory
+> > > depending on nr_lpis, if none of those LPIs are never upgraded to VLPIs.
+> > >
+> > > An alternative would be to move the vlpi_maps allocation out of
+> > > its_map_vlpi() and introduce a two-stage prepare/commit flow, allowing a
+> > > caller (KVM in the lockdep splat shown above) to do the allocation
+> > > outside irq_set_vcpu_affinity(). However, this would unnecessarily add
+> > > complexity.
+> > 
+> > That's debatable. It is probably fine for now, but if this was to
+> > grow, we'd need to revisit this.
+> 
+> Just curious but do you have any plans to replace the current
+> irq_set_vcpu_affinity() approach with something else?
+
+Who knows. This is the Linux kernel, everything changes all the time
+without the need for a good reason. More significantly, the amount of
+*data* being associated with a VLPI could become much higher in the
+future, and add more unnecessary allocation.
+
+	M.
+
 -- 
-Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
-
+Without deviation from the norm, progress is not possible.
 
