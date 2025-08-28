@@ -1,200 +1,134 @@
-Return-Path: <linux-kernel+bounces-790485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FF58B3A855
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 19:38:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D82AB3A864
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 19:41:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9417E18957C0
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 17:38:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AECAF7B319B
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 17:39:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 944F03375BC;
-	Thu, 28 Aug 2025 17:38:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B54FD33CE85;
+	Thu, 28 Aug 2025 17:41:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iPUqdSib"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eWkzffFU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 608D621B9F1
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 17:38:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 034C221B9F1;
+	Thu, 28 Aug 2025 17:41:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756402699; cv=none; b=E+0Q+8nK8M/FlzXeOnw9RnLOcROtvDv4Ept19bqyu7wi+LrfXOD0q+Csncaf/9DHDdHi0GulT03zFFPI4wfZUglWP4VrQdXhR3JSo7xFFrFF+9IRW3k2+tzAiHaVQR26H/+Y6g+D5CT+8l72SScKlcYDxUGw9qNZzBBnHbTUniE=
+	t=1756402864; cv=none; b=r+WklLsdZvRI6wcCKgHU75c+ITaFevGqUDmwpb+lqO6tn84IXbNdS9f1zblz2lK934l24aBw/dkwAwpbBmNxVVUwjEDe6hh/6SCeeXTDKMfSpxkOzEUMogCh51SqN4JpLrxjAlvzTZAPQ3d/M8pIUKWEUIh1yrFpWxPf2I42Iog=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756402699; c=relaxed/simple;
-	bh=SNXhCWfAZBtgC6ZU2ndzFpAUbXp6YJbSyN/+bro18TM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nTXmwJjkEsmPP2CXjlb4tPotWnu2USBXGXmfXvly4Qct5evYdfWePN4nzqtjBMAX/MES2svbGztkTSbUY7RtOCP6lDBpPs9i596oGhlouP+9/xIkK+UUOOiUH+NWvYDQzX7QCIaRD54iWhdaFmzUO0NBPq7rMkUrwVjNVOnIbq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iPUqdSib; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756402697;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=K6p2tt16Ex86fLCzx2c9aJ/wVLkuf0FjhhNKWXNuhhU=;
-	b=iPUqdSibglKYt8sO0mKT7KnL8E7tPFJhbtIit0Z7wTrAyMVT+Pa1ijeyRl/WG8cjwcnSDH
-	cSec420KMiz2MxdDHmrZOu4fAnHepwZZ968ZVBhkhf+CaFL8zZKSO8U/hklsq7ZqFgG9wS
-	PL2H00I73bKvaCVHYmsgcPX0t7YxDOc=
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
- [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-252-VguEAYxmPlGhMKZodmjXGg-1; Thu, 28 Aug 2025 13:38:15 -0400
-X-MC-Unique: VguEAYxmPlGhMKZodmjXGg-1
-X-Mimecast-MFC-AGG-ID: VguEAYxmPlGhMKZodmjXGg_1756402695
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-70dd6d25609so32545516d6.0
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 10:38:15 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756402695; x=1757007495;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=K6p2tt16Ex86fLCzx2c9aJ/wVLkuf0FjhhNKWXNuhhU=;
-        b=AEAjw3Y42+spnquEfPdIzownTclD3rCbk9Wq0h31zCBtrzFosqbwjm3HlCgieQqk18
-         rg3eBxNu8OljBE9kEDHLu5zZWxQHx9I1XgLoSLntxyK1mlc4D7zMnBuxMcQxv2j7lTp9
-         uiHqeCWvLfZMae5zpspUyZfEXhw2AbmTpq+0y+QKuzMlxoGa7InFYS+WgdsZhMpPftvl
-         a2i2xBwI67RGaphsjRbVGPkZ4Kr7ys/YA5K9Ognk7xS627fHhtaOgkqRdVI/dJrUUn6y
-         gsfEqeu/OZQqyFOjwHmMImluvnX35hOqYnLx5Km8rDujDcjrmshQU5rqI2GHpQZK1eeN
-         hc6g==
-X-Forwarded-Encrypted: i=1; AJvYcCVf4yv0xw9pnGlm0yKIkVl4mVFT3MpHnx9JC/1imqpcYHKI9V0q46uGHrpP+BkOfhHWi4eR9cspGtc3SQA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwSOhey6/Cvcdgr2Pcai8FEEBECFVwm7Q/EgErJdqR7J39NopUG
-	uLrvLKeLlmsrwRM9/fZfgbjSkKxY2YkYmwQxo5sPyEfRRSBOxeUEUj2Jm9mcfGhpujGo6h+NbJQ
-	1A57wzlgil7HMYrCiAhtueS8WB1Ngg6jtlZiJrkeWytRnFDlzqIeFKXIsKAYQbIY5Eg==
-X-Gm-Gg: ASbGncvy19mX1Eh1Wpbnh8SCFyzZ30oJhpeaPnjuQyGRnON2mr5y2b0Jb0M3W++HXdy
-	LUgkboKxscp/KOMq165vCeXn7lLp1RDLi52znod3EtHpRDCojboGrrYYgwQEAAAZto1H6IdwtjB
-	dTqJvFKvwKOw9n9TucPCepRrKzF+xUEsiqfmL2Xzp7YXkEK4tIg87PsE8XeWW1eV1wVjuEqiJhq
-	2qTzYY90IqZKVxIXyH9W6rVNAWkzAN1PBcGOH5A+W2wcI3JTYKWOVXkx+xcZYH+OYe8+GZy2kbB
-	mzMHWUjJ8ZMQ6BnXOO8TKHFq+KDqVPefPwP7awCfPiPB0D9ZKBzSUj1szNzpb+WoY1rjYspIp8T
-	v/1/055YDdzuGeAsYz9A=
-X-Received: by 2002:a05:6214:c65:b0:707:4539:5183 with SMTP id 6a1803df08f44-70d970980e6mr246817966d6.5.1756402695122;
-        Thu, 28 Aug 2025 10:38:15 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFolBQi5Yqb+JsBG1B+iQ0UbKTmrqVThPcyhvOhG9tT6SqvRRRfRTx8LsjupRZvAV5rgEeAWg==
-X-Received: by 2002:a05:6214:c65:b0:707:4539:5183 with SMTP id 6a1803df08f44-70d970980e6mr246817666d6.5.1756402694644;
-        Thu, 28 Aug 2025 10:38:14 -0700 (PDT)
-Received: from x1 (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-70da72cbff7sm108739796d6.62.2025.08.28.10.38.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Aug 2025 10:38:14 -0700 (PDT)
-Date: Thu, 28 Aug 2025 13:38:12 -0400
-From: Brian Masney <bmasney@redhat.com>
-To: Ryan.Wanner@microchip.com
-Cc: mturquette@baylibre.com, sboyd@kernel.org, nicolas.ferre@microchip.com,
-	alexandre.belloni@bootlin.com, claudiu.beznea@tuxon.dev,
-	varshini.rajendran@microchip.com, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	robh@kernel.org
-Subject: Re: [PATCH v3 03/32] clk: at91: sam9x75: switch to parent_hw and
- parent_data
-Message-ID: <aLCUBDXzZm8LukL9@x1>
-References: <cover.1752176711.git.Ryan.Wanner@microchip.com>
- <b39fdf4c800103e4fd3fe2ace2c295f635a59d0f.1752176711.git.Ryan.Wanner@microchip.com>
+	s=arc-20240116; t=1756402864; c=relaxed/simple;
+	bh=PaH5Bm0Erx+sV9CSZnF4BLXHmKWGXP0JFYFCZ8DnyUs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PZhkUjESSvwmYiuDzl6u1hIj/2qx0wwlSC7IR2+mifuqKW49wIGPTijW7DfWD7V2oFTPPKiLrlDPHGnpWwHOO+Fj2eI+Yst9ijxxoX1MPUY/Inw2lpPSeHUKglNhpUF07wF0ha/GYjtKthUDaqO6wtwLcB7psC1DajZN5z/TzQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eWkzffFU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04881C4CEEB;
+	Thu, 28 Aug 2025 17:40:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756402861;
+	bh=PaH5Bm0Erx+sV9CSZnF4BLXHmKWGXP0JFYFCZ8DnyUs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=eWkzffFU2c2Ux6W7lfrfx5sHW/wUq+4qPU25vkA6fFFeeUXSf53ZLMIppx1IsHbWs
+	 hXt20wu4U8XUFY2WsFcV/19Owg2zEaNzuGzN3JQIjOqoloyEwyYijCGBvJvtsKOXDJ
+	 Upt23MpVG3TlYrLZpo9PxcQeOE1JThYINwA7jZW8fXW4H7dLvAFM2zhdM54hvc/5hR
+	 WG77elD7WftItib2HudABOBg3bVaAqTpAT+tFTRfR2Rq4m3j7HP34cvmhPUNlmNv5f
+	 RAe2/ZzSJWGpLSvn8Rh93+IWc+FacUonpw5Ihuxqdv7zmsYaTZFVRsOsrldwMUOF7G
+	 TPwskstt3In6A==
+Message-ID: <25844eea-a41c-4a36-b132-8824e629568d@kernel.org>
+Date: Thu, 28 Aug 2025 19:40:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b39fdf4c800103e4fd3fe2ace2c295f635a59d0f.1752176711.git.Ryan.Wanner@microchip.com>
-User-Agent: Mutt/2.2.14 (2025-02-20)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V3 1/4] ufs: dt-bindings: Document gear and rate limit
+ properties
+To: Bart Van Assche <bvanassche@acm.org>,
+ Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>, alim.akhtar@samsung.com,
+ avri.altman@wdc.com, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, mani@kernel.org, James.Bottomley@HansenPartnership.com,
+ martin.petersen@oracle.com
+Cc: linux-scsi@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+References: <20250826150855.7725-1-quic_rdwivedi@quicinc.com>
+ <20250826150855.7725-2-quic_rdwivedi@quicinc.com>
+ <9944c595-da68-43c0-8364-6a8665a0fc3f@acm.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <9944c595-da68-43c0-8364-6a8665a0fc3f@acm.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jul 10, 2025 at 01:06:56PM -0700, Ryan.Wanner@microchip.com wrote:
-> From: Ryan Wanner <Ryan.Wanner@microchip.com>
+On 26/08/2025 17:35, Bart Van Assche wrote:
 > 
-> Switch SAM9X75 clocks to use parent_hw and parent_data. Having
-> parent_hw instead of parent names improves to clock registration
-> speed and re-parenting.
+>> +  limit-rate:
+>> +    $ref: /schemas/types.yaml#/definitions/uint32
+>> +    enum: [1, 2]
+>> +    default: 2
+>> +    description:
+>> +      Restricts the UFS controller to Rate A (1) or Rate B (2) for both
+>> +      TX and RX directions, often required in automotive environments due
+>> +      to hardware limitations.
 > 
-> The USBCLK will be updated in subsequent patches that update the clock
-> registration functions to use parent_hw and parent_data.
-> 
-> Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
-> ---
->  drivers/clk/at91/sam9x7.c | 308 +++++++++++++++++++++-----------------
->  1 file changed, 173 insertions(+), 135 deletions(-)
-> 
-> diff --git a/drivers/clk/at91/sam9x7.c b/drivers/clk/at91/sam9x7.c
-> index cbb8b220f16b..31184e11165a 100644
-> --- a/drivers/clk/at91/sam9x7.c
-> +++ b/drivers/clk/at91/sam9x7.c
-> +		[PLL_COMPID_DIV1] = {
-> +			.n = "plla_div2pmcck",
-> +			.p = SAM9X7_PLL_PARENT_FRACCK,
-> +			.l = &plladiv2_divpmc_layout,
-> +			/*
-> +			 * This may feed critical parts of the system like timers.
-> +			 * It should not be disabled.
-> +			 */
-> +			.f = CLK_IS_CRITICAL | CLK_SET_RATE_GATE,
-> +			.c = &plladiv2_characteristics,
-> +			.eid = PMC_PLLADIV2,
-> +			.t = PLL_TYPE_DIV,
-> +		},
+> As far as I know no numeric values are associated with these rates in
+> the UFSHCI 4.1 standard nor in any of the previous versions of this
+> standard. Does the .yaml syntax support something like "enum: [A, B]"?
 
-[snip]
+That's what I also requested and answer was "1" and "2" are coming from
+the spec. So now I am confused.
 
-> -	[PLL_ID_PLLA_DIV2] = {
-> -		{
-> -			.n = "plla_div2pmcck",
-> -			.p = "plla_fracck",
-> -			.l = &plladiv2_divpmc_layout,
-> -			/*
-> -			 * This may feed critical parts of the system like timers.
-> -			 * It should not be disabled.
-> -			 */
-> -			.f = CLK_IS_CRITICAL | CLK_SET_RATE_GATE,
-> -			.c = &plladiv2_characteristics,
-> -			.eid = PMC_PLLADIV2,
-> -			.t = PLL_TYPE_DIV,
-> -		},
-> -	},
 
-Should the div2 to div1 rename be mentioned in the commit log?
-
-> @@ -710,32 +738,24 @@ static const struct {
->  static void __init sam9x7_pmc_setup(struct device_node *np)
->  {
->  	struct clk_range range = CLK_RANGE(0, 0);
-> -	const char *td_slck_name, *md_slck_name, *mainxtal_name;
-> +	const char *main_xtal_name = "main_xtal";
->  	struct pmc_data *sam9x7_pmc;
->  	const char *parent_names[9];
->  	void **clk_mux_buffer = NULL;
->  	int clk_mux_buffer_size = 0;
-> -	struct clk_hw *main_osc_hw;
->  	struct regmap *regmap;
-> -	struct clk_hw *hw;
-> +	struct clk_hw *hw, *main_rc_hw, *main_osc_hw, *main_xtal_hw;
-> +	struct clk_hw *td_slck_hw, *md_slck_hw, *usbck_hw;
-> +	static struct clk_parent_data parent_data;
-> +	struct clk_hw *parent_hws[9];
->  	int i, j;
->  
-> -	i = of_property_match_string(np, "clock-names", "td_slck");
-> -	if (i < 0)
-> -		return;
-> -
-> -	td_slck_name = of_clk_get_parent_name(np, i);
-> -
-> -	i = of_property_match_string(np, "clock-names", "md_slck");
-> -	if (i < 0)
-> -		return;
-> -
-> -	md_slck_name = of_clk_get_parent_name(np, i);
-> +	td_slck_hw = __clk_get_hw(of_clk_get_by_name(np, "td_slck"));
-> +	md_slck_hw = __clk_get_hw(of_clk_get_by_name(np, "md_slck"));
-> +	main_xtal_hw = __clk_get_hw(of_clk_get_by_name(np, main_xtal_name));
-
-Based on Stephen's comment on your earlier series, I think it would be
-worthwhile to call out that these __clk_get_hw() calls will be removed
-in later patches in this series. I know you do in the next patch.
-
-Everything else in this patch looks good to me.
-
-Brian
-
+Best regards,
+Krzysztof
 
