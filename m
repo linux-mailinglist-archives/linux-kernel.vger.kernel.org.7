@@ -1,166 +1,128 @@
-Return-Path: <linux-kernel+bounces-790567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE6FAB3AA4F
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 20:50:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD296B3AA3E
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 20:47:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D394A01B38
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 18:50:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AD52A02073
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 18:47:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9E2932C31F;
-	Thu, 28 Aug 2025 18:50:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43DF127933A;
+	Thu, 28 Aug 2025 18:47:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="7PhGVjWo"
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ajgD2e4h"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E4B830F52A;
-	Thu, 28 Aug 2025 18:50:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 006B426F2AF;
+	Thu, 28 Aug 2025 18:47:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756407037; cv=none; b=LkYJ9TCa/iMJigQz4gKZp6PUy2XgCb24rtxlRL68CB75mE/YfyS4fS0NRpwZz59zQO8dn4G/TLs1X8xnpaPWbp9HOZlW545B37QN+iRo203zi/OWiWwP0CewOE2Ce/lzYzNddsA/yjSiK1ybM5oz/598DvA0nyZbzB9OWXxIbEQ=
+	t=1756406823; cv=none; b=Cibalcw3452VPDzl+itEiu1TGsa2QQ42m5ZdjmG78CTeQseRHln7/L+3Wfb6R0a3ZowWRROjtHj7FHdN86dYGUvGoYHq7Z/jPKCdGeYY/WwNUbIBG4wDArDlg9Ip6eRi1+7jDBiF/ADp+NhLAtJWb85xqV2+Ru5jUamwRMKTOjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756407037; c=relaxed/simple;
-	bh=rDPt11hUyYEKYzRsksxc2au3/QreRdUJKeYIrv01Z1Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=OQbhIZC0oJthhb9OWN6QVrP5a+EPi8wU9UzrDWESSPcrpaeaC/kIdhL7717JDDUgoAJTogf20e81HrBRB6f4PW3xsXnmatFVP9Dl9EEjGJ3yMevx35k+NrqgD7yYilZmLXTnmtLBxLdmkl1VFg+6IBxT3Hu5NhDfm0kfivChruw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=7PhGVjWo; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57SGK1Q6000314;
-	Thu, 28 Aug 2025 20:49:56 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	QngEIke0AHC8FxDBE5xQKqvSi6Ne/Qs63SuZOpgs9rU=; b=7PhGVjWors7Len+8
-	8boKa4Mku8xTRTVBQIwPckTq5qP62dkbDckuIoWUjJwRBQVkDO/NCvZ/Xd0f0lAc
-	qlMzdA0j+8xixjOEBDzfNE/bMlhcC43lIyqxbxLuD0mDYI/P53pBKDim9k2ond7K
-	DDEnnnkNsHh8ul7tnHtQkcbAN98RKbHDJ2kr7mEAZfVmQZDlc/Lhzv/v5bB+XRpC
-	4RVE5sqxff1+wnAQ9BtratCEwvItq0kJIPBIj1U+we+otSG3PWul6RlLRfkKN5kk
-	EZ2IBrk3RwkwnBuzL7MQ2Kt7kXS5AgcdWUIsu+Xd7OBNOZQ/yFhTSOIBk3mYIzUJ
-	DfW2Ag==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 48q5xbwhff-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 28 Aug 2025 20:49:56 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id D36834004B;
-	Thu, 28 Aug 2025 20:48:10 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id E170277A5A4;
-	Thu, 28 Aug 2025 20:46:34 +0200 (CEST)
-Received: from [10.130.77.120] (10.130.77.120) by SHFDAG1NODE3.st.com
- (10.75.129.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 28 Aug
- 2025 20:46:33 +0200
-Message-ID: <3a0afc93-a7ae-467e-97ad-f1c8d7d7a693@foss.st.com>
-Date: Thu, 28 Aug 2025 20:46:30 +0200
+	s=arc-20240116; t=1756406823; c=relaxed/simple;
+	bh=vdhERKYfOY+T/pT2jzq6anWaCIeNTGYp5ND7/mID50U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WBwZ5GnpsZ7vmYwzwk8bPR5Xx/I4evkK/VDuquiqoBtVmtLB4h8fGi9mL6XVQXeWjg7UHvJw4I//iCcssJRjPTshOpD7xAKJeZ0MSRH12CoXgFT1dCPN3n8N2o+jMvNv0DzQYFm37MHSG37SmbjvAjx2rpuxFrE/OhIYFlSoGp4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ajgD2e4h; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-336b0b3d753so5395151fa.1;
+        Thu, 28 Aug 2025 11:47:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756406820; x=1757011620; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=q1r+LpWaRtkOKvYchwIX0i0/lFLrHnDiOSxWU9T+LDA=;
+        b=ajgD2e4h1fQoJtbFyPpi98jlM/zxALGcIa8QXmymqqloyx2FfXF3L1GSdgvAGJymQJ
+         9qOGi3kdbjxN5ns6JtvHH5qE8Z715V2G61bXfeSYZfrmP0JRwiOLV+niy5FURllWaok9
+         WrD6vZpuc/kVSzXj4qvCvWjCBzzh75EGxM92jGJDafcvuGIadkKs2L84zcHYDVawIUDd
+         Cx43qxtBae14sZRoBOar7surLyTBiKsnbtxayP3bQizZv5mgTOepWC+dxxmAJC1QWcJr
+         vMzYD6kOShwKFtQJXOfqnCmGj7h3T9RBVsgdr6A4eI88VcXDDl5m/VALcBivhVmoNZUC
+         8Xww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756406820; x=1757011620;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=q1r+LpWaRtkOKvYchwIX0i0/lFLrHnDiOSxWU9T+LDA=;
+        b=TtkgpLVJpnd6UXsKwOPL1MWSk/FywvxSlXQ06g60gjUkA3L7A+NyvUkY8pS/2M+4+I
+         kXi2+qORrYpG/Y5cmCuS5EkAgiMeMtroJaDM3pjz8DvfuzNU4IOWlw7I91yBL/p9YOnf
+         70MbG7PDKnm8J0Lbifo3X8Xm+BLTOWrMeLfoCKUqwp4iesJulHxpzLN8gWRkx9QjMrio
+         TA7It1TFi//1fD83y9PcmmTxCdGt93i7z8b4APrONhDlkczXEunI9iuGi7YKnviwPuJN
+         qea5G6+ZU5+K9n/GsnbX0IBeIvmduIbhPXpl24ghhEwnLXTHgDcP0HeNJgq2bUKa6aR9
+         rUOg==
+X-Forwarded-Encrypted: i=1; AJvYcCVAYvVtX8nhVod0HeQCvQC3GC/oivC9ADGa4MCEAHwHuOXGZmaW4uX/aQ0sOWvVX3TSEEzrs6OysEc=@vger.kernel.org, AJvYcCWQeHyrhgUwM/yo4YOQGbWBl8ZCFtd1vmm2d6IsNIocjWqN7GIiClaeh1iXSYMFYB5jyw3dqi2kNk4rLLIA@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxxssu0b4WF5mwaYhsPUpy6Iyj5G41jUqLu8zus4KCZaHS+4iId
+	1JsCLsj4lBARW4cJ42YNMPrdblxzoFIJzFfMtf8fWIWER+zgyrpjOH+4a6mzAjUvjt3UzPC/Wdq
+	yy5pVfqfCkWGvTIYQ/ABtgzi65W9V/HU=
+X-Gm-Gg: ASbGncupCFXaaHKJrU9jiJ+mF66Bigey/Juw/5IS2CPo+jkAP9seQbYbSy9mXaq4vxC
+	EwbVaIUBcOyWCQhcjMgiKzZu373zkyqHoDDlcUc9j3IQJIyv9D21QKZujoPoDCukTLp+9Rf/mIg
+	ehH+yvTjQ+yrT5+1fK8S7T0xm1mLCp0EDl3ihA32rQqv6J+avxGQJ9NHCxUxdLEgx3oqM0ktj99
+	5+t5BWfYNvKpIxQV3sC/R1AlT1RrgLcuSGtIzCPIF51LBznNguH1CNUBjwkwB0=
+X-Google-Smtp-Source: AGHT+IFMC2ZGxBrZONWeNUQkwu4jL1gVEuKk1uI3/qQorZ/4xBGHg45CV+Pe/z7N00ztH3Se81uNof8UDI1QNxE+3hw=
+X-Received: by 2002:a05:651c:550:b0:32f:3e83:437d with SMTP id
+ 38308e7fff4ca-33695ac0e40mr15036911fa.17.1756406819698; Thu, 28 Aug 2025
+ 11:46:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v13 06/11] PCI: stm32: Add PCIe Endpoint support for
- STM32MP25
-To: Bjorn Helgaas <helgaas@kernel.org>
-CC: <lpieralisi@kernel.org>, <kwilczynski@kernel.org>, <mani@kernel.org>,
-        <robh@kernel.org>, <bhelgaas@google.com>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <mcoquelin.stm32@gmail.com>,
-        <alexandre.torgue@foss.st.com>, <linus.walleij@linaro.org>,
-        <corbet@lwn.net>, <p.zabel@pengutronix.de>, <shradha.t@samsung.com>,
-        <mayank.rana@oss.qualcomm.com>, <namcao@linutronix.de>,
-        <qiang.yu@oss.qualcomm.com>, <thippeswamy.havalige@amd.com>,
-        <inochiama@gmail.com>, <quic_schintav@quicinc.com>,
-        <johan+linaro@kernel.org>, <linux-pci@vger.kernel.org>,
-        <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>, <linux-doc@vger.kernel.org>
-References: <20250828171622.GA945192@bhelgaas>
-From: Christian Bruel <christian.bruel@foss.st.com>
-Content-Language: en-US
-In-Reply-To: <20250828171622.GA945192@bhelgaas>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE3.st.com
- (10.75.129.71)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-28_04,2025-08-28_01,2025-03-28_01
+References: <20250827191919.1361787-1-akshayaj.lkd@gmail.com> <CAHp75VdQB673=qXBp0mPUHxQGxM=Z1CNSmEpP82OprVn++Y5uw@mail.gmail.com>
+In-Reply-To: <CAHp75VdQB673=qXBp0mPUHxQGxM=Z1CNSmEpP82OprVn++Y5uw@mail.gmail.com>
+From: Akshay Jindal <akshayaj.lkd@gmail.com>
+Date: Fri, 29 Aug 2025 00:16:47 +0530
+X-Gm-Features: Ac12FXxoQ5jjdCMvg5RcgTSxcd0BSKYFj3rzxUWDKhSKayf51bd0T1qeu9_8F9I
+Message-ID: <CAE3SzaTJTi3bHnqNbAfQ3W2jHcmhQHqa2ZtKE7=2BnP+onJv-w@mail.gmail.com>
+Subject: Re: [PATCH v2] iio: light: ltr390: Implement runtime PM support
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: anshulusr@gmail.com, jic23@kernel.org, dlechner@baylibre.com, 
+	nuno.sa@analog.com, andy@kernel.org, shuah@kernel.org, 
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, Aug 28, 2025 at 7:17=E2=80=AFAM Andy Shevchenko
+<andy.shevchenko@gmail.com> wrote:
+>
+> On Wed, Aug 27, 2025 at 10:19=E2=80=AFPM Akshay Jindal <akshayaj.lkd@gmai=
+l.com> wrote:
+> >
+>
+> > +static int ltr390_read_raw(struct iio_dev *iio_device,
+> > +                          struct iio_chan_spec const *chan, int *val,
+> > +                          int *val2, long mask)
+> > +{
+> > +       int ret, retval;
+> > +       struct ltr390_data *data =3D iio_priv(iio_device);
+> > +       struct device *dev =3D &data->client->dev;
+> > +
+> > +       ret =3D pm_runtime_resume_and_get(dev);
+> > +       if (ret < 0)
+> > +               dev_err(dev, "runtime PM failed to resume: %d\n", ret);
+>
+> If it fails, there is no point to read the value, it will be garbage
+> or even can make the bus stuck.
+>
+My rationale behind this approach is that earlier ltr390_read_raw()
+had all the functionality
+of the .read_raw callback so the return value whether success or
+failure was of the core functionality.
+But now, since the core functionality has been relocated into
+__ltr390_read_raw(), I felt the return value
+ltr390_read_raw should be the return value of __ltr390_read_raw().
+Hence I thought, it will be better to
+just print dev_err for runtime PM failures and return the retval of
+__ltr390_read_raw only.
+Let me know your thoughts on this. Will make the change accordingly in
+the next version.
 
-
-On 8/28/25 19:16, Bjorn Helgaas wrote:
-> On Thu, Aug 28, 2025 at 02:12:57PM +0200, Christian Bruel wrote:
->> On 8/27/25 20:58, Bjorn Helgaas wrote:
->>> On Wed, Aug 20, 2025 at 09:54:06AM +0200, Christian Bruel wrote:
->>>> Add driver to configure the STM32MP25 SoC PCIe Gen1 2.5GT/s or Gen2 5GT/s
->>>> controller based on the DesignWare PCIe core in endpoint mode.
->>>
->>>> +static void stm32_pcie_perst_deassert(struct dw_pcie *pci)
->>>> +{
->>>> +	struct stm32_pcie *stm32_pcie = to_stm32_pcie(pci);
->>>> +	struct device *dev = pci->dev;
->>>> +	struct dw_pcie_ep *ep = &pci->ep;
->>>> +	int ret;
->>>> +
->>>> +	dev_dbg(dev, "PERST de-asserted by host\n");
->>>> +
->>>> +	ret = pm_runtime_resume_and_get(dev);
->>>> +	if (ret < 0) {
->>>> +		dev_err(dev, "Failed to resume runtime PM: %d\n", ret);
->>>> +		return;
->>>> +	}
->>>> +
->>>> +	ret = stm32_pcie_enable_resources(stm32_pcie);
->>>> +	if (ret) {
->>>> +		dev_err(dev, "Failed to enable resources: %d\n", ret);
->>>> +		goto err_pm_put_sync;
->>>> +	}
->>>> +
->>>> +	/*
->>>> +	 * Need to reprogram the configuration space registers here because the
->>>> +	 * DBI registers were incorrectly reset by the PHY RCC during phy_init().
->>>
->>> Is this incorrect reset of DBI registers a software issue or some kind
->>> of hardware erratum that might be fixed someday?  Or maybe it's just a
->>> characteristic of the hardware and thus not really "incorrect"?
->>>
->>> I do see that qcom_pcie_perst_deassert() in pcie-qcom-ep.c also calls
->>> dw_pcie_ep_init_registers() in the qcom_pcie_ep_perst_irq_thread()
->>> path.
->>>
->>> So does pex_ep_event_pex_rst_deassert() (pcie-tegra194.c) in the
->>> tegra_pcie_ep_pex_rst_irq() path.
->>>
->>> But as far as I can tell, none of the other dwc drivers need this, so
->>> maybe it's something to do with the glue around the DWC core?
->>
->> The RCC PHY reset is connected to the Synopsys cold reset logic, which
->> explains why the registers need to be restored. This point has been
->> addressed in the reference manual.
-> 
-> OK.  I dropped "incorrectly" from the comment because I think future
-> readers will wonder about whether or how this could be fixed, and it
-> sounds like it's just a feature of the hardware that we need to deal
-> with.
-
-OK, thank you. "unexpectedly" would have been appropriate, but just drop 
-it is even better.
-
-> 
->>>> +	 */
->>>> +	ret = dw_pcie_ep_init_registers(ep);
->>>> +	if (ret) {
->>>> +		dev_err(dev, "Failed to complete initialization: %d\n", ret);
->>>> +		goto err_disable_resources;
->>>> +	}
->>
-
+Thanks,
+Akshay
 
