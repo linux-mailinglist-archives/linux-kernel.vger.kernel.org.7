@@ -1,93 +1,143 @@
-Return-Path: <linux-kernel+bounces-790082-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30228B39F16
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 15:36:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02D6AB39F1C
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 15:37:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 494EB3B015F
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 13:36:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7DCB5362A5D
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 13:37:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3734B30F7E6;
-	Thu, 28 Aug 2025 13:36:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7768618EFD1;
+	Thu, 28 Aug 2025 13:36:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="MSDxVgj9"
-Received: from 003.mia.mailroute.net (003.mia.mailroute.net [199.89.3.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="anyIY6bq"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1647D13C9C4;
-	Thu, 28 Aug 2025 13:36:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08D011DC9B5
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 13:36:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756388167; cv=none; b=LP18QB/FoTbGhRUNJyDhzm1SIQFjd/xf8ZEulQ/O/ChYcgl/oY7RhpvYr77lF3v6JRzd3p/wyZymGV/O8WbLcd4A+LElSrStmWd2sVcjw9+M35Vz2iYM/n/mDypSruEZ9XsXveFPYcbrL86IY3RJMJCnJ0eguwEUriGZ7uDvKAM=
+	t=1756388217; cv=none; b=jiwH5sUodiKCSXyRZPXh+4Od5wzuYoGMCw8JJBMkx7XcYj3mEbDASzQpL3XZiG3CPkCnn72ioQjPGvM76JCNXEkZXMMXf1eZEWZGTBYkbD40p0kZHXyA7gcKM9V4CmUPhbDG9b26adplzwABox1ZbdWhyKN0IUXUta7y76GEYU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756388167; c=relaxed/simple;
-	bh=pMJGVdHzw82RWoCc7SXHdGTgGvXvAd4aIAO5C8iissU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kh/00mcw2OxdfIJFy/vNSnXLYxGOz9h4/zULisLT/6akhQh84u5hRmAUYrOUm2x5JV9yHp3eIw5J2C4UASllc1DUz1rd3o6cNq5Qt0wIosOMxf6Nb3DBTUvv0iBJuYgR/jxoiJx094gBCKy0uMgEiDoGuV5VzlBi/5jJGNmASiY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=MSDxVgj9; arc=none smtp.client-ip=199.89.3.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 003.mia.mailroute.net (Postfix) with ESMTP id 4cCMqT1WhbzlgqVV;
-	Thu, 28 Aug 2025 13:36:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1756388162; x=1758980163; bh=sqV1scMIAszcnmCOhrVrNpOW
-	dX3EsLB6kvfYWi/fNHk=; b=MSDxVgj9nIhZvrnKCZWsf6hc48bZmFnudklPkxDQ
-	J5H0jMEJVRrOZDc+8XHIor1L3DeKNmpEFx9A99bqNe/VUiTHxkl7P6fGTaCN0U0s
-	kBSGl/E28At3yC3FytdKeKteJUEkhm91sm7rhQTvGty2S95rn/0YwX6ULgjqka8g
-	Gzxux9/9Zj9YDIcWYw2Psk4UybI4LjFFbQM5uywgl9iILoUOV6XKm2I3tub5UtEq
-	yHMky2H8JklcRwyjGmdlQOD27oETiWF57w1cDUXTu706PQ1HQO1KX+OOEwJhLv3E
-	vtP1qcAYVvG26UFN7LJQlSbAVEI6brHDJeH5GWDvYIIpBQ==
-X-Virus-Scanned: by MailRoute
-Received: from 003.mia.mailroute.net ([127.0.0.1])
- by localhost (003.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id pohtwsPELwlf; Thu, 28 Aug 2025 13:36:02 +0000 (UTC)
-Received: from [172.20.6.188] (unknown [208.98.210.68])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 003.mia.mailroute.net (Postfix) with ESMTPSA id 4cCMqH1f14zlgn8k;
-	Thu, 28 Aug 2025 13:35:53 +0000 (UTC)
-Message-ID: <f8672cb8-f6ec-4eed-9c0b-4f4806cca79b@acm.org>
-Date: Thu, 28 Aug 2025 06:35:53 -0700
+	s=arc-20240116; t=1756388217; c=relaxed/simple;
+	bh=Dhz0H3gxyGM+rtfeLPQ0WqeuSnXhqTSw/EjNYLEea7o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=t/kcbeViBafQTVpoHlSjXj0JtXklT/0KkYvM54lKNWvX7GtH/fKtt/Su59SrhR8KkEDhBORQwG+w8wTooVVhzXaNBHaJgip/sTisLzyOQqrX8E7ETroGgpqdYNFs5FKBPBFbVdplO/OYjiWJorI4Q9gNy4g4pK95nEdJKFMojWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=anyIY6bq; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-55f6017004dso632312e87.0
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 06:36:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1756388214; x=1756993014; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vO3s8KTMvJZFdHoHnp5Qdx1sAV4PfJarnSm1ctLLZ3E=;
+        b=anyIY6bqVld6bKz8zoUj4u6nWSrlXYXFKJEP89W77u18bB/2lG+RYlILX7aQPRPShc
+         nJl6ZKM2A4uOlfQ16kJb/njGo8qy4IkWcTgx2TLc4dyU63llworYglBgTaLn3owQZ4L0
+         imd5Vd2uYCxy23QscTs3SksqZWsN/oAfvVeVXfQtFM9pZLTxL1/Qw2fEncFn4cIXDx71
+         zgsGax3Zka2RpeEv/ElE2kOz37Z0i6dUtst5MwCzMX3X6hjjQz/PDMQHE9HW4VXvW4Dk
+         vrfoSYCc8aGrcEU5TXPVPrm7hzs9clPI/vinO7Fvu9cWxTaTUgUEwyEXZ/gx/tpIC9+m
+         C3Mw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756388214; x=1756993014;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vO3s8KTMvJZFdHoHnp5Qdx1sAV4PfJarnSm1ctLLZ3E=;
+        b=pAwqT+kshgxkK+bgkJg1uvvsRT/h++GQWK4ZsapQIWLv75OfscL/qTrlyDfIQlsNq9
+         g/am4ZBtY/cGXf+7QPdXhgDPCiqn9OGqpZ7cjJ5Xv0PI8c6g6M2oRVSVzfDGYjNXPTSW
+         7G7ciiGf1dK9FTvLl64Ptqt79tAdn6ubBB+rVyd5aIyc1rZMsqAk8bCOOTUP07BAlAdZ
+         Oo5VT6b4HEq92gv1Y459KnZ4C79bwbGGrzCGnW4M/vy0+lraHCFjfILNgc3MCDkyZ9Go
+         k8LzjkQIDciN04DnGJiknIT5pamOvVxG0DAMC1y2MpBK4b97NvpTta94PwBbDG1DI1Aa
+         m/hg==
+X-Forwarded-Encrypted: i=1; AJvYcCWwGpD+qxDYicrHKHce+ydwqoGpJUdn9iddnP30rrOU2ic+m+VHuPh75hfaJZJol5/3GIUky9Pzol4ihEw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNzOMnE6T7oGl8gNUCPyfZE9Jcab12VmtK+o+2cEcZGo0XQdTJ
+	TMYHmdmSt5uLGmsRtMotfAE655IQP1a2IrR6JOqm/1nwWkUz8/iKrmjA1RXeIUwCNhKBeRx+KAA
+	xrLixb/pJRe1ox+RMP6stKiwvIo+IvJjwZOApink2tQ==
+X-Gm-Gg: ASbGnculY/Vl3nb5hFDagPcnFUa2TeIKZ/V/PwrCBtfaKNYi5xvUFE8oGebtrmhjPk7
+	ExO8K7ZqssVKO2X0IY5oZxVg6Fjv9Wjkjh8QsQNIc1ktBOVDFNpEMsd67btM91NR/sjsbXo6e2Q
+	Andvw7m19mnQGQ4C1vSkWeWdvDpKeRB8oX+dpO87BrBaZv50R2HVObDVElGUkaMvMnmrqL0OShc
+	L4chbMsSt5gsGBs1MCu0ABmWur51x/PwYcVtcI=
+X-Google-Smtp-Source: AGHT+IGjT2OYHV9mzILkObbuSFLpi9Xf+oP+6Uws6rzp7smTv5kAfs8i0u8RIWSnII9gINWFQq3zddWVjDxSq4eH8MM=
+X-Received: by 2002:a05:6512:245b:b0:55f:51b3:9419 with SMTP id
+ 2adb3069b0e04-55f51b39621mr1791521e87.50.1756388214118; Thu, 28 Aug 2025
+ 06:36:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] scsi: ufs: exynos: fsd: Gate ref_clk and put UFS device
- in reset on suspend
-To: Bharat Uppal <bharat.uppal@samsung.com>, linux-scsi@vger.kernel.org,
- linux-kernel@vger.kernel.org, James.Bottomley@HansenPartnership.com,
- martin.petersen@oracle.com, alim.akhtar@samsung.com, avri.altman@wdc.com,
- linux-samsung-soc@vger.kernel.org
-Cc: pankaj.dubey@samsung.com, aswani.reddy@samsung.com,
- Nimesh Sati <nimesh.sati@samsung.com>
-References: <CGME20250821053938epcas5p290f78790250d8cb09df2f35e45624359@epcas5p2.samsung.com>
- <20250821053923.69411-1-bharat.uppal@samsung.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20250821053923.69411-1-bharat.uppal@samsung.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250815-pinctrl-gpio-pinfuncs-v5-0-955de9fd91db@linaro.org>
+ <CACRpkdaDGmdhaik+1saRv7Ts4myQ+tg1aQqGU3xQyT7ma8dJFw@mail.gmail.com>
+ <CAHp75VephepLq61HrVy=PX2oKUQd5NK2qS-vOC5h_NR65td3Uw@mail.gmail.com>
+ <CACRpkda4soRCLF5=W=6R4wnwT3pjk743j022XfJxjTTQzuarAA@mail.gmail.com>
+ <534ad082-08fa-42c0-9c24-f0c11af7d5b2@sirena.org.uk> <CAMRc=Mdn0_yPXyYq4sbvH4P9-h71vEc4arLPBfSk1PiEFaB7jQ@mail.gmail.com>
+ <1804d9dc-8814-47d4-af88-c819c3f17bc0@sirena.org.uk> <CAMRc=MdKgqa+vjhHvD2+Tjw5NwBtFv-0aUivi5UuEQd+n4KxmA@mail.gmail.com>
+ <aLAYoDyz8Xie4Dhb@finisterre.sirena.org.uk>
+In-Reply-To: <aLAYoDyz8Xie4Dhb@finisterre.sirena.org.uk>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Thu, 28 Aug 2025 15:36:43 +0200
+X-Gm-Features: Ac12FXwlaqUs0TeuR0_lKNQwkWNyJ4q4Po7liyAa4ioyozolnG0jRU9pqqtYG0I
+Message-ID: <CAMRc=Mdd3fmKjFAfbUB-AAhx-5_CR+c7f36pePkF1k_2LDoORw@mail.gmail.com>
+Subject: Re: [PATCH v5 00/15] pinctrl: introduce the concept of a GPIO pin
+ function category
+To: Mark Brown <broonie@kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Andy Shevchenko <andy.shevchenko@gmail.com>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Alexey Klimov <alexey.klimov@linaro.org>, Lorenzo Bianconi <lorenzo@kernel.org>, 
+	Sean Wang <sean.wang@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Paul Cercueil <paul@crapouillou.net>, Kees Cook <kees@kernel.org>, 
+	Andy Shevchenko <andy@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	David Hildenbrand <david@redhat.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
+	Dong Aisheng <aisheng.dong@nxp.com>, Fabio Estevam <festevam@gmail.com>, 
+	Shawn Guo <shawnguo@kernel.org>, Jacky Bai <ping.bai@nxp.com>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, NXP S32 Linux Team <s32@nxp.com>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Tony Lindgren <tony@atomide.com>, 
+	Haojian Zhuang <haojian.zhuang@linaro.org>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Danilo Krummrich <dakr@kernel.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org, 
+	linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org, 
+	linux-hardening@vger.kernel.org, linux-mm@kvack.org, imx@lists.linux.dev, 
+	linux-omap@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Chen-Yu Tsai <wenst@chromium.org>, 
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 8/20/25 10:39 PM, Bharat Uppal wrote:
-> On FSD platform, gating the reference clock (ref_clk) and putting the
-> UFS device in reset by asserting the reset signal during UFS suspend,
-> improves the power savings and ensures the PHY is fully turned off.
-> 
-> These operations are added as FSD specific suspend hook to avoid
-> unintended side effects on other SoCs supported by this driver.
+On Thu, Aug 28, 2025 at 10:51=E2=80=AFAM Mark Brown <broonie@kernel.org> wr=
+ote:
+>
+> On Wed, Aug 27, 2025 at 06:46:28PM +0200, Bartosz Golaszewski wrote:
+> > On Wed, Aug 27, 2025 at 12:22=E2=80=AFPM Mark Brown <broonie@kernel.org=
+> wrote:
+>
+> > > I've just got the log I linked above.
+>
+> > So, I've been looking at this bisect email and clicking the links to
+> > LAVA jobs and I can't find anything. Does it fail to build? Fail at
+> > run-time? I'm not sure how to read this.
+>
+> It's failing prior to putting any output on the console.  I was also
+> seeing an issue on i.MX6 so it might be all i.MX boards, same issue:
+>
+>    https://lava.sirena.org.uk/scheduler/job/1697667
+>
+> so it's possibly all the i.MX platforms failing.
 
-Reviewed-by: Bart Van Assche <bvanassche@acm.org>
+Not even with earlycon? That's weird. There are no smatch warnings on
+this patch and I can't see anything obviously wrong upon visual
+inspection. I fixed all other issues but this one I can't test. :(
 
+Bartosz
 
