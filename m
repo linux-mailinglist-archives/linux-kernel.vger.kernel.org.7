@@ -1,87 +1,61 @@
-Return-Path: <linux-kernel+bounces-789513-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12750B39693
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 10:15:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C821B396A1
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 10:17:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3E1A1887772
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 08:15:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A447163B4A
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 08:16:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 092022DCF50;
-	Thu, 28 Aug 2025 08:15:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5B522E1EE6;
+	Thu, 28 Aug 2025 08:15:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hnwr0CcC"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDD4F29ACD1;
-	Thu, 28 Aug 2025 08:15:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="I3Ew/0dV"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CC5C27146E;
+	Thu, 28 Aug 2025 08:15:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756368908; cv=none; b=gUqzuB4O2pv3XidDz4bAPWfJpbw1JdNovKMWiIWs6QQsglOnB62rHLiD/j7lETPsXp8IwLQdL4oBh+/8F7ZIVe9x+TdyrSeamX9O8SgWS+9ZpTlWbk1ZxqX1aDJGmmQ0nMeR0jKzNnXQybXybKwGlnjK/I812np4ZGMNnNSQ5Kg=
+	t=1756368958; cv=none; b=Vuxzb9ZlnxcTBIH7g3gj9mqFwtu4bfFCWTZMAjct4fYPkg+ufejvIqqeegjJQ/sQK2zrqLoJPSFrOlFxz+jpUV7q1PXMDtdrEgEv1jpM7psdFwjIIb6hMudZZSEaqDkcDmsfK4EiZCr7s5225cun7Q5cKOvIuUt2V9bN9jZNNho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756368908; c=relaxed/simple;
-	bh=ftxvw7nkrouhuxNLXWlJ5iqNXxZaopoYAL6tujyJOYU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HUTRDNgUa5wB+8KKOuXUGjtVrd0SiPWYGULTnz/1ohr+WozFITCJz2WL6N9HDDJ19nucyR/8DaKCKrEk7c8qclhm1/6unL2YzATOcRSWMJ470EX6N2uae+V/u4ANP+JPe+8z80Dbh54FM3qdeLK6Iruaymd9jrFwF6IGKnZknbQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hnwr0CcC; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-771eecebb09so987532b3a.3;
-        Thu, 28 Aug 2025 01:15:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756368906; x=1756973706; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ia5R0sYryNlESVObLXR0gMWB492r2avec7eAXa6fF2Y=;
-        b=hnwr0CcCFx0OyWaiT/ACEPnz7+GKtDQRZ8FFeKzU/jHeNyjBBdyX02u3QAMzHHzdVW
-         wLD2XDWIefk+LF0SR+Dvu7VU7XvwECiIO4KkqO+02QSfBRilBENmNpiMjD2dq7nHqJP2
-         77QXSIOyXCAmyI6D8HIeQeVn1hwVLZXpsoxEyL5L6dFRPM9rL9qLkaq4+ZVwCvnh6JdC
-         ppZa9/gsGmyAmPDs2yR7Vnc3dFAN6cjh6uaHpu0CUObdGB/ucSfIhDwiIZAGCYLXPHZH
-         TemNSkFlX8yggiwQURjtTDbfTnoCXbvKXKFqzIcnKflcQ5Tu6ZJBStfgkJX7ifWeQr6m
-         lz2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756368906; x=1756973706;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ia5R0sYryNlESVObLXR0gMWB492r2avec7eAXa6fF2Y=;
-        b=B56U2QAOrytAewrfswpd32zI8agr3fTfzQWgCJHnklcIiNmxvR5BkfCuGGRXC9baoc
-         jJERNDmddYf85KR51Qs0HY2zLcSPXeHKhIOK9n7asR9XYgxldNreb0Slan6sRXxH8OAm
-         tSkGJnJLL9flG+sF/nTlX53GUOk5CrxHYZXw2rg6KP4gkBoqMvcznyqr6m6G6xHRW735
-         SiknSMXrtWvu+3yMec6TgzWE17Y9vzqultvvKuxqfj4TCTLI3sIsC+GnTiRAMz0OAZYW
-         Pwjo22qJkkyaBi+x3sCQ+YHnwDrG4ZNlyCDtLCRdFAhS6y1I6AExX4oDEXZDcyh642oH
-         aqhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWH4wPPMJQi7+zW71tU/ReQarDjikWf9eMYda3EIR7zqs7mtebTN/gZZqtorClqxDXPKmhpKJmr@vger.kernel.org, AJvYcCWf5fcl/NlD3NNysVn3kytwPLHBT08WhY0Z1e+8oBPOlRsEx1GauhABpleZOW7J58djHDzrGoJvCvOJrAs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5r85MHxwTwmbwwfKpj0Zaaju9535SpiSWaol9fH9KIzMvBhKV
-	OY6GiHBQx1rKLuFyUq6s0LzdDHL7fqUVehiu/Bv2jbrraw2wv+Q4XPDJZPfsOZMQxpU=
-X-Gm-Gg: ASbGncudtAOR8Apv4Tb6z+gKxDU0TVzqJoPI+dEvFJwSDxnIQItQGtrpiU1BbWLngbu
-	fEg57jzwKH1axas13Qt70cId38zUNwhVJct1edR9Y9x3wSjEr+DuFcKJ++o3nbbKJsOGeShkfpJ
-	5ktYWoetmsrGV8f+CLFVYnmR4P9cNREhzAmD87e01U026U2FZEYLhOZ/UsMyJwEaFM15NjRNI0S
-	xEHkRoQqZa1aknJ0uX9YA72fgooYpVHiIVwPBrBS5paYqQWb4TAFCjJQ3HnkanZBbR6kHTuOuVG
-	2pJMZCfqv1rTvlCR1X1plHnhgGiKC4Zy9TAhtys7D3Tba7+fjCLQVh3qP+wrjJyCSyfgkQR1D+b
-	3LAov4igd1Luuz06m0Gw2LlNx6d5NPB56V1N9JDFJ8f1k5TipK3LoMW18eFM1fqztY6rxvuMsT7
-	pCOWR3XqJ39PE=
-X-Google-Smtp-Source: AGHT+IEJbUNzADncN9xMb+Wu278ojcMnqcWdgYtjUsEoXle0Hm2TpMNvN9/nvDN5+Orv6CWHu3BjDA==
-X-Received: by 2002:a05:6a21:6d86:b0:240:8d5:6271 with SMTP id adf61e73a8af0-24340e1a51cmr32947085637.39.1756368906129;
-        Thu, 28 Aug 2025 01:15:06 -0700 (PDT)
-Received: from localhost.localdomain ([112.97.57.188])
-        by smtp.googlemail.com with ESMTPSA id 41be03b00d2f7-b49cb8b4b98sm13376672a12.19.2025.08.28.01.15.02
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Thu, 28 Aug 2025 01:15:05 -0700 (PDT)
-From: Miaoqian Lin <linmq006@gmail.com>
-To: Karsten Keil <isdn@linux-pingi.de>,
-	Laura Abbott <labbott@redhat.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: linmq006@gmail.com
-Subject: [PATCH] mISDN: Fix memory leak in dsp_hwec_enable()
-Date: Thu, 28 Aug 2025 16:14:57 +0800
-Message-Id: <20250828081457.36061-1-linmq006@gmail.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+	s=arc-20240116; t=1756368958; c=relaxed/simple;
+	bh=iww3BoikQK/TKxPAwWj0XgPz8nHnacH9Xa2ReLCRlyc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=URhXfi/NkDXnQ4lgEoCqKLRjA7Y4J1sc8fsPnmPbIL6Cz4gZLIFSGLBUDyWgzoXqgq6Zsk/XFb6Ep66YeAwHoS/hy3mevMpdDFiKstLQeBz2k8lDOjYa6d/TJQG8GIFQ7ftiIs3I7UQaCXBmJtrI3pjS4K8oDROEnfONL8Ak0B8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=I3Ew/0dV; arc=none smtp.client-ip=117.135.210.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=7q
+	PRyyd+a2kmu0JBoOy17OReoQfUlI+/Ks6s1wzM9kI=; b=I3Ew/0dVFwrzBp4tbv
+	NbbHIFvmvalJM0Q10XXYdXop6f00lqYkp47ukQaDp54ll+FSQ7nGms0IBVMa+rxn
+	vH7oIhX4mrYLXXmUM/+tfZ+wjEuRgMmhdixbTCaSOaCKxUqqpW4M9jU6Y+ZdaOm7
+	D4gXmjUe9hvkky3pJGE5F0nr0=
+Received: from localhost.localdomain (unknown [])
+	by gzsmtp3 (Coremail) with SMTP id PigvCgBH9SgLELBo_0uDAw--.3263S2;
+	Thu, 28 Aug 2025 16:15:08 +0800 (CST)
+From: Feng Yang <yangfeng59949@163.com>
+To: ast@kernel.org,
+	daniel@iogearbox.net,
+	john.fastabend@gmail.com,
+	andrii@kernel.org,
+	martin.lau@linux.dev,
+	eddyz87@gmail.com,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	jolsa@kernel.org
+Cc: bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org
+Subject: [PATCH bpf-next] selftests/bpf: Fix the issue where the error code is 0
+Date: Thu, 28 Aug 2025 16:15:07 +0800
+Message-Id: <20250828081507.1380218-1-yangfeng59949@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,45 +63,48 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:PigvCgBH9SgLELBo_0uDAw--.3263S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7CrW7WryUKF4UGrW3tw1UZFb_yoW8GF4DpF
+	40gw4jkrs0qF45Xa18Xw4UuF40gr1vv345Gw1DGa4Yvrn5WryxXr1xKFy3uFn8GrWFv3ya
+	yasFgryru34UAFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jUpnQUUUUU=
+X-CM-SenderInfo: p1dqww5hqjkmqzuzqiywtou0bp/1tbipRq3eGivvL97sQABs-
 
-dsp_hwec_enable() allocates dup pointer by kstrdup(arg),
-but then it updates dup variable by strsep(&dup, ",").
-As a result when it calls kfree(dup), the dup variable may be
-a modified pointer that no longer points to the original allocated
-memory, causing a memory leak.
+From: Feng Yang <yangfeng@kylinos.cn>
 
-The issue is the same pattern as fixed in commit c6a502c22999
-("mISDN: Fix memory leak in dsp_pipeline_build()").
+The error message printed here only uses the previous err value,
+which results in it being printed as 0.
+When bpf_map__attach_struct_ops encounters an error,
+it uses libbpf_err_ptr(err) to set errno = -err and returns NULL.
+Therefore, strerror(errno) can be used to fix this issue.
 
-Fixes: 9a4381618262 ("mISDN: Remove VLAs")
-Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
+Fix before:
+run_subtest:FAIL:1019 bpf_map__attach_struct_ops failed for map pro_epilogue: err=0
+
+Fix after:
+run_subtest:FAIL:1019 bpf_map__attach_struct_ops failed for map pro_epilogue: Bad file descriptor
+
+Signed-off-by: Feng Yang <yangfeng@kylinos.cn>
 ---
- drivers/isdn/mISDN/dsp_hwec.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ tools/testing/selftests/bpf/test_loader.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/isdn/mISDN/dsp_hwec.c b/drivers/isdn/mISDN/dsp_hwec.c
-index 0b3f29195330..0cd216e28f00 100644
---- a/drivers/isdn/mISDN/dsp_hwec.c
-+++ b/drivers/isdn/mISDN/dsp_hwec.c
-@@ -51,14 +51,14 @@ void dsp_hwec_enable(struct dsp *dsp, const char *arg)
- 		goto _do;
- 
- 	{
--		char *dup, *tok, *name, *val;
-+		char *dup, *next, *tok, *name, *val;
- 		int tmp;
- 
--		dup = kstrdup(arg, GFP_ATOMIC);
-+		dup = next = kstrdup(arg, GFP_ATOMIC);
- 		if (!dup)
- 			return;
- 
--		while ((tok = strsep(&dup, ","))) {
-+		while ((tok = strsep(&next, ","))) {
- 			if (!strlen(tok))
- 				continue;
- 			name = strsep(&tok, "=");
+diff --git a/tools/testing/selftests/bpf/test_loader.c b/tools/testing/selftests/bpf/test_loader.c
+index f361c8aa1daf..686a7d7f87b1 100644
+--- a/tools/testing/selftests/bpf/test_loader.c
++++ b/tools/testing/selftests/bpf/test_loader.c
+@@ -1008,8 +1008,8 @@ void run_subtest(struct test_loader *tester,
+ 			}
+ 			link = bpf_map__attach_struct_ops(map);
+ 			if (!link) {
+-				PRINT_FAIL("bpf_map__attach_struct_ops failed for map %s: err=%d\n",
+-					   bpf_map__name(map), err);
++				PRINT_FAIL("bpf_map__attach_struct_ops failed for map %s: %s\n",
++					   bpf_map__name(map), strerror(errno));
+ 				goto tobj_cleanup;
+ 			}
+ 			links[links_cnt++] = link;
 -- 
-2.39.5 (Apple Git-154)
+2.27.0
 
 
