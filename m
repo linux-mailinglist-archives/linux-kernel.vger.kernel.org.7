@@ -1,115 +1,164 @@
-Return-Path: <linux-kernel+bounces-789387-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789389-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41499B394C5
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 09:11:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 549F4B394C8
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 09:12:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61A805E6071
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 07:11:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A3F84980B2F
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 07:11:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF78B2EB84A;
-	Thu, 28 Aug 2025 07:09:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="f1Z4dyhz"
-Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08E122D5427;
+	Thu, 28 Aug 2025 07:11:00 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BDC92E5B1E
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 07:09:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 815A729D28B;
+	Thu, 28 Aug 2025 07:10:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756364979; cv=none; b=cpbzZwYj1/AIV4M/kBlqUbG/Run57wz8kXubeSEY4GIsQ/9sOqKlybutJFw04zxRDSb5qVkIiQi2MrbEAw5NPRXjtL+6QkYE/jX43/iIuH84KeTRK04M3b1NFhK8U1Gthbtb+Av0P/G5uIKDGy9fDyv/b3Xy5Axr/csGh8r24Hg=
+	t=1756365059; cv=none; b=IkUMFNPlryto+rYmyfLWTzx8X5k1IaX3PcHVYqm2DjNyOFO/mmur8GQweNYvNPZPvLtvRQC6iZXfjxbVXX+wsi4a9iRrbK7nCTq8mGprrTA1CQrfGU6349yM997xwnFxuOzcOYk9faYeCpr7++zQxFKykuT4QGM08Kz4na3VXnQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756364979; c=relaxed/simple;
-	bh=lURPkYJzF21xY2QquL/oWnteDlCb4vfGHfOnzqSwApQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EOoMM6VY0o3ZVX4bxOvwZP/2vnor1CniDRCTJXocvjVENAh16PLIYsjVHZzB/qW0Mg9Jn8sguY24w6WBnBNPA5K2yitHJ998AF8JdtfKZiswyoDe3cpj1U4duZO6tyf5yez1yfILQUC79norXmy0urijJyfjFTuUKZk1/tO8WQg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=f1Z4dyhz; arc=none smtp.client-ip=209.85.222.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7f861f89313so71116985a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 00:09:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756364976; x=1756969776; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Jvs5njM1wOnHzJ4hzbLuwCvVNmJOa7dYI9qPuTJeAVg=;
-        b=f1Z4dyhzXv5ADmSboyQ7Wn+9L+xknDiw6NrUHNrkgDKKxereJq9Muvz0qnM+gJQq76
-         0DaXprhdL/kruFypknzsyO9mbeL2jFhrhQfdqAzzZJgQvc5nah9e2LZRXpYeevQZJCb2
-         QiU0jclssmi4nlrMb9umZUJrv/k3WNPvNfvvLCfRC4P3GdZ6AiTV3YYSjzqcaDnccUvN
-         CGV8BP1git/TrFlAgUF1a1HUbCNGL8OcYXvlJ7LZ4T1jXraKQcTnshZLz2tZJ8/4RU5R
-         k9uljz/G/qCAkWcZnXhdJvgV9GEl8M+YY9HAD4gcGHfKsSA+WIwc3iNg8KJlhPS4AAUe
-         MwDQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756364976; x=1756969776;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Jvs5njM1wOnHzJ4hzbLuwCvVNmJOa7dYI9qPuTJeAVg=;
-        b=Fo82XpUD0zsU25bXJ+wtB1hgtSmxxx9zkMUEO6AdKE/9wArR7eh9j/M22kPRU91+7m
-         WW7Ma0rC0dqxycd0CnG9kF5fL3byYpfxgn+ZiF3VT8FoAYnoJVv3qxWFc6Jhs7f3Pd4d
-         LV1oV/8U+PgmdElC7Q2SFC7IuQUVoEsJmgErT3IOHDZiF3xPEzZf4W1das/vzne2zVZk
-         ON+bQQZrwiflCLxVpc8u1Mlbr0WOyd7CrLTy8j8+3EnKTiEG0wtgJmzPV/hLFeJs0fK6
-         1HyMGFQLbjQsGk1/IsunvyGppm7bst3bh1WeHFhuKMyd6alYqEJr17I/fhBMqQ2hongS
-         DJjw==
-X-Forwarded-Encrypted: i=1; AJvYcCUcqNw86CbpvFQ0dZERod6+XatcmJIHjxGbYHfNJDqch+fHO7HqUrhq+HrGH2TUaNLXTYuJMG+a+hiZC5M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwrVCxzupq7iFcdmzOIHppctSPcuWVwInLNurxGDaP1eQjLp6+Q
-	bM1niGfHnWF41Pr7rAbagiPxk1HDBrroJMZj5f4hSmjwPi0tCcO7d1gFWxSFrOHMawhDI8Is50u
-	Mge5/RJpfgkqGYEL7fcaHxxXwRPanELNrAgbFxSky
-X-Gm-Gg: ASbGncsaJ6Jq3mFXKJqY9aOVk4QuNvEoPG3O3OO83MoVKlJyieUhxFrTJGHVBY5pHqD
-	0PgOS4b51tsETk1rIJ4fakK80CsvCPB6j5BaO0NC8Kz3ClS/MclzievKgGlhZnnbmxMMWxLcCh2
-	TtvbCxPFNbM7v8SxTdSIb911gIsELJVRGlc+ZXqHwRr9dklQtifEl6Z0jfPHRxwP0zPZnmpgMYr
-	acMQWzfWzKuGSYgDp1HKA==
-X-Google-Smtp-Source: AGHT+IHxSqNH/ftHbBJ+fPHtJwYAGqsLTp8xOivDx1VKWMe0sNYk7sTPD/n4Agil+b9tyPi+N2/KpIicDTDhJp0h0hI=
-X-Received: by 2002:a05:620a:1a27:b0:7d2:1953:a410 with SMTP id
- af79cd13be357-7ea10fa1344mr2611829885a.17.1756364976094; Thu, 28 Aug 2025
- 00:09:36 -0700 (PDT)
+	s=arc-20240116; t=1756365059; c=relaxed/simple;
+	bh=cuLrA6c/v3D9fwcoximnAql+jlHCEAydo8gYwte2HAA=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=UoaBeU9dNagakqSsWmuhzrJZHKjHbYAdqkn/G1EbwwuqlmpYjkmCbsX3F7j8bVk74PA4apkgqMBQ9Zw8v3Q8lbxYE/lFubkyRY+GTiygWGZMv1FTgDHfXLLVaL9gXqxlF5ppnRjoynBC76qgzWXeSEiguZL480C4C1PDNX/6csA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cCCH51DF3zYQtwG;
+	Thu, 28 Aug 2025 15:10:57 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id ADA0A1A152F;
+	Thu, 28 Aug 2025 15:10:55 +0800 (CST)
+Received: from [10.174.179.143] (unknown [10.174.179.143])
+	by APP4 (Coremail) with SMTP id gCh0CgAXYIz8ALBowOE9Ag--.63876S3;
+	Thu, 28 Aug 2025 15:10:55 +0800 (CST)
+Subject: Re: [PATCH v6 md-6.18 11/11] md/md-llbitmap: introduce new lockless
+ bitmap
+To: Paul Menzel <pmenzel@molgen.mpg.de>, Yu Kuai <yukuai1@huaweicloud.com>
+Cc: hch@infradead.org, corbet@lwn.net, agk@redhat.com, snitzer@kernel.org,
+ mpatocka@redhat.com, song@kernel.org, xni@redhat.com, hare@suse.de,
+ linan122@huawei.com, colyli@kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, dm-devel@lists.linux.dev,
+ linux-raid@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
+ johnny.chenyi@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
+References: <20250826085205.1061353-1-yukuai1@huaweicloud.com>
+ <20250826085205.1061353-12-yukuai1@huaweicloud.com>
+ <4d21e669-f989-4bbc-8c38-ac1b311e8d01@molgen.mpg.de>
+ <65a2856a-7e2f-111a-c92e-7941206ad006@huaweicloud.com>
+ <8eb5acff-4c21-4be8-8d3c-b98bd258ef99@molgen.mpg.de>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <791992fe-3b98-1d00-6276-56fa1b45b2c8@huaweicloud.com>
+Date: Thu, 28 Aug 2025 15:10:52 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250828012018.15922-1-dqfext@gmail.com> <20250828012018.15922-2-dqfext@gmail.com>
-In-Reply-To: <20250828012018.15922-2-dqfext@gmail.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Thu, 28 Aug 2025 00:09:24 -0700
-X-Gm-Features: Ac12FXzCOHbY-0cZG_DPV4Isb0S8nmhFOKMxM0fnoaIGHxRJ38be9HGtCcgGyWA
-Message-ID: <CANn89iJ7DDA4gM2vDAwhOyc5KGXPmOBGATMQfXD8FHUAFbVDvQ@mail.gmail.com>
-Subject: Re: [PATCH net-next v3 2/2] pppoe: drop sock reference counting on
- fast path
-To: Qingfang Deng <dqfext@gmail.com>
-Cc: Michal Ostrowski <mostrows@earthlink.net>, Andrew Lunn <andrew+netdev@lunn.ch>, 
-	"David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <8eb5acff-4c21-4be8-8d3c-b98bd258ef99@molgen.mpg.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgAXYIz8ALBowOE9Ag--.63876S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7KF18uw47AFWDtw45Gw1rJFb_yoW8ZF47pa
+	4rKFyrKas8Jr4vvw1Iq3Z3JFyFyr97tFWUGr1rXa4rWr15JrySgFWIgF1Y934DGr1rXry2
+	vw4UtryrWanIy3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBa14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
+	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVW8ZVWrXwCF04k20xvY0x
+	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
+	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr41lIxAIcV
+	C0I7IYx2IY67AKxVW8JVW5JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F4UJwCI42IY
+	6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aV
+	CY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x0pRHUDLUUUUU=
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On Wed, Aug 27, 2025 at 6:20=E2=80=AFPM Qingfang Deng <dqfext@gmail.com> wr=
-ote:
->
-> Now that PPPoE sockets are freed via RCU (SOCK_RCU_FREE), it is no longer
-> necessary to take a reference count when looking up sockets on the receiv=
-e
-> path. Readers are protected by RCU, so the socket memory remains valid
-> until after a grace period.
->
-> Convert fast-path lookups to avoid refcounting:
->  - Replace get_item() and sk_receive_skb() in pppoe_rcv() with
->    __get_item() and __sk_receive_skb().
->  - Rework get_item_by_addr() into __get_item_by_addr() (no refcount and
->    move RCU lock into pppoe_ioctl)
->  - Remove unnecessary sock_put() calls.
->
-> This avoids cacheline bouncing from atomic reference counting and improve=
-s
-> performance on the receive fast path.
->
-> Signed-off-by: Qingfang Deng <dqfext@gmail.com>
+Hi,
 
-Reviewed-by: Eric Dumazet <edumazet@google.com>
+在 2025/08/27 14:07, Paul Menzel 写道:
+> Dear Kuai,
+> 
+> 
+> Thank you for your reply.
+> 
+> Am 27.08.25 um 05:44 schrieb Yu Kuai:
+> 
+>> 在 2025/08/26 17:52, Paul Menzel 写道:
+>>> It’d be great if you could motivate, why a lockless bitmap is needed 
+>>> > compared to the current implemention.
+>>
+>> Se the performance test, old bitmap have global spinlock and is bad with
+>> fast disk.
+> 
+> Yes, but it’s at the end, and not explicitly stated. Should you resend, 
+> it’d be great if you could add that.
+
+If there is no suggestions about functionality, I can add following in
+the beginning when I apply this:
+
+Due to known performance issues with md-bitmap and the unreasonable
+implementations:
+
+  - self-managed IO submitting like filemap_write_page();
+  - global spin_lock
+
+I have decided not to continue optimizing based on the current bitmap
+implementation.
+
+And the same as fixing those typos.
+
+Thanks,
+Kuai
+
+> 
+>> [snip the typo part]
+>>
+>>> How can/should this patch be tested/benchmarked?
+>>
+>> There is pending mdadm patch, rfc verion can be used. Will work on
+>> formal version after this set is applied.
+> 
+> Understood. Maybe add an URL to the mdadm patch. (Sorry, should I have 
+> missed it.)
+> 
+>>> --- a/drivers/md/md-bitmap.h
+>>> +++ b/drivers/md/md-bitmap.h
+>>> @@ -9,10 +9,26 @@
+>>>    #define BITMAP_MAGIC 0x6d746962
+>>> +/*
+>>> + * version 3 is host-endian order, this is deprecated and not used 
+>>> for new
+>>> + * array
+>>> + */
+>>> +#define BITMAP_MAJOR_LO        3
+>>> +#define BITMAP_MAJOR_HOSTENDIAN    3
+>>> +/* version 4 is little-endian order, the default value */
+>>> +#define BITMAP_MAJOR_HI        4
+>>> +/* version 5 is only used for cluster */
+>>> +#define BITMAP_MAJOR_CLUSTERED    5
+> 
+>>> Move this to the header in a separate patch?
+>>
+>> I prefer not, old bitmap use this as well.
+> Hmm, I do not understand the answer, as it’s moved in this patch, why 
+> can’t it be moved in another? But it’s not that important.
+> 
+> 
+> Kind regards,
+> 
+> Paul
+> .
+> 
+
 
