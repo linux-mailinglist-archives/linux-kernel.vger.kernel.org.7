@@ -1,157 +1,138 @@
-Return-Path: <linux-kernel+bounces-789362-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789370-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC345B3946D
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 08:56:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 21E4BB39490
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 09:06:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45FCC1C22D01
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 06:57:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 09CB9189130F
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 07:07:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E77712D1932;
-	Thu, 28 Aug 2025 06:56:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QDMRUiU6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43F302D59E8;
+	Thu, 28 Aug 2025 07:06:23 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CE6719FA8D;
-	Thu, 28 Aug 2025 06:56:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFB8C27B35F;
+	Thu, 28 Aug 2025 07:06:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756364173; cv=none; b=fdZC2HACDRlqMJAd8ytzI05D4zeKqVVRAd9UWJY+y0TCw12aO1m3jsAjZ3M4TdQj/PGpgUT9cAYnw5+N3fo7YM+De12PSHBP4sInjfKN5N3BGSGwLjK4cSc0XGAtkWc9KYmuqDMrEpH2rJ9yB6E/PzWFBhALjWdFEbVNPXzoc5A=
+	t=1756364782; cv=none; b=HfkvwfmrcYimMYb4JqJyaO1KkvDRJSF7iWck0VUttPlKj1JJqg9VUrLqVPMrhWoZINUYsrKUw+ITac6pfgdndo1KAXV0RlX/vNMGH7zvmIzkvVORKZntsvqBuxKbHQ9AVwHfZLLyz2LWhgmxsfklSR7M+fThT0a2DwARmkWsjL4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756364173; c=relaxed/simple;
-	bh=SO3WVlFuenuLJDzM92EELg2b8Pa4R1OJ6xC3R69TLYc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kjZHkgnurwrVD0THQDYz7Y/5v++VFn7L7qV9sYSzhWjuXfesdmRwWhVuBVhA1XJKkba2ZrM1hBSGQg4yDiGoejb/swY5jT67z6ifUT8Ku3QXW0/ETCZP7YQ5AVTTLIlRLUgP42ZDpAKoJTKjB77G3KvRi63JIf9Q/Aqpqmz9Cjk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QDMRUiU6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A60DCC4CEEB;
-	Thu, 28 Aug 2025 06:56:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756364172;
-	bh=SO3WVlFuenuLJDzM92EELg2b8Pa4R1OJ6xC3R69TLYc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=QDMRUiU65/NKhyUSoifzA/2KQYug/emesBLJ05oZhTZ4WCWGM9+Zp0I2eplR7Cphl
-	 2UOzWI9xSdqAxrxIQFzOMe6iwzD2drrId8mRGQHWVgSteUDhVO56Hg/je1xbfxozkn
-	 dGq+KT4b+UtjT9r25dfWAyf6KWZhR0KV8r4GD5EAqpeVJqsk+SKcDmOscdEws2xqwf
-	 QwNriMKoHIBpPz09AVUDYsVtK71xTaPrf4PqRcnvso87J8Rax92XYvcx9MOyFwxael
-	 dHQqf9W0T+B8bD+UUuKhjs0AC2rS3l81qB24oeJgbRu7H9PeeO216N5jYJDT8xli3F
-	 gYua7NP+Q+kPg==
-Message-ID: <bab2e05a-140f-460c-8c28-358e37727c6b@kernel.org>
-Date: Thu, 28 Aug 2025 08:56:07 +0200
+	s=arc-20240116; t=1756364782; c=relaxed/simple;
+	bh=3GtacDy0fynn68cetc6FdcOBuEARvE0UkBR+DvwmVqM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rVTj9y+y+vBvYtdt+eg6oH0JeBI8DEY0LiZoQeIoj/wDBmuKphe09RiTr/Y+4HtQ9IQWO8DdJK7NHKtUriTSSf/9W/VFqccYiCXDSQ7O4PqxTEOQH3yX+zrAZB4RECm6D/GgmT7AX/5uPXiHto3sWSUTdA2GKaP87s52ZW2hhgA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4cCC9b6MdrzKHLx4;
+	Thu, 28 Aug 2025 15:06:11 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 90F661A1CB1;
+	Thu, 28 Aug 2025 15:06:11 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP4 (Coremail) with SMTP id gCh0CgCn8Izh_69o_X89Ag--.14658S4;
+	Thu, 28 Aug 2025 15:06:11 +0800 (CST)
+From: Yu Kuai <yukuai1@huaweicloud.com>
+To: axboe@kernel.dk,
+	tj@kernel.org,
+	josef@toxicpanda.com,
+	song@kernel.org,
+	neil@brown.name,
+	akpm@linux-foundation.org,
+	hch@infradead.org,
+	colyli@kernel.org,
+	hare@suse.de,
+	tieren@fnnas.com
+Cc: linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	cgroups@vger.kernel.org,
+	linux-raid@vger.kernel.org,
+	yukuai3@huawei.com,
+	yukuai1@huaweicloud.com,
+	yi.zhang@huawei.com,
+	yangerkun@huawei.com,
+	johnny.chenyi@huawei.com
+Subject: [PATCH RFC v2 00/10] block: fix disordered IO in the case recursive split
+Date: Thu, 28 Aug 2025 14:57:23 +0800
+Message-Id: <20250828065733.556341-1-yukuai1@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/5] arm64: dts: qcom: lemans-evk: Extend peripheral and
- subsystem support
-To: Wasim Nazir <wasim.nazir@oss.qualcomm.com>,
- Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Richard Cochran <richardcochran@gmail.com>
-Cc: kernel@oss.qualcomm.com, linux-mmc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, netdev@vger.kernel.org,
- Viken Dadhaniya <viken.dadhaniya@oss.qualcomm.com>,
- Sushrut Shree Trivedi <quic_sushruts@quicinc.com>,
- Nirmesh Kumar Singh <quic_nkumarsi@quicinc.com>,
- Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>,
- Mohd Ayaan Anwar <quic_mohdayaa@quicinc.com>,
- Dikshita Agarwal <quic_dikshita@quicinc.com>,
- Monish Chunara <quic_mchunara@quicinc.com>,
- Vishal Kumar Pal <quic_vispal@quicinc.com>
-References: <20250826-lemans-evk-bu-v1-0-08016e0d3ce5@oss.qualcomm.com>
- <20250826-lemans-evk-bu-v1-3-08016e0d3ce5@oss.qualcomm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250826-lemans-evk-bu-v1-3-08016e0d3ce5@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgCn8Izh_69o_X89Ag--.14658S4
+X-Coremail-Antispam: 1UD129KBjvJXoW7Cw4Duw43GFWrJF4rtw1DJrb_yoW8AF4Upa
+	yagFW3Zr1UCr4agFnxZ3WUt3Z5C3WvgryrGr93Xws5XF9rZrWIkw4UAr1rKry5GFWrG34U
+	Xr1kCrWUWF15GrDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
+	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
+	zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
+	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
+	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
+	nIWIevJa73UjIFyTuYvjTRNJ5oDUUUU
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On 26/08/2025 20:21, Wasim Nazir wrote:
-> +
-> +&gpi_dma0 {
-> +	status = "okay";
-> +};
-> +
-> +&gpi_dma1 {
-> +	status = "okay";
-> +};
-> +
-> +&gpi_dma2 {
-> +	status = "okay";
-> +};
-> +
-> +&i2c18 {
-> +	status = "okay";
-> +
-> +	expander0: pca953x@38 {
+From: Yu Kuai <yukuai3@huawei.com>
 
-Node names should be generic. See also an explanation and list of
-examples (not exhaustive) in DT specification:
-https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
+Changes in v2:
+ - export a new helper bio_submit_split_bioset() instead of
+export bio_submit_split() directly;
+ - don't set no merge flag in the new helper;
+ - add patch 7 and patch 10;
+ - add patch 8 to skip bio checks for resubmitting split bio;
 
+patch 1 export a bio split helper;
+patch 2-7 unify bio split code;
+path 8-9 convert the helper to insert split bio to the head of current
+bio list;
+patch 10 is a follow cleanup for raid0;
 
-> +		compatible = "ti,tca9538";
-> +		#gpio-cells = <2>;
-> +		gpio-controller;
-> +		reg = <0x38>;
-> +	};
-> +
+This set is just test for raid5 for now, see details in patch 9;
 
+Yu Kuai (10):
+  block: factor out a helper bio_submit_split_bioset()
+  md/raid0: convert raid0_handle_discard() to use
+    bio_submit_split_bioset()
+  md/raid1: convert to use bio_submit_split_bioset()
+  md/raid10: convert read/write to use bio_submit_split_bioset()
+  md/raid5: convert to use bio_submit_split_bioset()
+  md/md-linear: convert to use bio_submit_split_bioset()
+  blk-crypto: convert to use bio_submit_split_bioset()
+  block: skip unnecessary checks for split bio
+  block: fix disordered IO in the case recursive split
+  md/raid0: convert raid0_make_request() to use
+    bio_submit_split_bioset()
 
+ block/blk-core.c            | 34 ++++++++++++++++----
+ block/blk-crypto-fallback.c | 15 +++------
+ block/blk-merge.c           | 63 ++++++++++++++++++++++++-------------
+ block/blk-throttle.c        |  2 +-
+ block/blk.h                 |  3 +-
+ drivers/md/md-linear.c      | 14 ++-------
+ drivers/md/raid0.c          | 31 ++++++------------
+ drivers/md/raid1.c          | 35 +++++++++------------
+ drivers/md/raid1.h          |  4 ++-
+ drivers/md/raid10.c         | 51 +++++++++++++-----------------
+ drivers/md/raid10.h         |  2 ++
+ drivers/md/raid5.c          | 10 +++---
+ include/linux/blkdev.h      |  2 ++
+ 13 files changed, 137 insertions(+), 129 deletions(-)
 
-Best regards,
-Krzysztof
+-- 
+2.39.2
+
 
