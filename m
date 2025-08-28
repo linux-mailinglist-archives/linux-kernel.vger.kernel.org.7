@@ -1,241 +1,187 @@
-Return-Path: <linux-kernel+bounces-790862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790863-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05405B3AE78
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 01:35:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A0ABB3AE7B
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 01:40:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B89225821B7
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 23:35:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 500877C587E
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 23:40:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F1CD2D9787;
-	Thu, 28 Aug 2025 23:35:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B4122D739A;
+	Thu, 28 Aug 2025 23:40:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Ls05hyCS"
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2063.outbound.protection.outlook.com [40.107.100.63])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3U4OX3Be"
+Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B6681A4E70;
-	Thu, 28 Aug 2025 23:34:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.63
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756424100; cv=fail; b=DbD4zkecVXQHEB5j9ebjrLysengmV7BJyak+1hYKR00WzmbFnbGwNOJFftzPNHmhZysVVAN0kFGO5DLD02RaAeE4Rql8lR7+D1CznRDC2Md7dDkL1StJ9OqBoxwgxrePpiBHpHbWrccJmPSODNyVM5pUGuwk8ig7V+eo61yWjAg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756424100; c=relaxed/simple;
-	bh=eoBbYX78Eim+idQb3iwDekoeso9dqVCjsBMHEm1CfEM=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=mEU/EaAWdmcrIp/wz1zVwKPvew8+IVU78/nNj0BGzDvvv7p9Ueeb37PmwZ3Ecbse9ZRBKnzRJMSBW/C07TzGn9EdTsHcV0bsOrSG5h1vEPyEF60SQ6IGX5sK8R7+3FnZrFFb94UOz+1qAuNR6fYhtBbyPFRmdb+CHUsy+OsXpHQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Ls05hyCS; arc=fail smtp.client-ip=40.107.100.63
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=qBIK5IWWmUbWB5pH/rV8gQf/K6u7GvM7H8R+TmydGaokxS8IcSDN+rvV9MUWVhexd0J5G3rjghGIdYLfZo9fKUBH0NsXQQCFIqy4gIlVanSwXWzmEThFWj/pYtKhUEPVIbwCHN7cu66ukaZYiNhUU7avDDMsEWbFtkcmi08OETMc90pUkMvEUnnwl3git1LPNJMctnI1u9V3bDhu93aiTxHYcSACdJeh3paduOOGqhG/7RfdlWWC1k+eCNl8ZM4RlRu+C2qaHUw6bGgE4Z7zoDfhDagn3FfFflH8GlFzAuewrp/Z2wE6CVxwnVL8CblR04PvZLXoLDuBHq87F+tkUg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=UbGNSbgj5rl1MFxwE06F05zp6IIPBESsi7KiDVCaqxg=;
- b=Fs+d8tZHndNae/SJWaSZIANR7yi72KRbQk650RmKrW07rY08IqY3j5tbocn2JD3q+21pnJ87p+/A6M9Ev5UVILWs9Q0McERlkmg6jen5FmpbOB174+kKuNoaz5gR8b6lKdUyQc6bwbm0y+lggQzJrj4SVUv13pvu+mzYFaKgfKDHq4QfSQDQYManHy9EFSbbqME4njM0OIwFPOKkKHx1Vq9bPaMIpLj711opFz8uE89OPwYaDkfY+eCx7Zkr5sQfgQrB6aYUF5jQyW7jSC6910TydBjD7ZInqHwc6/rlH7LMTvIfVDaGvRrDUbDaF3/LyepfR+h+VZsROaMyFPGRAQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=UbGNSbgj5rl1MFxwE06F05zp6IIPBESsi7KiDVCaqxg=;
- b=Ls05hyCS8MQBxCnb5c+9Z3wlsdrCp2awQnyG4XzZboaTCsKWBD+NnxU8QPtOrHp/SRqSyBHGXmcBvEf0vh93EEOH7m5F3UjumiBoN0t6Pb88Qq38j2X/adO40Bl59afPZ2iWzzkxfyTBMCoYcvx49D+vJqHz68Zi4ediT4C72Qw=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from MW4PR12MB7142.namprd12.prod.outlook.com (2603:10b6:303:220::6)
- by DS0PR12MB7947.namprd12.prod.outlook.com (2603:10b6:8:150::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.24; Thu, 28 Aug
- 2025 23:34:51 +0000
-Received: from MW4PR12MB7142.namprd12.prod.outlook.com
- ([fe80::e5b2:cd7c:ba7d:4be3]) by MW4PR12MB7142.namprd12.prod.outlook.com
- ([fe80::e5b2:cd7c:ba7d:4be3%3]) with mapi id 15.20.9052.014; Thu, 28 Aug 2025
- 23:34:51 +0000
-Message-ID: <eb466a9a-ce5b-4832-8d63-ef2f81a29302@amd.com>
-Date: Thu, 28 Aug 2025 16:34:48 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/6] dax/hmem, cxl: Coordinate Soft Reserved handling with
- CXL
-To: Alison Schofield <alison.schofield@intel.com>
-Cc: linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
- nvdimm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
- linux-pm@vger.kernel.org, Davidlohr Bueso <dave@stgolabs.net>,
- Jonathan Cameron <jonathan.cameron@huawei.com>,
- Dave Jiang <dave.jiang@intel.com>, Vishal Verma <vishal.l.verma@intel.com>,
- Ira Weiny <ira.weiny@intel.com>, Dan Williams <dan.j.williams@intel.com>,
- Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
- "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <len.brown@intel.com>,
- Pavel Machek <pavel@kernel.org>, Li Ming <ming.li@zohomail.com>,
- Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
- Ying Huang <huang.ying.caritas@gmail.com>,
- Yao Xingtao <yaoxt.fnst@fujitsu.com>, Peter Zijlstra <peterz@infradead.org>,
- Greg KH <gregkh@linuxfoundation.org>,
- Nathan Fontenot <nathan.fontenot@amd.com>,
- Terry Bowman <terry.bowman@amd.com>, Robert Richter <rrichter@amd.com>,
- Benjamin Cheatham <benjamin.cheatham@amd.com>,
- PradeepVineshReddy Kodamati <PradeepVineshReddy.Kodamati@amd.com>,
- Zhijian Li <lizhijian@fujitsu.com>
-References: <20250822034202.26896-1-Smita.KoralahalliChannabasappa@amd.com>
- <aK5BY7bQ_dMZLFNT@aschofie-mobl2.lan>
-Content-Language: en-US
-From: "Koralahalli Channabasappa, Smita"
- <Smita.KoralahalliChannabasappa@amd.com>
-In-Reply-To: <aK5BY7bQ_dMZLFNT@aschofie-mobl2.lan>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SJ0PR03CA0052.namprd03.prod.outlook.com
- (2603:10b6:a03:33e::27) To MW4PR12MB7142.namprd12.prod.outlook.com
- (2603:10b6:303:220::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F1012063F0
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 23:40:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756424416; cv=none; b=tNyvxOree1mEJfvWxbeia84KsA8vt4fCVhcnbv1Ykbnm6A8MFc0dobt4RJ4mDMpjsO2gPFz2ECzNWTWQpKLKOPs3k+9m5Wrcfzg1nFHVH7zqUe2GY+3C5agcsCzYj9/SENHMqyw8GV6NJ/DJcK9KvPYztxlPLa/DpT7QEE2+F4Y=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756424416; c=relaxed/simple;
+	bh=KsAyKzibOsjor0ReCDD55lr3rxs8WRdOFSK6ndQtHgg=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=BkZjIdivl+fsMMGlLbA9QDHwIueJETwmEbBSlw2rofQ+Emm0r/twgOEeBJ2yHkCU+UGKlBE2UZxcCkoaTiNb2zPgwECXOgvONSHuPavlMOeOjQYsyctnQPLAclTiuw6Eu3rqcF1VWnoTJfK1u8xOUoKZaHlz9edPvnGzb3fWijM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3U4OX3Be; arc=none smtp.client-ip=209.85.210.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-76e2e60221fso2351023b3a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 16:40:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1756424414; x=1757029214; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PEeUvBboOkLSk46g+vBgkfY4ImguJzhTUEdxhRNUWyM=;
+        b=3U4OX3BeVj28ZD9+u+R0EnMjBpOmz+8yAt7lH+bOe4rL19Go7HmhrB2Ito3fQyJ6i+
+         2yG7XPvGkoLvhUQW45tryt5XAWhPikdSJD8ab8eMr+sG/u8Xy8jwIIoI61e0NEEEyRm0
+         qIQyCJ9PdRmojlFb6B73/zSAtHtvDHPc06HVLk9vYDkXOtv6KG/w0CVowQUDFXZOUv+e
+         WdP/NWBzF7eICgU69Cy3+okFvk6W+urOPRRizIxYtf9RnBAtesI72LdEEUAgabExdOq3
+         023Zb7CoQgqF/pbvPnxq5fvzysyGcCQtmT5P3gspJqqIAZYT1CNV9oYStHdAzKVoxk3+
+         FMUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756424414; x=1757029214;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=PEeUvBboOkLSk46g+vBgkfY4ImguJzhTUEdxhRNUWyM=;
+        b=Cvdjrc9S+26rguh9XHcRSpqao16a75B1EmajUcwH3ZE+M0M1xhxB0zrXHhruZcgxuH
+         X26SyTKTtr1D5HTpMFaqhmUSyWHGzbXl+L4iMfzcU3mausk/HX+ZwXmUnYKrDODesVul
+         phGaqlGKFx41yDFsLxDtKytZZMie23Gd0TzTR5pxdRbTn5SGd1FeJzqHLxKL5J3teH0z
+         oVkQnVpsYlprZth5vDO6n/L9Cu3vCcStjQOrb7R+5CmYzbLMBkrIoRkDrbong8ZEwEym
+         ZtEp4KdVp1XUwqNt9NHMQXtv9+HU7sf+RtSNaFLitH8hl0OCAJP/vNLOxOenQ7Wxqp6j
+         fzMg==
+X-Forwarded-Encrypted: i=1; AJvYcCUJ2PF5afrd9X0KmvvPdlsN+phoQiE5Yq+SF4qz1xAdowaQFzjQ1nnBt5kR85UKaztui3GYwXH0NPK2GP0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz76ljjxjSuXLoWfFumzanKRML3eSLUd6o2aIPywfffzKCPqGEx
+	oK/JD/JdhHDkKqmXZYwBu29z1yYKGIdOTV43iGWmb62usxT7T69tS+yF7wy2CyOdM5O6iXK6VuV
+	VT3qC+Q==
+X-Google-Smtp-Source: AGHT+IHeJ88uApWJkJqXMHHSqLFiYmbSu+jf3zcvClugfQxnEbc0FP+VGJbRiLFQM0fXQ2K58Whmq3fXey8=
+X-Received: from pfbde5.prod.google.com ([2002:a05:6a00:4685:b0:771:e00d:cee])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:9291:b0:771:e451:4edf
+ with SMTP id d2e1a72fcca58-771e451567dmr20877658b3a.0.1756424414244; Thu, 28
+ Aug 2025 16:40:14 -0700 (PDT)
+Date: Thu, 28 Aug 2025 16:40:12 -0700
+In-Reply-To: <e6dd6de527d2eb92f4a2b4df0be593e2cf7a44d3.camel@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MW4PR12MB7142:EE_|DS0PR12MB7947:EE_
-X-MS-Office365-Filtering-Correlation-Id: dbb2ea3e-bb38-437a-24ab-08dde68b7bbd
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|7416014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?WFkzNHlXcW9tSllGcnJZOVJZQzJpTk1uVFlEdm1XYnJaYkR2eEJGSERkTTVR?=
- =?utf-8?B?THFSa0hTQ0dFVTlqRndweGluRHNSS1pxaHV6KzIxRkZ3VEtJcTBJbWRhYUl5?=
- =?utf-8?B?dHpkVU5YQTJGUkswSE1xc3BBK3FCb2Nsa0tVeVRNZEpIaUE3cVNMVTZtd3p2?=
- =?utf-8?B?Vk96cFNrNUNLamlGd0lHUzE2d2pIb2NuYnJjajh4YkpEV3J3V25pUmR5Q1ky?=
- =?utf-8?B?YzVGSXA1cmNlR25XdEtxdHlqMmhnb2hQVmZHRWNRbWNYdWcxellpM2VKanFv?=
- =?utf-8?B?cDcyUHh5ME13MTBzZUNLV2pMalIvREI3WmI1SnBpVklaZHBsVkREYWt4YzZF?=
- =?utf-8?B?RjhXT1JkOHdyNDhSZEZ4OG9tWTdweUNNZTd3UXIzSmcrdjdmSFloeVhsT3R4?=
- =?utf-8?B?MU96ZVJqUXR1dlNrWWV2M1JDVVh4Q2NzZW82Zk8vdW9DQWNScEU4MWN4aUMv?=
- =?utf-8?B?RkZ6L1J0d2VJZkNxMUZFaVBiTVpiVTVPdGpic3ppR05rMzZrY2U5SFg0UERC?=
- =?utf-8?B?YTE4enZNaHh3NUJKU2luQ2RaYjVyZ3pRNktyK2I5MDIzRmJYei9jQy96WXh2?=
- =?utf-8?B?RDhTd0k0NmtTS0kxVS9iMEpEa3FZeWJic3BKNkpsTUpqeHJXL2RSaDV6MzVD?=
- =?utf-8?B?YWd6Y1FKREx5NTlVVUE4N0pRMGhqdXBtc2dvbC9XalJvR2NpU1VBc05WaVJk?=
- =?utf-8?B?QW9leXNzbFBabWIyaWE0YTJMbWdNT1NVcmpCTCtod1JORjNzaVNneGEyZmlz?=
- =?utf-8?B?YmFhcUNuYmRWVUk2QmR1V0ZYdFJNK0owREx6b1FOajJJc3N2UnpUYVlGb1dk?=
- =?utf-8?B?MFJ2c0JRSUFXS0RrZy82U0swWW1wNi9uMTRUVGZoYjJjZkttMmdsNFpneS9a?=
- =?utf-8?B?T3BHeHRyRnRMOXJKTFdSa1VFYnF3QWY4eWpJMnFYalh1dG1FbUFwenhkbDha?=
- =?utf-8?B?SzRPcFVWRTYwd0h3QVorVlpqK3J4MFd6S1NxMTJlUWVmK1diSjhtOHJnbWZZ?=
- =?utf-8?B?OC8wNmY3WVVHZHZuR0dBQzlaNUZQT0RyNVNiYnRwTGxyMXF5MGx2U2ZoWmtk?=
- =?utf-8?B?MkcvSXJFYWtYcmZtOEpSQ1NxZ2dPbVhOUktHUmNTT0I4QkI4cWtLY1BCUnBy?=
- =?utf-8?B?S1NkL21EaTZ2U3plbWVuQStuMjBqMEFGd0xnS0JxTnVZL2hkdzNIa0hlVFZa?=
- =?utf-8?B?QjIwTFJLZHg0bE92UjlyalMzTk9kZjhIVnZOa3NOSTdFVDlzSlFOM1lXNTNI?=
- =?utf-8?B?TnlyaHQxbEgzM0g0MERsQUtMV2EvaUhhYVFDS3djdTlqREVpR3ZaQVNXMWFx?=
- =?utf-8?B?am5aNm9JanpEYk52QnpQd3lXNXlneUgwSkI3SVZUR0NFK2RZZlNyTlRLaDhR?=
- =?utf-8?B?MkRhS1FDT3hId1VGR3V5d0VBMWlXUlVFU2Q0Vi9LQy9HcThab29vSDV3d2sy?=
- =?utf-8?B?RURPOEtzVDFEYTA0TVl4L0hUckVIUW9lUkF1VEM0bFRKZUZRMUJQckVUR2NZ?=
- =?utf-8?B?YndZR3RqcVIyRU1xdXBXc29tdEFLRFdrbzcwYzV3VzNqWmRuVTBGaXI2ZU9R?=
- =?utf-8?B?WEZKRGtwMEFlTDJqTFpDbzNtamF2MjJzZHNUNFBoaWsva1VyVCs0TkFIMVRT?=
- =?utf-8?B?U3FDL2Y0WDRBTE05QmhReVVlOG9YVGExREwreGo3QU8zU3RpT0x3N0pZTEox?=
- =?utf-8?B?L3V2NTBSdmhuVHRDUGh2S2FnTERvUE9SL2tMeGJCU21xWHhCYUJxSDdGc3hi?=
- =?utf-8?B?T3ZtQVZ0OXdLdjM5d3R0Qzh5YURaaEpvOWtrbWp3MWIrUXZxeXVRY3lQTUJQ?=
- =?utf-8?B?YjZoR3BENUlKQ2JjaG9IV2VpanhrbkxPa3R6a3FtbXFBRlBVM01mRFh5aUhi?=
- =?utf-8?B?T2hwS00vQkVpeWZZM3I5em9lWTE3MVNlRVJvY3d4RFZQQlkvZlNOS0xLWUNk?=
- =?utf-8?Q?E3cLfRWPiqA=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW4PR12MB7142.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(7416014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?RDlRUlhXbVRiNWJzMkVERTV1ekVCRzBuTzk1aGJvejhmNStxbkpQVWs4Ujgz?=
- =?utf-8?B?WGN4Ujl1ZWpqODVob0V5Z0F3TFNkd2FWRXdHakxWdGY2b09xNEU3Q0lwdEpa?=
- =?utf-8?B?N2kvWXBSWlFNZk1TVWVCK3hrTUhkd29rOHByb0dkYlFPQzlGNzNmZnV4TFlz?=
- =?utf-8?B?WTh4aUFtZ1Q0ZWtJb3p4MVU4eHRsUkhEMHlNTDl4cGtXSFdGQ0JaakhvcTN0?=
- =?utf-8?B?ZDNUU2JXaTNjczVUTnlOc3RwNTRtbi9XcERxQUN1cWJ6bW9lUFNjRFYwT05E?=
- =?utf-8?B?S3lLSGJrWUtTWjZWT2lWQVZhaXZjZVhUcXg2REFRQWFvTFU5aFIwNVhCaFlD?=
- =?utf-8?B?QTJhUHBZQzFWODNkRU51cXF3MG9DbnROTDROWUhtWmJWZmZ2bUdWQ3VnYjE5?=
- =?utf-8?B?dUY5Q3dEWXVWSGllUVZjV3ZkNEcwOW1xTmlEcWdwKzNTZ1JHSVhabGpBNW1z?=
- =?utf-8?B?V1Z1aFN3MkFZbGFxcFNzSHFCTmJGbGpxYzdzMkw1cWhlMm5sZlJ2M0xDQTJP?=
- =?utf-8?B?ZjQ3QW5UQVJaZGtlNGNMMldvVkgyeGliaGNkL2VqN2pvV1lpZGttWm9PM0tN?=
- =?utf-8?B?T1FOcUszOS9aK2hrSkdmWXU0NW40WDhVTjQ0VzVueklMcnIyQjNud1FlWlVN?=
- =?utf-8?B?c2FseU1DS0dCalREcDZ5dXZFb0tUS2I5UnlYL2xzNDRaQzVlQ0dOVEVVamhK?=
- =?utf-8?B?UGFZUU91UXN4QmdBUk1YZDZweEpGUkRrdENCVWJYS0lPd2o5cmZjV29NMHRa?=
- =?utf-8?B?R0h6bi9pWVNhTWN6d29oWWl4S2xkU0VZVzM1eWFWem16TDVFV3dMb0tTRmpO?=
- =?utf-8?B?YW82ejV3YlRqQzAxRkd1a2pQbzhvY2MwQUF0OGpFNWd1UVk2TXRiMEVzT0ZN?=
- =?utf-8?B?eXF6bWNNejdnWFdpTjFaWDhmTXd0WkFmQnArQnVMaFZFMHhiUjJjMlFXSmds?=
- =?utf-8?B?SWEyYk0xL3FNaWZCV0FqNGQ5Uy9NU0NITm9acm5ZZGJNQnFuSm5JS3JacGxj?=
- =?utf-8?B?bWNOQmV2Yy9pVkg3aFUxM3dSekhZbDJiTytPbVRKMGRTbjlBd212ZWpFWFhT?=
- =?utf-8?B?aHF2MWtxUHgrNHJvS013UnVNN1REZURQNE41RWwzaWZGc2d4SXZxak91UGg4?=
- =?utf-8?B?cDlkTzJpaWV2RFA3bU9qRU9CZDM0TUtoWExkc2hJd2Rjckc1NzRZdzJ6N2VN?=
- =?utf-8?B?RmJmZ2FyNTVoUGtrZEZ1MnhIOUlkdmo1UkMyRytZUFJ2V1hSZkJqM2x6UFh5?=
- =?utf-8?B?ZXBCVTExSEVPTC92U0FGQUltQ1hMWFRLOGd1U29JOUg0VFFKUmV4a3lzSkI4?=
- =?utf-8?B?R3FncUhFc3hhUVlRNWZnV0ZPL1VMSjVYNjQxQjdTQVBuUmJBM1E2QlZNMFFY?=
- =?utf-8?B?S3hsVzNxOXVNVlQ2L0ZrVUkrUi9LNWhjMDRmWjRSZ0RJNFpQclBhbmZXWUFE?=
- =?utf-8?B?bXBLVzNVbitza0hnNDQwTjNRK296aVB1T1QxTDVoQkNpWXNWcmFjWFNpZE5Z?=
- =?utf-8?B?eURFMlE4ZWZkU0lDQjkrYVdoVWROc0pBMWMrWnRyQ0hRV2lwbmhTdU56YmNm?=
- =?utf-8?B?Z1duUEo3cU9xeUsxQWtIZFZON2JBNXVqcVd4MlZpaitnMktJWDdsZ25ZRTVk?=
- =?utf-8?B?dEVvcDZGZlhXS1RoakdIOXJNcEI1NTdFSmhrMGw1emp6MnBXbERQOWIzem10?=
- =?utf-8?B?blVwc3VpaHlBUVZaK3hCQW43RWltRXptc05CbmcwaHE2aENMRjZqQ2NzZkxr?=
- =?utf-8?B?UDQzZWM5d1pMbE9WTVNFbHVnQUpuanhkVkp4b3NCL1kwemwvQ1AvcCtxTnov?=
- =?utf-8?B?Z3BVVlNCdUtmYTlrallodWx3Y09vVmZiREtJTG5PWFdoSmtRRnoxakZjbnBZ?=
- =?utf-8?B?Z296cnhmSlI3MmlkV0ZmSStQKzlzUlJ4Rm1VN00vMVMrUEZJbWExRmpHbkta?=
- =?utf-8?B?cE1uNW9XR05ja1lEMjZBZVlONWJKSTVCTUZQN0xtV20vYTdwNlJtZW8zeWRk?=
- =?utf-8?B?MDJOY1hHVkgzSE03T1pQUFY4ZTNLUFNGZG1HSm5JRTJ2RFRRUW85blc3L1NR?=
- =?utf-8?B?MjBucVZha0hVbU5SaDlVOHc5ZXBsSW9SZGQrZjlhdFNSNU1XUFRLQVpjU1pq?=
- =?utf-8?Q?enqT9iAhYY1Wuxaqrhv2D47aJ?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: dbb2ea3e-bb38-437a-24ab-08dde68b7bbd
-X-MS-Exchange-CrossTenant-AuthSource: MW4PR12MB7142.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Aug 2025 23:34:50.9509
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: KeoRMDpKLFLP1UJboF92CiLPTT9MlAZMzvii3hglTJ3Mt0OCDa1RFRGzL8cclVZMFsyIUJgSMk98ddhrMHqKNQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB7947
+Mime-Version: 1.0
+References: <20250816101308.2594298-1-dwmw2@infradead.org> <aKdIvHOKCQ14JlbM@google.com>
+ <933dc95ead067cf1b362f7b8c3ce9a72e31658d2.camel@infradead.org>
+ <aKdzH2b8ShTVeWhx@google.com> <6783241f1bfadad8429f66c82a2f8810a74285a0.camel@infradead.org>
+ <aKeGBkv6ZjwM6V9T@google.com> <fdcc635f13ddf5c6c2ce3d5376965c81ce4c1b70.camel@infradead.org>
+ <01000198cf7ec03e-dfc78632-42ee-480b-8b51-3446fbb555d1-000000@email.amazonses.com>
+ <aK4LamiDBhKb-Nm_@google.com> <e6dd6de527d2eb92f4a2b4df0be593e2cf7a44d3.camel@infradead.org>
+Message-ID: <aLDo3F3KKW0MzlcH@google.com>
+Subject: Re: [PATCH v2 0/3] Support "generic" CPUID timing leaf as KVM guest
+ and host
+From: Sean Christopherson <seanjc@google.com>
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: Colin Percival <cperciva@tarsnap.com>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Vitaly Kuznetsov <vkuznets@redhat.com>, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, graf@amazon.de, 
+	Ajay Kaher <ajay.kaher@broadcom.com>, Alexey Makhalov <alexey.makhalov@broadcom.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Alison,
+On Wed, Aug 27, 2025, David Woodhouse wrote:
+> On Tue, 2025-08-26 at 12:30 -0700, Sean Christopherson wrote:
+> > On Fri, Aug 22, 2025, Colin Percival wrote:
+> > > On 8/21/25 14:10, David Woodhouse wrote:
+> > > > On Thu, 2025-08-21 at 13:48 -0700, Sean Christopherson wrote:
+> > > > > > I think I'm a lot happier with the explicit CPUID leaf exposed =
+by the
+> > > > > > hypervisor.
+> > > > >=20
+> > > > > Why?=C2=A0 If the hypervisor is ultimately the one defining the s=
+tate, why does it
+> > > > > matter which CPUID leaf its in?
+> > > > [...]
+> > > >=20
+> > > > If you tell me that 0x15 is *never* wrong when seen by a KVM guest,=
+ and
+> > > > that it's OK to extend the hardware CPUID support up to 0x15 even o=
+n
+> > > > older CPUs and there'll never be any adverse consequences from weir=
+d
+> > > > assumptions in guest operating systems if we do the latter... well,=
+ for
+> > > > a start, I won't believe you. And even if I do, I won't think it's
+> > > > worth the risk. Just use a hypervisor leaf :)
+> >=20
+> > But for CoCo VMs (TDX in particular), using a hypervisor leaf is object=
+ively worse,
+> > because the hypervisor leaf is emulated by the untrusted world, whereas=
+ CPUID.0x15
+> > is emulated by the trusted world (TDX-Module).
+> >=20
+> > If the issue is one of trust, what if we carve out a KVM_FEATURE_xxx bi=
+t that
+> > userspace can set to pinky swear it isn't broken?
+> >=20
+> > > FreeBSD developer here.=C2=A0 I'm with David on this, we'll consult t=
+he 0x15/0x16
+> > > CPUID leaves if we don't have anything better, but I'm not going to t=
+rust
+> > > those nearly as much as the 0x40000010 leaf.
+> > >=20
+> > > Also, the 0x40000010 leaf provides the lapic frequency, which AFAIK i=
+s not
+> > > exposed in any other way.
+> >=20
+> > On Intel CPUs, CPUID.0x15 defines the APIC timer frequency:
+> >=20
+> > =C2=A0 The APIC timer frequency will be the processor=E2=80=99s bus clo=
+ck or core crystal clock
+> > =C2=A0 frequency (when TSC/core crystal clock ratio is enumerated in CP=
+UID leaf 0x15)
+> > =C2=A0 divided by the value specified in the divide configuration regis=
+ter.
+> >=20
+> > Thanks to TDX (again), that is also now KVM's ABI.
+>=20
+> And AMD's Secure TSC provides it in a GUEST_TSC_FREQ MSR, I believe.
+>=20
+> For the non-CoCo cases, I do think we'd need at least that 'I pinky
+> swear that CPUID 0x15 is telling the truth' bit =E2=80=94 because right n=
+ow, on
+> today's hypervisors, I believe it might not be correct. So a guest
+> can't trust it without that bit.
+>=20
+> But I'm also concerned about the side-effects of advertising to guests
+> that everything up to 0x15 is present, on older and AMD CPUs.=20
 
-On 8/26/2025 4:21 PM, Alison Schofield wrote:
-> On Fri, Aug 22, 2025 at 03:41:56AM +0000, Smita Koralahalli wrote:
->> This series aims to address long-standing conflicts between dax_hmem and
->> CXL when handling Soft Reserved memory ranges.
-> 
-> Hi Smita,
-> 
-> I was able to try this out today and it looks good. See one question
-> about the !CXL_REGION case below.
-> 
-> Test case of a hot replace a dax region worked as expected. It appeared
-> with no soft reserved and after tear down, the same region could be
-> rebuilt in place.
-> 
-> Test case with CONFIG_CXL_REGION=N looks good too, as in DAX consumed
-> the entire resource. Do we intend the Soft Reserved resource to remain
-> like this:
-> c080000000-17dbfffffff : CXL Window 0
->    c080000000-c47fffffff : Soft Reserved
->      c080000000-c47fffffff : dax2.0
->        c080000000-c47fffffff : System RAM (kmem)
+Ah, you want to bolt this onto older vCPU models.  That makes sene.
 
-Yes, that is how it currently looks. Maybe we should also add a log 
-message to make it clear that this dax is coming from dax_hmem and not 
-dax_cxl?
+> And I just don't see the point in that 'pinky swear' bit,
 
-Another thought I had is that if we hand off fully to CXL even with 
-regions disabled, we could avoid showing the Soft Reserved layer 
-entirely (along with the kmem and devdax under it). The question is 
-whether that approach would be preferable, since in that case the memory 
-would end up left unclaimed/unavailable to Linux. Would be good to get 
-your perspective on this.
+Yeah, I can see poorly written guest software freaking out over CPUID.0x15 =
+being
+unexpectedly valid, e.g. on AMD hardware, in which case pinky swearing it's=
+ ok
+won't help.
 
-https://lore.kernel.org/all/a2e900b0-1b89-4e88-a6d4-8c0e6de50f52@amd.com/
+> when there's an *existing* hypervisor leaf which just gives the informati=
+on
+> directly, which is implemented in QEMU and EC2, as well as various guests=
+.
 
-Thanks
-Smita
-
-> 
-> These other issues noted previously did not re-appear:
-> - kmem dax3.0: probe with driver kmem failed with error -16
-> - resource: Unaddressable device  [ ] conflicts with []
-> 
-> -- Alison
-> 
-> snip
-> 
-
+Can we just have the VMM do the work then?  I.e. carve out the bit and the
+leaf in KVM's ABI, but leave it to the VMM to fill in?  I'd strongly prefer=
+ not
+to hook kvm_cpuid(), as I don't like overriding userspace's CPUID entries, =
+and
+I especially don't like that hooking kvm_cpuid() means the value can change
+throughout the lifetime of the VM, at least in theory, but in practice will=
+ only
+ever be checked by the guest during early boot.
 
