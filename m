@@ -1,115 +1,80 @@
-Return-Path: <linux-kernel+bounces-790819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20FFEB3AD8F
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 00:33:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55DB6B3AD94
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 00:36:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CBCAD9870DA
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 22:33:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 100B656860C
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 22:36:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DBB126E6F2;
-	Thu, 28 Aug 2025 22:33:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B317127FB18;
+	Thu, 28 Aug 2025 22:35:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eO3qzwe9"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="VybZreou"
+Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2139.outbound.protection.outlook.com [40.107.100.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8913024467A;
-	Thu, 28 Aug 2025 22:33:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83CB1271445;
+	Thu, 28 Aug 2025 22:35:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.139
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756420403; cv=fail; b=ABdj1oQH6+6sICZ9+c7YnqG5d4RNQZoOYQ4StNQL94nWmzRBWyBgDNGPaTOK97afw2/VLoWyH3CGrdoNhErvf4WDuxKyFd55ubffc5GCsYokirBpEgFWU2JBqRKLq7GTp0jOpuw+JfzThQn5NOVzZDbjY7EiXze+JNR++l7fZHc=
+	t=1756420545; cv=fail; b=U3tjzC/4VW+fFuwmNKXjj1ntubK99L2uQecNFrqiWg/KmiNT7kFwMcx7iaXqoPAyfntqRaakNxtb7OuTUAKBKMWoYDW6vA/0hrQKE97G1lQSJQoBqGkkrAsc3LFHP4aOHnt3d4YDXygWS1YAASD2nVGb9VALIlDhB7lI036qw/A=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756420403; c=relaxed/simple;
-	bh=0LOzYBnHpeSwLLCHEUpvd2mWvkUCJ/OKhIG5G5VnK14=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=JZLt7UiFHbQIRimWCGrwx22PXYUjkh3FccHbijYu83x5lM1pZOC0t4o9x6L/8a3fJ0oUo6gWjbrIAgWPiltM72hRIi9UG/wj4AJzmRZ7WA9aZdQIjrI7E+riDljxsjV61+l91G95AfBj+L4/JLYQpSXaqCS3gN8zaMOQ+iVR9P0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eO3qzwe9; arc=fail smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756420401; x=1787956401;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=0LOzYBnHpeSwLLCHEUpvd2mWvkUCJ/OKhIG5G5VnK14=;
-  b=eO3qzwe9KbnZSeu3gmHz7suhqsfD0S7k+N1Ed5bs9pjby74FtiPtq7AU
-   Rv8dnQhaRBZI3O0a2ajED8aY9wvwDqeIl1fXDu7Gmq0KAR/fMh5awW6aF
-   rHxGhoSmm7evEeAPw3UqXKrSAbZ+XE4Km0SO+E6chvXG+J3ma8KpNl0Jk
-   HoSnMw0iazUMj8fPIj98shbnXDRLsgsiZ6vTE9W30yhPfXnLL/coH4Lyk
-   D7T0MAqw9jIuaftNAWtZyTRDiGCQywAfQ+Dbno6NcpEkLy0bRLNDG0Urs
-   EvoryDyQzNOKzuiJj98p2lZLdRU4sVAJppHI2seyr0fSOE0SskkkfAeZa
-   g==;
-X-CSE-ConnectionGUID: Zg29Xec6T6y7Xnpnv5G9lw==
-X-CSE-MsgGUID: qItt1NXxQ9WK50RSsvSWrQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11536"; a="58806770"
-X-IronPort-AV: E=Sophos;i="6.18,221,1751266800"; 
-   d="scan'208";a="58806770"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2025 15:33:21 -0700
-X-CSE-ConnectionGUID: FXYGWzr8S3+P0oKs+f5nUQ==
-X-CSE-MsgGUID: sWJRy+fBSfSMy3L1/eykJA==
-X-ExtLoop1: 1
-Received: from fmsmsx902.amr.corp.intel.com ([10.18.126.91])
-  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2025 15:33:21 -0700
-Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
- fmsmsx902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Thu, 28 Aug 2025 15:33:20 -0700
-Received: from fmsedg903.ED.cps.intel.com (10.1.192.145) by
- FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17 via Frontend Transport; Thu, 28 Aug 2025 15:33:20 -0700
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (40.107.223.84)
- by edgegateway.intel.com (192.55.55.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Thu, 28 Aug 2025 15:33:20 -0700
+	s=arc-20240116; t=1756420545; c=relaxed/simple;
+	bh=6Db03154QkdAmw2l104U9zUt9IxO2wFGJi7bulAfjsA=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=pYRV1isKafdkrS107cTW5ugTDcfd8R0kd4abuRKcQxN7ojTv1aUQ5SYwuP+qao3Yg+UbYqtXdQMnk9N5oMr1CT8fGS5nyoM6Wc7/zd8t81ovtHIVk3iyQ9xsPYQBlj1z3SIUFmJ/S98HIIfuxv6UDvsmvbXW8V0gXrAt7DRCYIs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=VybZreou; arc=fail smtp.client-ip=40.107.100.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=KUhG7JE8FL5OEoMVzsKeHmfQO6WpGO5XKrS7K/oh0oOeYMy7Kaw4H1BoKK7U6PUaiR1VoYQ6mgmk8jw6VqcqiOIrvhUQ3wbcq/tjRtyhu06ix7A/4CDkI+irUm7jFbk8sGSiNvzc81YdSYW6VJWL/HqtX8wUO/IZ01LxVnK4KIgFzSOQVnwlnL5i9QlvWUZYUMWBXMV0c80VCduQ+oHUAw9RQ4qc3mddA7REw7kU8yaXZhqyr4DTijM8la8Fr0WRwBi0v2R1j1ZWHjr3iYOt5D8gabhkJcIOHdUN+o3EDlVHk1wdEa+8cq/8gOOSL4yd4Z09OPz1UQ60bO1uuENQjw==
+ b=qGaeBIeDIZ77xEIs2PwYLk2yNSGVevUXNn8QyZ4cO3ZdTA8cict7mPHvXc4vhHiLVCH1HWiszAJ5NgdvNYEsYDl/HeG6mAFaYyNd+HxOQZgKhCAoHSA3FediVIKbdsi4+cTE/+pZrZjdRDX8gPaDTkmTvxVWJLpMwzspPYisGmL/61suIpI9WYmwwEnfVZ09j09+giTzJnmZOK+xcuNbwNx/QGDCSOKtS0EQWRfSz0rqreuKgT2Fg1he4GrdpSQ1rPRP+C5rxx76KXkrbvPkNgBfPdMMKRfX3ypAJqP7QaoalwZxOWS0jOs2k2fbVOv5K9CPhkFGsvkpI4ocYqkQUA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=tFY+W8ZNrX6+n7X/E2FcDdKb+qRdTrpHunuwHyeoFyg=;
- b=Lkn9sFJZ+wMnP0E2crzuobLHkoZ20pMNZyXzIBwagINQezheVl9wSXVNGR30RNCBqdhAHcv20bzgu7SHsL/f1e9aGQ4dL7ZdINiMOY5ltv/UbFUzj2DweJRIEfIxx996ATOUElzgKpAu+te+elmuYP5LciB2a/5hkY+wnecjRDWy0plfo9bPCkHKY8D5g5w6IOh7LSRpq1OZYK+EIhY40f9Gffu9Idy5M4nB2IMb89keoA4MlqPZgNNWksGzrdIK3OkyXhx7/lmnB2Q2yZ7tMFURFo+z06m3BCtC90fQU5b0L76xpcFfzhWyjHWyd3awp37AARefMFXTANuxusG9Kg==
+ bh=zzdjbjGRcdQ8wf1stLvYxHbH2uAdDn91wiquywga2Ow=;
+ b=neSfoAObUhdqRxtSyFpDF8WGF9ruF+uzUTNnlBnRI9Bx9W+yK7u59W/caX81lEMBeG44bfp7bKEmj2ORA7zzOkwLJ07KdtR7Z7fmVlxR4MWqkvd2hZeA3lnYzZujXlVeQDV1NKC44gE0f1RdsESe2r7zllMlR7Yxd3VvFtFEM6fgikSsi9qvKJvFb4BaMNPT5Ss6INb0tOTMDGaCKXolfnXDuxjlbS38pIWrDq2J4FfJSfNXlwNk0K+YN+491VZKbOzEsOHctcYewGoiOEkSg/yKH6pwNDhl1SpMmUPtxGtTQW41Vh+4o/AJ+jIXMRSxkrHgPUzI3QYarTrCCXIeWA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
+ smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
+ header.from=os.amperecomputing.com; dkim=pass
+ header.d=os.amperecomputing.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=os.amperecomputing.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zzdjbjGRcdQ8wf1stLvYxHbH2uAdDn91wiquywga2Ow=;
+ b=VybZreoulxm42h0ZTdSuuEIL8WSWtaBmU1Zl9tmAVhzKcDcTDlnz8gLzwN5ASjmN+5576VAX2i1Xyu4DUwFH+XQWvWGGRGMrhamlGcopQaUns+Atc7PZY0VrwDdn+XRJUWRF56GF4foU1RI1J7/b29HtImMHxq+XiZjW59vkUPA=
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS0PR11MB7997.namprd11.prod.outlook.com (2603:10b6:8:125::14)
- by SA2PR11MB5065.namprd11.prod.outlook.com (2603:10b6:806:115::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.15; Thu, 28 Aug
- 2025 22:33:12 +0000
-Received: from DS0PR11MB7997.namprd11.prod.outlook.com
- ([fe80::9105:2b7c:b256:7a6c]) by DS0PR11MB7997.namprd11.prod.outlook.com
- ([fe80::9105:2b7c:b256:7a6c%6]) with mapi id 15.20.9073.016; Thu, 28 Aug 2025
- 22:33:12 +0000
-Message-ID: <51537b9e-46a8-4dd1-93fb-bb14ea15e6a2@intel.com>
-Date: Thu, 28 Aug 2025 15:33:10 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] hwmon: (coretemp) Replace x86_model checks with VFM
- ones
-Content-Language: en-US
-To: Dave Hansen <dave.hansen@intel.com>, Guenter Roeck <linux@roeck-us.net>
-CC: Dave Hansen <dave.hansen@linux.intel.com>, <linux-hwmon@vger.kernel.org>,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Ricardo Neri
-	<ricardo.neri-calderon@linux.intel.com>, Zhang Rui <rui.zhang@intel.com>,
-	<x86@kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20250828201729.1145420-1-sohil.mehta@intel.com>
- <9f1fbf32-fd37-420c-82bc-a43e6d5ef57a@roeck-us.net>
- <c53dedd1-5c58-4325-8da8-552f109b67c5@intel.com>
- <fa0f4052-22cd-47cc-95ea-ffe1c3a5a52a@intel.com>
-From: Sohil Mehta <sohil.mehta@intel.com>
-In-Reply-To: <fa0f4052-22cd-47cc-95ea-ffe1c3a5a52a@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SJ0PR13CA0078.namprd13.prod.outlook.com
- (2603:10b6:a03:2c4::23) To DS0PR11MB7997.namprd11.prod.outlook.com
- (2603:10b6:8:125::14)
+ header.d=none;dmarc=none action=none header.from=os.amperecomputing.com;
+Received: from MW4PR01MB6228.prod.exchangelabs.com (2603:10b6:303:76::7) by
+ LV3PR01MB8534.prod.exchangelabs.com (2603:10b6:408:197::13) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9073.13; Thu, 28 Aug 2025 22:35:37 +0000
+Received: from MW4PR01MB6228.prod.exchangelabs.com
+ ([fe80::13ba:df5b:8558:8bba]) by MW4PR01MB6228.prod.exchangelabs.com
+ ([fe80::13ba:df5b:8558:8bba%6]) with mapi id 15.20.9073.016; Thu, 28 Aug 2025
+ 22:35:36 +0000
+From: Ilkka Koskinen <ilkka@os.amperecomputing.com>
+To: Shuai Xue <xueshuai@linux.alibaba.com>,
+	Jing Zhang <renyu.zj@linux.alibaba.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Will Deacon <will@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-perf-users@vger.kernel.org,
+	Ilkka Koskinen <ilkka@os.amperecomputing.com>
+Subject: [PATCH] perf/dwc_pcie: Support counting multiple lane events in parallel
+Date: Thu, 28 Aug 2025 15:35:19 -0700
+Message-ID: <20250828223519.2812844-1-ilkka@os.amperecomputing.com>
+X-Mailer: git-send-email 2.50.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: CYXPR03CA0025.namprd03.prod.outlook.com
+ (2603:10b6:930:d2::29) To MW4PR01MB6228.prod.exchangelabs.com
+ (2603:10b6:303:76::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -117,121 +82,398 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR11MB7997:EE_|SA2PR11MB5065:EE_
-X-MS-Office365-Filtering-Correlation-Id: e9b85632-4c79-4c37-a009-08dde682df57
+X-MS-TrafficTypeDiagnostic: MW4PR01MB6228:EE_|LV3PR01MB8534:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1dbe8257-31e0-44af-67fd-08dde68334d6
+X-MS-Exchange-AtpMessageProperties: SA
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?TjAyTm9vMFh4VGtpQ1dXd0RHRmoxN0FkdHNJMHdqZkxJTnJ0blNvQnpCTmQ0?=
- =?utf-8?B?WERpNHVrZThyNFNoT3lsb0dJQjVxNldQRW1TaXBMWE0xT3NWSnFyMnJ5aXBu?=
- =?utf-8?B?Zmg4Ty9RTTBrcks1TjFWNFQxUWtVdmREci9zbm9LSVNNRjBtK1NVdDdkM2Js?=
- =?utf-8?B?c21kVkZJbEZiOUFHdjh2cE1ua0VoeEJDdG1NT3lRQnVIMEtPVnFUZjBYNm54?=
- =?utf-8?B?T0JycCtOSlJQam9GaXBiRVBrSlhUMWlRdnVKZzNOWU1qZjZicEdOMzVUQlJW?=
- =?utf-8?B?RlFWY2pHai9pSkJTUDc4TzBqbFhIYkhsMEkwLzRJYjBvSjlDckpuNGFaSTNT?=
- =?utf-8?B?WVVhV1BDQ2tpbExMbmRmTlNKbnlUM3dDNGV0Y1QwZ0xTRTZ3c2FSTWdGRzdp?=
- =?utf-8?B?QWNHeVVxQ1BucVpQNmZaZ1dqUUJ0a0dGekFKR3Q4SDRsL1ZHUTBwU1NRQnFY?=
- =?utf-8?B?RXN3SmtOckRMR0hIazhaclJiLzhBSUEvOXlia01QaXlEMjEycTkyL2Q1U1NN?=
- =?utf-8?B?TCt1aisrNlRzWUVpYUlHOS9ZUGxnbzMvdk8xWmp0TTJUNUFSSHZXQXF2R2ZG?=
- =?utf-8?B?WkY5Y3ZGSVJCNVhMUEM5TlVaWnZIL1ZmZzdqN1ExVm10d2FpMGdUbjNCT21I?=
- =?utf-8?B?RHQwVG9TTkh1ZUlJSDVGL3NFU0dOYkl5VzNBZndYckFpdndoOGs3cEJEd3g2?=
- =?utf-8?B?WlNRd0J6azlWc1ozUjJsSW5yL1h0cHk4cHdEUDhYdXUwalM5SWk4dDdQanBO?=
- =?utf-8?B?eXZXN1RYR3ZXUXliOCtwMGREcTdtNFZNd2JSZ3UyM3Y5NzNCWE53WksrbjV3?=
- =?utf-8?B?Z2JGUVo0RGpQeld2bUFnb210b2wzTFNBUWhjS3Q2SXBYbTY1bXZJQ2tnN1Zx?=
- =?utf-8?B?U3ZKdWRVN0lZNDJYUkFOSndTVkdPVVhHQ2NMTGFKTU9wQnc1L2xRSHY4NnVo?=
- =?utf-8?B?MGtqV3NUMXJwNDRBdXJkRTF3OGtRZ3hheTFIUnRtRjkzZTFsU0RwMVR5VUZ1?=
- =?utf-8?B?UmYwRjRScGRyamVuUzBMbm5zci9IbTl1aEhWK1hweXYrWXVMK2xUSVFaNlJF?=
- =?utf-8?B?WlgvYk9PL0JPNTFyNE1vYXNlS3E1cUlLSkJJUC94K1BXcE1jaEhSWGZPV3FZ?=
- =?utf-8?B?Zjk2aXVxelVaclRJVnFMZFVSeFJYdEZxSzZOVHh5K2RZNXNDMkptN0Q1eVpz?=
- =?utf-8?B?SDZ3WlVCdmNDN3k3Nzh0K082Vi9PWlZ1V1dIdmNHUDJmcFdPYTFxN28zU2Qz?=
- =?utf-8?B?NnRNR1ZxQnB5dDR1eVNrb3N1TGRTUzMwaHBsQU05OWdORXJ0VHpvOTdtUFVL?=
- =?utf-8?B?K3ZLMGdHL1k2TFAxQkFIV3U1UENGWG1TTy9XNHBISi9MVnN1U2hyZFJHeDRO?=
- =?utf-8?B?S3NMYUFLWFZESGNPSitONDFidGtLZFBTMGZXTXIwaGNDM1lMbjJWaWtZbEZv?=
- =?utf-8?B?a2QyUVNvR09yMTdkS1JhdEtGTk11NWpnUkxjazVFTlJrYXM1UFBXRzdxUXNU?=
- =?utf-8?B?Y0hyMGtMempwTjBOWjhibi82d1VyRFk2enM4OVRBUTdJWXhCQVdGN2d3amZB?=
- =?utf-8?B?L2pLbWZUSytlZXBVekZRelR0Vk5KSHdwNnVtRUR1bmhTTTBkdWFPdW1ZUjMz?=
- =?utf-8?B?T0FuREtWa2Z4Z0IrOHlqSFBLZEJGT0ZpTHgvQjRKZldkQWFtckpLcmsxcGts?=
- =?utf-8?B?M05LdEdkQ1Fua21lTnRvanFjeW5CS3Byck12VjFLOWRoT2lCQzBtcFJyOXEw?=
- =?utf-8?B?RUcrQm45ZVBZMjdwRUtSell2RHRtUU54WkFaNnNZbzJwaVAvRERFc2pveW5L?=
- =?utf-8?B?clZYTnloS1BzQm5UT0l4TklYTWFXcTVTNFZhaFFDWXlWQ2RiaG9QbnJmQUky?=
- =?utf-8?B?WUQxWlZvM3lPY0FZRWNlR3dwZWJWM3VQKzNnUW1LK1hhR0RsRE9nUUlzWWtq?=
- =?utf-8?Q?uHn4wIN3JUY=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR11MB7997.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|376014|52116014|366016|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?gewV+Hnqwy4KZDt2+XQ/aP8KG5w3h+UCJVPGBRpAA4UYeF7hFvlReep+bvJY?=
+ =?us-ascii?Q?EzIpa0REJbea1pQyGxqQQP5ZvZyoCa7FGw8Zl+u7/jwkxCfhH8uBhvaVQlRo?=
+ =?us-ascii?Q?x+uXnxb4prBErxXUU04pIEqk46nZ8jPJhmNE5As8phI4u6rP+7tsXm/R3at4?=
+ =?us-ascii?Q?mCuweaD7yDMxdpp46/aRjKgy0vlaFa9aO2vrILP5Ev53UfaCdyZ7jvHFNJXn?=
+ =?us-ascii?Q?ewb65hBkSk7MV1d/8iOTIoy+a2uDXJ6X9N3ptKdTnprxUdYAbh4cVyXxbe92?=
+ =?us-ascii?Q?CgLGzUCs+08GSV/5PgjcKav3eMch+4meMjnOaOsSDVa+iH6+GqulcfIWqFmS?=
+ =?us-ascii?Q?Xnk7ESVmMeIZJ9mCuWsmh0lg5ssS1zakPyFqxUW//rvwPB/qsu0LpeF7mhZI?=
+ =?us-ascii?Q?19pQCjR3XHpf34NawjBuW8GV+NDIpLrrzhC244N2UxZSdwOTu3rVdTLhhGOS?=
+ =?us-ascii?Q?562u87nW8bCuemUSLmhrPaMlD3pe5Pqa2eb/Effs3dJcv98RX2YCrXBOYoo4?=
+ =?us-ascii?Q?q11/Bgdxr2brTkDKHUL8py+brY+oHrlwUTHPdlnXJlckDai+ajXS+dR04lug?=
+ =?us-ascii?Q?NGLm/a28h/aM/swEmKMys4Va72kAJuDeYAUbLyya1QJMRXajs0gFIqEh1Au7?=
+ =?us-ascii?Q?qK6viq6T5c0ZQOoBM8V9qQhuSbaY3xgDOvrhGfH0I+lR3Nb5PDAay0B9xc0w?=
+ =?us-ascii?Q?eoRk8m0OO4SDyL+qnvs/A9N0fmvzBhFaGmvsLcx0CGdkGjzcM86c9lMZlJ4V?=
+ =?us-ascii?Q?d7RFcU3EiCGcqWSb7Ovjh0ac4B/OWe8D9mWxLJLORausbPbC+THYkrFlt8Ko?=
+ =?us-ascii?Q?eFOvXQppFjR6ObPyYVgKhF2R4x+EsoaH95JE94F5/3dHkB8UljR9raU21gtl?=
+ =?us-ascii?Q?4AucBSIms1onhYyQ4aIDOCMp1OMZflboZdkzilPfrBIB8TPCSKUwZI3eIVG7?=
+ =?us-ascii?Q?Rp9ohqMNq0oc+NwFFciD2UexN32xn6BeOkWYok+S5Ym4vxe59jmWswxKoSTv?=
+ =?us-ascii?Q?SxW1ctr8tOhCHgDR0LSatDZJrPQCnRBHXYVPdMuK9ZawZbbAvHGk0ld4YDxT?=
+ =?us-ascii?Q?NRLFo31a/BasMx+3LOWgj40oZZVaB5AKBtd+S/zNP1Y0CO5E7gK1lhLgv1Om?=
+ =?us-ascii?Q?wxFzI0OG9mT36QgXNPaGq0ZmkyJPyous/jpeExlxbPmzSnL/hPl+btUYKl8f?=
+ =?us-ascii?Q?rJr/TosNyQSA/1jsG7AJWU4LSnFESiBYt7ZlosfZnIXn8jMZi1BQUN9SMSDb?=
+ =?us-ascii?Q?y+Yfuw+FTL2M/ggHSH6MrcWSkuW0JRSfl559QdJ6bT2CmB2Zh32km8RIOYu+?=
+ =?us-ascii?Q?sV9f7pATJRDaWLYueK/EOvMPUsedavqdY1i/eIyVBsjmM+EWXd2UzTcidBH1?=
+ =?us-ascii?Q?LlNX+JlHKeChDL7cYbcTGK/zAt5ZFKRHHZkYqh+ne0kQQ6VUW1tmNX6ZiMHr?=
+ =?us-ascii?Q?dYWYtJd09Bs5XWW2Ujpswu+/+lF6nXnPaxb3+M/55yhpYF9ixl5jVg=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW4PR01MB6228.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(52116014)(366016)(38350700014);DIR:OUT;SFP:1102;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?bE0rWVhzZXVwOEhHUFNiOE12VzNEQjZDUEdQVStEbkJhRVR2QVdBdUtlUndk?=
- =?utf-8?B?YmVTbmNaSWlpM0ErMGFoME14UUtRNjJNVW5GMGN6OXNWRVViRnlKV2EwUU1R?=
- =?utf-8?B?b29SNjlKRWpnMURzakI1UThzVm9EeENzWE0vcENHUUpzZnRmVFl2bTFWajBq?=
- =?utf-8?B?MEtTRVBIRHluNGw2K0FHb3VlUm1GcWVvWjBrNXVrNFU1aUt2YXFZRWg5RFEw?=
- =?utf-8?B?QzZkQ2p3bWFjSHNJMXhObGpuZ3FCWGJsWm5jYVhjRlNKRzR6Y0xFVVN6enMr?=
- =?utf-8?B?N1B2dzZZOXJtV2ZGNllMVE9hV0ErK0xRMThJWkdWdm5DK3BKN2ZYK3RHU3Bu?=
- =?utf-8?B?NG40MEVmYURZWVVJL2pDb2g1cndFajlwYnNWb3BWeXNJSU0yZ1dOKzNpTzdT?=
- =?utf-8?B?T0lTTG9uVnFPZUgzQTdBckhSNG5kY2ZOcDNZbmNJTW5MSFBtZERQcnk1YzVs?=
- =?utf-8?B?Yk11cHp0Y1BCYWNHK2JuY0s5ZFlHK2JWMmpNYUxuZWJmVTFtUUJTYkVCTzBI?=
- =?utf-8?B?YlpXbk5Qcnp5Z1lhZlp5SWR3QmZ3MENBY0hEbXNLM0VaOWFaUkFRc202QnJy?=
- =?utf-8?B?RjNneldYUXduTmVJSko4WUdYQmlQZ2NJYVAwdE5RTEp5UjFvMTQ2dWo3SnVB?=
- =?utf-8?B?YUNiME5lT1RkQWRkM0tHbWx3d1poQ1VXamlXdjFYMTd1cnVGZkVkS2RUNTda?=
- =?utf-8?B?cE9SL0VZZlM3eklsWGRweVd4bkZHb1A5R3hOQW14eEU5VEhZN0NqdUxMckJQ?=
- =?utf-8?B?OUl2aURnU0FQRGs5UEJzOW5yWm1xclRNZFFTQ1pxVnRRVVhWOGFIbnNKVm1p?=
- =?utf-8?B?cjg2Ly9PcDduRkF6bmtYQm9tbjdaU210S3RtSTJIdWk4NlROL216OXMyR2lq?=
- =?utf-8?B?bXEzTitNTzN3aG1iblcrd1FGSkZRU0U3Uy9zQ3UvRnVDQkJzVC9CYnVYY1Iy?=
- =?utf-8?B?WjhERmR4RjkxVVFYZG50WU9oTHBHUUorTHVhTlNYWlJMVFd1QU96bzVkaUVZ?=
- =?utf-8?B?NlB2YVhkN0N0NmRnZVVlYU53c3F4UmJYL0N4SjFlS2ZzTHQrbXhydnI4L3Rl?=
- =?utf-8?B?ZkpOa0d1UjhhL0Q1WWxOVUlFNG1nNFllcDZpeGh6L3dka2hBbzdNK1B5Ty9H?=
- =?utf-8?B?aTlKN2ltN0o5aGNPMHczcTVkZVBvcTM4cFhla294SzkwZEw5Z2JSUXgrci9F?=
- =?utf-8?B?U3daa1c5NmhvNGw0NldHVTFpSUxoSjVOblIwbVlaOC91ZlVmdDdGMk4xWDdY?=
- =?utf-8?B?VXFKT2w0QS9peks3VHJPU0Y3cituTFpIQVlwK0JvMW54MjNKZWMwVkVJSGk3?=
- =?utf-8?B?d2JuaHVyUTZZZ3ZZVDl1djZIa3c2ZFZ5ZzlJUERlbXlaSnZsV1NZKzVpcmdH?=
- =?utf-8?B?U0tzRXRLVmY4WkpNSVBGZk9GSU5nYXc0WXg3bDRjc1dpbGhEK2t4ZzZXbmlq?=
- =?utf-8?B?VkQ0T1M3YUpCWk9KY0dUaFlrMUZ3WEdVYVVMcXJ2d0Fnb2g3Ym5BbjRVSU9K?=
- =?utf-8?B?QVcvNy9yb1ZuNklPS0hhVDJKYVJXdXE5WFRMSnN2SlExZzh2Tm0zVGFsYXg1?=
- =?utf-8?B?SjZzZTNuSmlCeUJqWVBZZk5SczJRMis3ZkxKYUJSRkREemo4V25oU2FwSlM4?=
- =?utf-8?B?eWtpcjFEUXM3R0g4RjZxTlVoc2FJNldPdDJQSkdHbytaQlNDNVRPS29jNEM4?=
- =?utf-8?B?OXV1WGp1MUUvSmpqYkdrZmFlYmF6VkJqYTFXMzh4WGdsVXV1MlNTSGxWWnVD?=
- =?utf-8?B?L2hpRElTOGVaclRYaVRKWDJIODlTY2xieTAwZEp1dWVYbkZtMlRRYTU5M1Ju?=
- =?utf-8?B?NjkyMTJHdXRTaGp1aGdpNnMvTnpvVlk3eHRPejFDd1Q0L2xvNHJsaGpJYjQx?=
- =?utf-8?B?UW1LMFpqeGNoUkllbkxsaG52cnJ0ckhrNU41SHVZenhENjFmSW5qZllMM0h4?=
- =?utf-8?B?Njg0MG55OE1uYldCY2xPV3F1ZzhrSExnRmU0a01WL2lhZ3N2M2EwNldYcEpr?=
- =?utf-8?B?Z29HZWdHSTU2eStUUWhSRUVnaXAvbUZTYi93eit5MTZlS21vN25tNGhTNThK?=
- =?utf-8?B?SXpHK2lRUFhMVEJwY3dyQzBQc0w4U3JYaDlZYW83SkJJRkhJUWpGODA0blo5?=
- =?utf-8?Q?GRcp/82xy5qjjpCJTrZpyYake?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: e9b85632-4c79-4c37-a009-08dde682df57
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7997.namprd11.prod.outlook.com
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?WS4BR34azxCM+guGJ+bpOn5DQPwHHD4AjNY2der/m2CP+Oz43MtdNGjs02of?=
+ =?us-ascii?Q?CM0wELNGX/9TTkMTdkzKvgFUTnzDKKnmH7+nYp7q7qt8XHfz1dj0zz0TbZoY?=
+ =?us-ascii?Q?FOXUdflxOQf8p9L8XVrzf2VHc3NKdo/ICMcuhDd4aKl74hzI7T6V6m7zUnwT?=
+ =?us-ascii?Q?okpd/iITJOb8xnj5K9C5XMrponApNXa7UR2amwi8Ah1aKeb6mSkr50H0yB/A?=
+ =?us-ascii?Q?TF+RIAY/LLmBHdpuCRtYXrBW/HSIMKL9Y1RGfZZA2u5BjubyrTkMDn3wC4dH?=
+ =?us-ascii?Q?LBKpIlZ1X6qpkj/eA/60kHpLqIPHYTz0lA9QSHehwhZZcTuEe9ACibQvyoCS?=
+ =?us-ascii?Q?UxBbTQYSZM48kUDU4fJsPHYYLOUM0I9EF00wGKeyCT3iAt7Sbd2r2YmvIchB?=
+ =?us-ascii?Q?nsTZ5cooRsnbdFBlN8JbDPw0dXUNQ7OBk2zQa/yF91CY9MUEL00JmuERQUa1?=
+ =?us-ascii?Q?hFBsrmfwwbcn+6KS+cWzmGVEZuq+GkKj648vAuVW2fVrdCK8K5fDA9IFyoE3?=
+ =?us-ascii?Q?yncUzg7aKCgdH6o3VxrNKS3TyP7w43fJ6JC8mD5RWU2mOCzurbJYGoxDrdNp?=
+ =?us-ascii?Q?IzndfAnIPa/NnB3qHvXakzpjZuZdq02EMN4SbI3n1pGhviB0Oy9lGp11LWCL?=
+ =?us-ascii?Q?2mR4OuUseKgbtmkP8wn6kjx3D7JHGdI6mPT52gdmRaYqmvUfvy44HbrwFBdP?=
+ =?us-ascii?Q?kC0DI1eLuztwklO1dNOPsdentzgydmJNUEuA4s4l+C2x9OoaH17cd9mLfgiQ?=
+ =?us-ascii?Q?N4ZdkUsInkT83HEB/loWes5A+WX8DadwxYLvRHP9/5oC9lClnzDGsSLs4KPk?=
+ =?us-ascii?Q?bNtn6sQJVB+Lo70/HfmJen1PbmVtwdiSRaw6NHrP04pwndws51GmuTGn1wU6?=
+ =?us-ascii?Q?p7eYbhwVj4VQvkzX9mc3hfOWt9UL684Y5QPwdc22Bhgz9cUEwQ+XK3hzMbr6?=
+ =?us-ascii?Q?mE8v+RemcLYgXoQ1/shjUgXbeZtwmVHMeeeUIS4q6AY2cu6K32vbmkK4qA42?=
+ =?us-ascii?Q?BaUT1ujHI3LCu4PGqsU9ICy3e51J8jS2Aqgk64TUVOuG3YocgcKUkxGvCbKx?=
+ =?us-ascii?Q?KGFiRm+pBXRMMfAKWOpoRcWxp94/a8yzJWHB7xQ42h1T4JM3z5JTZ9uNU0BK?=
+ =?us-ascii?Q?NL3FC5i7rMFBZXKJbHqZSTlXLcFL7MXj5mwvzgSg/ty3aO8aVzsXK7PfFQP8?=
+ =?us-ascii?Q?SxO36uCeiBCTyjkvTUDZuVzRRITf242Q4TweRRT2z6fV5epfxpT1SvkecHGC?=
+ =?us-ascii?Q?Azn9SS3XKTYHv53Ym4H/epsKgoL4ILa0iF9SQEuADFQuwqsWzO+JigWbGFJg?=
+ =?us-ascii?Q?i+iVNSpkssOWao+74AWtXnzUx5cq5SbPzUejTOKqWOzRoX2XSnVZ/fnrqbY7?=
+ =?us-ascii?Q?kXs6p8xzgvyejy976QOfITDZoI7fsdritTyjegh0FoyP/QBhtlR8O8Pndxe/?=
+ =?us-ascii?Q?fKGDuV9sTyt+MS8betUfPvwqyeTc2+qNPm8DVwS2EL7h8j2cK0y+MYH4tKnx?=
+ =?us-ascii?Q?KA8naiAHiyJApf5Zb+dY7MkIQD78lu0edMSQMeC1WNKUaW1+0JsR8LweeIhs?=
+ =?us-ascii?Q?zHNO/j7MLdnCMOIYghMMEsHJqJboL+eQPqec31+B53Ues1HMqBqcsssZRAhn?=
+ =?us-ascii?Q?ED7Gze3d+J6SBaPFys0/0Xo=3D?=
+X-OriginatorOrg: os.amperecomputing.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1dbe8257-31e0-44af-67fd-08dde68334d6
+X-MS-Exchange-CrossTenant-AuthSource: MW4PR01MB6228.prod.exchangelabs.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Aug 2025 22:33:12.4819
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Aug 2025 22:35:35.9844
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: vlZ+kH0otw46/nygO8dNFcqdYdVp2E1Zg7Elan3nd3Sihw3TgxquTmYzKRn+sIwWeQ3px0lVH1EC0hj7bMOuNA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA2PR11MB5065
-X-OriginatorOrg: intel.com
+X-MS-Exchange-CrossTenant-UserPrincipalName: c3mItIk88HyH49HHDKU5zi+mVV5KAtkTKZHECxfUAdh5f0tZ2Vhgzx8jsT5Bhz1xMHwGvJ4YYnk/YyfM08JwTTuh+ElcM8X7Mm7qKrpVuVgHvkwqL06e2QWbwtdzRftG
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR01MB8534
 
-On 8/28/2025 2:51 PM, Dave Hansen wrote:
-> Let's just wait until Guenter sends it upstream. Once it hits Linus's
-> tree, you can ask for it to be in stable if we decide it's a good idea.
-> 
+While Designware PCIe PMU allows to count only one time based event
+at a time, it allows to count all the lane events simultaneously.
+After the patch one is able to count a group of lane events:
 
-Sure, sounds good.
+  $  perf stat -e '{dwc_rootport/tx_memory_write,lane=1/,dwc_rootport/rx_memory_read,lane=0/}' dd if=/dev/nvme0n1 of=/dev/null bs=1M count=1
 
-> I asked if it was necessary because I'm not positive it's a good idea.
-> 
+Earlier the events wouldn't have been counted successfully.
 
-The model numbers in play are around 14, 15, 23. In some cases, the
-model number is used to determine if a sysfs attribute should be
-created. So, for lower model numbers, the TTARGET attr probably won't be
-created.
+Signed-off-by: Ilkka Koskinen <ilkka@os.amperecomputing.com>
+---
+ .../admin-guide/perf/dwc_pcie_pmu.rst         |   4 +-
+ drivers/perf/dwc_pcie_pmu.c                   | 161 ++++++++++++++----
+ 2 files changed, 132 insertions(+), 33 deletions(-)
 
-	if (c->x86_model > 0xe && c->x86_model != 0x1c)
-		if (get_ttarget(tdata, &pdev->dev) >= 0)
-			tdata->attr_size++;
+diff --git a/Documentation/admin-guide/perf/dwc_pcie_pmu.rst b/Documentation/admin-guide/perf/dwc_pcie_pmu.rst
+index cb376f335f40..167f9281fbf5 100644
+--- a/Documentation/admin-guide/perf/dwc_pcie_pmu.rst
++++ b/Documentation/admin-guide/perf/dwc_pcie_pmu.rst
+@@ -16,8 +16,8 @@ provides the following two features:
+ 
+ - one 64-bit counter for Time Based Analysis (RX/TX data throughput and
+   time spent in each low-power LTSSM state) and
+-- one 32-bit counter for Event Counting (error and non-error events for
+-  a specified lane)
++- one 32-bit counter per event for Event Counting (error and non-error
++  events for a specified lane)
+ 
+ Note: There is no interrupt for counter overflow.
+ 
+diff --git a/drivers/perf/dwc_pcie_pmu.c b/drivers/perf/dwc_pcie_pmu.c
+index 146ff57813fb..d77f767cde89 100644
+--- a/drivers/perf/dwc_pcie_pmu.c
++++ b/drivers/perf/dwc_pcie_pmu.c
+@@ -39,6 +39,10 @@
+ #define DWC_PCIE_EVENT_CLEAR			GENMASK(1, 0)
+ #define DWC_PCIE_EVENT_PER_CLEAR		0x1
+ 
++/* Event Selection Field has two subfields */
++#define DWC_PCIE_CNT_EVENT_SEL_GROUP		GENMASK(11, 8)
++#define DWC_PCIE_CNT_EVENT_SEL_EVID		GENMASK(7, 0)
++
+ #define DWC_PCIE_EVENT_CNT_DATA			0xC
+ 
+ #define DWC_PCIE_TIME_BASED_ANAL_CTL		0x10
+@@ -73,6 +77,10 @@ enum dwc_pcie_event_type {
+ 	DWC_PCIE_EVENT_TYPE_MAX,
+ };
+ 
++#define DWC_PCIE_LANE_GROUP_6 6
++#define DWC_PCIE_LANE_GROUP_7 7
++#define DWC_PCIE_LANE_MAX_EVENTS_PER_GROUP 256
++
+ #define DWC_PCIE_LANE_EVENT_MAX_PERIOD		GENMASK_ULL(31, 0)
+ #define DWC_PCIE_MAX_PERIOD			GENMASK_ULL(63, 0)
+ 
+@@ -82,8 +90,11 @@ struct dwc_pcie_pmu {
+ 	u16			ras_des_offset;
+ 	u32			nr_lanes;
+ 
++	/* Groups #6 and #7 */
++	DECLARE_BITMAP(lane_events, 2 * DWC_PCIE_LANE_MAX_EVENTS_PER_GROUP);
++	struct perf_event	*time_based_event;
++
+ 	struct hlist_node	cpuhp_node;
+-	struct perf_event	*event[DWC_PCIE_EVENT_TYPE_MAX];
+ 	int			on_cpu;
+ };
+ 
+@@ -246,19 +257,26 @@ static const struct attribute_group *dwc_pcie_attr_groups[] = {
+ };
+ 
+ static void dwc_pcie_pmu_lane_event_enable(struct dwc_pcie_pmu *pcie_pmu,
++					   struct perf_event *event,
+ 					   bool enable)
+ {
+ 	struct pci_dev *pdev = pcie_pmu->pdev;
+ 	u16 ras_des_offset = pcie_pmu->ras_des_offset;
++	int event_id = DWC_PCIE_EVENT_ID(event);
++	int lane = DWC_PCIE_EVENT_LANE(event);
++	u32 ctrl;
++
++	ctrl = FIELD_PREP(DWC_PCIE_CNT_EVENT_SEL, event_id) |
++		FIELD_PREP(DWC_PCIE_CNT_LANE_SEL, lane) |
++		FIELD_PREP(DWC_PCIE_EVENT_CLEAR, DWC_PCIE_EVENT_PER_CLEAR);
+ 
+ 	if (enable)
+-		pci_clear_and_set_config_dword(pdev,
+-					ras_des_offset + DWC_PCIE_EVENT_CNT_CTL,
+-					DWC_PCIE_CNT_ENABLE, DWC_PCIE_PER_EVENT_ON);
++		ctrl |= FIELD_PREP(DWC_PCIE_CNT_ENABLE, DWC_PCIE_PER_EVENT_ON);
+ 	else
+-		pci_clear_and_set_config_dword(pdev,
+-					ras_des_offset + DWC_PCIE_EVENT_CNT_CTL,
+-					DWC_PCIE_CNT_ENABLE, DWC_PCIE_PER_EVENT_OFF);
++		ctrl |= FIELD_PREP(DWC_PCIE_CNT_ENABLE, DWC_PCIE_PER_EVENT_OFF);
++
++	pci_write_config_dword(pdev, ras_des_offset + DWC_PCIE_EVENT_CNT_CTL,
++			       ctrl);
+ }
+ 
+ static void dwc_pcie_pmu_time_based_event_enable(struct dwc_pcie_pmu *pcie_pmu,
+@@ -276,11 +294,22 @@ static u64 dwc_pcie_pmu_read_lane_event_counter(struct perf_event *event)
+ {
+ 	struct dwc_pcie_pmu *pcie_pmu = to_dwc_pcie_pmu(event->pmu);
+ 	struct pci_dev *pdev = pcie_pmu->pdev;
++	int event_id = DWC_PCIE_EVENT_ID(event);
++	int lane = DWC_PCIE_EVENT_LANE(event);
+ 	u16 ras_des_offset = pcie_pmu->ras_des_offset;
+-	u32 val;
++	u32 val, ctrl;
+ 
++	ctrl = FIELD_PREP(DWC_PCIE_CNT_EVENT_SEL, event_id) |
++		FIELD_PREP(DWC_PCIE_CNT_LANE_SEL, lane) |
++		FIELD_PREP(DWC_PCIE_CNT_ENABLE, DWC_PCIE_PER_EVENT_ON);
++	pci_write_config_dword(pdev, ras_des_offset + DWC_PCIE_EVENT_CNT_CTL,
++			       ctrl);
+ 	pci_read_config_dword(pdev, ras_des_offset + DWC_PCIE_EVENT_CNT_DATA, &val);
+ 
++	ctrl |= FIELD_PREP(DWC_PCIE_EVENT_CLEAR, DWC_PCIE_EVENT_PER_CLEAR);
++	pci_write_config_dword(pdev, ras_des_offset + DWC_PCIE_EVENT_CNT_CTL,
++			       ctrl);
++
+ 	return val;
+ }
+ 
+@@ -329,26 +358,77 @@ static void dwc_pcie_pmu_event_update(struct perf_event *event)
+ {
+ 	struct hw_perf_event *hwc = &event->hw;
+ 	enum dwc_pcie_event_type type = DWC_PCIE_EVENT_TYPE(event);
+-	u64 delta, prev, now = 0;
++	u64 delta, prev, now;
++
++	if (type == DWC_PCIE_LANE_EVENT) {
++		now = dwc_pcie_pmu_read_lane_event_counter(event) &
++			DWC_PCIE_LANE_EVENT_MAX_PERIOD;
++		local64_add(now, &event->count);
++		return;
++	}
+ 
+ 	do {
+ 		prev = local64_read(&hwc->prev_count);
+-
+-		if (type == DWC_PCIE_LANE_EVENT)
+-			now = dwc_pcie_pmu_read_lane_event_counter(event);
+-		else if (type == DWC_PCIE_TIME_BASE_EVENT)
+-			now = dwc_pcie_pmu_read_time_based_counter(event);
++		now = dwc_pcie_pmu_read_time_based_counter(event);
+ 
+ 	} while (local64_cmpxchg(&hwc->prev_count, prev, now) != prev);
+ 
+ 	delta = (now - prev) & DWC_PCIE_MAX_PERIOD;
+-	/* 32-bit counter for Lane Event Counting */
+-	if (type == DWC_PCIE_LANE_EVENT)
+-		delta &= DWC_PCIE_LANE_EVENT_MAX_PERIOD;
+-
+ 	local64_add(delta, &event->count);
+ }
+ 
++static int dwc_pcie_pmu_validate_add_lane_event(struct perf_event *event,
++						unsigned long val_lane_events[])
++{
++	int event_id, event_nr, group;
++
++	event_id = DWC_PCIE_EVENT_ID(event);
++	event_nr = FIELD_GET(DWC_PCIE_CNT_EVENT_SEL_EVID, event_id);
++	group = FIELD_GET(DWC_PCIE_CNT_EVENT_SEL_GROUP, event_id);
++
++	if (group != DWC_PCIE_LANE_GROUP_6 && group != DWC_PCIE_LANE_GROUP_7)
++		return -EINVAL;
++
++	group -= DWC_PCIE_LANE_GROUP_6;
++
++	if (test_and_set_bit(group * DWC_PCIE_LANE_MAX_EVENTS_PER_GROUP + event_nr,
++			     val_lane_events))
++		return -EINVAL;
++
++	return 0;
++}
++
++static int dwc_pcie_pmu_validate_group(struct perf_event *event)
++{
++	struct perf_event *sibling, *leader = event->group_leader;
++	DECLARE_BITMAP(val_lane_events, 2 * DWC_PCIE_LANE_MAX_EVENTS_PER_GROUP);
++	bool time_event;
++	int type;
++
++	type = DWC_PCIE_EVENT_TYPE(leader);
++	if (type == DWC_PCIE_TIME_BASE_EVENT)
++		time_event = true;
++	else
++		if (dwc_pcie_pmu_validate_add_lane_event(leader, val_lane_events))
++			return -ENOSPC;
++
++	for_each_sibling_event(sibling, leader) {
++		type = DWC_PCIE_EVENT_TYPE(sibling);
++		if (type == DWC_PCIE_TIME_BASE_EVENT) {
++			if (time_event)
++				return -ENOSPC;
++
++			time_event = true;
++			continue;
++		}
++
++		if (dwc_pcie_pmu_validate_add_lane_event(sibling, val_lane_events))
++			return -ENOSPC;
++	}
++
++	return 0;
++}
++
+ static int dwc_pcie_pmu_event_init(struct perf_event *event)
+ {
+ 	struct dwc_pcie_pmu *pcie_pmu = to_dwc_pcie_pmu(event->pmu);
+@@ -367,10 +447,6 @@ static int dwc_pcie_pmu_event_init(struct perf_event *event)
+ 	if (event->cpu < 0 || event->attach_state & PERF_ATTACH_TASK)
+ 		return -EINVAL;
+ 
+-	if (event->group_leader != event &&
+-	    !is_software_event(event->group_leader))
+-		return -EINVAL;
+-
+ 	for_each_sibling_event(sibling, event->group_leader) {
+ 		if (sibling->pmu != event->pmu && !is_software_event(sibling))
+ 			return -EINVAL;
+@@ -385,6 +461,9 @@ static int dwc_pcie_pmu_event_init(struct perf_event *event)
+ 			return -EINVAL;
+ 	}
+ 
++	if (dwc_pcie_pmu_validate_group(event))
++		return -ENOSPC;
++
+ 	event->cpu = pcie_pmu->on_cpu;
+ 
+ 	return 0;
+@@ -400,7 +479,7 @@ static void dwc_pcie_pmu_event_start(struct perf_event *event, int flags)
+ 	local64_set(&hwc->prev_count, 0);
+ 
+ 	if (type == DWC_PCIE_LANE_EVENT)
+-		dwc_pcie_pmu_lane_event_enable(pcie_pmu, true);
++		dwc_pcie_pmu_lane_event_enable(pcie_pmu, event, true);
+ 	else if (type == DWC_PCIE_TIME_BASE_EVENT)
+ 		dwc_pcie_pmu_time_based_event_enable(pcie_pmu, true);
+ }
+@@ -414,12 +493,13 @@ static void dwc_pcie_pmu_event_stop(struct perf_event *event, int flags)
+ 	if (event->hw.state & PERF_HES_STOPPED)
+ 		return;
+ 
++	dwc_pcie_pmu_event_update(event);
++
+ 	if (type == DWC_PCIE_LANE_EVENT)
+-		dwc_pcie_pmu_lane_event_enable(pcie_pmu, false);
++		dwc_pcie_pmu_lane_event_enable(pcie_pmu, event, false);
+ 	else if (type == DWC_PCIE_TIME_BASE_EVENT)
+ 		dwc_pcie_pmu_time_based_event_enable(pcie_pmu, false);
+ 
+-	dwc_pcie_pmu_event_update(event);
+ 	hwc->state |= PERF_HES_STOPPED | PERF_HES_UPTODATE;
+ }
+ 
+@@ -434,14 +514,17 @@ static int dwc_pcie_pmu_event_add(struct perf_event *event, int flags)
+ 	u16 ras_des_offset = pcie_pmu->ras_des_offset;
+ 	u32 ctrl;
+ 
+-	/* one counter for each type and it is in use */
+-	if (pcie_pmu->event[type])
+-		return -ENOSPC;
+-
+-	pcie_pmu->event[type] = event;
+ 	hwc->state = PERF_HES_STOPPED | PERF_HES_UPTODATE;
+ 
+ 	if (type == DWC_PCIE_LANE_EVENT) {
++		int event_nr = FIELD_GET(DWC_PCIE_CNT_EVENT_SEL_EVID, event_id);
++		int group = FIELD_GET(DWC_PCIE_CNT_EVENT_SEL_GROUP, event_id) -
++			DWC_PCIE_LANE_GROUP_6;
++
++		if (test_and_set_bit(group * DWC_PCIE_LANE_MAX_EVENTS_PER_GROUP + event_nr,
++				     pcie_pmu->lane_events))
++			return -ENOSPC;
++
+ 		/* EVENT_COUNTER_DATA_REG needs clear manually */
+ 		ctrl = FIELD_PREP(DWC_PCIE_CNT_EVENT_SEL, event_id) |
+ 			FIELD_PREP(DWC_PCIE_CNT_LANE_SEL, lane) |
+@@ -450,6 +533,11 @@ static int dwc_pcie_pmu_event_add(struct perf_event *event, int flags)
+ 		pci_write_config_dword(pdev, ras_des_offset + DWC_PCIE_EVENT_CNT_CTL,
+ 				       ctrl);
+ 	} else if (type == DWC_PCIE_TIME_BASE_EVENT) {
++		if (pcie_pmu->time_based_event)
++			return -ENOSPC;
++
++		pcie_pmu->time_based_event = event;
++
+ 		/*
+ 		 * TIME_BASED_ANAL_DATA_REG is a 64 bit register, we can safely
+ 		 * use it with any manually controlled duration. And it is
+@@ -478,7 +566,18 @@ static void dwc_pcie_pmu_event_del(struct perf_event *event, int flags)
+ 
+ 	dwc_pcie_pmu_event_stop(event, flags | PERF_EF_UPDATE);
+ 	perf_event_update_userpage(event);
+-	pcie_pmu->event[type] = NULL;
++
++	if (type == DWC_PCIE_TIME_BASE_EVENT) {
++		pcie_pmu->time_based_event = NULL;
++	} else {
++		int event_id = DWC_PCIE_EVENT_ID(event);
++		int event_nr = FIELD_GET(DWC_PCIE_CNT_EVENT_SEL_EVID, event_id);
++		int group    = FIELD_GET(DWC_PCIE_CNT_EVENT_SEL_GROUP, event_id) -
++			DWC_PCIE_LANE_GROUP_6;
++
++		clear_bit(group * DWC_PCIE_LANE_MAX_EVENTS_PER_GROUP + event_nr,
++			  pcie_pmu->lane_events);
++	}
+ }
+ 
+ static void dwc_pcie_pmu_remove_cpuhp_instance(void *hotplug_node)
+-- 
+2.50.0
 
-	/* Create sysfs interfaces */
-	err = create_core_attrs(tdata, pdata->hwmon_dev);
-
-In some other cases, the temperature adjustment would vary slightly.
-But, nothing scary for now.
-
-> So, let's actually look at what it would mean in practice to have it hit
-> stable@ or not. Just spent 10 minutes looking at it.
-
-Yeah, I am fine with deciding based on the severity of the practical impact.
 
