@@ -1,66 +1,62 @@
-Return-Path: <linux-kernel+bounces-789315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41570B393D7
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 08:33:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0ACEFB393E6
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 08:36:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92E4E6858F1
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 06:33:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 452311BA571B
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 06:36:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 216AD27B330;
-	Thu, 28 Aug 2025 06:33:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE627230BD9;
+	Thu, 28 Aug 2025 06:36:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="HmNrRI5l"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BxcGHTrB"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D0BD17B425
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 06:33:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B02113DDAA;
+	Thu, 28 Aug 2025 06:36:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756362808; cv=none; b=fyNphYC56QIkNBv5OUFni8s3Sxpte5Z544+PvITEELNMihncyHuZECEMw5fN9uOpBgw2BqTGjlQXLRNBkMIOeWEOg0RbTR2cZFDSNZzwaGiF6sV/yF/CQnPVwMLGWA3puLxccFmTdszT5+RFRPo1hw0+7kRhZlzipCu8f2kSQgc=
+	t=1756362965; cv=none; b=j0Ia2ESQrC+a83/AGzO81F5+blP214jf2PKsnWpKj3NzIlGQHfd1nnhPLV1+kqJquimvIMfA0VXctLCE3wYxElrqSvNL5GB7wDQ1pyveeq48GSxi359Yzokb3fFYkfkETmJTSyb3SLhb9CxsdhYuPxKkkma13KqvY4nZDXujyfQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756362808; c=relaxed/simple;
-	bh=sISZX8wz3TMfziuAEWGXOmlQAQ/457q129K1fJcMoW0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=hN+UysGJ/FqVTbaqpZRxsANxbcw3v9ifd4x1XteoPyyfgd/gKpa/CSgnWFns0saYBUxD3P2sZJqJ5kffOKS4cat6O9a+Gopkn24tOkubmz4inhDiukU+b8LkwrVtyY6dYfKfZbdcTYSVHkxWHTYHbm1aS5tK8c/bKQ+N9cdglEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=HmNrRI5l; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57S6XNHk1920078;
-	Thu, 28 Aug 2025 01:33:23 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1756362803;
-	bh=9Su7u7EeRwSFuqcRObBezSgsvYNagytQRtGxv6MxOFU=;
-	h=Date:Subject:To:References:From:In-Reply-To;
-	b=HmNrRI5l7V7/EYptDVrl+GbFAsWQxaKmBQeFsHjgjI3Kpb5a7YVK6i14CNl5X4GG3
-	 gRZs76geL/LzGbvkH9HlJKEDqNe1r+S3izEFyg7dl1x5CDaFSutbp5XC4eGHAQz0cg
-	 l6yzcsD5Dmj0zdUVIYbzPjqT8vI6dRccDTsazNsU=
-Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
-	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57S6XN0Y3745440
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Thu, 28 Aug 2025 01:33:23 -0500
-Received: from DLEE204.ent.ti.com (157.170.170.84) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 28
- Aug 2025 01:33:23 -0500
-Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE204.ent.ti.com
- (157.170.170.84) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.2.2562.20; Thu, 28 Aug
- 2025 01:33:22 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Thu, 28 Aug 2025 01:33:22 -0500
-Received: from [172.24.233.150] (a0507176-hp-z2-tower-g9-workstation-desktop-pc.dhcp.ti.com [172.24.233.150])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57S6XLt64078663;
-	Thu, 28 Aug 2025 01:33:22 -0500
-Message-ID: <0c2841f5-5e70-402a-b299-2d9fb96d5372@ti.com>
-Date: Thu, 28 Aug 2025 12:03:20 +0530
+	s=arc-20240116; t=1756362965; c=relaxed/simple;
+	bh=szTe0dTbwwG5MWJhylxFr9OxQ7bczUM8OGrRq2+Ivwc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JptB7O1n8kiX6APynnPKtsO8/kXIAoOkggfGtJYUGhS2UX+wAFj/OiONySLCBZ0oX2g+0Bsw29emvxFYTIEfWMUG/QbKIclCc/lH6bZtlGGlOFR44UcEVAsxWlCwi+VZpL+yliTQBUAhpikVZcIVFf3M6saEOAjcidDskCqfMrc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BxcGHTrB; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756362963; x=1787898963;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=szTe0dTbwwG5MWJhylxFr9OxQ7bczUM8OGrRq2+Ivwc=;
+  b=BxcGHTrBuO4J1SuGzDARzuCDpb3TB2bZZcg/FkQb8HkOZ9STTcIM24xJ
+   FqUwp3Lf8DPSjodj1NvPYb2E6a11dzwMTOquKVMVq3hYsHoy0v24b7Q8R
+   wtebTe8PchOHj7DjBT9UwMOIRPbl/g4oLCeweoVXiyEXj2h8l3lcXk1ZJ
+   dt1rXYaOGvCmN2MZqDvpeMf9jOq5mgEr776RyG1N3L3VhZoFIdaRq5/4W
+   nv5busI6n0mDoTgsiyYqZRTZHxak/f82ecyuWOpwFRXrPV4h5IAD3dh8u
+   iSXHxgxEBLTyPkHHEm8ZvRlMkaPM+opqdSq1dHHoGG9H80p6HHUBihUyk
+   Q==;
+X-CSE-ConnectionGUID: bV3mPBPkRoyi+I0+YINM7g==
+X-CSE-MsgGUID: MY4C0sKBR+2jiAr8f2usng==
+X-IronPort-AV: E=McAfee;i="6800,10657,11535"; a="69994260"
+X-IronPort-AV: E=Sophos;i="6.18,217,1751266800"; 
+   d="scan'208";a="69994260"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2025 23:36:01 -0700
+X-CSE-ConnectionGUID: FvopSwX+TDyhC9bLjSSbSQ==
+X-CSE-MsgGUID: 7QGIVFLxQmyrszb20JVXeg==
+X-ExtLoop1: 1
+Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2025 23:35:59 -0700
+Message-ID: <0b9492bc-b033-46c3-acf2-6fca3d19148b@linux.intel.com>
+Date: Thu, 28 Aug 2025 14:33:29 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,236 +64,102 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] clocksource: timer-ti-dm : Capture functionality for
- OMAP DM timer
-To: <daniel.lezcano@linaro.org>, <linux-kernel@vger.kernel.org>
-References: <20250812105346.203541-1-g-praveen@ti.com>
- <37e7589a-15c3-465e-8ba9-195dc205a2bd@ti.com>
+Subject: Re: [PATCH] iommu/intel: Fix __domain_mapping()'s usage of
+ switch_to_super_page()
+To: David Woodhouse <dwmw2@infradead.org>, Eugene Koira
+ <eugkoira@amazon.com>, iommu@lists.linux.dev, linux-kernel@vger.kernel.org
+Cc: joro@8bytes.org, will@kernel.org, robin.murphy@arm.com,
+ longpeng2@huawei.com, graf@amazon.de, nsaenz@amazon.com,
+ nh-open-source@amazon.com, stable@vger.kernel.org
+References: <20250826143816.38686-1-eugkoira@amazon.com>
+ <37c9ae89eb6cf879e5b984d53d590a69bcf1666a.camel@infradead.org>
 Content-Language: en-US
-From: Gokul Praveen <g-praveen@ti.com>
-In-Reply-To: <37e7589a-15c3-465e-8ba9-195dc205a2bd@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <37c9ae89eb6cf879e5b984d53d590a69bcf1666a.camel@infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Daniel,
-
-Is this patch good to be merged?
-
-Regards
-Gokul
-
-On 21/08/25 19:13, Neha Malcom Francis wrote:
-> Hi Gokul
+On 8/26/25 23:48, David Woodhouse wrote:
+> On Tue, 2025-08-26 at 14:38 +0000, Eugene Koira wrote:
+>> switch_to_super_page() assumes the memory range it's working on is aligned
+>> to the target large page level. Unfortunately, __domain_mapping() doesn't
+>> take this into account when using it, and will pass unaligned ranges
+>> ultimately freeing a PTE range larger than expected.
+>>
+>> Take for example a mapping with the following iov_pfn range [0x3fe400,
+>> 0x4c0600], which should be backed by the following mappings:
 > 
-> On 12/08/25 16:23, Gokul Praveen wrote:
->> Add PWM capture function in DM timer driver.
+> The range is [0x3fe400, 0x4c0600) ?
+> 
+>>     iov_pfn [0x3fe400, 0x3fffff] covered by 2MiB pages
+>>     iov_pfn [0x400000, 0x4bffff] covered by 1GiB pages
+>>     iov_pfn [0x4c0000, 0x4c05ff] covered by 2MiB pages
 >>
->> OMAP DM timer hardware supports capture feature.It can be used to
->> timestamp events (falling/rising edges) detected on input signal.
+>> Under this circumstance, __domain_mapping() will pass [0x400000, 0x4c05ff]
+>> to switch_to_super_page() at a 1 GiB granularity, which will in turn
+>> free PTEs all the way to iov_pfn 0x4fffff.
 >>
->> Signed-off-by: Gokul Praveen <g-praveen@ti.com>
+>> Mitigate this by rounding down the iov_pfn range passed to
+>> switch_to_super_page() in __domain_mapping()
+>> to the target large page level.
+>>
+>> Additionally add range alignment checks to switch_to_super_page.
+>>
+>> Fixes: 9906b9352a35 ("iommu/vt-d: Avoid duplicate removing in __domain_mapping()")
+>> Signed-off-by: Eugene Koira <eugkoira@amazon.com>
+>> Cc: stable@vger.kernel.org
 >> ---
->> v2<==> v1
->> ===========
->> * Optimized the code and fixed some comment spacing and newline issues
+>>   drivers/iommu/intel/iommu.c | 7 ++++++-
+>>   1 file changed, 6 insertions(+), 1 deletion(-)
 >>
->> Precondition : Before calling driver API,it is assumed that the
->>                 capture signal is active else both duty cycle
->>                 and period returned by driver will not be valid.
->> ---
->>   drivers/clocksource/timer-ti-dm.c          | 119 ++++++++++++++++++++-
->>   include/linux/platform_data/dmtimer-omap.h |   4 +
->>   2 files changed, 121 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/clocksource/timer-ti-dm.c b/drivers/clocksource/timer-ti-dm.c
->> index e9e32df6b566..793e7cdcb1b1 100644
->> --- a/drivers/clocksource/timer-ti-dm.c
->> +++ b/drivers/clocksource/timer-ti-dm.c
->> @@ -31,6 +31,7 @@
->>   #include <linux/platform_data/dmtimer-omap.h>
+>> diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
+>> index 9c3ab9d9f69a..dff2d895b8ab 100644
+>> --- a/drivers/iommu/intel/iommu.c
+>> +++ b/drivers/iommu/intel/iommu.c
+>> @@ -1575,6 +1575,10 @@ static void switch_to_super_page(struct dmar_domain *domain,
+>>   	unsigned long lvl_pages = lvl_to_nr_pages(level);
+>>   	struct dma_pte *pte = NULL;
 >>   
->>   #include <clocksource/timer-ti-dm.h>
->> +#include <linux/delay.h>
+>> +	if (WARN_ON(!IS_ALIGNED(start_pfn, lvl_pages) ||
+>> +		    !IS_ALIGNED(end_pfn + 1, lvl_pages)))
+>> +		return;
+>> +
+>>   	while (start_pfn <= end_pfn) {
+>>   		if (!pte)
+>>   			pte = pfn_to_dma_pte(domain, start_pfn, &level,
+>> @@ -1650,7 +1654,8 @@ __domain_mapping(struct dmar_domain *domain, unsigned long iov_pfn,
+>>   				unsigned long pages_to_remove;
 >>   
->>   /*
->>    * timer errata flags
->> @@ -836,6 +837,48 @@ static int omap_dm_timer_set_match(struct omap_dm_timer *cookie, int enable,
->>   	return 0;
->>   }
->>   
->> +static int omap_dm_timer_set_cap(struct omap_dm_timer *cookie,
->> +					int autoreload, bool config_period)
->> +{
->> +	struct dmtimer *timer;
->> +	struct device *dev;
->> +	int rc;
->> +	u32 l;
->> +
->> +	timer = to_dmtimer(cookie);
->> +	if (unlikely(!timer))
->> +		return -EINVAL;
->> +
->> +	dev = &timer->pdev->dev;
->> +	rc = pm_runtime_resume_and_get(dev);
->> +	if (rc)
->> +		return rc;
->> +	/*
->> +	 *  1. Select autoreload mode. TIMER_TCLR[1] AR bit.
->> +	 *  2. TIMER_TCLR[14]: Sets the functionality of the TIMER IO pin.
->> +	 *  3. TIMER_TCLR[13] : Capture mode select bit.
->> +	 *  3. TIMER_TCLR[9-8] : Select transition capture mode.
->> +	 */
->> +
->> +	l = dmtimer_read(timer, OMAP_TIMER_CTRL_REG);
->> +
->> +	if (autoreload)
->> +		l |= OMAP_TIMER_CTRL_AR;
->> +
->> +	l |= OMAP_TIMER_CTRL_CAPTMODE | OMAP_TIMER_CTRL_GPOCFG;
->> +
->> +	if (config_period == true)
->> +		l |= OMAP_TIMER_CTRL_TCM_LOWTOHIGH; /* Time Period config */
->> +	else
->> +		l |= OMAP_TIMER_CTRL_TCM_BOTHEDGES; /* Duty Cycle config */
->> +
->> +	dmtimer_write(timer, OMAP_TIMER_CTRL_REG, l);
->> +
->> +	pm_runtime_put_sync(dev);
->> +
->> +	return 0;
->> +}
->> +
->>   static int omap_dm_timer_set_pwm(struct omap_dm_timer *cookie, int def_on,
->>   				 int toggle, int trigger, int autoreload)
->>   {
->> @@ -1023,23 +1066,92 @@ static unsigned int omap_dm_timer_read_counter(struct omap_dm_timer *cookie)
->>   	return __omap_dm_timer_read_counter(timer);
->>   }
->>   
->> +static inline unsigned int __omap_dm_timer_cap(struct dmtimer *timer, int idx)
->> +{
->> +	return idx == 0 ? dmtimer_read(timer, OMAP_TIMER_CAPTURE_REG) :
->> +			  dmtimer_read(timer, OMAP_TIMER_CAPTURE2_REG);
->> +}
->> +
->>   static int omap_dm_timer_write_counter(struct omap_dm_timer *cookie, unsigned int value)
->>   {
->>   	struct dmtimer *timer;
->> +	struct device *dev;
->>   
->>   	timer = to_dmtimer(cookie);
->> -	if (unlikely(!timer || !atomic_read(&timer->enabled))) {
->> -		pr_err("%s: timer not available or enabled.\n", __func__);
->> +	if (unlikely(!timer)) {
->> +		pr_err("%s: timer not available.\n", __func__);
->>   		return -EINVAL;
->>   	}
->>   
->> +	dev = &timer->pdev->dev;
->> +
->> +	pm_runtime_resume_and_get(dev);
->>   	dmtimer_write(timer, OMAP_TIMER_COUNTER_REG, value);
->> +	pm_runtime_put_sync(dev);
->>   
->>   	/* Save the context */
->>   	timer->context.tcrr = value;
->>   	return 0;
->>   }
->>   
->> +/**
->> + * omap_dm_timer_cap_counter() - Calculate the high count or period count depending on the
->> + * configuration.
->> + * @cookie:Pointer to OMAP DM timer
->> + * @is_period:Whether to configure timer in period or duty cycle mode
->> + *
->> + * Return high count or period count if timer is enabled else appropriate error.
->> + */
->> +static unsigned int omap_dm_timer_cap_counter(struct omap_dm_timer *cookie,	bool is_period)
->> +{
->> +	struct dmtimer *timer;
->> +	unsigned int cap1 = 0;
->> +	unsigned int cap2 = 0;
->> +	u32 l, ret;
->> +
->> +	timer = to_dmtimer(cookie);
->> +	if (unlikely(!timer || !atomic_read(&timer->enabled))) {
->> +		pr_err("%s:timer is not available or enabled.%p\n", __func__, (void *)timer);
->> +		return -EINVAL;
->> +	}
->> +
->> +	/* Stop the timer */
->> +	omap_dm_timer_stop(cookie);
->> +
->> +	/* Clear the timer counter value to 0 */
->> +	ret = omap_dm_timer_write_counter(cookie, 0);
->> +	if (ret)
->> +		return ret;
->> +
->> +	/* Sets the timer capture configuration for period/duty cycle calculation */
->> +	ret = omap_dm_timer_set_cap(cookie, true, is_period);
->> +	if (ret) {
->> +		pr_err("%s: Failed to set timer capture configuration.\n", __func__);
->> +		return ret;
->> +	}
->> +	/* Start the timer */
->> +	omap_dm_timer_start(cookie);
->> +
->> +	/*
->> +	 * 1 sec delay is given so as to provide
->> +	 * enough time to capture low frequency signals.
->> +	 */
->> +	msleep(1000);
->> +
->> +	cap1 = __omap_dm_timer_cap(timer, 0);
->> +	cap2 = __omap_dm_timer_cap(timer, 1);
->> +
->> +	/*
->> +	 *  Clears the TCLR configuration.
->> +	 *  The start bit must be set to 1 as the timer is already in start mode.
->> +	 */
->> +	l = dmtimer_read(timer, OMAP_TIMER_CTRL_REG);
->> +	l &= ~(0xffff) | 0x1;
->> +	dmtimer_write(timer, OMAP_TIMER_CTRL_REG, l);
->> +
->> +	return (cap2-cap1);
->> +}
->> +
->>   static int __maybe_unused omap_dm_timer_runtime_suspend(struct device *dev)
->>   {
->>   	struct dmtimer *timer = dev_get_drvdata(dev);
->> @@ -1246,6 +1358,9 @@ static const struct omap_dm_timer_ops dmtimer_ops = {
->>   	.write_counter = omap_dm_timer_write_counter,
->>   	.read_status = omap_dm_timer_read_status,
->>   	.write_status = omap_dm_timer_write_status,
->> +	.set_cap = omap_dm_timer_set_cap,
->> +	.get_cap_status = omap_dm_timer_get_pwm_status,
->> +	.read_cap = omap_dm_timer_cap_counter,
->>   };
->>   
->>   static const struct dmtimer_platform_data omap3plus_pdata = {
->> diff --git a/include/linux/platform_data/dmtimer-omap.h b/include/linux/platform_data/dmtimer-omap.h
->> index 95d852aef130..726d89143842 100644
->> --- a/include/linux/platform_data/dmtimer-omap.h
->> +++ b/include/linux/platform_data/dmtimer-omap.h
->> @@ -36,9 +36,13 @@ struct omap_dm_timer_ops {
->>   	int	(*set_pwm)(struct omap_dm_timer *timer, int def_on,
->>   			   int toggle, int trigger, int autoreload);
->>   	int	(*get_pwm_status)(struct omap_dm_timer *timer);
->> +	int	(*set_cap)(struct omap_dm_timer *timer,
->> +			   int autoreload, bool config_period);
->> +	int	(*get_cap_status)(struct omap_dm_timer *timer);
->>   	int	(*set_prescaler)(struct omap_dm_timer *timer, int prescaler);
->>   
->>   	unsigned int (*read_counter)(struct omap_dm_timer *timer);
->> +	unsigned int (*read_cap)(struct omap_dm_timer *timer, bool is_period);
->>   	int	(*write_counter)(struct omap_dm_timer *timer,
->>   				 unsigned int value);
->>   	unsigned int (*read_status)(struct omap_dm_timer *timer);
+>>   				pteval |= DMA_PTE_LARGE_PAGE;
+>> -				pages_to_remove = min_t(unsigned long, nr_pages,
+>> +				pages_to_remove = min_t(unsigned long,
+>> +							round_down(nr_pages, lvl_pages),
+>>   							nr_pte_to_next_page(pte) * lvl_pages);
+>>   				end_pfn = iov_pfn + pages_to_remove - 1;
+>>   				switch_to_super_page(domain, iov_pfn, end_pfn, largepage_lvl);
 > 
-> LGTM
+> I'm mildly entertained by the fact that the *only* comment in this
+> block of code is a lie. Would you care to address that while you're
+> here? Maybe the comment could look something like...
 > 
-> Reviewed-by: Neha Malcom Francis <n-francis@ti.com>
+> 			/* If the new mapping is eligible for a large page, then
+> 			 * remove all smaller pages that the existing pte at this
+> 			 * level references.
+> 			 * XX: do we even need to bother calling switch_to_super_page()
+> 			 * if this PTE wasn't *present* before?
+> 			 */
 > 
+> I bet it would benefit from one or two other one-line comments to make
+> it clearer what's going on, too...
+> 
+> But in general, I think this looks sane even though this code makes my
+> brain hurt. Could do with a test case, in an ideal world. Maybe we can
+> work on that as part of the generic pagetable support which is coming?
 
+Agreed. The generic pagetable work will replace this code, so this will
+be removed. Therefore, we need a fix patch that can be backported before
+the generic pagetable for vt-d lands.
+
+Thanks,
+baolu
 
