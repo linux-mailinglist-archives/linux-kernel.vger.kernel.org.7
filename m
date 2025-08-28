@@ -1,538 +1,391 @@
-Return-Path: <linux-kernel+bounces-789560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FB5FB39760
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 10:44:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77783B39801
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 11:18:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 103254607E1
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 08:44:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2730B7ADCC9
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 09:16:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44B1F2E229E;
-	Thu, 28 Aug 2025 08:44:37 +0000 (UTC)
-Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFCD52F84F;
+	Thu, 28 Aug 2025 09:17:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="ZVeDCsU7"
+Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2055.outbound.protection.outlook.com [40.107.101.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B60B42E091C
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 08:44:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756370676; cv=none; b=H5X5BnUwgMMSec1fqS3vPsBZYQtRJ98AUM4uCi7h95lNgcaCbyD2QmJ0POrCBaSuu04GwKoPxEoSxEG2zup/s/cONJ35ofS0efzgEwfxio7bGOvSHf/FxoEmFP4iwdi7hU45L5ZeVj9CB+jfW2cv6auHA610GbM3Hx6wm70M5m4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756370676; c=relaxed/simple;
-	bh=tc5Jp/vbgM3UElv10x5lQdr8BkU0uq3COkrbKPH+DuA=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=MupyZZIbXhICmfnZXlWmUowgeOPUv1QrPcED6qA4/mUh531CWt5EwuUCOa8Eoayg0e1/TUQfP9LQjUpEGtghNmxkK3Lf+OTcHR953rt2ACc05xXkwAOCVQQ+ZPxbiOkacgbdH6u7hC4/PCLu/IPLGu5JLkvESzzH+a7iCk5W1tE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3f1ca34d50aso5189705ab.0
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 01:44:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756370673; x=1756975473;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=eEaRHR9x8AfgcIS5oggNn/wUR7qBXtDnUWv4Q6q3658=;
-        b=A/1HIrVUZmhPcrQVsNpLeU5Cl7XDo7LAJ4kvmeWMR/kgyoLJ2NxD1jMQpl3yox7F3e
-         gxOeWfPiZKtDCSDJt+s5RB3nBFaeVU/tp+L3gKd8hcNFu55U8DAGNDDvnbcWF8YQmPMW
-         IsNH2rzKWyKNPRAyDE8xNCv8TD7pyow3mVVG3wH6z3/dcOrfH/M1C40Yhf4RwsgJAoMN
-         C2+9k/0oCwzd4NWRtZzH15XQ0ZoBgJIsTk0CFFeroflpI8bXa7wn4Y04fZPG85vCZywg
-         670K787xzkrKMgrMxWoDf+ZHyNcJqDSfxMlwhoMbAseGthaLLkXKg78D/UYrvfbQwdfE
-         alWA==
-X-Forwarded-Encrypted: i=1; AJvYcCV43Wf2SID1XH8gX8BWLSU3X/c2uNmsWPko8te8MDAouKOlC6qrB01xN/8cxzq/OotUuAPH8MKHv4nug4k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwsEltYJX46yseoLS00CXa0jaTSb0lc32o5Li35M0iPrmJWwPAc
-	7WtvInaKwYq1cYzwh2GUcAYOSFwYdVsNcOYF5TR44Ydu+h7BcipQ7nIAukb+/ypZ+euBhxusx+v
-	F0dqpuCMG7ZJi4N11w0Jl/gk/BreSyPA8S/nOkgbqqmQ6wwKmik3zwuZ+sao=
-X-Google-Smtp-Source: AGHT+IFk/PBEHUuVoL3zr6oIlFjeQJcDOXoUuC8fgSakp1rygQsPwT7SYJLqY0eX/NIOhlp1NQureEoar3tl3pfIslfHe8Hs1Xho
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F06C426D4EB;
+	Thu, 28 Aug 2025 09:17:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.55
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756372669; cv=fail; b=u7JosGsWzt8NMMk+JzI0L12oMLN5pofge6BAUfloOBEsnUdrGEr0TFkpS/gwr3BFRz/ZL0UB4U60riU7xFQ8XpJbEsZECL9vyIDTZMlLtuS61pBlkQPLiJ2I6tZNf+jeem3RzvKfivI1CssEOgQiu97dFDb2sCc0XE2fVBIoL9k=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756372669; c=relaxed/simple;
+	bh=urtqQysZ02JmxXHaMNZYLoUPK5OsX/kpkCdn+GbEEMg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=bLJDtpdis8DZxFoucSBwE/QiThriJ2fr0c2k3jn4thCkNbMRBACbCHR4Q2TBdIfcTcnJW0I6HNAh+tcyKgvaYNas5f8iV/h2rrsruD9mZ59sSKe+CiRx58cX2zmkFbA7eJnGnqjcZNYzOMaSnh0Mlb22Cx3kUlVJBJpCSqdpXMw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=ZVeDCsU7; arc=fail smtp.client-ip=40.107.101.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Lc0nzR4q718+9FAmdaQa3RsU2xQN3NZ8Wg8f5f3S8xfTCoOQeM/kaHCubAPJTlvjQEnk3gXk1nqUXnFn1fqlEpxCjFErecCubJ5OHzgJIKs2pdQulTF/krHY+Jrxu1X6Cjv6k9FgO+dl/cXURY7C3CAQu8vE+DJrnbGFoEtvwM2Sf/Q++HgCgBr0R42RqDsuWz/ArgeNElNgNPPrEwestyFx7Dq9hwkRLVZp+Sot1p6/YxlAmMgJ06c6A2jKRWPLKtVLsYLi0rgX4O+FuGpt57fWfBwepFx3Rgco+NtqA4kQmrhDBt52sUD6OvQLt6rnbp4qQCbLcBH/tY/8NagjNw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=DLxVZ3sJvbVJ7+yBPnAEUieQGTrl5VIy0BJ5vQ1cSvY=;
+ b=YbQgVpWksfz+h68Cmi3XbJmimxJesGyYoyk4fR9Q/9mZuL7r9STJxEY5tKgafZc0rx/CesnplEnkz58wl3CL4a1m3PrJ4KfewiICrYiq/PrBj7qOjH53TvcKaVtioq0A39KEthl/PaAkczsRJ1JkdNJi7XC20ymZhdbAkaxr8cv5pVpm3WfuH3V29aXg6Gfcx0OQlkoKyvQ4p2oshShfVMDFeYenpGwiuky60zMZxV5AyclnowJeGfaKI9BUWCr2RvblqdG1U2wLx/f8bYV5qXlFf6ystRmnwk7xSuG6luMbQ6YOWz1yH9vBp+B8+WbJYQI4tKMux4XWAP98/kr37Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=DLxVZ3sJvbVJ7+yBPnAEUieQGTrl5VIy0BJ5vQ1cSvY=;
+ b=ZVeDCsU76VExz5vdNKf6B9LTLYYbxzQi4CewcnVXkNKWFpf9qSZX6oSImfNinLBOeHeNiZWf9A73hG0pl57W/sVWSdI8MCpSs2f6K5U9TQB9CpGQjIz9ATziRiiiisr1RDxg9QgRwy7Xz/OJwfQtMkWYZCkxTzmtfobVsleAf9Q=
+Received: from CH0PR08CA0008.namprd08.prod.outlook.com (2603:10b6:610:33::13)
+ by CY5PR12MB6298.namprd12.prod.outlook.com (2603:10b6:930:21::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.15; Thu, 28 Aug
+ 2025 09:17:35 +0000
+Received: from CH2PEPF000000A0.namprd02.prod.outlook.com
+ (2603:10b6:610:33:cafe::f6) by CH0PR08CA0008.outlook.office365.com
+ (2603:10b6:610:33::13) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9073.18 via Frontend Transport; Thu,
+ 28 Aug 2025 09:17:35 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ CH2PEPF000000A0.mail.protection.outlook.com (10.167.244.26) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.9052.8 via Frontend Transport; Thu, 28 Aug 2025 09:17:35 +0000
+Received: from Satlexmb09.amd.com (10.181.42.218) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 28 Aug
+ 2025 03:45:29 -0500
+Received: from 555e2b870847.amd.com (10.180.168.240) by satlexmb09.amd.com
+ (10.181.42.218) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.1748.10; Thu, 28 Aug
+ 2025 01:45:24 -0700
+From: Bin Du <Bin.Du@amd.com>
+To: <mchehab@kernel.org>, <hverkuil@xs4all.nl>,
+	<laurent.pinchart+renesas@ideasonboard.com>, <bryan.odonoghue@linaro.org>,
+	<sakari.ailus@linux.intel.com>, <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	<linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<sultan@kerneltoast.com>
+CC: <pratap.nirujogi@amd.com>, <benjamin.chan@amd.com>, <king.li@amd.com>,
+	<gjorgji.rosikopulos@amd.com>, <Phil.Jawich@amd.com>,
+	<Dominic.Antony@amd.com>, <mario.limonciello@amd.com>,
+	<richard.gong@amd.com>, <anson.tsao@amd.com>, <bin.du@amd.com>, Bin Du
+	<Bin.Du@amd.com>
+Subject: [PATCH v3 0/7] Add AMD ISP4 driver
+Date: Thu, 28 Aug 2025 16:45:00 +0800
+Message-ID: <20250828084507.94552-1-Bin.Du@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:170f:b0:3f1:aba6:6ecf with SMTP id
- e9e14a558f8ab-3f1aba670cbmr9504615ab.17.1756370672899; Thu, 28 Aug 2025
- 01:44:32 -0700 (PDT)
-Date: Thu, 28 Aug 2025 01:44:32 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68b016f0.a00a0220.1337b0.0004.GAE@google.com>
-Subject: [syzbot] [block?] INFO: task hung in queue_limits_commit_update_frozen
-From: syzbot <syzbot+f272bbfbf8498ddadea5@syzkaller.appspotmail.com>
-To: axboe@kernel.dk, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To satlexmb09.amd.com
+ (10.181.42.218)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PEPF000000A0:EE_|CY5PR12MB6298:EE_
+X-MS-Office365-Filtering-Correlation-Id: 95ebf81c-804e-46fa-3eef-08dde613ba04
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|82310400026|36860700013|1800799024|13003099007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?U6o4IHgUzy0r73XbF0EvFdCwL5k0qMLMK7EA+1+exSy6nv2xA+QJcK6W8Eom?=
+ =?us-ascii?Q?krtTIPZdW5WiqRuLCN5WqN6uaTm+lL8y+S2FIaf1p005kepu2l3BXlOjoIP9?=
+ =?us-ascii?Q?KgcpXYojehO88JA2b2LY75s5U+LEQDgzA9bsbMEATxehoizhfLFd+2dnqr31?=
+ =?us-ascii?Q?K+zwj9ZczjZrrnekZtGASk7lEhtlMbYA8Pwrs5eGGH8vBrofX6Sv4CrXUsgP?=
+ =?us-ascii?Q?Bbm06x4rA42DY65evJsrwdYMsi/tWeidBqaJVI5mFPdTSG3zCUI443E0jSqZ?=
+ =?us-ascii?Q?g8xyeMiEpr9ffVQND9IKGj251bVx9vCxla1Mkf3ndYLbW8YytiZjAGp3aU4J?=
+ =?us-ascii?Q?PhRGCivmMZLHrb3mUk1YB60fWmlhy1rD8MgaWs46gTLSo92KRO0yMp01ze2s?=
+ =?us-ascii?Q?2x/BwuR+fzuGpmk69hXw5CWh5CcunwUrmU29MEzhPrHXNkY2w2VqCtX5VfNQ?=
+ =?us-ascii?Q?TvJeR/YUZu93+bYh1ZlEucwkixYBXirXgQPyZTVJWwf34FNtwt2S0SyYhPOk?=
+ =?us-ascii?Q?AP9os9C++wX7VsRXAprSS7lNRwi8lU9QslZ6YaRJtWHztbtAhad0tNpZayvh?=
+ =?us-ascii?Q?Isql6/gVdVJOLYxHQhwFMLitPr5X93r7+dG0Zs2l2IeoDcSqE51LI5ffK4R9?=
+ =?us-ascii?Q?R3YiuxeCvm/E3zgcVMqe6L43lVeKOX/rEYc+yHqopxKi7rkKmH/RJOlTOs5D?=
+ =?us-ascii?Q?2Q98k/8ijBn6Xy3iFjIpowXU6+aGPDXwJef+cULoHlJsY9rjaLVwN/mhCKZi?=
+ =?us-ascii?Q?ljmJseKUskzdXoF7/2QuKnB4W7Q/zIQ0AZqPPV+rRmXfqgk35ISm9L1KkcBh?=
+ =?us-ascii?Q?v8U5z+JSbPjnOkg1ILatKRw1fHA1dWyFHISQUwFEUNLv6JhT5jwOqPAIIKJq?=
+ =?us-ascii?Q?zM42lJLcmFqCa8hjqCQIUEnZXVdmRQD8ILIqeRCQbVlkUDSBuEcvgVdgSyj6?=
+ =?us-ascii?Q?yHqgNUYU5oF6A9GoHlfb8FX43+cIs+e0NGGqjy5kvN2doDwfdHsMEpKcY7N5?=
+ =?us-ascii?Q?n0qJ8LKTFgJYfz8RfvsCeLASDsWD+EXlrMToeCafFnFCHYvE0Ws0Y227564k?=
+ =?us-ascii?Q?ovC80BFE7c1ef90RbSEAEEs11wPvbJLzZnLmMp8LqcL6QX79/MghQB6ZgB4L?=
+ =?us-ascii?Q?T9Db5I96fvhURPflVyGeMJPbJO2dOrmPSm5yYk8f8B4yodifT23+eLP1EE0G?=
+ =?us-ascii?Q?84Zhe5kpghqghgNu1lf9y3U9KTJe+Xb4hf9X90gXwlc/d6mD2Zd+9vBIyJqd?=
+ =?us-ascii?Q?9VN9aZNhi55i5SBPxc9rzkJfZ9kf3A0w//lKIHPGTdxPijvjbSmmXTZrtOPP?=
+ =?us-ascii?Q?EnppyNUQbAfWK3preuvJLQAGFduv1J5o7bJ0fAqpI/lJgk0BBcnMnafXF9As?=
+ =?us-ascii?Q?1V/oJCkeeOKWpeHxDIvWdNCXqrl0JoraTiRzdHoevZa6jMjzd8om7tb313Yj?=
+ =?us-ascii?Q?hscZYy5IeMjH6kh+CFdTVQVpxPEiJc60trsE1dppHcoucvMMjizMXw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(82310400026)(36860700013)(1800799024)(13003099007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Aug 2025 09:17:35.5551
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 95ebf81c-804e-46fa-3eef-08dde613ba04
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CH2PEPF000000A0.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6298
 
 Hello,
 
-syzbot found the following issue on:
+AMD ISP4 is the AMD image processing gen 4 which can be found in HP ZBook Ultra G1a 14 inch Mobile Workstation PC ( Ryzen AI Max 385)
+(https://ubuntu.com/certified/202411-36043)
+This patch series introduces the initial driver support for the AMD ISP4.
 
-HEAD commit:    bd2902e0bcac Merge branch 'locking-fixes-for-fbnic-driver'
-git tree:       net
-console output: https://syzkaller.appspot.com/x/log.txt?x=13bfdef0580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=292f3bc9f654adeb
-dashboard link: https://syzkaller.appspot.com/bug?extid=f272bbfbf8498ddadea5
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+Patch summary:
+- Powers up/off and initializes ISP HW
+- Configures and kicks off ISP FW
+- Interacts with APP using standard V4l2 interface by video node
+- Controls ISP HW and interacts with ISP FW to do image processing
+- Support enum/set output image format and resolution
+- Support queueing buffer from app and dequeueing ISP filled buffer to App
+- It supports libcamera ver0.2 SimplePipeline
+- It is verified on qv4l2, cheese and qcam
+- It is verified together with following patches
+	platform/x86: Add AMD ISP platform config (https://lore.kernel.org/all/20250514215623.522746-1-pratap.nirujogi@amd.com/)
+	pinctrl: amd: isp411: Add amdisp GPIO pinctrl (https://github.com/torvalds/linux/commit/e97435ab09f3ad7b6a588dd7c4e45a96699bbb4a)
+	drm/amd/amdgpu: Add GPIO resources required for amdisp (https://gitlab.freedesktop.org/agd5f/linux/-/commit/ad0f5966ed8297aa47b3184192b00b7379ae0758)
 
-Unfortunately, I don't have any reproducer for this issue yet.
+AMD ISP4 Key features:
+- Processes bayer raw data from the connected sensor and output them to different YUV formats
+- Downscale input image to different output image resolution
+- Pipeline to do image processing on the input image including demosaic, denoise, 3A, etc
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/866cb9f09108/disk-bd2902e0.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/05ea2ff5b4f0/vmlinux-bd2902e0.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/6b499ed83474/bzImage-bd2902e0.xz
+----------
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+f272bbfbf8498ddadea5@syzkaller.appspotmail.com
+Changes v2 -> v3:
 
-INFO: task syz.0.4146:17611 blocked for more than 143 seconds.
-      Not tainted syzkaller #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz.0.4146      state:D stack:26152 pid:17611 tgid:17609 ppid:14724  task_flags:0x480140 flags:0x00004004
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5357 [inline]
- __schedule+0x1798/0x4cc0 kernel/sched/core.c:6961
- __schedule_loop kernel/sched/core.c:7043 [inline]
- schedule+0x165/0x360 kernel/sched/core.c:7058
- blk_mq_freeze_queue_wait+0xf4/0x170 block/blk-mq.c:190
- blk_mq_freeze_queue include/linux/blk-mq.h:934 [inline]
- queue_limits_commit_update_frozen+0x5d/0x3e0 block/blk-settings.c:554
- nbd_set_size+0x47e/0x6a0 drivers/block/nbd.c:374
- nbd_genl_size_set+0x2eb/0x3c0 drivers/block/nbd.c:2058
- nbd_genl_reconfigure+0x409/0x1870 drivers/block/nbd.c:2361
- genl_family_rcv_msg_doit+0x215/0x300 net/netlink/genetlink.c:1115
- genl_family_rcv_msg net/netlink/genetlink.c:1195 [inline]
- genl_rcv_msg+0x60e/0x790 net/netlink/genetlink.c:1210
- netlink_rcv_skb+0x208/0x470 net/netlink/af_netlink.c:2552
- genl_rcv+0x28/0x40 net/netlink/genetlink.c:1219
- netlink_unicast_kernel net/netlink/af_netlink.c:1320 [inline]
- netlink_unicast+0x82c/0x9e0 net/netlink/af_netlink.c:1346
- netlink_sendmsg+0x805/0xb30 net/netlink/af_netlink.c:1896
- sock_sendmsg_nosec net/socket.c:714 [inline]
- __sock_sendmsg+0x21c/0x270 net/socket.c:729
- ____sys_sendmsg+0x505/0x830 net/socket.c:2614
- ___sys_sendmsg+0x21f/0x2a0 net/socket.c:2668
- __sys_sendmsg net/socket.c:2700 [inline]
- __do_sys_sendmsg net/socket.c:2705 [inline]
- __se_sys_sendmsg net/socket.c:2703 [inline]
- __x64_sys_sendmsg+0x19b/0x260 net/socket.c:2703
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fcc6338ebe9
-RSP: 002b:00007fcc6417e038 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 00007fcc635b5fa0 RCX: 00007fcc6338ebe9
-RDX: 0000000024002800 RSI: 0000200000000140 RDI: 0000000000000004
-RBP: 00007fcc63411e19 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007fcc635b6038 R14: 00007fcc635b5fa0 R15: 00007fffb3ba9178
- </TASK>
-INFO: task syz.4.4151:17620 blocked for more than 143 seconds.
-      Not tainted syzkaller #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz.4.4151      state:D stack:26056 pid:17620 tgid:17619 ppid:14195  task_flags:0x400140 flags:0x00004004
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5357 [inline]
- __schedule+0x1798/0x4cc0 kernel/sched/core.c:6961
- __schedule_loop kernel/sched/core.c:7043 [inline]
- schedule+0x165/0x360 kernel/sched/core.c:7058
- schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:7115
- __mutex_lock_common kernel/locking/mutex.c:676 [inline]
- __mutex_lock+0x7e6/0x1350 kernel/locking/mutex.c:760
- genl_lock net/netlink/genetlink.c:35 [inline]
- genl_op_lock net/netlink/genetlink.c:60 [inline]
- genl_rcv_msg+0x10d/0x790 net/netlink/genetlink.c:1209
- netlink_rcv_skb+0x208/0x470 net/netlink/af_netlink.c:2552
- genl_rcv+0x28/0x40 net/netlink/genetlink.c:1219
- netlink_unicast_kernel net/netlink/af_netlink.c:1320 [inline]
- netlink_unicast+0x82c/0x9e0 net/netlink/af_netlink.c:1346
- netlink_sendmsg+0x805/0xb30 net/netlink/af_netlink.c:1896
- sock_sendmsg_nosec net/socket.c:714 [inline]
- __sock_sendmsg+0x21c/0x270 net/socket.c:729
- __sys_sendto+0x3bd/0x520 net/socket.c:2228
- __do_sys_sendto net/socket.c:2235 [inline]
- __se_sys_sendto net/socket.c:2231 [inline]
- __x64_sys_sendto+0xde/0x100 net/socket.c:2231
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f23fbd90a7c
-RSP: 002b:00007f23fccd4ec0 EFLAGS: 00000293 ORIG_RAX: 000000000000002c
-RAX: ffffffffffffffda RBX: 00007f23fccd4fc0 RCX: 00007f23fbd90a7c
-RDX: 0000000000000028 RSI: 00007f23fccd5010 RDI: 0000000000000007
-RBP: 0000000000000000 R08: 00007f23fccd4f14 R09: 000000000000000c
-R10: 0000000000000000 R11: 0000000000000293 R12: 0000000000000007
-R13: 00007f23fccd4f68 R14: 00007f23fccd5010 R15: 0000000000000000
- </TASK>
-INFO: task syz.1.4155:17634 blocked for more than 144 seconds.
-      Not tainted syzkaller #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz.1.4155      state:D stack:28488 pid:17634 tgid:17633 ppid:14472  task_flags:0x400140 flags:0x00004004
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5357 [inline]
- __schedule+0x1798/0x4cc0 kernel/sched/core.c:6961
- __schedule_loop kernel/sched/core.c:7043 [inline]
- schedule+0x165/0x360 kernel/sched/core.c:7058
- schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:7115
- __mutex_lock_common kernel/locking/mutex.c:676 [inline]
- __mutex_lock+0x7e6/0x1350 kernel/locking/mutex.c:760
- genl_lock net/netlink/genetlink.c:35 [inline]
- genl_op_lock net/netlink/genetlink.c:60 [inline]
- genl_rcv_msg+0x10d/0x790 net/netlink/genetlink.c:1209
- netlink_rcv_skb+0x208/0x470 net/netlink/af_netlink.c:2552
- genl_rcv+0x28/0x40 net/netlink/genetlink.c:1219
- netlink_unicast_kernel net/netlink/af_netlink.c:1320 [inline]
- netlink_unicast+0x82c/0x9e0 net/netlink/af_netlink.c:1346
- netlink_sendmsg+0x805/0xb30 net/netlink/af_netlink.c:1896
- sock_sendmsg_nosec net/socket.c:714 [inline]
- __sock_sendmsg+0x21c/0x270 net/socket.c:729
- __sys_sendto+0x3bd/0x520 net/socket.c:2228
- __do_sys_sendto net/socket.c:2235 [inline]
- __se_sys_sendto net/socket.c:2231 [inline]
- __x64_sys_sendto+0xde/0x100 net/socket.c:2231
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f5a14d90a7c
-RSP: 002b:00007f5a15c6fec0 EFLAGS: 00000293 ORIG_RAX: 000000000000002c
-RAX: ffffffffffffffda RBX: 00007f5a15c6ffc0 RCX: 00007f5a14d90a7c
-RDX: 0000000000000020 RSI: 00007f5a15c70010 RDI: 0000000000000004
-RBP: 0000000000000000 R08: 00007f5a15c6ff14 R09: 000000000000000c
-R10: 0000000000000000 R11: 0000000000000293 R12: 0000000000000004
-R13: 00007f5a15c6ff68 R14: 00007f5a15c70010 R15: 0000000000000000
- </TASK>
-INFO: task syz.3.4158:17642 blocked for more than 144 seconds.
-      Not tainted syzkaller #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz.3.4158      state:D stack:26968 pid:17642 tgid:17641 ppid:15125  task_flags:0x400040 flags:0x00004004
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5357 [inline]
- __schedule+0x1798/0x4cc0 kernel/sched/core.c:6961
- __schedule_loop kernel/sched/core.c:7043 [inline]
- schedule+0x165/0x360 kernel/sched/core.c:7058
- schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:7115
- __mutex_lock_common kernel/locking/mutex.c:676 [inline]
- __mutex_lock+0x7e6/0x1350 kernel/locking/mutex.c:760
- genl_lock net/netlink/genetlink.c:35 [inline]
- genl_op_lock net/netlink/genetlink.c:60 [inline]
- genl_rcv_msg+0x10d/0x790 net/netlink/genetlink.c:1209
- netlink_rcv_skb+0x208/0x470 net/netlink/af_netlink.c:2552
- genl_rcv+0x28/0x40 net/netlink/genetlink.c:1219
- netlink_unicast_kernel net/netlink/af_netlink.c:1320 [inline]
- netlink_unicast+0x82c/0x9e0 net/netlink/af_netlink.c:1346
- netlink_sendmsg+0x805/0xb30 net/netlink/af_netlink.c:1896
- sock_sendmsg_nosec net/socket.c:714 [inline]
- __sock_sendmsg+0x21c/0x270 net/socket.c:729
- __sys_sendto+0x3bd/0x520 net/socket.c:2228
- __do_sys_sendto net/socket.c:2235 [inline]
- __se_sys_sendto net/socket.c:2231 [inline]
- __x64_sys_sendto+0xde/0x100 net/socket.c:2231
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f1752d90a7c
-RSP: 002b:00007f1753c0fec0 EFLAGS: 00000293 ORIG_RAX: 000000000000002c
-RAX: ffffffffffffffda RBX: 00007f1753c0ffc0 RCX: 00007f1752d90a7c
-RDX: 0000000000000020 RSI: 00007f1753c10010 RDI: 0000000000000004
-RBP: 0000000000000000 R08: 00007f1753c0ff14 R09: 000000000000000c
-R10: 0000000000000000 R11: 0000000000000293 R12: 0000000000000004
-R13: 00007f1753c0ff68 R14: 00007f1753c10010 R15: 0000000000000000
- </TASK>
-INFO: task syz.2.4168:17666 blocked for more than 144 seconds.
-      Not tainted syzkaller #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz.2.4168      state:D stack:27144 pid:17666 tgid:17665 ppid:13741  task_flags:0x400140 flags:0x00004004
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5357 [inline]
- __schedule+0x1798/0x4cc0 kernel/sched/core.c:6961
- __schedule_loop kernel/sched/core.c:7043 [inline]
- schedule+0x165/0x360 kernel/sched/core.c:7058
- schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:7115
- __mutex_lock_common kernel/locking/mutex.c:676 [inline]
- __mutex_lock+0x7e6/0x1350 kernel/locking/mutex.c:760
- genl_lock net/netlink/genetlink.c:35 [inline]
- genl_op_lock net/netlink/genetlink.c:60 [inline]
- genl_rcv_msg+0x10d/0x790 net/netlink/genetlink.c:1209
- netlink_rcv_skb+0x208/0x470 net/netlink/af_netlink.c:2552
- genl_rcv+0x28/0x40 net/netlink/genetlink.c:1219
- netlink_unicast_kernel net/netlink/af_netlink.c:1320 [inline]
- netlink_unicast+0x82c/0x9e0 net/netlink/af_netlink.c:1346
- netlink_sendmsg+0x805/0xb30 net/netlink/af_netlink.c:1896
- sock_sendmsg_nosec net/socket.c:714 [inline]
- __sock_sendmsg+0x21c/0x270 net/socket.c:729
- __sys_sendto+0x3bd/0x520 net/socket.c:2228
- __do_sys_sendto net/socket.c:2235 [inline]
- __se_sys_sendto net/socket.c:2231 [inline]
- __x64_sys_sendto+0xde/0x100 net/socket.c:2231
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fdb72390a7c
-RSP: 002b:00007fdb731d0ec0 EFLAGS: 00000293 ORIG_RAX: 000000000000002c
-RAX: ffffffffffffffda RBX: 00007fdb731d0fc0 RCX: 00007fdb72390a7c
-RDX: 0000000000000020 RSI: 00007fdb731d1010 RDI: 0000000000000007
-RBP: 0000000000000000 R08: 00007fdb731d0f14 R09: 000000000000000c
-R10: 0000000000000000 R11: 0000000000000293 R12: 0000000000000007
-R13: 00007fdb731d0f68 R14: 00007fdb731d1010 R15: 0000000000000000
- </TASK>
-INFO: task syz-executor:17670 blocked for more than 145 seconds.
-      Not tainted syzkaller #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz-executor    state:D stack:22760 pid:17670 tgid:17670 ppid:1      task_flags:0x400140 flags:0x00004004
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5357 [inline]
- __schedule+0x1798/0x4cc0 kernel/sched/core.c:6961
- __schedule_loop kernel/sched/core.c:7043 [inline]
- schedule+0x165/0x360 kernel/sched/core.c:7058
- schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:7115
- __mutex_lock_common kernel/locking/mutex.c:676 [inline]
- __mutex_lock+0x7e6/0x1350 kernel/locking/mutex.c:760
- genl_lock net/netlink/genetlink.c:35 [inline]
- genl_op_lock net/netlink/genetlink.c:60 [inline]
- genl_rcv_msg+0x10d/0x790 net/netlink/genetlink.c:1209
- netlink_rcv_skb+0x208/0x470 net/netlink/af_netlink.c:2552
- genl_rcv+0x28/0x40 net/netlink/genetlink.c:1219
- netlink_unicast_kernel net/netlink/af_netlink.c:1320 [inline]
- netlink_unicast+0x82c/0x9e0 net/netlink/af_netlink.c:1346
- netlink_sendmsg+0x805/0xb30 net/netlink/af_netlink.c:1896
- sock_sendmsg_nosec net/socket.c:714 [inline]
- __sock_sendmsg+0x21c/0x270 net/socket.c:729
- __sys_sendto+0x3bd/0x520 net/socket.c:2228
- __do_sys_sendto net/socket.c:2235 [inline]
- __se_sys_sendto net/socket.c:2231 [inline]
- __x64_sys_sendto+0xde/0x100 net/socket.c:2231
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f2824f90a7c
-RSP: 002b:00007ffedef93660 EFLAGS: 00000293 ORIG_RAX: 000000000000002c
-RAX: ffffffffffffffda RBX: 00007f2825ce4620 RCX: 00007f2824f90a7c
-RDX: 0000000000000020 RSI: 00007f2825ce4670 RDI: 0000000000000005
-RBP: 0000000000000000 R08: 00007ffedef936b4 R09: 000000000000000c
-R10: 0000000000000000 R11: 0000000000000293 R12: 0000000000000005
-R13: 00007ffedef93708 R14: 00007f2825ce4670 R15: 0000000000000000
- </TASK>
-INFO: task syz-executor:17680 blocked for more than 145 seconds.
-      Not tainted syzkaller #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz-executor    state:D stack:22760 pid:17680 tgid:17680 ppid:1      task_flags:0x400140 flags:0x00004004
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5357 [inline]
- __schedule+0x1798/0x4cc0 kernel/sched/core.c:6961
- __schedule_loop kernel/sched/core.c:7043 [inline]
- schedule+0x165/0x360 kernel/sched/core.c:7058
- schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:7115
- __mutex_lock_common kernel/locking/mutex.c:676 [inline]
- __mutex_lock+0x7e6/0x1350 kernel/locking/mutex.c:760
- genl_lock net/netlink/genetlink.c:35 [inline]
- genl_op_lock net/netlink/genetlink.c:60 [inline]
- genl_rcv_msg+0x10d/0x790 net/netlink/genetlink.c:1209
- netlink_rcv_skb+0x208/0x470 net/netlink/af_netlink.c:2552
- genl_rcv+0x28/0x40 net/netlink/genetlink.c:1219
- netlink_unicast_kernel net/netlink/af_netlink.c:1320 [inline]
- netlink_unicast+0x82c/0x9e0 net/netlink/af_netlink.c:1346
- netlink_sendmsg+0x805/0xb30 net/netlink/af_netlink.c:1896
- sock_sendmsg_nosec net/socket.c:714 [inline]
- __sock_sendmsg+0x21c/0x270 net/socket.c:729
- __sys_sendto+0x3bd/0x520 net/socket.c:2228
- __do_sys_sendto net/socket.c:2235 [inline]
- __se_sys_sendto net/socket.c:2231 [inline]
- __x64_sys_sendto+0xde/0x100 net/socket.c:2231
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f50ecf90a7c
-RSP: 002b:00007ffcc2e16c30 EFLAGS: 00000293 ORIG_RAX: 000000000000002c
-RAX: ffffffffffffffda RBX: 00007f50edce4620 RCX: 00007f50ecf90a7c
-RDX: 0000000000000020 RSI: 00007f50edce4670 RDI: 0000000000000005
-RBP: 0000000000000000 R08: 00007ffcc2e16c84 R09: 000000000000000c
-R10: 0000000000000000 R11: 0000000000000293 R12: 0000000000000005
-R13: 00007ffcc2e16cd8 R14: 00007f50edce4670 R15: 0000000000000000
- </TASK>
-INFO: task syz-executor:17682 blocked for more than 145 seconds.
-      Not tainted syzkaller #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz-executor    state:D stack:21296 pid:17682 tgid:17682 ppid:1      task_flags:0x400140 flags:0x00004004
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5357 [inline]
- __schedule+0x1798/0x4cc0 kernel/sched/core.c:6961
- __schedule_loop kernel/sched/core.c:7043 [inline]
- schedule+0x165/0x360 kernel/sched/core.c:7058
- schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:7115
- __mutex_lock_common kernel/locking/mutex.c:676 [inline]
- __mutex_lock+0x7e6/0x1350 kernel/locking/mutex.c:760
- genl_lock net/netlink/genetlink.c:35 [inline]
- genl_op_lock net/netlink/genetlink.c:60 [inline]
- genl_rcv_msg+0x10d/0x790 net/netlink/genetlink.c:1209
- netlink_rcv_skb+0x208/0x470 net/netlink/af_netlink.c:2552
- genl_rcv+0x28/0x40 net/netlink/genetlink.c:1219
- netlink_unicast_kernel net/netlink/af_netlink.c:1320 [inline]
- netlink_unicast+0x82c/0x9e0 net/netlink/af_netlink.c:1346
- netlink_sendmsg+0x805/0xb30 net/netlink/af_netlink.c:1896
- sock_sendmsg_nosec net/socket.c:714 [inline]
- __sock_sendmsg+0x21c/0x270 net/socket.c:729
- __sys_sendto+0x3bd/0x520 net/socket.c:2228
- __do_sys_sendto net/socket.c:2235 [inline]
- __se_sys_sendto net/socket.c:2231 [inline]
- __x64_sys_sendto+0xde/0x100 net/socket.c:2231
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fc4b6b90a7c
-RSP: 002b:00007ffcd1b6f180 EFLAGS: 00000293 ORIG_RAX: 000000000000002c
-RAX: ffffffffffffffda RBX: 00007fc4b78e4620 RCX: 00007fc4b6b90a7c
-RDX: 0000000000000020 RSI: 00007fc4b78e4670 RDI: 0000000000000005
-RBP: 0000000000000000 R08: 00007ffcd1b6f1d4 R09: 000000000000000c
-R10: 0000000000000000 R11: 0000000000000293 R12: 0000000000000005
-R13: 00007ffcd1b6f228 R14: 00007fc4b78e4670 R15: 0000000000000000
- </TASK>
-INFO: task syz-executor:17698 blocked for more than 146 seconds.
-      Not tainted syzkaller #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz-executor    state:D stack:22760 pid:17698 tgid:17698 ppid:1      task_flags:0x400140 flags:0x00004004
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5357 [inline]
- __schedule+0x1798/0x4cc0 kernel/sched/core.c:6961
- __schedule_loop kernel/sched/core.c:7043 [inline]
- schedule+0x165/0x360 kernel/sched/core.c:7058
- schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:7115
- __mutex_lock_common kernel/locking/mutex.c:676 [inline]
- __mutex_lock+0x7e6/0x1350 kernel/locking/mutex.c:760
- genl_lock net/netlink/genetlink.c:35 [inline]
- genl_op_lock net/netlink/genetlink.c:60 [inline]
- genl_rcv_msg+0x10d/0x790 net/netlink/genetlink.c:1209
- netlink_rcv_skb+0x208/0x470 net/netlink/af_netlink.c:2552
- genl_rcv+0x28/0x40 net/netlink/genetlink.c:1219
- netlink_unicast_kernel net/netlink/af_netlink.c:1320 [inline]
- netlink_unicast+0x82c/0x9e0 net/netlink/af_netlink.c:1346
- netlink_sendmsg+0x805/0xb30 net/netlink/af_netlink.c:1896
- sock_sendmsg_nosec net/socket.c:714 [inline]
- __sock_sendmsg+0x21c/0x270 net/socket.c:729
- __sys_sendto+0x3bd/0x520 net/socket.c:2228
- __do_sys_sendto net/socket.c:2235 [inline]
- __se_sys_sendto net/socket.c:2231 [inline]
- __x64_sys_sendto+0xde/0x100 net/socket.c:2231
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f0225b90a7c
-RSP: 002b:00007ffc5f620490 EFLAGS: 00000293 ORIG_RAX: 000000000000002c
-RAX: ffffffffffffffda RBX: 00007f02268e4620 RCX: 00007f0225b90a7c
-RDX: 0000000000000020 RSI: 00007f02268e4670 RDI: 0000000000000005
-RBP: 0000000000000000 R08: 00007ffc5f6204e4 R09: 000000000000000c
-R10: 0000000000000000 R11: 0000000000000293 R12: 0000000000000005
-R13: 00007ffc5f620538 R14: 00007f02268e4670 R15: 0000000000000000
- </TASK>
-INFO: task syz-executor:17700 blocked for more than 146 seconds.
-      Not tainted syzkaller #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz-executor    state:D stack:22760 pid:17700 tgid:17700 ppid:1      task_flags:0x400140 flags:0x00004004
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5357 [inline]
- __schedule+0x1798/0x4cc0 kernel/sched/core.c:6961
- __schedule_loop kernel/sched/core.c:7043 [inline]
- schedule+0x165/0x360 kernel/sched/core.c:7058
- schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:7115
- __mutex_lock_common kernel/locking/mutex.c:676 [inline]
- __mutex_lock+0x7e6/0x1350 kernel/locking/mutex.c:760
- genl_lock net/netlink/genetlink.c:35 [inline]
- genl_op_lock net/netlink/genetlink.c:60 [inline]
- genl_rcv_msg+0x10d/0x790 net/netlink/genetlink.c:1209
- netlink_rcv_skb+0x208/0x470 net/netlink/af_netlink.c:2552
- genl_rcv+0x28/0x40 net/netlink/genetlink.c:1219
- netlink_unicast_kernel net/netlink/af_netlink.c:1320 [inline]
- netlink_unicast+0x82c/0x9e0 net/netlink/af_netlink.c:1346
- netlink_sendmsg+0x805/0xb30 net/netlink/af_netlink.c:1896
- sock_sendmsg_nosec net/socket.c:714 [inline]
- __sock_sendmsg+0x21c/0x270 net/socket.c:729
- __sys_sendto+0x3bd/0x520 net/socket.c:2228
- __do_sys_sendto net/socket.c:2235 [inline]
- __se_sys_sendto net/socket.c:2231 [inline]
- __x64_sys_sendto+0xde/0x100 net/socket.c:2231
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f2a8d190a7c
-RSP: 002b:00007ffe6f054da0 EFLAGS: 00000293 ORIG_RAX: 000000000000002c
-RAX: ffffffffffffffda RBX: 00007f2a8dee4620 RCX: 00007f2a8d190a7c
-RDX: 0000000000000020 RSI: 00007f2a8dee4670 RDI: 0000000000000005
-RBP: 0000000000000000 R08: 00007ffe6f054df4 R09: 000000000000000c
-R10: 0000000000000000 R11: 0000000000000293 R12: 0000000000000005
-R13: 00007ffe6f054e48 R14: 00007f2a8dee4670 R15: 0000000000000000
- </TASK>
-Future hung task reports are suppressed, see sysctl kernel.hung_task_warnings
-INFO: lockdep is turned off.
-NMI backtrace for cpu 0
-CPU: 0 UID: 0 PID: 31 Comm: khungtaskd Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
-Call Trace:
- <TASK>
- dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
- nmi_cpu_backtrace+0x39e/0x3d0 lib/nmi_backtrace.c:113
- nmi_trigger_cpumask_backtrace+0x17a/0x300 lib/nmi_backtrace.c:62
- trigger_all_cpu_backtrace include/linux/nmi.h:160 [inline]
- check_hung_uninterruptible_tasks kernel/hung_task.c:328 [inline]
- watchdog+0xf93/0xfe0 kernel/hung_task.c:491
- kthread+0x70e/0x8a0 kernel/kthread.c:463
- ret_from_fork+0x3f9/0x770 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
-Sending NMI from CPU 0 to CPUs 1:
-NMI backtrace for cpu 1
-CPU: 1 UID: 0 PID: 0 Comm: swapper/1 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
-RIP: 0010:pv_native_safe_halt+0x13/0x20 arch/x86/kernel/paravirt.c:82
-Code: 53 e7 02 00 cc cc cc 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa 66 90 0f 00 2d f3 86 0e 00 f3 0f 1e fa fb f4 <c3> cc cc cc cc cc cc cc cc cc cc cc cc 90 90 90 90 90 90 90 90 90
-RSP: 0018:ffffc90000197de0 EFLAGS: 000002c2
-RAX: 165a988fa3d66b00 RBX: ffffffff819683b8 RCX: 165a988fa3d66b00
-RDX: 0000000000000001 RSI: ffffffff8be33660 RDI: ffffffff819683b8
-RBP: ffffc90000197f20 R08: ffff8880b8732f9b R09: 1ffff110170e65f3
-R10: dffffc0000000000 R11: ffffed10170e65f4 R12: ffffffff8fa38530
-R13: 0000000000000001 R14: 0000000000000001 R15: 1ffff110039d6b40
-FS:  0000000000000000(0000) GS:ffff888125d1b000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00005590b4744fb0 CR3: 000000000df36000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- arch_safe_halt arch/x86/include/asm/paravirt.h:107 [inline]
- default_idle+0x13/0x20 arch/x86/kernel/process.c:757
- default_idle_call+0x74/0xb0 kernel/sched/idle.c:122
- cpuidle_idle_call kernel/sched/idle.c:190 [inline]
- do_idle+0x1e8/0x510 kernel/sched/idle.c:330
- cpu_startup_entry+0x44/0x60 kernel/sched/idle.c:428
- start_secondary+0x101/0x110 arch/x86/kernel/smpboot.c:315
- common_startup_64+0x13e/0x147
- </TASK>
+- All the dependent patches in other modules (drm/amd/amdgpu, platform/x86, pinctrl/amd) merged on upstream mainline kernel (https://github.com/torvalds/linux) v6.17.
+- Removed usage of amdgpu structs in ISP driver. Added helper functions in amdgpu accepting opaque params from ISP driver to allocate and release ISP GART buffers.
+- Moved sensor and MIPI phy control entirely into ISP FW instead of the previous hybrid approach controlling sensor from both FW and x86 (sensor driver).
+- Removed phy configuration and sensor binding as x86 (sensor driver) had relinquished the sensor control for ISP FW. With this approach the driver will be exposed as web camera like interface.
+- New FW with built-in sensor driver is submitted on upstream linux-firmware repo (https://gitlab.com/kernel-firmware/linux-firmware/).
+- Please note the new FW submitted is not directly compatible with OEM Kernel ISP4.0 (https://github.com/amd/Linux_ISP_Kernel/tree/4.0) and the previous ISP V2 patch series.
+- If intend to use the new FW, please rebuild OEM ISP4.0 Kernel with CONFIG_VIDEO_OV05C10=N and CONFIG_PINCTRL_AMDISP=Y.
+- Included critical fixes from Sultan Alsawaf branch (https://github.com/kerneltoast/kernel_x86_laptop.git) related to managing lifetime of isp buffers.
+      media: amd: isp4: Add missing refcount tracking to mmap memop
+      media: amd: isp4: Don't put or unmap the dmabuf when detaching
+      media: amd: isp4: Don't increment refcount when dmabuf export fails
+      media: amd: isp4: Fix possible use-after-free in isp4vid_vb2_put()
+      media: amd: isp4: Always export a new dmabuf from get_dmabuf memop
+      media: amd: isp4: Fix implicit dmabuf lifetime tracking
+      media: amd: isp4: Fix possible use-after-free when putting implicit dmabuf
+      media: amd: isp4: Simplify isp4vid_get_dmabuf() arguments
+      media: amd: isp4: Move up buf->vaddr check in isp4vid_get_dmabuf()
+      media: amd: isp4: Remove unused userptr memops
+      media: amd: isp4: Add missing cleanup on error in isp4vid_vb2_alloc()
+      media: amd: isp4: Release queued buffers on error in start_streaming
+- Addressed all code related upstream comments
+- Fix typo errors and other cosmetic issue.
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Changes v1 -> v2:
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+- Fix media CI test errors and valid warnings
+- Reduce patch number in the series from 9 to 8 by merging MAINTAINERS adding patch to the first patch
+- In patch 5
+	- do modification to use remote endpoint instead of local endpoint
+	- use link frequency and port number as start phy parameter instead of extra added phy-id and phy-bit-rate property of endpoint
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+----------
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+It passes v4l2 compliance test, the test reports for:
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+(a) amd_isp_capture device /dev/video0
 
-If you want to undo deduplication, reply with:
-#syz undup
+Compliance test for amd_isp_capture device /dev/video0:
+-------------------------------------------------------
+
+atg@atg-HP-PV:~/bin$ ./v4l2-compliance -d /dev/video0
+v4l2-compliance 1.29.0-5348, 64 bits, 64-bit time_t
+v4l2-compliance SHA: 75e3f0e2c2cb 2025-03-17 18:12:17
+
+Compliance test for amd_isp_capture device /dev/video0:
+
+Driver Info:
+        Driver name      : amd_isp_capture
+        Card type        : amd_isp_capture
+        Bus info         : platform:amd_isp_capture
+        Driver version   : 6.14.0
+        Capabilities     : 0xa4200001
+                Video Capture
+                I/O MC
+                Streaming
+                Extended Pix Format
+                Device Capabilities
+        Device Caps      : 0x24200001
+                Video Capture
+                I/O MC
+                Streaming
+                Extended Pix Format
+Media Driver Info:
+        Driver name      : amd_isp_capture
+        Model            : amd_isp41_mdev
+        Serial           :
+        Bus info         : platform:amd_isp_capture
+        Media version    : 6.14.0
+        Hardware revision: 0x00000000 (0)
+        Driver version   : 6.14.0
+Interface Info:
+        ID               : 0x03000005
+        Type             : V4L Video
+Entity Info:
+        ID               : 0x00000003 (3)
+        Name             : Preview
+        Function         : V4L2 I/O
+        Pad 0x01000004   : 0: Sink
+          Link 0x02000007: from remote pad 0x1000002 of entity 'amd isp4' (Image Signal Processor): Data, Enabled, Immutable
+
+Required ioctls:
+        test MC information (see 'Media Driver Info' above): OK
+        test VIDIOC_QUERYCAP: OK
+        test invalid ioctls: OK
+
+Allow for multiple opens:
+        test second /dev/video0 open: OK
+        test VIDIOC_QUERYCAP: OK
+        test VIDIOC_G/S_PRIORITY: OK
+        test for unlimited opens: OK
+
+Debug ioctls:
+        test VIDIOC_DBG_G/S_REGISTER: OK (Not Supported)
+        test VIDIOC_LOG_STATUS: OK (Not Supported)
+
+Input ioctls:
+        test VIDIOC_G/S_TUNER/ENUM_FREQ_BANDS: OK (Not Supported)
+        test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+        test VIDIOC_S_HW_FREQ_SEEK: OK (Not Supported)
+        test VIDIOC_ENUMAUDIO: OK (Not Supported)
+        test VIDIOC_G/S/ENUMINPUT: OK
+        test VIDIOC_G/S_AUDIO: OK (Not Supported)
+        Inputs: 1 Audio Inputs: 0 Tuners: 0
+
+Output ioctls:
+        test VIDIOC_G/S_MODULATOR: OK (Not Supported)
+        test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+        test VIDIOC_ENUMAUDOUT: OK (Not Supported)
+        test VIDIOC_G/S/ENUMOUTPUT: OK (Not Supported)
+        test VIDIOC_G/S_AUDOUT: OK (Not Supported)
+        Outputs: 0 Audio Outputs: 0 Modulators: 0
+
+Input/Output configuration ioctls:
+        test VIDIOC_ENUM/G/S/QUERY_STD: OK (Not Supported)
+        test VIDIOC_ENUM/G/S/QUERY_DV_TIMINGS: OK (Not Supported)
+        test VIDIOC_DV_TIMINGS_CAP: OK (Not Supported)
+        test VIDIOC_G/S_EDID: OK (Not Supported)
+
+Control ioctls (Input 0):
+        test VIDIOC_QUERY_EXT_CTRL/QUERYMENU: OK (Not Supported)
+        test VIDIOC_QUERYCTRL: OK (Not Supported)
+        test VIDIOC_G/S_CTRL: OK (Not Supported)
+        test VIDIOC_G/S/TRY_EXT_CTRLS: OK (Not Supported)
+        test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: OK (Not Supported)
+        test VIDIOC_G/S_JPEGCOMP: OK (Not Supported)
+        Standard Controls: 0 Private Controls: 0
+
+Format ioctls (Input 0):
+        test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK
+        test VIDIOC_G/S_PARM: OK
+        test VIDIOC_G_FBUF: OK (Not Supported)
+        test VIDIOC_G_FMT: OK
+        test VIDIOC_TRY_FMT: OK
+        test VIDIOC_S_FMT: OK
+        test VIDIOC_G_SLICED_VBI_CAP: OK (Not Supported)
+        test Cropping: OK (Not Supported)
+        test Composing: OK (Not Supported)
+        test Scaling: OK (Not Supported)
+
+Codec ioctls (Input 0):
+        test VIDIOC_(TRY_)ENCODER_CMD: OK (Not Supported)
+        test VIDIOC_G_ENC_INDEX: OK (Not Supported)
+        test VIDIOC_(TRY_)DECODER_CMD: OK (Not Supported)
+
+Buffer ioctls (Input 0):
+        test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: OK
+        test CREATE_BUFS maximum buffers: OK
+        test VIDIOC_REMOVE_BUFS: OK
+        test VIDIOC_EXPBUF: OK
+        test Requests: OK (Not Supported)
+        test blocking wait: OK
+
+Total for amd_isp_capture device /dev/video0: 49, Succeeded: 49, Failed: 0, Warnings: 0
+
+Please review and provide feedback.
+
+Many thanks,
+
+Bin Du (7):
+  media: platform: amd: Introduce amd isp4 capture driver
+  media: platform: amd: low level support for isp4 firmware
+  media: platform: amd: Add isp4 fw and hw interface
+  media: platform: amd: isp4 subdev and firmware loading handling added
+  media: platform: amd: isp4 video node and buffers handling added
+  media: platform: amd: isp4 debug fs logging and  more descriptive
+    errors
+  Documentation: add documentation of AMD isp 4 driver
+
+ Documentation/admin-guide/media/amdisp4-1.rst |   66 +
+ Documentation/admin-guide/media/amdisp4.dot   |    8 +
+ .../admin-guide/media/v4l-drivers.rst         |    1 +
+ MAINTAINERS                                   |   25 +
+ drivers/media/platform/Kconfig                |    1 +
+ drivers/media/platform/Makefile               |    1 +
+ drivers/media/platform/amd/Kconfig            |    3 +
+ drivers/media/platform/amd/Makefile           |    3 +
+ drivers/media/platform/amd/isp4/Kconfig       |   13 +
+ drivers/media/platform/amd/isp4/Makefile      |   10 +
+ drivers/media/platform/amd/isp4/isp4.c        |  237 ++++
+ drivers/media/platform/amd/isp4/isp4.h        |   26 +
+ drivers/media/platform/amd/isp4/isp4_debug.c  |  272 ++++
+ drivers/media/platform/amd/isp4/isp4_debug.h  |   41 +
+ .../platform/amd/isp4/isp4_fw_cmd_resp.h      |  314 +++++
+ drivers/media/platform/amd/isp4/isp4_hw_reg.h |  125 ++
+ .../media/platform/amd/isp4/isp4_interface.c  |  972 +++++++++++++
+ .../media/platform/amd/isp4/isp4_interface.h  |  149 ++
+ drivers/media/platform/amd/isp4/isp4_subdev.c | 1198 ++++++++++++++++
+ drivers/media/platform/amd/isp4/isp4_subdev.h |  133 ++
+ drivers/media/platform/amd/isp4/isp4_video.c  | 1213 +++++++++++++++++
+ drivers/media/platform/amd/isp4/isp4_video.h  |   87 ++
+ 22 files changed, 4898 insertions(+)
+ create mode 100644 Documentation/admin-guide/media/amdisp4-1.rst
+ create mode 100644 Documentation/admin-guide/media/amdisp4.dot
+ create mode 100644 drivers/media/platform/amd/Kconfig
+ create mode 100644 drivers/media/platform/amd/Makefile
+ create mode 100644 drivers/media/platform/amd/isp4/Kconfig
+ create mode 100644 drivers/media/platform/amd/isp4/Makefile
+ create mode 100644 drivers/media/platform/amd/isp4/isp4.c
+ create mode 100644 drivers/media/platform/amd/isp4/isp4.h
+ create mode 100644 drivers/media/platform/amd/isp4/isp4_debug.c
+ create mode 100644 drivers/media/platform/amd/isp4/isp4_debug.h
+ create mode 100644 drivers/media/platform/amd/isp4/isp4_fw_cmd_resp.h
+ create mode 100644 drivers/media/platform/amd/isp4/isp4_hw_reg.h
+ create mode 100644 drivers/media/platform/amd/isp4/isp4_interface.c
+ create mode 100644 drivers/media/platform/amd/isp4/isp4_interface.h
+ create mode 100644 drivers/media/platform/amd/isp4/isp4_subdev.c
+ create mode 100644 drivers/media/platform/amd/isp4/isp4_subdev.h
+ create mode 100644 drivers/media/platform/amd/isp4/isp4_video.c
+ create mode 100644 drivers/media/platform/amd/isp4/isp4_video.h
+
+-- 
+2.34.1
+
 
