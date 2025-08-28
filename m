@@ -1,179 +1,148 @@
-Return-Path: <linux-kernel+bounces-789844-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7A3DB39B74
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 13:25:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91E87B39B7B
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 13:26:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D21B53B03F2
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 11:25:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23D98463422
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 11:26:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A213930E0C5;
-	Thu, 28 Aug 2025 11:24:57 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76C2D30E0D3;
+	Thu, 28 Aug 2025 11:26:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C9rGY1ej"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19D75273D6F;
-	Thu, 28 Aug 2025 11:24:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7355D4A23;
+	Thu, 28 Aug 2025 11:26:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756380297; cv=none; b=uyv7HSncuSHDRCepbAjE3wA/K0+oXy8vZdzCfLg5vW+5cn0ADy4FUupGoI5acAa+lVXvvhEYxn9zHvuTgGSAcua9O2rHIX5SchRaMjoZNJ4zLDRmGhEwDS1s5a5E2ZjTH/iJfXWzUaSCnaTo+fdsyczApWJnqRNPc9m9vbGIgBI=
+	t=1756380408; cv=none; b=IEsNgeA4Q16/Dt2vzfMghEj31ZD0eAdfYpjVdxtSyWdH/mfTQdyUR59mbdk8cEiT9S1D6jkLDhyOXre5ftn6xN7bit+Tqrh/NXlc00suIGvwbXZgwp8pxctN6raeFc/ayFkbVRHK/nntmKjIqbW+eVoJ59ZAS71NKjYkl3plPuw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756380297; c=relaxed/simple;
-	bh=TXeRFLOKaqNXdI3M+wtltoVaeAc4aWofDcyk4oABMPc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cKStUZA9epik1fjQnpNpL4e/BpUkag8TyqT91DkHMSIJnIlal4Pw/JOUg3eAgrSw3v9FzDULr+8olPSXcuY/TxszeTl63uY5TYYs0heCBe75bdVeVk2E4iOgvkgipVezd87kfIYxlPDsyy89AjbAGq42q23dtgocNhTQTkWShlc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cCJw36MJ6zYQvTT;
-	Thu, 28 Aug 2025 19:24:51 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 615E91A08BE;
-	Thu, 28 Aug 2025 19:24:50 +0800 (CST)
-Received: from [10.174.179.247] (unknown [10.174.179.247])
-	by APP4 (Coremail) with SMTP id gCh0CgAncIyAPLBoCCNSAg--.3285S3;
-	Thu, 28 Aug 2025 19:24:50 +0800 (CST)
-Message-ID: <93e96f14-dfe3-6390-5a91-f28e1cdb1783@huaweicloud.com>
-Date: Thu, 28 Aug 2025 19:24:48 +0800
+	s=arc-20240116; t=1756380408; c=relaxed/simple;
+	bh=lJaQWwx/56+lS65+Ml8qliH1iA7FVtZkb6ocqsoNu+w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dxmJZ1SU/4QpfZKXnt+gAtvUQbrunTm+38MhfTijlNJOAWNrb/rQyjmEYc5DAOz89ohLvRkBQd/ZpeHe8ITGuvckVcE0GqC0JPyrfTxQxb3CSxzpje5c55siBYvEYehnGhnGzHjZAXIw+T3KXa/PSdqql/Epty21l5cz3AWsS7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C9rGY1ej; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-248e01cd834so1018635ad.0;
+        Thu, 28 Aug 2025 04:26:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756380407; x=1756985207; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TB49lARAguv+2novlKNuN0CFuq7GTPMP7W+cgTo2Hmc=;
+        b=C9rGY1ejQ9CmwE9G/swwJMmyurYprEW7Y+kSnW5o4RFffWs7fpAXrGz8cYzLiM1pT1
+         g280CSS36gpT8zQzbyXCZ8e/NeE4xbMAist7U7pBAFdJLDQgaB37gwAtOpOVZP1rZmld
+         AKQXbUYqFwNv9G/693mDaQE8IzgaWSkcVdMkKxqtGmH2jwFQ14hSIouCMmcHuX0ZEb8K
+         jzIUzsUY/uybWKd1BZGTXaBITkpyHfGsqW/AnCvigQ1MI2TC8zRmwdrKMV9tlUlF59ax
+         qNMpQwEennLh+zDJYfN3pH4Nw7kP3IybiiKrNA3OMwED0HuKeTYm4YUbC1btNJJ0MAIR
+         ltkA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756380407; x=1756985207;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TB49lARAguv+2novlKNuN0CFuq7GTPMP7W+cgTo2Hmc=;
+        b=KV1kTpdbarqh0xOTrFQlKHGXXJua6Dxx3bHVVHEac80WRluUxVbFFDtdHNoaawJ3/a
+         +BqtTyFl/bMsLj9ZixT+GTh2RW+Y+/okFYE6aqOSBaFdAj8ztoKUwoZiVx8+QyHYJiJy
+         oKXalVtha/SUcnVuOsNFGuAwixx9I5C5mKLOH4NpB5/Y39izL7Lx/6jDcmGsJITbsBOr
+         3a1ivZxRNZdstB/TXu4Xe6NtTGCUaleMBdfKTNYEO+apqC2Igt+0FlVf87bYKNShy1Eq
+         31+90RUO8PqjyJzIe+UPw9kPlXnbSM1UT2rc9/2CG5A/yfPGBPBI21DJKGKt90V0kz0y
+         1c1w==
+X-Forwarded-Encrypted: i=1; AJvYcCUqKGZ11YhMf+jzOMV0fuvTCUYQdxtqwyL9PzBQNsPsXJjmaQ8pD7FYqX/Uq8UklUJpWo4PRi4mMPKxfZo=@vger.kernel.org, AJvYcCXcT1HhNYxg/HOZFaMny710nObloBy5Q7muco65JiFOsiIGXf6wBJ5L72HewIy0N9Ww4881N04EC9t5F5QZYtY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxp9HkvYGolMjGX+FUCI3wj6RUaZY7tQwILQhk4JWT1QZlBOB4K
+	pXhBnnHYwlgg4lcTZgdOhsT8JK3gF6a5RTXN+IEw5jNuXh2ay5F5jtqxEgOsNdea0kpEAjTR/2x
+	9tVxE+XPJlbAQoVRP/h/O6RqIvRJ/yUFO6gkAjd0=
+X-Gm-Gg: ASbGnct4N4jh2TyumnumzGJggIpWsf3GMfhDvoiR1rIQ6Fq/CoEzYh54AVKAqoVt50g
+	L92M/QgZYDKimKHCKQ+38rpJyFBPkG2OLogsLIBQHJ+l6qSOL3MfBw+xAjn9ZBKKvrK/VIamed7
+	yZ/opUhzB/y5heTm1FTbtEQAVDYgRCqLEIHm/rkd5Tm9eiaGn10H0krI1BhTTj/SkjpWyYhDGUb
+	3CY/kpsSP6swaXAjWXCU/6UNEJNMloQTpOiEdRDj+4iQxFJJ9rbX50WEbKV7jaDB6/7mMfb/Xd5
+	X0duzi6+vv3KzYKLR4hHes22UrqiX/j2oTdBgL4PO3v+Sao=
+X-Google-Smtp-Source: AGHT+IHHmDIHqxhO7l79GLUkJwaWQ7dZNpLn1zpLg1iQnq0+hdNtOQx1/t6zWJjm/sSiYUD2aH3gJhMn/p7bQf7ZDaE=
+X-Received: by 2002:a17:902:f60d:b0:248:847b:8906 with SMTP id
+ d9443c01a7336-248847b8b62mr52656055ad.11.1756380406614; Thu, 28 Aug 2025
+ 04:26:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH v6 md-6.18 11/11] md/md-llbitmap: introduce new lockless
- bitmap
-To: Yu Kuai <yukuai1@huaweicloud.com>, hch@infradead.org, corbet@lwn.net,
- agk@redhat.com, snitzer@kernel.org, mpatocka@redhat.com, song@kernel.org,
- xni@redhat.com, hare@suse.de, colyli@kernel.org
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- dm-devel@lists.linux.dev, linux-raid@vger.kernel.org, yukuai3@huawei.com,
- yi.zhang@huawei.com, yangerkun@huawei.com, johnny.chenyi@huawei.com
-References: <20250826085205.1061353-1-yukuai1@huaweicloud.com>
- <20250826085205.1061353-12-yukuai1@huaweicloud.com>
-From: Li Nan <linan666@huaweicloud.com>
-In-Reply-To: <20250826085205.1061353-12-yukuai1@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgAncIyAPLBoCCNSAg--.3285S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxGr4UAw43Jry5Xr47Cry5twb_yoW5ZrWxpw
-	sIyrn7Jrs8tr48K3sFqFyxta4SyrW8Jw13Jr15GF1vvw1q9rnIvF48WFW0q3srCry3X3Wj
-	qF4qvry8JFWDCFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUPI14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1lnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xv
-	F2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r
-	4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v
-	4I1lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7
-	AKxVW8ZVWrXwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02
-	F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_Wr
-	ylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r
-	1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0pRB
-	Vb9UUUUU=
-X-CM-SenderInfo: polqt0awwwqx5xdzvxpfor3voofrz/
+References: <20250826-nova_firmware-v2-0-93566252fe3a@nvidia.com>
+ <20250826-nova_firmware-v2-2-93566252fe3a@nvidia.com> <9adb92d4-6063-4032-bf76-f98dcfe2c824@nvidia.com>
+ <DCD2VJ1WJW2O.VM7E4PD3DFYO@nvidia.com>
+In-Reply-To: <DCD2VJ1WJW2O.VM7E4PD3DFYO@nvidia.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Thu, 28 Aug 2025 13:26:34 +0200
+X-Gm-Features: Ac12FXzy24K1wGe7TQOMJcL6Fdf60t07YBP-70leUEy1vm3L-w174pbiaRtsL7M
+Message-ID: <CANiq72=nGbziZCKt=AneE_vXw76i=+td0dSVfbOJ8kJ9eYHw9w@mail.gmail.com>
+Subject: Re: [PATCH v2 2/8] gpu: nova-core: firmware: add support for common
+ firmware header
+To: Alexandre Courbot <acourbot@nvidia.com>
+Cc: John Hubbard <jhubbard@nvidia.com>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, Alistair Popple <apopple@nvidia.com>, 
+	Joel Fernandes <joelagnelf@nvidia.com>, Timur Tabi <ttabi@nvidia.com>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, nouveau@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Aug 27, 2025 at 10:47=E2=80=AFAM Alexandre Courbot <acourbot@nvidia=
+.com> wrote:
+>
+> However, `fw_start + fw_size` can panic in debug configuration if it
+> overflows. In a release build I believe it will just happily wrap, and
 
+In the kernel, it is a panic in the default configuration, not just a debug=
+ one.
 
-在 2025/8/26 16:52, Yu Kuai 写道:
-> From: Yu Kuai <yukuai3@huawei.com>
-> 
-> Redundant data is used to enhance data fault tolerance, and the storage
-> method for redundant data vary depending on the RAID levels. And it's
-> important to maintain the consistency of redundant data.
-> 
-> Bitmap is used to record which data blocks have been synchronized and which
-> ones need to be resynchronized or recovered. Each bit in the bitmap
-> represents a segment of data in the array. When a bit is set, it indicates
-> that the multiple redundant copies of that data segment may not be
-> consistent. Data synchronization can be performed based on the bitmap after
-> power failure or readding a disk. If there is no bitmap, a full disk
-> synchronization is required.
-> 
-> Key Features:
-> 
->   - IO fastpath is lockless, if user issues lots of write IO to the same
->   bitmap bit in a short time, only the first write have additional overhead
->   to update bitmap bit, no additional overhead for the following writes;
->   - support only resync or recover written data, means in the case creating
->   new array or replacing with a new disk, there is no need to do a full disk
->   resync/recovery;
-> 
-> Key Concept:
-> 
->   - State Machine:
-> 
-> Each bit is one byte, contain 6 difference state, see llbitmap_state. And
-> there are total 8 differenct actions, see llbitmap_action, can change state:
-> 
-> llbitmap state machine: transitions between states
-> 
-> |           | Startwrite | Startsync | Endsync | Abortsync|
-> | --------- | ---------- | --------- | ------- | -------  |
-> | Unwritten | Dirty      | x         | x       | x        |
-> | Clean     | Dirty      | x         | x       | x        |
-> | Dirty     | x          | x         | x       | x        |
-> | NeedSync  | x          | Syncing   | x       | x        |
-> | Syncing   | x          | Syncing   | Dirty   | NeedSync |
-> 
-> |           | Reload   | Daemon | Discard   | Stale     |
-> | --------- | -------- | ------ | --------- | --------- |
-> | Unwritten | x        | x      | x         | x         |
-> | Clean     | x        | x      | Unwritten | NeedSync  |
-> | Dirty     | NeedSync | Clean  | Unwritten | NeedSync  |
-> | NeedSync  | x        | x      | Unwritten | x         |
-> | Syncing   | NeedSync | x      | Unwritten | NeedSync  |
-> 
-> Typical scenarios:
-> 
-> 1) Create new array
-> All bits will be set to Unwritten by default, if --assume-clean is set,
-> all bits will be set to Clean instead.
-> 
-> 2) write data, raid1/raid10 have full copy of data, while raid456 doesn't and
-> rely on xor data
-> 
-> 2.1) write new data to raid1/raid10:
-> Unwritten --StartWrite--> Dirty
-> 
-> 2.2) write new data to raid456:
-> Unwritten --StartWrite--> NeedSync
-> 
-> Because the initial recover for raid456 is skipped, the xor data is not build
-> yet, the bit must set to NeedSync first and after lazy initial recover is
-> finished, the bit will finially set to Dirty(see 5.1 and 5.4);
-> 
-> 2.3) cover write
-> Clean --StartWrite--> Dirty
-> 
-> 3) daemon, if the array is not degraded:
-> Dirty --Daemon--> Clean
-> 
-> For degraded array, the Dirty bit will never be cleared, prevent full disk
-> recovery while readding a removed disk.
-> 
-> 4) discard
-> {Clean, Dirty, NeedSync, Syncing} --Discard--> Unwritten
-> 
-> 5) resync and recover
-> 
-> 5.1) common process
-> NeedSync --Startsync--> Syncing --Endsync--> Dirty --Daemon--> Clean
+We have debug assertions too -- and those are disabled by default, but
+they are separate from the overflow checking, which is the one enabled
+by default.
 
-There is some issue whith Dirty state:
-1. The Dirty bit will not synced when a disk is re-add.
-2. It remains Dirty even after a full recovery -- it should be Clean.
+So, any use of those operators is limited to cases where one knows,
+somehow, that it will not overflow. And e.g. user-controlled inputs
+cannot use them at all.
 
--- 
-Thanks,
-Nan
+So, conceptually, something like this:
 
+  - Static assert if the compiler knows it cannot fail.
+  - Build assert if the optimizer knows it cannot fail.
+  - Unfallible (like the possibly panicking operators) if the
+developer knows it cannot fail.
+  - Fallible/wrapping/saturating/... if the developer isn't sure or it
+simply cannot be known until runtime. User-derived inputs must use
+this option (or rarely the unsafe one).
+  - Unsafe if the developer knows it cannot fail and the other options
+are not acceptable for some reason. Ideally paired with a debug
+assertion (the compiler adds these already for many unsafe
+preconditions).
+
+In the past I requested upstream Rust a way to have a "third mode"
+("report and continue") for the operators so that it would wrap (like
+the non-panicking mode) but allowing us to add a customization point
+so that we can e.g. `WARN_ON_ONCE`.
+
+That would be ideal, because it is a nice middle ground that is not as
+punishing if a developer gets it wrong, especially for "normal users",
+where panics typically mean lost reports etc. And other kernel users,
+like cloud operators, can keep the panicking mode.
+
+As for discussing no-panic, sure!
+
+Cheers,
+Miguel
 
