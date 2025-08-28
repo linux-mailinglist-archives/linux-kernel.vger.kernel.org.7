@@ -1,280 +1,111 @@
-Return-Path: <linux-kernel+bounces-790609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1BA4B3AAC9
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 21:21:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D57D0B3AACB
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 21:23:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AAE707B645A
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 19:20:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CC261BA77DB
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 19:24:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F11B1265CCB;
-	Thu, 28 Aug 2025 19:21:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98EB6265CCB;
+	Thu, 28 Aug 2025 19:23:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="G1cVf1qi"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NaF1h/NY"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92FF3215077
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 19:21:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DB4E20013A;
+	Thu, 28 Aug 2025 19:23:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756408887; cv=none; b=lTumJCgEtKk3Vu34dy1KBzPOup4bb7WM+e7nhpZJE3jHAgV0Z9HJJfuO8Yg5wr6DUqsC9OQzr9cDeYWz3HOVwV5H1ZwgTszvZxgtBNoLISRvJMxoYSnTDfktPqvQcbYyFBSKqYuKoBDj3jt/OxY0f/gBpYNY7A8gAn0hwvKdjeA=
+	t=1756409018; cv=none; b=b5o3pvp5TxitptcTo+1jdhgPwtUSBwehuCX7CI4Zf1ufaKvek+Kp5t5OEhNfyU3wH9q04VxXjeARyD1LvvewB+gRSCKw4STfsTBpo9splNdynyJMaQx/07u5ly5qD8PJDV9m61Mdq1JjKpCRRmVWux/atUkXRYg9bnS3I1nXoQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756408887; c=relaxed/simple;
-	bh=rDD66MXkQ62CRBDL+PoyFT7bbZIEcKDbwJsMX1RqbYA=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=W0mGRRJSvTyFqsOQv7PuT43GpBJcMlb/8bUx9p6HZnN71+98vSPD95r/pqTelp1TqfK5Mtk8YWt+eLCNA5ugwUqAgXl1c+OmO1qQIsyGYZkyCK7wrE4zJ3pLBkAW6e9Zs4fAAbNVnxt04apjX4uJEgHV6V6KbOW7Z5LBGZXw0+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=G1cVf1qi; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-24457f59889so13628595ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 12:21:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756408884; x=1757013684; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=MNjs6T98kdJx8OM7hbT1Sjw0Nyzd0bo6/V8ToeUSZTA=;
-        b=G1cVf1qiboEpFvFx91BYVNlocvHecAV2CSSYb7Jl5e57FqSumDUZgxWEJoQOA8Xbus
-         STv/Kaj1rxvg50iBy5r6HWPWKjQfOjg1DwWAyTib4MUytwKcxaiPh53bVT+eyk4IKJ8E
-         qkoHp66LYW5C5Z60pGzF2nvaDtFn1JCk5wlHMtrMvbFGHWBJpBBMOFnGupLIIDDzjkEr
-         7Hxas3sNEBKLY/SEV86s1v9uawIg6KrIdpJzpLx8DmOkPOcR5cP6Pda7TxxRERMKLPCn
-         jlyw5wI/fjnX1zs9JsuqV6r/ddiv0XSY2lvUsxVftKuph0S1MboCrahyFlQNTJ5lNloN
-         bivw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756408884; x=1757013684;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MNjs6T98kdJx8OM7hbT1Sjw0Nyzd0bo6/V8ToeUSZTA=;
-        b=Ggmp5A28An7xEAVZH7scJhtKK+4c+tFlnrgHWBvRe9ohnPJRmZUR2OEzkvJN2nJj5A
-         GlBw51ZmZBdKVe4SJEG6k2HCPg2k3UcUY0vIcmYJDd0WsPy+GbrGuN5qAtA52lNuEuZv
-         o1OE417BEJYajd/KeugHqoctms18fM29bOwuvyYAGOe/yZbUrmrBXlbXNvlIjTjk1Je8
-         mRX6D55do2e/yiTWO23KWo4+GKQAO6s2D2YVDQG/EOiygkHuKqScsOESyQ8e9L1NwD58
-         yxE1DNQZpD4zo92z7TwI9Krs2BZwW9u5GWpJFFz8Au2GcuNDYrZlY8kPTm1J7wN5rJkQ
-         igFw==
-X-Forwarded-Encrypted: i=1; AJvYcCXnA6AGXG8PrCclgH5qcEAGFUmSakQ8LnxvfxCO5/uFTjKDqnF5eVPubdLNoKnKbfoqAG2lFp4YGSJEppk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUJd1k0GS9zyAvQJ3ND5P6QzqzOt1hTL2gJzKcHorzfB6S1jiy
-	FjTC2gF0tZb4y4k+lNEiDt6S2yhzMG3gcQa9eK2vZWBnbx7Tt7YTuJvIs3FthEebr0BT8P9QSCV
-	Ufjdxww==
-X-Google-Smtp-Source: AGHT+IGxta86IRHLgGEt2ecmMu/Zj2MP8ZHry1zOcjR1Qn5pmbRw4LCjm959jaMZRYjAagvAW7vHEj3bDxI=
-X-Received: from plpc6.prod.google.com ([2002:a17:903:1b46:b0:246:727:7f8f])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:1984:b0:246:80e9:85b0
- with SMTP id d9443c01a7336-24680e9887bmr257282235ad.41.1756408884538; Thu, 28
- Aug 2025 12:21:24 -0700 (PDT)
-Date: Thu, 28 Aug 2025 12:21:23 -0700
-In-Reply-To: <11edfb8db22a48d2fe1c7a871f50fc07b77494d8.camel@intel.com>
+	s=arc-20240116; t=1756409018; c=relaxed/simple;
+	bh=V63f1ex+PBQ5+O6++zEpvOMvjCSNqO1rdBSOwnvnUAk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HClh6ZoGXDshxNslUreHupgf2hjH7Jffy1nVy1sGE1t9ZnZTpHOW8blhzgpzfqCYUnrccLgF3kFmjm5VCq9IqR5YJJN9adxXCZYo3d2/lAHWKtBbPMcQW19uh5mCA7aUEJGXv8NBfqf+CXEfeOfeAzvnQ0LmQXdmHNHTC66J/1w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NaF1h/NY; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756409016; x=1787945016;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=V63f1ex+PBQ5+O6++zEpvOMvjCSNqO1rdBSOwnvnUAk=;
+  b=NaF1h/NYUQDNQPWH9tazkoH98J89BxZv7C5axEmwyzDClYdgpnLS2u5h
+   MtaGC9eY7CkDM9ktWqzNpFL+q/ZjjS75UrV5VpjB/YTUtRq4AaY12ymPS
+   AM1XkvHmpW48QcsWO4Bvxmhrio/mD/6Q6warxv++tEn6Ltpp4oJs50QHe
+   nCKqOmeeRoAYPAzVKFfBZM3xE3CXet3Cl6c48hgV1fiBmBjYhpq+JVV/g
+   lXB6TNQs4PgZDqRFWMQgJpEPS93P4LcPR0LcLp6c9eY/j9twHO04kQTiB
+   W3wAFrQeTHeYsEeOy/GbCXwoKF5CFCTwI4wrMVTLTDRkxIdQL5Cl/t8V2
+   w==;
+X-CSE-ConnectionGUID: t4Md96PiRJexmvN4h/KJYw==
+X-CSE-MsgGUID: ao/JwkwRR2+h8P5SW5a0lA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11536"; a="58621884"
+X-IronPort-AV: E=Sophos;i="6.18,221,1751266800"; 
+   d="scan'208";a="58621884"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2025 12:23:35 -0700
+X-CSE-ConnectionGUID: OLqdhYEdS4yV4rxfpxcjow==
+X-CSE-MsgGUID: hdl/1B/FSTmfnhUT6JzTkw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,221,1751266800"; 
+   d="scan'208";a="169783663"
+Received: from spandruv-desk.jf.intel.com ([10.54.75.16])
+  by orviesa009.jf.intel.com with ESMTP; 28 Aug 2025 12:23:34 -0700
+From: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+To: rafael@kernel.org,
+	daniel.lezcano@linaro.org,
+	lukasz.luba@arm.com
+Cc: linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Subject: [PATCH] selftests/thermel/intel/workload_hint: Mask unsupported types
+Date: Thu, 28 Aug 2025 12:23:28 -0700
+Message-ID: <20250828192328.929742-1-srinivas.pandruvada@linux.intel.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250827000522.4022426-1-seanjc@google.com> <20250827000522.4022426-7-seanjc@google.com>
- <11edfb8db22a48d2fe1c7a871f50fc07b77494d8.camel@intel.com>
-Message-ID: <aLCsM6DShlGDxPOd@google.com>
-Subject: Re: [RFC PATCH 06/12] KVM: TDX: Return -EIO, not -EINVAL, on a
- KVM_BUG_ON() condition
-From: Sean Christopherson <seanjc@google.com>
-To: Rick P Edgecombe <rick.p.edgecombe@intel.com>
-Cc: "pbonzini@redhat.com" <pbonzini@redhat.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
-	Vishal Annapurve <vannapurve@google.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Yan Y Zhao <yan.y.zhao@intel.com>, 
-	"michael.roth@amd.com" <michael.roth@amd.com>, Ira Weiny <ira.weiny@intel.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Thu, Aug 28, 2025, Rick P Edgecombe wrote:
-> On Tue, 2025-08-26 at 17:05 -0700, Sean Christopherson wrote:
-> > Return -EIO when a KVM_BUG_ON() is tripped, as KVM's ABI is to return -EIO
-> > when a VM has been killed due to a KVM bug, not -EINVAL.
-> > 
-> > Signed-off-by: Sean Christopherson <seanjc@google.com>
-> > ---
-> >  arch/x86/kvm/vmx/tdx.c | 8 ++++----
-> >  1 file changed, 4 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
-> > index 9fb6e5f02cc9..ef4ffcad131f 100644
-> > --- a/arch/x86/kvm/vmx/tdx.c
-> > +++ b/arch/x86/kvm/vmx/tdx.c
-> > @@ -1624,7 +1624,7 @@ static int tdx_mem_page_record_premap_cnt(struct kvm *kvm, gfn_t gfn,
-> >  	struct kvm_tdx *kvm_tdx = to_kvm_tdx(kvm);
-> >  
-> >  	if (KVM_BUG_ON(kvm->arch.pre_fault_allowed, kvm))
-> > -		return -EINVAL;
-> > +		return -EIO;
-> >  
-> >  	/* nr_premapped will be decreased when tdh_mem_page_add() is called. */
-> >  	atomic64_inc(&kvm_tdx->nr_premapped);
-> > @@ -1638,7 +1638,7 @@ static int tdx_sept_set_private_spte(struct kvm *kvm, gfn_t gfn,
-> >  
-> >  	/* TODO: handle large pages. */
-> >  	if (KVM_BUG_ON(level != PG_LEVEL_4K, kvm))
-> > -		return -EINVAL;
-> > +		return -EIO;
-> >  
-> >  	/*
-> >  	 * Read 'pre_fault_allowed' before 'kvm_tdx->state'; see matching
-> > @@ -1849,7 +1849,7 @@ static int tdx_sept_free_private_spt(struct kvm *kvm, gfn_t gfn,
-> >  	 * and slot move/deletion.
-> >  	 */
-> >  	if (KVM_BUG_ON(is_hkid_assigned(kvm_tdx), kvm))
-> > -		return -EINVAL;
-> > +		return -EIO;
-> >  
-> >  	/*
-> >  	 * The HKID assigned to this TD was already freed and cache was
-> > @@ -1870,7 +1870,7 @@ static int tdx_sept_remove_private_spte(struct kvm *kvm, gfn_t gfn,
-> >  	 * there can't be anything populated in the private EPT.
-> >  	 */
-> >  	if (KVM_BUG_ON(!is_hkid_assigned(to_kvm_tdx(kvm)), kvm))
-> > -		return -EINVAL;
-> > +		return -EIO;
-> >  
-> >  	ret = tdx_sept_zap_private_spte(kvm, gfn, level, page);
-> >  	if (ret <= 0)
-> 
-> 
-> Did you miss?
+The workload hint may contain some other hints which are not defined.
+So mask out unsupported types. Currently only lower 4 bits of workload
+type hints are defined.
 
-I did indeed.
+Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+---
+ .../selftests/thermal/intel/workload_hint/workload_hint_test.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-> diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
-> index f9ac590e8ff0..fd1b8fea55a9 100644
-> --- a/arch/x86/kvm/vmx/tdx.c
-> +++ b/arch/x86/kvm/vmx/tdx.c
-> @@ -1656,10 +1656,10 @@ static int tdx_sept_drop_private_spte(struct kvm *kvm,
-> gfn_t gfn,
->  
->         /* TODO: handle large pages. */
->         if (KVM_BUG_ON(level != PG_LEVEL_4K, kvm))
-> -               return -EINVAL;
-> +               return -EIO;
->  
->         if (KVM_BUG_ON(!is_hkid_assigned(kvm_tdx), kvm))
-> -               return -EINVAL;
-> +               return -EIO;
->  
->         /*
->          * When zapping private page, write lock is held. So no race condition
-> 
-> 
-> We really have a lot of KVM_BUG_ON()s in tdx code. I hesitate to pull them out
-> but it feels a bit gratuitous.
-
-Generally speaking, the number of KVM_BUG_ON()s is fine.  What we can do though
-is reduce the amount of boilerplate and the number of paths the propagate a SEAMCALL
-err through multiple layers, e.g. by eliminating single-use helpers (which is made
-easier by reducing boilerplate and thus lines of code).
-
-Concretely, if we combine the KVM_BUG_ON() usage with pr_tdx_error():
-
-#define __TDX_BUG_ON(__err, __fn_str, __kvm, __fmt, __args...)			\
-({										\
-	struct kvm *_kvm = (__kvm);						\
-	bool __ret = !!(__err);							\
-										\
-	if (WARN_ON_ONCE(__ret && (!_kvm || !_kvm->vm_bugged))) {		\
-		if (_kvm)							\
-			kvm_vm_bugged(_kvm);					\
-		pr_err_ratelimited("SEAMCALL " __fn_str " failed: 0x%llx"	\
-				   __fmt "\n",  __err,  __args); 		\
-	}									\
-	unlikely(__ret);							\
-})
-
-#define TDX_BUG_ON(__err, __fn, __kvm)				\
-	__TDX_BUG_ON(__err, #__fn, __kvm, "%s", "")
-
-#define TDX_BUG_ON_1(__err, __fn, __rcx, __kvm)			\
-	__TDX_BUG_ON(__err, #__fn, __kvm, ", rcx 0x%llx", __rcx)
-
-#define TDX_BUG_ON_2(__err, __fn, __rcx, __rdx, __kvm)		\
-	__TDX_BUG_ON(__err, #__fn, __kvm, ", rcx 0x%llx, rdx 0x%llx", __rcx, __rdx)
-
-#define TDX_BUG_ON_3(__err, __fn, __rcx, __rdx, __r8, __kvm)	\
-	__TDX_BUG_ON(__err, #__fn, __kvm, ", rcx 0x%llx, rdx 0x%llx, r8 0x%llx", __rcx, __rdx, __r8)
-
-
-And a macro to handle retry when kicking vCPUs out of the guest:
-
-#define tdh_do_no_vcpus(tdh_func, kvm, args...)					\
-({										\
-	struct kvm_tdx *__kvm_tdx = to_kvm_tdx(kvm);				\
-	u64 __err;								\
-										\
-	lockdep_assert_held_write(&kvm->mmu_lock);				\
-										\
-	__err = tdh_func(args);							\
-	if (unlikely(tdx_operand_busy(__err))) {				\
-		WRITE_ONCE(__kvm_tdx->wait_for_sept_zap, true);			\
-		kvm_make_all_cpus_request(kvm, KVM_REQ_OUTSIDE_GUEST_MODE);	\
-										\
-		__err = tdh_func(args);						\
-										\
-		WRITE_ONCE(__kvm_tdx->wait_for_sept_zap, false);		\
-	}									\
-	__err;									\
-})
-
-And do a bit of massaging, then we can end up e.g. this, which IMO is much easier
-to follow than the current form of tdx_sept_remove_private_spte(), which has
-several duplicate sanity checks and error handlers.
-
-The tdh_do_no_vcpus() macro is a little mean, but I think it's a net positive
-as eliminates quite a lot of "noise", and thus makes it easier to focus on the
-logic.  And alternative to a trampoline macro would be to implement a guard()
-and then do a scoped_guard(), but I think that'd be just as hard to read, and
-would require almost as much boilerplate as there is today.
-
-static void tdx_sept_remove_private_spte(struct kvm *kvm, gfn_t gfn,
-					 enum pg_level level, u64 spte)
-{
-	struct page *page = pfn_to_page(spte_to_pfn(spte));
-	int tdx_level = pg_level_to_tdx_sept_level(level);
-	struct kvm_tdx *kvm_tdx = to_kvm_tdx(kvm);
-	gpa_t gpa = gfn_to_gpa(gfn);
-	u64 err, entry, level_state;
-
-	/*
-	 * HKID is released after all private pages have been removed, and set
-	 * before any might be populated. Warn if zapping is attempted when
-	 * there can't be anything populated in the private EPT.
-	 */
-	if (KVM_BUG_ON(!is_hkid_assigned(to_kvm_tdx(kvm)), kvm))
-		return;
-
-	/* TODO: handle large pages. */
-	if (KVM_BUG_ON(level != PG_LEVEL_4K, kvm))
-		return;
-
-	err = tdh_do_no_vcpus(tdh_mem_range_block, kvm, &kvm_tdx->td, gpa,
-			      tdx_level, &entry, &level_state);
-	if (TDX_BUG_ON_2(err, TDH_MEM_RANGE_BLOCK, entry, level_state, kvm))
-		return;
-
-	/*
-	 * TDX requires TLB tracking before dropping private page.  Do
-	 * it here, although it is also done later.
-	 */
-	tdx_track(kvm);
-
-	/*
-	 * When zapping private page, write lock is held. So no race condition
-	 * with other vcpu sept operation.
-	 * Race with TDH.VP.ENTER due to (0-step mitigation) and Guest TDCALLs.
-	 */
-	err = tdh_do_no_vcpus(tdh_mem_page_remove, kvm, &kvm_tdx->td, gpa,
-			      tdx_level, &entry, &level_state);
-	if (TDX_BUG_ON_2(err, TDH_MEM_PAGE_REMOVE, entry, level_state, kvm))
-		return;
-
-	err = tdh_phymem_page_wbinvd_hkid((u16)kvm_tdx->hkid, page);
-	if (TDX_BUG_ON(err, TDH_PHYMEM_PAGE_WBINVD, kvm))
-		return;
-
-	tdx_clear_page(page);
-}
+diff --git a/tools/testing/selftests/thermal/intel/workload_hint/workload_hint_test.c b/tools/testing/selftests/thermal/intel/workload_hint/workload_hint_test.c
+index ba58589a1145..3ee018bca899 100644
+--- a/tools/testing/selftests/thermal/intel/workload_hint/workload_hint_test.c
++++ b/tools/testing/selftests/thermal/intel/workload_hint/workload_hint_test.c
+@@ -133,6 +133,7 @@ int main(int argc, char **argv)
+ 		} else if (ret == 0) {
+ 			printf("Poll Timeout\n");
+ 		} else {
++
+ 			if ((lseek(fd, 0L, SEEK_SET)) < 0) {
+ 				fprintf(stderr, "Failed to set pointer to beginning\n");
+ 				exit(1);
+@@ -144,6 +145,8 @@ int main(int argc, char **argv)
+ 			ret = sscanf(index_str, "%d", &index);
+ 			if (ret < 0)
+ 				break;
++
++			index &= 0x0f;
+ 			if (index > WORKLOAD_TYPE_MAX_INDEX)
+ 				printf("Invalid workload type index\n");
+ 			else
+-- 
+2.50.1
 
 
