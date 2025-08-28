@@ -1,408 +1,278 @@
-Return-Path: <linux-kernel+bounces-789829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C13E0B39B44
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 13:14:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AE5D0B39B43
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 13:14:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 10F33985B70
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 11:14:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9EA34680198
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 11:14:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D6C230E0F3;
-	Thu, 28 Aug 2025 11:13:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E191630E0D8;
+	Thu, 28 Aug 2025 11:13:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="lF0en1jY"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2069.outbound.protection.outlook.com [40.107.220.69])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="u2RJJowG"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CC5830DD19;
-	Thu, 28 Aug 2025 11:13:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.69
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756379637; cv=fail; b=ExLjzi24eWWFodlr+og4vQ7AZEtYlvHSZB5LyNBETgEFQD0l+57zho3S1A3OxpI6WQm6gTUPErV4XNSwHc+3cccDayzOLEx18sSebnmdWQgRTHPRh2E/HXiSLHItE7+6gs7nfMNsu8o8t3guqHUTnUtNnMnQEHkBpA9aEwt6HKg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756379637; c=relaxed/simple;
-	bh=B/aEcj/lbNltvSSuMQAC9SbTpfvsKjuLPhILNusLhx0=;
-	h=Content-Type:Date:Message-Id:Cc:Subject:From:To:References:
-	 In-Reply-To:MIME-Version; b=bMbONhUwlKtfhaFNnechK6y3KCQuhDrAkhgizXVGpnlc8gPhrr9t7dxWEPx0l3BXeqCA2rCvIEQXj1/mmyZM/tPilzDWnNRauuDP9GTPRigcV5cZRmVwX71QI1dRKDQtd5Gz8LcCMfHS6mz9tsCP3jafYub5kbA3u2hAZ2/2g4c=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=lF0en1jY; arc=fail smtp.client-ip=40.107.220.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=fQvFfJFXyovgzpYrfP0SNHRpzNTlpXCM393e0v4CvZtrJWJzpsArt+TV0pwqfgP+KCOaWhZ0NfNnpzqe8bcnDd+ikt7X6I01tQwLTv3QxOnmJkUyWpQTiDs1eYvRQauXgzdN6V0o+GLvA9idw6nSN6mcMSOt4poec+xTPULFQYpV5MqXE2c0NeWOT1i1R5aW1IETEWfsODpTgOHX1rMkqU4AnbZ91CxHDVAvrc8WWoQXKtiiu/+STuRt5oEHbnylHzKOeiAaQuH+wpSBmybpGjlkwl75Vta7aM++chMAKEPtq9lomCoHyFqy1ZK1/DMCKOp+DLm/XdHA+H/L5p7ezw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=uxEFtOw+7F8TRaBnoIA9R6BVenf3qdU2x641uWUQ+74=;
- b=VGULvcWmk6Jjq7LdGpXFjOlfwPGtSXyrcwqbhuLprgXHyoDghp4nip7UNEfzdwFmPSksKBTyjMS5r0E3J8OwzdsrhIhi01XOZguHJ2oVVkmIFrjngXKmzZO4L196XM9fTWzZJKX6DQOUAqX+2ePnG2FCm9rIMRaT+rcBZibiZm9Obl5aLkDjd7p341VLPufwdJ7jcuOrhrOYYn1z75DhTJ0r8cMSY/CrgipNLmfBCRXqGId3gLHLyaBVle9ciVJpbrKlh9JtkcLNMO363270CkwnlzwrNPwznidM/qG44miWd5Nxkg2EzJiNpsErVDW5XM8XEvbv9lFb/mg3amak6g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=uxEFtOw+7F8TRaBnoIA9R6BVenf3qdU2x641uWUQ+74=;
- b=lF0en1jYm/NM9egIPMA8mnh2F9AtI/EakX8C7JrioiyPnD742REzsjJJMo0I/iQ5PEuBCtkmqWH+cR4F4llbiexanfiIHZnu5we8QFecD2O5l0MXmI2ewZA2d6/NfU8oRznQ3ZOPVzyKfYiEdHGh63QzzwbB54sl5CJF1clSeY/lGKLP1X4ZMeqrtglrXbBMFOuL1R0XpjySrEMiwmiqWcp0jcE9gkd4yhcMO0JXlQ736YSOQcKkDf83NAUo4xEXxIywzjqL1//vWSR4M425H18uTre0HDrZ++SSc9hKSiJTBnKs3TpUqoCPfedOz/opjpCe0QnNgGx9G3gUWf1E0g==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
- by BL1PR12MB5994.namprd12.prod.outlook.com (2603:10b6:208:39a::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.21; Thu, 28 Aug
- 2025 11:13:48 +0000
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::6e37:569f:82ee:3f99]) by CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::6e37:569f:82ee:3f99%3]) with mapi id 15.20.9052.019; Thu, 28 Aug 2025
- 11:13:48 +0000
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 28 Aug 2025 20:13:44 +0900
-Message-Id: <DCE0M4NY29YA.K4IX71XOHF4C@nvidia.com>
-Cc: "Alistair Popple" <apopple@nvidia.com>, "Joel Fernandes"
- <joelagnelf@nvidia.com>, "Timur Tabi" <ttabi@nvidia.com>,
- <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <nouveau@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>
-Subject: Re: [PATCH v2 5/8] gpu: nova-core: firmware: process and prepare
- the GSP firmware
-From: "Alexandre Courbot" <acourbot@nvidia.com>
-To: "John Hubbard" <jhubbard@nvidia.com>, "Miguel Ojeda" <ojeda@kernel.org>,
- "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>,
- "Gary Guo" <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
- Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
- "Trevor Gross" <tmgross@umich.edu>, "Danilo Krummrich" <dakr@kernel.org>,
- "David Airlie" <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>,
- "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>, "Maxime Ripard"
- <mripard@kernel.org>, "Thomas Zimmermann" <tzimmermann@suse.de>
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a-dirty
-References: <20250826-nova_firmware-v2-0-93566252fe3a@nvidia.com>
- <20250826-nova_firmware-v2-5-93566252fe3a@nvidia.com>
- <407bf89c-0488-40e4-91f7-440610b6a906@nvidia.com>
-In-Reply-To: <407bf89c-0488-40e4-91f7-440610b6a906@nvidia.com>
-X-ClientProxiedBy: TYCP301CA0039.JPNP301.PROD.OUTLOOK.COM
- (2603:1096:400:380::16) To CH2PR12MB3990.namprd12.prod.outlook.com
- (2603:10b6:610:28::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E20DC279798;
+	Thu, 28 Aug 2025 11:13:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756379636; cv=none; b=EEZeR8zUDQ95hs2QH420URQNHkyrBNiDLKFcIADWtqbWLr92GNMdCU2hcoN4XuOey6kPmOVR5761tgGRcuwGGvrPcDWhSJd/sh6XRGvXHJ46NjvLmyzlBm7Dt59IYb+ZJCJHL7DsZjY3G3fSJQWq5qYxnoZ1isiXa1U25j/cAlU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756379636; c=relaxed/simple;
+	bh=ZlMzfEU+OdSa0mkz6+PAzGz67knIN4MmLEFxeKzh3xc=;
+	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
+	 To:Date:Message-ID; b=E9iIUKQmEbV8Wur4hOW4hldN5LHQU7aRBb7U9eYkf3a+9GKZxoyyB4F5rlsZq8+HrdpQZs+/ATtBILPyRJ86+1QujYzPfwslsBtYwRMqHA0oJQpBUZwoZemMb+q3mv4ZX5kWDfkIMZK6W07muldOUoMA+9zcQW4nUcbwnSsvzH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=u2RJJowG; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from mail.ideasonboard.com (unknown [IPv6:2401:4900:1c69:1331:996f:e361:948:c527])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 2274E20EE;
+	Thu, 28 Aug 2025 13:12:46 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1756379567;
+	bh=ZlMzfEU+OdSa0mkz6+PAzGz67knIN4MmLEFxeKzh3xc=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=u2RJJowGeffhqffaqSWXSUCBieb3uLWVA/X/Tl9CDfHxAmTXjrv4Aw8HMO+H1nM7j
+	 Txv+u/oFjefI3RcOZEsW8j2V1WiXZE8nXfcEROGUPiOQQpvXlRJNQUTq2LaLyWucYp
+	 48KjVImf8hBxyMe62J2fMS+/dk/boQMT2PZ7rsOI=
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|BL1PR12MB5994:EE_
-X-MS-Office365-Filtering-Correlation-Id: cb08a034-f360-4812-2d9f-08dde623f5d2
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|10070799003|376014|7416014|1800799024|366016|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?MkRvNmVsTWlPM3plVTl1YzhkM2FxTFdlemtWL1phTHJwdVlhK2ZtbFFWQlhZ?=
- =?utf-8?B?dkhUUmsyVDNjWkQwQm9ERmxKVENTTjNIWWhCOUszRFhyUDdlVXBOWWszRVVl?=
- =?utf-8?B?eG1oQXNjZjR0K2lZeUkzT2M1cDVsMVEvQVpWMFBXQ21YbWtnQk13cGNub1Jx?=
- =?utf-8?B?UFVZMk1pd25NWUUyOG4rMkNiSDFHb09ldit2UnMxYkl2eUhQeWdkbFNYWEFi?=
- =?utf-8?B?UWFEYXZpTkZlZFNhMThzb3Iwck9oN0tLOStFUlRQbDA1Q0hrWGxVYU9sRWVC?=
- =?utf-8?B?T0lrMGlGSUFsR2pYekhJUVNJNGxwVSt0b1JjNnhLZjFNNldpeDJqalZkMWYw?=
- =?utf-8?B?RzBtaXZMSGVqR2FLT0NNRTQ1QkFQRkRFbm5vMVRXbWgwRzNHVWpSU1FMeXVZ?=
- =?utf-8?B?QXB2ZGpxUUc3SEdJVm8wZ2ZoakJXb2JNRitaWGc1d21EcEFiMC96Z3ZvNko0?=
- =?utf-8?B?L2VLQWQrNW4vV29iSmNpbDQxUk4rVlBvalZqUXk3VVl4VU5vU1IwZ3ZqZ2VI?=
- =?utf-8?B?UTlNTEkrdkk2ZDA4N3FOME9Zd0ZESktCaGM2REdqTnBnM1R5OEFJYW12c01u?=
- =?utf-8?B?MGdmTzdQMWZrdjRuNVBVOVViUTlPeTJ4RmFZNTdvdklqUUdtQlVwbG5sL3FT?=
- =?utf-8?B?dGtpUUNyTitZWDZLUzB5WjZFb2FzbVhmZHBTU0RYb2VRQm1jSWUvZnJjMWpR?=
- =?utf-8?B?cW5SN0l4ZFhtVCtSK1I2Sk1LSk90czZUSSsxc3JGcEZZdHJvVHJLWWFyZWtP?=
- =?utf-8?B?cmRmTWtBcytKb3VtdkRqL3hOaHdsTEY1YkhRMys3SDlFdWRmTHVqSWpXNGR4?=
- =?utf-8?B?aTBiUkg0elJ6d0t0TVZqRE4wYzZWcU1UTjAwTWFPejdtSGhGSXN4dkVjbXlj?=
- =?utf-8?B?ZzVHdWorbEJFUWJ2MU5NVW91ZHFkNUxpNnU5eDh0bXpyc3VtVVVnZE5IRHdY?=
- =?utf-8?B?Z2Jrd2VZNTd2VTlFMGJtWHlGYWVESXY2ejdMK1FmbjlYRXdwVExnN2VwKzlZ?=
- =?utf-8?B?aG5HMjBwdmNvOWNLdDBlcnFMQ3ZDSHhnZ1grYnpGMnBwRXdKZWdLeVZzZmQ4?=
- =?utf-8?B?ekJGbkl3TUVyZUJEUHZUNTZIQ00vR09ibWNaU3F1T2VKRWF5QlkwU3RTZStK?=
- =?utf-8?B?bm5EbC82ZFJMckJWOTZmZjRBOVBva3Z2RUxvMXpBTlJRNlRSaHlVMGtRR3Vh?=
- =?utf-8?B?bUtNSFFkZE9OSjFDMFpjdW1RVDdENzMra3A4VE5iTHl3Vmg0cGlRSFlMeCsz?=
- =?utf-8?B?RGRENjkxYVBHbGhXVnp3NXpNOWtGV090dDFTTlZCU2lGZWFFOVBFbzBGMjl2?=
- =?utf-8?B?Vi9sZ0orbDcxVE9ndTF2MWw3UExaSWREcExBK1dBWU9JTUsrRVBsenNTeW4v?=
- =?utf-8?B?RnRpbm1VaDQvRVVLd3ozbytmSVcrSUpnbUpUeG1tUjFNZ1IzYkhuaGdkV0Nt?=
- =?utf-8?B?SGhrRUYvS3lqNk14V2xLOE1oSkpJVEhoMm41NDNmMm9KN3EvOTl6enlnWnVO?=
- =?utf-8?B?ZWRMMGdhODhiNWVqTWF3bEF3Z2I1akx1bklUbGVCRE9CWnd6UEswd2tmckkx?=
- =?utf-8?B?K0pHeVY1UXN2MG0wc2UxQzhJMW0zTjNMMlN2NStQcGRGampNWVB2VEovVzli?=
- =?utf-8?B?eDFpTHpLVDIrcy9WWnB5TnpNSkE5UnhONGowekFoMWRpTDlRcXN2eHNvNmJP?=
- =?utf-8?B?VHBFV3NFMEpva2xIOVVhTjBNUHkyWUk4R2NtR21XQ2F0cVVsZXZpOWd6OS82?=
- =?utf-8?B?UjBwcVQ2SytjWkpYeTNjYkJuOVE4VVNsVUViQkNzMUJrcFE1U1NMbnFNVlFC?=
- =?utf-8?B?cWZIQWVhcDlRSEc1d0lwYmFYTEJGNmZzdDVnS3MwZ2xLTHZwdjRNUWNpL2Zr?=
- =?utf-8?B?VlF0RzZKZjZybnBOLzdEWDVGdGNyRFBJcnp5RW0rNC9oU0xBUmRTRGN2bUZ5?=
- =?utf-8?B?MHI0K3ZOdm10R2FKV1I3RHYvbS9vajQyWHluWXo4dUphbXkvLzZEblM3RS9k?=
- =?utf-8?B?RVJ1VkwyYTBnPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(376014)(7416014)(1800799024)(366016)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?MUtLWmhTcnRITU5oa2VUdWNxdDdzd1R6SzdEa0NmS0dJK1EzUHhZV2dOaVpm?=
- =?utf-8?B?U3plVVJxY1BGY2J1TUQvZ2dsNWMyM1dBVlM4WXhpM2tndEpMOWJwaExRRmE2?=
- =?utf-8?B?V3FINXFRVFFtc3JzWlpvei8ySUxVUHVLbWJXUGtkcHdEeGRBUUdWU3Z6OHMz?=
- =?utf-8?B?c2Qzazl0aW82OUc2c3FNS3VWN1NDQTdhQitYWTloTEdsU1hYS0RENUtyNWZ6?=
- =?utf-8?B?MlBLTGJ1dDlYejZCY0NHYUxXUEV1MCtpaFhoRnJ6R09MZzNJZy9aTURkKzZi?=
- =?utf-8?B?VXJEai85R01nTFd6UHc1eXlLallHT0c1d0E3REd5ekE0U3RIV2JnSUF4TExs?=
- =?utf-8?B?ckwzaFNodW94aTJvRWlLSUNmUWFSZXRtMys2aEU3Ykw4Ym1wL3N6QXZhNXpz?=
- =?utf-8?B?U2JVVHdtTFJlODU3dzg0YTh6VW8xN3BORFV6UHRGbk9qRDFwNFlKaitaaUVJ?=
- =?utf-8?B?em95c1NPd2UwdFNETysyUTh3SEJEN2I1NHVxa2xqbks3MGt2T0xMUFRNOXJu?=
- =?utf-8?B?K29vZ2wxK3lqeTEvNU5QUmJNK2tYRmZpM3RNejRLNFNIYjlyUHhJaEFoQ2pa?=
- =?utf-8?B?b0hLejk3UFl1ai84UlRlKzJwMVk5djk0R3d3RHBQbEFXSGF0R0lOakNOeGpU?=
- =?utf-8?B?bXltUXpHazJpMTRGbmlVN2NHTjlzM1VIOU9Pc1drM01wVXBTZEZEbDZGNDM5?=
- =?utf-8?B?cENZU2Z6N25XMEwzYXU2TDZoTlJDZmZ5OHJlVlN0bVJKMGpnRGhsOU9zdHYx?=
- =?utf-8?B?NnU5ZlhEcHhHbzY5bjhZeDBOaTFCVDlxS24zM1o0d0tYRi9UY3RKTHpVakNi?=
- =?utf-8?B?NWJZRWpzUEpFNmNQZnJ5WWl6WTdvZEtrZnNmQ25ldmE2ZGFQb3hhSmJxTE1T?=
- =?utf-8?B?M3pNaTdqU0x4bHpWNjhnK2lFMFVGSUJjSmErWENTb21oUlNWWnlTakQ1SWFz?=
- =?utf-8?B?NHdFdlNrdktLaGQ2ckhJd0wyaitmL1RTeklrc2lzeFQ3UFJuUlkwUW0xMStu?=
- =?utf-8?B?ZWkwOHo5YWRwR0RmeWlaMzRjQmRTa3BESFpVTDFFNVFJbi9nazJtaHV6anBF?=
- =?utf-8?B?NlFZRzFEZlZ6NDNJelhtbWk3SE5VQ3ptaFhML1IvOExBeHlzZW1VcTA4cUl2?=
- =?utf-8?B?SXpWWTJIM1ZYVy96VjAzTUkvczduUTk5cFZxNStVcnd6T1pZbVN5RUZxeERu?=
- =?utf-8?B?d1crZHRKVHJDbkU0dWJXaVFwZGhvb1JDbEJFcFJia2V6U3gzRnlrRmdNU1l2?=
- =?utf-8?B?Yi8yMHhsV2xvQURrMS9FVkFMbUdnQ0FRQ2EveUp6em1CWWxYV0ZiNU1JZTUw?=
- =?utf-8?B?NzY1Qm5CMlJFUlE1Rmo3VUt2cnhRNGxTT0hOZE8xVnR0TnJVQmN4eG8wYXYz?=
- =?utf-8?B?NU0zR3Vlc1hONE5CdFNybkJncElLajczTWh5V1dPYitBWXlGTXZMRGlyWGJu?=
- =?utf-8?B?ZVFxMGphUnlHeWVFZVlNQ1Z0UkErZkJ4ZEgyR3I1Y0dONlp2SVlId1h4bkVo?=
- =?utf-8?B?Zmx0aUJHVHpTU3lUb1Q4dytMcGlVVGRWMnBoNkp6ZGQrVzZucE9YM1ppSXNF?=
- =?utf-8?B?RjhUZ1g5cXNwZHRuSFZwMFVmWnltczVvVHVvdy9xY2tJLyt6YU5lL1ZnWEZo?=
- =?utf-8?B?aU9XTWUxMXJjNmpERVFOaHVPcVJLS1hEUk83NGtXQXhhSkFpZytOMzV6OXcw?=
- =?utf-8?B?MHRyV0NteTZwYTFhMDZDdXd1TnlWSHFqSzBPdDBaNkJLM0VBUFprMTBzbVVU?=
- =?utf-8?B?bHgvYlExNysxb0FCZmY0UlJ6dXNYV0M1QzZsR01XbnBLT21pZzNGVkorNUc3?=
- =?utf-8?B?R1ZyRmwxeWRmTWRtYmQ0ZENOeFdjblRTei9IQXhpR2ozeVk2THhFeEdBUXNx?=
- =?utf-8?B?TW9ONVF0Z3JObTFiY0VsV0tNMG0yQThOb08zZnR5WFp3OVNEOTRGWlJUaWlq?=
- =?utf-8?B?azR0dWNIaHVVNGZxNlpPaG9RWnZCcXBydlhjaVA0Q1A3SXA0SkloaEZ0bG5I?=
- =?utf-8?B?dE9XUURDYVRlOVNPdUVZWWNMdjlqbG10Wi9HVEc3ZHo5anp5VkYzOHcyMWhJ?=
- =?utf-8?B?UlFnbHNJUFhKTlRNc3ZxdmUyN2lWOEVENUw3OVU4RGpZR2ZMZjlrOUU3RWhE?=
- =?utf-8?B?ZnpXa1pVTVV5cTl0NW43ZmdBY2J3eTZ3K25sb0d4L2RManBJRXVaREg3dWln?=
- =?utf-8?Q?XXnfCHgWa6PVN8/93B3H6nSz/3mWMKdhI2slWM61ALYj?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cb08a034-f360-4812-2d9f-08dde623f5d2
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Aug 2025 11:13:48.1042
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: r+5ByO4FUkt+6itsaFVMVa2Gh0j2Rt6qY215Q1jBxVo1HFQanvZjvuNsc8fviPsrYQdtknoCBtBmgcxZP6Vn5w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR12MB5994
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250825142522.1826188-10-r-donadkar@ti.com>
+References: <20250825142522.1826188-1-r-donadkar@ti.com> <20250825142522.1826188-10-r-donadkar@ti.com>
+Subject: Re: [PATCH v5 09/14] media: ti: j721e-csi2rx: add support for processing virtual channels
+From: Jai Luthra <jai.luthra@ideasonboard.com>
+Cc: r-donadkar@ti.com, y-abhilashchandra@ti.com, devarsht@ti.com, vaishnav.a@ti.com, s-jain1@ti.com, vigneshr@ti.com, mchehab@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, sakari.ailus@linux.intel.com, hverkuil-cisco@xs4all.nl, tomi.valkeinen@ideasonboard.com, changhuang.liang@starfivetech.com, jack.zhu@starfivetech.com, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org
+To: Rishikesh Donadkar <r-donadkar@ti.com>, jai.luthra@linux.dev, laurent.pinchart@ideasonboard.com, mripard@kernel.org
+Date: Thu, 28 Aug 2025 16:43:46 +0530
+Message-ID: <175637962616.1633224.4699307874299488136@freya>
+User-Agent: alot/0.12.dev28+gd2c823fe
 
-On Thu Aug 28, 2025 at 1:01 PM JST, John Hubbard wrote:
-> On 8/25/25 9:07 PM, Alexandre Courbot wrote:
->> The GSP firmware is a binary blob that is verified, loaded, and run by
->> the GSP bootloader. Its presentation is a bit peculiar as the GSP
->> bootloader expects to be given a DMA address to a 3-levels page table
->> mapping the GSP firmware at address 0 of its own address space.
->>=20
->> Prepare such a structure containing the DMA-mapped firmware as well as
->> the DMA-mapped page tables, and a way to obtain the DMA handle of the
->> level 0 page table.
->>=20
->> As we are performing the required ELF section parsing and radix3 page
->> table building, remove these items from the TODO file.
->>=20
->> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
->> ---
->>  Documentation/gpu/nova/core/todo.rst  |  17 -----
->>  drivers/gpu/nova-core/firmware.rs     | 110 +++++++++++++++++++++++++++=
-++++-
->>  drivers/gpu/nova-core/firmware/gsp.rs | 117 +++++++++++++++++++++++++++=
-+++++++
->>  drivers/gpu/nova-core/gsp.rs          |   4 ++
->>  drivers/gpu/nova-core/nova_core.rs    |   1 +
->>  5 files changed, 229 insertions(+), 20 deletions(-)
+Quoting Rishikesh Donadkar (2025-08-25 19:55:17)
+> From: Jai Luthra <j-luthra@ti.com>
+>=20
+> Use get_frame_desc() to get the frame desc from the connected source,
+> and use the provided virtual channel instead of hardcoded one.
+>=20
+> get_frame_desc() returns the same information when called on each stream
+> start, so instead get the VCs for all the routed stream at first
+> stream start and cache this information in the driver.
+>=20
+> get_frame_desc() works per stream, but as we don't support multiple
+> streams yet, we will just always use stream 0. If the source doesn't
+> support get_frame_desc(), fall back to the previous method of always
+> capturing virtual channel 0.
+>=20
+> Reviewed-by: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>
+> Co-developed-by: Pratyush Yadav <p.yadav@ti.com>
+> Signed-off-by: Pratyush Yadav <p.yadav@ti.com>
+> Signed-off-by: Jai Luthra <j-luthra@ti.com>
+> Signed-off-by: Rishikesh Donadkar <r-donadkar@ti.com>
+> ---
+>  .../platform/ti/j721e-csi2rx/j721e-csi2rx.c   | 108 ++++++++++++++++++
+>  1 file changed, 108 insertions(+)
+>=20
+> diff --git a/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c b/driv=
+ers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c
+> index 6cab7642aa10..45e9001fa35b 100644
+> --- a/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c
+> +++ b/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c
+> @@ -32,6 +32,7 @@
+>  #define SHIM_DMACNTX_YUV422            GENMASK(27, 26)
+>  #define SHIM_DMACNTX_DUAL_PCK_CFG      BIT(24)
+>  #define SHIM_DMACNTX_SIZE              GENMASK(21, 20)
+> +#define SHIM_DMACNTX_VC                        GENMASK(9, 6)
+>  #define SHIM_DMACNTX_FMT               GENMASK(5, 0)
+>  #define SHIM_DMACNTX_YUV422_MODE_11    3
+>  #define SHIM_DMACNTX_SIZE_8            0
+> @@ -103,6 +104,7 @@ struct ti_csi2rx_dev;
 > =20
-> Code looks good. Or more accurately, it's working on my machine, and
-> I think I understand it, aside from the SG Table internals.
->
-> The documentation on the whole "radix 3" aspect is too light though, so
-> I've created some that you can add in if you agree with it.
->
-> ...
->> diff --git a/drivers/gpu/nova-core/firmware/gsp.rs b/drivers/gpu/nova-co=
-re/firmware/gsp.rs
-> ...
->> +/// A device-mapped firmware with a set of (also device-mapped) pages t=
-ables mapping the firmware
->> +/// to the start of their own address space, also known as a `Radix3` f=
-irmware.
->
-> I'd like to replace the above two lines with something like this:
->
-> /// GSP firmware with 3-level radix page tables for the GSP bootloader.
-> ///
-> /// The bootloader expects firmware to be mapped starting at address 0 in=
- GSP's virtual address
-> /// space:
-> ///
-> /// ```text
-> /// Level 0:  1 page, 1 entry         -> points to first level 1 page
-> /// Level 1:  Multiple pages/entries  -> each entry points to a level 2 p=
-age
-> /// Level 2:  Multiple pages/entries  -> each entry points to a firmware =
-page
-> /// ```
-> ///
-> /// Each page is 4KB, each entry is 8 bytes (64-bit DMA address).
-> /// Also known as "Radix3" firmware.
+>  struct ti_csi2rx_ctx {
+>         struct ti_csi2rx_dev            *csi;
+> +       struct v4l2_subdev_route        *route;
+>         struct video_device             vdev;
+>         struct vb2_queue                vidq;
+>         struct mutex                    mutex; /* To serialize ioctls. */
+> @@ -111,6 +113,8 @@ struct ti_csi2rx_ctx {
+>         struct media_pad                pad;
+>         u32                             sequence;
+>         u32                             idx;
+> +       u32                             vc;
+> +       u32                             stream;
+>  };
+> =20
+>  struct ti_csi2rx_dev {
+> @@ -134,6 +138,7 @@ struct ti_csi2rx_dev {
+>                 dma_addr_t              paddr;
+>                 size_t                  len;
+>         } drain;
+> +       bool                            vc_cached;
+>  };
+> =20
+>  static inline struct ti_csi2rx_dev *to_csi2rx_dev(struct v4l2_subdev *sd)
+> @@ -614,6 +619,7 @@ static void ti_csi2rx_setup_shim(struct ti_csi2rx_ctx=
+ *ctx)
+>         }
+> =20
+>         reg |=3D FIELD_PREP(SHIM_DMACNTX_SIZE, fmt->size);
+> +       reg |=3D FIELD_PREP(SHIM_DMACNTX_VC, ctx->vc);
+> =20
+>         writel(reg, csi->shim + SHIM_DMACNTX(ctx->idx));
+> =20
+> @@ -887,6 +893,83 @@ static void ti_csi2rx_buffer_queue(struct vb2_buffer=
+ *vb)
+>         }
+>  }
+> =20
+> +static int ti_csi2rx_get_route(struct ti_csi2rx_ctx *ctx)
+> +{
+> +       struct ti_csi2rx_dev *csi =3D ctx->csi;
+> +       struct media_pad *pad;
+> +       struct v4l2_subdev_state *state;
+> +       struct v4l2_subdev_route *r;
+> +
+> +       /* Get the source pad connected to this ctx */
+> +       pad =3D media_entity_remote_source_pad_unique(ctx->pad.entity);
+> +       if (!pad) {
+> +               dev_err(csi->dev, "No pad connected to ctx %d\n", ctx->id=
+x);
+> +               v4l2_subdev_unlock_state(state);
 
-Thanks, this is perfect!
+Here the state =3D=3D NULL.
 
->
->
->> +#[pin_data]
->> +pub(crate) struct GspFirmware {
->
-> And then a slightly higher-level set of inline comments will help
-> developers, I think:
->
->> +    /// The GSP firmware inside a [`VVec`], device-mapped via a SG tabl=
-e.
->> +    #[pin]
->> +    fw: SGTable<Owned<VVec<u8>>>,
->> +    /// The level 2 page table, mapping [`Self::fw`] at its beginning.
->
-> Instead, how about:
->
->       /// Level 2 page table(s) whose entries contain DMA addresses of fi=
-rmware pages.
->
->> +    #[pin]
->> +    lvl2: SGTable<Owned<VVec<u8>>>,
->> +    /// The level 1 page table, mapping [`Self::lvl2`] at its beginning=
-.
->
->        /// Level 1 page table(s) whose entries contain DMA addresses of l=
-evel 2 pages.
+I think this is broken since v4. Please fix in the next one.
 
-Looking good. But isn't it singular "table"? We have one table, with
-potentialy several pages, but each page is not a table in itself IIUC.
-
+> +               return -ENODEV;
+> +       }
+> +
+> +       state =3D v4l2_subdev_lock_and_get_active_state(&csi->subdev);
+> +
+> +       for_each_active_route(&state->routing, r) {
+> +               if (!(r->flags & V4L2_SUBDEV_ROUTE_FL_ACTIVE))
+> +                       continue;
+> +               if (r->source_pad !=3D pad->index)
+> +                       continue;
+> +
+> +               ctx->route =3D r;
+> +       }
+> +
+> +       v4l2_subdev_unlock_state(state);
+> +
+> +       if (!ctx->route)
+> +               return -ENODEV;
+> +
+> +       return 0;
+> +}
+> +
+> +static int ti_csi2rx_get_vc(struct ti_csi2rx_ctx *ctx)
+> +{
+> +       struct ti_csi2rx_dev *csi =3D ctx->csi;
+> +       struct ti_csi2rx_ctx *curr_ctx;
+> +       struct v4l2_mbus_frame_desc fd;
+> +       struct media_pad *source_pad;
+> +       struct v4l2_subdev_route *curr_route;
+> +       int ret;
+> +       unsigned int i, j;
+> +
+> +       /* Get the frame desc form source */
+> +       source_pad =3D media_entity_remote_pad_unique(&csi->subdev.entity=
+, MEDIA_PAD_FL_SOURCE);
+> +       if (!source_pad)
+> +               return -ENODEV;
+> +
+> +       ret =3D v4l2_subdev_call(csi->source, pad, get_frame_desc, source=
+_pad->index, &fd);
+> +       if (ret)
+> +               return ret;
+> +
+> +       if (fd.type !=3D V4L2_MBUS_FRAME_DESC_TYPE_CSI2)
+> +               return -EINVAL;
+> +
+> +       for (i =3D 0; i < csi->num_ctx; i++) {
+> +               curr_ctx =3D &csi->ctx[i];
+> +
+> +               /* Capture VC 0 by default */
+> +               curr_ctx->vc =3D 0;
+> +
+> +               ret =3D ti_csi2rx_get_route(curr_ctx);
+> +               if (ret)
+> +                       continue;
+> +
+> +               curr_route =3D curr_ctx->route;
+> +               curr_ctx->stream =3D curr_route->sink_stream;
+> +
+> +               for (j =3D 0; j < fd.num_entries; j++)
+> +                       if (curr_ctx->stream =3D=3D fd.entry[j].stream)
+> +                               curr_ctx->vc =3D fd.entry[j].bus.csi2.vc;
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+>  static int ti_csi2rx_start_streaming(struct vb2_queue *vq, unsigned int =
+count)
+>  {
+>         struct ti_csi2rx_ctx *ctx =3D vb2_get_drv_priv(vq);
+> @@ -907,6 +990,25 @@ static int ti_csi2rx_start_streaming(struct vb2_queu=
+e *vq, unsigned int count)
+>         if (ret)
+>                 goto err;
+> =20
+> +       /* If no stream is routed to this ctx, exit early */
+> +       ret =3D ti_csi2rx_get_route(ctx);
+> +       if (ret)
+> +               goto err;
+> +
+> +       /* Get the VC for all enabled ctx on first stream start */
+> +       mutex_lock(&csi->mutex);
+> +       if (!csi->vc_cached) {
+> +               ret =3D ti_csi2rx_get_vc(ctx);
+> +               if (ret =3D=3D -ENOIOCTLCMD) {
+> +                       ctx->vc =3D 0;
+> +               } else if (ret < 0) {
+> +                       mutex_unlock(&csi->mutex);
+> +                       goto err;
+> +               }
+> +               csi->vc_cached =3D true;
+> +       }
+> +       mutex_unlock(&csi->mutex);
+> +
+>         ti_csi2rx_setup_shim(ctx);
+> =20
+>         ctx->sequence =3D 0;
+> @@ -953,6 +1055,10 @@ static void ti_csi2rx_stop_streaming(struct vb2_que=
+ue *vq)
+>         writel(0, csi->shim + SHIM_CNTL);
+>         writel(0, csi->shim + SHIM_DMACNTX(ctx->idx));
+> =20
+> +       mutex_lock(&csi->mutex);
+> +       csi->vc_cached =3D false;
+> +       mutex_unlock(&csi->mutex);
+> +
+>         ret =3D v4l2_subdev_call(&csi->subdev, video, s_stream, 0);
+>         if (ret)
+>                 dev_err(csi->dev, "Failed to stop subdev stream\n");
+> @@ -1306,6 +1412,8 @@ static int ti_csi2rx_init_ctx(struct ti_csi2rx_ctx =
+*ctx)
+> =20
+>         ti_csi2rx_fill_fmt(fmt, &ctx->v_fmt);
+> =20
+> +       ctx->route =3D NULL;
+> +
+>         ctx->pad.flags =3D MEDIA_PAD_FL_SINK;
+>         vdev->entity.ops =3D &ti_csi2rx_video_entity_ops;
+>         ret =3D media_entity_pads_init(&ctx->vdev.entity, 1, &ctx->pad);
+> --=20
+> 2.34.1
 >
->> +    #[pin]
->> +    lvl1: SGTable<Owned<VVec<u8>>>,
->> +    /// The level 0 page table, mapping [`Self::lvl1`] at its beginning=
-.
->
->        /// Level 0 page table (single 4KB page) with one entry: DMA addre=
-ss of first level 1 page.
->
->> +    lvl0: DmaObject,
->> +    /// Size in bytes of the firmware contained in [`Self::fw`].
->> +    pub size: usize,
->> +}
->> +
->> +impl GspFirmware {
->> +    /// Maps the GSP firmware image `fw` into `dev`'s address-space, an=
-d creates the page tables
->> +    /// expected by the GSP bootloader to load it.
->> +    pub(crate) fn new<'a>(
->> +        dev: &'a device::Device<device::Bound>,
->> +        fw: &'a [u8],
->> +    ) -> impl PinInit<Self, Error> + 'a {
->> +        try_pin_init!(&this in Self {
->> +            fw <- {
->> +                // Move the firmware into a vmalloc'd vector and map it=
- into the device address
->> +                // space.
->> +                VVec::with_capacity(fw.len(), GFP_KERNEL)
->> +                .and_then(|mut v| {
->> +                    v.extend_from_slice(fw, GFP_KERNEL)?;
->> +                    Ok(v)
->> +                })
->> +                .map_err(|_| ENOMEM)
->> +                .map(|v| SGTable::new(dev, v, DataDirection::ToDevice, =
-GFP_KERNEL))?
->> +            },
->> +            lvl2 <- {
->
-> Why must we use a strange vowel-removal algorithm for these vrbl nms? I'l=
-l let you have
-> a few extra characters and you can spell out "level2"...
-
-Yeah, let me spell these fully.
-
->
->> +                // Allocate the level 2 page table, map the firmware on=
-to it, and map it into the
->> +                // device address space.
->> +                // SAFETY: `this` is a valid pointer, and `fw` has been=
- initialized.
->> +                let fw_sg_table =3D unsafe { &(*this.as_ptr()).fw };
->> +                VVec::<u8>::with_capacity(
->> +                    fw_sg_table.iter().count() * core::mem::size_of::<u=
-64>(),
->> +                    GFP_KERNEL,
->> +                )
->> +                .map_err(|_| ENOMEM)
->> +                .and_then(|lvl2| map_into_lvl(fw_sg_table, lvl2))
->> +                .map(|lvl2| SGTable::new(dev, lvl2, DataDirection::ToDe=
-vice, GFP_KERNEL))?
->> +            },
->> +            lvl1 <- {
->> +                // Allocate the level 1 page table, map the level 2 pag=
-e table onto it, and map it
->> +                // into the device address space.
->> +                // SAFETY: `this` is a valid pointer, and `lvl2` has be=
-en initialized.
->> +                let lvl2_sg_table =3D unsafe { &(*this.as_ptr()).lvl2 }=
-;
->> +                VVec::<u8>::with_capacity(
->> +                    lvl2_sg_table.iter().count() * core::mem::size_of::=
-<u64>(),
->> +                    GFP_KERNEL,
->> +                )
->> +                .map_err(|_| ENOMEM)
->> +                .and_then(|lvl1| map_into_lvl(lvl2_sg_table, lvl1))
->> +                .map(|lvl1| SGTable::new(dev, lvl1, DataDirection::ToDe=
-vice, GFP_KERNEL))?
->> +            },
->> +            lvl0: {
->> +                // Allocate the level 0 page table as a device-visible =
-DMA object, and map the
->> +                // level 1 page table onto it.
->> +                // SAFETY: `this` is a valid pointer, and `lvl1` has be=
-en initialized.
->> +                let lvl1_sg_table =3D unsafe { &(*this.as_ptr()).lvl1 }=
-;
->> +                let mut lvl0 =3D DmaObject::new(dev, GSP_PAGE_SIZE)?;
->> +                // SAFETY: we are the only owner of this newly-created =
-object, making races
->> +                // impossible.
->> +                let lvl0_slice =3D unsafe { lvl0.as_slice_mut(0, GSP_PA=
-GE_SIZE) }?;
->> +                lvl0_slice[0..core::mem::size_of::<u64>()].copy_from_sl=
-ice(
->> +                    #[allow(clippy::useless_conversion)]
->> +                    &(u64::from(lvl1_sg_table.iter().next().unwrap().dm=
-a_address())).to_le_bytes(),
->> +                );
->> +
->> +                lvl0
->> +            },
->> +            size: fw.len(),
->> +        })
->> +    }
->> +
->> +    #[expect(unused)]
->> +    /// Returns the DMA handle of the level 0 page table.
->> +    pub(crate) fn lvl0_dma_handle(&self) -> DmaAddress {
->> +        self.lvl0.dma_handle()
->> +    }
->> +}
->> +
->> +/// Create a linear mapping the device mapping of the buffer described =
-by `sg_table` into `dst`.
->
-> How about this:
->
-> /// Build a page table from a scatter-gather list.
-> ///
-> /// Takes each DMA-mapped region from `sg_table` and writes page table en=
-tries
-> /// for all 4KB pages within that region. For example, a 16KB SG entry be=
-comes
-> /// 4 consecutive page table entries.
-
-Much better. And I mixed some words in the original message which didn't
-even make sense to begin with.
-
 
