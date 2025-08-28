@@ -1,130 +1,109 @@
-Return-Path: <linux-kernel+bounces-790536-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790537-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95F8DB3AA00
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 20:27:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3202B3AA05
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 20:28:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 63552174BDE
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 18:27:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 02ED31C84738
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 18:28:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7170F273811;
-	Thu, 28 Aug 2025 18:27:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43ECF2749D7;
+	Thu, 28 Aug 2025 18:27:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="u5ao/qRq"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="j+SgAZgk"
+Received: from 004.mia.mailroute.net (004.mia.mailroute.net [199.89.3.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25265272E74
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 18:27:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE5D218E377;
+	Thu, 28 Aug 2025 18:27:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756405657; cv=none; b=qSmis4xb45Jq16gg2M4NfITxHGYOWccKD3hjtmw/9XUnbs41/cntsMGbH9k4ffIvMvtOLFlaClY4zl8zCN/GU++D4aWZM/+/52Yu9+HKWxHWl7aEXE5xPk38dzLwNkIYLRHNctYdU2ya05QvjlcdMOxwbXU+GuUD6IeFmzftsHs=
+	t=1756405672; cv=none; b=O/B0UQFNu5MzojZghA/IPksFZtMkHFeDtrEEmhGuLVdC/vpRm4AYns6N8YDF10zFUIYS0I78FkEUyOz7I6f0zGyOphw4PllIq4B8Wq/FUPMks6ahnNdIVGDWUXGBMYj4k5JBYtZj2xFKOVKclU8V+ikd6PpYi+zYPir3M5iwRRw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756405657; c=relaxed/simple;
-	bh=yUudGldIdimJfnVV7F3jVvnrtrGzbpei61zCHqvYDRw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=knss5qs2szS806wL7A9SN/FHzJruq/F1C+nkSThK3i/+RRB3dJLzK1WRAuVui3QarOG1/ueCDxxRWc/bslKxzDiOvCGhkBhAW0/BWz3fUtuTYtSmyz0VG6bGbP+B1bUOjWz0VmFvVdTZS1LGp5ktrTpygFm4rvUpQkPNCQzKHyA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=u5ao/qRq; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-55f3ce45abcso1488005e87.3
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 11:27:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756405654; x=1757010454; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pqwyb/SnnH1TinOPkVGbJlqbh2FEY+oG9aGa26NkltQ=;
-        b=u5ao/qRqEbZVbijEzO5hnSNcEZreJOpjR7t2KS384DjiPdKGM1+vJ+KClsy1z5Hn5y
-         IOpO6Ik3amodLIvfe3o2oZrbO3QZa7eKG2goNKGl2M1BjMJo/u/yA2sCVlW4gsdoCwXW
-         lkImRj0oda5bKS7aaBuRqQNBOW3XTdaDNXaL0obDsU0qlIXLJHxH7ooWgqKuycqXzyLy
-         c7/h5XXcin866TcI9GQdG8PR/pNIWbVJAVYep0nPIyfnMooJchfAs5Ih8IBNFFZE3Ioi
-         IFDZbCU/lWLg9c4iL3UafcG+9RqGdLQz6QDe/x3QmwImdO0xKEcNXj0GQ8kFw7j49uhq
-         20qg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756405654; x=1757010454;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pqwyb/SnnH1TinOPkVGbJlqbh2FEY+oG9aGa26NkltQ=;
-        b=BuQTZGhaqDDNc+6dee553zaqAS9sqvWF1VbE/Tb5ThdH0qWES/42owLyyX9PvHvHml
-         Y4lOwr6lra3Dr9aI10/S6MQgiWedxeBbHT7GGyBBDwuWgZMWC08bHP+1E+uJa/M7fDmp
-         6oZScAjsEJuWZ7synYOaH6qtkL6CIBs+ca2ysRG2fg4LuZB9abtLxoRGc16RkjZg+vOl
-         A7F0XO1EvUVMJkzuRqIjSqTFitKQcuYAGh7/MSaj/FrYybxsu9nLtiOrAveqcSR85Dx4
-         B3jwTv3A8TWosDIPtGYWA0fx/pz+o6Qpsqhc0FDWkbttFanL5hGA2pVw8rfXf+P+ClI9
-         qTtQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV2OEtjSe9P4y1dml3HBBxrbQI05Hf5MWmF+oyOp3u6/kHzaQZITmlYSR0w0o8O6B7QdmCjm9CFftWPf58=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxalPdEYy6+pveKW43402YWOAW0Jn4oz4t72AueYoJPOin/0be2
-	qAxDN5SuqnRBbmaFmmFE+kAEo6jLwLP/47cSajfgvgY8skUP6DG5jjoVg1DFyopNpqptaw5d3xN
-	C2Yb1nIme65bu7TzTuHbFw+LHfyOQQ/Dm77Eshju+iA==
-X-Gm-Gg: ASbGncvzDUMhlK+uSZUP1KCDNOkSJ0wFtkEsnus2niuDG6t82FCBRwyFb/3D0Bgv6Gk
-	WsEEDh1LV7mN9g8gzO4cfKYnOn49eMxmWo9HetRaALKFG19mOb6qMnNUbX2istUMNJ/uPPalyGc
-	NMpwq20m8PIHGsL1asToJMWI3Z5hP2d86nJZx9EAHgibIaauSLGzCnJYYbgMUnbO3RUi3LkOjyN
-	r/R1dRaq+tqT0zd6w==
-X-Google-Smtp-Source: AGHT+IHjNr9ZC6xmrExTBjeycVEVqrH7imCeC/o/rJDawlJYvFFJ3EnVgmrnFIfcqveGRJTNAgtfNbpETKNQsRbUIjU=
-X-Received: by 2002:a05:6512:6412:b0:55f:4c9c:27e5 with SMTP id
- 2adb3069b0e04-55f4c9c2a0amr3876653e87.23.1756405654172; Thu, 28 Aug 2025
- 11:27:34 -0700 (PDT)
+	s=arc-20240116; t=1756405672; c=relaxed/simple;
+	bh=18LdtOFXKOJg3DyeNVbctOmZ9oWQXbv1iQ5ztloYB9s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ARRUIo0O+EKfCaXM5/c266TnCsfjTEatzIKhw7QiNOG3suCwOCXS63RHi4BWp/Wfkx4bHnu3PbkueOBuSofnYtxB5MbclOneJ5s/b02/4uuI8Xc7K5W70z530kx9GRLLxfXA/BeHmLeG0nOWSRIo4J9nBu5HsTuoB4MJgiRLZE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=j+SgAZgk; arc=none smtp.client-ip=199.89.3.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 004.mia.mailroute.net (Postfix) with ESMTP id 4cCVJ56flyzm0yVg;
+	Thu, 28 Aug 2025 18:27:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1756405667; x=1758997668; bh=fCFTF+N52C0czaoE9/4vxFQB
+	xphUlPInr06EwfDDb9I=; b=j+SgAZgkMBU19DRwZPXuxMzFRgPi0POAgw0g/NOu
+	ReCp+FMIqntcO3eOksN1qDUl5NCoS0017rrgDPD/6Yf1LFzu7Fr29slzScEZyGts
+	cl/IUVU+VA/LcztImzJqzkTXiQ0Fh1wCszpK/YCPehSxeANj1qo6wfPTOUZoCVVW
+	rsKcxYumAfFjfhrFCnOuJ8mTeqKnCF8U2y8e9hQPsSHijwK/MRZ4W3oXQNDMHdrh
+	ebepTY2tD5081yAtDSWiTekuxuiKYr6pwptKSo7X9Ny8Wqo8YyG0EXSU7dzgRE3c
+	+MLI5ZvcETsj/vpLXFgjBG2pye0EIY1QgotGCWE8tNd+wg==
+X-Virus-Scanned: by MailRoute
+Received: from 004.mia.mailroute.net ([127.0.0.1])
+ by localhost (004.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id D9hLUZSu0D4v; Thu, 28 Aug 2025 18:27:47 +0000 (UTC)
+Received: from [172.20.6.188] (unknown [208.98.210.68])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 004.mia.mailroute.net (Postfix) with ESMTPSA id 4cCVHq1FqPzm0yVV;
+	Thu, 28 Aug 2025 18:27:34 +0000 (UTC)
+Message-ID: <1824553d-a038-4ba8-941e-cad64875cb92@acm.org>
+Date: Thu, 28 Aug 2025 11:27:25 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250827024222.588082-1-gary.yang@cixtech.com> <20250827024222.588082-3-gary.yang@cixtech.com>
-In-Reply-To: <20250827024222.588082-3-gary.yang@cixtech.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 28 Aug 2025 20:27:22 +0200
-X-Gm-Features: Ac12FXxAt5VeCD-YOlaMkQli9qerZ055DqxwpMYFqqyUfOtx4GPyUpzPDPyGmoI
-Message-ID: <CACRpkdaX2VPAb+vihZ5BEAsGy+jNUdQ8q+3c3Q78uWmqZYeu=g@mail.gmail.com>
-Subject: Re: [PATCH 2/3] dt-bindings: pinctrl: Add cix,sky1-pinctrl
-To: Gary Yang <gary.yang@cixtech.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, cix-kernel-upstream@cixtech.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V3 1/4] ufs: dt-bindings: Document gear and rate limit
+ properties
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+ Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>, alim.akhtar@samsung.com,
+ avri.altman@wdc.com, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, mani@kernel.org, James.Bottomley@HansenPartnership.com,
+ martin.petersen@oracle.com
+Cc: linux-scsi@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+References: <20250826150855.7725-1-quic_rdwivedi@quicinc.com>
+ <20250826150855.7725-2-quic_rdwivedi@quicinc.com>
+ <9944c595-da68-43c0-8364-6a8665a0fc3f@acm.org>
+ <25844eea-a41c-4a36-b132-8824e629568d@kernel.org>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <25844eea-a41c-4a36-b132-8824e629568d@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Aug 27, 2025 at 4:42=E2=80=AFAM Gary Yang <gary.yang@cixtech.com> w=
-rote:
+On 8/28/25 10:40 AM, Krzysztof Kozlowski wrote:
+> On 26/08/2025 17:35, Bart Van Assche wrote:
+>>
+>>> +  limit-rate:
+>>> +    $ref: /schemas/types.yaml#/definitions/uint32
+>>> +    enum: [1, 2]
+>>> +    default: 2
+>>> +    description:
+>>> +      Restricts the UFS controller to Rate A (1) or Rate B (2) for both
+>>> +      TX and RX directions, often required in automotive environments due
+>>> +      to hardware limitations.
+>>
+>> As far as I know no numeric values are associated with these rates in
+>> the UFSHCI 4.1 standard nor in any of the previous versions of this
+>> standard. Does the .yaml syntax support something like "enum: [A, B]"?
+> 
+> That's what I also requested and answer was "1" and "2" are coming from
+> the spec. So now I am confused.
 
-> Add dt-bindings docs
->
-> Signed-off-by: Gary Yang <gary.yang@cixtech.com>
+Ram quoted from the MIPI spec. That's another standard than what I
+referred to (UFSHCI).
 
-I saw Krzysztof reacted to this:
-
-> +++ b/include/dt-bindings/pinctrl/pads-sky1.h
-(...)
-> +#define CIX_PAD_GPIO001_OFFSET                 0x0
-> +#define CIX_PAD_GPIO002_OFFSET                 0x4
-(...)
-> +#define CIX_PAD_GPIO001_FUNC_GPIO001                              0x0
-> +#define CIX_PAD_GPIO002_FUNC_GPIO002                              0x0
-(...)
-> +#define PULL_UP                (1 << 6)
-> +#define PULL_DOWN      (1 << 5)
-> +#define ST             (1 << 4)
-> +#define DS_LEVEL1      0x1
-> +#define DS_LEVEL2      0x2
-(...)
-
-As stated, this isn't part of bindings so it should not be
-include/dt-bindings/pinctrl/*.
-
-If you are using the pinmux =3D <...>: property, what you can
-do however is to put the same defines into
-arch/arm64/boot/dts/cix/sky1-pinmux-props.dtsi
-and use it the same way.
-
-Then it is not bindings, just some DT data.
-
-Sometimes this distinction isn't clear, and the kernel contain
-many offenders to this rule.
-
-Yours,
-Linus Walleij
+Bart.
 
