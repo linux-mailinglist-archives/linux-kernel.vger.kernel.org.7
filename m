@@ -1,462 +1,534 @@
-Return-Path: <linux-kernel+bounces-789781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F7C4B39A9A
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 12:47:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18559B39A9E
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 12:48:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C78E53B5725
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 10:47:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27A191C22351
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 10:48:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1960930C618;
-	Thu, 28 Aug 2025 10:47:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 147FF30C61B;
+	Thu, 28 Aug 2025 10:48:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b="fvofJaPk"
-Received: from mout.web.de (mout.web.de [212.227.17.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc.com header.i=@rivosinc.com header.b="IJJJU+mU"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10BD530C615;
-	Thu, 28 Aug 2025 10:47:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97DF530C60A
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 10:48:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756378054; cv=none; b=J/Xpvp7L9lxVLVii9tfChjIGqZBusoUqCb6eL/MIaUeAK5uCwTrC4uKRl0SwnuC6hmxnCgh0AJ2O/oVHmPOyD76VCAAcfu9vJn8pHZ5oTCfmWZK7n1xpj9AZzETYVb5uLH0HIEYmnKwBXyCjrfmrbgDh1d4T7qihrGQjFfqtIkE=
+	t=1756378085; cv=none; b=hZMQE2BW8aRrMzoDvDZteybvSPDv6vEXMKGqgWmghp1yuOxHsjBrUkx868cTpsdgzFl4O7KCX/v1nBU98xIRdGBOHezyraEo8/NNcAy9slRNLPnbPaUzgyOjMesEaAuddMLBrTGOQ7GvcIopvBBGxot93qwIipn/g9/+B/BKE08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756378054; c=relaxed/simple;
-	bh=bH1+9tCrgFxXQQMyQJqGifsOSchntb5WWHYa+mdkBbw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VZWzSgZGge28ysvVotVAerBr9d70KlcARcN4UDra0MLlxqEhIpb+AcsdijbfLGsBZCffxizWQSUb520p/pSq1LVTx4smqgNN+/s9qISDYArolcq9l6LBw58gP9iWnV0uZxeQwMi8nQN6szii72iRe7E4d45J9l82OL2ROB8fO1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b=fvofJaPk; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1756378022; x=1756982822; i=spasswolf@web.de;
-	bh=0WUJqsrAYnQkrI39CYTgeGfmXA2oXBJe4Y8RSF3Rocg=;
-	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-ID:In-Reply-To:
-	 References:MIME-Version:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=fvofJaPk04UEbJ0tgOPTIBGpJ+5yn1ns6pnWzY9auAAeMJh9B661CO0seeDvNONm
-	 idpKw4Sqb/9FPxqxLNdl2CLeFTB35nkaJbNQaCo5N37lk9ZchG7oc+JgTQw9KFnql
-	 ENlrQWDj/HaeTigmLBFJDqP+HND/AI4yNWw6LkFz9GROqOmDxKhaltszvNPwmGf6G
-	 54gR9B6KEXw30WNc+7EHAwfq7rnCV5r37Rw7PryUMSblTmB7YpsKL22JwD7lMrWQQ
-	 EQ9f7+8zm5GOrDqCh88ELVGiEGZ/TyldFMfeCtu7Z6P2Q5GW1XydgraXW0wAPqA+0
-	 bQZMZaiHeA/KCnxaWQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from localhost.localdomain ([95.223.134.88]) by smtp.web.de
- (mrweb106 [213.165.67.124]) with ESMTPSA (Nemesis) id
- 1MXocY-1uzJP73lBk-00Ynov; Thu, 28 Aug 2025 12:47:02 +0200
-From: Bert Karwatzki <spasswolf@web.de>
-To: vbabka@suse.cz
-Cc: Bert Karwatzki <spasswolf@web.de>,
-	Liam.Howlett@oracle.com,
-	cl@gentwo.org,
-	harry.yoo@oracle.com,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-rt-devel@lists.linux.dev,
-	maple-tree@lists.infradead.org,
-	rcu@vger.kernel.org,
-	rientjes@google.com,
-	roman.gushchin@linux.dev,
-	surenb@google.com,
-	urezki@gmail.com
-Subject: commit 4ca04daa23305 fails to compile with PREEMPT_RT=y
-Date: Thu, 28 Aug 2025 12:46:57 +0200
-Message-ID: <20250828104658.172649-1-spasswolf@web.de>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: 20250827-slub-percpu-caches-v6-2-f0f775a3f73f@suse.cz
-References: 
+	s=arc-20240116; t=1756378085; c=relaxed/simple;
+	bh=Zlwoh+qa6SilypL4zeShmNK0fRUZrxTorgAzE0eTKAI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WUJ/T9HItVxg2MswvEaEsO+NwgSJEW9MGrqP/4QSlWmJbCwzufC9p+AFQKvde7uC8kw6XIWybOqPj23eDpLdZLbEQfx07cEDEpEdM/4cMZj+srjvPW4IzE3YiLXbtt0wn4pZsZI7E4Ggs7BAZ9rKilPsAskZR5iwBowe9DscZfY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc.com header.i=@rivosinc.com header.b=IJJJU+mU; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-7720c7cc05fso589204b3a.3
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 03:48:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc.com; s=google; t=1756378083; x=1756982883; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=QtGthQ0upOgEQqzx2TwZo3OjqznpTQZNr4AegOn3my4=;
+        b=IJJJU+mUua3l+WKATbJeoFjApmDuOxOkcbTYdGNbWZeUrvWaD9XZboQ7QaXKg6UgMw
+         K5FePFi5MrFuoECD3QUWTPmhex4UybRa7RBJToe+CvoLLo4Sg0vYPbP+VdRPcimCgMOT
+         ib+JwjBO3HjafvGzLX4HJNY+ubrQxgQkGPntoWCkknAWLRcwa5LHAs47MXB1lQ3FDAJk
+         3HVMcQZ01p4FIPBYq29uHZRk6/TARmiJIMfO4WVmsbPYlHiiqqDzl2IIi7Bok2hrbUii
+         rfne0Ig/1N+P7tzSL2Pi8ZaBqNh7yIFqR7AzhSOUXHW5dWQW97WKUurF9GhNgx0kQrLe
+         jiFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756378083; x=1756982883;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=QtGthQ0upOgEQqzx2TwZo3OjqznpTQZNr4AegOn3my4=;
+        b=QFPkeX4oUPOWaP1cyLj2s7IEpBSRxwTs1Q/5Mm+yzAuxUH5O3pS5EPcQYUDQSHWl4R
+         o+SrsDDfEa7rUVRBU8UM+CKWysMUEm6nRsBgip3LYxOK1tjpEumHz84d717cEXi8ocSZ
+         kPDd75bf4967LC147sbfH+I2+ZwpXLJEmHb4cQb5kuIRw72hbGsrS4tvWV+hudYisFX9
+         U8L/xzBv6AbPyu7K4VPr1UbDwdX6pMwcTR3612CgdVyRGxzBCnpn6cEw3yvbg4CvAJZj
+         KZYM++QSEuqfid1sdRiLOlVEhCcDOEF4ooyWK+5N+pm8O7g+mJoGXj0zz/2AGWE8J+fg
+         J21g==
+X-Forwarded-Encrypted: i=1; AJvYcCXAO72XjdPy1lczgYxArXxzh2LPOhBgClp6FIVQ+n8LCWFfJ/R2YdwwT+fsSp5rcWIJ1MOSrm/MNEJwP70=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKyv6JYs5zgVZJNcn7h+dDJNR38HGwF6lXb5ZqgdCpPNf0zVnT
+	sGYZ0jSfjerq7HSfsLF9U1/vEIbJK2RiPj5sq4/i3tsiarXiInF2F3i1VL6NcJWOepU=
+X-Gm-Gg: ASbGncsFOIYU9XpMeEByw8eeV69AT1f0hVbEJPJy7AXkxtMW2mE7gDe1I4ltQXrb/nQ
+	1Gmh5Ub1zSLAD9Twv4BmIGoDqJ7wUEDprJ7OFkhKF8wwO0gvqnQtTqI8IcJ6tOcLcL+0LD5wGBU
+	29qUYvXtHXfBDOC073/fTKzeNO8zHGsjT6Rmkb7aPANTioxWcozUqaEpE4rwS3MRR2aWlfBjuJG
+	B7lrR0jr/KW4L4WfBK5SXXKvptT435g+OUptj88UxrHYqdA+GJNvO4n09Jja2E+ZuNTH7LRuG8V
+	fhCfhTk5GwD3M9YHqsdQhcKbf9chnZxNZKWujlAjFCU7vPk2CvxnG1uje6GF0P8uCeGYyUhkuZI
+	h/SOr9pRrH3hEB543YI4OEhNe3+BDb8XAE32UfJRv7SJsYJrCXfg62W2rj6Ff5/wJh/unEVDeb1
+	AZJQ==
+X-Google-Smtp-Source: AGHT+IFg/4U1C4hDt6D+sol//DAeZoKYVjecS/OZxJBf4KsldAhJFeGu7S6YWjTmOrdEcSNq1kGx/g==
+X-Received: by 2002:a05:6a00:66ea:b0:770:573f:fc60 with SMTP id d2e1a72fcca58-770573ffe32mr19626815b3a.0.1756378082801;
+        Thu, 28 Aug 2025 03:48:02 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:e17:9700:16d2:7456:6634:9626? ([2a01:e0a:e17:9700:16d2:7456:6634:9626])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-772093cac4bsm4314244b3a.12.2025.08.28.03.47.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 28 Aug 2025 03:48:02 -0700 (PDT)
+Message-ID: <15af1c5c-abab-4b2a-a32c-4933b2c325d6@rivosinc.com>
+Date: Thu, 28 Aug 2025 12:47:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [External] [PATCH v6 2/5] riscv: add support for SBI Supervisor
+ Software Events extension
+To: yunhui cui <cuiyunhui@bytedance.com>
+Cc: Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, linux-riscv@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Himanshu Chauhan <hchauhan@ventanamicro.com>,
+ Anup Patel <apatel@ventanamicro.com>, Xu Lu <luxu.kernel@bytedance.com>,
+ Atish Patra <atishp@atishpatra.org>, =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?=
+ <bjorn@rivosinc.com>
+References: <20250808153901.2477005-1-cleger@rivosinc.com>
+ <20250808153901.2477005-3-cleger@rivosinc.com>
+ <CAEEQ3w=iMtePajsANgJ=imUfGyWUag2m1Y9kexHT3BDuL5+dtg@mail.gmail.com>
+Content-Language: en-US
+From: =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>
+In-Reply-To: <CAEEQ3w=iMtePajsANgJ=imUfGyWUag2m1Y9kexHT3BDuL5+dtg@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:x8k7jnSLTIhjtWsrF57/r+ECHgT4S23aBF+WvPLQmxRQ3qbrz5Y
- BMzXjERZIhcrvgm87eBXEIlDnXJGKF3/Ms7eF6CIdyONbD98QI58RdZc2nhWL2SVAtUcZCQ
- e/BBxXpK01UvZAIXxHpebOLizmd0t7w46q0t6y5y/PMHD45G37CAx5c0v09E+o6K3FKZ0lz
- uGUaqyeXAFY313t+aashQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:Np0hriZfIZM=;c6DZNBGjuihKHBEYf5ipWmKa4CR
- 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
- n40O4zoAjcUYx4VMoRt
-
-In noticed that linux next-20250828 fails to compile with the following er=
-ror:
-
-In file included from ./include/linux/spinlock.h:63,
-                 from ./include/linux/mmzone.h:8,
-                 from ./include/linux/gfp.h:7,
-                 from ./include/linux/mm.h:7,
-                 from mm/slub.c:13:
-mm/slub.c: In function =E2=80=98__pcs_replace_empty_main=E2=80=99:
-mm/slub.c:4727:64: error: =E2=80=98local_trylock_t=E2=80=99 {aka =E2=80=98=
-__seg_gs struct spinlock=E2=80=99} has no member named =E2=80=98llock=E2=
-=80=99; did you mean =E2=80=98lock=E2=80=99?
- 4727 |         lockdep_assert_held(this_cpu_ptr(&s->cpu_sheaves->lock.llo=
-ck));
-      |                                                                ^~~=
-~~
-./include/linux/lockdep.h:392:61: note: in definition of macro =E2=80=98lo=
-ckdep_assert_held=E2=80=99
-  392 | #define lockdep_assert_held(l)                  do { (void)(l); } =
-while (0)
-      |                                                             ^
-./include/linux/percpu-defs.h:245:9: note: in expansion of macro =E2=80=98=
-__verify_pcpu_ptr=E2=80=99
-  245 |         __verify_pcpu_ptr(ptr);                                   =
-      \
-      |         ^~~~~~~~~~~~~~~~~
-./include/linux/percpu-defs.h:256:27: note: in expansion of macro =E2=80=
-=98raw_cpu_ptr=E2=80=99
-  256 | #define this_cpu_ptr(ptr) raw_cpu_ptr(ptr)
-      |                           ^~~~~~~~~~~
-mm/slub.c:4727:29: note: in expansion of macro =E2=80=98this_cpu_ptr=E2=80=
-=99
- 4727 |         lockdep_assert_held(this_cpu_ptr(&s->cpu_sheaves->lock.llo=
-ck));
-      |                             ^~~~~~~~~~~~
-mm/slub.c:4727:64: error: =E2=80=98local_trylock_t=E2=80=99 {aka =E2=80=98=
-__seg_gs struct spinlock=E2=80=99} has no member named =E2=80=98llock=E2=
-=80=99; did you mean =E2=80=98lock=E2=80=99?
- 4727 |         lockdep_assert_held(this_cpu_ptr(&s->cpu_sheaves->lock.llo=
-ck));
-      |                                                                ^~~=
-~~
-./include/linux/lockdep.h:392:61: note: in definition of macro =E2=80=98lo=
-ckdep_assert_held=E2=80=99
-  392 | #define lockdep_assert_held(l)                  do { (void)(l); } =
-while (0)
-      |                                                             ^
-./include/linux/percpu-defs.h:246:9: note: in expansion of macro =E2=80=98=
-arch_raw_cpu_ptr=E2=80=99
-  246 |         arch_raw_cpu_ptr(ptr);                                    =
-      \
-      |         ^~~~~~~~~~~~~~~~
-./include/linux/percpu-defs.h:256:27: note: in expansion of macro =E2=80=
-=98raw_cpu_ptr=E2=80=99
-  256 | #define this_cpu_ptr(ptr) raw_cpu_ptr(ptr)
-      |                           ^~~~~~~~~~~
-mm/slub.c:4727:29: note: in expansion of macro =E2=80=98this_cpu_ptr=E2=80=
-=99
- 4727 |         lockdep_assert_held(this_cpu_ptr(&s->cpu_sheaves->lock.llo=
-ck));
-      |                             ^~~~~~~~~~~~
-mm/slub.c:4727:64: error: =E2=80=98local_trylock_t=E2=80=99 {aka =E2=80=98=
-__seg_gs struct spinlock=E2=80=99} has no member named =E2=80=98llock=E2=
-=80=99; did you mean =E2=80=98lock=E2=80=99?
- 4727 |         lockdep_assert_held(this_cpu_ptr(&s->cpu_sheaves->lock.llo=
-ck));
-      |                                                                ^~~=
-~~
-./include/linux/lockdep.h:392:61: note: in definition of macro =E2=80=98lo=
-ckdep_assert_held=E2=80=99
-  392 | #define lockdep_assert_held(l)                  do { (void)(l); } =
-while (0)
-      |                                                             ^
-./arch/x86/include/asm/percpu.h:68:10: note: in expansion of macro =E2=80=
-=98TYPEOF_UNQUAL=E2=80=99
-   68 |         (TYPEOF_UNQUAL(*(_ptr)) __force __kernel *)tcp_ptr__;     =
-      \
-      |          ^~~~~~~~~~~~~
-./include/linux/percpu-defs.h:246:9: note: in expansion of macro =E2=80=98=
-arch_raw_cpu_ptr=E2=80=99
-  246 |         arch_raw_cpu_ptr(ptr);                                    =
-      \
-      |         ^~~~~~~~~~~~~~~~
-./include/linux/percpu-defs.h:256:27: note: in expansion of macro =E2=80=
-=98raw_cpu_ptr=E2=80=99
-  256 | #define this_cpu_ptr(ptr) raw_cpu_ptr(ptr)
-      |                           ^~~~~~~~~~~
-mm/slub.c:4727:29: note: in expansion of macro =E2=80=98this_cpu_ptr=E2=80=
-=99
- 4727 |         lockdep_assert_held(this_cpu_ptr(&s->cpu_sheaves->lock.llo=
-ck));
-      |                             ^~~~~~~~~~~~
-  CC      net/ipv4/route.o
-mm/slub.c: In function =E2=80=98__pcs_install_empty_sheaf=E2=80=99:
-  AS      lib/crypto/x86/sha1-ni-asm.o
-  CC      drivers/acpi/ec.o
-mm/slub.c:5604:64: error: =E2=80=98local_trylock_t=E2=80=99 {aka =E2=80=98=
-__seg_gs struct spinlock=E2=80=99} has no member named =E2=80=98llock=E2=
-=80=99; did you mean =E2=80=98lock=E2=80=99?
- 5604 |         lockdep_assert_held(this_cpu_ptr(&s->cpu_sheaves->lock.llo=
-ck));
-      |                                                                ^~~=
-~~
-./include/linux/lockdep.h:392:61: note: in definition of macro =E2=80=98lo=
-ckdep_assert_held=E2=80=99
-  392 | #define lockdep_assert_held(l)                  do { (void)(l); } =
-while (0)
-      |                                                             ^
-./include/linux/percpu-defs.h:245:9: note: in expansion of macro =E2=80=98=
-__verify_pcpu_ptr=E2=80=99
-  245 |         __verify_pcpu_ptr(ptr);                                   =
-      \
-      |         ^~~~~~~~~~~~~~~~~
-./include/linux/percpu-defs.h:256:27: note: in expansion of macro =E2=80=
-=98raw_cpu_ptr=E2=80=99
-  256 | #define this_cpu_ptr(ptr) raw_cpu_ptr(ptr)
-      |                           ^~~~~~~~~~~
-mm/slub.c:5604:29: note: in expansion of macro =E2=80=98this_cpu_ptr=E2=80=
-=99
- 5604 |         lockdep_assert_held(this_cpu_ptr(&s->cpu_sheaves->lock.llo=
-ck));
-      |                             ^~~~~~~~~~~~
-mm/slub.c:5604:64: error: =E2=80=98local_trylock_t=E2=80=99 {aka =E2=80=98=
-__seg_gs struct spinlock=E2=80=99} has no member named =E2=80=98llock=E2=
-=80=99; did you mean =E2=80=98lock=E2=80=99?
- 5604 |         lockdep_assert_held(this_cpu_ptr(&s->cpu_sheaves->lock.llo=
-ck));
-      |                                                                ^~~=
-~~
-./include/linux/lockdep.h:392:61: note: in definition of macro =E2=80=98lo=
-ckdep_assert_held=E2=80=99
-  392 | #define lockdep_assert_held(l)                  do { (void)(l); } =
-while (0)
-      |                                                             ^
-./include/linux/percpu-defs.h:246:9: note: in expansion of macro =E2=80=98=
-arch_raw_cpu_ptr=E2=80=99
-  246 |         arch_raw_cpu_ptr(ptr);                                    =
-      \
-      |         ^~~~~~~~~~~~~~~~
-./include/linux/percpu-defs.h:256:27: note: in expansion of macro =E2=80=
-=98raw_cpu_ptr=E2=80=99
-  256 | #define this_cpu_ptr(ptr) raw_cpu_ptr(ptr)
-      |                           ^~~~~~~~~~~
-mm/slub.c:5604:29: note: in expansion of macro =E2=80=98this_cpu_ptr=E2=80=
-=99
- 5604 |         lockdep_assert_held(this_cpu_ptr(&s->cpu_sheaves->lock.llo=
-ck));
-      |                             ^~~~~~~~~~~~
-mm/slub.c:5604:64: error: =E2=80=98local_trylock_t=E2=80=99 {aka =E2=80=98=
-__seg_gs struct spinlock=E2=80=99} has no member named =E2=80=98llock=E2=
-=80=99; did you mean =E2=80=98lock=E2=80=99?
- 5604 |         lockdep_assert_held(this_cpu_ptr(&s->cpu_sheaves->lock.llo=
-ck));
-      |                                                                ^~~=
-~~
-./include/linux/lockdep.h:392:61: note: in definition of macro =E2=80=98lo=
-ckdep_assert_held=E2=80=99
-  392 | #define lockdep_assert_held(l)                  do { (void)(l); } =
-while (0)
-      |                                                             ^
-./arch/x86/include/asm/percpu.h:68:10: note: in expansion of macro =E2=80=
-=98TYPEOF_UNQUAL=E2=80=99
-   68 |         (TYPEOF_UNQUAL(*(_ptr)) __force __kernel *)tcp_ptr__;     =
-      \
-      |          ^~~~~~~~~~~~~
-./include/linux/percpu-defs.h:246:9: note: in expansion of macro =E2=80=98=
-arch_raw_cpu_ptr=E2=80=99
-  246 |         arch_raw_cpu_ptr(ptr);                                    =
-      \
-      |         ^~~~~~~~~~~~~~~~
-./include/linux/percpu-defs.h:256:27: note: in expansion of macro =E2=80=
-=98raw_cpu_ptr=E2=80=99
-  256 | #define this_cpu_ptr(ptr) raw_cpu_ptr(ptr)
-      |                           ^~~~~~~~~~~
-mm/slub.c:5604:29: note: in expansion of macro =E2=80=98this_cpu_ptr=E2=80=
-=99
- 5604 |         lockdep_assert_held(this_cpu_ptr(&s->cpu_sheaves->lock.llo=
-ck));
-      |                             ^~~~~~~~~~~~
-mm/slub.c: In function =E2=80=98__pcs_replace_full_main=E2=80=99:
-mm/slub.c:5653:64: error: =E2=80=98local_trylock_t=E2=80=99 {aka =E2=80=98=
-__seg_gs struct spinlock=E2=80=99} has no member named =E2=80=98llock=E2=
-=80=99; did you mean =E2=80=98lock=E2=80=99?
- 5653 |         lockdep_assert_held(this_cpu_ptr(&s->cpu_sheaves->lock.llo=
-ck));
-      |                                                                ^~~=
-~~
-./include/linux/lockdep.h:392:61: note: in definition of macro =E2=80=98lo=
-ckdep_assert_held=E2=80=99
-  392 | #define lockdep_assert_held(l)                  do { (void)(l); } =
-while (0)
-      |                                                             ^
-./include/linux/percpu-defs.h:245:9: note: in expansion of macro =E2=80=98=
-__verify_pcpu_ptr=E2=80=99
-  245 |         __verify_pcpu_ptr(ptr);                                   =
-      \
-      |         ^~~~~~~~~~~~~~~~~
-./include/linux/percpu-defs.h:256:27: note: in expansion of macro =E2=80=
-=98raw_cpu_ptr=E2=80=99
-  256 | #define this_cpu_ptr(ptr) raw_cpu_ptr(ptr)
-      |                           ^~~~~~~~~~~
-mm/slub.c:5653:29: note: in expansion of macro =E2=80=98this_cpu_ptr=E2=80=
-=99
- 5653 |         lockdep_assert_held(this_cpu_ptr(&s->cpu_sheaves->lock.llo=
-ck));
-      |                             ^~~~~~~~~~~~
-mm/slub.c:5653:64: error: =E2=80=98local_trylock_t=E2=80=99 {aka =E2=80=98=
-__seg_gs struct spinlock=E2=80=99} has no member named =E2=80=98llock=E2=
-=80=99; did you mean =E2=80=98lock=E2=80=99?
- 5653 |         lockdep_assert_held(this_cpu_ptr(&s->cpu_sheaves->lock.llo=
-ck));
-      |                                                                ^~~=
-~~
-./include/linux/lockdep.h:392:61: note: in definition of macro =E2=80=98lo=
-ckdep_assert_held=E2=80=99
-  392 | #define lockdep_assert_held(l)                  do { (void)(l); } =
-while (0)
-      |                                                             ^
-./include/linux/percpu-defs.h:246:9: note: in expansion of macro =E2=80=98=
-arch_raw_cpu_ptr=E2=80=99
-  246 |         arch_raw_cpu_ptr(ptr);                                    =
-      \
-      |         ^~~~~~~~~~~~~~~~
-./include/linux/percpu-defs.h:256:27: note: in expansion of macro =E2=80=
-=98raw_cpu_ptr=E2=80=99
-  256 | #define this_cpu_ptr(ptr) raw_cpu_ptr(ptr)
-      |                           ^~~~~~~~~~~
-mm/slub.c:5653:29: note: in expansion of macro =E2=80=98this_cpu_ptr=E2=80=
-=99
- 5653 |         lockdep_assert_held(this_cpu_ptr(&s->cpu_sheaves->lock.llo=
-ck));
-      |                             ^~~~~~~~~~~~
-mm/slub.c:5653:64: error: =E2=80=98local_trylock_t=E2=80=99 {aka =E2=80=98=
-__seg_gs struct spinlock=E2=80=99} has no member named =E2=80=98llock=E2=
-=80=99; did you mean =E2=80=98lock=E2=80=99?
- 5653 |         lockdep_assert_held(this_cpu_ptr(&s->cpu_sheaves->lock.llo=
-ck));
-      |                                                                ^~~=
-~~
-./include/linux/lockdep.h:392:61: note: in definition of macro =E2=80=98lo=
-ckdep_assert_held=E2=80=99
-  392 | #define lockdep_assert_held(l)                  do { (void)(l); } =
-while (0)
-      |                                                             ^
-./arch/x86/include/asm/percpu.h:68:10: note: in expansion of macro =E2=80=
-=98TYPEOF_UNQUAL=E2=80=99
-   68 |         (TYPEOF_UNQUAL(*(_ptr)) __force __kernel *)tcp_ptr__;     =
-      \
-      |          ^~~~~~~~~~~~~
-./include/linux/percpu-defs.h:246:9: note: in expansion of macro =E2=80=98=
-arch_raw_cpu_ptr=E2=80=99
-  246 |         arch_raw_cpu_ptr(ptr);                                    =
-      \
-      |         ^~~~~~~~~~~~~~~~
-./include/linux/percpu-defs.h:256:27: note: in expansion of macro =E2=80=
-=98raw_cpu_ptr=E2=80=99
-  256 | #define this_cpu_ptr(ptr) raw_cpu_ptr(ptr)
-      |                           ^~~~~~~~~~~
-mm/slub.c:5653:29: note: in expansion of macro =E2=80=98this_cpu_ptr=E2=80=
-=99
- 5653 |         lockdep_assert_held(this_cpu_ptr(&s->cpu_sheaves->lock.llo=
-ck));
-      |                             ^~~~~~~~~~~~
+Content-Transfer-Encoding: 8bit
 
 
-The reason for this is that local_trylock_t is mapped to spinlock_t on=20
-PREEMPT_RT=3Dy and spinlock_t has no member named llock.
-If one changes the assertion like this the kernel compiles with PREEMPT_RT=
-=3Dy, too,
-but I'm not sure if the assertion is correctly used here. If not one has t=
-o use
-#ifdef PREEMPT_RT here I think:
 
-diff --git a/mm/slub.c b/mm/slub.c
-index 3ab91a1409f5..2138fecc8d37 100644
-=2D-- a/mm/slub.c
-+++ b/mm/slub.c
-@@ -4724,7 +4724,7 @@ __pcs_replace_empty_main(struct kmem_cache *s, struc=
-t slub_percpu_sheaves *pcs,
- 	struct slab_sheaf *full;
- 	bool can_alloc;
-=20
--	lockdep_assert_held(this_cpu_ptr(&s->cpu_sheaves->lock.llock));
-+	lockdep_assert_held(this_cpu_ptr(&s->cpu_sheaves->lock));
-=20
- 	if (pcs->spare && pcs->spare->size > 0) {
- 		swap(pcs->main, pcs->spare);
-@@ -5601,7 +5601,7 @@ static void __slab_free(struct kmem_cache *s, struct=
- slab *slab,
- static void __pcs_install_empty_sheaf(struct kmem_cache *s,
- 		struct slub_percpu_sheaves *pcs, struct slab_sheaf *empty)
- {
--	lockdep_assert_held(this_cpu_ptr(&s->cpu_sheaves->lock.llock));
-+	lockdep_assert_held(this_cpu_ptr(&s->cpu_sheaves->lock));
-=20
- 	/* This is what we expect to find if nobody interrupted us. */
- 	if (likely(!pcs->spare)) {
-@@ -5650,7 +5650,7 @@ __pcs_replace_full_main(struct kmem_cache *s, struct=
- slub_percpu_sheaves *pcs)
- 	bool put_fail;
-=20
- restart:
--	lockdep_assert_held(this_cpu_ptr(&s->cpu_sheaves->lock.llock));
-+	lockdep_assert_held(this_cpu_ptr(&s->cpu_sheaves->lock));
-=20
- 	put_fail =3D false;
-=20
+On 18/08/2025 11:08, yunhui cui wrote:
+> Hi Clément,
+> 
+> On Fri, Aug 8, 2025 at 11:39 PM Clément Léger <cleger@rivosinc.com> wrote:
+>>
+>> The SBI SSE extension allows the supervisor software to be notified by
+>> the SBI of specific events that are not maskable. The context switch is
+>> handled partially by the firmware which will save registers a6 and a7.
+>> When entering kernel we can rely on these 2 registers to setup the stack
+>> and save all the registers.
+>>
+>> Since SSE events can be delivered at any time to the kernel (including
+>> during exception handling, we need a way to locate the current_task for
+>> context tracking. On RISC-V, it is sotred in scratch when in user space
+>> or tp when in kernel space (in which case SSCRATCH is zero). But at a
+>> at the beginning of exception handling, SSCRATCH is used to swap tp and
+>> check the origin of the exception. If interrupted at that point, then,
+>> there is no way to reliably know were is located the current
+>> task_struct. Even checking the interruption location won't work as SSE
+>> event can be nested on top of each other so the original interruption
+>> site might be lost at some point. In order to retrieve it reliably,
+>> store the current task in an additional __sse_entry_task per_cpu array.
+>> This array is then used to retrieve the current task based on the
+>> hart ID that is passed to the SSE event handler in a6.
+>>
+>> That being said, the way the current task struct is stored should
+>> probably be reworked to find a better reliable alternative.
+>>
+>> Since each events (and each CPU for local events) have their own
+>> context and can preempt each other, allocate a stack (and a shadow stack
+>> if needed for each of them (and for each cpu for local events).
+>>
+>> When completing the event, if we were coming from kernel with interrupts
+>> disabled, simply return there. If coming from userspace or kernel with
+>> interrupts enabled, simulate an interrupt exception by setting IE_SIE in
+>> CSR_IP to allow delivery of signals to user task. For instance this can
+>> happen, when a RAS event has been generated by a user application and a
+>> SIGBUS has been sent to a task.
+>>
+>> Signed-off-by: Clément Léger <cleger@rivosinc.com>
+>> ---
+>>  arch/riscv/include/asm/asm.h         |  14 ++-
+>>  arch/riscv/include/asm/scs.h         |   7 ++
+>>  arch/riscv/include/asm/sse.h         |  47 +++++++
+>>  arch/riscv/include/asm/switch_to.h   |  14 +++
+>>  arch/riscv/include/asm/thread_info.h |   1 +
+>>  arch/riscv/kernel/Makefile           |   1 +
+>>  arch/riscv/kernel/asm-offsets.c      |  14 +++
+>>  arch/riscv/kernel/sse.c              | 154 +++++++++++++++++++++++
+>>  arch/riscv/kernel/sse_entry.S        | 180 +++++++++++++++++++++++++++
+>>  9 files changed, 429 insertions(+), 3 deletions(-)
+>>  create mode 100644 arch/riscv/include/asm/sse.h
+>>  create mode 100644 arch/riscv/kernel/sse.c
+>>  create mode 100644 arch/riscv/kernel/sse_entry.S
+>>
+>> diff --git a/arch/riscv/include/asm/asm.h b/arch/riscv/include/asm/asm.h
+>> index a8a2af6dfe9d..982c4be9a9c3 100644
+>> --- a/arch/riscv/include/asm/asm.h
+>> +++ b/arch/riscv/include/asm/asm.h
+>> @@ -90,16 +90,24 @@
+>>  #define PER_CPU_OFFSET_SHIFT 3
+>>  #endif
+>>
+>> -.macro asm_per_cpu dst sym tmp
+>> -       REG_L \tmp, TASK_TI_CPU_NUM(tp)
+>> -       slli  \tmp, \tmp, PER_CPU_OFFSET_SHIFT
+>> +.macro asm_per_cpu_with_cpu dst sym tmp cpu
+>> +       slli  \tmp, \cpu, PER_CPU_OFFSET_SHIFT
+>>         la    \dst, __per_cpu_offset
+>>         add   \dst, \dst, \tmp
+>>         REG_L \tmp, 0(\dst)
+>>         la    \dst, \sym
+>>         add   \dst, \dst, \tmp
+>>  .endm
+>> +
+>> +.macro asm_per_cpu dst sym tmp
+>> +       REG_L \tmp, TASK_TI_CPU_NUM(tp)
+>> +       asm_per_cpu_with_cpu \dst \sym \tmp \tmp
+>> +.endm
+>>  #else /* CONFIG_SMP */
+>> +.macro asm_per_cpu_with_cpu dst sym tmp cpu
+>> +       la    \dst, \sym
+>> +.endm
+>> +
+>>  .macro asm_per_cpu dst sym tmp
+>>         la    \dst, \sym
+>>  .endm
+>> diff --git a/arch/riscv/include/asm/scs.h b/arch/riscv/include/asm/scs.h
+>> index 0e45db78b24b..62344daad73d 100644
+>> --- a/arch/riscv/include/asm/scs.h
+>> +++ b/arch/riscv/include/asm/scs.h
+>> @@ -18,6 +18,11 @@
+>>         load_per_cpu gp, irq_shadow_call_stack_ptr, \tmp
+>>  .endm
+>>
+>> +/* Load the per-CPU IRQ shadow call stack to gp. */
+>> +.macro scs_load_sse_stack reg_evt
+>> +       REG_L gp, SSE_REG_EVT_SHADOW_STACK(\reg_evt)
+>> +.endm
+>> +
+>>  /* Load task_scs_sp(current) to gp. */
+>>  .macro scs_load_current
+>>         REG_L   gp, TASK_TI_SCS_SP(tp)
+>> @@ -41,6 +46,8 @@
+>>  .endm
+>>  .macro scs_load_irq_stack tmp
+>>  .endm
+>> +.macro scs_load_sse_stack reg_evt
+>> +.endm
+>>  .macro scs_load_current
+>>  .endm
+>>  .macro scs_load_current_if_task_changed prev
+>> diff --git a/arch/riscv/include/asm/sse.h b/arch/riscv/include/asm/sse.h
+>> new file mode 100644
+>> index 000000000000..8929a268462c
+>> --- /dev/null
+>> +++ b/arch/riscv/include/asm/sse.h
+>> @@ -0,0 +1,47 @@
+>> +/* SPDX-License-Identifier: GPL-2.0-only */
+>> +/*
+>> + * Copyright (C) 2024 Rivos Inc.
+>> + */
+>> +#ifndef __ASM_SSE_H
+>> +#define __ASM_SSE_H
+>> +
+>> +#include <asm/sbi.h>
+>> +
+>> +#ifdef CONFIG_RISCV_SSE
+>> +
+>> +struct sse_event_interrupted_state {
+>> +       unsigned long a6;
+>> +       unsigned long a7;
+>> +};
+>> +
+>> +struct sse_event_arch_data {
+>> +       void *stack;
+>> +       void *shadow_stack;
+>> +       unsigned long tmp;
+>> +       struct sse_event_interrupted_state interrupted;
+>> +       unsigned long interrupted_phys;
+>> +       u32 evt_id;
+>> +       unsigned int hart_id;
+>> +       unsigned int cpu_id;
+>> +};
+>> +
+>> +static inline bool sse_event_is_global(u32 evt)
+>> +{
+>> +       return !!(evt & SBI_SSE_EVENT_GLOBAL);
+>> +}
+>> +
+>> +void arch_sse_event_update_cpu(struct sse_event_arch_data *arch_evt, int cpu);
+>> +int arch_sse_init_event(struct sse_event_arch_data *arch_evt, u32 evt_id,
+>> +                       int cpu);
+>> +void arch_sse_free_event(struct sse_event_arch_data *arch_evt);
+>> +int arch_sse_register_event(struct sse_event_arch_data *arch_evt);
+>> +
+>> +void sse_handle_event(struct sse_event_arch_data *arch_evt,
+>> +                     struct pt_regs *regs);
+>> +asmlinkage void handle_sse(void);
+>> +asmlinkage void do_sse(struct sse_event_arch_data *arch_evt,
+>> +                      struct pt_regs *reg);
+>> +
+>> +#endif
+>> +
+>> +#endif
+>> diff --git a/arch/riscv/include/asm/switch_to.h b/arch/riscv/include/asm/switch_to.h
+>> index 0e71eb82f920..cd1cead0c682 100644
+>> --- a/arch/riscv/include/asm/switch_to.h
+>> +++ b/arch/riscv/include/asm/switch_to.h
+>> @@ -88,6 +88,19 @@ static inline void __switch_to_envcfg(struct task_struct *next)
+>>                         :: "r" (next->thread.envcfg) : "memory");
+>>  }
+>>
+>> +#ifdef CONFIG_RISCV_SSE
+>> +DECLARE_PER_CPU(struct task_struct *, __sse_entry_task);
+>> +
+>> +static inline void __switch_sse_entry_task(struct task_struct *next)
+>> +{
+>> +       __this_cpu_write(__sse_entry_task, next);
+>> +}
+>> +#else
+>> +static inline void __switch_sse_entry_task(struct task_struct *next)
+>> +{
+>> +}
+>> +#endif
+>> +
+>>  extern struct task_struct *__switch_to(struct task_struct *,
+>>                                        struct task_struct *);
+>>
+>> @@ -122,6 +135,7 @@ do {                                                        \
+>>         if (switch_to_should_flush_icache(__next))      \
+>>                 local_flush_icache_all();               \
+>>         __switch_to_envcfg(__next);                     \
+>> +       __switch_sse_entry_task(__next);                        \
+>>         ((last) = __switch_to(__prev, __next));         \
+>>  } while (0)
+>>
+>> diff --git a/arch/riscv/include/asm/thread_info.h b/arch/riscv/include/asm/thread_info.h
+>> index f5916a70879a..28e9805e61fc 100644
+>> --- a/arch/riscv/include/asm/thread_info.h
+>> +++ b/arch/riscv/include/asm/thread_info.h
+>> @@ -36,6 +36,7 @@
+>>  #define OVERFLOW_STACK_SIZE     SZ_4K
+>>
+>>  #define IRQ_STACK_SIZE         THREAD_SIZE
+>> +#define SSE_STACK_SIZE         THREAD_SIZE
+>>
+>>  #ifndef __ASSEMBLY__
+>>
+>> diff --git a/arch/riscv/kernel/Makefile b/arch/riscv/kernel/Makefile
+>> index c7b542573407..62e4490b34ee 100644
+>> --- a/arch/riscv/kernel/Makefile
+>> +++ b/arch/riscv/kernel/Makefile
+>> @@ -99,6 +99,7 @@ obj-$(CONFIG_DYNAMIC_FTRACE)  += mcount-dyn.o
+>>  obj-$(CONFIG_PERF_EVENTS)      += perf_callchain.o
+>>  obj-$(CONFIG_HAVE_PERF_REGS)   += perf_regs.o
+>>  obj-$(CONFIG_RISCV_SBI)                += sbi.o sbi_ecall.o
+>> +obj-$(CONFIG_RISCV_SSE)                += sse.o sse_entry.o
+>>  ifeq ($(CONFIG_RISCV_SBI), y)
+>>  obj-$(CONFIG_SMP)              += sbi-ipi.o
+>>  obj-$(CONFIG_SMP) += cpu_ops_sbi.o
+>> diff --git a/arch/riscv/kernel/asm-offsets.c b/arch/riscv/kernel/asm-offsets.c
+>> index 6e8c0d6feae9..315547c3a2ef 100644
+>> --- a/arch/riscv/kernel/asm-offsets.c
+>> +++ b/arch/riscv/kernel/asm-offsets.c
+>> @@ -14,6 +14,8 @@
+>>  #include <asm/ptrace.h>
+>>  #include <asm/cpu_ops_sbi.h>
+>>  #include <asm/stacktrace.h>
+>> +#include <asm/sbi.h>
+>> +#include <asm/sse.h>
+>>  #include <asm/suspend.h>
+>>
+>>  void asm_offsets(void);
+>> @@ -528,4 +530,16 @@ void asm_offsets(void)
+>>         DEFINE(FREGS_A6,            offsetof(struct __arch_ftrace_regs, a6));
+>>         DEFINE(FREGS_A7,            offsetof(struct __arch_ftrace_regs, a7));
+>>  #endif
+>> +
+>> +#ifdef CONFIG_RISCV_SSE
+>> +       OFFSET(SSE_REG_EVT_STACK, sse_event_arch_data, stack);
+>> +       OFFSET(SSE_REG_EVT_SHADOW_STACK, sse_event_arch_data, shadow_stack);
+>> +       OFFSET(SSE_REG_EVT_TMP, sse_event_arch_data, tmp);
+>> +       OFFSET(SSE_REG_HART_ID, sse_event_arch_data, hart_id);
+>> +       OFFSET(SSE_REG_CPU_ID, sse_event_arch_data, cpu_id);
+>> +
+>> +       DEFINE(SBI_EXT_SSE, SBI_EXT_SSE);
+>> +       DEFINE(SBI_SSE_EVENT_COMPLETE, SBI_SSE_EVENT_COMPLETE);
+>> +       DEFINE(ASM_NR_CPUS, NR_CPUS);
+>> +#endif
+>>  }
+>> diff --git a/arch/riscv/kernel/sse.c b/arch/riscv/kernel/sse.c
+>> new file mode 100644
+>> index 000000000000..d2da7e23a74a
+>> --- /dev/null
+>> +++ b/arch/riscv/kernel/sse.c
+>> @@ -0,0 +1,154 @@
+>> +// SPDX-License-Identifier: GPL-2.0-or-later
+>> +/*
+>> + * Copyright (C) 2024 Rivos Inc.
+>> + */
+>> +#include <linux/nmi.h>
+>> +#include <linux/scs.h>
+>> +#include <linux/bitfield.h>
+>> +#include <linux/riscv_sse.h>
+>> +#include <linux/percpu-defs.h>
+>> +
+>> +#include <asm/asm-prototypes.h>
+>> +#include <asm/switch_to.h>
+>> +#include <asm/irq_stack.h>
+>> +#include <asm/sbi.h>
+>> +#include <asm/sse.h>
+>> +
+>> +DEFINE_PER_CPU(struct task_struct *, __sse_entry_task);
+>> +
+>> +void __weak sse_handle_event(struct sse_event_arch_data *arch_evt, struct pt_regs *regs)
+>> +{
+>> +}
+>> +
+>> +void do_sse(struct sse_event_arch_data *arch_evt, struct pt_regs *regs)
+>> +{
+>> +       nmi_enter();
+>> +
+>> +       /* Retrieve missing GPRs from SBI */
+>> +       sbi_ecall(SBI_EXT_SSE, SBI_SSE_EVENT_ATTR_READ, arch_evt->evt_id,
+>> +                 SBI_SSE_ATTR_INTERRUPTED_A6,
+>> +                 (SBI_SSE_ATTR_INTERRUPTED_A7 - SBI_SSE_ATTR_INTERRUPTED_A6) + 1,
+>> +                 arch_evt->interrupted_phys, 0, 0);
+>> +
+>> +       memcpy(&regs->a6, &arch_evt->interrupted, sizeof(arch_evt->interrupted));
+>> +
+>> +       sse_handle_event(arch_evt, regs);
+>> +
+>> +       /*
+>> +        * The SSE delivery path does not uses the "standard" exception path
+>> +        * (see sse_entry.S) and does not process any pending signal/softirqs
+>> +        * due to being similar to a NMI.
+>> +        * Some drivers (PMU, RAS) enqueue pending work that needs to be handled
+>> +        * as soon as possible by bottom halves. For that purpose, set the SIP
+>> +        * software interrupt pending bit which will force a software interrupt
+>> +        * to be serviced once interrupts are reenabled in the interrupted
+>> +        * context if they were masked or directly if unmasked.
+>> +        */
+>> +       csr_set(CSR_IP, IE_SIE);
+> 
+> When using perf record, will S mode interrupts experience starvation?
 
-Bert Karwatzki
+It shouldn't starve the other interrupts since after returning to S-mode
+(before servicing the interrupt), the hart will still be able to set
+other interrupts as pending which will be serviced as well I think. At
+least, I did not observed anything indicating that S-mode was not
+servicing interrupts anymore.
+
+Clément
+
+> 
+>> +
+>> +       nmi_exit();
+>> +}
+>> +
+>> +static void *alloc_to_stack_pointer(void *alloc)
+>> +{
+>> +       return alloc ? alloc + SSE_STACK_SIZE : NULL;
+>> +}
+>> +
+>> +static void *stack_pointer_to_alloc(void *stack)
+>> +{
+>> +       return stack - SSE_STACK_SIZE;
+>> +}
+>> +
+>> +#ifdef CONFIG_VMAP_STACK
+>> +static void *sse_stack_alloc(unsigned int cpu)
+>> +{
+>> +       void *stack = arch_alloc_vmap_stack(SSE_STACK_SIZE, cpu_to_node(cpu));
+>> +
+>> +       return alloc_to_stack_pointer(stack);
+>> +}
+>> +
+>> +static void sse_stack_free(void *stack)
+>> +{
+>> +       vfree(stack_pointer_to_alloc(stack));
+>> +}
+>> +#else /* CONFIG_VMAP_STACK */
+>> +static void *sse_stack_alloc(unsigned int cpu)
+>> +{
+>> +       void *stack = kmalloc(SSE_STACK_SIZE, GFP_KERNEL);
+>> +
+>> +       return alloc_to_stack_pointer(stack);
+>> +}
+>> +
+>> +static void sse_stack_free(void *stack)
+>> +{
+>> +       kfree(stack_pointer_to_alloc(stack));
+>> +}
+>> +#endif /* CONFIG_VMAP_STACK */
+>> +
+>> +static int sse_init_scs(int cpu, struct sse_event_arch_data *arch_evt)
+>> +{
+>> +       void *stack;
+>> +
+>> +       if (!scs_is_enabled())
+>> +               return 0;
+>> +
+>> +       stack = scs_alloc(cpu_to_node(cpu));
+>> +       if (!stack)
+>> +               return -ENOMEM;
+>> +
+>> +       arch_evt->shadow_stack = stack;
+>> +
+>> +       return 0;
+>> +}
+>> +
+>> +void arch_sse_event_update_cpu(struct sse_event_arch_data *arch_evt, int cpu)
+>> +{
+>> +       arch_evt->cpu_id = cpu;
+>> +       arch_evt->hart_id = cpuid_to_hartid_map(cpu);
+>> +}
+>> +
+>> +int arch_sse_init_event(struct sse_event_arch_data *arch_evt, u32 evt_id, int cpu)
+>> +{
+>> +       void *stack;
+>> +
+>> +       arch_evt->evt_id = evt_id;
+>> +       stack = sse_stack_alloc(cpu);
+>> +       if (!stack)
+>> +               return -ENOMEM;
+>> +
+>> +       arch_evt->stack = stack;
+>> +
+>> +       if (sse_init_scs(cpu, arch_evt)) {
+>> +               sse_stack_free(arch_evt->stack);
+>> +               return -ENOMEM;
+>> +       }
+>> +
+>> +       if (sse_event_is_global(evt_id)) {
+>> +               arch_evt->interrupted_phys =
+>> +                                       virt_to_phys(&arch_evt->interrupted);
+>> +       } else {
+>> +               arch_evt->interrupted_phys =
+>> +                               per_cpu_ptr_to_phys(&arch_evt->interrupted);
+>> +       }
+>> +
+>> +       arch_sse_event_update_cpu(arch_evt, cpu);
+>> +
+>> +       return 0;
+>> +}
+>> +
+>> +void arch_sse_free_event(struct sse_event_arch_data *arch_evt)
+>> +{
+>> +       scs_free(arch_evt->shadow_stack);
+>> +       sse_stack_free(arch_evt->stack);
+>> +}
+>> +
+>> +int arch_sse_register_event(struct sse_event_arch_data *arch_evt)
+>> +{
+>> +       struct sbiret sret;
+>> +
+>> +       sret = sbi_ecall(SBI_EXT_SSE, SBI_SSE_EVENT_REGISTER, arch_evt->evt_id,
+>> +                        (unsigned long)handle_sse, (unsigned long)arch_evt, 0,
+>> +                        0, 0);
+>> +
+>> +       return sbi_err_map_linux_errno(sret.error);
+>> +}
+> ...
+> 
+> Thanks,
+> Yunhui
+
 
