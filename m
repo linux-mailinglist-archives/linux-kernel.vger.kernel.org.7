@@ -1,86 +1,109 @@
-Return-Path: <linux-kernel+bounces-790430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98550B3A70F
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 18:57:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C827B3A716
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 18:57:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E9A2563193
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 16:57:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 010D456330E
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 16:57:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 282BC32BF42;
-	Thu, 28 Aug 2025 16:57:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F1FB3314B9;
+	Thu, 28 Aug 2025 16:57:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f6baMZT0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QXQaLCDX"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80118322A26;
-	Thu, 28 Aug 2025 16:57:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 678CF322DD1;
+	Thu, 28 Aug 2025 16:57:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756400229; cv=none; b=PoAB0ykS1x35hXeryLNvrURJs3vpvFpFn4vcGvl8bgN7L5DT1QcWCbQcxVKa6RWYmNK/rfeVCghiZpWO4gydL7USav90KtpAIx9blDYTGxori0LsPvUJrpgiCkmXwjmUILUyOU6Csrc03wqiKnYvAuC/x8iKhLQJLlgdk4uoN5g=
+	t=1756400246; cv=none; b=aHjWo3SHpeL/dULwA8dDdOFqGZXHFmtUJBR9xBUgQ67q0e5szlBtsPQDrrUdGFfwjY1293TRXNOq1xTuDH/ZQb72syClM+tiGZnEn0W4R79f8UNARZfAQdHtav63B4HEMSb3lVAIqbl8ORKIW+hDqzuU8ROasj5cyzUUjxUMbdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756400229; c=relaxed/simple;
-	bh=twbEl6RIop6nZrrZWjYGdwphD6aGwt1zB9C3V1gHSlo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fHLQFo5PGcPnIlYkXUgW1UIQCzLvodNNad9x5dsYDCdzrsTkVXOy1resNHPUT1ebWZKyf9R+tppsMNsqkap1C2WHED6GtJyim0Bpq8VwocVcbr3Gacu7hxBjI01g+ge/B2777e8OMmlsmGjbRfYmgsCJH58ZkfknwujgQ3+t92E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f6baMZT0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35398C4CEEB;
-	Thu, 28 Aug 2025 16:57:07 +0000 (UTC)
+	s=arc-20240116; t=1756400246; c=relaxed/simple;
+	bh=MyGuywaVJRTnrDuohxHecg+wMfhfMcnjDHdSphNISLY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=touLe/oiw878fchlwZrOrsU5hteURvmLtHbRfOaPq218gxfQKfzcfqHgMbgJmiVZlI4b8/zjfwkGeUgGfurpjUabfsUChpoz5z1utR3bWpdtAVYQHXbYaC/7XEfioY0vleKxCB89ERwmlcwDmpsnfh6sW9ma4JQZg20nWG3TdfY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QXQaLCDX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id CCE27C4CEEB;
+	Thu, 28 Aug 2025 16:57:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756400229;
-	bh=twbEl6RIop6nZrrZWjYGdwphD6aGwt1zB9C3V1gHSlo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=f6baMZT0HtqWBcrbX+fYbmZkLsk+3QnIsdA0VS4USY0L3HGXsilySuDBdrDLeWYZ0
-	 uiwngObcZqJylx3m/I/vc5EGSlbzbL2qOJedAfvuLkQnW4ALGSYGm061j3Ba51VVwS
-	 xgJbVxaVBfh3NrGqpS0xvLq3rrBNHhWyDCVm4QXzhvsdqfgLfoFxb3Ay9EW1V19vfK
-	 XHcKn3LdodfBQN6icZ2CJ6hMEsZWevGfMIvAjlR4owY0a2j0CFjRpMygUMj0X2f8cY
-	 fWOFXJoQg8HHnO60Jc3HnIvUMbXcuxCI8q/Z0jAY9IWdpnHAgL5NR5ITnOBDOG8sc9
-	 A6pW9uU1ti6wg==
-Date: Thu, 28 Aug 2025 17:57:04 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-	kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH] dt-bindings: soc: rockchip: add missing clock reference
- for rk3576-dcphy syscon
-Message-ID: <20250828-shame-stinger-e1443c61d31a@spud>
-References: <20250828131107.3531769-1-heiko@sntech.de>
+	s=k20201202; t=1756400245;
+	bh=MyGuywaVJRTnrDuohxHecg+wMfhfMcnjDHdSphNISLY=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=QXQaLCDXrSNvTZGGSJ04PeY2E5N2CecKyGaPF5I1bMKQnQUOP17iRP98ODBmpBI7L
+	 1toEuUbyvT1yGWjs7pX7Zmx9ZIAK5JLmbBsWgyanglknNmpu44nt70Q2P4Vozv6wxG
+	 7B1WwdvCs0Y8Pgw5wp2hHi5aPZ86HYD1BtcPCnBuS9aI0J9d/3qh8LUe/rzlvvcK28
+	 mx1mNDW907AMJHhbFVN4oe+9lW7Oz47FvaKrYhJDrWm9N1kKkESx6Gb4NCwN2z3cF2
+	 +F76GaiZL9AQce89qXS4Yl2ymtZJl/uk1DKn3HVWNk+Q+Vmg8nvtUhO41wPsEYz2X7
+	 EbvIY8TVD0DkA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC9D1CA0FF7;
+	Thu, 28 Aug 2025 16:57:25 +0000 (UTC)
+From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
+Subject: [PATCH v2 0/2] cpufreq: tegra186: Fix initialization and scaling
+Date: Thu, 28 Aug 2025 11:57:19 -0500
+Message-Id: <20250828-tegra186-cpufreq-fixes-v2-0-fcffe4de1e15@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="p9ZbeHQWfYofwOCV"
-Content-Disposition: inline
-In-Reply-To: <20250828131107.3531769-1-heiko@sntech.de>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAG+KsGgC/4WNTQ6CMBCFr0Jm7Zi2xlJceQ/DorRTmET+WiQaw
+ t2tXMDl916+9zZIFJkS3IoNIq2ceBwyqFMBrrNDS8g+MyihrsIojQu10Uqj0U2vEGnGwG9KWIY
+ mBCOdNlZBlqdIR5HdR52547SM8XP8rPKX/p1cJQqsylAZfyFhfXNve8vPsxt7qPd9/wKAUAMDv
+ AAAAA==
+X-Change-ID: 20250826-tegra186-cpufreq-fixes-7fbff81c68a2
+To: "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Viresh Kumar <viresh.kumar@linaro.org>, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, Aaron Kling <luceoscutum@gmail.com>, 
+ Sumit Gupta <sumitg@nvidia.com>
+Cc: Thierry Reding <treding@nvidia.com>, linux-pm@vger.kernel.org, 
+ linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Aaron Kling <webgeek1234@gmail.com>, 
+ Mikko Perttunen <mperttunen@nvidia.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1756400245; l=820;
+ i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
+ bh=MyGuywaVJRTnrDuohxHecg+wMfhfMcnjDHdSphNISLY=;
+ b=jTkl4Ze5C2Hk4Gg/ssP9hc3eZzVbpeg/G2YMW+0uFbkBSrM1Is5s3uDGl/NemC36ypPtUO2wc
+ +E51dc/pgphCnTJY1zDIBifWBCbDNfAi8M2T/L6m6zrLM1j8mr5kqk3
+X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
+ pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
+X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
+ auth_id=342
+X-Original-From: Aaron Kling <webgeek1234@gmail.com>
+Reply-To: webgeek1234@gmail.com
+
+This series fixes an issue with shared policy per cluster not scaling
+all cpus and with some cores being initialized by the subsystem.
+
+Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+---
+Changes in v2:
+- Set max freq instead of base freq in patch 2
+- Link to v1: https://lore.kernel.org/r/20250826-tegra186-cpufreq-fixes-v1-0-97f98d3e0adb@gmail.com
+
+---
+Aaron Kling (2):
+      cpufreq: tegra186: Set target frequency for all cpus in policy
+      cpufreq: tegra186: Initialize all cores to max frequencies
+
+ drivers/cpufreq/tegra186-cpufreq.c | 26 +++++++++++++++++++++-----
+ 1 file changed, 21 insertions(+), 5 deletions(-)
+---
+base-commit: 1b237f190eb3d36f52dffe07a40b5eb210280e00
+change-id: 20250826-tegra186-cpufreq-fixes-7fbff81c68a2
+
+Best regards,
+-- 
+Aaron Kling <webgeek1234@gmail.com>
 
 
---p9ZbeHQWfYofwOCV
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-
-
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-
---p9ZbeHQWfYofwOCV
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaLCKYAAKCRB4tDGHoIJi
-0glBAP9334cjtxvGihXrVmnI3SiWQWYFgyyt8jz2Ht0U/JaZ7gEAy3V7xRCiRHkx
-ARtCHT1yuoOGr+Lio1IlQih2X4fixQM=
-=VoQr
------END PGP SIGNATURE-----
-
---p9ZbeHQWfYofwOCV--
 
