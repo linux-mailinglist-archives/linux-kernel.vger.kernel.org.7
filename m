@@ -1,174 +1,119 @@
-Return-Path: <linux-kernel+bounces-790799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 851E2B3AD1D
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 23:57:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EE1DB3AD39
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 00:00:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 458D91720B4
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 21:57:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F3EE46187D
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 22:00:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BE032C08AD;
-	Thu, 28 Aug 2025 21:57:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98A1C2C1596;
+	Thu, 28 Aug 2025 21:59:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="AsZoGYAn"
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hXslAWvA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E319E129A78
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 21:57:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3F5B27B4E8;
+	Thu, 28 Aug 2025 21:59:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756418263; cv=none; b=UtoBJ/eZpLOJxd3/i1znayUWyGIDLY6FWDw6wYWhAC12NCUKglHaxQsYbUDJZ/iKRr+Gk2OxBHaV0MYlpf1dC23Yo0HLXO2sDpi6T8mwllZbij8YXSEXBTN8GMY7VsU9FjaNO3VqKaMZUmoR7UNrdq4f0FSBfO8rbxgZqCJ8m6k=
+	t=1756418396; cv=none; b=OlbkGU9KyFVYLZlop7EBNlyXgBrpvgGHYYBW2XiamNsvkoz0ZiWCzJG1IeXIKIZ2Rfb8kwYefrpu1EAk6PPnK+Th0+pOQGC/q92tMywIAdXVvUTnsIwyQjf3K2OusM4w7EMDOCsXIo4ymxzjwIc96rqceKhtq0k9euju3e1dO9A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756418263; c=relaxed/simple;
-	bh=KuU7MFe5Hw5QT5mDGOLPcE1wLuXANA35URR6cOm+gn0=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=j8Va60x0QBq1VpqKICtUitZBiLz91B8t/6pVJq9sO/UHx5hN+/Gdz9FHbRhFa6A/QVWxVaa7EiDFvcpwYwvtTdrtN7i4wPUsG+S1V+lhb+6FZXxrOc58f+6nXSlih5oy+4FrBQWstabTkRK8/U3soPVV8Ihigmr9ajBFpc/LHaM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=AsZoGYAn; arc=none smtp.client-ip=209.85.210.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-7720b00a313so1304818b3a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 14:57:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756418261; x=1757023061; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=pA5ZuDq4s4O/Y5U45tkQ/giHeKUQA670rdBBu3hbsJ8=;
-        b=AsZoGYAny6y1J1Ig3KddAw7gl7UkSlsUgM6huN0gHHSand+jHzYok9CO1cnhP9Nu2P
-         G+H26MK4ZHnIHUhXmlbLxl4GdVTkyYLdStjsnMvNjuM+q1C6cqhiJaGBcURiQebVQ47n
-         mFVVsJ5NABA72Xd29SuBllV3ftOD5B03kLLEL5VSkR3GRnZtzKkkM2pu9MtRzIcypZK1
-         qRhTNFw9628Op2C3wdBdKD07+J9tFm0WftfXza+fD0BOtUQLgKyOMhFNFA7G0UxMD7gU
-         Ckzvy8hKiKHxcDiVABK9ZsCoWOzp7QXNfShcxaTNRIAwYg/OTLfny0WiFTA8UQxlhNAq
-         MQ5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756418261; x=1757023061;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=pA5ZuDq4s4O/Y5U45tkQ/giHeKUQA670rdBBu3hbsJ8=;
-        b=vnS9ogK4gb6suWT4YuZZN2A/6pMeVWEGlnubZDFNTq2PNNvhBAPuKOSYHywk8pgNQf
-         ADHMMGtSj5GK74fX6sJibJsHp5uBmcQq106wuSQdlBYqE1oxFr5D33sk0WHH1sBHgjBj
-         ZWIsIsmL/Up0xZMwyv7ckjdeqxMg9m8kgtfpSsWNP2a/zdZ4CtyILadjBAd8niYOiqbC
-         QUj7gDgC2QsmsUnJO5DOSA0Fvplx0g6rM+n6H9RWnK2EB3Sfhhi/m968pVnp2ZPd2bOc
-         SlmwIKpcXEtYQWSilUs/lB7v6YNz9WDulQhOH/efZe+qBSSBS88vKKpxrPrMJ+enjyJY
-         ddYA==
-X-Forwarded-Encrypted: i=1; AJvYcCUdnyh11873ap4UH6AZM8b5S2y3zMg09Ge5KFulMSV8qQoCSgAawOEQzlDDW01TX7tqxRDRTDfoxjmtkug=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzu+yP1xSgwCMAxeaiAuWntrKw+dUhfbVWcRnH21sNnva2WIBSN
-	6IW79f3LfiwmnUltTmCapcxeGyisFzOGvM2DCpgTzti+/b333GXRMgwlng4kwqsaJ15et070wGV
-	6lRtAow==
-X-Google-Smtp-Source: AGHT+IGR4HgnkA6BfHSXpSOoKMmxI4GjoYygF5OD856UeGSX0+bSquBGLl8NC2kp/VPYi+fp1g9EGOg3trU=
-X-Received: from pfwz26.prod.google.com ([2002:a05:6a00:1d9a:b0:772:13b2:f328])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:99d:b0:771:58e:5b10
- with SMTP id d2e1a72fcca58-771058e5ff3mr21388814b3a.8.1756418261101; Thu, 28
- Aug 2025 14:57:41 -0700 (PDT)
-Date: Thu, 28 Aug 2025 14:57:39 -0700
-In-Reply-To: <8670cd6065b428c891a7d008500934a57f09b99f.camel@intel.com>
+	s=arc-20240116; t=1756418396; c=relaxed/simple;
+	bh=+yn7bpIM+//8mwmC7Z0a1G3HNk6Q20Ctm8roSQE4Hxw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gdSONKYU48H5Z5oQH9mtix3F7Ran+FaEt5OuZbYly+eNPz1OMnjEQKRaGwXOpsn7FMdo7+jiniKB7UPSba57tLqNUOL5xuTueLPM32o2OmWYigN+WNNCifH+7s4TMoQ9S5/OcgxuI1pWFodfp3RYsC71QYBcqJSCIaI/+pObZSE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hXslAWvA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A868C4CEEB;
+	Thu, 28 Aug 2025 21:59:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756418395;
+	bh=+yn7bpIM+//8mwmC7Z0a1G3HNk6Q20Ctm8roSQE4Hxw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=hXslAWvA0T9+S0WXdu2fyyN48S1dw8Wz9ZeA7/gPudrI6PISRs+u/zJqXGfU4fSN2
+	 aFf1oimw6kIqHnaLXyNK2Or1zOOkTgQYu+DwAGAtivMaZb+KYIxtG7mRHgmjrj8ckR
+	 9jg1knDgv1eJ9/Mq8H0A+ULvTMNBhQcIfrwOPJw0pNg9yEPC5+3PlKWKH2DEDaD/T9
+	 gN4t4MAYj/sMscWOnPphIeCgQ+945NqmU/RfvfyFvlCH13vggxwhazPpvLF//UtkKw
+	 fuvdnOo7sl29GVuifed++vYTo06OLVao1SuRBXiqGlrEQglq8y1A27O1+yqCw4F0Zy
+	 VV31pr2pZOm+A==
+Message-ID: <26e5309e-3705-4d70-a2e7-3f0e9344816b@kernel.org>
+Date: Fri, 29 Aug 2025 00:59:49 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250827000522.4022426-1-seanjc@google.com> <20250827000522.4022426-10-seanjc@google.com>
- <aK7Ji3kAoDaEYn3h@yzhao56-desk.sh.intel.com> <aK9Xqy0W1ghonWUL@google.com>
- <aK/sdr2OQqYv9DBZ@yzhao56-desk.sh.intel.com> <aLCJ0UfuuvedxCcU@google.com>
- <fcfafa17b29cd24018c3f18f075a9f83b7f2f6e6.camel@intel.com>
- <aLC7k65GpIL-2Hk5@google.com> <8670cd6065b428c891a7d008500934a57f09b99f.camel@intel.com>
-Message-ID: <aLDQ09FP0uX3eJvC@google.com>
-Subject: Re: [RFC PATCH 09/12] KVM: TDX: Fold tdx_mem_page_record_premap_cnt()
- into its sole caller
-From: Sean Christopherson <seanjc@google.com>
-To: Rick P Edgecombe <rick.p.edgecombe@intel.com>
-Cc: "kvm@vger.kernel.org" <kvm@vger.kernel.org>, "pbonzini@redhat.com" <pbonzini@redhat.com>, 
-	Vishal Annapurve <vannapurve@google.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Yan Y Zhao <yan.y.zhao@intel.com>, 
-	"michael.roth@amd.com" <michael.roth@amd.com>, Ira Weiny <ira.weiny@intel.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] dt-bindings: interconnect: add clocks property to
+ enable QoS on sa8775p
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+ Odelu Kukatla <odelu.kukatla@oss.qualcomm.com>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+ linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Mike Tipton <mike.tipton@oss.qualcomm.com>
+References: <20250808140300.14784-1-odelu.kukatla@oss.qualcomm.com>
+ <20250808140300.14784-2-odelu.kukatla@oss.qualcomm.com>
+ <90b51e31-3217-4483-bb5b-ec328665a723@kernel.org>
+ <28b97952-1b67-411f-a7fb-ddd558739839@oss.qualcomm.com>
+ <ac83c453-c24d-4c4d-83bc-9ed13f2f9d1e@kernel.org>
+ <7d3e5cf7-4167-4005-ba4b-c1915c254705@oss.qualcomm.com>
+ <00f50d92-e4ea-4805-b771-147fa5f5ebe4@kernel.org>
+ <249f8109-31b1-4cb8-a5a4-b30c27b2e987@oss.qualcomm.com>
+ <6e036d6a-f2d1-43d6-bb35-54467edd7ec9@kernel.org>
+Content-Language: en-US
+From: Georgi Djakov <djakov@kernel.org>
+In-Reply-To: <6e036d6a-f2d1-43d6-bb35-54467edd7ec9@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Aug 28, 2025, Rick P Edgecombe wrote:
-> On Thu, 2025-08-28 at 13:26 -0700, Sean Christopherson wrote:
-> > Me confused.=C2=A0 This is pre-boot, not the normal fault path, i.e. bl=
-ocking other
-> > operations is not a concern.
->=20
-> Just was my recollection of the discussion. I found it:
-> https://lore.kernel.org/lkml/Zbrj5WKVgMsUFDtb@google.com/
+On 8/28/25 9:20 PM, Krzysztof Kozlowski wrote:
+> On 28/08/2025 20:16, Odelu Kukatla wrote:
+>>
+>>>> QoS configuration is essential for managing latency and bandwidth across
+>>>> subsystems such as CPU, GPU, and multimedia engines. Without it, the
+>>>> system may experience performance degradation, especially under
+>>>
+>>> So how was it working for the last 2 years?
+>>>
+>> The system may function normally without this feature. However, enabling
+> 
+> 
+> Huh? So you agree but keep continuing the discussion?
+> 
+> I don't understand what we are discussing in such case, but just to
+> close the topic from my side and be explicit: based on above you cannot
+> break the ABI.
 
-Ugh, another case where an honest question gets interpreted as "do it this =
-way". :-(
+To be even more specific, if we already have some DT binding without any
+clocks and reg properties, we can't just suddenly change them from now
+on to be "required". But they can still be "optional" and this will not
+break the ABI, right? The old DT is still valid and the QoS will be
+active when the new properties are present and this is handled properly
+by the driver.
 
-> > If tdh_mr_extend() is too heavy for a non-preemptible section, then the=
- current
-> > code is also broken in the sense that there are no cond_resched() calls=
-.=C2=A0 The
-> > vast majority of TDX hosts will be using non-preemptible kernels, so wi=
-thout an
-> > explicit cond_resched(), there's no practical difference between extend=
-ing the
-> > measurement under mmu_lock versus outside of mmu_lock.
-> >=20
-> > _If_ we need/want to do tdh_mr_extend() outside of mmu_lock, we can and=
- should
-> > still do tdh_mem_page_add() under mmu_lock.
->=20
-> I just did a quick test and we should be on the order of <1 ms per page f=
-or the
-> full loop. I can try to get some more formal test data if it matters. But=
- that
-> doesn't sound too horrible?
+BR,
+Georgi
 
-1ms is totally reasonable.  I wouldn't bother with any more testing.
+> 
+>> QoS helps optimize latency and bandwidth across subsystems like CPU,
+>> GPU, and multimedia engines, which becomes important in high-throughput
+>> scenarios.
+> 
+> No one discussed that.
+> 
+> 
+> Best regards,
+> Krzysztof
 
-> tdh_mr_extend() outside MMU lock is tempting because it doesn't *need* to=
- be
-> inside it.
-
-Agreed, and it would eliminate the need for a "flags" argument.  But keepin=
-g it
-in the mmu_lock critical section means KVM can WARN on failures.  If it's m=
-oved
-out, then zapping S-EPT entries could induce failure, and I don't think it'=
-s
-worth going through the effort to ensure it's impossible to trigger S-EPT r=
-emoval.
-
-Note, temoving S-EPT entries during initialization of the image isn't somet=
-hing
-I want to official support, rather it's an endless stream of whack-a-mole d=
-ue to
-obsurce edge cases
-
-Hmm, actually, maybe I take that back.  slots_lock prevents memslot updates=
-,
-filemap_invalidate_lock() prevents guest_memfd updates, and mmu_notifier ev=
-ents
-shouldn't ever hit S-EPT.  I was worried about kvm_zap_gfn_range(), but the=
- call
-from sev.c is obviously mutually exclusive, TDX disallows KVM_X86_QUIRK_IGN=
-ORE_GUEST_PAT
-so same goes for kvm_noncoherent_dma_assignment_start_or_stop, and while I'=
-m 99%
-certain there's a way to trip __kvm_set_or_clear_apicv_inhibit(), the APIC =
-page
-has its own non-guest_memfd memslot and so can't be used for the initial im=
-age,
-which means that too is mutually exclusive.
-
-So yeah, let's give it a shot.  Worst case scenario we're wrong and TDH_MR_=
-EXTEND
-errors can be triggered by userspace.
-
-> But maybe a better reason is that we could better handle errors
-> outside the fault. (i.e. no 5 line comment about why not to return an err=
-or in
-> tdx_mem_page_add() due to code in another file).
->=20
-> I wonder if Yan can give an analysis of any zapping races if we do that.
-
-As above, I think we're good?
 
