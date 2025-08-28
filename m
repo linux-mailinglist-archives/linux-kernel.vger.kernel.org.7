@@ -1,363 +1,231 @@
-Return-Path: <linux-kernel+bounces-790066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790067-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42B02B39EF3
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 15:31:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A0E66B39EF7
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 15:31:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 46512200798
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 13:30:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E6FE56461C
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 13:30:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16DB93126C3;
-	Thu, 28 Aug 2025 13:30:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CE63310628;
+	Thu, 28 Aug 2025 13:30:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A55075pb"
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="WdVPK2jG"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58B55310628;
-	Thu, 28 Aug 2025 13:30:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03DA0313540
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 13:30:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756387802; cv=none; b=oiLaDcL9MLpNOPVojlz2QvN+KjbUtnID7ikBGnNSbquMPETxbt/WtEhNNcjELGe/gJY8Z4DY3lChUlm8Tc2Q+EIGQwDUFqjSUQcS5ktmunCX8TuDDy1+Ha/IAFFThk6A5+AlosLHSFN5IqA+E2o41aSnyFgSoakARBraqvjwnZ8=
+	t=1756387808; cv=none; b=Fwx409YhIC0EPWV1qjZDH98t/QtWnK9uOcjZRiUClJI7TncYKbp21H28p1K36MgO1ocB5ub4cdRrssyFlyKZcfAqElH3L23wmmY/VRPW3JYYTQJ7QTWx+dTQjb9t8iQ9Pt/ic0ENNinvzxC4yolRildOTjgjRfapl/1V3hrktQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756387802; c=relaxed/simple;
-	bh=55L6vhzG2jgOJEl7I4X26HAgyvryCAmxeBWCwr51Hvk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oZkX2Jq8kb73w0CORii3x+HWUi35bhwahdeM+XTjtXiup6oXiXspDgc4SeMrMxdHf7Iejc6+j/tcEBm2YJn4qYxK7rqcQ0t8trRbBzUR4vM/zA8Ky3IB+oLGu+SBu4U/z1jD0DZwcjubDncXWwh/02EDbVN72oVDXtWD9MlXehA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A55075pb; arc=none smtp.client-ip=209.85.216.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-327705d0a9bso883260a91.0;
-        Thu, 28 Aug 2025 06:30:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756387800; x=1756992600; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4n0tum4VDah4U2bv7Oe7CW2rYIFPwcyA0fu9h3EYKtA=;
-        b=A55075pb5fPMVLF0lj7E7OxXE9Tl/D7D1b4uK5Le4it/ek0ZWvNoXY1Bwru9E78FYm
-         4E6vUmvIXalD7oFqQNC1P7hs71edEFhXm5c6SyVN1Pckg+eG5mgot/fb2MOT38CwXapW
-         upwVwEtaaaiS2oru8/JfeIteTOVzggtGmAtPzgLCeQeahtOTEcLcnGW7OAq1fpxY4A5v
-         wbG6qWoSDhVgz6eLu14qzndwDZWlMb3FlLoErULZnnGa1xRV6PAfIjYxwX+nu54vWuam
-         wwm+yk/xKLGaPbYY1i7pigr90z7RzjOJHScT2i0W3yeQORkXM1B0F6OlVxBURCbZuu1z
-         7wbw==
+	s=arc-20240116; t=1756387808; c=relaxed/simple;
+	bh=cv0ZxHdea5CKsewlRvW/nTV3U8O64mbsID3Dg6IGx0I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kwX0Fi6K7iV3ZMfVw8wwA/gSwkH1ZpS15+x9mt590SQZolpJmOzKmTPwZudvupWOxXBMLZscR3alR7IVMHeus1gYrzDuyRI5nHxv79ExClkccojpDqW5qZjQZhCacQsk/ZpbbySiwOfHmM2DLwfK4IB5Xhd0TRokYAEHRCnSxnk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=WdVPK2jG; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57S9mS5J021398
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 13:30:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	t1IRldKz0gQmhFQYU2bb3SAPuJJrpPeWPFtRHihBROo=; b=WdVPK2jGbR8S0q4p
+	vNFhQDsCRbecVWA+fCnLIBrkBx+EWt2dqWkdCKJ+OgemYk4l0b0y8X+shn5sZFmB
+	LHlBk3TXiGkfoaL9vZFkTT2UTdIkluEnODuBI6TbGwHEUK7dlqS7H+YRQBfWsdtI
+	moblJdPF52D+fmAQ11reSz25Q6iOxf1Qn0+OrARUkOcelB+PYrc+KxtAg8Rqr6Tq
+	X3AqiNm/FsP7G0EQlyDxvBsZhb6a2QgcNKA5Ls6xGeDb0uy65begVgG1H/ON8unt
+	ow24+4Fpv4f5mjUZGsvwW4XCDcbh6KH4GpbvGhRg5DvwUFnUtjJ//UH7nPbjucrc
+	P6ssXg==
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48q5we8236-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 13:30:05 +0000 (GMT)
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4b109be525eso21031141cf.2
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 06:30:05 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756387800; x=1756992600;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4n0tum4VDah4U2bv7Oe7CW2rYIFPwcyA0fu9h3EYKtA=;
-        b=jKpFk2YHdYlm6llmRcKIoYsRsWO/DEWWmWinS7t3MEn/Ykv0DpwiJDj3KOLckmTB08
-         aUyY0tYjJNkvzyj57Wed56kHB8R2DMbaR5L7VNE6i2K8efs+WwDM864sEnTCENz+usA2
-         0D+hDaKMXgkF63BuMajmbbzDBLaPxvziMJGzK3RNVFDU6yBZYUigQ2VqjPo/8JPZOp5e
-         blB9Z9i+8qQzJwBLOfU/O6TXAKaX9cmIqLEi2YgeUg0J+hvsbP7UVbidsIcGJ9Z5XgJ4
-         6u72Y1M3KBjZTrur4lHAoaX6LylR2gngERNnlBiRW2IcQrVghCDzi2xgNX+SrogOKFVW
-         8FsA==
-X-Forwarded-Encrypted: i=1; AJvYcCVVlDt+Nv9vnXWlioLTOeOK1RRPopgQSvXo4cJd3rjFW3H9vBwn2E+m2LZm1+sHtTiDTFFAyRcyebcQpbo58xoyTlviCP3h@vger.kernel.org, AJvYcCWI2T3B37NlDpNtSfJ4cQP570pt45p8I38yPKAeV9NjrALu5L0bT588K80L4x8XOWJogrzx6bZ/mw==@vger.kernel.org, AJvYcCWxD7EhQXLqPZP0IIdW3eLOrRpvakEkZkdr0ZRORry1+mkhtv0aC1lSzy52Jo63vhzkJ3dMZqII7tMyQuw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHWXVZc25li8ia+WnaGf5Aj4Y1RFP9WVMw9l5Iku9P9zDWQ7rv
-	9j91pt/dVvnk1Kl3NAdHF5KYdwpwAy5nDOJwyn0j9yY4gp9vuYZ6/Cn/MgRm+IvLkE/6AcO+YZq
-	TBWlCVU4gzNkJzqg3VHw6b9mY5yXX7yM=
-X-Gm-Gg: ASbGnctNJDt62OjphFsmvRYb8QfCDXRiEbA23Ai6lMqcazsR45vQgrt9tIaEq2i1vNT
-	GOFRSJ9jOZqrpK1Rq8f7xdsaCVxVrLlN5QCZ0Pl3N7fBWafhEU2oOGtxll2kLg9FCf+wi6PPZ7g
-	hQ3ExlQMZSL2A52oZqBpbyQyRR8cIoCffQV4IC37fGdG4UpTI9wCImt43GGAh+xQnMRpGv8ckuI
-	0Hnzio=
-X-Google-Smtp-Source: AGHT+IF9fxo38tdSY1lXKPcvTKCu7yLbvImIstAsgUDP9cqGG5UHtxAtT+n8efcbSbsUybFZ0Kmprvh8bhLl5dF+eSA=
-X-Received: by 2002:a17:90b:1fce:b0:327:ceb0:6f6a with SMTP id
- 98e67ed59e1d1-327ceb07148mr783409a91.4.1756387799474; Thu, 28 Aug 2025
- 06:29:59 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1756387805; x=1756992605;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=t1IRldKz0gQmhFQYU2bb3SAPuJJrpPeWPFtRHihBROo=;
+        b=BugZTew31/usNh9hmBonCjEgRozlz2gzQXWrei44VBiTlbvu8+FiNgEHqSYTPeXug9
+         NH/1UfYrtvKFTXOf7d6pwQwFXPB1JywY7t3AI9zLT7ScU2VFKVIoqH4Fr0oyR/xsy3Ty
+         T97CclI4Fry23Wls+3ghRB0zV7MeeN9+gD4YJkEAcq8AlOia/8OwAgzgI6gqo0JFJy8v
+         CgayzjOOjA6IEkb+sJ3OVl+sYLhS7OZfBpd5UHotUXvnfX+oCXXBP9ZrtmaHtZssLCyU
+         r4NsjQEoITiT6+4p4fuTZYi+9DVFel0IdpqJQo1QxT6Om9H1JdyfZI6aYSuAvRIaSTUu
+         qaTw==
+X-Forwarded-Encrypted: i=1; AJvYcCVAaq3t1R4rmZOCdN8UsA36JZVXc6t5X3v5sG/6qmMDlKDuGYy0aYcorUjYnGCbhLw87i/kcr64QUKFxXk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/+E8wIweS69DFImiYg9Of3i2cE8Mgie3vYllAFOeDOVnQi0Xd
+	CTc+uqw/97VnM9sAnXEOPWq675t++OOc4YoyILihMRL6vjZQ7Vc9iYFdXvhlAAdWjdWMSv6U4Qs
+	7OEIoRn5Jz2j23gCFmFoRjBdZSCyWdmamCzlTsorpQCpItK2U29o/HuUZ+s7+cA1BgRU=
+X-Gm-Gg: ASbGnctdkGBEbs40/MvUfnwOWfgd1LnEzIOFGS3bgcNzCmaTUAkjZgt1CHedqQBeemz
+	NHQoQWhxvVuuc4w25qIGYgObYlSKkGBPFj6ed2etyOjg0WjUzrhmP4Ikn/3ssJuCfUvStr0ny0n
+	mkMVCYD6AKRfmHJeFXb048fL4tN7j+fHjx4DR3j5N4dIUMwvZqq9puUS+KZZX+OW9lrJtKd3xEG
+	FbVQAML7y2RWWz81kLbVawX2yYP1S+nAjES4E990GaKWId8CQ8iaCXEj1T2TaPkcJ7zxl82lcGa
+	+p833Iq+merqe9lY+ctqsTUii3DhRvGUQywieDy/JFwSsudr2fNOGrP2yYzLJkExMCtix1XhCSY
+	PV5+v6pWDOISg2qGlDbgW3BdyovuDh0I++W+IAMI9b81aPzJpAvWk
+X-Received: by 2002:a05:622a:5b9a:b0:4b2:eed0:4a61 with SMTP id d75a77b69052e-4b2eed04cffmr82140991cf.71.1756387804551;
+        Thu, 28 Aug 2025 06:30:04 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHaOiP53QzP+S1t68Ggm4fjMOYi9fuzbFRp57u9VDUOAbeZXX2cOuJSczfNUU5F5LjJth2aNQ==
+X-Received: by 2002:a05:622a:5b9a:b0:4b2:eed0:4a61 with SMTP id d75a77b69052e-4b2eed04cffmr82139901cf.71.1756387803743;
+        Thu, 28 Aug 2025 06:30:03 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55f489f09a8sm1977650e87.116.2025.08.28.06.30.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Aug 2025 06:30:01 -0700 (PDT)
+Date: Thu, 28 Aug 2025 16:30:00 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Sushrut Shree Trivedi <quic_sushruts@quicinc.com>
+Cc: Wasim Nazir <wasim.nazir@oss.qualcomm.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Richard Cochran <richardcochran@gmail.com>, kernel@oss.qualcomm.com,
+        linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        netdev@vger.kernel.org,
+        Viken Dadhaniya <viken.dadhaniya@oss.qualcomm.com>,
+        Nirmesh Kumar Singh <quic_nkumarsi@quicinc.com>,
+        Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>,
+        Mohd Ayaan Anwar <quic_mohdayaa@quicinc.com>,
+        Dikshita Agarwal <quic_dikshita@quicinc.com>,
+        Monish Chunara <quic_mchunara@quicinc.com>,
+        Vishal Kumar Pal <quic_vispal@quicinc.com>
+Subject: Re: [PATCH 3/5] arm64: dts: qcom: lemans-evk: Extend peripheral and
+ subsystem support
+Message-ID: <zys26seraohh3gv2kl3eb3rd5pdo3y5vpfw6yxv6a7y55hpaux@myzhufokyorh>
+References: <20250826-lemans-evk-bu-v1-0-08016e0d3ce5@oss.qualcomm.com>
+ <20250826-lemans-evk-bu-v1-3-08016e0d3ce5@oss.qualcomm.com>
+ <kycmxk3qag7uigoiitzcxcak22cewdv253fazgaidjcnzgzlkz@htrh22msxteq>
+ <3f94ccc8-ac8a-4c62-8ac6-93dd603dcd36@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250826031824.1227551-1-tweek@google.com> <CAEjxPJ6G2iK9Yp8eCwbwHQfF1J3WBEVU42kAMQHNuuC_H5QHNw@mail.gmail.com>
-In-Reply-To: <CAEjxPJ6G2iK9Yp8eCwbwHQfF1J3WBEVU42kAMQHNuuC_H5QHNw@mail.gmail.com>
-From: Stephen Smalley <stephen.smalley.work@gmail.com>
-Date: Thu, 28 Aug 2025 09:29:48 -0400
-X-Gm-Features: Ac12FXwihC1jaP0Hmcu35QtchrNt5_UC4cuegSSxvaLhssrES19Bc258iqePTuk
-Message-ID: <CAEjxPJ70O5SY=XYJKrQDLkHOO3spD4VSjYCv0LkhYKCvK=GP7Q@mail.gmail.com>
-Subject: Re: [PATCH] memfd,selinux: call security_inode_init_security_anon
-To: =?UTF-8?Q?Thi=C3=A9baud_Weksteen?= <tweek@google.com>
-Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	Hugh Dickins <hughd@google.com>, Jeff Vander Stoep <jeffv@google.com>, Nick Kralevich <nnk@google.com>, 
-	Jeff Xu <jeffxu@google.com>, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, selinux@vger.kernel.org, 
-	linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <3f94ccc8-ac8a-4c62-8ac6-93dd603dcd36@quicinc.com>
+X-Proofpoint-GUID: pJl3AzLqk-pTN0C_YTpbSJJjoVyiL8GC
+X-Proofpoint-ORIG-GUID: pJl3AzLqk-pTN0C_YTpbSJJjoVyiL8GC
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIzMDAzMyBTYWx0ZWRfX4DzkFaoeGtqz
+ SZ4t2YEw6Y+RmJipzToWhu/PZCHL5OexDWnpnM4twEeUcegy6pc4fudXALvteQkTqBRvWWc3zSl
+ jtcvaVfGzI15JuJj0RrZDXIYy/AKVEpvNdjTVXbOztZuNPcB+I9/BruvYAoXD0eFHk+2YZGtj65
+ +40mpJOpnYruHH1RzX+65XdsEP+JmMr1ZaFanpIDQ8vsOdT1KbYvhbzcRIw9FY8G5xvL6c5gqpe
+ XlQwaFkY/vRrK19IDqGAPfYb+UxGvAn3tgmhnkEZFUy91rk8AHjqdYip+B9EPWNsuOxnbJ+SIPp
+ r7kh+/fYK7UrZfmja5tw3YjAK5uqdiblc8xvB+adFKopyutgKe73ZmS7j7BM1xogF8xgHtGHWHz
+ gWHNQBcs
+X-Authority-Analysis: v=2.4 cv=BJazrEQG c=1 sm=1 tr=0 ts=68b059dd cx=c_pps
+ a=JbAStetqSzwMeJznSMzCyw==:117 a=xqWC_Br6kY4A:10 a=8nJEP1OIZ-IA:10
+ a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=COk6AnOGAAAA:8 a=bO8WyBFqmgISiikzXHoA:9
+ a=3ZKOabzyN94A:10 a=wPNLvfGTeEIA:10 a=uxP6HrT_eTzRwkO_Te1X:22
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-28_04,2025-08-28_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 adultscore=0 priorityscore=1501 clxscore=1015 impostorscore=0
+ bulkscore=0 phishscore=0 suspectscore=0 spamscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508230033
 
-On Wed, Aug 27, 2025 at 9:23=E2=80=AFAM Stephen Smalley
-<stephen.smalley.work@gmail.com> wrote:
->
-> On Mon, Aug 25, 2025 at 11:18=E2=80=AFPM Thi=C3=A9baud Weksteen <tweek@go=
-ogle.com> wrote:
-> >
-> > Prior to this change, no security hooks were called at the creation of =
-a
-> > memfd file. It means that, for SELinux as an example, it will receive
-> > the default type of the filesystem that backs the in-memory inode. In
-> > most cases, that would be tmpfs, but if MFD_HUGETLB is passed, it will
-> > be hugetlbfs. Both can be considered implementation details of memfd.
-> >
-> > It also means that it is not possible to differentiate between a file
-> > coming from memfd_create and a file coming from a standard tmpfs mount
-> > point.
-> >
-> > Additionally, no permission is validated at creation, which differs fro=
-m
-> > the similar memfd_secret syscall.
-> >
-> > Call security_inode_init_security_anon during creation. This ensures
-> > that the file is setup similarly to other anonymous inodes. On SELinux,
-> > it means that the file will receive the security context of its task.
-> >
-> > The ability to limit fexecve on memfd has been of interest to avoid
-> > potential pitfalls where /proc/self/exe or similar would be executed
-> > [1][2]. Reuse the "execute_no_trans" and "entrypoint" access vectors,
-> > similarly to the file class. These access vectors may not make sense fo=
-r
-> > the existing "anon_inode" class. Therefore, define and assign a new
-> > class "memfd_file" to support such access vectors.
-> >
-> > Guard these changes behind a new policy capability named "memfd_class".
-> >
-> > [1] https://crbug.com/1305267
-> > [2] https://lore.kernel.org/lkml/20221215001205.51969-1-jeffxu@google.c=
-om/
-> >
-> > Signed-off-by: Thi=C3=A9baud Weksteen <tweek@google.com>
->
-> This looks good to me, but do you have a test for it, preferably via
-> patch for the selinux-testsuite?
-> See https://github.com/SELinuxProject/selinux-testsuite/commit/023b79b831=
-9e5fe222fb5af892c579593e1cbc50
-> for an example.
->
-> Otherwise, you can add my:
-> Acked-by: Stephen Smalley <stephen.smalley.work@gmail.com>
+On Thu, Aug 28, 2025 at 06:38:03PM +0530, Sushrut Shree Trivedi wrote:
+> 
+> On 8/27/2025 7:05 AM, Dmitry Baryshkov wrote:
+> > On Tue, Aug 26, 2025 at 11:51:02PM +0530, Wasim Nazir wrote:
+> > > Enhance the Qualcomm Lemans EVK board file to support essential
+> > > peripherals and improve overall hardware capabilities, as
+> > > outlined below:
+> > >    - Enable GPI (Generic Peripheral Interface) DMA-0/1/2 and QUPv3-0/2
+> > >      controllers to facilitate DMA and peripheral communication.
+> > >    - Add support for PCIe-0/1, including required regulators and PHYs,
+> > >      to enable high-speed external device connectivity.
+> > >    - Integrate the TCA9534 I/O expander via I2C to provide 8 additional
+> > >      GPIO lines for extended I/O functionality.
+> > >    - Enable the USB0 controller in device mode to support USB peripheral
+> > >      operations.
+> > >    - Activate remoteproc subsystems for supported DSPs such as Audio DSP,
+> > >      Compute DSP-0/1 and Generic DSP-0/1, along with their corresponding
+> > >      firmware.
+> > >    - Configure nvmem-layout on the I2C EEPROM to store data for Ethernet
+> > >      and other consumers.
+> > >    - Enable the QCA8081 2.5G Ethernet PHY on port-0 and expose the
+> > >      Ethernet MAC address via nvmem for network configuration.
+> > >      It depends on CONFIG_QCA808X_PHY to use QCA8081 PHY.
+> > >    - Add support for the Iris video decoder, including the required
+> > >      firmware, to enable video decoding capabilities.
+> > >    - Enable SD-card slot on SDHC.
+> > > 
+> > > Co-developed-by: Viken Dadhaniya <viken.dadhaniya@oss.qualcomm.com>
+> > > Signed-off-by: Viken Dadhaniya <viken.dadhaniya@oss.qualcomm.com>
+> > > Co-developed-by: Sushrut Shree Trivedi <quic_sushruts@quicinc.com>
+> > > Signed-off-by: Sushrut Shree Trivedi <quic_sushruts@quicinc.com>
+> > > Co-developed-by: Nirmesh Kumar Singh <quic_nkumarsi@quicinc.com>
+> > > Signed-off-by: Nirmesh Kumar Singh <quic_nkumarsi@quicinc.com>
+> > > Co-developed-by: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
+> > > Signed-off-by: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
+> > > Co-developed-by: Mohd Ayaan Anwar <quic_mohdayaa@quicinc.com>
+> > > Signed-off-by: Mohd Ayaan Anwar <quic_mohdayaa@quicinc.com>
+> > > Co-developed-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
+> > > Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
+> > > Co-developed-by: Monish Chunara <quic_mchunara@quicinc.com>
+> > > Signed-off-by: Monish Chunara <quic_mchunara@quicinc.com>
+> > > Co-developed-by: Vishal Kumar Pal <quic_vispal@quicinc.com>
+> > > Signed-off-by: Vishal Kumar Pal <quic_vispal@quicinc.com>
+> > > Signed-off-by: Wasim Nazir <wasim.nazir@oss.qualcomm.com>
+> > > ---
+> > >   arch/arm64/boot/dts/qcom/lemans-evk.dts | 387 ++++++++++++++++++++++++++++++++
+> > >   1 file changed, 387 insertions(+)
+> > > 
+> > 
+> > > @@ -356,6 +720,29 @@ &ufs_mem_phy {
+> > >   	status = "okay";
+> > >   };
+> > > +&usb_0 {
+> > > +	status = "okay";
+> > > +};
+> > > +
+> > > +&usb_0_dwc3 {
+> > > +	dr_mode = "peripheral";
+> > Is it actually peripheral-only?
+> 
+> Hi Dmitry,
+> 
+> HW supports OTG mode also, but for enabling OTG we need below mentioned
+> driver changes in dwc3-qcom.c :
 
-Also, we'll need a corresponding patch to define the new policy
-capability in libsepol, and will need to de-conflict with the other
-pending patches that are also trying to claim the next available
-policy capability bit (so you may end up with a different one
-upstream).
+Is it the USB-C port? If so, then you should likely be using some form
+of the Type-C port manager (in software or in hardware). These platforms
+usually use pmic-glink in order to handle USB-C.
 
->
-> > ---
-> > Changes since RFC:
-> > - Remove enum argument, simply compare the anon inode name
-> > - Introduce a policy capability for compatility
-> > - Add validation of class in selinux_bprm_creds_for_exec
-> >
-> >  include/linux/memfd.h                      |  2 ++
-> >  mm/memfd.c                                 | 14 +++++++++--
-> >  security/selinux/hooks.c                   | 27 ++++++++++++++++++----
-> >  security/selinux/include/classmap.h        |  2 ++
-> >  security/selinux/include/policycap.h       |  1 +
-> >  security/selinux/include/policycap_names.h |  1 +
-> >  security/selinux/include/security.h        |  5 ++++
-> >  7 files changed, 46 insertions(+), 6 deletions(-)
-> >
-> > diff --git a/include/linux/memfd.h b/include/linux/memfd.h
-> > index 6f606d9573c3..cc74de3dbcfe 100644
-> > --- a/include/linux/memfd.h
-> > +++ b/include/linux/memfd.h
-> > @@ -4,6 +4,8 @@
-> >
-> >  #include <linux/file.h>
-> >
-> > +#define MEMFD_ANON_NAME "[memfd]"
-> > +
-> >  #ifdef CONFIG_MEMFD_CREATE
-> >  extern long memfd_fcntl(struct file *file, unsigned int cmd, unsigned =
-int arg);
-> >  struct folio *memfd_alloc_folio(struct file *memfd, pgoff_t idx);
-> > diff --git a/mm/memfd.c b/mm/memfd.c
-> > index bbe679895ef6..63b439eb402a 100644
-> > --- a/mm/memfd.c
-> > +++ b/mm/memfd.c
-> > @@ -433,6 +433,8 @@ static struct file *alloc_file(const char *name, un=
-signed int flags)
-> >  {
-> >         unsigned int *file_seals;
-> >         struct file *file;
-> > +       struct inode *inode;
-> > +       int err =3D 0;
-> >
-> >         if (flags & MFD_HUGETLB) {
-> >                 file =3D hugetlb_file_setup(name, 0, VM_NORESERVE,
-> > @@ -444,12 +446,20 @@ static struct file *alloc_file(const char *name, =
-unsigned int flags)
-> >         }
-> >         if (IS_ERR(file))
-> >                 return file;
-> > +
-> > +       inode =3D file_inode(file);
-> > +       err =3D security_inode_init_security_anon(inode,
-> > +                       &QSTR(MEMFD_ANON_NAME), NULL);
-> > +       if (err) {
-> > +               fput(file);
-> > +               file =3D ERR_PTR(err);
-> > +               return file;
-> > +       }
-> > +
-> >         file->f_mode |=3D FMODE_LSEEK | FMODE_PREAD | FMODE_PWRITE;
-> >         file->f_flags |=3D O_LARGEFILE;
-> >
-> >         if (flags & MFD_NOEXEC_SEAL) {
-> > -               struct inode *inode =3D file_inode(file);
-> > -
-> >                 inode->i_mode &=3D ~0111;
-> >                 file_seals =3D memfd_file_seals_ptr(file);
-> >                 if (file_seals) {
-> > diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> > index c95a5874bf7d..429b2269b35a 100644
-> > --- a/security/selinux/hooks.c
-> > +++ b/security/selinux/hooks.c
-> > @@ -93,6 +93,7 @@
-> >  #include <linux/fanotify.h>
-> >  #include <linux/io_uring/cmd.h>
-> >  #include <uapi/linux/lsm.h>
-> > +#include <linux/memfd.h>
-> >
-> >  #include "avc.h"
-> >  #include "objsec.h"
-> > @@ -2366,9 +2367,12 @@ static int selinux_bprm_creds_for_exec(struct li=
-nux_binprm *bprm)
-> >         ad.type =3D LSM_AUDIT_DATA_FILE;
-> >         ad.u.file =3D bprm->file;
-> >
-> > +       if (isec->sclass !=3D SECCLASS_FILE && isec->sclass !=3D SECCLA=
-SS_MEMFD_FILE)
-> > +               return -EPERM;
-> > +
-> >         if (new_tsec->sid =3D=3D old_tsec->sid) {
-> > -               rc =3D avc_has_perm(old_tsec->sid, isec->sid,
-> > -                                 SECCLASS_FILE, FILE__EXECUTE_NO_TRANS=
-, &ad);
-> > +               rc =3D avc_has_perm(old_tsec->sid, isec->sid, isec->scl=
-ass,
-> > +                                 FILE__EXECUTE_NO_TRANS, &ad);
-> >                 if (rc)
-> >                         return rc;
-> >         } else {
-> > @@ -2378,8 +2382,8 @@ static int selinux_bprm_creds_for_exec(struct lin=
-ux_binprm *bprm)
-> >                 if (rc)
-> >                         return rc;
-> >
-> > -               rc =3D avc_has_perm(new_tsec->sid, isec->sid,
-> > -                                 SECCLASS_FILE, FILE__ENTRYPOINT, &ad)=
-;
-> > +               rc =3D avc_has_perm(new_tsec->sid, isec->sid, isec->scl=
-ass,
-> > +                                 FILE__ENTRYPOINT, &ad);
-> >                 if (rc)
-> >                         return rc;
-> >
-> > @@ -2974,10 +2978,18 @@ static int selinux_inode_init_security_anon(str=
-uct inode *inode,
-> >         struct common_audit_data ad;
-> >         struct inode_security_struct *isec;
-> >         int rc;
-> > +       bool is_memfd =3D false;
-> >
-> >         if (unlikely(!selinux_initialized()))
-> >                 return 0;
-> >
-> > +       if (name !=3D NULL && name->name !=3D NULL &&
-> > +           !strcmp(name->name, MEMFD_ANON_NAME)) {
-> > +               if (!selinux_policycap_memfd_class())
-> > +                       return 0;
-> > +               is_memfd =3D true;
-> > +       }
-> > +
-> >         isec =3D selinux_inode(inode);
-> >
-> >         /*
-> > @@ -2996,6 +3008,13 @@ static int selinux_inode_init_security_anon(stru=
-ct inode *inode,
-> >
-> >                 isec->sclass =3D context_isec->sclass;
-> >                 isec->sid =3D context_isec->sid;
-> > +       } else if (is_memfd) {
-> > +               isec->sclass =3D SECCLASS_MEMFD_FILE;
-> > +               rc =3D security_transition_sid(
-> > +                       sid, sid,
-> > +                       isec->sclass, name, &isec->sid);
-> > +               if (rc)
-> > +                       return rc;
-> >         } else {
-> >                 isec->sclass =3D SECCLASS_ANON_INODE;
-> >                 rc =3D security_transition_sid(
-> > diff --git a/security/selinux/include/classmap.h b/security/selinux/inc=
-lude/classmap.h
-> > index 5665aa5e7853..3ec85142771f 100644
-> > --- a/security/selinux/include/classmap.h
-> > +++ b/security/selinux/include/classmap.h
-> > @@ -179,6 +179,8 @@ const struct security_class_mapping secclass_map[] =
-=3D {
-> >         { "anon_inode", { COMMON_FILE_PERMS, NULL } },
-> >         { "io_uring", { "override_creds", "sqpoll", "cmd", "allowed", N=
-ULL } },
-> >         { "user_namespace", { "create", NULL } },
-> > +       { "memfd_file",
-> > +         { COMMON_FILE_PERMS, "execute_no_trans", "entrypoint", NULL }=
- },
-> >         /* last one */ { NULL, {} }
-> >  };
-> >
-> > diff --git a/security/selinux/include/policycap.h b/security/selinux/in=
-clude/policycap.h
-> > index 7405154e6c42..dabcc9f14dde 100644
-> > --- a/security/selinux/include/policycap.h
-> > +++ b/security/selinux/include/policycap.h
-> > @@ -17,6 +17,7 @@ enum {
-> >         POLICYDB_CAP_NETLINK_XPERM,
-> >         POLICYDB_CAP_NETIF_WILDCARD,
-> >         POLICYDB_CAP_GENFS_SECLABEL_WILDCARD,
-> > +       POLICYDB_CAP_MEMFD_CLASS,
-> >         __POLICYDB_CAP_MAX
-> >  };
-> >  #define POLICYDB_CAP_MAX (__POLICYDB_CAP_MAX - 1)
-> > diff --git a/security/selinux/include/policycap_names.h b/security/seli=
-nux/include/policycap_names.h
-> > index d8962fcf2ff9..8e96f2a816b6 100644
-> > --- a/security/selinux/include/policycap_names.h
-> > +++ b/security/selinux/include/policycap_names.h
-> > @@ -20,6 +20,7 @@ const char *const selinux_policycap_names[__POLICYDB_=
-CAP_MAX] =3D {
-> >         "netlink_xperm",
-> >         "netif_wildcard",
-> >         "genfs_seclabel_wildcard",
-> > +       "memfd_class",
-> >  };
-> >  /* clang-format on */
-> >
-> > diff --git a/security/selinux/include/security.h b/security/selinux/inc=
-lude/security.h
-> > index 8201e6a3ac0f..72c963f54148 100644
-> > --- a/security/selinux/include/security.h
-> > +++ b/security/selinux/include/security.h
-> > @@ -209,6 +209,11 @@ static inline bool selinux_policycap_netif_wildcar=
-d(void)
-> >                 selinux_state.policycap[POLICYDB_CAP_NETIF_WILDCARD]);
-> >  }
-> >
-> > +static inline bool selinux_policycap_memfd_class(void)
-> > +{
-> > +       return READ_ONCE(selinux_state.policycap[POLICYDB_CAP_MEMFD_CLA=
-SS]);
-> > +}
-> > +
-> >  struct selinux_policy_convert_data;
-> >
-> >  struct selinux_load_state {
-> > --
-> > 2.51.0.261.g7ce5a0a67e-goog
-> >
+Or is it micro-USB-OTG port?
+
+> 
+> a) dwc3 core callback registration by dwc3 glue driver; this change is under
+>     review in upstream.
+> b) vbus supply enablement for host mode; this change is yet to be submitted
+>     to upstream.
+> 
+> Post the above mentioned driver changes, we are planning to enable OTG on
+> usb0.
+> 
+> - Sushrut
+> 
+> > > +};
+> > > +
+
+-- 
+With best wishes
+Dmitry
 
