@@ -1,103 +1,119 @@
-Return-Path: <linux-kernel+bounces-789677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4CDAB398F5
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 12:00:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4F82B398F7
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 12:00:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D73E31B288E7
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 10:00:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FEDC5E630E
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 10:00:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51575301017;
-	Thu, 28 Aug 2025 09:59:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FB503043AF;
+	Thu, 28 Aug 2025 10:00:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=xff.cz header.i=@xff.cz header.b="Jpl9V0En"
-Received: from vps.xff.cz (vps.xff.cz [195.181.215.36])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ul1T3Pj4"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5FE52F7477;
-	Thu, 28 Aug 2025 09:59:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.181.215.36
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C2B6301477;
+	Thu, 28 Aug 2025 10:00:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756375196; cv=none; b=d0tf8Dc7VAvCg4hnO0Ds1eFU5VgO9aK8q5aQV+UIerGXCzQdccSI8xa4PfEWjXCno19tEYbmhkCjFvYjaQYrF2fEukSCcJDlX4NkUH1Va5T2AGQ+68YZ0hdC3041JJf/e2/ZP18XAzz+UA32/A5SMWjoYwZvXJ15wnA97Qj8jsI=
+	t=1756375233; cv=none; b=efW0GOAsi0NyEdkDW2imYqmFNysaNd7ZLSE4rHtcMc2QtCJxDDdx4iZ93RBODGSJCGCmX672jF/c0TH2FL3AsNHqTkO7EntdDT7qaPJz2Q1RjQGSobPh7+QErQO7ctTCU7+ipWf5AUUWyvK83uFkED3OJdXDGjGXmr/2CtsTddA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756375196; c=relaxed/simple;
-	bh=9xSK5wQebA1aqy7LgKNxVsJm9NVimwKAsxwFdofUyZo=;
+	s=arc-20240116; t=1756375233; c=relaxed/simple;
+	bh=HA4dVBi8aqMDUcldqnQpGdSm3y7+poiy6y83kJRmjbk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YHZy96nPasVFbNkIBs0GNkduS1SbWaoISdBtoaG8LT2RS9XLKGqmbyvaaAuLDTIva2vhCcH2XtztxfENLR1/haH4rSaB+mgHHgQ0oeJ/l+y7leBDGyt8F9Ep6KuLbGrW2ter/iRBERLiY3dUpTrND4jfKpvuWEWKd/k1bxP6imM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xff.cz; spf=pass smtp.mailfrom=xff.cz; dkim=pass (1024-bit key) header.d=xff.cz header.i=@xff.cz header.b=Jpl9V0En; arc=none smtp.client-ip=195.181.215.36
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xff.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xff.cz
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xff.cz; s=mail;
-	t=1756375184; bh=9xSK5wQebA1aqy7LgKNxVsJm9NVimwKAsxwFdofUyZo=;
-	h=Date:From:To:Cc:Subject:X-My-GPG-KeyId:References:From;
-	b=Jpl9V0EnXS0hooV4AW2thMQ/BJNtdjxOk3uvnXwwmT4pP1pGH6nas3SOnUVQhucE1
-	 tjLA7D1ah1ADClJAPAK5fJfTPdDSf69icB7ShRkI1tJ5/VSREk24HjyIW961hLQhCD
-	 6n3CXMohR8IjNRfBFw0bii9/JAIwOvm9CVIDMsYs=
-Date: Thu, 28 Aug 2025 11:59:44 +0200
-From: =?utf-8?Q?Ond=C5=99ej?= Jirman <megi@xff.cz>
-To: Peter Robinson <pbrobinson@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Heiko Stuebner <heiko@sntech.de>, Diederik de Haas <didi.debian@cknow.org>, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, Dragan Simic <dsimic@manjaro.org>
-Subject: Re: [PATCH] arm64: dts: rockchip: Add vcc-supply to SPI flash on
- Pinephone Pro
-Message-ID: <s4pqhvg542k4d3m4sosnugy5sdnqpw3dabv7cw4o33imvfyxje@yao7oufrhxn6>
-Mail-Followup-To: =?utf-8?Q?Ond=C5=99ej?= Jirman <megi@xff.cz>, 
-	Peter Robinson <pbrobinson@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Heiko Stuebner <heiko@sntech.de>, Diederik de Haas <didi.debian@cknow.org>, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, Dragan Simic <dsimic@manjaro.org>
-X-My-GPG-KeyId: EBFBDDE11FB918D44D1F56C1F9F0A873BE9777ED
- <https://xff.cz/key.txt>
-References: <20250827143501.1646163-1-pbrobinson@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=eXiRd654twyeZBN9lFHR8gpBmHGxFHDCTuDwbzfeodeGEUXtD42MfL+T0yvs4ToZl+bNQ8QtLP2L89QhJwyT9u3dBagWQZpb0KNJo7ULNViYzlY3bZMkRjSuVjReBeVFbqfYpIgMNUFw5hezeEmNuOeHompp+aqfLYr8yQAdNhc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ul1T3Pj4; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3ceb9c3d98cso12124f8f.0;
+        Thu, 28 Aug 2025 03:00:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756375230; x=1756980030; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=FEeRKz6nLfTB3/Se8Z43eEXG5xuvc5/iRyjLLOsJT74=;
+        b=Ul1T3Pj4k+HT2K8Hqby5uxl15yN18/IPblW0TZR670xiaO1bhyjcTuQajHmSkpKwN4
+         /eNHMi3RtWPh+xXShdTrnyYSQPh+mvZkPKzRpZo840AfnQ91rpighg92amW1EfAE8w++
+         6D17+Y0FoqO2Y/bGHAvxLW9N+WUXE2CPUrjrM2XpY7PB0Ha72y3KHSLcMz4c8X6YvAgm
+         CbJ26oLiWMQ65rw9S2mxOPr+DjovsNqi5d7jkx+8TpazQ+raxzLzUlYna7oH/mFBEhwW
+         umsJMnfgg4Bd2s8w6ZNfPbupv5ZUqoRQs663f6hHYiGotjBy6IyvtcFSK73r9RZo3u9j
+         yHDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756375230; x=1756980030;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FEeRKz6nLfTB3/Se8Z43eEXG5xuvc5/iRyjLLOsJT74=;
+        b=RGdBaNqtvL2RXuA19Z7IoNLTq4rQdR8fNxAUrK5Uy/C0vU9bJWrhvEmpJroQ4zohzM
+         VWq5Kq+4roRbNPQe4X4c9qcmZ80ef82AwpE48DufLuOAq5ElX56OvlJxkt/qeOVhajyd
+         FYeWmpRM4cw68UpfeOcTZI5HYzQVUg2bCLqR8NVHivrg8m+ecW2rQlsr8j4+b88RjEYm
+         F7zpEPaEZ5pHBClj6WXX35jr3Bp/monf393alXosYgrZGDu+0Mn728+NL2maiLZFS6Yv
+         RkzYUV4yYyaAJO1owfzk75eqDJD5a2keDuBRV/WxpIRlJiu80BCl6AcUuLU1ljXHaw8G
+         pWAg==
+X-Forwarded-Encrypted: i=1; AJvYcCUkGSVXdCuI+336QbepipDgTDFyOM8SyEhBr1BHiRJ+zFV6UcKuSf6ScGjzq9fJ1VGT1Z6PYGXRXti5Rl8=@vger.kernel.org, AJvYcCUrRpaRcHjk+gkMfbD0W8+EbpsrFwGG0DZu+idFrVqBLnbm5zT3E76YPnSDSzL0+KHrExhz5I+XcJjoYg==@vger.kernel.org, AJvYcCXsnOOOuMjJI2q7mne/9WjBueX0yXHaXH/OdhQ8BJo00RUPEK2Bkp5jzgr6v3TkXR7HU0gvfLpb@vger.kernel.org
+X-Gm-Message-State: AOJu0YwRUL52qFsD4A8t3C9kQ1QLc81Rf6/8x7DTncqpg+M4zrt16I90
+	ToJnjYod8D6Z8XqSHdMVy6UoRCAdHAtac9Q3it+zif5rWXVSXoDYBIxq
+X-Gm-Gg: ASbGncsWMDzmrNCabCYiVgZRNANFYV0gGG52sEzj7oj3J959QCbXbvfv6qb1NQwHe4Z
+	SsjU3c1Hd1exzgiSc8dUZrVxLHjAws7c7ssDA9hA1tlR3fcIV149t/lFygsnkUz3BQXpEG6bNjb
+	FL/2m3L2G6BurVHZYrAg3+/ZW8WPYYpzVzb4ziXnMbEU93qeJEp4jfkhJdBAbBYfCAdgEPtFdAx
+	PUBnjY/5N+fkUJ0uERZuhY7xlnNACY0HyVQXAsXO3AChbbiWWNeQ2/zHQQkj7ODvWgYFoLybqvU
+	XH99hGuvZupri3VwVXPX98E3eNLIzoCiCany3tOO5kA75L4Vq/co6xs+mSxK7ymeNSVVgAzEmAL
+	/NlmMmUQ8Q9v8jBDH1M/HBxrzVQJIRM7fi8yxI+GsB0eH1Im46vBcTjcOIsgP6iNwItkdODds+e
+	dOcr2aLT/zwGklfuk=
+X-Google-Smtp-Source: AGHT+IGvDElhIshKN88Vw7r6kxnwKoQ3BhuXfCKhAXN9Dss/GFkoWkJ0InaIKnuWGBYhW3CBRA7MsA==
+X-Received: by 2002:a05:6000:24c5:b0:3cd:3643:cb62 with SMTP id ffacd0b85a97d-3cd3643cf21mr3267637f8f.6.1756375230266;
+        Thu, 28 Aug 2025 03:00:30 -0700 (PDT)
+Received: from hoboy.vegasvil.org (91-133-84-221.stat.cablelink.at. [91.133.84.221])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b797dd1e7sm25100585e9.19.2025.08.28.03.00.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Aug 2025 03:00:29 -0700 (PDT)
+Date: Thu, 28 Aug 2025 03:00:26 -0700
+From: Richard Cochran <richardcochran@gmail.com>
+To: Mark Bloch <mbloch@nvidia.com>
+Cc: Paolo Abeni <pabeni@redhat.com>, Saeed Mahameed <saeedm@nvidia.com>,
+	Leon Romanovsky <leon@kernel.org>, netdev@vger.kernel.org,
+	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Gal Pressman <gal@nvidia.com>, Thomas Gleixner <tglx@linutronix.de>,
+	Carolina Jubran <cjubran@nvidia.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	Dragos Tatulea <dtatulea@nvidia.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Tariq Toukan <tariqt@nvidia.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>
+Subject: Re: [PATCH net-next V2 1/3] ptp: Add ioctl commands to expose raw
+ cycle counter values
+Message-ID: <aLAouocTPQJezuzq@hoboy.vegasvil.org>
+References: <1755008228-88881-1-git-send-email-tariqt@nvidia.com>
+ <1755008228-88881-2-git-send-email-tariqt@nvidia.com>
+ <ca8b550b-a284-4afc-9a50-09e42b86c774@redhat.com>
+ <1384ef6c-4c20-49fb-9a9f-1ee8b8ce012a@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250827143501.1646163-1-pbrobinson@gmail.com>
+In-Reply-To: <1384ef6c-4c20-49fb-9a9f-1ee8b8ce012a@nvidia.com>
 
-On Wed, Aug 27, 2025 at 03:34:58PM +0100, Peter Robinson wrote:
-> As documented in the PinephonePro-Schematic-V1.0-20211127.pdf,
-> page 11, the SPI Flash's VCC pin is connected to VCC_1V8 power
-> source. This fixes the following warning:
+On Mon, Aug 25, 2025 at 08:52:52PM +0300, Mark Bloch wrote:
 > 
->   spi-nor spi1.0: supply vcc not found, using dummy regulator
 > 
-> Signed-off-by: Peter Robinson <pbrobinson@gmail.com>
+> On 19/08/2025 11:43, Paolo Abeni wrote:
+> > can we have a formal ack here?
+> 
+> Gentle reminder.
 
-Reviewed-by: Ondřej Jirman <megi@xff.cz>
+I'm travelling ATM.  Please ping again next week.
 
-Thank you,
-	o.
-
-> ---
->  arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts b/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts
-> index be90e049a302c..24e4365a2e588 100644
-> --- a/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts
-> +++ b/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts
-> @@ -772,6 +772,7 @@ flash@0 {
->  		compatible = "jedec,spi-nor";
->  		reg = <0>;
->  		spi-max-frequency = <10000000>;
-> +		vcc-supply = <&vcc_1v8>;
->  	};
->  };
->  
-> -- 
-> 2.51.0
-> 
+Thanks,
+Richard
 
