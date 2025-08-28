@@ -1,98 +1,301 @@
-Return-Path: <linux-kernel+bounces-789947-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789946-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 009CCB39D3B
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 14:26:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFD7EB39D39
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 14:26:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B685018830FB
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 12:26:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 345C2188DFBB
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 12:26:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD50D30FC33;
-	Thu, 28 Aug 2025 12:25:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14D2D30F932;
+	Thu, 28 Aug 2025 12:25:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="SlmLv/AV"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jTaHD5sc"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5E7230F539;
-	Thu, 28 Aug 2025 12:25:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 683E423A9A0;
+	Thu, 28 Aug 2025 12:25:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756383941; cv=none; b=fptpePVFO+MSB+4TdkBfuNd3zjgj6QOMXDAfFKar193hYaRRXcN2Py8GSiZSvieNJIMpOh5wMQeu18UXo4FOeNMqgVWm3hF/GuKQCKlIvGCKkJZVNipY9/f4Wapu7IYC6CXv0NCDV0kkk77U9ExsbK6NNWThfZ7b6iMGB21wFKw=
+	t=1756383939; cv=none; b=JUSOMVdX6lLh7F0MHLzNaSbehKw72TgWJOJkbF3ntaLtOnC9BrXBN7W5qaKeuAp1c1OB05z9niFoVpGWXoob3cWrv3/tn5mg3mKwLlNPkodeyojqByRr/YpxRv4S6u92abABZJt0zyPNVefvAn0mdAmJrFtlapOrxpYufymn1L8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756383941; c=relaxed/simple;
-	bh=55pOfAEwdUFshkttiSg6HMTkC44P6HWHjEh17urY36Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EP/f+WC9+wYYo3wDfg+zRVf2HE++fsQf3k6AaZ6jpvltO6n/3Ox2/mYz6csoi+fKNhKoaZHaBu2B52Ok0Sjk8AAXwG75puA7jjJamhsYmkOG02dH1bwNwzL5Y0fXTLi/PONld/95/dNMnT4mGHo/VG20ud/p9gL/zeIkWuu4pHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=SlmLv/AV; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=YJDph0fXZVk4m3ieOM7hmiCyKRXpxhXzgl8fdbR1bTI=; b=SlmLv/AV1LP/FS2SqD7LO7GGjN
-	dn2NeprwgVsDrSNR2Ocxi7ij+yGusWyE3BfqOle/SFz/+XxVzyP7c4sMEbOQXki77wk2cIfH+WfTF
-	guErJNOY9UEx0uRg+D1g0hOKEnknp7tsg4OlOlMCcjCYLJQQyeUtXK3k4OGQey0kuFW0=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1urbgt-006LSS-LX; Thu, 28 Aug 2025 14:25:19 +0200
-Date: Thu, 28 Aug 2025 14:25:19 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Konrad Leszczynski <konrad.leszczynski@intel.com>
-Cc: Vadim Fedorenko <vadim.fedorenko@linux.dev>, davem@davemloft.net,
-	andrew+netdev@lunn.ch, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, cezary.rojewski@intel.com,
-	sebastian.basierski@intel.com
-Subject: Re: [PATCH net-next 0/7] net: stmmac: fixes and new features
-Message-ID: <f77cb80c-d4b2-4742-96cb-db01fbd96e0e@lunn.ch>
-References: <20250826113247.3481273-1-konrad.leszczynski@intel.com>
- <e4cb25cb-2016-4bab-9cc2-333ea9ae9d3a@linux.dev>
- <9e86a642-629d-42e9-9b70-33ea5e04343a@intel.com>
+	s=arc-20240116; t=1756383939; c=relaxed/simple;
+	bh=8XkDUHEI81AMaOII2j2nixGtBB1Sy2s+g+XRsmVbal0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SmbgIK4ja/Fs68hOOmIiaoZIbNnnd3JxOB/JfXK5l0fMTzprZ5+J+pJs4bcsvWDwFNB0nc9f0jpgprvYTIzLvckXNQqgKA+sI0ydcOHXh/zuNvgJnHIwhD9/us7lfmFLSeWD4Bt4J2u2q3aF7Csak+jfJ7A03/5Jxwp52uhZKEU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jTaHD5sc; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-45a1b00f23eso5675775e9.0;
+        Thu, 28 Aug 2025 05:25:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756383936; x=1756988736; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=pJhXsEN4Q2OnvFn5r5d6ITdNmPJSOFLb4TThxFWXwmY=;
+        b=jTaHD5scP+JfyInLdhK0J1vdV4Thhw41ktxOf/QHA2FB7YNYhOYl9iuXdgkZrnvrzY
+         BKKRfY4guT37vplwmi4GcAT+hf4LZ1jufC9CNyIHdUzMlgERfT3gTXJoJskW8jcPhQp7
+         uG4H0sOTB2Zmrdi1Whdn4/iDuxrrtSpcOhXBiA/Xa6gW55jepLV/9MIWZwRyf1N16jGb
+         cgckicfPYG6p63PlJPJ3xqOwo12tBiQ+0lwN6+U06wOZVQa+bu8ve8zf7j2LFCwMfJYa
+         mw9WhmzaryzZoldpcrswCBLFyVWybqL7s4v5xrST3Llzv6YpFD7B7c2MmUmznexTtaS9
+         WjzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756383936; x=1756988736;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pJhXsEN4Q2OnvFn5r5d6ITdNmPJSOFLb4TThxFWXwmY=;
+        b=rKZAKsZn1CVboWkcEAG1opd4aLZrayeHy1M37IaNHlsyL1PAcN4EFVS87/IRDMWK2v
+         h7BbV1p8icGi8pD37pvsBe6RfIWdCa3YmfqbCxU6V8uvmPG1/s1xWdft286BEmDK0Csq
+         5UKRwcdgCJW8m17NX/O7mz3f6cqS9X5rsnPIBAWd4+SRHN1WKKYJJpFUJIJcNs3iBCGe
+         yoQQmCcq2imiU9VZKMdEoeTh9pCpcNAooitrD2ZcMMpdUm6j3mxpcSujKyW/Qi+cvXUg
+         uCCv7D1RErFCpkOmZ5zxw2MenB6v9POlhFxH5K+fldx6NWoYukLbCqFVPSCdfgj0kh/p
+         E1HA==
+X-Forwarded-Encrypted: i=1; AJvYcCVrOeRUyWIt+k0tKAFmRWF0ELs9JQ2vbd8EZ+1ymWlTDCAMlrJcvU4YweMxvrAGTpunz7LJipXYWbrWv6k=@vger.kernel.org, AJvYcCWW9s5JysodRzJj40VwyFh5cKnhuRVRFw9LgK5C7rOpntSopLIVcEl1snhTg5znEtQSv6DBILtg3a5D@vger.kernel.org
+X-Gm-Message-State: AOJu0YymLsEx7FC7jGK6whMI5XvglTwJzrdF9WuLWEzjdOvZbe4DMxQS
+	skLNJ9Y6MAxGxdqaepkWr2e0srNA6f0+zWG8VtlurEhCNJwEAI6mrY3/
+X-Gm-Gg: ASbGncv09dNanFVy0rntztEIwA/VCsU/XMRnd9233odPtmC3Z+uFwrPFsO/EYsBFkaJ
+	Nt2HlEAFd5c64b9xWx6SKloP0kOpCjOIzB22LIwWEQSR6MOkGihck8JMpCwRr/68s4FVh92zH5+
+	1+VqGH9do3NC6Jl5zJ3KY1M4aLnzRJY8J+DSpwkxAyxw9/6mzPxvVvBstIwIL/i0e6rrPk35A98
+	E40OO1T4trQsRUj0mkPErWZqDzyg57y6/kEnu8GJW2DOBiBBtXEf7aMg5bHXOLOf51SrkHS9KAG
+	AgD5lOYhlZPP0OppR+buxlwvkE/qJcKgEDVoCqM44S4hrfByrld0k4rFD9HBdebrxNum7eHJ6zv
+	JrqQbas7IR1YH2wlRYVU=
+X-Google-Smtp-Source: AGHT+IGHWM3XiS6zwR6fakBXh4xaK81UnW/w5K7B0co+OWvrA9Bv5i8oMLzCixpqBaDqRf3hr0ZwOA==
+X-Received: by 2002:a05:600c:4715:b0:458:f70d:ebd7 with SMTP id 5b1f17b1804b1-45b517c2f25mr188117125e9.20.1756383935370;
+        Thu, 28 Aug 2025 05:25:35 -0700 (PDT)
+Received: from pc.. ([102.208.164.46])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b6f306c93sm72240625e9.14.2025.08.28.05.25.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Aug 2025 05:25:34 -0700 (PDT)
+From: Erick Karanja <karanja99erick@gmail.com>
+To: bhelgaas@google.com
+Cc: julia.lawall@inria.fr,
+	linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Erick Karanja <karanja99erick@gmail.com>
+Subject: [PATCH] PCI/VGA: Replace manual locks with lock guards
+Date: Thu, 28 Aug 2025 15:25:24 +0300
+Message-ID: <20250828122524.1233749-1-karanja99erick@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9e86a642-629d-42e9-9b70-33ea5e04343a@intel.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Aug 28, 2025 at 08:47:02AM +0200, Konrad Leszczynski wrote:
-> 
-> On 26-Aug-25 19:29, Vadim Fedorenko wrote:
-> > On 26/08/2025 12:32, Konrad Leszczynski wrote:
-> > > This series starts with three fixes addressing KASAN panic on ethtool
-> > > usage, Enhanced Descriptor printing and flow stop on TC block setup when
-> > > interface down.
-> > > Everything that follows adds new features such as ARP Offload support,
-> > > VLAN protocol detection and TC flower filter support.
-> > 
-> > Well, mixing fixes and features in one patchset is not a great idea.
-> > Fixes patches should have Fixes: tags and go to -net tree while features
-> > should go to net-next. It's better to split series into 2 and provide
-> > proper tags for the "fixes" part
-> 
-> Hi Vadim,
-> 
-> Thanks for the review. I've specifically placed the fixes first and the
-> features afterwards to not intertwine the patches. I can split them into two
-> patchsets if you think that's the best way to go.
+Switch from explicit lock/unlock pairs to scoped lock guards.
+This simplifies error handling and improves code readability.
 
-https://www.kernel.org/doc/html/latest/process/maintainer-netdev.html
+Generated-by: Coccinelle SmPL
 
-You probably need to wait a week between the fixes and new features in
-order that net and net-next are synced.
-
-    Andrew
-
+Signed-off-by: Erick Karanja <karanja99erick@gmail.com>
 ---
-pw-bot: cr
-	
+ drivers/pci/vgaarb.c | 87 ++++++++++++++++----------------------------
+ 1 file changed, 32 insertions(+), 55 deletions(-)
+
+diff --git a/drivers/pci/vgaarb.c b/drivers/pci/vgaarb.c
+index 78748e8d2dba..6a00ee00e362 100644
+--- a/drivers/pci/vgaarb.c
++++ b/drivers/pci/vgaarb.c
+@@ -501,8 +501,6 @@ EXPORT_SYMBOL(vga_get);
+ static int vga_tryget(struct pci_dev *pdev, unsigned int rsrc)
+ {
+ 	struct vga_device *vgadev;
+-	unsigned long flags;
+-	int rc = 0;
+ 
+ 	vga_check_first_use();
+ 
+@@ -511,17 +509,13 @@ static int vga_tryget(struct pci_dev *pdev, unsigned int rsrc)
+ 		pdev = vga_default_device();
+ 	if (pdev == NULL)
+ 		return 0;
+-	spin_lock_irqsave(&vga_lock, flags);
++	guard(spinlock_irqsave)(&vga_lock);
+ 	vgadev = vgadev_find(pdev);
+-	if (vgadev == NULL) {
+-		rc = -ENODEV;
+-		goto bail;
+-	}
++	if (vgadev == NULL)
++		return -ENODEV;
+ 	if (__vga_tryget(vgadev, rsrc))
+-		rc = -EBUSY;
+-bail:
+-	spin_unlock_irqrestore(&vga_lock, flags);
+-	return rc;
++		return -EBUSY;
++	return 0;
+ }
+ 
+ /**
+@@ -537,20 +531,17 @@ static int vga_tryget(struct pci_dev *pdev, unsigned int rsrc)
+ void vga_put(struct pci_dev *pdev, unsigned int rsrc)
+ {
+ 	struct vga_device *vgadev;
+-	unsigned long flags;
+ 
+ 	/* The caller should check for this, but let's be sure */
+ 	if (pdev == NULL)
+ 		pdev = vga_default_device();
+ 	if (pdev == NULL)
+ 		return;
+-	spin_lock_irqsave(&vga_lock, flags);
++	guard(spinlock_irqsave)(&vga_lock);
+ 	vgadev = vgadev_find(pdev);
+ 	if (vgadev == NULL)
+-		goto bail;
++		return;
+ 	__vga_put(vgadev, rsrc);
+-bail:
+-	spin_unlock_irqrestore(&vga_lock, flags);
+ }
+ EXPORT_SYMBOL(vga_put);
+ 
+@@ -912,29 +903,20 @@ static void __vga_set_legacy_decoding(struct pci_dev *pdev,
+ 				      bool userspace)
+ {
+ 	struct vga_device *vgadev;
+-	unsigned long flags;
+ 
+ 	decodes &= VGA_RSRC_LEGACY_MASK;
+ 
+-	spin_lock_irqsave(&vga_lock, flags);
++	guard(spinlock_irqsave)(&vga_lock);
+ 	vgadev = vgadev_find(pdev);
+ 	if (vgadev == NULL)
+-		goto bail;
++		return;
+ 
+ 	/* Don't let userspace futz with kernel driver decodes */
+ 	if (userspace && vgadev->set_decode)
+-		goto bail;
++		return;
+ 
+ 	/* Update the device decodes + counter */
+ 	vga_update_device_decodes(vgadev, decodes);
+-
+-	/*
+-	 * XXX If somebody is going from "doesn't decode" to "decodes"
+-	 * state here, additional care must be taken as we may have pending
+-	 * ownership of non-legacy region.
+-	 */
+-bail:
+-	spin_unlock_irqrestore(&vga_lock, flags);
+ }
+ 
+ /**
+@@ -981,14 +963,13 @@ EXPORT_SYMBOL(vga_set_legacy_decoding);
+ int vga_client_register(struct pci_dev *pdev,
+ 		unsigned int (*set_decode)(struct pci_dev *pdev, bool decode))
+ {
+-	unsigned long flags;
+ 	struct vga_device *vgadev;
+ 
+-	spin_lock_irqsave(&vga_lock, flags);
+-	vgadev = vgadev_find(pdev);
+-	if (vgadev)
+-		vgadev->set_decode = set_decode;
+-	spin_unlock_irqrestore(&vga_lock, flags);
++	scoped_guard (spinlock_irqsave, &vga_lock) {
++		vgadev = vgadev_find(pdev);
++		if (vgadev)
++			vgadev->set_decode = set_decode;
++	}
+ 	if (!vgadev)
+ 		return -ENODEV;
+ 	return 0;
+@@ -1411,7 +1392,6 @@ static __poll_t vga_arb_fpoll(struct file *file, poll_table *wait)
+ static int vga_arb_open(struct inode *inode, struct file *file)
+ {
+ 	struct vga_arb_private *priv;
+-	unsigned long flags;
+ 
+ 	pr_debug("%s\n", __func__);
+ 
+@@ -1421,9 +1401,8 @@ static int vga_arb_open(struct inode *inode, struct file *file)
+ 	spin_lock_init(&priv->lock);
+ 	file->private_data = priv;
+ 
+-	spin_lock_irqsave(&vga_user_lock, flags);
+-	list_add(&priv->list, &vga_user_list);
+-	spin_unlock_irqrestore(&vga_user_lock, flags);
++	scoped_guard (spinlock_irqsave, &vga_user_lock)
++		list_add(&priv->list, &vga_user_list);
+ 
+ 	/* Set the client's lists of locks */
+ 	priv->target = vga_default_device(); /* Maybe this is still null! */
+@@ -1438,25 +1417,25 @@ static int vga_arb_release(struct inode *inode, struct file *file)
+ {
+ 	struct vga_arb_private *priv = file->private_data;
+ 	struct vga_arb_user_card *uc;
+-	unsigned long flags;
+ 	int i;
+ 
+ 	pr_debug("%s\n", __func__);
+ 
+-	spin_lock_irqsave(&vga_user_lock, flags);
+-	list_del(&priv->list);
+-	for (i = 0; i < MAX_USER_CARDS; i++) {
+-		uc = &priv->cards[i];
+-		if (uc->pdev == NULL)
+-			continue;
+-		vgaarb_dbg(&uc->pdev->dev, "uc->io_cnt == %d, uc->mem_cnt == %d\n",
+-			uc->io_cnt, uc->mem_cnt);
+-		while (uc->io_cnt--)
+-			vga_put(uc->pdev, VGA_RSRC_LEGACY_IO);
+-		while (uc->mem_cnt--)
+-			vga_put(uc->pdev, VGA_RSRC_LEGACY_MEM);
++	scoped_guard (spinlock_irqsave, &vga_user_lock) {
++		list_del(&priv->list);
++		for (i = 0; i < MAX_USER_CARDS; i++) {
++			uc = &priv->cards[i];
++			if (uc->pdev == NULL)
++				continue;
++			vgaarb_dbg(&uc->pdev->dev,
++				   "uc->io_cnt == %d, uc->mem_cnt == %d\n",
++				   uc->io_cnt, uc->mem_cnt);
++			while (uc->io_cnt--)
++				vga_put(uc->pdev, VGA_RSRC_LEGACY_IO);
++			while (uc->mem_cnt--)
++				vga_put(uc->pdev, VGA_RSRC_LEGACY_MEM);
++		}
+ 	}
+-	spin_unlock_irqrestore(&vga_user_lock, flags);
+ 
+ 	kfree(priv);
+ 
+@@ -1470,7 +1449,6 @@ static int vga_arb_release(struct inode *inode, struct file *file)
+ static void vga_arbiter_notify_clients(void)
+ {
+ 	struct vga_device *vgadev;
+-	unsigned long flags;
+ 	unsigned int new_decodes;
+ 	bool new_state;
+ 
+@@ -1479,7 +1457,7 @@ static void vga_arbiter_notify_clients(void)
+ 
+ 	new_state = (vga_count > 1) ? false : true;
+ 
+-	spin_lock_irqsave(&vga_lock, flags);
++	guard(spinlock_irqsave)(&vga_lock);
+ 	list_for_each_entry(vgadev, &vga_list, list) {
+ 		if (vgadev->set_decode) {
+ 			new_decodes = vgadev->set_decode(vgadev->pdev,
+@@ -1487,7 +1465,6 @@ static void vga_arbiter_notify_clients(void)
+ 			vga_update_device_decodes(vgadev, new_decodes);
+ 		}
+ 	}
+-	spin_unlock_irqrestore(&vga_lock, flags);
+ }
+ 
+ static int pci_notify(struct notifier_block *nb, unsigned long action,
+-- 
+2.43.0
+
 
