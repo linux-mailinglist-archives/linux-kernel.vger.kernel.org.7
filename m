@@ -1,210 +1,115 @@
-Return-Path: <linux-kernel+bounces-790472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E75C5B3A7AB
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 19:19:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14EB4B3A7B5
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 19:20:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 054571C83775
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 17:20:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBB2E16B35C
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 17:20:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB9DA335BBA;
-	Thu, 28 Aug 2025 17:19:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A105C335BC4;
+	Thu, 28 Aug 2025 17:20:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="AGe0W0FG"
-Received: from smtpbguseast3.qq.com (smtpbguseast3.qq.com [54.243.244.52])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="qVEWwtd9"
+Received: from out-178.mta1.migadu.com (out-178.mta1.migadu.com [95.215.58.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DD63322DB3
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 17:19:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.243.244.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3D95334725
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 17:20:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756401570; cv=none; b=oUQ26+TuiOZLGOcrmDmFx0RVOOOzvRz68Yila6bQ7C+3UO82h0ewVo9hANqDCf1gQL+1TGEkgajnp9FyrqbGHvnEwxxRd3IBMQCP2tRyNR2yGdsb1Qpj0iakZiDi0xpVQ66HrVgnW0jb15p2ijL1aKXRTd2SJDlUoMpO0yNS0yk=
+	t=1756401610; cv=none; b=kNURe+YJK8Dlm5tyZMxYwR7OcAyf21IynSO/Y8wglwGf+uof89JTV0d66f/VrnbaK5lpQaPUWs1ErOS1XD5qSjQCV7ZAAChb4/+q/f6+jfHRuLVM/T52Db+NYip/C3d2rrHCc/VnKAO5OJ2ZR2YYWWqNtS6/N578A/34J1mMoQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756401570; c=relaxed/simple;
-	bh=h36ynH6Bd80Xap/ak7gTKh9a8SrMnwXa7sS2b1g2BQU=;
-	h=From:To:Cc:Subject:Mime-Version:Content-Type:Date:Message-ID:
-	 References:In-Reply-To; b=CboYMLAvKw4USv1cV4mDGYYELcic3Hb5P4yCrJ799GCuPig5O6WK8kC2c98DZCmQVFWz0ahryA55QcbupV/bfQP3dMXS0A4U6xh5+mLaXia3MTLODd+Qy/tl3fvLQOsWlzLaV0RpRb2P8w2xXhHJkvXNMFv4faiZg/+ESM6jdRw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=AGe0W0FG; arc=none smtp.client-ip=54.243.244.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1756401542;
-	bh=h36ynH6Bd80Xap/ak7gTKh9a8SrMnwXa7sS2b1g2BQU=;
-	h=From:To:Subject:Mime-Version:Date:Message-ID;
-	b=AGe0W0FGKbrW2XjVnoUG2zko0GiOfSGHRs0p0QUVMAmGyCf4s1Az7VG+NsFJdQ5Ye
-	 d5SEBt1/8t+WcC5vZl7+76TcJJxWkIKP2FaF6hUlDnWy8wpdXM2+fnKRUS9WRdiL+X
-	 MPe8wQvnHkt7htb0VNjamaW2ZMO50nt0WdTE4gH0=
-EX-QQ-RecipientCnt: 7
-X-QQ-GoodBg: 1
-X-QQ-SSF: 00400000000000F0
-X-QQ-FEAT: D4aqtcRDiqST8P4pfj07qGG6ZowgZlQrBrKFg+dHp6U=
-X-QQ-BUSINESS-ORIGIN: 2
-X-QQ-Originating-IP: Cny2uphP+8mRH85lxn1RaGRUKi7RIoSHLZSnyjwiLI8=
-X-QQ-STYLE: 
-X-QQ-mid: lv3sz3a-6t1756401536tfcac6e36
-From: "=?utf-8?B?V2VudGFvIEd1YW4=?=" <guanwentao@uniontech.com>
-To: "=?utf-8?B?5YWz5paH5rab?=" <guanwentao@uniontech.com>, "=?utf-8?B?WGkgUnVveWFv?=" <xry111@xry111.site>, "=?utf-8?B?Y2hlbmh1YWNhaQ==?=" <chenhuacai@kernel.org>
-Cc: "=?utf-8?B?V0FORyBYdWVydWk=?=" <kernel@xen0n.name>, "=?utf-8?B?bGludXgta2VybmVs?=" <linux-kernel@vger.kernel.org>, "=?utf-8?B?bG9vbmdhcmNo?=" <loongarch@lists.linux.dev>, "=?utf-8?B?5Y2g5L+K?=" <zhanjun@uniontech.com>
-Subject: Re: [PATCH] Loongarch: entry: fix syscall_get_arguments() VS no-bultin-memcpy
+	s=arc-20240116; t=1756401610; c=relaxed/simple;
+	bh=VNDRFOm6iD0Frw1D88ZQaVB/vKrn9vS5tlXTgHOkvcM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cPmoSsFJfGsaVBYsL7f+M1Al5sIQqv5ERJb48wF5CmB/HHsQo2eG2zwQjMaNuxz+CeAgtO0QcjZa16RpJNDl2VQcWbDfg78YdQ8yJTRdYkcHGHk/SnyK6KtNFN+JHbiSmFDt6Na6amzhSka0oTprDXWxMGM//gEF7+nYcVjDN2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=qVEWwtd9; arc=none smtp.client-ip=95.215.58.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <b4e5cc2c-ca62-467c-9b58-52831ebeb032@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1756401593;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pyHKGykIxOwM8LqQ483zBF7dyZd7CrXVY89y5CfS7A4=;
+	b=qVEWwtd9ZgjaNvp1q7hz6fuVvkWUE4DwWZ8LuGnemPwGykGEdnZNZNU5JsDgD8ECKrThYt
+	lQVxHozdOUCM8EN2pRumAHq1oVP8vyJ2tY+gwmtXm9PVGpLIFo/w46urDhYk8hawvzdIR2
+	+kb+jtWv8PTdwJETT3GLjh6Mw7jC9Lo=
+Date: Thu, 28 Aug 2025 13:19:41 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
-	charset="utf-8"
-Content-Transfer-Encoding: base64
-Date: Fri, 29 Aug 2025 01:18:55 +0800
-X-Priority: 3
-Message-ID: <tencent_62C4A0442C3453142C0FA002@qq.com>
-X-QQ-MIME: TCMime 1.0 by Tencent
-X-Mailer: QQMail 2.x
-X-QQ-Mailer: QQMail 2.x
-References: <20250826113225.406238-1-guanwentao@uniontech.com>
-	<20d3df642aaff2a771e74452b81463709f7c16d1.camel@xry111.site>
-	<tencent_6579F3317CCF94D00EC3C7DD@qq.com>
-In-Reply-To: <tencent_6579F3317CCF94D00EC3C7DD@qq.com>
-X-QQ-ReplyHash: 101352067
-X-BIZMAIL-ID: 13946493721893942874
-X-QQ-SENDSIZE: 520
-Received: from qq.com (unknown [127.0.0.1])
-	by smtp.qq.com (ESMTP) with SMTP
-	id ; Fri, 29 Aug 2025 01:18:57 +0800 (CST)
-Feedback-ID: lv:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: MgQY1K25Ph0mWji9+SI8Lfix3zhgzxcHRpHnfzkUzUSE+RQnxVjeNNCz
-	4HKULFKQri4phUg0rzL/06b93IP42KcZ0gYc2f9bb8hwI3G9jMSdnzxwKJJfpIpYrOdZuFF
-	9Y+PLXGZwWL6kYV4aRPItNhDRtFFWOAwMFVH8+OmjarrgNif3gTzl2uZFdrzoQ9RY5+QFlP
-	om94pp+FwqCQtqaLogymx1R4yfPsJbooU/Ta/K11xOgkhjJB3dD2ShUAZF+IhpslmhretXI
-	aIC/zGe/sANrPLyxzBrTFKSRHfyT3xoaeZcveSENEJcXLCcyv6mBDt9skBXB9bKRaM0Qi6S
-	/b639XtHvDytZmwETGhFPmpD2ri0MJ6Q/CJC+6nDaX+/y8qDn4dVIF0ZR+8TYHp6idgE+Vi
-	BAYeoVMj9r+OqI3pO6Btc2sFOt599hnfj0Cr2NryUp6FWo4xr+0xYhofu9CWTpE5/lsCkbS
-	tEgpAgNhM0x6krdStJxSJwaaPn1crnS0lgyxthQp5B9wCB+4ayVn11wFY+S5fdPY6L57fKT
-	581D3FxWl44u4yQkIGRYX0zFMxD10GFl42aZBxF5yAi8m3XcysKAlkgcMjCN7QZFzBgqlw2
-	lFuJc4dEuwfL+5pP3FJliW2TRdZ2YYEIPL9wi8wWzpwGfx7XQ1Yq4fhXZGgqhwNNPLIgzAA
-	Tj6oO0rZdq1zmH+Iz/QPm8KzzLO86TKGNxqAo7/kSm3n/Dpl5nQJMVJKN8OgQCJMH4GpEih
-	S2yr82QTwaJjfoF4Peij0Ck2MxqGJR+IARI2uhzJmGAHgw6TIFRWV60h7igsZO0/rKuViEI
-	LirBddRy5TGZG3befZ37gc1U9fbUB4Prbw2vm1ZdkuWHsuekzGBDobl43eEwXMQJlwDJUiS
-	JzfAPl/PkE0O9wD0vqk86DoGrWJX23TdQf7Q35tJ9qTJi33O0ECDnCZu7Fhhep459vqFeSJ
-	s9EKKj0jei55c+KTSZPoFKZhSTPUuQQ/KOS+KV6IJt0VrFBeaU/iS+gwYzHVEJLfJERiYKN
-	mH2JB7jvQk2KFdrGwLYHeXwaRpuTKFN0CbnNzlDbko8OK9JoQ6
-X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
-X-QQ-RECHKSPAM: 0
+MIME-Version: 1.0
+Subject: Re: [PATCH] net: macb: Fix tx_ptr_lock locking
+To: Robert Hancock <robert.hancock@calian.com>,
+ "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+ "edumazet@google.com" <edumazet@google.com>,
+ "andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>,
+ "davem@davemloft.net" <davem@davemloft.net>,
+ "pabeni@redhat.com" <pabeni@redhat.com>, "kuba@kernel.org" <kuba@kernel.org>
+Cc: "nicolas.ferre@microchip.com" <nicolas.ferre@microchip.com>,
+ "efault@gmx.de" <efault@gmx.de>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "claudiu.beznea@tuxon.dev" <claudiu.beznea@tuxon.dev>
+References: <20250828160023.1505762-1-sean.anderson@linux.dev>
+ <382f53239ff21a050089bcabb38d31329836ad98.camel@calian.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Sean Anderson <sean.anderson@linux.dev>
+In-Reply-To: <382f53239ff21a050089bcabb38d31329836ad98.camel@calian.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-SGVsbG8gUnVveWFvLA0KDQpUaGUgcXVpY2sgdGVzdCByZXN1bHRzIGFyZSB2ZXJ5IGludGVy
-ZXN0aW5nLi4uOg0KVW5peEJlbmNoIHN5c2NhbGwgb24gM0E2MDAwIHBsYXRmb3JtOg0KLi9S
-dW4gc3lzY2FsbCAtaSAxMCAtYyA4DQprZXJuZWwgc291cmNlOiB2Ni4xNg0Ka2VybmVsIGNv
-bmZpZzoNCmh0dHBzOi8vZ2l0aHViLmNvbS9kZWVwaW4tY29tbXVuaXR5L2tlcm5lbC9ibG9i
-L2xpbnV4LTYuMTIueS9hcmNoL2xvb25nYXJjaC9jb25maWdzL2RlZXBpbl9sb29uZ2FyY2hf
-ZGVza3RvcF9kZWZjb25maWcNClVzZSB0aGlzIEdDQyAxNVsxXToNCg0KcmVzdWx0OiANCjEu
-IHdpdGggbm8gcGF0Y2g6DQpTeXN0ZW0gQ2FsbCBPdmVyaGVhZCAgICAgICAgICAgICAgICAg
-ICAgICAgICAgMTUwMDAuMCAgICA4ODkzMDExLjggICA1OTI4LjcNCjIuIHdpdGggcGF0Y2gg
-WzJdIHRvIGRpc2FibGUgLWZuby1idWlsdGluLW1lbWNweSAtZm5vLWJ1aWx0aW4tbWVtbW92
-ZSAtZm5vLWJ1aWx0aW4tbWVtc2V0Og0KU3lzdGVtIENhbGwgT3ZlcmhlYWQgICAgICAgICAg
-ICAgICAgICAgICAgICAgIDE1MDAwLjAgICAgODUxMDQxNS4yICAgNTY3My42DQpsb3dlciB0
-aGFuIHBhdGNoPz8/DQozLiB3aXRoIG15IG9yaWdpbiBwYXRjaCBbM10oKzQuOSUpOiANClN5
-c3RlbSBDYWxsIE92ZXJoZWFkICAgICAgICAgICAgICAgICAgICAgICAgICAxNTAwMC4wICAg
-IDkzMzYwMjIuMSAgIDYyMjQuMA0KDQpCUnMNCldlbnRhbyBHdWFuDQoNClsxXTogaHR0cHM6
-Ly9taXJyb3JzLmVkZ2Uua2VybmVsLm9yZy9wdWIvdG9vbHMvY3Jvc3N0b29sL2ZpbGVzL2Jp
-bi94ODZfNjQvMTUuMi4wDQpbMl06DQpkaWZmIC0tZ2l0IGEvYXJjaC9sb29uZ2FyY2gvS2Nv
-bmZpZyBiL2FyY2gvbG9vbmdhcmNoL0tjb25maWcNCmluZGV4IDRiMTlmOTMzNy4uNTNiYmNm
-MzFjIDEwMDY0NA0KLS0tIGEvYXJjaC9sb29uZ2FyY2gvS2NvbmZpZw0KKysrIGIvYXJjaC9s
-b29uZ2FyY2gvS2NvbmZpZw0KQEAgLTc0Niw2ICs3NDYsOSBAQCBjb25maWcgQVJDSF9TVVNQ
-RU5EX1BPU1NJQkxFDQogY29uZmlnIEFSQ0hfSElCRVJOQVRJT05fUE9TU0lCTEUNCiAgICAg
-ICAgZGVmX2Jvb2wgeQ0KIA0KK2NvbmZpZyBBUkNIX01FTU9SWV9MSUJDQUxMX0RJU0FCTEUN
-CisgICAgICAgZGVmX2Jvb2wgS0FTQU4gfHwgR0NDX1ZFUlNJT04gPj0gMTQwMDAwDQorDQog
-c291cmNlICJrZXJuZWwvcG93ZXIvS2NvbmZpZyINCiBzb3VyY2UgImRyaXZlcnMvYWNwaS9L
-Y29uZmlnIg0KIHNvdXJjZSAiZHJpdmVycy9jcHVmcmVxL0tjb25maWciDQpkaWZmIC0tZ2l0
-IGEvYXJjaC9sb29uZ2FyY2gvTWFrZWZpbGUgYi9hcmNoL2xvb25nYXJjaC9NYWtlZmlsZQ0K
-aW5kZXggYjA3MDNhNGUwLi5mYmE4MzdiMjIgMTAwNjQ0DQotLS0gYS9hcmNoL2xvb25nYXJj
-aC9NYWtlZmlsZQ0KKysrIGIvYXJjaC9sb29uZ2FyY2gvTWFrZWZpbGUNCkBAIC0xMjAsNyAr
-MTIwLDcgQEAgZW5kaWYNCiANCiBjZmxhZ3MteSArPSAkKGNhbGwgY2Mtb3B0aW9uLCAtbW5v
-LWNoZWNrLXplcm8tZGl2aXNpb24pDQogDQotaWZuZGVmIENPTkZJR19LQVNBTg0KK2lmZXEg
-KCQoQ09ORklHX0FSQ0hfTUVNT1JZX0xJQkNBTExfRElTQUJMRSksKQ0KIGNmbGFncy15ICs9
-IC1mbm8tYnVpbHRpbi1tZW1jcHkgLWZuby1idWlsdGluLW1lbW1vdmUgLWZuby1idWlsdGlu
-LW1lbXNldA0KIGVuZGlmDQpbM106DQpkaWZmIC0tZ2l0IGEvYXJjaC9sb29uZ2FyY2gvaW5j
-bHVkZS9hc20vc3lzY2FsbC5oIGIvYXJjaC9sb29uZ2FyY2gvaW5jbHVkZS9hc20vc3lzY2Fs
-bC5oDQppbmRleCA4MWQyNzMzZjcuLjE3MWFmMmVkZCAxMDA2NDQNCi0tLSBhL2FyY2gvbG9v
-bmdhcmNoL2luY2x1ZGUvYXNtL3N5c2NhbGwuaA0KKysrIGIvYXJjaC9sb29uZ2FyY2gvaW5j
-bHVkZS9hc20vc3lzY2FsbC5oDQpAQCAtNjUsNyArNjUsMTEgQEAgc3RhdGljIGlubGluZSB2
-b2lkIHN5c2NhbGxfZ2V0X2FyZ3VtZW50cyhzdHJ1Y3QgdGFza19zdHJ1Y3QgKnRhc2ssDQog
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHVuc2lnbmVkIGxvbmcg
-KmFyZ3MpDQogew0KICAgICAgICBhcmdzWzBdID0gcmVncy0+b3JpZ19hMDsNCi0gICAgICAg
-bWVtY3B5KCZhcmdzWzFdLCAmcmVncy0+cmVnc1s1XSwgNSAqIHNpemVvZihsb25nKSk7DQor
-ICAgICAgIGFyZ3NbMV0gPSByZWdzLT5yZWdzWzVdOw0KKyAgICAgICBhcmdzWzJdID0gcmVn
-cy0+cmVnc1s2XTsNCisgICAgICAgYXJnc1szXSA9IHJlZ3MtPnJlZ3NbN107DQorICAgICAg
-IGFyZ3NbNF0gPSByZWdzLT5yZWdzWzhdOw0KKyAgICAgICBhcmdzWzVdID0gcmVncy0+cmVn
-c1s5XTsNCiB9DQogDQogc3RhdGljIGlubGluZSB2b2lkIHN5c2NhbGxfc2V0X2FyZ3VtZW50
-cyhzdHJ1Y3QgdGFza19zdHJ1Y3QgKnRhc2ssDQoNCls0XTogcGVyZiBkaWZmDQojIEV2ZW50
-ICdjeWNsZXM6UCcNCiMNCiMgQmFzZWxpbmUgIERlbHRhIEFicyAgU2hhcmVkIE9iamVjdCAg
-ICAgICAgICAgICAgICAgICAgICAgU3ltYm9sICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICA+DQojIC4uLi4uLi4uICAuLi4uLi4uLi4gIC4uLi4uLi4u
-Li4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4gIC4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4u
-Li4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uPg0KIw0KICAgIDEyLjcyJSAgICAgLTcuMDcl
-ICBba2VybmVsLmthbGxzeW1zXSAgICAgICAgICAgICAgICAgICBba10gc3lzY2FsbF90cmFj
-ZV9lbnRlcg0KICAgICAwLjAwJSAgICAgKzIuOTQlICBba2VybmVsLmthbGxzeW1zXSAgICAg
-ICAgICAgICAgICAgICBba10gX19tZW1jcHlfZmFzdA0KICAgIDMzLjY5JSAgICAgKzEuNDEl
-ICBba2VybmVsLmthbGxzeW1zXSAgICAgICAgICAgICAgICAgICBba10gZG9fc3lzY2FsbA0K
-ICAgICAyLjY0JSAgICAgKzAuMzIlICBba2VybmVsLmthbGxzeW1zXSAgICAgICAgICAgICAg
-ICAgICBba10gX19hdWRpdF9zeXNjYWxsX2VudHJ5DQogICAgIDQuOTIlICAgICArMC4zMiUg
-IGxpYmMuc28uNiAgICAgICAgICAgICAgICAgICAgICAgICAgIFsuXSBfX0dJX19fdW1hc2sN
-CiAgICAgMy41NCUgICAgICswLjMwJSAgW2tlcm5lbC5rYWxsc3ltc10gICAgICAgICAgICAg
-ICAgICAgW2tdIGFsbG9jX2ZkDQogICAgIDQuMzYlICAgICArMC4yNCUgIGxpYmMuc28uNiAg
-ICAgICAgICAgICAgICAgICAgICAgICAgIFsuXSBfX0dJX19fZ2V0dWlkDQogICAgIDQuNjMl
-ICAgICArMC4yNCUgIGxpYmMuc28uNiAgICAgICAgICAgICAgICAgICAgICAgICAgIFsuXSBz
-eXNjYWxsDQogICAgIDQuNTAlICAgICArMC4yMiUgIGxpYmMuc28uNiAgICAgICAgICAgICAg
-ICAgICAgICAgICAgIFsuXSBfX0dJX19fZHVwDQogICAgIDQuODQlICAgICArMC4yMiUgIFtr
-ZXJuZWwua2FsbHN5bXNdICAgICAgICAgICAgICAgICAgIFtrXSBzeXNjYWxsX2V4aXRfd29y
-aw0KICAgICA0LjgxJSAgICAgKzAuMjIlICBsaWJjLnNvLjYgICAgICAgICAgICAgICAgICAg
-ICAgICAgICBbLl0gX19jbG9zZQ0KICAgICAgICAgICAgICAgKzAuMjAlICBba2VybmVsLmth
-bGxzeW1zXSAgICAgICAgICAgICAgICAgICBba10gX19tZW1jcHkNCiAgICAgMS40OCUgICAg
-ICswLjE1JSAgW2tlcm5lbC5rYWxsc3ltc10gICAgICAgICAgICAgICAgICAgW2tdIGF1ZGl0
-X3Jlc2V0X2NvbnRleHQNCiAgICAgMC42OSUgICAgICswLjEzJSAgW2tlcm5lbC5rYWxsc3lt
-c10gICAgICAgICAgICAgICAgICAgW2tdIF9fc2Vfc3lzX2Nsb3NlDQogICAgIDIuMTMlICAg
-ICArMC4xMCUgIFtrZXJuZWwua2FsbHN5bXNdICAgICAgICAgICAgICAgICAgIFtrXSBmaWxl
-X2Nsb3NlX2ZkX2xvY2tlZA0KICAgICAwLjg2JSAgICAgKzAuMDglICBba2VybmVsLmthbGxz
-eW1zXSAgICAgICAgICAgICAgICAgICBba10gbWFwX2lkX3JhbmdlX3VwDQogICAgIDAuNzEl
-ICAgICArMC4wNiUgIFtrZXJuZWwua2FsbHN5bXNdICAgICAgICAgICAgICAgICAgIFtrXSBf
-X3Rhc2tfcGlkX25yX25zDQogICAgIDAuNDElICAgICArMC4wNCUgIFtrZXJuZWwua2FsbHN5
-bXNdICAgICAgICAgICAgICAgICAgIFtrXSBmZF9pbnN0YWxsDQogICAgIDAuNTYlICAgICAr
-MC4wNCUgIFtrZXJuZWwua2FsbHN5bXNdICAgICAgICAgICAgICAgICAgIFtrXSBfX3JjdV9y
-ZWFkX3VubG9jaw0KICAgICAwLjU3JSAgICAgKzAuMDQlICBba2VybmVsLmthbGxzeW1zXSAg
-ICAgICAgICAgICAgICAgICBba10gZnB1dF9jbG9zZV9zeW5jDQogICAgIDAuMDclICAgICAt
-MC4wNCUgIFtrZXJuZWwua2FsbHN5bXNdICAgICAgICAgICAgICAgICAgIFtrXSBpZGxlX2V4
-aXQNCiAgICAgMS4zNyUgICAgICswLjA0JSAgW2tlcm5lbC5rYWxsc3ltc10gICAgICAgICAg
-ICAgICAgICAgW2tdIF9yYXdfc3Bpbl9sb2NrDQogICAgIDAuNjklICAgICArMC4wMyUgIFtr
-ZXJuZWwua2FsbHN5bXNdICAgICAgICAgICAgICAgICAgIFtrXSBmaWxwX2ZsdXNoDQogICAg
-IDAuNzYlICAgICArMC4wMyUgIHN5c2NhbGwgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-IFsuXSBtYWluDQogICAgIDAuNTIlICAgICArMC4wMyUgIFtrZXJuZWwua2FsbHN5bXNdICAg
-ICAgICAgICAgICAgICAgIFtrXSBmcm9tX2t1aWRfbXVuZ2VkDQogICAgIDAuNDUlICAgICAr
-MC4wMyUgIFtrZXJuZWwua2FsbHN5bXNdICAgICAgICAgICAgICAgICAgIFtrXSBfcmF3X3Nw
-aW5fdW5sb2NrDQogICAgIDAuMDclICAgICAtMC4wMyUgIFtrZXJuZWwua2FsbHN5bXNdICAg
-ICAgICAgICAgICAgICAgIFtrXSBmaW5pc2hfdGFza19zd2l0Y2guaXNyYS4wDQogICAgIDEu
-NzIlICAgICArMC4wMyUgIFtrZXJuZWwua2FsbHN5bXNdICAgICAgICAgICAgICAgICAgIFtr
-XSBrdGltZV9nZXRfY29hcnNlX3JlYWxfdHM2NA0KICAgICAwLjY3JSAgICAgKzAuMDMlICBb
-a2VybmVsLmthbGxzeW1zXSAgICAgICAgICAgICAgICAgICBba10gX19yY3VfcmVhZF9sb2Nr
-DQogICAgIDAuMDMlICAgICAtMC4wMyUgIGRlZXBpbi1kZWVwaW5pZC1kYWVtb24gICAgICAg
-ICAgICAgIFsuXSAweDAwMDAwMDAwMDAwMDMwMTgNCiAgICAgMS4yOCUgICAgIC0wLjAyJSAg
-W2tlcm5lbC5rYWxsc3ltc10gICAgICAgICAgICAgICAgICAgW2tdIF9fYXVkaXRfc3lzY2Fs
-bF9leGl0DQogICAgIDAuMTIlICAgICArMC4wMiUgIHN5c2NhbGwgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgIFsuXSBnZXR1aWRAcGx0DQogICAgIDAuMDIlICAgICAtMC4wMiUgIGRk
-ZS1zZXNzaW9uLWRhZW1vbiAgICAgICAgICAgICAgICAgIFsuXSAweDAwMDAwMDAwMDAyOTlk
-MTANCiAgICAgMC4wMiUgICAgIC0wLjAyJSAgbGQtbGludXgtbG9vbmdhcmNoLWxwNjRkLnNv
-LjEgICAgICAgWy5dIGRvX2xvb2t1cF94DQogICAgIDAuMDMlICAgICAtMC4wMSUgIFtrZXJu
-ZWwua2FsbHN5bXNdICAgICAgICAgICAgICAgICAgIFtrXSBfcmF3X3NwaW5fdW5sb2NrX2ly
-cXJlc3RvcmUNCiAgICAgMC4wMSUgICAgIC0wLjAxJSAgbGQtbGludXgtbG9vbmdhcmNoLWxw
-NjRkLnNvLjEgICAgICAgWy5dIF9kbF9sb29rdXBfc3ltYm9sX3gNCiAgICAgMC4zMCUgICAg
-ICswLjAxJSAgW2tlcm5lbC5rYWxsc3ltc10gICAgICAgICAgICAgICAgICAgW2tdIHN5c19n
-ZXRwaWQNCiAgICAgMC4xNCUgICAgIC0wLjAxJSAgc3lzY2FsbCAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgWy5dIHVtYXNrQHBsdA0KICAgICAwLjAxJSAgICAgLTAuMDElICBsaWJk
-YnVzLTEuc28uMy4zMi40ICAgICAgICAgICAgICAgICBbLl0gMHgwMDAwMDAwMDAwMDE1YWMw
-DQogICAgIDAuMDIlICAgICAtMC4wMSUgIFtrZXJuZWwua2FsbHN5bXNdICAgICAgICAgICAg
-ICAgICAgIFtrXSBjbGVhcl9wYWdlDQogICAgIDAuMDElICAgICAtMC4wMSUgIGRlZXBpbi1z
-eW5jLWhlbHBlciAgICAgICAgICAgICAgICAgIFsuXSAweDAwMDAwMDAwMDAwMDNhODQNCiAg
-ICAgMC4xNCUgICAgICswLjAxJSAgc3lzY2FsbCAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgWy5dIGNsb3NlQHBsdA==
+On 8/28/25 12:13, Robert Hancock wrote:
+> On Thu, 2025-08-28 at 12:00 -0400, Sean Anderson wrote:
+>> macb_start_xmit can be called with bottom-halves disabled (e.g.
+>> transmitting from softirqs) as well as with interrupts disabled (with
+>> netpoll). Because of this, all other functions taking tx_ptr_lock
+>> must
+>> disable IRQs, and macb_start_xmit must only re-enable IRQs if they
+>> were already enabled.
+>> 
+>> Fixes: 138badbc21a0 ("net: macb: use NAPI for TX completion path")
+>> Reported-by: Mike Galbraith <efault@gmx.de>
+>> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
+>> ---
+>> 
+>>  drivers/net/ethernet/cadence/macb_main.c | 25 ++++++++++++----------
+>> --
+>>  1 file changed, 13 insertions(+), 12 deletions(-)
+>> 
+>> diff --git a/drivers/net/ethernet/cadence/macb_main.c
+>> b/drivers/net/ethernet/cadence/macb_main.c
+>> index 16d28a8b3b56..b0a8dfa341ea 100644
+>> --- a/drivers/net/ethernet/cadence/macb_main.c
+>> +++ b/drivers/net/ethernet/cadence/macb_main.c
+>> @@ -1228,7 +1228,7 @@ static int macb_tx_complete(struct macb_queue
+>> *queue, int budget)
+>>         int packets = 0;
+>>         u32 bytes = 0;
+>> 
+>> -       spin_lock(&queue->tx_ptr_lock);
+>> +       spin_lock_irq(&queue->tx_ptr_lock);
+>> 
+> 
+> Hm, I think I used a non-IRQ lock here to avoid potentially disabling
+> interrupts for so long during TX completion processing. I don't think I
+> considered the netpoll case where start_xmit can be called with IRQs
+> disabled however. Not sure if there is a better solution to satisfy
+> that case without turning IRQs off entirely here?
 
+Well, we have a single producer (macb_start_xmit) so we don't need to
+take a lock to enqueue anything as long as we add barriers in the right
+places.
+
+--Sean
 
