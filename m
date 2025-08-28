@@ -1,39 +1,44 @@
-Return-Path: <linux-kernel+bounces-790092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B532B39F49
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 15:44:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2058B39F4D
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 15:48:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8988460A91
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 13:44:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B6D41B22BF4
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 13:48:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 650F4311979;
-	Thu, 28 Aug 2025 13:44:52 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24F951A5B8B;
-	Thu, 28 Aug 2025 13:44:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F92B1F5433;
+	Thu, 28 Aug 2025 13:47:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="MeWDqhk5"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6824518C034;
+	Thu, 28 Aug 2025 13:47:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756388691; cv=none; b=OptVjlZfzVr/SHC2MswmrlprWPru9w0t9Jaboic4MB0PPrJj/77d/2ULpL9R71rFm7Vsv4VDPhe+bpbqyhBWDQlJz3lPqa5bMJ9rDV/IkX4JzZQwu7e1H1jteGvboNXVtX+Gku2MYAS024R2J7gA2yrCmhCQD9kXcBg9ZuWFFUE=
+	t=1756388877; cv=none; b=gWG/1YrHne5D8emPAOZPvsTuqo3nP69sSdbL7avQ7W5ITD79HSHU04rJSN43yMD0cbxAipll4MbjR/QGeA0O9u94nH7KmN2KZGUkzD6pKaiznCWYT7pFQ/VHzR8ywkjNKtgCHemn7JvhrC7KWD7fC0QJ9X4NgMuoDPaPCvyM2sw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756388691; c=relaxed/simple;
-	bh=0e1wl8KD9W2dJNhMmZD7OWJHIVn1H54k14Oc7BBtOto=;
+	s=arc-20240116; t=1756388877; c=relaxed/simple;
+	bh=o/X3XZ/6OBB1rmQze8OxBiOeqqr0Dre1xoe+LWKp95Q=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aGJU8sjxwwxAKc2XnsitekiDJqDcC3VjOFP6aT3hOJ9lEd2jzT2gdyItyMGDdA156618yxmVcSDKcZQzpjWqCaKF918msEyKdbgMnXkKBCo6tfgZvoigwmVYVxmFl9WVU6ousCxO3VrTMKuxt08pOindDQrowGVGsOlZl8yihq4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 147011688;
-	Thu, 28 Aug 2025 06:44:40 -0700 (PDT)
-Received: from [10.1.196.46] (e134344.arm.com [10.1.196.46])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9B9523F738;
-	Thu, 28 Aug 2025 06:44:42 -0700 (PDT)
-Message-ID: <17f4507c-c244-42ee-bea0-57ed22e0a05f@arm.com>
-Date: Thu, 28 Aug 2025 14:44:40 +0100
+	 In-Reply-To:Content-Type; b=PbdeZe8iZYfxHrK3OlYw7IVKL1jYTxCGYtEvIFwhSuNFDB603SxJQZjolSutSSStfZeFzYBCgpWkLTxEGggkyzBd2XwdrAQ5argNF029r+H+sxZKcixI2dY4MdZs1OZ3zeSSaQ8PKqW20i5gdWcddPnaWIvgtMOOMf1lVnsxcrQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=MeWDqhk5; arc=none smtp.client-ip=220.197.31.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:To:From:
+	Content-Type; bh=xBLLsiAN4pe0CURXmH4j6QXps7YJcvxVYiQNA1fD854=;
+	b=MeWDqhk5KhLlLe2aTBEIY695V5QM9x2oN65e+kMLlKIUyz4CckPDEIDy/ZhrJf
+	aunUKL8M/3rB2nZB643dgdLD305F0TeXIdZQ924RX2frylg9aWeXE5yaJ6fy021Y
+	c8V7VFH+fbPyrXDOuSJRCeOzeM6IOyzwk8GZ5aTvc/jvY=
+Received: from [IPV6:240e:b8f:919b:3100:3980:6173:5059:2d2a] (unknown [])
+	by gzga-smtp-mtada-g0-2 (Coremail) with SMTP id _____wAH1Ef0XbBogl2wEg--.36208S2;
+	Thu, 28 Aug 2025 21:47:32 +0800 (CST)
+Message-ID: <6aaafcce-0dc4-45b1-aef5-9004f84fd207@163.com>
+Date: Thu, 28 Aug 2025 21:47:32 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,341 +46,144 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 17/33] arm_mpam: Probe the hardware features resctrl
- supports
-To: James Morse <james.morse@arm.com>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-acpi@vger.kernel.org,
- devicetree@vger.kernel.org
-Cc: shameerali.kolothum.thodi@huawei.com,
- D Scott Phillips OS <scott@os.amperecomputing.com>,
- carl@os.amperecomputing.com, lcherian@marvell.com,
- bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
- baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
- Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
- dfustini@baylibre.com, amitsinght@marvell.com,
- David Hildenbrand <david@redhat.com>, Rex Nie <rex.nie@jaguarmicro.com>,
- Dave Martin <dave.martin@arm.com>, Koba Ko <kobak@nvidia.com>,
- Shanker Donthineni <sdonthineni@nvidia.com>, fenghuay@nvidia.com,
- baisheng.gao@unisoc.com, Jonathan Cameron <jonathan.cameron@huawei.com>,
- Rob Herring <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
- Rafael Wysocki <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo
- <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
- Will Deacon <will@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Danilo Krummrich <dakr@kernel.org>
-References: <20250822153048.2287-1-james.morse@arm.com>
- <20250822153048.2287-18-james.morse@arm.com>
-From: Ben Horgan <ben.horgan@arm.com>
+Subject: Re: [PATCH v4 02/13] PCI: dwc: Refactor code by using
+ dw_pcie_clear_and_set_dword()
+To: Manivannan Sadhasivam <mani@kernel.org>
+Cc: lpieralisi@kernel.org, bhelgaas@google.com, kwilczynski@kernel.org,
+ robh@kernel.org, jingoohan1@gmail.com, linux-pci@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250813044531.180411-1-18255117159@163.com>
+ <20250813044531.180411-3-18255117159@163.com>
+ <wi2mylqrf6szc5iluncle2lj373aoxu46lyy7d2gaqx4dv3abq@sja5aj5mwv3j>
 Content-Language: en-US
-In-Reply-To: <20250822153048.2287-18-james.morse@arm.com>
-Content-Type: text/plain; charset=UTF-8
+From: Hans Zhang <18255117159@163.com>
+In-Reply-To: <wi2mylqrf6szc5iluncle2lj373aoxu46lyy7d2gaqx4dv3abq@sja5aj5mwv3j>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:_____wAH1Ef0XbBogl2wEg--.36208S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW3AF1DurWfKw1rGw15Aw17Awb_yoW7Aw48pa
+	9xAF4akF45JFnxuw4kZa4kZw1rZws5AFZxGwsrC34xuF9Ivr92qFyjg34YyFWxJrWIqw45
+	Kw4Utasrurn8AaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UIoGdUUUUU=
+X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiQxu3o2iwWuYqaAABsr
 
-Hi James,
 
-On 8/22/25 16:29, James Morse wrote:
-> Expand the probing support with the control and monitor types
-> we can use with resctrl.
+
+On 2025/8/27 21:51, Manivannan Sadhasivam wrote:
+> On Wed, Aug 13, 2025 at 12:45:20PM GMT, Hans Zhang wrote:
+>> DesignWare core modules contain multiple instances of manual
+>> read-modify-write operations for register bit manipulation.
+>> These patterns duplicate functionality now provided by
+>> dw_pcie_clear_and_set_dword(), particularly in debugfs, endpoint,
+>> host, and core initialization paths.
+>>
+>> Replace open-coded bit manipulation sequences with calls to
+>> dw_pcie_clear_and_set_dword(). Affected areas include debugfs register
+>> control, endpoint capability configuration, host setup routines, and
+>> core link initialization logic. The changes simplify power management
+>> handling, capability masking, and feature configuration.
+>>
+>> Standardizing on the helper function reduces code duplication by ~140
+>> lines across core modules while improving readability. The refactoring
+>> also ensures consistent error handling for register operations and
+>> provides a single point of control for future bit manipulation logi
+>> updates.
+>>
+>> Signed-off-by: Hans Zhang <18255117159@163.com>
+>> ---
+>>   .../controller/dwc/pcie-designware-debugfs.c  | 66 +++++++---------
+>>   .../pci/controller/dwc/pcie-designware-ep.c   | 20 +++--
+>>   .../pci/controller/dwc/pcie-designware-host.c | 26 +++----
+>>   drivers/pci/controller/dwc/pcie-designware.c  | 75 +++++++------------
+>>   drivers/pci/controller/dwc/pcie-designware.h  | 18 +----
+>>   5 files changed, 76 insertions(+), 129 deletions(-)
+>>
+>> diff --git a/drivers/pci/controller/dwc/pcie-designware-debugfs.c b/drivers/pci/controller/dwc/pcie-designware-debugfs.c
+>> index 0fbf86c0b97e..ff185b8977f3 100644
+>> --- a/drivers/pci/controller/dwc/pcie-designware-debugfs.c
+>> +++ b/drivers/pci/controller/dwc/pcie-designware-debugfs.c
+>> @@ -213,10 +213,8 @@ static ssize_t lane_detect_write(struct file *file, const char __user *buf,
+>>   	if (val)
+>>   		return val;
+>>   
+>> -	val = dw_pcie_readl_dbi(pci, rinfo->ras_cap_offset + SD_STATUS_L1LANE_REG);
+>> -	val &= ~(LANE_SELECT);
+>> -	val |= FIELD_PREP(LANE_SELECT, lane);
+>> -	dw_pcie_writel_dbi(pci, rinfo->ras_cap_offset + SD_STATUS_L1LANE_REG, val);
+>> +	dw_pcie_clear_and_set_dword(pci, rinfo->ras_cap_offset + SD_STATUS_L1LANE_REG,
+>> +				    LANE_SELECT, FIELD_PREP(LANE_SELECT, lane));
+>>   
+>>   	return count;
+>>   }
+>> @@ -309,12 +307,11 @@ static void set_event_number(struct dwc_pcie_rasdes_priv *pdata,
+>>   {
+>>   	u32 val;
+>>   
+>> -	val = dw_pcie_readl_dbi(pci, rinfo->ras_cap_offset + RAS_DES_EVENT_COUNTER_CTRL_REG);
+>> -	val &= ~EVENT_COUNTER_ENABLE;
+>> -	val &= ~(EVENT_COUNTER_GROUP_SELECT | EVENT_COUNTER_EVENT_SELECT);
+>> -	val |= FIELD_PREP(EVENT_COUNTER_GROUP_SELECT, event_list[pdata->idx].group_no);
+>> +	val = FIELD_PREP(EVENT_COUNTER_GROUP_SELECT, event_list[pdata->idx].group_no);
+>>   	val |= FIELD_PREP(EVENT_COUNTER_EVENT_SELECT, event_list[pdata->idx].event_no);
+>> -	dw_pcie_writel_dbi(pci, rinfo->ras_cap_offset + RAS_DES_EVENT_COUNTER_CTRL_REG, val);
+>> +	dw_pcie_clear_and_set_dword(pci, rinfo->ras_cap_offset + RAS_DES_EVENT_COUNTER_CTRL_REG,
+>> +				    EVENT_COUNTER_ENABLE | EVENT_COUNTER_GROUP_SELECT |
+>> +				    EVENT_COUNTER_EVENT_SELECT, val);
+>>   }
+>>   
+>>   static ssize_t counter_enable_read(struct file *file, char __user *buf,
+>> @@ -354,13 +351,10 @@ static ssize_t counter_enable_write(struct file *file, const char __user *buf,
+>>   
+>>   	mutex_lock(&rinfo->reg_event_lock);
+>>   	set_event_number(pdata, pci, rinfo);
+>> -	val = dw_pcie_readl_dbi(pci, rinfo->ras_cap_offset + RAS_DES_EVENT_COUNTER_CTRL_REG);
+>> -	if (enable)
+>> -		val |= FIELD_PREP(EVENT_COUNTER_ENABLE, PER_EVENT_ON);
+>> -	else
+>> -		val |= FIELD_PREP(EVENT_COUNTER_ENABLE, PER_EVENT_OFF);
+>>   
+>> -	dw_pcie_writel_dbi(pci, rinfo->ras_cap_offset + RAS_DES_EVENT_COUNTER_CTRL_REG, val);
+>> +	val |= FIELD_PREP(EVENT_COUNTER_ENABLE, enable ? PER_EVENT_ON : PER_EVENT_OFF);
 > 
-> CC: Dave Martin <Dave.Martin@arm.com>
-> Signed-off-by: James Morse <james.morse@arm.com>
-> ---
-> Changes since RFC:
->  * Made mpam_ris_hw_probe_hw_nrdy() more in C.
->  * Added static assert on features bitmap size.
-> ---
->  drivers/resctrl/mpam_devices.c  | 156 +++++++++++++++++++++++++++++++-
->  drivers/resctrl/mpam_internal.h |  54 +++++++++++
->  2 files changed, 209 insertions(+), 1 deletion(-)
+> So you just added the bitfields to the existing 'val' variable which was storing
+> the return value of kstrtou32_from_user().
 > 
-> diff --git a/drivers/resctrl/mpam_devices.c b/drivers/resctrl/mpam_devices.c
-> index 012e09e80300..290a04f8654f 100644
-> --- a/drivers/resctrl/mpam_devices.c
-> +++ b/drivers/resctrl/mpam_devices.c
-> @@ -102,7 +102,7 @@ static LLIST_HEAD(mpam_garbage);
->  
->  static u32 __mpam_read_reg(struct mpam_msc *msc, u16 reg)
->  {
-> -	WARN_ON_ONCE(reg > msc->mapped_hwpage_sz);
-> +	WARN_ON_ONCE(reg + sizeof(u32) > msc->mapped_hwpage_sz);
-Update in the patch that introduced this line.
 
->  	WARN_ON_ONCE(!cpumask_test_cpu(smp_processor_id(), &msc->accessibility));
->  
->  	return readl_relaxed(msc->mapped_hwpage + reg);
-> @@ -131,6 +131,20 @@ static inline void _mpam_write_partsel_reg(struct mpam_msc *msc, u16 reg, u32 va
->  }
->  #define mpam_write_partsel_reg(msc, reg, val)  _mpam_write_partsel_reg(msc, MPAMCFG_##reg, val)
->  
-> +static inline u32 _mpam_read_monsel_reg(struct mpam_msc *msc, u16 reg)
-> +{
-> +	mpam_mon_sel_lock_held(msc);
-> +	return __mpam_read_reg(msc, reg);
-> +}
-> +#define mpam_read_monsel_reg(msc, reg) _mpam_read_monsel_reg(msc, MSMON_##reg)
-> +
-> +static inline void _mpam_write_monsel_reg(struct mpam_msc *msc, u16 reg, u32 val)
-> +{
-> +	mpam_mon_sel_lock_held(msc);
-> +	__mpam_write_reg(msc, reg, val);
-> +}
-> +#define mpam_write_monsel_reg(msc, reg, val)   _mpam_write_monsel_reg(msc, MSMON_##reg, val)
-> +
->  static u64 mpam_msc_read_idr(struct mpam_msc *msc)
->  {
->  	u64 idr_high = 0, idr_low;
-> @@ -643,6 +657,139 @@ static struct mpam_msc_ris *mpam_get_or_create_ris(struct mpam_msc *msc,
->  	return found;
->  }
->  
-> +/*
-> + * IHI009A.a has this nugget: "If a monitor does not support automatic behaviour
-> + * of NRDY, software can use this bit for any purpose" - so hardware might not
-> + * implement this - but it isn't RES0.
-> + *
-> + * Try and see what values stick in this bit. If we can write either value,
-> + * its probably not implemented by hardware.
-> + */
-> +static bool _mpam_ris_hw_probe_hw_nrdy(struct mpam_msc_ris * ris, u32 mon_reg)
-> +{
-> +	u32 now;
-> +	u64 mon_sel;
-> +	bool can_set, can_clear;
-> +	struct mpam_msc *msc = ris->vmsc->msc;
-> +
-> +	if (WARN_ON_ONCE(!mpam_mon_sel_inner_lock(msc)))
-> +		return false;
-> +
-> +	mon_sel = FIELD_PREP(MSMON_CFG_MON_SEL_MON_SEL, 0) |
-> +		  FIELD_PREP(MSMON_CFG_MON_SEL_RIS, ris->ris_idx);
-> +	_mpam_write_monsel_reg(msc, mon_reg, mon_sel);
-> +
-> +	_mpam_write_monsel_reg(msc, mon_reg, MSMON___NRDY);
-> +	now = _mpam_read_monsel_reg(msc, mon_reg);
-> +	can_set = now & MSMON___NRDY;
-> +
-> +	_mpam_write_monsel_reg(msc, mon_reg, 0);
-> +	now = _mpam_read_monsel_reg(msc, mon_reg);
-> +	can_clear = !(now & MSMON___NRDY);
-> +	mpam_mon_sel_inner_unlock(msc);
-> +
-> +	return (!can_set || !can_clear);
-> +}
-> +
-> +#define mpam_ris_hw_probe_hw_nrdy(_ris, _mon_reg)			\
-> +        _mpam_ris_hw_probe_hw_nrdy(_ris, MSMON_##_mon_reg)
-> +
-> +static void mpam_ris_hw_probe(struct mpam_msc_ris *ris)
-> +{
-> +	int err;
-> +	struct mpam_msc *msc = ris->vmsc->msc;
-> +	struct mpam_props *props = &ris->props;
-> +
-> +	lockdep_assert_held(&msc->probe_lock);
-> +	lockdep_assert_held(&msc->part_sel_lock);
-> +
-> +	/* Cache Portion partitioning */
-> +	if (FIELD_GET(MPAMF_IDR_HAS_CPOR_PART, ris->idr)) {
-> +		u32 cpor_features = mpam_read_partsel_reg(msc, CPOR_IDR);
-> +
-> +		props->cpbm_wd = FIELD_GET(MPAMF_CPOR_IDR_CPBM_WD, cpor_features);
-> +		if (props->cpbm_wd)
-> +			mpam_set_feature(mpam_feat_cpor_part, props);
-> +	}
-> +
-> +	/* Memory bandwidth partitioning */
-> +	if (FIELD_GET(MPAMF_IDR_HAS_MBW_PART, ris->idr)) {
-> +		u32 mbw_features = mpam_read_partsel_reg(msc, MBW_IDR);
-> +
-> +		/* portion bitmap resolution */
-> +		props->mbw_pbm_bits = FIELD_GET(MPAMF_MBW_IDR_BWPBM_WD, mbw_features);
-> +		if (props->mbw_pbm_bits &&
-> +		    FIELD_GET(MPAMF_MBW_IDR_HAS_PBM, mbw_features))
-> +			mpam_set_feature(mpam_feat_mbw_part, props);
-> +
-> +		props->bwa_wd = FIELD_GET(MPAMF_MBW_IDR_BWA_WD, mbw_features);
-> +		if (props->bwa_wd && FIELD_GET(MPAMF_MBW_IDR_HAS_MAX, mbw_features))
-> +			mpam_set_feature(mpam_feat_mbw_max, props);
-> +	}
-> +
-> +	/* Performance Monitoring */
-> +	if (FIELD_GET(MPAMF_IDR_HAS_MSMON, ris->idr)) {
-> +		u32 msmon_features = mpam_read_partsel_reg(msc, MSMON_IDR);
-> +
-> +		/*
-> +		 * If the firmware max-nrdy-us property is missing, the
-> +		 * CSU counters can't be used. Should we wait forever?
-> +		 */
-> +		err = device_property_read_u32(&msc->pdev->dev,
-> +					       "arm,not-ready-us",
-> +					       &msc->nrdy_usec);
-> +
-> +		if (FIELD_GET(MPAMF_MSMON_IDR_MSMON_CSU, msmon_features)) {
-> +			u32 csumonidr;
-> +
-> +			csumonidr = mpam_read_partsel_reg(msc, CSUMON_IDR);
-> +			props->num_csu_mon = FIELD_GET(MPAMF_CSUMON_IDR_NUM_MON, csumonidr);
-> +			if (props->num_csu_mon) {
-> +				bool hw_managed;
-> +
-> +				mpam_set_feature(mpam_feat_msmon_csu, props);
-> +
-> +				/* Is NRDY hardware managed? */
-> +				mpam_mon_sel_outer_lock(msc);
-> +				hw_managed = mpam_ris_hw_probe_hw_nrdy(ris, CSU);
-> +				mpam_mon_sel_outer_unlock(msc);
-> +				if (hw_managed)
-> +					mpam_set_feature(mpam_feat_msmon_csu_hw_nrdy, props);
-> +			}
-> +
-> +			/*
-> +			 * Accept the missing firmware property if NRDY appears
-> +			 * un-implemented.
-> +			 */
-> +			if (err && mpam_has_feature(mpam_feat_msmon_csu_hw_nrdy, props))
-> +				pr_err_once("Counters are not usable because not-ready timeout was not provided by firmware.");
-> +		}
-> +		if (FIELD_GET(MPAMF_MSMON_IDR_MSMON_MBWU, msmon_features)) {
-> +			bool hw_managed;
-> +			u32 mbwumonidr = mpam_read_partsel_reg(msc, MBWUMON_IDR);
-> +
-> +			props->num_mbwu_mon = FIELD_GET(MPAMF_MBWUMON_IDR_NUM_MON, mbwumonidr);
-> +			if (props->num_mbwu_mon)
-> +				mpam_set_feature(mpam_feat_msmon_mbwu, props);
-> +
-> +			if (FIELD_GET(MPAMF_MBWUMON_IDR_HAS_RWBW, mbwumonidr))
-> +				mpam_set_feature(mpam_feat_msmon_mbwu_rwbw, props);
-> +
-> +			/* Is NRDY hardware managed? */
-> +			mpam_mon_sel_outer_lock(msc);
-> +			hw_managed = mpam_ris_hw_probe_hw_nrdy(ris, MBWU);
-> +			mpam_mon_sel_outer_unlock(msc);
-> +			if (hw_managed)
-> +				mpam_set_feature(mpam_feat_msmon_mbwu_hw_nrdy, props);
-> +
-> +			/*
-> +			 * Don't warn about any missing firmware property for
-> +			 * MBWU NRDY - it doesn't make any sense!
-> +			 */
-> +		}
-> +	}
-> +}
-> +
->  static int mpam_msc_hw_probe(struct mpam_msc *msc)
->  {
->  	u64 idr;
-> @@ -663,6 +810,7 @@ static int mpam_msc_hw_probe(struct mpam_msc *msc)
->  
->  	idr = mpam_msc_read_idr(msc);
->  	mutex_unlock(&msc->part_sel_lock);
-> +
->  	msc->ris_max = FIELD_GET(MPAMF_IDR_RIS_MAX, idr);
->  
->  	/* Use these values so partid/pmg always starts with a valid value */
-> @@ -683,6 +831,12 @@ static int mpam_msc_hw_probe(struct mpam_msc *msc)
->  		ris = mpam_get_or_create_ris(msc, ris_idx);
->  		if (IS_ERR(ris))
->  			return PTR_ERR(ris);
-> +		ris->idr = idr;
-> +
-> +		mutex_lock(&msc->part_sel_lock);
-> +		__mpam_part_sel(ris_idx, 0, msc);
-> +		mpam_ris_hw_probe(ris);
-> +		mutex_unlock(&msc->part_sel_lock);
->  	}
->  
->  	spin_lock(&partid_max_lock);
-> diff --git a/drivers/resctrl/mpam_internal.h b/drivers/resctrl/mpam_internal.h
-> index c6f087f9fa7d..9f6cd4a68cce 100644
-> --- a/drivers/resctrl/mpam_internal.h
-> +++ b/drivers/resctrl/mpam_internal.h
-> @@ -136,6 +136,56 @@ static inline void mpam_mon_sel_lock_held(struct mpam_msc *msc)
->  		lockdep_assert_preemption_enabled();
->  }
->  
-> +/*
-> + * When we compact the supported features, we don't care what they are.
-> + * Storing them as a bitmap makes life easy.
-> + */
-> +typedef u16 mpam_features_t;
-> +
-> +/* Bits for mpam_features_t */
-> +enum mpam_device_features {
-> +	mpam_feat_ccap_part = 0,
-> +	mpam_feat_cpor_part,
-> +	mpam_feat_mbw_part,
-> +	mpam_feat_mbw_min,
-> +	mpam_feat_mbw_max,
-> +	mpam_feat_mbw_prop,
-> +	mpam_feat_msmon,
-> +	mpam_feat_msmon_csu,
-> +	mpam_feat_msmon_csu_capture,
-> +	mpam_feat_msmon_csu_hw_nrdy,
-> +	mpam_feat_msmon_mbwu,
-> +	mpam_feat_msmon_mbwu_capture,
-> +	mpam_feat_msmon_mbwu_rwbw,
-> +	mpam_feat_msmon_mbwu_hw_nrdy,
-> +	mpam_feat_msmon_capt,
-> +	MPAM_FEATURE_LAST,
+Dear Mani,
 
-This isn't all the features or just the features supported by resctrl.
-Just add them all in this patch?
+Thank you very much for your reply and for taking the time to point out 
+the problem. I double-checked today, identified the problem and will fix 
+it in the next version.
 
-> +};
-> +static_assert(BITS_PER_TYPE(mpam_features_t) >= MPAM_FEATURE_LAST);
-> +#define MPAM_ALL_FEATURES      ((1 << MPAM_FEATURE_LAST) - 1)
-Unused?
 
-> +
-> +struct mpam_props {
-> +	mpam_features_t		features;
-> +
-> +	u16			cpbm_wd;
-> +	u16			mbw_pbm_bits;
-> +	u16			bwa_wd;
-> +	u16			num_csu_mon;
-> +	u16			num_mbwu_mon;
-> +};
-> +
-> +static inline bool mpam_has_feature(enum mpam_device_features feat,
-> +				    struct mpam_props *props)
-> +{
-> +	return (1 << feat) & props->features;
-> +}
-> +
-> +static inline void mpam_set_feature(enum mpam_device_features feat,
-> +				    struct mpam_props *props)
-> +{
-> +	props->features |= (1 << feat);
-> +}
-> +
->  struct mpam_class {
->  	/* mpam_components in this class */
->  	struct list_head	components;
-> @@ -175,6 +225,8 @@ struct mpam_vmsc {
->  	/* mpam_msc_ris in this vmsc */
->  	struct list_head	ris;
->  
-> +	struct mpam_props	props;
-> +
->  	/* All RIS in this vMSC are members of this MSC */
->  	struct mpam_msc		*msc;
->  
-> @@ -186,6 +238,8 @@ struct mpam_vmsc {
->  
->  struct mpam_msc_ris {
->  	u8			ris_idx;
-> +	u64			idr;
-> +	struct mpam_props	props;
->  
->  	cpumask_t		affinity;
->  
+> What makes me nervous about this series is these kind of subtle bugs. It is
+> really hard to spot all with too many drivers/changes :/
+> 
+> I would suggest you to just convert whatever drivers you can test with and leave
+> the rest to platforms maintainers to convert later. I do not want to regress
+> platforms for cleanups.
 
-Thanks,
+My original intention was to hope that the code would become 
+increasingly concise and that a lot of repetitive code would be removed. 
+I also believe it will provide convenience for the subsequent 
+development. I hope there won't be any problems with my next version.
 
-Ben
+> 
+>> +	dw_pcie_clear_and_set_dword(pci, rinfo->ras_cap_offset + RAS_DES_EVENT_COUNTER_CTRL_REG,
+>> +				    0, val);
+> 
+> Similar to what Lukas suggested here: https://lore.kernel.org/linux-pci/aKDpIeQgt7I9Ts8F@wunner.de
+> 
+> Please use separate API for just setting the word instead of passing 0 to this
+> API.
+> 
+
+Will add dw_pcie_clear_dword and dw_pcie_set_dword.
+
+Best regards,
+Hans
+
+> - Mani
+> 
 
 
