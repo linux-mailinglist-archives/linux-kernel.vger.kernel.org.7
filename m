@@ -1,136 +1,184 @@
-Return-Path: <linux-kernel+bounces-790228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24EFAB3A2AC
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 16:51:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45208B3A327
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 17:00:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1831B18829C3
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 14:51:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E9B4167C0A
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 14:56:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79880238C03;
-	Thu, 28 Aug 2025 14:51:02 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1F2B21CA00;
-	Thu, 28 Aug 2025 14:50:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BF22314B78;
+	Thu, 28 Aug 2025 14:55:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b="JUEfVJda";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="MHq8u2V9"
+Received: from flow-a7-smtp.messagingengine.com (flow-a7-smtp.messagingengine.com [103.168.172.142])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0F72313E21;
+	Thu, 28 Aug 2025 14:55:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756392662; cv=none; b=W62PwcccAJUbwPnLlIDdGD9WiJbB800fgVJ9mRakn+vmYXQ0gNz5k1CNgMUkj6fAaL8YKxELc2pXtDW6vkMTHm/RB/9u5p/959C5538+WhVHh1z+XhXOiN0PFq+/Btqif5d8ZcfpKSZGTXByisDQA5Mf8YoY34CBqJUkMqM83Rc=
+	t=1756392947; cv=none; b=BvVJRqOKuvoHDV/5YQWHEQVb0Lvu00NIvYOQwIJWEJD+CwJKdAOTI12WIHyT3N3lbEHysudVhrDbMW4hzcYf3pCyNANiAWp3tEKGPJeEkKMUxi2fzAoRPVlPNjagjm1HXMDhxnBWT4zZlZNmQwD7EvzRtWKBnky9e4uTsGGQI58=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756392662; c=relaxed/simple;
-	bh=ffQj8LEzf3ToHr+tKQe/O3lDaSKM/jN6r1WVbU3sulQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oJrbhB1wyBt8zR+i+eE6jAs8DAyfLOIjSnDBlJEDziI4MkBIJn2FhXvkskOLqfa6ch67g7R/zrYmDqhCfVPrXBu+df8UjKACNYdNCMYe2shZGXJ0QsNBNsFlOGp7ePy+spWdgV4gbwu4Msup6rBr9y3sb6u86vgwGjvGksiyz00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9BB081688;
-	Thu, 28 Aug 2025 07:50:50 -0700 (PDT)
-Received: from [10.1.30.134] (XHFQ2J9959.cambridge.arm.com [10.1.30.134])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E605F3F694;
-	Thu, 28 Aug 2025 07:50:56 -0700 (PDT)
-Message-ID: <261fceba-8485-4015-af72-582c4507cadc@arm.com>
-Date: Thu, 28 Aug 2025 15:50:55 +0100
+	s=arc-20240116; t=1756392947; c=relaxed/simple;
+	bh=WlBb0jJmn04MaLIfHfPKXwa9UjgUaNfYxdtYiQpQBvo=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=PpS0yKBnncpuJLbFaYQou0YnXOZQA7/PBfxfEiEl35EO6/jm7ANGqVoQKyDklO11nVb0FZECX5AmfscXvsr1ZJxo6Ak8413FGEKzyXI7gtxJN1Naxeb3Z+wFrlULrx7qdVRxvAe/xdpYDhIukjfhju38rlXaGwfXF8LplXG4cC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net; spf=pass smtp.mailfrom=jannau.net; dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b=JUEfVJda; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=MHq8u2V9; arc=none smtp.client-ip=103.168.172.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jannau.net
+Received: from phl-compute-09.internal (phl-compute-09.internal [10.202.2.49])
+	by mailflow.phl.internal (Postfix) with ESMTP id C850F1380DA7;
+	Thu, 28 Aug 2025 10:55:43 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-09.internal (MEProxy); Thu, 28 Aug 2025 10:55:43 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jannau.net; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1756392943;
+	 x=1756400143; bh=/1HCzcPWpXBSpnbj/QDJHLEH1PFOq/NBWIwZsLaGAto=; b=
+	JUEfVJdalsBHmFDtqcsVx63oqloV+T/tGhzAHQ9+arprL8JADMc7WoNs1e+ZskUj
+	R1I2KynVO6viufJVuXlxKT51gDnsPcdN189//WH2yRcV17Y9SlxN1gLi5iHtPQc6
+	DnaZLmf52glHkJLXP/tXdiOrssVH2/CJGnvInPpgMMCb8eINbdgq48pSTDeQfMoG
+	ECOWvSP4JL9GuPdHAGec2hvGh6khLyEO3GQrVxehD6mtd8sM2GTI0O44257zN58r
+	tc82iudF0Zo7psuGnKjgGt0yNAbW5/tSbTBgAnugSSsVNS5R0EVkGZaLx9Of9g0O
+	I30CK9UYemEGyYg+rjHVwA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1756392943; x=
+	1756400143; bh=/1HCzcPWpXBSpnbj/QDJHLEH1PFOq/NBWIwZsLaGAto=; b=M
+	Hq8u2V9IHvxSi75Fig+W0qozO2giF0xpwf/O6/1IkzYHIwk27xMhVdYlhPBITzQK
+	hVR3LzelnwiLj4wVJzmzeFbMJiokIDCx5LbE0FbDlgGQerIE6t0jCzvHun5Gevwk
+	cJfpVudxIN2j5LfQgdRymyptz99NL/1ip2+fR9IsF7sSt9+iX74DP1P/xEzAaMS+
+	62fxg52akPDOB1RvZqEC3rhFl7N4JqVQI7KUdQmYhjCqyszAlRLAVpj3jWxLPtGo
+	szf5hNci1sd/vG2O0cazUWkLU2cwi+sDhjaXXN2PPl3TMu65mS7Rcw1RvYFKD0dV
+	sPbYOjWHepqphQvxwywQg==
+X-ME-Sender: <xms:6m2waKmnYa2FdIrcu_L9tOlt2ZKYPU4Stfq7t586JpTMj6oCyN007g>
+    <xme:6m2waApFyf5oQwidF9teShyXB6yxYFWxH_7LduDR5VKe5luRS1XQ3SVaeN9X2jKag
+    x_FllNwzSVyZ-8SRHE>
+X-ME-Received: <xmr:6m2waDXc5A2re2szZKOEi55YYyhfvavQkp6KsBeqck8m-tjpMzpgVobxkPjSpZyuG8-iKSF2710WJHlnGDT-uFp9_j1ibJ8QZYnNgQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddukedufedvucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhephfffufggtgfgkfhfjgfvvefosehtjeertdertdejnecuhfhrohhmpeflrghnnhgv
+    ucfirhhunhgruhcuoehjsehjrghnnhgruhdrnhgvtheqnecuggftrfgrthhtvghrnhepve
+    ekkefgjeettdduueejgeeuteduffefteejudegieevuedvieffteeljeelgfeknecuffho
+    mhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
+    grmhepmhgrihhlfhhrohhmpehjsehjrghnnhgruhdrnhgvthdpnhgspghrtghpthhtohep
+    ieegpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehsvhgvnheskhgvrhhnvghlrd
+    horhhgpdhrtghpthhtoheprghlhihsshgrsehrohhsvghniiifvghighdrihhopdhrtghp
+    thhtohepnhgvrghlsehgohhmphgrrdguvghvpdhrtghpthhtoheprhhosghhsehkvghrnh
+    gvlhdrohhrghdprhgtphhtthhopehkrhiikhdoughtsehkvghrnhgvlhdrohhrghdprhgt
+    phhtthhopegtohhnohhrodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepmhgrrh
+    gtrghnsehmrghrtggrnhdrshhtpdhrtghpthhtoheprhgrfhgrvghlsehkvghrnhgvlhdr
+    ohhrghdprhgtphhtthhopehvihhrvghshhdrkhhumhgrrheslhhinhgrrhhordhorhhg
+X-ME-Proxy: <xmx:6m2waFrTf35PgHb3njAcVHWQ8QR-g62UyrQIC7kEhKNAfyH6xKmzPw>
+    <xmx:6m2waOf0g_tg3qwoV2wdDKszkMeMad52NNgvQmWw_qV8WkZnJZWLiA>
+    <xmx:6m2waGdDlnENjZ5HBWAX4TL5jGe73veREkVa-VN4ZKQN_bQvqm_1cg>
+    <xmx:6m2waJrAadnALiEkOA8lV99QmcXasWWJYDt8jKHkhCvvE3cefceqJA>
+    <xmx:722waN9gGr8x5mX7n7t8O042S8vd3V7CC9cIJvsU2hM85ZmHrS3ks-GE>
+Feedback-ID: i47b949f6:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 28 Aug 2025 10:55:38 -0400 (EDT)
+From: Janne Grunau <j@jannau.net>
+Date: Thu, 28 Aug 2025 16:52:09 +0200
+Subject: [PATCH 31/37] spi: apple: Add "apple,t8103-spi" compatible
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] selftests/mm/uffd-stress: Make test operate on less
- hugetlb memory
-Content-Language: en-GB
-To: Dev Jain <dev.jain@arm.com>, akpm@linux-foundation.org, david@redhat.com,
- shuah@kernel.org
-Cc: lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, vbabka@suse.cz,
- rppt@kernel.org, surenb@google.com, mhocko@suse.com, npache@redhat.com,
- linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250826070705.53841-1-dev.jain@arm.com>
- <20250826070705.53841-2-dev.jain@arm.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <20250826070705.53841-2-dev.jain@arm.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20250828-dt-apple-t6020-v1-31-bb8e1b87edef@jannau.net>
+References: <20250828-dt-apple-t6020-v1-0-bb8e1b87edef@jannau.net>
+In-Reply-To: <20250828-dt-apple-t6020-v1-0-bb8e1b87edef@jannau.net>
+To: Sven Peter <sven@kernel.org>, Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+  Neal Gompa <neal@gompa.dev>, Rob Herring <robh@kernel.org>,
+  Krzysztof Kozlowski <krzk+dt@kernel.org>,
+  Conor Dooley <conor+dt@kernel.org>, Hector Martin <marcan@marcan.st>,
+  "Rafael J. Wysocki" <rafael@kernel.org>,
+  Viresh Kumar <viresh.kumar@linaro.org>,
+  Thomas Gleixner <tglx@linutronix.de>, Joerg Roedel <joro@8bytes.org>,
+  Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+  Linus Walleij <linus.walleij@linaro.org>,
+  Mark Kettenis <kettenis@openbsd.org>,
+ Andi Shyti <andi.shyti@kernel.org>,
+  Jassi Brar <jassisinghbrar@gmail.com>,
+  Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+  Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>,
+  David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+  Sasha Finkelstein <fnkl.kernel@gmail.com>,
+  Marcel Holtmann <marcel@holtmann.org>,
+  Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+  Johannes Berg <johannes@sipsolutions.net>,
+ van Spriel <arend@broadcom.com>,  Lee Jones <lee@kernel.org>,
+  =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+  Stephen Boyd <sboyd@kernel.org>,
+ Wim Van Sebroeck <wim@linux-watchdog.org>,
+  Guenter Roeck <linux@roeck-us.net>,
+  Michael Turquette <mturquette@baylibre.com>,
+  =?utf-8?q?Martin_Povi=C5=A1er?= <povik+lin@cutebit.org>,
+  Vinod Koul <vkoul@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+  Mark Brown <broonie@kernel.org>, Marc Zyngier <maz@kernel.org>,
+  Ulf Hansson <ulf.hansson@linaro.org>, Keith Busch <kbusch@kernel.org>,
+  Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
+  Sagi Grimberg <sagi@grimberg.me>, Jaroslav Kysela <perex@perex.cz>,
+  Takashi Iwai <tiwai@suse.com>
+Cc: asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-pm@vger.kernel.org, iommu@lists.linux.dev, linux-gpio@vger.kernel.org, 
+ linux-i2c@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+ linux-bluetooth@vger.kernel.org, linux-wireless@vger.kernel.org, 
+ linux-pwm@vger.kernel.org, linux-watchdog@vger.kernel.org, 
+ linux-clk@vger.kernel.org, dmaengine@vger.kernel.org, 
+ linux-sound@vger.kernel.org, linux-spi@vger.kernel.org, 
+ linux-nvme@lists.infradead.org, Janne Grunau <j@jannau.net>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=911; i=j@jannau.net; s=yk2024;
+ h=from:subject:message-id; bh=WlBb0jJmn04MaLIfHfPKXwa9UjgUaNfYxdtYiQpQBvo=;
+ b=owGbwMvMwCW2UNrmdq9+ahrjabUkhowNOf/3qCr8iqy77cgo19jWq9MS+0DgcOvBOtM/UvNU9
+ /w3mVfbUcrCIMbFICumyJKk/bKDYXWNYkztgzCYOaxMIEMYuDgFYCJMExgZHu1SPHxm+vMZ/F9+
+ GuluLnjnd2zKHgWlAp1dM6Le5H7a28zw341DLSzd0Oy3MWdyxIp1fKdXmaTNuefffE5CYcb3qnt
+ e/AA=
+X-Developer-Key: i=j@jannau.net; a=openpgp;
+ fpr=8B336A6BE4E5695E89B8532B81E806F586338419
 
-On 26/08/2025 08:07, Dev Jain wrote:
-> We observed uffd-stress selftest failure on arm64 and intermittent failures
-> on x86 too:
-> running ./uffd-stress hugetlb-private 128 32
-> 
-> bounces: 17, mode: rnd read, ERROR: UFFDIO_COPY error: -12 (errno=12, @uffd-common.c:617) [FAIL]
-> not ok 18 uffd-stress hugetlb-private 128 32 # exit=1
-> 
-> For this particular case, the number of free hugepages from run_vmtests.sh
-> will be 128, and the test will allocate 64 hugepages in the source
-> location. The stress() function will start spawning threads which will
-> operate on the destination location, triggering uffd-operations like
-> UFFDIO_COPY from src to dst, which means that we will require 64 more
-> hugepages for the dst location.
-> 
-> Let us observe the locking_thread() function. It will lock the mutex kept
-> at dst, triggering uffd-copy. Suppose that 127 (64 for src and 63 for dst)
-> hugepages have been reserved. In case of BOUNCE_RANDOM, it may happen that
-> two threads trying to lock the mutex at dst, try to do so at the same
-> hugepage number. If one thread succeeds in reserving the last hugepage,
-> then the other thread may fail in alloc_hugetlb_folio(), returning -ENOMEM.
-> I can confirm that this is indeed the case by this hacky patch:
-> 
-> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-> index 753f99b4c718..39eb21d8a91b 100644
-> --- a/mm/hugetlb.c
-> +++ b/mm/hugetlb.c
-> @@ -6929,6 +6929,11 @@ int hugetlb_mfill_atomic_pte(pte_t *dst_pte,
->  
->  		folio = alloc_hugetlb_folio(dst_vma, dst_addr, false);
->  		if (IS_ERR(folio)) {
-> +			pte_t *actual_pte = hugetlb_walk(dst_vma, dst_addr, PMD_SIZE);
-> +			if (actual_pte) {
-> +				ret = -EEXIST;
-> +				goto out;
-> +			}
->  			ret = -ENOMEM;
->  			goto out;
->  		}
-> 
-> This code path gets triggered indicating that the PMD at which one thread
-> is trying to map a hugepage, gets filled by a racing thread.
-> 
-> Therefore, instead of using freepgs to compute the amount of memory,
-> use freepgs - 10, so that the test still has some extra hugepages to use.
-> Note that, in case this value underflows, there is a check for the number
-> of free hugepages in the test itself, which will fail, so we are safe.
-> 
-> Signed-off-by: Dev Jain <dev.jain@arm.com>
-> ---
->  tools/testing/selftests/mm/run_vmtests.sh | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/tools/testing/selftests/mm/run_vmtests.sh b/tools/testing/selftests/mm/run_vmtests.sh
-> index 471e539d82b8..6a9f435be7a1 100755
-> --- a/tools/testing/selftests/mm/run_vmtests.sh
-> +++ b/tools/testing/selftests/mm/run_vmtests.sh
-> @@ -326,7 +326,7 @@ CATEGORY="userfaultfd" run_test ${uffd_stress_bin} anon 20 16
->  # the size of the free pages we have, which is used for *each*.
->  # uffd-stress expects a region expressed in MiB, so we adjust
->  # half_ufd_size_MB accordingly.
-> -half_ufd_size_MB=$(((freepgs * hpgsize_KB) / 1024 / 2))
-> +half_ufd_size_MB=$((((freepgs - 10) * hpgsize_KB) / 1024 / 2))
+After discussion with the devicetree maintainers we agreed to not extend
+lists with the generic compatible "apple,spi" anymore [1]. Use
+"apple,t8103-spi" as base compatible as it is the SoC the driver and
+bindings were written for.
 
-Why 10? I don't know much about uffd-stress but the comment at the top says it
-runs 3 threads per CPU, so does the number of potential races increase with the
-number of CPUs? Perhaps this number needs to be a function of nrcpu?
+[1]: https://lore.kernel.org/asahi/12ab93b7-1fc2-4ce0-926e-c8141cfe81bf@kernel.org/
 
-I tested it and it works though so:
+Signed-off-by: Janne Grunau <j@jannau.net>
+---
+ drivers/spi/spi-apple.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Tested-by: Ryan Roberts <ryan.roberts@arm.com>
+diff --git a/drivers/spi/spi-apple.c b/drivers/spi/spi-apple.c
+index 6273352a2b2861c9da0976a46ec2adbc4c71d3d2..2fee7057ecc99063521bd0a9da3ba573b84776f9 100644
+--- a/drivers/spi/spi-apple.c
++++ b/drivers/spi/spi-apple.c
+@@ -511,6 +511,7 @@ static int apple_spi_probe(struct platform_device *pdev)
+ }
+ 
+ static const struct of_device_id apple_spi_of_match[] = {
++	{ .compatible = "apple,t8103-spi", },
+ 	{ .compatible = "apple,spi", },
+ 	{}
+ };
 
->  CATEGORY="userfaultfd" run_test ${uffd_stress_bin} hugetlb "$half_ufd_size_MB" 32
->  CATEGORY="userfaultfd" run_test ${uffd_stress_bin} hugetlb-private "$half_ufd_size_MB" 32
->  CATEGORY="userfaultfd" run_test ${uffd_stress_bin} shmem 20 16
+-- 
+2.51.0
 
 
