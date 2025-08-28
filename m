@@ -1,170 +1,129 @@
-Return-Path: <linux-kernel+bounces-790416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A1F2B3A6D0
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 18:47:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E21EBB3A6D4
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 18:49:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C386D166ACF
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 16:47:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF32E562D07
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 16:49:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F304AA926;
-	Thu, 28 Aug 2025 16:47:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80DCA22A4D5;
+	Thu, 28 Aug 2025 16:48:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GxzqBMLl"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eXlh38uh"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 875AF30CD95;
-	Thu, 28 Aug 2025 16:47:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 788711C860C
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 16:48:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756399639; cv=none; b=E3RhUgJzeKSQokznGX+ZOJKUWO9LCqJKCBu1NZesMvQy7r6Isz/aJO7a9S9EyENd2sV6Q1qdkNisksr2zoikUBzUcbdIl4CimerWWYniOjnDEFNK/HxvztQGWcU053MFa0Fy/WScIUcwDZMpDzjWLR3x5hoYbNy4e3DOk/9XkJ0=
+	t=1756399736; cv=none; b=PmDWTh0DYOurnXONyswpk3zI6uvijw/x6c3ANcI/6LhTfGfSaFvHN1AaOTRloF+mvOq8HWwxDG5d3GJNqSTCBWBECjEJqkY8bmFut5BvPL2gtvU5GBsCvIWRniyf5bCGM6T/r+4JiIE9EJ0sZ+kPEsRMzr3F8kHU7KMx/vtNNic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756399639; c=relaxed/simple;
-	bh=aU91kSbFDXIVNuJ60vvVOrVduOxjp8fd95hLA1xmbMQ=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=QVpVTMGdt+mGXZSx2/GkYwRqa6XShHjz6cwDb1Bbkn8d5XmXJl9RczulFZsO4FuHhuI+nTS6Dm88cRG8aKkNykvbYqVflBw35spcns9BGVdZL2nnVTW+C+6mPWBH0YVPuN1zbTKYTK7AW0B3/nAn9gzjB4s3vQdvadmK0WGQvSw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GxzqBMLl; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756399637; x=1787935637;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version:content-id;
-  bh=aU91kSbFDXIVNuJ60vvVOrVduOxjp8fd95hLA1xmbMQ=;
-  b=GxzqBMLlSJ7ayIDlYbPgK8JNOsXgBOjB4LvNtbo+GUEsOzLHV2FAKEjL
-   2OMbLda7FBwvLs+sSKMnyfWDhoINNK7tOZb+qCahd316JEjlQTyK5AuD/
-   WR/iNOGbsO+Cy4CNi80mr7bhBlfjYmH7UcGCmG669oCHc8tdQi8NC2c+E
-   TCt+Nfb8EFZYkF1RvOIx8dpw0zM7a1mrc1uQTEuMv7uaKA5RTLM283pLU
-   ePa9coiJ8ousxIEiNh4jraVaBHanL2F6vnCYZi3TBCwPXShOC6uop90u1
-   iCd2bePQe3idICd7EVyQI7dAIVWkwXYYX9WlorN2m9zjHju4rtYxCQ3DZ
-   w==;
-X-CSE-ConnectionGUID: JIUsepvYR8O8bemB4mP9ww==
-X-CSE-MsgGUID: q3FqIogeR5abXu1ncbHtZw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="58621132"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="58621132"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2025 09:47:16 -0700
-X-CSE-ConnectionGUID: SjrdaJHHQdK4rDEfENOp0g==
-X-CSE-MsgGUID: vM+TeRjKRZ2iMMw4509i4w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,220,1751266800"; 
-   d="scan'208";a="207303211"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.99])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2025 09:47:09 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Thu, 28 Aug 2025 19:47:06 +0300 (EEST)
-To: Bjorn Helgaas <helgaas@kernel.org>
-cc: Andreas Larsson <andreas@gaisler.com>, Bjorn Helgaas <bhelgaas@google.com>, 
-    "David S. Miller" <davem@davemloft.net>, 
-    Geert Uytterhoeven <geert@linux-m68k.org>, linux-m68k@lists.linux-m68k.org, 
-    linux-mips@vger.kernel.org, linux-pci@vger.kernel.org, 
-    sparclinux@vger.kernel.org, 
-    Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-    =?ISO-8859-15?Q?Christian_K=F6nig?= <christian.koenig@amd.com>, 
-    Yinghai Lu <yinghai@kernel.org>, Igor Mammedov <imammedo@redhat.com>, 
-    "Rafael J . Wysocki" <rafael@kernel.org>, 
-    Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
-    Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, 
-    =?ISO-8859-2?Q?Krzysztof_Wilczy=F1ski?= <kw@linux.com>, 
-    LKML <linux-kernel@vger.kernel.org>, 
-    =?ISO-8859-2?Q?Micha=B3_Winiarski?= <michal.winiarski@intel.com>, 
-    linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH 00/24] PCI: Bridge window selection improvements
-In-Reply-To: <20250827223606.GA915856@bhelgaas>
-Message-ID: <d209c08a-56df-5aac-869d-7c6c548c0614@linux.intel.com>
-References: <20250827223606.GA915856@bhelgaas>
+	s=arc-20240116; t=1756399736; c=relaxed/simple;
+	bh=cxxGqqht0UDsRw/LgBdx8Bu/jntVwIkDP9B8rSEkLOA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=L3y9DWaI/7oMfI3a/x2Lqw2nCA+8bbJqA4/REv/1zycu5tjydUlJ+ecpxOZsEVcAzSFBYabJkNkqnhus5+WdSbH+HBUs9iKCWxFBeXi8WRTruYWOKFxVOoCY5FPx961/g9MFrVO4ARR52Jl9LEhsr/IvUIf9x5eM49cu5m8YcLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eXlh38uh; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756399734;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=91Z3nV2xDDPr0AIVq0M2gFIJkrVUpCIj8oRRwM3WbMg=;
+	b=eXlh38uhPT38fdRhYMIVNB5AFCzdWebzHrCkGDv3ziAWf0OOzL0rPthrgBCE8cpz37woTl
+	H4gTzrWi8DSViORZPflVTYnqogo3c+jWNQblEIf7gToOu/aErhpFATRdLNGYSAsyvio/K1
+	oipnSw05c9E8an77HevvDlPznRVLIZY=
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
+ [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-539-ZUks_p75M_-8x4lxrHmLwQ-1; Thu, 28 Aug 2025 12:48:53 -0400
+X-MC-Unique: ZUks_p75M_-8x4lxrHmLwQ-1
+X-Mimecast-MFC-AGG-ID: ZUks_p75M_-8x4lxrHmLwQ_1756399733
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7f95f654931so290956185a.3
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 09:48:53 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756399733; x=1757004533;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=91Z3nV2xDDPr0AIVq0M2gFIJkrVUpCIj8oRRwM3WbMg=;
+        b=j5dJL8vzs2fe7FCHsN0pukplYJpwwJ4hnLKxZVaeExq+RbVIbykwfT9D/DOS4hMWyk
+         Gq+MsdV+YgDjm4vTsQA7X9hLzpY8vedgpL9IMI8nNmFB18a3ijgFKlyIHuOlZPE0yulZ
+         d/j92XyFlMU70rdYWp4Q9VLtEtxk0hiD1mMlB3lqjGj4zx5t0y53MKb75uHMuTrSOd0o
+         GZSFLH8Q7OSmr/KVYhlIps8cWuxJYB31GYjJCS71IlI9XURushgFxoAoTr3fGxCMbzSj
+         HHsSVEk3oymYGDSBC0CMV/zyqWgOYLQr8+5QudJrTTXrMx1N7jiDj+8gLom2vmwt2uCU
+         +Afg==
+X-Forwarded-Encrypted: i=1; AJvYcCUIezZ2HxPSun0RmfWY1vn8sLEa9BmuflayeNZbIMXlbc4wRnJ6Jl8uSONDU4rKyjEarohsMVc1OnE7sD0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5RJaBf4QjJ08AOD0TKfLM8w43p/1VWxgZTYfU3+OvPktQsZ10
+	ZgHil5D/jd0n+q2+a+IhU0mELaFmvWgKWCzAk/MiwWOR+nVnTqRX8BRc6l7LuIBnP7digLXyick
+	V2ab64FsrMInqScdkFdkmtQQd+UyjCPtE9GEpf5+Q6zD3k+ArjYK+i4sCudiT5i//UA==
+X-Gm-Gg: ASbGncvRcWwPZ5t1mznXXePDLr8wXE7yXXczqaK7KzUIDWA9dYWN1UByJTXYU7weo3f
+	whJHh+31bJzQBvyA4LRlup8gZxPGhXVXzmUxlq8gZYpNkyPF+d2FXPKpEf+iB9/kp406CZX7VD6
+	jD2tk4xPGhV8vJ8OzqK+4dCDxnYILD7vPjEsVMrbkg1dxqxk6dpr56uVeKqXj3BoeGHrbrisg7b
+	pV6MuaAfDadDfEz9+06xKflERnEvAgymbUxMh69P0cn4x6eWAZ3J7+EKfr13i+jhWRS/1EO5HkS
+	WMZ5HNTLELm5fMzEwGVyBfzh86nwlqJeNwdcFEWsqG/ugkLpPOWhyJ8BGePjUzjlCJzX73+9x5V
+	s178NPoOyruA8yulgNxU=
+X-Received: by 2002:a05:620a:1a23:b0:7f2:2982:1eaf with SMTP id af79cd13be357-7f229822d16mr1501256785a.74.1756399732582;
+        Thu, 28 Aug 2025 09:48:52 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFBTDG4Ww1kwCTyr3kj9IVvcYfVGPYh4Xr0SFGCZucQRn0W59c/rhczTAx0aZ+uZxiIuXhzEA==
+X-Received: by 2002:a05:620a:1a23:b0:7f2:2982:1eaf with SMTP id af79cd13be357-7f229822d16mr1501254085a.74.1756399732137;
+        Thu, 28 Aug 2025 09:48:52 -0700 (PDT)
+Received: from x1 (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7fc0eea8e74sm14591785a.27.2025.08.28.09.48.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Aug 2025 09:48:51 -0700 (PDT)
+Date: Thu, 28 Aug 2025 12:48:49 -0400
+From: Brian Masney <bmasney@redhat.com>
+To: Ryan Wanner <ryan.wanner@microchip.com>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, nicolas.ferre@microchip.com,
+	alexandre.belloni@bootlin.com, claudiu.beznea@tuxon.dev,
+	varshini.rajendran@microchip.com, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	robh@kernel.org
+Subject: Re: [PATCH v3 00/32] clk: at91: add support for parent_data and
+Message-ID: <aLCIcWIJ4Nfqt7oi@x1>
+References: <cover.1752176711.git.Ryan.Wanner@microchip.com>
+ <aLB7CJY9nMLoS1or@x1>
+ <08dd4d82-8ac4-43a3-8d01-f293db6302e2@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; BOUNDARY="8323328-231680363-1756381945=:938"
-Content-ID: <11bc2533-54ae-273a-c46a-d271790c5a86@linux.intel.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <08dd4d82-8ac4-43a3-8d01-f293db6302e2@microchip.com>
+User-Agent: Mutt/2.2.14 (2025-02-20)
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On Thu, Aug 28, 2025 at 09:16:16AM -0700, Ryan Wanner wrote:
+> On 8/28/25 08:51, Brian Masney wrote:
+> > What tree did you develop this against? When I try to apply this series
+> > to Linus's tree (6.17-rc3) and linux-next, only 12 of these patches
+> > actually apply with 'git am'.
+> 
+> This was developed on 6.16 but when I bumped this thread I checked and
+> they all apply cleanly on the v6.17-rc3 tag. I also just tested on
+> next-20250828 tag and this set applies cleanly as well.
 
---8323328-231680363-1756381945=:938
-Content-Type: text/plain; CHARSET=ISO-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Content-ID: <f90962a0-95ab-8e0a-58b9-2afe95683ba6@linux.intel.com>
+I initially used
+'b4 mbox af762c93-c9d0-485e-a0d1-7792e6e37c09@microchip.com' to download
+the series, and tried to apply it with 'git am', and that's when only 12
+of the 32 patches apply cleanly. I expected to have to 'git am --skip'
+on the cover letter.
 
-On Wed, 27 Aug 2025, Bjorn Helgaas wrote:
+However, if I download the series with
+'b4 am af762c93-c9d0-485e-a0d1-7792e6e37c09@microchip.com', then all of
+the patches apply cleanly.
 
-> On Fri, Aug 22, 2025 at 05:55:41PM +0300, Ilpo J=E4rvinen wrote:
-> > This series is based on top of the three resource fitting and
-> > assignment algorithm fixes (v3).
-> >=20
-> > PCI resource fitting and assignment code needs to find the bridge
-> > window a resource belongs to in multiple places, yet, no common
-> > function for that exists. Thus, each site has its own version of
-> > the decision, each with their own corner cases, misbehaviors, and
-> > some resulting in complex interfaces between internal functions.
-> > ...
->=20
-> > I've tried to look out for any trouble that code under arch/ could
-> > cause after the flags start to behave differently and therefore ended
-> > up consolidating arch/ code to use pci_enable_resources(). My
-> > impression is that strictly speaking only the MIPS code would break
-> > similar to PCI core's copy of pci_enable_resources(), the others were
-> > much more lax in checking so they'd likely keep working but
-> > consolidation seemed still the best approach there as the enable checks
-> > seemed diverging for no apparent reason.
-> > ...
->=20
-> >   m68k/PCI: Use pci_enable_resources() in pcibios_enable_device()
-> >   sparc/PCI: Remove pcibios_enable_device() as they do nothing extra
-> >   MIPS: PCI: Use pci_enable_resources()
-> > ...
->=20
-> >  arch/m68k/kernel/pcibios.c   |  39 +-
-> >  arch/mips/pci/pci-legacy.c   |  38 +-
-> >  arch/sparc/kernel/leon_pci.c |  27 --
-> >  arch/sparc/kernel/pci.c      |  27 --
-> >  arch/sparc/kernel/pcic.c     |  27 --
-> > ...
->=20
-> I love the fact that you're doing so much cleanup.  Thanks for all the
-> work in this!
->
-> Obviously all this code is quite sensitive, so I put it on
-> pci/resource to get more exposure in -next.
+I have a few minor questions on some of the patches.
 
-Thanks. I really appreciate the opportunity to have it in next for extra=20
-testing as my testing, while relatively extensive, still has its limits.
+Brian
 
-I'll need to do minor corrections into a few intermediate patches though=20
-to ensure bisectability, we really want to make this as bisectable as=20
-possible. In other words, I've found 2 relatively small issues in them=20
-which won't change the end result when the whole series is complete and=20
-fixed some small grammar errors in the changelogs.
-
-I see you made some corrections so I'm not sure what's the best course of=
-=20
-action here to update them. Should I just send v2 normally and you deal=20
-with your changes while replacing v1 with v2?
-
-> If it turns out that we
-> trip over things or just don't feel comfortable yet for v6.18, we can
-> always defer this part until the next cycle.
-
-I agree, and really please don't hesitate to postpone if it turns out=20
-necessary.
-
-> I will also watch for acks from the m68k, mips, and sparc maintainers
-> for those pieces.
->=20
-> Bjorn
->=20
-
---=20
- i.
---8323328-231680363-1756381945=:938--
 
