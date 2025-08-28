@@ -1,143 +1,103 @@
-Return-Path: <linux-kernel+bounces-790357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39857B3A5E2
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 18:15:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 685C7B3A5DE
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 18:14:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1AC2E1892EAA
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 16:15:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5779C18891D3
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 16:15:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 459162F1FD8;
-	Thu, 28 Aug 2025 16:14:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87D682D9ED0;
+	Thu, 28 Aug 2025 16:14:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A2uvxWho"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kLGzPffi"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9251C2EDD6B;
-	Thu, 28 Aug 2025 16:14:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2E3629993F;
+	Thu, 28 Aug 2025 16:14:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756397683; cv=none; b=gCjiTrNqDunYH5Y1O6bs8ti+ymHIiPEB6rfy19YiKaC45ZiXiBMQZoQr0p6nKaqC61TjJReRjTzNC0TfhYL6VPuYZshW2tSPam62gbykb1/6kM0FeI82CMY6KtQMcDzezn3ALdmY1p0BE6ZMTKbDBDZ0WyGAVespbxCMyinanKE=
+	t=1756397680; cv=none; b=X+/5KIvUq1kKbbfeILjKbBJ3JtoRSrd31nHEipbv1lg3MFgsnhcAGGB0Xj+C8imA/cQJc7kSuIqH1AnfoDXSS+RaGxbVAC4ioYtBtZJbC641TlXeySnyt/cC/i1PL84xwQqHrl5n/ND5xEv9ks/oEEjvrKg2IoM9oeygQzRbr/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756397683; c=relaxed/simple;
-	bh=0mWAt9V6mXzDVb76YBkp9s6T7YlQCMYmSXf3GXrqJbg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Gp3yIfwSJecf+WnpYwRHx5i/B1ovPj359HSY4YNDE0ywf4v7ruS5+RUXnCokHXLajg3cyGL96piR8a7YhHm3wSn3262mIeyB8Mp4KsuOtf/07wiXwEAQ/Gq5qRwjya5UvOGrnbPusWNA6XM1wxcmu1qGkJysLPF/Aow6wtAJFM0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A2uvxWho; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22941C4CEEB;
-	Thu, 28 Aug 2025 16:14:43 +0000 (UTC)
+	s=arc-20240116; t=1756397680; c=relaxed/simple;
+	bh=w1rDoj1PZWDUXnkCbbX4505cj5XQXh3XYYhIua+JY4c=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=WapDJxr5s6TqanHnoeh5tONrfW5FdiNI5JxjzA9FUh8LXoWX5Gr5Dn9yBUVbR3TlHteW/fx0XwClacryInZuAwIsi94eTilrhXZzNmtaCWFAjnbT7OEmK2Ips488gFlxu8Umjm8GpEeIhOUUaaL3WxhR5Sc+/Qtd9tCpuqECfJE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kLGzPffi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EACB2C4CEEB;
+	Thu, 28 Aug 2025 16:14:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756397683;
-	bh=0mWAt9V6mXzDVb76YBkp9s6T7YlQCMYmSXf3GXrqJbg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=A2uvxWhoM/zuM2lRnzkT8S/A/a14ldw2ziBz4wZraMso8vGj6wggJ9v6vH6DsBH2Y
-	 b3fhWWkZjiU3nWfw6OY1czRqq+7PiUSbgBQ2T9Ks9HaOwi5WGBAJZ+zIALeCs9yasb
-	 PBp6vqRa1mq+aJcRIy3ro60lGlYlH1/GKJ//RjgSpE5dUso/zu8+hbc8wdQ0jNlxey
-	 wF+prCs2tI6dzScMZxTvaFQsEE/ZuLFG3p2o8JowQCfNV527s7le0mCN8gZ0JP0WBa
-	 qwCEEYJbOR3PNOeZjy4ln80FeuRv8qjeoEOlk+pDK7z1r6yjB8WSpb+3KsT4R+RfOM
-	 /wed8/NKuiumQ==
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-33667661214so9308871fa.2;
-        Thu, 28 Aug 2025 09:14:43 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUNb12wjxtgbq6ihEsR1WwNEdTzfgXyKA43G2BRtKunvmh4WQIZDAyhW4zdtwsEbt5x3wnk5PLtmCoTHbWg@vger.kernel.org, AJvYcCXIMxWNG142zid39PAzYZxR3wnK8MQBVLcoizrH6XwGMztouVnbQaTBypEgKgFQUhPqMMch9WxkpPU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YylArEcvEN5nuf8FMRgkSPgDRnEwsdsacTbjGOjHCbuLBdLesTX
-	ju7WB0CHndBuN0D0MS7JVKNHvGPjnp9vmfDYH5O32DTLsd9gZl0ec7yEAJkB7AogUPkFzCSoXxW
-	fmG8XmldabugQ0QEA/+mT5/bpGku4mSw=
-X-Google-Smtp-Source: AGHT+IG1WYeagqTMnqb5sScxobXQ++ZQzyOW31/FcuuZBydDuBwB6gyyreygguVxecm5t/O9yoNhokOnymRZ2RRmejk=
-X-Received: by 2002:a05:651c:544:b0:336:9232:fb91 with SMTP id
- 38308e7fff4ca-33692334925mr17627921fa.4.1756397681507; Thu, 28 Aug 2025
- 09:14:41 -0700 (PDT)
+	s=k20201202; t=1756397679;
+	bh=w1rDoj1PZWDUXnkCbbX4505cj5XQXh3XYYhIua+JY4c=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=kLGzPffijHgVDUxrwLW3/YlgYKmtAS76fai3FmrIUOmJuxBhM1zYVidYHpBrXh6ef
+	 nf66HjF46Fv/Xh8SUY8ZcstGj3s4LQ4v5kIfc0KusD3DyhXREn5u0QurksfkVQXqtM
+	 1MX81ByN9aG5ex/YkQwwbHKLnEz9GX3rJdv3dl0RArPhx80/1WgVP0oGMU73clpj8o
+	 qi0LH+q0s75ukxZRF2WdrHDshUf4S7GynGuvvvNrKRIfvYKKmpbdWbdn0ht2v4uBQO
+	 jAGuSC37hAOL9C66ICpMB4W1XomOUfPJ+geY5gjAFRxdS9FQpfKFLiKx8lCjEE3JNW
+	 YxFPiczUB4FTA==
+From: Conor Dooley <conor@kernel.org>
+To: daire.mcnamara@microchip.com,
+	paul.walmsley@sifive.com,
+	palmer@dabbelt.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	aou@eecs.berkeley.edu,
+	alex@ghiti.fr,
+	Valentina Fernandez <valentina.fernandezalanis@microchip.com>
+Cc: Conor Dooley <conor.dooley@microchip.com>,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v1 0/5] Icicle Kit with prod device and Discovery Kit support
+Date: Thu, 28 Aug 2025 17:14:30 +0100
+Message-ID: <20250828-aloft-procurer-7316559f2e30@spud>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To:  <20250825161952.3902672-1-valentina.fernandezalanis@microchip.com>
+References: <20250825161952.3902672-1-valentina.fernandezalanis@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250828102202.1849035-24-ardb+git@google.com>
- <20250828102202.1849035-25-ardb+git@google.com> <20250828153317.GJaLB2vSvuR20WzgQV@fat_crate.local>
-In-Reply-To: <20250828153317.GJaLB2vSvuR20WzgQV@fat_crate.local>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Thu, 28 Aug 2025 18:14:30 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXFa5j2AoUWNvOmfBrQxg_hjwwPrCZSKickNwYjZ8RxkVA@mail.gmail.com>
-X-Gm-Features: Ac12FXxogj-fTnbMOOotGI37m-7Cxa4h31KLVwgtA58M4JKiXlQMA8t8aRuGwKg
-Message-ID: <CAMj1kXFa5j2AoUWNvOmfBrQxg_hjwwPrCZSKickNwYjZ8RxkVA@mail.gmail.com>
-Subject: Re: [PATCH v7 01/22] x86/sev: Separate MSR and GHCB based snp_cpuid()
- via a callback
-To: Borislav Petkov <bp@alien8.de>
-Cc: Ard Biesheuvel <ardb+git@google.com>, Tom Lendacky <thomas.lendacky@amd.com>, 
-	Michael Roth <michael.roth@amd.com>, =?UTF-8?B?SsO2cmcgUsO2ZGVs?= <joro@8bytes.org>, 
-	linux-kernel@vger.kernel.org, linux-efi@vger.kernel.org, x86@kernel.org, 
-	Ingo Molnar <mingo@kernel.org>, Kevin Loughlin <kevinloughlin@google.com>, 
-	Josh Poimboeuf <jpoimboe@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Nikunj A Dadhania <nikunj@amd.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1247; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=NYXKvAfMqZtWqo/K3uDK7cV1jaCUvi3zYkj9bk8jQ2M=; b=owGbwMvMwCVWscWwfUFT0iXG02pJDBkbGtK/Rp5qVJzftyyi546iJt//vutOe59uSfjIxRfEN O/J8c+eHaUsDGJcDLJiiiyJt/tapNb/cdnh3PMWZg4rE8gQBi5OAZiIxklGhoV7vk70ujWlv+6C +KF9kSu6T+/eMqXBe9mc8htfu/9p9WUyMlx65dddU8AkMd+603Hzph9LVmQqdjZFdx28qp4YlrF tJgMA
+X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
+Content-Transfer-Encoding: 8bit
 
-On Thu, 28 Aug 2025 at 17:33, Borislav Petkov <bp@alien8.de> wrote:
->
-> + Joerg and Mike to doublecheck me.
->
-> On Thu, Aug 28, 2025 at 12:22:04PM +0200, Ard Biesheuvel wrote:
-> > @@ -648,7 +611,7 @@ void __head do_vc_no_ghcb(struct pt_regs *regs, unsigned long exit_code)
-> >       leaf.fn = fn;
-> >       leaf.subfn = subfn;
-> >
-> > -     ret = snp_cpuid(NULL, NULL, &leaf);
-> > +     ret = snp_cpuid(snp_cpuid_hv_msr, NULL, &leaf);
-> >       if (!ret)
-> >               goto cpuid_done;
-> >
->
-> So this code becomes now:
->
-> ---
->         ret = snp_cpuid(snp_cpuid_hv_msr, NULL, &leaf);
->         if (!ret)
->                 goto cpuid_done;
->
-> <--- tries to find the CPUID leaf in the CPUID table
-> <--- otherwise uses the MSR protocol to read CPUID from HV and massage it
->
->         if (ret != -EOPNOTSUPP)
->                 goto fail;
->
->         if (__sev_cpuid_hv_msr(&leaf))
->                 goto fail;
->
-> <--- and now it tries to do the same - do CPUID over MSR protocol.
->
-> This flow made sense before your change because it'll try to use the GHCB
-> protocol but you're zapping that now so, IOW, you can zap that second call
-> too:
->
->
-> diff --git a/arch/x86/boot/startup/sev-shared.c b/arch/x86/boot/startup/sev-shared.c
-> index ed88dfe7605e..fbfdfe0dce70 100644
-> --- a/arch/x86/boot/startup/sev-shared.c
-> +++ b/arch/x86/boot/startup/sev-shared.c
-> @@ -612,16 +612,9 @@ void __head do_vc_no_ghcb(struct pt_regs *regs, unsigned long exit_code)
->         leaf.subfn = subfn;
->
->         ret = snp_cpuid(snp_cpuid_hv_msr, NULL, &leaf);
-> -       if (!ret)
-> -               goto cpuid_done;
-> -
-> -       if (ret != -EOPNOTSUPP)
-> -               goto fail;
-> -
-> -       if (__sev_cpuid_hv_msr(&leaf))
-> +       if (ret && ret != -EOPNOTSUPP)
->                 goto fail;
->
-> -cpuid_done:
->         regs->ax = leaf.eax;
->         regs->bx = leaf.ebx;
->         regs->cx = leaf.ecx;
->
+From: Conor Dooley <conor.dooley@microchip.com>
 
-This seems plausible but I'm not sure I understand 100% why this
-fallback logic was introduced in the first place, so I'll defer to the
-experts here.
+On Mon, 25 Aug 2025 17:19:47 +0100, Valentina Fernandez wrote:
+> With the introduction of the Icicle Kit with the production device
+> (MPFS250T) to the market, it's necessary to distinguish it from the
+> engineering sample (-es) variant. This is because engineering samples
+> cannot write to flash from the MSS, as noted in the PolarFire SoC
+> FPGA ES errata.
+> 
+> This series adds a common board DTSI for the Icicle Kit, containing
+> hardware shared by both the engineering sample and production
+> versions, as well as a DTS for each Icicle Kit variant.
+> 
+> [...]
+
+Applied to riscv-dt-for-next, thanks!
+
+[1/5] riscv: dts: microchip: add common board dtsi for icicle kit variants
+      https://git.kernel.org/conor/c/2a95aaa34dfe
+[2/5] dt-bindings: riscv: microchip: document icicle kit with production device
+      https://git.kernel.org/conor/c/4b9e63bb6491
+[3/5] riscv: dts: microchip: add icicle kit with production device
+      https://git.kernel.org/conor/c/1ba401aae7a1
+[4/5] dt-bindings: riscv: microchip: document Discovery Kit
+      https://git.kernel.org/conor/c/0d880b095a19
+[5/5] riscv: dts: microchip: add a device tree for Discovery Kit
+      https://git.kernel.org/conor/c/f66eb149b876
+
+Thanks,
+Conor.
 
