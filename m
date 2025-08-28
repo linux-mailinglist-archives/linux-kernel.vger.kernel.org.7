@@ -1,808 +1,136 @@
-Return-Path: <linux-kernel+bounces-790733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FD22B3AC5F
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 23:04:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E47B4B3AC2E
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 23:00:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CFEF1169CE5
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 21:04:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9CBBC580711
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 21:00:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F24DF2D0621;
-	Thu, 28 Aug 2025 21:00:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC0902D12E4;
+	Thu, 28 Aug 2025 20:59:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="c0EjRMTf"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dC1uDxHL"
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 335492C2377
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 21:00:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AD5629AB03
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 20:59:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756414825; cv=none; b=aL3MNHm049p4EbHVbwbXulZ6tA9ndJ5NOLkGCdAqfPqN1rTkF+6g+hD/dJQWYshgZXLdHJ8lH62vo/ICyoBDpFtU71ezK4KpmimgsrJAKtKT/ti0JyjxLvX27Yhj7nNVbR9+x0plswmahG1mLDFmNin4vEdaxqJPR2P+yj6njbQ=
+	t=1756414797; cv=none; b=sM2AoeARGfxekVHQKTFcKheoBUtkqPEfwG6X8EtBmO/VB6ZtlO5bXkSSKgI4wtgO/UrqeR78mHOcuLQ0HhTZsPQ3wwfqE+60jE5Lq+5Wi9/eQDbuj8Pl6P4WJBBxgH0RfBW2Q6OmieWZME3M7KvXScxDToGF7OpJ6pfoNcUP5Bo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756414825; c=relaxed/simple;
-	bh=gBRKKBRxQLJONbo8A9bQU21BYngnGKIYlkZ4FOA3n5w=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Content-Type; b=Ov3XwRtpdZXHZW7Dc1NECgfEeHRnMFHd/gwmKSzyHO7xj/vfix7gcZQBd0UZMZSrWJfwFKr3nUp9WMI9UPuuHP1kesgtKtWQi/8Q2Nda/3u/0oez+gcnTkEJG8VxfE8mv5gqrTtPmxML/cOzXM2AD732zdlPytQuro+2t9v8+ks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=c0EjRMTf; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-32769224506so1363631a91.2
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 14:00:21 -0700 (PDT)
+	s=arc-20240116; t=1756414797; c=relaxed/simple;
+	bh=vcH+lJXlXkzbWh1s+giYmvp9r3m+hUxJ894v+cf3nQo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=a5JNA7FNWVXu/kfPvebAyCGbKXN1kGNKCwDXZqK8oDFszL1Td/+opPPbEjOdvS6RrbeF1YZGIO5WVSIdQ1s1njxlYeNgo7m47FgRXJfDQP9Winn4zbTndk1Ymxgws/o9Hn7xNG+JOUTpCuoF9br7KR5BZv1Uh25nFoRkgjvPAig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dC1uDxHL; arc=none smtp.client-ip=209.85.208.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-336b63d2e56so1217471fa.2
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 13:59:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756414821; x=1757019621; darn=vger.kernel.org;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/GLsDojbRFdPdQ0xNQoTnJS+AjKqk9C94ywU0aQXeqE=;
-        b=c0EjRMTfvYgKvlVCXwKl8Rrc9xhfozkeKe3nfIEI6L3pxfdRp162EWVcOyUht/jvT3
-         XtxByT3Mb22h6nLKTC/AwVVyTih7nt58ujcBE3Vp6D62tiBT+2dX12fa/Qxe7X9Bpl8H
-         iBwszF7sYixbBWI/qttcaNetM+2LpO1n81dRAPmKrXFvIRFxpQ0X0O3HJsqaRdb6mlWr
-         sBwaYDek2nCXGePGg32MUVZn2VCjJSXEDUrk+CQjPMtfu8q4YhJIOa3BbAfToKbTtWgG
-         OoI7imxu93iqmQNistJ5j995KrBHV72/JpFdO4/zhwa3rVbtbsQbelgPA9zZ+JFyrHyr
-         o/3w==
+        d=linaro.org; s=google; t=1756414792; x=1757019592; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vcH+lJXlXkzbWh1s+giYmvp9r3m+hUxJ894v+cf3nQo=;
+        b=dC1uDxHLdzR89Uj56ebMGaoDeRvegTy02rmD4lDoUGNwIlNRsYa+MDnEwUwxYsuVya
+         Y8brW/f7t8jPxSO+kvkkj5EpDjPec/e6TYHDcu5+BEGKhiYpSHNcgh4PjIPQTjSrFuGv
+         29bmDkLl6eQ4isdMBsaJKvQxTXRA97n+Owzb0UaOKn2DK5J6NDKruHPhNyLdj28A6f1U
+         xa7AB1eEBovGXqonRimswFIIH/UBqn7V2U2Bz07sKbRA7ciRp74+aSbBdni3PZz/n9wh
+         ArMCqsNRws0dRWKWBV/F+8m8qKVhCtZunjvcaF8fk8oIzDZryq51BDa8XZkckv0/glo7
+         4tVw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756414821; x=1757019621;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/GLsDojbRFdPdQ0xNQoTnJS+AjKqk9C94ywU0aQXeqE=;
-        b=gkNAeVY/o2b+sA8SgvVAYvIQL9y79bFgc88+cVdipYQ6pSOw2bfyWBKVlyOfBgmuqD
-         hvtZCAd1kT4say7W39cAhBDcGj4FDZ0RIbZF3HlilNiwVVs6X8xpWi457S8e1jXK4id8
-         7jdwDqcb4PBzK+pIIYR8eeLZtn1lWRvvAlBs6rpQZfzzPSMfPZZb2+XCN6/EgeOUBRFb
-         u9svCz7O94Hvedkv0xLBUkms7xeA0dZkri4YJi3WIuNQY3SjT9OeUH+TOEes2y35PPY8
-         /6/YQ4zMAMDbHSe/adK43dbOuhX3uu0WFwnSOS8SWPAAobYYwE0R2YnYtbfTVyZHm3u6
-         IWfw==
-X-Forwarded-Encrypted: i=1; AJvYcCUMri98ZZ9ygMOS4SvYm8QQz59jayknpMw9eb7iU5f48vhcc5BicVnLvUPh77lsDRGtMMq66W32B1aTDg4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCqPJvTm60QugHOWRS74qkovPgWcKwVDCeNOL+yKtOzrJBctmO
-	Y32UR7TVM+V+r8+eBwHSQpCdeVm0WauQAz55LmOpF+Ay9h0nfVJ8ggLC4OhJpq2qw3s5F8dK0zU
-	DdR+5jQSUyA==
-X-Google-Smtp-Source: AGHT+IFYZDgwkuhYzL+A00AIcr4Semx/wk/dPpAoP3kVcymuC9BZJ384Ooo+Lt5e6c0+3gF/a56slyx4T8YS
-X-Received: from pjbx3.prod.google.com ([2002:a17:90a:3883:b0:327:e021:e61d])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:1fcc:b0:327:6823:bfe
- with SMTP id 98e67ed59e1d1-32768230e60mr10832612a91.8.1756414821258; Thu, 28
- Aug 2025 14:00:21 -0700 (PDT)
-Date: Thu, 28 Aug 2025 13:59:30 -0700
-In-Reply-To: <20250828205930.4007284-1-irogers@google.com>
+        d=1e100.net; s=20230601; t=1756414792; x=1757019592;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vcH+lJXlXkzbWh1s+giYmvp9r3m+hUxJ894v+cf3nQo=;
+        b=B4e3w1K4Z6HuU2awREKeJHDexbv08wIzyDMtv9KBvM4wzDY7pSj9qP223ubdU7Y+gm
+         FUxeOBHZ5uQMNDdlpYXMdNRokSxiOPShMMUr7cqJZp/EIb41JVVCd/T6lMhc4ttY/R6h
+         VmXI8kfM/3kMjb2I9II6t2AqGsJnrQKmPXymD3CJH04gb38gbex9Zy4vJI6PTbAIhGGj
+         QkFSudfxJCvoFGEk8JgNeS4kkzpWnpr5LDkzyzbF8KZmt41xaAD1XSbfRoftjdJdzAP+
+         HbuC2E+v1eS0Kh3C60yq+8GxUaJhHDJbtHeyZuLVLzV1zgZFZB8QULXSa3X18ORO3llb
+         mfiw==
+X-Forwarded-Encrypted: i=1; AJvYcCWlUrKhkd8hexKLd/ak0TOuSR44Hod37HAtzKfe49CgaVSaXRee19wdxIQfpUP7EiDylKNXb0MasIFE4A4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyYQriKvQy50wT8cBatQkWFk2teOzDMJf2xVya4E+dR/05ZVE/8
+	Id+1ehGzz7cjOmFd9tDUYUjilxikd9P8CrMkgun1kvu7f2sPJbHyYu+pisHMoxSy2t+lJ1Plxzn
+	VXJoj9Lhb/zP+MZ97pYkhBMFTAIITxdoraKIgla+rYw==
+X-Gm-Gg: ASbGnctwMFnDzCbCVH+81y8W0MqVBDnJcWxuqEMQU3qyYkM4Saj9QInwewvEnPWHg7Q
+	qTDDTZdsPYKyqS5axU8QGacRBvQBQBVYreEkEk6PefBQHXikbtwW40ch8AX/Gkf2a7Exz/I7+Y8
+	+2A/anC63SqbiRR/LOR3Ed3mW8jsLdoMyqEd8Xb8/Xt07PioIG3d1fMawgUEdh5rwXNUvaaXwsr
+	ezkuaY=
+X-Google-Smtp-Source: AGHT+IEvCK27Dx3T+NwB4QTV9UIlsAab63smCZ6D7uUks2NtQZowbM82iFbh3N6kvr8t1WPK8CdOU0xtB51L+4ds/dQ=
+X-Received: by 2002:a05:651c:3256:10b0:332:3fd0:15fb with SMTP id
+ 38308e7fff4ca-33650ba8612mr48592831fa.0.1756414792241; Thu, 28 Aug 2025
+ 13:59:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250828205930.4007284-1-irogers@google.com>
-X-Mailer: git-send-email 2.51.0.318.gd7df087d1a-goog
-Message-ID: <20250828205930.4007284-16-irogers@google.com>
-Subject: [PATCH v3 15/15] perf parse-events: Remove hard coded legacy hardware
- and cache parsing
-From: Ian Rogers <irogers@google.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, James Clark <james.clark@linaro.org>, 
-	Xu Yang <xu.yang_2@nxp.com>, Thomas Falcon <thomas.falcon@intel.com>, 
-	Andi Kleen <ak@linux.intel.com>, linux-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org, bpf@vger.kernel.org, 
-	Atish Patra <atishp@rivosinc.com>, Beeman Strong <beeman@rivosinc.com>, Leo Yan <leo.yan@arm.com>, 
-	Vince Weaver <vincent.weaver@maine.edu>
+MIME-Version: 1.0
+References: <20250828-dt-apple-t6020-v1-0-507ba4c4b98e@jannau.net> <20250828-dt-apple-t6020-v1-9-507ba4c4b98e@jannau.net>
+In-Reply-To: <20250828-dt-apple-t6020-v1-9-507ba4c4b98e@jannau.net>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Thu, 28 Aug 2025 22:59:41 +0200
+X-Gm-Features: Ac12FXyoYnYKNXDomZzl4EdS0dXvIhCV2tkZJGb1B6Y1kaQgUA-l_NpqH411N_c
+Message-ID: <CACRpkdbg8KYcDpqDKn9fqs+rL9hLK9mGCj0PTXPBGDW7A_AZbw@mail.gmail.com>
+Subject: Re: [PATCH 09/37] dt-bindings: pinctrl: apple,pinctrl: Add
+ apple,t6020-pinctrl compatible
+To: Janne Grunau <j@jannau.net>
+Cc: Sven Peter <sven@kernel.org>, Alyssa Rosenzweig <alyssa@rosenzweig.io>, Neal Gompa <neal@gompa.dev>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Hector Martin <marcan@marcan.st>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Viresh Kumar <viresh.kumar@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, 
+	Mark Kettenis <kettenis@openbsd.org>, Andi Shyti <andi.shyti@kernel.org>, 
+	Jassi Brar <jassisinghbrar@gmail.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Sasha Finkelstein <fnkl.kernel@gmail.com>, Marcel Holtmann <marcel@holtmann.org>, 
+	Luiz Augusto von Dentz <luiz.dentz@gmail.com>, Johannes Berg <johannes@sipsolutions.net>, 
+	van Spriel <arend@broadcom.com>, Lee Jones <lee@kernel.org>, 
+	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
+	Stephen Boyd <sboyd@kernel.org>, Wim Van Sebroeck <wim@linux-watchdog.org>, 
+	Guenter Roeck <linux@roeck-us.net>, Michael Turquette <mturquette@baylibre.com>, 
+	=?UTF-8?Q?Martin_Povi=C5=A1er?= <povik+lin@cutebit.org>, 
+	Vinod Koul <vkoul@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	Marc Zyngier <maz@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, Keith Busch <kbusch@kernel.org>, 
+	Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>, 
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, asahi@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, iommu@lists.linux.dev, 
+	linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linux-bluetooth@vger.kernel.org, 
+	linux-wireless@vger.kernel.org, linux-pwm@vger.kernel.org, 
+	linux-watchdog@vger.kernel.org, linux-clk@vger.kernel.org, 
+	dmaengine@vger.kernel.org, linux-sound@vger.kernel.org, 
+	linux-spi@vger.kernel.org, linux-nvme@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Now that legacy hardware and cache events are in json, having the
-lexer match the specific event is no longer necessary and generic PMU
-parsing can take place. Because of this remove the specific term
-parsing, event adding, and passing of alternate_hw_config which was
-now always PERF_COUNT_HW_MAX.
+On Thu, Aug 28, 2025 at 4:02=E2=80=AFPM Janne Grunau <j@jannau.net> wrote:
 
-This mirrors a similar change for software events in commit 6e9fa4131abb
-("perf parse-events: Remove non-json software events").
+> After discussion with the devicetree maintainers we agreed to not extend
+> lists with the generic compatible "apple,pinctrl" anymore [1]. Use
+> "apple,t8103-pinctrl" as fallback compatible as it is the SoC the driver
+> and bindings were written for.
+>
+> The M2 Pro/Max/Ultra SoCs use the same pinctrl hardware, so just add its
+> per-SoC compatible using the new base as fallback.
+>
+> [1]: https://lore.kernel.org/asahi/12ab93b7-1fc2-4ce0-926e-c8141cfe81bf@k=
+ernel.org/
+>
+> Signed-off-by: Janne Grunau <j@jannau.net>
 
-With no hard coded legacy hardware or cache events the wild card, case
-insensitivity, etc. is consistent for events. This does, however, mean
-events like cycles will wild card against all PMUs. A change does the
-same was originally posted and merged from:
-https://lore.kernel.org/r/20240416061533.921723-10-irogers@google.com
-and reverted by Linus in commit 4f1b067359ac ("Revert "perf
-parse-events: Prefer sysfs/JSON hardware events over legacy"") due to
-his dislike for the cycles behavior on ARM. Earlier patches in this
-series make perf record event opening failures non-fatal and hide the
-cycles event's failure to open on ARM in perf record, so it is
-expected the behavior will now be transparent in perf record. perf
-stat with a cycles event will wildcard open the event on all PMUs.
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
-The change to support legacy events with PMUs was done to clean up
-Intel's hybrid PMU implementation.  Having sysfs/json events with
-increased priority to legacy was requested by Mark Rutland
-<mark.rutland@arm.com> to fix Apple-M PMU issues wrt broken legacy
-events on that PMU. It was requested that RISC-V be able to add events
-to the perf tool json so the PMU driver didn't need to map legacy
-events to config encodings:
-https://lore.kernel.org/lkml/20240217005738.3744121-1-atishp@rivosinc.com/
-
-A previous series of patches decreasing legacy hardware event
-priorities was posted in:
-https://lore.kernel.org/lkml/20250416045117.876775-1-irogers@google.com/
-Namhyung Kim <namhyung@kernel.org> mentioned that hardware and
-software events can be implemented similarly:
-https://lore.kernel.org/lkml/aIJmJns2lopxf3EK@google.com/
-
-Signed-off-by: Ian Rogers <irogers@google.com>
----
- tools/perf/util/parse-events.c | 191 ++-------------------------------
- tools/perf/util/parse-events.h |   8 +-
- tools/perf/util/parse-events.l |  52 ---------
- tools/perf/util/parse-events.y | 114 +-------------------
- tools/perf/util/pmu.c          |   6 +-
- 5 files changed, 17 insertions(+), 354 deletions(-)
-
-diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
-index 72cc59cfc46d..ab5a3048fa9e 100644
---- a/tools/perf/util/parse-events.c
-+++ b/tools/perf/util/parse-events.c
-@@ -419,111 +419,7 @@ bool parse_events__filter_pmu(const struct parse_events_state *parse_state,
- static int parse_events_add_pmu(struct parse_events_state *parse_state,
- 				struct list_head *list, struct perf_pmu *pmu,
- 				const struct parse_events_terms *const_parsed_terms,
--				struct evsel *first_wildcard_match, u64 alternate_hw_config);
--
--int parse_events_add_cache(struct list_head *list, int *idx, const char *name,
--			   struct parse_events_state *parse_state,
--			   struct parse_events_terms *parsed_terms,
--			   void *loc_)
--{
--	YYLTYPE *loc = loc_;
--	struct perf_pmu *pmu = NULL;
--	bool found_supported = false;
--	const char *config_name = get_config_name(parsed_terms);
--	const char *metric_id = get_config_metric_id(parsed_terms);
--	struct perf_cpu_map *cpus = get_config_cpu(parsed_terms);
--	int ret = 0;
--	struct evsel *first_wildcard_match = NULL;
--
--	while ((pmu = perf_pmus__scan_for_event(pmu, name)) != NULL) {
--		LIST_HEAD(config_terms);
--		struct perf_event_attr attr;
--
--		if (parse_events__filter_pmu(parse_state, pmu))
--			continue;
--
--		if (perf_pmu__have_event(pmu, name)) {
--			/*
--			 * The PMU has the event so add as not a legacy cache
--			 * event.
--			 */
--			struct parse_events_terms temp_terms;
--			struct parse_events_term *term;
--			char *config = strdup(name);
--
--			if (!config)
--				goto out_err;
--
--			parse_events_terms__init(&temp_terms);
--			if (!parsed_terms)
--				parsed_terms = &temp_terms;
--
--			if (parse_events_term__num(&term,
--						    PARSE_EVENTS__TERM_TYPE_USER,
--						    config, /*num=*/1, /*novalue=*/true,
--						    loc, /*loc_val=*/NULL) < 0) {
--				zfree(&config);
--				goto out_err;
--			}
--			list_add(&term->list, &parsed_terms->terms);
--
--			ret = parse_events_add_pmu(parse_state, list, pmu,
--						   parsed_terms,
--						   first_wildcard_match,
--						   /*alternate_hw_config=*/PERF_COUNT_HW_MAX);
--			list_del_init(&term->list);
--			parse_events_term__delete(term);
--			parse_events_terms__exit(&temp_terms);
--			if (ret)
--				goto out_err;
--			found_supported = true;
--			if (first_wildcard_match == NULL)
--				first_wildcard_match =
--					container_of(list->prev, struct evsel, core.node);
--			continue;
--		}
--
--		if (!pmu->is_core) {
--			/* Legacy cache events are only supported by core PMUs. */
--			continue;
--		}
--
--		memset(&attr, 0, sizeof(attr));
--		attr.type = PERF_TYPE_HW_CACHE;
--
--		ret = parse_events__decode_legacy_cache(name, pmu->type, &attr.config);
--		if (ret)
--			return ret;
--
--		found_supported = true;
--
--		if (parsed_terms) {
--			if (config_attr(&attr, parsed_terms, parse_state->error,
--					config_term_common)) {
--				ret = -EINVAL;
--				goto out_err;
--			}
--			if (get_config_terms(parsed_terms, &config_terms)) {
--				ret = -ENOMEM;
--				goto out_err;
--			}
--		}
--
--		if (__add_event(list, idx, &attr, /*init_attr*/true, config_name ?: name,
--				metric_id, pmu, &config_terms, first_wildcard_match,
--				cpus, /*alternate_hw_config=*/PERF_COUNT_HW_MAX) == NULL)
--			ret = -ENOMEM;
--
--		if (first_wildcard_match == NULL)
--			first_wildcard_match = container_of(list->prev, struct evsel, core.node);
--		free_config_terms(&config_terms);
--		if (ret)
--			goto out_err;
--	}
--out_err:
--	perf_cpu_map__put(cpus);
--	return found_supported ? 0 : -EINVAL;
--}
-+				struct evsel *first_wildcard_match);
- 
- static void tracepoint_error(struct parse_events_error *e, int err,
- 			     const char *sys, const char *name, int column)
-@@ -815,8 +711,6 @@ const char *parse_events__term_type_str(enum parse_events__term_type term_type)
- 		[PARSE_EVENTS__TERM_TYPE_AUX_SAMPLE_SIZE]	= "aux-sample-size",
- 		[PARSE_EVENTS__TERM_TYPE_METRIC_ID]		= "metric-id",
- 		[PARSE_EVENTS__TERM_TYPE_RAW]                   = "raw",
--		[PARSE_EVENTS__TERM_TYPE_LEGACY_CACHE]          = "legacy-cache",
--		[PARSE_EVENTS__TERM_TYPE_HARDWARE]              = "hardware",
- 		[PARSE_EVENTS__TERM_TYPE_LEGACY_HARDWARE_CONFIG]	= "legacy-hardware-config",
- 		[PARSE_EVENTS__TERM_TYPE_LEGACY_CACHE_CONFIG]	= "legacy-cache-config",
- 		[PARSE_EVENTS__TERM_TYPE_CPU]			= "cpu",
-@@ -868,8 +762,6 @@ config_term_avail(enum parse_events__term_type term_type, struct parse_events_er
- 	case PARSE_EVENTS__TERM_TYPE_AUX_ACTION:
- 	case PARSE_EVENTS__TERM_TYPE_AUX_SAMPLE_SIZE:
- 	case PARSE_EVENTS__TERM_TYPE_RAW:
--	case PARSE_EVENTS__TERM_TYPE_LEGACY_CACHE:
--	case PARSE_EVENTS__TERM_TYPE_HARDWARE:
- 	case PARSE_EVENTS__TERM_TYPE_LEGACY_HARDWARE_CONFIG:
- 	case PARSE_EVENTS__TERM_TYPE_LEGACY_CACHE_CONFIG:
- 	default:
-@@ -1027,8 +919,6 @@ do {									   \
- 	}
- 	case PARSE_EVENTS__TERM_TYPE_DRV_CFG:
- 	case PARSE_EVENTS__TERM_TYPE_USER:
--	case PARSE_EVENTS__TERM_TYPE_LEGACY_CACHE:
--	case PARSE_EVENTS__TERM_TYPE_HARDWARE:
- 	case PARSE_EVENTS__TERM_TYPE_LEGACY_HARDWARE_CONFIG:
- 	case PARSE_EVENTS__TERM_TYPE_LEGACY_CACHE_CONFIG:
- 	default:
-@@ -1115,59 +1005,6 @@ static int config_term_pmu(struct perf_event_attr *attr,
- 		attr->type = PERF_TYPE_HW_CACHE;
- 		return 0;
- 	}
--	if (term->type_term == PARSE_EVENTS__TERM_TYPE_LEGACY_CACHE) {
--		struct perf_pmu *pmu = perf_pmus__find_by_type(attr->type);
--
--		if (!pmu) {
--			char *err_str;
--
--			if (asprintf(&err_str, "Failed to find PMU for type %d", attr->type) >= 0)
--				parse_events_error__handle(err, term->err_term,
--							   err_str, /*help=*/NULL);
--			return -EINVAL;
--		}
--		/*
--		 * Rewrite the PMU event to a legacy cache one unless the PMU
--		 * doesn't support legacy cache events or the event is present
--		 * within the PMU.
--		 */
--		if (perf_pmu__supports_legacy_cache(pmu) &&
--		    !perf_pmu__have_event(pmu, term->config)) {
--			attr->type = PERF_TYPE_HW_CACHE;
--			return parse_events__decode_legacy_cache(term->config, pmu->type,
--								 &attr->config);
--		} else {
--			term->type_term = PARSE_EVENTS__TERM_TYPE_USER;
--			term->no_value = true;
--		}
--	}
--	if (term->type_term == PARSE_EVENTS__TERM_TYPE_HARDWARE) {
--		struct perf_pmu *pmu = perf_pmus__find_by_type(attr->type);
--
--		if (!pmu) {
--			char *err_str;
--
--			if (asprintf(&err_str, "Failed to find PMU for type %d", attr->type) >= 0)
--				parse_events_error__handle(err, term->err_term,
--							   err_str, /*help=*/NULL);
--			return -EINVAL;
--		}
--		/*
--		 * If the PMU has a sysfs or json event prefer it over
--		 * legacy. ARM requires this.
--		 */
--		if (perf_pmu__have_event(pmu, term->config)) {
--			term->type_term = PARSE_EVENTS__TERM_TYPE_USER;
--			term->no_value = true;
--			term->alternate_hw_config = true;
--		} else {
--			attr->type = PERF_TYPE_HARDWARE;
--			attr->config = term->val.num;
--			if (perf_pmus__supports_extended_type())
--				attr->config |= (__u64)pmu->type << PERF_PMU_TYPE_SHIFT;
--		}
--		return 0;
--	}
- 	if (term->type_term == PARSE_EVENTS__TERM_TYPE_USER ||
- 	    term->type_term == PARSE_EVENTS__TERM_TYPE_DRV_CFG) {
- 		/*
-@@ -1212,8 +1049,6 @@ static int config_term_tracepoint(struct perf_event_attr *attr,
- 	case PARSE_EVENTS__TERM_TYPE_PERCORE:
- 	case PARSE_EVENTS__TERM_TYPE_METRIC_ID:
- 	case PARSE_EVENTS__TERM_TYPE_RAW:
--	case PARSE_EVENTS__TERM_TYPE_LEGACY_CACHE:
--	case PARSE_EVENTS__TERM_TYPE_HARDWARE:
- 	case PARSE_EVENTS__TERM_TYPE_CPU:
- 	default:
- 		if (err) {
-@@ -1349,8 +1184,6 @@ do {								\
- 		case PARSE_EVENTS__TERM_TYPE_NAME:
- 		case PARSE_EVENTS__TERM_TYPE_METRIC_ID:
- 		case PARSE_EVENTS__TERM_TYPE_RAW:
--		case PARSE_EVENTS__TERM_TYPE_LEGACY_CACHE:
--		case PARSE_EVENTS__TERM_TYPE_HARDWARE:
- 		case PARSE_EVENTS__TERM_TYPE_CPU:
- 		default:
- 			break;
-@@ -1406,8 +1239,6 @@ static int get_config_chgs(struct perf_pmu *pmu, struct parse_events_terms *head
- 		case PARSE_EVENTS__TERM_TYPE_AUX_SAMPLE_SIZE:
- 		case PARSE_EVENTS__TERM_TYPE_METRIC_ID:
- 		case PARSE_EVENTS__TERM_TYPE_RAW:
--		case PARSE_EVENTS__TERM_TYPE_LEGACY_CACHE:
--		case PARSE_EVENTS__TERM_TYPE_HARDWARE:
- 		case PARSE_EVENTS__TERM_TYPE_CPU:
- 		default:
- 			break;
-@@ -1533,8 +1364,9 @@ static bool config_term_percore(struct list_head *config_terms)
- static int parse_events_add_pmu(struct parse_events_state *parse_state,
- 				struct list_head *list, struct perf_pmu *pmu,
- 				const struct parse_events_terms *const_parsed_terms,
--				struct evsel *first_wildcard_match, u64 alternate_hw_config)
-+				struct evsel *first_wildcard_match)
- {
-+	u64 alternate_hw_config = PERF_COUNT_HW_MAX;
- 	struct perf_event_attr attr;
- 	struct perf_pmu_info info;
- 	struct evsel *evsel;
-@@ -1667,7 +1499,7 @@ static int parse_events_add_pmu(struct parse_events_state *parse_state,
- }
- 
- int parse_events_multi_pmu_add(struct parse_events_state *parse_state,
--			       const char *event_name, u64 hw_config,
-+			       const char *event_name,
- 			       const struct parse_events_terms *const_parsed_terms,
- 			       struct list_head **listp, void *loc_)
- {
-@@ -1719,7 +1551,7 @@ int parse_events_multi_pmu_add(struct parse_events_state *parse_state,
- 			continue;
- 
- 		if (!parse_events_add_pmu(parse_state, list, pmu,
--					  &parsed_terms, first_wildcard_match, hw_config)) {
-+					  &parsed_terms, first_wildcard_match)) {
- 			struct strbuf sb;
- 
- 			strbuf_init(&sb, /*hint=*/ 0);
-@@ -1734,7 +1566,7 @@ int parse_events_multi_pmu_add(struct parse_events_state *parse_state,
- 
- 	if (parse_state->fake_pmu) {
- 		if (!parse_events_add_pmu(parse_state, list, perf_pmus__fake_pmu(), &parsed_terms,
--					 first_wildcard_match, hw_config)) {
-+					  first_wildcard_match)) {
- 			struct strbuf sb;
- 
- 			strbuf_init(&sb, /*hint=*/ 0);
-@@ -1776,15 +1608,13 @@ int parse_events_multi_pmu_add_or_add_pmu(struct parse_events_state *parse_state
- 	/* Attempt to add to list assuming event_or_pmu is a PMU name. */
- 	pmu = perf_pmus__find(event_or_pmu);
- 	if (pmu && !parse_events_add_pmu(parse_state, *listp, pmu, const_parsed_terms,
--					 first_wildcard_match,
--					 /*alternate_hw_config=*/PERF_COUNT_HW_MAX))
-+					 first_wildcard_match))
- 		return 0;
- 
- 	if (parse_state->fake_pmu) {
- 		if (!parse_events_add_pmu(parse_state, *listp, perf_pmus__fake_pmu(),
- 					  const_parsed_terms,
--					  first_wildcard_match,
--					  /*alternate_hw_config=*/PERF_COUNT_HW_MAX))
-+					  first_wildcard_match))
- 			return 0;
- 	}
- 
-@@ -1797,8 +1627,7 @@ int parse_events_multi_pmu_add_or_add_pmu(struct parse_events_state *parse_state
- 
- 		if (!parse_events_add_pmu(parse_state, *listp, pmu,
- 					  const_parsed_terms,
--					  first_wildcard_match,
--					  /*alternate_hw_config=*/PERF_COUNT_HW_MAX)) {
-+					  first_wildcard_match)) {
- 			ok++;
- 			parse_state->wild_card_pmus = true;
- 		}
-@@ -1812,7 +1641,7 @@ int parse_events_multi_pmu_add_or_add_pmu(struct parse_events_state *parse_state
- 
- 	/* Failure to add, assume event_or_pmu is an event name. */
- 	zfree(listp);
--	if (!parse_events_multi_pmu_add(parse_state, event_or_pmu, PERF_COUNT_HW_MAX,
-+	if (!parse_events_multi_pmu_add(parse_state, event_or_pmu,
- 					const_parsed_terms, listp, loc))
- 		return 0;
- 
-diff --git a/tools/perf/util/parse-events.h b/tools/perf/util/parse-events.h
-index 32bde974c9f5..32fa76f697ff 100644
---- a/tools/perf/util/parse-events.h
-+++ b/tools/perf/util/parse-events.h
-@@ -79,8 +79,6 @@ enum parse_events__term_type {
- 	PARSE_EVENTS__TERM_TYPE_AUX_SAMPLE_SIZE,
- 	PARSE_EVENTS__TERM_TYPE_METRIC_ID,
- 	PARSE_EVENTS__TERM_TYPE_RAW,
--	PARSE_EVENTS__TERM_TYPE_LEGACY_CACHE,
--	PARSE_EVENTS__TERM_TYPE_HARDWARE,
- 	PARSE_EVENTS__TERM_TYPE_CPU,
- 	PARSE_EVENTS__TERM_TYPE_LEGACY_HARDWARE_CONFIG,
- 	PARSE_EVENTS__TERM_TYPE_LEGACY_CACHE_CONFIG,
-@@ -233,10 +231,6 @@ int parse_events_add_numeric(struct parse_events_state *parse_state,
- 			     u32 type, u64 config,
- 			     const struct parse_events_terms *head_config,
- 			     bool wildcard);
--int parse_events_add_cache(struct list_head *list, int *idx, const char *name,
--			   struct parse_events_state *parse_state,
--			   struct parse_events_terms *parsed_terms,
--			   void *loc);
- int parse_events__decode_legacy_cache(const char *name, int pmu_type, __u64 *config);
- int parse_events_add_breakpoint(struct parse_events_state *parse_state,
- 				struct list_head *list,
-@@ -248,7 +242,7 @@ struct evsel *parse_events__add_event(int idx, struct perf_event_attr *attr,
- 				      struct perf_pmu *pmu);
- 
- int parse_events_multi_pmu_add(struct parse_events_state *parse_state,
--			       const char *event_name, u64 hw_config,
-+			       const char *event_name,
- 			       const struct parse_events_terms *const_parsed_terms,
- 			       struct list_head **listp, void *loc);
- 
-diff --git a/tools/perf/util/parse-events.l b/tools/perf/util/parse-events.l
-index b5058b6b49d3..e390f30499b4 100644
---- a/tools/perf/util/parse-events.l
-+++ b/tools/perf/util/parse-events.l
-@@ -75,11 +75,6 @@ static int quoted_str(yyscan_t scanner, int token)
- 	return token;
- }
- 
--static int lc_str(yyscan_t scanner, const struct parse_events_state *state)
--{
--	return str(scanner, state->match_legacy_cache_terms ? PE_LEGACY_CACHE : PE_NAME);
--}
--
- /*
-  * This function is called when the parser gets two kind of input:
-  *
-@@ -117,14 +112,6 @@ do {								\
- 	yyless(0);						\
- } while (0)
- 
--static int sym(yyscan_t scanner, int config)
--{
--	YYSTYPE *yylval = parse_events_get_lval(scanner);
--
--	yylval->num = config;
--	return PE_VALUE_SYM_HW;
--}
--
- static int term(yyscan_t scanner, enum parse_events__term_type type)
- {
- 	YYSTYPE *yylval = parse_events_get_lval(scanner);
-@@ -133,16 +120,6 @@ static int term(yyscan_t scanner, enum parse_events__term_type type)
- 	return PE_TERM;
- }
- 
--static int hw_term(yyscan_t scanner, int config)
--{
--	YYSTYPE *yylval = parse_events_get_lval(scanner);
--	char *text = parse_events_get_text(scanner);
--
--	yylval->hardware_term.str = strdup(text);
--	yylval->hardware_term.num = PERF_TYPE_HARDWARE + config;
--	return PE_TERM_HW;
--}
--
- static void modifiers_error(struct parse_events_state *parse_state, yyscan_t scanner,
- 			    int pos, char mod_char, const char *mod_name)
- {
-@@ -256,8 +233,6 @@ drv_cfg_term	[a-zA-Z0-9_\.]+(=[a-zA-Z0-9_*?\.:]+)?
-  */
- modifier_event	[ukhpPGHSDIWebR]{1,16}
- modifier_bp	[rwx]{1,3}
--lc_type 	(L1-dcache|l1-d|l1d|L1-data|L1-icache|l1-i|l1i|L1-instruction|LLC|L2|dTLB|d-tlb|Data-TLB|iTLB|i-tlb|Instruction-TLB|branch|branches|bpu|btb|bpc|node)
--lc_op_result	(load|loads|read|store|stores|write|prefetch|prefetches|speculative-read|speculative-load|refs|Reference|ops|access|misses|miss)
- digit		[0-9]
- non_digit	[^0-9]
- 
-@@ -338,23 +313,10 @@ metric-id		{ return term(yyscanner, PARSE_EVENTS__TERM_TYPE_METRIC_ID); }
- cpu			{ return term(yyscanner, PARSE_EVENTS__TERM_TYPE_CPU); }
- legacy-hardware-config 	{ return term(yyscanner, PARSE_EVENTS__TERM_TYPE_LEGACY_HARDWARE_CONFIG); }
- legacy-cache-config	{ return term(yyscanner, PARSE_EVENTS__TERM_TYPE_LEGACY_CACHE_CONFIG); }
--cpu-cycles|cycles				{ return hw_term(yyscanner, PERF_COUNT_HW_CPU_CYCLES); }
--stalled-cycles-frontend|idle-cycles-frontend	{ return hw_term(yyscanner, PERF_COUNT_HW_STALLED_CYCLES_FRONTEND); }
--stalled-cycles-backend|idle-cycles-backend	{ return hw_term(yyscanner, PERF_COUNT_HW_STALLED_CYCLES_BACKEND); }
--instructions					{ return hw_term(yyscanner, PERF_COUNT_HW_INSTRUCTIONS); }
--cache-references				{ return hw_term(yyscanner, PERF_COUNT_HW_CACHE_REFERENCES); }
--cache-misses					{ return hw_term(yyscanner, PERF_COUNT_HW_CACHE_MISSES); }
--branch-instructions|branches			{ return hw_term(yyscanner, PERF_COUNT_HW_BRANCH_INSTRUCTIONS); }
--branch-misses					{ return hw_term(yyscanner, PERF_COUNT_HW_BRANCH_MISSES); }
--bus-cycles					{ return hw_term(yyscanner, PERF_COUNT_HW_BUS_CYCLES); }
--ref-cycles					{ return hw_term(yyscanner, PERF_COUNT_HW_REF_CPU_CYCLES); }
- r{num_raw_hex}		{ return str(yyscanner, PE_RAW); }
- r0x{num_raw_hex}	{ return str(yyscanner, PE_RAW); }
- ,			{ return ','; }
- "/"			{ BEGIN(INITIAL); return '/'; }
--{lc_type}			{ return lc_str(yyscanner, _parse_state); }
--{lc_type}-{lc_op_result}	{ return lc_str(yyscanner, _parse_state); }
--{lc_type}-{lc_op_result}-{lc_op_result}	{ return lc_str(yyscanner, _parse_state); }
- {num_dec}		{ return value(_parse_state, yyscanner, 10); }
- {num_hex}		{ return value(_parse_state, yyscanner, 16); }
- {term_name}		{ return str(yyscanner, PE_NAME); }
-@@ -393,20 +355,6 @@ r0x{num_raw_hex}	{ return str(yyscanner, PE_RAW); }
- <<EOF>>			{ BEGIN(INITIAL); }
- }
- 
--cpu-cycles|cycles				{ return sym(yyscanner, PERF_COUNT_HW_CPU_CYCLES); }
--stalled-cycles-frontend|idle-cycles-frontend	{ return sym(yyscanner, PERF_COUNT_HW_STALLED_CYCLES_FRONTEND); }
--stalled-cycles-backend|idle-cycles-backend	{ return sym(yyscanner, PERF_COUNT_HW_STALLED_CYCLES_BACKEND); }
--instructions					{ return sym(yyscanner, PERF_COUNT_HW_INSTRUCTIONS); }
--cache-references				{ return sym(yyscanner, PERF_COUNT_HW_CACHE_REFERENCES); }
--cache-misses					{ return sym(yyscanner, PERF_COUNT_HW_CACHE_MISSES); }
--branch-instructions|branches			{ return sym(yyscanner, PERF_COUNT_HW_BRANCH_INSTRUCTIONS); }
--branch-misses					{ return sym(yyscanner, PERF_COUNT_HW_BRANCH_MISSES); }
--bus-cycles					{ return sym(yyscanner, PERF_COUNT_HW_BUS_CYCLES); }
--ref-cycles					{ return sym(yyscanner, PERF_COUNT_HW_REF_CPU_CYCLES); }
--
--{lc_type}			{ return str(yyscanner, PE_LEGACY_CACHE); }
--{lc_type}-{lc_op_result}	{ return str(yyscanner, PE_LEGACY_CACHE); }
--{lc_type}-{lc_op_result}-{lc_op_result}	{ return str(yyscanner, PE_LEGACY_CACHE); }
- mem:			{ BEGIN(mem); return PE_PREFIX_MEM; }
- r{num_raw_hex}		{ return str(yyscanner, PE_RAW); }
- {num_dec}		{ return value(_parse_state, yyscanner, 10); }
-diff --git a/tools/perf/util/parse-events.y b/tools/perf/util/parse-events.y
-index ced26c549c33..c194de5ec1ec 100644
---- a/tools/perf/util/parse-events.y
-+++ b/tools/perf/util/parse-events.y
-@@ -55,22 +55,18 @@ static void free_list_evsel(struct list_head* list_evsel)
- %}
- 
- %token PE_START_EVENTS PE_START_TERMS
--%token PE_VALUE PE_VALUE_SYM_HW PE_TERM
-+%token PE_VALUE PE_TERM
- %token PE_EVENT_NAME
- %token PE_RAW PE_NAME
- %token PE_MODIFIER_EVENT PE_MODIFIER_BP PE_BP_COLON PE_BP_SLASH
--%token PE_LEGACY_CACHE
- %token PE_PREFIX_MEM
- %token PE_ERROR
- %token PE_DRV_CFG_TERM
--%token PE_TERM_HW
- %type <num> PE_VALUE
--%type <num> PE_VALUE_SYM_HW
- %type <mod> PE_MODIFIER_EVENT
- %type <term_type> PE_TERM
- %type <str> PE_RAW
- %type <str> PE_NAME
--%type <str> PE_LEGACY_CACHE
- %type <str> PE_MODIFIER_BP
- %type <str> PE_EVENT_NAME
- %type <str> PE_DRV_CFG_TERM
-@@ -83,8 +79,6 @@ static void free_list_evsel(struct list_head* list_evsel)
- %type <list_terms> opt_pmu_config
- %destructor { parse_events_terms__delete ($$); } <list_terms>
- %type <list_evsel> event_pmu
--%type <list_evsel> event_legacy_symbol
--%type <list_evsel> event_legacy_cache
- %type <list_evsel> event_legacy_mem
- %type <list_evsel> event_legacy_tracepoint
- %type <list_evsel> event_legacy_numeric
-@@ -100,8 +94,6 @@ static void free_list_evsel(struct list_head* list_evsel)
- %destructor { free_list_evsel ($$); } <list_evsel>
- %type <tracepoint_name> tracepoint_name
- %destructor { free ($$.sys); free ($$.event); } <tracepoint_name>
--%type <hardware_term> PE_TERM_HW
--%destructor { free ($$.str); } <hardware_term>
- 
- %union
- {
-@@ -116,10 +108,6 @@ static void free_list_evsel(struct list_head* list_evsel)
- 		char *sys;
- 		char *event;
- 	} tracepoint_name;
--	struct hardware_term {
--		char *str;
--		u64 num;
--	} hardware_term;
- }
- %%
- 
-@@ -262,8 +250,6 @@ PE_EVENT_NAME event_def
- event_def
- 
- event_def: event_pmu |
--	   event_legacy_symbol |
--	   event_legacy_cache sep_dc |
- 	   event_legacy_mem sep_dc |
- 	   event_legacy_tracepoint sep_dc |
- 	   event_legacy_numeric sep_dc |
-@@ -288,7 +274,7 @@ PE_NAME sep_dc
- 	struct list_head *list;
- 	int err;
- 
--	err = parse_events_multi_pmu_add(_parse_state, $1, PERF_COUNT_HW_MAX, NULL, &list, &@1);
-+	err = parse_events_multi_pmu_add(_parse_state, $1, /*const_parsed_terms*/NULL, &list, &@1);
- 	if (err < 0) {
- 		struct parse_events_state *parse_state = _parse_state;
- 		struct parse_events_error *error = parse_state->error;
-@@ -304,66 +290,6 @@ PE_NAME sep_dc
- 	$$ = list;
- }
- 
--event_legacy_symbol:
--PE_VALUE_SYM_HW '/' event_config '/'
--{
--	struct list_head *list;
--	int err;
--
--	list = alloc_list();
--	if (!list)
--		YYNOMEM;
--	err = parse_events_add_numeric(_parse_state, list,
--				       PERF_TYPE_HARDWARE, $1,
--				       $3,
--				       /*wildcard=*/true);
--	parse_events_terms__delete($3);
--	if (err) {
--		free_list_evsel(list);
--		PE_ABORT(err);
--	}
--	$$ = list;
--}
--|
--PE_VALUE_SYM_HW sep_slash_slash_dc
--{
--	struct list_head *list;
--	int err;
--
--	list = alloc_list();
--	if (!list)
--		YYNOMEM;
--	err = parse_events_add_numeric(_parse_state, list,
--				       PERF_TYPE_HARDWARE, $1,
--				       /*head_config=*/NULL,
--				       /*wildcard=*/true);
--	if (err)
--		PE_ABORT(err);
--	$$ = list;
--}
--
--event_legacy_cache:
--PE_LEGACY_CACHE opt_event_config
--{
--	struct parse_events_state *parse_state = _parse_state;
--	struct list_head *list;
--	int err;
--
--	list = alloc_list();
--	if (!list)
--		YYNOMEM;
--
--	err = parse_events_add_cache(list, &parse_state->idx, $1, parse_state, $2, &@1);
--
--	parse_events_terms__delete($2);
--	free($1);
--	if (err) {
--		free_list_evsel(list);
--		PE_ABORT(err);
--	}
--	$$ = list;
--}
--
- event_legacy_mem:
- PE_PREFIX_MEM PE_VALUE PE_BP_SLASH PE_VALUE PE_BP_COLON PE_MODIFIER_BP opt_event_config
- {
-@@ -582,12 +508,7 @@ event_term
- 	$$ = head;
- }
- 
--name_or_raw: PE_RAW | PE_NAME | PE_LEGACY_CACHE
--|
--PE_TERM_HW
--{
--	$$ = $1.str;
--}
-+name_or_raw: PE_RAW | PE_NAME
- 
- event_term:
- PE_RAW
-@@ -629,19 +550,6 @@ name_or_raw '=' PE_VALUE
- 	$$ = term;
- }
- |
--PE_LEGACY_CACHE
--{
--	struct parse_events_term *term;
--	int err = parse_events_term__num(&term, PARSE_EVENTS__TERM_TYPE_LEGACY_CACHE,
--					 $1, /*num=*/1, /*novalue=*/true, &@1, /*loc_val=*/NULL);
--
--	if (err) {
--		free($1);
--		PE_ABORT(err);
--	}
--	$$ = term;
--}
--|
- PE_NAME
- {
- 	struct parse_events_term *term;
-@@ -655,20 +563,6 @@ PE_NAME
- 	$$ = term;
- }
- |
--PE_TERM_HW
--{
--	struct parse_events_term *term;
--	int err = parse_events_term__num(&term, PARSE_EVENTS__TERM_TYPE_HARDWARE,
--					 $1.str, $1.num & 255, /*novalue=*/false,
--					 &@1, /*loc_val=*/NULL);
--
--	if (err) {
--		free($1.str);
--		PE_ABORT(err);
--	}
--	$$ = term;
--}
--|
- PE_TERM '=' name_or_raw
- {
- 	struct parse_events_term *term;
-@@ -737,8 +631,6 @@ PE_DRV_CFG_TERM
- 
- sep_dc: ':' |
- 
--sep_slash_slash_dc: '/' '/' | ':' |
--
- %%
- 
- void parse_events_error(YYLTYPE *loc, void *_parse_state,
-diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c
-index b9e489ce696e..6c398303f325 100644
---- a/tools/perf/util/pmu.c
-+++ b/tools/perf/util/pmu.c
-@@ -2029,10 +2029,10 @@ int perf_pmu__for_each_format(struct perf_pmu *pmu, void *state, pmu_format_call
- 
- 	/*
- 	 * max-events and driver-config are missing above as are the internal
--	 * types user, metric-id, raw, legacy cache and hardware. Assert against
--	 * the enum parse_events__term_type so they are kept in sync.
-+	 * types user, metric-id, and raw. Assert against the enum
-+	 * parse_events__term_type so they are kept in sync.
- 	 */
--	_Static_assert(ARRAY_SIZE(terms) == __PARSE_EVENTS__TERM_TYPE_NR - 6,
-+	_Static_assert(ARRAY_SIZE(terms) == __PARSE_EVENTS__TERM_TYPE_NR - 4,
- 		       "perf_pmu__for_each_format()'s terms must be kept in sync with enum parse_events__term_type");
- 	list_for_each_entry(format, &pmu->format, list) {
- 		perf_pmu_format__load(pmu, format);
--- 
-2.51.0.318.gd7df087d1a-goog
-
+Yours,
+Linus Walleij
 
