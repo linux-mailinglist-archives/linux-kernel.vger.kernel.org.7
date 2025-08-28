@@ -1,148 +1,143 @@
-Return-Path: <linux-kernel+bounces-789754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58DCEB39A00
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 12:33:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE44DB39A01
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 12:33:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E57BD1B252CA
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 10:32:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7FCA1C235CD
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 10:32:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 584F530C355;
-	Thu, 28 Aug 2025 10:30:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9457A30C61E;
+	Thu, 28 Aug 2025 10:31:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Cdngxen0"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="j+ikrmBE"
+Received: from out30-98.freemail.mail.aliyun.com (out30-98.freemail.mail.aliyun.com [115.124.30.98])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBEC030BB9B
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 10:30:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DFB030C616
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 10:30:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756377049; cv=none; b=E0G7KKXJVhyiJ9VrCeawJbDIQq249jfckeWpi/HFjjIvhy6RS3fIZE5pzlAhDVg/Lj0ZEkCgn5lIN2xHcYF0cvOAMA+uaDQcuh5qdTw8OTq5vJwoO0SKTeh/gw4pZBedAAMXSyG/ill8+sSfHeTAy7Tg5mf40EfbhfqQnKQDBrI=
+	t=1756377064; cv=none; b=gLqy5W4fC9W8uuZbTbOxtl0PP+VjMcGQ0ghZKXbURfRE/5Z+A2xJ7rkJWnfeDVCZE45Q3p4cdtukBgCb9WOV55K02QflA8fcOtH/GoC/m7GnM9f6HxGtXZmFP9l51s++tWiYJQUP+SQf/3nlJ5Uq+F54Zwxvl35W439SOghMC9E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756377049; c=relaxed/simple;
-	bh=nFrvEIERFAvwyT9kdcHXUPvc32k5PlGxOwgN8YIcKAw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DdtIG2hI5vfjdq/8M6uTY0Ktcm3aFpiUJpTze4+b4fn64PpzZCbMDh9lkOyedHAhvWos25ddYxlpmR+QhupZz4hLO7IZ94Z8hi+gnjq/u0ZS2t5yhKn+Vqk1uYTUa+g35qMSphTVD2xL4ZVkfZ9eplmMHAqSZQnuW/UbVci65y0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Cdngxen0; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-55f439b393eso38089e87.0
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 03:30:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756377046; x=1756981846; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=t4Kw4U85mgfg3dN5KJcd7BuidBkgxZ4ucMLd7EmPUzg=;
-        b=Cdngxen0DlNBpeTbqnj71ypJwaCLfj2Ugw35eFyzET6Zr2qCpNbrattqEPjdmyAkIT
-         fEhWl61HCluyLeWmDgjDSd12n35iVuUGPPut8MnNVfZkZdvBhn6hNPKdAE6elisdnMFH
-         jRK8mosYqPsdNRPtOun07TINfWQrQZCKS3Iq73Wq5yLn2YFgYG55zLjZYNUfbMUGR1/O
-         Vik8BagHntQvvl41m1aEchBKOqztCx0iVTH8gfAKrX68wH0Ju2pfFWkZN0IrfJpiFx8T
-         KbCcYcoApWfBQfa47GIZ+QKLnS1jMkmvqesWg43j1CW+7PfoVy2QKVeuBvZn5b7BOfS1
-         n3Ag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756377046; x=1756981846;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=t4Kw4U85mgfg3dN5KJcd7BuidBkgxZ4ucMLd7EmPUzg=;
-        b=C6uKessZS7hzvpbjJVTxatQtF9Svpnv8xMZiWCge6RpIZ8m4sbsPp2xXKP4gw3HYM5
-         RqcxgL8A73GdNmrLNjr+YAAQjRSLCnxNAnaR75bBFX93tyKbS8fY9MG7qbWVRBvxjbAt
-         GMO1+fzeRY25Y/Rj6dkNaZEtAGXqcXQQYDGAuo1VZP6gq7XX80PxSLjEiuNwQDA31oSE
-         z1YWy+vttr2ocw3VROqgCyvLquQb/atK99S/74AqSIbLQaDD8A+hnok2q8g99xVUKf00
-         x79WnfNBoLSOi4W1chnPqBCrGQP38IoW6KTDASnN8PGWbncGQqqgVBSppNkO+xCOoKGd
-         0RNw==
-X-Forwarded-Encrypted: i=1; AJvYcCWPjYo6VqStKzB2+SCkcAnM0r2FflSJCKOyhW6iHbbc0aZ5tJuD0lU4UBhuIGJWJzw5l/I9D8pYn1DDEXk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+1DcO6lgpCgge82PN4Qa9MZFqJEDv4LqQpdTMHf2o9CmdFCjM
-	ToC2Fnn5M502TzBirtcK8BRYn2JbLfsRK5u1j9QmknSnSLRYvzngawuNFrvz7l5mod0=
-X-Gm-Gg: ASbGncswLmV7BUYNkcIeKXNTMu46LzXF505rOjCECJeVidQ0IizSUb5p/smZpJOcT1u
-	KD8Jvhvm1CdZK5iC79WC+KeYza3xG7x15ORam7drWPTM6RjhyzASv8VYF8fb2G3IZSW1ioYCmhs
-	OXtU5C0uphdzQxSF8UjmMxd61iN7yIu7fWen7UqqvSElBbqfywGEVuCP+Uxq9eKe7ju57R+PTBN
-	oF8ObcW960daxTnTqJZXXJSGDuruGuyrk7X14p0dkceU6swO2DS91jtsOQDnJDULAj6UNdqWw45
-	nTOGsKJTfkCWpfPTPVjXxkeo/l5P0m1PhXjXUVRgVmZbq7y6MAljnmgFUpIFnr6I/rxFrcTz22W
-	6X/6ccMBWsfciHl1DtfmsQYkiR//45jH9ZLDOoHaxlTn+pGxsgOQCPMmJjdTwVmsunDtJXHw44n
-	jwUUI=
-X-Google-Smtp-Source: AGHT+IEtZ/FN1eZE/NpbPi7cNF8sNnh7uAwwZYEG2CH9o5wOOOAXUfYTY775jJvav0K0prTgFk9doA==
-X-Received: by 2002:a05:6512:108d:b0:55f:63c8:7e32 with SMTP id 2adb3069b0e04-55f63c887camr104573e87.5.1756377045890;
-        Thu, 28 Aug 2025 03:30:45 -0700 (PDT)
-Received: from localhost (c-85-229-7-191.bbcust.telenor.se. [85.229.7.191])
-        by smtp.gmail.com with UTF8SMTPSA id 2adb3069b0e04-55f35c998b7sm3215305e87.107.2025.08.28.03.30.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Aug 2025 03:30:45 -0700 (PDT)
-From: Anders Roxell <anders.roxell@linaro.org>
-To: shuah@kernel.org,
-	brauner@kernel.org
-Cc: linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	dan.carpenter@linaro.org,
-	arnd@arndb.de,
-	benjamin.copeland@linaro.org,
-	Anders Roxell <anders.roxell@linaro.org>
-Subject: [PATCH] selftests/filesystems: Skip file_stressor test on NFS root
-Date: Thu, 28 Aug 2025 12:30:42 +0200
-Message-ID: <20250828103042.1412850-1-anders.roxell@linaro.org>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1756377064; c=relaxed/simple;
+	bh=5Cm4Q5y6uqLhfWD3Jz701KdZsCnWtf0jsdufxtM3Nm8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HaXFNLTtnOkorTyh93BOAHqh1OX6uWLA4MWOQQh7zfDBPyqLwSwTDqLLiVUXnex85+Zw5lj1qtTv8MvcWUdhJUHJYLGSE6UrTEPcwEO+V2YoRoDBF/2Cu6Uxr10yPdXsp49R8ILuOGCZAcbhqH0cIxRVfq5Lmcq0EJ1swOM5bv4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=j+ikrmBE; arc=none smtp.client-ip=115.124.30.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1756377057; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=h3HUDLwwcHzYbAtlolpUh3esRybaOlr+CrGOLxJ95c8=;
+	b=j+ikrmBEP8ZYhE+03wVw4upUAKWj1MJS1TvW+j3M7q2cishSwsbp0LV5QRKPC1yto7Q4ZBUuDAouICEztyOc1gIhS2kL2QmoFtnzpNerBIXCTyBux02zhzi5birIJXaUAhCgghRUfUnVghLQPZz38OBqeZ76QIzOB7UUHB0Ab0Q=
+Received: from 30.74.128.191(mailfrom:tongweilin@linux.alibaba.com fp:SMTPD_---0Wmmy9ac_1756377056 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Thu, 28 Aug 2025 18:30:57 +0800
+Message-ID: <9a02a229-96da-45cc-a0fa-ae5344faa540@linux.alibaba.com>
+Date: Thu, 28 Aug 2025 18:30:56 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC] mm: Use pr_warn_once() for min_free_kbytes warning
+To: Michal Hocko <mhocko@suse.com>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org, vbabka@suse.cz,
+ surenb@google.com, jackmanb@google.com, hannes@cmpxchg.org, ziy@nvidia.com,
+ linux-kernel@vger.kernel.org, baolin.wang@linux.alibaba.com
+References: <20250828030602.204332-1-tongweilin@linux.alibaba.com>
+ <aK_7GKJ4BWjye4tZ@tiehlicka>
+ <35e0a580-ae78-4485-b285-7f71f91e046d@linux.alibaba.com>
+ <aLAj-itGT9DD3SU3@tiehlicka>
+ <9639adfe-13ba-4c27-8ba6-8bf3e2190450@linux.alibaba.com>
+ <aLAq5TaqdR7GQB6J@tiehlicka>
+Content-Language: en-US
+From: Weilin Tong <tongweilin@linux.alibaba.com>
+In-Reply-To: <aLAq5TaqdR7GQB6J@tiehlicka>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-The file_stressor test creates directories in the root filesystem and
-performs mount namespace operations that can fail on NFS root filesystems
-due to network filesystem restrictions and permission limitations.
 
-Add NFS root filesystem detection using statfs() to check for
-NFS_SUPER_MAGIC and skip the test gracefully when running on NFS root,
-providing a clear message about why the test was skipped.
+在 2025/8/28 18:09, Michal Hocko 写道:
+> On Thu 28-08-25 17:48:54, Weilin Tong wrote:
+>> 在 2025/8/28 17:40, Michal Hocko 写道:
+>>> On Thu 28-08-25 17:23:40, Weilin Tong wrote:
+>>>> 在 2025/8/28 14:45, Michal Hocko 写道:
+>>>>
+>>>>> On Thu 28-08-25 11:06:02, Weilin Tong wrote:
+>>>>>> When min_free_kbytes is user-configured, increasing system memory via memory
+>>>>>> hotplug may trigger multiple recalculations of min_free_kbytes. This results
+>>>>>> in excessive warning messages flooding the kernel log if several memory blocks
+>>>>>> are added in a short period.
+>>>>>>
+>>>>>> Sample dmesg output before optimization:
+>>>>>> ...
+>>>>>> [ 1303.897214] min_free_kbytes is not updated to 126529 because user defined value 1048576 is preferred
+>>>>>> [ 1303.960498] min_free_kbytes is not updated to 126529 because user defined value 1048576 is preferred
+>>>>>> [ 1303.970116] min_free_kbytes is not updated to 126529 because user defined value 1048576 is preferred
+>>>>>> [ 1303.979709] min_free_kbytes is not updated to 126529 because user defined value 1048576 is preferred
+>>>>>> [ 1303.989254] min_free_kbytes is not updated to 126529 because user defined value 1048576 is preferred
+>>>>>> [ 1303.999122] min_free_kbytes is not updated to 126529 because user defined value 1048576 is preferred
+>>>>>> [ 1304.008644] min_free_kbytes is not updated to 126529 because user defined value 1048576 is preferred
+>>>>>> [ 1304.018537] min_free_kbytes is not updated to 126529 because user defined value 1048576 is preferred
+>>>>>> [ 1304.028054] min_free_kbytes is not updated to 126529 because user defined value 1048576 is preferred
+>>>>>> [ 1304.037615] min_free_kbytes is not updated to 126529 because user defined value 1048576 is preferred
+>>>>>> ...
+>>>>>>
+>>>>>> Replace pr_warn() with pr_warn_once() to ensure only one warning is printed,
+>>>>>> preventing large volumes of repeated log entries and improving log readability.
+>>>>> pr_warn_once seems too aggressive as we could miss useful events. On the
+>>>>> other hand I agree that repeating the same message for each memory block
+>>>>> onlining is not really helpful. Would it make sense to only pr_warn when
+>>>>> new_min_free_kbytes differs from the previous one we have warned for?
+>>>> Thanks for your feedback!
+>>>>
+>>>> The dmesg output above comes from hotplugging a large amount of memory into
+>>>> ZONE_MOVABLE, where new_min_free_kbytes does not actually change, resulting
+>>>> in repeated warnings with identical messages.
+>>> Yes, this is clear from the changelog
+>>>
+>>>> However, if memory is hotplugged into ZONE_NORMAL (such as pmem-type
+>>>> memory), new_min_free_kbytes changes on each operation, so we still get a
+>>>> large number of warnings—even though the value is different each time.
+>>> We can check whether the value has changed considerably.
+>>>
+>>>> If the concern is missing useful warnings, pr_warn_ratelimited() would be an
+>>>> acceptable alternative, as it can reduce log spam without completely
+>>>> suppressing potentially important messages. However I still think that
+>>>> printing the warning once is sufficient to alert the user about the
+>>>> overridden configuration, especially since this is not a particularly
+>>>> critical warning.
+>>> The thing is that kernel log buffer can easily overflow and you can lose
+>>> those messages over time, especially for system with a large uptime -
+>>> which is far from uncommon.
+>>>
+>>> I am not entirely enthusiastic about rate limiting because that is time
+>>> rather than even driven. Anyway, if you can make ratelimiting work for
+>>> your usecase, then no objection from me but I would rather make the
+>>> reporting more useful than hack around it.
+>> I agree with your suggestion.
+>>
+>> With respect to your suggestion that “we can check whether the value has
+>> changed considerably” I would like to seek your advice on how to define what
+>> constitutes a significant change in this context. Do you have any
+>> recommended criteria or thresholds for determining when a difference in
+>> min_free_kbytes should trigger a warning?
+> No really. Certainly increasing min_free_kbytes by 1% would be barely
+> noticeable but 10% might show some difference. This will likely need to
+> be tuned on real life usecases so start with something and we can tune
+> that based on future usecases.
+>
+Understood, thank you for your suggestion.
 
-This prevents spurious test failures in CI environments that use NFS
-root while preserving the test's ability to catch SLAB_TYPESAFE_BY_RCU
-related bugs on local filesystems where it can run properly.
-
-Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
----
- tools/testing/selftests/filesystems/file_stressor.c | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/tools/testing/selftests/filesystems/file_stressor.c b/tools/testing/selftests/filesystems/file_stressor.c
-index 01dd89f8e52f..b9dfe0b6b125 100644
---- a/tools/testing/selftests/filesystems/file_stressor.c
-+++ b/tools/testing/selftests/filesystems/file_stressor.c
-@@ -10,12 +10,14 @@
- #include <string.h>
- #include <sys/stat.h>
- #include <sys/mount.h>
-+#include <sys/vfs.h>
- #include <unistd.h>
- 
- #include "../kselftest_harness.h"
- 
- #include <linux/types.h>
- #include <linux/mount.h>
-+#include <linux/magic.h>
- #include <sys/syscall.h>
- 
- static inline int sys_fsopen(const char *fsname, unsigned int flags)
-@@ -58,8 +60,13 @@ FIXTURE(file_stressor) {
- 
- FIXTURE_SETUP(file_stressor)
- {
-+	struct statfs sfs;
- 	int fd_context;
- 
-+	/* Skip test if root filesystem is NFS */
-+	if (statfs("/", &sfs) == 0 && sfs.f_type == NFS_SUPER_MAGIC)
-+		SKIP(return, "Test requires local root filesystem, NFS root detected");
-+
- 	ASSERT_EQ(unshare(CLONE_NEWNS), 0);
- 	ASSERT_EQ(mount(NULL, "/", NULL, MS_SLAVE | MS_REC, NULL), 0);
- 	ASSERT_EQ(mkdir("/slab_typesafe_by_rcu", 0755), 0);
--- 
-2.50.1
+I'm also looking forward to additional discussion and input from the 
+community.
 
 
