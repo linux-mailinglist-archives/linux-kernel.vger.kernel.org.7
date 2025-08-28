@@ -1,88 +1,97 @@
-Return-Path: <linux-kernel+bounces-790694-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790695-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1482B3ABD2
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 22:40:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8C9DB3ABD5
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 22:41:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AEFE2567E78
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 20:40:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3A851898CC2
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 20:41:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 752D3288515;
-	Thu, 28 Aug 2025 20:40:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCBA9288505;
+	Thu, 28 Aug 2025 20:41:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="oASrOklJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="o2ZiUAbI"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFD1C27B330;
-	Thu, 28 Aug 2025 20:40:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DDFF278771;
+	Thu, 28 Aug 2025 20:41:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756413639; cv=none; b=GQlUxA0LyKK1EOgL+l0odWvCX50zaxL254gDEOLXW1a+i01q5K6Ggbofn0VuBQZVgv1Fm5lsD9k8DF8QcgS1s1TZJuehvwCKMZCFLVcyEgkxwyDw153uMekN7EAP7ipee+NBF3c7JnRkYfRzuzd+DEtQ2PxpKd4I0UnZFEpFf04=
+	t=1756413681; cv=none; b=SMLy7mHQ8Ucz3FNOjzmvG2XQI900Fw9eAsYZATVRwfPm7ivMuAeSvL+I/WFlbX77IIpvyN1hpLTfKdVTTB94RzEVeW6l27qG5XSOmDfDc6a7bmsHrHDcJXPnFVaOwgK1hw75rf24mBFyv9Ct3lbMilytt4KgsafZbbTyLPFD9/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756413639; c=relaxed/simple;
-	bh=kSd9yQ5EINKYpwqi6yUYFPe1ps+5gMFanto3kxgPNGc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LMnTj9/bBScEmTdGXewe5WC4ZFUCXKJVK28lmJJr1LLs/YVxQH6Zw96YoHppLfNeuzeBCgQkATEcpLnI+YvIg36eITpb8kXVJLbvwEcTbZUIFtBAm4iwJINFSpY4loSb0m5YuRZBbMj/YPPRlNDlgGQspdfCS6mWVv7oREzIy78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=oASrOklJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26505C4CEEB;
-	Thu, 28 Aug 2025 20:40:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1756413639;
-	bh=kSd9yQ5EINKYpwqi6yUYFPe1ps+5gMFanto3kxgPNGc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oASrOklJJgORMInU8rbv3sn1bDbUqM6i2oWdWH98H3IhdGeV4J2N8s9jgiNE/6OJf
-	 OMf2QTGYEy/SlmGfj7yZDVFvrO08c6tAzz8z7immjy23IeA3DmLPULA9szb6QsIYAl
-	 mgZbGbSRfNwua09FnixrpxWRzzDqOin2FVHZ4kaA=
-Date: Thu, 28 Aug 2025 16:40:38 -0400
-From: Konstantin Ryabitsev <konstantin@linuxfoundation.org>
-To: Brian Masney <bmasney@redhat.com>
-Cc: Ryan Wanner <ryan.wanner@microchip.com>, mturquette@baylibre.com, 
-	sboyd@kernel.org, nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com, 
-	claudiu.beznea@tuxon.dev, varshini.rajendran@microchip.com, linux-clk@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, robh@kernel.org
-Subject: Re: [PATCH v3 00/32] clk: at91: add support for parent_data and
-Message-ID: <20250828-spectacular-lion-of-reward-3afda3@lemur>
-References: <cover.1752176711.git.Ryan.Wanner@microchip.com>
- <aLB7CJY9nMLoS1or@x1>
- <08dd4d82-8ac4-43a3-8d01-f293db6302e2@microchip.com>
- <aLCIcWIJ4Nfqt7oi@x1>
+	s=arc-20240116; t=1756413681; c=relaxed/simple;
+	bh=qRPHO8gQHPajIgEp5/3I9xSjYX/5pOJwwHV0hLSlH9Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Gi5gye5t/n/GdpZ8oPre3Xv5ukjTO5totBwIMkcMF+FF6B81ufyXqxJOku0LNuzgOLV2fzm+GcxxmvZEbP4btrxu2MCDDKiqceUpQMbeMTMbykc7UeXk38bJZsjtja7hgvOqldPDxOldJRnGHQynSwNFyNoGAdXNJmzadMi2WG4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=o2ZiUAbI; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1756413675;
+	bh=Yk18VGt9D/krkaodUFdxaxLjsonJGEItT9n7h9+3A74=;
+	h=Date:From:To:Cc:Subject:From;
+	b=o2ZiUAbIV62Mb9EgzgpwF+ITKw0mEk9qJbjHB+af0vCdAJdT8yv2T/E3b68eRNzgK
+	 zTMHwiZ26cduFacE2AVhLAyyF+d14iZM7n0awNFx7yuq2rYl+KbEKkFmyp0YhNclG0
+	 9KNkVRorQRHDFPnkNOjQWDBgEWFwZRQD2cpjXc8t/x2FmijDHcEH7jz6veb2UE/UiR
+	 ZpG6itIiMpL3m60QecjIKw5er5bLAMhpw/9IWFQLrZPAzwlHJwhzY9XY0htePrBteR
+	 Cn2jMXijPdp0NIXMJh4vsvcvobqNmbXNxFpDRsJF/f12523WPTkHdMP0fW4W+FeOO/
+	 5FcVh3wtfMZ4Q==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4cCYG31X73z4wb0;
+	Fri, 29 Aug 2025 06:41:14 +1000 (AEST)
+Date: Fri, 29 Aug 2025 06:41:14 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: Signed-off-by missing for commit in the slab tree
+Message-ID: <20250829064114.3d633180@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <aLCIcWIJ4Nfqt7oi@x1>
+Content-Type: multipart/signed; boundary="Sig_/.bKy3s08UcL_C+kMMdGgKUi";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Thu, Aug 28, 2025 at 12:48:49PM -0400, Brian Masney wrote:
-> > This was developed on 6.16 but when I bumped this thread I checked and
-> > they all apply cleanly on the v6.17-rc3 tag. I also just tested on
-> > next-20250828 tag and this set applies cleanly as well.
-> 
-> I initially used
-> 'b4 mbox af762c93-c9d0-485e-a0d1-7792e6e37c09@microchip.com' to download
-> the series, and tried to apply it with 'git am', and that's when only 12
-> of the 32 patches apply cleanly. I expected to have to 'git am --skip'
-> on the cover letter.
+--Sig_/.bKy3s08UcL_C+kMMdGgKUi
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-`b4 mbox` downloads the entire thread, including followups, and isn't really
-intended to be passed directly to git -- it's more aimed at people who want to
-read a whole thread in their preferred email agent.
+Hi all,
 
-> However, if I download the series with
-> 'b4 am af762c93-c9d0-485e-a0d1-7792e6e37c09@microchip.com', then all of
-> the patches apply cleanly.
+Commit
 
-This is because `b4 am` will make sure they are in the right order, etc. This
-is, in fact, the command that is intended for this purpose.
+  8c7b8666cf53 ("locking/local_lock: Expose dep_map in local_trylock_t.")
 
-Hope this helps.
+is missing a Signed-off-by from its committer.
 
--K
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/.bKy3s08UcL_C+kMMdGgKUi
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmiwvuoACgkQAVBC80lX
+0Gzp9gf/XKgl4CtSjdkrG11s1yMY9bWwHlM9rsJ1hSyHjGn3BDgHRxlrOErcItok
+LzkUX3iMZ6SWH/xRR5mhA9Pb6i2dS87KaaN+yWXl+dcgwqL9xho2NmAphavdkHd0
+8TPVHVagWxj7L507g2tpbJTRHrWuTzei7Spm5tENR8FghSRVtgmYThS0eTC30Ro1
+eKCLngmizjC1z+hVOcFZhRdQxlFmWkLPyg95OGEc9yDDZIGmeTYl1tmZIz87N7w5
+Pj/Rhd2NUW8MnYsTiapUU4GqvfKgNVIG7ERqwsWev3sLkoIMERC25HvP4fvrGTfG
+w8Lj6uvZIHr+aoCwAU53PGOpSK9+SA==
+=N5XW
+-----END PGP SIGNATURE-----
+
+--Sig_/.bKy3s08UcL_C+kMMdGgKUi--
 
