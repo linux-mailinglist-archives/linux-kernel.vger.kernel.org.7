@@ -1,96 +1,91 @@
-Return-Path: <linux-kernel+bounces-789207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 859C7B3923C
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 05:33:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00C50B39234
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 05:28:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B65441C23568
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 03:34:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2DBBD1C23A3D
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 03:28:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ECC61CEAC2;
-	Thu, 28 Aug 2025 03:33:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="QYKK6lNc"
-Received: from out203-205-221-239.mail.qq.com (out203-205-221-239.mail.qq.com [203.205.221.239])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6076C2494C2;
+	Thu, 28 Aug 2025 03:28:15 +0000 (UTC)
+Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [160.30.148.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24BF313D503;
-	Thu, 28 Aug 2025 03:33:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.239
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2B2521171D;
+	Thu, 28 Aug 2025 03:28:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=160.30.148.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756352023; cv=none; b=FCgAhOMowK7tKve/wTINqi9Mh0VHRDI0qwQHHKYd2ek+oGgHupdMZ09l7makJxx4ZZPRS/nsVwow2giQecCUSJ+teLrUzI469+H3Zql72tLExoYGg4ms3X5AOvxmVhehBv4gTBpjtVv5508FUa+2tZN4+U2wSapZ81L905Hf6qU=
+	t=1756351695; cv=none; b=ndEUUSTvvHOaEWWvvvcIbgKJaiZOYF4XTDDDq0+CoeDrxw4VAep3twlT84ueBfqFupmjBu+rgt97A32o4av4HLPBUgs6z7wj+tqYuTLNvK31YqGIImOuYfndJXAEqH1PBicUnWEQPkUjl4MGz7JXN2X7UPm1NFcgR781CujbTNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756352023; c=relaxed/simple;
-	bh=BMAGjRMk4Z3TjouD68EjoYToYs9haeFZiFaVppJm+XA=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=mREpUQCO8Nz/qb7wOCCD38iYs4PDnmJz2cbXm9bR+XveiOznf0QwsgJFHz0Yp2npLXzjIWMLr7r8ewlrxkeYHBCoR5ZzXxUBpJFB1W5Y7AqSZB4GzuR/VgiUwhcYXtl2btliifhjqh1Rb+EQU9AmPQQZ8DVSGuitu1Ioq9JRAEE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=QYKK6lNc; arc=none smtp.client-ip=203.205.221.239
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1756352017; bh=u1zhF4oSCXVG+6LusvOKKNkPof3RJVhGMntnsj+s+1o=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=QYKK6lNcfUyMS2DXomL8yP06dzLwoMuRlzqhJHe9mI6vP2jxnBlX1/mcJkWqJ7eWq
-	 Pt7a0D3PeDyfjlmxgvIpZlFBR4Re19a5896eB0ILIt6DjIrFxJUumSfo5EqKUaC/+H
-	 airj3n993krKMbycXifpRciD/GSRC7rInO9HilmE=
-Received: from nebula-bj.localdomain ([223.104.40.195])
-	by newxmesmtplogicsvrsza56-0.qq.com (NewEsmtp) with SMTP
-	id 6E0888BA; Thu, 28 Aug 2025 11:27:32 +0800
-X-QQ-mid: xmsmtpt1756351652ta9x299eo
-Message-ID: <tencent_2DDD243AE6E04DB6288696AC252D1B46EF06@qq.com>
-X-QQ-XMAILINFO: NGZp1yYNf7Y+9GzPxqsNlS6AYhGbwwFB5CviZmlZJVmcbrpS9/OK+Dw/zgqzHX
-	 6+5nr9SgFDCxH0x+PRGPCBF4pkycXVY9nYdwiUue6ACSsAYjv1g/uN/ZLUeyfajQEg7zoZ8BlVXb
-	 HBZ0UMpM5/94LQTBgdrAy6jurk2p0cjr7iSwwpJDhhIU4Egc9StM9mCxpKZUOHELk79zsM5zJzSd
-	 lX3aPYRIfbMRSAwbXf0vNPqfMXtvyux72R4QShSoSV5WsrJKUy0UJon3ofzq0xw/E2bvjBSKLhxw
-	 bq9Z1aEhbcIiWf/rpyT6ENccAoCcJE0GhkpzYrvL4mAnz1ei6ots4Og0C0JK2KORfu+3lCdGnbI+
-	 FGPc3F66xS7flDuTrZwxa9zGMXx1lUWOH2MPeX33+0virMr/cNpu42HfH1frcu9yUD9atRkFghlX
-	 rL5kyPwFc0sb176V5SYw63D7H+onYvuNdI8CtCKvGRf1QpdMoy5+4AekM1a/yFrZvS6j71znv+ke
-	 jebWJHiMz2Q6Pk58pCEzfsHNYhHL56TI3SqYtheZZzG2xeMd7rrOuyv9t6nhUPblrj8xRDlRFHuX
-	 ZMo0lNwr+9XOpfyY235BDjMz0z5Ksw6kesXk6jyaIeirY0Z22knSdK8XFAitHdRY/l6MH3nc0ClL
-	 oU3BLyv6BJ2g+ZsjTMZ2wQg4+tcHtkXaEWSH0cQcX5RZxYsrGj8w3KsIjusWlH7o5xBg8p1xKPzq
-	 e52KCW2QqlazO8RJaY6B0lMoNHeYEpzX1eMV2YH5IwRFpAatar6/ZY5VreNa/x9PfFH36RaA2pAg
-	 8r6e5wdQjZ4vRu35TurUWt9Hy0UlkcjqbugirVI4FnuZrHj5be8XS51AwEXcDnEBinKXV2zqsU1i
-	 yUUb7sDnDcDL9Hb5m1Osai6Pfq7YP5uRFeouSc1uyaD9iNix5asUABFBAVGiH8r1yM1JV9o6X1f0
-	 /RXGmsWtABMkMgxATYoMxZy3Mk+j8ZoDiEKrhGYysWih5fuhOElMwbtsXuXA5F5+aK3teg67Fn2x
-	 2wVjiKinU6uMjrkndvIQa8czMTCPBfZRe/fivscMRKg9SHjI/I490KCFFPWA54re4ELUmy8YpfsG
-	 4AgF+DCf/2TOsClQYKRcGPIQzmPg==
-X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
-From: Qingyue Zhang <chunzhennn@qq.com>
-To: axboe@kernel.dk
-Cc: aftern00n@qq.com,
-	io-uring@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] io_uring/kbuf: fix infinite loop in io_kbuf_inc_commit()
-Date: Thu, 28 Aug 2025 11:27:32 +0800
-X-OQ-MSGID: <20250828032732.101494-1-chunzhennn@qq.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <8f4a4090-78ed-4cf1-bd73-7ae73fff8b90@kernel.dk>
-References: <8f4a4090-78ed-4cf1-bd73-7ae73fff8b90@kernel.dk>
+	s=arc-20240116; t=1756351695; c=relaxed/simple;
+	bh=vWT0vrcOJ51bj0i0t0ohp1YwUgvZjAG2sI8ZvQQnGRg=;
+	h=Date:Message-ID:In-Reply-To:References:Mime-Version:From:To:Cc:
+	 Subject:Content-Type; b=sMf66lyytW3UX/V2odU0QrN6VPoJ3NsMbPq3U7jHxauqi2/utQUn/CPw7LFKiXRUOKVyzH+8t2wk/sfJ0VHa46zZJPYTpBGZvkMIr62t2uGLwXq45oI82sBOzT9ofF2nNFe7FAogrfxyv7qiPSHBbZHgJfODgSxmyW0Vqp2bvDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=160.30.148.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
+Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4cC6L23C0fz5PM37;
+	Thu, 28 Aug 2025 11:28:10 +0800 (CST)
+Received: from xaxapp05.zte.com.cn ([10.99.98.109])
+	by mse-fl2.zte.com.cn with SMTP id 57S3RovQ072338;
+	Thu, 28 Aug 2025 11:27:50 +0800 (+08)
+	(envelope-from xu.xin16@zte.com.cn)
+Received: from mapi (xaxapp02[null])
+	by mapi (Zmail) with MAPI id mid32;
+	Thu, 28 Aug 2025 11:27:51 +0800 (CST)
+Date: Thu, 28 Aug 2025 11:27:51 +0800 (CST)
+X-Zmail-TransId: 2afa68afccb7355-bd9af
+X-Mailer: Zmail v1.0
+Message-ID: <20250828112751947nPp0i9WwI02rU1BNa3FTt@zte.com.cn>
+In-Reply-To: <20250814203052841vWATRXU4pnku526u5TwPn@zte.com.cn>
+References: 20250814201129510XielEwRpr4QXPx_XBtkhv@zte.com.cn,20250814203052841vWATRXU4pnku526u5TwPn@zte.com.cn
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+From: <xu.xin16@zte.com.cn>
+To: <wang.yaxin@zte.com.cn>, <alexs@kernel.org>
+Cc: <wang.yaxin@zte.com.cn>, <si.yanteng@linux.dev>, <corbet@lwn.net>,
+        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <yang.yang29@zte.com.cn>, <fan.yu9@zte.com.cn>, <he.peilin@zte.com.cn>,
+        <tu.qiang35@zte.com.cn>, <qiu.yutan@zte.com.cn>,
+        <zhang.yunkai@zte.com.cn>
+Subject: =?UTF-8?B?UmU6IFtQQVRDSCA0LzQgdjJdIERvY3MvemhfQ046IFRyYW5zbGF0ZSB0aW1lc3RhbXBpbmcucnN0IHRvIFNpbXBsaWZpZWQgQ2hpbmVzZQ==?=
+Content-Type: text/plain;
+	charset="UTF-8"
+X-MAIL:mse-fl2.zte.com.cn 57S3RovQ072338
+X-TLS: YES
+X-SPF-DOMAIN: zte.com.cn
+X-ENVELOPE-SENDER: xu.xin16@zte.com.cn
+X-SPF: None
+X-SOURCE-IP: 10.5.228.133 unknown Thu, 28 Aug 2025 11:28:10 +0800
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 68AFCCCA.000/4cC6L23C0fz5PM37
 
-Thanks for taking care of this report!
+> From: Wang Yaxin <wang.yaxin@zte.com.cn>
+> 
+> translate the "timestamping.rst" into Simplified Chinese.
+> 
+> Update the translation through commit d5c17e36549c
+> ("docs: networking: timestamping: improve stacked PHC sentence")
+> 
+> Signed-off-by: Wang Yaxin <wang.yaxin@zte.com.cn>
+> Signed-off-by: Sun yuxi <sun.yuxi@zte.com.cn>
+> ---
+>  .../translations/zh_CN/networking/index.rst   |   2 +-
+>  .../zh_CN/networking/timestamping.rst         | 674 ++++++++++++++++++
+>  2 files changed, 675 insertions(+), 1 deletion(-)
+>  create mode 100644 Documentation/translations/zh_CN/networking/timestamping.rst
 
-Regarding tags, it would be nice to add a 
-'Reported-by: Suoxing Zhang <aftern00n@qq.com>'
-tag too, as this report and reproducer are
-developed by both of us.
-
-And absolutely, please feel free to use our 
-reproducer for a test case! I'm glad it can 
-be useful. Your version with idiomatic 
-liburing looks great.
-
-This is my first contribution to the Linux 
-Kernel, and I really appreciate your patience 
-and quick responses throughout this process!
-
+Reviewed-by: xu xin <xu.xin16@zte.com.cn>
 
