@@ -1,218 +1,126 @@
-Return-Path: <linux-kernel+bounces-790467-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DA9EB3A780
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 19:16:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1B68B3A78D
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 19:16:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AA4F97BBF5F
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 17:14:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 205A2A01F4F
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 17:16:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 772B433CEBC;
-	Thu, 28 Aug 2025 17:15:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DD25341AA3;
+	Thu, 28 Aug 2025 17:15:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EJzdxybn"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fnmNyIm6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4725340D81
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 17:15:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56272340D90;
+	Thu, 28 Aug 2025 17:15:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756401321; cv=none; b=IobPqaZqHgtcAm0a02kMkIV2sWbHtxesTiSddvPm/njxwDpOxQKMMsqo3tnNqAXlVMAgOdFwxt1h3gfjZP0DcnZlUA63B9GFQ/EmNDGAxt9V5CcKCDQWirp8rSUQ7q/HT+aqBw6s4RtPkqBOFXOqYcQl31WaKz0KgF2tQDQRG2I=
+	t=1756401325; cv=none; b=HjTueI1GQffMoqMsbKBaacZXY+wB6ruHntr5Jy31qu1wWQN8Z/SN9HY0XipUxo86Y40rqOM3+1C88EyfZ4MeOJvTHbO4R8fbst95nG2jmyrDjPYM8/ayFPdPfIsi1e++IaQdMPiw0cpTVm8Kes5RBcl7/UKNohC/LxTDr5XYRKo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756401321; c=relaxed/simple;
-	bh=tjLq4yotJVvrKtVjK5XLYb7jE1fQQx1FF/sxrbky9es=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=BP6BiVXVlINbZdUjizqIR2C2mk/pirZJYbQpewDDr8WtLvSOoEmVF2qf0MG8BFPqjM0nqDhvHXXZplCK+Hm6X7Hyjup9xY/8IbLOW8AoRQx2CUQraxnSdTM+jZs363hyFQeHF+ciFjj23RTKW/f7wxRHp4A9AzhCdjMB0uwi0xU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=EJzdxybn; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-32769224506so1196725a91.2
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 10:15:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756401319; x=1757006119; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=g/D1R1ws5ojuN4WG3pCUGyU24UMqyGj6lojr+YSYQ0c=;
-        b=EJzdxybnyxlQrk6qJR558wtNekNbgws953L2pneIZYbmyp9tAmsnaz2aSuhIUBM5zr
-         yym6Q3hOD+h86ma+8fB5UYxWC0FsSh8WsgByN6NGuhj5XPnYnWvTGq97mGOESOdqxB8M
-         UO5/YFoyUcXdWdRme2wq/ulZFp8KXOMX/N5wcNQCirgFPfS9pE37lzw+nKFk5IrmnDbO
-         G5sw2Dwq2cicHF4lperkYSyAoX2g6OycdnZ1FjYe/p8IEgXy13BJvrhiJGJwM3VA8ugT
-         uPqiFjyVbr8N6oCUmphfD2rJa6OFoETW3Ncm5ZacDEJ+l20U+VrrmUTHcEPjkrroNkNZ
-         4tIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756401319; x=1757006119;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=g/D1R1ws5ojuN4WG3pCUGyU24UMqyGj6lojr+YSYQ0c=;
-        b=BMhtolp9zpA6bm/7cj7GwowcjCLK8TBxpKeZtPy/w4c0Bl4Bo0IBBGRM2dhKexXDLY
-         yjDT6tEj+zLvGLaXxSuCDLK521oqeXnPYcBm8/+Pzf6HREDAEypwXyk3gpxTMgmqH3Y7
-         nPOXa5CbNFHWekNKkiE9lCgKjNrPq4hU3l7c2DarZRFW1zb3pGVGH0c0Pakf5KUQ/BPW
-         OhcI9srE3eBYyqW7rIt4w2MmPR6anoGAjbMk7vl1gYIzaLScBGacESKk+ory2LZr0ChW
-         dwJ9NV0JlM+y6WJn6NrDUMpncttXMkOPdiz9J+86Y8YOB5Izd/0OADwiYQYQHPuiWT8G
-         UmuA==
-X-Forwarded-Encrypted: i=1; AJvYcCV0iMIB0GrHKPc3Nn/V2r3gRdXorp0t8FWKwpQDWa1rWXR35uugdGrQS6WIn8L5JfmPhSVzKQ0m0mDzr90=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyW06gvK5tQFSGrfO+zi4EgpzvBF5/FMIlVt70mIfyIAdQlTdjf
-	gshEZanXixtsoZXnRWP8Rhz6us7AwvNoEs6jR2cyUdnsioYNRAKtUTSGlnMfVTaC7jViVrvu+Oi
-	LQLRJJQ==
-X-Google-Smtp-Source: AGHT+IEgfCMAj/kPGbx0Dj2C82B+XByTzBEnlSaJgGQHGzaozLp7T19v0PG28aEIfyLg5E6WkydfWYNcBOM=
-X-Received: from pjhk31.prod.google.com ([2002:a17:90a:4ca2:b0:327:9b90:7a79])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:1dc3:b0:327:cec7:b8c6
- with SMTP id 98e67ed59e1d1-327cec7cb53mr1738031a91.32.1756401318775; Thu, 28
- Aug 2025 10:15:18 -0700 (PDT)
-Date: Thu, 28 Aug 2025 10:15:17 -0700
-In-Reply-To: <874d821e-8ea3-40ac-921b-c19bb380a456@kylinos.cn>
+	s=arc-20240116; t=1756401325; c=relaxed/simple;
+	bh=ou3iD8shgadPVxQRtF41FaHPfXiCub7fMhAggBLVXMc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CIK1BTXrRUzIbeO8wFyOuRuBiD4ndwXhbtS+o9mCWHAKjuJkjWoM9BLrVjoqHm6iODw67pBqn6VPkXymOXOivAFl8E7dbE5J7W0Qy5C2oJxYWzHyMOAJh87t6trgYWvLxC1BHhID6z3PXChBEh9iTC14EKEiOJP1zYGmTP2Sif0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fnmNyIm6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A72BC4CEF4;
+	Thu, 28 Aug 2025 17:15:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756401324;
+	bh=ou3iD8shgadPVxQRtF41FaHPfXiCub7fMhAggBLVXMc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fnmNyIm6kveacQ6zFjHwSr/ld+cbNXoqmfCrawHp1gvsXVCDDljqqxTV+b1zApRgH
+	 5lcwKbYEv5XvzJ74pZRRlHz4xMMdbU2hypSAtpXWfDMqRVbb/qc2SqQSSCNqbZ1peQ
+	 BdR01HGV590kQ600i1NoQpXCyGOYKnHeIsk3mGhcH3PGq+tQybbYkfchgS5mr5H49F
+	 IvJGdW2sSi79scStsbkC/ihQucpNHR67O3EvTjBCfBwOnwU2YHvQc3Mh/Yo09lKjUz
+	 oioVDuGo8iH8GapTPxpdVPh2h5wOe61XtWreqwSjOT2z6hU8npwTgtY7JSO24epBr/
+	 2W6Y4P8WQ/UJw==
+Date: Thu, 28 Aug 2025 11:15:20 -0600
+From: Keith Busch <kbusch@kernel.org>
+To: Leon Romanovsky <leon@kernel.org>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
+	Jason Gunthorpe <jgg@nvidia.com>,
+	Abdiel Janulgue <abdiel.janulgue@gmail.com>,
+	Alexander Potapenko <glider@google.com>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Christoph Hellwig <hch@lst.de>, Danilo Krummrich <dakr@kernel.org>,
+	iommu@lists.linux.dev, Jason Wang <jasowang@redhat.com>,
+	Jens Axboe <axboe@kernel.dk>, Joerg Roedel <joro@8bytes.org>,
+	Jonathan Corbet <corbet@lwn.net>, Juergen Gross <jgross@suse.com>,
+	kasan-dev@googlegroups.com, linux-block@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, linux-nvme@lists.infradead.org,
+	linuxppc-dev@lists.ozlabs.org, linux-trace-kernel@vger.kernel.org,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>, rust-for-linux@vger.kernel.org,
+	Sagi Grimberg <sagi@grimberg.me>,
+	Stefano Stabellini <sstabellini@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	virtualization@lists.linux.dev, Will Deacon <will@kernel.org>,
+	xen-devel@lists.xenproject.org
+Subject: Re: [PATCH v4 15/16] block-dma: properly take MMIO path
+Message-ID: <aLCOqIaoaKUEOdeh@kbusch-mbp>
+References: <cover.1755624249.git.leon@kernel.org>
+ <642dbeb7aa94257eaea71ec63c06e3f939270023.1755624249.git.leon@kernel.org>
+ <aLBzeMNT3WOrjprC@kbusch-mbp>
+ <20250828165427.GB10073@unreal>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250827023202.10310-1-zhangzihuan@kylinos.cn>
- <20250827023202.10310-3-zhangzihuan@kylinos.cn> <aK8Sd30K64mbN1Nt@google.com> <874d821e-8ea3-40ac-921b-c19bb380a456@kylinos.cn>
-Message-ID: <aLCOpfNkcQN9P-Wa@google.com>
-Subject: Re: [PATCH v2 02/18] KVM: x86: Use __free(put_cpufreq_policy) for
- policy reference
-From: Sean Christopherson <seanjc@google.com>
-To: Zihuan Zhang <zhangzihuan@kylinos.cn>
-Cc: "Rafael J . wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
-	Markus Mayer <mmayer@broadcom.com>, Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, 
-	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, 
-	Chanwoo Choi <cw00.choi@samsung.com>, Jani Nikula <jani.nikula@linux.intel.com>, 
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, 
-	Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Daniel Lezcano <daniel.lezcano@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, 
-	Eduardo Valentin <edubezval@gmail.com>, Keerthy <j-keerthy@ti.com>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	zhenglifeng <zhenglifeng1@huawei.com>, "H . Peter Anvin" <hpa@zytor.com>, Zhang Rui <rui.zhang@intel.com>, 
-	Len Brown <lenb@kernel.org>, Nicholas Piggin <npiggin@gmail.com>, 
-	Christophe Leroy <christophe.leroy@csgroup.eu>, Lukasz Luba <lukasz.luba@arm.com>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Beata Michalska <beata.michalska@arm.com>, 
-	Fabio Estevam <festevam@gmail.com>, Pavel Machek <pavel@kernel.org>, Sumit Gupta <sumitg@nvidia.com>, 
-	Prasanna Kumar T S M <ptsm@linux.microsoft.com>, Sudeep Holla <sudeep.holla@arm.com>, 
-	Yicong Yang <yangyicong@hisilicon.com>, linux-pm@vger.kernel.org, x86@kernel.org, 
-	kvm@vger.kernel.org, linux-acpi@vger.kernel.org, 
-	linuxppc-dev@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, 
-	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
-	imx@lists.linux.dev, linux-omap@vger.kernel.org, 
-	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250828165427.GB10073@unreal>
 
-On Thu, Aug 28, 2025, Zihuan Zhang wrote:
-> > Hmm, this is technically buggy.  __free() won't invoke put_cpufreq_poli=
-cy() until
-> > policy goes out of scope, and so using __free() means the code is effec=
-tively:
-> >=20
-> > 		if (IS_ENABLED(CONFIG_CPU_FREQ)) {
-> > 			struct cpufreq_policy *policy;
-> > 			int cpu;
-> >=20
-> > 			cpu =3D get_cpu();
-> > 			policy =3D cpufreq_cpu_get(cpu);
-> > 			if (policy && policy->cpuinfo.max_freq)
-> > 				max_tsc_khz =3D policy->cpuinfo.max_freq;
-> > 			put_cpu();
-> >=20
-> > 			if (policy)
-> > 				cpufreq_cpu_put(policy);
-> > 		}
+On Thu, Aug 28, 2025 at 07:54:27PM +0300, Leon Romanovsky wrote:
+> On Thu, Aug 28, 2025 at 09:19:20AM -0600, Keith Busch wrote:
+> > On Tue, Aug 19, 2025 at 08:36:59PM +0300, Leon Romanovsky wrote:
+> > > diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
+> > > index 09b99d52fd36..283058bcb5b1 100644
+> > > --- a/include/linux/blk_types.h
+> > > +++ b/include/linux/blk_types.h
+> > > @@ -387,6 +387,7 @@ enum req_flag_bits {
+> > >  	__REQ_FS_PRIVATE,	/* for file system (submitter) use */
+> > >  	__REQ_ATOMIC,		/* for atomic write operations */
+> > >  	__REQ_P2PDMA,		/* contains P2P DMA pages */
+> > > +	__REQ_MMIO,		/* contains MMIO memory */
+> > >  	/*
+> > >  	 * Command specific flags, keep last:
+> > >  	 */
+> > > @@ -420,6 +421,7 @@ enum req_flag_bits {
+> > >  #define REQ_FS_PRIVATE	(__force blk_opf_t)(1ULL << __REQ_FS_PRIVATE)
+> > >  #define REQ_ATOMIC	(__force blk_opf_t)(1ULL << __REQ_ATOMIC)
+> > >  #define REQ_P2PDMA	(__force blk_opf_t)(1ULL << __REQ_P2PDMA)
+> > > +#define REQ_MMIO	(__force blk_opf_t)(1ULL << __REQ_MMIO)
+> > 
+> > Now that my integrity metadata DMA series is staged, I don't think we
+> > can use REQ flags like this because data and metadata may have different
+> > mapping types. I think we should add a flags field to the dma_iova_state
+> > instead.
+> 
+> Before integrity metadata code was merged, the assumption was that request is
+> only one type or p2p or host. Is it still holding now?
 
-...
+I don't think that was ever the case. Metadata is allocated
+independently of the data payload, usually by the kernel in
+bio_integrity_prep() just before dispatching the request. The bio may
+have a p2p data payload, but the integrity metadata is just a kmalloc
+buf in that path.
 
-> Yes, this will indeed change the execution order.
-> Can you accept that?=20
+> And we can't store in dma_iova_state() as HMM/RDMA code works in page-based
+> granularity and one dma_iova_state() can mix different types.
 
-No, because it's buggy.
-
-> Personally, I don=E2=80=99t think it=E2=80=99s ideal either.
->=20
-> 		if (IS_ENABLED(CONFIG_CPU_FREQ)) {
->  			int cpu;
-> 			cpu =3D get_cpu();
-> 			{
-> 				struct cpufreq_policy *policy __free(put_cpufreq_policy) =3D cpufreq_=
-cpu_get(cpu);
-> 				if (policy && policy->cpuinfo.max_freq)
-> 					max_tsc_khz =3D policy->cpuinfo.max_freq;
-> 			}
-> 			put_cpu();
->=20
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 }
->=20
-> Other places may also have the same issue,
->=20
-> maybe we should consider introducing a macro to handle this properly,
-> so that initialization and cleanup are well defined without changing
-> the existing order unexpected.
->=20
-> like this:
->=20
-> #define WITH_CPUFREQ_POLICY(cpu) {\
->=20
-> for(struct cpufreq_policy *policy __free(put_cpufreq_policy) =3D  \
-> 			cpufreq_cpu_get(cpu);			\
-> 			policy;)
->=20
-> Then Use it:
->=20
-> 		if (IS_ENABLED(CONFIG_CPU_FREQ)) {
->  			int cpu;
-> 			cpu =3D get_cpu();
-> 			WITH_CPUFREQ_POLICY(cpu){
-> 				if (policy->cpuinfo.max_freq)
-> 					max_tsc_khz =3D policy->cpuinfo.max_freq;
-> 			}
-> 			put_cpu();
-
-This all feels very forced, in the sense that we have a shiny new tool and =
-are
-trying to use it everywhere without thinking critically about whether or no=
-t
-doing so is actually an improvement.
-
-At a glance, this is literally the only instance in the entire kernel where=
- the
-CPU to use is grabbed immediately before the policy.
-=20
-  $ git grep -B 20 cpufreq_cpu_get | grep -e get_cpu -e smp_processor_id
-  arch/x86/kvm/x86.c-			cpu =3D get_cpu();
-  drivers/cpufreq/cppc_cpufreq.c-static int cppc_get_cpu_power(struct devic=
-e *cpu_dev,
-  drivers/cpufreq/cppc_cpufreq.c-static int cppc_get_cpu_cost(struct device=
- *cpu_dev, unsigned long KHz,
-  drivers/cpufreq/mediatek-cpufreq-hw.c-mtk_cpufreq_get_cpu_power(struct de=
-vice *cpu_dev, unsigned long *uW,
-
-Probably because KVM's usage is rather bizarre and honestly kind of dumb.  =
-But
-KVM has had this behavior for 15+ years, so as weird as it is, I'm not incl=
-ined
-to change it without a really, really strong reason to do so, e.g. to itera=
-te
-over all CPUs or something.
-
-So given that this is the only intance of the problem patter, I think it ma=
-kes
-sense to leave KVM as-is, and not spend a bunch of time trying to figure ou=
-t how
-to make KVM's usage play nice with __free().
+I see.
 
