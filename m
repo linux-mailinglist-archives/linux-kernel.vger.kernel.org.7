@@ -1,238 +1,151 @@
-Return-Path: <linux-kernel+bounces-790297-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C1C4B3A47F
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 17:32:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81A77B3A485
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 17:33:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3B1837B2211
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 15:30:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB8A11C81E32
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 15:34:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F587230BDF;
-	Thu, 28 Aug 2025 15:31:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 711AF23A9B0;
+	Thu, 28 Aug 2025 15:33:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b="fDTlmxfA"
-Received: from fra-out-004.esa.eu-central-1.outbound.mail-perimeter.amazon.com (fra-out-004.esa.eu-central-1.outbound.mail-perimeter.amazon.com [3.74.81.189])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="epGcgtWO"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD6B8221557;
-	Thu, 28 Aug 2025 15:31:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=3.74.81.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE46A230BF8;
+	Thu, 28 Aug 2025 15:33:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756395085; cv=none; b=HPLyahBU2L58dEUtx6jKrYs42q9KFTSApU0btYb9pHE8r+pn1dmlTiyTykH7Qr/isC8Yn2s/XVZ+Nd1g3fdmHyNgYvSf2UF8FPHaP2q/hBqCvgs7a07vfNDB39FsNnnTZjh9eAn6Oul06Yxm6gHa92tHweEwPMUcjHRMGmmU1W8=
+	t=1756395226; cv=none; b=C8aONKTkANdaL78vJfohPRcVKfcN7iPEi07RyQhMHLpzhTKqVJ5YHXVh/mved6FlXAvTdGwuqFzmtOuGfLv31Mus8e7G+KqR3UW5bvZXoWHgQ5qsNFE/6ARK0rak2hN1NU8dEeVn5U02gZIOEvgoy5x+2fHl9/6I+Po7UiUfZvM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756395085; c=relaxed/simple;
-	bh=mk7b2YyAsivRkDVPxo2FPF/ODspXCEyaZ6Ip/VG95w8=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=C/V+3v+k7Z/778BLTdYkSgs8i+wuaMuifXShSZEnQ+SnGgA7zHxissDjTCp7Xm6xCqjFXO1R/Y7qiLEE9mqwdW/jnzxgmdu+FyjAca+NPAxYcLTAKyoagTu/kZEoMMr0vG1unUQSPkwAyHwAAwpzbDUHVx3wKxonT4syRM0hKSI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (2048-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b=fDTlmxfA; arc=none smtp.client-ip=3.74.81.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.co.uk; i=@amazon.co.uk; q=dns/txt;
-  s=amazoncorp2; t=1756395083; x=1787931083;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=V5me1vbEPjC3lLIXGRdLlLGlsFqu+EM7eB3QDsegrgE=;
-  b=fDTlmxfARDA3jzhTnVBIgNK8V7gIMuqtwWUqqSUIB91/ggZAk8DuKC7l
-   ZdEwdHcbY7nri5/Wrn9ZpvlerVGWlb9/SOcbSL0b8QQsvPFhlkRYUebpN
-   lkAXXWAOH+iFP6WkN6UxbKMdzdzCxQwahEMvHjLxQLKEz79CN6MmGb8cA
-   AUUOE69gK3Lis1muIPb4PIowWoU3+afhH+3KLHPYI6VDFRzDDuC5J1ntm
-   MEKpwAXJZ9G3/KBoFCcpg88wYwtnoNLQUT2FWJcxz6vmDU/sdgOxBx+QD
-   aT8gHg1Zyg4fTtHiSzaZop0jnSfTpnQDUwmKLGU6PV9lPlhYi/z3Iv8GM
-   w==;
-X-CSE-ConnectionGUID: I2OtGiczTv6U+aeUYpDu2g==
-X-CSE-MsgGUID: BA0NUChcRRyEMf7aQczCTg==
-X-IronPort-AV: E=Sophos;i="6.18,214,1751241600"; 
-   d="scan'208";a="1327209"
-Received: from ip-10-6-11-83.eu-central-1.compute.internal (HELO smtpout.naws.eu-central-1.prod.farcaster.email.amazon.dev) ([10.6.11.83])
-  by internal-fra-out-004.esa.eu-central-1.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2025 15:31:13 +0000
-Received: from EX19MTAEUB002.ant.amazon.com [54.240.197.232:17221]
- by smtpin.naws.eu-central-1.prod.farcaster.email.amazon.dev [10.0.16.219:2525] with esmtp (Farcaster)
- id 2368e651-18b1-4fbf-946e-1f80a29a505a; Thu, 28 Aug 2025 15:31:13 +0000 (UTC)
-X-Farcaster-Flow-ID: 2368e651-18b1-4fbf-946e-1f80a29a505a
-Received: from EX19D022EUC003.ant.amazon.com (10.252.51.167) by
- EX19MTAEUB002.ant.amazon.com (10.252.51.59) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.17;
- Thu, 28 Aug 2025 15:31:13 +0000
-Received: from EX19D022EUC002.ant.amazon.com (10.252.51.137) by
- EX19D022EUC003.ant.amazon.com (10.252.51.167) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.17;
- Thu, 28 Aug 2025 15:31:12 +0000
-Received: from EX19D022EUC002.ant.amazon.com ([fe80::bd:307b:4d3a:7d80]) by
- EX19D022EUC002.ant.amazon.com ([fe80::bd:307b:4d3a:7d80%3]) with mapi id
- 15.02.2562.017; Thu, 28 Aug 2025 15:31:12 +0000
-From: "Kalyazin, Nikita" <kalyazin@amazon.co.uk>
-To: "pbonzini@redhat.com" <pbonzini@redhat.com>, "shuah@kernel.org"
-	<shuah@kernel.org>
-CC: "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"michael.day@amd.com" <michael.day@amd.com>, "david@redhat.com"
-	<david@redhat.com>, "jthoughton@google.com" <jthoughton@google.com>, "Roy,
- Patrick" <roypat@amazon.co.uk>, "Thomson, Jack" <jackabt@amazon.co.uk>,
-	"Manwaring, Derek" <derekmn@amazon.com>, "Cali, Marco"
-	<xmarcalx@amazon.co.uk>, "Kalyazin, Nikita" <kalyazin@amazon.co.uk>
-Subject: [PATCH v4 2/2] KVM: selftests: update guest_memfd write tests
-Thread-Topic: [PATCH v4 2/2] KVM: selftests: update guest_memfd write tests
-Thread-Index: AQHcGDDJcxHhkxTsa0ilibpNOQvawQ==
-Date: Thu, 28 Aug 2025 15:31:12 +0000
-Message-ID: <20250828153049.3922-3-kalyazin@amazon.com>
-References: <20250828153049.3922-1-kalyazin@amazon.com>
-In-Reply-To: <20250828153049.3922-1-kalyazin@amazon.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1756395226; c=relaxed/simple;
+	bh=L/wrJJW+zsakS3v8mZhjJIFtUUxX77tfd0hFmjNdpv8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LE+iWIDYOnqquQiwX3ubVPGGt2K1CIeWHnBrcneSJu6GVNgRfZwWOzPZemLfPC9mKYst4N+Zdy41m72NSPNQcdoHm/YJBjEtTtwxNQQR/XFFLxCylEwmaCx4JP2YF2aBmowpNp/5rDnAuef0VQNt8VjpZIpFWnyH9VBlvFe3gAE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=epGcgtWO; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 7397540E0176;
+	Thu, 28 Aug 2025 15:33:41 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id HpUUbd6cDfRY; Thu, 28 Aug 2025 15:33:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1756395218; bh=UNCPq6/6K2eLwrlzUsHd93fSfZJ45fbgGFibHSJZEek=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=epGcgtWO1dKvRMTIiyeuDpEXeGVhONNf7EYvYY/Gp9Xi4fKq1jifkr9oQdDMdNW7P
+	 dCnVmv9CSP/wxGaqIQNO2om09/sANhNB+jQLN9XUgdXazf4YWQSpw5ZaKx0TWjlmJQ
+	 6wpNIgBaWz9t9e9Mf4FnX/8ETBeB+OGzMYoUSEdCQ8yhBfPoAPogOp2yxzT73uT+H+
+	 ZQysiiUHODuPtxSTPvhGrW6MwwZBOWkwlhX8qbOheRARbHebNQMRolhAPpKTiFXq3p
+	 lJVwPzkuxpL1FIcsAuOhmwHrZLFQt8H49K1QI6FUW9hopVHBQ99fl7cvq9OPuRUEzs
+	 WqCpXLWmlWhl3bgZkGN09XScz5jO7nlurG7lRs9HfPtDickzbkUpzkWSze16yOmn9c
+	 mBrAhC9yskWVtO4e+93jJwnzOI9eQBabPdjphlpA5TDOUmiQaLJRTyCmejJh64MukU
+	 6oV+1Mn63YU4O4LWjD4AhvuE7eBM3hDM7c2BAuvKp0pkN7PMs5E0eldzS2MQ53JNIS
+	 +Upcq0n5QhS/+ph1F1fROF4XE4Up5zIuUZ0uo5NhfG9FECr3LB9mFg6QOC0O1IXl0/
+	 v4ooBcIO3ZpIXyicX1uVqRLaBSX5tstMliISwmLzWRJSQvO5lajtOCgO9s/sTGGl42
+	 pmQlXbROWCjnDKwbPEGD2sMI=
+Received: from zn.tnic (pd953092e.dip0.t-ipconnect.de [217.83.9.46])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id DA41940E00DD;
+	Thu, 28 Aug 2025 15:33:24 +0000 (UTC)
+Date: Thu, 28 Aug 2025 17:33:17 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Ard Biesheuvel <ardb+git@google.com>,
+	Tom Lendacky <thomas.lendacky@amd.com>,
+	Michael Roth <michael.roth@amd.com>,
+	=?utf-8?B?SsO2cmcgUsO2ZGVs?= <joro@8bytes.org>
+Cc: linux-kernel@vger.kernel.org, linux-efi@vger.kernel.org, x86@kernel.org,
+	Ard Biesheuvel <ardb@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+	Kevin Loughlin <kevinloughlin@google.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Nikunj A Dadhania <nikunj@amd.com>
+Subject: Re: [PATCH v7 01/22] x86/sev: Separate MSR and GHCB based
+ snp_cpuid() via a callback
+Message-ID: <20250828153317.GJaLB2vSvuR20WzgQV@fat_crate.local>
+References: <20250828102202.1849035-24-ardb+git@google.com>
+ <20250828102202.1849035-25-ardb+git@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250828102202.1849035-25-ardb+git@google.com>
 
-This is to reflect that the write syscall is now implemented for=0A=
-guest_memfd.=0A=
-=0A=
-Signed-off-by: Nikita Kalyazin <kalyazin@amazon.com>=0A=
----=0A=
- .../testing/selftests/kvm/guest_memfd_test.c  | 85 +++++++++++++++++--=0A=
- 1 file changed, 79 insertions(+), 6 deletions(-)=0A=
-=0A=
-diff --git a/tools/testing/selftests/kvm/guest_memfd_test.c b/tools/testing=
-/selftests/kvm/guest_memfd_test.c=0A=
-index b3ca6737f304..7217a3232055 100644=0A=
---- a/tools/testing/selftests/kvm/guest_memfd_test.c=0A=
-+++ b/tools/testing/selftests/kvm/guest_memfd_test.c=0A=
-@@ -24,18 +24,90 @@=0A=
- #include "test_util.h"=0A=
- #include "ucall_common.h"=0A=
- =0A=
--static void test_file_read_write(int fd)=0A=
-+static void test_file_read(int fd)=0A=
- {=0A=
- 	char buf[64];=0A=
- =0A=
- 	TEST_ASSERT(read(fd, buf, sizeof(buf)) < 0,=0A=
- 		    "read on a guest_mem fd should fail");=0A=
--	TEST_ASSERT(write(fd, buf, sizeof(buf)) < 0,=0A=
--		    "write on a guest_mem fd should fail");=0A=
- 	TEST_ASSERT(pread(fd, buf, sizeof(buf), 0) < 0,=0A=
- 		    "pread on a guest_mem fd should fail");=0A=
--	TEST_ASSERT(pwrite(fd, buf, sizeof(buf), 0) < 0,=0A=
--		    "pwrite on a guest_mem fd should fail");=0A=
-+}=0A=
-+=0A=
-+static void test_file_write(int fd, size_t total_size)=0A=
-+{=0A=
-+	size_t page_size =3D getpagesize();=0A=
-+	void *buf =3D NULL;=0A=
-+	int ret;=0A=
-+=0A=
-+	ret =3D posix_memalign(&buf, page_size, total_size);=0A=
-+	TEST_ASSERT_EQ(ret, 0);=0A=
-+=0A=
-+	/* Check arguments correctness checks work as expected */=0A=
-+=0A=
-+	ret =3D pwrite(fd, buf, page_size - 1, 0);=0A=
-+	TEST_ASSERT(ret =3D=3D -1, "write unaligned count on a guest_mem fd shoul=
-d fail");=0A=
-+	TEST_ASSERT_EQ(errno, EINVAL);=0A=
-+=0A=
-+	ret =3D pwrite(fd, buf, page_size, 1);=0A=
-+	TEST_ASSERT(ret =3D=3D -1, "write unaligned offset on a guest_mem fd shou=
-ld fail");=0A=
-+	TEST_ASSERT_EQ(errno, EINVAL);=0A=
-+=0A=
-+	ret =3D pwrite(fd, buf, page_size, total_size);=0A=
-+	TEST_ASSERT(ret =3D=3D -1, "writing past the file size on a guest_mem fd =
-should fail");=0A=
-+	TEST_ASSERT_EQ(errno, EINVAL);=0A=
-+=0A=
-+	ret =3D pwrite(fd, NULL, page_size, 0);=0A=
-+	TEST_ASSERT(ret =3D=3D -1, "supplying a NULL buffer when writing a guest_=
-mem fd should fail");=0A=
-+	TEST_ASSERT_EQ(errno, EFAULT);=0A=
-+=0A=
-+	/* Check double population is not allowed */=0A=
-+=0A=
-+	ret =3D pwrite(fd, buf, page_size, 0);=0A=
-+	TEST_ASSERT(ret =3D=3D page_size, "page-aligned write on a guest_mem fd s=
-hould succeed");=0A=
-+=0A=
-+	ret =3D pwrite(fd, buf, page_size, 0);=0A=
-+	TEST_ASSERT(ret =3D=3D -1, "write on already populated guest_mem fd shoul=
-d fail");=0A=
-+	TEST_ASSERT_EQ(errno, ENOSPC);=0A=
-+=0A=
-+	ret =3D fallocate(fd, FALLOC_FL_KEEP_SIZE | FALLOC_FL_PUNCH_HOLE, 0, page=
-_size);=0A=
-+	TEST_ASSERT(!ret, "fallocate(PUNCH_HOLE) should succeed");=0A=
-+=0A=
-+	/* Check population is allowed again after punching a hole */=0A=
-+=0A=
-+	ret =3D pwrite(fd, buf, page_size, 0);=0A=
-+	TEST_ASSERT(ret =3D=3D page_size, "page-aligned write on a punched guest_=
-mem fd should succeed");=0A=
-+=0A=
-+	ret =3D fallocate(fd, FALLOC_FL_KEEP_SIZE | FALLOC_FL_PUNCH_HOLE, 0, page=
-_size);=0A=
-+	TEST_ASSERT(!ret, "fallocate(PUNCH_HOLE) should succeed");=0A=
-+=0A=
-+	/* Check population of already allocated memory is allowed */=0A=
-+=0A=
-+	ret =3D fallocate(fd, FALLOC_FL_KEEP_SIZE, 0, page_size);=0A=
-+	TEST_ASSERT(!ret, "fallocate with aligned offset and size should succeed"=
-);=0A=
-+=0A=
-+	ret =3D pwrite(fd, buf, page_size, 0);=0A=
-+	TEST_ASSERT(ret =3D=3D page_size, "write on a preallocated guest_mem fd s=
-hould succeed");=0A=
-+=0A=
-+	ret =3D fallocate(fd, FALLOC_FL_KEEP_SIZE | FALLOC_FL_PUNCH_HOLE, 0, page=
-_size);=0A=
-+	TEST_ASSERT(!ret, "fallocate(PUNCH_HOLE) should succeed");=0A=
-+=0A=
-+	/* Check population works until an already populated page is encountered =
-*/=0A=
-+=0A=
-+	ret =3D pwrite(fd, buf, total_size, 0);=0A=
-+	TEST_ASSERT(ret =3D=3D total_size, "page-aligned write on a guest_mem fd =
-should succeed");=0A=
-+=0A=
-+	ret =3D fallocate(fd, FALLOC_FL_KEEP_SIZE | FALLOC_FL_PUNCH_HOLE, 0, page=
-_size);=0A=
-+	TEST_ASSERT(!ret, "fallocate(PUNCH_HOLE) should succeed");=0A=
-+=0A=
-+	ret =3D pwrite(fd, buf, total_size, 0);=0A=
-+	TEST_ASSERT(ret =3D=3D page_size, "write on a guest_mem fd should not ove=
-rwrite data");=0A=
-+=0A=
-+	ret =3D fallocate(fd, FALLOC_FL_KEEP_SIZE | FALLOC_FL_PUNCH_HOLE, 0, tota=
-l_size);=0A=
-+	TEST_ASSERT(!ret, "fallocate(PUNCH_HOLE) should succeed");=0A=
-+=0A=
-+=0A=
-+	free(buf);=0A=
- }=0A=
- =0A=
- static void test_mmap_supported(int fd, size_t page_size, size_t total_siz=
-e)=0A=
-@@ -281,7 +353,8 @@ static void test_guest_memfd(unsigned long vm_type)=0A=
- =0A=
- 	fd =3D vm_create_guest_memfd(vm, total_size, flags);=0A=
- =0A=
--	test_file_read_write(fd);=0A=
-+	test_file_read(fd);=0A=
-+	test_file_write(fd, total_size);=0A=
- =0A=
- 	if (flags & GUEST_MEMFD_FLAG_MMAP) {=0A=
- 		test_mmap_supported(fd, page_size, total_size);=0A=
--- =0A=
-2.50.1=0A=
-=0A=
++ Joerg and Mike to doublecheck me.
+
+On Thu, Aug 28, 2025 at 12:22:04PM +0200, Ard Biesheuvel wrote:
+> @@ -648,7 +611,7 @@ void __head do_vc_no_ghcb(struct pt_regs *regs, unsigned long exit_code)
+>  	leaf.fn = fn;
+>  	leaf.subfn = subfn;
+>  
+> -	ret = snp_cpuid(NULL, NULL, &leaf);
+> +	ret = snp_cpuid(snp_cpuid_hv_msr, NULL, &leaf);
+>  	if (!ret)
+>  		goto cpuid_done;
+>  
+
+So this code becomes now:
+
+---
+        ret = snp_cpuid(snp_cpuid_hv_msr, NULL, &leaf);
+        if (!ret)
+                goto cpuid_done;
+
+<--- tries to find the CPUID leaf in the CPUID table
+<--- otherwise uses the MSR protocol to read CPUID from HV and massage it
+
+        if (ret != -EOPNOTSUPP)
+                goto fail;
+
+        if (__sev_cpuid_hv_msr(&leaf))
+                goto fail;
+
+<--- and now it tries to do the same - do CPUID over MSR protocol.
+
+This flow made sense before your change because it'll try to use the GHCB
+protocol but you're zapping that now so, IOW, you can zap that second call
+too:
+
+
+diff --git a/arch/x86/boot/startup/sev-shared.c b/arch/x86/boot/startup/sev-shared.c
+index ed88dfe7605e..fbfdfe0dce70 100644
+--- a/arch/x86/boot/startup/sev-shared.c
++++ b/arch/x86/boot/startup/sev-shared.c
+@@ -612,16 +612,9 @@ void __head do_vc_no_ghcb(struct pt_regs *regs, unsigned long exit_code)
+ 	leaf.subfn = subfn;
+ 
+ 	ret = snp_cpuid(snp_cpuid_hv_msr, NULL, &leaf);
+-	if (!ret)
+-		goto cpuid_done;
+-
+-	if (ret != -EOPNOTSUPP)
+-		goto fail;
+-
+-	if (__sev_cpuid_hv_msr(&leaf))
++	if (ret && ret != -EOPNOTSUPP)
+ 		goto fail;
+ 
+-cpuid_done:
+ 	regs->ax = leaf.eax;
+ 	regs->bx = leaf.ebx;
+ 	regs->cx = leaf.ecx;
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
