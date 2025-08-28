@@ -1,129 +1,159 @@
-Return-Path: <linux-kernel+bounces-790413-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30D6FB3A6C9
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 18:45:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 674FCB3A6C8
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 18:45:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84D4EA016B7
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 16:45:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15AC3985166
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 16:45:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11376326D6E;
-	Thu, 28 Aug 2025 16:45:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A29332A3F0;
+	Thu, 28 Aug 2025 16:45:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b="Y4FiiP6c"
-Received: from sender4-pp-o95.zoho.com (sender4-pp-o95.zoho.com [136.143.188.95])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Gp3eUQDr"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0EB92153E1;
-	Thu, 28 Aug 2025 16:45:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.95
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756399541; cv=pass; b=aeS6gzs8vrZE2iAEI2Q16mix3kNOPGH9BqKbMgqQKnC7imSR9TxYpFFRW6khuerH+gePxg0DhKGO6V88YKkFAJ4dxjj0EmJwEz/wRiH5v8dbcMqnLEdsia0Tt8f0Cib6Sza3PHjfRr0sYslE381WqEz59nGi/02detMOl8ovl7k=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756399541; c=relaxed/simple;
-	bh=3hNbbGnIIeUh0Xq169DwWUhdfjIjNlud6e1OOq1hvgI=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=PWgE3pON5w4H+b8se7eZeSTdmshE5niv6Uh8UBYh4kJFh2zdORKtgpYhL0Zx3WBRn/TXqXa4oPGKZ6r1SVMD1okkg7tnvwdgVyOyvyMxuY99srGHdi+Tkqdn69gR0s/nru1oZeb8brcwS22gm5G8myWI+jtY6ugeedo3b65joA8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b=Y4FiiP6c; arc=pass smtp.client-ip=136.143.188.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
-ARC-Seal: i=1; a=rsa-sha256; t=1756399492; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=nt9ujwIF+j5OMdtPq+mji6OStcJSTF2iSyhtPMWQLKVocY9TKH5Z4Dv9y8yrtcLm1OmhXdFLQPMOddurirkrT3MfKwB9MeCMw9GxvBs7CFhG5euz448+LvYOVLFRVzsobzWaNiDh3yZdg2/OD9ILDKRzf2H9/Vaiml5j+doSn5A=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1756399492; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=xrVBUXkzvzBF2rrjO9ftLnAnNRA3Pzir4wCQwPuO9Io=; 
-	b=jGxafguVxA+sATZFmmv3LQgo/TI9Q39ykgTeMka0t41ZbDM2rcswWp0WKlJ+FSJms4aULM6yduwIZEv+Bg8Y1d2dftReHuJzZrdlI6ln0buPYW3yTXNXkz4nBFGMpok4Zn8Dz4Av1K1gnPTrV3Kl4hKr9b6wxLgesp4W1SPBTmE=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=zohomail.com;
-	spf=pass  smtp.mailfrom=safinaskar@zohomail.com;
-	dmarc=pass header.from=<safinaskar@zohomail.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1756399492;
-	s=zm2022; d=zohomail.com; i=safinaskar@zohomail.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
-	bh=xrVBUXkzvzBF2rrjO9ftLnAnNRA3Pzir4wCQwPuO9Io=;
-	b=Y4FiiP6cHnEt9IL9qbZh8sOiJdC4tI4m0yKvUPOai5R5sg0SSKhFCQ7JgFGVUJif
-	4wszl7sc/FyT08qi4yXkKTchq+1pf/KfWD9K6r6tWtvvmPXLO6XgJBqwax8hzBTOLJt
-	nb3upuBHJ43WvuyEDRKePGvm0A0etm2tUe7wdyRs=
-Received: from mail.zoho.com by mx.zohomail.com
-	with SMTP id 1756399491637732.1699248320573; Thu, 28 Aug 2025 09:44:51 -0700 (PDT)
-Received: from  [212.73.77.104] by mail.zoho.com
-	with HTTP;Thu, 28 Aug 2025 09:44:51 -0700 (PDT)
-Date: Thu, 28 Aug 2025 20:44:51 +0400
-From: Askar Safin <safinaskar@zohomail.com>
-To: "Gao Xiang" <hsiangkao@linux.alibaba.com>
-Cc: "Byron Stanoszek" <gandalf@winds.org>, "Christoph Hellwig" <hch@lst.de>,
-	"gregkh" <gregkh@linuxfoundation.org>,
-	"julian.stecklina" <julian.stecklina@cyberus-technology.de>,
-	"linux-fsdevel" <linux-fsdevel@vger.kernel.org>,
-	"linux-kernel" <linux-kernel@vger.kernel.org>,
-	"rafael" <rafael@kernel.org>,
-	"torvalds" <torvalds@linux-foundation.org>,
-	"viro" <viro@zeniv.linux.org.uk>,
-	=?UTF-8?Q?=22Thomas_Wei=C3=9Fschuh=22?= <thomas.weissschuh@linutronix.de>,
-	"Christian Brauner" <brauner@kernel.org>
-Message-ID: <198f1915a27.10415eef562419.6441525173245870022@zohomail.com>
-In-Reply-To: <81788d65-968a-4225-ba1b-8ede4deb0f61@linux.alibaba.com>
-References: <20250321050114.GC1831@lst.de>
- <20250825182713.2469206-1-safinaskar@zohomail.com>
- <20250826075910.GA22903@lst.de>
- <a54ced51-280e-cc9d-38e4-5b592dd9e77b@winds.org>
- <6b77eda9-142e-44fa-9986-77ac0ed5382f@linux.alibaba.com>
- <198ead62fff.fc7d206346787.2754614060206901867@zohomail.com>
- <d820951e-f5df-4ddb-a657-5f0cc7c3493a@linux.alibaba.com> <81788d65-968a-4225-ba1b-8ede4deb0f61@linux.alibaba.com>
-Subject: Re: [PATCH] initrd: support erofs as initrd
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B880C22A4D5;
+	Thu, 28 Aug 2025 16:45:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756399533; cv=none; b=HckIpRBDeU9+PS9FPDyqFCwE/q/YOOoxLJBOnWC6bLRANp7BVXB0rOihVdVR8Uzrkolb3Kuhp7Xk4aZxRxYhwiRJXavX2KiZmDzCKa5F11t+671rwqbXJyhbQxMgJtZkIxEXoduYqnb0RCNIO5ucw0FSJREE5L7UsrAtFCe8n4g=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756399533; c=relaxed/simple;
+	bh=ybJ1f8sBP5axyBxUa6IjKhhSOFJ+7mVTnYkNAwqNI6U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=tEQdO4yK/6AY30swd0xTT9ydv1PKHOOa4IVgrStIst5nUIfIu0o7qnr6ztxsMKX7ZnV0y8n3Fat6912fFQshSXVPepNLZ6Ldua2g0IP3OElHCs6J84sleg1/jE6j4nr+zEPAHK87dJ+/AzZxcCdcOeNSwlCpqZG44ASWmkkoL/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Gp3eUQDr; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57SEOjrX030104;
+	Thu, 28 Aug 2025 16:45:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	G+zrw1XxE5Jzdovbrl0Kr12pWeJHN+sdic6+TdiAkcY=; b=Gp3eUQDry5LNXElk
+	LialPHIcKeDtxqa2HTryv9BzHLxg2bV7kQ0+sLhBNdCANkwggG5AIPKhfbZowaLt
+	voC+xXnA+EXrj0e8XkQcSZhm54erjX+m+Qb4JcM4kBoxHr+oMBO/xE3wrFYrldfg
+	rhWQLMSmiP69wXJYteLmkqvmAzxnoEgUGVeWsh6GKW8CcXQ+IZhOdiF2zFe/H5cq
+	oTKLJVo954iIuGwrS875hgfAc2AeGtGR8hBcp/obvILD00N9gYgkLVKg5AjZTez7
+	CM1HOeEP/LWlEQPAPjbvo7Xwr8BmyLZL2WRtu+hFEYL9w7JVqiBxSkfNAwqKM9Fo
+	ywxf9g==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48q5up0tbq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 28 Aug 2025 16:45:19 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 57SGjHwY030600
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 28 Aug 2025 16:45:18 GMT
+Received: from [10.218.4.141] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.24; Thu, 28 Aug
+ 2025 09:45:13 -0700
+Message-ID: <8d705694-498a-4592-b93a-7df6a1dd5211@quicinc.com>
+Date: Thu, 28 Aug 2025 22:15:10 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V3 1/4] ufs: dt-bindings: Document gear and rate limit
+ properties
+To: Bart Van Assche <bvanassche@acm.org>, <alim.akhtar@samsung.com>,
+        <avri.altman@wdc.com>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <mani@kernel.org>,
+        <James.Bottomley@HansenPartnership.com>, <martin.petersen@oracle.com>
+CC: <linux-scsi@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>
+References: <20250826150855.7725-1-quic_rdwivedi@quicinc.com>
+ <20250826150855.7725-2-quic_rdwivedi@quicinc.com>
+ <9944c595-da68-43c0-8364-6a8665a0fc3f@acm.org>
+Content-Language: en-US
+From: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
+In-Reply-To: <9944c595-da68-43c0-8364-6a8665a0fc3f@acm.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Importance: Medium
-User-Agent: Zoho Mail
-X-Mailer: Zoho Mail
-Feedback-ID: rr0801122752d06e396f7e7865dd3a0d050000c5060cc9522ec008e81a4b38c4e66a6265240f58d73be4b200:zu0801122755eab974bb7b668fad6bb8710000346584e788a9fcab2204fd423ce27651cec1e91681ae3b5138:rf0801122b8c3ec6ac4e79f50d268b6a9400009faf7565bbb4e40d3b4d2d258eca40d706241f9abce8de4dd8018c6976:ZohoMail
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: OIZbKr9G7_QKE2ZRxphkiSdihz1WdmEw
+X-Proofpoint-ORIG-GUID: OIZbKr9G7_QKE2ZRxphkiSdihz1WdmEw
+X-Authority-Analysis: v=2.4 cv=JJo7s9Kb c=1 sm=1 tr=0 ts=68b0879f cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10
+ a=1l4myg9UuvIpqwvpMjoA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIzMDAzMSBTYWx0ZWRfX9bjh0rHnDqbH
+ CTKRTtbPPV3MLRG+bO747gUjE9Cl8bfKAFK32jbRkmxk6frppPoH1mC/as31a5uVQMGyfynlkpf
+ C16WF205BOKDTOKfNMT4vVe/nxQjIdqJIq0Xwt92/1fXwz3b7MmDgdqYYITZIHgVVW7/VIEf7pE
+ McgDLJrPpI+Qrte78KAuBmFI144BW89649rvRltcBCEA5VT8bmWTJ6+ccb7qNHUM/lBC8v6Cte6
+ p5XaLbeyAUfI3bxq9pP1t+vdNqMMUMhfHbAhRtoHeM4wCtyMQUWqrMj1vftzZeXV3d31LMPXIXY
+ x+ifwv2dlWK/sbltGashPoPo/GffC+NxesPhEKQjWBWzWJIiV6oxY0z5iFe/QGqsCV7PZPzo9Gj
+ qCooHLb7
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-28_04,2025-08-28_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 adultscore=0 bulkscore=0 spamscore=0 impostorscore=0
+ malwarescore=0 clxscore=1015 priorityscore=1501 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508230031
 
- ---- On Wed, 27 Aug 2025 13:58:02 +0400  Gao Xiang <hsiangkao@linux.alibaba.com> wrote --- 
- > The additional cpio extraction destroys bit-for-bit identical data
- > protection, or some other new verification approach is needed for
- > initramfs tmpfs.
 
-Put erofs to initramfs and sign whole thing.
 
-Also: initramfs's are concatenatable.
-So, you can put erofs to cpio and sign the result.
-And then concatenate that cpio with another cpio (with init).
+On 26-Aug-25 9:05 PM, Bart Van Assche wrote:
+> On 8/26/25 8:08 AM, Ram Kumar Dwivedi wrote:
+>> +  limit-hs-gear:
+>> +    $ref: /schemas/types.yaml#/definitions/uint32
+>> +    minimum: 1
+>> +    maximum: 5
+>> +    default: 5
+>> +    description:
+>> +      Restricts the maximum HS gear used in both TX and RX directions,
+>> +      typically for hardware or power constraints in automotive use cases.
+> 
+> The UFSHCI 5.0 spec will add gear 6 soon. So why to restrict the maximum
+> gear to 5?
+> 
+>> +  limit-rate:
+>> +    $ref: /schemas/types.yaml#/definitions/uint32
+>> +    enum: [1, 2]
+>> +    default: 2
+>> +    description:
+>> +      Restricts the UFS controller to Rate A (1) or Rate B (2) for both
+>> +      TX and RX directions, often required in automotive environments due
+>> +      to hardware limitations.
+> 
+> As far as I know no numeric values are associated with these rates in
+> the UFSHCI 4.1 standard nor in any of the previous versions of this
+> standard. Does the .yaml syntax support something like "enum: [A, B]"?
+Hi Bart,
 
-Also, you can put erofs to cpio, then sign this thing, and then add init to kernel
-built-in cpio (via INITRAMFS_SOURCE).
+As per the MIPI UniPro spec:
 
-In fact, this built-in initramfs (INITRAMFS_SOURCE) is very powerful thing.
-You can specify there arbitrary boot logic, and have that initramfs inside kernel
-image.
+In Section 5.7.12.3.2, the hs_series is defined as:
+hs_series = Flags[3] + 1;
 
-You can even specify logic there for checking signature of erofs (not cpio, but erofs itself).
+In Section 5.7.7.1, Flags[3] is described as:
+Set to ‘0’ for Series A and ‘1’ for Series B (PA_HSSeries).
 
-Also, if all these is still not helpful, then try to describe your use case in more details.
-I still don't understand what is wrong with signing cpio, which contains erofs.
-Yes, this will slightly complicate pipeline for building erofs. Now you will
-have to put it to cpio and then sign that cpio. So what?
+While issuing the DME command from the UFS driver to set the rate,
+the values 1 and 2 are passed as arguments for Rate A and Rate B
+respectively. Additionally, the hs_rate variable is of type u32.
 
-Also, if your users want to have their own init inside that erofs, then
-you can just write trivial init, which calls their init.
-And you can put that trivial init to cpio, which is build-in in kernel via INITRAMFS_SOURCE.
+Thanks,
+Ram
 
-Also, when I hear "sign, signature, something something", then UKIs show up in my mind.
-( https://uapi-group.org/specifications/specs/unified_kernel_image/ ).
-Maybe they are somehow helpful? That page talks a lot about signatures, measuring into
-TPM, etc. (Every time that page says "initrd", they mean initramfs, of course.)
-
--- 
-Askar Safin
-https://types.pl/@safinaskar
+> 
+> Thanks,
+> 
+> Bart.
 
 
