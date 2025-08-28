@@ -1,127 +1,121 @@
-Return-Path: <linux-kernel+bounces-789231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9550B39281
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 06:17:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 318D0B39284
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 06:19:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F29101C2249C
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 04:17:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC23998179D
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 04:19:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 446EA24BC07;
-	Thu, 28 Aug 2025 04:17:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B1E020459A;
+	Thu, 28 Aug 2025 04:19:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MwfHaePf"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Jxrqicmr"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A5101C5F23
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 04:17:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC16330CD97;
+	Thu, 28 Aug 2025 04:18:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756354627; cv=none; b=TogdObhUHpBD+sJ2BlHEyVjnlvGV3btbleuJqWisPAnML5MXYu1ccmB+7WcDWnieKEC3HXeXProZNvRLDb1QzxTefeFqqBtW1+AO7wJK0C6ddeSYtZ3Y0tksnYx9cLiigPnFOsQvNa9sZSGJaGjTGBipBHJvIQRT2g/i8Wgv3DI=
+	t=1756354743; cv=none; b=hoiV64t6xtd9ay+z5Vc9DmVzkFp60PRBjhUGJh5tLE2Sdx8f5hvCNNF2RJ8kOa4/zWNYzC2yvA2JM/kRYJpAzBjwyBm3dYwTJENdIF9fgMCUIUshD/YQ7eai8pf/5HZX4Qtn65x17TKyU7jmVqKk1MoVIMfqGvVq1SPiq7iNP/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756354627; c=relaxed/simple;
-	bh=aiRplx1VFpUgZxqodOSdvKPvN4pjIopwIYvOiNZITQU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CQ/abt+IMT+X3U7yEOX99ReHbt8E8qPf0GJs8KY72tlNNbaKLUFGcxqUculDaLulGUSQqsSpil84TLa4V0Aev2ppp3e4DAw1yPHQ4Kp4dzl6gBgTdYmvQ+rzeHfZ4bqxt2JbAnWvArpp6ILjQ/FP2iJkqP4LLHUfrxG8R5WpIzE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MwfHaePf; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-248681b5892so105825ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 21:17:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756354625; x=1756959425; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=TMQVn8CrO16DsNUEv8ZI780aElTyTlwevDHE/l6d5V8=;
-        b=MwfHaePfiRPgogmV9Rg4y+1zqBlotE6Z2qunWFEWOVRBp8txiokxJXSMylhiVtjaXj
-         ouC5p3uw+FEMEhbJ0pgLGBCVenOudeO1rk3GLnO/LH1wgMtP3xGgUZUVMuZmnMMINTKf
-         lUGaobEI5WyM3TSDFszAPN4uVBoPyhPI/mBu1lwhaw1BMXqj+P+5zfOYN5Z/E6joWevb
-         Ez4Q/KSzVenoTHYlN2SNJFRf14YeX+7jk45g6JojKav/G5/JQ5BGWMGaIn/5ZJRIKRE6
-         +Uo3J42SiBazkR39X/o5kdLvN9NftuuJmkWB1eqyCeN7s1bBAzZj3MzISiNJ2SibZ0df
-         LGhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756354625; x=1756959425;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TMQVn8CrO16DsNUEv8ZI780aElTyTlwevDHE/l6d5V8=;
-        b=OyaXtX3/MRXj59pEMknD/VWP1aiZwGadMZSXdCrDoO8ZjmkxCkY+wuj6axSq/g6KIf
-         ZgB7ORHrDPleKiiQ4L9gvWfp96Vi5DbrYUnzO6icEZK3GMaSa+nJW/X3UqLpb1nIKRYi
-         wHsZAKgXQR8g4ukPWHZwBq0ik6lLoMMqLCpNjxFnrJOlhK4qhVlnYTKS7WqGU7yANyG0
-         T6ePn4amsSNoDy9vW5EMlLJUXRpICDnoP+6OL2IKxIbAVbn5OhLttt/ALcV7eQgoGhuY
-         jWX/WK/2lYBRsI+x9zpUlcpA2qPLD+rFCYPcoRYHiolBoaOHBOTw07kexGp+ltVsfkkY
-         QG8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVot3VNFwAyB2yDMAGORc78VuotvUic1LXhSIEg1L7G+cb6CGgUlhdPAHt5IZGxLDRc+QKE9H5JC3J9ijY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+H3KXE0ZhMbUJi19UPOjBKmRVfqYWyLR5ofCVXrjQq2BN7Vx+
-	I35eAMmXbibiRmgnUyOvwmPhDHRsUw6JlC3gmmcFFqztb8mffZmlAVpGV0c9NULkTA==
-X-Gm-Gg: ASbGncvL1ogAIgl/OAzbyD13W+twpZ3pu5t3LpBVqGMlbmaA+HpTDrjlWIs95J49EJU
-	vDtA+WjUZ2rcFoylTw5e2tWlyckI/35qsdQsD6GoPlBf5lW3xIUpWFIgngMI8LgmpOBFx5jYefz
-	78WsCUUALi1aSv/yzGtE0QasYsVqbH9cYzmMXTH/nH43DbQxjwOvNnttjCoK/kiEeIbjUMhpYjb
-	gLjdVM6Z5rTRofIZYz1l/B8b1mTRg34ZeWEpRMa6M6sixM2EBB8vVsOpHWVCZ86mmHQbSUnUBEB
-	dGf795NeJgXPcZdQENz0KEz0eInnkzd07pglbO9s8By0EBzpJUnLLk+oChRlocqkSsaxkdhUU8P
-	zzswj8vE9U7+8/W+Dj/K+6JbSE1tG56BJteifBNCLOHHf+p2lMvfU4LNKlCVXcw==
-X-Google-Smtp-Source: AGHT+IEScvfgJtRVasw57V/0vxqTUB7x4SvVvb5MS9koK0iAGjVijb4Cn9+NhLOy8EhFZ2odTZwOvw==
-X-Received: by 2002:a17:903:1ce:b0:248:84b0:3fa7 with SMTP id d9443c01a7336-24884b054ccmr9171285ad.3.1756354624980;
-        Wed, 27 Aug 2025 21:17:04 -0700 (PDT)
-Received: from google.com (3.32.125.34.bc.googleusercontent.com. [34.125.32.3])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24668864426sm136937785ad.80.2025.08.27.21.17.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Aug 2025 21:17:04 -0700 (PDT)
-Date: Thu, 28 Aug 2025 04:16:59 +0000
-From: Carlos Llamas <cmllamas@google.com>
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
-	Pedro Falcato <pfalcato@suse.de>, kernel-team@android.com,
-	linux-kernel@vger.kernel.org,
-	"open list:MEMORY MAPPING" <linux-mm@kvack.org>
-Subject: Re: [PATCH] mm/mremap: fix regression in vrm->new_addr check
-Message-ID: <aK_YO90AEgow_iQt@google.com>
-References: <20250828032653.521314-1-cmllamas@google.com>
- <xpxoxn25fzhahdyvjp2vgmcnek6oot2hhvb5niz3tw7au46eno@cixyid6ywf27>
- <aK_V4sOUOIpEhFC-@google.com>
+	s=arc-20240116; t=1756354743; c=relaxed/simple;
+	bh=xjPLySpG4Cqaeo6i2PBc0ZZuCTZhuQ8xsn5W87rGIfI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BZTApYfjYM7ty9Bps9DaR+5WV00BnMsCraLCgkgB6aoaQwRnjiNM3kDoHjy8muzQl7jANCeilQyQvhjaQS4tPHlu0pPYywPSkZ3ZP40OjgoYTpvxJLZvm85CjN49R06H4sU+4oDEtviOVleL4ZOL7Poeq0dfLR/vPi9UCXq0Uzo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Jxrqicmr; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=oNuKGPPg3hK4HshhqAcAMhnyXLVAApIs8OiHECNh8HI=; b=Jxrqicmr34AlSRZm6wMJCkBKeM
+	jb5arR1aO4fzHXN+p+DugR/B14WdMERJjWS421KwWRNphNYZChZemDsy/qt9iJrxqzlcY/6oK9jy9
+	5ayTR31bi/ca+WCeGlW2se+eijA7w/XPHxHFugWBCmgu6bnUtDONXZ7hUPP+S3No9mYPd4ZujRI3b
+	u35wIsfMD2hVid31dSLIVJL/8I0//XFm0AFL6qqfyupnKLFZTBk2VEwoTESYncMRfAFXt5d+QA4qR
+	qxULy7IF7SfLZXJNcl90loJGBvz8h56udLj5VQKmQCmu8C6C2IaXrECV/vh4cml5rrRwy20O9fFQ1
+	YQaR/LQw==;
+Received: from [50.53.25.54] (helo=[192.168.254.17])
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1urU6D-00000000Dyq-2i21;
+	Thu, 28 Aug 2025 04:18:57 +0000
+Message-ID: <d0070beb-f6fd-477c-a315-a2c6db99c227@infradead.org>
+Date: Wed, 27 Aug 2025 21:18:57 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aK_V4sOUOIpEhFC-@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] Documentation: management-style: Reword "had better
+ known the details" phrase
+To: Bagas Sanjaya <bagasdotme@gmail.com>,
+ Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+ Jonathan Corbet <corbet@lwn.net>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux Documentation <linux-doc@vger.kernel.org>,
+ Linux Kernel Workflows <workflows@vger.kernel.org>,
+ =?UTF-8?Q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+ Fox Foster <fox@tardis.ed.ac.uk>, Federico Vaga <federico.vaga@vaga.pv.it>,
+ Stephen Rothwell <sfr@canb.auug.org.au>,
+ Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
+ Matthew Wilcox <willy@infradead.org>
+References: <20250827044848.17374-1-bagasdotme@gmail.com>
+ <87wm6p9v8l.fsf@trenco.lwn.net> <20250827113312.62162725@foz.lan>
+ <aK_XIoncppxWp7sB@archie.me>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <aK_XIoncppxWp7sB@archie.me>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Aug 28, 2025 at 04:06:58AM +0000, Carlos Llamas wrote:
-> On Wed, Aug 27, 2025 at 11:43:39PM -0400, Liam R. Howlett wrote:
-> > * Carlos Llamas <cmllamas@google.com> [250827 23:27]:
-> > > Commit 3215eaceca87 ("mm/mremap: refactor initial parameter sanity
-> > > checks") moved the sanity check for vrm->new_addr from mremap_to() to
-> > > check_mremap_params().
-> > > 
-> > > However, this caused a regression as vrm->new_addr is now checked even
-> > > when MREMAP_FIXED and MREMAP_DONTUNMAP flags are not specified. In this
-> > > case, vrm->new_addr can be garbage and create unexpected failures.
-> > > 
-> > > Fix this by moving the new_addr check after the vrm_implies_new_addr()
-> > > guard. This ensures that the new_addr is only checked when the user has
-> > > specified one explicitly.
-> > > 
-> > > Fixes: 3215eaceca87 ("mm/mremap: refactor initial parameter sanity checks")
-> > > Signed-off-by: Carlos Llamas <cmllamas@google.com>
-> > 
-> > I assume this showed up with clang?
-> 
-> Right.
-> 
-> The specific test that broke on our end was this:
-> https://android.googlesource.com/platform/bionic/+/HEAD/tests/__cxa_atexit_test.cpp
-> Although I'm not exactly sure how __cxa_atexit() implementation uses
-> mremap() underneath.
 
-Ok, here is the specific call to mremap() in the test:
-https://android.googlesource.com/platform/bionic/+/HEAD/libc/bionic/atexit.cpp#197
+
+On 8/27/25 9:12 PM, Bagas Sanjaya wrote:
+> On Wed, Aug 27, 2025 at 11:33:12AM +0200, Mauro Carvalho Chehab wrote:
+>> As a non-native English speaker, "had better know" looks really
+>> weird on my eyes, as, at least for me, "know" is a verb.
+>>
+>> Heh, I just discovered today by looking on a dictionary:
+>>
+>> 	https://dictionary.cambridge.org/dictionary/english/know
+>>
+>> That know can informally be used as a noun (a shortcut for
+>> knowledge?).
+>>
+>> For me as a non-native English speaker, when one writes:
+>>
+>> 	They "most likely know"		(know here is a verb)
+>>
+>> or:
+>> 	They "had better knowledge"	(knowledge is a name)
+>>
+>> Things become clearer.
+>>
+>> Heh:
+>>
+>> 	They "had better know the details better than you"
+>>
+>> the "better" word is used twice, and yeah, this is requires more
+>> fluency in English for a non-native speaker to get what it says.
+>>
+>> Considering that "know" (noun) seems to be a shortcut
+>> for "knowledge", what about:
+>>
+>> 	They "had better knowledge about the details than you"
+> 
+> That can be alternative.
+
+Nope, afraid not. Just leave it as is or (I think) 2 people have suggested
+something like "They should know better about the details than you".
+
+-- 
+~Randy
+
 
