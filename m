@@ -1,141 +1,187 @@
-Return-Path: <linux-kernel+bounces-789416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789420-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A514FB39537
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 09:32:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35B32B39543
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 09:34:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C82C71C244EB
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 07:32:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF9FC5E3D10
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 07:34:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FCFF2D7390;
-	Thu, 28 Aug 2025 07:31:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE8EF2D3A7C;
+	Thu, 28 Aug 2025 07:34:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IojEBrIY"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VfaMs52u"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F9C025634;
-	Thu, 28 Aug 2025 07:31:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97AA72D0626;
+	Thu, 28 Aug 2025 07:34:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756366314; cv=none; b=qWC2Vwoig8aYS76njKQO8470ytesOUdkGNtnL1pHSJVI1Q92x/qpIW8FJ1TY0Ci2lhJWxRMQVWxjlsSFDAxswBRZQkX+KBI1X/FmtapgVuEFdt9m8FQHILztQHIQFd+gkweJG/7cTSLqB1BBpgSLREI18qIUmUWVGIn/olVA6ho=
+	t=1756366451; cv=none; b=OOL8FbGlf4YJBwp1vpBgvGhsRjCPW+/03B69/P9LhAyvP3cL9M57VtvgqJUo+n4KP4XELyGFqnb60LGsqg3uZD0nhi0Krf2Ru0Y4QYz5ERGTeKc01tW/t3H5f9IwbcgSiw4cfe8OLv3H+PKdwqq5N8mFy5+Xp7utzq8wpzgmJUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756366314; c=relaxed/simple;
-	bh=TpwyzypEujQZAeEzgHHlRrVk+R8i3A3xvfnvM9KGUhA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kDUlxMJ/d8KYNdc8PS876M1qMcHSRnis70mi47IzlpAmQkqPmYBASzapRiOXI5kTrx5dIbyqKdpHHERiyPhUp7dNVlnNvkq6FCnEzij36HRnCZOIo6YaSa86mWbMx6mTgkOFlI6bu8U/4KYj+KbV8Go2qPPcmg1vjFnzNgPO+CM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IojEBrIY; arc=none smtp.client-ip=209.85.221.51
+	s=arc-20240116; t=1756366451; c=relaxed/simple;
+	bh=KunA+ClFMMc2AGmooKotn9jUWmNj9tiso6TLGErh3uk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=c5FtKjt2mlCTqDA6oGlmuuqFeRN4GD+yr4/NswzgKGLEKmxgT+6nURIoSh7icASbFGsy0xOOqiBNE+x7mpdpwplKTQ7ITbKIxrldJ0Yn6vTfU7HS6HxknRpdbG7aQNJ9Fi4BOdaVi8U1qRJ2PVJobMcAb+yFv/fx8peVziMAtow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VfaMs52u; arc=none smtp.client-ip=209.85.210.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3c8fe6bd038so285007f8f.1;
-        Thu, 28 Aug 2025 00:31:52 -0700 (PDT)
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-76e4fc419a9so697543b3a.0;
+        Thu, 28 Aug 2025 00:34:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756366311; x=1756971111; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EuV0vIwmYzbGp0NvCAEdvEWsqc4i4ounAUIZgXtsn78=;
-        b=IojEBrIY02OFMAEdD5l+cqfpLbuHMSMObCvLSgZ/V1mbItoAXTh9551Wu4SyO7QXkY
-         2Nr+ip1MvzrpXHDnQo8ajDHGFsFJB+toxNaLP6BQKpnx3d33nkRuZMOMRHiZAt401dF2
-         rYsWc49/U/dVQteBheVb0o4feobzxdSO4WusUO7z4MjpLB6h0V2r7XuEW6d7Yb+vi+Zj
-         bk1UzU0UTPK/PFQr3+s/CHBROUr6P71g4cmE7jpDicVjLr/wA9boRd5D+q7Pb1Jg9sf+
-         0cefcN4B6H0oUpaLO+f8dqy6tjGXPSuo6aFIJpuX/JAy5QiAucXYGU7OXR8HRYK/KECI
-         2Djg==
+        d=gmail.com; s=20230601; t=1756366449; x=1756971249; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=j+wvbIZSOArG9eklWNCAJ/EwS6c50oTh0cISY2nYyU4=;
+        b=VfaMs52uGvNjg5Hmj9IxtqqJCQgpfoztu7/Fa2c5oeUViIChZoH1X55eW6uZ8GGjxn
+         lo8PqWIt7gVgRCgWgjdGwgfSaXfVMS2Dw+nGy6la9yOrNPOK8cROwwsiY4e2ufHDn8qb
+         K1Hxa2VksEFJzXXVyWE0I5WufF25fPZePXioq+bO5tTUWEtypQ/2iDyBt2Q7Pn0CcLRy
+         r2+YsfamI494HcIBfBDkJT8bRXfu9nceCqZJjYAUEkt1wl/Ce7m7aXl+gy17BNt2yUXQ
+         iBKbxl0cazKTeBj9j9gKECTeApDL9Ubv2oYao9AQpXLPiWYbU94efcIovwSxEMC9H3lG
+         c9WA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756366311; x=1756971111;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=EuV0vIwmYzbGp0NvCAEdvEWsqc4i4ounAUIZgXtsn78=;
-        b=bmm/W+gJ9uxO60EVpPqFuttZFyuV2L0ZRIKfVV+hVoIMR4fPSKQYUSktuS77SmeY3U
-         Duf7N/xcboGFyzspamgOAUDmIuZDvVLG6OuVFXBnbW6jSM4vlgoyUIE7/4Q+Or+pQUU9
-         hH3vXRLzEO75BoDzEGkyyiyC/IrzEui6jZP7NneDGelua+W0TLMfvsLPHLJ42UpLHYQp
-         udy/3z6fsaARGiJ5z8/EzdTsptjphzg/NQ9O77u4EiCgZLhlHaxNzqGyCfYJbL/njZwX
-         b06+zescZgMPZVSuDQSTo0vq053CBT/xcwO7c6mwogjgKisEmGBEh7E+UO/kF95+bQPt
-         wdVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVJWZax6PY9+wL8MwidAATTyjN+rBsy4H1eYrqWcvBxls6crMNu61eT260ohV9YpqWCK7RcRkHbXoU9Mg==@vger.kernel.org, AJvYcCVXladc80+VeA3Umt4krY0kN/BYGymfbwJuhcPGzE5X+sU5YGuA4wcDB5U6L1TOrZn9F/FUaC938xHWLw==@vger.kernel.org, AJvYcCW9hSxxp2Hy1mEca5O6PI7XybXZP/A6slh02+kzkZoFpnHBzG9e329J9k+brfIBvPdzoP5/KzLjSg==@vger.kernel.org, AJvYcCWGyx3dZzEWUJXzxGbUXyhTGc/3RwTIRlPaM2jZaJ5wg+XO4sIyGYomhUnMwvnXqnR8mdY0+dioI9jS@vger.kernel.org, AJvYcCWI3a4W0oBj6R3K6WJbPN6gAZf78pxywJaQWnUuRCzbTFDbt1wFRdW/+0EKHiBgKQt5Xdgkl4tYsmJWpjet@vger.kernel.org, AJvYcCWX+MgQipGMBNLsY+omSs0BWUrQ2we0z87R1UX3mmTydTAU5Mo7pKBwp2H7zABwKq/PhZXaOIV9@vger.kernel.org, AJvYcCWZ49csSkToLG0pACa7fsGcBMoZAbjOLCyT5ZTKlDbkLumJJ5xjQ4RN58D2iMQVTGnOYIHq35kh7lNU@vger.kernel.org, AJvYcCWao2HbfGF60qbVTCsN5chWuueF6uj9bBTIsrfTgwFJhUOUg1dZugQujbhOgZXAQIEuovN+3qXtkACZ9s5h4Zz2@vger.kernel.org, AJvYcCWvYvE1TM5VDOg/DODi1+LtuQYyy/CUeoqiClTOlbhovmx1vQZlS84C6SJF9M7PQROVvWXF@vger.kernel.org, AJvYcCXlJBm9LiSAtuzE36j4TRAwXGUdWj63xxUWvEFQ
- 6oSHYaMTYf6vFmVLfBR85Q9bmDL3yFYwhZ7XTLcpXw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxg6PJ3+DmyeKPNZdPeIKUNdCQtPZSyCIc7a3/RWwszQ9EC7kXs
-	3uUXTm8FM2jv7nBZ2Duzr51F36Cs8fVIjildXJ9C54X3TfNtdXngKogD
-X-Gm-Gg: ASbGnctNtER5g1VktjqrpE/4/C2dw1j3VNSIor4GJY2pI6qC3O/Y+m53Gn9ge1u0x8q
-	sr/B+QgYpsIY+zxCvk1zD8GdnxRsGLm3eHNOrVIGTN31///9YvPT0MMuEhnLHtc+aFzskHmNXM+
-	7Qp05BYDHsmMCJKtahkE8bgK+T3vGKqUCNY4BH3IKtA91dWBFngDLuef01gIM4YoOWViyNxtCRc
-	MrqjU4TGpc+pElJQFBLcDoH5f7q5LTTUJW3TTi+supZnxAmrMk3BPF9LPFfJdr6jtpAIICQEseU
-	OUlM45bu2voBRfUE1/OH6LhCeSyy3KA0CMylA5q8QTZ510AGC9STWFbEry6XGSSemigmw/4gSKN
-	US/Lp40FSoAUzXsi7uRph7PS2DiOzSlZzBl3e
-X-Google-Smtp-Source: AGHT+IGYsCTFAB2u+mO+a+/7YQm7WCRYBnf/bqNrDbgJHuGpC+AeSLNYygCiHCIag3yJJPklKDadWQ==
-X-Received: by 2002:a05:6000:2891:b0:3cd:96bb:b948 with SMTP id ffacd0b85a97d-3cd96bbc28fmr1837267f8f.47.1756366311260;
-        Thu, 28 Aug 2025 00:31:51 -0700 (PDT)
-Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c9c9324dc9sm14883755f8f.3.2025.08.28.00.31.50
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 28 Aug 2025 00:31:50 -0700 (PDT)
-Date: Thu, 28 Aug 2025 07:31:50 +0000
-From: Wei Yang <richard.weiyang@gmail.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Zi Yan <ziy@nvidia.com>,
-	SeongJae Park <sj@kernel.org>,
-	Alexander Potapenko <glider@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Brendan Jackman <jackmanb@google.com>,
-	Christoph Lameter <cl@gentwo.org>, Dennis Zhou <dennis@kernel.org>,
-	Dmitry Vyukov <dvyukov@google.com>, dri-devel@lists.freedesktop.org,
-	intel-gfx@lists.freedesktop.org, iommu@lists.linux.dev,
-	io-uring@vger.kernel.org, Jason Gunthorpe <jgg@nvidia.com>,
-	Jens Axboe <axboe@kernel.dk>, Johannes Weiner <hannes@cmpxchg.org>,
-	John Hubbard <jhubbard@nvidia.com>, kasan-dev@googlegroups.com,
-	kvm@vger.kernel.org, "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-arm-kernel@axis.com, linux-arm-kernel@lists.infradead.org,
-	linux-crypto@vger.kernel.org, linux-ide@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-mips@vger.kernel.org,
-	linux-mmc@vger.kernel.org, linux-mm@kvack.org,
-	linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
-	linux-scsi@vger.kernel.org,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Marco Elver <elver@google.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Michal Hocko <mhocko@suse.com>, Mike Rapoport <rppt@kernel.org>,
-	Muchun Song <muchun.song@linux.dev>, netdev@vger.kernel.org,
-	Oscar Salvador <osalvador@suse.de>, Peter Xu <peterx@redhat.com>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Suren Baghdasaryan <surenb@google.com>, Tejun Heo <tj@kernel.org>,
-	virtualization@lists.linux.dev, Vlastimil Babka <vbabka@suse.cz>,
-	wireguard@lists.zx2c4.com, x86@kernel.org
-Subject: Re: [PATCH v1 06/36] mm/page_alloc: reject unreasonable
- folio/compound page sizes in alloc_contig_range_noprof()
-Message-ID: <20250828073150.jyafkufvkjfqwp3f@master>
-Reply-To: Wei Yang <richard.weiyang@gmail.com>
-References: <20250827220141.262669-1-david@redhat.com>
- <20250827220141.262669-7-david@redhat.com>
+        d=1e100.net; s=20230601; t=1756366449; x=1756971249;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=j+wvbIZSOArG9eklWNCAJ/EwS6c50oTh0cISY2nYyU4=;
+        b=fk+Il8zc8oZny5jYujEaA/4YOQPIlQ3uU/L8xSLedw4G5/mNlgTFIyS2rxGp8H1yNZ
+         VSzr+xZ4x9JaTgwBtaIRUGNM69R4JF1Nvh7ygGqBV3W3rj6Sus/DcfYLsxt447TCcobf
+         /ctrPsMjTgc6wRBJ/i87Dt4SAX4NoIa9jZNTwpTs9stLeqcqBrCbkUFfdXxxpH5Qvivo
+         4cNyHQ4ant46IWOsBPseRr43Dov6HnJWLorUsGoTHORJ0UjxcpDOxaJWdD1WTiq7uh2i
+         NxPAZlxehWCA8YjmL2q6Rq8BZdKETqgQIBlqvKGmbeD4eaeFGnXDtQUnRI+vwqBOFL/Z
+         4zpA==
+X-Forwarded-Encrypted: i=1; AJvYcCVBmjWKXZWLf/m1qhAPheBmjctgzPK6tQMGV5IPOnmwERAhVylYTcBFR78FNXMTmer2iJlhRc2BRkEbR473wOHQ9XQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzsqdl8RlOm5KIsnWRRXVtSKfFLThYmXoxbowbjn5ZAI4J9hKbb
+	HFx0kNnTe11W/vR0oCa7qbZf8VFqMCVnaJI2rSfB4o7mwHkcsGs9zX7B
+X-Gm-Gg: ASbGncvDJBHxC+Ipqw2q/KAiHAxlHqNO/YbzxMYC7ED5l56J2r3749GuICZAYTl2zw2
+	gGtrBH2Q3iaso42/CJXwM+/hR0XV33r7sJ6N35h4aYxOyKRDHVCOt4i5LlS5OpuuSJKjxhJ0CDO
+	q+xgJy+ToYMS3G2k3UlR6kS7N9Yw8wsrNxz/hNBH/s9DyxnJB5WZn6pBvjj6lg6VFdZouAQmLWD
+	wrk+bYmYaP7sSj9QKk+h+wv/V0WhSMoFh3/MZdv8SNHD0GvL7Nj94L6DM5y2B1XQTSZuiVC+UtO
+	Ig3xXtUyVqs9+gSPJKBNpcCKWdiaBv8woQpej/k7hQNdTNOPKm0qEps25vxWI7xkj/gScT99xXK
+	9LoISY4jgc78JP4MGsORWTO4V5pSYEkW8Yec/J1SPaan52uSU1Q==
+X-Google-Smtp-Source: AGHT+IE0Bj834whDXotueWX71WpNaH0hF1RPeXxQmdcXuHEqPvv59XyUYnfM+JaBPoGK6bm6cgZ0lA==
+X-Received: by 2002:a05:6a20:7d9a:b0:234:3932:2958 with SMTP id adf61e73a8af0-24340c47a88mr31770311637.20.1756366448736;
+        Thu, 28 Aug 2025 00:34:08 -0700 (PDT)
+Received: from localhost.localdomain ([103.88.46.62])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b49cb8afb7bsm13182613a12.16.2025.08.28.00.34.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Aug 2025 00:34:08 -0700 (PDT)
+From: Jinchao Wang <wangjinchao600@gmail.com>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	"Naveen N . Rao" <naveen@kernel.org>,
+	linux-mm@kvack.org,
+	linux-trace-kernel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Jinchao Wang <wangjinchao600@gmail.com>
+Subject: [PATCH 00/17] mm/ksw: Introduce real-time Kernel Stack Watch debugging tool
+Date: Thu, 28 Aug 2025 15:32:33 +0800
+Message-ID: <20250828073311.1116593-1-wangjinchao600@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250827220141.262669-7-david@redhat.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Aug 28, 2025 at 12:01:10AM +0200, David Hildenbrand wrote:
->Let's reject them early, which in turn makes folio_alloc_gigantic() reject
->them properly.
->
->To avoid converting from order to nr_pages, let's just add MAX_FOLIO_ORDER
->and calculate MAX_FOLIO_NR_PAGES based on that.
->
->Reviewed-by: Zi Yan <ziy@nvidia.com>
->Acked-by: SeongJae Park <sj@kernel.org>
->Signed-off-by: David Hildenbrand <david@redhat.com>
+This patch series introduces **KStackWatch**, a lightweight kernel debugging tool 
+for detecting kernel stack corruption in real time.
 
-Reviewed-by: Wei Yang <richard.weiyang@gmail.com>
+The motivation comes from scenarios where corruption occurs silently in one function 
+but manifests later as a crash in another. Using KASAN may not reproduce the issue due
+to its heavy overhead. with no direct call trace linking the two. Such bugs are often
+extremely hard to debug with existing tools.
+I demonstrate this scenario in **test2 (silent corruption test)**.
+
+KStackWatch works by combining a hardware breakpoint with kprobe and fprobe.
+It can watch a stack canary or a selected local variable and detects the moment the 
+corruption actually occurs. This allows developers to pinpoint the real source rather 
+than only observing the final crash.
+
+Key features include:
+
+  - Lightweight overhead with minimal impact on bug reproducibility  
+  - Real-time detection of stack corruption  
+  - Simple configuration through `/proc/kstackwatch`  
+  - Support for recursive depth filter  
+
+To validate the approach, the patch includes a test module and a test script.
+
+---
+This series builds on the previously proposed RFC[1] and incorporates feedback. The
+changes are as follows:
+
+Core Implementation
+
+  *   Replaced kretprobe with fprobe for function exit hooking, as suggested
+      by Masami Hiramatsu.
+  *   Introduced per-task depth logic to track recursion across scheduling
+  *   Removed the use of workqueue for a more efficient corruption check
+  *   Reordered patches for better logical flow
+  *   Simplified and improved commit messages throughout the series
+  *   Removed initial archcheck which should be improved later
+
+
+Testing and Architecture
+
+  *   Replaced the multiple-thread test with silent corruption test
+  *   Split self-tests into a separate patch to improve clarity.
+
+Maintenance
+  *   Added a new entry for KStackWatch to the MAINTAINERS file.
+
+[1] https://lore.kernel.org/lkml/20250818122720.434981-1-wangjinchao600@gmail.com/
+---
+
+The series is structured as follows:
+Jinchao Wang (17):
+  mm/ksw: add build system support
+  mm/ksw: add ksw_config struct and parser
+  mm/ksw: add /proc/kstackwatch interface
+  mm/ksw: add HWBP pre-allocation support
+  x86/HWBP: introduce arch_reinstall_hw_breakpoint() for atomic context
+  mm/ksw: add atomic watch on/off operations
+  mm/ksw: add stack probe support
+  mm/ksw: implement stack canary and local var resolution logic
+  mm/ksw: add per-task recursion depth tracking
+  mm/ksw: coordinate watch and stack for full functionality
+  mm/ksw: add self-debug functions for kstackwatch watch
+  mm/ksw: add test module
+  mm/ksw: add stack overflow test
+  mm/ksw: add simplified silent corruption test
+  mm/ksw: add recursive corruption test
+  tools/kstackwatch: add interactive test script for KStackWatch
+  MAINTAINERS: add entry for KStackWatch (Kernel Stack Watch)
+
+ MAINTAINERS                           |   6 +
+ arch/x86/include/asm/hw_breakpoint.h  |   1 +
+ arch/x86/kernel/hw_breakpoint.c       |  50 +++++
+ mm/Kconfig.debug                      |  20 ++
+ mm/Makefile                           |   1 +
+ mm/kstackwatch/Makefile               |   8 +
+ mm/kstackwatch/kernel.c               | 260 +++++++++++++++++++++++
+ mm/kstackwatch/kstackwatch.h          |  53 +++++
+ mm/kstackwatch/kstackwatch_test.c     | 261 +++++++++++++++++++++++
+ mm/kstackwatch/stack.c                | 289 ++++++++++++++++++++++++++
+ mm/kstackwatch/watch.c                | 177 ++++++++++++++++
+ tools/kstackwatch/kstackwatch_test.sh | 118 +++++++++++
+ 12 files changed, 1244 insertions(+)
+ create mode 100644 mm/kstackwatch/Makefile
+ create mode 100644 mm/kstackwatch/kernel.c
+ create mode 100644 mm/kstackwatch/kstackwatch.h
+ create mode 100644 mm/kstackwatch/kstackwatch_test.c
+ create mode 100644 mm/kstackwatch/stack.c
+ create mode 100644 mm/kstackwatch/watch.c
+ create mode 100644 tools/kstackwatch/kstackwatch_test.sh
 
 -- 
-Wei Yang
-Help you, Help me
+2.43.0
+
 
