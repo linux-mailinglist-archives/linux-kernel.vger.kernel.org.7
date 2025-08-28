@@ -1,156 +1,214 @@
-Return-Path: <linux-kernel+bounces-789530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F41AB396F4
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 10:29:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 32A57B396F9
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 10:29:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 855FE1C242A4
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 08:29:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53A8E1C242DA
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 08:29:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 995122DE6F3;
-	Thu, 28 Aug 2025 08:29:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 893612E7648;
+	Thu, 28 Aug 2025 08:29:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="pGvhnLcM"
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="VVDi/G5o";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="H7wpXe7r";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="VVDi/G5o";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="H7wpXe7r"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 532931E285A
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 08:29:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 644792E1753
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 08:29:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756369745; cv=none; b=eE0GWpBLLkbAfQf0RBsq0XSPX8HbVxIz1OfpUSt+mZzYZWCIvGwcJfJDqMGzdHxFQ8ATG3SOaU1ISGy5BLIaeY+AynYWHH7xqUKPgZbxTj+RLqs+Ui89M76HVG/tBFNgcHelsil7xSntXuWKgaFjsBRrjwpUXwXaXyYAHvO6GHE=
+	t=1756369754; cv=none; b=p67wAgjGUFsWnii2iJhTJt8wk/hZWDdArdTdc01dM+lohW8KVUB1mvmeFaKNarVM2AL0lCzpEl1x9O3QIgB9gT7Upm0Ps3ioD1LKozonecJVko0b+1JwJRgIoFHoor2QsXN8aIUFHyp9DVrhdneUQUsZn+XNNZliOhHpeqF7T9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756369745; c=relaxed/simple;
-	bh=0NTg+qwqHhGGJy7CFFSFLCIsbcG18npQ4bBDIzsClwA=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=WF+XlgZ5xM9eTjF69cGREpjCbpJZZdtzjc2UQNUjZ7MFrJBzIi9EA7TAOmoa/ouf0oH/r2q+bC1LktvKRGZTBzOTmnhu4vD9QiWOb/zOfRxXVhwluaAXToetVtNiIl1KPJ/mnmWsiB1EpcqhzpVo65ERIAZu3Tshxf1WY/wymiA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=pGvhnLcM; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
+	s=arc-20240116; t=1756369754; c=relaxed/simple;
+	bh=V7L/Y1uMzsklxnPAh214IOx2VcFlUksjl6zQ/Oiy5rA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KufUXavsi3CM1qDwTfoPtKr5/PjtzLHVx0+VWxO/qdNZQLLGERhRKwtcLHe+FxHF2TH0ifxMGn2zynkdarG3T6qv2aJN3MIYXoWNncdy3ivZ7r4cV7dfGFjo29p27XrzWGlkEo2/WeqDAGimuwG5jivhWPZpO1RazGYnMfWaoIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=VVDi/G5o; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=H7wpXe7r; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=VVDi/G5o; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=H7wpXe7r; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4cCF162CCqz9tRV;
-	Thu, 28 Aug 2025 10:28:58 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1756369738; h=from:from:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 6851A222FE;
+	Thu, 28 Aug 2025 08:29:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1756369744; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=nFw4tqBP0jjDKzRQjS/NUlldQwm7m+edN6Jc0V91AOY=;
-	b=pGvhnLcMdJJOvz7uVPoVJL5NlxV1ATHCFoMQlF342Y3tXZsTZnHg5aBqHUDAkki+E65ZOB
-	SL1Xrm6zDAb/6NuCfxXlA8tzfwzUJTEwVVO84frD2W2CCGYyBusZjSS/dZPCH7ObKgNLmi
-	Ey3UHF59uc1sivbCywSw1C42GivpDlPEKs63C/Bx3RXjTu06bTIYYRfniboZfO7XAaBMJj
-	ENlH3r+yp+/LirNaeTTg5YNAZf0n48o7CwWPMKSbvlmMfzd8V9ovIp2APf5nuUGdcCBaAf
-	8DHddeuPMy4HHNNgYRd7XpcaJi8IqDbIDu7tH/SXYBfBz6YabBBWN4y+/+A+Cw==
-Message-ID: <c41b717da1345bafc526ba7524b0fa24661243e2.camel@mailbox.org>
-Subject: Re: [PATCH v2] drm/sched: Document race condition in
- drm_sched_fini()
-From: Philipp Stanner <phasta@mailbox.org>
-Reply-To: phasta@kernel.org
-To: Danilo Krummrich <dakr@kernel.org>, Philipp Stanner <phasta@kernel.org>
-Cc: Matthew Brost <matthew.brost@intel.com>, Christian
- =?ISO-8859-1?Q?K=F6nig?= <ckoenig.leichtzumerken@gmail.com>, Maarten
- Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
- <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, James
- Flowers <bold.zone2373@fastmail.com>
-Date: Thu, 28 Aug 2025 10:28:53 +0200
-In-Reply-To: <DC1BGCY1JPKJ.7BHDGBYZDYMZ@kernel.org>
-References: <20250813085654.102504-2-phasta@kernel.org>
-	 <DC1BGCY1JPKJ.7BHDGBYZDYMZ@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+	bh=tOlr6C5vhqa1kxYAAqtfuSRSBiOOy3yEM6QLgnHqjqQ=;
+	b=VVDi/G5o8C1V6YAUebvIHQxNyDxcUqhryqx39L9fB3EQ7nFKvJHpSzQzgC26KTHMNhUkzO
+	5r8H0JU3IyYH2T6EPcu8JnnitMnRQ9IrF9aMRW8OsrDo1V8007Am8yVqa9lZhTGbFw4UVH
+	NASV6+R0bI4EXjA663yPVGRYuy2es5k=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1756369744;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tOlr6C5vhqa1kxYAAqtfuSRSBiOOy3yEM6QLgnHqjqQ=;
+	b=H7wpXe7rcDLkp5HsTMTb0+OLJJAAbCglgDyy+bXScDGYpg4BuYttPj/7BoDiP4mPPwWNQd
+	0Xk4fLj0s/44NcAQ==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b="VVDi/G5o";
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=H7wpXe7r
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1756369744; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tOlr6C5vhqa1kxYAAqtfuSRSBiOOy3yEM6QLgnHqjqQ=;
+	b=VVDi/G5o8C1V6YAUebvIHQxNyDxcUqhryqx39L9fB3EQ7nFKvJHpSzQzgC26KTHMNhUkzO
+	5r8H0JU3IyYH2T6EPcu8JnnitMnRQ9IrF9aMRW8OsrDo1V8007Am8yVqa9lZhTGbFw4UVH
+	NASV6+R0bI4EXjA663yPVGRYuy2es5k=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1756369744;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tOlr6C5vhqa1kxYAAqtfuSRSBiOOy3yEM6QLgnHqjqQ=;
+	b=H7wpXe7rcDLkp5HsTMTb0+OLJJAAbCglgDyy+bXScDGYpg4BuYttPj/7BoDiP4mPPwWNQd
+	0Xk4fLj0s/44NcAQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4116D13326;
+	Thu, 28 Aug 2025 08:29:03 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id F0QNDU8TsGhoKwAAD6G6ig
+	(envelope-from <svarbanov@suse.de>); Thu, 28 Aug 2025 08:29:03 +0000
+Message-ID: <1fc287a8-4b90-439e-8562-35c093d92ff5@suse.de>
+Date: Thu, 28 Aug 2025 11:29:02 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MBO-RS-META: 93fb8p3pn7pc33koyyzxqjju885p743o
-X-MBO-RS-ID: f51ef53e48fd1a49415
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/5] net: cadence: macb: Set upper 32bits of DMA ring
+ buffer
+To: Nicolas Ferre <nicolas.ferre@microchip.com>,
+ Jakub Kicinski <kuba@kernel.org>, Stanimir Varbanov <svarbanov@suse.de>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rpi-kernel@lists.infradead.org,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, Andrew Lunn
+ <andrew+netdev@lunn.ch>, "David S . Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Florian Fainelli <florian.fainelli@broadcom.com>,
+ Andrea della Porta <andrea.porta@suse.com>,
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>, Phil Elwell
+ <phil@raspberrypi.com>, Jonathan Bell <jonathan@raspberrypi.com>,
+ Dave Stevenson <dave.stevenson@raspberrypi.com>, stable@vger.kernel.org,
+ Andrew Lunn <andrew@lunn.ch>, =?UTF-8?Q?Th=C3=A9o_Lebrun?=
+ <theo.lebrun@bootlin.com>
+References: <20250822093440.53941-1-svarbanov@suse.de>
+ <20250822093440.53941-2-svarbanov@suse.de>
+ <20250825165310.64027275@kernel.org>
+ <3bccf773-abd6-4ade-a1c5-99f2a773b723@microchip.com>
+Content-Language: en-US
+From: Stanimir Varbanov <svarbanov@suse.de>
+In-Reply-To: <3bccf773-abd6-4ade-a1c5-99f2a773b723@microchip.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: 6851A222FE
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[25];
+	TAGGED_RCPT(0.00)[dt,netdev];
+	MID_RHS_MATCH_FROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:mid,suse.de:email];
+	TO_MATCH_ENVRCPT_SOME(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	RCVD_COUNT_TWO(0.00)[2];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Spam-Score: -3.01
 
-On Wed, 2025-08-13 at 14:58 +0200, Danilo Krummrich wrote:
-> On Wed Aug 13, 2025 at 10:56 AM CEST, Philipp Stanner wrote:
-> > In drm_sched_fini() all entities are marked as stopped - without taking
-> > the appropriate lock, because that would deadlock. That means that
-> > drm_sched_fini() and drm_sched_entity_push_job() can race against each
-> > other.
-> >=20
-> > This should most likely be fixed by establishing the rule that all
-> > entities associated with a scheduler must be torn down first. Then,
-> > however, the locking should be removed from drm_sched_fini() alltogethe=
-r
-> > with an appropriate comment.
-> >=20
-> > Reported-by: James Flowers <bold.zone2373@fastmail.com>
-> > Link: https://lore.kernel.org/dri-devel/20250720235748.2798-1-bold.zone=
-2373@fastmail.com/
-> > Signed-off-by: Philipp Stanner <phasta@kernel.org>
 
-Applied to drm-misc-next
 
-> > ---
-> > Changes in v2:
-> > =C2=A0 - Fix typo.
-> > ---
-> > =C2=A0drivers/gpu/drm/scheduler/sched_main.c | 16 ++++++++++++++++
-> > =C2=A01 file changed, 16 insertions(+)
-> >=20
-> > diff --git a/drivers/gpu/drm/scheduler/sched_main.c b/drivers/gpu/drm/s=
-cheduler/sched_main.c
-> > index 5a550fd76bf0..46119aacb809 100644
-> > --- a/drivers/gpu/drm/scheduler/sched_main.c
-> > +++ b/drivers/gpu/drm/scheduler/sched_main.c
-> > @@ -1424,6 +1424,22 @@ void drm_sched_fini(struct drm_gpu_scheduler *sc=
-hed)
-> > =C2=A0			 * Prevents reinsertion and marks job_queue as idle,
-> > =C2=A0			 * it will be removed from the rq in drm_sched_entity_fini()
-> > =C2=A0			 * eventually
-> > +			 *
-> > +			 * FIXME:
-> > +			 * This lacks the proper spin_lock(&s_entity->lock) and
-> > +			 * is, therefore, a race condition. Most notably, it
-> > +			 * can race with drm_sched_entity_push_job(). The lock
-> > +			 * cannot be taken here, however, because this would
-> > +			 * lead to lock inversion -> deadlock.
-> > +			 *
-> > +			 * The best solution probably is to enforce the life
-> > +			 * time rule of all entities having to be torn down
-> > +			 * before their scheduler. Then, however, locking could
-> > +			 * be dropped alltogether from this function.
->=20
-> "Enforce the rule" is correct, since factually it's there, as a dependenc=
-y in
-> the code.
->=20
-> Do we know which drivers violate this lifetime rule?
+On 8/26/25 12:14 PM, Nicolas Ferre wrote:
+> On 26/08/2025 at 01:53, Jakub Kicinski wrote:
+>> On Fri, 22 Aug 2025 12:34:36 +0300 Stanimir Varbanov wrote:
+>>> In case of rx queue reset and 64bit capable hardware, set the upper
+>>> 32bits of DMA ring buffer address.
+>>>
+>>> Cc: stable@vger.kernel.org # v4.6+
+>>> Fixes: 9ba723b081a2 ("net: macb: remove BUG_ON() and reset the queue
+>>> to handle RX errors")
+>>> Credits-to: Phil Elwell <phil@raspberrypi.com>
+>>> Credits-to: Jonathan Bell <jonathan@raspberrypi.com>
+>>> Signed-off-by: Stanimir Varbanov <svarbanov@suse.de>
+>>> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+>>
+>>> diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/
+>>> ethernet/cadence/macb_main.c
+>>> index ce95fad8cedd..36717e7e5811 100644
+>>> --- a/drivers/net/ethernet/cadence/macb_main.c
+>>> +++ b/drivers/net/ethernet/cadence/macb_main.c
+>>> @@ -1634,7 +1634,11 @@ static int macb_rx(struct macb_queue *queue,
+>>> struct napi_struct *napi,
+>>>                macb_writel(bp, NCR, ctrl & ~MACB_BIT(RE));
+>>>
+>>>                macb_init_rx_ring(queue);
+>>> -             queue_writel(queue, RBQP, queue->rx_ring_dma);
+>>> +             queue_writel(queue, RBQP, lower_32_bits(queue-
+>>> >rx_ring_dma));
+>>> +#ifdef CONFIG_ARCH_DMA_ADDR_T_64BIT
+>>> +             if (bp->hw_dma_cap & HW_DMA_CAP_64B)
+>>> +                     macb_writel(bp, RBQPH, upper_32_bits(queue-
+>>> >rx_ring_dma));
+>>> +#endif
+>>>
+>>>                macb_writel(bp, NCR, ctrl | MACB_BIT(RE));
+>>>
+>>
+>> Looks like a subset of Théo Lebrun's work:
+>> https://lore.kernel.org/all/20250820-macb-fixes-
+>> v4-0-23c399429164@bootlin.com/
+>> let's wait for his patches to get merged instead?
+> 
+> Yes, we can certainly wait. As RBOPH changes by Théo are key, they will
+> probably remove the need for this fix altogether: but I count on you
+> Stanimir to monitor that (as I don't have a 64 bit capable platform at
+> hand).
 
-I've got no idea :(
+Sure I will monitor those series. Unfortunately I also don't have MACB
+64bit platform, I only have GEM.
 
->=20
-> @Christian: What about amdgpu (for which the below was added to begin wit=
-h)?
-
-+1
-
-P.
-
->=20
-> > +			 * For now, this remains a potential race in all
-> > +			 * drivers that keep entities alive for longer than
-> > +			 * the scheduler.
-> > =C2=A0			 */
-> > =C2=A0			s_entity->stopped =3D true;
-> > =C2=A0		spin_unlock(&rq->lock);
-> > --=20
-> > 2.49.0
->=20
+regards,
+~Stan
 
 
