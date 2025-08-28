@@ -1,131 +1,117 @@
-Return-Path: <linux-kernel+bounces-790740-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A2E5B3AC70
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 23:06:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E030B3AC73
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 23:06:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4053A7C7E92
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 21:06:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C2ADA04489
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 21:06:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C10112D6409;
-	Thu, 28 Aug 2025 21:02:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FDD72C237C;
+	Thu, 28 Aug 2025 21:03:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="JcBLfOTU"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qDx38l6W"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BABF305075
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 21:02:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 291432BE7CD
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 21:03:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756414952; cv=none; b=LaxXSsfnQ8+5hvQRcygefLwQSJM1dSvnyXneb5xxP9ed3fIZ0outCDxfz+SpnJ+BlygYsmBboVJD68sSRbAw9M1gCaIhPHfDFB+pXTH2xVhbVTCtYoV/q4WOXPI7sQ2glbRbh+RD+AE0cJMDoM9/RVbvqkIWQZDb8qTtUGbI1x4=
+	t=1756415021; cv=none; b=klJ0r5R+X1H7QlcpZRjdZyVDWO+/NVznzDerc3h6VcbU0tERimuojzpk+k3rbdxpDnP2d4AKfiuORAYNcZsDwMEOXUM6K5PP4yG2ewLU+Vemcda+ROfag0CCy8H6uPqDj/26KcxwHS3eL4g7brOpIJLilHRSZbm5LytC7Nj2lDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756414952; c=relaxed/simple;
-	bh=+uhGjh7Bn3uOymHdOEWWzg7tt6DiT6h7ooyNGhpADVQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=S7RxjJo02PEyqceQYGi/Od5SR+dcbohbCqdwg6oXMkHhC8B8FJrH9eqdWBRP7lsqKJAMDy8/tJoq4ltr8ZJFmYZeEOU2mv6CGBwY7OYiSjZWbFxkYKX0lBsbrSEn78z672B0heYQQnb59Tz6dbk96NvXToPHnvs0jgkNAGhTL54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=JcBLfOTU; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1756414946;
-	bh=n1G3l3//V3/ZMhJKkM/EbLpc11PG2PTLkGdW4WQeIYc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=JcBLfOTUBPHP/Z0EzP9AhF9TR3uPHdo9FDKKBVowPVhRA1GOn1aFZgWjNcwIZlArP
-	 YX15lAxxH/mDDNfFvmzE+FC5jnlX9S42sVc6q7cULlnm9mSUtoMBCeJqH0kJFOOZPY
-	 /gp+roJC83mBw/ALdEKbyA81VmddPg1hxwX+ix9B8VYWQRWtQqZvRaSSh1spJ36v6y
-	 YW1vAUCTIdTcTXNbFJXPv7kJ/KTFpeumtul4P8DWOphXXuRo9dq9oZXnKkidUrR68F
-	 yz9XMSfziK0RDno2otrN25xmcGlJ6f9Ttkg55PBJs3VcXIY+HwFXkbC5xEd6UAn74I
-	 5rtTc9h7YUhWg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4cCYkT37Rvz4wfq;
-	Fri, 29 Aug 2025 07:02:25 +1000 (AEST)
-Date: Fri, 29 Aug 2025 07:02:24 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Steven Rostedt <rostedt@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Andrew Morton
- <akpm@linux-foundation.org>, Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [for-next][PATCH 0/3] tracing: Trigger a warning on build if a
- tracepoint is defined but unused
-Message-ID: <20250829070224.503ddc8a@canb.auug.org.au>
-In-Reply-To: <20250828182754.733989525@kernel.org>
-References: <20250828182754.733989525@kernel.org>
+	s=arc-20240116; t=1756415021; c=relaxed/simple;
+	bh=JpqemiYOa4qZgBu4emt/PYSqWqeke/6L1n6Biqi6C3E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cT6OTeqv9uP41c+4Id1AGOPKv9R6Lo1XeFFeMoLxuRdQt13YD3Fjki4T8tKlHOjCwHqCxTZLoXJnogD2zcQSrjdlFsUbQ/Gf72xrScyGM041Kh3EpXD4S8lJgordORLOc/hco8E/JdOpfMthvT8cHSMNzPIeLujGUbG4Wb0mAXo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qDx38l6W; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-55f5dd58ee0so1271417e87.1
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 14:03:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1756415018; x=1757019818; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JpqemiYOa4qZgBu4emt/PYSqWqeke/6L1n6Biqi6C3E=;
+        b=qDx38l6WdYgqxoFkRbvHMZmaBo0wsUZvg1lzXTBD81YUIeKxB9VRgpoPveh4Jus9T5
+         QlvXf0oPQhy0WodEb1wYlt03dSeV/kTK0L3y6AXRBqU4xZ8cxj8iNbtBoJwe/b/tt2GY
+         03Zn6WRhN/MS2xJ7Lb8VPns2VzzdQ+gRa9Rd1o2vEzpFoZpHbZTI+6UM8HyEcsJB/4Jo
+         xqhP7su99DofEiGTMcLtEbgH2SFkRpvUeiVWCp3k8WRQ/hY4b0IxeR/kbaxzgkrSWuEk
+         l3EE0a/B5cu4cW94B4EQVbq6Sw1zq96CjOLNDDmjNOWyUScrM49qW0FSTtboaDw7kYNG
+         leDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756415018; x=1757019818;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JpqemiYOa4qZgBu4emt/PYSqWqeke/6L1n6Biqi6C3E=;
+        b=r1OQcksjtT6Y6PoA4LrWkFL5M75/aowmQzd5v5+Ql9LAKD1Bah35WP4RffftWUOwYT
+         5zjBL7GiJer+AsB/+9wE+1h6cUjp9KucThJishz0vKu5BV5kuZervHQMUUCFzYUcsO2V
+         QaLr9w3N2YNcqTWpMElwCjYrbg9/jer0X88rTCO3AlzGOEkH9vzIH7d26kzY5vQRAQ6X
+         +LfBnPrVcXvrkInQ0h+5uKfXWmjZr2UddkRRJeuwDFOgnK4PpM3m/0rPxbnuKOlxwi2q
+         pjFR0YDI41aJp6g09VN+Grk6CXYu6GAkkBN6WI18V8ECKcCrMzg664C/Pu+i42qpaaSS
+         oV3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVn4MZTOsp4Uj6n3NJE54NT4vmCWdBki0B1sYHeAMJ9voUpIiU8oaSy3z4vVRjkvDg2MR9MhK3Gw9HXzug=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxYhdOmFgZmC80yHSzWUx82nQpOVkcnoJt0d6/E/6x7L9zren7R
+	UtDfl0gBZ1ALGVmRmh/BowPy96F3llODudYdO1uIzlmbAqdQxCNeD76QNNTseYJqwiBekkrBhrE
+	mL6ooxJIkDD+swnpMlmzPrEq42bNIx+aUaWVAysxAKw==
+X-Gm-Gg: ASbGncvh1rEdebsC9Efk8679ruBrK9aObXiQyoqieptxZleAdp1Q2z6+vbtpqvb1QNz
+	tN8wrln0w4QVdWspMYe3s6KH5FrnR6oS7Xw+4SvlDY1KcnRh+BzCMX8fQRUljXT6eY3jTZJnYYr
+	iFwRpdFUbTebRWRNCc3QGEWLwZhkbsOiTIJ36y/6o3vkzjqM3mySxeB38eJqovEPcvhaNhSegqq
+	W7kgqY=
+X-Google-Smtp-Source: AGHT+IEBjFJWFLGkbXGuhHAtRjCVWrmXlPYLpQwfq1rarphkzkuwgBTA1g4AurEUs7Vb+ka2DgQY9BMQPqm+5bNSxi8=
+X-Received: by 2002:ac2:568b:0:b0:55f:64b9:3ab4 with SMTP id
+ 2adb3069b0e04-55f64b946eemr717027e87.23.1756415018205; Thu, 28 Aug 2025
+ 14:03:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/k6.s4V9GhcxwPSBgRWnSwy6";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-
---Sig_/k6.s4V9GhcxwPSBgRWnSwy6
-Content-Type: text/plain; charset=US-ASCII
+References: <20250827024222.588082-1-gary.yang@cixtech.com>
+ <20250827024222.588082-2-gary.yang@cixtech.com> <d5c85ba7-77ec-47f4-8ba1-39199e96da11@kernel.org>
+ <CACRpkdYXy9ZgbAZKUdquxdp0X0m5AHT82K74Ex-ZAyEx=Uwi1w@mail.gmail.com> <67e58bda-3cac-4689-831a-4e4116a0e19b@kernel.org>
+In-Reply-To: <67e58bda-3cac-4689-831a-4e4116a0e19b@kernel.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Thu, 28 Aug 2025 23:03:26 +0200
+X-Gm-Features: Ac12FXxBf9FMZVXj6RcmihJXxBREGp-5LZAybPVE_Wl0j-njgxfgbqyikM_ygFc
+Message-ID: <CACRpkda+iUfHKFnnsTGmXrvxpPSy7WTQRKaAu=YgXtcrsjXthA@mail.gmail.com>
+Subject: Re: [PATCH 1/3] pinctrl: cix: Add pin-controller support for sky1
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Gary Yang <gary.yang@cixtech.com>, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, cix-kernel-upstream@cixtech.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Steven,
+On Thu, Aug 28, 2025 at 8:02=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.or=
+g> wrote:
 
-On Thu, 28 Aug 2025 14:27:54 -0400 Steven Rostedt <rostedt@kernel.org> wrot=
-e:
+> > If you see that the "hello world" from that driver is missing, you know=
+ it
+> > isn't probing, instead of finding it out after combing through the .con=
+fig
+> > for the third time.
 >
-> I built this against all archs in my tree (26 of them) with a allyesconfi=
-g.
-> Unfortunately, only 10 build successfully with that (they all build
-> successfully with defconfig and this option with tracing enabled). This
-> detected 178 unique tracepoints that are defined and not used:
->=20
-> $ grep '^warning:' /work/autotest/cross-unused-traceevnts.log | sort -u |=
-wc -l
-> 178
->=20
-> Among them, 78 tracepoints were created and never referenced.
->=20
-> $ grep '^warning:' /work/autotest/cross-unused-traceevents.log | sort -u =
-|cut -d"'" -f2 |
->     while read a ; do if ! git grep -q trace_$a ; then echo $a; fi ; done=
- | wc -l
-> 78
->=20
-> The 100 remaining are likely in strange #ifdef CONFIG combinations where =
-an
-> allyesconfig defines the tracepoint but doesn't enable the code that uses
-> them.
+> Any tests for driver success should be checking in sysfs, not in dmesg.
+> Most of platforms have smaller or bigger tests for that.
 
-[Pretending to be Linus :-)]
+Yeah I understand the thinking.
 
-So, have you fixed up the 178 new warnings you know about?  I cannot
-possibly do that, or even notify the offenders.  Please do that before
-adding this code to linux-next.
+The typical symptom of a non-probed pin control driver is however
+eg that the system does not mount root because some pins
+connected to the eMMC are not muxed right.
 
-But, really, these known warnings can just make it so much harder to
-notice new ones.
---=20
-Cheers,
-Stephen Rothwell
+People find the problem sooner or later anyway, it's just that the
+print makes it sooner. And the mistake is pretty common (or
+at least for me, but I'm not the best developer...)
 
---Sig_/k6.s4V9GhcxwPSBgRWnSwy6
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmiww+AACgkQAVBC80lX
-0GxH7Af+PI41gk/is+FpGOfBJDFaasIeXr4ZDlczAaI5kkS4C+72BM4wtcyPgJpe
-4CB13SjYMl7NcT+BxGa7JeQl2Ab+ipt6ZcUfAp+mlsz7Pew5S0xMBwCHx0JMMptY
-udB+Y8o76dV9ddAiBAn7ROWtqZ67sUUaEHnCJ8ylBnK5PabgcnwVvqTWbcMAfwnk
-GDblBg+M/EUNqv7h+egNLASbFxbifUHK2KAkyYcC5znWyK+YIX6we0dBznBdMHOL
-lSUgbgUn/bcxt+xd8AUMpb0AGJsGhVD0j/T785XlT+eETH1E1ZiIo0lVMa5qJH5e
-7EfNxZJ60uwb4KVqQfeQrMioMc34Kg==
-=k72E
------END PGP SIGNATURE-----
-
---Sig_/k6.s4V9GhcxwPSBgRWnSwy6--
+Yours,
+Linus Walleij
 
