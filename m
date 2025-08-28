@@ -1,151 +1,233 @@
-Return-Path: <linux-kernel+bounces-790657-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790658-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA1B1B3AB6F
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 22:16:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F34C4B3AB72
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 22:17:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6CAE85671BC
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 20:16:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 987537B7FEB
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 20:15:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B225285C97;
-	Thu, 28 Aug 2025 20:16:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33896284880;
+	Thu, 28 Aug 2025 20:16:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fhvsm+lc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GjfZ587K"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCE1A273D7B;
-	Thu, 28 Aug 2025 20:16:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0BA0273D7B
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 20:16:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756412186; cv=none; b=LpjHjG4B+WoCCklwh4O5hlvz1Y59NLw8kkMJCO5t5CjmEfQVT0swsmVry5tCG6YexnecGzObm6jaTTJ0+cxvXE5/8J4/+8OQnPKj5nc6DgHHQXaWkZ25awcBKAc/StbBg9H/p957WpOwm7cgMhu+d2SBnJQaFu8xX2MwryiAHlc=
+	t=1756412209; cv=none; b=ecCwx6D/f/mh3E5DFaANdrqxnfmXtmNnVVsdTQF9Z0i4GOiiokhO+So04ZFv/gvtq1xpHSSCnUku/sSbJpGF07lLWvMqiCjWygJIFRdcHVZBOoUVwcKJo57raB0cbkiYQxsDVNxI6IlJ1uoszoanST9QctJGUs2JcNm3tYgzX3k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756412186; c=relaxed/simple;
-	bh=CgBLmyi9jgGUOiv9TCodnN5Hn/4OG3mZltDzTz2ZkBU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cHu6+Szz56kt+eWLHC3uCET75VuMCBBaCAIUFXAlfCnzZ0MY+2DHl7VWZVU4ScjZYaR/qeWusTAfE1yhWpaOge7IMxqf8GeNeMRzZqZpFs0747t7SzSameUcbp5sCnXOw+gt2/eR1hA1qIFp9yVnFWUAukfO5qChcFSJOv6ellM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fhvsm+lc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7A7AC4CEEB;
-	Thu, 28 Aug 2025 20:16:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756412185;
-	bh=CgBLmyi9jgGUOiv9TCodnN5Hn/4OG3mZltDzTz2ZkBU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=fhvsm+lcTt1YfmIC0GR9xSBEK83jAIDPHlw1FVHjoDGKzxVlZT0pemqxIbRa4P4QH
-	 fsnDGSzVIdcYWANZeLn1WWyIKAGsOSzazcK7widCEwPTdt6SHuSiL/2YYrH+zmj6tK
-	 NuudI4e1eLLYCwhcZnpUU59FbqLMEHBfvSwN7ceKs5r6S+MIRgp+oJ0bH6Hdyh9lZ4
-	 cC7mnZ0odHhjxsWSDbjc4U6jTvw++byM3CL5rIMANkBM/hVPd0Yw1BUfOnuMjAfY/w
-	 kuAtxnhvMdUiDDmrBL6hdUEhbvdslfNXzReAcyaKT8Z6W2ZcC+W0u4PvFfa6PllpWW
-	 AiK22kKremk8A==
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: Frederic Weisbecker <frederic@kernel.org>,
- LKML <linux-kernel@vger.kernel.org>, Peter Zijlstra <peterz@infradead.org>,
- Christian Loehle <christian.loehle@arm.com>
-Subject: [PATCH v1] cpuidle: governors: teo: Special-case nohz_full CPUs
-Date: Thu, 28 Aug 2025 22:16:20 +0200
-Message-ID: <5939372.DvuYhMxLoT@rafael.j.wysocki>
-Organization: Linux Kernel Development
-In-Reply-To: <2804546.mvXUDI8C0e@rafael.j.wysocki>
-References: <2804546.mvXUDI8C0e@rafael.j.wysocki>
+	s=arc-20240116; t=1756412209; c=relaxed/simple;
+	bh=omStx6Vdan48sEm8PL/UoDjYdWtcY6Lxj4Ld5gcz9Cc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=snfRxyMkM0iS/Aqp63phu0mArTN68FAg2sW59rW05LWmiwsgqz8so3AKEb20banmDEn3ncMCbmbErgm+Yx8rL26CZuasN1Jn4fMG7PmDa2tz6eb/g48JAJcQBRypVJa/eFRynNwzBuCMAuzMkNnhZS0mED4HB03AW3XakPRmVKE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GjfZ587K; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756412206;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=+uwHlyQ6LciyyA2ZqVWztkqsrihdSVO7uAsTz06acTE=;
+	b=GjfZ587K5sMopN56fcfJksmu36VuWTKiX33SBkkNKRJykR+Y/QvLb6ILf3kMfqz+c/r0o2
+	dGmOAZT6VbjYnJuSRZ9PwaJXkbTmKEioh6n4C87uCq62vfJXZXojHdhv7t1PDzCNd34jTX
+	7hGK8AcRAY/pmnJp+P1xLbT9PaGe5ZM=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-304-x9Sph75ENN6aAPzapRLe0g-1; Thu, 28 Aug 2025 16:16:45 -0400
+X-MC-Unique: x9Sph75ENN6aAPzapRLe0g-1
+X-Mimecast-MFC-AGG-ID: x9Sph75ENN6aAPzapRLe0g_1756412204
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-45a1b05a59cso8540085e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 13:16:45 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756412204; x=1757017004;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+uwHlyQ6LciyyA2ZqVWztkqsrihdSVO7uAsTz06acTE=;
+        b=VmlfGv+zDnqf/udcaFwc5iSCpyzkMWS3DRNVno8gswRyTW63hiFV6S5Ye5qN/rK7x8
+         bV4K/3JQ/n84CkUvg1IxoD0KfBERLLVmf8Pbd7MBlYWslImNm5wGc+cJPkJ9JGyVE2pt
+         e5k0CXgXTrNF00CN6LT/FlpJeIxi2FTvpqAQI89Dj9KQqHycrCBrRlRHj3zmDN3pICAL
+         p0R6y2xAJmEU+bSe5ZjpPLH+7JfALSKJ6mZfIFS9EaqE0jmUznCw/DV5kBt7jmaitKkj
+         ehOoWrXFPKqbw9xXJsCHvlmTrAPgOfHfbQ/E0jBpnFlB6GMb7Xz0DiIBFlXbK3Ferxhj
+         p//A==
+X-Forwarded-Encrypted: i=1; AJvYcCWWngf0YgRW7kB07gBZC+qraLURfVka6bznTDOWvy8GsgYloDfWWdv6Ej+0ptV+6PYxXKAuoYcdF8h2aA0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7+8FfuanzRV6JBkHWFEJY2ZeSOx1xBEu4PRYyk19j/k8ZiavH
+	38ZpL1aA52ZWwUCkuqmkas+qfeEauLaSaniqm7mJZK5wpRuDPzqy/frl84JZ1IDWykmJcCKE4fY
+	eOrceyRz8Ted1rLVeeSbG/GjUcGHD+YQzKxl+kUGQ1A/DHpeFlHt++Dk/4O+621vGfA==
+X-Gm-Gg: ASbGncvOXevwBMukOeHwMB+g37kZaIgrOr4b9TeQQG/+3mVrHOSo/M/LejbG8eNje6+
+	UuO02O4i/XebuFLAE+Xziy5/rCgbsFg2M7HmCsC6yko2H2Ybzo3gulKmVtEZETswr3Esj0xLHmf
+	+ziW1oDG+DO3VTDX2HUz0D5+Q1Q29QRTh4GTVGuRS0J3LGeRmMgSiJSyRMJ8W66uItBvDo7Ed+5
+	ToSDsKKWZYMzAs+flaeBpF8vz4hFbcr/p8NcoE2isYlI2xecqL8UK5MAJyMYrfxGbJq+5cVEesx
+	ESd/1g3wa5lRCfQvRg9NNxRLvo2l1sU3ttQFMun283ShviAGPYAvy2TCZ5SnhOyIUt5nMbBil0d
+	8Pinw3qFc7rMDQWLOD7PeRofUUvOZzhYkhcjNUiMWF+OnvMsw662y0WI1uyYJJS5G1jk=
+X-Received: by 2002:a05:600c:444f:b0:458:a847:671e with SMTP id 5b1f17b1804b1-45b517d402cmr220840435e9.23.1756412203972;
+        Thu, 28 Aug 2025 13:16:43 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFop3NDQa/jvUw/7iAhPc6xPyo6DCTowuFm5PMXVJXqUwMAoM+eWtpd9lIdKLYbcTafxwGkzg==
+X-Received: by 2002:a05:600c:444f:b0:458:a847:671e with SMTP id 5b1f17b1804b1-45b517d402cmr220840175e9.23.1756412203527;
+        Thu, 28 Aug 2025 13:16:43 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f28:c100:2225:10aa:f247:7b85? (p200300d82f28c100222510aaf2477b85.dip0.t-ipconnect.de. [2003:d8:2f28:c100:2225:10aa:f247:7b85])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b6f3125ccsm87282945e9.19.2025.08.28.13.16.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 28 Aug 2025 13:16:41 -0700 (PDT)
+Message-ID: <c5d42263-7256-4be2-ab12-13cab0320ef4@redhat.com>
+Date: Thu, 28 Aug 2025 22:16:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] mm/memory-failure: Fix redundant updates for already
+ poisoned pages
+To: Kyle Meyer <kyle.meyer@hpe.com>, akpm@linux-foundation.org,
+ linmiaohe@huawei.com, jane.chu@oracle.com, jiaqiyan@google.com
+Cc: bp@alien8.de, Liam.Howlett@oracle.com, linux-edac@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ lorenzo.stoakes@oracle.com, mhocko@suse.com, nao.horiguchi@gmail.com,
+ osalvador@suse.de, rppt@kernel.org, russ.anderson@hpe.com,
+ surenb@google.com, tony.luck@intel.com, vbabka@suse.cz
+References: <aLCiHMy12Ck3ouwC@hpe.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <aLCiHMy12Ck3ouwC@hpe.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On 28.08.25 20:38, Kyle Meyer wrote:
+> Duplicate memory errors can be reported by multiple sources.
+> 
+> Passing an already poisoned page to action_result() causes issues:
+> 
+> * The amount of hardware corrupted memory is incorrectly updated.
+> * Per NUMA node MF stats are incorrectly updated.
+> * Redundant "already poisoned" messages are printed.
+> 
+> Avoid those issues by:
+> 
+> * Skipping hardware corrupted memory updates for already poisoned pages.
+> * Skipping per NUMA node MF stats updates for already poisoned pages.
+> * Dropping redundant "already poisoned" messages.
+> 
+> Make MF_MSG_ALREADY_POISONED consistent with other action_page_types and
+> make calls to action_result() consistent for already poisoned
+> normal pages and huge pages.
+> 
+> Fixes: b8b9488d50b7 ("mm/memory-failure: improve memory failure action_result messages")
+> Signed-off-by: Kyle Meyer <kyle.meyer@hpe.com>
+> ---
+> 
+> v1 -> v2:
+>   * Continue passing poisoned pages to action_result() with MF_FAILED but don't
+> update anything.
+>   * https://lore.kernel.org/all/20250821164445.14467-1-kyle.meyer@hpe.com
+> 
+> ---
+>   mm/memory-failure.c | 13 ++++++-------
+>   1 file changed, 6 insertions(+), 7 deletions(-)
+> 
+> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
+> index fc30ca4804bf..10b3c281c2ae 100644
+> --- a/mm/memory-failure.c
+> +++ b/mm/memory-failure.c
+> @@ -956,7 +956,7 @@ static const char * const action_page_types[] = {
+>   	[MF_MSG_BUDDY]			= "free buddy page",
+>   	[MF_MSG_DAX]			= "dax page",
+>   	[MF_MSG_UNSPLIT_THP]		= "unsplit thp",
+> -	[MF_MSG_ALREADY_POISONED]	= "already poisoned",
+> +	[MF_MSG_ALREADY_POISONED]	= "already poisoned page",
+>   	[MF_MSG_UNKNOWN]		= "unknown page",
+>   };
+>   
+> @@ -1349,9 +1349,10 @@ static int action_result(unsigned long pfn, enum mf_action_page_type type,
+>   {
+>   	trace_memory_failure_event(pfn, type, result);
+>   
+> -	num_poisoned_pages_inc(pfn);
+> -
+> -	update_per_node_mf_stats(pfn, result);
+> +	if (type != MF_MSG_ALREADY_POISONED) {
+> +		num_poisoned_pages_inc(pfn);
+> +		update_per_node_mf_stats(pfn, result);
+> +	}
+>   
+>   	pr_err("%#lx: recovery action for %s: %s\n",
+>   		pfn, action_page_types[type], action_name[result]);
+> @@ -2094,12 +2095,11 @@ static int try_memory_failure_hugetlb(unsigned long pfn, int flags, int *hugetlb
+>   		*hugetlb = 0;
+>   		return 0;
+>   	} else if (res == -EHWPOISON) {
+> -		pr_err("%#lx: already hardware poisoned\n", pfn);
+>   		if (flags & MF_ACTION_REQUIRED) {
+>   			folio = page_folio(p);
+>   			res = kill_accessing_process(current, folio_pfn(folio), flags);
+> -			action_result(pfn, MF_MSG_ALREADY_POISONED, MF_FAILED);
+>   		}
+> +		action_result(pfn, MF_MSG_ALREADY_POISONED, MF_FAILED);
 
-This change follows an analogous modification of the menu governor [1].
+Was briefly confused by that change, but action_result() now essentially 
+only traces + pr_err() with MF_MSG_ALREADY_POISONED.
 
-Namely, when the governor runs on a nohz_full CPU and there are no user
-space timers in the workload on that CPU, it ends up selecting idle
-states with target residency values above TICK_NSEC, or the deepest
-enabled idle state in the absence of any of those, all the time due to
-a tick_nohz_tick_stopped() check designed for running on CPUs where the
-tick is not permanently disabled.  In that case, the fact that the tick
-has been stopped means that the CPU was expected to be idle sufficiently
-long previously, so it is not unreasonable to expect it to be idle
-sufficiently long again, but this inference does not apply to nohz_full
-CPUs.
+Acked-by: David Hildenbrand <david@redhat.com>
 
-In some cases, latency in the workload grows undesirably as a result of
-selecting overly deep idle states, and the workload may also consume
-more energy than necessary if the CPU does not spend enough time in the
-selected deep idle state.
+-- 
+Cheers
 
-Address this by amending the tick_nohz_tick_stopped() check in question
-with a tick_nohz_full_cpu() one to avoid effectively ignoring all
-shallow idle states on nohz_full CPUs.  While doing so introduces a risk
-of getting stuck in a shallow idle state for a long time, that only
-affects energy efficiently, but the current behavior potentially hurts
-both energy efficiency and performance that is arguably the priority for
-nohz_full CPUs.
-
-While at it, add a comment explaining the logic in teo_state_ok().
-
-Link: https://lore.kernel.org/linux-pm/2244365.irdbgypaU6@rafael.j.wysocki/ [1]
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
- drivers/cpuidle/governors/teo.c |   18 +++++++++++++-----
- 1 file changed, 13 insertions(+), 5 deletions(-)
-
---- a/drivers/cpuidle/governors/teo.c
-+++ b/drivers/cpuidle/governors/teo.c
-@@ -227,9 +227,17 @@
- 	cpu_data->total += PULSE;
- }
- 
--static bool teo_state_ok(int i, struct cpuidle_driver *drv)
-+static bool teo_state_ok(int i, struct cpuidle_driver *drv, struct cpuidle_device *dev)
- {
--	return !tick_nohz_tick_stopped() ||
-+	/*
-+	 * If the scheduler tick has been stopped already, avoid selecting idle
-+	 * states with target residency below the tick period length under the
-+	 * assumption that the CPU is likely to be idle sufficiently long for
-+	 * the tick to be stopped again (or the tick would not have been
-+	 * stopped previously in the first place).  However, do not do that on
-+	 * nohz_full CPUs where the above assumption does not hold.
-+	 */
-+	return !tick_nohz_tick_stopped() || tick_nohz_full_cpu(dev->cpu) ||
- 		drv->states[i].target_residency_ns >= TICK_NSEC;
- }
- 
-@@ -379,7 +387,7 @@
- 				 * shallow or disabled, in which case take the
- 				 * first enabled state that is deep enough.
- 				 */
--				if (teo_state_ok(i, drv) &&
-+				if (teo_state_ok(i, drv, dev) &&
- 				    !dev->states_usage[i].disable) {
- 					idx = i;
- 					break;
-@@ -391,7 +399,7 @@
- 			if (dev->states_usage[i].disable)
- 				continue;
- 
--			if (teo_state_ok(i, drv)) {
-+			if (teo_state_ok(i, drv, dev)) {
- 				/*
- 				 * The current state is deep enough, but still
- 				 * there may be a better one.
-@@ -460,7 +468,7 @@
- 	 */
- 	if (drv->states[idx].target_residency_ns > duration_ns) {
- 		i = teo_find_shallower_state(drv, dev, idx, duration_ns, false);
--		if (teo_state_ok(i, drv))
-+		if (teo_state_ok(i, drv, dev))
- 			idx = i;
- 	}
- 
-
-
+David / dhildenb
 
 
