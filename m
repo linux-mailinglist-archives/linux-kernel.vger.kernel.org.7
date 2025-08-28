@@ -1,148 +1,169 @@
-Return-Path: <linux-kernel+bounces-790359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D339EB3A5E9
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 18:15:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57331B3A5ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 18:16:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C69F04E46C8
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 16:15:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5E8CA046B9
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 16:16:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58344314B65;
-	Thu, 28 Aug 2025 16:15:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2E88320CAD;
+	Thu, 28 Aug 2025 16:16:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b/Y4KTDB"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="GpcF7xYc"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51FAA313E35;
-	Thu, 28 Aug 2025 16:15:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 932DC212567;
+	Thu, 28 Aug 2025 16:16:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756397746; cv=none; b=AmeA1e4a9uV/S75jg1BUkhsULNXTfGMgIMpX5CRb6URIjNdaN+tgxJB7qr4pgn1fk/K9JUcyFOxzOe3R78W4VHJ34KshKKEfZhS/8RwBKni0haprOOPRHYscvu0OBQLkgd0PKpAOPg3Z3tNoKob7K9agcH84ZcMKtuYVlU3NKSI=
+	t=1756397802; cv=none; b=KOGpuciwBxC2F2u3hKXGEbowY+m0I/ou4v6kcRti6Aml+1yUk5x8G7xO1+bQ/eZE77apiaOEmHS9hs0E/CJM8q7cokbpgIhskZwnBE+Uv7WKBHpd5xUb4cBpnCL82do61lBdNGaZvaz0wcVyKPLXQDWfPzDHHjWpICwm8U1IQmw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756397746; c=relaxed/simple;
-	bh=FF/S4rAzFkXtvksfZQyNpXbL19No9ho+QvpdPcRX8EY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IFLcL+nER2ak+iymGOFR96Q8SvqimG2RtbgLKXNTg1Bj73UTjuRiOdA6t9k3HqEcMpAkgyRT4CLVB4+/DtjRk02de6KEObEErhSq+HNpGfU7DiFRjG2b61+wtYeO2CH7rwZW/Tylk4PN6PtQlFUq+sLR3+D0ynbBK/rG036yWQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b/Y4KTDB; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3cdfb1ff7aeso565391f8f.2;
-        Thu, 28 Aug 2025 09:15:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756397742; x=1757002542; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4ticAyNq5Rm9JFmx4WAvdUTe25pxzkVngwqprOuPmfU=;
-        b=b/Y4KTDBIEV4h4axits+zrkDP38KEObeeYsiP30TVPlUbIg8WBUB/1sR4MNAfYc1a7
-         7QaSkW1DzPTja4u7x4oEr+6nq470tI9jGcpWHKf054yRVibupPz4/Uegzf2nsXd+ir6X
-         U9IGExDFFauSdzJWjkAtZOvot0K7HWbVJErHF09JMtzo3lL7/PDqYPHe6CxA1O+EHntT
-         f4xI+VsRuHzz/eoX1vrKauuvLvvNBs3y6ty3IKnv16Pik0AdJLDcdK3DvDjiCSfNG7A9
-         wQ9V/nYPYsyrPmgVFxLqWB0j8j8MEQdmm06ZBkNM7ZD5utWimdLe28NIY7Z994fkeVfF
-         pTeA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756397742; x=1757002542;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4ticAyNq5Rm9JFmx4WAvdUTe25pxzkVngwqprOuPmfU=;
-        b=AxWUyGKZLDy2+UdzxCFluZj5+DO4dMusDUD0fLAT9QEoZ0sstTYZn1XuDHtNby4ov/
-         WzV3h7N//duMVXPS3cgHHvHvSW8mwjWgnBouI9/56eERRGvPzE8QRGdOllxCmyUVVr4Y
-         aqBULUxcNURHBM7n45n7gsDy1PAENfYE0L/E84KLjTdKOabyR0ANxa6uVKvZNSjwnfsb
-         3qreso5UNKOa4HyJwbc2jg51KKYqtmdmmFjrgL+a31adqxWLgDP6EBNFvxHT7jQyryJx
-         d3fgwTvGPsLoM9oDtljCCAJQSoczO6vjB+aIJqsws4Zfz5XjY3ZQHENdsTLBhN2kXIcw
-         Rl/w==
-X-Forwarded-Encrypted: i=1; AJvYcCUB2ZbvR4hdRjlHLR/i93+r4MScQuNG/C/LlXODkgcqhX/oJ7tDG43hM4i+iwawuQ5eNue6IUkTsuc4TS18@vger.kernel.org, AJvYcCVqolz5rnTeY0c9uMHnbqHGzkdUWcwbYu02sWhQevL3hkqxn6IU7BHipPGw4HN7Eb/d2iBk4RDOWqdKqGqtIu1S@vger.kernel.org, AJvYcCVvdua1xCzDSPTi/s8OA8OiG+1YmlmTewgzvOCYaq0DHXIzkuGO1dL6MUVNzpbBSTUqxeU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxC9J+AzG8XFv548/CAnIQ3/g4neUp1wVUlmMHD8VGrA4A2ankX
-	Wuh8EqhEFe8mtrWpLNDjgN12EB52/HZLuCJUAPmUL3Ll1auKMW/5avNanr/Le4YgE2g3PIVADZ2
-	bc0WFdyuwlmJGrBRKP4PNGfx7rbPste4=
-X-Gm-Gg: ASbGncsX/tJNJy4HlwRE8uoOO4qIt/kNoBapbJ8h7KtyJ/ytXpEUqa5BTitBu0ZEmNP
-	hZ4yyc/iQE+muTF4po1LVaX4CZ4+LtmINYvtMgbxftPmb+40HKT/ZZPfDZt4yZQMHrQg7SIIIkl
-	Pte4fqqFK5bUc3MErlywXQkKSJVLHmUVZ04t9VHQWcC94p0vkMxb8Jw0Wd4VUAHHG29di7QHW1x
-	7bTNblaxTaOIw8khPk62ahi6r7xmgbmRndk
-X-Google-Smtp-Source: AGHT+IGqiDNC33JqG7zCizvu0ottr5G3BU+YyTpElZyBpILKkCoprTVvZxt1i+j8W5vyb77u50q9jkZjhVvWfu89vEY=
-X-Received: by 2002:a05:6000:40ca:b0:3ce:81d:6c38 with SMTP id
- ffacd0b85a97d-3ce081d6f97mr2838836f8f.29.1756397741421; Thu, 28 Aug 2025
- 09:15:41 -0700 (PDT)
+	s=arc-20240116; t=1756397802; c=relaxed/simple;
+	bh=dbxb4w4OJlV5sDEo57zFUE5nYfUGYzxZZDwgoF4J/Dw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=cPDD2aIfKlYl62VN+Tzt5vD/fymeE1jUN1oXWXgvxQvxIHoUS/HeFBe5ko3EMnPECHPkrCMJROBON596SuFI/e2JMRwczZTu8GE1Omdg5bT6JLhv5LRrhda0PQWKnYaRePU9QWh0FPUSTiSGF7Lf6t9konN+rkfZfvXdTqsGSx8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=GpcF7xYc; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1756397800; x=1787933800;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=dbxb4w4OJlV5sDEo57zFUE5nYfUGYzxZZDwgoF4J/Dw=;
+  b=GpcF7xYcgB23BK6bxJ80U1JNAOWvKZMDyA/mNMTamrON4h+JrNl+vY6e
+   cJgF87J+JPxoDW65T3Jsessbw0SXW7tfUdijirtuK4rcxO5Xqoma2aeRi
+   gavNAEKSmlfrAB9VypuRKrRZ6VaWYhEzfAVVzRmFCdQv2TM9KHde13pN5
+   aLOurrOIGPBPEF2SpZ973YB0dfpxr7BP2wXBv2PO09hovDqJIB0MXc6Il
+   M3jlPQo5sEwekyJh7Oxf+kL6QVgVdQ4xtXmJmD6gkL9nqc1/Eg2Tp4qG4
+   crnow5eU+GgLWs0GXe2AECJRmhO0a4sqtYd1RLwIXu+AnKsdoCczqbMOS
+   g==;
+X-CSE-ConnectionGUID: X9YiAgovSEikt4Ra+TjvOg==
+X-CSE-MsgGUID: 9dg/711GTSemJKiM6lKqeA==
+X-IronPort-AV: E=Sophos;i="6.18,220,1751266800"; 
+   d="scan'208";a="46343766"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 28 Aug 2025 09:16:33 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Thu, 28 Aug 2025 09:16:18 -0700
+Received: from [10.10.179.162] (10.10.85.11) by chn-vm-ex01.mchp-main.com
+ (10.10.85.143) with Microsoft SMTP Server id 15.1.2507.44 via Frontend
+ Transport; Thu, 28 Aug 2025 09:16:18 -0700
+Message-ID: <08dd4d82-8ac4-43a3-8d01-f293db6302e2@microchip.com>
+Date: Thu, 28 Aug 2025 09:16:16 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250828081507.1380218-1-yangfeng59949@163.com>
-In-Reply-To: <20250828081507.1380218-1-yangfeng59949@163.com>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Thu, 28 Aug 2025 09:15:30 -0700
-X-Gm-Features: Ac12FXziPgBF6JW4_9rC-7_i4Djij2vCltQdFo1tim-e6-aJA5PyJ_KQonJWkFM
-Message-ID: <CAADnVQKo3KiX5xHk=TzYJZy-irJu=qmUFXBbhu6ExpSGk4x7+w@mail.gmail.com>
-Subject: Re: [PATCH bpf-next] selftests/bpf: Fix the issue where the error
- code is 0
-To: Feng Yang <yangfeng59949@163.com>
-Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	John Fastabend <john.fastabend@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Eduard <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
-	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
-	bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 00/32] clk: at91: add support for parent_data and
+To: Brian Masney <bmasney@redhat.com>
+CC: <mturquette@baylibre.com>, <sboyd@kernel.org>,
+	<nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
+	<claudiu.beznea@tuxon.dev>, <varshini.rajendran@microchip.com>,
+	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <robh@kernel.org>
+References: <cover.1752176711.git.Ryan.Wanner@microchip.com>
+ <aLB7CJY9nMLoS1or@x1>
+From: Ryan Wanner <ryan.wanner@microchip.com>
+Content-Language: en-US
+In-Reply-To: <aLB7CJY9nMLoS1or@x1>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
 
-On Thu, Aug 28, 2025 at 1:15=E2=80=AFAM Feng Yang <yangfeng59949@163.com> w=
-rote:
->
-> From: Feng Yang <yangfeng@kylinos.cn>
->
-> The error message printed here only uses the previous err value,
-> which results in it being printed as 0.
-> When bpf_map__attach_struct_ops encounters an error,
-> it uses libbpf_err_ptr(err) to set errno =3D -err and returns NULL.
+On 8/28/25 08:51, Brian Masney wrote:
+> EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
+> 
+> Hi Ryan and Claudiu,
+> 
+> On Thu, Jul 10, 2025 at 01:06:53PM -0700, Ryan.Wanner@microchip.com wrote:
+>> From: Ryan Wanner <Ryan.Wanner@microchip.com>
+>>
+>> This series adds support for parent data and parent _hw on the at91
+>> clock drivers. This also updates all the SoC specific clock drivers to
+>> use this format as well.
+>>
+>> This is a continuation of the V1 of this series here [1].
+>>
+>> This has been tested on the SAMA5* SoCs, the sam9x* SoCs, and the SAMA7*
+>> SoCs.
+>>
+>> Changes v1 -> V2:
+>> - Remove all the small sama7g54 SoC driver changes and put them in their
+>>   own patch.
+>> - Add the SAMA7D65 and the SAM9X75 to this update.
+>> - Add a patch to move all common used macros into the pmc.h file.
+>> - Update changes from v6.6 to v6.16.
+>> - Remove patches that where style fixes and include those in the update.
+>>
+>> Changes v2 -> v3:
+>> - Adjust each patch so they are fully atomic.
+>> - Add a patch to have the SAMA7D65 systemclocks use parent_data and
+>>   parent_hw.
+>> - Add a formatting cleanup patch for the SAM9X75.
+>> - Adjust commit messages that no longer show invalid information.
+>>
+>>
+>> 1) https://lore.kernel.org/all/20230727053156.13587-1-claudiu.beznea@tuxon.dev/
+>>
+>>
+>> Claudiu Beznea (28):
+>>   clk: at91: pmc: add macros for clk_parent_data
+>>   clk: at91: clk-sam9x60-pll: use clk_parent_data
+>>   clk: at91: clk-peripheral: switch to clk_parent_data
+>>   clk: at91: clk-main: switch to clk parent data
+>>   clk: at91: clk-utmi: use clk_parent_data
+>>   clk: at91: clk-master: use clk_parent_data
+>>   clk: at91: clk-programmable: use clk_parent_data
+>>   clk: at91: clk-generated: use clk_parent_data
+>>   clk: at91: clk-usb: add support for clk_parent_data
+>>   clk: at91: clk-system: use clk_parent_data
+>>   clk: at91: clk-pll: add support for parent_hw
+>>   clk: at91: clk-audio-pll: add support for parent_hw
+>>   clk: at91: clk-plldiv: add support for parent_hw
+>>   clk: at91: clk-h32mx: add support for parent_hw
+>>   clk: at91: clk-i2s-mux: add support for parent_hw
+>>   clk: at91: clk-smd: add support for clk_parent_data
+>>   clk: at91: clk-slow: add support for parent_hw
+>>   clk: at91: dt-compat: switch to parent_hw and parent_data
+>>   clk: at91: sam9x60: switch to parent_hw and parent_data
+>>   clk: at91: sama5d2: switch to parent_hw and parent_data
+>>   clk: at91: sama5d3: switch to parent_hw and parent_data
+>>   clk: at91: sama5d4: switch to parent_hw and parent_data
+>>   clk: at91: at91sam9x5: switch to parent_hw and parent_data
+>>   clk: at91: at91rm9200: switch to parent_hw and parent_data
+>>   clk: at91: at91sam9260: switch to parent_hw and parent_data
+>>   clk: at91: at91sam9g45: switch to parent_hw and parent_data
+>>   clk: at91: at91sam9n12: switch to parent_hw and parent_data
+>>   clk: at91: at91sam9rl: switch to clk_parent_data
+>>
+>> Ryan Wanner (4):
+>>   clk: at91: pmc: Move macro to header file
+>>   clk: at91: sam9x75: switch to parent_hw and parent_data
+>>   clk: at91: sama7d65: switch to parent_hw and parent_data
+>>   clk: at91: sam9x7: Clean up formatting
+> 
+> What tree did you develop this against? When I try to apply this series
+> to Linus's tree (6.17-rc3) and linux-next, only 12 of these patches
+> actually apply with 'git am'.
 
-Yes, but libbpf_get_error() is better.
-And decimal number is preferred as ASSERT_OK_PTR() macro does.
+This was developed on 6.16 but when I bumped this thread I checked and
+they all apply cleanly on the v6.17-rc3 tag. I also just tested on
+next-20250828 tag and this set applies cleanly as well.
 
-pw-bot: cr
+Ryan
+> 
+> Brian
+> 
 
-> Therefore, strerror(errno) can be used to fix this issue.
->
-> Fix before:
-> run_subtest:FAIL:1019 bpf_map__attach_struct_ops failed for map pro_epilo=
-gue: err=3D0
->
-> Fix after:
-> run_subtest:FAIL:1019 bpf_map__attach_struct_ops failed for map pro_epilo=
-gue: Bad file descriptor
->
-> Signed-off-by: Feng Yang <yangfeng@kylinos.cn>
-> ---
->  tools/testing/selftests/bpf/test_loader.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/tools/testing/selftests/bpf/test_loader.c b/tools/testing/se=
-lftests/bpf/test_loader.c
-> index f361c8aa1daf..686a7d7f87b1 100644
-> --- a/tools/testing/selftests/bpf/test_loader.c
-> +++ b/tools/testing/selftests/bpf/test_loader.c
-> @@ -1008,8 +1008,8 @@ void run_subtest(struct test_loader *tester,
->                         }
->                         link =3D bpf_map__attach_struct_ops(map);
->                         if (!link) {
-> -                               PRINT_FAIL("bpf_map__attach_struct_ops fa=
-iled for map %s: err=3D%d\n",
-> -                                          bpf_map__name(map), err);
-> +                               PRINT_FAIL("bpf_map__attach_struct_ops fa=
-iled for map %s: %s\n",
-> +                                          bpf_map__name(map), strerror(e=
-rrno));
->                                 goto tobj_cleanup;
->                         }
->                         links[links_cnt++] =3D link;
-> --
-> 2.27.0
->
 
