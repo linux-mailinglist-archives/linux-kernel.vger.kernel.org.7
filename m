@@ -1,101 +1,100 @@
-Return-Path: <linux-kernel+bounces-789348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D22E0B39420
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 08:48:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A228B39414
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 08:47:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C05E87B8B93
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 06:46:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BD563B997C
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 06:46:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EF822797B7;
-	Thu, 28 Aug 2025 06:47:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A9C427B344;
+	Thu, 28 Aug 2025 06:44:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="VCfzzeIv"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="mTB0tG91"
+Received: from smtpbguseast3.qq.com (smtpbguseast3.qq.com [54.243.244.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA149747F;
-	Thu, 28 Aug 2025 06:47:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB24A27A448
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 06:44:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.243.244.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756363665; cv=none; b=dSVA+Hp9oWgg6MqksCSFsshNH2uUkXoXWtmJ4sqzxM48TyvJsnnZZxw4YsG0IdKlfv9l+rILfVO03DAUF98KxNXKRB9hWC4mpBxWOShaA6/Dieryj2qN+tQW3UJQS2ns/P5t2DHKDvMsQ668luULtfMMUS7yhaTHi3XJB/EbjNA=
+	t=1756363460; cv=none; b=uz43SdchSeV/aIwgz6sZOBmFQ2lC+AZzf2mx74mcxZ4xl7GWDxLCu+JtIwn61S+VUNIHrR7goq9HZYcT1NCurtq1MJ2zWMzftMu5dNZSi+/9CbEXbaUbdulc/8I685lqDA5KhTRfsqsyVKy5LN7HsRf47IGGVru7sjzxJd0n2Jw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756363665; c=relaxed/simple;
-	bh=8sbgKSxAhOEK+Z5a/Of1IcGfOcbdGrx8hV/4V6OmYQg=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p21gJnn/YYgwmOtmJCnzSmclV2RNM0ms+oOYUtoPujLmWfJwqrxbsGKgJOK+ZCh4iTcZxrkTtkaQQHU2xkzZerorlxlbHA//uz59iiz82a5q+UnRV+LvKbe1Y5vk6qZCGQYe0S87Aeq3V5CplMHlUsCT6ZjXbKUYCWpjvxIpWj4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=VCfzzeIv; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1756363663; x=1787899663;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=8sbgKSxAhOEK+Z5a/Of1IcGfOcbdGrx8hV/4V6OmYQg=;
-  b=VCfzzeIvdtn8Do8UOs75EUOS2IM6tp/+CAJTqpuYt6sIEIiXAALe4DQK
-   3YNqFdopwTS7dPSubaa5cHau5PBQW7ZJv1miraQtZkAEojm1H3gu20/ue
-   5R2Qd9L/8JfmsdoNkn5RWn+JEHqctAwH0F4YbKjJ4G484kP4qaL2/Kqcr
-   GJ0owlYSFTuf8sve28WYBwa4Nc0s8xWQ9pwNBoEQP9MHEnPXD+GjDFg0p
-   M7F9hDuMaxdlt/ExpN1UFmUtuLAcJUPLRu/BA+fZR6zoJxuCEyt62fPRK
-   OMSn5Ua+dGPmtoxEWio95ZcKnzfPbDVMzQD58niYnYKFbMsr4wop3rUoe
-   A==;
-X-CSE-ConnectionGUID: qJZKSV6FTHO7/mkDgcwgpg==
-X-CSE-MsgGUID: K50yxsCaSJGjkgfAKAve+Q==
-X-IronPort-AV: E=Sophos;i="6.18,217,1751266800"; 
-   d="scan'208";a="46322859"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 27 Aug 2025 23:47:42 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Wed, 27 Aug 2025 23:47:06 -0700
-Received: from localhost (10.10.85.11) by chn-vm-ex03.mchp-main.com
- (10.10.85.151) with Microsoft SMTP Server id 15.1.2507.44 via Frontend
- Transport; Wed, 27 Aug 2025 23:47:05 -0700
-Date: Thu, 28 Aug 2025 08:43:32 +0200
-From: Horatiu Vultur <horatiu.vultur@microchip.com>
-To: Jakub Kicinski <kuba@kernel.org>
-CC: <andrew@lunn.ch>, <hkallweit1@gmail.com>, <linux@armlinux.org.uk>,
-	<davem@davemloft.net>, <edumazet@google.com>, <pabeni@redhat.com>,
-	<richardcochran@gmail.com>, <Parthiban.Veerasooran@microchip.com>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net-next v3 2/2] net: phy: micrel: Add PTP support for
- lan8842
-Message-ID: <20250828064332.n7kqn2rfuuieydnx@DEN-DL-M31836.microchip.com>
-References: <20250826071100.334375-1-horatiu.vultur@microchip.com>
- <20250826071100.334375-3-horatiu.vultur@microchip.com>
- <20250827174720.7b6406a1@kernel.org>
+	s=arc-20240116; t=1756363460; c=relaxed/simple;
+	bh=yq+wFxTVL2RzNrDhMgTRNWbOLvZn/ja6zdG986j2M0o=;
+	h=From:To:Cc:Subject:Mime-Version:Content-Type:Date:Message-ID:
+	 References:In-Reply-To; b=VnCoO8z3osUBfnOGTM7ZCU2Oxa9puH7ToSTDgnFtyJm6yAbcp/fnDXqC11HgTmtXEyvXhY7ohw0xdpcQ85sHqTFlECH8WMA2YH0ONWRi0346ryO8hnfh0prXlFJcecew3n0GVdLlhUul+nfLgSi6qA0BDTq7HR5LjQhvTgkGGL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=mTB0tG91; arc=none smtp.client-ip=54.243.244.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1756363421;
+	bh=yq+wFxTVL2RzNrDhMgTRNWbOLvZn/ja6zdG986j2M0o=;
+	h=From:To:Subject:Mime-Version:Date:Message-ID;
+	b=mTB0tG91oi9x6KssE9MJNelVl8qL7ewICkIoWd+/EEbnG1uXMm7WU4tqqkSVuz+mV
+	 aA4os/b/a7ZlJLSCq6jbVL5r4ER6uIDI/2DwOQ4E92Ip6Ym2icFq/uEcVFaPNkU93f
+	 EWCopLaqvXmJ5tIbfEFbh6be/kngqcoWYNJRNlpg=
+EX-QQ-RecipientCnt: 7
+X-QQ-GoodBg: 1
+X-QQ-SSF: 00410000000000F0
+X-QQ-FEAT: DTni/y8B87/aZgC8Xs1Z47pSOeTS/TBOLVi5xJ6UuD4=
+X-QQ-BUSINESS-ORIGIN: 2
+X-QQ-Originating-IP: DBZElzaigNA6Te8v8pMdV02wWLWlM/95ZhXvOU1s/LA=
+X-QQ-STYLE: 
+X-QQ-mid: lv3sz3a-6t1756363417t4ae72586
+From: "=?utf-8?B?V2VudGFvIEd1YW4=?=" <guanwentao@uniontech.com>
+To: "=?utf-8?B?SHVhY2FpIENoZW4=?=" <chenhuacai@kernel.org>, "=?utf-8?B?WWFudGVuZyBTaQ==?=" <si.yanteng@linux.dev>
+Cc: "=?utf-8?B?V0FORyBYdWVydWk=?=" <kernel@xen0n.name>, "=?utf-8?B?WGkgUnVveWFv?=" <xry111@xry111.site>, "=?utf-8?B?bGludXgta2VybmVs?=" <linux-kernel@vger.kernel.org>, "=?utf-8?B?bG9vbmdhcmNo?=" <loongarch@lists.linux.dev>, "=?utf-8?B?5Y2g5L+K?=" <zhanjun@uniontech.com>
+Subject: Re: [PATCH] Loongarch: entry: fix syscall_get_arguments() VS no-bultin-memcpy
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-In-Reply-To: <20250827174720.7b6406a1@kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain;
+	charset="utf-8"
+Content-Transfer-Encoding: base64
+Date: Thu, 28 Aug 2025 14:43:36 +0800
+X-Priority: 3
+Message-ID: <tencent_1B5F03836C31C9BB345806A2@qq.com>
+X-QQ-MIME: TCMime 1.0 by Tencent
+X-Mailer: QQMail 2.x
+X-QQ-Mailer: QQMail 2.x
+References: <20250826113225.406238-1-guanwentao@uniontech.com>
+	<a0e11216-71b0-447f-beab-351d024810fb@linux.dev>
+	<CAAhV-H7zKLNpx7jM=JBT7unqQ=G4Ztv4RgEhrFsjP+P4LjPYjA@mail.gmail.com>
+In-Reply-To: <CAAhV-H7zKLNpx7jM=JBT7unqQ=G4Ztv4RgEhrFsjP+P4LjPYjA@mail.gmail.com>
+X-QQ-ReplyHash: 3799560694
+X-BIZMAIL-ID: 12075257076705248846
+X-QQ-SENDSIZE: 520
+Received: from qq.com (unknown [127.0.0.1])
+	by smtp.qq.com (ESMTP) with SMTP
+	id ; Thu, 28 Aug 2025 14:43:38 +0800 (CST)
+Feedback-ID: lv:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: NAtipnnbTPea9vulzRXGw+KxxkO2e9FUsEUC7iZkrOcU/iUgF1SuBCRJ
+	kWKQ10yMfnR+4ZPpCxXUcGvQePUMPrE82+SzNHE2+9tlT/waWh+X4zKivuaZ2MAWPoVSPgT
+	/PH+4434VMD+dk8v1zkSIXS6UMK0hM4IR5VKCB2+kFmzHjJYcje5WiJbxogN0XLVD3n+ydk
+	crXtUAMbEIj4UHXn6K5dRl7CV46Xy4RUgqNApTPM2KGu3zvglyArj4fjPRm5dgT+/hW5Xu8
+	hmEsOSco3Vr+IYxfdRBsie7BJwB8dDG+v9mXkyDHGxpg7RHeSmdblEZXg0X7A8cqS6Mwf9h
+	0jyaa7zJTIO71+b8WIxPSlQkT8rQ9IWkOs5k6dx7ntdZqrUdO8Uz4tvHhP2ZQdnyU/a44ku
+	mug9UrA+23uSgdsUuWce80m6pWODxRJWciqFuIKPwEUWc7p4Z6QxMUbjYgV6cmCIxUVRxEY
+	lcV+I7uop8zsFGCtgwy1mv7m7YKwY++GFmCBj5Ig59L0nAyqq+yOmBUMI9LHlDLAnP0oxHs
+	qSzNgo0fPy4C8jJ2Cb5mgRufjh2p9KRXqZ0vhekbsmGOtWnDWGnF0GXPV72qIf56wJuIl90
+	TfQJsxq3k5lBF22Q0rrgyyBV1rQ5YSs3ndJ9A6VUanOtBZhq/gJOYWVI95ofCofEm2JDMIL
+	BjChD3iKqtOrptZOSJLusv+DyR9xhJrOS1m1JOmj8DrfGYZ2w1xeB/EVaZOHC6PPq4oR/rA
+	qd1Zbr/yQkCTLMmerctwH7LM7U2Z0gW3G4c+ow81DdvqmusyHD6kG/ZXLWJhxOQU0fSzTQU
+	7rc2suN9eYogquvq507hM9BkZLcg0lj7pDPBX1KQ844tCNNRoeSNVaMDyXKaYYArMSuBIFv
+	dAPLwiTT315GgUor45F99Baws4lvEZIkL4sH/VOVrpC9at9UOF9rOZPdxULW9gfoRVrwzQn
+	QpYl+r5/5Vo0TjtJQuvACNbbJ2Ik5etGc31ljvHPD7vZkPgNFjzfCKTRTbVz6lzCw9VeVHz
+	IQ+ozp3HVpNXT4GCqA+1a+m9gsRs+pflO1vOOLLSNgvwt77F/upPvCH6zVc98=
+X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
+X-QQ-RECHKSPAM: 0
 
-The 08/27/2025 17:47, Jakub Kicinski wrote:
-> 
-> On Tue, 26 Aug 2025 09:11:00 +0200 Horatiu Vultur wrote:
-> > +#define LAN8842_STRAP_REG_PHYADDR_MASK               GENMASK(4, 0)
-> 
-> > +     addr = lanphy_read_page_reg(phydev, LAN8814_PAGE_COMMON_REGS,
-> > +                                 LAN8842_STRAP_REG);
-> > +     addr &= LAN8842_STRAP_REG_PHYADDR_MASK;
-> > +     if (addr < 0)
-> > +             return addr;
-> 
-> Did you mean to mask the value after the check if it's negative?
+RGVhciBIdWFjYWksDQoNCkVtbW0sIGxldCBjaGFuZ2UgdGhlIHRpdGxlIGZpeCB0byBvcHRp
+bWl6ZS4uLg0KDQpCUnMNCldlbnRhbyBHdWFu
 
-Yep, I wanted to mask after the check. I will fix this in the next
-version.
-
--- 
-/Horatiu
 
