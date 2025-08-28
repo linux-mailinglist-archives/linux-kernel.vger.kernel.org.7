@@ -1,158 +1,117 @@
-Return-Path: <linux-kernel+bounces-790348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 637C9B3A5D4
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 18:13:11 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FA90B3A5D6
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 18:13:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB24517000E
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 16:12:13 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2EDEE4E22BB
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 16:13:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA8B32D837C;
-	Thu, 28 Aug 2025 16:11:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F35102D6407;
+	Thu, 28 Aug 2025 16:13:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JpncEeF/"
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="c4Hrq8ZM"
+Received: from out-185.mta0.migadu.com (out-185.mta0.migadu.com [91.218.175.185])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AFCD286D60;
-	Thu, 28 Aug 2025 16:11:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6261A25D202
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 16:13:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756397518; cv=none; b=mwEIsvBByabDGVxmGIblkbmPzyXDNimHMfXYyFIBnuKL5v5D/YhAfGuQghklgb6AKJi9Im1QD84YOIadY8KO9t9t1tzPAR5thxmDJAEXzAG9WwjFt5fmLDVOIMNmEkiWSIccQmPNrDvN3eucdDP2tdrrEwXt8D9KrZTRCMkGFD8=
+	t=1756397594; cv=none; b=lmAUdHugnHbysvFhfqLwI0kjPKGV0Oqyjxv1r7aWvszWI30BBupdplXkOyhRIxc+oi2GtoXRxPCCxFQmat7Iik99nK8Wkt5ZgZ+eu+V0Z0vOssys/KbQkrvTO3Dr2NbCVkr7KdF1LMIsQ2thz0ZkLgPabJDsucNlkjiwbnac3Kk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756397518; c=relaxed/simple;
-	bh=VCgz87AQbD+NIqYtaGv4MfNGpvxEv3mxEjPpigap2YI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nmtFtc1kTCtss3jaqxFIX7Imgm5J9FJgLBSNS7f6U3M2FIA4k9rnx+Qg2r1mZ4ADElIK5SSIyGNYBms9OSZ7K8tHTpPLRT1NTk4i3G6UVTk6AS3prNonWz6/XpAq3r3O9QqxLVY6QBpg9zDF+IS5p6VlHaeL5uds9FsD7ewtREI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JpncEeF/; arc=none smtp.client-ip=209.85.215.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-b47175d02dcso971172a12.3;
-        Thu, 28 Aug 2025 09:11:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756397516; x=1757002316; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=VCgz87AQbD+NIqYtaGv4MfNGpvxEv3mxEjPpigap2YI=;
-        b=JpncEeF/iBww32epG/SJZsoKDJkTQmeSDtnB1nMwAxhRecyBMNR465HQXKKnIbbMA6
-         LRYEAwcJ2f76K7bG3K1qeJ50dNQcC1ugQ+iq5HFmVTWJIm8yOlTvfBrxiB04mCPPI3Lk
-         LAdYISZJI8XTm7Dexcovssm0j/WqHyYN8C0UX+BpW6cqSxX8VVV4iCFvpcN8D8xXuktc
-         n5UIo9vUL3Sv3PhIQhyzqSBvH6CnDmawIDCb2cYWFY74lkzqAe8DfNJ9BjHx4bTrNDRK
-         5T0yrwOSmrCYfyiaGpho51gXBlT5W+7IZgYBhM7oT1RWWrikQsp27AWVu599IZh1jZxb
-         TYew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756397516; x=1757002316;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VCgz87AQbD+NIqYtaGv4MfNGpvxEv3mxEjPpigap2YI=;
-        b=WdaLDsvVheCAGGdPTtplIDQhr6FJfzZIsT1bkaLhXruNtOrbFdH38hCALAB/MSU+2y
-         4lI9UNjAnzVY1hfoAAjNiyHmBdNSPkDtqqOKypwhg2+3a6LmzDrWCptBahV0478KEclY
-         Yz2FFz1Yr1nPao7+CRcE4EXD/cL3O5Fl8JFIznxcYbBNnNlw+UtMACZF20/PyDA36P0/
-         JwSOYVG7GmUecTwab5AYG30UJIuLrNAQrA7HmrPVx2bpUcFFBzyAounwWpc+IhpFd/L3
-         ioGPmeUPQOLRpvZv56I097nJD2XPlytPMLUEfuS+M7FtRVzsU7s6znGQBftt3/5rsa+R
-         0iHw==
-X-Forwarded-Encrypted: i=1; AJvYcCUmzG1aFV79RmgWKw+HEVngdYNtFDi8NGMN1oSg9gJdC/HULIMpNwXXz13tJOp82zmzAYSSz0GNZ12+@vger.kernel.org, AJvYcCUxz5rqptzuKmbhOYRzHPHKYjVd50XJUMpL8H9ewn3xOwQoyx4YQ223WWrRHLV8dgFKJ558P/ckKA0AY+Q=@vger.kernel.org, AJvYcCV7qMOCA+a9vtiieFbd25qA8Mq0QuicYy+5fkq1d/czS7pU8QPTFIf/q/dRRlp9wthIbCxEuferDFTmMOv4wxx9@vger.kernel.org, AJvYcCVG2eTElNfwN6eQ4Teq3bOdlIYSSxm5LmA5RToOFbymPIDWh7hO6x519ReWc8HcUi0oAdbOPfUjX/f3aZ/F9ZI=@vger.kernel.org, AJvYcCVUTpOPqYKamM0fXt6ZKEPLugy+q0DzwaSbZYlhiSGysWCwaPdclV0QCFVqDCQvTDCGfV47UbPq1fA2@vger.kernel.org, AJvYcCX+/s2sePoWMUtlXeybqw/INOdHV8M4gTcqoM0Cs+2YJDuSV32o4HrnRE/azyrSCsCvnDSsIKsibEjz@vger.kernel.org, AJvYcCXDMrkOUvX6axMMcuMSupcwOnnYR2qp6cAVChVaP04R6Fq7cYex5MSXBQCsum9hAb5gqBjhNlzd9As=@vger.kernel.org, AJvYcCXH22lIKaCe86U5NgeRoorBb4aEABl+eTLLtCFFeJYJxCjkHQVatvNvLxnyj9ARPy8fkOXxdjXHN12T@vger.kernel.org, AJvYcCXIfzmzhsg2ch/UVk7Lc0yez/iV3GWzfxPH9GTL/h8GIudq3LglRpTqz6e1vs/q/R3myoSCC4FCDHr5Rnx9@vger.kernel.org, AJvYcCXjuj6DlZnilC5tnoFteVS7
- 4h5dQBvCedYWSoNdmmmEmLDMjiantSTKMtyHs7Kb4U+YilO5Y/nygvmdgUzPfQI=@vger.kernel.org, AJvYcCXkKZqBh/XqPgYc6e1+jn0W1jtFftIqk3Skjb7dwMbNnPNXC7l8be9SQ6lrtLHRODr3wKLw9+Xx5AnG5w==@vger.kernel.org, AJvYcCXqOjhIx9oxvgsLpSHeOyu0sJb0f5sA59bq300R9/4kE4bcVjXRuP4DecFeazImEbFPzD03wLgRc0Be@vger.kernel.org, AJvYcCXuBxupmB/mzZQ2If2rWTX6qbRM2M6p8aZHLQN6B2A8iBbfG8SjpN107zXjgdgbsvdBaeZ9Hhhy8k9M@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2ooFcZMn5Qg/2WSwiFbOXpMEGYa6DB62Urc52Th9LDnKuJGHt
-	NLu81jkM90MAgD0qPvkGVOTWhsWPWnu4hhqcValiQw27SPyxmfdHXU+q
-X-Gm-Gg: ASbGncuhVr+9O7iPPiQqxUXuNPeevfWdsrFCOO+2n1iyQPF1ho3KXcVEV1lVhYPT9KP
-	AEVamihwDxHRtaSvj54/+Zvarcxwn6Sr7XAOQcS+Ebn2LemBo8TfW7MmpN7oYfX82714+r3U95h
-	ffJUZgxkbnf/7XR1+n1lAYPHG+7WgONSckPT+jaBfy9hVy912Vd9HpSMobqaYSPpXZ7D/hMSIRu
-	vLs7vcGUlwQ5ZXSBeUXTp6gyrKW84HrCCeFN4tQcbDwbjtAxli6J6k5IjEEu84Yp8zt2YmZbGEd
-	j7w4v9mgJt5IJV2hG765i3USeobsbwOWrcjHCk1gLtbXvIqQ5/ZkoHVm6wnhpWw9BebiIVYLXCH
-	ijjqJFU+4QYHY5fbioRgO+AYd6av3dckDnh1PUJ4V7BP4zIXiGPCW1b+a8hS4vt0M
-X-Google-Smtp-Source: AGHT+IEelSOuEo8Npbahj3GwLi0XEymTTpHMsSHpMsvQzhvD7rxDhVw5w3VB77ZuaLmwNpmmTqLyYw==
-X-Received: by 2002:a17:903:19ec:b0:248:9e56:e806 with SMTP id d9443c01a7336-2489e56ea30mr87843455ad.12.1756397515676;
-        Thu, 28 Aug 2025 09:11:55 -0700 (PDT)
-Received: from [192.168.1.111] ([59.188.211.98])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-248a63b5916sm45971445ad.52.2025.08.28.09.11.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 28 Aug 2025 09:11:55 -0700 (PDT)
-Message-ID: <932e0085-c901-40f8-b0d5-67f8f0b934e6@gmail.com>
-Date: Fri, 29 Aug 2025 00:11:40 +0800
+	s=arc-20240116; t=1756397594; c=relaxed/simple;
+	bh=mFfLc2w4A1s0Z+GSo7QaZhoKYbIHCQGO4bXrafwtMjs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RMHmXthEpJInzVVU5wKAp0DP9Q6iF3Uj3lqIWNqzl9F2c12B3sLcOmNSdif2mLGmXGEL1rbSWuQo1Pkd8g6eqitNOoRDPCyIVCTUnBTBOh0nfiFy1RXEPITxfbAjfm4/FjyFSy42JhJqsk1gOrXDvFHrJX3Oy2VFrGX08MQBNPM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=c4Hrq8ZM; arc=none smtp.client-ip=91.218.175.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1756397580;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=ZvjX2ifl7fBCryv7z+YmmCfuSCRQ329m4eE0VyNCgVs=;
+	b=c4Hrq8ZMkjm/bUMRu9m0RqhuURkaxCZ8f/p7fRXL3/IBdaYgfq2GfgqzzS9Y0nrfcy8zya
+	leKu67rSZ7BcVKDqjfFzBuyD+YiuPAE/GImyc5+xF9edkIArTDWdomqaAGdb3b7pjBOW2y
+	wOB4tNAdHEYO8W0d8xAqga1oxnTKH/U=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: Nilesh Javali <njavali@marvell.com>,
+	GR-QLogic-Storage-Upstream@marvell.com,
+	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH RESEND] scsi: qla2xxx: Use secs_to_jiffies() instead of msecs_to_jiffies()
+Date: Thu, 28 Aug 2025 18:11:53 +0200
+Message-ID: <20250828161153.3676-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 00/37] arm64: Add initial device trees for Apple M2
- Pro/Max/Ultra devices
-To: Janne Grunau <j@jannau.net>, Sven Peter <sven@kernel.org>,
- Alyssa Rosenzweig <alyssa@rosenzweig.io>, Neal Gompa <neal@gompa.dev>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Hector Martin <marcan@marcan.st>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Viresh Kumar <viresh.kumar@linaro.org>, Thomas Gleixner
- <tglx@linutronix.de>, Joerg Roedel <joro@8bytes.org>,
- Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
- Linus Walleij <linus.walleij@linaro.org>,
- Mark Kettenis <kettenis@openbsd.org>, Andi Shyti <andi.shyti@kernel.org>,
- Jassi Brar <jassisinghbrar@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Sasha Finkelstein <fnkl.kernel@gmail.com>,
- Marcel Holtmann <marcel@holtmann.org>,
- Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
- Johannes Berg <johannes@sipsolutions.net>, van Spriel <arend@broadcom.com>,
- Lee Jones <lee@kernel.org>, =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?=
- <ukleinek@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
- Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck
- <linux@roeck-us.net>, Michael Turquette <mturquette@baylibre.com>,
- =?UTF-8?Q?Martin_Povi=C5=A1er?= <povik+lin@cutebit.org>,
- Vinod Koul <vkoul@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>, Marc Zyngier <maz@kernel.org>,
- Ulf Hansson <ulf.hansson@linaro.org>, Keith Busch <kbusch@kernel.org>,
- Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
- Sagi Grimberg <sagi@grimberg.me>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>
-Cc: asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org, iommu@lists.linux.dev, linux-gpio@vger.kernel.org,
- linux-i2c@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-bluetooth@vger.kernel.org, linux-wireless@vger.kernel.org,
- linux-pwm@vger.kernel.org, linux-watchdog@vger.kernel.org,
- linux-clk@vger.kernel.org, dmaengine@vger.kernel.org,
- linux-sound@vger.kernel.org, linux-spi@vger.kernel.org,
- linux-nvme@lists.infradead.org
-References: <20250828-dt-apple-t6020-v1-0-507ba4c4b98e@jannau.net>
-Content-Language: en-US
-From: Nick Chan <towinchenmi@gmail.com>
-In-Reply-To: <20250828-dt-apple-t6020-v1-0-507ba4c4b98e@jannau.net>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
+Use secs_to_jiffies() instead of msecs_to_jiffies() and avoid scaling
+'ratov_j' to milliseconds.
 
-Janne Grunau 於 2025/8/28 晚上10:01 寫道:
-> This series adds device trees for Apple's M2 Pro, Max and Ultra based
-> devices. The M2 Pro (t6020), M2 Max (t6021) and M2 Ultra (t6022) SoCs
-> follow design of the t600x family so copy the structure of SoC *.dtsi
-> files.
-[...]
-> After discussion with the devicetree maintainers we agreed to not extend
-> lists with the generic compatibles anymore [1]. Instead either the first
-> compatible SoC or t8103 is used as fallback compatible supported by the
-> drivers. t8103 is used as default since most drivers and bindings were
-> initially written for M1 based devices.
->
-> The series adds those fallback compatibles to drivers where necessary,
-> annotates the SoC lists for generic compatibles as "do not extend" and
-> adds t6020 per-SoC compatibles.
+No functional changes intended.
 
-The series is inconsistent about the use of generic fallback compatibles.
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+---
+ drivers/scsi/qla2xxx/qla_bsg.c | 4 ++--
+ drivers/scsi/qla2xxx/qla_os.c  | 8 ++++----
+ 2 files changed, 6 insertions(+), 6 deletions(-)
 
-"apple,aic2", "apple,s5l-fpwm", "apple,asc-mailbox-v4" is still used.
+diff --git a/drivers/scsi/qla2xxx/qla_bsg.c b/drivers/scsi/qla2xxx/qla_bsg.c
+index 10431a67d202..ccfc2d26dd37 100644
+--- a/drivers/scsi/qla2xxx/qla_bsg.c
++++ b/drivers/scsi/qla2xxx/qla_bsg.c
+@@ -3106,8 +3106,8 @@ static bool qla_bsg_found(struct qla_qpair *qpair, struct bsg_job *bsg_job)
+ 	switch (rval) {
+ 	case QLA_SUCCESS:
+ 		/* Wait for the command completion. */
+-		ratov_j = ha->r_a_tov / 10 * 4 * 1000;
+-		ratov_j = msecs_to_jiffies(ratov_j);
++		ratov_j = ha->r_a_tov / 10 * 4;
++		ratov_j = secs_to_jiffies(ratov_j);
+ 
+ 		if (!wait_for_completion_timeout(&comp, ratov_j)) {
+ 			ql_log(ql_log_info, vha, 0x7089,
+diff --git a/drivers/scsi/qla2xxx/qla_os.c b/drivers/scsi/qla2xxx/qla_os.c
+index d4b484c0fd9d..9a2f328200ab 100644
+--- a/drivers/scsi/qla2xxx/qla_os.c
++++ b/drivers/scsi/qla2xxx/qla_os.c
+@@ -1291,8 +1291,8 @@ qla2xxx_eh_abort(struct scsi_cmnd *cmd)
+ 	       "Abort command mbx cmd=%p, rval=%x.\n", cmd, rval);
+ 
+ 	/* Wait for the command completion. */
+-	ratov_j = ha->r_a_tov/10 * 4 * 1000;
+-	ratov_j = msecs_to_jiffies(ratov_j);
++	ratov_j = ha->r_a_tov / 10 * 4;
++	ratov_j = secs_to_jiffies(ratov_j);
+ 	switch (rval) {
+ 	case QLA_SUCCESS:
+ 		if (!wait_for_completion_timeout(&comp, ratov_j)) {
+@@ -1806,8 +1806,8 @@ static void qla2x00_abort_srb(struct qla_qpair *qp, srb_t *sp, const int res,
+ 		rval = ha->isp_ops->abort_command(sp);
+ 		/* Wait for command completion. */
+ 		ret_cmd = false;
+-		ratov_j = ha->r_a_tov/10 * 4 * 1000;
+-		ratov_j = msecs_to_jiffies(ratov_j);
++		ratov_j = ha->r_a_tov / 10 * 4;
++		ratov_j = secs_to_jiffies(ratov_j);
+ 		switch (rval) {
+ 		case QLA_SUCCESS:
+ 			if (wait_for_completion_timeout(&comp, ratov_j)) {
+-- 
+2.50.1
 
-
-[...]
-
-Best regards,
-Nick Chan
 
