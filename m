@@ -1,137 +1,173 @@
-Return-Path: <linux-kernel+bounces-789650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789651-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45EDFB398AC
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 11:46:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2312B398AE
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 11:47:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 829C31C827BA
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 09:47:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E847D7B0DBB
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 09:45:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CBEB2DA779;
-	Thu, 28 Aug 2025 09:46:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E8FF2E0910;
+	Thu, 28 Aug 2025 09:47:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BXp+EWQv"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="xO0j4LAX"
+Received: from out30-130.freemail.mail.aliyun.com (out30-130.freemail.mail.aliyun.com [115.124.30.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5120E26E6F2
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 09:46:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83DCF26E6F2;
+	Thu, 28 Aug 2025 09:46:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756374407; cv=none; b=CUq9TQ8zK+9h90tjUsbCdu1hFpoJ1y8UnBoy1HI7Z05L6mCGVsIR39xQQH/+80RkJpsfZsotZmldrxzAFiwAm9IZ+na2sqN7zsP2vcWBSXFfp5VTd6XRFX9AGs71H6zUuAAS4deIFgY/9pKrKkZlMeafqF1jLUcLfgIivTqPHYg=
+	t=1756374419; cv=none; b=qeFefHn4PD7+mepvDkKkjDSvlNLPjd8zPJJPRdzLwJSwTqgG4XF/NhgZEIey6kSIRZ7VHTglJPxXW+FMO+H3o2htat3xflJE7wZUAaHHu0MTgPJc2TWaaFnRcsJywlDyC+EfW6qobFYqVHTfyuvo3rsbZ41E4W5g70gQWBju/MI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756374407; c=relaxed/simple;
-	bh=Yuh2ilkl49qigY14vDa5g90O/ZTEywXMWlWBmVgjN6E=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EvcxxhweL/oMtA8+2UFa1Z1mgE+6j9JL3cmjS4BgS6yGfs5PEiY+UxqIJhFeJgIvPqMiEXD9gyG64gnulD3elfB2SvvMgvqve0p8ilZLtR/d2nfepEsjoiHu2WofmJNnOtpO5Thk+aSxYZQpQ9MRj/Mof05WsImq8pcWIpv3wuI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BXp+EWQv; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-7704f3c4708so905644b3a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 02:46:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756374405; x=1756979205; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=WV9EP3WiHIkOcIDq8xrAUCSMCtBiY+6XMNrlVI5mv1E=;
-        b=BXp+EWQvvXgbrhqgwXhKnHX0C23PCTeU7dWYb5DdtQZt1RWXVbiipPvRAEpu6FoZjl
-         sGs8T/iW9PsYB954sYNNZos+gS/oy7BfIZqQyts8oLuT2o5YXovPcNU2eCo9diM50Wv2
-         QCAAAkmaYSIJ2ywA9yXU1eySXy5yApSDe43q1QNpZ9HOtHJzqh1hPwzoN/vxvUR1L6dS
-         CLz1CD90RDe1lFiJQXX7aB9NCjIa4IfrmlTjV7GQD3EZK8TKqZUsQsK7unMYtJ4NErux
-         wTaE0FQZlT1TcPAvI66jN4Lal3x3qnevWgEOmnD2SVZlWMhmbD4ii11RlobKtkXW2PN8
-         7D4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756374405; x=1756979205;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=WV9EP3WiHIkOcIDq8xrAUCSMCtBiY+6XMNrlVI5mv1E=;
-        b=LSMK3iY+K/VqtIgLD2YDGXHSdIumh5TVLV/BNzvY4jjzx4UJ37avHkerS8+3mWGMS7
-         ZE5rQzGPCcgNL0vRD/Yuiv5CvXqKZHc28SZHwo0CBaj+ZAhroQmpsaaAt6wu8jElsBpd
-         yfEJOq3XE5JME3MnZIOKashtfH0Jbp1l1lZ1sjJB/IE5br8TbNXdojK8vkekrrT+t0u3
-         SjxC2rL/ZaOR940wB1fGiiZ94VQelEYmmZP+iV4afM455TSUEvd9CkbDqulSbdrcV1Za
-         ZYFxkb5bGav7qlKlCVtpuyq//uh4UEI/brzOzOgYOpkQAEKukeZwC1bIAdEgksXdv+3D
-         vpbA==
-X-Forwarded-Encrypted: i=1; AJvYcCUXPDqvAGZUq2GX4fBzwmfPGx+R8jTr7EFF5G0513CxuNJQa3KhswpVRgpjL6ChrQ0/MrMK1HQM9Pt3fms=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxA51wZ/8Unop/gB64Wjrhs3wFUESMusv8QChFtMzcipLr2dI1G
-	5lf5lLl/5V7oxvToCfgc+FAsdaU0D3CpHc+vwXA/ufB/DKfcje4DGAkm
-X-Gm-Gg: ASbGnctuikHIm1LCPARi9HpUc+GOzbHCag+pdAvYr3hf5tNv781uMfqmBe8P5iVUFK2
-	nafjUsiVYfAVMdfHif0pqBj61gMx24v2Pdld6sjH0Y4Un8i9G3elRI3xkhUYzkXxxFUfMeXXA4D
-	E/D4mTdCngpJZ2C2nPGJtzuh0Fi2RdbNaWw9HPDn5CUSxh0dO6vMT9hIIa6OvbJIMXNlJ7D/dJf
-	8jfn7Wrnf8omqz5Zt4stge2+yajFtfhlZt6vmBRqIahJQ+2mBVVyRNViU5PexOJuHS8FZCE2XdN
-	Ba7obYVrT2bxdujf8yUcIW4LHxLJOrFthOU4JrO4QCFa48gUO2sAO/LOvqs5E01hn3meGjbGLZN
-	UdckzosIYe0P/49Lc7S8damsW/AQ0bsUCcFCcDobDc76BYp0yf9hlpCqChDdwf9xa6Z56y7umLg
-	VdrA==
-X-Google-Smtp-Source: AGHT+IFzCwjXA12UFQ+soxjLMPsT7ynuD1wJEEhRU0FFfN/HRedhPq2h53Pq5F2zABdrX0M2lgpglw==
-X-Received: by 2002:a05:6a20:1592:b0:23d:dd9b:b563 with SMTP id adf61e73a8af0-24340d15dcemr34925546637.39.1756374405378;
-        Thu, 28 Aug 2025 02:46:45 -0700 (PDT)
-Received: from yingche.. (111-255-102-121.dynamic-ip.hinet.net. [111.255.102.121])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b49cb8b4b98sm13591617a12.19.2025.08.28.02.46.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Aug 2025 02:46:44 -0700 (PDT)
-From: yingche <zxcv2569763104@gmail.com>
-To: gregkh@linuxfoundation.org
-Cc: linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	yingche <zxcv2569763104@gmail.com>
-Subject: [RFC PATCH] staging: rtl8723bs: fix fortify warnings by using struct_group
-Date: Thu, 28 Aug 2025 17:45:37 +0800
-Message-ID: <20250828094537.884046-1-zxcv2569763104@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1756374419; c=relaxed/simple;
+	bh=LpA6H+aeQtqTKiAd+afSJ6jbJZdTff8nG98/sQA0udU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tmIRYVAPGVgiy1gGKxc+s6DXhf1BG+9eEgkgBr48IRpyRqMJbWENAa9ox7yILXoYJbuCfIU6ooxukeD3juOb9UMgtoPTkRWaIsoK/1MTyHjpF1FmGvDB6lSGxcY78mThhReDMce4oqUpAMzHtMHeJQs3WY/1HnIKHN2bGNv8t/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=xO0j4LAX; arc=none smtp.client-ip=115.124.30.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1756374408; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=A5UZMuVtzlTYwPVWKKP1nj4b0AXXLsi60Juw56Bu+zg=;
+	b=xO0j4LAXCmE+45QBgPVj4+GO9sgb5rNOjWeCPILLqH2Lcf6Y4LMgLa7S6NLmK/Mgti0P0ZMs4/OsH0ygDYPB/xpFOJNutWlHPvKrq8LKEKswUtG+2ZhbllK/ADEW7u/mR2fd4PB3WOUkqDKe5zT9E5LJiEKJgZdOp1tzUoirJcI=
+Received: from 30.74.144.114(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WmmpNqb_1756374404 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Thu, 28 Aug 2025 17:46:45 +0800
+Message-ID: <db2320ee-6bd4-49c1-8fce-0468f48e1842@linux.alibaba.com>
+Date: Thu, 28 Aug 2025 17:46:42 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v10 00/13] khugepaged: mTHP support
+To: David Hildenbrand <david@redhat.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Nico Pache <npache@redhat.com>, Dev Jain <dev.jain@arm.com>,
+ linux-mm@kvack.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, ziy@nvidia.com, Liam.Howlett@oracle.com,
+ ryan.roberts@arm.com, corbet@lwn.net, rostedt@goodmis.org,
+ mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
+ akpm@linux-foundation.org, baohua@kernel.org, willy@infradead.org,
+ peterx@redhat.com, wangkefeng.wang@huawei.com, usamaarif642@gmail.com,
+ sunnanyong@huawei.com, vishal.moola@gmail.com,
+ thomas.hellstrom@linux.intel.com, yang@os.amperecomputing.com,
+ kirill.shutemov@linux.intel.com, aarcange@redhat.com, raquini@redhat.com,
+ anshuman.khandual@arm.com, catalin.marinas@arm.com, tiwai@suse.de,
+ will@kernel.org, dave.hansen@linux.intel.com, jack@suse.cz, cl@gentwo.org,
+ jglisse@google.com, surenb@google.com, zokeefe@google.com,
+ hannes@cmpxchg.org, rientjes@google.com, mhocko@suse.com,
+ rdunlap@infradead.org, hughd@google.com
+References: <20250819134205.622806-1-npache@redhat.com>
+ <e971c7e0-70f0-4ce0-b288-4b581e8c15d3@lucifer.local>
+ <38b37195-28c8-4471-bd06-951083118efd@arm.com>
+ <0d9c6088-536b-4d7a-8f75-9be5f0faa86f@lucifer.local>
+ <CAA1CXcCqhFoGBvFK-ox2sJw7QHaFt+-Lw09BDYsAGKg4qc8nSw@mail.gmail.com>
+ <CAA1CXcAXTL811VJxqyL18CUw8FNek6ibPr6pKJ_7rfGn-ZU-1A@mail.gmail.com>
+ <5bea5efa-2efc-4c01-8aa1-a8711482153c@lucifer.local>
+ <CAA1CXcBDq9PucQdfQRh1iqJLPB6Jn6mNy28v_AuHWb9kz1gpqQ@mail.gmail.com>
+ <d110a84a-a827-48b4-91c5-67cec3e92874@lucifer.local>
+ <95012dfc-d82d-4ae2-b4cd-1e8dcf15e44b@redhat.com>
+ <bdbb5168-7657-4f11-a42d-b75cce7e0bca@lucifer.local>
+ <e34e1ffe-c377-4c9a-b28b-ca873f3620ac@redhat.com>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <e34e1ffe-c377-4c9a-b28b-ca873f3620ac@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Fix fortify_memcpy_chk warnings in rtw_BIP_verify() and
-rtw_mgmt_xmitframe_coalesce() functions by using struct_group
-to access consecutive address fields.
+(Sorry for chiming in late)
 
-Changed memcpy calls to use &hdr->addrs instead of hdr->addr1
-when copying 18 bytes (addr1 + addr2 + addr3).
+On 2025/8/22 22:10, David Hildenbrand wrote:
+>>> Once could also easily support the value 255 (HPAGE_PMD_NR / 2- 1), 
+>>> but not sure
+>>> if we have to add that for now.
+>>
+>> Yeah not so sure about this, this is a 'just have to know' too, and 
+>> yes you
+>> might add it to the docs, but people are going to be mightily 
+>> confused, esp if
+>> it's a calculated value.
+>>
+>> I don't see any other way around having a separate tunable if we don't 
+>> just have
+>> something VERY simple like on/off.
+> 
+> Yeah, not advocating that we add support for other values than 0/511, 
+> really.
+> 
+>>
+>> Also the mentioned issue sounds like something that needs to be fixed 
+>> elsewhere
+>> honestly in the algorithm used to figure out mTHP ranges (I may be 
+>> wrong - and
+>> happy to stand corrected if this is somehow inherent, but reallly 
+>> feels that
+>> way).
+> 
+> I think the creep is unavoidable for certain values.
+> 
+> If you have the first two pages of a PMD area populated, and you allow 
+> for at least half of the #PTEs to be non/zero, you'd collapse first a
+> order-2 folio, then and order-3 ... until you reached PMD order.
+> 
+> So for now we really should just support 0 / 511 to say "don't collapse 
+> if there are holes" vs. "always collapse if there is at least one pte 
+> used".
 
-This resolves 'detected read beyond size of field' warnings
-by using the proper struct_group mechanism as suggested by
-the compiler.
+If we only allow setting 0 or 511, as Nico mentioned before, "At 511, no 
+mTHP collapses would ever occur anyway, unless you have 2MB disabled and 
+other mTHP sizes enabled. Technically, at 511, only the highest enabled 
+order would ever be collapsed."
 
-Signed-off-by: yingche <zxcv2569763104@gmail.com>
----
- drivers/staging/rtl8723bs/core/rtw_security.c | 2 +-
- drivers/staging/rtl8723bs/core/rtw_xmit.c     | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+In other words, for the scenario you described, although there are only 
+2 PTEs present in a PMD, it would still get collapsed into a PMD-sized 
+THP. In reality, what we probably need is just an order-2 mTHP collapse.
 
-diff --git a/drivers/staging/rtl8723bs/core/rtw_security.c b/drivers/staging/rtl8723bs/core/rtw_security.c
-index 8367fd15c6b1..314ec5894d47 100644
---- a/drivers/staging/rtl8723bs/core/rtw_security.c
-+++ b/drivers/staging/rtl8723bs/core/rtw_security.c
-@@ -1363,7 +1363,7 @@ u32 rtw_BIP_verify(struct adapter *padapter, u8 *precvframe)
- 		ClearPwrMgt(BIP_AAD);
- 		ClearMData(BIP_AAD);
- 		/* conscruct AAD, copy address 1 to address 3 */
--		memcpy(BIP_AAD+2, pwlanhdr->addr1, 18);
-+		memcpy(BIP_AAD + 2, &pwlanhdr->addrs, 18);
- 
- 		if (omac1_aes_128(padapter->securitypriv.dot11wBIPKey[padapter->securitypriv.dot11wBIPKeyid].skey
- 			, BIP_AAD, ori_len, mic))
-diff --git a/drivers/staging/rtl8723bs/core/rtw_xmit.c b/drivers/staging/rtl8723bs/core/rtw_xmit.c
-index 8c6841f078b4..424da9030f60 100644
---- a/drivers/staging/rtl8723bs/core/rtw_xmit.c
-+++ b/drivers/staging/rtl8723bs/core/rtw_xmit.c
-@@ -1209,7 +1209,7 @@ s32 rtw_mgmt_xmitframe_coalesce(struct adapter *padapter, struct sk_buff *pkt, s
- 		ClearPwrMgt(BIP_AAD);
- 		ClearMData(BIP_AAD);
- 		/* conscruct AAD, copy address 1 to address 3 */
--		memcpy(BIP_AAD+2, pwlanhdr->addr1, 18);
-+		memcpy(BIP_AAD + 2, &pwlanhdr->addrs, 18);
- 		/* copy management fram body */
- 		memcpy(BIP_AAD+BIP_AAD_SIZE, MGMT_body, frame_body_len);
- 		/* calculate mic */
--- 
-2.43.0
+If 'khugepaged_max_ptes_none' is set to 255, I think this would achieve 
+the desired result: when there are only 2 PTEs present in a PMD, an 
+order-2 mTHP collapse would be successed, but it wouldn’t creep up to an 
+order-3 mTHP collapse. That’s because:
+When attempting an order-3 mTHP collapse, 'threshold_bits' = 1, while 
+'bits_set' = 1 (means only 1 chunk is present), so 'bits_set > 
+threshold_bits' is false, then an order-3 mTHP collapse wouldn’t be 
+attempted. No?
+
+So I have some concerns that if we only allow setting 0 or 511, it may 
+not meet the goal we have for mTHP collapsing.
+
+>>> Because, as raised in the past, I'm afraid nobody on this earth has a 
+>>> clue how
+>>> to set this parameter to values different to 0 (don't waste memory 
+>>> with khugepaged)
+>>> and 511 (page fault behavior).
+>>
+>> Yup
+>>
+>>>
+>>>
+>>> If any other value is set, essentially
+>>>     pr_warn("Unsupported 'max_ptes_none' value for mTHP collapse");
+>>>
+>>> for now and just disable it.
+>>
+>> Hmm but under what circumstances? I would just say unsupported value 
+>> not mention
+>> mTHP or people who don't use mTHP might find that confusing.
+> 
+> Well, we can check whether any mTHP size is enabled while the value is 
+> set to something unexpected. We can then even print the problematic 
+> sizes if we have to.
+> 
+> We could also just just say that if the value is set to something else 
+> than 511 (which is the default), it will be treated as being "0" when 
+> collapsing mthp, instead of doing any scaling.
+> 
 
 
