@@ -1,88 +1,154 @@
-Return-Path: <linux-kernel+bounces-789410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF2DEB39518
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 09:25:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94123B3951C
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 09:26:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 784B61B23469
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 07:25:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F2573BE8D2
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 07:26:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E90502C2345;
-	Thu, 28 Aug 2025 07:25:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DB582D0626;
+	Thu, 28 Aug 2025 07:26:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LZl18nnn"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XGY/4w04"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4722130CDA9;
-	Thu, 28 Aug 2025 07:25:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2F6E2877E2;
+	Thu, 28 Aug 2025 07:26:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756365922; cv=none; b=CB5hxi30tm/BWlvjyxY9A1F78PUbaGCYvUFScb0EOZ9fNg1FuzXT4eHaW7rxVgtxnHVaMak/YPIP0OSzX1b79p+blmBF0hE8rsfaWcYgWyq0b82+kFJ0GjwKtHtGjo125RsZiJcoU6oTJAS1Won2nIcl+eg4yiQEBJ0YMFkz4PY=
+	t=1756365960; cv=none; b=AMKqoNWKh4WQ+/sr5pCSNtgcjjqzehZmpkQw8SzF6deWXkFqPDjLf/zptE3M3zaDWLaQfjuqwDVx/YRY+k0dlgaxvbwwlGr1QOhP/xQaivGPDSWilCRkzOMzjPqi7CRXaIxB/AikmyaWUKZm4GcnwVWQGkthwMV2R+GHxQqWmfA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756365922; c=relaxed/simple;
-	bh=2xmUxxbnZRFfY7nOW7Ta4ARgAuSVey3Yvt60WAVlxGo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WMqZFLFQ4pTeYpnPFAQOT5YyW1FkvO6t5gKSkyk9vCr2XxHuQwujNDlnmiD6Ej/LvCxV9k710137u9Lklm1UFUZFFpBY0PNuU4QD2PtuHe4pQGNrZ0n4kaP08scmijCuc1sNN183hBfGVs7nV0jhyvLUbJ+PPfHFESpibNcynYw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LZl18nnn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88E20C4CEF4;
-	Thu, 28 Aug 2025 07:25:21 +0000 (UTC)
+	s=arc-20240116; t=1756365960; c=relaxed/simple;
+	bh=2BRwtGaDZ/6Km5UhK2qGK47+lM1iCESKOunbULBWRtk=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=exNbtV3jASM+Eb9ZMHMh0NxXiCHq3CK4Efdi2xahSq5xukDI+Ta1fkHqoacHShVq5O6SSuBa2CEIKBN0gEiY4jtpns4rBcHrM+kMOrC4R42ZbGW6uE/GCbvdRaIetxIRyi5tyeyAgF2zAxcUpQEtlQJ6QPyQY/WQEn6H4n/K7Yw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XGY/4w04; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F754C4CEEB;
+	Thu, 28 Aug 2025 07:25:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756365921;
-	bh=2xmUxxbnZRFfY7nOW7Ta4ARgAuSVey3Yvt60WAVlxGo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LZl18nnnx7Ol9IYoKSLa0ouYGiiMJQXROK7kPJtUk8pQSBwD9XYhFXpJDaD0O6Iv+
-	 QUZd2/BAlPbBxXSHt2St9uJDlfHs6AZUbezIQTHgylO7T5DkktmRIM5+lFHzPvPFyV
-	 4SqalD5VIXoiH78ef+OywLKR78qyk+mPXiWVRNYyUx07AywX7F5vQ1ACN6ylWG9SLX
-	 vOsy1ZsNOGUuduQxvPvtyfJ1I5oA3hkpchcRk+mL56IX3u/Hp22S9izH+mGrWmt1+f
-	 Qvn8B8A/s8bavLrseb+lllBmbJk66bJPlzJXPvtvoIz7As8JqcxWvodkwKEIaxwnlh
-	 s3h5vIpglTYvA==
-Date: Thu, 28 Aug 2025 09:25:19 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Gary Yang <gary.yang@cixtech.com>
-Cc: linus.walleij@linaro.org, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, cix-kernel-upstream@cixtech.com
-Subject: Re: [PATCH 2/3] dt-bindings: pinctrl: Add cix,sky1-pinctrl
-Message-ID: <20250828-ebony-frog-of-luck-dfbca6@kuoka>
-References: <20250827024222.588082-1-gary.yang@cixtech.com>
- <20250827024222.588082-3-gary.yang@cixtech.com>
+	s=k20201202; t=1756365960;
+	bh=2BRwtGaDZ/6Km5UhK2qGK47+lM1iCESKOunbULBWRtk=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=XGY/4w04AxdmWRUziN0qjr1ZicsrOZFbfNTMFu54+Tta8pvvQLQFGnifdQmgWDRhn
+	 5QewdC/u4PqZPmxavJ6LnkWMTwDoqPjw2L+8rLKXWMAS3v+UJKMw7JYMtlHjCIATNi
+	 wC/nbK02Menz8rZm7LtB6aSTAEgZngLZ0mKtL26Spire86NWqXpq1mUjmwodyCLsoC
+	 cZ84LyUoNZh1hPg+lAvSka87xmafwc/nHZbdl9BF4/PtJ9x3Pz04+qz1Q2ZIscisc1
+	 6+r+x7TzyA/iTpj1yyIkPbxHazFsrtHOWWWc6bswy+NYK3MqkTzfACEbja6+Nlo1X5
+	 dNyZwsZaQvmxQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250827024222.588082-3-gary.yang@cixtech.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 28 Aug 2025 09:25:56 +0200
+Message-Id: <DCDVRPJKZBC3.31KGTGS90WUUA@kernel.org>
+Cc: "Jens Axboe" <axboe@kernel.dk>, "Daniel Almeida"
+ <daniel.almeida@collabora.com>, "Caleb Sander Mateos"
+ <csander@purestorage.com>, "Miguel Ojeda" <ojeda@kernel.org>, "Arnd
+ Bergmann" <arnd@arndb.de>, "Greg Kroah-Hartman"
+ <gregkh@linuxfoundation.org>, <rust-for-linux@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <io-uring@vger.kernel.org>
+Subject: Re: [RFC PATCH v3 3/5] rust: io_uring: introduce rust abstraction
+ for io-uring cmd
+From: "Benno Lossin" <lossin@kernel.org>
+To: "Ming Lei" <ming.lei@redhat.com>, "Sidong Yang" <sidong.yang@furiosa.ai>
+X-Mailer: aerc 0.20.1
+References: <20250822125555.8620-1-sidong.yang@furiosa.ai>
+ <20250822125555.8620-4-sidong.yang@furiosa.ai> <aK-kd3GBhxOzt_mA@fedora>
+In-Reply-To: <aK-kd3GBhxOzt_mA@fedora>
 
-On Wed, Aug 27, 2025 at 10:42:21AM +0800, Gary Yang wrote:
-> Add dt-bindings docs
-> 
-> Signed-off-by: Gary Yang <gary.yang@cixtech.com>
-> ---
->  .../bindings/pinctrl/cix,sky1-pinctrl.yaml    |  77 +++
->  include/dt-bindings/pinctrl/pads-sky1.h       | 592 ++++++++++++++++++
->  2 files changed, 669 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pinctrl/cix,sky1-pinctrl.yaml
->  create mode 100644 include/dt-bindings/pinctrl/pads-sky1.h
-> 
-> diff --git a/Documentation/devicetree/bindings/pinctrl/cix,sky1-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/cix,sky1-pinctrl.yaml
-> new file mode 100644
-> index 000000000000..10a4a292188e
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/pinctrl/cix,sky1-pinctrl.yaml
+On Thu Aug 28, 2025 at 2:36 AM CEST, Ming Lei wrote:
+> On Fri, Aug 22, 2025 at 12:55:53PM +0000, Sidong Yang wrote:
+>> +    /// Reads protocol data unit as `T` that impl `FromBytes` from urin=
+g cmd
+>> +    ///
+>> +    /// Fails with [`EFAULT`] if size of `T` is bigger than pdu size.
+>> +    #[inline]
+>> +    pub fn read_pdu<T: FromBytes>(&self) -> Result<T> {
+>> +        // SAFETY: `self.inner` is guaranteed by the type invariant to =
+point
+>> +        // to a live `io_uring_cmd`, so dereferencing is safe.
+>> +        let inner =3D unsafe { &mut *self.inner.get() };
+>> +
+>> +        let len =3D size_of::<T>();
+>> +        if len > inner.pdu.len() {
+>> +            return Err(EFAULT);
+>> +        }
+>> +
+>> +        let mut out: MaybeUninit<T> =3D MaybeUninit::uninit();
+>> +        let ptr =3D &raw mut inner.pdu as *const c_void;
+>> +
+>> +        // SAFETY:
+>> +        // * The `ptr` is valid pointer from `self.inner` that is guara=
+nteed by type invariant.
+>> +        // * The `out` is valid pointer that points `T` which impls `Fr=
+omBytes` and checked
+>> +        //   size of `T` is smaller than pdu size.
+>> +        unsafe {
+>> +            core::ptr::copy_nonoverlapping(ptr, out.as_mut_ptr().cast::=
+<c_void>(), len);
+>> +        }
+>> +
+>> +        // SAFETY: The read above has initialized all bytes in `out`, a=
+nd since `T` implements
+>> +        // `FromBytes`, any bit-pattern is a valid value for this type.
+>> +        Ok(unsafe { out.assume_init() })
+>> +    }
+>> +
+>> +    /// Writes the provided `value` to `pdu` in uring_cmd `self`
+>> +    ///
+>> +    /// Fails with [`EFAULT`] if size of `T` is bigger than pdu size.
+>> +    #[inline]
+>> +    pub fn write_pdu<T: AsBytes>(&mut self, value: &T) -> Result<()> {
+>> +        // SAFETY: `self.inner` is guaranteed by the type invariant to =
+point
+>> +        // to a live `io_uring_cmd`, so dereferencing is safe.
+>> +        let inner =3D unsafe { &mut *self.inner.get() };
+>> +
+>> +        let len =3D size_of::<T>();
+>> +        if len > inner.pdu.len() {
+>> +            return Err(EFAULT);
+>> +        }
+>> +
+>> +        let src =3D (value as *const T).cast::<c_void>();
+>> +        let dst =3D &raw mut inner.pdu as *mut c_void;
+>> +
+>> +        // SAFETY:
+>> +        // * The `src` is points valid memory that is guaranteed by `T`=
+ impls `AsBytes`
+>> +        // * The `dst` is valid. It's from `self.inner` that is guarant=
+eed by type invariant.
+>> +        // * It's safe to copy because size of `T` is no more than len =
+of pdu.
+>> +        unsafe {
+>> +            core::ptr::copy_nonoverlapping(src, dst, len);
+>> +        }
+>> +
+>> +        Ok(())
+>> +    }
+>
+> pdu is part of IoUringCmd, which is live in the whole uring_cmd lifetime.=
+ But
+> both read_pdu()/write_pdu() needs copy to read or write any byte in the p=
+du, which
+> is slow and hard to use, it could be more efficient to add two methods to=
+ return
+> Result<&T> and Result<mut &T> for user to manipulate uring_cmd's pdu.
 
-Also: Filename based on compatible
+That can also be useful, but you do need to ensure that the pdu is
+aligned to at least the required alignment of `T` for this to be sound.
+I also don't follow your argument that reading & writing the pdu is
+slow.
 
-Bot reports here some warnings, so please confirm: did you test your
-bindings and there are no errors reported by the toolset?
-
-Best regards,
-Krzysztof
-
+---
+Cheers,
+Benno
 
