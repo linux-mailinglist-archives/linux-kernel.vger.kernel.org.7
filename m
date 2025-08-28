@@ -1,124 +1,168 @@
-Return-Path: <linux-kernel+bounces-790642-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1CE5B3AB3D
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 22:04:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFE31B3AB3F
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 22:04:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0ACAE1C23930
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 20:05:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 88CAE7ACB6E
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 20:03:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15AEA26E6FF;
-	Thu, 28 Aug 2025 20:04:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C949628489A;
+	Thu, 28 Aug 2025 20:04:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WhYcS4YG"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nxy53NT/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2525511187
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 20:04:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D845215198;
+	Thu, 28 Aug 2025 20:04:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756411473; cv=none; b=i2W7a4ho4fUY0kp0P22J0ZbG8DVkEqqbwXKDoEn2O1BD40ooEcLqnBHHkOQt3d/2GqNcSDY5237z19U/e6tYLFsuCdMVPtj9cCA2QKOqdKy4i0n+96QAujvrKAG2DsdcdQC3UdKuyADLCUnlvwTsbaDXy2p7NuA+Dcn9L0gqzMc=
+	t=1756411483; cv=none; b=UCOC8LpHCKCoGqJYnkXrmS/Soz924gBiMXTexqEsbwbpJV/qCixY+MAn9plTzvudy4nAzkPzz0NsksF6YTsvhGHONzSM3jgz6crZS11NqilHyBSWKcj+CuO1JH0QcWsjmtiYnVbhmuwqsU6AvtZuC92wSKeXm5Ul1i2SaywQoD4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756411473; c=relaxed/simple;
-	bh=lJJtbOn3uVfo2sZeGj6tKDlyaEBAGHI9cPnyCNgz7GE=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version; b=o4O2wYbE5z7hV9eI73WXt9UdyA21oaFPzqOJEa8kgA2JCxsjE2iYZTV00G0SF+FUtqvhp4Kci/Ez/sdzO/lWmXgYWXI5dLAdhkTjRH7thog/wP7sHaXgaO7gnejMhFlDCj2LO+0jsCByL8qtccUQpm3UQOQRjSCE55h1zF2Dc6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WhYcS4YG; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-7720f23123dso1373701b3a.2
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 13:04:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756411471; x=1757016271; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=QgBwgze5c2UdQqNkQjeB0hL6toTqJXIIsEOJ6SdZPhA=;
-        b=WhYcS4YGlDsAosmPe2w7rBdmfaDowmWnL3+EWgMueTubABVt826s72OOqOymxp0ZXY
-         CNEAhk0f+uKDIAFH6/jH/mzkqi2S/CHY6/6jirIFUDSSb5F/lC1+KJFqjP5SNk/iTRqX
-         VC3/GjpcFfutQJI6P7+UKSOAszB1vaBLKTMB0cyO4tREDWlMxdLIQomeas+s67NeTwS/
-         5v4Z6f5B+LDbkgk4RpeVB+yavKaIbkd7wxkB5VFnFkX9O+RQE7R/FdM/4IGiNdkh9Cu+
-         PNzW47pzJnV6IDsStk/wX6BTMWtIGjxZbqyKaVJsDHgHvi5KMUvsqDlTAl6SWWlxLLZN
-         v+0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756411471; x=1757016271;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QgBwgze5c2UdQqNkQjeB0hL6toTqJXIIsEOJ6SdZPhA=;
-        b=qnaeK8EStrm2yhGU9t1hy0yXdhsYGhXT7zUgzsQKxkvxPdA0U10QqWNDJWqt7+NSbh
-         Fry7DgVPIlrfmCLMLEIDhBnrHVFFiIbVlHI3HQHcCYfssa0+C7zfFOd+pq38Ovpl2LZA
-         lnxQOwwn6ocbGCjXHMGCSyc2ltDEnm34SeyJOsXJpESRUGiJ+KyxZqsWlP13WP0wB5ZE
-         jHdsseYykJv4aCnT0XoEuVaEYZ2pHrXXbqfgLpZ/P55SQ5A4EEGUF2D5gtgtAq5aGIEE
-         sbfAPQQJg7l1ustcxjO6XM+Yh4buIaI4705GV/trVTI0iHM/G0995bzkVersVt6huDIS
-         4PTw==
-X-Forwarded-Encrypted: i=1; AJvYcCW6LnH0P1q2QlBLaMdaILEvgppxFOaW2uRKzSDuCk6beWjKhBldYzaJQQ6uKUfpeBxCWRIXj9SfcprqMk0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxmtXXR5uYuJxSZ3tmT9za2OwKBkkDEYiEsqnMOyXOsg5N42RXc
-	+LhhzL1fmv03/dSDqlaDhMd9p0Fjo1MkBePKO5bfZvoIcdQqZHAIyv13
-X-Gm-Gg: ASbGnctnsOS/vau0rOSRiDWvekfNx4Qj31pwFT3+X7ZQOnJ8iZyzxQ19QxAV7FpVll2
-	rRac8eB+iIY6eoGT1InfooemnuC/krh2sCsCnDlhIUyzCqRxiWdLwPXLJ9aYWHUyIUyxgD03Eu4
-	xeBp9yqITDEGBhkLxUEFR43QMajEfpoGhav9SEh5A4TRAc0vkRDfWcGfL5ts4AUH8Z+ainkE6Ga
-	MwXmBVJJc4fAKafHrmusAw3fQ2TRBsKfMq7ye1B78IZjlimW7oHcWsAiIMmh8KOD+4hq0k+qxbe
-	8XwB/R02m5frf+IRTHy6QNrGnxnKzvmBj8SWENkxyYsS/btq/qzJqQJ3OmTAVH/Z6uxOI+n8xaw
-	0CL/IMarEywBwv9DfAgLMaVz7perBpIcRfVkIKV2Y1n/K+tGS1Fa2+A==
-X-Google-Smtp-Source: AGHT+IGmTwpUPPdaVGSqeg327GXXw0GgBhct6VPdgjMR7zW8CaSu9AGMI3nYDEAA9IljAAh/s23DZQ==
-X-Received: by 2002:a05:6a00:18a9:b0:772:553:934b with SMTP id d2e1a72fcca58-77205539ac5mr10186281b3a.31.1756411471335;
-        Thu, 28 Aug 2025 13:04:31 -0700 (PDT)
-Received: from localhost (185.3.125.34.bc.googleusercontent.com. [34.125.3.185])
-        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-7722a2b8097sm289868b3a.35.2025.08.28.13.04.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Aug 2025 13:04:30 -0700 (PDT)
-From: Chia-I Wu <olvaffe@gmail.com>
-To: Boris Brezillon <boris.brezillon@collabora.com>,
-	Steven Price <steven.price@arm.com>,
-	Liviu Dudau <liviu.dudau@arm.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] drm/panthor: always set fence errors on CS_FAULT
-Date: Thu, 28 Aug 2025 13:04:19 -0700
-Message-ID: <20250828200419.3533393-1-olvaffe@gmail.com>
-X-Mailer: git-send-email 2.51.0.318.gd7df087d1a-goog
+	s=arc-20240116; t=1756411483; c=relaxed/simple;
+	bh=5afeh85lUxhx753E2Mx3hibqZTVDszFxzOqclgIIGzU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X8gQsfJmfaU90jneO4zh/9QQPJlrVjNyzuPex8/GP5ils53lb/QaUc3lBILjgKz8I4igPkx1YfuMHWyferwqWzcjyVg3DlcNXwWW2YFydbdpPOc7JbdVYgjcQVTxNioYin3UgLDwJGlrpgjs4opOvoW8KTLps5PwX7VFb3ar8Es=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nxy53NT/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A77DC4CEEB;
+	Thu, 28 Aug 2025 20:04:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756411482;
+	bh=5afeh85lUxhx753E2Mx3hibqZTVDszFxzOqclgIIGzU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nxy53NT/IVD6ltXeYTGqywzDRNqnYFvb13cgIk0R73sIPkn7+xpWs0eAq3/Qt7oOS
+	 kJslIH9Nm/73Am42W2t54YWoyFf4RiAHfGV6r8vHG+4uq2ddygkJslWdqDkXqVHlK7
+	 605Hk9vt2uE+mUnlHQHEFW+Dbqncp9hDFlo7ryIChuoF28aKMKdInH6Z9ESeRFMmeR
+	 buzV1L8XlJc38AxskvoWMpQVxQqni+nu80Ukfx34dX8jjGBR1R5BNqld6wIzymrX43
+	 w/FS7XggjoQBTC+ZPQeZQglPQKSMNKQd+LOhpBkmuTn5qNniZP4xhFWT67HcknNRPM
+	 WCqViIg9s7Dnw==
+Date: Thu, 28 Aug 2025 17:04:38 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
+	Steven Rostedt <rostedt@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org,
+	x86@kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Indu Bhagat <indu.bhagat@oracle.com>,
+	"Jose E. Marchesi" <jemarch@gnu.org>,
+	Beau Belgrave <beaub@linux.microsoft.com>,
+	Jens Remus <jremus@linux.ibm.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Florian Weimer <fweimer@redhat.com>, Sam James <sam@gentoo.org>,
+	Kees Cook <kees@kernel.org>, Carlos O'Donell <codonell@redhat.com>
+Subject: Re: [PATCH v6 5/6] tracing: Show inode and device major:minor in
+ deferred user space stacktrace
+Message-ID: <aLC2Vs06UifGU2HZ@x1>
+References: <20250828180300.591225320@kernel.org>
+ <20250828180357.223298134@kernel.org>
+ <CAHk-=wi0EnrBacWYJoUesS0LXUprbLmSDY3ywDfGW94fuBDVJw@mail.gmail.com>
+ <D7C36F69-23D6-4AD5-AED1-028119EAEE3F@gmail.com>
+ <CAHk-=wiBUdyV9UdNYEeEP-1Nx3VUHxUb0FQUYSfxN1LZTuGVyg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHk-=wiBUdyV9UdNYEeEP-1Nx3VUHxUb0FQUYSfxN1LZTuGVyg@mail.gmail.com>
 
-It is unclear why fence errors were set only for CS_INHERIT_FAULT.
-Downstream driver also does not treat CS_INHERIT_FAULT specially.
-Remove the check.
+On Thu, Aug 28, 2025 at 12:18:39PM -0700, Linus Torvalds wrote:
+> On Thu, 28 Aug 2025 at 11:58, Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com> wrote:
 
-Signed-off-by: Chia-I Wu <olvaffe@gmail.com>
-Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
+> > >Give the damn thing an actual filename or something *useful*, not a
+> > >number that user space can't even necessarily match up to anything.
 
----
-v2: add rb from Boris
----
- drivers/gpu/drm/panthor/panthor_sched.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/panthor/panthor_sched.c b/drivers/gpu/drm/panthor/panthor_sched.c
-index ba5dc3e443d9c..231f42c67f175 100644
---- a/drivers/gpu/drm/panthor/panthor_sched.c
-+++ b/drivers/gpu/drm/panthor/panthor_sched.c
-@@ -1412,7 +1412,7 @@ cs_slot_process_fault_event_locked(struct panthor_device *ptdev,
- 	fault = cs_iface->output->fault;
- 	info = cs_iface->output->fault_info;
+> > A build ID?
  
--	if (queue && CS_EXCEPTION_TYPE(fault) == DRM_PANTHOR_EXCEPTION_CS_INHERIT_FAULT) {
-+	if (queue) {
- 		u64 cs_extract = queue->iface.output->extract;
- 		struct panthor_job *job;
- 
--- 
-2.51.0.318.gd7df087d1a-goog
+> I think that's a better thing than the disgusting inode number, yes.
 
+> That said, I think they are problematic too, in that I don't think
+> they are universally available, so if you want to trace some
+> executable without build ids - and there are good reasons to do that -
+> you might hate being limited that way.
+
+Right, but these days gdb (and other traditional tools) supports it and
+downloads it (perf should do it with a one-time sticky question too,
+does it already in some cases, unconditionally, that should be fixed as
+well), most distros have it:
+
+⬢ [acme@toolbx perf-tools-next]$ file /bin/bash
+/bin/bash: ELF 64-bit LSB pie executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, BuildID[sha1]=707a1c670cd72f8e55ffedfbe94ea98901b7ce3a, for GNU/Linux 3.2.0, stripped
+⬢ [acme@toolbx perf-tools-next]$
+
+We have debuginfod-servers that brings ELF images with debug keyed by
+that build id and finally build-ids come together with pathnames, so if
+one is null, fallback to the other.
+
+Default in fedora:
+
+⬢ [acme@toolbx perf-tools-next]$ echo $DEBUGINFOD_
+$DEBUGINFOD_IMA_CERT_PATH  $DEBUGINFOD_URLS           
+⬢ [acme@toolbx perf-tools-next]$ echo $DEBUGINFOD_
+$DEBUGINFOD_IMA_CERT_PATH  $DEBUGINFOD_URLS           
+⬢ [acme@toolbx perf-tools-next]$ echo $DEBUGINFOD_IMA_CERT_PATH 
+/etc/keys/ima:
+⬢ [acme@toolbx perf-tools-next]$ echo $DEBUGINFOD_URLS 
+https://debuginfod.fedoraproject.org/
+⬢ [acme@toolbx perf-tools-next]$
+
+I wasn't aware of that IMA stuff.
+
+So even without the mandate and with sometimes not being able to get
+that build-id, most of the time they are there and deterministically
+allows tooling to fetch it in most cases, I guess that is as far as we
+can pragmatically get.
+
+- Arnaldo
+ 
+> So I think you'd be much better off with just actual pathnames.
+> 
+> Are there no trace events for "mmap this path"? Create a good u64 hash
+> from the contents of a 'struct path' (which is just two pointers: the
+> dentry and the mnt) when mmap'ing the file, and then you can just
+> associate the stack trace entry with that hash.
+> 
+> That should be simple and straightforward, and hashing two pointers
+> should be simple and straightforward.
+> 
+> And then matching that hash against the mmap event where the actual
+> path was saved off gives you an actual *pathname*. Which is *so* much
+> better than those horrific inode numbers.
+> 
+> And yes, yes, obviously filenames can go away and aren't some kind of
+> long-term stable thing. But inode numbers can be re-used too, so
+> that's no different.
+> 
+> With the "create a hash of 'struct path' contents" you basically have
+> an ID that can be associated with whatever the file name was at the
+> time it was mmap'ed into the thing you are tracing, which is I think
+> what you really want anyway.
+> 
+> Now, what would be even simpler is to not create a hash at all, but
+> simply just create the whole pathname when the stack trace entry is
+> created. But it would probably waste too much space, since you'd
+> probably want to have at least 32 bytes (as opposed to just 64 bits)
+> for a (truncated) pathname.
+> 
+> And it would be more expensive than just hashing the dentry/mnt
+> pointers, although '%pD' isn't actually *that* expensive. But probably
+> expensive enough to not really be acceptable. I'm just throwing it out
+> as a stupid idea that at least generates much more usable output than
+> the inode numbers do.
+> 
+>           Linus
 
