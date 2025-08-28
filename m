@@ -1,146 +1,119 @@
-Return-Path: <linux-kernel+bounces-790616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E294B3AAE1
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 21:26:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30246B3AAE4
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 21:31:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 877AD1896284
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 19:26:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA5854632EF
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 19:31:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 408AB26AA83;
-	Thu, 28 Aug 2025 19:26:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D486326CE2E;
+	Thu, 28 Aug 2025 19:31:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Iv2nbeQ1"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NL1kNv8G"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C1F91DFDA1;
-	Thu, 28 Aug 2025 19:26:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03870273F9;
+	Thu, 28 Aug 2025 19:31:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756409166; cv=none; b=vAiE8npLIRbXn2WwJFa5w/so5bptwTwb9ACcLboC5Nycg+v86rPPQI5kY006o2knuA6O8jKbn9BL/RLjHDwixLgSP+JOPddQSgxm6T9L1Iph9aW+q+aLqX9sug+OGtkwNC6+AK47GkvvYC+JzHGr9YGV0myjwv0WqjWKzJ+SgnA=
+	t=1756409503; cv=none; b=V+2YUzniYsZCU1iGFxsFAL+Uu4Q6PgzCVQpAkR7lfzVlvLnwfF22WO24en5T1WWH5IXIP0NMO8Pb7ulQC76He2btDr90WmyADzAiRsvc7ysIOtrm7rHpayJSpW4wMvlRy4Ydof0jnL/NNHoWDfNIvoJqSO49o1gLQFq+a+B21Gg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756409166; c=relaxed/simple;
-	bh=iQDHls7dhKgBkVim32KIx+Gbn9Zo9HUnX/e0BW/lc0k=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=e4OniCHjtRwZXyqAYcXrLZjayvg26UFiXdqdcg7SrGj1nGmhREOx7Pjk8+KiiNn97PPq3STGfzi15SLNmiNFjQKj0PLFly4Kx8kUAOsbUqzlbexcCS7aenyWXndw/4YUKoimkHrJoq24XJeHWfsbkk0SJRD3wRzGkO4LiFTlXCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Iv2nbeQ1; arc=none smtp.client-ip=209.85.210.180
+	s=arc-20240116; t=1756409503; c=relaxed/simple;
+	bh=20L/t/dQg856UitOCMDzjeFNPY/n61oJgouq8+c/wpg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AZkN2T+/GZ5476xRunNsAF64vGAcBVlfCtE6zBxeAqk7YmdToXtD/xhIlkZhc/ttBQVuHXHVRX/mZkiOL3EVj/VPctvTTyBoozS0DFpdp1oJCexu8Xsl91Gd++psajUrvs2104CAwf5TQP64QFSIEkv4lcM+cWwi5Tm1FI06ROU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NL1kNv8G; arc=none smtp.client-ip=209.85.214.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-76e2ea21430so75207b3a.2;
-        Thu, 28 Aug 2025 12:26:05 -0700 (PDT)
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-248887257e0so2962055ad.2;
+        Thu, 28 Aug 2025 12:31:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756409164; x=1757013964; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1756409501; x=1757014301; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ZNKCiEXVNimfghYWuXUmKnsDjiRGghYXpeYN/YwzGig=;
-        b=Iv2nbeQ1tWesCNnKkaHR7WsuYWCvVOohr76FuMF1pezowpVHnn4uHeUaBGWMrNFPlq
-         1wbKSCF57i7N40V7T2UDGApvI4LY1sQRfAis5Qi0MV6JssZ5W+QsFFXMtjdbERbg8JaT
-         gV6mIFmQBu3CZhhAtkgkG9tjhnRMNYx35j++pcs4lMJ2O7XiGFKJOY1tcAHwu4acrqYQ
-         BJfL2ZWfnG9MXSdvnkyFVrZJalSxOiclInmw8S8VblnmGdcbBZTE+dFAnC5p/AqwbY1K
-         u9hxGmlcDPWZg5rTEVi6g2YuDlcyt6DHaGbGV9UH5zdEbXGCQ/5/K6TAC0xMA1tX9Swc
-         x1yQ==
+        bh=20L/t/dQg856UitOCMDzjeFNPY/n61oJgouq8+c/wpg=;
+        b=NL1kNv8G/+grOD/M4kjl3uEmJ34zicYMUs718OW2rijo+P7UD110yohPgieGu4ov10
+         8Bx2P1953GCvdci7I4463nK4cz+e/Q9wWh0OwlRJA/K8udf2fx8cOyzkfQHe4EaEGG4g
+         5Xi3f0lIR3SvOcGKSsHDmyEUgGRLo9lFN6miylFRmO7YUajpLDb5EDsIV8ZupXf3nLms
+         Qb0Fn0sXsQWDOYESNQW2QblPF6S0PQdXJBSfSDn6gtqCFei4XaVIm/zodckfUY+HFQLl
+         s1m2r57MQzyxgFkM9QlifxXbEwMOYjP1Wj46F1rxjWink41ugdZg9aZDTbQtK6KWAPxa
+         TU9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756409164; x=1757013964;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1756409501; x=1757014301;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ZNKCiEXVNimfghYWuXUmKnsDjiRGghYXpeYN/YwzGig=;
-        b=v3vmqctUSoabatKpsYqhxDfg7K2FkJ1eEajCrHx0JREpqGeXJUmAtvNx2jtEvNQCFQ
-         8haJ5fEZQzywdP9I1KAhjnrSAJlCvlk/kLN3xSOMP7VY2DlBvbB3ruGpaWTIQvF+9lqN
-         dqQssEBKWwZTqZodJm8EZEwcSfpL8rql89lDPf1/ElV+vT9WFXNoPqL8EWRIwhLFIaCA
-         I2iamG2gYad79OkcDcmlV6PSofb5etu0bgFPTQc4VC0LqY4cVFBqDer3xztmwQNUN7ks
-         waPwzRh5Pf/lZSt3q5+WzfeFXUv070Mn+fzyiM6jhg64oqiubHEDz3unO5bmLIdYo+Rb
-         8ZDw==
-X-Forwarded-Encrypted: i=1; AJvYcCW1UuWdEO0bqyh7eNkHtP12mxS/RINa+W5UVseM1iQGKEv0HNw2fOv2vELG+1UJhB7Vy7ILdxCiJDbvsew=@vger.kernel.org, AJvYcCXXVyaT//XwtUK3GqWNGg80Fl/agmobzXcaYTM1sHmAaCluhu6/ImSFecd5wIPEHthAyrHyzZmc@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2utwCD0IfV8PgK34pwzHjUOXFHH1p4TcWrlhunoZM8faq+KSX
-	Pyl++4pttRmOqccgjIprPqaif72WFndpOH/FyH8YSY5un82cuWk/UIfX
-X-Gm-Gg: ASbGnct790uNMzl4OKWAJM1Zxhaqw3CpNxmf7J/IcLaPzDd2ACa50pF8GLx5kmBgmdp
-	wgY7WUGqGVzPz7vPinnCDgilXjQT2YmMSb6ChsQUn4kFcQ7+QsRzhJ03bYsmWHkcmPLWwWrVj0m
-	wgckxxxVhM4pdeDehH25RXkyP4z9jt/r+GNVPRbVjAKenM0X+Dfc+UZEy1OUeoxLss/vzN8KEIV
-	N3cpDtWIzqHWYbUPAOJNFd4bYEnwGXLwiUuxpC3FDnCYBs5L1MUX6U3cbt6U1V3C974J8leRIWQ
-	v6YRoTLr28opm0Fu9qEVkMTLHEHYWNGL4MBY3A24U/6au+KkBdKMs1PriGcD6OMRHyK5bSnjAv1
-	J7bh+LQ1kv1O8pvpACcFTBP4Ta8cjdA==
-X-Google-Smtp-Source: AGHT+IGcyabkfIuSoXCOILkTR8xN93+W1H/AO1TgmOhp+v3ddQPFBzXanNv611WeYtUQcZLAXv1+Hw==
-X-Received: by 2002:a05:6a20:729f:b0:23d:da6d:b050 with SMTP id adf61e73a8af0-24340dc88e9mr18828886637.6.1756409164421;
-        Thu, 28 Aug 2025 12:26:04 -0700 (PDT)
-Received: from ranganath.. ([2406:7400:98:c01d:44cd:e101:4619:945f])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7722a2aafa2sm221784b3a.22.2025.08.28.12.26.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Aug 2025 12:26:03 -0700 (PDT)
-From: Ranganath V N <vnranganath.20@gmail.com>
-To: vadim.fedorenko@linux.dev
-Cc: andrew+netdev@lunn.ch,
-	anthony.l.nguyen@intel.com,
-	davem@davemloft.net,
-	edumazet@google.com,
-	intel-wired-lan@lists.osuosl.org,
-	kuba@kernel.org,
-	linux-kernel-mentees@lists.linuxfoundation.org,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	pabeni@redhat.com,
-	przemyslaw.kitszel@intel.com,
-	skhan@linuxfoundation.org,
-	vnranganath.20@gmail.com,
-	aleksandr.loktionov@intel.com
-Subject: Re: [PATCH] net: igb: expose rx_dropped via ethtool -S
-Date: Fri, 29 Aug 2025 00:55:51 +0530
-Message-ID: <20250828192551.13216-1-vnranganath.20@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <29cbde11-b7bc-4eba-a0ea-b20e4a9ecb79@linux.dev>
-References: <29cbde11-b7bc-4eba-a0ea-b20e4a9ecb79@linux.dev>
+        bh=20L/t/dQg856UitOCMDzjeFNPY/n61oJgouq8+c/wpg=;
+        b=oNJcxg1h391zIxCfjHaAELMYHlNAffbSE0cOV0VwS/V8GTluq8QYyweiNyDBtsYOhw
+         6LjWh8/7+8Ly12IsvirxpiZstBC2vJpGb+HzS7mBUgl1KRjbvLNBoXSfwBhyvQnDh8F3
+         oBLqV/NUz/Wj99wAjFM/6gSzZxizOSuCHrCNfHGEuzMfChSsgotbt5/eQcVQc02DZDAi
+         WTO6w7/oW4wUVkgQn8KSNbHo9SS1jLQbi3q3FnYNF0AnKWBvZenXl2PjGt3kaxXJiazr
+         xpVsPef6+twzbGeh1HPavLAT5OGHMg/BSlpG7MgdoCdDnb7qjtgI/2DcY1AXppr/nuqU
+         QcjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUEUJrUICJw33PCY8gCKVVp3XU5rMamxFgKJlJsd9VUvGnxIlBbjyjTBta+noP4FpCR5d7DnU/ElDZos3xPtmE=@vger.kernel.org, AJvYcCXQQb+1ClZ50jc+PYQfixWxR2TqWIHf6JOUaMxshHABChNe36Yq8pfZJQcIEFfoSGL7Ivh5OrEXvqeDnHA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwY6vV/hhHGx6KhOQ6cOWTPEFZv+5QVWnZ9uGt1fs1KxjdSPbd4
+	SKwhPrvVl2swDJB55yXmhZNbuVzr+pKiABOFT/Y+PoID6OVAFl1xvS7Oo1qCishwxL4J1Ocb89c
+	Bqa4LaD+KHB43exkTr4YtXXFW5TUT5akL4CYo
+X-Gm-Gg: ASbGncuuegFf7i6FxYJvZZwquB4+8qGDF75EY3OlIu+dsXXylorms/Vkft/EmUJFlIb
+	JKAUTAY9p+j7adOj0VDm+WsZq8rZjsuPp4d60gmocI+yGvZ6TSkatgztWk9Xa+jt4aqVCWIEwWU
+	dDTkPrFb0kMUfYysgQAIWpqeUkVK04mdaE7mfBBnm9u9H0AYxFS1K8p2lzQUiFyMT47/4roXdlU
+	i6EANXAg8SBxvjc5O8cm/I0p1/rEj2AiJSGyYjtSg/5Pl/tGnGI4kfyvOhk6B7s6fZ0U/6LVTFa
+	azo+CEH9LX8Aw7fIosrPt+K7t1BXiXTL2qP2
+X-Google-Smtp-Source: AGHT+IFWdw6UhPiyKJrbHE7IDTwFisR1W8SRBwQA99k5or2f4Qr+eBc4mB2thKEKcqtoV9bQyWk8o9eMXoEOsRDv48Q=
+X-Received: by 2002:a17:902:d50d:b0:240:25f3:5be9 with SMTP id
+ d9443c01a7336-2462ef6f3fbmr183406685ad.10.1756409501161; Thu, 28 Aug 2025
+ 12:31:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250828160247.37492-1-ojeda@kernel.org> <b680c343-ba97-4eb4-b426-56e318dce492@kernel.org>
+ <DCEB1J2P3MZS.3IGXEYP0MAC5H@kernel.org>
+In-Reply-To: <DCEB1J2P3MZS.3IGXEYP0MAC5H@kernel.org>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Thu, 28 Aug 2025 21:31:28 +0200
+X-Gm-Features: Ac12FXwvQbB3YxWRKL103qR7GEVPMjkX_VgeadkNh7YUOWF4Fhw5ZECkLfkRVzk
+Message-ID: <CANiq72mkPqFnb4ztiCokE6+ntVSmgOTgERshg-4SMmLboFOqNg@mail.gmail.com>
+Subject: Re: gpu: nova-core: arm32 build errors
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, nouveau@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
->> On 28/08/2025 12:42, Ranganath V N wrote:
->> Currently the igb driver does not reports RX dropped
->> packets in the ethtool -S statistics output, even though
->> this information is already available in struct
->> rtnl_link_stats64.
->> 
->> This patch adds rx_dropped, so users can monitor dropped
->> packet counts directly with ethtool.
->> 
->> Signed-off-by: Ranganath V N <vnranganath.20@gmail.com>
->> ---
->>   drivers/net/ethernet/intel/igb/igb_ethtool.c | 1 +
->>   1 file changed, 1 insertion(+)
->> 
->> diff --git a/drivers/net/ethernet/intel/igb/igb_ethtool.c b/drivers/net/ethernet/intel/igb/igb_ethtool.c
->> index 92ef33459aec..3c6289e80ba0 100644
->> --- a/drivers/net/ethernet/intel/igb/igb_ethtool.c
->> +++ b/drivers/net/ethernet/intel/igb/igb_ethtool.c
->> @@ -81,6 +81,7 @@ static const struct igb_stats igb_gstrings_stats[] = {
->>   }
->>   static const struct igb_stats igb_gstrings_net_stats[] = {
->>   	IGB_NETDEV_STAT(rx_errors),
->> +	IGB_NETDEV_STAT(rx_dropped),
->>   	IGB_NETDEV_STAT(tx_errors),
->>   	IGB_NETDEV_STAT(tx_dropped),
->>   	IGB_NETDEV_STAT(rx_length_errors),
+On Thu, Aug 28, 2025 at 9:24=E2=80=AFPM Danilo Krummrich <dakr@kernel.org> =
+wrote:
+>
+> Maybe I spoke too soon, it's actually pretty painful to keep 32-bit
+> compatibility, even though it would be nice for testing purposes.
+>
+> I'll paste the diff to fix it below, I think that makes it obvious why I =
+say
+> that.
+>
+> Instead, we should really just depend on CONFIG_64BIT (which implies
+> ARCH_DMA_ADDR_T_64BIT).
 
-> This stat is never used in the igb driver, what's the benefit of
-> constant 0 value in the output?
+Yeah, it isn't great.
 
-Hi,
-I initially proposed exposing it, but after reviewing 
-the driver, I realized that stats.rx_dropped is never 
-updated in igb. Exposing it would always show 0.
+If it were just that, maybe it it is worth it (and a `DmaAddress`
+newtype, not just a typedef, could perhaps be nice anyway?), but if
+you think it will become increasingly painful later, then it may be
+best to focus on what matters.
 
-Ixgbe behaves the same: the counter is present 
-but never incremented.But this patch wouldn't provide meaningful data.
+It is unlikely there is going to be actual users on a 32-bit platform, righ=
+t?
 
-Thanks again for your guidance.
-
-Ranganath
+Cheers,
+Miguel
 
