@@ -1,167 +1,175 @@
-Return-Path: <linux-kernel+bounces-789360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7602B39446
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 08:54:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD6D0B39451
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 08:55:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5048189A33E
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 06:54:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6176F7AE5F9
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 06:53:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FA872882C5;
-	Thu, 28 Aug 2025 06:54:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8D2A2BDC2A;
+	Thu, 28 Aug 2025 06:55:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jn7yFfkh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Ue6oc2H3"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B9FC293C44;
-	Thu, 28 Aug 2025 06:54:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E2DB27A448
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 06:55:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756364065; cv=none; b=s/ees6UxClTpPdQ1kKyTimAShBLgulZZLweFQx1ZgUsOWuFyR3OzSGbrYR4DYZK/am9IzkBIUVsGrLKAqoqWzO/H75JWYaNuM1I5DneO+0S9kInOcVTPzjOL1KscB6iycd+mv0W/kTOWL66ywO5/tuoMyzIbuEY1ikRNgYFyN40=
+	t=1756364121; cv=none; b=XnqoY+GdfJgzluuNfqs+1cBmddJm5mA6lGmmB55N//VFhvxQ7W3tRzlOfEujjYsooUI0I9ms+9IsGTy2L/3X2aGF4O2glQtwrW2P7aEBtFCn333NLgdGG7SGEAxrnt59WRGB1zZvZ2a/hIMdIm6atXcWZxSnhTovBP+iyMSFuGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756364065; c=relaxed/simple;
-	bh=/oR092HKV45JV2FK9wkNxV9iN8AAPJogbzc0CL8maV8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZHnW/7/vpLm3M4hYect/fILiLI/yRC5TBBMY0zkEbslXw68hJceKO5JMfYpfWBacQ73zbI+iE2uI5LZg65WXtU/TD5MQ1E19oqcTjOz7lCrNyga/rviZr2m4F6NnzDtCcvhpipiplhSMj6M15pncaATSPVSx6V39vvSkRyxhKw4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jn7yFfkh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59698C4CEEB;
-	Thu, 28 Aug 2025 06:54:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756364064;
-	bh=/oR092HKV45JV2FK9wkNxV9iN8AAPJogbzc0CL8maV8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=jn7yFfkhi0Q8T7wqXMOiT0KhKNDqQFrGSEMGmmwR/aNB+HgUaQErcXTxb9Vfyy3HQ
-	 6PA3K1hXikCoVYicStbFZP7Wpg4dH/WR4WWZlwFXd0imGtK2cJBtqOHpYfmgR0EIxn
-	 AhXhY3FkAShf80nMvjoavL6uyznZk9PCY1IdcRoPTiVp+uwMU/H5YsBb3FMcw0cJr2
-	 hHaED8zRMnYQYYfhGtFDP9XS4QNZ7QESXA0vX/xuQIyjPkHl6ddNwZVz8N3ujwyUUb
-	 g6hVOL+TlJuKy7TP+xwUQKvqcNrc+Vg+jluTa5oW3E4/A3pLJ6ys9CWTWi1L4rlTvQ
-	 GZuHg7kd6sKvg==
-Message-ID: <e8934b5b-ef75-4ee0-b1e3-cc5db72b99ec@kernel.org>
-Date: Thu, 28 Aug 2025 08:54:18 +0200
+	s=arc-20240116; t=1756364121; c=relaxed/simple;
+	bh=9zk7MaZVnq9C9qg4ybe/c98j7g9Kh38l1+dwNY+aMAs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BbGmw3MFJFPXCLyWzJ2n34n4nmlG7AE1QDqbAbAAT+K0Kx/SLCHcT/rn/vuCwhZkR9iRkBP/YWHeqMWZNsEzcxI2KcD+c/ambcKALUOnb+aLq39P+BwpyH20efbe6hnZMvbNds2FVjzdkyMtotvoElyQ7AiN5qG/dJqbMh6RdTg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Ue6oc2H3; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-afcb72d5409so95893666b.0
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 23:55:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1756364118; x=1756968918; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jfykkSEaqRihdwJK+71Zkm/Ir0bH5rnOYiT/o5ljlio=;
+        b=Ue6oc2H32Xl9mmSrF5jb361DiT4fI7Sez/cE4o0Ir8cYlokwc7VxBL//c7JRTuhjdG
+         kEBC+z8isfMHjWyCovTPx3cugEehuitdjx66Qj3Pk3/uDB3Ej3xkV5TOhkqQDzV/hLbS
+         qNRbhWHnzSfDakh8dBgom/U87r+vJrb/1wzHF5kzHH5psOTIulF5DjCFHEzdNwwgcIwk
+         OAHf1WtaDGYWgagtNl+WDmphcmFDttJnRxSMM586x2PKKZSWUgfsQ9fM0oUVQtZhxWSU
+         oLIQQxI6kt0BwPlWMcHj8COVQJJRDw8ZG+H1a+qAEEOVLRffe/GxmVS9IPKqJG4D2LdZ
+         GP9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756364118; x=1756968918;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jfykkSEaqRihdwJK+71Zkm/Ir0bH5rnOYiT/o5ljlio=;
+        b=bdtWT3Z5FQeukm8NoLn7Wo1BdwoW6JRDFQD6tu06MGW5Q8Cv04wcNv9Ppgce34ifmq
+         GC0QRufWxIRQ1ZKq61vkTEwGWCq8zw/HlboJArbfvZwyWrCk9/rpFxzCsgWRvhY4FtW7
+         BEmwCbg0XUZ8NY5g3PHpGDJqKVrwrilEa/TCiMqU5xIU9gnB4YaTlt470LfCRcDsD1Fw
+         RRPES19C/tU6gVPqWa6dX98upSQUa9HOq03DvMLvM9tLLq3vh0CJAHuZSskTV3Y9N/u+
+         SyUq1nsnZVx8H9H7zl8rEGE1MLvmXdx9WUDlhGt9JDe7srdkkXI4VpHcR+V8FaH9I4bP
+         CL1A==
+X-Forwarded-Encrypted: i=1; AJvYcCWsWsK3c0GSWydkVPky0xiAELNbmS3a/RKbFwczmJjXqyfCDwj01UHZFi4IAN1oNezIJ6nfvHxhOiNv5Xg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0Re+glfvvyqgBcgtEIhYo1vIjFlB24dGZ9VDPVcr4J4aXQryy
+	mP/vyAtFMbDq6m+X1rpq7TkWa1JS7QJXQnFc34Zcx3G4yWh/ENGMUh+VDLkuumXjkpVkKDcWMMk
+	m8MFDG/qw7wtpVuDxwufRQBFE6MtVexUm/qfdXlni
+X-Gm-Gg: ASbGncsZyec9QYeLdPMViz9NYX1LRB/lslqXVHfJB73uofR/4Ua1IJ/D06C5Y8DggHq
+	b0RH+F7U8SDwtXhBecQn6xAAmV//EHiWcWSQVEoDUPErSw0o6OlrVrxc0PWDZV73fzuqdMEBhZA
+	PiBjsIWeOW5kNkmZ2x2L6qE+H1XmkL4K0YRQsAAwDzBHM4a4AA4dqLf6ZBd/pj2WRBYhoq3hZqg
+	ChA2MxTGPV9S0MJNbCAQpI=
+X-Google-Smtp-Source: AGHT+IHepmoLe7owuQg/ttGnou7IrSd6gNUs+MxMKC2XYHdwpqQpe1mB7KTbQs4YRPtZx203Vm/GoSCY0OvajzsBYRQ=
+X-Received: by 2002:a17:907:3f23:b0:afe:c2fd:32c9 with SMTP id
+ a640c23a62f3a-afec2fd38ffmr469942066b.46.1756364117529; Wed, 27 Aug 2025
+ 23:55:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 01/22] dt-bindings: usb: snps,dwc3: Allow multiple
- iommus
-To: Sven Peter <sven@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Felipe Balbi <balbi@kernel.org>,
- Janne Grunau <j@jannau.net>, Alyssa Rosenzweig <alyssa@rosenzweig.io>,
- Neal Gompa <neal@gompa.dev>, Vinod Koul <vkoul@kernel.org>,
- Kishon Vijay Abraham I <kishon@kernel.org>,
- Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
- Heikki Krogerus <heikki.krogerus@linux.intel.com>,
- Philipp Zabel <p.zabel@pengutronix.de>, linux-usb@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-phy@lists.infradead.org
-References: <20250821-atcphy-6-17-v1-0-172beda182b8@kernel.org>
- <20250821-atcphy-6-17-v1-1-172beda182b8@kernel.org>
- <20250822-skinny-clay-harrier-64dc58@kuoka>
- <e4c730d2-6ee1-46d7-850b-8ebbe0a1bfcd@kernel.org>
- <a89ba427-b174-42c3-b3b4-5e4079942c3c@kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <a89ba427-b174-42c3-b3b4-5e4079942c3c@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250722072708.2079165-24-ardb+git@google.com>
+ <20250722072708.2079165-45-ardb+git@google.com> <20250811174034.GRaJorEmcBfLTDhWml@fat_crate.local>
+ <c9bb1b3f-17ce-254f-5d0f-ae3563b03b50@amd.com> <20250811190306.GAaJo-ai4M2aVod6_V@fat_crate.local>
+ <38f6fa08-41fb-4717-9763-39ec5fa54075@amd.com> <CAMj1kXGY7-ZmQbUnw-KtMq6HG-o9xUNmb7KMHAzdBBbWBmGo=g@mail.gmail.com>
+In-Reply-To: <CAMj1kXGY7-ZmQbUnw-KtMq6HG-o9xUNmb7KMHAzdBBbWBmGo=g@mail.gmail.com>
+From: Ard Biesheuvel <ardb@google.com>
+Date: Thu, 28 Aug 2025 08:55:06 +0200
+X-Gm-Features: Ac12FXwiuUhjnwsNDrkZiGd14sRet2k3w2d5l8TyhOvAPASb-aRAp7vujbAgfAw
+Message-ID: <CAGnOC3YsE3p4JA0=mswVHhEC_AK3PMSpPRcLCe5HYY3RDJKUUA@mail.gmail.com>
+Subject: Re: [PATCH v6 21/22] x86/boot: Move startup code out of __head section
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: Tom Lendacky <thomas.lendacky@amd.com>, Borislav Petkov <bp@alien8.de>, 
+	Ard Biesheuvel <ardb+git@google.com>, linux-kernel@vger.kernel.org, 
+	linux-efi@vger.kernel.org, x86@kernel.org, Ingo Molnar <mingo@kernel.org>, 
+	Kevin Loughlin <kevinloughlin@google.com>, Josh Poimboeuf <jpoimboe@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Nikunj A Dadhania <nikunj@amd.com>, 
+	Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 27/08/2025 18:07, Sven Peter wrote:
-> On 24.08.25 10:31, Krzysztof Kozlowski wrote:
->> On 22/08/2025 09:22, Krzysztof Kozlowski wrote:
->>> On Thu, Aug 21, 2025 at 03:38:53PM +0000, Sven Peter wrote:
->>>> Apple's dwc3 variant requires two iommus.
->>>>
->>>> Signed-off-by: Sven Peter <sven@kernel.org>
->>>> ---
->>>>   Documentation/devicetree/bindings/usb/snps,dwc3.yaml | 2 +-
->>>>   1 file changed, 1 insertion(+), 1 deletion(-)
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/usb/snps,dwc3.yaml b/Documentation/devicetree/bindings/usb/snps,dwc3.yaml
->>>> index 4380bb6fa2f08a475b557e80467abc2861f622e2..6d35dcc605c01977f4fc6fdb6f12976f1cef2b9e 100644
->>>> --- a/Documentation/devicetree/bindings/usb/snps,dwc3.yaml
->>>> +++ b/Documentation/devicetree/bindings/usb/snps,dwc3.yaml
->>>> @@ -60,7 +60,7 @@ properties:
->>>>     dma-coherent: true
->>>>   
->>>>     iommus:
->>>> -    maxItems: 1
->>>> +    maxItems: 2
->>>
->>> Never tested. You anyway need specific constraints.
->> I realized that's pretty vague, so clarifying: you changed all bindings
->> to have two iommus and that's unexpected. All other devices have only
->> one IOMMU mapping here, so they need to stay like that. If these IOMMUs
->> differ, you should also list them, but probably that's not the case here.
-> 
-> Makes sense, thanks for the detailed explanation.
-> 
-> I don't quite understand why this controller needs two iommus but they 
-> must essentially be programmed to the same mapping for xhci to work.
+On Thu, Aug 28, 2025 at 8:50=E2=80=AFAM Ard Biesheuvel <ardb@kernel.org> wr=
+ote:
+>
+> On Thu, 14 Aug 2025 at 19:17, Tom Lendacky <thomas.lendacky@amd.com> wrot=
+e:
+> >
+> > On 8/11/25 14:03, Borislav Petkov wrote:
+> > > On Mon, Aug 11, 2025 at 01:05:42PM -0500, Tom Lendacky wrote:
+> > >> Yes, that works. Or just get rid of snp_abort() and call
+> > >> sev_es_terminate() directly. Secure AVIC could even use an
+> > >> SEV_TERM_SET_LINUX specific code instead of the generic failure code=
+.
+> > >
+> > > I *love* deleting code. Here's something to start the debate:
+> > >
+> > > ---
+> > > diff --git a/arch/x86/boot/startup/sev-startup.c b/arch/x86/boot/star=
+tup/sev-startup.c
+> > > index 7a8128dc076e..19b23e6d2dbe 100644
+> > > --- a/arch/x86/boot/startup/sev-startup.c
+> > > +++ b/arch/x86/boot/startup/sev-startup.c
+> > > @@ -135,7 +135,7 @@ static struct cc_blob_sev_info *__init find_cc_bl=
+ob(struct boot_params *bp)
+> > >
+> > >  found_cc_info:
+> > >       if (cc_info->magic !=3D CC_BLOB_SEV_HDR_MAGIC)
+> > > -             snp_abort();
+> > > +             sev_es_terminate(SEV_TERM_SET_GEN, GHCB_SNP_UNSUPPORTED=
+);
+> > >
+> > >       return cc_info;
+> > >  }
+> > > @@ -209,8 +209,3 @@ bool __init snp_init(struct boot_params *bp)
+> > >
+> > >       return true;
+> > >  }
+> > > -
+> > > -void __init __noreturn snp_abort(void)
+> > > -{
+> > > -     sev_es_terminate(SEV_TERM_SET_GEN, GHCB_SNP_UNSUPPORTED);
+> > > -}
+> > > diff --git a/arch/x86/boot/startup/sme.c b/arch/x86/boot/startup/sme.=
+c
+> > > index 39e7e9d18974..e389b39fa2a9 100644
+> > > --- a/arch/x86/boot/startup/sme.c
+> > > +++ b/arch/x86/boot/startup/sme.c
+> > > @@ -531,7 +531,7 @@ void __init sme_enable(struct boot_params *bp)
+> > >        * enablement abort the guest.
+> > >        */
+> > >       if (snp_en ^ !!(msr & MSR_AMD64_SEV_SNP_ENABLED))
+> > > -             snp_abort();
+> > > +             sev_es_terminate(SEV_TERM_SET_GEN, GHCB_SNP_UNSUPPORTED=
+);
+> > >
+> > >       /* Check if memory encryption is enabled */
+> > >       if (feature_mask =3D=3D AMD_SME_BIT) {
+> > > diff --git a/arch/x86/include/asm/sev-common.h b/arch/x86/include/asm=
+/sev-common.h
+> > > index 0020d77a0800..01a6e4dbe423 100644
+> > > --- a/arch/x86/include/asm/sev-common.h
+> > > +++ b/arch/x86/include/asm/sev-common.h
+> > > @@ -208,6 +208,7 @@ struct snp_psc_desc {
+> > >  #define GHCB_TERM_SVSM_CAA           9       /* SVSM is present but =
+CAA is not page aligned */
+> > >  #define GHCB_TERM_SECURE_TSC         10      /* Secure TSC initializ=
+ation failed */
+> > >  #define GHCB_TERM_SVSM_CA_REMAP_FAIL 11      /* SVSM is present but =
+CA could not be remapped */
+> > > +#define GHCB_TERM_SAVIC_FAIL         12      /* Secure AVIC-specific=
+ failure */
+> >
+> > We can get specific if desired, e.g., GHCB_TERM_SAVIC_NO_X2APIC
+> >
+>
+> I'll fold this in for the next revision, and we can take it from there.
 
-That's fine.
-
-> All of device mode goes through one of them and xhci buffers are split 
-> between the two iommus (iirc I saw the command ring using the first one 
-> and the event ring the second one and then just decided to program them 
-> the same since anything else would result in a big mess).
-
-Sure. But if you change existing bindings (existing devices) allowing
-them to have two IOMMUs, this must be explicitly mentioned in commit msg
-with some sort of rationale (even if rationale was "we just missed that").
-
-Best regards,
-Krzysztof
+Actually, it does not appear to be in tip/master yet so I am going to
+ignore it for now.
 
