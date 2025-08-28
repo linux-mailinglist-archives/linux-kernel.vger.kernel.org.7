@@ -1,259 +1,167 @@
-Return-Path: <linux-kernel+bounces-789696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789697-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BABD8B39946
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 12:13:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A9E3B3994B
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 12:15:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B55997AFB96
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 10:11:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 695821C21002
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 10:15:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B3CA308F2F;
-	Thu, 28 Aug 2025 10:13:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CCB4308F37;
+	Thu, 28 Aug 2025 10:15:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JtUaF+BD"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="i/D6/cS+"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25FAB3019A5;
-	Thu, 28 Aug 2025 10:13:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.15
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756375986; cv=fail; b=Bg1fQhTQyr3GUir3a/UTrApoUK3Vigi7+cJBRYt+cwsNnEi+oUGLjgtJKpE6wDKvIiTDAbcMTYOwXda4Jr8AYIt4UCpZ0ioDkTa0DGIcz1GKrXDGEfJ4RRAZhSFadqYnsG2ZyTyiwsw64KVI2x91Fcmj6eLtWZ75tFCJj05/Nrw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756375986; c=relaxed/simple;
-	bh=ekKz+Hv95LqvSjRO65D8m9PbfMsxlgWipZHUKHzyJBc=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=fo/tYyNwAH7oQwiZLkWYZApDvZq8uiDWtPh+NKec+as0iYTGHLBVYSI892NXLXfT8NA4X2NCtyUXPt/JpXKNiONzwHgMt88OXil+VYNzDU4qtdu1QHPQekkN9sOExnUKAU0yl2YkAfs/oUj/WsCIOYNb1aS1hjznIQoPDWI8s5s=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JtUaF+BD; arc=fail smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756375984; x=1787911984;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=ekKz+Hv95LqvSjRO65D8m9PbfMsxlgWipZHUKHzyJBc=;
-  b=JtUaF+BDAU3MzXawNTLDgNkBFUtTiWYE4Z/CD8o8nJNMBYAm6kvA5+6k
-   q0Dr/EneOfc3yP5qF6Fjy49kpWei3n/IO0ADBdnq/W+iieqVds4CFWeXo
-   xholeDAsJcx27GnmTDjc8JK3xa45/jIF3aXusOasSPGNPCTupcmYJm1dT
-   Gx6yxDqIhwNlxmUp1PoCKBz9gTclofoGfDrcAPfUqmqw0HEZBt+upS/Ve
-   rWxJCEc2eBTJNosQ8wYxK3IngvG2VDEemsQfraMethABFq1Y2KqYvoy+a
-   CZL08vM0hq24KUTwiy2u6WM7DT4YBU7oQXXswQV9LCYb6zzCyVbLHFgY+
-   w==;
-X-CSE-ConnectionGUID: HBWDGYisSJqNWxJK2jffzQ==
-X-CSE-MsgGUID: NseoLxXcQuaVBYaVM8CBLg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11535"; a="58740960"
-X-IronPort-AV: E=Sophos;i="6.18,217,1751266800"; 
-   d="scan'208";a="58740960"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2025 03:13:03 -0700
-X-CSE-ConnectionGUID: 6YmtWAhUQlGZvgvbSDt91A==
-X-CSE-MsgGUID: ChrILDteQVekpoU0z6ZX8Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,217,1751266800"; 
-   d="scan'208";a="175370226"
-Received: from fmsmsx903.amr.corp.intel.com ([10.18.126.92])
-  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2025 03:12:51 -0700
-Received: from FMSMSX903.amr.corp.intel.com (10.18.126.92) by
- fmsmsx903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Thu, 28 Aug 2025 03:12:50 -0700
-Received: from fmsedg903.ED.cps.intel.com (10.1.192.145) by
- FMSMSX903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17 via Frontend Transport; Thu, 28 Aug 2025 03:12:50 -0700
-Received: from NAM02-BN1-obe.outbound.protection.outlook.com (40.107.212.42)
- by edgegateway.intel.com (192.55.55.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Thu, 28 Aug 2025 03:12:50 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=d8Z2npgwk/XslPpFgOuYO6IcUe7eEAv1RAY4Ft2mISBnlFCOjW+BjgBxqomCM+nA6ha+w/dfmRAqEANFY9igwh3h9mzoEWc9o1WbBhyADpbHhNjqQGHqo9j0Z6d7XzMEQU2EfiqS+PcQTM/5xNRHeOz8KlIeapUeC/36SPjmYoaigSm0ADZqugIqrPzOxT7YvcCnsv4YN8tkXm422vfdwiJWAtMdj71kYpL2EZI1HzMRdix9pII0DXF3WEQLASBh/32KRisvFKa70iGcwziv3WbhAH6RSbwlD0RQx3sy9h0NwiY0EGkUxyEsOxUc3RpOSblXppmHOq1zvSTp8guBvw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=stMDLxavVX3A3CYCcMqO6TQoxzyA4TfNa+h0BJUQrmQ=;
- b=vCOdXQClWtPKG4ylUOJuLDx9R65U10EcijJNC9L9sAfuByKXJwHH7/0KauE+GkWsDL9C7DaWnsssAjiG903UY6p4DRMKBL+uw7GNCaXSdJ56l7q4a4jU8EAOvFu9lm08ZAId+LQy2BI6HflQ+/srTu+VKfxXU/CRZodKqc2HVGNtqWqpePBKMDvYzvpT6d2SvUoCblG9hE37S9P+sxmUdhAcsAWReRWJoFV7IDrEyRFOUocm9DWpDIVlHowwC9E7Yk+Y2CNhMLJhOCHuudygc0u0WHqDyCqJpIPrrAqGuXwTyxKgBNjxGz/t/LD1FhgYyghfSoFOjMVGPDvx0KqkWw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from IA3PR11MB8985.namprd11.prod.outlook.com (2603:10b6:208:575::17)
- by SJ2PR11MB8322.namprd11.prod.outlook.com (2603:10b6:a03:549::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.13; Thu, 28 Aug
- 2025 10:12:46 +0000
-Received: from IA3PR11MB8985.namprd11.prod.outlook.com
- ([fe80::4955:174:d3ce:10e6]) by IA3PR11MB8985.namprd11.prod.outlook.com
- ([fe80::4955:174:d3ce:10e6%3]) with mapi id 15.20.9073.010; Thu, 28 Aug 2025
- 10:12:46 +0000
-From: "Romanowski, Rafal" <rafal.romanowski@intel.com>
-To: Simon Horman <horms@kernel.org>, Kohei Enju <enjuk@amazon.com>
-CC: "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Nguyen,
- Anthony L" <anthony.l.nguyen@intel.com>, "Kitszel, Przemyslaw"
-	<przemyslaw.kitszel@intel.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David
- S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, "Jakub
- Kicinski" <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	"kohei.enju@gmail.com" <kohei.enju@gmail.com>, Paul Menzel
-	<pmenzel@molgen.mpg.de>
-Subject: RE: [Intel-wired-lan] [PATCH v2 iwl-next 1/2] igbvf: add lbtx_packets
- and lbtx_bytes to ethtool statistics
-Thread-Topic: [Intel-wired-lan] [PATCH v2 iwl-next 1/2] igbvf: add
- lbtx_packets and lbtx_bytes to ethtool statistics
-Thread-Index: AQHcEFOR/5nP6iL4AkKvvMLak3QJDrR2eywAgAFstEA=
-Date: Thu, 28 Aug 2025 10:12:46 +0000
-Message-ID: <IA3PR11MB8985A48DCC9AC13F4970757B8F3BA@IA3PR11MB8985.namprd11.prod.outlook.com>
-References: <20250818151902.64979-4-enjuk@amazon.com>
- <20250818151902.64979-5-enjuk@amazon.com>
- <20250827122712.GA1063@horms.kernel.org>
-In-Reply-To: <20250827122712.GA1063@horms.kernel.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: IA3PR11MB8985:EE_|SJ2PR11MB8322:EE_
-x-ms-office365-filtering-correlation-id: d3706bb4-1425-4c04-eff7-08dde61b6f93
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024|38070700018;
-x-microsoft-antispam-message-info: =?us-ascii?Q?oq6IvEQzxlC86bQrE6QkEgobzDwv1Rq5UdCgK2ZJ9yCNITWFTjmoavxGfmpf?=
- =?us-ascii?Q?BexRs1Oq8ftiR4Z61Sd973/CQqGUV0roWnXp+XcYKs17XcX0FAD5dD2skapX?=
- =?us-ascii?Q?OkQksh2KXC932EcpOXY8xMqkqGSTUjp+/2i1wgDzTj82Dz7SAST1KViAUrSh?=
- =?us-ascii?Q?XZkcnGSDUTUh6eAg+sNmWYcGlPefjTosEDXA7O362sgFLUUHdBdMAeaLA2L9?=
- =?us-ascii?Q?OD/mPWAmZZLQ7jsyoKMGl7PbDRDLDu+8qDSqT/3zJVh9jfnjdB11L/m8kQXe?=
- =?us-ascii?Q?d5GzWL9d1NcEOZjIs8AYqEFW+2G8Ai2KJyqKv/eOetzkGYnKB8PATrp8O2UU?=
- =?us-ascii?Q?PNZbMhrVDRw84jCaZNOoSmFV8IgdLEM7guN6yVVXMYe2oANrtTP8rNeahzwy?=
- =?us-ascii?Q?+Fk6JcALFnDv4K1VbkWX36x7SdvSYzar9BpMgWrEYtTUbepcs9MaR6DDo+Ut?=
- =?us-ascii?Q?m8LsQVoP1snQc0RMdbD0xUYJmplaqaxh9FhT/2YdxK7pdj2ycWFXRfyrexSJ?=
- =?us-ascii?Q?0v0yQ4K7rkoQsAk9WLVyZdbAqxOp1CfX57HRH2T55+zdazw66nMptOLfjWux?=
- =?us-ascii?Q?wVS4XSAN1A3q80xrVMMDeeQiWfD6SGTfVeXbxprGvSYozbmVkJZaj0eGO+io?=
- =?us-ascii?Q?fbh8CO0GXoGO7ZaaMH8Qzyt8KWZ4apLXYJ5w5CiFg9fi6jSMJN4TXHLOZvd7?=
- =?us-ascii?Q?kaoUclhCDxsboqm26JLZcT+d2X3k5kHjeXU5/pK/1IInuTstNKdDfKWXJRZR?=
- =?us-ascii?Q?YCeQiGjUqzBM1acjc5kf7hnXxT+WBlo8mfEdc+JLEeLGGFrm3T5vkvpdZoOi?=
- =?us-ascii?Q?0aXKScgVkN0sypVdPp9iRpujzA+9GABN8GsDgChw5pmYY7M3yN0Wk2QK2jds?=
- =?us-ascii?Q?O8oKGuY6sdcqatPDnCDx+7FqFepxKPT2WnCofdVdV0Sdpft/Dy2GekrZTv3Y?=
- =?us-ascii?Q?V5OsAZiFodDcvF83OWtP48ojpqK4SHD3hmb9spsIi88UHRseq7QhnY405OzG?=
- =?us-ascii?Q?PtJvNl5eb0MQ9ae5euY42H/pnlaPv4FiZr92uVMQRBNKLli3mGEA02rW11YY?=
- =?us-ascii?Q?gw7XtObI9hJeAjxdtCm97b0hOIigKFD0V2ZiuYnid30wez9NlBPRbcCmD+xo?=
- =?us-ascii?Q?ZOKNckzdhlS8maldOlEK8PpoEvYu0qJOFYt8OjiWkmQ7KJN6HgXVuCAYv4vz?=
- =?us-ascii?Q?0q4cc5ZD/n/oJRmfdGr4uDdf9HzKAAvVjQc8Z+KgEMHWJz5/5C2KBVqJ7V6R?=
- =?us-ascii?Q?4B+RXTYt5xBmJri/AXauuIrFgNcOvI/p3I/B+rzHNZgdUJitzCrq2YBaU/iK?=
- =?us-ascii?Q?1ep4QcuhY15H8WEW+AZGnIxXWJ6ZpAHxHaQzYRKJxuL65q1n9Mp0meWwKV45?=
- =?us-ascii?Q?qKZca+Mz4XgL00jnSElxL5Un2NmiHqn1t+37713iLNFrJ9SsTw5YahjorxfM?=
- =?us-ascii?Q?N/lTRYMkZCswNsTRYf3hUZe+/BosGHWVmRsKxscTEYYaSotiKOFkEw=3D=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA3PR11MB8985.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?FtKqyWf3H+37hXj2bnd2BCnFxvblMlMq38n0JCPW1dGBClsv8AFzkhWOi98D?=
- =?us-ascii?Q?T9BqMbSKFRBHp/Guqc5EgVXMP7elAzVSbOmP0J6N0CiiV7lb5O8WzpqlhnUG?=
- =?us-ascii?Q?4q69KgpbrI0ZoFpoPH2NOijbLIIqz3bPEOW6hbTNRvlXOe+CDAWOmQkruxgl?=
- =?us-ascii?Q?35TNFLE/N9U2xuhyN2e3l/KpSxgEsNPAg1eXW9XaOmHIlR+yrM+0fTy07ToD?=
- =?us-ascii?Q?6uAtP0LrhNG2CfyuHL6hWxbcBnc55DC6xtlCukXhUviewu/VFgOWonXjY8pd?=
- =?us-ascii?Q?1D2W9G1VZfw5uIvg3H4pNcIC03na4BxCs7vzZfP/mDL5YOWkumodqOqTbc9a?=
- =?us-ascii?Q?Nf+4YvsDdjp6hNBC43VnTNAX3Kfk7Ka0Ky7apW5mPq2SStqpXasO7cprkQBT?=
- =?us-ascii?Q?qvsLM97y/q9C5N0epbOUU6iXBrp1Kyi+vsHVEjxVNWSSeSe7rId8e9gJVWQt?=
- =?us-ascii?Q?OA5WzTbqKfKEXXc60laVIU5z9dNTTmxO2fGKkj5RhLPYROwItcQYK2lia0tL?=
- =?us-ascii?Q?2iAEIjadEiWLnyx2o9owbihntY73MonCDBJ+h+EhwtkMfqdx4Oc7c5mPw0QW?=
- =?us-ascii?Q?RZyMh0cUo4Krq8Nu4wOAn3HDRVZzHMKnvhB/lxe+cE9+ehQSXbt8CwnD/yjN?=
- =?us-ascii?Q?XPTl9iZ+g6uNNBfSwzqymAMtO4viunCMeKuc+oJyuM2T8eYe3y0xp8wIQbB2?=
- =?us-ascii?Q?hRkv4uyKdf7Ytv8wZjOtxuHqIX1tBvDFxX/fLYiv4VsD7uOyqMRoZoYYEnye?=
- =?us-ascii?Q?cRAuJhPjgXa9S//7iUS2i+wNlRX7y94NFab1iO6pg+NbLlDxcgi1csvZCghE?=
- =?us-ascii?Q?SeOgs0UMAC/crEObPOBDLC1+nvoyMNF0SK6T6DYgVIjcYxHjwcgBvfLhHQ7X?=
- =?us-ascii?Q?SgCC3y4gAnpPmQql/Bfe1uvPl0+i28K3mYriHnHtd7mHlqcgG5fjEmTfJ9Xd?=
- =?us-ascii?Q?C1xk4tKJJyO8N5OH6JAlgvgScQ9FoQMcfgd1bhYc7SCtw8p1QcpPP3s0K4M4?=
- =?us-ascii?Q?PtYaTn6pofzSjizyAutxuhC6fWnl17CNhDnbQ/uA2Wb0P2tGSnAUqFyeqRMr?=
- =?us-ascii?Q?/bZZe/GrFD/d8hkquXonOzWzZq9It4c8aQPm3NvN34Qaa2whQyf8c6WlrHU/?=
- =?us-ascii?Q?fBQ/bBu55rdh3ZzgadNLQdj00Sc/zrdvHxz+KQOwGsH0Xmb99Ilbc0WGM3qF?=
- =?us-ascii?Q?F7VdMpT7GVP8hziwFeEJqaDhRKYwuTmfN4nHFfiebpv3zeQ0KA46qYCJ+bAJ?=
- =?us-ascii?Q?JV9voz+J4MiExXrf11ug7+cABAyz4sfj8YomjoUfB2xHTaRyrAOwx0cVBMLF?=
- =?us-ascii?Q?EyfEXzpM1lD8ErIgtgJcDlALIaP8pS14l5YEn5aycXBwQ7XX5Z1Qx1sb4rot?=
- =?us-ascii?Q?KEVUpS83Ok6XhXZ74ULM5WRk8zsdoFA1g2P7fRM1vUz4n1dMunRrm7vmIpLk?=
- =?us-ascii?Q?61D63PQRvG8Ui5ELhC4GWFRBUnyWIH46wrerutwG8ezJawFV4lac+LjWu52x?=
- =?us-ascii?Q?zDJYQIWK7nqOaNjXV/ZdjtPEZ3z3n+Br+IY/ulb39ko5d5/pIr7bHKKnZ6Jx?=
- =?us-ascii?Q?ykSwpxrlXc9noCzFRxGdvZBmWk7F1aJ+5kXI3qlOwobKeYhihmPB0IJmMcqK?=
- =?us-ascii?Q?xA=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9FA526E703
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 10:15:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756376127; cv=none; b=bfxrkKMZfhTAQ4HG8tt6hmCUkzcgSEI9+Cp2IyH8aONEimTNk2j12jmhtyw635+nlh2MDOboZvQSIw1bUVZu9Yi25/LgB0ocJsUHiTd0WMlm1jeio1P5T5W81TAMtHaWCKcaEDltpx6cmFt7zSD79D2rqtMQ4ppb4C3V1JBo3Zw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756376127; c=relaxed/simple;
+	bh=x3Xcu1z+CtLQlbgjL7Gni2IBKCEYZWwIRYW4Gql8iLg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=VjkIiBlKDZK8xloSunyDrV55Fg52WFons7xcx3PnsFHFAY+l6eIOwnQG53RWX7EQgvgoYhVUVPn1viSGlHKgLUvFRnpv8/l9s5fIhY7Eq3PXDo1DqIKtiBqcRg/cysY4FapNEkBWbQ5vcvEJ7lxWyiVDk6GNRGq5YNRHGYzil98=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=i/D6/cS+; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3c98b309804so487610f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 03:15:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1756376124; x=1756980924; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=5dtsWOrssFq6dCtiMfrdoC2rXhSI5ZG5/AkQSWPW1V4=;
+        b=i/D6/cS+be0Rd/q4pOhwhxG7GES+3JBl8WPBeHv+MqWhpUFGk+6RlI3anRKtnrKk3f
+         WoxN0ntwFMg76MrOAzhtNXlmHKgs9w0bSUMrXpG4aMrxUyLXkqwTo0AF4KZxml6ASIrQ
+         Kr5QnXwHv9LaxKSzbUW8Moeg5alQzA2W63E17PaBvVH0zN32qmE75Gl15lByS8c64E0l
+         c3y0l8psJJBkL/5X48eR28h/3Ba7GsK4VQyyHwWQoNc8XoMSdLH7EVy3DXuWiKn6GHF8
+         JW5j+AgV1LVT+/8YNp9V2OhaK903GXcH6QUgqi5x8NAiVQDExqk+TmmmZ89AyjJanSgI
+         mrvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756376124; x=1756980924;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5dtsWOrssFq6dCtiMfrdoC2rXhSI5ZG5/AkQSWPW1V4=;
+        b=sLmSYzat1TCnPduaAxPqVIRLxrpyRE/IvJ0klegx7Pacvto5OFvjDd09cLyhtYYXRa
+         XUOsmgmjmaYdYtmHuqHTGok3Yocorte/6ri0xEiZQCN6meVqPulVfTlF05Zj/2y5QQgc
+         3MNbTy0RtgGSLsEyyKnf19/5E0SJGx2sRoZgxvT+u3loVy1iVtZzQzvGIHdb3UtfFQCn
+         R2ntndzgv13fGOOcUy2e+m4NXt+mOEUzrz2Uwb5W66VJg/KW2H+beCxBmCj8ndQA+u/D
+         xxlQL0+/ZP9jwcotMoNy7aFa++KrN4j16SFK0fJyFfaeusJwyKvmGOsBFBWuCdnjl8gT
+         APVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUu2dQhx7G9nzDi9Ez8+krBjp90r9LoNVPF9Tqa+F0XMSWYhYpmKE4uUd5a9Oj0zcvPsCzDCMExy+cvmiU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwF68pMprZqilYSqEX6Itd12eEwylvR8qWcphf0RR3IKBIj5RUa
+	yzLOIVtDRMul8yxmHeDxj9nlZl5ff4zPtPAtCOFC/YAC1Ujth0bcOCYvo+Nb+igetPs=
+X-Gm-Gg: ASbGnctVCah11TUD2CouwU1R3KFfMF2QQIF2mgfgjrpj4mCGq4EbmZlWVSFrFbjsyFE
+	TLFMlzIQ02IvbkplmPC++MrdRF4Tg7NN5wqPudjTNK3AZuMxdYq9aYnVSKififKVXLIlmzLoHul
+	Hl528p8qTjTYuza3QBVlL2mPg/mH81ayWxCCZu0w0nFFbr0idRcJhche6MdLYNzLDrVE1sgwrqS
+	HClYkhkCWOe9K86b3u6s2QpWwR8Y3eRDTGGsu4NgWcp77GoOLEsi1mIsaZT5Xb0UFTWJJQfUwFM
+	NCPTJdyAO8OB6GdltiO4KJo6c6WSDgtThcg43RtyKKh30+zROvdoKsnNvlxdjdnj+fgJMXQHoLl
+	CSSm6uYMcdMc+Pb/1lFStZ6jz3XqIGnDAmIcElJT/IQ==
+X-Google-Smtp-Source: AGHT+IHKf2aG6pLYrFaDWGlL7FrtoqqzoGeCk3EgyukB/f1w9pdZhxPxMSnGHp2vNNZqCXF6rvJJMA==
+X-Received: by 2002:a05:6000:240c:b0:3c9:9ec0:203b with SMTP id ffacd0b85a97d-3c99ec02f4bmr11349567f8f.27.1756376124175;
+        Thu, 28 Aug 2025 03:15:24 -0700 (PDT)
+Received: from ho-tower-lan.lan ([185.48.76.109])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b66f2041fsm49976305e9.5.2025.08.28.03.15.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Aug 2025 03:15:23 -0700 (PDT)
+From: James Clark <james.clark@linaro.org>
+Subject: [PATCH v2 0/9] spi: spi-fsl-lpspi: Generic fixes and support for
+ S32G devices
+Date: Thu, 28 Aug 2025 11:14:39 +0100
+Message-Id: <20250828-james-nxp-lpspi-v2-0-6262b9aa9be4@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: IA3PR11MB8985.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d3706bb4-1425-4c04-eff7-08dde61b6f93
-X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Aug 2025 10:12:46.6925
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: t6qzqwwBdXQ0MOmLTm57PgsbfwOymCnkIaN9YmLIa3FioN2kbvzEHP9VOdgprIE1BWH8UBh9gQKMNhzF2F6MXHwVAWbkMvNq84kMN3c8Ws8=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR11MB8322
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAA8ssGgC/22PQQ6CMBBFr0K6toYplBZX3sO4KHSAGiykNQ2Gc
+ HcLMVGDy/+T9/7MTDw6g56ckpk4DMabwcbADgmpO2VbpEbHTFjKeCqA05u6o6d2Gmk/+tFQaFT
+ NJQqmeEkiNTpszLQZL9eYO+Mfg3tuAwHW9u3KYOcKQFOqy4JlQqomq6tzb6xyw3Fw7ereQAn5f
+ 7DkstBCAteQf4PrFYF9lmW6/yKwKMhE2YBWVSEQfwTLsrwANL898CkBAAA=
+To: Frank Li <Frank.Li@nxp.com>, Mark Brown <broonie@kernel.org>, 
+ Clark Wang <xiaoning.wang@nxp.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+ Larisa Grigore <larisa.grigore@oss.nxp.com>, 
+ Larisa Grigore <larisa.grigore@nxp.com>, 
+ Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>, 
+ Ciprianmarian Costea <ciprianmarian.costea@nxp.com>, s32@nxp.com
+Cc: James Clark <james.clark@linaro.org>, linux-spi@vger.kernel.org, 
+ imx@lists.linux.dev, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org
+X-Mailer: b4 0.14.0
 
-> -----Original Message-----
-> From: Intel-wired-lan <intel-wired-lan-bounces@osuosl.org> On Behalf Of S=
-imon
-> Horman
-> Sent: Wednesday, August 27, 2025 2:27 PM
-> To: Kohei Enju <enjuk@amazon.com>
-> Cc: intel-wired-lan@lists.osuosl.org; netdev@vger.kernel.org; linux-
-> kernel@vger.kernel.org; Nguyen, Anthony L <anthony.l.nguyen@intel.com>;
-> Kitszel, Przemyslaw <przemyslaw.kitszel@intel.com>; Andrew Lunn
-> <andrew+netdev@lunn.ch>; David S. Miller <davem@davemloft.net>; Eric
-> Dumazet <edumazet@google.com>; Jakub Kicinski <kuba@kernel.org>; Paolo
-> Abeni <pabeni@redhat.com>; kohei.enju@gmail.com; Paul Menzel
-> <pmenzel@molgen.mpg.de>
-> Subject: Re: [Intel-wired-lan] [PATCH v2 iwl-next 1/2] igbvf: add lbtx_pa=
-ckets and
-> lbtx_bytes to ethtool statistics
->=20
-> On Tue, Aug 19, 2025 at 12:18:26AM +0900, Kohei Enju wrote:
-> > Currently ethtool shows lbrx_packets and lbrx_bytes (Good RX
-> > Packets/Octets loopback Count), but doesn't show the TX-side
-> > equivalents (lbtx_packets and lbtx_bytes). Add visibility of those
-> > missing statistics by adding them to ethtool statistics.
-> >
-> > In addition, the order of lbrx_bytes and lbrx_packets is not
-> > consistent with non-loopback statistics (rx_packets, rx_bytes).
-> > Therefore, align the order by swapping positions of lbrx_bytes and lbrx=
-_packets.
-> >
-> > Tested on Intel Corporation I350 Gigabit Network Connection.
-> >
-> > Before:
-> >   # ethtool -S ens5 | grep -E "x_(bytes|packets)"
-> >        rx_packets: 135
-> >        tx_packets: 106
-> >        rx_bytes: 16010
-> >        tx_bytes: 12451
-> >        lbrx_bytes: 1148
-> >        lbrx_packets: 12
-> >
-> > After:
-> >   # ethtool -S ens5 | grep -E "x_(bytes|packets)"
-> >        rx_packets: 748
-> >        tx_packets: 304
-> >        rx_bytes: 81513
-> >        tx_bytes: 33698
-> >        lbrx_packets: 97
-> >        lbtx_packets: 109
-> >        lbrx_bytes: 12090
-> >        lbtx_bytes: 12401
-> >
-> > Reviewed-by: Paul Menzel <pmenzel@molgen.mpg.de>
-> > Signed-off-by: Kohei Enju <enjuk@amazon.com>
->=20
-> Reviewed-by: Simon Horman <horms@kernel.org>
+Various fixes for LPSI along with some refactorings. None of the fixes
+are strictly related to S32G, however these changes all originate from
+the work to support S32G devices. The only commits that are strictly
+related are for the new s32g2 and s32g3 compatible strings.
 
+Signed-off-by: James Clark <james.clark@linaro.org>
+---
+To: Frank Li <Frank.Li@nxp.com>
+To: Mark Brown <broonie@kernel.org>
+To: Clark Wang <xiaoning.wang@nxp.com>
+To: Rob Herring <robh@kernel.org>
+To: Krzysztof Kozlowski <krzk+dt@kernel.org>
+To: Conor Dooley <conor+dt@kernel.org>
+To: Shawn Guo <shawnguo@kernel.org>
+To: Sascha Hauer <s.hauer@pengutronix.de>
+To: Fabio Estevam <festevam@gmail.com>
+To: Larisa Grigore <larisa.grigore@oss.nxp.com>
+To: Larisa Grigore <larisa.grigore@nxp.com>
+To: Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>
+To: Ciprianmarian Costea <ciprianmarian.costea@nxp.com>
+To: s32@nxp.com
+Cc: linux-spi@vger.kernel.org
+Cc: imx@lists.linux.dev
+Cc: linux-kernel@vger.kernel.org
+Cc: devicetree@vger.kernel.org
 
-Tested-by: Rafal Romanowski <rafal.romanowski@intel.com>
+---
+Changes in v2:
+- Drop changes to be able to swap input/output pins. It's not required
+  for generic S32G support and we don't know what board it's for.
+- Drop binding change for max num_cs value. Although the maximum is 3,
+  this would be autodetected so it should be left blank. 2 is the max
+  that is required to set manually.
+- Fix missing bitfield header for some compile targets
+- Keep prescale_max as a numeric value, but treat 0 as no limit
+- Put compatible string dt-bindings patch before driver change
+- Link to v1: https://lore.kernel.org/r/20250814-james-nxp-lpspi-v1-0-9586d7815d14@linaro.org
 
+---
+James Clark (3):
+      spi: spi-fsl-lpspi: Constify devtype datas
+      spi: spi-fsl-lpspi: Treat prescale_max == 0 as no erratum
+      spi: spi-fsl-lpspi: Parameterize reading num-cs from hardware
+
+Larisa Grigore (6):
+      spi: spi-fsl-lpspi: Fix transmissions when using CONT
+      spi: spi-fsl-lpspi: Set correct chip-select polarity bit
+      spi: spi-fsl-lpspi: Reset FIFO and disable module on transfer abort
+      spi: spi-fsl-lpspi: Clear status register after disabling the module
+      dt-bindings: lpspi: Document support for S32G
+      spi: spi-fsl-lpspi: Add compatible for S32G
+
+ .../devicetree/bindings/spi/spi-fsl-lpspi.yaml     |  5 +++
+ drivers/spi/spi-fsl-lpspi.c                        | 47 +++++++++++++---------
+ 2 files changed, 33 insertions(+), 19 deletions(-)
+---
+base-commit: 07d9df80082b8d1f37e05658371b087cb6738770
+change-id: 20250715-james-nxp-lpspi-1fac58e72a59
+
+Best regards,
+-- 
+James Clark <james.clark@linaro.org>
 
 
