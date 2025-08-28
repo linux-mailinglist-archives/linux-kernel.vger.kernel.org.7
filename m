@@ -1,201 +1,346 @@
-Return-Path: <linux-kernel+bounces-790645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790646-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDDC9B3AB43
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 22:05:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1176DB3AB47
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 22:06:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91213986BB9
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 20:05:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 23D921B21E41
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 20:07:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E133527F4CE;
-	Thu, 28 Aug 2025 20:05:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A26B927CCC4;
+	Thu, 28 Aug 2025 20:06:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DX6o5k+c"
-Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b="owmaGhNg"
+Received: from sendmail.purelymail.com (sendmail.purelymail.com [34.202.193.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40CA127CCE2
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 20:05:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9ED724DD11
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 20:06:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=34.202.193.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756411542; cv=none; b=ayfKafTpom0G0TzOxe2H9smE/yIKgDgA+2pKIFrj9sc0wsP4CJDTuQqeQ1S5BmeR8gexIjQnv5yrqInBs580dOgYhkw92HZDbbuGrFvaMk96SUNiiPtutWSSjYAvhUxTMwzmh0FXcMFwuYWwZcfYhk2ty41mP3JrlAOrUmJ5eCo=
+	t=1756411608; cv=none; b=TGc8ijd+8Pgm095Z8sQTBT+sWQ22FT5EMuFCL2rwELWet0j62hv+BxaB+GndNPU6nHoou5gwBc9UbVqPVb/Ltqdv1JjDMyxBPQCBrK21iaY2y/+a8lVxiYX/YoUfBWRbM45VAI7iY0toP6zHRWvmCZMU2QVVgivblAWELEPDlIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756411542; c=relaxed/simple;
-	bh=lLtjzd6O8HO7gkv+l7YGZbUvlYOWHUpA8CFt/l/Th7A=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version; b=n/ZWwjVoHbLrAQvZRtBKA0gV8ErztDPyLOlpjWxIdm3ih+GxYfnn8ZzWcKKu3/88wCrZEqzGqdcPej47cLP3s+rmIesRp5yu/WAzzJfQ5VBXj1bnG7SvlrKQ/2YygaQ0DN10SYENFVoMzIWdtdHUtCd/AXyWnOsb83Ku5Wd5ZHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DX6o5k+c; arc=none smtp.client-ip=209.85.215.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-b4cf40cd0d1so11417a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 13:05:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756411539; x=1757016339; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=jmSGeUqi7bgVdyADhjktgbxkyZv4XRIq1wbeRuWB31M=;
-        b=DX6o5k+cxeiK5Vs62WYBbTJ9XWy1V6sQspO+eAbYyNOv/BDQCVasxnL/jB9MOeOYD1
-         A7DaGVcEYXPKfNXyeQ5i3UISndWeFg+m7xfMcugZQhmuqIY482wbWyXyKOuI0LY1a+Qt
-         4L6bL0irSwmNnNQjcIKOkfkPGRbTL7QyryYP+lJuJDMOu8EiEi/i47cnEWYOx9YZnWkD
-         dT7zO3XF6qzR/Z1g8TrDOIkyqzSoNbFShSciJTitZPGfjalB8v8lltUdflkQEByBy96K
-         UBTMkumDblrs8c8ktzq/GEFoZGk02K32XLOIAmJJdvwjFmwaLzoAxg9oELvkHSohlTmT
-         6pvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756411539; x=1757016339;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jmSGeUqi7bgVdyADhjktgbxkyZv4XRIq1wbeRuWB31M=;
-        b=Qh4WGlduamm5nbisDTbNKZnW+KdQ7YHlXduEqA4/loXKX27n2daKE+pPrPz5I4VoWU
-         51qyKcL+uiGIMWOmLtcwfLlCJ6Nr2ozsMGhQ+mDNLbX3TFOpgWJ9QIvUrL4Q/vVueY85
-         up+izjx6jGTLuoDTbZA6e4Jar7tJWEIRgGSbavNbPyGBl5JIFkFMmv4ymLBNF9ayfX46
-         5ZHsKzQCVCro1Sv6LQReBrMuJzbXtUKhMBfVhPyVEqbvXHBdlNNmKWixSe0e/RMMVt8C
-         JdhH0Ulv0fr/NTnc/Poq6HM1DeOQqO0o5/zx1csWxOuUOcOkfGW5+DhECqUkztc5xqll
-         h/Fg==
-X-Forwarded-Encrypted: i=1; AJvYcCWVQixrMap2hG+FygviXbqIlwf2opu+Vd7lqZ62XJKhhlRR61T8ppjbs5P0OFZx12ZtWXe0mT0IFTzw/g0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyzpUQUE9px+vwqaos1B3Ymfuab4bCrXMDMooXGuzYkDzChKxXo
-	mQHYv28EHq/BY/vOc1dqBV6uErrTzh4bQIgqwMtFAa3wS8iChbQ3KDtD
-X-Gm-Gg: ASbGncuV+uXehW1nlCnv+HHocrXNGfs7qV1CIuQNoql5IRmGkC+F5gC2lW9lLq8in8P
-	dm4/iP0EhukknEB9rz92vjHLk+v6D+HB0dG+rPbcOlC89HtDAtu6wDbCc4s8ePaPPMqRVJlejiV
-	z3VgB3ZN6AvLYtodGOne9AXpp9bhOjXvfwHHeU/Z8tF7gs0GxnQMP1pQGRJCox/9Ekl+cMxwdzd
-	nxWhPpPNb0EzI2oONlCCN5yqyYwatovR5eP7QVnM3KuJr+oGeXJZFWRnUc+LsPAEzg3frt1uXP/
-	JHKhhzqto0z7VxazbndRRpeI7aF5Zl0k7ip0dE/DQlYajaKCZH/j4+0BwBTDc6++xPqj3s7xrmF
-	VWLqS+Ml5SPR1B4Miqo9UWVY6yrZAjoRVK3Hl+54mgVIf/KYdh7bGjyXPGfWJW0M8
-X-Google-Smtp-Source: AGHT+IEzxoHmzG3n4HuxC6z+DexJNDaIUy1dNEXlCE2cF0/EicLBDhy71dFO/24eaTNw02i5vYZGOw==
-X-Received: by 2002:a17:902:c402:b0:246:464d:118a with SMTP id d9443c01a7336-246464d12bbmr286853515ad.46.1756411539067;
-        Thu, 28 Aug 2025 13:05:39 -0700 (PDT)
-Received: from localhost (185.3.125.34.bc.googleusercontent.com. [34.125.3.185])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-249065a4a76sm3522085ad.122.2025.08.28.13.05.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Aug 2025 13:05:38 -0700 (PDT)
-From: Chia-I Wu <olvaffe@gmail.com>
-To: Boris Brezillon <boris.brezillon@collabora.com>,
-	Steven Price <steven.price@arm.com>,
-	Liviu Dudau <liviu.dudau@arm.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/panthor: assign unique names to queues
-Date: Thu, 28 Aug 2025 13:05:32 -0700
-Message-ID: <20250828200532.3534201-1-olvaffe@gmail.com>
-X-Mailer: git-send-email 2.51.0.318.gd7df087d1a-goog
+	s=arc-20240116; t=1756411608; c=relaxed/simple;
+	bh=u9TsNJz5Cli+hy1QKsrKbomaP8wVYfx+FZl2Clzk1tg=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
+	 References:In-Reply-To; b=Zdt4x11OXeM9S9jfawFHk7PNdyyI3m9e+urNhKVRVmY2Rj0gLRcy4UlfZg9GVK26qNsJft6Svdy/ThVpBFxlkQbQV6S0gDu1lEBWlnGE25HhEhWC45PS1SuMbJmcZ5rWBdwC3+jojK/cnOS9AtpGqx2WKpvQHZWHRDH4KUYyzfQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org; spf=pass smtp.mailfrom=mentallysanemainliners.org; dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b=owmaGhNg; arc=none smtp.client-ip=34.202.193.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mentallysanemainliners.org
+DKIM-Signature: a=rsa-sha256; b=owmaGhNgfaOD+znx/GojLIb2t38ZD4Jrl1iYxrYo6B4VOkxVOFhOEi2oNv/m5+yW0lF+EFo0TPpX4Dd6FXITgreGaiI4YED3URfoCsWXgJIj8A44OSMG+RM+DKNhOlaTsNlycsYNxF2Z7SiV0zs3Anhw+610gir2iyFKo2zASmCC1s8pRHV9E8tQUvFqfNLGej99GLBac1nJJ3GHeLuanuAx75JhlT31ounVZQ+kJNPlxJwx/tZGMTqdlrhfZG3L/P312jy6vpYonIx2v8CEs57KmC4X/jpCeNcuJ0TFRbaTeuLi3XLWWp+W3lMcNSEOhEt0GR3iRXYGZSXGRk1Gsg==; s=purelymail1; d=purelymail.com; v=1; bh=u9TsNJz5Cli+hy1QKsrKbomaP8wVYfx+FZl2Clzk1tg=; h=Feedback-ID:Received:Date:To:Subject:From;
+Feedback-ID: 68247:10037:null:purelymail
+X-Pm-Original-To: linux-kernel@vger.kernel.org
+Received: by smtp.purelymail.com (Purelymail SMTP) with ESMTPSA id 1961342606;
+          (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
+          Thu, 28 Aug 2025 20:06:27 +0000 (UTC)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 28 Aug 2025 22:06:25 +0200
+Message-Id: <DCEBXZ0J8PYY.1D1SFSURUN457@mentallysanemainliners.org>
+To: "Arseniy Velikanov" <me@adomerle.pw>
+Cc: <linux-arm-kernel@lists.infradead.org>,
+ <linux-mediatek@lists.infradead.org>, <linux-phy@lists.infradead.org>,
+ <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <~postmarketos/upstreaming@lists.sr.ht>
+Subject: Re: [PATCH v1 2/2] phy: mediatek: tphy: Add software role switching
+From: "Igor Belwon" <igor.belwon@mentallysanemainliners.org>
+X-Mailer: aerc 0.20.1-0-g2ecb8770224a-dirty
+References: <20250814234825.810-1-me@adomerle.pw>
+ <20250814234825.810-2-me@adomerle.pw>
+In-Reply-To: <20250814234825.810-2-me@adomerle.pw>
 
-Userspace relies on the ring field of gpu_scheduler tracepoints to
-identify a drm_gpu_scheduler.  The value of the ring field is taken from
-sched->name.
+Hi Arseniy,
 
-Because we typically have multiple schedulers running in parallel in
-each process, assign unique names to schedulers such that userspace can
-distinguish them.
+On Fri Aug 15, 2025 at 1:48 AM CEST, Arseniy Velikanov wrote:
+> MediaTek USB T-PHY has broken role switching on (likely) all mobile SoCs.
+> Known affected socs are: MT6735, MT6757, MT6761, MT6765, MT6768, MT6771,
+> MT6785, MT6789.
+>
+> The downstream kernel manually controls the PHY mode by writing
+> "test mode" FORCE regs. Setting all these regs fixes device/host modes, b=
+ut
+> breaks dual-role functionality. As a workaround we use workqueue that
+> periodically checks the USB role and changes the PHY mode accordingly.
+>
+> To address this issue only on affected SoCs, we introduce a new
+> device-tree property `mediatek,software-role-switch`. This ensures
+> the workaround is applied only to broken hardware while leaving unaffecte=
+d
+> devices (like Chromebooks) untouched.
+>
+> Signed-off-by: Arseniy Velikanov <me@adomerle.pw>
+> ---
+>  drivers/phy/mediatek/phy-mtk-tphy.c | 148 ++++++++++++++++++++++++++++
+>  1 file changed, 148 insertions(+)
+>
+> diff --git a/drivers/phy/mediatek/phy-mtk-tphy.c b/drivers/phy/mediatek/p=
+hy-mtk-tphy.c
+> index f6504e0ecd1a..472859ec929c 100644
+> --- a/drivers/phy/mediatek/phy-mtk-tphy.c
+> +++ b/drivers/phy/mediatek/phy-mtk-tphy.c
+> @@ -18,6 +18,9 @@
+>  #include <linux/phy/phy.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/regmap.h>
+> +#include <linux/usb/role.h>
+> +#include <linux/usb/otg.h>
+> +#include <linux/workqueue.h>
+> =20
+>  #include "phy-mtk-io.h"
+> =20
+> @@ -111,11 +114,18 @@
+> =20
+>  #define U3P_U2PHYDTM1		0x06C
+>  #define P2C_RG_UART_EN			BIT(16)
+> +#define P2C_FORCE_IDPULLUP	BIT(8)
+>  #define P2C_FORCE_IDDIG		BIT(9)
+> +#define P2C_FORCE_AVALID	BIT(10)
+> +#define P2C_FORCE_SESSEND	BIT(12)
+> +#define P2C_FORCE_VBUSVALID	BIT(13)
+> +
+>  #define P2C_RG_VBUSVALID		BIT(5)
+>  #define P2C_RG_SESSEND			BIT(4)
+> +#define P2C_RG_BVALID			BIT(3)
+>  #define P2C_RG_AVALID			BIT(2)
+>  #define P2C_RG_IDDIG			BIT(1)
+> +#define P2C_RG_IDPULLUP			BIT(0)
+> =20
+>  #define U3P_U2PHYBC12C		0x080
+>  #define P2C_RG_CHGDT_EN		BIT(0)
+> @@ -317,6 +327,8 @@ struct mtk_phy_instance {
+>  		struct u3phy_banks u3_banks;
+>  	};
+>  	struct clk_bulk_data clks[TPHY_CLKS_CNT];
+> +	struct delayed_work dr_work;
+> +	struct usb_role_switch *role_switch;
+>  	u32 index;
+>  	u32 type;
+>  	struct regmap *type_sw;
+> @@ -326,14 +338,17 @@ struct mtk_phy_instance {
+>  	u32 efuse_intr;
+>  	u32 efuse_tx_imp;
+>  	u32 efuse_rx_imp;
+> +	int current_role;
+>  	int eye_src;
+>  	int eye_vrt;
+>  	int eye_term;
+>  	int intr;
+>  	int discth;
+>  	int pre_emphasis;
+> +	int sw_get_retries;
+>  	bool bc12_en;
+>  	bool type_force_mode;
+> +	bool software_role_switch;
+>  };
+> =20
+>  struct mtk_tphy {
+> @@ -818,12 +833,118 @@ static void u2_phy_pll_26m_set(struct mtk_tphy *tp=
+hy,
+>  			 P2R_RG_U2PLL_FRA_EN | P2R_RG_U2PLL_REFCLK_SEL);
+>  }
+> =20
+> +static void u2_phy_instance_role_set(struct mtk_phy_instance *instance,
+> +				     int role)
+> +{
+> +	struct u2phy_banks *u2_banks =3D &instance->u2_banks;
+> +	void __iomem *com =3D u2_banks->com;
+> +
+> +	instance->current_role =3D role;
+> +
+> +	/* end session before role switch */
+> +	mtk_phy_set_bits(com + U3P_U2PHYDTM1, P2C_RG_SESSEND);
+> +	mdelay(5);
+> +	mtk_phy_clear_bits(com + U3P_U2PHYDTM1, P2C_RG_SESSEND);
+> +
+> +	switch (role) {
+> +	case USB_ROLE_DEVICE:
+> +		dev_dbg(&instance->phy->dev, "set device role\n");
+> +		mtk_phy_set_bits(com + U3P_U2PHYDTM1, P2C_RG_IDDIG);
+> +		break;
+> +	case USB_ROLE_HOST:
+> +		dev_dbg(&instance->phy->dev, "set host role\n");
+> +		mtk_phy_clear_bits(com + U3P_U2PHYDTM1, P2C_RG_IDDIG);
+> +		break;
+> +	default:
+> +		break;
+> +	}
+> +}
+> +
+> +static void u2_phy_role_switch_work(struct work_struct *work)
+> +{
+> +	struct mtk_phy_instance *instance =3D
+> +		container_of(work, struct mtk_phy_instance, dr_work.work);
+> +	int role;
+> +
+> +	if (IS_ERR_OR_NULL(instance->role_switch))
+> +		instance->role_switch =3D usb_role_switch_get(&instance->phy->dev);
+> +
+> +	if (IS_ERR_OR_NULL(instance->role_switch)) {
+> +		if (instance->sw_get_retries >=3D 10) {
+> +			dev_warn(&instance->phy->dev, "failed to get role switch\n");
+> +			return;
+> +		}
+> +
+> +		instance->sw_get_retries +=3D 1;
+> +		schedule_delayed_work(&instance->dr_work, msecs_to_jiffies(500));
+> +	}
+> +
+> +	role =3D usb_role_switch_get_role(instance->role_switch);
+> +
+> +	if (instance->current_role =3D=3D role)
+> +		goto reschedule_work;
+> +
+> +	u2_phy_instance_role_set(instance, role);
+> +
+> +reschedule_work:
+> +	schedule_delayed_work(&instance->dr_work, msecs_to_jiffies(100));
+> +}
+> +
+> +static int u2_phy_software_role_switch_init(struct mtk_phy_instance *ins=
+tance)
+> +{
+> +	struct fwnode_handle *ep, *remote_ep, *usb_fwnode;
+> +	struct device *usb_dev;
+> +	int mode;
+> +
+> +	instance->sw_get_retries =3D 0;
+> +
+> +	ep =3D fwnode_graph_get_endpoint_by_id(dev_fwnode(&instance->phy->dev),
+> +					     0,
+> +					     0,
+> +					     FWNODE_GRAPH_ENDPOINT_NEXT);
+> +	if (!ep)
+> +		return -ENODEV;
+> +
+> +	remote_ep =3D fwnode_graph_get_remote_endpoint(ep);
+> +	fwnode_handle_put(ep);
+> +	if (!remote_ep)
+> +		return -ENODEV;
+> +
+> +	usb_fwnode =3D fwnode_graph_get_port_parent(remote_ep);
+> +	fwnode_handle_put(remote_ep);
+> +
+> +	if (!usb_fwnode)
+> +		return -ENODEV;
+> +
+> +	usb_dev =3D bus_find_device_by_fwnode(&platform_bus_type, usb_fwnode);
+> +	fwnode_handle_put(usb_fwnode);
+> +	if (!usb_dev)
+> +		return -ENODEV;
+> +
+> +	mode =3D usb_get_role_switch_default_mode(usb_dev);
+> +	if (mode =3D=3D USB_DR_MODE_HOST)
+> +		u2_phy_instance_role_set(instance, USB_ROLE_HOST);
+> +	else
+> +		u2_phy_instance_role_set(instance, USB_ROLE_DEVICE);
+> +
+> +	INIT_DELAYED_WORK(&instance->dr_work, u2_phy_role_switch_work);
+> +
+> +	return 0;
+> +}
+> +
+>  static void u2_phy_instance_init(struct mtk_tphy *tphy,
+>  	struct mtk_phy_instance *instance)
+>  {
+>  	struct u2phy_banks *u2_banks =3D &instance->u2_banks;
+>  	void __iomem *com =3D u2_banks->com;
+>  	u32 index =3D instance->index;
+> +	int ret;
+> +
+> +	if (instance->software_role_switch) {
+> +		ret =3D u2_phy_software_role_switch_init(instance);
+> +		if (ret)
+> +			dev_warn(&instance->phy->dev, "failed to initialize role switching\n"=
+);
+> +	}
+> =20
+>  	/* switch to USB function, and enable usb pll */
+>  	mtk_phy_clear_bits(com + U3P_U2PHYDTM0, P2C_FORCE_UART_EN | P2C_FORCE_S=
+USPENDM);
+> @@ -883,6 +1004,18 @@ static void u2_phy_instance_power_on(struct mtk_tph=
+y *tphy,
+> =20
+>  		mtk_phy_set_bits(com + U3P_U2PHYDTM0, P2C_RG_SUSPENDM | P2C_FORCE_SUSP=
+ENDM);
+>  	}
+> +
+> +	if (instance->software_role_switch) {
+> +		/* Set FORCE modes for manual role switching */
+> +		mtk_phy_set_bits(com + U3P_U2PHYDTM1, P2C_FORCE_IDPULLUP
+> +			| P2C_FORCE_IDDIG | P2C_FORCE_AVALID | P2C_FORCE_VBUSVALID
+> +			| P2C_FORCE_SESSEND);
+> +		mtk_phy_set_bits(com + U3P_U2PHYDTM1, P2C_RG_IDPULLUP | P2C_RG_BVALID)=
+;
+> +
+> +		if (!instance->role_switch)
+> +			schedule_delayed_work(&instance->dr_work, msecs_to_jiffies(100));
+> +	}
+> +
+>  	dev_dbg(tphy->dev, "%s(%d)\n", __func__, index);
+>  }
+> =20
+> @@ -906,6 +1039,9 @@ static void u2_phy_instance_power_off(struct mtk_tph=
+y *tphy,
+>  		mtk_phy_clear_bits(com + U3D_U2PHYDCR0, P2C_RG_SIF_U2PLL_FORCE_ON);
+>  	}
+> =20
+> +	if (instance->role_switch)
+> +		cancel_delayed_work_sync(&instance->dr_work);
+> +
+>  	dev_dbg(tphy->dev, "%s(%d)\n", __func__, index);
+>  }
+> =20
+> @@ -940,6 +1076,9 @@ static void u2_phy_instance_set_mode(struct mtk_tphy=
+ *tphy,
+>  		tmp &=3D ~P2C_RG_IDDIG;
+>  		break;
+>  	case PHY_MODE_USB_OTG:
+> +		/* We are managing role in workqueue */
+> +		if (instance->software_role_switch)
+> +			return;
+>  		tmp &=3D ~(P2C_FORCE_IDDIG | P2C_RG_IDDIG);
+>  		break;
+>  	default:
+> @@ -1129,6 +1268,11 @@ static void phy_parse_property(struct mtk_tphy *tp=
+hy,
+>  	if (instance->type =3D=3D PHY_TYPE_USB3)
+>  		instance->type_force_mode =3D device_property_read_bool(dev, "mediatek=
+,force-mode");
+> =20
+> +	instance->software_role_switch =3D
+> +		device_property_read_bool(dev, "mediatek,software-role-switch");
+> +	if (instance->software_role_switch)
+> +		dev_info(dev, "software role switch enabled\n");
+> +
+>  	if (instance->type !=3D PHY_TYPE_USB2)
+>  		return;
+> =20
+> @@ -1618,6 +1762,10 @@ static int mtk_tphy_probe(struct platform_device *=
+pdev)
+>  		struct phy *phy;
+>  		int retval;
+> =20
+> +		/* filter non-phy nodes (e.g. graphs) */
+> +		if (!of_find_property(child_np, "reg", NULL))
+> +			continue;
+> +
+>  		instance =3D devm_kzalloc(dev, sizeof(*instance), GFP_KERNEL);
+>  		if (!instance)
+>  			return -ENOMEM;
 
-Signed-off-by: Chia-I Wu <olvaffe@gmail.com>
----
- drivers/gpu/drm/panthor/panthor_sched.c | 32 ++++++++++++++++++-------
- 1 file changed, 23 insertions(+), 9 deletions(-)
+This patch made USB role-switching work on the MT6878 SoC. As such:
 
-diff --git a/drivers/gpu/drm/panthor/panthor_sched.c b/drivers/gpu/drm/panthor/panthor_sched.c
-index ba5dc3e443d9c..26616b6cb110d 100644
---- a/drivers/gpu/drm/panthor/panthor_sched.c
-+++ b/drivers/gpu/drm/panthor/panthor_sched.c
-@@ -360,6 +360,9 @@ struct panthor_queue {
- 	/** @entity: DRM scheduling entity used for this queue. */
- 	struct drm_sched_entity entity;
- 
-+	/** @name: DRM scheduler name for this queue. */
-+	char name[32];
-+
- 	/**
- 	 * @remaining_time: Time remaining before the job timeout expires.
- 	 *
-@@ -3308,9 +3311,10 @@ static u32 calc_profiling_ringbuf_num_slots(struct panthor_device *ptdev,
- 
- static struct panthor_queue *
- group_create_queue(struct panthor_group *group,
--		   const struct drm_panthor_queue_create *args)
-+		   const struct drm_panthor_queue_create *args, u32 gid,
-+		   u32 qid)
- {
--	const struct drm_sched_init_args sched_args = {
-+	struct drm_sched_init_args sched_args = {
- 		.ops = &panthor_queue_sched_ops,
- 		.submit_wq = group->ptdev->scheduler->wq,
- 		.num_rqs = 1,
-@@ -3323,7 +3327,7 @@ group_create_queue(struct panthor_group *group,
- 		.credit_limit = args->ringbuf_size / sizeof(u64),
- 		.timeout = msecs_to_jiffies(JOB_TIMEOUT_MS),
- 		.timeout_wq = group->ptdev->reset.wq,
--		.name = "panthor-queue",
-+		.name = NULL, /* will point to queue->name */
- 		.dev = group->ptdev->base.dev,
- 	};
- 	struct drm_gpu_scheduler *drm_sched;
-@@ -3398,6 +3402,11 @@ group_create_queue(struct panthor_group *group,
- 	if (ret)
- 		goto err_free_queue;
- 
-+	/* assign a unique name */
-+	snprintf(queue->name, sizeof(queue->name), "panthor-queue-%d-%d", gid,
-+		 qid);
-+	sched_args.name = queue->name;
-+
- 	ret = drm_sched_init(&queue->scheduler, &sched_args);
- 	if (ret)
- 		goto err_free_queue;
-@@ -3540,12 +3549,18 @@ int panthor_group_create(struct panthor_file *pfile,
- 	memset(group->syncobjs->kmap, 0,
- 	       group_args->queues.count * sizeof(struct panthor_syncobj_64b));
- 
-+	ret = xa_alloc(&gpool->xa, &gid, group,
-+		       XA_LIMIT(1, MAX_GROUPS_PER_POOL), GFP_KERNEL);
-+	if (ret)
-+		goto err_put_group;
-+
- 	for (i = 0; i < group_args->queues.count; i++) {
--		group->queues[i] = group_create_queue(group, &queue_args[i]);
-+		group->queues[i] =
-+			group_create_queue(group, &queue_args[i], gid, i);
- 		if (IS_ERR(group->queues[i])) {
- 			ret = PTR_ERR(group->queues[i]);
- 			group->queues[i] = NULL;
--			goto err_put_group;
-+			goto err_erase_gid;
- 		}
- 
- 		group->queue_count++;
-@@ -3553,10 +3568,6 @@ int panthor_group_create(struct panthor_file *pfile,
- 
- 	group->idle_queues = GENMASK(group->queue_count - 1, 0);
- 
--	ret = xa_alloc(&gpool->xa, &gid, group, XA_LIMIT(1, MAX_GROUPS_PER_POOL), GFP_KERNEL);
--	if (ret)
--		goto err_put_group;
--
- 	mutex_lock(&sched->reset.lock);
- 	if (atomic_read(&sched->reset.in_progress)) {
- 		panthor_group_stop(group);
-@@ -3575,6 +3586,9 @@ int panthor_group_create(struct panthor_file *pfile,
- 
- 	return gid;
- 
-+err_erase_gid:
-+	xa_erase(&gpool->xa, gid);
-+
- err_put_group:
- 	group_put(group);
- 	return ret;
--- 
-2.51.0.318.gd7df087d1a-goog
+Tested-by: Igor Belwon <igor.belwon@mentallysanemainliners.org>
 
+Kind regards,
+Igor
 
