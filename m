@@ -1,161 +1,161 @@
-Return-Path: <linux-kernel+bounces-789172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5F0EB391E8
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 04:56:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67535B391EB
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 04:56:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8751C980026
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 02:56:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 946CF1C219EB
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 02:56:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED01226AA91;
-	Thu, 28 Aug 2025 02:56:14 +0000 (UTC)
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1502B26D4F8;
+	Thu, 28 Aug 2025 02:56:19 +0000 (UTC)
+Received: from smtpbgsg1.qq.com (smtpbgsg1.qq.com [54.254.200.92])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFC2926A088;
-	Thu, 28 Aug 2025 02:56:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 526AA26A0AD;
+	Thu, 28 Aug 2025 02:56:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756349774; cv=none; b=AdOiaRhWdHDrLujllm3pdEzqiOV8UdenqFr1lpKSX4IW/tFkWNepEsF/L4TxGGsFUw0tad2Y+xv5uh/FrfJL0m4HSBRaY+doJyWiPiPQamhqaoNVVIwISxHfqlqxmWy8jq/Af16sar9lzwBKSQ7mzP4vj3ESUQKCi/GbvKYhTxM=
+	t=1756349778; cv=none; b=pQmd8CO0INlgKnNBGQbHPufel8NW00TgxKXHwjK1b6agzOo1Xikbemzfw+aLWLs9Qawm1o2+xhwZvHIY7QP7KSQ0Qb5GwP9KHdSmlxUJ9e2ESC0K2QKtQBwrn0cBgCEu0GXVAd9pS79jJgWgkI7JYdxX7O/R1dzEcW3wrpj8h5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756349774; c=relaxed/simple;
-	bh=3Q9iEVOUz1gJksPvlCugtYW8aE3sRLkDtX7rKdL7enw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lv6S8beo2V88Jto9pkAQtibzSItsMnDM9LdtLdwGmuTVB9jCyDzShrTRTyn9vKek/0RvQREjO1oqn5Bbh38s7okLiOR31H9cGjzKhvNFOS9meh/C9oOa3SZe0p8WpsMY3JPxQtGyAdxSxaX4HoqeBkuUVz/xEQayQ4NenflfKHo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gompa.dev; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gompa.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-afebe21a1c0so66533366b.1;
-        Wed, 27 Aug 2025 19:56:12 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756349771; x=1756954571;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9/sG5Ec7Hlcd6BQNqJwLka5sDq9zcWIANhRNknbwVaY=;
-        b=NVjLCKkAO2cG6XBG55NEvsPjaeLXZH40cF0qfywAyHpNPiMQrvZ0uS8lL/Wfsvbgob
-         Io0bYnqxFuKXCEyNXa/O0IgJCGJAU//Yy2kzShh09TAXwLWaR6nuceIdeo0pn5oYQwFU
-         UlY27aZPmP6ybgx8vNMJcX9sgT1IQ802Mzj7SdZ6JTp9WvzXGo1vt7VNAFtfaJTn5Gop
-         q0BWUUvidIt6TKmtp9pxKUrHEr9eOn1RetA3pl/prS6o6KV+c+LpFOSkyJYeL/rk9fF5
-         iw7xuzEkZpGjHcMY4j71z6kthjzkV9a1Kkmlnk/WpTXqM0ghpg+7Jp4LeEl3fvlwgQfW
-         p4vw==
-X-Forwarded-Encrypted: i=1; AJvYcCV0VN4DWE0UoKLbaHpL4zM5pPdTRYx3ezm2vnMYbz6yuUKBlwLWCRQnb13i+f5NEFNY4PeEj644SaIebxuX@vger.kernel.org, AJvYcCW439OM7WnrZkbPXxWBWfSb3bTzRsk/a6OtuHoNdRIqXb8HxFFdMMDJStNNh5r6PWue4TmUxg5GMKxM@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxmxb2SRsIfP44KTDBWfVMX54eTp8ibV6eCOjNZ5CTxkqhOD8T7
-	chfP09L1cersWIr1OvaWejlTbgx9Ta0eozHerOuWw7s5ConRdI3heLmSb6+l6y4+ee8=
-X-Gm-Gg: ASbGncvQXi875XHMgls4+li+7dwnfliB0UMjI0EoHbYbjNohgJXAgzgLXyjgzzm21vj
-	5X/uK500IiJQX9iC0aH4sonAOAOSuhqZpmAEKVEkAE+daXDj3hWXBr2U+KMlPesqxlcgeIbtxFC
-	aRZBZkIx3guxJETJvoOCEyVLs/NbmWutuEzWbNADDF/DL/uVObHSkvDTOPjK39ScL76Eup5T8FD
-	Bl8V5OTbLd8SctiP1aXetWVlHfp4Imgg/AK0Vxc2Z9g9CwyhiNPy82A8JF6ZLA+qan8zoRpBijD
-	qlROSUz7Ea0s9FAGvv5nrzWPOoZl0tzGhUYXv6WAIqnir5qTSjkzUueMhWcAytVe3JpRd2gCBgX
-	qUK2+xOMDnSPSQNTjkzdsEjPCKz8YZZRVlhgpwx8v8TjphU/I4ac68vY01PH0Ry9pN17N9oSJDR
-	FzVHTbhXO6
-X-Google-Smtp-Source: AGHT+IGVAo13RrRQvBt+hgRc1uaRfzs1rbCwvTCix81bOLcIrNP4esz/j8NwwaazEdwmc8FPeLF5/g==
-X-Received: by 2002:a17:907:3f9a:b0:afe:d21f:7af0 with SMTP id a640c23a62f3a-afed21f7e3cmr265415066b.14.1756349770831;
-        Wed, 27 Aug 2025 19:56:10 -0700 (PDT)
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com. [209.85.218.50])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afe8d03f981sm662259266b.60.2025.08.27.19.56.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Aug 2025 19:56:10 -0700 (PDT)
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-afebe21a1c0so66531566b.1;
-        Wed, 27 Aug 2025 19:56:10 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUQV4n2gH82qyO2Ru8IapVrUaJ9ifdj9c0230o3hP/YkatMPv2JGZIdAFr/lRd45ucCuw0eF5mpF59YXVy3@vger.kernel.org, AJvYcCXyQHn8ivPTv6A+4Utc+PtCeCvlx8+1qOsYsncCYTEP/KZ66ziNwspKRdRUY+T6YpOjNcrV7yYZCepY@vger.kernel.org
-X-Received: by 2002:a17:907:7f26:b0:afe:ea46:e808 with SMTP id
- a640c23a62f3a-afeea4747aemr33407866b.47.1756349770127; Wed, 27 Aug 2025
- 19:56:10 -0700 (PDT)
+	s=arc-20240116; t=1756349778; c=relaxed/simple;
+	bh=VeENKAYZM/UVp+O/FDrwaag9F77aNhuhzYJ5z3hgnK0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=d3UlGuYsWDKoaVC38KrImKOay9s8C32RdSV1uhsUwck51MxiMFYNSKVDjX/zCVYea4HDO89ahC14gme88TnApDZwJ9AH+im6bq3ClbU+eMLoUQg/57vZTcWi8AS/RnoUHLEiWpQzMXPaV1QdcjDu0dBkRaaq5gj9d1rnZjBh0x0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com; spf=pass smtp.mailfrom=mucse.com; arc=none smtp.client-ip=54.254.200.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mucse.com
+X-QQ-mid: esmtpgz16t1756349758tb611abc5
+X-QQ-Originating-IP: aL4MtiQuI1SdtEOC8fLpKCATwptjBpuAzJkdPwOu7aE=
+Received: from localhost.localdomain ( [203.174.112.180])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Thu, 28 Aug 2025 10:55:55 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 12824084307090948245
+EX-QQ-RecipientCnt: 28
+From: Dong Yibo <dong100@mucse.com>
+To: andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	horms@kernel.org,
+	corbet@lwn.net,
+	gur.stavi@huawei.com,
+	maddy@linux.ibm.com,
+	mpe@ellerman.id.au,
+	danishanwar@ti.com,
+	lee@trager.us,
+	gongfan1@huawei.com,
+	lorenzo@kernel.org,
+	geert+renesas@glider.be,
+	Parthiban.Veerasooran@microchip.com,
+	lukas.bulwahn@redhat.com,
+	alexanderduyck@fb.com,
+	richardcochran@gmail.com,
+	kees@kernel.org,
+	gustavoars@kernel.org,
+	rdunlap@infradead.org,
+	vadim.fedorenko@linux.dev
+Cc: netdev@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org,
+	dong100@mucse.com
+Subject: [PATCH net-next v9 0/5] Add driver for 1Gbe network chips from MUCSE
+Date: Thu, 28 Aug 2025 10:55:42 +0800
+Message-Id: <20250828025547.568563-1-dong100@mucse.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250823-apple-dt-sync-6-17-v2-0-6dc0daeb4786@jannau.net>
-In-Reply-To: <20250823-apple-dt-sync-6-17-v2-0-6dc0daeb4786@jannau.net>
-From: Neal Gompa <neal@gompa.dev>
-Date: Wed, 27 Aug 2025 22:55:33 -0400
-X-Gmail-Original-Message-ID: <CAEg-Je9WSJ_eyuKfZejCNCdN5g-V-7_VSW=NY=Sxc4jCJfDcJA@mail.gmail.com>
-X-Gm-Features: Ac12FXybLNW3dXUB-nTs8fEB4lNe9ODNBHdvueiT250V7fxKSinYXBh99Kd-hDc
-Message-ID: <CAEg-Je9WSJ_eyuKfZejCNCdN5g-V-7_VSW=NY=Sxc4jCJfDcJA@mail.gmail.com>
-Subject: Re: [PATCH v2 0/5] Apple device tree sync from downstream kernel
-To: Janne Grunau <j@jannau.net>
-Cc: Sven Peter <sven@kernel.org>, Alyssa Rosenzweig <alyssa@rosenzweig.io>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Mark Kettenis <kettenis@openbsd.org>, Hector Martin <marcan@marcan.st>, asahi@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: esmtpgz:mucse.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: N879q09ZcJuCn71ZUSvp0SRcwQMWWflhG5H7hq2/tabDdfTAPe4S0o3v
+	8EH5VXjx9Af/H9xQO3M7ajfVcT+MqlCpNzd5sgTOozMVMPlJ4obIJikIRkhf+rv9ZxWGr9H
+	pjOMKB8OjypHI7PvxY//B5gWLu0ueOZYLGfhXU/qUKMmn4yYHu5fTgGJHTeb3IwCb9QZK4Z
+	V7NgjtOzefhLl1ydDEIuipKjjQ8gnMKKis5ODifyHJMFOVwgcUwfHbOAtbKyZ+wC462HaQQ
+	ukQ/Yi+PjMXBN5ZWGgykRQcvgokez8V/Pm8lW9AfdRK4zi+y3Kp9l5oKBUzu58/UbThS5+Z
+	mU/NBTY14jZKEYdc1lJjda7j/slS7fKETHkw7HGVuNRHLKmIM/TUS8zdBQNQCV9nUr6ptOe
+	L+OQwjUqApJKtfTBDyAIva0G/jMdb/JTnBlqOSsrmL9NzlSklcOvSNfHeSqxAvhyAvDzNme
+	R19+Ypgr+dnONlDaAXPAlea8HJda4cmPuTb7PP/3fAN/+EnnY9ElWMXndbYcviKIeSIenSP
+	jH3+w5HyzKWwDa4+BfnDicfbUnVYjfd630Z6Q7+mgfuBv6S9STmNKEXKvBPGfh3ViTZC/AL
+	cUpACKJXXnZGOOeC5zfIe+OJVvXOqQBgpKkK2NIZGc9tPGnOfWsTT10Wu/yzVU7mQ8zA9b4
+	uURfRTB5pWvRoO7bg6MET6Z78iHgYKlDDjx1mvKKDwX0Z5dpxHNPm5Fwpt0slolOgs+sLtN
+	DuAct9j0N9zSBL/xCi9AIqdKBdypwEc8RSGQmbIMaSR3CRWsfJpCu6dg8q8goDQrPk2tZQn
+	5jYyaT3FBGu5Hnhy/7ZmN6bcIWEZvvr3tN3J4pIomEbBjy5GyWHZqWA5aUHyNgT6aOOceG7
+	Htwt3t+Bco6yvcEb9YK3MiNQK9lcrjgVJb+EptEhJmiOCB2GRgWBgVaP735xn6UNG1iuYdE
+	39WK2mO1AKEt5LTWJlfHIoayG3dJ38zUQFu/r6ZRb3iq/h6bCYCEmee4krN/MWASCeT+PAU
+	nR7f8SugGCElIF7VeI+v1xYqfN2cuacfOmt+W2T++MTG29C6IW
+X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
+X-QQ-RECHKSPAM: 0
 
-On Sat, Aug 23, 2025 at 5:49=E2=80=AFAM Janne Grunau <j@jannau.net> wrote:
->
-> This series pulls changes from the downstream device trees which are
-> supported in upstream kernel.
-> Most importantly it fixes the PCIe description for a specific iMac model
-> (iMac M1, 2 USB-C ports, 2021). This is worked around in the downstream
-> kernel by not disabling the port. In preparation for submitting M2
-> Pro/Max/Ultra devices trees I investigated the issue on the similarly
-> affected M2 Pro Mac mini and fixed it this way.
-> It completes the Wlan/BT device nodes for t600x based devices and adds
-> the missing 15-inch Macbook Air (M2, 2023).
->
-> Checkpatch emits following warnings:
->
-> WARNING: DT compatible string vendor "pci14e4" appears un-documented --
-> check ./Documentation/devicetree/bindings/vendor-prefixes.yaml
->
-> Which I chose to ignore. `vendor-prefixes.yaml` prefixes contains no
-> other mapping for PCI vendor code and the list of ignored prefixes
-> forbids extending it. Both options feel wrong though. "pci${vendor}" is
-> clearly a vendor prefix but duplicating the PCI vendor data base feels
-> wrong. `vendor-prefixes.yaml` currently does not contain and PCI vendor
-> aliases.
->
-> Signed-off-by: Janne Grunau <j@jannau.net>
-> ---
-> Changes in v2:
-> - fixed commit subject of PATCH 2/5
-> - correct Macbook Pro (15-inch, M2) to Macbook Air
-> - added Neal's and Sven's Rb: tags
-> - Link to v1: https://lore.kernel.org/r/20250813-apple-dt-sync-6-17-v1-0-=
-209f15d10aa0@jannau.net
->
-> ---
-> Hector Martin (2):
->       arm64: dts: apple: t600x: Add missing WiFi properties
->       arm64: dts: apple: t600x: Add bluetooth device nodes
->
-> Janne Grunau (3):
->       arm64: dts: apple: t8103-j457: Fix PCIe ethernet iommu-map
->       dt-bindings: arm: apple: Add t8112 j415 compatible
->       arm64: dts: apple: Add devicetreee for t8112-j415
->
->  Documentation/devicetree/bindings/arm/apple.yaml |  2 +
->  arch/arm64/boot/dts/apple/Makefile               |  1 +
->  arch/arm64/boot/dts/apple/t6000-j314s.dts        |  8 +++
->  arch/arm64/boot/dts/apple/t6000-j316s.dts        |  8 +++
->  arch/arm64/boot/dts/apple/t6001-j314c.dts        |  8 +++
->  arch/arm64/boot/dts/apple/t6001-j316c.dts        |  8 +++
->  arch/arm64/boot/dts/apple/t6001-j375c.dts        |  8 +++
->  arch/arm64/boot/dts/apple/t6002-j375d.dts        |  8 +++
->  arch/arm64/boot/dts/apple/t600x-j314-j316.dtsi   | 10 +++
->  arch/arm64/boot/dts/apple/t600x-j375.dtsi        | 10 +++
->  arch/arm64/boot/dts/apple/t8103-j457.dts         | 12 +++-
->  arch/arm64/boot/dts/apple/t8112-j415.dts         | 80 ++++++++++++++++++=
-++++++
->  12 files changed, 161 insertions(+), 2 deletions(-)
-> ---
-> base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
-> change-id: 20250813-apple-dt-sync-6-17-d1fc1c89f7ca
->
+Hi maintainers,
 
-LGTM.
+This patch series is v9 to introduce support for MUCSE N500/N210 1Gbps
+Ethernet controllers. I divide codes into multiple series, this is the
+first one which only register netdev without true tx/rx functions.
 
-Reviewed-by: Neal Gompa <neal@gompa.dev>
+Changelog:
+v8 -> v9:
+1. update function description format '@return' to 'Return' 
+2. update 'negative on failure' to 'negative errno on failure'
 
+links:
+v8: https://lore.kernel.org/netdev/20250827034509.501980-1-dong100@mucse.com/
+v7: https://lore.kernel.org/netdev/20250822023453.1910972-1-dong100@mucse.com
+v6: https://lore.kernel.org/netdev/20250820092154.1643120-1-dong100@mucse.com/
+v5: https://lore.kernel.org/netdev/20250818112856.1446278-1-dong100@mucse.com/
+v4: https://lore.kernel.org/netdev/20250814073855.1060601-1-dong100@mucse.com/
+v3: https://lore.kernel.org/netdev/20250812093937.882045-1-dong100@mucse.com/
+v2: https://lore.kernel.org/netdev/20250721113238.18615-1-dong100@mucse.com/
+v1: https://lore.kernel.org/netdev/20250703014859.210110-1-dong100@mucse.com/
 
---=20
-=E7=9C=9F=E5=AE=9F=E3=81=AF=E3=81=84=E3=81=A4=E3=82=82=E4=B8=80=E3=81=A4=EF=
-=BC=81/ Always, there's only one truth!
+Dong Yibo (5):
+  net: rnpgbe: Add build support for rnpgbe
+  net: rnpgbe: Add n500/n210 chip support
+  net: rnpgbe: Add basic mbx ops support
+  net: rnpgbe: Add basic mbx_fw support
+  net: rnpgbe: Add register_netdev
+
+ .../device_drivers/ethernet/index.rst         |   1 +
+ .../device_drivers/ethernet/mucse/rnpgbe.rst  |  21 +
+ MAINTAINERS                                   |   8 +
+ drivers/net/ethernet/Kconfig                  |   1 +
+ drivers/net/ethernet/Makefile                 |   1 +
+ drivers/net/ethernet/mucse/Kconfig            |  34 ++
+ drivers/net/ethernet/mucse/Makefile           |   7 +
+ drivers/net/ethernet/mucse/rnpgbe/Makefile    |  11 +
+ drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h    |  98 +++++
+ .../net/ethernet/mucse/rnpgbe/rnpgbe_chip.c   | 153 +++++++
+ drivers/net/ethernet/mucse/rnpgbe/rnpgbe_hw.h |  18 +
+ .../net/ethernet/mucse/rnpgbe/rnpgbe_main.c   | 286 +++++++++++++
+ .../net/ethernet/mucse/rnpgbe/rnpgbe_mbx.c    | 393 ++++++++++++++++++
+ .../net/ethernet/mucse/rnpgbe/rnpgbe_mbx.h    |  25 ++
+ .../net/ethernet/mucse/rnpgbe/rnpgbe_mbx_fw.c | 253 +++++++++++
+ .../net/ethernet/mucse/rnpgbe/rnpgbe_mbx_fw.h | 126 ++++++
+ 16 files changed, 1436 insertions(+)
+ create mode 100644 Documentation/networking/device_drivers/ethernet/mucse/rnpgbe.rst
+ create mode 100644 drivers/net/ethernet/mucse/Kconfig
+ create mode 100644 drivers/net/ethernet/mucse/Makefile
+ create mode 100644 drivers/net/ethernet/mucse/rnpgbe/Makefile
+ create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h
+ create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe_chip.c
+ create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe_hw.h
+ create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe_main.c
+ create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe_mbx.c
+ create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe_mbx.h
+ create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe_mbx_fw.c
+ create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe_mbx_fw.h
+
+-- 
+2.25.1
+
 
