@@ -1,95 +1,78 @@
-Return-Path: <linux-kernel+bounces-789843-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3561B39B6E
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 13:23:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8432B39B77
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 13:25:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E3623B544A
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 11:23:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED6C11C231D0
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 11:25:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEBA730E0C5;
-	Thu, 28 Aug 2025 11:22:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A1A330E0C5;
+	Thu, 28 Aug 2025 11:25:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qt1kh0yC"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=siemens.com header.i=huaqian.li@siemens.com header.b="ppUKXa/S"
+Received: from mta-64-227.siemens.flowmailer.net (mta-64-227.siemens.flowmailer.net [185.136.64.227])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBE97244691;
-	Thu, 28 Aug 2025 11:22:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D619273D6F
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 11:25:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.64.227
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756380178; cv=none; b=ZivJeGmrCOM0Jeq3YSaM4BtwWLdaxw/N1JJc6VLt20YI1S2NxgTMwX1+awKwN9rG1GXsnPJmOr/HIZtTbDLWUt13Je7sDT5cDz3MPEDixv/Jmz5FZeqmSqILeIYizzoRa0vngh+ljeN9m7KF3HMSPkNOciT6gOopv7Wlg4tyEW0=
+	t=1756380309; cv=none; b=cTX0Gb3z+EEV9LSexmxgwePIKDftHJYuCXheyhAYjgZc0puPKHF10bpqGanSM9625JysTQLYzxDeZZ8YlXgeX2NLN9/Iwk45oLxTytynkCZnenDzN9ggjT6tSnO8kpkZIVzmSAoEgWlEZrQhUEmV1nUie/sFquGaTcNPhEtzeIY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756380178; c=relaxed/simple;
-	bh=fvV1/34M0q/gAMQ253l/U84MmKBcsMJLgosMs2oZQgk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=d/iv61m2I+TkmV3UGbPnvSUt7w3+7WzfeYdAba8KFn5cWOVI9wr4IIPQVNRaeXjmXkCdunDpvcn96vtvtPcXuXzxvMaGw6UNI48TUZKxO3pGKU36xrRMo2+3vvuwCF5/455Maka4GaaFr0SnffQ97nMPjxzmBNdlbqVnmZSnkXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Qt1kh0yC; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2445824dc27so7139685ad.3;
-        Thu, 28 Aug 2025 04:22:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756380176; x=1756984976; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=PxeMfx1+uNFbtk5b+iMV6QezPtIYzUJuvmOTjg2DLuM=;
-        b=Qt1kh0yC0vw6jItCiCV9czAn4OxUuWnFj4N5JpMiJpbj0sAgDXYu9+mGe9LHRkJgQ2
-         lvZgeAvisXSaBFB8tM7pgmQ9knbZrvAs1ypnG0yKEJMa+/GFNvUJGJGpcQBKojNLE43Y
-         nofVOyfUHq/piwG50hZBRXhgxVvGSzAYxDTTrRD5oUmaxs6tNcc64V8TU2qYtcDlhNNc
-         qz8dL8THwnv9/3rW4mXFPJNUFZTGohLW/tcUISN/WWEazQil38RnyPNnjLKksr/sgrY7
-         78QjKisVDqJzF+P9oHKCkGI2uY5IBR/MF5O/z6bqlkE0fDF8B3ESYE7sim7GSMTIxe2R
-         I/xw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756380176; x=1756984976;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=PxeMfx1+uNFbtk5b+iMV6QezPtIYzUJuvmOTjg2DLuM=;
-        b=UhrpCDLqTJpaX+ZgWymxslGSr3gR0ni8s/LQ3VeLWsQ4yB05xDeWUAV8HD4/K8VIou
-         AX9/ozU0UK/04U7sQX4uu+3pxsZgsTmaJdeoo4VEKj/mpDa2HRkmJoeHQGZjmblpvv2g
-         yAUHPtXc3K5+S0zIjdq6kGkiWxZ7+Z3Z7SQ7m5pDDL7Zwv+gatdBEviR0DklS8pNl/Ub
-         +W/k6F+fC6nHbkDv/WOjNaJKkwyWExPH+nLwdaFFm98bx1wUmDO4+P3iXwuGGmP5ClXy
-         mWKKM0kuoZoeFvzUrPG6/9O2VnVihVnODP+mM3bfw7DQPLs0UPJdG07rJNqRpDujCUvX
-         NTug==
-X-Forwarded-Encrypted: i=1; AJvYcCVBr6DgtmPWhbHdXj1CTfsfzvvVa7zCOMkysAvIGKps70G1JpgfNQ84fZBFQk18pLfRJRsskyE3@vger.kernel.org, AJvYcCWjwRlTwc6k3+H0LcjOisJarhehSPWbV54Q8Ywso8f5Pwa/TvaDs+rImEa64V3oaMVBQco=@vger.kernel.org, AJvYcCWpp76uyiENM6t509yPUC4nYseUZ6HPpuqVS8qHRrf/tNGJXbG3FSPx2lOTDWswoN+6AwjvMbFQOCq28w==@vger.kernel.org, AJvYcCXvR08hnM5jb73cboeoRv3nPFY2gooM0MZ43wqjSz1tZdD4IAkU8nH6IxHNpRS+TWsGiAjOcbSbrcLx/Jfr@vger.kernel.org
-X-Gm-Message-State: AOJu0YxmBuF3KO703f2KJGAixIW9chkaVIDaiUN9kAQhX94s/89Z0By4
-	zAJOg+f0i/sJDg7sAlUFbbgrBl93iIRMypC6fPHDQP3Sxibthimb77h8
-X-Gm-Gg: ASbGnctIbRq63VKxrki0H2ekp3f9sZWXOkSfjRliJprT2aLr+aJzLLgvKurDXGtIONB
-	uEWNkK5Km95fg8FJg8w38c5suHJkt5dzJdYjYCR7PcI/R5teEfo37ZSI2FOTrakuhdfOKZOBarj
-	8jKzy8rRZOs/19a6JuJmhgKUHMafqWYNIpnpueG3R9qJSvhfBvcr/04nvxw9JugdPEElxXNAgGH
-	c3C0ninF2lxFh2HEcXQzYiR0/+m6wRFiz8B+x66tsC2UV9TDuAilcPd7K2PprsgeC8MZ93efgkA
-	0ErCp4R8cTXCH7aTS+WPv3IbwDxTCoeSihffMdJmqZIJJMtn3PMqptDe94Uj4/BVMsluBt4KxVL
-	ULx8SUg2o3SOuI0sAHUWAgL01UTTVqUbSVhUOP81kjnsqsxFzbeRRyTWUH0wroIXvTj973noUxM
-	kyGr8Ipy/XHA9DbEZgN5wvOQ==
-X-Google-Smtp-Source: AGHT+IHQiVu4toyB2lDInXoaA+fupYv0LkXXDoJV5p3MjYWV2/Hw1sV5uJxKSw9UtwpQSAHlRTlqsQ==
-X-Received: by 2002:a17:902:fd0e:b0:242:accd:bbe8 with SMTP id d9443c01a7336-2462ef4ca76mr245371675ad.36.1756380175971;
-        Thu, 28 Aug 2025 04:22:55 -0700 (PDT)
-Received: from localhost.localdomain ([112.97.57.188])
-        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-3276f57ab3esm4952547a91.3.2025.08.28.04.22.48
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Thu, 28 Aug 2025 04:22:55 -0700 (PDT)
-From: Miaoqian Lin <linmq006@gmail.com>
-To: Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Hanjun Guo <guohanjun@huawei.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>,
-	Joerg Roedel <jroedel@suse.de>,
-	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
-	Robin Murphy <robin.murphy@arm.com>,
-	linux-acpi@vger.kernel.org,
+	s=arc-20240116; t=1756380309; c=relaxed/simple;
+	bh=gAeJYPiWvvW/0IyRkIBxLQARRkyu4B4Y9YGUAn6QIxg=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=S9HCxlA+o2OQ9MTODpzaE2YwFnb/2okQtXpIwB2OoptmlCH+IYiIiveHPnSiMv8PEcINseNQV11NSL/c0wT1jBL5kx+VjKGghM4qPhC+P6/9vhn8S9KMq+a1SoWRU9FyJxkDmUdRq/2XdRukN0ZbY9m0Jwh2AmHoI1ILvwGMqic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=huaqian.li@siemens.com header.b=ppUKXa/S; arc=none smtp.client-ip=185.136.64.227
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
+Received: by mta-64-227.siemens.flowmailer.net with ESMTPSA id 20250828112457fa5f912bff00020782
+        for <linux-kernel@vger.kernel.org>;
+        Thu, 28 Aug 2025 13:24:57 +0200
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
+ d=siemens.com; i=huaqian.li@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc:References:In-Reply-To;
+ bh=gAeJYPiWvvW/0IyRkIBxLQARRkyu4B4Y9YGUAn6QIxg=;
+ b=ppUKXa/SF25VHu0ObymsZkYC4YZ2jSnCePYE5s6U+rMfKnDLC/YmU0oyNMgEjnmnT+EFvm
+ aCqIHHmfIbxEyZqMamA1nVx7Pc0PaSQmO+/9eXxjR8WkNbsyeAKvxFWXKahghSXQGpL6lH1F
+ DUGQx6hvEl3TXnBrOm+Y5NcvyAdE1PWTkM8ibq+JL2GRJrJwbINYH2fCSkWDX1UjqDu2IwA0
+ IeURwhammbS8kR9Zq2xaBEohFhVgfcQdivDLS+xNUo7wbiFn/z0uD5lEafZ/R/zWwPmvrC/n
+ mPxk7yqSx2nGy1bmyp7LIzONckMdbUy7qfiNaBXUZaFFqXXnXN0inu/g==;
+From: huaqian.li@siemens.com
+To: mani@kernel.org,
+	arnd@arndb.de
+Cc: baocheng.su@siemens.com,
+	bhelgaas@google.com,
+	christophe.jaillet@wanadoo.fr,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	diogo.ivo@siemens.com,
+	helgaas@kernel.org,
+	huaqian.li@siemens.com,
+	jan.kiszka@siemens.com,
+	kristo@kernel.org,
+	krzk+dt@kernel.org,
+	kw@linux.com,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org
-Cc: linmq006@gmail.com,
-	stable@vger.kernel.org
-Subject: [PATCH] ACPI/IORT: Fix memory leak in iort_rmr_alloc_sids()
-Date: Thu, 28 Aug 2025 19:22:43 +0800
-Message-Id: <20250828112243.61460-1-linmq006@gmail.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+	linux-pci@vger.kernel.org,
+	lkp@intel.com,
+	lpieralisi@kernel.org,
+	nm@ti.com,
+	oe-kbuild-all@lists.linux.dev,
+	robh@kernel.org,
+	s-vadapalli@ti.com,
+	ssantosh@kernel.org,
+	vigneshr@ti.com
+Subject: Re: [PATCH v12 0/7] soc: ti: Add and use PVU on K3-AM65 for DMA
+Date: Thu, 28 Aug 2025 19:24:34 +0800
+Message-Id: <20250828112434.2310936-1-huaqian.li@siemens.com>
+In-Reply-To: <yhbjfg7dqx3xud75rhwlhq7ayqa4d6wrsan2j7ki7ri3uynpeu@hdv2o33x4hdn>
+References: <yhbjfg7dqx3xud75rhwlhq7ayqa4d6wrsan2j7ki7ri3uynpeu@hdv2o33x4hdn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,39 +80,25 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-959203:519-21489:flowmailer
 
-If krealloc_array() fails in iort_rmr_alloc_sids(), the function returns
-NULL but does not free the original 'sids' allocation. This results in a
-memory leak since the caller overwrites the original pointer with the
-NULL return value.
+Hi Mani,
 
-Fixes: 491cf4a6735a ("ACPI/IORT: Add support to retrieve IORT RMR reserved regions")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
----
-This follows the same pattern as the fix in commit 06615967d488
-("bpf, verifier: Fix memory leak in array reallocation for stack state").
----
- drivers/acpi/arm64/iort.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Thanks for your offer to help with the patch series. Yes, let's proceed
+with splitting the submission:
 
-diff --git a/drivers/acpi/arm64/iort.c b/drivers/acpi/arm64/iort.c
-index 98759d6199d3..65f0f56ad753 100644
---- a/drivers/acpi/arm64/iort.c
-+++ b/drivers/acpi/arm64/iort.c
-@@ -937,8 +937,10 @@ static u32 *iort_rmr_alloc_sids(u32 *sids, u32 count, u32 id_start,
- 
- 	new_sids = krealloc_array(sids, count + new_count,
- 				  sizeof(*new_sids), GFP_KERNEL);
--	if (!new_sids)
-+	if (!new_sids) {
-+		kfree(sids);
- 		return NULL;
-+	}
- 
- 	for (i = count; i < total_count; i++)
- 		new_sids[i] = id_start++;
--- 
-2.39.5 (Apple Git-154)
+Please go ahead and take the dt-bindings through the PCI tree. That would
+be helpful to get them established early.
+
+Hi Arnd,
+
+Could you please take care of the driver code with the cross-dependencies
+through the arm-soc tree? The PCI controller driver has the API dependency
+with the SoC driver as Mani pointed out. Could you let me know which specific
+components of the series you would be willing to take?
+
+Best Regards,
+Li Hua Qian
 
 
