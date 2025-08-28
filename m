@@ -1,206 +1,209 @@
-Return-Path: <linux-kernel+bounces-789398-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2EFAB394ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 09:19:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56CE9B394F5
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 09:20:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2EFA61895F02
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 07:20:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE6063A227E
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 07:20:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 455322E0B5D;
-	Thu, 28 Aug 2025 07:18:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DE8C2EACEF;
+	Thu, 28 Aug 2025 07:19:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Joedf28s"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XHhPfr6w"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E3E42DCF4D;
-	Thu, 28 Aug 2025 07:18:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8420C2D640E;
+	Thu, 28 Aug 2025 07:19:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756365535; cv=none; b=uLfLQZwW0bNd2Zw90eRt+5RGUAQzPfGSZVjn2RkQINEYbsEdtbUudbPFOpQ6tkr9nhvf6s48r8lbaBXOb8JzK/OvmEY2bcttouWteeRd78Ht3OIBo7Aympz1bnFpAUpbanpJL9L+ngOVufHTn38okqPSiTtlGlhIag8eqRWHr1U=
+	t=1756365540; cv=none; b=fWAdh/kQZkLb/CILyrFFeP8dAQRza6TwM1Gm/jqkFK6WJ3cktB0HTPhoKu+5KXyH00HDC4GgGDX85vuVICcPiaKozmKbehcDtErMMSN/uZcY2q44pbd3ZMQ5+/1vWy8beTNFYBRZVT9Deo4KrXi5EeJ90Na/YiJuB3OmCHkscro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756365535; c=relaxed/simple;
-	bh=RLiNIIZsDGQt0B7qhXbwVc0kC0z981GdJgTavaVVo+U=;
+	s=arc-20240116; t=1756365540; c=relaxed/simple;
+	bh=zfz+QHV4zEPWS1bSGkbWjz8xGBzvSXS3sMBjjUuLtQw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pPMCurDfcsANH35QmR6eeVJnkKCFzdmBmMnE6i1xTIOtEnQLxIYSu7Ph+m3lWbbkA6lbi94SHiXyJvKrf70Eo7RmCss9VGeuVKhvK0dj3QScxxGb6UP4ew2TZTqhblYDF+TdA8aPdRecYFM+rGXNIEydYhwrcH7q1otgwI9boG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Joedf28s; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-afe9f6caf9eso87484066b.3;
-        Thu, 28 Aug 2025 00:18:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756365532; x=1756970332; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ACPidqQG6DQZNVxh12NaJPKP3Jkf06hyqyPjQ1p5F2E=;
-        b=Joedf28s79TmVflu0u9ETaRtcuAFlF1Q+cRkj0AoHTEbZRc9ov+0LbwWVeBAOSwM5F
-         9se5m/hnaH2x9U9mqdgE1yd5LsJv+u+CbNQ1vyDpUOv4Sxm9oBRTEhDgF7ojkoYgmqJI
-         Y+SYq6V0dueE4LmZ6hHjIMNaKrWG5O8L9dHNl5Abc9vZo3kIWwP1KgyG3SwielmoovyI
-         04xgZFJ3k7phq4cCj4+/Bh/1W9xQExRwrMWhGVQQ4Y3kzygOA3KtT/uESQQs997Dil2z
-         b1DUNkXQZ6WUjeRA6av4rhkRQhoIfBHuMVhVo2zPjT/ORNlCvwABaWjy6/Iedzdn4eJh
-         AJHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756365532; x=1756970332;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=ACPidqQG6DQZNVxh12NaJPKP3Jkf06hyqyPjQ1p5F2E=;
-        b=h7nRzuuMPqBM56Qor/d+U1MMwfU5rv2tNgKuU9BK3rrxOlM5k2dabPmNeeMyegNLXD
-         nOQl6Z6SghPGx9aibPNrqLQmcMNbs6B1vFUsVYLpoXhYwTqar3co2m0dZRu2mSY5ZJhn
-         datmC1JW7ctj+YfFezmbdMkrpNneqVI8bMbCo90t7qa25lGqFxw2YCbQu109y+ydKxP5
-         9oY4/cdVDDp+A34vqW3ddUkMwQKlZKbBfSXw8fBsrQnMSxciEwbnlqNDsORLjeWbrNGc
-         dIyNuxvTeCn5PC2zO2wsZMywBgr5qIuVePxVvBhYw+bp6WttNkOu4mAqzOaJEPLjm3PG
-         NbDw==
-X-Forwarded-Encrypted: i=1; AJvYcCUFLN461B7xX+aGitmy9WuYcSo7gPHYEzT2DSG5gglyYOoornH5S9jAsfDLGEfxq3qw2+r3FIozvAzV@vger.kernel.org, AJvYcCUdbarWq6z1eY1kJQIoM5C1kQSDv/wb0uM58WBskTOg06IFI+8J/aFXU7l3nbGo2i7UMS5E/+9UjqQH9g==@vger.kernel.org, AJvYcCV1abVnSk19u44tjzQ71TeWBmJWURclSiy/bflMR5w7t05I9fdxgKxMhMAC+90qH4owxtay@vger.kernel.org, AJvYcCVx+GXCKhwSoRFUJ4IJmArkRt4jegWeCNwvynGvLXD4/O2WhsW9GYLVGc4CvhqvDvSXIehBBC3G3A==@vger.kernel.org, AJvYcCW3xnuW0hj/5HKEs9PIkTmRIuW/vRZFT7hfhQO9Nv92f0BbFQnAYs4R41IMiTfRmGNk7/tA4NkXQqPfvQ==@vger.kernel.org, AJvYcCW91AEe/r8hDSUDTfmZBb1y3+17At/zKPFo/16Rj5EYcce6zZSkf/qlPtgP8afOuoJH1WzJ+U5SmL8P642z@vger.kernel.org, AJvYcCWRvh/RpFcSW4JMJ0y+aVIPjL22p5Jru5cgB84sewQV7SE9m/LPzjVntn07+gDDpyCFRycqbo5Y@vger.kernel.org, AJvYcCX+DNv7A5c4yvLXTsQsHhsrzwqhFvfHO5R4pEpqnjdcqCp1rKDj6EEyw/dqLmNykfObkJdasZFkM5L3mA==@vger.kernel.org, AJvYcCXiFjJCEUpPrjBN6ZReHRdoDObDbhKMzVMNpbqhu+d6eEfCk4zr8Vc36gyOka4DwhyHsAzCGXFUcJAJNVzJWNmO@vger.kernel.org, AJvYcCXjJPPIj10LXuqzOAvGWKQ86mQMCWuiJ/q2
- IXdTYYuXFtYzlaUPvsWbD5ez4MpKVA/U3VYUAdyhbRlA@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz2F96dDb9eVMlmDVaQA5HMcDPai70QF1BoTLh8OJ6kR96Fy2/I
-	x26FUYqT5HOOD1MUZkx6z/v9eGljUAVxV0S25pntRAKPxNQVqfelRtZz
-X-Gm-Gg: ASbGncuC4y3Zz4kTEt0Yv820rsqQxg96Tjaz12Ob+EaBF0HrYNOZke8/q8ToDkekLlm
-	LSGO1vBUGpOv/8YMgwG4OQ18cKdTLWYflSwH3UBCoxfACmIo9iraP+6EL8pxaLF21ybYRzH44XA
-	bLifwbx9AEofNbbYu4+KqGmJDUTh+mhRPhZWPxYvjR8iV/YwsZmwED8O9GVwZ/sELvA5YyoX8B3
-	kofM37I/JO8oZPRhGLL6+F4h6yCoJXRTXgJkvUNwwarOau1A4KNLoYR+KKU2YA7dsDf+5264WLY
-	fMCCyMAXdkatmAHw8tyBge03VNz/kkgCX2EfqynqrRgvOGBWJ8iYB6rLQoh1ksrE0TZNylrhfRl
-	g9pYjVvHTnaNZ/Ub9EGnb1T58H5Uav+42lWR1
-X-Google-Smtp-Source: AGHT+IEf18QCG44U8jBJ4evHstdtd0oL4Hr6BpN08BPT0cHmsLXVki3gbBRZpXohq9eRx3IUTA8+0Q==
-X-Received: by 2002:a17:907:d2a:b0:afe:dbfb:b10e with SMTP id a640c23a62f3a-afedbfbb935mr140730666b.47.1756365531421;
-        Thu, 28 Aug 2025 00:18:51 -0700 (PDT)
-Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afe98ade972sm616427066b.50.2025.08.28.00.18.50
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 28 Aug 2025 00:18:50 -0700 (PDT)
-Date: Thu, 28 Aug 2025 07:18:50 +0000
-From: Wei Yang <richard.weiyang@gmail.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Zi Yan <ziy@nvidia.com>,
-	"Mike Rapoport (Microsoft)" <rppt@kernel.org>,
-	SeongJae Park <sj@kernel.org>, Huacai Chen <chenhuacai@kernel.org>,
-	WANG Xuerui <kernel@xen0n.name>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	"David S. Miller" <davem@davemloft.net>,
-	Andreas Larsson <andreas@gaisler.com>,
-	Alexander Potapenko <glider@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Brendan Jackman <jackmanb@google.com>,
-	Christoph Lameter <cl@gentwo.org>, Dennis Zhou <dennis@kernel.org>,
-	Dmitry Vyukov <dvyukov@google.com>, dri-devel@lists.freedesktop.org,
-	intel-gfx@lists.freedesktop.org, iommu@lists.linux.dev,
-	io-uring@vger.kernel.org, Jason Gunthorpe <jgg@nvidia.com>,
-	Jens Axboe <axboe@kernel.dk>, Johannes Weiner <hannes@cmpxchg.org>,
-	John Hubbard <jhubbard@nvidia.com>, kasan-dev@googlegroups.com,
-	kvm@vger.kernel.org, "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-arm-kernel@axis.com, linux-arm-kernel@lists.infradead.org,
-	linux-crypto@vger.kernel.org, linux-ide@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-mips@vger.kernel.org,
-	linux-mmc@vger.kernel.org, linux-mm@kvack.org,
-	linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
-	linux-scsi@vger.kernel.org,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Marco Elver <elver@google.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Michal Hocko <mhocko@suse.com>, Muchun Song <muchun.song@linux.dev>,
-	netdev@vger.kernel.org, Oscar Salvador <osalvador@suse.de>,
-	Peter Xu <peterx@redhat.com>, Robin Murphy <robin.murphy@arm.com>,
-	Suren Baghdasaryan <surenb@google.com>, Tejun Heo <tj@kernel.org>,
-	virtualization@lists.linux.dev, Vlastimil Babka <vbabka@suse.cz>,
-	wireguard@lists.zx2c4.com, x86@kernel.org
-Subject: Re: [PATCH v1 01/36] mm: stop making SPARSEMEM_VMEMMAP
- user-selectable
-Message-ID: <20250828071850.kl7clyh6e75horlk@master>
-Reply-To: Wei Yang <richard.weiyang@gmail.com>
-References: <20250827220141.262669-1-david@redhat.com>
- <20250827220141.262669-2-david@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z1z6oGZcHDwq9sJaGLtnMkvMuZgLFgbkUqVVvbMIMe1ntyozH8R+fTwhVSWleMWT3DplrqjNge8NS+zSs0bfRc2/R6Ljh0NcLI39uvvvhQrxmYKvjw5t5DyKl0WMyKMyXaFJ6xq/xPnI1xJmecHVN9mESNSYFPriCmvPTKE7IH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XHhPfr6w; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99F81C4CEEB;
+	Thu, 28 Aug 2025 07:18:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756365540;
+	bh=zfz+QHV4zEPWS1bSGkbWjz8xGBzvSXS3sMBjjUuLtQw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XHhPfr6wnryhYSLOLkCyHP3FgHuMnHxeQFCVu51hpNKHcNwAa9BTM7qlAWXDLclXr
+	 plu2InNTVd7CcR7MdFIZSGN0XFYfEKen9pv/VuJyn7KeClpCm44uRrZ7B/DQ+xwXBK
+	 ErWfkyvmd2AcOW3hzCTtWskEdqYTF+bFfLYgzA1ni4Fojo5E4m86FaZhn04cT3Sw5K
+	 8H33TwfCDQjNr9RaqxLqvFGq+JVHX6Yi++JhpSmXIeWOu9Q45u3f1Y31TlpQxto98C
+	 zzLL81fHyPI8FccN4BJe45zAP+wk5z84Xisoj8cWCjxUwFq9obOr+0EQAzMzo2PIv/
+	 XtnL3Wr+/y7iw==
+Date: Thu, 28 Aug 2025 00:18:58 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Zecheng Li <zecheng@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Xu Liu <xliuprof@google.com>, linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 02/10] perf dwarf-aux: More accurate variable type
+ match for breg
+Message-ID: <aLAC4pKRVyzFR8nZ@google.com>
+References: <20250825195412.223077-1-zecheng@google.com>
+ <20250825195412.223077-3-zecheng@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250827220141.262669-2-david@redhat.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20250825195412.223077-3-zecheng@google.com>
 
-On Thu, Aug 28, 2025 at 12:01:05AM +0200, David Hildenbrand wrote:
->In an ideal world, we wouldn't have to deal with SPARSEMEM without
->SPARSEMEM_VMEMMAP, but in particular for 32bit SPARSEMEM_VMEMMAP is
->considered too costly and consequently not supported.
->
->However, if an architecture does support SPARSEMEM with
->SPARSEMEM_VMEMMAP, let's forbid the user to disable VMEMMAP: just
->like we already do for arm64, s390 and x86.
->
->So if SPARSEMEM_VMEMMAP is supported, don't allow to use SPARSEMEM without
->SPARSEMEM_VMEMMAP.
->
->This implies that the option to not use SPARSEMEM_VMEMMAP will now be
->gone for loongarch, powerpc, riscv and sparc. All architectures only
->enable SPARSEMEM_VMEMMAP with 64bit support, so there should not really
->be a big downside to using the VMEMMAP (quite the contrary).
->
->This is a preparation for not supporting
->
->(1) folio sizes that exceed a single memory section
->(2) CMA allocations of non-contiguous page ranges
->
->in SPARSEMEM without SPARSEMEM_VMEMMAP configs, whereby we
->want to limit possible impact as much as possible (e.g., gigantic hugetlb
->page allocations suddenly fails).
->
->Acked-by: Zi Yan <ziy@nvidia.com>
->Acked-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
->Acked-by: SeongJae Park <sj@kernel.org>
->Cc: Huacai Chen <chenhuacai@kernel.org>
->Cc: WANG Xuerui <kernel@xen0n.name>
->Cc: Madhavan Srinivasan <maddy@linux.ibm.com>
->Cc: Michael Ellerman <mpe@ellerman.id.au>
->Cc: Nicholas Piggin <npiggin@gmail.com>
->Cc: Christophe Leroy <christophe.leroy@csgroup.eu>
->Cc: Paul Walmsley <paul.walmsley@sifive.com>
->Cc: Palmer Dabbelt <palmer@dabbelt.com>
->Cc: Albert Ou <aou@eecs.berkeley.edu>
->Cc: Alexandre Ghiti <alex@ghiti.fr>
->Cc: "David S. Miller" <davem@davemloft.net>
->Cc: Andreas Larsson <andreas@gaisler.com>
->Signed-off-by: David Hildenbrand <david@redhat.com>
-
-Reviewed-by: Wei Yang <richard.weiyang@gmail.com>
-
->---
-> mm/Kconfig | 3 +--
-> 1 file changed, 1 insertion(+), 2 deletions(-)
->
->diff --git a/mm/Kconfig b/mm/Kconfig
->index 4108bcd967848..330d0e698ef96 100644
->--- a/mm/Kconfig
->+++ b/mm/Kconfig
->@@ -439,9 +439,8 @@ config SPARSEMEM_VMEMMAP_ENABLE
-> 	bool
+On Mon, Aug 25, 2025 at 07:54:04PM +0000, Zecheng Li wrote:
+> Introduces the function is_breg_access_indirect to determine whether a
+> memory access involving a DW_OP_breg* operation refers to the variable's
+> value directly or requires dereferencing the variable's type as a
+> pointer based on the DWARF expression. Previously, all breg based
+> accesses were assumed to directly access the variable's value
+> (is_pointer = false).
 > 
-> config SPARSEMEM_VMEMMAP
->-	bool "Sparse Memory virtual memmap"
->+	def_bool y
-> 	depends on SPARSEMEM && SPARSEMEM_VMEMMAP_ENABLE
->-	default y
-> 	help
-> 	  SPARSEMEM_VMEMMAP uses a virtually mapped memmap to optimise
-> 	  pfn_to_page and page_to_pfn operations.  This is the most
->-- 
->2.50.1
->
+> The is_breg_access_indirect function handles three cases:
+> 
+> 1. Base register + offset only: (e.g., DW_OP_breg7 RSP+88) The
+>    calculated address is the location of the variable. The access is
+>    direct, so no type dereference is needed. Returns false.
 
--- 
-Wei Yang
-Help you, Help me
+I'm afraid there may be cases that the base register doesn't point to
+the stack.  In that case it may return true, right?
+
+I think struct find_var_data already has 'is_fbreg' field.  Maybe you
+can add 'is_stack' or 'is_stack_reg' field if the target.  Currently we
+hardcoded X86_REG_SP but it should be arch-dependent.
+
+> 
+> 2. Base register + offset, followed by other operations ending in
+>    DW_OP_stack_value, including DW_OP_deref: (e.g., DW_OP_breg*,
+>    DW_OP_deref, DW_OP_stack_value) The DWARF expression computes the
+>    variable's value, but that value requires a dereference. The memory
+>    access is fetching that value, so no type dereference is needed.
+>    Returns false.
+> 
+> 3. Base register + offset, followed only by DW_OP_stack_value: (e.g.,
+>    DW_OP_breg13 R13+256, DW_OP_stack_value) This indicates the value at
+>    the base + offset is the variable's value. Since this value is being
+>    used as an address in the memory access, the variable's type is
+>    treated as a pointer and requires a type dereference. Returns true.
+> 
+> The is_pointer argument passed to match_var_offset is now set by
+> is_breg_access_indirect for breg accesses.
+> 
+> There are more complex expressions that includes multiple operations and
+> may require additional handling, such as DW_OP_deref without a
+> DW_OP_stack_value, or including multiple base registers. They are less
+> common in the Linux kernel dwarf and are skipped in check_allowed_ops.
+> 
+> Signed-off-by: Zecheng Li <zecheng@google.com>
+> ---
+>  tools/perf/util/dwarf-aux.c | 38 ++++++++++++++++++++++++++++++++-----
+>  1 file changed, 33 insertions(+), 5 deletions(-)
+> 
+> diff --git a/tools/perf/util/dwarf-aux.c b/tools/perf/util/dwarf-aux.c
+> index 920054425578..449bc9ad7aff 100644
+> --- a/tools/perf/util/dwarf-aux.c
+> +++ b/tools/perf/util/dwarf-aux.c
+> @@ -1423,6 +1423,34 @@ static bool match_var_offset(Dwarf_Die *die_mem, struct find_var_data *data,
+>  	return true;
+>  }
+>  
+> +/**
+> + * is_breg_access_indirect - Check if breg based access implies type
+> + * dereference
+> + * @ops: DWARF operations array
+> + * @nops: Number of operations in @ops
+> + *
+> + * Returns true if the DWARF expression evaluates to the variable's
+> + * value, so the memory access on that register needs type dereference.
+> + * Returns false if the expression evaluates to the variable's address.
+> + * This is called after check_allowed_ops.
+> + */
+> +static bool is_breg_access_indirect(Dwarf_Op *ops, size_t nops)
+> +{
+> +	/* only the base register */
+> +	if (nops == 1)
+> +		return false;
+
+Then it could be like below:
+
+	if (nops == 1) {
+		int reg = reg_from_dwarf_op(ops);
+		return !(reg == DWARF_REG_FB || data->is_fbreg || reg == data->is_stack);
+	}
+
+Thanks,
+Namhyung
+
+> +
+> +	if (nops == 2 && ops[1].atom == DW_OP_stack_value)
+> +		return true;
+> +
+> +	if (nops == 3 && (ops[1].atom == DW_OP_deref ||
+> +		ops[1].atom == DW_OP_deref_size) &&
+> +		ops[2].atom == DW_OP_stack_value)
+> +		return false;
+> +	/* unreachable, OP not supported */
+> +	return false;
+> +}
+> +
+>  /* Only checks direct child DIEs in the given scope. */
+>  static int __die_find_var_reg_cb(Dwarf_Die *die_mem, void *arg)
+>  {
+> @@ -1451,7 +1479,7 @@ static int __die_find_var_reg_cb(Dwarf_Die *die_mem, void *arg)
+>  		if (data->is_fbreg && ops->atom == DW_OP_fbreg &&
+>  		    check_allowed_ops(ops, nops) &&
+>  		    match_var_offset(die_mem, data, data->offset, ops->number,
+> -				     /*is_pointer=*/false))
+> +				     is_breg_access_indirect(ops, nops)))
+>  			return DIE_FIND_CB_END;
+>  
+>  		/* Only match with a simple case */
+> @@ -1463,11 +1491,11 @@ static int __die_find_var_reg_cb(Dwarf_Die *die_mem, void *arg)
+>  					     /*is_pointer=*/true))
+>  				return DIE_FIND_CB_END;
+>  
+> -			/* Local variables accessed by a register + offset */
+> +			/* variables accessed by a register + offset */
+>  			if (ops->atom == (DW_OP_breg0 + data->reg) &&
+>  			    check_allowed_ops(ops, nops) &&
+>  			    match_var_offset(die_mem, data, data->offset, ops->number,
+> -					     /*is_pointer=*/false))
+> +					     is_breg_access_indirect(ops, nops)))
+>  				return DIE_FIND_CB_END;
+>  		} else {
+>  			/* pointer variables saved in a register 32 or above */
+> @@ -1477,11 +1505,11 @@ static int __die_find_var_reg_cb(Dwarf_Die *die_mem, void *arg)
+>  					     /*is_pointer=*/true))
+>  				return DIE_FIND_CB_END;
+>  
+> -			/* Local variables accessed by a register + offset */
+> +			/* variables accessed by a register + offset */
+>  			if (ops->atom == DW_OP_bregx && data->reg == ops->number &&
+>  			    check_allowed_ops(ops, nops) &&
+>  			    match_var_offset(die_mem, data, data->offset, ops->number2,
+> -					     /*is_poitner=*/false))
+> +					     is_breg_access_indirect(ops, nops)))
+>  				return DIE_FIND_CB_END;
+>  		}
+>  	}
+> -- 
+> 2.51.0.261.g7ce5a0a67e-goog
+> 
 
