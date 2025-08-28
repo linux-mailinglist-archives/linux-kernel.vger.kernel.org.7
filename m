@@ -1,216 +1,382 @@
-Return-Path: <linux-kernel+bounces-790714-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76616B3AC19
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 22:59:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38201B3AC29
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 23:00:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8786418981C8
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 20:59:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EBA625805D9
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 21:00:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91C8329AB03;
-	Thu, 28 Aug 2025 20:59:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAA752C1597;
+	Thu, 28 Aug 2025 20:59:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="utrrBlfv"
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2062.outbound.protection.outlook.com [40.107.100.62])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Uzj/uSOS"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0A8F17A300;
-	Thu, 28 Aug 2025 20:59:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.62
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756414745; cv=fail; b=NgjuL9W/KMfzz5INK7nDpD0SPaK1atnQx1OdPPLQPWsXWuAQWh/+7hkySNEjZ+BNoKImSJeny+tDdI6Xav5aWMK2+6PSiZWCb9Sn+DjvwySQLhV5y8KwPqvBnmz1rw3T7R6lkwq+/40Icfv6VA//9q15v02Sv0tIOr+90eRQ2CU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756414745; c=relaxed/simple;
-	bh=xuOES7TyJVB40YqVH2j+mBJ57k54bKBEGPkkYDwU+oc=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=ZVA9nwMWg2J1klaU4ytcgFioQ5VL3DRzZWNRgoR5FW3+C3XDrCYLPME/LjfOiAyy2nqrvAPvu3gJkRJVIvX74eN6OkNfTqJsnx9cuiI4p6boFlsWxl7PXg9B8ydbV8/WMpQ4/yca+tXlGkJPrrkFQxPpZv2YDh7dnBj76UFNjbE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=utrrBlfv; arc=fail smtp.client-ip=40.107.100.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=UviJ4yFoT8cp8wBCRzMsMA2MmfYANKxKo9qvkmb+G4y7gtJxnIPKDUqdcerD4OB1l8rby/NdpEzvNJ+4zwmRuaTA2Y8kW4XHTSs1zKoG/4WCvBNDw0WPiP9lKTJEUY1divqXxPaZ1TSJ1EYkLr1Q+vTMCNQwsaPhTwEdM6AzYuVQaaciXPd3tezum/fjdTxEEO7Kcd3I8Dz5U4GDXqxsL6iKIEvBbXDdCRJUQYhFR/1zdpeNrm0QEwH9hev5I5A7m4aKm+hkKzdWjhh4xRolgDLLiZYNXkaXCNGycO781Nz25XmsJq9ipYKAhT45jKNaT7nwzWUsRyNrFbnY+h+utg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xuOES7TyJVB40YqVH2j+mBJ57k54bKBEGPkkYDwU+oc=;
- b=dAgUQxtzpGbuzsoNid2qYKgjJ75BnSRRjRJxzSNCK1Q2N7kEYV+qT4kMngSv51nErqOVhhYcL4s+lW9E/NVUiV0ni7nfAg2VeOnoLYk7KEey0Vwm5Xk4u+2yRTXv1YJF+bonIjQRVTuvrNUv8hU5wIwKlHEFdErx1i5KSDnnwdbNBC0AiQp4g96UsXbm9PT3nwxPqUYO0H8VMVZS6eB4p25Xs1gdxbh97cVgrNcZ2OQb4mDPSPp4AH4YfBe1NZVS3F3aU/uT1D5UJpGu19a2zvXXUF8kQlyXLt4vZO2H40VS267HN1XvvcQkHsIrxiovHzEShLEBcpcLQtHLKkiQuA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xuOES7TyJVB40YqVH2j+mBJ57k54bKBEGPkkYDwU+oc=;
- b=utrrBlfv4JcfiQZ+Lz57xsi560kk0JhuuUjO8wGOqTHU0h3jDzTOblj3c48/5gRZAs0qsDDap1BuWLeFTIuQxTlGA0Ak9eM4sJOrVycgYIIxD9Rq4g/s6TZgnoRcd0w3uLC8U82Q/Xipy1v8XbMmGoewFL4w7B7Kn/2r150rrMFrHgOSnqTIFKuaeSIxjcaqaj0/ZvggQcdjOcidRX66bLCv9UED0QETjnjg7ywPvi678nHCD1V+EIJmjiQHkH3/g82wfockGfti5VxG1tM5MORFx//y6Qeb5KcgsLfgnIBJo1l0ivIukS5si0d6WWbzE9sYvf9XiaD5w+290suESg==
-Received: from CY5PR12MB6526.namprd12.prod.outlook.com (2603:10b6:930:31::20)
- by CY5PR12MB6381.namprd12.prod.outlook.com (2603:10b6:930:3f::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.16; Thu, 28 Aug
- 2025 20:58:55 +0000
-Received: from CY5PR12MB6526.namprd12.prod.outlook.com
- ([fe80::e420:4e37:166:9c56]) by CY5PR12MB6526.namprd12.prod.outlook.com
- ([fe80::e420:4e37:166:9c56%6]) with mapi id 15.20.9052.021; Thu, 28 Aug 2025
- 20:58:55 +0000
-From: Timur Tabi <ttabi@nvidia.com>
-To: Alexandre Courbot <acourbot@nvidia.com>, "lossin@kernel.org"
-	<lossin@kernel.org>, "ojeda@kernel.org" <ojeda@kernel.org>,
-	"boqun.feng@gmail.com" <boqun.feng@gmail.com>, "a.hindborg@kernel.org"
-	<a.hindborg@kernel.org>, "simona@ffwll.ch" <simona@ffwll.ch>,
-	"tmgross@umich.edu" <tmgross@umich.edu>, "alex.gaynor@gmail.com"
-	<alex.gaynor@gmail.com>, "tzimmermann@suse.de" <tzimmermann@suse.de>,
-	"mripard@kernel.org" <mripard@kernel.org>,
-	"maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
-	"bjorn3_gh@protonmail.com" <bjorn3_gh@protonmail.com>, "airlied@gmail.com"
-	<airlied@gmail.com>, "aliceryhl@google.com" <aliceryhl@google.com>,
-	"gary@garyguo.net" <gary@garyguo.net>, "dakr@kernel.org" <dakr@kernel.org>
-CC: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	Alistair Popple <apopple@nvidia.com>, Joel Fernandes <joelagnelf@nvidia.com>,
-	"nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, John Hubbard
-	<jhubbard@nvidia.com>, "rust-for-linux@vger.kernel.org"
-	<rust-for-linux@vger.kernel.org>
-Subject: Re: [PATCH v2 3/8] gpu: nova-core: firmware: process Booter and patch
- its signature
-Thread-Topic: [PATCH v2 3/8] gpu: nova-core: firmware: process Booter and
- patch its signature
-Thread-Index: AQHcFj8EsK7GTIDKG0e6dqx/BqyF07R4kKIA
-Date: Thu, 28 Aug 2025 20:58:55 +0000
-Message-ID: <0d7377cdca7f9aa1574c924073a2fcbcf0544218.camel@nvidia.com>
-References: <20250826-nova_firmware-v2-0-93566252fe3a@nvidia.com>
-	 <20250826-nova_firmware-v2-3-93566252fe3a@nvidia.com>
-In-Reply-To: <20250826-nova_firmware-v2-3-93566252fe3a@nvidia.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-user-agent: Evolution 3.52.3-0ubuntu1 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: CY5PR12MB6526:EE_|CY5PR12MB6381:EE_
-x-ms-office365-filtering-correlation-id: b2bf51b0-1916-4f27-d1d1-08dde675b36a
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|366016|7416014|1800799024|376014|921020|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?Y09iSnBNT1MyQTRiL0lpMjhRRjkvNVJDQWluRGNYbTdzMTVLRXpsNHNQM1Zt?=
- =?utf-8?B?TjJ3dFZMWjNDblA5YUo5dGltNFVwMWRac1BHZk9ZUHYvK0VpVm1NVlRpRTgy?=
- =?utf-8?B?Q1EwRmJMclpaZnQzYk5tOGk0ek1RUGNRWTE2ak9Fclpwd3IvS3VxOW42MEdG?=
- =?utf-8?B?RUVmbkdSODZQUHhGeU1lZXU4UGozOWNOL2loSy8xQVdxeGU2NFNEdjVJTVhK?=
- =?utf-8?B?bVZCR3NiUHBaTEhQZnpHUEhXVGprN2JVbjVSUFZBSHV5Tzg4OWo5SEZEVUQz?=
- =?utf-8?B?VnI2ZHRlYTd1c2tsRFZxRFo4aENkRWk1ejU0cldONFhORUhNMVVjc1V1RWF2?=
- =?utf-8?B?SEhmdFVvZHZrV0k3MWMxcVF4eFdLZ2Q0aG1ueU91ZWp3dnVrMHhQa1IxNFJw?=
- =?utf-8?B?UVJWdys1R3VCTHBWNjVVL2xQYU84VC9Xb2N0TmRYN3FUbEVMOHdnMUttMGlv?=
- =?utf-8?B?V0s4VUVjRmh0alh4clFjYjIxdU10Y0NSYW1SY24rSk5OUEZwMHBzZCtZUTJ2?=
- =?utf-8?B?TGs1dU9objhPUXJ1R0FOOU5TTWI0d2ZNaFBLeUh6Y1FhSHQ5N0ZvT2poMEVJ?=
- =?utf-8?B?d3hYNEx2RVFrWGI1dU1JNm1mVkRZemIremREWHZYTWhYN0ZySlBHWkNtVW5D?=
- =?utf-8?B?VEdZcVc2V0FxRWRzQWFFdVYrQ3ZOdkg1UkNBUEIrSUFGd3c5elJBUmJyNXNT?=
- =?utf-8?B?MkQ4SlR0bWNHVG1Od3NvK3huemFOSmFZUUUzMWQ0RWlXcFhINGppVi94Wmdi?=
- =?utf-8?B?WWxEcW8zckE0K0xIMGoxOGRBR1d2NHFBeVBic0pBVmdrSGthZ0cyZ3lXRFJz?=
- =?utf-8?B?b3ZwcUlHVUxiMXRycCtKTFpvSFBJa3dNUll4aU1NZ0FoMlhUTlVzU2JHblh6?=
- =?utf-8?B?RnVwM2xzT0EvU2lCZGZ1a3dNM3FzNFZIYzkrQ2hoRHp1bnBrbnNyTUZNcTNG?=
- =?utf-8?B?QklDWnczeFloKzdoaXRXSGxJWEl6TXl3M2RIZkRKOG9aa2UvdGNXL1VJM1ht?=
- =?utf-8?B?SXprRjJUdGpPeTE5ajR2N3hoYjJGQ3Z1blB2SStvZHNXcUtEaXpkdllPRGRx?=
- =?utf-8?B?c29QNTB2RVNCL0JRejE1c3RGc05uZmEvR2N0QkQ0ZndjK2xSSUl5cEV4bHVi?=
- =?utf-8?B?S3ZEenBOQ2l3TE9LYWdlV2FNcWsxZTZRNU1SWVAxTEdpSUkySUtPQ2ZpSjNH?=
- =?utf-8?B?SW8ybnNXUVN3d0I3MkZlcUs5MUdmVmpFSG5GWFJzbUVpRUpYU3ByYnZ1OWsx?=
- =?utf-8?B?RXlONE92UjJMSWxEZ0RHL2dTclY1MDNXT1BZeFJzZ0J4TGhWUEttWFFXa2M3?=
- =?utf-8?B?eTNOSktjUGV2Vkxsd1UxVUNqUldLSklVbUE4MGRkdytkbUJlTnpuOEl2ZDgy?=
- =?utf-8?B?bi9KTTlabHlSOFJVNzl1Ync3V0hFYnUzYmxySHBsTEllQy9vUFRKTjFyd2tt?=
- =?utf-8?B?ei9CN2FvMWRZTTBadjB3T3JlUE1zNUVyUFdZK081U1pwSUFUWmR6djI3S0pr?=
- =?utf-8?B?ZndNMXRXSkJxL0ErdzM4alZoSDRDdGZVU3gxMWt4OVNieC8zZEx5RjNlbnND?=
- =?utf-8?B?OWFPdlAybUJrR2lpdUthWnFUTWQ0SjFwb1ErQUFhVWpVdkRaczdpVEtTUDJi?=
- =?utf-8?B?MmFWWSsrT2FhYjNXcW1WU294ZlIxWDFzbGJBZWVrb1JJZ2RhWEMvUjExeTUr?=
- =?utf-8?B?L3E2cG5JK0txRkxHWTlCL3owNlhWMVloVUtFSlZESjNrOHE0WDVNYWZJWkdN?=
- =?utf-8?B?Wk9tNlBmOGIzbWJSTCsvYVJDZ0tUSTNzUGVDM3pQNkZCME1NUTBIMUZNdG9Q?=
- =?utf-8?B?V3c0by9qV0RwcTdubDdzNmtEOEo2SEN6YjUzcXBNenFFZ0NVZGpPNkZFUW82?=
- =?utf-8?B?R2lRR29WSUdnWFQ2L2IrcWhzU3FWZUpOOTVqRlo4UVh3SGlKVkR4ZFJtVWEv?=
- =?utf-8?B?TDRmaS9yWi8vcEtySGR4eDJnWHp5enZEQkE1ZzQxTDNncHVNSXZXODg0dks4?=
- =?utf-8?Q?8Wa++3gJtLnP79EoWmBX+CP8d1jTEU=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR12MB6526.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(1800799024)(376014)(921020)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?d3lValFaRVRTUVRxS0VhN0pRdit0cXBaRnNtQnZJQUE3ZDNpbGtiNTFDTjY1?=
- =?utf-8?B?UklhMUZLZDJuQXVGZzFhdWtXTGtpZnhQRXVnc2swQ2E0TkxwRmxrK29wT1pW?=
- =?utf-8?B?L3lhYndlQ3dsRGNnaXZPVW94ZVZBRkl2dXJaNkZqUGhqRkhrRS85UVpLZ25E?=
- =?utf-8?B?RVliTzVyYm1HZ1pDaDJQREo0amFhVENCeE1uZEUzMkk1QnhoR1ZPQjJaMEdF?=
- =?utf-8?B?aWVpUnFIWlhyNDZIa1ZNS0RLTVMxSDMxN2IzelAzbFQ3ZUw3QzVqUldvOGFu?=
- =?utf-8?B?NXVtYW9tclVDUVh2aCs4bXdncEZVMFVXRDMzQmNqYnlXNjRtZnEvYXEwblJj?=
- =?utf-8?B?VlZhb1o0UU1pYUxDWDZvMVhYSU5DbllRY3lMdjlQTGJ4bGt0L09vaFhvbitn?=
- =?utf-8?B?VjhvMTdkY0F0UlZ4WnUrZis5NSs3WWdlUmZFcHkxNGpiU0t6ZDE0VFZqQVZ0?=
- =?utf-8?B?L1d5aXNhRmdNOWlFblNZY2JjcUU0amtsaUlXL2tpUVFkNERjS0dHUUQ4OG4z?=
- =?utf-8?B?citlWUtBNEVsdjZKOHBNeHJaNW9GYkpROFEwVVBHQ05XZzhNZjlZTWlSb3Vs?=
- =?utf-8?B?V0IyQTZsQ1ZCTjBkN2dZZm52SzFqRHhUazVPa01hRFdwcFZRcitBUStwVGVn?=
- =?utf-8?B?RHhQMmFGYktxdmYzT3FYdXVMQ2RTWDNQQm1Tc2ltWTh5SUpXcWg0SFc5QmN4?=
- =?utf-8?B?SVJESmVRY2FwUWp0L1pJSk1IVkZyeXBGRFMyVXhqRWxNb050YkUzVDRpZ3FI?=
- =?utf-8?B?L2VRYnBrNWZlbUtGbm9lZmp5MTJPQ05mL1hGem9idlhLbGtqRmplTDRzbUVS?=
- =?utf-8?B?NlVTWWJJWWY4Mm43dmFQbERWb2wySEtONE1YVHJENFV2eXQ1bEZhMEhzL2xx?=
- =?utf-8?B?Y0xuNi9IQnF5WEJncHl4ZndwYnBxMVZSZHlETW42VGZ2VVNIK1VHcDFHbVR0?=
- =?utf-8?B?Ykw1ZHlLcXVBNUFWR21rSGw2NUNFZjJma1N1ZHEvWjNXMmNoQU5KYU1HMUla?=
- =?utf-8?B?MldWT2h4ZW5VQUlpeEZCV1BMeEpSMVZobjVPYnZyTjlNa3NTZTNPVWpPQ3pR?=
- =?utf-8?B?TGpIQ2Y3R2h5YnVNYmIvNEVPOHowZzhkenRlU0c1aGhHSkFxSzFjRDN1N1ZU?=
- =?utf-8?B?L21xWEVwNU9TTm1LYXppNEJQcnlPdXBmMHNEYU9kazRJTjZBRVlNUWF2dmhV?=
- =?utf-8?B?TW05ZExPNUp6UnNCTkVIVU9yUHkxdlJEQ1V2MjNoSVZ1cFZnRGxMVk9XdzMx?=
- =?utf-8?B?azJpbGt2ZnphQlVnb0dieko1am1KcG1najkxbHY5STlDNHcyNnlnUk9Baldz?=
- =?utf-8?B?aTV2ck93NjByNDJhV1dmUlcwRjMrTERPNUJkVUdBNVd2dEIxNEl6UkoxMWdM?=
- =?utf-8?B?QnlvN0dnclBURmNzSVVGNnBzN2VxQlowQVZCV1Q3OTgxZ2tTc2pqM28rTHVh?=
- =?utf-8?B?VnZucGFCQkwyK2tvQkY4U2d3VzNHQjBQZFE3UU54MEdMa0VSRDNUVjFHY1pX?=
- =?utf-8?B?QlRzTkY5amo0WkZYUWFTL25rN0tNamxiZTUyS0pZNUMxc1pGTjV4OUd6NS9P?=
- =?utf-8?B?WUtJL3Q2dVkzNUZzOUFJcnRJQnFmdzVzOUVGKyt4d29ZSm9hczN4anpndnRp?=
- =?utf-8?B?VUxEV1VwbFp2WVh2NVRNWTBHZnBrb3lVVWo1bHR5U2JURXNVWm0yZFNXblQr?=
- =?utf-8?B?a0EyL05ZYTliUldDQlVJQ21JMXl5N3NidkhySHZUaHBicFZWa2xPYis3cmJw?=
- =?utf-8?B?bXhxb1I5a1FqVmZvSTFXY3hWZjE5MWdiYjBLUTFIdE91WnpiSVVVekpaUVZx?=
- =?utf-8?B?T0NYVUlWQTMvV0tKcGQvN1p1bFRJaE8rSmdORFFYSEFVZjZhM01VN3h3OEZO?=
- =?utf-8?B?bUcxUkdVcGk2N2p5M1lEdjcwZmw4cmRrZW91S1J1cFlmeDl0bnVJdzd0c0hw?=
- =?utf-8?B?ZUtlWVNJekI5aWJid1ZET1NhUHBmNC9BY1JLa2d0bEh3WkhyU0o0U2xxeDQv?=
- =?utf-8?B?TUZONVFxNFdrUS9DYmVYVWFpV0pCbzE0VkJkRDdrRWtXYWR4STAvRldJM1B5?=
- =?utf-8?B?cnNaQTArTWtNYkRoZGRmYnFmSWZzL3ZvbEVzNHlHL0ppVEowbFNHdnJhUnUv?=
- =?utf-8?Q?d7NcQcPsAO0gnpDdkrpg/s6N6?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <C17B48CC6BBE5543985C92E4C3AB4F70@namprd12.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 042CC285049
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 20:59:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756414796; cv=none; b=msPrfzhi6rjLYDvOao36ErIwKTZaNyMyQQvLmHDuE0Sx0aynIbd10JNvzcrgH1hKQluHTb9/dPxwYMm0TkkN8KKfCicvjJ1CWlUGgf6tYkCoR1lJ0oMHOT2Aq82qRuy4HdRRRcZzxBXUp7abFaXc9+//7VOnptcH3jmCI5lg0hU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756414796; c=relaxed/simple;
+	bh=svOTJag/ZLjZEjzV1ufdwDhtfrG3XLSInHSNVL/2fGk=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Content-Type; b=Fn2Ssq29EiLqxpVNwYNcrgcgT94ZguIgBm/Q8zDxVlvu/GnPHOi4HL8/55kvCE07xwtEVkgHI+foXsS1JUG+zWA4auZNWSYM6+hsblI9FfNKUA5a2Tf1Ql9aslaxUg+oALWiCDPiHKsqwixzxYwVQpA4tfdffMr84XDERN7fBk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Uzj/uSOS; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-324e41e946eso2514018a91.0
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 13:59:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1756414793; x=1757019593; darn=vger.kernel.org;
+        h=to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=P5FCMb3MK9tcA2rTPEiWfJ7E6xU+WM6otEOzcIt2ksc=;
+        b=Uzj/uSOSZRke4PzRV+25gmILBZsIr2qnRUVclf//WR0jHcIdv9Iq+A4J/o9Nw5L7Em
+         dNHLbAReIOyPCPtSC0fbGKQBoPhVYfigPJNIZco0je3jip6X7RRFvuyh5jJwCi2gMFv7
+         gnJqgZmWTgcnNEKJ8aBmFQLkzNsW0kbxyK6vpgNVC4tPRTdeXmoImoL+j/oEUbPJq8wj
+         b0zqYwsWHsjBz6l62ZL0sJPyK+wAzvSTwMTmGYhz03oqRVjue2aR8Ly8BKpmg+o8T7S6
+         8U9Z/S7XtgEW0DTLlP8B75XBwcdwv/OoCArYPRpLRQKTBs+ysNumKO5nsRfVMKarSpna
+         yzHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756414793; x=1757019593;
+        h=to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=P5FCMb3MK9tcA2rTPEiWfJ7E6xU+WM6otEOzcIt2ksc=;
+        b=VG1BMp3cFiGC4R0eCbqdgaG6NUuPeLnmAl+zCcDu83/X6RbACBkiVe+82PiByyhUL2
+         hpe2dgkb4vcXAtVKgfjXpR0VmriTL3O86WVuomvnAitSygN2l2N+36Cg1A8Y4GqPZIP7
+         TEHcU+XFAbMNuKFgbdC/+JG5kyqrVnoc2KeXT/NeX+DbNZG0HDIqMmALCmrr8Zan7EZM
+         YS0Dpks7L/HnGZD6xnrwbMTrEpOsgbQAOIw+hAzADG1ONsgwRjp0ySdOD93stKUxAXMq
+         FyTIfnwz1oBo5GjYkYlbgMTddNxnZgbWmLbPrfz7dB+nPc4bYmJzyGSKxzNPUZEbomF0
+         rMtw==
+X-Forwarded-Encrypted: i=1; AJvYcCVjG/7ssfAlrdkwh3pHS8h26klC8XM1DJQ6byG9AuY4diRfBzA7mTOhL81B/x27KgpRPwrG8OsRcdimS9I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxwVU9i6jOGSTVGiZsS84To14pyvmsBP0PdPnFKkJljNnIqTFa0
+	ppNbqN65CHrPH++cCjrgwzkkPczCaSkxi3H9o/JGg+qMCkxHpk/qbiHlDbo8PVCi7lqeDRIBu0K
+	DEuzi372lDg==
+X-Google-Smtp-Source: AGHT+IG2psQ+MPJ5ZulAz233ZLh6wFva0vi2PqJ+SlAV0FxqKuJ2pIUo1FtLJ+BZmziozSZA85RNYf0JijMB
+X-Received: from pjvb15.prod.google.com ([2002:a17:90a:d88f:b0:31f:1ed:c76e])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:28c6:b0:327:e2ab:d92b
+ with SMTP id 98e67ed59e1d1-327e2abdc20mr371094a91.35.1756414793311; Thu, 28
+ Aug 2025 13:59:53 -0700 (PDT)
+Date: Thu, 28 Aug 2025 13:59:15 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CY5PR12MB6526.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b2bf51b0-1916-4f27-d1d1-08dde675b36a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Aug 2025 20:58:55.2147
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: j9LnFQf7GJ3xWuiy4jjv9+Utgianj4M6zVHTOoUU7FThaQQ52YpwWzbvJ933YjQecO4OIOEg1K1XvyzmldhJtg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6381
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.0.318.gd7df087d1a-goog
+Message-ID: <20250828205930.4007284-1-irogers@google.com>
+Subject: [PATCH v3 00/15] Legacy hardware/cache events as json
+From: Ian Rogers <irogers@google.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, James Clark <james.clark@linaro.org>, 
+	Xu Yang <xu.yang_2@nxp.com>, Thomas Falcon <thomas.falcon@intel.com>, 
+	Andi Kleen <ak@linux.intel.com>, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org, bpf@vger.kernel.org, 
+	Atish Patra <atishp@rivosinc.com>, Beeman Strong <beeman@rivosinc.com>, Leo Yan <leo.yan@arm.com>, 
+	Vince Weaver <vincent.weaver@maine.edu>
+Content-Type: text/plain; charset="UTF-8"
 
-T24gVHVlLCAyMDI1LTA4LTI2IGF0IDEzOjA3ICswOTAwLCBBbGV4YW5kcmUgQ291cmJvdCB3cm90
-ZToNCj4gK3N0cnVjdCBIc0hlYWRlclYyIHsNCj4gK8KgwqDCoCAvLy8gT2Zmc2V0IHRvIHRoZSBz
-dGFydCBvZiB0aGUgc2lnbmF0dXJlcy4NCj4gK8KgwqDCoCBzaWdfcHJvZF9vZmZzZXQ6IHUzMiwN
-Cj4gK8KgwqDCoCAvLy8gU2l6ZSBpbiBieXRlcyBvZiB0aGUgc2lnbmF0dXJlcy4NCj4gK8KgwqDC
-oCBzaWdfcHJvZF9zaXplOiB1MzIsDQo+ICvCoMKgwqAgLy8vIE9mZnNldCB0byBhIGB1MzJgIGNv
-bnRhaW5pbmcgdGhlIGxvY2F0aW9uIGF0IHdoaWNoIHRvIHBhdGNoIHRoZSBzaWduYXR1cmUgaW4g
-dGhlDQo+IG1pY3JvY29kZQ0KPiArwqDCoMKgIC8vLyBpbWFnZS4NCj4gK8KgwqDCoCBwYXRjaF9s
-b2M6IHUzMiwNCj4gK8KgwqDCoCAvLy8gT2Zmc2V0IHRvIGEgYHUzMmAgY29udGFpbmluZyB0aGUg
-aW5kZXggb2YgdGhlIHNpZ25hdHVyZSB0byBwYXRjaC4NCj4gK8KgwqDCoCBwYXRjaF9zaWc6IHUz
-MiwNCj4gK8KgwqDCoCAvLy8gU3RhcnQgb2Zmc2V0IHRvIHRoZSBzaWduYXR1cmUgbWV0YWRhdGEu
-DQo+ICvCoMKgwqAgbWV0YV9kYXRhX29mZnNldDogdTMyLA0KPiArwqDCoMKgIC8vLyBTaXplIGlu
-IGJ5dGVzIG9mIHRoZSBzaWduYXR1cmUgbWV0YWRhdGEuDQo+ICvCoMKgwqAgbWV0YV9kYXRhX3Np
-emU6IHUzMiwNCj4gK8KgwqDCoCAvLy8gT2Zmc2V0IHRvIGEgYHUzMmAgY29udGFpbmluZyB0aGUg
-bnVtYmVyIG9mIHNpZ25hdHVyZXMgaW4gdGhlIHNpZ25hdHVyZXMgc2VjdGlvbi4NCj4gK8KgwqDC
-oCBudW1fc2lnOiB1MzIsDQo+ICvCoMKgwqAgLy8vIE9mZnNldCBvZiB0aGUgYXBwbGljYXRpb24t
-c3BlY2lmaWMgaGVhZGVyLg0KPiArwqDCoMKgIGhlYWRlcl9vZmZzZXQ6IHUzMiwNCj4gK8KgwqDC
-oCAvLy8gU2l6ZSBpbiBieXRlcyBvZiB0aGUgYXBwbGljYXRpb24tc3BlY2lmaWMgaGVhZGVyLg0K
-PiArwqDCoMKgIGhlYWRlcl9zaXplOiB1MzIsDQo+ICt9DQoNCllvdSBhcmUgaW5jb25zaXN0ZW50
-IHdpdGggdGhlIG5hbWVzIG9mIG9mZnNldCBmaWVsZHMgaW4gdGhpcyBzdHJ1Y3QuDQoNCnBhdGNo
-X2xvYyBzaG91bGQgYmUgcGF0Y2hfbG9jX29mZnNldA0KcGF0Y2hfc2lnIHNob3VsZCBiZSBwYXRj
-aF9zaWdfb2Zmc2V0DQpudW1fc2lnIHNob3VsZCBiZSBudW1fc2lnX29mZnNldA0KDQo=
+Mirroring similar work for software events in commit 6e9fa4131abb
+("perf parse-events: Remove non-json software events"). These changes
+migrate the legacy hardware and cache events to json.  With no hard
+coded legacy hardware or cache events the wild card, case
+insensitivity, etc. is consistent for events. This does, however, mean
+events like cycles will wild card against all PMUs. A change doing the
+same was originally posted and merged from:
+https://lore.kernel.org/r/20240416061533.921723-10-irogers@google.com
+and reverted by Linus in commit 4f1b067359ac ("Revert "perf
+parse-events: Prefer sysfs/JSON hardware events over legacy"") due to
+his dislike for the cycles behavior on ARM with perf record. Earlier
+patches in this series make perf record event opening failures
+non-fatal and hide the cycles event's failure to open on ARM in perf
+record, so it is expected the behavior will now be transparent in perf
+record on ARM. perf stat with a cycles event will wildcard open the
+event on all PMUs.
+
+The change to support legacy events with PMUs was done to clean up
+Intel's hybrid PMU implementation. Having sysfs/json events with
+increased priority to legacy was requested by Mark Rutland
+ <mark.rutland@arm.com> to fix Apple-M PMU issues wrt broken legacy
+events on that PMU. It is believed the PMU driver is now fixed, but
+this has only been confirmed on ARM Juno boards. It was requested that
+RISC-V be able to add events to the perf tool json so the PMU driver
+didn't need to map legacy events to config encodings:
+https://lore.kernel.org/lkml/20240217005738.3744121-1-atishp@rivosinc.com/
+This patch series achieves this.
+
+A previous series of patches decreasing legacy hardware event
+priorities was posted in:
+https://lore.kernel.org/lkml/20250416045117.876775-1-irogers@google.com/
+Namhyung Kim <namhyung@kernel.org> mentioned that hardware and
+software events can be implemented similarly:
+https://lore.kernel.org/lkml/aIJmJns2lopxf3EK@google.com/
+and this patch series achieves this.
+
+Note, patch 1 (perf parse-events: Fix legacy cache events if event is
+duplicated in a PMU) fixes a function deleted by patch 15 (perf
+parse-events: Remove hard coded legacy hardware and cache
+parsing). Adding the json exposed an issue when legacy cache (not
+legacy hardware) and sysfs/json events exist. The fix is necessary to
+keep tests passing through the series. It is also posted for backports
+to stable trees.
+
+The perf list behavior includes a lot more information and events. The
+before behavior on a hybrid alderlake is:
+```
+$ perf list hw
+
+List of pre-defined events (to be used in -e or -M):
+
+  branch-instructions OR branches                    [Hardware event]
+  branch-misses                                      [Hardware event]
+  bus-cycles                                         [Hardware event]
+  cache-misses                                       [Hardware event]
+  cache-references                                   [Hardware event]
+  cpu-cycles OR cycles                               [Hardware event]
+  instructions                                       [Hardware event]
+  ref-cycles                                         [Hardware event]
+$ perf list hwcache
+
+List of pre-defined events (to be used in -e or -M):
+
+
+cache:
+  L1-dcache-loads OR cpu_atom/L1-dcache-loads/
+  L1-dcache-stores OR cpu_atom/L1-dcache-stores/
+  L1-icache-loads OR cpu_atom/L1-icache-loads/
+  L1-icache-load-misses OR cpu_atom/L1-icache-load-misses/
+  LLC-loads OR cpu_atom/LLC-loads/
+  LLC-load-misses OR cpu_atom/LLC-load-misses/
+  LLC-stores OR cpu_atom/LLC-stores/
+  LLC-store-misses OR cpu_atom/LLC-store-misses/
+  dTLB-loads OR cpu_atom/dTLB-loads/
+  dTLB-load-misses OR cpu_atom/dTLB-load-misses/
+  dTLB-stores OR cpu_atom/dTLB-stores/
+  dTLB-store-misses OR cpu_atom/dTLB-store-misses/
+  iTLB-load-misses OR cpu_atom/iTLB-load-misses/
+  branch-loads OR cpu_atom/branch-loads/
+  branch-load-misses OR cpu_atom/branch-load-misses/
+  L1-dcache-loads OR cpu_core/L1-dcache-loads/
+  L1-dcache-load-misses OR cpu_core/L1-dcache-load-misses/
+  L1-dcache-stores OR cpu_core/L1-dcache-stores/
+  L1-icache-load-misses OR cpu_core/L1-icache-load-misses/
+  LLC-loads OR cpu_core/LLC-loads/
+  LLC-load-misses OR cpu_core/LLC-load-misses/
+  LLC-stores OR cpu_core/LLC-stores/
+  LLC-store-misses OR cpu_core/LLC-store-misses/
+  dTLB-loads OR cpu_core/dTLB-loads/
+  dTLB-load-misses OR cpu_core/dTLB-load-misses/
+  dTLB-stores OR cpu_core/dTLB-stores/
+  dTLB-store-misses OR cpu_core/dTLB-store-misses/
+  iTLB-load-misses OR cpu_core/iTLB-load-misses/
+  branch-loads OR cpu_core/branch-loads/
+  branch-load-misses OR cpu_core/branch-load-misses/
+  node-loads OR cpu_core/node-loads/
+  node-load-misses OR cpu_core/node-load-misses/
+```
+and after it is:
+```
+$ perf list hw
+
+legacy hardware:
+  branch-instructions
+       [Retired branch instructions [This event is an alias of branches].
+        Unit: cpu_atom]
+  branch-misses
+       [Mispredicted branch instructions. Unit: cpu_atom]
+  branches
+       [Retired branch instructions [This event is an alias of
+        branch-instructions]. Unit: cpu_atom]
+  bus-cycles
+       [Bus cycles,which can be different from total cycles. Unit: cpu_atom]
+  cache-misses
+       [Cache misses. Usually this indicates Last Level Cache misses; this is
+        intended to be used in conjunction with the
+        PERF_COUNT_HW_CACHE_REFERENCES event to calculate cache miss rates.
+        Unit: cpu_atom]
+  cache-references
+       [Cache accesses. Usually this indicates Last Level Cache accesses but
+        this may vary depending on your CPU. This may include prefetches and
+        coherency messages; again this depends on the design of your CPU.
+        Unit: cpu_atom]
+  cpu-cycles
+       [Total cycles. Be wary of what happens during CPU frequency scaling
+        [This event is an alias of cycles]. Unit: cpu_atom]
+  cycles
+       [Total cycles. Be wary of what happens during CPU frequency scaling
+        [This event is an alias of cpu-cycles]. Unit: cpu_atom]
+  instructions
+       [Retired instructions. Be careful,these can be affected by various
+        issues,most notably hardware interrupt counts. Unit: cpu_atom]
+  ref-cycles
+       [Total cycles; not affected by CPU frequency scaling. Unit: cpu_atom]
+  branch-instructions
+       [Retired branch instructions [This event is an alias of branches].
+        Unit: cpu_core]
+  branch-misses
+       [Mispredicted branch instructions. Unit: cpu_core]
+  branches
+       [Retired branch instructions [This event is an alias of
+        branch-instructions]. Unit: cpu_core]
+  bus-cycles
+       [Bus cycles,which can be different from total cycles. Unit: cpu_core]
+  cache-misses
+       [Cache misses. Usually this indicates Last Level Cache misses; this is
+        intended to be used in conjunction with the
+        PERF_COUNT_HW_CACHE_REFERENCES event to calculate cache miss rates.
+        Unit: cpu_core]
+  cache-references
+       [Cache accesses. Usually this indicates Last Level Cache accesses but
+        this may vary depending on your CPU. This may include prefetches and
+        coherency messages; again this depends on the design of your CPU.
+        Unit: cpu_core]
+  cpu-cycles
+       [Total cycles. Be wary of what happens during CPU frequency scaling
+        [This event is an alias of cycles]. Unit: cpu_core]
+  cycles
+       [Total cycles. Be wary of what happens during CPU frequency scaling
+        [This event is an alias of cpu-cycles]. Unit: cpu_core]
+  instructions
+       [Retired instructions. Be careful,these can be affected by various
+        issues,most notably hardware interrupt counts. Unit: cpu_core]
+  ref-cycles
+       [Total cycles; not affected by CPU frequency scaling. Unit: cpu_core]
+$ perf list hwcache
+
+legacy cache:
+  branch-load-misses
+       [Branch prediction unit read misses. Unit: cpu_atom]
+  branch-loads
+       [Branch prediction unit read accesses. Unit: cpu_atom]
+  dtlb-load-misses
+       [Data TLB read misses. Unit: cpu_atom]
+  dtlb-loads
+       [Data TLB read accesses. Unit: cpu_atom]
+  dtlb-store-misses
+       [Data TLB write misses. Unit: cpu_atom]
+  dtlb-stores
+       [Data TLB write accesses. Unit: cpu_atom]
+  itlb-load-misses
+       [Instruction TLB read misses. Unit: cpu_atom]
+  l1-dcache-loads
+       [Level 1 data cache read accesses. Unit: cpu_atom]
+  l1-dcache-stores
+       [Level 1 data cache write accesses. Unit: cpu_atom]
+  l1-icache-load-misses
+       [Level 1 instruction cache read misses. Unit: cpu_atom]
+  l1-icache-loads
+       [Level 1 instruction cache read accesses. Unit: cpu_atom]
+  llc-load-misses
+       [Last level cache read misses. Unit: cpu_atom]
+  llc-loads
+       [Last level cache read accesses. Unit: cpu_atom]
+  llc-store-misses
+       [Last level cache write misses. Unit: cpu_atom]
+  llc-stores
+       [Last level cache write accesses. Unit: cpu_atom]
+  branch-load-misses
+       [Branch prediction unit read misses. Unit: cpu_core]
+  branch-loads
+       [Branch prediction unit read accesses. Unit: cpu_core]
+  dtlb-load-misses
+       [Data TLB read misses. Unit: cpu_core]
+  dtlb-loads
+       [Data TLB read accesses. Unit: cpu_core]
+  dtlb-store-misses
+       [Data TLB write misses. Unit: cpu_core]
+  dtlb-stores
+       [Data TLB write accesses. Unit: cpu_core]
+  itlb-load-misses
+       [Instruction TLB read misses. Unit: cpu_core]
+  l1-dcache-load-misses
+       [Level 1 data cache read misses. Unit: cpu_core]
+  l1-dcache-loads
+       [Level 1 data cache read accesses. Unit: cpu_core]
+  l1-dcache-stores
+       [Level 1 data cache write accesses. Unit: cpu_core]
+  l1-icache-load-misses
+       [Level 1 instruction cache read misses. Unit: cpu_core]
+  llc-load-misses
+       [Last level cache read misses. Unit: cpu_core]
+  llc-loads
+       [Last level cache read accesses. Unit: cpu_core]
+  llc-store-misses
+       [Last level cache write misses. Unit: cpu_core]
+  llc-stores
+       [Last level cache write accesses. Unit: cpu_core]
+  node-load-misses
+       [Local memory read misses. Unit: cpu_core]
+  node-loads
+       [Local memory read accesses. Unit: cpu_core]
+```
+
+v3: Deprecate the legacy cache events that aren't shown in the
+    previous perf list to avoid the perf list output being too verbose.
+
+v2: Additional details to the cover letter. Credit to Vince Weaver
+    added to the commit message for the event details. Additional
+    patches to clean up perf_pmu new_alias by removing an unused term
+    scanner argument and avoid stdio usage.
+    https://lore.kernel.org/lkml/20250828163225.3839073-1-irogers@google.com/
+
+v1: https://lore.kernel.org/lkml/20250828064231.1762997-1-irogers@google.com/
+
+Ian Rogers (15):
+  perf parse-events: Fix legacy cache events if event is duplicated in a
+    PMU
+  perf perf_api_probe: Avoid scanning all PMUs, try software PMU first
+  perf record: Skip don't fail for events that don't open
+  perf jevents: Support copying the source json files to OUTPUT
+  perf pmu: Don't eagerly parse event terms
+  perf parse-events: Remove unused FILE input argument to scanner
+  perf pmu: Use fd rather than FILE from new_alias
+  perf pmu: Factor term parsing into a perf_event_attr into a helper
+  perf parse-events: Add terms for legacy hardware and cache config
+    values
+  perf jevents: Add legacy json terms and default_core event table
+    helper
+  perf pmu: Add and use legacy_terms in alias information
+  perf jevents: Add legacy-hardware and legacy-cache json
+  perf print-events: Remove print_hwcache_events
+  perf print-events: Remove print_symbol_events
+  perf parse-events: Remove hard coded legacy hardware and cache parsing
+
+ tools/perf/Makefile.perf                      |   21 +-
+ tools/perf/arch/x86/util/intel-pt.c           |    2 +-
+ tools/perf/builtin-list.c                     |   34 +-
+ tools/perf/builtin-record.c                   |   89 +-
+ tools/perf/pmu-events/Build                   |   24 +-
+ .../arch/common/common/legacy-hardware.json   |   72 +
+ tools/perf/pmu-events/empty-pmu-events.c      | 2763 ++++++++++++++++-
+ tools/perf/pmu-events/jevents.py              |   24 +
+ tools/perf/pmu-events/make_legacy_cache.py    |  129 +
+ tools/perf/pmu-events/pmu-events.h            |    1 +
+ tools/perf/tests/parse-events.c               |    2 +-
+ tools/perf/tests/pmu-events.c                 |   24 +-
+ tools/perf/tests/pmu.c                        |    3 +-
+ tools/perf/util/parse-events.c                |  283 +-
+ tools/perf/util/parse-events.h                |   16 +-
+ tools/perf/util/parse-events.l                |   54 +-
+ tools/perf/util/parse-events.y                |  114 +-
+ tools/perf/util/perf_api_probe.c              |   27 +-
+ tools/perf/util/pmu.c                         |  302 +-
+ tools/perf/util/print-events.c                |  112 -
+ tools/perf/util/print-events.h                |    4 -
+ 21 files changed, 3330 insertions(+), 770 deletions(-)
+ create mode 100644 tools/perf/pmu-events/arch/common/common/legacy-hardware.json
+ create mode 100755 tools/perf/pmu-events/make_legacy_cache.py
+
+-- 
+2.51.0.318.gd7df087d1a-goog
+
 
