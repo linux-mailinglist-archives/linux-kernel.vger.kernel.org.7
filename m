@@ -1,93 +1,123 @@
-Return-Path: <linux-kernel+bounces-789553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B3F7B3973C
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 10:40:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF329B39743
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 10:41:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 399B13B8C90
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 08:40:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB6B317B842
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 08:41:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 333232ECE8F;
-	Thu, 28 Aug 2025 08:40:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E80F62E8882;
+	Thu, 28 Aug 2025 08:41:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EO1UwsTi"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i+HJy0Ew"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D22F2E1F0B;
-	Thu, 28 Aug 2025 08:39:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FFEE2BB13;
+	Thu, 28 Aug 2025 08:41:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756370399; cv=none; b=jey0FiM+bNwMFwKOXHQIRGENW5lJc/ncBU7u46lUvniN0BLEKPM+dvF6R/DOye9JUPVy3RkQzL5KYacl5R7efisV0t2UqQZMYxj4GxjNFPn3L7loSlCvVrcwuqvIiJC/ySB8Gh7GTvjdkwoTmViEaOy4jRleMus9YaozcSbkd+0=
+	t=1756370477; cv=none; b=gMNWP+e+o2a5DpljYnyL3M82eL8SMoc05pcNi8SMBErByaT6oC5gUCidL/fhk1uAdXqQCh2JWBmLNBnh5+j1z2O4i4PbMQBUsdxaSizlM++snr+HcqwLxfUk4d84SdsVqhMSc0BEL6EcX19OPfAaizGf/IkihP5vNybYcZvbmsI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756370399; c=relaxed/simple;
-	bh=t8u2AeLj+nVRCv+SE0yp9+jho+NkSP9HP03oSFsz230=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=He9LQ+PvzQh71hI97O1x+fmtw0ubI6MK6Bjc1Yycg26aOWnVPn4cnnr5Y2BXfrUOsmFGVGbEJXlK67uewGI/wEr14jNjhi6z/6qTbr7OD0SoKY4lSr6Hl17+dudFFC17d6LeCl/ESHkCRHCUjWWSgMAPXXUHslshndea0VY0g8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EO1UwsTi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1FE43C4CEF4;
-	Thu, 28 Aug 2025 08:39:59 +0000 (UTC)
+	s=arc-20240116; t=1756370477; c=relaxed/simple;
+	bh=3Tr7ht9RaQ1mmZzlO0RWE9wqu1IpyyKJ3Q2xB3+M7QM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sKfVGegQvWqRGjdTM0q4Np7JNPp7xx8oHsEjnEZAWg6txIP2LVC8AWl5+UUYaa4AGSVRTMm7VYeSipBwguuEld0/s7/Nn3AbBNpSv1VcZoA8C9NkEoVbCgJaMqaxgPMbBQQaXOpKAVRbemIUILDkowdMAz6qCMxoIAudhbYXruY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i+HJy0Ew; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17307C4CEEB;
+	Thu, 28 Aug 2025 08:41:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756370399;
-	bh=t8u2AeLj+nVRCv+SE0yp9+jho+NkSP9HP03oSFsz230=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=EO1UwsTi5jtUM+kAG+R2Trr00+yxUR2jrYoFHdH/ltO2MPMsz8JZGbSglwzRNPHWx
-	 qbPnQJWkeVQAsBMMKyFTfz8eBRwp0zK5VXRfXEuy8ZNXXElQXH4dzBMlev1XK5//x5
-	 iZAXa0gcwLtXe12nqJUZk+S0QknlagIOhMU9fmt1t4GSHYle5VaKThewJTZLgwHPSE
-	 je5NEai+uwx8aSC5aFrJHS58LVHIjl9Mm5CNxfEEx4Fj7IW0qhObL/de24d3otZ7vN
-	 /JtUjF0sE99PC7dEtcuc+OJQ1QNYimRolTdPZA4myUeyZj+P0rfp4TF8T5Lid8H2je
-	 gBaQTqq/yaK7g==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70D48383BF70;
-	Thu, 28 Aug 2025 08:40:07 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1756370476;
+	bh=3Tr7ht9RaQ1mmZzlO0RWE9wqu1IpyyKJ3Q2xB3+M7QM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=i+HJy0Ew6hxAO2ybuI1qit4HkoBlZ+7pblW6gIadxFLxIlQlYDAJ55feMih3YrlkG
+	 U/OQWKmE/4fIKVNQMqQzwFvDc3o/1U7xVm6gSEdDeCI5Z9IunyRsh7TlxXEIlRwDBU
+	 tKeZ1J3RpTChQ3ALGyv/P+B5yQea2XBiaxUz745RBIt9UJxfNT0OPIwEEmcvgoZ1JO
+	 BxDiW8gmo2zQlj6iqsRWaEwTjnAX+ojxq9lDBHc2d/9//CpdDzqXwjxd9Cfe9yAPzE
+	 /Yj45O64u0VGI9XSt2XEMa2C7ZoHxNLnyQY9zT+LQU5UQ6McM9rQtRxUj2hTcNzLhc
+	 7VcwBTal4Mo4Q==
+Date: Thu, 28 Aug 2025 10:41:10 +0200
+From: Mark Brown <broonie@kernel.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Benson Leung <bleung@chromium.org>,
+	Guenter Roeck <groeck@chromium.org>,
+	Tim Harvey <tharvey@gateworks.com>,
+	Pengyu Luo <mitltlatltl@gmail.com>,
+	Michael Walle <mwalle@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Jean Delvare <jdelvare@suse.com>,
+	Thomas Gleixner <tglx@linutronix.de>, Lee Jones <lee@kernel.org>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Cheng-Yi Chiang <cychiang@chromium.org>,
+	Tzung-Bi Shih <tzungbi@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Nikita Travkin <nikita@trvn.ru>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Tinghan Shen <tinghan.shen@mediatek.com>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	chrome-platform@lists.linux.dev, linux-gpio@vger.kernel.org,
+	linux-hwmon@vger.kernel.org, linux-pwm@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, linux-sound@vger.kernel.org,
+	linux-watchdog@vger.kernel.org,
+	Mathew McBride <matt@traverse.com.au>
+Subject: Re: [PATCH v3] dt-bindings: mfd: Move embedded controllers to own
+ directory
+Message-ID: <aLAWJn4yKukvaIro@finisterre.sirena.org.uk>
+References: <20250825081201.9775-2-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net v2] net: macb: Disable clocks once
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <175637040625.1362868.4424023735390845788.git-patchwork-notify@kernel.org>
-Date: Thu, 28 Aug 2025 08:40:06 +0000
-References: <20250826143022.935521-1-sean.anderson@linux.dev>
-In-Reply-To: <20250826143022.935521-1-sean.anderson@linux.dev>
-To: Sean Anderson <sean.anderson@linux.dev>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
- nicolas.ferre@microchip.com, claudiu.beznea@tuxon.dev,
- shubhrajyoti.datta@xilinx.com, neil.mandir@seco.com,
- linux-kernel@vger.kernel.org, harini.katakam@xilinx.com
-
-Hello:
-
-This patch was applied to netdev/net.git (main)
-by Paolo Abeni <pabeni@redhat.com>:
-
-On Tue, 26 Aug 2025 10:30:22 -0400 you wrote:
-> From: Neil Mandir <neil.mandir@seco.com>
-> 
-> When the driver is removed the clocks are disabled twice: once in
-> macb_remove and a second time by runtime pm. Disable wakeup in remove so
-> all the clocks are disabled and skip the second call to macb_clks_disable.
-> Always suspend the device as we always set it active in probe.
-> 
-> [...]
-
-Here is the summary with links:
-  - [net,v2] net: macb: Disable clocks once
-    https://git.kernel.org/netdev/net/c/dac978e51cce
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ok3vOuHD1C4RwPWT"
+Content-Disposition: inline
+In-Reply-To: <20250825081201.9775-2-krzysztof.kozlowski@linaro.org>
+X-Cookie: Filmed before a live audience.
 
 
+--ok3vOuHD1C4RwPWT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Mon, Aug 25, 2025 at 10:12:02AM +0200, Krzysztof Kozlowski wrote:
+
+> Move several embedded controller bindings (like ChromeOS EC, Gateworks
+> System Controller and Kontron sl28cpld Board Management) to new
+> subdirectory "embedded-controller" matching their purpose.
+
+Acked-by: Mark Brown <broonie@kernel.org>
+
+--ok3vOuHD1C4RwPWT
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmiwFiYACgkQJNaLcl1U
+h9CEPwf+J550xIwuw8AaUZo+9pOj1PHT+041UckMzvPlutaXGGQ0l4+E8dgv/+F5
+axHPEuZztWIxiajWwLHso4HcDQbXtz7U1ALEbjoR8G7/JPWMxQpS0eO5N1bRmUOj
+rc6R/jGPW+GoVTTmHjq0++Xh2GRWNt6QnW4HzGnn0RwHwxsRYmk1Yr6y2j94fhNP
+QiAb/bFASf2nQ7bV1md6JI9BUwyrwJgqBI0/pXB7fzptET77UeuwX+D3S3Pl/zll
+mFnmPDlfcdfIRP3D4HydviJc9WBRhkXmcnRa51abojkg2IcABSiTgbW4juQomD9G
+7CJMLCouGZOv5SS74saYf09DXOJltw==
+=G0XQ
+-----END PGP SIGNATURE-----
+
+--ok3vOuHD1C4RwPWT--
 
