@@ -1,78 +1,161 @@
-Return-Path: <linux-kernel+bounces-789241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B326FB392AB
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 06:42:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 581CDB392A3
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 06:40:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 80DC7207403
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 04:42:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 12E4E367C1D
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 04:40:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDEE32652AC;
-	Thu, 28 Aug 2025 04:42:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD7AF2652AF;
+	Thu, 28 Aug 2025 04:40:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tgQls4KD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZaqEZNNP"
+Received: from mail-pg1-f194.google.com (mail-pg1-f194.google.com [209.85.215.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 204C7259CB2;
-	Thu, 28 Aug 2025 04:42:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 882D513BC3F;
+	Thu, 28 Aug 2025 04:40:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756356155; cv=none; b=E6Y/xA7aXQjICnJtjg0QPfzztXqWIiAvn4iqUry9i5oMHev6vK8iTOlFuiXH6Y0C05llCx2Me5dCgXKhCJNuDw69Om7evc6DlRdGMe5SQFXgb341GdZ6To001jQcp9Oq3lNh/oHXwCZcghPXeiG1BGGzPG6u5kqt/UAdZfBO8UU=
+	t=1756356022; cv=none; b=RaG5e95lHfkJb4EzyZzkxVdYhr1GKBUTpEwJvwrwyEWe11EGCbTSeUvAvvo6mGFe0ByGhxUkhqKWnZQC4EBNNlMnPnhm12fvR9qKsQ9FPWbFgbYpmNamUKSqihsajaQn51ecwBuufliPYDt8bS1yO/c/9jWQbzIU+2PylcuWbqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756356155; c=relaxed/simple;
-	bh=RzhXG7YA5z20uKbJqDcRU3nx+33tlO97T91rTjUp+x8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=PwCpv6lL9z09tb7el2bbCSa+30KJmglvhVKfaTs8FoXM4UaOBfOtHbf7fCT/kgvOWIQ0jTA7IZbXzf3BKhLQkAEJcMx7Wsriun09hfbn82Quuqcd0sKyBwHcKyPOEY6ohgOfdsStthcWzQOLaCBa92YuECrE8Od5/cM/SB8oZH4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tgQls4KD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B4DBC4CEEB;
-	Thu, 28 Aug 2025 04:42:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756356154;
-	bh=RzhXG7YA5z20uKbJqDcRU3nx+33tlO97T91rTjUp+x8=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=tgQls4KDTN+0law2NP0E0muRR8U9sti57JybbIYuSP2iajDnlDAFNhOMkhb57YsuO
-	 EUG7KXrwxxnodGePIqCixUypu2Auu5rSYWCsxnVPWLKRIVS/vx7VmtKAtybkB7EBJ+
-	 dt5Z+wtPPhcnoykl3VTCHUoix0clmeMAZoZBVlhvSKHVl8L4VS7dZL69oh2i+1d7Au
-	 RjCWo55Rs39mU8/tw54DMwNF8mA0aofMfSpffyrMGPoOTR28KBg/tt7zqc1IJiifTh
-	 rl6Om1dUvjdwNivwyNf7HbHv7tx/Na6eFLm0kIHN8oDPHohv+lIHO/mmVKF7Iy5alD
-	 e5h9nTSJDcVqA==
-Message-ID: <06706ded-9eb2-4a0c-ba11-b35b5c05dd4d@kernel.org>
-Date: Thu, 28 Aug 2025 13:39:42 +0900
+	s=arc-20240116; t=1756356022; c=relaxed/simple;
+	bh=EprYMS7hj8izs5KOEZoOZxUbWLd46yXqkjI1puJA5/s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VbS+SK0TWJ/Mxp+kf6ajnLY7iMY+Upr1YsqgqRnBU/sWPiYFZbrcM3GZJ9TYHBvUWt2pyQga0LFWkMbRan460vsvuJLddSUTNulKa4l0nMGyDlZIghfCzAS8g5v8XdULes+fPuLY6BOtyr/GczHy+o1oupVyQUo5k0CygAIks0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZaqEZNNP; arc=none smtp.client-ip=209.85.215.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f194.google.com with SMTP id 41be03b00d2f7-b4c5467617dso551217a12.1;
+        Wed, 27 Aug 2025 21:40:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756356020; x=1756960820; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/1FbmeMJrwmv+p89A8rbgWWowNF8958qVntUHwO7+EI=;
+        b=ZaqEZNNPlkCLAO4U0SXNmDV4J9/SaClNrx+m/4mYOat1waZZaAYQitv/MiJz9TDhZ/
+         WCPL2kdOPAvOfR7UQPqBqsqGaoHWYr7jgeK5RLYHQQS7ex5mTUN/lEf51NBZK14pfvuW
+         VEs0zchwTpNPXnJ8VRBGZyUksVAKPbs3QfxXhs4hyP2QGmwADGEuQkHegXVTGFut5DuP
+         bBCsxRryigqPT1nF8wSdBJzaQrI2JZU2govOKAIFj02OxU2LBnV0yJiXNMhdAaXTzHLx
+         DlsM0qNfMqDUEtVTFgt7oEi/6t5h7NH14Roz5iqjsPyQoumjEnrGD+/pIz7ruB1CN6WB
+         +gAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756356020; x=1756960820;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/1FbmeMJrwmv+p89A8rbgWWowNF8958qVntUHwO7+EI=;
+        b=UPoUXP6K8hVDdj4r+sBRSPTkPbXitl8WBJJch8AdcrrhhD3kFBq+MwEFJmKT6NLyaE
+         akWlCkMAWIpoiGuqokYadkdsb4VKkqcAAYO+r7W4pVKmBAVjr3V+dvqwZ2S74DPLqIkx
+         xT2M/xjZQtydXF0cxhYm5Nt7s0wNxx5nDj8v2sH62qZba1G8O9Ewr4TgHentBGx+E+v2
+         yoRR83+3Wqi3Ij0+RkGhrgTM4+uzzWd1jSZMTIC5d9SCuljrMGxqFotrCQ3nvXmjBwpn
+         j/mAAhqfb1tWv2pH2JjrVvPM/nLl89DNclYeRxIquqULmufMLgLW60AjetAKK1Ajku+Y
+         HO/w==
+X-Forwarded-Encrypted: i=1; AJvYcCUF4U8vPKO3QUmhSfJTmhQnjG3Bp2yyVhZdzN31ckXcjoi7PL2beurTHa401ChmzlEEnjBnuQNqwqhwoL8=@vger.kernel.org, AJvYcCVW8gzisn1KffY0rtLw5m/TSh6TPUfOhkuGNH4FiPwtiHd+TvTPAo2cAyfHq8xqGt0bmYR/JExV@vger.kernel.org
+X-Gm-Message-State: AOJu0YzfhmeNEKAVKk9KvGHbcogrIMr/SRV2F4iK8B44j8bXw5YhDtEO
+	7aR4vpmdUMs9eJRkvKLVKsNvr/stLSpAaCXL3zltpRCQr0UtWH5npCew
+X-Gm-Gg: ASbGncuoYMidji5D37BrijQMzVd+6fgxB0m/iszvEciOc4taCvllUp33guQ//g0A5OR
+	6fKSub7RH/SZTvL2m0ebzIIeH/YGAKvvE8r4KLjwSinOXTdQ3yKcugsSHSZ04KISt78nxjai2Rm
+	ZjC7j+YSNSfBna+fey9KW9DC2Q2SjwCANFkrBTkscRroCZDj4nlKPe33uah+GYlzsDCwU9ltM/S
+	YbqLT/gF+j9ze5F9D1SyZ7sgFMDBre93M7R5xUtc0TQYZmipepkrCKllODtOsTIpR901uRIMBip
+	92cMEqPq7fUMFaX+Nt2bLsl9Iyp2g8isK6tM/k6aEfzwsNOVzFLb4LbX1wwxidkFaB7h2MDtCkA
+	RDly9BSuaHrZbWXl2PCaupu/ghtZbvTnmCF47/E+6aM3E9LF/Vtl3eNaaP6LBTaROSVRSG/jPnZ
+	CAdnW2zcTpow==
+X-Google-Smtp-Source: AGHT+IEP1TMhgc2sfEgNwFmxmDOy/Miw4UKnS0rMvZzojwu7hGcM0OKpcNCnt1LcGiWVsu/79ksTyw==
+X-Received: by 2002:a17:90b:48c5:b0:325:8f58:f4d1 with SMTP id 98e67ed59e1d1-3258f58f6f6mr18806594a91.29.1756356019741;
+        Wed, 27 Aug 2025 21:40:19 -0700 (PDT)
+Received: from 2045D.localdomain (56.sub-75-229-200.myvzw.com. [75.229.200.56])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3274572be3bsm3482835a91.2.2025.08.27.21.40.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 Aug 2025 21:40:19 -0700 (PDT)
+From: John Evans <evans1210144@gmail.com>
+To: james.smart@broadcom.com,
+	dick.kennedy@broadcom.com,
+	James.Bottomley@HansenPartnership.com,
+	martin.petersen@oracle.com,
+	justintee8345@gmail.com
+Cc: linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: [PATCH v2] scsi: lpfc: Fix buffer free/clear order in deferred receive path
+Date: Thu, 28 Aug 2025 12:40:08 +0800
+Message-ID: <20250828044008.743-1-evans1210144@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] ata: ahci_xgene: Use int type for 'rc' to store error
- codes
-To: Qianfeng Rong <rongqianfeng@vivo.com>, Niklas Cassel <cassel@kernel.org>,
- linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250826075418.196069-1-rongqianfeng@vivo.com>
-From: Damien Le Moal <dlemoal@kernel.org>
-Content-Language: en-US
-Organization: Western Digital Research
-In-Reply-To: <20250826075418.196069-1-rongqianfeng@vivo.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 8/26/25 4:54 PM, Qianfeng Rong wrote:
-> Use int instead of u32 for the 'rc' variable in xgene_ahci_softreset()
-> to store negative error codes returned by ahci_do_softreset().
-> 
-> In xgene_ahci_pmp_softreset(), remove the redundant 'rc' variable and
-> directly return the result of the ahci_do_softreset() call instead.
-> 
-> Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
+Fix a use-after-free window by correcting the buffer release sequence in
+the deferred receive path. The code freed the RQ buffer first and only
+then cleared the context pointer under the lock. Concurrent paths
+(e.g., ABTS and the repost path) also inspect and release the same
+pointer under the lock, so the old order could lead to double-free/UAF.
 
-Applied to for-6.17-fixes. Thanks !
+Note that the repost path already uses the correct pattern: detach the
+pointer under the lock, then free it after dropping the lock. The deferred
+path should do the same.
 
+Fixes: 472e146d1cf3 ("scsi: lpfc: Correct upcalling nvmet_fc transport during io done downcall")
+Cc: stable@vger.kernel.org
+Signed-off-by: John Evans <evans1210144@gmail.com>
+---
+v2:
+* Rework locking to read and clear the buffer pointer atomically, as
+  suggested by Justin Tee.
+---
+ drivers/scsi/lpfc/lpfc_nvmet.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/scsi/lpfc/lpfc_nvmet.c b/drivers/scsi/lpfc/lpfc_nvmet.c
+index fba2e62027b7..4cfc928bcf2d 100644
+--- a/drivers/scsi/lpfc/lpfc_nvmet.c
++++ b/drivers/scsi/lpfc/lpfc_nvmet.c
+@@ -1243,7 +1243,7 @@ lpfc_nvmet_defer_rcv(struct nvmet_fc_target_port *tgtport,
+ 	struct lpfc_nvmet_tgtport *tgtp;
+ 	struct lpfc_async_xchg_ctx *ctxp =
+ 		container_of(rsp, struct lpfc_async_xchg_ctx, hdlrctx.fcp_req);
+-	struct rqb_dmabuf *nvmebuf = ctxp->rqb_buffer;
++	struct rqb_dmabuf *nvmebuf;
+ 	struct lpfc_hba *phba = ctxp->phba;
+ 	unsigned long iflag;
+ 
+@@ -1251,13 +1251,18 @@ lpfc_nvmet_defer_rcv(struct nvmet_fc_target_port *tgtport,
+ 	lpfc_nvmeio_data(phba, "NVMET DEFERRCV: xri x%x sz %d CPU %02x\n",
+ 			 ctxp->oxid, ctxp->size, raw_smp_processor_id());
+ 
++	spin_lock_irqsave(&ctxp->ctxlock, iflag);
++	nvmebuf = ctxp->rqb_buffer;
+ 	if (!nvmebuf) {
++		spin_unlock_irqrestore(&ctxp->ctxlock, iflag);
+ 		lpfc_printf_log(phba, KERN_INFO, LOG_NVME_IOERR,
+ 				"6425 Defer rcv: no buffer oxid x%x: "
+ 				"flg %x ste %x\n",
+ 				ctxp->oxid, ctxp->flag, ctxp->state);
+ 		return;
+ 	}
++	ctxp->rqb_buffer = NULL;
++	spin_unlock_irqrestore(&ctxp->ctxlock, iflag);
+ 
+ 	tgtp = phba->targetport->private;
+ 	if (tgtp)
+@@ -1265,9 +1270,6 @@ lpfc_nvmet_defer_rcv(struct nvmet_fc_target_port *tgtport,
+ 
+ 	/* Free the nvmebuf since a new buffer already replaced it */
+ 	nvmebuf->hrq->rqbp->rqb_free_buffer(phba, nvmebuf);
+-	spin_lock_irqsave(&ctxp->ctxlock, iflag);
+-	ctxp->rqb_buffer = NULL;
+-	spin_unlock_irqrestore(&ctxp->ctxlock, iflag);
+ }
+ 
+ /**
 -- 
-Damien Le Moal
-Western Digital Research
+2.43.0
+
 
