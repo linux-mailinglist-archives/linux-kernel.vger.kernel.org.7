@@ -1,111 +1,200 @@
-Return-Path: <linux-kernel+bounces-790824-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1709B3ADA0
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 00:40:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FB47B3ADA2
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 00:44:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF0DB583351
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 22:40:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5687B1C27263
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 22:45:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B16926F2BE;
-	Thu, 28 Aug 2025 22:40:20 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE8BD2264A3
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 22:40:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AF9228AAE6;
+	Thu, 28 Aug 2025 22:44:45 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0017.hostedemail.com [216.40.44.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D331126B77B;
+	Thu, 28 Aug 2025 22:44:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756420819; cv=none; b=q4p88E3fmcSZ/Rr2zWZJ+1s3FGyidRN9vqGts7/+gNluuKQdiAjTwJka58UhDu++dlR6JxCqD+AMIhLY5Cuq6dfaVebpoiIaBcVsqq9xaX9ejqWLmFocA1qj2AERQmlz6lo55uHqdeZnELzYOsBXbb5BBWRRC1B2s8V6FzBcW5o=
+	t=1756421084; cv=none; b=Jc4OciEBv9sX/jOmSTSLTb4axms2siXP/v7oPN6S2lPlM8uMDCk4JZIQH8UmkiqzbM72KA+Qol9TZV4hlXYXMxYdvyBCclN8wWkFb1a3EYtzllYUIgohLfpM/9kCSq4bvgpAqQNXiOup2h/+fNv1L9xYNoZ0wX6DGRc9TbNE3Zs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756420819; c=relaxed/simple;
-	bh=3GiqgHj2UCdSsbG5WJ6XWydJWCGenb/LnjW5cFj29m0=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=YOPUStrbIPZaaaz9ZC4o/5v7y9MatZ0jyKJKjzB39A1XDHd1CBCNgdQx97qKbCHatjTLTM5owJZEx1zd4LWW25jnjEjeEzvT/MdW7gN3Ulk0g4KpNhAyH4Pt02pJ2A5oSs/DzpgFaI0PxUAAJOQlU7B8cQfezoqO0KUTv8q60YA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BCFF11655;
-	Thu, 28 Aug 2025 15:40:07 -0700 (PDT)
-Received: from [192.168.0.16] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 371A73F63F;
-	Thu, 28 Aug 2025 15:40:15 -0700 (PDT)
-Message-ID: <e381fd4b-fb90-41ae-a480-0dad1ce2aa9f@arm.com>
-Date: Thu, 28 Aug 2025 23:40:13 +0100
+	s=arc-20240116; t=1756421084; c=relaxed/simple;
+	bh=i8B475GFQv13EK2Z65lMMoGXTratgVqcu8ZihnWECDY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=gVD2YQxcZw84/JH4iCE7KxNT3FYgeXKW5y3bOds29t3rit+WAoi0z9v14ljK41Ru86AQhcM6C+LmW9emX9p31ey1kxmdt0Ov2Dgl8b0frAAy4tELLlRqJ90W3i67OAcS0bDNXamDXK1XAsit7jW2UkL6VCAQ4QFkXHrdg9LM8rQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf16.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay06.hostedemail.com (Postfix) with ESMTP id B4CF71190DE;
+	Thu, 28 Aug 2025 22:44:38 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf16.hostedemail.com (Postfix) with ESMTPA id 806F62000D;
+	Thu, 28 Aug 2025 22:44:33 +0000 (UTC)
+Date: Thu, 28 Aug 2025 18:44:54 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Steven Rostedt <rostedt@kernel.org>, Arnaldo Carvalho de Melo
+ <arnaldo.melo@gmail.com>, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org, x86@kernel.org,
+ Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Josh Poimboeuf <jpoimboe@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, Jiri
+ Olsa <jolsa@kernel.org>, Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Andrii Nakryiko <andrii@kernel.org>, Indu Bhagat <indu.bhagat@oracle.com>,
+ "Jose E. Marchesi" <jemarch@gnu.org>, Beau Belgrave
+ <beaub@linux.microsoft.com>, Jens Remus <jremus@linux.ibm.com>, Andrew
+ Morton <akpm@linux-foundation.org>, Florian Weimer <fweimer@redhat.com>,
+ Sam James <sam@gentoo.org>, Kees Cook <kees@kernel.org>, "Carlos O'Donell"
+ <codonell@redhat.com>
+Subject: Re: [PATCH v6 5/6] tracing: Show inode and device major:minor in
+ deferred user space stacktrace
+Message-ID: <20250828184454.0681a2c6@gandalf.local.home>
+In-Reply-To: <CAHk-=wh0LjoJmRPHF41eQ1ZRf085urz+rvQQ-rwp8dLQCdqohw@mail.gmail.com>
+References: <20250828180300.591225320@kernel.org>
+	<20250828180357.223298134@kernel.org>
+	<CAHk-=wi0EnrBacWYJoUesS0LXUprbLmSDY3ywDfGW94fuBDVJw@mail.gmail.com>
+	<D7C36F69-23D6-4AD5-AED1-028119EAEE3F@gmail.com>
+	<CAHk-=wiBUdyV9UdNYEeEP-1Nx3VUHxUb0FQUYSfxN1LZTuGVyg@mail.gmail.com>
+	<20250828161718.77cb6e61@batman.local.home>
+	<CAHk-=wiujYBqcZGyBgLOT+OWdY3cz7EhbZE0GidhJmLNd9VPOQ@mail.gmail.com>
+	<20250828164819.51e300ec@batman.local.home>
+	<CAHk-=wjRC0sRZio4TkqP8_S+Fr8LUypVucPDnmERrHVjWOABXw@mail.gmail.com>
+	<20250828171748.07681a63@batman.local.home>
+	<CAHk-=wh0LjoJmRPHF41eQ1ZRf085urz+rvQQ-rwp8dLQCdqohw@mail.gmail.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: Thomas Gleixner <tglx@linutronix.de>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- yury.norov@gmail.com
-Cc: Rik van Riel <riel@surriel.com>
-From: Christian Loehle <christian.loehle@arm.com>
-Subject: [PATCH] smp: Fix smp_call_function_any() if no CPU online
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: 806F62000D
+X-Stat-Signature: pc3b9kohapgudmcbqjtfxxb856xjt7x8
+X-Rspamd-Server: rspamout06
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1/D+WLcwnZSdCPst/uJHEijZy1DI0ybSF0=
+X-HE-Tag: 1756421073-400866
+X-HE-Meta: U2FsdGVkX18ltWyuwuDBvGXtiJcyZ4mEbm6HixOdWvSKWt5tGg4YithH/RS+KFZ7rUIBG5mOkmgmhOTTCUOI20dcQI8uymQCBIpzD/qTjibf4wOgus3/OCRjjtsKsuqWKFSovfEcuCTdpPepB88LJnQzWPS/N8cmvgq94iXK0t5YjwEmIG8Nw+bk47IUlZ8c8qStPwB4MDKSamGl/7ctvUr+eAsCy+73GTziuNTqG0EPB2+cs4hvTHcgsAcQapuMK+9Y7vi7LhPB7Lh8u5bA8vV7/PGcy2P1OZzS8QcGsB/KzkbPGjImOgIvm23igNwc/BWktTTPWF9JrKsq9bvl3TYkpMvKLWUffzyU+eWuzhJxm/toPuQWql2e2cu7WOCLkvLXoe5GhEowGblVCM6yPQ==
 
-smp_call_function_any() used to handle a mask without any online
-CPUs just fine, but when switching to use sched_numa_find_nth_cpu()
-a previous check for online CPUs was removed.
-smp_call_function_single() handles invalid CPUs just fine, so
-just add the check back before calling sched_numa_find_nth_cpu().
 
-An observed issue was when initializing PMUs on HMP if all CPUs
-were offline (e.g. by booting with maxcpus):
+[ My last email of the night, as it's our anniversary, and I'm off to dinner now ;-) ]
 
-[    1.192642] Call trace:
-[    1.192868]  sched_numa_find_nth_cpu+0xc0/0x170 (P)
-[    1.193323]  smp_call_function_any+0xc8/0xd0
-[    1.193724]  armv8_pmu_init+0x58/0x27c
-[    1.194079]  armv8_cortex_a72_pmu_init+0x20/0x2c
-[    1.194507]  arm_pmu_device_probe+0x1e4/0x5e8
-[    1.194911]  armv8_pmu_device_probe+0x1c/0x28
-[    1.195316]  platform_probe+0x5c/0xac
-[    1.195658]  really_probe+0xbc/0x298
-[    1.195995]  __driver_probe_device+0x78/0x12c
-[    1.196399]  driver_probe_device+0xdc/0x160
-[    1.196787]  __driver_attach+0x94/0x19c
-[    1.197146]  bus_for_each_dev+0x74/0xd4
-[    1.197503]  driver_attach+0x24/0x30
-[    1.197838]  bus_add_driver+0xe4/0x208
-[    1.198187]  driver_register+0x60/0x128
-[    1.198546]  __platform_driver_register+0x24/0x30
-[    1.198974]  armv8_pmu_driver_init+0x28/0x4c
-[    1.199372]  do_one_initcall+0x44/0x25c
-[    1.199729]  kernel_init_freeable+0x1dc/0x3bc
-[    1.200134]  kernel_init+0x20/0x1d8
-[    1.200466]  ret_from_fork+0x10/0x20
-[    1.200809] Code: 4b020264 eb04007f 54000129 51000402 (f860d825)
-[    1.201355] ---[ end trace 0000000000000000 ]---
+On Thu, 28 Aug 2025 15:10:52 -0700
+Linus Torvalds <torvalds@linux-foundation.org> wrote:
 
-Fixes: 5f295519b42f ("smp: Improve locality in smp_call_function_any()")
-Cc: stable@vger.kernel.org
-Signed-off-by: Christian Loehle <christian.loehle@arm.com>
----
- kernel/smp.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+> On Thu, 28 Aug 2025 at 14:17, Steven Rostedt <rostedt@kernel.org> wrote:
+> >
+> > But that's unique per task, right? What I liked about the f_inode
+> > pointer, is that it appears to be shared between tasks.  
+> 
+> I actually think the local meaning of the file pointer is an advantage.
+> 
+> It not only means that you see the difference in mappings of the same
+> file created with different open calls, it also means that when
+> different processes mmap the same executable, they don't see the same
+> hash.
+> 
+> And because the file pointer doesn't have any long-term meaning, it
+> also means that you also can't make the mistake of thinking the hash
+> has a long lifetime. With an inode pointer hash, you could easily have
+> software bugs that end up not realizing that it's a temporary hash,
+> and that the same inode *will* get two different hashes if the inode
+> has been flushed from memory and then loaded anew due to memory
+> pressure.
 
-diff --git a/kernel/smp.c b/kernel/smp.c
-index 56f83aa58ec8..cbce9699ced6 100644
---- a/kernel/smp.c
-+++ b/kernel/smp.c
-@@ -759,7 +759,9 @@ int smp_call_function_any(const struct cpumask *mask,
- 
- 	/* Try for same CPU (cheapest) */
- 	cpu = get_cpu();
--	if (!cpumask_test_cpu(cpu, mask))
-+	if (!cpumask_intersects(mask, cpu_online_mask))
-+		cpu = nr_cpu_ids;
-+	else if (!cpumask_test_cpu(cpu, mask))
- 		cpu = sched_numa_find_nth_cpu(mask, 0, cpu_to_node(cpu));
- 
- 	ret = smp_call_function_single(cpu, func, info, wait);
--- 
-2.34.1
+This is a reasonable argument. But it is still nice to have the same value
+for all tasks. This is for a "file_cache" that does get flushed regularly
+(when various changes happen to the tracefs system).
+
+It's only purpose is to map the user space stack trace hash value to a path
+name (and build-id).
+
+But yeah, I do not want another file to get flagged with the same hash.
+
+> 
+> > I only want to add a new hash and print the path for a new file. If
+> > several tasks are using the same file (which they are with the
+> > libraries), then having the hash be the same between tasks would be
+> > more efficient.  
+> 
+> Why? See above why I think it's a mistake to think those hashes have
+> lifetimes. They don't. Two different inodes can have the same hash due
+> to lifetime issues, and the same inode can get two different hashes at
+> different times for the same reason.
+> 
+> So you *need* to tie these things to the only lifetime that matters:
+> the open/close pair (and the mmap - and the stack traces - will be
+> part of that lifetime).
+> 
+> I literally think that you are not thinking about this right if you
+> think you can re-use the hash.
+
+I'm just worried about this causing slow downs, especially if I also track
+the buildid. I did a quick update to the code to first use the f_inode and
+get the build_id, and it gives:
+
+       trace-cmd-1012    [003] ...1.    35.247318: inode_cache: hash=0xcb214087 path=/usr/lib/x86_64-linux-gnu/libc.so.6 build_id={0x10bddb6d,0xf5234181,0xc2f72e26,0x1aa4f797,0x6aa19eda}
+       trace-cmd-1012    [003] ...1.    35.247333: inode_cache: hash=0x2565194a path=/usr/local/bin/trace-cmd build_id={0x3f399e26,0xf9eb2d4d,0x475fa369,0xf5bb7eeb,0x6244ae85}
+       trace-cmd-1012    [003] ...1.    35.247419: inode_cache: hash=0x22dca920 path=/usr/local/lib64/libtracefs.so.1.8.2 build_id={0x6b040bdb,0x961f23d6,0xc1e1027e,0x7067c348,0xd069fa67}
+       trace-cmd-1012    [003] ...1.    35.247455: inode_cache: hash=0xe87b6ea5 path=/usr/local/lib64/libtraceevent.so.1.8.4 build_id={0x8946b4eb,0xe3bf4ec5,0x11fd7d86,0xcd3105e2,0xe44a8d4d}
+       trace-cmd-1012    [003] ...1.    35.247488: inode_cache: hash=0xafc34117 path=/usr/lib/x86_64-linux-gnu/libzstd.so.1.5.7 build_id={0x379dc873,0x32bbdbc4,0x91eeb6cf,0xba549730,0xe2b96c55}
+            bash-1003    [001] ...1.    35.248508: inode_cache: hash=0xcf9bd2d6 path=/usr/bin/bash build_id={0xd94aa36d,0x8e1f19c7,0xa4a69446,0x7338f602,0x20d66357}
+  NetworkManager-581     [004] ...1.    35.703993: inode_cache: hash=0xea1c3e22 path=/usr/sbin/NetworkManager build_id={0x278c6dbb,0x4a1cdde6,0xa1a30a2c,0xbc417464,0x9dfaa28e}
+            bash-1003    [001] ...1.    35.904817: inode_cache: hash=0x133252fa path=/usr/lib/x86_64-linux-gnu/libtinfo.so.6.5 build_id={0xff2193a5,0xb2ece2f1,0x1bcbd242,0xca302a0b,0xc155fd26}
+            bash-1013    [004] ...1.    37.716435: inode_cache: hash=0x53ae379b path=/usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2 build_id={0x4ed9e462,0xb302cd84,0x3ccf0104,0xbd80ac72,0x91c7fd44}
+            bash-1013    [004] ...1.    37.722923: inode_cache: hash=0xa55a259e path=/usr/lib/x86_64-linux-gnu/libz.so.1.3.1 build_id={0xc2d9e5b6,0xb211e958,0xdef878e4,0xe4022df,0x9552253}
+
+Now I changed it to be the file pointer, and it does give a bit more (see the duplicates):
+
+    sshd-session-1004    [007] ...1.    98.940058: inode_cache: hash=0x41a6191a path=/usr/lib/x86_64-linux-gnu/libc.so.6 build_id={0x10bddb6d,0xf5234181,0xc2f72e26,0x1aa4f797,0x6aa19eda}
+       trace-cmd-1016    [006] ...1.    98.940089: inode_cache: hash=0xcc38a542 path=/usr/lib/x86_64-linux-gnu/libc.so.6 build_id={0x10bddb6d,0xf5234181,0xc2f72e26,0x1aa4f797,0x6aa19eda}
+       trace-cmd-1016    [006] ...1.    98.940109: inode_cache: hash=0xa89cdd4b path=/usr/local/bin/trace-cmd build_id={0x3f399e26,0xf9eb2d4d,0x475fa369,0xf5bb7eeb,0x6244ae85}
+       trace-cmd-1016    [006] ...1.    98.940410: inode_cache: hash=0xb3c570ca path=/usr/local/lib64/libtracefs.so.1.8.2 build_id={0x6b040bdb,0x961f23d6,0xc1e1027e,0x7067c348,0xd069fa67}
+       trace-cmd-1016    [006] ...1.    98.940460: inode_cache: hash=0x4da4af85 path=/usr/local/lib64/libtraceevent.so.1.8.4 build_id={0x8946b4eb,0xe3bf4ec5,0x11fd7d86,0xcd3105e2,0xe44a8d4d}
+       trace-cmd-1016    [006] ...1.    98.940513: inode_cache: hash=0xce16bd9d path=/usr/lib/x86_64-linux-gnu/libzstd.so.1.5.7 build_id={0x379dc873,0x32bbdbc4,0x91eeb6cf,0xba549730,0xe2b96c55}
+            bash-1007    [004] ...1.    98.941772: inode_cache: hash=0x772df671 path=/usr/lib/x86_64-linux-gnu/libc.so.6 build_id={0x10bddb6d,0xf5234181,0xc2f72e26,0x1aa4f797,0x6aa19eda}
+            bash-1007    [004] ...1.    98.941911: inode_cache: hash=0xdb764962 path=/usr/bin/bash build_id={0xd94aa36d,0x8e1f19c7,0xa4a69446,0x7338f602,0x20d66357}
+            bash-1007    [004] ...1.   100.080299: inode_cache: hash=0xef3bf212 path=/usr/lib/x86_64-linux-gnu/libtinfo.so.6.5 build_id={0xff2193a5,0xb2ece2f1,0x1bcbd242,0xca302a0b,0xc155fd26}
+           gmain-602     [003] ...1.   100.477235: inode_cache: hash=0xc9205658 path=/usr/lib/x86_64-linux-gnu/libc.so.6 build_id={0x10bddb6d,0xf5234181,0xc2f72e26,0x1aa4f797,0x6aa19eda}
+       trace-cmd-1017    [005] ...1.   101.412116: inode_cache: hash=0x5a77751e path=/usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2 build_id={0x4ed9e462,0xb302cd84,0x3ccf0104,0xbd80ac72,0x91c7fd44}
+       trace-cmd-1017    [005] ...1.   101.417004: inode_cache: hash=0xf2e95689 path=/usr/lib/x86_64-linux-gnu/libc.so.6 build_id={0x10bddb6d,0xf5234181,0xc2f72e26,0x1aa4f797,0x6aa19eda}
+       trace-cmd-1017    [005] ...1.   101.418528: inode_cache: hash=0x5f35d3ca path=/usr/lib/x86_64-linux-gnu/libzstd.so.1.5.7 build_id={0x379dc873,0x32bbdbc4,0x91eeb6cf,0xba549730,0xe2b96c55}
+       trace-cmd-1017    [005] ...1.   101.418572: inode_cache: hash=0x57feda78 path=/usr/lib/x86_64-linux-gnu/libz.so.1.3.1 build_id={0xc2d9e5b6,0xb211e958,0xdef878e4,0xe4022df,0x9552253}
+       trace-cmd-1017    [005] ...1.   101.418620: inode_cache: hash=0x22ad5d84 path=/usr/local/lib64/libtraceevent.so.1.8.4 build_id={0x8946b4eb,0xe3bf4ec5,0x11fd7d86,0xcd3105e2,0xe44a8d4d}
+       trace-cmd-1017    [005] ...1.   101.418666: inode_cache: hash=0x11c240a6 path=/usr/local/lib64/libtracefs.so.1.8.2 build_id={0x6b040bdb,0x961f23d6,0xc1e1027e,0x7067c348,0xd069fa67}
+       trace-cmd-1017    [005] ...1.   101.418714: inode_cache: hash=0xf4e46cf path=/usr/local/bin/trace-cmd build_id={0x3f399e26,0xf9eb2d4d,0x475fa369,0xf5bb7eeb,0x6244ae85}
+  wpa_supplicant-583     [000] ...1.   102.521195: inode_cache: hash=0xd20a587b path=/usr/lib/x86_64-linux-gnu/libc.so.6 build_id={0x10bddb6d,0xf5234181,0xc2f72e26,0x1aa4f797,0x6aa19eda}
+       trace-cmd-1018    [005] ...1.   102.847910: inode_cache: hash=0xee16ee8e path=/usr/lib/x86_64-linux-gnu/libc.so.6 build_id={0x10bddb6d,0xf5234181,0xc2f72e26,0x1aa4f797,0x6aa19eda}
+    sshd-session-1004    [000] ...1.   102.853561: inode_cache: hash=0x3404c7ea path=/usr/lib/openssh/sshd-session build_id={0x3b119855,0x5b15323e,0xe1ec337a,0xbd49f66e,0x78bddd0f}
+   systemd-udevd-323     [007] ...1.   125.800839: inode_cache: hash=0x760273d5 path=/usr/lib/x86_64-linux-gnu/libc.so.6 build_id={0x10bddb6d,0xf5234181,0xc2f72e26,0x1aa4f797,0x6aa19eda}
+ systemd-journal-294     [000] ...1.   125.800932: inode_cache: hash=0x77f34056 path=/usr/lib/x86_64-linux-gnu/libc.so.6 build_id={0x10bddb6d,0xf5234181,0xc2f72e26,0x1aa4f797,0x6aa19eda}
+   systemd-udevd-323     [007] ...1.   125.801135: inode_cache: hash=0xe70bd063 path=/usr/lib/x86_64-linux-gnu/systemd/libsystemd-shared-257.so build_id={0x81d9bace,0x59f9953f,0x439928d7,0xe849d513,0xf2103286}
+         systemd-1       [006] ...1.   125.801781: inode_cache: hash=0x42292844 path=/usr/lib/x86_64-linux-gnu/libc.so.6 build_id={0x10bddb6d,0xf5234181,0xc2f72e26,0x1aa4f797,0x6aa19eda}
+         systemd-1       [006] ...1.   125.802811: inode_cache: hash=0x2cac8b3b path=/usr/lib/x86_64-linux-gnu/systemd/libsystemd-core-257.so build_id={0x580a80c5,0x931714d2,0xec54d3be,0xd5400bc0,0x6f2530ba}
+         systemd-1       [006] ...1.   125.803740: inode_cache: hash=0xb17acaa6 path=/usr/lib/x86_64-linux-gnu/systemd/libsystemd-shared-257.so build_id={0x81d9bace,0x59f9953f,0x439928d7,0xe849d513,0xf2103286}
+            cron-541     [006] ...1.   138.192640: inode_cache: hash=0x9285db61 path=/usr/lib/x86_64-linux-gnu/libc.so.6 build_id={0x10bddb6d,0xf5234181,0xc2f72e26,0x1aa4f797,0x6aa19eda}
+  NetworkManager-581     [005] ...1.   144.716224: inode_cache: hash=0xf3c5bbc1 path=/usr/lib/x86_64-linux-gnu/libc.so.6 build_id={0x10bddb6d,0xf5234181,0xc2f72e26,0x1aa4f797,0x6aa19eda}
+  NetworkManager-581     [005] ...1.   144.716392: inode_cache: hash=0x381883bb path=/usr/sbin/NetworkManager build_id={0x278c6dbb,0x4a1cdde6,0xa1a30a2c,0xbc417464,0x9dfaa28e}
+  NetworkManager-581     [005] ...1.   146.385151: inode_cache: hash=0x43451e15 path=/usr/lib/x86_64-linux-gnu/libglib-2.0.so.0.8400.0 build_id={0x9a7d3e29,0x5d8ed8f,0xe399da0,0xb5d373da,0x3ca1049b}
+         chronyd-663     [001] ...1.   157.080405: inode_cache: hash=0xa0db647a path=/usr/lib/x86_64-linux-gnu/libc.so.6 build_id={0x10bddb6d,0xf5234181,0xc2f72e26,0x1aa4f797,0x6aa19eda}
+         chronyd-663     [001] ...1.   158.152790: inode_cache: hash=0x1c471c4c path=/usr/sbin/chronyd build_id={0xf9588e62,0x3a8e6223,0x619fcb4f,0x12562bb,0x2ea104fb}
+
+But maybe it's not enough to be an issue. But this will become more
+predominate when sframes is built throughout. I only have a few
+applications having sframes enabled so not every task is getting a full
+stack trace, and hence, not all the files being touched is being displayed.
+
+Just to clarify my concern. I want the stack traces to be quick and small.
+I believe a 32 bit hash may be enough. And then have a side event that gets
+updated when new files appear that can display much more information. This
+side event may be slow which is why I don't want it to occur often. But I
+do want it to occur for all new files.
+
+-- Steve
 
