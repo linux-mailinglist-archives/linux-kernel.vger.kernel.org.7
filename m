@@ -1,139 +1,152 @@
-Return-Path: <linux-kernel+bounces-790564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95E85B3AA42
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 20:48:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FD5EB3AA46
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 20:48:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BE6DF7BAEF9
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 18:46:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CAC7D7BB22A
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 18:47:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3B0427933A;
-	Thu, 28 Aug 2025 18:48:28 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0EE0322A1D;
+	Thu, 28 Aug 2025 18:48:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="aQnBYNcf"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A7672727E4
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 18:48:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B03F2277C84
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 18:48:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756406908; cv=none; b=iQoUYvY/A0tnmxrV7kKtjwgUCtF+w5p3wFxsiXqWd1QICeeuHwRxT2ET3BwICo114QbmoOr5wXyfxXqiHvqruXMkTGsYD5Ey+UPY2fyBD9p2IQhgXcM7fVRP4opugHggbtW+8b6f4F8i07KW2cxqyD5CmRkPQqUr3QGcKA2Uirg=
+	t=1756406920; cv=none; b=Xc8oynMvJ1ERiKJUifqtu+YDXQ1ZeV6yd7d+CHBCmTHPo0zBh++7EsWKl8vZQGgT5v8kjE/mELG1Gj3YwXEofeQdDRBt8yNE9WphTYzPUpl8NaIFKC77pk9LpwXPlh4XOuKLwwk76QiM7uRxIUtx3XumiHnTG1/jLdFYxr8c4TU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756406908; c=relaxed/simple;
-	bh=QZqRfOnd/mthr7SgmzudH6me1aqzl7OP8FHh2NQ2q7E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DLx5jBCBDmVYfTrvx8fyEbzyKUMMYDZLsbbT28pyO4zwT3jwxAn9I/1caKI34QuLurZI7imopanyg7jAlqAiloVFqyFyNb8zr139xzx/chnd5q3etUBsYOp6yzYZLwlIm6sFUOpCqNXM3QEU08P4iGbtdrmrqU7n7G1nQfPqz9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CB2EC4CEEB;
-	Thu, 28 Aug 2025 18:48:25 +0000 (UTC)
-Date: Thu, 28 Aug 2025 19:48:23 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Ryan Roberts <ryan.roberts@arm.com>
-Cc: Yang Shi <yang@os.amperecomputing.com>, will@kernel.org,
-	akpm@linux-foundation.org, Miko.Lenczewski@arm.com,
-	dev.jain@arm.com, scott@os.amperecomputing.com, cl@gentwo.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH v6 3/4] arm64: mm: support large block mapping when
- rodata=full
-Message-ID: <aLCkd-E1wgszoZKd@arm.com>
-References: <20250805081350.3854670-1-ryan.roberts@arm.com>
- <20250805081350.3854670-4-ryan.roberts@arm.com>
- <aLCNTsM-nn6SpfOO@arm.com>
- <5795892e-503e-496b-a5dd-be4776f15513@arm.com>
+	s=arc-20240116; t=1756406920; c=relaxed/simple;
+	bh=fe43Ufei8hmJArfwfjHykXLl3MBtNupHer/YfngfUoE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=JH51tpjoXHqmPq9DYoFK8FADMzMITHN/qhgfmsvcIGJkAlLRbUbC4TcnYx/2won5ITK0n83b90gWFkhXuyvjrJJZLCoFJauJZ366cRMqU+Ara1zV0wVyfeN4xudRLj0bgj/RMVS2KC5nhmzmmkEyhxN0MZkz2B+fQeuAxMbnc54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=aQnBYNcf; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3b9edf4cf6cso965829f8f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 11:48:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1756406916; x=1757011716; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=YCFZGFKOrqQ9/x6LRTlmOZOgQDcEYVtLxoEx0AmcCMI=;
+        b=aQnBYNcf8pYYB5xW+uDvDXU4kLGAwstLaNplpBglsh7Ufq0zmi4dwTjLVGFABhBnU0
+         //o4mxVh4Xg/yTXsb7kl1MLPtePS88GaEiNUzBadr9S3tOhKveihFZlC22Krm6bdvGs0
+         zqmdoJIlc6NYXJlw0cW0xry5NbhKuCE3TkiNXqqM8HHHeDyzRIC4UE3MNYGGqR2cGZPU
+         XAaH25oWV+uIPlVGY48vrF1GoXcZBIXkgg9WDfqitgB+i8IxSqFIIC1+WEfyuWA+Eoja
+         JgUqyGLu4bu49Y5b0C0/YzoWV0l6xk5zlEReGHHetBNbvwBIl1l6BN9zZuT6Au4Guoao
+         aHOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756406916; x=1757011716;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YCFZGFKOrqQ9/x6LRTlmOZOgQDcEYVtLxoEx0AmcCMI=;
+        b=qoCCuNNPKTZONas+MdW41GyGYcB9C9aPC4Y85Ehifdxc/PhqV1HDniRfx8IZirQ8Au
+         Bw0wvUfODj5ivSLuSx+Qip855L9suHwu3JnCyW8IjUQTwtA3TT00U3zgwfLBSZlEUq3I
+         E65K/xwsp/lnLeeih5ymrXAUElbaD0ajig8I4Nit2ZmyMSemozmdNWuzwMpFY4BFuBr2
+         y/A6+Pkd4CPI5dISHnSVOvZ2EcGi3zApSdXcH0/84N5Ijg83WlzX3e/wiVo5gZRTxfDm
+         SLNqJJfV3xWEs8lr2ubB+m5i/x96yJp4E6fBOuvJRbwIxWSNFHGh3H3D4VfIjFb8gkWc
+         hfDA==
+X-Forwarded-Encrypted: i=1; AJvYcCXvDOyACLfTRm/4kiA0iNdwCClbrXXC9XvzBiSfGSFQpo1pgEEwtFS/aVAZEHhYDt2dskxqbzjstSYPPzw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVFMTiYwOT6KrREnXAR6P7MbCeHX7t7sXPFRgQg6eBq9uT+Y5i
+	EIqBL3ys807YxzSV/63sl7CsTJ9hVxZTTNfRlskD7IfXz/VHcQAMhnxYtAgT2FWq7zU=
+X-Gm-Gg: ASbGnctTx8MdkeQNRaIp8VlLmKf+Rb4TWjlkYgCihwQbBm+R3690RDqLz2JIUb1HLDk
+	ZWPM4RHb8W1Nq+afey86ctnmTFxIGC1UZ7vvx8yUzjO9Fr3ycGkCcXYfjRIIYT8rQ4n9Xw82tNH
+	DhEbDxfsS+Sga6esaT17hZempLi+N58ZdL1Uid82Og8LCWJtz9u7FT7cEoiHaMhcSwbopvXn8AM
+	SYYcNpmvoyWZwwYpX0qVOsd+ZT4UNS7m7cFnpbvMYwcxU9b/6/XXNTfusoRwoA36wjnZUF8SYlH
+	rhyqDhJ5fburPTjZf5Jc7y5nVepDFdI123RaqolRXyYVBlnEZY+eDd6lhHAyTMKW38+92DcIuIr
+	82sniXh1k2spswNMC0DNWF0nh9CcTjZ0=
+X-Google-Smtp-Source: AGHT+IHVpWUb6I19wVNzRTK5okLcwkV6fHhDdpnCpY6sXIIuYLXSPeVvVtRTfWlPTgYkaVI82dzhHQ==
+X-Received: by 2002:a05:6000:402c:b0:3ce:d43c:673f with SMTP id ffacd0b85a97d-3ced43c6c3fmr912774f8f.4.1756406915951;
+        Thu, 28 Aug 2025 11:48:35 -0700 (PDT)
+Received: from localhost ([177.94.120.255])
+        by smtp.gmail.com with UTF8SMTPSA id a1e0cc1a2514c-89438a05d95sm124151241.11.2025.08.28.11.48.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Aug 2025 11:48:35 -0700 (PDT)
+From: =?utf-8?B?UmljYXJkbyBCLiBNYXJsacOocmU=?= <rbm@suse.com>
+Date: Thu, 28 Aug 2025 15:48:30 -0300
+Subject: [PATCH] selftests/bpf: Upon failures, exit with code 1 in
+ test_xsk.sh
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5795892e-503e-496b-a5dd-be4776f15513@arm.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20250828-selftests-bpf-test_xsk_ret-v1-1-e6656c01f397@suse.com>
+X-B4-Tracking: v=1; b=H4sIAH2ksGgC/x2MQQqDMBAAvyJ77mISKEq/UookcaOhJcpukID49
+ ybeZg4zJwhxJIFXdwLTESVuqYp+dOBXmxbCOFcHo8xTjWZEoV/IJFnQ7QEbTUW+E1NGTc4Ms7N
+ eDRrqYGcKsdzz96e6s0Lo2Ca/tmXrE5Xch41vgOv6A4tuKcKQAAAA
+X-Change-ID: 20250828-selftests-bpf-test_xsk_ret-1eb27dbac071
+To: =?utf-8?q?Bj=C3=B6rn_T=C3=B6pel?= <bjorn@kernel.org>, 
+ Magnus Karlsson <magnus.karlsson@intel.com>, 
+ Maciej Fijalkowski <maciej.fijalkowski@intel.com>, 
+ Jonathan Lemon <jonathan.lemon@gmail.com>, 
+ Stanislav Fomichev <sdf@fomichev.me>, Andrii Nakryiko <andrii@kernel.org>, 
+ Eduard Zingerman <eddyz87@gmail.com>, Mykola Lysenko <mykolal@fb.com>, 
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+ Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, 
+ Yonghong Song <yonghong.song@linux.dev>, 
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
+ Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
+ Shuah Khan <shuah@kernel.org>
+Cc: netdev@vger.kernel.org, bpf@vger.kernel.org, 
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Ricardo_B=2E_Marli=C3=A8re?= <rbm@suse.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=897; i=rbm@suse.com;
+ h=from:subject:message-id; bh=fe43Ufei8hmJArfwfjHykXLl3MBtNupHer/YfngfUoE=;
+ b=owEBiQJ2/ZANAwAIAckLinxjhlimAcsmYgBosKSA/nhxIoPS8PHCw9bnh+yzRVq632rzVwddF
+ OagFjceVWSJAk8EAAEIADkWIQQDCo6eQk7jwGVXh+HJC4p8Y4ZYpgUCaLCkgBsUgAAAAAAEAA5t
+ YW51MiwyLjUrMS4xMSwyLDIACgkQyQuKfGOGWKYXEhAAs9TjcvKoxfickRlOGkOOMBIReNojdTJ
+ Cmf3hb3ahhhNrhQbdWqAvSBjzQPAVRx7pOH4ayhdu7hqmHXDPHjdRtTf2o2OyWt0wLeZj07Etsa
+ 9i6Ruw7nw8k1dmQiAzokP7nmb2Nfj9getAUul5qIxTS9eJtnyxDM0EIaCd5+yVKjdFfE+Vt0+ue
+ QqNTyuNUj1hhxJgHto4QRUNFF3NHGqfZkAJeaDwCAG0xkyrjGPLsMZ0QzkYz+1hTMDxxS5qdBjF
+ j7lpnPmIfvdjx7OTEwA4BfPPx0JvDMAb+VR16NCC3CvTSG9QZvx9SlsP5vzZToaaBqGGho9CVQh
+ RpQCYPmkbeBHA86PC82hlCxQ0PmNMORUOzWZsvivbzzq0e/T8QTuBQtVwLL5IN/LnLdQTwpln0Q
+ Ldl6dCg08Klth1edZD6cGb+MHvV9MyR/5Av85aqjycLAF8ZAqXA/ppEkGybm6lEgFKgHz+dwxgY
+ j+v2w1rgJ8Pt3mwv5qg95FXr46+RMatYySKSPd31f5ckth4qS0W5V4k6fh6MKuzyk1QCYTDtDBu
+ vL6c+RT5sZAZ8iKqOz6bKbndeap+ypS2THssEWCDb4zoAo/C1AYnpBNu6WG1Kd5kl0oBGjvIZ33
+ CfHFkRP7u0Ml273F/g6r17OYZ9Cs7mgxhr2e4dNN6fCziMBB/fwU=
+X-Developer-Key: i=rbm@suse.com; a=openpgp;
+ fpr=030A8E9E424EE3C0655787E1C90B8A7C638658A6
 
-On Thu, Aug 28, 2025 at 06:45:32PM +0100, Ryan Roberts wrote:
-> On 28/08/2025 18:09, Catalin Marinas wrote:
-> > On Tue, Aug 05, 2025 at 09:13:48AM +0100, Ryan Roberts wrote:
-> >> diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
-> >> index abd9725796e9..f6cd79287024 100644
-> >> --- a/arch/arm64/mm/mmu.c
-> >> +++ b/arch/arm64/mm/mmu.c
-> > [...]
-> >> @@ -640,6 +857,16 @@ static inline void arm64_kfence_map_pool(phys_addr_t kfence_pool, pgd_t *pgdp) {
-> >>  
-> >>  #endif /* CONFIG_KFENCE */
-> >>  
-> >> +static inline bool force_pte_mapping(void)
-> >> +{
-> >> +	bool bbml2 = system_capabilities_finalized() ?
-> >> +		system_supports_bbml2_noabort() : bbml2_noabort_available();
-> >> +
-> >> +	return (!bbml2 && (rodata_full || arm64_kfence_can_set_direct_map() ||
-> >> +			   is_realm_world())) ||
-> >> +		debug_pagealloc_enabled();
-> >> +}
-> >> +
-> >>  static void __init map_mem(pgd_t *pgdp)
-> >>  {
-> >>  	static const u64 direct_map_end = _PAGE_END(VA_BITS_MIN);
-> >> @@ -665,7 +892,7 @@ static void __init map_mem(pgd_t *pgdp)
-> >>  
-> >>  	early_kfence_pool = arm64_kfence_alloc_pool();
-> >>  
-> >> -	if (can_set_direct_map())
-> >> +	if (force_pte_mapping())
-> >>  		flags |= NO_BLOCK_MAPPINGS | NO_CONT_MAPPINGS;
-> >>  
-> >>  	/*
-> >> @@ -1367,7 +1594,7 @@ int arch_add_memory(int nid, u64 start, u64 size,
-> >>  
-> >>  	VM_BUG_ON(!mhp_range_allowed(start, size, true));
-> >>  
-> >> -	if (can_set_direct_map())
-> >> +	if (force_pte_mapping())
-> >>  		flags |= NO_BLOCK_MAPPINGS | NO_CONT_MAPPINGS;
-> >>  
-> >>  	__create_pgd_mapping(swapper_pg_dir, start, __phys_to_virt(start),
-> > 
-> > Not sure this works in a heterogeneous configuration.
-> > bbml2_noabort_available() only checks the current/boot CPU which may
-> > return true but if secondary CPUs don't have the feature, it results in
-> > system_supports_bbml2_noabort() being false with force_pte_mapping()
-> > also false in the early map_mem() calls.
-> 
-> The intent is that we eagerly create a block-mapped linear map at boot if the
-> boot CPU supports BBML2. If, once we have determined that a secondary CPU
-> doesn't support BBML2 (and therefore the system doesn't support it) then we
-> repaint the linear map using page mappings.
-> 
-> The repainting mechanism is added in the next patch.
+Currently, even if some subtests fails, the end result will still yield
+"ok 1 selftests: bpf: test_xsk.sh". Fix it by exiting with 1 if there are
+any failures.
 
-Ah, I haven't reached that patch yet ;).
+Signed-off-by: Ricardo B. Marlière <rbm@suse.com>
+---
+ tools/testing/selftests/bpf/test_xsk.sh | 2 ++
+ 1 file changed, 2 insertions(+)
 
-> I've tested this with heterogeneous configs and I'm confident it does work.
+diff --git a/tools/testing/selftests/bpf/test_xsk.sh b/tools/testing/selftests/bpf/test_xsk.sh
+index 65aafe0003db054e9dfd156092fed53b07be06a0..62db060298a4a3b4391ee4cfa50557cf4a62d3d5 100755
+--- a/tools/testing/selftests/bpf/test_xsk.sh
++++ b/tools/testing/selftests/bpf/test_xsk.sh
+@@ -241,4 +241,6 @@ done
+ 
+ if [ $failures -eq 0 ]; then
+         echo "All tests successful!"
++else
++	exit 1
+ fi
 
-Great. The downside is that such configuration is rare, the logic is
-fairly complex and won't get tested much. Hardware with such
-configuration will take a slight hit on the boot time.
+---
+base-commit: 5b6d6fe1ca7b712c74f78426bb23c465fd34b322
+change-id: 20250828-selftests-bpf-test_xsk_ret-1eb27dbac071
 
-I don't remember the discussions around Miko's patches adding the BBML2
-feature - do we have such heterogeneous configurations or are they just
-theoretical at this stage?
-
-> FYI, I actually have a new version of this ready to go - I was hoping to post
-> tomorrow, subject to performance results. I thought you were implying in a
-> previous mail that you weren't interested in reviewing until it was based on top
-> of an -rc. Perhaps I misunderstood. Let me know if you want me to hold off on
-> posting that given you are now reviewing this version.
-
-In general I prefer patches on top of a fixed -rc, especially if I need
-to apply them locally. But I was wondering if you are waiting for review
-feedback before rebasing, so I had a quick look ;).
-
-Please post a new version. I'll have a look at that since you were
-planning to update a few bits anyway.
-
+Best regards,
 -- 
-Catalin
+Ricardo B. Marlière <rbm@suse.com>
+
 
