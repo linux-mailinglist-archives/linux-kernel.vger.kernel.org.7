@@ -1,156 +1,133 @@
-Return-Path: <linux-kernel+bounces-789711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D5B6B3998A
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 12:22:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67659B39976
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 12:18:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6C9EC7AFF15
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 10:17:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D5671C27E5B
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 10:19:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CDCD30BBBF;
-	Thu, 28 Aug 2025 10:16:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4970530ACF3;
+	Thu, 28 Aug 2025 10:16:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="CkYi5kMx"
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kCdrXVHt"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98F4B30BBA9
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 10:16:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCAA33081CF;
+	Thu, 28 Aug 2025 10:16:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756376205; cv=none; b=oHY/2P4hQx8K9KMJDlmRNfne3SINCfVjQ0qLGdypSWsLlXfpD5ZtRmDCeXQW7gAS66M0XDzOmXth/5TMpcvTObQTP1eywV1EfcTfqSssReb5N0ON5BJiayPytTWqgE62W9Mt+KKdMtBZTNHqugT1NxEdBcXAmzgaRpS30v0hcxs=
+	t=1756376191; cv=none; b=aM44kFxF4vkE9nHLGed0nJKOvH+m6mVWwnld6ETqyqvBSPpcIEvBvbcAdrCmNcdSoqFifYJynH8cnuT/luSvufH5P4ivlf2xVvQUmbYBF3YoPq12Kw8fcd6dyufJyijTJJR86505xmW8VXKoGMCpUpThk0dtIgDykGct9lpxeGo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756376205; c=relaxed/simple;
-	bh=eQ6/+QYc3GtKN89cbuw8yxOlg3HzS1j1uIjLOLeHlUw=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=Y0yWzod0dVaYBKuc2coP29jxOVefY9OWOo0YGknatL9/CMtyYOz4Rn5+jTIx/fZJOARSNnr/XSdsKIOdrxayNWcqB0N+tiBR8PLnnob2mo3crtN9xljO+QM5nH/3lRBjMtZpsWCJmB9yMOt0KzysOCKkb+iuNGHlwNUBpZfn1KQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=CkYi5kMx; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250828101640epoutp01d2230ee5323a9ddbf41f988da5d0f4dd~f5tlBHiXh1959819598epoutp01S
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 10:16:40 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250828101640epoutp01d2230ee5323a9ddbf41f988da5d0f4dd~f5tlBHiXh1959819598epoutp01S
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1756376200;
-	bh=7WVbLEgCBgW0kxr8siZONXo38qiuBE7Ny1BRGaYyQ2A=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=CkYi5kMx3iyOqZ9y17EC/DFSJSQlfwgkL60NAxPR6nSriqfZALFLSUU5yLg4OQxyb
-	 bscMf4PnGUvY+dm8nCjARO//MNPdU6N6oITbGYSdNn67c5m+8WBYByBbfVt+Cet/4y
-	 zoQZcOJWXReceNQTRN3WThIaYRmfxqH+jsonVMwQ=
-Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPS id
-	20250828101639epcas5p48b80c4a47884cd10bbac3bbc8f4591fc~f5tkKT9_40991509915epcas5p4y;
-	Thu, 28 Aug 2025 10:16:39 +0000 (GMT)
-Received: from epcas5p1.samsung.com (unknown [182.195.38.92]) by
-	epsnrtp03.localdomain (Postfix) with ESMTP id 4cCHPL3zKGz3hhT3; Thu, 28 Aug
-	2025 10:16:38 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-	20250828101638epcas5p47594b2a3f92cfbe02b3135b62e6c71fd~f5tivVJSY0991509915epcas5p4u;
-	Thu, 28 Aug 2025 10:16:38 +0000 (GMT)
-Received: from FDSFTE361 (unknown [107.122.81.127]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250828101636epsmtip14b3c87b255cbf7a76151549e375f0457~f5thOPiNG2530725307epsmtip1e;
-	Thu, 28 Aug 2025 10:16:36 +0000 (GMT)
-From: "Bharat Uppal" <bharat.uppal@samsung.com>
-To: "'Bart Van Assche'" <bvanassche@acm.org>, <linux-scsi@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <James.Bottomley@HansenPartnership.com>,
-	<martin.petersen@oracle.com>, <alim.akhtar@samsung.com>,
-	<avri.altman@wdc.com>, <linux-samsung-soc@vger.kernel.org>
-Cc: <pankaj.dubey@samsung.com>, <aswani.reddy@samsung.com>, "'Nimesh Sati'"
-	<nimesh.sati@samsung.com>, <bharat.uppal@samsung.com>
-In-Reply-To: 
-Subject: RE: [PATCH] scsi: ufs: exynos: fsd: Gate ref_clk and put UFS device
- in reset on suspend
-Date: Thu, 28 Aug 2025 15:46:24 +0530
-Message-ID: <005401dc1804$d68d9110$83a8b330$@samsung.com>
+	s=arc-20240116; t=1756376191; c=relaxed/simple;
+	bh=9AhecmCpNrrUSjsrecrQe2CL2tQ3LbxLRxBTLNW/I6c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NTABESY/rBQt5yebqUZO7zLUq+OYWEdnZ6umzSMJ7cBXrk9kky08neMl9lQDrCy3bZudwO1LChe8uPD253/19wTms/uB0ebQmNfBrVQNv/MLGvZaLEzUqMmCLv57ZdsMrMvdyVPmr0kUdeG07BYz0sHN+NcUhDYK9KrIPmxSX/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kCdrXVHt; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756376190; x=1787912190;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=9AhecmCpNrrUSjsrecrQe2CL2tQ3LbxLRxBTLNW/I6c=;
+  b=kCdrXVHtp9FG7/CD6ZMRFsyip8/keO39uzTqgaBiZVHy7b3LC46cyb4o
+   FhNJHeyO5Gn1/NTcp2ngsen+o46eTGkv+3aR74g2aKkpzTV5Vgg1mdOh3
+   b7VDyQise8Sq1LcMNqxABxwlQggJTVZtnQakfDL/AAafMw9agfCalaSMM
+   ZLfnOxHvApZ9XUIwGOmMfslBjbdh86sKW7I9U0HBs8X/CTDK1fak8FrSn
+   oaAp1YbQYv/e1HJ8BbraQKsthLxqOEwdeuXcF23/agZn5SJOCCNlgHwf0
+   QaA4uBvAkp8PZJCpaZZh452P1IFnHsQw8GbVA/ASvgtGkiTzwtAxv6fE8
+   A==;
+X-CSE-ConnectionGUID: Ov98luw6Q7awMDOEOrubhA==
+X-CSE-MsgGUID: 1ZGw79ajSjmXyUHRsvLj+Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11535"; a="61275397"
+X-IronPort-AV: E=Sophos;i="6.18,217,1751266800"; 
+   d="scan'208";a="61275397"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2025 03:16:29 -0700
+X-CSE-ConnectionGUID: F7FbhJlcRg69b1NtU/w1ag==
+X-CSE-MsgGUID: aCGmAGT2S76Yjxj5AMYN1Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,217,1751266800"; 
+   d="scan'208";a="170246185"
+Received: from kuha.fi.intel.com ([10.237.72.152])
+  by orviesa008.jf.intel.com with SMTP; 28 Aug 2025 03:16:26 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Thu, 28 Aug 2025 13:16:24 +0300
+Date: Thu, 28 Aug 2025 13:16:24 +0300
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: Anjelique Melendez <anjelique.melendez@oss.qualcomm.com>
+Cc: gregkh@linuxfoundation.org, lumag@kernel.org, neil.armstrong@linaro.org,
+	johan+linaro@kernel.org, quic_bjorande@quicinc.com,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] usb: typec: ucsi_glink: Update request/response
+ buffers to be packed
+Message-ID: <aLAseOzr9_s0_lOv@kuha.fi.intel.com>
+References: <20250827201241.3111857-1-anjelique.melendez@oss.qualcomm.com>
+ <20250827201241.3111857-2-anjelique.melendez@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQExeeAfBfzr5YSvfr0wrrMUW8ELmAHKrEFuAhf3ztm1iYbGIIAkeQeQ
-Content-Language: en-in
-X-CMS-MailID: 20250828101638epcas5p47594b2a3f92cfbe02b3135b62e6c71fd
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-541,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250804113654epcas5p1dc2a495e16ff0f66eafc54be67550f23
-References: <CGME20250804113654epcas5p1dc2a495e16ff0f66eafc54be67550f23@epcas5p1.samsung.com>
-	<20250804113643.75140-1-bharat.uppal@samsung.com>
-	<c9cd3d39-37ec-42cf-9458-e3242fe1f302@acm.org> 
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250827201241.3111857-2-anjelique.melendez@oss.qualcomm.com>
 
-Hi Bart,
-I have made the relevant changes and pushed the updated patch.
-Can you please review it and close the same.
+On Wed, Aug 27, 2025 at 01:12:40PM -0700, Anjelique Melendez wrote:
+> Update the ucsi request/response buffers to be packed to ensure there
+> are no "holes" in memory while we read/write these structs.
+> 
+> Signed-off-by: Anjelique Melendez <anjelique.melendez@oss.qualcomm.com>
 
-With Regards
-Bharat Uppal
+Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 
-> -----Original Message-----
-> From: Bharat Uppal <bharat.uppal=40samsung.com>
-> Sent: 05 August 2025 10:58
-> To: 'Bart Van Assche' <bvanassche=40acm.org>; 'linux-scsi=40vger.kernel.o=
-rg'
-> <linux-scsi=40vger.kernel.org>; 'linux-kernel=40vger.kernel.org' <linux-
-> kernel=40vger.kernel.org>; 'James.Bottomley=40HansenPartnership.com'
-> <James.Bottomley=40HansenPartnership.com>;
-> 'martin.petersen=40oracle.com' <martin.petersen=40oracle.com>;
-> 'alim.akhtar=40samsung.com' <alim.akhtar=40samsung.com>;
-> 'avri.altman=40wdc.com' <avri.altman=40wdc.com>; 'linux-samsung-
-> soc=40vger.kernel.org' <linux-samsung-soc=40vger.kernel.org>
-> Cc: 'pankaj.dubey=40samsung.com' <pankaj.dubey=40samsung.com>;
-> 'aswani.reddy=40samsung.com' <aswani.reddy=40samsung.com>; 'Nimesh Sati'
-> <nimesh.sati=40samsung.com>
-> Subject: RE: =5BPATCH=5D scsi: ufs: exynos: fsd: Gate ref_clk and put UFS=
- device in
-> reset on suspend
->=20
->=20
-> > -----Original Message-----
-> > From: Bart Van Assche <bvanassche=40acm.org>
-> > Sent: 04 August 2025 21:17
-> > To: Bharat Uppal <bharat.uppal=40samsung.com>;
-> > linux-scsi=40vger.kernel.org; linux-kernel=40vger.kernel.org;
-> > James.Bottomley=40HansenPartnership.com;
-> > martin.petersen=40oracle.com; alim.akhtar=40samsung.com;
-> > avri.altman=40wdc.com; linux-samsung-soc=40vger.kernel.org
-> > Cc: pankaj.dubey=40samsung.com; aswani.reddy=40samsung.com; Nimesh
-> Sati
-> > <nimesh.sati=40samsung.com>
-> > Subject: Re: =5BPATCH=5D scsi: ufs: exynos: fsd: Gate ref_clk and put U=
-FS
-> > device in reset on suspend
-> >
-> > On 8/4/25 4:36 AM, Bharat Uppal wrote:
-> > > +static int fsd_ufs_suspend(struct exynos_ufs *ufs) =7B
-> > > +	exynos_ufs_gate_clks(ufs);
-> > > +	hci_writel(ufs, 0 << 0, HCI_GPIO_OUT);
-> > > +	return 0;
-> > > +=7D
-> >
-> > Why '0 << 0' instead of just '0'? Isn't the latter easier to read?
-> Thanks for reviewing.
-> Indeed setting 0 is right, but in the same file ufs-exynos.c,  I have see=
-n
-> HCI_GPIO_OUT register configured using 0 << 0.
-> My intent here is to maintain coding style within the file.
->=20
-> With Regards
-> Bharat Uppal
->=20
-> >
-> > Thanks,
-> >
-> > Bart.
+> ---
+>  drivers/usb/typec/ucsi/ucsi_glink.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/usb/typec/ucsi/ucsi_glink.c b/drivers/usb/typec/ucsi/ucsi_glink.c
+> index 8af79101a2fc..1f9f0d942c1a 100644
+> --- a/drivers/usb/typec/ucsi/ucsi_glink.c
+> +++ b/drivers/usb/typec/ucsi/ucsi_glink.c
+> @@ -30,24 +30,24 @@ struct ucsi_read_buf_req_msg {
+>  	struct pmic_glink_hdr   hdr;
+>  };
+>  
+> -struct ucsi_read_buf_resp_msg {
+> +struct __packed ucsi_read_buf_resp_msg {
+>  	struct pmic_glink_hdr   hdr;
+>  	u8                      buf[UCSI_BUF_SIZE];
+>  	u32                     ret_code;
+>  };
+>  
+> -struct ucsi_write_buf_req_msg {
+> +struct __packed ucsi_write_buf_req_msg {
+>  	struct pmic_glink_hdr   hdr;
+>  	u8                      buf[UCSI_BUF_SIZE];
+>  	u32                     reserved;
+>  };
+>  
+> -struct ucsi_write_buf_resp_msg {
+> +struct __packed ucsi_write_buf_resp_msg {
+>  	struct pmic_glink_hdr   hdr;
+>  	u32                     ret_code;
+>  };
+>  
+> -struct ucsi_notify_ind_msg {
+> +struct __packed ucsi_notify_ind_msg {
+>  	struct pmic_glink_hdr   hdr;
+>  	u32                     notification;
+>  	u32                     receiver;
+> -- 
+> 2.34.1
 
+-- 
+heikki
 
