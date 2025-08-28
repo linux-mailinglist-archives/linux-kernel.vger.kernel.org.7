@@ -1,146 +1,152 @@
-Return-Path: <linux-kernel+bounces-790806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8C8FB3AD49
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 00:10:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EB1CB3AD4A
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 00:11:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3672C16F0CA
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 22:10:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9650916A981
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 22:11:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CD3029B8E2;
-	Thu, 28 Aug 2025 22:10:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CEEE2BF019;
+	Thu, 28 Aug 2025 22:11:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HwtaVXms"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="LdMcs4FD"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BE12196C7C
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 22:10:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68421196C7C
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 22:11:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756419010; cv=none; b=iyHaNlep4xX6t16uZmA5DIUzNjPgi/33ui9S5Ys7GTuaWsSwE9fLktBaRshj5PgrEWgaE8EW8bZDJzd6FPR8WzQGysviv0r3r/CnMq7jEe7XmrQ43WBqsKgGYGDvMH4BV19JOFYgfI31phrYam+mg3ThKIBShAXKzOrhV3yORHA=
+	t=1756419076; cv=none; b=dXIXrS4Hj0VCqBHaFPyRRLKcwUXazDx/VaJrhtg3UICFvSAipVaMxqv/fqFwE+Vq0TypzJZXtzOzNyRX/GXr798iU8Lhcm1zCEKiFNUmorXjJYAyI7k9g+HM3QozG5SCqvFkaaz/VncEphZjqZ23K17cl/I/cwSfEPiXd0VbtzE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756419010; c=relaxed/simple;
-	bh=ntDuM+i2CiJdrfEvKVb4hG8nZ7wLSjf/cPPhPWDtEaA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KZkwPaPL1u8343gzVrzOs2FOpyQPljNP+NV16I6eCbejPas33QLnoV9oyXoVpeKP2tlFvECnjIIiSCdJlaE55eipbILBLdTtp75dtbhElPfV2PCNWY0KQt8jT2A9+a9W5MbepnL+AMzzFv7GFrIRPHqoYFiey7A22wYUdtSAsEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HwtaVXms; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3c985f13d45so988605f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 15:10:08 -0700 (PDT)
+	s=arc-20240116; t=1756419076; c=relaxed/simple;
+	bh=9WEGzCFhZV6sH6YxOCr5ztz6wxhV90gkoN+WpO2tJ3E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iSj8a9dS965z+C+j7I3SIMOJMiB3jE/lhgKillHWOxA6b3GFCiWLuP13YvI4ioSIx6d4q1r7i3iSOCftwFTvt3lD7QyXSQB4WvCGU3iRMrYeR9BA4xRtNo7rHeG0/GhG7DLIekXP9KlxYC67CvfXik9/bfg3PuyVsnIuJM9ef70=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=LdMcs4FD; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-afe9f6caf9eso215490066b.3
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 15:11:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756419007; x=1757023807; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=skVMf4Y64VvWuVdkg790UsFu5YpWQWWVSI/rnXUaOE8=;
-        b=HwtaVXmsDbvKvK2y2Z+w6LWxmHF+BSKbkDxzYC7wzOsRO6up538kncIswe0AzcCmDi
-         W2xPlSEfURPevJvEGLMjBK0AhXzBxZTFB0nh1kR7ePGoxp0lCbY7DV1kuRyIqYLCe6d0
-         mjrqiJuAiO31t7kdSuzPHT7sxYXrhcZbgS/SMDOvnh77QGXs92WfNCRWKhHwnAFi9SCa
-         x/W9V3T8SXaxysgBsVOAXM8byyplLdP19e/Bg3CoxJLi/7Zc3dojcmMfh19BoDZeJc9i
-         8vRu70EcSSwjZK+P24W5XiXAeMSkuXKrf6v3YGrqf0RzgYsUScRa62fchXB+vYmZyQLb
-         53Ew==
+        d=linux-foundation.org; s=google; t=1756419072; x=1757023872; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=PvdilKb/k6sbi3O/WOYoC5wLcLE1gCyu//e95KE+Wa0=;
+        b=LdMcs4FDZs3Fc+tW3G5aind3UJ1BYGG19x40EAC0vOu4Q49jUoDAPH4HbFME30b+bk
+         fLUX2Z+QTKD051jO3TNKwa1hKudYCA6BYfR/XNF8ac6Nb9YPzUrTfdWsdfUOeg1phlvP
+         aCvEOk/qICUl0TzRHlQgxZFOAEPYu4lo4YwDw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756419007; x=1757023807;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=skVMf4Y64VvWuVdkg790UsFu5YpWQWWVSI/rnXUaOE8=;
-        b=UtaeuUqi/kPysiywSwN//BHbMc5AqmmSSNSwpmDhxWvvmMEpo/kWwdB4im/h6h5Qod
-         HGc4KJcND21x2ZC+Gjv56FYj/pNDl7qcxir1sQgmEE4GQ3FfjZKnvmaeFTzmMrqF4YOq
-         Ns9WUpukwYHFhRe5lHybjqQSLTN2Ei+kSgN4JCYs4swkK2/F47KCDUjXYtmD45Yaa6kK
-         SgZjjSvgFt/FWf0kvq9+wcOB/kFM0EOPKZz6ohrzGMe7j6nkjZIc7JKgZnzWA0aYs5md
-         WUeQcgdO8BobtJVYoAm+cp9Z+ihycJsqTOfzAvMhSD0Ve9QTnm0hjMQZa790Afa7bJqf
-         P68A==
-X-Forwarded-Encrypted: i=1; AJvYcCWgfBQkFUqATdpV5uv1MzOVz8oNHFxprnxtXzDtqGLVkYrDpwQmwtCarEkTWy49cu+Jafu41HDmp4ELpeQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxAbk499z9yeiSVHmd/C7tb2c4qrgwxm25gm4sAO1mgq3k+2gTy
-	1f/zipIOtdqdrCE+ohzD/RQMkYZH/GfVVgR4D4o7E0C2lYXSbseHz8of
-X-Gm-Gg: ASbGncsBVHf+BZErUUGfXctw0www4S+hTUg0YHC5yt3EBVYK/ICtqUB4PjRYXFyFqFT
-	mlBVqkHCyjWW6FC5SLFB80cXlpsiLfeOSgdWDjgSwnMNdSU+2yTfQe/ZuY9MZz2aeful8g1AzYZ
-	H6DCS8BIJsRUM9NLbbkWwtgGNqzzNRH1VfkHHXhem4ByOwfuDw/GuwZs4ziNiOQ36RJMqJS7PZ/
-	0PTEZarJvEh1/p3g27pAGDqG+ri9E91SlWWv+rskkdEyt2b0RuV9t4d86RViFAJYSHxkEvGvKhb
-	7h9U4WGOdp0unQ5o69P2xFK+KH+4KfQMQIQ2f3z0VPH5bFDUNxo7pfiQrljNBQtZgEAdA6on/J2
-	PRWtBluBM5oKPuaK/WBjlfrNF2YPsKguL3IIwcgfmvyMib0D+C5yRMgo+er+C
-X-Google-Smtp-Source: AGHT+IHiZ3WBoyZu/FzweeVRjC7PvnRoZSigUpwU+uJ3IFJU1fWXfFsuIEdijQh0lzqXSdjRkIa2fA==
-X-Received: by 2002:a05:6000:2485:b0:3b7:9703:d99f with SMTP id ffacd0b85a97d-3cbb15ca058mr9165575f8f.27.1756419006524;
-        Thu, 28 Aug 2025 15:10:06 -0700 (PDT)
-Received: from devbig569.cln6.facebook.com ([2a03:2880:31ff:4a::])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3cf33fbb238sm765573f8f.53.2025.08.28.15.10.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Aug 2025 15:10:06 -0700 (PDT)
-Date: Thu, 28 Aug 2025 15:10:03 -0700
-From: Yueyang Pan <pyyjason@gmail.com>
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Brendan Jackman <jackmanb@google.com>,
-	Johannes Weiner <hannes@cmpxchg.org>, Zi Yan <ziy@nvidia.com>,
-	Usama Arif <usamaarif642@gmail.com>, linux-mm@kvack.org,
-	kernel-team@meta.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 2/2] mm/show_mem: Add trylock while printing alloc info
-Message-ID: <aLDTu3GrvLd9jMhr@devbig569.cln6.facebook.com>
-References: <cover.1756318426.git.pyyjason@gmail.com>
- <7e2bc96faab1a338829e549246189ad96e6c866b.1756318426.git.pyyjason@gmail.com>
- <20250827150619.4e468e68988f224f9f9bea6f@linux-foundation.org>
- <aLAUhXeRVWzLCNNd@devbig569.cln6.facebook.com>
- <c8db3486-4f13-4922-a270-1fbf61e2d782@suse.cz>
- <aLAXsptN4cw05IoZ@devbig569.cln6.facebook.com>
- <2182c715-aaf1-46d1-809e-e4142bc083af@suse.cz>
- <aLAmp4oayTfkPJ3o@devbig569.cln6.facebook.com>
- <92a3320e-2433-4ee8-8ed5-d5db6098b43e@suse.cz>
+        d=1e100.net; s=20230601; t=1756419072; x=1757023872;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PvdilKb/k6sbi3O/WOYoC5wLcLE1gCyu//e95KE+Wa0=;
+        b=ah5ipVJ9bRb6PfMs+2x1qNnliSN2Uk4SaSE4KlLwoiTs1DquHHH039wdp98qxYQ78H
+         KD6QlIgFqzwsSMZf9Y02YBEyj2YRLbJXlqvd24lRa131pcbggvPc2Cu5jpeBN4ZCuZwC
+         Fdf5pwZdd4cOXBM2UyvsIK0fsdoJisHETJbWqRIrXKQKu39adu2MLw6mvkTePGJvbBtT
+         zm6Cubb2EAI2ejef22W0I6/FM54CjDICePwUrxwuIPvO3QSXQOQGaELYX2oPIN5Dwzj8
+         9cSHoYbkobAPkV7UItTCVXD3MOBDa8Hukgdouo7O4973I+dETmlT5PftM0PNN5ofXnfj
+         Z3oA==
+X-Forwarded-Encrypted: i=1; AJvYcCUmUJE3qIX6OF2oWqVddMMhGkJfLRVjb7m46gELTTDpryf74tV/CVCRI5vNTTQUb3sLT5bzMmyBdDX84jg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzI06CB7SxyDNCaRH4O8A9Yt3FAozHpJkPq5K2l4x7Cwe9u7DvV
+	cZp4+MKXooTKOuTQfAznCmHwzkV/NRnlogodt1DBbT69Gx3rSkxmrgOsiqC/WFVjpvNf4IdiPvI
+	8nNWtrhqFVA==
+X-Gm-Gg: ASbGncuvdk7PyW+6RyJWNf7I1R2wxezVcM6avhtjFUlSieWhzPAryy1pR7GFDMlL2Lr
+	nUgrluwYjxpDDeiswoEb4lcmHj/QnnL/F1YLokBV7V/5YseXCIitz3C27UxnWg3gVrK7nQe8XQC
+	UNMaWUqs3slX4W1cGVIzMPcsTIT0IC/P+u0kZiTtyulQCvDz9rV67+5Sz0zq/Qgzcrwjjh3W/9R
+	BTxwDtOrMDzjrAqAf2DI14izDIohCm01yMKYmUKWMMS73raJfZOsPy4B7EzQf4AgNGeanehGth+
+	GuCvqKfgyTE2Zw3OwuaZpEO5xquXuTTmIBXBsNXR9NzbORc703tEOdQVf3oMCsVVQ8kXOcfMShi
+	D23gSKtsiDcMtJprbnAg9TPMoyFP5uAzBCEYUJZ8f+qT5zRPReV8yqWQLetgqPNY3wFDKqzu/vA
+	+lJJzBufX+v8areiuU2Q==
+X-Google-Smtp-Source: AGHT+IF5Nv70uO+o6ORBTr+ve3hypDGDB0tBa1cdEZv7hlRsy5ox99ZFWCWjcTNmFFSZF0Q9V6ndLQ==
+X-Received: by 2002:a17:907:80b:b0:afd:d994:7d1a with SMTP id a640c23a62f3a-afe2970a133mr2496663866b.63.1756419072440;
+        Thu, 28 Aug 2025 15:11:12 -0700 (PDT)
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com. [209.85.208.54])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afefc7edb7csm51769466b.2.2025.08.28.15.11.10
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 28 Aug 2025 15:11:10 -0700 (PDT)
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-6188b5b113eso2115855a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 15:11:10 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXRTkIi2T4gaKA+DsO11iMyV4jyzbe00Ye8jFC2JcKDqTwkvW174SzlJL2/EYRHYZG8c6uZiGSk0NnsqJI=@vger.kernel.org
+X-Received: by 2002:a17:907:60cf:b0:af9:3116:e0f6 with SMTP id
+ a640c23a62f3a-afe296e6412mr2315793666b.53.1756419069671; Thu, 28 Aug 2025
+ 15:11:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <92a3320e-2433-4ee8-8ed5-d5db6098b43e@suse.cz>
+References: <20250828180300.591225320@kernel.org> <20250828180357.223298134@kernel.org>
+ <CAHk-=wi0EnrBacWYJoUesS0LXUprbLmSDY3ywDfGW94fuBDVJw@mail.gmail.com>
+ <D7C36F69-23D6-4AD5-AED1-028119EAEE3F@gmail.com> <CAHk-=wiBUdyV9UdNYEeEP-1Nx3VUHxUb0FQUYSfxN1LZTuGVyg@mail.gmail.com>
+ <20250828161718.77cb6e61@batman.local.home> <CAHk-=wiujYBqcZGyBgLOT+OWdY3cz7EhbZE0GidhJmLNd9VPOQ@mail.gmail.com>
+ <20250828164819.51e300ec@batman.local.home> <CAHk-=wjRC0sRZio4TkqP8_S+Fr8LUypVucPDnmERrHVjWOABXw@mail.gmail.com>
+ <20250828171748.07681a63@batman.local.home>
+In-Reply-To: <20250828171748.07681a63@batman.local.home>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Thu, 28 Aug 2025 15:10:52 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wh0LjoJmRPHF41eQ1ZRf085urz+rvQQ-rwp8dLQCdqohw@mail.gmail.com>
+X-Gm-Features: Ac12FXx5hAxpj7R5TefcskUP8HKtgWPbH5S6RidfTf_IcaWQCyRoB2repH8EaWs
+Message-ID: <CAHk-=wh0LjoJmRPHF41eQ1ZRf085urz+rvQQ-rwp8dLQCdqohw@mail.gmail.com>
+Subject: Re: [PATCH v6 5/6] tracing: Show inode and device major:minor in
+ deferred user space stacktrace
+To: Steven Rostedt <rostedt@kernel.org>
+Cc: Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>, linux-kernel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org, x86@kernel.org, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Andrii Nakryiko <andrii@kernel.org>, 
+	Indu Bhagat <indu.bhagat@oracle.com>, "Jose E. Marchesi" <jemarch@gnu.org>, 
+	Beau Belgrave <beaub@linux.microsoft.com>, Jens Remus <jremus@linux.ibm.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Florian Weimer <fweimer@redhat.com>, 
+	Sam James <sam@gentoo.org>, Kees Cook <kees@kernel.org>, "Carlos O'Donell" <codonell@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Aug 28, 2025 at 11:54:58AM +0200, Vlastimil Babka wrote:
-> On 8/28/25 11:51, Yueyang Pan wrote:
-> > On Thu, Aug 28, 2025 at 10:53:01AM +0200, Vlastimil Babka wrote:
-> >> On 8/28/25 10:47, Yueyang Pan wrote:
-> >> > On Thu, Aug 28, 2025 at 10:41:23AM +0200, Vlastimil Babka wrote:
-> >> >> On 8/28/25 10:34, Yueyang Pan wrote:
-> >> >> > On Wed, Aug 27, 2025 at 03:06:19PM -0700, Andrew Morton wrote:
-> >> >> >> On Wed, 27 Aug 2025 11:34:23 -0700 Yueyang Pan <pyyjason@gmail.com> wrote:
-> >> >> >> 
-> >> >> >> > In production, show_mem() can be called concurrently from two
-> >> >> >> > different entities, for example one from oom_kill_process()
-> >> >> >> > another from __alloc_pages_slowpath from another kthread. This
-> >> >> >> > patch adds a mutex and invokes trylock before printing out the
-> >> >> >> > kernel alloc info in show_mem(). This way two alloc info won't
-> >> >> >> > interleave with each other, which then makes parsing easier.
-> >> >> 
-> >> >> What about the rest of the information printed by show_mem() being interleaved?
-> >> > 
-> >> > Thanks for your feedback, Vlastimil. We cannot use trylock for the rest 
-> >> > part as node filter can be different.
-> >> 
-> >> Right.
-> >> 
-> >> > Do you think we need a lock to prevent the whole show_mem() from being 
-> >> > interleaved and to acquire it at the very beginning? Will it be too 
-> >> > heavy?
-> >> 
-> >> It might be risky so perhaps let's not. Guess we can disentangle by dmesg
-> >> showing the thread id prefix.
-> > 
-> > I have thought about this. Since each line can interleave with another, we 
-> > would end up adding tid to each line. Not sure if this is acceptable.
-> 
-> I meant that printk/dmesg already does that so it's fine.
+On Thu, 28 Aug 2025 at 14:17, Steven Rostedt <rostedt@kernel.org> wrote:
+>
+> But that's unique per task, right? What I liked about the f_inode
+> pointer, is that it appears to be shared between tasks.
 
-Cool. Then I will do this for the previous part before memory allocation info.
+I actually think the local meaning of the file pointer is an advantage.
 
-> 
-> > Thanks
-> > Pan
-> 
+It not only means that you see the difference in mappings of the same
+file created with different open calls, it also means that when
+different processes mmap the same executable, they don't see the same
+hash.
+
+And because the file pointer doesn't have any long-term meaning, it
+also means that you also can't make the mistake of thinking the hash
+has a long lifetime. With an inode pointer hash, you could easily have
+software bugs that end up not realizing that it's a temporary hash,
+and that the same inode *will* get two different hashes if the inode
+has been flushed from memory and then loaded anew due to memory
+pressure.
+
+> I only want to add a new hash and print the path for a new file. If
+> several tasks are using the same file (which they are with the
+> libraries), then having the hash be the same between tasks would be
+> more efficient.
+
+Why? See above why I think it's a mistake to think those hashes have
+lifetimes. They don't. Two different inodes can have the same hash due
+to lifetime issues, and the same inode can get two different hashes at
+different times for the same reason.
+
+So you *need* to tie these things to the only lifetime that matters:
+the open/close pair (and the mmap - and the stack traces - will be
+part of that lifetime).
+
+I literally think that you are not thinking about this right if you
+think you can re-use the hash.
+
+             Linus
 
