@@ -1,278 +1,218 @@
-Return-Path: <linux-kernel+bounces-789828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789830-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE5D0B39B43
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 13:14:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 020DEB39B46
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 13:14:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9EA34680198
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 11:14:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58399985FD0
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 11:14:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E191630E0D8;
-	Thu, 28 Aug 2025 11:13:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD8B230E0CB;
+	Thu, 28 Aug 2025 11:14:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="u2RJJowG"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="3W7KQx5d"
+Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2059.outbound.protection.outlook.com [40.107.212.59])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E20DC279798;
-	Thu, 28 Aug 2025 11:13:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756379636; cv=none; b=EEZeR8zUDQ95hs2QH420URQNHkyrBNiDLKFcIADWtqbWLr92GNMdCU2hcoN4XuOey6kPmOVR5761tgGRcuwGGvrPcDWhSJd/sh6XRGvXHJ46NjvLmyzlBm7Dt59IYb+ZJCJHL7DsZjY3G3fSJQWq5qYxnoZ1isiXa1U25j/cAlU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756379636; c=relaxed/simple;
-	bh=ZlMzfEU+OdSa0mkz6+PAzGz67knIN4MmLEFxeKzh3xc=;
-	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=E9iIUKQmEbV8Wur4hOW4hldN5LHQU7aRBb7U9eYkf3a+9GKZxoyyB4F5rlsZq8+HrdpQZs+/ATtBILPyRJ86+1QujYzPfwslsBtYwRMqHA0oJQpBUZwoZemMb+q3mv4ZX5kWDfkIMZK6W07muldOUoMA+9zcQW4nUcbwnSsvzH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=u2RJJowG; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from mail.ideasonboard.com (unknown [IPv6:2401:4900:1c69:1331:996f:e361:948:c527])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 2274E20EE;
-	Thu, 28 Aug 2025 13:12:46 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1756379567;
-	bh=ZlMzfEU+OdSa0mkz6+PAzGz67knIN4MmLEFxeKzh3xc=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=u2RJJowGeffhqffaqSWXSUCBieb3uLWVA/X/Tl9CDfHxAmTXjrv4Aw8HMO+H1nM7j
-	 Txv+u/oFjefI3RcOZEsW8j2V1WiXZE8nXfcEROGUPiOQQpvXlRJNQUTq2LaLyWucYp
-	 48KjVImf8hBxyMe62J2fMS+/dk/boQMT2PZ7rsOI=
-Content-Type: text/plain; charset="utf-8"
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C29630C62D;
+	Thu, 28 Aug 2025 11:14:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.212.59
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756379663; cv=fail; b=eHL7t5Kn82ZbvqK1DzsJa+erbfYzwJmsYa6x+BJPmtEa9JFmFLWO5v76xclIGX9htDsrpVUroEggm41Um/LEr9dLyqp1eso1HLjnhY1OX3V9Broor7ynp3ctnHSX5DdwnvmOJsANKIb7kYfJgJ8fnkv+k7yeGtBajD6Ao9h8O4k=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756379663; c=relaxed/simple;
+	bh=SfvJHIpj+x1ntt10aMsHGrLE4099WfbK3xcDnINCtoI=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lliIQQOV/fv0OcoqWbL0fUKh7zqXUSZhjcYHPHnypLb0MQUi42oRGPiyshzHPjDpghwahxjYK6R8ykyHVX85TWq3+ekpW3gQ5ydfE3uMzFhpG/U7ULpDgsRWrHM54md2ZZn5kgH326un6niR93UOIoNUbbWJXdXSZODtpyHf/k0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=3W7KQx5d; arc=fail smtp.client-ip=40.107.212.59
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=a1P+4PGTb7JAIW1p1TKOLnghCrTl9kuUEObCj2mFKbb0P5qngqdt6PpbOUHrhzfDARMuEWJSYNpK6CZ5iF+EegMk/H9Bl5UlEmkT6Gu2dRdRc0jQocEI5iJw8z1Ut1KW2n5EI+U9pQlDR7UpSdUX5Y+eXcBztrQCDH8J//p8ji72nbSosgPWznBZmW0ySMEfKX7LUNV1ob2+6PCdHw6QA0hg8CsMLaH+2ezPRBYFEkINl8MF1scpF6JfOvJzKb4jaY7DZnjI89uEpm9sMHCQ9TGnrGTiN7MKW8JsgEAPxknGvmiWeOoEsUczSTqixffA6AioequFOZcQeGEMwYHsmw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=t0NygJSNDy2c9LvyB3pHkE/bUIXzFXvxWIMov9kiJt8=;
+ b=aNlAX2aYZUvk564LJ7At8rffZBm6REYJlCdoDBT6cdxRpuIs982JTDXEVy1gz3H8f3LOnw+DaGf9alAMhoevCdDbwoQOwLfUaSRDb3Rz/AAwkrWd4jpmpSL4kO9GKN2kfLhV9vS9XOrNVbhaz1e4im+Rr46i1qUpmMpHQ9qG6j3W2xHhEK0IcT2nsM5X0Uoh/peFSTVpGry5N6TSwkh9Mo2yqZHcMTI3BE4qtQ2SKIs5lDDdPtA7n34gjhcLcnKfX3wpfvbvWbbORDBnkjhI4BVSYPUKVObLlJieFK8XPVDVlHQ7SVps5dcddiWLPhVxlrUhujxOfCktSQON5vsKDQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=t0NygJSNDy2c9LvyB3pHkE/bUIXzFXvxWIMov9kiJt8=;
+ b=3W7KQx5dDy8ZNdwjq+tk3TjYo9BVHAKXAtYYu4A57Fu4AvKPhlujMaOjFsp2xEsJ1NctSQuyr7HEAlhBT8tK7V0mZ9Idya29YO8KLD0Yze8fFdLq6RpR1imvthbXSeJf6sQ6WQKYRSPUJGm5eWeww2ktA1uUcwEW+LAOX7jvZ6o=
+Received: from BLAPR03CA0173.namprd03.prod.outlook.com (2603:10b6:208:32f::35)
+ by MN0PR12MB5858.namprd12.prod.outlook.com (2603:10b6:208:379::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.21; Thu, 28 Aug
+ 2025 11:14:12 +0000
+Received: from BL6PEPF0001AB53.namprd02.prod.outlook.com
+ (2603:10b6:208:32f:cafe::5e) by BLAPR03CA0173.outlook.office365.com
+ (2603:10b6:208:32f::35) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9073.17 via Frontend Transport; Thu,
+ 28 Aug 2025 11:14:12 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
+Received: from SATLEXMB03.amd.com (165.204.84.17) by
+ BL6PEPF0001AB53.mail.protection.outlook.com (10.167.241.5) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.9052.8 via Frontend Transport; Thu, 28 Aug 2025 11:14:12 +0000
+Received: from Satlexmb09.amd.com (10.181.42.218) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 28 Aug
+ 2025 06:14:12 -0500
+Received: from BLR-L-NUPADHYA.xilinx.com (10.180.168.240) by
+ satlexmb09.amd.com (10.181.42.218) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.1748.10; Thu, 28 Aug 2025 04:14:05 -0700
+From: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+To: <linux-kernel@vger.kernel.org>
+CC: <bp@alien8.de>, <tglx@linutronix.de>, <mingo@redhat.com>,
+	<dave.hansen@linux.intel.com>, <Thomas.Lendacky@amd.com>, <nikunj@amd.com>,
+	<Santosh.Shukla@amd.com>, <Vasant.Hegde@amd.com>,
+	<Suravee.Suthikulpanit@amd.com>, <David.Kaplan@amd.com>, <x86@kernel.org>,
+	<hpa@zytor.com>, <peterz@infradead.org>, <seanjc@google.com>,
+	<pbonzini@redhat.com>, <kvm@vger.kernel.org>, <huibo.wang@amd.com>,
+	<naveen.rao@amd.com>, <francescolavra.fl@gmail.com>, <tiala@microsoft.com>
+Subject: [PATCH v10 13/18] x86/apic: Read and write LVT* APIC registers from HV for SAVIC guests
+Date: Thu, 28 Aug 2025 16:43:56 +0530
+Message-ID: <20250828111356.208972-1-Neeraj.Upadhyay@amd.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250828070334.208401-1-Neeraj.Upadhyay@amd.com>
+References: <20250828070334.208401-1-Neeraj.Upadhyay@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250825142522.1826188-10-r-donadkar@ti.com>
-References: <20250825142522.1826188-1-r-donadkar@ti.com> <20250825142522.1826188-10-r-donadkar@ti.com>
-Subject: Re: [PATCH v5 09/14] media: ti: j721e-csi2rx: add support for processing virtual channels
-From: Jai Luthra <jai.luthra@ideasonboard.com>
-Cc: r-donadkar@ti.com, y-abhilashchandra@ti.com, devarsht@ti.com, vaishnav.a@ti.com, s-jain1@ti.com, vigneshr@ti.com, mchehab@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, sakari.ailus@linux.intel.com, hverkuil-cisco@xs4all.nl, tomi.valkeinen@ideasonboard.com, changhuang.liang@starfivetech.com, jack.zhu@starfivetech.com, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org
-To: Rishikesh Donadkar <r-donadkar@ti.com>, jai.luthra@linux.dev, laurent.pinchart@ideasonboard.com, mripard@kernel.org
-Date: Thu, 28 Aug 2025 16:43:46 +0530
-Message-ID: <175637962616.1633224.4699307874299488136@freya>
-User-Agent: alot/0.12.dev28+gd2c823fe
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To satlexmb09.amd.com
+ (10.181.42.218)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL6PEPF0001AB53:EE_|MN0PR12MB5858:EE_
+X-MS-Office365-Filtering-Correlation-Id: 79e40daf-9857-435f-d07d-08dde6240487
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|376014|82310400026|1800799024|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?860lKu9v9k4mO6UZexowd54RiG13sTmgzPZ99wBoqi5ffxQ3G6By+qW7Bg7l?=
+ =?us-ascii?Q?FQg6OX9VaVfKnBV2J/Bnrva2lj4t2pm/ZkV3/olrQp3JAkP1WPd4NzZiR2Xb?=
+ =?us-ascii?Q?wZpXWJ7hTUlEwlBIhKJ1VF2mFvnEqxSUjdjiU0Oy77kukHD/6Y/OJqyUXZMN?=
+ =?us-ascii?Q?HWC4x2eJ2/hXlAS7t9K358dpwqgbRrz5/wi11N7lmtRZG4nZPMNde44mbJ8S?=
+ =?us-ascii?Q?06T954+tXENLg0JGsj/PGlNI4k83fzQpMSetHbeaTMJuEneiR7a6E4J7zM/n?=
+ =?us-ascii?Q?uT+LKZ6X9l3ibpc017/hIKOYU9O5RB6jPfVsk5v/qhktsKkUE6pm0Y+8qKtz?=
+ =?us-ascii?Q?wiLR/pT7fypdocXMlAjljKhaCCjk86SC6gvFwuSIhBYtaDPCX9IuM7zdIaiC?=
+ =?us-ascii?Q?2a7tpQVWBwm+mWlzhBMCCi4GFWo2Ims0rbdHg/Qa0uGf4uJiWpMYvNza9vbu?=
+ =?us-ascii?Q?EobNpQdGgjLjhYlEBk3fiLpbKDYRaZmxrAOo9uKWvP9HsFdfWqttuX1b/N0z?=
+ =?us-ascii?Q?hm/WcR+y+HaJjyO9LnDVp5J6O6GQ+KoZwa87QSTi2hde0EOUoQz4Rsy+ogoG?=
+ =?us-ascii?Q?+TRU4TrK7nrwtm1HFZkuiJ3jrPfWSKC9NLczd3pM+upLaoEgZaoKIZ1h5X+d?=
+ =?us-ascii?Q?D6MrBngaVxtQzZWHipzfsJ2DGvgu5IeCY9FKEN0aSDeBOii4GEUsCHjBY/ii?=
+ =?us-ascii?Q?owSNxhzp4t1jLek1el3URx+4f/u9rwrosZbZEndDX7nKKwGsoBXe41I15YsD?=
+ =?us-ascii?Q?ulqzr71Q/WRMt0gNxsif2n0EWQjQmazXSlZWaJSt1+utn2zxcOrV27QQW0zA?=
+ =?us-ascii?Q?/VzZAV7bhIo45naOInKuTt97RdMHeIAIb47ooRVzJtyeU5b/bDXcu69cHKFj?=
+ =?us-ascii?Q?GZhXwMXg8Ub89tSydi8VH7qQ8cJPc4qClGQSd8Qthhj8HPSOBVO+uqWnWXk5?=
+ =?us-ascii?Q?HK97YlCHkN0zMRNO486Vwmih54shmQlpNSXlkw7Gt8KSQ3pRiROmjt8NsLM5?=
+ =?us-ascii?Q?JfcXF/EesrVZ3zXC1LD4yZuWvzK3gLK7LQy0GZpprxXKNFS86K2Ts/DW64jR?=
+ =?us-ascii?Q?Gicy3G8GG8TaxFUguRyZcCUNLap+lrrexpgPm++D1wxOqNbBc26FoKUjYZ6n?=
+ =?us-ascii?Q?jjF2Np7gqpZDvPQGFIqngPsiqvpxZiMNnE+UVpdTNDkL/o7JQxKBlw3QGQyG?=
+ =?us-ascii?Q?bnC2dkO5NaXhTBpkYZJev34eHaZJ1XXSsaer6X5yWsRN36rCgwUhlBpmWVX/?=
+ =?us-ascii?Q?eLo8/ki788AKI2P9sTJjWoF7RtkAQP3xsyj7c0Sg1EqDi28T3ZfNwBOC/mYB?=
+ =?us-ascii?Q?yyy7zNcmk8kz9b7A9OxB6/nnyyv4dELkY0vopIJVwocO0tzudNVGiv36MOE1?=
+ =?us-ascii?Q?bmH74xJll87UxhS09xmgv09oPDbl3l4jPO/wM7/96IR+EMjcp990zJdAbhIy?=
+ =?us-ascii?Q?jRlQ/Lrd05R7MTKzXTz1gGEazSzquSAEiK5rpCNiOIltBJEAuExaW7obnKt4?=
+ =?us-ascii?Q?r2VJD29aNWH9awK6V7wWflD/A+gG6J6U/B6Y?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(7416014)(376014)(82310400026)(1800799024)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Aug 2025 11:14:12.5248
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 79e40daf-9857-435f-d07d-08dde6240487
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BL6PEPF0001AB53.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB5858
 
-Quoting Rishikesh Donadkar (2025-08-25 19:55:17)
-> From: Jai Luthra <j-luthra@ti.com>
->=20
-> Use get_frame_desc() to get the frame desc from the connected source,
-> and use the provided virtual channel instead of hardcoded one.
->=20
-> get_frame_desc() returns the same information when called on each stream
-> start, so instead get the VCs for all the routed stream at first
-> stream start and cache this information in the driver.
->=20
-> get_frame_desc() works per stream, but as we don't support multiple
-> streams yet, we will just always use stream 0. If the source doesn't
-> support get_frame_desc(), fall back to the previous method of always
-> capturing virtual channel 0.
->=20
-> Reviewed-by: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>
-> Co-developed-by: Pratyush Yadav <p.yadav@ti.com>
-> Signed-off-by: Pratyush Yadav <p.yadav@ti.com>
-> Signed-off-by: Jai Luthra <j-luthra@ti.com>
-> Signed-off-by: Rishikesh Donadkar <r-donadkar@ti.com>
-> ---
->  .../platform/ti/j721e-csi2rx/j721e-csi2rx.c   | 108 ++++++++++++++++++
->  1 file changed, 108 insertions(+)
->=20
-> diff --git a/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c b/driv=
-ers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c
-> index 6cab7642aa10..45e9001fa35b 100644
-> --- a/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c
-> +++ b/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c
-> @@ -32,6 +32,7 @@
->  #define SHIM_DMACNTX_YUV422            GENMASK(27, 26)
->  #define SHIM_DMACNTX_DUAL_PCK_CFG      BIT(24)
->  #define SHIM_DMACNTX_SIZE              GENMASK(21, 20)
-> +#define SHIM_DMACNTX_VC                        GENMASK(9, 6)
->  #define SHIM_DMACNTX_FMT               GENMASK(5, 0)
->  #define SHIM_DMACNTX_YUV422_MODE_11    3
->  #define SHIM_DMACNTX_SIZE_8            0
-> @@ -103,6 +104,7 @@ struct ti_csi2rx_dev;
-> =20
->  struct ti_csi2rx_ctx {
->         struct ti_csi2rx_dev            *csi;
-> +       struct v4l2_subdev_route        *route;
->         struct video_device             vdev;
->         struct vb2_queue                vidq;
->         struct mutex                    mutex; /* To serialize ioctls. */
-> @@ -111,6 +113,8 @@ struct ti_csi2rx_ctx {
->         struct media_pad                pad;
->         u32                             sequence;
->         u32                             idx;
-> +       u32                             vc;
-> +       u32                             stream;
->  };
-> =20
->  struct ti_csi2rx_dev {
-> @@ -134,6 +138,7 @@ struct ti_csi2rx_dev {
->                 dma_addr_t              paddr;
->                 size_t                  len;
->         } drain;
-> +       bool                            vc_cached;
->  };
-> =20
->  static inline struct ti_csi2rx_dev *to_csi2rx_dev(struct v4l2_subdev *sd)
-> @@ -614,6 +619,7 @@ static void ti_csi2rx_setup_shim(struct ti_csi2rx_ctx=
- *ctx)
->         }
-> =20
->         reg |=3D FIELD_PREP(SHIM_DMACNTX_SIZE, fmt->size);
-> +       reg |=3D FIELD_PREP(SHIM_DMACNTX_VC, ctx->vc);
-> =20
->         writel(reg, csi->shim + SHIM_DMACNTX(ctx->idx));
-> =20
-> @@ -887,6 +893,83 @@ static void ti_csi2rx_buffer_queue(struct vb2_buffer=
- *vb)
->         }
->  }
-> =20
-> +static int ti_csi2rx_get_route(struct ti_csi2rx_ctx *ctx)
-> +{
-> +       struct ti_csi2rx_dev *csi =3D ctx->csi;
-> +       struct media_pad *pad;
-> +       struct v4l2_subdev_state *state;
-> +       struct v4l2_subdev_route *r;
-> +
-> +       /* Get the source pad connected to this ctx */
-> +       pad =3D media_entity_remote_source_pad_unique(ctx->pad.entity);
-> +       if (!pad) {
-> +               dev_err(csi->dev, "No pad connected to ctx %d\n", ctx->id=
-x);
-> +               v4l2_subdev_unlock_state(state);
+Hypervisor need information about the current state of LVT registers
+for device emulation and NMI. So, forward reads and write of these
+registers to the hypervisor for Secure AVIC enabled guests.
 
-Here the state =3D=3D NULL.
+Reviewed-by: Tianyu Lan <tiala@microsoft.com>
+Signed-off-by: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+---
+Changes since v9:
+ - No change.
 
-I think this is broken since v4. Please fix in the next one.
+ arch/x86/kernel/apic/x2apic_savic.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-> +               return -ENODEV;
-> +       }
-> +
-> +       state =3D v4l2_subdev_lock_and_get_active_state(&csi->subdev);
-> +
-> +       for_each_active_route(&state->routing, r) {
-> +               if (!(r->flags & V4L2_SUBDEV_ROUTE_FL_ACTIVE))
-> +                       continue;
-> +               if (r->source_pad !=3D pad->index)
-> +                       continue;
-> +
-> +               ctx->route =3D r;
-> +       }
-> +
-> +       v4l2_subdev_unlock_state(state);
-> +
-> +       if (!ctx->route)
-> +               return -ENODEV;
-> +
-> +       return 0;
-> +}
-> +
-> +static int ti_csi2rx_get_vc(struct ti_csi2rx_ctx *ctx)
-> +{
-> +       struct ti_csi2rx_dev *csi =3D ctx->csi;
-> +       struct ti_csi2rx_ctx *curr_ctx;
-> +       struct v4l2_mbus_frame_desc fd;
-> +       struct media_pad *source_pad;
-> +       struct v4l2_subdev_route *curr_route;
-> +       int ret;
-> +       unsigned int i, j;
-> +
-> +       /* Get the frame desc form source */
-> +       source_pad =3D media_entity_remote_pad_unique(&csi->subdev.entity=
-, MEDIA_PAD_FL_SOURCE);
-> +       if (!source_pad)
-> +               return -ENODEV;
-> +
-> +       ret =3D v4l2_subdev_call(csi->source, pad, get_frame_desc, source=
-_pad->index, &fd);
-> +       if (ret)
-> +               return ret;
-> +
-> +       if (fd.type !=3D V4L2_MBUS_FRAME_DESC_TYPE_CSI2)
-> +               return -EINVAL;
-> +
-> +       for (i =3D 0; i < csi->num_ctx; i++) {
-> +               curr_ctx =3D &csi->ctx[i];
-> +
-> +               /* Capture VC 0 by default */
-> +               curr_ctx->vc =3D 0;
-> +
-> +               ret =3D ti_csi2rx_get_route(curr_ctx);
-> +               if (ret)
-> +                       continue;
-> +
-> +               curr_route =3D curr_ctx->route;
-> +               curr_ctx->stream =3D curr_route->sink_stream;
-> +
-> +               for (j =3D 0; j < fd.num_entries; j++)
-> +                       if (curr_ctx->stream =3D=3D fd.entry[j].stream)
-> +                               curr_ctx->vc =3D fd.entry[j].bus.csi2.vc;
-> +       }
-> +
-> +       return 0;
-> +}
-> +
->  static int ti_csi2rx_start_streaming(struct vb2_queue *vq, unsigned int =
-count)
->  {
->         struct ti_csi2rx_ctx *ctx =3D vb2_get_drv_priv(vq);
-> @@ -907,6 +990,25 @@ static int ti_csi2rx_start_streaming(struct vb2_queu=
-e *vq, unsigned int count)
->         if (ret)
->                 goto err;
-> =20
-> +       /* If no stream is routed to this ctx, exit early */
-> +       ret =3D ti_csi2rx_get_route(ctx);
-> +       if (ret)
-> +               goto err;
-> +
-> +       /* Get the VC for all enabled ctx on first stream start */
-> +       mutex_lock(&csi->mutex);
-> +       if (!csi->vc_cached) {
-> +               ret =3D ti_csi2rx_get_vc(ctx);
-> +               if (ret =3D=3D -ENOIOCTLCMD) {
-> +                       ctx->vc =3D 0;
-> +               } else if (ret < 0) {
-> +                       mutex_unlock(&csi->mutex);
-> +                       goto err;
-> +               }
-> +               csi->vc_cached =3D true;
-> +       }
-> +       mutex_unlock(&csi->mutex);
-> +
->         ti_csi2rx_setup_shim(ctx);
-> =20
->         ctx->sequence =3D 0;
-> @@ -953,6 +1055,10 @@ static void ti_csi2rx_stop_streaming(struct vb2_que=
-ue *vq)
->         writel(0, csi->shim + SHIM_CNTL);
->         writel(0, csi->shim + SHIM_DMACNTX(ctx->idx));
-> =20
-> +       mutex_lock(&csi->mutex);
-> +       csi->vc_cached =3D false;
-> +       mutex_unlock(&csi->mutex);
-> +
->         ret =3D v4l2_subdev_call(&csi->subdev, video, s_stream, 0);
->         if (ret)
->                 dev_err(csi->dev, "Failed to stop subdev stream\n");
-> @@ -1306,6 +1412,8 @@ static int ti_csi2rx_init_ctx(struct ti_csi2rx_ctx =
-*ctx)
-> =20
->         ti_csi2rx_fill_fmt(fmt, &ctx->v_fmt);
-> =20
-> +       ctx->route =3D NULL;
-> +
->         ctx->pad.flags =3D MEDIA_PAD_FL_SINK;
->         vdev->entity.ops =3D &ti_csi2rx_video_entity_ops;
->         ret =3D media_entity_pads_init(&ctx->vdev.entity, 1, &ctx->pad);
-> --=20
-> 2.34.1
->
+diff --git a/arch/x86/kernel/apic/x2apic_savic.c b/arch/x86/kernel/apic/x2apic_savic.c
+index bb8d4032dcf9..c569b6e23777 100644
+--- a/arch/x86/kernel/apic/x2apic_savic.c
++++ b/arch/x86/kernel/apic/x2apic_savic.c
+@@ -67,6 +67,11 @@ static u32 savic_read(u32 reg)
+ 	case APIC_TMICT:
+ 	case APIC_TMCCT:
+ 	case APIC_TDCR:
++	case APIC_LVTTHMR:
++	case APIC_LVTPC:
++	case APIC_LVT0:
++	case APIC_LVT1:
++	case APIC_LVTERR:
+ 		return savic_ghcb_msr_read(reg);
+ 	case APIC_ID:
+ 	case APIC_LVR:
+@@ -76,11 +81,6 @@ static u32 savic_read(u32 reg)
+ 	case APIC_LDR:
+ 	case APIC_SPIV:
+ 	case APIC_ESR:
+-	case APIC_LVTTHMR:
+-	case APIC_LVTPC:
+-	case APIC_LVT0:
+-	case APIC_LVT1:
+-	case APIC_LVTERR:
+ 	case APIC_EFEAT:
+ 	case APIC_ECTRL:
+ 	case APIC_SEOI:
+@@ -205,18 +205,18 @@ static void savic_write(u32 reg, u32 data)
+ 	case APIC_LVTT:
+ 	case APIC_TMICT:
+ 	case APIC_TDCR:
+-		savic_ghcb_msr_write(reg, data);
+-		break;
+ 	case APIC_LVT0:
+ 	case APIC_LVT1:
++	case APIC_LVTTHMR:
++	case APIC_LVTPC:
++	case APIC_LVTERR:
++		savic_ghcb_msr_write(reg, data);
++		break;
+ 	case APIC_TASKPRI:
+ 	case APIC_EOI:
+ 	case APIC_SPIV:
+ 	case SAVIC_NMI_REQ:
+ 	case APIC_ESR:
+-	case APIC_LVTTHMR:
+-	case APIC_LVTPC:
+-	case APIC_LVTERR:
+ 	case APIC_ECTRL:
+ 	case APIC_SEOI:
+ 	case APIC_IER:
+-- 
+2.34.1
+
 
