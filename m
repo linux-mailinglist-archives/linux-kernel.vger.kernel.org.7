@@ -1,132 +1,96 @@
-Return-Path: <linux-kernel+bounces-789202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789207-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7400B39232
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 05:27:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 859C7B3923C
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 05:33:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC5DD1C238B2
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 03:27:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B65441C23568
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 03:34:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D29C24729A;
-	Thu, 28 Aug 2025 03:27:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ECC61CEAC2;
+	Thu, 28 Aug 2025 03:33:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yK2BkNFp"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="QYKK6lNc"
+Received: from out203-205-221-239.mail.qq.com (out203-205-221-239.mail.qq.com [203.205.221.239])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67A5913957E
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 03:26:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24BF313D503;
+	Thu, 28 Aug 2025 03:33:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.239
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756351620; cv=none; b=LjJ0zjzacnYIj+E2uavdhtBfrkvXzxaqswwLkCbeoighsuRXvD5aygMjWm3TvQetelsS6lD04ObHJvzMobEF5iRBzBEBGO3PyouMB8LeTcMMxcnL5AFab3iPn7ZnvDgaoqEMIPCFm8AdorpVJjYJ8xJC6fMqG6tOB2fCbm7iVH8=
+	t=1756352023; cv=none; b=FCgAhOMowK7tKve/wTINqi9Mh0VHRDI0qwQHHKYd2ek+oGgHupdMZ09l7makJxx4ZZPRS/nsVwow2giQecCUSJ+teLrUzI469+H3Zql72tLExoYGg4ms3X5AOvxmVhehBv4gTBpjtVv5508FUa+2tZN4+U2wSapZ81L905Hf6qU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756351620; c=relaxed/simple;
-	bh=ftdmSlNt09FgQY4pEvWWw7yJUxA83F1tEXsoFtLyi3s=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=ffB1iHG+2vgGqIqX8e95e4FmEICXOf3teyfaSOcSDXZzrC39cA8Ww/FV+hWYKpL4uJqa/ozANjw6GnqB+y0mOKhDL4UiiksIE8Iq6AtC0vnM68YgeQhXaTetzokXKQJWKP1j6Yuwo7r+hII9eCPHyhHpDfYBUm6IL90o9tNFyRQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--cmllamas.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yK2BkNFp; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--cmllamas.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-248d9301475so4271945ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 20:26:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756351618; x=1756956418; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=/WwDqhBFvfX8vGdZlaGfr2aX/pAs2877vUWTmC3CYPY=;
-        b=yK2BkNFpJoBiQ1H5/AwQpYZr+rxDxxQtS1L2sgzky0AlXJ0PMNNKlSEJ8DYhf3E6GA
-         X6M5q38TEIifI6cg/VDwjUeKWQyODHz2FaUYZILXUYaWG5OnSrhm+85XciX+fcVTwhyY
-         +iZb662jSQU59ia7gzbhKLIpKCws8s5KCyzHXzg51rBv5cJX+Uh5vh49Vcs2If+D3WWh
-         yNYvgPAXF7nfZeigKuM0VVqYIL5djxSKJ6NuICRTlrw5KErc+Rhl7p1mF5X5S76CDy66
-         g5irpUVLeqGhla1PobI2eonzoYwsnFM5i5qsiIxRiCQZQIIqv9Xh0GSMwGrpcOkciNxf
-         pCDA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756351619; x=1756956419;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/WwDqhBFvfX8vGdZlaGfr2aX/pAs2877vUWTmC3CYPY=;
-        b=XYhOkALRuGGE1JnxU6SCIv6lWET5xvN99GfG5q8tbS/ra8xSNVbHg9lhdPomoYLrqf
-         wlO9kJC2S0RBSAjK+0y6kgLaJV3UECgoBRtclb8anKYEHLksU1+Gb2oVR6pts/tRBd/y
-         MEfbL+nQeoFcL6vya0+aNYgEjoCu6I6tpzxXYaxGUIfOV7zTgudRClM24yNnL5dz7kGc
-         o2od3Yxe0G7dHaOiHEpfBTURnOWQ+SMedZK5ZfHm7lO+pvLmd8ps4eURRi1BaQJTM2ta
-         1RbCgzlEDxqO6zl92SC4eMaIrd6FCUBbymYxs752MgbjI2UCTF/D+TMmwE1C5wd0ajdJ
-         8h+g==
-X-Forwarded-Encrypted: i=1; AJvYcCWI6B6LoI8vFaefurTrtadZKAPzWN3qeDU3zPU1jP9pYc0xnyEWlyJ3PKfpL1T99VXOJnjAZQDjnR4t5/E=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywvd1udbpblwwmOLtlOa7Mx/DwUldsUTattfDRLr55mcpwsZT7p
-	/MKUwLHZ24hOkzEE/Odutf08ot3MX60OYrpYgUOVDhnffbyykGa7f7Q1azNjPI4NFUhyxjdztey
-	tFqofPJRJxNffXQ==
-X-Google-Smtp-Source: AGHT+IFxSA9GIyNl3LjYDLq/9j+Nr4FbBkqdslTMspmmUmyNwznrDCKsEp0DmZ+NS6CY1yHpDOzTMPRVndE+uA==
-X-Received: from plfz1.prod.google.com ([2002:a17:902:d541:b0:248:beac:b4f1])
- (user=cmllamas job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:902:f707:b0:235:f459:69c7 with SMTP id d9443c01a7336-2462efa8c13mr281904895ad.52.1756351618636;
- Wed, 27 Aug 2025 20:26:58 -0700 (PDT)
-Date: Thu, 28 Aug 2025 03:26:52 +0000
+	s=arc-20240116; t=1756352023; c=relaxed/simple;
+	bh=BMAGjRMk4Z3TjouD68EjoYToYs9haeFZiFaVppJm+XA=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=mREpUQCO8Nz/qb7wOCCD38iYs4PDnmJz2cbXm9bR+XveiOznf0QwsgJFHz0Yp2npLXzjIWMLr7r8ewlrxkeYHBCoR5ZzXxUBpJFB1W5Y7AqSZB4GzuR/VgiUwhcYXtl2btliifhjqh1Rb+EQU9AmPQQZ8DVSGuitu1Ioq9JRAEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=QYKK6lNc; arc=none smtp.client-ip=203.205.221.239
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1756352017; bh=u1zhF4oSCXVG+6LusvOKKNkPof3RJVhGMntnsj+s+1o=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=QYKK6lNcfUyMS2DXomL8yP06dzLwoMuRlzqhJHe9mI6vP2jxnBlX1/mcJkWqJ7eWq
+	 Pt7a0D3PeDyfjlmxgvIpZlFBR4Re19a5896eB0ILIt6DjIrFxJUumSfo5EqKUaC/+H
+	 airj3n993krKMbycXifpRciD/GSRC7rInO9HilmE=
+Received: from nebula-bj.localdomain ([223.104.40.195])
+	by newxmesmtplogicsvrsza56-0.qq.com (NewEsmtp) with SMTP
+	id 6E0888BA; Thu, 28 Aug 2025 11:27:32 +0800
+X-QQ-mid: xmsmtpt1756351652ta9x299eo
+Message-ID: <tencent_2DDD243AE6E04DB6288696AC252D1B46EF06@qq.com>
+X-QQ-XMAILINFO: NGZp1yYNf7Y+9GzPxqsNlS6AYhGbwwFB5CviZmlZJVmcbrpS9/OK+Dw/zgqzHX
+	 6+5nr9SgFDCxH0x+PRGPCBF4pkycXVY9nYdwiUue6ACSsAYjv1g/uN/ZLUeyfajQEg7zoZ8BlVXb
+	 HBZ0UMpM5/94LQTBgdrAy6jurk2p0cjr7iSwwpJDhhIU4Egc9StM9mCxpKZUOHELk79zsM5zJzSd
+	 lX3aPYRIfbMRSAwbXf0vNPqfMXtvyux72R4QShSoSV5WsrJKUy0UJon3ofzq0xw/E2bvjBSKLhxw
+	 bq9Z1aEhbcIiWf/rpyT6ENccAoCcJE0GhkpzYrvL4mAnz1ei6ots4Og0C0JK2KORfu+3lCdGnbI+
+	 FGPc3F66xS7flDuTrZwxa9zGMXx1lUWOH2MPeX33+0virMr/cNpu42HfH1frcu9yUD9atRkFghlX
+	 rL5kyPwFc0sb176V5SYw63D7H+onYvuNdI8CtCKvGRf1QpdMoy5+4AekM1a/yFrZvS6j71znv+ke
+	 jebWJHiMz2Q6Pk58pCEzfsHNYhHL56TI3SqYtheZZzG2xeMd7rrOuyv9t6nhUPblrj8xRDlRFHuX
+	 ZMo0lNwr+9XOpfyY235BDjMz0z5Ksw6kesXk6jyaIeirY0Z22knSdK8XFAitHdRY/l6MH3nc0ClL
+	 oU3BLyv6BJ2g+ZsjTMZ2wQg4+tcHtkXaEWSH0cQcX5RZxYsrGj8w3KsIjusWlH7o5xBg8p1xKPzq
+	 e52KCW2QqlazO8RJaY6B0lMoNHeYEpzX1eMV2YH5IwRFpAatar6/ZY5VreNa/x9PfFH36RaA2pAg
+	 8r6e5wdQjZ4vRu35TurUWt9Hy0UlkcjqbugirVI4FnuZrHj5be8XS51AwEXcDnEBinKXV2zqsU1i
+	 yUUb7sDnDcDL9Hb5m1Osai6Pfq7YP5uRFeouSc1uyaD9iNix5asUABFBAVGiH8r1yM1JV9o6X1f0
+	 /RXGmsWtABMkMgxATYoMxZy3Mk+j8ZoDiEKrhGYysWih5fuhOElMwbtsXuXA5F5+aK3teg67Fn2x
+	 2wVjiKinU6uMjrkndvIQa8czMTCPBfZRe/fivscMRKg9SHjI/I490KCFFPWA54re4ELUmy8YpfsG
+	 4AgF+DCf/2TOsClQYKRcGPIQzmPg==
+X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
+From: Qingyue Zhang <chunzhennn@qq.com>
+To: axboe@kernel.dk
+Cc: aftern00n@qq.com,
+	io-uring@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] io_uring/kbuf: fix infinite loop in io_kbuf_inc_commit()
+Date: Thu, 28 Aug 2025 11:27:32 +0800
+X-OQ-MSGID: <20250828032732.101494-1-chunzhennn@qq.com>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <8f4a4090-78ed-4cf1-bd73-7ae73fff8b90@kernel.dk>
+References: <8f4a4090-78ed-4cf1-bd73-7ae73fff8b90@kernel.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.51.0.268.g9569e192d0-goog
-Message-ID: <20250828032653.521314-1-cmllamas@google.com>
-Subject: [PATCH] mm/mremap: fix regression in vrm->new_addr check
-From: Carlos Llamas <cmllamas@google.com>
-To: Andrew Morton <akpm@linux-foundation.org>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>
-Cc: kernel-team@android.com, linux-kernel@vger.kernel.org, 
-	Carlos Llamas <cmllamas@google.com>, "open list:MEMORY MAPPING" <linux-mm@kvack.org>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Commit 3215eaceca87 ("mm/mremap: refactor initial parameter sanity
-checks") moved the sanity check for vrm->new_addr from mremap_to() to
-check_mremap_params().
+Thanks for taking care of this report!
 
-However, this caused a regression as vrm->new_addr is now checked even
-when MREMAP_FIXED and MREMAP_DONTUNMAP flags are not specified. In this
-case, vrm->new_addr can be garbage and create unexpected failures.
+Regarding tags, it would be nice to add a 
+'Reported-by: Suoxing Zhang <aftern00n@qq.com>'
+tag too, as this report and reproducer are
+developed by both of us.
 
-Fix this by moving the new_addr check after the vrm_implies_new_addr()
-guard. This ensures that the new_addr is only checked when the user has
-specified one explicitly.
+And absolutely, please feel free to use our 
+reproducer for a test case! I'm glad it can 
+be useful. Your version with idiomatic 
+liburing looks great.
 
-Fixes: 3215eaceca87 ("mm/mremap: refactor initial parameter sanity checks")
-Signed-off-by: Carlos Llamas <cmllamas@google.com>
----
- mm/mremap.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
-
-diff --git a/mm/mremap.c b/mm/mremap.c
-index e618a706aff5..692acb0f9ea2 100644
---- a/mm/mremap.c
-+++ b/mm/mremap.c
-@@ -1771,18 +1771,17 @@ static unsigned long check_mremap_params(struct vma_remap_struct *vrm)
- 	 * for DOS-emu "duplicate shm area" thing. But
- 	 * a zero new-len is nonsensical.
- 	 */
--	if (!vrm->new_len)
--		return -EINVAL;
--
--	/* Is the new length or address silly? */
--	if (vrm->new_len > TASK_SIZE ||
--	    vrm->new_addr > TASK_SIZE - vrm->new_len)
-+	if (!vrm->new_len || vrm->new_len > TASK_SIZE)
- 		return -EINVAL;
- 
- 	/* Remainder of checks are for cases with specific new_addr. */
- 	if (!vrm_implies_new_addr(vrm))
- 		return 0;
- 
-+	/* Is the new address silly? */
-+	if (vrm->new_addr > TASK_SIZE - vrm->new_len)
-+		return -EINVAL;
-+
- 	/* The new address must be page-aligned. */
- 	if (offset_in_page(vrm->new_addr))
- 		return -EINVAL;
--- 
-2.51.0.268.g9569e192d0-goog
+This is my first contribution to the Linux 
+Kernel, and I really appreciate your patience 
+and quick responses throughout this process!
 
 
