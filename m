@@ -1,209 +1,171 @@
-Return-Path: <linux-kernel+bounces-789005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27E1AB38F90
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 02:04:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20341B38F92
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 02:04:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2D55981B85
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 00:04:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC688208A11
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 00:04:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E57CA25A33E;
-	Thu, 28 Aug 2025 00:02:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="P3ILK07k"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 691D2CA6B;
+	Thu, 28 Aug 2025 00:04:24 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0011.hostedemail.com [216.40.44.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8514E23F421
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 00:02:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54BE5F513
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 00:04:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756339337; cv=none; b=ks3MkAXUz/0kIFmLw0xWxbGBnrkfAbHDpc5YPA7zssUcf886Oq86rWsAqsrTspmPEuFvei3WuEOgCH08DFL0ZlT3SQg4paa28QoU1PMJ/qqvcJlt3/VFe5EHDwx9Iqqvmttwml5j5ha+XJhReIBF7Y+nfo/MRwlDbaMnwgqcSjs=
+	t=1756339464; cv=none; b=Zy/2QdSqCt0jkPYDkWDu+Ruc8reBNIeyx0e7tZEOu9DHTPlV1tCDJ1tow1SaQkHrz1JFfwiFHvq4/WzSFDWxITyLPjqpk+TlyLb8j9iSABWqFVK4zwf+hGUVKfGMzNFXGQKYUhNK2MCOqVGKHrZQ8p8cbpfRr1E6k695DbNtG0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756339337; c=relaxed/simple;
-	bh=5KZra7rrb6EshYnRt06iajnZTBGSSVrTrCSYe32dt9s=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=e9hu+Vcy9GFKXKXK/4UevXBk068oHE5IEQD4REE4ipTPFIkkBRtN5mVdFd/zmjm75z9aUFShj5AWDwo48+h0yYUJb+nSKcOcgRqbNsulM77+rS6eLQ30WkjXgkBnYUIYhwub5yW/cSGIcQ7NEZxEHimucgfFwqZqyWZWmTq2BjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=P3ILK07k; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-324e4c3af5fso368378a91.3
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 17:02:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756339335; x=1756944135; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=qS5zxATrMXESBFPKwTqytXa2jxoDaW3HrytCSPyurss=;
-        b=P3ILK07kHqpUGuivkSLsoI+MFv54KeHD0qtH79NPU/KqIIn8aXu3po2ImTA6Zbi1rb
-         E5fBA7B2UekDDNvUsAKexzToVzRJc7Mw5dg7uHLZwb62LaaH+ax04wKyjta2qvvu3S+h
-         kTOk1iAlOQBWuwZhpmkRB+iXKBRmnXgrckSG/m3GzzzExftf50JP43JiZxW6f235Lo7V
-         fFCHf9fbjIGrlALSh3sn42twHZWzxgWNcnuQqOMarurbLQfJXVDcqoaiP3Wyv10FIbtY
-         4WAE16o5571YGlB8Lz65SnxkmdGx0ApLw47O36szCXI96jYaIvBsgiiEaF4hhKpQRkP3
-         /LPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756339335; x=1756944135;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qS5zxATrMXESBFPKwTqytXa2jxoDaW3HrytCSPyurss=;
-        b=qLpl4NmB7uvbwBw4NdvDmp8MOg7stvCfkVj2Keh9WwjwnQtfGTS0rEH5+kxJpxKkgk
-         zh35pWWNyH/AinPQgbp1aZo1NtKHJwz2TQnGLQgePOWf1Io3tObXANXo5g7928Q6T05C
-         Q+gcmSTjY5huVaEo3ZhKNrWOqWGwRLKaQ01KLWJ/9LRhgBu52FoNxzwkxEz/1a4AGzXM
-         yer8+Yz7mX6yqE6c67kFKO9lOmJ/vwCSYpetKCWM4rUrBBIGq1czXUKtTwVfWWCWOdY8
-         9P8aDn1an5HFAYvD2k8v48fYqJNrHo3hdALxLesR7NKc3S+HjbXeWc4nQvTWZkHrS5H3
-         h1Vg==
-X-Gm-Message-State: AOJu0Yxdj3GVn217nyPaRp5KJjXQ8qw4/coLyabYFmGzWxM6DMciuDk0
-	joyOE93uvbJdk3NI6vzbL/gBbAysSnLWXzYezRaPAVcq8+Jrfwal/ptEX7kY2uiY1CQLciGCPoR
-	w3mO3hA==
-X-Google-Smtp-Source: AGHT+IHTwHRJ1LtJUNLrZJovplfjTJdtHnbpa9Rw0OlaHYLIVyGS/gJ8LisaniBrYJHJcn/KzpZqw55zABU=
-X-Received: from pjbsc11.prod.google.com ([2002:a17:90b:510b:b0:321:c36d:1b8a])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3941:b0:327:b01c:4fd4
- with SMTP id 98e67ed59e1d1-327b01c52bcmr306189a91.2.1756339334767; Wed, 27
- Aug 2025 17:02:14 -0700 (PDT)
-Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Wed, 27 Aug 2025 17:01:56 -0700
-In-Reply-To: <20250828000156.23389-1-seanjc@google.com>
+	s=arc-20240116; t=1756339464; c=relaxed/simple;
+	bh=rHO1ispFcxMAW3C3zy7IHu4bk6d/qTZOWT8fshYSiCY=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=N7k469HIqS6biyiCcIxSBrMGb7QJ8cC6ATJiKxWxzT3OlUHmUvglx6wWp66/e/136o4RdLZuC83DKET6rYbXkc7Yit7qwCFH5K6F1T7hrni+xUJVWUlmqy7pz/LV8yRNLBzKs215OX4BcbOPPI0po/qUgygOu8779x/cv9d7crM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com; spf=pass smtp.mailfrom=perches.com; arc=none smtp.client-ip=216.40.44.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=perches.com
+Received: from omf20.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay05.hostedemail.com (Postfix) with ESMTP id 23CB7591BA;
+	Thu, 28 Aug 2025 00:04:21 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf20.hostedemail.com (Postfix) with ESMTPA id 3FD3320026;
+	Thu, 28 Aug 2025 00:04:19 +0000 (UTC)
+Message-ID: <5b914354f29e58097e373dde76ee26b246a64ce6.camel@perches.com>
+Subject: Re: [PATCH] powerpc/powernv: Rename pe_level_printk to pe_printk
+ and embed KERN_LEVEL in format
+From: Joe Perches <joe@perches.com>
+To: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel
+ <linux-kernel@vger.kernel.org>
+Date: Wed, 27 Aug 2025 17:04:16 -0700
+In-Reply-To: <732ae03a-f0a7-450c-8896-e8a4975a5254@csgroup.eu>
+References: <df3a7ca31d2002ca447ab062f5b5e32ced9bec85.camel@perches.com>
+	 <732ae03a-f0a7-450c-8896-e8a4975a5254@csgroup.eu>
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250828000156.23389-1-seanjc@google.com>
-X-Mailer: git-send-email 2.51.0.268.g9569e192d0-goog
-Message-ID: <20250828000156.23389-8-seanjc@google.com>
-Subject: [PATCH v2 7/7] Drivers: hv: Use "entry virt" APIs to do work before
- returning to lower VTL
-From: Sean Christopherson <seanjc@google.com>
-To: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Tianrui Zhao <zhaotianrui@loongson.cn>, Bibo Mao <maobibo@loongson.cn>, 
-	Huacai Chen <chenhuacai@kernel.org>, Anup Patel <anup@brainfault.org>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Sean Christopherson <seanjc@google.com>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"K. Y. Srinivasan" <kys@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>, 
-	Dexuan Cui <decui@microsoft.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Andy Lutomirski <luto@kernel.org>, "Paul E. McKenney" <paulmck@kernel.org>, 
-	Frederic Weisbecker <frederic@kernel.org>, Neeraj Upadhyay <neeraj.upadhyay@kernel.org>, 
-	Joel Fernandes <joelagnelf@nvidia.com>, Josh Triplett <josh@joshtriplett.org>, 
-	Boqun Feng <boqun.feng@gmail.com>, Uladzislau Rezki <urezki@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	kvmarm@lists.linux.dev, kvm@vger.kernel.org, loongarch@lists.linux.dev, 
-	kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org, 
-	linux-hyperv@vger.kernel.org, rcu@vger.kernel.org, 
-	Nuno Das Neves <nunodasneves@linux.microsoft.com>, Mukesh R <mrathor@linux.microsoft.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+X-Rspamd-Server: rspamout04
+X-Rspamd-Queue-Id: 3FD3320026
+X-Stat-Signature: uau5hkr6errx756ojdmfydbea8w4err6
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Session-ID: U2FsdGVkX19Ba6ut9WVmmTi9/CJjacHvw6XJzPZwXTI=
+X-HE-Tag: 1756339459-982349
+X-HE-Meta: U2FsdGVkX18cO46/q+eMU6rG9Rt60S6qUj+EUM63rbXb6VN9Iw7P9AjBQMdGD3MLUsHiamW2QjS/gei4KlRbOJBxbB47tqGF6QB7iMpj8J/jjIXhTcA7UuutXlZIL8AWfKFhR89ZCFa4cS9nHHgFDY8h6xxSBtRyt7n8lJ9RaKLOQqHllfK7YvX6x1GYxkIQ2p2+VjxzZkzgccqwAFKvMfwFGAylFn7uw62w4m9d2orZdIP4MxeB7EU5aTon+SMt9/m9Ac6zKw+/4rNN82ihf2YuQ1nPrQnZ8t1KYh5cDK17cBnE3VTp3+91U9KMKrX0bHIIwusVHOcOtbov+F1MfyCuoTxuh7zwaKprhwA03u+TrspOqmqF7+A1rWgLTbaD
 
-Use the kernel's common "entry virt" APIs to handle pending work prior to
-returning to a lower VTL.  Drop the now-defunct common MSHV helper for
-doing work as the VTL driver was the last user.
+On Wed, 2025-08-27 at 18:42 +0200, Christophe Leroy wrote:
+> Hi Joe
+>=20
+> Le 21/06/2019 =E0 07:36, Joe Perches a =E9crit=A0:
+> > Remove the separate KERN_<LEVEL> from each pe_level_printk and
+> > instead add the KERN_<LEVEL> to the format.
 
-No functional change intended.
+Hello Christophe.
 
-Signed-off-by: Sean Christopherson <seanjc@google.com>
----
- drivers/hv/Kconfig         |  1 +
- drivers/hv/mshv.h          |  2 --
- drivers/hv/mshv_common.c   | 22 ----------------------
- drivers/hv/mshv_vtl_main.c | 11 +++--------
- 4 files changed, 4 insertions(+), 32 deletions(-)
+It's over 6 years since I wrote that.
+Is that the typical review time? ;)
 
-diff --git a/drivers/hv/Kconfig b/drivers/hv/Kconfig
-index 894037afcbf9..b00b2b3fe3db 100644
---- a/drivers/hv/Kconfig
-+++ b/drivers/hv/Kconfig
-@@ -85,6 +85,7 @@ config MSHV_VTL
- 	# Therefore, do not attempt to access or modify MTRRs here.
- 	depends on !MTRR
- 	select CPUMASK_OFFSTACK
-+	select VIRT_XFER_TO_GUEST_WORK
- 	default n
- 	help
- 	  Select this option to enable Hyper-V VTL driver support.
-diff --git a/drivers/hv/mshv.h b/drivers/hv/mshv.h
-index 0340a67acd0a..d4813df92b9c 100644
---- a/drivers/hv/mshv.h
-+++ b/drivers/hv/mshv.h
-@@ -25,6 +25,4 @@ int hv_call_set_vp_registers(u32 vp_index, u64 partition_id, u16 count,
- int hv_call_get_partition_property(u64 partition_id, u64 property_code,
- 				   u64 *property_value);
- 
--int mshv_do_pre_guest_mode_work(ulong th_flags);
--
- #endif /* _MSHV_H */
-diff --git a/drivers/hv/mshv_common.c b/drivers/hv/mshv_common.c
-index eb3df3e296bb..aa2be51979fd 100644
---- a/drivers/hv/mshv_common.c
-+++ b/drivers/hv/mshv_common.c
-@@ -138,25 +138,3 @@ int hv_call_get_partition_property(u64 partition_id,
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(hv_call_get_partition_property);
--
--/*
-- * Handle any pre-processing before going into the guest mode on this cpu, most
-- * notably call schedule(). Must be invoked with both preemption and
-- * interrupts enabled.
-- *
-- * Returns: 0 on success, -errno on error.
-- */
--int mshv_do_pre_guest_mode_work(ulong th_flags)
--{
--	if (th_flags & (_TIF_SIGPENDING | _TIF_NOTIFY_SIGNAL))
--		return -EINTR;
--
--	if (th_flags & (_TIF_NEED_RESCHED | _TIF_NEED_RESCHED_LAZY))
--		schedule();
--
--	if (th_flags & _TIF_NOTIFY_RESUME)
--		resume_user_mode_work(NULL);
--
--	return 0;
--}
--EXPORT_SYMBOL_GPL(mshv_do_pre_guest_mode_work);
-diff --git a/drivers/hv/mshv_vtl_main.c b/drivers/hv/mshv_vtl_main.c
-index 4ca13c54c0a0..1eabed16aab9 100644
---- a/drivers/hv/mshv_vtl_main.c
-+++ b/drivers/hv/mshv_vtl_main.c
-@@ -8,6 +8,7 @@
-  *   Naman Jain <namjain@linux.microsoft.com>
-  */
- 
-+#include <linux/entry-virt.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/miscdevice.h>
-@@ -727,22 +728,16 @@ static int mshv_vtl_ioctl_return_to_lower_vtl(void)
- {
- 	preempt_disable();
- 	for (;;) {
--		const unsigned long VTL0_WORK = _TIF_SIGPENDING | _TIF_NEED_RESCHED |
--						_TIF_NOTIFY_RESUME | _TIF_NOTIFY_SIGNAL |
--						_TIF_NEED_RESCHED_LAZY;
--		unsigned long ti_work;
- 		unsigned long irq_flags;
- 		struct hv_vp_assist_page *hvp;
- 		int ret;
- 
--		ti_work = READ_ONCE(current_thread_info()->flags);
--		if (unlikely(ti_work & VTL0_WORK)) {
-+		if (__xfer_to_guest_mode_work_pending()) {
- 			preempt_enable();
--			ret = mshv_do_pre_guest_mode_work(ti_work);
-+			ret = xfer_to_guest_mode_handle_work();
- 			if (ret)
- 				return ret;
- 			preempt_disable();
--			continue;
- 		}
- 
- 		local_irq_save(irq_flags);
--- 
-2.51.0.268.g9569e192d0-goog
+I would expect it doesn't apply anyway
+though it should make the object size
+a tiny bit smaller.
 
+> >=20
+> > pfix in pe_level_printk could also be used uninitialized so
+> > add a new else and set pfx to the hex value of pe->flags.
+> >=20
+> > Rename pe_level_printk to pe_printk and update the pe_<level>
+> > macros.
+> >=20
+> > Signed-off-by: Joe Perches <joe@perches.com>
+> > ---
+> >   arch/powerpc/platforms/powernv/pci-ioda.c | 14 ++++++++++++--
+> >   arch/powerpc/platforms/powernv/pci.h      | 11 +++++------
+> >   2 files changed, 17 insertions(+), 8 deletions(-)
+>=20
+> I can't see the added value of this patch, it adds more lines than it=20
+> removes.
+>=20
+> Christophe
+>=20
+> >=20
+> > diff --git a/arch/powerpc/platforms/powernv/pci-ioda.c b/arch/powerpc/p=
+latforms/powernv/pci-ioda.c
+> > index 10cc42b9e541..60fc36ae626a 100644
+> > --- a/arch/powerpc/platforms/powernv/pci-ioda.c
+> > +++ b/arch/powerpc/platforms/powernv/pci-ioda.c
+> > @@ -50,15 +50,23 @@
+> >   static const char * const pnv_phb_names[] =3D { "IODA1", "IODA2", "NP=
+U_NVLINK",
+> >   					      "NPU_OCAPI" };
+> >  =20
+> > -void pe_level_printk(const struct pnv_ioda_pe *pe, const char *level,
+> > -			    const char *fmt, ...)
+> > +void pe_printk(const struct pnv_ioda_pe *pe, const char *fmt, ...)
+> >   {
+> >   	struct va_format vaf;
+> >   	va_list args;
+> >   	char pfix[32];
+> > +	char level[PRINTK_MAX_SINGLE_HEADER_LEN + 1] =3D "\0";
+> >  =20
+> >   	va_start(args, fmt);
+> >  =20
+> > +	while (printk_get_level(fmt)) {
+> > +		size_t size =3D printk_skip_level(fmt) - fmt;
+> > +
+> > +		memcpy(level, fmt,  size);
+> > +		level[size] =3D '\0';
+> > +		fmt +=3D size;
+> > +	}
+> > +
+> >   	vaf.fmt =3D fmt;
+> >   	vaf.va =3D &args;
+> >  =20
+> > @@ -74,6 +82,8 @@ void pe_level_printk(const struct pnv_ioda_pe *pe, co=
+nst char *level,
+> >   			(pe->rid & 0xff00) >> 8,
+> >   			PCI_SLOT(pe->rid), PCI_FUNC(pe->rid));
+> >   #endif /* CONFIG_PCI_IOV*/
+> > +	else
+> > +		sprintf(pfix, "(flags: 0x%lx)", pe->flags);
+> >  =20
+> >   	printk("%spci %s: [PE# %.2x] %pV",
+> >   	       level, pfix, pe->pe_number, &vaf);
+> > diff --git a/arch/powerpc/platforms/powernv/pci.h b/arch/powerpc/platfo=
+rms/powernv/pci.h
+> > index be26ab3d99e0..870b21f55b3f 100644
+> > --- a/arch/powerpc/platforms/powernv/pci.h
+> > +++ b/arch/powerpc/platforms/powernv/pci.h
+> > @@ -205,15 +205,14 @@ extern unsigned long pnv_pci_ioda2_get_table_size=
+(__u32 page_shift,
+> >   		__u64 window_size, __u32 levels);
+> >   extern int pnv_eeh_post_init(void);
+> >  =20
+> > -__printf(3, 4)
+> > -extern void pe_level_printk(const struct pnv_ioda_pe *pe, const char *=
+level,
+> > -			    const char *fmt, ...);
+> > +__printf(2, 3)
+> > +extern void pe_printk(const struct pnv_ioda_pe *pe, const char *fmt, .=
+..);
+> >   #define pe_err(pe, fmt, ...)					\
+> > -	pe_level_printk(pe, KERN_ERR, fmt, ##__VA_ARGS__)
+> > +	pe_printk(pe, KERN_ERR fmt, ##__VA_ARGS__)
+> >   #define pe_warn(pe, fmt, ...)					\
+> > -	pe_level_printk(pe, KERN_WARNING, fmt, ##__VA_ARGS__)
+> > +	pe_printk(pe, KERN_WARNING fmt, ##__VA_ARGS__)
+> >   #define pe_info(pe, fmt, ...)					\
+> > -	pe_level_printk(pe, KERN_INFO, fmt, ##__VA_ARGS__)
+> > +	pe_printk(pe, KERN_INFO fmt, ##__VA_ARGS__)
+> >  =20
+> >   /* Nvlink functions */
+> >   extern void pnv_npu_try_dma_set_bypass(struct pci_dev *gpdev, bool by=
+pass);
 
