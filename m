@@ -1,73 +1,49 @@
-Return-Path: <linux-kernel+bounces-789076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0714DB390CC
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 03:09:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A112B390CE
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 03:10:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 99A8D4652C0
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 01:09:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE30F4654BB
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 01:10:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC70225BEF1;
-	Thu, 28 Aug 2025 01:06:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB7691DF26E;
+	Thu, 28 Aug 2025 01:10:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="ha5iZhEC"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A19424BBF0;
-	Thu, 28 Aug 2025 01:06:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ghKuZKVm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F37991DED40;
+	Thu, 28 Aug 2025 01:10:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756343187; cv=none; b=F0fxwq5GFv14bi4XPq/YUQmAayibHBXXZLTreaN+hYZFw2VQDLNTNyhnJl7AnYTqhy3OoXzK3fHYL0Be7GrcttAXa0+jljKIRWii0b4R+9VaAGVoNOYXlWO7tOq2XRDM64wLPr6T/tVPa9Pa2ueRuh1qnUokFN2vIzv2/17+pro=
+	t=1756343404; cv=none; b=WRLEjyGfytbD9dugWj/qotnrVhr8tAnuPWxji/S44nc5GPO0MyWf4p/29DT3aXlTh5vvBmoaV7SfEc1xBcYY5XMT9tZ7Hpa/3/Y5yDApu+PAuo8UHSPBXMnmSuTJ8JmZ+mFgtnKztdbVp/QgnoyQpliui7yehHvfwIDtkgAW4KY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756343187; c=relaxed/simple;
-	bh=32YrWvWyLeYRWG8d8naP7LAMzKHsmu0xOULh8pYDGpI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=RJxMHLNFLsjo/UgUMcOxyQphhhgTdAzNbokRg+g3cdTTN7BRztzAZX826G3hsXgbQBOVNolAgjS2haLvuvA5dpsx2Zg2sRaFGwB7zRU4rhcyynxL2N4yne6yQqZRy4eOeM5g9hKFbOdV6gy/iX5SCfvPXuH6X44kgNXObw5d1qk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=ha5iZhEC; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from romank-3650.corp.microsoft.com (unknown [131.107.174.60])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 53A7F2110807;
-	Wed, 27 Aug 2025 18:06:25 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 53A7F2110807
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1756343185;
-	bh=qSjSegGY9QX2z06QsGMSUcJPV3Wn+5tB52XD9UQkq7o=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ha5iZhECvt6LMVfM7/Z3ECWoYut+ldH4j9IF872A38gphc1MFpLy+O2oluLlSVWnb
-	 7Fb8EmEmWoi45XfDC4l56qxP8i3/SLSrhI2Sii91k0fW3BXQ9i3sAiLTrWd434NZqD
-	 IlbYBk2l3LUMA3HexQQ+TEuyaP3IY3z7OQxSkeLU=
-From: Roman Kisel <romank@linux.microsoft.com>
-To: arnd@arndb.de,
-	bp@alien8.de,
-	corbet@lwn.net,
-	dave.hansen@linux.intel.com,
-	decui@microsoft.com,
-	haiyangz@microsoft.com,
-	hpa@zytor.com,
-	kys@microsoft.com,
-	mikelley@microsoft.com,
-	mingo@redhat.com,
-	tglx@linutronix.de,
-	Tianyu.Lan@microsoft.com,
-	wei.liu@kernel.org,
-	x86@kernel.org,
-	linux-hyperv@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arch@vger.kernel.org
-Cc: benhill@microsoft.com,
-	bperkins@microsoft.com,
-	sunilmut@microsoft.com,
-	romank@linux.microsoft.com
-Subject: [PATCH hyperv-next v5 16/16] Drivers: hv: Support establishing the confidential VMBus connection
-Date: Wed, 27 Aug 2025 18:05:57 -0700
-Message-ID: <20250828010557.123869-17-romank@linux.microsoft.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250828010557.123869-1-romank@linux.microsoft.com>
-References: <20250828010557.123869-1-romank@linux.microsoft.com>
+	s=arc-20240116; t=1756343404; c=relaxed/simple;
+	bh=9epErMzKwEF73B1z1uZQqR7IOWewVgK6nclV/VwLCFI=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=VIcXqrw9SUGpRmd+K74Sy6DI/2HkiuZkBJmbiEMTE1MHK3hiAvZfcL7WdKad/tk3GIMTSh8T1tjZ3Nv6RbkE27VIqzfvrBmQ9f+WwcGslddjfKY2g4wji/Xpu3wSUJOhUdv2YhW4Xeu3no7EX8Jojd8lo4nNluL+kUen0Ri1ElA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ghKuZKVm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C290C4CEF9;
+	Thu, 28 Aug 2025 01:10:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756343403;
+	bh=9epErMzKwEF73B1z1uZQqR7IOWewVgK6nclV/VwLCFI=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=ghKuZKVmA0U7YggCEOOsk05ZzrFAIuXRHH5nsZqvUDwLBYJUZalyLvsU7goP3Zw1l
+	 siY2/wYGtd5vJZ/cBOFL3rj34TbPSy98XtR5aGA1iEC7f0lOMKEbNCzEWM6vwzkUYt
+	 SPOANcU9iKoOmkHbqw3WPZnOyZzT/PA6f/d/NiX08c6NFbNKjkRnCpqjXwj0YwDH/n
+	 lSORYyoCg76RsWZLK0CvRfoAUvGgFe1k05Z4bGz6TTVONDfW/2EHc72NUoMQc1RyYs
+	 WyMiUPebc3ilr6X8ETrOHeoykfI6wr1vj2A0cBQ+eT6gMPWk69i1clAW1tYm66f+23
+	 a/jDkW0wpY4LA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAD79383BF77;
+	Thu, 28 Aug 2025 01:10:11 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,281 +51,42 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] amd-xgbe: Use int type to store negative error codes
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <175634341072.896460.8805791812563148479.git-patchwork-notify@kernel.org>
+Date: Thu, 28 Aug 2025 01:10:10 +0000
+References: <20250826142159.525059-1-rongqianfeng@vivo.com>
+In-Reply-To: <20250826142159.525059-1-rongqianfeng@vivo.com>
+To: Qianfeng Rong <rongqianfeng@vivo.com>
+Cc: Shyam-sundar.S-k@amd.com, andrew+netdev@lunn.ch, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-To establish the confidential VMBus connection the CoCo VM, the guest
-first checks on the confidential VMBus availability, and then proceeds
-to initializing the communication stack.
+Hello:
 
-Implement that in the VMBus driver initialization.
+This patch was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
-Reviewed-by: Michael Kelley <mhklinux@outlook.com>
----
- drivers/hv/vmbus_drv.c | 168 ++++++++++++++++++++++++++---------------
- 1 file changed, 106 insertions(+), 62 deletions(-)
+On Tue, 26 Aug 2025 22:21:59 +0800 you wrote:
+> Use int instead of unsigned int for the 'ret' variable to store return
+> values from functions that either return zero on success or negative error
+> codes on failure.  Storing negative error codes in an unsigned int causes
+> no runtime issues, but it's ugly as pants,  Change 'ret' from unsigned int
+> to int type - this change has no runtime impact.
+> 
+> Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
+> 
+> [...]
 
-diff --git a/drivers/hv/vmbus_drv.c b/drivers/hv/vmbus_drv.c
-index aa0cde8b8a71..c2b083f6f7b2 100644
---- a/drivers/hv/vmbus_drv.c
-+++ b/drivers/hv/vmbus_drv.c
-@@ -1058,12 +1058,9 @@ static void vmbus_onmessage_work(struct work_struct *work)
- 	kfree(ctx);
- }
- 
--void vmbus_on_msg_dpc(unsigned long data)
-+static void __vmbus_on_msg_dpc(void *message_page_addr)
- {
--	struct hv_per_cpu_context *hv_cpu = (void *)data;
--	void *page_addr = hv_cpu->hyp_synic_message_page;
--	struct hv_message msg_copy, *msg = (struct hv_message *)page_addr +
--				  VMBUS_MESSAGE_SINT;
-+	struct hv_message msg_copy, *msg;
- 	struct vmbus_channel_message_header *hdr;
- 	enum vmbus_channel_message_type msgtype;
- 	const struct vmbus_channel_message_table_entry *entry;
-@@ -1071,6 +1068,10 @@ void vmbus_on_msg_dpc(unsigned long data)
- 	__u8 payload_size;
- 	u32 message_type;
- 
-+	if (!message_page_addr)
-+		return;
-+	msg = (struct hv_message *)message_page_addr + VMBUS_MESSAGE_SINT;
-+
- 	/*
- 	 * 'enum vmbus_channel_message_type' is supposed to always be 'u32' as
- 	 * it is being used in 'struct vmbus_channel_message_header' definition
-@@ -1196,6 +1197,14 @@ void vmbus_on_msg_dpc(unsigned long data)
- 	vmbus_signal_eom(msg, message_type);
- }
- 
-+void vmbus_on_msg_dpc(unsigned long data)
-+{
-+	struct hv_per_cpu_context *hv_cpu = (void *)data;
-+
-+	__vmbus_on_msg_dpc(hv_cpu->hyp_synic_message_page);
-+	__vmbus_on_msg_dpc(hv_cpu->para_synic_message_page);
-+}
-+
- #ifdef CONFIG_PM_SLEEP
- /*
-  * Fake RESCIND_CHANNEL messages to clean up hv_sock channels by force for
-@@ -1234,21 +1243,19 @@ static void vmbus_force_channel_rescinded(struct vmbus_channel *channel)
- #endif /* CONFIG_PM_SLEEP */
- 
- /*
-- * Schedule all channels with events pending
-+ * Schedule all channels with events pending.
-+ * The event page can be directly checked to get the id of
-+ * the channel that has the interrupt pending.
-  */
--static void vmbus_chan_sched(struct hv_per_cpu_context *hv_cpu)
-+static void vmbus_chan_sched(void *event_page_addr)
- {
- 	unsigned long *recv_int_page;
- 	u32 maxbits, relid;
-+	union hv_synic_event_flags *event;
- 
--	/*
--	 * The event page can be directly checked to get the id of
--	 * the channel that has the interrupt pending.
--	 */
--	void *page_addr = hv_cpu->hyp_synic_event_page;
--	union hv_synic_event_flags *event
--		= (union hv_synic_event_flags *)page_addr +
--					 VMBUS_MESSAGE_SINT;
-+	if (!event_page_addr)
-+		return;
-+	event = (union hv_synic_event_flags *)event_page_addr + VMBUS_MESSAGE_SINT;
- 
- 	maxbits = HV_EVENT_FLAGS_COUNT;
- 	recv_int_page = event->flags;
-@@ -1256,6 +1263,11 @@ static void vmbus_chan_sched(struct hv_per_cpu_context *hv_cpu)
- 	if (unlikely(!recv_int_page))
- 		return;
- 
-+	/*
-+	 * Suggested-by: Michael Kelley <mhklinux@outlook.com>
-+	 * One possible optimization would be to keep track of the largest relID that's in use,
-+	 * and only scan up to that relID.
-+	 */
- 	for_each_set_bit(relid, recv_int_page, maxbits) {
- 		void (*callback_fn)(void *context);
- 		struct vmbus_channel *channel;
-@@ -1319,26 +1331,35 @@ static void vmbus_chan_sched(struct hv_per_cpu_context *hv_cpu)
- 	}
- }
- 
--void vmbus_isr(void)
-+static void vmbus_message_sched(struct hv_per_cpu_context *hv_cpu, void *message_page_addr)
- {
--	struct hv_per_cpu_context *hv_cpu
--		= this_cpu_ptr(hv_context.cpu_context);
--	void *page_addr;
- 	struct hv_message *msg;
- 
--	vmbus_chan_sched(hv_cpu);
--
--	page_addr = hv_cpu->hyp_synic_message_page;
--	msg = (struct hv_message *)page_addr + VMBUS_MESSAGE_SINT;
-+	if (!message_page_addr)
-+		return;
-+	msg = (struct hv_message *)message_page_addr + VMBUS_MESSAGE_SINT;
- 
- 	/* Check if there are actual msgs to be processed */
- 	if (msg->header.message_type != HVMSG_NONE) {
- 		if (msg->header.message_type == HVMSG_TIMER_EXPIRED) {
- 			hv_stimer0_isr();
- 			vmbus_signal_eom(msg, HVMSG_TIMER_EXPIRED);
--		} else
-+		} else {
- 			tasklet_schedule(&hv_cpu->msg_dpc);
-+		}
- 	}
-+}
-+
-+void vmbus_isr(void)
-+{
-+	struct hv_per_cpu_context *hv_cpu
-+		= this_cpu_ptr(hv_context.cpu_context);
-+
-+	vmbus_chan_sched(hv_cpu->hyp_synic_event_page);
-+	vmbus_chan_sched(hv_cpu->para_synic_event_page);
-+
-+	vmbus_message_sched(hv_cpu, hv_cpu->hyp_synic_message_page);
-+	vmbus_message_sched(hv_cpu, hv_cpu->para_synic_message_page);
- 
- 	add_interrupt_randomness(vmbus_interrupt);
- }
-@@ -1357,6 +1378,59 @@ static void vmbus_percpu_work(struct work_struct *work)
- 	hv_synic_init(cpu);
- }
- 
-+static int vmbus_alloc_synic_and_connect(void)
-+{
-+	int ret, cpu;
-+	struct work_struct __percpu *works;
-+	int hyperv_cpuhp_online;
-+
-+	ret = hv_synic_alloc();
-+	if (ret < 0)
-+		goto err_alloc;
-+
-+	works = alloc_percpu(struct work_struct);
-+	if (!works) {
-+		ret = -ENOMEM;
-+		goto err_alloc;
-+	}
-+
-+	/*
-+	 * Initialize the per-cpu interrupt state and stimer state.
-+	 * Then connect to the host.
-+	 */
-+	cpus_read_lock();
-+	for_each_online_cpu(cpu) {
-+		struct work_struct *work = per_cpu_ptr(works, cpu);
-+
-+		INIT_WORK(work, vmbus_percpu_work);
-+		schedule_work_on(cpu, work);
-+	}
-+
-+	for_each_online_cpu(cpu)
-+		flush_work(per_cpu_ptr(works, cpu));
-+
-+	/* Register the callbacks for possible CPU online/offline'ing */
-+	ret = cpuhp_setup_state_nocalls_cpuslocked(CPUHP_AP_ONLINE_DYN, "hyperv/vmbus:online",
-+						   hv_synic_init, hv_synic_cleanup);
-+	cpus_read_unlock();
-+	free_percpu(works);
-+	if (ret < 0)
-+		goto err_alloc;
-+	hyperv_cpuhp_online = ret;
-+
-+	ret = vmbus_connect();
-+	if (ret)
-+		goto err_connect;
-+	return 0;
-+
-+err_connect:
-+	cpuhp_remove_state(hyperv_cpuhp_online);
-+	return -ENODEV;
-+err_alloc:
-+	hv_synic_free();
-+	return -ENOMEM;
-+}
-+
- /*
-  * vmbus_bus_init -Main vmbus driver initialization routine.
-  *
-@@ -1367,8 +1441,7 @@ static void vmbus_percpu_work(struct work_struct *work)
-  */
- static int vmbus_bus_init(void)
- {
--	int ret, cpu;
--	struct work_struct __percpu *works;
-+	int ret;
- 
- 	ret = hv_init();
- 	if (ret != 0) {
-@@ -1403,41 +1476,15 @@ static int vmbus_bus_init(void)
- 		}
- 	}
- 
--	ret = hv_synic_alloc();
--	if (ret)
--		goto err_alloc;
--
--	works = alloc_percpu(struct work_struct);
--	if (!works) {
--		ret = -ENOMEM;
--		goto err_alloc;
--	}
--
- 	/*
--	 * Initialize the per-cpu interrupt state and stimer state.
--	 * Then connect to the host.
-+	 * Cache the value as getting it involves a VM exit on x86(_64), and
-+	 * doing that on each VP while initializing SynIC's wastes time.
- 	 */
--	cpus_read_lock();
--	for_each_online_cpu(cpu) {
--		struct work_struct *work = per_cpu_ptr(works, cpu);
--
--		INIT_WORK(work, vmbus_percpu_work);
--		schedule_work_on(cpu, work);
--	}
--
--	for_each_online_cpu(cpu)
--		flush_work(per_cpu_ptr(works, cpu));
--
--	/* Register the callbacks for possible CPU online/offline'ing */
--	ret = cpuhp_setup_state_nocalls_cpuslocked(CPUHP_AP_ONLINE_DYN, "hyperv/vmbus:online",
--						   hv_synic_init, hv_synic_cleanup);
--	cpus_read_unlock();
--	free_percpu(works);
--	if (ret < 0)
--		goto err_alloc;
--	hyperv_cpuhp_online = ret;
--
--	ret = vmbus_connect();
-+	is_confidential = hv_confidential_vmbus_available();
-+	if (is_confidential)
-+		pr_info("Establishing connection to the confidential VMBus\n");
-+	hv_para_set_sint_proxy(!is_confidential);
-+	ret = vmbus_alloc_synic_and_connect();
- 	if (ret)
- 		goto err_connect;
- 
-@@ -1453,9 +1500,6 @@ static int vmbus_bus_init(void)
- 	return 0;
- 
- err_connect:
--	cpuhp_remove_state(hyperv_cpuhp_online);
--err_alloc:
--	hv_synic_free();
- 	if (vmbus_irq == -1) {
- 		hv_remove_vmbus_handler();
- 	} else {
+Here is the summary with links:
+  - amd-xgbe: Use int type to store negative error codes
+    https://git.kernel.org/netdev/net-next/c/a6bac1822931
+
+You are awesome, thank you!
 -- 
-2.43.0
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
