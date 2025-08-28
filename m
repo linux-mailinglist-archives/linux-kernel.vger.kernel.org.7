@@ -1,110 +1,161 @@
-Return-Path: <linux-kernel+bounces-790259-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790260-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8B83B3A39A
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 17:10:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9BDDB3A390
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 17:09:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C9DD7C4B05
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 15:09:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5AFEF7B93A8
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 15:07:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BABFD254B1B;
-	Thu, 28 Aug 2025 15:09:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 063B6262FFF;
+	Thu, 28 Aug 2025 15:09:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="jAJh2ab9"
-Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WERgi3vV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F130D1F1932
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 15:08:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EF751F1932;
+	Thu, 28 Aug 2025 15:09:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756393742; cv=none; b=TUTtBodQef1gtODEGQ7YfLDCNb6DrZ9/bMbxDPc4rFIMJmySn4wuKbTQw/6As+0cmQhJRGgzzh9SdkbW59+gn0Gib1UkNAIHUFVt7iqn7LLI63lnML5T9nNMMusKtYaEiEPC3f19Y6mKl+A7SwM+D90hr5s9HgIIHFJBVALmmdI=
+	t=1756393746; cv=none; b=QaxTl7LK4sGMAEfXsXdU78lyykrV2FIImSKP2l8fmle95De1I1YDLrORQRPBl/9dNIxHNCIOuAX1UkhNhOdyj2jYoE7X9l3+9fAdRX/Junb1KRneGvZJv55+9AUfVVSxnULrwDckJ01okqTN8+c6Qd4fgTyyR9WKIYOERnJkE4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756393742; c=relaxed/simple;
-	bh=icOFXtpyTr+v62nWJkhrG9QgJ0lD5a5gT8SO+Skige0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dWCMpatvpflYjBRYIxcpT7rzlFHEP4UCPJoX8xmyif7NhCg+WDFU7fIj2NRA+D0zcy405AbqSuufbJJxLvzVw1ggZJb+nd6Hee7tj+htRdqdlVs84OVLelhlSDT5u4lekWXBaDM+3Wq9yglKRHK0okNijUZDHiftZ7fA+9VJiow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=jAJh2ab9; arc=none smtp.client-ip=91.218.175.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <0c5a5a2d-59f6-4a31-9c09-7df8f9117a31@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1756393727;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=M+I3SDsSbN1coFtYj99WmS0+2o5TVYr/BtAhlhZ/HgE=;
-	b=jAJh2ab95ttb0ewNQ7bbtJPVHIl6fvKKfYzEJgfu1RIsYfdVjNlT0LAkZJK9EN/Jd5rhIC
-	Hu+gSU3G7bjeXP9t/36VyBy8e/64MYv0nePmOuWp+JQ19NzBgaxaAMOzvovZguALS50MBG
-	xqa5Zy88eVhwu009ucC3Ey3wEhWgC9U=
-Date: Thu, 28 Aug 2025 16:08:42 +0100
+	s=arc-20240116; t=1756393746; c=relaxed/simple;
+	bh=QEhPD3tD6vGrwgq2uVTV2AuL5VvNwkicFuwxTV3BCGc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dqeeiTq8UyG9c8rV8SzvUym8L4fu8SDkV6Cy2YTy5iHaP3r26/VQ34nGfJPfCnR3rKnOewx66R5vduHTOGZOy74hQnqf+VbMEY5jjNkT5whKtLgZSHNX4NlyUC4GkBLStVDz9wNQlmg3VYgUf3rEmf1ZifipgdYhxawkgNHE0H8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WERgi3vV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DAB0EC4CEEB;
+	Thu, 28 Aug 2025 15:09:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756393745;
+	bh=QEhPD3tD6vGrwgq2uVTV2AuL5VvNwkicFuwxTV3BCGc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WERgi3vVXd6KrtqqApFxR/6rIbIBAQV9x0UP1MfDhrwrSKrjOsoDiBYrpVAdu24sk
+	 SAyo0r7WvTgO2z6fTUleWEkNZwfluPadR3eOdPDHhWWBKe69A/Rzlp0/FedS2oyXhS
+	 OK/IQiPMn1MUL92vrtUUeWc44fJt8s1vCsYmxZUxIkpIBQyLDC5vyaR3cMC/jF5RU6
+	 u/R2zzWKbqmb/G3jEl3PIT6vnIGxZRhDdmeUIwtnP37lW3XFzUz0kZDO3TL2oo5Lh5
+	 EpJ6H2XWsADYzzdnW83NoFvlHVqMzWEJtD8/L1nqYFbVq5T7yWjLT3iA9sNrKFicWE
+	 8xCA2wrFRVRLA==
+Date: Thu, 28 Aug 2025 08:09:05 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+Cc: Zorro Lang <zlang@redhat.com>, fstests@vger.kernel.org,
+	Ritesh Harjani <ritesh.list@gmail.com>, john.g.garry@oracle.com,
+	tytso@mit.edu, linux-xfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org
+Subject: Re: [PATCH v5 02/12] common/rc: Add _require_fio_version helper
+Message-ID: <20250828150905.GB8092@frogsfrogsfrogs>
+References: <cover.1755849134.git.ojaswin@linux.ibm.com>
+ <955d47b2534d9236adbd2bbd13598bbd1da8fc04.1755849134.git.ojaswin@linux.ibm.com>
+ <20250825160801.ffktqauw2o6l5ql3@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
+ <aK8hUqdee-JFcFHn@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH net-next v02 13/14] hinic3: Fix missing napi->dev in
- netif_queue_set_napi
-To: Fan Gong <gongfan1@huawei.com>, Zhu Yikai <zhuyikai1@h-partners.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Simon Horman <horms@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
- linux-doc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
- Bjorn Helgaas <helgaas@kernel.org>, luosifu <luosifu@huawei.com>,
- Xin Guo <guoxin09@huawei.com>, Shen Chenyang <shenchenyang1@hisilicon.com>,
- Zhou Shuai <zhoushuai28@huawei.com>, Wu Like <wulike1@huawei.com>,
- Shi Jing <shijing34@huawei.com>, Meny Yossefi <meny.yossefi@huawei.com>,
- Gur Stavi <gur.stavi@huawei.com>, Lee Trager <lee@trager.us>,
- Michael Ellerman <mpe@ellerman.id.au>, Suman Ghosh <sumang@marvell.com>,
- Przemek Kitszel <przemyslaw.kitszel@intel.com>,
- Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-References: <cover.1756378721.git.zhuyikai1@h-partners.com>
- <71685e8f14c4523add7580dbfd078b1b2763f7c3.1756378721.git.zhuyikai1@h-partners.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-In-Reply-To: <71685e8f14c4523add7580dbfd078b1b2763f7c3.1756378721.git.zhuyikai1@h-partners.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aK8hUqdee-JFcFHn@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
 
-On 28/08/2025 13:10, Fan Gong wrote:
-> As netif_queue_set_napi checks napi->dev, if it doesn't have it and
-> it will warn_on and return. So we should use netif_napi_add before
-> netif_queue_set_napi because netif_napi_add has "napi->dev = dev".
-> 
-> Co-developed-by: Xin Guo <guoxin09@huawei.com>
-> Signed-off-by: Xin Guo <guoxin09@huawei.com>
-> Co-developed-by: Zhu Yikai <zhuyikai1@h-partners.com>
-> Signed-off-by: Zhu Yikai <zhuyikai1@h-partners.com>
-> Signed-off-by: Fan Gong <gongfan1@huawei.com>
-> ---
->   drivers/net/ethernet/huawei/hinic3/hinic3_irq.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/ethernet/huawei/hinic3/hinic3_irq.c b/drivers/net/ethernet/huawei/hinic3/hinic3_irq.c
-> index 33eb9080739d..a69b361225e9 100644
-> --- a/drivers/net/ethernet/huawei/hinic3/hinic3_irq.c
-> +++ b/drivers/net/ethernet/huawei/hinic3/hinic3_irq.c
-> @@ -42,11 +42,11 @@ static void qp_add_napi(struct hinic3_irq_cfg *irq_cfg)
->   {
->   	struct hinic3_nic_dev *nic_dev = netdev_priv(irq_cfg->netdev);
->   
-> +	netif_napi_add(nic_dev->netdev, &irq_cfg->napi, hinic3_poll);
->   	netif_queue_set_napi(irq_cfg->netdev, irq_cfg->irq_id,
->   			     NETDEV_QUEUE_TYPE_RX, &irq_cfg->napi);
->   	netif_queue_set_napi(irq_cfg->netdev, irq_cfg->irq_id,
->   			     NETDEV_QUEUE_TYPE_TX, &irq_cfg->napi);
-> -	netif_napi_add(nic_dev->netdev, &irq_cfg->napi, hinic3_poll);
->   	napi_enable(&irq_cfg->napi);
->   }
->   
+On Wed, Aug 27, 2025 at 08:46:34PM +0530, Ojaswin Mujoo wrote:
+> On Tue, Aug 26, 2025 at 12:08:01AM +0800, Zorro Lang wrote:
+> > On Fri, Aug 22, 2025 at 01:32:01PM +0530, Ojaswin Mujoo wrote:
+> > > The main motivation of adding this function on top of _require_fio is
+> > > that there has been a case in fio where atomic= option was added but
+> > > later it was changed to noop since kernel didn't yet have support for
+> > > atomic writes. It was then again utilized to do atomic writes in a later
+> > > version, once kernel got the support. Due to this there is a point in
+> > > fio where _require_fio w/ atomic=1 will succeed even though it would
+> > > not be doing atomic writes.
+> > > 
+> > > Hence, add an explicit helper to ensure tests to require specific
+> > > versions of fio to work past such issues.
+> > 
+> > Actually I'm wondering if fstests really needs to care about this. This's
+> > just a temporary issue of fio, not kernel or any fs usespace program. Do
+> > we need to add a seperated helper only for a temporary fio issue? If fio
+> > doesn't break fstests running, let it run. Just the testers install proper
+> > fio (maybe latest) they need. What do you and others think?
 
-Reviewed-by: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+Are there obvious failures if you try to run these new atomic write
+tests on a system with the weird versions of fio that have the no-op
+atomic= functionality?  I'm concerned that some QA person is going to do
+that unwittingly and report that everything is ok when in reality they
+didn't actually test anything.
+
+--D
+
+> > Thanks,
+> > Zorro
+> 
+> Hey Zorro,
+> 
+> Sure I'm okay with not keeping the helper and letting the user make sure
+> the fio version is correct.
+> 
+> @John, does that sound okay?
+> 
+> Regards,
+> ojaswin
+> > 
+> > > 
+> > > Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+> > > ---
+> > >  common/rc | 32 ++++++++++++++++++++++++++++++++
+> > >  1 file changed, 32 insertions(+)
+> > > 
+> > > diff --git a/common/rc b/common/rc
+> > > index 35a1c835..f45b9a38 100644
+> > > --- a/common/rc
+> > > +++ b/common/rc
+> > > @@ -5997,6 +5997,38 @@ _max() {
+> > >  	echo $ret
+> > >  }
+> > >  
+> > > +# Check the required fio version. Examples:
+> > > +#   _require_fio_version 3.38 (matches 3.38 only)
+> > > +#   _require_fio_version 3.38+ (matches 3.38 and above)
+> > > +#   _require_fio_version 3.38- (matches 3.38 and below)
+> > > +_require_fio_version() {
+> > > +	local req_ver="$1"
+> > > +	local fio_ver
+> > > +
+> > > +	_require_fio
+> > > +	_require_math
+> > > +
+> > > +	fio_ver=$(fio -v | cut -d"-" -f2)
+> > > +
+> > > +	case "$req_ver" in
+> > > +	*+)
+> > > +		req_ver=${req_ver%+}
+> > > +		test $(_math "$fio_ver >= $req_ver") -eq 1 || \
+> > > +			_notrun "need fio >= $req_ver (found $fio_ver)"
+> > > +		;;
+> > > +	*-)
+> > > +		req_ver=${req_ver%-}
+> > > +		test $(_math "$fio_ver <= $req_ver") -eq 1 || \
+> > > +			_notrun "need fio <= $req_ver (found $fio_ver)"
+> > > +		;;
+> > > +	*)
+> > > +		req_ver=${req_ver%-}
+> > > +		test $(_math "$fio_ver == $req_ver") -eq 1 || \
+> > > +			_notrun "need fio = $req_ver (found $fio_ver)"
+> > > +		;;
+> > > +	esac
+> > > +}
+> > > +
+> > >  ################################################################################
+> > >  # make sure this script returns success
+> > >  /bin/true
+> > > -- 
+> > > 2.49.0
+> > > 
+> > 
+> 
 
