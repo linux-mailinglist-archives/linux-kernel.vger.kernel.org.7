@@ -1,154 +1,217 @@
-Return-Path: <linux-kernel+bounces-789412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94123B3951C
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 09:26:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D62ECB3951D
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 09:26:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F2573BE8D2
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 07:26:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DDC941892CD4
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 07:27:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DB582D0626;
-	Thu, 28 Aug 2025 07:26:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DCCD29CB32;
+	Thu, 28 Aug 2025 07:26:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XGY/4w04"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qMMhTHSu"
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2F6E2877E2;
-	Thu, 28 Aug 2025 07:26:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A18CB1FC0F0
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 07:26:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756365960; cv=none; b=AMKqoNWKh4WQ+/sr5pCSNtgcjjqzehZmpkQw8SzF6deWXkFqPDjLf/zptE3M3zaDWLaQfjuqwDVx/YRY+k0dlgaxvbwwlGr1QOhP/xQaivGPDSWilCRkzOMzjPqi7CRXaIxB/AikmyaWUKZm4GcnwVWQGkthwMV2R+GHxQqWmfA=
+	t=1756366006; cv=none; b=bckd/ylihhWV8ZxD9qYACEPp6vdBXKwSnCl8mONEk1xS+bWeR9xbU3XXREPs07d1QpQySsMBKe8Ktfgocn2q3l3vGtk/rJ8U4H5fPkLMRU1flJQo6t/lvMTFI7uxKAKSqbaLqizfA5INmC+V1CiIV82Zog3dMuovmqSXkiLTz6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756365960; c=relaxed/simple;
-	bh=2BRwtGaDZ/6Km5UhK2qGK47+lM1iCESKOunbULBWRtk=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=exNbtV3jASM+Eb9ZMHMh0NxXiCHq3CK4Efdi2xahSq5xukDI+Ta1fkHqoacHShVq5O6SSuBa2CEIKBN0gEiY4jtpns4rBcHrM+kMOrC4R42ZbGW6uE/GCbvdRaIetxIRyi5tyeyAgF2zAxcUpQEtlQJ6QPyQY/WQEn6H4n/K7Yw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XGY/4w04; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F754C4CEEB;
-	Thu, 28 Aug 2025 07:25:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756365960;
-	bh=2BRwtGaDZ/6Km5UhK2qGK47+lM1iCESKOunbULBWRtk=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=XGY/4w04AxdmWRUziN0qjr1ZicsrOZFbfNTMFu54+Tta8pvvQLQFGnifdQmgWDRhn
-	 5QewdC/u4PqZPmxavJ6LnkWMTwDoqPjw2L+8rLKXWMAS3v+UJKMw7JYMtlHjCIATNi
-	 wC/nbK02Menz8rZm7LtB6aSTAEgZngLZ0mKtL26Spire86NWqXpq1mUjmwodyCLsoC
-	 cZ84LyUoNZh1hPg+lAvSka87xmafwc/nHZbdl9BF4/PtJ9x3Pz04+qz1Q2ZIscisc1
-	 6+r+x7TzyA/iTpj1yyIkPbxHazFsrtHOWWWc6bswy+NYK3MqkTzfACEbja6+Nlo1X5
-	 dNyZwsZaQvmxQ==
+	s=arc-20240116; t=1756366006; c=relaxed/simple;
+	bh=FWeqn5vRZAH6k0pKhP35N/soh/ogrNerUNcbSo/TcDI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ewNM9JY3ZSd/QpkgrUl4zonI2jzeuEYCFkkOM0RKXkuEbXKuImq5mE1USWHDjgKJsjrWPlTowEvMPkqLeE/5GRhLgjZDo0FewAuIzC3ktqXYgBprWFEdp6tnHshraj0mmO6MeUstxBLeaYBmzaDeFP9mnTueRHS7sLwn5LPjTVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qMMhTHSu; arc=none smtp.client-ip=209.85.160.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-4b2a09bfa2aso593471cf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 00:26:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1756366003; x=1756970803; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=7deqPVGcNTC25viCblNvhMMKUTMA22h7onsyE6m/3YQ=;
+        b=qMMhTHSubkfeBVCiHEsPH8rqv51/6Isto6DRac3BYo6yoJyjB3R5cIUQXgwATWnxF9
+         F9fw0i5eAvt9xRjcAmwTUMA71ZxgTBGsaPPF/D+Bwv7bBuKD7P+/q51EoL/4Ie2AVhUg
+         HzMoE4Ec50FvUC4dHnbv1J3bG0oV4TXBqddHzHeawPZ5zUddX7gSyuJIL2kSfsbibG1o
+         BdEGqeb4dd1yScngzYsCnZTZ5We7wBivNn7vLxzQal/Fu9Bvl0JiVZ+dHVE9OKpGWjnP
+         mef8bixg41e0lPbdmGgK5NoILU5wSEeqqypjkrYdKyqLEwXPMbG9p+8/9IX7NeHGew/V
+         KbrA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756366003; x=1756970803;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7deqPVGcNTC25viCblNvhMMKUTMA22h7onsyE6m/3YQ=;
+        b=USEUxxCo0N8NNnEBsGs2rtTYBpiqnEQf4wD1MMQkFi+ORz9LXhkOnMr3G52k+S/3IL
+         6lrENX3JkPYdVzOFqhAkQ2KpUnGtguFEPnuxdymUgr9OHbhRr724sB4NKtxmbVcIguLL
+         MgM5cBQ/wm/mJ0o5QCt46+5SvyJN+Z3hJfiANx7GnDcVMr2DsDNDBV09c11Qbm3xVNNH
+         o2rZzjJvzFP4kwoPX4GuBT/VmcFvcudu7qTA5SPHuKeNwDOC4HZmjXL67Zp+xuy3aNP3
+         dIDu3Epyx8ChbSVyyV9kymBmYmo35ZGc6tFJVq0csvvB0sg/ThpC4/m/RY+j10XwEaNM
+         02IA==
+X-Forwarded-Encrypted: i=1; AJvYcCV+eMu7emkmznZZRqzPw8oN1Db7PWOapyGThzLAxV6b30noBZz+6pQHfKuVymjoTyyGNwPx/ETvqZxjORk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxkn5ub6AfU/cfuEzrB26uWfYnhS3F4n5lykgCQoX4gi03hAPa5
+	fc+WN0qXIEyXSvzcdf6x6Le3EFzTxd96P4EdQekXHuFeNBsX/cAItbXG0OiiSLxRCuwFnPvBKTv
+	1l+wJKU/GoMxeroyLTD15Juqh0PDdJ/uvbmmwRrSB3w==
+X-Gm-Gg: ASbGncsuxJWdc3h8wTriYw7xht1wYhp+p4XJaI8eWpsfgSTLagQ2q0ZTgG7FBilRDv+
+	nTGTmkekeEUYQjLyg+P18TjoTYPbrqNPiXq61ni5yD4PDNWFCXyZrfSDNkUM2H+Fz5UXyplBLgv
+	cBtSU6V5nPwssqlVw5pJ53beBjwVY67vzUex0F3p5WWPKhg+0k+tbNkVo3TAMej+EI3P4disdjC
+	Stj24P6V4fZB/Cj
+X-Google-Smtp-Source: AGHT+IErKUhUmI37jeBXoTvy7qMI9WCIiqOnvQ/h3DmG9UhJAH1k1Z+eP17jDLSBcN8nrX9bC4v/R4LnJVxfLQLcGYg=
+X-Received: by 2002:a05:6214:1d25:b0:70d:96d0:83c9 with SMTP id
+ 6a1803df08f44-70d970c54a1mr165565056d6.2.1756366003397; Thu, 28 Aug 2025
+ 00:26:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 28 Aug 2025 09:25:56 +0200
-Message-Id: <DCDVRPJKZBC3.31KGTGS90WUUA@kernel.org>
-Cc: "Jens Axboe" <axboe@kernel.dk>, "Daniel Almeida"
- <daniel.almeida@collabora.com>, "Caleb Sander Mateos"
- <csander@purestorage.com>, "Miguel Ojeda" <ojeda@kernel.org>, "Arnd
- Bergmann" <arnd@arndb.de>, "Greg Kroah-Hartman"
- <gregkh@linuxfoundation.org>, <rust-for-linux@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <io-uring@vger.kernel.org>
-Subject: Re: [RFC PATCH v3 3/5] rust: io_uring: introduce rust abstraction
- for io-uring cmd
-From: "Benno Lossin" <lossin@kernel.org>
-To: "Ming Lei" <ming.lei@redhat.com>, "Sidong Yang" <sidong.yang@furiosa.ai>
-X-Mailer: aerc 0.20.1
-References: <20250822125555.8620-1-sidong.yang@furiosa.ai>
- <20250822125555.8620-4-sidong.yang@furiosa.ai> <aK-kd3GBhxOzt_mA@fedora>
-In-Reply-To: <aK-kd3GBhxOzt_mA@fedora>
+MIME-Version: 1.0
+References: <20250827073826.377382421@linuxfoundation.org>
+In-Reply-To: <20250827073826.377382421@linuxfoundation.org>
+From: Anders Roxell <anders.roxell@linaro.org>
+Date: Thu, 28 Aug 2025 09:26:32 +0200
+X-Gm-Features: Ac12FXziFZRFGNoRBwgurFlgUSBKRKa9JvBPPmeOBJJCRxUePGr8466KojIL_b0
+Message-ID: <CADYN=9LV1rjG1dv-Ctbk24nwhRuu+a_mzBagaFEMZkQ7qG65WA@mail.gmail.com>
+Subject: Re: [PATCH 5.4 000/403] 5.4.297-rc2 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
+	broonie@kernel.org, achill@achill.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu Aug 28, 2025 at 2:36 AM CEST, Ming Lei wrote:
-> On Fri, Aug 22, 2025 at 12:55:53PM +0000, Sidong Yang wrote:
->> +    /// Reads protocol data unit as `T` that impl `FromBytes` from urin=
-g cmd
->> +    ///
->> +    /// Fails with [`EFAULT`] if size of `T` is bigger than pdu size.
->> +    #[inline]
->> +    pub fn read_pdu<T: FromBytes>(&self) -> Result<T> {
->> +        // SAFETY: `self.inner` is guaranteed by the type invariant to =
-point
->> +        // to a live `io_uring_cmd`, so dereferencing is safe.
->> +        let inner =3D unsafe { &mut *self.inner.get() };
->> +
->> +        let len =3D size_of::<T>();
->> +        if len > inner.pdu.len() {
->> +            return Err(EFAULT);
->> +        }
->> +
->> +        let mut out: MaybeUninit<T> =3D MaybeUninit::uninit();
->> +        let ptr =3D &raw mut inner.pdu as *const c_void;
->> +
->> +        // SAFETY:
->> +        // * The `ptr` is valid pointer from `self.inner` that is guara=
-nteed by type invariant.
->> +        // * The `out` is valid pointer that points `T` which impls `Fr=
-omBytes` and checked
->> +        //   size of `T` is smaller than pdu size.
->> +        unsafe {
->> +            core::ptr::copy_nonoverlapping(ptr, out.as_mut_ptr().cast::=
-<c_void>(), len);
->> +        }
->> +
->> +        // SAFETY: The read above has initialized all bytes in `out`, a=
-nd since `T` implements
->> +        // `FromBytes`, any bit-pattern is a valid value for this type.
->> +        Ok(unsafe { out.assume_init() })
->> +    }
->> +
->> +    /// Writes the provided `value` to `pdu` in uring_cmd `self`
->> +    ///
->> +    /// Fails with [`EFAULT`] if size of `T` is bigger than pdu size.
->> +    #[inline]
->> +    pub fn write_pdu<T: AsBytes>(&mut self, value: &T) -> Result<()> {
->> +        // SAFETY: `self.inner` is guaranteed by the type invariant to =
-point
->> +        // to a live `io_uring_cmd`, so dereferencing is safe.
->> +        let inner =3D unsafe { &mut *self.inner.get() };
->> +
->> +        let len =3D size_of::<T>();
->> +        if len > inner.pdu.len() {
->> +            return Err(EFAULT);
->> +        }
->> +
->> +        let src =3D (value as *const T).cast::<c_void>();
->> +        let dst =3D &raw mut inner.pdu as *mut c_void;
->> +
->> +        // SAFETY:
->> +        // * The `src` is points valid memory that is guaranteed by `T`=
- impls `AsBytes`
->> +        // * The `dst` is valid. It's from `self.inner` that is guarant=
-eed by type invariant.
->> +        // * It's safe to copy because size of `T` is no more than len =
-of pdu.
->> +        unsafe {
->> +            core::ptr::copy_nonoverlapping(src, dst, len);
->> +        }
->> +
->> +        Ok(())
->> +    }
+On Wed, 27 Aug 2025 at 09:44, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
 >
-> pdu is part of IoUringCmd, which is live in the whole uring_cmd lifetime.=
- But
-> both read_pdu()/write_pdu() needs copy to read or write any byte in the p=
-du, which
-> is slow and hard to use, it could be more efficient to add two methods to=
- return
-> Result<&T> and Result<mut &T> for user to manipulate uring_cmd's pdu.
+> This is the start of the stable review cycle for the 5.4.297 release.
+> There are 403 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Fri, 29 Aug 2025 07:37:48 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.297-rc2.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-That can also be useful, but you do need to ensure that the pdu is
-aligned to at least the required alignment of `T` for this to be sound.
-I also don't follow your argument that reading & writing the pdu is
-slow.
+Results from Linaro's test farm.
+No regressions on arm64, arm, x86_64, and i386.
 
----
-Cheers,
-Benno
+Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+
+NOTE: the previous reported arm64 build regressions have been fixed in RC2.
+
+
+## Build
+* kernel: 5.4.297-rc2
+* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+* git commit: a860ce417cb1ff7332caa94fd6014183f8639a17
+* git describe: v5.4.296-404-ga860ce417cb1
+* test details:
+https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-5.4.y/build/v5.4.296-404-ga860ce417cb1
+
+## Test Regressions (compared to v5.4.295-145-g6d1abaaa322e)
+
+## Metric Regressions (compared to v5.4.295-145-g6d1abaaa322e)
+
+## Test Fixes (compared to v5.4.295-145-g6d1abaaa322e)
+
+## Metric Fixes (compared to v5.4.295-145-g6d1abaaa322e)
+
+## Test result summary
+total: 43352, pass: 33098, fail: 2462, skip: 7622, xfail: 170
+
+## Build Summary
+* arc: 5 total, 5 passed, 0 failed
+* arm: 131 total, 131 passed, 0 failed
+* arm64: 31 total, 29 passed, 2 failed
+* i386: 18 total, 13 passed, 5 failed
+* mips: 25 total, 25 passed, 0 failed
+* parisc: 3 total, 0 passed, 3 failed
+* powerpc: 26 total, 26 passed, 0 failed
+* riscv: 9 total, 3 passed, 6 failed
+* s390: 6 total, 6 passed, 0 failed
+* sh: 10 total, 10 passed, 0 failed
+* sparc: 6 total, 6 passed, 0 failed
+* x86_64: 27 total, 27 passed, 0 failed
+
+## Test suites summary
+* boot
+* kselftest-arm64
+* kselftest-breakpoints
+* kselftest-capabilities
+* kselftest-clone3
+* kselftest-core
+* kselftest-cpu-hotplug
+* kselftest-exec
+* kselftest-fpu
+* kselftest-futex
+* kselftest-intel_pstate
+* kselftest-kcmp
+* kselftest-membarrier
+* kselftest-mincore
+* kselftest-mqueue
+* kselftest-openat2
+* kselftest-ptrace
+* kselftest-rseq
+* kselftest-rtc
+* kselftest-sigaltstack
+* kselftest-size
+* kselftest-timers
+* kselftest-tmpfs
+* kselftest-tpm2
+* kselftest-user_events
+* kselftest-vDSO
+* kselftest-x86
+* kunit
+* lava
+* libhugetlbfs
+* log-parser-boot
+* log-parser-build-clang
+* log-parser-build-gcc
+* log-parser-test
+* ltp-capability
+* ltp-commands
+* ltp-containers
+* ltp-controllers
+* ltp-cpuhotplug
+* ltp-crypto
+* ltp-cve
+* ltp-dio
+* ltp-fcntl-locktests
+* ltp-fs
+* ltp-fs_bind
+* ltp-fs_perms_simple
+* ltp-hugetlb
+* ltp-math
+* ltp-mm
+* ltp-nptl
+* ltp-pty
+* ltp-sched
+* ltp-smoke
+* ltp-syscalls
+* ltp-tracing
+* perf
+* rcutorture
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
