@@ -1,103 +1,181 @@
-Return-Path: <linux-kernel+bounces-789007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FE73B38F94
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 02:05:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9CB4B38F97
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 02:07:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED7DD208AC0
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 00:05:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B469D189CC27
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 00:07:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 550E9CA4B;
-	Thu, 28 Aug 2025 00:05:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B00318E3F;
+	Thu, 28 Aug 2025 00:07:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Z68l9Ywl"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pEOrfLvE"
+Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09CB779EA;
-	Thu, 28 Aug 2025 00:05:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED4A7101DE
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 00:07:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756339552; cv=none; b=bKXVRziVNHM1utwf+mkFt/SyaY2qyTw+ZnVb/vW89jmw5Iik0Jot9aRwBNceJvIvyXJb/GvTW5V7HdnQA+jFcaPnMcC12NWRZEh47HCbMIAOMiLqE6ojHzXySehgKQzrekz/5tMbk0Rjkfxdc9DpxOZN82DpAJK0kgHlTYyfWs4=
+	t=1756339635; cv=none; b=bJKJE0N6NBxrm1teDMX7aieYyzjgwRtk1dlKWRskHQjXmtK12IDDb905tKJ44YuCAj72Ek3DGeAXtTRASmpkG7UMusuRbZpwpCW80hm6nGEgY6huJYHd61z/3ngFta+ipOJ6jj/GJCZ4364Ajx1iFwIt2e9smpk8CdqkkuHRDds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756339552; c=relaxed/simple;
-	bh=A0T5vpnrwrWTYySqpv1+OzkO5CfDmPgTEx+Q88BI6nc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=ieV7WfpvUWEb2YNvHRQeccbxxAXKRWaPy2PCMGNHIwSuI0QjFhBn7mpTp9fbSRpEVFLvlY+nUQUWdh5ocmFUkNmXcnrwIOnI0LxYTEByGPwAMdTWDwzd11l241isUCHPF4RAOy0SvhwGsml7cv4HV7Nqb2HLbSobb9Bm0kidx5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Z68l9Ywl; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1756339546;
-	bh=V2lp1/i+ZKEtDnIvhKkup1+LvX0vtA9UstFI8fDeX+8=;
-	h=Date:From:To:Cc:Subject:From;
-	b=Z68l9Ywl7+qSARHDh3u+t9yVaiO0L16/uqpaMqNebpM/UMvsLuk4UZn+SWvgYExx0
-	 DgSmkFPc8z+IKrGyNxKb6V2K4fZLPmhvpE47yUMkJRR4e7yMVm5NCAedLQ8lOWgG6M
-	 Vz5Y++9G4Jb712kFQzIOQjhxN1rUzf8hqWZomgA6gs00UQlYBv6anJt21R0xLV0jPo
-	 9LRxYz/e787ajpSi32Hv9jv+mcdTnNGF0h2oGfn5SuNlySMUvztLJMZIZD8RQ8rsdU
-	 8K4ynYQbvCh+mr7LVNXcoORLshvCitbxjbUHi/Dp4QACJ99VlhvmAlxsZCvacIxVws
-	 jp32WqTK26NEg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4cC1rV5QPjz4w2P;
-	Thu, 28 Aug 2025 10:05:46 +1000 (AEST)
-Date: Thu, 28 Aug 2025 10:05:46 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Andrew Morton <akpm@linux-foundation.org>, Mike Rapoport
- <rppt@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: duplicate patch in the mm-unstable tree
-Message-ID: <20250828100546.296ab364@canb.auug.org.au>
+	s=arc-20240116; t=1756339635; c=relaxed/simple;
+	bh=EKG1cKzLKUKkjt9t7eG2R6R8dZd2IX10aS64SIZ7J1s=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=PU2RNfviLHlGMNQp9QVd+Wyvmv458u4ZZqYTTViXL73sqmyqhVpk6b3WfNElRCvgGUFsX68TIOeN9QLfuP8iMU0b4AcObDS6CpBxoCGQccY+YLulbU8UGaM4WI0HIyjl0HWMAQQ+tyh7K73hlcMrPF83CDE49OzC8+CaynOl0Lo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pEOrfLvE; arc=none smtp.client-ip=209.85.210.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-7720ac7c788so315115b3a.3
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 17:07:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1756339633; x=1756944433; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=t579SF/wnMrFK0E/9c31FaYDCwaoHad3snclUWLCz6M=;
+        b=pEOrfLvEG+tA9aBtoX3JCX4cTyDzZ4jRCFcoCv0UmE6J50Me+QuqdqsL3rvq6H87Fd
+         at/ct0mVLB+xuM9LkQQJUy5Kg4FDBqsjfU9rIzv/oSmTRt7oa9/u5k7XlYMG+kbZCtFE
+         4nu7AP8zB4/GgEwH0gZzVBni+NgiU6crkVvF/f25+QOVfgAb7hFL0CQiHFd9AJouzhL5
+         zG0XhSd5A2GtGhWva52o7vnwN+Pvxl5bz8WpW0utAnGue9zB1oz8obDlI/VeVBkpVkxN
+         YGtywCWOMC22SO56GVboqe17O7gtlBafbRA8g7K9qKZHGlgjVJ6kblItR1MSBw7KIDw5
+         r9fQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756339633; x=1756944433;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=t579SF/wnMrFK0E/9c31FaYDCwaoHad3snclUWLCz6M=;
+        b=hKz8dvy5xXadbFLv6/2S8n+Pu17Q+ep66tb7S15BUQOkzeoafojsakm9F6aeJ7HAkX
+         C7OSH9AduTXt4IlI9qaMMpFiQSEtIZPDw7exRhXsxo1ihrARI6vwEE9lj73Hl3l+/bnp
+         +7dkjMYRYf1diT8hkSnoFvAFrk1rN8cDh+ORihCodca0SBJl5/am7k3xCJLLND84GOCw
+         YBXXOeZV7xQVdYhHxUYMLIYyk/bEzroVEBAbWxVrc0HTKs7vEX6KlteAcQ8mcAtFxwuq
+         G1idSNr7K+Vm7YKQ3KrRQQanR/QL7X19sKyuBoEphzhwe2Lt3Sic+rn4ZiLNxoySY0M1
+         35DQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWV477HfNZnlh9QDOahuYbtuhXgn9ymCFxEmHbUiJ7wus9LQDwt08T9jd5ZAjj3KepPMlkCDv8ycMs6UXs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YytknU2deaR9TFpwNYT+LqGPRD+OvzyehuPZ1OaNsUk2KZHZ9QF
+	BHTBvQsmyoQdoBINN0qgDmG2pCGQ+sZmeJoqeCFL8IoQTwQTypLHdxuj2ordPMqGl2xiIy40YIt
+	p+uD3qg==
+X-Google-Smtp-Source: AGHT+IETLC27C6TI91VObBy0J9hrR5myKvHDcaHo0xSKLRonIs5n9tEC5WogkS6LO7SOJpU1fDydbpJ3DGk=
+X-Received: from pgdo2.prod.google.com ([2002:a63:9202:0:b0:b4c:40fc:9518])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:7286:b0:243:ae10:2433
+ with SMTP id adf61e73a8af0-243ae1026c0mr944532637.40.1756339633137; Wed, 27
+ Aug 2025 17:07:13 -0700 (PDT)
+Date: Wed, 27 Aug 2025 17:07:11 -0700
+In-Reply-To: <aKc61y0_tvGLmieC@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/XI_Gty7jjXYP9mApMpOFD/7";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-
---Sig_/XI_Gty7jjXYP9mApMpOFD/7
-Content-Type: text/plain; charset=US-ASCII
+Mime-Version: 1.0
+References: <550a730d-07db-46d7-ac1a-b5b7a09042a6@linux.intel.com>
+ <aIeX0GQh1Q_4N597@google.com> <ad616489-1546-4f6a-9242-a719952e19b6@linux.intel.com>
+ <CAGtprH9EL0=Cxu7f8tD6rEvnpC7uLAw6jKijHdFUQYvbyJgkzA@mail.gmail.com>
+ <20641696-242d-4fb6-a3c1-1a8e7cf83b18@linux.intel.com> <697aa804-b321-4dba-9060-7ac17e0a489f@linux.intel.com>
+ <aKYMQP5AEC2RkOvi@google.com> <d84b792e-8d26-49c2-9e7c-04093f554f8a@linux.intel.com>
+ <f1ec8527-322d-4bdb-9a38-145fd9f28e4b@linux.intel.com> <aKc61y0_tvGLmieC@google.com>
+Message-ID: <aK-dr2W7UoA65jM2@google.com>
+Subject: Re: [PATCH 0/2] x86/kvm: Force legacy PCI hole as WB under SNP/TDX
+From: Sean Christopherson <seanjc@google.com>
+To: Binbin Wu <binbin.wu@linux.intel.com>
+Cc: Vishal Annapurve <vannapurve@google.com>, Nikolay Borisov <nik.borisov@suse.com>, 
+	Jianxiong Gao <jxgao@google.com>, "Borislav Petkov (AMD)" <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, Dionna Glaze <dionnaglaze@google.com>, 
+	"H. Peter Anvin" <hpa@zytor.com>, jgross@suse.com, 
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>, pbonzini@redhat.com, 
+	Peter Gonda <pgonda@google.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Tom Lendacky <thomas.lendacky@amd.com>, Vitaly Kuznetsov <vkuznets@redhat.com>, x86@kernel.org, 
+	Rick Edgecombe <rick.p.edgecombe@intel.com>, jiewen.yao@intel.com
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Thu, Aug 21, 2025, Sean Christopherson wrote:
+> On Thu, Aug 21, 2025, Binbin Wu wrote:
+> > On 8/21/2025 11:30 AM, Binbin Wu wrote:
+> > > Variable MTRR has requirement for range size and alignment:
+> > > For ranges greater than 4 KBytes, each range must be of length 2^n an=
+d its base
+> > > address must be aligned on a 2^n boundary, where n is a value equal t=
+o or
+> > > greater than 12. The base-address alignment value cannot be less than=
+ its length.
+> >=20
+> > Wait, Linux kernel converts MTRR register values to MTRR state (base an=
+d size) and
+> > cache it for later lookups (refer to map_add_var()). I.e., in Linux ker=
+nel,
+> > only the cached state will be used.
+> >=20
+> > These MTRR register values are never programmed when using
+> > guest_force_mtrr_state() , so even the values doesn't meet the requirem=
+ent
+> > from hardware perspective, Linux kernel can still get the right base an=
+d
+> > size.
+>=20
+> Yeah.  I forget what happens if the ranges don't meet the power-of-2 requ=
+irements,
+> but the mask+match logic should work jus tfine.
+>=20
+> > No bothering to force the base and size alignment.
+> > But a comment would be helpful.
+> > Also, BIT(11) could be replaced by MTRR_PHYSMASK_V.
+>=20
+> Ha!  I spent a good 5 minutes looking for a #define couldn't find one.  W=
+hat a
+> bizarre name...
+>=20
+> > How about:
+> > diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
+> > index 90097df4eafd..a9582ffc3088 100644
+> > --- a/arch/x86/kernel/kvm.c
+> > +++ b/arch/x86/kernel/kvm.c
+> > @@ -934,9 +934,15 @@ static void kvm_sev_hc_page_enc_status(unsigned lo=
+ng pfn, int npages, bool enc)
+> > =C2=A0static void __init kvm_init_platform(void)
+> > =C2=A0{
+> > =C2=A0 =C2=A0 =C2=A0 =C2=A0 u64 tolud =3D e820__end_of_low_ram_pfn() <<=
+ PAGE_SHIFT;
+> > +=C2=A0 =C2=A0 =C2=A0 =C2=A0/*
+> > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 * The range's base address and size may no=
+t meet the alignment
+> > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 * requirement for variable MTRR. However, =
+Linux guest never
+> > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 * programs MTRRs when forcing guest MTRR s=
+tate, no bothering to
+> > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 * enforce the base and range size alignmen=
+t.
+> > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 */
+> > =C2=A0 =C2=A0 =C2=A0 =C2=A0 struct mtrr_var_range pci_hole =3D {
+> > =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 .base_lo =3D to=
+lud | X86_MEMTYPE_UC,
+> > -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0.mask_lo =3D (u=
+32)(~(SZ_4G - tolud - 1)) | BIT(11),
+> > +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0.mask_lo =3D (u=
+32)(~(SZ_4G - tolud - 1)) | MTRR_PHYSMASK_V,
+> > =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 .mask_hi =3D (B=
+IT_ULL(boot_cpu_data.x86_phys_bits) - 1) >> 32,
+> > =C2=A0 =C2=A0 =C2=A0 =C2=A0 };
+> >=20
+> >=20
+> > I tested it in my setup, it can fix the issue of TPM driver failure wit=
+h the
+> > modified ACPI table for TPM in QEMU.
+> >=20
+> >=20
+> > Hi Vishal,
+> > Could you test it with google's VMM?
+>=20
+> Vishal is OOO for a few days.  I pinged our internal bug tracker, I'll fi=
+nd
+> someone to test.
 
-The following commit is also in the memblock-fixes tree as a different
-commit (but the same patch):
-
-  9457e50100f9 ("memblock: fix kernel-doc for MEMBLOCK_RSRV_NOINIT")
-
-This is commit
-
-  b3dcc9d1d806 ("memblock: fix kernel-doc for MEMBLOCK_RSRV_NOINIT")
-
-in the memblock-fixes tree.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/XI_Gty7jjXYP9mApMpOFD/7
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmivnVoACgkQAVBC80lX
-0GyMAQf/VtrJdkxPOj4+Xrw3aA2+6EuZZh7T3eJsX9pnRZ4cISI5/ok+m4w+rtY1
-UcGoKbe7wd/KfPN5NZD9l0a0WOhx3sj2UeZrrmTm4rUndurbzxECs+CmRoa0b9DS
-HQ5mpaby3n6SlIX2VfMrWFkUwwAWvn51lxHy7NnLSD7AfrgWfxyh7wYJpsaDHaEi
-lgdZVil6rphESbAewKwZedUWvoH6mXaYVUWpgHLc554F2nRoYrvo2wHeye+68Tc9
-AZzWBoRyjD55AcbaJibSKMrIkgnMplxjoUP0kIhWzxaYya5mQf/muOVg/IbIUj5T
-cIEbHJR0kKDrOWNMeaZfheVi783h2g==
-=6Kyf
------END PGP SIGNATURE-----
-
---Sig_/XI_Gty7jjXYP9mApMpOFD/7--
+Got confirmation this fixes the vTPM woes with Google's VMM.  v2 incoming..=
+.
 
