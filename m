@@ -1,225 +1,498 @@
-Return-Path: <linux-kernel+bounces-789476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 564EFB3960E
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 09:57:40 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C8C5B39612
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 09:58:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D915A3B504B
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 07:57:38 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F06D64E36D8
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 07:58:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEB102773E2;
-	Thu, 28 Aug 2025 07:57:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78CE42D6E5A;
+	Thu, 28 Aug 2025 07:58:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bv9KJvgL"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="cY9fu5nO"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2043.outbound.protection.outlook.com [40.107.220.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9757C1F8AC5
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 07:57:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756367853; cv=none; b=JcsP+fG7sWbBSAY9NpfuedhpW20lL37fmu2jP9qnnCmqR/9kNCcfEWXqHR3B8SZU4L2MEpgIDkNsX+qhJp1R1SXLyQHeZrK3Ithavcg/4ul6OlfYoYgQzowyRDheDj4A5ozUiC7UAHqXHPv7ycxy2vx8I8zMZMF2dENnT+w8Qw4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756367853; c=relaxed/simple;
-	bh=vdeMfA4XgdhKFH4DhC/B07X2MDdjHOQVm8nqKWApLe8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hCCzbphyZATLxt2+doSHQVLL6zPtfD/GLZK6xc4r26ew820usqNMAERRPqWmSVF8b0ib+tN6q9Qbmxv6dEWbyO8JPozN+ka3oJ9QLUSAfqpM8L3BNiQ/+ByS3qBy6eQKs1g6pubo17Aat6pW0BwbIGMAh4jlzVSctJZAbFuLTFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bv9KJvgL; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756367850;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=UbZY19kla5JanDLGwXleiL+Lbzg8wDPMzsYjknbeE08=;
-	b=bv9KJvgLYHEXRQN9Rn9P1fbYdMgelYJev2QuiBo1lUYjyxwoLQgYXKZ4yz/i9p29EMJCmc
-	u6b+urrobkURrkoeNRdtDroyJ0jiQy9PL3SiOarQT5S3NLKYwjVscZLH2zs/IL1/cFENfY
-	a22iloi3LZoxLzSpNN+12/ZsJqdxaU8=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-570-Z9f3n1dqNUGk0pAMWMxWNg-1; Thu, 28 Aug 2025 03:57:28 -0400
-X-MC-Unique: Z9f3n1dqNUGk0pAMWMxWNg-1
-X-Mimecast-MFC-AGG-ID: Z9f3n1dqNUGk0pAMWMxWNg_1756367848
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3c6abcfd218so482862f8f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 00:57:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756367848; x=1756972648;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UbZY19kla5JanDLGwXleiL+Lbzg8wDPMzsYjknbeE08=;
-        b=LC28DSCzd4Mc+8Os+XeVPMMMZVma5TNRjgR5tnl4VLBaITq+5uuhEI5ZPHoRuCUsLs
-         eG4ADiwilgRu9p083tRVOA78xBwll2UQYKiygPN8Y3DSJkz4x3E1/z35vGQp0VnuFkyR
-         M+gfl7gba8pVYBHNE5VZXGsxHjWwHIlt5ZisBqvgxd3Oe2ztivty7RC/UobQRooTAwgy
-         Ai8cZBwfub1hqqSfuF7cxE5QYTsrCe7jCkhgceQ9s8lKps/sovX4EpHKFacHK83pWfvY
-         auLiuDowqdaJG1Dv7c1+tAeAkN+EQEMVAaiIXrwkhw5Tkz5J44jPsWn5bSsKKCvoDS/7
-         gELw==
-X-Forwarded-Encrypted: i=1; AJvYcCXfL3B+g2wkoyP68+8r+UHbYbnQDSo2kWXIumqae/HWwZPFXF8JuNl2qY2jYGhzJemhwYa+T+GsAAqOe3Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyHhHqyeQpXbCl4QfkiyJk9sR8tll3GlxMnv/twB55qQ/BJBHNG
-	M/VN/TVuQvqIO+20108kLFcLZG9pzQM4OchLLDKRi3YozH71go4QzYO4JMTTtKNrP1kYGF/vDY/
-	LdxAD/Sug12SEBYQRpxEt/YfGkHTvSd700Ee89QugCSx/VB8VFgnGfC8KaZ7a/LY56A==
-X-Gm-Gg: ASbGncvkWIoYDu1SU0QsEejU2qm6Tzn8vlYVOepTLYcyPz4j9WDgYMJIhnIF8T8HaU4
-	MrBoH/JCc30RlL2TUKLgzwcP0lyJ+U5WT+XPdnwutUO4AhsfiYmVpjTbyzKEXxFiewDph9O78Rt
-	oztk4rFD3/W1XXZg/3hqh+GJjBfVYbXUt13i3WbnbdJI3d9DSFAg61tK9R/65p7UrDg5RUF2Lzy
-	LOpib6aWxLzcNm8cS36zzF3AkzMkbxYnSUElPciCry6ynpoXX78rhD9aWtzcBlPrlIzlicBi90I
-	jw7Lf7kQbevAZY8FncOv78XzMy5diUh+GY23t9aCj77Y6qDSNoXMoSZ7e1Syn52LhoGlPqo+ufE
-	EAnvfKqD6kg2atHzkHJIXY+nb0lTuROL2wy2j2qTRPhBBPqfj2hi13Ua/45TwWlkY2Eg=
-X-Received: by 2002:a05:6000:3105:b0:3ca:43ce:8a68 with SMTP id ffacd0b85a97d-3ca43ce8e89mr8320260f8f.47.1756367847594;
-        Thu, 28 Aug 2025 00:57:27 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEIHY+n/N124O87jCHNAlrsZyduC64z8czEg/qHAbsVW1ouYN3MmeY/U08JPQi5BlvdXgr69Q==
-X-Received: by 2002:a05:6000:3105:b0:3ca:43ce:8a68 with SMTP id ffacd0b85a97d-3ca43ce8e89mr8320243f8f.47.1756367847112;
-        Thu, 28 Aug 2025 00:57:27 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f28:c100:2225:10aa:f247:7b85? (p200300d82f28c100222510aaf2477b85.dip0.t-ipconnect.de. [2003:d8:2f28:c100:2225:10aa:f247:7b85])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c9c9324dc9sm14969370f8f.3.2025.08.28.00.57.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 28 Aug 2025 00:57:26 -0700 (PDT)
-Message-ID: <d048aac6-7b70-44b7-9e92-7277bd49b182@redhat.com>
-Date: Thu, 28 Aug 2025 09:57:25 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D2031F8AC5;
+	Thu, 28 Aug 2025 07:58:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.43
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756367891; cv=fail; b=qERMvylx1GOcEXu/ulEL4zR2zNon+2Q8iTegRPhGfGiMX0NKGVujUDsdfvu4TZJ97MK3B30oEfHldQ64XBqTPjI/4hamKr8yM5fPVrlwMZFm0B/lsMqCSUw2V/XxELRtK6dFo3KC/6VEK2QfbFzSf9t+V2act2S2z/apzoyhscw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756367891; c=relaxed/simple;
+	bh=W4FtYF+4TAVZf25OjwnsOYYFFlTC7+mqrArZMTfU46g=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=TkRbXgEdlUev8ZIxE3EI/no2eJvaaI18W0/PNHXIPCLX+QTvNkkvypk00QhCzuRUAL065Xj7nghZJSS2/BBHzwialAlqPc7eU9cQor2C9yd5ptr73FzRZwK9YyVF+t+c4Rw5sAIHUSo/v4MYhpWtL5+z9ITw6wuln0qxxsA9oAo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=cY9fu5nO; arc=fail smtp.client-ip=40.107.220.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Bw43iuBP1gBjRGmXcNDychEzsZV0vL+O7Ta6Lrr3NgRRALAFwOXgE4vO+hDB1CiOuWB7F9PKMz7oRmfxbMwgGB61SvV+ce54edsGBPzNHzHowFjDfJXIE6ABwDYVBWAMKh58omB9Hbbps0/Wko6S/jt4ri6BYwRT9qU/xGp1eEYRoC86GXtyxxxCZYhbZrQFEv+dWVXOva2M9PZm8EZFRjBJAd9jA/xr5p/RtIm6KEXOw8tu85dUJzkeD3qxe63iZa9y8ml69hzkR1KjdPAygwENuMuMe9O6B0LKblTTCu2NeFlEu7Ay1r+tcx35YxF8u+BF1IvsOHDhyE7KSfMI9w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=eUnkCgTQfiH5CbXaOvxbwiRkKsMMhQ57KQrea7VEGNY=;
+ b=yNhmwddfkDgsHWb1ZcZtxksHj8XE2aPPqVL4jMHngQiOiUWcdtCeuQMt/WKfF8/w06lEsWy6OCFjxzZwRHtebdUmAdOAmlGIrrhV61hlQRo2atQo5bJU6CYcxI/q+VFU72ZGkmJ9O3AUxHzE/Om7fXu6h1wsmB9lHSdwoPivzq9m/+lPhJM6tLWXX7OvtnaMhTC/RAJ6pufFCp6aXCsUhj+HxXktsTWX9KNTTaLjK6cCW1DWEbRBLbhpCEy8L7VbAkC7sKRklu++4W+pwp7mZtdaUUiqDbp7+F0E29ZdzyENdn7qLJ/wRM07ZuZFrK9Y+SddhgS7F53JVQyclTHlxg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=eUnkCgTQfiH5CbXaOvxbwiRkKsMMhQ57KQrea7VEGNY=;
+ b=cY9fu5nOGzPR54Vtsxs2yyu9DBORmUJ2MSeBOFZxTQIqdyJI2yIT7Qlc5IHs68TfGgZNNzkuqfkQyXso59Un7Xb7FwMsnwM1fxE1tUZaB4/bPyoEBcZPIdHmf/kS2tKQ0ltQV1ue0tyeOgOA2D7hT0VmKvzoV2N45VCL6g5VCwIvRqePQ9kW8Gs639M6SpjyA8stpGDXoWQClAmzni0jAVYfCoGooK0ePFmV3L4Le+grljHKyIfO8qgGJA5GJgluEMkIKwEgS+Qj1WxA2amCbMngNtwhKOh0dWwrVO4SELTgokQt13KEEdDnrd6GfR6kAYMOA/gs1hu/67a7rHbY7w==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DM4PR12MB6494.namprd12.prod.outlook.com (2603:10b6:8:ba::19) by
+ PH7PR12MB9076.namprd12.prod.outlook.com (2603:10b6:510:2f6::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.22; Thu, 28 Aug
+ 2025 07:58:02 +0000
+Received: from DM4PR12MB6494.namprd12.prod.outlook.com
+ ([fe80::346b:2daf:d648:2e11]) by DM4PR12MB6494.namprd12.prod.outlook.com
+ ([fe80::346b:2daf:d648:2e11%6]) with mapi id 15.20.9052.019; Thu, 28 Aug 2025
+ 07:58:02 +0000
+From: Mikko Perttunen <mperttunen@nvidia.com>
+To: "Rafael J. Wysocki" <rafael@kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
+ Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Thierry Reding <treding@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>,
+ Svyatoslav Ryhel <clamor95@gmail.com>, Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject:
+ Re: [PATCH v5 5/6] thermal: tegra: add Tegra114 specific SOCTHERM driver
+Date: Thu, 28 Aug 2025 16:57:59 +0900
+Message-ID: <3366819.oiGErgHkdL@senjougahara>
+In-Reply-To: <20250828055104.8073-6-clamor95@gmail.com>
+References:
+ <20250828055104.8073-1-clamor95@gmail.com>
+ <20250828055104.8073-6-clamor95@gmail.com>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-ClientProxiedBy: TYCP286CA0082.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:2b3::6) To DM4PR12MB6494.namprd12.prod.outlook.com
+ (2603:10b6:8:ba::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] huge_mm.h: disallow is_huge_zero_folio(NULL)
-To: Andrew Morton <akpm@linux-foundation.org>,
- Max Kellermann <max.kellermann@ionos.com>
-Cc: lorenzo.stoakes@oracle.com, ziy@nvidia.com,
- baolin.wang@linux.alibaba.com, Liam.Howlett@oracle.com, npache@redhat.com,
- ryan.roberts@arm.com, dev.jain@arm.com, baohua@kernel.org,
- shikemeng@huaweicloud.com, kasong@tencent.com, nphamcs@gmail.com,
- bhe@redhat.com, chrisl@kernel.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-References: <2aa3f478-9c87-4102-b83e-bf235372d834@redhat.com>
- <20250827150330.280399-1-max.kellermann@ionos.com>
- <20250827165309.44e465ff214e45f1a6665b24@linux-foundation.org>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <20250827165309.44e465ff214e45f1a6665b24@linux-foundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR12MB6494:EE_|PH7PR12MB9076:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6eae2be2-b0e9-449a-11cb-08dde6089ced
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|1800799024|366016|10070799003|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?NTEycXNaWHpFcUZZcXZGRTIrckdqbTVBUGNXN0xaeDdiMVNZdlROZytqV0tH?=
+ =?utf-8?B?VG1sRHZ6cUhtSnFNYzZmMXZrTkJwemdTY01FRVFONWpqaS80eGRmTGNUelpL?=
+ =?utf-8?B?OEczeDEzYUlsMThmcDMycWVySlJnQ1JHaDdjT1hDZTczZ1dxa2Y3amhMNklj?=
+ =?utf-8?B?VVJBRmJKTzlUS0ptV1djRXRuV092T1c5MjU4T1NGZDA1K2ZkczczcUltYy9o?=
+ =?utf-8?B?dWRXTkJCTkRveTlvQnRReWE5SHBVS2p3SEFOb2RCK0I1R3k5dHVIazNaMHQ2?=
+ =?utf-8?B?Njl2NW5XRyt2K3h0N3VtbDVFdWx5aWppWGF4WHQyV2lVTlVueko3VGNmbG5z?=
+ =?utf-8?B?ckJOZ3BiajhuTUhmTGhDU1Q3RXJQSmhlY1Y3VUZ3V2ZrNmVwWEs5Q3RCZ3VR?=
+ =?utf-8?B?cHlEaUc2bmZDSitFQ2dkRmxXUFlYRXR6SEh4aWtFR2hqM0ZHRVZsTDMwYWJL?=
+ =?utf-8?B?MjNWR0pxWUEweUZUOFZMUDBITnp6K2VtTXBzVjhxVnlqeWc4eE1zaGJCeTEr?=
+ =?utf-8?B?elIyVnRHWjFvdjZUbm8ydmQrRFJUWFNPS1U1RzV5TUhUY2tLU2tkSWZHc0Fv?=
+ =?utf-8?B?UUtESis1QjhCa2FUL1JNU2FuK2VxNjErUStLaGgxdXVETFF5WTJsb2E0RWIx?=
+ =?utf-8?B?UzJNOE9Rd1BDVzJlQUcvNnBpUlZDakNabmJuMkozVVVSRWlnaFUrdW51cnE3?=
+ =?utf-8?B?MXBSelVuazViVFptdk5WMDRKSm5aRmJrRFFoWkpvazd3RjNqQ3FxdVJETVM3?=
+ =?utf-8?B?U0E4enhNeUQ3R3JTTUVmS1B0bWFkR0djQys5Q3hjakEvZm5QWkdNTHJ1djNn?=
+ =?utf-8?B?ajNCM0c4TEZwODFEMzJWTlBCSWJheUtDWGhDN1o2VGdESWtqWXE2RU56Q2h3?=
+ =?utf-8?B?Uy8wRWE4S0xYNGdFbFhYRTNTeSs2VzVNdmlzaVB6cDhCRE5WMUpYTGx1WEVX?=
+ =?utf-8?B?ZjNOcVUxdEdSek1TTjFaVklma09oOFdIN1dxYks2RkRoMnlLa0FoSm8yTGtS?=
+ =?utf-8?B?bnJMMTRxT0lDanl6ZFRGT3ZnRXNHOGYrUU1pY2tzV1dleFEzazZCd3puM04w?=
+ =?utf-8?B?Q29sbHVKbUNjNm1BWjNadUEvbnc5c2ZLMjAyYVRmODNvUmhTZElIVGhsRmtD?=
+ =?utf-8?B?MEpmbC8yYXd5SnlzTWp3bGtVZVdyeXM0T0xWaVZXUk1RdzZTZG1ibURNRXZa?=
+ =?utf-8?B?NXNKbmwxZjNNYW5LZTJyMUdzK3EwVzdCWU1ZMGNDekRDSlhURlFhT1VXTmJU?=
+ =?utf-8?B?T09Vd2s2a0JnK3RvZkxKQzNTZVNETmxaS1BHSCsxOHNXNHFOU3NaSVFnUXQx?=
+ =?utf-8?B?U0pteU5idXdmUnhzUjZqTm5BazFwcHNOSVpRZnNHWnoxNDJtc3RwWExDMG5J?=
+ =?utf-8?B?OHVBaTg5dENBY1R3Yjc5RmIzN0ZqMjJMekNNVVJSMEJIYmVqeFVac1Uza3dl?=
+ =?utf-8?B?WkRySVhpdC9peUVKMFhMZ3JZK1R5UUZFb1V2eWk1TlA4Nzh5NGRYbUtzc0hQ?=
+ =?utf-8?B?TmhVbVBUZlBvUU1uUTlVbCttYTRNM3M5Z3htN1luK3VDQ2IybjJXRHVtaG1w?=
+ =?utf-8?B?U05JZ1crWDZacjN1K1M1ZXNibmhCWnpzcjV0ZGl1azMyTEtoVUUzY3lYajI5?=
+ =?utf-8?B?NXprWWNKekV2UVNkcEVFNWJCWXhMTFdDN2tTZkVrZTRNL1NVbzVlVWkvOUdM?=
+ =?utf-8?B?N2FPQnVESDQ2bXA5ZzlDZTVrYk10cU05RXIzdnNpV3VVNUVjcGZNRUZ0Nnha?=
+ =?utf-8?B?WHBsMnIrbWt4SllzQUl3dUVYUFJYRE1MUG5UMmhxalluajQ1MWhJNy9YY1Ja?=
+ =?utf-8?B?anpNcG9yWWxoa2xYVEhia0trY1BSQ01xeGhpYVY1R0kxa3JmMGZwZ1h5VEo3?=
+ =?utf-8?B?dmZJc0w1ZGpOZklpeHV1SlVoOEthRTJBZ01KRmxsVFVOeTg1Y2syOHF5ZzM5?=
+ =?utf-8?Q?reFoF7jBcmCLJa59BYvzTxhRFX+mYp80?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB6494.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(10070799003)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Vjd3aXdhL01PRWg4U2hUY21DV3kvSGhFeFRha0UycTZ4STZCRms5azFJK3Qr?=
+ =?utf-8?B?bWpXTWJYb1dtdmI5eS9lQkdGci9YN2xOYmdLZkNyaWFQNE80OG05QUptcENN?=
+ =?utf-8?B?cElYOS93aFpkWDNSSE9ubUFiUzIyMVZWMXlVM09GNmRGbSs4VWlCbnZPalVF?=
+ =?utf-8?B?R1pCN2xRelFjL1JkOENESkMyNlNWL1B3aUlLaDF3TDlqODhYcEZCSGJSV1hn?=
+ =?utf-8?B?Wm5xUXlUTllJQVpTcnQrTytvSXhXS3YzVmNib1h6cWh4b2dyUnVKQmlLdHEy?=
+ =?utf-8?B?T0JWRE5aS3dQSmZlSHpYNUx3YmIrV2s0QS9vSmpHWFFIWDI2VXVVc2Q4U3VP?=
+ =?utf-8?B?cjJ0OG5HeVdTV2xCSC91L3F5RGxDVzNZSklBcW9WOXFjSDZyY3ZUbDBPcUE1?=
+ =?utf-8?B?eDJ4NlIwQWtnZ3RuT2djK2Y0VURPdHNCOGlmQklEY3dsdzgyeUN2MnA3dUdx?=
+ =?utf-8?B?Tkg3T1hMQnZRYld1cVpVckxjUGZOQi8vNERPdHZRU2dUUWlOckpwM1ZEd0ZG?=
+ =?utf-8?B?UzlyTElGazhMTWJjSmt5WmMySlljN21sR3VIb2s1TStiOGFWcnQrbEJuTTNT?=
+ =?utf-8?B?UUR1VkZmSy9WdW5mazcwSnlJbzd2RkxIM3BqNkJWc3VmSEplVkRxckZVVDUz?=
+ =?utf-8?B?MmRrdVEzWEU0elFaQ2RKVGNzMlM1NmNSVCtSd2NDY2t4N2RaZjBSOW5qV3N2?=
+ =?utf-8?B?Yk1DWkZLdEFJNnRVUUNKMG1JY2ZKVXNwa3NQay9uRXZXQXVnL1FKdHZGMUJu?=
+ =?utf-8?B?NFUwMStPQjhvcWNabHZjeVM3REFZOEhGYXBWTFQ0UXdFZGN0U0g1RjkvMngz?=
+ =?utf-8?B?bE9tVWtmYWJnQjlpdnJuc1VkblBxbFFramdrVlNEbkJZOUxPaHR6c1JNcmlx?=
+ =?utf-8?B?WEQ0YmsvZUxYR3Jtazl2dVJuaWxNbnFoemlqelkxc2xtSEJiei9CTHFIUy9L?=
+ =?utf-8?B?TC9LZkpmL2VBNm9xODZkaTZzZGlIRndmRndiRFdYL3JibHR1aFVhRVl1V1dw?=
+ =?utf-8?B?U2RQZ0IrVTJHWTRYQ1ZLN3loZzZaNHVjdkZLM0pGd1dUTTQ5cWV3VEdYTDZj?=
+ =?utf-8?B?ZUFhaENIc2QzNW5xVW8zQUJyNHd2UVQxamxhdytXbXAwRnhOREdYUGlwUm5K?=
+ =?utf-8?B?UFpGWXQ1WUN5MkczelBNMDd3WlorT215WXFPOUxkVnlEdDVRUUZ2ZEhhYW1y?=
+ =?utf-8?B?YWFuaVJ1T1lJdEltVDdNWnY1aG1qbS9SQjFuOWxORE9EaTRoTjJtY0dONktv?=
+ =?utf-8?B?QlJ5ZlRKaW83bk9OeFJ3K1RmZzFHQnhnOHpjNmtrdjNheGFYVjJQRU9CaGR3?=
+ =?utf-8?B?VWxYcW1xUTN4WnJEWDU1QTF0NFllc2IrQkJ3WTN1YmJrWFJBTWNyczNzVVd2?=
+ =?utf-8?B?M2QxQmllbjB2Y1B1NEFxZ2lzdHNiZDMybnI2VFdnS2tFRGRyYXEraUt3a3Jo?=
+ =?utf-8?B?b1VJdGtSU05lQ3hHRlh3VDZNckxUWUdwK2xEZGFZcGlrYysrbzhtTnlJaUxI?=
+ =?utf-8?B?MXk0V2V6cWd4akpOT1BBNmtNekFPbG51UjM0UUtMcU1BcEZjSDduRS9lZWdy?=
+ =?utf-8?B?R3pJZFFkcUxjZysveVpxOUtCY1ptWU1iVVlKaDVTbWtUVzc2S1NZN2ZlZXpz?=
+ =?utf-8?B?dzU3RWNqRjdMWjdNRGkvNnkrdDBIY1dzeUxQYjlWNlYxamkvYlp5dzdIcXhi?=
+ =?utf-8?B?cVNBNDl5MENoNlRCZmVYUFg1Vk9qSkR1bFVYYitwTlM4TkF3UEQzcmpTV0cz?=
+ =?utf-8?B?N2VxVW5rbFdXK3NrMmU0NGJScmZqdnQxbUNKYWR6VWdxTCtiNGp2MWZzWE5N?=
+ =?utf-8?B?cjVYdmhCMXlZTE9qRENOQXRwUGQ4VzlZbDBualBjRTN5SWlWQVFISGZpZnlY?=
+ =?utf-8?B?dXdWWGVWVjFHM08ycUJwblZEUUMyeUtnZ3VJVGRtMFZpdEVEMEw3Q3drMGFk?=
+ =?utf-8?B?UFZkekgzQkxzb0ZFMUZCU3VseHpLZkZlUE5LT2Y2QmwvMXArWXE4K1VxNUVL?=
+ =?utf-8?B?UEVMUkJ4TDFWM2JHejlET0JDMUphb0VhbllVK01sQWc2NDFZWEpsbkJmakJr?=
+ =?utf-8?B?OTd4V0xPTCs0dllwWWhDK3lGVmQ3VWUrOGRVNFVpMm41K09VcGNGVG81WHdW?=
+ =?utf-8?B?Sm13MEN3MFBxZUI0ZkVpR3JnQzg0dnRYQUdvVEdlS0xXNkVGNU9TUzRaaXc2?=
+ =?utf-8?B?WFczbm84STNzRWhGbWNoalhRVDVwbjlFcU1Pc3hFOVZ4N3FrSXZTT0c3RU1P?=
+ =?utf-8?B?dURzUVBhSDVLTVZmL29vRENUbkp3PT0=?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6eae2be2-b0e9-449a-11cb-08dde6089ced
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB6494.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Aug 2025 07:58:02.5993
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: pknYdol3OUwJfPwPBkqL3P9bo6BCuT60Q6rY8RyJrbuOwSmmlPoLCdDRTzljl5eWyduH8UuquRH36Qfk21Gs8w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB9076
 
-On 28.08.25 01:53, Andrew Morton wrote:
-> On Wed, 27 Aug 2025 17:03:30 +0200 Max Kellermann <max.kellermann@ionos.com> wrote:
-> 
->> Calling is_huge_zero_folio(NULL) should not be legal - it makes no
->> sense, and a different (theoretical) implementation may dereference
->> the pointer.  But currently, lacking any explicit documentation, this
->> call is possible.
->>
->> But if somebody really passes NULL, the function should not return
->> true - this isn't the huge zero folio after all!  However, if the
->> `huge_zero_folio` hasn't been allocated yet, it's NULL, and
->> is_huge_zero_folio(NULL) just happens to return true, which is a lie.
->>
->> This weird side effect prevented me from reproducing a kernel crash
->> that occurred when the elements of a folio_batch were NULL - since
->> folios_put_refs() skips huge zero folios, this sometimes causes a
->> crash, but sometimes does not.  For debugging, it is better to reveal
->> such bugs reliably and not hide them behind random preconditions like
->> "has the huge zero folio already been created?"
->>
->> To improve detection of such bugs, David Hildenbrand suggested adding
->> a VM_WARN_ON_ONCE().
->>
->> ...
->>
->> --- a/include/linux/huge_mm.h
->> +++ b/include/linux/huge_mm.h
->> @@ -2,6 +2,7 @@
->>   #ifndef _LINUX_HUGE_MM_H
->>   #define _LINUX_HUGE_MM_H
->>   
->> +#include <linux/mmdebug.h> // for VM_WARN_ON_ONCE()
->>   #include <linux/mm_types.h>
->>   
->>   #include <linux/fs.h> /* only for vma_is_dax() */
->> @@ -479,6 +480,8 @@ extern unsigned long huge_zero_pfn;
->>   
->>   static inline bool is_huge_zero_folio(const struct folio *folio)
->>   {
->> +	VM_WARN_ON_ONCE(folio == NULL);
->> +
->>   	return READ_ONCE(huge_zero_folio) == folio;
->>   }
-> 
-> OK, but it remains the case that we have seen code which calls
-> is_huge_zero_folio() prior to the initialization of huge_zero_folio.
-> 
-> Is this a bug?  I think so.  Should we be checking for recurrences of
-> this bug?
+On Thursday, August 28, 2025 2:51=E2=80=AFPM Svyatoslav Ryhel wrote:
+> Add Tegra114 specific SOCTHERM driver.
+>=20
+> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> ---
+>  drivers/thermal/tegra/Makefile            |   1 +
+>  drivers/thermal/tegra/soctherm.c          |  13 ++
+>  drivers/thermal/tegra/soctherm.h          |   4 +
+>  drivers/thermal/tegra/tegra114-soctherm.c | 209 ++++++++++++++++++++++
+>  4 files changed, 227 insertions(+)
+>  create mode 100644 drivers/thermal/tegra/tegra114-soctherm.c
+>=20
+> diff --git a/drivers/thermal/tegra/Makefile b/drivers/thermal/tegra/Makef=
+ile
+> index eb27d194c583..9b3e91f7fb97 100644
+> --- a/drivers/thermal/tegra/Makefile
+> +++ b/drivers/thermal/tegra/Makefile
+> @@ -4,6 +4,7 @@ obj-$(CONFIG_TEGRA_BPMP_THERMAL)	+=3D tegra-bpmp-thermal.=
+o
+>  obj-$(CONFIG_TEGRA30_TSENSOR)		+=3D tegra30-tsensor.o
+>=20
+>  tegra-soctherm-y				:=3D soctherm.o soctherm-
+fuse.o
+> +tegra-soctherm-$(CONFIG_ARCH_TEGRA_114_SOC)	+=3D tegra114-soctherm.o
+>  tegra-soctherm-$(CONFIG_ARCH_TEGRA_124_SOC)	+=3D tegra124-soctherm.o
+>  tegra-soctherm-$(CONFIG_ARCH_TEGRA_132_SOC)	+=3D tegra132-soctherm.o
+>  tegra-soctherm-$(CONFIG_ARCH_TEGRA_210_SOC)	+=3D tegra210-soctherm.o
+> diff --git a/drivers/thermal/tegra/soctherm.c
+> b/drivers/thermal/tegra/soctherm.c index 926f1052e6de..bd1919f70860 10064=
+4
+> --- a/drivers/thermal/tegra/soctherm.c
+> +++ b/drivers/thermal/tegra/soctherm.c
+> @@ -31,6 +31,7 @@
+>  #include <linux/reset.h>
+>  #include <linux/thermal.h>
+>=20
+> +#include <dt-bindings/thermal/tegra114-soctherm.h>
+>  #include <dt-bindings/thermal/tegra124-soctherm.h>
+>=20
+>  #include "../thermal_core.h"
+> @@ -357,6 +358,12 @@ struct soctherm_oc_irq_chip_data {
+>=20
+>  static struct soctherm_oc_irq_chip_data soc_irq_cdata;
+>=20
+> +/* Ensure that TEGRA114_* and TEGRA124_* counterparts are equal */
+> +static_assert(TEGRA114_SOCTHERM_SENSOR_CPU =3D=3D
+> TEGRA124_SOCTHERM_SENSOR_CPU); +static_assert(TEGRA114_SOCTHERM_SENSOR_ME=
+M
+> =3D=3D TEGRA124_SOCTHERM_SENSOR_MEM);
+> +static_assert(TEGRA114_SOCTHERM_SENSOR_GPU =3D=3D
+> TEGRA124_SOCTHERM_SENSOR_GPU); +static_assert(TEGRA114_SOCTHERM_SENSOR_PL=
+LX
+> =3D=3D TEGRA124_SOCTHERM_SENSOR_PLLX); +
+>  /**
+>   * ccroc_writel() - writes a value to a CCROC register
+>   * @ts: pointer to a struct tegra_soctherm
+> @@ -2048,6 +2055,12 @@ static void soctherm_init(struct platform_device
+> *pdev) }
+>=20
+>  static const struct of_device_id tegra_soctherm_of_match[] =3D {
+> +#ifdef CONFIG_ARCH_TEGRA_114_SOC
+> +	{
+> +		.compatible =3D "nvidia,tegra114-soctherm",
+> +		.data =3D &tegra114_soctherm,
+> +	},
+> +#endif
+>  #ifdef CONFIG_ARCH_TEGRA_124_SOC
+>  	{
+>  		.compatible =3D "nvidia,tegra124-soctherm",
+> diff --git a/drivers/thermal/tegra/soctherm.h
+> b/drivers/thermal/tegra/soctherm.h index 083388094fd4..aa4af9268b05 10064=
+4
+> --- a/drivers/thermal/tegra/soctherm.h
+> +++ b/drivers/thermal/tegra/soctherm.h
+> @@ -142,6 +142,10 @@ int tegra_calc_tsensor_calib(const struct tegra_tsen=
+sor
+> *sensor, const struct tsensor_shared_calib *shared,
+>  			     u32 *calib);
+>=20
+> +#ifdef CONFIG_ARCH_TEGRA_114_SOC
+> +extern const struct tegra_soctherm_soc tegra114_soctherm;
+> +#endif
+> +
+>  #ifdef CONFIG_ARCH_TEGRA_124_SOC
+>  extern const struct tegra_soctherm_soc tegra124_soctherm;
+>  #endif
+> diff --git a/drivers/thermal/tegra/tegra114-soctherm.c
+> b/drivers/thermal/tegra/tegra114-soctherm.c new file mode 100644
+> index 000000000000..688104f28052
+> --- /dev/null
+> +++ b/drivers/thermal/tegra/tegra114-soctherm.c
+> @@ -0,0 +1,209 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) 2014-2018, NVIDIA CORPORATION.  All rights reserved.
+> + * Copyright (c) 2024, Svyatoslav Ryhel <clamor95@gmail.com>
+> + */
+> +
+> +#include <linux/module.h>
+> +#include <linux/platform_device.h>
+> +
+> +#include <dt-bindings/thermal/tegra114-soctherm.h>
+> +
+> +#include "soctherm.h"
+> +
+> +#define TEGRA114_THERMTRIP_ANY_EN_MASK		(0x1 << 28)
+> +#define TEGRA114_THERMTRIP_MEM_EN_MASK		(0x1 << 27)
+> +#define TEGRA114_THERMTRIP_GPU_EN_MASK		(0x1 << 26)
+> +#define TEGRA114_THERMTRIP_CPU_EN_MASK		(0x1 << 25)
+> +#define TEGRA114_THERMTRIP_TSENSE_EN_MASK	(0x1 << 24)
+> +#define TEGRA114_THERMTRIP_GPUMEM_THRESH_MASK	(0xff << 16)
+> +#define TEGRA114_THERMTRIP_CPU_THRESH_MASK	(0xff << 8)
+> +#define TEGRA114_THERMTRIP_TSENSE_THRESH_MASK	0xff
+> +
+> +#define TEGRA114_THERMCTL_LVL0_UP_THRESH_MASK	(0xff << 17)
+> +#define TEGRA114_THERMCTL_LVL0_DN_THRESH_MASK	(0xff << 9)
+> +
+> +#define TEGRA114_THRESH_GRAIN			1000
+> +#define TEGRA114_BPTT				8
+> +
+> +static const struct tegra_tsensor_configuration tegra114_tsensor_config =
+=3D {
+> +	.tall =3D 16300,
+> +	.tiddq_en =3D 1,
+> +	.ten_count =3D 1,
+> +	.tsample =3D 163,
+> +	.tsample_ate =3D 655,
+> +};
+> +
+> +static const struct tegra_tsensor_group tegra114_tsensor_group_cpu =3D {
+> +	.id =3D TEGRA114_SOCTHERM_SENSOR_CPU,
+> +	.name =3D "cpu",
+> +	.sensor_temp_offset =3D SENSOR_TEMP1,
+> +	.sensor_temp_mask =3D SENSOR_TEMP1_CPU_TEMP_MASK,
+> +	.pdiv =3D 10,
+> +	.pdiv_ate =3D 10,
+> +	.pdiv_mask =3D SENSOR_PDIV_CPU_MASK,
+> +	.pllx_hotspot_diff =3D 6,
+> +	.pllx_hotspot_mask =3D SENSOR_HOTSPOT_CPU_MASK,
+> +	.thermtrip_any_en_mask =3D TEGRA114_THERMTRIP_ANY_EN_MASK,
+> +	.thermtrip_enable_mask =3D TEGRA114_THERMTRIP_CPU_EN_MASK,
+> +	.thermtrip_threshold_mask =3D TEGRA114_THERMTRIP_CPU_THRESH_MASK,
+> +	.thermctl_isr_mask =3D THERM_IRQ_CPU_MASK,
+> +	.thermctl_lvl0_offset =3D THERMCTL_LEVEL0_GROUP_CPU,
+> +	.thermctl_lvl0_up_thresh_mask =3D=20
+TEGRA114_THERMCTL_LVL0_UP_THRESH_MASK,
+> +	.thermctl_lvl0_dn_thresh_mask =3D=20
+TEGRA114_THERMCTL_LVL0_DN_THRESH_MASK,
+> +};
+> +
+> +static const struct tegra_tsensor_group tegra114_tsensor_group_gpu =3D {
+> +	.id =3D TEGRA114_SOCTHERM_SENSOR_GPU,
+> +	.name =3D "gpu",
+> +	.sensor_temp_offset =3D SENSOR_TEMP1,
+> +	.sensor_temp_mask =3D SENSOR_TEMP1_GPU_TEMP_MASK,
+> +	.pdiv =3D 10,
+> +	.pdiv_ate =3D 10,
+> +	.pdiv_mask =3D SENSOR_PDIV_GPU_MASK,
+> +	.pllx_hotspot_diff =3D 6,
+> +	.pllx_hotspot_mask =3D SENSOR_HOTSPOT_GPU_MASK,
+> +	.thermtrip_any_en_mask =3D TEGRA114_THERMTRIP_ANY_EN_MASK,
+> +	.thermtrip_enable_mask =3D TEGRA114_THERMTRIP_GPU_EN_MASK,
+> +	.thermtrip_threshold_mask =3D TEGRA114_THERMTRIP_GPUMEM_THRESH_MASK,
+> +	.thermctl_isr_mask =3D THERM_IRQ_GPU_MASK,
+> +	.thermctl_lvl0_offset =3D THERMCTL_LEVEL0_GROUP_GPU,
+> +	.thermctl_lvl0_up_thresh_mask =3D=20
+TEGRA114_THERMCTL_LVL0_UP_THRESH_MASK,
+> +	.thermctl_lvl0_dn_thresh_mask =3D=20
+TEGRA114_THERMCTL_LVL0_DN_THRESH_MASK,
+> +};
+> +
+> +static const struct tegra_tsensor_group tegra114_tsensor_group_pll =3D {
+> +	.id =3D TEGRA114_SOCTHERM_SENSOR_PLLX,
+> +	.name =3D "pll",
+> +	.sensor_temp_offset =3D SENSOR_TEMP2,
+> +	.sensor_temp_mask =3D SENSOR_TEMP2_PLLX_TEMP_MASK,
+> +	.pdiv =3D 10,
+> +	.pdiv_ate =3D 10,
+> +	.pdiv_mask =3D SENSOR_PDIV_PLLX_MASK,
+> +	.thermtrip_any_en_mask =3D TEGRA114_THERMTRIP_ANY_EN_MASK,
+> +	.thermtrip_enable_mask =3D TEGRA114_THERMTRIP_TSENSE_EN_MASK,
+> +	.thermtrip_threshold_mask =3D TEGRA114_THERMTRIP_TSENSE_THRESH_MASK,
+> +	.thermctl_isr_mask =3D THERM_IRQ_TSENSE_MASK,
+> +	.thermctl_lvl0_offset =3D THERMCTL_LEVEL0_GROUP_TSENSE,
+> +	.thermctl_lvl0_up_thresh_mask =3D=20
+TEGRA114_THERMCTL_LVL0_UP_THRESH_MASK,
+> +	.thermctl_lvl0_dn_thresh_mask =3D=20
+TEGRA114_THERMCTL_LVL0_DN_THRESH_MASK,
+> +};
+> +
+> +static const struct tegra_tsensor_group tegra114_tsensor_group_mem =3D {
+> +	.id =3D TEGRA114_SOCTHERM_SENSOR_MEM,
+> +	.name =3D "mem",
+> +	.sensor_temp_offset =3D SENSOR_TEMP2,
+> +	.sensor_temp_mask =3D SENSOR_TEMP2_MEM_TEMP_MASK,
+> +	.pdiv =3D 10,
+> +	.pdiv_ate =3D 10,
+> +	.pdiv_mask =3D SENSOR_PDIV_MEM_MASK,
+> +	.pllx_hotspot_diff =3D 0,
+> +	.pllx_hotspot_mask =3D SENSOR_HOTSPOT_MEM_MASK,
+> +	.thermtrip_any_en_mask =3D TEGRA114_THERMTRIP_ANY_EN_MASK,
+> +	.thermtrip_enable_mask =3D TEGRA114_THERMTRIP_MEM_EN_MASK,
+> +	.thermtrip_threshold_mask =3D TEGRA114_THERMTRIP_GPUMEM_THRESH_MASK,
+> +	.thermctl_isr_mask =3D THERM_IRQ_MEM_MASK,
+> +	.thermctl_lvl0_offset =3D THERMCTL_LEVEL0_GROUP_MEM,
+> +	.thermctl_lvl0_up_thresh_mask =3D=20
+TEGRA114_THERMCTL_LVL0_UP_THRESH_MASK,
+> +	.thermctl_lvl0_dn_thresh_mask =3D=20
+TEGRA114_THERMCTL_LVL0_DN_THRESH_MASK,
+> +};
+> +
+> +static const struct tegra_tsensor_group *tegra114_tsensor_groups[] =3D {
+> +	&tegra114_tsensor_group_cpu,
+> +	&tegra114_tsensor_group_gpu,
+> +	&tegra114_tsensor_group_pll,
+> +	&tegra114_tsensor_group_mem,
+> +};
+> +
+> +static const struct tegra_tsensor tegra114_tsensors[] =3D {
+> +	{
+> +		.name =3D "cpu0",
+> +		.base =3D 0xc0,
+> +		.config =3D &tegra114_tsensor_config,
+> +		.calib_fuse_offset =3D 0x098,
+> +		.fuse_corr_alpha =3D 1196400,
+> +		.fuse_corr_beta =3D -13600000,
+> +		.group =3D &tegra114_tsensor_group_cpu,
+> +	}, {
+> +		.name =3D "cpu1",
+> +		.base =3D 0xe0,
+> +		.config =3D &tegra114_tsensor_config,
+> +		.calib_fuse_offset =3D 0x084,
+> +		.fuse_corr_alpha =3D 1196400,
+> +		.fuse_corr_beta =3D -13600000,
+> +		.group =3D &tegra114_tsensor_group_cpu,
+> +	}, {
+> +		.name =3D "cpu2",
+> +		.base =3D 0x100,
+> +		.config =3D &tegra114_tsensor_config,
+> +		.calib_fuse_offset =3D 0x088,
+> +		.fuse_corr_alpha =3D 1196400,
+> +		.fuse_corr_beta =3D -13600000,
+> +		.group =3D &tegra114_tsensor_group_cpu,
+> +	}, {
+> +		.name =3D "cpu3",
+> +		.base =3D 0x120,
+> +		.config =3D &tegra114_tsensor_config,
+> +		.calib_fuse_offset =3D 0x12c,
+> +		.fuse_corr_alpha =3D 1196400,
+> +		.fuse_corr_beta =3D -13600000,
+> +		.group =3D &tegra114_tsensor_group_cpu,
+> +	}, {
+> +		.name =3D "mem0",
+> +		.base =3D 0x140,
+> +		.config =3D &tegra114_tsensor_config,
+> +		.calib_fuse_offset =3D 0x158,
+> +		.fuse_corr_alpha =3D 1000000,
+> +		.fuse_corr_beta =3D 0,
+> +		.group =3D &tegra114_tsensor_group_mem,
+> +	}, {
+> +		.name =3D "mem1",
+> +		.base =3D 0x160,
+> +		.config =3D &tegra114_tsensor_config,
+> +		.calib_fuse_offset =3D 0x15c,
+> +		.fuse_corr_alpha =3D 1000000,
+> +		.fuse_corr_beta =3D 0,
+> +		.group =3D &tegra114_tsensor_group_mem,
+> +	}, {
+> +		.name =3D "gpu",
+> +		.base =3D 0x180,
+> +		.config =3D &tegra114_tsensor_config,
+> +		.calib_fuse_offset =3D 0x154,
+> +		.fuse_corr_alpha =3D 1124500,
+> +		.fuse_corr_beta =3D -9793100,
+> +		.group =3D &tegra114_tsensor_group_gpu,
+> +	}, {
+> +		.name =3D "pllx",
+> +		.base =3D 0x1a0,
+> +		.config =3D &tegra114_tsensor_config,
+> +		.calib_fuse_offset =3D 0x160,
+> +		.fuse_corr_alpha =3D 1224200,
+> +		.fuse_corr_beta =3D -14665000,
+> +		.group =3D &tegra114_tsensor_group_pll,
+> +	},
+> +};
+> +
+> +static const struct tegra_soctherm_fuse tegra114_soctherm_fuse =3D {
+> +	.fuse_base_cp_mask =3D 0x3ff,
+> +	.fuse_base_cp_shift =3D 0,
+> +	.fuse_shift_cp_mask =3D 0x3f << 10,
+> +	.fuse_shift_cp_shift =3D 10,
+> +	.fuse_base_ft_mask =3D 0x7ff << 16,
+> +	.fuse_base_ft_shift =3D 16,
+> +	.fuse_shift_ft_mask =3D 0x1f << 27,
+> +	.fuse_shift_ft_shift =3D 27,
+> +	.fuse_common_reg =3D FUSE_VSENSOR_CALIB,
+> +	.fuse_spare_realignment =3D 0,
+> +	.nominal_calib_ft =3D 90,
+> +};
+> +
+> +const struct tegra_soctherm_soc tegra114_soctherm =3D {
+> +	.tsensors =3D tegra114_tsensors,
+> +	.num_tsensors =3D ARRAY_SIZE(tegra114_tsensors),
+> +	.ttgs =3D tegra114_tsensor_groups,
+> +	.num_ttgs =3D ARRAY_SIZE(tegra114_tsensor_groups),
+> +	.tfuse =3D &tegra114_soctherm_fuse,
+> +	.thresh_grain =3D TEGRA114_THRESH_GRAIN,
+> +	.bptt =3D TEGRA114_BPTT,
+> +	.use_ccroc =3D false,
+> +};
 
-As answered elsewhere, this is perfectly fine as the huge zero folio is 
-allocated on demand only (and only once enabled).
+Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
 
-> 
-> 
-> Also, sigh.  I do dislike seeing VM_WARN_ON_ONCE() in an inline
-> function - heaven knows how much bloat that adds.  Defconfig
-> mm/huge_memory.o (which has three calls) grows by 80 bytes so I guess
-> that's livable with.
 
-Common practice to use VM_WARN_ON_ONCE() and friend in inline functions. 
-Just look at page-flags.h.
-
-If someone complains about kernel image size with CONFIG_DEBUG_VM, they 
-shopuld reevaluate life choices. :)
-
--- 
-Cheers
-
-David / dhildenb
 
 
