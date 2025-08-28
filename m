@@ -1,187 +1,161 @@
-Return-Path: <linux-kernel+bounces-790591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74F2BB3AA8C
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 21:05:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7F1EB3AA8E
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 21:06:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B36F1C85AD7
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 19:05:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88618A033E4
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 19:06:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80D2832A3F3;
-	Thu, 28 Aug 2025 19:05:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68E41326D50;
+	Thu, 28 Aug 2025 19:06:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z0U1Iyuy"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SwVBx0MH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61DF2BA4A;
-	Thu, 28 Aug 2025 19:05:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD470BA4A;
+	Thu, 28 Aug 2025 19:06:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756407927; cv=none; b=FCuwimi8KQ9x+R2Cu5kzhRCu+AVLilG+Rd4qiBbOUAGBw7db8ZfUR8gPS2IUkmDJf7WoG2KLTf2V+oG5G4k9DsWW8/dEibA/x9H1dwdWD6DpxBe8Qk/25qzWel2m/LQ4GWgPCxDElpCK3FuF6x4ePY70brIFOp3/kPTQVV8fHxo=
+	t=1756407980; cv=none; b=T9ECadY/xgb2eN4dFctKSzT8ATScG4kBEYNHpwebS/hJIgZeUiMbkr1P+EJ23LY1rKGrZWZrAcjJ+IVYzknI6BL0fNRaQM+7qV9xOrik/VYmBadm0ks8PqY5jleTNDGdVca41MElVN+9vRXJXwZZe//Num3fdb+4CFIJJRKB03I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756407927; c=relaxed/simple;
-	bh=SpsoAYl55zrLHYlbpk4zDAkQFwqQbAw+k16o38jMBO8=;
+	s=arc-20240116; t=1756407980; c=relaxed/simple;
+	bh=gi8hdVT9HHu4Wiplx3eEcjGfjRwntJaWHk89UtZXhIY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PsefAqYy6s/En6oEIJ3UO1AzEYIF/OCBxgwWlLgupCuUbjS5r9KORkCnzxyAjcOHrFqBFx++Vd9cym36GtlekxPrVSTCfRQoB/ljT+O0b45ySC2rBOQsw95wKAnIF3TBL1EB2/IFR5iJ/kYg+b3mquqrJlJ5bp0iXaQfPn5w0NA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z0U1Iyuy; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-24622df0d95so10291485ad.2;
-        Thu, 28 Aug 2025 12:05:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756407926; x=1757012726; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rR0+JHs1NacLYH8MYBujXaoNJIKko2mzeDV5ZiP7NL8=;
-        b=Z0U1IyuyGQr9/cm/+gFTh4sFW3c7SMZOniLqg8OwS7yv9FPjhwWth+9t3i6STe7qnS
-         cuqZ6aVz6HqV5QFdGnoCxqRQFDODH5K6q+KVhxo3HJNhMbifQisqbqkerbAOpB/J2++G
-         R/wSa1+TTV4vzbzemwYPE7FUiLH/43DZ7xJVA8fY/7f3BWuY+SkX7VLx1w+tLbgCRKrd
-         5tnltDBcip6aiGlGveXVB7NVVl+E0epe84Bwk+PvrfrWs8Eg4M6w2JEQ4CPl4/opGILO
-         R/TJuCxf+IvbII4+PokArxDv83yBURdAd1R2H2Iu5MK5Yhk62ZUqe9udCz9+5HBbDzGQ
-         0uQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756407926; x=1757012726;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rR0+JHs1NacLYH8MYBujXaoNJIKko2mzeDV5ZiP7NL8=;
-        b=gsp/4WavcpQyyM/NoLu4dAc9Gw8/L4A/TIICqkkAH2PtkCJJqkJAKNVSpqWPa9QCBJ
-         1Htwf6Bvjgpr7z+ajbtVXZeSaIueSiYsexON3KbhWZN1Yj/B7hfiQ+cumBKXk0Ke3qmv
-         TMi6/fVSb1YoVG0S4h/QLe7epFyrzrgGEN2Yzw4SInWkXEnWTiiKhOKB6tiEwf7BrQax
-         SbhwO/vjo/Of45VdqnVPX9FYhnZ8RU1IQi3Sdo21hhzsm8HAiybTGqMBd8fc9HUaKPJF
-         g2pdAD5IxebOGaO9oGgKbswMToue+zHc1YlJJ0YV/Kv30tctdW2KY7b7seouKgCW/4Qq
-         bFwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWL6OurQszjcnsm96DhskGco7HcYqiHjoICVLqYtCoHk67+lWoOJIpb0DVkuiMw3YHSsRIqwDfwLhfl+c4=@vger.kernel.org, AJvYcCWdGEsx2mE0qX5uulXmg3r5Xc25qIEkkkxIzotYhLHWCQGwJ0WTHgu0vGS1pkruJMrxw/GAroln@vger.kernel.org
-X-Gm-Message-State: AOJu0YzI8ZMvO6k3+c2nXmhEtjKVyR4fvb4Tjv8dCgZ2WgYp8wygr0xp
-	EMON2b2SMXhxj2TVbDhYpecEDR6y1pd82Ev8arKJEYjge75lfRkAxgBKMx9HNOdUuHC3FcrvBe8
-	f/t8fV11dngK06+xRpBk4Gvyavj9+I2w=
-X-Gm-Gg: ASbGncvCFtcHQrIidt73A3EGAmkQDki754+R378YhhxqX5dRA5IW01xqD0FmdA3ZHv2
-	Ja7O23e2VoVU3JiaWtcLNiv3OKqWQXktlvKuYAI8qhKiTuNLJFweB2/JpaeF2OSTzhUFZ4tApYJ
-	3garmQrLIpv+WqdcMN8EnCB6JFFHyGPu8q98bJVo8KATbYzCGkbjmgPf0bgySb11S/LsKXi8xPE
-	dZ2xwQ=
-X-Google-Smtp-Source: AGHT+IGPUo/IY53+KORmENAfo8Tih/RI8yw4eqrGp9vOFTKkz7K3VNQnsD6zUalN8Z79FHLsYMjvTCe6b9qQMyTO78Q=
-X-Received: by 2002:a17:902:d551:b0:248:f211:cd44 with SMTP id
- d9443c01a7336-248f211d045mr31257545ad.48.1756407925546; Thu, 28 Aug 2025
- 12:05:25 -0700 (PDT)
+	 To:Cc:Content-Type; b=mmUg4GlQ6LgeUMu+/uzOb5tUtEfUTQ6sQCcNU3ojIBqh+lu3O1fw10wP/WWLCcQTGBF07Yn6VTNqM+/b7QTIecxZywKBO2JQX3ixaRxwiF9lkbawkj/DR0TgT0VIkJgvY8jQ9oVDw/wQ95P0j/MW+S+gEfrRULc/EBvcNwHIDaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SwVBx0MH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D9E3C4CEEB;
+	Thu, 28 Aug 2025 19:06:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756407980;
+	bh=gi8hdVT9HHu4Wiplx3eEcjGfjRwntJaWHk89UtZXhIY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=SwVBx0MHNUw9i7h3MiWHMtMUDUcdQX6ADIPhyHsAxcGQVKb7L1u6XxAufCNDv72ia
+	 5IwWvY2rdRaGFSjlu3D7TmWWI8txQHkZqXdcOQ38M69qx9bxVuMvyM2jdItuRAQ3JW
+	 7NsyzYApYJTXjXcFI6IzUKEmAkhusUG/v/M5+UMucDxjOIKr+9TZfMfyUfvmwKxOIa
+	 1mdep7vZO3TooI78g2EvnnOVoDqvLsYqrjyBeXYQpdXJJmKQ37saS7Rm8T9KliF8Dw
+	 QFGZbQtU6jW5TQ8qAyz2WyMuxcBK88KpVNr/AgeW67A39uaUcWQPmKpF3G0JHwNfeE
+	 KCihcSVFVaSFA==
+Received: by mail-oo1-f42.google.com with SMTP id 006d021491bc7-61de87bdca5so485067eaf.1;
+        Thu, 28 Aug 2025 12:06:20 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXWx9IVcZ5UzANSuFMsDpfytwxuVAyZpG1CYTBM6JgDChjU63pS/GJhclLDpXfWLwl6DFiCiMPzn5NHnYI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywo1tPUWXbiXxVCRZJw9jE3UeIJN3MDeIgeEz2dV5iOr6wo6pn8
+	dPKs0woNgHT7xIF0hIS2JCp5EohX66MjkDzG+f+wYf/ROQaL2IoDlKT6us+8ItgrOozYs5nyeTm
+	kvfiZ+72iWJaqYVIKBfZNw09SNeec2tc=
+X-Google-Smtp-Source: AGHT+IGwFaSRZyUZhEEneldJNoYsYHl9utLxDtabxa2KZNsv1+GJc4CaUPVJikGvi9LffPDKwXwYEBCoJwBegYhKsQw=
+X-Received: by 2002:a05:6820:1606:b0:61e:1b97:149b with SMTP id
+ 006d021491bc7-61e1b971769mr1047086eaf.7.1756407979571; Thu, 28 Aug 2025
+ 12:06:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250827181708.314248-1-max.kellermann@ionos.com> <791306ab6884aa732c58ccabd9b89e3fd92d2cb0.camel@ibm.com>
-In-Reply-To: <791306ab6884aa732c58ccabd9b89e3fd92d2cb0.camel@ibm.com>
-From: Ilya Dryomov <idryomov@gmail.com>
-Date: Thu, 28 Aug 2025 21:05:14 +0200
-X-Gm-Features: Ac12FXw6ykozFutsbYqGCTH-l1MNV1l9ZWN0X90YhyRSZcdMJonmOpOREm8vhks
-Message-ID: <CAOi1vP_pCbVJFG4DqLWGmc6tfzcHvOADt75rryEyaMjtuggcUA@mail.gmail.com>
-Subject: Re: [PATCH] fs/ceph/addr: always call ceph_shift_unused_folios_left()
-To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-Cc: "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>, 
-	"max.kellermann@ionos.com" <max.kellermann@ionos.com>, Xiubo Li <xiubli@redhat.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Alex Markuze <amarkuze@redhat.com>, 
-	"stable@vger.kernel.org" <stable@vger.kernel.org>
+References: <724616a2-6374-4ba3-8ce3-ea9c45e2ae3b@arm.com> <CAJZ5v0gGchbaQWRq39JbrX8chca7uefef763coJeup+vUOfyCw@mail.gmail.com>
+ <CAJZ5v0h=OG-wgcZBD8mZ51+kb7j3yeDZQt9XfO=fdasLRgQkEg@mail.gmail.com>
+In-Reply-To: <CAJZ5v0h=OG-wgcZBD8mZ51+kb7j3yeDZQt9XfO=fdasLRgQkEg@mail.gmail.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 28 Aug 2025 21:06:07 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0jdMHd7cRktE8xsQZMTkSK44LZCyFdWzDVLcasvfhJP-g@mail.gmail.com>
+X-Gm-Features: Ac12FXxaSnQhGCowQgnVnFw2YbzFI8OZHxA8lLP5N1Zh1bHln2jBU2e0_npDctk
+Message-ID: <CAJZ5v0jdMHd7cRktE8xsQZMTkSK44LZCyFdWzDVLcasvfhJP-g@mail.gmail.com>
+Subject: Re: [PATCH] Revert "intel_idle: Rescan "dead" SMT siblings during, initialization"
+To: Christian Loehle <christian.loehle@arm.com>
+Cc: linux-pm <linux-pm@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	Artem Bityutskiy <artem.bityutskiy@linux.intel.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 28, 2025 at 8:55=E2=80=AFPM Viacheslav Dubeyko
-<Slava.Dubeyko@ibm.com> wrote:
+On Thu, Aug 28, 2025 at 6:13=E2=80=AFPM Rafael J. Wysocki <rafael@kernel.or=
+g> wrote:
 >
-> On Wed, 2025-08-27 at 20:17 +0200, Max Kellermann wrote:
-> > The function ceph_process_folio_batch() sets folio_batch entries to
-> > NULL, which is an illegal state.  Before folio_batch_release() crashes
-> > due to this API violation, the function
-> > ceph_shift_unused_folios_left() is supposed to remove those NULLs from
-> > the array.
+> On Thu, Aug 28, 2025 at 4:44=E2=80=AFPM Rafael J. Wysocki <rafael@kernel.=
+org> wrote:
 > >
-> > However, since commit ce80b76dd327 ("ceph: introduce
-> > ceph_process_folio_batch() method"), this shifting doesn't happen
-> > anymore because the "for" loop got moved to
-> > ceph_process_folio_batch(), and now the `i` variable that remains in
-> > ceph_writepages_start() doesn't get incremented anymore, making the
-> > shifting effectively unreachable much of the time.
+> > On Thu, Aug 28, 2025 at 4:26=E2=80=AFPM Christian Loehle
+> > <christian.loehle@arm.com> wrote:
+> > >
+> > > This reverts commit a430c11f401589a0f4f57fd398271a5d85142c7a.
+> > >
+> > > Calling arch_cpu_rescan_dead_smt_siblings() in intel_idle_init with
+> > > boot parameter nosmt and maxcpus active hotplugged boot-offline CPUs
+> > > in (and leave them online) which weren't supposed to be online.
+> > >
+> > > With the revert and nosmt and maxcpus=3D12 on a raptor lake:
+> > > cpu     online  capacity
+> > > cpu0    1       1009
+> > > cpu1    0       -
+> > > cpu2    1       1009
+> > > cpu3    0       -
+> > > cpu4    1       1009
+> > > cpu5    0       -
+> > > cpu6    1       1009
+> > > cpu7    0       -
+> > > cpu8    1       1024
+> > > cpu9    0       -
+> > > cpu10   1       1024
+> > > cpu11   0       -
+> > > cpu12   1       1009
+> > > cpu13   0       -
+> > > cpu14   1       1009
+> > > cpu15   0       -
+> > > cpu16   1       623
+> > > cpu17   1       623
+> > > cpu18   1       623
+> > > cpu19   1       623
+> > > cpu20   0       -
+> > > cpu21   0       -
+> > > cpu22   0       -
+> > > cpu23   0       -
+> > >
+> > > Previously:
+> > > cpu     online  capacity
+> > > cpu0    1       1009
+> > > cpu1    0       -
+> > > cpu2    1       1009
+> > > cpu3    0       -
+> > > cpu4    1       1009
+> > > cpu5    0       -
+> > > cpu6    1       1009
+> > > cpu7    0       -
+> > > cpu8    1       1024
+> > > cpu9    0       -
+> > > cpu10   1       1024
+> > > cpu11   0       -
+> > > cpu12   1       1009
+> > > cpu13   0       -
+> > > cpu14   1       1009
+> > > cpu15   0       -
+> > > cpu16   1       623
+> > > cpu17   1       623
+> > > cpu18   1       623
+> > > cpu19   1       623
+> > > cpu20   1       623
+> > > cpu21   1       623
+> > > cpu22   1       623
+> > > cpu23   1       623
+> > >
+> > > Signed-off-by: Christian Loehle <christian.loehle@arm.com>
+> > > ---
+> > > Rafael, I don't immediately see how to fix this properly so I won't
+> > > try to, feel free to treat this as a bug report.
 > >
-> > Later, commit 1551ec61dc55 ("ceph: introduce ceph_submit_write()
-> > method") added more preconditions for doing the shift, replacing the
-> > `i` check (with something that is still just as broken):
+> > Sure, thanks for reporting this!
 > >
-> > - if ceph_process_folio_batch() fails, shifting never happens
+> > Well, I think that cpuhp_smt_enable() is missing a check.  It looks to
+> > me like it should do the topology_is_primary_thread(cpu) check like
+> > cpuhp_smt_disable().
 > >
-> > - if ceph_move_dirty_page_in_page_array() was never called (because
-> >   ceph_process_folio_batch() has returned early for some of various
-> >   reasons), shifting never happens
-> >
-> > - if `processed_in_fbatch` is zero (because ceph_process_folio_batch()
-> >   has returned early for some of the reasons mentioned above or
-> >   because ceph_move_dirty_page_in_page_array() has failed), shifting
-> >   never happens
-> >
-> > Since those two commits, any problem in ceph_process_folio_batch()
-> > could crash the kernel, e.g. this way:
-> >
-> >  BUG: kernel NULL pointer dereference, address: 0000000000000034
-> >  #PF: supervisor write access in kernel mode
-> >  #PF: error_code(0x0002) - not-present page
-> >  PGD 0 P4D 0
-> >  Oops: Oops: 0002 [#1] SMP NOPTI
-> >  CPU: 172 UID: 0 PID: 2342707 Comm: kworker/u778:8 Not tainted 6.15.10-=
-cm4all1-es #714 NONE
-> >  Hardware name: Dell Inc. PowerEdge R7615/0G9DHV, BIOS 1.6.10 12/08/202=
-3
-> >  Workqueue: writeback wb_workfn (flush-ceph-1)
-> >  RIP: 0010:folios_put_refs+0x85/0x140
-> >  Code: 83 c5 01 39 e8 7e 76 48 63 c5 49 8b 5c c4 08 b8 01 00 00 00 4d 8=
-5 ed 74 05 41 8b 44 ad 00 48 8b 15 b0 >
-> >  RSP: 0018:ffffb880af8db778 EFLAGS: 00010207
-> >  RAX: 0000000000000001 RBX: 0000000000000000 RCX: 0000000000000003
-> >  RDX: ffffe377cc3b0000 RSI: 0000000000000000 RDI: ffffb880af8db8c0
-> >  RBP: 0000000000000000 R08: 000000000000007d R09: 000000000102b86f
-> >  R10: 0000000000000001 R11: 00000000000000ac R12: ffffb880af8db8c0
-> >  R13: 0000000000000000 R14: 0000000000000000 R15: ffff9bd262c97000
-> >  FS:  0000000000000000(0000) GS:ffff9c8efc303000(0000) knlGS:0000000000=
-000000
-> >  CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> >  CR2: 0000000000000034 CR3: 0000000160958004 CR4: 0000000000770ef0
-> >  PKRU: 55555554
-> >  Call Trace:
-> >   <TASK>
-> >   ceph_writepages_start+0xeb9/0x1410
-> >
-> > The crash can be reproduced easily by changing the
-> > ceph_check_page_before_write() return value to `-E2BIG`.
-> >
+> > I'll cut a test patch for this later.
 >
-> I cannot reproduce the crash/issue. If ceph_check_page_before_write() ret=
-urns
-> `-E2BIG`, then nothing happens. There is no crush and no write operations=
- could
-> be processed by file system driver anymore. So, it doesn't look like reci=
-pe to
-> reproduce the issue. I cannot confirm that the patch fixes the issue with=
-out
-> clear way to reproduce the issue.
->
-> Could you please provide more clear explanation of the issue reproduction=
- path?
+> Something like the attached one, perhaps.  I haven't tested it yet,
+> but I'll do that later.
 
-Hi Slava,
-
-Was this bit taken into account?
-
-  (Interestingly, the crash happens only if `huge_zero_folio` has
-  already been allocated; without `huge_zero_folio`,
-  is_huge_zero_folio(NULL) returns true and folios_put_refs() skips NULL
-  entries instead of dereferencing them.  That makes reproducing the bug
-  somewhat unreliable.  See
-  https://lore.kernel.org/20250826231626.218675-1-max.kellermann@ionos.com
-  for a discussion of this detail.)
-
-Thanks,
-
-                Ilya
+Works here AFAICS, but my test system is not hybrid.
 
