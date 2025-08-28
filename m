@@ -1,105 +1,102 @@
-Return-Path: <linux-kernel+bounces-790857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CC1CB3AE63
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 01:20:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 857AEB3AE62
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 01:20:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE4301BA05D4
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 23:20:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A03B5601A2
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 23:20:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 336FC2C2341;
-	Thu, 28 Aug 2025 23:20:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02EA32DAFDF;
+	Thu, 28 Aug 2025 23:20:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b="JuHVOD1V"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="a3pu7n+P"
+Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9A8926658A
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 23:19:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756423199; cv=pass; b=glYqhlkfZAmnOXChYlvb5aqMo9ZroHPpvm5idqJL4nm13ghNZi7xqthUyH1rgisIK0ulaadnWlEUouLgkpp1o5V/iWM/RXmhgd3WdGTY09i6f8iwEMtg1AWwYp0gVciU1I43OCCUba1Bgt5liPahXi77rx4IbHG+N3R+2Th6IM0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756423199; c=relaxed/simple;
-	bh=r8mzZUctITU0SttAiXMrKzBd8QZIuzM+DjeNzKHA5CI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ssDazjnPd9ai/Zp+utqq/l5eaLb1bpBMLwWXJALDdAusXqHjFDmMx9t5OLsaLIRHBPSj2L3rvlZh2ErwBW9YDO2bT/kFuM6N9BKN4MkLE9N0VTgYygT1Xq/XsycLCmNm2iuk6672/scwV2h0Viu8WttPp3OlbLsljI2AFtcLAN0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b=JuHVOD1V; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1756423185; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=fBP1QE9hUTdRtd5SoDn9f1q8SCmyDE47y0Biq6lRDZRxE9PlT90k1o0u4uvVoHLVmKOavxr+nZ0/oGtL4IEIyNdYz+UDWQdC/k4YqA5fZfhiM1uYYbiZakqWlI/m/586ljwlvSNYgOu0LtomXafbWx2tevDGHI7qOy+zGNIuHpA=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1756423185; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=//sW/a2KrCcPD1VaLKBJOK1FbYvTVA0T4g7i0IE5MFk=; 
-	b=kL6xi8okQutIMnxfq3k+CJJIgNfHML8/9npY7dN2UXPTxfAxf1CjQHDLY1oS/OVbwShCa0f6NEGt9iMxyr2SwbbMuDYaQGnb+KDQqDk1qJ8/PR8jtXMqvu3hap/NPDuib/d4SYIwC8HVGZ/hpQvhZcd5qcc9CNGUVoxgzfjW8nw=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=adrian.larumbe@collabora.com;
-	dmarc=pass header.from=<adrian.larumbe@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1756423185;
-	s=zohomail; d=collabora.com; i=adrian.larumbe@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:Content-Transfer-Encoding:In-Reply-To:Message-Id:Reply-To;
-	bh=//sW/a2KrCcPD1VaLKBJOK1FbYvTVA0T4g7i0IE5MFk=;
-	b=JuHVOD1ViaWQl9ZpSCDz7XXeffijiNx14nO18fRNP8rpHQ1fkw/RgvtPJSVscJrM
-	uMMwqV3XwGQVNVKC25F/Ysz78y3JnPOlKKHskrN3gAv0chlAUh4jCeBfj7zSjKniYFV
-	X/XXYYZVUQjjopFl2QmQFMfCCMQCM2wA4CS4E9zg=
-Received: by mx.zohomail.com with SMTPS id 1756423183032290.65905970578365;
-	Thu, 28 Aug 2025 16:19:43 -0700 (PDT)
-Date: Fri, 29 Aug 2025 00:19:39 +0100
-From: =?utf-8?Q?Adri=C3=A1n?= Larumbe <adrian.larumbe@collabora.com>
-To: linux-kernel@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, 
-	Boris Brezillon <boris.brezillon@collabora.com>, kernel@collabora.com
-Subject: Re: [PATCH 0/5] Introduce Panfrost JM contexts
-Message-ID: <3ren5nysulgowtvaqfnsysn5qcsuhlov7orxzbuzfje4oyzis6@jzdougkthyry>
-References: <20250828023422.2404784-1-adrian.larumbe@collabora.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 147E62D8DAA
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 23:20:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756423203; cv=none; b=DPLzCt5hcMSJVC4QCkrh+vEU/LeLdb2LYogxtk03Jm/dlQr5lZXDQcp1rHaL2ZjnRZHzWRLilYumSBlI2sEgzuo6qC0+JlXGmyk9EvDd1OAM3arfeQcEh3LzKazaSwYphwURK5ZWM/c1/6Fe8cnMLDPnSmTBefYQLyw8ucrmUjY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756423203; c=relaxed/simple;
+	bh=Cxft7seCAmBWcypMb9m35OtziQzTUNY9jLYI/4QvXx0=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=a17gyFXqxQCSPlHal60FW23bDu4MThLe9Nq0y0X5KxOrAV1ICf5Bo6Ujo7lR2kbmXg9rKwgnP85SZpXuaqjQL2Q2A8MXgamKGgyfMn1eUGubR6ebVdpm2mpsN86jiA8Qo+mVI+1QQ9sMCozPXhQlac3xUnt7gIxX5QcDFxhWfQ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=a3pu7n+P; arc=none smtp.client-ip=209.85.210.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-7720c7cc099so2514897b3a.3
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 16:20:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1756423201; x=1757028001; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=SCPDFqvUJHSIb9MrvnTYEaS1lyeHhMoigX0tHvZ1jNA=;
+        b=a3pu7n+Prz5PLlnaxRCI9fxz5M6WuReZdGPKIUp39bHbXRK42PM9cv2TBr7/e+mWZH
+         5UgwkZxTox19QrieMUcxAaqlx3H8a9SEvHY+jCDoQUa6asy3+HjdLM6fClBas2KLf/v2
+         IyTkwNi1+Gr7Z6j6otAS7UgCyemuS3f7vWD8nS/AwYq1VXNx2xd6r648FuKYtXGPEpc1
+         dDnmwii0mp9FbiRFEtl8j/zJtmZQSPdVSTWV+wDht6kZsCcqB97tbR9xLUvnAuXSHGIT
+         baCbKvMbS7eg7ni5iFAhJw9iqa03k4vWQ8wa7O0DgR/k8r30DqBZ/b059T7kpNhlnqSM
+         /+cA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756423201; x=1757028001;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SCPDFqvUJHSIb9MrvnTYEaS1lyeHhMoigX0tHvZ1jNA=;
+        b=u1Y9HRFKAvHho9XfO2pMbijZpLo4jY56lQ/UCznFHbvG+9TUYSAbrOTFsfJS+lbpxy
+         jhkwu08Qb24qiEHd8G46MMcEJmuoakQh4qZX+uEckP9sXKWLUeZn1ROvU9AxmOUnR4S7
+         hlpjA1FLYDgkYMNgYHDY9yvppGzy8IKtBfyab++reeGdUICgoWcEBJE+lC0rd+1kLPRZ
+         auYqmuZuTOAGSitgmSklND9+XpEqhpF23FJze5vOlujvRCUWEk6Za7F16alDNe7JD1rH
+         aNEniElmRTqMuOJEfTS/rwmZY014Xe8W5EK6pq/ThhQpHHojDgUJ8PuDVJuMQyQuMnvg
+         FuMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXcpsnn52J2e2dgMweTS38sm92sMmtcHs5RHtvLixisrVo5zxbE98uwKsfrQcOFNm6rKaeR3keS6SBKcXs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWGRr8QuXbNDP/4dk+OnvLAroTdil39gWS5+bgoFqrzseKGh6X
+	DGPmiBxRJXfrcwMQh0KOIqAtpdfv9/h3sVgNcWcKcApX7OAj1AmkTo7THPPBe7DTdGBw/kN07fv
+	3M1ucGg==
+X-Google-Smtp-Source: AGHT+IFuvDqf/SDO8zb/Rg2sLEuAECUMgCjHNKn3M6DuiXByxYBIDEUMOWmtYL95p8pUeWwPYzmCaAAW9xw=
+X-Received: from pfbdn11.prod.google.com ([2002:a05:6a00:498b:b0:772:14a5:87cb])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:1810:b0:772:2869:14d3
+ with SMTP id d2e1a72fcca58-77228691e77mr1743965b3a.20.1756423201269; Thu, 28
+ Aug 2025 16:20:01 -0700 (PDT)
+Date: Thu, 28 Aug 2025 23:19:59 +0000
+In-Reply-To: <567d67970b610fe1e9d09dbfaa935e05093495e0.camel@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250828023422.2404784-1-adrian.larumbe@collabora.com>
+Mime-Version: 1.0
+References: <20250827000522.4022426-1-seanjc@google.com> <567d67970b610fe1e9d09dbfaa935e05093495e0.camel@intel.com>
+Message-ID: <aLDkHy-2VkjV2WeX@google.com>
+Subject: Re: [RFC PATCH 00/12] KVM: x86/mmu: TDX post-populate cleanups
+From: Sean Christopherson <seanjc@google.com>
+To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
+Cc: "pbonzini@redhat.com" <pbonzini@redhat.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
+	"Annapurve, Vishal" <vannapurve@google.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Zhao, Yan Y" <yan.y.zhao@intel.com>, 
+	"michael.roth@amd.com" <michael.roth@amd.com>, "Weiny, Ira" <ira.weiny@intel.com>
+Content-Type: text/plain; charset="us-ascii"
 
-Mesa MR with the UM driver changes is available at:
-https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/37075
+On Thu, Aug 28, 2025, Edgecombe, Rick P wrote:
+> On Tue, 2025-08-26 at 17:05 -0700, Sean Christopherson wrote:
+> > RFC as this is compile tested only (mostly due to lack of access to a TDX
+> > capable system, but also due to lack of cycles).
+> 
+> Let us know how we could best help with this. The series fails the tests because
+> of the page size issue Yan pointed. We could just review and test a v2, or if
+> you want us to pull together the feedback, test the result, and repost please
+> let us know. I think either should work from our end.
 
-On 28.08.2025 03:34, Adrián Larumbe wrote:
-> This patch series brings the notion of JM contexts into Panfrost.
-> UM will be able to create contexts, get a handle for them and attach
-> it to a job submission. Contexts describe basic HW resource assignment
-> to jobs, and also their job slot priorities.
->
-> A Mesa MR with UM changes that leverage this new kernel driver feature
-> is still in the making.
->
-> Boris Brezillon (5):
->   drm/panfrost: Add job slot register defs for affinity
->   drm/panfrost: Introduce uAPI for JM context creation
->   drm/panfrost: Introduce JM context for manging job resources
->   drm/panfrost: Expose JM context IOCTLs to UM
->   drm/panfrost: Display list of device JM contexts over debugfs
->
->  drivers/gpu/drm/panfrost/panfrost_device.h |   4 +-
->  drivers/gpu/drm/panfrost/panfrost_drv.c    | 152 +++++++++++-
->  drivers/gpu/drm/panfrost/panfrost_job.c    | 270 +++++++++++++++++----
->  drivers/gpu/drm/panfrost/panfrost_job.h    |  27 ++-
->  drivers/gpu/drm/panfrost/panfrost_regs.h   |   6 +
->  include/uapi/drm/panfrost_drm.h            |  93 +++++++
->  6 files changed, 494 insertions(+), 58 deletions(-)
->
->
-> base-commit: 5c76c794bf29399394ebacaa5af8436b8bed0d46
-> --
-> 2.50.0
+I'll post a v2, it's going to look quite different.
 
-Adrian Larumbe
+> I suspect Vishal could hook you up with a TDX machine. But if you need any setup
+> help there too, please shout.
+
+Oh, he can, I just haven't crossed that testing bridge yet (ditto for SNP).  I'll
+do so someday, but for now I'll abuse your generosity and throw noodles at ya :-)
 
