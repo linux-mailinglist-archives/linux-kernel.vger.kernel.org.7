@@ -1,302 +1,201 @@
-Return-Path: <linux-kernel+bounces-790782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F19CB3ACEC
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 23:46:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16380B3ACDD
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 23:44:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66CD97C169D
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 21:45:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D67D1B26C6B
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 21:44:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E06F22C2368;
-	Thu, 28 Aug 2025 21:45:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A36852C327D;
+	Thu, 28 Aug 2025 21:44:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="g7TwXRlc";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="JS0KMtpP"
-Received: from fhigh-a2-smtp.messagingengine.com (fhigh-a2-smtp.messagingengine.com [103.168.172.153])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Vd6zOPx/"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7732220E715;
-	Thu, 28 Aug 2025 21:45:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 775222BE7AC
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 21:44:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756417526; cv=none; b=jr4EzgJgn1qk382+j8Q72kds31wGAbqpRpBky7dxWlg3OeuuO8ftsFjmkHAAAR/q8JP8eHzsZVZYss1dS2M3vWYzINoUfsV9Nw1funp1UFDx/5Pv2l35WlfD/E2eEkw8CedAnzrKq7CZJdFfA7rmO9d62LD9Ie86O64hUz+Ow7k=
+	t=1756417470; cv=none; b=A/hFiRaeR1PusFUDt7RFG0L0L5/zTFr7yXM6hnGOx0FwJ0jLizhyIQzmkuvQ/zKOExzh7v1I7shG3WRtjGV5WUelYz+X3rbj3pitOggAw7tpDD6XvtFWR5C48rLyRcTj9XLFRt1qbYyxlWMOIITIlItMylHbUMFO2Jdtc/M7JmU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756417526; c=relaxed/simple;
-	bh=6BkI8/aVBf20pV9Bg3H+f6IE09nJupW+qtiGe68ymxY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EbDS2cXdA7/Muxn0A1Gq4Qy9AKNZLat2wBglt3pM2AwnTb1rA/CyLOg0kokUDB+UQNy+m9sAAAu3ddW6M7ENKDmh0g46O1yFyE2Fr58FfOw/oYUOWJ8xTw5lRgVHWtPeYTSRDk9T8oq98yzYGtioX87jIV/mmKlNUnK8idSJqVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=g7TwXRlc; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=JS0KMtpP; arc=none smtp.client-ip=103.168.172.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
-Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 8D473140011F;
-	Thu, 28 Aug 2025 17:45:23 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-06.internal (MEProxy); Thu, 28 Aug 2025 17:45:23 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1756417523;
-	 x=1756503923; bh=GbAoYu7sNjBNua8XfgMVVnWr13d3p8SJ3P1MbagYRZE=; b=
-	g7TwXRlcBV75JMAb+Dyjs+GgbxraNW7yUgzCaEoVIrqnQgLKkulcf1BhSo90fjqJ
-	8J2pkL7lmvfW32iwv1+mBdm7BV/9iTzSJNegjg/80ODBPBHsUeA0kwBNAlyOcnZ1
-	3wPhrZAai0YLom2QmNlSVoyvcmZbQGVNNYA0mAivga05DUKSpnkfFsGLQeAmRRwB
-	hbkyUMBEOqh31PvvsxhsutBeu2+zFdXhzL5xsvWjnhiASbmmGIW58i4Y6i4Ha8Yi
-	WB0dA6xVVp8wmJFg+hTyDug396Mg+GYpU4XjNA5SFC8VrP8ZT9m7R8yy7jygZ5tR
-	1qzYy68uS2MUcH7erD4cXQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1756417523; x=
-	1756503923; bh=GbAoYu7sNjBNua8XfgMVVnWr13d3p8SJ3P1MbagYRZE=; b=J
-	S0KMtpPvWe6/IUMOt20daCWCSf/EpcjtX0pHRjcfRTyZaRdGt1phvKdUNNDO8Vbf
-	GcHGYKo7+YRLULLdVKJqB8KjU6yjO6VvOKK1XEmDFSm1C2DeG+MP3IHsB9wcUNNN
-	OIubG3VcTcwQ+wOp8gTmYTsKzL5wg6r4bYzlllsgxNqeJf7+eqbrnOrnNCG1DqUY
-	piwpA+spjs/DyXShprcS3t1Fy7IhyqhvoDypAz/KkV8wDvUFPJ1uMs0n5F8Fw/Pp
-	711foiSmCb5ZFmYbmZilIGYYR7NrRaDGatJAx5RYkDapPx4EEck7Z3pSWC8WIs7B
-	ZJwxjULsA4wJI0UB2UI7A==
-X-ME-Sender: <xms:882waLErr0rF_gA6oxPQZAuN0dMudiP6llU_d9UuWScEpeDoamgkAQ>
-    <xme:882waBT6_vaMV5_tUZDm73y5CYIfAUyfac4H75gRdnzXz7JGJR6cTaUnfd3NBIlot
-    HHHOGbFHZTpW2zfnR8>
-X-ME-Received: <xmr:882waIu653eVdJwhc3cYz8wj70FUDc6ix1iXGgpWKxCfe9HQongL9Jjg7WKFMrTiZZgMEk9OqnhHVw89_ezJtZHosg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddukedvudduucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhephffvvefufffkofgjfhggtgfgsehtkeertdertdejnecuhfhrohhmpefpihhklhgr
-    shcuufpnuggvrhhluhhnugcuoehnihhklhgrshdrshhouggvrhhluhhnugdorhgvnhgvsh
-    grshesrhgrghhnrghtvggthhdrshgvqeenucggtffrrghtthgvrhhnpeehiefgueevuedt
-    fefhheegkeevtdelueeukeevfeduhefhhfejfffggeffleefgeenucevlhhushhtvghruf
-    hiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehnihhklhgrshdrshhouggvrhhl
-    uhhnugesrhgrghhnrghtvggthhdrshgvpdhnsggprhgtphhtthhopeehpdhmohguvgepsh
-    hmthhpohhuthdprhgtphhtthhopegurghnihgvlhdrlhgviigtrghnoheslhhinhgrrhho
-    rdhorhhgpdhrtghpthhtohepthhglhigsehlihhnuhhtrhhonhhigidruggvpdhrtghpth
-    htoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghp
-    thhtoheplhhinhhugidqrhgvnhgvshgrshdqshhotgesvhhgvghrrdhkvghrnhgvlhdroh
-    hrghdprhgtphhtthhopehnihhklhgrshdrshhouggvrhhluhhnugdorhgvnhgvshgrshes
-    rhgrghhnrghtvggthhdrshgv
-X-ME-Proxy: <xmx:882waJKQ2LgQbUofRlgeP0kaO6RYgfuCtLHnocgin4B7MLsJljHB-A>
-    <xmx:882waNkUdHHcKT2OFtQPneHMCgQ_Zm-mdixzfOvX3TuuKAKNiaVTiQ>
-    <xmx:882waCJGIeN0ykiCNYU6T_obs_EXx1Bubjw3UhzQjm6-4x_ccQkaoQ>
-    <xmx:882waK43-yNgp7w0Zb9NAdh9VVdMILGCS9hqxJmOcDutkZbCosNLew>
-    <xmx:882waCTnnjwl8XtOGqtU02gEUN6CiiEO4EyCkTr_D8-zDp6PNdBxsBKh>
-Feedback-ID: i80c9496c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 28 Aug 2025 17:45:22 -0400 (EDT)
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org
-Cc: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 2/2] clocksource/drivers/sh_cmt: Do not power down channels used for events
-Date: Thu, 28 Aug 2025 23:44:03 +0200
-Message-ID: <20250828214403.1765311-3-niklas.soderlund+renesas@ragnatech.se>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20250828214403.1765311-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20250828214403.1765311-1-niklas.soderlund+renesas@ragnatech.se>
+	s=arc-20240116; t=1756417470; c=relaxed/simple;
+	bh=GqvJqfvJWhpmyKfjufJhWpQg+eSKv4bD/PdpwBPkw4Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=gHZb6PWh0JlZVowq1Ed/zNEpKOUMJrzvoKWcXLEX31l/N8wMKxHESItLGYqopV9tyGmQOJwhPWIRC/6Jxl5MkkJBcyQtZkER1GdJ14lRwvgQonC+jaYuFZ9zuNTwiH/cnf9mPneeKI08HLZgCTeEEA7v5IyTgNV6LPMb86cXcdU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Vd6zOPx/; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756417466;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2RACveh/So+FTKv8PaqNTUy1Q8R/Mr9cJX1WRHPYTfo=;
+	b=Vd6zOPx/rlwE3GSy0+GLCj0hR+m3qy7ReZuQcxDjWykPQEvW+HJ7YIgMIeAJhbUd6wt0Vi
+	mkyheYrYfRWOLbb3Dz3fQuAJeRgDXLNXXVUwYWMVHKjI886BemeyIaqL5ERr1F8KG3QN3C
+	xLYt6BG0eLVNpWrGsa/w6rUYc5gMc5M=
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com
+ [209.85.166.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-5-FbzPeY8BPh6nPdaFXOG-Tw-1; Thu, 28 Aug 2025 17:44:24 -0400
+X-MC-Unique: FbzPeY8BPh6nPdaFXOG-Tw-1
+X-Mimecast-MFC-AGG-ID: FbzPeY8BPh6nPdaFXOG-Tw_1756417464
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3ebd3ca6902so3763705ab.3
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 14:44:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756417464; x=1757022264;
+        h=content-transfer-encoding:mime-version:organization:references
+         :in-reply-to:message-id:subject:cc:to:from:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=2RACveh/So+FTKv8PaqNTUy1Q8R/Mr9cJX1WRHPYTfo=;
+        b=qQ7dGBJZlsmsfjKxmChzUXhi+rJnnPM/1bpcAWi9B2EhTKhIaelF8JKRD3BcGxSxmO
+         QyX2Zha+dnvxiMB2BqnPRnECxfSBzS7ekGOs4J2JK2tlUXamV1pC3OmGrRGmtRBD+r6G
+         rm6XwZ6x8Ra+bs1ayjmcBsoWfGNnlR/XzDdcbLdm3JaA9vsaPvcGfQEJ+XPS6Xcmhz80
+         OqXOE4xNfe6tpyZvk1T8/NGvIfGLfaQiYMbf94rMMlDInUg9bkFc0jsE/ZS3e3K3UdrF
+         62s7L2dBuJ6G70UepXpferDBTs1mR3VeZSNx9zlqvLxHDan8QObpxYIpYWac7ybblaJn
+         jt/A==
+X-Gm-Message-State: AOJu0YzzezRgO67XGZ5P46jyJf2RibDdwz2OxXLbIa3c0UqLxRcECp/Y
+	sBTjq2/DCq7L5KurUwBB4YpS6W+5L7ZxDXkTDWG2fp6LyJLnaxe023KNIT3CPwlPOjOWDf6hd1s
+	dgD1OPCYE4nnOX39xVlsuJS95ssWCvbHhlGW5fwMk9FNqpnvTjKKkIJpwThLwE480ag==
+X-Gm-Gg: ASbGncticlOixVP8ZUKuWBkzwEDrTBs7QZKWVEDl2k6aOcN/RVOn6QqgZAeKgGHS493
+	RMEEuPHckaeoaNQ2DwA8nuN6hBbvi4mRRmrlYy5Aec2LeLQdpX0zIeBDzlW0OtthZQBcfSgOOOo
+	35LxB8r96H057VTlglXuEMduu9oCV+I2/YZWb15wKcBgd57EgMK05EtEnt6T/a3n3vTIaCiCTUk
+	Grd5hicGwkPmDstLWcew1dcVkZ3lWSVjuvPVKvHzFMDpX08QwcTOCT7nqxOufFRag8dL/UsjBua
+	RPHFTaO42f8stIOhtt2/V8uIAm7Y88TE5gGEC1dOcMM=
+X-Received: by 2002:a92:c26c:0:b0:3f1:de48:36ad with SMTP id e9e14a558f8ab-3f1de48389amr15264715ab.4.1756417463547;
+        Thu, 28 Aug 2025 14:44:23 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEg3wgzbv9HEvAwkExjx2PJxCJ2VJntEJpNjUpTyBRq2NcFk03fhpFQ0yUR1SdojwXP+MApaA==
+X-Received: by 2002:a92:c26c:0:b0:3f1:de48:36ad with SMTP id e9e14a558f8ab-3f1de48389amr15264645ab.4.1756417463113;
+        Thu, 28 Aug 2025 14:44:23 -0700 (PDT)
+Received: from redhat.com ([38.15.36.11])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3f2a1c704ccsm763975ab.42.2025.08.28.14.44.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Aug 2025 14:44:22 -0700 (PDT)
+Date: Thu, 28 Aug 2025 15:44:19 -0600
+From: Alex Williamson <alex.williamson@redhat.com>
+To: Masatake YAMATO <yamato@redhat.com>
+Cc: linux-kernel@vger.kernel.org, ldv@strace.io, kvm@vger.kernel.org
+Subject: Re: [PATCH] vfio: show the name of IOMMU driver in
+ /proc/$pid/fdinfo
+Message-ID: <20250828154419.5f4b15ff.alex.williamson@redhat.com>
+In-Reply-To: <20250828202100.3661180-1-yamato@redhat.com>
+References: <20250828202100.3661180-1-yamato@redhat.com>
+Organization: Red Hat
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-The CMT do runtime PM and call clk_enable()/clk_disable() when a new
-clock event is register and the CMT is not already started. This is not
-always possible as a spinlock is also needed to sync the internals of
-the CMT. Running with PROVE_LOCKING uncovers one such issue.
+[Cc kvm@vger.kernel.org]
 
-    =============================
-    [ BUG: Invalid wait context ]
-    6.17.0-rc3-arm64-renesas-03071-gb3c4f4122b28-dirty #21 Not tainted
-    -----------------------------
-    swapper/1/0 is trying to lock:
-    ffff00000898d180 (&dev->power.lock){-...}-{3:3}, at: __pm_runtime_resume+0x38/0x88
-    ccree e6601000.crypto: ARM CryptoCell 630P Driver: HW version 0xAF400001/0xDCC63000, Driver version 5.0
-    other info that might help us debug this:
-    ccree e6601000.crypto: ARM ccree device initialized
-    context-{5:5}
-    2 locks held by swapper/1/0:
-     #0: ffff80008173c298 (tick_broadcast_lock){-...}-{2:2}, at: __tick_broadcast_oneshot_control+0xa4/0x3a8
-     #1: ffff0000089a5858 (&ch->lock){....}-{2:2}
-    usbcore: registered new interface driver usbhid
-    , at: sh_cmt_start+0x30/0x364
-    stack backtrace:
-    CPU: 1 UID: 0 PID: 0 Comm: swapper/1 Not tainted 6.17.0-rc3-arm64-renesas-03071-gb3c4f4122b28-dirty #21 PREEMPT
-    Hardware name: Renesas Salvator-X 2nd version board based on r8a77965 (DT)
-    Call trace:
-     show_stack+0x14/0x1c (C)
-     dump_stack_lvl+0x6c/0x90
-     dump_stack+0x14/0x1c
-     __lock_acquire+0x904/0x1584
-     lock_acquire+0x220/0x34c
-     _raw_spin_lock_irqsave+0x58/0x80
-     __pm_runtime_resume+0x38/0x88
-     sh_cmt_start+0x54/0x364
-     sh_cmt_clock_event_set_oneshot+0x64/0xb8
-     clockevents_switch_state+0xfc/0x13c
-     tick_broadcast_set_event+0x30/0xa4
-     __tick_broadcast_oneshot_control+0x1e0/0x3a8
-     tick_broadcast_oneshot_control+0x30/0x40
-     cpuidle_enter_state+0x40c/0x680
-     cpuidle_enter+0x30/0x40
-     do_idle+0x1f4/0x26c
-     cpu_startup_entry+0x34/0x40
-     secondary_start_kernel+0x11c/0x13c
-     __secondary_switched+0x74/0x78
+On Fri, 29 Aug 2025 05:21:00 +0900
+Masatake YAMATO <yamato@redhat.com> wrote:
 
-Fix this by unconditionally powering on and enabling the needed clocks
-for all CMT channels which are used for clock events.
+> The ops of VFIO overlap:
+> 
+>   (include/uapi/linux/vfio.h)
+>   #define VFIO_DEVICE_GET_PCI_HOT_RESET_INFO	_IO(VFIO_TYPE, VFIO_BASE + 12)
+>   ...
+>   #define VFIO_MIG_GET_PRECOPY_INFO _IO(VFIO_TYPE, VFIO_BASE + 21)
+>   ...
+>   #define VFIO_IOMMU_DIRTY_PAGES             _IO(VFIO_TYPE, VFIO_BASE + 17)
+>   #define VFIO_IOMMU_SPAPR_TCE_GET_INFO	_IO(VFIO_TYPE, VFIO_BASE + 12)
+>   #define VFIO_EEH_PE_OP			_IO(VFIO_TYPE, VFIO_BASE + 21)
+>   #define VFIO_IOMMU_SPAPR_REGISTER_MEMORY	_IO(VFIO_TYPE, VFIO_BASE + 17)
+>   ...
+>   #define VFIO_IOMMU_SPAPR_TCE_REMOVE	_IO(VFIO_TYPE, VFIO_BASE + 20)
+> 
+> These overlapping makes strace decoding the ops and their arguments hard.
+> See also https://lists.strace.io/pipermail/strace-devel/2021-May/010561.html
+> 
+> This change adds "vfio-iommu-driver" field to /proc/$pid/fdinfo/$fd
+> where $fd opens /dev/vfio/vfio. The value of the field helps strace
+> decode the ops arguments.
+> 
+> The prototype version of strace based on this change works fine:
+> - https://lists.strace.io/pipermail/strace-devel/2021-August/010660.html
+> - https://lists.strace.io/pipermail/strace-devel/2021-August/010660.html
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/clocksource/sh_cmt.c | 87 ++++++++++++++++--------------------
- 1 file changed, 38 insertions(+), 49 deletions(-)
+Duplicate links.
 
-diff --git a/drivers/clocksource/sh_cmt.c b/drivers/clocksource/sh_cmt.c
-index 385eb94bbe7c..a57d5523f63b 100644
---- a/drivers/clocksource/sh_cmt.c
-+++ b/drivers/clocksource/sh_cmt.c
-@@ -5,6 +5,7 @@
-  *  Copyright (C) 2008 Magnus Damm
-  */
+We really only have type1 and spapr, and they're mutually exclusive per
+architecture.  POWER is spapr and everything else is type1.  We're also
+moving to using IOMMUFD and consider the vfio container to be somewhat
+legacy, so we're not getting any new IOMMU backends for container mode.
+The spapr support is also barely hanging on by a shoestring.
+
+Is there current interest (ie. since 2021) for these changes?  It
+doesn't appear that even the RFC these changes were based on,
+differentiating by file type, is in the current strace code base.
  
-+#include <linux/cleanup.h>
- #include <linux/clk.h>
- #include <linux/clockchips.h>
- #include <linux/clocksource.h>
-@@ -623,51 +624,6 @@ static void sh_cmt_stop_clocksource(struct sh_cmt_channel *ch)
- 	pm_runtime_put(&ch->cmt->pdev->dev);
- }
- 
--static int sh_cmt_start_clockevent(struct sh_cmt_channel *ch)
--{
--	int ret = 0;
--	unsigned long flags;
--
--	raw_spin_lock_irqsave(&ch->lock, flags);
--
--	if (!(ch->flags & (FLAG_CLOCKEVENT | FLAG_CLOCKSOURCE))) {
--		pm_runtime_get_sync(&ch->cmt->pdev->dev);
--		ret = sh_cmt_enable(ch);
--	}
--
--	if (ret)
--		goto out;
--
--	ch->flags |= FLAG_CLOCKEVENT;
-- out:
--	raw_spin_unlock_irqrestore(&ch->lock, flags);
--
--	return ret;
--}
--
--static void sh_cmt_stop_clockevent(struct sh_cmt_channel *ch)
--{
--	unsigned long flags;
--	unsigned long f;
--
--	raw_spin_lock_irqsave(&ch->lock, flags);
--
--	f = ch->flags & (FLAG_CLOCKEVENT | FLAG_CLOCKSOURCE);
--
--	ch->flags &= ~FLAG_CLOCKEVENT;
--
--	if (f && !(ch->flags & (FLAG_CLOCKEVENT | FLAG_CLOCKSOURCE))) {
--		sh_cmt_disable(ch);
--		pm_runtime_put(&ch->cmt->pdev->dev);
--	}
--
--	/* adjust the timeout to maximum if only clocksource left */
--	if (ch->flags & FLAG_CLOCKSOURCE)
--		__sh_cmt_set_next(ch, ch->max_match_value);
--
--	raw_spin_unlock_irqrestore(&ch->lock, flags);
--}
--
- static struct sh_cmt_channel *cs_to_sh_cmt(struct clocksource *cs)
- {
- 	return container_of(cs, struct sh_cmt_channel, cs);
-@@ -774,19 +730,30 @@ static struct sh_cmt_channel *ced_to_sh_cmt(struct clock_event_device *ced)
- 
- static void sh_cmt_clock_event_start(struct sh_cmt_channel *ch, int periodic)
- {
--	sh_cmt_start_clockevent(ch);
--
- 	if (periodic)
- 		sh_cmt_set_next(ch, ((ch->cmt->rate + HZ/2) / HZ) - 1);
- 	else
- 		sh_cmt_set_next(ch, ch->max_match_value);
- }
- 
-+static void sh_cmt_clock_event_stop(struct sh_cmt_channel *ch)
-+{
-+	unsigned long flags;
-+
-+	raw_spin_lock_irqsave(&ch->lock, flags);
-+
-+	/* adjust the timeout to maximum if only clocksource left */
-+	if (ch->flags & FLAG_CLOCKSOURCE)
-+		__sh_cmt_set_next(ch, ch->max_match_value);
-+
-+	raw_spin_unlock_irqrestore(&ch->lock, flags);
-+}
-+
- static int sh_cmt_clock_event_shutdown(struct clock_event_device *ced)
- {
- 	struct sh_cmt_channel *ch = ced_to_sh_cmt(ced);
- 
--	sh_cmt_stop_clockevent(ch);
-+	sh_cmt_clock_event_stop(ch);
- 	return 0;
- }
- 
-@@ -797,7 +764,7 @@ static int sh_cmt_clock_event_set_state(struct clock_event_device *ced,
- 
- 	/* deal with old setting first */
- 	if (clockevent_state_oneshot(ced) || clockevent_state_periodic(ced))
--		sh_cmt_stop_clockevent(ch);
-+		sh_cmt_clock_event_stop(ch);
- 
- 	dev_info(&ch->cmt->pdev->dev, "ch%u: used for %s clock events\n",
- 		 ch->index, periodic ? "periodic" : "oneshot");
-@@ -908,6 +875,28 @@ static int sh_cmt_register(struct sh_cmt_channel *ch, const char *name,
- 		ret = sh_cmt_register_clockevent(ch, name);
- 		if (ret < 0)
- 			return ret;
-+
-+		/*
-+		 * To support clock events the CMT must always be ready to
-+		 * accept new events, start it and leave no way for it to be
-+		 * turned off.
-+		 *
-+		 * This is OK as we can't never unregister a CMT device. If this
-+		 * is fixed in future an equal unconditional shutdown is needed.
-+		 */
-+		pm_runtime_get_sync(&ch->cmt->pdev->dev);
-+
-+		scoped_guard(raw_spinlock_irqsave, &ch->lock) {
-+			ret = sh_cmt_enable(ch);
-+			if (ret)
-+				return ret;
-+
-+			/*
-+			 * Flag that the channel is used as a clock event, it's not
-+			 * allowed to be powered off!
-+			 */
-+			ch->flags |= FLAG_CLOCKEVENT;
-+		}
- 	}
- 
- 	if (clocksource) {
--- 
-2.51.0
+> Cc: Dmitry V. Levin <ldv@strace.io>
+> Signed-off-by: Masatake YAMATO <yamato@redhat.com>
+> ---
+>  drivers/vfio/container.c | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
+> 
+> diff --git a/drivers/vfio/container.c b/drivers/vfio/container.c
+> index d53d08f16973..03677fda49de 100644
+> --- a/drivers/vfio/container.c
+> +++ b/drivers/vfio/container.c
+> @@ -11,6 +11,7 @@
+>  #include <linux/iommu.h>
+>  #include <linux/miscdevice.h>
+>  #include <linux/vfio.h>
+> +#include <linux/seq_file.h>
+>  #include <uapi/linux/vfio.h>
+>  
+>  #include "vfio.h"
+> @@ -384,12 +385,22 @@ static int vfio_fops_release(struct inode *inode, struct file *filep)
+>  	return 0;
+>  }
+
+#ifdef CONFIG_PROC_FS
+
+> +static void vfio_fops_show_fdinfo(struct seq_file *m, struct file *filep)
+> +{
+> +	struct vfio_container *container = filep->private_data;
+> +	struct vfio_iommu_driver *driver = container->iommu_driver;
+> +
+> +	if (driver && driver->ops->name)
+> +		seq_printf(m, "vfio-iommu-driver:\t%s\n", driver->ops->name);
+> +}
+
+#endif
+
+> +
+>  static const struct file_operations vfio_fops = {
+>  	.owner		= THIS_MODULE,
+>  	.open		= vfio_fops_open,
+>  	.release	= vfio_fops_release,
+>  	.unlocked_ioctl	= vfio_fops_unl_ioctl,
+>  	.compat_ioctl	= compat_ptr_ioctl,
+
+#ifdef CONFIG_PROC_FS
+
+> +	.show_fdinfo    = vfio_fops_show_fdinfo,
+
+#endif
+
+>  };
+>  
+>  struct vfio_container *vfio_container_from_file(struct file *file)
+
+proc.rst should also be updated.  See [1] for a recent addition fdinfo.
+Thanks,
+
+Alex
+
+[1]https://lore.kernel.org/r/20250804-show-fdinfo-v4-1-96b14c5691b3@fb.com
 
 
