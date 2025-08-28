@@ -1,266 +1,188 @@
-Return-Path: <linux-kernel+bounces-790551-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BA8EB3AA1D
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 20:36:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B932DB3AA21
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 20:39:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F214B988129
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 18:36:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B607981785
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 18:39:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 392372773C4;
-	Thu, 28 Aug 2025 18:36:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E897A27700A;
+	Thu, 28 Aug 2025 18:39:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="iNw98LZ8"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b="UUbpN/YE"
+Received: from mx0b-002e3701.pphosted.com (mx0b-002e3701.pphosted.com [148.163.143.35])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BD0D2765E9
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 18:36:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 067AE2765EB;
+	Thu, 28 Aug 2025 18:39:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.143.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756406208; cv=none; b=aJeproc/a78uqc8sTcqopRZnA9Ybi4ZXwGfBjWb2+sKtuxnTo7U0uSZgsdtx27tz5CkaBlKLy4gNp00l9jnLsxtwa+iTES9CYpgldwwwu8IHLVSXYWtqQ/mTkEClY/XRrnKtxIxl+cH9BDpTvu7ES0njprRlOTj22M+kn43Rl5Q=
+	t=1756406387; cv=none; b=akemazPXX39mUKAy6dXbLCm5kCmrsxNFd0t8IYg/wS7orCiPnxtuFOuIGUUnQK7eVCwRVSjxt6Wo8OlPYhPb6X4GrNK1ysNXunBpXHAfQYd5xcTZrJVcAhfMyi+CAImclvSgjYsuRq3uKqHwjdYaHZ48wPPNYdi2sJ+xIKfRUxg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756406208; c=relaxed/simple;
-	bh=bvhPWX3894/1cLC+TB+lwb7jSVxlvq91YvDHkvtjR5Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kmV7v3oEF1NHSbaYAzv4zFEkMVaOmkSTO7W+suuWpytB7e8jW4L02M1ont4ioiassUP1UcgsD3AKMHY2UH1vcsbmeASnG/HVtW5/68ZTc22YXNNP0h7ZGP5FADDALi1if9nekCJA+McxpS3+pVH1gooMgtrpM13GhXe8QB/awQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=iNw98LZ8; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-afcb7a16441so187136866b.2
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 11:36:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756406205; x=1757011005; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hHW66vik/XOF/b5a9eA0c5HxElogAXhATll56cjYuUc=;
-        b=iNw98LZ85Mpd5Q8SMSlr4EgeGQ0zY130a2bpfQ2GMaYcnoZJivH+CX6Mp+WthPCP77
-         iW71PlTySqzBibHZz1fpci1oGDniPwzOEhxkgocMIwqIXfwwARCjoyMj/snLPs2Y3wX+
-         ex8yJubWcb+H/eZBspCGWaFYh1OxV98AWLNLbeQjhIlsjzwpccB0bQbSCrjnfVX0ek8o
-         0+fmHxboXx4PxNCm6ZE4j3wIi6RErpbB97j+a7G6HB1M94dDWy1gAInzDqGiwJe0nc5R
-         HyEmqYO8QFMS6Lm2tj0OCAfJ1NOLEJO8cYEynZtxhhVHdw16dK6SBN7ItvwrQg1mjSGd
-         NKpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756406205; x=1757011005;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hHW66vik/XOF/b5a9eA0c5HxElogAXhATll56cjYuUc=;
-        b=ZSB+W48GAs8rUhfKz45KobdrXlEdG8MIwJz7gIlVJCNKHV7XVn9ds6aL6Bqi3cx2fb
-         CQilr+ohUXF0S7drq+HjWwuMJX3lfovzV4A4GmDhvZTdu41xqzVgNOug8DmjQ4o5zA/W
-         JPfHYHzYffSjMx12mnRakTbF7T6Xwp2AUvu6GqO0UCWZ6qsellOiqpe9EJimdxjwmvzY
-         Elk5vp2E1HYKYDjDqkXsN4hy23J1n7ARLq8Qq0cM3W3N+pdm/akRfDf2Ny+EBa/AxmaV
-         dRTr/cSt5EgjN+II0a6j4dTJV/Vyn3ElfWF3R1gY4MpxC67HR/DUI7t2m6BbR5FZaFI9
-         lNMw==
-X-Forwarded-Encrypted: i=1; AJvYcCWfxhv290dQEUL7byCE9xx1Wwud4fHnp0XIIRHUyrq6/35ulTE2S3ON0PZVPW3cBwtkpBofiDpbuU6u72Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUM8gOzjLWdBEPD4TBcEBzMoeQ+KU2+49xUAjoO/QcQ2GPdoDp
-	EqhQ8rnR+vTB41Hn8ZtVySf39oYSCtp0V6r2nQka9rDIbpvMLyLZdmBRvc/hZ8A1vlWeBdxAlV6
-	ywMyGOZnsyBzn19NSVGjAl5PifJSknaJbpVzEt1PH
-X-Gm-Gg: ASbGncuMcUma969L1h/Q6TzEqvQaSv9TOIqiG3pDA/DWUpJxVbrG2UlVsi4OOJpvITd
-	F7YXIGl8vQ1Fq+zIwICftKRsIakOL/2yIOV3rWYbkkUaOpHujoudu0q4ush3m9iIA0jp/ZAckIW
-	Z1fSgYcDsu0VXcNBirQWlc5ont5rdpib4bEbF66mSdPED6WBZjfKzadpc3+WaHjACDTk0JRvU8r
-	+YRNbL6OJlNIXoC60zNGZoSZwVj59y8JxtYS+615zXMhbTP8Z92J1L0Uoe1HCyikw==
-X-Google-Smtp-Source: AGHT+IGMiMWlNBMZzKgGFJuPkN5U8PL7qDthlThh6NkESps4kFZfJXlrZ3T4dW9Uddef46UXYdRba/Pa4HgyNIMDCFk=
-X-Received: by 2002:a17:906:8f8a:b0:afe:c2e7:3709 with SMTP id
- a640c23a62f3a-afec2e7433amr686859166b.18.1756406204609; Thu, 28 Aug 2025
- 11:36:44 -0700 (PDT)
+	s=arc-20240116; t=1756406387; c=relaxed/simple;
+	bh=GNo2t51egNLhS8QjdRwVx/SQS8FD2wRkXa3bxmxwa4E=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=hT4RBFGai5MGwePgj+VDFxFfkYTr+NwJSJzlqOKpggO8tbSSQoLHU6ddBZLzyVTvX/lntfRlaZfHBZroXcMaWmg7DbSubRd3xyPr7vq4+aIQlqy8sbCSRISBFsM6Ts/8eO7SCQC7j73dtKmyvr5CDgXeLF415y7bg/SZsmhId5c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hpe.com; spf=pass smtp.mailfrom=hpe.com; dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b=UUbpN/YE; arc=none smtp.client-ip=148.163.143.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hpe.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hpe.com
+Received: from pps.filterd (m0150245.ppops.net [127.0.0.1])
+	by mx0b-002e3701.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57SEmjL4000988;
+	Thu, 28 Aug 2025 18:38:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hpe.com; h=cc
+	:content-type:date:from:message-id:mime-version:subject:to; s=
+	pps0720; bh=7tDlIM0TyZMcvSoK1xxHIEjCDRhecC3cjshhiua9X5k=; b=UUbp
+	N/YEKbBZQA3HEvX3FD5d1MirTV0FjnU1H8aAlBICM677obaXSec1f8Mem5oATus7
+	CjRSN3rOEdXKGuTJP5BzI09o8zDs3FCJX7D6fp/6+StpXvMyueFyVV7xmm04Kz/o
+	tmM0by0ZdVVGbGwpTVgwzDqyEKvCWxJqpKK5/nuMMjn12qYK5OxybdNAtP1Hbvsj
+	/aXm0wNWG8z5fQQe1w3d/uasOeZKYdhAC7AhOqRy+1jriXfWTCbsbn2tgthgyTlF
+	NZru6L5KzL/3G73LNfTIAmYv+DS2aRFpmDCtjePiwFRA8xC6vsxXuCqKhMKWZ60H
+	q3x3u0F5Qb2QoQVJRA==
+Received: from p1lg14879.it.hpe.com ([16.230.97.200])
+	by mx0b-002e3701.pphosted.com (PPS) with ESMTPS id 48ts71svb3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 28 Aug 2025 18:38:32 +0000 (GMT)
+Received: from p1lg14886.dc01.its.hpecorp.net (unknown [10.119.18.237])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by p1lg14879.it.hpe.com (Postfix) with ESMTPS id A65F5132C5;
+	Thu, 28 Aug 2025 18:38:26 +0000 (UTC)
+Received: from HPE-5CG20646DK.localdomain (unknown [16.231.227.36])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by p1lg14886.dc01.its.hpecorp.net (Postfix) with ESMTPS id 1263D800EB5;
+	Thu, 28 Aug 2025 18:38:22 +0000 (UTC)
+Date: Thu, 28 Aug 2025 13:38:20 -0500
+From: Kyle Meyer <kyle.meyer@hpe.com>
+To: akpm@linux-foundation.org, linmiaohe@huawei.com, jane.chu@oracle.com,
+        jiaqiyan@google.com
+Cc: bp@alien8.de, david@redhat.com, kyle.meyer@hpe.com,
+        Liam.Howlett@oracle.com, linux-edac@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        lorenzo.stoakes@oracle.com, mhocko@suse.com, nao.horiguchi@gmail.com,
+        osalvador@suse.de, rppt@kernel.org, russ.anderson@hpe.com,
+        surenb@google.com, tony.luck@intel.com, vbabka@suse.cz
+Subject: [PATCH v2] mm/memory-failure: Fix redundant updates for already
+ poisoned pages
+Message-ID: <aLCiHMy12Ck3ouwC@hpe.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250825195412.223077-1-zecheng@google.com> <20250825195412.223077-3-zecheng@google.com>
- <aLAC4pKRVyzFR8nZ@google.com>
-In-Reply-To: <aLAC4pKRVyzFR8nZ@google.com>
-From: Zecheng Li <zecheng@google.com>
-Date: Thu, 28 Aug 2025 14:36:32 -0400
-X-Gm-Features: Ac12FXyOmG6qOzijGmOY98Fs0TzVvdyjlqP-oeOBptUFoEa_KQU99z-KiieCows
-Message-ID: <CAJUgMyK2wTiEZB__dtgCELmaNGFWhG1j0g9rv_C=cLD6Zq4_5w@mail.gmail.com>
-Subject: Re: [PATCH v2 02/10] perf dwarf-aux: More accurate variable type
- match for breg
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	"Liang, Kan" <kan.liang@linux.intel.com>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Xu Liu <xliuprof@google.com>, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Authority-Analysis: v=2.4 cv=I5llRMgg c=1 sm=1 tr=0 ts=68b0a228 cx=c_pps
+ a=5jkVtQsCUlC8zk5UhkBgHg==:117 a=5jkVtQsCUlC8zk5UhkBgHg==:17
+ a=kj9zAlcOel0A:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=MvuuwTCpAAAA:8
+ a=_9263MXg1XWMioqDkNYA:9 a=CjuIK1q_8ugA:10
+X-Proofpoint-ORIG-GUID: mEN2_SVhX1feWP9FMfdMAfO80NtjnQtM
+X-Proofpoint-GUID: mEN2_SVhX1feWP9FMfdMAfO80NtjnQtM
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODI4MDEyNCBTYWx0ZWRfX8D7QSBPnFi+3
+ 6fhGaiBbJ/Jz8Ny806+A+AhBU3IsHMWCWG/DYuWOVzwDSZM2TruWwvTX4k/yLVr7fChTslnSkvD
+ YRFluNpFiUa8jj/DClEREh0I4XicCoq3nKwVLnZKIn4o+W7BGyAB+2Tlfd41zfqKWeq6cyDH7kR
+ EdenwIf4aIT1pr6g/llqxD8GjrOOt1DBndGBtVh0tgQc0dbz3aFwFFP0q7YaZY31Gkhy9oHYslF
+ qc1oDarTx+46ZOVri4kTCTi9yd41ir+KKpijdlDq4Buxkvn4qcOtwd0vWlMy9GTlZlHb/LAP3y4
+ AWOp2klQPiNWUZooas0BOFUJW9XgduAdYNxOWGJcZ8eF00CD1bav1aFWfuPXSngKybKGxclKNTA
+ ytMwq0Mq
+X-HPE-SCL: -1
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-28_04,2025-08-28_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 phishscore=0 adultscore=0 impostorscore=0 malwarescore=0
+ clxscore=1015 spamscore=0 priorityscore=1501 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508280124
 
-On Thu, Aug 28, 2025 at 3:19=E2=80=AFAM Namhyung Kim <namhyung@kernel.org> =
-wrote:
->
-> On Mon, Aug 25, 2025 at 07:54:04PM +0000, Zecheng Li wrote:
-> > Introduces the function is_breg_access_indirect to determine whether a
-> > memory access involving a DW_OP_breg* operation refers to the variable'=
-s
-> > value directly or requires dereferencing the variable's type as a
-> > pointer based on the DWARF expression. Previously, all breg based
-> > accesses were assumed to directly access the variable's value
-> > (is_pointer =3D false).
-> >
-> > The is_breg_access_indirect function handles three cases:
-> >
-> > 1. Base register + offset only: (e.g., DW_OP_breg7 RSP+88) The
-> >    calculated address is the location of the variable. The access is
-> >    direct, so no type dereference is needed. Returns false.
->
-> I'm afraid there may be cases that the base register doesn't point to
-> the stack.  In that case it may return true, right?
+Duplicate memory errors can be reported by multiple sources.
 
-Hi Namhyung,
+Passing an already poisoned page to action_result() causes issues:
 
-In this case, the DWARF specification for a DW_OP_breg* operation is
-to always calculate a memory address. So, even if the base register
-isn't the stack pointer, the expression still resolves to the
-variable's location, meaning the access is direct (is_pointer =3D
-false).
+* The amount of hardware corrupted memory is incorrectly updated.
+* Per NUMA node MF stats are incorrectly updated.
+* Redundant "already poisoned" messages are printed.
 
-> I think struct find_var_data already has 'is_fbreg' field.  Maybe you
-> can add 'is_stack' or 'is_stack_reg' field if the target.  Currently we
-> hardcoded X86_REG_SP but it should be arch-dependent.
+Avoid those issues by:
 
-Therefore we don't need to check if the register is a stack or frame base.
+* Skipping hardware corrupted memory updates for already poisoned pages.
+* Skipping per NUMA node MF stats updates for already poisoned pages.
+* Dropping redundant "already poisoned" messages.
 
-> >
-> > 2. Base register + offset, followed by other operations ending in
-> >    DW_OP_stack_value, including DW_OP_deref: (e.g., DW_OP_breg*,
-> >    DW_OP_deref, DW_OP_stack_value) The DWARF expression computes the
-> >    variable's value, but that value requires a dereference. The memory
-> >    access is fetching that value, so no type dereference is needed.
-> >    Returns false.
-> >
-> > 3. Base register + offset, followed only by DW_OP_stack_value: (e.g.,
-> >    DW_OP_breg13 R13+256, DW_OP_stack_value) This indicates the value at
-> >    the base + offset is the variable's value. Since this value is being
-> >    used as an address in the memory access, the variable's type is
-> >    treated as a pointer and requires a type dereference. Returns true.
-> >
-> > The is_pointer argument passed to match_var_offset is now set by
-> > is_breg_access_indirect for breg accesses.
-> >
-> > There are more complex expressions that includes multiple operations an=
-d
-> > may require additional handling, such as DW_OP_deref without a
-> > DW_OP_stack_value, or including multiple base registers. They are less
-> > common in the Linux kernel dwarf and are skipped in check_allowed_ops.
-> >
-> > Signed-off-by: Zecheng Li <zecheng@google.com>
-> > ---
-> >  tools/perf/util/dwarf-aux.c | 38 ++++++++++++++++++++++++++++++++-----
-> >  1 file changed, 33 insertions(+), 5 deletions(-)
-> >
-> > diff --git a/tools/perf/util/dwarf-aux.c b/tools/perf/util/dwarf-aux.c
-> > index 920054425578..449bc9ad7aff 100644
-> > --- a/tools/perf/util/dwarf-aux.c
-> > +++ b/tools/perf/util/dwarf-aux.c
-> > @@ -1423,6 +1423,34 @@ static bool match_var_offset(Dwarf_Die *die_mem,=
- struct find_var_data *data,
-> >       return true;
-> >  }
-> >
-> > +/**
-> > + * is_breg_access_indirect - Check if breg based access implies type
-> > + * dereference
-> > + * @ops: DWARF operations array
-> > + * @nops: Number of operations in @ops
-> > + *
-> > + * Returns true if the DWARF expression evaluates to the variable's
-> > + * value, so the memory access on that register needs type dereference=
-.
-> > + * Returns false if the expression evaluates to the variable's address=
-.
-> > + * This is called after check_allowed_ops.
-> > + */
-> > +static bool is_breg_access_indirect(Dwarf_Op *ops, size_t nops)
-> > +{
-> > +     /* only the base register */
-> > +     if (nops =3D=3D 1)
-> > +             return false;
->
-> Then it could be like below:
->
->         if (nops =3D=3D 1) {
->                 int reg =3D reg_from_dwarf_op(ops);
->                 return !(reg =3D=3D DWARF_REG_FB || data->is_fbreg || reg=
- =3D=3D data->is_stack);
->         }
->
-> Thanks,
-> Namhyung
->
-> > +
-> > +     if (nops =3D=3D 2 && ops[1].atom =3D=3D DW_OP_stack_value)
-> > +             return true;
-> > +
-> > +     if (nops =3D=3D 3 && (ops[1].atom =3D=3D DW_OP_deref ||
-> > +             ops[1].atom =3D=3D DW_OP_deref_size) &&
-> > +             ops[2].atom =3D=3D DW_OP_stack_value)
-> > +             return false;
-> > +     /* unreachable, OP not supported */
-> > +     return false;
-> > +}
-> > +
-> >  /* Only checks direct child DIEs in the given scope. */
-> >  static int __die_find_var_reg_cb(Dwarf_Die *die_mem, void *arg)
-> >  {
-> > @@ -1451,7 +1479,7 @@ static int __die_find_var_reg_cb(Dwarf_Die *die_m=
-em, void *arg)
-> >               if (data->is_fbreg && ops->atom =3D=3D DW_OP_fbreg &&
-> >                   check_allowed_ops(ops, nops) &&
-> >                   match_var_offset(die_mem, data, data->offset, ops->nu=
-mber,
-> > -                                  /*is_pointer=3D*/false))
-> > +                                  is_breg_access_indirect(ops, nops)))
-> >                       return DIE_FIND_CB_END;
-> >
-> >               /* Only match with a simple case */
-> > @@ -1463,11 +1491,11 @@ static int __die_find_var_reg_cb(Dwarf_Die *die=
-_mem, void *arg)
-> >                                            /*is_pointer=3D*/true))
-> >                               return DIE_FIND_CB_END;
-> >
-> > -                     /* Local variables accessed by a register + offse=
-t */
-> > +                     /* variables accessed by a register + offset */
-> >                       if (ops->atom =3D=3D (DW_OP_breg0 + data->reg) &&
-> >                           check_allowed_ops(ops, nops) &&
-> >                           match_var_offset(die_mem, data, data->offset,=
- ops->number,
-> > -                                          /*is_pointer=3D*/false))
-> > +                                          is_breg_access_indirect(ops,=
- nops)))
-> >                               return DIE_FIND_CB_END;
-> >               } else {
-> >                       /* pointer variables saved in a register 32 or ab=
-ove */
-> > @@ -1477,11 +1505,11 @@ static int __die_find_var_reg_cb(Dwarf_Die *die=
-_mem, void *arg)
-> >                                            /*is_pointer=3D*/true))
-> >                               return DIE_FIND_CB_END;
-> >
-> > -                     /* Local variables accessed by a register + offse=
-t */
-> > +                     /* variables accessed by a register + offset */
-> >                       if (ops->atom =3D=3D DW_OP_bregx && data->reg =3D=
-=3D ops->number &&
-> >                           check_allowed_ops(ops, nops) &&
-> >                           match_var_offset(die_mem, data, data->offset,=
- ops->number2,
-> > -                                          /*is_poitner=3D*/false))
-> > +                                          is_breg_access_indirect(ops,=
- nops)))
-> >                               return DIE_FIND_CB_END;
-> >               }
-> >       }
-> > --
-> > 2.51.0.261.g7ce5a0a67e-goog
-> >
+Make MF_MSG_ALREADY_POISONED consistent with other action_page_types and
+make calls to action_result() consistent for already poisoned
+normal pages and huge pages.
+
+Fixes: b8b9488d50b7 ("mm/memory-failure: improve memory failure action_result messages")
+Signed-off-by: Kyle Meyer <kyle.meyer@hpe.com>
+---
+
+v1 -> v2:
+ * Continue passing poisoned pages to action_result() with MF_FAILED but don't
+update anything.
+ * https://lore.kernel.org/all/20250821164445.14467-1-kyle.meyer@hpe.com
+
+---
+ mm/memory-failure.c | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
+
+diff --git a/mm/memory-failure.c b/mm/memory-failure.c
+index fc30ca4804bf..10b3c281c2ae 100644
+--- a/mm/memory-failure.c
++++ b/mm/memory-failure.c
+@@ -956,7 +956,7 @@ static const char * const action_page_types[] = {
+ 	[MF_MSG_BUDDY]			= "free buddy page",
+ 	[MF_MSG_DAX]			= "dax page",
+ 	[MF_MSG_UNSPLIT_THP]		= "unsplit thp",
+-	[MF_MSG_ALREADY_POISONED]	= "already poisoned",
++	[MF_MSG_ALREADY_POISONED]	= "already poisoned page",
+ 	[MF_MSG_UNKNOWN]		= "unknown page",
+ };
+ 
+@@ -1349,9 +1349,10 @@ static int action_result(unsigned long pfn, enum mf_action_page_type type,
+ {
+ 	trace_memory_failure_event(pfn, type, result);
+ 
+-	num_poisoned_pages_inc(pfn);
+-
+-	update_per_node_mf_stats(pfn, result);
++	if (type != MF_MSG_ALREADY_POISONED) {
++		num_poisoned_pages_inc(pfn);
++		update_per_node_mf_stats(pfn, result);
++	}
+ 
+ 	pr_err("%#lx: recovery action for %s: %s\n",
+ 		pfn, action_page_types[type], action_name[result]);
+@@ -2094,12 +2095,11 @@ static int try_memory_failure_hugetlb(unsigned long pfn, int flags, int *hugetlb
+ 		*hugetlb = 0;
+ 		return 0;
+ 	} else if (res == -EHWPOISON) {
+-		pr_err("%#lx: already hardware poisoned\n", pfn);
+ 		if (flags & MF_ACTION_REQUIRED) {
+ 			folio = page_folio(p);
+ 			res = kill_accessing_process(current, folio_pfn(folio), flags);
+-			action_result(pfn, MF_MSG_ALREADY_POISONED, MF_FAILED);
+ 		}
++		action_result(pfn, MF_MSG_ALREADY_POISONED, MF_FAILED);
+ 		return res;
+ 	} else if (res == -EBUSY) {
+ 		if (!(flags & MF_NO_RETRY)) {
+@@ -2285,7 +2285,6 @@ int memory_failure(unsigned long pfn, int flags)
+ 		goto unlock_mutex;
+ 
+ 	if (TestSetPageHWPoison(p)) {
+-		pr_err("%#lx: already hardware poisoned\n", pfn);
+ 		res = -EHWPOISON;
+ 		if (flags & MF_ACTION_REQUIRED)
+ 			res = kill_accessing_process(current, pfn, flags);
+-- 
+2.50.1
+
 
