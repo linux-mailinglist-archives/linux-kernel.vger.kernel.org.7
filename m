@@ -1,156 +1,249 @@
-Return-Path: <linux-kernel+bounces-789545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3906EB39715
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 10:34:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AE5A6B39717
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 10:35:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E97CC3BCD92
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 08:34:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 655A43BC142
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 08:35:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D36A2EB5CF;
-	Thu, 28 Aug 2025 08:34:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9E792E0921;
+	Thu, 28 Aug 2025 08:35:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="g5THEQN2";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ytj5Vijj";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="g5THEQN2";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ytj5Vijj"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="wyCfGT/H"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2088.outbound.protection.outlook.com [40.107.94.88])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AD6B2BE04D
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 08:34:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756370061; cv=none; b=AnwELBIVdFKensOzm1IwzFJCUOnu8ZUFkXrHi55orXoP5tMydaQlILGc6oXRntiYLr44HR+YzZrnWmWFvpo+kBoN9mVp7qo9xxSXJu9FGtf+59g3dJoUJ+BN1L6gqCIlWsn+6cUhdVCay3BPopEfLPGNzLY0MUDevFje5rn9xog=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756370061; c=relaxed/simple;
-	bh=sfMt63UacuBw2pnE1Oybb1wnpfSV+T++31YiSDnOTxw=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VH2wZV3woklnDkPXf58GDZ9EXY5r4wHDDHeSh3cwX+YFyDM7V2FduDYVtaTl35SwOc7svjwC8UUtU8vz/iyiozCeJFyaYYQWU//RYzz1sSh4mI+stYmDDwpON3Kj2jMEsPo/W1/L2NNja8CIJndCnDUxAMQkkIXMsnpKXR8jFyo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=g5THEQN2; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ytj5Vijj; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=g5THEQN2; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ytj5Vijj; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 3B60C338B6;
-	Thu, 28 Aug 2025 08:34:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1756370058; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YaTh2AkPtW8EpYatcKHLSoYd9UBh9SkT7Ebip2b889Q=;
-	b=g5THEQN2Jl0sHkVNcmVu3qoF0W0Z4BVmNj6waCU7+yFoM7ZyIxCReBjfzZFw88CAhBFnzV
-	AhZC2r8MSus6jgXjx/mF7hNKw3oTbSviLlWCYHwF34+87+79K55lsSuz0R1deZP4oohuMo
-	3MstwSyb9BOr0nGlO4JiD+O8y7VE/bY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1756370058;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YaTh2AkPtW8EpYatcKHLSoYd9UBh9SkT7Ebip2b889Q=;
-	b=ytj5Vijjrp/mOietmy2qHt6U7q8N2XD+gLUlQX4DUM33ZoDtRgAMkNlK7sFbQnt3c+cum0
-	+EIF8fb1RadAYnDg==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=g5THEQN2;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=ytj5Vijj
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1756370058; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YaTh2AkPtW8EpYatcKHLSoYd9UBh9SkT7Ebip2b889Q=;
-	b=g5THEQN2Jl0sHkVNcmVu3qoF0W0Z4BVmNj6waCU7+yFoM7ZyIxCReBjfzZFw88CAhBFnzV
-	AhZC2r8MSus6jgXjx/mF7hNKw3oTbSviLlWCYHwF34+87+79K55lsSuz0R1deZP4oohuMo
-	3MstwSyb9BOr0nGlO4JiD+O8y7VE/bY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1756370058;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YaTh2AkPtW8EpYatcKHLSoYd9UBh9SkT7Ebip2b889Q=;
-	b=ytj5Vijjrp/mOietmy2qHt6U7q8N2XD+gLUlQX4DUM33ZoDtRgAMkNlK7sFbQnt3c+cum0
-	+EIF8fb1RadAYnDg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D6E771368B;
-	Thu, 28 Aug 2025 08:34:17 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id hIlgL4kUsGhrLQAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Thu, 28 Aug 2025 08:34:17 +0000
-Date: Thu, 28 Aug 2025 10:34:17 +0200
-Message-ID: <87cy8fg7zq.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Qianfeng Rong <rongqianfeng@vivo.com>
-Cc: Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ALSA: lx_core: use int type to store negative error codes
-In-Reply-To: <20250828081312.393148-1-rongqianfeng@vivo.com>
-References: <20250828081312.393148-1-rongqianfeng@vivo.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 529DF1E47C5;
+	Thu, 28 Aug 2025 08:35:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.88
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756370139; cv=fail; b=trN+E1Vf66EncKP2rZBdYudGOUPyYkwVN2nfdHSV3IIX3tMwGN5ls/fgXkNMFjyDd2hz6dLmsjGlcKhksz8yf9wCw1T1RLd/Ah6V3RYDhNZskOFMC9+gleA3uIWGBfX7MoAau1Wrcmen+LlESkKf+tbhcQfE+PZ5rGBtoHig4PY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756370139; c=relaxed/simple;
+	bh=m+dpoOTQznSLkfIrG/mDOLL3VPwnh/YGej5Cg4Lrmto=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=icTilKwTZWjQOE68hobDP4vZodd1qs+MdQlFGC+WPTr1QmyP4LpaJDSC6mIBJ1EOnu8Su8iywkvFwLtddMgUk0qy3xff9nqt+XXQHYv3mvlCFCxzlWwUvPQb1uiHf5G0eqNlI9eQC2Y1l1xiQHznpYYh781sarN8aaWHvwgu+eM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=wyCfGT/H; arc=fail smtp.client-ip=40.107.94.88
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=SnsfHcnJaKXOS0Ne04YGP5nINGX86IcS5CRxb91JGaCZKLTCohd5AIipcskYKd8dcgbIVj9Q1ftAug/4YOhOPQqlDjLyb/0uipRNovA2cLtdRVwzccWfBJl+P8hkswd6duPkBv6+8xyJzT5yNXpirm12rA2k5l7QQcrzmIKO4QSKm/1YPVJg0fZuBxk7OQgZ5TEzyE0OLMNOjemVw+YgUqu1t4uf1Nzb4pZOXJNxckW67FucKq1n5F9dvDAvV3Odw5Se7/AFDCK8T7jdGvcrAj/uoCnTxuD54GbUMdOgZtceAHwlTTHO2F2zgGTm2LCErfZH+c5c1aBfqfj2bWH7/g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=wg5xYl1yquVxj/KrcVLNf/7AqlAosNOkDWzrnqnOvhU=;
+ b=Lvnusgkqituh6dKFFm6l7bylW74OVXuLlOqKTkv4NDvjVjmTVQ4KGTbUAt26ojSi2Ivs8hac3RfLgvia08AuTB/t27hurnDHjhh+ke4FLqPHAPWuNRv70XVWwRYyYD1Fpbnv/VvbsvKFYY/RYmL5xWGs0RquOkt6qPJduJr52hZLggsLZHP4tYStzaym+OVzMJEJKtJ01xL7YkvLYexlZeTiRjX3X56eKjCs9RV9BQMXKz9iLrG51joWERBhL2yLvOhC/e19mRIjBcnrRWYKOL0F5ucMynxyCSDIfKZcR/7SveomqjGK/PIPzxCH40tGlhgzl7U2J0xjMkKILz/tCw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=wg5xYl1yquVxj/KrcVLNf/7AqlAosNOkDWzrnqnOvhU=;
+ b=wyCfGT/H7VlsS7S7rYFtKQN8BpmdiCvuk0uj9RD+6ocjklew9172p/kg4tjr0sCuMBcoJPIpquSJkpO/kbUJN8yuaK8RQxssxC3uB9EfL+lpTIsI8eatsxCjJQwdGE+kKMJsK2HCUV639zz9C4fDhlTg+Utj5qVzTtoanCC56h4=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DM6PR12MB4202.namprd12.prod.outlook.com (2603:10b6:5:219::22)
+ by CY8PR12MB7658.namprd12.prod.outlook.com (2603:10b6:930:9e::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.25; Thu, 28 Aug
+ 2025 08:35:34 +0000
+Received: from DM6PR12MB4202.namprd12.prod.outlook.com
+ ([fe80::f943:600c:2558:af79]) by DM6PR12MB4202.namprd12.prod.outlook.com
+ ([fe80::f943:600c:2558:af79%7]) with mapi id 15.20.9073.016; Thu, 28 Aug 2025
+ 08:35:33 +0000
+Message-ID: <cb5cab2b-5cd1-4fec-99d4-9e8d9517b487@amd.com>
+Date: Thu, 28 Aug 2025 09:35:25 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v11 04/23] cxl/pci: Remove unnecessary CXL RCH handling
+ helper functions
+Content-Language: en-US
+To: Terry Bowman <terry.bowman@amd.com>, dave@stgolabs.net,
+ jonathan.cameron@huawei.com, dave.jiang@intel.com,
+ alison.schofield@intel.com, dan.j.williams@intel.com, bhelgaas@google.com,
+ shiju.jose@huawei.com, ming.li@zohomail.com,
+ Smita.KoralahalliChannabasappa@amd.com, rrichter@amd.com,
+ dan.carpenter@linaro.org, PradeepVineshReddy.Kodamati@amd.com,
+ lukas@wunner.de, Benjamin.Cheatham@amd.com,
+ sathyanarayanan.kuppuswamy@linux.intel.com, linux-cxl@vger.kernel.org,
+ ira.weiny@intel.com
+Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
+References: <20250827013539.903682-1-terry.bowman@amd.com>
+ <20250827013539.903682-5-terry.bowman@amd.com>
+From: Alejandro Lucero Palau <alucerop@amd.com>
+In-Reply-To: <20250827013539.903682-5-terry.bowman@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: PR1P264CA0103.FRAP264.PROD.OUTLOOK.COM
+ (2603:10a6:102:2cf::10) To DM6PR12MB4202.namprd12.prod.outlook.com
+ (2603:10b6:5:219::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 3B60C338B6
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-3.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[5];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:mid];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Spam-Score: -3.51
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6PR12MB4202:EE_|CY8PR12MB7658:EE_
+X-MS-Office365-Filtering-Correlation-Id: e34c8a07-c8aa-4100-4ffb-08dde60dd9cd
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|1800799024|366016|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?eWpyaVZrejBTREQrQVJpMlBJWktPdXo5d3E3T2E2WVhueGgyTXI1dncwWjYx?=
+ =?utf-8?B?dmZOMjAyWUx5NzhpNVZQU0twRm5hSHAxQWVjVUw5TlJ0UFkzRCtqN3AvYTFu?=
+ =?utf-8?B?OUxGQ3pndm5pOFhraTFqWEdIVlk4aURwcjVZTXhBZkd2N0JDZUl1WFF6MVpH?=
+ =?utf-8?B?cm00N2kvb2dBNXZpSDQrMlJibE8rV1dpSDdQSTlRTUVINStzRHRzUXhoWG1q?=
+ =?utf-8?B?eHVtbFdNL25BOU5zNVRqRkhmeFg5VHI0d2tVM2xDck5vUTNaL1VBTExNaUU3?=
+ =?utf-8?B?eWErbUxiZTk4WGpVSlZnZm5VS3UzQWNFQVVKRnNxWSs0SDBMeUhSRUFmWEs4?=
+ =?utf-8?B?WXQrcGZpWm9SNlhaZ0hTNm5ZbFVZTEkwOEx6aEdaejBwU2NUTWpmK05QalQ3?=
+ =?utf-8?B?Qi9vWWs4U2QvNFl6UlRPWDBJVExUSW5vU0Vpd2FEdmg5cjI2R1Zia1B4cXBU?=
+ =?utf-8?B?TzBESk1wc1VaMGRja1hBOFB3ZWJ0K0pEcDM5dXpZWkxQY0hIWiswWWJTR3dL?=
+ =?utf-8?B?M2I5TDBLWjlERFh4bFFpR1dvVjBHMjZRMEpGVjJaZjRpdm1aU2VQOWE3TWFX?=
+ =?utf-8?B?YUhQNGVMZlJ6Nm9XRE4ybThhdjBBdWQ0eTVuTFRQOXgwcXV1WnlLTkJPcTNK?=
+ =?utf-8?B?aUdZR25uaDRRRzN0NnVTcHU1czJ6TWdaS0lXYTg1VmZXWVAxanEzdWc0T05D?=
+ =?utf-8?B?L1lKZS8vbWE5eEtnNU85cUIvUjltV3krUU9VMzR0NUVXTk90K3p2a0VNRTZR?=
+ =?utf-8?B?SERleHlndEZ6Z2dYRFhqRVNXNHQrL2QxVXd5Vm5VQzlVYnJsR3J4WTdTZnAy?=
+ =?utf-8?B?NytDRUdJMi9QTTlubzUya3VpZG5aSElwT1ZEZEJzNSsveFBwcmtSMXN6UHps?=
+ =?utf-8?B?STIvczhZSzc0c1JHNnl5ZHduZEpaZXRrY3duVHBoMDZQWHQzbkRPV2tvZTMy?=
+ =?utf-8?B?RHlQZmpaV1RPdGFrc1k4MDNBTWRoR0c4TUtTNDc1VFZyOC9CZEFydkFHRG1Q?=
+ =?utf-8?B?OWhjWmNVcDY4MHpjS3VEdkt3Rkg2YmVWMURXK0RrdGlOMzZpNzVIWjVUMlpO?=
+ =?utf-8?B?azVtNksyR3JmR1l2VVJGUk8wenR4QzduaWF0WHRFcml5TUNXWkNKbEdKbUYy?=
+ =?utf-8?B?VjRjbXVtTXJyelVXQ3Z4MnZlL0JRK0lqN1BPOFAza29KcTdKcGJlZHJObzJZ?=
+ =?utf-8?B?RTJNcU9YaEdTYXlmY3E3MG9QdFdlUjUzbGM3T2tpOXJMZ3lOWHdzck9ycTJ2?=
+ =?utf-8?B?UmdUZzVDdUtuajFITzdBZGRCS2Y3aTNDQVNTcC8vaTQzYThET2J4Q09vZ2dR?=
+ =?utf-8?B?ZU1VK0gveE0rc3hObm53Q2dsb3lFakhRLzhIR2JZeFZudlYwYjNDTGYxNlll?=
+ =?utf-8?B?dmtyeVhIckZRa0tPRk1rZTVsdnJrY0IvT2YzRnNjOFVaNkE1aW85Y1hLUUcw?=
+ =?utf-8?B?dFZrZDhrVEI5bFFmVHBqcno4NGpISm9SOEZieGhUbnZYdGZ3WEpsZ0lQYlFa?=
+ =?utf-8?B?Qno5TUZNc2NoKzZIN2xqeWFqQ09jOHNESCtaQ1U2ZnJDcDRIMVpHd0RMWDJN?=
+ =?utf-8?B?NmJ3R1I1d1E4UitaTGt6VWVNUG12OHRSbkV0RnQvb0YyWjN3b3FoTUh4aFJW?=
+ =?utf-8?B?TzlIUEpGdjlYQmxrUXNXR0hPR0JYSGVtNWx4RVo5YThReVJMSXFWZWtIam01?=
+ =?utf-8?B?SzJIdVRIdjdsQWZjVjY1SXFody9wcVVGOVVBTkRjSHU4KzF5QU9ML3hzNjNE?=
+ =?utf-8?B?UkFlNWVoRStYcHZwMFlzNmk1Q282RGxWcFJKdjVJZ0dMaXRtb1NGTUI4ZUxT?=
+ =?utf-8?B?eVROOHVEQmRNWjNseVdmdkFwMW8zV1QycS8xMTVhamR2QXRIQnBnSWRqTktY?=
+ =?utf-8?B?ellmUmdVU2pmSFltK1BoSldrRUlpTlVSOVpHZE12YTROY1ExSzlsWWVFV0p3?=
+ =?utf-8?B?MHdKdkZnZTl6ZXBZVmNJUGtyWCtBRnJnenF5K1F6TEFwNnFrS2trU2RFVDlx?=
+ =?utf-8?B?elpBZHBuUFRnPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB4202.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?b3ZhWit1V3E3OE5nT2cxNi84RVo4VDRHdkZkME84cUk1aXNTOFRuWVNhVUVm?=
+ =?utf-8?B?dmI5S2VrRnBmMXc2a2MybGVQL3Ara2ZmQ0NWdmFhSVJQbG9hRlFEV1crQWtq?=
+ =?utf-8?B?alRwbnd2NDVyMDFqdE9YeUlLRkZWSWJMU3VGa1RkRHZaQm1tbGN3bW9MZklL?=
+ =?utf-8?B?SG15bzN1OXdtZEV1TkJGZkRUN0k4dDNCcjVOb2wwaUcwZ1VqVFdBdk9QeVBr?=
+ =?utf-8?B?cEUyaVhjb2tVdDZNYk9ZUnJlMUE2VVlFYlFrZnFFcmRpQWVnYkZGYUlRYzJR?=
+ =?utf-8?B?Y3BlckpuUFBlT2Z5aHZmeWhrWTY2anlqSTFabSsvTmJTbXNnYW9jR2k1OEEw?=
+ =?utf-8?B?QlIvRFhpc1RTaXFUeGhMVlh6Y0VRY1VxcEhlMm0rcVdPMnltNUJsTTVjOHRs?=
+ =?utf-8?B?b29rR2tnY0FGWjlua3k3Y1A3RG9taGZoZzU3K3A1T0hCc0Vvb0p6RWFLc0Fz?=
+ =?utf-8?B?VFJQT3pScHV3WHlaUlhhc2kvNWVpZHZseEtXNUttSzVabUxUMlM2MW0xVFpK?=
+ =?utf-8?B?YUtLN3BFT3M1bnVOdUZXaENsL2dFa2FOZDBBNmdZRkdVTUREMlJlZnNHQzU1?=
+ =?utf-8?B?cGFjNE9HZXJHaURDKy9pbk5DOHJId1ZJM3Z2S2loYVc4T0dqbmVLc1lWMHJL?=
+ =?utf-8?B?ZkNjMW54WVJheCswb2lhSTBQaUh4Q2tyZ2poMExNMGEwc3E3MnE3b0txWWVt?=
+ =?utf-8?B?QTZLcUhXTkdIWDBObmtubGFEd0QxVE9ObFNNQ3ZwZjRqbDU4MENIdUdQUWxo?=
+ =?utf-8?B?MnNGdDhZeW9KMDgzazZWS0Y4aWpCS2VEM1FkRUtTaXhLdUk3SURYZ3E0MVpX?=
+ =?utf-8?B?b1ZzTnhrRjJ6bWlzYUpaVUtQcUYzOW5FMDZxK3dZKzhydldmRUtTQlhJQW82?=
+ =?utf-8?B?QTJiWGdzNVIxM05ZVWJGMndZN2VlVUsrQUpDRXNvS1daUC9qTTdnVUJYdDZ2?=
+ =?utf-8?B?d05JLzFabW9reGFRQlNrZWxCcjNFUEttZlFveGoza0poNGpQcW4yWTZoN0NQ?=
+ =?utf-8?B?bDk1R3NuNm9jZHFPZkFJSHVnaTdXT29SUG1tQWtoR2ZVOHVMS3NSQ3N2NXJ2?=
+ =?utf-8?B?NWY5UUZLaFl2VmRIOW1SR1ZNZjM0UkMzaEF0b1hERVRKSUdSLzlaWWJKcWlT?=
+ =?utf-8?B?MFIrLzRkUmM0UHRsdXRXdENuTllkQm5wTFdPcXNqRWJyVDRtYkx5T3RyZjla?=
+ =?utf-8?B?NXlKbHJCR0VReW5Od3JQV1RrMGVRYXRFdjZzWjl5VnV5QlBNbGpxbzlWTlN0?=
+ =?utf-8?B?Z1MxcERVbkNRVGlzWGI5YXVzYU1DMk0zT0k1Tzk1dk1sK0tHeFhyTHB4dXpR?=
+ =?utf-8?B?YXllY2FmZjdqcFFIV2pkaXRIVnppcXdjQTNtL3RWL0J4NzY5NEVwK0EwRmRs?=
+ =?utf-8?B?SEttVERET3MrVEw0Z2pCUE5PR2JYczNVcVc0WWFtYkZPREZlS05Gbkc3Wm5u?=
+ =?utf-8?B?elk1c2ROTTE0dmZOdldtOVFrbXZnaUxxN2xySnN4V05pWW5tZ1ppYXJrWUhY?=
+ =?utf-8?B?SHp6VWRJWVhtbEh2S1NlY0xDd09nR2RtRkhDRjNHZlFHUE5tYUk1QjJZbzE5?=
+ =?utf-8?B?eWxlYmxaNGtvekIxK0U2N0Q0dnpQdEdJQUFRRjhZcU8vRXozZEZkRHBiNGdJ?=
+ =?utf-8?B?M2twUGppOGhsVTR6K0hTSDlNdjNaTnpLN2crODRLR3V1T29nSWpOdnpNWGFW?=
+ =?utf-8?B?QzlhMTBtT0pHc1c0QXZ6YVJoVHd5TVE4aE92amI1YVljaURvVENMdWRkRlZO?=
+ =?utf-8?B?NUNVNGYwUEw5Z3NXM3R1QUtwdm5yRXBqZVA0MWkxZU1CYXZLenoxQXVreXFQ?=
+ =?utf-8?B?WXhIQ3lzWGFyVVM1YnhFT1pQWDBJdklBWFZkbGwzb0dqNzg1Tmx1SE81bUZx?=
+ =?utf-8?B?QUJRK2RGZ01Wb0ErZ3EwcUp1UFRWYVNIbW1BandGczhadm1zSGt3eWVWUXVm?=
+ =?utf-8?B?WnpIb3QxSXpiV3p5bzNCa2czWkowelRpWmFrM1UzbEtSNEtRYTlWa29OeDRp?=
+ =?utf-8?B?enFodWZNbFM2RmdNWi8zM2ZRclB0S3NMNEFGbVlSb3p5eG1veTZlSFg0a1Ax?=
+ =?utf-8?B?dXNFNFRnS2Q0emVWSUxLUkpsOXoxZTNoNmpkbHRxaCtveTZXS2NrSUszMkZO?=
+ =?utf-8?Q?/v8them0asdSe1neFdU0LgM5H?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e34c8a07-c8aa-4100-4ffb-08dde60dd9cd
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB4202.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Aug 2025 08:35:33.6418
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: VtcczxLikKRLa9+rzDNWvJxVQSYfNnvlxNZ8u0ZxPRkLO4nD0qRUTNMKwj4w4kGSxSdATTkr+EuEJMnPifwzmg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7658
 
-On Thu, 28 Aug 2025 10:13:10 +0200,
-Qianfeng Rong wrote:
-> 
-> Change the 'ret' variable from u16 to int to store negative error codes or
-> zero returned by lx_message_send_atomic().
-> 
-> Storing the negative error codes in unsigned type, doesn't cause an issue
-> at runtime but it's ugly as pants. Additionally, assigning negative error
-> codes to unsigned type may trigger a GCC warning when the -Wsign-conversion
-> flag is enabled.
-> 
-> No effect on runtime.
-> 
-> Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
 
-Applied now.  Thanks.
+On 8/27/25 02:35, Terry Bowman wrote:
+> cxl_handle_rdport_cor_ras() and cxl_handle_rdport_ras() are specific
+> to Restricted CXL Host (RCH) handling. Improve readability and
+> maintainability by replacing these and instead using the common
+> cxl_handle_cor_ras() and cxl_handle_ras() functions.
+>
+> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
 
 
-Takashi
+Good and simple.
+
+
+Reviewed-by: Alejandro Lucero <alucerop@amd.com>
+
+
+> ---
+>
+> Changes in v10->v11:
+> - New patch
+> ---
+>   drivers/cxl/core/ras.c | 16 ++--------------
+>   1 file changed, 2 insertions(+), 14 deletions(-)
+>
+> diff --git a/drivers/cxl/core/ras.c b/drivers/cxl/core/ras.c
+> index 544a0d8773fa..0875ce8116ff 100644
+> --- a/drivers/cxl/core/ras.c
+> +++ b/drivers/cxl/core/ras.c
+> @@ -233,12 +233,6 @@ static void header_log_copy(void __iomem *ras_base, u32 *log)
+>   	}
+>   }
+>   
+> -static void cxl_handle_rdport_cor_ras(struct cxl_dev_state *cxlds,
+> -				      struct cxl_dport *dport)
+> -{
+> -	return cxl_handle_cor_ras(cxlds, dport->regs.ras);
+> -}
+> -
+>   /*
+>    * Log the state of the RAS status registers and prepare them to log the
+>    * next error status. Return 1 if reset needed.
+> @@ -276,12 +270,6 @@ static bool cxl_handle_ras(struct cxl_dev_state *cxlds, void __iomem *ras_base)
+>   	return true;
+>   }
+>   
+> -static bool cxl_handle_rdport_ras(struct cxl_dev_state *cxlds,
+> -				  struct cxl_dport *dport)
+> -{
+> -	return cxl_handle_ras(cxlds, dport->regs.ras);
+> -}
+> -
+>   /*
+>    * Copy the AER capability registers using 32 bit read accesses.
+>    * This is necessary because RCRB AER capability is MMIO mapped. Clear the
+> @@ -350,9 +338,9 @@ static void cxl_handle_rdport_errors(struct cxl_dev_state *cxlds)
+>   
+>   	pci_print_aer(pdev, severity, &aer_regs);
+>   	if (severity == AER_CORRECTABLE)
+> -		cxl_handle_rdport_cor_ras(cxlds, dport);
+> +		cxl_handle_cor_ras(cxlds, dport->regs.ras);
+>   	else
+> -		cxl_handle_rdport_ras(cxlds, dport);
+> +		cxl_handle_ras(cxlds, dport->regs.ras);
+>   }
+>   
+>   void cxl_cor_error_detected(struct pci_dev *pdev)
 
