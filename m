@@ -1,346 +1,219 @@
-Return-Path: <linux-kernel+bounces-790038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D349B39E9C
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 15:21:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 710E1B3AA34
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 20:46:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE2503B20D0
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 13:20:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 827981C834BB
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 18:46:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08DA53148B4;
-	Thu, 28 Aug 2025 13:19:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFC3D27FD6B;
+	Thu, 28 Aug 2025 18:45:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="aHagub5n"
-Received: from mail-yw1-f225.google.com (mail-yw1-f225.google.com [209.85.128.225])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="GSaH+mvR"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 701A6313E2D
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 13:19:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.225
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D333126B2A6;
+	Thu, 28 Aug 2025 18:45:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756387152; cv=none; b=LpkYhwoqslDg2/gGHY67c7zmnTSpTL9Bv8zr8D/dtPIITgyd3lF/rM2QgtEC4bPVtSoRy/K+If2LoRzbGoGhxyvwrNEMM+/OzGm8BkVR0nIeJmFJGXkMpgd9FKFlfB6FNrHUfNo89DvRbttUa16dnj1E3doqxPN7uDdzfWcI8Q0=
+	t=1756406751; cv=none; b=elcFo75fII+TkN/GxucLG9vxFdgHiwUQ2agHwr8GgXnR8HkYjTPawK76f7ErqCSeUrXXtIaiCnGy7q4zyl9t0M5u8guaJPnWH4wVXBqa4E/X3gcMZ553yxTkMZ/LFLtreDfaHAqENcQQdO0pyUU6nJEo3Gr80JjJVhigkPyscSY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756387152; c=relaxed/simple;
-	bh=H7JoMIILAhGUgjcUXQyHFBWQ8k2DHQByyC1Q5/bQTDQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=tCBDbZHFfzwoxdAyMWjC+1su4m/qVX0avJ5Ab9ncKRNSb9xibMb/YCp0n4HlEOk//M4Hepcu2bEJqSH/VmzbpVFVg6vKiexo/vPrQhxNjviOgeZQApzXRAJ+S+hGhQkiPRg3COQxzp8X9/ZLHl5a/Pj6ULRqcY6LCQW08wsJt6M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=aHagub5n; arc=none smtp.client-ip=209.85.128.225
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-yw1-f225.google.com with SMTP id 00721157ae682-71d6014810fso7071477b3.0
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 06:19:09 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756387148; x=1756991948;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:dkim-signature
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=R/9NtnykLFlbdwq/BFwbqCg1JY7GaLggRNo0Kw7S3VI=;
-        b=HjFToYtRRLiv9c1gzR8HLlCFrprWEk0pvd1Q4MgS0Qkq6MCqTCK6xcvPauA30Gs/iC
-         GUArntIOtXUdESd4oOBkDxzHVDlHjnXGueuss51v3Xo3y5p+tuBth1Z/SLR5j+I+PWm+
-         e6z6YidzO5lEqprpoInK1e8BWeUzpMWTAQmqwEe9R0LC/5m1NpXJCreo6HFK/05uyD3Q
-         UNMi6UTmjelva/RTT0hDGfYlvHL05+sssIP3xIcGOjdzgPY01r0YVUyDvmkqXv+Itgj0
-         o6TduHPg6gXT84D9x4nqU7yftetrAcp39g8NI99YhzDZPojVAHNrd0R65A8TQxxA6gsT
-         aS0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXwLMg0FrvPp7udTbzzXgS7aZT8CWViQ3zAGea1hWgY2O5U9imySDq5plCtDM9qnvf/opegK+uqGPxvgaY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVZJdeUURzyBMftnkchvYKWv+bmG9WMZhRQKAcsnr6fGN9ucf5
-	/rJP8p8UCSl18drJaQilLzDD20ByAm/EP5B5qXz2gCLcB4CBYNFlZHQBEsIlOa0a4w8siiM3zEJ
-	UqAWMr4nliadEeXsyskKHqSFT99VZdEBeUIRtcCQQ7QOJ624ByGyvOCNxzjfNyQIGzzL+gUlXYT
-	22CGSvHyXvHY6pRjoGC4NPBlB5a5xDot3yTcho/lOWvUgdkV9dY9KYPvRpfor8B0ZTkrwqrfXOU
-	IrFOOvsNNPPWeSM1DDqsGBI6g==
-X-Gm-Gg: ASbGnctVY3vFyNawsuMcM5pCebgHRCMN2wfPvjUNi7H3WueTvd0kA4C23hNkh77D+bD
-	UyNpLuEQsN7d4G5p+0JgBXF93CV4HzDKoIYfxB+7VK0PVvvOHQTsgpz69WvKZTZFRHtpX4wAfVj
-	hErI8jpywTlMD2zuCMBtpMEYk80CGs7/T8WrPIDyJO0HuhtEaPsrWZcglL/mB4rH6TsxRDF/w/E
-	U/EECIbjHG4CgeDAWC5BLuhFVjvn2clxXm8oRpd8icSrlYUPCIk70Fkb7ka0ewqfIMjokUZWVGL
-	6/tzFo9upTTBBUwm3KzCRZiIm6Q5zkp5H7ehntw76R8AieNel2xyYYcX96S5G8tFYW8k6RWGr9o
-	3zwVyfpkMn3q9oMN8MEurepr5fmc6kq3gWmvLD05o7+3I6RIsd4oJi9wmn+lC8G5rfjJJ+3TyKH
-	NDy5AKK2rj
-X-Google-Smtp-Source: AGHT+IG8yfS2NI8OPhywdJp91PjIZNpU9lPHM/urwUAxmn9s2mcJOKLRtbuIpiWnvxYN/Y/6+7/fKTLBjDWp
-X-Received: by 2002:a05:690c:9c0e:b0:71a:234c:aaa8 with SMTP id 00721157ae682-71fdc2b0946mr283528047b3.2.1756387148089;
-        Thu, 28 Aug 2025 06:19:08 -0700 (PDT)
-Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com (address-144-49-247-100.dlp.protect.broadcom.com. [144.49.247.100])
-        by smtp-relay.gmail.com with ESMTPS id 00721157ae682-71ff16a43a5sm9453047b3.10.2025.08.28.06.19.07
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 28 Aug 2025 06:19:08 -0700 (PDT)
-X-Relaying-Domain: broadcom.com
-X-CFilter-Loop: Reflected
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-2445803f0cfso12358035ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 06:19:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1756387147; x=1756991947; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=R/9NtnykLFlbdwq/BFwbqCg1JY7GaLggRNo0Kw7S3VI=;
-        b=aHagub5newfmYfUftcXrXpTIaVB2prJS3YwIdO5TQYsNTYhkJ4jCxDwR3AeZnvKB6k
-         S4ONQyE24LgTRB0FwP5B48Aug7gM204wo5WW3/B7AtxfVM97AxbtiK7ENBe7+Dy92rgP
-         NUsREo34vhHAXSa+uvOQQI2hAEmMDk/oNHL7g=
-X-Forwarded-Encrypted: i=1; AJvYcCULbvypCWuyjWo1qoHMZxM/uD2sD8GVDGsamokuS59YIUD4qvr47E/wK+o8uR01fsdksVOicF3XzU3Xrx4=@vger.kernel.org
-X-Received: by 2002:a17:903:240e:b0:248:df64:ec6a with SMTP id d9443c01a7336-248df64fa0fmr27643645ad.15.1756387146772;
-        Thu, 28 Aug 2025 06:19:06 -0700 (PDT)
-X-Received: by 2002:a17:903:240e:b0:248:df64:ec6a with SMTP id d9443c01a7336-248df64fa0fmr27643165ad.15.1756387146310;
-        Thu, 28 Aug 2025 06:19:06 -0700 (PDT)
-Received: from hyd-csg-thor2-h1-server2.dhcp.broadcom.net ([192.19.203.250])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-248b6a16ae3sm36468705ad.137.2025.08.28.06.19.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Aug 2025 06:19:05 -0700 (PDT)
-From: Bhargava Marreddy <bhargava.marreddy@broadcom.com>
-To: davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	andrew+netdev@lunn.ch,
-	horms@kernel.org
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	michael.chan@broadcom.com,
-	pavan.chebbi@broadcom.com,
-	vsrama-krishna.nemani@broadcom.com,
-	Bhargava Marreddy <bhargava.marreddy@broadcom.com>,
-	Vikas Gupta <vikas.gupta@broadcom.com>,
-	Rajashekar Hudumula <rajashekar.hudumula@broadcom.com>
-Subject: [v5, net-next 3/9] bng_en: Introduce VNIC
-Date: Thu, 28 Aug 2025 18:45:41 +0000
-Message-ID: <20250828184547.242496-4-bhargava.marreddy@broadcom.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20250828184547.242496-1-bhargava.marreddy@broadcom.com>
-References: <20250828184547.242496-1-bhargava.marreddy@broadcom.com>
+	s=arc-20240116; t=1756406751; c=relaxed/simple;
+	bh=//Upra/X2Pbl23/cwYHGyyFdIDag/vCHd2kVf6DOrxg=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=TnXG4MPoAnFFLBgOtCe+G1nx2Xi/7GvYpqbVk6naICwVmJmglAOQZaoQG08DBJBNmteMMyk0sHGvsBDolV79aRN6uUwaSScY/4QeBLQyonWOWGqvMh1KAqxQSZk3XWivnfXQtBkObhIYGrJonmvw9qKFxO3catJ/Eno91ugHH2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=GSaH+mvR; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1756406746;
+	bh=//Upra/X2Pbl23/cwYHGyyFdIDag/vCHd2kVf6DOrxg=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=GSaH+mvRR7lt4BTMAGS4bChGVOccfoL0HGsMeji6UhICY0GO1qbrfXM75N1RyAEQy
+	 CNty/TlD+Eqnn10SWid41ZJcSacyMGVLcM/7amTNbmPUBqEqeK2hqd0scaeH01cYkz
+	 oPuGAMEYYcRj00hxkfa8xvERa6oF0tOTNtLQFBqV89dnWNEJ4wB3KT7POs1zJoMCEB
+	 Y1b3RsNrWsVAoQNuFMu1NmUzLSWKSMWNTObBXQ6aaeFyak499PpnqqEc+lmhc7RB2P
+	 o0ShqcRW6DzfUpuk0b9L9pg/P26rJwlvJbsD2tf47p4SeePCFELepXXkn2oXqqHbjg
+	 CtlemsxlUlH9Q==
+Received: from [IPv6:2606:6d00:11:5a76::5ac] (unknown [IPv6:2606:6d00:11:5a76::5ac])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: nicolas)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id E014817E1259;
+	Thu, 28 Aug 2025 20:45:45 +0200 (CEST)
+Message-ID: <a44e8e04903edac00cf1a6d8304b2c9433b25ba1.camel@collabora.com>
+Subject: Re: [PATCH v2 1/4] media: uapi: Move colorimetry controls at the
+ end of the file
+From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+To: Paul Kocialkowski <paulk@sys-base.io>, linux-media@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil
+	 <hverkuil@xs4all.nl>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Date: Thu, 28 Aug 2025 14:45:42 -0400
+In-Reply-To: <20250824180735.765587-2-paulk@sys-base.io>
+References: <20250824180735.765587-1-paulk@sys-base.io>
+	 <20250824180735.765587-2-paulk@sys-base.io>
+Autocrypt: addr=nicolas.dufresne@collabora.com; prefer-encrypt=mutual;
+ keydata=mDMEaCN2ixYJKwYBBAHaRw8BAQdAM0EHepTful3JOIzcPv6ekHOenE1u0vDG1gdHFrChD
+ /e0J05pY29sYXMgRHVmcmVzbmUgPG5pY29sYXNAbmR1ZnJlc25lLmNhPoicBBMWCgBEAhsDBQsJCA
+ cCAiICBhUKCQgLAgQWAgMBAh4HAheABQkJZfd1FiEE7w1SgRXEw8IaBG8S2UGUUSlgcvQFAmibrjo
+ CGQEACgkQ2UGUUSlgcvQlQwD/RjpU1SZYcKG6pnfnQ8ivgtTkGDRUJ8gP3fK7+XUjRNIA/iXfhXMN
+ abIWxO2oCXKf3TdD7aQ4070KO6zSxIcxgNQFtDFOaWNvbGFzIER1ZnJlc25lIDxuaWNvbGFzLmR1Z
+ nJlc25lQGNvbGxhYm9yYS5jb20+iJkEExYKAEECGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4
+ AWIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaCyyxgUJCWX3dQAKCRDZQZRRKWBy9ARJAP96pFmLffZ
+ smBUpkyVBfFAf+zq6BJt769R0al3kHvUKdgD9G7KAHuioxD2v6SX7idpIazjzx8b8rfzwTWyOQWHC
+ AAS0LU5pY29sYXMgRHVmcmVzbmUgPG5pY29sYXMuZHVmcmVzbmVAZ21haWwuY29tPoiZBBMWCgBBF
+ iEE7w1SgRXEw8IaBG8S2UGUUSlgcvQFAmibrGYCGwMFCQll93UFCwkIBwICIgIGFQoJCAsCBBYCAw
+ ECHgcCF4AACgkQ2UGUUSlgcvRObgD/YnQjfi4+L8f4fI7p1pPMTwRTcaRdy6aqkKEmKsCArzQBAK8
+ bRLv9QjuqsE6oQZra/RB4widZPvphs78H0P6NmpIJ
+Organization: Collabora Canada
+Content-Type: multipart/signed; micalg="pgp-sha512";
+	protocol="application/pgp-signature"; boundary="=-GntifHjHFo+uE3nWfLj3"
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
 
-Add the VNIC-specific structures and DMA memory necessary to support
-UC/MC and RSS functionality.
 
-Signed-off-by: Bhargava Marreddy <bhargava.marreddy@broadcom.com>
-Reviewed-by: Vikas Gupta <vikas.gupta@broadcom.com>
-Reviewed-by: Rajashekar Hudumula <rajashekar.hudumula@broadcom.com>
+--=-GntifHjHFo+uE3nWfLj3
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+Le dimanche 24 ao=C3=BBt 2025 =C3=A0 20:07 +0200, Paul Kocialkowski a =C3=
+=A9crit=C2=A0:
+> The colorimetry controls class is defined after the stateless codec
+> class at the top of the controls header. It is currently defined in
+> the middle of stateless codec controls.
+>=20
+> Move the colorimetry controls after the stateless codec controls,
+> at the end of the file.
+>=20
+> Signed-off-by: Paul Kocialkowski <paulk@sys-base.io>
+
+Reviewed-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+
+> ---
+> =C2=A0include/uapi/linux/v4l2-controls.h | 68 +++++++++++++++------------=
 ---
- .../net/ethernet/broadcom/bnge/bnge_netdev.c  | 129 ++++++++++++++++++
- .../net/ethernet/broadcom/bnge/bnge_netdev.h  |  30 ++++
- 2 files changed, 159 insertions(+)
+> =C2=A01 file changed, 34 insertions(+), 34 deletions(-)
+>=20
+> diff --git a/include/uapi/linux/v4l2-controls.h b/include/uapi/linux/v4l2=
+-
+> controls.h
+> index f836512e9deb..4a483ff1c418 100644
+> --- a/include/uapi/linux/v4l2-controls.h
+> +++ b/include/uapi/linux/v4l2-controls.h
+> @@ -2549,40 +2549,6 @@ struct v4l2_ctrl_hevc_scaling_matrix {
+> =C2=A0	__u8	scaling_list_dc_coef_32x32[2];
+> =C2=A0};
+> =C2=A0
+> -#define V4L2_CID_COLORIMETRY_CLASS_BASE	(V4L2_CTRL_CLASS_COLORIMETRY
+> | 0x900)
+> -#define V4L2_CID_COLORIMETRY_CLASS	(V4L2_CTRL_CLASS_COLORIMETRY | 1)
+> -
+> -#define
+> V4L2_CID_COLORIMETRY_HDR10_CLL_INFO	(V4L2_CID_COLORIMETRY_CLASS_BASE + 0)
+> -
+> -struct v4l2_ctrl_hdr10_cll_info {
+> -	__u16 max_content_light_level;
+> -	__u16 max_pic_average_light_level;
+> -};
+> -
+> -#define
+> V4L2_CID_COLORIMETRY_HDR10_MASTERING_DISPLAY	(V4L2_CID_COLORIMETRY_CLASS_=
+BASE +1)
+> -
+> -#define V4L2_HDR10_MASTERING_PRIMARIES_X_LOW	5
+> -#define V4L2_HDR10_MASTERING_PRIMARIES_X_HIGH	37000
+> -#define V4L2_HDR10_MASTERING_PRIMARIES_Y_LOW	5
+> -#define V4L2_HDR10_MASTERING_PRIMARIES_Y_HIGH	42000
+> -#define V4L2_HDR10_MASTERING_WHITE_POINT_X_LOW	5
+> -#define V4L2_HDR10_MASTERING_WHITE_POINT_X_HIGH	37000
+> -#define V4L2_HDR10_MASTERING_WHITE_POINT_Y_LOW	5
+> -#define V4L2_HDR10_MASTERING_WHITE_POINT_Y_HIGH	42000
+> -#define V4L2_HDR10_MASTERING_MAX_LUMA_LOW	50000
+> -#define V4L2_HDR10_MASTERING_MAX_LUMA_HIGH	100000000
+> -#define V4L2_HDR10_MASTERING_MIN_LUMA_LOW	1
+> -#define V4L2_HDR10_MASTERING_MIN_LUMA_HIGH	50000
+> -
+> -struct v4l2_ctrl_hdr10_mastering_display {
+> -	__u16 display_primaries_x[3];
+> -	__u16 display_primaries_y[3];
+> -	__u16 white_point_x;
+> -	__u16 white_point_y;
+> -	__u32 max_display_mastering_luminance;
+> -	__u32 min_display_mastering_luminance;
+> -};
+> -
+> =C2=A0/* Stateless VP9 controls */
+> =C2=A0
+> =C2=A0#define V4L2_VP9_LOOP_FILTER_FLAG_DELTA_ENABLED	0x1
+> @@ -3515,4 +3481,38 @@ struct v4l2_ctrl_av1_film_grain {
+> =C2=A0#define V4L2_CID_MPEG_MFC51_BASE=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0 V4L2_CID_CODEC_MFC51_BASE
+> =C2=A0#endif
+> =C2=A0
+> +#define V4L2_CID_COLORIMETRY_CLASS_BASE	(V4L2_CTRL_CLASS_COLORIMETRY
+> | 0x900)
+> +#define V4L2_CID_COLORIMETRY_CLASS	(V4L2_CTRL_CLASS_COLORIMETRY | 1)
+> +
+> +#define
+> V4L2_CID_COLORIMETRY_HDR10_CLL_INFO	(V4L2_CID_COLORIMETRY_CLASS_BASE + 0)
+> +
+> +struct v4l2_ctrl_hdr10_cll_info {
+> +	__u16 max_content_light_level;
+> +	__u16 max_pic_average_light_level;
+> +};
+> +
+> +#define
+> V4L2_CID_COLORIMETRY_HDR10_MASTERING_DISPLAY	(V4L2_CID_COLORIMETRY_CLASS_=
+BASE +1)
+> +
+> +#define V4L2_HDR10_MASTERING_PRIMARIES_X_LOW	5
+> +#define V4L2_HDR10_MASTERING_PRIMARIES_X_HIGH	37000
+> +#define V4L2_HDR10_MASTERING_PRIMARIES_Y_LOW	5
+> +#define V4L2_HDR10_MASTERING_PRIMARIES_Y_HIGH	42000
+> +#define V4L2_HDR10_MASTERING_WHITE_POINT_X_LOW	5
+> +#define V4L2_HDR10_MASTERING_WHITE_POINT_X_HIGH	37000
+> +#define V4L2_HDR10_MASTERING_WHITE_POINT_Y_LOW	5
+> +#define V4L2_HDR10_MASTERING_WHITE_POINT_Y_HIGH	42000
+> +#define V4L2_HDR10_MASTERING_MAX_LUMA_LOW	50000
+> +#define V4L2_HDR10_MASTERING_MAX_LUMA_HIGH	100000000
+> +#define V4L2_HDR10_MASTERING_MIN_LUMA_LOW	1
+> +#define V4L2_HDR10_MASTERING_MIN_LUMA_HIGH	50000
+> +
+> +struct v4l2_ctrl_hdr10_mastering_display {
+> +	__u16 display_primaries_x[3];
+> +	__u16 display_primaries_y[3];
+> +	__u16 white_point_x;
+> +	__u16 white_point_y;
+> +	__u32 max_display_mastering_luminance;
+> +	__u32 min_display_mastering_luminance;
+> +};
+> +
+> =C2=A0#endif
 
-diff --git a/drivers/net/ethernet/broadcom/bnge/bnge_netdev.c b/drivers/net/ethernet/broadcom/bnge/bnge_netdev.c
-index dd56e8b5eee9..59357b89ac29 100644
---- a/drivers/net/ethernet/broadcom/bnge/bnge_netdev.c
-+++ b/drivers/net/ethernet/broadcom/bnge/bnge_netdev.c
-@@ -435,6 +435,122 @@ static int bnge_alloc_tx_rings(struct bnge_net *bn)
- 	return 0;
- }
- 
-+static void bnge_free_vnic_attributes(struct bnge_net *bn)
-+{
-+	struct pci_dev *pdev = bn->bd->pdev;
-+	struct bnge_vnic_info *vnic;
-+	int i;
-+
-+	if (!bn->vnic_info)
-+		return;
-+
-+	for (i = 0; i < bn->nr_vnics; i++) {
-+		vnic = &bn->vnic_info[i];
-+
-+		kfree(vnic->uc_list);
-+		vnic->uc_list = NULL;
-+
-+		if (vnic->mc_list) {
-+			dma_free_coherent(&pdev->dev, vnic->mc_list_size,
-+					  vnic->mc_list, vnic->mc_list_mapping);
-+			vnic->mc_list = NULL;
-+		}
-+
-+		if (vnic->rss_table) {
-+			dma_free_coherent(&pdev->dev, vnic->rss_table_size,
-+					  vnic->rss_table,
-+					  vnic->rss_table_dma_addr);
-+			vnic->rss_table = NULL;
-+		}
-+
-+		vnic->rss_hash_key = NULL;
-+		vnic->flags = 0;
-+	}
-+}
-+
-+static int bnge_alloc_vnic_attributes(struct bnge_net *bn)
-+{
-+	struct bnge_dev *bd = bn->bd;
-+	struct bnge_vnic_info *vnic;
-+	int i, rc = 0, size;
-+
-+	for (i = 0; i < bn->nr_vnics; i++) {
-+		vnic = &bn->vnic_info[i];
-+
-+		if (vnic->flags & BNGE_VNIC_UCAST_FLAG) {
-+			int mem_size = (BNGE_MAX_UC_ADDRS - 1) * ETH_ALEN;
-+
-+			if (mem_size > 0) {
-+				vnic->uc_list = kmalloc(mem_size, GFP_KERNEL);
-+				if (!vnic->uc_list) {
-+					rc = -ENOMEM;
-+					goto out;
-+				}
-+			}
-+		}
-+
-+		if (vnic->flags & BNGE_VNIC_MCAST_FLAG) {
-+			vnic->mc_list_size = BNGE_MAX_MC_ADDRS * ETH_ALEN;
-+			vnic->mc_list =
-+				dma_alloc_coherent(bd->dev,
-+						   vnic->mc_list_size,
-+						   &vnic->mc_list_mapping,
-+						   GFP_KERNEL);
-+			if (!vnic->mc_list) {
-+				rc = -ENOMEM;
-+				goto out;
-+			}
-+		}
-+
-+		/* Allocate rss table and hash key */
-+		size = L1_CACHE_ALIGN(BNGE_MAX_RSS_TABLE_SIZE);
-+
-+		vnic->rss_table_size = size + HW_HASH_KEY_SIZE;
-+		vnic->rss_table = dma_alloc_coherent(bd->dev,
-+						     vnic->rss_table_size,
-+						     &vnic->rss_table_dma_addr,
-+						     GFP_KERNEL);
-+		if (!vnic->rss_table) {
-+			rc = -ENOMEM;
-+			goto out;
-+		}
-+
-+		vnic->rss_hash_key = ((void *)vnic->rss_table) + size;
-+		vnic->rss_hash_key_dma_addr = vnic->rss_table_dma_addr + size;
-+	}
-+
-+	return 0;
-+
-+out:
-+	return rc;
-+}
-+
-+static int bnge_alloc_vnics(struct bnge_net *bn)
-+{
-+	int num_vnics;
-+
-+	/* Allocate only 1 VNIC for now
-+	 * Additional VNICs will be added based on RFS/NTUPLE in future patches
-+	 */
-+	num_vnics = 1;
-+
-+	bn->vnic_info = kcalloc(num_vnics, sizeof(struct bnge_vnic_info),
-+				GFP_KERNEL);
-+	if (!bn->vnic_info)
-+		return -ENOMEM;
-+
-+	bn->nr_vnics = num_vnics;
-+
-+	return 0;
-+}
-+
-+static void bnge_free_vnics(struct bnge_net *bn)
-+{
-+	kfree(bn->vnic_info);
-+	bn->vnic_info = NULL;
-+	bn->nr_vnics = 0;
-+}
-+
- static void bnge_free_ring_grps(struct bnge_net *bn)
- {
- 	kfree(bn->grp_info);
-@@ -443,11 +559,13 @@ static void bnge_free_ring_grps(struct bnge_net *bn)
- 
- static void bnge_free_core(struct bnge_net *bn)
- {
-+	bnge_free_vnic_attributes(bn);
- 	bnge_free_tx_rings(bn);
- 	bnge_free_rx_rings(bn);
- 	bnge_free_nq_tree(bn);
- 	bnge_free_nq_arrays(bn);
- 	bnge_free_ring_grps(bn);
-+	bnge_free_vnics(bn);
- 	kfree(bn->tx_ring_map);
- 	bn->tx_ring_map = NULL;
- 	kfree(bn->tx_ring);
-@@ -535,6 +653,10 @@ static int bnge_alloc_core(struct bnge_net *bn)
- 		txr->bnapi = bnapi2;
- 	}
- 
-+	rc = bnge_alloc_vnics(bn);
-+	if (rc)
-+		goto err_free_core;
-+
- 	rc = bnge_alloc_nq_arrays(bn);
- 	if (rc)
- 		goto err_free_core;
-@@ -553,6 +675,13 @@ static int bnge_alloc_core(struct bnge_net *bn)
- 	if (rc)
- 		goto err_free_core;
- 
-+	bn->vnic_info[BNGE_VNIC_DEFAULT].flags |= BNGE_VNIC_RSS_FLAG |
-+						  BNGE_VNIC_MCAST_FLAG |
-+						  BNGE_VNIC_UCAST_FLAG;
-+	rc = bnge_alloc_vnic_attributes(bn);
-+	if (rc)
-+		goto err_free_core;
-+
- 	return 0;
- 
- err_free_core:
-diff --git a/drivers/net/ethernet/broadcom/bnge/bnge_netdev.h b/drivers/net/ethernet/broadcom/bnge/bnge_netdev.h
-index 8041951da187..7c56786f5a71 100644
---- a/drivers/net/ethernet/broadcom/bnge/bnge_netdev.h
-+++ b/drivers/net/ethernet/broadcom/bnge/bnge_netdev.h
-@@ -178,6 +178,8 @@ struct bnge_net {
- 
- 	/* grp_info indexed by napi/nq index */
- 	struct bnge_ring_grp_info	*grp_info;
-+	struct bnge_vnic_info		*vnic_info;
-+	int				nr_vnics;
- 	int				total_irqs;
- };
- 
-@@ -302,4 +304,32 @@ struct bnge_napi {
- 	struct bnge_tx_ring_info	*tx_ring[BNGE_MAX_TXR_PER_NAPI];
- };
- 
-+#define INVALID_STATS_CTX_ID	-1
-+#define BNGE_VNIC_DEFAULT	0
-+#define BNGE_MAX_UC_ADDRS	4
-+
-+struct bnge_vnic_info {
-+	u8		*uc_list;
-+	dma_addr_t	rss_table_dma_addr;
-+	__le16		*rss_table;
-+	dma_addr_t	rss_hash_key_dma_addr;
-+	u64		*rss_hash_key;
-+	int		rss_table_size;
-+#define BNGE_RSS_TABLE_ENTRIES		64
-+#define BNGE_RSS_TABLE_SIZE		(BNGE_RSS_TABLE_ENTRIES * 4)
-+#define BNGE_RSS_TABLE_MAX_TBL		8
-+#define BNGE_MAX_RSS_TABLE_SIZE			\
-+	(BNGE_RSS_TABLE_SIZE * BNGE_RSS_TABLE_MAX_TBL)
-+
-+	u8		*mc_list;
-+	int		mc_list_size;
-+	int		mc_list_count;
-+	dma_addr_t	mc_list_mapping;
-+#define BNGE_MAX_MC_ADDRS	16
-+
-+	u32		flags;
-+#define BNGE_VNIC_RSS_FLAG	1
-+#define BNGE_VNIC_MCAST_FLAG	4
-+#define BNGE_VNIC_UCAST_FLAG	8
-+};
- #endif /* _BNGE_NETDEV_H_ */
--- 
-2.47.3
+--=-GntifHjHFo+uE3nWfLj3
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
 
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaLCj1wAKCRDZQZRRKWBy
+9NbRAP9SJ+CQdKYlBASaUM6wrL9UH/xeYoYhaH8K0/LfLuaPQgD/WHIU2B18YI3f
+nvHSH5giTNnqK0NLeeASLGpGD3eLUgM=
+=Skjj
+-----END PGP SIGNATURE-----
+
+--=-GntifHjHFo+uE3nWfLj3--
 
