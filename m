@@ -1,76 +1,88 @@
-Return-Path: <linux-kernel+bounces-789191-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73DCAB39218
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 05:09:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4C3CB3921B
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 05:10:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B2625E71B4
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 03:09:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44ACA206F53
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 03:10:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16CFC261B96;
-	Thu, 28 Aug 2025 03:09:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 901F12620D5;
+	Thu, 28 Aug 2025 03:10:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=valinux.co.jp header.i=@valinux.co.jp header.b="kuwESRfF"
-Received: from OS0P286CU010.outbound.protection.outlook.com (mail-japanwestazon11011037.outbound.protection.outlook.com [40.107.74.37])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="LDd6hMhT"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2048.outbound.protection.outlook.com [40.107.237.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A21721AAE17
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 03:09:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.74.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABEBB1AAE17;
+	Thu, 28 Aug 2025 03:09:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.48
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756350550; cv=fail; b=pqkOI+ih4NKDWFvZWFj8ICZs5XZRNTTMPcmfvAYjo8hvJZ4EHR3QQ7O7H2AFs1CKTKLGYz7SIfCdie8/4+JiNfQ70f57mpzblJCd/CWE9e2daTYm84kM0IZWGe09NNaG8WqXV+NaNOSIJzSrMNT29S90l4BSSuJ8teiOz297Tvw=
+	t=1756350599; cv=fail; b=K64t3o/7tU0b0ioYWZJ2O8X5HYLU5bwQm5lIim8TtCDsx7mqejGRyzcfueH1hHF7V193OTP1tYsrmtpAx9bVL7+DK9ChX+Ciep8SKlApeHtAhLBK7nWj+0R0OdQdsr1CIRz74lIUBIkTTylJlUcM8Su+//YdP70JrH2aiJSm1bY=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756350550; c=relaxed/simple;
-	bh=I4sy2oUnHFd2AU74jyT8b9NIFehgnJCaWAHzo6lky3o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=IbzpWC4oHphNylTR8qQndFeYXuKIC/FCZ88YUx+/2Fh0h7Zp0l9mKfWwOF4JAnutn5nyqR85KgyuIBnv8uSkmn5fnAPgA8IjU8u0Kkm7Zc4gXWoacbnSJj/aoM7H//SXfyODc/KgfdtVCgAzILk+g9aUgFLbwnqKvCX00snMs4I=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=valinux.co.jp; spf=pass smtp.mailfrom=valinux.co.jp; dkim=pass (1024-bit key) header.d=valinux.co.jp header.i=@valinux.co.jp header.b=kuwESRfF; arc=fail smtp.client-ip=40.107.74.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=valinux.co.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=valinux.co.jp
+	s=arc-20240116; t=1756350599; c=relaxed/simple;
+	bh=/4urinDjFkml03xCrt/JMF5sCVYowt+yq9Zf5BMBKVk=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=QkSv1Rp5Dllb6jQrpaLNMO/Qb0C7OFQUfV4c5L+qbUcHLiS08uHDnz0id+M6UIRkFz+D9evUA1h0/tAZX+k6az+vbJcYGsg5dlA6mQeTWgNUcScHqhu0DjLAuAlh1hBBiP5WJ7Z+WzahVVjIECaq8ZAtR+ptWkLmTViVkMpVpiM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=LDd6hMhT; arc=fail smtp.client-ip=40.107.237.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=sxdLbAkPZwddjuAAJwahlHl80X8Jvks9wNdKbI9KtaB9Pa85HJ4obFd7tes4udiSAzm31YsNwTH8FMeZkIjzo6jun93SFgARC8MrV3+DvdFMYK2VJVIvuS6ln4e04aGQQ7x2hXxOY1cMjQ1rduggloURViRLm6Ybl/qrqd3stYYXILirMkfEkMTt3jczOQkWpd1cfp0oWR/Bk0XbY/TKzWuwMb+MXlyXhUZaRuMbY4Su51TNhWgsf+SK7XXfcv24OWGDz4w43XrcWKnH1c1a7bJtz95D88Szr/qKX4wD99lBS0TXpCjVzVR8EfrKqqkoVCmm3EhFX2oF1EcTa0LIGg==
+ b=wCCHigbv4tPNWVWFVe/gt3m2ljZDsl2zeVDmUuvzI5aV2C+OXpnJYPZ5I5hI71RAl7yrHG3bBcIoOOwch1/JvCIHuZuQYNhZRODgiRst/uoosy5y/xk4E+K/yW9fqzFkOX92fJoXZOzNGZcOBR6x/s2rUF2hHkW7vNAWLfIQDjQqE/QEgoLC/HtulraySoPEDinlSBjZ8X5u/VSbSo8FFzVhk5x8rMQddgZPf2Yw7NyM5MAMg+319KdGxeUKmnmbUhG8VTWpT77vMMeh7LpIR1Y+PckbqWHzgqwxyCg0B9QVwac5sXxddokP9rlAfrQDDJCkiKZTfUQ1aubETR43Wg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=hJhw0qxM/LAU71EEZ5AbPC52nLOGrUVertbown/9J5I=;
- b=rNhMlb+aqG5+95vX4jyE8IkvtJTnFc4JLx1g2i2YPg1aJHutaPaIOmRMb1PHzVfp/1H9PK6FABeg73GU0K8EDqWf6U50VqKsomUERZLyocZD32GWHiyiHtNYg+67qLOU9quIhvWD3VarZcmDqIwMQ3JiqS/vlQI8ZSzcy7pOZFpeOwwP5ne+cPtToDdS+jBfp8obvOsr4OKKGDE8318EqlYh7mHM5aZ+wrAHrknqPo7P7zMh6AjaXp5lFZ6hCmiE77ob1JvMvYncQ7y7PGRno23+P8qBkASQB92AoCDD39X22HJtDS6qQK7A5h/2Z0AD6lioP8A3E3ku0/DgNpREFw==
+ bh=LIGiGK9zk7N3JZB3cSVCWBPo1qfB+KQXbhgDFM5o4bY=;
+ b=NjHWB1xhgRSI80X2JtiBjNpXrZTUxazBlVCBxtcPkfurihXS4YJUUSiR54xlcXKVEzBdaKTs+YB60aR2Dx3Hm28CU5dMtOx106zNOzk5slvs/rw9vRSqy72jRHshdvS6CN/UBScQS2xSSqgUwwpWR3UapoIZ8XnpWC0WDp+PQxQE4qLsbupQGjZv7cxqxG2Qs5EwSCOsgyL2QY3XfKXIRN4mVx7ALJmrErQHc/lVbR7JgRSWSoFKJkVZHiJIpIH55aEVT6N0qYRmmrb+F7kbHN6ZxRaG30gBKQhV3o0k6ooHSvxek/ZjES+ffPKGYTs4a7CTqZoyxbWhYjCEHjNO2w==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=valinux.co.jp; dmarc=pass action=none
- header.from=valinux.co.jp; dkim=pass header.d=valinux.co.jp; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=valinux.co.jp;
- s=selector1;
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hJhw0qxM/LAU71EEZ5AbPC52nLOGrUVertbown/9J5I=;
- b=kuwESRfF7OKrmZxYRNKzpALhBS/ZzwXtsMpqqhgmIYuQSQgIWCybnXGKjImpVGMXT6vOJi5qb0CMLCcI+Q6Io3oL4ucVXVx+7awWqDbTLZRPFi/KHMHNXlLthdlU1tUkPlu0xILb2JOErqYFBDytz7EOuJFpBFOPsgypFXr9JCI=
+ bh=LIGiGK9zk7N3JZB3cSVCWBPo1qfB+KQXbhgDFM5o4bY=;
+ b=LDd6hMhTdkG6tAKBBalS+sAkQZc5Gj0FDVG+k4uOcoaUYYA93/xIUVjbx/AqAkZS8QvqIT3r+u/PIGnzAzIOE7lVCibru/c4CdaEYHb8EWiJJgRoTna125XQ9cIZGvgB0FNLDtvFbSaVlzd0OnwsCv1Qpshrf0oSXn1ctLgptOj7wMwbLEM9XDKzv9KdoDVNB2mqTTibafEjftEnmm8CNbLV+PiCFv0SGbPw1bWFKtDCtMfeeM4btVIHCoztMRqfEqjo87J8/q94BKKmsXwcsjfjKoQUr3h232GRfzVq+h05P1HOoWE02KzOv8QzpxRXFJ2TXF0qJZZuk8P931mEpA==
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=valinux.co.jp;
-Received: from OSZP286MB0982.JPNP286.PROD.OUTLOOK.COM (2603:1096:604:fe::6) by
- OS3P286MB3212.JPNP286.PROD.OUTLOOK.COM (2603:1096:604:20c::9) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9052.21; Thu, 28 Aug 2025 03:09:05 +0000
-Received: from OSZP286MB0982.JPNP286.PROD.OUTLOOK.COM
- ([fe80::fb9b:13f3:8329:52e3]) by OSZP286MB0982.JPNP286.PROD.OUTLOOK.COM
- ([fe80::fb9b:13f3:8329:52e3%5]) with mapi id 15.20.9052.019; Thu, 28 Aug 2025
- 03:09:02 +0000
-Date: Thu, 28 Aug 2025 12:09:00 +0900
-From: Koichiro Den <den@valinux.co.jp>
-To: Marc Zyngier <maz@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, tglx@linutronix.de, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] irqchip/gic-v3-its: Fix invalid wait context lockdep
- report
-Message-ID: <pkfekcmetqyoj7rwvr77kisu7ok7bc6srq5maoydisnsk4bnyy@wimnw744lp5t>
-References: <20250827073848.1410315-1-den@valinux.co.jp>
- <86h5xtdj6m.wl-maz@kernel.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <86h5xtdj6m.wl-maz@kernel.org>
-X-ClientProxiedBy: TYCP286CA0072.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:31a::20) To OSZP286MB0982.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:604:fe::6)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from LV2PR12MB5968.namprd12.prod.outlook.com (2603:10b6:408:14f::7)
+ by DM4PR12MB7718.namprd12.prod.outlook.com (2603:10b6:8:102::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.20; Thu, 28 Aug
+ 2025 03:09:53 +0000
+Received: from LV2PR12MB5968.namprd12.prod.outlook.com
+ ([fe80::e6dd:1206:6677:f9c4]) by LV2PR12MB5968.namprd12.prod.outlook.com
+ ([fe80::e6dd:1206:6677:f9c4%6]) with mapi id 15.20.9073.010; Thu, 28 Aug 2025
+ 03:09:53 +0000
+Message-ID: <8cb256a0-bf25-4d14-8847-9c5e8f02533a@nvidia.com>
+Date: Wed, 27 Aug 2025 20:09:50 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 4/8] gpu: nova-core: firmware: process the GSP
+ bootloader
+To: Alexandre Courbot <acourbot@nvidia.com>, Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>,
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>
+Cc: Alistair Popple <apopple@nvidia.com>,
+ Joel Fernandes <joelagnelf@nvidia.com>, Timur Tabi <ttabi@nvidia.com>,
+ rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+ nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+References: <20250826-nova_firmware-v2-0-93566252fe3a@nvidia.com>
+ <20250826-nova_firmware-v2-4-93566252fe3a@nvidia.com>
+Content-Language: en-US
+From: John Hubbard <jhubbard@nvidia.com>
+In-Reply-To: <20250826-nova_firmware-v2-4-93566252fe3a@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BYAPR01CA0048.prod.exchangelabs.com (2603:10b6:a03:94::25)
+ To LV2PR12MB5968.namprd12.prod.outlook.com (2603:10b6:408:14f::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,280 +90,270 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: OSZP286MB0982:EE_|OS3P286MB3212:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3b5faffa-096c-4b06-080f-08dde5e03d67
+X-MS-TrafficTypeDiagnostic: LV2PR12MB5968:EE_|DM4PR12MB7718:EE_
+X-MS-Office365-Filtering-Correlation-Id: 53675d96-4bb4-4bb7-4bae-08dde5e05c05
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|10070799003|376014|366016|1800799024;
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|7416014|376014|921020;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Rb1lfzZunrRLlmseeSYB2HC4tukgLJMyHuibOgwU4e4Gq8IWldQdd9qcYwx8?=
- =?us-ascii?Q?VCmvG7WwgiMUG4MECDVlY0q8U8TiVF/2tFwpz+hUpQYiInMbnYt5hn3UgcI2?=
- =?us-ascii?Q?qhOFJOOgSQ/qXue1EWBdGox6UbsjMLAC8pVh8I5TBsuDaAb9L74iMbtgIR9z?=
- =?us-ascii?Q?Uu9n2PuwGZJQheI8kziBlUWCK4H5kYWJgsvwxl80tXEJC+xHJHtt+db0LNhv?=
- =?us-ascii?Q?u/bAG0qrwvc2J8SDqPz5Mqts96TbRlFRPgAWUHl5ov0u+loXWuYP8zfbU0AU?=
- =?us-ascii?Q?BgfAxte8MtZb93aaxgnsxtB7Comedy7Bdg+Dr/wX0ic3cc2Kh+H/7YwIzsWR?=
- =?us-ascii?Q?9V2r9vKYjIfqeuplyr8Nd13eWBc6RvxJ/ipFVu8Z5PnpuvQGfyIO4t0rWgz5?=
- =?us-ascii?Q?MgHzhrYzUDjvFrbEeJYErAwazmUIgTNmMEgnmwYAIuji0ViH+JODbLIOP30M?=
- =?us-ascii?Q?7IZHxVlGA+tdw/074BJVH8G4YBum1x1VNT0nQ/Vj6JIrOlwvY21782a4xO3o?=
- =?us-ascii?Q?XrintdEyQBg1bRTcKxRURUzNr7y1Ey0M64/3GaXDjlUIzNPkSi8h837CpVWF?=
- =?us-ascii?Q?NqKVlzuVL9H64abTOT4Z0iuVpJrKG8mgzzZEcZYqSKVkYfjyAV+gJGWxwcoq?=
- =?us-ascii?Q?fzihj4k0Y5b6kHzOwVYhSji5m0mJJT18My/NcIpIARzQ/orvbqPAGBQOfaiB?=
- =?us-ascii?Q?rd5X8r1/nh9wy+okcaLIsbELD/xbLDTeJhXk6zDzoIfpCUTuH/8HygFdNZPg?=
- =?us-ascii?Q?UJ53Lie55lVDmweIXxQOFp1ZedP66CaIvIFEMYhZC+35a8xN6XghhVMCiOW2?=
- =?us-ascii?Q?44STkELjVqRp/86SutrsobJEbjx0cHiuUfS6K0ng8rcZL5baAZGAYlGpri6b?=
- =?us-ascii?Q?rBRzfRMrYr2l/bev/F+bvcgT9ZFpHEDz/NOEQvPkuCOY5xSa0stjXqJ4+R7K?=
- =?us-ascii?Q?hByE4HQtfVmCV6URr7e2sL1DS9qCDN0dVPsn+oxxkboGjdJuqnoFBKroahp9?=
- =?us-ascii?Q?nJCMjpTAuoxutGdBEv1cqBNhJoDcaub524Hgpy3oRdbrfLKlB1df4QCve6yb?=
- =?us-ascii?Q?AcQBUsNX82U+LWWw0fvHWO6vwWLN4PP/hOoKbHGXWjU2uZe3b2/7HMbMcDOQ?=
- =?us-ascii?Q?uE9cI9Dl2YLUcyvf/RQm/QoiDMsYlzAeAd9NbAu2m/1gWqoprYzZ3g1zMkq2?=
- =?us-ascii?Q?hQdl3Renp7iJSoXeyb8jY5ieacYdM0TpmniYKFvIPR9CYlQF1A9GpybAU43O?=
- =?us-ascii?Q?mmDZYszbSuQPtSBM+FLEsqwpPvRZXIK9fJF+CGBwbTSXFWBTIOHjn0W9B70c?=
- =?us-ascii?Q?Y2fE6g29L+dD2pSnLdKP/AoK28Lhh+4CQJTImBFerR8POeb+tlFvbnImbLW5?=
- =?us-ascii?Q?eKPysJIBoZptotfreNXV8hXi8WTE7I1Mpo9zkFn80r04xZTSxL1BUROl4sWa?=
- =?us-ascii?Q?H8rV1/k6ocQ=3D?=
+	=?utf-8?B?d1R1MWluY3ZYS1NZN1pzYkVMd0FpNkR4U3dwS2VDNklFMEhFUzUvaXVNK25y?=
+ =?utf-8?B?cEN2aVhndjFqL1VZajRRa3o4Mng0d3FPSCtySFc3ekp1c2F5aGxMQ1M1WXA4?=
+ =?utf-8?B?S1VHV0dZRFBWMDZ1VTgvNkFkVFRzc1VPYWdYRE1sR1lVc3VKSTVJbXdpRlBN?=
+ =?utf-8?B?VG9DT3E5Y01iZUdpaGJyaWRYOEFQNmZ4M3Z2cTBIRTlPMWhPb1FVaGlKaXZs?=
+ =?utf-8?B?MDdlSElBcHFNelJCVnp1YkU4aTJ2NjVHMWU0cmw4V1paQTA1aFpqUlhNQjg2?=
+ =?utf-8?B?bEpDNzhleUl1cXFhNTYwMFI5RHhsemJzd1d2a1ZmVUUzT0d4Sjl5TWRSWWNs?=
+ =?utf-8?B?Sis0V3hSTGc4TGkya1hid0lJMnBUSDJOQ3UxSzExMlMxbmV4Wm1aKy90MlU5?=
+ =?utf-8?B?SUFiQ0t0eW14eGxRS3RDMnpWUjljT25ldHhMR0ZZWFphd0NkR0o3VmFkUmlD?=
+ =?utf-8?B?S0JzbXNZVy9ka1gzRnRaaWFXZkdPNHF1NzdVb0lYc0RGaHlZcGluRnJibThY?=
+ =?utf-8?B?N1cyUlVFZFEyVUY2T0YySFNNUUxsMjQ3T3RuWnBZR01CMmpHZGF5dFFlQ3pr?=
+ =?utf-8?B?cDA1RGt4ckNydU9ITU9ma1FXZzhPWUVOQXluOE5WcU1xN3dEaEd4SzJSVUtr?=
+ =?utf-8?B?WDk4ZHduTWlqbGVzR1BvRkNDdkNQc1FadGNEeXlUZGV3SzFUUERkNnNHUWFD?=
+ =?utf-8?B?Si9QSGVoM2NTRjgyTUlJcm9Falhkb1Fqb1FpWFJRdnBKdUpqNDZUWVdlUVR5?=
+ =?utf-8?B?Vk9ZUC8xNk5lR1NQdFp1a3Zweks1ZG9iOEhpejI4dHp4bXZub2FzUEMwT1lq?=
+ =?utf-8?B?amJHYm1KWGZDd21CeGJWamgwQjB6Q3JsaGdqamNnQnVha01ueUxoSHdiN0Nm?=
+ =?utf-8?B?WDd5clIwM0dzNnZoYkVUTVpqaEVRejMrV0Q0L0RDZ3AxcUZSMmtFMFVtRUtk?=
+ =?utf-8?B?WnRaQW0zOVJtWlFJamxGVEtpS2dOTVU0N0tJYVRDRWhNblE5UjFaakU5aDU2?=
+ =?utf-8?B?RHMrU2luNjZiRzBmbnVTWXJoaVdyaUc5V3hjZjc2U1NQQmFYMTFlQnh3Y2Ru?=
+ =?utf-8?B?emJnMytCS3dzZGo2NFNlcmh2Q0RhQWdtQjduLzA0VHk2SWdIVlhjUDB5b29W?=
+ =?utf-8?B?RmlNcEpTY3ZMTkd5Wk5Ob3BVTEZkeHFLRE1JMVZ3b2J5eDlsK2hyeWJna28y?=
+ =?utf-8?B?WkM4NUYycitvcGxpenEwOU4zSGRjaGZNc2paV2g2bGgvVEtQK1hZUVVieWU4?=
+ =?utf-8?B?ZHZ2UEE4dnJmbnpteWYvamcxRThVbGlOcDVWYzRFWmZSSTJVeDNlTDlOb1VY?=
+ =?utf-8?B?VnpUdjdpaDEyKzBTNUhoV1ZGYVVTaXNzUm15K2RXRnBlc0xCOG1hNlR5d1Q1?=
+ =?utf-8?B?Y1V2cWZGS0ZTR2FJVm5EclA1bDJndUk0d2w5VXZRQlhteC9qQmdHcXJYK1VU?=
+ =?utf-8?B?NUNYWjZTZlRpUktFMFBWc2VUaFJGQXRnNGdkRjJiNW9COTJuRzZvaERuMHIv?=
+ =?utf-8?B?aWtRN0REaFk4eUlkVnZnUis3bkF5QmFlR21oR0NaSTRFc0NRYVcrUURtQ1pa?=
+ =?utf-8?B?Z1oyd0xVRkZGeHViTWFJcllTS0wzdjNvZm5ONTg3a0hvSnBEb1p0TU9aQ09O?=
+ =?utf-8?B?dXBFUzRwb0FLVzVydEFxd0lmMngvdVZ5eGNHWE9iSVdkaldWaTB6UnN1eWQ0?=
+ =?utf-8?B?YkxoSGZuc3JOMkJucTJVVC9qeTdDZVdXaWptNGtqL2p0NzFaRGZvMHdtU3cw?=
+ =?utf-8?B?RkhOa2dSQ3BZM0RUcmNVU0JuUHVFTU12VHRtVmFMOHlIZ2FETzBLV3ZTcWlL?=
+ =?utf-8?B?R2xFSnNlZ1hySzF0cFcyOHNFbzhwQk9UZnY2MlNsVitQbHo2U2VuRHZ1bTdm?=
+ =?utf-8?B?MXFjSHlRaG95N1VRYVBiVGlrVlVsbUd5UVhhSDlBdVlJZHRaM3ZKOUc3TEFT?=
+ =?utf-8?B?TnVBWnovQWxkMjQycUZkUkovczh4TzdvR1RoNmoyYUZuSVV3Q25nUW5UZnVP?=
+ =?utf-8?B?ZXR6NU5vNGVRPT0=?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OSZP286MB0982.JPNP286.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV2PR12MB5968.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(921020);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?bPeYSZUv7f/sl9BBArtC9yra85Zz+ay3EqPJKWXE4VfmXTywMnoTGYmIS7Tp?=
- =?us-ascii?Q?aSqC+rCtW/blrp4vq4RJ1aGROEkfcoyBXzgLgesDnXsNEG1ywUMEdr9Ckq33?=
- =?us-ascii?Q?mb14XSKmbAo0fY/Z7Wyf+gtZ69FSBuQuj43BiDRxc5Bk9mI1eihDucmh8xDU?=
- =?us-ascii?Q?bAPdsRaSbkzjBB4Ge86JqXQFF9Kt08ronoDTUF6gpDNeP+T6++hyzGz2cUTJ?=
- =?us-ascii?Q?Vr8UtqnwSyNrV63eLrocialf264I7y+aEna07Bp4QX9XVSqWz/+4srHbZCFq?=
- =?us-ascii?Q?exNAaD+h1/yqoCDILsSM8UMvdiJoNfM2gydS2+JdxmVZD8IWilInHnZj2t3H?=
- =?us-ascii?Q?Wf+15QvcYzf40TJGjjqMuE57fcTnDxyU9LIqoyYk8SMht6zvVw57JMfH9SHP?=
- =?us-ascii?Q?iQYfyklEYxrkxsfI0wjjWZAQa+sED5bk/7HruZwOrHPrXwNfYZLS3faveDGF?=
- =?us-ascii?Q?xV4AD6ADrID4iXwYgRiVKDZJnJpZUqrSM833/XgAH2QKB24bekV/fOKfwxXj?=
- =?us-ascii?Q?Xc87Ev8JTUT8l7viK85I96J4Fl1TxckRCgBqZSjUiAipj+EmGDOi026lCY8N?=
- =?us-ascii?Q?hSIgNWScuVHehNXdJdKWasucUy3PDTruJzDRKrg/y9LiQZcbr2WelXwaD3dl?=
- =?us-ascii?Q?UAKjmCu4NXD/DB6K+pQsvhN1ZxBPW0FiNjoQhgg2fLwdDECI//v1xbQwOc8K?=
- =?us-ascii?Q?MmXV9dyavjJPRS2Sg+1j4EmD5hC4lzD9YJHOShG28a7pmWIBGmw0rAfThC4A?=
- =?us-ascii?Q?e1EDPx7rwhMh9f54sE98Bfkir0YSOgprnCfRHxhmhbxgbfdbgip3XbmXQTLp?=
- =?us-ascii?Q?fSbZ8UT7kklylrLVkPXOjeQOAfeMt3nFQGKKBuhkW0ZBVz18N4UozepLHWgR?=
- =?us-ascii?Q?GKPni9H3AicugfTKktSpsIKpQtcYwT5gw1zH0AGDD/ZBsaEXnkqwiUkt0RGR?=
- =?us-ascii?Q?0BbzvEDVIXcOAQ9RDyCNAKtKrTMSdIavJXWWstj/IFIa/r3Ab9ssm9YbWF1R?=
- =?us-ascii?Q?BEOGitj8ypyfpl/RhH0mPfCCfcK4y7ag6HYgHClQ5wWUaaAvBsyaw9RqJVT4?=
- =?us-ascii?Q?X2mfyUmlKWnutK0vnEl5YN/KieO3d3jSn8JDgliK2NcitRXHAqn7e4CWeFQ0?=
- =?us-ascii?Q?HT8Qhph1ITstB+cAIIRq7zG94G5WwjSWKG1vZ5bKa7HYCU0oqgCKsI6zlkeC?=
- =?us-ascii?Q?CrjafZNlx9YTZukuIJDx94YtZfUoODEJwPmnYyBPicH0LSvmlDEz0rZq5kuh?=
- =?us-ascii?Q?NC68FhNzfn5Hp4IXLdkBRooijfvwjTSZSedTxVijuR9BN+cfD86xxVnjktoK?=
- =?us-ascii?Q?qTFdX0+6AV55gG9jFEr2Uc8/EQdGU64FBDYaTIGfKRdWF7TK+Ex43Zxwd6iY?=
- =?us-ascii?Q?daMtg3/+xuoyCN6z1h1Nb7q6Z5W4Yca4Apf/pkXOGNUJrFgmV9t++6ScKeKs?=
- =?us-ascii?Q?OL4bohs3gBZY1oTJSw6LI4M1xIwGBm+5i+2iTZMN3IvFqYm0BHQ8lwffdUYG?=
- =?us-ascii?Q?BQQyes2N9kh6oH7ygUGxfrl6H7PQe3PD4Y4IEycOFzw6ve5LU4FKIb6lIrcK?=
- =?us-ascii?Q?Yg3pSHhKKNogWdEObAeu2buKLH/losya2pjVqqnMSqTerk3aCJjUkv8lukkf?=
- =?us-ascii?Q?ZjXHjLyO7XfMkiU7fc+PKyA=3D?=
-X-OriginatorOrg: valinux.co.jp
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3b5faffa-096c-4b06-080f-08dde5e03d67
-X-MS-Exchange-CrossTenant-AuthSource: OSZP286MB0982.JPNP286.PROD.OUTLOOK.COM
+	=?utf-8?B?Tm9KWlNvWlBxVEZ2SGpRSE1oS3MwdjhOUG9GaXhJZndFNm1SZzdxdVB4OHU4?=
+ =?utf-8?B?TkZxY1JkME5CVmtiYjlIQmRlL0hjdFNSYnIxb1kzVFdTeWdhalRWcmxyVkJR?=
+ =?utf-8?B?c0s4c3VLWHg0MnoxSWJLaDhub3FPeUE3eUtDVmRJYjJSWVNqTitLamUyeGY0?=
+ =?utf-8?B?VW5QeWJGOVNSb016RFRlSGxKU01lMzEyVXBlWmRBWG8yYUxyZ3F6UUVXUitZ?=
+ =?utf-8?B?ZGF5TzJsNGZrSHh6Z2J4eE9QWFMvVXNLQkNtQlBuT0RCWWhpSjNNeTg4Y2pp?=
+ =?utf-8?B?NzFTK00zb1ZnSE9MdzYrZURnRWhYMXcxWXJuVGl2aWEzelhmRWVBT1h6c2pK?=
+ =?utf-8?B?TjFJUmFkRnIvemNzRWdMOCtLRWtrWTR0azNYemZVZmhzQisycld5eE15QWhw?=
+ =?utf-8?B?bzI2anMvdEx0L0h5SmpVaEl1OWtldk8vVkYzMlhHRGkvUFV4elhjcXRNc1NO?=
+ =?utf-8?B?VFFuNDUzbW1aaXJLdnhCbks0MmYzWU9BUnJpWDRYWjdORFRhVDNKSERFNC9D?=
+ =?utf-8?B?SnBkQkhHU3ErT01adWM4cDgzaUFDQUxRZFR5VTRNUTBHVWZ5Rmg5WGVzd1py?=
+ =?utf-8?B?aDBFZWpvb1VNelRBaCtlaGhORm5JbVkrRjJ0YllVZUJsVHhrTEZOa3NUVXIy?=
+ =?utf-8?B?aVZKWS83SUt0UXQ3eDFpZmlTQmQ1YmxVNEIxS3J5bjRFd1BCNjB1ZmU4ZnIy?=
+ =?utf-8?B?aTBFL2E3UnJuc0paSUpQYktRNHF0bTIyb215MFlmYm16M2pvVFFWYyt0VWlT?=
+ =?utf-8?B?VmcydWdxMDd3TUU0QTAzVUxBNWJ3UW5vT05pamhYbXRTQUpNbjBlRUhTV1dv?=
+ =?utf-8?B?RkJmYm02N2FEYThmdVZ2WTFadFFOS1BHTlRKSjZDOFZib09VaUNXNDFJTGk0?=
+ =?utf-8?B?MXVPc0dRS0t6RGxtdEdCL0lOd1RyNE9MOVNyVzBYVnNHbVR3R3NaUFRSeGFy?=
+ =?utf-8?B?dFRFQ2VOamRLdEEybTRvamZvbmRQY0diWU50YjF0QXpaeDRtSWhKODRVQWpP?=
+ =?utf-8?B?WVJsaXNjKzFuSWxYb1R6ODZiTnd6L3dLNHEzaGZ0YWpuQUhZVVgyRTBQU05s?=
+ =?utf-8?B?dHlpdzQ3WG0yU2xqdEVJN2QwTVRzaTJ1b2gwcmNXWUFpMmRLbVZwRnhZc04x?=
+ =?utf-8?B?TndGRXBqUHQrVmZHTnc1MEFidy80SUN1aTV4QkZxR09lTTJIa050Nm5vN3ZS?=
+ =?utf-8?B?UENTeGpJWkcvakhvc0sxa0dHTE5NZUFIcEVZdzM3SjJWN3Q0bktVOFg1NWox?=
+ =?utf-8?B?RkxKclF3SkVOMnVYY3VvRFMvM2lyRDV4Z0kzVW9jc3dJNmh5Y3pFbjFtYXov?=
+ =?utf-8?B?aEJYTzcyZklhZEpqSmRtNmZTL2VQZ2d3RWFOWEZ3UUh2VTE0MFVvUDM4aTFu?=
+ =?utf-8?B?UkQ0QU45YjRBeDk5UnJYMHE0Zlc0dThybkh5NGxBT3VSYitxb1NqdzRYbmtw?=
+ =?utf-8?B?Z053VFRrVWpOdGp5RFNZMzlwUGUxTS93SmdNek1Sa3J4MTlyK1BlTmhsRnJZ?=
+ =?utf-8?B?b0lNcnA1aXNmdXlZWWFDMUhqV0pUbmc1RDRYdEJnamRlV3ZGckhHV2ZrMXNE?=
+ =?utf-8?B?U0ZRajZtVnJIaHc5bTF5ZHlleWVVQjJ6MCt4V2pRemhBVkFadys5T2lvbDJw?=
+ =?utf-8?B?MGV3aUV5endyK0R5UXlrUGg5QUlQMUI5TjFUSGVTaUplNEtNcElxaG1xZVdh?=
+ =?utf-8?B?WXZqUkxkek53QVRudXltNHUzRFRPMnBob0FtM2lMbWQwenZQVmNua09OVUZU?=
+ =?utf-8?B?c1AxWWxNd3crUnlOSE1KWitPekpjM0JZdGZ1emVwVnFSdVRRZDNGdjJQd09j?=
+ =?utf-8?B?SkpQa0FROURJRndKeStxNFhBVmJiTkdrM2VJUFZIcjZKM2FVS3MrZVFJZVcv?=
+ =?utf-8?B?TWlpZTF0ZFlnYVV1VXRNVG1zZWNHZkhaU0diQTYra0xNeDFnNUZJbFFDcjJi?=
+ =?utf-8?B?UnNqWVBGakFQN3Njak5qWU0vc29TeHEzOGVMWEdUWWc3NUFmRVpRcWFXK0ho?=
+ =?utf-8?B?RjE0WWx6N3FmenlvM2NwTldwSUJ0LzBGNlE2a2VKcDBNczhHZjhiYzMxYmVF?=
+ =?utf-8?B?a3hDR3hMSmY5eGpEcFJlRExadFdUKzJjOE04VFF0RUlDenl5R0xzZ3pHL3Z3?=
+ =?utf-8?Q?nexigjWae+Yv7YxJ9/JvM9wYq?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 53675d96-4bb4-4bb7-4bae-08dde5e05c05
+X-MS-Exchange-CrossTenant-AuthSource: LV2PR12MB5968.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Aug 2025 03:09:02.6725
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Aug 2025 03:09:53.7703
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 7a57bee8-f73d-4c5f-a4f7-d72c91c8c111
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 1RDNklZ51zztAfHLfFnxTWsuH8ql9PVZR21Opfpke2wpKKwXvK/WKX+xs8Yd6X5zzMer3GZsHmqanJnimSYdqg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS3P286MB3212
+X-MS-Exchange-CrossTenant-UserPrincipalName: ZKiiHC7s/XUJ8xPkekrjrc1dUsMUzlPADN2p3/gY/XzG6fs4SM/om+BWRDP9UErlgbrHOnFrmL5eKDgtgM3dNg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB7718
 
-On Wed, Aug 27, 2025 at 01:48:33PM +0100, Marc Zyngier wrote:
-> On Wed, 27 Aug 2025 08:38:48 +0100,
-> Koichiro Den <den@valinux.co.jp> wrote:
-> > 
-> > its_irq_set_vcpu_affinity() always runs under a raw_spin_lock wait
-> > context, so calling kcalloc there is not permitted and RT-unsafe since
-> > ___slab_alloc() may acquire a local lock. The below is the actual
-> > lockdep report observed:
-> > 
-> >   =============================
-> >   [ BUG: Invalid wait context ]
-> >   6.16.0-rc3-irqchip-next-7e28bba92c5c+ #1 Tainted: G S
-> >   -----------------------------
-> >   qemu-system-aar/2129 is trying to lock:
-> >   ffff0085b74f2178 (batched_entropy_u32.lock){..-.}-{3:3}, at: get_random_u32+0x9c/0x708
-> >   other info that might help us debug this:
-> >   context-{5:5}
-> >   6 locks held by qemu-system-aar/2129:
-> >    #0: ffff0000b84a0738 (&vdev->igate){+.+.}-{4:4}, at: vfio_pci_core_ioctl+0x40c/0x748 [vfio_pci_core]
-> >    #1: ffff8000883cef68 (lock#6){+.+.}-{4:4}, at: irq_bypass_register_producer+0x64/0x2f0
-> >    #2: ffff0000ac0df960 (&its->its_lock){+.+.}-{4:4}, at: kvm_vgic_v4_set_forwarding+0x224/0x6f0
-> >    #3: ffff000086dc4718 (&irq->irq_lock#3){....}-{2:2}, at: kvm_vgic_v4_set_forwarding+0x288/0x6f0
-> >    #4: ffff0001356200c8 (&irq_desc_lock_class){-.-.}-{2:2}, at: __irq_get_desc_lock+0xc8/0x158
-> >    #5: ffff00009eae4850 (&dev->event_map.vlpi_lock){....}-{2:2}, at: its_irq_set_vcpu_affinity+0x8c/0x528
-> >   ...
-> >   Call trace:
-> >    show_stack+0x30/0x98 (C)
-> >    dump_stack_lvl+0x9c/0xd0
-> >    dump_stack+0x1c/0x34
-> >    __lock_acquire+0x814/0xb40
-> >    lock_acquire.part.0+0x16c/0x2a8
-> >    lock_acquire+0x8c/0x178
-> >    get_random_u32+0xd4/0x708
-> >    __get_random_u32_below+0x20/0x80
-> >    shuffle_freelist+0x5c/0x1b0
-> >    allocate_slab+0x15c/0x348
-> >    new_slab+0x48/0x80
-> >    ___slab_alloc+0x590/0x8b8
-> >    __slab_alloc.isra.0+0x3c/0x80
-> >    __kmalloc_noprof+0x174/0x520
-> >    its_vlpi_map+0x834/0xce0
-> >    its_irq_set_vcpu_affinity+0x21c/0x528
-> >    irq_set_vcpu_affinity+0x160/0x1b0
-> >    its_map_vlpi+0x90/0x100
-> >    kvm_vgic_v4_set_forwarding+0x3c4/0x6f0
-> >    kvm_arch_irq_bypass_add_producer+0xac/0x108
-> >    __connect+0x138/0x1b0
-> >    irq_bypass_register_producer+0x16c/0x2f0
-> >    vfio_msi_set_vector_signal+0x2c0/0x5a8 [vfio_pci_core]
-> >    vfio_msi_set_block+0x8c/0x120 [vfio_pci_core]
-> >    vfio_pci_set_msi_trigger+0x120/0x3d8 [vfio_pci_core]
+On 8/25/25 9:07 PM, Alexandre Courbot wrote:
+> The GSP bootloader is a small RISC-V firmware that is loaded by Booter
+> onto the GSP core and is in charge of loading, validating, and starting
+> the actual GSP firmware.
 > 
-> Huh. I guess this is due to RT not being completely compatible with
-> GFP_ATOMIC...  Why you'd want RT and KVM at the same time is beyond
-> me, but hey.
-
-For the record, I didn't run KVM on RT, though I still believe it's better
-to conform to the wait context rule and avoid triggering the lockdep splat.
-
-I don't know if there are any plans which make kmalloc with GFP_ATOMIC
-workable under a stricter wait context (getting rid of the local lock
-in some way?), but I think it would be nicer.
-
+> It is a regular binary firmware file containing a specific header.
+> Create a type holding the DMA-mapped firmware as well as useful
+> information extracted from the header, and hook it into our firmware
+> structure for later use.
 > 
-> >   ...
-> > 
-> > To avoid this, simply pre-allocate vlpi_maps when creating an ITS v4
-> > device with LPIs allcation. The trade-off is some wasted memory
-> > depending on nr_lpis, if none of those LPIs are never upgraded to VLPIs.
-> >
-> > An alternative would be to move the vlpi_maps allocation out of
-> > its_map_vlpi() and introduce a two-stage prepare/commit flow, allowing a
-> > caller (KVM in the lockdep splat shown above) to do the allocation
-> > outside irq_set_vcpu_affinity(). However, this would unnecessarily add
-> > complexity.
+> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+> ---
+>  drivers/gpu/nova-core/firmware.rs       |  7 ++-
+>  drivers/gpu/nova-core/firmware/riscv.rs | 89 +++++++++++++++++++++++++++++++++
+>  2 files changed, 94 insertions(+), 2 deletions(-)
 > 
-> That's debatable. It is probably fine for now, but if this was to
-> grow, we'd need to revisit this.
 
-Just curious but do you have any plans to replace the current
-irq_set_vcpu_affinity() approach with something else?
+I've once again failed to find any problems with the code itself, and
+have instead listed one or two trivial documentation suggestions, 
+below. :)
 
+Reviewed-by: John Hubbard <jhubbard@nvidia.com>
+
+
+> diff --git a/drivers/gpu/nova-core/firmware.rs b/drivers/gpu/nova-core/firmware.rs
+> index be190af1e11aec26c18c85324a185d135a16eabe..9bee0e0a0ab99d10be7e56d366970fdf4c813fc4 100644
+> --- a/drivers/gpu/nova-core/firmware.rs
+> +++ b/drivers/gpu/nova-core/firmware.rs
+> @@ -12,6 +12,7 @@
+>  use kernel::prelude::*;
+>  use kernel::str::CString;
+>  use kernel::transmute::FromBytes;
+> +use riscv::RiscvFirmware;
+>  
+>  use crate::dma::DmaObject;
+>  use crate::driver::Bar0;
+> @@ -22,6 +23,7 @@
+>  
+>  pub(crate) mod booter;
+>  pub(crate) mod fwsec;
+> +pub(crate) mod riscv;
+>  
+>  pub(crate) const FIRMWARE_VERSION: &str = "535.113.01";
+>  
+> @@ -32,7 +34,8 @@ pub(crate) struct Firmware {
+>      booter_loader: BooterFirmware,
+>      /// Runs on the sec2 falcon engine to stop and unload a running GSP firmware.
+>      booter_unloader: BooterFirmware,
+> -    bootloader: firmware::Firmware,
+> +    /// GSP bootloader, verifies the GSP firmware before loading and running it.
+> +    gsp_bootloader: RiscvFirmware,
+>      gsp: firmware::Firmware,
+>  }
+>  
+> @@ -58,7 +61,7 @@ pub(crate) fn new(
+>                  .and_then(|fw| BooterFirmware::new(dev, &fw, sec2, bar))?,
+>              booter_unloader: request("booter_unload")
+>                  .and_then(|fw| BooterFirmware::new(dev, &fw, sec2, bar))?,
+> -            bootloader: request("bootloader")?,
+> +            gsp_bootloader: request("bootloader").and_then(|fw| RiscvFirmware::new(dev, &fw))?,
+>              gsp: request("gsp")?,
+>          })
+>      }
+> diff --git a/drivers/gpu/nova-core/firmware/riscv.rs b/drivers/gpu/nova-core/firmware/riscv.rs
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..926883230f2fe4e3327713e28b7fae31ebee60bb
+> --- /dev/null
+> +++ b/drivers/gpu/nova-core/firmware/riscv.rs
+> @@ -0,0 +1,89 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +//! Support for firmware binaries designed to run on a RISC-V cores. Such firmwares have a
+
+typo: s/cores/core/
+
+Also, as long as we're here: "Such firmwares" is understandable, but
+"Such firmware files" is better.
+
+> +//! dedicated header.
+> +
+> +use kernel::device;
+> +use kernel::firmware::Firmware;
+> +use kernel::prelude::*;
+> +use kernel::transmute::FromBytes;
+> +
+> +use crate::dma::DmaObject;
+> +use crate::firmware::BinFirmware;
+> +
+> +/// Descriptor for microcode running on a RISC-V core.
+> +#[repr(C)]
+> +#[derive(Debug)]
+> +struct RmRiscvUCodeDesc {
+> +    version: u32,
+> +    bootloader_offset: u32,
+> +    bootloader_size: u32,
+> +    bootloader_param_offset: u32,
+> +    bootloader_param_size: u32,
+> +    riscv_elf_offset: u32,
+> +    riscv_elf_size: u32,
+> +    app_version: u32,
+> +    manifest_offset: u32,
+> +    manifest_size: u32,
+> +    monitor_data_offset: u32,
+> +    monitor_data_size: u32,
+> +    monitor_code_offset: u32,
+> +    monitor_code_size: u32,
+> +}
+> +
+> +// SAFETY: all bit patterns are valid for this type, and it doesn't use interior mutability.
+> +unsafe impl FromBytes for RmRiscvUCodeDesc {}
+> +
+> +impl RmRiscvUCodeDesc {
+> +    /// Interprets the header of `bin_fw` as a [`RmRiscvUCodeDesc`] and returns it.
+> +    ///
+> +    /// Fails if the header pointed at by `bin_fw` is not within the bounds of the firmware image.
+> +    fn new(bin_fw: &BinFirmware<'_>) -> Result<Self> {
+> +        let offset = bin_fw.hdr.header_offset as usize;
+> +
+> +        bin_fw
+> +            .fw
+> +            .get(offset..offset + size_of::<Self>())
+> +            .and_then(Self::from_bytes_copy)
+> +            .ok_or(EINVAL)
+> +    }
+> +}
+> +
+> +/// A parsed firmware for a RISC-V core, ready to be loaded and run.
+> +#[expect(unused)]
+> +pub(crate) struct RiscvFirmware {
+> +    /// Offset at which the code starts in the firmware image.
+> +    code_offset: u32,
+> +    /// Offset at which the data starts in the firmware image.
+> +    data_offset: u32,
+> +    /// Offset at which the manifest starts in the firmware image.
+> +    manifest_offset: u32,
+> +    /// Application version.
+> +    app_version: u32,
+> +    /// Device-mapped firmware image.
+> +    ucode: DmaObject,
+> +}
+> +
+> +impl RiscvFirmware {
+> +    // Parses the RISC-V firmware image contained in `fw`.
+
+Should this be a "///" comment?
+
+> +    pub(crate) fn new(dev: &device::Device<device::Bound>, fw: &Firmware) -> Result<Self> {
+> +        let bin_fw = BinFirmware::new(fw)?;
+> +
+> +        let riscv_desc = RmRiscvUCodeDesc::new(&bin_fw)?;
+> +
+> +        let ucode = {
+> +            let start = bin_fw.hdr.data_offset as usize;
+> +            let len = bin_fw.hdr.data_size as usize;
+> +
+> +            DmaObject::from_data(dev, fw.data().get(start..start + len).ok_or(EINVAL)?)?
+> +        };
+> +
+> +        Ok(Self {
+> +            ucode,
+> +            code_offset: riscv_desc.monitor_code_offset,
+> +            data_offset: riscv_desc.monitor_data_offset,
+> +            manifest_offset: riscv_desc.manifest_offset,
+> +            app_version: riscv_desc.app_version,
+> +        })
+> +    }
+> +}
 > 
-> > Fixes: d011e4e654d7 ("irqchip/gic-v3-its: Add VLPI map/unmap operations")
-> 
-> No. This code predates RT being merged, and this problem cannot occur
-> before RT.
 
-I'll drop this in v2.
+thanks,
+-- 
+John Hubbard
 
-> 
-> > Signed-off-by: Koichiro Den <den@valinux.co.jp>
-> > ---
-> >  drivers/irqchip/irq-gic-v3-its.c | 36 ++++++++++++++++++--------------
-> >  1 file changed, 20 insertions(+), 16 deletions(-)
-> > 
-> > diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
-> > index 467cb78435a9..b933be8ddc51 100644
-> > --- a/drivers/irqchip/irq-gic-v3-its.c
-> > +++ b/drivers/irqchip/irq-gic-v3-its.c
-> > @@ -1923,19 +1923,10 @@ static int its_vlpi_map(struct irq_data *d, struct its_cmd_info *info)
-> >  	if (!info->map)
-> >  		return -EINVAL;
-> >  
-> > -	if (!its_dev->event_map.vm) {
-> > -		struct its_vlpi_map *maps;
-> > -
-> > -		maps = kcalloc(its_dev->event_map.nr_lpis, sizeof(*maps),
-> > -			       GFP_ATOMIC);
-> > -		if (!maps)
-> > -			return -ENOMEM;
-> > -
-> > +	if (!its_dev->event_map.vm)
-> >  		its_dev->event_map.vm = info->map->vm;
-> > -		its_dev->event_map.vlpi_maps = maps;
-> > -	} else if (its_dev->event_map.vm != info->map->vm) {
-> > +	else if (its_dev->event_map.vm != info->map->vm)
-> >  		return -EINVAL;
-> > -	}
-> >  
-> >  	/* Get our private copy of the mapping information */
-> >  	its_dev->event_map.vlpi_maps[event] = *info->map;
-> > @@ -2010,10 +2001,8 @@ static int its_vlpi_unmap(struct irq_data *d)
-> >  	 * Drop the refcount and make the device available again if
-> >  	 * this was the last VLPI.
-> >  	 */
-> > -	if (!--its_dev->event_map.nr_vlpis) {
-> > +	if (!--its_dev->event_map.nr_vlpis)
-> >  		its_dev->event_map.vm = NULL;
-> > -		kfree(its_dev->event_map.vlpi_maps);
-> > -	}
-> >  
-> >  	return 0;
-> >  }
-> > @@ -3469,6 +3458,7 @@ static struct its_device *its_create_device(struct its_node *its, u32 dev_id,
-> >  {
-> >  	struct its_device *dev;
-> >  	unsigned long *lpi_map = NULL;
-> > +	struct its_vlpi_map *vlpi_maps;
-> >  	unsigned long flags;
-> >  	u16 *col_map = NULL;
-> >  	void *itt;
-> > @@ -3497,16 +3487,28 @@ static struct its_device *its_create_device(struct its_node *its, u32 dev_id,
-> >  
-> >  	if (alloc_lpis) {
-> >  		lpi_map = its_lpi_alloc(nvecs, &lpi_base, &nr_lpis);
-> > -		if (lpi_map)
-> > +		if (lpi_map) {
-> >  			col_map = kcalloc(nr_lpis, sizeof(*col_map),
-> >  					  GFP_KERNEL);
-> > +
-> > +			/*
-> > +			 * Pre-allocate vlpi_maps to avoid slab allocation
-> > +			 * under the strict raw spinlock wait context of
-> > +			 * irq_set_vcpu_affinity. This could waste memory
-> > +			 * if no vlpi map is ever created.
-> > +			 */
-> > +			if (is_v4(its) && nr_lpis > 0)
-> > +				vlpi_maps = kcalloc(nr_lpis, sizeof(*vlpi_maps),
-> > +						    GFP_KERNEL);
-> > +		}
-> >  	} else {
-> >  		col_map = kcalloc(nr_ites, sizeof(*col_map), GFP_KERNEL);
-> >  		nr_lpis = 0;
-> >  		lpi_base = 0;
-> >  	}
-> >  
-> > -	if (!dev || !itt || !col_map || (!lpi_map && alloc_lpis)) {
-> > +	if (!dev || !itt || !col_map ||
-> > +	    (alloc_lpis && (!lpi_map || (is_v4(its) && !vlpi_maps)))) {
-> 
-> This needs to be collapsed into a single boolean evaluated with the
-> pointer being NULL.
-
-Right, I'll add and use something like:
-
-  bool prealloc_vlpis_maps = alloc_lpis && is_v4(its);
-
-If that's not the intended direction, please let me know.
-BTW, I noticed I forgot to initialize vlpi_maps. I'll fix that as well.
-
-> 
-> >  		kfree(dev);
-> >  		itt_free_pool(itt, sz);
-> >  		bitmap_free(lpi_map);
-> 
-> Where are you freeing vlpi_maps if on the failure path??
-
-Thanks for catching this, I'll fix this in v2.
-
-Thanks for the review!
-
--Koichiro
-
-> 
-> Thanks,
-> 
-> 	M.
-> 
-> -- 
-> Without deviation from the norm, progress is not possible.
 
