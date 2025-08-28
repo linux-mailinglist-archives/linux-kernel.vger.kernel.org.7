@@ -1,172 +1,156 @@
-Return-Path: <linux-kernel+bounces-790155-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790156-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19844B3A147
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 16:22:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D2BAB3A185
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 16:25:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BBC6C3B88B4
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 14:18:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA2905835DE
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 14:18:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFE3E23E356;
-	Thu, 28 Aug 2025 14:05:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C43B03126CC;
+	Thu, 28 Aug 2025 14:06:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H+zo2fE6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gfQIf4iI"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 060551EB1AA;
-	Thu, 28 Aug 2025 14:05:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C324418FC92;
+	Thu, 28 Aug 2025 14:06:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756389923; cv=none; b=SzQhq6gOK22MHHrrNsVsUuZw9XIyNb3yGlPbQe3oGw9hVQUeTjdEnvh1fGd/Vl5C3tgw4+21Vgcobq/Hz6Kcye9u/7qvdquPFT++T97bcQxZenjeFMKbDb6NDlX4+2l3ZHIRACqGuuOb8hdxIK5tQIQ+qpBqJ0LW3/6qiFtCXmw=
+	t=1756389985; cv=none; b=nufmR8ChHgg0YWTnc6WTfIEZXE7rDGxD4ltri9UiDV0q5maAcLHXwMXYq50eTBu+Nh2WEwbEhzv93lwn687ZFy5Ni2+UfUb7pQFO+PZIltbdi5E7G5OHYEdELaiPFQQLrqghv8331Uq0LYozlFGHEwTQi8jzu1xhJEb8K4tmdOQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756389923; c=relaxed/simple;
-	bh=DyNh/B5mAGR7TnY7MatHO1yPHUOMMK2nagZ3lUWn2fA=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WKTyJZBxfbd6HcULd0/bK2CvtCrzek8J567EXKK1VsXNUkLr9t8KZQY9E703E9mTdeCRj2NKWeMrWIUcBhcoSF3LRYsX+cs0/oV+p48sb3r5utR8CpKhABzrneBN/fQUEKOBA6urG/PJ+jae1OGCmumC44s3Jvr/6e4eApN1atY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H+zo2fE6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85578C4CEEB;
-	Thu, 28 Aug 2025 14:05:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756389922;
-	bh=DyNh/B5mAGR7TnY7MatHO1yPHUOMMK2nagZ3lUWn2fA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=H+zo2fE6t4kb7opwDirCTmZXQYUMxdvDUzaEKmgm8oXo5Y/8fdTsykOW8ssM5iF+D
-	 SmedYJyt043ervcAhMuYbe8ar+hbn7oFmJsq22z8U6+H2RIfzztrWWqTszG4rGAhwd
-	 yzBFfas+iTFaYelbOfN0IK7GUHRM8SskLDVX6yP8Job6MSKqD5TiFWdb6F2XxO3efU
-	 cBZ73/1djxNknr85AEIcZHyRIBxY1ujZEKIWxq8qWu4rl4nsKhy0ixUBGdKbbAefws
-	 T1nGT5HPB82ySUXmGtOvqLzYWC/DG4BL/X1u7pWZyB9bqMLmWOoBvJA9LmUNcviwzi
-	 2fII+8TyG8u0A==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <maz@kernel.org>)
-	id 1urdFf-00000001H7W-31tP;
-	Thu, 28 Aug 2025 14:05:19 +0000
-Date: Thu, 28 Aug 2025 15:05:19 +0100
-Message-ID: <86a53jee3k.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Sascha Bischoff <Sascha.Bischoff@arm.com>
-Cc: "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-	"kvmarm@lists.linux.dev"
-	<kvmarm@lists.linux.dev>,
-	"linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-	nd <nd@arm.com>,
-	"oliver.upton@linux.dev" <oliver.upton@linux.dev>,
-	Joey Gouly
-	<Joey.Gouly@arm.com>,
-	Suzuki Poulose <Suzuki.Poulose@arm.com>,
-	"yuzenghui@huawei.com" <yuzenghui@huawei.com>,
-	"will@kernel.org"
-	<will@kernel.org>,
-	"tglx@linutronix.de" <tglx@linutronix.de>,
-	"lpieralisi@kernel.org" <lpieralisi@kernel.org>,
-	Timothy Hayes
-	<Timothy.Hayes@arm.com>
-Subject: Re: [PATCH 1/5] KVM: arm64: Allow ICC_SRE_EL2 accesses on a GICv5 host
-In-Reply-To: <20250828105925.3865158-2-sascha.bischoff@arm.com>
-References: <20250828105925.3865158-1-sascha.bischoff@arm.com>
-	<20250828105925.3865158-2-sascha.bischoff@arm.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1756389985; c=relaxed/simple;
+	bh=B/siCNsmCwDQeXpu3CoMuywLNybWqg95GF25BmBeqh8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=C3ZuuKxatwC71F50397yuA7paNAHKkdCVzgz4TtTHhj4YCp84/C6lPPAMERx0D4Xz0Ky7amEC7e1Sb0/8PaS3723dCVIi/ninO6em0IXZMMNAK/J5KLerrDCIX2yg6wvfcghFohEuc6mzq1daeVH6oP5MHy3BMOdY6zF7sGabX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gfQIf4iI; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756389983; x=1787925983;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=B/siCNsmCwDQeXpu3CoMuywLNybWqg95GF25BmBeqh8=;
+  b=gfQIf4iI+J4Cg2aDAKA2nIvA2txDZzeo+YdDPsdZ6/acCLgMJAt2gheU
+   p5LMYstxL2uluxg1vZ3ILi3iUsUWEUATjMWJDsfyHB9NaanlgqCEqzlB3
+   8NBPFE/iI5Y6jsRLuouA/rKsrqY/vTIS043iDiF1QcYU2sTC7mLXqu3S5
+   JlmCm0gKRhTJOHH+CLxgfOKCAOGj6vtONK5FApTU0R39prDDJqTm3RKSh
+   mirBe8xFUehOCj23jCzfjGz5qLYE4qUWygaHB3NmgNa2MHMlUhvXOWE4o
+   aDTY1GWzP+xewK89F/WCzyjooG8p6PRR7hULXGPlx1u+9Oxf/yjwIttLn
+   A==;
+X-CSE-ConnectionGUID: 5VCgn782Qiqq9TAZssmKwQ==
+X-CSE-MsgGUID: hwYoIk2+TFW3/GAIJljClA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11536"; a="58761027"
+X-IronPort-AV: E=Sophos;i="6.18,217,1751266800"; 
+   d="scan'208";a="58761027"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2025 07:06:22 -0700
+X-CSE-ConnectionGUID: t6gOAOP+TACRhUM6B+ICGA==
+X-CSE-MsgGUID: 8xq7RtMETomLkqQZxpW0+A==
+X-ExtLoop1: 1
+Received: from fpallare-mobl4.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.245.135])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2025 07:06:19 -0700
+Received: from punajuuri.localdomain (unknown [192.168.240.130])
+	by kekkonen.fi.intel.com (Postfix) with ESMTP id E44B411F9D4;
+	Thu, 28 Aug 2025 17:06:16 +0300 (EEST)
+Received: from sailus by punajuuri.localdomain with local (Exim 4.98.2)
+	(envelope-from <sakari.ailus@linux.intel.com>)
+	id 1urdGb-0000000DOiq-3Rlx;
+	Thu, 28 Aug 2025 17:06:17 +0300
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: David Lechner <dlechner@baylibre.com>,
+	=?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	linux-iio@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+Subject: [PATCH v5 1/1] iio: dac: Remove redundant pm_runtime_mark_last_busy() calls
+Date: Thu, 28 Aug 2025 17:06:17 +0300
+Message-ID: <20250828140617.3193288-1-sakari.ailus@linux.intel.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: Sascha.Bischoff@arm.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, kvm@vger.kernel.org, nd@arm.com, oliver.upton@linux.dev, Joey.Gouly@arm.com, Suzuki.Poulose@arm.com, yuzenghui@huawei.com, will@kernel.org, tglx@linutronix.de, lpieralisi@kernel.org, Timothy.Hayes@arm.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Thu, 28 Aug 2025 11:59:42 +0100,
-Sascha Bischoff <Sascha.Bischoff@arm.com> wrote:
-> 
-> The bet0 release of the GICv5 specification didn't include the
-> ICC_SRE_EL2 register as part of FEAT_GCIE_LEGACY. This was an
-> oversight, and support for this register has been added as of the bet1
-> release of the specification.
-> 
-> Remove the guarding in the vGICv3 code that skipped the ICC_SRE_EL2
-> accesses for a GICv5 host. As a result of this change, it now becomes
-> possible to use nested virtualisation on a GICv5 host when running
-> legacy GICv3-based VMs.
-> 
-> Signed-off-by: Sascha Bischoff <sascha.bischoff@arm.com>
-> ---
->  arch/arm64/kvm/hyp/vgic-v3-sr.c | 27 +++++++--------------------
->  1 file changed, 7 insertions(+), 20 deletions(-)
-> 
-> diff --git a/arch/arm64/kvm/hyp/vgic-v3-sr.c b/arch/arm64/kvm/hyp/vgic-v3-sr.c
-> index d81275790e69..7dbfd35a63a8 100644
-> --- a/arch/arm64/kvm/hyp/vgic-v3-sr.c
-> +++ b/arch/arm64/kvm/hyp/vgic-v3-sr.c
-> @@ -296,19 +296,12 @@ void __vgic_v3_activate_traps(struct vgic_v3_cpu_if *cpu_if)
->  	}
->  
->  	/*
-> -	 * GICv5 BET0 FEAT_GCIE_LEGACY doesn't include ICC_SRE_EL2. This is due
-> -	 * to be relaxed in a future spec release, at which point this in
-> -	 * condition can be dropped.
-> +	 * Prevent the guest from touching the ICC_SRE_EL1 system
-> +	 * register. Note that this may not have any effect, as
-> +	 * ICC_SRE_EL2.Enable being RAO/WI is a valid implementation.
->  	 */
-> -	if (!cpus_have_final_cap(ARM64_HAS_GICV5_CPUIF)) {
-> -		/*
-> -		 * Prevent the guest from touching the ICC_SRE_EL1 system
-> -		 * register. Note that this may not have any effect, as
-> -		 * ICC_SRE_EL2.Enable being RAO/WI is a valid implementation.
-> -		 */
-> -		write_gicreg(read_gicreg(ICC_SRE_EL2) & ~ICC_SRE_EL2_ENABLE,
-> -			     ICC_SRE_EL2);
-> -	}
-> +	write_gicreg(read_gicreg(ICC_SRE_EL2) & ~ICC_SRE_EL2_ENABLE,
-> +		     ICC_SRE_EL2);
+pm_runtime_put_autosuspend(), pm_runtime_put_sync_autosuspend(),
+pm_runtime_autosuspend() and pm_request_autosuspend() now include a call
+to pm_runtime_mark_last_busy(). Remove the now-reduntant explicit call to
+pm_runtime_mark_last_busy().
 
-At some point, it would be great to elide this on systems where
-GICv2-on-v3 doesn't exist, as there is no way for the guest to disable
-the system register view. This would avoid a couple of pointless traps
-on each entry-exit for a nested guest.
+Also clean up error handling in stm32_dac_set_enable_state().
 
->  
->  	/*
->  	 * If we need to trap system registers, we must write
-> @@ -329,14 +322,8 @@ void __vgic_v3_deactivate_traps(struct vgic_v3_cpu_if *cpu_if)
->  		cpu_if->vgic_vmcr = read_gicreg(ICH_VMCR_EL2);
->  	}
->  
-> -	/*
-> -	 * Can be dropped in the future when GICv5 spec is relaxed. See comment
-> -	 * above.
-> -	 */
-> -	if (!cpus_have_final_cap(ARM64_HAS_GICV5_CPUIF)) {
-> -		val = read_gicreg(ICC_SRE_EL2);
-> -		write_gicreg(val | ICC_SRE_EL2_ENABLE, ICC_SRE_EL2);
-> -	}
-> +	val = read_gicreg(ICC_SRE_EL2);
-> +	write_gicreg(val | ICC_SRE_EL2_ENABLE, ICC_SRE_EL2);
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+---
+since v4:
 
-Same here. That's two back-to-back traps for values that cannot
-realistically change on non-v2-compat systems (i.e. relatively modern
-machines).
+- Rework error handling.
 
-No need to respin for that, but I may end-up posting a follow-up to
-clean this up.
+ drivers/iio/dac/stm32-dac.c | 19 +++++--------------
+ 1 file changed, 5 insertions(+), 14 deletions(-)
 
-Thanks,
-
-	M.
-
+diff --git a/drivers/iio/dac/stm32-dac.c b/drivers/iio/dac/stm32-dac.c
+index 344388338d9b..b860e18d52a1 100644
+--- a/drivers/iio/dac/stm32-dac.c
++++ b/drivers/iio/dac/stm32-dac.c
+@@ -82,9 +82,11 @@ static int stm32_dac_set_enable_state(struct iio_dev *indio_dev, int ch,
+ 
+ 	ret = regmap_update_bits(dac->common->regmap, STM32_DAC_CR, msk, en);
+ 	mutex_unlock(&dac->lock);
+-	if (ret < 0) {
++	if (ret) {
+ 		dev_err(&indio_dev->dev, "%s failed\n", str_enable_disable(en));
+-		goto err_put_pm;
++		if (enable)
++			pm_runtime_put_autosuspend(dev);
++		return ret;
+ 	}
+ 
+ 	/*
+@@ -95,20 +97,10 @@ static int stm32_dac_set_enable_state(struct iio_dev *indio_dev, int ch,
+ 	if (en && dac->common->hfsel)
+ 		udelay(1);
+ 
+-	if (!enable) {
+-		pm_runtime_mark_last_busy(dev);
++	if (!enable)
+ 		pm_runtime_put_autosuspend(dev);
+-	}
+ 
+ 	return 0;
+-
+-err_put_pm:
+-	if (enable) {
+-		pm_runtime_mark_last_busy(dev);
+-		pm_runtime_put_autosuspend(dev);
+-	}
+-
+-	return ret;
+ }
+ 
+ static int stm32_dac_get_value(struct stm32_dac *dac, int channel, int *val)
+@@ -349,7 +341,6 @@ static int stm32_dac_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		goto err_pm_put;
+ 
+-	pm_runtime_mark_last_busy(dev);
+ 	pm_runtime_put_autosuspend(dev);
+ 
+ 	return 0;
 -- 
-Without deviation from the norm, progress is not possible.
+2.47.2
+
 
