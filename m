@@ -1,55 +1,55 @@
-Return-Path: <linux-kernel+bounces-789159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77770B391C5
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 04:36:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32A6EB391C6
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 04:36:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 481AD3B5B4D
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 02:35:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B3CFE161C26
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 02:36:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 938C1264636;
-	Thu, 28 Aug 2025 02:35:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 216042690C0;
+	Thu, 28 Aug 2025 02:35:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b="Ic46tJvh"
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b="e5wKqVPi"
 Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B64E325BEF8
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 02:35:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACEFF25D1EE
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 02:35:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756348539; cv=pass; b=joeXj82dl7sQU9Jw5hCqmr+rjd7VSOdW0B2KCaDsl0ueq1XxZaN2/4r1LO46MyEFN5W+sFVO1zr2BZLFIc2rJrgdi0dbGwO5tt3IwDhEm0fXPori1oMXEFnpDRPf1Cj0YIiYfTaV0Unnhtu+PSKRvT3R6FrNjX/vZ4Nm9unnIyo=
+	t=1756348542; cv=pass; b=djPW5D/WGv9Q7PJplIyJm8DXxt3Dy43J+3IWaKA4BKtLfYP95Ao2dzOf0F4iFcTPbpbY1ugmW3Kg08ay0dfMpxamYzMy7NlmxXMdWuxhsu+ihapQz4mgznMvhtjHPe68flE0+qywH1IbnEZEdSGBro9m37XHUAXAUg2un4JQOFE=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756348539; c=relaxed/simple;
-	bh=j1Gitwkm4En+JoTojCmV16fbmEt2ycquiz14lw46/jE=;
+	s=arc-20240116; t=1756348542; c=relaxed/simple;
+	bh=tYltz7helLksfswpqxgC4xZJWWPlD8KezNZ8jFQaIPY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=V52mSMjTxzVpmClanpIvg6kGgVFAHd+Ntc+Kg7lOXKYyspDYdy2+JTL507vp0Wfo8RR3Djd/XcNE5N1+18u+Mmcr4iKoyJODWr8Dv5bPGZwodwBx3nWXk0c9kzmtUqDDumD+FAORRxSHvw0JkwdBhct7TP+iuvrLsVu9VOvnSYY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b=Ic46tJvh; arc=pass smtp.client-ip=136.143.188.112
+	 MIME-Version:Content-Type; b=qCQLBCHVbNdJnwKfefDpXAXPPxvJKvevSxRTviZwaFzDKAXe94laRf/VaP+bzCYeppswdSlFQ1NxCnXmCBlL4eTd1QRwqJ+AuDxWJD36r3rzWF1pAT8J/us1RnAZqwLEC/EegJVPMxfx2PbSwasS1AcCvvn0k0pS9Uu6ZryhTUA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b=e5wKqVPi; arc=pass smtp.client-ip=136.143.188.112
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1756348517; cv=none; 
+ARC-Seal: i=1; a=rsa-sha256; t=1756348521; cv=none; 
 	d=zohomail.com; s=zohoarc; 
-	b=FZHPNHJuaJ/ya76DB++rRFwIXmXyFCHu7xddqfci852BHbOEvvcA9xMqOtmK2EflDjHU3/tqg3GSW9cr8VwPWhuWKXe/d9zRlE0ki2XWpju407e5KE2h+LTp+oKMx0H5aWBaILVEq6TrqlpbF48KkSbSblBCnCt46g7m9iiKztg=
+	b=DA4N4aH5+wWrP1LP3Sif2/kVsTYDQSSvvojqVC86fVK9a04jv+5tfToFYB+ffWoRMDRYiQ49vCWeHX0JjNUCh+V4smqEmb2or0BAAh3+ADTaNPTxAUbXLQFa5uh80lcmELhLXJCbWrdX9fEH6v8Uakb5ZKJ/aEJH9NFY8taHxFI=
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1756348517; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=Ahg0uZ2g/6UpbHdYm0+DfmTgyMu38iJj+ckHrZ7WQDs=; 
-	b=eOc0o6HSm5bPfU/RTbDlENwOaw84pKj2Xm/rSE+jY1uT9J35AODNzfdl3jCbdGQp5l7Jqs8GovdJ844Q2bxwM4XPnHJ4MN3rWqdEw+zw6BSEOMPhXGsxciiDJCQhWZEKvvuvj5Mvhpt39cwJs0sduNjyuw1+hPvhLenhiUmLryQ=
+	t=1756348521; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=V1Uvfctiz0Q3YCABen6cOD/xIWF8r6drJ7x0TI0+0eA=; 
+	b=S3FZxUVoZDTFqDYWBPw2CJGd4N+MbxYYRRsHmdOwjWKhjnqOsB13SCmn229+IDz9xr1f39JBmjlUEkKvbUX7GdIIGeo2wt8OTIVbDc+Xf9UbOiC3vOyR3pO0gHMBiFTuX8TF9qc0jKB6U3uTjeXE5R7up6wQqogLxFQagl6qg7Q=
 ARC-Authentication-Results: i=1; mx.zohomail.com;
 	dkim=pass  header.i=collabora.com;
 	spf=pass  smtp.mailfrom=adrian.larumbe@collabora.com;
 	dmarc=pass header.from=<adrian.larumbe@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1756348517;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1756348521;
 	s=zohomail; d=collabora.com; i=adrian.larumbe@collabora.com;
 	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=Ahg0uZ2g/6UpbHdYm0+DfmTgyMu38iJj+ckHrZ7WQDs=;
-	b=Ic46tJvh8E/kUfX3M/bWifavhfM1zyWUJmE0zcn7o5ZgjhOghd4ZKJbdgbgJQbKg
-	TPqCAV/b67/VgBuzidoyLTIGljJcduulWS0zgOf8KrV4EH5JgOvi+L84jKr+oNJsBKH
-	fU09x7e1mIM3Hrjy0GSrNUtlN0h9FGPfXcdR96FE=
-Received: by mx.zohomail.com with SMTPS id 1756348515901842.2094297680466;
-	Wed, 27 Aug 2025 19:35:15 -0700 (PDT)
+	bh=V1Uvfctiz0Q3YCABen6cOD/xIWF8r6drJ7x0TI0+0eA=;
+	b=e5wKqVPiGOL9qx/mvTMxmh/x1KqDz9tkR9F5adZB9Kmu4VnMtBflfIK47DsTGJRC
+	KeryRSEJHSaUbCcnxdH6fikEElOpLUR69tmmDglxVdfgYZuSPxoWMMOolEyoXhgSnKd
+	TU3pdGiqg1ELi5lbcjVU2AK8YHEeernREV1uoQSo=
+Received: by mx.zohomail.com with SMTPS id 1756348518972966.8106728089455;
+	Wed, 27 Aug 2025 19:35:18 -0700 (PDT)
 From: =?UTF-8?q?Adri=C3=A1n=20Larumbe?= <adrian.larumbe@collabora.com>
 To: linux-kernel@vger.kernel.org
 Cc: dri-devel@lists.freedesktop.org,
@@ -63,9 +63,9 @@ Cc: dri-devel@lists.freedesktop.org,
 	Thomas Zimmermann <tzimmermann@suse.de>,
 	David Airlie <airlied@gmail.com>,
 	Simona Vetter <simona@ffwll.ch>
-Subject: [PATCH 4/5] drm/panfrost: Expose JM context IOCTLs to UM
-Date: Thu, 28 Aug 2025 03:34:07 +0100
-Message-ID: <20250828023422.2404784-5-adrian.larumbe@collabora.com>
+Subject: [PATCH 5/5] drm/panfrost: Display list of device JM contexts over debugfs
+Date: Thu, 28 Aug 2025 03:34:08 +0100
+Message-ID: <20250828023422.2404784-6-adrian.larumbe@collabora.com>
 X-Mailer: git-send-email 2.50.0
 In-Reply-To: <20250828023422.2404784-1-adrian.larumbe@collabora.com>
 References: <20250828023422.2404784-1-adrian.larumbe@collabora.com>
@@ -80,87 +80,142 @@ Content-Transfer-Encoding: 8bit
 
 From: Boris Brezillon <boris.brezillon@collabora.com>
 
-Minor revision of the driver must be bumped because this expands the
-uAPI. On top of that, let user know the available priorities so that
-they can create contexts with legal priority values.
+For DebugFS builds, create a filesystem knob that, for every single open
+file of the Panfrost DRM device, shows its command name information and
+PID (when applicable), and all of its existing JM contexts.
+
+For every context, show also register values that a UM tool could decode
+back into a mask of L2 caches, tiling units and shader cores which jobs
+submitted under that context can use.
 
 Signed-off-by: Boris Brezillon <boris.brezillon@collabora.com>
 Signed-off-by: Adrián Larumbe <adrian.larumbe@collabora.com>
 ---
- drivers/gpu/drm/panfrost/panfrost_drv.c | 32 +++++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
+ drivers/gpu/drm/panfrost/panfrost_drv.c | 101 ++++++++++++++++++++++++
+ 1 file changed, 101 insertions(+)
 
 diff --git a/drivers/gpu/drm/panfrost/panfrost_drv.c b/drivers/gpu/drm/panfrost/panfrost_drv.c
-index 398c067457d9..b54cdd589ec4 100644
+index b54cdd589ec4..3ba43180ca8d 100644
 --- a/drivers/gpu/drm/panfrost/panfrost_drv.c
 +++ b/drivers/gpu/drm/panfrost/panfrost_drv.c
-@@ -13,6 +13,7 @@
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
- #include <drm/panfrost_drm.h>
-+#include <drm/drm_auth.h>
- #include <drm/drm_debugfs.h>
- #include <drm/drm_drv.h>
- #include <drm/drm_ioctl.h>
-@@ -109,6 +110,15 @@ static int panfrost_ioctl_get_param(struct drm_device *ddev, void *data, struct
- #endif
- 		break;
- 
-+	case DRM_PANFROST_PARAM_ALLOWED_JM_CTX_PRIORITIES:
-+		param->value = BIT(PANFROST_JM_CTX_PRIORITY_LOW) |
-+			       BIT(PANFROST_JM_CTX_PRIORITY_MEDIUM);
-+
-+		/* High prio require CAP_SYS_NICE or DRM_MASTER */
-+		if (capable(CAP_SYS_NICE) || drm_is_current_master(file))
-+			param->value |= BIT(PANFROST_JM_CTX_PRIORITY_HIGH);
-+		break;
-+
- 	default:
- 		return -EINVAL;
- 	}
-@@ -547,6 +557,24 @@ static int panfrost_ioctl_set_label_bo(struct drm_device *ddev, void *data,
- 	return ret;
+@@ -713,6 +713,52 @@ static int panthor_gems_show(struct seq_file *m, void *data)
+ 	return 0;
  }
  
-+static int panfrost_ioctl_jm_ctx_create(struct drm_device *dev, void *data,
-+					struct drm_file *file)
++static void show_panfrost_jm_ctx(struct panfrost_jm_ctx *jm_ctx, u32 handle,
++				 struct seq_file *m)
 +{
-+	return panfrost_jm_ctx_create(file, data);
++	static const char * const prios[] = {
++		[DRM_SCHED_PRIORITY_HIGH] = "HIGH",
++		[DRM_SCHED_PRIORITY_NORMAL] = "NORMAL",
++		[DRM_SCHED_PRIORITY_LOW] = "LOW",
++	};
++
++	seq_printf(m, " JM context %u:\n", handle);
++
++	for (u32 i = 0; i < ARRAY_SIZE(jm_ctx->slots); i++) {
++		const struct panfrost_js_ctx *slot = &jm_ctx->slots[i];
++		const char *prio = NULL;
++
++		if (!slot->enabled)
++			continue;
++
++		if (slot->sched_entity.priority < ARRAY_SIZE(prios))
++			prio = prios[slot->sched_entity.priority];
++
++		seq_printf(m, "  slot %u: priority %s config %x affinity %llx xaffinity %x\n",
++			   i, prio ? prio : "UNKNOWN", slot->config,
++			   slot->affinity, slot->xaffinity);
++	}
 +}
 +
-+static int panfrost_ioctl_jm_ctx_destroy(struct drm_device *dev, void *data,
-+					 struct drm_file *file)
++static int show_file_jm_ctxs(struct panfrost_file_priv *pfile,
++			     struct seq_file *m)
 +{
-+	const struct drm_panfrost_jm_ctx_destroy *args = data;
++	struct panfrost_jm_ctx *jm_ctx;
++	unsigned long i;
 +
-+	/* We can't destroy the default context created when the file is opened. */
-+	if (!args->handle)
-+		return -EINVAL;
++	xa_lock(&pfile->jm_ctxs);
++	xa_for_each(&pfile->jm_ctxs, i, jm_ctx) {
++		jm_ctx = panfrost_jm_ctx_get(jm_ctx);
++		xa_unlock(&pfile->jm_ctxs);
++		show_panfrost_jm_ctx(jm_ctx, i, m);
++		panfrost_jm_ctx_put(jm_ctx);
++		xa_lock(&pfile->jm_ctxs);
++	}
++	xa_unlock(&pfile->jm_ctxs);
 +
-+	return panfrost_jm_ctx_destroy(file, args->handle);
++	return 0;
 +}
 +
- int panfrost_unstable_ioctl_check(void)
- {
- 	if (!unstable_ioctls)
-@@ -614,6 +642,8 @@ static const struct drm_ioctl_desc panfrost_drm_driver_ioctls[] = {
- 	PANFROST_IOCTL(PERFCNT_DUMP,	perfcnt_dump,	DRM_RENDER_ALLOW),
- 	PANFROST_IOCTL(MADVISE,		madvise,	DRM_RENDER_ALLOW),
- 	PANFROST_IOCTL(SET_LABEL_BO,	set_label_bo,	DRM_RENDER_ALLOW),
-+	PANFROST_IOCTL(JM_CTX_CREATE,	jm_ctx_create,	DRM_RENDER_ALLOW),
-+	PANFROST_IOCTL(JM_CTX_DESTROY,	jm_ctx_destroy,	DRM_RENDER_ALLOW),
+ static struct drm_info_list panthor_debugfs_list[] = {
+ 	{"gems", panthor_gems_show, 0, NULL},
  };
+@@ -726,9 +772,64 @@ static int panthor_gems_debugfs_init(struct drm_minor *minor)
+ 	return 0;
+ }
  
- static void panfrost_gpu_show_fdinfo(struct panfrost_device *pfdev,
-@@ -710,6 +740,8 @@ static void panfrost_debugfs_init(struct drm_minor *minor)
-  * - 1.3 - adds JD_REQ_CYCLE_COUNT job requirement for SUBMIT
-  *       - adds SYSTEM_TIMESTAMP and SYSTEM_TIMESTAMP_FREQUENCY queries
-  * - 1.4 - adds SET_LABEL_BO
-+ * - 1.5 - adds JM_CTX_{CREATE,DESTROY} ioctls and extend SUBMIT to allow
-+ *	   context creation with configurable priorities/affinity
-  */
- static const struct drm_driver panfrost_drm_driver = {
- 	.driver_features	= DRIVER_RENDER | DRIVER_GEM | DRIVER_SYNCOBJ,
++static int show_each_file(struct seq_file *m, void *arg)
++{
++	struct drm_info_node *node = (struct drm_info_node *)m->private;
++	struct drm_device *ddev = node->minor->dev;
++	int (*show)(struct panfrost_file_priv *, struct seq_file *) =
++		node->info_ent->data;
++	struct drm_file *file;
++	int ret;
++
++	ret = mutex_lock_interruptible(&ddev->filelist_mutex);
++	if (ret)
++		return ret;
++
++	list_for_each_entry(file, &ddev->filelist, lhead) {
++		struct task_struct *task;
++		struct panfrost_file_priv *pfile = file->driver_priv;
++		struct pid *pid;
++
++		/*
++		 * Although we have a valid reference on file->pid, that does
++		 * not guarantee that the task_struct who called get_pid() is
++		 * still alive (e.g. get_pid(current) => fork() => exit()).
++		 * Therefore, we need to protect this ->comm access using RCU.
++		 */
++		rcu_read_lock();
++		pid = rcu_dereference(file->pid);
++		task = pid_task(pid, PIDTYPE_TGID);
++		seq_printf(m, "client_id %8llu pid %8d command %s:\n",
++			   file->client_id, pid_nr(pid),
++			   task ? task->comm : "<unknown>");
++		rcu_read_unlock();
++
++		ret = show(pfile, m);
++		if (ret < 0)
++			break;
++
++		seq_puts(m, "\n");
++	}
++
++	mutex_unlock(&ddev->filelist_mutex);
++	return ret;
++}
++
++static struct drm_info_list panfrost_sched_debugfs_list[] = {
++	{ "sched_ctxs", show_each_file, 0, show_file_jm_ctxs },
++};
++
++static void panfrost_sched_debugfs_init(struct drm_minor *minor)
++{
++	drm_debugfs_create_files(panfrost_sched_debugfs_list,
++				 ARRAY_SIZE(panfrost_sched_debugfs_list),
++				 minor->debugfs_root, minor);
++}
++
+ static void panfrost_debugfs_init(struct drm_minor *minor)
+ {
+ 	panthor_gems_debugfs_init(minor);
++	panfrost_sched_debugfs_init(minor);
+ }
+ #endif
+ 
 -- 
 2.50.0
 
