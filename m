@@ -1,447 +1,199 @@
-Return-Path: <linux-kernel+bounces-790102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40431B39F74
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 15:56:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03D0AB39F79
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 15:57:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DFA2F1C21D82
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 13:56:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12BAE1C27A6F
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 13:58:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 078DF30FC2F;
-	Thu, 28 Aug 2025 13:56:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75CB020469E;
+	Thu, 28 Aug 2025 13:57:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bM4iFahC"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ub6EQEAz"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ACB91CDFD5;
-	Thu, 28 Aug 2025 13:56:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5CF730F7EA
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 13:57:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756389380; cv=none; b=NEUcxjYQAgimdA+nslYYINM1ZWxtsJeIJpfJ82pFd6See5bQIHbIR7GZMY1SXq+2AkUw7QnSfli2F46UWqhdPJGCN0DngzMsHKqbLdfaansDldSoHjTEaS9w2MEpGc3E6urCAR1fJFp8rtOLkIlfsUJjZvU02etPaSCwJzR9ckU=
+	t=1756389451; cv=none; b=TAUmf0VVW2WTNJ7aZiVIGg6UedYH9j9Yl2oIxpE+cIaBfDDdwroDMM6B7KJzwdlX/DVY/Mbewk5SQM2nUoQPODq+QSbGOxp7SULau4j3VkFsW2EQSQ1bLhPpSLSto7QGJu4TyB6MxX7zRqXIS21bSKvPPaGVY56LycOMu1Jixfc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756389380; c=relaxed/simple;
-	bh=NVtfQkj/LLhGbbkjcOyFZJmL6lONFV3/3lzPX+8SPr0=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=mMw2QgcROKi/TZ/g2MP53ndYUKpw47ADV717oTQag4cXLU8xiPOUMYT1C46v3/kS4cq4MYw9cKvJ4TnOm6//d/040Y5VNOmjAJhNdJLe9JT4LwCsWwnmASGnhrDuVFcKzA5GzqQ/xcrtizMs1BnsISc64S+j1Hj+5YWBPpNsfkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bM4iFahC; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756389378; x=1787925378;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=NVtfQkj/LLhGbbkjcOyFZJmL6lONFV3/3lzPX+8SPr0=;
-  b=bM4iFahCpxR90vVgunjAFpfLxGhf9gfOkJrKOuy3Kx+AMfjaMbSfe9yY
-   VX5W9+pafzCjB7yBL+sgGR8+R3+FyLbkgvokdBG5Kitzoe/iE7KzYM9fs
-   rRFr+0O03v8pmjfeOUeulfq/I8KDgNOi8/CxO9Avz5zzhuYlhZ2l33ko1
-   4CARIPws3oSI5x0blKQNULuRquQICrt3mPb5D7qEzerEihXh3lVxiNKDd
-   NOdjtBTP5aPvkIjevHyGe4M1mnIdQQbrsGZmYyb0tMqf2SLevP+KJEYaJ
-   6VHp423weKkD6tC6PeVoUyIcAtjcugkOhVl6Rs8bFcdhuvdKzdKObFnHQ
-   g==;
-X-CSE-ConnectionGUID: 117nSS9MR464gffnpvcS3g==
-X-CSE-MsgGUID: DzFuJoCLStmzgHDQlmLThw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11536"; a="69364338"
-X-IronPort-AV: E=Sophos;i="6.18,217,1751266800"; 
-   d="scan'208";a="69364338"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2025 06:56:18 -0700
-X-CSE-ConnectionGUID: kyI6ONA1SQC+ZxrRCvflIQ==
-X-CSE-MsgGUID: C9a/RJgqS+KJWNZ9mFAh8A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,217,1751266800"; 
-   d="scan'208";a="201035136"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.99])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2025 06:56:11 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Thu, 28 Aug 2025 16:56:05 +0300 (EEST)
-To: Xi Pardee <xi.pardee@linux.intel.com>
-cc: irenic.rajneesh@gmail.com, david.e.box@linux.intel.com, 
-    Hans de Goede <hdegoede@redhat.com>, platform-driver-x86@vger.kernel.org, 
-    LKML <linux-kernel@vger.kernel.org>, linux-pm@vger.kernel.org
-Subject: Re: [PATCH v3 5/6] platform/x86:intel/pmc: Show device and function
- number
-In-Reply-To: <20250815224611.2460255-6-xi.pardee@linux.intel.com>
-Message-ID: <c9aa04ae-f942-cf73-d046-78d0f90f373d@linux.intel.com>
-References: <20250815224611.2460255-1-xi.pardee@linux.intel.com> <20250815224611.2460255-6-xi.pardee@linux.intel.com>
+	s=arc-20240116; t=1756389451; c=relaxed/simple;
+	bh=Lga8eUmvTypnU+N8xf2bcKYX2aN4L/PZ63SC9x2UnKY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qOCUKFKrRyKSy6WLZP7OKHo0OJcDgFt+1xWuYsItqeErvQ9T6+Ep7I+M/H0tLivB3EJC55IZfkBMqo5paJYL6i8T050znF9QJL3Z5fJ8m42rRrym2ksmeEZrZzYwPtXjBikfHWsY5bgid1aoTKtISTK9krQ6lDaSpezDIEdzDJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ub6EQEAz; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-61cb67e06c1so142711a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 06:57:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1756389448; x=1756994248; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=ry5BAM4eGzyoMNqwVqMz8Kcq7nPsJJxRcXsSOxb+jRw=;
+        b=ub6EQEAzzVnFNhEamrg2lwBo88xZ1Go6BTbeMa5P0dscbLvkyBGtFS8tPxJ9KbUPHp
+         JynDVZ2O1+txIR95tgzM1mrN9MqzChRBLGw9fphSQ1+R9tCLvPNlDcvNaoAsddbaMnoG
+         M64WT79jiXyrsAP+oRmqZ6SoKRdxYqPlMgMGsNpJMYVJ9aALHw7a9KXVRXIDp66tcxCF
+         x7+uC7Vz8HgG5Yl4eiDyJzyJt4V5fTO2mHhEORRxficWT2ikPXL+aSVKni+FT0GOQF7L
+         9HmHOn6i6aYNSkTTTz+SmslJZhbNTM4wDo2IW2s+7kDt+UymQi3p7N0JLZoPeZMhBKvY
+         xrOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756389448; x=1756994248;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ry5BAM4eGzyoMNqwVqMz8Kcq7nPsJJxRcXsSOxb+jRw=;
+        b=KiBy+p82DUHoPC8U5INu8Xbn3jX+jUOEZJhubTWEtK+CFPLzY9Tog8I5HJ6othHxN3
+         SlZLRKx/RhFjBY86u8B64hHp30sZRBAAC02HgTRfs6qhzwiy9+k74lbCzMVjOBWhs5uv
+         +Mhz8miLk8gxFYNBuO6bVXhKMl2ViUVP4sn7v/ygFqDAv1D5CSMaexBR9uphWh887eg9
+         ELTpfwo4XXjV4JgT7+NSxitFbf2SSjkecbjXV46LRx6c15/s4YcjHCBBwCrBrUOcaMtH
+         DQGIXOKTMdMsihNrgCUQMdoZjwFe2b00a16iVKw66OS3TisBF200D+N6hLYpk29tvF8q
+         Gf/A==
+X-Forwarded-Encrypted: i=1; AJvYcCWF6AVJAld8PW3PfHM+rFYXBTH3r/bhQI7Xd9fCPPvsVoEtZqoxRVLDe+MM0sZHQ0dXk/wzWdBdocWrfdA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4aUx3cPWvRlPiEbFgEll69f4XgMWXAK1iljPL5OwsSK/qOlud
+	eo586yfhrD/ZdWhBw730qmZjnNwktgf5kpmcZhHaKwzNItmX2aG2/HVQkOCXrFx/9H0=
+X-Gm-Gg: ASbGncuQih1LCA6oRH16r3SGiX2h5iYHDScpN2mORXrWOlSAlnjMXC2a47FkF/OKDac
+	3mzwhs/iPHo9h7BkB/Un7KZ0kDMQb+9TJDcwITVAezjveB+XT3QyMXn8ejr/w8qwxlKzkFBgwvL
+	iMYf+a2gnHCPth63R57t9kQSCJZ2LwWvPg3DWDEFcyDgWbTqT1l8WOwjliktrRcOxk0t1GsqiKa
+	tAQIo7NS4IF+sr/nQ0TajTjshQtKzF6EukPyO+uvoEMSBsRhKbdc77E0ohvgs3fCzH7SAZeyrNO
+	DqOQUknebBLl9w5psqO50gl14mMstu6R25uaKioTvFleDFgGdQ3xf4NX6v0wqZ9cOqLkUx7evza
+	pozJuiYQOtHAMG04OMJpM9tlJkfm1fBmkvoXkSFRoZEc=
+X-Google-Smtp-Source: AGHT+IGiTDx72Ct0qq6LfR78hlyca9TI5FhuYQdGlgAMQ9n+t1eXNexwlAt4NBGtyPNmUoOOUbw4QA==
+X-Received: by 2002:aa7:d9c9:0:b0:61c:bd9f:7242 with SMTP id 4fb4d7f45d1cf-61cbd9f7594mr1690901a12.8.1756389448227;
+        Thu, 28 Aug 2025 06:57:28 -0700 (PDT)
+Received: from [192.168.1.29] ([178.197.219.123])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61c90ffd657sm5610219a12.44.2025.08.28.06.57.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 28 Aug 2025 06:57:27 -0700 (PDT)
+Message-ID: <46f5d11d-8bed-4d01-9151-35a24cdacfa5@linaro.org>
+Date: Thu, 28 Aug 2025 15:57:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] media: dt-bindings: qcom,sm8550-iris: Do not reference
+ legacy venus properties
+To: Vikash Garodia <quic_vgarodia@quicinc.com>,
+ Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+Cc: Dikshita Agarwal <quic_dikshita@quicinc.com>,
+ Abhinav Kumar <abhinav.kumar@linux.dev>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+ linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250823155349.22344-2-krzysztof.kozlowski@linaro.org>
+ <20250825113734.iekrgyvctamhb5y7@hu-mojha-hyd.qualcomm.com>
+ <a3325bf1-2a3f-416a-ba2a-4fb1e9f85e61@linaro.org>
+ <05d40a3b-cc13-b704-cac7-0ecbeea0e59d@quicinc.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzTRLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnp5c3p0b2Yua296bG93c2tpQGxpbmFyby5vcmc+wsGUBBMBCgA+AhsD
+ BQsJCAcCBhUKCQgLAgQWAgMBAh4BAheAFiEEm9B+DgxR+NWWd7dUG5NDfTtBYpsFAmgXUEoF
+ CRaWdJoACgkQG5NDfTtBYpudig/+Inb3Kjx1B7w2IpPKmpCT20QQQstx14Wi+rh2FcnV6+/9
+ tyHtYwdirraBGGerrNY1c14MX0Tsmzqu9NyZ43heQB2uJuQb35rmI4dn1G+ZH0BD7cwR+M9m
+ lSV9YlF7z3Ycz2zHjxL1QXBVvwJRyE0sCIoe+0O9AW9Xj8L/dmvmRfDdtRhYVGyU7fze+lsH
+ 1pXaq9fdef8QsAETCg5q0zxD+VS+OoZFx4ZtFqvzmhCs0eFvM7gNqiyczeVGUciVlO3+1ZUn
+ eqQnxTXnqfJHptZTtK05uXGBwxjTHJrlSKnDslhZNkzv4JfTQhmERyx8BPHDkzpuPjfZ5Jp3
+ INcYsxgttyeDS4prv+XWlT7DUjIzcKih0tFDoW5/k6OZeFPba5PATHO78rcWFcduN8xB23B4
+ WFQAt5jpsP7/ngKQR9drMXfQGcEmqBq+aoVHobwOfEJTErdku05zjFmm1VnD55CzFJvG7Ll9
+ OsRfZD/1MKbl0k39NiRuf8IYFOxVCKrMSgnqED1eacLgj3AWnmfPlyB3Xka0FimVu5Q7r1H/
+ 9CCfHiOjjPsTAjE+Woh+/8Q0IyHzr+2sCe4g9w2tlsMQJhixykXC1KvzqMdUYKuE00CT+wdK
+ nXj0hlNnThRfcA9VPYzKlx3W6GLlyB6umd6WBGGKyiOmOcPqUK3GIvnLzfTXR5DOwU0EVUNc
+ NAEQAM2StBhJERQvgPcbCzjokShn0cRA4q2SvCOvOXD+0KapXMRFE+/PZeDyfv4dEKuCqeh0
+ hihSHlaxTzg3TcqUu54w2xYskG8Fq5tg3gm4kh1Gvh1LijIXX99ABA8eHxOGmLPRIBkXHqJY
+ oHtCvPc6sYKNM9xbp6I4yF56xVLmHGJ61KaWKf5KKWYgA9kfHufbja7qR0c6H79LIsiYqf92
+ H1HNq1WlQpu/fh4/XAAaV1axHFt/dY/2kU05tLMj8GjeQDz1fHas7augL4argt4e+jum3Nwt
+ yupodQBxncKAUbzwKcDrPqUFmfRbJ7ARw8491xQHZDsP82JRj4cOJX32sBg8nO2N5OsFJOcd
+ 5IE9v6qfllkZDAh1Rb1h6DFYq9dcdPAHl4zOj9EHq99/CpyccOh7SrtWDNFFknCmLpowhct9
+ 5ZnlavBrDbOV0W47gO33WkXMFI4il4y1+Bv89979rVYn8aBohEgET41SpyQz7fMkcaZU+ok/
+ +HYjC/qfDxT7tjKXqBQEscVODaFicsUkjheOD4BfWEcVUqa+XdUEciwG/SgNyxBZepj41oVq
+ FPSVE+Ni2tNrW/e16b8mgXNngHSnbsr6pAIXZH3qFW+4TKPMGZ2rZ6zITrMip+12jgw4mGjy
+ 5y06JZvA02rZT2k9aa7i9dUUFggaanI09jNGbRA/ABEBAAHCwXwEGAEKACYCGwwWIQSb0H4O
+ DFH41ZZ3t1Qbk0N9O0FimwUCaBdQXwUJFpZbKgAKCRAbk0N9O0Fim07TD/92Vcmzn/jaEBcq
+ yT48ODfDIQVvg2nIDW+qbHtJ8DOT0d/qVbBTU7oBuo0xuHo+MTBp0pSTWbThLsSN1AuyP8wF
+ KChC0JPcwOZZRS0dl3lFgg+c+rdZUHjsa247r+7fvm2zGG1/u+33lBJgnAIH5lSCjhP4VXiG
+ q5ngCxGRuBq+0jNCKyAOC/vq2cS/dgdXwmf2aL8G7QVREX7mSl0x+CjWyrpFc1D/9NV/zIWB
+ G1NR1fFb+oeOVhRGubYfiS62htUQjGLK7qbTmrd715kH9Noww1U5HH7WQzePt/SvC0RhQXNj
+ XKBB+lwwM+XulFigmMF1KybRm7MNoLBrGDa3yGpAkHMkJ7NM4iSMdSxYAr60RtThnhKc2kLI
+ zd8GqyBh0nGPIL+1ZVMBDXw1Eu0/Du0rWt1zAKXQYVAfBLCTmkOnPU0fjR7qVT41xdJ6KqQM
+ NGQeV+0o9X91X6VBeK6Na3zt5y4eWkve65DRlk1aoeBmhAteioLZlXkqu0pZv+PKIVf+zFKu
+ h0At/TN/618e/QVlZPbMeNSp3S3ieMP9Q6y4gw5CfgiDRJ2K9g99m6Rvlx1qwom6QbU06ltb
+ vJE2K9oKd9nPp1NrBfBdEhX8oOwdCLJXEq83vdtOEqE42RxfYta4P3by0BHpcwzYbmi/Et7T
+ 2+47PN9NZAOyb771QoVr8A==
+In-Reply-To: <05d40a3b-cc13-b704-cac7-0ecbeea0e59d@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, 15 Aug 2025, Xi Pardee wrote:
-
-> Add support to show device and function number for S0ix blockers. This
-> feature depends on S0ix blocker substate requirement table and BDF
-> association table. This feature is available for platforms starting from
-> Pather Lake.
+On 28/08/2025 15:49, Vikash Garodia wrote:
+>>>
+>>> Whether removing will not break any ABI as initial binding enables the IRIS
+>>> related code to use video-firmware, now we are removing it.
+>>> I believe, removing binding always break ABI ? or is it depend on driver
+>>> code not using it ?
+>>
+>> There is no single user of this, out of tree (I briefly checked) and
+>> in-tree, so there is no ABI impact. I am changing the documentation of
+>> the ABI, but there is no actual ABI break because impact is 0.
+>>
 > 
-> Only a subset of S0ix blockers has device and function number associated
-> to it. Get the availability information from the substate requirement
-> table. Get the device and function number mapping information for each
-> S0ix blocker from the BDF association table.
-> 
-> Signed-off-by: Xi Pardee <xi.pardee@linux.intel.com>
-> ---
->  drivers/platform/x86/intel/pmc/core.c | 182 +++++++++++++++++++++++++-
->  drivers/platform/x86/intel/pmc/core.h |  23 +++-
->  2 files changed, 203 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/platform/x86/intel/pmc/core.c b/drivers/platform/x86/intel/pmc/core.c
-> index a0b948a875a5a..69ee40cbb8b8a 100644
-> --- a/drivers/platform/x86/intel/pmc/core.c
-> +++ b/drivers/platform/x86/intel/pmc/core.c
-> @@ -1017,6 +1017,38 @@ const struct file_operations pmc_core_substate_req_regs_fops = {
->  	.release	= single_release,
->  };
->  
-> +static int pmc_core_bdf_show(struct seq_file *s, void *unused)
-> +{
-> +	struct pmc_dev *pmcdev = s->private;
-> +	unsigned int pmcidx;
-> +
-> +	seq_printf(s, "%36s | %15s | %15s |\n", "Element", "Device Number", "Function Number");
-> +	for (pmcidx = 0; pmcidx < ARRAY_SIZE(pmcdev->pmcs); pmcidx++) {
+> My understanding here is that the interface "video-firmware" is already defined
+> in the binding. There could be possible out-of-tree users of it, might not be
 
-Change this to pmc_idx and lets make it the only form that are added from 
-this point on.
+There are no such.
 
-The other ones should be converted to it eventually, I once had a cleanup 
-patch to rename them but IIRC I dropped it to not conflict with some 
-feature worked. Maybe you can fit a rename change into some series so I 
-won't end up conflicting your feature work :-).
+> possible for us to look into all of those out=of-tree users.
 
-> +		const char *name = NULL;
-> +		struct list_head *cur;
-> +		struct bdf_entry *bdf;
-> +		struct pmc *pmc;
-> +
-> +		pmc = pmcdev->pmcs[pmcidx];
-> +		if (!pmc)
-> +			continue;
-> +
-> +		list_for_each(cur, pmc->bdf_list) {
-> +			bdf = list_entry(cur, struct bdf_entry, node);
-> +			if (bdf->name != name) {
-> +				seq_printf(s, "pmc%d: %30s | %15x | %15x |\n", pmcidx,
+We both know there are no such so you claiming "maybe not possible" is
+quite misleading. Qualcomm does not use it and that's the only possible
+case. We can verify it and I did verify this.
 
-%u
+> I support such cleanups, but also need to understand how this is not an ABI
 
-> +					   bdf->name, bdf->dev_num, bdf->fun_num);
-> +				name = bdf->name;
-> +			} else {
-> +				seq_printf(s, "%54x | %15x |\n",
-> +					   bdf->dev_num, bdf->fun_num);
-> +			}
-> +		}
-> +	}
-> +	return 0;
-> +}
-> +DEFINE_SHOW_ATTRIBUTE(pmc_core_bdf);
-> +
->  static unsigned int pmc_core_get_crystal_freq(void)
->  {
->  	unsigned int eax_denominator, ebx_numerator, ecx_hz, edx;
-> @@ -1418,6 +1450,10 @@ static void pmc_core_dbgfs_register(struct pmc_dev *pmcdev, struct pmc_dev_info
->  				    pmc_dev_info->sub_req_show);
->  	}
->  
-> +	if (primary_pmc->bdf_list) {
-> +		debugfs_create_file("bdf", 0444, pmcdev->dbgfs_dir, pmcdev, &pmc_core_bdf_fops);
-> +	}
+You are just making up fake obstacles.
 
-Unnecessary braces.
 
-> +
->  	if (primary_pmc->map->pson_residency_offset && pmc_core_is_pson_residency_enabled(pmcdev)) {
->  		debugfs_create_file("pson_residency_usec", 0444,
->  				    pmcdev->dbgfs_dir, primary_pmc, &pmc_core_pson_residency);
-> @@ -1521,7 +1557,7 @@ int pmc_core_pmt_get_lpm_req(struct pmc_dev *pmcdev, struct pmc *pmc, struct tel
->  	return ret;
->  }
->  
-> -int pmc_core_pmt_get_blk_sub_req(struct pmc_dev *pmcdev, struct pmc *pmc,
-> +static int pmc_core_pmt_get_blk_sub_req(struct pmc_dev *pmcdev, struct pmc *pmc,
->  				 struct telem_endpoint *ep)
->  {
->  	u32 num_blocker, sample_id;
-> @@ -1551,6 +1587,150 @@ int pmc_core_pmt_get_blk_sub_req(struct pmc_dev *pmcdev, struct pmc *pmc,
->  	return 0;
->  }
->  
-> +static const char *pmc_core_get_next_bdf_ip_name(struct pmc *pmc, unsigned int *r_idx,
-> +						 unsigned int *i_idx, u32 **lpm_req_regs)
-> +{
-> +	const struct pmc_bit_map **maps;
-> +	unsigned int arr_size;
-> +	bool reset = FALSE;
+> break, just that there are no in-tree DTS user means no ABI break ?
+> Would appreciate if you could point to any guidelines if my understanding is not
+> correct, i am currently referring to [1]
 
-FALSE is a define in some obscure header (which you probably didn't 
-include intentionally anyway ;-)).
+There are hundreds of discussions describing this and I am not going to
+do your homework.
 
-Please use false.
+In none of other qcom media camss/iris/venus patches affecting ABI you
+raised that problem. Even remotely, so I cannot understand these
+questions here differently than just spreading some sort of FUD over
+this patch just to keep that broken video-firmware design for future users.
 
-> +
-> +	maps = pmc->map->s0ix_blocker_maps;
-> +	arr_size = pmc_core_lpm_get_arr_size(maps);
-> +
-> +	// Iteration reaches the end of the bitmap array
+>> I am really sorry but it seems you ask about basics of DT, so please
+>> first get into docs and other existing discussions.
 
-This driver has used exclusively /* */ comments.
+Again, read the docs and existing discussions. I am not going to do your
+homework.
 
-> +	if (!maps[*r_idx][*i_idx].name)
-> +		(*r_idx)++;
-> +
-> +	// Iteration reaches the end of the maps
-> +	if (*r_idx >= arr_size)
-> +		return NULL;
-> +
-> +	for (; *r_idx < arr_size; (*r_idx)++) {
-> +		const char *ip_name;
-
-Can't you put this to the innermost block?
-
-> +		if (reset)
-
-Why you need this?
-
-> +			*i_idx = 0;
-> +
-> +		for (; maps[*r_idx][*i_idx].name; reset = TRUE, (*i_idx)++) {
-
-true
-
-This is hard enough to understand even without that "for (;". Would 
-probably be better to use while () instead.
-
-> +			if (!maps[*r_idx][*i_idx].blk)
-> +				continue;
-> +
-> +			bool exist = **lpm_req_regs & BIT(BDF_EXIST_BIT);
-> +			(*lpm_req_regs)++;
-> +			if (exist) {
-> +				ip_name = maps[*r_idx][*i_idx].name;
-> +				(*i_idx)++;
-> +				return ip_name;
-> +			}
-> +		}
-> +	}
-> +	return NULL;
-> +}
-
-TBH, this entire function is horrible mess, two nested iterators as 
-pointers, etc.
-
-I'm very far from following all what going on here.
-
-I suppose I've not seen this patch previously?
-
-> +static int pmc_core_process_bdf(struct pmc_dev *pmcdev,  struct pmc *pmc, u32 data,
-> +				unsigned int *r_idx, unsigned int *i_idx, u32 **lpm_req_regs,
-> +				const char **name)
-> +{
-> +	unsigned int i;
-> +
-> +	if (!data)
-> +		return 0;
-> +
-> +	if (!*name)
-> +		return -EINVAL;
-> +
-> +	for (i = BDF_FUN_LOW_BIT; i <= BDF_FUN_HIGH_BIT; i++) {
-
-I think you can iterate 0 ... __fls(FIELD_MAX()).
-
-> +		struct bdf_entry *b_entry;
-> +		u32 function_data;
-> +
-> +		function_data = (data & BIT(i));
-> +		if (function_data) {
-
-Why the extra variable???
-
-> +			b_entry = devm_kzalloc(&pmcdev->pdev->dev, sizeof(*b_entry), GFP_KERNEL);
-> +			if (!b_entry)
-> +				return -ENOMEM;
-> +			b_entry->dev_num = data & GENMASK(BDF_DEV_HIGH_BIT, BDF_DEV_LOW_BIT);
-> +			b_entry->fun_num = i - BDF_FUN_LOW_BIT;
-
-What "fun" stands for? Should it be "func" as is the typical short for 
-"function" in BDF?
-
-> +			b_entry->name = *name;
-> +			list_add_tail(&b_entry->node, pmc->bdf_list);
-> +		}
-> +	}
-> +
-> +	if (!(data & BIT(BDF_REQ_BIT)))
-> +		*name = pmc_core_get_next_bdf_ip_name(pmc, r_idx, i_idx, lpm_req_regs);
-> +
-> +	return 0;
-> +}
-> +
-> +static int pmc_core_pmt_get_bdf(struct pmc_dev *pmcdev, struct pmc *pmc, struct telem_endpoint *ep)
-> +{
-> +	unsigned int sample_id, max_sample_id, header_id, size, r_idx, i_idx;
-> +	struct bdf_entry *entry;
-> +	u32 *lpm_reg_regs;
-> +	const char *name;
-> +	int ret;
-> +
-> +	header_id = pmc->map->bdf_offset;
-> +	sample_id = header_id;
-> +	max_sample_id = sample_id + pmc->map->bdf_table_size;
-> +	lpm_reg_regs = pmc->lpm_req_regs;
-> +	r_idx = 0;
-> +	i_idx = 0;
-> +
-> +	name = pmc_core_get_next_bdf_ip_name(pmc, &r_idx, &i_idx, &lpm_reg_regs);
-> +	if (!name)
-> +		return -EINVAL;
-> +
-> +	pmc->bdf_list = devm_kzalloc(&pmcdev->pdev->dev, sizeof(struct list_head), GFP_KERNEL);
-
-Should use sizeof(*xx).
-
-But why you need to allocate the list head and not have it in place 
-within the pmc's struct?
-
-> +	if (!pmc->bdf_list)
-> +		return -ENOMEM;
-> +
-> +	INIT_LIST_HEAD(pmc->bdf_list);
-> +
-> +	for (; sample_id < max_sample_id; sample_id++) {
-> +		u32 data;
-> +
-> +		ret = pmt_telem_read32(ep, sample_id, &data, 1);
-> +		if (ret) {
-> +			dev_err(&pmcdev->pdev->dev,
-> +				"couldn't read bdf: %d\n", ret);
-
-One line.
-
-> +			return ret;
-> +		}
-> +
-> +		if (sample_id == header_id) {
-> +			size = (data & GENMASK(BDF_SIZE_HIGH_BIT, BDF_SIZE_LOW_BIT))
-> +			       >> BDF_SIZE_LOW_BIT;
-
-Define the field and use FIELD_GET().
-
-> +			header_id += size + 1;
-
-No, I just cannot understand what's going on here, it's hopeless. Always 
-when I think I've finally understood what its all about you throw a curve 
-ball like this.
-
-In case this series is in any kind of hurry. I suggest you send the series 
-without this patch and we work out this patch separately on top of the 
-applied patches (I expect the patch 1-5 to be fine on next iteration).
-
-> +			continue;
-> +		}
-> +
-> +		ret = pmc_core_process_bdf(pmcdev, pmc, data, &r_idx, &i_idx, &lpm_reg_regs, &name);
-> +		if (ret)
-> +			return ret;
-> +		data = data >> BDF_SIZE;
-> +		ret = pmc_core_process_bdf(pmcdev, pmc, data, &r_idx, &i_idx, &lpm_reg_regs, &name);
-> +		if (ret)
-> +			return ret;
-> +	}
-> +
-> +	list_for_each_entry(entry, pmc->bdf_list, node) {
-> +		dev_dbg(&pmcdev->pdev->dev, "bdf info: name %s, dev_num %x, fun_num %x",
-> +			entry->name, entry->dev_num, entry->fun_num);
-> +	}
-> +	return 0;
-> +}
-> +
-> +int pmc_core_pmt_get_sub_req_bdf(struct pmc_dev *pmcdev, struct pmc *pmc,
-> +				 struct telem_endpoint *ep)
-> +{
-> +	int ret;
-> +
-> +	ret = pmc_core_pmt_get_blk_sub_req(pmcdev, pmc, ep);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return pmc_core_pmt_get_bdf(pmcdev, pmc, ep);
-> +}
-> +
->  static int pmc_core_get_telem_info(struct pmc_dev *pmcdev, struct pmc_dev_info *pmc_dev_info)
->  {
->  	struct pci_dev *pcidev __free(pci_dev_put) = NULL;
-> diff --git a/drivers/platform/x86/intel/pmc/core.h b/drivers/platform/x86/intel/pmc/core.h
-> index bfe8fba808063..6ff2d171dc2ba 100644
-> --- a/drivers/platform/x86/intel/pmc/core.h
-> +++ b/drivers/platform/x86/intel/pmc/core.h
-> @@ -317,6 +317,24 @@ enum ppfear_regs {
->  #define PMC_DEVID_MTL_IOEP	0x7ecf
->  #define PMC_DEVID_MTL_IOEM	0x7ebf
->  
-> +/* BDF offset */
-> +#define BDF_EXIST_BIT		3
-> +#define BDF_SIZE_HIGH_BIT	23
-> +#define BDF_SIZE_LOW_BIT	16
-> +#define BDF_DEV_HIGH_BIT	4
-> +#define BDF_DEV_LOW_BIT		0
-> +#define BDF_FUN_HIGH_BIT	12
-> +#define BDF_FUN_LOW_BIT		5
-> +#define BDF_REQ_BIT		15
-> +#define BDF_SIZE		16
-
-Use BIT(), GENMASK() for most right here. All?
-
-> +
-> +struct bdf_entry {
-> +	struct list_head node;
-> +	const char *name;
-> +	u32 dev_num;
-> +	u32 fun_num;
-> +};
-> +
->  extern const char *pmc_lpm_modes[];
->  
->  struct pmc_bit_map {
-> @@ -373,6 +391,8 @@ struct pmc_reg_map {
->  	const u32 s0ix_blocker_offset;
->  	const u32 num_s0ix_blocker;
->  	const u32 blocker_req_offset;
-> +	const u32 bdf_offset;
-> +	const u32 bdf_table_size;
->  	/* Low Power Mode registers */
->  	const int lpm_num_maps;
->  	const int lpm_num_modes;
-> @@ -418,6 +438,7 @@ struct pmc {
->  	const struct pmc_reg_map *map;
->  	u32 *lpm_req_regs;
->  	u32 ltr_ign;
-> +	struct list_head *bdf_list;
->  };
->  
->  /**
-> @@ -540,7 +561,7 @@ extern struct pmc_dev_info ptl_pmc_dev;
->  void cnl_suspend(struct pmc_dev *pmcdev);
->  int cnl_resume(struct pmc_dev *pmcdev);
->  int pmc_core_pmt_get_lpm_req(struct pmc_dev *pmcdev, struct pmc *pmc, struct telem_endpoint *ep);
-> -int pmc_core_pmt_get_blk_sub_req(struct pmc_dev *pmcdev, struct pmc *pmc,
-> +int pmc_core_pmt_get_sub_req_bdf(struct pmc_dev *pmcdev, struct pmc *pmc,
->  				 struct telem_endpoint *ep);
->  
->  extern const struct file_operations pmc_core_substate_req_regs_fops;
-> 
-
--- 
- i.
-
+Best regards,
+Krzysztof
 
