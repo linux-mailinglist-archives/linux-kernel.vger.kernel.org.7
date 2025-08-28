@@ -1,161 +1,154 @@
-Return-Path: <linux-kernel+bounces-789903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9B95B39C59
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 14:10:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D752B39C75
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 14:11:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BBF297C32C4
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 12:10:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D96BB1C806F0
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 12:12:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BAF73101B6;
-	Thu, 28 Aug 2025 12:09:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ozAD7fvV"
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 211663115B2;
+	Thu, 28 Aug 2025 12:10:34 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44B9C17B425
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 12:09:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61D95311580;
+	Thu, 28 Aug 2025 12:10:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756382985; cv=none; b=HwYVFPtlxPcT2YhOCqSRoSFVrkAoPC+9r6vnZ7jiKZMtZ7bV1DWxzR36rkCpLFgsynPDQnGoR4D7b0eikNSYcoVaEPjxuTnPSrabU48EyJk2GoZ3pwSdMkiE8UZ1dc7h+gDfaxHo3IropsgnsGWNXxd5BfUbNirw3/Ye7ZL1IUk=
+	t=1756383033; cv=none; b=BWfqwOfypDf4tLTGv6vKfEiI4u5QaEVQnaRAYkigifikLaQpxaZC+aFCnHw7+/kbxc7MyWihlAMGtht5DomhEwuEgjXbcbYN81jTwa9m+hb8jDqcoMarGh9gcgWhe9fm/JDvgmoBj7rL+lpRRm1MU2orKTaPU9zadpRNv9Rlh/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756382985; c=relaxed/simple;
-	bh=3hgVzlfd4NToIgU3SDcM4IJcS4xyGL78KkaLtds3NOg=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=FNyFahQO1F0CjWKe4GFRBT7PxXqZhOMhvnoRGHu85BDw+rqFATVSUUHi+kU0lTOWNzEh08ga1tQF7xFkmqNPBRZyPaLI3W+yqJL38EVZyzEJhfIB4N1ZKezMxn4yLyjA7gLFXo8uIMdgKfiDtZ0EZr3sDqIO/hK3edRO55X5WqY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ozAD7fvV; arc=none smtp.client-ip=209.85.128.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-45b7d485153so1807775e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 05:09:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756382981; x=1756987781; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HavNw+6wj7CZy0vJ8uYCxeS+2LLSGgwf2HHTPIdMtLo=;
-        b=ozAD7fvVWjVXcSDNS2IAAJPee6NsjogZLTnbEFplX9ufPKM+ECWBi6riwDuA6zd11t
-         9fQEQvtIWsBWTfEaJCFbMDInBzOiv9gXQ/rQB08hnEqGqLGYcQ37KbDL7JguKLNclF1Y
-         uxdGNR5YN8qPF9qD8EnyXD3U+BMGkWwpaQoufBLL7su88NaJdMmFW4wVygs0RxNbJXD/
-         8dsttHNo2G2LytOvnuV+kIZkH3glF6vaJofpeC2SiW9lai9kdyCFHXYx1g2jMmgttcGQ
-         ak50nwnO1dlPkfpuaOcmzQqmQbdgCyKgf3zOdARlHY5fyB6hDzrpA7JtSZQbmh5v9fs0
-         BRNg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756382981; x=1756987781;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=HavNw+6wj7CZy0vJ8uYCxeS+2LLSGgwf2HHTPIdMtLo=;
-        b=t/V1FlfltIUhDC/E6EmX26oMbLGT21kh3nbmu41DPU7kM455lqnxofY5byuA2up4Ix
-         iKpT6LEWpv/wphzMx4a7tMc1wdtZeRNcmkMaSSV3LUZ/+WXfEn1RNdvYcmcfMQIu8TzI
-         UVvJfNdDAPrE8vUy3/e9QlAygCCdi9Bg8yzogLWoZalfkaEPQp3C0swHYasZiL9svC9G
-         H01LoQ+seRc5C/uecqWtBrzfzsseZ8XB9Ac8pOGSJqCDoENYJERW9IIwYjplgdXVF35j
-         RlLAj4QMWbqa3BxyJSGv1gnhIatSbOjocErSWl+06fFMtjPZfDYJOR3TZRonW4gWTgSb
-         XmSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUARH08Gs5bfvEdQwMbluvfyrQH8qQDIvNTfLb8Ys8/QnPVlwFW8zorIkig6uStjRh2DL6yu1GaVf5WiEA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLWe31kJd1AocPewu17PMf3IEAwj67ZaTn2wcGTSpksp9KhH5e
-	S9g5x1M5yLIVXlQfD3gJJ+lqI8METBr6TbFAdsvTlRo1j0aXzn5vJtYmzLnzT89kJeqJ9dcvI7y
-	cN0tTeaJcQpS1yw==
-X-Google-Smtp-Source: AGHT+IHvhLLT/kC7PuOPio1cryunuDdCa/BS9BJvHCrzilaBbfUWPcBeesZqWuGm2DjaRZKle1v/SYyQ2ri+Dw==
-X-Received: from wmhj12.prod.google.com ([2002:a05:600c:300c:b0:45b:7954:4bc3])
- (user=jackmanb job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:3b26:b0:456:1ac8:cac8 with SMTP id 5b1f17b1804b1-45b517ad6c8mr197845955e9.15.1756382981471;
- Thu, 28 Aug 2025 05:09:41 -0700 (PDT)
-Date: Thu, 28 Aug 2025 12:09:40 +0000
-In-Reply-To: <9cefb766-d6ca-4c82-84ae-8a47b1fc6e84@lucifer.local>
+	s=arc-20240116; t=1756383033; c=relaxed/simple;
+	bh=V7RgHdNDHBYxAhY2+IsyX4PfcM+1bA9spprKsdjVpKE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=GOnZIyi3MWlp06G01PFcFTzQAsht7BSOjlFDYg2fthrFU7eTO/d2KUiMWLNjrWaYMhhKUqQ4mVMhKWTBc2aGXmyL9aXm+EXxGuKuF9Y5y8L6zuNH6X9SpjrJyeUlU1IC+CDwA1IfZPTCMjsuMZvgbbXx9yOHE46q+a6Kgmpuqh4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4cCKwX3TZpz14MNw;
+	Thu, 28 Aug 2025 20:10:20 +0800 (CST)
+Received: from kwepemf100013.china.huawei.com (unknown [7.202.181.12])
+	by mail.maildlp.com (Postfix) with ESMTPS id CEE3A14011A;
+	Thu, 28 Aug 2025 20:10:27 +0800 (CST)
+Received: from DESKTOP-62GVMTR.china.huawei.com (10.174.189.55) by
+ kwepemf100013.china.huawei.com (7.202.181.12) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 28 Aug 2025 20:10:26 +0800
+From: Fan Gong <gongfan1@huawei.com>
+To: Fan Gong <gongfan1@huawei.com>, Zhu Yikai <zhuyikai1@h-partners.com>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "David S.
+ Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
+ Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman
+	<horms@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
+	<linux-doc@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, Bjorn Helgaas
+	<helgaas@kernel.org>, luosifu <luosifu@huawei.com>, Xin Guo
+	<guoxin09@huawei.com>, Shen Chenyang <shenchenyang1@hisilicon.com>, Zhou
+ Shuai <zhoushuai28@huawei.com>, Wu Like <wulike1@huawei.com>, Shi Jing
+	<shijing34@huawei.com>, Meny Yossefi <meny.yossefi@huawei.com>, Gur Stavi
+	<gur.stavi@huawei.com>, Lee Trager <lee@trager.us>, Michael Ellerman
+	<mpe@ellerman.id.au>, Vadim Fedorenko <vadim.fedorenko@linux.dev>, Suman
+ Ghosh <sumang@marvell.com>, Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Joe Damato <jdamato@fastly.com>, Christophe JAILLET
+	<christophe.jaillet@wanadoo.fr>
+Subject: [PATCH net-next v02 00/14] net: hinic3: Add a driver for Huawei 3rd gen NIC - sw and hw initialization
+Date: Thu, 28 Aug 2025 20:10:06 +0800
+Message-ID: <cover.1756378721.git.zhuyikai1@h-partners.com>
+X-Mailer: git-send-email 2.51.0.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250827-b4-vma-no-atomic-h-v1-0-5d3a94ae670f@google.com> <9cefb766-d6ca-4c82-84ae-8a47b1fc6e84@lucifer.local>
-X-Mailer: aerc 0.20.1
-Message-ID: <DCE1SYEUTLM5.3L54LZGH0QVAL@google.com>
-Subject: Re: [PATCH 0/3] tools: testing: Use existing atomic.h for
- vma/radix-tree tests
-From: Brendan Jackman <jackmanb@google.com>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>, 
-	<linux-kernel@vger.kernel.org>, <maple-tree@lists.infradead.org>, 
-	<linux-mm@kvack.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
+ kwepemf100013.china.huawei.com (7.202.181.12)
 
-On Thu Aug 28, 2025 at 10:28 AM UTC, Lorenzo Stoakes wrote:
-> On Wed, Aug 27, 2025 at 11:04:40AM +0000, Brendan Jackman wrote:
->> De-duplicating this lets us delete a bit of code.
->
-> Thanks very much! This is nice stuff.
->
->>
->> Ulterior motive: I'm working on a new set of the userspace-based unit
->> tests, which will need the atomics API too. That would involve even more
->> duplication, so while the win in this patchset alone is very minimal, it
->> looks a lot more significant with my other WIP patchset.
->
-> I hope that my + Liam's work helped inspire you :)
+This is [3/3] part of hinic3 Ethernet driver initial submission.
+With this patch hinic3 becomes a functional Ethernet driver.
 
-Certainly! Unfortunately after spending most of the last week on it I
-decided I need to cut my losses for the time being. I can see where it
-needs to get to but it's hard to say how many more days I'll have to
-pour into fiddling around splitting headers and moving definitions etc
-etc etc. This unknown number of days is hard to justify investing right
-now, given that I think there's a high risk people see the amount of
-code movement and go "please immediately step away from my codebase":
+The driver parts contained in this patch:
+Memory allocation and initialization of the driver structures.
+Management interfaces initialization.
+HW capabilities probing, initialization and setup using management
+interfaces.
+Net device open/stop implementation and data queues initialization.
+Register VID:DID in PCI id_table.
+Fix netif_queue_set_napi usage.
 
-=E2=9D=AF=E2=9D=AF  git diff --stat origin/master..buddy-tests
- include/linux/buddy.h                    |   58 ++
- include/linux/gfp.h                      |   36 +-
- include/linux/mm.h                       |   13 -
- include/linux/mm_types.h                 |  103 ++-
- include/linux/mmzone.h                   |  942 +-------------------
- include/linux/mmzone_types.h             | 1080 ++++++++++++++++++++++
- include/linux/nodemask_types.h           |    2 +-
- include/linux/page-flags.h               |   52 +-
- include/linux/page-isolation.h           |    8 -
- include/trace/events/kmem.h              |    1 +
- kernel/bounds.c                          |    9 +-
- mm/Makefile                              |    2 +-
- mm/buddy.c                               | 3618 ++++++++++++++++++++++++++=
-++++++++++++++++++++++++++++++++++++++++++++++++
- mm/buddy.h                               |  738 +++++++++++++++
- mm/buddy_internal.h                      |  136 +++
- mm/compaction.c                          |    1 +
- mm/internal.h                            |  300 +++----
- mm/page_alloc.c                          | 4403 +++-----------------------=
-----------------------------------------------------------------
- mm/page_isolation.c                      |    1 +
- mm/page_reporting.c                      |    1 +
- mm/show_mem.c                            |    1 +
- mm/vmstat.c                              |    1 +
- tools/include/linux/atomic.h             |   19 +
- tools/include/linux/bitops.h             |    9 +
- tools/include/linux/cache.h              |    2 +
- tools/include/linux/llist.h              |  317 +++++++
- tools/include/linux/math.h               |   12 +
- tools/include/linux/spinlock.h           |    1 +
- tools/testing/buddy/.gitignore           |    7 +
- tools/testing/buddy/Makefile             |   18 +
- tools/testing/buddy/buddy.c              |   40 +
- tools/testing/buddy/buddy_internal.h     |  256 ++++++
- tools/testing/buddy/linux/mm_types.h     |   54 ++
- tools/testing/buddy/linux/mmdebug.h      |   13 +
- tools/testing/buddy/linux/nr_pageflags.h |   12 +
- tools/testing/buddy/linux/seqlock.h      |    5 +
- tools/testing/shared/linux/lockdep.h     |    3 +
- tools/testing/shared/linux/maple_tree.h  |    6 +-
- tools/testing/shared/shared.mk           |    6 +-
- tools/testing/vma/linux/atomic.h         |   17 -
- tools/testing/vma/vma_internal.h         |    3 +-
- 41 files changed, 6776 insertions(+), 5530 deletions(-)
+Changes:
 
-Anyway, at least it resulted in a nice little cleanup for the existing
-tests. And maybe I'll get back to it soon when I'm back to being
-frustrated about how hard it is to be sure my page_alloc.c code works.
+PATCH 03 V01: https://lore.kernel.org/netdev/cover.1756195078.git.zhuyikai1@h-partners.com
+* Remove extra memset 0 after kzalloc (Vadim Fedorenko)
+* Remove another init function in hinic3_init_hwdev/hwif/nic_io (Vadim Fedorenko)
+* Create a new separate patch of fixing code style (Vadim Fedorenko)
+* Use bitmap_free instead of kfree (ALOK TIWARI)
+* Add prefix "hinic3" to non-static functions and parse_* functions (Vadim Fedorenko)
+* Init func_tbl_cfg to {} (Vadim Fedorenko)
+* Move endinass-improvements to a separate patch (Vadim Fedorenko)
+* Use kmalloc_array before overwrite rss_hkey on the very next line (Vadim Fedorenko)
+* Remove extra key copy about hinic3_rss_set_hash_key (Vadim Fedorenko)
+* Use netdev_rss_key_fill instead of static rss hash key for safety (Eric Dumazet)
+
+PATCH 03 V02:
+
+Fan Gong (14):
+  hinic3: HW initialization
+  hinic3: HW management interfaces
+  hinic3: HW common function initialization
+  hinic3: HW capability initialization
+  hinic3: Command Queue flush interfaces
+  hinic3: Nic_io initialization
+  hinic3: Queue pair endianness improvements
+  hinic3: Queue pair resource initialization
+  hinic3: Queue pair context initialization
+  hinic3: Tx & Rx configuration
+  hinic3: Add Rss function
+  hinic3: Add port management
+  hinic3: Fix missing napi->dev in netif_queue_set_napi
+  hinic3: Fix code style (Missing a blank line before return)
+
+ drivers/net/ethernet/huawei/hinic3/Makefile   |   2 +
+ .../ethernet/huawei/hinic3/hinic3_hw_cfg.c    | 195 ++++
+ .../ethernet/huawei/hinic3/hinic3_hw_cfg.h    |   4 +
+ .../ethernet/huawei/hinic3/hinic3_hw_comm.c   | 364 ++++++++
+ .../ethernet/huawei/hinic3/hinic3_hw_comm.h   |  21 +
+ .../ethernet/huawei/hinic3/hinic3_hw_intf.h   | 121 +++
+ .../net/ethernet/huawei/hinic3/hinic3_hwdev.c | 547 ++++++++++-
+ .../net/ethernet/huawei/hinic3/hinic3_hwif.c  | 253 +++++
+ .../net/ethernet/huawei/hinic3/hinic3_hwif.h  |  16 +
+ .../net/ethernet/huawei/hinic3/hinic3_irq.c   |   2 +-
+ .../net/ethernet/huawei/hinic3/hinic3_lld.c   |   9 +-
+ .../net/ethernet/huawei/hinic3/hinic3_main.c  |   9 +-
+ .../net/ethernet/huawei/hinic3/hinic3_mgmt.c  |  21 +
+ .../net/ethernet/huawei/hinic3/hinic3_mgmt.h  |   2 +
+ .../huawei/hinic3/hinic3_mgmt_interface.h     | 119 +++
+ .../huawei/hinic3/hinic3_netdev_ops.c         | 432 ++++++++-
+ .../ethernet/huawei/hinic3/hinic3_nic_cfg.c   | 152 +++
+ .../ethernet/huawei/hinic3/hinic3_nic_cfg.h   |  20 +
+ .../ethernet/huawei/hinic3/hinic3_nic_dev.h   |   5 +
+ .../ethernet/huawei/hinic3/hinic3_nic_io.c    | 874 +++++++++++++++++-
+ .../ethernet/huawei/hinic3/hinic3_nic_io.h    |  39 +-
+ .../huawei/hinic3/hinic3_pci_id_tbl.h         |   9 +
+ .../net/ethernet/huawei/hinic3/hinic3_rss.c   | 352 +++++++
+ .../net/ethernet/huawei/hinic3/hinic3_rss.h   |  14 +
+ .../net/ethernet/huawei/hinic3/hinic3_rx.c    | 232 ++++-
+ .../net/ethernet/huawei/hinic3/hinic3_rx.h    |  38 +-
+ .../net/ethernet/huawei/hinic3/hinic3_tx.c    | 184 +++-
+ .../net/ethernet/huawei/hinic3/hinic3_tx.h    |  30 +-
+ 28 files changed, 3980 insertions(+), 86 deletions(-)
+ create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_mgmt.c
+ create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_pci_id_tbl.h
+ create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_rss.c
+ create mode 100644 drivers/net/ethernet/huawei/hinic3/hinic3_rss.h
+
+
+base-commit: b1c92cdf5af3198e8fbc1345a80e2a1dff386c02
+-- 
+2.43.0
+
 
