@@ -1,152 +1,133 @@
-Return-Path: <linux-kernel+bounces-789617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789618-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA6DEB39853
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 11:31:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 748C1B3984C
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 11:29:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D22BB7B3795
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 09:28:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0005A5E8946
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 09:29:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 144932ECE8B;
-	Thu, 28 Aug 2025 09:28:34 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD2562EE29F;
+	Thu, 28 Aug 2025 09:28:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="itR4/JIf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D17BB2E0910;
-	Thu, 28 Aug 2025 09:28:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24AE12E0910;
+	Thu, 28 Aug 2025 09:28:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756373313; cv=none; b=NlR9bT2syrd6krbkbdcfmFM907PxwaeGScOqOOgIfal0+aD+crUEZfvNpXbawgZDgF4JWM4pb3Y+mhTnRB6Svr+c8oUa1GZdBBeghMY1ppPIJukCsUn7jHNFpo+mrkLyC0sFPjCOkmxj87ppH3dPrHXUlhQfv4gxPOG6i8ir/7w=
+	t=1756373330; cv=none; b=uH2NABUODJ67GcX4RtO8wttbjw3cKb3h+6PYle+iAJIj44uSurm9hN7F3j19q4KKBMNF65VJfybNPZN2RnXKlBgC2EI9Z1zbuGa9ZqHjhBtbndiZ8jxO22umPIiBpBQapVaOgZjayb9Fbjh+pf+014kkaA3ZeL20rOs83c3j/+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756373313; c=relaxed/simple;
-	bh=3LP8Z+RPW5dloclFNTs7hN4RIE1n53EWxwbnP6KzdUM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Wnz+SkAJw+1GaTSTm8DmRnaMDvZ7w3NcpubSu/GQ10Wpr1GhuL8ixt8sSrSFV8LLpglOeQHk7kE+LsC+dhI+/yMnJhYxWi1L8mSaBU2kqbdqROjjQb1BQ9k9bCV1X8W4k4M2MqVxVezXqKtTd8YcS5BJAqdzrqPHt3U/NzHN9pk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4cCGKm2XqPzKHMwh;
-	Thu, 28 Aug 2025 17:28:28 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 0D5321A1773;
-	Thu, 28 Aug 2025 17:28:28 +0800 (CST)
-Received: from [10.174.179.247] (unknown [10.174.179.247])
-	by APP4 (Coremail) with SMTP id gCh0CgB3wY06IbBoUOhIAg--.19147S3;
-	Thu, 28 Aug 2025 17:28:27 +0800 (CST)
-Message-ID: <fc587a1a-97fb-584c-c17c-13bb5e3d7a92@huaweicloud.com>
-Date: Thu, 28 Aug 2025 17:28:26 +0800
+	s=arc-20240116; t=1756373330; c=relaxed/simple;
+	bh=y8YnwcnSxBOTmOyoA65L96B1RKvSEtcKZ0A6OCYbckQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=F2bQNJICioUFpB/QaTvlYy+A0LdOq0Udry2iR/9niFgaKBene3cZr8vwna2cyDN27f4k7hVRkDQZjeJduk8r6E5ba6UUcih7AXkXrUq7ouF9CalnVOWsb+ENX2nwh6vLUWvkFpeNlXLo9bY6wOcIbfJYbRSwMAsJpKDHs+l5PBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=itR4/JIf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2ECBFC4CEEB;
+	Thu, 28 Aug 2025 09:28:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1756373329;
+	bh=y8YnwcnSxBOTmOyoA65L96B1RKvSEtcKZ0A6OCYbckQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=itR4/JIfDU7uqrAWwxeNh0s9mmdmkznvYT3uyvfBV2KPNdM5qTCqjObIv4dnUZHac
+	 ZskNQxAdVWivgltri9cqI6IEyqXIpIkELFktXg78wPFx8NGA3kZvImaLzRvKzqvIKY
+	 zSOkrreyzUtIt5zvnHkmae0jVUd8BvQbwn1JJaV4=
+Date: Thu, 28 Aug 2025 11:28:46 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Miaoqian Lin <linmq006@gmail.com>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Grygorii Strashko <grygorii.strashko@ti.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH] net: ethernet: ti: Prevent divide-by-zero in
+ cpts_calc_mult_shift()
+Message-ID: <2025082830-bobbing-confusing-14fc@gregkh>
+References: <20250828092224.46761-1-linmq006@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH] blk-mq: check kobject state_in_sysfs before deleting in
- blk_mq_unregister_hctx
-To: Ming Lei <ming.lei@redhat.com>, Li Nan <linan666@huaweicloud.com>
-Cc: Yu Kuai <yukuai1@huaweicloud.com>, axboe@kernel.dk,
- jianchao.w.wang@oracle.com, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, yangerkun@huawei.com, yi.zhang@huawei.com,
- "yukuai (C)" <yukuai3@huawei.com>
-References: <20250826084854.1030545-1-linan666@huaweicloud.com>
- <aK5YH4Jbt3ZNngwR@fedora>
- <3853d5bf-a561-ec2d-e063-5fbe5cf025ca@huaweicloud.com>
- <aK5g-38izFqjPk9v@fedora>
- <b5f385bc-5e16-2a79-f997-5fd697f2a38a@huaweicloud.com>
- <aK69gpTnVv3TZtjg@fedora>
-From: Li Nan <linan666@huaweicloud.com>
-In-Reply-To: <aK69gpTnVv3TZtjg@fedora>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgB3wY06IbBoUOhIAg--.19147S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7tF18Aw48CFy5KFyxAFWUurg_yoW8KF45pF
-	WrJa1kKr1DAF47Z3Wjvw4xGFyakrs7Gr4Yvr98Jry5A3sI9r95tr4xKr4DWFWv9rykC3WI
-	qa1UXFWfWry8ZaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUPI14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1lnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xv
-	F2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r
-	4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v
-	4I1lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7
-	AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02
-	F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GF
-	ylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7Cj
-	xVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r
-	1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUQ
-	vtAUUUUU=
-X-CM-SenderInfo: polqt0awwwqx5xdzvxpfor3voofrz/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250828092224.46761-1-linmq006@gmail.com>
 
-
-
-在 2025/8/27 16:10, Ming Lei 写道:
-> On Wed, Aug 27, 2025 at 11:22:06AM +0800, Li Nan wrote:
->>
->>
->> 在 2025/8/27 9:35, Ming Lei 写道:
->>> On Wed, Aug 27, 2025 at 09:04:45AM +0800, Yu Kuai wrote:
->>>> Hi,
->>>>
->>>> 在 2025/08/27 8:58, Ming Lei 写道:
->>>>> On Tue, Aug 26, 2025 at 04:48:54PM +0800, linan666@huaweicloud.com wrote:
->>>>>> From: Li Nan <linan122@huawei.com>
->>>>>>
->>>>>> In __blk_mq_update_nr_hw_queues() the return value of
->>>>>> blk_mq_sysfs_register_hctxs() is not checked. If sysfs creation for hctx
->>>>>
->>>>> Looks we should check its return value and handle the failure in both
->>>>> the call site and blk_mq_sysfs_register_hctxs().
->>>>
->>>>   From __blk_mq_update_nr_hw_queues(), the old hctxs is already
->>>> unregistered, and this function is void, we failed to register new hctxs
->>>> because of memory allocation failure. I really don't know how to handle
->>>> the failure here, do you have any suggestions?
->>>
->>> It is out of memory, I think it is fine to do whatever to leave queue state
->>> intact instead of making it `partial workable`, such as:
->>>
->>> - try update nr_hw_queues to 1
->>>
->>> - if it still fails, delete disk & mark queue as dead if disk is attached
->>>
->>
->> If we ignore these non-critical sysfs creation failures, the disk remains
->> usable with no loss of functionality. Deleting the disk seems to escalate
->> the error?
+On Thu, Aug 28, 2025 at 05:22:23PM +0800, Miaoqian Lin wrote:
+> cpts_calc_mult_shift() has a potential divide-by-zero in this line:
 > 
-> It is more like a workaround by ignoring the sysfs register failure. And if
-> the issue need to be fixed in this way, you have to document it. >
-> In case of OOM, it usually means that the system isn't usable any more.
-> But it is NOIO allocation and the typical use case is for error recovery in
-> nvme pci, so there may not be enough pages for noio allocation only. That is
-> the reason for ignoring sysfs register in blk_mq_update_nr_hw_queues()?
+>         do_div(maxsec, freq);
 > 
-> But NVMe has been pretty fragile in this area by using non-owner queue
-> freeze, and call blk_mq_update_nr_hw_queues() on frozen queue, so it is
-> really necessary to take it into account?
-
-I agree with your points about NOIO and NVMe.
-
-I hit this issue in null_blk during fuzz testing with memory-fault
-injection. Changing the number of hardware queues under OOM is extremely 
-rare in real-world usage. So I think adding a workaround and documenting it
-is sufficient. What do you think?
-
+> due to the fact that clk_get_rate() can return zero in certain error
+> conditions.
+> Add an explicit check to fix this.
 > 
-> Thanks,
-> Ming
+> Fixes: 88f0f0b0bebf ("net: ethernet: ti: cpts: calc mult and shift from refclk freq")
+> Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
+> ---
+> This follows the same pattern as the fix in commit 7ca59947b5fc
+> ("pwm: mediatek: Prevent divide-by-zero in pwm_mediatek_config()").
+> ---
+>  drivers/net/ethernet/ti/cpts.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/net/ethernet/ti/cpts.c b/drivers/net/ethernet/ti/cpts.c
+> index 2ba4c8795d60..e4e3409e7648 100644
+> --- a/drivers/net/ethernet/ti/cpts.c
+> +++ b/drivers/net/ethernet/ti/cpts.c
+> @@ -607,6 +607,8 @@ static void cpts_calc_mult_shift(struct cpts *cpts)
+>  	u32 freq;
+>  
+>  	freq = clk_get_rate(cpts->refclk);
+> +	if (!freq)
+> +		return;
+>  
+>  	/* Calc the maximum number of seconds which we can run before
+>  	 * wrapping around.
+> -- 
+> 2.39.5 (Apple Git-154)
 > 
 
 
--- 
-Thanks,
-Nan
+Hi,
 
+This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
+a patch that has triggered this response.  He used to manually respond
+to these common problems, but in order to save his sanity (he kept
+writing the same thing over and over, yet to different people), I was
+created.  Hopefully you will not take offence and will fix the problem
+in your patch and resubmit it so that it can be accepted into the Linux
+kernel tree.
+
+You are receiving this message because of the following common error(s)
+as indicated below:
+
+- You have marked a patch with a "Fixes:" tag for a commit that is in an
+  older released kernel, yet you do not have a cc: stable line in the
+  signed-off-by area at all, which means that the patch will not be
+  applied to any older kernel releases.  To properly fix this, please
+  follow the documented rules in the
+  Documentation/process/stable-kernel-rules.rst file for how to resolve
+  this.
+
+If you wish to discuss this problem further, or you have questions about
+how to resolve this issue, please feel free to respond to this email and
+Greg will reply once he has dug out from the pending patches received
+from other developers.
+
+thanks,
+
+greg k-h's patch email bot
 
