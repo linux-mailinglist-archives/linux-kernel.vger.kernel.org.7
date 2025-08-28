@@ -1,94 +1,95 @@
-Return-Path: <linux-kernel+bounces-790190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8032BB3A234
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 16:39:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D8E4B3A1D9
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 16:31:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC81A581892
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 14:30:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2C78A7AB0BC
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 14:29:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B14230FC20;
-	Thu, 28 Aug 2025 14:30:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E07B126561D;
+	Thu, 28 Aug 2025 14:31:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="TiaksBK2";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="0vv1DokT";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="TiaksBK2";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="0vv1DokT"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="UjnuTlC4";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="lXR6YRFC";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="UjnuTlC4";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="lXR6YRFC"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24A962451F3
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 14:30:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9537DB665
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 14:31:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756391444; cv=none; b=SYr37NRh+Nx+XPerM/4NWohKwJqnM+MPkoIE50gwbFaV2UG7qBjtGzDAvdZIOBGqk6D5XptHx+QGpPV835G4Ebve5Q6/z+O0NovyZhSvIXHDM9tvmfcvMF7RFxQdDAvvguc1op+BFTbLKXiKI2NTwQuNSr2idPtqeWRpTexJhj0=
+	t=1756391477; cv=none; b=ljQuuv0loeGA/7mVkjuHSIuBMljBaYoAEdrB8d7y0TDhdm6jPZK9o7cS2COuuvYNvNf60ERCTaI93ztQeIjOjCKMCh0Ne4wNBRdW5rcV35zOFnAxItPdhasalx4JJ4isOwVIFCo4RNVKSqSoil8CGFcGooH7NYozUHHxjn/vDgM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756391444; c=relaxed/simple;
-	bh=6Cir9eKHQmIdJ8bzY01aZN//9SOPJYEgesmkIDEiFW0=;
+	s=arc-20240116; t=1756391477; c=relaxed/simple;
+	bh=tNA3DDUc81X+YxUNtdH63clIrTAh5wtApuNUIftWx30=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dQhqVk14n06A/zZV2MlAEl2cs9jWf5nI2Hh2aB1M3PENkVJmZb4T79R59A+wfulLJZ+ask0WgOSYBWo1g4NBzNA9Qqb9hQ4IFFtCjuqd5gT6XEXsZr/wHOuVntsnfOyomzGQ3+nHUX/pDMyV1tFOAr9gSSEd62U1hP0Y/m8R/AA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=TiaksBK2; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=0vv1DokT; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=TiaksBK2; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=0vv1DokT; arc=none smtp.client-ip=195.135.223.130
+	 In-Reply-To:Content-Type; b=r+eDEEHwYOsTSUovNvNXIDXRUdiOem66AIKERejxEtMCg2578VzOLAv6Ak37adoBszjsKR0h525EUIK+F6qbK7TD+oBRq33bL5TbXdSlYGBQdADs7rU8StkYg14L/fyHOKlclE3jALbUjZOUPbKwmf9Qa6UayAbpn49lVrNxXj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=UjnuTlC4; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=lXR6YRFC; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=UjnuTlC4; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=lXR6YRFC; arc=none smtp.client-ip=195.135.223.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 4A16F33895;
-	Thu, 28 Aug 2025 14:30:41 +0000 (UTC)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 89B7720C68;
+	Thu, 28 Aug 2025 14:31:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1756391441; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1756391473; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=LRuuHCoLWwYVBQEW2UDz60bE1l/PW8wxhu/LxdEPMjE=;
-	b=TiaksBK2Iso0XoO5Wc9+xCKVSkNGR7euxpUK3hFQj4QLxHQUkDvwQMsOxkhMjdKpeGCXPv
-	X0QXCRrYH0gzVj3ad/Cjx7WtJvlp+9hU7ybqh8wKza9bnbygfCXifDs5dfcvizgeBVztvK
-	rCjQbybCNt1O0XAsKxDm29zUVc7wXNA=
+	bh=wAf1rSyN0U88x/f7J+bzl7K3AHopgiG6PvRguCxbi5E=;
+	b=UjnuTlC4dxVxCW4DBvUrGdDPbNkR+BCF8FOKlMXnSSwk6RGdZbS0bqAKTHPnu1cz5I/+EN
+	OHIbE434/kd3p92SgiD5yvxjDODUKJBa1w6QvuRGxfSF/1ozLVlJL9VBW27XI8kHgo6NRM
+	729WZYs/lZKRhme+7kbweUO1vKT1CUY=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1756391441;
+	s=susede2_ed25519; t=1756391473;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=LRuuHCoLWwYVBQEW2UDz60bE1l/PW8wxhu/LxdEPMjE=;
-	b=0vv1DokTxWHWRE2UdBhHRnIc97oM92EM9+5SZ2U4fjSt0S0q50GdzIcGVc+dCXQym8nF8w
-	bPsHhvC0F3fwB8DQ==
-Authentication-Results: smtp-out1.suse.de;
-	none
+	bh=wAf1rSyN0U88x/f7J+bzl7K3AHopgiG6PvRguCxbi5E=;
+	b=lXR6YRFC4GWT0l59A/+aOcjIr/ToKs1Heigrdyp5i66BHDgi66AwP2yUDBaECiPO4THwjW
+	n7EWRqbx9OOImlBA==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=UjnuTlC4;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=lXR6YRFC
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1756391441; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1756391473; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=LRuuHCoLWwYVBQEW2UDz60bE1l/PW8wxhu/LxdEPMjE=;
-	b=TiaksBK2Iso0XoO5Wc9+xCKVSkNGR7euxpUK3hFQj4QLxHQUkDvwQMsOxkhMjdKpeGCXPv
-	X0QXCRrYH0gzVj3ad/Cjx7WtJvlp+9hU7ybqh8wKza9bnbygfCXifDs5dfcvizgeBVztvK
-	rCjQbybCNt1O0XAsKxDm29zUVc7wXNA=
+	bh=wAf1rSyN0U88x/f7J+bzl7K3AHopgiG6PvRguCxbi5E=;
+	b=UjnuTlC4dxVxCW4DBvUrGdDPbNkR+BCF8FOKlMXnSSwk6RGdZbS0bqAKTHPnu1cz5I/+EN
+	OHIbE434/kd3p92SgiD5yvxjDODUKJBa1w6QvuRGxfSF/1ozLVlJL9VBW27XI8kHgo6NRM
+	729WZYs/lZKRhme+7kbweUO1vKT1CUY=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1756391441;
+	s=susede2_ed25519; t=1756391473;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=LRuuHCoLWwYVBQEW2UDz60bE1l/PW8wxhu/LxdEPMjE=;
-	b=0vv1DokTxWHWRE2UdBhHRnIc97oM92EM9+5SZ2U4fjSt0S0q50GdzIcGVc+dCXQym8nF8w
-	bPsHhvC0F3fwB8DQ==
+	bh=wAf1rSyN0U88x/f7J+bzl7K3AHopgiG6PvRguCxbi5E=;
+	b=lXR6YRFC4GWT0l59A/+aOcjIr/ToKs1Heigrdyp5i66BHDgi66AwP2yUDBaECiPO4THwjW
+	n7EWRqbx9OOImlBA==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2B7311368B;
-	Thu, 28 Aug 2025 14:30:41 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6A0721368B;
+	Thu, 28 Aug 2025 14:31:13 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id fSotCRFosGhRIwAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Thu, 28 Aug 2025 14:30:41 +0000
-Message-ID: <5f88a029-b783-4a47-ac7f-9e1ed6605229@suse.cz>
-Date: Thu, 28 Aug 2025 16:30:40 +0200
+	id P2zKGDFosGhuIwAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Thu, 28 Aug 2025 14:31:13 +0000
+Message-ID: <8d536d53-a365-4a9f-8d30-bbade9a85e3e@suse.cz>
+Date: Thu, 28 Aug 2025 16:31:13 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,17 +97,19 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] mm/mremap: fix regression in vrm->new_addr check
+Subject: Re: [PATCH] mm/mremap: fix regression in vrm->new_addr check
 Content-Language: en-US
 To: Carlos Llamas <cmllamas@google.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Jann Horn <jannh@google.com>,
- Pedro Falcato <pfalcato@suse.de>
-Cc: kernel-team@android.com, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org, "open list:MEMORY MAPPING" <linux-mm@kvack.org>
-References: <8a4dc910-5237-48aa-8abb-a6d5044bc290@lucifer.local>
- <20250828142657.770502-1-cmllamas@google.com>
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Jann Horn <jannh@google.com>,
+ Pedro Falcato <pfalcato@suse.de>, kernel-team@android.com,
+ linux-kernel@vger.kernel.org, "open list:MEMORY MAPPING" <linux-mm@kvack.org>
+References: <20250828032653.521314-1-cmllamas@google.com>
+ <8a4dc910-5237-48aa-8abb-a6d5044bc290@lucifer.local>
+ <53b938ed-dd78-42fa-8cde-f3a938b6f39f@suse.cz>
+ <b58449cc-022b-497a-97f2-c91776d133dc@lucifer.local>
+ <aLBn4vb0Pmwoqt51@google.com>
 From: Vlastimil Babka <vbabka@suse.cz>
 Autocrypt: addr=vbabka@suse.cz; keydata=
  xsFNBFZdmxYBEADsw/SiUSjB0dM+vSh95UkgcHjzEVBlby/Fg+g42O7LAEkCYXi/vvq31JTB
@@ -147,91 +150,76 @@ Autocrypt: addr=vbabka@suse.cz; keydata=
  rywqgzTUhHFKKF6/9L/lYtrNcHU8Z6Y4Ju/MLUiNYkmtrGIMnkjKCiRqlRrZE/v5YFHbayRD
  dJKXobXTtCBYpLJM4ZYRpGZXne/FAtWNe4KbNJJqxMvrTOrnIatPj8NhBVI0RSJRsbilh6TE
  m6M14QORSWTLRg==
-In-Reply-To: <20250828142657.770502-1-cmllamas@google.com>
+In-Reply-To: <aLBn4vb0Pmwoqt51@google.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Spamd-Result: default: False [-4.30 / 50.00];
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: 89B7720C68
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.51 / 50.00];
 	BAYES_HAM(-3.00)[100.00%];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
 	MIME_GOOD(-0.10)[text/plain];
-	MIME_TRACE(0.00)[0:+];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_TLS_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
+	MX_GOOD(-0.01)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
 	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCPT_COUNT_SEVEN(0.00)[10];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
 	MID_RHS_MATCH_FROM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid,suse.cz:email,oracle.com:email,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Spam-Score: -4.30
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.cz:dkim,suse.cz:mid];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Spam-Score: -4.51
 
-On 8/28/25 16:26, Carlos Llamas wrote:
-> Commit 3215eaceca87 ("mm/mremap: refactor initial parameter sanity
-> checks") moved the sanity check for vrm->new_addr from mremap_to() to
-> check_mremap_params().
+On 8/28/25 16:29, Carlos Llamas wrote:
+> On Thu, Aug 28, 2025 at 03:22:54PM +0100, Lorenzo Stoakes wrote:
+>> On Thu, Aug 28, 2025 at 04:21:05PM +0200, Vlastimil Babka wrote:
+>> > On 8/28/25 07:38, Lorenzo Stoakes wrote:
+>> > > On Thu, Aug 28, 2025 at 03:26:52AM +0000, Carlos Llamas wrote:
+>> > >> Commit 3215eaceca87 ("mm/mremap: refactor initial parameter sanity
+>> > >> checks") moved the sanity check for vrm->new_addr from mremap_to() to
+>> > >> check_mremap_params().
+>> > >>
+>> > >> However, this caused a regression as vrm->new_addr is now checked even
+>> > >> when MREMAP_FIXED and MREMAP_DONTUNMAP flags are not specified. In this
+>> > >> case, vrm->new_addr can be garbage and create unexpected failures.
+>> > >
+>> > > Yikes, sorry my mistake.
+>> > >
+>> > >>
+>> > >> Fix this by moving the new_addr check after the vrm_implies_new_addr()
+>> > >> guard. This ensures that the new_addr is only checked when the user has
+>> > >> specified one explicitly.
+>> > >>
+>> > >> Fixes: 3215eaceca87 ("mm/mremap: refactor initial parameter sanity checks")
+>> > >> Signed-off-by: Carlos Llamas <cmllamas@google.com>
+>> > >
+>> > > You need a Cc: Stable.
+>> >
+>> > No need as the commit being fixed is from 6.17-rc1?
+>> > But it's better to use "[PATCH mm-hotfixes]" to make sure it goes to 6.17
+>> > and not the next merge window.
+>> >
+>> 
+>> Ah haha really? I'm losing track of my patches.
+>> 
+>> Yeah sure as per Vlasta then Carlos :)
 > 
-> However, this caused a regression as vrm->new_addr is now checked even
-> when MREMAP_FIXED and MREMAP_DONTUNMAP flags are not specified. In this
-> case, vrm->new_addr can be garbage and create unexpected failures.
-> 
-> Fix this by moving the new_addr check after the vrm_implies_new_addr()
-> guard. This ensures that the new_addr is only checked when the user has
-> specified one explicitly.
-> 
-> Cc: stable@vger.kernel.org
+> Oops, sorry my v2 raced with this.
 
-Not necessary, but for mm-hotfixes please, Andrew.
-
-> Fixes: 3215eaceca87 ("mm/mremap: refactor initial parameter sanity checks")
-> Reviewed-by: Liam R. Howlett <Liam.Howlett@oracle.com>
-> Signed-off-by: Carlos Llamas <cmllamas@google.com>
-
-Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
-
-> ---
-> v2:
->  - split out vrm->new_len into individual checks
->  - cc stable, collect tags
-> 
-> v1:
-> https://lore.kernel.org/all/20250828032653.521314-1-cmllamas@google.com/
-> 
->  mm/mremap.c | 9 ++++++---
->  1 file changed, 6 insertions(+), 3 deletions(-)
-> 
-> diff --git a/mm/mremap.c b/mm/mremap.c
-> index e618a706aff5..35de0a7b910e 100644
-> --- a/mm/mremap.c
-> +++ b/mm/mremap.c
-> @@ -1774,15 +1774,18 @@ static unsigned long check_mremap_params(struct vma_remap_struct *vrm)
->  	if (!vrm->new_len)
->  		return -EINVAL;
->  
-> -	/* Is the new length or address silly? */
-> -	if (vrm->new_len > TASK_SIZE ||
-> -	    vrm->new_addr > TASK_SIZE - vrm->new_len)
-> +	/* Is the new length silly? */
-> +	if (vrm->new_len > TASK_SIZE)
->  		return -EINVAL;
->  
->  	/* Remainder of checks are for cases with specific new_addr. */
->  	if (!vrm_implies_new_addr(vrm))
->  		return 0;
->  
-> +	/* Is the new address silly? */
-> +	if (vrm->new_addr > TASK_SIZE - vrm->new_len)
-> +		return -EINVAL;
-> +
->  	/* The new address must be page-aligned. */
->  	if (offset_in_page(vrm->new_addr))
->  		return -EINVAL;
-
+Nevermind, Andrew can fixup locally. Thanks :)
 
