@@ -1,323 +1,248 @@
-Return-Path: <linux-kernel+bounces-789479-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54A59B3961C
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 10:00:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 989F2B3961E
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 10:01:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35EB41BA7BFB
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 08:01:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4C423621D2
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 08:01:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC7B02D6E7C;
-	Thu, 28 Aug 2025 08:00:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E81732D0274;
+	Thu, 28 Aug 2025 08:01:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="MX9o4WWS"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="XNe5x4ex";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="z9iUOAsJ";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="tgbWUcm8";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="J7PBkZLx"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDFF613C9C4;
-	Thu, 28 Aug 2025 08:00:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83BF826AABE
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 08:01:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756368035; cv=none; b=SVfW+iR5xhrddd96phYHUKFfYTYWMCTfvtaaxXy4LHRYDNQjNlVxtDWN4XFGyh0k7p/jNmf7+c+sSTWItwl94gNemQYwQmQ/SXYtMPl4KPoshmMQvY5PjL10WkyMw4M6nBVBKSz9kWORuYuVkZ4vSYtAMomXUA0gvdNRGM8qEQI=
+	t=1756368105; cv=none; b=fOvvJ22wvSpdpxNu4azE/gLK4AotLKQg5KiKEnTYC/a1i5t9PK9pcgKbHLY28gymv2bBlZMYYI5j3A4yl/TQimpRDiRUpk7Uw75PhBUOCfs2zlGDngI8ggOSuhQbWdbGYvrTd9rxlw6QDT6iB9R/8USpvj+X1Vk2ehXG9FkFSdg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756368035; c=relaxed/simple;
-	bh=UZ/78le+r1IFnCSnUidZws5UWDQwvQslw8bJcUqe4J4=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
-	 In-Reply-To:Content-Type; b=JqcgrUZXleaRmrPFEzwePvVf9H7IOyqRVBzA0vY5g6EQMlKmhXClLcHDEtrnqhzJkiuTJGxZB6FaV7nsV5ZMaWbBMft04V8v1uCyH9L00df83PGP9dd8UBUMEOc1g7aF0M2WOCeLGcge66g2eCO6Tb7Oyou5PDQ7CPXsUBtGz8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=MX9o4WWS; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57S5qOB6008217;
-	Thu, 28 Aug 2025 08:00:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	FazfvUQql7SGj2jSNfDtX5yZYUvRFGHeFE6ggQVkRvY=; b=MX9o4WWSht7XOqMn
-	/rqkJNQDXaowbhmohDQOq17fvfAnKM32peTre9Xk4Q1SVPJTWoA+GirEl9ZkD4Wk
-	xfb3Ur6Amek0B0b1TwJsl502GFcKhHSEN3QxwqKargOhzo0VMrcXd4ULAJaVdPAI
-	QWtYsOMb8hFkQQ1xCKdOyFSXDvql7x82lV5FUAqQ0T1OVeeLUrjE1GZ2Y3fqHDi1
-	+4COa2srluFv4PLM9d5bvd/ngeeXrH7hJpr5zkPIdXRpiQF4rCKDeaX4l4+CxMb+
-	WSnAAVcoTHoBPmE2Y+i2CsS6cfzLNWLjwUGo4syw+tDNSr2J2W6Y7cXqN+Gi1MrL
-	C4PNkQ==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48sh8anpgd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 28 Aug 2025 08:00:29 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 57S80T6l022265
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 28 Aug 2025 08:00:29 GMT
-Received: from [10.217.216.18] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.24; Thu, 28 Aug
- 2025 01:00:24 -0700
-Message-ID: <335a0397-59e3-ad65-5e75-0bb7f399be66@quicinc.com>
-Date: Thu, 28 Aug 2025 13:30:21 +0530
+	s=arc-20240116; t=1756368105; c=relaxed/simple;
+	bh=W+RSXIZI4aBoVU4PbDJ2mSNTsDYJruBBjbUelu4DtOA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JTF99qYQdFGzlpfYx1cnEKPdzjGGvTDo2C0B7PdrGjO35nxnC5TMhZBlDwyYtMhaLyH0wZTRuS1qRK7aaI8STdtZS6ehdbbfLe7tDY61F64hUa8aMaJV9tlyS6VNPOYx7d0JQHbE/ARTnnx+LgTN7tK0riM0NRJsGms/lOC7EoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=XNe5x4ex; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=z9iUOAsJ; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=tgbWUcm8; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=J7PBkZLx; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 092E320A99;
+	Thu, 28 Aug 2025 08:01:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1756368101; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=G6ItBYEouCLq/APyaYGz19HWEDks/RPcsNJulNZZBW8=;
+	b=XNe5x4ex2WUGvQtkfsbIYtJQ3IH2zM6qHyqHThn0UYC8T8coXxexpjEFSEwY/dISzW64Ux
+	F7u7yMzxH844gbXNtShA9cB8MjRoTtlUU6MRZ+py/PE27jY8BaitaAHjD9qTmFvUeWZJBX
+	rM6FzKEooofps4ui7WGO1D/lknC4KRg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1756368101;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=G6ItBYEouCLq/APyaYGz19HWEDks/RPcsNJulNZZBW8=;
+	b=z9iUOAsJdTzWYhANDkwS2QMmzhAijjYCquLMvoCRp2bovKTzEhwNC2/y441NTxNUiGAYGR
+	n6CspIhXnZAa4jCA==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=tgbWUcm8;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=J7PBkZLx
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1756368100; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=G6ItBYEouCLq/APyaYGz19HWEDks/RPcsNJulNZZBW8=;
+	b=tgbWUcm8aXE6IbO44BqEo/dyWOa0pZGE6wmTeINWA4fqk+EFvE28gGjRhhv/bh/kB/1JMC
+	OCd4WLF2C43AVNWLqX6tUUkAOlgwpvijZJ2cJGs3TaG/wUV3KFB9xqag2Ox+XA6uwmMF/K
+	PXtgtXvle+Rdn5pR4Qzd0XzKC42jyic=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1756368100;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=G6ItBYEouCLq/APyaYGz19HWEDks/RPcsNJulNZZBW8=;
+	b=J7PBkZLxBRYzfT+UZHT2ZgTZvS5r2T5yVK+B7QrMTVGk7JMHcP/klQWzb5Z3pslTvPB4Qh
+	yRRH8JAOr4WEQRCA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B803F13326;
+	Thu, 28 Aug 2025 08:01:39 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id qiDJK+MMsGg9IgAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Thu, 28 Aug 2025 08:01:39 +0000
+Message-ID: <e58c8482-bd11-4111-b912-daf8b43ebb15@suse.cz>
+Date: Thu, 28 Aug 2025 10:01:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH V2 2/2] mmc: sdhci-msm: Rectify DLL programming sequence
- for SDCC
-From: Ram Prakash Gupta <quic_rampraka@quicinc.com>
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-CC: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Sachin Gupta
-	<quic_sachgupt@quicinc.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        "Ulf
- Hansson" <ulf.hansson@linaro.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <quic_cang@quicinc.com>,
-        <quic_nguyenb@quicinc.com>, <quic_bhaskarv@quicinc.com>,
-        <quic_mapa@quicinc.com>, <quic_nitirawa@quicinc.com>,
-        <quic_sartgarg@quicinc.com>
-References: <otfof56qvqxyjaq6onor2f3egrt57h2xazncias72qnn4xjgz5@2aj2pyj5xmyl>
- <a885b32c-c59f-4fb6-b2cb-7955d2d3ae69@quicinc.com>
- <mpuyg4ndd7xvfpwd6oubn7zmzkuienyrig5pmkrd4badlpebvf@h6weyimpcfv2>
- <769268c2-9a7f-4b6e-aabd-a6cf5a744d5b@quicinc.com>
- <d5ykzwuk3wrwycol3wpeontfp5t7h7vfrfcxnmxei3qs74xsp7@ihtzne5wbytf>
- <81323b02-a7be-847a-b973-ca0cdb906558@quicinc.com>
- <p7o2ykmpghx5jqagpkhd2rfqgizcdagn366rltyn4gmbmnmpje@vcygaqcaowkn>
- <82d11cf6-bfed-9b73-c697-c692d1c7e02d@quicinc.com>
- <1f910d65-de34-424d-adf9-7669c22afeaa@oss.qualcomm.com>
- <bb85f33a-17e4-3c7f-57ce-c4d67b7d655b@quicinc.com>
- <jybd2m25jtg35yocf77e23ytbvrlt5d2f6jjscdyxilpk75tx3@na3u4h2vdweu>
- <ec1b0c96-3069-5937-7bc4-cbce0a4c4ec2@quicinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 02/10] slab: add opt-in caching layer of percpu sheaves
+To: Thorsten Leemhuis <linux@leemhuis.info>,
+ Suren Baghdasaryan <surenb@google.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Christoph Lameter <cl@gentwo.org>, David Rientjes <rientjes@google.com>
+Cc: Roman Gushchin <roman.gushchin@linux.dev>,
+ Harry Yoo <harry.yoo@oracle.com>, Uladzislau Rezki <urezki@gmail.com>,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
+ maple-tree@lists.infradead.org,
+ Linux Next Mailing List <linux-next@vger.kernel.org>,
+ Stephen Rothwell <sfr@canb.auug.org.au>,
+ Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+References: <20250827-slub-percpu-caches-v6-0-f0f775a3f73f@suse.cz>
+ <20250827-slub-percpu-caches-v6-2-f0f775a3f73f@suse.cz>
+ <9f61c814-0d39-46f2-a540-cc9c0e716cf6@leemhuis.info>
 Content-Language: en-US
-In-Reply-To: <ec1b0c96-3069-5937-7bc4-cbce0a4c4ec2@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ m6M14QORSWTLRg==
+In-Reply-To: <9f61c814-0d39-46f2-a540-cc9c0e716cf6@leemhuis.info>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=cLDgskeN c=1 sm=1 tr=0 ts=68b00c9e cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10
- a=BjlAg-MckeNOhhUD8ukA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODI2MDE1MyBTYWx0ZWRfXxrXH9j/oocYK
- 1H5GkKcc3h7VE2ccC7cKrFXhjAyhOIsp0IYPjxQyjCSDTg59MtYQEwfW5OWHf5z/GmYl/3n4ncd
- ngU/u1E+NqZF2/sCeX1M3V0iOYD3lekOEx8cloVWMEYCtDNFP+sXV9Kdfr6syTX8dTNWYPGOHCs
- 5kM8uCoOq777tNw5Mx2WPLvwnkeBQ7jw03X2SBujcO2va7N6YXrkfpMAIHRXBvOwMoNy6wtYGuV
- TEFzJan5/HalEvmkOGX6kdQJZFg459jZz6kymvAaR+PdQCw3k8ysFcsYF3KPbwtWpgueTEbQSeq
- 0Y4wf9cDs3c0SNckzOvXQVQtdyJMCoTAIYHe1RK1jy7UHTTDaFNErBMEjaJbpg9+5Je6iAMdyZw
- ZCCftxpk
-X-Proofpoint-GUID: CeRmc9_mIPln0JiRtANguhVyy9KoLD0L
-X-Proofpoint-ORIG-GUID: CeRmc9_mIPln0JiRtANguhVyy9KoLD0L
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-28_02,2025-08-28_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 clxscore=1011 malwarescore=0 spamscore=0 adultscore=0
- impostorscore=0 suspectscore=0 priorityscore=1501 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508260153
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: 092E320A99
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[16];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FREEMAIL_CC(0.00)[linux.dev,oracle.com,gmail.com,kvack.org,vger.kernel.org,lists.infradead.org,canb.auug.org.au,linutronix.de];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Score: -3.01
+
+On 8/28/25 09:43, Thorsten Leemhuis wrote:
+> On 27.08.25 10:26, Vlastimil Babka wrote:
+>> Specifying a non-zero value for a new struct kmem_cache_args field
+>> sheaf_capacity will setup a caching layer of percpu arrays called
+>> sheaves of given capacity for the created cache.
+>> 
+>> Allocations from the cache will allocate via the percpu sheaves (main or
+>> spare) as long as they have no NUMA node preference. Frees will also
+>> put the object back into one of the sheaves.
+>> [...]
+> 
+> This patch showed up in linux-next today and from a *quick* glance at
+> things I suspect it might be the reason why my daily next rpm builds for
+> Fedora failed today like this:
+
+Hi, thanks for the report.
+> ""
+> In file included from ./include/linux/spinlock.h:63,
+>                  from ./include/linux/mmzone.h:8,
+>                  from ./include/linux/gfp.h:7,
+>                  from ./include/linux/mm.h:7,
+>                  from mm/slub.c:13:
+> mm/slub.c: In function ‘__pcs_replace_empty_main’:
+> mm/slub.c:4727:64: error: ‘local_trylock_t’ {aka ‘__seg_gs struct spinlock’} has no member named ‘llock’; did you mean ‘lock’?
+>  4727 |         lockdep_assert_held(this_cpu_ptr(&s->cpu_sheaves->lock.llock));
+>       |                                                                ^~~~~
+> ./include/linux/lockdep.h:392:61: note: in definition of macro ‘lockdep_assert_held’
+>   392 | #define lockdep_assert_held(l)                  do { (void)(l); } while (0)
+>       |                                                             ^
+> [...]
+> mm/slub.c:5653:29: note: in expansion of macro ‘this_cpu_ptr’
+>  5653 |         lockdep_assert_held(this_cpu_ptr(&s->cpu_sheaves->lock.llock));
+>       |                             ^~~~~~~~~~~~
+> make[3]: *** [scripts/Makefile.build:287: mm/slub.o] Error 1
+> make[2]: *** [scripts/Makefile.build:556: mm] Error 2
+> make[2]: *** Waiting for unfinished jobs....
+> make[1]: *** [/builddir/build/BUILD/kernel-6.17.0-build/kernel-next-20250828/linux-6.17.0-0.0.next.20250828.432.vanilla.fc44.x86_64/Makefile:2017: .] Error 2
+> make: *** [Makefile:256: __sub-make] Error 2
+> ""
+> 
+> Full log: https://download.copr.fedorainfracloud.org/results/@kernel-vanilla/next/fedora-rawhide-x86_64/09498568-next-next-all/builder-live.log.gz
+
+Oh so I assume the .config here has both LOCKDEP and PREEMPT_RT?
+I tried to make lockdep_assert_held() with trylock but forgot about the RT
+difference. The solution is Alexei's patch
+
+https://lore.kernel.org/all/20250718021646.73353-2-
+alexei.starovoitov@gmail.com/
+
+Wonder if I can just fast-track it to here from that series?
 
 
-On 8/21/2025 7:45 PM, Ram Prakash Gupta wrote:
-> On 8/9/2025 3:10 PM, Dmitry Baryshkov wrote:
->> On Thu, Aug 07, 2025 at 01:28:28AM +0530, Ram Prakash Gupta wrote:
->>> On 7/31/2025 7:49 PM, Dmitry Baryshkov wrote:
->>>> On 31/07/2025 14:46, Ram Prakash Gupta wrote:
->>>>> On 7/30/2025 11:26 PM, Dmitry Baryshkov wrote:
->>>>>> On Wed, Jul 23, 2025 at 03:43:37PM +0530, Ram Prakash Gupta wrote:
->>>>>>> On 1/22/2025 3:20 PM, Dmitry Baryshkov wrote:
->>>>>>>> On Wed, Jan 22, 2025 at 02:57:59PM +0530, Sachin Gupta wrote:
->>>>>>>>> On 1/7/2025 8:38 PM, Dmitry Baryshkov wrote:
->>>>>>>>>> On Tue, Jan 07, 2025 at 11:13:32AM +0530, Sachin Gupta wrote:
->>>>>>>>>>> On 12/27/2024 12:23 AM, Dmitry Baryshkov wrote:
->>>>>>>>>>>> On Thu, Dec 26, 2024 at 11:22:40AM +0530, Sachin Gupta wrote:
->>>>>>>>>>>>> On 12/19/2024 11:24 AM, Dmitry Baryshkov wrote:
->>>>>>>>>>>>>> On Wed, Dec 18, 2024 at 02:40:57PM +0530, Sachin Gupta wrote:
->>>>>>>>>>>>>>> +
->>>>>>>>>>>>>>> +static unsigned int sdhci_msm_get_clk_rate(struct sdhci_host *host, u32 req_clk)
->>>>>>>>>>>>>>> +{
->>>>>>>>>>>>>>> +    struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
->>>>>>>>>>>>>>> +    struct sdhci_msm_host *msm_host = sdhci_pltfm_priv(pltfm_host);
->>>>>>>>>>>>>>> +    struct clk *core_clk = msm_host->bulk_clks[0].clk;
->>>>>>>>>>>>>>> +    unsigned int sup_clk;
->>>>>>>>>>>>>>> +
->>>>>>>>>>>>>>> +    if (req_clk < sdhci_msm_get_min_clock(host))
->>>>>>>>>>>>>>> +        return sdhci_msm_get_min_clock(host);
->>>>>>>>>>>>>>> +
->>>>>>>>>>>>>>> +    sup_clk = clk_round_rate(core_clk, clk_get_rate(core_clk));
->>>>>>>>>>>>>>> +
->>>>>>>>>>>>>>> +    if (host->clock != msm_host->clk_rate)
->>>>>>>>>>>>>>> +        sup_clk = sup_clk / 2;
->>>>>>>>>>>>>>> +
->>>>>>>>>>>>>>> +    return sup_clk;
->>>>>>>>>>>>>> Why?
->>>>>>>>>>>>> Sorry, I did not understand your question. Can you please explain in detail.
->>>>>>>>>>>> Please explain the maths. You get the rate from the clock, then you
->>>>>>>>>>>> round it, but it is the rate that has just been returned, so there
->>>>>>>>>>>> should be no need to round it. And after that there a division by two
->>>>>>>>>>>> for some reason. So I've asked for an explanation for that code.
->>>>>>>>>>>>
->>>>>>>>>>> clk_round_rate is used in case of over clocking issue we can round it to the
->>>>>>>>>>> usable frequency.
->>>>>>>>>> If it is a frequency _returned_ by the clock driver, why do you need to
->>>>>>>>>> round it? It sounds like that freq should be usable anyway.
->>>>>>>>>>
->>>>>>>>> I agree, rounding will be taken care by clock driver. Will remove in my next
->>>>>>>>> patch.
->>>>>>>>>
->>>>>>>>>>> Divide by 2 is used as for HS400 the tuning happens in
->>>>>>>>>>> HS200 mode only so to update the frequency to 192 Mhz.
->>>>>>>>>> Again, is it really 192 MHz? Or 19.2 MHz?
->>>>>>>>>> Also if it is for HS400, then shouldn't /2 be limited to that mode?
->>>>>>>>>>
->>>>>>>>> Yes, It is 192 MHz.
->>>>>>>> Good, thanks for the confirmation.
->>>>>>>>
->>>>>>>>> As part of eMMC Init, driver will try to init with the best mode supported
->>>>>>>>> by controller and device. In this case it is HS400 mode, But as part of
->>>>>>>>> HS400 mode, we perform Tuning in HS200 mode only where we need to configure
->>>>>>>>> half of the clock.
->>>>>>>> This isn't an answer to the question. Let me rephrase it for you: if the
->>>>>>>> /2 is only used for HS400, why should it be attempted in all other
->>>>>>>> modes? Please limit the /2 just to HS400.
->>>>>>> Hi Dmitry,
->>>>>>>
->>>>>>> like updated earlier by Sachin, HS400 tuning happens in HS200 mode, so if
->>>>>>> we try to use "ios->timing == MMC_TIMING_MMC_HS400" that wont help, as at
->>>>>>> this stage timing can be MMC_TIMING_MMC_HS200/MMC_TIMING_MMC_HS400 for
->>>>>>> hs200 tuning and hs400 selection. In this case we must divide clk by 2
->>>>>>> to get 192MHz and we find this as host->clock wont be equal to
->>>>>>> msm_host->clk_rate.
->>>>>> What are host->clock and msm_host->clk_rate at this point?
->>>>>> What is the host->flags value? See sdhci_msm_hc_select_mode().
->>>>> There are 2 paths which are traced to this function when card initializes
->>>>> in HS400 mode, please consider below call stack in 2 paths
->>>>>
->>>>> sdhci_msm_configure_dll
->>>>> sdhci_msm_dll_config
->>>>> sdhci_msm_execute_tuning
->>>>> mmc_execute_tuning
->>>>> mmc_init_card
->>>>> _mmc_resume
->>>>> mmc_runtime_resume
->>>>>
->>>>> with values of host->clock as 200000000 & msm_host-clk_rate as 400000000
->>>> Please check the rates explicitly in the code rather than just checking that they are not equal.
->>> in function msm_get_clock_mult_for_bus_mode(), clk multiplier returns 2, with HS400
->>> DDR52 and DDR50 modes which is called from sdhci_msm_set_clock() and
->>> sdhci_msm_execute_tuning. And in sdhci_msm_execute_tuning(), we are calling
->>> sdhci_msm_dll_config() when SDHCI_HS400_TUNING is set and this flag is cleared
->>> immediately after return. And sdhci_msm_dll_config() is called after that.
->>>
->>> Now when the card is supporting HS400 mode, then from mmc_hs200_tuning(),
->>> sdhci_prepare_hs400_tuning is getting called, and there SDHCI_HS400_TUNING
->>> flag is set, and clock set is multiplying the clk rate by 2 in below call stack
->>>
->>> msm_set_clock_rate_for_bus_mode
->>> sdhci_msm_execute_tuning
->>> mmc_execute_tuning
->>> mmc_init_card
->>>
->>> so this clk rate is doubling only with HS400 mode selection and while setting up
->>> dll in HS400 dll configuration path sup_clk need to divide by 2 as msm_host->clk_rate
->>> is twice the host->clock as mentioned above.
->> I don't see how it's relevant. I'm asking you to check for the rate
->> values explicitly in the driver code rather than just checking that
->> rateA != rateB. You might error out if rateA != rateB and they are not
->> 192 MHz / 384 MHz
-> ok I see, but I got one another alternate to this, I can try use similar checks used in
-> function msm_get_clock_mult_for_bus_mode(), ios.timing == MMC_TIMING_MMC_HS400 
-> host->flags & SDHCI_HS400_TUNING, but for this I ll have to move check
-> host->flags &= ~SDHCI_HS400_TUNING in function sdhci_msm_execute_tuning () at the bottom
-> of this function, this will make code more readable and consistent to checks at other
-> places but I am testing it right now and will update.
->
-> If this doesn't work then I ll explicitly use the rate value in check.
->
-> Thanks,
-> Ram
-
-Hi Dmitry,
-
-adding checks for ios.timing == MMC_TIMING_MMC_HS400 && host->flags & SDHCI_HS400_TUNING
-serves the same purpose for dividing the clk when mode is hs400 and hs400_tuning flag is
-set, and clk value checks can be avoided now.
-
-With this HS200, HS400, HS400ES modes of eMMC is tested.
-
-so if this approach looks good to you, then I would like to proceed with next patchset.
-
-Thanks,
-Ram
-
->>>>> and host->flags as 0x90c6.
->>>>>
->>>>> and
->>>>>
->>>>> sdhci_msm_configure_dll
->>>>> sdhci_msm_dll_config
->>>>> sdhci_msm_set_uhs_signaling
->>>>> sdhci_set_ios
->>>>> mmc_set_clock
->>>>> mmc_set_bus_speed
->>>>> mmc_select_hs400
->>>>> mmc_init_card
->>>>> _mmc_resume
->>>>> mmc_runtime_resume
->>>>>
->>>>> with values of host->clock as 200000000 & msm_host-clk_rate as 400000000
->>>>> and host->flags as 0x90c6 which are same as 1st.
->>>>>
->>>>> Now if card is initialized in HS200 mode only below is the call stack
->>>>>
->>>>> sdhci_msm_configure_dll
->>>>> sdhci_msm_dll_config
->>>>> sdhci_msm_execute_tuning
->>>>> mmc_execute_tuning
->>>>> mmc_init_card
->>>>> _mmc_resume
->>>>> mmc_runtime_resume
->>>>>
->>>>> with values of host->clock as 200000000 & msm_host-clk_rate as 200000000
->>>>> and host->flags as 0x90c6.
->>>>>
->>>>> now if you see the host->flags value, its same across the modes, and if
->>>>> I am getting it right from the pointed out function
->>>>> sdhci_msm_hc_select_mode(), your suggestion seems to be using the check
->>>>> host->flags & SDHCI_HS400_TUNING which is bit[13], but in above dumped
->>>>> host->flags SDHCI_HS400_TUNING bit is not set where we are using the /2.
->>>>>
->>>>> and the reason is, this bit is getting cleared in sdhci_msm_execute_tuning()
->>>>> before sdhci_msm_dll_config() call.
->>>>>
->>>>> so this /2, is eventually called only for HS400 mode.
->>>>>
->>>>> Thanks,
->>>>> Ram
->>>>>
->>>>>>> Now if we go for only HS200 mode supported card, there
->>>>>>> the supported clock value would be 192Mhz itself and we need to pass
->>>>>>> clk freq as 192MHz itself, hence division by 2 wont be needed, that is
->>>>>>> achieved there as host->clock would be equal to msm_host->clk_rate. Hence
->>>>>>> no other check is needed here.
->>>>>> Please think about the cause, not about the symptom. Clocks being
->>>>>> unequal is a result of some other checks being performed by the driver.
->>>>>> Please use those checks too.
->>>>>>
->>>>>>> sorry for it took time to update as I was gathering all this data.
->>>>>> 6 months? Well, that's a nice time to "gather all this data".
->>>>> Took it up from sachin last month but still its a long gap.
->>>>> Thanks for helping revive.
->>>>>
->>>>>>> since Sachin have already pushed patchset #3, and if this explanation
->>>>>>> helps, let me know if we can continue on patchset #3.
->>>>>>>
->>>>>>> Thanks,
->>>>>>> Ram
->>>>>>>
 
