@@ -1,157 +1,107 @@
-Return-Path: <linux-kernel+bounces-790265-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790266-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CE7DB3A3E0
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 17:16:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 71911B3A3E4
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 17:16:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 53DA316A7A6
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 15:13:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA7DD172117
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 15:14:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A64A262FF8;
-	Thu, 28 Aug 2025 15:13:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57F5625D1EE;
+	Thu, 28 Aug 2025 15:14:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="AcedoJ/b"
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="o7v6t2XX"
+Received: from mail-io1-f41.google.com (mail-io1-f41.google.com [209.85.166.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 058FE259CA4
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 15:13:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5483225A331
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 15:14:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756394013; cv=none; b=ecq28HOXaUqQU6wBCtEE/njb1Hb+WrWoH9ysR2/2raiW6KevYegVgBeUXEdjW/QbG4zwxMBe8bJsB8C2I0Vq4WaWwbo1nmDY8BqjxrZgBplGl+Na4+uVIWhQG45fzOU6aF3GMORaMyZhE+1prsFl/LTfXoHGTCpPd97E4rqbrSM=
+	t=1756394045; cv=none; b=Lczg7tIFq7fw1aOLE/CGkahGHp7J7Adpd8yEAjhpuoz6PdVMwy+sYhJCeqLnQ6dtfVBDk1y3hrWx8RfmAwpGHk5VnJ9R2AziKZwTprLA+kCEcMvJcXS8p9dVgfcG7L6h5UwUgta5ABx15EUC6VAPicyD+5hptOl6OqMjINNA5Rw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756394013; c=relaxed/simple;
-	bh=w2+P6LuZxNLocswuyLR6jCH7IucTlMDmyCyEUgbj0c4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LzGOCuhGqLlap3psQodwJfqj5XsaQWj/inRncvnyiuYDzE1JLJDQlNcU8hk1JKrCjU9iHWispOgQaD62T3dS9DzZVl0MGJxIpi6/Mc/Ep9bc6mcyaVgOC8mghfdlUuR0f0TTbFrBRrxXh5WlnmR++ZLHp/o3KJHiN09jwnuD/ws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=AcedoJ/b; arc=none smtp.client-ip=209.85.216.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-3276f3ee2c5so778093a91.1
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 08:13:31 -0700 (PDT)
+	s=arc-20240116; t=1756394045; c=relaxed/simple;
+	bh=++s62hW7OBa0l+4/DpAnC9LOKmBOE+6VWqOSbmKKErg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cw6JZQiT4VkeNojiuEChvcUCnRkKAvlwU240D9/Aps65TJ6BbMxGwbsODyM83OlGiU+Rf94bEcmGbCeB0deOvOx3ZsVIKTtTxvfc4qjXndOAd5kZj6DywQWTDacQDvjWbTiHBv8Qp9ipZZhIJRt9X5SLM33nOebN9qOK10c3dsQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=o7v6t2XX; arc=none smtp.client-ip=209.85.166.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-io1-f41.google.com with SMTP id ca18e2360f4ac-88432dc61d8so108151939f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 08:14:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1756394011; x=1756998811; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5Ayg5INEbzaZhjUJB+PggkJhdT02eVoUoex1wYs37Eg=;
-        b=AcedoJ/btH/aEleVwBujrhBs/HJqH1ZYoDgutiE+A7CXRZIXuFNDRCUocXgCNDKAnh
-         SyqOAuxCY2UEO4nTXb689MUg2dWQFFxK4P504Vn8rZmRJ3ctm2wEDm49R01G16X0G2nL
-         wMk0Iio/Qr7yvcrWqTVHxSmxE4wTkD+jwaYvFFXTj20i5F4a8CsVoPzurk7wxCRMxqlz
-         u5jjx9JpuTAszdj8FAVE80JDq6TFg4KdoAnVhZTkngS3HVYRRfB9rNR6GxRqzv9SjNfG
-         +heP4jprP8DMm6mHD7MCd1sK6+wDn23I0apH2Ms2YSVicbsEn/B+IpmD4k1AIm6fFJ4M
-         xKwg==
+        d=google.com; s=20230601; t=1756394043; x=1756998843; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=9QjH1nYmKuaK8/vbNAhIt79YgVpoGEuS/iGXFW67apM=;
+        b=o7v6t2XXcmsdJ9PvXz6sq1LELwGJIPDcC+OFMrSpvqCSXDJCIcyX0uKC8E93T+2MI/
+         paxBzbZpCk3qvwS1cm6ZH/w9o5wvMrIqqs9hBU2NlgnAEWIGlqGbuUxLCKeWD9UZ/jwP
+         jjP4IulU691KFB4K10YElE6OmhYhzgYOwK+4fM6hy6n8Noj2Zy08CrHr/OLaywuzaxL/
+         EaG4AWMnTPDzz+IIVoM8ecYoSybSn/1BBB3lNzTRZLjx6ST6N+CLdNIgoL8CxPGvFakL
+         SQuM4FruKJpvqHJ54ZmHgxXeG7C/pXPBg3bFM5g/Fhk2ZDK+UWCh2ei2po8DgZCM0dFz
+         GcSw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756394011; x=1756998811;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5Ayg5INEbzaZhjUJB+PggkJhdT02eVoUoex1wYs37Eg=;
-        b=RmW95QmQgPOiUHo5tc3OifKv3ehED5nJiE/YnZ1vlUgO/hVT9yp6RaDQEbQxI7Ffzl
-         uJruBu8EWGTHXPR1a7r6KUQWPevcN4S/MY3OlDX1dROztQ/rkXXhFBj8zIGBXZ2nc+By
-         SP5wTUporKiDAJn1iO3mbeiR27JZg0Au4Tvd9f94mGmqHrRIAr0TcGb4lzsemT4LsOlS
-         fli/eHcK7iQ21wvya8TConU30XUBQVLdSqDx72fNNKa2K/ohAZAAIvr7qgtR//TwjYbV
-         rlIxUZTe0uACHR1AFBXIAxVBiSjWVLVpZZYfFUGVopvyabeEGfXpQECfVzKRjAaZkWKy
-         hMqA==
-X-Forwarded-Encrypted: i=1; AJvYcCXZezdnzwoZ/59TK2jR05BiBZv7HhUL3ussSOazB0zmdUkwEWfok9bgpX/CEVtMV4H14c/zZUbQM1ZUxXg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVDwMY+Ve/QXx+xcQQv52wkZYt+4YHy70SoNqarXFa0rU3M5um
-	mhzUX9Zd64U6331G5X4GN9LbODeCsUHx46oVMXFi9/XcMaj8cq/xg75DQsSfE5gholo=
-X-Gm-Gg: ASbGnctcaD12qDXcFKHgEr3yrj1EN+vu30B/HsUm1H/KKKHSYf2tRmAfdxsW9P8WUiU
-	+aEou+Xchm+FCJCYRHC+azUxDxRoRL0+ZYS2HmGjSTXxiKUGbvTjUMlrSFs5mJ3AItK0fKZIG3R
-	08MrbReoyGHNLP+TOhf/NJZsS5qmLIFvbSnGooKHfjI6yfONaj0YzDrClbecKLUHAKLJPGPD01J
-	NbSF32bXbaVCF2dglRVLfYc7dVO9mcHU8EDEgxUySWwhVkqpUwGFYxItMY3RZpxG71mdAwpCBmy
-	lWJH4Ycwgn3K395ISvpeDdmxFu5JH4uPcaal9/hYUXc7GZYYjEdQ0G2GSVyAzLUz1IWa8MoAY9l
-	6btbQKWR/Orl6NXb89sx07jCDEXV3F9K/RZOeG5md9Pv6EzFcJO/3vV9b6zai7cIbSQ==
-X-Google-Smtp-Source: AGHT+IFeBD8+FsFOIfhdVfCuBI9Q22Evk4whBnaoZs4OTHBuqiV6OsCzuYJCKNJmIqpVWno7FbQ4rw==
-X-Received: by 2002:a17:90b:2ccf:b0:312:959:dc42 with SMTP id 98e67ed59e1d1-32515ef6f25mr25874725a91.11.1756394011030;
-        Thu, 28 Aug 2025 08:13:31 -0700 (PDT)
-Received: from [10.4.109.226] ([139.177.225.238])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3276f5a0bf9sm5578927a91.13.2025.08.28.08.13.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 28 Aug 2025 08:13:30 -0700 (PDT)
-Message-ID: <f904b674-98ba-4e13-a64c-fd30b6ac4a2e@bytedance.com>
-Date: Thu, 28 Aug 2025 23:13:25 +0800
+        d=1e100.net; s=20230601; t=1756394043; x=1756998843;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9QjH1nYmKuaK8/vbNAhIt79YgVpoGEuS/iGXFW67apM=;
+        b=JJmT4ZSKO5oQJDSkNj2dIJSv35GFYWjxBH5UHjQWMLpBQ8PLFf8r47TRrMquZY27Zd
+         /gzVBSMMa5QpriheqaknJJ0gIwo3gJg5cmio4qz15wAuxQ1UIVB+urdsUtA5ANEtcwks
+         JQEfYuS5ma/7gEVXDZcxSFJHENYP62Jj64kvVr7lXMgWQiu+ijOXUYbvI8GrkVsGtxP7
+         /Se7v4116wSRV5PbK6UMdk/13h8ruEM2ov3OBJMGbAalpPRUTSeg/CEFqT1TJut0EMN0
+         dQL00n3WZG0MxUnZSNs/iQhezj9vGEBzau9l8TXabaL3blKVmp5aTHOPkCL0z0grtBnb
+         Pc2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXa168tQQd3NaHkipmmh9jTP0UvxpQP3+xKHpW95SkdNasbDd9/Zd87tnfZXB4y6GsHEvMA3ZCIJaYItBo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxoVT1WooUPnNjIWcJgifhRRXJqRsLocdWO92bPgLyRLQvdFaoM
+	M7Kd1eyV4gMVADX9Pw8wvOtdbhlwGSonYsyv8+aWKAD7yx5mIgosqyR1iD402qmwTQ==
+X-Gm-Gg: ASbGncsxq10Ddp2CyOlXtGYy0XAfsrN0kqdq6OaHAY7GmJ85iHTtx8vfdNVCmypB6Fn
+	MtjoZr4GvtHgXFSvh0Drv7UxAdWXzJMct4X8U2SkUIOseEl/t+T53anJppgh5H/ycZysTme+zTX
+	6q30Jegt5D2za95KBKTcwb8rvrxch4lXDJszq9J21hTEzQVo+OAu2Ht8ptv6rTHPNA+wfk3ikeN
+	mv7cQoCNW4bW4QD9VK3bNXyAlNZN90huWIIhn1GpZE1ifWqIqedpQ3Re/aebh9u3PAgDPEPxkrU
+	8WPh0YNsNNVd4ukkitKQyNA9Qa5r01QJSnRjdxzb5oWh06BghPh1kKWMkagRTHpeAP8XYraNHMr
+	qvQoSW99DYbtI36t+0vAfLUrV2hz52H/t/kFuVbObJ4+eJ1LyrgPZScgvpcDsvBMlgHNx7JssW0
+	6y
+X-Google-Smtp-Source: AGHT+IHIYBXQTGiCww/PFnxj0YWLbLCi2wzmsjMIYDw9X9C2ummK1XtPh0NkG5nHEbdzSuIpZ0lSCA==
+X-Received: by 2002:a05:6e02:1b08:b0:3e9:eec4:9b71 with SMTP id e9e14a558f8ab-3e9eec49eedmr327588045ab.28.1756394043133;
+        Thu, 28 Aug 2025 08:14:03 -0700 (PDT)
+Received: from google.com (189.227.72.34.bc.googleusercontent.com. [34.72.227.189])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3ea4c75cfd7sm108783375ab.22.2025.08.28.08.14.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Aug 2025 08:14:02 -0700 (PDT)
+Date: Thu, 28 Aug 2025 15:13:59 +0000
+From: Neill Kapron <nkapron@google.com>
+To: Stephen Smalley <stephen.smalley.work@gmail.com>
+Cc: Paul Moore <paul@paul-moore.com>, Ondrej Mosnacek <omosnace@redhat.com>,
+	kernel-team@android.com, linux-kernel@vger.kernel.org,
+	selinux@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] selinux: enable per-file labeling for functionfs
+Message-ID: <aLByN-OSeVTLdStd@google.com>
+References: <20250827222224.1648500-1-nkapron@google.com>
+ <CAEjxPJ4QKnzgoSYgfy8+CqjRigEbW7=B5t4fO4djbO5GnLtCOg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [External] Re: [PATCH] KVM: x86: Latch INITs only in specific CPU
- states in KVM_SET_VCPU_EVENTS
-To: Paolo Bonzini <pbonzini@redhat.com>,
- Sean Christopherson <seanjc@google.com>
-Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com, liran.alon@oracle.com, hpa@zytor.com,
- wanpeng.li@hotmail.com, kvm@vger.kernel.org, x86@kernel.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <20250827152754.12481-1-lifei.shirley@bytedance.com>
- <aK8r11trXDjBnRON@google.com>
- <CABgObfYqVTK3uB00pAyZAdX=Vx1Xx_M0MOwUzm+D1C04mrVfig@mail.gmail.com>
-Content-Language: en-US
-From: Fei Li <lifei.shirley@bytedance.com>
-In-Reply-To: <CABgObfYqVTK3uB00pAyZAdX=Vx1Xx_M0MOwUzm+D1C04mrVfig@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAEjxPJ4QKnzgoSYgfy8+CqjRigEbW7=B5t4fO4djbO5GnLtCOg@mail.gmail.com>
 
+On Thu, Aug 28, 2025 at 09:08:48AM -0400, Stephen Smalley wrote:
+ 
+> This isn't actually a multi-patch series for the kernel, so don't use
+> the patch 1/2, patch 2/2 notation since that confuses b4 (it tries to
+> pull in the 2nd patch for libsepol and unsurprisingly that won't apply
+> to the kernel). Not sure that warrants re-posting (defer to Paul).
 
-On 8/28/25 12:08 AM, Paolo Bonzini wrote:
-> On Wed, Aug 27, 2025 at 6:01 PM Sean Christopherson <seanjc@google.com> wrote:
->> On Wed, Aug 27, 2025, Fei Li wrote:
->>> Commit ff90afa75573 ("KVM: x86: Evaluate latched_init in
->>> KVM_SET_VCPU_EVENTS when vCPU not in SMM") changes KVM_SET_VCPU_EVENTS
->>> handler to set pending LAPIC INIT event regardless of if vCPU is in
->>> SMM mode or not.
->>>
->>> However, latch INIT without checking CPU state exists race condition,
->>> which causes the loss of INIT event. This is fatal during the VM
->>> startup process because it will cause some AP to never switch to
->>> non-root mode. Just as commit f4ef19108608 ("KVM: X86: Fix loss of
->>> pending INIT due to race") said:
->>>        BSP                          AP
->>>                       kvm_vcpu_ioctl_x86_get_vcpu_events
->>>                         events->smi.latched_init = 0
->>>
->>>                       kvm_vcpu_block
->>>                         kvm_vcpu_check_block
->>>                           schedule
->>>
->>> send INIT to AP
->>>                       kvm_vcpu_ioctl_x86_set_vcpu_events
->>>                       (e.g. `info registers -a` when VM starts/reboots)
->>>                         if (events->smi.latched_init == 0)
->>>                           clear INIT in pending_events
->> This is a QEMU bug, no?
-> I think I agree.
-Actually this is a bug triggered by one monitor tool in our production 
-environment. This monitor executes 'info registers -a' hmp at a fixed 
-frequency, even during VM startup process, which makes some AP stay in 
-KVM_MP_STATE_UNINITIALIZED forever. But thisrace only occurs with 
-extremely low probability, about 1~2 VM hangs per week.
+Whoops, I will send separate patches as v3.
 
-Considering other emulators, like cloud-hypervisor and firecracker maybe 
-also have similar potential race issues, I think KVM had better do some 
-handling. But anyway, I will check Qemu code to avoid such race. Thanks 
-for both of your comments. 🙂
+Thanks,
+Neill
 
-Have a nice day, thanks
-Fei
->
->> IIUC, it's invoking kvm_vcpu_ioctl_x86_set_vcpu_events()
->> with stale data.
-> More precisely, it's not expecting other vCPUs to change the pending
-> events asynchronously.
-Yes, will sort out a more complete calling process later.
->
->> I'm also a bit confused as to how QEMU is even gaining control
->> of the vCPU to emit KVM_SET_VCPU_EVENTS if the vCPU is in
->> kvm_vcpu_block().
-> With a signal. :)
->
-> Paolo
->
 
