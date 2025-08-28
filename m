@@ -1,189 +1,251 @@
-Return-Path: <linux-kernel+bounces-789818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52C8DB39B1D
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 13:10:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A5FBB39B20
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 13:11:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5100A1B27E47
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 11:11:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60F9A3B53D7
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 11:11:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DA5530DD32;
-	Thu, 28 Aug 2025 11:10:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E890230DEAE;
+	Thu, 28 Aug 2025 11:11:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iI1k++QV"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="kU3lCAWd"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40BA31F4CAF;
-	Thu, 28 Aug 2025 11:10:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7BAA2F39DD;
+	Thu, 28 Aug 2025 11:11:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756379451; cv=none; b=PXc9yqyNYOqEKFhNxkgUNh7LEgVN5yQCX1Cutcb8AxBs81gNoT4bpHaIkJASQ8YFoJXzDt4NbDHZo79zf+znW4Q+gJvgfJRg4WkBtSiWSHDv8SiE76YQFBwWys7ZvkAedkv71HS172wk9Vzf6G7wdqtbmxh0DOlYRhof/VmLdRo=
+	t=1756379480; cv=none; b=d11Nx5XkazE5Bn0s5leEdPhDTZ5LhyGXy+2wxmAW8JCRKlaeEf8iKcGiXgjsVJK5ZK9cIGH1xkW9alctv8dIg0n1cCeNUXmGfO7HjwH7zEHT1A1fny9OQDS6EW/OALhz7valDZHnDjcG/kfWgNzbHA+MvTBdmkLGc039JDWjx2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756379451; c=relaxed/simple;
-	bh=EjWEYcDmhkhr5dB4FdWTNV+SQHvS/YaT2jO/86b0BEA=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=E1a/Ut60suAz3cTiVUuPVUWcQfR/91kEDuXoEsIBph3at9O6/Aedcjxv8HQ7DVMPijiapkMCCYp9TL1zJ6MatBYGxyFGKppuA8u4QcLYP2WfXugi7WFeGMrDx/v7TX5OqAyFNgdGspQYHJOIDxnzG89elZYS8sqXKeLvk4o0Jf4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iI1k++QV; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756379451; x=1787915451;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=EjWEYcDmhkhr5dB4FdWTNV+SQHvS/YaT2jO/86b0BEA=;
-  b=iI1k++QVIPZt58CscTmF/sUySCP4LNmRng3I+aeBlAE8sTVfOOCqzn79
-   94GaVN58Bq8Ne1fcsLfwEqe4arZvIFAWYQ2dA6mDLkSrxnWqWnTjpiudY
-   9Gzg+i84+K2yzenKoQnsLSVtTf/HKzZW0XgTcnBpjXr0y4otpYcvmNwNP
-   EwmZs44nXcOXOAdMotsRcRJWmhMREdhJb5aj5MvjUYMlHh/Dp8lzfMank
-   eY2l7l1Rz9w9nj1hq44mjxCxfWhLasc3oOd24Ut0JxqtXA5R+c2BMni9M
-   j74QEmzUbFYpo/QskbX9Xt6/GnK7BNMP37wB3HutohNxAHKYyCWQ21pK6
-   A==;
-X-CSE-ConnectionGUID: yrVxTsECS5ayzyuqrpIAhQ==
-X-CSE-MsgGUID: z7wjSLEMRuGGArKj9YZg8A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11535"; a="68918111"
-X-IronPort-AV: E=Sophos;i="6.18,217,1751266800"; 
-   d="scan'208";a="68918111"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2025 04:10:50 -0700
-X-CSE-ConnectionGUID: F25B9ecoRIW9M4ekdUPLuA==
-X-CSE-MsgGUID: h99Hnb9GSnW5WrUj3jUlPA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,217,1751266800"; 
-   d="scan'208";a="175358538"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.99])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2025 04:10:47 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Thu, 28 Aug 2025 14:10:44 +0300 (EEST)
-To: Daniel <dany97@live.ca>
-cc: matan@svgalib.org, platform-driver-x86@vger.kernel.org, 
-    LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] platform/x86: lg-laptop: Fix WMAB call in
- fan_mode_store
-In-Reply-To: <MN2PR06MB55982D694628BC31FD980FD2DC3DA@MN2PR06MB5598.namprd06.prod.outlook.com>
-Message-ID: <2fdc2487-aaae-aa3c-9aa6-0c2bf2379e5a@linux.intel.com>
-References: <MN2PR06MB55982D694628BC31FD980FD2DC3DA@MN2PR06MB5598.namprd06.prod.outlook.com>
+	s=arc-20240116; t=1756379480; c=relaxed/simple;
+	bh=RgsKuFALNXze+uheWEehna21G8m95dXSHQ+Ws/HfTd8=;
+	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
+	 To:Date:Message-ID; b=YChGR0er9voa0bGTj+fG33+eOzs0XX1GDT1sStJw4f+9u8nsn/gUmaNg1eZrVkAbGZA11rofzT9zYmUYDMlNHnXcedYHPIOfonUA5LC84Kif8aq3g0Zj3ppI/iYFeLhOYtmVPszpkN2diovcGIf5ed31DKTD9pcOFHjBZMbKo7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=kU3lCAWd; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from mail.ideasonboard.com (unknown [IPv6:2401:4900:1c69:1331:996f:e361:948:c527])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 9BEDE20EE;
+	Thu, 28 Aug 2025 13:10:04 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1756379405;
+	bh=RgsKuFALNXze+uheWEehna21G8m95dXSHQ+Ws/HfTd8=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=kU3lCAWdR/47kPIV88oiekKv3yLNpYofomh9Ei7Gi1/9Tw4dDsVf+UVPVzLWFKT44
+	 kil+RJzdrEf+8jpqNOXJLPE6tKhOib57/brVfvaPT+b5u2fof+TMXzWwe3FqDy8AR6
+	 ugYjMTqWA05176AF7utVNgYHj+Hn9TyuLfDlfXyo=
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250825142522.1826188-8-r-donadkar@ti.com>
+References: <20250825142522.1826188-1-r-donadkar@ti.com> <20250825142522.1826188-8-r-donadkar@ti.com>
+Subject: Re: [PATCH v5 07/14] media: ti: j721e-csi2rx: get number of contexts from device tree
+From: Jai Luthra <jai.luthra@ideasonboard.com>
+Cc: r-donadkar@ti.com, y-abhilashchandra@ti.com, devarsht@ti.com, vaishnav.a@ti.com, s-jain1@ti.com, vigneshr@ti.com, mchehab@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, sakari.ailus@linux.intel.com, hverkuil-cisco@xs4all.nl, tomi.valkeinen@ideasonboard.com, changhuang.liang@starfivetech.com, jack.zhu@starfivetech.com, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org
+To: Rishikesh Donadkar <r-donadkar@ti.com>, jai.luthra@linux.dev, laurent.pinchart@ideasonboard.com, mripard@kernel.org
+Date: Thu, 28 Aug 2025 16:41:04 +0530
+Message-ID: <175637946417.1633224.8030756212311298506@freya>
+User-Agent: alot/0.12.dev28+gd2c823fe
 
-On Fri, 22 Aug 2025, Daniel wrote:
+Hi Rishikesh,
 
-> On my LG Gram 16Z95P-K.AA75A8 (2022), writes to
-> /sys/devices/platform/lg-laptop/fan_mode have no effect and reads always
-> report a status of 0.
-> 
-> Disassembling the relevant ACPI tables reveals that in the call
-> 
-> 	lg_wmab(dev, WM_FAN_MODE, WM_SET, x)
-> 
-> the new mode is read from either the upper nibble or the lower nibble of x,
-> depending on the value of some other EC register.  Crucially, when WMAB
-> is called twice (once with the fan mode in the upper nibble, once with
-> it in the lower nibble), the result of the second call can overwrite
-> the first call.
-> 
-> Fix this by calling WMAB once, with the fan mode set in both nibbles.
-> As a bonus, the driver now supports the "Performance" mode seen in
-> the Windows LG Control Center app (less aggressive CPU throttling, but
-> louder fan noise and shorter battery life).  I can confirm that with
-> this patch writing/reading the fan mode works as expected on my laptop,
-> although I haven't tested it on any other LG laptops.
-> 
-> Also, correct the documentation to reflect that a value of 0 corresponds
-> to the default mode (what the LG app calls "Optimal") and a value of 1
-> corresponds to the silent mode.
-> 
-> Tested-by: Daniel <dany97@live.ca>
-> Signed-off-by: Daniel <dany97@live.ca>
+Quoting Rishikesh Donadkar (2025-08-25 19:55:15)
+> From: Pratyush Yadav <p.yadav@ti.com>
+>=20
+> Different platforms that use this driver might have different number of
+> DMA channels allocated for CSI. So only as many DMA contexts can be used
+> as the number of DMA channels available. Get the number of channels
+> provided via device tree and only configure that many contexts, and
+> hence only that many pads.
+>=20
+> Reviewed-by: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>
+> Signed-off-by: Pratyush Yadav <p.yadav@ti.com>
+> Co-developed-by: Jai Luthra <j-luthra@ti.com>
+> Signed-off-by: Jai Luthra <j-luthra@ti.com>
+> Signed-off-by: Rishikesh Donadkar <r-donadkar@ti.com>
 > ---
->  .../admin-guide/laptops/lg-laptop.rst         |  4 ++--
->  drivers/platform/x86/lg-laptop.c              | 22 +++++--------------
->  2 files changed, 8 insertions(+), 18 deletions(-)
-> 
-> diff --git a/Documentation/admin-guide/laptops/lg-laptop.rst b/Documentation/admin-guide/laptops/lg-laptop.rst
-> index 67fd6932c..c4dd534f9 100644
-> --- a/Documentation/admin-guide/laptops/lg-laptop.rst
-> +++ b/Documentation/admin-guide/laptops/lg-laptop.rst
-> @@ -48,8 +48,8 @@ This value is reset to 100 when the kernel boots.
->  Fan mode
->  --------
->  
-> -Writing 1/0 to /sys/devices/platform/lg-laptop/fan_mode disables/enables
-> -the fan silent mode.
-> +Writing 0/1/2 to /sys/devices/platform/lg-laptop/fan_mode sets fan mode to
-> +Optimal/Silent/Performance respectively.
->  
->  
->  USB charge
-> diff --git a/drivers/platform/x86/lg-laptop.c b/drivers/platform/x86/lg-laptop.c
-> index 4b57102c7..b8de6e568 100644
-> --- a/drivers/platform/x86/lg-laptop.c
-> +++ b/drivers/platform/x86/lg-laptop.c
-> @@ -274,29 +274,19 @@ static ssize_t fan_mode_store(struct device *dev,
->  			      struct device_attribute *attr,
->  			      const char *buffer, size_t count)
+>  .../platform/ti/j721e-csi2rx/j721e-csi2rx.c   | 42 ++++++++++++++-----
+>  1 file changed, 31 insertions(+), 11 deletions(-)
+>=20
+> diff --git a/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c b/driv=
+ers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c
+> index 4e1c9db0dcf5..6cab7642aa10 100644
+> --- a/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c
+> +++ b/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c
+> @@ -44,7 +44,7 @@
+> =20
+>  #define TI_CSI2RX_MAX_PIX_PER_CLK      4
+>  #define PSIL_WORD_SIZE_BYTES           16
+> -#define TI_CSI2RX_NUM_CTX              1
+> +#define TI_CSI2RX_MAX_CTX              32
+> =20
+>  /*
+>   * There are no hard limits on the width or height. The DMA engine can h=
+andle
+> @@ -57,8 +57,8 @@
+> =20
+>  #define TI_CSI2RX_PAD_SINK             0
+>  #define TI_CSI2RX_PAD_FIRST_SOURCE     1
+> -#define TI_CSI2RX_NUM_SOURCE_PADS      1
+> -#define TI_CSI2RX_NUM_PADS             (1 + TI_CSI2RX_NUM_SOURCE_PADS)
+> +#define TI_CSI2RX_MAX_SOURCE_PADS      TI_CSI2RX_MAX_CTX
+> +#define TI_CSI2RX_MAX_PADS             (1 + TI_CSI2RX_MAX_SOURCE_PADS)
+> =20
+>  #define DRAIN_TIMEOUT_MS               50
+>  #define DRAIN_BUFFER_SIZE              SZ_32K
+> @@ -118,14 +118,15 @@ struct ti_csi2rx_dev {
+>         void __iomem                    *shim;
+>         struct mutex                    mutex; /* To serialize ioctls. */
+>         unsigned int                    enable_count;
+> +       unsigned int                    num_ctx;
+>         struct v4l2_device              v4l2_dev;
+>         struct media_device             mdev;
+>         struct media_pipeline           pipe;
+> -       struct media_pad                pads[TI_CSI2RX_NUM_PADS];
+> +       struct media_pad                pads[TI_CSI2RX_MAX_PADS];
+>         struct v4l2_async_notifier      notifier;
+>         struct v4l2_subdev              *source;
+>         struct v4l2_subdev              subdev;
+> -       struct ti_csi2rx_ctx            ctx[TI_CSI2RX_NUM_CTX];
+> +       struct ti_csi2rx_ctx            ctx[TI_CSI2RX_MAX_CTX];
+>         u8                              pix_per_clk;
+>         /* Buffer to drain stale data from PSI-L endpoint */
+>         struct {
+> @@ -463,7 +464,7 @@ static int csi_async_notifier_complete(struct v4l2_as=
+ync_notifier *notifier)
+>                 return ret;
+> =20
+>         /* Create and link video nodes for all DMA contexts */
+> -       for (i =3D 0; i < TI_CSI2RX_NUM_CTX; i++) {
+> +       for (i =3D 0; i < csi->num_ctx; i++) {
+>                 struct ti_csi2rx_ctx *ctx =3D &csi->ctx[i];
+>                 struct video_device *vdev =3D &ctx->vdev;
+> =20
+> @@ -1250,10 +1251,11 @@ static int ti_csi2rx_v4l2_init(struct ti_csi2rx_d=
+ev *csi)
+>         csi->pads[TI_CSI2RX_PAD_SINK].flags =3D MEDIA_PAD_FL_SINK;
+> =20
+>         for (unsigned int i =3D TI_CSI2RX_PAD_FIRST_SOURCE;
+> -            i < TI_CSI2RX_NUM_PADS; i++)
+> +            i < TI_CSI2RX_PAD_FIRST_SOURCE + csi->num_ctx; i++)
+>                 csi->pads[i].flags =3D MEDIA_PAD_FL_SOURCE;
+> =20
+> -       ret =3D media_entity_pads_init(&sd->entity, ARRAY_SIZE(csi->pads),
+> +       ret =3D media_entity_pads_init(&sd->entity,
+> +                                    TI_CSI2RX_PAD_FIRST_SOURCE + csi->nu=
+m_ctx,
+>                                      csi->pads);
+>         if (ret)
+>                 goto unregister_media;
+> @@ -1344,8 +1346,9 @@ static int ti_csi2rx_init_ctx(struct ti_csi2rx_ctx =
+*ctx)
+> =20
+>  static int ti_csi2rx_probe(struct platform_device *pdev)
 >  {
-> -	bool value;
-> +	unsigned long value;
->  	union acpi_object *r;
-> -	u32 m;
->  	int ret;
->  
-> -	ret = kstrtobool(buffer, &value);
-> +	ret = kstrtoul(buffer, 10, &value);
->  	if (ret)
->  		return ret;
-> +	if (value >= 3)
-> +		return -EINVAL;
->  
-> -	r = lg_wmab(dev, WM_FAN_MODE, WM_GET, 0);
-> +	r = lg_wmab(dev, WM_FAN_MODE, WM_SET, (value << 4) | value);
+> +       struct device_node *np =3D pdev->dev.of_node;
+>         struct ti_csi2rx_dev *csi;
+> -       int ret, i;
+> +       int ret, i, count;
+> =20
+>         csi =3D devm_kzalloc(&pdev->dev, sizeof(*csi), GFP_KERNEL);
+>         if (!csi)
+> @@ -1367,13 +1370,29 @@ static int ti_csi2rx_probe(struct platform_device=
+ *pdev)
+>         if (!csi->drain.vaddr)
+>                 return -ENOMEM;
+> =20
+> +       /* Only use as many contexts as the number of DMA channels alloca=
+ted. */
+> +       count =3D of_property_count_strings(np, "dma-names");
+> +       if (count < 0) {
+> +               dev_err(csi->dev, "Failed to get DMA channel count: %d\n"=
+, count);
+> +               ret =3D count;
+> +               goto err_dma_chan;
+> +       }
+> +
+> +       csi->num_ctx =3D count;
+> +       if (csi->num_ctx > TI_CSI2RX_MAX_CTX) {
+> +               dev_err(csi->dev,
+> +                       "%u DMA channels passed. Maximum is %u.\n",
+> +                       csi->num_ctx, TI_CSI2RX_MAX_CTX);
+> +               goto err_dma_chan;
+> +       }
+> +
 
-Is it okay to remove preserving the other bits?
+I get the following errors while compiling:
 
-Please name these field with defined GENMASK() and then use FIELD_PREP() 
-here for both fields.
+../drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c:1582:6: warning: v=
+ariable 'ret' is used uninitialized whenever 'if' condition is true [-Wsome=
+times-uninitialized]
+ 1582 |         if (csi->num_ctx > TI_CSI2RX_MAX_CTX) {
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+../drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c:1627:9: note: unin=
+itialized use occurs here
+ 1627 |         return ret;
+      |                ^~~
+../drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c:1582:2: note: remo=
+ve the 'if' if its condition is always false
+ 1582 |         if (csi->num_ctx > TI_CSI2RX_MAX_CTX) {
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 1583 |                 dev_err(csi->dev,
+      |                 ~~~~~~~~~~~~~~~~~
+ 1584 |                         "%u DMA channels passed. Maximum is %u.\n",
+      |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 1585 |                         csi->num_ctx, TI_CSI2RX_MAX_CTX);
+      |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 1586 |                 goto err_dma_chan;
+      |                 ~~~~~~~~~~~~~~~~~~
+ 1587 |         }
+      |         ~
+../drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c:1551:9: note: init=
+ialize the variable 'ret' to silence this warning
+ 1551 |         int ret, i, count;
+      |                ^
+      |                 =3D 0
 
->  	if (!r)
->  		return -EIO;
-> -
-> -	if (r->type != ACPI_TYPE_INTEGER) {
-> -		kfree(r);
-> -		return -EIO;
-> -	}
-> -
-> -	m = r->integer.value;
-> -	kfree(r);
-> -	r = lg_wmab(dev, WM_FAN_MODE, WM_SET, (m & 0xffffff0f) | (value << 4));
-> -	kfree(r);
-> -	r = lg_wmab(dev, WM_FAN_MODE, WM_SET, (m & 0xfffffff0) | value);
->  	kfree(r);
->  
->  	return count;
-> @@ -317,7 +307,7 @@ static ssize_t fan_mode_show(struct device *dev,
->  		return -EIO;
->  	}
->  
-> -	status = r->integer.value & 0x01;
-> +	status = r->integer.value & 0x03;
-
-This looks also like a field so should be named with a define?
-
->  	kfree(r);
->  
->  	return sysfs_emit(buffer, "%d\n", status);
-> 
-
--- 
- i.
-
+>         mutex_init(&csi->mutex);
+> =20
+>         ret =3D ti_csi2rx_v4l2_init(csi);
+>         if (ret)
+>                 goto err_v4l2;
+> =20
+> -       for (i =3D 0; i < TI_CSI2RX_NUM_CTX; i++) {
+> +       for (i =3D 0; i < csi->num_ctx; i++) {
+>                 csi->ctx[i].idx =3D i;
+>                 csi->ctx[i].csi =3D csi;
+>                 ret =3D ti_csi2rx_init_ctx(&csi->ctx[i]);
+> @@ -1402,6 +1421,7 @@ static int ti_csi2rx_probe(struct platform_device *=
+pdev)
+>         ti_csi2rx_cleanup_v4l2(csi);
+>  err_v4l2:
+>         mutex_destroy(&csi->mutex);
+> +err_dma_chan:
+>         dma_free_coherent(csi->dev, csi->drain.len, csi->drain.vaddr,
+>                           csi->drain.paddr);
+>         return ret;
+> @@ -1412,7 +1432,7 @@ static void ti_csi2rx_remove(struct platform_device=
+ *pdev)
+>         struct ti_csi2rx_dev *csi =3D platform_get_drvdata(pdev);
+>         unsigned int i;
+> =20
+> -       for (i =3D 0; i < TI_CSI2RX_NUM_CTX; i++)
+> +       for (i =3D 0; i < csi->num_ctx; i++)
+>                 ti_csi2rx_cleanup_ctx(&csi->ctx[i]);
+> =20
+>         ti_csi2rx_cleanup_notifier(csi);
+> --=20
+> 2.34.1
+>
 
