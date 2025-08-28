@@ -1,172 +1,114 @@
-Return-Path: <linux-kernel+bounces-789876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89A8AB39C03
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 13:52:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A9F1B39BEE
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 13:46:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8ED1F36119E
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 11:52:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16DFC17101C
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 11:46:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B139C261B7F;
-	Thu, 28 Aug 2025 11:52:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19BA52D7DF2;
+	Thu, 28 Aug 2025 11:46:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="FShbToC2";
-	dkim=permerror (0-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="ZY6yP+2N"
-Received: from mo4-p00-ob.smtp.rzone.de (mo4-p00-ob.smtp.rzone.de [85.215.255.23])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="P+dy/ZC8"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D038A30C61A;
-	Thu, 28 Aug 2025 11:52:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=85.215.255.23
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756381935; cv=pass; b=U03AAD3GU9XO/ql473tbQVrbGLOZDcGpugnW2b+dhs2iwWGSVRWwC5WKUBTgqXoXRVnVu3JalHvEMahT8XxYbySsYRsZCMfl/BVZps867kHNWge9UkY/YvLjl4tYFsUWAvTKk/phOLMvJHqFo7ClT+cMyKsEHPRk0IOZnFGXdGs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756381935; c=relaxed/simple;
-	bh=Kx4l3+xB1BSQ8qLi5aQcVgB8V8o2amSYdQIf+TG/czk=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=sCiPqTYpXY2CYBXGzoHEmX5Mq+eXRgZCyveXSelbfwG6I9y/QAdub1uJai46tLXd3afj3OTnzt4hMRIbEst4DckPeThAHhRRbWr+YVlZFiW3B9lC+fp6a7moJnNvqzekuE9SIirM8sia2YnZYjE/FXgiZtjxMbNzuQmlAfGYmro=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=goldelico.com; spf=pass smtp.mailfrom=goldelico.com; dkim=pass (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b=FShbToC2; dkim=permerror (0-bit key) header.d=goldelico.com header.i=@goldelico.com header.b=ZY6yP+2N; arc=pass smtp.client-ip=85.215.255.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=goldelico.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goldelico.com
-ARC-Seal: i=1; a=rsa-sha256; t=1756381559; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=HW9nBCZm79N6/3lZiBIBb4oNVP9kUaaVmnjTuYubgdIKr5rMuKkjVkG3wCpdSJlJFn
-    s4dBpD2BubC5bWfWJEsfo30j0o4gNoBLhE+YY1njsotQqnsMi3DMG4zkyC6Kr3seK3uH
-    b9kyzjVwJJdHpz7PZYfeyyKyyF7+FuP/K7xMNWknwjfD/M5knzqZ6Fjc2Csazy/DrNS0
-    kB4OchwC8i0HgcOf29l8jwlYaZsU/Lx2Rk+Fmrfk9DTiNCtfkDRjWM0K4PTwrpPmdHRC
-    hcHASJYuRDA1QTKi6U0CUIUrl1YUKbBudJnlrRTtgLt8VGRG05o8GnMKP6Pgoen95qoM
-    8Urg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1756381559;
-    s=strato-dkim-0002; d=strato.com;
-    h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:Cc:Date:
-    From:Subject:Sender;
-    bh=MWefUO0OIHQqurX1Ir8EInMU5qzQRWl+IVu35PatAbo=;
-    b=Yu6249nvabFJ5RYXNlBYsx39cc4KZrKiYbJ9jT3eyPf3b95UWsugoEgQA6wJ8/ZNLP
-    2ePmozzO1duK7DJ6GsdObPF7j37gSTMoDax5miwrLYfDaHaq9IO20LN8lHxKMusnX8Fa
-    ATWYrA+CoPf/56ioGKhruj0J7FxEK/OzK6OnvPa7lsBfU9SZJQsTlshga9VFMi+/PF7m
-    pIGyeiDDuWY8F3mH0uoNCBHfzLidn3sZV0DV/lYufs182Y7/q328MMJrTBVGxatGn/f3
-    b2sJ4KothJW/UXMKHhMtwklfbnYI0Al+2uQ1FpUCyxU+8ukmctkHgtU9jaFFCm+fh6ys
-    Tfhw==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo00
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1756381559;
-    s=strato-dkim-0002; d=goldelico.com;
-    h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:Cc:Date:
-    From:Subject:Sender;
-    bh=MWefUO0OIHQqurX1Ir8EInMU5qzQRWl+IVu35PatAbo=;
-    b=FShbToC21WikuInf/t99VpikTtjdvsnOYD8Zj3hPA3Po04737lsI4QJ86sOlkG2scf
-    tjI3A9Bd8sPKuvJzKHASi9LuSKtOE4QYaian4ZzjIIGII1BsQ/wea9H0O2hy+9HHwgwu
-    G+q9H2XCcpSbudEhAjmHFsPbhEJsULPPXnVpeqS4E6Qth0I6DulxikE7Gk4Ky8qb+pAa
-    cly6/nUyTe1B/5sv9L6LJHHYGGoU+P79M8c3tidCpUkivNGDyXWzmUwduHiB//GzkG93
-    SQNd8K4vfb9U6hO2karL+lxaBu47dH/lGd4yeyS7esehLrekJLEiOxg01DFiyBVJIZAD
-    vQqQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1756381559;
-    s=strato-dkim-0003; d=goldelico.com;
-    h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:Cc:Date:
-    From:Subject:Sender;
-    bh=MWefUO0OIHQqurX1Ir8EInMU5qzQRWl+IVu35PatAbo=;
-    b=ZY6yP+2NQbqb9OW//H9p8m+GSWe9pffRqxLaNPL91GNCtyv9ztcN4qAsO2lHHhc3O4
-    7OSfVauPQvB3hh8UFdDA==
-X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9o12DNOsPj0lFzL1yeTsZ"
-Received: from smtpclient.apple
-    by smtp.strato.de (RZmta 52.1.2 DYNA|AUTH)
-    with ESMTPSA id Q307a417SBjwmjN
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve X9_62_prime256v1 with 256 ECDH bits, eq. 3072 bits RSA))
-	(Client did not present a certificate);
-    Thu, 28 Aug 2025 13:45:58 +0200 (CEST)
-Content-Type: text/plain;
-	charset=us-ascii
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B69727A13D;
+	Thu, 28 Aug 2025 11:46:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756381601; cv=none; b=aUZyJXhAdewuiQKX4cRifHzfUqjkFbirm9tJliHWHq1Z7VU/fBeFjXINd+Y1Scz6ioglTFEgYwtmUrAkloUbIRiKuXLRINAtaG8WHYUhfP/JvMUYLRybjcZkfVS0TMPi8dj4zbNnV0uNHMP2aD1XZ6MhduUGr91stiundLob6MM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756381601; c=relaxed/simple;
+	bh=B4gw0+6Ow3oDOb1XZabWlH/xg0VjGJze/LsazYjLx00=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=O1VZUChWPvl7Yk756i1iLPPUxFmx8KA2kxdqpoJGYwIPfXEH8w6Gx6DbLzqwnibZuQLxAH9muFoS7Lr7EZsKmGH6gbtcerrTsnKzRNSi1+uIQBJS32oNLippHFqx2ktNqq5Xi7ARI4kMC0Q7Z1ByFvOxnMB6kD2eZSkC70rUXK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=P+dy/ZC8; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1756381600; x=1787917600;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=B4gw0+6Ow3oDOb1XZabWlH/xg0VjGJze/LsazYjLx00=;
+  b=P+dy/ZC8nyAMG/RWufQdBiVugUw76Q8sD64B3bjaHHyovqhXIi+sENWH
+   rRh1A0qR+2r0PbSoVUNytW9mvjZNid4D0IBh49+g9MP1YOq2trVQag05P
+   WZOAgnHOrYdPGzKr2o35Tl128+ixHnNea6a0E5Wr1GWNvoE+FOKRCvtM/
+   8XJY11dJ9ZiquGALPEVhMMrryb9b7YG6tYHRmgs//ZUl9Lgu/LmqabFjN
+   E51jPSp7vg9BiRXMFObfQvUbOzh3URuqPAIYxLqJcRLBZ0I0bTcPjqSkD
+   SKelf7i3NJcakDlGpFQGyC6GclhY0ru6d/P8ntNv0r0Rf/k2xts7sRvZb
+   w==;
+X-CSE-ConnectionGUID: papHqfZvQdSzLVAcs06GLg==
+X-CSE-MsgGUID: o15sR3c5ToCt9FaszvYYvg==
+X-IronPort-AV: E=Sophos;i="6.18,217,1751266800"; 
+   d="scan'208";a="277148031"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 28 Aug 2025 04:46:39 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Thu, 28 Aug 2025 04:45:58 -0700
+Received: from che-ll-i17164.microchip.com (10.10.85.11) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
+ 15.1.2507.44 via Frontend Transport; Thu, 28 Aug 2025 04:45:56 -0700
+From: Parthiban Veerasooran <parthiban.veerasooran@microchip.com>
+To: <andrew+netdev@lunn.ch>, <davem@davemloft.net>, <edumazet@google.com>,
+	<kuba@kernel.org>, <pabeni@redhat.com>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Parthiban
+ Veerasooran" <parthiban.veerasooran@microchip.com>
+Subject: [PATCH net-next v2] microchip: lan865x: add ndo_eth_ioctl handler to enable PHY ioctl support
+Date: Thu, 28 Aug 2025 17:15:49 +0530
+Message-ID: <20250828114549.46116-1-parthiban.veerasooran@microchip.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
-Subject: Re: [Letux-kernel] [PATCH v2 2/2] power: supply: bq27xxx: restrict
- no-battery detection to bq27000
-From: "H. Nikolaus Schaller" <hns@goldelico.com>
-In-Reply-To: <6162e560-1b60-4e30-8d1e-210ba9e132cd@axis.com>
-Date: Thu, 28 Aug 2025 13:45:47 +0200
-Cc: Sebastian Reichel <sre@kernel.org>,
- Jerry Lv <Jerry.Lv@axis.com>,
- linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- stable@vger.kernel.org,
- kernel@pyra-handheld.com,
- =?utf-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>,
- Discussions about the Letux Kernel <letux-kernel@openphoenux.org>,
- Andreas Kemnade <andreas@kemnade.info>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <2CE9A923-2205-425D-81D0-DAFF8527C498@goldelico.com>
-References: <cover.1755945297.git.hns@goldelico.com>
- <dd979fa6855fd051ee5117016c58daaa05966e24.1755945297.git.hns@goldelico.com>
- <6162e560-1b60-4e30-8d1e-210ba9e132cd@axis.com>
-To: Discussions about the Letux Kernel <letux-kernel@openphoenux.org>
-X-Mailer: Apple Mail (2.3826.700.81)
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
+Introduce support for standard MII ioctl operations in the LAN865x
+Ethernet driver by implementing the .ndo_eth_ioctl callback. This allows
+PHY-related ioctl commands to be handled via phy_do_ioctl_running() and
+enables support for ethtool and other user-space tools that rely on ioctl
+interface to perform PHY register access using commands like SIOCGMIIREG
+and SIOCSMIIREG.
 
+This feature enables improved diagnostics and PHY configuration
+capabilities from userspace.
 
-> Am 28.08.2025 um 09:33 schrieb Jerry Lv <jerrylv@axis.com>:
->=20
-> On 8/23/2025 6:34 PM, H. Nikolaus Schaller wrote:
->> There are fuel gauges in the bq27xxx series (e.g. bq27z561) which may =
-in some
->> cases report 0xff as the value of BQ27XXX_REG_FLAGS that should not =
-be
->> interpreted as "no battery" like for a disconnected battery with some =
-built
->> in bq27000 chip.
->>=20
->> So restrict the no-battery detection originally introduced by
->>=20
->>     commit 3dd843e1c26a ("bq27000: report missing device better.")
->>=20
->> to the bq27000.
->>=20
->> There is no need to backport further because this was hidden before
->>=20
->> 	commit f16d9fb6cf03 ("power: supply: bq27xxx: Retrieve again =
-when busy")
->>=20
->> Fixes: f16d9fb6cf03 ("power: supply: bq27xxx: Retrieve again when =
-busy")
->> Suggested-by: Jerry Lv <Jerry.Lv@axis.com>
->> Cc: stable@vger.kernel.org
->> Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
->> ---
->>  drivers/power/supply/bq27xxx_battery.c | 4 ++--
->>  1 file changed, 2 insertions(+), 2 deletions(-)
->>=20
->> diff --git a/drivers/power/supply/bq27xxx_battery.c =
-b/drivers/power/supply/bq27xxx_battery.c
->> index dadd8754a73a8..3363af24017ae 100644
->> --- a/drivers/power/supply/bq27xxx_battery.c
->> +++ b/drivers/power/supply/bq27xxx_battery.c
->> @@ -1944,8 +1944,8 @@ static void =
-bq27xxx_battery_update_unlocked(struct bq27xxx_device_info *di)
->>  	bool has_singe_flag =3D di->opts & BQ27XXX_O_ZERO;
->>    	cache.flags =3D bq27xxx_read(di, BQ27XXX_REG_FLAGS, =
-has_singe_flag);
->> -	if ((cache.flags & 0xff) =3D=3D 0xff)
->> -		cache.flags =3D -ENODEV; /* read error */
->> +	if (di->chip =3D=3D BQ27000 && (cache.flags & 0xff) =3D=3D 0xff)
->> +		cache.flags =3D -ENODEV; /* bq27000 hdq read error */
->>  	if (cache.flags >=3D 0) {
->>  		cache.capacity =3D bq27xxx_battery_read_soc(di);
->> =20
->=20
-> This change works fine for BQ27z561
+Signed-off-by: Parthiban Veerasooran <parthiban.veerasooran@microchip.com>
+---
+v2:
+- Replaced custom lan865x_eth_ioctl() with direct use of
+  phy_do_ioctl_running() to avoid code duplication.
+- Updated commit message to reflect the new change.
+---
+ drivers/net/ethernet/microchip/lan865x/lan865x.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Thanks for testing!
+diff --git a/drivers/net/ethernet/microchip/lan865x/lan865x.c b/drivers/net/ethernet/microchip/lan865x/lan865x.c
+index 84c41f193561..f7cb685b1562 100644
+--- a/drivers/net/ethernet/microchip/lan865x/lan865x.c
++++ b/drivers/net/ethernet/microchip/lan865x/lan865x.c
+@@ -326,6 +326,7 @@ static const struct net_device_ops lan865x_netdev_ops = {
+ 	.ndo_start_xmit		= lan865x_send_packet,
+ 	.ndo_set_rx_mode	= lan865x_set_multicast_list,
+ 	.ndo_set_mac_address	= lan865x_set_mac_address,
++	.ndo_eth_ioctl          = phy_do_ioctl_running,
+ };
+ 
+ static int lan865x_probe(struct spi_device *spi)
 
-So it appears we need a maintainer to pick up these patches...
-
-BR,
-Nikolaus
+base-commit: d4854be4ec21dad23907c0fbc3389c3a394ebf67
+-- 
+2.34.1
 
 
