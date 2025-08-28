@@ -1,106 +1,87 @@
-Return-Path: <linux-kernel+bounces-790231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FB3AB3A2D3
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 16:55:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E77EDB3A315
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 16:59:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75E3A3A5092
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 14:54:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76A67179BD9
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 14:55:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DAF33128C8;
-	Thu, 28 Aug 2025 14:54:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00E80314B80;
+	Thu, 28 Aug 2025 14:55:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U3/dMkL2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="SiieUIGg"
+Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF9CF3126C7;
-	Thu, 28 Aug 2025 14:54:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9D46314A85;
+	Thu, 28 Aug 2025 14:55:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756392844; cv=none; b=sGSpbGwbBUxxb3boSjHhI5oza7ehm+JU27eSI3Fdy6Mtc1N5k3Ig2wVb4dnVsXv1rk7Nq4t0lfJvXCQ+5zMAvZ58IfXeaTtQWHzm4JEPb45IkWErkAlqAxkmfEcdZG4ajhDFWWFSrD8GDxlruio9HHY96SqfRoNn+pijcF0NTjc=
+	t=1756392908; cv=none; b=JB+TM5lNgM5dQ7z2G2sASRhTgiwFL0vsJF67qngHFK/eoHGlyAcdvb9Ung6VLCUmwCY0EB24MhLzSyArG6/Z+aayAV4qVHbBxxS4BDAp4k0NLn1+og5wACgl9It18zMUjI42tGmkMd31qLYNcH56oFegc6gbTroHd2q1AGOM9oE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756392844; c=relaxed/simple;
-	bh=m7DbKa5nL0/l/h4kStB22h0PHHL/c9TtGgkpRT1CwFk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=narecj7uA3yMVwAuSW+dAZ29hqr+o8x8elgTuUu1c7O1ywMl81fOxKoWszRvwHFtikL2u3HZUkrMCEYYkDDy1BCyJHxcayRkDY2nOhtbzF2z7tjBbGictxnjfU5Vv9OM4vO3sSWIBQP40HL5mgWY/yMPCUKqnpSzBFS+iipNhVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U3/dMkL2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6BE16C4CEEB;
-	Thu, 28 Aug 2025 14:54:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756392841;
-	bh=m7DbKa5nL0/l/h4kStB22h0PHHL/c9TtGgkpRT1CwFk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=U3/dMkL2cuy5yroFBqYyQ61iRC8Tauq4yidehrDsfj6WVwgQbMSYv8ZXKUX7z4/qL
-	 AmyASZXoT+ejQ42z0edgv3o9ecNh5ZygL6zJZdaGI69WL66tkchTqb9GeU02hWPEh/
-	 KkXir5k3p2hI3gVzEIECg7En3TONYSRGB377PiMSSXQFL8qZoog7aYhzPd720uQ5XB
-	 owQ5l4zlELlxI+byPMAwljWd5nZ4lc/pHoy5u/wee/Kq4EQO/5dGEv5HNmthrYij06
-	 KqLJDrd6/ErMCRBVkU5JDyf5uxFaEJJbcWR83n+cmcRLlyofjZ9uY8vfHLuX9Havjs
-	 44drH1fMRJQSQ==
-Date: Thu, 28 Aug 2025 07:54:00 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Marcelo Moreira <marcelomoreira1905@gmail.com>
-Cc: cem@kernel.org, linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	skhan@linuxfoundation.org,
-	linux-kernel-mentees@lists.linuxfoundation.org
-Subject: Re: [PATCH v3] xfs: Replace strncpy with memcpy
-Message-ID: <20250828145400.GH8096@frogsfrogsfrogs>
-References: <20250827221830.23032-1-marcelomoreira1905@gmail.com>
+	s=arc-20240116; t=1756392908; c=relaxed/simple;
+	bh=BPkdl9j9D1N90XZ6qmK5CEv9tLIbbm/tl8OiHdkyUhc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qFLhoTCs/N6W5akc7z/sWMWfr7+TOaaMQpPmUtQFRcirUVGCTaVgsB3kVHPhclu88qVa6zphoPUOUTg1pcBOKP3iijIK2ROUjmkGAtrOyI1dfgbRgBt6NaN/M0t+WfzdDTB1ZYmts8uU00u90KY4frYXdNKoCoKzZDecqjcsn3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=SiieUIGg; arc=none smtp.client-ip=95.215.58.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <f215be4c-b157-4b31-a6f2-ecf5017eb32a@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1756392892;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JwasJTl+J8ScGiEt5lcNBkxwdcyLk9n6hR9skE1FDLI=;
+	b=SiieUIGgwMXLiI/LnmPyzMZWrDZae7TeoTvJEZgrh7ylpcsKDeSmNApxqppY2E7pMzT5J3
+	HkP0WgQAhbvRChTA92lHshX5yaybJ1jSFa01W2xnC0pisZtbw4EkEhTuhPexPsl+9aoh8A
+	4UaTxyyTvJhXwHHQINcraY8otU9qt/c=
+Date: Thu, 28 Aug 2025 15:54:37 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250827221830.23032-1-marcelomoreira1905@gmail.com>
+Subject: Re: [PATCH net-next v02 07/14] hinic3: Queue pair endianness
+ improvements
+To: Fan Gong <gongfan1@huawei.com>, Zhu Yikai <zhuyikai1@h-partners.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Simon Horman <horms@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ linux-doc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+ Bjorn Helgaas <helgaas@kernel.org>, luosifu <luosifu@huawei.com>,
+ Xin Guo <guoxin09@huawei.com>, Shen Chenyang <shenchenyang1@hisilicon.com>,
+ Zhou Shuai <zhoushuai28@huawei.com>, Wu Like <wulike1@huawei.com>,
+ Shi Jing <shijing34@huawei.com>, Meny Yossefi <meny.yossefi@huawei.com>,
+ Gur Stavi <gur.stavi@huawei.com>, Lee Trager <lee@trager.us>,
+ Michael Ellerman <mpe@ellerman.id.au>, Suman Ghosh <sumang@marvell.com>,
+ Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+References: <cover.1756378721.git.zhuyikai1@h-partners.com>
+ <c612c77032db14657b9622c342ab7cc208c4b4d8.1756378721.git.zhuyikai1@h-partners.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+In-Reply-To: <c612c77032db14657b9622c342ab7cc208c4b4d8.1756378721.git.zhuyikai1@h-partners.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Aug 27, 2025 at 07:17:07PM -0300, Marcelo Moreira wrote:
-> The changes modernizes the code by aligning it with current kernel best
-> practices. It improves code clarity and consistency, as strncpy is deprecated
-> as explained in Documentation/process/deprecated.rst. This change does
-> not alter the functionality or introduce any behavioral changes.
+On 28/08/2025 13:10, Fan Gong wrote:
+> Explicitly use little-endian & big-endian to enhance code readability.
 > 
-> Suggested-by: Dave Chinner <david@fromorbit.com>
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
-> Reviewed-by: Carlos Maiolino <cmaiolino@redhat.com>
-> Signed-off-by: Marcelo Moreira <marcelomoreira1905@gmail.com>
+> Co-developed-by: Xin Guo <guoxin09@huawei.com>
+> Signed-off-by: Xin Guo <guoxin09@huawei.com>
+> Co-developed-by: Zhu Yikai <zhuyikai1@h-partners.com>
+> Signed-off-by: Zhu Yikai <zhuyikai1@h-partners.com>
+> Signed-off-by: Fan Gong <gongfan1@huawei.com>
 
-memcpy is fine, the repair code determines the new target length via
-strnlen(bufsize) later on so we'll continue to fix the "non-null
-characters after the zero terminator" case.
-
-Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
-
---D
-
-> ---
-> Changes since v2:
-> - Fixing some errors in the commit message.
-> Link to v2: https://lore.kernel.org/linux-kernel-mentees/CAPZ3m_iNj2zwpAovv3BTz8gNp5XzdxSRHBFonM9sJvaSjYVBeg@mail.gmail.com/T/#t
-> 
->  fs/xfs/scrub/symlink_repair.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/xfs/scrub/symlink_repair.c b/fs/xfs/scrub/symlink_repair.c
-> index 953ce7be78dc..5902398185a8 100644
-> --- a/fs/xfs/scrub/symlink_repair.c
-> +++ b/fs/xfs/scrub/symlink_repair.c
-> @@ -185,7 +185,7 @@ xrep_symlink_salvage_inline(
->  		return 0;
->  
->  	nr = min(XFS_SYMLINK_MAXLEN, xfs_inode_data_fork_size(ip));
-> -	strncpy(target_buf, ifp->if_data, nr);
-> +	memcpy(target_buf, ifp->if_data, nr);
->  	return nr;
->  }
->  
-> -- 
-> 2.50.1
-> 
-> 
+Reviewed-by: Vadim Fedorenko <vadim.fedorenko@linux.dev>
 
