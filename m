@@ -1,349 +1,428 @@
-Return-Path: <linux-kernel+bounces-789604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 677BCB39811
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 11:21:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D019B39481
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 09:04:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D377360B3D
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 09:21:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D7F1317BDD6
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 07:04:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3020B2EA17D;
-	Thu, 28 Aug 2025 09:21:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A092628C84C;
+	Thu, 28 Aug 2025 07:04:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="uU/khuE1"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2086.outbound.protection.outlook.com [40.107.243.86])
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="anOnhwXW"
+Received: from SEYPR02CU001.outbound.protection.outlook.com (mail-koreacentralazon11013009.outbound.protection.outlook.com [40.107.44.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8309A18C011;
-	Thu, 28 Aug 2025 09:21:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.86
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2192D2A1AA
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 07:04:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.44.9
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756372866; cv=fail; b=c0J4LOL6x5fqjXOEWs7bhkG/SjVsWYzwTn/1p6m9z1Z1+frlpf5UppLAejQ0jUiWwbdq8VP2uaYXXLZqBUBC7kV3a8n9VR+V4s51SCJFXwxYs4KGv92hO8vM8Wfcgo2Z5VHeZlyIpawQBNcDt3ivvUly49VpM8B3ccZ0zd4vuGE=
+	t=1756364671; cv=fail; b=JCBu8apHk66e5uuCvEaAGYY0JLHNn+kvRR9mzwKXRs3a5MvbdSnDhQW7pn/PQGmGSwi/gElfpQfJ/UjUOvpH5cfAqdm9Eo8tzjdURBXxyM9yKwnkE1IC+T//yVgEXb9uj5oQXqVQ43TML9OKc9dFv9ICZK0Izgsb2DMy3J66elI=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756372866; c=relaxed/simple;
-	bh=XoRxKMv52/s8vK+EwCU5q+qg5QlMilgNsX2NYuAs+W8=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ux/+xKDG3Ik/u5lJY/j3O+vc9siwe9ysgP00VTHtkiMul3/WeHRdTcqjKd2+inhBv//V9w9or09mYeP6qKuLRUg7dqiqUcqKhewUGRln8mpCMN2vdBqfw6zOUyRXDrO9782JP/fUX52gAeZzFUH/4dicF2dBwkhXL1g2G9S7Mr0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=uU/khuE1; arc=fail smtp.client-ip=40.107.243.86
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	s=arc-20240116; t=1756364671; c=relaxed/simple;
+	bh=CX1M3Rd8zpUTmLw0B8vipV5Uis4l7oWgDRiOmgt1qKU=;
+	h=Message-ID:Date:Subject:To:References:Cc:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=WhNieLx2z0+/SY8ZHgCWyxvUM9q2QyMkKwI5HzU5sARon1YlKifrR4+XA+khZFEuFhTVsHyR+SIN7prWtl0jz6OBZ9nd2ZFobJO+pD7fOcLHENPMbML2bHlMEvswuL36nn1HttQlr/QqXfPLjaJgt1N3jAA1uMsGMm3Kh6/JMKs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=anOnhwXW; arc=fail smtp.client-ip=40.107.44.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=EX4YT687ge0qh8cn/u6ICqXXx9XqEuSwh9TAA8uT6u2HDrP75U6jLFy30oFmS31/4+13qjx/3zaCC3UhupMgZBLEHAq66XTu8SRasAfeAsJ66XOT4e+B2a4SiFUxVMr5onZEfD7cFhow6O8RvWB4xiSe67G0FaK69aGij2SnE41cfYRKYlA42Umvuea0zgifHnxLp50B9OSGGqFRZ4oWP1kfTdL0xGzqSdkkNuFgniwpOBl+7dJHpC33HjKehEEh1evW3+8nppUQdWzZxWaneQ/Rq3TKd9gNxlfBCKuMg/hM8cEjABf/vU/CXCF/0vimRBYdlvP/2pXLj3PqiX+UeA==
+ b=itqGQm76vhXs08QZ0Hom93bLTumlJvN4Im7CnioXQzzQ2OGagnrtIVnWfYbBIFfy+siqDPebvCuoVbMhTxGQDqTyNZEY/VvwHcB5MJitfdPZvX/L/G8TfHIkgBlz3hQYDDI/BHerqc+XWnQphG6dvsh8UWVgjy+73eh0jG2kyEFQRu3+aCI96DAXTNDtXBXHzTAJzB6mX19UgGWGqorgF1qz2zdxd15O0aTeJVewhe3GhnblPCsuyveUB0enZl3z+ienys4Ytw3FNQfqI9WnnI1ukrIk0jpBHvcAA30Z1y0h71rk2p8E1hX4I8UrBEKgmv8H8lsOXqaTdX94lBAzzA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Q/tpKY6KEnBtcNC9boBtX7q2L2Qpahog3LG0mTbhCzI=;
- b=Mgbh14p8mr/fW8gsPlI3NmoW7Gfhg5KY9JudklDm089wx4cDFGN7f9fz87fspxu8Ttm47rKffUtYxBAgBm8mgUrjai3ZRk+RpXhJuHqquJN/d8Qz5oWMfUlR1NQmoFRfrsrsnYqHQet0LhHsWYFYXCi7+GMQJCGrSxNhcB47IqFjrYUJXhqUYNpbl4+M7Sc66kMSoKtd80n7kJJxq73URY9bv0dVqoCh+t/Cx/V0mlRI0C0c46SrS529MvMI0OxlSPpdVAgB2BgRAV2VtVFG6NbscXshRtqEfIx4eHCIQo4pta3ERJ7Pi+pLmYUuRpr7tqUVoxmTsCCOutbv6YXKQQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ bh=Xj7zUt49nMaZ3sPNNiiCDXZR70XlnYePDZsW34AswXQ=;
+ b=eAIp5Fkhcll7sR06TV4dwwHTHlC9jTnbXFoLdHWi1aqoWvyfueyZkaikj2Lmv1maJQKGQxqOSKRCgS5usOfENSsOTtZebCO+XEjRB+PhKwwEM7oNG5qSdaDAnkX9H6p6JGZPW+i/XLaDnULE2IfdeZvc8oJpk9g+CutrpVKuN3wsQZKyAqwVrukkAaVI3r6gx2YP/BIpOz2/gYxsKgIpeosrmtDH1m6+L8gQz5pj/L6ZmhANI5v3K5Jo+hlSscOhUiVAUZEvHRGDdh7x6/eOw896YBxuox3QhEAefozZGFYQ78AabeW6Z2+zjBBfkz7XqNDhHyD04V/g2W+bPYzxtA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Q/tpKY6KEnBtcNC9boBtX7q2L2Qpahog3LG0mTbhCzI=;
- b=uU/khuE1dyaPJmL9fygL99LWxlM/uRzJMsN86H9Py1PEN+jO6wv8589yBEfvMd5XH71Uew+K6EJ230U2ysZGhKL/uJyvUOS3tWq+q97uwU7lsz7SNjHivyELmLUjjbAQQi+R2RYc49+uMNXyvBaKXcAZn7RzAbxsFbEyhk70SPs=
-Received: from MN0P221CA0029.NAMP221.PROD.OUTLOOK.COM (2603:10b6:208:52a::20)
- by MW4PR12MB6803.namprd12.prod.outlook.com (2603:10b6:303:20e::10) with
+ bh=Xj7zUt49nMaZ3sPNNiiCDXZR70XlnYePDZsW34AswXQ=;
+ b=anOnhwXWv/3O5z0RG2/lSR0oAKxSowtsm9X4XTRbxvTQU3jCjrhaCdOZWB16rodxvHUXZwpnLjWh/AyISN5mzTOoG7/HNISBIxktsVADnKQ0ydFPA0m6KItSWeoLOBBlplxKy5T9FTlxKsPB83yWa7K+HWnudk5xgMg7ga485Un0OPzU3qSUqDAVDoWfn3TQ1cnhJL9i27hGGnh2aQ+tY3V4o/2cpGLZnkIFa+9jABPBfFyJKCzKanHgGe7iVtB27a0GK1OoGuN8jwx/lEAqEuV4hdv6v0OWvs99cwAOT8sY+xUaczwGEb4hqUJ77HjtxXFL76fRf5n1VdvIWuJWLA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SEZPR06MB5576.apcprd06.prod.outlook.com (2603:1096:101:c9::14)
+ by SG2PR06MB5405.apcprd06.prod.outlook.com (2603:1096:4:1b8::12) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.20; Thu, 28 Aug
- 2025 09:20:58 +0000
-Received: from BL6PEPF00020E5F.namprd04.prod.outlook.com
- (2603:10b6:208:52a:cafe::2a) by MN0P221CA0029.outlook.office365.com
- (2603:10b6:208:52a::20) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9073.19 via Frontend Transport; Thu,
- 28 Aug 2025 09:20:58 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
-Received: from SATLEXMB03.amd.com (165.204.84.17) by
- BL6PEPF00020E5F.mail.protection.outlook.com (10.167.249.20) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.9073.11 via Frontend Transport; Thu, 28 Aug 2025 09:20:58 +0000
-Received: from Satlexmb09.amd.com (10.181.42.218) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 28 Aug
- 2025 02:04:25 -0500
-Received: from BLR-L-NUPADHYA.xilinx.com (10.180.168.240) by
- satlexmb09.amd.com (10.181.42.218) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.1748.10; Thu, 28 Aug 2025 00:04:19 -0700
-From: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
-To: <linux-kernel@vger.kernel.org>
-CC: <bp@alien8.de>, <tglx@linutronix.de>, <mingo@redhat.com>,
-	<dave.hansen@linux.intel.com>, <Thomas.Lendacky@amd.com>, <nikunj@amd.com>,
-	<Santosh.Shukla@amd.com>, <Vasant.Hegde@amd.com>,
-	<Suravee.Suthikulpanit@amd.com>, <David.Kaplan@amd.com>, <x86@kernel.org>,
-	<hpa@zytor.com>, <peterz@infradead.org>, <seanjc@google.com>,
-	<pbonzini@redhat.com>, <kvm@vger.kernel.org>,
-	<kirill.shutemov@linux.intel.com>, <huibo.wang@amd.com>,
-	<naveen.rao@amd.com>, <francescolavra.fl@gmail.com>, <tiala@microsoft.com>
-Subject: [PATCH v10 02/18] x86/apic: Initialize Secure AVIC APIC backing page
-Date: Thu, 28 Aug 2025 12:33:18 +0530
-Message-ID: <20250828070334.208401-3-Neeraj.Upadhyay@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250828070334.208401-1-Neeraj.Upadhyay@amd.com>
-References: <20250828070334.208401-1-Neeraj.Upadhyay@amd.com>
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.20; Thu, 28 Aug
+ 2025 07:04:25 +0000
+Received: from SEZPR06MB5576.apcprd06.prod.outlook.com
+ ([fe80::5c0a:2748:6a72:99b6]) by SEZPR06MB5576.apcprd06.prod.outlook.com
+ ([fe80::5c0a:2748:6a72:99b6%7]) with mapi id 15.20.9073.014; Thu, 28 Aug 2025
+ 07:04:24 +0000
+Message-ID: <35664093-198b-40c2-84a7-58e7c4794898@vivo.com>
+Date: Thu, 28 Aug 2025 15:04:20 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] f2fs: Use allocate_section_policy to control write
+ priority in multi-devices setups
+To: Chao Yu <chao@kernel.org>
+References: <20250826140539.521074-1-liaoyuanhong@vivo.com>
+ <5c955a76-8a12-4001-b89a-8e1b84b36564@kernel.org>
+Content-Language: en-US
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>,
+ "open list:F2FS FILE SYSTEM" <linux-f2fs-devel@lists.sourceforge.net>,
+ open list <linux-kernel@vger.kernel.org>, liaoyuanhong@vivo.com
+From: Liao Yuanhong <liaoyuanhong@vivo.com>
+In-Reply-To: <5c955a76-8a12-4001-b89a-8e1b84b36564@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SG2PR01CA0156.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:8f::36) To SEZPR06MB5576.apcprd06.prod.outlook.com
+ (2603:1096:101:c9::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To satlexmb09.amd.com
- (10.181.42.218)
-X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL6PEPF00020E5F:EE_|MW4PR12MB6803:EE_
-X-MS-Office365-Filtering-Correlation-Id: db52ad97-8b1b-4c42-285e-08dde61432ba
+X-MS-TrafficTypeDiagnostic: SEZPR06MB5576:EE_|SG2PR06MB5405:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7d331c86-0cb1-42bc-4281-08dde6011ec1
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|1800799024|36860700013|376014|7416014;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?1Y2W1kIZfZ8aR2JvAgfK74iP+cPELcpCwGdg+IHPar5trPB4tRfWb/pXjHnx?=
- =?us-ascii?Q?uTnGGjEscRgQnDIvIc1EzvicjtaYnJXUkq2lGhGBZkLy6UoSZbEKsrJyVPe3?=
- =?us-ascii?Q?Sktn+psU7Kv+4CyIxZF1D4n6qGBo9sHG/4a32upL2pMH68SXA+C1rfxvlzF0?=
- =?us-ascii?Q?RbyokX2BOQljS/V7ey5y9v8UeN/Dh+BmpMVfx3GgZOMW6Tg5ex7sNRMWKpYK?=
- =?us-ascii?Q?h6o3frEphwKuAqOjfrOYycHclp9EGQ7dgEzRVnYE5NzZIGbBGaW7Y34VTmDj?=
- =?us-ascii?Q?PCVq0WRF6+BPo7pbDQM9gQhgg2EeHvsd41vHS9kTFcCGtm7MUnYHfs2iqCk1?=
- =?us-ascii?Q?Ow+MoqEQWy7Bzw2itcrOoasARRXxoLqGjJTzRp1kQJTMApnhYEYmMSDqy+ra?=
- =?us-ascii?Q?QMBlTHO+PDF4V9XC6fU6QpHxsrfGXGTmGuQtl9vxd0VgS+u7wPfG2cj1ht83?=
- =?us-ascii?Q?SClCcY8b6fconhVDGaTNOU8hCGV83ciCuqhaO1gWjkQ4gOVOa6wgLVt6gsos?=
- =?us-ascii?Q?qDy+2qpuCQzZB74NsjGBftqzZdLTR7bzwNcNlHujK/s1tDbpqQzIzlj2ICcg?=
- =?us-ascii?Q?lMGU4hGe61k6R2RpwU4kJB6Upvz+MSFjpp4iZaPaD9QaqPhWBiRDJymgfimK?=
- =?us-ascii?Q?Mts8LIF4v3uC1VKDbmr114ReFWeW5m9NUoL3EKkbRe84UoM76Id4nZYkvVyt?=
- =?us-ascii?Q?zYK/NLHtqLpXZ/gKSA/Zq152Mbbxj7Rlsg8KSIXpUhpdnEDvBqGHvkuN/mwX?=
- =?us-ascii?Q?j/ZlVynnXB2EgxJpHHMNzxXhmUM+esP8sYNMoq8gvtYBkNZhS9NaSjTwFLQX?=
- =?us-ascii?Q?Vp5h/+TVvCUXh1nVbU3UC/wwSMp+b4L6dZVr9GYRGlOzoqiM0LHKWnPhe6KD?=
- =?us-ascii?Q?Qxtl+zokxrLGB15dVG3dEXU46GNBO6afsxbzMU0mnBSvv17z5Ky8DZNarERs?=
- =?us-ascii?Q?szJcjd3S+5vBhd9nXo67vw4dLq1fcTtPHxnJJifOTZBSMeNddOwLRlXxPk8f?=
- =?us-ascii?Q?Dx6GOu/4eFPJqpAY8NXWFt7V8oWbS2X6hxjLZFGVxatvcn6jpXmLnIIC9J1/?=
- =?us-ascii?Q?eMS9mTQ5nvJqPnx2qY8WquIY3rGxNVM2W7fKc3wu8BIicNzzF2cBClvIY4Yg?=
- =?us-ascii?Q?k8ZvV7SW3I5LtdTShTjG3LXhQ4PVosQgnOZA5M1MTQvHncbip1bxsSTyR0+e?=
- =?us-ascii?Q?yW0ThLMyZ1d3TsA7IZFZ/kegSXYEl6CXkzcDjJdIBFuIcfG3qydLVWa6KsM/?=
- =?us-ascii?Q?/yev5zHXC4jsEJ1h3g6h1oyZUmGIk6BFh6bG/N1wJhxd39aWUmedN3FMRtq5?=
- =?us-ascii?Q?HH0s+e9eV6jE1MLLTK3fSBGMiij82nLkXMJn2+/cBJRxM7jYYyNY+a1le/Dn?=
- =?us-ascii?Q?f1EVoMZ5bl/AdJ+vaA3ZCrU6RScs3DQgBUsqkKX+Vz4QhEcWFtItvOT2x8ti?=
- =?us-ascii?Q?kaapxgfBJn/W5yg9NT/eNOPJtya06ZzRtHjG3BMoyInCp2ayJeIaYE+HvMkb?=
- =?us-ascii?Q?a8L1nJE/0CTwfhTMga+fvzE3+mH6SZTxA8tU?=
+	=?utf-8?B?VGlObFVJM0FlREJIMGZrR0FpUVl1dHhHU1BUZTdXMXUxdHIxdE9CeG93V0w4?=
+ =?utf-8?B?T052MHFyRzl3cXhkU1hvVnJMQlhtZ1pDR1RuNDBOVkRmU05CUUV2T0R2bkhW?=
+ =?utf-8?B?eGxCSlVqTlFHMk1RbzZNUUNEMEhOZlh3U1hqK3hzbHhPT1YyUWM5Q1cydmlH?=
+ =?utf-8?B?T2MwQ3VXdEo5SHBINk1MY09tdjlhNGVnNFJmSmVDNUZLbm9Vc29nYUowQjR3?=
+ =?utf-8?B?MUxRNGp1QWRNWGtmRUJjdTVQckxyODBjZkdPck82M1JsY1FUZnc2NmxZa0Jo?=
+ =?utf-8?B?VHhPUVlCN0pCVGhWYks1OHFha2NhS2dGTTRZdTVpRXpGL2Yrenk4MVZveHZm?=
+ =?utf-8?B?VGRIUnE5YTVYc2lYRVFUaVVPdWhyVzBVNGh2RGZ3WW5raUh0dzNSSUI2RDJW?=
+ =?utf-8?B?MzZ6bXdDVXRXMjczb1B6WTcvYXZDeCs1SWVlMVB0dUpLeXpqTFozRTVkeUtT?=
+ =?utf-8?B?NEg1bUlnWWx5eVdOcW9CNmtaTkV4aG1MbDNZak5RMkM1UUFJV3d2MFZjb01D?=
+ =?utf-8?B?SW5KdERCejE2Z0N5dHdvcFMvZGpoZ3V2YytqMXg1cVp0NEtaOHI0dVhYdlJ2?=
+ =?utf-8?B?Y0JURzFpU1JRd1RIQWt1ZURjTnJjd0lTd0FHcitqWktLQlU3dDVsY3JWS0c3?=
+ =?utf-8?B?dzJaZ3JUdkZUMUNKME9tTmhSYXZ6ckRtd0F3UWZNMVlOU3Vlcmw1b1BCcGdB?=
+ =?utf-8?B?b2FlcU1ZcnF4cXpEYzFnL0NCQlgza0JwdjdIMjNqUjN1QTBoc3lUWGJWTVdB?=
+ =?utf-8?B?YklQSmNZSS9JOWVSSkdqUnBOdFdwbVJabWdxV2M4cXZ2aFZzdXFtRFJpd0NQ?=
+ =?utf-8?B?bWsvWFRFY1d4MTNHeVdFcGFmVFhyeEJxNjhUU1ZrdVMyM1pXQmJ1Z1RzeUIz?=
+ =?utf-8?B?Qm1XMyt5Wk11WS9sTzBUR0RsSnhQZlA2Z2h0MjNuRmZudDRPTUpJbHVudkx5?=
+ =?utf-8?B?a0N0Z2M2SGl4T2Z5Zk56MTFZdnJZc3JDRE1DdHJ4eGxPbldIdC8yeGtLbFVC?=
+ =?utf-8?B?WkJKS29MbFZmdWhsdWcxTXhlN3IvVWFTZnFaN21VZHlqb1Rzd0tqL09NTzNm?=
+ =?utf-8?B?RlQ3bkkrQXFRUEhyQjVPSU4vVjJzMGE0UDJ5YS80SEFRYmRSNVZFNzNLZWFk?=
+ =?utf-8?B?L2hqTXpEUGFYOERBV2htWk9lTGxpT2xPclcvM2lhMXRiaFl6TmkyWXNIaVFz?=
+ =?utf-8?B?UE5yS2ZOTmYrZVlWWC9NbnVwZ2dTQlF1ZWpjMkVrUDkvaVNsREdYZ3RxNEtZ?=
+ =?utf-8?B?QUhHamZqcytUSG96c21ERFhNYW4xOTUrR1pLczVvbTBXLzFYdVdaamJuTlk3?=
+ =?utf-8?B?S1ppbWZ4NXd1S3VJaHdFVE41dVR3cG5FcmpHTWdtbFJtV3hieDB2d2IvMGEy?=
+ =?utf-8?B?ejV1a1hySWJyTlFtQjErZU1nbzlXUFpURGxHektBZWNXZE15dnk2M1BLTHdr?=
+ =?utf-8?B?UWJEdUZEdHlSbXlYNEFJME85UnAyNkpWN0M0ZDJzY3doS29SWEt3Y1hiSnl4?=
+ =?utf-8?B?YjBYRXNJSzZ6VWxvYzJEaUJqb3pQbkJBUEtlWVkyRjg2ZEx0SHY0ODdCSzZW?=
+ =?utf-8?B?SnI4THhiNHh0UlJGTjZsQmY0bU5EZDZRUzFQd0haWVBpK0JGRjR1b0JZQW56?=
+ =?utf-8?B?YndDWFZjOVZiSkJtaTBZN1VES2JjR2c0K2Q5cnQ0NUZqTlMwNGdiQlp2T0Jp?=
+ =?utf-8?B?NHFTdkM4WEdicXF2ZWVOalZGTnkrdFJneS9GVVpjcGlxWnNpSEJrODBIYmhi?=
+ =?utf-8?B?UlRaN0hWekJYaEpyeit5blRyNG9kbWErdW9scXNmMjRBbnEvYzNDdUVISk02?=
+ =?utf-8?B?V0JmdkhNTnU0d3ROdGtkMEJBWnVwdTIxeXZmdGFXNVhQNzJhMlBwSG1kUzBM?=
+ =?utf-8?B?UWxyRDFKem9CSWFRMTMwbU9sUDFxakRsOVprZzVwR2czVFE9PQ==?=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(36860700013)(376014)(7416014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Aug 2025 09:20:58.0840
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5576.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?MnhMZmU5L05BRW15MmpJSll0RlVaUlYyT3ZsL1NZY0tlY2NFbmUzMmNaVmpv?=
+ =?utf-8?B?bWx3NzJkaWJ3aGI1ZkdLenQrR2RMVDJpUk5peklkaVd4dXljMGxxU2VBMTVQ?=
+ =?utf-8?B?UW1zVTlJVWQwd1FWQ053Q0dWWTIrWEtUeGFMV2tvQTY5Mm1iaVdRekV3K2NW?=
+ =?utf-8?B?eW5raDVBYk1pcGFZMk8zeWt4QmZjdjNnaCt5R1QxYlhadUtJandwN1dPajJl?=
+ =?utf-8?B?MUMyUDJoUTJTTmtWMzFicGY1ajZMWjZyWkVTY0dpbGtmenhnOHRKcTFiZ0hX?=
+ =?utf-8?B?SVpxQVhadEt3c0JJWTdvMjFXS1V2V2dMMnFTMm84QVdUaXpuN3IzZG9XcUlG?=
+ =?utf-8?B?Z3YzcGlmU2NjQzVZRmpkMVE2NjNZVnNXVGZDUlVrQXdnYU12TXdTMllNWkRX?=
+ =?utf-8?B?WmpsVDIvVFhCT3JSaWQxZm9ENTRGYlF2SEdoZXlJaHdRb3dSRm8zZXpINnVQ?=
+ =?utf-8?B?TC81enZuRmh1clRnei9TdUtweUcwRS83cGsvQkN3TGVjUGdHNWkxdWhYblNH?=
+ =?utf-8?B?QTlOVmxwcnFrekZiTW5jVHBjclhrSkp3THM2a28wcG0zMmZXN2lRSU5VVkd0?=
+ =?utf-8?B?RjI4TGNIc3RVdXdZUUJxY0h6VmlpZU50OEpRTWZZaW5Eank1YmMxNm5kYmt0?=
+ =?utf-8?B?aDduWEQxVVNhVkZYQ0R6RXVuTUZDdUVQYTdXenZxTGpNcTdWb0FCWi9GUG5s?=
+ =?utf-8?B?ekZNdCthTE5NZ1lwSDgvMm16MnNkbVE4TGJtYmVuWW5ReEk4SjlhNDVqQ01Q?=
+ =?utf-8?B?anYwYW40cGg4N2dvRFVOdHV0bytoQ1M4TmNsRlhnYWg3UEdzUG1yc1NlcmxI?=
+ =?utf-8?B?NWo3TTltUWMzeUJObWhTbXBFOEJkMEl1MDkzZWhsY1hzVTBGWmtnRnppTjBp?=
+ =?utf-8?B?dlgzcldpM0VQUjZ0S2R3aUZJWU9kQVBNVGxpSlNCYi9rVDc0TElpRVRtNmV6?=
+ =?utf-8?B?SkhwdmIvYVl1dy9BUFFwb2gwTmF4OUFLSkhTakdiKytZYStyUkZxN2xyeGFY?=
+ =?utf-8?B?Z1lJTXhDZ3B4WncvWURGLzVIeGRjMlZCSHN3UnNJL3lLdldGQVpVd0RMYWFr?=
+ =?utf-8?B?TC85Rll0Q25EdUdWRWhYV251UTEzZXY1WFdPMjlubzZZNHZSbnRzUklPa28v?=
+ =?utf-8?B?aklvOWEwVWtDUE9PR2tLa21wM1FneGpoWmFaV3NKVlVQdEI1VkgxWmNDU29L?=
+ =?utf-8?B?bFN0WmZPQTBlNm82TXRncEdiK1NNbi9IVjJ1enBNZm1CM3FvZ2dkS3JmcVNj?=
+ =?utf-8?B?QitiRXQ0cHFyTWhSTG1ZeHlLZG54WTFaRDZNVXNHVlVJMHRZVHh1aURjRGIv?=
+ =?utf-8?B?eGgwTkFFRWhyUUw4SzdUakd3a3NtTlpxemVaV3VPOVAyU1plRTZCZytxazdX?=
+ =?utf-8?B?aWFJcjdrL2xsVXBrcDdjZmlCQkpPZW1HOWU4MWdRNmJLcWxPWWpHSW0vRjNl?=
+ =?utf-8?B?amZmOVE4Q1lWaEVkUldMVEQxK1liT1l6eXBsN2w3Ry9qaG1GMzdpSW14Y2Na?=
+ =?utf-8?B?SDRKdFhaVytoNE9SUHdrWmVzcnJkZHZwZHBjaktQdGcvSWdjUlhaV1EvV1ZD?=
+ =?utf-8?B?dms0bTVvdTNFcVZZTEhuUklVc2JKamozYUFXWG95M00reC9ucUF5NVNoclFN?=
+ =?utf-8?B?S2JEazlZNjBoeVd2MWVSbnRuaGJOaHh4OXFwNlo1YW4rTUhLbThmUmsxaTRy?=
+ =?utf-8?B?Z1VIdzU4RUg2bVg2UXVDR1FacENBekJUeVQydlBUTWl2Mkw2WkZ6cTh1MXdN?=
+ =?utf-8?B?bTZXelhrNWxBNTQralpxUDE2V3JveE1ZN1hoM2hUdGFvQWw4U0VaT0NrK0Vx?=
+ =?utf-8?B?SEMvQ1RGVUIvZm1TRERrMEQ5Q21BSGpGTU9MN09Yb25naU5QODVKUmFMeTJR?=
+ =?utf-8?B?bTUwT1JJSlRTeWlMK3lxU21CTHhwSG5oZEg4WUhSSkh1OXZZV3d4Y1NZVzJY?=
+ =?utf-8?B?aFV1U2pBN09XSXVFV041Nkk1OHRGR25FL0pWT2FDdEF0dU9pZ0JuaExOZVZV?=
+ =?utf-8?B?T3ZHejRsU09oeWJuclFTeGhKYUpLTnRKOWtBQ1Y4bExsQnJoRC9PMGNGWUcz?=
+ =?utf-8?B?UmxIK2xvUXZqZFpOWmFwcFJDdTd6YzRSN3JwNTQ2YzJ3YzBuVmwyZUFLQUtS?=
+ =?utf-8?Q?Y6j20W0pzA11xivX5KizLpRNF?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7d331c86-0cb1-42bc-4281-08dde6011ec1
+X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5576.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Aug 2025 07:04:24.5269
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: db52ad97-8b1b-4c42-285e-08dde61432ba
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BL6PEPF00020E5F.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB6803
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: KJv+4/JbMUz00W5EICgYDdPxtaJkYy71uKZelLLGTEVPaSnF947FsNM2FwRAcOsre98rPF7YDePU4AvPZmfqXw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SG2PR06MB5405
 
-With Secure AVIC, the APIC backing page is owned and managed by the guest.
-Allocate and initialize APIC backing page for all guest CPUs.
 
-The NPT entry for a vCPU's APIC backing page must always be present when
-the vCPU is running in order for Secure AVIC to function. A VMEXIT_BUSY
-is returned on VMRUN and the vCPU cannot be resumed if the NPT entry for
-the APIC backing page is not present. To handle this, notify GPA of the
-vCPU's APIC backing page to the hypervisor by using the
-SVM_VMGEXIT_SECURE_AVIC GHCB protocol event. Before executing VMRUN, the
-hypervisor makes use of this information to make sure the APIC backing
-page is mapped in the NPT.
+On 8/28/2025 10:10 AM, Chao Yu wrote:
+> On 8/26/25 22:05, Liao Yuanhong wrote:
+>> Introduces two new sys nodes: allocate_section_hint and
+>> allocate_section_policy. The allocate_section_hint identifies the boundary
+>> between devices, measured in sections; it defaults to the end of the device
+>> for single storage setups, and the end of the first device for multiple
+>> storage setups. The allocate_section_policy determines the write strategy,
+>> with a default value of 0 for normal sequential write strategy. A value of
+>> 1 prioritizes writes before the allocate_section_hint, while a value of 2
+>> prioritizes writes after it.
+>>
+>> This strategy addresses the issue where, despite F2FS supporting multiple
+>> devices, SOC vendors lack multi-devices support (currently only supporting
+>> zoned devices). As a workaround, multiple storage devices are mapped to a
+>> single dm device. Both this workaround and the F2FS multi-devices solution
+>> may require prioritizing writing to certain devices, such as a device with
+>> better performance or when switching is needed due to performance
+>> degradation near a device's end. For scenarios with more than two devices,
+>> sort them at mount time to utilize this feature.
+>>
+>> When using this feature with a single storage device, it has almost no
+>> impact. However, for configurations where multiple storage devices are
+>> mapped to the same dm device using F2FS, utilizing this feature can provide
+>> some optimization benefits. Therefore, I believe it should not be limited
+>> to just multi-devices usage.
+>>
+>> Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
+>> ---
+>> Changes in v3:
+>> 	- Refactored the implementation logic of allocate_section_policy in
+>> 	get_new_segment(). The current version has a more coherent and readable
+>> 	logic while maintaining nearly the same functionality.
+>> 	- Added a validity check for allocate_section_hint in get_new_segment()
+>> 	to prevent potential conflicts that MAIN_SECS() might cause.
+>> 	- Adjusted the initialization position of allocate_section_hint, now
+>> 	initialized in init_sb_info().
+>>
+>> Changes in v2:
+>> 	- Updated the feature naming to better reflect its actual functionality.
+>> 	- Appended patch description to clarify whether the usage should be
+>> 	limited to multi-devices.
+>> 	- Improved the code style.
+>> 	- Fixed typo.
+>> ---
+>>   Documentation/ABI/testing/sysfs-fs-f2fs | 22 ++++++++++++++++++++++
+>>   fs/f2fs/f2fs.h                          |  8 ++++++++
+>>   fs/f2fs/gc.c                            |  5 +++++
+>>   fs/f2fs/segment.c                       | 15 +++++++++++++++
+>>   fs/f2fs/super.c                         |  4 ++++
+>>   fs/f2fs/sysfs.c                         | 18 ++++++++++++++++++
+>>   6 files changed, 72 insertions(+)
+>>
+>> diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
+>> index ee3acc8c2cb8..b590809869ca 100644
+>> --- a/Documentation/ABI/testing/sysfs-fs-f2fs
+>> +++ b/Documentation/ABI/testing/sysfs-fs-f2fs
+>> @@ -911,3 +911,25 @@ Description:	Used to adjust the BG_GC priority when pending IO, with a default v
+>>   		bggc_io_aware = 1   skip background GC if there is pending read IO
+>>   		bggc_io_aware = 2   don't aware IO for background GC
+>>   		==================  ======================================================
+>> +
+>> +What:		/sys/fs/f2fs/<disk>/allocate_section_hint
+>> +Date:		August 2025
+>> +Contact:	"Liao Yuanhong" <liaoyuanhong@vivo.com>
+>> +Description:	Indicates the hint section between the first device and others in multi-devices
+>> +		setup. It defaults to the end of the first device in sections. For a single storage
+>> +		device, it defaults to the total number of sections. It can be manually set to match
+>> +		scenarios where multi-devices are mapped to the same dm device.
+>> +
+>> +What:		/sys/fs/f2fs/<disk>/allocate_section_policy
+>> +Date:		August 2025
+>> +Contact:	"Liao Yuanhong" <liaoyuanhong@vivo.com>
+>> +Description:	Controls write priority in multi-devices setups. A value of 0 means normal writing.
+>> +		A value of 1 prioritizes writing to devices before the allocate_section_hint. A value of 2
+>> +		prioritizes writing to devices after the allocate_section_hint. The default is 0.
+>> +
+>> +		===========================  ==========================================================
+>> +		value					     description
+>> +		allocate_section_policy = 0  Normal writing
+>> +		allocate_section_policy = 1  Prioritize writing to section before allocate_section_hint
+>> +		allocate_section_policy = 2  Prioritize writing to section after allocate_section_hint
+>> +		===========================  ==========================================================
+>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+>> index 6cde72fce74e..7c6bfee81c61 100644
+>> --- a/fs/f2fs/f2fs.h
+>> +++ b/fs/f2fs/f2fs.h
+>> @@ -162,6 +162,12 @@ enum bggc_io_aware_policy {
+>>   	AWARE_NONE,			/* don't aware IO for background GC */
+>>   };
+>>   
+>> +enum device_allocation_policy {
+>> +	ALLOCATE_FORWARD_NOHINT,
+>> +	ALLOCATE_FORWARD_WITHIN_HINT,
+>> +	ALLOCATE_FORWARD_FROM_HINT,
+>> +};
+>> +
+>>   /*
+>>    * An implementation of an rwsem that is explicitly unfair to readers. This
+>>    * prevents priority inversion when a low-priority reader acquires the read lock
+>> @@ -1856,6 +1862,8 @@ struct f2fs_sb_info {
+>>   	bool aligned_blksize;			/* all devices has the same logical blksize */
+>>   	unsigned int first_seq_zone_segno;	/* first segno in sequential zone */
+>>   	unsigned int bggc_io_aware;		/* For adjust the BG_GC priority when pending IO */
+>> +	unsigned int allocate_section_hint;	/* the boundary position between devices */
+>> +	unsigned int allocate_section_policy;	/* determine the section writing priority */
+>>   
+>>   	/* For write statistics */
+>>   	u64 sectors_written_start;
+>> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+>> index 098e9f71421e..b57b8fd64747 100644
+>> --- a/fs/f2fs/gc.c
+>> +++ b/fs/f2fs/gc.c
+>> @@ -2182,6 +2182,8 @@ static void update_fs_metadata(struct f2fs_sb_info *sbi, int secs)
+>>   	SM_I(sbi)->segment_count = (int)SM_I(sbi)->segment_count + segs;
+>>   	MAIN_SEGS(sbi) = (int)MAIN_SEGS(sbi) + segs;
+>>   	MAIN_SECS(sbi) += secs;
+>> +	if (sbi->allocate_section_hint > MAIN_SECS(sbi))
+>> +		sbi->allocate_section_hint = MAIN_SECS(sbi);
+>>   	FREE_I(sbi)->free_sections = (int)FREE_I(sbi)->free_sections + secs;
+>>   	FREE_I(sbi)->free_segments = (int)FREE_I(sbi)->free_segments + segs;
+>>   	F2FS_CKPT(sbi)->user_block_count = cpu_to_le64(user_block_count + blks);
+>> @@ -2189,6 +2191,9 @@ static void update_fs_metadata(struct f2fs_sb_info *sbi, int secs)
+>>   	if (f2fs_is_multi_device(sbi)) {
+>>   		int last_dev = sbi->s_ndevs - 1;
+>>   
+>> +		sbi->allocate_section_hint = FDEV(0).total_segments /
+>> +					SEGS_PER_SEC(sbi);
+>> +
+>>   		FDEV(last_dev).total_segments =
+>>   				(int)FDEV(last_dev).total_segments + segs;
+>>   		FDEV(last_dev).end_blk =
+>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+>> index 04b0a3c1804d..e86b78111444 100644
+>> --- a/fs/f2fs/segment.c
+>> +++ b/fs/f2fs/segment.c
+>> @@ -2807,6 +2807,21 @@ static int get_new_segment(struct f2fs_sb_info *sbi,
+>>   	}
+>>   #endif
+>>   
+>> +	/*
+>> +	 * Prevent allocate_section_hint from exceeding MAIN_SECS()
+>> +	 * due to desynchronization.
+>> +	 */
+>> +	if (sbi->allocate_section_policy != ALLOCATE_FORWARD_NOHINT &&
+>> +		sbi->allocate_section_hint > MAIN_SECS(sbi))
+>> +		sbi->allocate_section_hint = MAIN_SECS(sbi);
+>> +
+>> +	if (sbi->allocate_section_policy == ALLOCATE_FORWARD_FROM_HINT &&
+>> +		hint < sbi->allocate_section_hint)
+>> +		hint = sbi->allocate_section_hint;
+>> +	else if (sbi->allocate_section_policy == ALLOCATE_FORWARD_WITHIN_HINT &&
+>> +			hint >= sbi->allocate_section_hint)
+>> +		hint = 0;
+> I suspect use of sbi->allocate_section_hint and sbi->allocate_section_policy may
+> race w/ their update via sysfs node.
+>
+> What about this?
+>
+> unsigned int alloc_policy = sbi->allocate_section_hint;
+> unsigned int alloc_hint = sbi->allocate_section_hint;
+>
+> if (alloc_policy != ALLOCATE_FORWARD_NOHINT &&
+> 		alloc_hint > MAIN_SECS(sbi))
+> 	alloc_hint = MAIN_SECS(sbi);
+>
+> if (alloc_policy == ALLOCATE_FORWARD_FROM_HINT &&
+> ...
+>
+> Thanks,
 
-Co-developed-by: Kishon Vijay Abraham I <kvijayab@amd.com>
-Signed-off-by: Kishon Vijay Abraham I <kvijayab@amd.com>
-Reviewed-by: Tianyu Lan <tiala@microsoft.com>
-Signed-off-by: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
----
-Changes since v9:
+Okay, I will upload the v4 version with this fix later.
 
- - Commit log update.
- - Change secure_avic_page var name to savic_page.
 
- arch/x86/coco/sev/core.c            | 22 ++++++++++++++++++
- arch/x86/include/asm/apic.h         |  1 +
- arch/x86/include/asm/sev.h          |  2 ++
- arch/x86/include/uapi/asm/svm.h     |  4 ++++
- arch/x86/kernel/apic/apic.c         |  3 +++
- arch/x86/kernel/apic/x2apic_savic.c | 35 +++++++++++++++++++++++++++++
- 6 files changed, 67 insertions(+)
+Thanks,
 
-diff --git a/arch/x86/coco/sev/core.c b/arch/x86/coco/sev/core.c
-index f7a549f650e9..7669aafcad95 100644
---- a/arch/x86/coco/sev/core.c
-+++ b/arch/x86/coco/sev/core.c
-@@ -1108,6 +1108,28 @@ int __init sev_es_efi_map_ghcbs_cas(pgd_t *pgd)
- 	return 0;
- }
- 
-+enum es_result savic_register_gpa(u64 gpa)
-+{
-+	struct ghcb_state state;
-+	struct es_em_ctxt ctxt;
-+	enum es_result res;
-+	struct ghcb *ghcb;
-+
-+	guard(irqsave)();
-+
-+	ghcb = __sev_get_ghcb(&state);
-+	vc_ghcb_invalidate(ghcb);
-+
-+	ghcb_set_rax(ghcb, SVM_VMGEXIT_SAVIC_SELF_GPA);
-+	ghcb_set_rbx(ghcb, gpa);
-+	res = sev_es_ghcb_hv_call(ghcb, &ctxt, SVM_VMGEXIT_SAVIC,
-+				  SVM_VMGEXIT_SAVIC_REGISTER_GPA, 0);
-+
-+	__sev_put_ghcb(&state);
-+
-+	return res;
-+}
-+
- static void snp_register_per_cpu_ghcb(void)
- {
- 	struct sev_es_runtime_data *data;
-diff --git a/arch/x86/include/asm/apic.h b/arch/x86/include/asm/apic.h
-index 07ba4935e873..44b4080721a6 100644
---- a/arch/x86/include/asm/apic.h
-+++ b/arch/x86/include/asm/apic.h
-@@ -305,6 +305,7 @@ struct apic {
- 
- 	/* Probe, setup and smpboot functions */
- 	int	(*probe)(void);
-+	void	(*setup)(void);
- 	int	(*acpi_madt_oem_check)(char *oem_id, char *oem_table_id);
- 
- 	void	(*init_apic_ldr)(void);
-diff --git a/arch/x86/include/asm/sev.h b/arch/x86/include/asm/sev.h
-index 02236962fdb1..9036122a6d45 100644
---- a/arch/x86/include/asm/sev.h
-+++ b/arch/x86/include/asm/sev.h
-@@ -533,6 +533,7 @@ int snp_svsm_vtpm_send_command(u8 *buffer);
- 
- void __init snp_secure_tsc_prepare(void);
- void __init snp_secure_tsc_init(void);
-+enum es_result savic_register_gpa(u64 gpa);
- 
- static __always_inline void vc_ghcb_invalidate(struct ghcb *ghcb)
- {
-@@ -605,6 +606,7 @@ static inline int snp_send_guest_request(struct snp_msg_desc *mdesc,
- static inline int snp_svsm_vtpm_send_command(u8 *buffer) { return -ENODEV; }
- static inline void __init snp_secure_tsc_prepare(void) { }
- static inline void __init snp_secure_tsc_init(void) { }
-+static inline enum es_result savic_register_gpa(u64 gpa) { return ES_UNSUPPORTED; }
- 
- #endif	/* CONFIG_AMD_MEM_ENCRYPT */
- 
-diff --git a/arch/x86/include/uapi/asm/svm.h b/arch/x86/include/uapi/asm/svm.h
-index 9c640a521a67..650e3256ea7d 100644
---- a/arch/x86/include/uapi/asm/svm.h
-+++ b/arch/x86/include/uapi/asm/svm.h
-@@ -118,6 +118,10 @@
- #define SVM_VMGEXIT_AP_CREATE			1
- #define SVM_VMGEXIT_AP_DESTROY			2
- #define SVM_VMGEXIT_SNP_RUN_VMPL		0x80000018
-+#define SVM_VMGEXIT_SAVIC			0x8000001a
-+#define SVM_VMGEXIT_SAVIC_REGISTER_GPA		0
-+#define SVM_VMGEXIT_SAVIC_UNREGISTER_GPA	1
-+#define SVM_VMGEXIT_SAVIC_SELF_GPA		~0ULL
- #define SVM_VMGEXIT_HV_FEATURES			0x8000fffd
- #define SVM_VMGEXIT_TERM_REQUEST		0x8000fffe
- #define SVM_VMGEXIT_TERM_REASON(reason_set, reason_code)	\
-diff --git a/arch/x86/kernel/apic/apic.c b/arch/x86/kernel/apic/apic.c
-index d73ba5a7b623..36f1326fea2e 100644
---- a/arch/x86/kernel/apic/apic.c
-+++ b/arch/x86/kernel/apic/apic.c
-@@ -1503,6 +1503,9 @@ static void setup_local_APIC(void)
- 		return;
- 	}
- 
-+	if (apic->setup)
-+		apic->setup();
-+
- 	/*
- 	 * If this comes from kexec/kcrash the APIC might be enabled in
- 	 * SPIV. Soft disable it before doing further initialization.
-diff --git a/arch/x86/kernel/apic/x2apic_savic.c b/arch/x86/kernel/apic/x2apic_savic.c
-index bea844f28192..948d89497baa 100644
---- a/arch/x86/kernel/apic/x2apic_savic.c
-+++ b/arch/x86/kernel/apic/x2apic_savic.c
-@@ -8,17 +8,47 @@
-  */
- 
- #include <linux/cc_platform.h>
-+#include <linux/percpu-defs.h>
- 
- #include <asm/apic.h>
- #include <asm/sev.h>
- 
- #include "local.h"
- 
-+struct secure_avic_page {
-+	u8 regs[PAGE_SIZE];
-+} __aligned(PAGE_SIZE);
-+
-+static struct secure_avic_page __percpu *savic_page __ro_after_init;
-+
- static int savic_acpi_madt_oem_check(char *oem_id, char *oem_table_id)
- {
- 	return x2apic_enabled() && cc_platform_has(CC_ATTR_SNP_SECURE_AVIC);
- }
- 
-+static void savic_setup(void)
-+{
-+	void *ap = this_cpu_ptr(savic_page);
-+	enum es_result res;
-+	unsigned long gpa;
-+
-+	gpa = __pa(ap);
-+
-+	/*
-+	 * The NPT entry for a vCPU's APIC backing page must always be
-+	 * present when the vCPU is running in order for Secure AVIC to
-+	 * function. A VMEXIT_BUSY is returned on VMRUN and the vCPU cannot
-+	 * be resumed if the NPT entry for the APIC backing page is not
-+	 * present. Notify GPA of the vCPU's APIC backing page to the
-+	 * hypervisor by calling savic_register_gpa(). Before executing
-+	 * VMRUN, the hypervisor makes use of this information to make sure
-+	 * the APIC backing page is mapped in NPT.
-+	 */
-+	res = savic_register_gpa(gpa);
-+	if (res != ES_OK)
-+		snp_abort();
-+}
-+
- static int savic_probe(void)
- {
- 	if (!cc_platform_has(CC_ATTR_SNP_SECURE_AVIC))
-@@ -30,6 +60,10 @@ static int savic_probe(void)
- 		/* unreachable */
- 	}
- 
-+	savic_page = alloc_percpu(struct secure_avic_page);
-+	if (!savic_page)
-+		snp_abort();
-+
- 	return 1;
- }
- 
-@@ -38,6 +72,7 @@ static struct apic apic_x2apic_savic __ro_after_init = {
- 	.name				= "secure avic x2apic",
- 	.probe				= savic_probe,
- 	.acpi_madt_oem_check		= savic_acpi_madt_oem_check,
-+	.setup				= savic_setup,
- 
- 	.dest_mode_logical		= false,
- 
--- 
-2.34.1
+Liao
 
+>> +
+>>   find_other_zone:
+>>   	secno = find_next_zero_bit(free_i->free_secmap, MAIN_SECS(sbi), hint);
+>>   
+>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+>> index e288b7be3131..924ad2216f67 100644
+>> --- a/fs/f2fs/super.c
+>> +++ b/fs/f2fs/super.c
+>> @@ -4238,6 +4238,7 @@ static void init_sb_info(struct f2fs_sb_info *sbi)
+>>   	sbi->total_node_count = SEGS_TO_BLKS(sbi,
+>>   			((le32_to_cpu(raw_super->segment_count_nat) / 2) *
+>>   			NAT_ENTRY_PER_BLOCK));
+>> +	sbi->allocate_section_hint = le32_to_cpu(raw_super->section_count);
+>>   	F2FS_ROOT_INO(sbi) = le32_to_cpu(raw_super->root_ino);
+>>   	F2FS_NODE_INO(sbi) = le32_to_cpu(raw_super->node_ino);
+>>   	F2FS_META_INO(sbi) = le32_to_cpu(raw_super->meta_ino);
+>> @@ -4721,6 +4722,7 @@ static int f2fs_scan_devices(struct f2fs_sb_info *sbi)
+>>   	logical_blksize = bdev_logical_block_size(sbi->sb->s_bdev);
+>>   	sbi->aligned_blksize = true;
+>>   	sbi->bggc_io_aware = AWARE_ALL_IO;
+>> +	sbi->allocate_section_policy = ALLOCATE_FORWARD_NOHINT;
+>>   #ifdef CONFIG_BLK_DEV_ZONED
+>>   	sbi->max_open_zones = UINT_MAX;
+>>   	sbi->blkzone_alloc_policy = BLKZONE_ALLOC_PRIOR_SEQ;
+>> @@ -4752,6 +4754,8 @@ static int f2fs_scan_devices(struct f2fs_sb_info *sbi)
+>>   					SEGS_TO_BLKS(sbi,
+>>   					FDEV(i).total_segments) - 1 +
+>>   					le32_to_cpu(raw_super->segment0_blkaddr);
+>> +				sbi->allocate_section_hint = FDEV(i).total_segments /
+>> +							SEGS_PER_SEC(sbi);
+>>   			} else {
+>>   				FDEV(i).start_blk = FDEV(i - 1).end_blk + 1;
+>>   				FDEV(i).end_blk = FDEV(i).start_blk +
+>> diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+>> index 1ffaf9e74ce9..81b99c2a02a9 100644
+>> --- a/fs/f2fs/sysfs.c
+>> +++ b/fs/f2fs/sysfs.c
+>> @@ -889,6 +889,20 @@ static ssize_t __sbi_store(struct f2fs_attr *a,
+>>   		return count;
+>>   	}
+>>   
+>> +	if (!strcmp(a->attr.name, "allocate_section_hint")) {
+>> +		if (t < 0 || t > MAIN_SECS(sbi))
+>> +			return -EINVAL;
+>> +		sbi->allocate_section_hint = t;
+>> +		return count;
+>> +	}
+>> +
+>> +	if (!strcmp(a->attr.name, "allocate_section_policy")) {
+>> +		if (t < ALLOCATE_FORWARD_NOHINT || t > ALLOCATE_FORWARD_FROM_HINT)
+>> +			return -EINVAL;
+>> +		sbi->allocate_section_policy = t;
+>> +		return count;
+>> +	}
+>> +
+>>   	*ui = (unsigned int)t;
+>>   
+>>   	return count;
+>> @@ -1161,6 +1175,8 @@ F2FS_SBI_GENERAL_RW_ATTR(max_victim_search);
+>>   F2FS_SBI_GENERAL_RW_ATTR(migration_granularity);
+>>   F2FS_SBI_GENERAL_RW_ATTR(migration_window_granularity);
+>>   F2FS_SBI_GENERAL_RW_ATTR(dir_level);
+>> +F2FS_SBI_GENERAL_RW_ATTR(allocate_section_hint);
+>> +F2FS_SBI_GENERAL_RW_ATTR(allocate_section_policy);
+>>   #ifdef CONFIG_F2FS_IOSTAT
+>>   F2FS_SBI_GENERAL_RW_ATTR(iostat_enable);
+>>   F2FS_SBI_GENERAL_RW_ATTR(iostat_period_ms);
+>> @@ -1398,6 +1414,8 @@ static struct attribute *f2fs_attrs[] = {
+>>   	ATTR_LIST(max_read_extent_count),
+>>   	ATTR_LIST(carve_out),
+>>   	ATTR_LIST(reserved_pin_section),
+>> +	ATTR_LIST(allocate_section_hint),
+>> +	ATTR_LIST(allocate_section_policy),
+>>   	NULL,
+>>   };
+>>   ATTRIBUTE_GROUPS(f2fs);
 
