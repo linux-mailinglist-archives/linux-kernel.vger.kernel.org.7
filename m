@@ -1,113 +1,78 @@
-Return-Path: <linux-kernel+bounces-789821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37788B39B24
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 13:12:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30A62B39B01
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 13:06:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBF74360171
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 11:12:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66B341884A06
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 11:07:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D1BA30DEAB;
-	Thu, 28 Aug 2025 11:12:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="ZzptfstS"
-Received: from out162-62-58-216.mail.qq.com (out162-62-58-216.mail.qq.com [162.62.58.216])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3227530C624;
+	Thu, 28 Aug 2025 11:06:41 +0000 (UTC)
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5357721D3EE;
-	Thu, 28 Aug 2025 11:11:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.216
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23B742459E1
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 11:06:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756379519; cv=none; b=ocVqWE6E/7rrNOIOFQCxCuAiRImtNYarJZO9DTiSc1Jnzlleo5sP4bzSQZiD2YJUw3tQU/gajOBAdNAYAmat9YOExhDpwhTRWN3z5Gu+5IHvI21hyYQZhn4nKvCPoXHCZLTJXTIgTsMDLhzk8onib8kEWY8zyYzmnUrodHdR/H0=
+	t=1756379200; cv=none; b=Di4ECfnJnr6KN0gzcLlUFWfGNzFlUjrzaucofmxDGspwUSv8rPzpIMT25QUKQqgxL61HdvY+biM7Fsw2pi+ZTiLFPeK9XAiBA8COOf+FHFv2mz4k//2eznp12Xjm0BvI/fKE4N/tVwHf9Fc684O7Yti1Qe1TDXYODqIkbsbLunw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756379519; c=relaxed/simple;
-	bh=NPxx/ey2tXKTRsHU1SUjCV4ADg0ZhVLhJz4gBqVmG84=;
-	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=NsmECoFov+aKCDnfxRqnMht6m35ygctPP0+ls9edOxSks5zw7dZ/C/tDSw/jhLFmkLctqHn1dFUlqgJSYYYbvizm0f2jsx6kzzbV/4l+Iml8Sj571C39fewNfhYWE+Obc0xhD9s6sXZQHMDQFUYhFD0rni0YNOCjd0di6seSwOc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=ZzptfstS; arc=none smtp.client-ip=162.62.58.216
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-	s=s201512; t=1756379205;
-	bh=BcVs6RdP2pVoj2tAX1f2LpjoEbkeuktpGmJZui03meQ=;
-	h=From:To:Cc:Subject:Date;
-	b=ZzptfstStfO6aAXbq/AEKgn2QZUMn7vegJfZY4yz3ZnNphXtntqy9vxSbQzHtu0cm
-	 akJFo2ITBYBmWF2mtaPur9QTN0sOzDq6uNpg1q7j0ZuUl57Ogr3o+l6oMqHtJV9h9E
-	 BqkyrpzRcPWfF6Nh51HDScp5Y0oFHYlNsCDBNiJg=
-Received: from NUC10 ([39.156.73.10])
-	by newxmesmtplogicsvrszb42-0.qq.com (NewEsmtp) with SMTP
-	id 1A914CDB; Thu, 28 Aug 2025 19:06:41 +0800
-X-QQ-mid: xmsmtpt1756379201tzxa3pir2
-Message-ID: <tencent_8B8FEE211A1A0009ED67855EA2AAECBDE20A@qq.com>
-X-QQ-XMAILINFO: NAtipnnbTPeaZftIKjm/rzpYqAps5Bu6jLMD80w4t5M+CXEhckWTv5o7AbnL5p
-	 f5CsG5CvIxXXyvoyRAsTNAzbjXQOoWeDfqffw4Q3JtCd79pHyEm3+D5XoKRS6KT+qCsmRLY89iL0
-	 ArrfBA6oCIdFkGbrtfqMu08UGDGSPC7TS5RLtGl4vQLXdSAdWytqFL3WjjQZU9ntQfWlXlYNiiR9
-	 j67iuVdY07/ASW5afemUwE3hhVP+jhUOogECLpggCetT0Q9slMFHRfHECLVZVSmH+dfRdyzu58Ml
-	 meB3+u9Z7nXKJ7syeEhK887iWP90QUwOa6ffsDJXLGimxZku8iZ01cQbOpoAMt0eCVI1cJIbc5gi
-	 NW8FrPbT296tHhOpbZ2hGaG1gk3J3HuPXa2YfhdJ6yq4nVwJIXSD5ULEGcypmvkTRhTKsFKTHqDH
-	 z+wpRb6S2YIjHj90ZSQFS+J1QsOQV3pNuQVkX0bphRazjurtvow1IjXOSpli3jTkpmYG0GtV5kDW
-	 ofOSPo3bm/Z4dUyXtfMK4Wmn+5IAGSM3KG3NV7W6uzkYmZwedUWwk+2PlW/5BFw47GTzwskSuQ3M
-	 TGl8yE+v1actqPHz34+anKqJK0Xawu3Eoo7bYAhjhR+JuTEAu0W79Hj7FdaZ1OcxvgsbescUqMP7
-	 p3e2ZJPVCea942MWOGHlC6pc8BEfOoIud+VRlkdsJiPomGgKqlXrts93pH2V3nugxw1ib9p4w44o
-	 +KdII4yjcnPKBHfCu2HnBlPfStYeIe1An+opThrqTgNTRKAKU+qhZDjEers24myxBDVynXrzSltk
-	 hFB6nTQDVxd69SVy35fhY1amJdhqvQLBFqH/W4s5fEq0g+Xj/8IV9kerlU3afBmDgDC+an7VT4Nq
-	 wYuq6yCoiC53QU5tL0e5s5XlYiQvidXE+ETysv+qo99yEXXFL58iyh7yb1hFgk7kD5+1Ltvc6MSG
-	 UosnqVUWbuzcU3x594CDIjTOasoXEXnRq653xwTdURTV8q9RKV1SHheSlSJM8q52fAkhy0xXV9Ru
-	 Kwkdj+fh/DdxQ/GKqs0gx/+1bZZGtWH+w+K8eyJUMv34SJDMFyDnJl9qsSXO8=
-X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
-From: Rong Tao <rtoax@foxmail.com>
-To: andrii.nakryiko@gmail.com,
-	ast@kernel.org,
-	daniel@iogearbox.net,
-	vmalik@redhat.com
-Cc: Rong Tao <rtoax@foxmail.com>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>,
-	Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Mykola Lysenko <mykolal@fb.com>,
-	Shuah Khan <shuah@kernel.org>,
-	Rong Tao <rongtao@cestc.cn>,
-	bpf@vger.kernel.org (open list:BPF [GENERAL] (Safe Dynamic Programs and Tools)),
-	linux-kernel@vger.kernel.org (open list),
-	linux-kselftest@vger.kernel.org (open list:KERNEL SELFTEST FRAMEWORK)
-Subject: [PATCH bpf-next v3 0/2] Fix bpf_strnstr len error
-Date: Thu, 28 Aug 2025 19:06:26 +0800
-X-OQ-MSGID: <cover.1756378974.git.rtoax@foxmail.com>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1756379200; c=relaxed/simple;
+	bh=Nas3Yc0d+xnRKeHP94h5sYkVeRl3KlV0gfHSlr8sc74=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aYGRTvdGCU72VNWpStR/4DH3USVr6r3ylphsO7z+XTFHoZNUu7lT/9vAHfp+h0CAvB7tNG1IlJpvNHKe4jJjFg8CP0SLgE+z+FoiZdl+MVlfuonfmde3hpIfy7qX+vzFUmexSJxNF/7CdadLoIOaCl3JatzgQKVkQS8CY/yMxzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 57SB6TST092890;
+	Thu, 28 Aug 2025 20:06:29 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from [192.168.1.10] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 57SB6TbS092886
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Thu, 28 Aug 2025 20:06:29 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <2a58b0b4-1c67-46d2-9c2a-fce3d26fc846@I-love.SAKURA.ne.jp>
+Date: Thu, 28 Aug 2025 20:06:29 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot] [net?] WARNING in xfrm_state_fini (3)
+To: Sabrina Dubroca <sd@queasysnail.net>,
+        Steffen Klassert <steffen.klassert@secunet.com>
+Cc: syzbot <syzbot+6641a61fe0e2e89ae8c5@syzkaller.appspotmail.com>,
+        davem@davemloft.net, edumazet@google.com, herbert@gondor.apana.org.au,
+        horms@kernel.org, kuba@kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, pabeni@redhat.com,
+        syzkaller-bugs@googlegroups.com
+References: <6888736f.a00a0220.b12ec.00ca.GAE@google.com>
+ <aIiqAjZzjl7uNeSb@gauss3.secunet.de> <aIisBdRAM2vZ_VCW@krikkit>
+Content-Language: en-US
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <aIisBdRAM2vZ_VCW@krikkit>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Anti-Virus-Server: fsav405.rs.sakura.ne.jp
+X-Virus-Status: clean
 
-Fix bpf_strnstr() wrong 'len' parameter, bpf_strnstr("open", "open", 4)
-should return 0 instead of -ENOENT.
+syzbot is still hitting this problem. Please check.
 
-Rong Tao (2):
-  bpf/helpers: bpf_strnstr: Exact match length
-  selftests/bpf: Add tests for bpf_strnstr
-
- kernel/bpf/helpers.c                                      | 4 +++-
- tools/testing/selftests/bpf/progs/string_kfuncs_success.c | 4 +++-
- 2 files changed, 6 insertions(+), 2 deletions(-)
-
----
-v3: Fix selftests/bpf error in v2, sorry about that;
-v2: Follow Andrii Nakryiko's advise, fix the 'wrong fix';
-    https://lore.kernel.org/lkml/tencent_DF4DA83EEBFB9246E5E3357BB40911CCA005@qq.com/
-v1: https://lore.kernel.org/lkml/tencent_65E5988AD52BEC280D22964189505CD6ED06@qq.com/
--- 
-2.51.0
-
+On 2025/07/29 20:09, Sabrina Dubroca wrote:
+>> Hi Sabrina, your recent ipcomp patches seem to trigger this issue.
+>> At least reverting them make it go away. Can you please look
+>> into this?
+> 
+> I haven't looked at the other reports yet, but this one seems to be a
+> stupid mistake in my revert patch. With these changes, the syzbot
+> repro stops splatting here:
 
