@@ -1,305 +1,230 @@
-Return-Path: <linux-kernel+bounces-790523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DF7FB3A9B4
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 20:15:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83F0CB3A9BB
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 20:16:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65F9A1C81C36
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 18:16:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9FE101C81DE9
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 18:17:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 839B52236F3;
-	Thu, 28 Aug 2025 18:15:46 +0000 (UTC)
-Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29C48192D68;
+	Thu, 28 Aug 2025 18:16:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="EVtx8NFj"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E052642AA4
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 18:15:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1F8F217654
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 18:16:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756404945; cv=none; b=CUEqtTOEEw2Wydo6oI6eRF5eQfMdGrkfPxN+sj/kNHVhTACxgaTg/0LFMX9A1m1Kvu2q6aoSHoe4DgViL7ymb9eXEARjR37jVJEs+RD3O1r+QvR5SZ5D+9mxRhzwhypkdtJtFbFAXrkj73+RRBHr/4SLE1Zdn/YRRWhtGMjrf5M=
+	t=1756404991; cv=none; b=Yn5u1Fq410Z7dUa+1GbBKrrLBfr+hHD2AFNFKm8VsvtezqJulFvRIGfoS7hFbL2WQ8Wb52UIb/NvbgUfCHFN57p2nW9GP1I6DQ+rTyU8xf1PnXkdV/sMu8ENR3KVuJWCa304GiW/zWOApsUve24hQl+Wq4YDfnRIV+IfgBVY7IU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756404945; c=relaxed/simple;
-	bh=vTcIZmfvTBPpIzuzdSGuAvEnWo82Uy3/vrxBJsPAGg0=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=NOTZiXUub19/y0WDn7C1pUTtDpdo27v7ES44/WVEaSiW34QEd2S7huZc9c8mbfJjytPTspCqhcAcuMrqvvwDLQ7611toWqNTLhjNn4Q1qT2iIFmBeUYN/Dg0pt0q6tSGThqWNgSU+N+7DU4uFI669/9RtDpz8CiTSpjP7FTWexs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3ed0ba44c8fso15324285ab.0
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 11:15:43 -0700 (PDT)
+	s=arc-20240116; t=1756404991; c=relaxed/simple;
+	bh=M3HQCiM5KYRjRQ/WjF0auNC6AvPAf635gqp+hRXNtAY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jJdF7bY5TheReyXjA4OMFlaBG7TsSppkmvKcj9y3Bu4XcaYWW9ImtfyeO6CdDF9SfJ8FCwZSBvNMDwmBZOKRoavzyD3K0TnS0jEVxRUjnRGOv8xR+epv6Q8sP1Wp9IQkVXXQOMMcFkNgcAkYhq+e3JyGJe8/7AunYRT8oysImuE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=EVtx8NFj; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57SE2k9D029258
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 18:16:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	4dNA65guW+NvhqNBWZahbcbYrQpvet8rF5DHP3CXwC0=; b=EVtx8NFjx1LQ164Q
+	eIJ/iHS1YF4mwAPftJw3WaMvCLNhprY5B7fMVPbau8TGOEDNCv4NOvTjaitibEkk
+	Tq97WF5Q/NbWuGbrDmwNWk2vSCSgzlB682qXOoUrqadK/n1onj8AVMcnlRPJ1mUl
+	i6xJPLQMIeglzZHbooj7WSxnvuA1DGutJW9repM51fcOTTgwTDAwygxPmJjUsmOW
+	JJyj25m37eJM4zVAlEJ6VEt17pvgllBTuw5pXDLVVIri817kQRYRTJlv7r9dmfCL
+	D+7owS2uZ94ufEjCGyGmO+995Qnj/No452TpjL72NAO3NpknkyBnIqf6+I9RlCBq
+	fHW/WA==
+Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com [209.85.210.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48q5w31f5v-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 18:16:28 +0000 (GMT)
+Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-771b23c0a6bso2086660b3a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 11:16:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756404943; x=1757009743;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=7nGNvldgd/RRAc8uTpZZ+9Zg1c8g1AnsVsk/7T6rLYY=;
-        b=tLlzE2ICOeu1iLSROmMzAaQzBaB5VB+C2o03diXqVN12zy/NTlfKNoc1e3/SWovq4I
-         d0v7/XJpd4MC7nu52+18qDKGRdeespr7b3b+eFPFf105kOtC/9hjqjdePmN2WeTiWsPU
-         FIuEvbkv6ldiA37mpyehx+jB+mpsfQLc7zjrh0of/NGM6Ii2uAJmyn9Tu+RDOIr1cnoO
-         +/X8dNPt0SLyEkTBMGY/+vloqCciQQSgzBjcuTPEdeh+ClUIH9FSAYl3nlEhMpeWJ96U
-         j5cnzh78YL2PrDYgv31MA958WXVoG+bjPcwgRtYf1hv86bYeYK3VOySvIXNDTlotMd5P
-         ZOjA==
-X-Forwarded-Encrypted: i=1; AJvYcCXtkyvYqYsN1agSyxsVmdqis3DL58yyx15GFqHtqKBpoRmw9ZEu551lGh7k122AUbzP+xSJQS4N1oRb71U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyasiOh3E8R7JKU7n0cZYq3tFAy22QfIO6K6nFSFGhdmEr8fZBP
-	rLjGBLXAuUHRyHu6fZRdSQj4IO867cCM8g2BNQw/iY1Ds9TvXjrqeFw6eafIhyHYXaBTQ+FIY8Q
-	yra/BPAWQnnujF3W/S1Yd/9kuSAc+wCURgiGkBMOqWaxUqbF4bjF0RB4w0RE=
-X-Google-Smtp-Source: AGHT+IHftrKMrTTSGzqUj80LQbx/Sw4Ni0j3ZJ0EH0D801cfx8flrI+Z6qha7+vbfgBhsav4aFAeqzkDxRL4IwAfFXa/ZAAOK1bT
+        d=1e100.net; s=20230601; t=1756404988; x=1757009788;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4dNA65guW+NvhqNBWZahbcbYrQpvet8rF5DHP3CXwC0=;
+        b=MfKUq1V2SBFIRgs/bcCN4hP0hrgplR3ZOJAS2nFFq+6RNsX+Q01fg7U3XRKIp2QTj9
+         FtYqy74CRNQBVAoZHhgnS+4f8+qxOb8qg0I1gky/gz7QgBp9BXfCVQhqkVMgZ7FWq2sh
+         htOJ5tRFdMwR1sjWCcYozxF3yMlSm9aS5FjTaSzIzrPR6JhiH7jLPWxdd1VfJ0G2gSXN
+         HKzWJR6zyYesAjFXC1VHtqwKCz2NM6XK+Dc7bSQpV486L4AJE0pK7ZCzxX7cr1zDJhH5
+         x1ljWWKzQbKkWWpd/eWmG1tDSx/jbpgk6tP7pD7YiGCaB3/iSN7yrMBwWLnayL2r8xxe
+         37Nw==
+X-Forwarded-Encrypted: i=1; AJvYcCVqylbKMB8ln7mDVCF9wFlDVYycr78aWszs0xgu7Xc7pca0RGQBblg+opw6f05j2f/T2w+ILXAHaZA3xbk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6SfbLm3pJdZQKRpaUC/7IerY6ZJKYqDMCGYjrR6PBRDm/5ARq
+	76hk31rNIYvcr1gLdtIpky9R/3mHlMZ5aOLJr5GKpY+omVzG6enfj3m+2wcWx5MfIGu6KsOVGQm
+	sBVOBBOHLO8G1faqC7IqpxqRm4J0R254kuUQnBWvvpP997yM20MeCbIyES8YpG4AYRtI=
+X-Gm-Gg: ASbGncuMmO03jpJPtKfe/5AIMf3H6/m2W/vO/nC81aNszXR8GGD2Ezq9OAO0dBxq0kW
+	5+NRFGeYCF9WLaL7ymGl+PwKw3x5/Y3CCNBNuOsxEYnwlh5C7LpLl/C4EkMzpSQK9z/ka9eMQft
+	5JM6oOp5S7lDboPXuI1K3bdG+aEZDofAGKG497UyeS8Sx/RqKB4E+ktb2namjLnMi4YaY1MywSU
+	LBp1tsMCFnZboNf4NijAEf4Yx1sLiho/Iw+4yJXF3Uxit/knE7qXOta15yvkc/0vSUjGOgkOxcx
+	OOufVoDa8C6D2BdtjKiZgKqhKu5K4XXYGno1cBup0CfjBp5LKeZDy8+FEXzIWDTO/5x/4DPo
+X-Received: by 2002:a05:6a20:4321:b0:243:b52b:c97 with SMTP id adf61e73a8af0-243b52b1499mr3374479637.2.1756404988011;
+        Thu, 28 Aug 2025 11:16:28 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHWc/uGOqMrJNITtI/IuoZY7KUw8N7dOMChku9OrZXXhErY7DhsaxinUs69MN8iRPDDCck2Sg==
+X-Received: by 2002:a05:6a20:4321:b0:243:b52b:c97 with SMTP id adf61e73a8af0-243b52b1499mr3374418637.2.1756404987463;
+        Thu, 28 Aug 2025 11:16:27 -0700 (PDT)
+Received: from [192.168.1.7] ([136.185.228.167])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b4cd006c340sm90998a12.1.2025.08.28.11.16.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 28 Aug 2025 11:16:27 -0700 (PDT)
+Message-ID: <249f8109-31b1-4cb8-a5a4-b30c27b2e987@oss.qualcomm.com>
+Date: Thu, 28 Aug 2025 23:46:21 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2582:b0:3ed:256a:d680 with SMTP id
- e9e14a558f8ab-3ed256ad943mr216770355ab.13.1756404942663; Thu, 28 Aug 2025
- 11:15:42 -0700 (PDT)
-Date: Thu, 28 Aug 2025 11:15:42 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68b09cce.050a0220.3db4df.006a.GAE@google.com>
-Subject: [syzbot] [bcachefs?] INFO: task hung in truncate_setsize (2)
-From: syzbot <syzbot+0d26e9339d135e85c6e1@syzkaller.appspotmail.com>
-To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-
-Hello,
-
-syzbot found the following issue on:
-
-HEAD commit:    b6add54ba618 Merge tag 'pinctrl-v6.17-2' of git://git.kern..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=120f7862580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e1e1566c7726877e
-dashboard link: https://syzkaller.appspot.com/bug?extid=0d26e9339d135e85c6e1
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14309c42580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1198eef0580000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/a4d47e89f4f4/disk-b6add54b.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/5b1fec039895/vmlinux-b6add54b.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/5f14eb59c93e/bzImage-b6add54b.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/de46bb7110d1/mount_0.gz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+0d26e9339d135e85c6e1@syzkaller.appspotmail.com
-
-INFO: task syz.0.19:6216 blocked for more than 143 seconds.
-      Not tainted syzkaller #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz.0.19        state:D stack:17448 pid:6216  tgid:6215  ppid:6040   task_flags:0x400140 flags:0x00004006
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5357 [inline]
- __schedule+0x16f3/0x4c20 kernel/sched/core.c:6961
- __schedule_loop kernel/sched/core.c:7043 [inline]
- schedule+0x165/0x360 kernel/sched/core.c:7058
- io_schedule+0x81/0xe0 kernel/sched/core.c:7903
- folio_wait_bit_common+0x6b5/0xb90 mm/filemap.c:1317
- folio_lock include/linux/pagemap.h:1133 [inline]
- truncate_inode_pages_range+0x88d/0xb90 mm/truncate.c:433
- truncate_inode_pages mm/truncate.c:460 [inline]
- truncate_pagecache mm/truncate.c:769 [inline]
- truncate_setsize+0xcf/0xf0 mm/truncate.c:794
- bchfs_truncate+0x622/0xc20 fs/bcachefs/fs-io.c:488
- notify_change+0xb31/0xe60 fs/attr.c:552
- do_truncate+0x1a4/0x220 fs/open.c:68
- handle_truncate fs/namei.c:3508 [inline]
- do_open fs/namei.c:3891 [inline]
- path_openat+0x3078/0x3840 fs/namei.c:4046
- do_filp_open+0x1fa/0x410 fs/namei.c:4073
- do_sys_openat2+0x121/0x1c0 fs/open.c:1435
- do_sys_open fs/open.c:1450 [inline]
- __do_sys_open fs/open.c:1458 [inline]
- __se_sys_open fs/open.c:1454 [inline]
- __x64_sys_open+0x11e/0x150 fs/open.c:1454
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f3c72b7ebe9
-RSP: 002b:00007f3c721e6038 EFLAGS: 00000246 ORIG_RAX: 0000000000000002
-RAX: ffffffffffffffda RBX: 00007f3c72da5fa0 RCX: 00007f3c72b7ebe9
-RDX: 0000000000000040 RSI: 0000000000141242 RDI: 0000200000000140
-RBP: 00007f3c72c01e19 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007f3c72da6038 R14: 00007f3c72da5fa0 R15: 00007ffee1b49c78
- </TASK>
-INFO: task syz.0.19:6227 blocked for more than 143 seconds.
-      Not tainted syzkaller #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz.0.19        state:D stack:21432 pid:6227  tgid:6215  ppid:6040   task_flags:0x440140 flags:0x00004006
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5357 [inline]
- __schedule+0x16f3/0x4c20 kernel/sched/core.c:6961
- __schedule_loop kernel/sched/core.c:7043 [inline]
- schedule+0x165/0x360 kernel/sched/core.c:7058
- __bch2_two_state_lock+0x1ea/0x370 fs/bcachefs/two_state_shared_lock.c:7
- bch2_two_state_lock fs/bcachefs/two_state_shared_lock.h:55 [inline]
- bch2_readahead+0x94f/0x1100 fs/bcachefs/fs-io-buffered.c:296
- read_pages+0x17a/0x580 mm/readahead.c:160
- page_cache_ra_unbounded+0x63b/0x740 mm/readahead.c:297
- filemap_readahead mm/filemap.c:2572 [inline]
- filemap_get_pages+0xaed/0x1df0 mm/filemap.c:2617
- filemap_splice_read+0x587/0xc60 mm/filemap.c:2991
- do_splice_read fs/splice.c:982 [inline]
- splice_direct_to_actor+0x4b1/0xcd0 fs/splice.c:1086
- do_splice_direct_actor fs/splice.c:1204 [inline]
- do_splice_direct+0x187/0x270 fs/splice.c:1230
- do_sendfile+0x4ec/0x7f0 fs/read_write.c:1370
- __do_sys_sendfile64 fs/read_write.c:1431 [inline]
- __se_sys_sendfile64+0x13e/0x190 fs/read_write.c:1417
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f3c72b7ebe9
-RSP: 002b:00007f3c721c5038 EFLAGS: 00000246 ORIG_RAX: 0000000000000028
-RAX: ffffffffffffffda RBX: 00007f3c72da6090 RCX: 00007f3c72b7ebe9
-RDX: 0000000000000000 RSI: 0000000000000005 RDI: 0000000000000005
-RBP: 00007f3c72c01e19 R08: 0000000000000000 R09: 0000000000000000
-R10: 00000000e0000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007f3c72da6128 R14: 00007f3c72da6090 R15: 00007ffee1b49c78
- </TASK>
-
-Showing all locks held in the system:
-1 lock held by khungtaskd/39:
- #0: ffffffff8d9a8b80 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
- #0: ffffffff8d9a8b80 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:841 [inline]
- #0: ffffffff8d9a8b80 (rcu_read_lock){....}-{1:3}, at: debug_show_all_locks+0x2e/0x180 kernel/locking/lockdep.c:6775
-6 locks held by kworker/0:3/5224:
-2 locks held by getty/5604:
- #0: ffff88823bf8c8a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:243
- #1: ffffc90003e8b2e0 (&ldata->atomic_read_lock){+.+.}-{4:4}, at: n_tty_read+0x444/0x1410 drivers/tty/n_tty.c:2222
-2 locks held by syz.0.19/6216:
- #0: ffff88801df4c488 (sb_writers#12){.+.+}-{0:0}, at: mnt_want_write+0x41/0x90 fs/namespace.c:557
- #1: ffff888057a89a38 (&sb->s_type->i_mutex_key#20){+.+.}-{4:4}, at: inode_lock_killable include/linux/fs.h:874 [inline]
- #1: ffff888057a89a38 (&sb->s_type->i_mutex_key#20){+.+.}-{4:4}, at: do_truncate+0x171/0x220 fs/open.c:63
-1 lock held by syz.0.19/6227:
- #0: ffff888057a89c08 (mapping.invalidate_lock#3){.+.+}-{4:4}, at: filemap_invalidate_lock_shared include/linux/fs.h:934 [inline]
- #0: ffff888057a89c08 (mapping.invalidate_lock#3){.+.+}-{4:4}, at: page_cache_ra_unbounded+0xf4/0x740 mm/readahead.c:228
-2 locks held by syz.1.30/6384:
- #0: ffff88803492a488 (sb_writers#12){.+.+}-{0:0}, at: mnt_want_write+0x41/0x90 fs/namespace.c:557
- #1: ffff888057a889b8 (&sb->s_type->i_mutex_key#20){+.+.}-{4:4}, at: inode_lock_killable include/linux/fs.h:874 [inline]
- #1: ffff888057a889b8 (&sb->s_type->i_mutex_key#20){+.+.}-{4:4}, at: do_truncate+0x171/0x220 fs/open.c:63
-1 lock held by syz.1.30/6395:
- #0: ffff888057a88b88 (mapping.invalidate_lock#3){.+.+}-{4:4}, at: filemap_invalidate_lock_shared include/linux/fs.h:934 [inline]
- #0: ffff888057a88b88 (mapping.invalidate_lock#3){.+.+}-{4:4}, at: page_cache_ra_unbounded+0xf4/0x740 mm/readahead.c:228
-1 lock held by syz.2.43/6582:
- #0: ffff888057a8bd08 (mapping.invalidate_lock#3){.+.+}-{4:4}, at: filemap_invalidate_lock_shared include/linux/fs.h:934 [inline]
- #0: ffff888057a8bd08 (mapping.invalidate_lock#3){.+.+}-{4:4}, at: page_cache_ra_unbounded+0xf4/0x740 mm/readahead.c:228
-2 locks held by syz.2.43/6593:
- #0: ffff888038354488 (sb_writers#12){.+.+}-{0:0}, at: mnt_want_write+0x41/0x90 fs/namespace.c:557
- #1: ffff888057a8bb38 (&sb->s_type->i_mutex_key#20){+.+.}-{4:4}, at: inode_lock_killable include/linux/fs.h:874 [inline]
- #1: ffff888057a8bb38 (&sb->s_type->i_mutex_key#20){+.+.}-{4:4}, at: do_truncate+0x171/0x220 fs/open.c:63
-1 lock held by syz.3.53/6736:
- #0: ffff88805d136648 (mapping.invalidate_lock#3){.+.+}-{4:4}, at: filemap_invalidate_lock_shared include/linux/fs.h:934 [inline]
- #0: ffff88805d136648 (mapping.invalidate_lock#3){.+.+}-{4:4}, at: page_cache_ra_unbounded+0xf4/0x740 mm/readahead.c:228
-2 locks held by syz.3.53/6747:
- #0: ffff88803c472488 (sb_writers#12){.+.+}-{0:0}, at: mnt_want_write+0x41/0x90 fs/namespace.c:557
- #1: ffff88805d136478 (&sb->s_type->i_mutex_key#20){+.+.}-{4:4}, at: inode_lock_killable include/linux/fs.h:874 [inline]
- #1: ffff88805d136478 (&sb->s_type->i_mutex_key#20){+.+.}-{4:4}, at: do_truncate+0x171/0x220 fs/open.c:63
-1 lock held by syz.4.58/6838:
- #0: ffff88805d134d88 (mapping.invalidate_lock#3){.+.+}-{4:4}, at: filemap_invalidate_lock_shared include/linux/fs.h:934 [inline]
- #0: ffff88805d134d88 (mapping.invalidate_lock#3){.+.+}-{4:4}, at: page_cache_ra_unbounded+0xf4/0x740 mm/readahead.c:228
-2 locks held by syz.4.58/6849:
- #0: ffff88803c40a488 (sb_writers#12){.+.+}-{0:0}, at: mnt_want_write+0x41/0x90 fs/namespace.c:557
- #1: ffff88805d134bb8 (&sb->s_type->i_mutex_key#20){+.+.}-{4:4}, at: inode_lock_killable include/linux/fs.h:874 [inline]
- #1: ffff88805d134bb8 (&sb->s_type->i_mutex_key#20){+.+.}-{4:4}, at: do_truncate+0x171/0x220 fs/open.c:63
-2 locks held by syz-executor/6853:
- #0: ffffffff8e43aa00 (&ops->srcu#2){.+.+}-{0:0}, at: rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
- #0: ffffffff8e43aa00 (&ops->srcu#2){.+.+}-{0:0}, at: rcu_read_lock include/linux/rcupdate.h:841 [inline]
- #0: ffffffff8e43aa00 (&ops->srcu#2){.+.+}-{0:0}, at: rtnl_link_ops_get+0x23/0x250 net/core/rtnetlink.c:570
- #1: ffffffff8ecd1f38 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_lock net/core/rtnetlink.c:80 [inline]
- #1: ffffffff8ecd1f38 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_nets_lock net/core/rtnetlink.c:341 [inline]
- #1: ffffffff8ecd1f38 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_newlink+0x8db/0x1c70 net/core/rtnetlink.c:4056
-
-=============================================
-
-NMI backtrace for cpu 1
-CPU: 1 UID: 0 PID: 39 Comm: khungtaskd Not tainted syzkaller #0 PREEMPT_{RT,(full)} 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
-Call Trace:
- <TASK>
- dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
- nmi_cpu_backtrace+0x39e/0x3d0 lib/nmi_backtrace.c:113
- nmi_trigger_cpumask_backtrace+0x17a/0x300 lib/nmi_backtrace.c:62
- trigger_all_cpu_backtrace include/linux/nmi.h:160 [inline]
- check_hung_uninterruptible_tasks kernel/hung_task.c:328 [inline]
- watchdog+0xf93/0xfe0 kernel/hung_task.c:491
- kthread+0x711/0x8a0 kernel/kthread.c:463
- ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
-Sending NMI from CPU 1 to CPUs 0:
-NMI backtrace for cpu 0
-CPU: 0 UID: 0 PID: 5224 Comm: kworker/0:3 Not tainted syzkaller #0 PREEMPT_{RT,(full)} 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
-Workqueue: events_power_efficient neigh_periodic_work
-RIP: 0010:__bfs kernel/locking/lockdep.c:1815 [inline]
-RIP: 0010:__bfs_backwards kernel/locking/lockdep.c:1860 [inline]
-RIP: 0010:check_irq_usage kernel/locking/lockdep.c:2796 [inline]
-RIP: 0010:check_prev_add kernel/locking/lockdep.c:3169 [inline]
-RIP: 0010:check_prevs_add kernel/locking/lockdep.c:3284 [inline]
-RIP: 0010:validate_chain+0xfd7/0x2140 kernel/locking/lockdep.c:3908
-Code: 25 ff 0f 00 00 39 05 24 41 61 11 73 06 89 05 1c 41 61 11 49 8b 04 24 48 89 de 48 39 e8 0f 84 33 fe ff ff 4c 89 68 30 48 8b 00 <48> 39 e8 75 f4 48 89 de e9 1f fe ff ff 48 c7 c7 50 91 87 8d 48 89
-RSP: 0018:ffffc90003ba73e8 EFLAGS: 00000006
-RAX: ffffffff958ff8e8 RBX: 00000000000003cd RCX: 0000000000000213
-RDX: 0000000000000008 RSI: 00000000000003cd RDI: ffff8880349f0000
-RBP: ffffffff929f16c8 R08: ffffc90003ba73b0 R09: 0000000000000020
-R10: dffffc0000000000 R11: ffffffff819c6180 R12: ffffffff95817a08
-R13: ffffffff959cddd8 R14: ffff8880349f0c10 R15: 0000000000000212
-FS:  0000000000000000(0000) GS:ffff8881268c2000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f00417400f6 CR3: 000000000d7a6000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- __lock_acquire+0xab9/0xd20 kernel/locking/lockdep.c:5237
- lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5868
- __raw_spin_lock include/linux/spinlock_api_smp.h:133 [inline]
- _raw_spin_lock+0x2e/0x40 kernel/locking/spinlock.c:154
- update_cfs_rq_load_avg kernel/sched/fair.c:4572 [inline]
- __update_blocked_fair kernel/sched/fair.c:9705 [inline]
- sched_balance_update_blocked_averages+0x524/0x1580 kernel/sched/fair.c:9811
- sched_balance_softirq+0xe1/0x1a0 kernel/sched/fair.c:12846
- handle_softirqs+0x22c/0x710 kernel/softirq.c:579
- __do_softirq kernel/softirq.c:613 [inline]
- __local_bh_enable_ip+0x179/0x270 kernel/softirq.c:259
- local_bh_enable include/linux/bottom_half.h:33 [inline]
- write_unlock_bh include/linux/rwlock_rt.h:134 [inline]
- neigh_periodic_work+0xc37/0xe90 net/core/neighbour.c:1040
- process_one_work kernel/workqueue.c:3236 [inline]
- process_scheduled_works+0xade/0x17b0 kernel/workqueue.c:3319
- worker_thread+0x8a0/0xda0 kernel/workqueue.c:3400
- kthread+0x711/0x8a0 kernel/kthread.c:463
- ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] dt-bindings: interconnect: add clocks property to
+ enable QoS on sa8775p
+To: Krzysztof Kozlowski <krzk@kernel.org>, Georgi Djakov <djakov@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+Cc: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Mike Tipton <mike.tipton@oss.qualcomm.com>
+References: <20250808140300.14784-1-odelu.kukatla@oss.qualcomm.com>
+ <20250808140300.14784-2-odelu.kukatla@oss.qualcomm.com>
+ <90b51e31-3217-4483-bb5b-ec328665a723@kernel.org>
+ <28b97952-1b67-411f-a7fb-ddd558739839@oss.qualcomm.com>
+ <ac83c453-c24d-4c4d-83bc-9ed13f2f9d1e@kernel.org>
+ <7d3e5cf7-4167-4005-ba4b-c1915c254705@oss.qualcomm.com>
+ <00f50d92-e4ea-4805-b771-147fa5f5ebe4@kernel.org>
+Content-Language: en-US
+From: Odelu Kukatla <odelu.kukatla@oss.qualcomm.com>
+In-Reply-To: <00f50d92-e4ea-4805-b771-147fa5f5ebe4@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Authority-Analysis: v=2.4 cv=Z/vsHGRA c=1 sm=1 tr=0 ts=68b09cfd cx=c_pps
+ a=WW5sKcV1LcKqjgzy2JUPuA==:117 a=5/7ZUQgNSTcp6WzxQoauSQ==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8
+ a=05eQtMsT6qBiqFT4EjoA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=OpyuDcXvxspvyRM73sMx:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIzMDAzMyBTYWx0ZWRfX41cc1RYp6U9d
+ edCgrk0kNmGyL5ibgPx9O0Lwnxh02ZRyCSUTt3nao6vhLr9c2EkDQEdlpu+S2RZYEMfz99jXmaO
+ 7K29PNGHW9FRBXZ9pueKcbhWE2q9uTeU9j2GPrDGQnlb54oaBLFcNlO5ytCrZuswPTpH7VRoj8I
+ Vz3BM5gOz6Kn8KXqTO89S3j8KJBV8gY+9AE4d0XV9lM5RQAOs4Qh+WpVjHgsfrZXeK2DoyiOpDA
+ syNmSRwOWpbeYt4sRe12foeughU7NQo/e7ILq3WnuabwRpbpeoBbKxCUszSEeMOAGnuJDfHhXDQ
+ c/SljxlltVWVGrDEN9hLSmh1SGxtGIsA7UgWnaNEdjQlbD0MbJXTJvIzSHenfMD5sa15ClVZUPF
+ kQkuKPqx
+X-Proofpoint-GUID: eS6li92p_fd6Ne3WXXvLLGRnSaNS45FY
+X-Proofpoint-ORIG-GUID: eS6li92p_fd6Ne3WXXvLLGRnSaNS45FY
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-28_04,2025-08-28_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 priorityscore=1501 malwarescore=0 phishscore=0 clxscore=1015
+ suspectscore=0 impostorscore=0 adultscore=0 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508230033
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+On 8/24/2025 2:38 PM, Krzysztof Kozlowski wrote:
+> On 20/08/2025 10:51, Odelu Kukatla wrote:
+>>
+>>
+>> On 8/13/2025 11:32 AM, Krzysztof Kozlowski wrote:
+>>> On 13/08/2025 07:55, Odelu Kukatla wrote:
+>>>>
+>>>>
+>>>> On 8/12/2025 3:47 PM, Krzysztof Kozlowski wrote:
+>>>>> On 08/08/2025 16:02, Odelu Kukatla wrote:
+>>>>>> Add reg and clocks properties to enable the clocks required
+>>>>>> for accessing QoS configuration.
+>>>>>
+>>>>>
+>>>>> Nothing here explains why EXISTING hardware is being changed. I also
+>>>>> remember big discussions and big confusing patches regarding sa8775p
+>>>>> (its rename, dropping/changing all providers), and this patch feels like
+>>>>> pieces of it without proper justification.
+>>>>>
+>>>> Thanks for the review.
+>>>> I have added description in cover letter, i will add here as well in next revision.> And this is hidden ABI break, no justification, no mentioning either.
+>>>>> Again we are discussing basics of ABI breaking patches?
+>>>>>
+>>>> If you are talking ABI break if we load old DT which may lead to crash, we have .qos_requires_clocks flag which takes care of skipping QoS if required clocks are not enabled.we have addressed this issue through https://lore.kernel.org/all/20240704125515.22194-1-quic_okukatla@quicinc.com/ 
+>>>
+>>> Format your emails correctly, it's difficult to read.
+>>>
+>>> Your binding did not require reg and clocks. Now it requires reg and
+>>> clocks. This is called ABI break.
+>>>
+>>> Please follow Qualcomm extensive upstreaming guide, it explains this,
+>>> doesn't it? Or follow writing bindings...
+>>>
+>>
+>> Thanks for your review and guidance.
+>>
+>> I agree that adding reg and clocks properties to existing bindings is an
+>> ABI break. The sa8775p is a relatively older platform, and when the
+>> interconnect provider driver was initially upstreamed, QoS configuration
+>> support was not available in the framework. As a result, QoS was not
+>> enabled at that time.
+> 
+> 
+> That's irrelevant reason. Writing bindings since long time ask pretty
+> clearly to describe hardware completely, regardless whether Linux
+> supports this or not.
+> 
+> It does not matter if you enable QoS or not.
+> 
+I agree with you. Ideally, the bindings should have described the
+hardware fully from the beginning. However, this was not done at the
+time of initial upstreaming, and the driver was contributed by someone
+from the community. I’m working now to improve the binding by adding the
+missing pieces to support QoS configuration.
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+>>
+>> The motivation for this change is that certain interconnect paths on
+>> sa8775p require specific clocks to be enabled to access QoS registers.
+> 
+> This does not look at all like existing device is completely broken.
+> 
+> You just add new feature, so no ABI break.
+> 
+Yes, you are right. This is a feature aimed at performance enhancement
+to improve system performance under concurrent workloads.
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+>> QoS configuration is essential for managing latency and bandwidth across
+>> subsystems such as CPU, GPU, and multimedia engines. Without it, the
+>> system may experience performance degradation, especially under
+> 
+> So how was it working for the last 2 years?
+> 
+The system may function normally without this feature. However, enabling
+QoS helps optimize latency and bandwidth across subsystems like CPU,
+GPU, and multimedia engines, which becomes important in high-throughput
+scenarios.
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+Best regards,
+Odelu
+> 
+>> concurrent workloads. Enabling QoS improves system responsiveness and
+>> ensures more predictable behavior in high-throughput scenarios.
+> 
+> 
+> 
+> Best regards,
+> Krzysztof
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
