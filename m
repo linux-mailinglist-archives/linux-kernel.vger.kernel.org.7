@@ -1,575 +1,271 @@
-Return-Path: <linux-kernel+bounces-789415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789414-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D02FB3952B
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 09:30:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2F6EB39529
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 09:30:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D03C3B641D
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 07:30:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2D8C200A64
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 07:30:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBD3D2C2376;
-	Thu, 28 Aug 2025 07:30:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C4C52C2345;
+	Thu, 28 Aug 2025 07:29:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gcs3D6SQ"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="GyiyehtX"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C8A011187
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 07:30:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7366030CDA9;
+	Thu, 28 Aug 2025 07:29:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756366215; cv=none; b=LrhgYK2k/2Y2f1KjOOWH4DifMZ8AvlHvDoNDQNhGIN/LWBTndDmGXufUAhkBakHdFJWAR8JJGKhdXX3DJqpNSqCZ6IZnfZiMmH03Sngd2+ULC2KhBB/WCQuNF+I5IVSYxb7j0f5DKyMrqjyWinHOOjA76nOVMz7LN8oNtJgb5XA=
+	t=1756366195; cv=none; b=S1OPXajuSwJtbRPEe9hoMrHjSOSccZpKD2g+KbrVfwq3yjfRgT0QV9cvJYLvBNX/i3eUGteJwZ/+QeuCMy0bwbQjgx4iATbQzm8UbQ6is9FD8P8JFOGGb56zCDiH2T5GCmHbJiRzh3vj0hlnTQAIFCbp3AxedFUbaDsLuCo/cIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756366215; c=relaxed/simple;
-	bh=21PfpMKtKDVcACZ6zlySxaEekvnMXpqaMrDgPuSsoFA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Qw84q9HDWlI+Re3UHZX1smsE6hOrwlAfydWD8tZ7+I1xSQrro/vnmlmJdPL27jlS8hy3NgO+emjavIHvX2DzVxpibXZhqMnIB70bzD94ES1uVmRQHaRDipnZzp6Trh6HEyYuifczj3UukzOHwn4TKcwsOT2Hsduze8eRjHBzs6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gcs3D6SQ; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-45b629c8035so3171165e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 00:30:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756366212; x=1756971012; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=inJY3AgQbDnGDCI5KoM0oO/WAsA8y/abOnXOIp8AQwk=;
-        b=Gcs3D6SQ/iRMKRdht/PmD7ogUWa1Nc5DxhVhXNHrhOpEfI8AS/OleTjDAC1kThW2O6
-         EaY1MnEZrbyV8aNgpOGOtx9q96X9ty9hz6Q1DENRpwX22B54DbzSHC8tXGTS07cfto3y
-         ROmGKguxKVEm/HQ65s+wmHuZ2DS61Ezf98pXCuf9OazlMTGIuzvmyVhYzh1EHXmYj0b4
-         SuZ1KrjjVOgh2XUpYnzA3Mk3BnWd4WbJRDR7XIPG1zEwLSvYqaCTH9c1fISVHAdSUb8X
-         s/sXsOaSt9RRya9Rpo0oOgoNVroFLGE98ooiDX5uyYm+qHLzJrf3s7dszJeKv9VoZnix
-         k2EA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756366212; x=1756971012;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=inJY3AgQbDnGDCI5KoM0oO/WAsA8y/abOnXOIp8AQwk=;
-        b=MzZ5SpGSzwbuDj3S2304yqCrscMQbl4w/X6jnw/CsdQ4tbaCyWbKeAMLIszBZuJ1VA
-         uiSZjpLFUYL+tCKtkL9BVj7EmftssHpRwcgP3RrR8fVKoaDCUVsZ2b8sqLSvW6a8C/j0
-         G+KVUX8igKMYvZDNqvwbYvw59a6QQGsquJeKGEtDQLj5m69NgdkWHmZ0kN9E0YHL8dZB
-         y9i/Qlc1VID00+kpkI6UGMEbBMKwCwJrI3YPtj9DhhAU0YmjQpnfC7s9MGljHkkoTlnC
-         w5Gyud8MryxJh27cAp38ewihGKcfemvnmYVIwRtg1O2Nlvt6gfyc0AM9TTdjk/t2Fw/+
-         tJxA==
-X-Forwarded-Encrypted: i=1; AJvYcCUeyguJV2H4N/E4R2GNXNUi3Karcv8AO/XHUwqg/+Yh1JcDrBHQu5vwnqvAPECWyy9OI/olWrYuKByAIPI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyBiPInF+ktpLT//Z0cFcVVizj6oaR3pId6/cIoMzzryZEwBq0o
-	ZiYhPoY54GsAKi/46N6zpPilm3cWo4qOr/m7co2o3xrkatPlfLn7wZOP
-X-Gm-Gg: ASbGncv/0kGvm+skUkQ6HGIVAfqXrKKiD5JdVaLmrcBMDQEuzt6gDBxNAnMjQ2baFfM
-	LGq9bnCV/nKHZtRsJmOm/AZyN33Djr4nPTETLwMfSHbnV5/BC1iY6kT0Bwz90uTaGdKw8rqpVGM
-	PPjdu1cceGuK5fVIrR95uMKgC+6tjuH5U1QZ8llJ5sm0k0DniebMP8sjv6tM4hlgtHVk5A26E9J
-	uI+BYZ+QEiocz359OH7lQNHZ+utCDu0Fv6ld+F+0aCrvQLxgCfq8bVu2KLgXh/rpYukYiK9oxcA
-	Sh+v8Ut3NCZC1OfuMTbYAjglgharnzZ2Jxd4hXawMNg+GBoG6PgzGBLRVEhpPw70OGTB9lHf7p6
-	6f9b0f0sSRTgfcobLjhf0qQcQio1BwwWl
-X-Google-Smtp-Source: AGHT+IHOea1B6mWL4uRzuUaBOnqlRG7f0hfrjbNq//wc20EpbPs3fZj6Pb+DYI/WCuwma7WNhiY63w==
-X-Received: by 2002:a05:600c:4447:b0:456:27a4:50ad with SMTP id 5b1f17b1804b1-45b517ea940mr203509615e9.33.1756366211358;
-        Thu, 28 Aug 2025 00:30:11 -0700 (PDT)
-Received: from fedora ([193.77.86.199])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b6f0d3073sm67496305e9.7.2025.08.28.00.30.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Aug 2025 00:30:10 -0700 (PDT)
-From: Uros Bizjak <ubizjak@gmail.com>
-To: x86@kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Uros Bizjak <ubizjak@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@kernel.org>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>
-Subject: [PATCH -tip] x86: Remove code depending on __GCC_ASM_FLAG_OUTPUTS__
-Date: Thu, 28 Aug 2025 09:29:29 +0200
-Message-ID: <20250828072958.3922703-1-ubizjak@gmail.com>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1756366195; c=relaxed/simple;
+	bh=cvWm9M27h+7aDZ33E9rYg655VODr+A3HSiuqjXT2qv0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=DWU5tcmkBQ/nK4AnIQ6m/5mAKN9HCW9bV2kBpFk6ES7VzkSlt5OD4SlfOKcFusEhWuzJllOMCDIPIAt+w/ynq1VWmo65C+Ea82afCHSaB/pqTmKg7PKwV4QjEfRNd3dq4ryhWQdArHcUKrIiPcY5I942pUWLToBeKUwyGH/TkkA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=casper.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=GyiyehtX; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=casper.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=MIME-Version:Content-Type:References:
+	In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=9KcXOAU3ZsWVGIC8Rt2diVecJ+Gq0OtDN/9ng5j+6/A=; b=GyiyehtXHVsyLGDTKxPLKtNEY0
+	cPu/uKqmDOSNpYl4EbGJF2l0IYlragFOo1k7TmqxigneMLo+dihp1BfSogTC8bBjtqJeBDR4AHOI1
+	lh9T9dFHKOHU03HwcuuIAtd47L/BLF22ICLCITlp6q1kdgikR0Y1jstf7tWEH/3jFnY1p+Xfy2AsE
+	LhKqc41CG5vTvQAktTStVDKr+8QD5sWp4RbAABGY8FCT8yC/EuFiWlPqnjfEPr7xc7c7VCjLQSoa4
+	yI1qXS0AUl7hCAh4jrOoahTzDLy5tPRnXq33wGXvbf1e8aqp/aEGMlriUSnGd9W/EJ73BV4xISWFe
+	UhYE/f3w==;
+Received: from 54-240-197-231.amazon.com ([54.240.197.231] helo=iad51-en-hct-f1c2-r2.amazon.com)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1urX4n-00000004fwA-0hEa;
+	Thu, 28 Aug 2025 07:29:42 +0000
+Message-ID: <e119e295535deafd93e283db143e9f17b1148169.camel@infradead.org>
+Subject: Re: [PATCH] iommu/intel: Fix __domain_mapping()'s usage of
+ switch_to_super_page()
+From: David Woodhouse <dwmw2@infradead.org>
+To: Baolu Lu <baolu.lu@linux.intel.com>, Eugene Koira <eugkoira@amazon.com>,
+  iommu@lists.linux.dev, linux-kernel@vger.kernel.org
+Cc: joro@8bytes.org, will@kernel.org, robin.murphy@arm.com,
+ longpeng2@huawei.com,  graf@amazon.de, nsaenz@amazon.com,
+ nh-open-source@amazon.com,  stable@vger.kernel.org
+Date: Thu, 28 Aug 2025 08:29:40 +0100
+In-Reply-To: <0b9492bc-b033-46c3-acf2-6fca3d19148b@linux.intel.com>
+References: <20250826143816.38686-1-eugkoira@amazon.com>
+	 <37c9ae89eb6cf879e5b984d53d590a69bcf1666a.camel@infradead.org>
+	 <0b9492bc-b033-46c3-acf2-6fca3d19148b@linux.intel.com>
+Content-Type: multipart/signed; micalg="sha-256"; protocol="application/pkcs7-signature";
+	boundary="=-/7iGcOUW4Sqx1P03whoF"
+User-Agent: Evolution 3.52.3-0ubuntu1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 
-The minimum supported GCC version is 8.1, which supports flag
-output operands and always defines __GCC_ASM_FLAG_OUTPUTS__ macro.
 
-Remove code depending on __GCC_ASM_FLAG_OUTPUTS__
-and use the "=@ccCOND" flag output operand directly.
+--=-/7iGcOUW4Sqx1P03whoF
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
----
- arch/x86/boot/bitops.h               |  2 +-
- arch/x86/boot/boot.h                 |  8 ++++----
- arch/x86/boot/string.c               |  4 ++--
- arch/x86/include/asm/archrandom.h    |  6 ++----
- arch/x86/include/asm/asm.h           | 12 ------------
- arch/x86/include/asm/bitops.h        | 18 ++++++------------
- arch/x86/include/asm/cmpxchg.h       | 12 ++++--------
- arch/x86/include/asm/cmpxchg_32.h    |  6 ++----
- arch/x86/include/asm/cmpxchg_64.h    |  3 +--
- arch/x86/include/asm/percpu.h        | 12 ++++--------
- arch/x86/include/asm/rmwcc.h         | 26 ++------------------------
- arch/x86/include/asm/sev.h           |  3 +--
- arch/x86/include/asm/signal.h        |  3 +--
- arch/x86/include/asm/special_insns.h |  3 +--
- arch/x86/include/asm/uaccess.h       |  7 +++----
- tools/arch/x86/include/asm/asm.h     | 12 ------------
- tools/perf/bench/find-bit-bench.c    |  2 +-
- 17 files changed, 35 insertions(+), 104 deletions(-)
+On Thu, 2025-08-28 at 14:33 +0800, Baolu Lu wrote:
+> On 8/26/25 23:48, David Woodhouse wrote:
+> > On Tue, 2025-08-26 at 14:38 +0000, Eugene Koira wrote:
+> > > switch_to_super_page() assumes the memory range it's working on is al=
+igned
+> > > to the target large page level. Unfortunately, __domain_mapping() doe=
+sn't
+> > > take this into account when using it, and will pass unaligned ranges
+> > > ultimately freeing a PTE range larger than expected.
+> > >=20
+> > > Take for example a mapping with the following iov_pfn range [0x3fe400=
+,
+> > > 0x4c0600], which should be backed by the following mappings:
+> >=20
+> > The range is [0x3fe400, 0x4c0600) ?
+> >=20
+> > > =C2=A0=C2=A0=C2=A0 iov_pfn [0x3fe400, 0x3fffff] covered by 2MiB pages
+> > > =C2=A0=C2=A0=C2=A0 iov_pfn [0x400000, 0x4bffff] covered by 1GiB pages
+> > > =C2=A0=C2=A0=C2=A0 iov_pfn [0x4c0000, 0x4c05ff] covered by 2MiB pages
+> > >=20
+> > > Under this circumstance, __domain_mapping() will pass [0x400000, 0x4c=
+05ff]
+> > > to switch_to_super_page() at a 1 GiB granularity, which will in turn
+> > > free PTEs all the way to iov_pfn 0x4fffff.
+> > >=20
+> > > Mitigate this by rounding down the iov_pfn range passed to
+> > > switch_to_super_page() in __domain_mapping()
+> > > to the target large page level.
+> > >=20
+> > > Additionally add range alignment checks to switch_to_super_page.
+> > >=20
+> > > Fixes: 9906b9352a35 ("iommu/vt-d: Avoid duplicate removing in __domai=
+n_mapping()")
+> > > Signed-off-by: Eugene Koira <eugkoira@amazon.com>
+> > > Cc: stable@vger.kernel.org
+> > > ---
+> > > =C2=A0=C2=A0drivers/iommu/intel/iommu.c | 7 ++++++-
+> > > =C2=A0=C2=A01 file changed, 6 insertions(+), 1 deletion(-)
+> > >=20
+> > > diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.=
+c
+> > > index 9c3ab9d9f69a..dff2d895b8ab 100644
+> > > --- a/drivers/iommu/intel/iommu.c
+> > > +++ b/drivers/iommu/intel/iommu.c
+> > > @@ -1575,6 +1575,10 @@ static void switch_to_super_page(struct dmar_d=
+omain *domain,
+> > > =C2=A0=C2=A0	unsigned long lvl_pages =3D lvl_to_nr_pages(level);
+> > > =C2=A0=C2=A0	struct dma_pte *pte =3D NULL;
+> > > =C2=A0=20
+> > > +	if (WARN_ON(!IS_ALIGNED(start_pfn, lvl_pages) ||
+> > > +		=C2=A0=C2=A0=C2=A0 !IS_ALIGNED(end_pfn + 1, lvl_pages)))
+> > > +		return;
+> > > +
+> > > =C2=A0=C2=A0	while (start_pfn <=3D end_pfn) {
+> > > =C2=A0=C2=A0		if (!pte)
+> > > =C2=A0=C2=A0			pte =3D pfn_to_dma_pte(domain, start_pfn, &level,
+> > > @@ -1650,7 +1654,8 @@ __domain_mapping(struct dmar_domain *domain, un=
+signed long iov_pfn,
+> > > =C2=A0=C2=A0				unsigned long pages_to_remove;
+> > > =C2=A0=20
+> > > =C2=A0=C2=A0				pteval |=3D DMA_PTE_LARGE_PAGE;
+> > > -				pages_to_remove =3D min_t(unsigned long, nr_pages,
+> > > +				pages_to_remove =3D min_t(unsigned long,
+> > > +							round_down(nr_pages, lvl_pages),
+> > > =C2=A0=C2=A0							nr_pte_to_next_page(pte) * lvl_pages);
+> > > =C2=A0=C2=A0				end_pfn =3D iov_pfn + pages_to_remove - 1;
+> > > =C2=A0=C2=A0				switch_to_super_page(domain, iov_pfn, end_pfn, largep=
+age_lvl);
+> >=20
+> > I'm mildly entertained by the fact that the *only* comment in this
+> > block of code is a lie. Would you care to address that while you're
+> > here? Maybe the comment could look something like...
+> >=20
+> > 			/* If the new mapping is eligible for a large page, then
+> > 			 * remove all smaller pages that the existing pte at this
+> > 			 * level references.
+> > 			 * XX: do we even need to bother calling switch_to_super_page()
+> > 			 * if this PTE wasn't *present* before?
+> > 			 */
+> >=20
+> > I bet it would benefit from one or two other one-line comments to make
+> > it clearer what's going on, too...
+> >=20
+> > But in general, I think this looks sane even though this code makes my
+> > brain hurt. Could do with a test case, in an ideal world. Maybe we can
+> > work on that as part of the generic pagetable support which is coming?
+>=20
+> Agreed. The generic pagetable work will replace this code, so this will
+> be removed. Therefore, we need a fix patch that can be backported before
+> the generic pagetable for vt-d lands.
 
-diff --git a/arch/x86/boot/bitops.h b/arch/x86/boot/bitops.h
-index 8518ae214c9b..79e15971529d 100644
---- a/arch/x86/boot/bitops.h
-+++ b/arch/x86/boot/bitops.h
-@@ -27,7 +27,7 @@ static inline bool variable_test_bit(int nr, const void *addr)
- 	bool v;
- 	const u32 *p = addr;
- 
--	asm("btl %2,%1" CC_SET(c) : CC_OUT(c) (v) : "m" (*p), "Ir" (nr));
-+	asm("btl %2,%1" : "=@ccc" (v) : "m" (*p), "Ir" (nr));
- 	return v;
- }
- 
-diff --git a/arch/x86/boot/boot.h b/arch/x86/boot/boot.h
-index 60580836daf7..a3c58ebe3662 100644
---- a/arch/x86/boot/boot.h
-+++ b/arch/x86/boot/boot.h
-@@ -155,15 +155,15 @@ static inline void wrgs32(u32 v, addr_t addr)
- static inline bool memcmp_fs(const void *s1, addr_t s2, size_t len)
- {
- 	bool diff;
--	asm volatile("fs repe cmpsb" CC_SET(nz)
--		     : CC_OUT(nz) (diff), "+D" (s1), "+S" (s2), "+c" (len));
-+	asm volatile("fs repe cmpsb"
-+		     : "=@ccnz" (diff), "+D" (s1), "+S" (s2), "+c" (len));
- 	return diff;
- }
- static inline bool memcmp_gs(const void *s1, addr_t s2, size_t len)
- {
- 	bool diff;
--	asm volatile("gs repe cmpsb" CC_SET(nz)
--		     : CC_OUT(nz) (diff), "+D" (s1), "+S" (s2), "+c" (len));
-+	asm volatile("gs repe cmpsb"
-+		     : "=@ccnz" (diff), "+D" (s1), "+S" (s2), "+c" (len));
- 	return diff;
- }
- 
-diff --git a/arch/x86/boot/string.c b/arch/x86/boot/string.c
-index f35369bb14c5..b25c6a9303b7 100644
---- a/arch/x86/boot/string.c
-+++ b/arch/x86/boot/string.c
-@@ -32,8 +32,8 @@
- int memcmp(const void *s1, const void *s2, size_t len)
- {
- 	bool diff;
--	asm("repe cmpsb" CC_SET(nz)
--	    : CC_OUT(nz) (diff), "+D" (s1), "+S" (s2), "+c" (len));
-+	asm("repe cmpsb"
-+	    : "=@ccnz" (diff), "+D" (s1), "+S" (s2), "+c" (len));
- 	return diff;
- }
- 
-diff --git a/arch/x86/include/asm/archrandom.h b/arch/x86/include/asm/archrandom.h
-index 02bae8e0758b..4c305305871b 100644
---- a/arch/x86/include/asm/archrandom.h
-+++ b/arch/x86/include/asm/archrandom.h
-@@ -23,8 +23,7 @@ static inline bool __must_check rdrand_long(unsigned long *v)
- 	unsigned int retry = RDRAND_RETRY_LOOPS;
- 	do {
- 		asm volatile("rdrand %[out]"
--			     CC_SET(c)
--			     : CC_OUT(c) (ok), [out] "=r" (*v));
-+			     : "=@ccc" (ok), [out] "=r" (*v));
- 		if (ok)
- 			return true;
- 	} while (--retry);
-@@ -35,8 +34,7 @@ static inline bool __must_check rdseed_long(unsigned long *v)
- {
- 	bool ok;
- 	asm volatile("rdseed %[out]"
--		     CC_SET(c)
--		     : CC_OUT(c) (ok), [out] "=r" (*v));
-+		     : "=@ccc" (ok), [out] "=r" (*v));
- 	return ok;
- }
- 
-diff --git a/arch/x86/include/asm/asm.h b/arch/x86/include/asm/asm.h
-index f963848024a5..d5c8d3afe196 100644
---- a/arch/x86/include/asm/asm.h
-+++ b/arch/x86/include/asm/asm.h
-@@ -122,18 +122,6 @@ static __always_inline __pure void *rip_rel_ptr(void *p)
- }
- #endif
- 
--/*
-- * Macros to generate condition code outputs from inline assembly,
-- * The output operand must be type "bool".
-- */
--#ifdef __GCC_ASM_FLAG_OUTPUTS__
--# define CC_SET(c) "\n\t/* output condition code " #c "*/\n"
--# define CC_OUT(c) "=@cc" #c
--#else
--# define CC_SET(c) "\n\tset" #c " %[_cc_" #c "]\n"
--# define CC_OUT(c) [_cc_ ## c] "=qm"
--#endif
--
- #ifdef __KERNEL__
- 
- # include <asm/extable_fixup_types.h>
-diff --git a/arch/x86/include/asm/bitops.h b/arch/x86/include/asm/bitops.h
-index eebbc8889e70..33153dcd119c 100644
---- a/arch/x86/include/asm/bitops.h
-+++ b/arch/x86/include/asm/bitops.h
-@@ -99,8 +99,7 @@ static __always_inline bool arch_xor_unlock_is_negative_byte(unsigned long mask,
- {
- 	bool negative;
- 	asm_inline volatile(LOCK_PREFIX "xorb %2,%1"
--		CC_SET(s)
--		: CC_OUT(s) (negative), WBYTE_ADDR(addr)
-+		: "=@ccs" (negative), WBYTE_ADDR(addr)
- 		: "iq" ((char)mask) : "memory");
- 	return negative;
- }
-@@ -149,8 +148,7 @@ arch___test_and_set_bit(unsigned long nr, volatile unsigned long *addr)
- 	bool oldbit;
- 
- 	asm(__ASM_SIZE(bts) " %2,%1"
--	    CC_SET(c)
--	    : CC_OUT(c) (oldbit)
-+	    : "=@ccc" (oldbit)
- 	    : ADDR, "Ir" (nr) : "memory");
- 	return oldbit;
- }
-@@ -175,8 +173,7 @@ arch___test_and_clear_bit(unsigned long nr, volatile unsigned long *addr)
- 	bool oldbit;
- 
- 	asm volatile(__ASM_SIZE(btr) " %2,%1"
--		     CC_SET(c)
--		     : CC_OUT(c) (oldbit)
-+		     : "=@ccc" (oldbit)
- 		     : ADDR, "Ir" (nr) : "memory");
- 	return oldbit;
- }
-@@ -187,8 +184,7 @@ arch___test_and_change_bit(unsigned long nr, volatile unsigned long *addr)
- 	bool oldbit;
- 
- 	asm volatile(__ASM_SIZE(btc) " %2,%1"
--		     CC_SET(c)
--		     : CC_OUT(c) (oldbit)
-+		     : "=@ccc" (oldbit)
- 		     : ADDR, "Ir" (nr) : "memory");
- 
- 	return oldbit;
-@@ -211,8 +207,7 @@ static __always_inline bool constant_test_bit_acquire(long nr, const volatile un
- 	bool oldbit;
- 
- 	asm volatile("testb %2,%1"
--		     CC_SET(nz)
--		     : CC_OUT(nz) (oldbit)
-+		     : "=@ccnz" (oldbit)
- 		     : "m" (((unsigned char *)addr)[nr >> 3]),
- 		       "i" (1 << (nr & 7))
- 		     :"memory");
-@@ -225,8 +220,7 @@ static __always_inline bool variable_test_bit(long nr, volatile const unsigned l
- 	bool oldbit;
- 
- 	asm volatile(__ASM_SIZE(bt) " %2,%1"
--		     CC_SET(c)
--		     : CC_OUT(c) (oldbit)
-+		     : "=@ccc" (oldbit)
- 		     : "m" (*(unsigned long *)addr), "Ir" (nr) : "memory");
- 
- 	return oldbit;
-diff --git a/arch/x86/include/asm/cmpxchg.h b/arch/x86/include/asm/cmpxchg.h
-index b61f32c3459f..a88b06f1c35e 100644
---- a/arch/x86/include/asm/cmpxchg.h
-+++ b/arch/x86/include/asm/cmpxchg.h
-@@ -166,8 +166,7 @@ extern void __add_wrong_size(void)
- 	{								\
- 		volatile u8 *__ptr = (volatile u8 *)(_ptr);		\
- 		asm_inline volatile(lock "cmpxchgb %[new], %[ptr]"	\
--			     CC_SET(z)					\
--			     : CC_OUT(z) (success),			\
-+			     : "=@ccz" (success),			\
- 			       [ptr] "+m" (*__ptr),			\
- 			       [old] "+a" (__old)			\
- 			     : [new] "q" (__new)			\
-@@ -178,8 +177,7 @@ extern void __add_wrong_size(void)
- 	{								\
- 		volatile u16 *__ptr = (volatile u16 *)(_ptr);		\
- 		asm_inline volatile(lock "cmpxchgw %[new], %[ptr]"	\
--			     CC_SET(z)					\
--			     : CC_OUT(z) (success),			\
-+			     : "=@ccz" (success),			\
- 			       [ptr] "+m" (*__ptr),			\
- 			       [old] "+a" (__old)			\
- 			     : [new] "r" (__new)			\
-@@ -190,8 +188,7 @@ extern void __add_wrong_size(void)
- 	{								\
- 		volatile u32 *__ptr = (volatile u32 *)(_ptr);		\
- 		asm_inline volatile(lock "cmpxchgl %[new], %[ptr]"	\
--			     CC_SET(z)					\
--			     : CC_OUT(z) (success),			\
-+			     : "=@ccz" (success),			\
- 			       [ptr] "+m" (*__ptr),			\
- 			       [old] "+a" (__old)			\
- 			     : [new] "r" (__new)			\
-@@ -202,8 +199,7 @@ extern void __add_wrong_size(void)
- 	{								\
- 		volatile u64 *__ptr = (volatile u64 *)(_ptr);		\
- 		asm_inline volatile(lock "cmpxchgq %[new], %[ptr]"	\
--			     CC_SET(z)					\
--			     : CC_OUT(z) (success),			\
-+			     : "=@ccz" (success),			\
- 			       [ptr] "+m" (*__ptr),			\
- 			       [old] "+a" (__old)			\
- 			     : [new] "r" (__new)			\
-diff --git a/arch/x86/include/asm/cmpxchg_32.h b/arch/x86/include/asm/cmpxchg_32.h
-index 371f7906019e..1f80a62be969 100644
---- a/arch/x86/include/asm/cmpxchg_32.h
-+++ b/arch/x86/include/asm/cmpxchg_32.h
-@@ -46,8 +46,7 @@ static __always_inline u64 __cmpxchg64_local(volatile u64 *ptr, u64 old, u64 new
- 	bool ret;							\
- 									\
- 	asm_inline volatile(_lock "cmpxchg8b %[ptr]"			\
--		     CC_SET(e)						\
--		     : CC_OUT(e) (ret),					\
-+		     : "=@ccz" (ret),					\
- 		       [ptr] "+m" (*(_ptr)),				\
- 		       "+a" (o.low), "+d" (o.high)			\
- 		     : "b" (n.low), "c" (n.high)			\
-@@ -125,8 +124,7 @@ static __always_inline u64 arch_cmpxchg64_local(volatile u64 *ptr, u64 old, u64
- 		ALTERNATIVE(_lock_loc					\
- 			    "call cmpxchg8b_emu",			\
- 			    _lock "cmpxchg8b %a[ptr]", X86_FEATURE_CX8) \
--		CC_SET(e)						\
--		: ALT_OUTPUT_SP(CC_OUT(e) (ret),			\
-+		: ALT_OUTPUT_SP("=@ccz" (ret),				\
- 				"+a" (o.low), "+d" (o.high))		\
- 		: "b" (n.low), "c" (n.high),				\
- 		  [ptr] "S" (_ptr)					\
-diff --git a/arch/x86/include/asm/cmpxchg_64.h b/arch/x86/include/asm/cmpxchg_64.h
-index 71d1e72ed879..5afea056fb20 100644
---- a/arch/x86/include/asm/cmpxchg_64.h
-+++ b/arch/x86/include/asm/cmpxchg_64.h
-@@ -66,8 +66,7 @@ static __always_inline u128 arch_cmpxchg128_local(volatile u128 *ptr, u128 old,
- 	bool ret;							\
- 									\
- 	asm_inline volatile(_lock "cmpxchg16b %[ptr]"			\
--		     CC_SET(e)						\
--		     : CC_OUT(e) (ret),					\
-+		     : "=@ccz" (ret),					\
- 		       [ptr] "+m" (*(_ptr)),				\
- 		       "+a" (o.low), "+d" (o.high)			\
- 		     : "b" (n.low), "c" (n.high)			\
-diff --git a/arch/x86/include/asm/percpu.h b/arch/x86/include/asm/percpu.h
-index b0d03b6c279b..332428caaed2 100644
---- a/arch/x86/include/asm/percpu.h
-+++ b/arch/x86/include/asm/percpu.h
-@@ -309,8 +309,7 @@ do {									\
- 									\
- 	asm qual (__pcpu_op_##size("cmpxchg") "%[nval], "		\
- 		  __percpu_arg([var])					\
--		  CC_SET(z)						\
--		  : CC_OUT(z) (success),				\
-+		  : "=@ccz" (success),					\
- 		    [oval] "+a" (pco_old__),				\
- 		    [var] "+m" (__my_cpu_var(_var))			\
- 		  : [nval] __pcpu_reg_##size(, pco_new__)		\
-@@ -367,8 +366,7 @@ do {									\
- 	asm_inline qual (						\
- 		ALTERNATIVE("call this_cpu_cmpxchg8b_emu",		\
- 			    "cmpxchg8b " __percpu_arg([var]), X86_FEATURE_CX8) \
--		CC_SET(z)						\
--		: ALT_OUTPUT_SP(CC_OUT(z) (success),			\
-+		: ALT_OUTPUT_SP("=@ccz" (success),			\
- 				[var] "+m" (__my_cpu_var(_var)),	\
- 				"+a" (old__.low), "+d" (old__.high))	\
- 		: "b" (new__.low), "c" (new__.high),			\
-@@ -436,8 +434,7 @@ do {									\
- 	asm_inline qual (						\
- 		ALTERNATIVE("call this_cpu_cmpxchg16b_emu",		\
- 			    "cmpxchg16b " __percpu_arg([var]), X86_FEATURE_CX16) \
--		CC_SET(z)						\
--		: ALT_OUTPUT_SP(CC_OUT(z) (success),			\
-+		: ALT_OUTPUT_SP("=@ccz" (success),			\
- 				[var] "+m" (__my_cpu_var(_var)),	\
- 				"+a" (old__.low), "+d" (old__.high))	\
- 		: "b" (new__.low), "c" (new__.high),			\
-@@ -585,8 +582,7 @@ do {									\
- 	bool oldbit;							\
- 									\
- 	asm volatile("btl %[nr], " __percpu_arg([var])			\
--		     CC_SET(c)						\
--		     : CC_OUT(c) (oldbit)				\
-+		     : "=@ccc" (oldbit)					\
- 		     : [var] "m" (__my_cpu_var(_var)),			\
- 		       [nr] "rI" (_nr));				\
- 	oldbit;								\
-diff --git a/arch/x86/include/asm/rmwcc.h b/arch/x86/include/asm/rmwcc.h
-index 3821ee3fae35..54c8fc430684 100644
---- a/arch/x86/include/asm/rmwcc.h
-+++ b/arch/x86/include/asm/rmwcc.h
-@@ -6,37 +6,15 @@
- 
- #define __CLOBBERS_MEM(clb...)	"memory", ## clb
- 
--#ifndef __GCC_ASM_FLAG_OUTPUTS__
--
--/* Use asm goto */
--
--#define __GEN_RMWcc(fullop, _var, cc, clobbers, ...)			\
--({									\
--	bool c = false;							\
--	asm goto (fullop "; j" #cc " %l[cc_label]"		\
--			: : [var] "m" (_var), ## __VA_ARGS__		\
--			: clobbers : cc_label);				\
--	if (0) {							\
--cc_label:	c = true;						\
--	}								\
--	c;								\
--})
--
--#else /* defined(__GCC_ASM_FLAG_OUTPUTS__) */
--
--/* Use flags output or a set instruction */
--
- #define __GEN_RMWcc(fullop, _var, cc, clobbers, ...)			\
- ({									\
- 	bool c;								\
--	asm_inline volatile (fullop CC_SET(cc)				\
--			: [var] "+m" (_var), CC_OUT(cc) (c)		\
-+	asm_inline volatile (fullop					\
-+			: [var] "+m" (_var), "=@cc" #cc (c)		\
- 			: __VA_ARGS__ : clobbers);			\
- 	c;								\
- })
- 
--#endif /* defined(__GCC_ASM_FLAG_OUTPUTS__) */
--
- #define GEN_UNARY_RMWcc_4(op, var, cc, arg0)				\
- 	__GEN_RMWcc(op " " arg0, var, cc, __CLOBBERS_MEM())
- 
-diff --git a/arch/x86/include/asm/sev.h b/arch/x86/include/asm/sev.h
-index 02236962fdb1..7cb8e09e749b 100644
---- a/arch/x86/include/asm/sev.h
-+++ b/arch/x86/include/asm/sev.h
-@@ -491,8 +491,7 @@ static inline int pvalidate(unsigned long vaddr, bool rmp_psize, bool validate)
- 
- 	/* "pvalidate" mnemonic support in binutils 2.36 and newer */
- 	asm volatile(".byte 0xF2, 0x0F, 0x01, 0xFF\n\t"
--		     CC_SET(c)
--		     : CC_OUT(c) (no_rmpupdate), "=a"(rc)
-+		     : "=@ccc"(no_rmpupdate), "=a"(rc)
- 		     : "a"(vaddr), "c"(rmp_psize), "d"(validate)
- 		     : "memory", "cc");
- 
-diff --git a/arch/x86/include/asm/signal.h b/arch/x86/include/asm/signal.h
-index c72d46175374..5c03aaa89014 100644
---- a/arch/x86/include/asm/signal.h
-+++ b/arch/x86/include/asm/signal.h
-@@ -83,8 +83,7 @@ static inline int __const_sigismember(sigset_t *set, int _sig)
- static inline int __gen_sigismember(sigset_t *set, int _sig)
- {
- 	bool ret;
--	asm("btl %2,%1" CC_SET(c)
--	    : CC_OUT(c) (ret) : "m"(*set), "Ir"(_sig-1));
-+	asm("btl %2,%1" : "=@ccc"(ret) : "m"(*set), "Ir"(_sig-1));
- 	return ret;
- }
- 
-diff --git a/arch/x86/include/asm/special_insns.h b/arch/x86/include/asm/special_insns.h
-index c99914569352..46aa2c9c1bda 100644
---- a/arch/x86/include/asm/special_insns.h
-+++ b/arch/x86/include/asm/special_insns.h
-@@ -284,8 +284,7 @@ static inline int enqcmds(void __iomem *dst, const void *src)
- 	 * See movdir64b()'s comment on operand specification.
- 	 */
- 	asm volatile(".byte 0xf3, 0x0f, 0x38, 0xf8, 0x02, 0x66, 0x90"
--		     CC_SET(z)
--		     : CC_OUT(z) (zf), "+m" (*__dst)
-+		     : "=@ccz" (zf), "+m" (*__dst)
- 		     : "m" (*__src), "a" (__dst), "d" (__src));
- 
- 	/* Submission failure is indicated via EFLAGS.ZF=1 */
-diff --git a/arch/x86/include/asm/uaccess.h b/arch/x86/include/asm/uaccess.h
-index 3a7755c1a441..91a3fb8ae7ff 100644
---- a/arch/x86/include/asm/uaccess.h
-+++ b/arch/x86/include/asm/uaccess.h
-@@ -378,7 +378,7 @@ do {									\
- 	asm_goto_output("\n"						\
- 		     "1: " LOCK_PREFIX "cmpxchg"itype" %[new], %[ptr]\n"\
- 		     _ASM_EXTABLE_UA(1b, %l[label])			\
--		     : CC_OUT(z) (success),				\
-+		     : "=@ccz" (success),				\
- 		       [ptr] "+m" (*_ptr),				\
- 		       [old] "+a" (__old)				\
- 		     : [new] ltype (__new)				\
-@@ -397,7 +397,7 @@ do {									\
- 	asm_goto_output("\n"						\
- 		     "1: " LOCK_PREFIX "cmpxchg8b %[ptr]\n"		\
- 		     _ASM_EXTABLE_UA(1b, %l[label])			\
--		     : CC_OUT(z) (success),				\
-+		     : "=@ccz" (success),				\
- 		       "+A" (__old),					\
- 		       [ptr] "+m" (*_ptr)				\
- 		     : "b" ((u32)__new),				\
-@@ -417,11 +417,10 @@ do {									\
- 	__typeof__(*(_ptr)) __new = (_new);				\
- 	asm volatile("\n"						\
- 		     "1: " LOCK_PREFIX "cmpxchg"itype" %[new], %[ptr]\n"\
--		     CC_SET(z)						\
- 		     "2:\n"						\
- 		     _ASM_EXTABLE_TYPE_REG(1b, 2b, EX_TYPE_EFAULT_REG,	\
- 					   %[errout])			\
--		     : CC_OUT(z) (success),				\
-+		     : "=@ccz" (success),				\
- 		       [errout] "+r" (__err),				\
- 		       [ptr] "+m" (*_ptr),				\
- 		       [old] "+a" (__old)				\
-diff --git a/tools/arch/x86/include/asm/asm.h b/tools/arch/x86/include/asm/asm.h
-index dbe39b44256b..6e1b357c374b 100644
---- a/tools/arch/x86/include/asm/asm.h
-+++ b/tools/arch/x86/include/asm/asm.h
-@@ -108,18 +108,6 @@
- 
- #endif
- 
--/*
-- * Macros to generate condition code outputs from inline assembly,
-- * The output operand must be type "bool".
-- */
--#ifdef __GCC_ASM_FLAG_OUTPUTS__
--# define CC_SET(c) "\n\t/* output condition code " #c "*/\n"
--# define CC_OUT(c) "=@cc" #c
--#else
--# define CC_SET(c) "\n\tset" #c " %[_cc_" #c "]\n"
--# define CC_OUT(c) [_cc_ ## c] "=qm"
--#endif
--
- #ifdef __KERNEL__
- 
- /* Exception table entry */
-diff --git a/tools/perf/bench/find-bit-bench.c b/tools/perf/bench/find-bit-bench.c
-index 7e25b0e413f6..e697c20951bc 100644
---- a/tools/perf/bench/find-bit-bench.c
-+++ b/tools/perf/bench/find-bit-bench.c
-@@ -37,7 +37,7 @@ static noinline void workload(int val)
- 	accumulator++;
- }
- 
--#if (defined(__i386__) || defined(__x86_64__)) && defined(__GCC_ASM_FLAG_OUTPUTS__)
-+#if defined(__i386__) || defined(__x86_64__)
- static bool asm_test_bit(long nr, const unsigned long *addr)
- {
- 	bool oldbit;
--- 
-2.51.0
+Yep. And since Jason has in fact already posted the patches which
+*delete* all this code, I don't think I even care about fixing the
+comments. Eugene's patch is fine as-is.
 
+Reviewed-by: David Woodhouse <dwmw@amazon.co.uk>
+
+--=-/7iGcOUW4Sqx1P03whoF
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Transfer-Encoding: base64
+
+MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCD9Aw
+ggSOMIIDdqADAgECAhAOmiw0ECVD4cWj5DqVrT9PMA0GCSqGSIb3DQEBCwUAMGUxCzAJBgNVBAYT
+AlVTMRUwEwYDVQQKEwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xJDAi
+BgNVBAMTG0RpZ2lDZXJ0IEFzc3VyZWQgSUQgUm9vdCBDQTAeFw0yNDAxMzAwMDAwMDBaFw0zMTEx
+MDkyMzU5NTlaMEExCzAJBgNVBAYTAkFVMRAwDgYDVQQKEwdWZXJva2V5MSAwHgYDVQQDExdWZXJv
+a2V5IFNlY3VyZSBFbWFpbCBHMjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAMjvgLKj
+jfhCFqxYyRiW8g3cNFAvltDbK5AzcOaR7yVzVGadr4YcCVxjKrEJOgi7WEOH8rUgCNB5cTD8N/Et
+GfZI+LGqSv0YtNa54T9D1AWJy08ZKkWvfGGIXN9UFAPMJ6OLLH/UUEgFa+7KlrEvMUupDFGnnR06
+aDJAwtycb8yXtILj+TvfhLFhafxroXrflspavejQkEiHjNjtHnwbZ+o43g0/yxjwnarGI3kgcak7
+nnI9/8Lqpq79tLHYwLajotwLiGTB71AGN5xK+tzB+D4eN9lXayrjcszgbOv2ZCgzExQUAIt98mre
+8EggKs9mwtEuKAhYBIP/0K6WsoMnQCcCAwEAAaOCAVwwggFYMBIGA1UdEwEB/wQIMAYBAf8CAQAw
+HQYDVR0OBBYEFIlICOogTndrhuWByNfhjWSEf/xwMB8GA1UdIwQYMBaAFEXroq/0ksuCMS1Ri6en
+IZ3zbcgPMA4GA1UdDwEB/wQEAwIBhjAdBgNVHSUEFjAUBggrBgEFBQcDBAYIKwYBBQUHAwIweQYI
+KwYBBQUHAQEEbTBrMCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5kaWdpY2VydC5jb20wQwYIKwYB
+BQUHMAKGN2h0dHA6Ly9jYWNlcnRzLmRpZ2ljZXJ0LmNvbS9EaWdpQ2VydEFzc3VyZWRJRFJvb3RD
+QS5jcnQwRQYDVR0fBD4wPDA6oDigNoY0aHR0cDovL2NybDMuZGlnaWNlcnQuY29tL0RpZ2lDZXJ0
+QXNzdXJlZElEUm9vdENBLmNybDARBgNVHSAECjAIMAYGBFUdIAAwDQYJKoZIhvcNAQELBQADggEB
+ACiagCqvNVxOfSd0uYfJMiZsOEBXAKIR/kpqRp2YCfrP4Tz7fJogYN4fxNAw7iy/bPZcvpVCfe/H
+/CCcp3alXL0I8M/rnEnRlv8ItY4MEF+2T/MkdXI3u1vHy3ua8SxBM8eT9LBQokHZxGUX51cE0kwa
+uEOZ+PonVIOnMjuLp29kcNOVnzf8DGKiek+cT51FvGRjV6LbaxXOm2P47/aiaXrDD5O0RF5SiPo6
+xD1/ClkCETyyEAE5LRJlXtx288R598koyFcwCSXijeVcRvBB1cNOLEbg7RMSw1AGq14fNe2cH1HG
+W7xyduY/ydQt6gv5r21mDOQ5SaZSWC/ZRfLDuEYwggWbMIIEg6ADAgECAhAH5JEPagNRXYDiRPdl
+c1vgMA0GCSqGSIb3DQEBCwUAMEExCzAJBgNVBAYTAkFVMRAwDgYDVQQKEwdWZXJva2V5MSAwHgYD
+VQQDExdWZXJva2V5IFNlY3VyZSBFbWFpbCBHMjAeFw0yNDEyMzAwMDAwMDBaFw0yODAxMDQyMzU5
+NTlaMB4xHDAaBgNVBAMME2R3bXcyQGluZnJhZGVhZC5vcmcwggIiMA0GCSqGSIb3DQEBAQUAA4IC
+DwAwggIKAoICAQDali7HveR1thexYXx/W7oMk/3Wpyppl62zJ8+RmTQH4yZeYAS/SRV6zmfXlXaZ
+sNOE6emg8WXLRS6BA70liot+u0O0oPnIvnx+CsMH0PD4tCKSCsdp+XphIJ2zkC9S7/yHDYnqegqt
+w4smkqUqf0WX/ggH1Dckh0vHlpoS1OoxqUg+ocU6WCsnuz5q5rzFsHxhD1qGpgFdZEk2/c//ZvUN
+i12vPWipk8TcJwHw9zoZ/ZrVNybpMCC0THsJ/UEVyuyszPtNYeYZAhOJ41vav1RhZJzYan4a1gU0
+kKBPQklcpQEhq48woEu15isvwWh9/+5jjh0L+YNaN0I//nHSp6U9COUG9Z0cvnO8FM6PTqsnSbcc
+0j+GchwOHRC7aP2t5v2stVx3KbptaYEzi4MQHxm/0+HQpMEVLLUiizJqS4PWPU6zfQTOMZ9uLQRR
+ci+c5xhtMEBszlQDOvEQcyEG+hc++fH47K+MmZz21bFNfoBxLP6bjR6xtPXtREF5lLXxp+CJ6KKS
+blPKeVRg/UtyJHeFKAZXO8Zeco7TZUMVHmK0ZZ1EpnZbnAhKE19Z+FJrQPQrlR0gO3lBzuyPPArV
+hvWxjlO7S4DmaEhLzarWi/ze7EGwWSuI2eEa/8zU0INUsGI4ywe7vepQz7IqaAovAX0d+f1YjbmC
+VsAwjhLmveFjNwIDAQABo4IBsDCCAawwHwYDVR0jBBgwFoAUiUgI6iBOd2uG5YHI1+GNZIR//HAw
+HQYDVR0OBBYEFFxiGptwbOfWOtMk5loHw7uqWUOnMDAGA1UdEQQpMCeBE2R3bXcyQGluZnJhZGVh
+ZC5vcmeBEGRhdmlkQHdvb2Rob3Uuc2UwFAYDVR0gBA0wCzAJBgdngQwBBQEBMA4GA1UdDwEB/wQE
+AwIF4DAdBgNVHSUEFjAUBggrBgEFBQcDAgYIKwYBBQUHAwQwewYDVR0fBHQwcjA3oDWgM4YxaHR0
+cDovL2NybDMuZGlnaWNlcnQuY29tL1Zlcm9rZXlTZWN1cmVFbWFpbEcyLmNybDA3oDWgM4YxaHR0
+cDovL2NybDQuZGlnaWNlcnQuY29tL1Zlcm9rZXlTZWN1cmVFbWFpbEcyLmNybDB2BggrBgEFBQcB
+AQRqMGgwJAYIKwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmRpZ2ljZXJ0LmNvbTBABggrBgEFBQcwAoY0
+aHR0cDovL2NhY2VydHMuZGlnaWNlcnQuY29tL1Zlcm9rZXlTZWN1cmVFbWFpbEcyLmNydDANBgkq
+hkiG9w0BAQsFAAOCAQEAQXc4FPiPLRnTDvmOABEzkIumojfZAe5SlnuQoeFUfi+LsWCKiB8Uextv
+iBAvboKhLuN6eG/NC6WOzOCppn4mkQxRkOdLNThwMHW0d19jrZFEKtEG/epZ/hw/DdScTuZ2m7im
+8ppItAT6GXD3aPhXkXnJpC/zTs85uNSQR64cEcBFjjoQDuSsTeJ5DAWf8EMyhMuD8pcbqx5kRvyt
+JPsWBQzv1Dsdv2LDPLNd/JUKhHSgr7nbUr4+aAP2PHTXGcEBh8lTeYea9p4d5k969pe0OHYMV5aL
+xERqTagmSetuIwolkAuBCzA9vulg8Y49Nz2zrpUGfKGOD0FMqenYxdJHgDCCBZswggSDoAMCAQIC
+EAfkkQ9qA1FdgOJE92VzW+AwDQYJKoZIhvcNAQELBQAwQTELMAkGA1UEBhMCQVUxEDAOBgNVBAoT
+B1Zlcm9rZXkxIDAeBgNVBAMTF1Zlcm9rZXkgU2VjdXJlIEVtYWlsIEcyMB4XDTI0MTIzMDAwMDAw
+MFoXDTI4MDEwNDIzNTk1OVowHjEcMBoGA1UEAwwTZHdtdzJAaW5mcmFkZWFkLm9yZzCCAiIwDQYJ
+KoZIhvcNAQEBBQADggIPADCCAgoCggIBANqWLse95HW2F7FhfH9bugyT/danKmmXrbMnz5GZNAfj
+Jl5gBL9JFXrOZ9eVdpmw04Tp6aDxZctFLoEDvSWKi367Q7Sg+ci+fH4KwwfQ8Pi0IpIKx2n5emEg
+nbOQL1Lv/IcNiep6Cq3DiyaSpSp/RZf+CAfUNySHS8eWmhLU6jGpSD6hxTpYKye7PmrmvMWwfGEP
+WoamAV1kSTb9z/9m9Q2LXa89aKmTxNwnAfD3Ohn9mtU3JukwILRMewn9QRXK7KzM+01h5hkCE4nj
+W9q/VGFknNhqfhrWBTSQoE9CSVylASGrjzCgS7XmKy/BaH3/7mOOHQv5g1o3Qj/+cdKnpT0I5Qb1
+nRy+c7wUzo9OqydJtxzSP4ZyHA4dELto/a3m/ay1XHcpum1pgTOLgxAfGb/T4dCkwRUstSKLMmpL
+g9Y9TrN9BM4xn24tBFFyL5znGG0wQGzOVAM68RBzIQb6Fz758fjsr4yZnPbVsU1+gHEs/puNHrG0
+9e1EQXmUtfGn4InoopJuU8p5VGD9S3Ikd4UoBlc7xl5yjtNlQxUeYrRlnUSmdlucCEoTX1n4UmtA
+9CuVHSA7eUHO7I88CtWG9bGOU7tLgOZoSEvNqtaL/N7sQbBZK4jZ4Rr/zNTQg1SwYjjLB7u96lDP
+sipoCi8BfR35/ViNuYJWwDCOEua94WM3AgMBAAGjggGwMIIBrDAfBgNVHSMEGDAWgBSJSAjqIE53
+a4blgcjX4Y1khH/8cDAdBgNVHQ4EFgQUXGIam3Bs59Y60yTmWgfDu6pZQ6cwMAYDVR0RBCkwJ4ET
+ZHdtdzJAaW5mcmFkZWFkLm9yZ4EQZGF2aWRAd29vZGhvdS5zZTAUBgNVHSAEDTALMAkGB2eBDAEF
+AQEwDgYDVR0PAQH/BAQDAgXgMB0GA1UdJQQWMBQGCCsGAQUFBwMCBggrBgEFBQcDBDB7BgNVHR8E
+dDByMDegNaAzhjFodHRwOi8vY3JsMy5kaWdpY2VydC5jb20vVmVyb2tleVNlY3VyZUVtYWlsRzIu
+Y3JsMDegNaAzhjFodHRwOi8vY3JsNC5kaWdpY2VydC5jb20vVmVyb2tleVNlY3VyZUVtYWlsRzIu
+Y3JsMHYGCCsGAQUFBwEBBGowaDAkBggrBgEFBQcwAYYYaHR0cDovL29jc3AuZGlnaWNlcnQuY29t
+MEAGCCsGAQUFBzAChjRodHRwOi8vY2FjZXJ0cy5kaWdpY2VydC5jb20vVmVyb2tleVNlY3VyZUVt
+YWlsRzIuY3J0MA0GCSqGSIb3DQEBCwUAA4IBAQBBdzgU+I8tGdMO+Y4AETOQi6aiN9kB7lKWe5Ch
+4VR+L4uxYIqIHxR7G2+IEC9ugqEu43p4b80LpY7M4KmmfiaRDFGQ50s1OHAwdbR3X2OtkUQq0Qb9
+6ln+HD8N1JxO5nabuKbymki0BPoZcPdo+FeRecmkL/NOzzm41JBHrhwRwEWOOhAO5KxN4nkMBZ/w
+QzKEy4PylxurHmRG/K0k+xYFDO/UOx2/YsM8s138lQqEdKCvudtSvj5oA/Y8dNcZwQGHyVN5h5r2
+nh3mT3r2l7Q4dgxXlovERGpNqCZJ624jCiWQC4ELMD2+6WDxjj03PbOulQZ8oY4PQUyp6djF0keA
+MYIDuzCCA7cCAQEwVTBBMQswCQYDVQQGEwJBVTEQMA4GA1UEChMHVmVyb2tleTEgMB4GA1UEAxMX
+VmVyb2tleSBTZWN1cmUgRW1haWwgRzICEAfkkQ9qA1FdgOJE92VzW+AwDQYJYIZIAWUDBAIBBQCg
+ggE3MBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI1MDgyODA3Mjk0
+MFowLwYJKoZIhvcNAQkEMSIEIKsGi+ou5UQwobdbSws+XBS3XMMOJdLqQgJhjS5blLUwMGQGCSsG
+AQQBgjcQBDFXMFUwQTELMAkGA1UEBhMCQVUxEDAOBgNVBAoTB1Zlcm9rZXkxIDAeBgNVBAMTF1Zl
+cm9rZXkgU2VjdXJlIEVtYWlsIEcyAhAH5JEPagNRXYDiRPdlc1vgMGYGCyqGSIb3DQEJEAILMVeg
+VTBBMQswCQYDVQQGEwJBVTEQMA4GA1UEChMHVmVyb2tleTEgMB4GA1UEAxMXVmVyb2tleSBTZWN1
+cmUgRW1haWwgRzICEAfkkQ9qA1FdgOJE92VzW+AwDQYJKoZIhvcNAQEBBQAEggIAJ4TCly/ztGWG
+W2m7AHrUGSX0UPrhpfDOUSXcUFxg088+0Qjtjf0VBYrj4Kwc+ZsX5LY21rBWQ/eiAKP8NrDXTzoT
+vnzkYGPyxNhZ6fEI8h1l3wHzmaH1rpmRefKxdrZBZP9qx6A1OGjp49ctShjr2HtjwPeZljJXSE88
+FNT2m6PSfKSlHfcKa/4bu62Y0TxIIApjer3aIvcd4BdVfQF5Vu+tS6SfmhyLho8s5JpN7evDKZfm
+W3Lku/6WQDMjLILlbqKwpPao7p+cQvgFYmd4hzcx1m6yt95hrfAhRN5rSjBlwIQ7CqKytZio8ybf
+c4+F2IU0g0Z4tD1+JxvSRnVJy/jZCDNxENu6AqYkoEx5xr80mavn7JEqC6FQ3XSK3tfEZXDgufjk
+2FPCPvAt0Ftt4Lietq4EMrDhT0kcpwUib/uj3KnOPl0xPYNKSAidXxvYZ2F+ErY4gFfNTe59r8KC
+i81cRQXg3oDEPzoIQpdWyctMxX+HQcFYl61x0w5DIAh7Yk2Qw/8bn6SqLVz6Y+De4kgESZJStDRj
+xgZ5cmhBBy8RgR7PDEy6iSmvJUlPg+Fi8NMficyX1LxO8dLZe6AkR4f4cqNSti/4QP3GFyaCNRMW
+a/Zx3ofQohTEvLgaHnx+Z1ShoOhLdbEc1LNN7Djc2V5eZEGtpjKHTxG+JF/knqsAAAAAAAA=
+
+
+--=-/7iGcOUW4Sqx1P03whoF--
 
