@@ -1,355 +1,129 @@
-Return-Path: <linux-kernel+bounces-790414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DD36B3A6CB
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 18:46:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30D6FB3A6C9
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 18:45:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A73A562CF3
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 16:46:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84D4EA016B7
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 16:45:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C9CA32BF35;
-	Thu, 28 Aug 2025 16:45:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11376326D6E;
+	Thu, 28 Aug 2025 16:45:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="olV9FDnI"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b="Y4FiiP6c"
+Received: from sender4-pp-o95.zoho.com (sender4-pp-o95.zoho.com [136.143.188.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6DCE32BF2E
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 16:45:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756399548; cv=none; b=SLU5BzyLXaXYjd3+gOdiduqae/wiMHuTfgekqGVrRtjBs9Iv0FZAZu68iBKNT0aVER8Hg4Kk19C8S49/r6JLGLP7E9MNBb7CRosMO383s4srFFG5ut0nRYXm1M5f7MNF6198wwd/O8v/uq8gHBwv49ZKuQfr8Ys9/s9L+96aDMA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756399548; c=relaxed/simple;
-	bh=DkoHGMXPv+Ziz7tic5ZhCq23uuGDr/sdhHtebp3o6vo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=GZVT6I9fqykmtyIhWalrIk7T8Vfinu2XXb3H7IdDWY7ZXkoLYoULgLyLHMX/gelRa4SAK4OCf94VwwNGHF+PrWPpfIP6Om6u5oTTVlX2ICn0ijg3n/SWEJW/XtUWLWQW8kYrE4bfu/vIgxogZZM4TqDspevumNtOxFGXWkO5H/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=olV9FDnI; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57SGisPw2022902;
-	Thu, 28 Aug 2025 11:44:54 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1756399494;
-	bh=uvOzIUOt4mRyEwxd4Xgg6NBzk4tyhr5ea4GoxBX2rz0=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=olV9FDnIudQJKaDsNmUyDlKi+4Qe8y9KFTAjT4QvBNDEezi4sE9wlkFbsW9PuMYUe
-	 76UWa6Tb/Qv4jnc9pE/mPakWBgZIxu5shDVqVnYwtKoCVLM5+2Iu9jW/mqXpidhv6U
-	 TM2sPTvjj6QulzAiRGwkARXu72PpD52E4+MjtsM0=
-Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
-	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57SGisS93593614
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Thu, 28 Aug 2025 11:44:54 -0500
-Received: from DFLE102.ent.ti.com (10.64.6.23) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 28
- Aug 2025 11:44:53 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE102.ent.ti.com
- (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Thu, 28 Aug 2025 11:44:53 -0500
-Received: from [172.24.233.20] (a0512632.dhcp.ti.com [172.24.233.20])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57SGinYH928769;
-	Thu, 28 Aug 2025 11:44:50 -0500
-Message-ID: <9e09e8d9-d2b4-4c94-955a-903aec4e812e@ti.com>
-Date: Thu, 28 Aug 2025 22:14:49 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0EB92153E1;
+	Thu, 28 Aug 2025 16:45:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.95
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756399541; cv=pass; b=aeS6gzs8vrZE2iAEI2Q16mix3kNOPGH9BqKbMgqQKnC7imSR9TxYpFFRW6khuerH+gePxg0DhKGO6V88YKkFAJ4dxjj0EmJwEz/wRiH5v8dbcMqnLEdsia0Tt8f0Cib6Sza3PHjfRr0sYslE381WqEz59nGi/02detMOl8ovl7k=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756399541; c=relaxed/simple;
+	bh=3hNbbGnIIeUh0Xq169DwWUhdfjIjNlud6e1OOq1hvgI=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=PWgE3pON5w4H+b8se7eZeSTdmshE5niv6Uh8UBYh4kJFh2zdORKtgpYhL0Zx3WBRn/TXqXa4oPGKZ6r1SVMD1okkg7tnvwdgVyOyvyMxuY99srGHdi+Tkqdn69gR0s/nru1oZeb8brcwS22gm5G8myWI+jtY6ugeedo3b65joA8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b=Y4FiiP6c; arc=pass smtp.client-ip=136.143.188.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
+ARC-Seal: i=1; a=rsa-sha256; t=1756399492; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=nt9ujwIF+j5OMdtPq+mji6OStcJSTF2iSyhtPMWQLKVocY9TKH5Z4Dv9y8yrtcLm1OmhXdFLQPMOddurirkrT3MfKwB9MeCMw9GxvBs7CFhG5euz448+LvYOVLFRVzsobzWaNiDh3yZdg2/OD9ILDKRzf2H9/Vaiml5j+doSn5A=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1756399492; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=xrVBUXkzvzBF2rrjO9ftLnAnNRA3Pzir4wCQwPuO9Io=; 
+	b=jGxafguVxA+sATZFmmv3LQgo/TI9Q39ykgTeMka0t41ZbDM2rcswWp0WKlJ+FSJms4aULM6yduwIZEv+Bg8Y1d2dftReHuJzZrdlI6ln0buPYW3yTXNXkz4nBFGMpok4Zn8Dz4Av1K1gnPTrV3Kl4hKr9b6wxLgesp4W1SPBTmE=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=zohomail.com;
+	spf=pass  smtp.mailfrom=safinaskar@zohomail.com;
+	dmarc=pass header.from=<safinaskar@zohomail.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1756399492;
+	s=zm2022; d=zohomail.com; i=safinaskar@zohomail.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
+	bh=xrVBUXkzvzBF2rrjO9ftLnAnNRA3Pzir4wCQwPuO9Io=;
+	b=Y4FiiP6cHnEt9IL9qbZh8sOiJdC4tI4m0yKvUPOai5R5sg0SSKhFCQ7JgFGVUJif
+	4wszl7sc/FyT08qi4yXkKTchq+1pf/KfWD9K6r6tWtvvmPXLO6XgJBqwax8hzBTOLJt
+	nb3upuBHJ43WvuyEDRKePGvm0A0etm2tUe7wdyRs=
+Received: from mail.zoho.com by mx.zohomail.com
+	with SMTP id 1756399491637732.1699248320573; Thu, 28 Aug 2025 09:44:51 -0700 (PDT)
+Received: from  [212.73.77.104] by mail.zoho.com
+	with HTTP;Thu, 28 Aug 2025 09:44:51 -0700 (PDT)
+Date: Thu, 28 Aug 2025 20:44:51 +0400
+From: Askar Safin <safinaskar@zohomail.com>
+To: "Gao Xiang" <hsiangkao@linux.alibaba.com>
+Cc: "Byron Stanoszek" <gandalf@winds.org>, "Christoph Hellwig" <hch@lst.de>,
+	"gregkh" <gregkh@linuxfoundation.org>,
+	"julian.stecklina" <julian.stecklina@cyberus-technology.de>,
+	"linux-fsdevel" <linux-fsdevel@vger.kernel.org>,
+	"linux-kernel" <linux-kernel@vger.kernel.org>,
+	"rafael" <rafael@kernel.org>,
+	"torvalds" <torvalds@linux-foundation.org>,
+	"viro" <viro@zeniv.linux.org.uk>,
+	=?UTF-8?Q?=22Thomas_Wei=C3=9Fschuh=22?= <thomas.weissschuh@linutronix.de>,
+	"Christian Brauner" <brauner@kernel.org>
+Message-ID: <198f1915a27.10415eef562419.6441525173245870022@zohomail.com>
+In-Reply-To: <81788d65-968a-4225-ba1b-8ede4deb0f61@linux.alibaba.com>
+References: <20250321050114.GC1831@lst.de>
+ <20250825182713.2469206-1-safinaskar@zohomail.com>
+ <20250826075910.GA22903@lst.de>
+ <a54ced51-280e-cc9d-38e4-5b592dd9e77b@winds.org>
+ <6b77eda9-142e-44fa-9986-77ac0ed5382f@linux.alibaba.com>
+ <198ead62fff.fc7d206346787.2754614060206901867@zohomail.com>
+ <d820951e-f5df-4ddb-a657-5f0cc7c3493a@linux.alibaba.com> <81788d65-968a-4225-ba1b-8ede4deb0f61@linux.alibaba.com>
+Subject: Re: [PATCH] initrd: support erofs as initrd
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 2/3] drm/tidss: Remove max_pclk_khz from tidss display
- features
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-CC: <h-shenoy@ti.com>, <devarsht@ti.com>, <vigneshr@ti.com>, <praneeth@ti.com>,
-        <u-kumar1@ti.com>, <dri-devel@lists.freedesktop.org>,
-        <linux-kernel@vger.kernel.org>, <jyri.sarha@iki.fi>,
-        <maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
-        <tzimmermann@suse.de>, <airlied@gmail.com>, <simona@ffwll.ch>,
-        <aradhya.bhatia@linux.dev>
-References: <20250819192113.2420396-1-s-jain1@ti.com>
- <20250819192113.2420396-3-s-jain1@ti.com>
- <b95b60c3-5988-4238-a8d4-73bd8bbf8779@ideasonboard.com>
-Content-Language: en-US
-From: Swamil Jain <s-jain1@ti.com>
-In-Reply-To: <b95b60c3-5988-4238-a8d4-73bd8bbf8779@ideasonboard.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Importance: Medium
+User-Agent: Zoho Mail
+X-Mailer: Zoho Mail
+Feedback-ID: rr0801122752d06e396f7e7865dd3a0d050000c5060cc9522ec008e81a4b38c4e66a6265240f58d73be4b200:zu0801122755eab974bb7b668fad6bb8710000346584e788a9fcab2204fd423ce27651cec1e91681ae3b5138:rf0801122b8c3ec6ac4e79f50d268b6a9400009faf7565bbb4e40d3b4d2d258eca40d706241f9abce8de4dd8018c6976:ZohoMail
 
+ ---- On Wed, 27 Aug 2025 13:58:02 +0400  Gao Xiang <hsiangkao@linux.alibaba.com> wrote --- 
+ > The additional cpio extraction destroys bit-for-bit identical data
+ > protection, or some other new verification approach is needed for
+ > initramfs tmpfs.
 
+Put erofs to initramfs and sign whole thing.
 
-On 8/27/25 14:19, Tomi Valkeinen wrote:
-> Hi,
-> 
-> On 19/08/2025 22:21, Swamil Jain wrote:
->> From: Jayesh Choudhary <j-choudhary@ti.com>
->>
->> TIDSS hardware by itself does not have variable max_pclk for each VP.
->> The maximum pixel clock is determined by the limiting factor between
->> the functional clock and the PLL (parent to the VP/pixel clock).
-> 
-> Hmm, this is actually not in the driver, is it? We're not limiting the
-> pclk based on the fclk.
-Hi Tomi,
-We are checking what all pclks can be supported, which is limited by 
-fclk, thats what Jayesh wanted to mention here.
-> 
->> The limitation that has been modeled till now comes from the clock
->> (PLL can only be programmed to a particular max value). Instead of
->> putting it as a constant field in dispc_features, we can query the
->> DM to see if requested clock can be set or not and use it in
->> mode_valid().
->>
->> Replace constant "max_pclk_khz" in dispc_features with
->> max_successful_rate and max_attempted_rate, both of these in
->> tidss_device structure would be modified in runtime. In mode_valid()
->> call, check if a best frequency match for mode clock can be found or
->> not using "clk_round_rate()". Based on that, propagate
->> max_successful_rate and max_attempted_rate and query DM again only if
->> the requested mode clock is greater than max_attempted_rate. (As the
->> preferred display mode is usually the max resolution, driver ends up
->> checking the highest clock the first time itself which is used in
->> subsequent checks).
->>
->> Since TIDSS display controller provides clock tolerance of 5%, we use
->> this while checking the max_successful_rate. Also, move up
->> "dispc_pclk_diff()" before it is called.
->>
->> This will make the existing compatibles reusable if DSS features are
->> same across two SoCs with the only difference being the pixel clock.
->>
->> Fixes: 7246e0929945 ("drm/tidss: Add OLDI bridge support")
->> Reviewed-by: Devarsh Thakkar <devarsht@ti.com>
->> Signed-off-by: Jayesh Choudhary <j-choudhary@ti.com>
->> Signed-off-by: Swamil Jain <s-jain1@ti.com>
->> ---
->>   drivers/gpu/drm/tidss/tidss_dispc.c | 85 +++++++++++++----------------
->>   drivers/gpu/drm/tidss/tidss_dispc.h |  1 -
->>   drivers/gpu/drm/tidss/tidss_drv.h   | 11 +++-
->>   3 files changed, 47 insertions(+), 50 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/tidss/tidss_dispc.c b/drivers/gpu/drm/tidss/tidss_dispc.c
->> index c0277fa36425..c2c0fe0d4a0f 100644
->> --- a/drivers/gpu/drm/tidss/tidss_dispc.c
->> +++ b/drivers/gpu/drm/tidss/tidss_dispc.c
->> @@ -58,10 +58,6 @@ static const u16 tidss_k2g_common_regs[DISPC_COMMON_REG_TABLE_LEN] = {
->>   const struct dispc_features dispc_k2g_feats = {
->>   	.min_pclk_khz = 4375,
->>   
->> -	.max_pclk_khz = {
->> -		[DISPC_VP_DPI] = 150000,
->> -	},
->> -
->>   	/*
->>   	 * XXX According TRM the RGB input buffer width up to 2560 should
->>   	 *     work on 3 taps, but in practice it only works up to 1280.
->> @@ -144,11 +140,6 @@ static const u16 tidss_am65x_common_regs[DISPC_COMMON_REG_TABLE_LEN] = {
->>   };
->>   
->>   const struct dispc_features dispc_am65x_feats = {
->> -	.max_pclk_khz = {
->> -		[DISPC_VP_DPI] = 165000,
->> -		[DISPC_VP_OLDI_AM65X] = 165000,
->> -	},
->> -
->>   	.scaling = {
->>   		.in_width_max_5tap_rgb = 1280,
->>   		.in_width_max_3tap_rgb = 2560,
->> @@ -244,11 +235,6 @@ static const u16 tidss_j721e_common_regs[DISPC_COMMON_REG_TABLE_LEN] = {
->>   };
->>   
->>   const struct dispc_features dispc_j721e_feats = {
->> -	.max_pclk_khz = {
->> -		[DISPC_VP_DPI] = 170000,
->> -		[DISPC_VP_INTERNAL] = 600000,
->> -	},
->> -
->>   	.scaling = {
->>   		.in_width_max_5tap_rgb = 2048,
->>   		.in_width_max_3tap_rgb = 4096,
->> @@ -315,11 +301,6 @@ const struct dispc_features dispc_j721e_feats = {
->>   };
->>   
->>   const struct dispc_features dispc_am625_feats = {
->> -	.max_pclk_khz = {
->> -		[DISPC_VP_DPI] = 165000,
->> -		[DISPC_VP_INTERNAL] = 170000,
->> -	},
->> -
->>   	.scaling = {
->>   		.in_width_max_5tap_rgb = 1280,
->>   		.in_width_max_3tap_rgb = 2560,
->> @@ -376,15 +357,6 @@ const struct dispc_features dispc_am625_feats = {
->>   };
->>   
->>   const struct dispc_features dispc_am62a7_feats = {
->> -	/*
->> -	 * if the code reaches dispc_mode_valid with VP1,
->> -	 * it should return MODE_BAD.
->> -	 */
->> -	.max_pclk_khz = {
->> -		[DISPC_VP_TIED_OFF] = 0,
->> -		[DISPC_VP_DPI] = 165000,
->> -	},
->> -
->>   	.scaling = {
->>   		.in_width_max_5tap_rgb = 1280,
->>   		.in_width_max_3tap_rgb = 2560,
->> @@ -441,10 +413,6 @@ const struct dispc_features dispc_am62a7_feats = {
->>   };
->>   
->>   const struct dispc_features dispc_am62l_feats = {
->> -	.max_pclk_khz = {
->> -		[DISPC_VP_DPI] = 165000,
->> -	},
->> -
->>   	.subrev = DISPC_AM62L,
->>   
->>   	.common = "common",
->> @@ -1347,25 +1315,57 @@ static void dispc_vp_set_default_color(struct dispc_device *dispc,
->>   			DISPC_OVR_DEFAULT_COLOR2, (v >> 32) & 0xffff);
->>   }
->>   
->> +/*
->> + * Calculate the percentage difference between the requested pixel clock rate
->> + * and the effective rate resulting from calculating the clock divider value.
->> + */
->> +unsigned int dispc_pclk_diff(unsigned long rate, unsigned long real_rate)
->> +{
->> +	int r = rate / 100, rr = real_rate / 100;
->> +
->> +	return (unsigned int)(abs(((rr - r) * 100) / r));
->> +}
->> +
->> +static int check_pixel_clock(struct dispc_device *dispc,
->> +			     u32 hw_videoport, unsigned long clock)
->> +{
->> +	unsigned long round_clock;
->> +
->> +	if (dispc->tidss->is_ext_vp_clk[hw_videoport])
->> +		return 0;
->> +
->> +	if (clock <= dispc->tidss->max_successful_rate[hw_videoport])
->> +		return 0;
->> +
->> +	if (clock < dispc->tidss->max_attempted_rate[hw_videoport])
->> +		return -EINVAL;
->> +
->> +	round_clock = clk_round_rate(dispc->vp_clk[hw_videoport], clock);
->> +
->> +	if (dispc_pclk_diff(clock, round_clock) > 5)
->> +		return -EINVAL;
->> +
->> +	dispc->tidss->max_successful_rate[hw_videoport] = round_clock;
->> +	dispc->tidss->max_attempted_rate[hw_videoport] = clock;
-> 
-> I still don't think this logic is sound. This is trying to find the
-> maximum clock rate, and optimize by avoiding the calls to
-> clk_round_rate() if possible. That makes sense.
-> 
-> But checking for the 5% tolerance breaks it, in my opinion. If we find
-> out that the PLL can do, say, 100M, but we need pclk of 90M, the current
-> maximum is still the 100M, isn't it?
-> 
-> Why can't we replace the "if (mode->clock > max_pclk)" check with a new
-> check that only looks for the max rate? If we want to add tolerance
-> checks to mode_valid (which are currently not there), let's add it in a
-> separate patch.
-> 
+Also: initramfs's are concatenatable.
+So, you can put erofs to cpio and sign the result.
+And then concatenate that cpio with another cpio (with init).
 
-Yeah, we can drop tolerance check. So, should we drop 
-check_pixel_clock() and also clk_round_rate(), but then how can we know 
-the maximum supported pclk?
+Also, you can put erofs to cpio, then sign this thing, and then add init to kernel
+built-in cpio (via INITRAMFS_SOURCE).
 
-Regards,
-Swamil
->   Tomi
-> 
->> +	return 0;
->> +}
->> +
->>   enum drm_mode_status dispc_vp_mode_valid(struct dispc_device *dispc,
->>   					 u32 hw_videoport,
->>   					 const struct drm_display_mode *mode)
->>   {
->>   	u32 hsw, hfp, hbp, vsw, vfp, vbp;
->>   	enum dispc_vp_bus_type bus_type;
->> -	int max_pclk;
->>   
->>   	bus_type = dispc->feat->vp_bus_type[hw_videoport];
->>   
->> -	max_pclk = dispc->feat->max_pclk_khz[bus_type];
->> -
->> -	if (WARN_ON(max_pclk == 0))
->> +	if (WARN_ON(bus_type == DISPC_VP_TIED_OFF))
->>   		return MODE_BAD;
->>   
->>   	if (mode->clock < dispc->feat->min_pclk_khz)
->>   		return MODE_CLOCK_LOW;
->>   
->> -	if (mode->clock > max_pclk)
->> +	if (check_pixel_clock(dispc, hw_videoport, mode->clock * 1000))
->>   		return MODE_CLOCK_HIGH;
->>   
->>   	if (mode->hdisplay > 4096)
->> @@ -1437,17 +1437,6 @@ void dispc_vp_disable_clk(struct dispc_device *dispc, u32 hw_videoport)
->>   	clk_disable_unprepare(dispc->vp_clk[hw_videoport]);
->>   }
->>   
->> -/*
->> - * Calculate the percentage difference between the requested pixel clock rate
->> - * and the effective rate resulting from calculating the clock divider value.
->> - */
->> -unsigned int dispc_pclk_diff(unsigned long rate, unsigned long real_rate)
->> -{
->> -	int r = rate / 100, rr = real_rate / 100;
->> -
->> -	return (unsigned int)(abs(((rr - r) * 100) / r));
->> -}
->> -
->>   int dispc_vp_set_clk_rate(struct dispc_device *dispc, u32 hw_videoport,
->>   			  unsigned long rate)
->>   {
->> diff --git a/drivers/gpu/drm/tidss/tidss_dispc.h b/drivers/gpu/drm/tidss/tidss_dispc.h
->> index b8614f62186c..45b1a8aa9089 100644
->> --- a/drivers/gpu/drm/tidss/tidss_dispc.h
->> +++ b/drivers/gpu/drm/tidss/tidss_dispc.h
->> @@ -75,7 +75,6 @@ enum dispc_dss_subrevision {
->>   
->>   struct dispc_features {
->>   	int min_pclk_khz;
->> -	int max_pclk_khz[DISPC_VP_MAX_BUS_TYPE];
->>   
->>   	struct dispc_features_scaling scaling;
->>   
->> diff --git a/drivers/gpu/drm/tidss/tidss_drv.h b/drivers/gpu/drm/tidss/tidss_drv.h
->> index 4e38cfa99e84..667c0d772519 100644
->> --- a/drivers/gpu/drm/tidss/tidss_drv.h
->> +++ b/drivers/gpu/drm/tidss/tidss_drv.h
->> @@ -23,7 +23,16 @@ struct tidss_device {
->>   	const struct dispc_features *feat;
->>   	struct dispc_device *dispc;
->>   	bool is_ext_vp_clk[TIDSS_MAX_PORTS];
->> -
->> +	/*
->> +	 * Stores highest pixel clock value found to be valid while checking
->> +	 * supported modes for connected display
->> +	 */
->> +	unsigned long max_successful_rate[TIDSS_MAX_PORTS];
->> +	/*
->> +	 * Stores the highest attempted pixel clock rate whose validated
->> +	 * clock is within the tolerance range
->> +	 */
->> +	unsigned long max_attempted_rate[TIDSS_MAX_PORTS];
->>   
->>   	unsigned int num_crtcs;
->>   	struct drm_crtc *crtcs[TIDSS_MAX_PORTS];
-> 
+In fact, this built-in initramfs (INITRAMFS_SOURCE) is very powerful thing.
+You can specify there arbitrary boot logic, and have that initramfs inside kernel
+image.
+
+You can even specify logic there for checking signature of erofs (not cpio, but erofs itself).
+
+Also, if all these is still not helpful, then try to describe your use case in more details.
+I still don't understand what is wrong with signing cpio, which contains erofs.
+Yes, this will slightly complicate pipeline for building erofs. Now you will
+have to put it to cpio and then sign that cpio. So what?
+
+Also, if your users want to have their own init inside that erofs, then
+you can just write trivial init, which calls their init.
+And you can put that trivial init to cpio, which is build-in in kernel via INITRAMFS_SOURCE.
+
+Also, when I hear "sign, signature, something something", then UKIs show up in my mind.
+( https://uapi-group.org/specifications/specs/unified_kernel_image/ ).
+Maybe they are somehow helpful? That page talks a lot about signatures, measuring into
+TPM, etc. (Every time that page says "initrd", they mean initramfs, of course.)
+
+-- 
+Askar Safin
+https://types.pl/@safinaskar
+
 
