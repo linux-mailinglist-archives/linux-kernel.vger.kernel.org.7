@@ -1,100 +1,111 @@
-Return-Path: <linux-kernel+bounces-790344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0ADF8B3A5AC
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 18:09:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FC96B3A5A8
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 18:09:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B4F116C920
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 16:06:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8AC735E34B2
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 16:08:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E957C2848B5;
-	Thu, 28 Aug 2025 16:05:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAD83298CC0;
+	Thu, 28 Aug 2025 16:08:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="2fAWHEFh";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="rqd6HEqk"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gAJdjTK2"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDAD62848B7
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 16:04:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EB89285065;
+	Thu, 28 Aug 2025 16:08:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756397100; cv=none; b=sTYEvh+LxvUQWrGlQpnbgp9l0kvQbnJDJVsP7SLhqTLRPtOUxk4NxXKvhh55CnSvYzV57kNiGjgA29LtVkBiBN75/3kbvvjHj+KS5WMDeW0OT4UeLHPPjXI6DI0oiXbGd0rhNqYuVQ/n+eqog3+uNDpIVdTtkGZLGogFnbjBs5c=
+	t=1756397298; cv=none; b=GaL5WQ5IUtYB0myCIoSvjXbH8sGvd+2tc+lWGA7l2QNWVTKpOMVgrLYa6SQdyPrQi527xxpygoqPJsW9dlgkTnjlYDqby7daltFe3fIGWPzuz6PlDtVL/Pp0+In2kr3UAyXuFtTS1LXXacomHZEXqv+9w97lit4V0yk8U701veo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756397100; c=relaxed/simple;
-	bh=ecVMeP443f64m+M+NmMkG4F5JybvvXU7SpIX8upmfhk=;
+	s=arc-20240116; t=1756397298; c=relaxed/simple;
+	bh=chl2pglmKuX5THNV4UczW2DfJ8GWxqeVOVktQ94bii0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X81rlM8cskqJTvDfteko2mMqjZnRPVIl9HZ4ZgkWX2ObTl9UWvt11NthEFMHqi1wYh97HX5t4DaHwdQynCeA2p7Cnj0rsvvjQSqE1u7iZoj0qtGrng/77CZdWgF+KhD4Iqs2TUuaqIOWxNf9VB3+h5xq3cxKjqX4pSxaf95GGw4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=2fAWHEFh; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=rqd6HEqk; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 28 Aug 2025 18:04:55 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1756397096;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ecVMeP443f64m+M+NmMkG4F5JybvvXU7SpIX8upmfhk=;
-	b=2fAWHEFhcs28s66ugBbyfln+vyjsbXqNmjzM0hhvMDxzuElxcZRiVqLQVGrcdCRRCDJIV0
-	SFq91LjmzaKLikhhZbgmuX0hQIKB7lTOQvkxdGgWZGv+wXrZE3EHSHM6obXqrnjVNn2OMk
-	lhSIPCmkVht+RNmGGOrmXOU+GmoVoGbxL3WVEPlSE4+qn4htNsoulMEQCCq5Z4gxj/F9rC
-	IK4CJ4d/xc5DSVDDNL6I3dI0Onfz+M5HgJz0NHLUaSHHwmm6PmXMH4sEjUvGGm946mG9sX
-	9AY8RNIrjcXWJQesLJZJQXhY1U2k+DfPeo9sGJzw4Ofei+vKtSpClbtSwPl2fw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1756397096;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ecVMeP443f64m+M+NmMkG4F5JybvvXU7SpIX8upmfhk=;
-	b=rqd6HEqk+37sKUz4GGl5DoVeRJ7Cgl4e2/pi7DNlcWyBtS7kEjUBBodg0wU0tcwHRFeKaW
-	j/H1sKZwUxW89TAw==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Tejun Heo <tj@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH] softirq: Provide a handshake for canceling tasklets via
- polling on PREEMPT_RT
-Message-ID: <20250828160455.4dxzTug1@linutronix.de>
-References: <20250819150105.DYeV89fa@linutronix.de>
- <20250820103657.vDuDuLx6@linutronix.de>
- <20250820105518.Yf36NzJd@linutronix.de>
- <aKYltdkLBRZJF0Ok@slm.duckdns.org>
- <20250821092827.zcFpdnNy@linutronix.de>
- <aKdTEkK5MBz_Fj47@slm.duckdns.org>
- <20250822094812.L4hiquhY@linutronix.de>
- <aKix80fycymWz3Mh@slm.duckdns.org>
- <20250826154942.BcGs2_U5@linutronix.de>
- <aK3gbywOkrksPQeV@slm.duckdns.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=VQ0iPO2urATIExs855kEOTD9zwSXSsLJle8XRxFdrgWRsGJpzB+JLUVZzcKAj7k8tgs7AaB8chpWyl2816H3is3dsVUmAju+3Bxvv3z4F8jH0IB6UkZdONEpAu00MwmXP4gWs8YDHAk18kFW9grbsB6AUMgtR5iHCZWtvLBs+78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gAJdjTK2; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756397297; x=1787933297;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=chl2pglmKuX5THNV4UczW2DfJ8GWxqeVOVktQ94bii0=;
+  b=gAJdjTK2tyJp6Kma2k1Gwzx4+iEoaX0M/3jdWjpdQMnMqubZ4p5sh787
+   0VrCZPUdTjTy4wCxJjdnxFUB7nydPkaYcW6LnJVJCsFJUJqgUcIH6c4Jh
+   B3tct9fp7EbQpPuhdc9UjML68BgqpGQTBqy7O8SMvUWlqe/WW7XAd9Sdn
+   47rGfOQ7QH0LASk6pQ19nlR5FW0nGOEHAfwANf9Z8iIYBmqglX0ch5o4h
+   5y7kfa1UPL0uLVq6ffzkiFNRtjeLVn+1BzGR5Ffyfphlbm0nnoo8pcgvH
+   APY69hKJOxb4JIFOJ5CKgF7kSEkAB7LlKd7bFYVH68l/kb2hIgG2qMacZ
+   g==;
+X-CSE-ConnectionGUID: wQklFKzrR1ulYeD3orhqjg==
+X-CSE-MsgGUID: C7YqnZdMRWaslGcvh+dypA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11536"; a="61306461"
+X-IronPort-AV: E=Sophos;i="6.18,220,1751266800"; 
+   d="scan'208";a="61306461"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2025 09:08:16 -0700
+X-CSE-ConnectionGUID: 6NXhRMzqTDaxYPKfnPew0g==
+X-CSE-MsgGUID: d3UIs7vBS2q49mxX4Zsurg==
+X-ExtLoop1: 1
+Received: from fpallare-mobl4.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.245.135])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2025 09:08:11 -0700
+Received: from kekkonen.localdomain (localhost [IPv6:::1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id ABFA411F9D4;
+	Thu, 28 Aug 2025 19:08:08 +0300 (EEST)
+Date: Thu, 28 Aug 2025 19:08:08 +0300
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>
+Cc: Himanshu Bhavani <himanshu.bhavani@siliconsignals.io>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Hans Verkuil <hverkuil@xs4all.nl>,
+	Ricardo Ribalda <ribalda@chromium.org>,
+	Hans de Goede <hansg@kernel.org>,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	=?iso-8859-1?Q?Andr=E9?= Apitzsch <git@apitzsch.eu>,
+	Matthias Fend <matthias.fend@emfend.at>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Dongcheng Yan <dongcheng.yan@intel.com>,
+	Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
+	Sylvain Petinot <sylvain.petinot@foss.st.com>,
+	Jingjing Xiong <jingjing.xiong@intel.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Heimir Thor Sverrisson <heimir.sverrisson@gmail.com>,
+	linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v8 0/2] media: i2c: Add ov2735 camera sensor driver
+Message-ID: <aLB-6GsY-OiCZi9I@kekkonen.localdomain>
+References: <20250821143126.319470-1-hardevsinh.palaniya@siliconsignals.io>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aK3gbywOkrksPQeV@slm.duckdns.org>
+In-Reply-To: <20250821143126.319470-1-hardevsinh.palaniya@siliconsignals.io>
 
-On 2025-08-26 06:27:27 [-1000], Tejun Heo wrote:
-> Hello,
-Hello Tejun,
+Hi Hardev,
 
-> Oh yeah, that makes a lot of sense to me - splitting it out into something
-> which is named explicitly to discourage further usages.
+On Thu, Aug 21, 2025 at 08:01:11PM +0530, Hardevsinh Palaniya wrote:
+> The Omnivision OV2735 is a 1/2.7-Inch CMOS image sensor with an                 
+> active array size of 1920 x 1080.                                               
 
-I am a bit lost now. Do you intend to apply the patch and we came up
-with the bh-canceling-from-bh API later on or what is the plan?
+Have you run v4l2-compliance on this? Could you do so and provide the
+report, please?
 
-I can repost it of course together with the tasklet patch.
+-- 
+Kind regards,
 
-> Thanks.
-
-Sebastian
+Sakari Ailus
 
