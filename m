@@ -1,174 +1,128 @@
-Return-Path: <linux-kernel+bounces-790571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A187B3AA66
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 20:53:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6D85B3AA68
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 20:53:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1BA867BBE05
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 18:51:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7983C206032
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 18:53:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15E5F315772;
-	Thu, 28 Aug 2025 18:53:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 837D730ACF7;
+	Thu, 28 Aug 2025 18:53:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="U+89NkbQ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="QOZcbAzl"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACED130DEA1
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 18:53:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E88C2C11F0
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 18:53:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756407184; cv=none; b=hx09lvkIifdK73jbniNtOwRWN/6UUsCQY58wWRyudhIBe5RHBTc68EBROAEjYt1YVSrdZqQB2YUSg0E8GNYeSys7S7E89iMEchpb5idBroaQ6SH/K2iGZGz3wkTBWq70qSMdh/4cJ7oxOfVn1UsqzaJ58Mt+H7JMaoUE47lwPvg=
+	t=1756407224; cv=none; b=aohL9dqnTeIRbknQRcVjnpVl1ftcWjzjIVlGbF2QmLqe/p1ycGgXm6H9FFvrgjbeXddDnsaIEbHC35Gv1dRxdBW6gS9HVUVR0ZUw6PGpNwsfrsv5+R5wAnbPNvd+q9eK9sYR5WG6pKdqEWUMoJg5F6QTDCp1KNwOXHk1nKuCXjo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756407184; c=relaxed/simple;
-	bh=CgULwvBoKBpoCxSt14lLKe61Fel/Z9Jurl+x1vHCKzw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kIkGbn1A/1WWF9iKo89pC1ok2BRNSHQ504i6sRdzTHl+V4ZYq9SqW0vkyNDV3fA7Ddlf056okMscZdO9ggIMDprYu/lgKzq4uwk/Td7UpCy4l3UHJtfEz8CNhHDWNKRTzFCTkbxfCZbotHc5ipb+JvS+9EZCVS1i7PMKzH2dSWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=U+89NkbQ; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756407181;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Ox+fdqHLvqvHkCQcV7jSITHMPKa6EWT2tpRcTnamaBA=;
-	b=U+89NkbQyNI1+3Ir0lz7vt0x/cDlYrHLPPcYKX2OPv8Q1Eqe6PHr2ZkX3iGiZ1DDDgR1Yy
-	FjzKu86J4Hfhmoq+rk8G83VOujQjPE90Gg2JopH3pmSqc1MWxd7HiPQqbHNr4zgWZ63K7T
-	vQvyUuCtdBBMxw2eQlA/54U1EaYEtyk=
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com
- [209.85.166.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-624-K8Pqypk4PH2L9QfyFG-wxw-1; Thu, 28 Aug 2025 14:52:57 -0400
-X-MC-Unique: K8Pqypk4PH2L9QfyFG-wxw-1
-X-Mimecast-MFC-AGG-ID: K8Pqypk4PH2L9QfyFG-wxw_1756407176
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3ebd3ca6902so3309655ab.3
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 11:52:57 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756407176; x=1757011976;
-        h=content-transfer-encoding:mime-version:organization:references
-         :in-reply-to:message-id:subject:cc:to:from:date:x-gm-message-state
+	s=arc-20240116; t=1756407224; c=relaxed/simple;
+	bh=FQ1rdKGi9R94HCP+YGbh7p78J9PEq/G/b/AdDFMY+jY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Lcw06ibV+WtWNNNYEyQVJH29X8RxXck7gKaFw89g/dHv05HtrA94wrHLFhA9SRp10qhR5l36gv9O83pwjo3H/z65LfE7nRHRJRoWKUBG2HaaEP+6LnU3p66XC6yZ4AI5wYGZvdL7GcTEe1SjWTaUol3nnj4BTS7/1CInUtIyPMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=QOZcbAzl; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-45b7c01a708so3747275e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 11:53:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1756407221; x=1757012021; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=Ox+fdqHLvqvHkCQcV7jSITHMPKa6EWT2tpRcTnamaBA=;
-        b=mSxvnhYbJbghjjDREnerl+CQxyaTquW5uiRir+cIbj1zW0HAc3yWm0cfw7vV+paYqp
-         R8ivdX74dhBuyyZSE/Cz+UvvP5xPKrBurfdxh8He2pJqLgSzFtJFjb1VyP0G17l20fhF
-         +PCvNaxgWliBqwmf6qqn/wTibYWf07VBYBByIX8d8H3QfVuAyvYHUA+sGMnvuZ5ltNRU
-         6rrFDFPhTk3LyqKqHZarnnv3dksPOOwb8CF2BUP96z+Wa/5Cx4oFEa9a0oSy3TpuwLyU
-         hRSL7lEp3K9EApSFpuEjo4ItUQzAmUTjz/DjNnPHJVDiibCstxOi4LWdvLUIdweCuZHW
-         tdgg==
-X-Gm-Message-State: AOJu0YxmC/uA5T38Kor6kOCQTD3e3fmcUSXmza3XaDnCy/Gv4VPYuIY1
-	eRzGfC78hpox98POyyQqVEeWxY4zlwH+PxOEAvjBJxY6eHzXdZutbeGJfVLr7KmdN8jFrYKqGgv
-	8Dc8sFxZouFrX1CuhKzXI3o+QTTlPRubTh3QWEtYfwqsiys9H9BRVWmgwBlkkdidoIQ==
-X-Gm-Gg: ASbGnctcfsupr/AvUtI0oPFOnBjIxx1fakYs3ZO9TExor9eAmTUM+WgbTm7RCwi2iX0
-	itGM33gRJ5SkdJfXcL0TT+X5EQqf46YP2G7Oz4slFQy6MP3UzmnYtY09FqkRCjzWMzzIsx97QRx
-	XfQEa7et1mqHjHXhVXSOkU7FDw2KwVDIWB433556yuK6fl691zorsPTd67j4dB+WZzzNyCtYAde
-	yBrrHbUL0jVXXmQClptwM6KLDKOqmgXFtFd4rc7kiPrtfkC+geUZvjHPhfQ2Yxp9PpMWEDLS+2S
-	7P0c5HLY20bnl34Oh+FXt7gOmJ2OQ/5unACQtav/DBQ=
-X-Received: by 2002:a05:6e02:1a86:b0:3ee:cb14:e90f with SMTP id e9e14a558f8ab-3eecb14ea03mr61888835ab.7.1756407176421;
-        Thu, 28 Aug 2025 11:52:56 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEP6X5C8fKyFwSWmjzqPdfkbd7PprjZnYQm1xQXLb3Ss2KjE+y/MhfTqxlaUhO3jzRNfBiTrg==
-X-Received: by 2002:a05:6e02:1a86:b0:3ee:cb14:e90f with SMTP id e9e14a558f8ab-3eecb14ea03mr61888495ab.7.1756407175934;
-        Thu, 28 Aug 2025 11:52:55 -0700 (PDT)
-Received: from redhat.com ([38.15.36.11])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-50d78c67b4dsm47783173.7.2025.08.28.11.52.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Aug 2025 11:52:54 -0700 (PDT)
-Date: Thu, 28 Aug 2025 12:52:51 -0600
-From: Alex Williamson <alex.williamson@redhat.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Brett Creeley <brett.creeley@amd.com>,
- Jason Gunthorpe <jgg@ziepe.ca>, Yishai Hadas <yishaih@nvidia.com>, Shameer
- Kolothum <shameerali.kolothum.thodi@huawei.com>, Kevin Tian
- <kevin.tian@intel.com>, Alexander Potapenko <glider@google.com>, Andrew
- Morton <akpm@linux-foundation.org>, Brendan Jackman <jackmanb@google.com>,
- Christoph Lameter <cl@gentwo.org>, Dennis Zhou <dennis@kernel.org>, Dmitry
- Vyukov <dvyukov@google.com>, dri-devel@lists.freedesktop.org,
- intel-gfx@lists.freedesktop.org, iommu@lists.linux.dev,
- io-uring@vger.kernel.org, Jason Gunthorpe <jgg@nvidia.com>, Jens Axboe
- <axboe@kernel.dk>, Johannes Weiner <hannes@cmpxchg.org>, John Hubbard
- <jhubbard@nvidia.com>, kasan-dev@googlegroups.com, kvm@vger.kernel.org,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Linus Torvalds
- <torvalds@linux-foundation.org>, linux-arm-kernel@axis.com,
- linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
- linux-ide@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-mips@vger.kernel.org, linux-mmc@vger.kernel.org, linux-mm@kvack.org,
- linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
- linux-scsi@vger.kernel.org, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Marco Elver <elver@google.com>, Marek Szyprowski
- <m.szyprowski@samsung.com>, Michal Hocko <mhocko@suse.com>, Mike Rapoport
- <rppt@kernel.org>, Muchun Song <muchun.song@linux.dev>,
- netdev@vger.kernel.org, Oscar Salvador <osalvador@suse.de>, Peter Xu
- <peterx@redhat.com>, Robin Murphy <robin.murphy@arm.com>, Suren
- Baghdasaryan <surenb@google.com>, Tejun Heo <tj@kernel.org>,
- virtualization@lists.linux.dev, Vlastimil Babka <vbabka@suse.cz>,
- wireguard@lists.zx2c4.com, x86@kernel.org, Zi Yan <ziy@nvidia.com>
-Subject: Re: [PATCH v1 31/36] vfio/pci: drop nth_page() usage within SG
- entry
-Message-ID: <20250828125251.08e4a429.alex.williamson@redhat.com>
-In-Reply-To: <20250827220141.262669-32-david@redhat.com>
-References: <20250827220141.262669-1-david@redhat.com>
-	<20250827220141.262669-32-david@redhat.com>
-Organization: Red Hat
+        bh=KQxssGI+raI+XkRI8ea9mGLdtxL/7Ytn0lgOA6dMPAE=;
+        b=QOZcbAzlqtiDVq0p0SK2wIYjMIrVjLkDoxQG9YQq0g3CVrOpaPI2SAOa8YMr/u5uSx
+         qoXS7ucnnv4z7nBLgs05zJ2+o8cggQXg0mWMCV3bV/UbqPIuiz8/+sEHQUMFdNZhxCPu
+         NTfriGwrOQ7TmTthVIA2jz0BEKyCWT7QF+wIwziliqiDFhHKQlE2/kYSaK7TEL5nfSZV
+         6GEArmB32Q4qiuOk5I5keQqcEjcmeCemI+XbvM54DtUDzRvcvqAUS417eQkX4frwmCM7
+         JP+ZZBqVLq2JyEH4MS242ODQQ+1QPjEtYMpX5TygGzdcbs80AkNkx9dtIhdDkwBFDNC4
+         5T5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756407221; x=1757012021;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KQxssGI+raI+XkRI8ea9mGLdtxL/7Ytn0lgOA6dMPAE=;
+        b=SS8Wpar+XecIOWyovGM1U/7t6xAyG1VP0sca07jqmowgajRzVKwUArhDbRff4dwe6/
+         t4/RgilotC68Y83kOwT/jK8GaxmZ4nH0Ae9kcS8h69/mfDWVkviSzMbvhPxXMBeIq7CB
+         h185Tq4PJrI/pz9Ta/4iufk8HeGgtLtRaTgAH7EX2qlpMj+MY43S1i+b7t0sS2DYv7Mg
+         pGdsJ4VCzZIcyzQhqYcrzzYQuhQoHBNbPniN81aEyZ188tokL+JNfq+EaatriKHnia57
+         1AKkQPfi6bOXsKu2ccWLuQSLRPk5H3cLH0XkmVGawXBwszn20skDuuMwgis/+L/IxRpp
+         2cpQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWfc9rV72ljxjSJpg+6eQA9v19EcWDKUgYYJqzutJeG0sWPSTGhi210aS0M2c9gulWCnbwXNinWj0+gNWY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZ7eJnkEx1pAPnDWCi4tb6KWZNrNAAP+zdEGPqEJmX6Onow3Qx
+	h8MeIgCxoVbie4SbujSl0oV9PaPsC5EVZxkiyFL43elqkCmeGYAMZca05sUHPDL7Rb8=
+X-Gm-Gg: ASbGncs2+PKbUsrRHEsbhZMrIZ4xCOc1gDJowivg3xTRn8QAW9nBdXTNgbVRljXOmjD
+	Mu2FcHgYkAgkXsTPO1PuTxabzHlb/MZjcuT3jo4+qFGIJFQ+x2KHguU6Siw3vz2AiXINz9Q4ur1
+	hEBB0qy7qpZf38iRkOxGORXhU0Qs6RYTMedXjRtmrKV3TJH4ozllGEBcnCRyxqKPTaQhNyWVclN
+	+19ws1SA0t6KMS/tXjx2yJOFjEUrZ7Kvq5/bY6R5Q6lsd5AXSR/q55aN/Y5mkTgPjto2xS5a55e
+	LQ8E+8CTWzmyLMUbP6h6l5Z3K47TN9fAv5jrKcqTCRBln089/xDrgDOzQsXwe/BUla/RORMS3fs
+	cpWKiA10rvRc9BdV1jJunjivpmgzQoRI93GSrwZgUkO0nf8c5QO64KRi5n+DC6VDrVg9A1Xauj5
+	hGsQ==
+X-Google-Smtp-Source: AGHT+IEsQ4LuJqJJ8bLH2sEiTn/a4xu8JBjHjhH5JH9gsrlNMbO4Yfh55Kjm7XpwgoiSOdsGhAur2g==
+X-Received: by 2002:a05:600c:46ca:b0:45b:7c54:7518 with SMTP id 5b1f17b1804b1-45b7c5475a5mr21923185e9.13.1756407221350;
+        Thu, 28 Aug 2025 11:53:41 -0700 (PDT)
+Received: from ?IPV6:2a02:2f04:6103:4200:a4c6:4e84:e72c:19fd? ([2a02:2f04:6103:4200:a4c6:4e84:e72c:19fd])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b6f306c93sm85978075e9.14.2025.08.28.11.53.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 28 Aug 2025 11:53:40 -0700 (PDT)
+Message-ID: <a27c5e51-14ab-4f6c-8da7-3733c1c89abb@tuxon.dev>
+Date: Thu, 28 Aug 2025 21:53:39 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 0/4] thermal: renesas: Add support for RZ/G3S
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: rafael@kernel.org, daniel.lezcano@linaro.org, rui.zhang@intel.com,
+ lukasz.luba@arm.com, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, geert+renesas@glider.be, magnus.damm@gmail.com,
+ p.zabel@pengutronix.de, linux-pm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ niklas.soderlund@ragnatech.se,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20250810122125.792966-1-claudiu.beznea.uj@bp.renesas.com>
+ <aLAWLZBenSWWqqkK@shikoro>
+Content-Language: en-US
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <aLAWLZBenSWWqqkK@shikoro>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu, 28 Aug 2025 00:01:35 +0200
-David Hildenbrand <david@redhat.com> wrote:
+Hi, Wolfram,
 
-> It's no longer required to use nth_page() when iterating pages within a
-> single SG entry, so let's drop the nth_page() usage.
+On 8/28/25 11:41, Wolfram Sang wrote:
+> On Sun, Aug 10, 2025 at 03:21:21PM +0300, Claudiu wrote:
+>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>
+>> Hi,
+>>
+>> This series adds thermal support for the Renesas RZ/G3S SoC.
+>>
+>> Series is organized as follows:
+>> - patches 1-2/4:	add thermal support for RZ/G3S
+>> - patches 3-4/5:	add device tree support
+>>
+>> Merge strategy, if any:
+>> - patches 1-2/4 can go through the thermal tree
+>> - patches 3-4/4 can go through the Renesas tree
 > 
-> Cc: Brett Creeley <brett.creeley@amd.com>
-> Cc: Jason Gunthorpe <jgg@ziepe.ca>
-> Cc: Yishai Hadas <yishaih@nvidia.com>
-> Cc: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
-> Cc: Kevin Tian <kevin.tian@intel.com>
-> Cc: Alex Williamson <alex.williamson@redhat.com>
-> Signed-off-by: David Hildenbrand <david@redhat.com>
-> ---
->  drivers/vfio/pci/pds/lm.c         | 3 +--
->  drivers/vfio/pci/virtio/migrate.c | 3 +--
->  2 files changed, 2 insertions(+), 4 deletions(-)
+> Series applies fine; I can read the temp (36°) which increases
+> reasonably over time (40°).
 > 
-> diff --git a/drivers/vfio/pci/pds/lm.c b/drivers/vfio/pci/pds/lm.c
-> index f2673d395236a..4d70c833fa32e 100644
-> --- a/drivers/vfio/pci/pds/lm.c
-> +++ b/drivers/vfio/pci/pds/lm.c
-> @@ -151,8 +151,7 @@ static struct page *pds_vfio_get_file_page(struct pds_vfio_lm_file *lm_file,
->  			lm_file->last_offset_sg = sg;
->  			lm_file->sg_last_entry += i;
->  			lm_file->last_offset = cur_offset;
-> -			return nth_page(sg_page(sg),
-> -					(offset - cur_offset) / PAGE_SIZE);
-> +			return sg_page(sg) + (offset - cur_offset) / PAGE_SIZE;
->  		}
->  		cur_offset += sg->length;
->  	}
-> diff --git a/drivers/vfio/pci/virtio/migrate.c b/drivers/vfio/pci/virtio/migrate.c
-> index ba92bb4e9af94..7dd0ac866461d 100644
-> --- a/drivers/vfio/pci/virtio/migrate.c
-> +++ b/drivers/vfio/pci/virtio/migrate.c
-> @@ -53,8 +53,7 @@ virtiovf_get_migration_page(struct virtiovf_data_buffer *buf,
->  			buf->last_offset_sg = sg;
->  			buf->sg_last_entry += i;
->  			buf->last_offset = cur_offset;
-> -			return nth_page(sg_page(sg),
-> -					(offset - cur_offset) / PAGE_SIZE);
-> +			return sg_page(sg) + (offset - cur_offset) / PAGE_SIZE;
->  		}
->  		cur_offset += sg->length;
->  	}
+> Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Reviewed-by: Alex Williamson <alex.williamson@redhat.com>
-
+Thank you for checking it,
+Claudiu
 
