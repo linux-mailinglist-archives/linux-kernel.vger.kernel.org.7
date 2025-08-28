@@ -1,223 +1,162 @@
-Return-Path: <linux-kernel+bounces-789163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D25DB391D3
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 04:45:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CE4FB391E6
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 04:55:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E5321B27B2A
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 02:46:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F04F53BF91F
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 02:55:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 419B026773C;
-	Thu, 28 Aug 2025 02:45:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BwUqNoZP"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C56F26A0AD;
+	Thu, 28 Aug 2025 02:55:03 +0000 (UTC)
+Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 579C430CDB5;
-	Thu, 28 Aug 2025 02:45:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.16
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756349140; cv=fail; b=Cv6CN86edb54xLbvqPaEQlpz6WuCojU2pXDmJRtEeKMgAOkDs/m0Qfrs6HSw69Oa2jGl7+Sf55kvRDP98HCBYvG07Nh2P98FV2XNucXEVgJJ15dkRLvErYjmFPITPysJg7ZjkR9o5hTASLCbHod/TVHmdjCRZ/dlLNaG2ef2DdA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756349140; c=relaxed/simple;
-	bh=ifBUjMPlthVkMKpxg4mO+OixccY6lPYOJ1YXs21KPO4=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=YCkNvTDg5zzMaZgajZXoMJcMO+7WKcg8YQTlkcKrODo6jJiPD1n5Vf8ZTPcnpu0wytnQ2f3NA6DplHpmS9jjZ+iHchyamxynpwcl39jlQMR00FmqlWw+BgAkBVVaKqAxHKAeviraKdqYpCA7cwY+V5sv4ZS0xu8dSN/97lilu/4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BwUqNoZP; arc=fail smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756349138; x=1787885138;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-id:content-transfer-encoding:
-   mime-version;
-  bh=ifBUjMPlthVkMKpxg4mO+OixccY6lPYOJ1YXs21KPO4=;
-  b=BwUqNoZPSEcED0EoDwCi7P1Vx+FOGor9YUTV6hv3eEJ1HE7F935c7HsC
-   s1+X+d7t4pSlI7tbt/cVD+DFfaNk3ysjRJR47+uxucPTRJxRI+Gbe3Zgk
-   0xFWpxP/WTFrZJ1JcPsbl2Gw9csmR2tl0z+OfHLEbu6NDQIVuPXjxIuz7
-   qmGheCRHpldYwz5pWmCz+94XmaTlnCQdvpTTFwkq6NUdUpIF2DvvOytce
-   ir0lBd8sb1cBVJmXJVKobZN5SRvW5LNo8bf1uer7rPcnHI0qCIhGWpkxJ
-   hlzZyzQTvRDMcjCcw1fuHLBQZpm3PpcprmlzmEopoK8vbJ2cye0tqQ4ts
-   w==;
-X-CSE-ConnectionGUID: KGYk9emFTnayW8Uuww9jgg==
-X-CSE-MsgGUID: HnRZlMLSQMiGkWWKbucXPA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11535"; a="46184734"
-X-IronPort-AV: E=Sophos;i="6.18,217,1751266800"; 
-   d="scan'208";a="46184734"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2025 19:45:37 -0700
-X-CSE-ConnectionGUID: /4ScNcRITKSqPIE2vPc/cg==
-X-CSE-MsgGUID: V0Q8YWbHTeaLnerPbiCdZQ==
-X-ExtLoop1: 1
-Received: from fmsmsx901.amr.corp.intel.com ([10.18.126.90])
-  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2025 19:45:38 -0700
-Received: from FMSMSX903.amr.corp.intel.com (10.18.126.92) by
- fmsmsx901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 082621A9FB8
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 02:54:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756349702; cv=none; b=VezCPV928FMhlPEGKozqjTlvjkd+TAw/VI3mx8J0eViLTCwDG/d6POtggjcsJGcZoqMJoy9GZPACTBWVlMqKUuHiU8Xwi7LkM8mrxZ6oEHwvUr9R8sh/fOR+i6Ubun9+uoN3EyLd94ceP6e1/Xh5QtrU5s0STIeQ0NAql4M8Kk0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756349702; c=relaxed/simple;
+	bh=jrP5tsn75ZKmWcUJ6IrkqVA2DWJPtaGtNyFjOfvLCd4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=g4/F/ex1JsEtD+QLKo5Zz0Q254xBhCV0vBVLU5DZLfiJO2jsDiECKnwww5SsHOsuAhJxjZZ82GERo//mrB+Lr+elOCFNrUx0yKFS74MjfjKYDZON/vEq4m1Vo96YhcuKOuXXqmozJQGdZdLLLDE/r9Wtc/MQFXgtlK9POJLcaYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.234])
+	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4cC5d00hTzz27jHf;
+	Thu, 28 Aug 2025 10:56:04 +0800 (CST)
+Received: from dggemv706-chm.china.huawei.com (unknown [10.3.19.33])
+	by mail.maildlp.com (Postfix) with ESMTPS id 5C6AB14025A;
+	Thu, 28 Aug 2025 10:54:57 +0800 (CST)
+Received: from kwepemq500010.china.huawei.com (7.202.194.235) by
+ dggemv706-chm.china.huawei.com (10.3.19.33) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Wed, 27 Aug 2025 19:45:37 -0700
-Received: from fmsedg902.ED.cps.intel.com (10.1.192.144) by
- FMSMSX903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17 via Frontend Transport; Wed, 27 Aug 2025 19:45:37 -0700
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (40.107.236.78)
- by edgegateway.intel.com (192.55.55.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Wed, 27 Aug 2025 19:45:36 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=CTZ+wceZwCob63B7NwVrN0v/0qsjg8dBIEQqlQAQuBgeUD30Qc5vm50vPzrvuA5zNSGN0FhfeVxJfk49dFGDOx8CrEgpPqDX9/cAAwV9mDWfE5oVGR7uN9M+okv2QCo3IeQdA6vjF4yHw/UUuXBSYfY1td4Zg59XrFFOtmPiR715Tv5HP0WNufzQ9m4FPJ7mQgeidbkMWGCe9D1g03F5qIXA7uRVx1h13aHw32JRNSxq/+9nbB47hYXM+B90IIdSaov7BQA4hXVCM7u31wXeog12cHnRVSLHBxVenzFPepbVJZaPHQxxRQ3QrHdRTtP529y8ArMuUjP0KaNtW+DRNw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ifBUjMPlthVkMKpxg4mO+OixccY6lPYOJ1YXs21KPO4=;
- b=mcTp+wjrd18jGDMQb8KNrGwB5EP/ykg52Qh8qAfIOCbtM0vbtZouJYuIr+LgbYE77kV0XkNhERsE/B4c7nYtNQR8/DCoeNSmEkL+WjRJYE4NhaG1Ub6GQnW+7BPhccXTsucJ9vQlqVLWK92T0VnWC6Dptx8QGHrtkGQzoFYgRmHaPGr/jxgsCBiMEWk6OnaWWoatEK9+ELFwmkHCCYdRyb0Db4b89z7BEgo5pJIJK9r40BLh+ZZ9YkSvxP4MuMbAVYG8ma+pFZSqnBhc+MResyK4ihrJZSPQyM318ZzWHy3bX3NiGYLm5ypgyGCkjEbZITiD88KHhtl/4YE/d0kddA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from BL1PR11MB5525.namprd11.prod.outlook.com (2603:10b6:208:31f::10)
- by DM3PR11MB8757.namprd11.prod.outlook.com (2603:10b6:8:1af::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.21; Thu, 28 Aug
- 2025 02:45:18 +0000
-Received: from BL1PR11MB5525.namprd11.prod.outlook.com
- ([fe80::1a2f:c489:24a5:da66]) by BL1PR11MB5525.namprd11.prod.outlook.com
- ([fe80::1a2f:c489:24a5:da66%4]) with mapi id 15.20.9052.019; Thu, 28 Aug 2025
- 02:45:18 +0000
-From: "Huang, Kai" <kai.huang@intel.com>
-To: "pbonzini@redhat.com" <pbonzini@redhat.com>, "seanjc@google.com"
-	<seanjc@google.com>
-CC: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>, "kvm@vger.kernel.org"
-	<kvm@vger.kernel.org>, "Annapurve, Vishal" <vannapurve@google.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Zhao, Yan Y"
-	<yan.y.zhao@intel.com>, "michael.roth@amd.com" <michael.roth@amd.com>,
-	"Weiny, Ira" <ira.weiny@intel.com>
-Subject: Re: [RFC PATCH 05/12] KVM: TDX: Drop superfluous page pinning in
- S-EPT management
-Thread-Topic: [RFC PATCH 05/12] KVM: TDX: Drop superfluous page pinning in
- S-EPT management
-Thread-Index: AQHcFuaKhUXMa+FhXE2uQ+qsC925e7R3XcOA
-Date: Thu, 28 Aug 2025 02:45:18 +0000
-Message-ID: <7f01e35bab5334782e392b4ea3ecf0349a452797.camel@intel.com>
-References: <20250827000522.4022426-1-seanjc@google.com>
-	 <20250827000522.4022426-6-seanjc@google.com>
-In-Reply-To: <20250827000522.4022426-6-seanjc@google.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-user-agent: Evolution 3.56.2 (3.56.2-1.fc42) 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: BL1PR11MB5525:EE_|DM3PR11MB8757:EE_
-x-ms-office365-filtering-correlation-id: 83f9b938-ae3c-40de-2fc6-08dde5dceca4
-x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|376014|366016|1800799024|38070700018;
-x-microsoft-antispam-message-info: =?utf-8?B?ay9OR0l6UHNGelUxVlFIYzJrTEdFSEhVMldGQVZSTW8xcUdaMnFFV2JGN1Nn?=
- =?utf-8?B?T3A0c212SnUyVjNUUHc1OHl4cVFxMHVpYlRUVENxYUlFcitQRUVNL01EU0JC?=
- =?utf-8?B?ZW02SHhEK1p3YWlGRHdleEVhTzZuYnN1bWFNS0NZZ21IS3hiajlJeWZXN0xG?=
- =?utf-8?B?QytrRjZZUlNQazk0N1FMTS9oVWpERW1oSlBvVkRZWXZyQ21PaUV3UDdmTTdH?=
- =?utf-8?B?ZXQ2TElncDlqRjhRSklrTEpaeVRNOVRhTGJlcmxlaGNvY1dJOWpYR1VIY29W?=
- =?utf-8?B?KzNLbWNONFhPSmkxUkJkMnZTS0NtZzJuYVNUeDlvcWFCNnB2b0RpYUpOMTg0?=
- =?utf-8?B?WVUyRTdxU1JnbERTaFpiMTF2YzU3L1NFY2NrS2hqVmN6dDNTbUhLSWNQUUNS?=
- =?utf-8?B?SjFObWFUWmdvWTZqQkgxMmVRc1FTWWhta2FsQ25HRy8zZ2RoaU5EelVhRFRm?=
- =?utf-8?B?elJmMFRUR3VGZFArOEE3UTdmcmEvWmhWcktpZDBCVjlHbnc0ek1QV2ErSWNl?=
- =?utf-8?B?VndmUGNlcktOTlRrdGFCZ2FtNE8xWGFrVXcxT2hVNjdFcER5KzB0WGNlcXdK?=
- =?utf-8?B?YkkzTDZjb2NENkhEVy8rc0gya21Jek4vb0VsSHRhY1BLQ2J0MW5JY3lzcGNh?=
- =?utf-8?B?KzlzRGVjdzlmWDNaYmFvS283MHBnY0VsWHBrOXdTTlpaZHNGNzRRZ1A4dS9G?=
- =?utf-8?B?S1JNdmFadEFlZjBqdmpqV3pJenRvSVdiMUlvdVIxaVk2d1drZ211ek9obmZt?=
- =?utf-8?B?MXZRM01jMHRMenBJLzI0RzNIdWlGOUpQM3R6aEdjOU1QUTRGMjBFOTdYUkFm?=
- =?utf-8?B?WUlqU1pPMTJpb2ZhaXRoOHVEbW9WMlZ0ckRhc1ZzSkxhTzdERkZQSGtzQVJp?=
- =?utf-8?B?WDBFdUJNWTNVSHRqVm5JVW5nR2lKOGpaTkJ0SWUxZjI4RDdKZG5TSEZXMHAy?=
- =?utf-8?B?OStiQm9wc3gxcmlsc3RrQnJ4N2d4TUFMWTZrZ3hYR2h5dWUwVkhHS2wvTENS?=
- =?utf-8?B?aXBrREwrckhYUWY1Z09TWmhZaVhNMnZsWXR0MjNRTXBWdTdwL3RCUWV6NjZt?=
- =?utf-8?B?NVlWcmlScU9CdlFSNHkwNTgrM0QxSFFsL1N3OXVNUlBDeW5RY1JaSmZHOEJB?=
- =?utf-8?B?Ukl0STF1SGYyZFlrQk5QdFFvbzcvQUdsNXN1SnpnU3NGZzEwc1ZLOEtyTlI1?=
- =?utf-8?B?T29CQ3lpU3JISlNScUtYNitHTFZNV3NkTEVJNWgrWUJadml2NHFKUjhGSkE2?=
- =?utf-8?B?NVdFaDY4bE1Bcm5ZdEZUR0plbUkwdHB3cWhXSkRVbEVmZFVSSXhCbko4a1pl?=
- =?utf-8?B?ZjV6Qzh0MUVja1hKbGJscyt5S3FBYmQ0cFYyaEFEYy9jd1BXYU16U3BpUTFs?=
- =?utf-8?B?V2szQ1p3U1QrMHlIbWNOMHhjRzNQZlR3cXp1SVp1dDYwdmdqdnFwYkF6WUpM?=
- =?utf-8?B?Z08wUmdrbTFGaUxHditIK3FvZHErcTFqRnN4SXFTNllGSDQ3QVZrUXFKeTV0?=
- =?utf-8?B?Ujk0YXdoa2t1N2YwQVVYaS9LSkpyck94UXRZakJWazcxNGxaMDI5WDBqUmJv?=
- =?utf-8?B?SUJFaXo3OXBqbGV1Y1hESjhqRXRsK21XOVNmWnBETkJtcmRDSDJIS2FFNTVj?=
- =?utf-8?B?YWxoL2dVQzkzTU9UT2JFL2J0VjRvaTNORFRVRlNHRVN3NmNxcFlOWTdtYlJp?=
- =?utf-8?B?U2YvOG1QS1ZvbWY2SDBxK2cvWGZDKytpWGd0TzJINFAvTFN5a1R0TmdGZXd2?=
- =?utf-8?B?em5kUzQrNEFLRWRMWVVyWlA5SEg2YXQzTUxtbFpSQnJMNEY5U3h5OW96My9V?=
- =?utf-8?B?VEd2V1VZK2xpQ09pa1QzSkxPT3lkdnN6MCtIbHRuVEsrVGZrdUdxYmVIbm01?=
- =?utf-8?B?ckYwaW16S1Z0Y1gxeWFnUTdJc2JPdnNQV0lMeVdlaWRoSkhPUGRTMzA5dHkx?=
- =?utf-8?B?YjBnbFBHNlJMeFdqZWYwT2JsdzBkblZzVk9oSFo0Z2txbHVkRmZRTHdTN1dk?=
- =?utf-8?B?My9nYUxoN2FnPT0=?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR11MB5525.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?MnY4bEE4VkFiSjE2ZzFYRHVTd01WSFRZUit1Rm15SEgvS25JVTZjdnZPeUdx?=
- =?utf-8?B?WHRIbWpWWlBrUEE1WlZUMTk3bVZpcWJTd3Y2TWhrRVlEWHVrSkJYdkhqK0pr?=
- =?utf-8?B?UVpIVnBJZmFEYUdQdm5HM214OGVBUzR1eHR0c2hJMXdWcVlCUllrekE4ZSs2?=
- =?utf-8?B?SXp3THJCSGVmYkxZTWJqWHlvYS9Sa3B6NGsrNE4yOS8zV1FUd3pubVNENEVJ?=
- =?utf-8?B?dmpmRmQzdHl3RFhXSFMwZjI0NGlHanBJeHFZS01EMlRub0IzaXFzUkc3SVZm?=
- =?utf-8?B?VGhkdTE2aFpjNUtOMVlDWURwVkdqOWNXeVRyU0xzUkE1Nnd3eDdHVlVRZTFy?=
- =?utf-8?B?N1ppZFlpNndkeUQ1cWNIVVFtWUZwOUtiZjlSU0JwZW52eTRTblN2bkNuWDg3?=
- =?utf-8?B?WDFNMnFERklwb29GRS9jbjZ5Vmpnc2Q2ZzRET3NTTDU5ZEE2QWplUEZWdHdq?=
- =?utf-8?B?bUFSRGZHcWV0czlOU21aUDJTUGhWK1FaaFBIZGorZlE3cGRicm1BL1U2bXc4?=
- =?utf-8?B?MytvQXBZMjRZTktyZUQwbUNrSzVFcnU1eEpFMnZhT0lHbHdBeWx2TEptZmQx?=
- =?utf-8?B?ZWpacUZxSWNPb1FRQUZXYnNPMDBhVG9vM0hraTJFendRQXVqM3hLU2duQ1J6?=
- =?utf-8?B?ZlpEUk9saFBzZXZ5Z1JxTm1wTmJ0NEFMUEhpR29MdXdSY01FMW5qVFk0UzNZ?=
- =?utf-8?B?ZmhORFVWY2pFcUlwSHpuaFdWR1hCTnkzMFhyeldsSUE5ZmRLRCtxL2F5VDhQ?=
- =?utf-8?B?RDN2VmFtSGtZRWUwZHRxTG52Q01FdkljdGR0MEorS1NGNk9oQVZvd1V0cExC?=
- =?utf-8?B?K3RJMEhTcHlNdVdwSDJRTEZQalhwTGNLcXArTXBtM2ltbnBtWmkyUklweDZU?=
- =?utf-8?B?Mmljd01XekpKNHpZMzRVRHAzNHhvVHBUS2pGL3R3K2ZkWkVvUzI0NTN2Z3Yr?=
- =?utf-8?B?eE90T2M5enpLdTYvalB5bjAvYlptZWNReFdWbE9yeTh4bWlVTERibGRCOGt0?=
- =?utf-8?B?MVg5SXhycHNDaHZ3elpZMUw0NG5vTkJRbDNSRGRBOEFFVlRJN3FEVld0V3VV?=
- =?utf-8?B?OHNnMTdvVHlHeXBTZk1jUjNkeENDdllPNlJicXBNTVdvL2tIU0Z1SytIVGts?=
- =?utf-8?B?UXZsT09oZlFNQnZFYmo5eWtzWGora2ZGbTZRQStjWlJWUHZzZWhMZnA4RXYv?=
- =?utf-8?B?c0VhVElJbTlZaFlsMktWMDUrWllvdER6YXFYdmFrOXpzTWRXRFlhYUNOMHBU?=
- =?utf-8?B?S3NNTXp6MnB0Y3RlWXRza0haZU1zT3BNL1JSQVJ2MTVjK0lsWkJWQnV4Zi9X?=
- =?utf-8?B?MHN2OHpnREFUZ1hrTWdIVWZldVhNZ2Rzc3JLWDhrb0JBTTdETnAvVlIxNEhx?=
- =?utf-8?B?UXFoT21oY1g5NGtNKzZYZE55czNOdDZEZytUUCsyak1SRFA4TFVmVVh4M3lr?=
- =?utf-8?B?VGpJL3JFM2Z5eGdwSnVSS3pTNXdNVkZmR3MxQUJyeFpkUG43K1E5T1k5QkZn?=
- =?utf-8?B?OEpzYk5YV28vd3FkcWJOUFNCeDhTcTRKb0tKbUxpZHlraTRGblJMRnczQk5Y?=
- =?utf-8?B?QUpNRjh5OW5ueTE0QzUwRTlCTEhEUEJNc0N0NXR6cWY4T1c0VURkMzd3NzJh?=
- =?utf-8?B?K2w0enlUNWg5dWgxVDF4aGhESXJiUnY0Zk4ybHdUeDQ0endpYzNJSUZ1VGlB?=
- =?utf-8?B?NEU4aVR5SDdEK25GVTVYZ25BVUVDbnNXSmozenA1eEx6b1U0bC9ydVYrR2F0?=
- =?utf-8?B?TWZUL3BCK04rNmJ5TGRncGVjMGQ4cGpORGgrdmVWbFRPYjc1YVloUC9xWWlr?=
- =?utf-8?B?N3VOVWYrQlZUZlh6b1RUNE52Q2t0cFF4Tzd3dGduVzE4ajFFMWNBRWZsQ3dL?=
- =?utf-8?B?QnhnZm9SbHFlY1NnclFRTW1paTZYUEVPUVZMNEdGWGt4TmZ1NUIxNmh4MkFN?=
- =?utf-8?B?MlI2TlZmOGNLUHJQUHFpWktiMVdzMkRqOXN6MUxYMm5tSis0WEtIZ1VUL3Na?=
- =?utf-8?B?dWlsN3FIbXRZcGNxVWdOajVVOEpIQVNNQnZtVEZQSkdSZFgreTQxS1BlcC9Y?=
- =?utf-8?B?a04wOWp6U0ZISGJpMk1oZDNqbVA3anJlbEorcnFCZ3I4RWpLVVlkL3d2NE1Z?=
- =?utf-8?Q?deK3TnIQhyniq0RPFaJdBz6ia?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <D51BE9D19F9FE84D8A11A6E38529D7E2@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+ 15.2.1544.11; Thu, 28 Aug 2025 10:54:57 +0800
+Received: from huawei.com (10.173.125.236) by kwepemq500010.china.huawei.com
+ (7.202.194.235) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 28 Aug
+ 2025 10:54:56 +0800
+From: Miaohe Lin <linmiaohe@huawei.com>
+To: <akpm@linux-foundation.org>
+CC: <david@redhat.com>, <nao.horiguchi@gmail.com>, <linmiaohe@huawei.com>,
+	<linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v4] mm/memory-failure: fix VM_BUG_ON_PAGE(PagePoisoned(page)) when unpoison memory
+Date: Thu, 28 Aug 2025 10:46:18 +0800
+Message-ID: <20250828024618.1744895-1-linmiaohe@huawei.com>
+X-Mailer: git-send-email 2.33.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BL1PR11MB5525.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 83f9b938-ae3c-40de-2fc6-08dde5dceca4
-X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Aug 2025 02:45:18.1758
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: v1Rslcp4zIxG0U0FEnojAjfGnKGSL7GLW4jAutlPV1YpMSOCGF7qXW6GaWcOiIC/118ldHfBAmYxGxlbJnRpiQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM3PR11MB8757
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
+ kwepemq500010.china.huawei.com (7.202.194.235)
 
-T24gVHVlLCAyMDI1LTA4LTI2IGF0IDE3OjA1IC0wNzAwLCBTZWFuIENocmlzdG9waGVyc29uIHdy
-b3RlOg0KPiBEb24ndCBleHBsaWNpdGx5IHBpbiBwYWdlcyB3aGVuIG1hcHBpbmcgcGFnZXMgaW50
-byB0aGUgUy1FUFQsIGd1ZXN0X21lbWZkDQo+IGRvZXNuJ3Qgc3VwcG9ydCBwYWdlIG1pZ3JhdGlv
-biBpbiBhbnkgY2FwYWNpdHksIGkuZS4gdGhlcmUgYXJlIG5vIG1pZ3JhdGUNCj4gY2FsbGJhY2tz
-IGJlY2F1c2UgZ3Vlc3RfbWVtZmQgcGFnZXMgKmNhbid0KiBiZSBtaWdyYXRlZC4gIFNlZSB0aGUg
-V0FSTiBpbg0KPiBrdm1fZ21lbV9taWdyYXRlX2ZvbGlvKCkuDQo+IA0KPiBTaWduZWQtb2ZmLWJ5
-OiBTZWFuIENocmlzdG9waGVyc29uIDxzZWFuamNAZ29vZ2xlLmNvbT4NCj4gDQoNClJldmlld2Vk
-LWJ5OiBLYWkgSHVhbmcgPGthaS5odWFuZ0BpbnRlbC5jb20+DQo=
+When I did memory failure tests, below panic occurs:
+
+page dumped because: VM_BUG_ON_PAGE(PagePoisoned(page))
+kernel BUG at include/linux/page-flags.h:616!
+Oops: invalid opcode: 0000 [#1] PREEMPT SMP NOPTI
+CPU: 3 PID: 720 Comm: bash Not tainted 6.10.0-rc1-00195-g148743902568 #40
+RIP: 0010:unpoison_memory+0x2f3/0x590
+RSP: 0018:ffffa57fc8787d60 EFLAGS: 00000246
+RAX: 0000000000000037 RBX: 0000000000000009 RCX: ffff9be25fcdc9c8
+RDX: 0000000000000000 RSI: 0000000000000027 RDI: ffff9be25fcdc9c0
+RBP: 0000000000300000 R08: ffffffffb4956f88 R09: 0000000000009ffb
+R10: 0000000000000284 R11: ffffffffb4926fa0 R12: ffffe6b00c000000
+R13: ffff9bdb453dfd00 R14: 0000000000000000 R15: fffffffffffffffe
+FS:  00007f08f04e4740(0000) GS:ffff9be25fcc0000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000564787a30410 CR3: 000000010d4e2000 CR4: 00000000000006f0
+Call Trace:
+ <TASK>
+ unpoison_memory+0x2f3/0x590
+ simple_attr_write_xsigned.constprop.0.isra.0+0xb3/0x110
+ debugfs_attr_write+0x42/0x60
+ full_proxy_write+0x5b/0x80
+ vfs_write+0xd5/0x540
+ ksys_write+0x64/0xe0
+ do_syscall_64+0xb9/0x1d0
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f08f0314887
+RSP: 002b:00007ffece710078 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 0000000000000009 RCX: 00007f08f0314887
+RDX: 0000000000000009 RSI: 0000564787a30410 RDI: 0000000000000001
+RBP: 0000564787a30410 R08: 000000000000fefe R09: 000000007fffffff
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000009
+R13: 00007f08f041b780 R14: 00007f08f0417600 R15: 00007f08f0416a00
+ </TASK>
+Modules linked in: hwpoison_inject
+---[ end trace 0000000000000000 ]---
+RIP: 0010:unpoison_memory+0x2f3/0x590
+RSP: 0018:ffffa57fc8787d60 EFLAGS: 00000246
+RAX: 0000000000000037 RBX: 0000000000000009 RCX: ffff9be25fcdc9c8
+RDX: 0000000000000000 RSI: 0000000000000027 RDI: ffff9be25fcdc9c0
+RBP: 0000000000300000 R08: ffffffffb4956f88 R09: 0000000000009ffb
+R10: 0000000000000284 R11: ffffffffb4926fa0 R12: ffffe6b00c000000
+R13: ffff9bdb453dfd00 R14: 0000000000000000 R15: fffffffffffffffe
+FS:  00007f08f04e4740(0000) GS:ffff9be25fcc0000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000564787a30410 CR3: 000000010d4e2000 CR4: 00000000000006f0
+Kernel panic - not syncing: Fatal exception
+Kernel Offset: 0x31c00000 from 0xffffffff81000000 (relocation range: 0xffffffff80000000-0xffffffffbfffffff)
+---[ end Kernel panic - not syncing: Fatal exception ]---
+
+The root cause is that unpoison_memory() tries to check the PG_HWPoison
+flags of an uninitialized page. So VM_BUG_ON_PAGE(PagePoisoned(page)) is
+triggered. This can be reproduced by below steps:
+1.Offline memory block:
+ echo offline > /sys/devices/system/memory/memory12/state
+2.Get offlined memory pfn:
+ page-types -b n -rlN
+3.Write pfn to unpoison-pfn
+ echo <pfn> > /sys/kernel/debug/hwpoison/unpoison-pfn
+
+This scene can be identified by pfn_to_online_page() returning NULL.
+And ZONE_DEVICE pages are never expected, so we can simply fail if
+pfn_to_online_page() == NULL to fix the bug.
+
+Fixes: f1dd2cd13c4b ("mm, memory_hotplug: do not associate hotadded memory to zones until online")
+Suggested-by: David Hildenbrand <david@redhat.com>
+Signed-off-by: Miaohe Lin <linmiaohe@huawei.com>
+---
+v2:
+  Use pfn_to_online_page per David. Thanks.
+v3:
+  Simply fail if pfn_to_online_page() == NULL per David. Thanks.
+v4:
+  Add Fixes tag and remove pfn_valid check per David. Thanks.
+---
+ mm/memory-failure.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
+
+diff --git a/mm/memory-failure.c b/mm/memory-failure.c
+index c15ffee7d32b..4af8875b07b6 100644
+--- a/mm/memory-failure.c
++++ b/mm/memory-failure.c
+@@ -2569,10 +2569,9 @@ int unpoison_memory(unsigned long pfn)
+ 	static DEFINE_RATELIMIT_STATE(unpoison_rs, DEFAULT_RATELIMIT_INTERVAL,
+ 					DEFAULT_RATELIMIT_BURST);
+ 
+-	if (!pfn_valid(pfn))
+-		return -ENXIO;
+-
+-	p = pfn_to_page(pfn);
++	p = pfn_to_online_page(pfn);
++	if (!p)
++		return -EIO;
+ 	folio = page_folio(p);
+ 
+ 	mutex_lock(&mf_mutex);
+-- 
+2.33.0
+
 
