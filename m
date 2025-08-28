@@ -1,78 +1,73 @@
-Return-Path: <linux-kernel+bounces-789812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30A62B39B01
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 13:06:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29196B39B03
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 13:07:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66B341884A06
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 11:07:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F34B3360510
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 11:07:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3227530C624;
-	Thu, 28 Aug 2025 11:06:41 +0000 (UTC)
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F17C530DD11;
+	Thu, 28 Aug 2025 11:07:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="x9GfOVyw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23B742459E1
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 11:06:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42C141F4CAF;
+	Thu, 28 Aug 2025 11:07:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756379200; cv=none; b=Di4ECfnJnr6KN0gzcLlUFWfGNzFlUjrzaucofmxDGspwUSv8rPzpIMT25QUKQqgxL61HdvY+biM7Fsw2pi+ZTiLFPeK9XAiBA8COOf+FHFv2mz4k//2eznp12Xjm0BvI/fKE4N/tVwHf9Fc684O7Yti1Qe1TDXYODqIkbsbLunw=
+	t=1756379235; cv=none; b=U/AzuM8eaDXzZwE9e7Pg5SV2RF2X9itSw1/Yt9BWd3tlyI4G7aDvoC9b0Mzs74aBFo1GElu5Pgq4gUeXRj83skwBhO2i2w11kelh3bAvFqt35tewebq9Y5Ca+pJzjHkecKNt3tvj2Zju5fKbWOlDklfeU3U2C/qDCTpFPLPz9zo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756379200; c=relaxed/simple;
-	bh=Nas3Yc0d+xnRKeHP94h5sYkVeRl3KlV0gfHSlr8sc74=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aYGRTvdGCU72VNWpStR/4DH3USVr6r3ylphsO7z+XTFHoZNUu7lT/9vAHfp+h0CAvB7tNG1IlJpvNHKe4jJjFg8CP0SLgE+z+FoiZdl+MVlfuonfmde3hpIfy7qX+vzFUmexSJxNF/7CdadLoIOaCl3JatzgQKVkQS8CY/yMxzE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 57SB6TST092890;
-	Thu, 28 Aug 2025 20:06:29 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from [192.168.1.10] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 57SB6TbS092886
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Thu, 28 Aug 2025 20:06:29 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <2a58b0b4-1c67-46d2-9c2a-fce3d26fc846@I-love.SAKURA.ne.jp>
-Date: Thu, 28 Aug 2025 20:06:29 +0900
+	s=arc-20240116; t=1756379235; c=relaxed/simple;
+	bh=Azv4ohzdARRa6uGnEwoC67fTOgWZYWIdsIJ0un0crY8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lfaTfLRaYvm4azL2GB4iL6wQtbiMcbIe3kzmnX6Nkg+okkIzew/9qXISzzSEv6UaF1cTr1Ewc47RhKyPvCSigccsPk3qsgB1mJsegHTGsqr0IGmfNNQl+ohj/X9Mncn9Dp2OrxOv69Raw67CDOIVsp5TtJDwEwBZ8LMhE0X0Hsc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=x9GfOVyw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51D4FC4CEEB;
+	Thu, 28 Aug 2025 11:07:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1756379234;
+	bh=Azv4ohzdARRa6uGnEwoC67fTOgWZYWIdsIJ0un0crY8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=x9GfOVywmxB9/ON3yP/7Nwe8fxbQ4c8L9ew5jaUjqwOKsnn3qfPjrSdEByU5MrLDh
+	 VmlLpLj87G5QnToxvmV4odDEiqtD1tiDCclortx+iYZ+TuMgcr9hQQTum3Xefcwvpv
+	 CU1DQYGUlQp2g/HPF35LEqdLnEIZ4s9m6btIHYCY=
+Date: Thu, 28 Aug 2025 13:07:11 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Linux PM <linux-pm@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Danilo Krummrich <dakr@kernel.org>
+Subject: Re: [PATCH v1 0/2] driver core/PM: Two updates related to power.no_pm
+Message-ID: <2025082851-progress-unsliced-ade4@gregkh>
+References: <12749467.O9o76ZdvQC@rafael.j.wysocki>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [net?] WARNING in xfrm_state_fini (3)
-To: Sabrina Dubroca <sd@queasysnail.net>,
-        Steffen Klassert <steffen.klassert@secunet.com>
-Cc: syzbot <syzbot+6641a61fe0e2e89ae8c5@syzkaller.appspotmail.com>,
-        davem@davemloft.net, edumazet@google.com, herbert@gondor.apana.org.au,
-        horms@kernel.org, kuba@kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, pabeni@redhat.com,
-        syzkaller-bugs@googlegroups.com
-References: <6888736f.a00a0220.b12ec.00ca.GAE@google.com>
- <aIiqAjZzjl7uNeSb@gauss3.secunet.de> <aIisBdRAM2vZ_VCW@krikkit>
-Content-Language: en-US
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <aIisBdRAM2vZ_VCW@krikkit>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Anti-Virus-Server: fsav405.rs.sakura.ne.jp
-X-Virus-Status: clean
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <12749467.O9o76ZdvQC@rafael.j.wysocki>
 
-syzbot is still hitting this problem. Please check.
-
-On 2025/07/29 20:09, Sabrina Dubroca wrote:
->> Hi Sabrina, your recent ipcomp patches seem to trigger this issue.
->> At least reverting them make it go away. Can you please look
->> into this?
+On Thu, Aug 28, 2025 at 12:55:50PM +0200, Rafael J. Wysocki wrote:
+> Hi All,
 > 
-> I haven't looked at the other reports yet, but this one seems to be a
-> stupid mistake in my revert patch. With these changes, the syzbot
-> repro stops splatting here:
+> Applying this series will cause power.no_pm to be set for faux devices (so they
+> don't get processed unnecessarily during system-wide suspend/resume transitions)
+> and power.no_callbacks to be set along with power.no_pm (for consistency).
+
+Oh, nice!  I forgot about that entirely.  Should these be backported to
+older kernels as well?
+
+thanks,
+
+greg k-h
 
