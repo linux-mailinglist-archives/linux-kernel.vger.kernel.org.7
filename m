@@ -1,139 +1,130 @@
-Return-Path: <linux-kernel+bounces-790713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790747-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E366B3AC14
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 22:54:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3807B3AC7F
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 23:08:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C0643A289A
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 20:54:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6BD1188F377
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 21:08:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCFCA29D280;
-	Thu, 28 Aug 2025 20:54:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sCjN9TPm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDCFB2C2356;
+	Thu, 28 Aug 2025 21:07:32 +0000 (UTC)
+Received: from lankhorst.se (lankhorst.se [141.105.120.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07495223DDD;
-	Thu, 28 Aug 2025 20:54:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DEFE285042;
+	Thu, 28 Aug 2025 21:07:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.105.120.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756414482; cv=none; b=o27mp3fSJ7+lhArDJEfixvWqnu9kJ5R28lVrlDvH5JnANODNuOHJ/M8XqMstnx3+u7pZ09TapZXqOdJpdkOR5T+LhptjT0sYmKFj2SghSndic4OvAu3iQRpmXCXvWU9Acc9htSde+FBaZ8KHpptfWaSIYLELYRkPj2lqQwZy7ys=
+	t=1756415252; cv=none; b=KFXNUQgTh61Skgt40jrQahCS/EnVCe9Rh44LhPg2y/CIfGmry9+tROGia9gai5BEQd1whcjYowb1rdSx0FHWjo+7j9lPOib+tlI/yq7yFGF3hWWqoej8y7ikmSrfrqjRzs2Mvivl9Q7GYe6JVRJys23fUbcu6X8Cvm6KWRDc/yI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756414482; c=relaxed/simple;
-	bh=G+6sPUUIFuKNkRdpDGh7oyzJRLExx6mM3Rr0TsrNav4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UJW2k16/lx3tF73mcM3NJo3nTqKqXeeoz6Un3pBSVZoeHksTZ5pOD27trkunvUBkmh6qw6Q/bF+ky/y2+I71iVzUPmp3NAov6uJ9KwqqYGjzoInKW/Afx/l0OsyPCJ77N1t+HjnMXmCm9JqIwj7KxhqAFsS7UA3p8s55i2f0I70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sCjN9TPm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF632C4CEEB;
-	Thu, 28 Aug 2025 20:54:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756414481;
-	bh=G+6sPUUIFuKNkRdpDGh7oyzJRLExx6mM3Rr0TsrNav4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sCjN9TPmsmkv2CErZmw7eY4jhfo/PPQcCij3sdHoAaturic23UjSbV5/eD841QBrO
-	 q5lqa5UXldETsQDMVxoOfW90mr401cd2aNU4qwzO6IO/5MHaurrX5r01OojjZShQEf
-	 15Kqtld44h3aDOleBeJLOpcwjkQTTYAEhyrx8SC3goTrfnxyjVjHpigzIsE/EQK5r7
-	 FqO3qkArHFFA2cKutZwYB5+zz+dbLtckQEfa3MaBKs+Sg/PNA0jXRALMJBXOlqNLWJ
-	 BYklmKx3JSZ1NevsWbUBFS2Jp771ITiW6KubcU3EOHWT7p/JyrZiu2Mj04cW80QHY7
-	 3fGPgcRndIPdQ==
-Date: Thu, 28 Aug 2025 14:54:35 -0600
-From: Keith Busch <kbusch@kernel.org>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Leon Romanovsky <leon@kernel.org>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Abdiel Janulgue <abdiel.janulgue@gmail.com>,
-	Alexander Potapenko <glider@google.com>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Christoph Hellwig <hch@lst.de>, Danilo Krummrich <dakr@kernel.org>,
-	iommu@lists.linux.dev, Jason Wang <jasowang@redhat.com>,
-	Jens Axboe <axboe@kernel.dk>, Joerg Roedel <joro@8bytes.org>,
-	Jonathan Corbet <corbet@lwn.net>, Juergen Gross <jgross@suse.com>,
-	kasan-dev@googlegroups.com, linux-block@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, linux-nvme@lists.infradead.org,
-	linuxppc-dev@lists.ozlabs.org, linux-trace-kernel@vger.kernel.org,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>, rust-for-linux@vger.kernel.org,
-	Sagi Grimberg <sagi@grimberg.me>,
-	Stefano Stabellini <sstabellini@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	virtualization@lists.linux.dev, Will Deacon <will@kernel.org>,
-	xen-devel@lists.xenproject.org
-Subject: Re: [PATCH v4 15/16] block-dma: properly take MMIO path
-Message-ID: <aLDCC4rXcIKF8sRg@kbusch-mbp>
-References: <cover.1755624249.git.leon@kernel.org>
- <642dbeb7aa94257eaea71ec63c06e3f939270023.1755624249.git.leon@kernel.org>
- <aLBzeMNT3WOrjprC@kbusch-mbp>
- <20250828165427.GB10073@unreal>
- <aLCOqIaoaKUEOdeh@kbusch-mbp>
- <20250828184115.GE7333@nvidia.com>
- <aLCpqI-VQ7KeB6DL@kbusch-mbp>
- <20250828191820.GH7333@nvidia.com>
+	s=arc-20240116; t=1756415252; c=relaxed/simple;
+	bh=uO8jgO/nSSx1bAtQ93QecmELTMmAXdhO/BSn7C+isFg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kVGke8Sy/j1oaKabDgmbYkZy0ZDjqIoinJQIsyRXJgNZ2RVsJehFjAka88rjaryRMi+NkiSE9Gf+u2DQ5+QMIRp1CA0vDgGBzRP7+4vdQcsHnZqHUXLXp6p7SihMKqUI9WcvCy2uK/fIn3KdrVDuHv/ztLKDhkQeA8hVnk4H9KE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lankhorst.se; spf=pass smtp.mailfrom=lankhorst.se; arc=none smtp.client-ip=141.105.120.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lankhorst.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lankhorst.se
+Message-ID: <a85dd557-9dd8-472d-806c-3606b053cfdb@lankhorst.se>
+Date: Thu, 28 Aug 2025 22:58:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250828191820.GH7333@nvidia.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC 0/3] cgroups: Add support for pinned device memory
+To: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>
+Cc: Lucas De Marchi <lucas.demarchi@intel.com>,
+ =?UTF-8?Q?=27Thomas_Hellstr=C3=B6m=27?= <thomas.hellstrom@linux.intel.com>,
+ Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Maxime Ripard <mripard@kernel.org>,
+ Natalie Vock <natalie.vock@gmx.de>, Tejun Heo <tj@kernel.org>,
+ Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>,
+ Roman Gushchin <roman.gushchin@linux.dev>,
+ Shakeel Butt <shakeel.butt@linux.dev>, Muchun Song <muchun.song@linux.dev>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ David Hildenbrand <david@redhat.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ "'Liam R . Howlett'" <Liam.Howlett@oracle.com>,
+ Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+ Suren Baghdasaryan <surenb@google.com>,
+ Thomas Zimmermann <tzimmermann@suse.de>, Michal Hocko <mhocko@suse.com>,
+ intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, linux-mm@kvack.org
+References: <20250819114932.597600-5-dev@lankhorst.se>
+ <qd3ioegpvmrrrwdy2qntxznyrnwq3bhe74lmuxio7sy4sjggtt@tm6nqds3pyvj>
+Content-Language: en-US
+From: Maarten Lankhorst <dev@lankhorst.se>
+In-Reply-To: <qd3ioegpvmrrrwdy2qntxznyrnwq3bhe74lmuxio7sy4sjggtt@tm6nqds3pyvj>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Aug 28, 2025 at 04:18:20PM -0300, Jason Gunthorpe wrote:
-> On Thu, Aug 28, 2025 at 01:10:32PM -0600, Keith Busch wrote:
-> > 
-> > Data and metadata are mapped as separate operations. They're just
-> > different parts of one blk-mq request.
+Hey,
+
+Den 2025-08-26 kl. 16:20, skrev Michal Koutný:
+> Hello Maarten.
 > 
-> In that case the new bit leon proposes should only be used for the
-> unmap of the data pages and the metadata unmap should always be
-> unmapped as CPU?
+> On Tue, Aug 19, 2025 at 01:49:33PM +0200, Maarten Lankhorst <dev@lankhorst.se> wrote:
+>> Implementation details:
+>>
+>> For each cgroup up until the root cgroup, the 'min' limit is checked
+>> against currently effectively pinned value. If the value will go above
+>> 'min', the pinning attempt is rejected.
+> 
+> How is pinning different from setting a 'min' limit (from a user
+> perspective)?
+It's related, in fact you have to set the 'min' limit first.
 
-The common path uses host allocated memory to attach integrity metadata,
-but that isn't the only path. A user can attach their own metadata with
-nvme passthrough or the recent io_uring application metadata, and that
-could have been allocated from anywhere.
+The 'pinned' allows you to pick /which/ memory falls under the 'min' limit.
 
-In truth though, I hadn't tried p2p metadata before today, and it looks
-like bio_integrity_map_user() is missing the P2P extraction flags to
-make that work. Just added this patch below, now I can set p2p or host
-memory independently for data and integrity payloads:
+>>
+>> Pinned memory is handled slightly different and affects calculating
+>> effective min/low values. Pinned memory is subtracted from both,
+>> and needs to be added afterwards when calculating.
+>>
+>> This is because increasing the amount of pinned memory, the amount of
+>> free min/low memory decreases for all cgroups that are part of the
+>> hierarchy.
+> 
+> What is supposed to happen with pinned memory after cgroup removal?
+I think for accounting purposes pinned memory stays pinned,
+otherwise the idea of pinning is lost. However when you kill all
+processes in the cgroup, that should solve itself eventually.
 
----
-diff --git a/block/bio-integrity.c b/block/bio-integrity.c
-index 6b077ca937f6b..cf45603e378d5 100644
---- a/block/bio-integrity.c
-+++ b/block/bio-integrity.c
-@@ -265,6 +265,7 @@ int bio_integrity_map_user(struct bio *bio, struct iov_iter *iter)
- 	unsigned int align = blk_lim_dma_alignment_and_pad(&q->limits);
- 	struct page *stack_pages[UIO_FASTIOV], **pages = stack_pages;
- 	struct bio_vec stack_vec[UIO_FASTIOV], *bvec = stack_vec;
-+	iov_iter_extraction_t extraction_flags = 0;
- 	size_t offset, bytes = iter->count;
- 	unsigned int nr_bvecs;
- 	int ret, nr_vecs;
-@@ -286,7 +287,12 @@ int bio_integrity_map_user(struct bio *bio, struct iov_iter *iter)
- 	}
- 
- 	copy = !iov_iter_is_aligned(iter, align, align);
--	ret = iov_iter_extract_pages(iter, &pages, bytes, nr_vecs, 0, &offset);
-+
-+	if (blk_queue_pci_p2pdma(q))
-+		extraction_flags |= ITER_ALLOW_P2PDMA;
-+
-+	ret = iov_iter_extract_pages(iter, &pages, bytes, nr_vecs,
-+					extraction_flags, &offset);
- 	if (unlikely(ret < 0))
- 		goto free_bvec;
- 
---
+> I find the page_counter changes little bit complex without understanding
+> of the difference between min and pinned. Should this be conceptually
+> similar to memory.stat:unevictable? Or rather mlock(2)? So far neither
+> of those needed interaction with min/low values (in memcg).
+You could in theory implement mlockall using the 'min' values too.
+
+The page counter changes implement the following:
+
+Lets say you have this tree with 'min' values.
+
+      / '5' A
+X'6' -- '5' B
+      \ '5' C
+
+Effective min without pinned pages:
+      / '2' A
+X'6' -- '2' B
+      \ '2' C
+
+Now 'B' pins 3 pages:
+
+Effective min:
+         / '1' A
+X'3+3p' -- '1' B (1 + 3 pinned pages makes effective min 4)
+         \ '1' C
+
+Same for applies to effective 'low' calculations.
+
+Kind regards,
+~Maarten
+
 
