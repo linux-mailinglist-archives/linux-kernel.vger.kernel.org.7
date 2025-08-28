@@ -1,309 +1,258 @@
-Return-Path: <linux-kernel+bounces-789714-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789715-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04057B39994
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 12:23:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55BBCB3998C
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 12:22:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2A3407B2D1D
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 10:20:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F4CC189C2DD
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 10:23:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACC5F30BB81;
-	Thu, 28 Aug 2025 10:22:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7956330ACFF;
+	Thu, 28 Aug 2025 10:22:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="icFu/Zru"
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gbi5VxGH"
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2870930ACFA
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 10:22:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 942E126561D
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 10:22:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756376538; cv=none; b=jimxPiG3YPmKaIQDuMjiq0q8Ow/Afk9XwcvdP+wiD2qkcDugd8ydDnFXjDRQ4MZqd/e8GPL4tOioCxxDu/t6bCSyZFJ9ODQvMVWe3taX5pY9mkH56vI3iAhXx+act9oRJSebm1apsneZ3vazD8trf9n1WAlSYt/yE8gcFeVeoAQ=
+	t=1756376558; cv=none; b=raZ4E1PZQh0ypIRVCIkQV/yov7f4QiLYX0pdtaqDy5mfIHXX7ZC7uIODNRYnB6u8dvCq8vS4je89SCp2kSKVK376oWzo0zutkB4MU5rXx0gAdY3DtEPd7fIEi+q/M35QpmbxjS6n8nZBwoFbo8fmCjC7czGTYa3uvW0xsd54nUc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756376538; c=relaxed/simple;
-	bh=FtKlDX1cC88prd0nVVZDQ8wnFvM762DE57wJ6XlZHQg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fJvdg8ZSwuGH0IHXA9uLMzpNTVBqzMyWjdvI9u78vQ9Ev9jjdmEM+Bv2kUxFwd6xOWefY2j1dvSatf55Fey8v/SsBPLDwAvAQAWXnPDGdArIYHasNIx7IMZsJQNcToettEOB5igLj/2meE568rK/E3lutkZ1E5jjKB3h69g3wO8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=icFu/Zru; arc=none smtp.client-ip=209.85.160.170
+	s=arc-20240116; t=1756376558; c=relaxed/simple;
+	bh=GXtJm8Sqq8CakQQvfcS8jAZmx42AgbMq8RzCkNfALNc=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=ucxRsTuG/+KhJebIoetIEf8vE1qLg7sez6iDHeN61we12WnU36sh7JbNBpyuqytNT3E1LaKeCKfvkcQBu/y5yY0N0Qz+ChAqQdUiveUb8pfHHBhqi7zKs44NUNzYaJik3YOclYVmSw6keP74BMCxLkqtWml0NYWaPM8/l32IV9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gbi5VxGH; arc=none smtp.client-ip=209.85.128.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4b2f497c230so305661cf.0
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 03:22:15 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-45a1b0b14daso4604435e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 03:22:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756376535; x=1756981335; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=zAt+br+G9Lon3yOcD2uCT+F1HP2hGvD0BFIJ9EDkS/w=;
-        b=icFu/Zrupc4MpC4ulYgyL+DJ+DLSDkt9iV+NrrvKH5jwz2IE145sj347VL1MlW5t96
-         9Y29JiwUSY2U7gQDytet+gViF4GTzqF+B7ZYxeM7LmnOiwG+5/h971Ha0nxpv4yA7vgG
-         CDCKU6umlc0eJACUDRUEUaSrslttXioulIYp1fJcPUJ2OcR1HvrwtDBnNvHM/Fr8cTjc
-         P1lvae5yzBnM0FV6YfH+q5w7Zbx8b7Eu3oKeSORHr3nSIbsidQYDhmEr1TSz0oqx/Pss
-         P+GURGPmX0kvsFV71ssql3LZCiHF3L03pO7sOzsrGkg5v17CXXAXl75nZqzZT6C32sbq
-         +y/Q==
+        d=google.com; s=20230601; t=1756376555; x=1756981355; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=U8yCAI700QoeD0KjAlm516eTIXfj/D0G5f0Bt5v0978=;
+        b=gbi5VxGHPhBed6EaYFqRWYJrs4OBSvPOxIi7Geu7qsHt6FWRDzTVS+p+Y4B/QP1+wt
+         NAq9bcuLjYV5x6i4X3fzNCRPRTj8YCsAsJFrwzG+HD5YzCIubqbMKJuBTVLQXj5vlIoG
+         5XRApqUYGDczg0EdElKzo/NA7isg0X+TsPwuxvN+Oq3ycDsRIx49hC+BFpSMExMsQQTi
+         IyNU81z33Y8vgLHIv5c+28aCux2x4SLZzm0MbQrCFA34CS788HY9QvKBhRNWajXZ7sc8
+         MOD9zTtMVNQGIhp7Kk9EPdVa+67uIz2whTc8jLk9hqHZK7ZkTleZt7bfU7Vq+q8wq1Fo
+         8V8g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756376535; x=1756981335;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zAt+br+G9Lon3yOcD2uCT+F1HP2hGvD0BFIJ9EDkS/w=;
-        b=Oof4orO4MqQqOCNyROAXPUz4Ebp6wFV/BcT9117cnadRiKqqE6N/xp/4mugW2RkS4J
-         phzwDiG88WsC5UMOHzmKq27DZgDeI6LFSumzZxsu1ok0A6JXxdXej5nwyFPv+uWrUuUj
-         hyrSeeuY23E0V4dgAyHODs3rh11OojI+kshkGOUltBHpWzcPGM5C4+N9s3/nw+d1f0ZJ
-         Guvmunrrhuc8klZq2Sf8a20VZKx1lvHGJEo4yBK+za9Nvl01zHf8z0XVhz4ZMaoo/Jg7
-         PQp0K/q6n1v2dIlpUtUJVjUuh3yxtbHIGQ+JSfp8mFbemwzVeTqqWQrefZ6Mple6MuBZ
-         38Lg==
-X-Forwarded-Encrypted: i=1; AJvYcCVaiKcMghecIt+4Z571z/8Ec1UqszWCDEp48asLCrcUT3a+/yNkQjE8Td4eCVt1Uxw35+S+bkzJeJHOiaY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzal9zCSNkD/ScrCDKRmxkRldMQ2Jdr/RCtkx1hupNK3JCOWXHb
-	5P/DQMNb2Qy1MJ5uGTHwoE7vS678VdiIlO7mELTfU4s5eO3bGSvuBvnxYWRBn6OBxpil6NHQREl
-	oRfUBAJOCOeWjdvk2+AWbGTvtBfJ54KFMvKrL1ddO
-X-Gm-Gg: ASbGncu3kHOm2NlzlNCo66QXQXMQL9hnN9Om7jkMIItrS0rjnj1HrFhb4DIvtPqtP/C
-	DYlW9JYUU0bL3qGpiKxDSUwh9bqa1YViC+BzE3T5sGGPBu9JmU3wQQI3c4icmYFPF5Ye2qM7ui8
-	lDTx4Nin0q6St2sEueznN00r+hJefooVZaoGZxvn9RjPMZYCYkM1W2khlAKUD+LCHouBe81xHen
-	1xXkqSsLja6x8FtKzsghGSriw==
-X-Google-Smtp-Source: AGHT+IENYaxKywEJVnhRd53PlyB2PEFU36G7mSwHHBh3QnGvBJswRyDjryZtJh3goBAjur1DAoDs201z525n5fnLFR0=
-X-Received: by 2002:a05:622a:5143:b0:4b2:9b79:e700 with SMTP id
- d75a77b69052e-4b2ea8688bdmr14440241cf.4.1756376534543; Thu, 28 Aug 2025
- 03:22:14 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1756376555; x=1756981355;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=U8yCAI700QoeD0KjAlm516eTIXfj/D0G5f0Bt5v0978=;
+        b=c/Z3efqxAVfry+0xq4622q8CwK1I72th7AtadKp7f46pjV0ZLvPo1R/erQje8U8QSJ
+         I02kfMM4McHuL/6y6da70hj3W1lnwbYbBIymGnM7M1RgHfZEvRjUw5G8lvntkDjLcLm8
+         jcMN1Pyl2QVRQrPaL1x1lHnzNYwr9XUaCNuIfbFOUmgQETmlw+/G4hkLwJC1atEkgjJ4
+         05IDyYCxNW78gRZJyU+kJnlyutx3yctva4jLbq8N7cLrdu4Ik/KBQD5+7F8YA9YSHXcm
+         F6HgSDcJvtBZ+T7PJO3zef7+IzIkWi8tCBHDuQVQrOOm7HQFG33ZHetI/uaOpWpNi2Gk
+         b3Jw==
+X-Gm-Message-State: AOJu0YwGlWV1c0vDvDCQNcYqfW42oP3lAhHi36xVWf+aTtKs9vR7DHS1
+	6HlEGyUwtATueJGyhYs92/q290JmL0RVlBiyHTRbFNfKNqOwbU005/vFmeNAqJw+UCHAT00k4qU
+	ishshuBVRPstfYYzw3sr530d/LWUDRSW+ZgcFXB3TJgUUxK87/z7EZXFNAKtZ0p4fWBpo86qt8a
+	4xI35km6rpILpEaZyFyyOkxtYSQDnRlLbeOA==
+X-Google-Smtp-Source: AGHT+IGeZ8WHDz26AwgYy2WzgMv+UkYbW3RhB9TUZyp4YSODwPSMXcZk6HwbNe3vsD95GO3ECZsBPDgC
+X-Received: from wmbet13.prod.google.com ([2002:a05:600c:818d:b0:459:e027:2d9b])
+ (user=ardb job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600c:1c82:b0:45b:5efc:e97b
+ with SMTP id 5b1f17b1804b1-45b5f4e343cmr135704025e9.12.1756376554871; Thu, 28
+ Aug 2025 03:22:34 -0700 (PDT)
+Date: Thu, 28 Aug 2025 12:22:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250828093902.2719-1-roypat@amazon.co.uk> <20250828093902.2719-4-roypat@amazon.co.uk>
-In-Reply-To: <20250828093902.2719-4-roypat@amazon.co.uk>
-From: Fuad Tabba <tabba@google.com>
-Date: Thu, 28 Aug 2025 11:21:38 +0100
-X-Gm-Features: Ac12FXxQhIbmHWE_IVdh_SbAhoCZMe-hp6nPpbqQbsT5jXtNkVhWc6QqYibQkV8
-Message-ID: <CA+EHjTxOmDJkwjSvAUr2O4yqEkyqeQ=_p3E5Uj5yQrPW7Qz_HA@mail.gmail.com>
-Subject: Re: [PATCH v5 03/12] mm: introduce AS_NO_DIRECT_MAP
-To: "Roy, Patrick" <roypat@amazon.co.uk>
-Cc: "david@redhat.com" <david@redhat.com>, "seanjc@google.com" <seanjc@google.com>, 
-	"ackerleytng@google.com" <ackerleytng@google.com>, "pbonzini@redhat.com" <pbonzini@redhat.com>, 
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
-	"kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, 
-	"rppt@kernel.org" <rppt@kernel.org>, "will@kernel.org" <will@kernel.org>, "vbabka@suse.cz" <vbabka@suse.cz>, 
-	"Cali, Marco" <xmarcalx@amazon.co.uk>, "Kalyazin, Nikita" <kalyazin@amazon.co.uk>, 
-	"Thomson, Jack" <jackabt@amazon.co.uk>, "Manwaring, Derek" <derekmn@amazon.com>
+Mime-Version: 1.0
+X-Developer-Key: i=ardb@kernel.org; a=openpgp; fpr=F43D03328115A198C90016883D200E9CA6329909
+X-Developer-Signature: v=1; a=openpgp-sha256; l=8071; i=ardb@kernel.org;
+ h=from:subject; bh=51Omh/TQfJiq6f6ShqQ+zr/qzf6aJSUGv5CIRvBWdDo=;
+ b=owGbwMvMwCVmkMcZplerG8N4Wi2JIWOD7un+ls1zOnzjvU75bC+5bqvlUTlDqH+T3Pbpb5POr
+ 1f/4fu/o5SFQYyLQVZMkUVg9t93O09PlKp1niULM4eVCWQIAxenAEzk5U9GhnnzJmT4vple8TNL
+ 92J9eual1K+H9i61yCxPa76tdkeDZTUjw51JUu+/HXqzhsPvaVrXnh/Hd4a6B3Rnbj/u/efNwR2 CE3gB
+X-Mailer: git-send-email 2.51.0.268.g9569e192d0-goog
+Message-ID: <20250828102202.1849035-24-ardb+git@google.com>
+Subject: [PATCH v7 00/22] x86: strict separation of startup code
+From: Ard Biesheuvel <ardb+git@google.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-efi@vger.kernel.org, x86@kernel.org, 
+	Ard Biesheuvel <ardb@kernel.org>, Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@kernel.org>, 
+	Kevin Loughlin <kevinloughlin@google.com>, Tom Lendacky <thomas.lendacky@amd.com>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Nikunj A Dadhania <nikunj@amd.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Hi Patrick,
+From: Ard Biesheuvel <ardb@kernel.org>
 
-On Thu, 28 Aug 2025 at 10:39, Roy, Patrick <roypat@amazon.co.uk> wrote:
->
-> Add AS_NO_DIRECT_MAP for mappings where direct map entries of folios are
-> set to not present . Currently, mappings that match this description are
-> secretmem mappings (memfd_secret()). Later, some guest_memfd
-> configurations will also fall into this category.
->
-> Reject this new type of mappings in all locations that currently reject
-> secretmem mappings, on the assumption that if secretmem mappings are
-> rejected somewhere, it is precisely because of an inability to deal with
-> folios without direct map entries, and then make memfd_secret() use
-> AS_NO_DIRECT_MAP on its address_space to drop its special
-> vma_is_secretmem()/secretmem_mapping() checks.
->
-> This drops a optimization in gup_fast_folio_allowed() where
-> secretmem_mapping() was only called if CONFIG_SECRETMEM=y. secretmem is
-> enabled by default since commit b758fe6df50d ("mm/secretmem: make it on
-> by default"), so the secretmem check did not actually end up elided in
-> most cases anymore anyway.
->
-> Use a new flag instead of overloading AS_INACCESSIBLE (which is already
-> set by guest_memfd) because not all guest_memfd mappings will end up
-> being direct map removed (e.g. in pKVM setups, parts of guest_memfd that
-> can be mapped to userspace should also be GUP-able, and generally not
-> have restrictions on who can access it).
->
-> Signed-off-by: Patrick Roy <roypat@amazon.co.uk>
-> ---
->  include/linux/pagemap.h   | 16 ++++++++++++++++
->  include/linux/secretmem.h | 18 ------------------
->  lib/buildid.c             |  4 ++--
->  mm/gup.c                  | 14 +++-----------
->  mm/mlock.c                |  2 +-
->  mm/secretmem.c            |  6 +-----
->  6 files changed, 23 insertions(+), 37 deletions(-)
->
-> diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-> index 12a12dae727d..b52b28ae4636 100644
-> --- a/include/linux/pagemap.h
-> +++ b/include/linux/pagemap.h
-> @@ -211,6 +211,7 @@ enum mapping_flags {
->                                    folio contents */
->         AS_INACCESSIBLE = 8,    /* Do not attempt direct R/W access to the mapping */
->         AS_WRITEBACK_MAY_DEADLOCK_ON_RECLAIM = 9,
-> +       AS_NO_DIRECT_MAP = 10,  /* Folios in the mapping are not in the direct map */
->         /* Bits 16-25 are used for FOLIO_ORDER */
->         AS_FOLIO_ORDER_BITS = 5,
->         AS_FOLIO_ORDER_MIN = 16,
-> @@ -346,6 +347,21 @@ static inline bool mapping_writeback_may_deadlock_on_reclaim(struct address_spac
->         return test_bit(AS_WRITEBACK_MAY_DEADLOCK_ON_RECLAIM, &mapping->flags);
->  }
->
-> +static inline void mapping_set_no_direct_map(struct address_space *mapping)
-> +{
-> +       set_bit(AS_NO_DIRECT_MAP, &mapping->flags);
-> +}
-> +
-> +static inline bool mapping_no_direct_map(struct address_space *mapping)
-> +{
-> +       return test_bit(AS_NO_DIRECT_MAP, &mapping->flags);
-> +}
-> +
-> +static inline bool vma_is_no_direct_map(const struct vm_area_struct *vma)
-> +{
-> +       return vma->vm_file && mapping_no_direct_map(vma->vm_file->f_mapping);
-> +}
-> +
+This series implements a strict separation between startup code and
+ordinary code, where startup code is built in a way that tolerates being
+invoked from the initial 1:1 mapping of memory.
 
-Any reason vma is const whereas mapping in the function that it calls
-(defined above it) isn't?
+The existing approach of emitting this code into .head.text and checking
+for absolute relocations in that section is not 100% safe, and produces
+diagnostics that are sometimes difficult to interpret. [0]
 
-Cheers,
-/fuad
+Instead, rely on symbol prefixes, similar to how this is implemented for
+the EFI stub and for the startup code in the arm64 port. This ensures
+that startup code can only call other startup code, unless a special
+symbol alias is emitted that exposes a non-startup routine to the
+startup code.
 
->  static inline gfp_t mapping_gfp_mask(struct address_space * mapping)
->  {
->         return mapping->gfp_mask;
-> diff --git a/include/linux/secretmem.h b/include/linux/secretmem.h
-> index e918f96881f5..0ae1fb057b3d 100644
-> --- a/include/linux/secretmem.h
-> +++ b/include/linux/secretmem.h
-> @@ -4,28 +4,10 @@
->
->  #ifdef CONFIG_SECRETMEM
->
-> -extern const struct address_space_operations secretmem_aops;
-> -
-> -static inline bool secretmem_mapping(struct address_space *mapping)
-> -{
-> -       return mapping->a_ops == &secretmem_aops;
-> -}
-> -
-> -bool vma_is_secretmem(struct vm_area_struct *vma);
->  bool secretmem_active(void);
->
->  #else
->
-> -static inline bool vma_is_secretmem(struct vm_area_struct *vma)
-> -{
-> -       return false;
-> -}
-> -
-> -static inline bool secretmem_mapping(struct address_space *mapping)
-> -{
-> -       return false;
-> -}
-> -
->  static inline bool secretmem_active(void)
->  {
->         return false;
-> diff --git a/lib/buildid.c b/lib/buildid.c
-> index c4b0f376fb34..33f173a607ad 100644
-> --- a/lib/buildid.c
-> +++ b/lib/buildid.c
-> @@ -65,8 +65,8 @@ static int freader_get_folio(struct freader *r, loff_t file_off)
->
->         freader_put_folio(r);
->
-> -       /* reject secretmem folios created with memfd_secret() */
-> -       if (secretmem_mapping(r->file->f_mapping))
-> +       /* reject secretmem folios created with memfd_secret() or guest_memfd() */
-> +       if (mapping_no_direct_map(r->file->f_mapping))
->                 return -EFAULT;
->
->         r->folio = filemap_get_folio(r->file->f_mapping, file_off >> PAGE_SHIFT);
-> diff --git a/mm/gup.c b/mm/gup.c
-> index adffe663594d..8c988e076e5d 100644
-> --- a/mm/gup.c
-> +++ b/mm/gup.c
-> @@ -1234,7 +1234,7 @@ static int check_vma_flags(struct vm_area_struct *vma, unsigned long gup_flags)
->         if ((gup_flags & FOLL_SPLIT_PMD) && is_vm_hugetlb_page(vma))
->                 return -EOPNOTSUPP;
->
-> -       if (vma_is_secretmem(vma))
-> +       if (vma_is_no_direct_map(vma))
->                 return -EFAULT;
->
->         if (write) {
-> @@ -2751,7 +2751,6 @@ static bool gup_fast_folio_allowed(struct folio *folio, unsigned int flags)
->  {
->         bool reject_file_backed = false;
->         struct address_space *mapping;
-> -       bool check_secretmem = false;
->         unsigned long mapping_flags;
->
->         /*
-> @@ -2763,14 +2762,6 @@ static bool gup_fast_folio_allowed(struct folio *folio, unsigned int flags)
->                 reject_file_backed = true;
->
->         /* We hold a folio reference, so we can safely access folio fields. */
-> -
-> -       /* secretmem folios are always order-0 folios. */
-> -       if (IS_ENABLED(CONFIG_SECRETMEM) && !folio_test_large(folio))
-> -               check_secretmem = true;
-> -
-> -       if (!reject_file_backed && !check_secretmem)
-> -               return true;
-> -
->         if (WARN_ON_ONCE(folio_test_slab(folio)))
->                 return false;
->
-> @@ -2812,8 +2803,9 @@ static bool gup_fast_folio_allowed(struct folio *folio, unsigned int flags)
->          * At this point, we know the mapping is non-null and points to an
->          * address_space object.
->          */
-> -       if (check_secretmem && secretmem_mapping(mapping))
-> +       if (mapping_no_direct_map(mapping))
->                 return false;
-> +
->         /* The only remaining allowed file system is shmem. */
->         return !reject_file_backed || shmem_mapping(mapping);
->  }
-> diff --git a/mm/mlock.c b/mm/mlock.c
-> index a1d93ad33c6d..0def453fe881 100644
-> --- a/mm/mlock.c
-> +++ b/mm/mlock.c
-> @@ -474,7 +474,7 @@ static int mlock_fixup(struct vma_iterator *vmi, struct vm_area_struct *vma,
->
->         if (newflags == oldflags || (oldflags & VM_SPECIAL) ||
->             is_vm_hugetlb_page(vma) || vma == get_gate_vma(current->mm) ||
-> -           vma_is_dax(vma) || vma_is_secretmem(vma) || (oldflags & VM_DROPPABLE))
-> +           vma_is_dax(vma) || vma_is_no_direct_map(vma) || (oldflags & VM_DROPPABLE))
->                 /* don't set VM_LOCKED or VM_LOCKONFAULT and don't count */
->                 goto out;
->
-> diff --git a/mm/secretmem.c b/mm/secretmem.c
-> index 422dcaa32506..a2daee0e63a5 100644
-> --- a/mm/secretmem.c
-> +++ b/mm/secretmem.c
-> @@ -134,11 +134,6 @@ static int secretmem_mmap_prepare(struct vm_area_desc *desc)
->         return 0;
->  }
->
-> -bool vma_is_secretmem(struct vm_area_struct *vma)
-> -{
-> -       return vma->vm_ops == &secretmem_vm_ops;
-> -}
-> -
->  static const struct file_operations secretmem_fops = {
->         .release        = secretmem_release,
->         .mmap_prepare   = secretmem_mmap_prepare,
-> @@ -206,6 +201,7 @@ static struct file *secretmem_file_create(unsigned long flags)
->
->         mapping_set_gfp_mask(inode->i_mapping, GFP_HIGHUSER);
->         mapping_set_unevictable(inode->i_mapping);
-> +       mapping_set_no_direct_map(inode->i_mapping);
->
->         inode->i_op = &secretmem_iops;
->         inode->i_mapping->a_ops = &secretmem_aops;
-> --
-> 2.50.1
->
+This is somewhat intrusive, as there are many data objects that are
+referenced both by startup code and by ordinary code, and an alias needs
+to be emitted for each of those. If startup code references anything
+that has not been made available to it explicitly, a build time link
+error will occur.
+
+This ultimately allows the .head.text section to be dropped entirely, as
+it no longer has a special significance. Instead, code that only
+executes at boot is emitted into .init.text as it should.
+
+The majority of changes is around early SEV code. The main issue is that
+its use of GHCB pages and SVSM calling areas in code that may run from
+both the 1:1 mapping and the kernel virtual mapping is problematic as it
+relies on __pa() to perform VA to PA translations, which are ambiguous
+in this context. Also, __pa() pulls in non-trivial instrumented code
+when CONFIG_DEBUG_VIRTUAL=y and so it is better to avoid VA to PA
+translations altogether in the startup code.
+
+Changes since v6:
+- Rebase onto latest tip/master which incorporates v6.17-rc1
+- Use a descriptor struct instead of two additional function arguments
+  in patch #8
+- Clarify in commit log why the latent entropy GCC plugin needs to be
+  disabled for startup code
+- Apply Tom's Rb to patch #3
+
+Changes since v5:
+- Some cosmetic touchups to patch #1
+- Fix error spotted by Tom in patch #2
+- Rejig objtool 'noabs' feature using an arch hook to check for
+  relocations that should be considered absolute, which includes all of
+  R_X86_64_32, R_X86_64_32S and R_X86_64_64 on x86_64
+
+Changes since v4:
+- Incorporate feedback from Tom, and add a couple of RBs
+- Drop patch that moved the MSR save/restore out of the early page state
+  change helper - this is less efficient but likely negligible in
+  practice
+- Drop patch that unified the SEV-SNP hypervisor feature check, which
+  was identified by Nikunj as the one breaking SEV-SNP boot.
+
+Changes since RFT/v3:
+- Rebase onto tip/master
+- Incorporate Borislav's feedback on v3
+- Switch to objtool to check for absolute references in startup code
+- Remap inittext R-X when running on EFI implementations that require
+  strict R-X/RW- separation
+- Include a kbuild fix to incorporate arch/x86/boot/startup/ in the
+  right manner
+- For now, omit the LA57 changes that remove the problematic early
+  5-level paging checks. We can revisit this once there is agreement on
+  the approach. 
+
+Changes since RFT/v2:
+- Rebase onto tip/x86/boot and drop the patches from the previous
+  revision that have been applied in the meantime.
+- Omit the pgtable_l5_enabled() changes for now, and just expose PIC
+  aliases for the variables in question - this can be sorted later.
+- Don't use the boot SVSM calling area in snp_kexec_finish(), but pass
+  down the correct per-CPU one to the early page state API.
+- Rename arch/x86/coco/sev/sev-noinstr.o to arch/x86/coco/sev/noinstr.o
+- Further reduce the amount of SEV code that needs to be constructed in
+  a special way.
+
+Change since RFC/v1:
+- Include a major disentanglement/refactor of the SEV-SNP startup code,
+  so that only code that really needs to run from the 1:1 mapping is
+  included in the startup/ code
+
+- Incorporate some early notes from Ingo
+
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Kevin Loughlin <kevinloughlin@google.com>
+Cc: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Nikunj A Dadhania <nikunj@amd.com>
+
+[0] https://lore.kernel.org/all/CAHk-=wj7k9nvJn6cpa3-5Ciwn2RGyE605BMkjWE4MqnvC9E92A@mail.gmail.com/
+
+
+Ard Biesheuvel (22):
+  x86/sev: Separate MSR and GHCB based snp_cpuid() via a callback
+  x86/sev: Use MSR protocol for remapping SVSM calling area
+  x86/sev: Use MSR protocol only for early SVSM PVALIDATE call
+  x86/sev: Run RMPADJUST on SVSM calling area page to test VMPL
+  x86/sev: Move GHCB page based HV communication out of startup code
+  x86/sev: Avoid global variable to store virtual address of SVSM area
+  x86/sev: Share implementation of MSR-based page state change
+  x86/sev: Pass SVSM calling area down to early page state change API
+  x86/sev: Use boot SVSM CA for all startup and init code
+  x86/boot: Drop redundant RMPADJUST in SEV SVSM presence check
+  x86/boot: Provide PIC aliases for 5-level paging related constants
+  x86/sev: Provide PIC aliases for SEV related data objects
+  x86/sev: Move __sev_[get|put]_ghcb() into separate noinstr object
+  x86/sev: Export startup routines for later use
+  objtool: Add action to check for absence of absolute relocations
+  x86/boot: Check startup code for absence of absolute relocations
+  x86/boot: Revert "Reject absolute references in .head.text"
+  x86/kbuild: Incorporate boot/startup/ via Kbuild makefile
+  x86/boot: Create a confined code area for startup code
+  efistub/x86: Remap inittext read-execute when needed
+  x86/boot: Move startup code out of __head section
+  x86/boot: Get rid of the .head.text section
+
+ arch/x86/Kbuild                            |   2 +
+ arch/x86/Makefile                          |   1 -
+ arch/x86/boot/compressed/Makefile          |   2 +-
+ arch/x86/boot/compressed/misc.c            |   2 +
+ arch/x86/boot/compressed/sev-handle-vc.c   |   3 +
+ arch/x86/boot/compressed/sev.c             | 120 ++------
+ arch/x86/boot/startup/Makefile             |  22 ++
+ arch/x86/boot/startup/exports.h            |  14 +
+ arch/x86/boot/startup/gdt_idt.c            |   4 +-
+ arch/x86/boot/startup/map_kernel.c         |   4 +-
+ arch/x86/boot/startup/sev-shared.c         | 314 ++++++--------------
+ arch/x86/boot/startup/sev-startup.c        | 205 ++-----------
+ arch/x86/boot/startup/sme.c                |  27 +-
+ arch/x86/coco/sev/Makefile                 |   8 +-
+ arch/x86/coco/sev/core.c                   | 173 ++++++++---
+ arch/x86/coco/sev/{sev-nmi.c => noinstr.c} |  74 +++++
+ arch/x86/coco/sev/vc-handle.c              |   2 +
+ arch/x86/coco/sev/vc-shared.c              | 143 ++++++++-
+ arch/x86/include/asm/boot.h                |   2 +
+ arch/x86/include/asm/init.h                |   6 -
+ arch/x86/include/asm/setup.h               |   1 +
+ arch/x86/include/asm/sev-internal.h        |  26 +-
+ arch/x86/include/asm/sev.h                 |  23 +-
+ arch/x86/kernel/head64.c                   |   5 +-
+ arch/x86/kernel/head_32.S                  |   2 +-
+ arch/x86/kernel/head_64.S                  |  10 +-
+ arch/x86/kernel/vmlinux.lds.S              |   9 +-
+ arch/x86/mm/mem_encrypt_amd.c              |   6 -
+ arch/x86/mm/mem_encrypt_boot.S             |   6 +-
+ arch/x86/platform/pvh/head.S               |   2 +-
+ arch/x86/tools/relocs.c                    |   8 +-
+ drivers/firmware/efi/libstub/x86-stub.c    |   4 +-
+ tools/objtool/arch/x86/decode.c            |  12 +
+ tools/objtool/builtin-check.c              |   2 +
+ tools/objtool/check.c                      |  47 ++-
+ tools/objtool/include/objtool/arch.h       |   1 +
+ tools/objtool/include/objtool/builtin.h    |   1 +
+ 37 files changed, 671 insertions(+), 622 deletions(-)
+ create mode 100644 arch/x86/boot/startup/exports.h
+ rename arch/x86/coco/sev/{sev-nmi.c => noinstr.c} (61%)
+
+
+base-commit: cab48e960d35f35ff799f7aafce7a7bf7c56d8e3
+-- 
+2.51.0.268.g9569e192d0-goog
+
 
