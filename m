@@ -1,179 +1,225 @@
-Return-Path: <linux-kernel+bounces-789475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789476-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 238D5B3960D
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 09:56:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 564EFB3960E
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 09:57:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D86B617A948
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 07:56:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D915A3B504B
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 07:57:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CEE92D8799;
-	Thu, 28 Aug 2025 07:56:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEB102773E2;
+	Thu, 28 Aug 2025 07:57:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sYl2jjF8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bv9KJvgL"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BE452C236C
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 07:56:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9757C1F8AC5
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 07:57:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756367764; cv=none; b=Ad/6qom4GY1oDAxltxLaVG7I1Yyndb9djjgut1/l3fhMaLO2PoM3KQdHVhg/ktMmqAVtUQLlDca4Y29SU5yVWBxC5LQ0rvQXZfNST9wT2JEH1kkCrY+Oj/y6DxpsmjtMc+WYkcHlyeFzhdQEIvEOK6GR9KM0wzVKUBgyK3H8tBU=
+	t=1756367853; cv=none; b=JcsP+fG7sWbBSAY9NpfuedhpW20lL37fmu2jP9qnnCmqR/9kNCcfEWXqHR3B8SZU4L2MEpgIDkNsX+qhJp1R1SXLyQHeZrK3Ithavcg/4ul6OlfYoYgQzowyRDheDj4A5ozUiC7UAHqXHPv7ycxy2vx8I8zMZMF2dENnT+w8Qw4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756367764; c=relaxed/simple;
-	bh=LBFU3wJPpP1GzD1wqG5KpOWfMmOnz1g1O9lz75lM1nE=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=seVetunViM7YfGhYphbECDri8Xk8lsRvg0/f34gOuFvPBgk87F/JaZ4O/mHscaBoFDbKDvz2/1JRcDJPz3DyQ6qiDt6n4rgRlC2VL5tL5BvuZkChFaRZMH0sdA/m0IUpPAch4VSJxaqHETFtvUTAYtFQPskXIf9ZZ3UMTM/aYZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sYl2jjF8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1487EC4CEEB;
-	Thu, 28 Aug 2025 07:56:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756367764;
-	bh=LBFU3wJPpP1GzD1wqG5KpOWfMmOnz1g1O9lz75lM1nE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=sYl2jjF85JDbJk7EESItaQx9GxoAuwwBD5hfhuuTdpUUTDYI9+cSuNqbmx5a6VL+a
-	 iAdyAixrKpioIlMdVHg85cEgQDTOk1QNMkGSqp/THk1eUJs/l1abOSGQgPxkFdyGwT
-	 OJKO5j2feUyxvGE56kDhz7VTrQKDSmBJGo9QWgKvMflgephbGIdRtQgaQ0U8SCPFWV
-	 P7ANwW82O0PUUkXsKWJbUR/s6XkSLPYdVLtNi/L3gmYQXVYHRsANvIhlgNig3vxTKY
-	 dhbNpWgpg0aDRP76nJCcpCWJjjijLX+4LgwG87JbZJS1u4rT6LuuBZCED8rZ5N1ouT
-	 ZwhXUPh0tpfTw==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <maz@kernel.org>)
-	id 1urXUH-00000001A3d-3ITy;
-	Thu, 28 Aug 2025 07:56:01 +0000
-Date: Thu, 28 Aug 2025 08:56:01 +0100
-Message-ID: <86cy8fev72.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Koichiro Den <den@valinux.co.jp>
-Cc: linux-arm-kernel@lists.infradead.org,
-	tglx@linutronix.de,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] irqchip/gic-v3-its: Fix invalid wait context lockdep report
-In-Reply-To: <pkfekcmetqyoj7rwvr77kisu7ok7bc6srq5maoydisnsk4bnyy@wimnw744lp5t>
-References: <20250827073848.1410315-1-den@valinux.co.jp>
-	<86h5xtdj6m.wl-maz@kernel.org>
-	<pkfekcmetqyoj7rwvr77kisu7ok7bc6srq5maoydisnsk4bnyy@wimnw744lp5t>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1756367853; c=relaxed/simple;
+	bh=vdeMfA4XgdhKFH4DhC/B07X2MDdjHOQVm8nqKWApLe8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hCCzbphyZATLxt2+doSHQVLL6zPtfD/GLZK6xc4r26ew820usqNMAERRPqWmSVF8b0ib+tN6q9Qbmxv6dEWbyO8JPozN+ka3oJ9QLUSAfqpM8L3BNiQ/+ByS3qBy6eQKs1g6pubo17Aat6pW0BwbIGMAh4jlzVSctJZAbFuLTFg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bv9KJvgL; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756367850;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=UbZY19kla5JanDLGwXleiL+Lbzg8wDPMzsYjknbeE08=;
+	b=bv9KJvgLYHEXRQN9Rn9P1fbYdMgelYJev2QuiBo1lUYjyxwoLQgYXKZ4yz/i9p29EMJCmc
+	u6b+urrobkURrkoeNRdtDroyJ0jiQy9PL3SiOarQT5S3NLKYwjVscZLH2zs/IL1/cFENfY
+	a22iloi3LZoxLzSpNN+12/ZsJqdxaU8=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-570-Z9f3n1dqNUGk0pAMWMxWNg-1; Thu, 28 Aug 2025 03:57:28 -0400
+X-MC-Unique: Z9f3n1dqNUGk0pAMWMxWNg-1
+X-Mimecast-MFC-AGG-ID: Z9f3n1dqNUGk0pAMWMxWNg_1756367848
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3c6abcfd218so482862f8f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 00:57:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756367848; x=1756972648;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UbZY19kla5JanDLGwXleiL+Lbzg8wDPMzsYjknbeE08=;
+        b=LC28DSCzd4Mc+8Os+XeVPMMMZVma5TNRjgR5tnl4VLBaITq+5uuhEI5ZPHoRuCUsLs
+         eG4ADiwilgRu9p083tRVOA78xBwll2UQYKiygPN8Y3DSJkz4x3E1/z35vGQp0VnuFkyR
+         M+gfl7gba8pVYBHNE5VZXGsxHjWwHIlt5ZisBqvgxd3Oe2ztivty7RC/UobQRooTAwgy
+         Ai8cZBwfub1hqqSfuF7cxE5QYTsrCe7jCkhgceQ9s8lKps/sovX4EpHKFacHK83pWfvY
+         auLiuDowqdaJG1Dv7c1+tAeAkN+EQEMVAaiIXrwkhw5Tkz5J44jPsWn5bSsKKCvoDS/7
+         gELw==
+X-Forwarded-Encrypted: i=1; AJvYcCXfL3B+g2wkoyP68+8r+UHbYbnQDSo2kWXIumqae/HWwZPFXF8JuNl2qY2jYGhzJemhwYa+T+GsAAqOe3Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyHhHqyeQpXbCl4QfkiyJk9sR8tll3GlxMnv/twB55qQ/BJBHNG
+	M/VN/TVuQvqIO+20108kLFcLZG9pzQM4OchLLDKRi3YozH71go4QzYO4JMTTtKNrP1kYGF/vDY/
+	LdxAD/Sug12SEBYQRpxEt/YfGkHTvSd700Ee89QugCSx/VB8VFgnGfC8KaZ7a/LY56A==
+X-Gm-Gg: ASbGncvkWIoYDu1SU0QsEejU2qm6Tzn8vlYVOepTLYcyPz4j9WDgYMJIhnIF8T8HaU4
+	MrBoH/JCc30RlL2TUKLgzwcP0lyJ+U5WT+XPdnwutUO4AhsfiYmVpjTbyzKEXxFiewDph9O78Rt
+	oztk4rFD3/W1XXZg/3hqh+GJjBfVYbXUt13i3WbnbdJI3d9DSFAg61tK9R/65p7UrDg5RUF2Lzy
+	LOpib6aWxLzcNm8cS36zzF3AkzMkbxYnSUElPciCry6ynpoXX78rhD9aWtzcBlPrlIzlicBi90I
+	jw7Lf7kQbevAZY8FncOv78XzMy5diUh+GY23t9aCj77Y6qDSNoXMoSZ7e1Syn52LhoGlPqo+ufE
+	EAnvfKqD6kg2atHzkHJIXY+nb0lTuROL2wy2j2qTRPhBBPqfj2hi13Ua/45TwWlkY2Eg=
+X-Received: by 2002:a05:6000:3105:b0:3ca:43ce:8a68 with SMTP id ffacd0b85a97d-3ca43ce8e89mr8320260f8f.47.1756367847594;
+        Thu, 28 Aug 2025 00:57:27 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEIHY+n/N124O87jCHNAlrsZyduC64z8czEg/qHAbsVW1ouYN3MmeY/U08JPQi5BlvdXgr69Q==
+X-Received: by 2002:a05:6000:3105:b0:3ca:43ce:8a68 with SMTP id ffacd0b85a97d-3ca43ce8e89mr8320243f8f.47.1756367847112;
+        Thu, 28 Aug 2025 00:57:27 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f28:c100:2225:10aa:f247:7b85? (p200300d82f28c100222510aaf2477b85.dip0.t-ipconnect.de. [2003:d8:2f28:c100:2225:10aa:f247:7b85])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c9c9324dc9sm14969370f8f.3.2025.08.28.00.57.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 28 Aug 2025 00:57:26 -0700 (PDT)
+Message-ID: <d048aac6-7b70-44b7-9e92-7277bd49b182@redhat.com>
+Date: Thu, 28 Aug 2025 09:57:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: den@valinux.co.jp, linux-arm-kernel@lists.infradead.org, tglx@linutronix.de, linux-kernel@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] huge_mm.h: disallow is_huge_zero_folio(NULL)
+To: Andrew Morton <akpm@linux-foundation.org>,
+ Max Kellermann <max.kellermann@ionos.com>
+Cc: lorenzo.stoakes@oracle.com, ziy@nvidia.com,
+ baolin.wang@linux.alibaba.com, Liam.Howlett@oracle.com, npache@redhat.com,
+ ryan.roberts@arm.com, dev.jain@arm.com, baohua@kernel.org,
+ shikemeng@huaweicloud.com, kasong@tencent.com, nphamcs@gmail.com,
+ bhe@redhat.com, chrisl@kernel.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+References: <2aa3f478-9c87-4102-b83e-bf235372d834@redhat.com>
+ <20250827150330.280399-1-max.kellermann@ionos.com>
+ <20250827165309.44e465ff214e45f1a6665b24@linux-foundation.org>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <20250827165309.44e465ff214e45f1a6665b24@linux-foundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, 28 Aug 2025 04:09:00 +0100,
-Koichiro Den <den@valinux.co.jp> wrote:
+On 28.08.25 01:53, Andrew Morton wrote:
+> On Wed, 27 Aug 2025 17:03:30 +0200 Max Kellermann <max.kellermann@ionos.com> wrote:
 > 
-> On Wed, Aug 27, 2025 at 01:48:33PM +0100, Marc Zyngier wrote:
-> > On Wed, 27 Aug 2025 08:38:48 +0100,
-> > Koichiro Den <den@valinux.co.jp> wrote:
-> > > 
-> > > its_irq_set_vcpu_affinity() always runs under a raw_spin_lock wait
-> > > context, so calling kcalloc there is not permitted and RT-unsafe since
-> > > ___slab_alloc() may acquire a local lock. The below is the actual
-> > > lockdep report observed:
-> > > 
-> > >   =============================
-> > >   [ BUG: Invalid wait context ]
-> > >   6.16.0-rc3-irqchip-next-7e28bba92c5c+ #1 Tainted: G S
-> > >   -----------------------------
-> > >   qemu-system-aar/2129 is trying to lock:
-> > >   ffff0085b74f2178 (batched_entropy_u32.lock){..-.}-{3:3}, at: get_random_u32+0x9c/0x708
-> > >   other info that might help us debug this:
-> > >   context-{5:5}
-> > >   6 locks held by qemu-system-aar/2129:
-> > >    #0: ffff0000b84a0738 (&vdev->igate){+.+.}-{4:4}, at: vfio_pci_core_ioctl+0x40c/0x748 [vfio_pci_core]
-> > >    #1: ffff8000883cef68 (lock#6){+.+.}-{4:4}, at: irq_bypass_register_producer+0x64/0x2f0
-> > >    #2: ffff0000ac0df960 (&its->its_lock){+.+.}-{4:4}, at: kvm_vgic_v4_set_forwarding+0x224/0x6f0
-> > >    #3: ffff000086dc4718 (&irq->irq_lock#3){....}-{2:2}, at: kvm_vgic_v4_set_forwarding+0x288/0x6f0
-> > >    #4: ffff0001356200c8 (&irq_desc_lock_class){-.-.}-{2:2}, at: __irq_get_desc_lock+0xc8/0x158
-> > >    #5: ffff00009eae4850 (&dev->event_map.vlpi_lock){....}-{2:2}, at: its_irq_set_vcpu_affinity+0x8c/0x528
-> > >   ...
-> > >   Call trace:
-> > >    show_stack+0x30/0x98 (C)
-> > >    dump_stack_lvl+0x9c/0xd0
-> > >    dump_stack+0x1c/0x34
-> > >    __lock_acquire+0x814/0xb40
-> > >    lock_acquire.part.0+0x16c/0x2a8
-> > >    lock_acquire+0x8c/0x178
-> > >    get_random_u32+0xd4/0x708
-> > >    __get_random_u32_below+0x20/0x80
-> > >    shuffle_freelist+0x5c/0x1b0
-> > >    allocate_slab+0x15c/0x348
-> > >    new_slab+0x48/0x80
-> > >    ___slab_alloc+0x590/0x8b8
-> > >    __slab_alloc.isra.0+0x3c/0x80
-> > >    __kmalloc_noprof+0x174/0x520
-> > >    its_vlpi_map+0x834/0xce0
-> > >    its_irq_set_vcpu_affinity+0x21c/0x528
-> > >    irq_set_vcpu_affinity+0x160/0x1b0
-> > >    its_map_vlpi+0x90/0x100
-> > >    kvm_vgic_v4_set_forwarding+0x3c4/0x6f0
-> > >    kvm_arch_irq_bypass_add_producer+0xac/0x108
-> > >    __connect+0x138/0x1b0
-> > >    irq_bypass_register_producer+0x16c/0x2f0
-> > >    vfio_msi_set_vector_signal+0x2c0/0x5a8 [vfio_pci_core]
-> > >    vfio_msi_set_block+0x8c/0x120 [vfio_pci_core]
-> > >    vfio_pci_set_msi_trigger+0x120/0x3d8 [vfio_pci_core]
-> > 
-> > Huh. I guess this is due to RT not being completely compatible with
-> > GFP_ATOMIC...  Why you'd want RT and KVM at the same time is beyond
-> > me, but hey.
+>> Calling is_huge_zero_folio(NULL) should not be legal - it makes no
+>> sense, and a different (theoretical) implementation may dereference
+>> the pointer.  But currently, lacking any explicit documentation, this
+>> call is possible.
+>>
+>> But if somebody really passes NULL, the function should not return
+>> true - this isn't the huge zero folio after all!  However, if the
+>> `huge_zero_folio` hasn't been allocated yet, it's NULL, and
+>> is_huge_zero_folio(NULL) just happens to return true, which is a lie.
+>>
+>> This weird side effect prevented me from reproducing a kernel crash
+>> that occurred when the elements of a folio_batch were NULL - since
+>> folios_put_refs() skips huge zero folios, this sometimes causes a
+>> crash, but sometimes does not.  For debugging, it is better to reveal
+>> such bugs reliably and not hide them behind random preconditions like
+>> "has the huge zero folio already been created?"
+>>
+>> To improve detection of such bugs, David Hildenbrand suggested adding
+>> a VM_WARN_ON_ONCE().
+>>
+>> ...
+>>
+>> --- a/include/linux/huge_mm.h
+>> +++ b/include/linux/huge_mm.h
+>> @@ -2,6 +2,7 @@
+>>   #ifndef _LINUX_HUGE_MM_H
+>>   #define _LINUX_HUGE_MM_H
+>>   
+>> +#include <linux/mmdebug.h> // for VM_WARN_ON_ONCE()
+>>   #include <linux/mm_types.h>
+>>   
+>>   #include <linux/fs.h> /* only for vma_is_dax() */
+>> @@ -479,6 +480,8 @@ extern unsigned long huge_zero_pfn;
+>>   
+>>   static inline bool is_huge_zero_folio(const struct folio *folio)
+>>   {
+>> +	VM_WARN_ON_ONCE(folio == NULL);
+>> +
+>>   	return READ_ONCE(huge_zero_folio) == folio;
+>>   }
 > 
-> For the record, I didn't run KVM on RT, though I still believe it's better
-> to conform to the wait context rule and avoid triggering the lockdep
-> splat.
+> OK, but it remains the case that we have seen code which calls
+> is_huge_zero_folio() prior to the initialization of huge_zero_folio.
+> 
+> Is this a bug?  I think so.  Should we be checking for recurrences of
+> this bug?
 
-Then I don't understand how you get this, because I have not seen it
-so far.
+As answered elsewhere, this is perfectly fine as the huge zero folio is 
+allocated on demand only (and only once enabled).
 
 > 
-> I don't know if there are any plans which make kmalloc with GFP_ATOMIC
-> workable under a stricter wait context (getting rid of the local lock
-> in some way?), but I think it would be nicer.
-
-GFP_ATOMIC is documented as being compatible with raw spinlocks in the
-absence of RT, making the above trace pretty odd.
-
 > 
-> > 
-> > >   ...
-> > > 
-> > > To avoid this, simply pre-allocate vlpi_maps when creating an ITS v4
-> > > device with LPIs allcation. The trade-off is some wasted memory
-> > > depending on nr_lpis, if none of those LPIs are never upgraded to VLPIs.
-> > >
-> > > An alternative would be to move the vlpi_maps allocation out of
-> > > its_map_vlpi() and introduce a two-stage prepare/commit flow, allowing a
-> > > caller (KVM in the lockdep splat shown above) to do the allocation
-> > > outside irq_set_vcpu_affinity(). However, this would unnecessarily add
-> > > complexity.
-> > 
-> > That's debatable. It is probably fine for now, but if this was to
-> > grow, we'd need to revisit this.
-> 
-> Just curious but do you have any plans to replace the current
-> irq_set_vcpu_affinity() approach with something else?
+> Also, sigh.  I do dislike seeing VM_WARN_ON_ONCE() in an inline
+> function - heaven knows how much bloat that adds.  Defconfig
+> mm/huge_memory.o (which has three calls) grows by 80 bytes so I guess
+> that's livable with.
 
-Who knows. This is the Linux kernel, everything changes all the time
-without the need for a good reason. More significantly, the amount of
-*data* being associated with a VLPI could become much higher in the
-future, and add more unnecessary allocation.
+Common practice to use VM_WARN_ON_ONCE() and friend in inline functions. 
+Just look at page-flags.h.
 
-	M.
+If someone complains about kernel image size with CONFIG_DEBUG_VM, they 
+shopuld reevaluate life choices. :)
 
 -- 
-Without deviation from the norm, progress is not possible.
+Cheers
+
+David / dhildenb
+
 
