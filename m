@@ -1,588 +1,127 @@
-Return-Path: <linux-kernel+bounces-789230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57942B3927B
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 06:15:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9550B39281
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 06:17:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11781463332
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 04:15:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F29101C2249C
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 04:17:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AF0B264A97;
-	Thu, 28 Aug 2025 04:15:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 446EA24BC07;
+	Thu, 28 Aug 2025 04:17:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="2M4sYV+f"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MwfHaePf"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D857A30CD97;
-	Thu, 28 Aug 2025 04:15:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A5101C5F23
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 04:17:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756354525; cv=none; b=GWbHxxdqWxoqhgBsNMrw2LcPKR8DRB0OBT81BK8vAFKGBaKkPe14jEoz0/nJBf1g8n3DRj8WpFK8Fr19eTY2M7nZ18xsIPRmoxmhC+nniZUygyhmQ7PfBPZ7eHDbYUaMq4x/BYOgNp0nhiZMLnphU06Vqq53YSa38fTx2zXqRJo=
+	t=1756354627; cv=none; b=TogdObhUHpBD+sJ2BlHEyVjnlvGV3btbleuJqWisPAnML5MXYu1ccmB+7WcDWnieKEC3HXeXProZNvRLDb1QzxTefeFqqBtW1+AO7wJK0C6ddeSYtZ3Y0tksnYx9cLiigPnFOsQvNa9sZSGJaGjTGBipBHJvIQRT2g/i8Wgv3DI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756354525; c=relaxed/simple;
-	bh=TqOYXP7QxO4rwzY43NvfWQwCMshSYfBRLrTTmJkYbDI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ae5fjGfAP2HPsBvuPc0lGBqPKWrBWnuJdlCdPxk7V4Ei9zggGegTuhPDKcIZbTPwnu2D1Kse0H/kdkqSZxKd+a67J4xIttlKXe+8R1FCJ2rqYqMzHe4lrP2pVTkNhrLfKfZaopirRQNuupCrJF0MgBG+ubqG+WP53/DlfZyWVRk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=2M4sYV+f; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=l+8+WzKXdrJ+MpZtIuHoQQfYspPWLZFFVhI/RZ4JAAw=; b=2M4sYV+fsYM+YggbUwloEdN2lo
-	j3CB/wr+tLY5JH3GHiuCtBGRupKNG6MDetwcJ1zs9vAdYYQGK8DY5QZr3zalMsRnYdPuH/giRwDQd
-	6vzknfZqAPxxfCZys6lG1IvW3T4BXVHGXGlSqYluKzqI1v4QrYKF1ujo5ZRW73n5jzXadYKieaHd+
-	wO5yJUgmlZrPy2PDSCyl/Mwr+ko6TCFDOLrZEevZ8Xe7Oddsq0nfP5U9ohnMu2So51JVRTOGs0mtv
-	DxMWa8K9208A/hWdNpeOn47i5olvB2iDTtFTJz+l6BpxmfcsKTC2T5ABEMyIoBwms0cRXaYu6PbiJ
-	APOiQUDA==;
-Received: from [50.53.25.54] (helo=[192.168.254.17])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1urU2W-00000000DaL-2AP4;
-	Thu, 28 Aug 2025 04:15:08 +0000
-Message-ID: <79a2c3ff-e490-4fb5-b0fc-0bdadfae1b81@infradead.org>
-Date: Wed, 27 Aug 2025 21:15:07 -0700
+	s=arc-20240116; t=1756354627; c=relaxed/simple;
+	bh=aiRplx1VFpUgZxqodOSdvKPvN4pjIopwIYvOiNZITQU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CQ/abt+IMT+X3U7yEOX99ReHbt8E8qPf0GJs8KY72tlNNbaKLUFGcxqUculDaLulGUSQqsSpil84TLa4V0Aev2ppp3e4DAw1yPHQ4Kp4dzl6gBgTdYmvQ+rzeHfZ4bqxt2JbAnWvArpp6ILjQ/FP2iJkqP4LLHUfrxG8R5WpIzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MwfHaePf; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-248681b5892so105825ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 21:17:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1756354625; x=1756959425; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=TMQVn8CrO16DsNUEv8ZI780aElTyTlwevDHE/l6d5V8=;
+        b=MwfHaePfiRPgogmV9Rg4y+1zqBlotE6Z2qunWFEWOVRBp8txiokxJXSMylhiVtjaXj
+         ouC5p3uw+FEMEhbJ0pgLGBCVenOudeO1rk3GLnO/LH1wgMtP3xGgUZUVMuZmnMMINTKf
+         lUGaobEI5WyM3TSDFszAPN4uVBoPyhPI/mBu1lwhaw1BMXqj+P+5zfOYN5Z/E6joWevb
+         Ez4Q/KSzVenoTHYlN2SNJFRf14YeX+7jk45g6JojKav/G5/JQ5BGWMGaIn/5ZJRIKRE6
+         +Uo3J42SiBazkR39X/o5kdLvN9NftuuJmkWB1eqyCeN7s1bBAzZj3MzISiNJ2SibZ0df
+         LGhA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756354625; x=1756959425;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TMQVn8CrO16DsNUEv8ZI780aElTyTlwevDHE/l6d5V8=;
+        b=OyaXtX3/MRXj59pEMknD/VWP1aiZwGadMZSXdCrDoO8ZjmkxCkY+wuj6axSq/g6KIf
+         ZgB7ORHrDPleKiiQ4L9gvWfp96Vi5DbrYUnzO6icEZK3GMaSa+nJW/X3UqLpb1nIKRYi
+         wHsZAKgXQR8g4ukPWHZwBq0ik6lLoMMqLCpNjxFnrJOlhK4qhVlnYTKS7WqGU7yANyG0
+         T6ePn4amsSNoDy9vW5EMlLJUXRpICDnoP+6OL2IKxIbAVbn5OhLttt/ALcV7eQgoGhuY
+         jWX/WK/2lYBRsI+x9zpUlcpA2qPLD+rFCYPcoRYHiolBoaOHBOTw07kexGp+ltVsfkkY
+         QG8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVot3VNFwAyB2yDMAGORc78VuotvUic1LXhSIEg1L7G+cb6CGgUlhdPAHt5IZGxLDRc+QKE9H5JC3J9ijY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+H3KXE0ZhMbUJi19UPOjBKmRVfqYWyLR5ofCVXrjQq2BN7Vx+
+	I35eAMmXbibiRmgnUyOvwmPhDHRsUw6JlC3gmmcFFqztb8mffZmlAVpGV0c9NULkTA==
+X-Gm-Gg: ASbGncvL1ogAIgl/OAzbyD13W+twpZ3pu5t3LpBVqGMlbmaA+HpTDrjlWIs95J49EJU
+	vDtA+WjUZ2rcFoylTw5e2tWlyckI/35qsdQsD6GoPlBf5lW3xIUpWFIgngMI8LgmpOBFx5jYefz
+	78WsCUUALi1aSv/yzGtE0QasYsVqbH9cYzmMXTH/nH43DbQxjwOvNnttjCoK/kiEeIbjUMhpYjb
+	gLjdVM6Z5rTRofIZYz1l/B8b1mTRg34ZeWEpRMa6M6sixM2EBB8vVsOpHWVCZ86mmHQbSUnUBEB
+	dGf795NeJgXPcZdQENz0KEz0eInnkzd07pglbO9s8By0EBzpJUnLLk+oChRlocqkSsaxkdhUU8P
+	zzswj8vE9U7+8/W+Dj/K+6JbSE1tG56BJteifBNCLOHHf+p2lMvfU4LNKlCVXcw==
+X-Google-Smtp-Source: AGHT+IEScvfgJtRVasw57V/0vxqTUB7x4SvVvb5MS9koK0iAGjVijb4Cn9+NhLOy8EhFZ2odTZwOvw==
+X-Received: by 2002:a17:903:1ce:b0:248:84b0:3fa7 with SMTP id d9443c01a7336-24884b054ccmr9171285ad.3.1756354624980;
+        Wed, 27 Aug 2025 21:17:04 -0700 (PDT)
+Received: from google.com (3.32.125.34.bc.googleusercontent.com. [34.125.32.3])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24668864426sm136937785ad.80.2025.08.27.21.17.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 Aug 2025 21:17:04 -0700 (PDT)
+Date: Thu, 28 Aug 2025 04:16:59 +0000
+From: Carlos Llamas <cmllamas@google.com>
+To: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
+	Pedro Falcato <pfalcato@suse.de>, kernel-team@android.com,
+	linux-kernel@vger.kernel.org,
+	"open list:MEMORY MAPPING" <linux-mm@kvack.org>
+Subject: Re: [PATCH] mm/mremap: fix regression in vrm->new_addr check
+Message-ID: <aK_YO90AEgow_iQt@google.com>
+References: <20250828032653.521314-1-cmllamas@google.com>
+ <xpxoxn25fzhahdyvjp2vgmcnek6oot2hhvb5niz3tw7au46eno@cixyid6ywf27>
+ <aK_V4sOUOIpEhFC-@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 md-6.18 11/11] md/md-llbitmap: introduce new lockless
- bitmap
-To: Yu Kuai <yukuai1@huaweicloud.com>, hch@infradead.org, corbet@lwn.net,
- agk@redhat.com, snitzer@kernel.org, mpatocka@redhat.com, song@kernel.org,
- xni@redhat.com, hare@suse.de, linan122@huawei.com, colyli@kernel.org
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- dm-devel@lists.linux.dev, linux-raid@vger.kernel.org, yukuai3@huawei.com,
- yi.zhang@huawei.com, yangerkun@huawei.com, johnny.chenyi@huawei.com
-References: <20250826085205.1061353-1-yukuai1@huaweicloud.com>
- <20250826085205.1061353-12-yukuai1@huaweicloud.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20250826085205.1061353-12-yukuai1@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aK_V4sOUOIpEhFC-@google.com>
 
-
-
-On 8/26/25 1:52 AM, Yu Kuai wrote:
-> From: Yu Kuai <yukuai3@huawei.com>
+On Thu, Aug 28, 2025 at 04:06:58AM +0000, Carlos Llamas wrote:
+> On Wed, Aug 27, 2025 at 11:43:39PM -0400, Liam R. Howlett wrote:
+> > * Carlos Llamas <cmllamas@google.com> [250827 23:27]:
+> > > Commit 3215eaceca87 ("mm/mremap: refactor initial parameter sanity
+> > > checks") moved the sanity check for vrm->new_addr from mremap_to() to
+> > > check_mremap_params().
+> > > 
+> > > However, this caused a regression as vrm->new_addr is now checked even
+> > > when MREMAP_FIXED and MREMAP_DONTUNMAP flags are not specified. In this
+> > > case, vrm->new_addr can be garbage and create unexpected failures.
+> > > 
+> > > Fix this by moving the new_addr check after the vrm_implies_new_addr()
+> > > guard. This ensures that the new_addr is only checked when the user has
+> > > specified one explicitly.
+> > > 
+> > > Fixes: 3215eaceca87 ("mm/mremap: refactor initial parameter sanity checks")
+> > > Signed-off-by: Carlos Llamas <cmllamas@google.com>
+> > 
+> > I assume this showed up with clang?
 > 
-> Redundant data is used to enhance data fault tolerance, and the storage
-> method for redundant data vary depending on the RAID levels. And it's
-> important to maintain the consistency of redundant data.
+> Right.
 > 
-> Bitmap is used to record which data blocks have been synchronized and which
-> ones need to be resynchronized or recovered. Each bit in the bitmap
-> represents a segment of data in the array. When a bit is set, it indicates
-> that the multiple redundant copies of that data segment may not be
-> consistent. Data synchronization can be performed based on the bitmap after
-> power failure or readding a disk. If there is no bitmap, a full disk
-
-                   reading
-
-> synchronization is required.
-> 
-> Key Features:
-> 
->  - IO fastpath is lockless, if user issues lots of write IO to the same
-
-                    lockless. If the user
-
->  bitmap bit in a short time, only the first write have additional overhead
-
-                                                    has
-
->  to update bitmap bit, no additional overhead for the following writes;
->  - support only resync or recover written data, means in the case creating
->  new array or replacing with a new disk, there is no need to do a full disk
->  resync/recovery;
-> 
-> Key Concept:
-> 
->  - State Machine:
-> 
-> Each bit is one byte, contain 6 difference state, see llbitmap_state. And
-
-                        contains 6 different states,
-
-
-> there are total 8 differenct actions, see llbitmap_action, can change state:
-
-                    different                                that can change state:
-
-> 
-> llbitmap state machine: transitions between states
-> 
-> |           | Startwrite | Startsync | Endsync | Abortsync|
-> | --------- | ---------- | --------- | ------- | -------  |
-> | Unwritten | Dirty      | x         | x       | x        |
-> | Clean     | Dirty      | x         | x       | x        |
-> | Dirty     | x          | x         | x       | x        |
-> | NeedSync  | x          | Syncing   | x       | x        |
-> | Syncing   | x          | Syncing   | Dirty   | NeedSync |
-> 
-> |           | Reload   | Daemon | Discard   | Stale     |
-> | --------- | -------- | ------ | --------- | --------- |
-> | Unwritten | x        | x      | x         | x         |
-> | Clean     | x        | x      | Unwritten | NeedSync  |
-> | Dirty     | NeedSync | Clean  | Unwritten | NeedSync  |
-> | NeedSync  | x        | x      | Unwritten | x         |
-> | Syncing   | NeedSync | x      | Unwritten | NeedSync  |
-> 
-> Typical scenarios:
-> 
-> 1) Create new array
-> All bits will be set to Unwritten by default, if --assume-clean is set,
-
-                                       default. If
-
-> all bits will be set to Clean instead.
-> 
-> 2) write data, raid1/raid10 have full copy of data, while raid456 doesn't and
-> rely on xor data
-> 
-> 2.1) write new data to raid1/raid10:
-> Unwritten --StartWrite--> Dirty
-> 
-> 2.2) write new data to raid456:
-> Unwritten --StartWrite--> NeedSync
-> 
-> Because the initial recover for raid456 is skipped, the xor data is not build
-> yet, the bit must set to NeedSync first and after lazy initial recover is
-> finished, the bit will finially set to Dirty(see 5.1 and 5.4);
-
-                         finally
-
-> 
-> 2.3) cover write
-> Clean --StartWrite--> Dirty
-> 
-> 3) daemon, if the array is not degraded:
-> Dirty --Daemon--> Clean
-> 
-> For degraded array, the Dirty bit will never be cleared, prevent full disk
-
-                                                           preventing
-
-> recovery while readding a removed disk.
-
-                 reading
-
-> 
-> 4) discard
-> {Clean, Dirty, NeedSync, Syncing} --Discard--> Unwritten
-> 
-> 5) resync and recover
-> 
-> 5.1) common process
-> NeedSync --Startsync--> Syncing --Endsync--> Dirty --Daemon--> Clean
-> 
-> 5.2) resync after power failure
-> Dirty --Reload--> NeedSync
-> 
-> 5.3) recover while replacing with a new disk
-> By default, the old bitmap framework will recover all data, and llbitmap
-> implement this by a new helper, see llbitmap_skip_sync_blocks:
-
-  implements
-
-> 
-> skip recover for bits other than dirty or clean;
-> 
-> 5.4) lazy initial recover for raid5:
-> By default, the old bitmap framework will only allow new recover when there
-> are spares(new disk), a new recovery flag MD_RECOVERY_LAZY_RECOVER is add
-
-                                                                        added
-
-> to perform raid456 lazy recover for set bits(from 2.2).
-> 
-> Bitmap IO:
-> 
->  - Chunksize
-> 
-> The default bitmap size is 128k, incluing 1k bitmap super block, and
-
-                                   including
-
-> the default size of segment of data in the array each bit(chunksize) is 64k,
-> and chunksize will adjust to twice the old size each time if the total number
-> bits is not less than 127k.(see llbitmap_init)
-> 
->  - READ
-> 
-> While creating bitmap, all pages will be allocated and read for llbitmap,
-
-                                                                  llbitmap.
-
-> there won't be read afterwards
-
-  There          a read afterwards.
-
-> 
->  - WRITE
-> 
-> WRITE IO is divided into logical_block_size of the array, the dirty state
-> of each block is tracked independently, for example:
-> 
-> each page is 4k, contain 8 blocks; each block is 512 bytes contain 512 bit;
-
-                                                       bytes and contains 512 bits:
-
-> 
-> | page0 | page1 | ... | page 31 |
-> |       |
-> |        \-----------------------\
-> |                                |
-> | block0 | block1 | ... | block 8|
-> |        |
-> |         \-----------------\
-> |                            |
-> | bit0 | bit1 | ... | bit511 |
-> 
-> From IO path, if one bit is changed to Dirty or NeedSync, the corresponding
-> subpage will be marked dirty, such block must write first before the IO is
-
-                         dirty;
-
-> issued. This behaviour will affect IO performance, to reduce the impact, if
-
-                                        performance. To
-
-> multiple bits are changed in the same block in a short time, all bits in this
-> block will be changed to Dirty/NeedSync, so that there won't be any overhead
-> until daemon clears dirty bits.
-> 
-> Dirty Bits syncronization:
-> 
-> IO fast path will set bits to dirty, and those dirty bits will be cleared
-> by daemon after IO is done. llbitmap_page_ctl is used to synchronize between
-> IO path and daemon;
-> 
-> IO path:
->  1) try to grab a reference, if succeed, set expire time after 5s and return;
->  2) if failed to grab a reference, wait for daemon to finish clearing dirty
->  bits;
-> 
-> Daemon(Daemon will be waken up every daemon_sleep seconds):
-
-                will be woken up
-or
-                will be awakened
-
-> For each page:
->  1) check if page expired, if not skip this page; for expired page:
-
-                    expired; if not, skip this page. For expired page:
-
->  2) suspend the page and wait for inflight write IO to be done;
->  3) change dirty page to clean;
->  4) resume the page;
-> 
-> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
-> ---
->  Documentation/admin-guide/md.rst |   20 +
->  drivers/md/Kconfig               |   11 +
->  drivers/md/Makefile              |    1 +
->  drivers/md/md-bitmap.c           |    9 -
->  drivers/md/md-bitmap.h           |   31 +-
->  drivers/md/md-llbitmap.c         | 1600 ++++++++++++++++++++++++++++++
->  drivers/md/md.c                  |    6 +
->  drivers/md/md.h                  |    4 +-
->  8 files changed, 1670 insertions(+), 12 deletions(-)
->  create mode 100644 drivers/md/md-llbitmap.c
-> 
-> diff --git a/Documentation/admin-guide/md.rst b/Documentation/admin-guide/md.rst
-> index 001363f81850..47d1347ccd00 100644
-> --- a/Documentation/admin-guide/md.rst
-> +++ b/Documentation/admin-guide/md.rst
-> @@ -387,6 +387,8 @@ All md devices contain:
->           No bitmap
->       bitmap
->           The default internal bitmap
-> +     llbitmap
-> +         The lockless internal bitmap
->  
->  If bitmap_type is not none, then additional bitmap attributes bitmap/xxx or
->  llbitmap/xxx will be created after md device KOBJ_CHANGE event.
-> @@ -447,6 +449,24 @@ If bitmap_type is bitmap, then the md device will also contain:
->       once the array becomes non-degraded, and this fact has been
->       recorded in the metadata.
->  
-> +If bitmap_type is llbitmap, then the md device will also contain:
-> +
-> +  llbitmap/bits
-> +     This is readonly, show status of bitmap bits, the number of each
-
-                read-only; it shows the status of bitmap bits,
-
-> +     value.
-> +
-> +  llbitmap/metadata
-> +     This is readonly, show bitmap metadata, include chunksize, chunkshift,
-
-                read-only; it shows bitmap metadata, including
-
-> +     chunks, offset and daemon_sleep.
-> +
-> +  llbitmap/daemon_sleep
-> +     This is readwrite, time in seconds that daemon function will be
-
-                read-write, time in seconds
-
-> +     triggered to clear dirty bits.
-> +
-> +  llbitmap/barrier_idle
-> +     This is readwrite, time in seconds that page barrier will be idled,
-
-                read-write,> +     means dirty bits in the page will be cleared.
-> +
->  As component devices are added to an md array, they appear in the ``md``
->  directory as new directories named::
->  
-
-> diff --git a/drivers/md/md-llbitmap.c b/drivers/md/md-llbitmap.c
-> new file mode 100644
-> index 000000000000..88207f31c728
-> --- /dev/null
-> +++ b/drivers/md/md-llbitmap.c
-> @@ -0,0 +1,1600 @@
-
-> +/*
-> + * #### Background
-> + *
-> + * Redundant data is used to enhance data fault tolerance, and the storage
-> + * method for redundant data vary depending on the RAID levels. And it's
-
-      methods
-
-> + * important to maintain the consistency of redundant data.
-> + *
-> + * Bitmap is used to record which data blocks have been synchronized and which
-> + * ones need to be resynchronized or recovered. Each bit in the bitmap
-> + * represents a segment of data in the array. When a bit is set, it indicates
-> + * that the multiple redundant copies of that data segment may not be
-> + * consistent. Data synchronization can be performed based on the bitmap after
-> + * power failure or readding a disk. If there is no bitmap, a full disk
-
-                       reading
-
-> + * synchronization is required.
-> + *
-> + * #### Key Features
-> + *
-> + *  - IO fastpath is lockless, if user issues lots of write IO to the same
-
-                        lockless. If the user
-
-> + *  bitmap bit in a short time, only the first write have additional overhead
-
-                                                        has
-
-> + *  to update bitmap bit, no additional overhead for the following writes;
-
-                        bit; there is no additional overhead for the following writes;
-
-> + *  - support only resync or recover written data, means in the case creating
-> + *  new array or replacing with a new disk, there is no need to do a full disk
-> + *  resync/recovery;
-> + *
-> + * #### Key Concept
-> + *
-> + * ##### State Machine
-> + *
-> + * Each bit is one byte, contain 6 difference state, see llbitmap_state. And
-
-                      byte, containing           states,
-
-> + * there are total 8 differenct actions, see llbitmap_action, can change state:
-
-                        different                              , that can change state.
-
-> + *
-> + * llbitmap state machine: transitions between states
-
-                                                  states::
-
-Use "::" to maintain the table spacing.
-
-> + *
-> + * |           | Startwrite | Startsync | Endsync | Abortsync|
-> + * | --------- | ---------- | --------- | ------- | -------  |
-> + * | Unwritten | Dirty      | x         | x       | x        |
-> + * | Clean     | Dirty      | x         | x       | x        |
-> + * | Dirty     | x          | x         | x       | x        |
-> + * | NeedSync  | x          | Syncing   | x       | x        |
-> + * | Syncing   | x          | Syncing   | Dirty   | NeedSync |
-> + *
-> + * |           | Reload   | Daemon | Discard   | Stale     |
-> + * | --------- | -------- | ------ | --------- | --------- |
-> + * | Unwritten | x        | x      | x         | x         |
-> + * | Clean     | x        | x      | Unwritten | NeedSync  |
-> + * | Dirty     | NeedSync | Clean  | Unwritten | NeedSync  |
-> + * | NeedSync  | x        | x      | Unwritten | x         |
-> + * | Syncing   | NeedSync | x      | Unwritten | NeedSync  |
-> + *
-> + * Typical scenarios:
-> + *
-> + * 1) Create new array
-> + * All bits will be set to Unwritten by default, if --assume-clean is set,
-
-                                           default. If
-
-> + * all bits will be set to Clean instead.
-> + *
-> + * 2) write data, raid1/raid10 have full copy of data, while raid456 doesn't and
-> + * rely on xor data
-> + *
-> + * 2.1) write new data to raid1/raid10:
-> + * Unwritten --StartWrite--> Dirty
-> + *
-> + * 2.2) write new data to raid456:
-> + * Unwritten --StartWrite--> NeedSync
-> + *
-> + * Because the initial recover for raid456 is skipped, the xor data is not build
-
-                                                                              built
-
-> + * yet, the bit must set to NeedSync first and after lazy initial recover is
-
-                   must be set to
-
-> + * finished, the bit will finially set to Dirty(see 5.1 and 5.4);
-
-                             finally be set to
-
-> + *
-> + * 2.3) cover write
-> + * Clean --StartWrite--> Dirty
-> + *
-> + * 3) daemon, if the array is not degraded:
-> + * Dirty --Daemon--> Clean
-> + *
-> + * For degraded array, the Dirty bit will never be cleared, prevent full disk
-
-                                                               preventing
-
-> + * recovery while readding a removed disk.
-
-                     reading
-
-> + *
-> + * 4) discard
-> + * {Clean, Dirty, NeedSync, Syncing} --Discard--> Unwritten
-> + *
-> + * 5) resync and recover
-> + *
-> + * 5.1) common process
-> + * NeedSync --Startsync--> Syncing --Endsync--> Dirty --Daemon--> Clean
-> + *
-> + * 5.2) resync after power failure
-> + * Dirty --Reload--> NeedSync
-> + *
-> + * 5.3) recover while replacing with a new disk
-> + * By default, the old bitmap framework will recover all data, and llbitmap
-> + * implement this by a new helper, see llbitmap_skip_sync_blocks:
-
-      implements
-
-> + *
-> + * skip recover for bits other than dirty or clean;
-> + *
-> + * 5.4) lazy initial recover for raid5:
-> + * By default, the old bitmap framework will only allow new recover when there
-> + * are spares(new disk), a new recovery flag MD_RECOVERY_LAZY_RECOVER is add
-
-                     disk). A new                                           added
-
-> + * to perform raid456 lazy recover for set bits(from 2.2).
-> + *
-> + * ##### Bitmap IO
-> + *
-> + * ##### Chunksize
-> + *
-> + * The default bitmap size is 128k, incluing 1k bitmap super block, and
-> + * the default size of segment of data in the array each bit(chunksize) is 64k,
-> + * and chunksize will adjust to twice the old size each time if the total number
-> + * bits is not less than 127k.(see llbitmap_init)
-> + *
-> + * ##### READ
-> + *
-> + * While creating bitmap, all pages will be allocated and read for llbitmap,
-> + * there won't be read afterwards
-> + *
-> + * ##### WRITE
-> + *
-> + * WRITE IO is divided into logical_block_size of the array, the dirty state
-> + * of each block is tracked independently, for example:
-> + *
-> + * each page is 4k, contain 8 blocks; each block is 512 bytes contain 512 bit;
-
-                                                                 and contains 512 bits;
-
-> + *
-> + * | page0 | page1 | ... | page 31 |
-> + * |       |
-> + * |        \-----------------------\
-> + * |                                |
-> + * | block0 | block1 | ... | block 8|
-> + * |        |
-> + * |         \-----------------\
-> + * |                            |
-> + * | bit0 | bit1 | ... | bit511 |
-> + *
-> + * From IO path, if one bit is changed to Dirty or NeedSync, the corresponding
-> + * subpage will be marked dirty, such block must write first before the IO is
-> + * issued. This behaviour will affect IO performance, to reduce the impact, if
-> + * multiple bits are changed in the same block in a short time, all bits in this
-> + * block will be changed to Dirty/NeedSync, so that there won't be any overhead
-> + * until daemon clears dirty bits.
-> + *
-> + * ##### Dirty Bits syncronization
-
-                       synchronization
-
-[snip]
-
-> +
-> +static struct md_sysfs_entry llbitmap_bits =
-> +__ATTR_RO(bits);
-
-One line, or if you feel that it must be 2 lines, the second line
-should be indented.
-
-> +
-> +static struct md_sysfs_entry llbitmap_metadata =
-> +__ATTR_RO(metadata);
-
-One line, or if you feel that it must be 2 lines, the second line
-should be indented.
-
-> +
-> +static struct md_sysfs_entry llbitmap_daemon_sleep =
-> +__ATTR_RW(daemon_sleep);
-> +
-
-One line, or if you feel that it must be 2 lines, the second line
-should be indented.
-
-> +
-> +static struct md_sysfs_entry llbitmap_barrier_idle =
-> +__ATTR_RW(barrier_idle);
-> +
-
-One line, or if you feel that it must be 2 lines, the second line
-should be indented.
-
-
--- 
-~Randy
-
+> The specific test that broke on our end was this:
+> https://android.googlesource.com/platform/bionic/+/HEAD/tests/__cxa_atexit_test.cpp
+> Although I'm not exactly sure how __cxa_atexit() implementation uses
+> mremap() underneath.
+
+Ok, here is the specific call to mremap() in the test:
+https://android.googlesource.com/platform/bionic/+/HEAD/libc/bionic/atexit.cpp#197
 
