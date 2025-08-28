@@ -1,74 +1,76 @@
-Return-Path: <linux-kernel+bounces-789538-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D73D6B39709
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 10:32:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5641B3970A
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 10:32:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98DA03B5698
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 08:32:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 807013BAD48
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 08:32:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1739A2D4817;
-	Thu, 28 Aug 2025 08:32:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08DFF2E3AFE;
+	Thu, 28 Aug 2025 08:32:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Uq5zV0Dg"
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b/6dnKcv"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3864E2BB13
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 08:32:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2A9A1F7580
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 08:32:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756369954; cv=none; b=BhT3hDrc6aCnsKL2v1QVh51NQaXk9W4GmP0ztxYl+kfRXuP0PcUSqYaSIFVcX5KTuczJ0jzxGCgUQZHINjCVYhKugxjDkGkGJ7/OQYfvTDVDAj8w05SqzC3apX5F/FQc/JdHniYSiHoW964CPzUWLZpxLNUfWJpTU2zsnEuHZNM=
+	t=1756369959; cv=none; b=NIPPAhdGRlvR4PypRtOs/UhiV1fDzI7vqbibuokEhb4sLxZy1FltuR5sqgPmpjmX8lJ5PH5GETs0d5uwf2KfejS7Wdfo/dM7scN0J1ikB6ASxi8wPBH4FK7tk3PD1bey+PYKrfjGNieRKZJCqmBteWeBGCPy7H2rgCTm0iATNEY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756369954; c=relaxed/simple;
-	bh=jOss6MkhwjGpF1iOh14s08w/qSHb3yAql9v5qFr4hQI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tl2mrt5ZSbePyHSwnrPYhaBNF0yLwcUItSTiWN0Gt9u1pyTHOkRrI4yt0cCfcMFY5/SOBZi3wjEubzO9Av8RwV7RZVJIyS8Wn4CznVaRNILPheeCGziA5oDpo/2u77XUdlUfRm9q+nXTKwvfv5JZjREmM0pK3iRXQXefTL6kecY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Uq5zV0Dg; arc=none smtp.client-ip=209.85.216.43
+	s=arc-20240116; t=1756369959; c=relaxed/simple;
+	bh=7b6XxNZsRMjQrnkz2AtVX7MlNfVZ5seW+qrqMqolUI8=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=iJFeE6Hw+Mngo81WYhCBh2mlu5ftdmF5mqV9NqvQ0yLvoCMhRlsxuQoa3H2aqk2gH6eExw6ozrZfylwyJnjzudBH175Ys75JMH+VrrIb+FXfFOH4Vmys7/L6S6f4AkQ6miJp+aeNaVyNyXjEAEXgREKUJF7G2NQfJ3l3mrfbYZc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b/6dnKcv; arc=none smtp.client-ip=209.85.214.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-324eb9cc40aso1459100a91.0
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 01:32:32 -0700 (PDT)
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-246151aefaaso14565795ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 01:32:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756369952; x=1756974752; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=cMsawreydTlc4F82yKjrug0W8AgzAt83Q8ngL+wzgYQ=;
-        b=Uq5zV0Dgm+l0gMmOUyDAXhBenTOKqdIkn4hv0U1QzMk5ai8DmmV/M0b3pICCFLtrl9
-         wlDYwULOb4yND4NvGx81KSE3mrgvHkR6u0JFjNsnsBUhdGx/syi5Bbf5KyQA/DBkCLox
-         t6D+j9WUYdvj+zvb6qStW+8KElY9JDF+Sfelrn7O0ZlNB4c3Zl1arZyHeTLwsAwWMHUn
-         lk1zpTd062z7ec7pCx2GaDVdqYtIiu96Mtl/yLM+3LE9xDxvcj04rntFrxlGX5C8+IJp
-         QR+fTt4ev0jUJB+T7d/Z1Erezf169Ma9Vfx65+Tx37my5EnHfyCEoLcsISH0txBsPogF
-         l+pQ==
+        d=gmail.com; s=20230601; t=1756369957; x=1756974757; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lm8GPCPzMzcahypxzHwZb0Rzqx2ICQwQ/5Ip1qxN3kk=;
+        b=b/6dnKcvDY/X/VDJAtrG2GR0aZ7mS+Mdhd+S3n6jr2shYjzmkKOFvl7/MEmEjCGAU+
+         WL7Rzmv/C4adhr/nMG6i4ESKl99p2AnQseSwUjDnRehBAH9gYrPwYzxFDubAz16g0DVP
+         aTpe7SoglOSY1vZFF8zfXoAEqJuMocrHKto5f1Vzy7UJIUufecGtUUEguKdFqXhrbwPI
+         Lrz7RF2HG44PCBsIwbtJMO+O84JWlbptNLH93kcMlhcHgHdYJVLVC791hIS+Z9dhxv0w
+         5nH6zZLVukz4qljbyflI6bXVttvjznOQjQXm4TJ+SP4e72j+AeOG3TAPnfrrasTzhTew
+         Pnyw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756369952; x=1756974752;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cMsawreydTlc4F82yKjrug0W8AgzAt83Q8ngL+wzgYQ=;
-        b=fqXlEVCLWK1V7GAOfoZVhseAmd+rjp+PgsdOlyJ7CNmXAq1bTJ6pkWBeivVzTFE3mI
-         ztjIdagRmDk83telAYRclqq18AraJYfiDybMnDQVdVITrUHegYL2uzTv/Lf8uLau71Ha
-         1XjW287GYfTLwDOD7g6/uI/x5XARe0xxvrzLa1vyLUagWem+AOFsY+wGITmENqTZ2zeR
-         LRKxOq53IM98OLhZDr3TXgWg8lS/KdHon+hnGLmwEY8vBqTqapJj/43lDhMKL+ibGk5p
-         UdSgpXjXNWJdoJ4/iE914LF+lL5nyLKUQMQdQvPL45HhVNFqFyO3RyWCGr67LANNJllD
-         Y+jA==
-X-Gm-Message-State: AOJu0YyJMEBwPKKRvVI7NKe6rRCGiKxWpXuRaEVVB6HmJiRg7BTD3Liu
-	/BOTpk/09i7KFHxGiWOlcFyia5Gcq5MM8vKe+qDEJ+gsFPNJFe91QFki
-X-Gm-Gg: ASbGncv5ZScXtULIbvYEnRLJOmhB+xQfeaUv3+p6LxINT8fkXMn5D3Ab+6kQLLBYeAy
-	QwwA+q+kPCf7THvKYrV/L0HJo8QHvgxu+JyeWPCF2wKoEkHp1MaHoPKbW2f7LBwbvXeZT8YL3lY
-	wxeBSjql+hWU7cIMBRL6hRYh5fML070nXY2banQQZCenCvcRSj/UsQhrVfutFNvkSCmIaRa3HOY
-	xPMdxEA/uFmZxRWJJra8ru0J2XxGXChdRnDBFOVBs2rKok/q+YaJzHLzz4WO4dNM1GWR4eaMdoY
-	dWxPH0H445hUbXTB9VhVtuCwbx0T9E3mJdQNWw6kdxTxtpVTIlU0SsBKWS/6QuSPaUyoscW70qG
-	kARAmmKPkljm0dZ0+4jPH499aDBuZX+S+K6+Jopm2N+U=
-X-Google-Smtp-Source: AGHT+IGww2Au6EwKzWJINCDM44/+WlrGxfz+MYGJXZ3NEBCM62zu0VwMJxkQOfq9y5AhbcTU3tjCgg==
-X-Received: by 2002:a17:90b:5246:b0:321:82a0:fe50 with SMTP id 98e67ed59e1d1-3275085dabemr10455859a91.5.1756369952348;
-        Thu, 28 Aug 2025 01:32:32 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1756369957; x=1756974757;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lm8GPCPzMzcahypxzHwZb0Rzqx2ICQwQ/5Ip1qxN3kk=;
+        b=s70GIGqr/3nDJ7bSahsKHtc2PM4ATXH/w7m6RwtxxBItDIShkL4iYZkC9/t4XcfQLV
+         Ni5/j4WjF8lrL1DjxxRu362EAIQVE1VWjK9RXBunD9Heq99MJ5lWXbHeXFeh+rQjyLnB
+         A5YleSWBtp4mSm/tbC2421yTmYfuNKpXu4d2QUGTf2s+JDT2GIU3dnIIoNda0d6lfGgG
+         yLe22XzQaSvUE5ADmySxjkMmh4F8l0yxIPeYZw5VTlGs9mhck39L7X3lL/1qlzWTkP3b
+         grAFSGpKmPTLQSwio1FwJ+aYuZRiTVSU6upfVlFOTw4SA2QE9mnNxQ2Y4AsfwNIq6Iuy
+         mZkg==
+X-Gm-Message-State: AOJu0Yxuozim6KdbFr+U3qZzJRsMnOuskAcoXxzhIu536CVnv+OuDABM
+	48iHfeljPW3RtfP8NHfBPBLFyMAP6wQ+EJ0lmyl/eKzorX6tEXBCNImV
+X-Gm-Gg: ASbGncub9pPoZei5ur0MiJUgTEaSz94H5FUAceC372DLUyB4/0c3ma3HUlzx0u4TTJT
+	VqqW18lHLiKFQxlcarfgATazYhhezuplG2UGyW4TFBvwZP+z2Kl5yEtvieOeWO93Pdvilivu7rh
+	AUg2/zEERoYxoE1lELS1iteFsYc5EIh8uRjOu0mdOih/RDK3ltgyhNkALCul3DaS/I6Teh2PVHa
+	ylvc/muVtXOZE/utEQEioMy4lqw7x3JFLPxKLtctTXzVvaDY8i0TCLFv6R/qoNvVQXTiuFqqbp4
+	6/PsKjFcxqra/YBcAbKfqxORS27bn6SMFFHA+LR5qzYJQC08O7VGPRRqLNMqPwTSRMDrnurH9UJ
+	xtquW+ZhPMVHAWpEqzcn+YuMT3epU9BojcubjCypfzmuf4oCBEzoMew==
+X-Google-Smtp-Source: AGHT+IGhM/ccZEyF0simKH/f54xmziqAM/K0pJ/uS89XeLLZK3ZgBAFLP+zAoPECYnU+ZMpLrWUxrQ==
+X-Received: by 2002:a17:903:41c9:b0:245:f6aa:1cd0 with SMTP id d9443c01a7336-248753a2592mr126200535ad.17.1756369957036;
+        Thu, 28 Aug 2025 01:32:37 -0700 (PDT)
 Received: from cs20-buildserver.lan ([2402:7500:500:7a9f:2e0:4cff:fe68:863])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3276fde4cecsm4335148a91.29.2025.08.28.01.32.30
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3276fde4cecsm4335148a91.29.2025.08.28.01.32.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Aug 2025 01:32:31 -0700 (PDT)
+        Thu, 28 Aug 2025 01:32:36 -0700 (PDT)
 From: Stanley Chu <stanley.chuys@gmail.com>
 X-Google-Original-From: Stanley Chu <yschu@nuvoton.com>
 To: frank.li@nxp.com,
@@ -79,10 +81,12 @@ Cc: linux-kernel@vger.kernel.org,
 	tomer.maimon@nuvoton.com,
 	kwliu@nuvoton.com,
 	yschu@nuvoton.com
-Subject: [PATCH v1 0/2] i3c: master: svc: improve IBI handling
-Date: Thu, 28 Aug 2025 16:32:23 +0800
-Message-Id: <20250828083225.3558100-1-yschu@nuvoton.com>
+Subject: [PATCH v1 1/2] i3c: master: svc: Use manual response for IBI events
+Date: Thu, 28 Aug 2025 16:32:24 +0800
+Message-Id: <20250828083225.3558100-2-yschu@nuvoton.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250828083225.3558100-1-yschu@nuvoton.com>
+References: <20250828083225.3558100-1-yschu@nuvoton.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,15 +95,85 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Improve IBI handling to prevent certain error conditions.
+From: Stanley Chu <yschu@nuvoton.com>
 
-Stanley Chu (2):
-  i3c: master: svc: Use manual response for IBI events
-  i3c: master: svc: Recycle unused ibi slot
+Driver wants to nack the IBI request when the target is not in the
+known address list. In below code, svc_i3c_master_nack_ibi() will
+cause undefined behavior when using AUTOIBI with auto response rule,
+because hw always auto ack the IBI request.
 
- drivers/i3c/master/svc-i3c-master.c | 29 ++++++++++++++++++++++++-----
- 1 file changed, 24 insertions(+), 5 deletions(-)
+    switch (ibitype) {
+    case SVC_I3C_MSTATUS_IBITYPE_IBI:
+            dev = svc_i3c_master_dev_from_addr(master, ibiaddr);
+            if (!dev || !is_events_enabled(master, SVC_I3C_EVENT_IBI))
+                    svc_i3c_master_nack_ibi(master);
+            ...
+            break;
 
+AutoIBI has another issue that the controller doesn't quit AutoIBI state
+after IBIWON polling timeout when there is a SDA glitch(high->low->high).
+1. SDA high->low: raising an interrupt to execute IBI ISR
+2. SDA low->high
+3. Driver writes an AutoIBI request
+4. AutoIBI process does not start because SDA is not low
+5. IBIWON polling times out
+6. Controller reamins in AutoIBI state and doesn't accept EmitStop request
+
+Emitting broadcast address with IBIRESP_MANUAL avoids both issues.
+
+Signed-off-by: Stanley Chu <yschu@nuvoton.com>
+---
+ drivers/i3c/master/svc-i3c-master.c | 28 +++++++++++++++++++++++-----
+ 1 file changed, 23 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/i3c/master/svc-i3c-master.c b/drivers/i3c/master/svc-i3c-master.c
+index 701ae165b25b..baf3059fd668 100644
+--- a/drivers/i3c/master/svc-i3c-master.c
++++ b/drivers/i3c/master/svc-i3c-master.c
+@@ -517,9 +517,22 @@ static void svc_i3c_master_ibi_isr(struct svc_i3c_master *master)
+ 	 */
+ 	writel(SVC_I3C_MINT_IBIWON, master->regs + SVC_I3C_MSTATUS);
+ 
+-	/* Acknowledge the incoming interrupt with the AUTOIBI mechanism */
+-	writel(SVC_I3C_MCTRL_REQUEST_AUTO_IBI |
+-	       SVC_I3C_MCTRL_IBIRESP_AUTO,
++	/*
++	 * Write REQUEST_START_ADDR request to emit broadcast address for arbitration,
++	 * instend of using AUTO_IBI.
++	 *
++	 * Using AutoIBI request may cause controller to remain in AutoIBI state when
++	 * there is a glitch on SDA line (high->low->high).
++	 * 1. SDA high->low, raising an interrupt to execute IBI isr.
++	 * 2. SDA low->high.
++	 * 3. IBI isr writes an AutoIBI request.
++	 * 4. The controller will not start AutoIBI process because SDA is not low.
++	 * 5. IBIWON polling times out.
++	 * 6. Controller reamins in AutoIBI state and doesn't accept EmitStop request.
++	 */
++	writel(SVC_I3C_MCTRL_REQUEST_START_ADDR |
++	       SVC_I3C_MCTRL_IBIRESP_MANUAL |
++	       SVC_I3C_MCTRL_ADDR(I3C_BROADCAST_ADDR),
+ 	       master->regs + SVC_I3C_MCTRL);
+ 
+ 	/* Wait for IBIWON, should take approximately 100us */
+@@ -539,10 +552,15 @@ static void svc_i3c_master_ibi_isr(struct svc_i3c_master *master)
+ 	switch (ibitype) {
+ 	case SVC_I3C_MSTATUS_IBITYPE_IBI:
+ 		dev = svc_i3c_master_dev_from_addr(master, ibiaddr);
+-		if (!dev || !is_events_enabled(master, SVC_I3C_EVENT_IBI))
++		if (!dev || !is_events_enabled(master, SVC_I3C_EVENT_IBI)) {
+ 			svc_i3c_master_nack_ibi(master);
+-		else
++		} else {
++			if (dev->info.bcr & I3C_BCR_IBI_PAYLOAD)
++				svc_i3c_master_ack_ibi(master, true);
++			else
++				svc_i3c_master_ack_ibi(master, false);
+ 			svc_i3c_master_handle_ibi(master, dev);
++		}
+ 		break;
+ 	case SVC_I3C_MSTATUS_IBITYPE_HOT_JOIN:
+ 		if (is_events_enabled(master, SVC_I3C_EVENT_HOTJOIN))
 -- 
 2.34.1
 
