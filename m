@@ -1,109 +1,366 @@
-Return-Path: <linux-kernel+bounces-789598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12035B397DE
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 11:11:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4187B397F7
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 11:16:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C8B2E4E3DF8
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 09:11:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7F63F7ACAAA
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 09:15:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B22B26A0B1;
-	Thu, 28 Aug 2025 09:11:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 482D0223710;
+	Thu, 28 Aug 2025 09:16:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="pVcS55NV"
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CJ5FY01k"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F928EEBB
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 09:11:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A38C199230
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 09:16:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756372310; cv=none; b=iMqeBNBNh+9kRlOG/QDba6Tpm81+cLVh3adRln848f73k+WoiUkvOd5Z7K1EowRrFsV9Ru9+fdtUA90v5CF5PShQHU8jkY250jl5DBMijwyQ0Rif90zd+aiNNNt1B3sKIScvPGqKKuPUcdtnzsArbn2QqwecZKUw+OMwyOb9+/c=
+	t=1756372594; cv=none; b=Vfb6iWkIwseQqcbI/7RCXOcryveWFa2+mqSe/ZUGHiw091uLkiEBh/bkVzE24MmMXbJy5qOwfB9VIwozCfK1c6xg4z2N/NlexgI47dB5LvsTxFHKajG9ogVuk1S32ft2K4OsMauDZ4On/xvFVJ0nvXsfX5w+J7v2lcseum6qxt8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756372310; c=relaxed/simple;
-	bh=F49ckCOpg5fyZ690fawsGzAm+z7CFS7kUt4DM6zbfIU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
-	 References; b=MJkmvbDFx5zmAPEMZkg/F/On+oCrnMoUre7QOJfg1XviSVIyT2H0lLS2bdPKfM98SpAFzuet/YAADVgesIe4D+FSu1x0E3Caq/Ci962OTrvJURIIFu4ej8Ys2pvSxqBbaoqDdvFOQNqRH6+rZ4m68k0uboTgLa+imLUJiLmmrzQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=pVcS55NV; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250828091146euoutp0133bb1b65cb771311bea39d1293346113~f406V5o7k3095730957euoutp01w
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 09:11:46 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250828091146euoutp0133bb1b65cb771311bea39d1293346113~f406V5o7k3095730957euoutp01w
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1756372306;
-	bh=SQsf9ZDYvefHFj0I2V0CVwlzMn4B1xGONEr2tsW/hSM=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=pVcS55NVqCenJLn4CdGLewjI2ey3p//h6fnYseupia+kJu9gcyG3bsSysw7ZAhzi6
-	 KPHNcxwRiT2FXqiojfjFaXmHMjv6kPk6blbKwg8SGTDsBW1iZAX44WAj7mA+1CMC3N
-	 iCkijRsMALNqhmX10q/jzmLt0wMU6Gb27n4otXTc=
-Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20250828091145eucas1p2293261860e89a33ae54ce1c908ef8619~f405um4Gx1728417284eucas1p2N;
-	Thu, 28 Aug 2025 09:11:45 +0000 (GMT)
-Received: from AMDC4653.digital.local (unknown [106.120.51.32]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250828091145eusmtip2056ad537927b2eb250b5ebf770da3f1a~f405VunUS2470224702eusmtip2r;
-	Thu, 28 Aug 2025 09:11:45 +0000 (GMT)
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, iommu@lists.linux.dev, Marek Szyprowski
-	<m.szyprowski@samsung.com>, Christoph Hellwig <hch@lst.de>, Robin Murphy
-	<robin.murphy@arm.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
-	Oreoluwa Babatunde <oreoluwa.babatunde@oss.qualcomm.com>
-Subject: [GIT PULL] dma-mapping fix for Linux 6.17
-Date: Thu, 28 Aug 2025 11:11:32 +0200
-Message-Id: <20250828091132.860125-1-m.szyprowski@samsung.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1756372594; c=relaxed/simple;
+	bh=83MPi7t3c6et/19BGf6NIja0Y+tkJ3A67wMIYcCaTiE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=c1HQeQZS5Fv3XQT3dE+BnpjrMAXAr0kvOzYH+031ZFKf8kfpd2FJz7GnBwl4Xr3RvdP/eSFqu72+0jx700moeSJi+ekOKZbuKp+oefWzfsFVFSvjRW5wkTNWBJBuITTaQJgh9JiuSw2pIY73HhxqJufEMHAnGAXSfLs+SF25F1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CJ5FY01k; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756372590;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=lMHoyR4t+VD2Hv4M+jrjEVqyNy3Cvds3HYHQtEfzQbo=;
+	b=CJ5FY01kCbaF9/mD1mkZ8YCiKJQ8dW8SFzrIklzlw3H2PsDQVB3Gx9GMkx2NOo2LUOOppX
+	T11k+VQPEoYXrjBYbtB6s2/Td+qbV1Fy9ilKHM8uvHJ53l3xZvNClWETEMCHngotRjdqz7
+	SZRBlgskZ2YyoHO58m8ysVjSOD2bElE=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-82-q5zZCpZ-Obilh92PJH4tFg-1; Thu,
+ 28 Aug 2025 05:16:26 -0400
+X-MC-Unique: q5zZCpZ-Obilh92PJH4tFg-1
+X-Mimecast-MFC-AGG-ID: q5zZCpZ-Obilh92PJH4tFg_1756372585
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 096051800286;
+	Thu, 28 Aug 2025 09:16:25 +0000 (UTC)
+Received: from fedora.redhat.com (unknown [10.45.226.68])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 799271800291;
+	Thu, 28 Aug 2025 09:16:20 +0000 (UTC)
+From: Vitaly Kuznetsov <vkuznets@redhat.com>
+To: linux-hyperv@vger.kernel.org,
+	Michael Kelley <mhklinux@outlook.com>
+Cc: "K. Y. Srinivasan" <kys@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	Wei Liu <wei.liu@kernel.org>,
+	Dexuan Cui <decui@microsoft.com>,
+	x86@kernel.org,
+	linux-kernel@vger.kernel.org,
+	Nuno Das Neves <nunodasneves@linux.microsoft.com>,
+	Tianyu Lan <tiala@microsoft.com>,
+	Li Tian <litian@redhat.com>,
+	Philipp Rudo <prudo@redhat.com>
+Subject: [PATCH v4] x86/hyperv: Fix kdump on Azure CVMs
+Date: Thu, 28 Aug 2025 12:16:18 +0300
+Message-ID: <20250828091618.884950-1-vkuznets@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain
 Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20250828091145eucas1p2293261860e89a33ae54ce1c908ef8619
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20250828091145eucas1p2293261860e89a33ae54ce1c908ef8619
-X-EPHeader: CA
-X-CMS-RootMailID: 20250828091145eucas1p2293261860e89a33ae54ce1c908ef8619
-References: <CGME20250828091145eucas1p2293261860e89a33ae54ce1c908ef8619@eucas1p2.samsung.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d585:
+Azure CVM instance types featuring a paravisor hang upon kdump. The
+investigation shows that makedumpfile causes a hang when it steps on a page
+which was previously share with the host
+(HVCALL_MODIFY_SPARSE_GPA_PAGE_HOST_VISIBILITY). The new kernel has no
+knowledge of these 'special' regions (which are Vmbus connection pages,
+GPADL buffers, ...). There are several ways to approach the issue:
+- Convey the knowledge about these regions to the new kernel somehow.
+- Unshare these regions before accessing in the new kernel (it is unclear
+if there's a way to query the status for a given GPA range).
+- Unshare these regions before jumping to the new kernel (which this patch
+implements).
 
-  Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
+To make the procedure as robust as possible, store PFN ranges of shared
+regions in a linked list instead of storing GVAs and re-using
+hv_vtom_set_host_visibility(). This also allows to avoid memory allocation
+on the kdump/kexec path.
 
-are available in the Git repository at:
+Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+---
+Changes since v3 [Michael Kelley]:
+ - Employ x86_platform.guest.enc_kexec_{begin,finish} hooks.
+ - Don't use spinlock in what's now hv_vtom_kexec_finish().
+ - Handle possible hypercall failures in hv_mark_gpa_visibility()
+   symmetrically; change hv_list_enc_remove() to return -ENOMEM as well.
+ - Rebase to the latest hyperv/next.
+---
+ arch/x86/hyperv/ivm.c | 211 +++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 210 insertions(+), 1 deletion(-)
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/mszyprowski/linux.git tags/dma-mapping-6.17-2025-08-28
+diff --git a/arch/x86/hyperv/ivm.c b/arch/x86/hyperv/ivm.c
+index ade6c665c97e..a4615b889f3e 100644
+--- a/arch/x86/hyperv/ivm.c
++++ b/arch/x86/hyperv/ivm.c
+@@ -462,6 +462,195 @@ void hv_ivm_msr_read(u64 msr, u64 *value)
+ 		hv_ghcb_msr_read(msr, value);
+ }
+ 
++/*
++ * Keep track of the PFN regions which were shared with the host. The access
++ * must be revoked upon kexec/kdump (see hv_ivm_clear_host_access()).
++ */
++struct hv_enc_pfn_region {
++	struct list_head list;
++	u64 pfn;
++	int count;
++};
++
++static LIST_HEAD(hv_list_enc);
++static DEFINE_RAW_SPINLOCK(hv_list_enc_lock);
++
++static int hv_list_enc_add(const u64 *pfn_list, int count)
++{
++	struct hv_enc_pfn_region *ent;
++	unsigned long flags;
++	u64 pfn;
++	int i;
++
++	for (i = 0; i < count; i++) {
++		pfn = pfn_list[i];
++
++		raw_spin_lock_irqsave(&hv_list_enc_lock, flags);
++		/* Check if the PFN already exists in some region first */
++		list_for_each_entry(ent, &hv_list_enc, list) {
++			if ((ent->pfn <= pfn) && (ent->pfn + ent->count - 1 >= pfn))
++				/* Nothing to do - pfn is already in the list */
++				goto unlock_done;
++		}
++
++		/*
++		 * Check if the PFN is adjacent to an existing region. Growing
++		 * a region can make it adjacent to another one but merging is
++		 * not (yet) implemented for simplicity. A PFN cannot be added
++		 * to two regions to keep the logic in hv_list_enc_remove()
++		 * correct.
++		 */
++		list_for_each_entry(ent, &hv_list_enc, list) {
++			if (ent->pfn + ent->count == pfn) {
++				/* Grow existing region up */
++				ent->count++;
++				goto unlock_done;
++			} else if (pfn + 1 == ent->pfn) {
++				/* Grow existing region down */
++				ent->pfn--;
++				ent->count++;
++				goto unlock_done;
++			}
++		}
++		raw_spin_unlock_irqrestore(&hv_list_enc_lock, flags);
++
++		/* No adjacent region found -- create a new one */
++		ent = kzalloc(sizeof(struct hv_enc_pfn_region), GFP_KERNEL);
++		if (!ent)
++			return -ENOMEM;
++
++		ent->pfn = pfn;
++		ent->count = 1;
++
++		raw_spin_lock_irqsave(&hv_list_enc_lock, flags);
++		list_add(&ent->list, &hv_list_enc);
++
++unlock_done:
++		raw_spin_unlock_irqrestore(&hv_list_enc_lock, flags);
++	}
++
++	return 0;
++}
++
++static int hv_list_enc_remove(const u64 *pfn_list, int count)
++{
++	struct hv_enc_pfn_region *ent, *t;
++	struct hv_enc_pfn_region new_region;
++	unsigned long flags;
++	u64 pfn;
++	int i;
++
++	for (i = 0; i < count; i++) {
++		pfn = pfn_list[i];
++
++		raw_spin_lock_irqsave(&hv_list_enc_lock, flags);
++		list_for_each_entry_safe(ent, t, &hv_list_enc, list) {
++			if (pfn == ent->pfn + ent->count - 1) {
++				/* Removing tail pfn */
++				ent->count--;
++				if (!ent->count) {
++					list_del(&ent->list);
++					kfree(ent);
++				}
++				goto unlock_done;
++			} else if (pfn == ent->pfn) {
++				/* Removing head pfn */
++				ent->count--;
++				ent->pfn++;
++				if (!ent->count) {
++					list_del(&ent->list);
++					kfree(ent);
++				}
++				goto unlock_done;
++			} else if (pfn > ent->pfn && pfn < ent->pfn + ent->count - 1) {
++				/*
++				 * Removing a pfn in the middle. Cut off the tail
++				 * of the existing region and create a template for
++				 * the new one.
++				 */
++				new_region.pfn = pfn + 1;
++				new_region.count = ent->count - (pfn - ent->pfn + 1);
++				ent->count = pfn - ent->pfn;
++				goto unlock_split;
++			}
++
++		}
++unlock_done:
++		raw_spin_unlock_irqrestore(&hv_list_enc_lock, flags);
++		continue;
++
++unlock_split:
++		raw_spin_unlock_irqrestore(&hv_list_enc_lock, flags);
++
++		ent = kzalloc(sizeof(struct hv_enc_pfn_region), GFP_KERNEL);
++		if (!ent)
++			return -ENOMEM;
++
++		ent->pfn = new_region.pfn;
++		ent->count = new_region.count;
++
++		raw_spin_lock_irqsave(&hv_list_enc_lock, flags);
++		list_add(&ent->list, &hv_list_enc);
++		raw_spin_unlock_irqrestore(&hv_list_enc_lock, flags);
++	}
++
++	return 0;
++}
++
++/* Stop new private<->shared conversions */
++static void hv_vtom_kexec_begin(void)
++{
++	if (!IS_ENABLED(CONFIG_KEXEC_CORE))
++		return;
++
++	/*
++	 * Crash kernel reaches here with interrupts disabled: can't wait for
++	 * conversions to finish.
++	 *
++	 * If race happened, just report and proceed.
++	 */
++	if (!set_memory_enc_stop_conversion())
++		pr_warn("Failed to stop shared<->private conversions\n");
++}
++
++static void hv_vtom_kexec_finish(void)
++{
++	struct hv_gpa_range_for_visibility *input;
++	struct hv_enc_pfn_region *ent;
++	unsigned long flags;
++	u64 hv_status;
++	int cur, i;
++
++	local_irq_save(flags);
++	input = *this_cpu_ptr(hyperv_pcpu_input_arg);
++
++	if (unlikely(!input))
++		goto out;
++
++	list_for_each_entry(ent, &hv_list_enc, list) {
++		for (i = 0, cur = 0; i < ent->count; i++) {
++			input->gpa_page_list[cur] = ent->pfn + i;
++			cur++;
++
++			if (cur == HV_MAX_MODIFY_GPA_REP_COUNT || i == ent->count - 1) {
++				input->partition_id = HV_PARTITION_ID_SELF;
++				input->host_visibility = VMBUS_PAGE_NOT_VISIBLE;
++				input->reserved0 = 0;
++				input->reserved1 = 0;
++				hv_status = hv_do_rep_hypercall(
++					HVCALL_MODIFY_SPARSE_GPA_PAGE_HOST_VISIBILITY,
++					cur, 0, input, NULL);
++				WARN_ON_ONCE(!hv_result_success(hv_status));
++				cur = 0;
++			}
++		}
++
++	}
++
++out:
++	local_irq_restore(flags);
++}
++
+ /*
+  * hv_mark_gpa_visibility - Set pages visible to host via hvcall.
+  *
+@@ -475,6 +664,7 @@ static int hv_mark_gpa_visibility(u16 count, const u64 pfn[],
+ 	struct hv_gpa_range_for_visibility *input;
+ 	u64 hv_status;
+ 	unsigned long flags;
++	int ret;
+ 
+ 	/* no-op if partition isolation is not enabled */
+ 	if (!hv_is_isolation_supported())
+@@ -486,6 +676,13 @@ static int hv_mark_gpa_visibility(u16 count, const u64 pfn[],
+ 		return -EINVAL;
+ 	}
+ 
++	if (visibility == VMBUS_PAGE_NOT_VISIBLE)
++		ret = hv_list_enc_remove(pfn, count);
++	else
++		ret = hv_list_enc_add(pfn, count);
++	if (ret)
++		return ret;
++
+ 	local_irq_save(flags);
+ 	input = *this_cpu_ptr(hyperv_pcpu_input_arg);
+ 
+@@ -506,8 +703,18 @@ static int hv_mark_gpa_visibility(u16 count, const u64 pfn[],
+ 
+ 	if (hv_result_success(hv_status))
+ 		return 0;
++
++	if (visibility == VMBUS_PAGE_NOT_VISIBLE)
++		ret = hv_list_enc_add(pfn, count);
+ 	else
+-		return -EFAULT;
++		ret = hv_list_enc_remove(pfn, count);
++	/*
++	 * There's no good way to recover from -ENOMEM here, the accounting is
++	 * wrong either way.
++	 */
++	WARN_ON_ONCE(ret);
++
++	return -EFAULT;
+ }
+ 
+ /*
+@@ -669,6 +876,8 @@ void __init hv_vtom_init(void)
+ 	x86_platform.guest.enc_tlb_flush_required = hv_vtom_tlb_flush_required;
+ 	x86_platform.guest.enc_status_change_prepare = hv_vtom_clear_present;
+ 	x86_platform.guest.enc_status_change_finish = hv_vtom_set_host_visibility;
++	x86_platform.guest.enc_kexec_begin = hv_vtom_kexec_begin;
++	x86_platform.guest.enc_kexec_finish = hv_vtom_kexec_finish;
+ 
+ 	/* Set WB as the default cache mode. */
+ 	guest_force_mtrr_state(NULL, 0, MTRR_TYPE_WRBACK);
+-- 
+2.50.1
 
-for you to fetch changes up to 89a2d212bdb4bc29bed8e7077abe054b801137ea:
-
-  dma/pool: Ensure DMA_DIRECT_REMAP allocations are decrypted (2025-08-13 11:02:10 +0200)
-
-----------------------------------------------------------------
-dma-mapping fixes for Linux 6.17
-
-- another small fix relevant to arm64 systems with memory encryption
-(Shanker Donthineni)
-- fix relevant to arm32 systems with non-standard CMA configuration
-(Oreoluwa Babatunde)
-
-----------------------------------------------------------------
-Oreoluwa Babatunde (1):
-      of: reserved_mem: Restructure call site for dma_contiguous_early_fixup()
-
-Shanker Donthineni (1):
-      dma/pool: Ensure DMA_DIRECT_REMAP allocations are decrypted
-
- drivers/of/of_reserved_mem.c | 16 ++++++++++++----
- include/linux/dma-map-ops.h  |  3 +++
- kernel/dma/contiguous.c      |  2 --
- kernel/dma/pool.c            |  4 ++--
- 4 files changed, 17 insertions(+), 8 deletions(-)
 
