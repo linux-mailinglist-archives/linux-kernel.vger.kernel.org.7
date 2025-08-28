@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-790069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39D35B39EED
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 15:30:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6661CB39EF8
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 15:31:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 12BDC7ABEAD
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 13:29:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 092561C83B5A
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 13:31:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB9363128AD;
-	Thu, 28 Aug 2025 13:30:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24480313E3A;
+	Thu, 28 Aug 2025 13:30:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bQFcZuAe"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TwweZqIT"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0777930F7E6;
-	Thu, 28 Aug 2025 13:30:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 812D4313552;
+	Thu, 28 Aug 2025 13:30:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756387826; cv=none; b=hInv6nxwnk129HZ0YbwyAq5wIZUmo1l9DLwArf5ApR3uhqLo/Ofgu4EFZhaZY+bGunv2HotPVhgrsXIi7X09lCya0aIeBjw5YXlHmP2//pm1KGVs6uh00Xa+GIBnSLtU7Wf6WRTz7yO3Oa+z/8wOhvLgDF0WN4jgxB7MiNIaOE0=
+	t=1756387827; cv=none; b=t4jNRTwhJTFhMkqnauW+TU9nkH42UA/KLu1Ukv3JzYcEjziYclRB/nIfcMPZMFrx6kwFHfsHqLwq1d/qlyJVpSTSS8NOBO3WE6Ywk8jepsgvb+OUfziVv4GqjfOIrT8gvIZsn48zTEKsi0ZesJTFwlPWYn82qULOX17Za7hHlZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756387826; c=relaxed/simple;
-	bh=PxEep1c4CF+Tc8cos7oMoyl+CrwSHJTT/SjzKqYUkYc=;
+	s=arc-20240116; t=1756387827; c=relaxed/simple;
+	bh=Pp+mUIl9DaMYLcizWDp98QlTF7nc4qrOwFHsc6v7+TQ=;
 	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=JQdXEEPujnknPa2o5rkc8S0gsY790bQ7BmuPUKuw6Q9Zxd+jFZzpENB8a6pIHYjGfQH6F1eVDdWP8AZvo0PnQhgreoKBEz74XRWdA9h+rTNqCIcvf0d1U+ssxYeXaIp51X+YgvPBbH+1gOeUxl6R9bDXEK/ZV41aWNVIJjMy97Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bQFcZuAe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C626C4CEEB;
-	Thu, 28 Aug 2025 13:30:25 +0000 (UTC)
+	 Message-Id:Subject; b=kObpU5shRVJkXOVR/cQPrxhu1XxDOZl2OsrSQOz/1LB/FDKiBHmFTM2RSzos09hyRejVHpKK97EkcJWA/pQ9IT8slYbOpKHEd86lVi8uBd1EtvDzotMpRn7zdz9C4X29+buOuVbarxFYpWsrTBxoKkjafBMUVbuN2Qucvf83Ong=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TwweZqIT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0467BC4CEEB;
+	Thu, 28 Aug 2025 13:30:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756387825;
-	bh=PxEep1c4CF+Tc8cos7oMoyl+CrwSHJTT/SjzKqYUkYc=;
+	s=k20201202; t=1756387827;
+	bh=Pp+mUIl9DaMYLcizWDp98QlTF7nc4qrOwFHsc6v7+TQ=;
 	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=bQFcZuAeqFrlrhjvEdn38U+z5iKQHrIPvWn727CQWJGOp5bP/+wwZx4SMQ3v0K2TT
-	 hq8SmBp4eJAObgotbKYBNthTJayUsahN+92YFuWfLQwaq5Qo5b/EB1V0R0O1CjFAt7
-	 Vq+bNLtitkBMUiBmboQWB+R/aBlfp3SY3EP9t+EBRA3eARhHjj88BdilEpUvaOgf8Z
-	 a45QlNOPl2PZSAsgz1sCi2OKeXUKpmNRf0shxAypHmc/MVN1KK4BoeIvt38JL7UZhx
-	 5Qlss/DhKrxNtSXlJk5XHZLFl4Cx5T+HfPWF+FRkdqKTjkA6svfHFLaW5vFFt0ySvA
-	 k6W1uCuSXUmmA==
-Date: Thu, 28 Aug 2025 08:30:24 -0500
+	b=TwweZqITjVRYZRGj/vPSwPYU+UtXXfCd7962Xofky57MrVDYEefi6ytNHNM/1pMAr
+	 gS91QN2ZgTy1WqjajoriR9lBkyVMZhy5B1qonweQHmhRxQJTCh4uINMC6WjdGy2h5G
+	 yuQqN1G1TpGQwjg6Rj1krDl1hHHMBncEzOzu20RzOJJoQHvzZam5AERan/IwNloBsJ
+	 DSORi/1S7rGER8QbPP7/KkrRLJ54G5t4n9iklDI9tLBfhW4nWkeMn0ShjrhvaIVM8t
+	 ZWKB+pjIT2PBGMkhZ984seK9kn+1q8MfFSousLJm5EvZYwt2Te0Yy1hpX/aCn9V/l6
+	 LSDmscGzpEqoA==
+Date: Thu, 28 Aug 2025 08:30:26 -0500
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,32 +50,38 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Johannes Berg <johannes@sipsolutions.net>, devicetree@vger.kernel.org, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
- linux-kernel@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, 
- linux-mips@vger.kernel.org, linux-wireless@vger.kernel.org, 
- =?utf-8?q?Toke_H=C3=B8iland-J=C3=B8rgensen?= <toke@toke.dk>
-To: Rosen Penev <rosenp@gmail.com>
-In-Reply-To: <20250827005658.3464-2-rosenp@gmail.com>
-References: <20250827005658.3464-1-rosenp@gmail.com>
- <20250827005658.3464-2-rosenp@gmail.com>
-Message-Id: <175638709817.1370637.10754263567298002001.robh@kernel.org>
-Subject: Re: [PATCHv4 1/3] dt-bindings: net: wireless: ath9k: add led
- bindings
+Cc: xiandong.wang@mediatek.com, angelogioacchino.delregno@collabora.com, 
+ Project_Global_Chrome_Upstream_Group@mediatek.com, 
+ dri-devel@lists.freedesktop.org, p.zabel@pengutronix.de, 
+ devicetree@vger.kernel.org, krzk+dt@kernel.org, sunny.shen@mediatek.com, 
+ linux-arm-kernel@lists.infradead.org, singo.chang@mediatek.com, 
+ linux-kernel@vger.kernel.org, chunkuang.hu@kernel.org, conor+dt@kernel.org, 
+ linux-mediatek@lists.infradead.org, sirius.wang@mediatek.com, 
+ jason-jh.lin@mediatek.com, matthias.bgg@gmail.com, nancy.lin@mediatek.com, 
+ fshao@chromium.org, treapking@chromium.org
+To: Paul Chen <paul-pl.chen@mediatek.com>
+In-Reply-To: <20250828080855.3502514-4-paul-pl.chen@mediatek.com>
+References: <20250828080855.3502514-1-paul-pl.chen@mediatek.com>
+ <20250828080855.3502514-4-paul-pl.chen@mediatek.com>
+Message-Id: <175638709894.1370676.14730988453056252892.robh@kernel.org>
+Subject: Re: [PATCH v4 03/19] dt-bindings: display: mediatek: add EXDMA
+ yaml for MT8196
 
 
-On Tue, 26 Aug 2025 17:56:56 -0700, Rosen Penev wrote:
-> The ath9k driver has various pin GPIO numbers for different chipsets
-> which are not always correct for every device.
+On Thu, 28 Aug 2025 16:06:58 +0800, Paul Chen wrote:
+> From: Paul-pl Chen <paul-pl.chen@mediatek.com>
 > 
-> Add bindings to specify the correct number and if it should be
-> active-high.
+> Add mediatek,exdma.yaml to support EXDMA for MT8196.
+> The MediaTek display overlap extended DMA engine, namely
+> OVL_EXDMA or EXDMA, primarily functions as a DMA engine
+> for reading data from DRAM with various DRAM footprints
+> and data formats.
 > 
-> Signed-off-by: Rosen Penev <rosenp@gmail.com>
+> Signed-off-by: Paul-pl Chen <paul-pl.chen@mediatek.com>
 > ---
->  .../bindings/net/wireless/qca,ath9k.yaml        | 17 +++++++++++++++++
->  1 file changed, 17 insertions(+)
+>  .../bindings/dma/mediatek,exdma.yaml          | 68 +++++++++++++++++++
+>  1 file changed, 68 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/dma/mediatek,exdma.yaml
 > 
 
 My bot found errors running 'make dt_binding_check' on your patch:
@@ -83,20 +89,12 @@ My bot found errors running 'make dt_binding_check' on your patch:
 yamllint warnings/errors:
 
 dtschema/dtc warnings/errors:
-Documentation/devicetree/bindings/net/wireless/qca,ath9k.example.dts:92.15-25: Warning (reg_format): /example-2/ahb/wifi@180c0000/led:reg: property has invalid length (4 bytes) (#address-cells == 2, #size-cells == 1)
-Documentation/devicetree/bindings/net/wireless/qca,ath9k.example.dts:91.17-94.15: Warning (unit_address_vs_reg): /example-2/ahb/wifi@180c0000/led: node has a reg or ranges property, but no unit name
-Documentation/devicetree/bindings/net/wireless/qca,ath9k.example.dtb: Warning (pci_device_reg): Failed prerequisite 'reg_format'
-Documentation/devicetree/bindings/net/wireless/qca,ath9k.example.dtb: Warning (pci_device_bus_num): Failed prerequisite 'reg_format'
-Documentation/devicetree/bindings/net/wireless/qca,ath9k.example.dtb: Warning (simple_bus_reg): Failed prerequisite 'reg_format'
-Documentation/devicetree/bindings/net/wireless/qca,ath9k.example.dtb: Warning (i2c_bus_reg): Failed prerequisite 'reg_format'
-Documentation/devicetree/bindings/net/wireless/qca,ath9k.example.dtb: Warning (spi_bus_reg): Failed prerequisite 'reg_format'
-Documentation/devicetree/bindings/net/wireless/qca,ath9k.example.dts:91.17-94.15: Warning (avoid_default_addr_size): /example-2/ahb/wifi@180c0000/led: Relying on default #address-cells value
-Documentation/devicetree/bindings/net/wireless/qca,ath9k.example.dts:91.17-94.15: Warning (avoid_default_addr_size): /example-2/ahb/wifi@180c0000/led: Relying on default #size-cells value
-Documentation/devicetree/bindings/net/wireless/qca,ath9k.example.dtb: Warning (unique_unit_address_if_enabled): Failed prerequisite 'avoid_default_addr_size'
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/dma/mediatek,exdma.example.dtb: dma-controller@32850000 (mediatek,mt8196-exdma): 'mediatek,larb' is a required property
+	from schema $id: http://devicetree.org/schemas/dma/mediatek,exdma.yaml#
 
 doc reference errors (make refcheckdocs):
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250827005658.3464-2-rosenp@gmail.com
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250828080855.3502514-4-paul-pl.chen@mediatek.com
 
 The base for the series is generally the latest rc1. A different dependency
 should be noted in *this* patch.
