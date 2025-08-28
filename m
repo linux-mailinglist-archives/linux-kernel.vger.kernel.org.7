@@ -1,185 +1,156 @@
-Return-Path: <linux-kernel+bounces-789668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E1FAB398DF
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 11:54:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56091B398E3
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 11:55:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2E453B2948
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 09:54:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2927817C1A3
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 09:55:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E8502FE567;
-	Thu, 28 Aug 2025 09:54:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FF7B30146D;
+	Thu, 28 Aug 2025 09:55:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="N6Zg8vMn"
-Received: from fout-b4-smtp.messagingengine.com (fout-b4-smtp.messagingengine.com [202.12.124.147])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="k+IvwnSK"
+Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23F352FD1D6;
-	Thu, 28 Aug 2025 09:53:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 173203009FC
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 09:55:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756374841; cv=none; b=LEU0DMalFbXdbU8PLP4SJoPUilyvzBBUifyODbnSNOY7kZIjKgeng+0XVKueZiTOoPDvbeTO6Ldc6WhDoOCOUYQTcCarR4q1/3Y+zj4LGteU6ggMNHYclXrBd8Pz9sA6LN9WzMLx0BJARzoCw4Zrg3EEadw9ZydoRN8ELxn6v3s=
+	t=1756374907; cv=none; b=o5SIJ1jEaEQXzcsUDltcST33faX22WWLOE7GvsetJM+OO5HRQ+SXPpr8SR3gmkSXTxMLs13JEWuZvf4etj1RxvNcTWxg40Tt5y81HxiZyKiCiPTYE2NJaWQxQgCVNZTQMDG5/rrCDmThfpSZgPvRkBkPA8sua5yBxty/5iyNLoI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756374841; c=relaxed/simple;
-	bh=5Rv5C8k1jzRHy4/cxgOl7lPgfeqFs3kOHjyVxKxdfmU=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=PCEcLbX+cTt7cEv/KCWpISiVwlIiYkMJrcJQaLKQCD0xbGKoCLjXTWLM/IqGxEG2GIId+70jw1EMIKWpFMnAwcrtyGEsLyqX1w1r3hxvfY1s/Omjq3/j9OIJBd9z2bPOywnGrJQunfT/vsS45BhCRrjsDnmDR9H4W1bORhQ481M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=N6Zg8vMn; arc=none smtp.client-ip=202.12.124.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
-	by mailfout.stl.internal (Postfix) with ESMTP id D2B251D000A8;
-	Thu, 28 Aug 2025 05:53:57 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-02.internal (MEProxy); Thu, 28 Aug 2025 05:53:58 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1756374837; x=1756461237; bh=3YH2nSJxyfGdYHWOcLtHzcrvKz8K1+OQsxu
-	/mr71K2k=; b=N6Zg8vMn6+DVRmfTGgN5E+uzke1Jmyhl3ybLDf0pBS48IhWbALV
-	4kA+ohseswrxG8jYrzH7oGxSbZatxbzyq5U+ELaPJSH6I+hb5JDGSmZq1XmHjPfN
-	QFGihd2xLObmwujm4wRLXCUgq43JqcJ5dKoxR8owNQvcOJL/Tnq93bZulmzxGgHe
-	HB9DtSpCcfsiRg9NrQSIVbGa7+24Z3S4HAiZP+BlUTME/XqsJ5LNXTbI1o+AnPu5
-	6KIbj6Aew9tkETApfCaQLlsddYZAh+yFLvgXe6NoIxz6vbOCaG52O1Es3gCIZngf
-	jyRfLkoFU/HNBGETmQ2lAtdCDOWrTcwI+3A==
-X-ME-Sender: <xms:NCewaL2uW3z2Ps7_peLqfWSIFyfLG7kcPXM88oCX6wmP9nQgtpUFwg>
-    <xme:NCewaEtkw88geyhiOh3ur7bnVEGF42XI-kP5Z3BzUYGl8vrxE9flUOksPSEQw9njn
-    SjvDiARWp9HHtpR0Rw>
-X-ME-Received: <xmr:NCewaB7MEpMHSXrT_NMBYygp-VCN9fpstwR9gF26zAmCJvunhJb3Vh7PDPPwh1RBuyYbtKOtwFjaDl2ffcHVoe01bLzx4eQ3s1U>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddukedtjedvucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepfffhvfevufgjkfhfgggtsehttdertddttddvnecuhfhrohhmpefhihhnnhcuvfhh
-    rghinhcuoehfthhhrghinheslhhinhhugidqmheikehkrdhorhhgqeenucggtffrrghtth
-    gvrhhnpeelueehleehkefgueevtdevteejkefhffekfeffffdtgfejveekgeefvdeuheeu
-    leenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehfth
-    hhrghinheslhhinhhugidqmheikehkrdhorhhgpdhnsggprhgtphhtthhopeelpdhmohgu
-    vgepshhmthhpohhuthdprhgtphhtthhopehpvghtvghriiesihhnfhhrrgguvggrugdroh
-    hrghdprhgtphhtthhopegrkhhpmheslhhinhhugidqfhhouhhnuggrthhiohhnrdhorhhg
-    pdhrtghpthhtoheplhgrnhgtvgdrhigrnhhgsehlihhnuhigrdguvghvpdhrtghpthhtoh
-    epghgvvghrtheslhhinhhugidqmheikehkrdhorhhgpdhrtghpthhtohepmhhhihhrrghm
-    rghtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehorghksehhvghlshhinhhkihhnvg
-    htrdhfihdprhgtphhtthhopeifihhllheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohep
-    shhtrggslhgvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugi
-    dqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:NCewaAfZEntjjSY8iiv0Mi_8SATXZ0tqDdASBnIoF-lOLUOB1UYjmw>
-    <xmx:NCewaOyYQvI5UdHjNQnZ6cl6J1FsJvOPOuiQuGtd_DZWL-nhA7i_Tg>
-    <xmx:NCewaF9d9RBV-co-h5bs8ALUidlh9uHW5XWOoCoS0RA6i__gtRzMrg>
-    <xmx:NCewaMwcZVDy5oI_SBDI71fAuT3QpuR1ORFVK84sC7Njxg_JnoGHJA>
-    <xmx:NSewaGdFrcidvN-OLX2Q8t_EUMODwC8mQt4wM7331z7pPzeC09ekS13s>
-Feedback-ID: i58a146ae:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 28 Aug 2025 05:53:53 -0400 (EDT)
-Date: Thu, 28 Aug 2025 19:53:52 +1000 (AEST)
-From: Finn Thain <fthain@linux-m68k.org>
-To: Peter Zijlstra <peterz@infradead.org>
-cc: Andrew Morton <akpm@linux-foundation.org>, 
-    Lance Yang <lance.yang@linux.dev>, 
-    Geert Uytterhoeven <geert@linux-m68k.org>, 
-    Masami Hiramatsu <mhiramat@kernel.org>, Eero Tamminen <oak@helsinkinet.fi>, 
-    Will Deacon <will@kernel.org>, stable@vger.kernel.org, 
-    linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] atomic: Specify natural alignment for atomic_t
-In-Reply-To: <20250827115447.GR3289052@noisy.programming.kicks-ass.net>
-Message-ID: <10b5aaae-5947-53a9-88bb-802daafd83d4@linux-m68k.org>
-References: <7d9554bfe2412ed9427bf71ce38a376e06eb9ec4.1756087385.git.fthain@linux-m68k.org> <20250825071247.GO3245006@noisy.programming.kicks-ass.net> <58dac4d0-2811-182a-e2c1-4edfe4759759@linux-m68k.org> <20250825114136.GX3245006@noisy.programming.kicks-ass.net>
- <9453560f-2240-ab6f-84f1-0bb99d118998@linux-m68k.org> <20250827115447.GR3289052@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1756374907; c=relaxed/simple;
+	bh=ZVfqOwwixQhN1YsADMJ1GsK96L3zPIgJ19cSnfmn7Po=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=tBualpb7biEhEsIuQTX0OeR6oPe4IESjh5pChrxAHSQs1lhyd3CsPwmjtf8UBHZgkRq1Dtp//4IVbOgharM7AGif2I8QRimfbV9JPWwy5uGp0F6WKPu0OGi4eeigWUIxZZvAT6suo0rHzAiBP0YfrvRBnolYky2oafuY3lPSP8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=k+IvwnSK; arc=none smtp.client-ip=209.85.215.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-b49d46a8d05so708467a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 02:55:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1756374905; x=1756979705; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=0jvuITZ/unJkIw6qmtKmEjkIbRFIhMwWVAIfVS1zjig=;
+        b=k+IvwnSKqqG9Jm/JWgQrC6ozm4K8QyYUHhDDXKWrQ0N6L8nm/YH+5y11rChvQjke9o
+         jayIuIbPMkdJVf2satZ93XwB6k0n4myKPoqqI8S3vUf/eVlMu87MPkTyGCOT9i7CByrV
+         acZQw8bnAyztloJYRAVG3eH7zTctq95Lk/ScP666Ao0rSQvHB3CQ0hT0tFArBdbw4vct
+         95FmyCpoBK0y/zdcRBblDtUIwRh19XkSgivrZlw0nbd+iWYA5W4Rb5NCp8IHZ9idygrz
+         aohMj3T7Q26n90V8UMZQMgitubszCNHHh28oEo92UEfyA4olUWVCjckkP61srcmcpMUZ
+         kI7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756374905; x=1756979705;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=0jvuITZ/unJkIw6qmtKmEjkIbRFIhMwWVAIfVS1zjig=;
+        b=eFba5yLLcSGRu99e5EgeVUyaY2+khrdVU+9mLd11cx2QPJM1vTlrXcd/3PeRoBYeAe
+         spTTgzP7Dhv1Om7NI/8NUuLWok/Oh2M4WmSfWxgAc9IPhVYbjs30zFhprPyBqFaLLzyp
+         JcwGDAaV77MH/K6k162ZfO70ui15wAww9LYAR/lAC+ve6svCtfEsnSes5PNompnYRgP8
+         oMzBeWale6B0MFn9iSbJHh0XpwP37a1jqYu4xlDC9AOqiW5bFDJdFjpYvRL8s0bZq1Xe
+         HMQbQTRC9RrsVYry7Df3nMMMJmHrL+Pa3Di9fejae0OZ/jNn3cJwzlmm07cYGRi4NchS
+         0BkA==
+X-Gm-Message-State: AOJu0YxLjQq2yrzrA0OX3HZHmGwnRFsHw1LIr3aG+TqQ0wiRwp5uoiQS
+	4U7TA89wEMmghn77WwgBGo5A9DWxzPacBXecrC7OgfV4JaSOle63fPcslJJ47EaouxkmdaCfKuV
+	54tTzDCwpHxKeioJHvnMeqdkbczyu2oNZ7FdqyJY3qRhd0ABL+ZzQpJA=
+X-Gm-Gg: ASbGnctiz6dfcWCUDLGDwO0wv5GC/+3rK/JQO2tbesGnZTGda1jDTnQrUVjoyXaN183
+	UXLSDLzlBCuUy2InuVPzrKks3rKj8ABAK6EMdMODKXZDyO1ecVw+dO3avfzflo31c8Ae2WHF6Sz
+	aYvOXawDrUaM5ZYgUsaN3F8Fby488a/L1M3VjqfVmH7L+m8TxG1u131S8wenFFHtqxjgruedhiW
+	2qRVWxzy1CocPf47c1qXcXmujVoYP24hr+zseGa
+X-Google-Smtp-Source: AGHT+IFguJ+Z2YRJ9oQ+HqMrtwdA6Gs0EPRzyWeqEUpa81kCuYGFXDbA1Lv8HrhL0LBAfCI3DqPu7qWgxYGM1sgbFHg=
+X-Received: by 2002:a17:903:11c9:b0:243:47:f61b with SMTP id
+ d9443c01a7336-2462eeecaaamr332793775ad.45.1756374905075; Thu, 28 Aug 2025
+ 02:55:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Thu, 28 Aug 2025 15:24:53 +0530
+X-Gm-Features: Ac12FXyceiP5RR-C_nUh1L7LdZ5AX72S9AZ1y-5AioD-F1Rzld83iOQ0aG3Om6s
+Message-ID: <CA+G9fYuysVr6qT8bjF6f08WLyCJRG7aXAeSd2F7=zTaHHd7L+Q@mail.gmail.com>
+Subject: next-20250826 gcc-8 compiler_types.h:572:38: error: call to
+ '__compiletime_assert_478' declared with attribute error: FIELD_PREP: value
+ too large for the field
+To: open list <linux-kernel@vger.kernel.org>, PCI <linux-pci@vger.kernel.org>, 
+	lkft-triage@lists.linaro.org, Linux Regressions <regressions@lists.linux.dev>
+Cc: Kees Cook <kees@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Dan Carpenter <dan.carpenter@linaro.org>, Anders Roxell <anders.roxell@linaro.org>, 
+	Ben Copeland <benjamin.copeland@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+
+The following build warnings / errors noticed on arm riscv mips with
+gcc-8 toolchain but gcc-13 build pass for the following configs.
+
+Regression Analysis:
+- New regression? yes
+- Reproducibility? yes
+
+First seen on next-20250826
+Good: next-20250825
+Bad: next-20250826 to next-20250828
+
+Build regression: next-20250826 gcc-8 compiler_types.h:572:38: error:
+call to '__compiletime_assert_478' declared with attribute error:
+FIELD_PREP: value too large for the field
+
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+
+arm:
+  build:
+    * gcc-8-integrator_defconfig
+    * gcc-8-omap1_defconfig
+    * gcc-8-footbridge_defconfig
+
+riscv:
+  build:
+    * gcc-8-defconfig
+    * gcc-8-lkftconfig-hardening
+
+mips:
+    * cavium_octeon_defconfig
+    * malta_defconfig
+    * defconfig
+
+## Build log
+drivers/pci/pci.c: In function 'pcie_set_readrq':
+include/linux/compiler_types.h:572:38: error: call to
+'__compiletime_assert_478' declared with attribute error: FIELD_PREP:
+value too large for the field
+  _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+                                      ^
+
+Anders bisected this and found,
+# first bad commit:
+  [cbc654d18d3743cff70b2dafb64c903b8cd01f2b]
+  bitops: Add __attribute_const__ to generic ffs()-family implementations
 
 
-On Wed, 27 Aug 2025, Peter Zijlstra wrote:
+## Source
+* Kernel version: 6.17.0-rc3-next-20250828
+* Git tree: https://kernel.googlesource.com/pub/scm/linux/kernel/git/next/linux-next.git
+* Git describe: next-20250828
+* Architectures: arm riscv mips
+* Toolchains: gcc-8
+* Kconfigs: integrator_defconfig, omap1_defconfig, footbridge_defconfig
 
-> On Wed, Aug 27, 2025 at 05:17:19PM +1000, Finn Thain wrote:
-> > 
-> > On Mon, 25 Aug 2025, Peter Zijlstra wrote:
-> > 
-> > > On Mon, Aug 25, 2025 at 06:03:23PM +1000, Finn Thain wrote:
-> > > > 
-> > > > On Mon, 25 Aug 2025, Peter Zijlstra wrote:
-> > > > 
-> > > > > 
-> > > > > And your architecture doesn't trap on unaligned atomic access ?!!?!
-> > > > > 
-> > > > 
-> > > > Right. This port doesn't do SMP.
-> > > 
-> > > There is RMW_INSN which seems to imply a compare-and-swap instruction of 
-> > > sorts. That is happy to work on unaligned storage?
-> > > 
-> > 
-> > Yes, the TAS and CAS instructions are happy to work on unaligned storage. 
-> > 
-> > However, these operations involve an indivisible bus cycle that hogs the 
-> > bus to the detriment of other processors, DMA controllers etc. So I 
-> > suspect lock alignment would tend to shorten read-modify-write cycles, and 
-> > improve efficiency, when CONFIG_RMW_INSN is enabled.
-> > 
-> > Most m68k platforms will have CONFIG_RMW_INSN disabled, or else simply 
-> > don't implement TAS and CAS. In this case, lock alignment might still 
-> > help, just because L1 cache entries are long words. I've not tried to 
-> > measure this.
-> 
-> Fair enough; this sounds a little like the x86 LOCK prefix, it will work
-> on unaligned memory, but at tremendous cost (recent chips have an
-> optional exception on unaligned).
-> 
-> Anyway, I'm not opposed to adding an explicit alignment to atomic_t.
-> Isn't s32 or __s32 already having this?
-> 
+## Build
+* Build log: https://qa-reports.linaro.org/api/testruns/29694807/log_file/
+* Build details:
+https://regressions.linaro.org/lkft/linux-next-master/next-20250828/build/gcc-8-footbridge_defconfig/
+* Build error details:
+https://regressions.linaro.org/lkft/linux-next-master/next-20250828/log-parser-build-gcc/gcc-compiler-include_linux_compiler_types_h-error-call-to-__compiletime_assert_-declared-with-attribute-error-field_prep-value-too-large-for-the-field/history/
+* Build plan: https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/builds/31u6OUKGnkxZYEIbLMDV9Fi1OgZ
+* Build link: https://storage.tuxsuite.com/public/linaro/lkft/builds/31u6OUKGnkxZYEIbLMDV9Fi1OgZ/
+* Kernel config:
+https://storage.tuxsuite.com/public/linaro/lkft/builds/31u6OUKGnkxZYEIbLMDV9Fi1OgZ/config
 
-For Linux/m68k, __alignof__(__s32) == 2 and __alignof__(s32) == 2.
-
-> But I think it might make sense to have a DEBUG alignment check right
-> along with adding that alignment, just to make sure things are indeed /
-> stay aligned.
-> 
-
-A run-time assertion seems surperfluous as long as other architectures 
-already trap for misaligned locks. For m68k, perhaps we could have a 
-compile-time check:
-
---- a/arch/m68k/kernel/setup_mm.c
-+++ b/arch/m68k/kernel/setup_mm.c
-@@ -371,6 +371,12 @@ void __init setup_arch(char **cmdline_p)
-        }
- #endif
- #endif
-+
-+       /*
-+        * 680x0 CPUs don't require aligned storage for atomic ops.
-+        * However, alignment assumptions may appear in core kernel code.
-+        */
-+       BUILD_BUG_ON(__alignof__(atomic_t) < sizeof(atomic_t));
- }
-
-But I'm not sure that arch/m68k is a good place for that kind of thing -- 
-my inclination would be to place such compile-time assertions closer to 
-the code that rests on that assertion, like in hung_task.c or mutex.c. 
-E.g.
-
---- a/kernel/locking/mutex.c
-+++ b/kernel/locking/mutex.c
-@@ -54,8 +54,6 @@ __mutex_init(struct mutex *lock, const char *name, 
-struct lock_class_key *key)
- #endif
- 
-        debug_mutex_init(lock, name, key);
-+
-+       BUILD_BUG_ON(__alignof__(lock->owner) < sizeof(lock->owner));
- }
- EXPORT_SYMBOL(__mutex_init);
-
-
-Is that the kind of check you had in mind? I'm open to suggestions.
+--
+Linaro LKFT
+https://lkft.linaro.org
 
