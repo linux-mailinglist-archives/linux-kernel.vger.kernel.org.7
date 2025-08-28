@@ -1,88 +1,89 @@
-Return-Path: <linux-kernel+bounces-789904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35F72B39C5F
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 14:10:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E400B39C6D
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 14:11:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 49F564666DA
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 12:10:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C9C316EB7D
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 12:11:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFFFC30F55E;
-	Thu, 28 Aug 2025 12:10:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D64530F937;
+	Thu, 28 Aug 2025 12:10:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="QJFt/4dv"
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="WBGkOii2"
 Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B14DB30EF9F
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 12:10:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B46C03101D1
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 12:10:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756383007; cv=none; b=pXt3rUpt+lUxXm2ZaiB8nGDycxN5eBoRyHuHUIEemxURdoZkuFHAUlKlCHoqOaYVgxx2eUPx64HjuN0gPvxlMfRaqBEHbRtisQsCUmFEy4Cl120UsOR6Js4b2TdvhyXpCNPTWn3WBIKwNkjEomvmgH2aZTqQwnOgd8YhDM8olMI=
+	t=1756383025; cv=none; b=K5PWs38A7C5ha9s1t8euGU3y8Y2OFK+27MoJHH6s0SE8g77sUBKXbKav4eQMX+2xhvfz7lcJ4VhzCFnWS6g1RyHwv6EQMC01UkAYxyn101Az2J8hbkcsTdBD6HlHxoQH2nDqP0awQ/CbQlvNXnfGx1zr63MX6F4AoQYCv5rmUUo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756383007; c=relaxed/simple;
-	bh=fmCVWwvsFOC0IPTia4wk7audEaDOpQ5OD/rFcq2x+T8=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=XjfUQaLfSq/icEhNt/XOrdAUf147eBeWu/yIenHRgJ6MXFTeJtubS4pHTsA622mfPrSZ/S9kDQr3z69xuNB+qrjKFCjuitQ/opSfCtG3z66A8+S6WlPkbGZA9+n3oIAZlrAVIUfGjKKc+1eH2g8BdKAbUHNGs489Af2KdS+UJFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=QJFt/4dv; arc=none smtp.client-ip=205.220.180.131
+	s=arc-20240116; t=1756383025; c=relaxed/simple;
+	bh=8zvZqpFeuXSiqe4t+MpIJYoVCiPCsJm1Ov8cxUJVKCk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=QRpDno/t/bkWtZtKwWvwc5WkKR8HKys/vU44K9SFYt1V5ZMjFeXV2kE/xO/ONgzj7YqtCRYtCsvdtxwYRVhp5XXIMGWYlmBW8kjsGiRKToZ5OG1MyWjjhIcuovYY/e4BokkXtTb4HRag/rPKMMhMsI7hU8s3arM9k3FQX1hepq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=WBGkOii2; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57S94C8g007201
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 12:10:04 GMT
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57S5h0ah015908
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 12:10:22 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=7CBo4RsO1OtHtmHnfgVDg7
-	Mz0lcVGOkV5Of38is0x70=; b=QJFt/4dvLk01+Sf1U4efBMYxrqr7DQxobVw5k3
-	ePY6CVc2X3id7Ln5cclpNqtwiJbrfd2/oYbBR3IrixxAwdR0R9MhkCB+TmZJLq0h
-	/hWQjrXgKTj7w2HKTPXRmJbTtdVzPa/T2p+piBCchm0x5ZnUJyVxqX57AlfZo2mV
-	CSxKv57khcgatU8d0vjwpt4oxMC/O5cSjExXiqOU73iXTOSwSQNTHCBaB/h1AjYo
-	4O+0JzGjtnC4rDXfYb5/XR5cYftPjuFgS22ObH/LqfO9eJOz65TDrWXqBYVSlLSc
-	L9kdVyN4Ev+e/0pOycUyBm8HlvgIKeglJIiOzWk1ge6H1CTw==
-Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com [209.85.216.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48tbpghv77-1
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	N5SuIv3JLHlPvqOUKHgEWsX4PG4GINisx08kaTXoUAg=; b=WBGkOii2Zwhsy+sc
+	xHBvriDMKvagkkmCF1m5HAzgGrJlOPOSBamZyFPpDTo9lCegzVLsHhwhFgSS5QpZ
+	p2jpV5+Tf6WPAjIuZikuSPXh1AdvCnv+xk7D2BraiDpX2NRYVzgqHSfsujd9//hH
+	S2z9EqpuKtIDkrEi5pcWPGaY1IrlyCJq24vpBEvNXWfgdXNuEN8a0JsXgbR/lnxY
+	H5I7srI6ghOIe0ZJ3m77+ckmzifG9ZdOCN6zmlzPcmToKNRbkeoPO/d/G8CoqSS9
+	aMG+eud5nX30EczdV7aAJyJ29y5uLQx7d0Nrpz4WGBlLJxyBZ2RYeQEVQeKKQ3ZU
+	9MnWpw==
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com [209.85.216.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48rtpf2drh-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 12:10:04 +0000 (GMT)
-Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-3234811cab3so1121906a91.3
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 05:10:04 -0700 (PDT)
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 12:10:22 +0000 (GMT)
+Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-327706e0642so1596456a91.3
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 05:10:22 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756383003; x=1756987803;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7CBo4RsO1OtHtmHnfgVDg7Mz0lcVGOkV5Of38is0x70=;
-        b=OnaR7BeR0cscA+6hDEHFpX1ngjfpIFnGr8Av/fP17chgmO7ME8hGQIltp4blBtECyf
-         VwS4kyz1RXzjiNx7bIFUV6wDe3SN/Tuo2rG8SHfpOlPOPcuJoOEFjDUfKboojzcDJE7b
-         jJwX9EG2U76g0N/5U7T38KK924FDIg0G7arB1tOz76NpHu34B6s/4GsfDM0qf+4S/Noz
-         n/ShDEuiQPqed6xLXWUYWXt1t3tq7Wpe1cdMqflr7iUHNivgPfq+u1ySRSlkB9jIPLoW
-         xjwD1m0fUlhnpaoyFamMS9xeRmcim532NilC/I6SZabbtX3+N8lvqzFvYgMmwXL9uVID
-         RG4g==
-X-Forwarded-Encrypted: i=1; AJvYcCU3FfmSmDqRTWqnKnNxkRWxWF7eeOmw7sdtSyiRn4Uz3A/oq77IsEU8fryYlaGTw7L7JkZK14WmwHVho5M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywg7EEpNE3TNpLlt3RGzUTFljYmFax5mDwoE3Qp+id+A8hyhvd/
-	EWZDSwJbd5v2noxIL6alecA3V+o/WKPfWEvSpJbzkLGtzmoO2xME4ALgSAXq2Kf/spz9hxsg89s
-	kaMaUDtb1ZwoemMJDD+9hLzd6u5ZNtubH42C9oiL1QBPph38Te9qjRNDkJ1ItgmLVWlE=
-X-Gm-Gg: ASbGncvI6G/broaHVwDr4MuhuqtN2fZY4SvTSZcHcTPrkA+89GSA3AkAIAAbIzJTI44
-	V6tkglvVjO/FPBbBIqj7isAY5gWil7WVq1k2Kdd3XPu+wlqufZqYmWWba27d1QJQA/WauV9+94I
-	qZjiI1SLT0dvAe7hrIBMrFnXiphIH32nwuonKNA98pl+0GIqdFzqPQYFyzh1KsiCO5eIzxvpUzP
-	qMAVJEvmXLvKGcO+lub+/Y2zT1fQtUunRp+8s0xqom9fY2iuIF+3XrRt6cvdnQDJwG5I90gz9/3
-	z/mcUBiDngUmQjl01xRELcbQYUQljoz5HDtllP+gGWJ7EBm3unV6C4fL3vOZ+MPwpebNZHrUD2Q
+        d=1e100.net; s=20230601; t=1756383010; x=1756987810;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=N5SuIv3JLHlPvqOUKHgEWsX4PG4GINisx08kaTXoUAg=;
+        b=Ibo6X33N+pLNJN7+jxFMWUmj6Cf4/CC6uYZA4OvVaDNnYWWrMulqqIuckiW7TYAh4s
+         fYcP9PXSd+Nz6Y41ReAUZEeGdAnH7PPhArCm7lBq8ZWiMMCgHYcwCrj3sF636pQGf1x6
+         uessgY39yHj+Cq//nmDvEsr0wB/cHyTGaxTtCLDy72l/wX7h4XsY8AStPCP65rrphc80
+         LAscGCusCkxT106JEHDLW7GGlPdtYu6rTWyRvfLZSZGduxUY3CbaQVrs57BPOd4GS/Tx
+         EnC86JNs/FpB7AYYQFnjKcu5vHHEeCzAqnzAj6i6iRGyPBMiBaOPZiLF170xXMizaiuh
+         WarQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXqhRsvoQA7BW57hONYe+6y8hI9+7dwUze5GL8yHO54TlDRsgbk2nOfZZPhPzmaANQiJAZdnrNbje3an9s=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3u3c6D0qeCML7Jn0Lpz4PngH+cfx7W94/sGE91vM0lWBZww6h
+	0reHcPZlA66oHnCwvmNFdXtkr1P4XPlqQQeEzMUZF4wRXjKVgEQGEEN8+midn9UFysjuu2Q1aXu
+	mfQjcDLxjBtkfNq12FGGsypo4GarHuwy6bXa7eroJ4qx1ZpJcH3bcQeSIacAhoY1nGTM=
+X-Gm-Gg: ASbGncvGNq1jQvZzsw6W7t8oNAKcOkzyZ+GPXs0+JOE4Srv/rTngMc2UjxzdTYchNJN
+	p3UvX/MMgSwk85d1JU2n87gKr1VRiCMEHj3pVf06+g9jLrHKupw4EtnDV5UnaXWTIC0JYxalCv6
+	/gTqLP3GNWOZTKrpqxzR/qnNf1iANnf/B97q7NYZ4233TWZqo1JZkArVdn/zU1430VJwDw0noKt
+	pRqG4Hhc+MvgJn4U1bOWrs2w5rUjPk7v58rnnIRMAXsSC3+EjYN4UGad3frTVs6DbzF7T6mgnQJ
+	J58m9bvyKxQBM7YOQvjUh6RhPLUKdmJnwo9ejTd99rOnR/S0sCVt+A/8AIPEBRBm8X18JxUfOR8
 	=
-X-Received: by 2002:a17:90b:3e89:b0:327:aaeb:e80d with SMTP id 98e67ed59e1d1-327aaebeff2mr3337431a91.7.1756383002721;
-        Thu, 28 Aug 2025 05:10:02 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGShFwQdg1pXVH6TjbXej5/b8b+Ns3k7qKTLxyF2H8wNDEb5AkmNYw+GftmViK1wKFDqMPXpw==
-X-Received: by 2002:a17:90b:3e89:b0:327:aaeb:e80d with SMTP id 98e67ed59e1d1-327aaebeff2mr3337372a91.7.1756383002079;
-        Thu, 28 Aug 2025 05:10:02 -0700 (PDT)
+X-Received: by 2002:a17:90b:5445:b0:327:6a43:c73f with SMTP id 98e67ed59e1d1-3276a43ccb8mr8454341a91.20.1756383009728;
+        Thu, 28 Aug 2025 05:10:09 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFZ1xN1nH2+SOb4TBgCljRgNHYk41wxaH6Bv3TBCbiJASEGGgEmFVy9pBEJvSscYC2NVVceMQ==
+X-Received: by 2002:a17:90b:5445:b0:327:6a43:c73f with SMTP id 98e67ed59e1d1-3276a43ccb8mr8454272a91.20.1756383009006;
+        Thu, 28 Aug 2025 05:10:09 -0700 (PDT)
 Received: from hu-krichai-hyd.qualcomm.com ([202.46.23.25])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32741503367sm4019070a91.0.2025.08.28.05.09.54
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32741503367sm4019070a91.0.2025.08.28.05.10.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Aug 2025 05:10:01 -0700 (PDT)
+        Thu, 28 Aug 2025 05:10:08 -0700 (PDT)
 From: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-Subject: [PATCH v6 0/9] PCI: Enable Power and configure the TC9563 PCIe
- switch
-Date: Thu, 28 Aug 2025 17:38:57 +0530
-Message-Id: <20250828-qps615_v4_1-v6-0-985f90a7dd03@oss.qualcomm.com>
+Date: Thu, 28 Aug 2025 17:38:58 +0530
+Subject: [PATCH v6 1/9] dt-bindings: PCI: Add binding for Toshiba TC9563
+ PCIe switch
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,11 +92,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIANpGsGgC/22P0QqCMBSGXyV23WQ7umld9R4RMvUsB+nU1SjEd
- 28aEWU3B/4D33fOPxKHg0FH9puRDOiNM7YNQW43pKxVe0ZqqpAJMBAMONC+c5KL3Cc5pzpDCVp
- xnmaSBKIbUJv7YjueQq6Nu9rhsch9Mm/fHvnl8QlllKcIVSV2UIA6WOei/qYupW2aKIzZ/kJBr
- FFkmYxjlRaVztbo/IkXn+vJTwsvgkIUUjHJY9BY/lFM0/QErI8IJysBAAA=
-X-Change-ID: 20250212-qps615_v4_1-f8e62fa11786
+Message-Id: <20250828-qps615_v4_1-v6-1-985f90a7dd03@oss.qualcomm.com>
+References: <20250828-qps615_v4_1-v6-0-985f90a7dd03@oss.qualcomm.com>
+In-Reply-To: <20250828-qps615_v4_1-v6-0-985f90a7dd03@oss.qualcomm.com>
 To: Bjorn Helgaas <bhelgaas@google.com>,
         Lorenzo Pieralisi <lpieralisi@kernel.org>,
         Rob Herring <robh@kernel.org>,
@@ -117,185 +116,234 @@ Cc: quic_vbadigan@quicnic.com, amitk@kernel.org, linux-pci@vger.kernel.org,
         linux-arm-msm@vger.kernel.org, jorge.ramirez@oss.qualcomm.com,
         linux-arm-kernel@lists.infradead.org,
         Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
-        Dmitry Baryshkov <lumag@kernel.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        Shawn Anastasio <sanastasio@raptorengineering.com>,
-        Timothy Pearson <tpearson@raptorengineering.com>,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+        Dmitry Baryshkov <lumag@kernel.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1756382994; l=8072;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1756382994; l=5849;
  i=krishna.chundru@oss.qualcomm.com; s=20230907; h=from:subject:message-id;
- bh=fmCVWwvsFOC0IPTia4wk7audEaDOpQ5OD/rFcq2x+T8=;
- b=dntgyrpafu+Mj5IVIc77CSF3hlcMUe2yGSqQ48lTbPzSV6qF9wgaXfinZ370jrXGNl5oSiuZf
- peN02jJk2InDqtRom7uM9LZvHNA4KsH8wmspIc3xbAhCu4eTnsbZZxu
+ bh=8zvZqpFeuXSiqe4t+MpIJYoVCiPCsJm1Ov8cxUJVKCk=;
+ b=jmYXpazt1LKuasdTDORWhr1cdImPInQgvTaDPJW/cJ43tD/9dbY47ia5cmphxGwxpSeg2YmcK
+ zDj8ENLXIXfAy6GkNEgqDWx0QQOU+mh4pdMcKY2526d6HsUk6IKx2i+
 X-Developer-Key: i=krishna.chundru@oss.qualcomm.com; a=ed25519;
  pk=10CL2pdAKFyzyOHbfSWHCD0X0my7CXxj8gJScmn1FAg=
-X-Proofpoint-GUID: JNSZ5tCH4vu43hBIyZBWHfg7SvRgxwfC
-X-Proofpoint-ORIG-GUID: JNSZ5tCH4vu43hBIyZBWHfg7SvRgxwfC
-X-Authority-Analysis: v=2.4 cv=G7gcE8k5 c=1 sm=1 tr=0 ts=68b0471c cx=c_pps
- a=RP+M6JBNLl+fLTcSJhASfg==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
- a=yKAn6K1XAAAA:8 a=COk6AnOGAAAA:8 a=jdgvuftHn8Q9ZZcfGlkA:9 a=QEXdDO2ut3YA:10
- a=iS9zxrgQBfv6-_F4QbHw:22 a=6M1ixcW_PCWoKiWyFx5v:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODI3MDE5OSBTYWx0ZWRfXzJnUlzgKSNs7
- 4UI7c+oy75bDMSnfeDhfe4Tmy5FYOjUugwVbm1+T/g/YEMXmIqY4Yu47qaB3P7gxQwIjtMvdifY
- g3qyjVe2qJ9gLuARHNn26fN7lkZT4ds/ERWAUNaPyW1V3ISQV07vXhXrWeY/wgFPKkgU2zeplJB
- PV+4PqcAw3aRQ4CakczwR+Rq4LlVZxErh0YJH2WnKGIWYkY9hWkZYEi5kLAEVKzRI/s1rI9zyNV
- kRVjuExj1r06SQbkIT/OeQxO1ULsjXYY4hwUC2sh4ZyqcD8ctvRCJr+Hilr5bU8o7pXmyp0Gs6+
- eclPBfW1BuXk7VAap4kPSk8jZ4EYlLQtE5xM5mlYR5EJkyR/7cKCUVmyCpEMncExNhFfwbXKHnZ
- ch4hpvbB
+X-Proofpoint-GUID: 1T5_69aQlhzWz3slBfxQ0MI6jDSAs7A6
+X-Proofpoint-ORIG-GUID: 1T5_69aQlhzWz3slBfxQ0MI6jDSAs7A6
+X-Authority-Analysis: v=2.4 cv=Hd8UTjE8 c=1 sm=1 tr=0 ts=68b0472e cx=c_pps
+ a=0uOsjrqzRL749jD1oC5vDA==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=gEfo2CItAAAA:8 a=EUspDBNiAAAA:8
+ a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=dWfasREweX4F4dHnDHIA:9 a=QEXdDO2ut3YA:10
+ a=mQ_c8vxmzFEMiUWkPHU9:22 a=sptkURWiP4Gy88Gu7hUp:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODI1MDE0MiBTYWx0ZWRfX3NN3rsrzO/Yw
+ g5BWJa7Zq9wlujU8+Ktj4QMlSgfJmbV6dkXJ0ncm95kL+SJm8cqulbK18516MLgb8SXD8mZBn9b
+ 0+MjaEEZU9zDZ+bZExmROPYS/zVoJlXvgW+VAN1Us8p1upiVxW071n1+wXGx8EdD+eVkOTPAT8f
+ wtlvGhkscDsdNHxdeSC64WyJrsccFE12K2KA1rf3EGsY0Jey9PQU1rkglFw7q5b5157jBf63Fzh
+ fBPjYPxGPRxpP4Bm9cs1Vp7uVs6IUa4/luF52BnrJGQCgTPiLnhPwJtYTS16nimSF9ahU59krGy
+ PJnTM/XBri5bsgoIXYVRJ7q1FL7piImk28+TMSg9zz8kOBM4Cch4pR3Ubf6SWgiFfzuYy9zncsk
+ y8BSduiv
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-08-28_03,2025-08-28_01,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 phishscore=0 priorityscore=1501 adultscore=0 impostorscore=0
- bulkscore=0 suspectscore=0 clxscore=1015 spamscore=0 classifier=typeunknown
+ priorityscore=1501 malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0
+ adultscore=0 clxscore=1015 impostorscore=0 spamscore=0 classifier=typeunknown
  authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508270199
+ engine=8.19.0-2507300000 definitions=main-2508250142
 
-TC9563 is the PCIe switch which has one upstream and three downstream
-ports. To one of the downstream ports ethernet MAC is connected as endpoint
-device. Other two downstream ports are supposed to connect to external
-device. One Host can connect to TC956x by upstream port.
-
-TC9563 switch power is controlled by the GPIO's. After powering on
-the switch will immediately participate in the link training. if the
-host is also ready by that time PCIe link will established. 
-
-The TC9563 needs to configured certain parameters like de-emphasis,
-disable unused port etc before link is established.
-
-As the controller starts link training before the probe of pwrctl driver,
-the PCIe link may come up as soon as we power on the switch. Due to this
-configuring the switch itself through i2c will not have any effect as
-this configuration needs to done before link training. To avoid this
-introduce two functions in pci_ops to start_link() & stop_link() which
-will disable the link training if the PCIe link is not up yet.
-
-This series depends on the https://lore.kernel.org/all/20250124101038.3871768-3-krishna.chundru@oss.qualcomm.com/
-
-Note: The QPS615 PCIe switch is rebranded version of Toshiba switch TC9563 series.
-There is no difference between both the switches, both has two open downstream ports
-and one embedded downstream port to which Ethernet MAC is connected. As QPS615 is the
-rebranded version of Toshiba switch rename qps615 with tc956x so that this driver
-can be leveraged by all who are using Toshiba switch.
+Add a device tree binding for the Toshiba TC9563 PCIe switch, which
+provides an Ethernet MAC integrated to the 3rd downstream port and
+two downstream PCIe ports.
 
 Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 ---
-Changes in v6:
-- Took v10 patch  https://lore.kernel.org/all/1822371399.1670864.1756212520886.JavaMail.zimbra@raptorengineeringinc.com/
-  to my series as my change is dependent on it.
-- Add Reviewed-by tag by Rob on dt-binding patch.
-- Add Reviewed-by tag by Dmitry on devicetree.
-- Fixed compilation errors.
-- Fixed n-fts issue point by (Bjorn Helgaas).
-- Fixed couple of nits by (Bjorn Helgas).
-- Link to v5: https://lore.kernel.org/r/20250412-qps615_v4_1-v5-0-5b6a06132fec@oss.qualcomm.com
-Changes from v4:
-- Rename tc956x to tc9563, instead of using x which represents overlay board one
-  use actual name (Konrad & Krzysztof).
-- Remove the patches 9 & 10 from the series and this will be added by mani
-- Couple of nits by Konrad
-- Have defconfig change for TC956X by Dmitry
-- Change the function name pcie_is_link_active to pcie_link_is_active
-  replace all call sites of pciehp_check_link_active() with a call
-  to the new function. return bool instead of int (Lukas)
-- Add pincntrl property for reset gpio (Dmitry)
-- Follow the example-schema order, remove ref for the
-  tx-amplitude-microvolt, change the vendor prefix (Krzysztof)
-- for USP node refer pci-bus-common.yaml and for remaining refer
-  pci-pci-bridge.yaml(Mani)
-- rebase to latest code and change pci dev retrieval logic due code
-  changes in the latest tip.
-- Link to v4: https://lore.kernel.org/r/20250225-qps615_v4_1-v4-0-e08633a7bdf8@oss.qualcomm.com
-changes from v3:
-- move common properties like l0s-delay, l1-delay and nfts to pci-host-common.yaml (bjorn H)
-- remove axi-clk-frequency property (Krzysztof)
-- Update the pattern properties (Rob)
-- use pci-pci-bridge as the reference (Rob)
-- change tx-amplitude-millivolt to tx-amplitude-microvolt  (Krzysztof)
-- rename qps615_pwrctl_power_on to qps615_pwrctl_bring_up (Bart)
-- move the checks for l0s_delay, l1_delay etc to helper functon to
-  reduce a level of indentation (Bjorn H)
-- move platform_set_drvdata to end after there is no error return (bjorn H)
-- Replace GPIOD_ASIS to GPIOD_OUT_HIGH (Mani)
-- Create a common api to check if link is up or not and use that to call
-  stop_link() and start_link().
-- couple of nits in comments, names etc from everyone
-Link to v3: https://lore.kernel.org/all/20241112-qps615_pwr-v3-3-29a1e98aa2b0@quicinc.com/T/
-Changes from v2:
-- As per offline discussions with rob i2c-parent is best suitable to
-  use i2c client device. So use i2c-parent as suggested and remove i2c
-  client node reference from the dt-bindings & devicetree.
-- Remove "PCI: Change the parent to correctly represent pcie hierarchy"
-  as this requires seperate discussions.
-- Remove bdf logic to identify the dsp's and usp's to make it generic
-  by using the logic that downstream devices will always child of
-  upstream node and dsp1, dsp2 will always in same order (Dmitry)
-- Remove recursive function for parsing devicetree instead parse
-  only for required devicetree nodes (Dmitry)
-- Fix the issue in be & le conversion (Dmitry).
-- Call put_device for i2c device once done with the usage (Dmitry)
-- Use $defs to describe common properties between upstream port and
-  downstream properties. and remove unneccessary if then. (Krzysztof)
-- Place the qcom,qps615 compatibility in dt-binding document in alphabatic order (Krzysztof)
-- Rename qcom,no-dfe to describe it as hardware capability and change
-  qcom,nfts description to reflect hardware details (Krzysztof)
-- Fix the indentation in the example in dt binding (Dmitry)
-- Add more description to qcom,nfts (Dmitry)
-- Remove nanosec from the property description (Dmitry)
-- Link to v2: https://lore.kernel.org/r/linux-arm-msm/20240803-qps615-v2-0-9560b7c71369@quicinc.com/T/
-Changes from v1:
-- Instead of referencing whole i2c-bus add i2c-client node and reference it (Dmitry)
-- Change the regulator's as per the schematics as per offline review
-(Bjorn Andresson)
-- Remove additional host check in bus.c (Bart)
-- For stop_link op change return type from int to void (Bart)
-- Remove firmware based approach for configuring sequence as suggested
-by multiple reviewers.
-- Introduce new dt-properties for the switch to configure the switch
-as we are replacing the firmware based approach.
-- The downstream ports add properties in the child nodes which will
-represented in PCIe hierarchy format.
-- Removed D3cold D0 sequence in suspend resume for now as it needs
-separate discussion.
-- Link to v1: https://lore.kernel.org/linux-pci/20240626-qps615-v1-4-2ade7bd91e02@quicinc.com/T/
+ .../devicetree/bindings/pci/toshiba,tc9563.yaml    | 178 +++++++++++++++++++++
+ 1 file changed, 178 insertions(+)
 
----
-Krishna Chaitanya Chundru (9):
-      dt-bindings: PCI: Add binding for Toshiba TC9563 PCIe switch
-      arm64: dts: qcom: qcs6490-rb3gen2: Add TC9563 PCIe switch node
-      PCI: Add new start_link() & stop_link function ops
-      PCI: dwc: Add host_start_link() & host_start_link() hooks for dwc glue drivers
-      PCI: dwc: Implement .start_link(), .stop_link() hooks
-      PCI: qcom: Add support for host_stop_link() & host_start_link()
-      PCI: Add pcie_link_is_active() to determine if the link is active
-      PCI: pwrctrl: Add power control driver for tc9563
-      arm64: defconfig: Enable TC9563 PWRCTL driver
+diff --git a/Documentation/devicetree/bindings/pci/toshiba,tc9563.yaml b/Documentation/devicetree/bindings/pci/toshiba,tc9563.yaml
+new file mode 100644
+index 0000000000000000000000000000000000000000..82c902b67852d6c4b0305764a2231fe04e83458d
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pci/toshiba,tc9563.yaml
+@@ -0,0 +1,178 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/pci/toshiba,tc9563.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Toshiba TC9563 PCIe switch
++
++maintainers:
++  - Krishna chaitanya chundru <quic_krichai@quicinc.com>
++
++description: |
++  Toshiba TC9563 PCIe switch has one upstream and three downstream ports.
++  The 3rd downstream port has integrated endpoint device of Ethernet MAC.
++  Other two downstream ports are supposed to connect to external device.
++
++  The TC9563 PCIe switch can be configured through I2C interface before
++  PCIe link is established to change FTS, ASPM related entry delays,
++  tx amplitude etc for better power efficiency and functionality.
++
++properties:
++  compatible:
++    enum:
++      - pci1179,0623
++
++  reg:
++    maxItems: 1
++
++  reset-gpios:
++    maxItems: 1
++    description:
++      GPIO controlling the RESX# pin.
++
++  vdd18-supply: true
++
++  vdd09-supply: true
++
++  vddc-supply: true
++
++  vddio1-supply: true
++
++  vddio2-supply: true
++
++  vddio18-supply: true
++
++  i2c-parent:
++    $ref: /schemas/types.yaml#/definitions/phandle-array
++    description:
++      A phandle to the parent I2C node and the slave address of the device
++      used to do configure tc9563 to change FTS, tx amplitude etc.
++    items:
++      - description: Phandle to the I2C controller node
++      - description: I2C slave address
++
++patternProperties:
++  "^pcie@[1-3],0$":
++    description:
++      child nodes describing the internal downstream ports
++      the tc9563 switch.
++    type: object
++    allOf:
++      - $ref: "#/$defs/tc9563-node"
++      - $ref: /schemas/pci/pci-pci-bridge.yaml#
++    unevaluatedProperties: false
++
++$defs:
++  tc9563-node:
++    type: object
++
++    properties:
++      toshiba,tx-amplitude-microvolt:
++        description:
++          Change Tx Margin setting for low power consumption.
++
++      toshiba,no-dfe-support:
++        type: boolean
++        description:
++          Disable DFE (Decision Feedback Equalizer), which mitigates
++          intersymbol interference and some reflections caused by impedance mismatches.
++
++required:
++  - reset-gpios
++  - vdd18-supply
++  - vdd09-supply
++  - vddc-supply
++  - vddio1-supply
++  - vddio2-supply
++  - vddio18-supply
++  - i2c-parent
++
++allOf:
++  - $ref: "#/$defs/tc9563-node"
++  - $ref: /schemas/pci/pci-bus-common.yaml#
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/gpio/gpio.h>
++
++    pcie {
++        #address-cells = <3>;
++        #size-cells = <2>;
++
++        pcie@0 {
++            device_type = "pci";
++            reg = <0x0 0x0 0x0 0x0 0x0>;
++
++            #address-cells = <3>;
++            #size-cells = <2>;
++            ranges;
++            bus-range = <0x01 0xff>;
++
++            pcie@0,0 {
++                compatible = "pci1179,0623";
++
++                reg = <0x10000 0x0 0x0 0x0 0x0>;
++                device_type = "pci";
++                #address-cells = <3>;
++                #size-cells = <2>;
++                ranges;
++                bus-range = <0x02 0xff>;
++
++                i2c-parent = <&qup_i2c 0x77>;
++
++                vdd18-supply = <&vdd>;
++                vdd09-supply = <&vdd>;
++                vddc-supply = <&vdd>;
++                vddio1-supply = <&vdd>;
++                vddio2-supply = <&vdd>;
++                vddio18-supply = <&vdd>;
++
++                reset-gpios = <&gpio 1 GPIO_ACTIVE_LOW>;
++
++                pcie@1,0 {
++                    compatible = "pciclass,0604";
++                    reg = <0x20800 0x0 0x0 0x0 0x0>;
++                    #address-cells = <3>;
++                    #size-cells = <2>;
++                    device_type = "pci";
++                    ranges;
++                    bus-range = <0x03 0xff>;
++
++                    toshiba,no-dfe-support;
++                };
++
++                pcie@2,0 {
++                    compatible = "pciclass,0604";
++                    reg = <0x21000 0x0 0x0 0x0 0x0>;
++                    #address-cells = <3>;
++                    #size-cells = <2>;
++                    device_type = "pci";
++                    ranges;
++                    bus-range = <0x04 0xff>;
++                };
++
++                pcie@3,0 {
++                    compatible = "pciclass,0604";
++                    reg = <0x21800 0x0 0x0 0x0 0x0>;
++                    #address-cells = <3>;
++                    #size-cells = <2>;
++                    device_type = "pci";
++                    ranges;
++                    bus-range = <0x05 0xff>;
++
++                    toshiba,tx-amplitude-microvolt = <10>;
++
++                    ethernet@0,0 {
++                        reg = <0x50000 0x0 0x0 0x0 0x0>;
++                    };
++
++                    ethernet@0,1 {
++                        reg = <0x50100 0x0 0x0 0x0 0x0>;
++                    };
++                };
++            };
++        };
++    };
 
- .../devicetree/bindings/pci/toshiba,tc9563.yaml    | 178 ++++++
- arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts       | 128 +++++
- arch/arm64/boot/dts/qcom/sc7280.dtsi               |   2 +-
- arch/arm64/configs/defconfig                       |   1 +
- drivers/pci/controller/dwc/pcie-designware-host.c  |  18 +
- drivers/pci/controller/dwc/pcie-designware.h       |  16 +
- drivers/pci/controller/dwc/pcie-qcom.c             |  35 ++
- drivers/pci/hotplug/pciehp.h                       |   1 -
- drivers/pci/hotplug/pciehp_ctrl.c                  |   2 +-
- drivers/pci/hotplug/pciehp_hpc.c                   |  35 +-
- drivers/pci/pci.c                                  |  28 +-
- drivers/pci/pci.h                                  |   1 +
- drivers/pci/pwrctrl/Kconfig                        |  13 +
- drivers/pci/pwrctrl/Makefile                       |   2 +
- drivers/pci/pwrctrl/pci-pwrctrl-tc9563.c           | 637 +++++++++++++++++++++
- include/linux/pci.h                                |   2 +
- 16 files changed, 1062 insertions(+), 37 deletions(-)
----
-base-commit: 07d9df80082b8d1f37e05658371b087cb6738770
-change-id: 20250212-qps615_v4_1-f8e62fa11786
-
-Best regards,
 -- 
-Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+2.34.1
 
 
