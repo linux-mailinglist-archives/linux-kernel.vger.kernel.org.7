@@ -1,144 +1,1468 @@
-Return-Path: <linux-kernel+bounces-789325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEBB7B393F2
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 08:41:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6663B393F8
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 08:43:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2AF14189985F
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 06:41:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 61F7A174695
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 06:43:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B2F027A477;
-	Thu, 28 Aug 2025 06:41:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D75927FD6B;
+	Thu, 28 Aug 2025 06:42:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ssY/JVvB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UzqoFQ6k"
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DDFB1F3B96;
-	Thu, 28 Aug 2025 06:41:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8329617B425
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 06:42:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756363273; cv=none; b=VjNM+5o0Lkvpz4HwQ4eSpPOSJZn7pNwNzTj5uEXTxFqB8Gns16Ui4XIL8DOdXbQqS8N3rvrqD0iZ7/ZXd1OknxAccpMrD79Jsa9bs7L0W2ofM+Orr2RGj7hUm0FmnwMvlUiKaAntqGCAHh4TwSsG6io5lncFB6qeZQ0wpZyb+9s=
+	t=1756363359; cv=none; b=Ss0RD5YYF5TCoRq8MDdhjIUYEH1JsUAbGX+yO7d99Rawm3j6e6ijpx9Nvpx61IZ1bcUEr25JKNehIiFhrGINO0IW5Uuhbca9Nn88Ed3WuVhMW3J54vTf9vU1KtvTbzn0MUh1368n/TB8PJpkvIqRQjSzJi4HjloIDrPdL+Tkvv4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756363273; c=relaxed/simple;
-	bh=uvHu6Jg79leQgc5jk+P0upBRR7e35i0RjdRkQJjRmlQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bqMWUk3Eii7W+DawpE9AAp3cJxft7aN6yKsahfavwimeFzEjtmcaajAVMp39IKLuAWn6cwn6MOzG89HnvSCQCkPy2f29hpzfs3AT1XU2f8rBpy3a4/H1mgr0gKs3b59cOopIXVTofN3JPGkL3qo7M3HEZFZwpAwbKnyhlqk8maQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ssY/JVvB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05431C4CEEB;
-	Thu, 28 Aug 2025 06:41:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756363273;
-	bh=uvHu6Jg79leQgc5jk+P0upBRR7e35i0RjdRkQJjRmlQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=ssY/JVvBNfWl105pUHJ0nbujbLoxaxFh/J/Ji3i+k64d/MGbdOI2tw1U87Xm4pk1c
-	 m1+0y6C1DoMc3x/Xk05rJLdK1VZqR1VTyENVOWDDP18bJZE0iWyr/8pRBM8mY0X7kA
-	 7+8cGk10anS3LzHWvCSbHO2E0afCM7FsQ9lDl0ELbyQkC5zh+SS4CRY25nUP4BPxDj
-	 r7Avu9NFK3U4MhkrToESNy7fsz65MDi59a08+6iCcjNi8fhXrKd2AQ09OvHzTJyQkL
-	 u2PfmPh/HRJ3rdUcFa+DXAnUBbQ6m4bd6GK7vMBOOShQKE7LZGLC1PCKcHBk2ABnl7
-	 wGRctEJhFDt1g==
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-55f469ad067so686509e87.0;
-        Wed, 27 Aug 2025 23:41:12 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUf7QLRHyk/7jXJKtF6y+f1ey8tBnmBvSGKZXjIKKbAc6UEIMBepw10eVULpH7hL/zX+Cw39bIWAK4=@vger.kernel.org, AJvYcCW+YWHzN42ItijhZVkMq19RIi8555iZqCBqQjjPFAqwypzmwznUHBMexShlS4rP5U/NldC5Wg8HgIezjKRI@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFSx3HxIDSe0Wh8NaaX9J6omyAGNqzfEvji/WZ7cg3qL8nmUiS
-	wbzvUDQJhVEj6xKmqqlC3f5OMj016pENExOAy+ECcKnp7dyg+D9PiCnlF2AXkdlYHDzAqm/eLnW
-	19XzVSLd0NnOiIjS4T0dxKVwqQOewruA=
-X-Google-Smtp-Source: AGHT+IGIPB3Xwu5a+WuD6+HvR4o83E1B+3tbp1ucafhr7r/LxwN8bXumQLhhX6t1f/58D5YIZ8b+Lf9G0cQsN9SUqNI=
-X-Received: by 2002:a05:6512:b20:b0:55f:4bc6:a5e3 with SMTP id
- 2adb3069b0e04-55f4f4c6addmr2576297e87.24.1756363271372; Wed, 27 Aug 2025
- 23:41:11 -0700 (PDT)
+	s=arc-20240116; t=1756363359; c=relaxed/simple;
+	bh=t1M+f2xRnS8zztJzavA/0ed9pYjRbVpNZN4/vCSwL3g=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Content-Type; b=FOn3hwNsBaAV+pwValXtB4X/YgJuc4dCZ1wDdetb2FD6a8U/DCDh0152VNI55m8YbxasB7NcaF33KVBaV46qwUiJ6Tpp27jDwz399FWhj/DBChMHxV6wMJA0UDdke3wW/3B1rbilg1GKbmMUkVIq0koMCIgNfsRYK2tgwztxDuQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UzqoFQ6k; arc=none smtp.client-ip=209.85.215.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b4c3547bd78so539645a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 23:42:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1756363355; x=1756968155; darn=vger.kernel.org;
+        h=to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=HmQ98ikckj0X+Nh+EPf1MzU7pWhsDlhpKkFUCFW/Wko=;
+        b=UzqoFQ6k1i6IT6Jqhb9C1ljNCRAjloXiybXSQGLNnf8qE9TK9zZxHXGer5B+7z1/Eo
+         U/4t48K7duuTR57W7qlTtxKqZQ7+UPZ4BJSlSRZ5QdGGiI7cTjl1Tzapy6y01qow3RJD
+         24ouKiKD6RYJfGWx9586tmTWG1wpjljKZtCZw0X4wLtt6YnNyzkPJvbSwy9/hb83w+aL
+         n+9HGhhO0msbRAipMqp70V1e9Eo+wHZpA38+HQyQPDQEzQuZSW+VTc+fm2Y4i2CDn2pH
+         twgm2+XTm7SACyxVwXHNRvl0dzNqbamvxAVpglUVhoUuNBbbm8tvL9P6nii4jjoe9YCL
+         +pYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756363355; x=1756968155;
+        h=to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=HmQ98ikckj0X+Nh+EPf1MzU7pWhsDlhpKkFUCFW/Wko=;
+        b=ZYfc7mWBm3FW3iEK6webOUe2gQ4WuCioAapETFPJiu6lb9boSZLgVWgabnD4Spt36j
+         wMw3CFqvqc94scXNVYVcH/sowukwkJz0t0kiqU/fSNoS0/TwuAI76RhlU/nCba/RNqLF
+         dzWa0jrPlyYpgTG/pNj+RIMnPO+TrP/6eOkEOxyXHTt3hkY39yM2CxTO0DRlA5XeckzH
+         fT3DsfDsFb8kkjGBiKDxX9AhlTXiW0XldP27o15eIQuerHhUalyoq1lCSx+Bf7AWHByG
+         YGLV1rF1xshc4AbcfJXIhDBy01WQiLHfL68pKJHk0EthiXxdBPgVDCV6IQNJ8vqXO+qy
+         yhfg==
+X-Forwarded-Encrypted: i=1; AJvYcCUofpGvkn20tPFffhgsbEOH3pyItpCzK0miMZvaiyPH07cdT0xlqtZD/+BkhF+ER9gwKRVaqeKNEWACCEs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGn/hvihLvkFaH6sC4/guBKZGcVxt7X96hv62cUObfGJ1egnw+
+	TFb8wtrRxObikKeRAX0okOLlVR1E1fKOmvHWUjiuS84fmsTyf4UBv12PWXsxIRxp6BwI3z1c5YT
+	rejmyyjv5jw==
+X-Google-Smtp-Source: AGHT+IEDiR8z9X43uwtAZR4ePaK3XYkBfqFQFbKfC0/guT06VjZzb6RtcQSTHywLjTn1v1+inR4rooFCxkI9
+X-Received: from plkq6.prod.google.com ([2002:a17:902:edc6:b0:240:1f2a:423f])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:943:b0:244:6c39:3361
+ with SMTP id d9443c01a7336-2462ef8aeb1mr275023105ad.44.1756363354865; Wed, 27
+ Aug 2025 23:42:34 -0700 (PDT)
+Date: Wed, 27 Aug 2025 23:42:18 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250827073954.2046464-1-linan666@huaweicloud.com>
-In-Reply-To: <20250827073954.2046464-1-linan666@huaweicloud.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Thu, 28 Aug 2025 08:40:59 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXGa7X41H5Eip+WMt3WX2HoPzoxDXHgR-4-616jhHY0NeQ@mail.gmail.com>
-X-Gm-Features: Ac12FXxQN8DGxG4NlH0R8Z2i-FbHWj_fTdIO6j7nCyCbuAF9m0x4nRxJJN3VoKQ
-Message-ID: <CAMj1kXGa7X41H5Eip+WMt3WX2HoPzoxDXHgR-4-616jhHY0NeQ@mail.gmail.com>
-Subject: Re: [PATCH v3] efivarfs: Fix slab-out-of-bounds in efivarfs_d_compare
-To: linan666@huaweicloud.com
-Cc: jk@ozlabs.org, matt.fleming@intel.com, linux-efi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, yangerkun@huawei.com, yi.zhang@huawei.com
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.0.268.g9569e192d0-goog
+Message-ID: <20250828064231.1762997-1-irogers@google.com>
+Subject: [PATCH v1 00/13] Legacy hardware/cache events as json
+From: Ian Rogers <irogers@google.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, James Clark <james.clark@linaro.org>, 
+	Xu Yang <xu.yang_2@nxp.com>, Thomas Falcon <thomas.falcon@intel.com>, 
+	Andi Kleen <ak@linux.intel.com>, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org, bpf@vger.kernel.org, 
+	Atish Patra <atishp@rivosinc.com>, Beeman Strong <beeman@rivosinc.com>, Leo Yan <leo.yan@arm.com>
 Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 27 Aug 2025 at 09:48, <linan666@huaweicloud.com> wrote:
->
-> From: Li Nan <linan122@huawei.com>
->
-> Observed on kernel 6.6 (present on master as well):
->
->   BUG: KASAN: slab-out-of-bounds in memcmp+0x98/0xd0
->   Call trace:
->    kasan_check_range+0xe8/0x190
->    __asan_loadN+0x1c/0x28
->    memcmp+0x98/0xd0
->    efivarfs_d_compare+0x68/0xd8
->    __d_lookup_rcu_op_compare+0x178/0x218
->    __d_lookup_rcu+0x1f8/0x228
->    d_alloc_parallel+0x150/0x648
->    lookup_open.isra.0+0x5f0/0x8d0
->    open_last_lookups+0x264/0x828
->    path_openat+0x130/0x3f8
->    do_filp_open+0x114/0x248
->    do_sys_openat2+0x340/0x3c0
->    __arm64_sys_openat+0x120/0x1a0
->
-> If dentry->d_name.len < EFI_VARIABLE_GUID_LEN , 'guid' can become
-> negative, leadings to oob. The issue can be triggered by parallel
-> lookups using invalid filename:
->
->   T1                    T2
->   lookup_open
->    ->lookup
->     simple_lookup
->      d_add
->      // invalid dentry is added to hash list
->
->                         lookup_open
->                          d_alloc_parallel
->                           __d_lookup_rcu
->                            __d_lookup_rcu_op_compare
->                             hlist_bl_for_each_entry_rcu
->                             // invalid dentry can be retrieved
->                              ->d_compare
->                               efivarfs_d_compare
->                               // oob
->
-> Fix it by checking 'guid' before cmp.
->
-> Fixes: da27a24383b2 ("efivarfs: guid part of filenames are case-insensitive")
-> Signed-off-by: Li Nan <linan122@huawei.com>
-> Signed-off-by: Wu Guanghao <wuguanghao3@huawei.com>
-> ---
-> v3: Check guid directly, add comment. Emphasize 'invalid filename' in
->     commit message.
->
->  fs/efivarfs/super.c | 4 ++++
->  1 file changed, 4 insertions(+)
->
-> diff --git a/fs/efivarfs/super.c b/fs/efivarfs/super.c
-> index c4a139911356..4bb4002e3cdf 100644
-> --- a/fs/efivarfs/super.c
-> +++ b/fs/efivarfs/super.c
-> @@ -152,6 +152,10 @@ static int efivarfs_d_compare(const struct dentry *dentry,
->  {
->         int guid = len - EFI_VARIABLE_GUID_LEN;
->
-> +       /* Parallel lookups may produce a temporary invalid filename */
-> +       if (guid <= 0)
-> +               return 1;
-> +
->         if (name->len != len)
->                 return 1;
->
+Mirroring similar work for software events in commit 6e9fa4131abb
+("perf parse-events: Remove non-json software events"). These changes
+migrate the legacy hardware and cache events to json.  With no hard
+coded legacy hardware or cache events the wild card, case
+insensitivity, etc. is consistent for events. This does, however, mean
+events like cycles will wild card against all PMUs. A change does the
+same was originally posted and merged from:
+https://lore.kernel.org/r/20240416061533.921723-10-irogers@google.com
+and reverted by Linus in commit 4f1b067359ac ("Revert "perf
+parse-events: Prefer sysfs/JSON hardware events over legacy"") due to
+his dislike for the cycles behavior on ARM. Earlier patches in this
+series make perf record event opening failures non-fatal and hide the
+cycles event's failure to open on ARM in perf record, so it is
+expected the behavior will now be transparent in perf record on
+ARM. perf stat with a cycles event will wildcard open the event on all
+PMUs.
 
-Queued up as a fix now - thanks.
+The change to support legacy events with PMUs was done to clean up
+Intel's hybrid PMU implementation.  Having sysfs/json events with
+increased priority to legacy was requested by Mark Rutland
+ <mark.rutland@arm.com> to fix Apple-M PMU issues wrt broken legacy
+events on that PMU. It was requested that RISC-V be able to add events
+to the perf tool json so the PMU driver didn't need to map legacy
+events to config encodings:
+https://lore.kernel.org/lkml/20240217005738.3744121-1-atishp@rivosinc.com/
+
+A previous series of patches decreasing legacy hardware event
+priorities was posted in:
+https://lore.kernel.org/lkml/20250416045117.876775-1-irogers@google.com/
+Namhyung Kim <namhyung@kernel.org> mentioned that hardware and
+software events can be implemented similarly:
+https://lore.kernel.org/lkml/aIJmJns2lopxf3EK@google.com/
+and this patch series achieves this.
+
+The perf list behavior before is:
+```
+$ perf list hw
+
+List of pre-defined events (to be used in -e or -M):
+
+  branch-instructions OR branches                    [Hardware event]
+  branch-misses                                      [Hardware event]
+  bus-cycles                                         [Hardware event]
+  cache-misses                                       [Hardware event]
+  cache-references                                   [Hardware event]
+  cpu-cycles OR cycles                               [Hardware event]
+  instructions                                       [Hardware event]
+  ref-cycles                                         [Hardware event]
+$ perf list hwcache
+
+List of pre-defined events (to be used in -e or -M):
+
+
+cache:
+  L1-dcache-loads OR cpu/L1-dcache-loads/
+  L1-dcache-load-misses OR cpu/L1-dcache-load-misses/
+  L1-dcache-stores OR cpu/L1-dcache-stores/
+  L1-icache-load-misses OR cpu/L1-icache-load-misses/
+  LLC-loads OR cpu/LLC-loads/
+  LLC-load-misses OR cpu/LLC-load-misses/
+  LLC-stores OR cpu/LLC-stores/
+  LLC-store-misses OR cpu/LLC-store-misses/
+  dTLB-loads OR cpu/dTLB-loads/
+  dTLB-load-misses OR cpu/dTLB-load-misses/
+  dTLB-stores OR cpu/dTLB-stores/
+  dTLB-store-misses OR cpu/dTLB-store-misses/
+  iTLB-load-misses OR cpu/iTLB-load-misses/
+  branch-loads OR cpu/branch-loads/
+  branch-load-misses OR cpu/branch-load-misses/
+  node-loads OR cpu/node-loads/
+  node-load-misses OR cpu/node-load-misses/
+  node-stores OR cpu/node-stores/
+  node-store-misses OR cpu/node-store-misses/
+```
+and after it is:
+```
+$ perf list hw
+
+legacy hardware:
+  branch-instructions
+       [Retired branch instructions [This event is an alias of branches].
+        Unit: cpu]
+  branch-misses
+       [Mispredicted branch instructions. Unit: cpu]
+  branches
+       [Retired branch instructions [This event is an alias of
+        branch-instructions]. Unit: cpu]
+  bus-cycles
+       [Bus cycles,which can be different from total cycles. Unit: cpu]
+  cache-misses
+       [Cache misses. Usually this indicates Last Level Cache misses; this is
+        intended to be used in conjunction with the
+        PERF_COUNT_HW_CACHE_REFERENCES event to calculate cache miss rates.
+        Unit: cpu]
+  cache-references
+       [Cache accesses. Usually this indicates Last Level Cache accesses but
+        this may vary depending on your CPU. This may include prefetches and
+        coherency messages; again this depends on the design of your CPU.
+        Unit: cpu]
+  cpu-cycles
+       [Total cycles. Be wary of what happens during CPU frequency scaling
+        [This event is an alias of cycles]. Unit: cpu]
+  cycles
+       [Total cycles. Be wary of what happens during CPU frequency scaling
+        [This event is an alias of cpu-cycles]. Unit: cpu]
+  instructions
+       [Retired instructions. Be careful,these can be affected by various
+        issues,most notably hardware interrupt counts. Unit: cpu]
+  ref-cycles
+       [Total cycles; not affected by CPU frequency scaling. Unit: cpu]
+$ perf list hwcache
+
+legacy cache:
+  bpc
+       [Branch prediction unit read accesses. Unit: cpu]
+  bpc-access
+       [Branch prediction unit read accesses. Unit: cpu]
+  bpc-load
+       [Branch prediction unit read accesses. Unit: cpu]
+  bpc-load-access
+       [Branch prediction unit read accesses. Unit: cpu]
+  bpc-load-miss
+       [Branch prediction unit read misses. Unit: cpu]
+  bpc-load-misses
+       [Branch prediction unit read misses. Unit: cpu]
+  bpc-load-ops
+       [Branch prediction unit read accesses. Unit: cpu]
+  bpc-load-reference
+       [Branch prediction unit read accesses. Unit: cpu]
+  bpc-load-refs
+       [Branch prediction unit read accesses. Unit: cpu]
+  bpc-loads
+       [Branch prediction unit read accesses. Unit: cpu]
+  bpc-loads-access
+       [Branch prediction unit read accesses. Unit: cpu]
+  bpc-loads-miss
+       [Branch prediction unit read misses. Unit: cpu]
+  bpc-loads-misses
+       [Branch prediction unit read misses. Unit: cpu]
+  bpc-loads-ops
+       [Branch prediction unit read accesses. Unit: cpu]
+  bpc-loads-reference
+       [Branch prediction unit read accesses. Unit: cpu]
+  bpc-loads-refs
+       [Branch prediction unit read accesses. Unit: cpu]
+  bpc-miss
+       [Branch prediction unit read misses. Unit: cpu]
+  bpc-misses
+       [Branch prediction unit read misses. Unit: cpu]
+  bpc-ops
+       [Branch prediction unit read accesses. Unit: cpu]
+  bpc-read
+       [Branch prediction unit read accesses. Unit: cpu]
+  bpc-read-access
+       [Branch prediction unit read accesses. Unit: cpu]
+  bpc-read-miss
+       [Branch prediction unit read misses. Unit: cpu]
+  bpc-read-misses
+       [Branch prediction unit read misses. Unit: cpu]
+  bpc-read-ops
+       [Branch prediction unit read accesses. Unit: cpu]
+  bpc-read-reference
+       [Branch prediction unit read accesses. Unit: cpu]
+  bpc-read-refs
+       [Branch prediction unit read accesses. Unit: cpu]
+  bpc-reference
+       [Branch prediction unit read accesses. Unit: cpu]
+  bpc-refs
+       [Branch prediction unit read accesses. Unit: cpu]
+  bpu
+       [Branch prediction unit read accesses. Unit: cpu]
+  bpu-access
+       [Branch prediction unit read accesses. Unit: cpu]
+  bpu-load
+       [Branch prediction unit read accesses. Unit: cpu]
+  bpu-load-access
+       [Branch prediction unit read accesses. Unit: cpu]
+  bpu-load-miss
+       [Branch prediction unit read misses. Unit: cpu]
+  bpu-load-misses
+       [Branch prediction unit read misses. Unit: cpu]
+  bpu-load-ops
+       [Branch prediction unit read accesses. Unit: cpu]
+  bpu-load-reference
+       [Branch prediction unit read accesses. Unit: cpu]
+  bpu-load-refs
+       [Branch prediction unit read accesses. Unit: cpu]
+  bpu-loads
+       [Branch prediction unit read accesses. Unit: cpu]
+  bpu-loads-access
+       [Branch prediction unit read accesses. Unit: cpu]
+  bpu-loads-miss
+       [Branch prediction unit read misses. Unit: cpu]
+  bpu-loads-misses
+       [Branch prediction unit read misses. Unit: cpu]
+  bpu-loads-ops
+       [Branch prediction unit read accesses. Unit: cpu]
+  bpu-loads-reference
+       [Branch prediction unit read accesses. Unit: cpu]
+  bpu-loads-refs
+       [Branch prediction unit read accesses. Unit: cpu]
+  bpu-miss
+       [Branch prediction unit read misses. Unit: cpu]
+  bpu-misses
+       [Branch prediction unit read misses. Unit: cpu]
+  bpu-ops
+       [Branch prediction unit read accesses. Unit: cpu]
+  bpu-read
+       [Branch prediction unit read accesses. Unit: cpu]
+  bpu-read-access
+       [Branch prediction unit read accesses. Unit: cpu]
+  bpu-read-miss
+       [Branch prediction unit read misses. Unit: cpu]
+  bpu-read-misses
+       [Branch prediction unit read misses. Unit: cpu]
+  bpu-read-ops
+       [Branch prediction unit read accesses. Unit: cpu]
+  bpu-read-reference
+       [Branch prediction unit read accesses. Unit: cpu]
+  bpu-read-refs
+       [Branch prediction unit read accesses. Unit: cpu]
+  bpu-reference
+       [Branch prediction unit read accesses. Unit: cpu]
+  bpu-refs
+       [Branch prediction unit read accesses. Unit: cpu]
+  branch
+       [Branch prediction unit read accesses. Unit: cpu]
+  branch-access
+       [Branch prediction unit read accesses. Unit: cpu]
+  branch-load
+       [Branch prediction unit read accesses. Unit: cpu]
+  branch-load-access
+       [Branch prediction unit read accesses. Unit: cpu]
+  branch-load-miss
+       [Branch prediction unit read misses. Unit: cpu]
+  branch-load-misses
+       [Branch prediction unit read misses. Unit: cpu]
+  branch-load-ops
+       [Branch prediction unit read accesses. Unit: cpu]
+  branch-load-reference
+       [Branch prediction unit read accesses. Unit: cpu]
+  branch-load-refs
+       [Branch prediction unit read accesses. Unit: cpu]
+  branch-loads
+       [Branch prediction unit read accesses. Unit: cpu]
+  branch-loads-access
+       [Branch prediction unit read accesses. Unit: cpu]
+  branch-loads-miss
+       [Branch prediction unit read misses. Unit: cpu]
+  branch-loads-misses
+       [Branch prediction unit read misses. Unit: cpu]
+  branch-loads-ops
+       [Branch prediction unit read accesses. Unit: cpu]
+  branch-loads-reference
+       [Branch prediction unit read accesses. Unit: cpu]
+  branch-loads-refs
+       [Branch prediction unit read accesses. Unit: cpu]
+  branch-miss
+       [Branch prediction unit read misses. Unit: cpu]
+  branch-ops
+       [Branch prediction unit read accesses. Unit: cpu]
+  branch-read
+       [Branch prediction unit read accesses. Unit: cpu]
+  branch-read-access
+       [Branch prediction unit read accesses. Unit: cpu]
+  branch-read-miss
+       [Branch prediction unit read misses. Unit: cpu]
+  branch-read-misses
+       [Branch prediction unit read misses. Unit: cpu]
+  branch-read-ops
+       [Branch prediction unit read accesses. Unit: cpu]
+  branch-read-reference
+       [Branch prediction unit read accesses. Unit: cpu]
+  branch-read-refs
+       [Branch prediction unit read accesses. Unit: cpu]
+  branch-reference
+       [Branch prediction unit read accesses. Unit: cpu]
+  branch-refs
+       [Branch prediction unit read accesses. Unit: cpu]
+  branches-access
+       [Branch prediction unit read accesses. Unit: cpu]
+  branches-load
+       [Branch prediction unit read accesses. Unit: cpu]
+  branches-load-access
+       [Branch prediction unit read accesses. Unit: cpu]
+  branches-load-miss
+       [Branch prediction unit read misses. Unit: cpu]
+  branches-load-misses
+       [Branch prediction unit read misses. Unit: cpu]
+  branches-load-ops
+       [Branch prediction unit read accesses. Unit: cpu]
+  branches-load-reference
+       [Branch prediction unit read accesses. Unit: cpu]
+  branches-load-refs
+       [Branch prediction unit read accesses. Unit: cpu]
+  branches-loads
+       [Branch prediction unit read accesses. Unit: cpu]
+  branches-loads-access
+       [Branch prediction unit read accesses. Unit: cpu]
+  branches-loads-miss
+       [Branch prediction unit read misses. Unit: cpu]
+  branches-loads-misses
+       [Branch prediction unit read misses. Unit: cpu]
+  branches-loads-ops
+       [Branch prediction unit read accesses. Unit: cpu]
+  branches-loads-reference
+       [Branch prediction unit read accesses. Unit: cpu]
+  branches-loads-refs
+       [Branch prediction unit read accesses. Unit: cpu]
+  branches-miss
+       [Branch prediction unit read misses. Unit: cpu]
+  branches-misses
+       [Branch prediction unit read misses. Unit: cpu]
+  branches-ops
+       [Branch prediction unit read accesses. Unit: cpu]
+  branches-read
+       [Branch prediction unit read accesses. Unit: cpu]
+  branches-read-access
+       [Branch prediction unit read accesses. Unit: cpu]
+  branches-read-miss
+       [Branch prediction unit read misses. Unit: cpu]
+  branches-read-misses
+       [Branch prediction unit read misses. Unit: cpu]
+  branches-read-ops
+       [Branch prediction unit read accesses. Unit: cpu]
+  branches-read-reference
+       [Branch prediction unit read accesses. Unit: cpu]
+  branches-read-refs
+       [Branch prediction unit read accesses. Unit: cpu]
+  branches-reference
+       [Branch prediction unit read accesses. Unit: cpu]
+  branches-refs
+       [Branch prediction unit read accesses. Unit: cpu]
+  btb
+       [Branch prediction unit read accesses. Unit: cpu]
+  btb-access
+       [Branch prediction unit read accesses. Unit: cpu]
+  btb-load
+       [Branch prediction unit read accesses. Unit: cpu]
+  btb-load-access
+       [Branch prediction unit read accesses. Unit: cpu]
+  btb-load-miss
+       [Branch prediction unit read misses. Unit: cpu]
+  btb-load-misses
+       [Branch prediction unit read misses. Unit: cpu]
+  btb-load-ops
+       [Branch prediction unit read accesses. Unit: cpu]
+  btb-load-reference
+       [Branch prediction unit read accesses. Unit: cpu]
+  btb-load-refs
+       [Branch prediction unit read accesses. Unit: cpu]
+  btb-loads
+       [Branch prediction unit read accesses. Unit: cpu]
+  btb-loads-access
+       [Branch prediction unit read accesses. Unit: cpu]
+  btb-loads-miss
+       [Branch prediction unit read misses. Unit: cpu]
+  btb-loads-misses
+       [Branch prediction unit read misses. Unit: cpu]
+  btb-loads-ops
+       [Branch prediction unit read accesses. Unit: cpu]
+  btb-loads-reference
+       [Branch prediction unit read accesses. Unit: cpu]
+  btb-loads-refs
+       [Branch prediction unit read accesses. Unit: cpu]
+  btb-miss
+       [Branch prediction unit read misses. Unit: cpu]
+  btb-misses
+       [Branch prediction unit read misses. Unit: cpu]
+  btb-ops
+       [Branch prediction unit read accesses. Unit: cpu]
+  btb-read
+       [Branch prediction unit read accesses. Unit: cpu]
+  btb-read-access
+       [Branch prediction unit read accesses. Unit: cpu]
+  btb-read-miss
+       [Branch prediction unit read misses. Unit: cpu]
+  btb-read-misses
+       [Branch prediction unit read misses. Unit: cpu]
+  btb-read-ops
+       [Branch prediction unit read accesses. Unit: cpu]
+  btb-read-reference
+       [Branch prediction unit read accesses. Unit: cpu]
+  btb-read-refs
+       [Branch prediction unit read accesses. Unit: cpu]
+  btb-reference
+       [Branch prediction unit read accesses. Unit: cpu]
+  btb-refs
+       [Branch prediction unit read accesses. Unit: cpu]
+  d-tlb
+       [Data TLB read accesses. Unit: cpu]
+  d-tlb-access
+       [Data TLB read accesses. Unit: cpu]
+  d-tlb-load
+       [Data TLB read accesses. Unit: cpu]
+  d-tlb-load-access
+       [Data TLB read accesses. Unit: cpu]
+  d-tlb-load-miss
+       [Data TLB read misses. Unit: cpu]
+  d-tlb-load-misses
+       [Data TLB read misses. Unit: cpu]
+  d-tlb-load-ops
+       [Data TLB read accesses. Unit: cpu]
+  d-tlb-load-reference
+       [Data TLB read accesses. Unit: cpu]
+  d-tlb-load-refs
+       [Data TLB read accesses. Unit: cpu]
+  d-tlb-loads
+       [Data TLB read accesses. Unit: cpu]
+  d-tlb-loads-access
+       [Data TLB read accesses. Unit: cpu]
+  d-tlb-loads-miss
+       [Data TLB read misses. Unit: cpu]
+  d-tlb-loads-misses
+       [Data TLB read misses. Unit: cpu]
+  d-tlb-loads-ops
+       [Data TLB read accesses. Unit: cpu]
+  d-tlb-loads-reference
+       [Data TLB read accesses. Unit: cpu]
+  d-tlb-loads-refs
+       [Data TLB read accesses. Unit: cpu]
+  d-tlb-miss
+       [Data TLB read misses. Unit: cpu]
+  d-tlb-misses
+       [Data TLB read misses. Unit: cpu]
+  d-tlb-ops
+       [Data TLB read accesses. Unit: cpu]
+  d-tlb-read
+       [Data TLB read accesses. Unit: cpu]
+  d-tlb-read-access
+       [Data TLB read accesses. Unit: cpu]
+  d-tlb-read-miss
+       [Data TLB read misses. Unit: cpu]
+  d-tlb-read-misses
+       [Data TLB read misses. Unit: cpu]
+  d-tlb-read-ops
+       [Data TLB read accesses. Unit: cpu]
+  d-tlb-read-reference
+       [Data TLB read accesses. Unit: cpu]
+  d-tlb-read-refs
+       [Data TLB read accesses. Unit: cpu]
+  d-tlb-reference
+       [Data TLB read accesses. Unit: cpu]
+  d-tlb-refs
+       [Data TLB read accesses. Unit: cpu]
+  d-tlb-store
+       [Data TLB write accesses. Unit: cpu]
+  d-tlb-store-access
+       [Data TLB write accesses. Unit: cpu]
+  d-tlb-store-miss
+       [Data TLB write misses. Unit: cpu]
+  d-tlb-store-misses
+       [Data TLB write misses. Unit: cpu]
+  d-tlb-store-ops
+       [Data TLB write accesses. Unit: cpu]
+  d-tlb-store-reference
+       [Data TLB write accesses. Unit: cpu]
+  d-tlb-store-refs
+       [Data TLB write accesses. Unit: cpu]
+  d-tlb-stores
+       [Data TLB write accesses. Unit: cpu]
+  d-tlb-stores-access
+       [Data TLB write accesses. Unit: cpu]
+  d-tlb-stores-miss
+       [Data TLB write misses. Unit: cpu]
+  d-tlb-stores-misses
+       [Data TLB write misses. Unit: cpu]
+  d-tlb-stores-ops
+       [Data TLB write accesses. Unit: cpu]
+  d-tlb-stores-reference
+       [Data TLB write accesses. Unit: cpu]
+  d-tlb-stores-refs
+       [Data TLB write accesses. Unit: cpu]
+  d-tlb-write
+       [Data TLB write accesses. Unit: cpu]
+  d-tlb-write-access
+       [Data TLB write accesses. Unit: cpu]
+  d-tlb-write-miss
+       [Data TLB write misses. Unit: cpu]
+  d-tlb-write-misses
+       [Data TLB write misses. Unit: cpu]
+  d-tlb-write-ops
+       [Data TLB write accesses. Unit: cpu]
+  d-tlb-write-reference
+       [Data TLB write accesses. Unit: cpu]
+  d-tlb-write-refs
+       [Data TLB write accesses. Unit: cpu]
+  data-tlb
+       [Data TLB read accesses. Unit: cpu]
+  data-tlb-access
+       [Data TLB read accesses. Unit: cpu]
+  data-tlb-load
+       [Data TLB read accesses. Unit: cpu]
+  data-tlb-load-access
+       [Data TLB read accesses. Unit: cpu]
+  data-tlb-load-miss
+       [Data TLB read misses. Unit: cpu]
+  data-tlb-load-misses
+       [Data TLB read misses. Unit: cpu]
+  data-tlb-load-ops
+       [Data TLB read accesses. Unit: cpu]
+  data-tlb-load-reference
+       [Data TLB read accesses. Unit: cpu]
+  data-tlb-load-refs
+       [Data TLB read accesses. Unit: cpu]
+  data-tlb-loads
+       [Data TLB read accesses. Unit: cpu]
+  data-tlb-loads-access
+       [Data TLB read accesses. Unit: cpu]
+  data-tlb-loads-miss
+       [Data TLB read misses. Unit: cpu]
+  data-tlb-loads-misses
+       [Data TLB read misses. Unit: cpu]
+  data-tlb-loads-ops
+       [Data TLB read accesses. Unit: cpu]
+  data-tlb-loads-reference
+       [Data TLB read accesses. Unit: cpu]
+  data-tlb-loads-refs
+       [Data TLB read accesses. Unit: cpu]
+  data-tlb-miss
+       [Data TLB read misses. Unit: cpu]
+  data-tlb-misses
+       [Data TLB read misses. Unit: cpu]
+  data-tlb-ops
+       [Data TLB read accesses. Unit: cpu]
+  data-tlb-read
+       [Data TLB read accesses. Unit: cpu]
+  data-tlb-read-access
+       [Data TLB read accesses. Unit: cpu]
+  data-tlb-read-miss
+       [Data TLB read misses. Unit: cpu]
+  data-tlb-read-misses
+       [Data TLB read misses. Unit: cpu]
+  data-tlb-read-ops
+       [Data TLB read accesses. Unit: cpu]
+  data-tlb-read-reference
+       [Data TLB read accesses. Unit: cpu]
+  data-tlb-read-refs
+       [Data TLB read accesses. Unit: cpu]
+  data-tlb-reference
+       [Data TLB read accesses. Unit: cpu]
+  data-tlb-refs
+       [Data TLB read accesses. Unit: cpu]
+  data-tlb-store
+       [Data TLB write accesses. Unit: cpu]
+  data-tlb-store-access
+       [Data TLB write accesses. Unit: cpu]
+  data-tlb-store-miss
+       [Data TLB write misses. Unit: cpu]
+  data-tlb-store-misses
+       [Data TLB write misses. Unit: cpu]
+  data-tlb-store-ops
+       [Data TLB write accesses. Unit: cpu]
+  data-tlb-store-reference
+       [Data TLB write accesses. Unit: cpu]
+  data-tlb-store-refs
+       [Data TLB write accesses. Unit: cpu]
+  data-tlb-stores
+       [Data TLB write accesses. Unit: cpu]
+  data-tlb-stores-access
+       [Data TLB write accesses. Unit: cpu]
+  data-tlb-stores-miss
+       [Data TLB write misses. Unit: cpu]
+  data-tlb-stores-misses
+       [Data TLB write misses. Unit: cpu]
+  data-tlb-stores-ops
+       [Data TLB write accesses. Unit: cpu]
+  data-tlb-stores-reference
+       [Data TLB write accesses. Unit: cpu]
+  data-tlb-stores-refs
+       [Data TLB write accesses. Unit: cpu]
+  data-tlb-write
+       [Data TLB write accesses. Unit: cpu]
+  data-tlb-write-access
+       [Data TLB write accesses. Unit: cpu]
+  data-tlb-write-miss
+       [Data TLB write misses. Unit: cpu]
+  data-tlb-write-misses
+       [Data TLB write misses. Unit: cpu]
+  data-tlb-write-ops
+       [Data TLB write accesses. Unit: cpu]
+  data-tlb-write-reference
+       [Data TLB write accesses. Unit: cpu]
+  data-tlb-write-refs
+       [Data TLB write accesses. Unit: cpu]
+  dtlb
+       [Data TLB read accesses. Unit: cpu]
+  dtlb-access
+       [Data TLB read accesses. Unit: cpu]
+  dtlb-load
+       [Data TLB read accesses. Unit: cpu]
+  dtlb-load-access
+       [Data TLB read accesses. Unit: cpu]
+  dtlb-load-miss
+       [Data TLB read misses. Unit: cpu]
+  dtlb-load-misses
+       [Data TLB read misses. Unit: cpu]
+  dtlb-load-ops
+       [Data TLB read accesses. Unit: cpu]
+  dtlb-load-reference
+       [Data TLB read accesses. Unit: cpu]
+  dtlb-load-refs
+       [Data TLB read accesses. Unit: cpu]
+  dtlb-loads
+       [Data TLB read accesses. Unit: cpu]
+  dtlb-loads-access
+       [Data TLB read accesses. Unit: cpu]
+  dtlb-loads-miss
+       [Data TLB read misses. Unit: cpu]
+  dtlb-loads-misses
+       [Data TLB read misses. Unit: cpu]
+  dtlb-loads-ops
+       [Data TLB read accesses. Unit: cpu]
+  dtlb-loads-reference
+       [Data TLB read accesses. Unit: cpu]
+  dtlb-loads-refs
+       [Data TLB read accesses. Unit: cpu]
+  dtlb-miss
+       [Data TLB read misses. Unit: cpu]
+  dtlb-misses
+       [Data TLB read misses. Unit: cpu]
+  dtlb-ops
+       [Data TLB read accesses. Unit: cpu]
+  dtlb-read
+       [Data TLB read accesses. Unit: cpu]
+  dtlb-read-access
+       [Data TLB read accesses. Unit: cpu]
+  dtlb-read-miss
+       [Data TLB read misses. Unit: cpu]
+  dtlb-read-misses
+       [Data TLB read misses. Unit: cpu]
+  dtlb-read-ops
+       [Data TLB read accesses. Unit: cpu]
+  dtlb-read-reference
+       [Data TLB read accesses. Unit: cpu]
+  dtlb-read-refs
+       [Data TLB read accesses. Unit: cpu]
+  dtlb-reference
+       [Data TLB read accesses. Unit: cpu]
+  dtlb-refs
+       [Data TLB read accesses. Unit: cpu]
+  dtlb-store
+       [Data TLB write accesses. Unit: cpu]
+  dtlb-store-access
+       [Data TLB write accesses. Unit: cpu]
+  dtlb-store-miss
+       [Data TLB write misses. Unit: cpu]
+  dtlb-store-misses
+       [Data TLB write misses. Unit: cpu]
+  dtlb-store-ops
+       [Data TLB write accesses. Unit: cpu]
+  dtlb-store-reference
+       [Data TLB write accesses. Unit: cpu]
+  dtlb-store-refs
+       [Data TLB write accesses. Unit: cpu]
+  dtlb-stores
+       [Data TLB write accesses. Unit: cpu]
+  dtlb-stores-access
+       [Data TLB write accesses. Unit: cpu]
+  dtlb-stores-miss
+       [Data TLB write misses. Unit: cpu]
+  dtlb-stores-misses
+       [Data TLB write misses. Unit: cpu]
+  dtlb-stores-ops
+       [Data TLB write accesses. Unit: cpu]
+  dtlb-stores-reference
+       [Data TLB write accesses. Unit: cpu]
+  dtlb-stores-refs
+       [Data TLB write accesses. Unit: cpu]
+  dtlb-write
+       [Data TLB write accesses. Unit: cpu]
+  dtlb-write-access
+       [Data TLB write accesses. Unit: cpu]
+  dtlb-write-miss
+       [Data TLB write misses. Unit: cpu]
+  dtlb-write-misses
+       [Data TLB write misses. Unit: cpu]
+  dtlb-write-ops
+       [Data TLB write accesses. Unit: cpu]
+  dtlb-write-reference
+       [Data TLB write accesses. Unit: cpu]
+  dtlb-write-refs
+       [Data TLB write accesses. Unit: cpu]
+  i-tlb-load-miss
+       [Instruction TLB read misses. Unit: cpu]
+  i-tlb-load-misses
+       [Instruction TLB read misses. Unit: cpu]
+  i-tlb-loads-miss
+       [Instruction TLB read misses. Unit: cpu]
+  i-tlb-loads-misses
+       [Instruction TLB read misses. Unit: cpu]
+  i-tlb-miss
+       [Instruction TLB read misses. Unit: cpu]
+  i-tlb-misses
+       [Instruction TLB read misses. Unit: cpu]
+  i-tlb-read-miss
+       [Instruction TLB read misses. Unit: cpu]
+  i-tlb-read-misses
+       [Instruction TLB read misses. Unit: cpu]
+  instruction-tlb-load-miss
+       [Instruction TLB read misses. Unit: cpu]
+  instruction-tlb-load-misses
+       [Instruction TLB read misses. Unit: cpu]
+  instruction-tlb-loads-miss
+       [Instruction TLB read misses. Unit: cpu]
+  instruction-tlb-loads-misses
+       [Instruction TLB read misses. Unit: cpu]
+  instruction-tlb-miss
+       [Instruction TLB read misses. Unit: cpu]
+  instruction-tlb-misses
+       [Instruction TLB read misses. Unit: cpu]
+  instruction-tlb-read-miss
+       [Instruction TLB read misses. Unit: cpu]
+  instruction-tlb-read-misses
+       [Instruction TLB read misses. Unit: cpu]
+  itlb-load-miss
+       [Instruction TLB read misses. Unit: cpu]
+  itlb-load-misses
+       [Instruction TLB read misses. Unit: cpu]
+  itlb-loads-miss
+       [Instruction TLB read misses. Unit: cpu]
+  itlb-loads-misses
+       [Instruction TLB read misses. Unit: cpu]
+  itlb-miss
+       [Instruction TLB read misses. Unit: cpu]
+  itlb-misses
+       [Instruction TLB read misses. Unit: cpu]
+  itlb-read-miss
+       [Instruction TLB read misses. Unit: cpu]
+  itlb-read-misses
+       [Instruction TLB read misses. Unit: cpu]
+  l1-d
+       [Level 1 data cache read accesses. Unit: cpu]
+  l1-d-access
+       [Level 1 data cache read accesses. Unit: cpu]
+  l1-d-load
+       [Level 1 data cache read accesses. Unit: cpu]
+  l1-d-load-access
+       [Level 1 data cache read accesses. Unit: cpu]
+  l1-d-load-miss
+       [Level 1 data cache read misses. Unit: cpu]
+  l1-d-load-misses
+       [Level 1 data cache read misses. Unit: cpu]
+  l1-d-load-ops
+       [Level 1 data cache read accesses. Unit: cpu]
+  l1-d-load-reference
+       [Level 1 data cache read accesses. Unit: cpu]
+  l1-d-load-refs
+       [Level 1 data cache read accesses. Unit: cpu]
+  l1-d-loads
+       [Level 1 data cache read accesses. Unit: cpu]
+  l1-d-loads-access
+       [Level 1 data cache read accesses. Unit: cpu]
+  l1-d-loads-miss
+       [Level 1 data cache read misses. Unit: cpu]
+  l1-d-loads-misses
+       [Level 1 data cache read misses. Unit: cpu]
+  l1-d-loads-ops
+       [Level 1 data cache read accesses. Unit: cpu]
+  l1-d-loads-reference
+       [Level 1 data cache read accesses. Unit: cpu]
+  l1-d-loads-refs
+       [Level 1 data cache read accesses. Unit: cpu]
+  l1-d-miss
+       [Level 1 data cache read misses. Unit: cpu]
+  l1-d-misses
+       [Level 1 data cache read misses. Unit: cpu]
+  l1-d-ops
+       [Level 1 data cache read accesses. Unit: cpu]
+  l1-d-read
+       [Level 1 data cache read accesses. Unit: cpu]
+  l1-d-read-access
+       [Level 1 data cache read accesses. Unit: cpu]
+  l1-d-read-miss
+       [Level 1 data cache read misses. Unit: cpu]
+  l1-d-read-misses
+       [Level 1 data cache read misses. Unit: cpu]
+  l1-d-read-ops
+       [Level 1 data cache read accesses. Unit: cpu]
+  l1-d-read-reference
+       [Level 1 data cache read accesses. Unit: cpu]
+  l1-d-read-refs
+       [Level 1 data cache read accesses. Unit: cpu]
+  l1-d-reference
+       [Level 1 data cache read accesses. Unit: cpu]
+  l1-d-refs
+       [Level 1 data cache read accesses. Unit: cpu]
+  l1-d-store
+       [Level 1 data cache write accesses. Unit: cpu]
+  l1-d-store-access
+       [Level 1 data cache write accesses. Unit: cpu]
+  l1-d-store-ops
+       [Level 1 data cache write accesses. Unit: cpu]
+  l1-d-store-reference
+       [Level 1 data cache write accesses. Unit: cpu]
+  l1-d-store-refs
+       [Level 1 data cache write accesses. Unit: cpu]
+  l1-d-stores
+       [Level 1 data cache write accesses. Unit: cpu]
+  l1-d-stores-access
+       [Level 1 data cache write accesses. Unit: cpu]
+  l1-d-stores-ops
+       [Level 1 data cache write accesses. Unit: cpu]
+  l1-d-stores-reference
+       [Level 1 data cache write accesses. Unit: cpu]
+  l1-d-stores-refs
+       [Level 1 data cache write accesses. Unit: cpu]
+  l1-d-write
+       [Level 1 data cache write accesses. Unit: cpu]
+  l1-d-write-access
+       [Level 1 data cache write accesses. Unit: cpu]
+  l1-d-write-ops
+       [Level 1 data cache write accesses. Unit: cpu]
+  l1-d-write-reference
+       [Level 1 data cache write accesses. Unit: cpu]
+  l1-d-write-refs
+       [Level 1 data cache write accesses. Unit: cpu]
+  l1-data
+       [Level 1 data cache read accesses. Unit: cpu]
+  l1-data-access
+       [Level 1 data cache read accesses. Unit: cpu]
+  l1-data-load
+       [Level 1 data cache read accesses. Unit: cpu]
+  l1-data-load-access
+       [Level 1 data cache read accesses. Unit: cpu]
+  l1-data-load-miss
+       [Level 1 data cache read misses. Unit: cpu]
+  l1-data-load-misses
+       [Level 1 data cache read misses. Unit: cpu]
+  l1-data-load-ops
+       [Level 1 data cache read accesses. Unit: cpu]
+  l1-data-load-reference
+       [Level 1 data cache read accesses. Unit: cpu]
+  l1-data-load-refs
+       [Level 1 data cache read accesses. Unit: cpu]
+  l1-data-loads
+       [Level 1 data cache read accesses. Unit: cpu]
+  l1-data-loads-access
+       [Level 1 data cache read accesses. Unit: cpu]
+  l1-data-loads-miss
+       [Level 1 data cache read misses. Unit: cpu]
+  l1-data-loads-misses
+       [Level 1 data cache read misses. Unit: cpu]
+  l1-data-loads-ops
+       [Level 1 data cache read accesses. Unit: cpu]
+  l1-data-loads-reference
+       [Level 1 data cache read accesses. Unit: cpu]
+  l1-data-loads-refs
+       [Level 1 data cache read accesses. Unit: cpu]
+  l1-data-miss
+       [Level 1 data cache read misses. Unit: cpu]
+  l1-data-misses
+       [Level 1 data cache read misses. Unit: cpu]
+  l1-data-ops
+       [Level 1 data cache read accesses. Unit: cpu]
+  l1-data-read
+       [Level 1 data cache read accesses. Unit: cpu]
+  l1-data-read-access
+       [Level 1 data cache read accesses. Unit: cpu]
+  l1-data-read-miss
+       [Level 1 data cache read misses. Unit: cpu]
+  l1-data-read-misses
+       [Level 1 data cache read misses. Unit: cpu]
+  l1-data-read-ops
+       [Level 1 data cache read accesses. Unit: cpu]
+  l1-data-read-reference
+       [Level 1 data cache read accesses. Unit: cpu]
+  l1-data-read-refs
+       [Level 1 data cache read accesses. Unit: cpu]
+  l1-data-reference
+       [Level 1 data cache read accesses. Unit: cpu]
+  l1-data-refs
+       [Level 1 data cache read accesses. Unit: cpu]
+  l1-data-store
+       [Level 1 data cache write accesses. Unit: cpu]
+  l1-data-store-access
+       [Level 1 data cache write accesses. Unit: cpu]
+  l1-data-store-ops
+       [Level 1 data cache write accesses. Unit: cpu]
+  l1-data-store-reference
+       [Level 1 data cache write accesses. Unit: cpu]
+  l1-data-store-refs
+       [Level 1 data cache write accesses. Unit: cpu]
+  l1-data-stores
+       [Level 1 data cache write accesses. Unit: cpu]
+  l1-data-stores-access
+       [Level 1 data cache write accesses. Unit: cpu]
+  l1-data-stores-ops
+       [Level 1 data cache write accesses. Unit: cpu]
+  l1-data-stores-reference
+       [Level 1 data cache write accesses. Unit: cpu]
+  l1-data-stores-refs
+       [Level 1 data cache write accesses. Unit: cpu]
+  l1-data-write
+       [Level 1 data cache write accesses. Unit: cpu]
+  l1-data-write-access
+       [Level 1 data cache write accesses. Unit: cpu]
+  l1-data-write-ops
+       [Level 1 data cache write accesses. Unit: cpu]
+  l1-data-write-reference
+       [Level 1 data cache write accesses. Unit: cpu]
+  l1-data-write-refs
+       [Level 1 data cache write accesses. Unit: cpu]
+  l1-dcache
+       [Level 1 data cache read accesses. Unit: cpu]
+  l1-dcache-access
+       [Level 1 data cache read accesses. Unit: cpu]
+  l1-dcache-load
+       [Level 1 data cache read accesses. Unit: cpu]
+  l1-dcache-load-access
+       [Level 1 data cache read accesses. Unit: cpu]
+  l1-dcache-load-miss
+       [Level 1 data cache read misses. Unit: cpu]
+  l1-dcache-load-misses
+       [Level 1 data cache read misses. Unit: cpu]
+  l1-dcache-load-ops
+       [Level 1 data cache read accesses. Unit: cpu]
+  l1-dcache-load-reference
+       [Level 1 data cache read accesses. Unit: cpu]
+  l1-dcache-load-refs
+       [Level 1 data cache read accesses. Unit: cpu]
+  l1-dcache-loads
+       [Level 1 data cache read accesses. Unit: cpu]
+  l1-dcache-loads-access
+       [Level 1 data cache read accesses. Unit: cpu]
+  l1-dcache-loads-miss
+       [Level 1 data cache read misses. Unit: cpu]
+  l1-dcache-loads-misses
+       [Level 1 data cache read misses. Unit: cpu]
+  l1-dcache-loads-ops
+       [Level 1 data cache read accesses. Unit: cpu]
+  l1-dcache-loads-reference
+       [Level 1 data cache read accesses. Unit: cpu]
+  l1-dcache-loads-refs
+       [Level 1 data cache read accesses. Unit: cpu]
+  l1-dcache-miss
+       [Level 1 data cache read misses. Unit: cpu]
+  l1-dcache-misses
+       [Level 1 data cache read misses. Unit: cpu]
+  l1-dcache-ops
+       [Level 1 data cache read accesses. Unit: cpu]
+  l1-dcache-read
+       [Level 1 data cache read accesses. Unit: cpu]
+  l1-dcache-read-access
+       [Level 1 data cache read accesses. Unit: cpu]
+  l1-dcache-read-miss
+       [Level 1 data cache read misses. Unit: cpu]
+  l1-dcache-read-misses
+       [Level 1 data cache read misses. Unit: cpu]
+  l1-dcache-read-ops
+       [Level 1 data cache read accesses. Unit: cpu]
+  l1-dcache-read-reference
+       [Level 1 data cache read accesses. Unit: cpu]
+  l1-dcache-read-refs
+       [Level 1 data cache read accesses. Unit: cpu]
+  l1-dcache-reference
+       [Level 1 data cache read accesses. Unit: cpu]
+  l1-dcache-refs
+       [Level 1 data cache read accesses. Unit: cpu]
+  l1-dcache-store
+       [Level 1 data cache write accesses. Unit: cpu]
+  l1-dcache-store-access
+       [Level 1 data cache write accesses. Unit: cpu]
+  l1-dcache-store-ops
+       [Level 1 data cache write accesses. Unit: cpu]
+  l1-dcache-store-reference
+       [Level 1 data cache write accesses. Unit: cpu]
+  l1-dcache-store-refs
+       [Level 1 data cache write accesses. Unit: cpu]
+  l1-dcache-stores
+       [Level 1 data cache write accesses. Unit: cpu]
+  l1-dcache-stores-access
+       [Level 1 data cache write accesses. Unit: cpu]
+  l1-dcache-stores-ops
+       [Level 1 data cache write accesses. Unit: cpu]
+  l1-dcache-stores-reference
+       [Level 1 data cache write accesses. Unit: cpu]
+  l1-dcache-stores-refs
+       [Level 1 data cache write accesses. Unit: cpu]
+  l1-dcache-write
+       [Level 1 data cache write accesses. Unit: cpu]
+  l1-dcache-write-access
+       [Level 1 data cache write accesses. Unit: cpu]
+  l1-dcache-write-ops
+       [Level 1 data cache write accesses. Unit: cpu]
+  l1-dcache-write-reference
+       [Level 1 data cache write accesses. Unit: cpu]
+  l1-dcache-write-refs
+       [Level 1 data cache write accesses. Unit: cpu]
+  l1-i-load-miss
+       [Level 1 instruction cache read misses. Unit: cpu]
+  l1-i-load-misses
+       [Level 1 instruction cache read misses. Unit: cpu]
+  l1-i-loads-miss
+       [Level 1 instruction cache read misses. Unit: cpu]
+  l1-i-loads-misses
+       [Level 1 instruction cache read misses. Unit: cpu]
+  l1-i-miss
+       [Level 1 instruction cache read misses. Unit: cpu]
+  l1-i-misses
+       [Level 1 instruction cache read misses. Unit: cpu]
+  l1-i-read-miss
+       [Level 1 instruction cache read misses. Unit: cpu]
+  l1-i-read-misses
+       [Level 1 instruction cache read misses. Unit: cpu]
+  l1-icache-load-miss
+       [Level 1 instruction cache read misses. Unit: cpu]
+  l1-icache-load-misses
+       [Level 1 instruction cache read misses. Unit: cpu]
+  l1-icache-loads-miss
+       [Level 1 instruction cache read misses. Unit: cpu]
+  l1-icache-loads-misses
+       [Level 1 instruction cache read misses. Unit: cpu]
+  l1-icache-miss
+       [Level 1 instruction cache read misses. Unit: cpu]
+  l1-icache-misses
+       [Level 1 instruction cache read misses. Unit: cpu]
+  l1-icache-read-miss
+       [Level 1 instruction cache read misses. Unit: cpu]
+  l1-icache-read-misses
+       [Level 1 instruction cache read misses. Unit: cpu]
+  l1-instruction-load-miss
+       [Level 1 instruction cache read misses. Unit: cpu]
+  l1-instruction-load-misses
+       [Level 1 instruction cache read misses. Unit: cpu]
+  l1-instruction-loads-miss
+       [Level 1 instruction cache read misses. Unit: cpu]
+  l1-instruction-loads-misses
+       [Level 1 instruction cache read misses. Unit: cpu]
+  l1-instruction-miss
+       [Level 1 instruction cache read misses. Unit: cpu]
+  l1-instruction-misses
+       [Level 1 instruction cache read misses. Unit: cpu]
+  l1-instruction-read-miss
+       [Level 1 instruction cache read misses. Unit: cpu]
+  l1-instruction-read-misses
+       [Level 1 instruction cache read misses. Unit: cpu]
+  l1d
+       [Level 1 data cache read accesses. Unit: cpu]
+  l1d-access
+       [Level 1 data cache read accesses. Unit: cpu]
+  l1d-load
+       [Level 1 data cache read accesses. Unit: cpu]
+  l1d-load-access
+       [Level 1 data cache read accesses. Unit: cpu]
+  l1d-load-miss
+       [Level 1 data cache read misses. Unit: cpu]
+  l1d-load-misses
+       [Level 1 data cache read misses. Unit: cpu]
+  l1d-load-ops
+       [Level 1 data cache read accesses. Unit: cpu]
+  l1d-load-reference
+       [Level 1 data cache read accesses. Unit: cpu]
+  l1d-load-refs
+       [Level 1 data cache read accesses. Unit: cpu]
+  l1d-loads
+       [Level 1 data cache read accesses. Unit: cpu]
+  l1d-loads-access
+       [Level 1 data cache read accesses. Unit: cpu]
+  l1d-loads-miss
+       [Level 1 data cache read misses. Unit: cpu]
+  l1d-loads-misses
+       [Level 1 data cache read misses. Unit: cpu]
+  l1d-loads-ops
+       [Level 1 data cache read accesses. Unit: cpu]
+  l1d-loads-reference
+       [Level 1 data cache read accesses. Unit: cpu]
+  l1d-loads-refs
+       [Level 1 data cache read accesses. Unit: cpu]
+  l1d-miss
+       [Level 1 data cache read misses. Unit: cpu]
+  l1d-misses
+       [Level 1 data cache read misses. Unit: cpu]
+  l1d-ops
+       [Level 1 data cache read accesses. Unit: cpu]
+  l1d-read
+       [Level 1 data cache read accesses. Unit: cpu]
+  l1d-read-access
+       [Level 1 data cache read accesses. Unit: cpu]
+  l1d-read-miss
+       [Level 1 data cache read misses. Unit: cpu]
+  l1d-read-misses
+       [Level 1 data cache read misses. Unit: cpu]
+  l1d-read-ops
+       [Level 1 data cache read accesses. Unit: cpu]
+  l1d-read-reference
+       [Level 1 data cache read accesses. Unit: cpu]
+  l1d-read-refs
+       [Level 1 data cache read accesses. Unit: cpu]
+  l1d-reference
+       [Level 1 data cache read accesses. Unit: cpu]
+  l1d-refs
+       [Level 1 data cache read accesses. Unit: cpu]
+  l1d-store
+       [Level 1 data cache write accesses. Unit: cpu]
+  l1d-store-access
+       [Level 1 data cache write accesses. Unit: cpu]
+  l1d-store-ops
+       [Level 1 data cache write accesses. Unit: cpu]
+  l1d-store-reference
+       [Level 1 data cache write accesses. Unit: cpu]
+  l1d-store-refs
+       [Level 1 data cache write accesses. Unit: cpu]
+  l1d-stores
+       [Level 1 data cache write accesses. Unit: cpu]
+  l1d-stores-access
+       [Level 1 data cache write accesses. Unit: cpu]
+  l1d-stores-ops
+       [Level 1 data cache write accesses. Unit: cpu]
+  l1d-stores-reference
+       [Level 1 data cache write accesses. Unit: cpu]
+  l1d-stores-refs
+       [Level 1 data cache write accesses. Unit: cpu]
+  l1d-write
+       [Level 1 data cache write accesses. Unit: cpu]
+  l1d-write-access
+       [Level 1 data cache write accesses. Unit: cpu]
+  l1d-write-ops
+       [Level 1 data cache write accesses. Unit: cpu]
+  l1d-write-reference
+       [Level 1 data cache write accesses. Unit: cpu]
+  l1d-write-refs
+       [Level 1 data cache write accesses. Unit: cpu]
+  l1i-load-miss
+       [Level 1 instruction cache read misses. Unit: cpu]
+  l1i-load-misses
+       [Level 1 instruction cache read misses. Unit: cpu]
+  l1i-loads-miss
+       [Level 1 instruction cache read misses. Unit: cpu]
+  l1i-loads-misses
+       [Level 1 instruction cache read misses. Unit: cpu]
+  l1i-miss
+       [Level 1 instruction cache read misses. Unit: cpu]
+  l1i-misses
+       [Level 1 instruction cache read misses. Unit: cpu]
+  l1i-read-miss
+       [Level 1 instruction cache read misses. Unit: cpu]
+  l1i-read-misses
+       [Level 1 instruction cache read misses. Unit: cpu]
+  llc
+       [Last level cache read accesses. Unit: cpu]
+  llc-access
+       [Last level cache read accesses. Unit: cpu]
+  llc-load
+       [Last level cache read accesses. Unit: cpu]
+  llc-load-access
+       [Last level cache read accesses. Unit: cpu]
+  llc-load-miss
+       [Last level cache read misses. Unit: cpu]
+  llc-load-misses
+       [Last level cache read misses. Unit: cpu]
+  llc-load-ops
+       [Last level cache read accesses. Unit: cpu]
+  llc-load-reference
+       [Last level cache read accesses. Unit: cpu]
+  llc-load-refs
+       [Last level cache read accesses. Unit: cpu]
+  llc-loads
+       [Last level cache read accesses. Unit: cpu]
+  llc-loads-access
+       [Last level cache read accesses. Unit: cpu]
+  llc-loads-miss
+       [Last level cache read misses. Unit: cpu]
+  llc-loads-misses
+       [Last level cache read misses. Unit: cpu]
+  llc-loads-ops
+       [Last level cache read accesses. Unit: cpu]
+  llc-loads-reference
+       [Last level cache read accesses. Unit: cpu]
+  llc-loads-refs
+       [Last level cache read accesses. Unit: cpu]
+  llc-miss
+       [Last level cache read misses. Unit: cpu]
+  llc-misses
+       [Last level cache read misses. Unit: cpu]
+  llc-ops
+       [Last level cache read accesses. Unit: cpu]
+  llc-read
+       [Last level cache read accesses. Unit: cpu]
+  llc-read-access
+       [Last level cache read accesses. Unit: cpu]
+  llc-read-miss
+       [Last level cache read misses. Unit: cpu]
+  llc-read-misses
+       [Last level cache read misses. Unit: cpu]
+  llc-read-ops
+       [Last level cache read accesses. Unit: cpu]
+  llc-read-reference
+       [Last level cache read accesses. Unit: cpu]
+  llc-read-refs
+       [Last level cache read accesses. Unit: cpu]
+  llc-reference
+       [Last level cache read accesses. Unit: cpu]
+  llc-refs
+       [Last level cache read accesses. Unit: cpu]
+  llc-store
+       [Last level cache write accesses. Unit: cpu]
+  llc-store-access
+       [Last level cache write accesses. Unit: cpu]
+  llc-store-miss
+       [Last level cache write misses. Unit: cpu]
+  llc-store-misses
+       [Last level cache write misses. Unit: cpu]
+  llc-store-ops
+       [Last level cache write accesses. Unit: cpu]
+  llc-store-reference
+       [Last level cache write accesses. Unit: cpu]
+  llc-store-refs
+       [Last level cache write accesses. Unit: cpu]
+  llc-stores
+       [Last level cache write accesses. Unit: cpu]
+  llc-stores-access
+       [Last level cache write accesses. Unit: cpu]
+  llc-stores-miss
+       [Last level cache write misses. Unit: cpu]
+  llc-stores-misses
+       [Last level cache write misses. Unit: cpu]
+  llc-stores-ops
+       [Last level cache write accesses. Unit: cpu]
+  llc-stores-reference
+       [Last level cache write accesses. Unit: cpu]
+  llc-stores-refs
+       [Last level cache write accesses. Unit: cpu]
+  llc-write
+       [Last level cache write accesses. Unit: cpu]
+  llc-write-access
+       [Last level cache write accesses. Unit: cpu]
+  llc-write-miss
+       [Last level cache write misses. Unit: cpu]
+  llc-write-misses
+       [Last level cache write misses. Unit: cpu]
+  llc-write-ops
+       [Last level cache write accesses. Unit: cpu]
+  llc-write-reference
+       [Last level cache write accesses. Unit: cpu]
+  llc-write-refs
+       [Last level cache write accesses. Unit: cpu]
+  node
+       [Local memory read accesses. Unit: cpu]
+  node-access
+       [Local memory read accesses. Unit: cpu]
+  node-load
+       [Local memory read accesses. Unit: cpu]
+  node-load-access
+       [Local memory read accesses. Unit: cpu]
+  node-load-miss
+       [Local memory read misses. Unit: cpu]
+  node-load-misses
+       [Local memory read misses. Unit: cpu]
+  node-load-ops
+       [Local memory read accesses. Unit: cpu]
+  node-load-reference
+       [Local memory read accesses. Unit: cpu]
+  node-load-refs
+       [Local memory read accesses. Unit: cpu]
+  node-loads
+       [Local memory read accesses. Unit: cpu]
+  node-loads-access
+       [Local memory read accesses. Unit: cpu]
+  node-loads-miss
+       [Local memory read misses. Unit: cpu]
+  node-loads-misses
+       [Local memory read misses. Unit: cpu]
+  node-loads-ops
+       [Local memory read accesses. Unit: cpu]
+  node-loads-reference
+       [Local memory read accesses. Unit: cpu]
+  node-loads-refs
+       [Local memory read accesses. Unit: cpu]
+  node-miss
+       [Local memory read misses. Unit: cpu]
+  node-misses
+       [Local memory read misses. Unit: cpu]
+  node-ops
+       [Local memory read accesses. Unit: cpu]
+  node-read
+       [Local memory read accesses. Unit: cpu]
+  node-read-access
+       [Local memory read accesses. Unit: cpu]
+  node-read-miss
+       [Local memory read misses. Unit: cpu]
+  node-read-misses
+       [Local memory read misses. Unit: cpu]
+  node-read-ops
+       [Local memory read accesses. Unit: cpu]
+  node-read-reference
+       [Local memory read accesses. Unit: cpu]
+  node-read-refs
+       [Local memory read accesses. Unit: cpu]
+  node-reference
+       [Local memory read accesses. Unit: cpu]
+  node-refs
+       [Local memory read accesses. Unit: cpu]
+  node-store
+       [Local memory write accesses. Unit: cpu]
+  node-store-access
+       [Local memory write accesses. Unit: cpu]
+  node-store-miss
+       [Local memory write misses. Unit: cpu]
+  node-store-misses
+       [Local memory write misses. Unit: cpu]
+  node-store-ops
+       [Local memory write accesses. Unit: cpu]
+  node-store-reference
+       [Local memory write accesses. Unit: cpu]
+  node-store-refs
+       [Local memory write accesses. Unit: cpu]
+  node-stores
+       [Local memory write accesses. Unit: cpu]
+  node-stores-access
+       [Local memory write accesses. Unit: cpu]
+  node-stores-miss
+       [Local memory write misses. Unit: cpu]
+  node-stores-misses
+       [Local memory write misses. Unit: cpu]
+  node-stores-ops
+       [Local memory write accesses. Unit: cpu]
+  node-stores-reference
+       [Local memory write accesses. Unit: cpu]
+  node-stores-refs
+       [Local memory write accesses. Unit: cpu]
+  node-write
+       [Local memory write accesses. Unit: cpu]
+  node-write-access
+       [Local memory write accesses. Unit: cpu]
+  node-write-miss
+       [Local memory write misses. Unit: cpu]
+  node-write-misses
+       [Local memory write misses. Unit: cpu]
+  node-write-ops
+       [Local memory write accesses. Unit: cpu]
+  node-write-reference
+       [Local memory write accesses. Unit: cpu]
+  node-write-refs
+       [Local memory write accesses. Unit: cpu]
+```
+
+Ian Rogers (13):
+  perf parse-events: Fix legacy cache events if event is duplicated in a
+    PMU
+  perf perf_api_probe: Avoid scanning all PMUs, try software PMU first
+  perf record: Skip don't fail for events that don't open
+  perf jevents: Support copying the source json files to OUTPUT
+  perf pmu: Don't eagerly parse event terms
+  perf pmu: Factor term parsing into a perf_event_attr into a helper
+  perf parse-events: Add terms for legacy hardware and cache config
+    values
+  perf jevents: Add legacy json terms and default_core event table
+    helper
+  perf pmu: Add and use legacy_terms in alias information
+  perf jevents: Add legacy-hardware and legacy-cache json
+  perf print-events: Remove print_hwcache_events
+  perf print-events: Remove print_symbol_events
+  perf parse-events: Remove hard coded legacy hardware and cache parsing
+
+ tools/perf/Makefile.perf                      |   21 +-
+ tools/perf/builtin-list.c                     |   34 +-
+ tools/perf/builtin-record.c                   |   89 +-
+ tools/perf/pmu-events/Build                   |   24 +-
+ .../arch/common/common/legacy-hardware.json   |   72 +
+ tools/perf/pmu-events/empty-pmu-events.c      | 2763 ++++++++++++++++-
+ tools/perf/pmu-events/jevents.py              |   24 +
+ tools/perf/pmu-events/make_legacy_cache.py    |  131 +
+ tools/perf/pmu-events/pmu-events.h            |    1 +
+ tools/perf/tests/pmu-events.c                 |   24 +-
+ tools/perf/util/parse-events.c                |  265 +-
+ tools/perf/util/parse-events.h                |   13 +-
+ tools/perf/util/parse-events.l                |   54 +-
+ tools/perf/util/parse-events.y                |  114 +-
+ tools/perf/util/perf_api_probe.c              |   27 +-
+ tools/perf/util/pmu.c                         |  282 +-
+ tools/perf/util/print-events.c                |  112 -
+ tools/perf/util/print-events.h                |    4 -
+ 18 files changed, 3313 insertions(+), 741 deletions(-)
+ create mode 100644 tools/perf/pmu-events/arch/common/common/legacy-hardware.json
+ create mode 100755 tools/perf/pmu-events/make_legacy_cache.py
+
+-- 
+2.51.0.268.g9569e192d0-goog
+
 
