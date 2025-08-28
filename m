@@ -1,80 +1,85 @@
-Return-Path: <linux-kernel+bounces-789849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95419B39B80
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 13:27:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51B2BB39B87
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 13:28:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AFBB01C25B60
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 11:27:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 993DB7B7457
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 11:26:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD9294A23;
-	Thu, 28 Aug 2025 11:27:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD85230E82B;
+	Thu, 28 Aug 2025 11:27:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="m9p30+YT"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EbAvnjVq"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03D2930DED4
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 11:27:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D54630E0C3
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 11:27:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756380445; cv=none; b=OXxc1TnwZtJgM377YgrP39DW4eVxSYGDC7LyaIqo7pFmuMbVzcGZiJBo+/QRxZyLTLmynE6no/ieiD0Sneo6AAL2FEq4X2dYyKNcRZwsCNPofHgCZZphTCt+wbHYnYiao+1fVmQ4/XXmrIuu86cC7O6Z8rXWLbs74ZKKZz7PSlo=
+	t=1756380464; cv=none; b=qotERBIlJkDFksfn6c+LfKKW3Qp+d0UKxrGXjaGQDV95NdU+iTWxXQTPOPd94MieXPt4RMUEBlO370N7+upTkEXqtIS1SvUQANCEMO9I9geyg0uy+LNVeZrApDiV0LCr0B0nHD46SPNrdQt+rY0wX90wJVoezKgpXRJr9YrpodY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756380445; c=relaxed/simple;
-	bh=PXA05d/MuF/D5apGw3S4Tk0j0ctdz1q49N+CLC3BVaU=;
+	s=arc-20240116; t=1756380464; c=relaxed/simple;
+	bh=oNp9jEq5BmEbVN/b4Js6rQrq8Xst+4tcgv3iZC7SxfE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IFDaxCYeJ+EXDNQVqt9rdAHQMqPcm+0mH/GgNFZWmdH//xo5xvlbe4Qoe0gYjUwjQDyzUvuoHAworfc8RvpdePjTYFlTQhSYauvmRJXDvClwwbdOR1ijaRluY0/zlqQeFf0MZkewPNocFs8kP05tvn7MDHnDMFThW5kOMx5KM/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=m9p30+YT; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-afe72d68b88so7132766b.3
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 04:27:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756380442; x=1756985242; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=VYxwOUn5RO9RcaFpFVSkar8NeVF+jaOYqJmxcaSOISg=;
-        b=m9p30+YT9vzln0mzXpSc0QLJLwHd05q3dLGHPKslh19fkd4Bm2sYTIKZEX0TYczXwF
-         OtVYgtxXgT3d9hSl/zU7p7tr0kclyj219bDTo3x6UUHxCPgCTWK0TziTL9fK5Ue5YiCq
-         G4BhpzOCqA8YOUCpd5MM84emHd/7n9cRYJYznv0S5Tmy6P9RiML8spIgQryqESMzBwOe
-         fqRI57Fw0iwEoS8BEbMLXWIR37xW6+4yWa5W4TQnV2BZRsTKSv7iq4xLatwiOK2GpUXq
-         NXCMwK67WE8e/xNtZyGdgrHwKM0doeAqmHCoNIC1h0bWCJn+06dZtU4cj7EgHI2UzbvL
-         xYaQ==
+	 In-Reply-To:Content-Type; b=cr0GZdrz63mjCqFg27wfNRnyB0mJilEisDpX59mqeLDwGHdXi9iWAN7383DS3Mm+bczMvB6YpQsyOzZw3YGGp6aTeI+FshrRq2b1L5zLVmugsZqPdQLWxWbs4mQNbmen04wTr4sOx9hcVtFXmfYOD8RIm9Dz71Hxa0iDMRp6ux4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EbAvnjVq; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756380461;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NvseKhbRe99z0CmdjuhWgWGyOBPn+zwz/tfo7V9gT6k=;
+	b=EbAvnjVqwWx/V+9jK1kW3hu2vlqfcU/yc9tkuwfkMD+JEqCHMRnaLrc/gsJ5fipTtH8juX
+	STdzAR66SKqBi0bj6sBsVB++HlQ/SutB/+r59mEauj0C2A6F0y1zTOA0eUDTlEGVDqzK0y
+	CkiYDb+hjxDnklubZ6gXQrDwpoOWhjE=
+Received: from mail-yw1-f198.google.com (mail-yw1-f198.google.com
+ [209.85.128.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-422-YQhykFjFM_2TPozkE0gkuQ-1; Thu, 28 Aug 2025 07:27:40 -0400
+X-MC-Unique: YQhykFjFM_2TPozkE0gkuQ-1
+X-Mimecast-MFC-AGG-ID: YQhykFjFM_2TPozkE0gkuQ_1756380459
+Received: by mail-yw1-f198.google.com with SMTP id 00721157ae682-71ff6edcfe9so10584257b3.0
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 04:27:40 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756380442; x=1756985242;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=VYxwOUn5RO9RcaFpFVSkar8NeVF+jaOYqJmxcaSOISg=;
-        b=TG57jgB0V3z5xIELDIESNtS0dnzK+05ZNeMYakaoJTPQ1W1u0h5BEeCuSGaU4hMM75
-         wo4P4Dqz8tLGa2fjmJ9e39Od5q19IbL3tglamBl4dzSYz1iFUNfHkuhQQ6CL0piFlvU3
-         kp9ulh3bH+j/z79aaz76Y6bBBBAHKjcONlwlmP2GuUy2RZZFbmh4tf6+UbVR7UbrGheN
-         cxpavdtaRFLXN4/lyI/CwGQpzIf6fcdN/47Hp+SsPs7xx8m2AjNCnEhvluVwkXEv4Elv
-         NyPgiEqo1SOuuybUZ0kr7Pox6zFmaVrGMOBPdnoPltW44HJkB3Yy31r+t1e9JxrVi1CI
-         z6jA==
-X-Forwarded-Encrypted: i=1; AJvYcCUkw2PeRyTpkdGntCfQohElGTaXepGhjA8FCv4jeXnRHLPqvlFmOe7/k4wD57frQu1QSgUIvgphpCYulaI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXCW/9CSy/u7bT4ZXFdSPgLRBBpRWmOUbb+H1ARt6jEyIkvwGT
-	E6TbhWttCgZsn21ocI1LdXoiehY/5rxbZitl9lRjQpoJoZ0egq0O53NqtAK4saF1pBM=
-X-Gm-Gg: ASbGnctzg+EkhdMmzhhoUlt+p8CZglPbP2iIXvpXTARUHvBFYqDRmQ3ZQyhQMu1WIOp
-	QV627xsNVxZtJxqWsYupBjxaK2dmUOAkN6c6icc2uzPpSZk27JMNj1UqoYaENydHWHjyhtcG/rJ
-	5ZIw2X++V0KjYdJ65YBcUfUtPcOxHXWi8mGxjgqJf1iwbO/DaHdTcQh7FJa3Z4RphnWaanh5Qqv
-	wNen/Njv3Dlx26HeZVpe/1p1hhJaCair63vGyMfYJewNG5N0hIzyNRr64Adf+mcdmPaUS5bNL4P
-	A+aoUp65z0uE/v15/ES8nH0q2ouR0/zEs90zugBiCqrr/BUkKwnaXC/6GwyV3/bSeRB24I3zqG7
-	q4XkUlH54qtl0dltEZyl+eAAc4dajuJKcBtAdEaH2SCY=
-X-Google-Smtp-Source: AGHT+IFSeB43HKjtBSCloOCDpDpfschdv3+WCr9ykr5hqiFbaeWcfJhfAxNbXw49kQ6a8ZyAG8Wm5g==
-X-Received: by 2002:a17:907:807:b0:afe:d028:ebf5 with SMTP id a640c23a62f3a-afed028fb7fmr219739366b.5.1756380442237;
-        Thu, 28 Aug 2025 04:27:22 -0700 (PDT)
-Received: from [192.168.1.29] ([178.197.219.123])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afe8e77c6aasm749161966b.56.2025.08.28.04.27.20
+        d=1e100.net; s=20230601; t=1756380459; x=1756985259;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NvseKhbRe99z0CmdjuhWgWGyOBPn+zwz/tfo7V9gT6k=;
+        b=T/TANlvW85Vc3UYtkHJDtsDucDGLMTQh+dhcFfMcOVPFaQAT87il0YDrpHM/w5tYW/
+         zTRTcy0NrpBeNVMOH9N+nhGullKbL+ZGdBeJU0m3g/PQvZzinRd0VDI6akSjx2x8H1no
+         UyjQDk9/PzicekllOBowXGoBj81ImoZR3yeIdlCBmv9wxlie0scTPE5gtYDACTbY44Gi
+         nMvKD9oa484xxCvRPACYm4zPeEoY6Cuxch0GQ+U2zuHVlGvzQx6ANoT40FF7aN1pUi1J
+         uGoDL2PYdj2N4zL39qvIlRT4SSeAuzq3oc5qM4SdVBBhFyLbHXlV9gzras9p/a1vd+sY
+         W0jA==
+X-Forwarded-Encrypted: i=1; AJvYcCW5JiF8C4vjMl56D5IoniYWmke7H0AzOTg1ESZm3oF2ztDycI/Cu24tmh+UvCDVF/mhemQFOLiY6eEPdC4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyR7cFHmeUrBGeY0GLYyRCHjCWJDkKKVTrn+g6FsKz8P9Ge0ICK
+	VBAs8w1nl5KSnSCsEu0X3YsjBa/2w/8yvTXVXrSFd6dwkEGJZpYeFN9HjzHBXvbzFb9/lj0a3cA
+	ROjWg2g/iJ5aFZEAWn5uXZmnc8RVdSrAnMqQ7u4HgbJ1TX6XsKD/6ugOR2oBmnio4Gg==
+X-Gm-Gg: ASbGncuv7WYKZw9FG+uDJqPGXxh+l89T/nXq1mGX4H69ySZKR6ADC8mT8PaJ1pr5TkR
+	1ywzdMyuXnIWbDJoVt5mCPO9gU4dAcP56pbIYL6drADguLgX4BaRZFclpIcEhaGxc79IgF+KPnJ
+	mHARnIWjWgmThaJkjeqlOsffYokM6lV5TTsWkJbHS6chcJgASCsRXUoPLKZ3/yM2NMV96M5yJFK
+	uKLO5ZQbVtiNge1IBQkHmLUThn1FMTWMRnVlTMhWGjIKsyDqpgLl3RiVm3391+UYz/lWfTpkpiN
+	GT8ejv7HhUjx/faftI7mFFA62gs9F/atyXvaeAE=
+X-Received: by 2002:a05:690c:67c6:b0:720:58fd:6433 with SMTP id 00721157ae682-72058fd6980mr196110257b3.35.1756380459403;
+        Thu, 28 Aug 2025 04:27:39 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEs1gMfCshj+EI8bjuXG0ZlCYFlPKnwKuax5qtq3eiiOcfsRu4MQD8QtE8fsNsRs28xOi1lEA==
+X-Received: by 2002:a05:690c:67c6:b0:720:58fd:6433 with SMTP id 00721157ae682-72058fd6980mr196109997b3.35.1756380458909;
+        Thu, 28 Aug 2025 04:27:38 -0700 (PDT)
+Received: from [10.26.1.94] ([66.187.232.136])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-71ff173cd93sm38418157b3.22.2025.08.28.04.27.37
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 28 Aug 2025 04:27:21 -0700 (PDT)
-Message-ID: <a92d691c-7cfb-4ec4-80c6-9be0363503f7@linaro.org>
-Date: Thu, 28 Aug 2025 13:27:19 +0200
+        Thu, 28 Aug 2025 04:27:38 -0700 (PDT)
+Message-ID: <67ebb7d5-418c-4eaf-aa94-8ecf76bd44eb@redhat.com>
+Date: Thu, 28 Aug 2025 07:27:36 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,87 +87,187 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/2] dt-bindings: iio: adc: Add device tree binding for
- MAX22531 ADC
-To: Abhinav Jain <jain.abhinav177@gmail.com>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: lars@metafoo.de, Michael.Hennerich@analog.com,
- alexandru.ardelean@analog.com, jlc23@kernel.org, robh+dt@kernel.org,
- krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
- Marcelo.Schmitt@analog.com, dumitru.ceclan@analog.com,
- Jonathan.Santos@analog.com, dragos.bogdan@analog.com
-References: <cover.1756115378.git.jain.abhinav177@gmail.com>
- <ba7c09277c71cd8bc84736429a7fdc66914fd322.1756115378.git.jain.abhinav177@gmail.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH] platform/x86/intel: power-domains validate domain in
+ tpmi_cpu_online()
+To: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>,
+ platform-driver-x86@vger.kernel.org
+Cc: Hans de Goede <hansg@kernel.org>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
+ Dan Carpenter <dan.carpenter@linaro.org>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Tero Kristo <tero.kristo@linux.intel.com>, linux-kernel@vger.kernel.org
+References: <20250826164331.1372856-1-darcari@redhat.com>
+ <00466c7a41bd4a0120a7798318ac5bba8878ada5.camel@linux.intel.com>
+ <adbc0e8b-199a-42af-a45e-cb3791923554@redhat.com>
+ <abdd6c22714984782fbbb7dab5a7e1ab0fa4799c.camel@linux.intel.com>
 Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzTRLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnp5c3p0b2Yua296bG93c2tpQGxpbmFyby5vcmc+wsGUBBMBCgA+AhsD
- BQsJCAcCBhUKCQgLAgQWAgMBAh4BAheAFiEEm9B+DgxR+NWWd7dUG5NDfTtBYpsFAmgXUEoF
- CRaWdJoACgkQG5NDfTtBYpudig/+Inb3Kjx1B7w2IpPKmpCT20QQQstx14Wi+rh2FcnV6+/9
- tyHtYwdirraBGGerrNY1c14MX0Tsmzqu9NyZ43heQB2uJuQb35rmI4dn1G+ZH0BD7cwR+M9m
- lSV9YlF7z3Ycz2zHjxL1QXBVvwJRyE0sCIoe+0O9AW9Xj8L/dmvmRfDdtRhYVGyU7fze+lsH
- 1pXaq9fdef8QsAETCg5q0zxD+VS+OoZFx4ZtFqvzmhCs0eFvM7gNqiyczeVGUciVlO3+1ZUn
- eqQnxTXnqfJHptZTtK05uXGBwxjTHJrlSKnDslhZNkzv4JfTQhmERyx8BPHDkzpuPjfZ5Jp3
- INcYsxgttyeDS4prv+XWlT7DUjIzcKih0tFDoW5/k6OZeFPba5PATHO78rcWFcduN8xB23B4
- WFQAt5jpsP7/ngKQR9drMXfQGcEmqBq+aoVHobwOfEJTErdku05zjFmm1VnD55CzFJvG7Ll9
- OsRfZD/1MKbl0k39NiRuf8IYFOxVCKrMSgnqED1eacLgj3AWnmfPlyB3Xka0FimVu5Q7r1H/
- 9CCfHiOjjPsTAjE+Woh+/8Q0IyHzr+2sCe4g9w2tlsMQJhixykXC1KvzqMdUYKuE00CT+wdK
- nXj0hlNnThRfcA9VPYzKlx3W6GLlyB6umd6WBGGKyiOmOcPqUK3GIvnLzfTXR5DOwU0EVUNc
- NAEQAM2StBhJERQvgPcbCzjokShn0cRA4q2SvCOvOXD+0KapXMRFE+/PZeDyfv4dEKuCqeh0
- hihSHlaxTzg3TcqUu54w2xYskG8Fq5tg3gm4kh1Gvh1LijIXX99ABA8eHxOGmLPRIBkXHqJY
- oHtCvPc6sYKNM9xbp6I4yF56xVLmHGJ61KaWKf5KKWYgA9kfHufbja7qR0c6H79LIsiYqf92
- H1HNq1WlQpu/fh4/XAAaV1axHFt/dY/2kU05tLMj8GjeQDz1fHas7augL4argt4e+jum3Nwt
- yupodQBxncKAUbzwKcDrPqUFmfRbJ7ARw8491xQHZDsP82JRj4cOJX32sBg8nO2N5OsFJOcd
- 5IE9v6qfllkZDAh1Rb1h6DFYq9dcdPAHl4zOj9EHq99/CpyccOh7SrtWDNFFknCmLpowhct9
- 5ZnlavBrDbOV0W47gO33WkXMFI4il4y1+Bv89979rVYn8aBohEgET41SpyQz7fMkcaZU+ok/
- +HYjC/qfDxT7tjKXqBQEscVODaFicsUkjheOD4BfWEcVUqa+XdUEciwG/SgNyxBZepj41oVq
- FPSVE+Ni2tNrW/e16b8mgXNngHSnbsr6pAIXZH3qFW+4TKPMGZ2rZ6zITrMip+12jgw4mGjy
- 5y06JZvA02rZT2k9aa7i9dUUFggaanI09jNGbRA/ABEBAAHCwXwEGAEKACYCGwwWIQSb0H4O
- DFH41ZZ3t1Qbk0N9O0FimwUCaBdQXwUJFpZbKgAKCRAbk0N9O0Fim07TD/92Vcmzn/jaEBcq
- yT48ODfDIQVvg2nIDW+qbHtJ8DOT0d/qVbBTU7oBuo0xuHo+MTBp0pSTWbThLsSN1AuyP8wF
- KChC0JPcwOZZRS0dl3lFgg+c+rdZUHjsa247r+7fvm2zGG1/u+33lBJgnAIH5lSCjhP4VXiG
- q5ngCxGRuBq+0jNCKyAOC/vq2cS/dgdXwmf2aL8G7QVREX7mSl0x+CjWyrpFc1D/9NV/zIWB
- G1NR1fFb+oeOVhRGubYfiS62htUQjGLK7qbTmrd715kH9Noww1U5HH7WQzePt/SvC0RhQXNj
- XKBB+lwwM+XulFigmMF1KybRm7MNoLBrGDa3yGpAkHMkJ7NM4iSMdSxYAr60RtThnhKc2kLI
- zd8GqyBh0nGPIL+1ZVMBDXw1Eu0/Du0rWt1zAKXQYVAfBLCTmkOnPU0fjR7qVT41xdJ6KqQM
- NGQeV+0o9X91X6VBeK6Na3zt5y4eWkve65DRlk1aoeBmhAteioLZlXkqu0pZv+PKIVf+zFKu
- h0At/TN/618e/QVlZPbMeNSp3S3ieMP9Q6y4gw5CfgiDRJ2K9g99m6Rvlx1qwom6QbU06ltb
- vJE2K9oKd9nPp1NrBfBdEhX8oOwdCLJXEq83vdtOEqE42RxfYta4P3by0BHpcwzYbmi/Et7T
- 2+47PN9NZAOyb771QoVr8A==
-In-Reply-To: <ba7c09277c71cd8bc84736429a7fdc66914fd322.1756115378.git.jain.abhinav177@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+From: David Arcari <darcari@redhat.com>
+In-Reply-To: <abdd6c22714984782fbbb7dab5a7e1ab0fa4799c.camel@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 25/08/2025 23:25, Abhinav Jain wrote:
-> Add device tree documentation for MAX22530-MAX22532 family of ADCs.
-> The MAX22530–MAX22532 are galvanically isolated, 4-channel, multiplexed,
-> 12-bit, analog-to-digital converters (ADC) in the MAXSafe™ family product
-> line. An integrated, isolated, DC-DC converter powers all fieldside
-> circuitry, and this allows field-side diagnostics even when no input
-> signal is present.
+
+
+On 8/27/25 7:49 AM, srinivas pandruvada wrote:
+> On Tue, 2025-08-26 at 21:39 -0400, David Arcari wrote:
+>>
+>> Hi Srinivas,
+>>
+>> On 8/26/25 4:26 PM, srinivas pandruvada wrote:
+>>> Hi David,
+>>>
+>>> On Tue, 2025-08-26 at 12:43 -0400, David Arcari wrote:
+>>>> Although tpmi_get_power_domain_mask() calls
+>>>> tpmi_domain_is_valid()
+>>>> prior to indexing tpmi_power_domain_mask[],
+>>> Because this an API call so that caller parameter needs to be
+>>> sanitized.
+>>>
+>>>>    tpmi_cpu_online() does
+>>>> not.
+>>> This is hotplug callback, which should have correct topology
+>>> information.
+>>>
+>>>>    In the case where a VM creates non-contiguous package ids the
+>>>> result can be memory corruption. This can be prevented by adding
+>>>> the same validation in tpmi_cpu_online().
+>>>>
+>>>
+>>> This driver is getting loaded means MSR 0x54 is virtualised
+>>> otherwise
+>>> this driver will not load.
+>>
+>> I don't have direct access to the system, but this appears to be the
+>> case.  The driver is reading MSR 0x54:
+>>
+>> drivers/platform/x86/intel/tpmi_power_domains.c:#define
+>> MSR_PM_LOGICAL_ID       0x54
+>> drivers/platform/x86/intel/tpmi_power_domains.c:        ret =
+>> rdmsrl_safe(MSR_PM_LOGICAL_ID, &data);
+>> drivers/platform/x86/intel/tpmi_power_domains.c:        ret =
+>> rdmsrl_safe(MSR_PM_LOGICAL_ID, &data);
+>>
+>>
+>>> Not sure this is an upstream kernel or not.
+>>
+>> This was not an upstream kernel, but I don't see anything in the
+>> upstream driver that would have prevented the access that is
+>> occurring.
+>>
+> The issue here the topology_max_packages() is 2 but cpu 1 package ID is
+> also 2. So everywhere topology_max_packages() is used there may be
+> issue as you have to verify the package ID is fine.
+
+Correct.  There are two logical packages on this system, but they are 0 
+and 2.
+
 > 
-> Signed-off-by: Abhinav Jain <jain.abhinav177@gmail.com>
+> 
+> Repost the patch by adding the above root cause in the description, so
+> we know why we need this change.
 
+I will do that.
 
-Please do not develop on old trees. You need to rebase your patchset and
-test it on latest mainline kernel.
+Best,
+-DA
 
-You CC-ed an address, which suggests you do not work on mainline kernel
-or you do not use get_maintainers.pl/b4/patman. Please rebase and always
-work on mainline or start using mentioned tools, so correct addresses
-will be used.
+> 
+> Thanks,
+> Srinivas
+> 
+>>>
+>>> Some comments below.
+>>>
+>>>> Fixes: 17ca2780458c ("platform/x86/intel: TPMI domain id and CPU
+>>>> mapping")
+>>>>
+>>> Andy already pointed about new line here.
+>>>
+>>>> Cc: Hans de Goede <hansg@kernel.org>
+>>>> Cc: "Ilpo Järvinen" <ilpo.jarvinen@linux.intel.com>
+>>>> Cc: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+>>>> Cc: Peter Zijlstra <peterz@infradead.org>
+>>>> Cc: Ingo Molnar <mingo@kernel.org>
+>>>> Cc: Dan Carpenter <dan.carpenter@linaro.org>
+>>>> Cc: David Arcari <darcari@redhat.com>
+>>>> Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+>>>> Cc: Tero Kristo <tero.kristo@linux.intel.com>
+>>>> Cc: linux-kernel@vger.kernel.org
+>>>> Signed-off-by: David Arcari <darcari@redhat.com>
+>>>> ---
+>>>>    drivers/platform/x86/intel/tpmi_power_domains.c | 3 +++
+>>>>    1 file changed, 3 insertions(+)
+>>>>
+>>>> diff --git a/drivers/platform/x86/intel/tpmi_power_domains.c
+>>>> b/drivers/platform/x86/intel/tpmi_power_domains.c
+>>>> index 9d8247bb9cfa..ae5b58679e29 100644
+>>>> --- a/drivers/platform/x86/intel/tpmi_power_domains.c
+>>>> +++ b/drivers/platform/x86/intel/tpmi_power_domains.c
+>>>> @@ -194,6 +194,9 @@ static int tpmi_cpu_online(unsigned int cpu)
+>>>>    	if (ret)
+>>>>    		return 0;
+>>>>    
+>>> Need some more information.
+>>>
+>>> The only case this check is required if
+>>> topology_physical_package_id(cpu) is returning greater or equal to
+>>> topology_max_packages(). If this true in this case, please check
+>>> the
+>>> value of info->pkg_id. If this is bad then then some other places
+>>> also
+>>> this may have issue. info->punit_domain_id is already checked for
+>>> valid
+>>> value in tpmi_get_logical_id().
+>>
+>> That is correct.  In the case of the crash we have:
+>>
+>> crash> p/x __max_logical_packages
+>> $1 = 0x2
+>>
+>> static inline unsigned int topology_max_packages(void)
+>> {
+>> 	return __max_logical_packages;
+>> }
+>>
+>>
+>> $2 = {
+>>     hnode = {
+>>       next = 0xffff9651bbc37010,
+>>       pprev = 0xffffffffc0b7a640 <tpmi_cpu_hash>
+>>     },
+>>     linux_cpu = 1,
+>>     pkg_id = 2 '\002',
+>>     punit_thread_id = 0 '\000',
+>>     punit_core_id = 0 '\000',
+>>     punit_domain_id = 0 '\000'
+>> }
+>>
+>> The pkg_id of 2 leads to the bad reference.
+>>
+>> FWIW this change has been tested and resolves the issue.
+>>
+>> Let me know if there is any other information I can provide.  I will
+>> be
+>> out of the office on Wednesday, so response may be delayed.
+>>
+>> Best,
+>> -DA
+>>
+>>>
+>>> Thanks,
+>>> Srinivas
+>>>
+>>>> +	if (!tpmi_domain_is_valid(info))
+>>>> +		return 0;
+>>>> +
+>>>>    	index = info->pkg_id * MAX_POWER_DOMAINS + info-
+>>>>> punit_domain_id;
+>>>>    
+>>>>    	guard(mutex)(&tpmi_lock);
+>>>
+>>>
+>>
+> 
 
-
-Best regards,
-Krzysztof
 
