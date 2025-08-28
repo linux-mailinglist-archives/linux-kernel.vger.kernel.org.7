@@ -1,93 +1,114 @@
-Return-Path: <linux-kernel+bounces-789457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10773B395C5
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 09:44:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA2FFB395C0
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 09:44:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E73E16AE51
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 07:44:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40BD83ACE58
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 07:44:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 807712D6410;
-	Thu, 28 Aug 2025 07:44:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21D542D8DAA;
+	Thu, 28 Aug 2025 07:44:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WaK3PgXC"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GOUjOG6o"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6D7427A130;
-	Thu, 28 Aug 2025 07:44:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D77929D28B;
+	Thu, 28 Aug 2025 07:43:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756367047; cv=none; b=ds9qg/yss0Odvma4l/5ZvsJNFXwHecM7tUcjNpqH5miKtDGLbdKq7OhBqkqRkAntwVE4mn6PuSz/cqtvNqVXsl1JyWhnWadswNY5bQNnKANcgM2ZfgnBBcMG7ZE0DjuatorEbCyxO2TwZDrVL9IINj8mtnpnlmnEHz5yPLfHrm4=
+	t=1756367040; cv=none; b=ERXc+xrQAkd66wmMTdO90ZD7P1owLtQ6FYxSC3t+LzliOMnA2z03oYJLx4JTRW4lmSoMu+tAVI3dLYJTdq8SjcWhIceBM7fnbtK3TVCBwHFYAENOa/P3/U0PI42ZM2b063nst3IyViwUQjmyyIY4GlPOTKetV9U86WHJQNbs1zM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756367047; c=relaxed/simple;
-	bh=kmsd29Tqmz31V/sbkKfx3JiAU8TKi6TvSl3B6wrtCJU=;
+	s=arc-20240116; t=1756367040; c=relaxed/simple;
+	bh=XDFRc6QlXzcNT8Ow6MyYcXfogrHGk9sBXxgLao67Ms0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ksiq0gzdQy/M9jmX2zTpvKEOnaTeuDngadxFDywMBbEX4o1N2Tmknpw5F0MZRpubbWd+DJ0at0fJhnZMl7n/rWxjLfG7D/P+sFaXMsQl/FgpvBmF5ALel/kgQh5XTYwZ1HKYAkZaH4R26b9fQvzt1n9r4e0pQZ+nIVS9+0Q6Ngw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WaK3PgXC; arc=none smtp.client-ip=209.85.221.46
+	 Content-Type:Content-Disposition:In-Reply-To; b=Pv68KaKVnG0aD8w2YZTjAkIGpbEc/7kHPsq3eX6DJpm8iywKBsa/NjNodEvQRcs5125gWdCZOALgsFEY+spNZ2CDxoQjIgZlxONG1+JSR7fWK9jZfBqgeG4W88LI17MJqjsMpK9oaoRgoLPR9DeMiXX3hWyv1q2YKCiDE/chQ88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GOUjOG6o; arc=none smtp.client-ip=209.85.218.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3b9edf4cf6cso437832f8f.3;
-        Thu, 28 Aug 2025 00:44:05 -0700 (PDT)
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-afeee20b7c0so26982266b.3;
+        Thu, 28 Aug 2025 00:43:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756367044; x=1756971844; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=R0INQ3eSnSL95+ISHXv/Nm6m5DjYjfSgZtTbDRvm4xg=;
-        b=WaK3PgXCSCTMwjqXvrPSozDCXrX2lhFDo/rcESHgZlZqe0I8PL8YnjzRal64g/u878
-         R8De/F6ZV9t8u5c3oHhYfhHyDmq+ndDdBZI8KqzB9R/UY7TKXYIgxwFcDM6qUqwnguSa
-         nhN6odWqtvgrEm1weTYueHPogQzniDHISd6iheDIafKTb48pvyeaHhJLhXXmdAQFd294
-         sb8kJhTLcAEVD1iuokKMt6I/lK6pPM4dNdPNZP+0QzJNtCovZygD/m1yEa853uYq4wts
-         8erZ0RhCw2jivukvrUuKoAIO1UEVEQFHv28qwEBwiVoSPGFCQL5yCWWa5y4DVGLQwQvi
-         KYhg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756367044; x=1756971844;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1756367037; x=1756971837; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=R0INQ3eSnSL95+ISHXv/Nm6m5DjYjfSgZtTbDRvm4xg=;
-        b=pIC7Ia6+ZO9jYtXjnKnSUEUqBo+VERvX0dMO2zSR254ytsNMqGTT/bnpdFy71NuqFn
-         sz7l6khUyPZ4WlsmgnKXHsCIV6ZbCYIITpbNPHiPr5k8t5WTlFI3W9R9zmq2mfFMNpb1
-         TUhlquC6K/W7kk0wlqPn/07Nud5XeTuv8aU7J1jVtMYeN3tG9bBoHxPwFiddHgRnpYAr
-         IzFGWpyV0huHhyNWsycVPQzVrPyOeSOVXksIEkXWhFavqDQqQIs0JNscUS7YaI2/Rb9w
-         ifQ2Eewz01UbHefu467QA/XTIxn1bSgLX1JSYO9hmjEz26tn9dSxiELe8clB3TrHzJ/K
-         ilRQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWpctQJHEKL5h91h/EI47hS0PIyc3djTa9+ae3BzPO0SW4RhqYa+Jsy9BIcAxsUgSw39ntLgPL9NCc1PUjy@vger.kernel.org, AJvYcCXzwU29Tdjmhqu1Tk6xNx/VX2F94Ju7aGz4zm547hzPQxbqanGjxYk9iqi7vf7UMqDM94zL7BIawMs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywf9p4Xt+/qzw+rEPSqJGaEEaSkp0eJPZTnkCvvbO+Fw7EhnU+g
-	5+QMmpK1FLG6+BSfam7IGIp8N80hLRzFvOkwQQuaKQm53yo9jQv996mB
-X-Gm-Gg: ASbGncvyKgoIk+1zFzxSWqzpm1K8ZR1DVZYysucPR96tqaezDPv2GhvWbxdFP7bQTS2
-	5yFovD+CfLB5g//z81OVc11Fi6BELtB5RsRtX3VVi/8U/C+DO0/M/OMi+1EjX1j+NClQcfTbMe8
-	BIpDpm1+EYhQ6aX/kcvy5OwLNNbXueWc6yj5BQyGThVHoJg5q+d+xTxw276+HQR5iHYQDDhTXG4
-	/+AOGcgNknAGVKdGKnmqYm7bermIWF94vV9MdIUeT/UIft25M0GnfBLDEGEcJnxDpvbjYSH+zKp
-	xUvA7wHQEoAPDJOs2DVwX+9o0/RwsnokOMzVqeCQKuwkLSNpBAkTZmvyRJ9AsFCrR6SG5TwPAI2
-	EmeCN/Lw5qUhQSb3SHvdHfa9bI0QQUUg4ddP4xdAqpbgLLyoyx0mB9nr6NQ==
-X-Google-Smtp-Source: AGHT+IEARlmxPP7ePbomx57jV59Vnj51ja91WbAjgkDpT2wZrH5+wmftvoM9H4n/NHkYz76gVwiYmA==
-X-Received: by 2002:a05:6000:430d:b0:3cb:46fc:8eaa with SMTP id ffacd0b85a97d-3cb46fc8fe4mr7425313f8f.31.1756367043840;
-        Thu, 28 Aug 2025 00:44:03 -0700 (PDT)
-Received: from legfed1 (tmo-106-233.customers.d1-online.com. [80.187.106.233])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3ca8f2811d9sm12653566f8f.20.2025.08.28.00.44.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Aug 2025 00:44:03 -0700 (PDT)
-Date: Thu, 28 Aug 2025 09:43:54 +0200
-From: Dimitri Fedrau <dima.fedrau@gmail.com>
-To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Cc: dimitri.fedrau@liebherr.com, Li peiyu <579lpy@gmail.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Chris Lesiak <chris.lesiak@licorbio.com>
-Subject: Re: [PATCH 2/2] iio: humditiy: hdc3020: fix units for thresholds and
- hysteresis
-Message-ID: <20250828074354.GA3177@legfed1>
-References: <20250821-hdc3020-units-fix-v1-0-6ab0bc353c5e@liebherr.com>
- <20250821-hdc3020-units-fix-v1-2-6ab0bc353c5e@liebherr.com>
- <DCANVO3ZBHUN.A8E9WABNLHG4@gmail.com>
+        bh=uCyWFKVmsqDpuka3mORfqvZ6ED5815cQsuT83UfJ0fY=;
+        b=GOUjOG6od5zIKCSc6TFz+3QQANGLqQbNGtzlbxVU1BVGLcRUuc52zTa+kc+ocfXH7H
+         EhxYzQzjmKsWU0BnDlnYXwF7BNtIQ5mL0VpB7yhaD4mXXGXMAtyvq7sKaB9Pnbxsp0+a
+         JTEF6/KWVMJhgV3dk1LLTIzivtmVz1TeUxbPHJwqYg9jT/px0xS8C+f74Jk94hHBv/NI
+         c0saUE34Pq7YAv1EyW3J9L17BAnals5J5+kmaqr+WpMfWJeDhI+Od9Ls8Pb9CzPCP+Z2
+         /ePzL05XUO6H3yBjUryjOG/4SKB9WXsvb2aYE+ZLvXSLQpKMhipnQyuCjFU/wCeqhYGq
+         nnCA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756367037; x=1756971837;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=uCyWFKVmsqDpuka3mORfqvZ6ED5815cQsuT83UfJ0fY=;
+        b=bR0Hw8Y02X7ilNZBrRsTPQ8mWISpHaTH56Zvx9Jztq8cghhePYlUY2MCilKKOxfis+
+         SJM1V6qPUF8cWWgDNRpaZoLHwGJp8pKGv56f6i/zQr4dNhwRtYxXaficvemJYImGNTCl
+         q6np1GWy4WWQFJCnB53hQinSpwDfwKPg04bIAvKDAavywkuROhPijmvklanKgzFcF01A
+         cMDqi1oOuV8XPnTxxKwQE12U+anU3Xhj8A3qoSv+FArCG9dcrccDdw2CD7sPqs9S2ZAt
+         6wZ9L1PWJDybo9RWpiJ7PygMaLszB3Nhxtoakl7JQGAHpJbRWPWNfm7RG47cvkUKK/2i
+         4Pbg==
+X-Forwarded-Encrypted: i=1; AJvYcCU3ytH4nPNU8gDsNp9hv7/k+iEgJHL6e9cNVA/BHv+c9A6glYAg4wJKIAQK5ir+aouL9L7/DtXWgLvp@vger.kernel.org, AJvYcCURJdwWbgfDOAKkPhRyKIvRawMA7IxEnVTsPyV2h6COIPaRG9DkUJN/TB0RUEtQl4jGVr5jkT1C@vger.kernel.org, AJvYcCUgvO/hv6fCmw5IErOhvWGJxwBk11H0OIaLPhjHaV3iAeLJWAx00zJvjwXYcQuuATA5Zwk8Wu85teKrEnB8@vger.kernel.org, AJvYcCUywvRDHJbOOgWEGr96Ps74+5FxC8eOc+lGVltiosjIqBOWR0fyoQrB+v9Wi/O48Rt6EWoAvuT2eQ==@vger.kernel.org, AJvYcCVzrnEO5kYma31gdhyFWSdiZjurtLu4DpIr+FRu7ePvZsKvTjSc35s3NdZ0iFoaii44TcUDLPPh3Xb4Sg==@vger.kernel.org, AJvYcCWGcy/robXvOfb7GccxOX7jJvf2GWNxTRCVtlWbEt9Cc0wb3svWdzEwCc6H6V3LQz/nAq2eBMbg1H8GQQ==@vger.kernel.org, AJvYcCWHE2gdDXczEmeWlWydQg5Gi1IaJHPpOOQgcedDNFlsR5qLLGe9E13o4xTdN7fjPCJLFF3K@vger.kernel.org, AJvYcCXFm4I79CxL/Ik5zQSfrVqY6k73PYHpV6OGQgEy0WYdy/AQXatm/T9duGX8xTdyeOuSbuT5KAogUk2y@vger.kernel.org, AJvYcCXQOXo2yPL76XItWI885UCKwDvlsea734wmWSN+jVNuJl0tbMINm2Dy8IsTz2n0QeaCtpkqVgbzQmzk4HGJ7S/l@vger.kernel.org, AJvYcCXhr//1nsWN/clbvroNjWydXfjcNr/+9spwxr4t
+ /yYpIN12adbqG5FvcTuWczxWp/k4E1tet19XfXRk4Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzaETqZkGzPYI8rY83k/xvAG4sDE5egP+hhWZCCdUMIxPD0Zy9c
+	E98oVMTnAugEnYcLoprl5BECba5kRDW3SkH/cSb80ovgzqkzzTO8Y7h/
+X-Gm-Gg: ASbGncteuM+tGzCdZk8NQqXNei6vUqn5D++muVG4qeC2b9Hq+s9F/5vVbbc7ATZbNuh
+	thKwKCDgFsWu/zAyf/vYpAwVh8DzNcJIbODn8iF3nocGQT7R+eCblMWTNlwkRM+JM3FWJSCgHof
+	IXI8w9DEurHrM1Vyy1/DmHdNB5KXZOsTprZ5n5mAT4dfySA5GcZ+lYxkNOgqDfMqquXfYkzt/i/
+	urg2CMH2r8SsxR4aU2jgUMYz3xSb75Be58Xy3ASbmFIr67Pj0mPsbHFcLNEKNoBXnP1952h6sPp
+	bSblIBJ5/QUtRC5VSaj/kqW9poT6BmaPKqpbonlU3f6pfR1g8gOAI3oURDM3z5aHOh5tf5YJp2L
+	W9Bgi0oFJE+ZCdudxqyskPir2JDzW45o+T2sYEKzetQpj1LE=
+X-Google-Smtp-Source: AGHT+IFCWGCB9w3JZkSqlrk4a0OYpaWYnOsewLh1z3k9Jb7NB4buZSqln74MwC7LX4UWbpbQGZTMJw==
+X-Received: by 2002:a17:906:3717:b0:afe:764d:6b31 with SMTP id a640c23a62f3a-afe764d736dmr1280383766b.4.1756367036783;
+        Thu, 28 Aug 2025 00:43:56 -0700 (PDT)
+Received: from localhost ([185.92.221.13])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afe48fae316sm1165798866b.28.2025.08.28.00.43.56
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 28 Aug 2025 00:43:56 -0700 (PDT)
+Date: Thu, 28 Aug 2025 07:43:56 +0000
+From: Wei Yang <richard.weiyang@gmail.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org, Zi Yan <ziy@nvidia.com>,
+	Alexander Potapenko <glider@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Brendan Jackman <jackmanb@google.com>,
+	Christoph Lameter <cl@gentwo.org>, Dennis Zhou <dennis@kernel.org>,
+	Dmitry Vyukov <dvyukov@google.com>, dri-devel@lists.freedesktop.org,
+	intel-gfx@lists.freedesktop.org, iommu@lists.linux.dev,
+	io-uring@vger.kernel.org, Jason Gunthorpe <jgg@nvidia.com>,
+	Jens Axboe <axboe@kernel.dk>, Johannes Weiner <hannes@cmpxchg.org>,
+	John Hubbard <jhubbard@nvidia.com>, kasan-dev@googlegroups.com,
+	kvm@vger.kernel.org, "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-arm-kernel@axis.com, linux-arm-kernel@lists.infradead.org,
+	linux-crypto@vger.kernel.org, linux-ide@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, linux-mips@vger.kernel.org,
+	linux-mmc@vger.kernel.org, linux-mm@kvack.org,
+	linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
+	linux-scsi@vger.kernel.org,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Marco Elver <elver@google.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Michal Hocko <mhocko@suse.com>, Mike Rapoport <rppt@kernel.org>,
+	Muchun Song <muchun.song@linux.dev>, netdev@vger.kernel.org,
+	Oscar Salvador <osalvador@suse.de>, Peter Xu <peterx@redhat.com>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Suren Baghdasaryan <surenb@google.com>, Tejun Heo <tj@kernel.org>,
+	virtualization@lists.linux.dev, Vlastimil Babka <vbabka@suse.cz>,
+	wireguard@lists.zx2c4.com, x86@kernel.org
+Subject: Re: [PATCH v1 12/36] mm: simplify folio_page() and folio_page_idx()
+Message-ID: <20250828074356.3xiuqugokg36yuxw@master>
+Reply-To: Wei Yang <richard.weiyang@gmail.com>
+References: <20250827220141.262669-1-david@redhat.com>
+ <20250827220141.262669-13-david@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,114 +117,88 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <DCANVO3ZBHUN.A8E9WABNLHG4@gmail.com>
+In-Reply-To: <20250827220141.262669-13-david@redhat.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 
-Hi Javier,
+On Thu, Aug 28, 2025 at 12:01:16AM +0200, David Hildenbrand wrote:
+>Now that a single folio/compound page can no longer span memory sections
+>in problematic kernel configurations, we can stop using nth_page().
+>
+>While at it, turn both macros into static inline functions and add
+>kernel doc for folio_page_idx().
+>
+>Reviewed-by: Zi Yan <ziy@nvidia.com>
+>Signed-off-by: David Hildenbrand <david@redhat.com>
 
-Am Sun, Aug 24, 2025 at 08:36:58PM +0800 schrieb Javier Carrasco:
-> Hello Dimitri, thank you for your patch. A few comments inline:
-> 
-> > From: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
-> >
-> > According to the ABI the units after application of scale and offset are
-> > milli degree celsius for temperature thresholds and milli percent for
-> > relative humidity thresholds. Change scale factor to fix this issue.
-> 
-> I miss some explanation of what is going on (i.e. wrong) at the moment,
-> the scale factor that is being used and what results are being obtained.
-> 
-Yes, will add it. Temperature is currently returned in degree celsius,
-but should be returned in milli degree celsius. Relative humdity is
-returned in percent, but should be returned in milli percent.
+Reviewed-by: Wei Yang <richard.weiyang@gmail.com>
 
-> > @@ -379,12 +379,12 @@ static int hdc3020_thresh_get_temp(u16 thresh)
-> >  	 * Get the temperature threshold from 9 LSBs, shift them to get
-> >  	 * the truncated temperature threshold representation and
-> >  	 * calculate the threshold according to the formula in the
+The code looks good, while one nit below.
+
+>---
+> include/linux/mm.h         | 16 ++++++++++++++--
+> include/linux/page-flags.h |  5 ++++-
+> 2 files changed, 18 insertions(+), 3 deletions(-)
+>
+>diff --git a/include/linux/mm.h b/include/linux/mm.h
+>index 2dee79fa2efcf..f6880e3225c5c 100644
+>--- a/include/linux/mm.h
+>+++ b/include/linux/mm.h
+>@@ -210,10 +210,8 @@ extern unsigned long sysctl_admin_reserve_kbytes;
 > 
-> Having used 65535 back then without explaining why, or at least without using
-> a #define was not the best idea. It's difficult to understand why it is used
-> without getting into details.
+> #if defined(CONFIG_SPARSEMEM) && !defined(CONFIG_SPARSEMEM_VMEMMAP)
+> #define nth_page(page,n) pfn_to_page(page_to_pfn((page)) + (n))
+>-#define folio_page_idx(folio, p)	(page_to_pfn(p) - folio_pfn(folio))
+> #else
+> #define nth_page(page,n) ((page) + (n))
+>-#define folio_page_idx(folio, p)	((p) - &(folio)->page)
+> #endif
+> 
+> /* to align the pointer to the (next) page boundary */
+>@@ -225,6 +223,20 @@ extern unsigned long sysctl_admin_reserve_kbytes;
+> /* test whether an address (unsigned long or pointer) is aligned to PAGE_SIZE */
+> #define PAGE_ALIGNED(addr)	IS_ALIGNED((unsigned long)(addr), PAGE_SIZE)
+> 
+>+/**
+>+ * folio_page_idx - Return the number of a page in a folio.
+>+ * @folio: The folio.
+>+ * @page: The folio page.
+>+ *
+>+ * This function expects that the page is actually part of the folio.
+>+ * The returned number is relative to the start of the folio.
+>+ */
+>+static inline unsigned long folio_page_idx(const struct folio *folio,
+>+		const struct page *page)
+>+{
+>+	return page - &folio->page;
+>+}
+>+
+> static inline struct folio *lru_to_folio(struct list_head *head)
+> {
+> 	return list_entry((head)->prev, struct folio, lru);
+>diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
+>index 5ee6ffbdbf831..faf17ca211b4f 100644
+>--- a/include/linux/page-flags.h
+>+++ b/include/linux/page-flags.h
+>@@ -316,7 +316,10 @@ static __always_inline unsigned long _compound_head(const struct page *page)
+>  * check that the page number lies within @folio; the caller is presumed
+>  * to have a reference to the page.
+>  */
+>-#define folio_page(folio, n)	nth_page(&(folio)->page, n)
+>+static inline struct page *folio_page(struct folio *folio, unsigned long n)
+>+{
+>+	return &folio->page + n;
+>+}
+> 
+
+Curious about why it is in page-flags.h. It seems not related to page-flags.
+
+> static __always_inline int PageTail(const struct page *page)
+> {
+>-- 
+>2.50.1
 >
 
-Yes, will add a define and change the comment.
-
-> 13107 is even less obvious. I believe you divided 65535 by 5 everywhere in the
-> code, but it's not clear why.
->
-
-The reason for it is to avoid overflows, because the thresholds and
-hysteresis is now multiplied by 1000. Dividing the scale factor fixes this
-issue, but makes the code even harder to understand. Will try to fix
-this.
-
-> I'd suggest a clear definition at the beginning of the code because it
-> is used in different parts of the code, after having explained why it
-> is necessary in the commit message as I mentioned before.
-> 
-
-Ok.
-
-> > -	 * datasheet. Result is degree celsius scaled by 65535.
-> > +	 * datasheet. Result is degree celsius scaled by 13107.
-> >  	 */
-> >  	temp = FIELD_GET(HDC3020_THRESH_TEMP_MASK, thresh) <<
-> >  	       HDC3020_THRESH_TEMP_TRUNC_SHIFT;
-> >  
-> 
-> Again, it's difficult to understand why everything is divided by 5.
->
-
-Ok.
-
-> > -	return -2949075 + (175 * temp);
-> > +	return -589815 + (35 * temp);
-> >  }
-> >  
-> >  static int hdc3020_thresh_get_hum(u16 thresh)
-> > @@ -395,12 +395,12 @@ static int hdc3020_thresh_get_hum(u16 thresh)
-> >  	 * Get the humidity threshold from 7 MSBs, shift them to get the
-> >  	 * truncated humidity threshold representation and calculate the
-> >  	 * threshold according to the formula in the datasheet. Result is
-> > -	 * percent scaled by 65535.
-> > +	 * percent scaled by 13107.
-> >  	 */
-> >  	hum = FIELD_GET(HDC3020_THRESH_HUM_MASK, thresh) <<
-> >  	      HDC3020_THRESH_HUM_TRUNC_SHIFT;
-> >  
-> 
-> Similarly, multiplying by 20 (100/5) looks weird for a percentage.
->
-
-Ok, see above.
-
-> > -	return hum * 100;
-> > +	return hum * 20;
-> >  }
-> 
-> ...
-> 
-> > @@ -630,7 +630,7 @@ static int hdc3020_read_thresh(struct iio_dev *indio_dev,
-> >  		thresh = hdc3020_thresh_get_temp(ret);
-> >  		switch (info) {
-> >  		case IIO_EV_INFO_VALUE:
-> 
-> MILLI, as suggested for [1/2]? The same would apply to the following
-> diffs.
-> 
-
-Ok.
-
-> > -			*val = thresh;
-> > +			*val = thresh * 1000;
-> >  			break;
-> >  		case IIO_EV_INFO_HYSTERESIS:
-> >  			ret = hdc3020_read_be16(data, reg_clr);
-> > @@ -638,18 +638,18 @@ static int hdc3020_read_thresh(struct iio_dev *indio_dev,
-> >  				return ret;
-> >  
-> >  			clr = hdc3020_thresh_get_temp(ret);
-> 
-Best regards,
-Dimitri Fedrau
+-- 
+Wei Yang
+Help you, Help me
 
