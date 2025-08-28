@@ -1,168 +1,148 @@
-Return-Path: <linux-kernel+bounces-790358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B18B9B3A5E4
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 18:15:24 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id D339EB3A5E9
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 18:15:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 076B0987FA5
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 16:15:10 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C69F04E46C8
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 16:15:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F0AC2E03F8;
-	Thu, 28 Aug 2025 16:15:07 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42B05263C69;
-	Thu, 28 Aug 2025 16:15:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58344314B65;
+	Thu, 28 Aug 2025 16:15:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b/Y4KTDB"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51FAA313E35;
+	Thu, 28 Aug 2025 16:15:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756397706; cv=none; b=rUzOvUZvdzcXaZdBoOEdOoknpR69rwEg4TkCd4Oz2deb/SM3EeQ0zetrOlkd6g5qLpVyEze9QRtZTa8M9sUoOj3dfg6vNPKlzY+5krA3XE9PSPSDsnc85T/hS8LIeqs6vxUP+nuc9Kgjqo/kZ3Z3tfE3dP1LB+Sgguvfcct+RKE=
+	t=1756397746; cv=none; b=AmeA1e4a9uV/S75jg1BUkhsULNXTfGMgIMpX5CRb6URIjNdaN+tgxJB7qr4pgn1fk/K9JUcyFOxzOe3R78W4VHJ34KshKKEfZhS/8RwBKni0haprOOPRHYscvu0OBQLkgd0PKpAOPg3Z3tNoKob7K9agcH84ZcMKtuYVlU3NKSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756397706; c=relaxed/simple;
-	bh=O1lrH6pM6YsXnZ1Li2CZXZFGI/v1p6PVAEIz3UrlIoE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CpkppFUG5Ez+EKT555NSdro7UswtCPDXz+uAoUCGjZUZKGIgis+zLmWn2QCkmL0LnxAGj7GHjSDcOQTK+3+04XYGCeTN+RrzgzSNA1AKDE1FA4CTltvexStekSZBEUx6mGbAZ6t6NYK4KgPhByUNmCIgaV9b1BWgQaHLU4Jeu74=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 50A0E1688;
-	Thu, 28 Aug 2025 09:14:56 -0700 (PDT)
-Received: from [10.1.196.46] (e134344.arm.com [10.1.196.46])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C9F2A3F694;
-	Thu, 28 Aug 2025 09:14:58 -0700 (PDT)
-Message-ID: <75cdcd36-4bd5-4ad7-a37e-9c2a195c71e5@arm.com>
-Date: Thu, 28 Aug 2025 17:14:57 +0100
+	s=arc-20240116; t=1756397746; c=relaxed/simple;
+	bh=FF/S4rAzFkXtvksfZQyNpXbL19No9ho+QvpdPcRX8EY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IFLcL+nER2ak+iymGOFR96Q8SvqimG2RtbgLKXNTg1Bj73UTjuRiOdA6t9k3HqEcMpAkgyRT4CLVB4+/DtjRk02de6KEObEErhSq+HNpGfU7DiFRjG2b61+wtYeO2CH7rwZW/Tylk4PN6PtQlFUq+sLR3+D0ynbBK/rG036yWQA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b/Y4KTDB; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3cdfb1ff7aeso565391f8f.2;
+        Thu, 28 Aug 2025 09:15:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756397742; x=1757002542; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4ticAyNq5Rm9JFmx4WAvdUTe25pxzkVngwqprOuPmfU=;
+        b=b/Y4KTDBIEV4h4axits+zrkDP38KEObeeYsiP30TVPlUbIg8WBUB/1sR4MNAfYc1a7
+         7QaSkW1DzPTja4u7x4oEr+6nq470tI9jGcpWHKf054yRVibupPz4/Uegzf2nsXd+ir6X
+         U9IGExDFFauSdzJWjkAtZOvot0K7HWbVJErHF09JMtzo3lL7/PDqYPHe6CxA1O+EHntT
+         f4xI+VsRuHzz/eoX1vrKauuvLvvNBs3y6ty3IKnv16Pik0AdJLDcdK3DvDjiCSfNG7A9
+         wQ9V/nYPYsyrPmgVFxLqWB0j8j8MEQdmm06ZBkNM7ZD5utWimdLe28NIY7Z994fkeVfF
+         pTeA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756397742; x=1757002542;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4ticAyNq5Rm9JFmx4WAvdUTe25pxzkVngwqprOuPmfU=;
+        b=AxWUyGKZLDy2+UdzxCFluZj5+DO4dMusDUD0fLAT9QEoZ0sstTYZn1XuDHtNby4ov/
+         WzV3h7N//duMVXPS3cgHHvHvSW8mwjWgnBouI9/56eERRGvPzE8QRGdOllxCmyUVVr4Y
+         aqBULUxcNURHBM7n45n7gsDy1PAENfYE0L/E84KLjTdKOabyR0ANxa6uVKvZNSjwnfsb
+         3qreso5UNKOa4HyJwbc2jg51KKYqtmdmmFjrgL+a31adqxWLgDP6EBNFvxHT7jQyryJx
+         d3fgwTvGPsLoM9oDtljCCAJQSoczO6vjB+aIJqsws4Zfz5XjY3ZQHENdsTLBhN2kXIcw
+         Rl/w==
+X-Forwarded-Encrypted: i=1; AJvYcCUB2ZbvR4hdRjlHLR/i93+r4MScQuNG/C/LlXODkgcqhX/oJ7tDG43hM4i+iwawuQ5eNue6IUkTsuc4TS18@vger.kernel.org, AJvYcCVqolz5rnTeY0c9uMHnbqHGzkdUWcwbYu02sWhQevL3hkqxn6IU7BHipPGw4HN7Eb/d2iBk4RDOWqdKqGqtIu1S@vger.kernel.org, AJvYcCVvdua1xCzDSPTi/s8OA8OiG+1YmlmTewgzvOCYaq0DHXIzkuGO1dL6MUVNzpbBSTUqxeU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxC9J+AzG8XFv548/CAnIQ3/g4neUp1wVUlmMHD8VGrA4A2ankX
+	Wuh8EqhEFe8mtrWpLNDjgN12EB52/HZLuCJUAPmUL3Ll1auKMW/5avNanr/Le4YgE2g3PIVADZ2
+	bc0WFdyuwlmJGrBRKP4PNGfx7rbPste4=
+X-Gm-Gg: ASbGncsX/tJNJy4HlwRE8uoOO4qIt/kNoBapbJ8h7KtyJ/ytXpEUqa5BTitBu0ZEmNP
+	hZ4yyc/iQE+muTF4po1LVaX4CZ4+LtmINYvtMgbxftPmb+40HKT/ZZPfDZt4yZQMHrQg7SIIIkl
+	Pte4fqqFK5bUc3MErlywXQkKSJVLHmUVZ04t9VHQWcC94p0vkMxb8Jw0Wd4VUAHHG29di7QHW1x
+	7bTNblaxTaOIw8khPk62ahi6r7xmgbmRndk
+X-Google-Smtp-Source: AGHT+IGqiDNC33JqG7zCizvu0ottr5G3BU+YyTpElZyBpILKkCoprTVvZxt1i+j8W5vyb77u50q9jkZjhVvWfu89vEY=
+X-Received: by 2002:a05:6000:40ca:b0:3ce:81d:6c38 with SMTP id
+ ffacd0b85a97d-3ce081d6f97mr2838836f8f.29.1756397741421; Thu, 28 Aug 2025
+ 09:15:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 29/33] arm_mpam: Probe for long/lwd mbwu counters
-To: James Morse <james.morse@arm.com>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-acpi@vger.kernel.org,
- devicetree@vger.kernel.org
-Cc: shameerali.kolothum.thodi@huawei.com,
- D Scott Phillips OS <scott@os.amperecomputing.com>,
- carl@os.amperecomputing.com, lcherian@marvell.com,
- bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
- baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
- Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
- dfustini@baylibre.com, amitsinght@marvell.com,
- David Hildenbrand <david@redhat.com>, Rex Nie <rex.nie@jaguarmicro.com>,
- Dave Martin <dave.martin@arm.com>, Koba Ko <kobak@nvidia.com>,
- Shanker Donthineni <sdonthineni@nvidia.com>, fenghuay@nvidia.com,
- baisheng.gao@unisoc.com, Jonathan Cameron <jonathan.cameron@huawei.com>,
- Rob Herring <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
- Rafael Wysocki <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo
- <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
- Will Deacon <will@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Danilo Krummrich <dakr@kernel.org>
-References: <20250822153048.2287-1-james.morse@arm.com>
- <20250822153048.2287-30-james.morse@arm.com>
-From: Ben Horgan <ben.horgan@arm.com>
-Content-Language: en-US
-In-Reply-To: <20250822153048.2287-30-james.morse@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250828081507.1380218-1-yangfeng59949@163.com>
+In-Reply-To: <20250828081507.1380218-1-yangfeng59949@163.com>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Thu, 28 Aug 2025 09:15:30 -0700
+X-Gm-Features: Ac12FXziPgBF6JW4_9rC-7_i4Djij2vCltQdFo1tim-e6-aJA5PyJ_KQonJWkFM
+Message-ID: <CAADnVQKo3KiX5xHk=TzYJZy-irJu=qmUFXBbhu6ExpSGk4x7+w@mail.gmail.com>
+Subject: Re: [PATCH bpf-next] selftests/bpf: Fix the issue where the error
+ code is 0
+To: Feng Yang <yangfeng59949@163.com>
+Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	John Fastabend <john.fastabend@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Eduard <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
+	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
+	bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi James,
+On Thu, Aug 28, 2025 at 1:15=E2=80=AFAM Feng Yang <yangfeng59949@163.com> w=
+rote:
+>
+> From: Feng Yang <yangfeng@kylinos.cn>
+>
+> The error message printed here only uses the previous err value,
+> which results in it being printed as 0.
+> When bpf_map__attach_struct_ops encounters an error,
+> it uses libbpf_err_ptr(err) to set errno =3D -err and returns NULL.
 
-On 8/22/25 16:30, James Morse wrote:
-> From: Rohit Mathew <rohit.mathew@arm.com>
-> 
-> mpam v0.1 and versions above v1.0 support optional long counter for
-> memory bandwidth monitoring. The MPAMF_MBWUMON_IDR register have fields
-> indicating support for long counters. As of now, a 44 bit counter
-> represented by HAS_LONG field (bit 30) and a 63 bit counter represented
-> by LWD (bit 29) can be optionally integrated. Probe for these counters
-> and set corresponding feature bits if any of these counters are present.
-> 
-> Signed-off-by: Rohit Mathew <rohit.mathew@arm.com>
-> Signed-off-by: James Morse <james.morse@arm.com>
+Yes, but libbpf_get_error() is better.
+And decimal number is preferred as ASSERT_OK_PTR() macro does.
+
+pw-bot: cr
+
+> Therefore, strerror(errno) can be used to fix this issue.
+>
+> Fix before:
+> run_subtest:FAIL:1019 bpf_map__attach_struct_ops failed for map pro_epilo=
+gue: err=3D0
+>
+> Fix after:
+> run_subtest:FAIL:1019 bpf_map__attach_struct_ops failed for map pro_epilo=
+gue: Bad file descriptor
+>
+> Signed-off-by: Feng Yang <yangfeng@kylinos.cn>
 > ---
->  drivers/resctrl/mpam_devices.c  | 23 ++++++++++++++++++++++-
->  drivers/resctrl/mpam_internal.h |  8 ++++++++
->  2 files changed, 30 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/resctrl/mpam_devices.c b/drivers/resctrl/mpam_devices.c
-> index 11be34b54643..2ab7f127baaa 100644
-> --- a/drivers/resctrl/mpam_devices.c
-> +++ b/drivers/resctrl/mpam_devices.c
-> @@ -870,7 +870,7 @@ static void mpam_ris_hw_probe(struct mpam_msc_ris *ris)
->  				pr_err_once("Counters are not usable because not-ready timeout was not provided by firmware.");
->  		}
->  		if (FIELD_GET(MPAMF_MSMON_IDR_MSMON_MBWU, msmon_features)) {
-> -			bool hw_managed;
-> +			bool has_long, hw_managed;
->  			u32 mbwumonidr = mpam_read_partsel_reg(msc, MBWUMON_IDR);
-nit: the variable name would be more readable with an underscore,
-mwumon_idr.
->  
->  			props->num_mbwu_mon = FIELD_GET(MPAMF_MBWUMON_IDR_NUM_MON, mbwumonidr);
-> @@ -880,6 +880,27 @@ static void mpam_ris_hw_probe(struct mpam_msc_ris *ris)
->  			if (FIELD_GET(MPAMF_MBWUMON_IDR_HAS_RWBW, mbwumonidr))
->  				mpam_set_feature(mpam_feat_msmon_mbwu_rwbw, props);
->  
-> +			/*
-> +			 * Treat long counter and its extension, lwd as mutually
-> +			 * exclusive feature bits. Though these are dependent
-> +			 * fields at the implementation level, there would never
-> +			 * be a need for mpam_feat_msmon_mbwu_44counter (long
-> +			 * counter) and mpam_feat_msmon_mbwu_63counter (lwd)
-> +			 * bits to be set together.
-> +			 *
-> +			 * mpam_feat_msmon_mbwu isn't treated as an exclusive
-> +			 * bit as this feature bit would be used as the "front
-> +			 * facing feature bit" for any checks related to mbwu
-> +			 * monitors.
-> +			 */
-> +			has_long = FIELD_GET(MPAMF_MBWUMON_IDR_HAS_LONG, mbwumonidr);
-> +			if (props->num_mbwu_mon && has_long) {
-> +				if (FIELD_GET(MPAMF_MBWUMON_IDR_LWD, mbwumonidr))
-> +					mpam_set_feature(mpam_feat_msmon_mbwu_63counter, props);
-> +				else
-> +					mpam_set_feature(mpam_feat_msmon_mbwu_44counter, props);
-> +			}
-> +
->  			/* Is NRDY hardware managed? */
->  			mpam_mon_sel_outer_lock(msc);
->  			hw_managed = mpam_ris_hw_probe_hw_nrdy(ris, MBWU);
-> diff --git a/drivers/resctrl/mpam_internal.h b/drivers/resctrl/mpam_internal.h
-> index 9a50a5432f4a..9f627b5f72a1 100644
-> --- a/drivers/resctrl/mpam_internal.h
-> +++ b/drivers/resctrl/mpam_internal.h
-> @@ -178,7 +178,15 @@ enum mpam_device_features {
->  	mpam_feat_msmon_csu,
->  	mpam_feat_msmon_csu_capture,
->  	mpam_feat_msmon_csu_hw_nrdy,
-> +
-> +	/*
-> +	 * Having mpam_feat_msmon_mbwu set doesn't mean the regular 31 bit MBWU
-> +	 * counter would be used. The exact counter used is decided based on the
-> +	 * status of mpam_feat_msmon_mbwu_l/mpam_feat_msmon_mbwu_lwd as well.
-mpam_feat_msmon_mbwu_44counter/mpam_feat_msmon_mbwu_63counter
-> +	 */
->  	mpam_feat_msmon_mbwu,
-> +	mpam_feat_msmon_mbwu_44counter,
-> +	mpam_feat_msmon_mbwu_63counter,
->  	mpam_feat_msmon_mbwu_capture,
->  	mpam_feat_msmon_mbwu_rwbw,
->  	mpam_feat_msmon_mbwu_hw_nrdy,
-
-Other than the two nits, the change looks good to me.
-
-Reviewed-by: Ben Horgan <ben.horgan@arm.com>
-
-Thanks,
-
-Ben
-
+>  tools/testing/selftests/bpf/test_loader.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/tools/testing/selftests/bpf/test_loader.c b/tools/testing/se=
+lftests/bpf/test_loader.c
+> index f361c8aa1daf..686a7d7f87b1 100644
+> --- a/tools/testing/selftests/bpf/test_loader.c
+> +++ b/tools/testing/selftests/bpf/test_loader.c
+> @@ -1008,8 +1008,8 @@ void run_subtest(struct test_loader *tester,
+>                         }
+>                         link =3D bpf_map__attach_struct_ops(map);
+>                         if (!link) {
+> -                               PRINT_FAIL("bpf_map__attach_struct_ops fa=
+iled for map %s: err=3D%d\n",
+> -                                          bpf_map__name(map), err);
+> +                               PRINT_FAIL("bpf_map__attach_struct_ops fa=
+iled for map %s: %s\n",
+> +                                          bpf_map__name(map), strerror(e=
+rrno));
+>                                 goto tobj_cleanup;
+>                         }
+>                         links[links_cnt++] =3D link;
+> --
+> 2.27.0
+>
 
