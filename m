@@ -1,84 +1,128 @@
-Return-Path: <linux-kernel+bounces-790475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790476-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BACFBB3A7C2
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 19:22:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C9E7B3A7CD
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 19:23:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB3B21894479
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 17:22:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8DA917A4821
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 17:21:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12EC1337689;
-	Thu, 28 Aug 2025 17:21:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 647763376BC;
+	Thu, 28 Aug 2025 17:22:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g96eJfti"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="1gEKM/4C"
+Received: from 003.mia.mailroute.net (003.mia.mailroute.net [199.89.3.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65210334730;
-	Thu, 28 Aug 2025 17:21:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DA78176ADB;
+	Thu, 28 Aug 2025 17:22:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756401717; cv=none; b=I0HybYJqrpdGQ58/VXatEWc5c28eMXsCqIcWCOF1f+qnH8j+qd1TwH543DYMDfDbkUat098j6yF6bXlzEvlu71E5Yt9EwKZsuQT+OGbVkUaq3KDTGyB5yiB4lFHVv8+LEG/O7hzNA9/dc0W1QYsMk2OwTmc5o3IiIxGOUZXaE48=
+	t=1756401770; cv=none; b=gx9HA4n0irOYksnk8db7/jh1M4g5CQS41zIvKU7N/oeBDQuIVlbPRmEJp7MmyAmtAh6vkYftJv8V2apAUbj6+6UoyDD3tgVy6PzRcMg3S51CYcajRfQPcUjSaQX3FgZ6QlTvGjg2whDawfjjmQSl5AIzHU+hQZ8hiZ7QuatySQ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756401717; c=relaxed/simple;
-	bh=89YntpE4gZPOG50GWRFi1m+icTQx4/ls24M95AuzsxU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qMMYqcgIoYofl/bHpOjYCJmq47ND1JOJZzm0k4izu8DfTCTXxBbthFeo+XE1GEz+dhP8AgmasY+PJePbjxwg+BxqUoaUVgoYbpXQG1XEWevf7XZQgawImLtGMZPC3LVjPl19SoB52xc3y5kshSJng+0LB1g4nhFwujGR1S35M6Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g96eJfti; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A392C4AF09;
-	Thu, 28 Aug 2025 17:21:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756401717;
-	bh=89YntpE4gZPOG50GWRFi1m+icTQx4/ls24M95AuzsxU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=g96eJftifqtu06klKzvK4Ty6vItA/kFVARAOKvluP32FawOgp9Nv5BcsM4fFqvXfE
-	 weUlwMM6cCtGaNCVbOCp91h76Zlg8D1ZguGqJFUbOcpGOvgXEMMKVc+qNmzXBxNKyF
-	 0aNVBrXaSszgVistb/VtGy2mO1bWLgNeT1ZHXM957zVrKRIWd+3IkoktrYKv+AKQ7e
-	 JDtonmUIn2tyTlcCAkHWCX6zWCOLDlXhcoXdK9oFv+RAJ5t6BV0JqwikXyIiPQfoTy
-	 kQTLomhG/5w41KFwXV48J+xZMJm/enwD0gdidCZ3rZ5GdaAOAXiGCt9debLoslmVH8
-	 1GwgU0injyi4g==
-Date: Thu, 28 Aug 2025 18:21:53 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Grant Peltier <grantpeltier93@gmail.com>
-Cc: robh@kernel.org, conor+dt@kernel.org, grant.peltier.jg@renesas.com,
-	linux@roeck-us.net, linux-hwmon@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] dt-bindings: hwmon: (pmbus/isl68137) add RAA228244
- and RAA228246 support
-Message-ID: <20250828-bonfire-gulp-94c2160c09e9@spud>
-References: <cover.1756331945.git.grantpeltier93@gmail.com>
- <c0c6e99e51b6fd4c5dbab02e02e4d81abe31f085.1756331945.git.grantpeltier93@gmail.com>
+	s=arc-20240116; t=1756401770; c=relaxed/simple;
+	bh=C/gaTXy/0JJk7IW23NxiY1BKmydsHm3y9ndN33TgeAg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Hd+vQDZvKfNIXYtltESMx6WR6g11N0dNQ3Gk4fMYIEo/5ePEOinT/Bt7a6gyza9ZxWINSh9Hlw3TLVLv/SFhsWSf4+CE36xGlriEDCjdIBnnCRrJq/Vx1yw8o0YcSOBZYaybTwiBIS04PW0q4fyJuRXxJz23zTxtWcZxQb39mrM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=1gEKM/4C; arc=none smtp.client-ip=199.89.3.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 003.mia.mailroute.net (Postfix) with ESMTP id 4cCSs36WM0zlgqxy;
+	Thu, 28 Aug 2025 17:22:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1756401765; x=1758993766; bh=C/gaTXy/0JJk7IW23NxiY1BK
+	mydsHm3y9ndN33TgeAg=; b=1gEKM/4CY6RyW3OdXjJPaTq1TkHT+ExfLr+9Ib5T
+	2S5wHT1ITqnJFQUs3XXqGc0OFT0DWnLFIVzElfHyzK9pV7cdj/j7GdCZiXbw58ft
+	FDQrzD4MOJ9JnmdcSJ4eZJTIqWrfzUdh9jt+PJZSBJhZOEz5MuqGexiINFr0CARR
+	PUldR39rOaOlpwbU7tPQ57ykVX5kaZ5CFuJmhnp2pCtO2TxlZLMRlPaRKSS3k/rc
+	tEWaztWOJE8y7JVnuyk7i4u3h4l+o63BXQwxnfM/Ju0GbNLqVxhagMvqv5onwPQ7
+	SDse7ap3anu8g7eCWyxb4E0PpG1iM2fUdXCXyK1qr/YcNw==
+X-Virus-Scanned: by MailRoute
+Received: from 003.mia.mailroute.net ([127.0.0.1])
+ by localhost (003.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id LeCwucKU7Rnb; Thu, 28 Aug 2025 17:22:45 +0000 (UTC)
+Received: from [172.20.6.188] (unknown [208.98.210.68])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 003.mia.mailroute.net (Postfix) with ESMTPSA id 4cCSrk656mzlgqxj;
+	Thu, 28 Aug 2025 17:22:29 +0000 (UTC)
+Message-ID: <cf203807-77ab-463c-b0b0-4a1cec891fe6@acm.org>
+Date: Thu, 28 Aug 2025 10:22:28 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="OYHz+RiNkpQbmBQ0"
-Content-Disposition: inline
-In-Reply-To: <c0c6e99e51b6fd4c5dbab02e02e4d81abe31f085.1756331945.git.grantpeltier93@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V3 1/4] ufs: dt-bindings: Document gear and rate limit
+ properties
+To: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>, alim.akhtar@samsung.com,
+ avri.altman@wdc.com, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, mani@kernel.org, James.Bottomley@HansenPartnership.com,
+ martin.petersen@oracle.com
+Cc: linux-scsi@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+References: <20250826150855.7725-1-quic_rdwivedi@quicinc.com>
+ <20250826150855.7725-2-quic_rdwivedi@quicinc.com>
+ <9944c595-da68-43c0-8364-6a8665a0fc3f@acm.org>
+ <8d705694-498a-4592-b93a-7df6a1dd5211@quicinc.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <8d705694-498a-4592-b93a-7df6a1dd5211@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
 
+On 8/28/25 9:45 AM, Ram Kumar Dwivedi wrote:
+> On 26-Aug-25 9:05 PM, Bart Van Assche wrote:
+>> On 8/26/25 8:08 AM, Ram Kumar Dwivedi wrote:
+>>> +=C2=A0 limit-rate:
+>>> +=C2=A0=C2=A0=C2=A0 $ref: /schemas/types.yaml#/definitions/uint32
+>>> +=C2=A0=C2=A0=C2=A0 enum: [1, 2]
+>>> +=C2=A0=C2=A0=C2=A0 default: 2
+>>> +=C2=A0=C2=A0=C2=A0 description:
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Restricts the UFS controller to Rate =
+A (1) or Rate B (2) for both
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 TX and RX directions, often required =
+in automotive environments due
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 to hardware limitations.
+>>
+>> As far as I know no numeric values are associated with these rates in
+>> the UFSHCI 4.1 standard nor in any of the previous versions of this
+>> standard. Does the .yaml syntax support something like "enum: [A, B]"?
+> Hi Bart,
+>=20
+> As per the MIPI UniPro spec:
+>=20
+> In Section 5.7.12.3.2, the hs_series is defined as:
+> hs_series =3D Flags[3] + 1;
+>=20
+> In Section 5.7.7.1, Flags[3] is described as:
+> Set to =E2=80=980=E2=80=99 for Series A and =E2=80=981=E2=80=99 for Ser=
+ies B (PA_HSSeries).
+>=20
+> While issuing the DME command from the UFS driver to set the rate,
+> the values 1 and 2 are passed as arguments for Rate A and Rate B
+> respectively. Additionally, the hs_rate variable is of type u32.
 
---OYHz+RiNkpQbmBQ0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Hi Ram,
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Thanks for having looked this up.
 
---OYHz+RiNkpQbmBQ0
-Content-Type: application/pgp-signature; name="signature.asc"
+Since it is much more common to refer to these rates as "Rate A" and
+"Rate B" rather than using numbers for these rates, please change the
+enumeration labels into something like "Rate_A" and "Rate_B".
 
------BEGIN PGP SIGNATURE-----
+Thanks,
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaLCQMQAKCRB4tDGHoIJi
-0kWQAQCD8RYrCwM6PpWiJl18lW8xi5JfBq87dZ3jSXryTaVpSAD9ENX1xQWb8M8M
-TXyCsNTESndugJnY6PssU+a8wF9gCw0=
-=pFCw
------END PGP SIGNATURE-----
-
---OYHz+RiNkpQbmBQ0--
+Bart.
 
