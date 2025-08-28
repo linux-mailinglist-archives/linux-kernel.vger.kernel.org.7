@@ -1,109 +1,129 @@
-Return-Path: <linux-kernel+bounces-789862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789863-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6970B39BAF
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 13:36:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48651B39BC0
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 13:39:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D941A7B8DD2
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 11:34:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE78B1BA5C07
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 11:39:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7E0930E0EC;
-	Thu, 28 Aug 2025 11:35:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A83830E0FA;
+	Thu, 28 Aug 2025 11:39:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="SUKTdb3c"
-Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e78luegL"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2F1630C62D;
-	Thu, 28 Aug 2025 11:35:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04157260592;
+	Thu, 28 Aug 2025 11:39:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756380939; cv=none; b=Y9xpJ4Shz0UVn5IofOzHUomjmsKZahot0beejT/4CfojNbr7dUa6WCNBu1QxFwdao0ANkgQEgS5x+ddJ9LVofPVocFbyHvJ3tVNvxgd1Chxi5mHWQxGFvtS6tGahyj0xxObeJW6rvH8ooxqHfWtVddEiJEcPZr1s9Dg40tRW5F0=
+	t=1756381160; cv=none; b=k9VkoZpvuv/UqMrQ1ew7FSFaJfiqWvzYfNC7ieqPkouPno5Vg8U7BOU7GHjoWF05mqbau1GuVUFBIhmYe8t11OG6pewbb/nv5TA990tna9yQAf08M9hvoI8AiTh5mo7b8K1zw2Ovgx7hCAApxcUg3awOgFPKGhDcBAJ0//UtXpM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756380939; c=relaxed/simple;
-	bh=thDvjNmBzA4MV5p/MCdU6fjMXdLa0+BwlfQm4LBNnRo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C1FAeNFpnKwwX0Qy7Kzuu9ic881NALBuHgPt5TGvzrGD1K9357FGaxW0JAwOjjaDUMAReyMFBnBwJIBHeJRO4KTm72dOYMt9Oq+ouVZ9NZnTNmPw4IEtXYYFJ60R7V3kt1HlIFZHhE2pvEqqR2fOPBRpYUr4+Jhuy2xdvSiT0aU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=SUKTdb3c; arc=none smtp.client-ip=83.149.199.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
-Received: from localhost (unknown [5.228.116.177])
-	by mail.ispras.ru (Postfix) with UTF8SMTPSA id 7EDBC40643C9;
-	Thu, 28 Aug 2025 11:35:26 +0000 (UTC)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru 7EDBC40643C9
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
-	s=default; t=1756380926;
-	bh=htruAr9Eay0kERu9Ry9Meq5CGWofFUXQDp6UXGVxBzE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SUKTdb3c/rCm+APUfO4mmrt+7zLs8/2Q6pYlnru1/Ba5A/BFBox0E93Y8AdPWhK2L
-	 zkQqqnDexyHJ0ET8M+839u/uRhM+Da52MYu3eb5rqL8t5xzpEnF/tqO2Un1k+2jmFa
-	 E2IwmbngfW0tS5h+9CtYtF6mKsLInRFuOCwTKXcA=
-Date: Thu, 28 Aug 2025 14:35:26 +0300
-From: "pchelkin@ispras.ru" <pchelkin@ispras.ru>
-To: Zong-Zhe Yang <kevin_yang@realtek.com>
-Cc: Ping-Ke Shih <pkshih@realtek.com>, Bernie Huang <phhuang@realtek.com>, 
-	"linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"lvc-project@linuxtesting.org" <lvc-project@linuxtesting.org>, "stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: Re: [PATCH rtw v2 1/4] wifi: rtw89: fix use-after-free in
- rtw89_core_tx_kick_off_and_wait()
-Message-ID: <20250828140912-171fa800b314416241936137-pchelkin@ispras>
-References: <20250827120603.723548-2-pchelkin@ispras.ru>
- <87693651fe394065b421d8d8fe171f89@realtek.com>
+	s=arc-20240116; t=1756381160; c=relaxed/simple;
+	bh=32lnGp4lkPiIQG16uYgv0iwb9z8QnRiBWgi+huwiq98=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uqhaPcA1gCJBZUzJ9HQa+7isQOJTeiTynRBfubTDqi3XRzYqg0IooZimN0UuqU/xeQj+SiQu3/X5311T1GO/TShL3UpYdnZGrAjo1HtmXhK0b5Dt63jjvQFfZP4oqzkQIP2obJDHYRDbTEdsq2MWXWvhLzJL6KfPrL8vY3I4Vi0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e78luegL; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-afee6037847so92517566b.1;
+        Thu, 28 Aug 2025 04:39:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756381157; x=1756985957; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=32lnGp4lkPiIQG16uYgv0iwb9z8QnRiBWgi+huwiq98=;
+        b=e78luegLdrj9pfHxygrpFvGyapuVeoJ1fOZLDrNrdMxgIayxvMkrx7MPBpSXdq62+p
+         veDrW9nznfHjtk3KO+XLxJDgI39i4QfwlPksWzksdsjV7Vpm5bBdBiSXzW8Uo0p8NyId
+         KjvTT/FM1XkmGsCBRou2dfJ4UoNGIBpk4ThJZRoQdquPPZ2BnBnnppbrXCDaGgMiAOZ4
+         6y9CfV/2h5+h/2xAoRldWpIgp+OoZNqZmrgx8bAfY/0+uDkY/ri9hG8l1O5sqNgHh9H+
+         cCv6ioyx/Ll5gsM1hAjVYSti2sLO9e0E/+cqPKpRsWtVw1ZL4f5yZhl3YHkOh2z/cXYU
+         8YvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756381157; x=1756985957;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=32lnGp4lkPiIQG16uYgv0iwb9z8QnRiBWgi+huwiq98=;
+        b=L1xk/aIknRdYZzdGx4lhfYJsg3cpHZn3SVnsz5WScJfmGkeXwLwJRZWyoFhh44C64j
+         M6svIWENOOdjWG7lXcfzf5CgpvDssKFbWbdPjCd4X6uACIn38TfQbC4VvU0AmSBSOIg1
+         tGOJbyJPU9SBog3YiOmW1ZF8+m4mYcaodzigdSquytF7k27fdghz7scEPh3HUPClb9no
+         I+bPjbBQhJ0I1gd+q3c+nUa1O9aFQPwQoOtjpa1DiIrnAV7b06IjUesLR3BssDA4sWg4
+         Qa297BGH9S26c7FDsgyTUrC1Tl5salKT1wrvXWQ0HERWwp+ZLFFzm0i9b13GaU4/Jkz1
+         KrjA==
+X-Forwarded-Encrypted: i=1; AJvYcCW1ig1SAn0JBV/hHMXF2+7+bqBWV+SZuHCYFdvexcw/hg3xp0aFGC6zGiRyXACTz/g9+PwR0WbH75L0NlY=@vger.kernel.org, AJvYcCWXi5ie7fYpjqGAcxIiuq3Ncm3/jEaIXHrkA3K/PzJ5WaRvQYqAMvD3gZ3p2ZDSzKOgsWNAXMqf@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFHaaFFDxhkM6Gr2+RjG8BOoSTGB2WUjmq8X89pwGIDO1V6B8F
+	xwWopeqB86YwA1f1NdFtQUA5Tj1a6R++WCgsLbnJb/QfJEcC01jBZ+O9/ASlFXdJYkU1Z01o78a
+	YOsq5gHwxHP/RX+fhAn2rz1Qc0p2Kyrg=
+X-Gm-Gg: ASbGnctp44UQKqLb+pf/cZnCUOkDo3FfWJupDHuwqbZX+YVHrqfcjDvDstFR6KRsmaK
+	MJEKv1JS+XcLGYW650Qa+QqnQzkzsjWwobjizPOKw0x2usIyH+S5xAvB4g/o8qAzM0yieev0l+P
+	1E4jmHq4MPRwjF+0qRA5uHe4DcOt0pQEMPWNMzFElR5OIAKBDqHKWYyR2yHSDggFep+Bo029hG+
+	mTQi1lteGvw7KloKe7+Q0QGUVq/lw==
+X-Google-Smtp-Source: AGHT+IGZH/o3/ZWnUowQ1BIqtmwigFCWIn3F2IS+uL3bqn93Wy1CKlPLan+sf2rvYLelRLO9nIF8Muv/3x7fpKZTGp0=
+X-Received: by 2002:a17:907:7ea9:b0:afe:11:2141 with SMTP id
+ a640c23a62f3a-afe2953815amr2412568666b.31.1756381156530; Thu, 28 Aug 2025
+ 04:39:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <87693651fe394065b421d8d8fe171f89@realtek.com>
+References: <CANypQFbECe10JE9MKzdU3X7kehVDoHr0kGnQpK1CVMJrg+qJwA@mail.gmail.com>
+ <CACT4Y+YLTF0bG6yJABOXg7zZt+1nV6ajHLJxSWzazSk2sH=tfA@mail.gmail.com>
+In-Reply-To: <CACT4Y+YLTF0bG6yJABOXg7zZt+1nV6ajHLJxSWzazSk2sH=tfA@mail.gmail.com>
+From: Jiaming Zhang <r772577952@gmail.com>
+Date: Thu, 28 Aug 2025 19:38:34 +0800
+X-Gm-Features: Ac12FXxtJpZJlZSZbFMYLNM5iLVnyn4qxfZp5SpXlursZxc9iOqGDqNUTLhd0dc
+Message-ID: <CANypQFYzTMwpWHgn3sPwpP7nF3js-Q4gt7rFBBsFy494uEnB0g@mail.gmail.com>
+Subject: Re: [Linux Kernle Bug] INFO: rcu detected stall in e1000_watchdog
+To: Dmitry Vyukov <dvyukov@google.com>
+Cc: "anthony.l.nguyen@intel.com" <anthony.l.nguyen@intel.com>, davem@davemloft.net, 
+	intel-wired-lan@lists.osuosl.org, jesse.brandeburg@intel.com, kuba@kernel.org, 
+	netdev@vger.kernel.org, security@kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Thanks! I agree with all aforementioned comments but wonder about this one:
+Hi Dmitry,
 
-On Thu, 28. Aug 08:07, Zong-Zhe Yang wrote:
-> Fedor Pchelkin <pchelkin@ispras.ru> wrote:
-> > --- a/drivers/net/wireless/realtek/rtw89/pci.c
-> > +++ b/drivers/net/wireless/realtek/rtw89/pci.c
-> > @@ -464,10 +464,7 @@ static void rtw89_pci_tx_status(struct rtw89_dev *rtwdev,
-> >  	struct rtw89_tx_skb_data *skb_data = RTW89_TX_SKB_CB(skb);
-> >  	struct ieee80211_tx_info *info;
-> > 
-> > -	rtw89_core_tx_wait_complete(rtwdev, skb_data, tx_status == RTW89_TX_DONE);
-> > -
-> >  	info = IEEE80211_SKB_CB(skb);
-> > -	ieee80211_tx_info_clear_status(info);
-> > 
-> >  	if (info->flags & IEEE80211_TX_CTL_NO_ACK)
-> >  		info->flags |= IEEE80211_TX_STAT_NOACK_TRANSMITTED;
-> > @@ -494,6 +491,10 @@ static void rtw89_pci_tx_status(struct rtw89_dev *rtwdev,
-> >  		}
-> >  	}
-> > 
-> > +	if (rtw89_core_tx_wait_complete(rtwdev, skb_data, tx_status == RTW89_TX_DONE))
-> > +		return;
-> > +
-> > +	ieee80211_tx_info_clear_status(info);
-> 
-> Don't change order of these calls.
-> (it's wrong for normal pkt because their tx_info are cleared after filled)
-> 
+Got it. Thank you for the heads-up.
 
-ieee80211_tx_info_clear_status() clears only TX status part of the
-ieee80211_tx_info. It doesn't touch 'flags' field - the only one filled
-here by rtw89_pci_tx_status(). It shouldn't be wrong for normal packets.
-
-The reason for changing the order of those calls is to have a chance to
-update tx_ring statistics before fast return from rtw89_pci_tx_status()
-in case of tx_wait packets.
-
-But, ergh, I can't find those stats reported anywhere in the driver so
-it looks like just not a real issue currently and I'd rather not change
-the order, okay.
-
-> >  	ieee80211_tx_status_ni(rtwdev->hw, skb);  }
-> > 
+Dmitry Vyukov <dvyukov@google.com> =E4=BA=8E2025=E5=B9=B48=E6=9C=8828=E6=97=
+=A5=E5=91=A8=E5=9B=9B 19:05=E5=86=99=E9=81=93=EF=BC=9A
+>
+> On Thu, 28 Aug 2025 at 12:40, Jiaming Zhang <r772577952@gmail.com> wrote:
+> >
+> > Dear Linux kernel developers and maintainers:
+> >
+> > We are writing to report a kernel bug discovered with our modified
+> > version of syzkaller.
+> >
+> > The bug was initially found in Linux kernel v5.15.189 (commit
+> > c79648372d02944bf4a54d87e3901db05d0ac82e). We have attached the
+> > .config file and symbolized crash report for your reference.
+> >
+> > Unfortunately, we do not have a reliable reproducer at this time. We
+> > are actively analyzing the root cause and working to create a
+> > consistent reproducer, which we will share as soon as it is available.
+> >
+> > Please let us know if you need any further information.
+> >
+> > Best regards,
+> > Jiaming Zhang
+>
+> Hi Jiaming,
+>
+> This is likely to be a false positive. We found the default kernel
+> timeouts are not really suitable for fuzzing. Consider using the
+> official syzkaller-recommended configs with proper tuning for fuzzing.
+>
+> Additionally, v5.15 is extremely old. Check out:
+> https://github.com/google/syzkaller/blob/master/docs/linux/reporting_kern=
+el_bugs.md
 
