@@ -1,90 +1,85 @@
-Return-Path: <linux-kernel+bounces-790345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FC96B3A5A8
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 18:09:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37EC5B3A5C4
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 18:11:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8AC735E34B2
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 16:08:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 95C92162BC4
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 16:10:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAD83298CC0;
-	Thu, 28 Aug 2025 16:08:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78C8229ACD8;
+	Thu, 28 Aug 2025 16:10:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gAJdjTK2"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IiPR3XXk"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EB89285065;
-	Thu, 28 Aug 2025 16:08:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DC7B274666
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 16:10:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756397298; cv=none; b=GaL5WQ5IUtYB0myCIoSvjXbH8sGvd+2tc+lWGA7l2QNWVTKpOMVgrLYa6SQdyPrQi527xxpygoqPJsW9dlgkTnjlYDqby7daltFe3fIGWPzuz6PlDtVL/Pp0+In2kr3UAyXuFtTS1LXXacomHZEXqv+9w97lit4V0yk8U701veo=
+	t=1756397420; cv=none; b=gEocCxdACpNUUjcM42qJaP0/BuHymmJNxRAuiMk5PjmfYv2zIlsa1LshtTl/AM/Y0A0fjmv4aIBEBLg5GgwL8auNRf7DEm9MMUT++RFPkrdFmbDrxKYb6DOcIdZWYPfL78VCtR42FTwMfYjglNAuwL9Qpws5Mn0Ko+oZ1KbAyAo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756397298; c=relaxed/simple;
-	bh=chl2pglmKuX5THNV4UczW2DfJ8GWxqeVOVktQ94bii0=;
+	s=arc-20240116; t=1756397420; c=relaxed/simple;
+	bh=kOVKQaK8fXX3EdVsUxkmFQsK9WvZaywNwY3+kAGtDbI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VQ0iPO2urATIExs855kEOTD9zwSXSsLJle8XRxFdrgWRsGJpzB+JLUVZzcKAj7k8tgs7AaB8chpWyl2816H3is3dsVUmAju+3Bxvv3z4F8jH0IB6UkZdONEpAu00MwmXP4gWs8YDHAk18kFW9grbsB6AUMgtR5iHCZWtvLBs+78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gAJdjTK2; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756397297; x=1787933297;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=chl2pglmKuX5THNV4UczW2DfJ8GWxqeVOVktQ94bii0=;
-  b=gAJdjTK2tyJp6Kma2k1Gwzx4+iEoaX0M/3jdWjpdQMnMqubZ4p5sh787
-   0VrCZPUdTjTy4wCxJjdnxFUB7nydPkaYcW6LnJVJCsFJUJqgUcIH6c4Jh
-   B3tct9fp7EbQpPuhdc9UjML68BgqpGQTBqy7O8SMvUWlqe/WW7XAd9Sdn
-   47rGfOQ7QH0LASk6pQ19nlR5FW0nGOEHAfwANf9Z8iIYBmqglX0ch5o4h
-   5y7kfa1UPL0uLVq6ffzkiFNRtjeLVn+1BzGR5Ffyfphlbm0nnoo8pcgvH
-   APY69hKJOxb4JIFOJ5CKgF7kSEkAB7LlKd7bFYVH68l/kb2hIgG2qMacZ
-   g==;
-X-CSE-ConnectionGUID: wQklFKzrR1ulYeD3orhqjg==
-X-CSE-MsgGUID: C7YqnZdMRWaslGcvh+dypA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11536"; a="61306461"
-X-IronPort-AV: E=Sophos;i="6.18,220,1751266800"; 
-   d="scan'208";a="61306461"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2025 09:08:16 -0700
-X-CSE-ConnectionGUID: 6NXhRMzqTDaxYPKfnPew0g==
-X-CSE-MsgGUID: d3UIs7vBS2q49mxX4Zsurg==
-X-ExtLoop1: 1
-Received: from fpallare-mobl4.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.245.135])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2025 09:08:11 -0700
-Received: from kekkonen.localdomain (localhost [IPv6:::1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id ABFA411F9D4;
-	Thu, 28 Aug 2025 19:08:08 +0300 (EEST)
-Date: Thu, 28 Aug 2025 19:08:08 +0300
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>
-Cc: Himanshu Bhavani <himanshu.bhavani@siliconsignals.io>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Hans Verkuil <hverkuil@xs4all.nl>,
-	Ricardo Ribalda <ribalda@chromium.org>,
-	Hans de Goede <hansg@kernel.org>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	=?iso-8859-1?Q?Andr=E9?= Apitzsch <git@apitzsch.eu>,
-	Matthias Fend <matthias.fend@emfend.at>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Dongcheng Yan <dongcheng.yan@intel.com>,
-	Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
-	Sylvain Petinot <sylvain.petinot@foss.st.com>,
-	Jingjing Xiong <jingjing.xiong@intel.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Heimir Thor Sverrisson <heimir.sverrisson@gmail.com>,
-	linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 0/2] media: i2c: Add ov2735 camera sensor driver
-Message-ID: <aLB-6GsY-OiCZi9I@kekkonen.localdomain>
-References: <20250821143126.319470-1-hardevsinh.palaniya@siliconsignals.io>
+	 Content-Type:Content-Disposition:In-Reply-To; b=BB+IAc0seWbtppm0iv/d9QeeijjChpVQSlBbaZlkrcwYM5EDBF70Ct4yGpdb6V1iRpAOePAsbv9tUYkKRFNxqL9m2VrLTbysyoksMOsffzJ5uHTNPoEJ688POWQajH4JJWQUWkxuwy0sM28q6urh8qRdUFfqbaC0iw6/TbJUUKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IiPR3XXk; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-7720c7cbcabso854789b3a.3
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 09:10:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756397419; x=1757002219; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=nRTOW2045DXQQ+GW8Xk5izAs9xkstSciGXpe/X4tnN4=;
+        b=IiPR3XXkkn7kSHlz4y7hiTjMQersDfYmXK4s8b3uS+YZSe1vddwQwCHFUJBfP4rZ49
+         8NqDszke4mDmgUfPA/7j+o1ha+3ArSwyxEcccaRINy/WeQNuK1e9loinqtzgB2rCazFk
+         w7FKaXp5pKuqWOzxet+ZyWOeti+2HGPGOZ3FIwvEJiL8tKiJ6ptWOLZ+ZuJ3VIznDDqY
+         NqrykqyBrjQj6MElJp/7+dMgSNWrf+ZZoIEwVUHsYFUOdGNLhY+kJnOF17nsDLoC1P/s
+         ruSdJw02XoSBbzvVfeqTTommG6XzU5EoGryt1ZPrBccbrvCnDLsfzV9kThqZ4T9gg7wP
+         xKMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756397419; x=1757002219;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nRTOW2045DXQQ+GW8Xk5izAs9xkstSciGXpe/X4tnN4=;
+        b=nWxcZm4a4K9gMF46+E5ulxGJVf03/g3w7/Rvapd+FmiT9OqZYwwUFSKVfzlcez3orc
+         k4Oj6Z5WnFMmQBc4lDz/W0auEq301604Oir4ywAoArIS2syeiEJe1cBSNddJhYkCFdZT
+         po5jzfZzx0ftWxAy1chSetW6xqJdjwiLqUVjuMedgvN2I+dgJC2OxecGBMpMeZop9HmS
+         uUFbOXjePaW0fpsV82e9/t5RkeWT+LCJhVstPTZ29Ze/f++Tmy5GUjdbG3z0haQ/OY1a
+         gkvX0DdxG0LxPoERcztVWLkcCWqSyzIke3otzZjPcf6q/jq/LdLHqhtR2STKKVVpETR7
+         p1pA==
+X-Forwarded-Encrypted: i=1; AJvYcCXtquCWB+aKnjYJEeYy7FjPqzYPrrnMpMpTzeeWyovJ0XZRZEyw3zABuGw2phAISp/DV1Y7RNvNaTkmS+8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9Btq89xgcInEPc6rFJlEAEpMsyA3OtNcrk1wk0pZ6p6hAl2Kb
+	gB24VKriuq7/xKA5HbQKQjMuSQiaC8ybEtV2JftrmNwjt4lh8OM+8I/V+gGlLg==
+X-Gm-Gg: ASbGncsxZay20FKqgxEGVBzkK2jNl7ExYAqLAwiTmkB79A1nlrSOyeB2zY3zeOi8sry
+	8Bb6im1ex9OHRU7ZwXnAMSXGnwO32qqv9EvirS61+6bxeVTksNe7tRfXFIGj5qPxzIUWW8KrzeF
+	emTGyeQTebnA+jNpsOwQ25k3czqFXUmQ8Dq688WRov5XILGjK3AzWSFFV2aKNrnVp01/MNJgpHL
+	zKkyO03yHYiq8HCEHbV6tUPt0gXekQC/c7yfox2+CVReJpvADFlN9rsSHfvFU2K47vHIH6YBBH7
+	ZB8WMPmpZnSLDMRQNqFNBnGoK3InMjuJFwRH2kZb9e4G5MjPOs5kifbOYLb6AHqpuoZF0CX5Dpv
+	ydLAdqhwIDPsdw9iV+AubMexRY325AIwRtRimtrRgZN9kFirum/FUPQ==
+X-Google-Smtp-Source: AGHT+IGQ8xaVEq/0IKPq/hc5a9wL5srxZCFhCWzt7RsSEaXP9yO+1p1Sd5ZE9XcNBfx7e810X1mGrw==
+X-Received: by 2002:a05:6300:8b0f:b0:243:78a:8299 with SMTP id adf61e73a8af0-24340e068d0mr32039211637.50.1756397418589;
+        Thu, 28 Aug 2025 09:10:18 -0700 (PDT)
+Received: from fedora (c-67-164-59-41.hsd1.ca.comcast.net. [67.164.59.41])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b49cbbbd1absm14421652a12.52.2025.08.28.09.10.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Aug 2025 09:10:17 -0700 (PDT)
+Date: Thu, 28 Aug 2025 09:10:15 -0700
+From: "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
+To: Max Kellermann <max.kellermann@ionos.com>
+Cc: akpm@linux-foundation.org, david@redhat.com, lorenzo.stoakes@oracle.com,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] pagevec.h: add `const` to pointer parameters of
+ getter functions
+Message-ID: <aLB_Z3dv8dBYt-7V@fedora>
+References: <20250828130311.772993-1-max.kellermann@ionos.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,19 +88,12 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250821143126.319470-1-hardevsinh.palaniya@siliconsignals.io>
+In-Reply-To: <20250828130311.772993-1-max.kellermann@ionos.com>
 
-Hi Hardev,
+On Thu, Aug 28, 2025 at 03:03:11PM +0200, Max Kellermann wrote:
+> For improved const-correctness.
+> 
+> Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
 
-On Thu, Aug 21, 2025 at 08:01:11PM +0530, Hardevsinh Palaniya wrote:
-> The Omnivision OV2735 is a 1/2.7-Inch CMOS image sensor with an                 
-> active array size of 1920 x 1080.                                               
-
-Have you run v4l2-compliance on this? Could you do so and provide the
-report, please?
-
--- 
-Kind regards,
-
-Sakari Ailus
+Reviewed-by: Vishal Moola (Oracle) <vishal.moola@gmail.com>
 
