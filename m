@@ -1,211 +1,250 @@
-Return-Path: <linux-kernel+bounces-789864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3595AB39BC3
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 13:40:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 431D7B39BCC
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 13:42:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C960D560393
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 11:40:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53DC81C22B91
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 11:42:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07F4EB665;
-	Thu, 28 Aug 2025 11:40:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65F4130E825;
+	Thu, 28 Aug 2025 11:42:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="C83XqEow"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=phytec.de header.i=@phytec.de header.b="o+tPRZjB"
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2092.outbound.protection.outlook.com [40.107.21.92])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84539265298
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 11:40:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756381203; cv=none; b=p+xIi6Z8cs9FOz+BPAQ/OJCkfGCA6eOUxFGlX5a8xZY/0rRiFX94OgGtYLGsXfZb4o+ytXY3aC4U1ne5t6wqzKXlpO8Zm/N7kXy7Z8hK8+uBi2JDEuPtRXBGfhdXy8zsA+EI/s1b/xj1gl8dvnQjEOjK4HVZBB6sbPn/9UsNnu4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756381203; c=relaxed/simple;
-	bh=O7xdEYswjygSFKghVFDGoQEw6p/6DC20s/4mgaboZKw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=RTttiKIUAh2dfBYWLKK3XENxrK9X7cvEs/OnNJYLApUW1jfpL6OyJDy5cZZTZvv4NixaU2+rjkteUPy07SsuXWr5ZI1KZ+UqP50gOz1hMtboQALYaxSbk/iwqaFQl2HbSEftpQyo7gRqQOiaZVuiXfLLBU9Z0XaXWo03kfpAivo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=C83XqEow; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756381200;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+tCqT5/nyItEZam3sx+EY/DN0F99uvzrdRTcSCk3iUE=;
-	b=C83XqEowjYql3x0J1zHgLTvJYWyzeSD6LILgEfMEICnT4tzklcOBGmu6xgpfpS+XE9CFmw
-	RrlZ7HnsYGd7WLjIkQq1qGmciNnNA5r4g7TzEC986bi9NbVTfttqiulzOpVnp25FLgW3ND
-	5y8g3JsUc2eNYNAJb0BA9XDCzWw7Fwk=
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
- [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-608-mQd4hosEN5ymNAyYSmwFdA-1; Thu, 28 Aug 2025 07:39:58 -0400
-X-MC-Unique: mQd4hosEN5ymNAyYSmwFdA-1
-X-Mimecast-MFC-AGG-ID: mQd4hosEN5ymNAyYSmwFdA_1756381197
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7f674810ddbso240314085a.3
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 04:39:58 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756381197; x=1756985997;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+tCqT5/nyItEZam3sx+EY/DN0F99uvzrdRTcSCk3iUE=;
-        b=tf3T5Z28Ka+55UnhSlrYhwErgIysq2gARyyHUX8G+XW7Nty3CP7+mj+cIaFYLptXqK
-         7J/EfqY2K8Qn4dRwWkOltrf60qTloX5jmnp2kFFb9+m5aLjV5u0olEM7gO+Az32RPSgP
-         uPzk7YcuUvP5lPmIvZeHgEbp4LQFOzInd83C+SUibJ9aldw30ydwpgA5GCZ/1JXae7EG
-         XlNO02j2c/7wCNgi/BMPTkliJ4EGyATaxzO/uJ0tC4lkKDcTsWhiNOE+hsdVE1/qwDR6
-         fPZyabvBGMhYZWrt7JW8qeiDTC3rpuFFQ6f8BQHQuBJsCEt1ZBtzOVoFjsWlv8XZ5veU
-         X5Fg==
-X-Forwarded-Encrypted: i=1; AJvYcCX2HQrC9wm1WxFL0CXq4+ZI1IKwRUQjv2x/gfc2iUa89+wkXedqwpU9tx1MfRUHTOMy+EnT1tpzYEVRRAk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yza6GIS6vba6ogYTP/dyWeW6idGv0Vw9NAS6KEgOuWjNbTTSW5c
-	ALGsOSv6VEt6BBl7fzmcjLpu/FJLrr8LJotVKEFhLs2y4spD2w2rZ9mr52OtcSwYXMOT15UrbuW
-	I/Vq2bb8wLBUtC0ZOYewfDEx4wLCm+S+Cp+XVbBPcs1ZlI3viZobQPAdwJVjME+BxrA==
-X-Gm-Gg: ASbGnctsDf/KxJmr56xiRIIR9umR7YekvfyJ4yi2jp/9o7XwQlL5Wmg53VyYoHpIAAx
-	qyeiDIQ4OewO+yIcLdbZ5ImtyncxYbtYGuys3wmBT9fiWfhgwhsH2K7WMyMIXNTquLDrSAM85jH
-	jMGL1XnXSTH1nLd0XV/gr0QGA4X85TqqG1BeOvCwVZEFN2u0/2+5C8qL/TCzLI0ungEc/bdZ+Ad
-	k+Yc0ht2aeLfxGjou2vewLkq+wB8wqVZp1QvvBzYiyt6iYzX9BciIeVElvept7ZiMOZ86VyfZVR
-	F2uTi4GKPON3GvBuVc3YOQVkibwmpwFgCXIXmlR88R3zjn9JqKMgqOM4AXH4UgjaOICiknX4/Jd
-	iOi9xBUsH8xR53Au+wfJYAcDk
-X-Received: by 2002:a05:620a:2951:b0:7f0:21be:5fb4 with SMTP id af79cd13be357-7f021be64c3mr1705796585a.35.1756381197377;
-        Thu, 28 Aug 2025 04:39:57 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEe/KT7M75lXMqJagZz8fr9J7i71gy5nhg7Cmmy62zuCLwA03Rm3Yc6Uqbz4JJ+BwYMpG+vaw==
-X-Received: by 2002:a05:620a:2951:b0:7f0:21be:5fb4 with SMTP id af79cd13be357-7f021be64c3mr1705792485a.35.1756381196672;
-        Thu, 28 Aug 2025 04:39:56 -0700 (PDT)
-Received: from vschneid-thinkpadt14sgen2i.remote.csb (213-44-135-146.abo.bbox.fr. [213.44.135.146])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7f9a317338csm183426085a.18.2025.08.28.04.39.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Aug 2025 04:39:55 -0700 (PDT)
-From: Valentin Schneider <vschneid@redhat.com>
-To: K Prateek Nayak <kprateek.nayak@amd.com>, Ingo Molnar
- <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, Juri Lelli
- <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>,
- Leon
- Romanovsky <leon@kernel.org>, linux-kernel@vger.kernel.org
-Cc: Steve Wahl <steve.wahl@hpe.com>, Dietmar Eggemann
- <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, Ben
- Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, K Prateek Nayak
- <kprateek.nayak@amd.com>, Tim Chen <tim.c.chen@linux.intel.com>, Vinicius
- Costa Gomes <vinicius.gomes@intel.com>
-Subject: Re: [PATCH v6] sched/fair: Get rid of sched_domains_curr_level hack
- for tl->cpumask()
-In-Reply-To: <20250825120244.11093-1-kprateek.nayak@amd.com>
-References: <20250825120244.11093-1-kprateek.nayak@amd.com>
-Date: Thu, 28 Aug 2025 13:39:52 +0200
-Message-ID: <xhsmha53jllo7.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C201619ADBA;
+	Thu, 28 Aug 2025 11:42:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.92
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756381339; cv=fail; b=INt6YOOIG9zzOoeQ8Cqdy+UBG2hVGrDHMoy6PF9v9q+bgS/X5BQwVUvqWdAxQRROgP3kXe4ep/FZbGYBCX4vkiwaThwl0t3GXKEgjWIK9LNtL+1B9EJk4Z34EMdi5qc/YeiMTBfrDsWivQrGHGAjMOV2VJfL4bsFSd0niOXtPMs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756381339; c=relaxed/simple;
+	bh=WKi668MqLIo7ap0wd3u0h7+SCSjM5O9Y5H+CyVwnN3s=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=CkhJ3B8g2ruxlBB63qY0dqLdsQpUf70ngrPsBUffm7MxIbYl+MSrwTXZ5CrTdlrLuwMrl53sVe91Zz5Mu+AdLyb73TAdTiJPoqC+E1TdcnhFRbzOMXzb6pqD2xB4EVcFkEye8qlBibv7ltPO1c2PXuDyG5WXMV8D2CK8Lbdsn8A=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=phytec.de; spf=pass smtp.mailfrom=phytec.de; dkim=pass (2048-bit key) header.d=phytec.de header.i=@phytec.de header.b=o+tPRZjB; arc=fail smtp.client-ip=40.107.21.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=phytec.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=phytec.de
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=pdaifAxjzxrAeJPgyvGRyxc7shqP0ykpnM2ybnR9PW3rz1iyQoiijwb1+QmNvX/KhBcGyleQxP/PXls1ov83VlGBYw40K9Nlqh15WQplSUjXnk1iCmodMC67tPGiQ1Fd938am5hhKspvrQ7MfzSEgJSeuG/Ya1Hxokb+DWBJXXUwpEWOSYxXOJfS7YsGYP1AqhWGhgX5ZfpRcSSHM637fU9YolGfUcSgqosAxaAUDjVCjoRM3cTjMi+lHBp8XsHt6vFJOT0DiJ11YeqZAYeuK71IrNp0qN1+aNyzsnS7LIsm1YUi61blCYvc5hwHJudgRnjKJ5HjAiz73IVNBxZDcA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=L97oVJYBYDqouiRl0f4Vrh8PsYEpcHFztwVgWD5pIUg=;
+ b=gM7GkmgmSb9GyUoVME4yT1AWS3WDUqBgDz/fI90z5jff6MiikP9Jk+tMcK8+thybekLboEDkpGSyz+75sELrHvSnaVVvfFhDY94Uorg736tZZT4QIMLm86VIP9JAy87ao9L/BsXC1d+3mpMe6iFzoKn1nVWvj8K5aHqfHjXVfSmZNmtPQU+H6VcjJV069HMsOoq0CChcfulmjiwyyFYIL3LhxBg84RmXi+YLVL9JaPtDr9zETovAjZ0AL95amP2YnPwos3H4HlkHybUZ1WzwqyxkLgArakFPqvdZhyeppOWzzif9wH6U/sMtXQgawV+e8O43WaRVn4vwPWg7nyoHzQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=phytec.de; dmarc=pass action=none header.from=phytec.de;
+ dkim=pass header.d=phytec.de; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=phytec.de;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=L97oVJYBYDqouiRl0f4Vrh8PsYEpcHFztwVgWD5pIUg=;
+ b=o+tPRZjBqod30kk95EAyEMUnO4rj5iW2OoTZ+8nsruMNcw96epU4wLHEozDgRm8iBfKqm5jvCCHRaBcvx2dtEhtS9Q3N4M2kVB7Abh+Rz4alpfJwKFZmiN+1f7r1OD+GauipkscsJT/bFl90uQOAnF2+l4mylUs1fGrSvooHMFd/k3+wru303DNDnVkopRye3M/834Gx3TEpewZnqjQ86X41HZBvR2h/bZjA2sNgZIOklxWBq5uW5yFnV52mE4pU2GrkJ2Dv4SCHpMnmmuWA4qDHyLTmeFYZOYG+lAcVnm3Rb6t2zvnAScL7mSmXZNAYpdLEB8zm8uiinMiceXUuBQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=phytec.de;
+Received: from AS4P195MB1456.EURP195.PROD.OUTLOOK.COM (2603:10a6:20b:4b3::21)
+ by FRZP195MB2680.EURP195.PROD.OUTLOOK.COM (2603:10a6:d10:139::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.14; Thu, 28 Aug
+ 2025 11:42:12 +0000
+Received: from AS4P195MB1456.EURP195.PROD.OUTLOOK.COM
+ ([fe80::369c:a760:5bf9:8d4a]) by AS4P195MB1456.EURP195.PROD.OUTLOOK.COM
+ ([fe80::369c:a760:5bf9:8d4a%7]) with mapi id 15.20.9073.016; Thu, 28 Aug 2025
+ 11:42:12 +0000
+Message-ID: <b745deb3-b625-472b-b55a-468eebbdfb16@phytec.de>
+Date: Thu, 28 Aug 2025 14:42:08 +0300
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 18/33] arm64: dts: ti: k3-am64-phycore-som: Add missing
+ cfg for TI IPC Firmware
+To: Beleswar Padhi <b-padhi@ti.com>, nm@ti.com, vigneshr@ti.com,
+ kristo@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
+Cc: afd@ti.com, u-kumar1@ti.com, hnagalla@ti.com, jm@ti.com,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, Matt McKee <mmckee@phytec.com>,
+ Garrett Giordano <ggiordano@phytec.com>,
+ Nathan Morrisson <nmorrisson@phytec.com>, John Ma <jma@phytec.com>,
+ Logan Bristol <logan.bristol@utexas.edu>
+References: <20250823160901.2177841-1-b-padhi@ti.com>
+ <20250823160901.2177841-19-b-padhi@ti.com>
+From: Wadim Egorov <w.egorov@phytec.de>
+Content-Language: en-US
+In-Reply-To: <20250823160901.2177841-19-b-padhi@ti.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: VI1PR10CA0107.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:803:28::36) To AS4P195MB1456.EURP195.PROD.OUTLOOK.COM
+ (2603:10a6:20b:4b3::21)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS4P195MB1456:EE_|FRZP195MB2680:EE_
+X-MS-Office365-Filtering-Correlation-Id: 60f9263c-17d8-45c0-a547-08dde627ed7e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|7416014|376014|366016|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?NHBTWVNOdGdPZ09IUmJIL2dMWXRybnF3dVY3a2FlTVNWOFEveEpyS3VIWEhk?=
+ =?utf-8?B?MUNMMkcxUXNQOTJESjNETkIrbFdYdWRYRnZGbXo5T2NvZlhpTjlrS0poVEdH?=
+ =?utf-8?B?U2FsVE9malp4ZHJudkdqSDN6eTZzUHJiRnBHVEF0dE1CN2NFb3NKUk4wUFh6?=
+ =?utf-8?B?YWZtSUNtK3hTbjJ1dmJPWjh5c3lWZnZjMWdOVjZsMTVTUUg4QkkvTkVKcVlD?=
+ =?utf-8?B?MHRFOTFrSUxpRHhxWEJsT0s2ME9sb1FuUGh5djhnVjVlUzMyTnpJNDNSQlFz?=
+ =?utf-8?B?Y0p5WmdrVmxTZDU4cVgyWUptcnE1Zmo3azVnSENtU1FEeUFEbmI2SHMxTzFu?=
+ =?utf-8?B?L1RXMUs4RVRRQWNVdHU4dkl2RkRxNVVXVTg0Tmpyamo2a2o2TUMwU2g3alJp?=
+ =?utf-8?B?NzB1MDkwZEk3SG5seGpsZ1V2R1RZQlhqNzNkMHpWVXc1TzRqVWFCdlE0VjFq?=
+ =?utf-8?B?Y0Q0OWxWbmU3cFppVWNYRkNTVEFPRjFNWG5LUUtZSmFkbVBwU05sZXI4Vk5r?=
+ =?utf-8?B?TjA3djRmLzVxM1h2UnFWUlV4L2RiRTVJQ2c4d0NJcTc5NC9QaFJVOUxWaHl6?=
+ =?utf-8?B?N25xdjloVDdCbnZZUlQxa2FBR3planoxTTM2UElzL1pKNThKTTFMVzdSMktU?=
+ =?utf-8?B?cnFyVXphRDlwdmNMcU15bnQwcEFBVWF0UzllR3dMN3g4OEhhM0hoejJmTFhl?=
+ =?utf-8?B?NjNDcjYwOERycWoycHBKejkzV0xIOC9CY1VnL3R5SDdqeDN6N21SdkovbkVl?=
+ =?utf-8?B?U05JN1VCeUtlM0JOY01uVTA5UVZvUE9sQVJTNVJrNkFwc2lNV05KSlNSeGU2?=
+ =?utf-8?B?VDkzQTJycm9RbzFiYXBERDd3R0w2OHZxRlI5VWpIS3FnaU5xZ3FiVElIUlZ3?=
+ =?utf-8?B?QWc3YXF6UGk5RXNNMXBFSWVuaHVjdFhhbEx3TUNXaFNjSVBnRjFodGJQcTNu?=
+ =?utf-8?B?VFZSVWRPWjhWdENvUlY4M01sckxCaXRZV0g4Q2ZRK2lyMUUvQ21vSWRxaCtl?=
+ =?utf-8?B?bkFJTEpPY0t1QkMrZm80RzBnbFBoa21rMTB3Z1FLWndFVmFFRU90cXhDWFpo?=
+ =?utf-8?B?VDRsT2FBVWl4UmRWR2RrVFJqanlsOU5QMk0rV2wwSHVnM2luZHoxcTNZK0hL?=
+ =?utf-8?B?cEtteWlCY0ZObzdaaDcxa3k2eWFRMXNITGMwMnFHaTZxZnNRWEpUbkUxRWRa?=
+ =?utf-8?B?REhqNEwvRTFXQXFKdGdMZVpPcU1kblJWRWp5eW1UV0d3MGV1M0lFdHBFRW5J?=
+ =?utf-8?B?UnBxWC9jdm10S2hmWVAvZ0JnOFQzQzR5d3pGK1hxQkJFbFdsQ3hpYi8zZ3BH?=
+ =?utf-8?B?WCtzTFR1eWRxZTBTQ3dBdFVaQWNDSktBclV2SEU3Y0x6UGJrcjRYd1NPQWhl?=
+ =?utf-8?B?M3RHcm4vRzh4K3JxemxEQVZGMkIvME15NVB1VkhwYy9ZdURLaDdPdStUM0Jh?=
+ =?utf-8?B?VVI1ckRKNFhYUGZRVDRhOUtVTHdhVlQ0Rzg0Z0JjQTJnZE9Zb0ZDZjhUWGRh?=
+ =?utf-8?B?SzZOd3llWEY2OStxN3F0WDJqY3JibXBTOUtwckE0bGdQSkM0MnN6akFNazFw?=
+ =?utf-8?B?OE8xUHBFNVQ4VWRSbStMcDR5N0tqQmRLR2JmV0dkQTY5OC92eC81bytpVmZR?=
+ =?utf-8?B?ZmZ1ZEI3ZGhBNVBLR0VIdU5lZHN2WFA2RDA1TkZ0ck1uNTNNVVFFT2RMNzcw?=
+ =?utf-8?B?NEM0Zm50VGJrYU9xTjJ4ZCtNQWdpcXhuL2VyNitrTGRVdmdMTDFabkFxUWor?=
+ =?utf-8?B?NmFrN3p0ZEFHWHVpUWpmNXdJNGJQL2lXVnVVYUpkdExlRmYrRkV2ZGh4T3c5?=
+ =?utf-8?B?UjhwcUVidGdqbWZ1Y1JoQk0zVDJhUVM1Nnd1b25hZkppUU9YODh2d3FIRlps?=
+ =?utf-8?B?TDFqOW1GbTdDQ0JnVTcyQ2s3RGtQU3g4RG5MZ0Z1dHZIcEZLSS9IUWVWSFRm?=
+ =?utf-8?Q?AjUoZ31Ri/0=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4P195MB1456.EURP195.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016)(7053199007);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?MFpyRUtlaCsvZUJmZjl0YnJxQ1E5SWtIeUl0NExIY1FCM1pHaEp2YVJWUkUw?=
+ =?utf-8?B?U0dMK0xpOStSQWJjbkVrZGdiaUdjRVEwbHhEc3hBaWU5N1VYM1dBbHB4VFhP?=
+ =?utf-8?B?QVlnZllYLzNJZnJIeDBuY2dOVjhxQnZQYUd1UitkR3NsZlkrRW9tRDFuTTFN?=
+ =?utf-8?B?MEpqSjJma3orcHJQMVZzdnZlRDBpclBiR29IdFo4TWtsSjdNbm12WHlEcHY5?=
+ =?utf-8?B?WTFPcHpPNnJtVC9mRlVOVzJzYjdnUWFXek1pOWsrTHFZTnEwNEs3a0wwOWpR?=
+ =?utf-8?B?b2RCZElKc0JJZ29UOHYzSzZmWWtDWXRWc3BZMUJJR0JJTUl4bU01cldrSFA5?=
+ =?utf-8?B?N2s3TjFBdExhZjdUN1E5c05Rdmo0WkVIUWJmbGJqd2RBV3BaY3ExbkpRcG5S?=
+ =?utf-8?B?ajlmd3RlclZLWFdZeTRrSEJUZ0JmeUF4WFUrTEcrSGlkLzhHY3J0bE85Y2JC?=
+ =?utf-8?B?ZW4rQkxzV1lMaGszcU0yMFNlV2J2NkhaaTdkR3FyY3Z1YXlLU2kxWGtQcUFJ?=
+ =?utf-8?B?MkZ5eEJPS1VPTE5CT3pSSEwrMzMyWU9iVXVvWlhYNmpheEUrNENwY1QxT0NX?=
+ =?utf-8?B?TzYwSDJ6SXZFa0ZwbzVCcEN2ZEY5RkxzbEdJUC9OUlRXaFZ0Z1gwYUZ2eVp3?=
+ =?utf-8?B?UEs5RHZmZHdJeHh3cG1pQXNPa1FxcWtIcnYwSWpqYU9BbWZ3dlJ4MHZrdTBm?=
+ =?utf-8?B?RjJ4V2RWZEE4OWRnNi9UVmxXWkJFZUtDTjY4WVJYQ24xdmtlTUFqMHJkTWl0?=
+ =?utf-8?B?NVljUUpWRlhZN09mOXl5SnAzK3hxcWdIS2FLekpwYjJJNkhJUDZNODZxT2Fq?=
+ =?utf-8?B?dGZ5WkRXR0hiYlRnYzNYclRqMTNiOHh0Tk1CYjlyYkhNZW14c1VzWm84QW9x?=
+ =?utf-8?B?U0VtTHphdHFCdU5VN25IbjNWT1FnaThkMjMyTGdpUVFFVG45WSt6OTcrM0dE?=
+ =?utf-8?B?Sk9hdUxzKzkxRWw4b0U1RzRaUll3NGU2QW9wTU5MclFYdUpqOGovTzRERkF1?=
+ =?utf-8?B?WVVueUpodDZGaGI1QTNCbXBnU3NCcXJnNko2QU1hYkJMQW5KUC9HRUI0YzYz?=
+ =?utf-8?B?elpxb0ZOYWlZbU5xSFM1STlJRkdKZmNGaVNjMkdVK2JMYlBhSE5iSTRsYllX?=
+ =?utf-8?B?ejBUdlFMMTVUL3hHbXZEN3M2cUY3cVp6U2FER1cySlFSRGxLbXBlSEJkQW1M?=
+ =?utf-8?B?dGV1SnI1RnNHS09LZTRjMW1sSDVoMUtPWVJ0bXBjcGJRaHJ4Qm5RbTRBbHlX?=
+ =?utf-8?B?amFQN1RJRGJkREJ1WVlsL2wrYXRGdjN0cnkxZ3RmczYrbTJsTVJXZHRhaDhU?=
+ =?utf-8?B?azRzZHpRT2lUc0FvNWVzaDViVUpQcUtOUDJkcGdxOWNKOE01THp6RjgvMi9J?=
+ =?utf-8?B?QkkzRUh6ODNBSDMzYXcwUmNHcG40OVZVOGhYL0pWQ0ZSaHVrOWRMclVSNkNl?=
+ =?utf-8?B?c2pna0hlK3hPaUVNSllUMmh3MldlRDUwc0dBTVNXczI5d3FUdml3amR3Z3JX?=
+ =?utf-8?B?aldVU2kzNGhJMUhHVk9GVlhMNGhKZFFZdUwxL1JOYjJoQldPUnZUS3ZkL2hR?=
+ =?utf-8?B?c3dheEZXdjllcm16TmxhdTBWSHBhVkw5RG12S1gwUFhkc1pyTXZ3N2hyTXVP?=
+ =?utf-8?B?OWRQa3p4M3R0anprdU1vNVBLOE83OVlJVmhUQ3JKWkk5SEdMZ3VKeU9BdnNC?=
+ =?utf-8?B?a056YzVOTkE2azJlRkZGc2Q3UTlqcnJnVVd4OG43OWtreHpPdFhBTFAyUDJN?=
+ =?utf-8?B?ZkI0MkN4NEtwU0hGRmQwRE9SbllteFU4dmNQaGxYR3JMOS85K0tvbnhIcTk3?=
+ =?utf-8?B?SkFQSlFraW1jNlFQdzhvaU83SEpadWVKM3VuNFlFMG9XNFlUNURqSFF6ZU1j?=
+ =?utf-8?B?eFBIZWdxYkhWMm5WTGZoV0RLdFIvOXMvWStDWkxhMGhwRUxNcG56RDNwRGV3?=
+ =?utf-8?B?clJJaDIzQ1lkTTV4Q1FoWDZyZkdBSzA2aVN5YnN2UzdBTGVLTTdSdklacVdU?=
+ =?utf-8?B?amo5UTFzd1pXZ1FuZ3JKVjNWMldFNEhvQklJbnVrU3RENGdjWU9jSXMvVWhF?=
+ =?utf-8?B?RDluUVAzVmRPVjVrRTVHakxsZ0RGeEF0NEdxTklUR3NUb01YTm5QWS9mazlW?=
+ =?utf-8?Q?b63wq6kFgPEhqIq57UQ3zgcUR?=
+X-OriginatorOrg: phytec.de
+X-MS-Exchange-CrossTenant-Network-Message-Id: 60f9263c-17d8-45c0-a547-08dde627ed7e
+X-MS-Exchange-CrossTenant-AuthSource: AS4P195MB1456.EURP195.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Aug 2025 11:42:12.1142
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: e609157c-80e2-446d-9be3-9c99c2399d29
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: F+CFzCLC6ZdcV6u84QQD7g+P/oUvDXI02F5AYzcf72YbU9MyH2Rq8KXV2bC4XJrgOqf7oTDUW3t5guoUsLcIkA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: FRZP195MB2680
 
-On 25/08/25 12:02, K Prateek Nayak wrote:
-> From: Peter Zijlstra <peterz@infradead.org>
->
-> Leon [1] and Vinicius [2] noted a topology_span_sane() warning during
-> their testing starting from v6.16-rc1. Debug that followed pointed to
-> the tl->mask() for the NODE domain being incorrectly resolved to that of
-> the highest NUMA domain.
->
-> tl->mask() for NODE is set to the sd_numa_mask() which depends on the
-> global "sched_domains_curr_level" hack. "sched_domains_curr_level" is
-> set to the "tl->numa_level" during tl traversal in build_sched_domains()
-> calling sd_init() but was not reset before topology_span_sane().
->
-> Since "tl->numa_level" still reflected the old value from
-> build_sched_domains(), topology_span_sane() for the NODE domain trips
-> when the span of the last NUMA domain overlaps.
->
-> Instead of replicating the "sched_domains_curr_level" hack, get rid of
-> it entirely and instead, pass the entire "sched_domain_topology_level"
-> object to tl->cpumask() function to prevent such mishap in the future.
->
-> sd_numa_mask() now directly references "tl->numa_level" instead of
-> relying on the global "sched_domains_curr_level" hack to index into
-> sched_domains_numa_masks[].
->
 
-Oh am I happy to see that hack go :D
 
-> The original warning was reproducible on the following NUMA topology
-> reported by Leon:
->
->     $ sudo numactl -H
->     available: 5 nodes (0-4)
->     node 0 cpus: 0 1
->     node 0 size: 2927 MB
->     node 0 free: 1603 MB
->     node 1 cpus: 2 3
->     node 1 size: 3023 MB
->     node 1 free: 3008 MB
->     node 2 cpus: 4 5
->     node 2 size: 3023 MB
->     node 2 free: 3007 MB
->     node 3 cpus: 6 7
->     node 3 size: 3023 MB
->     node 3 free: 3002 MB
->     node 4 cpus: 8 9
->     node 4 size: 3022 MB
->     node 4 free: 2718 MB
->     node distances:
->     node   0   1   2   3   4
->       0:  10  39  38  37  36
->       1:  39  10  38  37  36
->       2:  38  38  10  37  36
->       3:  37  37  37  10  36
->       4:  36  36  36  36  10
->
-> The above topology can be mimicked using the following QEMU cmd that was
-> used to reproduce the warning and test the fix:
->
->      sudo qemu-system-x86_64 -enable-kvm -cpu host \
->      -m 20G -smp cpus=10,sockets=10 -machine q35 \
->      -object memory-backend-ram,size=4G,id=m0 \
->      -object memory-backend-ram,size=4G,id=m1 \
->      -object memory-backend-ram,size=4G,id=m2 \
->      -object memory-backend-ram,size=4G,id=m3 \
->      -object memory-backend-ram,size=4G,id=m4 \
->      -numa node,cpus=0-1,memdev=m0,nodeid=0 \
->      -numa node,cpus=2-3,memdev=m1,nodeid=1 \
->      -numa node,cpus=4-5,memdev=m2,nodeid=2 \
->      -numa node,cpus=6-7,memdev=m3,nodeid=3 \
->      -numa node,cpus=8-9,memdev=m4,nodeid=4 \
->      -numa dist,src=0,dst=1,val=39 \
->      -numa dist,src=0,dst=2,val=38 \
->      -numa dist,src=0,dst=3,val=37 \
->      -numa dist,src=0,dst=4,val=36 \
->      -numa dist,src=1,dst=0,val=39 \
->      -numa dist,src=1,dst=2,val=38 \
->      -numa dist,src=1,dst=3,val=37 \
->      -numa dist,src=1,dst=4,val=36 \
->      -numa dist,src=2,dst=0,val=38 \
->      -numa dist,src=2,dst=1,val=38 \
->      -numa dist,src=2,dst=3,val=37 \
->      -numa dist,src=2,dst=4,val=36 \
->      -numa dist,src=3,dst=0,val=37 \
->      -numa dist,src=3,dst=1,val=37 \
->      -numa dist,src=3,dst=2,val=37 \
->      -numa dist,src=3,dst=4,val=36 \
->      -numa dist,src=4,dst=0,val=36 \
->      -numa dist,src=4,dst=1,val=36 \
->      -numa dist,src=4,dst=2,val=36 \
->      -numa dist,src=4,dst=3,val=36 \
->      ...
->
->   [ prateek: Moved common functions to include/linux/sched/topology.h,
->     reuse the common bits for s390 and ppc, commit message ]
->
-> Reported-by: Leon Romanovsky <leon@kernel.org>
-> Closes: https://lore.kernel.org/lkml/20250610110701.GA256154@unreal/ [1]
-> Fixes: ccf74128d66c ("sched/topology: Assert non-NUMA topology masks don't (partially) overlap") # ce29a7da84cd, f55dac1dafb3
-> Link: https://lore.kernel.org/lkml/a3de98387abad28592e6ab591f3ff6107fe01dc1.1755893468.git.tim.c.chen@linux.intel.com/ [2]
-> Not-yet-signed-off-by: Peter Zijlstra <peterz@infradead.org>
-> Signed-off-by: K Prateek Nayak <kprateek.nayak@amd.com>
+On 8/23/25 7:08 PM, Beleswar Padhi wrote:
+> The k3-am64-phycore SoM enables all R5F and M4F remote processors.
+> Reserve the MAIN domain timers that are used by R5F remote
+> processors for ticks to avoid rproc crashes. This config aligns with
+> other AM64 boards and can be refactored out later.
+> 
+> Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
 
-Reviewed-by: Valentin Schneider <vschneid@redhat.com>
-Tested-by: Valentin Schneider <vschneid@redhat.com>
+I am not sure you need this patch, because you are deleting everything 
+you add in patch 32. But I tested the series on our hardware, so
+
+Tested-by: Wadim Egorov <w.egorov@phytec.de>
+
+> ---
+> Cc: Wadim Egorov <w.egorov@phytec.de>
+> Cc: Matt McKee <mmckee@phytec.com>
+> Cc: Garrett Giordano <ggiordano@phytec.com>
+> Cc: Nathan Morrisson <nmorrisson@phytec.com>
+> Cc: John Ma <jma@phytec.com>
+> Cc: Logan Bristol <logan.bristol@utexas.edu>
+> Requesting for review/test of this patch.
+> 
+> v2: Changelog:
+> 1. Re-ordered patch from [PATCH 28/33] to [PATCH v2 18/33].
+> 
+> Link to v1:
+> https://lore.kernel.org/all/20250814223839.3256046-29-b-padhi@ti.com/
+> 
+>   .../boot/dts/ti/k3-am64-phycore-som.dtsi      | 24 +++++++++++++++++++
+>   1 file changed, 24 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/ti/k3-am64-phycore-som.dtsi b/arch/arm64/boot/dts/ti/k3-am64-phycore-som.dtsi
+> index 03c46d74ebb5..1efd547b2ba6 100644
+> --- a/arch/arm64/boot/dts/ti/k3-am64-phycore-som.dtsi
+> +++ b/arch/arm64/boot/dts/ti/k3-am64-phycore-som.dtsi
+> @@ -275,6 +275,30 @@ mbox_m4_0: mbox-m4-0 {
+>   	};
+>   };
+>   
+> +/* main_timer8 is used by r5f0-0 */
+> +&main_timer8 {
+> +	status = "reserved";
+> +};
+> +
+> +/* main_timer9 is used by r5f0-1 */
+> +&main_timer9 {
+> +	status = "reserved";
+> +};
+> +
+> +/* main_timer10 is used by r5f1-0 */
+> +&main_timer10 {
+> +	status = "reserved";
+> +};
+> +
+> +/* main_timer11 is used by r5f1-1 */
+> +&main_timer11 {
+> +	status = "reserved";
+> +};
+> +
+> +&main_r5fss0 {
+> +	status = "okay";
+> +};
+> +
+>   &main_i2c0 {
+>   	pinctrl-names = "default";
+>   	pinctrl-0 = <&main_i2c0_pins_default>;
 
 
