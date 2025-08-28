@@ -1,119 +1,116 @@
-Return-Path: <linux-kernel+bounces-790218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA354B3A297
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 16:49:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9537BB3A2A8
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 16:50:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EADEB7C0657
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 14:46:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA3306828FF
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 14:47:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD2B2314B82;
-	Thu, 28 Aug 2025 14:42:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71F5431577E;
+	Thu, 28 Aug 2025 14:44:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XRoISDUd"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ShS8yTm5"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A751E3148A9;
-	Thu, 28 Aug 2025 14:42:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3958B313520;
+	Thu, 28 Aug 2025 14:43:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756392144; cv=none; b=d719QciXZZHEpT1mA20La32y4H7eArmQSb59HbIEFAIYcUa5FKJxwukrvAqV8qPd1LUtBZ1AgfYPmsAxLfVo27k1S751iZRIltXAgbLoxodsRVMOime+SWEuBQKX0BgzJp+dsq98waAMF+jCyVWsdiG+N5MuOCK6LZktYHdE4CU=
+	t=1756392240; cv=none; b=glUuabgXbMktdbZySenbLxdcA2k5EfGjW0VW9bZy/jB8lgerswKzVz4GbQ4PIV2GiLsCdA8lOiw250Kk/k+LxdMPrTcQm2HoT9V3wxDnZUU5sVgw63o6T8tVdG73lE/bt4pugR2lihlFuCgV5acKDdfp710x6sS7x9ACY34HSG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756392144; c=relaxed/simple;
-	bh=SMW3xNgf1e4fN0in0pQWb5Ft82SGZRFlvkKOyugEm/k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JxB+RxHmA7ZbNyWJN8z9OKk6Poz+tG3nvxYFd9FmYT4eVbDKwk+JLt5wgEA4RuIiXkXDTM3hUxACcYzyZG33tQ3LgAw46jPt7ILuKqRNNhj4k+6X8pa5LhkCFpmBs3XgdDuMhmEODP7QCAKCrzABm6nLvjvL2NOUbWgTB7Dv4lo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XRoISDUd; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756392142; x=1787928142;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=SMW3xNgf1e4fN0in0pQWb5Ft82SGZRFlvkKOyugEm/k=;
-  b=XRoISDUdaQyDLopGk9yIAvfaLGYSpggunmdYzDPjrPlwe8wxluSMQCg0
-   QuJlVZuWiUE9ysF7wMacdzrY52eSxYaEhSOKZrTW7hBbL6+CYxFAkunR7
-   7QNXiB/mdOitPr8igsCwFTRG1wQuMN+nDLAwM9eZ8rZhuEId1GPlhBOK/
-   ec6rLrFRXoHQWsMOOnpvc0OPY2eyZfcmhZxkm6xEAXgOE7NPAdx0G58tO
-   6NMzjOgF5sXkw44Urfrer2HHZp7ydmMspXHkRjXVGraRUx9GJdEa0pdzM
-   SF/kbjnQhAnrp+Q6RYQgUIpVXiKf3RqeMt0pJQvjdwHIdnPeqrAYPK5HS
-   g==;
-X-CSE-ConnectionGUID: MqjSepULRmGk9sNk97UbMw==
-X-CSE-MsgGUID: S7B0zK30Qv6ZyFb2YVOPLw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11536"; a="69256232"
-X-IronPort-AV: E=Sophos;i="6.18,217,1751266800"; 
-   d="scan'208";a="69256232"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2025 07:42:21 -0700
-X-CSE-ConnectionGUID: n5t3Q6rNRFaBlTLBg9DLDA==
-X-CSE-MsgGUID: RwZH5Jm1Rhi4vAmq71xDzQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,217,1751266800"; 
-   d="scan'208";a="170028872"
-Received: from fpallare-mobl4.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.245.135])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2025 07:42:16 -0700
-Received: from kekkonen.localdomain (localhost [IPv6:::1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id 66BF811F9D4;
-	Thu, 28 Aug 2025 17:42:13 +0300 (EEST)
-Date: Thu, 28 Aug 2025 17:42:13 +0300
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Cosmin Tanislav <demonsingur@gmail.com>
-Cc: Cosmin Tanislav <cosmin.tanislav@analog.com>,
-	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Niklas =?iso-8859-1?Q?S=F6derlund?= <niklas.soderlund@ragnatech.se>,
-	Julien Massot <julien.massot@collabora.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-staging@lists.linux.dev, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v7 00/24] media: i2c: add Maxim GMSL2/3 serializer and
- deserializer drivers
-Message-ID: <aLBqxQQsnY3ZK4eT@kekkonen.localdomain>
-References: <20250718152500.2656391-1-demonsingur@gmail.com>
+	s=arc-20240116; t=1756392240; c=relaxed/simple;
+	bh=y+wN+lwhqYoTKxVX6uQN/sHMwauGJ+RriAyxhBVnStc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qkJTFnMtyd/SKNMTj1AWnKfRIH0+Oz2JTOM1R3qkG3BqybuUBgo8jca018HrNCMWVhZw+k6NOg95q34SrJAUYdAWyJ5soHLc7zVxVN/D+WRfiP7B8ThaDrgZLYAG+devrs+5Gstr5gqjni29SwFxdvpiOg3KsKYAqdewXEMcqV0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ShS8yTm5; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-afebe21a1a3so182186666b.0;
+        Thu, 28 Aug 2025 07:43:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756392237; x=1756997037; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=y+wN+lwhqYoTKxVX6uQN/sHMwauGJ+RriAyxhBVnStc=;
+        b=ShS8yTm5c9XgJt+uN6yZzT8KX/LR/L+Ks/WF3f3jEWr4EMsN3JkY6qz6Zzk6eLnVdX
+         3oJXc79XX62wfcvk1OOzXr3EjRxYW1tYMlFCYPRYs4y3R7zM+1yf3UBK0QYC2EFh9biC
+         Hl1SEZ8d4Hi2jbNH/qZqG7b1c/POSMn9nuhOLrxLv/HLjH4eeWZJkDG0IBO/ruu8tez8
+         wfj20gUdVm5O+BxF3Wf/lmdbep4Yi07+nZvo0D6eO00ToTuDscaaycKQ8xIXXOnDspoX
+         ukgNzvAS6G91j+LhKkjX9FGKotpyiJ4SXbQF/7zc4IKIn6mRiH+nyLigUCCbNWACeTvU
+         GBNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756392237; x=1756997037;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=y+wN+lwhqYoTKxVX6uQN/sHMwauGJ+RriAyxhBVnStc=;
+        b=hbQxvGSMBQzeFo7ib3nEiQZjFAE5OQQVlysFpfPHgHjIVD81ka6NT1E8IM/TsUzfcO
+         mNlTogNsZILQ1juOqqYJFZ3zuosUdXmFda8Bi88nT7V1vD5LgdkR0447F2Jw9EjOJJdV
+         t84M3C1u1ejqmOxasiCJi5vM61cUDkaYA3sXKUqILpdKkGRIPd4tX7wZWbYlxQohfUhf
+         BCgqK1XiB7SU4flq2QBEeGZFtloAZG+6NuIfyc0tGFxyiZoQtKLJsIN+vbfVVdSZ/3cF
+         BG60f0ByfsKSDcvCOfcb5RUrvs7X9HQaSImNmLftG4twBQSQ+sCFAW/0JBB0NTkxlj+j
+         pYOg==
+X-Forwarded-Encrypted: i=1; AJvYcCWcM7O7tSwDmvJR2HK3/m0ZD/x9XRuUknuMFd7lYnEhf0IvIuMBRo+jTvtwTiwSG5IFKxk3oKgYM44=@vger.kernel.org, AJvYcCXutzTK/8GGqWQInvVJsjzmhGrFYEXDi/jJ0xQ1JyOHdciKVuyU/Nicg0upzGaCeHkdi6aVDoHNw+o8CiP/@vger.kernel.org
+X-Gm-Message-State: AOJu0YzlVe8iujFM3R3iu+U8TMQWp+z1oRcmpkNOxlxXjh4cZIlRm5P5
+	QLbTdZHlw+8n4oXupbrRrp2HhrP+0DSC/aRX8/Z6xnornACa3Ad4E4MhN69q9ZPz1lKFu/Hr4Ll
+	0bxMXxJ60S8NcTwrxG9jRRMzI1uLaTF4=
+X-Gm-Gg: ASbGnct6tNr8LwJIGN3yr1cV37IApAQldslwVQ3mCySZFYwlVceo9yy5+cOoaMgxgWg
+	/9ejpSeaokDd/XpBre5G+50PpxKbzKez6xZd9Wr2Pi/CojGNX2P5vPWcjakWGl9zLZQfRRakGck
+	3fI2QYgvHXsMlUkx2O+dh9YX4iSD39OFSasYkKimf5h5qpFmHhl5sKyMvyv2b0SJAlUHPq6vXU1
+	zUy3KXUNaJv6KHLSw==
+X-Google-Smtp-Source: AGHT+IHSpV38jN3vXlwaE5Hc/33kYxgkSGU7qt3cnFjrbvgWPlGfvWhPC35RdoWMMw0cLo0RpnrmYHf9TYgJV3EIk80=
+X-Received: by 2002:a17:907:7ba7:b0:af9:479b:8c80 with SMTP id
+ a640c23a62f3a-afeafeccd92mr974083966b.4.1756392237310; Thu, 28 Aug 2025
+ 07:43:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250718152500.2656391-1-demonsingur@gmail.com>
+References: <20250828140617.3193288-1-sakari.ailus@linux.intel.com>
+In-Reply-To: <20250828140617.3193288-1-sakari.ailus@linux.intel.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Thu, 28 Aug 2025 17:43:19 +0300
+X-Gm-Features: Ac12FXyTLkbkyCMLdfg5IxUIPPUzIcPP1Ugg5myE3SihT1YJg_dhgWhZBLYFxok
+Message-ID: <CAHp75Vdr5atuW8wivgR3KRjhCK_i+JE2rJFTU3CkWwzpuNv_pg@mail.gmail.com>
+Subject: Re: [PATCH v5 1/1] iio: dac: Remove redundant pm_runtime_mark_last_busy()
+ calls
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, 
+	=?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
+	Andy Shevchenko <andy@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+	Alexandre Torgue <alexandre.torgue@foss.st.com>, linux-iio@vger.kernel.org, 
+	linux-stm32@st-md-mailman.stormreply.com, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Cosmin,
+On Thu, Aug 28, 2025 at 5:06=E2=80=AFPM Sakari Ailus
+<sakari.ailus@linux.intel.com> wrote:
+>
+> pm_runtime_put_autosuspend(), pm_runtime_put_sync_autosuspend(),
+> pm_runtime_autosuspend() and pm_request_autosuspend() now include a call
+> to pm_runtime_mark_last_busy(). Remove the now-reduntant explicit call to
 
-On Fri, Jul 18, 2025 at 06:24:36PM +0300, Cosmin Tanislav wrote:
-> This series adds new drivers for multiple Maxim GMSL2 and GMSL3 devices,
-> replacing the few GMSL2 drivers already in upstream, and introducing a
-> common framework that can be used to implement such GMSL chips, which
-> avoids code duplication while also adding support for previously
-> unsupported features.
-> 
-> While the normally acceptable and polite way would be to extend the
-> current mainline drivers, the choice was made here to add a totally new
-> set of drivers. The current drivers support only a small subset of the
-> possible features, and only a few devices, so the end result after
-> extending them would in any case be essentially fully rewritten, new
-> drivers.
-> 
-> This series depends on support for internal pads, for which a patch has
-> been added.
+redundant
 
-Could you provide v4l2-compliance -m, media-ctl -p as well as media-ctl
---print-dot output on this device, please?
+> pm_runtime_mark_last_busy().
+>
+> Also clean up error handling in stm32_dac_set_enable_state().
 
--- 
-Kind regards,
 
-Sakari Ailus
+Code looks good to me in this version
+Reviewed-by: Andy Shevchenko <andy@kernel.org>
+
+--=20
+With Best Regards,
+Andy Shevchenko
 
