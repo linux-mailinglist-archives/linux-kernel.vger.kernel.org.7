@@ -1,183 +1,160 @@
-Return-Path: <linux-kernel+bounces-789645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FC20B3989A
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 11:43:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAF51B3989B
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 11:43:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C63A198614E
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 09:43:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E12141C81F77
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 09:43:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A62F72EF66E;
-	Thu, 28 Aug 2025 09:40:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1EEC2EB840;
+	Thu, 28 Aug 2025 09:40:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JJ89yqsM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Xs4cnsOl"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4DA82EB84B;
-	Thu, 28 Aug 2025 09:40:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F6F7207A09
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 09:40:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756374016; cv=none; b=iwEIK4KeeaGfMHdEU8Lj1tFeodlS6BEiMM6yWI5BUC5hf3TC8n8Tz+HBx1lItXruWPZ7llX7sbdAN1cyJ9VBpvM9Mk2/zQkV+4nCoQ++x/J4zLblpTYfFImS6ZY93C3NIZ0m+Bu3sCzchPtgNDiybSFOhtS6mSHDpFqzLq/MVrw=
+	t=1756374015; cv=none; b=Lw10v6aD7JY/fblSU49nZWEJqquesx/VXN+nCXvnsA0A3DJ7zZ2N6P6j1kByTiUjVPIWoISJ5AfsYcdCBXt7Bq/Na0dT/L6uoI5KK0GENvwUGKhqQo0mnZx6NtkW6ANPn4aR7LlyZDMwc9Np7gQaQrAA4fA62nEJLMLnjZXy0kM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756374016; c=relaxed/simple;
-	bh=Cl0m1kDKpWeagimjoCyJC2nNVcFJOKHXK8N9AWWvIRE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PWjtMwHik0IV1dxaOdgqBsNcnTrTTzRXi0xgmGTD70kRkbs85J1F6ZZl0+Qt+6t8HMN0NpxvqxK1HGg0ONZmXhDIPAE+X64uh+FnnERGPWPFsphMPWTReCE+VzzXEOoU2OLQnTao2V0WJuIVE7KflxadzHBZr67z9z3IPUyUOpg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JJ89yqsM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4004EC4CEFC;
-	Thu, 28 Aug 2025 09:40:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756374016;
-	bh=Cl0m1kDKpWeagimjoCyJC2nNVcFJOKHXK8N9AWWvIRE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=JJ89yqsM/siAb1VR6ZJU3bEFaUkNGoy0qdWneQKwaNTbKw9v5mNgvGxJA28E63mh8
-	 Upq25haYXC1EwPZL5mZ2pA6J2O7jYs80WZygAwabYpOC504atc6SOmn/XDviZLtv/u
-	 Dkhv5fJWuapG9S8NjjHS5krDPTFQktzMc6uGIyrrf1CtjntEwSY+BeVohNBKzjYck9
-	 vc8aBvirQTUlJJbQyNuCJvdcB69O+ndDUle/uzIu+YrtfNIQ654vov6hDZekcrOcRL
-	 5uf6Pz1m20Ccro9eZRk6B2A29o17/4zQC0wXfU4vOxKUBk+cvk6B8LwZnfbzjU2bLw
-	 ryOgMyPpw3vEg==
-Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-30cceb3be82so715373fac.2;
-        Thu, 28 Aug 2025 02:40:16 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUiFB/UFu1N0ZnTKqAR7jDshLPTAg829ij5rlYHMqEp0u+M0AexWFNC6Z0A9xtUVlB/4C/t5aWw7p4=@vger.kernel.org, AJvYcCUkdycEW+9kHgwCMXHAfsTYsQg7+nVyxfoFXzHpuCA+6wOzZEwyqCsaVnYfeP5Futxnp8PQ6yp3HMNYu4FfKrA40zo=@vger.kernel.org, AJvYcCUonPOnRlFo0mcqL06BWkPneOaJaoFtYJ/3pQN0UaQa5GX5CuGhNTkeor21j6cm+pnvKn4sX+9bjW6FmA==@vger.kernel.org, AJvYcCVg0FZ36TSQTocwz39aZnj+tMLerFOnWM3RSBcdmaywU++sUxnJfshcvJgh6ban6qTKwTY=@vger.kernel.org, AJvYcCVrAlxbM0F2b08GxzUuVtkTqrn/qpsDWwFWiyYTQCIewtyl8sQJHizLCHbKu0B66FT6nZIHLFGG7vta7Ks=@vger.kernel.org, AJvYcCWAbMVIHu07tKcHSJf7ms/QsimIqVEov6fjquvTp0vh00re5kqmzTR0L1XlpvcvTc2U22108FxeAThheWon@vger.kernel.org, AJvYcCWWvyVqMAfLAIERec1CbZopIXgz3939IyGJrvhnG3XBoclOzEZ0BCOI0IdGIAtQDt1iu+kKGsopsAJ5Xg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzcYOLKt6QaZkOk/lPYhKCw6defQgFSYtvm2N5RzBzJ07O9zzjl
-	5pYX8kCJtJOVz0HeV+mYwNTVRO9VgoOrFcR79jcXMGiKKD/9Il3lGjNBfgjyzybS6RGjje//IpG
-	HpxPet1FnS7beFeV5beoUZ6unk9N4U0g=
-X-Google-Smtp-Source: AGHT+IGV4ScW5OAU3iglUFz6GOl/SaxSbnlEKhbCLP2wFA8xAwCena16hSLRSa/lAp17g1juuguW4VQdAzFwj9/LUxc=
-X-Received: by 2002:a05:6870:9710:b0:310:b613:5fdb with SMTP id
- 586e51a60fabf-314dcb575e6mr9287838fac.7.1756374014938; Thu, 28 Aug 2025
- 02:40:14 -0700 (PDT)
+	s=arc-20240116; t=1756374015; c=relaxed/simple;
+	bh=aDjBedOFhogle5X50+cJzkbYK2Wl5K7pUiyI+O3mWmY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b6RT0AMZZJ2SAJuTIUqEP5OMwWLtCxmnS61zynJhLoxA6Au2Uu4FKZmwpYy5gVz8i4Lb52r8jgTELWTOyg9jUdp97Xn+Rgr7RssDpP33yUWC1XRvecAlG5KgmtQxPuGDKhdN8cPC4RbbHGQBjZoCsQiNz9gY0OY+RjaqJ2y5nvA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Xs4cnsOl; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3c73d3ebff0so827904f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 02:40:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1756374012; x=1756978812; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=H18ShQScvKRglRK2UXGYScgTs4Q/vE1IKwPk/BKJEEY=;
+        b=Xs4cnsOlaFR3B0WFPQ7OFgaK+quJzc4p2ybe1x9kf8uVXcDrfx+LfXIXlpA9rT9kdJ
+         S9kbHsIV4MY7JLCW9Ib5IdPh5FNgxbYd/yl6DU8EFOSUc21f54upac1eY0ofqDbVFew0
+         5UWLTEsEhWerMDSwYSzDNTlVpZa53bjOjQ4GgyDRnR0kJS5BKKTZ5cq+LsBnSwo82C6l
+         TgrgDdjuZMl3JoTw3WOL4gagarflFaOJiwZMbbWkoSjyCbHPNVhLt1/GSOyT8klwr6mH
+         K261zT8WfoRVv7uoR6EpYSiYfBabSzCiCvGAUWuMF8LxWowCN0akciQn3Z7M+ZfKFkjK
+         HfRg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756374012; x=1756978812;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=H18ShQScvKRglRK2UXGYScgTs4Q/vE1IKwPk/BKJEEY=;
+        b=cYg0OwEze6ygJB/zZ/wTkrHujFkZaFavG+fvxzDVzVuyVAt4N7p9Y1B/AWjbMGHbvd
+         aWiNOa2CReLlU0iq5iqZ7na8S0g7y0B2/s9pay2mIUXdwQ5md14XEyc0f0c5exN7J4xN
+         XSLnSQE7bODNqeBvZpFGWQPvkXg75wFUvBn/EAMgAmT64XfnOtRpqNhUh9Fqh9yrrxdW
+         pfTsGIRqZbLCQqilnCaCJH244CsSNKkzu8WT/xzAJ1V9mRoF3qLHz86pK+Iub4zxhJdJ
+         4FO47Re1J9lK7TP0d2PhPHhNJDRee9aVGR3FTSLy9whdzSu2MXqjr/ME+/IioYobq3/C
+         HSlw==
+X-Forwarded-Encrypted: i=1; AJvYcCWHcAoeeXYjgA/VuLQVi8+h+WOOKHSYFbOYMuqMYG60E6Pws72iFe06FwQUSjaI9GjpPdzrzxgbTpraupo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxU0aeiA5qW8qdn9Obvj91+8EZB3aPVRKsbIa/N5I/zdHiDtvTP
+	nbjuR2h3Q6DckAMhroNfdW06LKnPERtOZDwtYn7WXDDi0OukdTrEHnWwRJoMFI27u5Q=
+X-Gm-Gg: ASbGncv7cFpBvXEPnvwdUlnPXlGhYSe8eqRos3naeZdV1r4QRNN7ZOtKn66eNTSM/gD
+	8D74pJyrgD4zEiBlns4czPUM+QQDRQ3CxHZrFkq9ktGDQJ7XBe7dU6xMvMdnLIXqmweSI2BwiXc
+	Q3vhl6+XXn/s5mWEBIBH9e111L+vKRW4X4s1UZOelAzGZeuCWG1E+Nco1L3NOPREkM40bAPJU7A
+	yS272BvdDLi8xmdup5Iwjk47MyGKHXL2DxNVozw5KwQz4VLTNXXM/gE9fzcuJgqnh34BUJJ3kJX
+	oAicl+c2dsUftNX4ep4yv4Prq7R5sFmHINbqusmp4CPBlU+jZbc1m1+saNCvmRyjcpix3hpELNb
+	J6KooF00a2SxuPLW2eJyftfsZoYpOO7jDJQG7Hm1j33zLLA==
+X-Google-Smtp-Source: AGHT+IFERGYy0Bvc1+pJyr9ZQR1l+DS4FjEWsD509R+lmrVqd/10evLfD/XL9tsL/EgOd/szw8gFNA==
+X-Received: by 2002:a5d:64cc:0:b0:3b7:9d87:9808 with SMTP id ffacd0b85a97d-3cbb15ca448mr6762408f8f.15.1756374011627;
+        Thu, 28 Aug 2025 02:40:11 -0700 (PDT)
+Received: from localhost (109-81-86-254.rct.o2.cz. [109.81.86.254])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3cce1724939sm6098245f8f.26.2025.08.28.02.40.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Aug 2025 02:40:11 -0700 (PDT)
+Date: Thu, 28 Aug 2025 11:40:10 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: Weilin Tong <tongweilin@linux.alibaba.com>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org, vbabka@suse.cz,
+	surenb@google.com, jackmanb@google.com, hannes@cmpxchg.org,
+	ziy@nvidia.com, linux-kernel@vger.kernel.org,
+	baolin.wang@linux.alibaba.com
+Subject: Re: [PATCH RFC] mm: Use pr_warn_once() for min_free_kbytes warning
+Message-ID: <aLAj-itGT9DD3SU3@tiehlicka>
+References: <20250828030602.204332-1-tongweilin@linux.alibaba.com>
+ <aK_7GKJ4BWjye4tZ@tiehlicka>
+ <35e0a580-ae78-4485-b285-7f71f91e046d@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250827023202.10310-1-zhangzihuan@kylinos.cn> <20250827023202.10310-4-zhangzihuan@kylinos.cn>
-In-Reply-To: <20250827023202.10310-4-zhangzihuan@kylinos.cn>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 28 Aug 2025 11:40:03 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0jA7HjNc6VQWdjuwLnmd751kV01NXC4v8Pyn8h-r70BzQ@mail.gmail.com>
-X-Gm-Features: Ac12FXyk8AzMIpXHgrT8Z1UHGDrWUNjtTLP9mZxojpyASBCiNu69qRn54WdH-2Y
-Message-ID: <CAJZ5v0jA7HjNc6VQWdjuwLnmd751kV01NXC4v8Pyn8h-r70BzQ@mail.gmail.com>
-Subject: Re: [PATCH v2 03/18] ACPI: processor: thermal: Use
- __free(put_cpufreq_policy) for policy reference
-To: Zihuan Zhang <zhangzihuan@kylinos.cn>
-Cc: "Rafael J . wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, Markus Mayer <mmayer@broadcom.com>, 
-	Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, 
-	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, 
-	Chanwoo Choi <cw00.choi@samsung.com>, Jani Nikula <jani.nikula@linux.intel.com>, 
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, 
-	Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Daniel Lezcano <daniel.lezcano@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, 
-	Eduardo Valentin <edubezval@gmail.com>, Keerthy <j-keerthy@ti.com>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	zhenglifeng <zhenglifeng1@huawei.com>, "H . Peter Anvin" <hpa@zytor.com>, Zhang Rui <rui.zhang@intel.com>, 
-	Len Brown <lenb@kernel.org>, Nicholas Piggin <npiggin@gmail.com>, 
-	Christophe Leroy <christophe.leroy@csgroup.eu>, Lukasz Luba <lukasz.luba@arm.com>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Beata Michalska <beata.michalska@arm.com>, 
-	Fabio Estevam <festevam@gmail.com>, Pavel Machek <pavel@kernel.org>, Sumit Gupta <sumitg@nvidia.com>, 
-	Prasanna Kumar T S M <ptsm@linux.microsoft.com>, Sudeep Holla <sudeep.holla@arm.com>, 
-	Yicong Yang <yangyicong@hisilicon.com>, linux-pm@vger.kernel.org, x86@kernel.org, 
-	kvm@vger.kernel.org, linux-acpi@vger.kernel.org, 
-	linuxppc-dev@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, 
-	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
-	imx@lists.linux.dev, linux-omap@vger.kernel.org, 
-	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <35e0a580-ae78-4485-b285-7f71f91e046d@linux.alibaba.com>
 
-On Wed, Aug 27, 2025 at 4:33=E2=80=AFAM Zihuan Zhang <zhangzihuan@kylinos.c=
-n> wrote:
->
-> Replace the manual cpufreq_cpu_put() with __free(put_cpufreq_policy)
-> annotation for policy references. This reduces the risk of reference
-> counting mistakes and aligns the code with the latest kernel style.
->
-> No functional change intended.
->
-> Signed-off-by: Zihuan Zhang <zhangzihuan@kylinos.cn>
-> ---
->  drivers/acpi/processor_thermal.c | 12 +++---------
->  1 file changed, 3 insertions(+), 9 deletions(-)
->
-> diff --git a/drivers/acpi/processor_thermal.c b/drivers/acpi/processor_th=
-ermal.c
-> index 1219adb11ab9..f99ed0812934 100644
-> --- a/drivers/acpi/processor_thermal.c
-> +++ b/drivers/acpi/processor_thermal.c
-> @@ -64,17 +64,13 @@ static int phys_package_first_cpu(int cpu)
->
->  static int cpu_has_cpufreq(unsigned int cpu)
->  {
-> -       struct cpufreq_policy *policy;
-> +       struct cpufreq_policy *policy __free(put_cpufreq_policy);
->
->         if (!acpi_processor_cpufreq_init)
->                 return 0;
->
->         policy =3D cpufreq_cpu_get(cpu);
-> -       if (policy) {
-> -               cpufreq_cpu_put(policy);
-> -               return 1;
-> -       }
-> -       return 0;
-> +       return !!policy;
+On Thu 28-08-25 17:23:40, Weilin Tong wrote:
+> 在 2025/8/28 14:45, Michal Hocko 写道:
+> 
+> > On Thu 28-08-25 11:06:02, Weilin Tong wrote:
+> > > When min_free_kbytes is user-configured, increasing system memory via memory
+> > > hotplug may trigger multiple recalculations of min_free_kbytes. This results
+> > > in excessive warning messages flooding the kernel log if several memory blocks
+> > > are added in a short period.
+> > > 
+> > > Sample dmesg output before optimization:
+> > > ...
+> > > [ 1303.897214] min_free_kbytes is not updated to 126529 because user defined value 1048576 is preferred
+> > > [ 1303.960498] min_free_kbytes is not updated to 126529 because user defined value 1048576 is preferred
+> > > [ 1303.970116] min_free_kbytes is not updated to 126529 because user defined value 1048576 is preferred
+> > > [ 1303.979709] min_free_kbytes is not updated to 126529 because user defined value 1048576 is preferred
+> > > [ 1303.989254] min_free_kbytes is not updated to 126529 because user defined value 1048576 is preferred
+> > > [ 1303.999122] min_free_kbytes is not updated to 126529 because user defined value 1048576 is preferred
+> > > [ 1304.008644] min_free_kbytes is not updated to 126529 because user defined value 1048576 is preferred
+> > > [ 1304.018537] min_free_kbytes is not updated to 126529 because user defined value 1048576 is preferred
+> > > [ 1304.028054] min_free_kbytes is not updated to 126529 because user defined value 1048576 is preferred
+> > > [ 1304.037615] min_free_kbytes is not updated to 126529 because user defined value 1048576 is preferred
+> > > ...
+> > > 
+> > > Replace pr_warn() with pr_warn_once() to ensure only one warning is printed,
+> > > preventing large volumes of repeated log entries and improving log readability.
+> > pr_warn_once seems too aggressive as we could miss useful events. On the
+> > other hand I agree that repeating the same message for each memory block
+> > onlining is not really helpful. Would it make sense to only pr_warn when
+> > new_min_free_kbytes differs from the previous one we have warned for?
+> Thanks for your feedback!
+> 
+> The dmesg output above comes from hotplugging a large amount of memory into
+> ZONE_MOVABLE, where new_min_free_kbytes does not actually change, resulting
+> in repeated warnings with identical messages.
 
-If you want to make this change, please also change the return type of
-the function to bool.
+Yes, this is clear from the changelog
 
->  }
->
->  static int cpufreq_get_max_state(unsigned int cpu)
-> @@ -95,7 +91,7 @@ static int cpufreq_get_cur_state(unsigned int cpu)
->
->  static int cpufreq_set_cur_state(unsigned int cpu, int state)
->  {
-> -       struct cpufreq_policy *policy;
-> +       struct cpufreq_policy *policy __free(put_cpufreq_policy);
+> However, if memory is hotplugged into ZONE_NORMAL (such as pmem-type
+> memory), new_min_free_kbytes changes on each operation, so we still get a
+> large number of warnings—even though the value is different each time.
 
-This isn't correct AFAICS at least formally because the scope of the
-variable is the whole function, so it won't get out of scope at the
-point where you want cpufreq_cpu_put() to be called.
+We can check whether the value has changed considerably.
 
-The policy variable should be defined in the block following the "for"
-loop (and actually all of the local variables except for "i" can be
-defined there).
+> If the concern is missing useful warnings, pr_warn_ratelimited() would be an
+> acceptable alternative, as it can reduce log spam without completely
+> suppressing potentially important messages. However I still think that
+> printing the warning once is sufficient to alert the user about the
+> overridden configuration, especially since this is not a particularly
+> critical warning.
 
-Or better still, please move that block to a separate function
-containing all of the requisite local variable definitions and call
-that function for each online CPU.
+The thing is that kernel log buffer can easily overflow and you can lose
+those messages over time, especially for system with a large uptime -
+which is far from uncommon.
 
->         struct acpi_processor *pr;
->         unsigned long max_freq;
->         int i, ret;
-> @@ -127,8 +123,6 @@ static int cpufreq_set_cur_state(unsigned int cpu, in=
-t state)
->                 max_freq =3D (policy->cpuinfo.max_freq *
->                             (100 - reduction_step(i) * cpufreq_thermal_re=
-duction_pctg)) / 100;
->
-> -               cpufreq_cpu_put(policy);
-> -
->                 ret =3D freq_qos_update_request(&pr->thermal_req, max_fre=
-q);
->                 if (ret < 0) {
->                         pr_warn("Failed to update thermal freq constraint=
-: CPU%d (%d)\n",
-> --
+I am not entirely enthusiastic about rate limiting because that is time
+rather than even driven. Anyway, if you can make ratelimiting work for
+your usecase, then no objection from me but I would rather make the
+reporting more useful than hack around it.
+
+-- 
+Michal Hocko
+SUSE Labs
 
