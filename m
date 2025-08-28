@@ -1,181 +1,133 @@
-Return-Path: <linux-kernel+bounces-790187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 281B4B3A1D5
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 16:30:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A9D4AB3A1E4
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 16:31:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBC8E1C85397
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 14:29:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65E92188D996
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 14:30:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 200B32D29C7;
-	Thu, 28 Aug 2025 14:28:15 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0014.hostedemail.com [216.40.44.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6749E24167B;
+	Thu, 28 Aug 2025 14:30:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mTj8fa6H"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0748621CA02;
-	Thu, 28 Aug 2025 14:28:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49D1023182D
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 14:30:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756391294; cv=none; b=e1ocnMy3C7yoaBwcpxfuaGDqIhVU8PR5s/C+DkgMGMlF9cEz9JaF2Z7W55rCJy3SGaNWyl9Mp5gI2oBP1lCoYxGlelobwn+zuqa9jbAlRezFofWnBeg/FT+ZwRfzV7Ct7l5w5kiBPqG2z1BF5jb+KPF4qpLmKnbX4QSa8W/xYVM=
+	t=1756391403; cv=none; b=odqcdfu+/OmIDMPFUXJsuy0aRIFCoYuQlJElsws78hsUFHCcE+I2i0eYdm/Qsu6v2z914ToSxSFbaUn/yhgagsSB08TU1VkBXe6HyusA70yu0SBdw2kv/6mHW47N9/IxakDjzhd+AIbl934i1fx8aFvqFLVfskQsWfbEnneIMoY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756391294; c=relaxed/simple;
-	bh=t7pg/G4Tk4S39M8NtXKJTglfwsOPVinBNlNJsePOcow=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=k8ZKRAN8nxjB6ZZ89K+EiAiTguAL59eLxcRb1HnglaBmbU5ooXyoBRZVWqwYSfSY7zUBAuAavEEAPt2vEysdLD225OvYCd93xQxIksuKsD/swUHi1VxE1txZ/NVV+1ErK1RJgznfhn5iOnS8a+uQfxKJkW7AK523zbkXGiQiTU0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf15.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay05.hostedemail.com (Postfix) with ESMTP id C3E74577E2;
-	Thu, 28 Aug 2025 14:28:07 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf15.hostedemail.com (Postfix) with ESMTPA id 39CDD29;
-	Thu, 28 Aug 2025 14:27:59 +0000 (UTC)
-Date: Thu, 28 Aug 2025 10:28:19 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>
-Cc: Steven Rostedt <rostedt@kernel.org>, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org, x86@kernel.org,
- Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Josh Poimboeuf <jpoimboe@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, Jiri
- Olsa <jolsa@kernel.org>, Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- Andrii Nakryiko <andrii@kernel.org>, Indu Bhagat <indu.bhagat@oracle.com>,
- "Jose E. Marchesi" <jemarch@gnu.org>, Beau Belgrave
- <beaub@linux.microsoft.com>, Jens Remus <jremus@linux.ibm.com>, Linus
- Torvalds <torvalds@linux-foundation.org>, Andrew Morton
- <akpm@linux-foundation.org>, Florian Weimer <fweimer@redhat.com>, Sam James
- <sam@gentoo.org>, Kees Cook <kees@kernel.org>, Carlos O'Donell
- <codonell@redhat.com>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov
- <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin"
- <hpa@zytor.com>, David Hildenbrand <david@redhat.com>, Lorenzo Stoakes
- <lorenzo.stoakes@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, Mike
- Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, Michal
- Hocko <mhocko@suse.com>, linux-mm@kvack.org
-Subject: Re: [PATCH v10 02/11] unwind_user/sframe: Store sframe section data
- in per-mm maple tree
-Message-ID: <20250828102819.27d62d75@gandalf.local.home>
-In-Reply-To: <el6nfiplc3pitfief24cbcsd4dhvrp5hxwoz3dzccb5kilcogq@qv4pqrzekkfw>
-References: <20250827201548.448472904@kernel.org>
-	<20250827202440.444464744@kernel.org>
-	<el6nfiplc3pitfief24cbcsd4dhvrp5hxwoz3dzccb5kilcogq@qv4pqrzekkfw>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1756391403; c=relaxed/simple;
+	bh=xuHALRSB2lh3wzfyFYdypwQ9WFcxa7aaFkET2WvUz4w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ujMYwhLGmUASa0u6tSMLqZCjQc8dvCZK9MlzeDMs3J0p4CYpaZGja7zdWbZntkCUiP10oL8SjqHzKOtxbWh4cuOYpe6PR0ZBtxnuYxEBRnfFtwWDDnU5y32UDHyPpV03htly5GVrA80K1BY0gG6otX9e7TJbertTJKiYR7hKm6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mTj8fa6H; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-24611734e50so181405ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 07:30:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1756391401; x=1756996201; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=llJ1M4xxxeRjXKYFSOXlWlEyAgEpbCFW6TAfAztxyRI=;
+        b=mTj8fa6Hs19KPTA2WjzdXJsNzlczhc9U6LqZ57V3M4dYJ30C4bhXRXMuQzWAVZ+8XT
+         8s+DqPaDu35jp8r4r5IKUsa0lDRrTHvuxR3CCOvOFpkp8RnuNJOXI+GWUaTbrkuL7w1F
+         FlZEoqbOiloC6QlOSLH9+I7zI2V3i7WzRu4cNLZkYox9y8aAAruQ4qFwcCHt1wZ7yZ17
+         sL0JIBysPdgU0GwsYsiFw0LdkKjPlDmncvSN1c0U6e3dljBpTB4P93RsO/9BWSRaEd0M
+         Lj7X0BP1T+1PP7h/NoQ3WmDLL4YJuf8uaUgk0LEnpnKlnS9F6qWOSUsu4jDrIWjk4+fJ
+         CwWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756391401; x=1756996201;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=llJ1M4xxxeRjXKYFSOXlWlEyAgEpbCFW6TAfAztxyRI=;
+        b=LbFL9JUHiw228WbxzMN4JUDgUR9PN+uSINOz/erY+XGTOK2njwGKrAIp/tp5YEM2Dq
+         JVkZWHTfSFbRkBVMZSmNJ0HlEy/e+ZC3ULezb7FQk5QS+k+4G4V/xah1qudBMMHnHjYk
+         U5F9S+4QuTxoYR6xtvFzUMQ0nZjxVcPAdJQlzJyrEbTVksCQnhezlPCHXUbD2sGzvMrv
+         /8Roslqju16AEnJiTEGUx+eraPtDRfZ8Zury649rh5gnBN4XwrtzI6HZRmUspkKPzkUH
+         KYZE1NsJ4ZpCbshdOEIzIRY33dGAXidldPJIqRwauK5k0LZD0Ol/N8hYPaRPhOogKPL8
+         Jiow==
+X-Forwarded-Encrypted: i=1; AJvYcCWqR5sUJDcQWmd0jV4HN4MI0vql2JP+Z+SjKpIsR8MSO+a0Ur7vkHK1JjsvGx1QbSkxTKhwGE9AMXZkTp0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz1BZZpx3xV00/OMaFmzWJf/Nz80+i0Au4Bo8V4ePdTxfuX40TC
+	jk4sXkKOd4Gr66QiylsX4n31lLZbx86I0OyzPPn10wIPO5xXL5ju06xev3nbjMXqXg==
+X-Gm-Gg: ASbGncuoYba07vTrMCV+7jwPrPKXbB4g+eXVvf2mpqAdiE9hZH40DUCWQJQVUNTXyhD
+	vZSOkRr1lOh9marIo6yD2+8t189K6LgqjAr87hGH5c9wi/T0n4Nu+u7dqoHYipZpw3eFiQRSq7o
+	lGNEYneusyn/67BdsOWvys4pwTBiAN+uV4EiNRx5eqXtBEccnZDnkYIHdkIEiSPPJY/UlrhEt+4
+	KVQtJNJZMSPKSCveS0em+Cp9MwmAvvaSOsxRRDj17mF8aHdw43CcTDlEv90x8ZugClJyFbUOTQ0
+	Ar7n6oLDcfNihiyptTZ+jLaWApq7M/owt5bqCxGsavczGqhmYJJnW8jcHnJLvc25nq8TkXL6ykE
+	X4znRtQjK8BZ20hGXkKY0iZANd50gTh6GkTUIcdTDgLGRzqBA2/+/R5WFKacTIpX6wjVirW6G
+X-Google-Smtp-Source: AGHT+IGqnjMUnHwbY8ZYK4ZrateHqnkIq/oBjnMDFO1wIh4c+rK9agNtu2KOniT/7Fx7O0+N24b8zg==
+X-Received: by 2002:a17:902:c40a:b0:231:f6bc:5c84 with SMTP id d9443c01a7336-2485bd5ad00mr16238015ad.8.1756391401204;
+        Thu, 28 Aug 2025 07:30:01 -0700 (PDT)
+Received: from google.com (3.32.125.34.bc.googleusercontent.com. [34.125.32.3])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-327ab094f00sm2684545a91.6.2025.08.28.07.29.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Aug 2025 07:29:59 -0700 (PDT)
+Date: Thu, 28 Aug 2025 14:29:54 +0000
+From: Carlos Llamas <cmllamas@google.com>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>,
+	kernel-team@android.com, linux-kernel@vger.kernel.org,
+	"open list:MEMORY MAPPING" <linux-mm@kvack.org>
+Subject: Re: [PATCH] mm/mremap: fix regression in vrm->new_addr check
+Message-ID: <aLBn4vb0Pmwoqt51@google.com>
+References: <20250828032653.521314-1-cmllamas@google.com>
+ <8a4dc910-5237-48aa-8abb-a6d5044bc290@lucifer.local>
+ <53b938ed-dd78-42fa-8cde-f3a938b6f39f@suse.cz>
+ <b58449cc-022b-497a-97f2-c91776d133dc@lucifer.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: xedd6eijkc1xu5qms1rx3p8witpz3qqo
-X-Rspamd-Server: rspamout07
-X-Rspamd-Queue-Id: 39CDD29
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1/UpGGk0sN7ZRFjbCfmYaa8yXlKjFyWmZ0=
-X-HE-Tag: 1756391279-514030
-X-HE-Meta: U2FsdGVkX1/NHsF/xLEc4nIoi2djvu4+eFUqz+90saW6KPe2SSSeHmY3d+2NzAa0ja91OBKVE3l04tc1bxQy7939iX/OxWrqxK1IELyEJeTE86USU8gn/Yo564nlJA0gRJUwLSoesr1f16mCj/54MlKG/D2f/iybpDUF+amParwwGdPNDuwVkc+tupcJa0smZ6kzulttx6uToOb3SFRwLvkJ65U63MpGUeLUyl80lS7vxSNbsm3iUljE607my7wQG5plrIvuU58Lc4jwmSELen3dko11S0vheFH6PbTbHgw4gWUnnOaT8XsXXcBY7bDZVhxP1UVlbhi9CDBAw8HqA0VFWELP40G2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b58449cc-022b-497a-97f2-c91776d133dc@lucifer.local>
 
-On Wed, 27 Aug 2025 21:46:01 -0400
-"Liam R. Howlett" <Liam.Howlett@oracle.com> wrote:
-
-> >  int sframe_remove_section(unsigned long sframe_start)
-> >  {
-> > -	return -ENOSYS;
-> > +	struct mm_struct *mm = current->mm;
-> > +	struct sframe_section *sec;
-> > +	unsigned long index = 0;
-> > +	bool found = false;
-> > +	int ret = 0;
-> > +
-> > +	mt_for_each(&mm->sframe_mt, sec, index, ULONG_MAX) {
-> > +		if (sec->sframe_start == sframe_start) {
-> > +			found = true;
-> > +			ret |= __sframe_remove_section(mm, sec);
-> > +		}
-> > +	}  
+On Thu, Aug 28, 2025 at 03:22:54PM +0100, Lorenzo Stoakes wrote:
+> On Thu, Aug 28, 2025 at 04:21:05PM +0200, Vlastimil Babka wrote:
+> > On 8/28/25 07:38, Lorenzo Stoakes wrote:
+> > > On Thu, Aug 28, 2025 at 03:26:52AM +0000, Carlos Llamas wrote:
+> > >> Commit 3215eaceca87 ("mm/mremap: refactor initial parameter sanity
+> > >> checks") moved the sanity check for vrm->new_addr from mremap_to() to
+> > >> check_mremap_params().
+> > >>
+> > >> However, this caused a regression as vrm->new_addr is now checked even
+> > >> when MREMAP_FIXED and MREMAP_DONTUNMAP flags are not specified. In this
+> > >> case, vrm->new_addr can be garbage and create unexpected failures.
+> > >
+> > > Yikes, sorry my mistake.
+> > >
+> > >>
+> > >> Fix this by moving the new_addr check after the vrm_implies_new_addr()
+> > >> guard. This ensures that the new_addr is only checked when the user has
+> > >> specified one explicitly.
+> > >>
+> > >> Fixes: 3215eaceca87 ("mm/mremap: refactor initial parameter sanity checks")
+> > >> Signed-off-by: Carlos Llamas <cmllamas@google.com>
+> > >
+> > > You need a Cc: Stable.
+> >
+> > No need as the commit being fixed is from 6.17-rc1?
+> > But it's better to use "[PATCH mm-hotfixes]" to make sure it goes to 6.17
+> > and not the next merge window.
+> >
 > 
-
-Josh should be able to answer this better than I can, as he wrote it, and
-I'm not too familiar with how to use maple tree (reading the documentation
-now).
-
-> If you use the advanced interface you have to handle the locking, but it
-> will be faster.  I'm not sure how frequent you loop across many entries,
-> but you can do something like:
+> Ah haha really? I'm losing track of my patches.
 > 
-> MA_SATE(mas, &mm->sframe_mt, index, index);
-> 
-> mas_lock(&mas);
-> mas_for_each(&mas, sec, ULONG_MAX) {
-> ...
-> }
-> mas_unlock(&mas);
-> 
-> The maple state contains memory addresses of internal nodes, so you
-> cannot just edit the tree without it being either unlocked (which
-> negates the gains you would have) or by using it in the modification.
-> 
-> This seems like a good choice considering the __sframe_remove_section()
-> is called from only one place. You can pass the struct ma_state through
-> to the remove function and use it with mas_erase().
-> 
-> Actually, reading it again,  why are you starting a search at 0?  And
-> why are you deleting everything after the sframe_start to ULONG_MAX?
-> This seems incorrect.  Can you explain your plan a bit here?
+> Yeah sure as per Vlasta then Carlos :)
 
-Let me give a brief overview of how and why maple trees are used for
-sframes:
-
-The sframe section is mapped to the user space address from the elf file
-when the application starts. The dynamic library loader could also do a
-system call to tell the kernel where the sframe is for some dynamically
-loaded code. Since there can be more than one text section that has an
-sframe associated to it, the mm->sframe_mt is used to hold the range of
-text to find its corresponding sframe section. That is, there's one sframe
-section for the code that was loaded during exec(), and then there may be a
-separate sframe section for every library that is loaded. Note, it is
-possible that the same sframe section may cover more than one range of text.
-
-When doing stack walking, the instruction pointer is used as the key in the
-maple tree to find its corresponding sframe section.
-
-Now, if the sframe is determined to be corrupted, it must be removed from
-the current->mm->sframe_mt. It also gets removed when the dynamic loader
-removes some text from the application that has the code.
-
-I'm guessing that the 0 to ULONG_MAX is to simply find and remove all the
-associated sframe sections, as there may be more than one text range that a
-single sframe section covers.
-
-Does this make sense?
-
-Thanks for reviewing!
-
--- Steve
-
-> 
-> > +
-> > +	if (!found || ret)
-> > +		return -EINVAL;
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +void sframe_free_mm(struct mm_struct *mm)
-> > +{
-> > +	struct sframe_section *sec;
-> > +	unsigned long index = 0;
-> > +
-> > +	if (!mm)
-> > +		return;
-> > +
-> > +	mt_for_each(&mm->sframe_mt, sec, index, ULONG_MAX)
-> > +		free_section(sec);
-> > +
-> > +	mtree_destroy(&mm->sframe_mt);  
->
+Oops, sorry my v2 raced with this.
 
