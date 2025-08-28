@@ -1,241 +1,156 @@
-Return-Path: <linux-kernel+bounces-790871-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790872-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BF29B3AEAF
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 01:54:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C9B1CB3AEB4
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 01:56:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E35E2582B32
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 23:54:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE464582CC9
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 23:56:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D3B42D9787;
-	Thu, 28 Aug 2025 23:54:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D0AF2DC32B;
+	Thu, 28 Aug 2025 23:56:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d2wZc1Nh"
-Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BD28634;
-	Thu, 28 Aug 2025 23:54:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="FCmBOZww"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E482262FC0;
+	Thu, 28 Aug 2025 23:56:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756425273; cv=none; b=omO6E8aUrkrH4y85W4zMlarKqEjK9pm7M0Hz5gNCehT3Y/02JauXRYFBYmoGUVBUZBrYOC0OXRoaiyP+LDV8qXSTw+M7VLDgvr/iV0X5vJKBxyZKTlWAhVF66h3Zf7/i5Fg+xr5U6oALYXzffHhGXoCBWP9kVo/PHDZJ0Os+Q/0=
+	t=1756425394; cv=none; b=nYUdm8BP+4m9vOMx1CHCYk0fu+gdbHb8dGYOiTMDAiYrgIWNvH15XYFwb15eOb71fspXQw40JrwqB3QXyACrDUB2M2KO1YbVjRISEVPxXZCj+DEiM56N5Ci8iMQH4WiSFZSES2JRKvlVH0j7ZV9ywIWVwPpcAypBLcAcjKkPWK4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756425273; c=relaxed/simple;
-	bh=lCuDXGa8ikg2WC8GEmfWNaHgmgrl9ey+9nIbr+f+2bk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uOaGSar2NsHCW+CU1IsKOaYfN6CTB/tj9n3wPTcxElGbUCMg47UTwVOp8vXCv7wiszHW1tXgDr+BJ8MRxuttiPBk35CTNj4jRU8Ims3xtGlQfkDssa83scTI2/pJT1k/w5kseYPZu7T6ltO/nI51c+vPZLiTvoLw4bQQxuSliZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d2wZc1Nh; arc=none smtp.client-ip=209.85.222.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-7f0481658ceso159815385a.2;
-        Thu, 28 Aug 2025 16:54:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756425271; x=1757030071; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ywp5khp3KpGpdpq9ocHmTVlcpn3e5Ai0bpi4D2HSbEA=;
-        b=d2wZc1NhnTlSXVrDpKdeBMn+Kj8Zc+TtFdUxKGaqZfztBPb4wh/5zpIz+n5V5UrrNk
-         zeBNYmYsMFVKneo6FX0MaS/tCVzl3mjXXtMKNfjiMxwnb2nc/KBBXY142serBjQ9+UJQ
-         GelQcokvrhtHE5hZpL68z6oonQVEn3v1KHzmXt+vSAJAg6Q73VBtKPBA9JhiEaUkaaR3
-         qhz/wWP+YKE2vM8WB4ooepmYEOAac1/IXg32fWNKxs6yc3DZJeIl/oIK6lkSdtbfC2Vn
-         mIeRUwKxqVYiPD2G2Up4ObWrnjdE2Fmn8j9QlOWEASa1pQpqes7i7FRyDil6f+wxbJI8
-         MLSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756425271; x=1757030071;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ywp5khp3KpGpdpq9ocHmTVlcpn3e5Ai0bpi4D2HSbEA=;
-        b=k8JZQ95XPpJj9yprjsEVrkVzost6xDiNqt4gTDsWfGZMjEsDklledVDIMWIbPzd+67
-         vtp+Es+bCo+hOmH2MisoCZkb2/1UljAvkUqj8hmhTIeWwh32351xWSCqWIBe0wW7cWo2
-         mIW048Qb3Yjq7TqECU23WLM29i+g2gGd4Aouora3Li/NbwKRUyw+XkIrTvq9jVZg0iOk
-         mm3pZTB1b3M/dK/eSsETWW498cQB597iSKNnNfo35bYPoNp7uAKpDAmE9xhXBjoAmCuZ
-         QaVRWDHaGcMqqnBc4GxjXrVaeKx1PBJ6xLX4vTKxywIvIeKXcRl9Fzex4HoI0cxncyM+
-         CS2g==
-X-Forwarded-Encrypted: i=1; AJvYcCU7n7naPWOZ7t7gVQlxb2JOynScglGWuJmm9ez7nLfrmmnxyz+8XQ4SNFlDLLW86nnZ9xeRR040596G73g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YynpYiiTUzxLaORyZrSbVP/60W+NtpZEND4Fv4xzoJXGvFXUWy/
-	MeKXHqa8PEEVQ1hAGrAbWSEzVGccxroygR0FErv7Ia7T7hPCVfd2gSYMvSrK5B5DrnySnjoY5BT
-	Zkj/q3Ff12CMDdQLXqnVr+wKG1dh7hSM=
-X-Gm-Gg: ASbGnctvRcXJk87gbCdhG++iaqgXWY1jIaIxt4n+3iS+lkcS2mJXH8enLYCDV6RWGjJ
-	+luNQB9fJcipx43bDeaHxMbKDdBKayqsBAdwEm0SZTk6CyV04qKX/Ro9ZOaeJpetvECldL0Heu2
-	5EmBpVXxBGMWDOlqanNo5KhKHbpeUO4ixMHnsXFl/v+TVNnPrQZGmv0gIcciB8gYFk/WHxGmiLY
-	5DVDznZBqeQSDb5Tg==
-X-Google-Smtp-Source: AGHT+IFx1bCdet3TXgM/yuGL1gCygeo78sYjNJ6iHciVjPmaRNEDp0QbZjfxfvz+2gGiwjHgQPA9Qv79Bjp1hQIzq1I=
-X-Received: by 2002:a05:620a:a201:b0:7e9:fb98:f27e with SMTP id
- af79cd13be357-7ea1107f044mr3049024585a.58.1756425270808; Thu, 28 Aug 2025
- 16:54:30 -0700 (PDT)
+	s=arc-20240116; t=1756425394; c=relaxed/simple;
+	bh=jqOpLgavgnkRBITOWBnwEBLwXK1rh8ql4OGzOkGqwIY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fccigkxiXMu26HzCCHk/C74nKVTeDf/XmNOon8iFQGuq1pjFt+LSKhvd0XF2/vxvFQk0ok2dh/anJrpg6pHhl5rR0kPuFn3+SfGqCM8mK9Ld+BpcwE160SJj3SdvDs8SqacvjymOel8I/Coy3T++u2hVv6gNsF+6OFKuW64ngF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=FCmBOZww; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [100.65.128.219] (unknown [20.236.11.69])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 6157F2110814;
+	Thu, 28 Aug 2025 16:56:31 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 6157F2110814
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1756425392;
+	bh=pCexqDkoW83y7LpImpFx62Xw3cNxneYeXhAEgKffuKE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=FCmBOZwwR8w+zLgYvdYsQndKdjVa/Zic9g+xriRNGxIyvlCW/6jpNTSZnJfm6AeYV
+	 w2ojPM1lFjNBJBy+LYvZF2V3PzDSbQwMQWAu7ekzKLIlFXUd3JJs7xNFRWV7yBhSjO
+	 k2ChjjpZ1AKeJCgw2XX5B7Ss1Fvkq4e5nLRu23ks=
+Message-ID: <0b4eb0cc-657f-4cdb-8255-e3b8f6b14077@linux.microsoft.com>
+Date: Thu, 28 Aug 2025 16:56:20 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250801043642.8103-1-kanchana.p.sridhar@intel.com> <20250801043642.8103-25-kanchana.p.sridhar@intel.com>
-In-Reply-To: <20250801043642.8103-25-kanchana.p.sridhar@intel.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Fri, 29 Aug 2025 11:54:19 +1200
-X-Gm-Features: Ac12FXxu-APcLv8VU8AYKc0OPlj6u_0o-Gu5UmAhfYadfpGbK1JQlq4O_4nF6-Y
-Message-ID: <CAGsJ_4xMYUHo_SRc=1jgP6jMNosA_NP3HCitSMKwx=5ScJ0Cng@mail.gmail.com>
-Subject: Re: [PATCH v11 24/24] mm: zswap: Batched zswap_compress() with
- compress batching of large folios.
-To: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, hannes@cmpxchg.org, 
-	yosry.ahmed@linux.dev, nphamcs@gmail.com, chengming.zhou@linux.dev, 
-	usamaarif642@gmail.com, ryan.roberts@arm.com, ying.huang@linux.alibaba.com, 
-	akpm@linux-foundation.org, senozhatsky@chromium.org, 
-	linux-crypto@vger.kernel.org, herbert@gondor.apana.org.au, 
-	davem@davemloft.net, clabbe@baylibre.com, ardb@kernel.org, 
-	ebiggers@google.com, surenb@google.com, kristen.c.accardi@intel.com, 
-	vinicius.gomes@intel.com, wajdi.k.feghali@intel.com, vinodh.gopal@intel.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/7] Drivers: hv: Handle NEED_RESCHED_LAZY before
+ transferring to guest
+To: Sean Christopherson <seanjc@google.com>, Marc Zyngier <maz@kernel.org>,
+ Oliver Upton <oliver.upton@linux.dev>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Tianrui Zhao <zhaotianrui@loongson.cn>, Bibo Mao <maobibo@loongson.cn>,
+ Huacai Chen <chenhuacai@kernel.org>, Anup Patel <anup@brainfault.org>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+ "K. Y. Srinivasan" <kys@microsoft.com>,
+ Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
+ Dexuan Cui <decui@microsoft.com>, Peter Zijlstra <peterz@infradead.org>,
+ Andy Lutomirski <luto@kernel.org>, "Paul E. McKenney" <paulmck@kernel.org>,
+ Frederic Weisbecker <frederic@kernel.org>,
+ Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+ Joel Fernandes <joelagnelf@nvidia.com>, Josh Triplett
+ <josh@joshtriplett.org>, Boqun Feng <boqun.feng@gmail.com>,
+ Uladzislau Rezki <urezki@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ kvmarm@lists.linux.dev, kvm@vger.kernel.org, loongarch@lists.linux.dev,
+ kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
+ linux-hyperv@vger.kernel.org, rcu@vger.kernel.org,
+ Mukesh R <mrathor@linux.microsoft.com>
+References: <20250828000156.23389-1-seanjc@google.com>
+ <20250828000156.23389-2-seanjc@google.com>
+Content-Language: en-US
+From: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+In-Reply-To: <20250828000156.23389-2-seanjc@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-> +static bool zswap_compress(struct folio *folio, long start, unsigned int=
- nr_pages,
-> +                          struct zswap_entry *entries[], struct zswap_po=
-ol *pool,
-> +                          int node_id)
+On 8/27/2025 5:01 PM, Sean Christopherson wrote:
+> Check for NEED_RESCHED_LAZY, not just NEED_RESCHED, prior to transferring
+> control to a guest.  Failure to check for lazy resched can unnecessarily
+> delay rescheduling until the next tick when using a lazy preemption model.
+> 
+> Note, ideally both the checking and processing of TIF bits would be handled
+> in common code, to avoid having to keep three separate paths synchronized,
+> but defer such cleanups to the future to keep the fix as standalone as
+> possible.
+> 
+> Cc: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+> Cc: Mukesh R <mrathor@linux.microsoft.com>
+> Fixes: 621191d709b1 ("Drivers: hv: Introduce mshv_root module to expose /dev/mshv to VMMs")
+> Fixes: 64503b4f4468 ("Drivers: hv: Introduce mshv_vtl driver")
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
+> ---
+>  drivers/hv/mshv_common.c    | 2 +-
+>  drivers/hv/mshv_root_main.c | 3 ++-
+>  drivers/hv/mshv_vtl_main.c  | 3 ++-
+>  3 files changed, 5 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/hv/mshv_common.c b/drivers/hv/mshv_common.c
+> index 6f227a8a5af7..eb3df3e296bb 100644
+> --- a/drivers/hv/mshv_common.c
+> +++ b/drivers/hv/mshv_common.c
+> @@ -151,7 +151,7 @@ int mshv_do_pre_guest_mode_work(ulong th_flags)
+>  	if (th_flags & (_TIF_SIGPENDING | _TIF_NOTIFY_SIGNAL))
+>  		return -EINTR;
+>  
+> -	if (th_flags & _TIF_NEED_RESCHED)
+> +	if (th_flags & (_TIF_NEED_RESCHED | _TIF_NEED_RESCHED_LAZY))
+>  		schedule();
+>  
+>  	if (th_flags & _TIF_NOTIFY_RESUME)
+> diff --git a/drivers/hv/mshv_root_main.c b/drivers/hv/mshv_root_main.c
+> index 932932cb91ea..0d849f09160a 100644
+> --- a/drivers/hv/mshv_root_main.c
+> +++ b/drivers/hv/mshv_root_main.c
+> @@ -484,7 +484,8 @@ mshv_vp_wait_for_hv_kick(struct mshv_vp *vp)
+>  static int mshv_pre_guest_mode_work(struct mshv_vp *vp)
 >  {
->         struct crypto_acomp_ctx *acomp_ctx;
->         struct scatterlist input, output;
-> -       int comp_ret =3D 0, alloc_ret =3D 0;
-> -       unsigned int dlen =3D PAGE_SIZE;
-> -       unsigned long handle;
-> -       struct zpool *zpool;
-> +       struct zpool *zpool =3D pool->zpool;
-> +
-> +       unsigned int dlens[ZSWAP_MAX_BATCH_SIZE];
-> +       int errors[ZSWAP_MAX_BATCH_SIZE];
-> +
-> +       unsigned int nr_comps =3D min(nr_pages, pool->compr_batch_size);
-> +       unsigned int i, j;
-> +       int err;
->         gfp_t gfp;
-> -       u8 *dst;
-> +
-> +       gfp =3D GFP_NOWAIT | __GFP_NORETRY | __GFP_HIGHMEM | __GFP_MOVABL=
-E;
->
->         acomp_ctx =3D raw_cpu_ptr(pool->acomp_ctx);
->
->         mutex_lock(&acomp_ctx->mutex);
->
-> -       dst =3D acomp_ctx->buffers[0];
-> -       sg_init_table(&input, 1);
-> -       sg_set_page(&input, page, PAGE_SIZE, 0);
-> -
->         /*
-> -        * We need PAGE_SIZE * 2 here since there maybe over-compression =
-case,
-> -        * and hardware-accelerators may won't check the dst buffer size,=
- so
-> -        * giving the dst buffer with enough length to avoid buffer overf=
-low.
-> +        * Note:
-> +        * [i] refers to the incoming batch space and is used to
-> +        *     index into the folio pages, @entries and @errors.
->          */
-> -       sg_init_one(&output, dst, PAGE_SIZE * 2);
-> -       acomp_request_set_params(acomp_ctx->req, &input, &output, PAGE_SI=
-ZE, dlen);
-> +       for (i =3D 0; i < nr_pages; i +=3D nr_comps) {
-> +               if (nr_comps =3D=3D 1) {
-> +                       sg_init_table(&input, 1);
-> +                       sg_set_page(&input, folio_page(folio, start + i),=
- PAGE_SIZE, 0);
->
-> -       /*
-> -        * it maybe looks a little bit silly that we send an asynchronous=
- request,
-> -        * then wait for its completion synchronously. This makes the pro=
-cess look
-> -        * synchronous in fact.
-> -        * Theoretically, acomp supports users send multiple acomp reques=
-ts in one
-> -        * acomp instance, then get those requests done simultaneously. b=
-ut in this
-> -        * case, zswap actually does store and load page by page, there i=
-s no
-> -        * existing method to send the second page before the first page =
-is done
-> -        * in one thread doing zwap.
-> -        * but in different threads running on different cpu, we have dif=
-ferent
-> -        * acomp instance, so multiple threads can do (de)compression in =
-parallel.
-> -        */
-> -       comp_ret =3D crypto_wait_req(crypto_acomp_compress(acomp_ctx->req=
-), &acomp_ctx->wait);
-> -       dlen =3D acomp_ctx->req->dlen;
-> -       if (comp_ret)
-> -               goto unlock;
-> +                       /*
-> +                        * We need PAGE_SIZE * 2 here since there maybe o=
-ver-compression case,
-> +                        * and hardware-accelerators may won't check the =
-dst buffer size, so
-> +                        * giving the dst buffer with enough length to av=
-oid buffer overflow.
-> +                        */
-> +                       sg_init_one(&output, acomp_ctx->buffers[0], PAGE_=
-SIZE * 2);
-> +                       acomp_request_set_params(acomp_ctx->req, &input,
-> +                                                &output, PAGE_SIZE, PAGE=
-_SIZE);
-> +
-> +                       errors[i] =3D crypto_wait_req(crypto_acomp_compre=
-ss(acomp_ctx->req),
-> +                                                   &acomp_ctx->wait);
-> +                       if (unlikely(errors[i]))
-> +                               goto compress_error;
-> +
-> +                       dlens[i] =3D acomp_ctx->req->dlen;
-> +               } else {
-> +                       struct page *pages[ZSWAP_MAX_BATCH_SIZE];
-> +                       unsigned int k;
-> +
-> +                       for (k =3D 0; k < nr_pages; ++k)
-> +                               pages[k] =3D folio_page(folio, start + k)=
-;
-> +
-> +                       struct swap_batch_comp_data batch_comp_data =3D {
-> +                               .pages =3D pages,
-> +                               .dsts =3D acomp_ctx->buffers,
-> +                               .dlens =3D dlens,
-> +                               .errors =3D errors,
-> +                               .nr_comps =3D nr_pages,
-> +                       };
+>  	const ulong work_flags = _TIF_NOTIFY_SIGNAL | _TIF_SIGPENDING |
+> -				 _TIF_NEED_RESCHED  | _TIF_NOTIFY_RESUME;
+> +				 _TIF_NEED_RESCHED  | _TIF_NEED_RESCHED_LAZY |
+> +				 _TIF_NOTIFY_RESUME;
+>  	ulong th_flags;
+>  
+>  	th_flags = read_thread_flags();
+> diff --git a/drivers/hv/mshv_vtl_main.c b/drivers/hv/mshv_vtl_main.c
+> index dc6594ae03ad..12f5e77b7095 100644
+> --- a/drivers/hv/mshv_vtl_main.c
+> +++ b/drivers/hv/mshv_vtl_main.c
+> @@ -728,7 +728,8 @@ static int mshv_vtl_ioctl_return_to_lower_vtl(void)
+>  	preempt_disable();
+>  	for (;;) {
+>  		const unsigned long VTL0_WORK = _TIF_SIGPENDING | _TIF_NEED_RESCHED |
+> -						_TIF_NOTIFY_RESUME | _TIF_NOTIFY_SIGNAL;
+> +						_TIF_NOTIFY_RESUME | _TIF_NOTIFY_SIGNAL |
+> +						_TIF_NEED_RESCHED_LAZY;
+>  		unsigned long ti_work;
+>  		u32 cancel;
+>  		unsigned long irq_flags;
 
-Why would this work given that nr_pages might be larger than
-pool->compr_batch_size?
+Tested by compiling with CONFIG_PREEMPT_LAZY=y and booting a guest. For
+the test I added a check to confirm _TIF_NEED_RESCHED_LAZY was set and
+honored.
 
-unsigned int nr_comps =3D min(nr_pages, pool->compr_batch_size);
+Looks good, thanks.
 
-So this actually doesn=E2=80=99t happen unless pool->compr_batch_size =3D=
-=3D 1,
-but the code is confusing, right?
-
-> +
-> +                       acomp_ctx->req->kernel_data =3D &batch_comp_data;
-
-Can you actually pass a request larger than pool->compr_batch_size
-to the crypto driver?
-
-By the way, swap_batch_comp_data seems like a poor name. Why should
-crypto drivers know anything about swap_? kernel_data isn=E2=80=99t ideal e=
-ither;
-maybe batch_data would be better ?
-
-> +
-> +                       if (unlikely(crypto_acomp_compress(acomp_ctx->req=
-)))
-> +                               goto compress_error;
-> +               }
-
-Thanks
-Barry
+Tested-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+Reviewed-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
 
