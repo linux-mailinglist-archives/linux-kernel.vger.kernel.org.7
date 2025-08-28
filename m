@@ -1,125 +1,178 @@
-Return-Path: <linux-kernel+bounces-789437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B4C8B39558
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 09:37:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC51CB3953C
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 09:33:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA9795E5135
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 07:37:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7AF6F202EDA
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 07:33:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25F9B2FE051;
-	Thu, 28 Aug 2025 07:35:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cox9wtDn"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1582A2FD1C2;
-	Thu, 28 Aug 2025 07:35:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 130EB2D23B9;
+	Thu, 28 Aug 2025 07:33:45 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2413F9D6;
+	Thu, 28 Aug 2025 07:33:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756366510; cv=none; b=FTiQ/zIoxbFDMeD/5rgw8yO/AkQYOCKog6E3dDczuih30Vcxk0t37Oeo19XDUQBko8K9uGHCTzzVZMmDAZZmolbnXRCPDMgnwO+kZyz5BzKoTFt715EL6zjmA4CV79xKH9Zo1KuixiJhzJEAyQ+sN7qEVsfz+7+ZvAhY4Dj7Ido=
+	t=1756366424; cv=none; b=JzOL8nhjBniV6Siwmd/3/d4hi6cxNv/KKP2AvaaX6Yb/4r/G8hEIYFbTFtQCoHi8K3Yem/mt3HaY7/lEoN9GSNdM8GCZLR5nEK6irQv+PfGp9wDbxNRsf0k5niGepUpH/VddT0D9ONDle9bt6COKIBHMBfPdZ/0/VuqcxSWov2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756366510; c=relaxed/simple;
-	bh=8M2/0UwLcXRxMD4ixlU21GMSrgoCNNEd15QxD/byhss=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=rCqoC+f/n3c8jb7TDrHyyfiNSYZAo+x/DyoSrtwhGATIlBCGnkugwMp/QxQEKMQ22/WijPCzwfdul5vwMsqCIYkT4ccuXwDD/8Yba6mUHRW00fTOeI1UuEgXj6ldWLPZlZtLE/6oX86WfVkeD02N6KOW8B006R8Pj+V9UkUn1ps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Cox9wtDn; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-771e1e64fbbso786682b3a.3;
-        Thu, 28 Aug 2025 00:35:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756366508; x=1756971308; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eP+OdhpAXeM3MeCoK1wrQ3GVDNoiOJzpSPwPKz/ThLg=;
-        b=Cox9wtDne8+LjAmL8OUbPqLfknAWhTGmLu1WLIGOBCOiPt/GJputAsHABFQCwg6Rct
-         1gJFAk7Qt78msPe5Hq45CfE7yEOPtVIFsm73y72Bt22p0+reQjoCl/gL0kDyA++5UE3w
-         8e3p+mjIcFqhWMcsUYil1kgEt0/5NnaIouo9qFQh/uXLgrL3LBP3aVTuv8nxamZbZ+0J
-         ZnYQ/7cWVXXn04O7jTrHPeRL4KcNcHL6BG+gHLu7Jjky5NadPGlSRp9r4GDvMoGgBoOd
-         QtmePwMUpb9qGLOWuAC/thOPV0kDk7qj8Ifh0H0Oi/cHESBzsZd/45SrPOexWVxrtvdv
-         PtDQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756366508; x=1756971308;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eP+OdhpAXeM3MeCoK1wrQ3GVDNoiOJzpSPwPKz/ThLg=;
-        b=JDgB3K2p/JDM/OajNttEi65mzeHrQGKajJno1pJJAggvTJCI/7tcAcMmBy3kE46jIu
-         WshBSH9VEU5APhHmT6VoLWAULShLHZjKMlLxmCcLpfNBJrQPdHUJlw8poFPd5NtRgiTM
-         iqvYcsSeZxF1d8c1z0fZ/BGCvYXGTF1OK9GVNZM9ffbpWX+XQeCGiAGtjhaur7IPKiRT
-         BWEYyVv/nY70Xhj4mETXGm+Vfxm5nyD3OLG0zbdLM0PwqD5b7e83o5kZOL4/L3lxa8bm
-         7v7g4OrsEwnlmnw6H7PM13xjSX2A6t4wRKeaSWp7Tunm1dMxKAlb00OpON9qsZM4X1md
-         fRXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXCU1W+oisOIAHqtJxGKXH6zDemS/Npm8mlOMOXgzKzDTxt2aAtvJsyTrdiqCr8CT3xWclvWW4c2Z37mv96s3iESqo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzl1OdzSqS51ObPJ8vveq3G0zHEWQcH5VigZe1Srta/kbj8Ii0T
-	UuWLeMzQTEJV9WcmZzL2YrqyNaFTHNDk/12QGjdVV4woP2wI5LYfrQme
-X-Gm-Gg: ASbGncuo3bNeTR+Hxwt2D6SpY/W8M7MuQsB1W/T+X9ZaLZe4LFS5lMubr6nxPbbkvA7
-	fIKvsdSxRV/iYF81glo9euJu04vDPkPnHMURFHHyb3yECVi6QjDWgOqorhLWKP9KIKdvEkfmcS7
-	qYqXbZ7oteqqKJPj/TxEQYh8PDs/wMe8Z75w9Mhe3vM3Yt4lw02JfVkv527yg35VL/mDbdZVKLD
-	quykz/mfLrzJDVk+sfeXYhrheDaqTjDwH6mNx+fLFqYhg27MaRrExqO3iftgfTsFW1rTUnYItA/
-	0/SQKkzvvOPlKEN4v37eKD+Kb/619My7v3sur7BFw1aSz1lT3vwD0uT4R6X+KdAYjPcK/aMxCLm
-	9f7BccvKqozWNlaKGFrf7mFbI4yzPt8TP2lF5ozqUVXiJUUFIvSD9QCa+yCB1
-X-Google-Smtp-Source: AGHT+IG3E7HsLBsyZBtUPuuN6RttHjWI+4mOI8ICICciNWM3PhjKuCGhtkvM8/9T1iyfrPsEw+5ApQ==
-X-Received: by 2002:a05:6a20:7291:b0:243:b144:adaa with SMTP id adf61e73a8af0-243b144b09emr1456023637.54.1756366508342;
-        Thu, 28 Aug 2025 00:35:08 -0700 (PDT)
-Received: from localhost.localdomain ([103.88.46.62])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b49cb8afb7bsm13182613a12.16.2025.08.28.00.35.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Aug 2025 00:35:07 -0700 (PDT)
-From: Jinchao Wang <wangjinchao600@gmail.com>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	"Naveen N . Rao" <naveen@kernel.org>,
-	linux-mm@kvack.org,
-	linux-trace-kernel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Jinchao Wang <wangjinchao600@gmail.com>
-Subject: [PATCH 17/17] MAINTAINERS: add entry for KStackWatch (Kernel Stack Watch)
-Date: Thu, 28 Aug 2025 15:32:50 +0800
-Message-ID: <20250828073311.1116593-18-wangjinchao600@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250828073311.1116593-1-wangjinchao600@gmail.com>
-References: <20250828073311.1116593-1-wangjinchao600@gmail.com>
+	s=arc-20240116; t=1756366424; c=relaxed/simple;
+	bh=NQwsOjC4Pg+vDk/NIAxDfd9tk2aO4djsPYvh+LV1ofk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cZQeogmManAUWBBcXp+QxpaOLJ+1UIOWSKSzaEatyMba01SN94twzVWtQ6GY1lLH6+pt3h5UrVgRXV+TeKBABBhvYQqgET5PvgQSqEy2DHg17KTwe1400Q9B2S5NIvVOz/XxsZ3qqg8ip0ta70ttKP2c7yczcKyRwHBmg8wku3I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 83F3A1655;
+	Thu, 28 Aug 2025 00:33:32 -0700 (PDT)
+Received: from arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8A9923F694;
+	Thu, 28 Aug 2025 00:33:38 -0700 (PDT)
+Date: Thu, 28 Aug 2025 09:33:22 +0200
+From: Beata Michalska <beata.michalska@arm.com>
+To: Prashant Malani <pmalani@google.com>
+Cc: Yang Shi <yang@os.amperecomputing.com>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:CPU FREQUENCY SCALING FRAMEWORK" <linux-pm@vger.kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Ionela Voinescu <Ionela.Voinescu@arm.com>
+Subject: Re: [PATCH] cpufreq: CPPC: Increase delay between perf counter reads
+Message-ID: <aLAGQk3nOcEI0qJ2@arm.com>
+References: <20250730220812.53098-1-pmalani@google.com>
+ <8252b1e6-5d13-4f26-8aa3-30e841639e10@os.amperecomputing.com>
+ <CAFivqmKZcipdc1P1b7jkNTBAV-WE4bSeW8z=eHHmtHBxuErZiQ@mail.gmail.com>
+ <aKRDxhirzwEPxaqd@arm.com>
+ <CAFivqm+vzkbDEadJEF2So9ZWcRyVT_-Yc+8VWWwsgGW+KD4sNw@mail.gmail.com>
+ <aKY0xuegI1S4X2uW@arm.com>
+ <CAFivqm+Xi9FYtzPmT0QkAUxC2Kx_AkrH2NuQE_sVnJVuo48ypA@mail.gmail.com>
+ <aKx4nZWsRPTXK942@arm.com>
+ <aKzGlD7ZDIS4XMsF@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aKzGlD7ZDIS4XMsF@google.com>
 
-Add Jinchao Wang as the maintainer for KStackWatch, including its kernel
-module and test script.
+On Mon, Aug 25, 2025 at 08:24:52PM +0000, Prashant Malani wrote:
+> On Aug 25 16:52, Beata Michalska wrote:
+> > On Wed, Aug 20, 2025 at 02:25:16PM -0700, Prashant Malani wrote:
+> > > Hi Beata,
+> > > 
+> > > On Wed, 20 Aug 2025 at 13:49, Beata Michalska <beata.michalska@arm.com> wrote:
+> > > >
+> > > > Kinda working on that one.
+> > > 
+> > > OK. I'm eager to see what the solution is!
+> > > 
+> > > > >
+> > > > > Outside of that, I can't think of another mitigation beyond adding delay to make
+> > > > > the time deltas not matter so much.
+> > > > I'm not entirely sure what 'so much' means in this context.
+> > > > How one would quantify whether the added delay is actually mitigating the issue?
+> > > >
+> > > 
+> > > I alluded to it in the commit description, but here is the my basic
+> > > numerical analysis:
+> > > The effective timestamps for the 4 readings right now are:
+> > > Timestamp t0: del0
+> > > Timestamp t0 + m: ref0
+> > > (Time delay X us)
+> > > Timestamp t1: del1
+> > > Timestamp t1 + n: ref1
+> > > 
+> > > Timestamp t1 = t0 + m + X
+> > > 
+> > > The perf calculation is:
+> > > Per = del1 - del0 / ref1 - ref0
+> > >       = Del_counter_diff_over_time(t1 - t0) /
+> > > ref_counter_diff_over_time(t1 + n - (t0 + m))
+> > >       = Del_counter_diff_over time(t0 + m + X - t0) /
+> > > ref_counter_diff_over_time((t0 + m + X + n - t0 - m)
+> > >       = Del_counter_diff_over_time(m + X) / ref_counter_diff_over_time(n + X)
+> > > 
+> > > If X >> (m,n) this becomes:
+> > >       = Del_counter_diff_over_time(X) / ref_counter_diff_over_time(X)
+> > > which is what the actual calculation is supposed to be.
+> > > 
+> > > if X ~ (m, N) (which is what the case is right now), the calculation
+> > > becomes erratic.
+> > This is still bound by 'm' and 'n' values, as the difference between those will
+> > determine the error factor (with given, fixed X). If m != n, one counter delta
+> > is stretched more than the other, so the perf ratio no longer represents the
+> > same time interval. And that will vary between platforms/workloads leading to
+> > over/under-reporting.
+> 
+> What you are saying holds when m,n ~ X. But if X >> m,n, the X component
+> dominates. On most platforms, m and n are typically 1-2 us.
+> If X is anything >= 100us, it dominates the m,n component, making both
+> time intervals practically the same, i.e
+> 
+> (100 + 1) / (100 + 2) = 101 / 102 = 0.9901 ~ 1.00
+True but that does still influence the error - in this case that's ~1% so
+negligible. But the overall error magnitude does increase when the range
+between min and max of the possible values of m and n gets bigger.
+Question is what's the max error that can be deemed acceptable.
+And I'm pretty sure there are platforms that would require bigger X still.
 
-Signed-off-by: Jinchao Wang <wangjinchao600@gmail.com>
+> 
+> > > 
+> > > There have been other observations on this topic [1], that suggest
+> > > that even 100us
+> > > improves the error rate significantly from what it is with 2us.
+> > > 
+> > > BR,
+> > Which is exactly why I've mentioned this approach is not really recommended,
+> > being bound to rather specific setup. There have been similar proposals in the
+> > past, all with different values of the delay which should illustrate how fragile
+> > solution (if any) that is.
+> 
+> The reports/occurences point to the fact that the current value doesn't work.
+Wasn't claiming it does.
+> 
+> Another way of putting it is, why is 2us considered the "right"
+> value?
+Looking at the history, the argument was pretty much the same as yours: was
+considered sufficient for most platforms [1]
+> 
+> This patch was never meant to be an ideal solution, but it's better than what
+> is there at present. Currently, the `policy->cur` is completely unusable on CPPC,
+> and is cropping up in other locations in the cpufreq driver core [1]
+> while also breaking a userfacing ABI i.e scaling_setspeed.
+> 
+> I realize you're working on a solution, so if that is O(weeks) away, it
+> makes sense to wait; otherwise it would seem logical to mitigate the
+> error (it can always be reverted once the "better" solution is in
+> place).
+> 
+> Ultimately it's your call, but I'm not convinced with rationale provided
+> thus far.
+Actually it is not up to me, I'm simply sharing my opinion, which is:
+we should fix the problem instead of hiding it.
+Setting that aside though - this change seems rather harmless.
+
+Aside:
+./scripts/get_maintainer.pl --m ./drivers/cpufreq/cppc_cpufreq.c
+
 ---
- MAINTAINERS | 6 ++++++
- 1 file changed, 6 insertions(+)
+[1] https://lore.kernel.org/all/37517652-9a74-83f8-1315-07fe79a78d73@codeaurora.org/
+---
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index fed6cd812d79..097a0462e604 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -13354,6 +13354,12 @@ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest.git
- F:	Documentation/dev-tools/kselftest*
- F:	tools/testing/selftests/
- 
-+KERNEL STACK WATCH
-+M:	Jinchao Wang <wangjinchao600@gmail.com>
-+S:	Maintained
-+F:	mm/kstackwatch/
-+F:	tools/kstackwatch/
-+
- KERNEL SMB3 SERVER (KSMBD)
- M:	Namjae Jeon <linkinjeon@kernel.org>
- M:	Namjae Jeon <linkinjeon@samba.org>
--- 
-2.43.0
-
+BR
+Beata
+> 
+> Best regards,
+> 
+> -Prashant
+> 
+> [1] https://lore.kernel.org/linux-pm/20250823001937.2765316-1-pmalani@google.com/T/#t
 
