@@ -1,47 +1,64 @@
-Return-Path: <linux-kernel+bounces-790788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72AC4B3ACFB
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 23:50:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 229E0B3ACFC
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 23:51:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F3A83ACCAD
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 21:50:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D632F20535D
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 21:51:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D623E29BD90;
-	Thu, 28 Aug 2025 21:50:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 700A828C84C;
+	Thu, 28 Aug 2025 21:51:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ayggmNeQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ejxm+Rgb"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 361AE149C6F;
-	Thu, 28 Aug 2025 21:50:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57A617404E;
+	Thu, 28 Aug 2025 21:51:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756417806; cv=none; b=nqxO5fpHjxUk20/1+B3bldDyDzTHGye1M+qFbN9hCmp09glkTgQ9NgisHSsU5OAIgCzldNPNtChv0aXIYf6oIJ8PAJNG19BVAVZ2zpS6U2nPqTH+4VobkSOQ7axOYRQWusu8xJv+cKgZBHRNlMcczFp7lMeBRN+UgYEAdh0D8nY=
+	t=1756417900; cv=none; b=HmOUyQ/fj0E8y+gdZ99EqX0G8FOu7AIv+0GVsHQfhKzuj6xPG8kLG6P00ILhJ9T9bGyiRedCQH3PU8WDdhwxnkOasMbcAkTLRBVmp+m3/oBqKB14RZa+Nj9PkTGC0uFZQ6Q4NVpztbR4eEcaCwTfBH2KEGfzD7gnQaB7wYAOSBo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756417806; c=relaxed/simple;
-	bh=4Y4J6JquET82yYOKsdSO3p46GETUY7cRdw3zU1Y47NY=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=JO9lpOwIO4+LnOnMO4BIgYwLTGtiolapo/5CE8N14vhO39SQU+y3MYGpDVezTh5p/4TYDqa+N5o82a/NJTqF6/gcRGeZuI9KWkJnBoA05QrR/DCON/JEvaKfw9qyvwwM+6+1vdtqjLbVeoYwcsASSV3XT+MhU1xiiak+6uNKOYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ayggmNeQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC5E5C4CEEB;
-	Thu, 28 Aug 2025 21:50:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756417805;
-	bh=4Y4J6JquET82yYOKsdSO3p46GETUY7cRdw3zU1Y47NY=;
-	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
-	b=ayggmNeQ6jWVzGfgIn3J/tTcKORg8NpOIes7vSK9PcFoCSm7fGwJ9Z45Qw6lRZPPr
-	 u4gHCXlu35ra6ZobagPCDcaqbVTPOT9pH/zUrn9U5fP3I0lImCk5Muqpsc5xY0kfFC
-	 NNcDAtGGg0iVVvAnz7IiWB4Q5qnqYh0/KzT0msk5KYibTUGl2PGHOKZyMu4F288ojh
-	 0WAV2azFiI9yF2WoLKD4WPH0/1mFU2FDwoEpifsDjEjJbzVUeJDA0Ayj6shTzGN+wl
-	 PXrnUDQxC5rRmsEcUbEAZ/htNtEY/eP4qVpA0dK2PIj4dB8cs/tpD0s2spOqt/FjYb
-	 phE9JOxeiXRHA==
-Message-ID: <b0cc6fef-2048-4798-881f-61ae0366b726@kernel.org>
-Date: Thu, 28 Aug 2025 22:50:02 +0100
+	s=arc-20240116; t=1756417900; c=relaxed/simple;
+	bh=NLX7OAIAgGR+a6Q7hXVKic3rbHU7tK60lOqleoxNW1Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SMqItbOmar/bv1JyunVZk/Z0RGy8LAAk6dnd+vz0MTVlv5gw1SFfrE8db891h1toP4tWxEZ0VjLZO6S0AsFLCFOshqrlOUidrTMfIvyas8HVqH6fqK2dL2f52rYZPcWKYgJrQx3Ceg0wwXZ1R/muZE7FXxj46KG9VmjuVkP+TAU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ejxm+Rgb; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756417900; x=1787953900;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=NLX7OAIAgGR+a6Q7hXVKic3rbHU7tK60lOqleoxNW1Q=;
+  b=ejxm+RgbYZrSbQ7b6tOP9RjGKm0UVt7/on6QtfbNvldWQA+K2beFkomf
+   FhOF5p9ZGEM3qPaYQQP9uID72nlZehOAnuMPqr0YLFULfHl5d/bR8lDbo
+   RajN6WKB09qqwu0u1cNcc4S9WVr8p5wpKWl4yQZArZKAEqKBiWnKJlfX1
+   9EW3TGgasFUTXF/H4DN5shw/2fptuNTl3CFX39zzZsu4Q8ZChQO9rkAKy
+   u7Tab5/hJthRJjacrE1fVqUcC87ucWULEMTTpBvVAkulzb+aJYiQ2F969
+   g6zt4jm/UtQoPoRqNmAxmXnEM/9LCWCAswT51hPj7CEOtFH/afLoPgjo9
+   g==;
+X-CSE-ConnectionGUID: ZNOwHnhJTN+AoWC2d2cwwg==
+X-CSE-MsgGUID: iCynte1IT6uVYrv+Fg61Ng==
+X-IronPort-AV: E=McAfee;i="6800,10657,11536"; a="84104563"
+X-IronPort-AV: E=Sophos;i="6.18,221,1751266800"; 
+   d="scan'208";a="84104563"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2025 14:51:39 -0700
+X-CSE-ConnectionGUID: 13nun5FlQKyBFBd2cVeckQ==
+X-CSE-MsgGUID: HRycRmrARqur1JaNCB3/og==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,221,1751266800"; 
+   d="scan'208";a="174394844"
+Received: from kcaccard-desk.amr.corp.intel.com (HELO [10.125.109.98]) ([10.125.109.98])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2025 14:51:38 -0700
+Message-ID: <fa0f4052-22cd-47cc-95ea-ffe1c3a5a52a@intel.com>
+Date: Thu, 28 Aug 2025 14:51:37 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,42 +66,84 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: Quentin Monnet <qmo@kernel.org>
-Subject: Re: [PATCH v7 0/2] bpftool: Refactor config parsing and add CET
- symbol matching
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>, chenyuan_fl@163.com
-Cc: olsajiri@gmail.com, andrii@kernel.org, ast@kernel.org,
- bpf@vger.kernel.org, chenyuan@kylinos.cn, daniel@iogearbox.net,
- linux-kernel@vger.kernel.org, yonghong.song@linux.dev
-References: <aKL4rB3x8Cd4uUvb@krava>
- <20250825022002.13760-1-chenyuan_fl@163.com>
- <CAEf4Bzb_3ac0dPnkuMqs-dCrTEWqjVt-fsGWGyHAai_bUxubNA@mail.gmail.com>
-Content-Language: en-GB
-In-Reply-To: <CAEf4Bzb_3ac0dPnkuMqs-dCrTEWqjVt-fsGWGyHAai_bUxubNA@mail.gmail.com>
+Subject: Re: [PATCH v3] hwmon: (coretemp) Replace x86_model checks with VFM
+ ones
+To: Sohil Mehta <sohil.mehta@intel.com>, Guenter Roeck <linux@roeck-us.net>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>, linux-hwmon@vger.kernel.org,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+ Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
+ Zhang Rui <rui.zhang@intel.com>, x86@kernel.org, linux-kernel@vger.kernel.org
+References: <20250828201729.1145420-1-sohil.mehta@intel.com>
+ <9f1fbf32-fd37-420c-82bc-a43e6d5ef57a@roeck-us.net>
+ <c53dedd1-5c58-4325-8da8-552f109b67c5@intel.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <c53dedd1-5c58-4325-8da8-552f109b67c5@intel.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-2025-08-27 14:53 UTC-0700 ~ Andrii Nakryiko <andrii.nakryiko@gmail.com>
-> On Sun, Aug 24, 2025 at 7:20 PM <chenyuan_fl@163.com> wrote:
->>
->> From: Yuan CHen <chenyuan@kylinos.cn>
->>
->> 1. **Refactor kernel config parsing**
->>    - Moves duplicate config file handling from feature.c to common.c
->>    - Keeps all existing functionality while enabling code reuse
->>
->> 2. **Add CET-aware symbol matching**
->>    - Adjusts kprobe hook detection for x86_64 CET (endbr32/64 prefixes)
->>    - Matches symbols at both original and CET-adjusted addresses
->>
-> 
-> Quentin, can you please take a quick look at this patch set, when you
-> get a chance? Thanks!
+On 8/28/25 14:45, Sohil Mehta wrote:
+> On 8/28/2025 2:42 PM, Guenter Roeck wrote:
+...
+> Dave has provided his signoff on the patch now. Also, he suggested
+> including a Cc: stable.
 
+Let's just wait until Guenter sends it upstream. Once it hits Linus's
+tree, you can ask for it to be in stable if we decide it's a good idea.
 
-Yes! Both patches look good to me. For the series:
+I asked if it was necessary because I'm not positive it's a good idea.
 
-Acked-by: Quentin Monnet <qmo@kernel.org>
+For instance, if the model numbers in play were all >100 and Intel has
+zero plans to introduce a family 18/19, model >100, then it might not be
+worth it. Or, if the only downside is a single warning on dmesg, it
+might not be worth it.
 
-Thanks for this work
+But, if it's going to spew warnings constantly or set your brand new
+machine ablaze, then maybe it's worth backporting.
+
+So, let's actually look at what it would mean in practice to have it hit
+stable@ or not. Just spent 10 minutes looking at it.
 
