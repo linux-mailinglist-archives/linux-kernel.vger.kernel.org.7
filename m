@@ -1,234 +1,830 @@
-Return-Path: <linux-kernel+bounces-789929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789872-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61246B39CCF
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 14:19:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1675B39BF3
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 13:49:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C268017CB9F
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 12:18:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 81F1C7AAFCB
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 11:47:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1FDB310628;
-	Thu, 28 Aug 2025 12:11:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B979230DEA6;
+	Thu, 28 Aug 2025 11:49:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RqiFCK55"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="AneHdIvQ"
+Received: from SEYPR02CU001.outbound.protection.outlook.com (mail-koreacentralazon11013007.outbound.protection.outlook.com [40.107.44.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C391530F537
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 12:11:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756383095; cv=none; b=BLVEFyTVqRWjiYYQ4f6bx8VcAHggObWfxn/+OCSBP59+Fa91USaO4oZ4EPvLuRpW0Q6Lg6j/93GpYthn46jOXrxWtC4ud0mPjzdsrNJMpAyi8ragtG4nBmnQKs+EghiOgksVqlL/HCHrZrbWtChzsTPXcH6koC4dMQH6DBramOE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756383095; c=relaxed/simple;
-	bh=2ktMdNY3k61aPA2/lm50+GCes4gOy0DJDNPYFQGl4fs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QFrfRa9cyMvH+D9ef0MDtYrY/ddM6Q9/3YggO09Hl0AzEOoM+P5fQD+o7q5FZc9UGc1fLKHEtvWIe2dyl79UR3PPEbkhiqCse6xSiiVRkvrqi/0a6V+jD3WWJReESHvr6UPJYtwU8HBjUBirDyl5KzUqTeJg+hyaC6vakf8rAqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RqiFCK55; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756383092;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2UGqflFI8eChQOA7+GEyiXkR47jGjc2vCRu3os6QQyo=;
-	b=RqiFCK55xQ3Jm/wvajwYwQjgzNFaA7s7iLPZC6dDj3HWhaWm1pxjuRvPr7Pl5eC3cZRBxw
-	CKG8O765B28Scexey72stgNX9xjUZnZZxUTMdK+0JVxelNDuv8+wqyz79p29xbFbP6RIuB
-	VULPrx9RjhUEynqAHKEsCarymxvM1FU=
-Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
- [209.85.216.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-661-HvE7iTQMN-SxwpBnaCxjLw-1; Thu, 28 Aug 2025 08:11:30 -0400
-X-MC-Unique: HvE7iTQMN-SxwpBnaCxjLw-1
-X-Mimecast-MFC-AGG-ID: HvE7iTQMN-SxwpBnaCxjLw_1756383089
-Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-325e31cece1so1402992a91.2
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 05:11:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756383089; x=1756987889;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2UGqflFI8eChQOA7+GEyiXkR47jGjc2vCRu3os6QQyo=;
-        b=LsUZ69JpqFsf2iywtAv+4cdluqtnlqJQdg9mhSTAoQK/fvkqh/TwwQNKzp3sxTY7+C
-         O0IuSBM6eWMbuX5qYO3GX4n75pGF1MucRfP1gTuzjwTghvr1L3fIOCT8WBc6HqXF6IHO
-         GGE2u6+sZbCDUy20sxMJ1LGNdkMOD345KY2pZPhbzm/54ab7/5QkQFLoL1UASde5UYIW
-         o2yP42hzENxeZyDrtBR95y/S/DvF0BsYhj9GMG3VM5A7pZ/hmtXkBvhov34G2Xf1YZJf
-         r31V3GUf4lvgyQqrj7i5n/qWSVwddPGu3cSbtwIrvSxrjLWQ/wAxh6aBS087pmcsb7cR
-         3+nQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXeTsjN0WaRsNzl9ydqOlRtgRyN9kl01lI3fF6tXp7ziDo6DGUPpQmhO/0jc+dYMFlnOfEEE5HJ7Z2h5oE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzsqIAUqnlx54JV6HJ/QrfMEKj2KrHPG23SpjVuhWnsBnmOVGy2
-	f5lVvOznkcsc2dtKCc+yhblH40pQgci0gaoBU09k3o7a9jSTKBb7Dbja+b04x31hkPJdjOcZH0C
-	wHfH4Yh4Eyax++SNO5MSBNi0qDb3d3m0sg7H1ROinUtUsqNj4pi2GKHxPrQ//6jzrBqKZiW/iPn
-	sTG5fm6pBxHqmZFp1kdf8iZcVmIYOTncV9QWQn0u7y
-X-Gm-Gg: ASbGncsi5UYSQQZATauV/IlNyxCIZnXJsY8dHBgzMeTIL37VSUaPgy+PmszcWk4RAFH
-	0SZevrpdwn9JDwIFhsrr2iLtalgUxfhABF/7xayTo9Ph2Asx0g9xJjpVjttOuvEFmWRMpZWmZ1F
-	/tlhrY1XllIMPaRj4MnVVl3g==
-X-Received: by 2002:a17:90b:4ec7:b0:31f:42e8:a896 with SMTP id 98e67ed59e1d1-32518b8233amr27589479a91.34.1756383088814;
-        Thu, 28 Aug 2025 05:11:28 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG/1VuJO7sOj+w9DbBPxn7h7VRP4y4KKuh9IZVK6bmCJgpn+KrmoXKNVFrzEshD5AQ6z5yFNiOU64bGtA72s9Y=
-X-Received: by 2002:a17:90b:4ec7:b0:31f:42e8:a896 with SMTP id
- 98e67ed59e1d1-32518b8233amr27589439a91.34.1756383088324; Thu, 28 Aug 2025
- 05:11:28 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF90A191F6A
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 11:49:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.44.7
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756381746; cv=fail; b=SP70Y43bFQvznVrAAr9+hbPywb7grLrT5RoNJ54oGHlBQozg/ToNt+n73smX5zW0/WfzKjiacWpzT+KSSqDn9ixtxzkCyoJ2bDcXNznhc1R+koBS3WuKXZlW9ijMmBdsFN9n+7QeCAfH72Y+MXKKgNwRi8STXM3cAf+EresPbCY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756381746; c=relaxed/simple;
+	bh=jAk6Cfh3ldS3ouCEbuqcggU7X3x9ybdpW6FcxG9hbsE=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=EzWx1hbAazMKnZ6Ft9v5kh32an8p9/Me/oDEhCF+dvfw8KT8xmXs5/1NygnjuBMrDKIwv7sdYgu0+QSHqi6Q34R02pRRL+s2S4UyuOTvZrr2pX4dPUwgOXmCaypeCV3VasXn9bKkJMS8MGSP9OsS2tnv3RRIjPReXgZrSwesGIU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=AneHdIvQ; arc=fail smtp.client-ip=40.107.44.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=FeMdkFKCYHEe7fdUGtyYDFYfScGt83j55GbqLtcCohl1imi4sEuOak7LVyAF3VHR6V1TgINXSCBRLPDji0u01jyrrQ7SHD9HHTTe29/kTPWkg6BkxYu55CZIDkR+pxLr7W/7NhNOFxQKYtDj9xmLQveX5RAwu/K9yh6YHFyQXzfDqcx+B4WFGNNBlJJsN+P05Je+DCMXak+NPVzKTr04wrGxGvATIso1WiETFAzV00yOm7lqpXexgZ7ro5sv9uk+kFb/HgVXrgl+iRDMBluzEvUVKMGn8/r7mbY4KlLuQokuNVjPZKmh0pbcBX6qUeIA84gMd04u6SsiFqTG7zUodQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Cr2ZfBwjy5n/EDiIIRIagd462w0yVJ626edYmwe6CVk=;
+ b=GnXn5FVQIsj24KvBHjRDtDopJNWZJJuUe+QRDeTja1G520c2AMxdCiByV2uBbKZx8VELgfs1OORxUF8eQvhvUtCdXo+b8SCCvKPHDe6SwlWFOAgVACQhw0kIq8b/d9ERdcv3dfXX5GfTgnxiW7sF71Iy0dxWQei3aSPsGnvMAl2lxliBOEG17xgjPVH4q9xGkTb4QYsAT4saUPCE+Yum+5AmOVV+KHKW0TnldK+IOzSY7FBuJUpNaWQoWyGkjO/+MJLLp6pr9Zp8pB6u0nJmI3UkgvMKJcRQsokil2VNQvveqTi7NovI04ttjC5K9GVfw1mpL4cGbSkf/rk1Tubjkg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Cr2ZfBwjy5n/EDiIIRIagd462w0yVJ626edYmwe6CVk=;
+ b=AneHdIvQNXVrt91+rY+Q+Kn9QBfF4S/tPxZjFJIBnpz/RRr210QZr33AiS+ivz38LD5GyM7f0ZDt9xCHqQc9PA8E+ZAzBNUwSkS03BEixSq8ZSvaJD96jZg/N1E89zaqGTRsYIHhPYNlT+ErKg7pm37cLmenZ1x0ciGNXtBL+dAyke0Yscj0hS451tNCNpoQA5PZ9pXYTtsW6Fg8QEk/9WX46YQ0izPpVAESTORWwOvPXu9ln7sAzMe8+jwo4eTjXwz+fSHD7zGq1lGU3NZDV+i5xN82IEWras4TjcMr8S0QQVX0TK4J/u2sW29gmxhL5lDBLuDS/5t0b7gcqf3tqA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SEZPR06MB7140.apcprd06.prod.outlook.com (2603:1096:101:228::14)
+ by TYZPR06MB6996.apcprd06.prod.outlook.com (2603:1096:405:3e::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.21; Thu, 28 Aug
+ 2025 11:49:00 +0000
+Received: from SEZPR06MB7140.apcprd06.prod.outlook.com
+ ([fe80::9eaf:17a9:78b4:67c0]) by SEZPR06MB7140.apcprd06.prod.outlook.com
+ ([fe80::9eaf:17a9:78b4:67c0%5]) with mapi id 15.20.9052.019; Thu, 28 Aug 2025
+ 11:48:59 +0000
+From: Qi Han <hanqi@vivo.com>
+To: jaegeuk@kernel.org,
+	chao@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org,
+	axboe@kernel.dk,
+	Qi Han <hanqi@vivo.com>
+Subject: [RFC PATCH] f2fs: f2fs support uncached buffer I/O read and write
+Date: Thu, 28 Aug 2025 06:11:30 -0600
+Message-Id: <20250828121131.3694154-1-hanqi@vivo.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SG2P153CA0017.APCP153.PROD.OUTLOOK.COM (2603:1096::27) To
+ SEZPR06MB7140.apcprd06.prod.outlook.com (2603:1096:101:228::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250827075209.2347015-1-chuhu@redhat.com> <20250827075209.2347015-2-chuhu@redhat.com>
- <87956f34-e6b0-4d03-b30e-56be4f6b84f1@redhat.com>
-In-Reply-To: <87956f34-e6b0-4d03-b30e-56be4f6b84f1@redhat.com>
-From: Chunyu Hu <chuhu@redhat.com>
-Date: Thu, 28 Aug 2025 20:11:17 +0800
-X-Gm-Features: Ac12FXy5i29Lv7D_Qeef2pLLf4cwbU_o5j8qeJDX_02H1KqJvRXEd1sgycpMGA0
-Message-ID: <CAKJHmxy_zT7kT5mz85OAbThcjYHHKoMRNwkdh8m+i94keQR2BQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] selftests/mm: fix hugepages cleanup too early
-To: David Hildenbrand <david@redhat.com>
-Cc: akpm@linux-foundation.org, shuah@kernel.org, linux-mm@kvack.org, 
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, vbabka@suse.cz, 
-	rppt@kernel.org, surenb@google.com, mhocko@suse.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SEZPR06MB7140:EE_|TYZPR06MB6996:EE_
+X-MS-Office365-Filtering-Correlation-Id: e7c9d60d-34ca-4254-30cd-08dde628dfff
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|376014|52116014|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?KN92OJWkQwsgGmhaRUbxdPTgin5aYCNZKtbASRT1C53BjM9M/o0O06/rgZKb?=
+ =?us-ascii?Q?slrC/8oioo1IzZfx+yM4c/gJXlBr0bz7OFAk8ZUEIhXlz0jxtdRBI2aLKjda?=
+ =?us-ascii?Q?q8lEtd0jVK/X9Ac9u7ztTDEq13Mds32AtctO9xiohgTGSR+TnXbsWzVot1VL?=
+ =?us-ascii?Q?dVcntNiBsrRtAjD2jkUBXMjET/hkkp2+G93PQUlmf20cIDynpmTA2os1Xhna?=
+ =?us-ascii?Q?ZlJjppyBTxvSD5xUMvIbfGGJenLjjYhjKdYxu15JPs9FCXQ5JoGmJxQdMRdy?=
+ =?us-ascii?Q?SzXQD5bqK7aRw0bNa8BwIq7t1J2EIikC+uj/Ml63ROSHCLlwqFiI76vMTCiS?=
+ =?us-ascii?Q?m9UyFHqXcwslr/jJSHJ8bjvskthQW3WmF/Jiq7GDyOzWjHx+BVyUNU13R9ez?=
+ =?us-ascii?Q?96p9F3EK4hFtrJpa2HYmQlggjiucLZyaezxekXxOm7BC0d3yhwy80QKB55Y2?=
+ =?us-ascii?Q?OWsFCo6uz+3sZ7/in2iSAfn5SNblpshjfj25HwIGI0/0a6SrzmyEt5036Twj?=
+ =?us-ascii?Q?TpJq1aAIftGcZHVbCfcWYRo1ijYUVXDG8WgAIDpLhEQNGjgEGGm+42CD5LhR?=
+ =?us-ascii?Q?cun55kub6LBDXzeEG/zL7+QXdHEc6vJvgzc4ZlvZewJTreosRW1xBRgT80gq?=
+ =?us-ascii?Q?AfRlz/96DT/3/dGoI+uw/vQKgjG11qNmLqRh/u5r3RPte4C1vEa+d+2EdulK?=
+ =?us-ascii?Q?ygFrDIV6jPqGkW63IM6SPdFm0heIOLXuoy6rYyCOttap+v4RfkYo0AjJs2wH?=
+ =?us-ascii?Q?/yXHy8KcGp5qxBREE9+u8sUZCneI81uPTUMSyN0hIPD/5S7KgvhXrmR6wQuM?=
+ =?us-ascii?Q?5sTccByz+eQFHMalPpwiZ6gYe6ytdpSxL46eDXBW09a+um4HdhKp6NBKWJrJ?=
+ =?us-ascii?Q?+7ruTAqpcGGyS8SaGKKfIo/aGyqnPA3x/T+0zMBIpF4WGqMWt3yxxgvuwtFw?=
+ =?us-ascii?Q?L9xCaiD9f8Q46a5Da4zYWIrejl+96ars6ofGrqAivSxPVmhtk6Zfbz79qrpk?=
+ =?us-ascii?Q?1G+dor4Bn6B/2OYWef+lL9N8nZqeVMKDpIz4ugxw87aFLjDFfJyfsCv2y6t0?=
+ =?us-ascii?Q?2xFHYPv4RGBcOsaoQzhU38ntmpwiTrAUbT9TcvMBC1xBq/sSBCKAn+o/NV2s?=
+ =?us-ascii?Q?Gv/iYbC6ocvaEjysEVhY04UqjXzGTXkjv/czd23q9Ap+iuBnwaUK5lFYw1fR?=
+ =?us-ascii?Q?23L05Mx/jKNxpbYoLZCntecahCOLnznPm0osGuxjGTYRRpSsA7Qs21wYLOyL?=
+ =?us-ascii?Q?dgX+UZjTklumGLUnh3VbxFz8aLxYbCKCQRAKKI++m8yM/QOo+ED8idnAC2xm?=
+ =?us-ascii?Q?tn38CumNf9O2b2yTVG4MzF38kX87Rs0b6PW+fDRe/Qo8cv0svYiT8IYRryaW?=
+ =?us-ascii?Q?EyC+QeX9L6803tgQaKImDgKSNGteWrdkEkdk0l64nLavx2aIc6WxQgedqy/n?=
+ =?us-ascii?Q?8PjPzuWKe30gdwkRP60YupZcA2OjAsKpHYzqjFJDbXrrI4jg/KQhxg=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB7140.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(52116014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?IQfbdJueNMJAObTl+VB4XYA4f4NJe/Dy+pPV570P7N65J81NkpjqmHqASgOY?=
+ =?us-ascii?Q?OnU3eq2TCMTQtbaPytgb2FpE1fMNaROQ7ca+03hVcBHm9IoHppUZhBE4bTJj?=
+ =?us-ascii?Q?5n2cb7prBbOteRCVkq4i4l5Stf29nwqhkH690WDyei++U8f/SWHvKPhT5BnH?=
+ =?us-ascii?Q?OIbdP7hSay3CC6WiNLVk/xmyEwvAj5auX4tLeC1qOofa/zmeQ62XxCXa2EUv?=
+ =?us-ascii?Q?3+UOJF9sfreGqRX3igF0wi4B9dwwdHZu20bpXwIONw2N6HAUrz59xaOwfOSH?=
+ =?us-ascii?Q?W6ygaifaOwEBTlqdpDjXBNvZv+EvW+ByNX++bKLlG/j4lyFFNkOVh+sadWZ3?=
+ =?us-ascii?Q?gxqz9dt+9hAIMw+hGMEw1eu06sbS4E+1OkBkXRzywIBTrhtDVHkQiE45Jsyh?=
+ =?us-ascii?Q?+M7Dfvz2V3OKZ26Cuk/0Nqw+rm6cjw7LrUNtVCAUoUdaVy+Yhnf/yRBphxfm?=
+ =?us-ascii?Q?4ERCpCrcklqUjh6Eq+n0dhGTvvaLQGJwdgqSWcZHwtn+vGjdGnXp3M714ClT?=
+ =?us-ascii?Q?fvpE9B4w8W/TAnQbcHCajFuQrug048DoD+8RQjNYo6S1wnAjjbPd+jGDD77k?=
+ =?us-ascii?Q?IM+qbZdb1lVb+j2520SOfm43woy2JXLszdtkwHZ9eAu14404/Fmcaz193XIv?=
+ =?us-ascii?Q?0uTj2T83MuSOSgsEuuMvxDE9Q8HvGGb7HxtO/BhCza2EPbNapzSJoI5xDyGd?=
+ =?us-ascii?Q?kxRk4VpzWn8JE2F31GxLQRbqTE53oDpSsOPwf/+Bjz1Kr8frgCiMOSdNy5NO?=
+ =?us-ascii?Q?1y5i9GJ/SUyz6Jlw5tq5Fa59Jgk5UOjOYYid23l3P68JNAt1a/tU428dD5qd?=
+ =?us-ascii?Q?j/NscE4hfbTC/3aioXsgnfpkMR/HsVQp1Dum+DJYn/VDjz/gOhf9KfgEEK72?=
+ =?us-ascii?Q?NGHM4TYx+BCao6+uGakVmuLXkAuzyCJsWHDP/b2RUBBBaGBxRGBoGez2cFoB?=
+ =?us-ascii?Q?fb/aaGKN4X1H4pgSt5DDR3BvQsehw5RAMGb2QKHYQjG+wguTjsxC5hjUfjMD?=
+ =?us-ascii?Q?rQ5mBeYV69Uos7H5JdmmX41iVFbWFHf92cYInFfF+EH0m8kYoPZnIBdhgliO?=
+ =?us-ascii?Q?R7IosXRuw5tcCLls0iewNlan60ZG2u3Z/Mp4ubh+hF+TKKRDYk/5U0ESznMT?=
+ =?us-ascii?Q?BZw81CM5qXj2e5jexzcKg1oOWi+WEAIWtj6yP6YEJ6JVZsdl3Q8zSlFApC02?=
+ =?us-ascii?Q?mpqiTOL0EoclnobfGw3XLjxdzQyUFkNwNMgFaOJq7AXsk+VkkRTGPuKw/FNT?=
+ =?us-ascii?Q?ebzALwGoL7xORZovqTfrCM8sVVWjDQ4wQckFsiJ8ja8a9JydkvPE/cy2noCj?=
+ =?us-ascii?Q?8GHkdscxjflDqDiZ/UtYOTW9I09xsL/ZZOyFTmi9wpL+4/f18oqnrQz/pGik?=
+ =?us-ascii?Q?sC98bmN8FjVvGnoaRm3CIczujTwmmsCBB3Tz3lGi5iTsBoBjtmMKUnW5qSl4?=
+ =?us-ascii?Q?rmU76de6m8Pm8epOTAeeHHtw6H/MBziasYS2pC9XzIMRH6eeeYHO5uaz44jM?=
+ =?us-ascii?Q?10JxBtk1kBIwARQXpSNr1zDfFhVjzNV0h6zQW09zyWLtIN0qmobYZ3JMwmVY?=
+ =?us-ascii?Q?cJ1yCDv2XPtQ3sdGJ2GXr7kUkDZnbWze72bGNFp3?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e7c9d60d-34ca-4254-30cd-08dde628dfff
+X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB7140.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Aug 2025 11:48:59.2617
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: InQOk75Xq6843EqeWAkmac9s4O0GlHofgnt2T0QOtXqbWicbp/rMKGoxQWgYuWWNe9YE1O6SNwR/v1Lo/3IQ9g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR06MB6996
 
-On Wed, Aug 27, 2025 at 7:41=E2=80=AFPM David Hildenbrand <david@redhat.com=
-> wrote:
->
-> On 27.08.25 09:52, Chunyu Hu wrote:
-> > The nr_hugepgs variable is used to keep the original nr_hugepages at th=
-e
-> > hugepage setup step at test beginning. After userfaultfd test, a cleaup=
- is
-> > executed, both /sys/kernel/mm/hugepages/hugepages-*/nr_hugepages and
-> > /proc/sys//vm/nr_hugepages are reset to 'original' value before userfau=
-ltfd
-> > test starts.
-> >
-> > Issue here is the value used to restore /proc/sys/vm/nr_hugepages is
-> > nr_hugepgs which is the initial value before the vm_runtests.sh runs, n=
-ot
-> > the value before userfaultfd test starts. 'va_high_addr_swith.sh' tests
-> > runs after that will possibly see no hugepages available for test, and =
-got
-> > EINVAL when mmap(HUGETLB), making the result invalid.
-> >
-> > And before pkey tests, nr_hugepgs is changed to be used as a temp varia=
-ble
-> > to save nr_hugepages before pkey test, and restore it after pkey tests
-> > finish. The original nr_hugepages value is not tracked anymore, so no w=
-ay
-> > to restore it after all tests finish.
-> >
-> > Add a new variable nr_hugepgs_origin to save the original nr_hugepages,=
- and
-> > and restore it to nr_hugepages after all tests finish. And change to us=
-e
-> > the nr_hugepgs variable to save the /proc/sys/vm/nr_hugeages after huge=
-page
-> > setup, it's also the value before userfaultfd test starts, and the corr=
-ect
-> > value to be restored after userfaultfd finishes. The va_high_addr_switc=
-h.sh
-> > broken will be resolved.
-> >
-> > Signed-off-by: Chunyu Hu <chuhu@redhat.com>
-> > ---
-> >   tools/testing/selftests/mm/run_vmtests.sh | 9 +++++++--
-> >   1 file changed, 7 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/tools/testing/selftests/mm/run_vmtests.sh b/tools/testing/=
-selftests/mm/run_vmtests.sh
-> > index 471e539d82b8..f1a7ad3ec6a7 100755
-> > --- a/tools/testing/selftests/mm/run_vmtests.sh
-> > +++ b/tools/testing/selftests/mm/run_vmtests.sh
-> > @@ -172,13 +172,13 @@ fi
-> >
-> >   # set proper nr_hugepages
-> >   if [ -n "$freepgs" ] && [ -n "$hpgsize_KB" ]; then
-> > -     nr_hugepgs=3D$(cat /proc/sys/vm/nr_hugepages)
-> > +     nr_hugepgs_origin=3D$(cat /proc/sys/vm/nr_hugepages)
->
-> I'd call this "orig_nr_hugepgs".
+In the link [1], we adapted uncached buffer I/O read support in f2fs.
+Now, let's move forward to enabling uncached buffer I/O write support
+in f2fs.
 
-Hi David,
+In f2fs_write_end_io, a separate asynchronous workqueue is created to
+perform the page drop operation for bios that contain pages of type
+FGP_DONTCACHE.
 
-Thank you for your review and valuable feedback. I will rename it with
-a v2 and resend the two patches. Do you have suggestions on patch 2?
+The following patch is developed and tested based on the v6.17-rc3 branch.
+My local testing results are as follows, along with some issues observed:
+1) Write performance degradation. Uncached buffer I/O write is slower than
+normal buffered write because uncached I/O triggers a sync operation for
+each I/O after data is written to memory, in order to drop pages promptly
+at end_io. I assume this impact might be less visible on high-performance
+storage devices such as PCIe 6.0 SSDs.
+- f2fs_file_write_iter
+ - f2fs_buffered_write_iter
+ - generic_write_sync
+  - filemap_fdatawrite_range_kick
+2) As expected, page cache usage does not significantly increase during writes.
+3) The kswapd0 memory reclaim thread remains mostly idle, but additional
+asynchronous work overhead is introduced, e.g:
+  PID USER         PR  NI VIRT  RES  SHR S[%CPU] %MEM     TIME+ ARGS
+19650 root          0 -20    0    0    0 I  7.0   0.0   0:00.21 [kworker/u33:3-f2fs_post_write_wq]
+   95 root          0 -20    0    0    0 I  6.6   0.0   0:02.08 [kworker/u33:0-f2fs_post_write_wq]
+19653 root          0 -20    0    0    0 I  4.6   0.0   0:01.25 [kworker/u33:6-f2fs_post_write_wq]
+19652 root          0 -20    0    0    0 I  4.3   0.0   0:00.92 [kworker/u33:5-f2fs_post_write_wq]
+19613 root          0 -20    0    0    0 I  4.3   0.0   0:00.99 [kworker/u33:1-f2fs_post_write_wq]
+19651 root          0 -20    0    0    0 I  3.6   0.0   0:00.98 [kworker/u33:4-f2fs_post_write_wq]
+19654 root          0 -20    0    0    0 I  3.0   0.0   0:01.05 [kworker/u33:7-f2fs_post_write_wq]
+19655 root          0 -20    0    0    0 I  2.3   0.0   0:01.18 [kworker/u33:8-f2fs_post_write_wq]
 
->
-> But it's a shame that the naming is then out of sync with nr_size_hugepgs=
-?
+From these results on my test device, introducing uncached buffer I/O write on
+f2fs seems to bring more drawbacks than benefits. Do we really need to support
+uncached buffer I/O write in f2fs?
 
-nr_size_hugepgs is for uffd-wp-mremap, the test need all sizes hugepages,
-it's used to save and restore the nr_hugepagees of all sizes of hugepages,
-it's a test case setup, not like nr_hugepgs which is a global/general setup=
-.
-They are not the same kind, maybe they don't need to be aligned...
+Write test data without using uncached buffer I/O:
+Starting 1 threads
+pid: 17609
+writing bs 8192, uncached 0
+  1s: 753MB/sec, MB=753
+  2s: 792MB/sec, MB=1546
+  3s: 430MB/sec, MB=1978
+  4s: 661MB/sec, MB=2636
+  5s: 900MB/sec, MB=3542
+  6s: 769MB/sec, MB=4308
+  7s: 808MB/sec, MB=5113
+  8s: 766MB/sec, MB=5884
+  9s: 654MB/sec, MB=6539
+ 10s: 456MB/sec, MB=6995
+ 11s: 797MB/sec, MB=7793
+ 12s: 770MB/sec, MB=8563
+ 13s: 778MB/sec, MB=9341
+ 14s: 726MB/sec, MB=10077
+ 15s: 736MB/sec, MB=10803
+ 16s: 798MB/sec, MB=11602
+ 17s: 728MB/sec, MB=12330
+ 18s: 749MB/sec, MB=13080
+ 19s: 777MB/sec, MB=13857
+ 20s: 688MB/sec, MB=14395
 
->
->
-> >       needpgs=3D$((needmem_KB / hpgsize_KB))
-> >       tries=3D2
-> >       while [ "$tries" -gt 0 ] && [ "$freepgs" -lt "$needpgs" ]; do
-> >               lackpgs=3D$((needpgs - freepgs))
-> >               echo 3 > /proc/sys/vm/drop_caches
-> > -             if ! echo $((lackpgs + nr_hugepgs)) > /proc/sys/vm/nr_hug=
-epages; then
-> > +             if ! echo $((lackpgs + nr_hugepgs_origin)) > /proc/sys/vm=
-/nr_hugepages; then
-> >                       echo "Please run this test as root"
-> >                       exit $ksft_skip
-> >               fi
-> > @@ -189,6 +189,7 @@ if [ -n "$freepgs" ] && [ -n "$hpgsize_KB" ]; then
-> >               done < /proc/meminfo
-> >               tries=3D$((tries - 1))
-> >       done
-> > +     nr_hugepgs=3D$(cat /proc/sys/vm/nr_hugepages)
-> >       if [ "$freepgs" -lt "$needpgs" ]; then
-> >               printf "Not enough huge pages available (%d < %d)\n" \
-> >                      "$freepgs" "$needpgs"
-> > @@ -532,6 +533,10 @@ CATEGORY=3D"page_frag" run_test ./test_page_frag.s=
-h aligned
-> >
-> >   CATEGORY=3D"page_frag" run_test ./test_page_frag.sh nonaligned
-> >
-> > +if [ "${HAVE_HUGEPAGES}" =3D 1 ]; then
-> > +     echo "$nr_hugepgs_origin" > /proc/sys/vm/nr_hugepages
-> > +fi
->
-> FWIW, I think the tests should maybe be doing that
-> (save+configure+restore) themselves, like we do with THP settings through=
-.
->
-> thp_save_settings()
-> thp_write_settings()
->
-> and friends.
->
-> This is not really something run_vmtests.sh should bother with.
->
-> A bigger rework, though ...
+19:29:34      UID       PID    %usr %system  %guest   %wait    %CPU   CPU  Command
+19:29:35        0        94    0.00    0.00    0.00    0.00    0.00     4  kswapd0
+19:29:36        0        94    0.00    0.00    0.00    0.00    0.00     4  kswapd0
+19:29:37        0        94    0.00    0.00    0.00    0.00    0.00     4  kswapd0
+19:29:38        0        94    0.00    0.00    0.00    0.00    0.00     4  kswapd0
+19:29:39        0        94    0.00    0.00    0.00    0.00    0.00     4  kswapd0
+19:29:40        0        94    0.00    0.00    0.00    0.00    0.00     4  kswapd0
+19:29:41        0        94    0.00    2.00    0.00    0.00    2.00     0  kswapd0
+19:29:42        0        94    0.00   59.00    0.00    0.00   59.00     7  kswapd0
+19:29:43        0        94    0.00   45.00    0.00    0.00   45.00     7  kswapd0
+19:29:44        0        94    0.00   36.00    0.00    0.00   36.00     0  kswapd0
+19:29:45        0        94    0.00   27.00    0.00    1.00   27.00     0  kswapd0
+19:29:46        0        94    0.00   26.00    0.00    0.00   26.00     2  kswapd0
+19:29:47        0        94    0.00   57.00    0.00    0.00   57.00     7  kswapd0
+19:29:48        0        94    0.00   41.00    0.00    0.00   41.00     7  kswapd0
+19:29:49        0        94    0.00   38.00    0.00    0.00   38.00     7  kswapd0
+19:29:50        0        94    0.00   47.00    0.00    0.00   47.00     7  kswapd0
+19:29:51        0        94    0.00   43.00    0.00    1.00   43.00     7  kswapd0
+19:29:52        0        94    0.00   36.00    0.00    0.00   36.00     7  kswapd0
+19:29:53        0        94    0.00   39.00    0.00    0.00   39.00     2  kswapd0
+19:29:54        0        94    0.00   46.00    0.00    0.00   46.00     7  kswapd0
+19:29:55        0        94    0.00   43.00    0.00    0.00   43.00     7  kswapd0
+19:29:56        0        94    0.00   39.00    0.00    0.00   39.00     7  kswapd0
+19:29:57        0        94    0.00   29.00    0.00    1.00   29.00     1  kswapd0
+19:29:58        0        94    0.00   17.00    0.00    0.00   17.00     4  kswapd0
 
-Totally agree, with the c interface to do that is better. then the
-vm_runtest.sh would  be clean. It's a bigger rework outside of this topic..=
-.
+19:29:33    kbmemfree   kbavail kbmemused  %memused kbbuffers  kbcached  kbcommit   %commit  kbactive   kbinact   kbdirty
+19:29:34      4464588   6742648   4420876     38.12      6156   2032600 179730872    743.27   1863412   1822544         4
+19:29:35      4462572   6740784   4422752     38.13      6156   2032752 179739004    743.30   1863460   1823584        16
+19:29:36      4381512   6740856   4422420     38.13      6156   2114144 179746508    743.33   1863476   1905384     81404
+19:29:37      3619456   6741840   4421588     38.12      6156   2877032 179746652    743.33   1863536   2668896    592584
+19:29:38      2848184   6740720   4422472     38.13      6164   3646188 179746652    743.33   1863600   3438520    815692
+19:29:39      2436336   6739452   4423720     38.14      6164   4056772 179746652    743.33   1863604   3849164    357096
+19:29:40      1712660   6737700   4425140     38.15      6164   4779020 179746604    743.33   1863612   4571124    343716
+19:29:41       810664   6738020   4425004     38.15      6164   5681152 179746604    743.33   1863612   5473444    297268
+19:29:42       673756   6779120   4373200     37.71      5656   5869928 179746604    743.33   1902852   5589452    269032
+19:29:43       688480   6782024   4371012     37.69      5648   5856940 179750048    743.34   1926336   5542004    279344
+19:29:44       688956   6789028   4364260     37.63      5584   5863272 179750048    743.34   1941608   5518808    300096
+19:29:45       740768   6804560   4348772     37.49      5524   5827248 179750000    743.34   1954084   5452844    123120
+19:29:46       697936   6810612   4342768     37.44      5524   5876048 179750048    743.34   1962020   5483944    274908
+19:29:47       734504   6818716   4334156     37.37      5512   5849188 179750000    743.34   1978120   5426796    274504
+19:29:48       771696   6828316   4324180     37.28      5504   5820948 179762260    743.39   2006732   5354152    305388
+19:29:49       691944   6838812   4313108     37.19      5476   5912444 179749952    743.34   2021720   5418996    296852
+19:29:50       679392   6844496   4306892     37.13      5452   5931356 179749952    743.34   1982772   5463040    233600
+19:29:51       768528   6868080   4284224     36.94      5412   5865704 176317452    729.15   1990220   5359012    343160
+19:29:52       717880   6893940   4259968     36.73      5400   5942368 176317404    729.15   1965624   5444140    304856
+19:29:53       712408   6902660   4251268     36.65      5372   5956584 176318376    729.15   1969192   5442132    290224
+19:29:54       707184   6917512   4236160     36.52      5344   5976944 176318568    729.15   1968716   5443620    336948
+19:29:55       703172   6921608   4232332     36.49      5292   5984836 176318568    729.15   1979788   5429484    328716
+19:29:56       733256   6933020   4220864     36.39      5212   5966340 176318568    729.15   1983636   5396256    300008
+19:29:57       723308   6936340   4217280     36.36      5120   5979816 176318568    729.15   1987088   5394360    508792
+19:29:58       732148   6942972   4210680     36.30      5108   5977656 176311064    729.12   1990400   5379884    214936
 
->
-> --
-> Cheers
->
-> David / dhildenb
->
+Write test data after using uncached buffer I/O:
+Starting 1 threads
+pid: 17742
+writing bs 8192, uncached 1
+  1s: 433MB/sec, MB=433
+  2s: 195MB/sec, MB=628
+  3s: 209MB/sec, MB=836
+  4s: 54MB/sec, MB=883
+  5s: 277MB/sec, MB=1169
+  6s: 141MB/sec, MB=1311
+  7s: 185MB/sec, MB=1495
+  8s: 134MB/sec, MB=1631
+  9s: 201MB/sec, MB=1834
+ 10s: 283MB/sec, MB=2114
+ 11s: 223MB/sec, MB=2339
+ 12s: 164MB/sec, MB=2506
+ 13s: 155MB/sec, MB=2657
+ 14s: 132MB/sec, MB=2792
+ 15s: 186MB/sec, MB=2965
+ 16s: 218MB/sec, MB=3198
+ 17s: 220MB/sec, MB=3412
+ 18s: 191MB/sec, MB=3606
+ 19s: 214MB/sec, MB=3828
+ 20s: 257MB/sec, MB=4085
 
+19:31:31      UID       PID    %usr %system  %guest   %wait    %CPU   CPU  Command
+19:31:32        0        94    0.00    0.00    0.00    0.00    0.00     4  kswapd0
+19:31:33        0        94    0.00    0.00    0.00    0.00    0.00     4  kswapd0
+19:31:34        0        94    0.00    0.00    0.00    0.00    0.00     4  kswapd0
+19:31:35        0        94    0.00    0.00    0.00    0.00    0.00     4  kswapd0
+19:31:36        0        94    0.00    0.00    0.00    0.00    0.00     4  kswapd0
+19:31:37        0        94    0.00    0.00    0.00    0.00    0.00     4  kswapd0
+19:31:38        0        94    0.00    0.00    0.00    0.00    0.00     4  kswapd0
+19:31:39        0        94    0.00    0.00    0.00    0.00    0.00     4  kswapd0
+19:31:40        0        94    0.00    0.00    0.00    0.00    0.00     4  kswapd0
+19:31:41        0        94    0.00    0.00    0.00    0.00    0.00     4  kswapd0
+19:31:42        0        94    0.00    0.00    0.00    0.00    0.00     4  kswapd0
+19:31:43        0        94    0.00    0.00    0.00    0.00    0.00     4  kswapd0
+19:31:44        0        94    0.00    0.00    0.00    0.00    0.00     4  kswapd0
+19:31:45        0        94    0.00    0.00    0.00    0.00    0.00     4  kswapd0
+19:31:46        0        94    0.00    0.00    0.00    0.00    0.00     4  kswapd0
+19:31:47        0        94    0.00    0.00    0.00    0.00    0.00     4  kswapd0
+19:31:48        0        94    0.00    0.00    0.00    0.00    0.00     4  kswapd0
+19:31:49        0        94    0.00    0.00    0.00    0.00    0.00     4  kswapd0
 
---
-----
-Thanks,
-Chunyu Hu
+19:31:31    kbmemfree   kbavail kbmemused  %memused kbbuffers  kbcached  kbcommit   %commit  kbactive   kbinact   kbdirty
+19:31:32      4816812   6928788   4225812     36.43      5148   1879676 176322636    729.17   1920900   1336548    285748
+19:31:33      4781880   6889428   4265592     36.78      5148   1874860 176322636    729.17   1920920   1332268    279028
+19:31:34      4758972   6822588   4332376     37.35      5148   1830984 176322636    729.17   1920920   1288976    233040
+19:31:35      4850248   6766480   4387840     37.83      5148   1684244 176322636    729.17   1920920   1142408     90508
+19:31:36      4644176   6741676   4413256     38.05      5148   1864900 176322636    729.17   1920920   1323452    269380
+19:31:37      4637900   6681480   4473436     38.57      5148   1810996 176322588    729.17   1920920   1269612    217632
+19:31:38      4502108   6595508   4559500     39.31      5148   1860724 176322492    729.17   1920920   1319588    267760
+19:31:39      4498844   6551068   4603928     39.69      5148   1819528 176322492    729.17   1920920   1278440    226496
+19:31:40      4498812   6587396   4567340     39.38      5148   1856116 176322492    729.17   1920920   1314800    263292
+19:31:41      4656784   6706252   4448372     38.35      5148   1817112 176322492    729.17   1920920   1275704    224600
+19:31:42      4635032   6673328   4481436     38.64      5148   1805816 176322492    729.17   1920920   1264548    213436
+19:31:43      4636852   6679736   4474884     38.58      5148   1810548 176322492    729.17   1920932   1269796    218276
+19:31:44      4654740   6669104   4485544     38.67      5148   1782000 176322444    729.17   1920932   1241552    189880
+19:31:45      4821604   6693156   4461848     38.47      5148   1638864 176322444    729.17   1920932   1098784     31076
+19:31:46      4707548   6728796   4426400     38.16      5148   1788368 176322444    729.17   1920932   1248936    196596
+19:31:47      4683996   6747632   4407348     38.00      5148   1830968 176322444    729.17   1920932   1291396    239636
+19:31:48      4694648   6773808   4381320     37.78      5148   1846376 176322624    729.17   1920944   1307576    254800
+19:31:49      4663784   6730212   4424776     38.15      5148   1833784 176322772    729.17   1920948   1295156    242200
+
+[1]
+https://lore.kernel.org/lkml/20250725075310.1614614-1-hanqi@vivo.com/
+
+Signed-off-by: Qi Han <hanqi@vivo.com>
+---
+ fs/f2fs/data.c    | 178 ++++++++++++++++++++++++++++++++++------------
+ fs/f2fs/f2fs.h    |   5 ++
+ fs/f2fs/file.c    |   2 +-
+ fs/f2fs/iostat.c  |   8 ++-
+ fs/f2fs/iostat.h  |   4 +-
+ fs/f2fs/segment.c |   2 +-
+ fs/f2fs/super.c   |  16 ++++-
+ 7 files changed, 161 insertions(+), 54 deletions(-)
+
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 7961e0ddfca3..4eeb2b36473d 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -30,8 +30,10 @@
+ #define NUM_PREALLOC_POST_READ_CTXS	128
+ 
+ static struct kmem_cache *bio_post_read_ctx_cache;
++static struct kmem_cache *bio_post_write_ctx_cache;
+ static struct kmem_cache *bio_entry_slab;
+ static mempool_t *bio_post_read_ctx_pool;
++static mempool_t *bio_post_write_ctx_pool;
+ static struct bio_set f2fs_bioset;
+ 
+ #define	F2FS_BIO_POOL_SIZE	NR_CURSEG_TYPE
+@@ -120,6 +122,12 @@ struct bio_post_read_ctx {
+ 	block_t fs_blkaddr;
+ };
+ 
++struct bio_post_write_ctx {
++	struct bio *bio;
++	struct f2fs_sb_info *sbi;
++	struct work_struct work;
++};
++
+ /*
+  * Update and unlock a bio's pages, and free the bio.
+  *
+@@ -159,6 +167,56 @@ static void f2fs_finish_read_bio(struct bio *bio, bool in_task)
+ 	bio_put(bio);
+ }
+ 
++static void f2fs_finish_write_bio(struct f2fs_sb_info *sbi, struct bio *bio)
++{
++	struct folio_iter fi;
++	struct bio_post_write_ctx *write_ctx = (struct bio_post_write_ctx *)bio->bi_private;
++
++	bio_for_each_folio_all(fi, bio) {
++		struct folio *folio = fi.folio;
++		enum count_type type;
++
++		if (fscrypt_is_bounce_folio(folio)) {
++			struct folio *io_folio = folio;
++
++			folio = fscrypt_pagecache_folio(io_folio);
++			fscrypt_free_bounce_page(&io_folio->page);
++		}
++
++#ifdef CONFIG_F2FS_FS_COMPRESSION
++		if (f2fs_is_compressed_page(folio)) {
++			f2fs_compress_write_end_io(bio, folio);
++			continue;
++		}
++#endif
++
++		type = WB_DATA_TYPE(folio, false);
++
++		if (unlikely(bio->bi_status != BLK_STS_OK)) {
++			mapping_set_error(folio->mapping, -EIO);
++			if (type == F2FS_WB_CP_DATA)
++				f2fs_stop_checkpoint(sbi, true,
++						STOP_CP_REASON_WRITE_FAIL);
++		}
++
++		f2fs_bug_on(sbi, is_node_folio(folio) &&
++				folio->index != nid_of_node(folio));
++
++		dec_page_count(sbi, type);
++		if (f2fs_in_warm_node_list(sbi, folio))
++			f2fs_del_fsync_node_entry(sbi, folio);
++		folio_clear_f2fs_gcing(folio);
++		folio_end_writeback(folio);
++	}
++	if (!get_pages(sbi, F2FS_WB_CP_DATA) &&
++				wq_has_sleeper(&sbi->cp_wait))
++		wake_up(&sbi->cp_wait);
++
++	if (write_ctx)
++		mempool_free(write_ctx, bio_post_write_ctx_pool);
++	bio_put(bio);
++}
++
+ static void f2fs_verify_bio(struct work_struct *work)
+ {
+ 	struct bio_post_read_ctx *ctx =
+@@ -314,58 +372,32 @@ static void f2fs_read_end_io(struct bio *bio)
+ 	f2fs_verify_and_finish_bio(bio, intask);
+ }
+ 
++static void f2fs_finish_write_bio_async_work(struct work_struct *work)
++{
++	struct bio_post_write_ctx *ctx =
++		container_of(work, struct bio_post_write_ctx, work);
++
++	f2fs_finish_write_bio(ctx->sbi, ctx->bio);
++}
++
+ static void f2fs_write_end_io(struct bio *bio)
+ {
+-	struct f2fs_sb_info *sbi;
+-	struct folio_iter fi;
++	struct f2fs_sb_info *sbi = F2FS_F_SB(bio_first_folio_all(bio));
++	struct bio_post_write_ctx *write_ctx;
+ 
+ 	iostat_update_and_unbind_ctx(bio);
+-	sbi = bio->bi_private;
+ 
+ 	if (time_to_inject(sbi, FAULT_WRITE_IO))
+ 		bio->bi_status = BLK_STS_IOERR;
+ 
+-	bio_for_each_folio_all(fi, bio) {
+-		struct folio *folio = fi.folio;
+-		enum count_type type;
+-
+-		if (fscrypt_is_bounce_folio(folio)) {
+-			struct folio *io_folio = folio;
+-
+-			folio = fscrypt_pagecache_folio(io_folio);
+-			fscrypt_free_bounce_page(&io_folio->page);
+-		}
+-
+-#ifdef CONFIG_F2FS_FS_COMPRESSION
+-		if (f2fs_is_compressed_page(folio)) {
+-			f2fs_compress_write_end_io(bio, folio);
+-			continue;
+-		}
+-#endif
+-
+-		type = WB_DATA_TYPE(folio, false);
+-
+-		if (unlikely(bio->bi_status != BLK_STS_OK)) {
+-			mapping_set_error(folio->mapping, -EIO);
+-			if (type == F2FS_WB_CP_DATA)
+-				f2fs_stop_checkpoint(sbi, true,
+-						STOP_CP_REASON_WRITE_FAIL);
+-		}
+-
+-		f2fs_bug_on(sbi, is_node_folio(folio) &&
+-				folio->index != nid_of_node(folio));
+-
+-		dec_page_count(sbi, type);
+-		if (f2fs_in_warm_node_list(sbi, folio))
+-			f2fs_del_fsync_node_entry(sbi, folio);
+-		folio_clear_f2fs_gcing(folio);
+-		folio_end_writeback(folio);
++	write_ctx = (struct bio_post_write_ctx *)bio->bi_private;
++	if (write_ctx) {
++		INIT_WORK(&write_ctx->work, f2fs_finish_write_bio_async_work);
++		queue_work(write_ctx->sbi->post_write_wq, &write_ctx->work);
++		return;
+ 	}
+-	if (!get_pages(sbi, F2FS_WB_CP_DATA) &&
+-				wq_has_sleeper(&sbi->cp_wait))
+-		wake_up(&sbi->cp_wait);
+ 
+-	bio_put(bio);
++	f2fs_finish_write_bio(sbi, bio);
+ }
+ 
+ #ifdef CONFIG_BLK_DEV_ZONED
+@@ -467,11 +499,10 @@ static struct bio *__bio_alloc(struct f2fs_io_info *fio, int npages)
+ 		bio->bi_private = NULL;
+ 	} else {
+ 		bio->bi_end_io = f2fs_write_end_io;
+-		bio->bi_private = sbi;
++		bio->bi_private = NULL;
+ 		bio->bi_write_hint = f2fs_io_type_to_rw_hint(sbi,
+ 						fio->type, fio->temp);
+ 	}
+-	iostat_alloc_and_bind_ctx(sbi, bio, NULL);
+ 
+ 	if (fio->io_wbc)
+ 		wbc_init_bio(fio->io_wbc, bio);
+@@ -701,6 +732,7 @@ int f2fs_submit_page_bio(struct f2fs_io_info *fio)
+ 
+ 	/* Allocate a new bio */
+ 	bio = __bio_alloc(fio, 1);
++	iostat_alloc_and_bind_ctx(fio->sbi, bio, NULL, NULL);
+ 
+ 	f2fs_set_bio_crypt_ctx(bio, fio_folio->mapping->host,
+ 			fio_folio->index, fio, GFP_NOIO);
+@@ -899,6 +931,8 @@ int f2fs_merge_page_bio(struct f2fs_io_info *fio)
+ alloc_new:
+ 	if (!bio) {
+ 		bio = __bio_alloc(fio, BIO_MAX_VECS);
++		iostat_alloc_and_bind_ctx(fio->sbi, bio, NULL, NULL);
++
+ 		f2fs_set_bio_crypt_ctx(bio, folio->mapping->host,
+ 				folio->index, fio, GFP_NOIO);
+ 
+@@ -948,6 +982,7 @@ void f2fs_submit_page_write(struct f2fs_io_info *fio)
+ 	struct f2fs_bio_info *io = sbi->write_io[btype] + fio->temp;
+ 	struct folio *bio_folio;
+ 	enum count_type type;
++	struct bio_post_write_ctx *write_ctx = NULL;
+ 
+ 	f2fs_bug_on(sbi, is_read_io(fio->op));
+ 
+@@ -1001,6 +1036,13 @@ void f2fs_submit_page_write(struct f2fs_io_info *fio)
+ 		f2fs_set_bio_crypt_ctx(io->bio, fio_inode(fio),
+ 				bio_folio->index, fio, GFP_NOIO);
+ 		io->fio = *fio;
++
++		if (folio_test_dropbehind(bio_folio)) {
++			write_ctx = mempool_alloc(bio_post_write_ctx_pool, GFP_NOFS);
++			write_ctx->bio = io->bio;
++			write_ctx->sbi = sbi;
++		}
++		iostat_alloc_and_bind_ctx(fio->sbi, io->bio, NULL, write_ctx);
+ 	}
+ 
+ 	if (!bio_add_folio(io->bio, bio_folio, folio_size(bio_folio), 0)) {
+@@ -1077,7 +1119,7 @@ static struct bio *f2fs_grab_read_bio(struct inode *inode, block_t blkaddr,
+ 		ctx->decompression_attempted = false;
+ 		bio->bi_private = ctx;
+ 	}
+-	iostat_alloc_and_bind_ctx(sbi, bio, ctx);
++	iostat_alloc_and_bind_ctx(sbi, bio, ctx, NULL);
+ 
+ 	return bio;
+ }
+@@ -3540,6 +3582,7 @@ static int f2fs_write_begin(const struct kiocb *iocb,
+ 	bool use_cow = false;
+ 	block_t blkaddr = NULL_ADDR;
+ 	int err = 0;
++	fgf_t fgp = FGP_LOCK | FGP_WRITE | FGP_CREAT;
+ 
+ 	trace_f2fs_write_begin(inode, pos, len);
+ 
+@@ -3582,12 +3625,13 @@ static int f2fs_write_begin(const struct kiocb *iocb,
+ #endif
+ 
+ repeat:
++	if (iocb && iocb->ki_flags & IOCB_DONTCACHE)
++		fgp |= FGP_DONTCACHE;
+ 	/*
+ 	 * Do not use FGP_STABLE to avoid deadlock.
+ 	 * Will wait that below with our IO control.
+ 	 */
+-	folio = __filemap_get_folio(mapping, index,
+-				FGP_LOCK | FGP_WRITE | FGP_CREAT, GFP_NOFS);
++	folio = __filemap_get_folio(mapping, index, fgp, GFP_NOFS);
+ 	if (IS_ERR(folio)) {
+ 		err = PTR_ERR(folio);
+ 		goto fail;
+@@ -4127,12 +4171,38 @@ int __init f2fs_init_post_read_processing(void)
+ 	return -ENOMEM;
+ }
+ 
++int __init f2fs_init_post_write_processing(void)
++{
++	bio_post_write_ctx_cache =
++		kmem_cache_create("f2fs_bio_post_write_ctx",
++				sizeof(struct bio_post_write_ctx), 0, 0, NULL);
++	if (!bio_post_write_ctx_cache)
++		goto fail;
++	bio_post_write_ctx_pool =
++		mempool_create_slab_pool(NUM_PREALLOC_POST_READ_CTXS,
++				bio_post_write_ctx_cache);
++	if (!bio_post_write_ctx_pool)
++		goto fail_free_cache;
++	return 0;
++
++fail_free_cache:
++	kmem_cache_destroy(bio_post_write_ctx_cache);
++fail:
++	return -ENOMEM;
++}
++
+ void f2fs_destroy_post_read_processing(void)
+ {
+ 	mempool_destroy(bio_post_read_ctx_pool);
+ 	kmem_cache_destroy(bio_post_read_ctx_cache);
+ }
+ 
++void f2fs_destroy_post_write_processing(void)
++{
++	mempool_destroy(bio_post_write_ctx_pool);
++	kmem_cache_destroy(bio_post_write_ctx_cache);
++}
++
+ int f2fs_init_post_read_wq(struct f2fs_sb_info *sbi)
+ {
+ 	if (!f2fs_sb_has_encrypt(sbi) &&
+@@ -4146,12 +4216,26 @@ int f2fs_init_post_read_wq(struct f2fs_sb_info *sbi)
+ 	return sbi->post_read_wq ? 0 : -ENOMEM;
+ }
+ 
++int f2fs_init_post_write_wq(struct f2fs_sb_info *sbi)
++{
++	sbi->post_write_wq = alloc_workqueue("f2fs_post_write_wq",
++						 WQ_UNBOUND | WQ_HIGHPRI,
++						 num_online_cpus());
++	return sbi->post_write_wq ? 0 : -ENOMEM;
++}
++
+ void f2fs_destroy_post_read_wq(struct f2fs_sb_info *sbi)
+ {
+ 	if (sbi->post_read_wq)
+ 		destroy_workqueue(sbi->post_read_wq);
+ }
+ 
++void f2fs_destroy_post_write_wq(struct f2fs_sb_info *sbi)
++{
++	if (sbi->post_write_wq)
++		destroy_workqueue(sbi->post_write_wq);
++}
++
+ int __init f2fs_init_bio_entry_cache(void)
+ {
+ 	bio_entry_slab = f2fs_kmem_cache_create("f2fs_bio_entry_slab",
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 46be7560548c..fe3f81876b23 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1812,6 +1812,7 @@ struct f2fs_sb_info {
+ 	/* Precomputed FS UUID checksum for seeding other checksums */
+ 	__u32 s_chksum_seed;
+ 
++	struct workqueue_struct *post_write_wq;
+ 	struct workqueue_struct *post_read_wq;	/* post read workqueue */
+ 
+ 	/*
+@@ -4023,9 +4024,13 @@ bool f2fs_release_folio(struct folio *folio, gfp_t wait);
+ bool f2fs_overwrite_io(struct inode *inode, loff_t pos, size_t len);
+ void f2fs_clear_page_cache_dirty_tag(struct folio *folio);
+ int f2fs_init_post_read_processing(void);
++int f2fs_init_post_write_processing(void);
+ void f2fs_destroy_post_read_processing(void);
++void f2fs_destroy_post_write_processing(void);
+ int f2fs_init_post_read_wq(struct f2fs_sb_info *sbi);
++int f2fs_init_post_write_wq(struct f2fs_sb_info *sbi);
+ void f2fs_destroy_post_read_wq(struct f2fs_sb_info *sbi);
++void f2fs_destroy_post_write_wq(struct f2fs_sb_info *sbi);
+ extern const struct iomap_ops f2fs_iomap_ops;
+ 
+ /*
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 42faaed6a02d..8aa6a4fd52e8 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -5443,5 +5443,5 @@ const struct file_operations f2fs_file_operations = {
+ 	.splice_read	= f2fs_file_splice_read,
+ 	.splice_write	= iter_file_splice_write,
+ 	.fadvise	= f2fs_file_fadvise,
+-	.fop_flags	= FOP_BUFFER_RASYNC,
++	.fop_flags	= FOP_BUFFER_RASYNC | FOP_DONTCACHE,
+ };
+diff --git a/fs/f2fs/iostat.c b/fs/f2fs/iostat.c
+index f8703038e1d8..b2e6ce80c68d 100644
+--- a/fs/f2fs/iostat.c
++++ b/fs/f2fs/iostat.c
+@@ -245,7 +245,7 @@ void iostat_update_and_unbind_ctx(struct bio *bio)
+ 	if (op_is_write(bio_op(bio))) {
+ 		lat_type = bio->bi_opf & REQ_SYNC ?
+ 				WRITE_SYNC_IO : WRITE_ASYNC_IO;
+-		bio->bi_private = iostat_ctx->sbi;
++		bio->bi_private = iostat_ctx->post_write_ctx;
+ 	} else {
+ 		lat_type = READ_IO;
+ 		bio->bi_private = iostat_ctx->post_read_ctx;
+@@ -256,7 +256,8 @@ void iostat_update_and_unbind_ctx(struct bio *bio)
+ }
+ 
+ void iostat_alloc_and_bind_ctx(struct f2fs_sb_info *sbi,
+-		struct bio *bio, struct bio_post_read_ctx *ctx)
++		struct bio *bio, struct bio_post_read_ctx *read_ctx,
++		struct bio_post_write_ctx *write_ctx)
+ {
+ 	struct bio_iostat_ctx *iostat_ctx;
+ 	/* Due to the mempool, this never fails. */
+@@ -264,7 +265,8 @@ void iostat_alloc_and_bind_ctx(struct f2fs_sb_info *sbi,
+ 	iostat_ctx->sbi = sbi;
+ 	iostat_ctx->submit_ts = 0;
+ 	iostat_ctx->type = 0;
+-	iostat_ctx->post_read_ctx = ctx;
++	iostat_ctx->post_read_ctx = read_ctx;
++	iostat_ctx->post_write_ctx = write_ctx;
+ 	bio->bi_private = iostat_ctx;
+ }
+ 
+diff --git a/fs/f2fs/iostat.h b/fs/f2fs/iostat.h
+index eb99d05cf272..a358909bb5e8 100644
+--- a/fs/f2fs/iostat.h
++++ b/fs/f2fs/iostat.h
+@@ -40,6 +40,7 @@ struct bio_iostat_ctx {
+ 	unsigned long submit_ts;
+ 	enum page_type type;
+ 	struct bio_post_read_ctx *post_read_ctx;
++	struct bio_post_write_ctx *post_write_ctx;
+ };
+ 
+ static inline void iostat_update_submit_ctx(struct bio *bio,
+@@ -60,7 +61,8 @@ static inline struct bio_post_read_ctx *get_post_read_ctx(struct bio *bio)
+ 
+ extern void iostat_update_and_unbind_ctx(struct bio *bio);
+ extern void iostat_alloc_and_bind_ctx(struct f2fs_sb_info *sbi,
+-		struct bio *bio, struct bio_post_read_ctx *ctx);
++		struct bio *bio, struct bio_post_read_ctx *read_ctx,
++		struct bio_post_write_ctx *write_ctx);
+ extern int f2fs_init_iostat_processing(void);
+ extern void f2fs_destroy_iostat_processing(void);
+ extern int f2fs_init_iostat(struct f2fs_sb_info *sbi);
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index cc82d42ef14c..8501008e42b2 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -3856,7 +3856,7 @@ int f2fs_allocate_data_block(struct f2fs_sb_info *sbi, struct folio *folio,
+ 		f2fs_inode_chksum_set(sbi, folio);
+ 	}
+ 
+-	if (fio) {
++	if (fio && !folio_test_dropbehind(folio)) {
+ 		struct f2fs_bio_info *io;
+ 
+ 		INIT_LIST_HEAD(&fio->list);
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index e16c4e2830c2..110dfe073aee 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -1963,6 +1963,7 @@ static void f2fs_put_super(struct super_block *sb)
+ 	flush_work(&sbi->s_error_work);
+ 
+ 	f2fs_destroy_post_read_wq(sbi);
++	f2fs_destroy_post_write_wq(sbi);
+ 
+ 	kvfree(sbi->ckpt);
+ 
+@@ -4959,6 +4960,12 @@ static int f2fs_fill_super(struct super_block *sb, struct fs_context *fc)
+ 		goto free_devices;
+ 	}
+ 
++	err = f2fs_init_post_write_wq(sbi);
++	if (err) {
++		f2fs_err(sbi, "Failed to initialize post write workqueue");
++		goto free_devices;
++	}
++
+ 	sbi->total_valid_node_count =
+ 				le32_to_cpu(sbi->ckpt->valid_node_count);
+ 	percpu_counter_set(&sbi->total_valid_inode_count,
+@@ -5240,6 +5247,7 @@ static int f2fs_fill_super(struct super_block *sb, struct fs_context *fc)
+ 	/* flush s_error_work before sbi destroy */
+ 	flush_work(&sbi->s_error_work);
+ 	f2fs_destroy_post_read_wq(sbi);
++	f2fs_destroy_post_write_wq(sbi);
+ free_devices:
+ 	destroy_device_list(sbi);
+ 	kvfree(sbi->ckpt);
+@@ -5435,9 +5443,12 @@ static int __init init_f2fs_fs(void)
+ 	err = f2fs_init_post_read_processing();
+ 	if (err)
+ 		goto free_root_stats;
+-	err = f2fs_init_iostat_processing();
++	err = f2fs_init_post_write_processing();
+ 	if (err)
+ 		goto free_post_read;
++	err = f2fs_init_iostat_processing();
++	if (err)
++		goto free_post_write;
+ 	err = f2fs_init_bio_entry_cache();
+ 	if (err)
+ 		goto free_iostat;
+@@ -5469,6 +5480,8 @@ static int __init init_f2fs_fs(void)
+ 	f2fs_destroy_bio_entry_cache();
+ free_iostat:
+ 	f2fs_destroy_iostat_processing();
++free_post_write:
++	f2fs_destroy_post_write_processing();
+ free_post_read:
+ 	f2fs_destroy_post_read_processing();
+ free_root_stats:
+@@ -5504,6 +5517,7 @@ static void __exit exit_f2fs_fs(void)
+ 	f2fs_destroy_bio_entry_cache();
+ 	f2fs_destroy_iostat_processing();
+ 	f2fs_destroy_post_read_processing();
++	f2fs_destroy_post_write_processing();
+ 	f2fs_destroy_root_stats();
+ 	f2fs_exit_shrinker();
+ 	f2fs_exit_sysfs();
+-- 
+2.50.0
 
 
