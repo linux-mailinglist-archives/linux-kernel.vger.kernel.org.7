@@ -1,156 +1,142 @@
-Return-Path: <linux-kernel+bounces-790872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9B1CB3AEB4
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 01:56:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 85685B3AEB8
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 02:00:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE464582CC9
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 23:56:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5941D582CB9
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 00:00:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D0AF2DC32B;
-	Thu, 28 Aug 2025 23:56:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 070AB2DA779;
+	Thu, 28 Aug 2025 23:59:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="FCmBOZww"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E482262FC0;
-	Thu, 28 Aug 2025 23:56:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IoGAcm9m"
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3C32634;
+	Thu, 28 Aug 2025 23:59:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756425394; cv=none; b=nYUdm8BP+4m9vOMx1CHCYk0fu+gdbHb8dGYOiTMDAiYrgIWNvH15XYFwb15eOb71fspXQw40JrwqB3QXyACrDUB2M2KO1YbVjRISEVPxXZCj+DEiM56N5Ci8iMQH4WiSFZSES2JRKvlVH0j7ZV9ywIWVwPpcAypBLcAcjKkPWK4=
+	t=1756425597; cv=none; b=RXp3RAXxJz1m0hhVShgiwBDthloJ5XNOonMtJk8p0H9OESn3IrcBy7T8/pnvHOCPspZmQuYXue5Eo0FSqMGdXJSnjgVapH/9rBHkvd1mGvu0N5liY2bq7ephD4LV/s7CqVEeuhqDzjnWyXX0Te6cTFVOMnIwi47LWmkyJn06HdI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756425394; c=relaxed/simple;
-	bh=jqOpLgavgnkRBITOWBnwEBLwXK1rh8ql4OGzOkGqwIY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fccigkxiXMu26HzCCHk/C74nKVTeDf/XmNOon8iFQGuq1pjFt+LSKhvd0XF2/vxvFQk0ok2dh/anJrpg6pHhl5rR0kPuFn3+SfGqCM8mK9Ld+BpcwE160SJj3SdvDs8SqacvjymOel8I/Coy3T++u2hVv6gNsF+6OFKuW64ngF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=FCmBOZww; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [100.65.128.219] (unknown [20.236.11.69])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 6157F2110814;
-	Thu, 28 Aug 2025 16:56:31 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 6157F2110814
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1756425392;
-	bh=pCexqDkoW83y7LpImpFx62Xw3cNxneYeXhAEgKffuKE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=FCmBOZwwR8w+zLgYvdYsQndKdjVa/Zic9g+xriRNGxIyvlCW/6jpNTSZnJfm6AeYV
-	 w2ojPM1lFjNBJBy+LYvZF2V3PzDSbQwMQWAu7ekzKLIlFXUd3JJs7xNFRWV7yBhSjO
-	 k2ChjjpZ1AKeJCgw2XX5B7Ss1Fvkq4e5nLRu23ks=
-Message-ID: <0b4eb0cc-657f-4cdb-8255-e3b8f6b14077@linux.microsoft.com>
-Date: Thu, 28 Aug 2025 16:56:20 -0700
+	s=arc-20240116; t=1756425597; c=relaxed/simple;
+	bh=ziHLgutJ6Jzb9aA7gEl3JFJBYePIq6WyCFN9tsQbgmg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YWymnQLTMW9tvLKTp1YunVzolUWTpI4ydFcyqN7aT7TebK3tItwjo/PxozEBE1YCQlI5vE8MtrG7OBG96BjNHGitkSsM1V+68zZNIlXCvyvIHiIjy7zIPaRmlN5oljIQM0yJIHi8cE//5NWb1hpjzOZZPqmi1oI/p3t+3oGiPQA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IoGAcm9m; arc=none smtp.client-ip=209.85.160.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4b109c59dc9so18369091cf.3;
+        Thu, 28 Aug 2025 16:59:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756425595; x=1757030395; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yItl692DyhuDS6W/wEpu2bIzdUK1IZAYDHXcH2tTSMs=;
+        b=IoGAcm9mQ1SPpJGmLNgXtNikzPY9ehOdTa9lXZ4fr2BVvdgAH2TA4evPkomlO9VjW9
+         6pKAd7FXxGoEOcbgvPh+TVv9FbX9nO343rSZ4N4AMoBMySfuJYsMUwaj/mzJkFvdV6hA
+         gnXgZ4qLldhGvWKyQzEsHiSWhOva7YFvsmqdJn8l1rvsp7rp4xK3SxkJo+mjDWg9zQWd
+         NX/Q0L+XPkhm1R3zZHLPoX4ABQ3+JlYEWn4DPQFXXj2IBhnWX9gA44C+pO5EW6pfwDaC
+         mpWRy62p4aO4kL5wDfuuUutFTojUtzqE2mrN4l0d+sg+q5QOUNP3/monkl0gyDgFXglZ
+         Qpkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756425595; x=1757030395;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yItl692DyhuDS6W/wEpu2bIzdUK1IZAYDHXcH2tTSMs=;
+        b=cO4t7eRmE5dp3/z6C02x0vxFAoMH/hBlkxEnClT9mcKJPiNUmZjqPAq/v4I1YJ95e9
+         chnPr3vPYTV1KkrXVTrv8eJNraOb5NeBWkBgxc54XzHNOEtYmYWJs7/cOnLYouQgMCTz
+         Ztz2q8CndGpaiiaZo3CyBB656GIVgLL/xYa+m0jOp304hf5p3Wx7byUs7d5Rhyb70N6p
+         8efVEPkCFnlEErut5gfIvoRbxt4BjBoW5RbkKDOiTxGYR94c5eOnr2OgsbfG+oRs6FzJ
+         KgwChTdMTzCRqq0oaNYu0/YxVMLTJ+pujexscMLKRAm87UgRjnmVy3m2GnTG6r0JQNkg
+         3j6A==
+X-Forwarded-Encrypted: i=1; AJvYcCXfrCvAuVHTtoVU2zfqBp2MSlY+66Y5s4qnfBQAO6lPaQHFu+bKJD63/hgjdPBt6pkMSbrHX8yxTIHMWDY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxoC3WUaoqjqDMci3ZrhOHSmfBLV+LbrYswPdQpha8Sq5C8b4Yz
+	K1AtvdhQ5qp98zhW/OXi3Ccjk7GmHtSX25KgKJ2G5aBnneu6FV5rRqP17z7FkLxbt8RJp581e1/
+	ywjUte6awotIJ/voqcZ12CPDb+PnOhw4=
+X-Gm-Gg: ASbGncvjEvm5GEwR2PoolKk/G49JXyiGDEVRn0XpcukQRNTANCpwCjD6FUTbtPoY8VB
+	XReThy/ByAZPFEQ4DttZOo7f+BZx9nsZ8SymFRfD/NyN2Kte8ZHx3qPuyackmXxD1Rd54sbTCa9
+	Equoag5h4htVkL/RMJ+Q0C7KwnMVNRlu9rCr+n1g67sNALWwUeB971k5n5xejCPmZ3Yo1vu9I0y
+	ax9Bl74CM696Y9cuw==
+X-Google-Smtp-Source: AGHT+IF7fCSXabW657dVKAGS/GF509K9twPmo/AHrq8NDU0U6tCuf/HScs7K1Azgv7V+H4gdMTsEESUZ6v1fcRS+ldg=
+X-Received: by 2002:a05:622a:4c9:b0:4b2:a8d9:8683 with SMTP id
+ d75a77b69052e-4b2aaad2aecmr307254751cf.53.1756425594653; Thu, 28 Aug 2025
+ 16:59:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/7] Drivers: hv: Handle NEED_RESCHED_LAZY before
- transferring to guest
-To: Sean Christopherson <seanjc@google.com>, Marc Zyngier <maz@kernel.org>,
- Oliver Upton <oliver.upton@linux.dev>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Tianrui Zhao <zhaotianrui@loongson.cn>, Bibo Mao <maobibo@loongson.cn>,
- Huacai Chen <chenhuacai@kernel.org>, Anup Patel <anup@brainfault.org>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
- "K. Y. Srinivasan" <kys@microsoft.com>,
- Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
- Dexuan Cui <decui@microsoft.com>, Peter Zijlstra <peterz@infradead.org>,
- Andy Lutomirski <luto@kernel.org>, "Paul E. McKenney" <paulmck@kernel.org>,
- Frederic Weisbecker <frederic@kernel.org>,
- Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
- Joel Fernandes <joelagnelf@nvidia.com>, Josh Triplett
- <josh@joshtriplett.org>, Boqun Feng <boqun.feng@gmail.com>,
- Uladzislau Rezki <urezki@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- kvmarm@lists.linux.dev, kvm@vger.kernel.org, loongarch@lists.linux.dev,
- kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
- linux-hyperv@vger.kernel.org, rcu@vger.kernel.org,
- Mukesh R <mrathor@linux.microsoft.com>
-References: <20250828000156.23389-1-seanjc@google.com>
- <20250828000156.23389-2-seanjc@google.com>
-Content-Language: en-US
-From: Nuno Das Neves <nunodasneves@linux.microsoft.com>
-In-Reply-To: <20250828000156.23389-2-seanjc@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250801043642.8103-1-kanchana.p.sridhar@intel.com> <20250801043642.8103-24-kanchana.p.sridhar@intel.com>
+In-Reply-To: <20250801043642.8103-24-kanchana.p.sridhar@intel.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Fri, 29 Aug 2025 11:59:43 +1200
+X-Gm-Features: Ac12FXzBq7J1whHqez1tkCmNGbSGiqJOevhIX7mUkGKttCKRWOFATlZ2WVnzLG4
+Message-ID: <CAGsJ_4zFXzXKVKu9M2_R1Nqqt6FBEktT1YBGAFPRgjTxv=+1_Q@mail.gmail.com>
+Subject: Re: [PATCH v11 23/24] mm: zswap: zswap_store() will process a large
+ folio in batches.
+To: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, hannes@cmpxchg.org, 
+	yosry.ahmed@linux.dev, nphamcs@gmail.com, chengming.zhou@linux.dev, 
+	usamaarif642@gmail.com, ryan.roberts@arm.com, ying.huang@linux.alibaba.com, 
+	akpm@linux-foundation.org, senozhatsky@chromium.org, 
+	linux-crypto@vger.kernel.org, herbert@gondor.apana.org.au, 
+	davem@davemloft.net, clabbe@baylibre.com, ardb@kernel.org, 
+	ebiggers@google.com, surenb@google.com, kristen.c.accardi@intel.com, 
+	vinicius.gomes@intel.com, wajdi.k.feghali@intel.com, vinodh.gopal@intel.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 8/27/2025 5:01 PM, Sean Christopherson wrote:
-> Check for NEED_RESCHED_LAZY, not just NEED_RESCHED, prior to transferring
-> control to a guest.  Failure to check for lazy resched can unnecessarily
-> delay rescheduling until the next tick when using a lazy preemption model.
-> 
-> Note, ideally both the checking and processing of TIF bits would be handled
-> in common code, to avoid having to keep three separate paths synchronized,
-> but defer such cleanups to the future to keep the fix as standalone as
-> possible.
-> 
-> Cc: Nuno Das Neves <nunodasneves@linux.microsoft.com>
-> Cc: Mukesh R <mrathor@linux.microsoft.com>
-> Fixes: 621191d709b1 ("Drivers: hv: Introduce mshv_root module to expose /dev/mshv to VMMs")
-> Fixes: 64503b4f4468 ("Drivers: hv: Introduce mshv_vtl driver")
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
+On Fri, Aug 1, 2025 at 4:36=E2=80=AFPM Kanchana P Sridhar
+<kanchana.p.sridhar@intel.com> wrote:
+>
+> This patch modifies zswap_store() to store a batch of pages in large
+> folios at a time, instead of storing one page at a time. It does this by
+> calling a new procedure zswap_store_pages() with a range of
+> "pool->batch_size" indices in the folio.
+>
+> zswap_store_pages() implements all the computes done earlier in
+> zswap_store_page() for a single-page, for multiple pages in a folio,
+> namely the "batch":
+>
+> 1) It starts by allocating all zswap entries required to store the
+>    batch. New procedures, zswap_entries_cache_alloc_batch() and
+>    zswap_entries_cache_free_batch() call kmem_cache_[free]alloc_bulk()
+>    to optimize the performance of this step.
+>
+> 2) Next, the entries fields are written, computes that need to be happen
+>    anyway, without modifying the zswap xarray/LRU publishing order. This
+>    improves latency by avoiding having the bring the entries into the
+>    cache for writing in different code blocks within this procedure.
+>
+> 3) Next, it calls zswap_compress() to sequentially compress each page in
+>    the batch.
+>
+> 4) Finally, it adds the batch's zswap entries to the xarray and LRU,
+>    charges zswap memory and increments zswap stats.
+>
+> 5) The error handling and cleanup required for all failure scenarios
+>    that can occur while storing a batch in zswap are consolidated to a
+>    single "store_pages_failed" label in zswap_store_pages(). Here again,
+>    we optimize performance by calling kmem_cache_free_bulk().
+>
+> Signed-off-by: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
 > ---
->  drivers/hv/mshv_common.c    | 2 +-
->  drivers/hv/mshv_root_main.c | 3 ++-
->  drivers/hv/mshv_vtl_main.c  | 3 ++-
->  3 files changed, 5 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/hv/mshv_common.c b/drivers/hv/mshv_common.c
-> index 6f227a8a5af7..eb3df3e296bb 100644
-> --- a/drivers/hv/mshv_common.c
-> +++ b/drivers/hv/mshv_common.c
-> @@ -151,7 +151,7 @@ int mshv_do_pre_guest_mode_work(ulong th_flags)
->  	if (th_flags & (_TIF_SIGPENDING | _TIF_NOTIFY_SIGNAL))
->  		return -EINTR;
->  
-> -	if (th_flags & _TIF_NEED_RESCHED)
-> +	if (th_flags & (_TIF_NEED_RESCHED | _TIF_NEED_RESCHED_LAZY))
->  		schedule();
->  
->  	if (th_flags & _TIF_NOTIFY_RESUME)
-> diff --git a/drivers/hv/mshv_root_main.c b/drivers/hv/mshv_root_main.c
-> index 932932cb91ea..0d849f09160a 100644
-> --- a/drivers/hv/mshv_root_main.c
-> +++ b/drivers/hv/mshv_root_main.c
-> @@ -484,7 +484,8 @@ mshv_vp_wait_for_hv_kick(struct mshv_vp *vp)
->  static int mshv_pre_guest_mode_work(struct mshv_vp *vp)
->  {
->  	const ulong work_flags = _TIF_NOTIFY_SIGNAL | _TIF_SIGPENDING |
-> -				 _TIF_NEED_RESCHED  | _TIF_NOTIFY_RESUME;
-> +				 _TIF_NEED_RESCHED  | _TIF_NEED_RESCHED_LAZY |
-> +				 _TIF_NOTIFY_RESUME;
->  	ulong th_flags;
->  
->  	th_flags = read_thread_flags();
-> diff --git a/drivers/hv/mshv_vtl_main.c b/drivers/hv/mshv_vtl_main.c
-> index dc6594ae03ad..12f5e77b7095 100644
-> --- a/drivers/hv/mshv_vtl_main.c
-> +++ b/drivers/hv/mshv_vtl_main.c
-> @@ -728,7 +728,8 @@ static int mshv_vtl_ioctl_return_to_lower_vtl(void)
->  	preempt_disable();
->  	for (;;) {
->  		const unsigned long VTL0_WORK = _TIF_SIGPENDING | _TIF_NEED_RESCHED |
-> -						_TIF_NOTIFY_RESUME | _TIF_NOTIFY_SIGNAL;
-> +						_TIF_NOTIFY_RESUME | _TIF_NOTIFY_SIGNAL |
-> +						_TIF_NEED_RESCHED_LAZY;
->  		unsigned long ti_work;
->  		u32 cancel;
->  		unsigned long irq_flags;
+>  mm/zswap.c | 218 ++++++++++++++++++++++++++++++++++++-----------------
+>  1 file changed, 149 insertions(+), 69 deletions(-)
 
-Tested by compiling with CONFIG_PREEMPT_LAZY=y and booting a guest. For
-the test I added a check to confirm _TIF_NEED_RESCHED_LAZY was set and
-honored.
+This seems fine overall. However, could we pull some data from the
+cover letter. For example, even with hardware batching, we are still
+improving performance. Since your cover letter is very long, readers
+might fail to connect this data with the patches.
 
-Looks good, thanks.
-
-Tested-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
-Reviewed-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+Thanks
+Barry
 
