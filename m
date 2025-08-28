@@ -1,45 +1,87 @@
-Return-Path: <linux-kernel+bounces-789104-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789105-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE1A3B3912B
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 03:39:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A66FEB39131
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 03:41:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7FDB3464735
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 01:39:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B19BB1C21F52
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 01:41:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEB8E20E03F;
-	Thu, 28 Aug 2025 01:38:42 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9973223705;
+	Thu, 28 Aug 2025 01:41:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="KZcKznnE"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 412E3211A14
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 01:38:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 604A521CC55
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 01:41:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756345122; cv=none; b=gBPHFnPvSmmO1Afa4cWiPN9hBxDTtJYfv8XHUuQ8sXkpoQBaQCbwNU41yedVGAD5Ceyc8BwFpoQpsiOayCVJRddRlUk5CbC6c1k29aF8qcXzj8fVIwNh351MFJLxIXSyhKNoFhZQEDkeldXtORys+NqYveVVfbhv67xLz4kv28E=
+	t=1756345267; cv=none; b=DMonb2rSz4Cky3hmGot3BUM3muAYsYDvc9p7oPw35aKz9GktDh0PSDMJamY5RTJHiUhhNL36esMaw4ATP852lfMAIGfLRuAcsRS1cQI5r/pz0i/PzpPSDBaH3iCHHOPm4StYTVr/NurKjqhFC5dXhlXNGM6yNxN9L3TScIPVSvY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756345122; c=relaxed/simple;
-	bh=3O3uHOYrSjX5eIAnrOgb2x6/7x18qBCfNirsOPKZZAI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=lN9iG4rI0p2v3NHUWQCOrqjr0er2u4TE21HhKJC/z5tdxYxmxsb0nxantHh4nipefvhZWNPwmBz83QpKYSXC9J8vcSuXIjQneglEmoT836V/qcZFCBfZC8J5JpQRnLQdBYRBvKcdwJOQaWTPAEZxSfH2AlJKyz3Ui49Qd/Ux3es=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4cC3r93xGmz2VRHr;
-	Thu, 28 Aug 2025 09:35:37 +0800 (CST)
-Received: from dggpemf200018.china.huawei.com (unknown [7.185.36.31])
-	by mail.maildlp.com (Postfix) with ESMTPS id 6E1DE1A0188;
-	Thu, 28 Aug 2025 09:38:36 +0800 (CST)
-Received: from [10.174.176.250] (10.174.176.250) by
- dggpemf200018.china.huawei.com (7.185.36.31) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 28 Aug 2025 09:38:35 +0800
-Message-ID: <2c0477d5-217e-40fa-aa26-1dde19280779@huawei.com>
-Date: Thu, 28 Aug 2025 09:38:34 +0800
+	s=arc-20240116; t=1756345267; c=relaxed/simple;
+	bh=oaIKgwVoVMWlLCXXh4zBPqyQ4DU113682CKsRxELHGM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jBhxlepJCHyhmpqCY8gwryWVwRs1F4Q/1AsVHAlymEG+VGe70C0yNSC4Erun23Jf2As0RtTJ6+lBArPrM1aZlHSoyxxUEO4S6wj9pr17mYBW6ipaAWvtcpN10qwMBV7B0GrNUJ8JFLwferWvQ1CEmQd+YPx0pvEIk0FCwA/vjC0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=KZcKznnE; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57RGJVu0014780
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 01:41:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Ssoc0exiUKYkJTufSStqPOkqj7hxlg71SdT94NhDD5U=; b=KZcKznnEPFgJsOQn
+	EbH6lO2kFL1smweAQwe0gt/nnQ022nK0GbWupThfJsU0f7ZLhDq/kYXGcn3hQK6z
+	jX97ca+qt3gJQggKBuMYHUP/FiOEXKPGTqGziyUX6+JNDP1Eoo6Owcclv5gzhYoJ
+	JikNeSV0C2Ia87AyLHicMHs4LvwtmwLWKtgSze6A3LvFyVFO2VvH8ywTGn6pfbez
+	Qi99DmkrLD2WCiXWCqUtboc3ClyzpFsHi1/n0hlX2+o877h3lvJGweYxtx+HXv8u
+	FCsMEfO5EAMC6yX95wiRWKiTapGow2J82CzabkJAb8TSNvn3l3queQl6F0YBuk7+
+	xULbmA==
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48q5we67ct-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 01:41:04 +0000 (GMT)
+Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-244580538c3so1291625ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 18:41:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756345264; x=1756950064;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Ssoc0exiUKYkJTufSStqPOkqj7hxlg71SdT94NhDD5U=;
+        b=sNMVDCJC64Nb1Uuw9mADQzUluNy76654oP3i8iKNcxfGCQXzTSRrh+TJxYb25ibywC
+         7/vaqJiwfqGJaUe/lsrx6HdfjzAbLDelMdxLx3n7uMsXKZKUzcl9Xbll/ktcEwQYhk0c
+         o6B0pmAm2C3M8NlUwIBc/I/FSp8nplTYllKr4v+McUuO9681Mf7ieQwzNhJ2rsb0dLhj
+         FhBCMvyEhw0UWj2eHBCIihoGSK50AvqCzQMNwzAWXJHfhGrGM8aYhf4gBNOx6OacBLsu
+         JF9nEe6dek91w7gNPqOfJzsXL6BhUgI8W4k5BX5GCpK9LtGS2meNVBvdR3kXv94MxbcI
+         OE/g==
+X-Forwarded-Encrypted: i=1; AJvYcCUrzn11R5jhyqDizCuQOEGLPlgqpmZc5xpz6BIVxorCk7UN4ExE51eK0syUCenkjHcW8/ux5bxjrF8EdRg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxEBd73/3MthKeqz+4ANDQENx5xVI+pGKmBmyPtwRx25G+zPPJB
+	2TI8hvV5W7nmO1enO26WF7S7q5w96O1Si8iV1vXnnJqkkcReD1cHxJMMlXZf4oVqrf8advn0S4C
+	dKo7rtkIcBEY5CB9ocGzSE6F6oHFyhydorVtnUxjJfEgAcWfOc95G47Ud364TYd39aRk=
+X-Gm-Gg: ASbGncthXD0jORfXAv5tI5Y4JvscLyrWkDkRNP0Gaoo449O5KzSmc5K0vMmdNAh2NJW
+	2Zh9IYV8/WgKtz7ppu6l021XEQUdQHFf/2DwbgAOhBGle+ITJV3Gyed/aoRY15C9av0FAdvXuiz
+	uci8RIdri5m++I4ebBWEa3Lru1wKENje/EoWKraAfw60ZkxiSUFOXWj6ziTXPU8IBBTivITfqTO
+	3F247ND00p93u8XTNsVEwGe5YxSNFjq+XEFJqtgjXozDp1enPd656s3zhOfTrLyXkfDov0iioQ3
+	ssIzln0JAoTciRBYbdzkz0pCfTvt7Hd+hrRipviNWt/5aFu2a0fzbPH0lgtDEiPIgdLnUWKsNF9
+	utIVxyKLMAkQoOS9naSzCmlJKQOfDmQ==
+X-Received: by 2002:a17:902:f9c3:b0:23f:fd0e:e5c0 with SMTP id d9443c01a7336-2462ef98ba8mr109012355ad.9.1756345263527;
+        Wed, 27 Aug 2025 18:41:03 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGWXipYMCUO2Kzzeeg7jT0Nmhu/2L6WMJrB3Z5gpVV1nUTBpvsLjmhXjD4WaZ1s7Er0CBjoxA==
+X-Received: by 2002:a17:902:f9c3:b0:23f:fd0e:e5c0 with SMTP id d9443c01a7336-2462ef98ba8mr109012105ad.9.1756345262976;
+        Wed, 27 Aug 2025 18:41:02 -0700 (PDT)
+Received: from [10.133.33.166] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2466889c61bsm133558605ad.143.2025.08.27.18.40.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 27 Aug 2025 18:41:02 -0700 (PDT)
+Message-ID: <749ec6d1-f2f9-40f5-9c41-3443698f250a@oss.qualcomm.com>
+Date: Thu, 28 Aug 2025 09:40:51 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,115 +89,185 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 03/11] mm/damon/paddr: support addr_unit for
- DAMOS_PAGEOUT
-To: SeongJae Park <sj@kernel.org>
-CC: <akpm@linux-foundation.org>, <damon@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
-	<wangkefeng.wang@huawei.com>, <zuoze1@huawei.com>, <kernel-team@meta.com>,
-	kernel test robot <lkp@intel.com>
-References: <20250827180743.47876-1-sj@kernel.org>
-From: Quanmin Yan <yanquanmin1@huawei.com>
-In-Reply-To: <20250827180743.47876-1-sj@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Subject: Re: [PATCH v3 07/14] phy: qcom: qmp-usbc: Move reset and regulator
+ config into PHY cfg
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Rob Clark <robin.clark@oss.qualcomm.com>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Abhinav Kumar
+ <abhinav.kumar@linux.dev>,
+        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Kuogee Hsieh <quic_khsieh@quicinc.com>, Vinod Koul <vkoul@kernel.org>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>, linux-arm-msm@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-phy@lists.infradead.org, fange.zhang@oss.qualcomm.com,
+        yongxing.mou@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+References: <20250820-add-displayport-support-for-qcs615-platform-v3-0-a43bd25ec39c@oss.qualcomm.com>
+ <20250820-add-displayport-support-for-qcs615-platform-v3-7-a43bd25ec39c@oss.qualcomm.com>
+ <ofvzduf5xyip7w6yde2xwsrvv3tdh7ew3yyzeya2qzpqty3j7p@bnetyjowhdn5>
+ <6f7c3962-ccfc-4400-a77f-399b06da93e1@oss.qualcomm.com>
+ <llrt3xnd5gagovnmyzqebp2da5v67bkxjntfcgc5r5auamspyj@7v5taph3i3c4>
+ <f3cc06c1-25d2-40f4-bd77-8a9c51b40efa@oss.qualcomm.com>
+ <osav4kwxytfuxvnf26ugdw2qasd753smywsux5punuegbkxqgq@fp3r4esqiqyq>
+From: Xiangxu Yin <xiangxu.yin@oss.qualcomm.com>
+In-Reply-To: <osav4kwxytfuxvnf26ugdw2qasd753smywsux5punuegbkxqgq@fp3r4esqiqyq>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
- dggpemf200018.china.huawei.com (7.185.36.31)
+X-Proofpoint-GUID: FmcTT1_9KAd4I0SRgL1PUix5bwj1TtEX
+X-Proofpoint-ORIG-GUID: FmcTT1_9KAd4I0SRgL1PUix5bwj1TtEX
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIzMDAzMyBTYWx0ZWRfX6haory+nIupz
+ D8OXlopZDNjSZQbPJVvRhVOb5zqOg+SpP2HNPTwsfKMOaGvE3uPGHFiWV62zxIj536U0Ek/7CXe
+ sdoO/CybIcfhDu9nTATD+xE96pCs/mZsZHG//1C1EjhL09n3wXJ3RFiL2qOd5KeL8fhPleGLN1I
+ rjaXIiDOmQe+Wf9tzg6Ocn44qXhGnTcalP8ienvpNKcgF/Wn3ReK2cT4zGHW+wxqoST/wmh74PU
+ B2rJhDbUyHTxyPynBAr078l76rZriB+Wm5YnldHlp6BeifhsPFA6xIc/5G6wsRNbBtv0un1TjwB
+ fS3CZSk64RQX64+UVMY0ybrInXVTustRik7h8UipnW8CmuPkcYerUc4EafGb/YjWXvgxDCVI/it
+ 1tQFNRSU
+X-Authority-Analysis: v=2.4 cv=BJazrEQG c=1 sm=1 tr=0 ts=68afb3b1 cx=c_pps
+ a=JL+w9abYAAE89/QcEU+0QA==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=Nindc6OTbrst8G9qLT4A:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=324X-CrmTo6CU4MGRt3R:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-27_04,2025-08-26_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 adultscore=0 priorityscore=1501 clxscore=1015 impostorscore=0
+ bulkscore=0 phishscore=0 suspectscore=0 spamscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508230033
 
 
-在 2025/8/28 2:07, SeongJae Park 写道:
-> On Wed, 27 Aug 2025 19:37:38 +0800 Quanmin Yan <yanquanmin1@huawei.com> wrote:
->
->> Hi SJ,
->>
->> 在 2025/8/27 10:42, SeongJae Park 写道:
->>> On Wed, 27 Aug 2025 10:21:41 +0800 Quanmin Yan <yanquanmin1@huawei.com> wrote:
->>>
->>>> 在 2025/8/26 22:21, SeongJae Park 写道:
->>>>> On Tue, 26 Aug 2025 12:51:17 +0800 Quanmin Yan <yanquanmin1@huawei.com> wrote:
->>>>>
->>>>>> Hi SJ,
+On 8/27/2025 10:31 PM, Dmitry Baryshkov wrote:
+> On Wed, Aug 27, 2025 at 09:28:00PM +0800, Xiangxu Yin wrote:
+>> On 8/22/2025 6:08 PM, Dmitry Baryshkov wrote:
+>>> On Fri, Aug 22, 2025 at 04:29:28PM +0800, Xiangxu Yin wrote:
+>>>> On 8/20/2025 7:30 PM, Dmitry Baryshkov wrote:
+>>>>> On Wed, Aug 20, 2025 at 05:34:49PM +0800, Xiangxu Yin wrote:
+>>>>>> Refactor reset and regulator configuration to be managed via qmp_phy_cfg
+>>>>>> instead of hardcoded lists. This enables per-PHY customization and
+>>>>>> simplifies initialization logic for USB-only and USB/DP switchable PHYs.
+>>>>> Please split into two patches in order to simplify reviewing.
+>>>> Ok, will split reset and regulator part.
+>>>>
+>>>>
+>>>>>> Signed-off-by: Xiangxu Yin <xiangxu.yin@oss.qualcomm.com>
+>>>>>> ---
+>>>>>>  drivers/phy/qualcomm/phy-qcom-qmp-usbc.c | 108 +++++++++++++++----------------
+>>>>>>  1 file changed, 53 insertions(+), 55 deletions(-)
 >>>>>>
->>>>>> 在 2025/8/26 11:21, SeongJae Park 写道:
-> [...]
->>>> Please consider approving this fix.
->>> I'm yet in travel, and I'd like to take more time on thinking about the proper
->>> fix.  Quanmin, could you share more details about your test setups, both for
->>> the compiling success case and failing case?
->> Apologies for disturbing you during your travels. Please allow me to explain:
-> No worry, I'm the one who would like to apologize, for delayed response :)
-> I'm back from the travel, btw.
->
->> When CONFIG_PHYS_ADDR_T_64BIT is enabled on "i386" [1], the phys_addr_t type
->> becomes 64-bit, requiring the use of the do_div function. We are in agreement
->> on this point.
+>>>>>> diff --git a/drivers/phy/qualcomm/phy-qcom-qmp-usbc.c b/drivers/phy/qualcomm/phy-qcom-qmp-usbc.c
+>>>>>> index 61128d606238321d1b573655b3b987226aa2d594..4e797b7e65da0e3a827efa9a179f1c150c1b8b00 100644
+>>>>>> --- a/drivers/phy/qualcomm/phy-qcom-qmp-usbc.c
+>>>>>> +++ b/drivers/phy/qualcomm/phy-qcom-qmp-usbc.c
+>>>>>> @@ -421,8 +421,9 @@ struct qmp_phy_cfg {
+>>>>>>  	int (*configure_dp_phy)(struct qmp_usbc *qmp);
+>>>>>>  	int (*calibrate_dp_phy)(struct qmp_usbc *qmp);
+>>>>>>  
+>>>>>> -	/* regulators to be requested */
+>>>>>> -	const char * const *vreg_list;
+>>>>>> +	const char * const *reset_list;
+>>>>>> +	int num_resets;
+>>>>>> +	const struct regulator_bulk_data *vreg_list;
+>>>>>>  	int num_vregs;
+>>>>>>  
+>>>>>>  	/* array of registers with different offsets */
+>>>>>> @@ -453,7 +454,6 @@ struct qmp_usbc {
+>>>>>>  	struct clk_hw dp_pixel_hw;
+>>>>>>  	struct clk_bulk_data *clks;
+>>>>>>  	int num_clks;
+>>>>>> -	int num_resets;
+>>>>>>  	struct reset_control_bulk_data *resets;
+>>>>>>  	struct regulator_bulk_data *vregs;
+>>>>>>  
+>>>>>> @@ -514,9 +514,18 @@ static const char * const usb3phy_reset_l[] = {
+>>>>>>  	"phy_phy", "phy",
+>>>>>>  };
+>>>>>>  
+>>>>>> -/* list of regulators */
+>>>>>> -static const char * const qmp_phy_vreg_l[] = {
+>>>>>> -	"vdda-phy", "vdda-pll",
+>>>>>> +static const char * const usb3dpphy_reset_l[] = {
+>>>>>> +	"phy_phy", "dp_phy",
+>>>>>> +};
+>>>>>> +
+>>>>>> +static const struct regulator_bulk_data qmp_phy_usb_vreg_l[] = {
+>>>>>> +	{ .supply = "vdda-phy" },
+>>>>>> +	{ .supply = "vdda-pll" },
+>>>>> Please fill in the values for all platforms. It well might be that they
+>>>>> all share the same current requirements.
+>>>> I checked previous DP projects and found all platforms configured vdda-phy with 21.8mA and vdda-pll with 36mA.
+>>> No. On SDM660 and MSM8998 DP defines 73.4 mA for 0.9V supply and
+>>> 12.560 mA for 1.8 V supply.
+>>>
+>>>> However, I didn’t find USB load configs in downstream and from SoC related power grids:
+>>> Please check the actual HW documentation for those platforms.
+>>>
+>>>> QCS615
+>>>> L12A: VDDA_USB0_SS_1P8/VDDA_USB1_SS_1P8 Ipk:20ma
+>>>> L5A: VDDA_USB0_SS_0P9/VDDA_USB1_SS_0P9 Ipk:50mA
+>>>>
+>>>> sm6150
+>>>> L11A: VDDA_USB0_SS_1P8/VDDA_USB1_SS_1P8 Ipk:20ma
+>>>> L4A: VDDA_USB0_SS_0P9/VDDA_USB1_SS_0P9 Ipk:50mA
+>>>>
+>>>> SM6115
+>>>> L12A: VDDA_USB_SS_DP_1P8 Ipk:13.3mA
+>>>> L4A: VDDA_USB_SS_DP_CORE Ipk:66.1mA
+>>>>
+>>>> QCM2290
+>>>> L13A: VDDA_USB_SS_DP_1P8 Ipk:13.3mA
+>>>> L12A: VDDA_USB_SS_DP_CORE Ipk:66.1mA
+>>>>
+>>>> sdm660
+>>>> LDO10A: VDDA_USB_SS_1P8 Ipk:14mA
+>>>> LDO1B: VDDA_USB_SS_CORE Ipk:68.6mA
+>>>>
+>>>> msm8998
+>>>> L2A: VDDA_USB_SS_1P2 Ipk:14.2mA
+>>>> L1A: VDDA_USB_SS_CORE Ipk:68.6mA
+>>>>
+>>>> It seems the USB power requirements vary across platforms, and the
+>>>> 21800 µA load for vdda-phy exceeds the Ipk range in most cases.
+>>> Ipk being ?
 >>
->> On arm32, if LPAE (which we intend to support in this series) is enabled,
->> CONFIG_PHYS_ADDR_T_64BIT will also be enabled. In this case, pa / addr_unit
->> will involve 64-bit division and similarly require the do_div function.
->> Obviously, such link errors should normally occur under these circumstances.
->> Unfortunately, the expected anomalies did not manifest in my previous tests.
->> This may be related to some incorrect adjustments I had made to my local build
->> environment quite some time ago — though I cannot be entirely certain. That
->> said, I have since cleaned up the old configurations and ensured the current
->> environment is clean and normal. For now, we have confirmed the actual problem
->> and its root cause, shall we focus on fixing it?
-> Thank you for sharing the details.  I wanted to better understand where the
-> issue happens and not, to clearly understand the root cause and make a proper
-> fix based on that.  I think we can now focusing on fixing it.
->
->> In summary, after introducing addr_unit, we expect that any 32-bit architecture
->> should support monitoring of 64-bit phys_addr_t. Therefore, we can consider the
->> following adjustment:
+>> IPK: Instantaneous Peak Current
 >>
->> #if !defined(CONFIG_64BIT) && defined(CONFIG_PHYS_ADDR_T_64BIT)
 >>
->> Or at least adjust it to:
+>>>> I also tested removing the load settings for USB+DP PHY, and DP still works fine.
+>>> It mostly works either because we don't allow mode switching on older
+>>> platforms (yet) or because somebody else has already voted and that vote
+>>> keeps the required mode.
+>>>
+>>> As you've started looking on specifying proper current load, please
+>>> finish the work.
 >>
->> #if defined(__i386__) || (defined(__arm__) && defined(CONFIG_PHYS_ADDR_T_64BIT))
+>> Discussed with chip validation and power SW teams.
 >>
->> I have thoroughly re-validated the feature functionality today and confirmed the
->> correctness of the aforementioned modifications. Therefore, could I kindly ask
->> you to consider the aforementioned modifications when you have some free time?
-> Thank you for the suggestion and testing, Quanmin!
->
-> I was thinking making the change for only i386 is right since I was mistakenly
-> thinking the issue happens only on i386.  Now it is clear I was wrong and we
-> have at least two cases.  And I agree your suggestion will fix both cases.
->
-> But I'm bit concerned i386 and arm might not all the case, so wannt make the
-> fix more generalized.  My understanding of the problem, which is enlightened
-> thanks to you, is that not every config supports dividing 64 bit with 32 bit.
-> And div_u64() is suggested in general for dividing 64 bit with 32 bit.  So,
-> what about making the if condition more general but specific to the root cause,
-> like below?
->
-> static unsigned long damon_pa_core_addr(
->                 phys_addr_t pa, unsigned long addr_unit)
-> {
->         /*
->          * Use div_u64() for avoiding linking errors related with __udivdi3,
->          * __aeabi_uldivmod, or similar problems.  This should also improve the
->          * performance optimization (read div_u64() comment for the detail).
->          */
->         if (sizeof(pa) == 8 && sizeof(addr_unit) == 4)
->                 return div_u64(pa, addr_unit);
->         return pa / addr_unit;
-> }
->
-> Because the sizeof() result can be known at compile time, I think it shouldn't
-> cause the linking time error, and I confirmed that by passing the i386 test
-> case that kernel test robot shared.
->
-> Could I ask your opinion, Quanmin?  If you think that works, I could post v3 of
-> this patch series with the above fix.
+>> The power grid tables are primarily used to ensure each module receives 
+>> the correct voltage, and they define the Ipk for each submodule. 
+>>
+>> While they don’t specify recommended regulator load values, the Ipk values
+>> reflect the expected power domain strength and can help estimate the voting
+>> strength needed for each supply.
+>>
+>> Since regulator load is mainly used for voting, I’ll define init_load_uA in
+>> the next patch based on each SoC’s Ipk values to better align with hardware expectations.
+> If the Ipk is defined per module, then it's fine.
 
-Great! I believe this approach is better. This modification is more generic
-and eliminates the need to deal with those messy configs.
 
-I have also re-validated based on this change, and it is working correctly.
+Yes, under each regulator, multiple submodules are powered, and each submodule defines its own Ipk value.
 
-Thanks,
-Quanmin Yan
 
 
