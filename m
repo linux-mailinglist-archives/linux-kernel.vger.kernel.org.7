@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-789663-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8262B398CD
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 11:52:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C0FEB398D4
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 11:52:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CE8F44E48AD
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 09:52:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 472071BA6DBB
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 09:52:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0F0B2F28E6;
-	Thu, 28 Aug 2025 09:51:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B22DC2F39C9;
+	Thu, 28 Aug 2025 09:51:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mff.cuni.cz header.i=@mff.cuni.cz header.b="EakrUBza"
+	dkim=pass (2048-bit key) header.d=mff.cuni.cz header.i=@mff.cuni.cz header.b="R53Ja39T"
 Received: from smtp1.ms.mff.cuni.cz (smtp-in1.ms.mff.cuni.cz [195.113.20.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65A492EE61A;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 252EA2F0690;
 	Thu, 28 Aug 2025 09:51:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.113.20.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756374705; cv=none; b=YOjttH0NgcgRRA0F8Uptn5gVGBQBjLOTBfqYPihNbIalfMwOgw7Sm7wut1rwH+QJBeIjX3KbIKLHFQYxAeMNDd+GeH1CQgpgB0MhpeOdkXjzE+r/74BerHPPcM/5MrUy7Bh6WV202S3CfLeo0aEBhzSPF4ZhZJu2W1qPuF16AX8=
+	t=1756374706; cv=none; b=fP27IFnBqRN2IP/fomPDc2upPDy7rEMxZz4fsL/ljaPlVC/s2so2guPqxwIpqpHn2w3VLUyj6zl3iyZH0K8EhSrmcscVpls5ZU8iDnuzYr5GcoX4BcWho82YbNAb+byf/iiWLx4q55cAqRxS3bmaZd62fP0rlSZPrrkL+loi7vI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756374705; c=relaxed/simple;
-	bh=slP7/60xw9V0znMJSY4CskRnp7DU5hJfO5poLMUYqmE=;
+	s=arc-20240116; t=1756374706; c=relaxed/simple;
+	bh=WJI7Nd2+jQ7AaubXsM8kTP+G3+wwCUgpfmopC+FK8tE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=I1QIpg4B9+2xWp3Z4Q3Xmolw5LRQyXfUsziS9TKrtgrD5PvgwhwpQsmWipXKCmFWBQYZKs7M0qi8epf9dlioyVGfKuEnof1G9Fg84fhafVS0aSnKmsBoTS69kBedHg3IU/cLwjNeT5XaCwzMJrUHgwKAED5/EiHPCDd9C6qawvQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=matfyz.cz; spf=pass smtp.mailfrom=matfyz.cz; dkim=pass (2048-bit key) header.d=mff.cuni.cz header.i=@mff.cuni.cz header.b=EakrUBza; arc=none smtp.client-ip=195.113.20.234
+	 MIME-Version; b=OJPyAwv/1fKxuGLu9jHjbv5SMUr3TLn5dwFhXEfXbNlLoMvOFq6f/Uhudjj6eSt2DG9C3QV1E7FdYttm52+VEtRTGPIkUfvvD4PW88o8WDQq8gg5sZAVeugM4vNFLmmZxZ7Btg2yFvGivVuQofuMk8Mx8ryzu6HWpdxepE5+4/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=matfyz.cz; spf=pass smtp.mailfrom=matfyz.cz; dkim=pass (2048-bit key) header.d=mff.cuni.cz header.i=@mff.cuni.cz header.b=R53Ja39T; arc=none smtp.client-ip=195.113.20.234
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=matfyz.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=matfyz.cz
 X-SubmittedBy: id balejk@matfyz.cz subject /postalCode=110+2000/O=Univerzita+20Karlova/street=Ovocn+5CxC3+5CxBD+20trh+20560/5/ST=Praha,+20Hlavn+5CxC3+5CxAD+20m+5CxC4+5Cx9Bsto/C=CZ/CN=Karel+20Balej/emailAddress=balejk@matfyz.cz
@@ -35,19 +35,19 @@ X-SubmittedBy: id balejk@matfyz.cz subject /postalCode=110+2000/O=Univerzita+20K
 	issued by /C=NL/O=GEANT+20Vereniging/CN=GEANT+20Personal+20CA+204
 	auth type TLS.CUNI
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mff.cuni.cz;
-	s=submission; t=1756374651; x=1757674651;
-	bh=6s9hYIjQmXy/YswNdLVOWz53M6iEE/junj0ih+puxqY=; h=From;
-	b=EakrUBzaiTa4DNuBYMRKZqjOMdWIZXEliyTklD2kMNCBmz+ZZ5FFsF1P/hk2THyH9
-	 YAcHOe1q0PSdihR/lAmkT1aobCR/XV8bGRGfAAbgkNenAR/brZhQO/xBfsg7uy6ZHN
-	 5BBzQP2JGSvprrdkmSJlGsC7d8emUks4P2z/f/pLJN5dB3MqpUmJuL3Qy9W2HONS4G
-	 Zfczrc4tUuKQ1LfOFqsWBVc1Kc1wpbIPK2QUJqShFihOCT3tTDJVw1Tq4B6PMMwHkU
-	 CE4WOLhZxsSSqtwy8hZ4rOlX86O3vyXQvRRsJcxVwWzQVZiPGGq2tn5IW4PV5aG9i1
-	 CDwnWtYk6P5Tg==
+	s=submission; t=1756374653; x=1757674653;
+	bh=jgSVyNvKT8tyvT/0XuoEo9brNM1Cm43Vrq9buFP014k=; h=From;
+	b=R53Ja39T30QOM1NlhT7e/7bA2JxalQbl0TlvpE5eVDx3h8RYX+YmMfQ0LBIIrKYqD
+	 pLhj0hGeLDy089hgAZNBuDRBpi72pQTsgqr5j6++/zKaA3zQedSCYONaN9FYnbmsQs
+	 e/VcHUXb/DjlStD2gxnqcZz5RP4Mz6WVTyd1zxHPO5EVj4+zk1HxeOqkJ5/AiXSiMW
+	 eHZZw3n9q0nW2CoY8R9ww3DneGrDepqsYowyUxeurxYPh8kRkNdX8qWGjX5pX7Dvgt
+	 8G4/pFsYzf72/NkNQFO2iXVLBtfQYUjkAlNUph+bRscAJaK2jVQnskxT3oFUHbJ0/W
+	 ZkD7ymMSPFtAg==
 Received: from localhost (internet5.mraknet.com [185.200.108.250])
 	(authenticated)
-	by smtp1.ms.mff.cuni.cz (8.16.1/8.16.1) with ESMTPS id 57S9on5X046274
+	by smtp1.ms.mff.cuni.cz (8.16.1/8.16.1) with ESMTPS id 57S9oqFd046278
 	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=OK);
-	Thu, 28 Aug 2025 11:50:51 +0200 (CEST)
+	Thu, 28 Aug 2025 11:50:53 +0200 (CEST)
 	(envelope-from balejk@matfyz.cz)
 From: Karel Balej <balejk@matfyz.cz>
 To: linux-mmc@vger.kernel.org, ulf.hansson@linaro.org,
@@ -62,9 +62,9 @@ To: linux-mmc@vger.kernel.org, ulf.hansson@linaro.org,
         linux-kernel@vger.kernel.org
 Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
         Karel Balej <balejk@matfyz.cz>
-Subject: [PATCH v2 1/3] arm64: dts: samsung,coreprimevelte: add PMIC
-Date: Thu, 28 Aug 2025 11:49:02 +0200
-Message-ID: <20250828095028.24503-2-balejk@matfyz.cz>
+Subject: [PATCH v2 2/3] arm64: dts: samsung,coreprimevelte: add touchscreen
+Date: Thu, 28 Aug 2025 11:49:03 +0200
+Message-ID: <20250828095028.24503-3-balejk@matfyz.cz>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20250828095028.24503-1-balejk@matfyz.cz>
 References: <20250828095028.24503-1-balejk@matfyz.cz>
@@ -76,59 +76,50 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Bind power management chip to the samsung,coreprimevelte smartphone.
-This enables support for onkey and RTC as well as for regulators two of
-which are explicitly bound here to the SD card.
+Bind touchscreen for the samsung,coreprimevelte smartphone. The
+downstream code sets the VDD voltage to the exact value of 3.1 V,
+however it's been empirically verified that the lower bound used here
+sufficies for the proper operation of the chip and is thus used for
+power-saving purposes.
 
 Signed-off-by: Karel Balej <balejk@matfyz.cz>
 ---
-
-Notes:
-    v2:
-    - Modify interrupt properties as advised by Duje (thanks!).
-
- .../mmp/pxa1908-samsung-coreprimevelte.dts    | 23 +++++++++++++++++++
- 1 file changed, 23 insertions(+)
+ .../mmp/pxa1908-samsung-coreprimevelte.dts        | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/marvell/mmp/pxa1908-samsung-coreprimevelte.dts b/arch/arm64/boot/dts/marvell/mmp/pxa1908-samsung-coreprimevelte.dts
-index 47a4f01a7077..54131b0e5617 100644
+index 54131b0e5617..0ac1a24dc410 100644
 --- a/arch/arm64/boot/dts/marvell/mmp/pxa1908-samsung-coreprimevelte.dts
 +++ b/arch/arm64/boot/dts/marvell/mmp/pxa1908-samsung-coreprimevelte.dts
-@@ -303,6 +303,27 @@ &twsi1 {
+@@ -311,6 +311,11 @@ pmic@30 {
+ 		wakeup-source;
  
- &twsi2 {
+ 		regulators {
++			ldo2: ldo2 {
++				regulator-min-microvolt = <1900000>;
++				regulator-max-microvolt = <3100000>;
++			};
++
+ 			ldo6: ldo6 {
+ 				regulator-boot-on;
+ 				regulator-min-microvolt = <1200000>;
+@@ -328,6 +333,16 @@ ldo14: ldo14 {
+ 
+ &twsi3 {
  	status = "okay";
 +
-+	pmic@30 {
-+		compatible = "marvell,88pm886-a1";
-+		reg = <0x30>;
-+		interrupts = <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>;
-+		wakeup-source;
-+
-+		regulators {
-+			ldo6: ldo6 {
-+				regulator-boot-on;
-+				regulator-min-microvolt = <1200000>;
-+				regulator-max-microvolt = <3300000>;
-+			};
-+
-+			ldo14: ldo14 {
-+				regulator-boot-on;
-+				regulator-min-microvolt = <1200000>;
-+				regulator-max-microvolt = <3300000>;
-+			};
-+		};
++	touchscreen@50 {
++		compatible = "imagis,ist3032c";
++		reg = <0x50>;
++		interrupt-parent = <&gpio>;
++		interrupts = <72 IRQ_TYPE_EDGE_FALLING>;
++		vdd-supply = <&ldo2>;
++		touchscreen-size-x = <480>;
++		touchscreen-size-y = <800>;
 +	};
  };
  
- &twsi3 {
-@@ -328,4 +349,6 @@ &sdh0 {
- 	cd-inverted;
- 	bus-width = <4>;
- 	wp-inverted;
-+	vmmc-supply = <&ldo14>;
-+	vqmmc-supply = <&ldo6>;
- };
+ &usb {
 -- 
 2.51.0
 
