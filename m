@@ -1,155 +1,215 @@
-Return-Path: <linux-kernel+bounces-789483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C4A3B39636
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 10:06:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D542FB39668
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 10:10:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 036056881BA
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 08:06:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 48E8846361D
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 08:10:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C92A2DAFB5;
-	Thu, 28 Aug 2025 08:06:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F8E22F1FD5;
+	Thu, 28 Aug 2025 08:09:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vBGjtF+G"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="P739h/2e"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EA0C849C;
-	Thu, 28 Aug 2025 08:06:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 738362D9786;
+	Thu, 28 Aug 2025 08:09:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756368382; cv=none; b=S4h74yPY8V7GcIQC6RpRErcXEDvy/jqH4nmgMIYnvOywePTBx5x/hwh7QpPw+1Ib/sPzQkhhWZxE9svEiZojuYlYkDZ70ygDLionbLplstMqiP5y7eZzy846qSVZE/0mXt1PJDI27sPednh2q+knn15AoVCOhGKHOZQf6O//T6o=
+	t=1756368558; cv=none; b=uUQU0wTOIelLhhip0UTIp09DsgdxMJijWdM0IRpXMGVoWHUOCcDwEVg5NW4jZ1gW2jAm+0S361zpi3I9gy5upO857lPlO/lUofZENVy0dugwYb2qXSqRXF5eQNHdNeYFW2b89xliOSUHPnou4mVclD/rZlY43tnTNTJ6AIopsTg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756368382; c=relaxed/simple;
-	bh=8h3kXegWoTZB71c0/EOwOGHCDp9sWcsK0sA1Fhv8ieM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GRrAcaBm0odbUrLDBArrVz7DPEugEjWrkerztTOugXc/DpXktIba8fyaA+YbdOftFLprObfiHbW3jteleyIqDEtauCUU9v6PzPBD3PipTwP72ZhI8JaiFJ4mDLlimeMWXCY1aMGMnx0hWi66L4Yb+SV+S07oV3DPH8VyO+9c8ss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vBGjtF+G; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04174C4CEEB;
-	Thu, 28 Aug 2025 08:06:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756368382;
-	bh=8h3kXegWoTZB71c0/EOwOGHCDp9sWcsK0sA1Fhv8ieM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=vBGjtF+Gn0Ojo1KVedpXcUo5UNPKTP/e/wulKW1x/vz4AZ2m1wZ6thc/Lps+xlQF6
-	 DwTPlbi9e+FvV8tPla4md0hJavNfKkFh5xzuaITPDW7oEVPRJuMnRQWVL0KaIZNEg4
-	 4T8RWZ0Rh3tP7DQ1cUFf+tX54SzZArEKNTK8B97r3LwqCLB/OYDUdoSALNtM9+F5Dv
-	 KS7BJVC9pXBz7unzWbhSWZxMJ+vW4HayoOqIpbx1GOFj1iYowGmGtL7JMjJ/av8GLW
-	 NBVH9qH0fuKVNbHUV4tP2RMgGBJTXgbSoYrIDxxmnUwirlVFE2Z9r3rXRQTzilPCUm
-	 zB6/THzmytDdA==
-Date: Thu, 28 Aug 2025 11:06:07 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Alexander Potapenko <glider@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Brendan Jackman <jackmanb@google.com>,
-	Christoph Lameter <cl@gentwo.org>, Dennis Zhou <dennis@kernel.org>,
-	Dmitry Vyukov <dvyukov@google.com>, dri-devel@lists.freedesktop.org,
-	intel-gfx@lists.freedesktop.org, iommu@lists.linux.dev,
-	io-uring@vger.kernel.org, Jason Gunthorpe <jgg@nvidia.com>,
-	Jens Axboe <axboe@kernel.dk>, Johannes Weiner <hannes@cmpxchg.org>,
-	John Hubbard <jhubbard@nvidia.com>, kasan-dev@googlegroups.com,
-	kvm@vger.kernel.org, "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-arm-kernel@axis.com, linux-arm-kernel@lists.infradead.org,
-	linux-crypto@vger.kernel.org, linux-ide@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-mips@vger.kernel.org,
-	linux-mmc@vger.kernel.org, linux-mm@kvack.org,
-	linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
-	linux-scsi@vger.kernel.org,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Marco Elver <elver@google.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Michal Hocko <mhocko@suse.com>, Muchun Song <muchun.song@linux.dev>,
-	netdev@vger.kernel.org, Oscar Salvador <osalvador@suse.de>,
-	Peter Xu <peterx@redhat.com>, Robin Murphy <robin.murphy@arm.com>,
-	Suren Baghdasaryan <surenb@google.com>, Tejun Heo <tj@kernel.org>,
-	virtualization@lists.linux.dev, Vlastimil Babka <vbabka@suse.cz>,
-	wireguard@lists.zx2c4.com, x86@kernel.org, Zi Yan <ziy@nvidia.com>
-Subject: Re: [PATCH v1 13/36] mm/hugetlb: cleanup
- hugetlb_folio_init_tail_vmemmap()
-Message-ID: <aLAN7xS4WQsN6Hpm@kernel.org>
-References: <20250827220141.262669-1-david@redhat.com>
- <20250827220141.262669-14-david@redhat.com>
- <aLADXP89cp6hAq0q@kernel.org>
- <377449bd-3c06-4a09-8647-e41354e64b30@redhat.com>
+	s=arc-20240116; t=1756368558; c=relaxed/simple;
+	bh=sinpNIkJWKJFG11bnd8rCFaDFgj87v9xnGeqVhPqDT0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=jopcSjMhf4GIO27GAHEkH8NH4FLPU7sy+xMT7pEfiTFKq7ItmUvJgcWia/jljoOxSjV2Lzep8Yvj8rI+ZHDYZSpW9BMR9jnWufg2FV4NPNcUUNTt2inuzGQtf07Ag63B2Y0SURPMQuTRLk5P2QOhg1japZI3B4EZKXUjjXCBizo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=P739h/2e; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 43c9b05483e611f0b33aeb1e7f16c2b6-20250828
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=+650otIaLzyUp5/Ps4TfZ8nTIEmkXXQq3SPw7W37GNU=;
+	b=P739h/2e1FlQ5teJy1WUCFNOSk87LWyOb6ELrVLBKn1fjrIMAf9DvJbjpGRYU5TpwNVx0G45755LajLE3C+je+kDgQfkLj4sesjsWxmtsBzge6jwg9/Hri2vK6t9oZ+/d/kvyX62Y/snbIk8IFWzkTFLX73Dn2TmVBY7iTM1eEs=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.3,REQID:c0a9a143-10bd-4adc-9dbc-bfef3f650672,IP:0,UR
+	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
+	elease,TS:0
+X-CID-META: VersionHash:f1326cf,CLOUDID:fd0a9920-786d-4870-a017-e7b4f3839b3f,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:-5,Content:0|15|50,EDM:-3,IP:
+	nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,L
+	ES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 2,SSN|SDN
+X-CID-BAS: 2,SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: 43c9b05483e611f0b33aeb1e7f16c2b6-20250828
+Received: from mtkmbs13n2.mediatek.inc [(172.21.101.108)] by mailgw02.mediatek.com
+	(envelope-from <paul-pl.chen@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 626211355; Thu, 28 Aug 2025 16:09:05 +0800
+Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
+ MTKMBS14N1.mediatek.inc (172.21.101.75) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.39; Thu, 28 Aug 2025 16:09:03 +0800
+Received: from mtksitap99.mediatek.inc (10.233.130.16) by
+ mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1258.39 via Frontend Transport; Thu, 28 Aug 2025 16:09:03 +0800
+From: Paul Chen <paul-pl.chen@mediatek.com>
+To: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+	<chunkuang.hu@kernel.org>, <angelogioacchino.delregno@collabora.com>
+CC: <matthias.bgg@gmail.com>, <p.zabel@pengutronix.de>,
+	<jason-jh.lin@mediatek.com>, <nancy.lin@mediatek.com>,
+	<singo.chang@mediatek.com>, <xiandong.wang@mediatek.com>,
+	<sirius.wang@mediatek.com>, <paul-pl.chen@mediatek.com>,
+	<sunny.shen@mediatek.com>, <fshao@chromium.org>, <treapking@chromium.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<dri-devel@lists.freedesktop.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-arm-kernel@lists.infradead.org>,
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>
+Subject: [PATCH v4 00/19] Add MediaTek SoC DRM support for MT8196
+Date: Thu, 28 Aug 2025 16:06:55 +0800
+Message-ID: <20250828080855.3502514-1-paul-pl.chen@mediatek.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <377449bd-3c06-4a09-8647-e41354e64b30@redhat.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On Thu, Aug 28, 2025 at 09:44:27AM +0200, David Hildenbrand wrote:
-> On 28.08.25 09:21, Mike Rapoport wrote:
-> > On Thu, Aug 28, 2025 at 12:01:17AM +0200, David Hildenbrand wrote:
-> > > We can now safely iterate over all pages in a folio, so no need for the
-> > > pfn_to_page().
-> > > 
-> > > Also, as we already force the refcount in __init_single_page() to 1,
-> > > we can just set the refcount to 0 and avoid page_ref_freeze() +
-> > > VM_BUG_ON. Likely, in the future, we would just want to tell
-> > > __init_single_page() to which value to initialize the refcount.
-> > > 
-> > > Further, adjust the comments to highlight that we are dealing with an
-> > > open-coded prep_compound_page() variant, and add another comment explaining
-> > > why we really need the __init_single_page() only on the tail pages.
-> > > 
-> > > Note that the current code was likely problematic, but we never ran into
-> > > it: prep_compound_tail() would have been called with an offset that might
-> > > exceed a memory section, and prep_compound_tail() would have simply
-> > > added that offset to the page pointer -- which would not have done the
-> > > right thing on sparsemem without vmemmap.
-> > > 
-> > > Signed-off-by: David Hildenbrand <david@redhat.com>
-> > > ---
-> > >   mm/hugetlb.c | 20 ++++++++++++--------
-> > >   1 file changed, 12 insertions(+), 8 deletions(-)
-> > > 
-> > > diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-> > > index 4a97e4f14c0dc..1f42186a85ea4 100644
-> > > --- a/mm/hugetlb.c
-> > > +++ b/mm/hugetlb.c
-> > > @@ -3237,17 +3237,18 @@ static void __init hugetlb_folio_init_tail_vmemmap(struct folio *folio,
-> > >   {
-> > >   	enum zone_type zone = zone_idx(folio_zone(folio));
-> > >   	int nid = folio_nid(folio);
-> > > +	struct page *page = folio_page(folio, start_page_number);
-> > >   	unsigned long head_pfn = folio_pfn(folio);
-> > >   	unsigned long pfn, end_pfn = head_pfn + end_page_number;
-> > > -	int ret;
-> > > -
-> > > -	for (pfn = head_pfn + start_page_number; pfn < end_pfn; pfn++) {
-> > > -		struct page *page = pfn_to_page(pfn);
-> > > +	/*
-> > > +	 * We mark all tail pages with memblock_reserved_mark_noinit(),
-> > > +	 * so these pages are completely uninitialized.
-> > 
-> >                               ^ not? ;-)
-> 
-> Can you elaborate?
+From: Paul-pl Chen <paul-pl.chen@mediatek.com>
 
-Oh, sorry, I misread "uninitialized".
-Still, I'd phrase it as 
+Changes in v4:
+- [PATCH v4 11/19]
+  Add New commit to refactor the naming of OVL Fornat.
+- [PATCH v4 12/19]
+  Refactor ovl_blend_mode fucntion
+- [PATCH v4 13/19]
+  Move mtk_ovl_get_blend_mode to this commit to align with driver.
+- [PATCH v4 14/19]
+  Remove the unused paramter cmdq
+  Remove the reapet of pitch setting
+- [PATCH v4 15/19]
+  Remove the unused paramter cmdq
+  Remove the useless parametrt of func():mtk_disp_blender_config
+- [PATCH v4 16/19] 
+  Simplified the driiver code to improve readability 
+- [PATCH v4 17/19]
+  Refine mtk_ovlsys_adaptor_layer_config's layer config checking. 
+  Refine mtk_ovlsys_adaptor_config's logic
+  Fix func()'s mtk_ovlsys_adaptor_stop settting
+  Refine mtk_ovlsys_adaptor_clk_enbale to repaet NULL checking
+- [PATCH v4 18/19]
+  Fix the system report's syntext error
 
-	/*
-	 * We marked all tail pages with memblock_reserved_mark_noinit(),
-	 * so we must initialize them here.
-	 */
+Changes in v3:
+- [PATCH v3 06/17] 
+  Refine runtime PM, top clocks and async controls for MMSYS 
+- [PATCH v3 08/17]
+  Refactor SOF settings by adding mtk_mutex_get_output_comp_sof() and
+  extracting SOF logic from mtk_mutex_add_comp() 
+  and mtk_mutex_remove_comp()
+- [PATCH v3 10/17]
+  Export OVL format definitions and format 
+  conversion API
+- [PATCH v3 11/17]
+  Export OVL ignore pixel alpha logic
+- [PATCH v3 12/17] 
+  Refactor exdma_config setup to reduce complexity 
+  and consolidate duplicate settings in exdma_layer_config()
+- [PATCH v3 13/17]
+  Refine blender's layer_config driver for improved efficiency
+- [PATCH v3 14/17] Refine outproc driver: use readl() and writel() to 
+  replace mtk_ddp_write_mask() for normal mode settings
+- [PATCH v3 15/17]
+  Refine ovlsys_adaptor driver:Use path instead of ovl_adaptor_comp for 
+  searching component type. Improve efficiency of config, start, stop, 
+  and layer_config functions
+- [PATCH v3 16/17] 
+  Refine mtk_find_possible_crtcs() function
 
-> -- 
-> Cheers
-> 
-> David / dhildenb
-> 
+Changes in v2:
+- add support for MT8196's new hardware components (EXDMA, BLENDER, 
+  OUTPROC) following the previous MTK OVL software architecture.
+- reuse mtk_ovl drivers in MediaTek DRM display to support the new 
+  MT8196 SoC.
+- implement support for multiple mmsys instances within a single 
+  mediatek-drm driver, improving flexibility and scalability.
+- refactor existing components (mutex, OVL) to accommodate the new 
+  architecture and improve code reusability.
+- update component matching, binding log
+
+Nancy Lin (12):
+  dt-bindings: arm: mediatek: mmsys: add compatible for MT8196
+  dt-bindings: soc: mediatek: add mutex yaml for MT8196
+  soc: mediatek: Add runtime PM and top clocks and async controls for
+    MMSYS
+  soc: mediatek: add mmsys support for MT8196
+  soc: mediatek: mutex: add mutex support for MT8196
+  drm/mediatek: Export OVL formats definitions and format conversion API
+  drm/mediatek: add EXDMA support for MT8196
+  drm/mediatek: add BLENDER support for MT8196
+  drm/mediatek: add OUTPROC support for MT8196
+  drm/mediatek: add ovlsys_adaptor support for MT8196
+  drm/mediatek: Add support for multiple mmsys in the one mediatek-drm
+    driver
+  drm/mediatek: Add support for MT8196 multiple mmsys
+
+Paul-pl Chen (7):
+  dt-bindings: display: mediatek: add EXDMA yaml for MT8196
+  dt-bindings: display: mediatek: add BLENDER yaml for MT8196
+  dt-bindings: display: mediatek: add OUTPROC yaml for MT8196
+  soc: mediatek: mutex: Reused the switch case for SOF ID
+  soc: mediatek: mutex: refactor SOF settings for output components
+  drm/mediatek: Rename OVL format naming
+  drm/mediatek: Export OVL Blend function
+
+ .../bindings/arm/mediatek/mediatek,mmsys.yaml |   5 +
+ .../display/mediatek/mediatek,blender.yaml    |  47 ++
+ .../display/mediatek/mediatek,outproc.yaml    |  54 ++
+ .../bindings/dma/mediatek,exdma.yaml          |  68 ++
+ .../bindings/soc/mediatek/mediatek,mutex.yaml |   2 +
+ drivers/gpu/drm/mediatek/Makefile             |   4 +
+ drivers/gpu/drm/mediatek/mtk_crtc.c           | 342 +++++++--
+ drivers/gpu/drm/mediatek/mtk_crtc.h           |   6 +-
+ drivers/gpu/drm/mediatek/mtk_ddp_comp.c       | 136 +++-
+ drivers/gpu/drm/mediatek/mtk_ddp_comp.h       |   6 +
+ drivers/gpu/drm/mediatek/mtk_disp_blender.c   | 274 +++++++
+ drivers/gpu/drm/mediatek/mtk_disp_blender.h   |  10 +
+ drivers/gpu/drm/mediatek/mtk_disp_drv.h       |  66 ++
+ drivers/gpu/drm/mediatek/mtk_disp_exdma.c     | 359 +++++++++
+ drivers/gpu/drm/mediatek/mtk_disp_outproc.c   | 235 ++++++
+ drivers/gpu/drm/mediatek/mtk_disp_outproc.h   |  22 +
+ drivers/gpu/drm/mediatek/mtk_disp_ovl.c       | 229 ++++--
+ drivers/gpu/drm/mediatek/mtk_disp_ovl.h       |  29 +
+ .../drm/mediatek/mtk_disp_ovlsys_adaptor.c    | 717 ++++++++++++++++++
+ drivers/gpu/drm/mediatek/mtk_drm_drv.c        | 276 +++++--
+ drivers/gpu/drm/mediatek/mtk_drm_drv.h        |  27 +-
+ drivers/soc/mediatek/mt8196-mmsys.h           | 396 ++++++++++
+ drivers/soc/mediatek/mtk-mmsys.c              | 206 ++++-
+ drivers/soc/mediatek/mtk-mmsys.h              |  18 +
+ drivers/soc/mediatek/mtk-mutex.c              | 288 +++++--
+ include/linux/soc/mediatek/mtk-mmsys.h        |  60 ++
+ include/linux/soc/mediatek/mtk-mutex.h        |   4 +
+ 27 files changed, 3593 insertions(+), 293 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/display/mediatek/mediatek,blender.yaml
+ create mode 100644 Documentation/devicetree/bindings/display/mediatek/mediatek,outproc.yaml
+ create mode 100644 Documentation/devicetree/bindings/dma/mediatek,exdma.yaml
+ create mode 100644 drivers/gpu/drm/mediatek/mtk_disp_blender.c
+ create mode 100644 drivers/gpu/drm/mediatek/mtk_disp_blender.h
+ create mode 100644 drivers/gpu/drm/mediatek/mtk_disp_exdma.c
+ create mode 100644 drivers/gpu/drm/mediatek/mtk_disp_outproc.c
+ create mode 100644 drivers/gpu/drm/mediatek/mtk_disp_outproc.h
+ create mode 100644 drivers/gpu/drm/mediatek/mtk_disp_ovl.h
+ create mode 100644 drivers/gpu/drm/mediatek/mtk_disp_ovlsys_adaptor.c
+ create mode 100644 drivers/soc/mediatek/mt8196-mmsys.h
 
 -- 
-Sincerely yours,
-Mike.
+2.45.2
+
 
