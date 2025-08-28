@@ -1,116 +1,103 @@
-Return-Path: <linux-kernel+bounces-790180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D493B3A1AC
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 16:27:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27F78B3A212
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 16:36:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A54111B21AB1
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 14:27:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2EC5D583F54
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 14:27:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7918230F957;
-	Thu, 28 Aug 2025 14:26:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5C59313548;
+	Thu, 28 Aug 2025 14:26:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AP8lt6oN"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aHrNGTMa"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFF8424169F;
-	Thu, 28 Aug 2025 14:26:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C1D8226D18;
+	Thu, 28 Aug 2025 14:26:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756391201; cv=none; b=i8MlsM/mhKAihAbpjDx6RWJQaJy2FbtJwA9ASe/azu6M2pFfPHdcTjMHicecURhgDeC63Ngxrfb4mC0VLqx4H8RrVJRcN0LHjUACfFcEBdIZsDRgVJyqPItgNkQ1AaEsxglv2BAdY3LaoPj+pfeu1bB46Cfp7J1n2akFAF9Y0gE=
+	t=1756391205; cv=none; b=ZhPui96gCsterHg1VJSx840Y0lhrkpANeeP8wmHHpeV7Dxt1lWmS+cVQRKcfIRWN207yA+CtbEQP49aj1Mwmz62P2gc9i1R17RqO0GOCvIhnVShORHwF00E7uP2vJTAmXy3m+wlHPSLulbpBkaD4dPkYPTFRMsMeiP/j1gPbTWc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756391201; c=relaxed/simple;
-	bh=/IznsUAvnTndT5Ot+jQYWMWwYARY3EbdfbzmC6jzSlQ=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=GV+T4ICRflr3wxiweflHipHPnaE4tvgwxp5tuYoyFowoL24x74SkeB4L7PEbfjQYTyupsKQT4B7IECBQKCHJ4msaIbnm2DH4J1Kqxk+i/EFg3dK6L8nMJfN4yR7Rj6S9aHyWXirbEu2jqQAQZXAPR4D5trGHNOsKuvDlFox6dVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AP8lt6oN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83172C4CEF5;
-	Thu, 28 Aug 2025 14:26:41 +0000 (UTC)
+	s=arc-20240116; t=1756391205; c=relaxed/simple;
+	bh=OgX2g1VbwOW3A/1+b5scV4T2jr/8zC7Zzky6etYrcv4=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=GklKr7MAd4/0EA9AAUtEVj6+xhsbvSSDBWOYk6NfvJfdG2Y1U/CCa3+7NODp2XD8oT5I737hoo2TPFSWti7fYyr+zQC+gb0YtFkCrIgk/FqTbfqX8dDPAuzZT7lfSNjomZdg3YcqC6jCcfh3GEumlwmyZnJavHFa8GJNgqoWEFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aHrNGTMa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74F6AC4CEED;
+	Thu, 28 Aug 2025 14:26:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756391201;
-	bh=/IznsUAvnTndT5Ot+jQYWMWwYARY3EbdfbzmC6jzSlQ=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=AP8lt6oNDNEW43O0TspzpzGxfmWb0Unt+HwIL0fZGkcgjLVE4xDXm1eHFkKh2bISZ
-	 zf5mmnXHb/LjDY8GFTmCJiQXbMEUx621Rs3kBM/1KhQXuKU3hJ4shui6gRClRVfPk/
-	 MdDreZm4o/R70j3QJ18s2XbFblkXbG6k36J9B0dgNDs9+nQPCB2mlOwBFQxfvdcQP5
-	 LS+PicAo4cGNz/yJLkEFyExmKkenULDuVN7KOrWNfznpDPcKgz+Q8PNabCL1I0AkEv
-	 D645Sy1zsAQpxZWFfin/9GBj3nigmEc7dwaybTNMlR2saPu5mRhKsqRVRxlEfa3951
-	 w3tq4L4/jcSDA==
-Date: Thu, 28 Aug 2025 09:26:40 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=k20201202; t=1756391205;
+	bh=OgX2g1VbwOW3A/1+b5scV4T2jr/8zC7Zzky6etYrcv4=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=aHrNGTMaTGob9tj9cRYan5PlGmiK7c94wZV665v4S6Iftfjt3+XWdaYcJmN6OIfoL
+	 OIOw+9FouyrcEVNVPjRt2H4tZTs4B/DllMrkQ9x1XwYGN1cslg+511hgE/GwvZ0wrf
+	 iqBDxrwtgreuOJB9XybZzvXjemhOl7JILve2tMco8BR5UxfppxrZHy53IHlpAc5Ukh
+	 Dt4IMYIAsXWE3noY5UWAUe9CEq4Ez8MopM4DeRxc34OO77F6rf+0WEC93PzP8S0LAs
+	 Cg9V/k2K4WfI0CD+z3BZwKZ7Y5xt4QhKiSsZ8GrnU1VTi2JY4Es+Q3Z05kBkjtF1Or
+	 xz3G0AmYNTRug==
+From: Mark Brown <broonie@kernel.org>
+To: Liam Girdwood <lgirdwood@gmail.com>, Chen-Yu Tsai <wenst@chromium.org>
+Cc: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+ linux-sound@vger.kernel.org, linux-mediatek@lists.infradead.org, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250825151111.3696404-1-wenst@chromium.org>
+References: <20250825151111.3696404-1-wenst@chromium.org>
+Subject: Re: [PATCH v2] ASoC: mediatek: common: Switch to
+ for_each_available_child_of_node_scoped()
+Message-Id: <175639120317.325624.3705402613246984996.b4-ty@kernel.org>
+Date: Thu, 28 Aug 2025 16:26:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: linux-kernel@vger.kernel.org, conor+dt@kernel.org, jonathanh@nvidia.com, 
- thierry.reding@gmail.com, krzk+dt@kernel.org, linux-tegra@vger.kernel.org, 
- devicetree@vger.kernel.org
-To: Kartik Rajput <kkartik@nvidia.com>
-In-Reply-To: <20250828102803.497871-1-kkartik@nvidia.com>
-References: <20250828102803.497871-1-kkartik@nvidia.com>
-Message-Id: <175639109042.1621859.15536493695388543442.robh@kernel.org>
-Subject: Re: [PATCH] arm64: tegra: Add I2C nodes for Tegra264
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-a9b2a
 
-
-On Thu, 28 Aug 2025 15:58:03 +0530, Kartik Rajput wrote:
-> Add I2C nodes for Tegra264.
+On Mon, 25 Aug 2025 23:11:09 +0800, Chen-Yu Tsai wrote:
+> Using for_each_available_child_of_node_scoped() allows us to get rid of
+> of_node_put() calls from early returns or breaks in the loop. It also
+> fixes issues with missing of_node_put() calls.
 > 
-> Signed-off-by: Kartik Rajput <kkartik@nvidia.com>
-> ---
->  arch/arm64/boot/dts/nvidia/tegra264.dtsi | 225 +++++++++++++++++++++++
->  1 file changed, 225 insertions(+)
+> Switch to for_each_available_child_of_node_scoped() in parse_dai_link_info().
+> Also drop the braces around if blocks now that the inner block is just
+> one statement.
 > 
+> [...]
 
+Applied to
 
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
+Thanks!
 
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
+[1/1] ASoC: mediatek: common: Switch to for_each_available_child_of_node_scoped()
+      commit: b088b6189a4066b97cef459afd312fd168a76dea
 
-  pip3 install dtschema --upgrade
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-This patch series was applied (using b4) to base:
- Base: attempting to guess base-commit...
- Base: tags/next-20250828 (exact match)
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-If this is not the correct base, please add 'base-commit' tag
-(or use b4 which does this automatically)
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/nvidia/' for 20250828102803.497871-1-kkartik@nvidia.com:
-
-arch/arm64/boot/dts/nvidia/tegra264-p3971-0089+p3834-0008.dtb: /bus@0/i2c@c600000: failed to match any schema with compatible: ['nvidia,tegra264-i2c']
-arch/arm64/boot/dts/nvidia/tegra264-p3971-0089+p3834-0008.dtb: /bus@0/i2c@c610000: failed to match any schema with compatible: ['nvidia,tegra264-i2c']
-arch/arm64/boot/dts/nvidia/tegra264-p3971-0089+p3834-0008.dtb: /bus@8100000000/i2c@c410000: failed to match any schema with compatible: ['nvidia,tegra264-i2c']
-arch/arm64/boot/dts/nvidia/tegra264-p3971-0089+p3834-0008.dtb: /bus@8100000000/i2c@c420000: failed to match any schema with compatible: ['nvidia,tegra264-i2c']
-arch/arm64/boot/dts/nvidia/tegra264-p3971-0089+p3834-0008.dtb: /bus@8100000000/i2c@c430000: failed to match any schema with compatible: ['nvidia,tegra264-i2c']
-arch/arm64/boot/dts/nvidia/tegra264-p3971-0089+p3834-0008.dtb: /bus@8100000000/i2c@c630000: failed to match any schema with compatible: ['nvidia,tegra264-i2c']
-arch/arm64/boot/dts/nvidia/tegra264-p3971-0089+p3834-0008.dtb: /bus@8100000000/i2c@c640000: failed to match any schema with compatible: ['nvidia,tegra264-i2c']
-arch/arm64/boot/dts/nvidia/tegra264-p3971-0089+p3834-0008.dtb: /bus@8100000000/i2c@c650000: failed to match any schema with compatible: ['nvidia,tegra264-i2c']
-arch/arm64/boot/dts/nvidia/tegra264-p3971-0089+p3834-0008.dtb: /bus@8100000000/i2c@c670000: failed to match any schema with compatible: ['nvidia,tegra264-i2c']
-arch/arm64/boot/dts/nvidia/tegra264-p3971-0089+p3834-0008.dtb: /bus@8100000000/i2c@c680000: failed to match any schema with compatible: ['nvidia,tegra264-i2c']
-arch/arm64/boot/dts/nvidia/tegra264-p3971-0089+p3834-0008.dtb: /bus@8100000000/i2c@c690000: failed to match any schema with compatible: ['nvidia,tegra264-i2c']
-arch/arm64/boot/dts/nvidia/tegra264-p3971-0089+p3834-0008.dtb: /bus@8100000000/i2c@c6a0000: failed to match any schema with compatible: ['nvidia,tegra264-i2c']
-arch/arm64/boot/dts/nvidia/tegra264-p3971-0089+p3834-0008.dtb: /bus@8100000000/i2c@c6b0000: failed to match any schema with compatible: ['nvidia,tegra264-i2c']
-arch/arm64/boot/dts/nvidia/tegra264-p3971-0089+p3834-0008.dtb: /bus@8100000000/i2c@c6c0000: failed to match any schema with compatible: ['nvidia,tegra264-i2c']
-arch/arm64/boot/dts/nvidia/tegra264-p3971-0089+p3834-0008.dtb: /bus@8100000000/i2c@c6d0000: failed to match any schema with compatible: ['nvidia,tegra264-i2c']
-
-
-
-
+Thanks,
+Mark
 
 
