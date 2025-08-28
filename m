@@ -1,218 +1,347 @@
-Return-Path: <linux-kernel+bounces-789830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 020DEB39B46
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 13:14:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81AACB39B4A
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 13:16:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58399985FD0
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 11:14:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5BE561882588
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 11:16:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD8B230E0CB;
-	Thu, 28 Aug 2025 11:14:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 263AE30DEB5;
+	Thu, 28 Aug 2025 11:15:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="3W7KQx5d"
-Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2059.outbound.protection.outlook.com [40.107.212.59])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="euIsnO5m"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C29630C62D;
-	Thu, 28 Aug 2025 11:14:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.212.59
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756379663; cv=fail; b=eHL7t5Kn82ZbvqK1DzsJa+erbfYzwJmsYa6x+BJPmtEa9JFmFLWO5v76xclIGX9htDsrpVUroEggm41Um/LEr9dLyqp1eso1HLjnhY1OX3V9Broor7ynp3ctnHSX5DdwnvmOJsANKIb7kYfJgJ8fnkv+k7yeGtBajD6Ao9h8O4k=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756379663; c=relaxed/simple;
-	bh=SfvJHIpj+x1ntt10aMsHGrLE4099WfbK3xcDnINCtoI=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lliIQQOV/fv0OcoqWbL0fUKh7zqXUSZhjcYHPHnypLb0MQUi42oRGPiyshzHPjDpghwahxjYK6R8ykyHVX85TWq3+ekpW3gQ5ydfE3uMzFhpG/U7ULpDgsRWrHM54md2ZZn5kgH326un6niR93UOIoNUbbWJXdXSZODtpyHf/k0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=3W7KQx5d; arc=fail smtp.client-ip=40.107.212.59
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=a1P+4PGTb7JAIW1p1TKOLnghCrTl9kuUEObCj2mFKbb0P5qngqdt6PpbOUHrhzfDARMuEWJSYNpK6CZ5iF+EegMk/H9Bl5UlEmkT6Gu2dRdRc0jQocEI5iJw8z1Ut1KW2n5EI+U9pQlDR7UpSdUX5Y+eXcBztrQCDH8J//p8ji72nbSosgPWznBZmW0ySMEfKX7LUNV1ob2+6PCdHw6QA0hg8CsMLaH+2ezPRBYFEkINl8MF1scpF6JfOvJzKb4jaY7DZnjI89uEpm9sMHCQ9TGnrGTiN7MKW8JsgEAPxknGvmiWeOoEsUczSTqixffA6AioequFOZcQeGEMwYHsmw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=t0NygJSNDy2c9LvyB3pHkE/bUIXzFXvxWIMov9kiJt8=;
- b=aNlAX2aYZUvk564LJ7At8rffZBm6REYJlCdoDBT6cdxRpuIs982JTDXEVy1gz3H8f3LOnw+DaGf9alAMhoevCdDbwoQOwLfUaSRDb3Rz/AAwkrWd4jpmpSL4kO9GKN2kfLhV9vS9XOrNVbhaz1e4im+Rr46i1qUpmMpHQ9qG6j3W2xHhEK0IcT2nsM5X0Uoh/peFSTVpGry5N6TSwkh9Mo2yqZHcMTI3BE4qtQ2SKIs5lDDdPtA7n34gjhcLcnKfX3wpfvbvWbbORDBnkjhI4BVSYPUKVObLlJieFK8XPVDVlHQ7SVps5dcddiWLPhVxlrUhujxOfCktSQON5vsKDQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=t0NygJSNDy2c9LvyB3pHkE/bUIXzFXvxWIMov9kiJt8=;
- b=3W7KQx5dDy8ZNdwjq+tk3TjYo9BVHAKXAtYYu4A57Fu4AvKPhlujMaOjFsp2xEsJ1NctSQuyr7HEAlhBT8tK7V0mZ9Idya29YO8KLD0Yze8fFdLq6RpR1imvthbXSeJf6sQ6WQKYRSPUJGm5eWeww2ktA1uUcwEW+LAOX7jvZ6o=
-Received: from BLAPR03CA0173.namprd03.prod.outlook.com (2603:10b6:208:32f::35)
- by MN0PR12MB5858.namprd12.prod.outlook.com (2603:10b6:208:379::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.21; Thu, 28 Aug
- 2025 11:14:12 +0000
-Received: from BL6PEPF0001AB53.namprd02.prod.outlook.com
- (2603:10b6:208:32f:cafe::5e) by BLAPR03CA0173.outlook.office365.com
- (2603:10b6:208:32f::35) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9073.17 via Frontend Transport; Thu,
- 28 Aug 2025 11:14:12 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
-Received: from SATLEXMB03.amd.com (165.204.84.17) by
- BL6PEPF0001AB53.mail.protection.outlook.com (10.167.241.5) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.9052.8 via Frontend Transport; Thu, 28 Aug 2025 11:14:12 +0000
-Received: from Satlexmb09.amd.com (10.181.42.218) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 28 Aug
- 2025 06:14:12 -0500
-Received: from BLR-L-NUPADHYA.xilinx.com (10.180.168.240) by
- satlexmb09.amd.com (10.181.42.218) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.1748.10; Thu, 28 Aug 2025 04:14:05 -0700
-From: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
-To: <linux-kernel@vger.kernel.org>
-CC: <bp@alien8.de>, <tglx@linutronix.de>, <mingo@redhat.com>,
-	<dave.hansen@linux.intel.com>, <Thomas.Lendacky@amd.com>, <nikunj@amd.com>,
-	<Santosh.Shukla@amd.com>, <Vasant.Hegde@amd.com>,
-	<Suravee.Suthikulpanit@amd.com>, <David.Kaplan@amd.com>, <x86@kernel.org>,
-	<hpa@zytor.com>, <peterz@infradead.org>, <seanjc@google.com>,
-	<pbonzini@redhat.com>, <kvm@vger.kernel.org>, <huibo.wang@amd.com>,
-	<naveen.rao@amd.com>, <francescolavra.fl@gmail.com>, <tiala@microsoft.com>
-Subject: [PATCH v10 13/18] x86/apic: Read and write LVT* APIC registers from HV for SAVIC guests
-Date: Thu, 28 Aug 2025 16:43:56 +0530
-Message-ID: <20250828111356.208972-1-Neeraj.Upadhyay@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250828070334.208401-1-Neeraj.Upadhyay@amd.com>
-References: <20250828070334.208401-1-Neeraj.Upadhyay@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF6DE19ADBA
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 11:15:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756379753; cv=none; b=t4EONm6CgZXhfZuiLcsux8ozful4Bl8wMVfFw3rrpyS9UdyUW08TRmlNWfGUHXdUaRy9qj2Ku7LO2Y34jQGdpV2WBynYXdjq2kSq7C3SZxVBdlQOMQAlW56++uKTxZYywsN3Hc34gYDBpXS0L7UuX0Flja1BZMj2b1bEZBTzRac=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756379753; c=relaxed/simple;
+	bh=Erw0Zf5hiM6l3I9UY8d2WIa04sjb+pn9ISqGFBazVuc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BOELVTRekd4vBfq9ZU+UGJw3dnAfrdid4XJSQdbr0un0jMXdPtn2jj51gqCqr8KUEADhlZ2GL+bb+TWF+VD52IewvPiiSW69qPKcIUfFKv82ysHiTkDdIVLRaRM0gOzE2V35Fh/rdrd4rxxEv472ZO6+qJWL81ZtUH+iYj7utQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=euIsnO5m; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57SADug8007069
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 11:15:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=bskH2lX0CKt25YPYuNFvtUmU
+	RIgxsqpxQSWfGiy2I00=; b=euIsnO5mVFneMGtMApTR0zl2y0MNWfdrM5ekAscH
+	S8vtB4DcyCMi9yodY+kTlonIbTkd/TRJ07UsWrgCoVnr3RxHpdz/15n/Uf/bt5Bi
+	I02uVaNZnCqQzZ+SL3B1sniMf8rwH5vX25t4DMukf/MFF20Qm2DRza57LLhi0j2y
+	+1yByUKyMDy1CWN4j8DFT0GEzH0EN6Qa446dgbUYQcMNITPc0c7idRfhzkRAekng
+	hwhKWYNGqj7iFx56VBiXfR76Et8OsE8DBbaN88AezBovqTDACnwFsFRm7Fb220+t
+	kH/FMFl21KYDMHxsfAfI0KqBH0PpALbjg3lixNz16bq5cA==
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48tn67g5jv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 11:15:51 +0000 (GMT)
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-70dfcc58976so2112266d6.2
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 04:15:50 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756379750; x=1756984550;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bskH2lX0CKt25YPYuNFvtUmURIgxsqpxQSWfGiy2I00=;
+        b=H9AgpZtkB33GzZmUm6b4XYlCn3D5cvEyurz9uf/ZBc+yAUc00992ob+c6c4skhWTN3
+         2l1sswcSObzONqbm9qQPLO+6Twf+VDMulqPdY2lTQ4cLA3Nm2eAnkzu2iYgG1VLal4KC
+         JOzFPwXVq13kL5pCo9MImt/3wCiAHlR3oyLCKGclLNwkBEE1xgemNvo0oBiDTAbXVl6y
+         luWk2jdqELKB0TcUHasOxEo8MCRWF+krh3vE2xAqsPUCuXNuh4EK48VZGZ5+6vK+eJrh
+         BIEvmZTc9GQ2D+ELhm1BfpIf7TKGPiWl21boC5lFLClKewa20cr9LSW+HPzs39FJojB1
+         UJCw==
+X-Forwarded-Encrypted: i=1; AJvYcCVMIGBKWa1t9oFo7OsNXNxCKwb9VMbj1a68Q54lfcCzawwP6YGMM6jPTaUAQi1hsoz9hI54yB/NgVK4xXw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZCZB4wJVesa2R2L/qTQA+SOXTnulnpiNfxfyaao0TQljYjZLH
+	wlkdit5g6gZMrPYBcLh1d+3fsuLeNdOVVd0n8g83gXLb63iGh3Zbhl/wPC5vroPiDd765VpxoVT
+	D7tjcdJm7ToTSLaFXJs7m/uc4r3IcynKOQFaX7+zmXEgTbdug6+hCulS2cPYvmHjjCTU=
+X-Gm-Gg: ASbGnctSKjO424/LLQHgNwUTzrsMdaPwh7PLl3ZPoFWBy0/px48y9zFKM1NpkMvnX+K
+	3zO+uxUOy61AfcDG51wGLFoFpefakIUcWl2BGBGCUb5FgCwwAHdwA/Zx1ow6XkWJb7WELwhS3Of
+	D1fEoGg10F/qE4Hm6Ki5RHmGuLUTqJbYG0mcQ+Ad6DB+CJTP3Iu5F22ldGH9m3yh5oP//bzGZ1+
+	tXcEnaWIblZvn2h5D/KFbp6Muia9xIYPb0wNr1WyF/MZYtFxqtMtjl1gjJuEtc/S3VObIv4zwKL
+	EuhGGoVm9nDeMEPxTb6QAen0HOZIiZnDdcHahRiiWH1TBFsejKFY85/X9F2XAEeeFbMikz7FpwR
+	QGpMeLDiJlY/ENlYq5XDh/NmbprjRY0FhXmg5oeZENyXg0FEX5Xtf
+X-Received: by 2002:a05:6214:d48:b0:70d:c49e:2583 with SMTP id 6a1803df08f44-70dc49e26bfmr163670916d6.67.1756379749572;
+        Thu, 28 Aug 2025 04:15:49 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHR/I0kG9+z/qZVHlLX8H/kcR/onSu4ccUbMJ7Yzq0rYwxLFRv3gZslN4tolgLltQntNbol+g==
+X-Received: by 2002:a05:6214:d48:b0:70d:c49e:2583 with SMTP id 6a1803df08f44-70dc49e26bfmr163670466d6.67.1756379749031;
+        Thu, 28 Aug 2025 04:15:49 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3365e20dad4sm31331811fa.9.2025.08.28.04.15.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Aug 2025 04:15:48 -0700 (PDT)
+Date: Thu, 28 Aug 2025 14:15:46 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Yijie Yang <yijie.yang@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v8 3/3] arm64: dts: qcom: Add base HAMOA-IOT-EVK board
+Message-ID: <hbvc72fy2bnx5ggmmcpbrgy5jkhrlvewfv3ofh7z6blnj5l27e@4m2js7nf3g6b>
+References: <20250828-hamoa_initial-v8-0-c9d173072a5c@oss.qualcomm.com>
+ <20250828-hamoa_initial-v8-3-c9d173072a5c@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To satlexmb09.amd.com
- (10.181.42.218)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL6PEPF0001AB53:EE_|MN0PR12MB5858:EE_
-X-MS-Office365-Filtering-Correlation-Id: 79e40daf-9857-435f-d07d-08dde6240487
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|82310400026|1800799024|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?860lKu9v9k4mO6UZexowd54RiG13sTmgzPZ99wBoqi5ffxQ3G6By+qW7Bg7l?=
- =?us-ascii?Q?FQg6OX9VaVfKnBV2J/Bnrva2lj4t2pm/ZkV3/olrQp3JAkP1WPd4NzZiR2Xb?=
- =?us-ascii?Q?wZpXWJ7hTUlEwlBIhKJ1VF2mFvnEqxSUjdjiU0Oy77kukHD/6Y/OJqyUXZMN?=
- =?us-ascii?Q?HWC4x2eJ2/hXlAS7t9K358dpwqgbRrz5/wi11N7lmtRZG4nZPMNde44mbJ8S?=
- =?us-ascii?Q?06T954+tXENLg0JGsj/PGlNI4k83fzQpMSetHbeaTMJuEneiR7a6E4J7zM/n?=
- =?us-ascii?Q?uT+LKZ6X9l3ibpc017/hIKOYU9O5RB6jPfVsk5v/qhktsKkUE6pm0Y+8qKtz?=
- =?us-ascii?Q?wiLR/pT7fypdocXMlAjljKhaCCjk86SC6gvFwuSIhBYtaDPCX9IuM7zdIaiC?=
- =?us-ascii?Q?2a7tpQVWBwm+mWlzhBMCCi4GFWo2Ims0rbdHg/Qa0uGf4uJiWpMYvNza9vbu?=
- =?us-ascii?Q?EobNpQdGgjLjhYlEBk3fiLpbKDYRaZmxrAOo9uKWvP9HsFdfWqttuX1b/N0z?=
- =?us-ascii?Q?hm/WcR+y+HaJjyO9LnDVp5J6O6GQ+KoZwa87QSTi2hde0EOUoQz4Rsy+ogoG?=
- =?us-ascii?Q?+TRU4TrK7nrwtm1HFZkuiJ3jrPfWSKC9NLczd3pM+upLaoEgZaoKIZ1h5X+d?=
- =?us-ascii?Q?D6MrBngaVxtQzZWHipzfsJ2DGvgu5IeCY9FKEN0aSDeBOii4GEUsCHjBY/ii?=
- =?us-ascii?Q?owSNxhzp4t1jLek1el3URx+4f/u9rwrosZbZEndDX7nKKwGsoBXe41I15YsD?=
- =?us-ascii?Q?ulqzr71Q/WRMt0gNxsif2n0EWQjQmazXSlZWaJSt1+utn2zxcOrV27QQW0zA?=
- =?us-ascii?Q?/VzZAV7bhIo45naOInKuTt97RdMHeIAIb47ooRVzJtyeU5b/bDXcu69cHKFj?=
- =?us-ascii?Q?GZhXwMXg8Ub89tSydi8VH7qQ8cJPc4qClGQSd8Qthhj8HPSOBVO+uqWnWXk5?=
- =?us-ascii?Q?HK97YlCHkN0zMRNO486Vwmih54shmQlpNSXlkw7Gt8KSQ3pRiROmjt8NsLM5?=
- =?us-ascii?Q?JfcXF/EesrVZ3zXC1LD4yZuWvzK3gLK7LQy0GZpprxXKNFS86K2Ts/DW64jR?=
- =?us-ascii?Q?Gicy3G8GG8TaxFUguRyZcCUNLap+lrrexpgPm++D1wxOqNbBc26FoKUjYZ6n?=
- =?us-ascii?Q?jjF2Np7gqpZDvPQGFIqngPsiqvpxZiMNnE+UVpdTNDkL/o7JQxKBlw3QGQyG?=
- =?us-ascii?Q?bnC2dkO5NaXhTBpkYZJev34eHaZJ1XXSsaer6X5yWsRN36rCgwUhlBpmWVX/?=
- =?us-ascii?Q?eLo8/ki788AKI2P9sTJjWoF7RtkAQP3xsyj7c0Sg1EqDi28T3ZfNwBOC/mYB?=
- =?us-ascii?Q?yyy7zNcmk8kz9b7A9OxB6/nnyyv4dELkY0vopIJVwocO0tzudNVGiv36MOE1?=
- =?us-ascii?Q?bmH74xJll87UxhS09xmgv09oPDbl3l4jPO/wM7/96IR+EMjcp990zJdAbhIy?=
- =?us-ascii?Q?jRlQ/Lrd05R7MTKzXTz1gGEazSzquSAEiK5rpCNiOIltBJEAuExaW7obnKt4?=
- =?us-ascii?Q?r2VJD29aNWH9awK6V7wWflD/A+gG6J6U/B6Y?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(7416014)(376014)(82310400026)(1800799024)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Aug 2025 11:14:12.5248
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 79e40daf-9857-435f-d07d-08dde6240487
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BL6PEPF0001AB53.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB5858
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250828-hamoa_initial-v8-3-c9d173072a5c@oss.qualcomm.com>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODI4MDA4NSBTYWx0ZWRfX7FH6xnhSCAkk
+ aOMRyDE1R5r7Y6ReHCfBacb0F/FlDLn3kzZvs7QL0oJkuuR3pLkaxUkAUqmbVx+s8R3rz8Vg3+b
+ UUpt8xx6+8COlDSlF7jOvWh2ZKFwbM37lhxyqUcD1pBb49LhcNjR+yar0CYfy3jqy9+U3+6yk10
+ Iy343UT8iqJxOtVEJCGBXKXFxL+gkD6nQGU1drY9ER/qVGZ5G/1L6efJQycB5K4PvYZvRkOxPxg
+ 0GHjgXlyyrQPzEXmmOcRjx8mY3RQFfD+F0z3C4llh6GHnCWE5pf5ywTeXtFUkIwLmO4j59zYFL5
+ 33rWWfLfQvKlbCXT9RqjdQxVRdyDK2waxBXhYuk5a8zPiD2/RgJ6KVAT25loz0CkV9UswYL0t2I
+ K2cyWQJg
+X-Proofpoint-GUID: EHJV63JjI6CEf4pnSjK7yRA6szh0S15V
+X-Proofpoint-ORIG-GUID: EHJV63JjI6CEf4pnSjK7yRA6szh0S15V
+X-Authority-Analysis: v=2.4 cv=P7c6hjAu c=1 sm=1 tr=0 ts=68b03a67 cx=c_pps
+ a=oc9J++0uMp73DTRD5QyR2A==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=COk6AnOGAAAA:8 a=m4PJ2_s-LGQMiO66xH0A:9
+ a=CjuIK1q_8ugA:10 a=iYH6xdkBrDN1Jqds4HTS:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-28_03,2025-08-28_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 bulkscore=0 clxscore=1015 impostorscore=0 priorityscore=1501
+ adultscore=0 phishscore=0 malwarescore=0 spamscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508280085
 
-Hypervisor need information about the current state of LVT registers
-for device emulation and NMI. So, forward reads and write of these
-registers to the hypervisor for Secure AVIC enabled guests.
+On Thu, Aug 28, 2025 at 12:48:47PM +0800, Yijie Yang wrote:
+> The HAMOA-IOT-EVK is an evaluation platform for IoT products, composed of
+> the Hamoa IoT SoM and a carrier board. Together, they form a complete
+> embedded system capable of booting to UART.
+> 
+> This change enables the following peripherals on the carrier board:
+> - UART
+> - On-board regulators
+> - USB Type-C mux
+> - Pinctrl
+> - Embedded USB (EUSB) repeaters
+> - NVMe
+> - pmic-glink
+> - USB DisplayPorts
+> - Bluetooth
+> - Graphic
+> - Audio
+> 
+> Written in collaboration with Quill Qi (Audio) <le.qi@oss.qualcomm.com>,
+> Jie Zhang (Graphics) <quic_jiezh@quicinc.com>, Shuai Zhang (Bluetooth)
+> <quic_shuaz@quicinc.com>, and Yongxing Mou (USB DisplayPorts)
+> <quic_yongmou@quicinc.com>.
+> 
+> Signed-off-by: Yijie Yang <yijie.yang@oss.qualcomm.com>
+> ---
+>  arch/arm64/boot/dts/qcom/Makefile          |    1 +
+>  arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts | 1247 ++++++++++++++++++++++++++++
+>  2 files changed, 1248 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
+> index 94a84770b080..5e19535ad63d 100644
+> --- a/arch/arm64/boot/dts/qcom/Makefile
+> +++ b/arch/arm64/boot/dts/qcom/Makefile
+> @@ -13,6 +13,7 @@ dtb-$(CONFIG_ARCH_QCOM)	+= apq8039-t2.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)	+= apq8094-sony-xperia-kitakami-karin_windy.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)	+= apq8096-db820c.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)	+= apq8096-ifc6640.dtb
+> +dtb-$(CONFIG_ARCH_QCOM)	+= hamoa-iot-evk.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)	+= ipq5018-rdp432-c2.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)	+= ipq5018-tplink-archer-ax55-v1.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)	+= ipq5332-rdp441.dtb
+> diff --git a/arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts b/arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts
+> new file mode 100644
+> index 000000000000..b1a8380d6639
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts
+> @@ -0,0 +1,1247 @@
+> +// SPDX-License-Identifier: BSD-3-Clause
+> +/*
+> + * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+> + */
+> +
+> +/dts-v1/;
+> +
+> +#include "hamoa-iot-som.dtsi"
+> +
+> +/ {
+> +	model = "Qualcomm Technologies, Inc. Hamoa IoT EVK";
+> +	compatible = "qcom,hamoa-iot-evk", "qcom,hamoa-iot-som", "qcom,x1e80100";
+> +	chassis-type = "embedded";
+> +
+> +	aliases {
+> +		serial0 = &uart21;
+> +		serial1 = &uart14;
+> +	};
+> +
+> +	chosen {
+> +		stdout-path = "serial0:115200n8";
+> +	};
+> +
+> +	pmic-glink {
+> +		compatible = "qcom,x1e80100-pmic-glink",
+> +			     "qcom,sm8550-pmic-glink",
+> +			     "qcom,pmic-glink";
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +		orientation-gpios = <&tlmm 121 GPIO_ACTIVE_HIGH>,
+> +				    <&tlmm 123 GPIO_ACTIVE_HIGH>,
+> +				    <&tlmm 125 GPIO_ACTIVE_HIGH>;
+> +
+> +		connector@0 {
+> +			compatible = "usb-c-connector";
+> +			reg = <0>;
+> +			power-role = "dual";
+> +			data-role = "dual";
+> +
+> +			ports {
+> +				#address-cells = <1>;
+> +				#size-cells = <0>;
+> +
+> +				port@0 {
+> +					reg = <0>;
+> +
+> +					pmic_glink_ss0_hs_in: endpoint {
+> +						remote-endpoint = <&usb_1_ss0_dwc3_hs>;
+> +					};
+> +				};
+> +
+> +				port@1 {
+> +					reg = <1>;
+> +
+> +					pmic_glink_ss0_ss_in: endpoint {
+> +						remote-endpoint = <&usb_1_ss0_qmpphy_out>;
+> +					};
+> +				};
+> +
+> +				port@2 {
+> +					reg = <2>;
+> +
+> +					pmic_glink_ss0_sbu: endpoint {
+> +						remote-endpoint = <&usb_1_ss0_sbu_mux>;
+> +					};
+> +				};
+> +			};
+> +		};
+> +
+> +		connector@1 {
+> +			compatible = "usb-c-connector";
+> +			reg = <1>;
+> +			power-role = "dual";
+> +			data-role = "dual";
+> +
+> +			ports {
+> +				#address-cells = <1>;
+> +				#size-cells = <0>;
+> +
+> +				port@0 {
+> +					reg = <0>;
+> +
+> +					pmic_glink_ss1_hs_in: endpoint {
+> +						remote-endpoint = <&usb_1_ss1_dwc3_hs>;
+> +					};
+> +				};
+> +
+> +				port@1 {
+> +					reg = <1>;
+> +
+> +					pmic_glink_ss1_ss_in: endpoint {
+> +						remote-endpoint = <&retimer_ss1_ss_out>;
+> +					};
+> +				};
+> +
+> +				port@2 {
+> +					reg = <2>;
+> +
+> +					pmic_glink_ss1_con_sbu_in: endpoint {
+> +						remote-endpoint = <&retimer_ss1_con_sbu_out>;
+> +					};
+> +				};
+> +			};
+> +		};
+> +
+> +		connector@2 {
+> +			compatible = "usb-c-connector";
+> +			reg = <2>;
+> +			power-role = "dual";
+> +			data-role = "dual";
+> +
+> +			ports {
+> +				#address-cells = <1>;
+> +				#size-cells = <0>;
+> +
+> +				port@0 {
+> +					reg = <0>;
+> +
+> +					pmic_glink_ss2_hs_in: endpoint {
+> +						remote-endpoint = <&usb_1_ss2_dwc3_hs>;
+> +					};
+> +				};
+> +
+> +				port@1 {
+> +					reg = <1>;
+> +
+> +					pmic_glink_ss2_ss_in: endpoint {
+> +						remote-endpoint = <&retimer_ss2_ss_out>;
+> +					};
+> +				};
+> +
+> +				port@2 {
+> +					reg = <2>;
+> +
+> +					pmic_glink_ss2_con_sbu_in: endpoint {
+> +						remote-endpoint = <&retimer_ss2_con_sbu_out>;
+> +					};
+> +				};
+> +			};
+> +		};
+> +	};
+> +
+> +	vreg_edp_3p3: regulator-edp-3p3 {
 
-Reviewed-by: Tianyu Lan <tiala@microsoft.com>
-Signed-off-by: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
----
-Changes since v9:
- - No change.
+Here is a list of the top-level nodes defined in this DT. Does it look
+sorted?
 
- arch/x86/kernel/apic/x2apic_savic.c | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+	aliases
+	chosen
+	pmic-glink
+	regulator-edp-3p3
+	sound
+	regulator-vph-pwr
+	regulator-nvme
+	regulator-rtmr0-1p15
+	regulator-rtmr0-1p8
+	regulator-rtmr0-3p3
+	regulator-rtmr1-1p15
+	regulator-rtmr1-1p8
+	regulator-rtmr1-3p3
+	regulator-rtmr2-1p15
+	regulator-rtmr2-1p8
+	regulator-rtmr2-3p3
+	regulator-wcn-3p3
+	usb-1-ss0-sbu-mux
+	regulator-wcn-0p95
+	regulator-wcn-1p9
+	regulator-wwan
+	audio-codec
+	wcn7850-pmu
 
-diff --git a/arch/x86/kernel/apic/x2apic_savic.c b/arch/x86/kernel/apic/x2apic_savic.c
-index bb8d4032dcf9..c569b6e23777 100644
---- a/arch/x86/kernel/apic/x2apic_savic.c
-+++ b/arch/x86/kernel/apic/x2apic_savic.c
-@@ -67,6 +67,11 @@ static u32 savic_read(u32 reg)
- 	case APIC_TMICT:
- 	case APIC_TMCCT:
- 	case APIC_TDCR:
-+	case APIC_LVTTHMR:
-+	case APIC_LVTPC:
-+	case APIC_LVT0:
-+	case APIC_LVT1:
-+	case APIC_LVTERR:
- 		return savic_ghcb_msr_read(reg);
- 	case APIC_ID:
- 	case APIC_LVR:
-@@ -76,11 +81,6 @@ static u32 savic_read(u32 reg)
- 	case APIC_LDR:
- 	case APIC_SPIV:
- 	case APIC_ESR:
--	case APIC_LVTTHMR:
--	case APIC_LVTPC:
--	case APIC_LVT0:
--	case APIC_LVT1:
--	case APIC_LVTERR:
- 	case APIC_EFEAT:
- 	case APIC_ECTRL:
- 	case APIC_SEOI:
-@@ -205,18 +205,18 @@ static void savic_write(u32 reg, u32 data)
- 	case APIC_LVTT:
- 	case APIC_TMICT:
- 	case APIC_TDCR:
--		savic_ghcb_msr_write(reg, data);
--		break;
- 	case APIC_LVT0:
- 	case APIC_LVT1:
-+	case APIC_LVTTHMR:
-+	case APIC_LVTPC:
-+	case APIC_LVTERR:
-+		savic_ghcb_msr_write(reg, data);
-+		break;
- 	case APIC_TASKPRI:
- 	case APIC_EOI:
- 	case APIC_SPIV:
- 	case SAVIC_NMI_REQ:
- 	case APIC_ESR:
--	case APIC_LVTTHMR:
--	case APIC_LVTPC:
--	case APIC_LVTERR:
- 	case APIC_ECTRL:
- 	case APIC_SEOI:
- 	case APIC_IER:
+
 -- 
-2.34.1
-
+With best wishes
+Dmitry
 
