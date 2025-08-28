@@ -1,322 +1,97 @@
-Return-Path: <linux-kernel+bounces-790437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 270D4B3A72B
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 18:59:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AACA0B3A734
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 19:00:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F298985394
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 16:59:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E02D31BA7CB5
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 17:00:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3688232C330;
-	Thu, 28 Aug 2025 16:59:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8778B32C33E;
+	Thu, 28 Aug 2025 17:00:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="s2tPZ39Y"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="abx6U8xD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B57CF2C11F0;
-	Thu, 28 Aug 2025 16:59:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAAF7326D6E;
+	Thu, 28 Aug 2025 16:59:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756400357; cv=none; b=cCjhKyn6zfUHyjz3ZhyT+QFNjEI4gIhX80ZjkFj1dGLA0wfeu0aRyMGzZAsPjfOWAOBYvo9NUsAFJ81AQWrMZvnd+wQVxeogiA9mXgPG4NjJebJWtTK2TFgJAKjCMn59vQKPIS58an18PFIPoYIF6DoXwnILByBTgxhlCHWf/f4=
+	t=1756400400; cv=none; b=RmxiyzjH+FiHNcCnfaQVbsIHUUs3s7j1567FnabDKQtqWB5Mq5KfYxa3dTLIg9mwmt3BKnWxZ+CIQCxcU1T7ZJrqqGOKgI571KQT1fnWF9IExRZqIQ+LgsfLDOzaUHlFBfWgSPcaZCJFPrU8tdKgqamosVLgGdRd638naffmm5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756400357; c=relaxed/simple;
-	bh=qUv9mgql8rQsfZX5FEIKgvY6RVE3JxycfZIOzGI1I1k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GvR8kJk/uZp7B1u/ZxRDiNWrZhfmhUZ6hkzxMy6JS/QqYhqXe/4HzJrfQCmGXdXk3KTrHgroeFNUGUNVOh3IuuvW88OxjsH/JrOcMebWqs/WcAaZMqwzbb50s+VqQZNjA+Vsz2b6TTS2HsFsY8++bhkzA39A3G/TxKGHCDsBqio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=s2tPZ39Y; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (212-76-243-235.access.telenet.be [212.76.243.235])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 5BE3520EE;
-	Thu, 28 Aug 2025 18:58:08 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1756400288;
-	bh=qUv9mgql8rQsfZX5FEIKgvY6RVE3JxycfZIOzGI1I1k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=s2tPZ39Yon1sz6DTgms56w7ElyMEY4duH9vfyn7LbgsuEqoNN3V61PmcWF+waJe5j
-	 9LchcCD38EhPeJBLhk9QZD5LGPv38dZSorGhtZt+YM42CitxRfRu8sk3Vd6mVdkhIH
-	 HzNM7F5vN4OY9AvpN39m3/9Y/57WPI36oukZjIfg=
-Date: Thu, 28 Aug 2025 18:58:50 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Bin Du <Bin.Du@amd.com>
-Cc: mchehab@kernel.org, hverkuil@xs4all.nl, bryan.odonoghue@linaro.org,
-	sakari.ailus@linux.intel.com,
-	prabhakar.mahadev-lad.rj@bp.renesas.com,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	sultan@kerneltoast.com, pratap.nirujogi@amd.com,
-	benjamin.chan@amd.com, king.li@amd.com, gjorgji.rosikopulos@amd.com,
-	Phil.Jawich@amd.com, Dominic.Antony@amd.com,
-	mario.limonciello@amd.com, richard.gong@amd.com, anson.tsao@amd.com
-Subject: Re: [PATCH v3 0/7] Add AMD ISP4 driver
-Message-ID: <20250828165850.GA14246@pendragon.ideasonboard.com>
-References: <20250828084507.94552-1-Bin.Du@amd.com>
- <20250828165605.GA9916@pendragon.ideasonboard.com>
+	s=arc-20240116; t=1756400400; c=relaxed/simple;
+	bh=XEvwDNjnAT8jj/HiOmr+bo+aUTVwtSilJOz+oEMKONo=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=NDc5HAmrO8crTOO4ZV0W2hDgba/10SnZxJD81dlINsF4vmu5Y0hTLFQUt43FbZvAQL/W+6HkrBVA9rs8DyhjJ8fhhVE+8xapfk1aOODHipGF05QNFASxDTGJknZVmqqNrYRFUuu2cH07V363Qq3oGc8s5V9o6etdT9z+guQlp9Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=abx6U8xD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69A76C4CEEB;
+	Thu, 28 Aug 2025 16:59:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756400399;
+	bh=XEvwDNjnAT8jj/HiOmr+bo+aUTVwtSilJOz+oEMKONo=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=abx6U8xDYVE/NgcoLi4fz0fXKAQ5RggU3o3I/pqrOB92xsBSa9FQvQcmKz4eCSogB
+	 N7hbe5/V9608CvoVNMCHLr/AuJ0muX7k8SKZZNq2JlGiDwKKbn9O9QXoLiGUnwbB/m
+	 NoqBi+YudG9jPN7s1Bhsfzi2w1PkypApV9EosOPnm2NX5/0jvezc88p5qjP8YxTze6
+	 UYR32BddQRm4WEqX5jOBm51cUL8R4RbJcxKzyHBn+LOLLWdB/WbKSzeZYbH4ijC20G
+	 3qEvlZ6+7JOL1XKEoIoxVXLizxsMYTgPqu2BgO+AWRKx2IQUW2h/tDAVx7M3V5JWG7
+	 26SViAC5rxa8Q==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE0E1383BF63;
+	Thu, 28 Aug 2025 17:00:07 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250828165605.GA9916@pendragon.ideasonboard.com>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] selftests/bpf: Fix bpf_prog_detach2 usage in
+ test_lirc_mode2
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <175640040653.1537046.2241081272775332692.git-patchwork-notify@kernel.org>
+Date: Thu, 28 Aug 2025 17:00:06 +0000
+References: <20250828-selftests-bpf-v1-1-c7811cd8b98c@suse.com>
+In-Reply-To: <20250828-selftests-bpf-v1-1-c7811cd8b98c@suse.com>
+To: =?utf-8?b?UmljYXJkbyBCLiBNYXJsacOocmUgPHJibUBzdXNlLmNvbT4=?=@codeaurora.org
+Cc: andrii@kernel.org, eddyz87@gmail.com, mykolal@fb.com, ast@kernel.org,
+ daniel@iogearbox.net, martin.lau@linux.dev, song@kernel.org,
+ yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
+ sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, shuah@kernel.org,
+ bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org
 
-On Thu, Aug 28, 2025 at 06:56:06PM +0200, Laurent Pinchart wrote:
-> Hi Bin Bu,
+Hello:
+
+This patch was applied to bpf/bpf-next.git (master)
+by Andrii Nakryiko <andrii@kernel.org>:
+
+On Thu, 28 Aug 2025 10:12:33 -0300 you wrote:
+> Commit e9fc3ce99b34 ("libbpf: Streamline error reporting for high-level
+> APIs") redefined the way that bpf_prog_detach2() returns. Therefore, adapt
+> the usage in test_lirc_mode2_user.c.
 > 
-> Have you sent out the cover letter only ? I haven't received the rest of
-> the series, and it's not found on lore.kernel.org either.
+> Signed-off-by: Ricardo B. Marlière <rbm@suse.com>
+> ---
+>  tools/testing/selftests/bpf/test_lirc_mode2_user.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> [...]
 
-I've just noticed you sent the rest later and separately, as
-https://lore.kernel.org/all/20250828100811.95722-1-Bin.Du@amd.com/.
+Here is the summary with links:
+  - selftests/bpf: Fix bpf_prog_detach2 usage in test_lirc_mode2
+    https://git.kernel.org/bpf/bpf-next/c/98857d111c53
 
-> On Thu, Aug 28, 2025 at 04:45:00PM +0800, Bin Du wrote:
-> > Hello,
-> > 
-> > AMD ISP4 is the AMD image processing gen 4 which can be found in HP ZBook Ultra G1a 14 inch Mobile Workstation PC ( Ryzen AI Max 385)
-> > (https://ubuntu.com/certified/202411-36043)
-> > This patch series introduces the initial driver support for the AMD ISP4.
-> > 
-> > Patch summary:
-> > - Powers up/off and initializes ISP HW
-> > - Configures and kicks off ISP FW
-> > - Interacts with APP using standard V4l2 interface by video node
-> > - Controls ISP HW and interacts with ISP FW to do image processing
-> > - Support enum/set output image format and resolution
-> > - Support queueing buffer from app and dequeueing ISP filled buffer to App
-> > - It supports libcamera ver0.2 SimplePipeline
-> > - It is verified on qv4l2, cheese and qcam
-> > - It is verified together with following patches
-> > 	platform/x86: Add AMD ISP platform config (https://lore.kernel.org/all/20250514215623.522746-1-pratap.nirujogi@amd.com/)
-> > 	pinctrl: amd: isp411: Add amdisp GPIO pinctrl (https://github.com/torvalds/linux/commit/e97435ab09f3ad7b6a588dd7c4e45a96699bbb4a)
-> > 	drm/amd/amdgpu: Add GPIO resources required for amdisp (https://gitlab.freedesktop.org/agd5f/linux/-/commit/ad0f5966ed8297aa47b3184192b00b7379ae0758)
-> > 
-> > AMD ISP4 Key features:
-> > - Processes bayer raw data from the connected sensor and output them to different YUV formats
-> > - Downscale input image to different output image resolution
-> > - Pipeline to do image processing on the input image including demosaic, denoise, 3A, etc
-> > 
-> > ----------
-> > 
-> > Changes v2 -> v3:
-> > 
-> > - All the dependent patches in other modules (drm/amd/amdgpu, platform/x86, pinctrl/amd) merged on upstream mainline kernel (https://github.com/torvalds/linux) v6.17.
-> > - Removed usage of amdgpu structs in ISP driver. Added helper functions in amdgpu accepting opaque params from ISP driver to allocate and release ISP GART buffers.
-> > - Moved sensor and MIPI phy control entirely into ISP FW instead of the previous hybrid approach controlling sensor from both FW and x86 (sensor driver).
-> > - Removed phy configuration and sensor binding as x86 (sensor driver) had relinquished the sensor control for ISP FW. With this approach the driver will be exposed as web camera like interface.
-> > - New FW with built-in sensor driver is submitted on upstream linux-firmware repo (https://gitlab.com/kernel-firmware/linux-firmware/).
-> > - Please note the new FW submitted is not directly compatible with OEM Kernel ISP4.0 (https://github.com/amd/Linux_ISP_Kernel/tree/4.0) and the previous ISP V2 patch series.
-> > - If intend to use the new FW, please rebuild OEM ISP4.0 Kernel with CONFIG_VIDEO_OV05C10=N and CONFIG_PINCTRL_AMDISP=Y.
-> > - Included critical fixes from Sultan Alsawaf branch (https://github.com/kerneltoast/kernel_x86_laptop.git) related to managing lifetime of isp buffers.
-> >       media: amd: isp4: Add missing refcount tracking to mmap memop
-> >       media: amd: isp4: Don't put or unmap the dmabuf when detaching
-> >       media: amd: isp4: Don't increment refcount when dmabuf export fails
-> >       media: amd: isp4: Fix possible use-after-free in isp4vid_vb2_put()
-> >       media: amd: isp4: Always export a new dmabuf from get_dmabuf memop
-> >       media: amd: isp4: Fix implicit dmabuf lifetime tracking
-> >       media: amd: isp4: Fix possible use-after-free when putting implicit dmabuf
-> >       media: amd: isp4: Simplify isp4vid_get_dmabuf() arguments
-> >       media: amd: isp4: Move up buf->vaddr check in isp4vid_get_dmabuf()
-> >       media: amd: isp4: Remove unused userptr memops
-> >       media: amd: isp4: Add missing cleanup on error in isp4vid_vb2_alloc()
-> >       media: amd: isp4: Release queued buffers on error in start_streaming
-> > - Addressed all code related upstream comments
-> > - Fix typo errors and other cosmetic issue.
-> > 
-> > 
-> > Changes v1 -> v2:
-> > 
-> > - Fix media CI test errors and valid warnings
-> > - Reduce patch number in the series from 9 to 8 by merging MAINTAINERS adding patch to the first patch
-> > - In patch 5
-> > 	- do modification to use remote endpoint instead of local endpoint
-> > 	- use link frequency and port number as start phy parameter instead of extra added phy-id and phy-bit-rate property of endpoint
-> > 
-> > ----------
-> > 
-> > It passes v4l2 compliance test, the test reports for:
-> > 
-> > (a) amd_isp_capture device /dev/video0
-> > 
-> > Compliance test for amd_isp_capture device /dev/video0:
-> > -------------------------------------------------------
-> > 
-> > atg@atg-HP-PV:~/bin$ ./v4l2-compliance -d /dev/video0
-> > v4l2-compliance 1.29.0-5348, 64 bits, 64-bit time_t
-> > v4l2-compliance SHA: 75e3f0e2c2cb 2025-03-17 18:12:17
-> > 
-> > Compliance test for amd_isp_capture device /dev/video0:
-> > 
-> > Driver Info:
-> >         Driver name      : amd_isp_capture
-> >         Card type        : amd_isp_capture
-> >         Bus info         : platform:amd_isp_capture
-> >         Driver version   : 6.14.0
-> >         Capabilities     : 0xa4200001
-> >                 Video Capture
-> >                 I/O MC
-> >                 Streaming
-> >                 Extended Pix Format
-> >                 Device Capabilities
-> >         Device Caps      : 0x24200001
-> >                 Video Capture
-> >                 I/O MC
-> >                 Streaming
-> >                 Extended Pix Format
-> > Media Driver Info:
-> >         Driver name      : amd_isp_capture
-> >         Model            : amd_isp41_mdev
-> >         Serial           :
-> >         Bus info         : platform:amd_isp_capture
-> >         Media version    : 6.14.0
-> >         Hardware revision: 0x00000000 (0)
-> >         Driver version   : 6.14.0
-> > Interface Info:
-> >         ID               : 0x03000005
-> >         Type             : V4L Video
-> > Entity Info:
-> >         ID               : 0x00000003 (3)
-> >         Name             : Preview
-> >         Function         : V4L2 I/O
-> >         Pad 0x01000004   : 0: Sink
-> >           Link 0x02000007: from remote pad 0x1000002 of entity 'amd isp4' (Image Signal Processor): Data, Enabled, Immutable
-> > 
-> > Required ioctls:
-> >         test MC information (see 'Media Driver Info' above): OK
-> >         test VIDIOC_QUERYCAP: OK
-> >         test invalid ioctls: OK
-> > 
-> > Allow for multiple opens:
-> >         test second /dev/video0 open: OK
-> >         test VIDIOC_QUERYCAP: OK
-> >         test VIDIOC_G/S_PRIORITY: OK
-> >         test for unlimited opens: OK
-> > 
-> > Debug ioctls:
-> >         test VIDIOC_DBG_G/S_REGISTER: OK (Not Supported)
-> >         test VIDIOC_LOG_STATUS: OK (Not Supported)
-> > 
-> > Input ioctls:
-> >         test VIDIOC_G/S_TUNER/ENUM_FREQ_BANDS: OK (Not Supported)
-> >         test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
-> >         test VIDIOC_S_HW_FREQ_SEEK: OK (Not Supported)
-> >         test VIDIOC_ENUMAUDIO: OK (Not Supported)
-> >         test VIDIOC_G/S/ENUMINPUT: OK
-> >         test VIDIOC_G/S_AUDIO: OK (Not Supported)
-> >         Inputs: 1 Audio Inputs: 0 Tuners: 0
-> > 
-> > Output ioctls:
-> >         test VIDIOC_G/S_MODULATOR: OK (Not Supported)
-> >         test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
-> >         test VIDIOC_ENUMAUDOUT: OK (Not Supported)
-> >         test VIDIOC_G/S/ENUMOUTPUT: OK (Not Supported)
-> >         test VIDIOC_G/S_AUDOUT: OK (Not Supported)
-> >         Outputs: 0 Audio Outputs: 0 Modulators: 0
-> > 
-> > Input/Output configuration ioctls:
-> >         test VIDIOC_ENUM/G/S/QUERY_STD: OK (Not Supported)
-> >         test VIDIOC_ENUM/G/S/QUERY_DV_TIMINGS: OK (Not Supported)
-> >         test VIDIOC_DV_TIMINGS_CAP: OK (Not Supported)
-> >         test VIDIOC_G/S_EDID: OK (Not Supported)
-> > 
-> > Control ioctls (Input 0):
-> >         test VIDIOC_QUERY_EXT_CTRL/QUERYMENU: OK (Not Supported)
-> >         test VIDIOC_QUERYCTRL: OK (Not Supported)
-> >         test VIDIOC_G/S_CTRL: OK (Not Supported)
-> >         test VIDIOC_G/S/TRY_EXT_CTRLS: OK (Not Supported)
-> >         test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: OK (Not Supported)
-> >         test VIDIOC_G/S_JPEGCOMP: OK (Not Supported)
-> >         Standard Controls: 0 Private Controls: 0
-> > 
-> > Format ioctls (Input 0):
-> >         test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK
-> >         test VIDIOC_G/S_PARM: OK
-> >         test VIDIOC_G_FBUF: OK (Not Supported)
-> >         test VIDIOC_G_FMT: OK
-> >         test VIDIOC_TRY_FMT: OK
-> >         test VIDIOC_S_FMT: OK
-> >         test VIDIOC_G_SLICED_VBI_CAP: OK (Not Supported)
-> >         test Cropping: OK (Not Supported)
-> >         test Composing: OK (Not Supported)
-> >         test Scaling: OK (Not Supported)
-> > 
-> > Codec ioctls (Input 0):
-> >         test VIDIOC_(TRY_)ENCODER_CMD: OK (Not Supported)
-> >         test VIDIOC_G_ENC_INDEX: OK (Not Supported)
-> >         test VIDIOC_(TRY_)DECODER_CMD: OK (Not Supported)
-> > 
-> > Buffer ioctls (Input 0):
-> >         test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: OK
-> >         test CREATE_BUFS maximum buffers: OK
-> >         test VIDIOC_REMOVE_BUFS: OK
-> >         test VIDIOC_EXPBUF: OK
-> >         test Requests: OK (Not Supported)
-> >         test blocking wait: OK
-> > 
-> > Total for amd_isp_capture device /dev/video0: 49, Succeeded: 49, Failed: 0, Warnings: 0
-> > 
-> > Please review and provide feedback.
-> > 
-> > Many thanks,
-> > 
-> > Bin Du (7):
-> >   media: platform: amd: Introduce amd isp4 capture driver
-> >   media: platform: amd: low level support for isp4 firmware
-> >   media: platform: amd: Add isp4 fw and hw interface
-> >   media: platform: amd: isp4 subdev and firmware loading handling added
-> >   media: platform: amd: isp4 video node and buffers handling added
-> >   media: platform: amd: isp4 debug fs logging and  more descriptive
-> >     errors
-> >   Documentation: add documentation of AMD isp 4 driver
-> > 
-> >  Documentation/admin-guide/media/amdisp4-1.rst |   66 +
-> >  Documentation/admin-guide/media/amdisp4.dot   |    8 +
-> >  .../admin-guide/media/v4l-drivers.rst         |    1 +
-> >  MAINTAINERS                                   |   25 +
-> >  drivers/media/platform/Kconfig                |    1 +
-> >  drivers/media/platform/Makefile               |    1 +
-> >  drivers/media/platform/amd/Kconfig            |    3 +
-> >  drivers/media/platform/amd/Makefile           |    3 +
-> >  drivers/media/platform/amd/isp4/Kconfig       |   13 +
-> >  drivers/media/platform/amd/isp4/Makefile      |   10 +
-> >  drivers/media/platform/amd/isp4/isp4.c        |  237 ++++
-> >  drivers/media/platform/amd/isp4/isp4.h        |   26 +
-> >  drivers/media/platform/amd/isp4/isp4_debug.c  |  272 ++++
-> >  drivers/media/platform/amd/isp4/isp4_debug.h  |   41 +
-> >  .../platform/amd/isp4/isp4_fw_cmd_resp.h      |  314 +++++
-> >  drivers/media/platform/amd/isp4/isp4_hw_reg.h |  125 ++
-> >  .../media/platform/amd/isp4/isp4_interface.c  |  972 +++++++++++++
-> >  .../media/platform/amd/isp4/isp4_interface.h  |  149 ++
-> >  drivers/media/platform/amd/isp4/isp4_subdev.c | 1198 ++++++++++++++++
-> >  drivers/media/platform/amd/isp4/isp4_subdev.h |  133 ++
-> >  drivers/media/platform/amd/isp4/isp4_video.c  | 1213 +++++++++++++++++
-> >  drivers/media/platform/amd/isp4/isp4_video.h  |   87 ++
-> >  22 files changed, 4898 insertions(+)
-> >  create mode 100644 Documentation/admin-guide/media/amdisp4-1.rst
-> >  create mode 100644 Documentation/admin-guide/media/amdisp4.dot
-> >  create mode 100644 drivers/media/platform/amd/Kconfig
-> >  create mode 100644 drivers/media/platform/amd/Makefile
-> >  create mode 100644 drivers/media/platform/amd/isp4/Kconfig
-> >  create mode 100644 drivers/media/platform/amd/isp4/Makefile
-> >  create mode 100644 drivers/media/platform/amd/isp4/isp4.c
-> >  create mode 100644 drivers/media/platform/amd/isp4/isp4.h
-> >  create mode 100644 drivers/media/platform/amd/isp4/isp4_debug.c
-> >  create mode 100644 drivers/media/platform/amd/isp4/isp4_debug.h
-> >  create mode 100644 drivers/media/platform/amd/isp4/isp4_fw_cmd_resp.h
-> >  create mode 100644 drivers/media/platform/amd/isp4/isp4_hw_reg.h
-> >  create mode 100644 drivers/media/platform/amd/isp4/isp4_interface.c
-> >  create mode 100644 drivers/media/platform/amd/isp4/isp4_interface.h
-> >  create mode 100644 drivers/media/platform/amd/isp4/isp4_subdev.c
-> >  create mode 100644 drivers/media/platform/amd/isp4/isp4_subdev.h
-> >  create mode 100644 drivers/media/platform/amd/isp4/isp4_video.c
-> >  create mode 100644 drivers/media/platform/amd/isp4/isp4_video.h
-
+You are awesome, thank you!
 -- 
-Regards,
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-Laurent Pinchart
+
 
