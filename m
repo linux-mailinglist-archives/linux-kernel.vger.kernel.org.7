@@ -1,111 +1,118 @@
-Return-Path: <linux-kernel+bounces-789804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE968B39AEF
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 13:04:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01F87B39B00
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 13:06:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5AFF716FAC9
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 11:03:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1F3C201FC9
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 11:05:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E574F30E0D8;
-	Thu, 28 Aug 2025 11:03:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76F1230E0FA;
+	Thu, 28 Aug 2025 11:05:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iJVbwR9E"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="D9zThiN5"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29AC430DD11;
-	Thu, 28 Aug 2025 11:03:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19F8E14A4DB
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 11:05:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756378999; cv=none; b=uzlujb5HQ5FUxESW5Jm3IQEW6Ofl4sOOuvw4pZdNZeCe57i20PsCTjuwOMuVq9GEdpy19EyoFipqe5N51/MrKk5z5doWzXh1Nkc2dtnQuLPrvRszk40MudHmswZIkZ5v0T1mC3O76Z4EQzFQaJpCG7MzfbY+6HkjsOqS8LyISYQ=
+	t=1756379124; cv=none; b=iEHB3kFf0jziShaelh7H40DCOWznzSCGdT4t2ZbvNjJZHeeXLHfhQqELA7+4cL0dMvq/kfiYTjKzgQrPUATodEFCFE6wlwLyWIgfQWsFdpa3y+wKGy6yOxZo0wrfbQNEEoz8j04GZHINJqLCUwXKtOTIkzcDxq3xyjcqte3i27E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756378999; c=relaxed/simple;
-	bh=pjzAij7OpPaAmTNVqtQzbQpcumXq8d1CkhrUy4uidvo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=QkaYCquSMIW6/Y0YJbJuaLcNZjUeeZHNbm9CykDJBmsyTDktCfY65U9CqwQn/jnY7UHFUKdyvMoTnNvH3u92uc2kHNvlLCQYymcvNDrTmWo876lRe3/xbkN4gAJ6zmwVBsqpfpaie96+RMceTBnnc5Bf9HzZ9J+/qW8nNYagoso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iJVbwR9E; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07FD0C4CEF6;
-	Thu, 28 Aug 2025 11:03:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756378998;
-	bh=pjzAij7OpPaAmTNVqtQzbQpcumXq8d1CkhrUy4uidvo=;
-	h=From:To:Cc:Subject:Date:From;
-	b=iJVbwR9Ey1vPlkNXduKN6HwFO8hqpA39J8h7gOCQX34bfvbjY1IXJU3fzrOxt5ziw
-	 QQ2pIEY3VzMcpcUtH6YoQMqRNIz+83+sWXN4L1tUjuj8YOwUMsC0TUJEOaJtrZEKaB
-	 atOtmQ59xeHFS5OCJdfaB/PGydTHHdLZXQv/nvxnh4xKiYhwVtllS1rCKjWoggX/SW
-	 no2IbAY6HdTfRhaeOizQS+hW2r7UYD/J6akhL6buCNrxtl51EcfntjWy3COHgmE3/2
-	 Q7sWAQxDB1JYRrW77fzV8uCy3b3vgXz5r1XOx9SOSd0cYj5AKc9V4ZRiH8DyHS+wm8
-	 SlEbbF4CHV2+Q==
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-To: Linux ACPI <linux-acpi@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>,
- Zhang Rui <rui.zhang@intel.com>, Armin Wolf <w_armin@gmx.de>
-Subject:
- [PATCH v1] ACPI: fan: Fold two simple functions into their only caller
-Date: Thu, 28 Aug 2025 13:03:13 +0200
-Message-ID: <3386797.aeNJFYEL58@rafael.j.wysocki>
-Organization: Linux Kernel Development
+	s=arc-20240116; t=1756379124; c=relaxed/simple;
+	bh=TAUsH9qx5Xo7HZQWurliwAGX0byykFNGH5/xaDPAnAg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZSbUGlBIwaGuN+zxe6xnnkUPy9v7/V/Gi6KnDNAMLK2OAeRzp7YDmWl+4onEBMM+yEpwzWzOUpAXF0EiZykd3nR0LgzZ7VgCFix5ZVkPAFX3CZ3FpEgu1pXreKeC0eRWS4pH+ubIDh4me9fcC6E9beNNBOpnxckQQK74jQBy76A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=D9zThiN5; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-33679c4bd19so6654681fa.1
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 04:05:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1756379121; x=1756983921; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=TAUsH9qx5Xo7HZQWurliwAGX0byykFNGH5/xaDPAnAg=;
+        b=D9zThiN5CvyWhSOAXkTsNLbjvHgBmaYN2VOm2aotEJ5v9KaHiO79PizfuAoaFr5i3q
+         wgGAAt6itCrxtlVWHTpuoLaCKgxYrk0hFPnr061X8YyXx1Ma7yteboceDByDPNW4hnOI
+         lY95iXFrfpYrUrrVcFKvhl+x9MQsQZ8My9oK54/cyAcW29/Lw1i8Q+kugZkeuk9nCyMV
+         260qQzfkVL6Bs489EIx/kj2aiJNaI6mrUYg8R3onYuHZOqZfnDl4HBy+b7w9G/GDh8Nd
+         70/0RHwwworlBfGAok6w9ZH6JROeJxuwTMRxlVvoIxO8J/mtabP7wK20Vp80jJVmIuxO
+         IMtA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756379121; x=1756983921;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TAUsH9qx5Xo7HZQWurliwAGX0byykFNGH5/xaDPAnAg=;
+        b=iCCwY0L66U7UjVP9jVk9O6QJQLrHdyqdwT1yFjgeFnHah72fg76jEznQx25jjI5wmZ
+         QW3+gvo+kYtJKGTXc2wUr5ubHusIbmK5z3V0hEGwW2gf4w4+MkBow71YlOPfeaRUY4mc
+         ZqZGbUzO1PGuRT+Q1AadaBHfBOL5IfXL+IibYMntw8GT1OuOksXhsVwZ8mqqUD9aFsY8
+         k9KtQKOJR7gpfDJwIhHvrqYWmuCmEs+qJWmupOmEvYtS1kyr7Zkdi0hra6qK+K4PmPSa
+         +Q6pCnnNyIGOhc2vxOc3/93hhU1k3x7akWlpYydAqItTuAFGrT24pe/20aKOiK/+AK5+
+         E2jw==
+X-Forwarded-Encrypted: i=1; AJvYcCWMuOUANmedrTq/RJL8FpOAa+HT0GY0zVKgwowtdlfKf7LuFcSYUcSOpe98ZA4QhTyMnnj9zxdnY5Cv2zI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5VBC418WdmV2DV8uBBnRpGGQqKKYNQlnvnO+lt6d26abHTU7E
+	aWRbizd16gRlYLCD9TtTxHYWO+pE9DySReI60tTERVVMQUiDIHKt4sbCf3FfK7fVMfn7d8BcHLq
+	djjaKt7a50R4FKWSgcFIgpHd0EJbzfzj7ZKhlu48f
+X-Gm-Gg: ASbGncuA0vD5QvTmqkQwEUT9eyH7fRS4fiSWefcc9SVbnzsAyLx2WNwDqM7Nk/c7A/X
+	tSpGShIiZPB9ERfNOwE0g1QJxHMc3qMPOwFp2Nays6lYbjXOdfCT3oQoPNduwBy48HoxttHkX1w
+	rdVg9s7SYiRih0GTors73qw9ReW3qRL1g3QmYB2koDcVVtNfvAQsJRCEep95YwnCTNjNQnfFsu+
+	1Cd1EZL/zlyZylu+IXSq00cDPKKZpIxIOBthRMo8/ntyOXyjbko4u0=
+X-Google-Smtp-Source: AGHT+IH2xqkT7Gm8Y8VPKOFZe2CwX6AJnHBKkNuQ1kWl9XzOyZn3Ty6HeFlWouXcagu0nm0WrDp9EEtaTGEu1op7fA0=
+X-Received: by 2002:a05:651c:2359:20b0:336:9adb:75f3 with SMTP id
+ 38308e7fff4ca-3369adb788amr8793491fa.38.1756379120964; Thu, 28 Aug 2025
+ 04:05:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
+References: <CANypQFbECe10JE9MKzdU3X7kehVDoHr0kGnQpK1CVMJrg+qJwA@mail.gmail.com>
+In-Reply-To: <CANypQFbECe10JE9MKzdU3X7kehVDoHr0kGnQpK1CVMJrg+qJwA@mail.gmail.com>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Thu, 28 Aug 2025 13:05:07 +0200
+X-Gm-Features: Ac12FXwwRNf_fseKBhowipW4TPj-BQ0S2f9JAeNpAbDYk4E0hs940usVGesVMUU
+Message-ID: <CACT4Y+YLTF0bG6yJABOXg7zZt+1nV6ajHLJxSWzazSk2sH=tfA@mail.gmail.com>
+Subject: Re: [Linux Kernle Bug] INFO: rcu detected stall in e1000_watchdog
+To: Jiaming Zhang <r772577952@gmail.com>
+Cc: "anthony.l.nguyen@intel.com" <anthony.l.nguyen@intel.com>, davem@davemloft.net, 
+	intel-wired-lan@lists.osuosl.org, jesse.brandeburg@intel.com, kuba@kernel.org, 
+	netdev@vger.kernel.org, security@kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Thu, 28 Aug 2025 at 12:40, Jiaming Zhang <r772577952@gmail.com> wrote:
+>
+> Dear Linux kernel developers and maintainers:
+>
+> We are writing to report a kernel bug discovered with our modified
+> version of syzkaller.
+>
+> The bug was initially found in Linux kernel v5.15.189 (commit
+> c79648372d02944bf4a54d87e3901db05d0ac82e). We have attached the
+> .config file and symbolized crash report for your reference.
+>
+> Unfortunately, we do not have a reliable reproducer at this time. We
+> are actively analyzing the root cause and working to create a
+> consistent reproducer, which we will share as soon as it is available.
+>
+> Please let us know if you need any further information.
+>
+> Best regards,
+> Jiaming Zhang
 
-Both acpi_fan_has_fst() and acpi_fan_is_acpi4() are called from one
-place only, so fold them both into there caller which yields slightly
-leaner code that is somewhat easier to follow.
+Hi Jiaming,
 
-No intentional functional impact.
+This is likely to be a false positive. We found the default kernel
+timeouts are not really suitable for fuzzing. Consider using the
+official syzkaller-recommended configs with proper tuning for fuzzing.
 
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
- drivers/acpi/fan_core.c |   18 ++++--------------
- 1 file changed, 4 insertions(+), 14 deletions(-)
-
---- a/drivers/acpi/fan_core.c
-+++ b/drivers/acpi/fan_core.c
-@@ -203,18 +203,6 @@
-  * --------------------------------------------------------------------------
- */
- 
--static bool acpi_fan_has_fst(struct acpi_device *device)
--{
--	return acpi_has_method(device->handle, "_FST");
--}
--
--static bool acpi_fan_is_acpi4(struct acpi_device *device)
--{
--	return acpi_has_method(device->handle, "_FIF") &&
--	       acpi_has_method(device->handle, "_FPS") &&
--	       acpi_has_method(device->handle, "_FSL");
--}
--
- static int acpi_fan_get_fif(struct acpi_device *device)
- {
- 	struct acpi_buffer buffer = { ACPI_ALLOCATE_BUFFER, NULL };
-@@ -331,9 +319,11 @@
- 	device->driver_data = fan;
- 	platform_set_drvdata(pdev, fan);
- 
--	if (acpi_fan_has_fst(device)) {
-+	if (acpi_has_method(device->handle, "_FST")) {
- 		fan->has_fst = true;
--		fan->acpi4 = acpi_fan_is_acpi4(device);
-+		fan->acpi4 = acpi_has_method(device->handle, "_FIF") &&
-+				acpi_has_method(device->handle, "_FPS") &&
-+				acpi_has_method(device->handle, "_FSL");
- 	}
- 
- 	if (fan->acpi4) {
-
-
-
+Additionally, v5.15 is extremely old. Check out:
+https://github.com/google/syzkaller/blob/master/docs/linux/reporting_kernel_bugs.md
 
