@@ -1,173 +1,235 @@
-Return-Path: <linux-kernel+bounces-789651-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2312B398AE
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 11:47:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80F21B398B3
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 11:47:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E847D7B0DBB
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 09:45:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2F0B3B9C17
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 09:47:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E8FF2E0910;
-	Thu, 28 Aug 2025 09:47:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB49F2EE276;
+	Thu, 28 Aug 2025 09:47:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="xO0j4LAX"
-Received: from out30-130.freemail.mail.aliyun.com (out30-130.freemail.mail.aliyun.com [115.124.30.130])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hhOh9q4I"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83DCF26E6F2;
-	Thu, 28 Aug 2025 09:46:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.130
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756374419; cv=none; b=qeFefHn4PD7+mepvDkKkjDSvlNLPjd8zPJJPRdzLwJSwTqgG4XF/NhgZEIey6kSIRZ7VHTglJPxXW+FMO+H3o2htat3xflJE7wZUAaHHu0MTgPJc2TWaaFnRcsJywlDyC+EfW6qobFYqVHTfyuvo3rsbZ41E4W5g70gQWBju/MI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756374419; c=relaxed/simple;
-	bh=LpA6H+aeQtqTKiAd+afSJ6jbJZdTff8nG98/sQA0udU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tmIRYVAPGVgiy1gGKxc+s6DXhf1BG+9eEgkgBr48IRpyRqMJbWENAa9ox7yILXoYJbuCfIU6ooxukeD3juOb9UMgtoPTkRWaIsoK/1MTyHjpF1FmGvDB6lSGxcY78mThhReDMce4oqUpAMzHtMHeJQs3WY/1HnIKHN2bGNv8t/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=xO0j4LAX; arc=none smtp.client-ip=115.124.30.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1756374408; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=A5UZMuVtzlTYwPVWKKP1nj4b0AXXLsi60Juw56Bu+zg=;
-	b=xO0j4LAXCmE+45QBgPVj4+GO9sgb5rNOjWeCPILLqH2Lcf6Y4LMgLa7S6NLmK/Mgti0P0ZMs4/OsH0ygDYPB/xpFOJNutWlHPvKrq8LKEKswUtG+2ZhbllK/ADEW7u/mR2fd4PB3WOUkqDKe5zT9E5LJiEKJgZdOp1tzUoirJcI=
-Received: from 30.74.144.114(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WmmpNqb_1756374404 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Thu, 28 Aug 2025 17:46:45 +0800
-Message-ID: <db2320ee-6bd4-49c1-8fce-0468f48e1842@linux.alibaba.com>
-Date: Thu, 28 Aug 2025 17:46:42 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F40F2ECEA6;
+	Thu, 28 Aug 2025 09:47:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.9
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756374431; cv=fail; b=aPID/XWGhZYd41ZQTpYh1wROy1Uhzqg5Z/BZpUScGjY54N1Z3ZC9d1+uwJJ8bpEOh6i59eHan4xb2LHQdaDyirr62vIWNEE8bLGiv1GlxOfU5ZvD0Q3fXjfBtIhLJBwyzB4q01w3VamnZumgjcHDSlRlxqM5u5pNnKHLogAVhrs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756374431; c=relaxed/simple;
+	bh=6phb6ApcFtscGWltEhIs1e9nltCKu0rKHxjssfvA7xA=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=gpSAlymGtSplymr/BhaCmj6LmSuuyMspKOPaTWOdbVf1LIXpZ0eHrdZakBLt73rEs2/nAlB+Hgghz7wIS+hMXEYBt/r+n0/Imf2lE1HuhjWq6/MM0yeoW6mqAnDlin9jcza1K6zSpbs5IwkI63uSEcwV748VCG4T8w8zGKYLVSU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hhOh9q4I; arc=fail smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756374431; x=1787910431;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=6phb6ApcFtscGWltEhIs1e9nltCKu0rKHxjssfvA7xA=;
+  b=hhOh9q4I/8FGGtARDP1OG6kaN/6EL0+ANZkd1yH48S1U6mydMxqLeDeA
+   SMJ9hS3ck8qsRM3TZTUaDjgvpOQAO4htnwLy6rbctK/pjAwxhL20feuRr
+   Q5I2EEKRZjivcvY2romiiKz9nBHZLQsMcNLjwJibh5nTM7C5Hdluxk673
+   DEoNZkXyxa1jDqqh2tGNxXl/M8d5rg+2a0noZZFNDyuISyIxBEJDWHs3K
+   HO9lQk026stHRfJnk7DHR7EMiuKEkzOzh6UjlNP5RBwjrQ2b9kQE8jQar
+   F8Gch4h0BepZt73edsThOyaEt6o+C8zARlH6wdDSUVKvaxB9hEjeUlYM1
+   w==;
+X-CSE-ConnectionGUID: vGZ7bj8sTK2BlxexsGt4GQ==
+X-CSE-MsgGUID: WzToC8GHTnOxx72mBhpMuQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="81231916"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="81231916"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2025 02:47:10 -0700
+X-CSE-ConnectionGUID: slCVMdXTSqqKzd+bBF6qEg==
+X-CSE-MsgGUID: CiMELWWpRfW189aoQ7mBCQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,217,1751266800"; 
+   d="scan'208";a="200980507"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2025 02:47:09 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Thu, 28 Aug 2025 02:47:08 -0700
+Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17 via Frontend Transport; Thu, 28 Aug 2025 02:47:08 -0700
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (40.107.223.89)
+ by edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Thu, 28 Aug 2025 02:47:08 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=XoE8xZNrdLhtDA+hTJHAAlol3aM/Fqls58RCDGejL0VXB8NEjWrWbYfEXo09VRZo0YnTa/+iEFhL+SpKkSLsNsC7Qkm5CM+zrFqpWLXiVwuELUDd4/rDpgadxnZAuwL4Kk05/VO94ovcler+xGxMWYmZ75rAIIHFHMC6rFUQEXiHEnHdNW4q9FgvDG8428MjmBhcWLlvR3tlKCvzAhTOj+6jN+8tLPrI3+FK2uq3w9vaicuNA+d26fCxQhnIONQDVTXzzBlOjhChZbp5eFD40o8KxDYLpiHDCHqX3665FtoSbcNfOTnDs7yIfUOkychlM9shNjWzKwSrt3ukO9rXig==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Y6VC12gkXjTC3BzxfaZ/VrT6NwOfA4yv3nzjYTSkKHs=;
+ b=ZPac2xvyfYskcF9qNKY4hxgpJ/++7ebuUHwO7h+5WJupCqRoIZPAxpnaSfdOiv/uRbfFXrgR+d56tJPJtGc1laeBh75j/BY6dWy8Jkkris7Ud7lPL0JplZIY+Gn8lrdiOp7UKxnwFH9R5RUWArOUuLyHRL8ocj9SfnLlcgsYRajUItP5Bx0bswU+Ouu0eOBLhAkP/34NZPVz6OQ3aoCOKFaMiLVEnmEi87kBZMzjTT4EftAd8TMrMeEl39MJOcMgQmg6/oj/3drkBOhdbS9yGKbQYAXTbO7tYf9oLrb89gzbaozKB5i0kKmgZnaqXYUn0bCQhTUIsmUSKF/SErrRBg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from IA1PR11MB6443.namprd11.prod.outlook.com (2603:10b6:208:3a8::16)
+ by DM3PPFAB693A2AC.namprd11.prod.outlook.com (2603:10b6:f:fc00::f43) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.13; Thu, 28 Aug
+ 2025 09:47:03 +0000
+Received: from IA1PR11MB6443.namprd11.prod.outlook.com
+ ([fe80::7e9f:7976:bf62:ec10]) by IA1PR11MB6443.namprd11.prod.outlook.com
+ ([fe80::7e9f:7976:bf62:ec10%7]) with mapi id 15.20.9052.014; Thu, 28 Aug 2025
+ 09:47:03 +0000
+Message-ID: <4fc29d26-14a0-4295-b82f-48e21b376f49@intel.com>
+Date: Thu, 28 Aug 2025 11:46:58 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next 7/7] net: stmmac: add TC flower filter support
+ for IP EtherType
+To: Simon Horman <horms@kernel.org>
+CC: "davem@davemloft.net" <davem@davemloft.net>, "andrew+netdev@lunn.ch"
+	<andrew+netdev@lunn.ch>, "edumazet@google.com" <edumazet@google.com>,
+	"kuba@kernel.org" <kuba@kernel.org>, "pabeni@redhat.com" <pabeni@redhat.com>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Rojewski,
+ Cezary" <cezary.rojewski@intel.com>, "Basierski, Sebastian"
+	<sebastian.basierski@intel.com>, "Jurczenia, Karol"
+	<Karol.Jurczenia@intel.com>
+References: <20250826113247.3481273-1-konrad.leszczynski@intel.com>
+ <20250826113247.3481273-8-konrad.leszczynski@intel.com>
+ <20250827193710.GT10519@horms.kernel.org>
+Content-Language: en-US
+From: Konrad Leszczynski <konrad.leszczynski@intel.com>
+In-Reply-To: <20250827193710.GT10519@horms.kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: WA2P291CA0027.POLP291.PROD.OUTLOOK.COM
+ (2603:10a6:1d0:1f::18) To IA1PR11MB6443.namprd11.prod.outlook.com
+ (2603:10b6:208:3a8::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 00/13] khugepaged: mTHP support
-To: David Hildenbrand <david@redhat.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Nico Pache <npache@redhat.com>, Dev Jain <dev.jain@arm.com>,
- linux-mm@kvack.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, ziy@nvidia.com, Liam.Howlett@oracle.com,
- ryan.roberts@arm.com, corbet@lwn.net, rostedt@goodmis.org,
- mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
- akpm@linux-foundation.org, baohua@kernel.org, willy@infradead.org,
- peterx@redhat.com, wangkefeng.wang@huawei.com, usamaarif642@gmail.com,
- sunnanyong@huawei.com, vishal.moola@gmail.com,
- thomas.hellstrom@linux.intel.com, yang@os.amperecomputing.com,
- kirill.shutemov@linux.intel.com, aarcange@redhat.com, raquini@redhat.com,
- anshuman.khandual@arm.com, catalin.marinas@arm.com, tiwai@suse.de,
- will@kernel.org, dave.hansen@linux.intel.com, jack@suse.cz, cl@gentwo.org,
- jglisse@google.com, surenb@google.com, zokeefe@google.com,
- hannes@cmpxchg.org, rientjes@google.com, mhocko@suse.com,
- rdunlap@infradead.org, hughd@google.com
-References: <20250819134205.622806-1-npache@redhat.com>
- <e971c7e0-70f0-4ce0-b288-4b581e8c15d3@lucifer.local>
- <38b37195-28c8-4471-bd06-951083118efd@arm.com>
- <0d9c6088-536b-4d7a-8f75-9be5f0faa86f@lucifer.local>
- <CAA1CXcCqhFoGBvFK-ox2sJw7QHaFt+-Lw09BDYsAGKg4qc8nSw@mail.gmail.com>
- <CAA1CXcAXTL811VJxqyL18CUw8FNek6ibPr6pKJ_7rfGn-ZU-1A@mail.gmail.com>
- <5bea5efa-2efc-4c01-8aa1-a8711482153c@lucifer.local>
- <CAA1CXcBDq9PucQdfQRh1iqJLPB6Jn6mNy28v_AuHWb9kz1gpqQ@mail.gmail.com>
- <d110a84a-a827-48b4-91c5-67cec3e92874@lucifer.local>
- <95012dfc-d82d-4ae2-b4cd-1e8dcf15e44b@redhat.com>
- <bdbb5168-7657-4f11-a42d-b75cce7e0bca@lucifer.local>
- <e34e1ffe-c377-4c9a-b28b-ca873f3620ac@redhat.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <e34e1ffe-c377-4c9a-b28b-ca873f3620ac@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: IA1PR11MB6443:EE_|DM3PPFAB693A2AC:EE_
+X-MS-Office365-Filtering-Correlation-Id: bdd91c8d-857e-43a5-17bf-08dde617d767
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|42112799006|1800799024|7053199007;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?Rkl5eURVSE50Qk92ejR3L2FGYStQZGhtbVhxQk9sSlY0ZEtnRi9tMnA1Znp1?=
+ =?utf-8?B?d2ZQaDh0cVhXYmIzcTlnMW1FQXR4UXk1dmlJVWpZL1NvSEp3UllUQ0NGWjB5?=
+ =?utf-8?B?VXMxM1M4QVNqQjNMS1JIOEgzMFlzQ0VsdkU2Y2xyOTVzNXA4b3dyRU5xN0F0?=
+ =?utf-8?B?OW1KalNjWVRVcW1BK211SHY3OUU1U2RyWUxqWldDZmVYV0ptbUNEdHhZdjlN?=
+ =?utf-8?B?R3dhUzlWeWJjNHUyMlRWNFdjNndYQzBkS3JUQWhXWlNvTWF1QWVGV1pVOGlN?=
+ =?utf-8?B?OHp5djcybkQ2cE9jaTM4YzRWV2hubTZBb3pjRzJYczBtOWkwelhIZ0FhYmZJ?=
+ =?utf-8?B?QkNJdDlZOWxORDFQaG9SWkEvU1hvSC9YU3JiaGtBY1Yzei95SkxhZTRSVm1O?=
+ =?utf-8?B?ZUZ4Y0Q1dlBKYklGVzl3UXFUY3JhVkFVenRkU2tubHczU3BkYzBNSDhWdjQx?=
+ =?utf-8?B?a2JXYXRJdFptWDI4am5nb0d0bzdrdWhyWUFkUVJlNnVDWHV6dUs3TkJ3MjJD?=
+ =?utf-8?B?RTZMTG80dUYrTnd4eHlCckV4am9NR2J0VXZiMUthd1FyVjhyQkNPNEd4d1lU?=
+ =?utf-8?B?SUxCd3F5OHo0M21wQWlPMXRUaWd4Wk5rWEVFa1RvNGxmL0hIT2RVODFkOFhp?=
+ =?utf-8?B?MWJreDNzV2owSTd6OEhqR3FjeEFTSjc4WXVKQ3V3L2F2Q0VGbjl0T3JIbmhY?=
+ =?utf-8?B?cE5JOHc3QmJXa3B2Qk9hK3lIeWNyOXVpb0JwbW1KQWIzSHpRZnVGRG52cFJR?=
+ =?utf-8?B?MTVuZVh4Zm9RRllsOVBvaGR6T1k5dEFLOVRlcEZXQTk1dHcxRkl6ZnluQkdZ?=
+ =?utf-8?B?MXE2ZUxWSG1DVWtVSnNRRGJldUJpblZyTFdtUmdYUlFMeVFRemVsa3FKVWdR?=
+ =?utf-8?B?QnRLVUJiQjZhYWM0TTBPNnMzeTNYazhmd3ZPeG9QMU9zaTJrdzNmS2IyZjJO?=
+ =?utf-8?B?R3lIbTByRk9qVkJpSWczVHJZNWo5Mmp2MDBzSThyVktybFI1MVl6UHpVdXFJ?=
+ =?utf-8?B?SnFxT0paY2RBR3ROWFhZRWgzYlN6ZEJQd1NCV1pZR0puZHR0RENFSWJDbWtl?=
+ =?utf-8?B?VDE0eDRkZXppTUVxelhHWEZVOTJoZ3FYZEp5VDIvVlk3TTd4QjhKWHhkRHRh?=
+ =?utf-8?B?VkdNc1pZWUZYZExjN0xSR242WFF6WTlsTjYzN0FWaEt4VzMxUFhCc2sydDds?=
+ =?utf-8?B?clRoYVpKMHZUbWovbDBqUWtmdzhDYllydy8zb2hmOWVRV0k0bjRYcndZbFJJ?=
+ =?utf-8?B?WFBRcHp3bllxVjdydzEybTlkaTBpQnVoWTdJTFZpSmhnaFY1ZzFlM09DUGNK?=
+ =?utf-8?B?Qy8zMjR1L2lCU2RSTGdSeXpZbUF5a0F0UUxzaUl1cUJhWVAzaE9KWWpSdTlH?=
+ =?utf-8?B?Y3lDOEx1NWVXWER6OFJWay9ESGJwblB4ckhjcmRucHZrZGRtdUtRTHh2R2ZO?=
+ =?utf-8?B?aFZxU1FOYWZpU0U5YVNJdXJSaDRsTEdKSHY1b0hYcDBpNkUzOThKeExLVTI5?=
+ =?utf-8?B?NW5xMlJ4UFZPZHNUdEpjNXNhVW1Ga3VUcmMzclRCYTI4OTJsSE5ENTBqcGVw?=
+ =?utf-8?B?Z0lFSERMbEh0YStyNEN5ODZHOHZlbFBsTHY5ODMwVmlXUzQyQlVESjZTRXRN?=
+ =?utf-8?B?UEpqcWpIR0JvYjRkcHJZVTlLc05HU3pTSU1TZDVhRm9yamhsN1dvdVBacnp2?=
+ =?utf-8?B?dlllNnNaMHNmS2NwSXgxMnN3akROSE5ucW54dE5Id21PREVzeWVwekJSdVl1?=
+ =?utf-8?B?QXB5M0xXYU5QTGVZeWhyRGxlME5IWXd0V0k3Z0pZTFBGbktGdzdYR3Y1M3pw?=
+ =?utf-8?B?ZU51SEFaME41NkVPTkVxQVV4V3lkc3M4M2ZPaDViU3prMFBHN1AyYnlzaTUv?=
+ =?utf-8?B?UFpSTkgwa2VNQWhxRUI3ZGlNck5ieUZ5VTRvanIvcmEzckE9PQ==?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA1PR11MB6443.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(42112799006)(1800799024)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?cXMvVy9ZYk1raDJDaWo0U2I1RHBkWVB2eDFxRFpKZUgwM1ZrWFZqMG5vK3Fu?=
+ =?utf-8?B?SklTZUxhOUxxN3B2Y29zVUtZYjI3ZzZheHh4TzJNeE9WSTFCT08xMThlRG0v?=
+ =?utf-8?B?R2NMemZqeGE0NzFHa0lJRkZyTVFWdXBxZ1QyTEl1MlRCN1B0b1lZRFAwbXhU?=
+ =?utf-8?B?dWxvaWNsWmZMZ3lkb1NQQlUzNldCMXlRM01lNk1KaVEyN0lMODdIbnJ5SE02?=
+ =?utf-8?B?QXAyQVoxZVpsVlR5TGpWdmVXNGhkMFB1dVJ0VWs3c2hSeFNzWjFWVUxUaDJD?=
+ =?utf-8?B?Z1NLNjIraWtoV1IvL2Vrb2duaU9qa3BGTmZwc0ltYnBBR00rQWtjY3JFeXgy?=
+ =?utf-8?B?MVpiRzIxSFc4YjcxOGx1dzVFTHFpa3dBV1E5TU1zWUV1ZlZPakhlcERTdSsv?=
+ =?utf-8?B?T1FiZmhyZFN6ODRaaDR0bFdNMVpITGNTbnRkd3gxVmVUSFhrZERPUCtPdjVE?=
+ =?utf-8?B?c3FRSkhmOVZXQVR5Mktkc1I1MU8zZHpDUXNQNVRYM0Q5R1djbXdQWkdtQlQ1?=
+ =?utf-8?B?OVg4OU9hVnRsM0VibU5idjBETzVWeWkyYnhXLzY2eHZ3NnUwcU45Ty80b0d1?=
+ =?utf-8?B?MEtqc21MRC9YSy83R2lDdFM4V29yWU1qN2ZyMFR4LzZxMktyU0NmY1dzZnkz?=
+ =?utf-8?B?TldMMjhvTkN3L281Nm0yTEdYdXZoL0VhSTBBVG9YZ2VkY3dYQjNqWTVUb0Mw?=
+ =?utf-8?B?cXhLVFJSVElldndGUnFPVGEvUC9VK2t1WnZtankxY0ZuWDU4dm1NeWxRSGNJ?=
+ =?utf-8?B?UjJodFcvTjhQMzhDSlJlSzVqbkdZb2pYa2poZVhBRVJkbG5XVC9tZDdyU1VW?=
+ =?utf-8?B?M2F3d3NnU1doUmYvQmVWR01yUlJLa2crRW1jaTRxY2p2QW10YmZHNmdGNWZa?=
+ =?utf-8?B?bzM0NndDcXFscXBhSHYyMXdkVEhsQzdqdW9OaG1qd0pxUlBEY0VnSmh2L1I5?=
+ =?utf-8?B?RFdQMExQMHJ4Mlg2NmI2MnNSbE1mcU80Y1MyOGU1NUg2bDJSTUZncmNaNlZv?=
+ =?utf-8?B?ZG1Sa08rUEc2cytvMWRjOVJRY3JDNHZBMlRvRk40MWt6eEZPV3U5b0ZCL2pX?=
+ =?utf-8?B?cEkwbmtoOFJxZS90Qmd1cXpzNTc5MjdzdzVvcEN2WnMxbWtOOXgybFV6djd4?=
+ =?utf-8?B?VGhnNHRSTVVHN1lUSEIxeHhYdVhtVGpCanA2cjRzQkhGZTRpV1RsWHhBc3BG?=
+ =?utf-8?B?MlU2THNkQXc2SnhuUDAya2xDYmRUKzZJNFRObU5ncDAyd2UyU3lpVElNczVp?=
+ =?utf-8?B?WEc5Y2FsUEpaNndXN3hkeDl1ZlFQQ3ZleVZ3RDNCdVp5ODFjMXBncDhYNXYx?=
+ =?utf-8?B?dXRuU0pvM1V1YXR5clNkWVI2eEExa2N4QUw4dHVPOEZPaGhIQzF5ODBBbTF4?=
+ =?utf-8?B?U1NHMHVFc3dmTVcvZVZtYjJOeUJiYVJrN24wWU5qSFUwbEs2MThSbVd4dnZJ?=
+ =?utf-8?B?ODMzTkU3UEJzM2xJSmlGWVd0bU9pRjE2M08wZUNCL0dRNmZoNjRNQy90MndT?=
+ =?utf-8?B?TVFVY0JjM2h0TGlWd0ZhZmFmT3AyVnZvcnBkUHc2ZVI0Z25tVUxuUFdES0tj?=
+ =?utf-8?B?WEFwbzV2QWhJQXZ5YTJTZGczTWR2NExEbjNGSVdaTlRPUXJjZGRPNlNiTG8r?=
+ =?utf-8?B?VmRiak9NNFVWVHc4bGpndlQ5ZlZJMHNrRmxXSjZncS9JZTlaSTJBaHlpVWJo?=
+ =?utf-8?B?ZHRxNGlya0xFdmJ3cHljOVNjbElQWlpkdW1LWXJ4VXJubUQxd2E5Q0JVTmtm?=
+ =?utf-8?B?ODV0aEtGNnFVelJqUjhIcEtmckgyYy9wSGxhSDNDR0NBR3NVVGNjajdkdHBG?=
+ =?utf-8?B?TE5DK3RRZ1MwL2dFS0d4elJpMkp0aGVYMENxK2xjWm9SV01rbEpTa3hHT0Fw?=
+ =?utf-8?B?d3h6Q0FXYThkSzkxci8ybzVENFZWYTQvdG1oMVJDZW5uR0VRR0pXQiswTDIy?=
+ =?utf-8?B?a0xGOUNmbDFlZnRNOFRSUlR2ZjE5TDB2aFlsVTY5d1RUYU1DS2FHVk1PT29Y?=
+ =?utf-8?B?Zm9Lc1BuN3ZMdUw2NzBmKzQ4cDJTdkE4MzQxNi9jalloL2QrZFNranJrSlpH?=
+ =?utf-8?B?M2h3SFJDclMzRE0wUGNTWHNSNkprOSt3UmFPTG1VU1RIS0N3MUk0U0w1QVZB?=
+ =?utf-8?B?Ty9FVW1Jek9DczhVbjgzWlRxcnZvOGtYeVJ4T1pxOUg0THA3UGg0aTVRdUly?=
+ =?utf-8?B?MXc9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: bdd91c8d-857e-43a5-17bf-08dde617d767
+X-MS-Exchange-CrossTenant-AuthSource: IA1PR11MB6443.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Aug 2025 09:47:03.1163
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: nah7fXKBEMivJowBp0YsJneKZwtxT9l1obc6VZNe0Umtz1MFPvGVEG6U5m0cBVuVl/Riyq4LbQK5x5FGykECuLhTZL+mJViwHqq1c0aIS2I=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM3PPFAB693A2AC
+X-OriginatorOrg: intel.com
 
-(Sorry for chiming in late)
 
-On 2025/8/22 22:10, David Hildenbrand wrote:
->>> Once could also easily support the value 255 (HPAGE_PMD_NR / 2- 1), 
->>> but not sure
->>> if we have to add that for now.
+On 27-Aug-25 21:37, Simon Horman wrote:
+> On Tue, Aug 26, 2025 at 01:32:47PM +0200, Konrad Leszczynski wrote:
+>> From: Karol Jurczenia <karol.jurczenia@intel.com>
 >>
->> Yeah not so sure about this, this is a 'just have to know' too, and 
->> yes you
->> might add it to the docs, but people are going to be mightily 
->> confused, esp if
->> it's a calculated value.
+>> Add missing Traffic Control (TC) offload for flower filters matching the
+>> IP EtherType (ETH_P_IP).
 >>
->> I don't see any other way around having a separate tunable if we don't 
->> just have
->> something VERY simple like on/off.
-> 
-> Yeah, not advocating that we add support for other values than 0/511, 
-> really.
-> 
->>
->> Also the mentioned issue sounds like something that needs to be fixed 
->> elsewhere
->> honestly in the algorithm used to figure out mTHP ranges (I may be 
->> wrong - and
->> happy to stand corrected if this is somehow inherent, but reallly 
->> feels that
->> way).
-> 
-> I think the creep is unavoidable for certain values.
-> 
-> If you have the first two pages of a PMD area populated, and you allow 
-> for at least half of the #PTEs to be non/zero, you'd collapse first a
-> order-2 folio, then and order-3 ... until you reached PMD order.
-> 
-> So for now we really should just support 0 / 511 to say "don't collapse 
-> if there are holes" vs. "always collapse if there is at least one pte 
-> used".
+>> Reviewed-by: Konrad Leszczynski <konrad.leszczynski@intel.com>
+>> Reviewed-by: Sebastian Basierski <sebastian.basierski@intel.com>
+>> Signed-off-by: Karol Jurczenia <karol.jurczenia@intel.com>
+> Konrad,
+>
+> As per my comment on an earlier patch, your SoB line needs to go here.
+>
+> Otherwise, this looks good to me.
+>
+> Reviewed-by: Simon Horman <horms@kernel.org>
 
-If we only allow setting 0 or 511, as Nico mentioned before, "At 511, no 
-mTHP collapses would ever occur anyway, unless you have 2MB disabled and 
-other mTHP sizes enabled. Technically, at 511, only the highest enabled 
-order would ever be collapsed."
-
-In other words, for the scenario you described, although there are only 
-2 PTEs present in a PMD, it would still get collapsed into a PMD-sized 
-THP. In reality, what we probably need is just an order-2 mTHP collapse.
-
-If 'khugepaged_max_ptes_none' is set to 255, I think this would achieve 
-the desired result: when there are only 2 PTEs present in a PMD, an 
-order-2 mTHP collapse would be successed, but it wouldn’t creep up to an 
-order-3 mTHP collapse. That’s because:
-When attempting an order-3 mTHP collapse, 'threshold_bits' = 1, while 
-'bits_set' = 1 (means only 1 chunk is present), so 'bits_set > 
-threshold_bits' is false, then an order-3 mTHP collapse wouldn’t be 
-attempted. No?
-
-So I have some concerns that if we only allow setting 0 or 511, it may 
-not meet the goal we have for mTHP collapsing.
-
->>> Because, as raised in the past, I'm afraid nobody on this earth has a 
->>> clue how
->>> to set this parameter to values different to 0 (don't waste memory 
->>> with khugepaged)
->>> and 511 (page fault behavior).
->>
->> Yup
->>
->>>
->>>
->>> If any other value is set, essentially
->>>     pr_warn("Unsupported 'max_ptes_none' value for mTHP collapse");
->>>
->>> for now and just disable it.
->>
->> Hmm but under what circumstances? I would just say unsupported value 
->> not mention
->> mTHP or people who don't use mTHP might find that confusing.
-> 
-> Well, we can check whether any mTHP size is enabled while the value is 
-> set to something unexpected. We can then even print the problematic 
-> sizes if we have to.
-> 
-> We could also just just say that if the value is set to something else 
-> than 511 (which is the default), it will be treated as being "0" when 
-> collapsing mthp, instead of doing any scaling.
-> 
+Hi Simon, thanks for the review. I'll split the patchset into two to and 
+address all your comments.
 
 
