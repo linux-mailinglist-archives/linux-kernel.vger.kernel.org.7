@@ -1,1075 +1,497 @@
-Return-Path: <linux-kernel+bounces-789484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9A37B39638
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 10:07:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5425B3963B
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 10:08:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBE7B1BA815F
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 08:08:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6639A7A7B67
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 08:06:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B14542D6E7C;
-	Thu, 28 Aug 2025 08:07:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 700722D7DF2;
+	Thu, 28 Aug 2025 08:07:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc.com header.i=@rivosinc.com header.b="NgzAH/ul"
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
+	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="RstMqYs3"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D9F9849C
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 08:07:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 450E52D7801;
+	Thu, 28 Aug 2025 08:07:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756368462; cv=none; b=DcyO4u/+3+iJLUg7JdkGrWdOi16pWyFCtFsJbFlwU6XEpyi/NOzv7LzNt18k30MaEUFV6JbhuFHETVZdgj3jJqY0xLFdfSA3UEquHZgo9NuqPl3dDd5B12wGD5eM4kwIThE60WzDWbY8LLVqsvRbK54PQSttXyS54i7iZ4J6C+E=
+	t=1756368478; cv=none; b=bIU5r9GH65s7IX8F5janyEKv7LFDpvy4F66iLMXYZtZ+al6dd7Cxe8y3XpH8vYhQ3bRlsWquobhD7uLSAWyht/S9GpWcxlZrLo43HPPbMi4unX2u+DdvTID1YRPcxfkqyUeuEXsa+Fl2J4yXbmZdozYKEEIp2I6ZWbz/LDRLTvM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756368462; c=relaxed/simple;
-	bh=RbXkeFar9HSixEF6Zd0LUhhyRwTJq/+H40/JVY5iWzY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=n6si5KgJpk971K+QWb3QoLBNgkYpnRSNABS2ImjfKkQRXlftM+rrSbUNxh4YTkv72t5veVwWhGqrGkzFmRTs0aDgpsPf3FzO+0DKpx7/LFBSqKbSazHTI+aT+ZTVzCrG2V383RqcgX1s3Z7k5OhzWOkpiKRXtH5QUNw4XYMgpp8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc.com header.i=@rivosinc.com header.b=NgzAH/ul; arc=none smtp.client-ip=209.85.215.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-b49b56a3f27so453479a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 01:07:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc.com; s=google; t=1756368458; x=1756973258; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=BwiUz45SZp0QbktCDDzI8S8ZztMxoNXM0JK+vCoNnjo=;
-        b=NgzAH/ulJVPTDVtvBHP/zdnqxHCU/y1HjJF4L/GGOkAXCGmCh7tIwmyuh/pXp/0CGS
-         qFa3tgo8ZOIB/JwOYdwE0kJOnSebH1AkyAS/bKVVzHKWQ/NsXTxNu1L7rViFNR2lWr3E
-         ME351MYlvqEAeIPKcWRuih2lgmZRdST7V2Ftzq1U7b5qGl9IqzuD1/CArJzwm4GJLYo6
-         djuT+TFnpU+JeXvVp/7XPRJPjrl2OEp+B0voQNlljgm3TiJ1UqkS3uri8XHvHfeiC+2z
-         QiGG52B0U+vvMzmrl5WHn0ZJERtZQ4pnydubP8TpZ2I+yXYEFQKO3zX205OydeXwvOTf
-         ZMcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756368458; x=1756973258;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BwiUz45SZp0QbktCDDzI8S8ZztMxoNXM0JK+vCoNnjo=;
-        b=q0leqfqTNHkjbFUTEFyYFLHgKM6ETmpXtfHDmixsdn6MIZdJ52sJR3ID2fMfRBQmH9
-         2osNt2rWLqzVrBHxg83UiWdS6cqO3rVKFrFzTkilkI7Bmm0UfHK6RWYzG0ASndjKX/AK
-         e2vt8KKG5YFjY18ZO6o+fTs1a1OVc0YP7erY6yQOJQUzC7YSjSZwG162LYisO+jQUCpC
-         /Ury8PgrBANVOkl+STRWqVwz0Kj6c6Ro3JIAi2IXwwaNay5gfrMNLVakql3AZ48zDnv0
-         zqa6Fum67X15mQiFB9TFsqkTdfYlEWkAXJ2ygncqFq408AmDLl5L5vwoY9UIWigfnWow
-         sxAA==
-X-Forwarded-Encrypted: i=1; AJvYcCVSnQymuppTTPKsLIypahhuFuU0A1rGUNjrnCMT5z7hQFdT/ckYnlfPbRG7ACLNQBKUTT8O14X62FJWxYk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywwsnd4ALHwtRyDvpXddVklZqJYIqJmbXlSbv+ngXM6H9BAPLJX
-	DAj1zjRx3sjkWEcrWjqLgJ4Bu05Ofr+c8cAcwMAiGX1ZtGq2w1iTRDjfMx1Hv1FMo7M=
-X-Gm-Gg: ASbGncuylQRQQdPvd+g1me1DUNCTaWf4BGI+sMXdverQ4G0wPjVyxkRgMyGgb/+g8PM
-	HIBjUfBPzAbz3uo7l5I/s4hGkGF7wiK1kUKOrOuvbmTqKm/Hcn0tzqE3NLAnEU3vHMpzEEEov7S
-	4nqZnGavsefHx75yBYUezQMU2iXYArpmDKAnwIs+VDMtPQ7gJ7kOUBCUKaYKlP0BJ4Kqu20lVSq
-	TvBxekTo4b1IvxVGZrJ5oaBzS72i08ib+h7szMou9WCcwo6lipG4qWS03juL0nblzVrZkmhoOhb
-	X+pGacars2X3Lwb/TcTjJjNbRxVxp+OS6VzJcWGoTJ+GU0zh0t211B9IUW7gRzFbDD4HX1VV0Kq
-	/3u0zbP0z9iM8PDn0ME61En818yb9A86hjC7vLGGWk3F78KJ4OCIOto8U3NltSKx1qbg=
-X-Google-Smtp-Source: AGHT+IHNqQVJY1n+VwmBalY6g3sEoTvD3N83vTyNsL6IWy3liqssqYb9XyvoBwh0+g5rPx4FIVETKw==
-X-Received: by 2002:a17:903:2c08:b0:248:cd0b:3441 with SMTP id d9443c01a7336-248cd0b3888mr27707015ad.30.1756368458031;
-        Thu, 28 Aug 2025 01:07:38 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:e17:9700:16d2:7456:6634:9626? ([2a01:e0a:e17:9700:16d2:7456:6634:9626])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2466877a084sm142672055ad.20.2025.08.28.01.07.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 28 Aug 2025 01:07:37 -0700 (PDT)
-Message-ID: <1b4e39ca-2af7-4e18-9ff2-58fad7bd9472@rivosinc.com>
-Date: Thu, 28 Aug 2025 10:07:26 +0200
+	s=arc-20240116; t=1756368478; c=relaxed/simple;
+	bh=dSgFH52W1Wp5go3fx/XlIZBS2GEY67YrkqYA70jmFqY=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=IItbI07L10hRREiELfjukfCEiDHO7P2R5SfYOEpRSBg3HN+/zpn//uNaxtGb4huiWhG5UARQh9bP45/qA17l12KEa3hwFaLOOKDHRtmLkdmJ+XVXgmOMuGfJ2zvbF6EWqIGyOYzrIF4/2L73U7raFnPlweCUzq1LOLcsxsxSGZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=RstMqYs3; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 57S87UNj81334954, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
+	t=1756368451; bh=xLPnaPnz+J9oPl4NL8YGGtvhgUSFRZNSIyOOEWj5DJw=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:MIME-Version;
+	b=RstMqYs3yQX9i+4EcIhp77xFqIOlaVSVG0rgqhzEv8aeo6JQC9jBhxVVVY2FZ6LEK
+	 JT8Inr8qdnD9uPHDGu08cicjJG6JN1VVlFPKysQnxg5NyiWyA9Ei90CUhAisOp56pm
+	 ihzO3wlFLGmgpXI2K4foHaxeFcIh5p/v/+SnEa/cBHUao6vBVcONdbhZ3W598mHL/X
+	 W43x0JFbztJO+xMocXWFPYLsT/8UBEdB4etxAjG7Ka329KRS+9h6cng+IOkE8Ec4Dt
+	 avZYh2ls582F2Qo7tRHB9tYc9+gd3nFtL8qBO5amnhZIFFy8sdy3XX3auO8LJo33hp
+	 0loCg66FWDOvQ==
+Received: from mail.realtek.com (rtkexhmbs02.realtek.com.tw[172.21.6.41])
+	by rtits2.realtek.com.tw (8.15.2/3.13/5.93) with ESMTPS id 57S87UNj81334954
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 28 Aug 2025 16:07:31 +0800
+Received: from RTKEXHMBS01.realtek.com.tw (172.21.6.40) by
+ RTKEXHMBS02.realtek.com.tw (172.21.6.41) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.27; Thu, 28 Aug 2025 16:07:29 +0800
+Received: from RTEXMBS03.realtek.com.tw (172.21.6.96) by
+ RTKEXHMBS01.realtek.com.tw (172.21.6.40) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.27; Thu, 28 Aug 2025 16:07:28 +0800
+Received: from RTEXMBS03.realtek.com.tw ([fe80::982b:42ba:82a4:f1d]) by
+ RTEXMBS03.realtek.com.tw ([fe80::982b:42ba:82a4:f1d%2]) with mapi id
+ 15.01.2507.035; Thu, 28 Aug 2025 16:07:28 +0800
+From: Zong-Zhe Yang <kevin_yang@realtek.com>
+To: "pchelkin@ispras.ru" <pchelkin@ispras.ru>,
+        Ping-Ke Shih
+	<pkshih@realtek.com>,
+        Zong-Zhe Yang <kevin_yang@realtek.com>
+CC: Bernie Huang <phhuang@realtek.com>,
+        "linux-wireless@vger.kernel.org"
+	<linux-wireless@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+        "lvc-project@linuxtesting.org"
+	<lvc-project@linuxtesting.org>,
+        "stable@vger.kernel.org"
+	<stable@vger.kernel.org>
+Subject: RE: [PATCH rtw v2 1/4] wifi: rtw89: fix use-after-free in rtw89_core_tx_kick_off_and_wait()
+Thread-Topic: [PATCH rtw v2 1/4] wifi: rtw89: fix use-after-free in
+ rtw89_core_tx_kick_off_and_wait()
+Thread-Index: AQHcF8icTIlJtwQk2kOn9fej8NWkdbR3L+cQ
+Date: Thu, 28 Aug 2025 08:07:28 +0000
+Message-ID: <87693651fe394065b421d8d8fe171f89@realtek.com>
+References: <20250827120603.723548-2-pchelkin@ispras.ru>
+In-Reply-To: <20250827120603.723548-2-pchelkin@ispras.ru>
+Accept-Language: zh-TW, en-US
+Content-Language: zh-TW
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 3/5] drivers: firmware: add riscv SSE support
-To: Alexandre Ghiti <alex@ghiti.fr>, Paul Walmsley
- <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Cc: Himanshu Chauhan <hchauhan@ventanamicro.com>,
- Anup Patel <apatel@ventanamicro.com>, Xu Lu <luxu.kernel@bytedance.com>,
- Atish Patra <atishp@atishpatra.org>, =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?=
- <bjorn@rivosinc.com>, Yunhui Cui <cuiyunhui@bytedance.com>,
- Conor Dooley <conor.dooley@microchip.com>
-References: <20250808153901.2477005-1-cleger@rivosinc.com>
- <20250808153901.2477005-4-cleger@rivosinc.com>
- <8b474f27-6632-4706-a6fc-544787d08b5c@ghiti.fr>
-Content-Language: en-US
-From: =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>
-In-Reply-To: <8b474f27-6632-4706-a6fc-544787d08b5c@ghiti.fr>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 
-Hi Alex,
+Fedor Pchelkin <pchelkin@ispras.ru> wrote:
+> There is a bug observed when rtw89_core_tx_kick_off_and_wait() tries to a=
+ccess already
+> freed skb_data:
+>=20
+>  BUG: KFENCE: use-after-free write in rtw89_core_tx_kick_off_and_wait
+> drivers/net/wireless/realtek/rtw89/core.c:1110
+>=20
+>  CPU: 6 UID: 0 PID: 41377 Comm: kworker/u64:24 Not tainted  6.17.0-rc1+ #=
+1 PREEMPT(lazy)
+> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS edk2-20250523=
+-14.fc42
+> 05/23/2025
+>  Workqueue: events_unbound cfg80211_wiphy_work [cfg80211]
+>=20
+>  Use-after-free write at 0x0000000020309d9d (in kfence-#251):
+>  rtw89_core_tx_kick_off_and_wait drivers/net/wireless/realtek/rtw89/core.=
+c:1110
+>  rtw89_core_scan_complete drivers/net/wireless/realtek/rtw89/core.c:5338
+>  rtw89_hw_scan_complete_cb drivers/net/wireless/realtek/rtw89/fw.c:7979
+>  rtw89_chanctx_proceed_cb drivers/net/wireless/realtek/rtw89/chan.c:3165
+>  rtw89_chanctx_proceed drivers/net/wireless/realtek/rtw89/chan.h:141
+>  rtw89_hw_scan_complete drivers/net/wireless/realtek/rtw89/fw.c:8012
+>  rtw89_mac_c2h_scanofld_rsp drivers/net/wireless/realtek/rtw89/mac.c:5059
+>  rtw89_fw_c2h_work drivers/net/wireless/realtek/rtw89/fw.c:6758
+>  process_one_work kernel/workqueue.c:3241  worker_thread kernel/workqueue=
+.c:3400
+> kthread kernel/kthread.c:463  ret_from_fork arch/x86/kernel/process.c:154
+> ret_from_fork_asm arch/x86/entry/entry_64.S:258
+>=20
+>  kfence-#251: 0x0000000056e2393d-0x000000009943cb62, size=3D232,
+> cache=3Dskbuff_head_cache
+>=20
+>  allocated by task 41377 on cpu 6 at 77869.159548s (0.009551s ago):
+>  __alloc_skb net/core/skbuff.c:659
+>  __netdev_alloc_skb net/core/skbuff.c:734  ieee80211_nullfunc_get
+> net/mac80211/tx.c:5844  rtw89_core_send_nullfunc
+> drivers/net/wireless/realtek/rtw89/core.c:3431
+>  rtw89_core_scan_complete drivers/net/wireless/realtek/rtw89/core.c:5338
+>  rtw89_hw_scan_complete_cb drivers/net/wireless/realtek/rtw89/fw.c:7979
+>  rtw89_chanctx_proceed_cb drivers/net/wireless/realtek/rtw89/chan.c:3165
+>  rtw89_chanctx_proceed drivers/net/wireless/realtek/rtw89/chan.c:3194
+>  rtw89_hw_scan_complete drivers/net/wireless/realtek/rtw89/fw.c:8012
+>  rtw89_mac_c2h_scanofld_rsp drivers/net/wireless/realtek/rtw89/mac.c:5059
+>  rtw89_fw_c2h_work drivers/net/wireless/realtek/rtw89/fw.c:6758
+>  process_one_work kernel/workqueue.c:3241  worker_thread kernel/workqueue=
+.c:3400
+> kthread kernel/kthread.c:463  ret_from_fork arch/x86/kernel/process.c:154
+> ret_from_fork_asm arch/x86/entry/entry_64.S:258
+>=20
+>  freed by task 1045 on cpu 9 at 77869.168393s (0.001557s ago):
+>  ieee80211_tx_status_skb net/mac80211/status.c:1117  rtw89_pci_release_tx=
+wd_skb
+> drivers/net/wireless/realtek/rtw89/pci.c:564
+>  rtw89_pci_release_tx_skbs.isra.0 drivers/net/wireless/realtek/rtw89/pci.=
+c:651
+>  rtw89_pci_release_tx drivers/net/wireless/realtek/rtw89/pci.c:676
+>  rtw89_pci_napi_poll drivers/net/wireless/realtek/rtw89/pci.c:4238
+>  __napi_poll net/core/dev.c:7495
+>  net_rx_action net/core/dev.c:7557 net/core/dev.c:7684  handle_softirqs
+> kernel/softirq.c:580
+>  do_softirq.part.0 kernel/softirq.c:480
+>  __local_bh_enable_ip kernel/softirq.c:407  rtw89_pci_interrupt_threadfn
+> drivers/net/wireless/realtek/rtw89/pci.c:927
+>  irq_thread_fn kernel/irq/manage.c:1133
+>  irq_thread kernel/irq/manage.c:1257
+>  kthread kernel/kthread.c:463
+>  ret_from_fork arch/x86/kernel/process.c:154  ret_from_fork_asm
+> arch/x86/entry/entry_64.S:258
+>=20
+> It is a consequence of a race between the waiting and the signaling side =
+of the completion:
+>=20
+>             Waiting thread                            Completing thread
+>=20
+> rtw89_core_tx_kick_off_and_wait()
+>   rcu_assign_pointer(skb_data->wait, wait)
+>   /* start waiting */
+>   wait_for_completion_timeout()
+>                                                 rtw89_pci_tx_status()
+>                                                   rtw89_core_tx_wait_comp=
+lete()
+>                                                     rcu_read_lock()
+>                                                     /* signals completion=
+ and
+>                                                      * proceeds further
+>                                                      */
+>=20
+> complete(&wait->completion)
+>                                                     rcu_read_unlock()
+>                                                   ...
+>                                                   /* frees skb_data */
+>                                                   ieee80211_tx_status_ni(=
+)
+>   /* returns (exit status doesn't matter) */
+>   wait_for_completion_timeout()
+>   ...
+>   /* accesses the already freed skb_data */
+>   rcu_assign_pointer(skb_data->wait, NULL)
+>=20
+> The completing side might proceed and free the underlying skb even before=
+ the waiting side
+> is fully awoken and run to execution.  Actually the race happens regardle=
+ss of
+> wait_for_completion_timeout() exit status, e.g.
+> the waiting side may hit a timeout and the concurrent completing side is =
+still able to free the
+> skb.
+>=20
+> Skbs which are sent by rtw89_core_tx_kick_off_and_wait() are owned by the=
+ driver.  They
+> don't come from core ieee80211 stack so no need to pass them to ieee80211=
+_tx_status_ni()
+> on completing side.
+>=20
+> Introduce a work function which will act as a garbage collector for rtw89=
+_tx_wait_info objects
+> and the associated skbs.  Thus no potentially heavy locks are required on=
+ the completing
+> side.
+>=20
+> Found by Linux Verification Center (linuxtesting.org).
+>=20
+> Fixes: 1ae5ca615285 ("wifi: rtw89: add function to wait for completion of=
+ TX skbs")
+> Cc: stable@vger.kernel.org
+> Suggested-by: Zong-Zhe Yang <kevin_yang@realtek.com>
+> Signed-off-by: Fedor Pchelkin <pchelkin@ispras.ru>
+> ---
+>=20
+> v2: use a work function to manage release of tx_waits and associated skbs=
+ (Zong-Zhe)
+>=20
+> The interesting part is how rtw89_tx_wait_work() should wait for completi=
+on - based on
+> timeout or without it, or just check status with a call to completion_don=
+e().
+>=20
 
-On 13/08/2025 14:08, Alexandre Ghiti wrote:
-> 
-> On 8/8/25 17:38, Clément Léger wrote:
->> Add driver level interface to use RISC-V SSE arch support. This interface
->> allows registering SSE handlers, and receive them. This will be used by
->> PMU and GHES driver.
->>
->> Signed-off-by: Himanshu Chauhan <hchauhan@ventanamicro.com>
->> Co-developed-by: Himanshu Chauhan <hchauhan@ventanamicro.com>
-> 
-> 
-> Here you need to switch the Signed-off-by and the Co-developed-by
+I like "wait for timeout" as what you have done, but maybe using a smaller =
+timeout.
+Completing side might not be in order, so don't take too much time on uncom=
+pleted
+ones when going through list.
 
-Acked.
-> 
-> 
->> Signed-off-by: Clément Léger <cleger@rivosinc.com>
->> Acked-by: Conor Dooley <conor.dooley@microchip.com>
->> ---
->>   MAINTAINERS                        |  15 +
->>   drivers/firmware/Kconfig           |   1 +
->>   drivers/firmware/Makefile          |   1 +
->>   drivers/firmware/riscv/Kconfig     |  15 +
->>   drivers/firmware/riscv/Makefile    |   3 +
->>   drivers/firmware/riscv/riscv_sse.c | 694 +++++++++++++++++++++++++++++
->>   include/linux/riscv_sse.h          |  56 +++
->>   7 files changed, 785 insertions(+)
->>   create mode 100644 drivers/firmware/riscv/Kconfig
->>   create mode 100644 drivers/firmware/riscv/Makefile
->>   create mode 100644 drivers/firmware/riscv/riscv_sse.c
->>   create mode 100644 include/linux/riscv_sse.h
->>
->> diff --git a/MAINTAINERS b/MAINTAINERS
->> index bd62ad58a47f..114396d47f76 100644
->> --- a/MAINTAINERS
->> +++ b/MAINTAINERS
->> @@ -21640,6 +21640,13 @@ T:    git git://git.kernel.org/pub/scm/linux/
->> kernel/git/iommu/linux.git
->>   F:    Documentation/devicetree/bindings/iommu/riscv,iommu.yaml
->>   F:    drivers/iommu/riscv/
->>   +RISC-V FIRMWARE DRIVERS
->> +M:    Conor Dooley <conor@kernel.org>
->> +L:    linux-riscv@lists.infradead.org
->> +S:    Maintained
->> +T:    git git://git.kernel.org/pub/scm/linux/kernel/git/conor/linux.git
->> +F:    drivers/firmware/riscv/*
->> +
->>   RISC-V MICROCHIP FPGA SUPPORT
->>   M:    Conor Dooley <conor.dooley@microchip.com>
->>   M:    Daire McNamara <daire.mcnamara@microchip.com>
->> @@ -21704,6 +21711,14 @@ F:    arch/riscv/boot/dts/spacemit/
->>   N:    spacemit
->>   K:    spacemit
->>   +RISC-V SSE DRIVER
->> +M:    Clément Léger <cleger@rivosinc.com>
->> +R:    Himanshu Chauhan <himanshu@thechauhan.dev>
->> +L:    linux-riscv@lists.infradead.org
->> +S:    Maintained
->> +F:    drivers/firmware/riscv/riscv_sse.c
->> +F:    include/linux/riscv_sse.h
->> +
->>   RISC-V THEAD SoC SUPPORT
->>   M:    Drew Fustini <fustini@kernel.org>
->>   M:    Guo Ren <guoren@kernel.org>
->> diff --git a/drivers/firmware/Kconfig b/drivers/firmware/Kconfig
->> index bbd2155d8483..1894df87b08e 100644
->> --- a/drivers/firmware/Kconfig
->> +++ b/drivers/firmware/Kconfig
->> @@ -294,6 +294,7 @@ source "drivers/firmware/meson/Kconfig"
->>   source "drivers/firmware/microchip/Kconfig"
->>   source "drivers/firmware/psci/Kconfig"
->>   source "drivers/firmware/qcom/Kconfig"
->> +source "drivers/firmware/riscv/Kconfig"
->>   source "drivers/firmware/samsung/Kconfig"
->>   source "drivers/firmware/smccc/Kconfig"
->>   source "drivers/firmware/tegra/Kconfig"
->> diff --git a/drivers/firmware/Makefile b/drivers/firmware/Makefile
->> index 4ddec2820c96..6cdd84570ea7 100644
->> --- a/drivers/firmware/Makefile
->> +++ b/drivers/firmware/Makefile
->> @@ -34,6 +34,7 @@ obj-y                += efi/
->>   obj-y                += imx/
->>   obj-y                += psci/
->>   obj-y                += qcom/
->> +obj-y                += riscv/
->>   obj-y                += samsung/
->>   obj-y                += smccc/
->>   obj-y                += tegra/
->> diff --git a/drivers/firmware/riscv/Kconfig b/drivers/firmware/riscv/
->> Kconfig
->> new file mode 100644
->> index 000000000000..8056ed3262d9
->> --- /dev/null
->> +++ b/drivers/firmware/riscv/Kconfig
->> @@ -0,0 +1,15 @@
->> +# SPDX-License-Identifier: GPL-2.0-only
->> +menu "Risc-V Specific firmware drivers"
->> +depends on RISCV
->> +
->> +config RISCV_SSE
->> +    bool "Enable SBI Supervisor Software Events support"
->> +    depends on RISCV_SBI
->> +    default y
->> +    help
->> +      The Supervisor Software Events support allow the SBI to deliver
-> 
-> 
-> s/allow/allows
-> 
-> 
->> +      NMI-like notifications to the supervisor mode software. When
->> enable,
-> 
-> 
-> s/enable/enabled
-> 
-> 
->> +      this option provides support to register callbacks on specific SSE
->> +      events.
->> +
->> +endmenu
-> 
-> 
-> I think RISCV_SBI_SSE would be more accurate. Why do we need to gate SSE
-> support behind this config though? I don't see similar configs for other
-> SBI extensions.
+> Simply waiting with wait_for_completion() may become a bottleneck if for =
+any reason the
+> completion is delayed significantly, and we are holding a wiphy lock here=
+.  I _suspect_
+> rtw89_pci_tx_status() should be called either by napi polling handler or =
+in other cases e.g. by
+> rtw89_hci_reset() but it's hard to deduce for any possible scenario that =
+it will be called in
+> some time.
+>=20
 
-SSE is way more intrusive/larger than the other extensions in terms of
-code so it made sense to have a config option for it.
+When rtw89_hci_reset() is called, all pending skb should be released.
+(it means completing side will be done)
+So, we can call a func (directly) as rtw89_tx_wait_work() does there.
 
-> 
-> 
->> diff --git a/drivers/firmware/riscv/Makefile b/drivers/firmware/riscv/
->> Makefile
->> new file mode 100644
->> index 000000000000..4ccfcbbc28ea
->> --- /dev/null
->> +++ b/drivers/firmware/riscv/Makefile
->> @@ -0,0 +1,3 @@
->> +# SPDX-License-Identifier: GPL-2.0
->> +
->> +obj-$(CONFIG_RISCV_SSE)        += riscv_sse.o
->> diff --git a/drivers/firmware/riscv/riscv_sse.c b/drivers/firmware/
->> riscv/riscv_sse.c
->> new file mode 100644
->> index 000000000000..edd107ade94a
->> --- /dev/null
->> +++ b/drivers/firmware/riscv/riscv_sse.c
->> @@ -0,0 +1,694 @@
->> +// SPDX-License-Identifier: GPL-2.0-only
->> +/*
->> + * Copyright (C) 2024 Rivos Inc.
->> + */
->> +
->> +#define pr_fmt(fmt) "sse: " fmt
->> +
->> +#include <linux/cpu.h>
->> +#include <linux/cpuhotplug.h>
->> +#include <linux/cpu_pm.h>
->> +#include <linux/hardirq.h>
->> +#include <linux/list.h>
->> +#include <linux/percpu-defs.h>
->> +#include <linux/reboot.h>
->> +#include <linux/riscv_sse.h>
->> +#include <linux/slab.h>
->> +
->> +#include <asm/sbi.h>
->> +#include <asm/sse.h>
->> +
->> +struct sse_event {
->> +    struct list_head list;
->> +    u32 evt_id;
->> +    u32 priority;
->> +    sse_event_handler *handler;
->> +    void *handler_arg;
->> +    /* Only valid for global events */
->> +    unsigned int cpu;
-> 
-> 
-> Nit: Replace unsigned int with u32 to match evt_id and priority
-> definition? I have noticed a mix of "unsigned int" and u32 also below,
-> maybe stick to one? Same for other types.
+> Anyway, the current and the next patch try to make sure that when
+> rtw89_core_tx_wait_complete() is called, skbdata->wait is properly initia=
+lized so that there
+> should be no buggy situations when tx_wait skb is not recognized and inva=
+lidly passed to
+> ieee80211 stack, also without signaling a completion.
+>=20
+> If rtw89_core_tx_wait_complete() is not called at all, this should indica=
+te a bug elsewhere.
+>=20
+>  drivers/net/wireless/realtek/rtw89/core.c | 42 +++++++++++++++++++----
+> drivers/net/wireless/realtek/rtw89/core.h | 22 +++++++-----
+> drivers/net/wireless/realtek/rtw89/pci.c  |  9 ++---
+>  3 files changed, 54 insertions(+), 19 deletions(-)
+>=20
+> diff --git a/drivers/net/wireless/realtek/rtw89/core.c
+> b/drivers/net/wireless/realtek/rtw89/core.c
+> index 57590f5577a3..48aa02d6abd4 100644
+> --- a/drivers/net/wireless/realtek/rtw89/core.c
+> +++ b/drivers/net/wireless/realtek/rtw89/core.c
+> @@ -1073,6 +1073,26 @@ rtw89_core_tx_update_desc_info(struct rtw89_dev *r=
+twdev,
+>  	}
+>  }
+>=20
+> +static void rtw89_tx_wait_work(struct wiphy *wiphy, struct wiphy_work
+> +*work) {
+> +	struct rtw89_dev *rtwdev =3D container_of(work, struct rtw89_dev,
+> +						tx_wait_work);
+> +	struct rtw89_tx_wait_info *wait, *tmp;
+> +
+> +	lockdep_assert_wiphy(wiphy);
+> +
+> +	list_for_each_entry_safe(wait, tmp, &rtwdev->tx_waits, list) {
+> +		if (!wait->finished) {
+> +			unsigned long tmo =3D msecs_to_jiffies(wait->timeout);
+> +			if (!wait_for_completion_timeout(&wait->completion, tmo))
+> +				continue;
+> +		}
+> +		list_del(&wait->list);
+> +		dev_kfree_skb_any(wait->skb);
+> +		kfree(wait);
+> +	}
+> +}
+> +
 
-The CPU is always defined as unsigned int though this file which matches
-the cpu_online/cpu_offline definitions. I think keeping it like this is
-fine.
+A func (not work_fn look) for rtw89_hci_reset to call directly.
+And consider to use a smaller timeout.
 
-> 
-> 
->> +
->> +    union {
->> +        struct sse_registered_event *global;
->> +        struct sse_registered_event __percpu *local;
->> +    };
->> +};
->> +
->> +static int sse_hp_state;
->> +static bool sse_available __ro_after_init;
->> +static DEFINE_SPINLOCK(events_list_lock);
->> +static LIST_HEAD(events);
->> +static DEFINE_MUTEX(sse_mutex);
->> +
->> +struct sse_registered_event {
->> +    struct sse_event_arch_data arch;
->> +    struct sse_event *event;
->> +    unsigned long attr;
->> +    bool is_enabled;
->> +};
->> +
->> +void sse_handle_event(struct sse_event_arch_data *arch_event,
->> +              struct pt_regs *regs)
->> +{
->> +    int ret;
->> +    struct sse_registered_event *reg_evt =
->> +        container_of(arch_event, struct sse_registered_event, arch);
->> +    struct sse_event *evt = reg_evt->event;
->> +
->> +    ret = evt->handler(evt->evt_id, evt->handler_arg, regs);
->> +    if (ret)
->> +        pr_warn("event %x handler failed with error %d\n", evt-
->> >evt_id, ret);
->> +}
->> +
->> +static struct sse_event *sse_event_get(u32 evt)
->> +{
->> +    struct sse_event *event = NULL;
-> 
-> 
-> No need to initialize to NULL
-> 
-> 
->> +
->> +    scoped_guard(spinlock, &events_list_lock) {
->> +        list_for_each_entry(event, &events, list) {
->> +            if (event->evt_id == evt)
->> +                return event;
->> +        }
->> +    }
->> +
->> +    return NULL;
->> +}
->> +
->> +static phys_addr_t sse_event_get_attr_phys(struct
->> sse_registered_event *reg_evt)
->> +{
->> +    phys_addr_t phys;
->> +    void *addr = &reg_evt->attr;
->> +
->> +    if (sse_event_is_global(reg_evt->event->evt_id))
->> +        phys = virt_to_phys(addr);
->> +    else
->> +        phys = per_cpu_ptr_to_phys(addr);
->> +
->> +    return phys;
->> +}
->> +
->> +static struct sse_registered_event *sse_get_reg_evt(struct sse_event
->> *event)
->> +{
->> +    if (sse_event_is_global(event->evt_id))
->> +        return event->global;
->> +    else
->> +        return per_cpu_ptr(event->local, smp_processor_id());
->> +}
->> +
->> +static int sse_sbi_event_func(struct sse_event *event, unsigned long
->> func)
->> +{
->> +    struct sbiret ret;
->> +    u32 evt = event->evt_id;
->> +    struct sse_registered_event *reg_evt = sse_get_reg_evt(event);
->> +
->> +    ret = sbi_ecall(SBI_EXT_SSE, func, evt, 0, 0, 0, 0, 0);
->> +    if (ret.error) {
->> +        pr_warn("Failed to execute func %lx, event %x, error %ld\n",
->> +            func, evt, ret.error);
->> +        return sbi_err_map_linux_errno(ret.error);
->> +    }
->> +
->> +    if (func == SBI_SSE_EVENT_DISABLE)
->> +        reg_evt->is_enabled = false;
->> +    else if (func == SBI_SSE_EVENT_ENABLE)
->> +        reg_evt->is_enabled = true;
->> +
->> +    return 0;
->> +}
->> +
->> +int sse_event_disable_local(struct sse_event *event)
->> +{
->> +    return sse_sbi_event_func(event, SBI_SSE_EVENT_DISABLE);
->> +}
->> +EXPORT_SYMBOL_GPL(sse_event_disable_local);
->> +
->> +int sse_event_enable_local(struct sse_event *event)
->> +{
->> +    return sse_sbi_event_func(event, SBI_SSE_EVENT_ENABLE);
->> +}
->> +EXPORT_SYMBOL_GPL(sse_event_enable_local);
->> +
->> +static int sse_event_attr_get_no_lock(struct sse_registered_event
->> *reg_evt,
->> +                      unsigned long attr_id, unsigned long *val)
->> +{
->> +    struct sbiret sret;
->> +    u32 evt = reg_evt->event->evt_id;
->> +    unsigned long phys;
->> +
->> +    phys = sse_event_get_attr_phys(reg_evt);
->> +
->> +    sret = sbi_ecall(SBI_EXT_SSE, SBI_SSE_EVENT_ATTR_READ, evt,
->> attr_id, 1,
->> +             phys, 0, 0);
->> +    if (sret.error) {
->> +        pr_debug("Failed to get event %x attr %lx, error %ld\n", evt,
->> +             attr_id, sret.error);
->> +        return sbi_err_map_linux_errno(sret.error);
->> +    }
->> +
->> +    *val = reg_evt->attr;
->> +
->> +    return 0;
->> +}
->> +
->> +static int sse_event_attr_set_nolock(struct sse_registered_event
->> *reg_evt,
->> +                     unsigned long attr_id, unsigned long val)
-> 
-> 
-> Nit but here you use "nolock" and for the getter above, you use
-> "no_lock" (and while scrolling I noticed "nolock" again in
-> sse_event_set_target_cpu_nolock()).
+>  void rtw89_core_tx_kick_off(struct rtw89_dev *rtwdev, u8 qsel)  {
+>  	u8 ch_dma;
+> @@ -1090,6 +1110,8 @@ int rtw89_core_tx_kick_off_and_wait(struct rtw89_de=
+v *rtwdev,
+> struct sk_buff *sk
+>  	unsigned long time_left;
+>  	int ret =3D 0;
+>=20
+> +	lockdep_assert_wiphy(rtwdev->hw->wiphy);
+> +
+>  	wait =3D kzalloc(sizeof(*wait), GFP_KERNEL);
+>  	if (!wait) {
+>  		rtw89_core_tx_kick_off(rtwdev, qsel); @@ -1097,18 +1119,23 @@ int
+> rtw89_core_tx_kick_off_and_wait(struct rtw89_dev *rtwdev, struct sk_buff =
+*sk
+>  	}
+>=20
+>  	init_completion(&wait->completion);
+> -	rcu_assign_pointer(skb_data->wait, wait);
+> +	skb_data->wait =3D wait;
 
-Will use nolock like the other.
+(completing/waiting side are lockfree in different context, and can be diff=
+erent CPU)
+So, please keep RCU access to avoid potential problems.
+And, keep using kfree_rcu(wait) to ensure freeing time is suitable.
 
-> 
-> 
->> +{
->> +    struct sbiret sret;
->> +    u32 evt = reg_evt->event->evt_id;
->> +    unsigned long phys;
->> +
->> +    reg_evt->attr = val;
->> +    phys = sse_event_get_attr_phys(reg_evt);
->> +
->> +    sret = sbi_ecall(SBI_EXT_SSE, SBI_SSE_EVENT_ATTR_WRITE, evt,
->> attr_id, 1,
->> +             phys, 0, 0);
->> +    if (sret.error)
->> +        pr_debug("Failed to set event %x attr %lx, error %ld\n", evt,
->> +             attr_id, sret.error);
->> +
->> +    return sbi_err_map_linux_errno(sret.error);
->> +}
->> +
->> +static void sse_global_event_update_cpu(struct sse_event *event,
->> +                    unsigned int cpu)
->> +{
->> +    struct sse_registered_event *reg_evt = event->global;
->> +
->> +    event->cpu = cpu;
->> +    arch_sse_event_update_cpu(&reg_evt->arch, cpu);
->> +}
->> +
->> +static int sse_event_set_target_cpu_nolock(struct sse_event *event,
->> +                       unsigned int cpu)
->> +{
->> +    unsigned int hart_id = cpuid_to_hartid_map(cpu);
->> +    struct sse_registered_event *reg_evt = event->global;
->> +    u32 evt = event->evt_id;
->> +    bool was_enabled;
->> +    int ret;
->> +
->> +    if (!sse_event_is_global(evt))
->> +        return -EINVAL;
->> +
->> +    was_enabled = reg_evt->is_enabled;
->> +    if (was_enabled)
->> +        sse_event_disable_local(event);
->> +
->> +    ret = sse_event_attr_set_nolock(reg_evt,
->> SBI_SSE_ATTR_PREFERRED_HART,
->> +                    hart_id);
->> +    if (ret == 0)
->> +        sse_global_event_update_cpu(event, cpu);
->> +
->> +    if (was_enabled)
->> +        sse_event_enable_local(event);
->> +
->> +    return 0;
->> +}
->> +
->> +int sse_event_set_target_cpu(struct sse_event *event, unsigned int cpu)
->> +{
->> +    int ret;
->> +
->> +    scoped_guard(mutex, &sse_mutex) {
->> +        scoped_guard(cpus_read_lock) {
->> +            if (!cpu_online(cpu))
->> +                return -EINVAL;
->> +
->> +            ret = sse_event_set_target_cpu_nolock(event, cpu);
->> +        }
->> +    }
->> +
->> +    return ret;
->> +}
->> +EXPORT_SYMBOL_GPL(sse_event_set_target_cpu);
->> +
->> +static int sse_event_init_registered(unsigned int cpu,
->> +                     struct sse_registered_event *reg_evt,
->> +                     struct sse_event *event)
->> +{
->> +    reg_evt->event = event;
->> +
->> +    return arch_sse_init_event(&reg_evt->arch, event->evt_id, cpu);
->> +}
->> +
->> +static void sse_event_free_registered(struct sse_registered_event
->> *reg_evt)
->> +{
->> +    arch_sse_free_event(&reg_evt->arch);
->> +}
->> +
->> +static int sse_event_alloc_global(struct sse_event *event)
->> +{
->> +    int err;
->> +    struct sse_registered_event *reg_evt;
->> +
->> +    reg_evt = kzalloc(sizeof(*reg_evt), GFP_KERNEL);
->> +    if (!reg_evt)
->> +        return -ENOMEM;
->> +
->> +    event->global = reg_evt;
->> +    err = sse_event_init_registered(smp_processor_id(), reg_evt, event);
->> +    if (err)
->> +        kfree(reg_evt);
->> +
->> +    return err;
->> +}
->> +
->> +static int sse_event_alloc_local(struct sse_event *event)
->> +{
->> +    int err;
->> +    unsigned int cpu, err_cpu;
->> +    struct sse_registered_event *reg_evt;
->> +    struct sse_registered_event __percpu *reg_evts;
->> +
->> +    reg_evts = alloc_percpu(struct sse_registered_event);
->> +    if (!reg_evts)
->> +        return -ENOMEM;
->> +
->> +    event->local = reg_evts;
->> +
->> +    for_each_possible_cpu(cpu) {
->> +        reg_evt = per_cpu_ptr(reg_evts, cpu);
->> +        err = sse_event_init_registered(cpu, reg_evt, event);
->> +        if (err) {
->> +            err_cpu = cpu;
->> +            goto err_free_per_cpu;
->> +        }
->> +    }
->> +
->> +    return 0;
->> +
->> +err_free_per_cpu:
->> +    for_each_possible_cpu(cpu) {
->> +        if (cpu == err_cpu)
->> +            break;
->> +        reg_evt = per_cpu_ptr(reg_evts, cpu);
->> +        sse_event_free_registered(reg_evt);
->> +    }
->> +
->> +    free_percpu(reg_evts);
->> +
->> +    return err;
->> +}
->> +
->> +static struct sse_event *sse_event_alloc(u32 evt, u32 priority,
->> +                     sse_event_handler *handler, void *arg)
->> +{
->> +    int err;
->> +    struct sse_event *event;
->> +
->> +    event = kzalloc(sizeof(*event), GFP_KERNEL);
->> +    if (!event)
->> +        return ERR_PTR(-ENOMEM);
->> +
->> +    event->evt_id = evt;
->> +    event->priority = priority;
->> +    event->handler_arg = arg;
->> +    event->handler = handler;
->> +
->> +    if (sse_event_is_global(evt))
->> +        err = sse_event_alloc_global(event);
->> +    else
->> +        err = sse_event_alloc_local(event);
->> +
->> +    if (err) {
->> +        kfree(event);
->> +        return ERR_PTR(err);
->> +    }
->> +
->> +    return event;
->> +}
->> +
->> +static int sse_sbi_register_event(struct sse_event *event,
->> +                  struct sse_registered_event *reg_evt)
->> +{
->> +    int ret;
->> +
->> +    ret = sse_event_attr_set_nolock(reg_evt, SBI_SSE_ATTR_PRIO,
->> +                    event->priority);
->> +    if (ret)
->> +        return ret;
->> +
->> +    return arch_sse_register_event(&reg_evt->arch);
->> +}
->> +
->> +static int sse_event_register_local(struct sse_event *event)
->> +{
->> +    int ret;
->> +    struct sse_registered_event *reg_evt;
->> +
->> +    reg_evt = per_cpu_ptr(event->local, smp_processor_id());
->> +    ret = sse_sbi_register_event(event, reg_evt);
->> +    if (ret)
->> +        pr_debug("Failed to register event %x: err %d\n", event->evt_id,
->> +             ret);
->> +
->> +    return ret;
->> +}
->> +
->> +static int sse_sbi_unregister_event(struct sse_event *event)
->> +{
->> +    return sse_sbi_event_func(event, SBI_SSE_EVENT_UNREGISTER);
->> +}
->> +
->> +struct sse_per_cpu_evt {
->> +    struct sse_event *event;
->> +    unsigned long func;
->> +    cpumask_t error;
->> +};
->> +
->> +static void sse_event_per_cpu_func(void *info)
->> +{
->> +    int ret;
->> +    struct sse_per_cpu_evt *cpu_evt = info;
->> +
->> +    if (cpu_evt->func == SBI_SSE_EVENT_REGISTER)
->> +        ret = sse_event_register_local(cpu_evt->event);
->> +    else
->> +        ret = sse_sbi_event_func(cpu_evt->event, cpu_evt->func);
->> +
->> +    if (ret)
->> +        cpumask_set_cpu(smp_processor_id(), &cpu_evt->error);
->> +}
->> +
->> +static void sse_event_free(struct sse_event *event)
->> +{
->> +    unsigned int cpu;
->> +    struct sse_registered_event *reg_evt;
->> +
->> +    if (sse_event_is_global(event->evt_id)) {
->> +        sse_event_free_registered(event->global);
->> +        kfree(event->global);
->> +    } else {
->> +        for_each_possible_cpu(cpu) {
->> +            reg_evt = per_cpu_ptr(event->local, cpu);
->> +            sse_event_free_registered(reg_evt);
->> +        }
->> +        free_percpu(event->local);
->> +    }
->> +
->> +    kfree(event);
->> +}
->> +
->> +static void sse_on_each_cpu(struct sse_event *event, unsigned long func,
->> +                unsigned long revert_func)
->> +{
->> +    struct sse_per_cpu_evt cpu_evt;
->> +
->> +    cpu_evt.event = event;
->> +    cpumask_clear(&cpu_evt.error);
->> +    cpu_evt.func = func;
->> +    on_each_cpu(sse_event_per_cpu_func, &cpu_evt, 1);
->> +    /*
->> +     * If there are some error reported by CPUs, revert event state
->> on the
->> +     * other ones
->> +     */
->> +    if (!cpumask_empty(&cpu_evt.error)) {
->> +        cpumask_t revert;
->> +
->> +        cpumask_andnot(&revert, cpu_online_mask, &cpu_evt.error);
->> +        cpu_evt.func = revert_func;
->> +        on_each_cpu_mask(&revert, sse_event_per_cpu_func, &cpu_evt, 1);
->> +    }
->> +}
->> +
->> +int sse_event_enable(struct sse_event *event)
->> +{
->> +    int ret = 0;
->> +
->> +    scoped_guard(mutex, &sse_mutex) {
->> +        scoped_guard(cpus_read_lock) {
->> +            if (sse_event_is_global(event->evt_id)) {
->> +                ret = sse_event_enable_local(event);
->> +            } else {
->> +                sse_on_each_cpu(event, SBI_SSE_EVENT_ENABLE,
->> +                        SBI_SSE_EVENT_DISABLE);
->> +            }
->> +        }
->> +    }
->> +    return ret;
->> +}
->> +EXPORT_SYMBOL_GPL(sse_event_enable);
->> +
->> +static int sse_events_mask(void)
->> +{
->> +    struct sbiret ret;
->> +
->> +    ret = sbi_ecall(SBI_EXT_SSE, SBI_SSE_EVENT_HART_MASK, 0, 0, 0, 0,
->> 0, 0);
->> +
->> +    return sbi_err_map_linux_errno(ret.error);
->> +}
->> +
->> +static int sse_events_unmask(void)
->> +{
->> +    struct sbiret ret;
->> +
->> +    ret = sbi_ecall(SBI_EXT_SSE, SBI_SSE_EVENT_HART_UNMASK, 0, 0, 0,
->> 0, 0, 0);
->> +
->> +    return sbi_err_map_linux_errno(ret.error);
->> +}
->> +
->> +static void sse_event_disable_nolock(struct sse_event *event)
->> +{
->> +    struct sse_per_cpu_evt cpu_evt;
->> +
->> +    if (sse_event_is_global(event->evt_id)) {
->> +        sse_event_disable_local(event);
->> +    } else {
->> +        cpu_evt.event = event;
->> +        cpu_evt.func = SBI_SSE_EVENT_DISABLE;
->> +        on_each_cpu(sse_event_per_cpu_func, &cpu_evt, 1);
->> +    }
->> +}
->> +
->> +void sse_event_disable(struct sse_event *event)
->> +{
->> +    scoped_guard(mutex, &sse_mutex) {
->> +        scoped_guard(cpus_read_lock) {
->> +            sse_event_disable_nolock(event);
->> +        }
->> +    }
->> +}
->> +EXPORT_SYMBOL_GPL(sse_event_disable);
->> +
->> +struct sse_event *sse_event_register(u32 evt, u32 priority,
->> +                     sse_event_handler *handler, void *arg)
->> +{
->> +    struct sse_event *event;
->> +    int cpu;
->> +    int ret = 0;
->> +
->> +    if (!sse_available)
->> +        return ERR_PTR(-EOPNOTSUPP);
->> +
->> +    guard(mutex)(&sse_mutex);
->> +    if (sse_event_get(evt))
->> +        return ERR_PTR(-EEXIST);
->> +
->> +    event = sse_event_alloc(evt, priority, handler, arg);
->> +    if (IS_ERR(event))
->> +        return event;
->> +
->> +    scoped_guard(cpus_read_lock) {
->> +        if (sse_event_is_global(evt)) {
->> +            unsigned long preferred_hart;
->> +
->> +            ret = sse_event_attr_get_no_lock(event->global,
->> +                            SBI_SSE_ATTR_PREFERRED_HART,
->> +                            &preferred_hart);
->> +            if (ret)
->> +                goto err_event_free;
->> +
->> +            cpu = riscv_hartid_to_cpuid(preferred_hart);
->> +            sse_global_event_update_cpu(event, cpu);
->> +
->> +            ret = sse_sbi_register_event(event, event->global);
->> +            if (ret)
->> +                goto err_event_free;
->> +
->> +        } else {
->> +            sse_on_each_cpu(event, SBI_SSE_EVENT_REGISTER,
->> +                    SBI_SSE_EVENT_DISABLE);
->> +        }
->> +    }
->> +
->> +    scoped_guard(spinlock, &events_list_lock)
->> +        list_add(&event->list, &events);
->> +
->> +    return event;
->> +
->> +err_event_free:
->> +    sse_event_free(event);
->> +
->> +    return ERR_PTR(ret);
->> +}
->> +EXPORT_SYMBOL_GPL(sse_event_register);
->> +
->> +static void sse_event_unregister_nolock(struct sse_event *event)
->> +{
->> +    struct sse_per_cpu_evt cpu_evt;
->> +
->> +    if (sse_event_is_global(event->evt_id)) {
->> +        sse_sbi_unregister_event(event);
->> +    } else {
->> +        cpu_evt.event = event;
->> +        cpu_evt.func = SBI_SSE_EVENT_UNREGISTER;
->> +        on_each_cpu(sse_event_per_cpu_func, &cpu_evt, 1);
->> +    }
->> +}
->> +
->> +void sse_event_unregister(struct sse_event *event)
->> +{
->> +    scoped_guard(mutex, &sse_mutex) {
->> +        scoped_guard(cpus_read_lock)
->> +            sse_event_unregister_nolock(event);
->> +
->> +        scoped_guard(spinlock, &events_list_lock)
->> +            list_del(&event->list);
->> +
->> +        sse_event_free(event);
->> +    }
->> +}
->> +EXPORT_SYMBOL_GPL(sse_event_unregister);
->> +
->> +static int sse_cpu_online(unsigned int cpu)
->> +{
->> +    struct sse_event *event;
->> +
->> +    scoped_guard(spinlock, &events_list_lock) {
->> +        list_for_each_entry(event, &events, list) {
->> +            if (sse_event_is_global(event->evt_id))
->> +                continue;
->> +
->> +            sse_event_register_local(event);
->> +            if (sse_get_reg_evt(event))
->> +                sse_event_enable_local(event);
->> +        }
->> +    }
->> +
->> +    /* Ready to handle events. Unmask SSE. */
->> +    return sse_events_unmask();
->> +}
->> +
->> +static int sse_cpu_teardown(unsigned int cpu)
->> +{
->> +    int ret = 0;
->> +    unsigned int next_cpu;
->> +    struct sse_event *event;
->> +
->> +    /* Mask the sse events */
->> +    ret = sse_events_mask();
->> +    if (ret)
->> +        return ret;
->> +
->> +    scoped_guard(spinlock, &events_list_lock) {
->> +        list_for_each_entry(event, &events, list) {
->> +            if (!sse_event_is_global(event->evt_id)) {
->> +                if (event->global->is_enabled)
->> +                    sse_event_disable_local(event);
->> +
->> +                sse_sbi_unregister_event(event);
->> +                continue;
->> +            }
->> +
->> +            if (event->cpu != smp_processor_id())
->> +                continue;
->> +
->> +            /* Update destination hart for global event */
->> +            next_cpu = cpumask_any_but(cpu_online_mask, cpu);
->> +            ret = sse_event_set_target_cpu_nolock(event, next_cpu);
->> +        }
->> +    }
->> +
->> +    return ret;
->> +}
->> +
->> +static void sse_reset(void)
->> +{
->> +    struct sse_event *event;
->> +
->> +    list_for_each_entry(event, &events, list) {
->> +        sse_event_disable_nolock(event);
->> +        sse_event_unregister_nolock(event);
->> +    }
->> +}
->> +
->> +static int sse_pm_notifier(struct notifier_block *nb, unsigned long
->> action,
->> +               void *data)
->> +{
->> +    WARN_ON_ONCE(preemptible());
->> +
->> +    switch (action) {
->> +    case CPU_PM_ENTER:
->> +        sse_events_mask();
->> +        break;
->> +    case CPU_PM_EXIT:
->> +    case CPU_PM_ENTER_FAILED:
->> +        sse_events_unmask();
->> +        break;
->> +    default:
->> +        return NOTIFY_DONE;
->> +    }
->> +
->> +    return NOTIFY_OK;
->> +}
->> +
->> +static struct notifier_block sse_pm_nb = {
->> +    .notifier_call = sse_pm_notifier,
->> +};
->> +
->> +/*
->> + * Mask all CPUs and unregister all events on panic, reboot or kexec.
->> + */
->> +static int sse_reboot_notifier(struct notifier_block *nb, unsigned
->> long action,
->> +                   void *data)
->> +{
->> +    cpuhp_remove_state(sse_hp_state);
->> +    sse_reset();
->> +
->> +    return NOTIFY_OK;
->> +}
->> +
->> +static struct notifier_block sse_reboot_nb = {
->> +    .notifier_call = sse_reboot_notifier,
->> +};
->> +
->> +static int __init sse_init(void)
->> +{
->> +    int ret;
->> +
->> +    if (sbi_probe_extension(SBI_EXT_SSE) <= 0) {
->> +        pr_err("Missing SBI SSE extension\n");
->> +        return -EOPNOTSUPP;
->> +    }
->> +    pr_info("SBI SSE extension detected\n");
->> +
->> +    ret = cpu_pm_register_notifier(&sse_pm_nb);
->> +    if (ret) {
->> +        pr_warn("Failed to register CPU PM notifier...\n");
->> +        return ret;
->> +    }
->> +
->> +    ret = register_reboot_notifier(&sse_reboot_nb);
->> +    if (ret) {
->> +        pr_warn("Failed to register reboot notifier...\n");
->> +        goto remove_cpupm;
->> +    }
->> +
->> +    ret = cpuhp_setup_state(CPUHP_AP_ONLINE_DYN, "riscv/sse:online",
->> +                sse_cpu_online, sse_cpu_teardown);
->> +    if (ret < 0)
->> +        goto remove_reboot;
->> +
->> +    sse_hp_state = ret;
->> +    sse_available = true;
->> +
->> +    return 0;
->> +
->> +remove_reboot:
->> +    unregister_reboot_notifier(&sse_reboot_nb);
->> +
->> +remove_cpupm:
->> +    cpu_pm_unregister_notifier(&sse_pm_nb);
->> +
->> +    return ret;
->> +}
->> +arch_initcall(sse_init);
->> diff --git a/include/linux/riscv_sse.h b/include/linux/riscv_sse.h
->> new file mode 100644
->> index 000000000000..d7bd0e22a00f
->> --- /dev/null
->> +++ b/include/linux/riscv_sse.h
->> @@ -0,0 +1,56 @@
->> +/* SPDX-License-Identifier: GPL-2.0 */
->> +/*
->> + * Copyright (C) 2024 Rivos Inc.
->> + */
->> +
->> +#ifndef __LINUX_RISCV_SSE_H
->> +#define __LINUX_RISCV_SSE_H
->> +
->> +#include <linux/types.h>
->> +#include <linux/linkage.h>
->> +
->> +struct sse_event;
->> +struct pt_regs;
->> +
->> +typedef int (sse_event_handler)(u32 event_num, void *arg, struct
->> pt_regs *regs);
-> 
-> 
-> I don't see function pointer listed here https://www.kernel.org/doc/
-> html/v4.10/process/coding-style.html#typedefs so I'd rather avoid this one.
+>=20
+>  	rtw89_core_tx_kick_off(rtwdev, qsel);
+>  	time_left =3D wait_for_completion_timeout(&wait->completion,
+>  						msecs_to_jiffies(timeout));
+> -	if (time_left =3D=3D 0)
+> +	if (time_left =3D=3D 0) {
+>  		ret =3D -ETIMEDOUT;
+> -	else if (!wait->tx_done)
+> -		ret =3D -EAGAIN;
+> +	} else {
+> +		wait->finished =3D true;
+> +		if (!wait->tx_done)
+> +			ret =3D -EAGAIN;
+> +	}
+>=20
+> -	rcu_assign_pointer(skb_data->wait, NULL);
+> -	kfree_rcu(wait, rcu_head);
+> +	wait->skb =3D skb;
+> +	wait->timeout =3D timeout;
+> +	list_add_tail(&wait->list, &rtwdev->tx_waits);
+> +	wiphy_work_queue(rtwdev->hw->wiphy, &rtwdev->tx_wait_work);
+>=20
 
-Although not mentionned here, there are function typedefs in the kernel:
+If completed (i.e. time_left !=3D 0), free them directly without queuing wo=
+rk.
+Reduce the chance to do list/work things.
 
-git grep (typedef.*_fn)
+>  	return ret;
+>  }
+> @@ -4972,6 +4999,7 @@ void rtw89_core_stop(struct rtw89_dev *rtwdev)
+>  	clear_bit(RTW89_FLAG_RUNNING, rtwdev->flags);
+>=20
+>  	wiphy_work_cancel(wiphy, &rtwdev->c2h_work);
+> +	wiphy_work_cancel(wiphy, &rtwdev->tx_wait_work);
+>  	wiphy_work_cancel(wiphy, &rtwdev->cancel_6ghz_probe_work);
+>  	wiphy_work_cancel(wiphy, &btc->eapol_notify_work);
+>  	wiphy_work_cancel(wiphy, &btc->arp_notify_work); @@ -5203,6 +5231,7 @@ =
+int
+> rtw89_core_init(struct rtw89_dev *rtwdev)
+>  		INIT_LIST_HEAD(&rtwdev->scan_info.pkt_list[band]);
+>  	}
+>  	INIT_LIST_HEAD(&rtwdev->scan_info.chan_list);
+> +	INIT_LIST_HEAD(&rtwdev->tx_waits);
+>  	INIT_WORK(&rtwdev->ba_work, rtw89_core_ba_work);
+>  	INIT_WORK(&rtwdev->txq_work, rtw89_core_txq_work);
+>  	INIT_DELAYED_WORK(&rtwdev->txq_reinvoke_work, rtw89_core_txq_reinvoke_w=
+ork);
+> @@ -5233,6 +5262,7 @@ int rtw89_core_init(struct rtw89_dev *rtwdev)
+>  	wiphy_work_init(&rtwdev->c2h_work, rtw89_fw_c2h_work);
+>  	wiphy_work_init(&rtwdev->ips_work, rtw89_ips_work);
+>  	wiphy_work_init(&rtwdev->cancel_6ghz_probe_work, rtw89_cancel_6ghz_prob=
+e_work);
+> +	wiphy_work_init(&rtwdev->tx_wait_work, rtw89_tx_wait_work);
+>  	INIT_WORK(&rtwdev->load_firmware_work, rtw89_load_firmware_work);
+>=20
+>  	skb_queue_head_init(&rtwdev->c2h_queue);
+> diff --git a/drivers/net/wireless/realtek/rtw89/core.h
+> b/drivers/net/wireless/realtek/rtw89/core.h
+> index 43e10278e14d..06f7d82a8d18 100644
+> --- a/drivers/net/wireless/realtek/rtw89/core.h
+> +++ b/drivers/net/wireless/realtek/rtw89/core.h
+> @@ -3508,12 +3508,16 @@ struct rtw89_phy_rate_pattern {
+>=20
+>  struct rtw89_tx_wait_info {
+>  	struct rcu_head rcu_head;
+> +	struct list_head list;
+>  	struct completion completion;
+> +	struct sk_buff *skb;
+> +	unsigned int timeout;
+>  	bool tx_done;
+> +	bool finished;
+>  };
+>=20
+>  struct rtw89_tx_skb_data {
+> -	struct rtw89_tx_wait_info __rcu *wait;
+> +	struct rtw89_tx_wait_info *wait;
+>  	u8 hci_priv[];
+>  };
 
-This one is used at various places of the driver and is quite long so I
-would prefer to keep it. I'll rename it sse_event_handler_fn like a
-majority of the one in the kernel though.
+As mentioned above, I would like to keep rcu.
 
-Thanks,
+>=20
+> @@ -5925,6 +5929,9 @@ struct rtw89_dev {
+>  	/* used to protect rpwm */
+>  	spinlock_t rpwm_lock;
+>=20
+> +	struct list_head tx_waits;
+> +	struct wiphy_work tx_wait_work;
+> +
+>  	struct rtw89_cam_info cam_info;
+>=20
+>  	struct sk_buff_head c2h_queue;
+> @@ -7258,23 +7265,20 @@ static inline struct sk_buff *rtw89_alloc_skb_for=
+_rx(struct
+> rtw89_dev *rtwdev,
+>  	return dev_alloc_skb(length);
+>  }
+>=20
+> -static inline void rtw89_core_tx_wait_complete(struct rtw89_dev *rtwdev,
+> +static inline bool rtw89_core_tx_wait_complete(struct rtw89_dev
+> +*rtwdev,
+>  					       struct rtw89_tx_skb_data *skb_data,
+>  					       bool tx_done)
+>  {
+>  	struct rtw89_tx_wait_info *wait;
+>=20
+> -	rcu_read_lock();
+> -
+> -	wait =3D rcu_dereference(skb_data->wait);
+> +	wait =3D skb_data->wait;
+>  	if (!wait)
+> -		goto out;
+> +		return false;
+>=20
+>  	wait->tx_done =3D tx_done;
+> -	complete(&wait->completion);
+> +	complete_all(&wait->completion);
+>=20
+> -out:
+> -	rcu_read_unlock();
+> +	return true;
+>  }
+>=20
+>  static inline bool rtw89_is_mlo_1_1(struct rtw89_dev *rtwdev) diff --git
+> a/drivers/net/wireless/realtek/rtw89/pci.c b/drivers/net/wireless/realtek=
+/rtw89/pci.c
+> index a669f2f843aa..6356c2c224c5 100644
+> --- a/drivers/net/wireless/realtek/rtw89/pci.c
+> +++ b/drivers/net/wireless/realtek/rtw89/pci.c
+> @@ -464,10 +464,7 @@ static void rtw89_pci_tx_status(struct rtw89_dev *rt=
+wdev,
+>  	struct rtw89_tx_skb_data *skb_data =3D RTW89_TX_SKB_CB(skb);
+>  	struct ieee80211_tx_info *info;
+>=20
+> -	rtw89_core_tx_wait_complete(rtwdev, skb_data, tx_status =3D=3D RTW89_TX=
+_DONE);
+> -
+>  	info =3D IEEE80211_SKB_CB(skb);
+> -	ieee80211_tx_info_clear_status(info);
+>=20
+>  	if (info->flags & IEEE80211_TX_CTL_NO_ACK)
+>  		info->flags |=3D IEEE80211_TX_STAT_NOACK_TRANSMITTED;
+> @@ -494,6 +491,10 @@ static void rtw89_pci_tx_status(struct rtw89_dev *rt=
+wdev,
+>  		}
+>  	}
+>=20
+> +	if (rtw89_core_tx_wait_complete(rtwdev, skb_data, tx_status =3D=3D RTW8=
+9_TX_DONE))
+> +		return;
+> +
+> +	ieee80211_tx_info_clear_status(info);
 
-Clément
+Don't change order of these calls.
+(it's wrong for normal pkt because their tx_info are cleared after filled)
 
-> 
-> 
->> +
->> +#ifdef CONFIG_RISCV_SSE
->> +
->> +struct sse_event *sse_event_register(u32 event_num, u32 priority,
->> +                     sse_event_handler *handler, void *arg);
->> +
->> +void sse_event_unregister(struct sse_event *evt);
->> +
->> +int sse_event_set_target_cpu(struct sse_event *sse_evt, unsigned int
->> cpu);
->> +
->> +int sse_event_enable(struct sse_event *sse_evt);
->> +
->> +void sse_event_disable(struct sse_event *sse_evt);
->> +
->> +int sse_event_enable_local(struct sse_event *sse_evt);
->> +int sse_event_disable_local(struct sse_event *sse_evt);
->> +
->> +#else
->> +static inline struct sse_event *sse_event_register(u32 event_num, u32
->> priority,
->> +                           sse_event_handler *handler,
->> +                           void *arg)
->> +{
->> +    return ERR_PTR(-EOPNOTSUPP);
->> +}
->> +
->> +static inline void sse_event_unregister(struct sse_event *evt) {}
->> +
->> +static inline int sse_event_set_target_cpu(struct sse_event *sse_evt,
->> +                       unsigned int cpu)
->> +{
->> +    return -EOPNOTSUPP;
->> +}
->> +
->> +static inline int sse_event_enable(struct sse_event *sse_evt)
->> +{
->> +    return -EOPNOTSUPP;
->> +}
->> +
->> +static inline void sse_event_disable(struct sse_event *sse_evt) {}
->> +#endif
->> +#endif /* __LINUX_RISCV_SSE_H */
-
+>  	ieee80211_tx_status_ni(rtwdev->hw, skb);  }
+>=20
+> @@ -1387,7 +1388,7 @@ static int rtw89_pci_txwd_submit(struct rtw89_dev *=
+rtwdev,
+>  	}
+>=20
+>  	tx_data->dma =3D dma;
+> -	rcu_assign_pointer(skb_data->wait, NULL);
+> +	skb_data->wait =3D NULL;
+>=20
+>  	txwp_len =3D sizeof(*txwp_info);
+>  	txwd_len =3D chip->txwd_body_size;
+> --
+> 2.50.1
 
