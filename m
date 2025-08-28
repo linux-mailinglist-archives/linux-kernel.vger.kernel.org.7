@@ -1,106 +1,169 @@
-Return-Path: <linux-kernel+bounces-790746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE516B3AC80
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 23:08:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89A00B3AC85
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 23:08:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 959831C21ADC
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 21:08:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 60CF8581659
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 21:08:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDB462C235A;
-	Thu, 28 Aug 2025 21:07:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18CBF29A322;
+	Thu, 28 Aug 2025 21:07:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GszRXMLh"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pJT9EBg7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE078293B75;
-	Thu, 28 Aug 2025 21:07:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61A2414A0B5;
+	Thu, 28 Aug 2025 21:07:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756415252; cv=none; b=HJAikFScsa+KrmTo8dTp/ssC0aNqrc1qTmhjyG/NIibqfqSUTUGK3OoH8iTXQdv1ZfnTLONhEN0NFDsukT0v+OZxO52ZDESPFafZEF3yVbarchYDPwbfK4JBgfqUtinwjacZzNbwe4s0mmmOXLvjKip9/s25izJUKVzhPSIR2vM=
+	t=1756415270; cv=none; b=raTSBNjB5Rosha1avW1gKw1LFj6Lw+LCFbz/zYCY18J2AkS+cCFHgfTBF/7ld1UgVY+0voaVgV5s8ocScGSGoxzhT0+ykqa+9Ko6ykted/CDyfcBgFRguo1wJk5BI3THj4behDO+aaDgc2P/dpGBQBZPLU/eRbb9PE0hvqfyfQA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756415252; c=relaxed/simple;
-	bh=ofbsM7xQqlSA5ltgmkTYoU5eIhs0ICZqz5jfNtIFoeI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bwq0laWwC0DZWDklR2flaxY8x2PVQ0Tm97jOUcvzJoAsEW0b76bILr2asU7Spgcobpde/Er2eGOrHzzeu1jpxC3SR0rI7HTPmX0rhthqvqQywhyLa6oANRWlA1NEyx016ec43PmqkEAOOVGLWjvHNw9XR337YL8Dz6nxQPB83IY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GszRXMLh; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-248cb0b37dfso14134395ad.3;
-        Thu, 28 Aug 2025 14:07:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756415250; x=1757020050; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=BjL86Fze1R7sJJFQIUzDTcJaqf7BgddrD0Deu+Sh408=;
-        b=GszRXMLh2NBPauh6fEkKxqeMUD2Z7tiRNOB1qUfB3OJVbOiZEZApjnEBbRueVrHmfv
-         TnsG17lzzdOvVR4RnVus3tO1fh/uHh24b17mUXaeac44vo9aR5HHdpUhRFTwFXC7i4dy
-         QNNeuUKnuUZo7AqkGxOKcxVM5PQH2q1DqVab3gJgrHI1LK5V+8s5WhDZt/CLFEH/TWGA
-         I08Q/H/AahaYwOZpgkaL2etssu32Gdl2/WaIY9rGcWK4DLwwn7Ry15/ysJTH1qYDqbx2
-         O+oWehH04HEGijc20lBYw46Zk47ai7lQD8j01LYZP60Z1Iq0Bsc0xcloORkaJul9CetO
-         QVlw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756415250; x=1757020050;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BjL86Fze1R7sJJFQIUzDTcJaqf7BgddrD0Deu+Sh408=;
-        b=BTfTMrC5F64q+zUzo95SnqsyGHVR8rZ6W1TWsDCtqF9CbSWakhDng099QJETrmqut1
-         KmTQhj2LP9zz1YesBW5dI8H9JeVZhQC1G+dqR52fmSaOfhjzzW/+NBkFZh9UwyA90LE1
-         1WioeecmSTIZ7edzXhaCBX1rvAbj/FnXGlw64syNFg1W79tWsXrSuZsB11IKRYxtRGxm
-         5kq6jErp1uLhFR6ZfgFpNDGp7FiOJixyujMWNj6Ar7tHD19a2Y2zhiuSNUyv4Kc/Ni7a
-         r2y2tJ+LK7ZX8HxCIzd5jGUTFsMi1x3pQVP9hFH8gxKz/99d7Om0Joc+jbF8vXpm8Lx6
-         4Ohw==
-X-Forwarded-Encrypted: i=1; AJvYcCU9sxq12rpJruzbxamQOvQuecstVxXgMa3rOpFowv7F7ht6U5qjMlNU12hYaVTIKb60LQ+9ipdMpr703tU=@vger.kernel.org, AJvYcCUESIQIcusN1g5Yo9hcOrO4PeToY8l5nMRsTmsKIU4rdGEgfNtDco8qMK50mMO0XxOz9GldlJY+Hj8z@vger.kernel.org, AJvYcCVkflaucb31ITyJOBhP4l9uOLVfuM+4lbOwCAPTJvuZwDx60PsWMAR03u7t4kI/JRuT+dMI4OrmIb7STdgM@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzhtk6NGfoZPivVTEtVtolDv7FFmqPV9psUPvWowNo5sr0o+RsB
-	1TTrWd9KRai7xzgYBKRQMkwMdxAS/qr8LVQ2PkiiO5kbwbYGoa4NiO/dj7T5fQ==
-X-Gm-Gg: ASbGncuEIwRvkjSEkxVVxcoADcP8xm0lKKJHbxPE8+sSZDX2UQbQKJFzqxjIaLqfUbN
-	bzk1NzjHKEpLHQmLpZol+KctDKloNfvDyAa5y24iWIjhFwMVesOnuw14hIy1Gv2n1l/8DuNg6W3
-	w+7yw0ZWBufJg6/F0+kS7dkizhGBmneqHBM57cU2j6A+CiqdTZ2LjiMsyMlE6/4LjFOHQBiUQbV
-	xkytgEumoZYzxJHlf/50L8gbnKES9KBm9BL7CTHBAxjqKBxCuYYBDT/ct/xGO4NTxIUYb9dllOI
-	rLzVKw4ROVqgXTQ+1L7Br53pm8woctocKX53zj6IrVztNAHkZhHW0iAH+1PLh5ozOfWp81mU0pU
-	ARfodWmzMwndnM3L7+tSm2ztsDvbPoLV8g1M=
-X-Google-Smtp-Source: AGHT+IHK7WsgT3t3J0taPKEA/wjBT3gY30wg7LkuEn2udE+tE9xnrQ2Ows6M6cEJepJUjfEmCSShnQ==
-X-Received: by 2002:a17:903:3d0f:b0:246:7711:87e with SMTP id d9443c01a7336-24677110bbcmr257839135ad.21.1756415249892;
-        Thu, 28 Aug 2025 14:07:29 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24906395aa0sm4402265ad.100.2025.08.28.14.07.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Aug 2025 14:07:29 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Thu, 28 Aug 2025 14:07:28 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Grant Peltier <grantpeltier93@gmail.com>
-Cc: grant.peltier.jg@renesas.com, robh@kernel.org, conor+dt@kernel.org,
-	linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] hwmon: (pmbus/isl68137) add support for Renesas
- RAA228244 and RAA228246
-Message-ID: <31365758-6cd5-46d5-bc99-c7cdaa7f7b5b@roeck-us.net>
-References: <cover.1756331945.git.grantpeltier93@gmail.com>
- <70bb08e291bd57722b1b0edf732cd0017714ef07.1756331945.git.grantpeltier93@gmail.com>
+	s=arc-20240116; t=1756415270; c=relaxed/simple;
+	bh=3lJFbTf5d9SOdnXSpu0r1rqLV3G7tmqEW7dCzgaSZu8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=SIq0KIwsPfkXxEBShTAsysQdaHTP1vMaiqsRlR4b83dHpyncffMrQeCwaSABNGkDFgfXD2+sEmNYRFbfJBItV3J9SZVfKdEpIvNpeOH/6HmMzz5E8DyDLpcrOJWR5RAzTl51LDje9aSDWmsgn7FDS3muQ/lAC5KX4BJ8lAsBZDk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pJT9EBg7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E72EAC4CEF4;
+	Thu, 28 Aug 2025 21:07:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756415270;
+	bh=3lJFbTf5d9SOdnXSpu0r1rqLV3G7tmqEW7dCzgaSZu8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=pJT9EBg7iCsAv32XNzDOcWgERzWHuOQ3TDpdhvFawMsQQT+d7q2Xg8LCB4SsTep+w
+	 JN4tH3yiaOmRvo+0R9rHTCyOXbxA5Qx6wJUwDKCKPvRU6GM0MaFUcBGcS4fAhTtNb7
+	 yXW5m3Chx46o4pSlNScRxCglJv5k5+bfcE8WuXhVThbU7dJSg7PGdlRDbO/96vBJmt
+	 F1faNQwaeKe30K1Dblrs01exG8nkgJ6pRcx7u8xMQaEkRzfXpOM/n1cBCKz8nxHn9n
+	 7sFkjR7/zButFdmxdBvVF7+l3QcpFkSbL0Kgwi3a/AAnainRYij87APl1ojmP20xSO
+	 RfNWpAnc1D62A==
+Date: Thu, 28 Aug 2025 23:07:44 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Nicolas Schier <nsc@kernel.org>
+Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>, Jonathan Corbet
+ <corbet@lwn.net>, Thomas =?UTF-8?B?V2Vpw59zY2h1aA==?=
+ <thomas.weissschuh@linutronix.de>, Alice Ryhl <aliceryhl@google.com>, Randy
+ Dunlap <rdunlap@infradead.org>, Tamir Duberstein <tamird@gmail.com>,
+ linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] docs: add support to build manpages from
+ kerneldoc output
+Message-ID: <20250828230744.1fa2f291@foz.lan>
+In-Reply-To: <aK-A2DmxhGDQGVEf@levanger>
+References: <cover.1756282370.git.mchehab+huawei@kernel.org>
+	<d880eb9c915a08c25102b7c1b17a01a8ab7e32c3.1756282370.git.mchehab+huawei@kernel.org>
+	<aK-A2DmxhGDQGVEf@levanger>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <70bb08e291bd57722b1b0edf732cd0017714ef07.1756331945.git.grantpeltier93@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 27, 2025 at 05:41:36PM -0500, Grant Peltier wrote:
-> The RAA228244 and RAA228246 are both recently released digital dual-output
-> multiphase PWM controllers.
-> 
-> Signed-off-by: Grant Peltier <grantpeltier93@gmail.com>
+Em Thu, 28 Aug 2025 00:04:08 +0200
+Nicolas Schier <nsc@kernel.org> escreveu:
 
-Applied.
+> Please check your mail tooling: something strange happened to all
+> @kernel.org adresses:
+>=20
+> > Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+> >         Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+> >         Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>,
+> >         Alice Ryhl <aliceryhl@google.com>,
+> >         Masahiro Yamada <mchehab+huawei@kernel.org>,
+> >         Miguel Ojeda <mchehab+huawei@kernel.org>,
+> >         Nathan Chancellor <mchehab+huawei@kernel.org>,
+> >         Nicolas Schier <nicolas.schier@linux.dev>,
+> >         Randy Dunlap <rdunlap@infradead.org>,
+> >         Tamir Duberstein <tamird@gmail.com>,
+> >         linux-kbuild@vger.kernel.org,
+> >         linux-kernel@vger.kernel.org =20
 
-Guenter
+That's really weird! Thanks for letting me know. It was not supposed
+to do any e-mail changes.
+
+>=20
+> On Wed, Aug 27, 2025 at 10:26:37AM +0200, Mauro Carvalho Chehab wrote:
+> > Generating man files currently requires running a separate
+> > script. The target also doesn't appear at the docs Makefile.
+> >=20
+> > Add support for mandocs at the Makefile, adding the build
+> > logic inside sphinx-build-wrapper, updating documentation
+> > and dropping the ancillary script.
+> >=20
+> > Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> > ---
+> >  Documentation/Makefile                 |  3 +-
+> >  Documentation/doc-guide/kernel-doc.rst | 29 ++++-----
+> >  Makefile                               |  2 +-
+> >  scripts/split-man.pl                   | 28 ---------
+> >  tools/docs/sphinx-build-wrapper        | 81 ++++++++++++++++++++++++--
+> >  5 files changed, 95 insertions(+), 48 deletions(-)
+> >  delete mode 100755 scripts/split-man.pl
+> >=20
+> > diff --git a/Documentation/Makefile b/Documentation/Makefile
+> > index 3e1cb44a5fbb..22e39e5ed07d 100644
+> > --- a/Documentation/Makefile
+> > +++ b/Documentation/Makefile
+> > @@ -53,7 +53,7 @@ ifeq ($(HAVE_SPHINX),0)
+> >  else # HAVE_SPHINX
+> > =20
+> >  # Common documentation targets
+> > -infodocs texinfodocs latexdocs epubdocs xmldocs pdfdocs linkcheckdocs:
+> > +mandocs infodocs texinfodocs latexdocs epubdocs xmldocs pdfdocs linkch=
+eckdocs:
+> >  	$(Q)@$(srctree)/tools/docs/sphinx-pre-install --version-check
+> >  	+$(Q)$(PYTHON3) $(BUILD_WRAPPER) $@ \
+> >  		--sphinxdirs=3D"$(SPHINXDIRS)" --conf=3D$(SPHINX_CONF) \
+> > @@ -104,6 +104,7 @@ dochelp:
+> >  	@echo  '  htmldocs        - HTML'
+> >  	@echo  '  texinfodocs     - Texinfo'
+> >  	@echo  '  infodocs        - Info'
+> > +	@echo  '  mandocs         - Man pages'
+> >  	@echo  '  latexdocs       - LaTeX'
+> >  	@echo  '  pdfdocs         - PDF'
+> >  	@echo  '  epubdocs        - EPUB'
+> > diff --git a/Documentation/doc-guide/kernel-doc.rst b/Documentation/doc=
+-guide/kernel-doc.rst
+> > index af9697e60165..4370cc8fbcf5 100644
+> > --- a/Documentation/doc-guide/kernel-doc.rst
+> > +++ b/Documentation/doc-guide/kernel-doc.rst
+> > @@ -579,20 +579,23 @@ source.
+> >  How to use kernel-doc to generate man pages
+> >  -------------------------------------------
+> > =20
+> > -If you just want to use kernel-doc to generate man pages you can do th=
+is
+> > -from the kernel git tree::
+> > +To generate man pages for all files that contain kernel-doc markups, r=
+un::
+> > =20
+> > -  $ scripts/kernel-doc -man \
+> > -    $(git grep -l '/\*\*' -- :^Documentation :^tools) \
+> > -    | scripts/split-man.pl /tmp/man
+> > +  $ make mandocs
+> > =20
+> > -Some older versions of git do not support some of the variants of synt=
+ax for
+> > -path exclusion.  One of the following commands may work for those vers=
+ions::
+> > +Or calling ``script-build-wrapper`` directly:: =20
+>=20
+>                 ^^^^^^ sphinx-build-wrapper ?
+
+This is on a separate patch series:
+
+https://lore.kernel.org/linux-doc/cover.1756138805.git.mchehab+huawei@kerne=
+l.org/
+
+It basically moves the complex logic around docs Makefile into a
+script that can either be called via Makefile or directly.
+
+Thanks,
+Mauro
 
