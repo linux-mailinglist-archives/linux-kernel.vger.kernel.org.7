@@ -1,136 +1,301 @@
-Return-Path: <linux-kernel+bounces-790842-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790843-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F95CB3ADEC
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 01:00:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9F08B3ADF1
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 01:05:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 030AA7A5D67
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 22:59:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62F515E2430
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 23:05:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFE5525D1F5;
-	Thu, 28 Aug 2025 23:00:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 337292BF3E2;
+	Thu, 28 Aug 2025 23:05:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U3ssYPyI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ni5BgJBS"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F59F1EB36
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 23:00:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AA2079DA;
+	Thu, 28 Aug 2025 23:05:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756422031; cv=none; b=qiYG+lxONmODHoddWqcuNheMxpgP0euGAAqFfJF+qo+3AepUb3P5gzSDnKNnHBdEIGeGLy0cOwxjGOm+LvI7WltggcIY5LXplPow2d4pEwWbn1r/4KAX4Id3P96xPTjlRKwhKtkmKCVakBDVImZX+If44nQB7Bi++pAsc9S/5DE=
+	t=1756422344; cv=none; b=opEGgds5b0jytZhnw3rIUp4XNiF2SQ3nvNhNzSpuYZbX/jAyU2ykWp2R/HRTIf1FTSxzQElxuF69JM248FeiR/x2NxW1C+vwHnmOYEn98MVYkxl10SO3so4iOvy5+7PwiFhdeB2Y0Y9YjtaUAtRrDOPPiYZCckPVqSRptXkyLZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756422031; c=relaxed/simple;
-	bh=30fk9NHjTb+YHallX3yV7R6e7ygOcFwvrpZnNLQLRbU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qByJ48Nhg4u2VP9e2GSNDeWu9e63NDfMpKC0EujNxL7xJnxXdb4TuYl08K4rBcK7ptzeBjQHc/8YPmDS+Wpyho+iWRg/nLgO0V9XcDzDxeI+OYxF7tY7gzg7ogpolaUDj+5biNeOLwBibtVazM2RCqFY94xD4t4JFgl39qzuihc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U3ssYPyI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 145B3C4CEFD
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 23:00:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756422031;
-	bh=30fk9NHjTb+YHallX3yV7R6e7ygOcFwvrpZnNLQLRbU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=U3ssYPyIZf4bYjFozVRTageNbBGWYnc0BLQHgtQCltO6D/wkhm6Ma8Pow5iTRUxn1
-	 Ooi3zc5WYwmOGr5knJMQgsVpkf9TqEm8MilGpoORDWF1EDpalWL/2t3chxjK+JGmx0
-	 Hwt9jdTB75A2Kxcc2WQ3H6YwutEKx6pEhLq4iU/tHRD3XzlAfIjPcbCMy3TSCFzFaK
-	 9uu/dluZEdUB27iqtAyb+n6OwAocbz1SbqbQiLL1TRxyTDXUGW+JyWaK5+4ooS5oCp
-	 NN2KfHo55A/69tSBlFlcka6JRfMKJI46BYY6ILyQ3eMXfisYnEkNEggK2P4onyoLtR
-	 d/B7R6bcnFhhw==
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-45b7ed944d2so16665e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 16:00:31 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWhGiS4Vc4PZQ94hnytbGrF0+XN9Z8+9Gq4IcWet5EFv7JWxcF7td9abFM96Al+olr7XaM2ThlNkwjpQGA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywff8BIYyST9+jJZ/ghVbYSDtNSDWc0O2TUgRH8TB0NLRHg5R4p
-	XSgxgZCxJ2u3ZwDNMsKw0xpqmS+kwq9AUpV8m5oyfeawLOu7G/1pusI0Lz4E9UCFOc3CZMusJRB
-	dkSmEf7kIZf9X066SOASLmIIldomgmV+PTI8vMqEm
-X-Google-Smtp-Source: AGHT+IF37cR06H6qWz1gtR2Q33GyRHew0V5B6RhMXUxYEwLPyE0Qes9gQWNNur2aLf3Td0YQjtjqefGyXYAmbB98VJw=
-X-Received: by 2002:a05:600c:a408:b0:453:672b:5b64 with SMTP id
- 5b1f17b1804b1-45b66a2b6b4mr5476195e9.2.1756422029193; Thu, 28 Aug 2025
- 16:00:29 -0700 (PDT)
+	s=arc-20240116; t=1756422344; c=relaxed/simple;
+	bh=u3H89Z//3PoP+OudmHnpD3JeJZ7fOD3tDr+8SP0s0Jo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AtxdWr6lsIrYKMKjin6xQsumUqjhiPMTqY1Aa89OzYX+My9mHUsTdktC7yCUidPKXL/FDgF8HaOV2plkzL53B9mFHyt87Jsw7lqaLSCy65AegJ0veV88jpG3M2VhLDqi96is/8usyi5DI4LvMrOEuHH81x6DYvxCs7HhEtWN1lM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ni5BgJBS; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756422342; x=1787958342;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=u3H89Z//3PoP+OudmHnpD3JeJZ7fOD3tDr+8SP0s0Jo=;
+  b=Ni5BgJBSHsM/8wM7do0Ep4wqtZY/6f2lekbUJbbvcixlwMojphL7ZlQT
+   BLsMWWEa67EvPK+H1cWK5ei+NG0bsAzawV7gA4EKRrngWMKGNFtqH2/M0
+   MkH+OUp7MsLFJ0GJUULVLlM0gt/PuNUvzoNQaLp7UuxBukR+95KcUsjZl
+   dUUiKdiKc/IPeXs6EyoGyroZhrlI+kJ9dW1rU1emOZlTqaBUSu1PZlZlF
+   OraJh9znM1Yxwv22+IMORnsmAhz8BH5FxT2+/VzFN50zLQVN/NwlgGLI2
+   DPVkSSc5jBIuJtaQMaBE2raEzC18xVFKQE/3aMbWoW8I+LPdDEo8WgEZ4
+   w==;
+X-CSE-ConnectionGUID: GqOocF6fQh+okOpeSzl8WQ==
+X-CSE-MsgGUID: ImIThOvbRMuen/NEehr9Tg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11536"; a="76156937"
+X-IronPort-AV: E=Sophos;i="6.18,221,1751266800"; 
+   d="scan'208";a="76156937"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2025 16:05:37 -0700
+X-CSE-ConnectionGUID: pb39M6eLSn+xwlxuwyGpCA==
+X-CSE-MsgGUID: s/G4WcwVQFm5TP4utTsNSg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,221,1751266800"; 
+   d="scan'208";a="170624482"
+Received: from anmitta2-mobl4.gar.corp.intel.com (HELO [10.247.118.49]) ([10.247.118.49])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2025 16:05:28 -0700
+Message-ID: <d327d8c5-0633-4556-a021-56afff421a64@intel.com>
+Date: Thu, 28 Aug 2025 16:05:20 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250807014442.3829950-1-pasha.tatashin@soleen.com>
- <20250807014442.3829950-30-pasha.tatashin@soleen.com> <20250826162019.GD2130239@nvidia.com>
- <mafs0bjo0yffo.fsf@kernel.org> <20250828124320.GB7333@nvidia.com>
-In-Reply-To: <20250828124320.GB7333@nvidia.com>
-From: Chris Li <chrisl@kernel.org>
-Date: Thu, 28 Aug 2025 16:00:18 -0700
-X-Gmail-Original-Message-ID: <CAF8kJuMcD4HA_CjK7iZ_47jgnu63pF-0WRrhdREvUmMVOgWBEg@mail.gmail.com>
-X-Gm-Features: Ac12FXwgAj48kKV8-NSqN51LxVJutv6tGbA-WA_eygERRbP7T7KY6y3bnmWLRPM
-Message-ID: <CAF8kJuMcD4HA_CjK7iZ_47jgnu63pF-0WRrhdREvUmMVOgWBEg@mail.gmail.com>
-Subject: Re: [PATCH v3 29/30] luo: allow preserving memfd
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Pratyush Yadav <pratyush@kernel.org>, Pasha Tatashin <pasha.tatashin@soleen.com>, jasonmiu@google.com, 
-	graf@amazon.com, changyuanl@google.com, rppt@kernel.org, dmatlack@google.com, 
-	rientjes@google.com, corbet@lwn.net, rdunlap@infradead.org, 
-	ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, ojeda@kernel.org, 
-	aliceryhl@google.com, masahiroy@kernel.org, akpm@linux-foundation.org, 
-	tj@kernel.org, yoann.congal@smile.fr, mmaurer@google.com, 
-	roman.gushchin@linux.dev, chenridong@huawei.com, axboe@kernel.dk, 
-	mark.rutland@arm.com, jannh@google.com, vincent.guittot@linaro.org, 
-	hannes@cmpxchg.org, dan.j.williams@intel.com, david@redhat.com, 
-	joel.granados@kernel.org, rostedt@goodmis.org, anna.schumaker@oracle.com, 
-	song@kernel.org, zhangguopeng@kylinos.cn, linux@weissschuh.net, 
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-mm@kvack.org, 
-	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com, 
-	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
-	rafael@kernel.org, dakr@kernel.org, bartosz.golaszewski@linaro.org, 
-	cw00.choi@samsung.com, myungjoo.ham@samsung.com, yesanishhere@gmail.com, 
-	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com, 
-	aleksander.lobakin@intel.com, ira.weiny@intel.com, 
-	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
-	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
-	stuart.w.hayes@gmail.com, lennart@poettering.net, brauner@kernel.org, 
-	linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, saeedm@nvidia.com, 
-	ajayachandra@nvidia.com, parav@nvidia.com, leonro@nvidia.com, witu@nvidia.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v11 15/23] cxl/pci: Map CXL Endpoint Port and CXL Switch
+ Port RAS registers
+To: Terry Bowman <terry.bowman@amd.com>, dave@stgolabs.net,
+ jonathan.cameron@huawei.com, alison.schofield@intel.com,
+ dan.j.williams@intel.com, bhelgaas@google.com, shiju.jose@huawei.com,
+ ming.li@zohomail.com, Smita.KoralahalliChannabasappa@amd.com,
+ rrichter@amd.com, dan.carpenter@linaro.org,
+ PradeepVineshReddy.Kodamati@amd.com, lukas@wunner.de,
+ Benjamin.Cheatham@amd.com, sathyanarayanan.kuppuswamy@linux.intel.com,
+ linux-cxl@vger.kernel.org, alucerop@amd.com, ira.weiny@intel.com
+Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
+References: <20250827013539.903682-1-terry.bowman@amd.com>
+ <20250827013539.903682-16-terry.bowman@amd.com>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <20250827013539.903682-16-terry.bowman@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Aug 28, 2025 at 5:43=E2=80=AFAM Jason Gunthorpe <jgg@nvidia.com> wr=
-ote:
->
-> On Wed, Aug 27, 2025 at 05:03:55PM +0200, Pratyush Yadav wrote:
->
-> > I think we need something a luo_xarray data structure that users like
-> > memfd (and later hugetlb and guest_memfd and maybe others) can build to
-> > make serialization easier. It will cover both contiguous arrays and
-> > arrays with some holes in them.
->
-> I'm not sure xarray is the right way to go, it is very complex data
-> structure and building a kho variation of it seems like it is a huge
-> amount of work.
->
-> I'd stick with simple kvalloc type approaches until we really run into
-> trouble.
->
-> You can always map a sparse xarray into a kvalloc linear list by
-> including the xarray index in each entry.
 
-Each entry will be 16 byte, 8 for index and 8 for XAvalue, right?
 
-> Especially for memfd where we don't actually expect any sparsity in
-> real uses cases there is no reason to invest a huge effort to optimize
-> for it..
+On 8/26/25 6:35 PM, Terry Bowman wrote:
+> CXL Endpoint (EP) Ports may include Root Ports (RP) or Downstream Switch
+> Ports (DSP). CXL RPs and DSPs contain RAS registers that require memory
+> mapping to enable RAS logging. This initialization is currently missing and
+> must be added for CXL RPs and DSPs.
+> 
+> Update cxl_dport_init_ras_reporting() to support RP and DSP RAS mapping.
+> Add alongside the existing Restricted CXL Host Downstream Port RAS mapping.
+> 
+> Update cxl_endpoint_port_probe() to invoke cxl_dport_init_ras_reporting().
+> This will initiate the RAS mapping for CXL RPs and DSPs when each CXL EP is
+> created and added to the EP port.
+> 
+> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
+> ---
+> Changes in v10->v11:
+> - Use local pointer for readability in cxl_switch_port_init_ras() (Jonathan Cameron)
+> - Rename port to be ep in cxl_endpoint_port_init_ras() (Dave Jiang)
+> - Rename dport to be parent_dport in cxl_endpoint_port_init_ras()
+>   and cxl_switch_port_init_ras() (Dave Jiang)
+> - Port helper changes were in cxl/port.c, now in core/ras.c (Dave Jiang)
+> ---
+>  drivers/cxl/core/core.h |  7 ++++++
+>  drivers/cxl/core/ras.c  | 47 +++++++++++++++++++++++++++++++++++++++++
+>  drivers/cxl/cxl.h       |  2 ++
+>  drivers/cxl/cxlpci.h    |  4 ----
+>  drivers/cxl/mem.c       |  4 +++-
+>  drivers/cxl/port.c      |  5 +++++
+>  6 files changed, 64 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/cxl/core/core.h b/drivers/cxl/core/core.h
+> index 2c81a43d7b05..2fa76a913264 100644
+> --- a/drivers/cxl/core/core.h
+> +++ b/drivers/cxl/core/core.h
+> @@ -146,6 +146,9 @@ int cxl_port_get_switch_dport_bandwidth(struct cxl_port *port,
+>  #ifdef CONFIG_CXL_RAS
+>  int cxl_ras_init(void);
+>  void cxl_ras_exit(void);
+> +void cxl_switch_port_init_ras(struct cxl_port *port);
+> +void cxl_endpoint_port_init_ras(struct cxl_port *ep);
+> +void cxl_dport_init_ras_reporting(struct cxl_dport *dport, struct device *host);
+>  #else
+>  static inline int cxl_ras_init(void)
+>  {
+> @@ -155,6 +158,10 @@ static inline int cxl_ras_init(void)
+>  static inline void cxl_ras_exit(void)
+>  {
+>  }
+> +static inline void cxl_switch_port_init_ras(struct cxl_port *port) { }
+> +static inline void cxl_endpoint_port_init_ras(struct cxl_port *ep) { }
+> +static inline void cxl_dport_init_ras_reporting(struct cxl_dport *dport,
+> +						struct device *host) { }
+>  #endif // CONFIG_CXL_RAS
+>  
+>  int cxl_gpf_port_setup(struct cxl_dport *dport);
+> diff --git a/drivers/cxl/core/ras.c b/drivers/cxl/core/ras.c
+> index 69559043b772..42b6e0b092d5 100644
+> --- a/drivers/cxl/core/ras.c
+> +++ b/drivers/cxl/core/ras.c
+> @@ -284,6 +284,53 @@ void cxl_dport_init_ras_reporting(struct cxl_dport *dport, struct device *host)
+>  }
+>  EXPORT_SYMBOL_NS_GPL(cxl_dport_init_ras_reporting, "CXL");
+>  
+> +static void cxl_uport_init_ras_reporting(struct cxl_port *port,
+> +					 struct device *host)
+> +{
+> +	struct cxl_register_map *map = &port->reg_map;
+> +
+> +	map->host = host;
+> +	if (cxl_map_component_regs(map, &port->uport_regs,
+> +				   BIT(CXL_CM_CAP_CAP_ID_RAS)))
+> +		dev_dbg(&port->dev, "Failed to map RAS capability\n");
+> +}
+> +
+> +void cxl_switch_port_init_ras(struct cxl_port *port)
+> +{
+> +	struct cxl_dport *parent_dport = port->parent_dport;
+> +
+> +	if (is_cxl_root(to_cxl_port(port->dev.parent)))
+> +		return;
+> +
+> +	/* May have parent DSP or RP */
+> +	if (parent_dport && dev_is_pci(parent_dport->dport_dev)) {
+> +		struct pci_dev *pdev = to_pci_dev(parent_dport->dport_dev);
+> +
+> +		if ((pci_pcie_type(pdev) == PCI_EXP_TYPE_ROOT_PORT) ||
+> +		    (pci_pcie_type(pdev) == PCI_EXP_TYPE_DOWNSTREAM))
+> +			cxl_dport_init_ras_reporting(parent_dport, &port->dev);
+> +	}
+> +
+> +	cxl_uport_init_ras_reporting(port, &port->dev);
+> +}
+> +EXPORT_SYMBOL_NS_GPL(cxl_switch_port_init_ras, "CXL");
+> +
+> +void cxl_endpoint_port_init_ras(struct cxl_port *ep)
+> +{
+> +	struct cxl_dport *parent_dport;
+> +	struct cxl_memdev *cxlmd = to_cxl_memdev(ep->uport_dev);
+> +	struct cxl_port *parent_port __free(put_cxl_port) =
+> +		cxl_mem_find_port(cxlmd, &parent_dport);
+> +
+> +	if (!parent_dport || !dev_is_pci(parent_dport->dport_dev)) {
+> +		dev_err(&ep->dev, "CXL port topology not found\n");
+> +		return;
+> +	}
+> +
+> +	cxl_dport_init_ras_reporting(parent_dport, cxlmd->cxlds->dev);
+> +}
+> +EXPORT_SYMBOL_NS_GPL(cxl_endpoint_port_init_ras, "CXL");
+> +
+>  static void cxl_handle_cor_ras(struct device *dev, u64 serial, void __iomem *ras_base)
+>  {
+>  	void __iomem *addr;
+> diff --git a/drivers/cxl/cxl.h b/drivers/cxl/cxl.h
+> index 8f6224ac6785..32fccad9a7f6 100644
+> --- a/drivers/cxl/cxl.h
+> +++ b/drivers/cxl/cxl.h
+> @@ -586,6 +586,7 @@ struct cxl_dax_region {
+>   * @parent_dport: dport that points to this port in the parent
+>   * @decoder_ida: allocator for decoder ids
+>   * @reg_map: component and ras register mapping parameters
+> + * @uport_regs: mapped component registers
+>   * @nr_dports: number of entries in @dports
+>   * @hdm_end: track last allocated HDM decoder instance for allocation ordering
+>   * @commit_end: cursor to track highest committed decoder for commit ordering
+> @@ -606,6 +607,7 @@ struct cxl_port {
+>  	struct cxl_dport *parent_dport;
+>  	struct ida decoder_ida;
+>  	struct cxl_register_map reg_map;
+> +	struct cxl_component_regs uport_regs;
+>  	int nr_dports;
+>  	int hdm_end;
+>  	int commit_end;
+> diff --git a/drivers/cxl/cxlpci.h b/drivers/cxl/cxlpci.h
+> index ad24d81e9eaa..a6da0abfa506 100644
+> --- a/drivers/cxl/cxlpci.h
+> +++ b/drivers/cxl/cxlpci.h
+> @@ -84,7 +84,6 @@ void read_cdat_data(struct cxl_port *port);
+>  void cxl_cor_error_detected(struct pci_dev *pdev);
+>  pci_ers_result_t cxl_error_detected(struct pci_dev *pdev,
+>  				    pci_channel_state_t state);
+> -void cxl_dport_init_ras_reporting(struct cxl_dport *dport, struct device *host);
+>  #else
+>  static inline void cxl_cor_error_detected(struct pci_dev *pdev) { }
+>  
+> @@ -93,9 +92,6 @@ static inline pci_ers_result_t cxl_error_detected(struct pci_dev *pdev,
+>  {
+>  	return PCI_ERS_RESULT_NONE;
+>  }
+> -
+> -static inline void cxl_dport_init_ras_reporting(struct cxl_dport *dport,
+> -						struct device *host) { }
+>  #endif
+>  
+>  #endif /* __CXL_PCI_H__ */
+> diff --git a/drivers/cxl/mem.c b/drivers/cxl/mem.c
+> index 6e6777b7bafb..f7dc0ba8905d 100644
+> --- a/drivers/cxl/mem.c
+> +++ b/drivers/cxl/mem.c
+> @@ -7,6 +7,7 @@
+>  
+>  #include "cxlmem.h"
+>  #include "cxlpci.h"
+> +#include "core/core.h"
+>  
+>  /**
+>   * DOC: cxl mem
+> @@ -166,7 +167,8 @@ static int cxl_mem_probe(struct device *dev)
+>  	else
+>  		endpoint_parent = &parent_port->dev;
+>  
+> -	cxl_dport_init_ras_reporting(dport, dev);
+> +	if (dport->rch)
+> +		cxl_dport_init_ras_reporting(dport, dev);
 
-Ack.
+So the endpoint port probe calls this via cxl_endpoint_port_init_ras(), and if it's RCH the memedev probe also calls this. Trying to understand why it happens for both drivers for the RCH case... 
 
->
-> > As I explained above, the versioning is already there. Beyond that, why
-> > do you think a raw C struct is better than FDT? It is just another way
-> > of expressing the same information. FDT is a bit more cumbersome to
-> > write and read, but comes at the benefit of more introspect-ability.
->
-> Doesn't have the size limitations, is easier to work list, runs
-> faster.
+>  
+>  	scoped_guard(device, endpoint_parent) {
+>  		if (!endpoint_parent->driver) {
+> diff --git a/drivers/cxl/port.c b/drivers/cxl/port.c
+> index fe4b593331da..e66c7f2e1955 100644
+> --- a/drivers/cxl/port.c
+> +++ b/drivers/cxl/port.c
+> @@ -6,6 +6,7 @@
+>  
+>  #include "cxlmem.h"
+>  #include "cxlpci.h"
+> +#include "core/core.h"
+>  
+>  /**
+>   * DOC: cxl port
+> @@ -71,6 +72,8 @@ static int cxl_switch_port_probe(struct cxl_port *port)
+>  
+>  	cxl_switch_parse_cdat(port);
+>  
+> +	cxl_switch_port_init_ras(port);
+> +
+>  	cxlhdm = devm_cxl_setup_hdm(port, NULL);
+>  	if (!IS_ERR(cxlhdm))
+>  		return devm_cxl_enumerate_decoders(cxlhdm, NULL);
+> @@ -125,6 +128,8 @@ static int cxl_endpoint_port_probe(struct cxl_port *port)
+>  	if (rc)
+>  		return rc;
+>  
+> +	cxl_endpoint_port_init_ras(port);
+> +
+>  	/*
+>  	 * Now that all endpoint decoders are successfully enumerated, try to
+>  	 * assemble regions from committed decoders
 
-Yes, especially when you have a large array.
-
-Chris
 
