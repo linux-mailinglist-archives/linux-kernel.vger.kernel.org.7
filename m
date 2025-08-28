@@ -1,78 +1,104 @@
-Return-Path: <linux-kernel+bounces-789149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 805E5B391A8
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 04:30:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 029E6B391AA
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 04:30:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44F8F367968
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 02:30:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3334A1B2193F
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 02:31:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2E4C252906;
-	Thu, 28 Aug 2025 02:30:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2CCD1F4C92;
+	Thu, 28 Aug 2025 02:30:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G4mXf21R"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="HESuvyEY"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5220F24469E;
-	Thu, 28 Aug 2025 02:30:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B55B8635C;
+	Thu, 28 Aug 2025 02:30:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756348206; cv=none; b=l1Z3v7El+fj5kwzn9ZPXU0f9Qq0HsMGwhItnkqJ9OHzrjrX490ePigu9sze2g/bQMA/F/oZsK7j0bFDeY9tKc7zg1S+ubBw7s6fwG5DB2nxuRYEU/alxTvCPd9q7u8ZQ+cawXvRG7IsOfggc/zDrpBQSa5rS/Ct+d2kaKURnnKM=
+	t=1756348242; cv=none; b=gF+DTnNFhzlFjaaiLKnkK7LVCmuQRU4HCrLZ/s8YwopvCoSOtL/fdt2WymILdWefl95JhoHJt7YPNCmreZzv6XQudUA5LaFKKpJGpuS7HPVvgHFv41FrfnNaqYZpQEzn/Ua6yw/+qKsrEfTXIki3m3f0HYbgL41X8kfgCCEjckE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756348206; c=relaxed/simple;
-	bh=Gjxv2YrpjZ/n5CKwhXCSM0jptEQWCLDhbqlR9OJhNnI=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=rrCHzp2lZlXmuszR/DMiisY67H56+IEtH8AYa81j1jX9UkZ58XiYNRch9OO0w0s7cl7fAQwqN3YCmww02dM92ke1PTOnKQeXF4Z2TPCZ2hUhYv2d6NZE2yZfWjEaLNHRkRANdUprO+mqvZJPtcEBuNROYV5p8CJClPez85my8hM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G4mXf21R; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE456C4CEEB;
-	Thu, 28 Aug 2025 02:30:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756348205;
-	bh=Gjxv2YrpjZ/n5CKwhXCSM0jptEQWCLDhbqlR9OJhNnI=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=G4mXf21R229mz5oyH8zhuu79sjERZbMVJfxUyi8vJs9MA9RXKFQ19Jmja2e7INenA
-	 FjkdZIqx+Dbb2dWcIrwDdRBfwI8W48kPFLg+vHUys5jqkGEnyAvWPq+8ZhlPfSQlmB
-	 lHoi9a6y1MlFrlfQo8OHLwiLwY+nFnI9mb8ChR5b2H6QRuH6HVrMUYlhFv5HTboBqP
-	 bbE2J4Eg/MXvEeLxbexb75b/LC1Q1gWcsIlEI07C3f0pKzeP1s+lBG7/4dZqqJ2Stt
-	 1lxi+Ppxy7Gr/ox7nnGK1DP6LfMliEdIBrXpMe/WnPlff74HF0l7jbhJTBoSWHYzT/
-	 MczmTmB1rG7+w==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 375B6383BF76;
-	Thu, 28 Aug 2025 02:30:14 +0000 (UTC)
-Subject: Re: [GIT PULL] perf-tools fixes for v6.17-rc4
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20250827234817.4156091-1-namhyung@kernel.org>
-References: <20250827234817.4156091-1-namhyung@kernel.org>
-X-PR-Tracked-List-Id: <linux-perf-users.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20250827234817.4156091-1-namhyung@kernel.org>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools.git tags/perf-tools-fixes-for-v6.17-2025-08-27
-X-PR-Tracked-Commit-Id: 2c369d91d0933aaff96b6b807b22363e6a38a625
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 07d9df80082b8d1f37e05658371b087cb6738770
-Message-Id: <175634821340.914261.15053069721892327124.pr-tracker-bot@kernel.org>
-Date: Thu, 28 Aug 2025 02:30:13 +0000
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Arnaldo Carvalho de Melo <acme@kernel.org>, Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org
+	s=arc-20240116; t=1756348242; c=relaxed/simple;
+	bh=iKNiXFRzX1nEeZUk6fZim2JKXbuHPyUWpHKkX4rwvRI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=AnrAhdXPTLF4R9Kzo7U8MQ2lfPsXXDRS4erJyjY6/tgpNxK5isLyNjkTSCNx0/pf8yHP/HbNpxuIbTjsWz6yb/DSgVDhOsoORt473P3Ylzs+JflQ2xhv7aJqu13YQcN/DkfPnUTSRCdNpw8g/hBRBFX34pUC7EnhKMeEQl05D40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=HESuvyEY; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1756348236;
+	bh=kZC1KDfdhq0gkEdYPzIAvbx/+4yF1859Np7tSb3eZ6w=;
+	h=Date:From:To:Cc:Subject:From;
+	b=HESuvyEYbvKS3i9X3+144iJiERTNwp1GT2sHZULzo6UbY3wQvK9EI2bfLSsHLnrl2
+	 EtyFq5dXaTmOvg5JqSDFa9eM+CJZP48w80rzRLKS+dXNptCmImIAVQqro3dIIqZQ8q
+	 HgsJGv6mzCDe7ZlOWkoPZet/+K9jM0U+k3Fxh5QEJ+q5hImoNzVHccscolTjPqAk/r
+	 mk6FOtOXKHqHSWbBcSfs0pTpiq9+fGTXwAtfZ7ZIAAbglrB53aWdE6hstovEZIg33U
+	 mDHd5wX3oWgHHP5/qLJohD6yWDcFkUtP//YCndirg/9s87m7RpIzuwlllAQNZMd9di
+	 aZw/pJu3RQN1Q==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4cC53c0z8lz4wfs;
+	Thu, 28 Aug 2025 12:30:36 +1000 (AEST)
+Date: Thu, 28 Aug 2025 12:30:35 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Alex Williamson <alex.williamson@redhat.com>
+Cc: Alex Mastro <amastro@fb.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: build warning after merge of the vfio tree
+Message-ID: <20250828123035.2f0c74e7@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="Sig_/DnB81n2LIGA20nMA5qLEz6u";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-The pull request you sent on Wed, 27 Aug 2025 16:48:17 -0700:
+--Sig_/DnB81n2LIGA20nMA5qLEz6u
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools.git tags/perf-tools-fixes-for-v6.17-2025-08-27
+Hi all,
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/07d9df80082b8d1f37e05658371b087cb6738770
+After merging the vfio tree, today's linux-next build (htmldocs) produced
+this warning:
 
-Thank you!
+Documentation/filesystems/proc.rst:2171: WARNING: Title underline too short.
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+VFIO Device files
+~~~~~~~~~~~~~~~~ [docutils]
+
+Introduced by commit
+
+  1e736f148956 ("vfio/pci: print vfio-device syspath to fdinfo")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/DnB81n2LIGA20nMA5qLEz6u
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmivv0sACgkQAVBC80lX
+0Gwz1wf/YQskcQxuYsHbqSRkVQNybz56+8KcY7bvb3k9YLT6SfyxKp7/gOKEwBw5
+v7phb7Fgjtv2xIU7IZRrPsYUjk+BXv/LGYQLxWJuGX9RGylRGJqeaD7iJlfCrvXJ
+iV82LRPILTqilrJCNLnoQJAI2SJROuyPPvCWhtThjZGAEVZVwxjwGpJzLmXdQHd1
+3DqthAQOarY3QtSNr7RLNokn8kBkT1qT5x9uV6uBF4+5NxnLOdYpJvyNvjs5Me7m
+Q3CDlm4HbVMJteEBtw6lp4PQA5m2aJANIz+yrlIo03ZcaUZlVZEdl7A7cN6Afb33
++Mtx9CiiSrGupUG+BXRDMbXvC9BcCQ==
+=8kMY
+-----END PGP SIGNATURE-----
+
+--Sig_/DnB81n2LIGA20nMA5qLEz6u--
 
