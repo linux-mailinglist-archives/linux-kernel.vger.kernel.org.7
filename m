@@ -1,80 +1,80 @@
-Return-Path: <linux-kernel+bounces-790049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4CAEB39EB7
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 15:24:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2227AB39EB2
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 15:24:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8EC6561EAA
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 13:23:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89F5E1C83B64
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 13:23:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F09D2313E23;
-	Thu, 28 Aug 2025 13:22:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68E81313E02;
+	Thu, 28 Aug 2025 13:22:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OwaF3I6d"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pgM2fblx"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ABDD313556
-	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 13:22:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 946FA31196C
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 13:22:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756387330; cv=none; b=gtHUWcIHOAzGbjHXrMdkJz9GrBKK/QcCi6jarrzK2wSPVU5ScWAflXo0qltdEb6n9TOIuvQQcJh5ksD9Jaxm8QGk3ORnNAalYWS/isYJjvgz4ereVVeYBXODcjfwsoTvPs+Rb0nOSYXB7UbuJ1jZ41qsV0g1lv5gGWgmvq1anSM=
+	t=1756387327; cv=none; b=ZjyL3O95If7yYXSCXZ8+JEe8PPg7jYDSmWG8pVJX0GDu0aFDhKBm6581AKQGYZj574zC5fN6moFhPtnXs1mGOvVeQk/x9ICYXPaeIR+U9mBLw4+4K4s6+vg3yqG+RUIrOWxNYFq1q+emCC1lo7+79qbLNjtS8PIth2dt+JWHt+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756387330; c=relaxed/simple;
-	bh=5XTE+m+s7gCBnjAYMBLxzzkoPX0/i4ayIw1uWSSs0VU=;
+	s=arc-20240116; t=1756387327; c=relaxed/simple;
+	bh=jh74Bm9FuYTHqI0n6vq3i4l68ZMyCp1NQ4+AezIBvsk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=I3pLu9BJLX/wDKsS65F9tIRmDMdFiwVGkIGjaQsAmqpE7ptgb7jhd9Sd9ihDSUfIILA4an233+hO3WyOCtiODBPt9+rbKtWwYkM01UGI9ksvIlJtsdElwYmfxAy659YQE5+XggmJPEsVShUCaL12clDAdzqY24q9hFMxJotbeIg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OwaF3I6d; arc=none smtp.client-ip=209.85.218.54
+	 In-Reply-To:Content-Type; b=el3u1ihtcPzpRwSZOxPPi+sMPsZtHkRoofQzcKm9/X6L8vbZi9doCIBx4CkDU8qYLNaLV/3OYDGTWfwOc6SV8bArsN1e0fxXG21qtVMWiWKqMRSaC1MO7pxBKMvi9rhpgZ8lArJnrGp/k2ZOZsYYAxmEnSlzlzv8SJJASMS8Etk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pgM2fblx; arc=none smtp.client-ip=209.85.218.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-afcb7a16441so130047766b.2
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 06:22:07 -0700 (PDT)
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-afcb73394b4so135417666b.0
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 06:22:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756387326; x=1756992126; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
+        d=linaro.org; s=google; t=1756387324; x=1756992124; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=Qi55o5psDKNexWDsg9drcRiKGnBJjMSdfWzuesdk1og=;
-        b=OwaF3I6dCN0P2TjRXOyS0TTrv3uGpHpGyM6/4SLXUHF0GRdfTKYcgIERUyEqloPv/i
-         GWcwLlo1L9VKx5i3GQFOmiE+Lm8V+EHyxMba8ZRuO2z3agHsW0/OF0k0pNMhIils1Lbr
-         r8gA6ioRu+ubmrV+dGF/qJ6Ai2Y9YVH4m7q/BF1+MnKBZJ7zIEKbxOiN9rIoh1wQziEg
-         vVy8hzoqQp5LhVrbuMgkIUVTKAmh9H1yCxONEl+J2iyEVQ9d4mqWqYDzHmrqMMo9a3u1
-         rQ1qToJzT2pUII5nyIpavZYfPEP23b13FzcZQJ6IrmW+iwHD/kG+y1z99layBT3BGnfA
-         vUxA==
+        bh=0vejRaEijRO8+CORhQowxHuuY85LG5Du7ZSdJ6Jjs0g=;
+        b=pgM2fblxgg5vEKG5kWw5ti6/0oDeJ0/4cmG+qLWn9ygVjZBVXPEcBgmERxzqPWp2jb
+         jdfL7PxpR1kCt84llzptVYArXvce7Ofqv3E2G5tKVhoZv9n0FB0wHr0SuFPpEwl+n5at
+         ERQ2UMYwSH8JMvwc+rgk/6N5R+NZP1ChfmWvY/+WIHkoveCnWgw2KZuNlMnDTDnoZw1A
+         nky8jJo19dVSLCUrY4Wh4wtGFHX6uDLcF6SrS/A/IKykXutQl4iGmyVC7WA9+i+zqU7G
+         ZNpuI6kmhDqDWh8WjsFtT1v3/Fnad8jUjJQn3bqQJX5+LfBOOvleDsM4eC0DNyWcevH1
+         p4yA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756387326; x=1756992126;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1756387324; x=1756992124;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Qi55o5psDKNexWDsg9drcRiKGnBJjMSdfWzuesdk1og=;
-        b=kjGtOn6KH8pblHqV45gmC1Pgsz2xAx36Hhiw7k+qayB7wRVtcooSDQMhO58+dubKgX
-         0Z74MvnUzz4hXDif/uFMHE3Ni4T9ixvqb52xDrhrd5Rv8kMceDINGF1JAkfWSXj//wCj
-         4V37aCOQGAMpYn9N8ee7eD+0daDZL0c/Pz3QY77uF5E/KnugGJ9U0ABNh+iIw94/ozCD
-         qhHdHlZBfaRY46kY4Z6KeWVjmMk5v3w1lqSqHreTtTjjDay+wsjpZTg9COGIfrq69Vwm
-         HWdLY7LQ0WWmysaPdfLY4qAbOAMMiXwWDV6f7lRO5IlJyTOj+rmJh3NMgwtXz4xzSW7a
-         kvLw==
-X-Forwarded-Encrypted: i=1; AJvYcCXxg3FG36EVdcoHM9WAbUVNI4oRWpTOrs6kLaoouLskCJD6n4fiOhP1EJLDWT6A6PYuiXsKfrkt5jODYOA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyr6jWX3ALBd05wbP8SfswIXaYROx4YvzyM9Y7pqaMGc1mkqpam
-	KYp8wtQkPWrRXTELTfTREXcTQk5e+8a8cr1XiSaWhIh5xB5tALA2eCTkpHUTOIgoYjY=
-X-Gm-Gg: ASbGnct4CqqqXxcmpZX0qK4uTfFYberzyqsNB12gOu5+cUd7J2rl/PYVUJ2qhqEp0dU
-	vbtZ/2F2IKkY1BCm7VeV9jYCUaN6Pe5iNIRjWVZ6FY5sNMIxjMOwkMpZHCvT3AMdxtDwc27m1F4
-	qzt65+6DzsHbSAFaQoh0pXi6xlg3YL31HvPhSCef0G72+PWXV8yWi8UJYjKq8Im6jH/op1oo67h
-	NdabynMjtMJ8rOh6zoELJoWuO8oxh/yh+IRHCM7yeSniSL9K+F9DmM+7LGzHbFIdJRJW7LHzURC
-	wij0i9iFKMHecBj/TBsWNHM/Lx0nWNHyY+KHnlB/t8XyAXIIDwD3WrLOC/SBd/cs/ZJXyBljP0a
-	MZ+l3u9gXMEPnJ5115t8hpN5tNDRO+GiiEeuJtK4Q1OI1ONLxZlfAnmzEIXGZ73/dhJN0X6I+Wx
-	I9
-X-Google-Smtp-Source: AGHT+IGjzycD3I8jpbmQVU59Xd7O/26hTjS+y9agnGzek0/A/beiz9E8xi5Rv70X95Pxh+1hKUOYSQ==
-X-Received: by 2002:a17:907:9403:b0:afe:f92d:9178 with SMTP id a640c23a62f3a-afef92d9a2cmr10323866b.60.1756387324635;
-        Thu, 28 Aug 2025 06:22:04 -0700 (PDT)
-Received: from [192.168.1.36] (p4fc3dd6f.dip0.t-ipconnect.de. [79.195.221.111])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afe81890cd7sm865837266b.109.2025.08.28.06.22.02
+        bh=0vejRaEijRO8+CORhQowxHuuY85LG5Du7ZSdJ6Jjs0g=;
+        b=vu8I7WiVkIC8hiH/SV4I39sGuHatCfbNAqo1r/+HPItF4b7EiiP3dSOM0KdtqwZ/74
+         bRt9XOP0v+DiaDFQmH5Z/4nMMwrDyewb6w5OWslkOAkC1oeoHrCUOJei4U9OeT/wiei3
+         BPYzxCPPpTlOvgwrzEFAiZeMLYD0V8yXPFgW4v1k7WwDwweN6YJX1EFA+xNhraaU4C6F
+         3VfvEs5prLKdLRCzkmqZGqzkPWEfd2+tzWF9qdYNqKm9tFsdi6mUtAhCQJUqHxJkd10K
+         4VwMQuJxKRfqO4Qfc8CoJSTfcHgGFiycbBhu+io6VnTRjbrxWAAZsIgaHjhHdjSYuW5h
+         gQQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWgd+6GrfzPE4P4xncmVC85mWtwzVfJuDJkH+VkG81/k2wHUho1q07pzmQ9jXvA/4OGTdUSR0iqk9GUu1c=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1JTC1J/sHtk1AriPaZbIEL/gtQpAZObYscvra4LJhCCgidsqJ
+	aCsLkuZ49klPeV2BGchuaiUypZYY325wGIC1OBt6/L0ddy77tFbqZ19cj11tvJ0lAts=
+X-Gm-Gg: ASbGnct1F8olMSovx3h7VFGiHU0xyR3I917dyZWx7Ua9AZ/z0zRQlE/R0nfiM7PwYqd
+	8XoMjqT/Jq/fYTv3II8zhfk+mXAc45xZeFFtDnXtjUhjNTsQJn2xSgU13I348iIs0v4nFvj7Tga
+	IMdS9Jm8nFxmfBZn21WK5mgyYSMNf4TkIHc2BNlA8euO5iVePmK1WbyqkKiQBuI5OGHraT6fid+
+	j66ZwPkxf3YoS1Oo+AIAGf/T+j9SynxgLe++ECKQCHG6tdB6nHws6Miwql/kTUbzBwkOIsKWTMd
+	UtW693MFcYsw21FDwvakq80d9LfT7eOi/mXuEd6vfRoVPNNlt4lrnIMWW6GDNmxIf+/E/WUVlMO
+	VOcPI8QvDHx+uNH42zVNH/TnX+hIauTiL6kvczXpCBhB7G3aHg9HK/9hHKGJcpu6C7lU3wTD7Ba
+	jTKQ==
+X-Google-Smtp-Source: AGHT+IEydpmL/CGGlYRxIOHwyq2SzsRVG+uSKGaJVOpWYTkFto5PXtB9f5EDZvVuQAcMg4VMfo+bpw==
+X-Received: by 2002:a17:906:398f:b0:afe:b7b5:555a with SMTP id a640c23a62f3a-afeb7b56482mr637165366b.63.1756387323855;
+        Thu, 28 Aug 2025 06:22:03 -0700 (PDT)
+Received: from [10.41.150.230] ([77.241.232.9])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afe849d7e6bsm850780866b.61.2025.08.28.06.22.02
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
         Thu, 28 Aug 2025 06:22:03 -0700 (PDT)
-Message-ID: <88ee0a26-8d64-4060-b703-40156cd011a7@linaro.org>
-Date: Thu, 28 Aug 2025 15:22:01 +0200
+Message-ID: <45fa25b0-076e-4df5-a3e3-118b1034c71b@linaro.org>
+Date: Thu, 28 Aug 2025 15:22:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,247 +82,198 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v14 03/10] power: reset: reboot-mode: Add support for 64
- bit magic
+Subject: Re: [PATCH v10 03/13] media: dt-bindings: add rockchip px30 vip
+To: michael.riesch@collabora.com, Mehdi Djait <mehdi.djait@linux.intel.com>,
+ Maxime Chevallier <maxime.chevallier@bootlin.com>,
+ =?UTF-8?Q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ Gerald Loacker <gerald.loacker@wolfvision.net>,
+ Markus Elfring <Markus.Elfring@web.de>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring
+ <robh+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+ Kever Yang <kever.yang@rock-chips.com>,
+ Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+ Sebastian Reichel <sebastian.reichel@collabora.com>,
+ Collabora Kernel Team <kernel@collabora.com>,
+ Paul Kocialkowski <paulk@sys-base.io>,
+ Alexander Shiyan <eagle.alexander923@gmail.com>,
+ Val Packett <val@packett.cool>, Rob Herring <robh@kernel.org>,
+ Philipp Zabel <p.zabel@pengutronix.de>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, Mehdi Djait <mehdi.djait@bootlin.com>
+References: <20240220-rk3568-vicap-v10-0-62d8a7b209b4@collabora.com>
+ <20240220-rk3568-vicap-v10-3-62d8a7b209b4@collabora.com>
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 Content-Language: en-US
-To: Shivendra Pratap <shivendra.pratap@oss.qualcomm.com>,
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>, Sebastian Reichel <sre@kernel.org>,
- Rob Herring <robh@kernel.org>, Sudeep Holla <sudeep.holla@arm.com>,
- Souvik Chakravarty <Souvik.Chakravarty@arm.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Andy Yan <andy.yan@rock-chips.com>,
- Mark Rutland <mark.rutland@arm.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
- Konrad Dybcio <konradybcio@kernel.org>, cros-qcom-dts-watchers@chromium.org,
- Vinod Koul <vkoul@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
- Will Deacon <will@kernel.org>,
- Florian Fainelli <florian.fainelli@broadcom.com>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
- Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>,
- Stephen Boyd <swboyd@chromium.org>, Andre Draszik
- <andre.draszik@linaro.org>, linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
- Elliot Berman <quic_eberman@quicinc.com>,
- Srinivas Kandagatla <srini@kernel.org>
-References: <20250815-arm-psci-system_reset2-vendor-reboots-v14-0-37d29f59ac9a@oss.qualcomm.com>
- <20250815-arm-psci-system_reset2-vendor-reboots-v14-3-37d29f59ac9a@oss.qualcomm.com>
-From: Casey Connolly <casey.connolly@linaro.org>
-In-Reply-To: <20250815-arm-psci-system_reset2-vendor-reboots-v14-3-37d29f59ac9a@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240220-rk3568-vicap-v10-3-62d8a7b209b4@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Shivendra,
-
-On 15/08/2025 16:35, Shivendra Pratap wrote:
-> Current reboot-mode supports a single 32-bit argument for any
-> supported mode. Some reboot-mode based drivers may require
-> passing two independent 32-bit arguments during a reboot
-> sequence, for uses-cases, where a mode requires an additional
-> argument. Such drivers may not be able to use the reboot-mode
-> driver. For example, ARM PSCI vendor-specific resets, need two
-> arguments for its operation – reset_type and cookie, to complete
-> the reset operation. If a driver wants to implement this
-> firmware-based reset, it cannot use reboot-mode framework.
+On 19/08/2025 01:25, Michael Riesch via B4 Relay wrote:
+> From: Mehdi Djait <mehdi.djait@bootlin.com>
 > 
-> Introduce 64-bit magic values in reboot-mode driver to
-> accommodate dual 32-bit arguments when specified via device tree.
-> In cases, where no second argument is passed from device tree,
-> keep the upper 32-bit of magic un-changed(0) to maintain backward
-> compatibility.
-
-How about adding a n_magic_args property to struct reboot_mode_driver?
-Then in struct mode_info change magic to be a u32 array of a fixed
-length (currently two in-keeping with the DT bindings).
-
-Parsing the DT values then gets simpler (u32_array) and the magic value
-can be passed into the ->write() cb as a pointer since all the
-reboot_mode drivers already know how big the array is. Unpopulated DT
-values would just be 0.
-
-Kind regards,
-
+> Add documentation for the Rockchip PX30 Video Input Processor (VIP).
 > 
-> Update the current drivers using reboot-mode for a 64-bit magic
-> value.
-> 
-> Signed-off-by: Shivendra Pratap <shivendra.pratap@oss.qualcomm.com>
+> Signed-off-by: Mehdi Djait <mehdi.djait@bootlin.com>
+> [revised description]
+> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+> Signed-off-by: Michael Riesch <michael.riesch@wolfvision.net>
+> Signed-off-by: Michael Riesch <michael.riesch@collabora.com>
 > ---
->  drivers/power/reset/nvmem-reboot-mode.c  | 13 +++++++++----
->  drivers/power/reset/qcom-pon.c           | 11 ++++++++---
->  drivers/power/reset/reboot-mode.c        | 19 +++++++++++++------
->  drivers/power/reset/syscon-reboot-mode.c | 11 ++++++++---
->  include/linux/reboot-mode.h              |  3 ++-
->  5 files changed, 40 insertions(+), 17 deletions(-)
+>   .../bindings/media/rockchip,px30-vip.yaml          | 122 +++++++++++++++++++++
+>   MAINTAINERS                                        |   1 +
+>   2 files changed, 123 insertions(+)
 > 
-> diff --git a/drivers/power/reset/nvmem-reboot-mode.c b/drivers/power/reset/nvmem-reboot-mode.c
-> index 41530b70cfc48c2a83fbbd96f523d5816960a0d1..5d73dde585b1fd438b1847f884feb37cd9e4dd5c 100644
-> --- a/drivers/power/reset/nvmem-reboot-mode.c
-> +++ b/drivers/power/reset/nvmem-reboot-mode.c
-> @@ -16,15 +16,20 @@ struct nvmem_reboot_mode {
->  	struct nvmem_cell *cell;
->  };
->  
-> -static int nvmem_reboot_mode_write(struct reboot_mode_driver *reboot,
-> -				    unsigned int magic)
-> +static int nvmem_reboot_mode_write(struct reboot_mode_driver *reboot, u64 magic)
->  {
-> -	int ret;
->  	struct nvmem_reboot_mode *nvmem_rbm;
-> +	u32 magic_32;
-> +	int ret;
+> diff --git a/Documentation/devicetree/bindings/media/rockchip,px30-vip.yaml b/Documentation/devicetree/bindings/media/rockchip,px30-vip.yaml
+> new file mode 100644
+> index 000000000000..9f7ab6965636
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/media/rockchip,px30-vip.yaml
+> @@ -0,0 +1,122 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/media/rockchip,px30-vip.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
-> +	if (magic > U32_MAX)
-> +		return -EINVAL;
+> +title: Rockchip PX30 Video Input Processor (VIP)
 > +
-> +	magic_32 = magic;
->  
->  	nvmem_rbm = container_of(reboot, struct nvmem_reboot_mode, reboot);
->  
-> -	ret = nvmem_cell_write(nvmem_rbm->cell, &magic, sizeof(magic));
-> +	ret = nvmem_cell_write(nvmem_rbm->cell, &magic_32, sizeof(magic_32));
->  	if (ret < 0)
->  		dev_err(reboot->dev, "update reboot mode bits failed\n");
->  
-> diff --git a/drivers/power/reset/qcom-pon.c b/drivers/power/reset/qcom-pon.c
-> index 7e108982a582e8243c5c806bd4a793646b87189f..d0ed9431a02313a7bbaa93743c16fa1ae713ddfe 100644
-> --- a/drivers/power/reset/qcom-pon.c
-> +++ b/drivers/power/reset/qcom-pon.c
-> @@ -27,17 +27,22 @@ struct qcom_pon {
->  	long reason_shift;
->  };
->  
-> -static int qcom_pon_reboot_mode_write(struct reboot_mode_driver *reboot,
-> -				    unsigned int magic)
-> +static int qcom_pon_reboot_mode_write(struct reboot_mode_driver *reboot, u64 magic)
->  {
->  	struct qcom_pon *pon = container_of
->  			(reboot, struct qcom_pon, reboot_mode);
-> +	u32 magic_32;
->  	int ret;
->  
-> +	if (magic > U32_MAX || (magic << pon->reason_shift) > U32_MAX)
-> +		return -EINVAL;
+> +maintainers:
+> +  - Mehdi Djait <mehdi.djait@linux.intel.com>
+> +  - Michael Riesch <michael.riesch@collabora.com>
 > +
-> +	magic_32 = magic << pon->reason_shift;
+> +description:
+> +  The Rockchip PX30 Video Input Processor (VIP) receives the data from a camera
+> +  sensor or CCIR656 encoder and transfers it into system main memory by AXI bus.
 > +
->  	ret = regmap_update_bits(pon->regmap,
->  				 pon->baseaddr + PON_SOFT_RB_SPARE,
->  				 GENMASK(7, pon->reason_shift),
-> -				 magic << pon->reason_shift);
-> +				 magic_32);
->  	if (ret < 0)
->  		dev_err(pon->dev, "update reboot mode bits failed\n");
->  
-> diff --git a/drivers/power/reset/reboot-mode.c b/drivers/power/reset/reboot-mode.c
-> index 9bb97bcd33cd3d58c75c791e9b568024e810e5b0..ac81b8b0a9b7fc31f8ef21024333a050087ce90f 100644
-> --- a/drivers/power/reset/reboot-mode.c
-> +++ b/drivers/power/reset/reboot-mode.c
-> @@ -19,12 +19,11 @@
->  
->  struct mode_info {
->  	const char *mode;
-> -	u32 magic;
-> +	u64 magic;
->  	struct list_head list;
->  };
->  
-> -static unsigned int get_reboot_mode_magic(struct reboot_mode_driver *reboot,
-> -					  const char *cmd)
-> +static u64 get_reboot_mode_magic(struct reboot_mode_driver *reboot, const char *cmd)
->  {
->  	const char *normal = "normal";
->  	struct mode_info *info;
-> @@ -66,7 +65,7 @@ static int reboot_mode_notify(struct notifier_block *this,
->  			      unsigned long mode, void *cmd)
->  {
->  	struct reboot_mode_driver *reboot;
-> -	unsigned int magic;
-> +	u64 magic;
->  
->  	reboot = container_of(this, struct reboot_mode_driver, reboot_notifier);
->  	magic = get_reboot_mode_magic(reboot, cmd);
-> @@ -89,6 +88,8 @@ int reboot_mode_register(struct reboot_mode_driver *reboot, struct device_node *
->  	struct mode_info *next;
->  	struct property *prop;
->  	size_t len = strlen(PREFIX);
-> +	u32 magic_arg1;
-> +	u32 magic_arg2;
->  	int ret;
->  
->  	if (!np)
-> @@ -108,12 +109,18 @@ int reboot_mode_register(struct reboot_mode_driver *reboot, struct device_node *
->  			goto error;
->  		}
->  
-> -		if (of_property_read_u32(np, prop->name, &info->magic)) {
-> -			pr_err("reboot mode %s without magic number\n", info->mode);
-> +		if (of_property_read_u32(np, prop->name, &magic_arg1)) {
-> +			pr_err("reboot mode without magic number\n");
->  			kfree(info);
->  			continue;
->  		}
->  
-> +		if (of_property_read_u32_index(np, prop->name, 1, &magic_arg2))
-> +			magic_arg2 = 0;
+> +properties:
+> +  compatible:
+> +    const: rockchip,px30-vip
 > +
-> +		info->magic = magic_arg2;
-> +		info->magic = (info->magic << 32) | magic_arg1;
+> +  reg:
+> +    maxItems: 1
 > +
->  		info->mode = kstrdup_const(prop->name + len, GFP_KERNEL);
->  		if (!info->mode) {
->  			ret =  -ENOMEM;
-> diff --git a/drivers/power/reset/syscon-reboot-mode.c b/drivers/power/reset/syscon-reboot-mode.c
-> index e0772c9f70f7a19cd8ec8a0b7fdbbaa7ba44afd0..3cbd000c512239b12ec51987e900d260540a9dea 100644
-> --- a/drivers/power/reset/syscon-reboot-mode.c
-> +++ b/drivers/power/reset/syscon-reboot-mode.c
-> @@ -20,16 +20,21 @@ struct syscon_reboot_mode {
->  	u32 mask;
->  };
->  
-> -static int syscon_reboot_mode_write(struct reboot_mode_driver *reboot,
-> -				    unsigned int magic)
-> +static int syscon_reboot_mode_write(struct reboot_mode_driver *reboot, u64 magic)
->  {
->  	struct syscon_reboot_mode *syscon_rbm;
-> +	u32 magic_32;
->  	int ret;
->  
-> +	if (magic > U32_MAX)
-> +		return -EINVAL;
+> +  interrupts:
+> +    maxItems: 1
 > +
-> +	magic_32 = magic;
+> +  clocks:
+> +    items:
+> +      - description: ACLK
+> +      - description: HCLK
+> +      - description: PCLK
 > +
->  	syscon_rbm = container_of(reboot, struct syscon_reboot_mode, reboot);
->  
->  	ret = regmap_update_bits(syscon_rbm->map, syscon_rbm->offset,
-> -				 syscon_rbm->mask, magic);
-> +				 syscon_rbm->mask, magic_32);
->  	if (ret < 0)
->  		dev_err(reboot->dev, "update reboot mode bits failed\n");
->  
-> diff --git a/include/linux/reboot-mode.h b/include/linux/reboot-mode.h
-> index 98f68f95c9e8460be23282c51ef7fcbed73887bd..370228b5161963aac1d75af752ada0e8282b1078 100644
-> --- a/include/linux/reboot-mode.h
-> +++ b/include/linux/reboot-mode.h
-> @@ -3,11 +3,12 @@
->  #define __REBOOT_MODE_H__
->  
->  #include <linux/mutex.h>
-> +#include <linux/types.h>
->  
->  struct reboot_mode_driver {
->  	struct device *dev;
->  	struct list_head head;
-> -	int (*write)(struct reboot_mode_driver *reboot, unsigned int magic);
-> +	int (*write)(struct reboot_mode_driver *reboot, u64 magic);
->  	struct notifier_block reboot_notifier;
->  	/*Protects access to reboot mode list*/
->  	struct mutex rb_lock;
+> +  clock-names:
+> +    items:
+> +      - const: aclk
+> +      - const: hclk
+> +      - const: pclk
+> +
+> +  resets:
+> +    items:
+> +      - description: AXI
+> +      - description: AHB
+> +      - description: PCLK IN
+> +
+> +  reset-names:
+> +    items:
+> +      - const: axi
+> +      - const: ahb
+> +      - const: pclkin
+> +
+> +  power-domains:
+> +    maxItems: 1
+> +
+> +  ports:
+> +    $ref: /schemas/graph.yaml#/properties/ports
+> +
+> +    properties:
+> +      port@0:
+> +        $ref: /schemas/graph.yaml#/$defs/port-base
+> +        unevaluatedProperties: false
+> +        description: input port on the parallel interface
+> +
+> +        properties:
+> +          endpoint:
+> +            $ref: video-interfaces.yaml#
+> +            unevaluatedProperties: false
+> +
+> +            properties:
+> +              bus-type:
+> +                enum: [5, 6]
+> +
+> +            required:
+> +              - bus-type
+> +
+> +    required:
+> +      - port@0
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - clocks
+> +  - ports
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/px30-cru.h>
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    #include <dt-bindings/media/video-interfaces.h>
+> +    #include <dt-bindings/power/px30-power.h>
+> +
+> +    soc {
+> +        #address-cells = <2>;
+> +        #size-cells = <2>;
+> +
+> +        video-capture@ff490000 {
+> +            compatible = "rockchip,px30-vip";
+> +            reg = <0x0 0xff490000 0x0 0x200>;
+> +            interrupts = <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
+> +            clocks = <&cru ACLK_CIF>, <&cru HCLK_CIF>, <&cru PCLK_CIF>;
+> +            clock-names = "aclk", "hclk", "pclk";
+> +            power-domains = <&power PX30_PD_VI>;
+> +            resets = <&cru SRST_CIF_A>, <&cru SRST_CIF_H>, <&cru SRST_CIF_PCLKIN>;
+> +            reset-names = "axi", "ahb", "pclkin";
+> +
+> +            ports {
+> +                #address-cells = <1>;
+> +                #size-cells = <0>;
+> +
+> +                port@0 {
+> +                    reg = <0>;
+> +
+> +                    cif_in: endpoint {
+> +                        remote-endpoint = <&tw9900_out>;
+> +                        bus-type = <MEDIA_BUS_TYPE_BT656>;
+> +                    };
+> +                };
+> +            };
+> +        };
+> +    };
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 0d2adf483426..356679cfdcaa 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -21768,6 +21768,7 @@ M:	Michael Riesch <michael.riesch@collabora.com>
+>   L:	linux-media@vger.kernel.org
+>   S:	Maintained
+>   F:	Documentation/admin-guide/media/rkcif*
+> +F:	Documentation/devicetree/bindings/media/rockchip,px30-vip.yaml
+>   
+>   ROCKCHIP CRYPTO DRIVERS
+>   M:	Corentin Labbe <clabbe@baylibre.com>
 > 
 
--- 
-// Casey (she/her)
+I think your example could use with some newlines per dtsi files in real 
+life, i.e. newline after the reg as an example.
 
+Other than that this looks fine to me, please consider incorporating.
+
+Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 
