@@ -1,109 +1,160 @@
-Return-Path: <linux-kernel+bounces-789712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-789713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC3E8B39987
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 12:21:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C54E5B39985
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 12:20:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 273BA7BAD68
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 10:18:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B3C73B9299
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 10:20:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5483A30ACE2;
-	Thu, 28 Aug 2025 10:19:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61E292701D1;
+	Thu, 28 Aug 2025 10:20:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FNKDVS+n"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Voa9vrjz"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4212B309DC1;
-	Thu, 28 Aug 2025 10:19:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45EB626FD9D
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 10:19:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756376366; cv=none; b=TKZlBr4hjse2XiLoUta4Yfp8RXFTyWp5DkhykqQxsERXxXOO9NhWMHzVS3TAWmqIGGbcUUcnmSt0JTeuhmHtSECQ1HsDbmGO19aaUQyYPy7RF5iaEqX4oY3v0ux3tawBGk9zsdCbo65Vir0gLm1PjQXMWZaZtz0apC4IBAlPRDI=
+	t=1756376401; cv=none; b=di/KP9FWeFxsq/13gRcx7UT7PaN/C11CfzRTV5sxFqfrAITm38LjRhi9uG9GNPoVE22adn5kKMJHXt6VPvMtfbVmplW8qM4QeAlJI/3+hNwhxb3RXay2A3BiIh0W/RCQP+HsAg//vi36R49dsWPvB0NwNSHijVniaBDWKOXt1/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756376366; c=relaxed/simple;
-	bh=uCQsYzGHM8gdZUV2vcR2ZjpT4tC/WRO5wHruBh+dFIA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CXEtvBPbQ2XwdegD5AQMnDQ7f54d5WPpGD9rnVyulVwbtBshizpyh3dE5TjWK00W/NmEjphPD2FmzRbrGqWOBxhSUVRowEoXZXIeWj6kgboTzz+2Lg6+TpBFGkBo5D0YQutoWCuB6eu+REWl7NRTYa9KfUA1Yok2S5dtB2KDIRs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FNKDVS+n; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-24498e93b8fso1065215ad.3;
-        Thu, 28 Aug 2025 03:19:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756376364; x=1756981164; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uCQsYzGHM8gdZUV2vcR2ZjpT4tC/WRO5wHruBh+dFIA=;
-        b=FNKDVS+nPMZHa/Oql5Wo/vGiSMb9wSz0DvTBTSs46QugJhf3KnTl4cXFT9W7ZtLt3M
-         0riwxTq5OEIgPHf7QD5H2AZepRkAyBou+kQ/hb+LG1RxbNz6B36o7zlUdxPInGu3sfH9
-         KoycYVaab60M5ZYQwcYHWtn2i7L4SE6xkAjzUchPGcXtYxOK6LPm9gm3fVYvLPUkxy81
-         qLor3bUk4Arw4S25FbHaAzGgEIiGSErYK39fTCqgXJXBGJyP9nyIc8WCygXg6P79s2dU
-         vo+CFJt8aPW+xA4R5gUQKn+SumHs/YsDYml+D52H/obhTaJMCVzPf/+7m5l2cKDR6NRi
-         1mFw==
+	s=arc-20240116; t=1756376401; c=relaxed/simple;
+	bh=C1DYH4kVeKuTMIZnOmx1ZxMHuw47TEaonNH+ssfuphc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HUxyGklysbV+6up9shzLmghGnnbxkZzMt+ism7Ilm2aUT+Ko6kAGlVY3VmxTGoBeyzGRfISSLrvxih+Q3sryzEQWuMyBwM+d20QUjrFAlbugGTGWl/N9dj8OFczbkV0ZWpC2krYTC7uVfPDVo0ikAECe2nnejVXKBlQPg/g+6nE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Voa9vrjz; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756376399;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mBAEoFNbmswFsnSxAIv1w+pBcSdXwLgSTS2jwoutXlw=;
+	b=Voa9vrjzTwnIk1XnGe0lK5O7Py9HAgFReyjhQI8T2ENUvOwdCMAYApkR2u8qqCHwm/Lrga
+	V0b52jm5rnnRZkuWWLsCFA6eM2mfUE0n542QTNDJRVdnSv5eW3Qu9LuQGiWr9odywSypQE
+	sBqvdrMI8uPMDsJs2fltZeeNteUCdEA=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-264-K0osWPgaPPSDpY-Ym5leeQ-1; Thu, 28 Aug 2025 06:19:57 -0400
+X-MC-Unique: K0osWPgaPPSDpY-Ym5leeQ-1
+X-Mimecast-MFC-AGG-ID: K0osWPgaPPSDpY-Ym5leeQ_1756376396
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-45a1b0c5377so3674395e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 03:19:57 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756376364; x=1756981164;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uCQsYzGHM8gdZUV2vcR2ZjpT4tC/WRO5wHruBh+dFIA=;
-        b=RjriO80Ic5RXRpz9+cflJJlt0/L+LeKn1Th7Lj7MAD/o4yAWUa5mgL+uyuCmmHmzg3
-         1Kq6nBOaLk6PbmqJTYY2C+Hw/BNVk9r0jskw4Xep/a12FzJVOFhx/qHCahY+rq/bv68o
-         /lbYoIXRG1na6BeE86D4y8NgHUV/2w2it64peB23a3aZgErO9EFa7kAAAJNLyQRqLOGm
-         L6yn3MI0iZq1i2BLjxiPRUcVJ2KsSp0C205YyWTPFjev7XbgPlfTVT6KKRot8n5bOxBA
-         OwDqZ1sshZSRGzSgdMLj466cRLbgtmFqjWSmDWqf66Lf8HZkWdIPRUsa+9vvH0esvjeW
-         90ZA==
-X-Forwarded-Encrypted: i=1; AJvYcCVQE3QhybFKRXD9rsmKaGPYm606uu9Vo6khS96L6DeVNOEQr5aw6IBrDbLpzPS4RY2VoLRHZO7kIB7Vjgk=@vger.kernel.org, AJvYcCW2u/gpxlAJHTEUyk3Z4MMxJjD/77gLBvL0mMcTfm7eYzE4BBr6I1fV9N1goZIsufAcMqeP+x+GbiQFD2VSX14=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHb9Ch6hqZ+d5emfOHT83hFsOBwp1GcX5jXGRYYtSAUO4SQuBe
-	+GbLn45nrJi0gFUUv4fonMJdxc7+LSO8VsrKvVrxjfbSMvU8Kra1rZrxX3UrznKqUIWw1YD5OtS
-	bWuEh4FVeq9jqqSMlYwDMEbHjXW3P058=
-X-Gm-Gg: ASbGnctFAP2QoNfcl2MsC/x8DMZhgYwXgauquHMtUzqxlZ9JiXfU2oR2WIpo7nwovii
-	3Blyir7metnC12BuoR8YeLhVnHVrAtJ9FwowJgzu/xguHp/koQMRJRnJOumVD0GZTWyHzVqkium
-	T0wLEPZYHhIwHUcPbB9W/oeWGm0KR/HSzP3Li95c7q9rwvoGC5SRxoA56x03XFSBcCyYi+y4GWc
-	9tpYGk0FxenLaoztv+pnYOYHP6IRbMtjJgh6PuIyiN13eyVPpec299Ssi+EQ5lr7lXWRDGNY4Ef
-	1OY1BtFshUHJH39ESm1/TBwkUw==
-X-Google-Smtp-Source: AGHT+IHStlNBUV5wN3/j5DMOSMvcwNA0pDIUVAyHi9rF6MBo+5uBvp71X1ELOl1V1keODdFaDMBr/v72/qVV8RfW4m4=
-X-Received: by 2002:a17:902:db0b:b0:248:be7f:d3f8 with SMTP id
- d9443c01a7336-248be7fd4f2mr29581305ad.9.1756376364111; Thu, 28 Aug 2025
- 03:19:24 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1756376396; x=1756981196;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=mBAEoFNbmswFsnSxAIv1w+pBcSdXwLgSTS2jwoutXlw=;
+        b=pIcHQ0mKyUmwtSYAEZ+yTZRqeiyvNeukarYI9J9gA/I0i9IjzICxROIxNhRvFXOp4I
+         e0xr67cnJqWlzBRKTCojG85hoxH4fqZSbBFilZgmmRPBTykJE/jFVxwBEfmUmRkaH1xH
+         3ytp56xyEp1n6JOHf2ymO5USeQWrFig6llruckFiMuEeqYoHIRhhh/HTzHUK5q5fBii1
+         hI+tTAZG8VPdy1ty4P2w3SG9nEW1QWuEfGT0hH0MDRbcRCtsjBgOyZR54tICPOSo597z
+         324nKl9O8RZ9CCtFKaKvFlaRWC4b9SzgmGynVVmTy1Hudq5vJKv/tL0WUoUSHiGLnGXv
+         K5zg==
+X-Forwarded-Encrypted: i=1; AJvYcCU3VaphCPp1hXpxuc5CkwtAqLSRlAzrnv8/yYLiqQd6SolWuEWOGfJ2E/UsDkPV2V0WGIYiCIiT0oav43A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIuhfOdj81kdvp80C3ggyXKT04dV4st3Kr0MoNh8cUOdN/433n
+	WrFce6uOMotJeg911UQqtzzi6gZ9TzTRamS+lQFEkvKm7R0//4cTOeVn1xj92ByP1byxYC4p0zk
+	5Tp3Mtv5TB1h0gEnMlVdBk4Go4+0TJZwwUT4drkz25JioOddP7OdAKIwgwNbi+tbGFA==
+X-Gm-Gg: ASbGncttMo7KdFgctzhE1I3E9U+lSq7xIgN+cVp5coHRH8jdwZ+PX/mnzaZE3XU51Uf
+	vvReKPFk9M6qae8U9Pqh/c3EpJuBUvvX337tkQbwGxm2cw5tDAJrSOfDeP/uzqZRespKxP1A6Yf
+	4EuHEXUyDNCopDbXKd9E9usquW66R4UE3a5l3FxFIS8JnSM6MticxIArU9DNpA9D2LrkBquNmiN
+	RWp5KSAnT7uQkgxInB7+pJtqoyjb7v5HEFAyZzpw6+qzlPS41lzl+u7eKRo+v+MA50IpNGasBBk
+	jRiWLsDD187Xw/+ErcbDXooIIMps+xtN
+X-Received: by 2002:a05:600c:a47:b0:456:1824:4808 with SMTP id 5b1f17b1804b1-45b517cfe66mr169732945e9.32.1756376396482;
+        Thu, 28 Aug 2025 03:19:56 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHRzvWTBo2GxDcNnrIlhFHzO2y1QKjqd6ebF9+adqAAZUSWw06wXWnWxmDIghxndloNXqg0Zg==
+X-Received: by 2002:a05:600c:a47:b0:456:1824:4808 with SMTP id 5b1f17b1804b1-45b517cfe66mr169732795e9.32.1756376396123;
+        Thu, 28 Aug 2025 03:19:56 -0700 (PDT)
+Received: from redhat.com ([2a0d:6fc0:1515:7300:62e6:253a:2a96:5e3])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b79799c33sm26094735e9.5.2025.08.28.03.19.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Aug 2025 03:19:55 -0700 (PDT)
+Date: Thu, 28 Aug 2025 06:19:52 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Haixu Cui <quic_haixcui@quicinc.com>
+Cc: andriy.shevchenko@intel.com, harald.mommer@oss.qualcomm.com,
+	quic_msavaliy@quicinc.com, broonie@kernel.org,
+	virtio-dev@lists.linux.dev, viresh.kumar@linaro.org,
+	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	hdanton@sina.com, qiang4.zhang@linux.intel.com,
+	alex.bennee@linaro.org, quic_ztu@quicinc.com
+Subject: Re: [PATCH v4 2/3] virtio-spi: Add virtio-spi.h
+Message-ID: <20250828061943-mutt-send-email-mst@kernel.org>
+References: <20250820084944.84505-1-quic_haixcui@quicinc.com>
+ <20250820084944.84505-3-quic_haixcui@quicinc.com>
+ <20250821044231-mutt-send-email-mst@kernel.org>
+ <42806aa8-8cf1-476e-b775-50859fe0e7f1@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250825132539.122412-1-dakr@kernel.org> <20250825132539.122412-6-dakr@kernel.org>
-In-Reply-To: <20250825132539.122412-6-dakr@kernel.org>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Thu, 28 Aug 2025 12:19:10 +0200
-X-Gm-Features: Ac12FXw8EPqq8u93pnznOiOBpC6DEMbBYvNWDBItfM_jVmf6g0VPq_ATHlPnoOI
-Message-ID: <CANiq72knRW2VDdX68cCb5vBJpyVRtB62oB5e7YKZKPc_zHygQQ@mail.gmail.com>
-Subject: Re: [PATCH v3 5/5] MAINTAINERS: rust: dma: add scatterlist files
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: akpm@linux-foundation.org, ojeda@kernel.org, alex.gaynor@gmail.com, 
-	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, 
-	lossin@kernel.org, a.hindborg@kernel.org, aliceryhl@google.com, 
-	tmgross@umich.edu, abdiel.janulgue@gmail.com, acourbot@nvidia.com, 
-	jgg@ziepe.ca, lyude@redhat.com, robin.murphy@arm.com, 
-	daniel.almeida@collabora.com, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <42806aa8-8cf1-476e-b775-50859fe0e7f1@quicinc.com>
 
-On Mon, Aug 25, 2025 at 3:26=E2=80=AFPM Danilo Krummrich <dakr@kernel.org> =
-wrote:
->
-> Rename the "DMA MAPPING HELPERS DEVICE DRIVER API [RUST]" maintainers
-> entry to "DMA MAPPING & SCATTERLIST API [RUST]" and add the
-> corresponding scatterlist files.
->
-> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+On Mon, Aug 25, 2025 at 05:12:44PM +0800, Haixu Cui wrote:
+> 
+> On 8/21/2025 4:42 PM, Michael S. Tsirkin wrote:
+> > On Wed, Aug 20, 2025 at 04:49:43PM +0800, Haixu Cui wrote:
+> > > Add virtio-spi.h header for virtio SPI.
+> > > 
+> > > Signed-off-by: Haixu Cui <quic_haixcui@quicinc.com>
+> > > ---
+> > >   MAINTAINERS                     |   5 +
+> > >   include/uapi/linux/virtio_spi.h | 185 ++++++++++++++++++++++++++++++++
+> > >   2 files changed, 190 insertions(+)
+> > >   create mode 100644 include/uapi/linux/virtio_spi.h
+> > > 
+> > > diff --git a/MAINTAINERS b/MAINTAINERS
+> > > index daf520a13bdf..3e289677ca18 100644
+> > > --- a/MAINTAINERS
+> > > +++ b/MAINTAINERS
+> > > @@ -26760,6 +26760,11 @@ S:	Maintained
+> > >   F:	include/uapi/linux/virtio_snd.h
+> > >   F:	sound/virtio/*
+> > > +VIRTIO SPI DRIVER
+> > > +M:	Haixu Cui <quic_haixcui@quicinc.com>
+> > > +S:	Maintained
+> > > +F:	include/uapi/linux/virtio_spi.h
+> > > +
+> > 
+> > I would add a mailing list:
+> > 
+> > virtualization@lists.linux-foundation.org
+> > 
+> > 
+> 
+> Hi Michael,
+> 
+> Thank you for the suggestion to add a mailing list to the MAINTAINERS entry.
+> 
+> I noticed that other VIRTIO drivers, such as VIRTIO BALLOON, are currently
+> using virtualization@lists.linux.dev rather than
+> virtualization@lists.linux-foundation.org.
+> 
+> Just to confirm—should I use virtualization@lists.linux.dev for consistency,
+> or is virtualization@lists.linux-foundation.org the updated preferred list?
+> 
+> Appreciate your guidance!
+> 
+> Best regards,
+> Haixu Cui
 
-Acked-by: Miguel Ojeda <ojeda@kernel.org>
 
-Cheers,
-Miguel
+virtualization@lists.linux.dev
+
+Same as others.
+
 
