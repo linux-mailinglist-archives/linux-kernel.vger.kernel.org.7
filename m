@@ -1,137 +1,168 @@
-Return-Path: <linux-kernel+bounces-790770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 632A9B3ACCA
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 23:35:19 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D678B3ACBC
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 23:30:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3815C583AB3
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 21:35:19 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 604DF4E217C
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 21:29:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 134502BF3C5;
-	Thu, 28 Aug 2025 21:35:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB9452701DC;
+	Thu, 28 Aug 2025 21:29:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ijr8VXhy"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NNZ4DFAE"
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC47126B96A;
-	Thu, 28 Aug 2025 21:35:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B59082848BB
+	for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 21:29:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756416906; cv=none; b=SrUe/OLv5SmxX9HWqmaAOnMTiJakaSytSvHKNfpmG5IokhjxnXsuFtYALnY+MQD5cjqN3DC7fqTPD6M+ZRu1SmHFqzMy81/xnwNgqJt2JGwOQWvygkZ+opwqXXYXME5wEswyi62rHrvfTCf9V/G6TkeAdX7IBnZw4Y7X6hNayMc=
+	t=1756416592; cv=none; b=U60efN6TFcsDunSj9uBOFRttN1GTEQc+8aw2xDgH59RnI9Jc25Ug9fyWMJ0DPE5xUz05OHYJi9ldTwhDnYpeQoshWpwIVq+qC6yIj2eVeQTf69oKzwtaXrgx80hYk3RV30w7dhJ/2h4A3FLPQ6QAduLzrbtRc5JQlY1SaUjhJQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756416906; c=relaxed/simple;
-	bh=I7wEGxMZdqIIi5xw7IylI92kj9j17xHEIgaigxtGPcs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=D1kExjRlQCLsz8qfyi0kHKCqEsReD8ChHbzT3Iotuu3TkKy5s3EGrh/38gxOuzlUTsxPjSoFZv/rYyTlYUomryyuEv082sNHM5PKmIYFiJxNFucOM+j2Lyp4teTXMn7nacCj+FKqZpbQBQxxrSugtfVLiWpSp/IrTFMJcHBkQGM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ijr8VXhy; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-afe9358fe77so151330566b.1;
-        Thu, 28 Aug 2025 14:35:04 -0700 (PDT)
+	s=arc-20240116; t=1756416592; c=relaxed/simple;
+	bh=a1Y9Qfe4Ntinmu3qdU/LpvLv9GNDTobrJhavD8m/SRQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=o+GolwbCrvzXcQD1yFR6E2pefDUQ4eXQ3OXnxHsN1Hnmt/a+ru7NzUB9j4xz8EIqsje+AtKqD9cai7I1j+ulXGBqqQTEKSz4Pew3VXiWpvd3a29Q8+EAFoKsbojO0/V7TN74S6Q0Wnc+5xxvHleS8Byv4gnlyjXNJU1xjx5BhTc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NNZ4DFAE; arc=none smtp.client-ip=209.85.160.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4b12b123e48so119721cf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 14:29:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756416903; x=1757021703; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=R6RgA1Amq2gbjziZJHa66M8vo8i+nRkKhXZ8PDenMzI=;
-        b=Ijr8VXhyp/0dG7zVlTKYc9eIGUTtNsZGCY+gBuh0DJ8TBEfnbf1ywdFM/S24muYKTG
-         sZm31NUv11IIKmJw96pjqMY4BNfkPMnQfWvBcnJrhQ0yEu4NlIDluV6AtuaW//WumOkE
-         htk4rG/F3QAgKYkeFJsRMX3zQSxoB7eXcRyhNUro7I9CPJ6HhvJWqDAdyQcI/1Cz8f5V
-         eByYwxxi5AN0Oj6VOMBbKjUjzK9gqY7+tidYUgDUp29Ky9OkhpdUZB9KzAYbOf5X3FOU
-         DkVdXGF+iZl3J36XSmkZA1IWT19uhi2dvWJi0PBkAJCQ5oR9lwqOFQJbkrywz4Rt48s3
-         vqUQ==
+        d=google.com; s=20230601; t=1756416589; x=1757021389; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=a1Y9Qfe4Ntinmu3qdU/LpvLv9GNDTobrJhavD8m/SRQ=;
+        b=NNZ4DFAESVNWOnyl0gTJ1GCbHyKscENFJ/c57hWklzspCL/F8x48/0WMTMvBLfskjq
+         zIYcYO+7g+jRmVbyFNUJbH9m5uNWUhTL4r4oGDnul0F5ZLV5NeyRlqiHmuNOUYVfVePT
+         +nSx18AqQc8rcwKMwzo+xjTWkeydlow+xsEA/HkOX+0UHAOtgkzwD2I0yVvDFDKg5+Wa
+         XF6rFwyLy9hnZ0+y4UJrqOHNeEjBOXrMYFF9xb/gV1YKPxn7N5hp+nhsdrBgKTJq62cX
+         TmNPmgsp4riRSMHTJFXSrAqGmEcCpoXcJoXemJ2iB3s7KC7cxAW9r5AgMwa3W82xLH28
+         DCnw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756416903; x=1757021703;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1756416589; x=1757021389;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=R6RgA1Amq2gbjziZJHa66M8vo8i+nRkKhXZ8PDenMzI=;
-        b=qZ3cZU6AXUlXtmABx071zfyJWnAWnXvgmOGjUVG85FSJ322TpolcUknBwq37u4SzmU
-         c+BIN4B0tp/WR+hPFE9azBJdfEt9gFWCFM2ni6lfRjCAU+Zy1qwFwYF6Nb8qUf4VqsXO
-         L+zpb0UT9Cr8f7ICEHx47Viyxl8GW4RqMSwN1aSgIQ33Ruli1jp8sl7eYMtPShGRFISF
-         5QyJ9kJ1m4mgu1eRCJ9aaY4W96t6beWiUBIdYj1njJ23gBPLw9ggDkPk24N2BiFDwctd
-         cVF4hOFp1/54ZDWzFr/nXSAEA+42+SUp+cOxXJsUKXbm7DkKnrLF5/SFmYrfhV/JhxB4
-         Uaqg==
-X-Forwarded-Encrypted: i=1; AJvYcCWx57evTdzTu6RuUtbgdDg6xmpvBbNGV7+bx55LnirCaHv4RLzvf7TIuJ6EW9W2Y1h6lyEPSr1SF5nNPrQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzhtLPLYa7a/kshFIUVBLS2CHHFy20IzRebjsaKHnng4QkLIbwe
-	PzXqYPiLQIz0DrN+JxQInog7UTdt3t7AUtXRgCMOMjYyDuvw4z1YBjmF
-X-Gm-Gg: ASbGncuQFu8bTpJXWEs5WcMWeopEy5SqKJVKNWUZEJaTywJrfvBt54Ptio2kAGbct8w
-	yi34XoZjn3MLIjKN8ANaWXZeAXX7cHE3Umk/UtNmpKsC3PO1PtzPdvDMwcVQNghPdBg5YBhTCw1
-	JP5tjNTdM9SLgckY5yHx5Lln06SKEIwGQkDTrluN0/5+V821aBVwf+RpEgByiKL3RWR/Wdp3lJb
-	XxMeAYF/GBREk+M1rOIMatZbiHx0bek1ROZFVBNiblOGp5D6wtWx5b3HqeGNNfy+QELa920PbHj
-	36cPD6PjX/UtVEveeV3k6aQnmQowh45Uu2QtY7VLglCAJfZEuJx+wHAYy9nBeiZEuiD9gHaVErX
-	TAewBitAQoxfVLIRVlL02Mu1TjlRGxRdR68EbUBBh73Othf9gv1e701IIus9UdXYP0kXTtQVgHz
-	HWzUoIIY513scPREx6+7O3STMkHZAnTSL2
-X-Google-Smtp-Source: AGHT+IGsOjVY1xHlu7Ck4nnZUfJdc0rldLUjOBL0O+XsSoXmmaDai4XSpeQvLDGVBVp9yQQrqrCOBQ==
-X-Received: by 2002:a17:907:970c:b0:afe:af91:2e44 with SMTP id a640c23a62f3a-afeaf9139e5mr1005452266b.14.1756416902804;
-        Thu, 28 Aug 2025 14:35:02 -0700 (PDT)
-Received: from fedora (2a02-8389-2240-6380-b418-985e-6bb5-99d0.cable.dynamic.v6.surfer.at. [2a02:8389:2240:6380:b418:985e:6bb5:99d0])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afefcc1c6b9sm45032866b.80.2025.08.28.14.35.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Aug 2025 14:35:02 -0700 (PDT)
-From: Dennis Beier <nanovim@gmail.com>
-To: rafael@kernel.org,
-	viresh.kumar@linaro.org
-Cc: linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Dennis Beier <nanovim@gmail.com>
-Subject: [PATCH RESEND] cpufreq/longhaul: handle NULL policy in longhaul_exit
-Date: Thu, 28 Aug 2025 23:29:36 +0200
-Message-ID: <20250828213427.27593-1-nanovim@gmail.com>
-X-Mailer: git-send-email 2.50.1
+        bh=a1Y9Qfe4Ntinmu3qdU/LpvLv9GNDTobrJhavD8m/SRQ=;
+        b=N5lzLaGy0yFtTXW/Th2w4pubpICkypjJfAy3pokqjrrIH35G2HPAPUoszQbMrIxKK8
+         xuBskhJ5eCHaHOZdthACTXTrLk64uxFgUcb+oP3j3Xq2oabrXL4qZy/0IYxYVQEWF8HG
+         /r3r8y7cUf6dARpyS9DIqN03Y9q1yH3lSKhiXmV12ORza31EFyxJ5QO6O73pYh4OKzjn
+         1kmiWsKlkEw81RN4d1r+EN2SSt1/3yek+QF62eWZuxdXIVFu7YxtRWLGfIDiR4iQpx/K
+         oUk/1sIVi8JgDmZCaW3xfWHFerY1lzj4H7aKx931Ktd0FyEGtSqEn13I7Bm6Vb/u0CoR
+         7FOg==
+X-Forwarded-Encrypted: i=1; AJvYcCV3wPCNdl17l4yYVhgNM4O5Rv71zqaydfWX6Cz7dESW7SUuX/dtZjj1B4T3R69gqcWlRVJhuyVYiBjbCzc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHSUgilxblqOivqNKT0xxBoVVvwIQNZcp4U0ys38bpVbWeGqOT
+	O73yWM6uIEPhCVWVF+N2bjCDyNk+mTDtbfRCuLbiaJV6KU1n7M3b+LcOtJDPCASkz/mmy0B1J3c
+	eaL10kZ5Pi6DpMudhMU8yqwcoTZuJz13HoZ4zFZKp
+X-Gm-Gg: ASbGnctorpwaCIpxJeWRo3h2Mau7pbqGYkX3fn1YjLqWAnT2rnZ9sZN12uHDaZ0P+/J
+	L0U1Y7O/B6XipQwgVKdEb7s6VJa07SR5xpJMG/MrJ8uc1Jf2gmu9R4olTd3pLUif7JssQbgZwHr
+	2I9UO4E+NMzHDn1A7gSPHoApVqgbKebZ2Hq4gJdCAhZAgzyjRKhOzstH9nGuFtb9BXAqtJJuB4A
+	3ZqSWd7GNi2Fr78stWKlcRAMo76nN/3wu6g76uTvCtl
+X-Google-Smtp-Source: AGHT+IFqkD7ft+jmAQsaqJOxgwKm4Qy2o/YaSs3yFiKSnw9xPjJPZVBKQytl3x3ukUzsLWLbu6Pj2Ju4p4ZQAl6heVA=
+X-Received: by 2002:a05:622a:5cb:b0:4b3:8ee:521b with SMTP id
+ d75a77b69052e-4b308ee5cb3mr3721231cf.0.1756416589198; Thu, 28 Aug 2025
+ 14:29:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250730220812.53098-1-pmalani@google.com> <8252b1e6-5d13-4f26-8aa3-30e841639e10@os.amperecomputing.com>
+ <CAFivqmKZcipdc1P1b7jkNTBAV-WE4bSeW8z=eHHmtHBxuErZiQ@mail.gmail.com>
+ <aKRDxhirzwEPxaqd@arm.com> <CAFivqm+vzkbDEadJEF2So9ZWcRyVT_-Yc+8VWWwsgGW+KD4sNw@mail.gmail.com>
+ <aKY0xuegI1S4X2uW@arm.com> <CAFivqm+Xi9FYtzPmT0QkAUxC2Kx_AkrH2NuQE_sVnJVuo48ypA@mail.gmail.com>
+ <aKx4nZWsRPTXK942@arm.com> <aKzGlD7ZDIS4XMsF@google.com> <aLAGQk3nOcEI0qJ2@arm.com>
+In-Reply-To: <aLAGQk3nOcEI0qJ2@arm.com>
+From: Prashant Malani <pmalani@google.com>
+Date: Thu, 28 Aug 2025 14:29:37 -0700
+X-Gm-Features: Ac12FXzF-O6zQOCkRkRzG9C45ZMqIXcRsxfuzSsPwNBmBGM430lN7FJsPUYpVhM
+Message-ID: <CAFivqm+r41cRhsZWjXdOhGhTsQ3nmr50cACk27y-PLee7ZGKeA@mail.gmail.com>
+Subject: Re: [PATCH] cpufreq: CPPC: Increase delay between perf counter reads
+To: Beata Michalska <beata.michalska@arm.com>
+Cc: Yang Shi <yang@os.amperecomputing.com>, open list <linux-kernel@vger.kernel.org>, 
+	"open list:CPU FREQUENCY SCALING FRAMEWORK" <linux-pm@vger.kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Viresh Kumar <viresh.kumar@linaro.org>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Ionela Voinescu <Ionela.Voinescu@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 
+On Aug 28 09:33, Beata Michalska wrote:
+> On Mon, Aug 25, 2025 at 08:24:52PM +0000, Prashant Malani wrote:
+> > On Aug 25 16:52, Beata Michalska wrote:
+> > What you are saying holds when m,n ~ X. But if X >> m,n, the X component
+> > dominates. On most platforms, m and n are typically 1-2 us.
+> > If X is anything >= 100us, it dominates the m,n component, making both
+> > time intervals practically the same, i.e
+> >
+> > (100 + 1) / (100 + 2) = 101 / 102 = 0.9901 ~ 1.00
+> True but that does still influence the error - in this case that's ~1% so
+> negligible. But the overall error magnitude does increase when the range
+> between min and max of the possible values of m and n gets bigger.
+> Question is what's the max error that can be deemed acceptable.
+> And I'm pretty sure there are platforms that would require bigger X still.
 
-Resending this patch to include cpufreq maintainers.
+I think 1-2us is the typical m,n value for most platforms looking at
+past measurements in related threads here (it
+might be a little less, but it's a little challenging to measure this
+accurately with ftrace, since the timestamps have usec precision).
 
----
+Even a 5% error would be a great improvement from the current state.
 
-longhaul_exit() was calling cpufreq_cpu_get(0) without checking
-for a NULL policy pointer. On some systems, this could lead to a
-NULL dereference and a kernel warning or panic.
+>
+> >
+> > > >
+> > > > There have been other observations on this topic [1], that suggest
+> > > > that even 100us
+> > > > improves the error rate significantly from what it is with 2us.
+> > > >
+> > > > BR,
+> > > Which is exactly why I've mentioned this approach is not really recommended,
+> > > being bound to rather specific setup. There have been similar proposals in the
+> > > past, all with different values of the delay which should illustrate how fragile
+> > > solution (if any) that is.
+> >
+> > The reports/occurences point to the fact that the current value doesn't work.
+> Wasn't claiming it does.
+> >
+> > Another way of putting it is, why is 2us considered the "right"
+> > value?
+> Looking at the history, the argument was pretty much the same as yours: was
+> considered sufficient for most platforms [1]
 
-This patch adds a check using unlikely() and prints a warning
-if the policy is NULL, then returns early. Also, the loop variable
-is now declared inside the for-loop to match modern kernel style.
+Thanks for that link. It provided helpful context.
 
-Bugzilla: #219962
+> >
+> > This patch was never meant to be an ideal solution, but it's better than what
+> > is there at present. Currently, the `policy->cur` is completely unusable on CPPC,
+> > and is cropping up in other locations in the cpufreq driver core [1]
+> > while also breaking a userfacing ABI i.e scaling_setspeed.
+> >
+> > I realize you're working on a solution, so if that is O(weeks) away, it
+> > makes sense to wait; otherwise it would seem logical to mitigate the
+> > error (it can always be reverted once the "better" solution is in
+> > place).
+> >
+> > Ultimately it's your call, but I'm not convinced with rationale provided
+> > thus far.
+> Actually it is not up to me, I'm simply sharing my opinion, which is:
+> we should fix the problem instead of hiding it.
 
-Signed-off-by: Dennis Beier <nanovim@gmail.com>
+I think both options can be pursued concurrently :)
 
----
- drivers/cpufreq/longhaul.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+> Setting that aside though - this change seems rather harmless.
+>
+> Aside:
+> ./scripts/get_maintainer.pl --m ./drivers/cpufreq/cppc_cpufreq.c
 
-diff --git a/drivers/cpufreq/longhaul.c b/drivers/cpufreq/longhaul.c
-index ba0e08c8486a..9698d56bfe6c 100644
---- a/drivers/cpufreq/longhaul.c
-+++ b/drivers/cpufreq/longhaul.c
-@@ -951,9 +951,14 @@ static int __init longhaul_init(void)
- static void __exit longhaul_exit(void)
- {
- 	struct cpufreq_policy *policy = cpufreq_cpu_get(0);
--	int i;
-+	if (unlikely(!policy)) {
-+		pr_warn_once("longhaul_exit: policy is NULL\n");
-+
-+		return;
-+	}
-+
- 
--	for (i = 0; i < numscales; i++) {
-+	for (int i = 0; i < numscales; i++) {
- 		if (mults[i] == maxmult) {
- 			struct cpufreq_freqs freqs;
- 
--- 
-2.50.1
+Yes, I use this for all mailing list submissions (including this one),
+so I believe the maintainers should be on this thread.
 
+BR,
+
+-Prashant
 
