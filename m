@@ -1,210 +1,117 @@
-Return-Path: <linux-kernel+bounces-792537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792538-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4696FB3C556
-	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 00:47:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0288DB3C559
+	for <lists+linux-kernel@lfdr.de>; Sat, 30 Aug 2025 00:47:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DDD84A65F0C
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 22:45:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60FE5A66AB8
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 22:46:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 963B32D47FE;
-	Fri, 29 Aug 2025 22:44:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 986CE2C3278;
+	Fri, 29 Aug 2025 22:44:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="nKXtOaSW"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2051.outbound.protection.outlook.com [40.107.244.51])
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="oPuRIdLi"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 353C829B78F;
-	Fri, 29 Aug 2025 22:44:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.51
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756507442; cv=fail; b=m7m5ICgsjIDERU3OjL4Yu00oq42fd3Y21a83Raj97n6mbFaA9Y8iokRNDCa6mDObJS2hjQJuMlIFLa2UUo10VvX7VNYg2i0MA1opKq05Q2BwZx3b8OWq6sXnCKPi2W8nreF/SNSkx0uh8fEL+ltl9/2ckOa8HU4KZauNOYlooqc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756507442; c=relaxed/simple;
-	bh=rmOEvJE249gnk6wCYeR3IV3BUNns2ylphR3GqAT+D+Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=lRtsF4Ann5KjQMqvZSPZ0ff/wtyH25RZfML4bA6nJh76xCR0l1F1XG+kE7fcyEi9JXxjutyAgx9ovNBkNQlggz0az0EkZq9gU/c6HCIK3e0rsvwJeFLLnAF1EfaIIX00W1I8FgjABQMWQxocNLTEtkscrzFhrNFOCsYVu2kL8G4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=fail (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=fail (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=nKXtOaSW reason="signature verification failed"; arc=fail smtp.client-ip=40.107.244.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=g9hoeb23Lh/+CPmbsLmhHITQNP3yTqGgqi7XwenT8weKRiZO8z8LogoH/1vbGZxDLA8K70dcsnU2eBm+7+3fxtGVQPxyabQT5EkS02KUEwJLAfTVAPy4NUZshvRB3XhZFe+kdI2GENt7N0UdWKHv4QZ5R/L2ovcOI3GBSqrb52vTsaQ1m/s+p1FMuyEgLfTSbjtllt70bZDBT3m7zkTAaiZDiZ04NYYjziY0rZiDG41r5V5dhVEBag3BOUd+gRmL4sp4Bau9Uh9XvNUebT/W4jyt1rInBOW6GBi/5hpYeUY4mXNG/TeXiTgLZaGo96m0uBbeVXromrrz/flmcqeqcg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=btIPAbK3bUv7/v2CFO+Tup6zXNlLh4DQcGsE7TNVxZA=;
- b=vNPjPKy5f6CQNn2UVWyQwj3CvAgJezAvk3bA5xLZlxDtCywkmbakZki2rdaNxtbragSOA+wNpzHFBcEjjjJpZfnputdreL1MulUCMeZHsJ0g9wsqxeaDDj76iP0NmzG6I3y03jEx6WNd/Jmnxy54vLqCnqBzIoIWgeelgdS17duLoJCqdOJjKWm1W0UYmFrdo5stf246GRu576roxiIG+JFbgs0gOoL50D5GZqjI2NvUsMST+naqEfF72KXEb0bLVhkVMM99xzL7UDnC9bNw1lATUeK0kHO3dmN10ZE7bpmaE8yJdEdMz8pZ1cSQnMyemrXxeoZ99haICImzgoq5Hw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=btIPAbK3bUv7/v2CFO+Tup6zXNlLh4DQcGsE7TNVxZA=;
- b=nKXtOaSWBVr5zUabEezX2RoNTgxc6QemiHFeHD+VCxM/f9yQrdhNzzll3EZ9ZAj+OXTEakLXcG5Br9uUi+sS41iszvmbk9PJMcFtfVj0d2/shDsqUrcODHUblBYSC6tLrURMeuZNdZMQF2QjaVRQrBlts6AVc5jinXJ0/Bh7MhkCjuphpNQXRgg7n2CTQ0MJ8W4AS6fFCyXk/fydutfsnYdfiS7S9iPOCPFfrkAp1zldDEQvsUZsbwTA3IWoV8yEPLirnT++Yjc8ZPlAhzSFToeEr7Q2UwmouU7dmsV5aIdr2o3U//PCPrqCnyTnZ5xUtLc9V68qIvZsNi7rGx7Caw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SN7PR12MB8059.namprd12.prod.outlook.com (2603:10b6:806:32b::7)
- by DS7PR12MB5813.namprd12.prod.outlook.com (2603:10b6:8:75::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.15; Fri, 29 Aug
- 2025 22:43:52 +0000
-Received: from SN7PR12MB8059.namprd12.prod.outlook.com
- ([fe80::4ee2:654e:1fe8:4b91]) by SN7PR12MB8059.namprd12.prod.outlook.com
- ([fe80::4ee2:654e:1fe8:4b91%3]) with mapi id 15.20.9052.017; Fri, 29 Aug 2025
- 22:43:52 +0000
-Date: Fri, 29 Aug 2025 18:43:50 -0400
-From: Joel Fernandes <joelagnelf@nvidia.com>
-To: Timur Tabi <ttabi@nvidia.com>
-Cc: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	"dakr@kernel.org" <dakr@kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Alexandre Courbot <acourbot@nvidia.com>,
-	"joel@joelfernandes.org" <joel@joelfernandes.org>,
-	"lossin@kernel.org" <lossin@kernel.org>,
-	"ojeda@kernel.org" <ojeda@kernel.org>,
-	"boqun.feng@gmail.com" <boqun.feng@gmail.com>,
-	"a.hindborg@kernel.org" <a.hindborg@kernel.org>,
-	"simona@ffwll.ch" <simona@ffwll.ch>,
-	"tmgross@umich.edu" <tmgross@umich.edu>,
-	"alex.gaynor@gmail.com" <alex.gaynor@gmail.com>,
-	"tzimmermann@suse.de" <tzimmermann@suse.de>,
-	"mripard@kernel.org" <mripard@kernel.org>,
-	"maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
-	"nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>,
-	John Hubbard <jhubbard@nvidia.com>,
-	"rust-for-linux@vger.kernel.org" <rust-for-linux@vger.kernel.org>,
-	"bjorn3_gh@protonmail.com" <bjorn3_gh@protonmail.com>,
-	"airlied@gmail.com" <airlied@gmail.com>,
-	"aliceryhl@google.com" <aliceryhl@google.com>,
-	"gary@garyguo.net" <gary@garyguo.net>,
-	Alistair Popple <apopple@nvidia.com>
-Subject: Re: [PATCH 05/17] nova-core: gsp: Add support for checking if GSP
- reloaded
-Message-ID: <20250829224054.GA2082651@joelbox2>
-References: <20250829173254.2068763-1-joelagnelf@nvidia.com>
- <20250829173254.2068763-6-joelagnelf@nvidia.com>
- <a251efc542a49e95fd7b7032bdd1092253f967b4.camel@nvidia.com>
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <a251efc542a49e95fd7b7032bdd1092253f967b4.camel@nvidia.com>
-X-ClientProxiedBy: BN9PR03CA0930.namprd03.prod.outlook.com
- (2603:10b6:408:107::35) To SN7PR12MB8059.namprd12.prod.outlook.com
- (2603:10b6:806:32b::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE7372BEC20;
+	Fri, 29 Aug 2025 22:44:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756507472; cv=none; b=iNG25Th0dBi6Og7iNIgv4dTrkhebkogXRVz1R810tHaubK0+eKYB7LXnoFihvNQstpD9b/S/q4ve3XKlsB/KFQjyqOJ7cbyYzHSd4MMDb1kvUuHaX+Pj2ZZ1zhuOipsD82GjRW8F7+SX45Eq0x591Zv5e6IEQzfp45xq4x+62RQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756507472; c=relaxed/simple;
+	bh=3l9IyZ6E1ykYaE6ZiTn4FwDADVA8vWfN2yBfNykC3nA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=hGWODK8e+rtP5RVS7r1oTfpoVV273mWRC2CbI17x2ZrJLFCLz5VbqUo1UfqN/SE/v4t4Bwae6jjKWAAHFpf5nOg172Y4i6x/DuHSZP+vDkeFyUTgCpciMYoXphbuQqjuAibwForXMo1ndwMCmZLQ03xpvem8go6uKLy33oS50wE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=oPuRIdLi; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 612F540AF5
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1756507469; bh=XuBKPwHuhKr0qdeRskPKNe3G/Yu1uyjI8KfA52i8W8c=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=oPuRIdLiKHqAKRst3f8bstolu2fx6ZgL3itFUnndZVtPGkMR0TVXeQEGXceOgvAvA
+	 RWl5dx/a/uTqboX8u2Zb/L3MrSh/wmfzVotE1GipHMUU0IRE7wUdFDOlAWlSqGDBlR
+	 qHGksQs/QHZ4grepHQxOJVaL7YevdC/MR40Th3KNNCli7lgikngkQ/IaEy/8Xj8JL3
+	 m71uOmqMI+eAnne33TQ4POGSZtS4ea54tSoJtsigKQmkPlGAUzdm5AGw+IZY/IuF2S
+	 nylrgZ6TjXQyv+xKFTYnq5sofmG3eo2SEbWGuUvNMavrd4e1Yy8+B26dvu0T4E8piK
+	 iatG5dCQTJh8A==
+Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id 612F540AF5;
+	Fri, 29 Aug 2025 22:44:29 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Cc: Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Andrei Vagin
+ <avagin@google.com>, "Peter Zijlstra (Intel)" <peterz@infradead.org>
+Subject: Re: [PATCH v2] docs: scheduler: completion: Document
+ complete_on_current_cpu()
+In-Reply-To: <20250824-complete_on_current_cpu_doc-v2-1-fd13debcb020@gmail.com>
+References: <20250824-complete_on_current_cpu_doc-v2-1-fd13debcb020@gmail.com>
+Date: Fri, 29 Aug 2025 16:44:28 -0600
+Message-ID: <87a53h3fzn.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN7PR12MB8059:EE_|DS7PR12MB5813:EE_
-X-MS-Office365-Filtering-Correlation-Id: b08768b0-da3b-4be1-0c14-08dde74d873a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?iso-8859-1?Q?yQzFQNFSuzDsIci/0MKcWFm80LbgOgMRNtR6lnFgUz+Y7fDFQFU/++9OE6?=
- =?iso-8859-1?Q?hhfHcSskOvf51sGHjEIRPDQNXS7qOFMy3nreKzYjQBYHc+RzqE2NHg4QOo?=
- =?iso-8859-1?Q?hFh3M+zL66kwSHSjt1ZkKqe4C4Makp5+TxbIUicZLBzbN/ktyNCO56UGR+?=
- =?iso-8859-1?Q?K9K9kkbpN1d/F/ftO7MqCeJsSrqv7l0bA95k4ZblY6LaNfwoY9TZGSwuj6?=
- =?iso-8859-1?Q?CIvljuuH6SKDWxaf9pYuesqGOzCQ/dsYQn8T9jaUluMy5hr25zXJRxrvia?=
- =?iso-8859-1?Q?MEzFwlq196W4qzPhe7TEhptlweBlMXzsYUGHK41gXNalTR/fMkEhNhNvLr?=
- =?iso-8859-1?Q?RETq8wzkkP2PuxPZ0x2lriRhGZ8MPE4h1C1Dcetc7eMxHZF6n4+n0l7M9Y?=
- =?iso-8859-1?Q?omFVzgkhsd3W9TTne5lpSL/8SB4FhgVeJVMBlSyVw1hMwqktpVmt9IspZE?=
- =?iso-8859-1?Q?pIyAi+VdNi6tcOm3yD+3LHAPprjpF/diOT4pM2l7ZoabDV85S9p909BFxS?=
- =?iso-8859-1?Q?6nr90d2SVfamGSww/C+DwmS9mDXDZ20HjUaFiAMk82iPw8bB8Kin8D/6IW?=
- =?iso-8859-1?Q?+lzSFqxi8pVJnmgnuoiD1WKxeNxmvK4LYeHmGX87xuFtGnU0TmfjP+F9WB?=
- =?iso-8859-1?Q?zPHKpM15UY0un6ewlPm1CisabbtuK0YwuV6h2565tP8h+BeLTQucPtT+U6?=
- =?iso-8859-1?Q?PinyO1wbhloyA+NZVeNijDrgT+l7GZ6TAVTgqYdRVReuoJFugUmTxLJFef?=
- =?iso-8859-1?Q?UtDQibrlf3dNVNhth7TfciQXdnGTCgs+R9jOZvAjIeO+T5RU0arlu7WDof?=
- =?iso-8859-1?Q?Zk2PY4Feu0uCuYZMit/t1WBKaxwyqxQ028LqPsd50cEY1ULwVsQdHLNiLy?=
- =?iso-8859-1?Q?oE7Dqkkvco22czINO50osxP4f3rwWhIxIYF8VQ7L4W0oek86EKRWOmQA37?=
- =?iso-8859-1?Q?dmOJQdHb/H3F6KQOVDg8JvV6crbQpsYsr940UOQCU2dRI9Cs//cYkLCYkY?=
- =?iso-8859-1?Q?QL7RavHZMt84/a/0SfcAIIgJvKVVZjTLJIDp1dVuW1Xv+k7dx5OdENrW1n?=
- =?iso-8859-1?Q?vdhVbsnm86NIQt2ceK2o6d6DGQhedK7gePx8z10ddiGqvofheuHox2llbZ?=
- =?iso-8859-1?Q?eOThd+dpDm+7OpfVcM7uRZLqEI7B4byDtDT603BBSNcegXiIBYTsgOA9Fq?=
- =?iso-8859-1?Q?5wHUCr25Z90yHg8Xuka73NAmpXlgHuGF1T6+BJi4QdPYfYAvsYl65TK1Db?=
- =?iso-8859-1?Q?SQOE1YeTkdNBfqG9SJrxaexYQGD9uba2r/b3S+78MIe263Yq/GGVQoXf5q?=
- =?iso-8859-1?Q?rFYxR0EeGQodLeOoHGAgoUOblaFhMnG+X7GeTcJNz7WcsqD9ik4iEXxcDK?=
- =?iso-8859-1?Q?t7lKRGHX+fW1Nl67ZIIurnQORdrClKb/kvEV4n1o7ugsX4pkiAFpFUdw/h?=
- =?iso-8859-1?Q?HEIAKbitsiuw7YnH8cFDvN0x8mv5HnHb6DTvbg=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB8059.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?iso-8859-1?Q?e8d+KsDc/Dq0BaEbZN2tFTt4A7nPQpOJacuiDocbSNIO0NiE2jYHlycWtQ?=
- =?iso-8859-1?Q?F1ZTKEA1SigL0DclWIrGr1aRv1ZtC/zagsK2Pd21ZQ6CKjEYw9HqmBzNYb?=
- =?iso-8859-1?Q?+ygIoffXngpLDS7YfXyf8A/sUF6pPcA058NCGSnwYnQxhn531xC5xxNkXz?=
- =?iso-8859-1?Q?5GMYJAcRj5au+dphU7fI6KzIW9TEmlnwj1pTwetLKaETWmH58AXAcXNxxQ?=
- =?iso-8859-1?Q?0H7bEUDiqJDvGUkI+CevDgQ6Moev6KwenRBygEL4B/JvYK3HSTvNhJFtTq?=
- =?iso-8859-1?Q?gWlvQLLOEeLdGm9pK5b5kPQLIZwBWNBFqaaotTkPZ3ACDuCQZkLz0C+NpU?=
- =?iso-8859-1?Q?IQS0A5I4ZThtKjLFXJZtDR3oQgkCDq6uuZxfKpT4QtyEiulTw8h8k9mQZo?=
- =?iso-8859-1?Q?1XZmI5IUkn3d7JPjHxI4pvyA3e/hDB+Dn6LJLXjyjfK9ynd45pFckHzDQr?=
- =?iso-8859-1?Q?g0M9BiWrFEauVXjM1lHNICXaP/84mUPHaFbwbbgclGXcHoWGDIA1ZJTl0F?=
- =?iso-8859-1?Q?yy36R08XqkpjWwzGkLV4D2cINF/WY0GIhMd/Xk1JiewU7XhrtAATDy0xlM?=
- =?iso-8859-1?Q?vFVmjP4Vc+muVqDjI8ILItYiG/XBTsiBkDht4z+39lM3RGjpEMF7pla1cB?=
- =?iso-8859-1?Q?+EZhGcIlQZOKpgB2Ov8IfiiK/adju62Yxjr2ACMbBj17sI04S+MCGH04mG?=
- =?iso-8859-1?Q?ZOEiNTBazfB99aUtce0SXpYUAK/A12TFv3t9+MzFGjQBJFQUicInxkIwW8?=
- =?iso-8859-1?Q?7gc/KYuZ4eIDTkHUMUn3XBMmMNE67IcOyf61rPl88N/zLUYvgorcyczQFs?=
- =?iso-8859-1?Q?gKb8I0/0Zinf3E2w3KCrcf6Hz0Y4Z/Lae46DfOX3SanJjkhG//Z+6y2+oL?=
- =?iso-8859-1?Q?DnJzJ7qV6WAVbAD0/lpGcbRMgy/bj5JITD/tAlpaBOljaJL+NKtX9WHEcl?=
- =?iso-8859-1?Q?qcpVeVR5HLMsDjuE7GFL93MctPzYcKZVNjxsfHo434/W+hwHWWW7OxqEm8?=
- =?iso-8859-1?Q?EZn5qkjRXHgikoTg5hZwZSYls8PflEL2BCzC7lg3Vsmy0op3ZJ4t2tpFGV?=
- =?iso-8859-1?Q?8FymURt2qrTCW26jBVbS28iFSaybB7Na9otk69U3ETX0jCgxqq2oFA5ix7?=
- =?iso-8859-1?Q?U6Lup6LlK6fCW8fC3pB7urWNyQVe+x5+MBpHknuW2e7yIj4idBcoixHtkl?=
- =?iso-8859-1?Q?jQWmQbzY7oEBv+m6UP9zqMwcaNQ76E9YVGvVqQyPqVA4W+O5lNk9j3pFJd?=
- =?iso-8859-1?Q?ZTFiDfKawFdAnkX4o2sUFusnGrfqueu+VCx7DGeYPIVkBTi8GcL4DfJhpl?=
- =?iso-8859-1?Q?gUiuOT369B3rH6ycSYiF9pWfKT3kbqerGC0rSeB6q/m4jcePu4mjXC54Hb?=
- =?iso-8859-1?Q?EGamdgKqF5YlIxgGiiejKfKsP7zwbRYkOEQLmtOiTtLy/TrsUeBCRpbG3z?=
- =?iso-8859-1?Q?u9TQ2TMdYhAZJ9P6n1kYGpm0vPcRh0uyIZ9v8AcZ1TY2R7tWq235hD2NY8?=
- =?iso-8859-1?Q?IsicgTyXgyPXIDRbrzVy1yZ6+dteTrguoh6Nrx1hvBhcBGEZp7gBgyJH8p?=
- =?iso-8859-1?Q?MI7eVYgpA/bj7zhNM+sZvTuj2Cp6dzbDbPoQwzwevM7OTklaxhQPjp8v8/?=
- =?iso-8859-1?Q?FvbxmngbnM5X3ApKk6+v34MRzQE9u81c3B?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b08768b0-da3b-4be1-0c14-08dde74d873a
-X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB8059.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Aug 2025 22:43:52.5518
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 4eOuXkKqFT+erHaUCKTzVY5MOGJrqcDVH6Vb+qZEhPDwHERaBFVQwTofbFze/iYM3NWzfhAK1O/r2S8BxllzrQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB5813
+Content-Type: text/plain
 
-On Fri, Aug 29, 2025 at 06:44:53PM +0000, Timur Tabi wrote:
-> On Fri, 2025-08-29 at 13:32 -0400, Joel Fernandes wrote:
-> > +    /// Function to check if GSP reload/resume has completed during the boot process.
-> > +    #[expect(dead_code)]
-> > +    pub(crate) fn check_reload_completed(&self, bar: &Bar0, timeout: Delta) -> Result<bool> {
-> 
-> I think this should be renamed to is_reload_completed() and return just bool instead of Result<bool>
+Javier Carrasco <javier.carrasco.cruz@gmail.com> writes:
 
-This function can return Err(ETIMEDOUT).
+> Commit 6f63904c8f3e ("sched: add a few helpers to wake up tasks on the
+> current cpu") introduced this new function to the completion API that
+> has not been documented yet.
 
-> 
-> > +        wait_on(timeout, || {
-> > +            let val = regs::NV_PGC6_BSI_SECURE_SCRATCH_14::read(bar);
-> > +            if val.boot_stage_3_handoff() {
-> > +                Some(true)
-> > +            } else {
-> > +                None
-> > +            }
-> > +        })
-> 
-> And if you insist on returning Result<bool>, at least have this return Some(false) or
-> Some(val.boot_stage_3_handoff()) instead.
+For a change like this, it is a really good idea to copy the author of
+the original patch and others who were involved in it; I have added them
+now.
 
-Ok, so basically that means we would return False if a timeout occured.
-That's fine with me, I can make that change.
+jon
 
-thanks,
-
- - Joel
-
+> Document complete_on_current_cpu() explaining what it does and when its
+> usage is justified.
+>
+> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+>
+> ---
+> Changes in v2:
+> - Rebase onto v6.17-rc1
+> - Fix patch formatting (drop --- before the Signed-off-by tag).
+> - Link to v1: https://lore.kernel.org/r/20250703-complete_on_current_cpu_doc-v1-1-262dc859b38a@gmail.com
+> ---
+>  Documentation/scheduler/completion.rst | 4 ++++
+>  1 file changed, 4 insertions(+)
+>
+> diff --git a/Documentation/scheduler/completion.rst b/Documentation/scheduler/completion.rst
+> index adf0c0a56d02..db9c131f0b62 100644
+> --- a/Documentation/scheduler/completion.rst
+> +++ b/Documentation/scheduler/completion.rst
+> @@ -272,6 +272,10 @@ Signaling completion from IRQ context is fine as it will appropriately
+>  lock with spin_lock_irqsave()/spin_unlock_irqrestore() and it will never
+>  sleep.
+>  
+> +Use complete_on_current_cpu() to wake up the task on the current CPU.
+> +It makes use of the WF_CURRENT_CPU flag to move the task to be woken up
+> +to the current CPU, achieving faster context switches. To use this variant,
+> +the context switch speed must be relevant and the optimization justified.
+>  
+>  try_wait_for_completion()/completion_done():
+>  --------------------------------------------
+>
+> ---
+> base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+> change-id: 20250702-complete_on_current_cpu_doc-94dfc72a39f8
+>
+> Best regards,
+> --  
+> Javier Carrasco <javier.carrasco.cruz@gmail.com>
 
