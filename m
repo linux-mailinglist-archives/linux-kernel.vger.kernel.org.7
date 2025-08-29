@@ -1,197 +1,215 @@
-Return-Path: <linux-kernel+bounces-791222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42C93B3B39C
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 08:47:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7BECB3B39D
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 08:48:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 538781C84283
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 06:48:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E62535822EC
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 06:48:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 380AE25F984;
-	Fri, 29 Aug 2025 06:47:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B410A25F97D;
+	Fri, 29 Aug 2025 06:47:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="nlmaKlcM"
-Received: from TYDPR03CU002.outbound.protection.outlook.com (mail-japaneastazon11013060.outbound.protection.outlook.com [52.101.127.60])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Eiu+GQLU"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9274513AC1;
-	Fri, 29 Aug 2025 06:47:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.127.60
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756450058; cv=fail; b=Plq2ktkspeC37iA92noGq+giabz2238yUpDNzNrTuoc23yOxTU74JcQ4p62JnYPH+duXfwPbAU7rw+vluSZrpmunigsIAehlvdl0GyVtwUatMNxZ/54XhCQAzR5nrPr8E5YFCXyJVy7is40P7D0FTRF5MpM93oFU3t7RsOKO33k=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756450058; c=relaxed/simple;
-	bh=as3xdNhdQV/HpqYmRMvJV3Z79BoGKfuGTZcJbY/31o0=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=J9aieYCWK/3MMj3Rcu4Pu4apI5GVNSlGDvN4hpNKtw7sJxGBPHiu+wAj6UU2Y0QLlp/pnEVXvcHtp+uXBNc9Km9XzjugbvYaYoiWn69HqImcqBVAZ484S7v3sEuf2YTrW6kekbKwFDs8kgSPUHD9P7c6GroqS+IJiS8k4pPG9Nw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=nlmaKlcM; arc=fail smtp.client-ip=52.101.127.60
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=iPrWPhRuEyOcQ9G8yxsKOlOvN3LOGXKzE9S58sYiHXdnEsw8ywHniV5mezvkRdb0uPg337klwitcG7YjULxExzQyfJp2ecxwTkBculyjj11BqPFxXexRdRQzu5spByUZqWllXHEv2Zb56PQriWaleNnuxSiGtsBHpXAW6daLobqokQxQz67MgPaKMuqQ+s3SRfmtcYznkgS5B4FsP/2MV7GmQldImvarHtZcbWR+xMpGOeqP0X/PBp24Vo8zrWAbkJt2brtKzT37K/tTxkPIwA2cBlgSY3gMrMO4KP5vKxFJAf1PdEpDtg0Z/vQ9tLycZZVMKFJaXEmVy0mSbDTmCA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=MF5wPvqYoESTjVIRGWWGgHslz99bSYtWNt/IvtDLqoE=;
- b=oQ9erxl1SluR2+F/bufcSElLOA7/jxWjutaRonmgev6vQ4P64AWTyQUSkZXLpqV/FvmaRWNLrOpt/xWUIuho/oeVblmUgBRU4oMNo5MrO9qAZNjyIDV9eXrVpdamXXK2kBc54yLj7VATQL+RZb/SL8Ig8l3XDepSwXpuE61AA4uUKF3x729v5Av9aWJxkPJRAeHjkG7ZkhXce7nkH/Rv6uggRA1RUik8VHYU/5/xk341ihCpVbQc+fvIa7lpeaGMJUKE6Y4J/zOQ4aE8+YYZj9rbmyfJcxTjVjYG0IVjbScj6XtMrAGczSQf0qf+px4fhVeHKsI0ZsKS6VCppHMvKg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MF5wPvqYoESTjVIRGWWGgHslz99bSYtWNt/IvtDLqoE=;
- b=nlmaKlcMl3JGPdqTzNu6vA0ekKLpC+T10piZBJTNRJWyImkMCLKMct4x9WZqURtKVZxyIFTXQbMIDtJ5QZlM/mUlDJTYfLghG/OBbiSNFyMAIFriyTdunZ4L6zzcsBxWm3CKIhAY7H1ExzH32U8hUWP/AHucWdiEXZ43HH8HMVlm0xC5aN+MvWFUVG4F2a9jGN4TYHbRHT5WqrCFP4BrgqBZ1Libqvb/sDxv5nb/Ds/5yrmBHVKeVxA41UhIsa2BcJJ/REVS049/Z+Z73KSFr7GG5Lt46AQbbPBxgcwuzO2W29Avz083zA9KKXAk6+8dCU/pdB1z2LFHhbjarkB9Vw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from TYZPR06MB7335.apcprd06.prod.outlook.com (2603:1096:405:a2::13)
- by TY0PR06MB6840.apcprd06.prod.outlook.com (2603:1096:405:17::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.17; Fri, 29 Aug
- 2025 06:47:34 +0000
-Received: from TYZPR06MB7335.apcprd06.prod.outlook.com
- ([fe80::7b7a:484f:5ac8:29a3]) by TYZPR06MB7335.apcprd06.prod.outlook.com
- ([fe80::7b7a:484f:5ac8:29a3%4]) with mapi id 15.20.9073.017; Fri, 29 Aug 2025
- 06:47:33 +0000
-From: Xichao Zhao <zhao.xichao@vivo.com>
-To: andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	mcoquelin.stm32@gmail.com,
-	alexandre.torgue@foss.st.com
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Xichao Zhao <zhao.xichao@vivo.com>
-Subject: [net-next v2] net: stmmac: use us_to_ktime function to replace STMMAC_COAL_TIMER macro
-Date: Fri, 29 Aug 2025 14:47:22 +0800
-Message-Id: <20250829064722.521577-1-zhao.xichao@vivo.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SI2PR06CA0011.apcprd06.prod.outlook.com
- (2603:1096:4:186::16) To TYZPR06MB7335.apcprd06.prod.outlook.com
- (2603:1096:405:a2::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 545AE223DD4;
+	Fri, 29 Aug 2025 06:47:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756450067; cv=none; b=o557ffDL58JlirDDuEKutK/lyrASRE3D6FhWyyeKn/XWw5j3sNZ6qztdsVsksdmsyisX/6gU58YlwnEe6fjQ7/U0o28azIPCizw660bV+vmC+v0/n8CFY62/6S5CWgDfIrIrhLi1tl18QOJqyhtdAe31PQGtL3kNeL34bN86YP4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756450067; c=relaxed/simple;
+	bh=O/HE1gXeCkYVe/aIJCE4hHocKjAPsMCTpkKYu+FXid8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Iwy8WJ5rSR9vd7fHYstN57e34fwnOij95mXTiJu9204F1zd6gLTMyW7TDc3XHMYHI/P8q0Lq5djtaaSNKvk9x0loVyYTdi2APFZ9jdouRpktHS5TeGoyXdeyuML7CNV72je9rzt9A87xOdwpWATi5f0sKmSmfMSk+zIcTFQ+qLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Eiu+GQLU; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756450065; x=1787986065;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=O/HE1gXeCkYVe/aIJCE4hHocKjAPsMCTpkKYu+FXid8=;
+  b=Eiu+GQLUNqRWSMetv7xpe1zp/o23Jm0Y2pY4a3rI0hKNjtKjC2HZDW8F
+   kgiKJuH65Itg0YVMbt2lhGbMHois0/nyIWO4CuAmGq+0IF/ciLmoABpu/
+   FrsQQm8YxHwCPzd5+3fRwhAOAZSSGXf/1BK4B9wUAfjmuZMHpLDkvse3h
+   Op9McUvO/A0Hsc1XmiS0AGt2lMUmMNwah0obL9jXjVWIZK0E5MVRZg1lk
+   +xWU9LcTtOr077zXABd1HRYG+FnD/n+b3fE4AenAN7YFF8r1dTvu9uOoh
+   pAOO3wPoVguIjN2lK/M2ewziHsQ9Fa8UrJ6gg/uc2MqdygRxwsETpk9cx
+   g==;
+X-CSE-ConnectionGUID: vw/7fByeT7uGaCYlABrGOQ==
+X-CSE-MsgGUID: aB/mN/RERWWdfMkSdnMsww==
+X-IronPort-AV: E=McAfee;i="6800,10657,11536"; a="58834830"
+X-IronPort-AV: E=Sophos;i="6.18,221,1751266800"; 
+   d="scan'208";a="58834830"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2025 23:47:45 -0700
+X-CSE-ConnectionGUID: OvIAedLFSwO/vmdlcuuH7g==
+X-CSE-MsgGUID: UsBGxirhSOG7pGVoIXXeNg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,221,1751266800"; 
+   d="scan'208";a="170207683"
+Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.238.14]) ([10.124.238.14])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2025 23:47:40 -0700
+Message-ID: <5cc4f58d-d122-43ca-98ec-eabdbe5bf110@intel.com>
+Date: Fri, 29 Aug 2025 14:47:37 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYZPR06MB7335:EE_|TY0PR06MB6840:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8f1075fb-d11c-44ec-bfad-08dde6c7eecf
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|376014|52116014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?NkTVAEeD9uK3dX+gHzsbg9jcUSxEVq59hWbAJD48bT5yGME5k16Ao9T38q9G?=
- =?us-ascii?Q?cQRTGeVH+OHNhYJt56DLWQTN9b4dURyjjeoOA+lYSxKdpQqNsiInUK5C0bNH?=
- =?us-ascii?Q?J6E/nEkE3Sm+IPfziWId8tBtY/zhvclqUNo++cB6JJ5NngjHnSMFEgCSmcRQ?=
- =?us-ascii?Q?S3zSTA50u+gN73YaewsuATeGPLEaJCVZJ9+GEXLd3pWGa/HHPv+KTvmdbdIO?=
- =?us-ascii?Q?Xz49BLFKUXIj/41/JX8fP1xpCwikyds1Q03pjbhiBqxanUvKa6YiNXLUGhDK?=
- =?us-ascii?Q?Mp/4Scg6v7KE9pnht8xPpYMz5yBpqKPaRsxeUxp+PvdWGUNG4I2WF3BdIlYf?=
- =?us-ascii?Q?6qug82fpgGhI0kRMwbBYyFtzZmKBNUegs578uoUpuBJk8LAsMjazwM437t7l?=
- =?us-ascii?Q?BU0Jw2bshFhTa5B2/UNTm8fgxBNJIzdDHQKFgFmFojhcBMr+2HZIu11f7R82?=
- =?us-ascii?Q?yvQJ8UWBIZsAIGHcJP/jNenIc//p+irAB8ZpWFtTyppqT+naTx1k3SO8AWZd?=
- =?us-ascii?Q?QfoNrCXZQLwlDK/buNwaYB2mS8l8c21xyXAgh7s4NVgLfwbzPblagJ1WkLEs?=
- =?us-ascii?Q?qaCCUy1HhoP3yhSwzpc+EEM7eKeZhIBNfGdiOHGDIwmRMzOxbJrjQkcIurSJ?=
- =?us-ascii?Q?mAog0b5ZzE6w/k+0Ua/plftq2lJbmxqbd3b6YMihMtAwyA0Z6202dzdkyPrR?=
- =?us-ascii?Q?BIketXp/W25zOMO3ekDFJ6A8w6M6hebAlJyWg+a2HB+qWe+DkE1LDoQl0r28?=
- =?us-ascii?Q?6s8dyD+28qUcXbntg9PKvv4IFUp3Xb9rEkLoytZFJAONsKimi+8pbYSV0j/u?=
- =?us-ascii?Q?DXkgGsRki3WGAYK8SSJGcwtlQMpS9FlIQIxvwC4lncJLggvpHZI3/4smwVgG?=
- =?us-ascii?Q?sElcDnKPY/Qnu/CPUGz4ISZs9uQSARP/HLpyHrIlSVZAjXTMf8RAZa9ZG+je?=
- =?us-ascii?Q?GO7+v+VoAnfHeqUPk1sd2Q78JsLia7T1WvOOlHUofdTuOg6LN6RmyuV6W5Ti?=
- =?us-ascii?Q?vQegkf8U/xiAMeZY+Qfd7bhqlREUMxK4mAjbqMUUwCI4/vDrAY3C2xkMzK0b?=
- =?us-ascii?Q?ywn7gzp6QaWAZLwTWJxsXGN80NxJ5tYk4XZzNG9GUYxe3VgUTrU1vL0tozPG?=
- =?us-ascii?Q?6+cF6JeZ7E+TTcnUajGT9XlhenYVir9eo8kplQs/HPCx3FR67KGAPEMFNs0g?=
- =?us-ascii?Q?tDz3SntRVV7q9jlkDsa9GkJT7dxjwKNYeCnfyeOXc5tOqVxTIbcBhRR8+fbk?=
- =?us-ascii?Q?7JUxWIdCUJwf6AGjJ6SCQM7VpFbBsdexW7T9JPVYRVNbt6bhy2C8eeJbibHl?=
- =?us-ascii?Q?vHpjrFepxOI5qUvuaycBR0MHrc9RrXtJtQ6vvxo2zE9bkk4gwNH4BzV5cwPD?=
- =?us-ascii?Q?nOK9rjHLVbzFrmJoL7whkOkCGQ/5kkSPATCzVTBRvr/zRSpWBpEj/rdMHDJE?=
- =?us-ascii?Q?/HTNr9414YyQ9+f/huifuWNAiFwhFW/lXCCP9vliOneHv5T4nkI/CA=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR06MB7335.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(52116014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?fQ1P3hxn2cf4E2K5EXmL2i+FppCvYg8ikE0oAmIMreCN/XR47Q90gpZiKmLJ?=
- =?us-ascii?Q?gvCqG+5lA46SoVsME78Zy749JY/zvMM9409YJB0EUNPRLqEVQDHPZeIDjcbK?=
- =?us-ascii?Q?ec6v418Ss3Oie7ruSYwapJeVGVWxizc31hyF5Dof3QH9ILm6CJF7MCnt7Tyx?=
- =?us-ascii?Q?k1Qe659q3EAi4m9O2rBbaU1HxdPSXzLqhQUxlgK/3pT2qAHkq6NNngvwOnO6?=
- =?us-ascii?Q?vOSX0vX5bxK5KrDVE3Tc2k/+W/zlsoPt4u6vJRovwTkKmce1hm37Qj4eXvDp?=
- =?us-ascii?Q?NpBbkIVap3LL9zRDzaT9JDcHWY5ZkA87Iv5UQ7Qbrz21EWWEO3UhBHfu9p7i?=
- =?us-ascii?Q?eD7e34Gf5LUNtYPpYqc9rB2K6dWZH3peNR/BGI8cS0nndWsGweLFJrIaDaGu?=
- =?us-ascii?Q?0H+IQ6howSJte1xPeOp1CJUaPdH7JtNAn/ypOegWspwY/3uDnHF1jKiQ3tcB?=
- =?us-ascii?Q?wBvik+MVbAdYYaBLjaVNYmhiI7cCOyPDPyRtWlTCj3jVTe/P4Be1OWnwMCKH?=
- =?us-ascii?Q?nMo7SuhOwR6VojOl59GyyV0XwQmgxVEo92HoANOzoxLJ0ZSb+Q/aoRh8E+49?=
- =?us-ascii?Q?Hv+psojULU/qhID8xN/Cmk6J6Yw6sFL9Xhe3D2PtNTglNkI2pL2/gVvSNO8s?=
- =?us-ascii?Q?FB0M5Miou5a1Qt/5gfG0ZotUj6purYFNhxjbI/DTNi1LY2Yj0jBV98ELp193?=
- =?us-ascii?Q?xJheTm5pHRtJAWgFoEhuIzF08yHMxlLBb+mUjchA1+zURaFUglLXrnGYFL4t?=
- =?us-ascii?Q?f9BXq4WFsVuHx89iYqRZcuCIdYCmQq9ePFgZfxwIGYnuxiBEVCVVPyuCO3go?=
- =?us-ascii?Q?4XVFfjIQkqAWYgBFqZ1GoaEhyMD2mhptuufxfRZ30+2RD3vvxeuKlLJrVdVB?=
- =?us-ascii?Q?Ju+V49RFr2VmwjdefGd+TFCBwX2D1Xlkv/TbLVMW6oJ+oNEuL8/zXMQXnR6A?=
- =?us-ascii?Q?4z0cDfd/txxlxI/nbrbidOvdhSJyXbaKzT67V5D8uKHJI6i3/VvmXkhjxaMo?=
- =?us-ascii?Q?aY+yCmFCknsBZpEcSnYPnVL7yTl4vf4NEJ3u6aItxAhax48HwQqrWckAGSC2?=
- =?us-ascii?Q?AYxgXh39SJH3LZZqECE4zVJETchvaUzHTVj9dI2R94rg6sqUQTD2S2bWCSHW?=
- =?us-ascii?Q?wZLv/61z5pP0VPPFDzIyGsJ9U1wx+ujbKVLY2HIe5FwmcU6rgO2YgjHdo9O/?=
- =?us-ascii?Q?aHgvxKkMlc9Yw4h5uYNaS2Ezf3ranQxBlG5mIyO+WK+3C6Dxwxlxw45cJ5fj?=
- =?us-ascii?Q?PVB9RvUWGWQ+oFjyAhqzkpJ3eL3E6ZmviRaQT+trL6QLM+SlKCGvRi1gzbPE?=
- =?us-ascii?Q?I7gakBh84oFigwvP/jcib07SX78X2iFGAimzSf7605FiTgwTAWZFP47FPS73?=
- =?us-ascii?Q?oUmZMMkKFF5HIvzES/GqI6IyASLMzvFGvLkmc+0En/MjyoBsA0plp6Ke/KCj?=
- =?us-ascii?Q?2OYYTEV8AFwUUep0v+PnWIryRBTCKMQqTwq/psAYo7D/BGMr360Vk7TTSO8j?=
- =?us-ascii?Q?0qb+xfgJZS/x5Hh3U/P/9nNitXYUD+nZoErYUmR16Y96F5khML+UtAytDBp+?=
- =?us-ascii?Q?/X/8wT3fS1yYY/fP0eggKvE20Q3PCCtO2ccGvGhy?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8f1075fb-d11c-44ec-bfad-08dde6c7eecf
-X-MS-Exchange-CrossTenant-AuthSource: TYZPR06MB7335.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Aug 2025 06:47:33.8561
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 7wZPMcdwfkuoGPxZpNVxG14IP4AzsWBe0d1TJXV8bf555fgCmhv7C6Zs1H5w8lV8OUmsZFkSpZY2a50MF+7YPA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY0PR06MB6840
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v13 03/21] KVM: x86: Refresh CPUID on write to guest
+ MSR_IA32_XSS
+To: Chao Gao <chao.gao@intel.com>, kvm@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com,
+ john.allen@amd.com, mingo@redhat.com, minipli@grsecurity.net,
+ mlevitsk@redhat.com, pbonzini@redhat.com, rick.p.edgecombe@intel.com,
+ seanjc@google.com, tglx@linutronix.de, weijiang.yang@intel.com,
+ x86@kernel.org, xin@zytor.com, Zhang Yi Z <yi.z.zhang@linux.intel.com>
+References: <20250821133132.72322-1-chao.gao@intel.com>
+ <20250821133132.72322-4-chao.gao@intel.com>
+Content-Language: en-US
+From: Xiaoyao Li <xiaoyao.li@intel.com>
+In-Reply-To: <20250821133132.72322-4-chao.gao@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Removing the redundant STMMAC_COAL_TIMER macro and replacing it
-with us_to_ktime enhances standardization and improves code readability.
+On 8/21/2025 9:30 PM, Chao Gao wrote:
+> From: Yang Weijiang <weijiang.yang@intel.com>
+> 
+> Update CPUID.(EAX=0DH,ECX=1).EBX to reflect current required xstate size
+> due to XSS MSR modification.
+> CPUID(EAX=0DH,ECX=1).EBX reports the required storage size of all enabled
+> xstate features in (XCR0 | IA32_XSS). The CPUID value can be used by guest
+> before allocate sufficient xsave buffer.
+> 
+> Note, KVM does not yet support any XSS based features, i.e. supported_xss
+> is guaranteed to be zero at this time.
+> 
+> Opportunistically return KVM_MSR_RET_UNSUPPORTED if guest CPUID doesn't
+> enumerate it. Since KVM_MSR_RET_UNSUPPORTED takes care of host_initiated
+> cases, drop the host_initiated check.
 
-Signed-off-by: Xichao Zhao <zhao.xichao@vivo.com>
----
-v2: 
-  - remove the STMMAC_COAL_TIMER macro.
-  - add "net-next" to the subject.
-v1: https://lore.kernel.org/all/20250827020755.59665-1-zhao.xichao@vivo.com/
----
- drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+It looks most of this patch is introducing
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-index f1abf4242cd2..2767ea5bd204 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-@@ -144,8 +144,6 @@ static void stmmac_init_fs(struct net_device *dev);
- static void stmmac_exit_fs(struct net_device *dev);
- #endif
- 
--#define STMMAC_COAL_TIMER(x) (ns_to_ktime((x) * NSEC_PER_USEC))
--
- int stmmac_bus_clks_config(struct stmmac_priv *priv, bool enabled)
- {
- 	int ret = 0;
-@@ -3197,7 +3195,7 @@ static void stmmac_tx_timer_arm(struct stmmac_priv *priv, u32 queue)
- 	 */
- 	if (unlikely(!napi_is_scheduled(napi)))
- 		hrtimer_start(&tx_q->txtimer,
--			      STMMAC_COAL_TIMER(tx_coal_timer),
-+			      us_to_ktime(tx_coal_timer),
- 			      HRTIMER_MODE_REL);
- 	else
- 		hrtimer_try_to_cancel(&tx_q->txtimer);
--- 
-2.34.1
+   vcpu->arch.guest_supported_xss
+
+and use it to guard the wrmsr of MSR_IA32_XSS instead of KVM global 
+kvm_caps.supported_xss.
+
+So it's better to split it into two patches?
+
+> Suggested-by: Sean Christopherson <seanjc@google.com>
+> Co-developed-by: Zhang Yi Z <yi.z.zhang@linux.intel.com>
+> Signed-off-by: Zhang Yi Z <yi.z.zhang@linux.intel.com>
+> Signed-off-by: Yang Weijiang <weijiang.yang@intel.com>
+> Reviewed-by: Maxim Levitsky <mlevitsk@redhat.com>
+> Reviewed-by: Chao Gao <chao.gao@intel.com>
+> Tested-by: Mathias Krause <minipli@grsecurity.net>
+> Tested-by: John Allen <john.allen@amd.com>
+> Tested-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+> Signed-off-by: Chao Gao <chao.gao@intel.com>
+> ---
+>   arch/x86/include/asm/kvm_host.h |  3 ++-
+>   arch/x86/kvm/cpuid.c            | 15 ++++++++++++++-
+>   arch/x86/kvm/x86.c              |  9 +++++----
+>   3 files changed, 21 insertions(+), 6 deletions(-)
+> 
+> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+> index 0d3cc0fc27af..b7f82a421718 100644
+> --- a/arch/x86/include/asm/kvm_host.h
+> +++ b/arch/x86/include/asm/kvm_host.h
+> @@ -815,7 +815,6 @@ struct kvm_vcpu_arch {
+>   	bool at_instruction_boundary;
+>   	bool tpr_access_reporting;
+>   	bool xfd_no_write_intercept;
+> -	u64 ia32_xss;
+>   	u64 microcode_version;
+>   	u64 arch_capabilities;
+>   	u64 perf_capabilities;
+> @@ -876,6 +875,8 @@ struct kvm_vcpu_arch {
+>   
+>   	u64 xcr0;
+>   	u64 guest_supported_xcr0;
+> +	u64 guest_supported_xss;
+> +	u64 ia32_xss;
+>   
+>   	struct kvm_pio_request pio;
+>   	void *pio_data;
+> diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
+> index ad6cadf09930..b5f87254ced7 100644
+> --- a/arch/x86/kvm/cpuid.c
+> +++ b/arch/x86/kvm/cpuid.c
+> @@ -263,6 +263,17 @@ static u64 cpuid_get_supported_xcr0(struct kvm_vcpu *vcpu)
+>   	return (best->eax | ((u64)best->edx << 32)) & kvm_caps.supported_xcr0;
+>   }
+>   
+> +static u64 cpuid_get_supported_xss(struct kvm_vcpu *vcpu)
+> +{
+> +	struct kvm_cpuid_entry2 *best;
+> +
+> +	best = kvm_find_cpuid_entry_index(vcpu, 0xd, 1);
+> +	if (!best)
+> +		return 0;
+> +
+> +	return (best->ecx | ((u64)best->edx << 32)) & kvm_caps.supported_xss;
+> +}
+> +
+>   static __always_inline void kvm_update_feature_runtime(struct kvm_vcpu *vcpu,
+>   						       struct kvm_cpuid_entry2 *entry,
+>   						       unsigned int x86_feature,
+> @@ -305,7 +316,8 @@ static void kvm_update_cpuid_runtime(struct kvm_vcpu *vcpu)
+>   	best = kvm_find_cpuid_entry_index(vcpu, 0xD, 1);
+>   	if (best && (cpuid_entry_has(best, X86_FEATURE_XSAVES) ||
+>   		     cpuid_entry_has(best, X86_FEATURE_XSAVEC)))
+> -		best->ebx = xstate_required_size(vcpu->arch.xcr0, true);
+> +		best->ebx = xstate_required_size(vcpu->arch.xcr0 |
+> +						 vcpu->arch.ia32_xss, true);
+>   }
+>   
+>   static bool kvm_cpuid_has_hyperv(struct kvm_vcpu *vcpu)
+> @@ -424,6 +436,7 @@ void kvm_vcpu_after_set_cpuid(struct kvm_vcpu *vcpu)
+>   	}
+>   
+>   	vcpu->arch.guest_supported_xcr0 = cpuid_get_supported_xcr0(vcpu);
+> +	vcpu->arch.guest_supported_xss = cpuid_get_supported_xss(vcpu);
+>   
+>   	vcpu->arch.pv_cpuid.features = kvm_apply_cpuid_pv_features_quirk(vcpu);
+>   
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index 569583943779..75b7a29721bb 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -4011,16 +4011,17 @@ int kvm_set_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+>   		}
+>   		break;
+>   	case MSR_IA32_XSS:
+> -		if (!msr_info->host_initiated &&
+> -		    !guest_cpuid_has(vcpu, X86_FEATURE_XSAVES))
+> -			return 1;
+> +		if (!guest_cpuid_has(vcpu, X86_FEATURE_XSAVES))
+> +			return KVM_MSR_RET_UNSUPPORTED;
+>   		/*
+>   		 * KVM supports exposing PT to the guest, but does not support
+>   		 * IA32_XSS[bit 8]. Guests have to use RDMSR/WRMSR rather than
+>   		 * XSAVES/XRSTORS to save/restore PT MSRs.
+>   		 */
+> -		if (data & ~kvm_caps.supported_xss)
+> +		if (data & ~vcpu->arch.guest_supported_xss)
+>   			return 1;
+> +		if (vcpu->arch.ia32_xss == data)
+> +			break;
+>   		vcpu->arch.ia32_xss = data;
+>   		vcpu->arch.cpuid_dynamic_bits_dirty = true;
+>   		break;
 
 
