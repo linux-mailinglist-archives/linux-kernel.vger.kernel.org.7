@@ -1,157 +1,177 @@
-Return-Path: <linux-kernel+bounces-791489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2030FB3B776
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 11:29:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BEA6B3B774
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 11:29:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ABB4116321E
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 09:29:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 541207B9B88
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 09:28:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69F64304BD7;
-	Fri, 29 Aug 2025 09:24:04 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 219DF2F6560
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 09:24:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B33D330496B;
+	Fri, 29 Aug 2025 09:27:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="xHCy7lk3";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="G84P3RpO";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="xHCy7lk3";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="G84P3RpO"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FA482EB85D
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 09:27:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756459444; cv=none; b=WVXT1txbt9T6CRdrEEJqL1gEuKZHv2OUXukfvlyBivHC0r4DvwnUJgkoUeT5pHBOSHr4bUpVeNgKUuriJybxNPKq83TKN7fW2Kq0mq7wZ8A17sT38Kcrq+jyo/Fuzwzph1WfWElU10FzhROrlzSfW4sVmfr3ahKbYxVqU36+Nlo=
+	t=1756459638; cv=none; b=DHbN5cLlULN4DiVCMKKzkhSCS7eV0/pyfmEZ0tKRTgAbM2f33iifLBBlIJhHFqNuTraISFQG5m85/AJu4CWQcoUJk66y4vyPnSw6Mq0ZX8cZxNUj/CLIojb6IbYOo6836CaX/BsWI5MBaIylMyWVhVzzKoTwE9iDkDuL3nsBzA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756459444; c=relaxed/simple;
-	bh=bj/LsTA0mojzStTkp9FppnQBiFrMIfbq5S34UTSNvvI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rtNE2GxXQgSpEaW0oZe1VZbkvscvRCHsxlUjre/bVix6ixs1V0ZErBgomYUNgfM9Uh6Nh7ZfrVoNaJFZ1At6BSHf/vzjN+/z9njr5rLugdj7K/B5c3KHo1yEo4n013NURPLjfdHKphwy7gMPOjrpd1sqqry0MtKMq5ir/zlchZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B21251756;
-	Fri, 29 Aug 2025 02:23:52 -0700 (PDT)
-Received: from [10.57.91.118] (unknown [10.57.91.118])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6AE8A3F738;
-	Fri, 29 Aug 2025 02:23:59 -0700 (PDT)
-Message-ID: <9b7df510-b9a1-4fca-90d3-bcfb3df43bd4@arm.com>
-Date: Fri, 29 Aug 2025 10:23:57 +0100
+	s=arc-20240116; t=1756459638; c=relaxed/simple;
+	bh=kxhXbEWEmhBcd+QpJMTnmcE1P7rphBjRmfsCZBjC5n8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FfFm22KrG/1Vj5INGzxswVTtybRXHHQw6YgPJk0cM5TMRbcJqNkm3gV0urpVnOA9zoHD2ooEB9KY9nGksYkoiWNS3zfG0pZVOqSVoTZEXpipoJRSNKYL3pk4Q3T5fz7+A2PV5SZDCHsj5Yl+LEn3KICA+YurEVNG+r766rkaZvQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=xHCy7lk3; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=G84P3RpO; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=xHCy7lk3; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=G84P3RpO; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 17EFB207CD;
+	Fri, 29 Aug 2025 09:27:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1756459628; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YMNvp6aJZPRO/eumDR8IUAtr0y7CCMCS5RSfKCzLGko=;
+	b=xHCy7lk3SW0Fk7PWWPZv+/NHhfB1bbGCNVc746sg/Ise8q+ULwN8trwuLr5DI7nW5XiMt6
+	Im70+H2cMUQx3B0YzqeCoMEKXMAKVdtxWySV0o0izoEJqOMnKea85nv8tj6E9SMtZ77lbp
+	T9WAnRdW6znNoTeGD7YLtA8Zdm/dqXI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1756459628;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YMNvp6aJZPRO/eumDR8IUAtr0y7CCMCS5RSfKCzLGko=;
+	b=G84P3RpO/VmKz82Vve+fYtkgJePq86E7JHYq0+4ARLzCFbCQVS2X8xXXGz6+sxHb+nmhuY
+	sJG7+evDjuoF3KBg==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=xHCy7lk3;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=G84P3RpO
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1756459628; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YMNvp6aJZPRO/eumDR8IUAtr0y7CCMCS5RSfKCzLGko=;
+	b=xHCy7lk3SW0Fk7PWWPZv+/NHhfB1bbGCNVc746sg/Ise8q+ULwN8trwuLr5DI7nW5XiMt6
+	Im70+H2cMUQx3B0YzqeCoMEKXMAKVdtxWySV0o0izoEJqOMnKea85nv8tj6E9SMtZ77lbp
+	T9WAnRdW6znNoTeGD7YLtA8Zdm/dqXI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1756459628;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YMNvp6aJZPRO/eumDR8IUAtr0y7CCMCS5RSfKCzLGko=;
+	b=G84P3RpO/VmKz82Vve+fYtkgJePq86E7JHYq0+4ARLzCFbCQVS2X8xXXGz6+sxHb+nmhuY
+	sJG7+evDjuoF3KBg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 076CD13326;
+	Fri, 29 Aug 2025 09:27:08 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id w43IAWxysWgINAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Fri, 29 Aug 2025 09:27:08 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 25564A099C; Fri, 29 Aug 2025 11:27:03 +0200 (CEST)
+Date: Fri, 29 Aug 2025 11:27:03 +0200
+From: Jan Kara <jack@suse.cz>
+To: Xichao Zhao <zhao.xichao@vivo.com>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, mic@digikod.net, 
+	jack@suse.cz, gnoack@google.com, linux-fsdevel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fs: Replace offsetof() with struct_size() in
+ ioctl_file_dedupe_range()
+Message-ID: <65m5gqzejxjjeso2kxsu2pojdaylvv3z6nbl5lqimbxkz464ic@kc2nasscngeo>
+References: <20250829091510.597858-1-zhao.xichao@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v6 1/4] arm64: Enable permission change on arm64
- kernel block mappings
-Content-Language: en-GB
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Yang Shi <yang@os.amperecomputing.com>, will@kernel.org,
- akpm@linux-foundation.org, Miko.Lenczewski@arm.com, dev.jain@arm.com,
- scott@os.amperecomputing.com, cl@gentwo.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250805081350.3854670-1-ryan.roberts@arm.com>
- <20250805081350.3854670-2-ryan.roberts@arm.com> <aLCDGlobH1wG8iqx@arm.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <aLCDGlobH1wG8iqx@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250829091510.597858-1-zhao.xichao@vivo.com>
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_COUNT_THREE(0.00)[3];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	MIME_TRACE(0.00)[0:+];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Rspamd-Queue-Id: 17EFB207CD
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.01
 
-On 28/08/2025 17:26, Catalin Marinas wrote:
-> On Tue, Aug 05, 2025 at 09:13:46AM +0100, Ryan Roberts wrote:
->> From: Dev Jain <dev.jain@arm.com>
->>
->> This patch paves the path to enable huge mappings in vmalloc space and
->> linear map space by default on arm64. For this we must ensure that we
->> can handle any permission games on the kernel (init_mm) pagetable.
->> Currently, __change_memory_common() uses apply_to_page_range() which
->> does not support changing permissions for block mappings. We attempt to
->> move away from this by using the pagewalk API, similar to what riscv
->> does right now; however, it is the responsibility of the caller to
->> ensure that we do not pass a range overlapping a partial block mapping
->> or cont mapping; in such a case, the system must be able to support
->> range splitting.
->>
->> This patch is tied with Yang Shi's attempt [1] at using huge mappings in
->> the linear mapping in case the system supports BBML2, in which case we
->> will be able to split the linear mapping if needed without
->> break-before-make. Thus, Yang's series, IIUC, will be one such user of
->> my patch; suppose we are changing permissions on a range of the linear
->> map backed by PMD-hugepages, then the sequence of operations should look
->> like the following:
->>
->> split_range(start)
->> split_range(end);
->> __change_memory_common(start, end);
->>
->> However, this patch can be used independently of Yang's; since currently
->> permission games are being played only on pte mappings (due to
->> apply_to_page_range not supporting otherwise), this patch provides the
->> mechanism for enabling huge mappings for various kernel mappings like
->> linear map and vmalloc.
-> [...]
+On Fri 29-08-25 17:15:10, Xichao Zhao wrote:
+> When dealing with structures containing flexible arrays, struct_size()
+> provides additional compile-time checks compared to offsetof(). This
+> enhances code robustness and reduces the risk of potential errors.
 > 
-> I think some of this text needs to be trimmed down, avoid references to
-> other series if they are merged at the same time.
-> 
->> diff --git a/include/linux/pagewalk.h b/include/linux/pagewalk.h
->> index 682472c15495..8212e8f2d2d5 100644
->> --- a/include/linux/pagewalk.h
->> +++ b/include/linux/pagewalk.h
->> @@ -134,6 +134,9 @@ int walk_page_range(struct mm_struct *mm, unsigned long start,
->>  int walk_kernel_page_table_range(unsigned long start,
->>  		unsigned long end, const struct mm_walk_ops *ops,
->>  		pgd_t *pgd, void *private);
->> +int walk_kernel_page_table_range_lockless(unsigned long start,
->> +		unsigned long end, const struct mm_walk_ops *ops,
->> +		void *private);
->>  int walk_page_range_vma(struct vm_area_struct *vma, unsigned long start,
->>  			unsigned long end, const struct mm_walk_ops *ops,
->>  			void *private);
->> diff --git a/mm/pagewalk.c b/mm/pagewalk.c
->> index 648038247a8d..18a675ab87cf 100644
->> --- a/mm/pagewalk.c
->> +++ b/mm/pagewalk.c
->> @@ -633,6 +633,30 @@ int walk_kernel_page_table_range(unsigned long start, unsigned long end,
->>  	return walk_pgd_range(start, end, &walk);
->>  }
->>  
->> +/*
->> + * Use this function to walk the kernel page tables locklessly. It should be
->> + * guaranteed that the caller has exclusive access over the range they are
->> + * operating on - that there should be no concurrent access, for example,
->> + * changing permissions for vmalloc objects.
->> + */
->> +int walk_kernel_page_table_range_lockless(unsigned long start, unsigned long end,
->> +		const struct mm_walk_ops *ops, void *private)
->> +{
->> +	struct mm_walk walk = {
->> +		.ops		= ops,
->> +		.mm		= &init_mm,
->> +		.private	= private,
->> +		.no_vma		= true
->> +	};
->> +
->> +	if (start >= end)
->> +		return -EINVAL;
->> +	if (!check_ops_valid(ops))
->> +		return -EINVAL;
->> +
->> +	return walk_pgd_range(start, end, &walk);
->> +}
-> 
-> More of a nit: we could change walk_kernel_page_table_range() to call
-> this function after checking the mm lock as they look nearly identical.
-> The existing function has a pgd argument but it doesn't seem to be used
-> anywhere and could be removed (or add it here for consistency).
+> Signed-off-by: Xichao Zhao <zhao.xichao@vivo.com>
 
-Good point. I've done this refactoring in my new version, adding pgd to the
-_lockless() variant, since it's used by x86. Let's see what Lorenzo and co think
-in the context of the next version (incomming shortly).
+Indeed. Also with struct_size() it is more obvious what was the intention.
+Feel free to add:
 
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+								Honza
+
+> ---
+>  fs/ioctl.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> Either way, the patch looks fine.
+> diff --git a/fs/ioctl.c b/fs/ioctl.c
+> index 0248cb8db2d3..83d07218b6cd 100644
+> --- a/fs/ioctl.c
+> +++ b/fs/ioctl.c
+> @@ -426,7 +426,7 @@ static int ioctl_file_dedupe_range(struct file *file,
+>  		goto out;
+>  	}
+>  
+> -	size = offsetof(struct file_dedupe_range, info[count]);
+> +	size = struct_size(same, info, count);
+>  	if (size > PAGE_SIZE) {
+>  		ret = -ENOMEM;
+>  		goto out;
+> -- 
+> 2.34.1
 > 
-> Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
-
-
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
