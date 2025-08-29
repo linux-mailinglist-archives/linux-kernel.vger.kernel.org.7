@@ -1,156 +1,187 @@
-Return-Path: <linux-kernel+bounces-791507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E095AB3B7A6
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 11:48:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C642B3B7A8
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 11:48:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 189501C8024E
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 09:48:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56BE21C80376
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 09:48:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C74D304BA6;
-	Fri, 29 Aug 2025 09:47:59 +0000 (UTC)
-Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com [209.85.221.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95A0B3054E1;
+	Fri, 29 Aug 2025 09:48:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jhvqwzBl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3379E33985;
-	Fri, 29 Aug 2025 09:47:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC3A533985;
+	Fri, 29 Aug 2025 09:48:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756460879; cv=none; b=ChSD7ktySnDRbmn6ld7pqbdOKX6h4m/G4zmSyhkDFy1M+80C+YKcNGuTw7/EydzqvvLdtAEsTSux67FKwVIc7B47GtnlhiROsxJtbIyAOA3IZ0hnS4z4GqoCmos96YYjQVStsbD47Co+Aq7tiJam78Ccbyj5mkuahjISZXvVh40=
+	t=1756460883; cv=none; b=WQDEdeVjS0bLsirFq+iekU0/twka6S5/Wba6kgkb2KaA8FwjfoPMTsGCQAWmiIjLxPPDQkWjLFD4BvQTLwvqoU870eiXAR5zGX1AZKvVYtqgs9dfKREkYorEsk5BOdJx76ajqyUMr3wd65R7/VMNrN6vEOv8tF96DoK6nrCtXwk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756460879; c=relaxed/simple;
-	bh=Uam47n9XP2yNSU+KEkGNi082Ub+UjYkvl37Onz7YMGc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=W8Y54Yj3Oc7co2VBFzuZd1Frf/pqtPim2/GfPKuPtBTr46aMcDC3Evht3Oa2rIUougATWt8pZYKigJsADCIW1R136EUmLJS82HtB16fsbFjSEm4dcIL8/exhr6YQEa1Lfc3TD5FeVJcm258q4G5iMvXtPZub8rEvzbyd97z02sM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f176.google.com with SMTP id 71dfb90a1353d-54494c3f7e3so93524e0c.3;
-        Fri, 29 Aug 2025 02:47:56 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756460876; x=1757065676;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=SjwK9jXSJ6vy5qbcZE6vx6xB7K4aY3jNf25jf3fHvcU=;
-        b=nsJxo684igLQkv5DrQsu13X3rn6GfzCCXBIadNcZIcawPKLiHxSzDOyuVI85FvbxqE
-         +lUHCYs0p3bxo521EHh1ZxHHq4uf2D3r6gCAElQ0/0I3SQewRhBAyXn8yQqrSVHBfaeX
-         hOVFN7cG1LwkSuayb4ZT2kHSbHbNkNaS6Oq325GCvmVdJIjSpKsVSyjCURkRq6ETgCIJ
-         vheblAT3fSpFSO1JYxPsWTGte/+cNgcc31XpphGdv9c6U8NtqS5kQppUWBS7hEcjCdWX
-         s6tgcF11r3OUbqO3naANmv6B5LVAIedrBjgfF/F+UaMga8KxF2nCvcHpecmUKaBjH3P7
-         GMOw==
-X-Forwarded-Encrypted: i=1; AJvYcCUqAPKSuOszS4lp+sf9ovfmiuBaiu0wSh0yIafVsf9vjsmMx1hHb+8EaVUBPo3z5MlXPIg/toA8M7GVxsPa@vger.kernel.org, AJvYcCX1tdKExWHSDtHR/yu2Il+k8B4s/G8yL5fnR53Zx7Al2/mDEbI5f05pyr06oLVznoMz8+wqo9fqigY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy18+xjA7F0gpqu9IVLtGi3q/VeUnx00yUCbRPG3BAtH1psXyh0
-	dQwicYy2TeoFfq5lgoxQ0l+gDZJmAbgHS9I+55VfUC1zwuQYWFb0abu9siy2EIc5
-X-Gm-Gg: ASbGnctJEiy0D6VWdrYylh6vCY+Uw3Xmc3DMBXcKkJf1fT4vYnvKbU2vPG02kjsNy1Z
-	ibiDcquXxWN89/Cce/P6Ya/AKpFZ3QSx3BFYRl1rfUTsNIJ4eO0TJXxS8Ikcekz8gvIs7ErEgp9
-	TEkACl+12+Y3OedDtbnWfAdNsE+2svIfU+6LChcqWoFz1uxTdaltZ0nPQ8xeJM6XuQO/YtREEkp
-	bfh/dtaALlfdkLHUw9nxNTlTGC/uNPNZvyzseEcMsIL68dhLQXnowZZ8/uvNhFZjXLls640nTLO
-	TgS6fX0papcuFvQfgxfbCDPMqU+a2nyxlrdzEA6ZRiqdSgtCsAowmTMZ3vU03p3L5jzgqoaQ2qP
-	zXws4Eli8v89KI/ma/hpUqs+ISlpwBLJFNieUnb3qXKwFlGJJ31pcOMmf0l71TLxACLuDQ0Y=
-X-Google-Smtp-Source: AGHT+IG8jIKDsVWnAuswpo/MqWNPhyyrZCHuqJY72pBh0mx+lvb5wymxARAFOAJ0RFD3rfp1xyu3Uw==
-X-Received: by 2002:a05:6122:25e7:b0:541:366:d15a with SMTP id 71dfb90a1353d-5410366d42emr4515194e0c.2.1756460875666;
-        Fri, 29 Aug 2025 02:47:55 -0700 (PDT)
-Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com. [209.85.217.50])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-544914c0e8esm637779e0c.28.2025.08.29.02.47.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 29 Aug 2025 02:47:55 -0700 (PDT)
-Received: by mail-vs1-f50.google.com with SMTP id ada2fe7eead31-52069272157so295727137.3;
-        Fri, 29 Aug 2025 02:47:55 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUnkWB7FZ03ZIMOo6vOb5aqqknwPHM6/f3BxOAMelzGmhkm6+kvNseKgjXCrLnvKRgHKr2U/R50HoU=@vger.kernel.org, AJvYcCV+wcayYkck0zLXs1tkIkt5mdsTqRg/0B0pIWtZgYN56JR+VxYwco46S8GO9qmr0rZD5bp3Hcm2qkwr6x+o@vger.kernel.org
-X-Received: by 2002:a05:6102:5045:b0:4e9:9659:3a5f with SMTP id
- ada2fe7eead31-51d0d3295fcmr9051801137.10.1756460875111; Fri, 29 Aug 2025
- 02:47:55 -0700 (PDT)
+	s=arc-20240116; t=1756460883; c=relaxed/simple;
+	bh=c/nLtzvIjWghajbObEXEYoMuDbVvHsLyXpDONNIuyys=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pbzL6Y4ywNOOtP8WdHoYauYdb5CIWGtW6X3GbG6SOi7id1waEXrjrKhmvOkN9hPNNDvXpFDzbC93LSbJQW6KVsuYGk0E5gqjB2EaT6xpfH7WSF6It8xCjmwDae8tT9MjEz91uUsfOeFOEjELAvC5/kchr65eiRGT+q4RJOgnKDE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jhvqwzBl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FC19C4CEF6;
+	Fri, 29 Aug 2025 09:48:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756460882;
+	bh=c/nLtzvIjWghajbObEXEYoMuDbVvHsLyXpDONNIuyys=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jhvqwzBlD0vhRISffYFW/jHR6T+9q4xzM0ncFhAeZSgivmCzIWl8eS0asllwkDcp8
+	 nXg7SEzPFXijk0YQ47hMH+8YVQcK0t8VpJFp3/c4vKjxb5hc2dXs2PPEVUdmg35XBi
+	 Dg1PoySLqIlm9yJNb+M5nf/5EYj4RK6aS0hCQNUm8f6z9Ht4usjMbRkAEfylu0AG8d
+	 Ftf4oN5S8QxZyNdsoxUcVB1xF9LLciOznTYbIvRQFoasDVLqrQtHRmMgiXBSmVhVo2
+	 uqNr8/YC1FN2SIrWCqeLd3HVqeYo6/nst0ufX1Bec7iuJQ1OSbg0WNMoC5f+WtgJ/P
+	 3QGeE08GKsu+g==
+Date: Fri, 29 Aug 2025 11:47:58 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Alexander Monakov <amonakov@ispras.ru>
+Cc: linux-fsdevel@vger.kernel.org, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, linux-kernel@vger.kernel.org
+Subject: Re: ETXTBSY window in __fput
+Message-ID: <20250829-diskette-landbrot-aa01bc844435@brauner>
+References: <6e60aa72-94ef-9de2-a54c-ffd91fcc4711@ispras.ru>
+ <5a4513fe-6eae-9269-c235-c8b0bc1ae05b@ispras.ru>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250722-iio-use-more-iio_declare_buffer_with_ts-7-v2-1-d3ebeb001ed3@baylibre.com>
-In-Reply-To: <20250722-iio-use-more-iio_declare_buffer_with_ts-7-v2-1-d3ebeb001ed3@baylibre.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 29 Aug 2025 11:47:44 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWNNu+gwHdhfaShLyXHqxD=esp4CXpWiHJCqrCGho0z3g@mail.gmail.com>
-X-Gm-Features: Ac12FXw4ySjEeOeCH0mF3GQ3nupnIdCJpFWX1FkdY409glgjEvUK-Xh-p3wrdqg
-Message-ID: <CAMuHMdWNNu+gwHdhfaShLyXHqxD=esp4CXpWiHJCqrCGho0z3g@mail.gmail.com>
-Subject: Re: [PATCH v2] iio: proximity: isl29501: fix buffered read on
- big-endian systems
-To: David Lechner <dlechner@baylibre.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
-	Andy Shevchenko <andy@kernel.org>, Mathieu Othacehe <othacehe@gnu.org>, linux-iio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <5a4513fe-6eae-9269-c235-c8b0bc1ae05b@ispras.ru>
 
-Hi David,
+On Fri, Aug 29, 2025 at 10:21:35AM +0300, Alexander Monakov wrote:
+> 
+> On Wed, 27 Aug 2025, Alexander Monakov wrote:
+> 
+> > Dear fs hackers,
+> > 
+> > I suspect there's an unfortunate race window in __fput where file locks are
+> > dropped (locks_remove_file) prior to decreasing writer refcount
+> > (put_file_access). If I'm not mistaken, this window is observable and it
+> > breaks a solution to ETXTBSY problem on exec'ing a just-written file, explained
+> > in more detail below.
+> 
+> The race in __fput is a problem irrespective of how the testcase triggers it,
+> right? It's just showing a real-world scenario. But the issue can be
+> demonstrated without a multithreaded fork: imagine one process placing an
+> exclusive lock on a file and writing to it, another process waiting on that
+> lock and immediately execve'ing when the lock is released.
+> 
+> Can put_file_access be moved prior to locks_remove_file in __fput?
 
-On Tue, 22 Jul 2025 at 22:55, David Lechner <dlechner@baylibre.com> wrote:
-> Fix passing a u32 value as a u16 buffer scan item. This works on little-
-> endian systems, but not on big-endian systems.
->
-> A new local variable is introduced for getting the register value and
-> the array is changed to a struct to make the data layout more explicit
-> rather than just changing the type and having to recalculate the proper
-> length needed for the timestamp.
->
-> Fixes: 1c28799257bc ("iio: light: isl29501: Add support for the ISL29501 ToF sensor.")
-> Signed-off-by: David Lechner <dlechner@baylibre.com>
+Even if we fix this there's no guarantee that the kernel will give that
+letting the close() of a writably opened file race against a concurrent
+exec of the same file will not result in EBUSY in some arcane way
+currently or in the future.
 
-Thanks for your patch, which is now commit de18e978d0cda23e ("iio:
-proximity: isl29501: fix buffered read on big-endian systems")
-in v6.17-rc3.
+The fundamental problem is the idiotic exe_file_deny_write_access()
+mechanism for execve. This is the crux of the whole go issue. I've tried
+to removethis nonsense (twice?). Everytime because of some odd userspace
+regression we had to revert (And now we're apparently at the stage where
+in another patchset people think that this stuff needs to become a uapi
+O_* flag which will absolutely not happen.).
 
-> --- a/drivers/iio/proximity/isl29501.c
-> +++ b/drivers/iio/proximity/isl29501.c
-> @@ -938,12 +938,18 @@ static irqreturn_t isl29501_trigger_handler(int irq, void *p)
->         struct iio_dev *indio_dev = pf->indio_dev;
->         struct isl29501_private *isl29501 = iio_priv(indio_dev);
->         const unsigned long *active_mask = indio_dev->active_scan_mask;
-> -       u32 buffer[4] __aligned(8) = {}; /* 1x16-bit + naturally aligned ts */
-> -
-> -       if (test_bit(ISL29501_DISTANCE_SCAN_INDEX, active_mask))
-> -               isl29501_register_read(isl29501, REG_DISTANCE, buffer);
-> +       u32 value;
-> +       struct {
-> +               u16 data;
-> +               aligned_s64 ts;
-> +       } scan = { };
+My point is: currently you need synchronization for this to work cleanly
+in some form.
 
-This still looks rather obfuse to me: you rely on the implicit
-presence of a 6-byte hole between data and ts, and on the implicit
-64-bit alignment of data.
+But what I would do is the following. So far we've always failed to
+remove the deny on write mechanism because doing it unconditionally
+broke very weird use-cases with very strange justificatons.
 
-What about making this explicit?
+I think we should turn this on its head and give execveat() a flag
+AT_EXECVE_NODENYWRITE that allows applications to ignore the write
+restrictions.
 
-    struct {
-            u16 data;
-            u16 unused[3];
-            s64 ts;
-    } __aligned(8) scan = { };
+Applications like go can just start using this flag when exec'ing.
+Applications that need the annoying deny-write mechanism can just
+continue exec'ing as before without AT_EXECVE_NODENYWRITE.
 
-> +
-> +       if (test_bit(ISL29501_DISTANCE_SCAN_INDEX, active_mask)) {
-> +               isl29501_register_read(isl29501, REG_DISTANCE, &value);
-> +               scan.data = value;
-> +       }
->
-> -       iio_push_to_buffers_with_timestamp(indio_dev, buffer, pf->timestamp);
-> +       iio_push_to_buffers_with_timestamp(indio_dev, &scan, pf->timestamp);
->         iio_trigger_notify_done(indio_dev->trig);
->
->         return IRQ_HANDLED;
+__Completely untested and uncompiled__ draft below:
 
-Gr{oetje,eeting}s,
+diff --git a/fs/exec.c b/fs/exec.c
+index 2a1e5e4042a1..59e8fcd3fc19 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -766,7 +766,7 @@ static struct file *do_open_execat(int fd, struct filename *name, int flags)
+        int err;
+        struct file *file __free(fput) = NULL;
+        struct open_flags open_exec_flags = {
+-               .open_flag = O_LARGEFILE | O_RDONLY | __FMODE_EXEC,
++               .open_flag = O_LARGEFILE | O_RDONLY | __FMODE_EXEC | __F_EXEC_NODENYWRITE,
+                .acc_mode = MAY_EXEC,
+                .intent = LOOKUP_OPEN,
+                .lookup_flags = LOOKUP_FOLLOW,
+diff --git a/fs/fcntl.c b/fs/fcntl.c
+index 5598e4d57422..b0c01cba1560 100644
+--- a/fs/fcntl.c
++++ b/fs/fcntl.c
+@@ -1158,10 +1158,10 @@ static int __init fcntl_init(void)
+         * Exceptions: O_NONBLOCK is a two bit define on parisc; O_NDELAY
+         * is defined as O_NONBLOCK on some platforms and not on others.
+         */
+-       BUILD_BUG_ON(20 - 1 /* for O_RDONLY being 0 */ !=
++       BUILD_BUG_ON(21 - 1 /* for O_RDONLY being 0 */ !=
+                HWEIGHT32(
+                        (VALID_OPEN_FLAGS & ~(O_NONBLOCK | O_NDELAY)) |
+-                       __FMODE_EXEC));
++                       __FMODE_EXEC | __F_EXEC_NODENYWRITE));
 
-                        Geert
+        fasync_cache = kmem_cache_create("fasync_cache",
+                                         sizeof(struct fasync_struct), 0,
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index d7ab4f96d705..123f74cbe7a4 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -3215,12 +3215,16 @@ static inline int exe_file_deny_write_access(struct file *exe_file)
+ {
+        if (unlikely(FMODE_FSNOTIFY_HSM(exe_file->f_mode)))
+                return 0;
++       if (unlikely(exe_file->f_flags & __F_EXEC_NODENYWRITE))
++               return 0;
+        return deny_write_access(exe_file);
+ }
+ static inline void exe_file_allow_write_access(struct file *exe_file)
+ {
+        if (unlikely(!exe_file || FMODE_FSNOTIFY_HSM(exe_file->f_mode)))
+                return;
++       if (unlikely(exe_file->f_flags & __F_EXEC_NODENYWRITE))
++               return;
+        allow_write_access(exe_file);
+ }
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+diff --git a/include/uapi/asm-generic/fcntl.h b/include/uapi/asm-generic/fcntl.h
+index 613475285643..f3c8a457bc7d 100644
+--- a/include/uapi/asm-generic/fcntl.h
++++ b/include/uapi/asm-generic/fcntl.h
+@@ -61,6 +61,9 @@
+ #ifndef O_CLOEXEC
+ #define O_CLOEXEC      02000000        /* set close_on_exec */
+ #endif
++#ifdef __KERNEL__
++#define __F_EXEC_NODENYWRITE 020000000000 /* bit 31 */
++#endif
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+ /*
+  * Before Linux 2.6.33 only O_DSYNC semantics were implemented, but using
+diff --git a/include/uapi/linux/fcntl.h b/include/uapi/linux/fcntl.h
+index f291ab4f94eb..123fb158dc5b 100644
+--- a/include/uapi/linux/fcntl.h
++++ b/include/uapi/linux/fcntl.h
+@@ -174,6 +174,7 @@
+ #define AT_HANDLE_CONNECTABLE  0x002   /* Request a connectable file handle */
+
+ /* Flags for execveat2(2). */
++#define AT_EXECVE_NODENYWRITE  0x001   /* Allow writable file descriptors to the executable file. */
+ #define AT_EXECVE_CHECK                0x10000 /* Only perform a check if execution
+                                           would be allowed. */
 
