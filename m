@@ -1,117 +1,74 @@
-Return-Path: <linux-kernel+bounces-792401-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792404-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77F78B3C36D
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 21:55:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61BDEB3C376
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 21:56:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D660B175B4B
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 19:55:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C327A1790BE
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 19:56:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E23A246BD7;
-	Fri, 29 Aug 2025 19:55:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCA2A2459FE;
+	Fri, 29 Aug 2025 19:56:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SeM6Qfdx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Q0q1XCc+"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D497224676A;
-	Fri, 29 Aug 2025 19:55:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA4452566;
+	Fri, 29 Aug 2025 19:56:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756497336; cv=none; b=r8WBY5pIzTPJu19/dBgwiGk8iyDRbZcEJ8EbSoKV01EeHa+Xja3cI7XXt460gfMqF85qZdAnttYM0cCzVJxQQ/zCRxGkcIewn86LFOXQ107NPWJZxw98s+rOlTgFd4y0RfIdclxt5rMEtWFBKnxe2qFuN9gE2qKbXX3+7Bm8ly8=
+	t=1756497366; cv=none; b=RPb4ZK9UUpkM5nBFiltrs/5UOSzp9UFdPjGcakDTCecj0yFTo2CAYBVLLuukOGA0WR4S8/DpWyozhe7ivjX3tNUbhiDF/QxC4xLpXtp5FhP2xxYF+3s3U2oU0pIvsYIZQsPEwB9DcoId8zD1ldYAy03QUCue3gMCCO7Lz8NZ7to=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756497336; c=relaxed/simple;
-	bh=itlVCGisz6iB2X01ClCKsCQncrsTeK3qSEMOx++ZN8U=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ChM9Iq/2lyxWjrwh58fjbaXrWwaNoBb5e1uEfwbg2HqCETsb2gi2llIHb4w2fPE9IvrDl4XmgPZesdIdjp36064SkqqBrG8y1iW7BFvwR5BpFSN1bbn0oof9RaYVlJuMICmvNv3AEVbV4fj/rqdwXJN+2vPIysm6yC4lbl0EQ40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SeM6Qfdx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72443C4CEF0;
-	Fri, 29 Aug 2025 19:55:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756497336;
-	bh=itlVCGisz6iB2X01ClCKsCQncrsTeK3qSEMOx++ZN8U=;
-	h=From:To:Cc:Subject:Date:From;
-	b=SeM6QfdxqgMW0X3my7juosJyc+L8arDghwWPS5PzGFL7NvMeIzjuG3bpg8hKujgqR
-	 1fzNkcVuqR4gJZMpVTgKJWT/E1diNT67B2mFse4q2pr2RSv3vmg+Od66+pr7AXaOz6
-	 b9g57sbhFOd/LbffwlxuKfbeHP7uuTwg5P3lMJrX3WfVrItNiqfHX4aasvaQCOooAJ
-	 +NbJ8Li0ulzVS9eqwIE1d+a5vhVc9H0YikIwwVayd4MTUdwECuTQLkHbWOPflgJh5l
-	 1xxwkBtGHFncKRnNV69qXYQ5PWufMGnazsLun3CItFe0U/n6K+PIgHBHntleoa1HBW
-	 //FdAyoqfoyKg==
-From: Miguel Ojeda <ojeda@kernel.org>
-To: Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>
-Cc: Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	patches@lists.linux.dev,
-	Waffle Maybe <waffle.lapkin@gmail.com>
-Subject: [PATCH] rust: support Rust >= 1.91.0 target spec
-Date: Fri, 29 Aug 2025 21:55:25 +0200
-Message-ID: <20250829195525.721664-1-ojeda@kernel.org>
+	s=arc-20240116; t=1756497366; c=relaxed/simple;
+	bh=A3A3aF1R2lowUvenwhS7OWZI5YA6aw9UxDbAPid2PFM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eadsOss3x+jVtTHNGogLAe0AhD9FppVkL72kOSSBjedHpDqVOcESHXd9Z9x5w1DPjFLk1SHMQwIKGYUrhh+y3hCmc1rMnf8HZJy6I7FJJHNmnnIBuJpiyvCAAdv/TOFCMu8oI5V5TuczsLD+zQ90z3nQbkTrQgvsXxii8XFgcEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=Q0q1XCc+; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=KKLghzmewlqrbz3omzcx1pAoI3gSKvJa6gMHpz1XKh4=; b=Q0q1XCc+QOmHGO4e0vcHZeZbeN
+	ZHpkQpEHxzNc1mrLEce54ABqjB3SMWV37E5CcOS37OeyudnaBr6ZBkXqtXHE94jjA63lupJ8dNZD9
+	WCh/j7TCqhZxZoaPcD3PXeIxwU2WJ4VeztfQ2By2pjYCbPxr5KZoopq6h4zSc7/q9Sqs=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1us5CS-006WJ7-M9; Fri, 29 Aug 2025 21:55:52 +0200
+Date: Fri, 29 Aug 2025 21:55:52 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Xichao Zhao <zhao.xichao@vivo.com>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, mcoquelin.stm32@gmail.com,
+	alexandre.torgue@foss.st.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [net-next v2] net: stmmac: use us_to_ktime function to replace
+ STMMAC_COAL_TIMER macro
+Message-ID: <75da63fb-c658-4595-86c1-847590ba68b7@lunn.ch>
+References: <20250829064722.521577-1-zhao.xichao@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250829064722.521577-1-zhao.xichao@vivo.com>
 
-Starting with Rust 1.91.0 (expected 2025-10-30), the target spec format
-has changed the type of the `target-pointer-width` key from string
-to integer [1].
+On Fri, Aug 29, 2025 at 02:47:22PM +0800, Xichao Zhao wrote:
+> Removing the redundant STMMAC_COAL_TIMER macro and replacing it
+> with us_to_ktime enhances standardization and improves code readability.
+> 
+> Signed-off-by: Xichao Zhao <zhao.xichao@vivo.com>
 
-Thus conditionally use one or the other depending on the version.
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-Cc: Waffle Maybe <waffle.lapkin@gmail.com>
-Link: https://github.com/rust-lang/rust/pull/144443 [1]
-Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
----
-Conditional to the PR getting merged.
-
- scripts/generate_rust_target.rs | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
-
-diff --git a/scripts/generate_rust_target.rs b/scripts/generate_rust_target.rs
-index 39c82908ff3a..38b3416bb979 100644
---- a/scripts/generate_rust_target.rs
-+++ b/scripts/generate_rust_target.rs
-@@ -225,7 +225,11 @@ fn main() {
-         ts.push("features", features);
-         ts.push("llvm-target", "x86_64-linux-gnu");
-         ts.push("supported-sanitizers", ["kcfi", "kernel-address"]);
--        ts.push("target-pointer-width", "64");
-+        if cfg.rustc_version_atleast(1, 91, 0) {
-+            ts.push("target-pointer-width", 64);
-+        } else {
-+            ts.push("target-pointer-width", "64");
-+        }
-     } else if cfg.has("X86_32") {
-         // This only works on UML, as i386 otherwise needs regparm support in rustc
-         if !cfg.has("UML") {
-@@ -245,7 +249,11 @@ fn main() {
-         }
-         ts.push("features", features);
-         ts.push("llvm-target", "i386-unknown-linux-gnu");
--        ts.push("target-pointer-width", "32");
-+        if cfg.rustc_version_atleast(1, 91, 0) {
-+            ts.push("target-pointer-width", 32);
-+        } else {
-+            ts.push("target-pointer-width", "32");
-+        }
-     } else if cfg.has("LOONGARCH") {
-         panic!("loongarch uses the builtin rustc loongarch64-unknown-none-softfloat target");
-     } else {
-
-base-commit: 1b237f190eb3d36f52dffe07a40b5eb210280e00
---
-2.51.0
+    Andrew
 
