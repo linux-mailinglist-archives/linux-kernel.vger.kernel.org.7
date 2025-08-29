@@ -1,132 +1,280 @@
-Return-Path: <linux-kernel+bounces-792173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96A8AB3C10E
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 18:42:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74FE4B3C110
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 18:43:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 06EF27BD0FD
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 16:40:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 649061CC47C9
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 16:42:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 523CC334369;
-	Fri, 29 Aug 2025 16:40:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5AFA337698;
+	Fri, 29 Aug 2025 16:40:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Su4J5oEv"
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T4xOVhID"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3524633471D
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 16:40:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA5E93375D5;
+	Fri, 29 Aug 2025 16:40:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756485654; cv=none; b=TdKEc3UqLdKY9d65rfdxhnzk9vvfruLXqltkbRneNr3uwv24BIuwhL1EaVZ2SYbMQEIliHU0lyCIbUenlXAFTSIWrp3A3juP/6ut+DUYJPakUjh4H7yvf7jUjni9D7l4cZx3P42ybcrEByeEA3vqJCJ1AbPiFRHSMtm+7yN5OMU=
+	t=1756485659; cv=none; b=o5wEZ9Hjp2rXoXRiBNNwKmbz4kBs4oNffHCH8b9+FKlSpbeQyST2X7IX16wubx6/AtqeUcc2N5vsd7csgD0lz9kf1KlDjzmZ7ENKLFsQ79J5tX9sgYQJgHg7t8zAtf9sQKDXb7YUh5HU6aCu/vT8IpNO/LMsHI6hlD9n6F9EWEQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756485654; c=relaxed/simple;
-	bh=zOCXE1DubQ5HAVT08S9Rmw5blwEjk22sY+lTtRHgL4I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JXLRTd4O6Wfrf1wgT21kGHIuwCyg+HmzaqyF4WWSOjMuj/otAaI5b6cYXyY0pYQ6fZRcckg/Lfhv3TvI3eXQLz81Qee49QLdLUVpj8dES/nuYjDtIoM1/j9Ys1g2bM81U0xe/UeXDUsZD8GxfyUwIFp1q0QtbzckBMafCo5Emy8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Su4J5oEv; arc=none smtp.client-ip=209.85.215.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-b4c6fee41c9so1539294a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 09:40:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1756485647; x=1757090447; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1fz4tksacw/4xBuqyAP2+l68JOuUmAfZLQKxwsqSVUE=;
-        b=Su4J5oEvnvCoUt+66WpS7QeMyGm6xMrSoP8onYwHhjXt8HekYtIukBmrhNnTEsjhlS
-         vvWGoVhbrQRVeiZrqJ69dnXcbu4ssPjCCN7PF70IHtd0gYWX1A9IPMTaiM16Jiw9tiBd
-         eiGu5ExZqDFbMXZ3X8lFTFLYgz1Z5+5wEzA84=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756485647; x=1757090447;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1fz4tksacw/4xBuqyAP2+l68JOuUmAfZLQKxwsqSVUE=;
-        b=j1ubTi/c7DaaGmLMH7sawIUw0nYkWj6ecwVjQ66Wmj4NcMIVqZQUnx42uDfO/k3527
-         dy2liYNMcR4/KBGHGtvE1apPcimdQxHRBhFJ3TkQNNY9BFw++wEyfNafABp443OVG7I4
-         6wcb5Xc6GndOLdfdDFbZ2zKd/nsuSQ0rjw2CJO1HH9kkeo0ebOcdb1JHRiA3ft4cJcmw
-         3es+lX3BXce2lhNjdPYBSz1W6ha3qXdqyufd++qGI8jLY/kcv6H2cP5p3llWvguupm+D
-         aYtzqvDWlstgOBWIVZZ6qL6sOxwPWvpUiLcGLc4tY7EO25+TAP1/LKN4oyW89+Gw3/wv
-         0Kww==
-X-Forwarded-Encrypted: i=1; AJvYcCVVXI1eJT56ymMA8+00mauKehkdfxAETqbpqDQ8A8ZeOIA6pzrfI5UMJ8+fvs2smtAyQfHX6XbkbGBcpZQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2gumfgNy8M9N1OJyMu5MCfTCtNyIUUTaVbNHj8GzPtzKibrOA
-	lcFAAJ4p9Qw1QMvX9COOTNtUXbatAw/OFyVhVQdZ8LbMdz4uztzKAlxwRqrjDtG43lcv2TVfw3J
-	6Iyk=
-X-Gm-Gg: ASbGncuebGQ+Rido/i/NfqsJvj4P1W0WP4pKQ65RWuFzXwU2e9iHOn9n8i7jpx/yR1M
-	w9VYCD1Uw5HuB+InAdMi7R7apF9LQTyyFcLo3oDQ9dFwNbo2/1jNNNY02E9+yzItcvVXtYzqXZV
-	QPB4aycz7BllL3BjqABfaqa+EZ0oRHOYO/BbMZrPgsSILQqE7X9pgDtdlrfyiDDhDHCcOhJ1U9M
-	pwtvSyPA/zIS9rfNgZPzr6rFmJ6Kx9jzOs8mfaOAdNPhPCh0Fl46VZDuSkuvS+AApRXnQDTkHdl
-	WXVb37kk2pt/7GreQVdbSr85fQSUJtw7xZwoFEVUTR8T2yg6M4VvvPp25ZqcPKkdH45Vk0DI6lY
-	+SvrSuON5q0eQ05zIiSeqUYF63QX+VUvuxRVMCsYKtHJIrQav1Z1BGDbklNIqSH7l6xvQCgTtvq
-	Rr
-X-Google-Smtp-Source: AGHT+IFM3HpVL3H9S3ILSNrNPZDme+cVuhLyWDRNtk0LL3Oj3RFjU9oQRt9in2cJVbP8bXwnDMTkWQ==
-X-Received: by 2002:a17:903:3546:b0:246:d703:cf83 with SMTP id d9443c01a7336-246d703e19fmr278689155ad.17.1756485647523;
-        Fri, 29 Aug 2025 09:40:47 -0700 (PDT)
-Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com. [209.85.215.177])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-249037023b0sm30106405ad.10.2025.08.29.09.40.43
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 29 Aug 2025 09:40:43 -0700 (PDT)
-Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-b4df220483fso162201a12.2
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 09:40:43 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU+EdLQSSS8fnQOn7ypNaCgdAMDRgqzih/PLUZCncBgo3rLUQjlUEU16r2J9aSdhz9fc/0vUXxt+Ix7cfA=@vger.kernel.org
-X-Received: by 2002:a17:902:d2d0:b0:249:3027:bdbb with SMTP id
- d9443c01a7336-249302838c0mr15491195ad.0.1756485642821; Fri, 29 Aug 2025
- 09:40:42 -0700 (PDT)
+	s=arc-20240116; t=1756485659; c=relaxed/simple;
+	bh=RQx3k9ICtqz81FINdTuayS6/7Dq2k0lIJ6C2JyMWlIc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fxrIPCT8OZXEI7p+Xs0S71HyIftjDwaiB7yMcJKj8K79diTjd2RWISHbwUdZNjBLb0N3iWX0PgWu2X3MvQ3R8QIyriuaCvxMailoy9qYz8TkmRI7DWhGdf+KahyaSSSz7Qg2E3uYdJ+eMxun1/zStF7Osr0IlM2WfE3wVdEYIh4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T4xOVhID; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8881DC4CEF0;
+	Fri, 29 Aug 2025 16:40:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756485658;
+	bh=RQx3k9ICtqz81FINdTuayS6/7Dq2k0lIJ6C2JyMWlIc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=T4xOVhIDRV5duZ1GpPtBu0+6fshz/3NrsQrkdmFaUSY8AOpusTD94aeN2gst44zpd
+	 ZhwDpjky2b0/wq9sWQzJkeeVDbSFOsdHfp2C3Y4KVopYG3x5cI4191potu3DGLy7lP
+	 Gm7LhA0RQWOborD5EVfMODfkVxs8N35QzduH/DmnookgDoTj+Dtob1Ml2b67igB4Dt
+	 6BvhQX7LI5LLUnTdr1paCJMFi2ZdLFFJ2+d5RnXfqmK+KYVnZ8Xr1+ODKCPYkIGmtr
+	 stuklWrxlbDep/kyZ4A9Gp5yavNZj6kje2Rr1BxFE9tub+RnlqqLQhw9oNa8vr1FVd
+	 k33l4jW/UYRcg==
+Date: Fri, 29 Aug 2025 11:40:57 -0500
+From: Rob Herring <robh@kernel.org>
+To: James Calligeros <jcalligeros99@gmail.com>
+Cc: Sven Peter <sven@kernel.org>, Janne Grunau <j@jannau.net>,
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	Neal Gompa <neal@gompa.dev>, Lee Jones <lee@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>, asahi@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org,
+	linux-hwmon@vger.kernel.org, linux-input@vger.kernel.org
+Subject: Re: [PATCH v2 02/11] dt-bindings: hwmon: Add Apple System Management
+ Controller hwmon schema
+Message-ID: <20250829164057.GA976361-robh@kernel.org>
+References: <20250827-macsmc-subdevs-v2-0-ce5e99d54c28@gmail.com>
+ <20250827-macsmc-subdevs-v2-2-ce5e99d54c28@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250820152407.2788495-1-john.ripple@keysight.com> <20250820152407.2788495-2-john.ripple@keysight.com>
-In-Reply-To: <20250820152407.2788495-2-john.ripple@keysight.com>
-From: Doug Anderson <dianders@chromium.org>
-Date: Fri, 29 Aug 2025 09:40:30 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=VfCWFViDE1a5-_KtH0Pfo2EnCJeo2k8MaWuRHhmMPMMA@mail.gmail.com>
-X-Gm-Features: Ac12FXzH9d02U9lFxI5VRyuDKW_pjuvPCwYTO6NavU-RzNP2_mnL2seCn59eOxw
-Message-ID: <CAD=FV=VfCWFViDE1a5-_KtH0Pfo2EnCJeo2k8MaWuRHhmMPMMA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] drm/bridge: ti-sn65dsi86: break probe dependency loop
-To: John Ripple <john.ripple@keysight.com>
-Cc: andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org, 
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, 
-	airlied@gmail.com, simona@ffwll.ch, Laurent.pinchart@ideasonboard.com, 
-	jonas@kwiboo.se, jernej.skrabec@gmail.com, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250827-macsmc-subdevs-v2-2-ce5e99d54c28@gmail.com>
 
-Hi,
+On Wed, Aug 27, 2025 at 09:22:36PM +1000, James Calligeros wrote:
+> Apple Silicon devices integrate a vast array of sensors, monitoring
+> current, power, temperature, and voltage across almost every part of
+> the system. The sensors themselves are all connected to the System
+> Management Controller (SMC). The SMC firmware exposes the data
+> reported by these sensors via its standard FourCC-based key-value
+> API. The SMC is also responsible for monitoring and controlling any
+> fans connected to the system, exposing them in the same way.
+> 
+> For reasons known only to Apple, each device exposes its sensors with
+> an almost totally unique set of keys. This is true even for devices
+> which share an SoC. An M1 Mac mini, for example, will report its core
+> temperatures on different keys to an M1 MacBook Pro. Worse still, the
+> SMC does not provide a way to enumerate the available keys at runtime,
+> nor do the keys follow any sort of reasonable or consistent naming
+> rules that could be used to deduce their purpose. We must therefore
+> know which keys are present on any given device, and which function
+> they serve, ahead of time.
+> 
+> Add a schema so that we can describe the available sensors for a given
+> Apple Silicon device in the Devicetree.
+> 
+> Signed-off-by: James Calligeros <jcalligeros99@gmail.com>
+> ---
+>  .../bindings/hwmon/apple,smc-hwmon.yaml  | 132 +++++++++++++++++++++++++
+>  .../bindings/mfd/apple,smc.yaml          |  36 +++++++
+>  MAINTAINERS                              |   1 +
+>  3 files changed, 169 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/hwmon/apple,smc-hwmon.yaml b/Documentation/devicetree/bindings/hwmon/apple,smc-hwmon.yaml
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..08cc4f55f3a41ca8b3b428088f96240266fa42e8
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/hwmon/apple,smc-hwmon.yaml
+> @@ -0,0 +1,132 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/hwmon/apple,smc-hwmon.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Apple SMC Hardware Monitoring
+> +
+> +description:
+> +  Apple's System Management Controller (SMC) exposes a vast array of
+> +  hardware monitoring sensors, including temperature probes, current and
+> +  voltage sense, power meters, and fan speeds. It also provides endpoints
+> +  to manually control the speed of each fan individually. Each Apple
+> +  Silicon device exposes a different set of endpoints via SMC keys. This
+> +  is true even when two machines share an SoC. The CPU core temperature
+> +  sensor keys on an M1 Mac mini are different to those on an M1 MacBook
+> +  Pro, for example.
+> +
+> +maintainers:
+> +  - James Calligeros <jcalligeros99@gmail.com>
+> +
+> +definitions:
 
-On Wed, Aug 20, 2025 at 8:24=E2=80=AFAM John Ripple <john.ripple@keysight.c=
-om> wrote:
->
-> The commit c3b75d4734cb ("drm/bridge: sn65dsi86: Register and attach our
-> DSI device at probe") was intended to prevent probe ordering issues and
-> created the ti_sn_attach_host function.
->
-> In practice, I found the following when using the nwl-dsi driver:
->  - ti_sn_bridge_probe happens and it adds the i2c bridge. Then
->    ti_sn_attach_host runs (in the ti_sn_bridge_probe function) and fails =
-to
->    find the dsi host which then returns to ti_sn_bridge_probe and removes
->    the i2c bridge because of the failure.
->  - The nwl_dsi_probe then runs and adds dsi host to the host list and the=
-n
->    looks for the i2c bridge, which is now gone, so it fails. This loop
->    continues for the entire boot sequence.
+$defs
 
-Which i2c bridge are you talking about? You mean the one created by
-i2c_add_adapter() in drm_dp_aux_register()? I guess I'm confused about
-why the DSI probe routine would even be looking for that adapter.
+definitions was convention. $defs is in json-schema spec now.
 
-In any case, I don't _think_ your patch is valid. Specifically, if you
-notice ti_sn_attach_host() can return "-EPROBE_DEFER". That's a valid
-error code to return from a probe routine but I don't think it's a
-valid error code to return from a bridge attach function, is it?
+> +  apple,key-id:
+> +    $ref: /schemas/types.yaml#/definitions/string
+> +    pattern: "^[A-Za-z0-9]{4}$"
+> +    description: The SMC FourCC key of the desired sensor.
+> +      Must match the node's suffix.
+> +
+> +  label:
+> +    description: Human-readable name for the sensor
+> +
+> +properties:
+> +  compatible:
+> +    const: apple,smc-hwmon
+> +
+> +patternProperties:
+> +  "^current-[A-Za-z0-9]{4}$":
+> +    type: object
+> +    additionalProperties: false
+> +
+> +    properties:
+> +      apple,key-id:
+> +        $ref: "#/definitions/apple,key-id"
+> +
+> +      label:
+> +        $ref: "#/definitions/label"
+> +
+> +    required:
+> +      - apple,key-id
+> +      - label
+
+This should be something like this:
+
+"^current-[A-Za-z0-9]{4}$":
+  $ref: "#/$defs/sensor"
+  unevaluatedProperties: false
+
+With the $defs/sensor being:
+
+$defs:
+  sensor:
+    type: object
+    
+    properties:
+      apple,key-id:
+        $ref: /schemas/types.yaml#/definitions/string
+        pattern: "^[A-Za-z0-9]{4}$"
+        description: 
+          The SMC FourCC key of the desired sensor. Must match the 
+          node's suffix.
+
+      label:
+        description: Human-readable name for the sensor
+
+    required:
+      - apple,key-id
+      - label
+
+Though in general, 'label' should never be required being just for human 
+convenience.
+
+> +
+> +  "^fan-[A-Za-z0-9]{4}$":
+> +    type: object
+> +    additionalProperties: false
+
+And this one the same as above, but with the additional fan properties 
+listed here.
+
+> +
+> +    properties:
+> +      apple,key-id:
+> +        $ref: "#/definitions/apple,key-id"
+> +
+> +      apple,fan-minimum:
+> +        $ref: /schemas/types.yaml#/definitions/string
+> +        pattern: "^[A-Za-z0-9]{4}$"
+> +        description: SMC key containing the fan's minimum speed
+> +
+> +      apple,fan-maximum:
+> +        $ref: /schemas/types.yaml#/definitions/string
+> +        pattern: "^[A-Za-z0-9]{4}$"
+> +        description: SMC key containing the fan's maximum speed
+> +
+> +      apple,fan-target:
+> +        $ref: /schemas/types.yaml#/definitions/string
+> +        pattern: "^[A-Za-z0-9]{4}$"
+> +        description: Writeable endpoint for setting desired fan speed
+> +
+> +      apple,fan-mode:
+> +        $ref: /schemas/types.yaml#/definitions/string
+> +        pattern: "^[A-Za-z0-9]{4}$"
+> +        description: Writeable key to enable/disable manual fan control
+> +
+> +      label:
+> +        $ref: "#/definitions/label"
+> +
+> +    required:
+> +      - apple,key-id
+> +      - label
+> +
+> +  "^power-[A-Za-z0-9]{4}$":
+> +    type: object
+> +    additionalProperties: false
+> +
+> +    properties:
+> +      apple,key-id:
+> +        $ref: "#/definitions/apple,key-id"
+> +
+> +      label:
+> +        $ref: "#/definitions/label"
+> +
+> +    required:
+> +      - apple,key-id
+> +      - label
+> +
+> +  "^temperature-[A-Za-z0-9]{4}$":
+> +    type: object
+> +    additionalProperties: false
+> +
+> +    properties:
+> +      apple,key-id:
+> +        $ref: "#/definitions/apple,key-id"
+> +
+> +      label:
+> +        $ref: "#/definitions/label"
+> +
+> +    required:
+> +      - apple,key-id
+> +      - label
+> +
+> +  "^voltage-[A-Za-z0-9]{4}$":
+> +    type: object
+> +    additionalProperties: false
+> +
+> +    properties:
+> +      apple,key-id:
+> +        $ref: "#/definitions/apple,key-id"
+> +
+> +      label:
+> +        $ref: "#/definitions/label"
+> +
+> +    required:
+> +      - apple,key-id
+> +      - label
+> +
+> +additionalProperties: false
 
