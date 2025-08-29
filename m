@@ -1,114 +1,177 @@
-Return-Path: <linux-kernel+bounces-792225-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792226-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65A18B3C1A0
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 19:17:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 51FC1B3C1A2
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 19:18:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B21E11C804E9
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 17:17:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 219E21C80C33
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 17:18:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE82E3375AE;
-	Fri, 29 Aug 2025 17:17:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FD32340D91;
+	Fri, 29 Aug 2025 17:18:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="EhF7Aplf"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hvrTh0QK"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22BA3201033
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 17:17:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B9C2221D9E;
+	Fri, 29 Aug 2025 17:18:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756487840; cv=none; b=iqXzIDHIzUmeeVhC3lsSyaNQzXm4YAvGC7vje4/B/JBXeIOcjjTPOIKuvjv3DV5LlTjWyV4Oty3Fejd2mLKs9UmUH+v4WC8VzUeaTGF5AQOfo9QBEa2aJ7/sKMg4qEUFp4+ReY3J1Cr3aGcZzSwFtj61+nDyUrbzH1ZVLnYq50g=
+	t=1756487883; cv=none; b=ei1qhNK4R85yFg8+1qRXsAJjFhtIJa8JzEp7fefvHyaMNwCokiSmWBMupB71w9poOhxXcJnR+Eo7uj9MSjKUFp0jQsrnUd4Vmc7Dkzy0UjQUSaoiH1pSXNQRcSNY6mhIOKeV1GG9TJs6uc+aFVj7tFj8j7+JcaP14jWQe65P210=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756487840; c=relaxed/simple;
-	bh=IBtpyMyCDK1szOTv6hKPQ1XBcbyXLs/xB9Wy4H5DtS0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=R61uQz97oU4CnlOPoNThUf57+SACaCirV+qj42Z9XFETcy3hjzdfXFXY8hez0bZfq1/LxPuqzrDb9NcrK/Vbev/3YqbipLK1gei7kDQrcHAQxXC+UzazMSaTYcdLRw1ElEuCOO1IUVcWdP7aEU8mO69cTQ+U+bbnIXprKX0DWoo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=EhF7Aplf; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id D775C40E0185;
-	Fri, 29 Aug 2025 17:17:05 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id 2uBgxehETMd4; Fri, 29 Aug 2025 17:17:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1756487822; bh=25wZ+JH5mg8MQj9ElsXO9yrBDNK5dg8ZFEJmzubRlhs=;
-	h=Date:From:To:Cc:Subject:From;
-	b=EhF7Aplf5WBtuTdSiDZN1t8L3lS6eeS+L/A+prwlKw36GsgrlQ/LLi5tWhBjq93on
-	 ndDQytjQFwUtDikpcmC0XAPhJWMA8qWdpZFsv8BVLtgMjgIKPS9JoSo6s4nbvGBQ6K
-	 2cW8bhWn4HMnS0bVcLMCGwLh+znQquMxJ/bqC6mir/XrHDifbgzUj9bfl1T7xB7enZ
-	 CoMIa8Sfns0HP203IaNszyqXInAHcjtZG1jEMlgTgW1+CuqcANftPLe9ZzmcMWDb8K
-	 MCoJx86VyGdVumAONbofH/nn80s+ZfICiNhXOj0WEx9+vgMKL9C1OFG0Ffhx7zoX7j
-	 ODQyB48qJlK8J4hvASUJNZf8FwM2Xbpu+Ob4wFrq2Li0cO2c58EkBUguoOcrYJi7rs
-	 VEkWtQ0mJtul1KAq93QX7xJLl7/l0KmwRQ5cSy96nrKFCybGhwM23JnseXEU9HwE29
-	 /va+VqaVcSxOg/TvGr9T1vCdwpPkcz7gaR2EdNSZlfCRZc2WO2KHGJx7y53/QhJ2+W
-	 nrodQ1Usd40JFGSLZqwXjzlG60y5oCYxMsYLCAfgDQqH2mG10i2ti62kjyy6J6KRlm
-	 ZZsLbO18WDt71P9hfImObmMnpWQGCBo99chH4npXvfzdZvG6z1Y13f0Lp8octTw9vb
-	 AQNJUbfSfo7SAJZNI8MVKRnA=
-Received: from zn.tnic (pd953092e.dip0.t-ipconnect.de [217.83.9.46])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 4BB6440E0177;
-	Fri, 29 Aug 2025 17:16:56 +0000 (UTC)
-Date: Fri, 29 Aug 2025 19:16:55 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: amd-gfx@lists.freedesktop.org
-Cc: Alex Deucher <alexander.deucher@amd.com>,
-	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
-	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: evergreen_packet3_check:... radeon 0000:1d:00.0: vbo resource seems
- too big for the bo
-Message-ID: <20250829171655.GBaLHgh3VOvuM1UfJg@fat_crate.local>
+	s=arc-20240116; t=1756487883; c=relaxed/simple;
+	bh=ZN03sxhjmicQosWeGmY4JnLGwOZXXH0G5tX2JHrs4Yo=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=Mc2tsocf+zUln1RCtlJ2qIZsdZXCAFwaud3Q/uUrvNjyIypz9dLpvvsNOQeMJ9L+ZKqoOLeLcrBkOtHsOqceju7Oc46F6GXEof3z0TbI9bOxsAO8K/+SHElaMfnFvijwrg82p2tPd6smMwsAVkF1rCDKY3ByPJ0xjARkOeETIV0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hvrTh0QK; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-afcb7a3b3a9so361399066b.2;
+        Fri, 29 Aug 2025 10:18:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756487880; x=1757092680; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:references
+         :in-reply-to:user-agent:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=xrzuRNSlyqmubW3zh5/hhg2Gt+wTZOmIedHD4WFNRfs=;
+        b=hvrTh0QKBKwUISs8thiPN+QAtnUf9e0VpQgfLYR46hyYOmnbTGKrOYnDyjW7qJabah
+         03T3KdvQgMa3g9WLBd27uKdSSodp09fu83Erhw9WWV3WZZPg/cjbGACQuFUocJcndNwo
+         yVIRZe/8u2dQRjvhfNoX4C+vA453ky32Hovy2tEUTz+JgtFmVxbDs3aOvP34HcA1lOBK
+         jihDPT1lNttFd9bzu71NI5k+0QXWdWParHd8aHOSOo2LS6V6cAFOw6z1j8gUVhNQGX3K
+         CTFWQsiD+HkS9sTxbltXt+NBP/wCK9xsQJZRBVyBaxU3J2CurIRyzUGmcVZG+IUWIqmO
+         Fi3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756487880; x=1757092680;
+        h=content-transfer-encoding:mime-version:message-id:references
+         :in-reply-to:user-agent:subject:cc:to:from:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=xrzuRNSlyqmubW3zh5/hhg2Gt+wTZOmIedHD4WFNRfs=;
+        b=MoUg+bd8pwXcpzSrMAoIm8K9E1Dw6GlELppbj0rIAHn9I72j0x1r7uDgmmykZsWoIX
+         DUrDdJVeN7qoWLDd1WxOIiwYq+BcBqdHN21ZWWx1fDd0ruF5AMrIOqNSTpvhbUcgJ0fo
+         uDfl8bcjcgHbsUEH1G9XQRbtKw9vnvfvCn0Vv0eWlDULmNMOvd01JKs9xorrz0VHLIvl
+         w+q2wNfJdIgZWTjzElFCia2jZiNagfE1lebRdeks4Pa4eTMNZ25NpaxVmVaBITWVjkEJ
+         D+3fqH4aIKbcH4wbxU9f21SSmNtCAmpIy9WmX8cZ2NbWSeFPISoXgG7+EFG3kCiPjbXF
+         iT8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVZa2twsitgSY9OaMPRq83SkvZUSBsPKha6k+Svto871W5ciGsDFAnafM9yveZrTEIDGYQ0fK+qJOLLXffSwiG+eE6b@vger.kernel.org, AJvYcCVxQArDHXtqx7NpC+QAJe+Kg+RwtKQO8dLZsE7lbxy4rHk26aTfCZXD0iucXsx9Tt3ViA5SOlbNSq8DpGXY@vger.kernel.org, AJvYcCW4DjNboXTbgg4zw723nuSfgP9u2dL6iVbrzRUiHxKcD6BrUkDoy3XRkl/qIeVM5MzbBho=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6SBpUprKR1gFLCzVeN7ebBTpsjajyR9fiAGoCcnBu/rNCt8ES
+	UAi0OgGOSjsNTVAh0oymKz/4yKPbOmrybqfIgpb1URBM6bFBwqdk80fy
+X-Gm-Gg: ASbGncuvoccJycuex1wMjohY0WJ6QXxkZ/bTHHy5t3Vgi50iBQBzuYdnlZ5uAEQyA9i
+	JF3NV9UFJjDdM7eVjDXzB+wCt6AvS/KTCgFSvoclhuvXtdVdY7WfU36EEOsCm7s1eEYSWra78gn
+	9mjTJWMXWYuosZ+mbdtPNUIFyOtXIyca9SteZ9jFnq+ewju2QQKIpr+3j0IF9ZE599VkrLfexoH
+	OjpjgRLUF6FRpJyNOaKvC8k/uYlmZ8i92/q6zUXoSewUvFwlRL4BxHLl/KJduND878gA3ImYRcr
+	ORWxT3z8cwtYSz+PjiYTuPT68n9xyVLuhhccn+9ng8TXTfW33ngbZFeDcdKFS8DkijgVUFD/766
+	aEwN2TXb/PNsOxHR4PojtPDMkhggBKoQj66xvOSiH3kE/
+X-Google-Smtp-Source: AGHT+IFolD4Novq7SEQgN2iErN14DtXsvntBpVAJMgWA0Dt3VXGsPTSQaYEnIZc9sb/n3S4QKp1fxw==
+X-Received: by 2002:a17:907:1b1a:b0:af9:c321:7e01 with SMTP id a640c23a62f3a-afe29043210mr2312160166b.41.1756487880211;
+        Fri, 29 Aug 2025 10:18:00 -0700 (PDT)
+Received: from ehlo.thunderbird.net ([31.40.215.52])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afefcc2d50dsm232774366b.93.2025.08.29.10.17.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 29 Aug 2025 10:17:59 -0700 (PDT)
+Date: Fri, 29 Aug 2025 14:17:55 -0300
+From: Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+ Steven Rostedt <rostedt@goodmis.org>
+CC: Steven Rostedt <rostedt@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org, x86@kernel.org,
+ Masami Hiramatsu <mhiramat@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Josh Poimboeuf <jpoimboe@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Andrii Nakryiko <andrii@kernel.org>, Indu Bhagat <indu.bhagat@oracle.com>,
+ "Jose E. Marchesi" <jemarch@gnu.org>,
+ Beau Belgrave <beaub@linux.microsoft.com>, Jens Remus <jremus@linux.ibm.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Florian Weimer <fweimer@redhat.com>, Sam James <sam@gentoo.org>,
+ Kees Cook <kees@kernel.org>, Carlos O'Donell <codonell@redhat.com>
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v6_5/6=5D_tracing=3A_Show_inode_and_devi?=
+ =?US-ASCII?Q?ce_major=3Aminor_in_deferred_user_space_stacktrace?=
+User-Agent: Thunderbird for Android
+In-Reply-To: <CAHk-=wid_71e2FQ-kZ-=aGTkBxDjLwtWqcsuNSxrarnU4ewFCg@mail.gmail.com>
+References: <20250828180300.591225320@kernel.org> <20250828180357.223298134@kernel.org> <CAHk-=wi0EnrBacWYJoUesS0LXUprbLmSDY3ywDfGW94fuBDVJw@mail.gmail.com> <D7C36F69-23D6-4AD5-AED1-028119EAEE3F@gmail.com> <CAHk-=wiBUdyV9UdNYEeEP-1Nx3VUHxUb0FQUYSfxN1LZTuGVyg@mail.gmail.com> <20250828161718.77cb6e61@batman.local.home> <CAHk-=wiujYBqcZGyBgLOT+OWdY3cz7EhbZE0GidhJmLNd9VPOQ@mail.gmail.com> <20250828164819.51e300ec@batman.local.home> <CAHk-=wjRC0sRZio4TkqP8_S+Fr8LUypVucPDnmERrHVjWOABXw@mail.gmail.com> <20250828171748.07681a63@batman.local.home> <CAHk-=wh0LjoJmRPHF41eQ1ZRf085urz+rvQQ-rwp8dLQCdqohw@mail.gmail.com> <20250829110639.1cfc5dcc@gandalf.local.home> <CAHk-=wjeT3RKCTMDCcZzXznuvG2qf0fpKbHKCZuoPzxFYxVcQw@mail.gmail.com> <20250829121900.0e79673c@gandalf.local.home> <CAHk-=wj6+8vXfBQKoU4=8CSvgSEe1A++1KuQhXRZBHVvgFzzJg@mail.gmail.com> <20250829124922.6826cfe6@gandalf.local.home> <CAHk-=wid_71e2FQ-kZ-=aGTkBxDjLwtWqcsuNSxrarnU4ewFCg@mail.gmail.com>
+Message-ID: <6B146FF6-B84E-40A2-A4FA-ABD5576BF463@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Heya folks,
 
-this flood happens with plain 6.16 on my workstation - haven't done any hw
-changes:
 
-[   29.094609] evergreen_packet3_check: 115 callbacks suppressed
-[   29.094615] radeon 0000:1d:00.0: vbo resource seems too big for the bo
-[   29.106737] radeon 0000:1d:00.0: vbo resource seems too big for the bo
-[   29.106740] radeon 0000:1d:00.0: vbo resource seems too big for the bo
-[   29.106742] radeon 0000:1d:00.0: vbo resource seems too big for the bo
-[   29.106745] radeon 0000:1d:00.0: vbo resource seems too big for the bo
-[   29.106747] radeon 0000:1d:00.0: vbo resource seems too big for the bo
-[   29.106750] radeon 0000:1d:00.0: vbo resource seems too big for the bo
-[   29.106752] radeon 0000:1d:00.0: vbo resource seems too big for the bo
-[   29.106754] radeon 0000:1d:00.0: vbo resource seems too big for the bo
-[   29.106757] radeon 0000:1d:00.0: vbo resource seems too big for the bo
-[   52.579786] evergreen_packet3_check: 29 callbacks suppressed
-[   52.579792] radeon 0000:1d:00.0: vbo resource seems too big for the bo
-[   52.591825] radeon 0000:1d:00.0: vbo resource seems too big for the bo
-[   52.591829] radeon 0000:1d:00.0: vbo resource seems too big for the bo
-[   52.591832] radeon 0000:1d:00.0: vbo resource seems too big for the bo
-[   52.591835] radeon 0000:1d:00.0: vbo resource seems too big for the bo
-[   52.591838] radeon 0000:1d:00.0: vbo resource seems too big for the bo
-[   52.591840] radeon 0000:1d:00.0: vbo resource seems too big for the bo
-[   52.591843] radeon 0000:1d:00.0: vbo resource seems too big for the bo
-[   52.591846] radeon 0000:1d:00.0: vbo resource seems too big for the bo
-[   52.591849] radeon 0000:1d:00.0: vbo resource seems too big for the bo
+On August 29, 2025 1:59:21 PM GMT-03:00, Linus Torvalds <torvalds@linux-fo=
+undation=2Eorg> wrote:
+>On Fri, 29 Aug 2025 at 09:49, Steven Rostedt <rostedt@goodmis=2Eorg> wrot=
+e:
+>>
+>> What do I use to make the hash?
+>
+>Literally just '(unsigned long)(vma->vm_file)'=2E
+>
+>Nothing else=2E
+>
+>> One thing this is trying to do is not have to look up the path name for
+>> every line of a stack trace=2E
+>
+>That's the *opposite* of what I've been suggesting=2E I've literally
+>been talking about just saving off the hash of the file pointer=2E
+>
+>(And I just suggested that what you actually save off isn't even the
+>hash - just the value - and that you can hash it later at a less
+>critical point in time)
+>
+>Don't do *any* work at all at trace collection time=2E All you need is
+>to literally access three fields in the 'vma':
+>
+> - 'vm_start' and 'vm_pgoff' are needed to calculate the offset in the
+>file using the user space address
+>
+> - save off the value of 'vm_file' for later hashing
+>
+>and I really think you're done=2E
+>
+>Then, for the actual trace, you need two things:
+>
+> - you need the mmap trace event that has the 'file' value, and you
+>create a mmap event with that value hashed, and at that point you also
+>output the pathname and/or things like the build ID
+>
+> - for the stack trace events, you output the offset in the file, and
+>you hash and output the file value
+>
+>now, in user space, you have all you need=2E All you do is match the
+>hashes=2E They are random numbers, and user space cannot know what they
+>are=2E They are just cookies as a mapping ID=2E
+>
+>And look, now you have the pathname and the build ID - or whatever you
+>saved off in that mmap event=2E And at stack trace time, you needed to
+>do *nothing*=2E
+>
+>And mmap is rare enough - and heavy enough - that doing that pathname
+>and build ID at *that* point is a non-issue=2E
 
--- 
-Regards/Gruss,
-    Boris.
 
-https://people.kernel.org/tglx/notes-about-netiquette
+Or using a preexisting one in the DSO used for the executable mmap=2E
+
+As long as we don't lose those mmap events due to memory pressure/lost eve=
+nts and we have timestamps to order it all before lookups, yeah should work=
+=2E
+
+- Arnaldo=20
+
+>
+>See what I'm trying to say?
+>
+>               Linus
+
+- Arnaldo 
 
