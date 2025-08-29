@@ -1,272 +1,130 @@
-Return-Path: <linux-kernel+bounces-791829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791830-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5F04B3BC76
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 15:23:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC4AAB3BC75
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 15:23:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B68E91778AA
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 13:22:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 302E87BF5FA
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 13:21:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBFAF31B13D;
-	Fri, 29 Aug 2025 13:22:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cggUVm9j"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F14431A564;
+	Fri, 29 Aug 2025 13:22:33 +0000 (UTC)
+Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57D4C31AF0C
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 13:22:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACADA274B30
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 13:22:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756473735; cv=none; b=mljpS8lJ+X+24MIb6+i+RHHRj7jv0NjtT/jYeHxGJC3azKbuhUAT8cIbHGYVViYKBvRYqyER1hYBqzzmkXdRcQBQRbdLni5mAYH3YUi/cbdw5AbxsoFUZXVMCb2w4lLppg1lJW4IRhdeMZiuscgeOVE7bYmzEU4hfmh6mnNFxHI=
+	t=1756473753; cv=none; b=TsWRgYrXUDaIyTDSBNC1Rv9AKUfJq88DsIE/50Qd7Z/jP8zCWc8Q09FF6FkK+AOU6Bguz0wn+u6iA9HerVdkwuB+8CKfqmMnpYZYtfmnsGYtSPQilcqe9IQWQaCbgSEyvBQtkmB0up4qZ53N3V7upUPqCoMKnADOvi+C7pLiqXs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756473735; c=relaxed/simple;
-	bh=N+5WFIKkpSCBHcdEkYaqeEr5+8bOiQ8nFMzvcD9Vf3I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NmvEBkHhTDBdJBcjgNFNFVhKthHUvOOHk/71+XPZhP+GKpcS4kDviu3i4WrwtYamwOJVhnPNF+oVd7s7IypxCNVYuNOp2h6JpvOZQa8iRP8OAIL3ZsUyb9Y9CGm79RBbr+4rgD1jr1z28usDZ290xTmJKp/ROoD+cAcgo9/i1W8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cggUVm9j; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756473733;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=aggFKTWIoz3JmsTS53UGUQwfpKwPCT7EHzMCjR4W6Kc=;
-	b=cggUVm9jbfygqZZtaFQmmmCaCeVG4RChwZUnCU04xQ/68Adj9lBmmbvD/lkParRdCbOIur
-	ufnRBqz5aIzTQ9Q/o527CW8Q3BXehQfXRRQcnBgl4WB7mpKgTCmii8oOGhzJF4kQXKeJ0f
-	+I6yyJFnqZH66PIeD+aC28nMW6CvHu4=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-645-N6SqVXZMMSaJ-exyz_hPIQ-1; Fri, 29 Aug 2025 09:22:06 -0400
-X-MC-Unique: N6SqVXZMMSaJ-exyz_hPIQ-1
-X-Mimecast-MFC-AGG-ID: N6SqVXZMMSaJ-exyz_hPIQ_1756473725
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-45a1b0b2b5cso16618485e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 06:22:06 -0700 (PDT)
+	s=arc-20240116; t=1756473753; c=relaxed/simple;
+	bh=dF8o7y6dl4+JnyO9dE1Udt1otgaXHZOQv0HSPVpJmEw=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=YXSMGM4P7ciWqwfq0tY7lLKE6WGvtTF5IxhIw2yVovqEbvHa7jODvaNBWBCC2uGAtA46PXjmUR46ha8JrsdRnYhQW1HlDT4HiD1S0lFBmGElcfHEUwuCjkRvYFih2irNj0CoQRXf5hy3pBoN+XDob+vlj8uPIn0b7+8yw0MkKT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3e683419b91so23864515ab.2
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 06:22:31 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756473725; x=1757078525;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=aggFKTWIoz3JmsTS53UGUQwfpKwPCT7EHzMCjR4W6Kc=;
-        b=odH9+UnKkuYMPNyJpGFVCboBbGJxFF4jwC+VDw9G7P8uUwRUx+lkQhCQdCXXJJIhQ/
-         s6j5a1DXCqzBOeMALGry6LcxkBP8VanYR15oyxvEYPoTeaHZIhX/psd6vqmQN9aCqhKC
-         jRlD5cXNHcn/VX5VokX57SFfATCA4bwYxg2Ouyc19Y+MEdi3xYccANdxCm37NhRDh6nH
-         ikwfv1ZVAKVQFy85mPQbvr4IhO2bA7Xy1zgu+gKPXa6wSpoLm8P3nJfuJrGFC5qNRY/b
-         ad7N/sM8NnCpkUT2J2ZW8cfILDTmyUIO0OgH7+AERXNpYo7BX6iNriqDZ08PZ+lp0cgO
-         uINQ==
-X-Gm-Message-State: AOJu0YzdDI8I1TjFh6nd/fAiXlrXVyLnukfI2TOg+26Es6RINl0JD6rc
-	V3j/Mv4/4h1KgnTg+FL4NHlJdvKNlKWZppZDo7OW6dM3PbeOqbbb54uIwOqaJg4CBoY08dIBAK8
-	ghk/vYAdHqubDMMx9pUjtgLnPyuA5AXr52ueSvcOUXTMCKdfr6AhCNnnNk0Lh7GMmtw==
-X-Gm-Gg: ASbGncui2RQgc4KFTVJyDjObgoMf4aT2DMYFCwbvsmMjmvTOgNZxejX+STNSMyBbKia
-	zstxRIaZVXG8jHhz5DEiBmwaEZO8Mq/oAKVHB9k4mhv36DrQe9O3cikRYWx3OV3LWne3LgKmRMy
-	TiB+8WIprkfYwJewE1OB3spNJfFrQrCEApZfVhXyYJr0le46wxwBCyqjnM9lKSmohxV3KCDcZ9e
-	XxLDFsh5H0VlCJVN9X7X3RF7InNrI8rv/hNwX5a1iAVLy+m6KYsUZgQSARUm8p57+ACcHhOrn0b
-	MEUO36fKHLuKZFPlfiZHdHQfiYPl8XA1zXPwuPo61qE/s+N7b/92UXJYm5XYQnTikymgGPkMQRh
-	+s4XwprCtTTuJr5u8A0Ky0syVRm8J4+ZFVIoDrIxN/7NQ9P7xLMe8vTrzaypXcEcI
-X-Received: by 2002:a05:6000:2c0f:b0:3ca:a190:c473 with SMTP id ffacd0b85a97d-3caa190c6ecmr9849818f8f.4.1756473725378;
-        Fri, 29 Aug 2025 06:22:05 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGFfrTd/+15/bT4PGZswHLcvGvODyGQLUC+I3pIFqxdvqjEg2cDf44HeYcneQKTQcaMEr0KOA==
-X-Received: by 2002:a05:6000:2c0f:b0:3ca:a190:c473 with SMTP id ffacd0b85a97d-3caa190c6ecmr9849784f8f.4.1756473724881;
-        Fri, 29 Aug 2025 06:22:04 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f1d:100:4f8e:bb13:c3c7:f854? (p200300d82f1d01004f8ebb13c3c7f854.dip0.t-ipconnect.de. [2003:d8:2f1d:100:4f8e:bb13:c3c7:f854])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3cf33add483sm3368560f8f.37.2025.08.29.06.22.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 29 Aug 2025 06:22:04 -0700 (PDT)
-Message-ID: <f7f9f535-0bbe-413a-84e4-fcb17a502a40@redhat.com>
-Date: Fri, 29 Aug 2025 15:22:01 +0200
+        d=1e100.net; s=20230601; t=1756473750; x=1757078550;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=aDAZdlJt3qT79STyvS1hlaICocSeAh5xbgbdDljA5ks=;
+        b=N9X6RshsQ/bnd8HFFF+ZuAAUZGrenU9U2T2rYquPnHQEeNb9CgTv81yCO6OB+2VD5w
+         ErXhQgtM+3KXm2dL6FQaXmrzNXk/w65b9fWzdQTEII/BmjeuF7IT/7Wdz4NuJTc/LTLi
+         nnHtLY9mUa1ARqRk2j4FQqy7pRRSFnUKjerLk+m++Co9E+ybrdlo+MNt4qU8BwXiN7m7
+         A9f7VuPBp1GmyMnQ3sx+W6iMMF/1qdBG+hXxkQ44pDD5kSvmYF6z/2P/rq3TxZ8LIjcw
+         f8qlEp3EL1wLBlXvAMb7SqRAjoo2ChZ13rk9M1d+swGZ3RW8AbY709NNZjHQjTXl+tbY
+         Z5DA==
+X-Forwarded-Encrypted: i=1; AJvYcCXGkwpJ/o+NgUNOgWX8j04P6ALoUmUUaZ8WtbLyQTIW5GB4U5s6cu1rE27BEsEFyvfo0VmbWZ9A8jgV//w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzIsGqzNCdeqLD3p+lLjDaaPppHntj9rAa7uFLOBsq3xt9Mi/Nx
+	oFGlpm8Sts2Klbvj3DUKSGiYEykR2b8PLuZKix/vYOAhURvDH/i9P1LhTnTabwPDj9jf3vi7B9e
+	C1A+JDCWKMhUGaqjQ+XKZCP1q671vbhFEjgt2oz9gIKKfzBalP+/7fgpA7nc=
+X-Google-Smtp-Source: AGHT+IHqmTnM8uXeRk/Ah/oFyiW5/RhN5JM4sYIaIubGwHhZSFgk0akvubyrQZiCzZawkWAUt58OpVXHNswCj/gG12fjE8jp8Qy5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 16/36] fs: hugetlbfs: cleanup folio in
- adjust_range_hwpoison()
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: linux-kernel@vger.kernel.org, Alexander Potapenko <glider@google.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Brendan Jackman <jackmanb@google.com>, Christoph Lameter <cl@gentwo.org>,
- Dennis Zhou <dennis@kernel.org>, Dmitry Vyukov <dvyukov@google.com>,
- dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
- iommu@lists.linux.dev, io-uring@vger.kernel.org,
- Jason Gunthorpe <jgg@nvidia.com>, Jens Axboe <axboe@kernel.dk>,
- Johannes Weiner <hannes@cmpxchg.org>, John Hubbard <jhubbard@nvidia.com>,
- kasan-dev@googlegroups.com, kvm@vger.kernel.org,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Linus Torvalds <torvalds@linux-foundation.org>, linux-arm-kernel@axis.com,
- linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
- linux-ide@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-mips@vger.kernel.org, linux-mmc@vger.kernel.org, linux-mm@kvack.org,
- linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
- linux-scsi@vger.kernel.org, Marco Elver <elver@google.com>,
- Marek Szyprowski <m.szyprowski@samsung.com>, Michal Hocko <mhocko@suse.com>,
- Mike Rapoport <rppt@kernel.org>, Muchun Song <muchun.song@linux.dev>,
- netdev@vger.kernel.org, Oscar Salvador <osalvador@suse.de>,
- Peter Xu <peterx@redhat.com>, Robin Murphy <robin.murphy@arm.com>,
- Suren Baghdasaryan <surenb@google.com>, Tejun Heo <tj@kernel.org>,
- virtualization@lists.linux.dev, Vlastimil Babka <vbabka@suse.cz>,
- wireguard@lists.zx2c4.com, x86@kernel.org, Zi Yan <ziy@nvidia.com>
-References: <20250827220141.262669-1-david@redhat.com>
- <20250827220141.262669-17-david@redhat.com>
- <71cf3600-d9cf-4d16-951c-44582b46c0fa@lucifer.local>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <71cf3600-d9cf-4d16-951c-44582b46c0fa@lucifer.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:1a0f:b0:3eb:8e5a:8fd7 with SMTP id
+ e9e14a558f8ab-3eb8e5a9145mr297977055ab.11.1756473750663; Fri, 29 Aug 2025
+ 06:22:30 -0700 (PDT)
+Date: Fri, 29 Aug 2025 06:22:30 -0700
+In-Reply-To: <68adf6fa.a70a0220.3cafd4.0000.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68b1a996.a70a0220.f8cc2.00ee.GAE@google.com>
+Subject: Re: [syzbot] [net?] WARNING in est_timer
+From: syzbot <syzbot+72db9ee39db57c3fecc5@syzkaller.appspotmail.com>
+To: bigeasy@linutronix.de, davem@davemloft.net, edumazet@google.com, 
+	eric.dumazet@gmail.com, horms@kernel.org, jhs@mojatatu.com, jiri@resnulli.us, 
+	kuba@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	pabeni@redhat.com, syzkaller-bugs@googlegroups.com, xiyou.wangcong@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+
+syzbot has found a reproducer for the following issue on:
+
+HEAD commit:    07d9df80082b Merge tag 'perf-tools-fixes-for-v6.17-2025-08..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=13d67262580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e1e1566c7726877e
+dashboard link: https://syzkaller.appspot.com/bug?extid=72db9ee39db57c3fecc5
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1141c262580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13f69262580000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/cdf0bbb7922b/disk-07d9df80.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/d1975bf771ed/vmlinux-07d9df80.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/942416e1bedd/bzImage-07d9df80.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+72db9ee39db57c3fecc5@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 16 at ./include/linux/seqlock.h:221 __seqprop_assert include/linux/seqlock.h:221 [inline]
+WARNING: CPU: 0 PID: 16 at ./include/linux/seqlock.h:221 est_timer+0x6dc/0x9f0 net/core/gen_estimator.c:93
+Modules linked in:
+CPU: 0 UID: 0 PID: 16 Comm: ktimers/0 Not tainted syzkaller #0 PREEMPT_{RT,(full)} 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
+RIP: 0010:__seqprop_assert include/linux/seqlock.h:221 [inline]
+RIP: 0010:est_timer+0x6dc/0x9f0 net/core/gen_estimator.c:93
+Code: ff c7 42 80 3c 23 00 74 08 4c 89 f7 e8 7d 35 41 f9 4d 89 3e 42 80 3c 23 00 0f 85 54 ff ff ff e9 57 ff ff ff e8 95 fd e1 f8 90 <0f> 0b 90 e9 63 fd ff ff 44 89 e1 80 e1 07 38 c1 0f 8c 65 fa ff ff
+RSP: 0018:ffffc900001577a0 EFLAGS: 00010246
+RAX: ffffffff88dc5ebb RBX: 0000000000000001 RCX: ffff88801ae85940
+RDX: 0000000000000100 RSI: 0000000000000000 RDI: 0000000000000100
+RBP: ffffc900001578b0 R08: 0000000000000000 R09: 0000000000000100
+R10: dffffc0000000000 R11: fffff5200002af0a R12: 0000000000000002
+R13: 0000000000000000 R14: 0000000000000000 R15: ffff888027ab4e68
+FS:  0000000000000000(0000) GS:ffff8881268c2000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000200000005840 CR3: 000000003732e000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ call_timer_fn+0x17b/0x5f0 kernel/time/timer.c:1747
+ expire_timers kernel/time/timer.c:1798 [inline]
+ __run_timers kernel/time/timer.c:2372 [inline]
+ __run_timer_base+0x648/0x970 kernel/time/timer.c:2384
+ run_timer_base kernel/time/timer.c:2393 [inline]
+ run_timer_softirq+0xb7/0x180 kernel/time/timer.c:2403
+ handle_softirqs+0x22c/0x710 kernel/softirq.c:579
+ __do_softirq kernel/softirq.c:613 [inline]
+ run_ktimerd+0xcf/0x190 kernel/softirq.c:1043
+ smpboot_thread_fn+0x542/0xa60 kernel/smpboot.c:160
+ kthread+0x711/0x8a0 kernel/kthread.c:463
+ ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
 
 
-> 
-> Lord above.
-> 
-> Also semantics of 'if bytes == 0, then check first page anyway' which you do
-> capture.
-
-Yeah, I think bytes == 0 would not make any sense, though. Staring 
-briefly at the single caller, that seems to be the case (bytes != 0).
-
-> 
-> OK think I have convinced myself this is right, so hopefully no deeply subtle
-> off-by-one issues here :P
-> 
-> Anyway, LGTM, so:
-> 
-> Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> 
->> ---
->>   fs/hugetlbfs/inode.c | 33 +++++++++++----------------------
->>   1 file changed, 11 insertions(+), 22 deletions(-)
->>
->> diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
->> index c5a46d10afaa0..6ca1f6b45c1e5 100644
->> --- a/fs/hugetlbfs/inode.c
->> +++ b/fs/hugetlbfs/inode.c
->> @@ -198,31 +198,20 @@ hugetlb_get_unmapped_area(struct file *file, unsigned long addr,
->>   static size_t adjust_range_hwpoison(struct folio *folio, size_t offset,
->>   		size_t bytes)
->>   {
->> -	struct page *page;
->> -	size_t n = 0;
->> -	size_t res = 0;
->> -
->> -	/* First page to start the loop. */
->> -	page = folio_page(folio, offset / PAGE_SIZE);
->> -	offset %= PAGE_SIZE;
->> -	while (1) {
->> -		if (is_raw_hwpoison_page_in_hugepage(page))
->> -			break;
->> +	struct page *page = folio_page(folio, offset / PAGE_SIZE);
->> +	size_t safe_bytes;
->> +
->> +	if (is_raw_hwpoison_page_in_hugepage(page))
->> +		return 0;
->> +	/* Safe to read the remaining bytes in this page. */
->> +	safe_bytes = PAGE_SIZE - (offset % PAGE_SIZE);
->> +	page++;
->>
->> -		/* Safe to read n bytes without touching HWPOISON subpage. */
->> -		n = min(bytes, (size_t)PAGE_SIZE - offset);
->> -		res += n;
->> -		bytes -= n;
->> -		if (!bytes || !n)
->> +	for (; safe_bytes < bytes; safe_bytes += PAGE_SIZE, page++)
-> 
-> OK this is quite subtle - so if safe_bytes == bytes, this means we've confirmed
-> that all requested bytes are safe.
-> 
-> So offset=0, bytes = 4096 would fail this (as safe_bytes == 4096).
-> 
-> Maybe worth putting something like:
-> 
-> 	/*
-> 	 * Now we check page-by-page in the folio to see if any bytes we don't
-> 	 * yet know to be safe are contained within posioned pages or not.
-> 	 */
-> 
-> Above the loop. Or something like this.
-
-"Check each remaining page as long as we are not done yet."
-
-> 
->> +		if (is_raw_hwpoison_page_in_hugepage(page))
->>   			break;
->> -		offset += n;
->> -		if (offset == PAGE_SIZE) {
->> -			page++;
->> -			offset = 0;
->> -		}
->> -	}
->>
->> -	return res;
->> +	return min(safe_bytes, bytes);
-> 
-> Yeah given above analysis this seems correct.
-> 
-> You must have torn your hair out over this :)
-
-I could resist the urge to clean that up, yes.
-
-I'll also drop the "The implementation borrows the iteration logic from 
-copy_page_to_iter*." part, because I suspect this comment no longer 
-makes sense.
-
-Thanks!
-
--- 
-Cheers
-
-David / dhildenb
-
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
