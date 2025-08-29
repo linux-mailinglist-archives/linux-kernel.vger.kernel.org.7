@@ -1,152 +1,275 @@
-Return-Path: <linux-kernel+bounces-791399-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CC9CB3B662
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 10:51:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36917B3B665
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 10:51:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 36D571628EF
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 08:51:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 168991CC05EE
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 08:51:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09A432BE63A;
-	Fri, 29 Aug 2025 08:48:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27CB82BE646;
+	Fri, 29 Aug 2025 08:48:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e8NBodn/"
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="O171H4Aa"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDC632D9784;
-	Fri, 29 Aug 2025 08:48:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A98822D322F
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 08:48:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756457319; cv=none; b=gXrQdd71V5jup9NxEmrbmQV7S7tWZLbbNQT9OJ8rFh9bXq38bQ5+rZJ0gu+/vF8SL3nKXnV136+YzQHFNPBfNTG/lQdpba7NGgN9XltXwUR9MYu51qcPEt41ZmcVqQpEaJfnZYALmm82yiKdOSTS6R7cELX0haSOo0phRCYy+tQ=
+	t=1756457326; cv=none; b=MsMFsj2kWfylW4By5Cm1NaswAQ2PU842uDiI65B42L/uAqaLJxPvSh0UJSjbp9Sx2wuk1bWp/DmbdGz0pN1WcKRSIQdAEcz2znolMHvob0uCNXPQGZ8/W5u1VE1qMsDQ0De4Fl0v4Q8gE4gtdNa+IY+xsE3LwrldwwjgJluPUtY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756457319; c=relaxed/simple;
-	bh=IXmE83WrLHoojz0Htjo2nqONfoaTszNCQ2HISt7DOmU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=M/cyFU0f83Tn7p1Obfe5U5ECmPsnYyDDswiFDNjcUUq8YKekSQu56g4jq8TXp9lKDeoBV7kbeSqaaPmo23HQeWE0HhhuFI2uzlQ8d4yCUXcZ5oNgankmIdI5XBqxBmTYWGYFFlo+gnTDLauxf5s+qfsKhWCK1mmJTg0Scw6S+yo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e8NBodn/; arc=none smtp.client-ip=209.85.215.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-b49c1c130c9so1317687a12.0;
-        Fri, 29 Aug 2025 01:48:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756457317; x=1757062117; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=huo6UKRZvOysKzlKK029Ak+BDZSM4j9x9AL+B8QBDmg=;
-        b=e8NBodn/t9cOlqa0hHxTaxdb7yUoBkHu2rZldhWHpzZtXPfvqkjGrg6uwmLusSaWpH
-         DU0uIPfAqOjFvaY/V/Dx44JJyoLaAD1Q5NHdi7V8UWTDiatzH9NZRp6w+zD2U4N7mVb+
-         qhqf71h8qmsig2RjttL+cHoFM3Gu8arSqpamdcjG8zuFbBg7IdoF32oSE9HC5St5MfM7
-         QWiFCyXrwbpiu7yL8fPFT98p7EygIEJbYy9A/saBJSPmQ9EGib63INsyx2hxr6O1r7IM
-         x4YWiuHwSMi31+hf2F1C0g6LBp4yNwNo2LOQMnhSBhfUA4Lf5wVnqCViGUP+K776wDCp
-         c6pA==
+	s=arc-20240116; t=1756457326; c=relaxed/simple;
+	bh=U35e/E8q0I+gH4p+LPvs4gYYi3QH4Uu1M0lmIoOA1sU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gs4NIivVno4WhQq7ON8TTgeam7bw48sXi+eRz/G5qwpvMFtB+GyRrhRWx7y4BR6ZMtPT8dzTzNLskXh6j68TzCPEmz7dWTP6sxrYnDbHdiu/q0+1eImKhMI4Cz8LtVI8AoL71MBix42YiVYmTqblDCc/HhxElcl3NNfaI7d+nDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=O171H4Aa; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57T85Eag003534
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 08:48:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=/5pBODwspf82fhKHX/+Qq3M8
+	oCn/6yRZrJbLU7BeMOU=; b=O171H4Aal17R09DovZSV+f7s9mAfCdAdtrQVTFsl
+	GQlxb/LkQrUq/6+/W0kU6lq/0pofV7O7pLQhM+o1+aXy9r4fAPkuYL2MXiD4siQs
+	g1Na+02TxmDq29fo1qK8CUsEFolUHv7Tc/CfS4QJaFJpsGjh9LlP/jSUXO0lRmWZ
+	/CEbX8JaAtsj2hyphwKEMHu9i/NeKTePzqcndXiJ2Ty5Bd2R0/1PdwworLi+vW8J
+	VU+zqzS11JwUSpjblFP44O2dPwkJuocpegRv6CbYE+UMyxnMNW1agMiKOmNwftF9
+	j6bgIpa5uAUClt6tHX6mVrzhmjzjmE3cf5qsJHFYQFAZGQ==
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48tp5k38xw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 08:48:43 +0000 (GMT)
+Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-70ddbb81696so35328226d6.1
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 01:48:43 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756457317; x=1757062117;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=huo6UKRZvOysKzlKK029Ak+BDZSM4j9x9AL+B8QBDmg=;
-        b=eycF19VINE5pOJSpLtI0nUz+Ai26BD9/wTz9iZQGQo4ak8iwufa6wofD/UkosY+o2o
-         JoEYKx9YUsSIRDmg0WcC+QM1K76L60JTILhQmFiAoJxzGkwffJoNkDo3fFhFPENNvdrz
-         UhQkG0Yoe1XD9ULTt69K23yjsfxYRGG75rzbWGSfmNwIHpkvGoXd9Y8hMwAM5BVQsXnK
-         qqfaNt5rXIaAVJxQSOSzEIATt+fZmIVR/uqBBfjytf0PVVcHu2cexkf4m9LJYv5IzWDy
-         wVuBbfOF9M8Y8w395MiwFRRq1RXPGK/jdMGxyZPuiE7yCiT0jxuxFzNPDYgfjfJQlqPF
-         xDJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUU7dK9LLFeruyQHaoPNOSJXRri2xoiDyv+TFQkbYXpPV/ck+cKjPZa609ZTjnDs8iks96qiBu0POkU@vger.kernel.org, AJvYcCXn4oaKuZZpctzY+jbptrO1wCNUctllACZDn3KVjeExTc+Wqa7yOVHE6qHP08riozUHZlLwu1MLYjbGut0b@vger.kernel.org
-X-Gm-Message-State: AOJu0YwhYZXNGXxUAzoXz0OofjNNZtPdhzW6xcmAEUagrsV/PSYXSIDK
-	pp7xTWmdFSSwqFZjXz+ZRHh4h9Cw76pe5/ImBByB5f7oCzFXN49YI/gw
-X-Gm-Gg: ASbGncuQwnp3uCHYdKYZEh2eNLYhVZLi5tXxVI/T+O5U2aAhVSyQtvWJVWPjCgZRUeT
-	S9Z190Kcvp7dxtIlGyBxt2mrLo8Gj/zYvoAC771e3V9WepcpNXRxxeucW6lITxmkdz1Xkq+FOav
-	ObS35JkSofU+orgn1qlfEmOjMWn9RQM1KshWtijFLzBfHKb6tOIniPeM9BsmdMb57ttUvhrFD/s
-	y9MaLIrgmIjG3S0s6G7VMd1uJFRtpfisiqxquW0Sxj/Zha4CiyshT0bjEtl6hW74+BaljryEgSd
-	S4QeFqxPEJO5QonP3mUbh2aCrEuCA6kXBeOshl97Y1hWgmZo0K2Iq4DodXxM/q2cGZ/z9dRxjqF
-	TJUsnlnJ5umaK/KFLX96mjBJZI7fK4YmERtceFQ==
-X-Google-Smtp-Source: AGHT+IHNprSHX/gtqW7mH6PGrQAeU90URpR1MuRLk66CvGwjz133vsdLxYv6Yhkc0Ldb3CFt1gYuaA==
-X-Received: by 2002:a17:902:e891:b0:234:cc7c:d2e2 with SMTP id d9443c01a7336-2462edc4507mr413113905ad.1.1756457317009;
-        Fri, 29 Aug 2025 01:48:37 -0700 (PDT)
-Received: from [127.0.1.1] ([59.188.211.98])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-249066e042asm18162565ad.146.2025.08.29.01.48.33
+        d=1e100.net; s=20230601; t=1756457322; x=1757062122;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/5pBODwspf82fhKHX/+Qq3M8oCn/6yRZrJbLU7BeMOU=;
+        b=O3yNw2pw/Uk9V5Roo4nGP6tpi0kcPcdo4CzuysB331UXmD5pfLH9RNtspKvJ5JJYH5
+         Mpe4IlisGIFtjTyU7ANmw4GhhYzVIgVI2+a4AZFXIp76MapFgb7Z3j/VoGE0QDrBxXnB
+         RFib/JzVsFx2v+fuE20SejiQtQBwXLzBJFBN43fMfgwO9bkyfwIeXajxFLN2kc2ppOr8
+         kSsdHRnGDRZ2HEML7syguH2jimHwgxQUSzB/xSmhr68jtUoqvbhkiCwZ/MR6CtMrkuSx
+         OZPHA0Ff7JtuJnvPwsXT8xqTOaCiyMjh/SWVF1QFoz2kebux7xkYzd257+uVuVWhL6l+
+         9IWA==
+X-Forwarded-Encrypted: i=1; AJvYcCVIS20APBvxU3R7MbZzaPdZNQlF9OlXSAAVOW2jfN6qg2x/PEobo1i/iHz+qvpIKKOma3Q4l4rjZ8zavg0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwAt7sSkf/C5Knivv3vwaszTEaMlC0W5R5ayE+GAO2XqPJ+zYRx
+	5DtR/OMZ+r7G1x7iFJLHY/Q79FsrWMGMwB4/DVrVdZknVJeoXuGT1Xcqxkhnj6ZwKkUWwF06vSn
+	vPtBm9fpSSE7sY061YEyAQt74ddana1H4ay98NSZizc4cMy2Jq1cYGEX5HypHRLkIU/U=
+X-Gm-Gg: ASbGncu1EBmmG11AShltPB58Pv75aFxCNQXpc3W61tLggr2JBuV0RmPJziVjASk9dMY
+	p1Jc58qg9qRXmBrzRHrka87p17U75/KqTRxt2mP+6utIg46drtmSoIzCnNUE0vEWQBRG6EBh9cg
+	eZY5M9W/r3iuYGx2oKkDVmPi/1eTSPq8l6DPgoR4j79vYon5XvdsgwrGgfBZbF/xUBgnVnaNIBM
+	eAKbrVJrwZbjtE4v4Ir6dEZIVlb1RZvVi38eu9Y4L0N1EiUwHMtpYXrDnVnW0833BqaiMFohW0C
+	tTnG+LxZyYQwSr4JP9ZoqbNRjJFnmbK7sdeHNKdFR+hMWNrjPJ9QU4alSTE7hslL+f3IJWrXzZj
+	g6llgGT/3yPLqVDeufeIJt9O9YV1EKzJnWra/tqHcCm2786i9L9LM
+X-Received: by 2002:a05:6214:5186:b0:70d:b3de:cec9 with SMTP id 6a1803df08f44-70dd59c1196mr125891066d6.22.1756457322324;
+        Fri, 29 Aug 2025 01:48:42 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHq1ezFqcENyB1YLJXTV7TThom8X2IGaTOdTprgqE2iRpU+3lXQDMjeVPvPOaC+kNzjQAaeVA==
+X-Received: by 2002:a05:6214:5186:b0:70d:b3de:cec9 with SMTP id 6a1803df08f44-70dd59c1196mr125890886d6.22.1756457321839;
+        Fri, 29 Aug 2025 01:48:41 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55f6784526csm461424e87.84.2025.08.29.01.48.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Aug 2025 01:48:36 -0700 (PDT)
-From: Nick Chan <towinchenmi@gmail.com>
-Date: Fri, 29 Aug 2025 16:47:02 +0800
-Subject: [PATCH v3 3/3] arm64: dts: apple: t8015: Add SPMI node
+        Fri, 29 Aug 2025 01:48:39 -0700 (PDT)
+Date: Fri, 29 Aug 2025 11:48:37 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Damon Ding <damon.ding@rock-chips.com>
+Cc: andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
+        Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+        jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
+        mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com,
+        simona@ffwll.ch, jingoohan1@gmail.com, inki.dae@samsung.com,
+        sw0312.kim@samsung.com, kyungmin.park@samsung.com, krzk@kernel.org,
+        alim.akhtar@samsung.com, hjc@rock-chips.com, heiko@sntech.de,
+        andy.yan@rock-chips.com, l.stach@pengutronix.de, dianders@chromium.org,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH v4 07/13] drm/bridge: analogix_dp: Apply
+ drm_bridge_connector helper
+Message-ID: <ghp33yxo24gaubn6pijks3wnuch3fpbmi5z27cq7pk3siffiox@jb2zw3lt35hk>
+References: <20250814104753.195255-1-damon.ding@rock-chips.com>
+ <20250814104753.195255-8-damon.ding@rock-chips.com>
+ <incxmqneeurgli5h6p3hn3bgztxrzyk5eq2h5nq4lgzalohslq@mvehvr4cgyim>
+ <62dfbe1d-3e36-4bc5-9b25-a465e710f23b@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250829-t8015-spmi-v3-3-58b15ee2c825@gmail.com>
-References: <20250829-t8015-spmi-v3-0-58b15ee2c825@gmail.com>
-In-Reply-To: <20250829-t8015-spmi-v3-0-58b15ee2c825@gmail.com>
-To: Janne Grunau <j@jannau.net>, Alyssa Rosenzweig <alyssa@rosenzweig.io>, 
- Neal Gompa <neal@gompa.dev>, Stephen Boyd <sboyd@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Sasha Finkelstein <fnkl.kernel@gmail.com>, Sven Peter <sven@kernel.org>
-Cc: asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
- Nick Chan <towinchenmi@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1153; i=towinchenmi@gmail.com;
- h=from:subject:message-id; bh=IXmE83WrLHoojz0Htjo2nqONfoaTszNCQ2HISt7DOmU=;
- b=owEBbQKS/ZANAwAKAQHKCLemxQgkAcsmYgBosWlVRHFdQdeFy3aisUkxWV9ZA27SfibYMoV0R
- fxOZJPauX6JAjMEAAEKAB0WIQRLUnh4XJes95w8aIMBygi3psUIJAUCaLFpVQAKCRABygi3psUI
- JDzFEACGVhhRSiF4ZqOskPQJhky+N+NRBdF+sbQNrZ+xlazYZfV2JNJ2y0VtjSDu5Dm7ebqPDh6
- K3uh1eeiv92PqwLIYi4IpoSgzjhikJ8OXjyley21JBEF/Wy6q5rTHI5ds5weqL51AArgrWeN3gb
- k5k+6Ty2fGtOomkCh3vwYerV/0Oiv17108XRCEC9T/o8W9Xejkd7zBc2VwThLm61BOLZT2sCq9N
- t6cvJP/WY2a58Trz713eLyMZOGwXSdBNS3WOk3qwEgB6heQ6LA8NVFjR5sMWXwa0dVZ5OhPZJZ9
- En+FX7fPu7zpic7sg+LkHvtc+PYVLa4gDFO7WV725avPvD/9BZbo59h0dR/hhSAJ+J9ToxClanp
- J8uYbnDZgDUPpBwy7YOlcPkaEOocxaD62ooIgZpETZWQBj/R+d/hNzLnnxHR/1/ILwXB1kMvY/z
- 3bJeoBmON9pWo9EoOVImUQ2jh6trqcYepOCv+J3sV/UmYFfRC5H6mBjTknBEZlecV94khWSWYcI
- 1bRZPAQLDGYfZci20++ga3iSQHDIh3q35iWUsZS00LDSnx2hzhG6V6lIdiu7xzPaWy8t5YDnCVv
- dSKXupFEeHCIsB1VK0lfdOiA0Bmn7vEtzgr/fGR+h+ll3/qIv+L6JEs390S5NzId4lUOeRN0cnE
- uaXN/vJs2ZicH6g==
-X-Developer-Key: i=towinchenmi@gmail.com; a=openpgp;
- fpr=4B5278785C97ACF79C3C688301CA08B7A6C50824
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <62dfbe1d-3e36-4bc5-9b25-a465e710f23b@rock-chips.com>
+X-Authority-Analysis: v=2.4 cv=V9F90fni c=1 sm=1 tr=0 ts=68b1696b cx=c_pps
+ a=wEM5vcRIz55oU/E2lInRtA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=2OwXVqhp2XgA:10 a=s8YR1HE3AAAA:8 a=g_3uhpjf_u-dzjrkN2gA:9 a=CjuIK1q_8ugA:10
+ a=OIgjcC2v60KrkQgK7BGD:22 a=jGH_LyMDp9YhSvY-UuyI:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODI4MDA5NSBTYWx0ZWRfX4HW86qjq33GZ
+ KH2YI1hPV/o2wW4z1CZbg7nHxsbxAe2S8kncsxcM+8N80OQqem+HVfH51kL9CtobN+UssmL4XCo
+ 2+0Er3ia+c3MEIs3HnaX1DuJ9YF06t94Bq016MYf1kusodcMGRa2jzIubt16VpbhADSTI+rtP7C
+ e7ErOhl0S1W86UVCuvd7cEr7TCx/x+gAtT5nGX2TjcShGs9YAfnWgyefyQD9EQyZmfHJPXDqnCY
+ BY/Y3QG/FB+FIgrZ8biw0TqCbTXfKuQUhcZH9Kknu5mG2unw/0Hem/6pUFPX8H3kDSDF23/z4mu
+ F8xMFXPrZCEPyQRnwQKyxVliofC6RtZ5uTfHwWecWmYvzIRGjAPL6U/cbpW8mf5ZNfoD+28/DNh
+ vPQTbtKQ
+X-Proofpoint-ORIG-GUID: vtIR5CuHc0R5pKdea3zlT-qmT7Zld1Lu
+X-Proofpoint-GUID: vtIR5CuHc0R5pKdea3zlT-qmT7Zld1Lu
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-29_03,2025-08-28_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 bulkscore=0 spamscore=0 clxscore=1015 suspectscore=0
+ phishscore=0 malwarescore=0 adultscore=0 impostorscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508280095
 
-Add SPMI node for Apple A11 SoC.
+On Wed, Aug 20, 2025 at 05:18:13PM +0800, Damon Ding wrote:
+> Hi Dmitry,
+> 
+> On 8/17/2025 12:43 AM, Dmitry Baryshkov wrote:
+> > On Thu, Aug 14, 2025 at 06:47:47PM +0800, Damon Ding wrote:
+> > > Apply drm_bridge_connector helper for Analogix DP driver.
+> > > 
+> > > The following changes have been made:
+> > > - Apply drm_bridge_connector helper to get rid of &drm_connector_funcs
+> > >    and &drm_connector_helper_funcs.
+> > > - Remove unnecessary parameter struct drm_connector* for callback
+> > >    &analogix_dp_plat_data.attach.
+> > > - Remove &analogix_dp_device.connector.
+> > > - Convert analogix_dp_atomic_check()/analogix_dp_detect() to
+> > >    &drm_bridge_funcs.atomic_check()/&drm_bridge_funcs.detect().
+> > > - Split analogix_dp_get_modes() into &drm_bridge_funcs.get_modes() and
+> > >    &drm_bridge_funcs.edid_read().
+> > > 
+> > > Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
+> > > 
+> > > ------
+> > > 
+> > > Changes in v2:
+> > > - For &drm_bridge.ops, remove DRM_BRIDGE_OP_HPD and add
+> > >    DRM_BRIDGE_OP_EDID.
+> > > - Add analogix_dp_bridge_edid_read().
+> > > - Move &analogix_dp_plat_data.skip_connector deletion to the previous
+> > >    patches.
+> > > 
+> > > Changes in v3:
+> > > - Rebase with the new devm_drm_bridge_alloc() related commit
+> > >    48f05c3b4b70 ("drm/bridge: analogix_dp: Use devm_drm_bridge_alloc()
+> > >    API").
+> > > - Expand the commit message.
+> > > - Call drm_bridge_get_modes() in analogix_dp_bridge_get_modes() if the
+> > >    bridge is available.
+> > > - Remove unnecessary parameter struct drm_connector* for callback
+> > >    &analogix_dp_plat_data.attach.
+> > > - In order to decouple the connector driver and the bridge driver, move
+> > >    the bridge connector initilization to the Rockchip and Exynos sides.
+> > > 
+> > > Changes in v4:
+> > > - Expand analogix_dp_bridge_detect() parameters to &drm_bridge and
+> > >    &drm_connector.
+> > > - Rename the &analogix_dp_plat_data.bridge to
+> > >    &analogix_dp_plat_data.next_bridge.
+> > > ---
+> > >   .../drm/bridge/analogix/analogix_dp_core.c    | 145 ++++++++----------
+> > >   .../drm/bridge/analogix/analogix_dp_core.h    |   1 -
+> > >   drivers/gpu/drm/exynos/exynos_dp.c            |  18 ++-
+> > >   .../gpu/drm/rockchip/analogix_dp-rockchip.c   |  11 +-
+> > >   include/drm/bridge/analogix_dp.h              |   3 +-
+> > >   5 files changed, 88 insertions(+), 90 deletions(-)
+> > > 
+> > > diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+> > > index 7876b310aaed..a8ed44ec8ef5 100644
+> > > --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+> > > +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+> > > @@ -947,24 +947,16 @@ static int analogix_dp_disable_psr(struct analogix_dp_device *dp)
+> > >   	return analogix_dp_send_psr_spd(dp, &psr_vsc, true);
+> > >   }
+> > > -static int analogix_dp_get_modes(struct drm_connector *connector)
+> > > +static int analogix_dp_bridge_get_modes(struct drm_bridge *bridge, struct drm_connector *connector)
+> > >   {
+> > > -	struct analogix_dp_device *dp = to_dp(connector);
+> > > -	const struct drm_edid *drm_edid;
+> > > +	struct analogix_dp_device *dp = to_dp(bridge);
+> > >   	int num_modes = 0;
+> > > -	if (dp->plat_data->panel) {
+> > > +	if (dp->plat_data->panel)
+> > >   		num_modes += drm_panel_get_modes(dp->plat_data->panel, connector);
+> > > -	} else {
+> > > -		drm_edid = drm_edid_read_ddc(connector, &dp->aux.ddc);
+> > > -		drm_edid_connector_update(&dp->connector, drm_edid);
+> > > -
+> > > -		if (drm_edid) {
+> > > -			num_modes += drm_edid_connector_add_modes(&dp->connector);
+> > > -			drm_edid_free(drm_edid);
+> > > -		}
+> > > -	}
+> > > +	if (dp->plat_data->next_bridge)
+> > > +		num_modes += drm_bridge_get_modes(dp->plat_data->next_bridge, connector);
+> > 
+> > If there is a next bridge which provides OP_MODES, then
+> > drm_bridge_connector will use it for get_modes() and skip this one
+> > completely. I'm not sure what's the value of this call.
+> 
+> Following your advice, it is really a good idea to distinguish the
+> drm_bridge_ops between the panel and the bridge. Will add it in v5.
+> 
+> > 
+> > >   	if (dp->plat_data->get_modes)
+> > >   		num_modes += dp->plat_data->get_modes(dp->plat_data, connector);
+> > > @@ -972,51 +964,39 @@ static int analogix_dp_get_modes(struct drm_connector *connector)
+> > >   	return num_modes;
+> > >   }
+> > > -static struct drm_encoder *
+> > > -analogix_dp_best_encoder(struct drm_connector *connector)
+> > > +static const struct drm_edid *analogix_dp_bridge_edid_read(struct drm_bridge *bridge,
+> > > +							   struct drm_connector *connector)
+> > >   {
+> > > -	struct analogix_dp_device *dp = to_dp(connector);
+> > > +	struct analogix_dp_device *dp = to_dp(bridge);
+> > > +	const struct drm_edid *drm_edid = NULL;
+> > > -	return dp->encoder;
+> > > -}
+> > > +	drm_edid = drm_edid_read_ddc(connector, &dp->aux.ddc);
+> > > +	if (dp->plat_data->get_modes)
+> > > +		dp->plat_data->get_modes(dp->plat_data, connector);
+> > 
+> > 
+> > So, we have DDC, but we still want to return platform modes? What is the
+> > usecase for that?
+> > 
+> > There might be some, but I think it deserves a comment in the source
+> > file.
+> > 
+> 
+> For Rockchip side, since RK3588 and RK3576 can support YUV formats while the
+> other can not, the &analogix_dp_plat_data.get_modes() help filter out YUV
+> formats for some platforms(The YUV feature support may not be fit for this
+> patch series and will come later).
 
-Signed-off-by: Nick Chan <towinchenmi@gmail.com>
----
- arch/arm64/boot/dts/apple/t8015.dtsi | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Note, get_modes() here adds modes rather than filtering them. You can
+use .mode_valid in order to filter out YUV modes.
 
-diff --git a/arch/arm64/boot/dts/apple/t8015.dtsi b/arch/arm64/boot/dts/apple/t8015.dtsi
-index 12acf8fc8bc6bcde6b11773cadd97e9ee115f510..63b2a1ddaf44012a03bbbe3d7ebbba91becda015 100644
---- a/arch/arm64/boot/dts/apple/t8015.dtsi
-+++ b/arch/arm64/boot/dts/apple/t8015.dtsi
-@@ -10,6 +10,7 @@
- #include <dt-bindings/gpio/gpio.h>
- #include <dt-bindings/interrupt-controller/apple-aic.h>
- #include <dt-bindings/interrupt-controller/irq.h>
-+#include <dt-bindings/spmi/spmi.h>
- #include <dt-bindings/pinctrl/apple.h>
- 
- / {
-@@ -344,6 +345,13 @@ pinctrl_aop: pinctrl@2340f0000 {
- 				     <AIC_IRQ 141 IRQ_TYPE_LEVEL_HIGH>;
- 		};
- 
-+		spmi: spmi@235180700 {
-+			compatible = "apple,t8015-spmi", "apple,t8103-spmi";
-+			reg = <0x2 0x35180700 0x0 0x100>;
-+			#address-cells = <2>;
-+			#size-cells = <0>;
-+		};
-+
- 		pinctrl_nub: pinctrl@2351f0000 {
- 			compatible = "apple,t8015-pinctrl", "apple,pinctrl";
- 			reg = <0x2 0x351f0000 0x0 0x4000>;
+> 
+> For Exynos side, I think &analogix_dp_plat_data.get_modes() can help
+> parse the video mode set in the eDP DT node when there is no available panel
+> or bridge.
+
+I think this should be handled by a separate bridge. E.g. see how the
+imx-legacy-bridge is implemented.
+
+> 
+> I will add some comments about it in the next version.
+> 
 
 -- 
-2.51.0
-
+With best wishes
+Dmitry
 
