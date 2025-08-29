@@ -1,132 +1,110 @@
-Return-Path: <linux-kernel+bounces-792160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792152-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18D3EB3C0EE
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 18:39:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A71BAB3C0D4
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 18:34:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC0EC204EDF
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 16:39:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD7825620FB
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 16:33:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B64333436A;
-	Fri, 29 Aug 2025 16:38:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45C473277B4;
+	Fri, 29 Aug 2025 16:33:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="ex1BE6mV"
-Received: from out203-205-221-221.mail.qq.com (out203-205-221-221.mail.qq.com [203.205.221.221])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="fDvC81Ed"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EDAE32C30B;
-	Fri, 29 Aug 2025 16:38:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.221
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 794261917ED;
+	Fri, 29 Aug 2025 16:33:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756485532; cv=none; b=ZxZmGTKerj5Ne2RNGnnpehdGJElGrmZZkLyeVKlzRv7QU6cHbR/lakNPSUb8BYYWOM3kQNuzMNtpknplBoyF40bpn2TIj7u8/dqvHIZAnwtA4yNO3qJpNTRVlHfZ2ihz66mNTMlJbd/mo0P9HALa8WYnzpI1ScrhrjpQU7YcZFs=
+	t=1756485205; cv=none; b=Wh4zriOpSju2GBBVr5XgUWdO9pZFhYYerL/Loz7PibyJ7JkifTTy/O146XkrI6fCClxE1MEtMjijVLIe8h9LXhwAW+dkzsG2HMe7qayrStT34L3t/r4W5OjqA88T5UT+RWFuNBZCoUDZdGWYP4SIZWJ0AXSw33EI/csQPTHdlxI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756485532; c=relaxed/simple;
-	bh=3FypETjJEczaIGmMijvEDc/xAfE0ZqcMYaZH4REDzt0=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=RfyeaZ1cSai4YJNqFcGgJP07epCwG6bloVc2lkqbL8qekhlGEqdEg5MFFENqFaFodTjMYNWJHJteDeZhIOvIyKcYikvUugHLW2H+ICLfE47Luw3wTWR6uLVJFtoETmyS2iE7dVstM7IbJT6t32TU22aPQymbGHeUNf8BIFOm9Fw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=ex1BE6mV; arc=none smtp.client-ip=203.205.221.221
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-	s=s201512; t=1756485522;
-	bh=rJtuwGlT+WPV2Vvq0c50CumyH88uEPIOv2YTXhzReaU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=ex1BE6mVteOEROu+w99GcNKfNoj9HjNtm5kejmOkeAwJv2tsmeNU++nPbXOtQcYGL
-	 HMdCp083lUjaFqzDJqxrM8+kPfisK4MKKtAcd7872XFEHdsKJecR63RmTZJawSqdk+
-	 GnUiG3zcuAd3NLVmdfK3Dj16MtSs+xeeyLC+f4V4=
-Received: from f41.lan ([240e:305:1bb6:7c10:7285:c2ff:fe86:1af4])
-	by newxmesmtplogicsvrszb20-1.qq.com (NewEsmtp) with SMTP
-	id 8132B652; Sat, 30 Aug 2025 00:32:19 +0800
-X-QQ-mid: xmsmtpt1756485139tsqlraqb4
-Message-ID: <tencent_2ED218F8082565C95D86A804BDDA8DBA200A@qq.com>
-X-QQ-XMAILINFO: Nz6nvCBXF1ZFc1n9RbBfo0e7u7VtNKcl2N2A2MhqZsw203jPcjyGpMP5iZRq7x
-	 GY7a/AYfx161v8hmKvRURPLELjkR5W80aMu/5MxabOor30hGkqWitmmR9K4pT0zBmpiPNm8dNqSO
-	 WEgs6TXXsxNq3c6nn5p1BfxxRXZiJez55rlDJ2McCmKK25zjlqoDjHjR51FcORLJUuumIekEYCO3
-	 5oA5Q1XcH0MM7Jd0BCF0et6pnYX8ggIUsilVevFuwWWBrftMU6U9ZEPsh1P77sizz4X3FjFKFj5X
-	 aZFA07fCzx+gXMiD2zeU7FH3AZbcEvZSzkcGNCGMCfUmTT8TXNT3xyeWmyPNLmDbJsVsr+vPEJxY
-	 8onL4oKZo4YQzc4AQ62Sokwckg4pFV15CTf2UJ96J3yg4XiaxOqafoEDOk2Oj5+IwGoUL9W7f9NV
-	 EWBLzsEmfOE4sqmQ2eakZAREPjiIIwtstUK16xvtfP98lLtSZ91zTcihM/IAXVuzgXPHzm3tdJxT
-	 mKb5pxV7YLIFja5vsCEIKfYOOudSmgFr6UQBFxJGIDpCo6iuQarg9EqVTTwIc4C0H9gkmm8UlC+9
-	 po9l4fLPP7eKPo75sDO1cHUr/csPhVjVZgjXODwE2JGykzQNxjAkAPpojyakMQdu2wbnQkgErpoR
-	 G4/rBohsR/6GTK7th05th+/+SxyTVzRzD/imoCb6GAArlXrZxAUgSDbQzxwI2doo7zx07EBuX8qe
-	 g2Fbr14GnGbpNOJUv8Ie5oDjv1uq9yitu45kzLVYpUGbP5HU06l4FQScRG+qN/yfvLisbddLjJSr
-	 kmK+hZ20Ue1guOJielcC/9rWlIIM6CqpF6F0pctOjs7N5HcH8JuSAbpGCjqTaNVv0NOB8/NpVWJu
-	 8Zz+mwRyNfp2sxdEufQYGaEXnrPuw1JHzX7SFE+VhoPnMgDn8HZxoYhDOO+BaVBMoz4M/ce0nRlK
-	 nBd24qN0QRe3aDTLq9sFNQlAon6IDU96orqAxK1uTy6xkkxotWDn9uOjH8K49WCqPShfoAnHbNa5
-	 esT7xf6fcY+fDIZhw4jlb6REdFXgwSQEil1zHnVb7pQIN49tIfh4FSSgztKhx+8BqWFDnGLQ==
-X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
-From: Rong Tao <rtoax@foxmail.com>
-To: vmalik@redhat.com,
-	andrii.nakryiko@gmail.com,
-	ast@kernel.org,
-	daniel@iogearbox.net
-Cc: Rong Tao <rongtao@cestc.cn>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>,
-	Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Mykola Lysenko <mykolal@fb.com>,
-	Shuah Khan <shuah@kernel.org>,
-	bpf@vger.kernel.org (open list:BPF [GENERAL] (Safe Dynamic Programs and Tools)),
-	linux-kernel@vger.kernel.org (open list),
-	linux-kselftest@vger.kernel.org (open list:KERNEL SELFTEST FRAMEWORK)
-Subject: [PATCH bpf-next v5 2/2] selftests/bpf: Add tests for bpf_strnstr
-Date: Sat, 30 Aug 2025 00:32:13 +0800
-X-OQ-MSGID: <e13d6916f7184a04a167d2d94db5bb10fc15537e.1756484762.git.rongtao@cestc.cn>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <cover.1756484762.git.rongtao@cestc.cn>
-References: <cover.1756484762.git.rongtao@cestc.cn>
+	s=arc-20240116; t=1756485205; c=relaxed/simple;
+	bh=jgKCSrHUv6K524VE1l0gFO14QqQhak8oamgEm7Ome3A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=n4TBnTysFkSb0utOEBubz/WzIwzz5tyo28l506rg7jvwsnSCDIVBRO2P7037aCWxkiHlojIQ4l0i/ysq/EnnletuAWp9AdVXiUQ4OjARQLKQlfOACSu4Ov1FqQE7NiIkOiU7wKUk7tPSA7qX6r+neOPClVe70+MS5mjklkh8CTU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=fDvC81Ed; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94756C4CEF0;
+	Fri, 29 Aug 2025 16:33:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1756485205;
+	bh=jgKCSrHUv6K524VE1l0gFO14QqQhak8oamgEm7Ome3A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fDvC81EdV68n1C2rjUnPP0FGw7Ro+eO2SKfgVaNU53F46YJnPfz0uHojZ+hM+b912
+	 e5UuCgDEslujPigKXynTswZGejWJnsPnogn5b0CztVhjZEiU32X5SVpODA01DxqLRB
+	 PRJO47xgWBLI1QdBK6gSSadZmivfOJMw86AuxagM=
+Date: Fri, 29 Aug 2025 18:33:21 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Cc: Valentina Manea <valentina.manea.m@gmail.com>,
+	Shuah Khan <shuah@kernel.org>, Hongren Zheng <i@zenithal.me>,
+	"Brian G. Merrell" <bgmerrell@novell.com>, kernel@collabora.com,
+	Greg Kroah-Hartman <gregkh@suse.de>, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 00/18] USB/IP VHCI suspend fix and driver cleanup
+Message-ID: <2025082941-frenzied-chaos-890c@gregkh>
+References: <20250726-vhci-hcd-suspend-fix-v2-0-189266dfdfaa@collabora.com>
+ <2025072637-corny-careless-8523@gregkh>
+ <3dd94c4f-0971-4744-91e1-3a5474e1576c@collabora.com>
+ <5b39ce10-9845-4429-95bb-18b03513cdaf@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5b39ce10-9845-4429-95bb-18b03513cdaf@collabora.com>
 
-From: Rong Tao <rongtao@cestc.cn>
+On Wed, Aug 27, 2025 at 12:14:15PM +0300, Cristian Ciocaltea wrote:
+> On 7/28/25 12:41 PM, Cristian Ciocaltea wrote:
+> > Hi Greg,
+> > 
+> > On 7/26/25 9:43 AM, Greg Kroah-Hartman wrote:
+> >> On Sat, Jul 26, 2025 at 01:08:02AM +0300, Cristian Ciocaltea wrote:
+> >>> The USB/IP Virtual Host Controller (VHCI) platform driver is expected to
+> >>> prevent entering system suspend when at least one remote device is
+> >>> attached to the virtual USB root hub.
+> >>>
+> >>> However, in some cases, the detection logic for active USB/IP
+> >>> connections doesn't seem to work reliably, e.g. when all devices
+> >>> attached to the virtual hub have been already suspended.  This will
+> >>> normally lead to a broken suspend state, with unrecoverable resume.
+> >>>
+> >>> The first patch of the series provides a workaround to ensure the
+> >>> virtually attached devices do not enter suspend.  Note this is currently
+> >>> limited to the client side (vhci_hcd) only, since the server side
+> >>> (usbip_host) doesn't implement system suspend prevention.
+> >>>
+> >>> Additionally, during the investigation I noticed and fixed a bunch of
+> >>> coding style issues, hence the subsequent patches contain all the
+> >>> changes needed to make checkpatch happy for the entire driver.
+> >>
+> >> You are doing two major things here, fixing suspend, and cleaning up
+> >> checkpatch issues.  Please make that two different patch sets as those
+> >> are not logical things to put together at all.  Work on the suspend
+> >> issue first, and after that is all done and working, then consider
+> >> checkpatch cleanups, those are not that important overall :)
+> > 
+> > Yeah, the cleanup part ended up larger than initially anticipated, but I
+> > don't really expect further changes on the fixup side.  I can handle the
+> > split if another revision would be still required, or would you like me to
+> > do this regardless?  I've just made a quick test moving the first patch to
+> > the end of the series and it didn't cause any conflicts, hence there won't 
+> > be any dependencies between the two patch sets.
+> 
+> This continues to apply cleanly on recent linux-next, hence I'm not sure if
+> there's still a need to resend as two separate patch sets.
 
-Add tests for bpf_strnstr():
+As I no longer have any of these in my review queue, yes, you are going
+to have to resend whatever you want us to accept :)
 
-    bpf_strnstr("", "", 0) = 0
-    bpf_strnstr("hello world", "hello", 5) = 0
-    bpf_strnstr(str, "hello", 4) = -ENOENT
-    bpf_strnstr("", "a", 0) = -ENOENT
+thanks,
 
-Signed-off-by: Rong Tao <rongtao@cestc.cn>
----
- tools/testing/selftests/bpf/progs/string_kfuncs_success.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
-
-diff --git a/tools/testing/selftests/bpf/progs/string_kfuncs_success.c b/tools/testing/selftests/bpf/progs/string_kfuncs_success.c
-index 46697f381878..a47690174e0e 100644
---- a/tools/testing/selftests/bpf/progs/string_kfuncs_success.c
-+++ b/tools/testing/selftests/bpf/progs/string_kfuncs_success.c
-@@ -30,8 +30,12 @@ __test(2) int test_strcspn(void *ctx) { return bpf_strcspn(str, "lo"); }
- __test(6) int test_strstr_found(void *ctx) { return bpf_strstr(str, "world"); }
- __test(-ENOENT) int test_strstr_notfound(void *ctx) { return bpf_strstr(str, "hi"); }
- __test(0) int test_strstr_empty(void *ctx) { return bpf_strstr(str, ""); }
--__test(0) int test_strnstr_found(void *ctx) { return bpf_strnstr(str, "hello", 6); }
--__test(-ENOENT) int test_strnstr_notfound(void *ctx) { return bpf_strnstr(str, "hi", 10); }
-+__test(0) int test_strnstr_found1(void *ctx) { return bpf_strnstr("", "", 0); }
-+__test(0) int test_strnstr_found2(void *ctx) { return bpf_strnstr(str, "hello", 5); }
-+__test(0) int test_strnstr_found3(void *ctx) { return bpf_strnstr(str, "hello", 6); }
-+__test(-ENOENT) int test_strnstr_notfound1(void *ctx) { return bpf_strnstr(str, "hi", 10); }
-+__test(-ENOENT) int test_strnstr_notfound2(void *ctx) { return bpf_strnstr(str, "hello", 4); }
-+__test(-ENOENT) int test_strnstr_notfound3(void *ctx) { return bpf_strnstr("", "a", 0); }
- __test(0) int test_strnstr_empty(void *ctx) { return bpf_strnstr(str, "", 1); }
- 
- char _license[] SEC("license") = "GPL";
--- 
-2.51.0
-
+greg k-h
 
