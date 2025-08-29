@@ -1,133 +1,140 @@
-Return-Path: <linux-kernel+bounces-791800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BC2BB3BC21
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 15:14:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 49937B3BC44
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 15:17:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D21B5881CF
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 13:13:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5E4C167451
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 13:17:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18D3131E0EE;
-	Fri, 29 Aug 2025 13:12:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 948EB322764;
+	Fri, 29 Aug 2025 13:14:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RSOaMp1x"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ixg87rgR"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6749833F3;
-	Fri, 29 Aug 2025 13:12:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA49D322527
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 13:13:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756473150; cv=none; b=MqVar/U+RSaRLCI4OxCy52gKgHHIgJvYOu5v7nQfDsWl7CHHKAcOOFO/gZVJnWlwyopKDl5rZ1LCEsaDQTpqn6AOuMSOln6rcFdNKAyhCLNSjb2mNvIzgFpPruRJv7IjXGO8O+f6TraFtRUyWfHIuS2oxzd6zzB2PXjp9TwjDKc=
+	t=1756473241; cv=none; b=YHoJ3usEGExKwVyjkesaA0aSquvncRsX5xSfCdK2/lXO/64SItxHtcSoVNizysqsKJfUM31vo7L0apQeug4VSpTWek7zT0YHyHN/UzOaoz8IFqBnFp/vtb5LATPD9cT3ecUk9O2KFp9m2oBqCXFa0YYkVfDAYDXaDdc7Xo+UUxo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756473150; c=relaxed/simple;
-	bh=3TUJX+rqDBPrvBV7yN+YCbV5OV8L2UUqc9CM4ISWeyk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=G7f/Amc+VAizHbgWgYmLhYt8Jd2ERyDe2iVntFaNVFYXB+G2o/IgZ+YxACu6H6AYYtkECWtdVi0EwHr9Fz/I4eEQeY83mLPisphOvbGSulm69oIl0EcWtvO7+r1XSUcA2PMCT13IfJmmvdZJrZsx2wcoM14/cg+Dcn4mqIhEl1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RSOaMp1x; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CAE77C4CEF0;
-	Fri, 29 Aug 2025 13:12:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756473149;
-	bh=3TUJX+rqDBPrvBV7yN+YCbV5OV8L2UUqc9CM4ISWeyk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=RSOaMp1xMOKHykvDIjlQ/kLEZzKmtSrODeMHyteCoUV2faerxBuJ7F8CmO8n6YLjK
-	 bJEquwspVaZOUzK3amnRWFY/Z9eXfk+SZaPipKDbZ956efuI/wZWCMXnsZ/l7db5bA
-	 R3ztFJpwBLqWo5garIf5NH2vrqipODyxhMpaKD1YUtp7Y/88IFalhvJ1P4WV4ZN+f8
-	 Au4ga+aEZT2nt2VR+KaSCdhe36+DJ21RFm8ECkD1Ju57MeSMTw36XgUqRm8AphLY4I
-	 Ar5yISeM2HEvcndido4Kxifi5D8gmfBQlYQIBqMdEukb2CimnZzGJMbdqv7Gi5yoiC
-	 lxoNacPHa9yLQ==
-Message-ID: <bf925270-5410-407c-a4e0-472a427e6ef6@kernel.org>
-Date: Fri, 29 Aug 2025 15:12:24 +0200
+	s=arc-20240116; t=1756473241; c=relaxed/simple;
+	bh=jEDrWRqVtKULrTucTSLr0n/DeF/H+SMQdH2t6erHpwA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YhRU8QsIACtFAqYcSoB967Ir+FSmhfkBgJvrozeRutU+6fLFBjKRU28LHxGvKi5CUWBgSR66y8jvuVw29K2QoQu7FdXbcNpjSkwaos2Wc9xqMyE+vbRIg1HhQOODE0uGa5LaPos3urojMAhEGs/6PUScCPyB90RwR3KFvtGF+Qw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ixg87rgR; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-333f8d25d33so1007071fa.0
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 06:13:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1756473237; x=1757078037; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=FE9Jl8MLsGFXC4bdNsn+0eHbgCcJaZ4UJYq9PxJ9Nrw=;
+        b=ixg87rgRVcKadRFH6hrf2zLsYXOOyQFv49peJ0OnnRCToTXNzyG47yQdTgTwY4JMlf
+         l81WyqLAooYLKsj7J+KuKmklqZljZ+9yYy3LEtNHag9xkjGjpLxABiB34XquzMF6XPYA
+         /PPgSNuDFDz61IZ2eWsoZWHydeKtjY6+Kzgkg4p6UK+mImuLsZJ4/Zl59wXcsG4an4ai
+         275UAMoexefvpHOAQ9Psr6RWkf/s/2JBoLwJk6Sq9YN3KlW4wDVAOTs9YOk2+897md+3
+         dfjjGNIObZkzxQtlvKN61AsGIx58RuC1JDZlA5Nz70o0dbyHMxhphnsebGYkecPEUccP
+         EBFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756473237; x=1757078037;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FE9Jl8MLsGFXC4bdNsn+0eHbgCcJaZ4UJYq9PxJ9Nrw=;
+        b=D2AEX7apUpcwEVo+gWgeJBO8YHM53hW3fyOd1xwQqy6GZVAScgMb/C/7QOlDRfn0nw
+         z/o1znV7zoYpGEHGmY/IbUppjYQJHXk8amLC5wviEFZc0sANWP5e7rifuxKszEA2ySg5
+         2OrK0HsrT32kWauxKSofplcwEauYExbvOQXYcBXBUO6YBHeOUe329qaaK/9Jf7zeUp9B
+         pnbluqJJKmSQxymuMPJiQGbaYq4bQQrDMHRWyX+MZKnIocss7NSkEtVc0A/Okg/g75gP
+         ZXLVxvNxHt6ckNtQePN4dW73/hz535EDmulURN72P5oJSR4I4oKN/OCUy92hQ/F46l3R
+         2puw==
+X-Forwarded-Encrypted: i=1; AJvYcCUEz/0l/qG5Yi92Qn8lsfAyETJH650iYRKHQqp1nxcmRwBSC/49382oyzmcFkPEMRjSBND9Mf/aaeHBXNA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLLmMxcUkr0IAaz//Qwyg9Ru0s2m4GirEnx+TLkZlnK4JeRqeM
+	C7nL8QxawVlld8JuDJmH9Wr1lGJ8KSLsgHLdCH39nWwyg5TQxJcdjQ2IF4yH9mF7oupAroHa8K2
+	IDpm8
+X-Gm-Gg: ASbGnctAlrT8wEmuLsQgnVIv0NrU+4/b0/L11z/DH3jgVC+ovhfCejSD6NBXwgBEl2V
+	zILJM+lnYHv9HyNZejHYivqihoXxMBOEHA4oUb9R0fTJekjChIgx5beFrlSkZ3DwsNPaDUPsiJ3
+	QDjupFq/a5flFs2ePbEVv4VzNLNsay+Kl0T4WUSQJKDEyeIuCUhrGYrUu/DXY+5mIi6qS8h7ax+
+	O8mdCVK7pq8FZb9mJt2jhETU3hE9sVyOgTv3azGPaZ3lw9xFgYMl/shBK6Lfaiel+waOlvtdD/U
+	U67yW5B3Gex0yXrRUxZViqrb/x7y6or3VwVIhcWA1mai9RpuOF8DlkxGVsIXDNNcl6Iny8iP37S
+	doJwbbmWLYwrKxrPoMMLyXz2mGF1Lbg0MUqJaK6+0F8nJdGcqRuchGRjTFLKAPTv9Ah15
+X-Google-Smtp-Source: AGHT+IG/8Xqj716iiBt/qchOr1OFGqPi5/74id2OSt/hQJFdA0DdakhT+OcqxRtL9E/IhDxB0ZX1Dg==
+X-Received: by 2002:a05:651c:2121:b0:336:a73b:b605 with SMTP id 38308e7fff4ca-336b8da6293mr2896991fa.5.1756473236831;
+        Fri, 29 Aug 2025 06:13:56 -0700 (PDT)
+Received: from localhost (c-85-229-7-191.bbcust.telenor.se. [85.229.7.191])
+        by smtp.gmail.com with UTF8SMTPSA id 38308e7fff4ca-336b489c487sm4641041fa.49.2025.08.29.06.13.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 29 Aug 2025 06:13:56 -0700 (PDT)
+From: Anders Roxell <anders.roxell@linaro.org>
+To: peter.ujfalusi@gmail.com,
+	vkoul@kernel.org,
+	nathan@kernel.org
+Cc: dmaengine@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev,
+	dan.carpenter@linaro.org,
+	arnd@arndb.de,
+	benjamin.copeland@linaro.org,
+	Anders Roxell <anders.roxell@linaro.org>
+Subject: [PATCH] dmaengine: ti: edma: Fix memory allocation size for queue_priority_map
+Date: Fri, 29 Aug 2025 15:13:46 +0200
+Message-ID: <20250829131346.3697633-1-anders.roxell@linaro.org>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] dt-bindings: phy: add support for NXPs TJA1145 CAN
- transceiver
-To: dimitri.fedrau@liebherr.com, Vinod Koul <vkoul@kernel.org>,
- Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Dimitri Fedrau <dima.fedrau@gmail.com>,
- Marc Kleine-Budde <mkl@pengutronix.de>, linux-can@vger.kernel.org
-References: <20250829-tja1145-support-v2-0-60997f328979@liebherr.com>
- <20250829-tja1145-support-v2-1-60997f328979@liebherr.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250829-tja1145-support-v2-1-60997f328979@liebherr.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 29/08/2025 11:19, Dimitri Fedrau via B4 Relay wrote:
-> From: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
-> 
-> Adding documentation for NXPs TJA1145 CAN transceiver.
+Fix a critical memory allocation bug in edma_setup_from_hw() where
+queue_priority_map was allocated with insufficient memory. The code
+declared queue_priority_map as s8 (*)[2] (pointer to array of 2 s8), but
+allocated memory using sizeof(s8) instead of sizeof(s8[2]).
 
-Pity you did not include resolution of discussions about directory and
-can phy bindings here. You have entire commit msg for that, but instead
-it is a copy paste of subject.
+This caused out-of-bounds memory writes when accessing:
+  queue_priority_map[i][0] = i;
+  queue_priority_map[i][1] = i;
 
-> 
-> Signed-off-by: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
-> ---
->  .../devicetree/bindings/phy/nxp,tja1145-can.yaml   | 79 ++++++++++++++++++++++
->  1 file changed, 79 insertions(+)
+The bug manifested as kernel crashes with "Oops - undefined instruction"
+on ARM platforms (BeagleBoard-X15) during EDMA driver probe, as the
+memory corruption triggered kernel hardening features on Clang.
 
-> 
+Change the allocation from:
+  devm_kcalloc(dev, ecc->num_tc + 1, sizeof(s8), GFP_KERNEL)
+to this:
+  devm_kcalloc(dev, ecc->num_tc + 1, sizeof(s8[2]), GFP_KERNEL)
 
+This ensures proper allocation of (ecc->num_tc + 1) * 2 bytes to match
+the expected 2D array structure.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Fixes: 2b6b3b742019 ("ARM/dmaengine: edma: Merge the two drivers under drivers/dma/")
+Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+---
+ drivers/dma/ti/edma.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Best regards,
-Krzysztof
+diff --git a/drivers/dma/ti/edma.c b/drivers/dma/ti/edma.c
+index 3ed406f08c44..8f9b65e4bc87 100644
+--- a/drivers/dma/ti/edma.c
++++ b/drivers/dma/ti/edma.c
+@@ -2064,7 +2064,7 @@ static int edma_setup_from_hw(struct device *dev, struct edma_soc_info *pdata,
+ 	 * priority. So Q0 is the highest priority queue and the last queue has
+ 	 * the lowest priority.
+ 	 */
+-	queue_priority_map = devm_kcalloc(dev, ecc->num_tc + 1, sizeof(s8),
++	queue_priority_map = devm_kcalloc(dev, ecc->num_tc + 1, sizeof(s8[2]),
+ 					  GFP_KERNEL);
+ 	if (!queue_priority_map)
+ 		return -ENOMEM;
+-- 
+2.50.1
+
 
