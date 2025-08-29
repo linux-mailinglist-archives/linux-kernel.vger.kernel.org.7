@@ -1,124 +1,134 @@
-Return-Path: <linux-kernel+bounces-791985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791986-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E98AFB3BF21
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 17:24:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3089EB3BF23
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 17:25:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A49A6A02388
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 15:24:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8BDD81C87D05
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 15:25:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AD65322A24;
-	Fri, 29 Aug 2025 15:24:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="DVrkOPsB"
-Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CB3F322C87;
+	Fri, 29 Aug 2025 15:25:07 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4601831A54E;
-	Fri, 29 Aug 2025 15:24:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B72F12765D7;
+	Fri, 29 Aug 2025 15:25:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756481068; cv=none; b=YdL9UYEYx33jd4+ZIFghVTuCAOW3f0g3hV3mvdkuJ3kZDIObLgWSw50mpEIIV/Eqs/FPlonHIiKPEW66dgfHeLWetcyc37yjo12XPg5HYbVd+9c8zDmsXFosaTs71pd/KYYHJdZsSxndC4s903AUvEL0TNVMV/F1xLWWPgVn1AA=
+	t=1756481107; cv=none; b=VhAn8J+iVhuvqfqZQOBKBkOYQB3lanL96YuTAYSuqXcpeIFbuFoYfBWYXsmj5g6LpfyuWvGsUqWvXOQtUGQ9LLmuN97rSuF3KJeGHIUpVgItBWzxKyEHRHSOW+LOPUFru+EljAzcQhj14CCAg5GR3A6YVjLAag+SV2La6tFe/o8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756481068; c=relaxed/simple;
-	bh=WvP1a9OWWAcMBRUFia1F+cqtBVlgQRekpMrS3ZSE8sw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=MlPxAscqtThr/0FSKSnU3uhctjVn3x/UWATI7u803w6Vyank8TmXDu0MBQ6P91P1SBzEXJ9KWSl4sNiii+/SEIZ+5Xb0Qj/O/mdxlx9Fldx/k8lkEYkNYyAnXj2AuEBZuJhJFWSsz8OQtjnRUMnm/cO+3XRv10wmKB4TGbV7emM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=DVrkOPsB; arc=none smtp.client-ip=130.133.4.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:From:
-	Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
-	References; bh=mX735Q/4XZFX7y4hr5+ILgyC8bFLHmYhBKqs8glVQIw=; t=1756481065;
-	x=1757085865; b=DVrkOPsBM8D1mSplzLQ2vAAH+nh8DUF1gQXbv80v+kgxnCFKidGnDhZxYBsy4
-	K/2lIa2RU73tjO9mYBocFtVPUlgBRKXtXO1rFn7jQYRrsZiE+nkjkXTQUPZdS/mCrF3V+icYmFQBu
-	bXd3ZWM6x6NjqUR4lmu8tujYDDHf0dC+PNXrAe+ecL1nvvsyr4asQGWHj5PE7XMJlGk+8+sx8u1UC
-	lP3z7uWDAqs/FcV1FbnhMIKXZwdl3grYSP/+ZMAdei74YAzOkN0YNMcz5/dphp5+QQ2biV4iC/Bz/
-	OGrkJlRkT8Zxt0fruqls570m0ftd5mvh7L0Hqc60wILZGbj19Q==;
-Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
-          by outpost.zedat.fu-berlin.de (Exim 4.98)
-          with esmtps (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@zedat.fu-berlin.de>)
-          id 1us0xd-00000002BDq-1tAj; Fri, 29 Aug 2025 17:24:17 +0200
-Received: from p57bd96d0.dip0.t-ipconnect.de ([87.189.150.208] helo=suse-laptop.fritz.box)
-          by inpost2.zedat.fu-berlin.de (Exim 4.98)
-          with esmtpsa (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@physik.fu-berlin.de>)
-          id 1us0xd-0000000141v-0pmk; Fri, 29 Aug 2025 17:24:17 +0200
-Message-ID: <7dd79e0407696f975d545d78b3083ef06a838082.camel@physik.fu-berlin.de>
-Subject: Re: [PATCH v2 08/13] sparc64: vdso: Switch to the generic vDSO
- library
-From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-To: Thomas =?ISO-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>
-Cc: Andreas Larsson <andreas@gaisler.com>, Andy Lutomirski
- <luto@kernel.org>,  Thomas Gleixner <tglx@linutronix.de>, Vincenzo Frascino
- <vincenzo.frascino@arm.com>, Arnd Bergmann <arnd@arndb.de>,  "David S.
- Miller" <davem@davemloft.net>, Nagarathnam Muthusamy
- <nagarathnam.muthusamy@oracle.com>, Nick Alcock	 <nick.alcock@oracle.com>,
- John Stultz <jstultz@google.com>, Stephen Boyd	 <sboyd@kernel.org>,
- linux-kernel@vger.kernel.org, sparclinux@vger.kernel.org
-Date: Fri, 29 Aug 2025 17:24:16 +0200
-In-Reply-To: <20250829124314-288d0445-a744-4022-93bf-7da255182411@linutronix.de>
-References: 
-	<20250815-vdso-sparc64-generic-2-v2-0-b5ff80672347@linutronix.de>
-	 <20250815-vdso-sparc64-generic-2-v2-8-b5ff80672347@linutronix.de>
-	 <0b223e3d-25af-4897-b513-699dfeedfa04@gaisler.com>
-	 <20250826074526-a1463084-366a-44d1-874b-b898f4747451@linutronix.de>
-	 <271c108b-0fe4-4e7a-9bc7-325e75cf60ab@gaisler.com>
-	 <8f31efde-0212-49b9-a0ea-64d5532c0071@gaisler.com>
-	 <20250829122023-948f7969-b6b0-4ae2-9c12-71cc39abcf9e@linutronix.de>
-	 <b7ab1bdca349208532804d0d5e5af56817cd25c6.camel@physik.fu-berlin.de>
-	 <20250829124314-288d0445-a744-4022-93bf-7da255182411@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 
+	s=arc-20240116; t=1756481107; c=relaxed/simple;
+	bh=gpHaAoHZraDITaWelBYaFP3UvoJmpw2DrTmywlTnVCc=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=LIKAEo7h9V6/3DgYa8lHnINtI/4hTwDpCl0a9/fgqcP2hW67CFL1giIdI9T8yx/lG59trgcEh34/mfZarF/niCPUTBeHArm780BnO6ElaZarby5uE4/9F5BACq5Tj6AI9QQqdI7Gwhv6AmqNql1oitBTe6kZ2DB5ERyyx8aSNYU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cD29z2z6Sz6K8r4;
+	Fri, 29 Aug 2025 23:24:23 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 35C8F140370;
+	Fri, 29 Aug 2025 23:25:02 +0800 (CST)
+Received: from localhost (10.203.177.15) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 29 Aug
+ 2025 17:25:01 +0200
+Date: Fri, 29 Aug 2025 16:24:59 +0100
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+To: Terry Bowman <terry.bowman@amd.com>
+CC: <dave@stgolabs.net>, <dave.jiang@intel.com>, <alison.schofield@intel.com>,
+	<dan.j.williams@intel.com>, <bhelgaas@google.com>, <shiju.jose@huawei.com>,
+	<ming.li@zohomail.com>, <Smita.KoralahalliChannabasappa@amd.com>,
+	<rrichter@amd.com>, <dan.carpenter@linaro.org>,
+	<PradeepVineshReddy.Kodamati@amd.com>, <lukas@wunner.de>,
+	<Benjamin.Cheatham@amd.com>, <sathyanarayanan.kuppuswamy@linux.intel.com>,
+	<linux-cxl@vger.kernel.org>, <alucerop@amd.com>, <ira.weiny@intel.com>,
+	<linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>
+Subject: Re: [PATCH v11 02/23] CXL/AER: Remove CONFIG_PCIEAER_CXL and
+ replace with CONFIG_CXL_RAS
+Message-ID: <20250829162459.00007ca9@huawei.com>
+In-Reply-To: <20250827013539.903682-3-terry.bowman@amd.com>
+References: <20250827013539.903682-1-terry.bowman@amd.com>
+	<20250827013539.903682-3-terry.bowman@amd.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Original-Sender: glaubitz@physik.fu-berlin.de
-X-ZEDAT-Hint: PO
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100001.china.huawei.com (7.191.160.183) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-Hi Thomas,
+On Tue, 26 Aug 2025 20:35:17 -0500
+Terry Bowman <terry.bowman@amd.com> wrote:
 
-On Fri, 2025-08-29 at 12:52 +0200, Thomas Wei=C3=9Fschuh wrote:
-> On Fri, Aug 29, 2025 at 12:40:59PM +0200, John Paul Adrian Glaubitz wrote=
-:
-> > On Fri, 2025-08-29 at 12:37 +0200, Thomas Wei=C3=9Fschuh wrote:
-> > > In the meantime I installed a full Debian, but the bug is still not
-> > > reproducible in QEMU.
-> >=20
-> > Please keep in mind that QEMU emulates sun4u (on UltraSPARC II) while
-> > Andreas was testing on sun4v (on Niagara 4). There might be differences=
-.
->=20
-> I am aware. Unfortuntely I don't have anything else available.
-> If anybody could test this on real sun4u that would be great.
-> Or teach me how to use sun4v QEMU without it crashing on me.
-> In the past you offered access to a physical machine.
-> Does this offer still stand? Does it also run into the bug?
+> CXL RAS compilation is enabled using CONFIG_CXL_RAS while the AER CXL logic
+> uses CONFIG_PCIEAER_CXL. The 2 share the same dependencies and can be
+> combined. The 2 kernel configs are unnecessary and are problematic for the
+> user because of the duplication. Replace occurrences of CONFIG_PCIEAER_CXL
+> to be CONFIG_CXL_RAS.
+> 
+> Update the CONFIG_CXL_RAS Kconfig definition to include dependencies 'PCIEAER
+> && CXL_PCI' taken from the CONFIG_PCIEAER_CXL definition.
+> 
+> Remove the Kconfig CONFIG_PCIEAER_CXL definition.
+> 
+> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
 
-We have a SPARC T5 in the Debian project that can also be used for that mat=
-ter.
+Bjorn, do you mind having some code in PCIE land built depending on 
+a config symbol from drivers/cxl?  Alternative to this would be to remove
+the visible symbol (drop text after bool) and select it from
+the CONFIG_CXL_RAS entry. 
 
-It's currently out of service and will be back online next week if all goes=
- well.
+> 
+> ---
+> Changes in v10 -> v11:
+> - New patch
+> ---
+>  drivers/pci/pcie/Kconfig | 9 ---------
+>  drivers/pci/pcie/aer.c   | 2 +-
+>  2 files changed, 1 insertion(+), 10 deletions(-)
+> 
+> diff --git a/drivers/pci/pcie/Kconfig b/drivers/pci/pcie/Kconfig
+> index 17919b99fa66..207c2deae35f 100644
+> --- a/drivers/pci/pcie/Kconfig
+> +++ b/drivers/pci/pcie/Kconfig
+> @@ -49,15 +49,6 @@ config PCIEAER_INJECT
+>  	  gotten from:
+>  	     https://github.com/intel/aer-inject.git
+>  
+> -config PCIEAER_CXL
+> -	bool "PCI Express CXL RAS support"
+> -	default y
+> -	depends on PCIEAER && CXL_PCI
+> -	help
+> -	  Enables CXL error handling.
+> -
+> -	  If unsure, say Y.
+> -
+>  #
+>  # PCI Express ECRC
+>  #
+> diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
+> index 70ac66188367..7fe9f883f5c5 100644
+> --- a/drivers/pci/pcie/aer.c
+> +++ b/drivers/pci/pcie/aer.c
+> @@ -1086,7 +1086,7 @@ static bool find_source_device(struct pci_dev *parent,
+>  	return true;
+>  }
+>  
+> -#ifdef CONFIG_PCIEAER_CXL
+> +#ifdef CONFIG_CXL_RAS
+>  
+>  /**
+>   * pci_aer_unmask_internal_errors - unmask internal errors
 
-Adrian
-
---=20
- .''`.  John Paul Adrian Glaubitz
-: :' :  Debian Developer
-`. `'   Physicist
-  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
 
