@@ -1,177 +1,188 @@
-Return-Path: <linux-kernel+bounces-791016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72022B3B12A
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 04:48:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29F4AB3B12B
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 04:50:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4582C7A359F
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 02:47:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D9297583018
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 02:50:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DB0C2264CA;
-	Fri, 29 Aug 2025 02:48:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4772621CA1F;
+	Fri, 29 Aug 2025 02:50:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m7TeKyS1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="McN9MHhj"
+Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 622BE212B0A;
-	Fri, 29 Aug 2025 02:48:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 474361A58D
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 02:50:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756435696; cv=none; b=A5uBwgmtAaq8Hcg/ONds4Z1Y8HAIs1h8Ndk2kHuyi2vWSze3/gsT4F7O5w+w6oSul+sEjwcS4yTZnm72jEubbi7GK+kWdRKS4jHSWBFNiTCLwydcsIbnH6Zo2dH/1xAL3VwU8kFwSJ52nBq80V4HQTtTgXrAOl8bdXRtR2bRMwE=
+	t=1756435807; cv=none; b=CakG0LtKdpGrIHJTeN6t2lH9Vxzgq1hGQ/yArklPjY4BYoe116wmvt0j8vtk6aJVWHBuGItpB+mzIW7pBwwbCDmnBtvhFNS4vclZrUXf6qzqblynzbI3rNlrM6JL4Qg2Y3q4PL0L3HmFLApsb8e8whQge1mdqT6OzTnB/MLzddw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756435696; c=relaxed/simple;
-	bh=GnJwClUxMWgMLpJm4CE+0XiogVWIkUx6AZPEqH60IBs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=QMclrAGZ165XnC6AKRdNd3lAGbk9IsdQTVZcLL6dCVRM4LW3lr3BGYzbH5bfIgYNHiN8GX8+9tsa8vpNH0RqD8f/9RATa/xjgrJ7gEFGj/bNQBsJGVlX9tJ0imjO4Km1U3zW3kB+gPXb6c3COm9fTpGwczG08Lg24EdKdCxbkhk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m7TeKyS1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id D0732C4CEED;
-	Fri, 29 Aug 2025 02:48:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756435694;
-	bh=GnJwClUxMWgMLpJm4CE+0XiogVWIkUx6AZPEqH60IBs=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=m7TeKyS1pbTDlTAQzi986/MgfPdzbtmHcInF6csSJFt71BTr7ArILTWlgEDAUhvNq
-	 E+sCYCyEfMwczhwBGVvJZK9SEbIgsdKhZywNEt34eVre4UrJSAmhNiPW7DZsVTQXF6
-	 q0VdJWevJoVkTKs3tqe5gasTRvxfuwzhaMopwnd2tP0g5yDkGyjhocPgwm/yxXQKsv
-	 3K5lBffO9Vlt5Utz/FRYN7L4GM2CC/J6clW/tv0dgbzGkJJ9QrLmSCromOQc6RkQEI
-	 Hgo+Wyt3s4XnfvoN4g8xfuF21PcRzZGDRckzqy1Y2xY9EcC2SacN9Z01nP+G03D3eW
-	 NSfrW743NlQEg==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1D2FCA0FF6;
-	Fri, 29 Aug 2025 02:48:14 +0000 (UTC)
-From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
-Date: Thu, 28 Aug 2025 21:48:13 -0500
-Subject: [PATCH v3 2/2] cpufreq: tegra186: Initialize all cores to max
- frequencies
+	s=arc-20240116; t=1756435807; c=relaxed/simple;
+	bh=vJRQm0dAkpEGZ44IY0X2gTuHJlx1ARhV+s0u47Drtz4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=mv9YTOVQyxtaPfYHJp9ChTbz3SSDCaetnkQjoSIoEmsxLwA0mxGjqdP5gJ4lKQYTMdgYg6w45/fx+85ej7VuPl/NHmG5V7941AkgD9VCrYyKdEo6+cPmgRLKhcleMu1c1L8Lp52nKq8PG2Le0xDuVVpHl4xMPDLb2LAyJtQHPOA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=McN9MHhj; arc=none smtp.client-ip=91.218.175.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1756435791;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tHWX2ztP4eygxHjunFegKxK8vFLeIQnyXceb8aDigJ4=;
+	b=McN9MHhjH86tQu+ZKh1zeBHE28PXpN3dwbBHPHtI0F9UVfTNLg+lkSVpGb1xVnXtfig3Ev
+	fCyzUT6/BIO5mx3u9c1qXDxnXDb57048kho7AliaFt47BhxuNTBqX6OW3TS3zJTZfN8iPp
+	t8ftpHgjATCyDmsRfEvMLnES97bq+u4=
+From: menglong.dong@linux.dev
+To: Steven Rostedt <rostedt@goodmis.org>,
+ "Paul E. McKenney" <paulmck@kernel.org>
+Cc: mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ kernel test robot <oliver.sang@intel.com>
+Subject: Re: [PATCH] tracing: fprobe: fix suspicious rcu usage in fprobe_entry
+Date: Fri, 29 Aug 2025 10:49:46 +0800
+Message-ID: <2396899.ElGaqSPkdT@7940hx>
+In-Reply-To: <20250828222357.55fab4c2@batman.local.home>
+References:
+ <20250829021436.19982-1-dongml2@chinatelecom.cn>
+ <20250828222357.55fab4c2@batman.local.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250828-tegra186-cpufreq-fixes-v3-2-23a7341db254@gmail.com>
-References: <20250828-tegra186-cpufreq-fixes-v3-0-23a7341db254@gmail.com>
-In-Reply-To: <20250828-tegra186-cpufreq-fixes-v3-0-23a7341db254@gmail.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>, 
- Viresh Kumar <viresh.kumar@linaro.org>, 
- Thierry Reding <thierry.reding@gmail.com>, 
- Jonathan Hunter <jonathanh@nvidia.com>, Aaron Kling <luceoscutum@gmail.com>, 
- Sumit Gupta <sumitg@nvidia.com>
-Cc: Thierry Reding <treding@nvidia.com>, linux-pm@vger.kernel.org, 
- linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Aaron Kling <webgeek1234@gmail.com>, 
- Mikko Perttunen <mperttunen@nvidia.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1756435694; l=3164;
- i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
- bh=Cee7AliwERvbB7wKaI7YwL2ggH/0vhQ+XE9hO86NkEY=;
- b=HeiRL5v18eMEMdGOnHaqyKruV+NWZaMq9DEOZL+rad/fbdGREpgpd56SZYuM31CexSZoLwlAb
- 64G6dPnq1uzDAMXzNyNyD8K5JXE46E3JMQvSLBUolq1UMEmuURTmdOE
-X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
- pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
-X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
- auth_id=342
-X-Original-From: Aaron Kling <webgeek1234@gmail.com>
-Reply-To: webgeek1234@gmail.com
+X-Migadu-Flow: FLOW_OUT
 
-From: Aaron Kling <webgeek1234@gmail.com>
+On 2025/8/29 10:23 Steven Rostedt <rostedt@goodmis.org> write:
+> On Fri, 29 Aug 2025 10:14:36 +0800
+> Menglong Dong <dongml2@chinatelecom.cn> wrote:
+> 
+> > rcu_read_lock() is not needed in fprobe_entry, but rcu_dereference_check()
+> > is used in rhltable_lookup(), which causes suspicious RCU usage warning:
+> > 
+> >   WARNING: suspicious RCU usage
+> >   6.17.0-rc1-00001-gdfe0d675df82 #1 Tainted: G S
+> >   -----------------------------
+> >   include/linux/rhashtable.h:602 suspicious rcu_dereference_check() usage!
+> >   ......
+> >   stack backtrace:
+> >   CPU: 1 UID: 0 PID: 4652 Comm: ftracetest Tainted: G S
+> >   Tainted: [S]=CPU_OUT_OF_SPEC, [I]=FIRMWARE_WORKAROUND
+> >   Hardware name: Dell Inc. OptiPlex 7040/0Y7WYT, BIOS 1.1.1 10/07/2015
+> >   Call Trace:
+> >    <TASK>
+> >    dump_stack_lvl+0x7c/0x90
+> >    lockdep_rcu_suspicious+0x14f/0x1c0
+> >    __rhashtable_lookup+0x1e0/0x260
+> >    ? __pfx_kernel_clone+0x10/0x10
+> >    fprobe_entry+0x9a/0x450
+> >    ? __lock_acquire+0x6b0/0xca0
+> >    ? find_held_lock+0x2b/0x80
+> >    ? __pfx_fprobe_entry+0x10/0x10
+> >    ? __pfx_kernel_clone+0x10/0x10
+> >    ? lock_acquire+0x14c/0x2d0
+> >    ? __might_fault+0x74/0xc0
+> >    function_graph_enter_regs+0x2a0/0x550
+> >    ? __do_sys_clone+0xb5/0x100
+> >    ? __pfx_function_graph_enter_regs+0x10/0x10
+> >    ? _copy_to_user+0x58/0x70
+> >    ? __pfx_kernel_clone+0x10/0x10
+> >    ? __x64_sys_rt_sigprocmask+0x114/0x180
+> >    ? __pfx___x64_sys_rt_sigprocmask+0x10/0x10
+> >    ? __pfx_kernel_clone+0x10/0x10
+> >    ftrace_graph_func+0x87/0xb0
+> > 
+> > Fix this by using rcu_read_lock() for rhltable_lookup(). Alternatively, we
+> > can use rcu_lock_acquire(&rcu_lock_map) here to obtain better performance.
+> > However, it's not a common usage :/
+> 
+> So this is needed even though it's called under preempt_disable().
 
-During initialization, the EDVD_COREx_VOLT_FREQ registers for some cores
-are still at reset values and not reflecting the actual frequency. This
-causes get calls to fail. Set all cores to their respective max
-frequency during probe to initialize the registers to working values.
+It is needed when the lock debug configs are enabled.
 
-Suggested-by: Mikko Perttunen <mperttunen@nvidia.com>
-Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
----
- drivers/cpufreq/tegra186-cpufreq.c | 27 +++++++++++++++++++++------
- 1 file changed, 21 insertions(+), 6 deletions(-)
+> 
+> Paul, do we need to add an rcu_read_lock() because the code in rht
+> (rhashtable) requires RCU read lock?
+> 
+> I thought that rcu_read_lock() and preempt_disable() have been merged?
 
-diff --git a/drivers/cpufreq/tegra186-cpufreq.c b/drivers/cpufreq/tegra186-cpufreq.c
-index 6c394b429b6182faffabf222e5af501393dbbba9..bd94beebc4cc2fe6870e13ca55343cedb9729e99 100644
---- a/drivers/cpufreq/tegra186-cpufreq.c
-+++ b/drivers/cpufreq/tegra186-cpufreq.c
-@@ -138,13 +138,14 @@ static struct cpufreq_driver tegra186_cpufreq_driver = {
- 
- static struct cpufreq_frequency_table *init_vhint_table(
- 	struct platform_device *pdev, struct tegra_bpmp *bpmp,
--	struct tegra186_cpufreq_cluster *cluster, unsigned int cluster_id)
-+	struct tegra186_cpufreq_cluster *cluster, unsigned int cluster_id,
-+	int *num_rates)
- {
- 	struct cpufreq_frequency_table *table;
- 	struct mrq_cpu_vhint_request req;
- 	struct tegra_bpmp_message msg;
- 	struct cpu_vhint_data *data;
--	int err, i, j, num_rates = 0;
-+	int err, i, j;
- 	dma_addr_t phys;
- 	void *virt;
- 
-@@ -174,6 +175,7 @@ static struct cpufreq_frequency_table *init_vhint_table(
- 		goto free;
- 	}
- 
-+	*num_rates = 0;
- 	for (i = data->vfloor; i <= data->vceil; i++) {
- 		u16 ndiv = data->ndiv[i];
- 
-@@ -184,10 +186,10 @@ static struct cpufreq_frequency_table *init_vhint_table(
- 		if (i > 0 && ndiv == data->ndiv[i - 1])
- 			continue;
- 
--		num_rates++;
-+		(*num_rates)++;
- 	}
- 
--	table = devm_kcalloc(&pdev->dev, num_rates + 1, sizeof(*table),
-+	table = devm_kcalloc(&pdev->dev, *num_rates + 1, sizeof(*table),
- 			     GFP_KERNEL);
- 	if (!table) {
- 		table = ERR_PTR(-ENOMEM);
-@@ -229,7 +231,9 @@ static int tegra186_cpufreq_probe(struct platform_device *pdev)
- {
- 	struct tegra186_cpufreq_data *data;
- 	struct tegra_bpmp *bpmp;
--	unsigned int i = 0, err;
-+	unsigned int i = 0, err, edvd_offset;
-+	int num_rates = 0;
-+	u32 edvd_val, cpu;
- 
- 	data = devm_kzalloc(&pdev->dev,
- 			    struct_size(data, clusters, TEGRA186_NUM_CLUSTERS),
-@@ -252,10 +256,21 @@ static int tegra186_cpufreq_probe(struct platform_device *pdev)
- 	for (i = 0; i < TEGRA186_NUM_CLUSTERS; i++) {
- 		struct tegra186_cpufreq_cluster *cluster = &data->clusters[i];
- 
--		cluster->table = init_vhint_table(pdev, bpmp, cluster, i);
-+		cluster->table = init_vhint_table(pdev, bpmp, cluster, i, &num_rates);
- 		if (IS_ERR(cluster->table)) {
- 			err = PTR_ERR(cluster->table);
- 			goto put_bpmp;
-+		} else if (!num_rates) {
-+			err = -EINVAL;
-+			goto put_bpmp;
-+		}
-+
-+		for (cpu = 0; cpu < ARRAY_SIZE(tegra186_cpus); cpu++) {
-+			if (data->cpus[cpu].bpmp_cluster_id == i) {
-+				edvd_val = cluster->table[num_rates - 1].driver_data;
-+				edvd_offset = data->cpus[cpu].edvd_offset;
-+				writel(edvd_val, data->regs + edvd_offset);
-+			}
- 		}
- 	}
- 
+Maybe we can do some adjustment do rcu_read_lock_held_common()
+like this:
 
--- 
-2.50.1
+diff --git a/kernel/rcu/update.c b/kernel/rcu/update.c
+index c912b594ba98..280fa4d2fc79 100644
+--- a/kernel/rcu/update.c
++++ b/kernel/rcu/update.c
+@@ -114,6 +114,10 @@ static bool rcu_read_lock_held_common(bool *ret)
+                *ret = false;
+                return true;
+        }
++       if (!preemptible()) {
++               *ret = true;
++               return true;
++       }
+        return false;
+ }
+ 
+@@ -123,7 +127,7 @@ int rcu_read_lock_sched_held(void)
+ 
+        if (rcu_read_lock_held_common(&ret))
+                return ret;
+-       return lock_is_held(&rcu_sched_lock_map) || !preemptible();
++       return lock_is_held(&rcu_sched_lock_map);
+ }
+ EXPORT_SYMBOL(rcu_read_lock_sched_held);
+ #endif
+
+I think it's a bad idea, as !preemptiable() has different semantic
+with rcu_read_lock() :(
+
+Thanks!
+Menglong Dong
+
+> 
+> -- Steve
+> 
+> 
+> > 
+> > Reported-by: kernel test robot <oliver.sang@intel.com>
+> > Closes: https://lore.kernel.org/oe-lkp/202508281655.54c87330-lkp@intel.com
+> > Fixes: dfe0d675df82 ("tracing: fprobe: use rhltable for fprobe_ip_table")
+> > Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
+> > ---
+> >  kernel/trace/fprobe.c | 2 ++
+> >  1 file changed, 2 insertions(+)
+> > 
+> > diff --git a/kernel/trace/fprobe.c b/kernel/trace/fprobe.c
+> > index fb127fa95f21..fece0f849c1c 100644
+> > --- a/kernel/trace/fprobe.c
+> > +++ b/kernel/trace/fprobe.c
+> > @@ -269,7 +269,9 @@ static int fprobe_entry(struct ftrace_graph_ent *trace, struct fgraph_ops *gops,
+> >  	if (WARN_ON_ONCE(!fregs))
+> >  		return 0;
+> >  
+> > +	rcu_read_lock();
+> >  	head = rhltable_lookup(&fprobe_ip_table, &func, fprobe_rht_params);
+> > +	rcu_read_unlock();
+> >  	reserved_words = 0;
+> >  	rhl_for_each_entry_rcu(node, pos, head, hlist) {
+> >  		if (node->addr != func)
+> 
+> 
+> 
+
+
 
 
 
