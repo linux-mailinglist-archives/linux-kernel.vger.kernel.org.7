@@ -1,174 +1,146 @@
-Return-Path: <linux-kernel+bounces-791604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25BD5B3B90C
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 12:40:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0893FB3B910
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 12:40:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B2FD3AFF53
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 10:40:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB9EB1C22391
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 10:40:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D705A309DB1;
-	Fri, 29 Aug 2025 10:40:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5568309DC1;
+	Fri, 29 Aug 2025 10:40:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="jqE7bPUU";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="c0ABS8KD";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="jqE7bPUU";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="c0ABS8KD"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HIMywUM9"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB1123093BB
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 10:40:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B8281DF256;
+	Fri, 29 Aug 2025 10:40:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756464004; cv=none; b=oD7bwQD7RorFf/x9bqyTs7egzqcS0jJxD2lr1+vd2BueXX9IA8h74M0zEbeq82aIrkTDD+DjW5WjapTKZR3d8qBtQ+iYtRV5/QNujk+5TsvFchCniAYSp+NQzmAMGF0U5nYfEYTU+Us6kZ9QPGrn2Bj0oRBpHDV9PYRYB8D9ccg=
+	t=1756464012; cv=none; b=HlPCZjvYMA9HRkplSo0WcdHf0BXfJd17U/foKRYTjP1IF/WsOXo3E9GMGKD4nX+9LBVjR2ehvfhjb1h8COlpWkiGacW9q7PEcvjC55yjLWPUu5F7FNigA2Q91ayefbP4ZFy7Lt07TCQ2bfEaSjDkx+xQypc1AK5df/JIxikjc3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756464004; c=relaxed/simple;
-	bh=M7hsdmB/EI+Zj5IYFz0UaBCDGRYBqgtwedClHbFW7Ps=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rJNbGavrFEeTuaE5O3CWcGwJdSN+AhiNQyUrXvz6gE2lt6wekmWj1LJc69ehm2iHZVYgQYDKdt3OGOZz7Mo6RJp73AgdY0CTiuzZURo2/L0zEcpdlFRhyzNYUqtQMeJK5A7cQWwu43ceBz58c4vvgDgCfDGNUdMArrzbt94EQkg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=jqE7bPUU; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=c0ABS8KD; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=jqE7bPUU; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=c0ABS8KD; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id AC1DB33CEE;
-	Fri, 29 Aug 2025 10:40:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1756464000; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=J+Y66ukEooW5ffJXMRFc/3r29D2ClCT0DoqhBX0ZrhI=;
-	b=jqE7bPUUONC6pasY9Oh5+BcoiNv6e6y+mchCYq24mnz/ARiFPy2ewKxrElMOdAlIZZyrfG
-	goiNE+Ergek07XrUCk8Jio8eKADHLdtbCI7LXAC5sLMA8qI3bhS0OwGZGtZhgdE0QMM/13
-	xSo4O2lQaf8isHw0eUFm1t+0aA4wWPk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1756464000;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=J+Y66ukEooW5ffJXMRFc/3r29D2ClCT0DoqhBX0ZrhI=;
-	b=c0ABS8KDNKcITQ1cVOo0a6lcz7oJl8kjaMauXtI5SfpxsIFsn38rl+G46YFFvK2yVQ6BLd
-	WB0UxX+x8yCtY9Ag==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1756464000; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=J+Y66ukEooW5ffJXMRFc/3r29D2ClCT0DoqhBX0ZrhI=;
-	b=jqE7bPUUONC6pasY9Oh5+BcoiNv6e6y+mchCYq24mnz/ARiFPy2ewKxrElMOdAlIZZyrfG
-	goiNE+Ergek07XrUCk8Jio8eKADHLdtbCI7LXAC5sLMA8qI3bhS0OwGZGtZhgdE0QMM/13
-	xSo4O2lQaf8isHw0eUFm1t+0aA4wWPk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1756464000;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=J+Y66ukEooW5ffJXMRFc/3r29D2ClCT0DoqhBX0ZrhI=;
-	b=c0ABS8KDNKcITQ1cVOo0a6lcz7oJl8kjaMauXtI5SfpxsIFsn38rl+G46YFFvK2yVQ6BLd
-	WB0UxX+x8yCtY9Ag==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 907C113A3E;
-	Fri, 29 Aug 2025 10:40:00 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id iXZAI4CDsWj1SQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Fri, 29 Aug 2025 10:40:00 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 25C58A099C; Fri, 29 Aug 2025 12:39:56 +0200 (CEST)
-Date: Fri, 29 Aug 2025 12:39:56 +0200
-From: Jan Kara <jack@suse.cz>
-To: Xichao Zhao <zhao.xichao@vivo.com>
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fs: Replace offsetof() with struct_size()
-Message-ID: <53c374bjebongkfj5kejf7hb3blgdfvp7e4j4pzahcpw6ubdxp@6vwxcf576ll6>
-References: <20250829100328.618903-1-zhao.xichao@vivo.com>
+	s=arc-20240116; t=1756464012; c=relaxed/simple;
+	bh=IBT8NJmua99Bl7F9ZIpmFR9XFgOfeeeZG6Y421h59Hg=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=PYVv5nJaRkt07RuQh7wrE9sLkgpYarvgiOIjM98kS/onftSVJumUS6e/NpHLmhvP8GLDQUmrLHHtl8oG+yLc5atd/YnnAdUJ4aQPTgQBCGt06v/43S+s3m3CbJVkED9yuctQYDbNOHdGH2JPle1dBvYsoT8qoevBvAQlPnDOjVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HIMywUM9; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-afec5651966so348512866b.2;
+        Fri, 29 Aug 2025 03:40:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756464008; x=1757068808; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Yl5p12U2uO9xfcN1YtAosyTJ9NoreSs1ECa/E0M81SM=;
+        b=HIMywUM9KSLl0z+MeXTdvcHNL4R39HLPG0BI2Oga58LJwClpSEfp5XKO7dXY9XlGmY
+         816wLexIFeGEd3GySDiUVadne7vq3I9ZH6Q2UWxPC7wqUtTbMGm2Y9AkAfMxwbesn0Kj
+         F/mhedQECEGSlTtTGmM4y4Yk8zFcSW4naaIJNFtzxwJYEmSKB9YXRmVRQy7ZG2Msheis
+         QABzzLhqg5wNCFAQc3v8GTAfIw2Ky1y0qjRyEVN4kKjiEnc0psvgJp4gjw0S4PR2uIUC
+         a/uTmt3vZM5rYl4uxEts1qAoXFDVmJekYYahKxPkt3kGSzaDMmcIIC3o0khYzjrBCsao
+         MWQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756464008; x=1757068808;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Yl5p12U2uO9xfcN1YtAosyTJ9NoreSs1ECa/E0M81SM=;
+        b=itDZmrX6E4zTL+4TiqbXCTbPyfCuTjLa5UyfI7juZmKxCySUJki1MCMu1Wq6UoQf4x
+         wLdDMNcRbQPBBkXz1k/BoqqnFGjgtJ9ZvGXzkcOeEgGrkHI0AbGvUAaqB0ztoxVtAULq
+         hdnZHVPZto5ZnsmrJ5/UmhUk4OaLsP275syCrYksCTLVsXlo0ZxYE+60yburn/HHr/nN
+         Om9GjeLf1OWX4+OgMeRvEGa11DQ9RqJMCusGtC29AR3zxXrjzlUOKpppHFeDIGJtSRSk
+         aYwqh9538Wo5/FHS1Yc3b7/P8OnuRzVoDPBBsJFLXxh9kKtDkzd74gi1Dk5urXomLnmd
+         2cOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX9Dx/0BBBJ+6fwyLdm/CmkzEXt1A5GGSX8sD2/FZwDD/3ds0YTwlBETOfqG3o1cu+J87pYb5pJowSLzIaW@vger.kernel.org, AJvYcCXLLV4FZxg7gp7hlVZwmht3LHuPo9tewRokRHEiq6byfgZoPXPicOE5Bp7kqECv2BnPZf+ThArsA4Co@vger.kernel.org
+X-Gm-Message-State: AOJu0YxhMKDWdgeXl4E8xy3brLaZE9pMkfVzoo4BJ5QlW0yOjvW2xKKM
+	6MdNKOq3ejy5ZxsbpFIM36HdBfwFbACh1AYpZ62NZiPkkkm1h8BzLbN3
+X-Gm-Gg: ASbGncv6GxHcxsE5MQ9QW7jZQbvFokkKVYaS0pH9Urg4RH6SGReetiHrrCC7SMKI6WI
+	KqbLVZl3UlpvSJt64qpG7KT1q/elTe2fkOZESTfysuvQat4+tkzogYk6qZ1Jx9AD3iCFAXa1JZ5
+	1sceieYbfuNS0LOn6TZqMskIyr4k/ScllDShsd3KFmLfbWMiib9CTuomTHQwHcNdbYa/yi35F95
+	2yDc0Raz6R8XEWmeZo4N/7nbXBHTFtkEaIU7VVSz1WZI5/+SP2wuRkfDo9TKYVgjhpR+0vY+FjQ
+	mL+sKN9UgkxP1K7KhHeowneZax+y//4D3uz0XJvV3yvHxU8WDMEXrj0wsGT387qhVpAqI4lDKZq
+	X+E5Bl7Hz11OjEI5K4Yql2roK7+MFejTGtydyaqGB4qjJq4sFsIbL7y6S11ux
+X-Google-Smtp-Source: AGHT+IGTd5VpriOznSSUF78PDJ+lBThAc5tfiaPYhgxFnl96GsT4FoZv2KEHpZmkv5khcyAgJC1N0Q==
+X-Received: by 2002:a17:907:3f9a:b0:afe:d21f:7af0 with SMTP id a640c23a62f3a-afed21f7e3cmr716079066b.14.1756464008284;
+        Fri, 29 Aug 2025 03:40:08 -0700 (PDT)
+Received: from [10.82.207.1] (212-39-89-51.ip.btc-net.bg. [212.39.89.51])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afefc7ee8d2sm172652866b.20.2025.08.29.03.40.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 29 Aug 2025 03:40:07 -0700 (PDT)
+Message-ID: <31435f98-5701-4ae0-b822-11a99d1b2eef@gmail.com>
+Date: Fri, 29 Aug 2025 13:40:06 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250829100328.618903-1-zhao.xichao@vivo.com>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-0.998];
-	MIME_GOOD(-0.10)[text/plain];
-	MISSING_XM_UA(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	RCPT_COUNT_FIVE(0.00)[6];
-	FROM_EQ_ENVFROM(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,vivo.com:email,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Score: -3.80
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/4] arm64: dts: exynos2200: introduce serial busses,
+ except spi
+From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250815070500.3275491-1-ivo.ivanov.ivanov1@gmail.com>
+Content-Language: en-US
+In-Reply-To: <20250815070500.3275491-1-ivo.ivanov.ivanov1@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri 29-08-25 18:03:28, Xichao Zhao wrote:
-> When dealing with structures containing flexible arrays, struct_size()
-> provides additional compile-time checks compared to offsetof(). This
-> enhances code robustness and reduces the risk of potential errors.
-> 
-> Signed-off-by: Xichao Zhao <zhao.xichao@vivo.com>
+On 8/15/25 10:04, Ivaylo Ivanov wrote:
+> Hey, folks!
+>
+> This patchset adds serial busses, implemented in usi, for exynos2200.
+> It's missing spi, due to me having troubles with reads when testing.
+> Serial_0/1 have not been included in the patchset, as it seems like
+> they're encapsulated in usi blocks, but are the only implemented
+> protocol and/or do not have a dedicated register for setting other
+> protocols in a sysreg. That'd at least require patches in the usi
+> driver and bindings to add support for.
+>
+> About the naming convention for usi nodes, I've chosen to keep the
+> downstream one instead of relabelling all to avoid confusion when
+> cross-referencing the vendor DT and to keep consistency with clock
+> names. They're labelled the same in the bootloader too.
 
-Looks good. Feel free to add:
+BUMP - when is this going to get merged? I had a few other things
+I wanted to upstream before merge cycle.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+Best regards,
+Ivaylo
 
-								Honza
+>
+> Best regards,
+> Ivaylo
+>
+> Changes in v3:
+> - drop the serial_0/1 patch
+> - add r-b tags from Sam
+> - increase the size of all syscon to 0x10000 and not 0x3000
+> - change description of last patch to be more meaningful regarding the
+> usiN and usiN_i2c mess
+> - s/usi6_i2c_cmgp/usi_i2c_cmgp6, following the TRM naming convention
+>
+> Changes in v2:
+> - add a patch that switches address and size cells to 1 in /soc
+> - adjust all new nodes to define reg props with 2 cells in total instead of 4
+>
+> Ivaylo Ivanov (4):
+>   arm64: dts: exynos2200: fix typo in hsi2c23 bus pins label
+>   arm64: dts: exynos2200: use 32-bit address space for /soc
+>   arm64: dts: exynos2200: increase the size of all syscons
+>   arm64: dts: exynos2200: define all usi nodes
+>
+>  .../boot/dts/exynos/exynos2200-pinctrl.dtsi   |    2 +-
+>  arch/arm64/boot/dts/exynos/exynos2200.dtsi    | 1433 ++++++++++++++++-
+>  2 files changed, 1398 insertions(+), 37 deletions(-)
+>
 
-> ---
->  fs/namei.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/namei.c b/fs/namei.c
-> index 10f7caff7f0f..70a71b1b8abc 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -178,7 +178,7 @@ getname_flags(const char __user *filename, int flags)
->  	 * userland.
->  	 */
->  	if (unlikely(len == EMBEDDED_NAME_MAX)) {
-> -		const size_t size = offsetof(struct filename, iname[1]);
-> +		const size_t size = struct_size(result, iname, 1);
->  		kname = (char *)result;
->  
->  		/*
-> @@ -253,7 +253,7 @@ struct filename *getname_kernel(const char * filename)
->  	if (len <= EMBEDDED_NAME_MAX) {
->  		result->name = (char *)result->iname;
->  	} else if (len <= PATH_MAX) {
-> -		const size_t size = offsetof(struct filename, iname[1]);
-> +		const size_t size = struct_size(result, iname, 1);
->  		struct filename *tmp;
->  
->  		tmp = kmalloc(size, GFP_KERNEL);
-> -- 
-> 2.34.1
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
 
