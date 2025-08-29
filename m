@@ -1,45 +1,44 @@
-Return-Path: <linux-kernel+bounces-791593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C676B3B8EE
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 12:33:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF333B3B8E3
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 12:33:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19FC8A07D6F
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 10:33:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C3B6A5680C1
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 10:33:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D8553126C7;
-	Fri, 29 Aug 2025 10:31:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78F1A308F28;
+	Fri, 29 Aug 2025 10:31:27 +0000 (UTC)
 Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D1373090FD;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECC163093C8;
 	Fri, 29 Aug 2025 10:31:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756463486; cv=none; b=MBOg+3sZLHJbj//rC4Zinde8WC0rOxzBBhyJvYvHCqJbwlbrIcmR13tKIakE7Q3fqhoE/AUEUd+DCVHkWdRg0H+jNQ5uoG5Hzsg3IXscxgjtDPVCinPTvPDOqI38+/J8nqgB8knfEL2ySTpKisxMU2bNJ/9qCFlvrvBL4azGrS8=
+	t=1756463485; cv=none; b=O7WuP3n84wr5sr1ZcUxWCBFJyjUBBn3C5FNBxKvbuN/WVaE4XDt6tPAavdmaOb7Aev2cciE25DSxfR8RMWGvEwl83RDOnBD/a2JH0RO26oIwzWbxWixnrg3b15bgKWVhUN6J6rnhthazt8QV+N5pCVveVaR1aoFZGgzgd1wvE04=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756463486; c=relaxed/simple;
-	bh=5O/OMg/yscyU4l71hz/hXav+xWxEkW7Z3EH8WoYSPCI=;
+	s=arc-20240116; t=1756463485; c=relaxed/simple;
+	bh=mKeCRhe0f/6G6Jn+o+AOJ6n+rr3wYmeAywchh2F85bs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tnI4MkUWRkQBy5DVmJdcoQkSfORhEytrwMFrVIDxja3cQeMLmehBGeWKORA5Ue6ieeAuwUTKe/c3N/q2/PLr/NNkZoVLGHmK/L8dtP/jUK34uqdJBGpRBfvvTQdFZW40/G0akFgDloNyx0ZoZFch/oMVgXy8A87Jh595U2hpHbU=
+	 Content-Type:Content-Disposition:In-Reply-To; b=TDpjY4mafXSO9G+nuEMwOd+aXwFhNcHgs2svv5na6FuqmWPpV2DjTAzH0rvHbGl9wnOx9dvtnPaDozQZiLgwvDdnpt5IkZJpX8bQC5SXQw60fGhOCSSqVfDoHqCMOX0De/U7OEhC602WJpgKMlUvU9BiQY4xdUFDNcWU38r5r3U=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
 Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
-	id 1urwO1-0004Fa-00; Fri, 29 Aug 2025 12:31:13 +0200
+	id 1urwO1-0004FW-00; Fri, 29 Aug 2025 12:31:13 +0200
 Received: by alpha.franken.de (Postfix, from userid 1000)
-	id D1062C08C5; Fri, 29 Aug 2025 12:22:40 +0200 (CEST)
-Date: Fri, 29 Aug 2025 12:22:40 +0200
+	id A2DC3C0905; Fri, 29 Aug 2025 12:22:57 +0200 (CEST)
+Date: Fri, 29 Aug 2025 12:22:57 +0200
 From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-To: Brian Masney <bmasney@redhat.com>
-Cc: Maxime Ripard <mripard@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-	linux-clk@vger.kernel.org, linux-mips@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] MIPS: Alchemy: convert from round_rate() to
- determine_rate()
-Message-ID: <aLF_cFrbfaouDQ8O@alpha.franken.de>
-References: <20250810-mips-round-rate-v1-1-54e424c520dd@redhat.com>
+To: Aleksander Jan Bajkowski <olek2@wp.pl>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	zhouyanjie@wanyeetech.com, linux-mips@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: mips: cpu: Add MIPS 34Kc Core
+Message-ID: <aLF_ga6E0joS89W6@alpha.franken.de>
+References: <20250811092048.497087-1-olek2@wp.pl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -48,24 +47,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250810-mips-round-rate-v1-1-54e424c520dd@redhat.com>
+In-Reply-To: <20250811092048.497087-1-olek2@wp.pl>
 
-On Sun, Aug 10, 2025 at 06:30:23PM -0400, Brian Masney wrote:
-> The round_rate() clk ops is deprecated, so migrate this driver from
-> round_rate() to determine_rate() using the Coccinelle semantic patch
-> appended to the "under-the-cut" portion of the patch.
+On Mon, Aug 11, 2025 at 11:20:36AM +0200, Aleksander Jan Bajkowski wrote:
+> Document MIPS 34Kc device tree bindings. It is used in the Realtek
+> RTL930x SoC.
 > 
-> Note that prior to running Coccinelle, alchemy_clk_aux_roundr() was
-> renamed to alchemy_clk_aux_round_rate(). A few minor style cleanups
-> were also done by hand.
+> Signed-off-by: Aleksander Jan Bajkowski <olek2@wp.pl>
+> ---
+>  Documentation/devicetree/bindings/mips/cpus.yaml | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> Signed-off-by: Brian Masney <bmasney@redhat.com>
-> ---
-> [...]
-> https://lore.kernel.org/cocci/67642477-5f3e-4b2a-914d-579a54f48cbd@intel.com/
-> ---
->  arch/mips/alchemy/common/clock.c | 18 +++++++++++-------
->  1 file changed, 11 insertions(+), 7 deletions(-)
+> diff --git a/Documentation/devicetree/bindings/mips/cpus.yaml b/Documentation/devicetree/bindings/mips/cpus.yaml
+> index 471373ad0cfb..d3677f53f142 100644
+> --- a/Documentation/devicetree/bindings/mips/cpus.yaml
+> +++ b/Documentation/devicetree/bindings/mips/cpus.yaml
+> @@ -33,6 +33,7 @@ properties:
+>        - mips,mips1004Kc
+>        - mips,mips24KEc
+>        - mips,mips24Kc
+> +      - mips,mips34Kc
+>        - mips,mips4KEc
+>        - mips,mips4Kc
+>        - mips,mips74Kc
+> -- 
+> 2.47.2
 
 applied to mips-next.
 
