@@ -1,185 +1,187 @@
-Return-Path: <linux-kernel+bounces-791711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791712-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2F6DB3BA6D
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 13:58:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3673BB3BA78
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 13:59:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC8FC1CC17F5
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 11:59:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E50793BEDEF
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 11:59:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84818311C06;
-	Fri, 29 Aug 2025 11:58:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0B10314A78;
+	Fri, 29 Aug 2025 11:59:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="CysoOR9P"
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TKJXflju"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8BFA2D12E4
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 11:58:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3758D2FC880
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 11:59:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756468711; cv=none; b=K7JbOhPxYO31rDe+mHT1oK4XXEbCU1BzrFvHM9K6bUcefnLH4CLx7MLfJtFaKQ4ly6JFBZJhJ/Mm5adp4jGfJbsui1+1CEFcriHjrHHoilJFBpCW8Pi+2uBaEcl8PffB/CCv9KDppPOodM5Zmora79SwyO7UGnGArQOCYRQwvpM=
+	t=1756468767; cv=none; b=U+nG/WzC589jui47RImWD/o97jqhoBFFuYez5auZob61HOkvhEtUaOo8Le8D+HLc5D1ewcUnxF5b7eSBGspRb8nPDkw4j+M8mgjUKR3ZDZI2wS6X/40mjAYyw9EzFhdauDf5JVhIMix0ZpxVgC3lWfmBQaJX3L/Tl1Q/n4CgGkY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756468711; c=relaxed/simple;
-	bh=Rw5SIZaECKmBfdJ5CiNQHvr4hnQuJd5QmrWW0G/k3ys=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=fvRjMDtjT+P948TjZvvNrlrBhZtDOzmzvI+jlL3tBi7JK5P3XkNlaqpcL9+9Kph9yOWCYNoquuBdB87dAS1xygSRv3oX2FbL6PPFdVZJMYsVWaQnOxu0TbzWf+6Xm5JQHCV2od80GfC62WHKup3SoUAnR/0ACmtdpwai3K5dKfU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=CysoOR9P; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250829115827epoutp04b61f2efa9fa137cf2cf26fa5c862a2f6~gOvvIdu0n1093710937epoutp04C
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 11:58:27 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250829115827epoutp04b61f2efa9fa137cf2cf26fa5c862a2f6~gOvvIdu0n1093710937epoutp04C
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1756468707;
-	bh=uwY5hixuwzaZTDT5buByhfxmW867fLKpSCP8rlpiI14=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=CysoOR9PC9hnqe3pml403GQnA2oc/kH9yTcRYWraVwncS6r0Ua7oKrZX8fYTY8UiF
-	 wkmMBTtTPFS8p8p/SBihey+pSFosShUCntvBWl+YoSz6EKKZoIOEa6n7z321Lfvwa1
-	 +ys3ZAmEG4PVEJOSTVSBzmqJSKzG06tJCI9Fb7tQ=
-Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
-	20250829115827epcas5p1f685d8dfedaaf5048eb61a23746eb119~gOvueZGSr1701717017epcas5p1U;
-	Fri, 29 Aug 2025 11:58:27 +0000 (GMT)
-Received: from epcas5p4.samsung.com (unknown [182.195.38.95]) by
-	epsnrtp03.localdomain (Postfix) with ESMTP id 4cCxcL15L7z3hhT4; Fri, 29 Aug
-	2025 11:58:26 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-	20250829115825epcas5p308b9c24446175f4cd3107cd25d87d005~gOvtI56rB0210702107epcas5p3A;
-	Fri, 29 Aug 2025 11:58:25 +0000 (GMT)
-Received: from INBRO002756 (unknown [107.122.3.168]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250829115822epsmtip19020d35d0d51e22cc1325735aeef32e0~gOvqKeOfY1508415084epsmtip1L;
-	Fri, 29 Aug 2025 11:58:22 +0000 (GMT)
-From: "Alim Akhtar" <alim.akhtar@samsung.com>
-To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, "'Pritam Manohar Sutar'"
-	<pritam.sutar@samsung.com>
-Cc: <vkoul@kernel.org>, <kishon@kernel.org>, <robh@kernel.org>,
-	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <andre.draszik@linaro.org>,
-	<peter.griffin@linaro.org>, <kauschluss@disroot.org>,
-	<ivo.ivanov.ivanov1@gmail.com>, <igor.belwon@mentallysanemainliners.org>,
-	<johan@kernel.org>, <m.szyprowski@samsung.com>, <s.nawrocki@samsung.com>,
-	<linux-phy@lists.infradead.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-samsung-soc@vger.kernel.org>, <rosa.pila@samsung.com>,
-	<dev.tailor@samsung.com>, <faraz.ata@samsung.com>,
-	<muhammed.ali@samsung.com>, <selvarasu.g@samsung.com>
-In-Reply-To: <6b5f20ed-4e88-441e-8f61-20866e2b39c7@kernel.org>
-Subject: RE: [PATCH v7 5/6] dt-bindings: phy: samsung,usb3-drd-phy: add
- ExynosAutov920 combo ssphy
-Date: Fri, 29 Aug 2025 17:28:21 +0530
-Message-ID: <264501dc18dc$39afb340$ad0f19c0$@samsung.com>
+	s=arc-20240116; t=1756468767; c=relaxed/simple;
+	bh=pfZeu45Ptgbg81HsgsSyDPXotbJF6dygoEjrohpNRUA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ST/hJnrgnY9KPZGLBWlvtV3ZXa/Vxvpnbr+8ROGod+dMWQYvWaAuz3ZU32vlwLGPx+KNcu63JgYCgvBjRa15aYDYkMX5mM8Zjp8vE6eTfx4fZPi8Gn0oXForakjTWiZ1wAq6NJlWIOdGu+a6uM+NjrZlrHc3zJWSN+SZRLUd7WU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TKJXflju; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756468765;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=bF6XoHD5pMX2I9dADLrcLi6kiYTvPDGveY8Ow/uEvrs=;
+	b=TKJXfljuBO2SQSW5KQgcc4LJ+TyzUUk7hn6l1Xxqq/pEAN6LuJr9XalBz3RPWBVzxuTFn9
+	TVhopZvq8Ekjm0s8x/7R+LBxUrSCwXV6GGDQdLo5NJ1OiW0JafE5s0pVpg91cusYMMaiBg
+	1eWFfGz7+o4fF3RhgwYAkIJgseAKSZI=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-220-bxcdymr5O6GxWf3bfW0uWQ-1; Fri, 29 Aug 2025 07:59:24 -0400
+X-MC-Unique: bxcdymr5O6GxWf3bfW0uWQ-1
+X-Mimecast-MFC-AGG-ID: bxcdymr5O6GxWf3bfW0uWQ_1756468763
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3ce7f782622so693067f8f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 04:59:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756468763; x=1757073563;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bF6XoHD5pMX2I9dADLrcLi6kiYTvPDGveY8Ow/uEvrs=;
+        b=irgFUwiX8DK9SYn57hiZ0Nho/lm4YzoBR1oIsm0nFvB999gwLQzkoTgG19TiJO2d3w
+         RlGaZgB4I3oaHD217+tkT+DCh2pZqVeSvGsJUCvODqZ4+/qcoIekX/KWjnBrBLyYUDrA
+         ZLEwNO3xj9j9u84jMmHBnzZnnVudYkEn66/DzP1VXuV8Cx2eMtM1Vvpq1+5FJAmA9/s5
+         TNPzIUph1r1/PxPXW2C5D0ucupS3OpMLY/1xxB1HJtDPPQLtHLXuN7l1jVdGn9itE+dB
+         9pcxg8MvJVgrV2IvHNzNtck3k6QrtpMvnMgjrs2MHkAdwGeaJhmMSySnN/y6q3BwoCYG
+         mWEw==
+X-Gm-Message-State: AOJu0Yxule9MElLlgn7fT9Tg4eyMfyFF/Ck8FIkuyWOoUoCC948Pec4I
+	N6PKbiDa7fRfsviK6MWzsM6Jh/D+7/43mz25vAIx9gMZojWqb/6834UWMG02ybJBE0fHAqQXltO
+	kJJnH0/HJyb946OFZWWFPvl/YfCR3E67j1xU2WG0frdlcMDOz47jgYCPup5+14Pl17A==
+X-Gm-Gg: ASbGncsebYH9UgCvN6eIKGQrCxns8Q099ELsikGiUTSBM36SqpgWWTyIIa8YXr+c6md
+	70L23/o54iU6y8Pp4TW2Nz4Hc81AbEK9yn4Q5q2CDRO1O7INZqN6FvmQSfZpg/mp/+kFaGg+jqL
+	4rEMERmTBHZru+nfNEjaWpibafD2RaYu8sXciW4Qa4fjObqI323exvB5zcGKuoBRkFRbn9uSQUy
+	BG25tSq65WdJGvtSnj87d7x+SIqmg1hzy0pLcmJaIQLBdo6QDujhzp7b74+BFIGj/2ry0BwUuX+
+	9RW8p9hScdBhWzrLW34ELwAIqspXszDLcq0b9+9ASVmoFXJ/XMb/JJ1UqfPza9Q8afdEhicNn4v
+	kxqLhibdvhyHyrItNR7QrmXFxLE86VGRdXknEiJgmcRN/tkzyGxMOxMLTBbjy7kg=
+X-Received: by 2002:a05:6000:200e:b0:3d0:820:6814 with SMTP id ffacd0b85a97d-3d008206caamr1378542f8f.30.1756468762704;
+        Fri, 29 Aug 2025 04:59:22 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEmTZMPZLsWUlDoIJtYZ4y1n4323fVpiEEHsVmNFQad1skciXIKlgwtKzfxNR+9KUHASW5nzg==
+X-Received: by 2002:a05:6000:200e:b0:3d0:820:6814 with SMTP id ffacd0b85a97d-3d008206caamr1378503f8f.30.1756468762265;
+        Fri, 29 Aug 2025 04:59:22 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f1d:100:4f8e:bb13:c3c7:f854? (p200300d82f1d01004f8ebb13c3c7f854.dip0.t-ipconnect.de. [2003:d8:2f1d:100:4f8e:bb13:c3c7:f854])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3d0c344f6casm2018873f8f.36.2025.08.29.04.59.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 29 Aug 2025 04:59:21 -0700 (PDT)
+Message-ID: <0dcef56e-0ae7-401b-9453-f6dc6a4dcebf@redhat.com>
+Date: Fri, 29 Aug 2025 13:59:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQGSd8blfqR9gZc/NH28iGAFaSn12QHbdVSHAGa/K48CXY/t+wLwFCB2ArX7ZGwBn6FItwLUPA9DAP+/dGQCDX8RFrR+i4pg
-Content-Language: en-us
-X-CMS-MailID: 20250829115825epcas5p308b9c24446175f4cd3107cd25d87d005
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-542,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250822093022epcas5p42d8c16c851769dab0e1da9d45743ab1f
-References: <20250822093845.1179395-1-pritam.sutar@samsung.com>
-	<CGME20250822093022epcas5p42d8c16c851769dab0e1da9d45743ab1f@epcas5p4.samsung.com>
-	<20250822093845.1179395-6-pritam.sutar@samsung.com>
-	<20250824-rough-fresh-orangutan-eecb2f@kuoka>
-	<007501dc1653$e36c3b50$aa44b1f0$@samsung.com>
-	<83dc9435-5850-425d-b345-52e84ef9262c@kernel.org>
-	<000401dc18cd$ec02a1b0$c407e510$@samsung.com>
-	<e8e99c16-ad40-4d79-be92-1aa55c13f9ea@kernel.org>
-	<263801dc18d3$d1e20950$75a61bf0$@samsung.com>
-	<6b5f20ed-4e88-441e-8f61-20866e2b39c7@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 13/36] mm/hugetlb: cleanup
+ hugetlb_folio_init_tail_vmemmap()
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: linux-kernel@vger.kernel.org, Alexander Potapenko <glider@google.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Brendan Jackman <jackmanb@google.com>, Christoph Lameter <cl@gentwo.org>,
+ Dennis Zhou <dennis@kernel.org>, Dmitry Vyukov <dvyukov@google.com>,
+ dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+ iommu@lists.linux.dev, io-uring@vger.kernel.org,
+ Jason Gunthorpe <jgg@nvidia.com>, Jens Axboe <axboe@kernel.dk>,
+ Johannes Weiner <hannes@cmpxchg.org>, John Hubbard <jhubbard@nvidia.com>,
+ kasan-dev@googlegroups.com, kvm@vger.kernel.org,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>, linux-arm-kernel@axis.com,
+ linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
+ linux-ide@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-mips@vger.kernel.org, linux-mmc@vger.kernel.org, linux-mm@kvack.org,
+ linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
+ linux-scsi@vger.kernel.org, Marco Elver <elver@google.com>,
+ Marek Szyprowski <m.szyprowski@samsung.com>, Michal Hocko <mhocko@suse.com>,
+ Mike Rapoport <rppt@kernel.org>, Muchun Song <muchun.song@linux.dev>,
+ netdev@vger.kernel.org, Oscar Salvador <osalvador@suse.de>,
+ Peter Xu <peterx@redhat.com>, Robin Murphy <robin.murphy@arm.com>,
+ Suren Baghdasaryan <surenb@google.com>, Tejun Heo <tj@kernel.org>,
+ virtualization@lists.linux.dev, Vlastimil Babka <vbabka@suse.cz>,
+ wireguard@lists.zx2c4.com, x86@kernel.org, Zi Yan <ziy@nvidia.com>
+References: <20250827220141.262669-1-david@redhat.com>
+ <20250827220141.262669-14-david@redhat.com>
+ <cebd5356-0fc6-40aa-9bc6-a3a5ffe918f8@lucifer.local>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <cebd5356-0fc6-40aa-9bc6-a3a5ffe918f8@lucifer.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Krzysztof
+On 28.08.25 17:37, Lorenzo Stoakes wrote:
+> On Thu, Aug 28, 2025 at 12:01:17AM +0200, David Hildenbrand wrote:
+>> We can now safely iterate over all pages in a folio, so no need for the
+>> pfn_to_page().
+>>
+>> Also, as we already force the refcount in __init_single_page() to 1,
+> 
+> Mega huge nit (ignore if you want), but maybe worth saying 'via
+> init_page_count()'.
 
-> -----Original Message-----
-> From: Krzysztof Kozlowski <krzk=40kernel.org>
-> Sent: Friday, August 29, 2025 4:56 PM
-> To: Alim Akhtar <alim.akhtar=40samsung.com>; 'Pritam Manohar Sutar'
-> <pritam.sutar=40samsung.com>
-> Cc: vkoul=40kernel.org; kishon=40kernel.org; robh=40kernel.org;
-> krzk+dt=40kernel.org; conor+dt=40kernel.org; andre.draszik=40linaro.org;
->=20
-=5BSnip=5D
-> >>>>>> On Fri, Aug 22, 2025 at 03:08:44PM +0530, Pritam Manohar Sutar
-> wrote:
-> >>>>>>> This phy supports USB3.1 SSP+(10Gbps) protocol and is backwards
-> >>>>>>> compatible to the USB3.0 SS(5Gbps). It requires two clocks,
-> >>>>>>> named =22phy=22 and =22ref=22. The required supplies for USB3.1 a=
-re
-> >>>>>>> named as vdd075_usb30(0.75v), vdd18_usb30(1.8v).
-> >>>>>>
-> >>>>>> Please do not describe the schema, but hardware. This sentence
-> >>>>>> does not help me in my question further.
-> >>>>>
-> >>>>> This is a combo phy having Synopsys usb20 and usb30 phys (these 2
-> >>>>> phys are
-> >>>> totally different).
-> >>>>> One PHY only supports usb2.0 and data rates whereas another one
-> >>>>> does
-> >>>>> usb3.1 ssp+ and usb3.1 ssp
-> >>>>>
-> >>>>> This patch only explains about usb30 (since these are two
-> >>>>> different
-> >>>>> phys) phy
-> >>>> and omitted inclusion of usb20 reference (added separate patch for
-> >>>> this patch no 3).
-> >>>>>
-> >>>>> Hope this is clear.
-> >>>>
-> >>>> No. That sentence still explains what schema is doing.
-> >>>>
-> >>>
-> >>> Ok, let me simplify the commit message further something like below.
-> >>> Anyways, the coverletter contains more details about it.
-> >>>
-> >>> =22dt-bindings: phy: samsung,usb3-drd-phy: add ExynosAutov920 combo
-> >>> ssphy
-> >>>
-> >>>   Add schema for combo ssphy found on this SoC.
-> >>> =22
-> >>>
-> >>> Please confirm if this looks fine?
-> >>> If so, will reflect the similar commit messages in patch 1 and 3.
-> >>
-> >> Please read my first comment again. I do not see how does this
-> >> satisfy hardware explanation.
-> >>
-> > Just went through the conversation above, until what extent hardware
-> > description need to be explain in the commit?
-> > Do we have any guideline for the same?
-> > Could you please help with an example from previous any commit or some
-> other patches?
-> > I understand that mentioning, =E2=80=9Ctwo=20clocks,=20two=20supplies=
-=20etc=22=20are=20part=0D=0A>=20>=20of=20schema,=20one=20may=20or=20may=20n=
-ot=20capture=20that=20in=20the=20commit.=0D=0A>=20>=20However=20mentioning,=
-=20=E2=80=9Cthis=20hardware=20(SoC)=20contain=20a=20combo=20PHY=20which=0D=
-=0A>=20supports=20usb3.1=20and=20usb3.0=22=20is=20not=20ok?=0D=0A>=20=0D=0A=
->=20=0D=0A>=20Maybe=20that's=20just=20language,=20but=20to=20me=20the=20com=
-mit=20msg=20did=20not=20describe=0D=0A>=20hardware=20after=20first=20senten=
-ce,=20but=20said=20what=20schema=20requires=20(some=0D=0A>=20clocks=20and=
-=20supplies).=20Other=20examples:=0D=0A>=2000399bbe02d2bb6fd8d6eb90573ec305=
-616449f4=0D=0A>=20e4c9a7b475e5d0d9b2440ee48f91d1364eabd6cb=0D=0A>=20=0D=0AT=
-hanks=20for=20suggestion=20as=20always,=20I=20hope=20the=20author=20can=20f=
-ollow=20this.=20=0D=0A=0D=0A>=20and=20here=20another=20anti-pattern:=0D=0A>=
-=2023f793850e9ee7390584c0809f085d6c88de7d3f=0D=0A>=20=0D=0A>=20(and=20befor=
-e=20you=20ask=20why=20above=20carries=20my=20Rb=20tag,=20then=20note=20that=
-=0D=0AI=20will=20not=20ask=20:-)=0D=0A>=20Samsung's=20revenue=20is=20around=
-=20220=20billion=20USD,=20so=20for=20sure=20it=20has=20a=20lot,=0D=0A>=20re=
-ally=20a=20lot=20of=20resources=20to=20review=20patches=20internally=20and=
-=20improve=20their=0D=0A>=20quality=20before=20posting).=0D=0A>=20=0D=0AHmm=
-...,=20however=20let=20me=20check=20internally.=0D=0A=0D=0A>=20Best=20regar=
-ds,=0D=0A>=20Krzysztof=0D=0A=0D=0A
+Will add, thanks!
+
+-- 
+Cheers
+
+David / dhildenb
+
 
