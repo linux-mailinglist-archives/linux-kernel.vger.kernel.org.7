@@ -1,115 +1,154 @@
-Return-Path: <linux-kernel+bounces-792263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E856B3C1FC
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 19:43:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB99DB3C201
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 19:46:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ABC27189C44B
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 17:43:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 859F7A018E0
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 17:46:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EFDB342C8A;
-	Fri, 29 Aug 2025 17:43:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDC1F1DFE22;
+	Fri, 29 Aug 2025 17:46:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qet8Ahmk"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="knNMQ2HH"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF753238C0A;
-	Fri, 29 Aug 2025 17:43:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DF4C30CDA5;
+	Fri, 29 Aug 2025 17:46:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756489383; cv=none; b=rGg2c6iv1VpJnuNKdYwJyAiy7T4CrWZxnyFi/tFGd/8rejJkswlD2B7dN0BeURkt3CmRYBrNK4vAr5p1tjNYIq8Ht/5WCbnOSHrjqwHAKS3RbD5r0iwnfLlpjBOp83oH0U9RH21MfWntGKEC6aZsTB33o7WdDgYl+19aqw210tY=
+	t=1756489579; cv=none; b=UeSo2NB01kvM05TS3h8EcSeUkpuuuYf7/w9LXNpIdYSTXeaHv3XsQGHnW0nJdPDw5dnXTg0O/Ds1GgkbOSaH/yfdMtClyJ3QcnLhKux/NYLl1n1t20oMYR/jPCITmu1mGoknqNYGb/JGU3Nc1lwP3XER9QLipBEScknBsyelRIY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756489383; c=relaxed/simple;
-	bh=CVgM7Tyu00zzsMBseHOctXjMN0Os3f8IXfyGMpQmnqE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=u4ElrvWR2KSS4+Crg1ovmARZUJFCfUh8AQqapja03ptcw3odfcWvGzmYaAyTg0UBaGlRICV2Rs8onCwAjmtpdRTSKBLGjH1bQUJfij4FAy8upNwK5EXo0z/1ynTyggSdZk4/aH9Ja1S8Y1xURmWwYXySSe1HrXf6/LaV1PH3Vvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Qet8Ahmk; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2445826fd9dso28342325ad.3;
-        Fri, 29 Aug 2025 10:43:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756489381; x=1757094181; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CVgM7Tyu00zzsMBseHOctXjMN0Os3f8IXfyGMpQmnqE=;
-        b=Qet8Ahmk1rTLMyf5mZKm27IekxEfh/011F42a/lT1MIL9UmUIbOVH16gaUPqf1WaWi
-         Lxd58EOWi2ZYqr7ZjptWx93VsJ8+FZKbPdOwtQRDuV1bduOrr1qqU9S7qPg2t5PydfoN
-         TwxbRaR/SGXsLT10C9yeiM58tWVlOg0Msx9WQsD0q95dcTjpv5N7NXL3+Y5kgmUD/WFW
-         9JVy62U9yA880LCDxDNz76L+Tw/XVyJeYNKTAVgeVP6yGbdfVIy8c4h5/KIVPqhJrWeJ
-         wjoZS6nPusLStcOMmJnSA/0sOjYVVZx5ZKLqLAf8bC0B4xJ7CMNvUihOieUeger1yS2p
-         esYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756489381; x=1757094181;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CVgM7Tyu00zzsMBseHOctXjMN0Os3f8IXfyGMpQmnqE=;
-        b=fynYKc85km8wct0S/hpchIbg2+DEd8oNCUTQHgKzrq3G9raKRFTctd/gMcXx4BE2vK
-         mzUi0BLvCE7vzuM0zhe8stQjntWdCHmUH0AwS5UHMNFuGm4GUB8eRyAaRHVmBkiJhiiF
-         vAbSBI+6ouz8USvNwPrJS1Eh0Vip0K8av9ItOrmeniahgQ1Nzz8GNN2GKiXu9MOkYC2e
-         LwERw5dGofxYl8uSDQfeGIHSr04ML6+kdOYm08GRZJ2FnVXGzW/PWEVsc3ACe+JC8vEW
-         hf48z/a4jTuZp5yOM44lIeockSiO7T73SztAQRDGrpZam8DCZEDfsKEuQ/7C5MqBCfWy
-         973Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVp6Ucej5w+RT5eaKL65NUsK4/YUY250vGFwbWnc+PtTQnqcCvzZsJWaNBhjZlGgD+gelq986dO5/qcsNHB@vger.kernel.org, AJvYcCVvaphjV6yxVdOdpJfYdt6weFnkEUVGRT9xDOwPPCvfJ9HXna4ZyPi3IUc47C5gTnDhTBNaQKJRX84=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxcn+1d10jhOdMYCLFRJ7tAg23oJ2dqHaZM6py7T/vhTGLXpIVI
-	+GOrU8ofLZFzco2RCL3CI7nDMJFb6PZoBScudwwAv8SnEJ5KfnIE+Fo5
-X-Gm-Gg: ASbGncsEi5u1m1cJ+7MIqwagOsjeWzSB8zxrlnfdCYKxSa8Zten3pHa8yEPqKAqWyam
-	EQEUMDEPk1n0bKf/8nw/+FqTzbLz13tiwIjV9MsxKz402p8RqAuRqJ+I5bhWCFyi/Vf6kT58zZt
-	TqMigRvEggNo7J0C7/vRbVkiGmqjMCMooxhxl1fpJ+4UPvf2X8lTTwlaiRXYBdCtei9Ry583BxX
-	8GhrrzPrnWDCG/fFObhhibavbGumUB0BYyzlCbfuAs7wzj5udsbvqEa3/PhkVZAqAwd/L3tznqr
-	M63UPBkEZqtWL77/2cEguNosrtAOLT6l4yOl3WPFBQavGE2zwujLMRjkhl5ySoWO/ScLv8E06rw
-	Oxl8EnpbRsHfXdpxNXSNYXnsadn0JGkUjYhG2G3ZRBaxsVSzkYKe6zB2kVu8Ks4F5WHlgZovMuA
-	==
-X-Google-Smtp-Source: AGHT+IE23KRcGDR/kd3c4g0abkgFnf3oFZxhdeRn83CjGT1YO9Cgs7wU0MlSqxAutRWSDpZp8ltIBw==
-X-Received: by 2002:a17:903:1205:b0:248:79d4:93b5 with SMTP id d9443c01a7336-24879d497a4mr160522795ad.33.1756489380684;
-        Fri, 29 Aug 2025 10:43:00 -0700 (PDT)
-Received: from lkmp.. ([157.51.63.166])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b4cd347db1fsm2727833a12.47.2025.08.29.10.42.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Aug 2025 10:43:00 -0700 (PDT)
-From: Rakuram Eswaran <rakuram.e96@gmail.com>
-To: rakuram.e96@gmail.com,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de
-Cc: alexander.deucher@amd.com,
-	amd-gfx@lists.freedesktop.org,
-	christian.koenig@amd.com,
-	corbet@lwn.net,
-	dri-devel@lists.freedesktop.org,
-	harry.wentland@amd.com,
-	linux-doc@vger.kernel.org,
-	linux-kernel-mentees@lists.linuxfoundation.org,
-	linux-kernel@vger.kernel.org,
-	rdunlap@infradead.org,
-	siqueira@igalia.com,
-	skhan@linuxfoundation.org
-Subject: Re: [PATCH v2 2/2] docs: gpu: Fix spelling in gpu documentation 
-Date: Fri, 29 Aug 2025 23:12:43 +0530
-Message-ID: <20250829174244.13864-1-rakuram.e96@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250821025957.22546-3-rakuram.e96@gmail.com>
-References: <20250821025957.22546-3-rakuram.e96@gmail.com>
+	s=arc-20240116; t=1756489579; c=relaxed/simple;
+	bh=iINmr2KFYoSGsHTNTuQy3QPX4Iv/FtsHEayJdZ4JN8Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GXeoeqtfOL3UOuifgLRb4DFMRul3FNo5Or+S6PVwsDnirE03ypsmM3MZDLAIMjd89W9f0eQ0w9DO/MOnaNCFh6hAy5V0lzx/eEdScdlcxl95UEywmBBkSelIQbezuvVgiriK5s+bsx4OhNyEMdVzlXj4Trvy8cPfjSguAQR3f+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=knNMQ2HH; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756489577; x=1788025577;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=iINmr2KFYoSGsHTNTuQy3QPX4Iv/FtsHEayJdZ4JN8Q=;
+  b=knNMQ2HHPinjbQW1wky5YRh5O2ATdq3XjDESGA2r9e+iAf3V6EVXFguu
+   U1sLJCsrV4uZc4Nr4Ik3q5C1IvcBacCAJutKbvl9EMJOeTfyVN8iimeeP
+   9TEf9FmUsZZQUtytPG4Ivhl4J09Q6D0BAmVP0I1ygI4xZJkYTSkkQjz8m
+   5p+6ycxgdBJXtRAFWqgkrxTfhPlS8jO6PDKW29iVU0fsne0emc3Uh88hA
+   KT7QY97LObQzrEIDQfx/5+QQCnRQwiPTKQar4vg0vg+7QT/NGzRGRoTbP
+   AbxQgSH2TmPhCNqgu+vjLJsFbJyxCkFjmME28TU0DQjqVJz1RB+/ayrQ5
+   w==;
+X-CSE-ConnectionGUID: 1DR4Uj7tTM2MRINbNkG/3w==
+X-CSE-MsgGUID: jl/mC8n4RcqmGT1/HCoQ0g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="58851382"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="58851382"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2025 10:46:16 -0700
+X-CSE-ConnectionGUID: QVvqT+VwSzuYmS61GvWMGg==
+X-CSE-MsgGUID: Zka0mUPyQ02fm5dlf3hXFA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,221,1751266800"; 
+   d="scan'208";a="175716538"
+Received: from hrotuna-mobl2.ger.corp.intel.com (HELO localhost) ([10.245.246.58])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2025 10:46:13 -0700
+From: Jani Nikula <jani.nikula@intel.com>
+To: intel-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org
+Cc: linux-kernel@vger.kernel.org,
+	jani.nikula@intel.com,
+	Kees Cook <kees@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH 1/3] drm/i915: rename range_overflows_end() to range_end_overflows()
+Date: Fri, 29 Aug 2025 20:45:59 +0300
+Message-ID: <20250829174601.2163064-1-jani.nikula@intel.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Content-Transfer-Encoding: 8bit
 
-Hi all,
+Rename range_overflows_end() to range_end_overflows(), along with the _t
+variant.
 
-This is a gentle follow-up on this patch. Please let me know if any further
-changes are required.
+It's all rather subjective, but I think range_end_overflows() reads
+better.
 
-Regards
+Cc: Kees Cook <kees@kernel.org>
+Cc: Gustavo A. R. Silva <gustavoars@kernel.org>
+Cc: linux-hardening@vger.kernel.org
+Signed-off-by: Jani Nikula <jani.nikula@intel.com>
+---
+ drivers/gpu/drm/i915/display/intel_fbc.c | 4 ++--
+ drivers/gpu/drm/i915/gt/intel_rc6.c      | 2 +-
+ drivers/gpu/drm/i915/i915_utils.h        | 6 +++---
+ 3 files changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/gpu/drm/i915/display/intel_fbc.c b/drivers/gpu/drm/i915/display/intel_fbc.c
+index d4c5deff9cbe..446e2ad28a70 100644
+--- a/drivers/gpu/drm/i915/display/intel_fbc.c
++++ b/drivers/gpu/drm/i915/display/intel_fbc.c
+@@ -383,11 +383,11 @@ static void i8xx_fbc_program_cfb(struct intel_fbc *fbc)
+ 	struct drm_i915_private *i915 = to_i915(display->drm);
+ 
+ 	drm_WARN_ON(display->drm,
+-		    range_overflows_end_t(u64, i915_gem_stolen_area_address(i915),
++		    range_end_overflows_t(u64, i915_gem_stolen_area_address(i915),
+ 					  i915_gem_stolen_node_offset(&fbc->compressed_fb),
+ 					  U32_MAX));
+ 	drm_WARN_ON(display->drm,
+-		    range_overflows_end_t(u64, i915_gem_stolen_area_address(i915),
++		    range_end_overflows_t(u64, i915_gem_stolen_area_address(i915),
+ 					  i915_gem_stolen_node_offset(&fbc->compressed_llb),
+ 					  U32_MAX));
+ 	intel_de_write(display, FBC_CFB_BASE,
+diff --git a/drivers/gpu/drm/i915/gt/intel_rc6.c b/drivers/gpu/drm/i915/gt/intel_rc6.c
+index 9ca42589da4d..bf38cc5fe872 100644
+--- a/drivers/gpu/drm/i915/gt/intel_rc6.c
++++ b/drivers/gpu/drm/i915/gt/intel_rc6.c
+@@ -341,7 +341,7 @@ static int vlv_rc6_init(struct intel_rc6 *rc6)
+ 		return PTR_ERR(pctx);
+ 	}
+ 
+-	GEM_BUG_ON(range_overflows_end_t(u64,
++	GEM_BUG_ON(range_end_overflows_t(u64,
+ 					 i915->dsm.stolen.start,
+ 					 pctx->stolen->start,
+ 					 U32_MAX));
+diff --git a/drivers/gpu/drm/i915/i915_utils.h b/drivers/gpu/drm/i915/i915_utils.h
+index 9cb40c2c4b12..fdac9a158b53 100644
+--- a/drivers/gpu/drm/i915/i915_utils.h
++++ b/drivers/gpu/drm/i915/i915_utils.h
+@@ -79,7 +79,7 @@ bool i915_error_injected(void);
+ #define range_overflows_t(type, start, size, max) \
+ 	range_overflows((type)(start), (type)(size), (type)(max))
+ 
+-#define range_overflows_end(start, size, max) ({ \
++#define range_end_overflows(start, size, max) ({ \
+ 	typeof(start) start__ = (start); \
+ 	typeof(size) size__ = (size); \
+ 	typeof(max) max__ = (max); \
+@@ -88,8 +88,8 @@ bool i915_error_injected(void);
+ 	start__ > max__ || size__ > max__ - start__; \
+ })
+ 
+-#define range_overflows_end_t(type, start, size, max) \
+-	range_overflows_end((type)(start), (type)(size), (type)(max))
++#define range_end_overflows_t(type, start, size, max) \
++	range_end_overflows((type)(start), (type)(size), (type)(max))
+ 
+ #define ptr_mask_bits(ptr, n) ({					\
+ 	unsigned long __v = (unsigned long)(ptr);			\
+-- 
+2.47.2
+
 
