@@ -1,215 +1,192 @@
-Return-Path: <linux-kernel+bounces-792076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98AFEB3BFF3
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 17:54:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD66CB3C00B
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 17:58:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C1E7161618
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 15:53:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 034EC3AD055
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 15:55:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73D0C342CA3;
-	Fri, 29 Aug 2025 15:49:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B196334703;
+	Fri, 29 Aug 2025 15:53:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cwkIXzN/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hHfCCbCM"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA45D342C96;
-	Fri, 29 Aug 2025 15:49:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E485832C32C
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 15:53:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756482569; cv=none; b=X3ykQ7GJdP0ejYGWVymQUt6zGCo0MO5uqb8s+S1t/3NTOQW2aRzNb46xAY3waYQsQDv6OLT1q7j9Zllfn5J4p7dDLC8CYzCoF3MFcSnG57bS7YzjjmRmO2vBP9RZM29yt6cGYCIWlTAhpLax2bnSjAlgvsUK2a6FvkTVCkcNOzY=
+	t=1756482793; cv=none; b=TMU+rrf9NW2BAFKqCnrWL3+xW62CGKpCy+54bJdd5KrrHDomhJPjhquOZbDscKq+wvhk7ZgEuB6VWuOnKI2rDCwSYSmVh4mqFwesVGrIbPkb+Wp5XD4rLIrzArm3l7t/OxJTmgI7Xy81tTHkF9N/rKi3bDuuuV0A992XzQADIQk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756482569; c=relaxed/simple;
-	bh=uc8p3aC/orxSrazIUkCslXAzTEufeR3tXSYzllXV/hY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=TQumgpVO4vR9WYJfSzuxjqxULTkgSUG6Q/8hK3RCMbZMtaxYp5zFXhzUZzSpAYIy1ulQRzRdi3lx87PlUxiNahjANRVeCV7bdUmhjsZ+JdRKfTdLz7eBf2TAitUlzMFsam0AuklSh3zrzYBxvgK5CepIto5zNkF1SdYyAgyfMp4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cwkIXzN/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F006C4CEF0;
-	Fri, 29 Aug 2025 15:49:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756482569;
-	bh=uc8p3aC/orxSrazIUkCslXAzTEufeR3tXSYzllXV/hY=;
-	h=From:To:Cc:Subject:Date:From;
-	b=cwkIXzN/v/E28su3XbViCIg82IG8EBxEz6WDxN3oZFfyf7EVSxZr/TyphDZKeu2T9
-	 QMnkognR3FjzfCLA8N7zxaqGSERlbOmtMyPqe3Xefro81sucFwSSPd4ZnVFnLnLwC2
-	 5pM4IOI2TcnqeB/EQiwEr82VGFu+OOfYoK+PcvfWSQZf/gE3SeU4Zc/Z3tLY5ujnVk
-	 bL2qSRSqmTJ1/gdStZxE7zU4x0VyDfs+DTQbZ1Mpu28AQFwhNqOySN/xTswdAxqvsg
-	 QziFUHKRr/zZnBUP7vSoV5EN8Rl+W5mHH+fX+AgngXd0v6VSM0tL0x5EvMuEm9et20
-	 V2fa/biAaOZzQ==
-From: Kees Cook <kees@kernel.org>
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: Kees Cook <kees@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Anshuman Khandual <anshuman.khandual@arm.com>,
-	Yue Haibing <yuehaibing@huawei.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Marc Zyngier <maz@kernel.org>,
-	Mark Brown <broonie@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Yeoreum Yun <yeoreum.yun@arm.com>,
-	James Morse <james.morse@arm.com>,
-	Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Kevin Brodsky <kevin.brodsky@arm.com>,
-	David Hildenbrand <david@redhat.com>,
-	Zhenhua Huang <quic_zhenhuah@quicinc.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Dev Jain <dev.jain@arm.com>,
-	Yicong Yang <yangyicong@hisilicon.com>,
-	linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: [PATCH] arm64: mm: Fix CFI failure due to kpti_ng_pgd_alloc function signature
-Date: Fri, 29 Aug 2025 08:49:21 -0700
-Message-Id: <20250829154913.work.943-kees@kernel.org>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1756482793; c=relaxed/simple;
+	bh=r6o6tZrAu3+w3lcyJAMYfuRXyaYgtSBycjjyO1n469Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=FnyZ4xhlYA43526HD1cg3egHgPNwb2KrgMlEjPqQO54eLDajtcb33RF5T13IFHLqcphd+us7PEa2mBfSFRvlpBOXOxnzaKSehxROTPzmna812UamxBSYuM07+ZNyXBwjCC4uDuT8xkmn9Wy/hCU/kLlfjdP5hMZC5U7tWbd4MQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hHfCCbCM; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756482792; x=1788018792;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=r6o6tZrAu3+w3lcyJAMYfuRXyaYgtSBycjjyO1n469Y=;
+  b=hHfCCbCMmGrKUh+N7qwc5+ZM1CGKc5ibwAtUK36p9ftZ0hAhlvkFHJR/
+   WzF1WOv4pQUV50LMSpLOnnzlBJF8jLbDSNwT2+z9Yzm4g8MnalpLGTbfe
+   Yl+p4fPHG1Q3S+2i51wIntfXxRiQBj/n+hSNjb6qWB52603568jh2Zg9P
+   mDPCff9f9SbWQlkdtekOYiatNo9+sbcNLgbVx7v+mOfvaVTvaT2uAKMoM
+   BpdizoP4C7VFxngNodaAYOvncYqbBgaqGhNNoNO/r4jNXsLEzZu6/LiAc
+   n7ylbkUs45yV9Znb3/oS9iFEuZJvfmB1SvMBAg6VQXG6o8nrPG5pRSYqY
+   w==;
+X-CSE-ConnectionGUID: OSGLrUzQTWSboDJqzdS3mQ==
+X-CSE-MsgGUID: 7CTJVCIxSTKLTSdQJtBvng==
+X-IronPort-AV: E=McAfee;i="6800,10657,11537"; a="69479396"
+X-IronPort-AV: E=Sophos;i="6.18,221,1751266800"; 
+   d="scan'208";a="69479396"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2025 08:53:11 -0700
+X-CSE-ConnectionGUID: QImWmryqRbOtWb01gAjz0A==
+X-CSE-MsgGUID: opv4oweYSoisGenrwSOezA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,221,1751266800"; 
+   d="scan'208";a="174582244"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by orviesa003.jf.intel.com with ESMTP; 29 Aug 2025 08:53:10 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1us1PX-000UjF-0y;
+	Fri, 29 Aug 2025 15:53:07 +0000
+Date: Fri, 29 Aug 2025 23:52:12 +0800
+From: kernel test robot <lkp@intel.com>
+To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev,
+	"Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+	LKML <linux-kernel@vger.kernel.org>
+Subject: [gustavoars:testing/wfamnae-next20250814 2/8]
+ security/integrity/integrity.h:37:67: error: invalid application of 'sizeof'
+ to incomplete type 'struct evm_ima_xattr_data_hdr'
+Message-ID: <202508292352.Q9sA9NNG-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4495; i=kees@kernel.org; h=from:subject:message-id; bh=uc8p3aC/orxSrazIUkCslXAzTEufeR3tXSYzllXV/hY=; b=owGbwMvMwCVmps19z/KJym7G02pJDBkbzzAc3+vq1b5NWP+dObefBodGiciG5X4tDNs7lFn9d /y6onOjo5SFQYyLQVZMkSXIzj3OxeNte7j7XEWYOaxMIEMYuDgFYCJiZxn+meW6V0ySW7lJWoJ5 9Zs/fq1fPles32HruLLzkV6DWOF7TUaGtZKf/RL2THeRX7oi3vGtU0/ghwP8e8I6bG7OLV6ce3U dPwA=
-X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Seen during KPTI initialization:
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/gustavoars/linux.git testing/wfamnae-next20250814
+head:   4774a38f9cf278ece929331bdef17ab5db24684c
+commit: c2ca48406d8d7e98ac35251db90286b3b86f01c1 [2/8] Revert "integrity: Avoid -Wflex-array-member-not-at-end warnings"
+config: csky-randconfig-001-20250829 (https://download.01.org/0day-ci/archive/20250829/202508292352.Q9sA9NNG-lkp@intel.com/config)
+compiler: csky-linux-gcc (GCC) 9.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250829/202508292352.Q9sA9NNG-lkp@intel.com/reproduce)
 
-  CFI failure at create_kpti_ng_temp_pgd+0x124/0xce8 (target: kpti_ng_pgd_alloc+0x0/0x14; expected type: 0xd61b88b6)
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508292352.Q9sA9NNG-lkp@intel.com/
 
-The call site is alloc_init_pud() at arch/arm64/mm/mmu.c:
+All errors (new ones prefixed by >>):
 
-  pud_phys = pgtable_alloc(TABLE_PUD);
+   In file included from include/linux/container_of.h:5,
+                    from include/linux/list.h:5,
+                    from include/linux/key.h:14,
+                    from include/linux/security.h:27,
+                    from security/integrity/iint.c:12:
+>> security/integrity/integrity.h:37:67: error: invalid application of 'sizeof' to incomplete type 'struct evm_ima_xattr_data_hdr'
+      37 | static_assert(offsetof(struct evm_ima_xattr_data, data) == sizeof(struct evm_ima_xattr_data_hdr),
+         |                                                                   ^~~~~~
+   include/linux/build_bug.h:78:56: note: in definition of macro '__static_assert'
+      78 | #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
+         |                                                        ^~~~
+   security/integrity/integrity.h:37:1: note: in expansion of macro 'static_assert'
+      37 | static_assert(offsetof(struct evm_ima_xattr_data, data) == sizeof(struct evm_ima_xattr_data_hdr),
+         | ^~~~~~~~~~~~~
+>> include/linux/stddef.h:16:32: error: expression in static assertion is not an integer
+      16 | #define offsetof(TYPE, MEMBER) __builtin_offsetof(TYPE, MEMBER)
+         |                                ^~~~~~~~~~~~~~~~~~
+   include/linux/build_bug.h:78:56: note: in definition of macro '__static_assert'
+      78 | #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
+         |                                                        ^~~~
+   security/integrity/integrity.h:37:1: note: in expansion of macro 'static_assert'
+      37 | static_assert(offsetof(struct evm_ima_xattr_data, data) == sizeof(struct evm_ima_xattr_data_hdr),
+         | ^~~~~~~~~~~~~
+   security/integrity/integrity.h:37:15: note: in expansion of macro 'offsetof'
+      37 | static_assert(offsetof(struct evm_ima_xattr_data, data) == sizeof(struct evm_ima_xattr_data_hdr),
+         |               ^~~~~~~~
+>> security/integrity/integrity.h:64:66: error: invalid application of 'sizeof' to incomplete type 'struct ima_digest_data_hdr'
+      64 | static_assert(offsetof(struct ima_digest_data, digest) == sizeof(struct ima_digest_data_hdr),
+         |                                                                  ^~~~~~
+   include/linux/build_bug.h:78:56: note: in definition of macro '__static_assert'
+      78 | #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
+         |                                                        ^~~~
+   security/integrity/integrity.h:64:1: note: in expansion of macro 'static_assert'
+      64 | static_assert(offsetof(struct ima_digest_data, digest) == sizeof(struct ima_digest_data_hdr),
+         | ^~~~~~~~~~~~~
+>> include/linux/stddef.h:16:32: error: expression in static assertion is not an integer
+      16 | #define offsetof(TYPE, MEMBER) __builtin_offsetof(TYPE, MEMBER)
+         |                                ^~~~~~~~~~~~~~~~~~
+   include/linux/build_bug.h:78:56: note: in definition of macro '__static_assert'
+      78 | #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
+         |                                                        ^~~~
+   security/integrity/integrity.h:64:1: note: in expansion of macro 'static_assert'
+      64 | static_assert(offsetof(struct ima_digest_data, digest) == sizeof(struct ima_digest_data_hdr),
+         | ^~~~~~~~~~~~~
+   security/integrity/integrity.h:64:15: note: in expansion of macro 'offsetof'
+      64 | static_assert(offsetof(struct ima_digest_data, digest) == sizeof(struct ima_digest_data_hdr),
+         |               ^~~~~~~~
 
-alloc_init_pud() has the prototype:
 
-  static void alloc_init_pud(p4d_t *p4dp, unsigned long addr, unsigned long end,
-                             phys_addr_t phys, pgprot_t prot,
-                             phys_addr_t (*pgtable_alloc)(enum pgtable_type),
-                             int flags)
+vim +37 security/integrity/integrity.h
 
-where the pgtable_alloc() prototype is declared.
+6be5cc5246f807f Dmitry Kasatkin       2011-03-09  32  
+6be5cc5246f807f Dmitry Kasatkin       2011-03-09  33  struct evm_ima_xattr_data {
+6be5cc5246f807f Dmitry Kasatkin       2011-03-09  34  	u8 type;
+650b29dbdf2caf7 Thiago Jung Bauermann 2019-06-11  35  	u8 data[];
+650b29dbdf2caf7 Thiago Jung Bauermann 2019-06-11  36  } __packed;
+08ae3e5f5fc8edb Gustavo A. R. Silva   2024-08-08 @37  static_assert(offsetof(struct evm_ima_xattr_data, data) == sizeof(struct evm_ima_xattr_data_hdr),
+08ae3e5f5fc8edb Gustavo A. R. Silva   2024-08-08  38  	      "struct member likely outside of __struct_group()");
+650b29dbdf2caf7 Thiago Jung Bauermann 2019-06-11  39  
+650b29dbdf2caf7 Thiago Jung Bauermann 2019-06-11  40  /* Only used in the EVM HMAC code. */
+650b29dbdf2caf7 Thiago Jung Bauermann 2019-06-11  41  struct evm_xattr {
+c2ca48406d8d7e9 Gustavo A. R. Silva   2025-08-22  42  	struct evm_ima_xattr_data data;
+6be5cc5246f807f Dmitry Kasatkin       2011-03-09  43  	u8 digest[SHA1_DIGEST_SIZE];
+c7c8bb237fdbff9 Dmitry Kasatkin       2013-04-25  44  } __packed;
+c7c8bb237fdbff9 Dmitry Kasatkin       2013-04-25  45  
+398c42e2c46c88b Mimi Zohar            2021-11-24  46  #define IMA_MAX_DIGEST_SIZE	HASH_MAX_DIGESTSIZE
+c7c8bb237fdbff9 Dmitry Kasatkin       2013-04-25  47  
+c7c8bb237fdbff9 Dmitry Kasatkin       2013-04-25  48  struct ima_digest_data {
+c7c8bb237fdbff9 Dmitry Kasatkin       2013-04-25  49  	u8 algo;
+c7c8bb237fdbff9 Dmitry Kasatkin       2013-04-25  50  	u8 length;
+3ea7a56067e6632 Dmitry Kasatkin       2013-08-12  51  	union {
+3ea7a56067e6632 Dmitry Kasatkin       2013-08-12  52  		struct {
+3ea7a56067e6632 Dmitry Kasatkin       2013-08-12  53  			u8 unused;
+c7c8bb237fdbff9 Dmitry Kasatkin       2013-04-25  54  			u8 type;
+3ea7a56067e6632 Dmitry Kasatkin       2013-08-12  55  		} sha1;
+3ea7a56067e6632 Dmitry Kasatkin       2013-08-12  56  		struct {
+3ea7a56067e6632 Dmitry Kasatkin       2013-08-12  57  			u8 type;
+3ea7a56067e6632 Dmitry Kasatkin       2013-08-12  58  			u8 algo;
+3ea7a56067e6632 Dmitry Kasatkin       2013-08-12  59  		} ng;
+3ea7a56067e6632 Dmitry Kasatkin       2013-08-12  60  		u8 data[2];
+3ea7a56067e6632 Dmitry Kasatkin       2013-08-12  61  	} xattr;
+eb492c627a61b56 Gustavo A. R. Silva   2020-05-28  62  	u8 digest[];
+c7c8bb237fdbff9 Dmitry Kasatkin       2013-04-25  63  } __packed;
+08ae3e5f5fc8edb Gustavo A. R. Silva   2024-08-08 @64  static_assert(offsetof(struct ima_digest_data, digest) == sizeof(struct ima_digest_data_hdr),
+08ae3e5f5fc8edb Gustavo A. R. Silva   2024-08-08  65  	      "struct member likely outside of __struct_group()");
+6be5cc5246f807f Dmitry Kasatkin       2011-03-09  66  
 
-The target (kpti_ng_pgd_alloc) is used in arch/arm64/kernel/cpufeature.c:
+:::::: The code at line 37 was first introduced by commit
+:::::: 08ae3e5f5fc8edb9bd0c7ef9696ff29ef18b26ef integrity: Use static_assert() to check struct sizes
 
-  create_kpti_ng_temp_pgd(kpti_ng_temp_pgd, __pa(alloc), KPTI_NG_TEMP_VA,
-                          PAGE_SIZE, PAGE_KERNEL, kpti_ng_pgd_alloc, 0);
+:::::: TO: Gustavo A. R. Silva <gustavoars@kernel.org>
+:::::: CC: Mimi Zohar <zohar@linux.ibm.com>
 
-which is an alias for __create_pgd_mapping_locked() with prototype:
-
-  extern __alias(__create_pgd_mapping_locked)
-  void create_kpti_ng_temp_pgd(pgd_t *pgdir, phys_addr_t phys,
-                               unsigned long virt,
-                               phys_addr_t size, pgprot_t prot,
-                               phys_addr_t (*pgtable_alloc)(enum pgtable_type),
-                               int flags);
-
-__create_pgd_mapping_locked() passes the function pointer down:
-
-  __create_pgd_mapping_locked() -> alloc_init_p4d() -> alloc_init_pud()
-
-But the target function (kpti_ng_pgd_alloc) has the wrong signature:
-
-  static phys_addr_t __init kpti_ng_pgd_alloc(int shift);
-
-The "int" should be "enum pgtable_type".
-
-To make "enum pgtable_type" available to cpufeature.c, move
-enum pgtable_type definition from arch/arm64/mm/mmu.c to
-arch/arm64/include/asm/mmu.h.
-
-Adjust kpti_ng_pgd_alloc to use "enum pgtable_type" instead of "int".
-The function behavior remains identical (parameter is unused).
-
-Fixes: 47546a1912fc ("arm64: mm: install KPTI nG mappings with MMU enabled")
-Signed-off-by: Kees Cook <kees@kernel.org>
----
-Cc: Ard Biesheuvel <ardb@kernel.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will@kernel.org>
-Cc: Oliver Upton <oliver.upton@linux.dev>
-Cc: Anshuman Khandual <anshuman.khandual@arm.com>
-Cc: Yue Haibing <yuehaibing@huawei.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Marc Zyngier <maz@kernel.org>
-Cc: Mark Brown <broonie@kernel.org>
-Cc: <linux-arm-kernel@lists.infradead.org>
----
- arch/arm64/include/asm/mmu.h   | 7 +++++++
- arch/arm64/kernel/cpufeature.c | 5 +++--
- arch/arm64/mm/mmu.c            | 7 -------
- 3 files changed, 10 insertions(+), 9 deletions(-)
-
-diff --git a/arch/arm64/include/asm/mmu.h b/arch/arm64/include/asm/mmu.h
-index 6e8aa8e72601..49f1a810df16 100644
---- a/arch/arm64/include/asm/mmu.h
-+++ b/arch/arm64/include/asm/mmu.h
-@@ -17,6 +17,13 @@
- #include <linux/refcount.h>
- #include <asm/cpufeature.h>
- 
-+enum pgtable_type {
-+	TABLE_PTE,
-+	TABLE_PMD,
-+	TABLE_PUD,
-+	TABLE_P4D,
-+};
-+
- typedef struct {
- 	atomic64_t	id;
- #ifdef CONFIG_COMPAT
-diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
-index 9ad065f15f1d..e49d142a281f 100644
---- a/arch/arm64/kernel/cpufeature.c
-+++ b/arch/arm64/kernel/cpufeature.c
-@@ -84,6 +84,7 @@
- #include <asm/hwcap.h>
- #include <asm/insn.h>
- #include <asm/kvm_host.h>
-+#include <asm/mmu.h>
- #include <asm/mmu_context.h>
- #include <asm/mte.h>
- #include <asm/hypervisor.h>
-@@ -1945,11 +1946,11 @@ static bool has_pmuv3(const struct arm64_cpu_capabilities *entry, int scope)
- extern
- void create_kpti_ng_temp_pgd(pgd_t *pgdir, phys_addr_t phys, unsigned long virt,
- 			     phys_addr_t size, pgprot_t prot,
--			     phys_addr_t (*pgtable_alloc)(int), int flags);
-+			     phys_addr_t (*pgtable_alloc)(enum pgtable_type), int flags);
- 
- static phys_addr_t __initdata kpti_ng_temp_alloc;
- 
--static phys_addr_t __init kpti_ng_pgd_alloc(int shift)
-+static phys_addr_t __init kpti_ng_pgd_alloc(enum pgtable_type type)
- {
- 	kpti_ng_temp_alloc -= PAGE_SIZE;
- 	return kpti_ng_temp_alloc;
-diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
-index 34e5d78af076..183801520740 100644
---- a/arch/arm64/mm/mmu.c
-+++ b/arch/arm64/mm/mmu.c
-@@ -47,13 +47,6 @@
- #define NO_CONT_MAPPINGS	BIT(1)
- #define NO_EXEC_MAPPINGS	BIT(2)	/* assumes FEAT_HPDS is not used */
- 
--enum pgtable_type {
--	TABLE_PTE,
--	TABLE_PMD,
--	TABLE_PUD,
--	TABLE_P4D,
--};
--
- u64 kimage_voffset __ro_after_init;
- EXPORT_SYMBOL(kimage_voffset);
- 
 -- 
-2.34.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
