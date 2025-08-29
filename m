@@ -1,182 +1,272 @@
-Return-Path: <linux-kernel+bounces-791332-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA3A1B3B590
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 10:10:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D0E7B3B595
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 10:11:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C963F1B23FA5
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 08:10:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 078AA563FD4
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 08:11:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A4D02853EF;
-	Fri, 29 Aug 2025 08:10:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB385286D66;
+	Fri, 29 Aug 2025 08:11:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="bcMPcHi0"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="Nssw6Ra7"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2789F2848AF
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 08:09:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CB20262FC7
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 08:11:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756455000; cv=none; b=t5zUibkLl4RpE7fDsZ8g8CybhBQV/3FxFqQEzm9rKRAtRSRPQNezfBYPot6VsX6yaNtkXwdT9lm9LV9Kk+kXiW5BfJZv+dnPb5KQW+XoFY4JC6L4+856zSudAMqT9QCZ2xf4RBnLqZ21OHG3WQiNH5K1O0g8vBKN5PiiQXYaX7M=
+	t=1756455109; cv=none; b=u4D5aAGcHknay+3WmKLQBADYtr3MDaJ7yOZHLCk5i2CcCuGgyDlQgegZqsqQ2C/6PmvUmCH+JAETGi3Sormto1dZ3uNDHdEF7JeJHkfM1HrZ4OH/R00oRaZIJ6+f4SntHaJfGhfS/Cg3sXfmMaXG4SBRjPfzMW5E8gc+3snWfvk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756455000; c=relaxed/simple;
-	bh=z1h03GLNdXLleb5z+38xr8uADY1LeMbzAyZCQ9BdpzM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lvHexRWnBahj96c107FYLC6g7ukebjC22QrE3+5W4huoDSe8OTbZCL2Go/vJh3RQpQV2CnBvyihtb7ZNrsD/Rc7V6Wikjr6SF8ECfXI5MB9rXd5/RGDd1AlEMZbzteT6T6UurYqbRtF9jWW7kFrZTNPqiLKyZ5VshvtTpUgxTyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=bcMPcHi0; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57T85UV0027188
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 08:09:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=bsv6NnJRTxJOMkJMe1wyAAiF
-	Gmai0uCSvzMJL+nXi6A=; b=bcMPcHi0eahG31DYTlJndkJKxsFmOJaQJjCfgPiw
-	oRy7USpQH2G0MGhGU5YZKKaaVJ3vfXA3fqqofwPhwmx1U9Df4O4vt00xR8DXLYEL
-	yCWAy9+fqOVRJ9jMjExYyBuq8Ng3f6sg7GNb6O9xLFlX88EUJk5bzbzyh45Ex4cB
-	xyZV0IeywDMFfdqGfrM+VeHp+YXvKBPzuiLNlUarVK8gU1M6BRHD8vjRhRhDdVes
-	npFNYg+cu9tBlNRqsMZMDW6IQ36xlGk6nQYjPI3/7trdnNA1wK18V8kiuhlo+MPi
-	xMOht9UkYecWW5Nx/gPIkP8Rc5MkAo5C8P5Sq6cGCzLmEA==
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48tbpgn10g-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 08:09:57 +0000 (GMT)
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4b109be525eso39740791cf.2
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 01:09:57 -0700 (PDT)
+	s=arc-20240116; t=1756455109; c=relaxed/simple;
+	bh=zCQNH4BaPyBqGMdV3nBlmP+DVxgOOo7vm3MMkIdKiLc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=SywRMP8Lq1UNKmz1EEPn6rr9WH1xhRvvCABcJt05RaXB2TkvJj//6qKNz/s9qBIpatUXAB9bskiV7mu9up20ry5tw3ZclSbLqwcf6TRNDqIy1tQ2U608VStRdJXacYMX2/03tUMTVPPSvYBUa08UXyV8T6l3jYL6jhzaCp/kfmQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=Nssw6Ra7; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-7722bcb989aso469705b3a.1
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 01:11:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1756455107; x=1757059907; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=pEbfSaBfjchfdJ7NFoKvsnY+rm5fzrc9wpWffuZATUQ=;
+        b=Nssw6Ra7aW3W10w40/mSgjauB35vhORSutL6PEtYFrLI9Zw1m5gsU64VpJ1iEcRqAo
+         Sw4nj9MAkxbP3TgJaoJVMMZ8LbmxSyfg9tRoljamxNlDIJZO6v9EztU3y5O3KWnAin2m
+         Z26425g2VRAz0HpKfiUOQWa+wnQz1nhB/Yzpyhnoki3dFVjfqraLqkDX1lUsAyxRDOnm
+         kBa6lU5DAV9Cr6cj6o42y5tX9ZGfG36gG9I8L7+Ot+GzpchB3nCl+91fcvTUYSWBW9Oo
+         wH5XC2pkywhM+v4WtpMef+v58E+9vzNEVPSwciru6OmGq5MQcalkXlXy7sH2Qu5X5wjs
+         3RsA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756454997; x=1757059797;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bsv6NnJRTxJOMkJMe1wyAAiFGmai0uCSvzMJL+nXi6A=;
-        b=CbpVt8QQzh4c0k/uL7kO8DvKfyE6DIfATaFwXxCw74HjcRQrMg6tINGWmIXaGNJjcO
-         EFkJ/8n6hwsU/uTnLOlqchQSHjjCV9vVC98mxPiOCL1Be4/xjaQfpjd8bOblPLDfWUBO
-         PhfTyfV8yCGzBCEKmFlsZ/9fug41FEoaMjx0LFAvFXAmOwagmTp6vHNv64efym3l9icj
-         WsW3XCamA0GYuMtcMzmRckAygE1TDvYO9sS5NYOFqS/yPSLjQfbxbCRnhP2xWGecRlYI
-         GOkbQEyaqUAFx/rcR2dQgxijwakgWwx/9W8Y4TNEhkassTtJ2P76ug1TtSMh5BvmpUrz
-         vCCg==
-X-Forwarded-Encrypted: i=1; AJvYcCXW9pCdtnIbgVHTrxE7SVnZMjRiMFpFNMNiNfPeMD2pms/sAiXLvshd8X7uqplwg8o98j+EETrZVPc5kuo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbVp+sHjcw6LUP4iYj6kc03cS+znI8dwAeV1We92zG/Hh7iOE7
-	2aqVgvdxQ9AJNpfbyHKVQ4CPTfe9kWCWosrrnVb4RAI8mPIKOsERZKYqoOoBaqX5L3Ks2/iXrzC
-	aDVyK7I2ZV+qQ3LwtTjqq5SC8YGNT9216NScumeBJ8hNatv/EJheg1USYeLDHqajjwoM=
-X-Gm-Gg: ASbGnctl0r5PRdA6k6WzVFv2F4LjqtZnQHZ4iSPT7YN3plPNVoABoxhve3l6lPo+Dj6
-	8R6zJXoOYNqn2TaH1UwSu83fVLLSZB6NZI95/lFwPPx3uoQSwkJscB9unWnP0Yqude9OPG3fMVr
-	ZThMzODqHvVXW8Jgw5/IYtaG1i1jiju7krjGIPhVTssuX7C6qzsvoW3t6B6/kDO+wtfxOCT86Yv
-	v4tUGbFCOvF3A6l81ZAuPyvPI7uoDiQ/lTFMVy4vunWakeuu6xSLIC+deDMN1UP9QqUgcz//Vu6
-	bjGjL01UEODRQLtkhzQzPlzhJRfCjopztmVReLy2xhzM5lkX/OdJ1ShzJyeZWkfOlKfAHAjkv/Q
-	jlBMWYhyp//7igX2yrnaoV52sDYIAVzKxI6SV8t8UjIbH5d9mGBQT
-X-Received: by 2002:a05:622a:249:b0:4b2:e151:a1e3 with SMTP id d75a77b69052e-4b2ea694690mr119134261cf.36.1756454997057;
-        Fri, 29 Aug 2025 01:09:57 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEQwcGrf8Uq6ErZTLA64qML9AZfcxsKmHVxxEtfjH1059x26sGs3RoBSkASHz9bNHu8//dSdQ==
-X-Received: by 2002:a05:622a:249:b0:4b2:e151:a1e3 with SMTP id d75a77b69052e-4b2ea694690mr119133841cf.36.1756454996508;
-        Fri, 29 Aug 2025 01:09:56 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55f676dc52esm451242e87.8.2025.08.29.01.09.55
+        d=1e100.net; s=20230601; t=1756455107; x=1757059907;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pEbfSaBfjchfdJ7NFoKvsnY+rm5fzrc9wpWffuZATUQ=;
+        b=iip9iw1j/Nl/u1SN1bFvy/qB9EYwAWYKyczJ0FuBNEiEkRa65+VV/M/1xLeiaGdAw0
+         zw2Vc+Br9Hxu19eq5NMShxX/AbvQKurV1p5a9jdmYP702z69dPNx7w6SnAlh+p0ZY1q5
+         PinxsP+AEe/ApMPnaG0rl4Av9HS0Ztu1uUx2OEq+Rhcxj/znA0ZlJcVJ034OR59j4k1v
+         zXVDCmIRnT9TPGi13qCl9rO3RROY9YtdE4glFwCKkQcH9GyU41l13KsH+lvLgr37rJLO
+         7prfamVtRiBZH5qkCh4gochLpCV20A7ET9sT+V8hhHVZ5Wryht7BTLUxRMMTMM4rOdsb
+         hGbw==
+X-Gm-Message-State: AOJu0Yyy2ZwDQycvxz5Hl2gHKKp/e6TTRAJWdaxzbn9HrFb6oYmk4C/1
+	fxeJX/i7RVvqzemadE544dxaSj1VUsfoeuWOQsLgAQoKWWESDNYzctBZoKXNx7PWAw==
+X-Gm-Gg: ASbGncsx9fBAQbbRHthbwDq98lzZ2SoIWoOedwPgGdBQLFjYIVi7VbUCzaHGyy/j9cr
+	9XEUwzwD4CTHUKp2a5G/YYM/Mw8wB/tXvmXpxHZZTIXwIsE9GtCU0Jv1HnkJBxZWcF7Tf2eqYNf
+	TompS9CxP92q6Qxrke183pLbDMvhUCFFl04x5PcL+fb8OOi971lGkw/ycgxcIxMs07H7k2H5+r3
+	nwpPNWDHXZ5Y2sq811hgnx4gbdalVeO6bMYN8dwv+QTcSgCzb7c7dsJqus8NvL9jSLMGUxLGCWz
+	qMi+A/CI3X9R8ltbqTctPRXRyhuFQEjFXjZ6XXTTc4PUMrIFEo5X0Mf2RgFVI2dv7TUYUMICiUn
+	BgqkG8VrnqNmzWX1gGxJAquJjGXrpBZQ7q5bQeZ5u2gUkwAsUrdyUUIsz73O+581rsBZriZq6Lp
+	5VH+s=
+X-Google-Smtp-Source: AGHT+IG306jMTmeTZo1H5yp0x7w9unfYixS0fxAixXPsE7iNgqGlOSVWOFQj2uOznIdNoxkjJvFf+Q==
+X-Received: by 2002:a05:6a00:18a9:b0:772:553:934b with SMTP id d2e1a72fcca58-77205539ac5mr12488658b3a.31.1756455107120;
+        Fri, 29 Aug 2025 01:11:47 -0700 (PDT)
+Received: from 5CG4011XCS-JQI.bytedance.net ([61.213.176.55])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7722a2da9c6sm1601419b3a.42.2025.08.29.01.11.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Aug 2025 01:09:55 -0700 (PDT)
-Date: Fri, 29 Aug 2025 11:09:53 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>, jic23@kernel.org,
-        robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-        agross@kernel.org, andersson@kernel.org, lumag@kernel.org,
-        konradybcio@kernel.org, daniel.lezcano@linaro.org, sboyd@kernel.org,
-        amitk@kernel.org, thara.gopinath@gmail.com, lee@kernel.org,
-        rafael@kernel.org, subbaraman.narayanamurthy@oss.qualcomm.com,
-        david.collins@oss.qualcomm.com, anjelique.melendez@oss.qualcomm.com,
-        kamal.wadhwa@oss.qualcomm.com, rui.zhang@intel.com,
-        lukasz.luba@arm.com, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-iio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        cros-qcom-dts-watchers@chromium.org, quic_kotarake@quicinc.com,
-        neil.armstrong@linaro.org, stephan.gerhold@linaro.org
-Subject: Re: [PATCH V7 0/5] Add support for QCOM SPMI PMIC5 Gen3 ADC
-Message-ID: <zgm2k2osmasdal6anba66pw24a7fiypgwlf3c36kvteshz7uef@wee4had7x54u>
-References: <20250826083657.4005727-1-jishnu.prakash@oss.qualcomm.com>
- <20250829-demonic-soft-guppy-512c13@kuoka>
+        Fri, 29 Aug 2025 01:11:46 -0700 (PDT)
+From: Aaron Lu <ziqianlu@bytedance.com>
+To: Valentin Schneider <vschneid@redhat.com>,
+	Ben Segall <bsegall@google.com>,
+	K Prateek Nayak <kprateek.nayak@amd.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Chengming Zhou <chengming.zhou@linux.dev>,
+	Josh Don <joshdon@google.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Xi Wang <xii@google.com>
+Cc: linux-kernel@vger.kernel.org,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Mel Gorman <mgorman@suse.de>,
+	Chuyi Zhou <zhouchuyi@bytedance.com>,
+	Jan Kiszka <jan.kiszka@siemens.com>,
+	Florian Bezdeka <florian.bezdeka@siemens.com>,
+	Songtang Liu <liusongtang@bytedance.com>,
+	Chen Yu <yu.c.chen@intel.com>,
+	Matteo Martelli <matteo.martelli@codethink.co.uk>,
+	=?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: [PATCH v4 0/5] Defer throttle when task exits to user
+Date: Fri, 29 Aug 2025 16:11:15 +0800
+Message-Id: <20250829081120.806-1-ziqianlu@bytedance.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250829-demonic-soft-guppy-512c13@kuoka>
-X-Proofpoint-GUID: qFs3lpMaATr9YssGnJ5h1AaufVRSUvVt
-X-Proofpoint-ORIG-GUID: qFs3lpMaATr9YssGnJ5h1AaufVRSUvVt
-X-Authority-Analysis: v=2.4 cv=G7gcE8k5 c=1 sm=1 tr=0 ts=68b16055 cx=c_pps
- a=JbAStetqSzwMeJznSMzCyw==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=nrI73Fic2Yz_lu5inCMA:9
- a=CjuIK1q_8ugA:10 a=uxP6HrT_eTzRwkO_Te1X:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODI3MDE5OSBTYWx0ZWRfX6s0nMndARCh3
- OzD4Z1hmHCggniHriJzF0St1BZ8RVFsd/2XHQlhhIap07/YdmpX/MVjGn7fE4JXU+V0V0/p2eEP
- uaZDqcSce9pNe9C8MIJowUF/cbOMncoy7BJ9BvowBoG/DbqdPGtkM4x2tFRgZiLTGl7YlEzwXgM
- 6rAnSuveDVoTs+C+cALoaVwbwfGF2nUrlE6p4QAY3K7cR8zywTIdE4McSciEJUxZ4jHYOko1yRZ
- SaqG6dAly8vJnVCVTF9QDThwXE7O9xiShjrDzYPE+0Kr4rfedn9e4LqCB+7j2hjyr0VKOoII+s9
- mcmxNo9wEpYqhD74NAJPR5MgLSDurlAw9cmjcZ6suMlRs43m27rMHXS4z3LrkACql95KyFj7Qx1
- WGAyswG2
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-29_02,2025-08-28_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 phishscore=0 priorityscore=1501 adultscore=0 impostorscore=0
- bulkscore=0 suspectscore=0 clxscore=1015 spamscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508270199
+Content-Transfer-Encoding: 8bit
 
-On Fri, Aug 29, 2025 at 09:12:59AM +0200, Krzysztof Kozlowski wrote:
-> On Tue, Aug 26, 2025 at 02:06:52PM +0530, Jishnu Prakash wrote:
-> >  create mode 100644 drivers/iio/adc/qcom-spmi-adc5-gen3.c
-> >  create mode 100644 drivers/thermal/qcom/qcom-spmi-adc-tm5-gen3.c
-> >  create mode 100644 include/dt-bindings/iio/adc/qcom,pm8550-adc5-gen3.h
-> >  create mode 100644 include/dt-bindings/iio/adc/qcom,pm8550b-adc5-gen3.h
-> >  create mode 100644 include/dt-bindings/iio/adc/qcom,pm8550vx-adc5-gen3.h
-> >  create mode 100644 include/dt-bindings/iio/adc/qcom,pmk8550-adc5-gen3.h
-> >  rename include/dt-bindings/iio/{ => adc}/qcom,spmi-adc7-pm7325.h (98%)
-> >  rename include/dt-bindings/iio/{ => adc}/qcom,spmi-adc7-pm8350.h (98%)
-> >  rename include/dt-bindings/iio/{ => adc}/qcom,spmi-adc7-pm8350b.h (99%)
-> >  rename include/dt-bindings/iio/{ => adc}/qcom,spmi-adc7-pmk8350.h (97%)
-> >  rename include/dt-bindings/iio/{ => adc}/qcom,spmi-adc7-pmr735a.h (95%)
-> >  rename include/dt-bindings/iio/{ => adc}/qcom,spmi-adc7-pmr735b.h (95%)
-> >  rename include/dt-bindings/iio/{ => adc}/qcom,spmi-adc7-smb139x.h (93%)
-> >  rename include/dt-bindings/iio/{ => adc}/qcom,spmi-vadc.h (78%)
-> >  create mode 100644 include/linux/iio/adc/qcom-adc5-gen3-common.h
-> > 
-> > 
-> > base-commit: 0f4c93f7eb861acab537dbe94441817a270537bf
-> 
-> What's the base commit?
-> 
-> git show 0f4c93f7eb861acab537dbe94441817a270537bf
-> fatal: bad object 0f4c93f7eb861acab537dbe94441817a270537bf
+v4:
+- Add cfs_bandwidth_used() in task_is_throttled() and remove unlikely
+  for task_is_throttled(), suggested by Valetin Schneider;
+- Add a warn for non empty throttle_node in enqueue_throttled_task(),
+  suggested by Valetin Schneider;
+- Improve comments in enqueue_throttled_task() by Valetin Schneider;
+- Clear throttled for to-be-unthrottled tasks in tg_unthrottle_up();
+- Change throttled and pelt_clock_throttled fields in cfs_rq from int to
+  bool, reported by LKP;
+- Improve changelog for patch4 by Valetin Schneider.
 
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?h=next-20250822&id=0f4c93f7eb861acab537dbe94441817a270537bf
+Thanks a lot for all the reviews and tests, I hope I didn't miss any of
+them but if I do, please let me know. I've also run Jan's rt reproducer
+and songtang's stress test and didn't notice any problem.
 
-> 
-> 
-> b4 diff fails here, so you are not making this process easier for us.
-> 
-> b4 diff '20250826083657.4005727-1-jishnu.prakash@oss.qualcomm.com'
-> Grabbing thread from lore.kernel.org/all/20250826083657.4005727-1-jishnu.prakash@oss.qualcomm.com/t.mbox.gz
-> Checking for older revisions
-> Grabbing search results from lore.kernel.org
->   Added from v6: 6 patches
-> ---
-> Analyzing 53 messages in the thread
-> Preparing fake-am for v6: dt-bindings: iio/adc: Move QCOM ADC bindings to iio/adc folder
-> ERROR: Could not fake-am version v6
-> ---
-> Could not create fake-am range for lower series v6
-> 
-> > 
+Apply on top of sched/core, head commit 1b5f1454091e("sched/idle: Remove
+play_idle()").
 
+v3:
+- Keep throttled cfs_rq's PELT clock run as long as it still has entity
+  queued, suggested by Benjamin Segall; I've folded this change into
+  patch3;
+- Rebased on top of tip/sched/core, commit 2885daf47081
+  ("lib/smp_processor_id: Make migration check unconditional of SMP").
+
+Hi Prateek,
+I've kept your tested-by tag(Thanks!) for v2 since I believe this pelt
+clock change should not affect things much, but let me know if you don't
+think that is appropriate.
+
+Tests I've done:
+- Jan's rt deadlock reproducer[1]. Without this series, I saw rcu-stalls
+  within 2 minutes and with this series, I do not see rcu-stalls after
+  10 minutes.
+- A stress test that creates a lot of pressure on fork/exit path and
+  cgroup_threadgroup_rwsem. Without this series, the test will cause
+  task hung in about 5 minutes and with this series, no problem found
+  after several hours. Songtang wrote this test script and I've used it
+  to verify the patches, thanks Songtang.
+
+[1]: https://lore.kernel.org/all/7483d3ae-5846-4067-b9f7-390a614ba408@siemens.com/
+
+Below is previous changelogs:
+
+v2:
+- Re-org the patchset to use a single patch to implement throttle
+  related changes, suggested by Chengming;
+- Use check_cfs_rq_runtime()'s return value in pick_task_fair() to
+  decide if throttle task work is needed instead of checking
+  throttled_hierarchy(), suggested by Peter;
+- Simplify throttle_count check in tg_throtthe_down() and
+  tg_unthrottle_up(), suggested by Peter;
+- Add enqueue_throttled_task() to speed up enqueuing a throttled task to
+  a throttled cfs_rq, suggested by Peter;
+- Address the missing of detach_task_cfs_rq() for throttled tasks that
+  get migrated to a new rq, pointed out by Chengming;
+- Remove cond_resched_tasks_rcu_qs() in throttle_cfs_rq_work() as
+  cond_resched*() is going away, pointed out by Peter.
+I hope I didn't miss any comments and suggestions for v1 and if I do,
+please kindly let me know, thanks!
+
+Base: tip/sched/core commit dabe1be4e84c("sched/smp: Use the SMP version
+of double_rq_clock_clear_update()")
+
+cover letter of v1:
+
+This is a continuous work based on Valentin Schneider's posting here:
+Subject: [RFC PATCH v3 00/10] sched/fair: Defer CFS throttle to user entry
+https://lore.kernel.org/lkml/20240711130004.2157737-1-vschneid@redhat.com/
+
+Valentin has described the problem very well in the above link and I
+quote:
+"
+CFS tasks can end up throttled while holding locks that other,
+non-throttled tasks are blocking on.
+
+For !PREEMPT_RT, this can be a source of latency due to the throttling
+causing a resource acquisition denial.
+
+For PREEMPT_RT, this is worse and can lead to a deadlock:
+o A CFS task p0 gets throttled while holding read_lock(&lock)
+o A task p1 blocks on write_lock(&lock), making further readers enter
+the slowpath
+o A ktimers or ksoftirqd task blocks on read_lock(&lock)
+
+If the cfs_bandwidth.period_timer to replenish p0's runtime is enqueued
+on the same CPU as one where ktimers/ksoftirqd is blocked on
+read_lock(&lock), this creates a circular dependency.
+
+This has been observed to happen with:
+o fs/eventpoll.c::ep->lock
+o net/netlink/af_netlink.c::nl_table_lock (after hand-fixing the above)
+but can trigger with any rwlock that can be acquired in both process and
+softirq contexts.
+
+The linux-rt tree has had
+  1ea50f9636f0 ("softirq: Use a dedicated thread for timer wakeups.")
+which helped this scenario for non-rwlock locks by ensuring the throttled
+task would get PI'd to FIFO1 (ktimers' default priority). Unfortunately,
+rwlocks cannot sanely do PI as they allow multiple readers.
+"
+
+Jan Kiszka has posted an reproducer regarding this PREEMPT_RT problem :
+https://lore.kernel.org/r/7483d3ae-5846-4067-b9f7-390a614ba408@siemens.com/
+and K Prateek Nayak has an detailed analysis of how deadlock happened:
+https://lore.kernel.org/r/e65a32af-271b-4de6-937a-1a1049bbf511@amd.com/
+
+To fix this issue for PREEMPT_RT and improve latency situation for
+!PREEMPT_RT, change the throttle model to task based, i.e. when a cfs_rq
+is throttled, mark its throttled status but do not remove it from cpu's
+rq. Instead, for tasks that belong to this cfs_rq, when they get picked,
+add a task work to them so that when they return to user, they can be
+dequeued. In this way, tasks throttled will not hold any kernel resources.
+When cfs_rq gets unthrottled, enqueue back those throttled tasks.
+
+There are consequences because of this new throttle model, e.g. for a
+cfs_rq that has 3 tasks attached, when 2 tasks are throttled on their
+return2user path, one task still running in kernel mode, this cfs_rq is
+in a partial throttled state:
+- Should its pelt clock be frozen?
+- Should this state be accounted into throttled_time?
+
+For pelt clock, I chose to keep the current behavior to freeze it on
+cfs_rq's throttle time. The assumption is that tasks running in kernel
+mode should not last too long, freezing the cfs_rq's pelt clock can keep
+its load and its corresponding sched_entity's weight. Hopefully, this can
+result in a stable situation for the remaining running tasks to quickly
+finish their jobs in kernel mode.
+
+For throttle time accounting, according to RFC v2's feedback, rework
+throttle time accounting for a cfs_rq as follows:
+- start accounting when the first task gets throttled in its
+  hierarchy;
+- stop accounting on unthrottle.
+
+There is also the concern of increased duration of (un)throttle operations
+in RFC v1. I've done some tests and with a 2000 cgroups/20K runnable tasks
+setup on a 2sockets/384cpus AMD server, the longest duration of
+distribute_cfs_runtime() is in the 2ms-4ms range. For details, please see:
+https://lore.kernel.org/lkml/20250324085822.GA732629@bytedance/
+For throttle path, with Chengming's suggestion to move "task work setup"
+from throttle time to pick time, it's not an issue anymore.
+
+Aaron Lu (2):
+  sched/fair: Task based throttle time accounting
+  sched/fair: Get rid of throttled_lb_pair()
+
+Valentin Schneider (3):
+  sched/fair: Add related data structure for task based throttle
+  sched/fair: Implement throttle task work and related helpers
+  sched/fair: Switch to task based throttle model
+
+ include/linux/sched.h |   5 +
+ kernel/sched/core.c   |   3 +
+ kernel/sched/fair.c   | 458 ++++++++++++++++++++++++------------------
+ kernel/sched/pelt.h   |   4 +-
+ kernel/sched/sched.h  |   7 +-
+ 5 files changed, 280 insertions(+), 197 deletions(-)
+
+
+base-commit: 1b5f1454091e9e9fb5c944b3161acf4ec0894d0d
 -- 
-With best wishes
-Dmitry
+2.39.5
+
 
