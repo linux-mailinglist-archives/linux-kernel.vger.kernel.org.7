@@ -1,201 +1,153 @@
-Return-Path: <linux-kernel+bounces-792273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 229A1B3C21B
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 19:55:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 826EDB3C223
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 19:58:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 737757A759F
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 17:53:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1EA0F7AC94D
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 17:56:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13D3833A02B;
-	Fri, 29 Aug 2025 17:55:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14A8234164C;
+	Fri, 29 Aug 2025 17:58:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BlwZ0N45"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OZiFrf6e"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A45381EBA1E
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 17:55:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAAF233A02B;
+	Fri, 29 Aug 2025 17:58:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756490109; cv=none; b=kJTHzflWkNIODtql5vf1FxccBrdTmIh/JcEHdXqWoRs09bXy0WG6oD+529Z5NsUm8R+hxONJIfl9kNE7AE18f9AiPFrE6g2AGf1jQSL2QDnrt2EcTHeIVMbrsYaJtpvsBvb6k9PEDJlmm6RPNYDXhw3frAqUMdQ0wFec6jDONYA=
+	t=1756490285; cv=none; b=MRsq5MVaGqSPgM+PNeaxHftnWinbDDhRfmLHLKs4bQhpGfMmnubdRjPZNRv412c5OLIZbGZCb/LTMrs4nEVqVAQ5WZOc/hjZPXak0JzAbFaEFqzbNXntVugXbQ0+TOYdWLWTpW+0OIq7HDc8qiEc/RLhqmPJBmyRLsgMAJWzvHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756490109; c=relaxed/simple;
-	bh=Uwfk0eHlwy8uZBuSLQVz0BnRvrohIY9rbFsbOsDSybo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rgC/PLRhnpTs9i4wsxsAEg8iSPhrMavf8U9aHP9Zeox2JweLK+xWs0pCrwYZUe4+j++zQg0blhDH2fyscpa143VNYWz9WKOBYCsIZavdbS1hemGQCButLjtRiN+NzDE5uRMjaYsRbM8GOcmXM/xNJ9fU/odWfLKWrmTecszqS7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BlwZ0N45; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756490106;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=jyzU+Xmz+mrM28lik6eJAvyGeC0q+6spzdXmD+VryPk=;
-	b=BlwZ0N45vob/nHmS+2ZbmWtvoUve5TkLwgvBhCRcFSF1LMk2sxEwm5Uc3PlXbb9wPumjQp
-	4MSMEZNsuqU+hVOhslWbJOlHVYkJZdKBltm8jP9MmcVr92NbDDC/rSCtZ4MldOqrOOBs6D
-	uAXw4iR2E/9Jn22v+1mHNCJER8NpUuA=
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
- [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-526-QBODTy5dMbe-iADCd_YU5g-1; Fri, 29 Aug 2025 13:55:02 -0400
-X-MC-Unique: QBODTy5dMbe-iADCd_YU5g-1
-X-Mimecast-MFC-AGG-ID: QBODTy5dMbe-iADCd_YU5g_1756490101
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-70dff062d38so24655936d6.1
-        for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 10:55:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756490101; x=1757094901;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+	s=arc-20240116; t=1756490285; c=relaxed/simple;
+	bh=I5OY4LFNqLLPDVxAMmWT8dvCgWbSg5IxhOzBtc0iMzg=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=p4pg10kBXksLAD5fz639JohnFxnAoGi8mdgR2yB/cIof5ipQDfFoRHUmXTBAbrW1WlGjgJXWfJv3AfQQDpf5SOn8Ja1d/7kkMavujMfLoZ9wN0dpclZa+hqg9NSZYhu7HTRAHq31bJYMxA9l/UwVKzVzMdlwYe+XB22IPpsPcnE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OZiFrf6e; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-afcb72d5409so411527966b.0;
+        Fri, 29 Aug 2025 10:58:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756490282; x=1757095082; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:references
+         :in-reply-to:user-agent:subject:cc:to:from:date:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=jyzU+Xmz+mrM28lik6eJAvyGeC0q+6spzdXmD+VryPk=;
-        b=MzGjU3h82RvXHC/SngW3uJ9V7qdTKguyj0RTISCbmAGGMQPYTGzHpZ4KsWYYAwfNkJ
-         rdJQiMZkj6Eu3vP7Z+F8B0jIJbrRTrtflJnV4Zvlxg+56BbiMXqfM815xAi25mp1KxRm
-         yD4bKcPZCh5uPFO+EZ7Qa91R2tqPOQQXcnIpQ17Ux3twh+I8tKaW+pTx+F5YnkkgDPiX
-         ntkzupQ2ArHn2k+OKooXhvHc7PRk3nQSj2uE3+P5qc/A9GWnJiA9gx+Du0tKgzSvH3/i
-         SJN56WVFOd9pDiFhxkPUeEpQUjkTRdV+X9Vt6wN7fJAFqKFbHjDV7HzuK+WlCHkww7uM
-         F+9g==
-X-Gm-Message-State: AOJu0YyzlQC9ipcN5z6+nNl+jtabX4nMdrgTkAf4tAQjB9UNUnKbYoWx
-	mHcGjVOlqkSa5Jumn5z3qrxMHT/+pW7dX4qAuVpf7bGh7pQqRm1Pyzf3rddWqi5Gt5jSGsoAKTI
-	T4pv0bXCqbh7Wz/lKDBROBcxfxSoUNOpmvflIwAAZRmGV/d3lq/DR50axHLQhOSjxhQ/YUy2tcg
-	==
-X-Gm-Gg: ASbGncs+X9lGgeLosTA7Xjmhc/4rLpLFUL9sMcgvTu8N4IscsVhqs8COu7pw1SOY9OA
-	SN+yvC19p9KtY0StWdG9tr3F3UuTjV45GorBwmgR6kOSwXh/5v/wxKNjukZ/gw0ZNLUyz6O12pI
-	QEyQTEtzRDuWHRckbPVDIObkhoZxgtiZ4nMvS4H3Vql6Ipysg9wt5gzf+YTLKGv4/zjEXDZ8269
-	dT2N7zLB7AAC1eN5B1nrelhG8HdUPV809/Zioi2VFdWzBA1ypv1ezk7Xm6F9q+koEx4Dbg11ftn
-	lbEAzbcSG2CH7SV5WFwUtmYMWHjUmwAg8rgYVtQj
-X-Received: by 2002:a05:6214:1c48:b0:70d:c11c:a3db with SMTP id 6a1803df08f44-70dc11ca50bmr198796756d6.40.1756490101026;
-        Fri, 29 Aug 2025 10:55:01 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGQ60N52NE9MsMKOUYhrxRpFVIMIApl2YHvF2jXFyrCBGlXMOIM4upwu4noHWLIqcnjg2FqRQ==
-X-Received: by 2002:a05:6214:1c48:b0:70d:c11c:a3db with SMTP id 6a1803df08f44-70dc11ca50bmr198796476d6.40.1756490100517;
-        Fri, 29 Aug 2025 10:55:00 -0700 (PDT)
-Received: from [192.168.0.241] ([198.48.244.52])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-70e6250cc5dsm19769566d6.54.2025.08.29.10.54.58
+        bh=awljRsOqs8zmeNHYRoc+5rBvpq/dx6uCVPg6gUVT0+I=;
+        b=OZiFrf6e9Jjn1530oCX4PWJlu9/iro3fcM412I8cluZ1EozinH4nTgzRFbO/nHyEWx
+         pXg5QuBbzCj5CpSJsiewYzrNUY5iLSn26vbXSEkna9kxcuGPYpk+9wpU6at0xxyna/Bk
+         eDEDQNgzWQVDV2C4DkNfN/190TvjtIXI/3oKRcsK1TwWsyFh4KUnHXCdu9NBNhQaZTOk
+         gvzV/2xUOZKhWNjs9T6CsARvr//vil+PIBqE5XaIoBgoZaSH5unPvNe//r44uzUXASre
+         1ys1IJBx7PMpHVeC2wA7FkRlnAGCLuADnFtvWT++DVu9nZ5RRKTyWPD7BhOfvpKpI+oY
+         yRCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756490282; x=1757095082;
+        h=content-transfer-encoding:mime-version:message-id:references
+         :in-reply-to:user-agent:subject:cc:to:from:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=awljRsOqs8zmeNHYRoc+5rBvpq/dx6uCVPg6gUVT0+I=;
+        b=cJ7DFfltFN4t9I7mwC7vLLNAqu8of52/g7VBJNZ/LQ6BdRVNmTUvrWR1rT6QsS2jmg
+         hT4OtdUxRDFepR4VMzOery9iNUstlm0xE1U6Op4skMzm5VK+1xe3lTSTimoAT9bOL/3e
+         xldbv3VlOWG3DrQV0MloS0qxY8D5d1lb7ZzmpyoV+XAvAFHh5zFI6ID8cBzSK4OjKHzq
+         +v3M0e0irGw/nQdHDTpn6zSzKc+x3rUS699MdoEn68IxL71ALUYHYp09CQrTHiX+Tugb
+         FjsoCMA5jBNpsDPfihlP9p+45d6YvjNN+nG2Ue6Cuaj5KQPgSuIf7/FZ2J9K+XXuWwjR
+         UulA==
+X-Forwarded-Encrypted: i=1; AJvYcCVJX6qRnCVj1hwHNuelIVqzwHVLwztj39k0uuLyt7ETkAz3Z56ZnNgS3WmfpSbOwrVzPxfOrGnbSgxpRctjHyiT8QA/@vger.kernel.org, AJvYcCVa741gtauBJCM4FWuwN/p/56ds7TyiKSDIbS/T4JRDMUfSO27A4YH1ru7giEiatPhm1II=@vger.kernel.org, AJvYcCVvxFeAp1wyf7rSp4qm7WUMGWH68Qy4gGk1G4/wRZyDRQyekHRk9egxHw7VNG+Wx8MO68snQm6GQj3xRlle@vger.kernel.org
+X-Gm-Message-State: AOJu0YzjftVK4idqkx1j8oLa9guMb2SsuM7tfx3JYdpoQ/IZrJBppt2g
+	zPE5esrDJF5Ii+25Du4h/fxwRTL2aHSM9ULYa1rJkTVHyTLUiU/zmlCe
+X-Gm-Gg: ASbGnctuNxVoHOcVhdRxc+JY9H7V8WR9Lc6CIRctRGV3MclYDlBqVfvVjeWngO0PsWS
+	dCrRXjEla+MW4OFwQUExnZwHsQmir1Dy1V/gqfQG+nSSgUlEjNUqNsfmgLjS/gMSyU/h2zJpS+N
+	JKLsKD1xg/tAfRAIvDfJ0GWJVqmJdW9g2U1TgWe1Yz5R8fYB//fTqKKTSDN6rrLQNE7Ib6eieSA
+	Uoa235OEUhXC8n8JDWSxwPZJBnJu1YNGFT90pAxOK7KbJSgOH9tkG0WcVYK6Ha6waU1A5fuksBU
+	ElDi8zx12YrywJJ1iE37R7bV8CBvTcVQQAGNAUCDziHPULjDbIG6y4AeYIcvJo2d2CG26mh+wqt
+	I/zBpFcZ8XNCBLcPHEIvp28C7ZLGJdW4rA0QW20QJwWKP1jNMmt+uQfU=
+X-Google-Smtp-Source: AGHT+IFFhvEUCgb8MdiqB5hU668wQfYZA1otaPB+NgmfFMTUA8Ozb1vwvDCyI7yEpIjBDdG+r6qzzA==
+X-Received: by 2002:a17:907:e915:b0:afe:63ae:c337 with SMTP id a640c23a62f3a-afe63af7fd3mr2115252566b.57.1756490281728;
+        Fri, 29 Aug 2025 10:58:01 -0700 (PDT)
+Received: from ehlo.thunderbird.net ([31.40.215.52])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afefca0e5e2sm242172766b.38.2025.08.29.10.58.00
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 29 Aug 2025 10:54:59 -0700 (PDT)
-Message-ID: <710e8f05-b0b3-489a-9e89-8967cf6a9e70@redhat.com>
-Date: Fri, 29 Aug 2025 13:54:58 -0400
+        Fri, 29 Aug 2025 10:58:00 -0700 (PDT)
+Date: Fri, 29 Aug 2025 14:57:57 -0300
+From: Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+ Steven Rostedt <rostedt@goodmis.org>
+CC: Steven Rostedt <rostedt@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org, x86@kernel.org,
+ Masami Hiramatsu <mhiramat@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Josh Poimboeuf <jpoimboe@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Andrii Nakryiko <andrii@kernel.org>, Indu Bhagat <indu.bhagat@oracle.com>,
+ "Jose E. Marchesi" <jemarch@gnu.org>,
+ Beau Belgrave <beaub@linux.microsoft.com>, Jens Remus <jremus@linux.ibm.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Florian Weimer <fweimer@redhat.com>, Sam James <sam@gentoo.org>,
+ Kees Cook <kees@kernel.org>, Carlos O'Donell <codonell@redhat.com>
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v6_5/6=5D_tracing=3A_Show_inode_and_devi?=
+ =?US-ASCII?Q?ce_major=3Aminor_in_deferred_user_space_stacktrace?=
+User-Agent: Thunderbird for Android
+In-Reply-To: <CAHk-=wi3muqW7XAEawu+xvvqADMmoqyvmDPYUC_64aCnqz-WLg@mail.gmail.com>
+References: <20250828180300.591225320@kernel.org> <D7C36F69-23D6-4AD5-AED1-028119EAEE3F@gmail.com> <CAHk-=wiBUdyV9UdNYEeEP-1Nx3VUHxUb0FQUYSfxN1LZTuGVyg@mail.gmail.com> <20250828161718.77cb6e61@batman.local.home> <CAHk-=wiujYBqcZGyBgLOT+OWdY3cz7EhbZE0GidhJmLNd9VPOQ@mail.gmail.com> <20250828164819.51e300ec@batman.local.home> <CAHk-=wjRC0sRZio4TkqP8_S+Fr8LUypVucPDnmERrHVjWOABXw@mail.gmail.com> <20250828171748.07681a63@batman.local.home> <CAHk-=wh0LjoJmRPHF41eQ1ZRf085urz+rvQQ-rwp8dLQCdqohw@mail.gmail.com> <20250829110639.1cfc5dcc@gandalf.local.home> <CAHk-=wjeT3RKCTMDCcZzXznuvG2qf0fpKbHKCZuoPzxFYxVcQw@mail.gmail.com> <CAHk-=wjCOWCzXG7Z=wkbLYOOcqFbuZTXSdX2yqCCWWOvanugUg@mail.gmail.com> <20250829123321.63c9f525@gandalf.local.home> <CAHk-=wgv11k-3e8Ee-Vk_KHJMB0S9J1PwHqFUv2X-Z8eFWq8mg@mail.gmail.com> <CAHk-=whbHyKvJ5VSvObfmGSSEukYhv5DZVhR3_-smu_1_b54mg@mail.gmail.com> <20250829130239.61e25379@gandalf.local.home> <CAHk-=wi3muqW7XAEawu+xvvqADMmoqyvmDPYUC_64aCnqz-WLg@mail.gmail.com>
+Message-ID: <24E50A07-EC58-4864-9DB3-E5DB869AD030@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/4] man/man2/futex.2: Recycle two gmane URLs
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: linux-kernel@vger.kernel.org, linux-man@vger.kernel.org,
- Alejandro Colomar <alx@kernel.org>, =?UTF-8?Q?Andr=C3=A9_Almeida?=
- <andrealmeid@igalia.com>, Darren Hart <dvhart@infradead.org>,
- Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>,
- Juri Lelli <juri.lelli@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- Thomas Gleixner <tglx@linutronix.de>,
- Valentin Schneider <vschneid@redhat.com>, Waiman Long <longman@redhat.com>
-References: <20250829160200.756194-1-bigeasy@linutronix.de>
- <20250829160200.756194-4-bigeasy@linutronix.de>
- <1ced3c16-1534-4e43-8025-2301c134bbdd@redhat.com>
- <20250829173928.K82VGvOw@linutronix.de>
-From: Carlos O'Donell <carlos@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=carlos@redhat.com; keydata=
- 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
- m/A+1AHg4g==
-Organization: Red Hat
-In-Reply-To: <20250829173928.K82VGvOw@linutronix.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 8/29/25 1:39 PM, Sebastian Andrzej Siewior wrote:
-> On 2025-08-29 12:43:26 [-0400], Carlos O'Donell wrote:
->>> index 69df4036ada7f..027e91b826bf1 100644
->>> --- a/man/man2/futex.2
->>> +++ b/man/man2/futex.2
->>> @@ -6,10 +6,10 @@
->>>    .\"
->>>    .\" FIXME Still to integrate are some points from Torvald Riegel's mail of
->>>    .\" 2015-01-23:
->>> -.\"       http://thread.gmane.org/gmane.linux.kernel/1703405/focus=7977
->>> +.\"       https://lore.kernel.org/lkml/1422037788.29655.0.camel@triegel.csb
+
+
+On August 29, 2025 2:13:33 PM GMT-03:00, Linus Torvalds <torvalds@linux-fo=
+undation=2Eorg> wrote:
+>On Fri, 29 Aug 2025 at 10:02, Steven Rostedt <rostedt@goodmis=2Eorg> wrot=
+e:
 >>
->> Wrong link?
->>
->> Should be this link:
->> https://lore.kernel.org/lkml/1422037145.27573.0.camel@triegel.csb/
->>
->> Where the discussion is about the unresolved constraint to guarantee FIFO order.
-> 
-> I thought it is the longer email, the second that day, where he made
-> three points. Didn't read it (yet)…
+>> Note, the ring buffer can be mapped to user space=2E So anything writte=
+n into
+>> the buffer is already exposed=2E
+>
+>Oh, good point=2E Yeah, that means that you have to do the hashing
+>immediately=2E Too bad=2E Because while 'vma->vm_file' is basically free
+>(since you have to access the vma for other reasons anyway), a good
+>hash isn't=2E
 
-Given the dates and the disjoint set of topics, my suggestion is the link above.
 
-> Now FIFO ordering you say. Is it glibc's side or kernel side? The kernel
-> sorts the futex waiters according their (task's) priority. It is not
-> FIFO unless the tasks are of equal priority.
+Can't we continue with that idea by using some VMA sequential number that =
+don't expose anything critical to user space but allows us to match stack e=
+ntries to mmap records?
 
-The FIFO order question was a kernel-side question wrt futex semantics.
-At least that's how I read the thread. And the issue was resolved, but possibly
-not documented. Documentation might include stating "FIFO ordering over all
-waiters, or even a subset of waiters (at the same priority level) is not
-guaranteed."
+Deferring the heavily lift to when needed is great=2E
 
-Torvald was right that for POSIX condition variables we would naturally want
-a FIFO wake order so earlier sleepers are woken first.
+- Arnaldo=20
 
-> So a futex requeue will take the task with the highest priority from
-> uaddr1 and move it to uaddr2.
+>
+>siphash is good and fast for being what it is, but it's not completely
+>free=2E It's something like 50 shift/xor pairs, and it obviously needs
+>to also access that secret hash value that is likely behind a cache
+>miss=2E=2E
+>
+>Still, I suspect it's the best we've got=2E
+>
+>(If hashing is noticeable, it *might* be worth it to use
+>'siphash_1u32()' and only hash 32 bits of the pointers=2E That makes the
+>hashing slightly cheaper, and since the low bits of the pointer will
+>be zero anyway due to alignment, and the high bits don't have a lot of
+>information in them either, it doesn't actually remove much
+>information=2E You might get collissions if the two pointers are exactly
+>32 GB apart or whatever, but that sounds really really unlucky)
+>
+>                Linus
 
-Right.
-
--- 
-Cheers,
-Carlos.
-
+- Arnaldo 
 
