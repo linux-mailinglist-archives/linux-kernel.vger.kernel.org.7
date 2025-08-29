@@ -1,97 +1,115 @@
-Return-Path: <linux-kernel+bounces-792262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792263-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46DC2B3C1F8
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 19:41:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E856B3C1FC
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 19:43:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0212716F1A6
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 17:41:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ABC27189C44B
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 17:43:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61D51342C9D;
-	Fri, 29 Aug 2025 17:41:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EFDB342C8A;
+	Fri, 29 Aug 2025 17:43:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dujemihanovic.xyz header.i=@dujemihanovic.xyz header.b="AknN3tTe"
-Received: from mx.olsak.net (mx.olsak.net [37.205.8.231])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qet8Ahmk"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 331F7238C0A;
-	Fri, 29 Aug 2025 17:41:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.205.8.231
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF753238C0A;
+	Fri, 29 Aug 2025 17:43:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756489270; cv=none; b=KQwI5xcaeEEG3u3rIlCPd/jp9QD7xPsKd6amfOoTWrmoumVHLaQBQpht5VD1rEVoMrco40wxtdxa2aCMpkr0W1rhIKxZo/Xuao5v1i56XJvUP4SJeNeatgBEUeZS5Qip4aGc1KMMKgl4jNqeE1vrQFdNyBXAFy6Ydmf9E2Sx3Ts=
+	t=1756489383; cv=none; b=rGg2c6iv1VpJnuNKdYwJyAiy7T4CrWZxnyFi/tFGd/8rejJkswlD2B7dN0BeURkt3CmRYBrNK4vAr5p1tjNYIq8Ht/5WCbnOSHrjqwHAKS3RbD5r0iwnfLlpjBOp83oH0U9RH21MfWntGKEC6aZsTB33o7WdDgYl+19aqw210tY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756489270; c=relaxed/simple;
-	bh=cdPXKwjDZ+OMsho9T432TTp8LngI56q9YQbOvdhHIzw=;
+	s=arc-20240116; t=1756489383; c=relaxed/simple;
+	bh=CVgM7Tyu00zzsMBseHOctXjMN0Os3f8IXfyGMpQmnqE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ETle3YxSaczthHDwrIrSnRZ/C8FaeWR8+PqhYoJLhIF9o2E+ol+W+PByIxkv5GfzPrGsNcHSWBk9rYAtN5R+Gw7CHGi+38PECyt8ydFSykgSIh72MYoFKyfDNnejTOHG8Ipo+BKdG9AUCRKjh70txFoJ9iLwET8qLqgnt/Ea8z0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dujemihanovic.xyz; spf=pass smtp.mailfrom=dujemihanovic.xyz; dkim=pass (2048-bit key) header.d=dujemihanovic.xyz header.i=@dujemihanovic.xyz header.b=AknN3tTe; arc=none smtp.client-ip=37.205.8.231
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dujemihanovic.xyz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dujemihanovic.xyz
-DKIM-Signature: a=rsa-sha256; bh=40UIIGTecOqbR9yJwV9OkcAwYu0p3HODEAy0v18VNWY=;
- c=relaxed/relaxed; d=dujemihanovic.xyz;
- h=Subject:Subject:Sender:To:To:Cc:Cc:From:From:Date:Date:MIME-Version:MIME-Version:Content-Type:Content-Type:Content-Transfer-Encoding:Content-Transfer-Encoding:Reply-To:In-Reply-To:In-Reply-To:Message-Id:Message-Id:References:References:Autocrypt:Openpgp;
- i=@dujemihanovic.xyz; s=default; t=1756489242; v=1; x=1756921242;
- b=AknN3tTew5c/jn397+FXi+GcHLsXjLk90XF/n4FNlTa6qZQATuw8sGp/UzOaB2e+N64YnKiR
- W9BnRSRY2gCcqea1mwBkexjw4RYoM06RNupSQcjOF/uvMBizDVqxcpsfIyK0MDd62A1DI/IBqHt
- ay6PhsWKcoI6VVGh++Cw6Hbjo22O8HMmuISzJHBSnBGGB45ciqNQo9cUwvTFx2qSI/3Q26A/Sqw
- cAV8WDb4bnDMyUk8a+BVb6j6AtSrm/kBuPkU3s2No8UzKQiRzWGJ+tEPTv5BdYBcX7L+cdH9K80
- ljxOYQPnpJ54EHc5ZpNeRisJvZAD4UUroaShetLR1kF2Q==
-Received: by mx.olsak.net (envelope-sender <duje@dujemihanovic.xyz>) with
- ESMTPS id 7707aac5; Fri, 29 Aug 2025 19:40:42 +0200
-From: Duje =?UTF-8?B?TWloYW5vdmnEhw==?= <duje@dujemihanovic.xyz>
-To: Jonathan Cameron <jonathan.cameron@huawei.com>
-Cc: Jonathan Cameron <jic23@kernel.org>,
- David Lechner <dlechner@baylibre.com>,
- Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>,
- Andy Shevchenko <andy@kernel.org>, Karel Balej <balejk@matfyz.cz>,
- Lee Jones <lee@kernel.org>, David Wronek <david@mainlining.org>,
- phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
- linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org
-Subject: Re: [PATCH 1/2] iio: adc: Add driver for Marvell 88PM886 PMIC ADC
-Date: Fri, 29 Aug 2025 19:40:41 +0200
-Message-ID: <2453108.NG923GbCHz@radijator>
-In-Reply-To: <20250829172730.000079b5@huawei.com>
-References:
- <20250829-88pm886-gpadc-v1-0-f60262266fea@dujemihanovic.xyz>
- <20250829-88pm886-gpadc-v1-1-f60262266fea@dujemihanovic.xyz>
- <20250829172730.000079b5@huawei.com>
+	 MIME-Version; b=u4ElrvWR2KSS4+Crg1ovmARZUJFCfUh8AQqapja03ptcw3odfcWvGzmYaAyTg0UBaGlRICV2Rs8onCwAjmtpdRTSKBLGjH1bQUJfij4FAy8upNwK5EXo0z/1ynTyggSdZk4/aH9Ja1S8Y1xURmWwYXySSe1HrXf6/LaV1PH3Vvg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Qet8Ahmk; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2445826fd9dso28342325ad.3;
+        Fri, 29 Aug 2025 10:43:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756489381; x=1757094181; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CVgM7Tyu00zzsMBseHOctXjMN0Os3f8IXfyGMpQmnqE=;
+        b=Qet8Ahmk1rTLMyf5mZKm27IekxEfh/011F42a/lT1MIL9UmUIbOVH16gaUPqf1WaWi
+         Lxd58EOWi2ZYqr7ZjptWx93VsJ8+FZKbPdOwtQRDuV1bduOrr1qqU9S7qPg2t5PydfoN
+         TwxbRaR/SGXsLT10C9yeiM58tWVlOg0Msx9WQsD0q95dcTjpv5N7NXL3+Y5kgmUD/WFW
+         9JVy62U9yA880LCDxDNz76L+Tw/XVyJeYNKTAVgeVP6yGbdfVIy8c4h5/KIVPqhJrWeJ
+         wjoZS6nPusLStcOMmJnSA/0sOjYVVZx5ZKLqLAf8bC0B4xJ7CMNvUihOieUeger1yS2p
+         esYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756489381; x=1757094181;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CVgM7Tyu00zzsMBseHOctXjMN0Os3f8IXfyGMpQmnqE=;
+        b=fynYKc85km8wct0S/hpchIbg2+DEd8oNCUTQHgKzrq3G9raKRFTctd/gMcXx4BE2vK
+         mzUi0BLvCE7vzuM0zhe8stQjntWdCHmUH0AwS5UHMNFuGm4GUB8eRyAaRHVmBkiJhiiF
+         vAbSBI+6ouz8USvNwPrJS1Eh0Vip0K8av9ItOrmeniahgQ1Nzz8GNN2GKiXu9MOkYC2e
+         LwERw5dGofxYl8uSDQfeGIHSr04ML6+kdOYm08GRZJ2FnVXGzW/PWEVsc3ACe+JC8vEW
+         hf48z/a4jTuZp5yOM44lIeockSiO7T73SztAQRDGrpZam8DCZEDfsKEuQ/7C5MqBCfWy
+         973Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVp6Ucej5w+RT5eaKL65NUsK4/YUY250vGFwbWnc+PtTQnqcCvzZsJWaNBhjZlGgD+gelq986dO5/qcsNHB@vger.kernel.org, AJvYcCVvaphjV6yxVdOdpJfYdt6weFnkEUVGRT9xDOwPPCvfJ9HXna4ZyPi3IUc47C5gTnDhTBNaQKJRX84=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxcn+1d10jhOdMYCLFRJ7tAg23oJ2dqHaZM6py7T/vhTGLXpIVI
+	+GOrU8ofLZFzco2RCL3CI7nDMJFb6PZoBScudwwAv8SnEJ5KfnIE+Fo5
+X-Gm-Gg: ASbGncsEi5u1m1cJ+7MIqwagOsjeWzSB8zxrlnfdCYKxSa8Zten3pHa8yEPqKAqWyam
+	EQEUMDEPk1n0bKf/8nw/+FqTzbLz13tiwIjV9MsxKz402p8RqAuRqJ+I5bhWCFyi/Vf6kT58zZt
+	TqMigRvEggNo7J0C7/vRbVkiGmqjMCMooxhxl1fpJ+4UPvf2X8lTTwlaiRXYBdCtei9Ry583BxX
+	8GhrrzPrnWDCG/fFObhhibavbGumUB0BYyzlCbfuAs7wzj5udsbvqEa3/PhkVZAqAwd/L3tznqr
+	M63UPBkEZqtWL77/2cEguNosrtAOLT6l4yOl3WPFBQavGE2zwujLMRjkhl5ySoWO/ScLv8E06rw
+	Oxl8EnpbRsHfXdpxNXSNYXnsadn0JGkUjYhG2G3ZRBaxsVSzkYKe6zB2kVu8Ks4F5WHlgZovMuA
+	==
+X-Google-Smtp-Source: AGHT+IE23KRcGDR/kd3c4g0abkgFnf3oFZxhdeRn83CjGT1YO9Cgs7wU0MlSqxAutRWSDpZp8ltIBw==
+X-Received: by 2002:a17:903:1205:b0:248:79d4:93b5 with SMTP id d9443c01a7336-24879d497a4mr160522795ad.33.1756489380684;
+        Fri, 29 Aug 2025 10:43:00 -0700 (PDT)
+Received: from lkmp.. ([157.51.63.166])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b4cd347db1fsm2727833a12.47.2025.08.29.10.42.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 29 Aug 2025 10:43:00 -0700 (PDT)
+From: Rakuram Eswaran <rakuram.e96@gmail.com>
+To: rakuram.e96@gmail.com,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de
+Cc: alexander.deucher@amd.com,
+	amd-gfx@lists.freedesktop.org,
+	christian.koenig@amd.com,
+	corbet@lwn.net,
+	dri-devel@lists.freedesktop.org,
+	harry.wentland@amd.com,
+	linux-doc@vger.kernel.org,
+	linux-kernel-mentees@lists.linuxfoundation.org,
+	linux-kernel@vger.kernel.org,
+	rdunlap@infradead.org,
+	siqueira@igalia.com,
+	skhan@linuxfoundation.org
+Subject: Re: [PATCH v2 2/2] docs: gpu: Fix spelling in gpu documentation 
+Date: Fri, 29 Aug 2025 23:12:43 +0530
+Message-ID: <20250829174244.13864-1-rakuram.e96@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250821025957.22546-3-rakuram.e96@gmail.com>
+References: <20250821025957.22546-3-rakuram.e96@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Friday, 29 August 2025 18:27:30 Central European Summer Time Jonathan Ca=
-meron wrote:
-> On Fri, 29 Aug 2025 00:17:41 +0200
->=20
-> Duje Mihanovi=C4=87 <duje@dujemihanovic.xyz> wrote:
-> > +	iio->name =3D "88pm886-gpadc";
-> > +	iio->dev.parent =3D dev;
-> > +	iio->dev.of_node =3D parent->of_node;
->=20
-> Done in core code.
-> https://elixir.bootlin.com/linux/v6.16.3/source/drivers/iio/industrialio-=
-core.
-> c#L2044 __iio_device_register() so unless you use it before that call
-> shouldn't need this.
->=20
-> I'm not sure what it is used for though.
+Hi all,
 
-It was to explicitly bind the ADC (specifically, its IO channels) to
-the PMIC devicetree node. However, since the core does this already,
-will drop.
+This is a gentle follow-up on this patch. Please let me know if any further
+changes are required.
 
-Regards,
-=2D-
-Duje
-
-
-
+Regards
 
