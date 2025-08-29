@@ -1,258 +1,217 @@
-Return-Path: <linux-kernel+bounces-791297-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791296-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9267B3B4E4
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 09:56:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23254B3B4CD
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 09:55:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB80F1BA53E0
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 07:56:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B0589841FF
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 07:55:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 057942877DC;
-	Fri, 29 Aug 2025 07:55:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D7922853FD;
+	Fri, 29 Aug 2025 07:55:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Kokq4rww"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="N3tOgz2r";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="RReXZyzb";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="VuwX+BFU";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="czpKl5gk"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62DD4285077;
-	Fri, 29 Aug 2025 07:55:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAB85285041
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 07:55:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756454136; cv=none; b=jYhrASCshKcUm4BruqVwNDrQyevnQawZWNlfHTZbiAJ7lnpfZxUA8ne1vMQF4k1kCpLoc/d6AOykxpaxyYocQeSqvNMTsA2NxckKWVyyg729vpMrT5EIkxv8piSwIV0QTFlv5Vj9C09iSCxN4dQfo92n+hre86xY84hUsde6dLo=
+	t=1756454115; cv=none; b=oYkpvCr88HMi+3tGfNa+KMz39nLrYbbWJhA4c+DhoHlGmdWBFBzsddOQZHcwuLeFPSu3psqO21BPOEvufgykNxpyA8RmngdiQFXbapTu1eQAyF0E4T1ogWH4tv07x5eHLgW9W9NA2HpVxHa8uLEYxxxkCJ6v6HMT7crI6J07w6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756454136; c=relaxed/simple;
-	bh=UJUK8/oCaP8or4xMM6dYj2gtHalMI9xq0zTRRM+Er48=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CQvZ1G9ecPqnXZg+rVVzVsDNpKcJQ1fObEzlTBXSdyJphpfsmHGTXkUqSdyAVIjigHHnNYSkVO+yuwc+a5FfCeVpTRW83LCc2cYrM9xvQXCYajhbkYGWN2UjcBfUfAzWUpvpYXh6yD2/M0lKQA3VL/pIMjpKLWxvAZQWYmKE8ZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Kokq4rww; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-248c7f955a2so16704015ad.2;
-        Fri, 29 Aug 2025 00:55:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756454134; x=1757058934; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=e1dzl/9HN9fCmWWoku2EUAe+4oZJtgdEcU9UZmXN/7A=;
-        b=Kokq4rwwv9kr4Aoe18BW0bhcPqdWkfT8VFobv5jQ0ddyir/b8CkYjUUTzzk2/5NWD6
-         k9ovOq3/edK3u9B5g8x0PR/uF65j7iZ7SPeHJDtlkaLEIPSZmunTi1ae+wdfjhbYMMEs
-         Z6lcDyh0rcaB3I3RzTHV+oQ0B/nbBfSXZInDuWK85WA+rCjiyeLmQyDaFZ0yiUVZMz1t
-         28KwQ1kVTsoabTsnDKQPwIiD5WuF/ePsSxct6Zg7SYFjqLsZ2Ru3t9YLEpaLNcUH1tF5
-         37fD+hPEp6aFDDfLFvDBEu6SEI0IC+1vtvC74p1k0hwNrSJaPYVf4ngEezMn2vH8fv6i
-         EY/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756454134; x=1757058934;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=e1dzl/9HN9fCmWWoku2EUAe+4oZJtgdEcU9UZmXN/7A=;
-        b=Ak3wnzQWT0gRbqvFYaB5oW7EIIbnDcZwSqKbTTK+XaNpyj9BMiUoK0ifC2YSuZmybx
-         WDYSbTt06AeDPujou4w+xid9M7vYZQ6Zdp/ZPWhsHUOPMV/liETWpRRl5u2cnIqJnfZh
-         ycjKxJFqz+MqAQqJAcbxieHdCeUePczNHFp3NPOKlhA/dlWdFg6N+47L36XsYAgEFZfy
-         rEIlXt+fY2DMjAYy97q62/XwIh9IXa6a1f3mSpU9M6LJ3K0GjjA4qHWsxdKn86DI93z7
-         mqz1q973mf8w5c/fPPu5/HRNEZKW/gVRbcE8RwVmOM4XrviyJSrG1Z8yKjCxixY0qozx
-         YQfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU/kP5btMwaqykAgFlRB1o1XMmT900etxlz/GspTY8cMk9FhODTa1KP21zf92qQeEgeqXOOEPJ7sOUH@vger.kernel.org, AJvYcCUWIj/P/32OJegev1BTdZBa8LLqa3i+JBk3erobSK8moVKte88KmBWQ+AznBgJtxnumOTgb/g7x@vger.kernel.org, AJvYcCVHrqD/Ph2BeD3JjkOAjoR/fWeasbVdF8rWnHky6TwWUKLfmrn/OJubib2067IA++a2hJqpTA/ATv7uBoU=@vger.kernel.org, AJvYcCWEROOUk/uokrp44eT6Do82R8WqF28bIw94IKDET8hWmnAOQC42t4PQgP3FUj6DsFMUpAjypkfBNXhTXg==@vger.kernel.org, AJvYcCWLLW01uQs3QEDhMdvQwCucilt4eqvbzkHktMQnpcDtrU4V8CUKTMTmsqCMBooosWFlXt8=@vger.kernel.org, AJvYcCWLvokeoXvlBFFh5MNeIqWkOgsB0OQd7/q4OeWALSEku/XE2FTtn0yo4BdFdMtueAfw7p++/pj/fmni@vger.kernel.org, AJvYcCX8QgUP1FlVu7D8Vu2cL8oe7ic23Wnw25dqzSMFoB51fp0eqa7OKeCluiA5VH2g4MW0mQeU4ie8Q1w=@vger.kernel.org, AJvYcCXGEzbj/JF0nCS6SkPWJJxvH4N2WPfO2aX3dZJrMNlm6sugJtXabVxRVyHsRUU7nchFz4qKZJD/pP5ixduj@vger.kernel.org, AJvYcCXnQUZAxlb15sfSQeN+avIS7oG/SnGUWaD35JfZaLwaHo7GQ8eKKuCdlUQpS2yQam8dK+0Anp80LVgmbFM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxwuN6/iEdk4yLzGo7pPsGuVdOksnYPxSJtS3XReKMQIFEmyLL1
-	CtW7JjWXcPmvhAkn/RD2jXuP6qgl1PbT/pwmC8sOruL01gxGyycn7UFc
-X-Gm-Gg: ASbGncu4pG6TY0wFGGILhqbLTLZ3+gml0zIfrFc+8XKR7tcOIEclAEfwQX8myyoi25H
-	t4Ss7HkjADGXXgsep8WFQEiWyap3qd+hoLwmhPeFwnuuZb9O+7WEaAyYN6W7OhmhTqqzA2IFjc7
-	6e2gLC6PqQgl24nVdBSGbmWGF8uUzfM21Li+hZGslX33yIzWUY+ePs4VSwYeUkV5vGSmS5qwFZm
-	M5Z0GOFaEKb/nOVkarrsZxZxr1VamCi+Wk8ctit81fH2Y8QNGZHdZNTpn6sbWvdlkTw/xspxucp
-	hlT3cofzoHAt2a4M2caU1Q9PFhNcL6PHQ/brK1t4VCZOKOKjUBwe0A/FMK5kAWp+7FMe3XBsYTi
-	aU5RPG7YFrP6lX4LWuoCpS9rK6TJ6/IqpO9Ud
-X-Google-Smtp-Source: AGHT+IHHspv4kBSvuOju+syLfWNvxBR1WSkz7mrwJNK9paKzC+4NcNK8VdwZC8CcLSepusoSJLIitw==
-X-Received: by 2002:a17:903:15ce:b0:246:c7dd:8da7 with SMTP id d9443c01a7336-246c7dd91f6mr219457635ad.32.1756454133503;
-        Fri, 29 Aug 2025 00:55:33 -0700 (PDT)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-249037043b3sm17009045ad.22.2025.08.29.00.55.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Aug 2025 00:55:31 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id 92CC9411BF96; Fri, 29 Aug 2025 14:55:27 +0700 (WIB)
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Documentation <linux-doc@vger.kernel.org>,
-	Linux DAMON <damon@lists.linux.dev>,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	Linux Power Management <linux-pm@vger.kernel.org>,
-	Linux Block Devices <linux-block@vger.kernel.org>,
-	Linux BPF <bpf@vger.kernel.org>,
-	Linux Kernel Workflows <workflows@vger.kernel.org>,
-	Linux KASAN <kasan-dev@googlegroups.com>,
-	Linux Devicetree <devicetree@vger.kernel.org>,
-	Linux fsverity <fsverity@lists.linux.dev>,
-	Linux MTD <linux-mtd@lists.infradead.org>,
-	Linux DRI Development <dri-devel@lists.freedesktop.org>,
-	Linux Kernel Build System <linux-lbuild@vger.kernel.org>,
-	Linux Networking <netdev@vger.kernel.org>,
-	Linux Sound <linux-sound@vger.kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Borislav Petkov <bp@alien8.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	SeongJae Park <sj@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	David Hildenbrand <david@redhat.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Huang Rui <ray.huang@amd.com>,
-	"Gautham R. Shenoy" <gautham.shenoy@amd.com>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Perry Yuan <perry.yuan@amd.com>,
-	Jens Axboe <axboe@kernel.dk>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>,
-	Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Dwaipayan Ray <dwaipayanray1@gmail.com>,
-	Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-	Joe Perches <joe@perches.com>,
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
-	Alexander Potapenko <glider@google.com>,
-	Andrey Konovalov <andreyknvl@gmail.com>,
-	Dmitry Vyukov <dvyukov@google.com>,
-	Vincenzo Frascino <vincenzo.frascino@arm.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Eric Biggers <ebiggers@kernel.org>,
-	tytso@mit.edu,
-	Richard Weinberger <richard@nod.at>,
-	Zhihao Cheng <chengzhihao1@huawei.com>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas.schier@linux.dev>,
-	Ingo Molnar <mingo@redhat.com>,
-	Will Deacon <will@kernel.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Waiman Long <longman@redhat.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Shay Agroskin <shayagr@amazon.com>,
-	Arthur Kiyanovski <akiyano@amazon.com>,
-	David Arinzon <darinzon@amazon.com>,
-	Saeed Bishara <saeedb@amazon.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>,
+	s=arc-20240116; t=1756454115; c=relaxed/simple;
+	bh=k3v2fJVcyeVJCZQlqSt9kNdDpgpKXuGZOPu1XpDLYag=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lRSgVCFZJSh7FAecunbRGryLoZ8JqBr5CkMBAH9l7Hx5g979V8XlQ7+/7/DpSx0VvxhfHBo1tasfgNBD5vyAACU9JQRUry2wgZRGboVz59JbzI0H+/U0XhHXEY/q7Zd2hAPfqcP1tOnQxwWbNZoE1vl8SMBE9qrBX/iToYXy/og=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=N3tOgz2r; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=RReXZyzb; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=VuwX+BFU; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=czpKl5gk; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id E58A021D65;
+	Fri, 29 Aug 2025 07:55:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1756454111; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5xCdNAt/TMvWbdElAdCeAl9J1q/hpSEni3jvDwsZ588=;
+	b=N3tOgz2rVq2XklwAHsU6KhLr5MGvZzmEWctxmmdpcMNcKEP68y7YJ5Jds6NAk31IXYE8LB
+	b77LWq66ooK/nuEq6dseFu37T9YDRplc4RNDw2OLNTScNd12wfMhlKVOkhteYZRYC+1t+m
+	lrR33lmqd67Kd6DiXbpyH6CfqeibmiM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1756454111;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5xCdNAt/TMvWbdElAdCeAl9J1q/hpSEni3jvDwsZ588=;
+	b=RReXZyzbLlZFooLL0ir1dEiiaPZViukX2XQ69kCVra7Xqu+b38JFDwaMtPzQItSaK0/3TM
+	eIoHD0rJ1e8e+uCw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1756454110; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5xCdNAt/TMvWbdElAdCeAl9J1q/hpSEni3jvDwsZ588=;
+	b=VuwX+BFUmJLEzCi3+6T4AK8BrL+nIviEVEalOGSBGv3Q4apU9zfrtBT4b4FASq13Iyx4v1
+	LwzcCTqIqQsi4xdgCiv+eVH2h8fDk3+ivYYufpOzyVkNmPRK4N9U5RydaWytmRlLsg5Ysx
+	AACG/nKC4iPC+c0DB0CQKQ068pcQuUs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1756454110;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5xCdNAt/TMvWbdElAdCeAl9J1q/hpSEni3jvDwsZ588=;
+	b=czpKl5gkcztpG6SQL+RYjF1uzIcAg41lGfhrEnCoF4u9hKYLtToGd6wi2FLUODFjoRcpg7
+	F5BsV9SEhSQgL2BA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 88CB713A3E;
+	Fri, 29 Aug 2025 07:55:10 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id NjMoIN5csWiPEwAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Fri, 29 Aug 2025 07:55:10 +0000
+Date: Fri, 29 Aug 2025 09:55:10 +0200
+Message-ID: <87bjnyimu9.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: cryolitia@uniontech.com
+Cc: Jaroslav Kysela <perex@perex.cz>,
 	Takashi Iwai <tiwai@suse.com>,
-	Alexandru Ciobotaru <alcioa@amazon.com>,
-	The AWS Nitro Enclaves Team <aws-nitro-enclaves-devel@amazon.com>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	Bagas Sanjaya <bagasdotme@gmail.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Steve French <stfrench@microsoft.com>,
-	Meetakshi Setiya <msetiya@microsoft.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Bart Van Assche <bvanassche@acm.org>,
-	=?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <linux@weissschuh.net>,
-	Masahiro Yamada <masahiroy@kernel.org>
-Subject: [PATCH 00/14] Internalize www.kernel.org/doc cross-reference
-Date: Fri, 29 Aug 2025 14:55:10 +0700
-Message-ID: <20250829075524.45635-1-bagasdotme@gmail.com>
-X-Mailer: git-send-email 2.51.0
+	Jonathan Corbet <corbet@lwn.net>,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Mingcong Bai <jeffbai@aosc.io>,
+	Kexy Biscuit <kexybiscuit@aosc.io>,
+	Wang Yuli <wangyuli@deepin.org>,
+	Guan Wentao <guanwentao@uniontech.com>,
+	Nie Cheng <niecheng1@uniontech.com>,
+	Zhan Jun <zhanjun@uniontech.com>,
+	Celeste Liu <CoelacanthusHex@gmail.com>,
+	Guoli An <anguoli@uniontech.com>,
+	linux-doc@vger.kernel.org
+Subject: Re: [PATCH 1/2] ALSA: usb-audio: Add module param mixer_min_mute
+In-Reply-To: <20250829-sound-param-v1-1-3c2f67cd7c97@uniontech.com>
+References: <20250829-sound-param-v1-0-3c2f67cd7c97@uniontech.com>
+	<20250829-sound-param-v1-1-3c2f67cd7c97@uniontech.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3498; i=bagasdotme@gmail.com; h=from:subject; bh=UJUK8/oCaP8or4xMM6dYj2gtHalMI9xq0zTRRM+Er48=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDBkbY17c4br6T35GuJHFF8Yt24416R5lZZr0d5nIjOkLd Wbtjd2k0FHKwiDGxSArpsgyKZGv6fQuI5EL7WsdYeawMoEMYeDiFICJxIow/NNvVZZWvf59gvln 8f09a96zlV1ddP/qfkeet3OelO1bF7GW4X+WSslpN8ZtovrZdcGNj+0m353MlHX12bkXf15P2h5 ctoADAA==
-X-Developer-Key: i=bagasdotme@gmail.com; a=openpgp; fpr=701B806FDCA5D3A58FFB8F7D7C276C64A5E44A1D
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spamd-Result: default: False [-3.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[15];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FREEMAIL_CC(0.00)[perex.cz,suse.com,lwn.net,vger.kernel.org,aosc.io,deepin.org,uniontech.com,gmail.com];
+	TO_DN_SOME(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Spam-Score: -3.30
 
-Cross-references to other docs (so-called internal links) are typically
-done following Documentation/doc-guide/sphinx.rst: either simply
-write the target docs (preferred) or use :doc: or :ref: reST directives
-(for use-cases like having anchor text or cross-referencing sections).
-In some places, however, links to https://www.kernel.org/doc
-are used instead (outgoing, external links), owing inconsistency as
-these requires Internet connection only to see docs that otherwise
-can be accessed locally (after building with ``make htmldocs``).
+On Fri, 29 Aug 2025 07:10:59 +0200,
+Cryolitia PukNgae via B4 Relay wrote:
+> 
+> From: Cryolitia PukNgae <cryolitia@uniontech.com>
+> 
+> As already discussed[1], a module parameter called mixer_min_mute is
+> added to make it easier for end users to debug the widespread problem
+> without recompiling the kernel, where USB audio devices are muted when
+> the volume is set to the minimum value.
+> 
+> 1.
+> https://lore.kernel.org/all/20250827-sound-quirk-min-mute-v1-1-4717aa8a4f6a@uniontech.com/
+> 
+> Tested-by: Guoli An <anguoli@uniontech.com>
+> Signed-off-by: Cryolitia PukNgae <cryolitia@uniontech.com>
 
-Convert such external links to internal links. Note that this does not
-cover docs.kernel.org links nor touching Documentation/tools (as
-docs containing external links are in manpages).
+Err, maybe I misunderstood your suggestion in the previous patch.
+I didn't mean to add a new option, but only about adding the quirk
+bit.
 
-This series is based on docs-next tree.
+Honestly speaking, I don't want to add yet new option for a specific
+quirk behavior.  Once when we add, it's sticking almost forever and we
+can't delete it any longer.  Also, this option will apply to all USB
+connected USB-audio devices, which may have ill effect, too.
 
-Bagas Sanjaya (14):
-  Documentation: hw-vuln: l1tf: Convert kernel docs external links
-  Documentation: damon: reclaim: Convert "Free Page Reporting" citation
-    link
-  Documentation: perf-security: Convert security credentials
-    bibliography link
-  Documentation: amd-pstate: Use internal link to kselftest
-  Documentation: blk-mq: Convert block layer docs external links
-  Documentation: bpf: Convert external kernel docs link
-  Documentation: kasan: Use internal link to kunit
-  Documentation: gpu: Use internal link to kunit
-  Documentation: filesystems: Fix stale reference to device-mapper docs
-  Documentation: smb: smbdirect: Convert KSMBD docs link
-  Documentation: net: Convert external kernel networking docs
-  ASoC: doc: Internally link to Writing an ALSA Driver docs
-  nitro_enclaves: Use internal cross-reference for kernel docs links
-  Documentation: checkpatch: Convert kernel docs references
-
- Documentation/admin-guide/hw-vuln/l1tf.rst    |   9 +-
- .../admin-guide/mm/damon/reclaim.rst          |   2 +-
- Documentation/admin-guide/perf-security.rst   |   2 +-
- Documentation/admin-guide/pm/amd-pstate.rst   |   3 +-
- Documentation/block/blk-mq.rst                |  23 ++--
- Documentation/bpf/bpf_iterators.rst           |   3 +-
- Documentation/bpf/map_xskmap.rst              |   5 +-
- Documentation/dev-tools/checkpatch.rst        | 121 ++++++++++++------
- Documentation/dev-tools/kasan.rst             |   6 +-
- .../bindings/submitting-patches.rst           |   2 +
- .../driver-api/driver-model/device.rst        |   2 +
- Documentation/filesystems/fsverity.rst        |  11 +-
- Documentation/filesystems/smb/smbdirect.rst   |   4 +-
- Documentation/filesystems/sysfs.rst           |   2 +
- .../filesystems/ubifs-authentication.rst      |   4 +-
- Documentation/gpu/todo.rst                    |   6 +-
- Documentation/kbuild/reproducible-builds.rst  |   2 +
- Documentation/locking/lockdep-design.rst      |   2 +
- .../can/ctu/ctucanfd-driver.rst               |   3 +-
- .../device_drivers/ethernet/amazon/ena.rst    |   4 +-
- Documentation/networking/ethtool-netlink.rst  |   3 +-
- Documentation/networking/snmp_counter.rst     |  12 +-
- Documentation/process/coding-style.rst        |  15 +++
- Documentation/process/deprecated.rst          |   4 +
- Documentation/process/submitting-patches.rst  |   4 +
- Documentation/sound/soc/codec.rst             |   4 +-
- Documentation/sound/soc/platform.rst          |   4 +-
- Documentation/virt/ne_overview.rst            |  10 +-
- 28 files changed, 165 insertions(+), 107 deletions(-)
+What I had in mind instead is to extend the syntax of quirk option.
+e.g. it can accept a string like "mixer_min_mute" not only the integer
+value.  Or it may have a form like "$vendor:$value" so that it can be
+applied no matter which slot it's assigned.
 
 
-base-commit: ee9a6691935490dc39605882b41b9452844d5e4e
--- 
-An old man doll... just what I always wanted! - Clara
+thanks,
 
+Takashi
+
+> ---
+>  sound/usb/card.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/sound/usb/card.c b/sound/usb/card.c
+> index 0265206a8e8cf31133e8463c98fe0497d8ace89e..bf65727ad213f2897d735c1f3c55bfc3f85971cf 100644
+> --- a/sound/usb/card.c
+> +++ b/sound/usb/card.c
+> @@ -74,6 +74,7 @@ static char *quirk_alias[SNDRV_CARDS];
+>  static char *delayed_register[SNDRV_CARDS];
+>  static bool implicit_fb[SNDRV_CARDS];
+>  static unsigned int quirk_flags[SNDRV_CARDS];
+> +static bool mixer_min_mute;
+>  
+>  bool snd_usb_use_vmalloc = true;
+>  bool snd_usb_skip_validation;
+> @@ -109,6 +110,9 @@ module_param_named(use_vmalloc, snd_usb_use_vmalloc, bool, 0444);
+>  MODULE_PARM_DESC(use_vmalloc, "Use vmalloc for PCM intermediate buffers (default: yes).");
+>  module_param_named(skip_validation, snd_usb_skip_validation, bool, 0444);
+>  MODULE_PARM_DESC(skip_validation, "Skip unit descriptor validation (default: no).");
+> +module_param(mixer_min_mute, bool, 0444);
+> +MODULE_PARM_DESC(mixer_min_mute,
+> +		 "Set minimum volume control value as mute (default: no).");
+>  
+>  /*
+>   * we keep the snd_usb_audio_t instances by ourselves for merging
+> @@ -959,6 +963,9 @@ static int usb_audio_probe(struct usb_interface *intf,
+>  	if (ignore_ctl_error)
+>  		chip->quirk_flags |= QUIRK_FLAG_IGNORE_CTL_ERROR;
+>  
+> +	if (mixer_min_mute)
+> +		chip->quirk_flags |= QUIRK_FLAG_MIXER_MIN_MUTE;
+> +
+>  	if (chip->quirk_flags & QUIRK_FLAG_DISABLE_AUTOSUSPEND)
+>  		usb_disable_autosuspend(interface_to_usbdev(intf));
+>  
+> 
+> -- 
+> 2.51.0
+> 
+> 
 
