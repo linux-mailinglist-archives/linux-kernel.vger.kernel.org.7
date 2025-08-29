@@ -1,207 +1,144 @@
-Return-Path: <linux-kernel+bounces-791191-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CED00B3B336
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 08:18:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAA0BB3B33D
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 08:19:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 035481C81540
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 06:18:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB5963B791D
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 06:19:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9128623BCEF;
-	Fri, 29 Aug 2025 06:18:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A56723ABBD;
+	Fri, 29 Aug 2025 06:19:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bh/5p8+T"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="VlAr7cp1"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41914207A20
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 06:18:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D699207A20;
+	Fri, 29 Aug 2025 06:19:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756448297; cv=none; b=HA2CzOuKeLnjypzBKPqLwg1+/FjUym2+LjshSJa7wsFKxZrj/Li+r8pbCMlERWFJrWMI6a5ZHiSwKc0omXnA4qOKW/zNhjqm0uuHPV2d1pGoap5wmxnUGezYa0JC5GL74AmnvltGR09WNpsmfwBqLKKddPfX+GvHlUCdTGyPeLk=
+	t=1756448342; cv=none; b=bllLAzzvLZygy6YSNG8mzD/5a5pYu1EkHhb1BCY8Wc0gl72wCLXHSqcMaDjvzV/YLU5KEIt4qyox9t94eixCaFbNLEKA6KTycIjY5yrG7VKi6KmkLXAi1+Fp0iC61RJ2YaKmFFhN10C89w7fH2hTfVfGxYF9wM7qPFBFLKLcigc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756448297; c=relaxed/simple;
-	bh=qOf1M8CpxrREh2y0SwRzJRtBpqJMEe4p6G3QfMpjhkU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f1GIoCONL/qbOPYk8yarLH+U4Ytu4D8rWpAQEGqCFR8nFPSuSQXCM5KdVkxTYBvWQRKriH6BKQRW8CWv9wrm5zFi9I5DecTC3DPy6dYIqRW82l00zeMwY83/rvaqJQTx14CEvbYfpgqtxWdU2gqrtBL3nNSCdLwQ5ymLSGqHk6U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bh/5p8+T; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-7722f2f2aa4so378658b3a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 23:18:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756448295; x=1757053095; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=fyIWN60k8dYCbXXXMxmihVbQlVwII/BvZdY4wtkRha8=;
-        b=bh/5p8+TUoz18yVKKu1bFIu5XGn6nO5LQCk7OW2nYNq6bYKfql/5xaCMDiBK5XQvDh
-         jmh83zmJwEC+mSGjgJGCoAHbNgN2p3/Y+TQoJFj/iihz1hkXRxDAQfcaU8P5lRAcLqHd
-         VZ4Uvl6+VSOZ7y+yksI+08xVTlLuOER6AQjZjXt9A2ZsKqy+y720cVOY2mSxjZ0TdjPW
-         l4+SL1YAUZ74BKkuqv9wU/SjI32FPX4J/0YiZ9JMbOT8yy4huPyVBFWk+n/FCzVHDYh/
-         DDs71lskDuaiVx1L+wdeqcwxF2lmb9aNuQycPggDRSAHnEYnTZCOCI6p7N2dTjCrE3lQ
-         0+Hg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756448295; x=1757053095;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fyIWN60k8dYCbXXXMxmihVbQlVwII/BvZdY4wtkRha8=;
-        b=jlDu6hl+fW/8ezwCnHBqzow+Yt8UhERSs+VdyX4XZed8a3PKVkb3WMF8zsxwKsVRza
-         hsUruoA7yuS+pEFil/Ah6t0nj/Mbul704+cxcL0hzWNTOX1alwhY9BwZQCDmP+PDZuoJ
-         P9FDSaQMqLLtogQD9716MIEQJDQ10Fph9wER0Vo2zqDJSc4KSI9n6PDyE9YOaeQqcR2l
-         L8repYknm/0oAMrpPmMvVtAEQECC+H2eLExj8KyBCw0PB5NZYp3tyvaA1h9UJEylTXPb
-         yqn1TuCW6yvJpos4vQ/Ui1/Uxv9+qP8gsyfdysuYQ+JjLjxsYmZZdqUu/8kL3hH3iWUR
-         uDRw==
-X-Forwarded-Encrypted: i=1; AJvYcCXhXp6bsJzPA9ptGyJu6GUpIWNIYTQ1EObRGYg36HS3xejVM1t3FTi/EDQvyWtShFF/+3JgTU4pJq8xpoQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7RQ/OAripUAbTVG7WWel8+x1yPwP5sM3pGVdyTOtCEex1fF6J
-	9GrU1zXreoOZx+z0ASnLr6aCrrcR2tybGOpBrIJ8tX+xMzeGHWbvMot8jkXoPw4Q+GU=
-X-Gm-Gg: ASbGnctsWkWEicGG+3aDMzkQXC4J2e9mmdMhHTrAHl9o4c0uLez5C+RIdXtfhsZwYjO
-	DpPQ96J2q2+tD4LfV13nge/GJl7SZavATC8PdEp9dO+n17s4gnvRz84rc5T8FN2ypViuuul4Om9
-	WGZaeDZ2NM87eKHkcdsZ2xSdp+nNV8OAlhQ0MeQ2Z3Bb+m0WlbbWfK62DSrK+kDO3vupWRRftjb
-	N1evzp2Cag+8ITkhnESFuo+BYQAYiCsuwy2jMi7QNvQJe2olBHFyGAiq+GZqi+U1jfWZ986I7m4
-	9Yim9h3BnepvNuq9fsOFZqOPAOwstdEX6vylpgQ4dKGrtoe4D9DHpRlF2jkWjbLfs35VheMGEqB
-	NlixwOVE/ZB+WSQdV7MlMPAz8Ccy1X0E3v5E=
-X-Google-Smtp-Source: AGHT+IEdwrBA8fEPouruiBjmjO1y+VLHrsJ6SO97Twxy5LbO1fb87iKCtpWKSDsewOGX8ikCQhJ2gQ==
-X-Received: by 2002:a05:6a00:3907:b0:749:472:d3a7 with SMTP id d2e1a72fcca58-7702faaf2acmr35042659b3a.18.1756448295215;
-        Thu, 28 Aug 2025 23:18:15 -0700 (PDT)
-Received: from localhost ([122.172.87.165])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7722a4e1b21sm1307488b3a.69.2025.08.28.23.18.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Aug 2025 23:18:14 -0700 (PDT)
-Date: Fri, 29 Aug 2025 11:48:12 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Zihuan Zhang <zhangzihuan@kylinos.cn>
-Cc: "Rafael J . wysocki" <rafael@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Markus Mayer <mmayer@broadcom.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	MyungJoo Ham <myungjoo.ham@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Daniel Lezcano <daniel.lezcano@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Eduardo Valentin <edubezval@gmail.com>, Keerthy <j-keerthy@ti.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	zhenglifeng <zhenglifeng1@huawei.com>,
-	"H . Peter Anvin" <hpa@zytor.com>, Zhang Rui <rui.zhang@intel.com>,
-	Len Brown <lenb@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Lukasz Luba <lukasz.luba@arm.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Beata Michalska <beata.michalska@arm.com>,
-	Fabio Estevam <festevam@gmail.com>, Pavel Machek <pavel@kernel.org>,
-	Sumit Gupta <sumitg@nvidia.com>,
-	Prasanna Kumar T S M <ptsm@linux.microsoft.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Yicong Yang <yangyicong@hisilicon.com>, linux-pm@vger.kernel.org,
-	x86@kernel.org, kvm@vger.kernel.org, linux-acpi@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
-	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	imx@lists.linux.dev, linux-omap@vger.kernel.org,
-	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 08/18] cpufreq: mediatek: Use
- __free(put_cpufreq_policy) for policy reference
-Message-ID: <20250829061812.fziokvashujzbtth@vireshk-i7>
-References: <20250827023202.10310-1-zhangzihuan@kylinos.cn>
- <20250827023202.10310-9-zhangzihuan@kylinos.cn>
+	s=arc-20240116; t=1756448342; c=relaxed/simple;
+	bh=P9Q0SmdKT4+QR+pS62JZey3140CaFSXQyb5AfpmgPrc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=kMIBOUhLauIr5WA84CaULcEJx971avEC7WuEqDP13mdyiOIU2Zp28t1BQjo6kfX907pElhFByZJ5HAvEYkT65u39amIee8kfeFAhEyDXvbCF5mLZEeoToAq/W6tzw37f7I2Z6Hw+jsK0rp537tYU3qjlApnjGfaaexIAeP1Bl84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=VlAr7cp1; arc=none smtp.client-ip=198.47.19.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57T6IrnH2151732;
+	Fri, 29 Aug 2025 01:18:53 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1756448333;
+	bh=3IPwZazoSn4ZeSr5DFrwiRXhN0snIHoAAJIH9eLfr9U=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=VlAr7cp1b4CRn3SlUE3hf7hIh7IZy/hHvtEir/A8wQug1degH7AhhyKmubIkPa5vl
+	 9lfYiNyPXKy4wnhWicf7HGtm5Nhzt5rkxHrpwHVirZBN72EcpOaIC1QZfRBNW0/Szi
+	 pYdaqIVn8+Ff7bc2ksiE7BHEllszOJ4pIEEFRTKc=
+Received: from DLEE110.ent.ti.com (dlee110.ent.ti.com [157.170.170.21])
+	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57T6IqF43805307
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Fri, 29 Aug 2025 01:18:53 -0500
+Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE110.ent.ti.com
+ (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Fri, 29
+ Aug 2025 01:18:52 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Fri, 29 Aug 2025 01:18:52 -0500
+Received: from [172.24.20.139] (lt5cd2489kgj.dhcp.ti.com [172.24.20.139])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57T6ImNR1891002;
+	Fri, 29 Aug 2025 01:18:48 -0500
+Message-ID: <c542ad3f-8e6d-405a-92d3-4e45cbcfc2a3@ti.com>
+Date: Fri, 29 Aug 2025 11:48:47 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250827023202.10310-9-zhangzihuan@kylinos.cn>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] arm64: dts: ti: k3-j742s2-mcu-wakeup: Override
+ firmware-name for MCU R5F cores
+To: Beleswar Padhi <b-padhi@ti.com>, <nm@ti.com>, <vigneshr@ti.com>,
+        <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>
+CC: <afd@ti.com>, <hnagalla@ti.com>, <jm@ti.com>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <u-kumar1@ti.com>
+References: <20250823163111.2237199-1-b-padhi@ti.com>
+Content-Language: en-US
+From: "Kumar, Udit" <u-kumar1@ti.com>
+In-Reply-To: <20250823163111.2237199-1-b-padhi@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On 27-08-25, 10:31, Zihuan Zhang wrote:
-> Replace the manual cpufreq_cpu_put() with __free(put_cpufreq_policy)
-> annotation for policy references. This reduces the risk of reference
-> counting mistakes and aligns the code with the latest kernel style.
-> 
-> No functional change intended.
-> 
-> Signed-off-by: Zihuan Zhang <zhangzihuan@kylinos.cn>
+
+On 8/23/2025 10:01 PM, Beleswar Padhi wrote:
+> The J742S2 SoC reuses the common k3-j784s4-j742s2-mcu-wakeup-common.dtsi
+> for its MCU domain, but it does not override the firmware-name property
+> for its R5F cores. This causes the wrong firmware binaries to be
+> referenced.
+>
+> Introduce a new k3-j742s2-mcu-wakeup.dtsi file to override the
+> firmware-name property with correct names for J742s2.
+>
+> Fixes: 38fd90a3e1ac ("arm64: dts: ti: Introduce J742S2 SoC family")
+> Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
 > ---
->  drivers/cpufreq/mediatek-cpufreq.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/cpufreq/mediatek-cpufreq.c b/drivers/cpufreq/mediatek-cpufreq.c
-> index f3f02c4b6888..1fae060e16d9 100644
-> --- a/drivers/cpufreq/mediatek-cpufreq.c
-> +++ b/drivers/cpufreq/mediatek-cpufreq.c
-> @@ -320,7 +320,7 @@ static int mtk_cpufreq_opp_notifier(struct notifier_block *nb,
->  	struct dev_pm_opp *new_opp;
->  	struct mtk_cpu_dvfs_info *info;
->  	unsigned long freq, volt;
-> -	struct cpufreq_policy *policy;
-> +	struct cpufreq_policy *policy __free(put_cpufreq_policy);
->  	int ret = 0;
->  
->  	info = container_of(nb, struct mtk_cpu_dvfs_info, opp_nb);
-> @@ -354,11 +354,9 @@ static int mtk_cpufreq_opp_notifier(struct notifier_block *nb,
->  
->  			dev_pm_opp_put(new_opp);
->  			policy = cpufreq_cpu_get(info->opp_cpu);
-> -			if (policy) {
-> +			if (policy)
->  				cpufreq_driver_target(policy, freq / 1000,
->  						      CPUFREQ_RELATION_L);
-> -				cpufreq_cpu_put(policy);
-> -			}
->  		}
->  	}
+> v2: Changelog:
+> 1. Posted this patch as a fix as decided in v1, so added Fixes tag.
+>
+> Link to v1:
+> https://lore.kernel.org/all/20250522073426.329344-2-b-padhi@ti.com/
+>
+>   .../arm64/boot/dts/ti/k3-j742s2-mcu-wakeup.dtsi | 17 +++++++++++++++++
+>   arch/arm64/boot/dts/ti/k3-j742s2.dtsi           |  1 +
+>   2 files changed, 18 insertions(+)
+>   create mode 100644 arch/arm64/boot/dts/ti/k3-j742s2-mcu-wakeup.dtsi
+>
+> diff --git a/arch/arm64/boot/dts/ti/k3-j742s2-mcu-wakeup.dtsi b/arch/arm64/boot/dts/ti/k3-j742s2-mcu-wakeup.dtsi
+> new file mode 100644
+> index 000000000000..61db2348d6a4
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/ti/k3-j742s2-mcu-wakeup.dtsi
+> @@ -0,0 +1,17 @@
+> +// SPDX-License-Identifier: GPL-2.0-only OR MIT
+> +/*
+> + * Device Tree Source for J742S2 SoC Family
+> + *
+> + * TRM: https://www.ti.com/lit/pdf/spruje3
+> + *
+> + * Copyright (C) 2025 Texas Instruments Incorporated - https://www.ti.com/
+> + *
+> + */
+> +
+> +&mcu_r5fss0_core0 {
+> +	firmware-name = "j742s2-mcu-r5f0_0-fw";
+> +};
+> +
+> +&mcu_r5fss0_core1 {
+> +	firmware-name = "j742s2-mcu-r5f0_1-fw";
+> +};
 
-Merged with:
 
-diff --git a/drivers/cpufreq/mediatek-cpufreq.c b/drivers/cpufreq/mediatek-cpufreq.c
-index 1fae060e16d9..fae062a6431f 100644
---- a/drivers/cpufreq/mediatek-cpufreq.c
-+++ b/drivers/cpufreq/mediatek-cpufreq.c
-@@ -320,7 +320,6 @@ static int mtk_cpufreq_opp_notifier(struct notifier_block *nb,
-        struct dev_pm_opp *new_opp;
-        struct mtk_cpu_dvfs_info *info;
-        unsigned long freq, volt;
--       struct cpufreq_policy *policy __free(put_cpufreq_policy);
-        int ret = 0;
+Reviewed-by: Udit Kumar <u-kumar1@ti.com>
 
-        info = container_of(nb, struct mtk_cpu_dvfs_info, opp_nb);
-@@ -353,7 +352,9 @@ static int mtk_cpufreq_opp_notifier(struct notifier_block *nb,
-                        }
 
-                        dev_pm_opp_put(new_opp);
--                       policy = cpufreq_cpu_get(info->opp_cpu);
-+
-+                       struct cpufreq_policy *policy __free(put_cpufreq_policy)
-+                               = cpufreq_cpu_get(info->opp_cpu);
-                        if (policy)
-                                cpufreq_driver_target(policy, freq / 1000,
-                                                      CPUFREQ_RELATION_L);
-
--- 
-viresh
+> diff --git a/arch/arm64/boot/dts/ti/k3-j742s2.dtsi b/arch/arm64/boot/dts/ti/k3-j742s2.dtsi
+> index 7a72f82f56d6..d265df1abade 100644
+> --- a/arch/arm64/boot/dts/ti/k3-j742s2.dtsi
+> +++ b/arch/arm64/boot/dts/ti/k3-j742s2.dtsi
+> @@ -96,3 +96,4 @@ cpu3: cpu@3 {
+>   };
+>   
+>   #include "k3-j742s2-main.dtsi"
+> +#include "k3-j742s2-mcu-wakeup.dtsi"
 
