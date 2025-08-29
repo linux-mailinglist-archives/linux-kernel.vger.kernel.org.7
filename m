@@ -1,159 +1,131 @@
-Return-Path: <linux-kernel+bounces-791367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id A31F6B3B600
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 10:29:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C364B3B602
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 10:30:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 551BB4E3AB0
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 08:29:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19FBD3B3CDD
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 08:30:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B502729992E;
-	Fri, 29 Aug 2025 08:29:14 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33CBD2571DD;
+	Fri, 29 Aug 2025 08:30:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KsejlunZ"
+Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D67D285CAB;
-	Fri, 29 Aug 2025 08:29:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4240B2629D;
+	Fri, 29 Aug 2025 08:30:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756456154; cv=none; b=MAS1NKnwUKm9IZe3MlX4oeYozfkOrybUROrgBOjPj2qCm1d8LfyUcUdiVcz9KgXqimEwKTh2hBAeLws04UaRsi1JH4wq0nfX+zP09WTQTOCt61kjU8WNhRmV8GL2wX3s9CXBMlLnnPJGvkmhwyDNpD2O6cwKpStEg/++9hAwQJo=
+	t=1756456224; cv=none; b=FNOYtEmRSlMX/xA5hBoNJqMsQGZEKSpD8kQMyLPMijMLqs7umLgtLzU8YE2ka1Yq5QywM67w6t50WVOsMdW35hyPo/Z2RVJpG8jftxJVjAEXNX5G83nqngX2ASl0pExsxjQndu2H00zy8qRN+qp8LGOLP4I7ompegymH3pHdlMk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756456154; c=relaxed/simple;
-	bh=saNq597WfeDglag5mqqqm7y1w9j+DVQ19b4Ai1zb8Sw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Jt/43W8xPvAmk+pNCXZRBk55cTHJfsJQrS4u7JXrnv117CMJK7GPHxsR8Sij1WbtBMPGsmgqRUMyuyPCxQUEP3FgagNLMS4u+blEbWX8apyaWcJ1iyccNbRDexI45BRTW4XVDQAs9tjBdZRnRhSRmmCyvSkEhLvxNfkaDx+gN5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4cCrys1VmSzKHNMx;
-	Fri, 29 Aug 2025 16:29:09 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id E5BEA1A125A;
-	Fri, 29 Aug 2025 16:29:08 +0800 (CST)
-Received: from [10.67.108.244] (unknown [10.67.108.244])
-	by APP4 (Coremail) with SMTP id gCh0CgB3wY3TZLFo6Ui3Ag--.45960S3;
-	Fri, 29 Aug 2025 16:29:08 +0800 (CST)
-Message-ID: <436e4fa7-f8c7-4c23-a28a-4e5eebe2f854@huaweicloud.com>
-Date: Fri, 29 Aug 2025 16:29:07 +0800
+	s=arc-20240116; t=1756456224; c=relaxed/simple;
+	bh=fmztinXNGZoFyDM9iQimoe4sUQp0ILd71JgU+IBaAck=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=B2BAWRNcKcfYs1LcornWSY66uMILvuDXk4aIJ5raPwkCO5PjY/IkIhiGy0/Sm0UN38iM2jo7jabKpzRVRqKCP82Qx3c35e6ySYx9fOe/pF3XE+We6qQE029I7kCcrNaSILyCNQ2X7Pv8Ss4nTIeYmB4Ygo5UV4XtPpVO0I9dSSo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KsejlunZ; arc=none smtp.client-ip=209.85.215.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-b4d1e7d5036so179865a12.1;
+        Fri, 29 Aug 2025 01:30:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756456222; x=1757061022; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=wUFkmc/x2ufMRoDkDhwet0rnXo3rgvzLQTvAmQ/ZxPM=;
+        b=KsejlunZCf9K5DwrQAJu6S53GsJ7+DisS51fKBJ+81/7cPSqeA7CoAqvf0Q2Nj+u0R
+         gfRs1w4XS2VEUv7Ulfp6qBKAbWzQkb5jYM6BHzISbzzhJU0htuVHmG5tB9yVZ+mSq80r
+         iN7LI05jg4uBRfgOWLMTDFIJZUl9VOpq0lqhaP+nXc2XvogMdGuWIUKKP6MO89PR+CmX
+         nfNki7jlCBA9TvnXfzLNQZLYuwjrzLqwdpf1qSRhrWVsdr3webkpn5/Uxig0IkqBxXqg
+         WON0dLhk2zZzwkiOvnDI8tDiBoz+DVZwBzW+2Pg3vDllkzk6n0cKXuzRqFmtbCEWzF2w
+         iLEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756456222; x=1757061022;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wUFkmc/x2ufMRoDkDhwet0rnXo3rgvzLQTvAmQ/ZxPM=;
+        b=uCr1IVB518mnx9tCqGmqeSKokSaC6Zr/mTUzSkb+e1mOiI6mvAXh88RT+BMMj4/crQ
+         7xEf9IKf4gIvQQcu9wqv/gYycWf8tEBrPgkYWssC52Kt45ZbWqVuXw4zI69Xwt+lP4Da
+         P6JqWpjmdx4jnHlbgJA7Evn7H6gw8gF2TUauCKiK4j1H377EQZP3ADXq+VUUuyjBf8Dj
+         NGEji629Iw/D1MuzPCVMaJXxzLAAw1WTpgbw7g9V7ErWPYkiKqhHbzrSn5BAX5QFG7SJ
+         EbcmyYaRmp0mJxQQw5KCr0DoPjG0dIRkqV/R0stpNKmclDNydFb9DxX8uqvHy7L552bP
+         V1FQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVk9ICK/HrAlZuiBGqM57OXbfjzK6QtgLb9EHazELycJKEm/Z4KEJ5VMywwvsqxTinK7dslmm4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHWyLy87cJmSQZ8OVO8W963JLNLb/AShneNEl7thKxVi4wTeYE
+	1/hopWKaKh3IGUJBabIRVTKfhIiEnvdt3xtDwCSHLoZW1Aoj4x2Jap+f
+X-Gm-Gg: ASbGncuzc06lLtSVFSHrstFfCfdaNZb/65X0HfCX8E1PTpIuzs0ChPB9ZnceuNeR4bF
+	ajDzTluPMq3Jqfv7xfcu9PM1Sv33VLWUFk3Aqs6Kb1aZh+07eFVuI5vegf8kTFTslTk3NJbiPxO
+	qp0WQ2P+RKQwFxaz2M1O798Abfdp8/7QeKZr0045E6zFYXaMG/ChDAivwArRajaVqzlbgMQ5vZT
+	QNK2OTHVbKQWm7JcBwwPAHcrrNMUbHQWpDBWNn3XaJVwYECmXffiWzDDwKPwqZodbhwTI9d/65c
+	3ulN2jEd/a4IjVnFIfjNqqF9qKTaVJKyouh+n+DW7GigolNUa7QIPecu6pKR/Do+klwt0C06mvm
+	u6on5qnMq8Vu6+Tc+tLCzWg5h6EC82Tn4TBGRYVvViDajECpMOcU+OxivJpcO1GUFvd5nwHLnAs
+	mkFyx98ahZ/bzSgVX93hkl7Fjz+q6ExprOoCL/UYJHydvI
+X-Google-Smtp-Source: AGHT+IFy6XSrFwHA3q5MgaSXaSW7U25H3wu7AFeipRS6C0qM8v53NULMWlW/+QJoXG7hl/ZwLuWNDA==
+X-Received: by 2002:a17:903:1b06:b0:240:a559:be6a with SMTP id d9443c01a7336-2462ef4446amr356429315ad.34.1756456222497;
+        Fri, 29 Aug 2025 01:30:22 -0700 (PDT)
+Received: from vickymqlin-1vvu545oca.codev-2.svc.cluster.local ([14.22.11.165])
+        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-3276fcf04b8sm7511108a91.26.2025.08.29.01.30.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 29 Aug 2025 01:30:22 -0700 (PDT)
+From: Miaoqian Lin <linmq006@gmail.com>
+To: chris@zankel.net,
+	jcmvbkbc@gmail.com,
+	linmq006@gmail.com,
+	thorsten.blum@linux.dev,
+	viro@zeniv.linux.org.uk
+Cc: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: [PATCH] xtensa: simdisk: add input size check in proc_write_simdisk
+Date: Fri, 29 Aug 2025 16:30:15 +0800
+Message-Id: <20250829083015.1992751-1-linmq006@gmail.com>
+X-Mailer: git-send-email 2.35.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] tracing: Fix tracing_marker may trigger page fault during
- preempt_disable
-Content-Language: en-US
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-References: <20250819105152.2766363-1-luogengkun@huaweicloud.com>
- <20250819135008.5f1ba00e@gandalf.local.home>
-From: Luo Gengkun <luogengkun@huaweicloud.com>
-In-Reply-To: <20250819135008.5f1ba00e@gandalf.local.home>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:gCh0CgB3wY3TZLFo6Ui3Ag--.45960S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxGw13Cw4fJw4UXw4rXrWfuFg_yoW5XryrpF
-	yfKwsrKF4UWryjy3ZrZw10qa4rKr4UXryxGFn5Wr1fX3yY9rn8XFWxKwsY9FyUWry7Aw1S
-	yw4Utr9xWr15ZwUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUylb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAK
-	I48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
-	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xII
-	jxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw2
-	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x02
-	67AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxU7IJmUUUUU
-X-CM-SenderInfo: 5oxrwvpqjn3046kxt4xhlfz01xgou0bp/
+Content-Transfer-Encoding: 8bit
 
+A malicious user could pass an arbitrarily bad value
+to memdup_user_nul(), potentially causing kernel crash.
 
-On 2025/8/20 1:50, Steven Rostedt wrote:
-> On Tue, 19 Aug 2025 10:51:52 +0000
-> Luo Gengkun <luogengkun@huaweicloud.com> wrote:
->
->> Both tracing_mark_write and tracing_mark_raw_write call
->> __copy_from_user_inatomic during preempt_disable. But in some case,
->> __copy_from_user_inatomic may trigger page fault, and will call schedule()
->> subtly. And if a task is migrated to other cpu, the following warning will
-> Wait! What?
->
-> __copy_from_user_inatomic() is allowed to be called from in atomic context.
-> Hence the name it has. How the hell can it sleep? If it does, it's totally
-> broken!
->
-> Now, I'm not against using nofault() as it is better named, but I want to
-> know why you are suggesting this change. Did you actually trigger a bug here?
+This follows the same pattern as commit ee76746387f6
+("netdevsim: prevent bad user input in nsim_dev_health_break_write()")
 
-yes, I trigger this bug in arm64.
+Fixes: b6c7e873daf7 ("xtensa: ISS: add host file-based simulated disk")
+Fixes: 16e5c1fc3604 ("convert a bunch of open-coded instances of memdup_user_nul()")
+Cc: stable@vger.kernel.org
+Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
+---
+ arch/xtensa/platforms/iss/simdisk.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
->
->> be trigger:
->>          if (RB_WARN_ON(cpu_buffer,
->>                         !local_read(&cpu_buffer->committing)))
->>
->> An example can illustrate this issue:
->>
->> process flow						CPU
->> ---------------------------------------------------------------------
->>
->> tracing_mark_raw_write():				cpu:0
->>     ...
->>     ring_buffer_lock_reserve():				cpu:0
->>        ...
->>        cpu = raw_smp_processor_id()			cpu:0
->>        cpu_buffer = buffer->buffers[cpu]			cpu:0
->>        ...
->>     ...
->>     __copy_from_user_inatomic():				cpu:0
->>        ...
->>        # page fault
->>        do_mem_abort():					cpu:0
-> Sounds to me that arm64 __copy_from_user_inatomic() may be broken.
->
->>           ...
->>           # Call schedule
->>           schedule()					cpu:0
->> 	 ...
->>     # the task schedule to cpu1
->>     __buffer_unlock_commit():				cpu:1
->>        ...
->>        ring_buffer_unlock_commit():			cpu:1
->> 	 ...
->> 	 cpu = raw_smp_processor_id()			cpu:1
->> 	 cpu_buffer = buffer->buffers[cpu]		cpu:1
->>
->> As shown above, the process will acquire cpuid twice and the return values
->> are not the same.
->>
->> To fix this problem using copy_from_user_nofault instead of
->> __copy_from_user_inatomic, as the former performs 'access_ok' before
->> copying.
->>
->> Fixes: 656c7f0d2d2b ("tracing: Replace kmap with copy_from_user() in trace_marker writing")
-> The above commit was intorduced in 2016. copy_from_user_nofault() was
-> introduced in 2020. I don't think this would be the fix for that kernel.
->
-> So no, I'm not taking this patch. If you see __copy_from_user_inatomic()
-> sleeping, it's users are not the issue. That function is.
->
-> -- Steve
->
->
-I noticed that in most places where __copy_from_user_inatomic() is used,
-it is within the pagefault_disable/enable() section. When pagefault_disable()
-is called, user access methods will no sleep. So I'm going to send a v2patch which use pagefault_disable/enable()to fix this problem. -- Gengkun
-
->
->> Signed-off-by: Luo Gengkun <luogengkun@huaweicloud.com>
+diff --git a/arch/xtensa/platforms/iss/simdisk.c b/arch/xtensa/platforms/iss/simdisk.c
+index 6ed009318d24..3cafc8feddee 100644
+--- a/arch/xtensa/platforms/iss/simdisk.c
++++ b/arch/xtensa/platforms/iss/simdisk.c
+@@ -231,10 +231,14 @@ static ssize_t proc_read_simdisk(struct file *file, char __user *buf,
+ static ssize_t proc_write_simdisk(struct file *file, const char __user *buf,
+ 			size_t count, loff_t *ppos)
+ {
+-	char *tmp = memdup_user_nul(buf, count);
++	char *tmp;
+ 	struct simdisk *dev = pde_data(file_inode(file));
+ 	int err;
+ 
++	if (count == 0 || count > PAGE_SIZE)
++		return -EINVAL;
++
++	tmp = memdup_user_nul(buf, count);
+ 	if (IS_ERR(tmp))
+ 		return PTR_ERR(tmp);
+ 
+-- 
+2.35.1
 
 
