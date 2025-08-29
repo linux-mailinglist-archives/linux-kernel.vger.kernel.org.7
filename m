@@ -1,170 +1,163 @@
-Return-Path: <linux-kernel+bounces-791126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B66BB3B24D
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 07:11:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17201B3B24F
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 07:13:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 692577AB4C1
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 05:09:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ADD1216948D
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 05:13:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F410F216E32;
-	Fri, 29 Aug 2025 05:11:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A1021E9905;
+	Fri, 29 Aug 2025 05:13:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JWKBH1wS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U9HUcpm3"
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CA2ECA52;
-	Fri, 29 Aug 2025 05:11:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13622CA52
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 05:13:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756444264; cv=none; b=IeO6ChSy03RO/itOn9cYdybWwfoB9NM/9d5q4GAwpquRdwGKPcQsPkE+ratFYvcG61uwqw/FZUaJt/fuWYGHA2Sr8RpAw00l8wjcAz0c0gnBasvrxb4IWtHZiue69hhDfq28sN1MHJzwSuLr1CqxBgvhb90E9Eh6kLVfjM1aVVM=
+	t=1756444409; cv=none; b=aGF0o1CCZH8A7TW2iKAWyJacFtEGmPDbVGC9UirXC/3duFSN5S5E0ggwc8lBNSlHjTHy0MEaFpnYBOwv/Pa9Ffizp+CNtpAbtf5U8SKYAx+1Q/Akc+N5L8WcLVPx1NoFko71TY7JqjkCM9L9FMxxIUQmbAwtYU6eKohbLVXo0Vk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756444264; c=relaxed/simple;
-	bh=6vLrdCJFaNsRzlk7G9yfns7UswYZoLn7qkCqbcJ/dfA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=kXh3zOQIwLGriXbqUpvha5CqSo/KBVqBD6fTK+q/xdT0mymOsDMs3k51lsKx4tloJ/sD2qpVruey5tkgpRHIicHNo0gjcBaMw3OUDv24ShsHvpl66yJkPtSFlkS4w8PIJdd6DruAsSURxSG+0afoXdk8heDRHz5bWWacLiK5z7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JWKBH1wS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 1004CC4CEF1;
-	Fri, 29 Aug 2025 05:11:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756444264;
-	bh=6vLrdCJFaNsRzlk7G9yfns7UswYZoLn7qkCqbcJ/dfA=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=JWKBH1wS9DfSdRXjIOBN4zY286LuwjYSgASN+ixMacmrTzXlfYdiuJhlsC6Ttl4Yr
-	 V+acYpXSRtGll2NkLtu2Zg1qPtNL8MVZ0cF4ST3n1yrj80u9IYP+siSfQoCj3a51do
-	 Gh7xyrOLPyz+XjB197LTPwihFLkCdnnuvsWgIQyixC3K8J/6iVxXyhfYgtRAqIF2Xf
-	 CfPniNV5+j3eIsV/OalOnYknud7DArZP4Rjd+ebAVCPKkKciFktCH8WmPc2LIJtI7v
-	 05RkAiswSh6E3oJTeXKjmIXbqsgZs7d32uOumiW2Gfi/7G22E3UBMmqm8v1nEZBG45
-	 Q97fSL4L9Fc3A==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05F29CA0FF6;
-	Fri, 29 Aug 2025 05:11:04 +0000 (UTC)
-From: Cryolitia PukNgae via B4 Relay <devnull+cryolitia.uniontech.com@kernel.org>
-Date: Fri, 29 Aug 2025 13:11:00 +0800
-Subject: [PATCH 2/2] ALSA: docs: Add documents for recently changes in
- snd-usb-audio
+	s=arc-20240116; t=1756444409; c=relaxed/simple;
+	bh=rO6rnsqZjWA3RF52gv3XcgwAmEGZO8f2uvwIuKKDfBo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aCBzyIkfY2LNgRuyCOkMERSWGuu2Kng6090Rv0q4DS6sEOdIH9/qeYq5hpnKjB/Nzf5QSR4RNUK1NYiONsI3WuyJEFpMIvef6PnVaQAM4kQ9b1PxgyCqOQNlI1yaZSAw5IS/DLLkScOyDzjVe+ukkP5YEyI/MlgmV9Xc6VFKigM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U9HUcpm3; arc=none smtp.client-ip=209.85.215.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-b49d3b48d8aso1154208a12.2
+        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 22:13:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756444407; x=1757049207; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=rXFscyXVZO+o95fwx2W92cXlYphrwpyKb66RXu3hq9Y=;
+        b=U9HUcpm3vfw8VO5z6cIdQeRRg/6bIWYBGq8rR+ZVS2yYo0tQiCu9OCZLbpA0XwA8ZA
+         SPMtKkmgQpgjW99FPvKFLAd9l2B2yYzd3LGtmUL51JneEabLtT2lEHAHCYGPc8PFkizg
+         GaUFNhKPVQUBFzs7oOeIZT9B651K66LkWTskOGvDTDDjcfqiDtX3QSXTuJAK5v2bM2U6
+         TIvC96ZZeynfJ5l9buQcRu5002WagwjF/WjTT1+tHh19tqVJVyeYrizdP24yFTpprBL1
+         zuwrW2rmilOeA7PzHBSGw3A69Q6HtDuYnU6NPH2RlvCAXTCkx2r0iyKPd5xVNPH1UycO
+         WFkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756444407; x=1757049207;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rXFscyXVZO+o95fwx2W92cXlYphrwpyKb66RXu3hq9Y=;
+        b=C+q3DrbAfm4Dh8Aoic3NThkNGQjHCbjqBWheYii8xJIAj1qs/x8Gn5ET8M/yKgcvh3
+         IrLj4rzUa9oIpW8DlLuq9pk0SM2hGjwA022CZ+K14mAmzipt6mcW8EY9l/VUaOES9aKM
+         hiiLpeesmCwpd/dasH3snYZyevhYusdERbgKdAY2aGZbWXcizYKq0rSFVuOtEWXeaxJp
+         EHgUzZj+LF/NfKQhg/nkIiVCLCAHX9rQqr54QlypgDX59h+YfbPgFlxAzQjoxXD3z/9d
+         W/Uz9jdXLDjYr6JuowugJYGGZ79s6YCXn+4ZxJyUyJlgqfBfySE2tWA0N6k71NrG9UD1
+         LNbA==
+X-Gm-Message-State: AOJu0Yy1NM13F6XhUhvrMvWx/RkFENVmcV+VGhblh2Z7uE1FFKCB3C9a
+	MMJeFUwGT170k435Pd2IsXwnf1ucIQyNTooOB2C7zWYYvTnm5MACGRdl
+X-Gm-Gg: ASbGncsR1mq8eCCWzPvnEvigtQXa4+ks/NXzEBfOj4G0xHqnuMHxW688gIjJXkmK4B7
+	VsuryppIe09T/PO8oGXgcjMwrfscEC+Abl7HQoVEc5MBpYqT/ORLEsHoZwJrDQZphUFLw3wBwQq
+	CbHH1IubDYsefwqzOJjXcx9zvaXqh0h7S0jlYafA3ancc3fP7nY3keIf9HkeSWsFttfxc1sQxfR
+	ah1soDfodRQvvUKB9NNgg6rONyzqyuzoU4inPSo7JZVogSrkudT8spJlY/WpDSslRrWAQiULWUN
+	zwZrTBRzNV57JbkE9q6fJIhccbg5bODfAMs1SmWRvtH93kGzfNAN4rGQoQXf+dDhJbJF8JClI/5
+	H3mPcCIKIoluyaIRO6qAH0dAYdfvqNbn1Qyn+A1sTTZE2fvMU+HEJmk4RQ2A2
+X-Google-Smtp-Source: AGHT+IFhaLxIq01A8FU8eDpUIpw50v3rG0WsO3HpyWkyY1dTG4yOOm0PhjgmHQmMy7uxhY9q1PvLAQ==
+X-Received: by 2002:a17:903:1249:b0:240:7247:f738 with SMTP id d9443c01a7336-2462edee76fmr355050665ad.1.1756444407248;
+        Thu, 28 Aug 2025 22:13:27 -0700 (PDT)
+Received: from localhost.localdomain ([45.8.220.62])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b4cd28ade38sm1006073a12.34.2025.08.28.22.13.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Aug 2025 22:13:26 -0700 (PDT)
+From: Jinchao Wang <wangjinchao600@gmail.com>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	John Ogness <john.ogness@linutronix.de>,
+	Qianqiang Liu <qianqiang.liu@163.com>
+Cc: linux-kernel@vger.kernel.org,
+	Jinchao Wang <wangjinchao600@gmail.com>
+Subject: [PATCH] panic: use angle-bracket include for panic.h
+Date: Fri, 29 Aug 2025 13:13:02 +0800
+Message-ID: <20250829051312.33773-1-wangjinchao600@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250829-sound-param-v1-2-3c2f67cd7c97@uniontech.com>
-References: <20250829-sound-param-v1-0-3c2f67cd7c97@uniontech.com>
-In-Reply-To: <20250829-sound-param-v1-0-3c2f67cd7c97@uniontech.com>
-To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
- Jonathan Corbet <corbet@lwn.net>
-Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Mingcong Bai <jeffbai@aosc.io>, Kexy Biscuit <kexybiscuit@aosc.io>, 
- Wang Yuli <wangyuli@deepin.org>, Guan Wentao <guanwentao@uniontech.com>, 
- Nie Cheng <niecheng1@uniontech.com>, Zhan Jun <zhanjun@uniontech.com>, 
- Celeste Liu <CoelacanthusHex@gmail.com>, Guoli An <anguoli@uniontech.com>, 
- linux-doc@vger.kernel.org, Cryolitia PukNgae <cryolitia@uniontech.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1756444262; l=3978;
- i=cryolitia@uniontech.com; s=20250730; h=from:subject:message-id;
- bh=PnwZqS87di8Y9z9VFeETvAhxUw8n9nVXa6bBVHC+NIs=;
- b=1FLVNwx95G+yVtp4/fasPA4XQBJc3r+8xRhBSwg8yIwZ3YmsKuE2573PUMH5xjyv7HEyMaf3u
- ZsKLWGrnag8COq1So7judM/7g1YnsUZqMnLtplXSvddjnIYep9lFRwz
-X-Developer-Key: i=cryolitia@uniontech.com; a=ed25519;
- pk=tZ+U+kQkT45GRGewbMSB4VPmvpD+KkHC/Wv3rMOn/PU=
-X-Endpoint-Received: by B4 Relay for cryolitia@uniontech.com/20250730 with
- auth_id=474
-X-Original-From: Cryolitia PukNgae <cryolitia@uniontech.com>
-Reply-To: cryolitia@uniontech.com
+Content-Transfer-Encoding: 8bit
 
-From: Cryolitia PukNgae <cryolitia@uniontech.com>
+Replace quoted includes of panic.h with `#include <linux/panic.h>` for
+consistency across the kernel.
 
-Changed:
-  - ignore_ctl_error
-  - lowlatency
-  - skip_validation
-  - mixer_min_mute
-  - quirk_flags[19:24]
-
-Signed-off-by: Cryolitia PukNgae <cryolitia@uniontech.com>
+Signed-off-by: Jinchao Wang <wangjinchao600@gmail.com>
 ---
- Documentation/sound/alsa-configuration.rst | 35 ++++++++++++++++++++++++++----
- 1 file changed, 31 insertions(+), 4 deletions(-)
+ kernel/crash_core.c    | 2 +-
+ kernel/printk/nbcon.c  | 2 +-
+ kernel/printk/printk.c | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/Documentation/sound/alsa-configuration.rst b/Documentation/sound/alsa-configuration.rst
-index a45174d165ebdeadd89de5f556483465c5f6e808..35b288a22e2e6d869f79ba12914b4ee6b538a6c6 100644
---- a/Documentation/sound/alsa-configuration.rst
-+++ b/Documentation/sound/alsa-configuration.rst
-@@ -2253,8 +2253,15 @@ device_setup
-     Default: 0x0000 
- ignore_ctl_error
-     Ignore any USB-controller regarding mixer interface (default: no)
-+    ``ignore_ctl_error=1`` may help when you get an error at accessing
-+    the mixer element such as URB error -22.  This happens on some
-+    buggy USB device or the controller.  This workaround corresponds to
-+    the ``quirk_flags`` bit 14, too.
- autoclock
-     Enable auto-clock selection for UAC2 devices (default: yes)
-+lowlatency
-+    Enable low latency playback mode (default: yes).
-+    Could disable it to switch back to the old mode if face a regression.
- quirk_alias
-     Quirk alias list, pass strings like ``0123abcd:5678beef``, which
-     applies the existing quirk for the device 5678:beef to a new
-@@ -2284,6 +2291,17 @@ delayed_register
-     The driver prints a message like "Found post-registration device
-     assignment: 1234abcd:04" for such a device, so that user can
-     notice the need.
-+skip_validation
-+    Skip unit descriptor validation (default: no).
-+    The option is used to ignores the validation errors with the hexdump
-+    of the unit descriptor instead of a driver probe error, so that we
-+    can check its details.
-+mixer_min_mute
-+    Treat the minimum volume control value as mute (default: no).
-+    ``mixer_min_mute=1`` may help when you find the audio mutes when
-+    the volume is below a certain threshold.  This happens commonly with
-+    USB audio devices.  This workaround corresponds to the ``quirk_flags``
-+    bit 24, too.
- quirk_flags
-     Contains the bit flags for various device specific workarounds.
-     Applied to the corresponding card index.
-@@ -2307,6 +2325,16 @@ quirk_flags
-         * bit 16: Set up the interface at first like UAC1
-         * bit 17: Apply the generic implicit feedback sync mode
-         * bit 18: Don't apply implicit feedback sync mode
-+        * bit 19: Don't closed interface during setting sample rate
-+        * bit 20: Force an interface reset whenever stopping & restarting
-+          a stream
-+        * bit 21: Do not set PCM rate (frequency) when only one rate is
-+          available for the given endpoint.
-+        * bit 22: Set the fixed resolution 16 for Mic Capture Volume
-+        * bit 23: Set the fixed resolution 384 for Mic Capture Volume
-+        * bit 24: Set minimum volume control value as mute for devices
-+          where the lowest playback value represents muted state instead
-+          of minimum audible volume
+diff --git a/kernel/crash_core.c b/kernel/crash_core.c
+index bb38bbaf3a26..a5e8523dd6eb 100644
+--- a/kernel/crash_core.c
++++ b/kernel/crash_core.c
+@@ -4,7 +4,6 @@
+  * Copyright (C) 2002-2004 Eric Biederman  <ebiederm@xmission.com>
+  */
  
- This module supports multiple devices, autoprobe and hotplugging.
+-#include "linux/panic.h"
+ #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
  
-@@ -2314,10 +2342,9 @@ NB: ``nrpacks`` parameter can be modified dynamically via sysfs.
- Don't put the value over 20.  Changing via sysfs has no sanity
- check.
+ #include <linux/buildid.h>
+@@ -23,6 +22,7 @@
+ #include <linux/btf.h>
+ #include <linux/objtool.h>
+ #include <linux/delay.h>
++#include <linux/panic.h>
  
--NB: ``ignore_ctl_error=1`` may help when you get an error at accessing
--the mixer element such as URB error -22.  This happens on some
--buggy USB device or the controller.  This workaround corresponds to
--the ``quirk_flags`` bit 14, too.
-+NB: ``ignore_ctl_error=1`` and ``mixer_min_mute=1`` just provides A
-+quick way to work around the issues.  If you have a buggy device that
-+requires these quirks, please report it to the upstream.
+ #include <asm/page.h>
+ #include <asm/sections.h>
+diff --git a/kernel/printk/nbcon.c b/kernel/printk/nbcon.c
+index 171480135830..558ef3177976 100644
+--- a/kernel/printk/nbcon.c
++++ b/kernel/printk/nbcon.c
+@@ -2,7 +2,6 @@
+ // Copyright (C) 2022 Linutronix GmbH, John Ogness
+ // Copyright (C) 2022 Intel, Thomas Gleixner
  
- NB: ``quirk_alias`` option is provided only for testing / development.
- If you want to have a proper support, contact to upstream for
-
+-#include "linux/panic.h"
+ #include <linux/atomic.h>
+ #include <linux/bug.h>
+ #include <linux/console.h>
+@@ -13,6 +12,7 @@
+ #include <linux/irqflags.h>
+ #include <linux/kthread.h>
+ #include <linux/minmax.h>
++#include <linux/panic.h>
+ #include <linux/percpu.h>
+ #include <linux/preempt.h>
+ #include <linux/slab.h>
+diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+index 236f03937107..5aee9ffb16b9 100644
+--- a/kernel/printk/printk.c
++++ b/kernel/printk/printk.c
+@@ -17,7 +17,6 @@
+  *	01Mar01 Andrew Morton
+  */
+ 
+-#include "linux/panic.h"
+ #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+ 
+ #include <linux/kernel.h>
+@@ -49,6 +48,7 @@
+ #include <linux/sched/clock.h>
+ #include <linux/sched/debug.h>
+ #include <linux/sched/task_stack.h>
++#include <linux/panic.h>
+ 
+ #include <linux/uaccess.h>
+ #include <asm/sections.h>
 -- 
-2.51.0
-
+2.43.0
 
 
