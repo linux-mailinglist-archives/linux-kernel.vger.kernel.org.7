@@ -1,99 +1,86 @@
-Return-Path: <linux-kernel+bounces-791615-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791616-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 982BAB3B93E
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 12:52:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12ADDB3B941
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 12:53:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51C683B661B
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 10:52:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A1E51B27F8F
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 10:53:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98D2930FC1E;
-	Fri, 29 Aug 2025 10:52:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="iDgFte3x";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="tjyZkTfd"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9764E30FC00;
-	Fri, 29 Aug 2025 10:52:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06ADF30FF21;
+	Fri, 29 Aug 2025 10:52:59 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4351230FC00;
+	Fri, 29 Aug 2025 10:52:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756464771; cv=none; b=X7uSgk8rprkkkid5W8AO/+CcrYOtOVzFFeYGk4CRxLOusU2tPSEcJz7WF7rdUSjNIZjk2guJ3pwJk+nhYXwejKqzDF4euBS7e3G+Khhx6/7a9QwQ6MI+RutMoz4GMFssb6yfFf+aBAnH6GR+OyOWqiYMjGLhH8ljZ4G+qiv9mRQ=
+	t=1756464778; cv=none; b=NuAQ5xQxEpvnFRAOZBgMb2mQNFw44a/pE9pS4ceHSyVVFZB4XLonjNGwNlyV6rPuaUOllrjrzINkP6KLJ2xQc26CrRHjGjUOQs59JEZ9hHbHZ22VVUUPfyz+2Vmprx3sdK764PgGka9NxRAWSbLlN3Xrd76QhX9z7fm2k20zumM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756464771; c=relaxed/simple;
-	bh=AG1U5uZDjwxxo89I1nJNqY4zzgoxn6rOGGM85LkZafw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DR5yLjQfrW7tDWSdL7fhfwE6cTy4aU5uOQRMAAmpYr1B9pMpGNvNmfQOAPPePTatKlNo7EM8b1xyZ0zhdz6fRThsU+8AUIcraB6pCqWq5WFzztyq79SVFlRHQ7b2XwlV1f7sAqhQXF/UIbRMhemtCvNUGekGyfW0JleoAeoyeUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=iDgFte3x; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=tjyZkTfd; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 29 Aug 2025 12:52:46 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1756464767;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qteIrrZy/Hd5PTkCLfVwMbS81evxs/mvu7xmf+DTkII=;
-	b=iDgFte3xeL3v3s7mKgsMIwDz8G70PvZgPwjMlfNW2q72bKpr02zIzP9VYaJ9szgoAx/+Wn
-	u6OmDFBogxwxOdwXpCM65eQAKp1PPjnoDSv6up/o17Lamun1cc/datGkoMsdDeGnZXPc7q
-	/1qimv9/sT/qaJOBDoCh+Oc9RGQvVud/XmzQWDHGCJDTT9so52iTgYQvvXL7cROwwIwAx5
-	3+gP1LRaVqqyRWjzAdAL6F+0Ac/lVS/4nTulGv2PccEVd6Ov8eG1Bb2b8HSrhBMVgeIwqU
-	P3LdfozU6Qh6YFKoIPQqkeFloGWjqcNAQTHz6c/jotOAzy/i8dMdpcOx42dUGg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1756464767;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qteIrrZy/Hd5PTkCLfVwMbS81evxs/mvu7xmf+DTkII=;
-	b=tjyZkTfdLB5cdfijs+sd0FC7oRA75mECeN4v41oUjuTdoN3O+IwLnT/tt0xXB/atkO38tP
-	GrLdrlvTsGt+NnAQ==
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-To: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-Cc: Andreas Larsson <andreas@gaisler.com>, 
-	Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
-	Vincenzo Frascino <vincenzo.frascino@arm.com>, Arnd Bergmann <arnd@arndb.de>, 
-	"David S. Miller" <davem@davemloft.net>, Nagarathnam Muthusamy <nagarathnam.muthusamy@oracle.com>, 
-	Nick Alcock <nick.alcock@oracle.com>, John Stultz <jstultz@google.com>, 
-	Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org, sparclinux@vger.kernel.org
-Subject: Re: [PATCH v2 08/13] sparc64: vdso: Switch to the generic vDSO
- library
-Message-ID: <20250829124314-288d0445-a744-4022-93bf-7da255182411@linutronix.de>
-References: <20250815-vdso-sparc64-generic-2-v2-0-b5ff80672347@linutronix.de>
- <20250815-vdso-sparc64-generic-2-v2-8-b5ff80672347@linutronix.de>
- <0b223e3d-25af-4897-b513-699dfeedfa04@gaisler.com>
- <20250826074526-a1463084-366a-44d1-874b-b898f4747451@linutronix.de>
- <271c108b-0fe4-4e7a-9bc7-325e75cf60ab@gaisler.com>
- <8f31efde-0212-49b9-a0ea-64d5532c0071@gaisler.com>
- <20250829122023-948f7969-b6b0-4ae2-9c12-71cc39abcf9e@linutronix.de>
- <b7ab1bdca349208532804d0d5e5af56817cd25c6.camel@physik.fu-berlin.de>
+	s=arc-20240116; t=1756464778; c=relaxed/simple;
+	bh=2l67HPkV8juKuiJ0waqffOy2czHKCxwzQB9FinAHhAI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=D39M2Hw0QBdlZ9d4/g/US2Ebf+L9rgPPFG3CsgUk7XDGZfeJcIJwEWF79kf74lg7PJcPNZlt8w5i5ZwxXqjKX1Yreg9vaTw+D1kPamjSky5HeHdnUIHkYzmMPrnOT0rWRAzPjNzKK6SgwpYoLpvknN73sq3wctdxB+PKSq8ERbk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6DE9719F0;
+	Fri, 29 Aug 2025 03:52:48 -0700 (PDT)
+Received: from [10.57.2.173] (unknown [10.57.2.173])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 374673F738;
+	Fri, 29 Aug 2025 03:52:55 -0700 (PDT)
+Message-ID: <857fd009-bfef-4da9-b6a8-832f0c8b3154@arm.com>
+Date: Fri, 29 Aug 2025 11:52:51 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <b7ab1bdca349208532804d0d5e5af56817cd25c6.camel@physik.fu-berlin.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 02/14] dmaengine: dma350: Add missing dch->coherent
+ setting
+To: Jisheng Zhang <jszhang@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250823154009.25992-1-jszhang@kernel.org>
+ <20250823154009.25992-3-jszhang@kernel.org>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20250823154009.25992-3-jszhang@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Aug 29, 2025 at 12:40:59PM +0200, John Paul Adrian Glaubitz wrote:
-> On Fri, 2025-08-29 at 12:37 +0200, Thomas Weißschuh wrote:
-> > In the meantime I installed a full Debian, but the bug is still not
-> > reproducible in QEMU.
+On 2025-08-23 4:39 pm, Jisheng Zhang wrote:
+> The dch->coherent setting is missing.
 > 
-> Please keep in mind that QEMU emulates sun4u (on UltraSPARC II) while
-> Andreas was testing on sun4v (on Niagara 4). There might be differences.
+> Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
+> ---
+>   drivers/dma/arm-dma350.c | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/dma/arm-dma350.c b/drivers/dma/arm-dma350.c
+> index bf3962f00650..24cbadc5f076 100644
+> --- a/drivers/dma/arm-dma350.c
+> +++ b/drivers/dma/arm-dma350.c
+> @@ -587,6 +587,7 @@ static int d350_probe(struct platform_device *pdev)
+>   	for (int i = 0; i < nchan; i++) {
+>   		struct d350_chan *dch = &dmac->channels[i];
+>   
+> +		dch->coherent = coherent;
 
-I am aware. Unfortuntely I don't have anything else available.
-If anybody could test this on real sun4u that would be great.
-Or teach me how to use sun4v QEMU without it crashing on me.
-In the past you offered access to a physical machine.
-Does this offer still stand? Does it also run into the bug?
+Nit: I'd put this a bit further down with the CH_LINKATTR setup, but 
+otherwise,
+
+Reviewed-by: Robin Murphy <robin.murphy@arm.com>
+
+>   		dch->base = base + DMACH(i);
+>   		writel_relaxed(CH_CMD_CLEAR, dch->base + CH_CMD);
+>   
+
 
