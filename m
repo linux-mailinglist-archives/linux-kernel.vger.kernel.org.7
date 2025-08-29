@@ -1,116 +1,156 @@
-Return-Path: <linux-kernel+bounces-792049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A8E0B3BFCB
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 17:50:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9623EB3BFBF
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 17:48:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 913F2A2009F
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 15:48:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 38179202804
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 15:47:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC120322DA5;
-	Fri, 29 Aug 2025 15:47:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZLywLSEx"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2564322C72;
+	Fri, 29 Aug 2025 15:47:35 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F62C322A3B;
-	Fri, 29 Aug 2025 15:47:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 689151FDA8E;
+	Fri, 29 Aug 2025 15:47:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756482479; cv=none; b=gaN+BwV/Ib1takpV8SiFGf2F6Kf7KWpw564Rs2zYCBWPSbwW5jFPIXhsbIyx7CVd4kd68FGYTH8yW83M+rvonp1WnaqBc6WyhlmSDwA82gOluVYalcMymV2tbIRSwc5LKn3qWGLvMKi0fGtpxjTHTgPtNoiZOvOvekR9LzJLpao=
+	t=1756482455; cv=none; b=b6QRqza4XYiHQndCN3DezjsJZzfLu1YfITVlSQKpXQhDzFwFGFa3gSq35tSZmI9nxYVYCR0q8TTZwLXmf2qEdUwR4B1EE7oukxo3xPRAJ1Oqtd1/Q2yPV6kA0yxdZOLhkIM2fEacOLTvbGaJRkUsDRDYAeeV0GYFbH4f5pDGdis=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756482479; c=relaxed/simple;
-	bh=lnwOaQYRQcYYMVH8ncbgN/sEc5KTSu1MghIcOaktWoI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=C8xFqjViqIKi9gDUaXTVVIAdpPh0N6YDLFAvpIM77xRp5k7+4RfwPPnnge2tbSANFGmnBDvEK/AxO4YXlwZfKLlDQNCSm+alEMP6SeEE6jGhJAz0cp4oNrUwJRR5DqCP+i0fTGKdR2lkQylpkzZ9BgvNgXhA6KZ6cAKzI3gmxgc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZLywLSEx; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-afcb72d5409so384651066b.0;
-        Fri, 29 Aug 2025 08:47:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756482476; x=1757087276; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cAJIIWls01qcbdO+Zw0VxcPwlrsbBbyxT5nPcRBFdos=;
-        b=ZLywLSEx6h/sVFfSbp99BbtqFA9WOCA/FY+VZwox1dzlDneAb35o0Nd/XznWzPRDBy
-         KFujILIC1eRQf/SSUOVSjZqbY3cU6os2xuLPDl25kR2o7vBwqW1btxI3y8Yz5wS9yMV+
-         asAU5U972Idsqi7pr/Lio3Xz6WVcg/HlEnWjeDad7zj9Nn3I93cdUEGbgOL1EEE7IsJd
-         oqFwi4fsQ9zVp0wYk51R6308+YRUssi7DK1Nb480lDuS4apC16pNRzgS7LEz+vyWNDrE
-         B1B8A8Xa/DYoSh0me199h15ZCNb6NCy1gf++edCRv790RalpbKnADFhI4lpSs84y6rsJ
-         L7dA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756482476; x=1757087276;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cAJIIWls01qcbdO+Zw0VxcPwlrsbBbyxT5nPcRBFdos=;
-        b=S/fkhr0is2uWswl15whDvgOIVtJ/C/koSDwb1jDhlh5AkBJZqVM2e2cM3/EMjAtgUI
-         EZXpZwRonvkijUcG6U/oKh9j91YDuTey/vgOQt8GOaefhCl9wMJaiaTSVfsqMOTeaLnT
-         8a8nWOtPnqpJzsQ5hgkndoc2Om+0bdLZB+X5w1galtjxJhoMaFZrrKkTRe21C0tdqDaU
-         LONMWnsyPbGgGulDqHHVhAJEsuVbSjJX/WdRfSd0asACdSJ0UdduOERFMoXZJAxQGsxs
-         z65ngc44VgOaqx9jvZ4N3uQKrdHfr+wtmP2dcuiIFDYtgUgBodBZMpP/Gx0tGWM4nye/
-         1arQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV548k3xBrnAXiNh96q9XJp075een6JjcvVXf8iFp74RJpwF6chmGoJAxHAAJlW1DEJL5Pa+3mbnEwb02U=@vger.kernel.org, AJvYcCVW4OUKK4SADxwv5i1liqP8jHdH4XoyPSXobCHj3/y07Y5YSueKSSunMY9c7Vi8MSKGCD63qZYL/kI=@vger.kernel.org, AJvYcCW4FgsN9oc1qq3hkwGJCgx9xOTCdjC8Ti2rFZIH4i7FLZAEjQ7m+a3zdWIboT6s5l1LGPHG+F6ALoAPoHnX@vger.kernel.org
-X-Gm-Message-State: AOJu0YwqZNC2w45x6fHljSYAQ1asvmY2YREPQXnyZ/7CDKt5mme3iw31
-	HkHBo0PKzCliVIt/BlD6N0GSIO5NnRn1TJIiageDTB1agJcOJIDC2zIfWxIrnBPmAyewxhz0hAz
-	jY/XWUJVg8UA3cfBlwFH4I8Ne6NEPwB0=
-X-Gm-Gg: ASbGncuwxdWQXhOXnIhMwriizzEDholLfQcbZijr/lXXwZcHODq4MjoGp6LJVmvRvM7
-	V59uA85iqFCjSeXR82Q4qmHWmoygiLWjrUqY0p4lx2TNPlI2NgR1i72RgOdGgvkOeE4VEWy8sjd
-	n6p9OWQx1BLRbRLh62rWQkppOj3uhmE/OcwUoDQEQ3X65j/0YPHWtwBqMYqUV3bk4XS1F9hq360
-	RPzp32qegIpQ+lRsA==
-X-Google-Smtp-Source: AGHT+IFJq4hKgpclpLAzxMbJKPxkfTuTBk+yeSHiyUHSoi5ySksUHWMjTOQ/E9rzP4cQzVNVXKhPw9IIS83Ir4FS3n0=
-X-Received: by 2002:a17:907:948a:b0:aff:1719:a477 with SMTP id
- a640c23a62f3a-aff171a7dbamr84852466b.31.1756482475759; Fri, 29 Aug 2025
- 08:47:55 -0700 (PDT)
+	s=arc-20240116; t=1756482455; c=relaxed/simple;
+	bh=nWH1E+8SRzunXLKT1X0dDOrORgycPjOh4GuZcsujFBQ=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=sLxh6/bgwX5oJRbPWYEtr2uALxE1p28Fslr2kc049iR0Aia/7JhQoQXNjrRYtlrhoctoJM+f59841RoG0HNdCkR9M4I+E2SdsR1vt6xNGJYE8F4/m/IHWYVnp9Uy2B7l0mzq8W7S96e6eC9cF2ifdVynHvRTwVGKCT5AAAjYVE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cD2cY43R0z6L508;
+	Fri, 29 Aug 2025 23:43:57 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 8D227140370;
+	Fri, 29 Aug 2025 23:47:29 +0800 (CST)
+Received: from localhost (10.203.177.15) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 29 Aug
+ 2025 17:47:28 +0200
+Date: Fri, 29 Aug 2025 16:47:27 +0100
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+To: Lukas Wunner <lukas@wunner.de>
+CC: Terry Bowman <terry.bowman@amd.com>, <dave@stgolabs.net>,
+	<dave.jiang@intel.com>, <alison.schofield@intel.com>,
+	<dan.j.williams@intel.com>, <bhelgaas@google.com>, <shiju.jose@huawei.com>,
+	<ming.li@zohomail.com>, <Smita.KoralahalliChannabasappa@amd.com>,
+	<rrichter@amd.com>, <dan.carpenter@linaro.org>,
+	<PradeepVineshReddy.Kodamati@amd.com>, <Benjamin.Cheatham@amd.com>,
+	<sathyanarayanan.kuppuswamy@linux.intel.com>, <linux-cxl@vger.kernel.org>,
+	<alucerop@amd.com>, <ira.weiny@intel.com>, <linux-kernel@vger.kernel.org>,
+	<linux-pci@vger.kernel.org>, <shiju.jose@huawei.com>
+Subject: Re: [PATCH v11 07/23] CXL/PCI: Move CXL DVSEC definitions into
+ uapi/linux/pci_regs.h
+Message-ID: <20250829164727.00004d18@huawei.com>
+In-Reply-To: <aK8bY0epS6OStdfr@wunner.de>
+References: <20250827013539.903682-1-terry.bowman@amd.com>
+	<20250827013539.903682-8-terry.bowman@amd.com>
+	<aK8bY0epS6OStdfr@wunner.de>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250829-88pm886-gpadc-v1-0-f60262266fea@dujemihanovic.xyz> <20250829-88pm886-gpadc-v1-2-f60262266fea@dujemihanovic.xyz>
-In-Reply-To: <20250829-88pm886-gpadc-v1-2-f60262266fea@dujemihanovic.xyz>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Fri, 29 Aug 2025 18:47:19 +0300
-X-Gm-Features: Ac12FXwHNw5zWhs_BHazXdsjfePEaiLMfI77QMptP_oixXXRAfk8XbUX9VDuX3c
-Message-ID: <CAHp75VdxGs-tifyD+T+H+TPq9ZY0Oz5zfKsoqf2uuekZCnfizA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] mfd: 88pm886: Add GPADC cell
-To: =?UTF-8?Q?Duje_Mihanovi=C4=87?= <duje@dujemihanovic.xyz>
-Cc: Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, 
-	=?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
-	Andy Shevchenko <andy@kernel.org>, Karel Balej <balejk@matfyz.cz>, Lee Jones <lee@kernel.org>, 
-	David Wronek <david@mainlining.org>, phone-devel@vger.kernel.org, 
-	~postmarketos/upstreaming@lists.sr.ht, linux-kernel@vger.kernel.org, 
-	linux-iio@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100001.china.huawei.com (7.191.160.183) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On Fri, Aug 29, 2025 at 1:18=E2=80=AFAM Duje Mihanovi=C4=87 <duje@dujemihan=
-ovic.xyz> wrote:
->
-> Add a cell for the PMIC's onboard General Purpose ADC.
+On Wed, 27 Aug 2025 16:51:15 +0200
+Lukas Wunner <lukas@wunner.de> wrote:
 
-...
+> On Tue, Aug 26, 2025 at 08:35:22PM -0500, Terry Bowman wrote:
+> > The CXL DVSECs are currently defined in cxl/core/cxlpci.h. These are not
+> > accessible to other subsystems.
+> > 
+> > Change DVSEC name formatting to follow the existing PCI format in
+> > pci_regs.h. The current format uses CXL_DVSEC_XYZ. Change to be PCI_DVSEC_CXL_XYZ.  
+> [...]
+> > +++ b/include/uapi/linux/pci_regs.h
+> > @@ -1225,9 +1225,61 @@
+> >  /* Deprecated old name, replaced with PCI_DOE_DATA_OBJECT_DISC_RSP_3_TYPE */
+> >  #define PCI_DOE_DATA_OBJECT_DISC_RSP_3_PROTOCOL		PCI_DOE_DATA_OBJECT_DISC_RSP_3_TYPE
+> >  
+> > -/* Compute Express Link (CXL r3.1, sec 8.1.5) */
+> > -#define PCI_DVSEC_CXL_PORT				3
+> > -#define PCI_DVSEC_CXL_PORT_CTL				0x0c
+> > -#define PCI_DVSEC_CXL_PORT_CTL_UNMASK_SBR		0x00000001
+> > +/* Compute Express Link (CXL r3.2, sec 8.1)
+> > + *
+> > + * Note that CXL DVSEC id 3 and 7 to be ignored when the CXL link state
+> > + * is "disconnected" (CXL r3.2, sec 9.12.3). Re-enumerate these
+> > + * registers on downstream link-up events.
+> > + */
+> > +
+> > +#define PCI_DVSEC_HEADER1_LENGTH_MASK  GENMASK(31, 20)
+> > +
+> > +/* CXL 3.2 8.1.3: PCIe DVSEC for CXL Device */
+> > +#define PCI_DVSEC_CXL_DEVICE					0
+> > +#define	  PCI_DVSEC_CXL_CAP_OFFSET	       0xA
+> > +#define	    PCI_DVSEC_CXL_MEM_CAPABLE	       BIT(2)
+> > +#define	    PCI_DVSEC_CXL_HDM_COUNT_MASK       GENMASK(5, 4)
+> > +#define	  PCI_DVSEC_CXL_CTRL_OFFSET	       0xC
+> > +#define	    PCI_DVSEC_CXL_MEM_ENABLE	       BIT(2)
+> > +#define	  PCI_DVSEC_CXL_RANGE_SIZE_HIGH(i)     (0x18 + (i * 0x10))
+> > +#define	  PCI_DVSEC_CXL_RANGE_SIZE_LOW(i)      (0x1C + (i * 0x10))
+> > +#define	    PCI_DVSEC_CXL_MEM_INFO_VALID       BIT(0)
+> > +#define	    PCI_DVSEC_CXL_MEM_ACTIVE	       BIT(1)
+> > +#define	    PCI_DVSEC_CXL_MEM_SIZE_LOW_MASK    GENMASK(31, 28)
+> > +#define	  PCI_DVSEC_CXL_RANGE_BASE_HIGH(i)     (0x20 + (i * 0x10))
+> > +#define	  PCI_DVSEC_CXL_RANGE_BASE_LOW(i)      (0x24 + (i * 0x10))
+> > +#define	    PCI_DVSEC_CXL_MEM_BASE_LOW_MASK    GENMASK(31, 28)  
+> 
+> Is it legal to use BIT() in a uapi header?
+> 
+> We've only allowed use of GENMASK() in uapi headers since 2023 with
+> commit 3c7a8e190bc5 ("uapi: introduce uapi-friendly macros for GENMASK").
+> 
 
->  static const struct mfd_cell pm886_devs[] =3D {
+I was curious, so went looking at that series.
+There was a second patch that has what we need here
+https://lore.kernel.org/all/20240131225010.2872733-3-pbonzini@redhat.com/
 
->         MFD_CELL_RES("88pm886-onkey", pm886_onkey_resources),
->         MFD_CELL_NAME("88pm886-regulator"),
->         MFD_CELL_NAME("88pm886-rtc"),
-> +       MFD_CELL_NAME("88pm886-gpadc"),
+So upshot is we should use _BITUL() for user space headers defined in
+uapi/linux/const.h, also should be using  __GENMASK() not GENMASK()
+in uapi/cxl/features.h
 
-List seems ordered, please prevent it.
+Anyhow fancy fixing up the existing cxl headers?  I'll get to it maybe but
+will be a while as have a massive review backlog.
 
->  };
+Jonathan
 
 
---=20
-With Best Regards,
-Andy Shevchenko
+
+> But there is no uapi header in the kernel tree defining BIT().
+> 
+> I note that include/uapi/cxl/features.h has plenty of occurrences of BIT()
+> since commit 9b8e73cdb141 ("cxl: Move cxl feature command structs to user
+> header"), which went into v6.15.
+> 
+> ndctl contains a bitmap.h header defining BIT(), I guess that's why this
+> wasn't perceived as a problem so far:
+> https://github.com/pmem/ndctl/raw/main/util/bitmap.h
+> 
+> However existing user space applications including <linux/pci_regs.h>
+> may not have a BIT() definition and I suspect your change above will
+> break the build of those applications.
+> 
+> Thanks,
+> 
+> Lukas
+> 
+
 
