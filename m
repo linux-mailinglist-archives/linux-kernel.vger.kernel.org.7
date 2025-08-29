@@ -1,176 +1,151 @@
-Return-Path: <linux-kernel+bounces-791741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791743-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C620BB3BB3F
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 14:23:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88754B3BB43
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 14:26:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AC2F64E4D53
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 12:23:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BB381640E5
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 12:26:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15ECD31A04E;
-	Fri, 29 Aug 2025 12:23:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B1CF314B97;
+	Fri, 29 Aug 2025 12:26:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H5WpQMN7"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FAVOW1sB"
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A96FA317715;
-	Fri, 29 Aug 2025 12:23:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61BB5314B7B;
+	Fri, 29 Aug 2025 12:26:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756470185; cv=none; b=TLf08DU2wNNvIpq1lH9DwxIMaUYzhuayI9vr4YIZ4Q/FbXufiexfsj2DyMdS/WG/sNlGT3i2TEg0I39CLlccE+I7BXyg2Z/D5GIhbriJ4pEyg52HsSVpkYR7INbqnZeiXxlkbbi2GgmkIhONEU3Wx7nY5RklrBtYzVF7xyFktUs=
+	t=1756470368; cv=none; b=KthGWdqj5+kp1+Aoo8VmWldxhzopW9r52gghcL2P/DvOUBJREwqrJ4cHPLHO3ZDakW2CFO7afRKVOCme3XFT5fC2gGKTuUXqWbQDo5K4vmQhx3TbvNSKvbWlI4yXzzGn3R+umLDBPYOT4471dUtHH+4G33cnUyOjiXGtQSDH/tM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756470185; c=relaxed/simple;
-	bh=MXUu9QPmMd3rT7yOj7o+ms6cmx2K03QYdIn0E/ZLtF0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=OwNrE/giFPdLBUxMepXyXRf2mooG8eapBnNrZgaFBbCZ7RRh3VEwsLha2vDbeMU0KqGZolU7+xFX+R21yClwjL53r4M2AbLzlM99zVNeQwNDkzYGKlkUymNezK+RX0f0fbjsdInt32mVZd5ryL3AKXTqnGxSqXtlt9/W+9c1qyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H5WpQMN7; arc=none smtp.client-ip=209.85.218.42
+	s=arc-20240116; t=1756470368; c=relaxed/simple;
+	bh=iFI0/yI+74yAbMsl6eOM0bAZHRVDdpiKUdiXmY6Wy+U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lgs+0GWjZviIKAfwFDuYWyB7V33Zmzt4oOrRXb+Xae7pgXHCvFDlqL3cJGeU2urtlBdXvfD9fEQ/m/OZNuNFazGRQ+hK24KbujUnXcPQWEDEJZgFU3YgPdSTFpNr2b+7uHMHGteQIC68qlpZJER9CtSqg6d8uR2zSmr4U61aNCQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FAVOW1sB; arc=none smtp.client-ip=209.85.216.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-afe9358fe77so257325566b.1;
-        Fri, 29 Aug 2025 05:23:03 -0700 (PDT)
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-328015abe0bso173142a91.0;
+        Fri, 29 Aug 2025 05:26:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756470182; x=1757074982; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1756470366; x=1757075166; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=QV/43b5wZcr7oH1WYrVSWi9FWU3xmsqmK7c9FuV3Om4=;
-        b=H5WpQMN7V8d4tzjyimoWHoqELUiaBaEjES+VoiPogF/yRdSBjPtgmDZWNGGxXbJhj5
-         Ti72+CPKskT2fmQMePMG+J4FYhij5sWJPiFURaJ1AvXCFclOVSn7HDEPqpHqFimKBzJd
-         uWeFldfBLjk/1RYAR5f5yD7PxHjk61ZBRPfgyYFzCLzV06JYkpjNbugMeDqfp8rDvIEH
-         9m7a/uUR6wK7kwL2GPYqyz/GLPIpWF3tdBWYQZlsDzwV/OEW9TeWEUfxK0NbnSruDPrl
-         jdiG7yqw9jlS7jFYDM7XsSvI/GxW2hrF4/1C8P0aMPwr/PYRX4J/Wioqwaxz1evsPYmY
-         ACeA==
+        bh=lH1VzVsUexxcYyR6V/xEZQCfjvjSZYifMhkfJzyrGGM=;
+        b=FAVOW1sBWxH1aB7OHpj8H9cM2Ui4CzSV4uhR8LnDIByBkeopeT79pPHuwwUIEqPzGg
+         akObfCdMvcp68n+P8fTGCuPW3XL88j/C6D7l/4sX/2/Ccdwbw5h1LZ0UQKCOhoSVvgIa
+         HvTcNcyXoCHqy2UaER5ppXp1e/w/O8CROiPNSNoU0OizY/9PMZmWLz6JsZ7Z946zOTAr
+         YAo5cPUyrjTkMlU2fxMf0FtxO8v/chl2DbpBqd1J8goyDk/0eq/rIVAP/xDHffXXTssa
+         2aWnCgsuVdfyRPtSe8S+pLY5/cXV7RMj9jmrsG0T+TxFu4fzd22Q4x0tCcf/WrFDkMT9
+         QB6g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756470182; x=1757074982;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1756470366; x=1757075166;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=QV/43b5wZcr7oH1WYrVSWi9FWU3xmsqmK7c9FuV3Om4=;
-        b=GPaOkied5dZ9ju8LZUmZQPNdXZ10RRfwrlqBjD8CSMHE5WoDMVygWE6oqfSiRP4gL4
-         oA2nE7ZjXIDwga9VSaCuy8WC4mNn0l6oKjhhW0IHIROUqUWyHQ2RPJW14IBcCpvhx5u/
-         wk/w8pTl1Tnrx/R8KRLm7U9GiGPUEY8blwNJV28zVlnpIiq/CjnRVhzcN/PmP8gf7qha
-         bXbfvNlrjzirBGZ+gU0TlP3yU7A6t1p+dhx8LHRaZG9GIIDOB0jn6KGiaLPlmR0/lcDg
-         PLwafaOPn56ypP4BGj11fis6hIq0IoEymM1e9FOsEkLujodi7Tft+mRYQlKJL2vRpiHl
-         gQFA==
-X-Forwarded-Encrypted: i=1; AJvYcCXDCiALGy6vNYO4aGBSPOnminD0O1diZEZd4KGxR4w8SdVIileJ7/KO5n+y6Z0UTPUU4EMVmmrcCJExSVQz@vger.kernel.org, AJvYcCXEYWuCZnZOLKtulOfxq0x/di3YwC4LNzxXxBrS5BfD2peEhDLPvmbVngB8hhH1SVJm4VeZrFTnBec=@vger.kernel.org, AJvYcCXdw78i9dqWmwYxBQKZM8G8D/oPVghB4nNycVotoHjj59rrnHagZa7JOGb+qci9snOrc6hxhvU8zLGHOp8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwIMqYUVgtjAoYW7sGYXYOthjC+0heoE5RHeiEV6ZziOvkRw+Ya
-	5MLZuT11318wjSPLliEzSVIV6T5FZaZJqBLz5Sdkknzl9RCT9J3QWuJA
-X-Gm-Gg: ASbGncuKylG5OuNCOc7AyCpsP4IEwimMUdyFtKNf1P8QQPaQfrQSdZcVJq5SNQIKIKz
-	Rd/DikTAQYO5jotGMaF9whMgGuBYUEU9A6x4N47gxk7VzD1+4zZmexbIj+E/mJuABhp0FmzQtd7
-	Iaa5qZTVaFQqlJRh6Fz1LaImXUlWmNYCPwJUh87EGX67nCiIzXo/jR2QQ7oH5cduC8O/9saTVZ7
-	YrBlDuiJzr3xYW2xMBKHuJwakd2ensFTC9XwnzZkcUpgpdk2wYYPQdJ9ntBzlhO6Z6khxdGk5B9
-	r8qNSaI0N6xYSokOyWiI8Hsi9rsvXDUOINUE+L7EuIgZeBeXHcO8aeUPMUPQDtKXgzMpKvApxcW
-	AUc64cbYZCyjtCaj+yhZtBTPo
-X-Google-Smtp-Source: AGHT+IGvpJb6E7O7Cx1ORoFMxIhbdRAYFHmg2T22N2yoFC3HZ0zze+lDuibNTZqMBpYt2X2E/gXPrQ==
-X-Received: by 2002:a17:907:2d2c:b0:ad8:a935:b905 with SMTP id a640c23a62f3a-afe29031d11mr2364154966b.22.1756470181806;
-        Fri, 29 Aug 2025 05:23:01 -0700 (PDT)
-Received: from xeon.. ([188.163.112.70])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afefcbd7047sm188662166b.51.2025.08.29.05.23.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Aug 2025 05:23:01 -0700 (PDT)
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	Thierry Reding <treding@nvidia.com>,
-	Mikko Perttunen <mperttunen@nvidia.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Svyatoslav Ryhel <clamor95@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: devicetree@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: [PATCH v5 4/4] ARM: tegra: Add DFLL clock support for Tegra114
-Date: Fri, 29 Aug 2025 15:22:34 +0300
-Message-ID: <20250829122235.119745-5-clamor95@gmail.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250829122235.119745-1-clamor95@gmail.com>
-References: <20250829122235.119745-1-clamor95@gmail.com>
+        bh=lH1VzVsUexxcYyR6V/xEZQCfjvjSZYifMhkfJzyrGGM=;
+        b=fXvtOpd9aRz+7oI1+BG/+HZeyk/R+dHl/bj2V0yBL4geaP/E1Hn+D8XSQcKpbU6hMk
+         1M0siXkO36HrsMv6Qu07PolOJFCqYnykpC3afQyDBDApRe3TIq6IOce/IQa2dQrihrVR
+         Hc1bbOThKW/HbEiSYQAjGSjDa+vhtyhPJtqnYW0QKHPxrw+bxU1Ylvyi/qF8NB58oO2f
+         SOcVq5mlv1RGpZT1U+PI7w8ubc+V6kpy0b3tflhIYPpCF3CePYGGPZiHAqFlqNo9gJhr
+         7HJ8vR44VYLZpshgtjuA/u0GuQ6OBVDmaDr3PjBoTXdFiT1giLmv9hTCugXkd/fJwJYX
+         OioA==
+X-Forwarded-Encrypted: i=1; AJvYcCVdJQFBIiwduyjxC77CSpEelmqwiVi3jOkbEAkBRVY8x9/MO9IMYMJf5QfNvY+Weq/oIVm2cEPmkg==@vger.kernel.org, AJvYcCXeci6fBZ68ywRDiQ+m3oW2SSHr6kOpArktmkyrvpWWkt4FCQqET1WbpQVvfu0OBhAJVkhKaA1WFCqVdqQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywu+4u9pcaMzIzsQLfryk/WxegQ+t+kNa2IP4QC1xIgp2TFAlGe
+	JB4td9/iM29YyNtcMd+nLWtgMa+/iI21O5FMLdfvgZofiLJvUva8R58zC/zfg2kSBoTkNJZUhur
+	8HCO1q0w93pqYVT7HlhzvvKte0fLUjXo=
+X-Gm-Gg: ASbGnctaRbDeUNR9GjR0o065YUVRYbG4wKfY+gdqhOdTcqmRJkuY1J94iKCBQ3j6mvy
+	Jm0wSecKI5yZlTO7MmGdzV6eyDVgxBTPC1lwIneQHkx+ACyrQe25zZKw3LZ6sqQpSIjiR3WP34d
+	jrZvubo9mH4gQr8JGhUrUFZ/SPFym+pQpR/BE9hJ1QxiGZQx2ZqayZPQrsILnwdGobvkdKWTFTm
+	Osqlol78oreJFyTQg==
+X-Google-Smtp-Source: AGHT+IEgHTaTHOh+lA6JUZHbnapTEWK9wRoncZ2E1VWm92awnld772e7CvAH/uBvGsK4QIuBWefrUpAvTJufdHehSXo=
+X-Received: by 2002:a17:90b:1f8a:b0:327:53f0:6368 with SMTP id
+ 98e67ed59e1d1-32753f06524mr15768520a91.2.1756470366534; Fri, 29 Aug 2025
+ 05:26:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250828170503.2323187-1-nkapron@google.com>
+In-Reply-To: <20250828170503.2323187-1-nkapron@google.com>
+From: Stephen Smalley <stephen.smalley.work@gmail.com>
+Date: Fri, 29 Aug 2025 08:25:55 -0400
+X-Gm-Features: Ac12FXx1oSX4EXBH9uiLUrEqV8tzBGv8orc8GPDBy3QXtzhALhvI1DVsZ8SdY9o
+Message-ID: <CAEjxPJ6C4zALr7UDh2Psgt2KqPhhGuMW_aWZuko9+RqtNtb15A@mail.gmail.com>
+Subject: Re: [PATCH v3] libsepol: Support functionfs_seclabel policycap
+To: Neill Kapron <nkapron@google.com>
+Cc: Paul Moore <paul@paul-moore.com>, Ondrej Mosnacek <omosnace@redhat.com>, kernel-team@android.com, 
+	linux-kernel@vger.kernel.org, selinux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add DFLL clock node to common Tegra114 device tree along with clocks
-property to cpu node.
+On Thu, Aug 28, 2025 at 1:05=E2=80=AFPM Neill Kapron <nkapron@google.com> w=
+rote:
+>
+> This adds the necessary userspace pieces to support the
+> functionfs_seclabel policycap which enables per-file labels in
+> functionfs and the ability for userspace to apply the labels.
+>
+> With the policycap disabled, legacy behaviors are maintained and
+> per-file labeling is disallowed.
+>
+> Signed-off-by: Neill Kapron <nkapron@google.com>
 
-Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
----
- arch/arm/boot/dts/nvidia/tegra114.dtsi | 33 ++++++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
+Same caveat here - don't rely on this policy capability bit remaining
+stable until the kernel patch is merged and de-conflicted with the
+other recent patches introducing policy capabilities.
+And likewise, again doesn't require re-spinning IMHO but the changelog
+below should go after the "---" so it doesn't get included in the
+commit message since it becomes irrelevant once the patch is merged.
+Will wait to Ack this one until the kernel patch is merged.
 
-diff --git a/arch/arm/boot/dts/nvidia/tegra114.dtsi b/arch/arm/boot/dts/nvidia/tegra114.dtsi
-index 4caf2073c556..a2a50f959927 100644
---- a/arch/arm/boot/dts/nvidia/tegra114.dtsi
-+++ b/arch/arm/boot/dts/nvidia/tegra114.dtsi
-@@ -4,6 +4,7 @@
- #include <dt-bindings/memory/tegra114-mc.h>
- #include <dt-bindings/pinctrl/pinctrl-tegra.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/reset/nvidia,tegra114-car.h>
- #include <dt-bindings/soc/tegra-pmc.h>
- 
- / {
-@@ -693,6 +694,29 @@ mipi: mipi@700e3000 {
- 		#nvidia,mipi-calibrate-cells = <1>;
- 	};
- 
-+	dfll: clock@70110000 {
-+		compatible = "nvidia,tegra114-dfll";
-+		reg = <0x70110000 0x100>, /* DFLL control */
-+		      <0x70110000 0x100>, /* I2C output control */
-+		      <0x70110100 0x100>, /* Integrated I2C controller */
-+		      <0x70110200 0x100>; /* Look-up table RAM */
-+		interrupts = <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&tegra_car TEGRA114_CLK_DFLL_SOC>,
-+			 <&tegra_car TEGRA114_CLK_DFLL_REF>,
-+			 <&tegra_car TEGRA114_CLK_I2C5>;
-+		clock-names = "soc", "ref", "i2c";
-+		resets = <&tegra_car TEGRA114_RST_DFLL_DVCO>;
-+		reset-names = "dvco";
-+		#clock-cells = <0>;
-+		clock-output-names = "dfllCPU_out";
-+		nvidia,droop-ctrl = <0x00000f00>;
-+		nvidia,force-mode = <1>;
-+		nvidia,cf = <10>;
-+		nvidia,ci = <0>;
-+		nvidia,cg = <2>;
-+		status = "disabled";
-+	};
-+
- 	mmc@78000000 {
- 		compatible = "nvidia,tegra114-sdhci";
- 		reg = <0x78000000 0x200>;
-@@ -824,6 +848,15 @@ cpu0: cpu@0 {
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a15";
- 			reg = <0>;
-+
-+			clocks = <&tegra_car TEGRA114_CLK_CCLK_G>,
-+				 <&tegra_car TEGRA114_CLK_CCLK_LP>,
-+				 <&tegra_car TEGRA114_CLK_PLL_X>,
-+				 <&tegra_car TEGRA114_CLK_PLL_P>,
-+				 <&dfll>;
-+			clock-names = "cpu_g", "cpu_lp", "pll_x", "pll_p", "dfll";
-+			/* FIXME: what's the actual transition time? */
-+			clock-latency = <300000>;
- 		};
- 
- 		cpu1: cpu@1 {
--- 
-2.48.1
-
+>
+> Changes since v2:
+> - Sending as separate patches
+> ---
+>  libsepol/include/sepol/policydb/polcaps.h | 1 +
+>  libsepol/src/polcaps.c                    | 1 +
+>  2 files changed, 2 insertions(+)
+>
+> diff --git a/libsepol/include/sepol/policydb/polcaps.h b/libsepol/include=
+/sepol/policydb/polcaps.h
+> index 0835ea21..bbaebf1a 100644
+> --- a/libsepol/include/sepol/policydb/polcaps.h
+> +++ b/libsepol/include/sepol/policydb/polcaps.h
+> @@ -19,6 +19,7 @@ enum {
+>         POLICYDB_CAP_NETLINK_XPERM,
+>         POLICYDB_CAP_NETIF_WILDCARD,
+>         POLICYDB_CAP_GENFS_SECLABEL_WILDCARD,
+> +       POLICYDB_CAP_FUNCTIONFS_SECLABEL,
+>         __POLICYDB_CAP_MAX
+>  };
+>  #define POLICYDB_CAP_MAX (__POLICYDB_CAP_MAX - 1)
+> diff --git a/libsepol/src/polcaps.c b/libsepol/src/polcaps.c
+> index 7ac0ae7c..83eb6143 100644
+> --- a/libsepol/src/polcaps.c
+> +++ b/libsepol/src/polcaps.c
+> @@ -18,6 +18,7 @@ static const char * const polcap_names[POLICYDB_CAP_MAX=
+ + 1] =3D {
+>         [POLICYDB_CAP_NETLINK_XPERM]                    =3D "netlink_xper=
+m",
+>         [POLICYDB_CAP_NETIF_WILDCARD]                   =3D "netif_wildca=
+rd",
+>         [POLICYDB_CAP_GENFS_SECLABEL_WILDCARD]          =3D "genfs_seclab=
+el_wildcard",
+> +       [POLICYDB_CAP_FUNCTIONFS_SECLABEL]              =3D "functionfs_s=
+eclabel",
+>  };
+>
+>  int sepol_polcap_getnum(const char *name)
+> --
+> 2.51.0.318.gd7df087d1a-goog
+>
 
