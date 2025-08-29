@@ -1,176 +1,150 @@
-Return-Path: <linux-kernel+bounces-791775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59CC6B3BBD1
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 15:00:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD28FB3BBD5
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 15:01:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 194F8587213
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 13:00:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59ABCA2542B
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 13:01:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B48AE31A06A;
-	Fri, 29 Aug 2025 13:00:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 102962236F2;
+	Fri, 29 Aug 2025 13:01:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lHgfC15G"
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FKCR9zTS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79E1714B08A;
-	Fri, 29 Aug 2025 13:00:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6701414F9FB;
+	Fri, 29 Aug 2025 13:01:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756472415; cv=none; b=KJcZijw37thUJuefgVGAztSrDuV+Xy6IcJvaIpgIVX0mCVgARozoSsuVYVDis8oAbuu6F95t5WX3XHXKYXX1VZLhumzwWVMwcAsjgmSIiYMAp4nVgiRblPeu48oDefpAJxGSJJaHrpvhV1+/pmgiWM7HRseQ9EAzrZbRuxIjbpg=
+	t=1756472468; cv=none; b=hGuP456lIsqghQismgUXDrLivNvUqAymODQFEvT/L0Z2CAdrXeJyssdmV+fXZU6j63MkBtR89JSR1BZkV8oNuPpznVG8ZM17U92qovVlihh0iEvfsZpjUnngCUklXXvD38decDvclXjvIoDglNUywxo7Jjpt6RU9323LgmAM6p8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756472415; c=relaxed/simple;
-	bh=l3ftba9duJqWTCR1mNWvfLSGHT9IJ3o0PvZ2r1+fOaM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=se0IkUvhlMzHvTtd+1XkTZ0l6UxCtGClTN+q9drRML3dZtXH2vivMz/UPRCfVacYMIzY7LakXI1Idy+qNAKPynJp8te9AP7SySRd71TkkgTpAuiot2OtCuzMR8GivYzJ/TO15llp3GRK0vI9Yr8Oc+2MNxlvoWKrvF/zm+BmHF4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lHgfC15G; arc=none smtp.client-ip=209.85.160.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4b109c4af9eso16823091cf.3;
-        Fri, 29 Aug 2025 06:00:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756472412; x=1757077212; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=M3DXXRGKtXBXGU3/Pg0qvsIiljazBIVvz3rdg4K4anQ=;
-        b=lHgfC15GNynkYkl09oAfmbvg8qympM0pTTrC7nnXg5a7Yb4hZUTllK8FO2M7sXIErh
-         mtzmdmt+BZLI8iV6Z3GwXlEdfa1EPMRjsNdY6fy2Ijlkmc5wgR1Lt+n7ua1WIQGcRrPt
-         1zycLdI8YG61REzx5U6NZ58BRrt1TRhzbv71c1xGd9xW1VldJ2G94CEmSWQyVKmHjGBT
-         f9gIkYqjMFq9TLPHj/x1m/hPLcntdljSijfDknlAF2wKJZJUuD+bjHkYsr+ZKoAPIF3C
-         xW/hDU8NiPnRH/B8qa4+T3oyyMJxiKy+o9npOnNJ1gTV0syiRB1jQqbFfOL/HZDLTuzg
-         64Gw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756472412; x=1757077212;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=M3DXXRGKtXBXGU3/Pg0qvsIiljazBIVvz3rdg4K4anQ=;
-        b=mJayUfDKmfscCYC0YeJ88+wxEjXM8gqO+ErxfEStYUzWytcD99gI/BDXrp2FlyZ9yb
-         RofIihusjrlzpSHFK1oVeraRTm3mSelLVTE4ZdjuKbTenozOIQ5iR5iRjXfPad+gf91K
-         rfp5GNRdDeuP02gvQ4dN8Um9Jz2fXIU0OyEW244fSCMH4dNckrb+Na8XuMKDODO8dThZ
-         ytCO6A93l2HKM9nu3uX0YeNP8uA3SuEhWelFkczlejewc8ok54I3i0Dob4SVMjg4jtac
-         lqj5ScTAsz/4NxOyHecAONQgKQ8N/OiJHfephS62LLexf/4okAey0rSidxUCs5CT+Kj5
-         PHgw==
-X-Forwarded-Encrypted: i=1; AJvYcCUFZcmkXMlZmhveM8SLFkmhCha4t3jnQ/jnkRAsBpB3rytx8L9YBWdfgAySn0UxJgHd+VqUVMLGkaC6@vger.kernel.org, AJvYcCX1elXYYopkF8Yi9rWXaOAf2uXDjTsPkIxP5SpBJO7xvtU1Sj8sYDZSfLJLrgZE6Xx2+uupkJFq96dNC7fa@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZd/bLtQJez1uz1zmW0YrBQxpTF3qoumHlZbc/hGkuXWIzbejx
-	VnneyyeLf1WT2KgeL4/eFbb0Rgcut/Ovx23eZGe0n4cgQ93hxDUYfGWE
-X-Gm-Gg: ASbGncv0bewhFPXjOq7c3/+ZmNCQOyshJa3nhpmBTW38mVsOQjFoWOiDrnuXxDBFpNK
-	BSM1QhilhuHyUyXjJmrILdXTJfhva5LRywa4L4XQ5qnVT3AuQvnV4hMuICcDXAXYqSuL6oDqqhq
-	uDfJLTzbmlm2CrIwfURl5vR2svK1Rkp9hbXq+pOliGo4BI5zKEftuHEUFS67CVpGDw0zBzFfbZa
-	OD2x3ZtgEgtBTiHan66OOYHPTfMPvF/xBAjPUlwyK55U9uZPmGZICQysYdbH8M8KaoaxR94Be87
-	tVYtR4PyyTURoxDX8hsuK/LZY0jyFHPLSR7M+IqLt8IJ/aX7bpZ7ywRyvD96ne7+vHSYOQBZQqW
-	xspIKmasUEU+JHI5b2OiI3G+O7iWol8DfMPIg/7BVHnEdwbYmOc8FkvZwtCi+am55wvyajipVJL
-	AhJu0=
-X-Google-Smtp-Source: AGHT+IHgQDwp+Xmcx52kZ5tVMjh3dLUhHCuJJykye5EYsyHWMH/aTR3kc6E9PYCeEvwNrdOg0cdPlg==
-X-Received: by 2002:ad4:5c4a:0:b0:70d:a91c:ca74 with SMTP id 6a1803df08f44-70da91cd135mr236255446d6.20.1756472411972;
-        Fri, 29 Aug 2025 06:00:11 -0700 (PDT)
-Received: from localhost (modemcable197.17-162-184.mc.videotron.ca. [184.162.17.197])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-70e6250cc5dsm14656496d6.54.2025.08.29.06.00.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Aug 2025 06:00:11 -0700 (PDT)
-From: =?UTF-8?q?Jean-Fran=C3=A7ois=20Lessard?= <jefflessard3@gmail.com>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Daniel Scally <djrscally@gmail.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>
-Cc: linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-acpi@vger.kernel.org
-Subject: [PATCH v2] device property: Add scoped fwnode child node iterators
-Date: Fri, 29 Aug 2025 09:00:08 -0400
-Message-ID: <20250829130010.12959-1-jefflessard3@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1756472468; c=relaxed/simple;
+	bh=huEmYKtpngB9RmDN6wRbSbdKSJH3TWBnhI3yoCvi/xU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DLnvVW6bSsGb8tl5KAPgF8z6s8c+wL+upzshnS1qzjBE806ZED176dnV68v+lTRe/DaxOrpJhRGh79St2hxAPSSB1nh9i9kzByb88zNwYf9xyMSRt6i0r5Go0GVxp96Wkv3d9vrzfqI1+kYS1bYuA2r6igz6EVRjGnHc8xmVKTg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FKCR9zTS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7EA3BC4CEF0;
+	Fri, 29 Aug 2025 13:01:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756472467;
+	bh=huEmYKtpngB9RmDN6wRbSbdKSJH3TWBnhI3yoCvi/xU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FKCR9zTS39TL+CT4FGE3zmcte3Lcdogid/aX/TT42gdmxRnMM8Vh03urXpDNmisTH
+	 nPAPmS6HghA0IL5LbeF/npNmFuR08fLNdXbfjfDTf5A9EjP31elTOvviQnIYx+ZiyK
+	 1doh17YzPoR0JmUL8yg7T0Kly3iMpkMS55qBMpeYiWj98NGFGpvqy5yXerJDWDkVgR
+	 v5B4mjPFKeTEg8svXIv1v/iKjwyD9u5IbUWFEDn8Syn8PzRyJHJFnRxBrtp8pXmGmC
+	 aBboCCuNs6ai+OGuoHXK5++fwJpPJtsRR7wvTaYPDuaZCwouCFiIrG/apgP7EKoPuM
+	 nzZabLanOV7RA==
+Received: by pali.im (Postfix)
+	id 6B11085D; Fri, 29 Aug 2025 15:01:04 +0200 (CEST)
+Date: Fri, 29 Aug 2025 15:01:04 +0200
+From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
+To: Steve French <smfrench@gmail.com>
+Cc: ronnie sahlberg <ronniesahlberg@gmail.com>,
+	Jeremy Allison <jra@samba.org>, Steve French <sfrench@samba.org>,
+	Paulo Alcantara <pc@manguebit.com>, linux-cifs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: Do not use UID and GID from EAs
+Message-ID: <20250829130104.jtjp2jlmd6infvtc@pali>
+References: <20240913200204.10660-1-pali@kernel.org>
+ <20240913201041.cwueaflcxhewnvwj@pali>
+ <20240917200600.6smfxhrppkyjuyku@pali>
+ <ZunlTDxPLn4yryW3@jeremy-rocky-laptop.localdomain>
+ <20240917202921.ty32zzmhrg33knpy@pali>
+ <ZunnGhOogEQU2Hje@jeremy-rocky-laptop.localdomain>
+ <20240917203431.w5dejuwfkmabrewz@pali>
+ <CAN05THTVav8HOCk6V+5eg-BTESZDBx2BuQOF1c=Vn2dFv_UNxw@mail.gmail.com>
+ <CAH2r5muUioziUN7mRFUAOV3tGPMLnb949j70GKYnRM2LygAWVQ@mail.gmail.com>
+ <20250811105258.t3r65wsytkmyguem@pali>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250811105258.t3r65wsytkmyguem@pali>
+User-Agent: NeoMutt/20180716
 
-Add scoped versions of fwnode child node iterators that automatically
-handle reference counting cleanup using the __free() attribute:
+On Monday 11 August 2025 12:52:58 Pali Rohár wrote:
+> On Tuesday 17 September 2024 16:19:08 Steve French wrote:
+> > On Tue, Sep 17, 2024 at 3:45 PM ronnie sahlberg
+> > <ronniesahlberg@gmail.com> wrote:
+> > >
+> > > On Wed, 18 Sept 2024 at 06:37, Pali Rohár <pali@kernel.org> wrote:
+> > > >
+> > > > On Tuesday 17 September 2024 13:31:22 Jeremy Allison wrote:
+> > > > > On Tue, Sep 17, 2024 at 10:29:21PM +0200, Pali Rohár wrote:
+> > > > > > On Tuesday 17 September 2024 13:23:40 Jeremy Allison wrote:
+> > > > > > > On Tue, Sep 17, 2024 at 10:06:00PM +0200, Pali Rohár wrote:
+> > > > > > > > And seems that SMB2_OP_QUERY_WSL_EA is useful not only for reparse
+> > > > > > > > points, but also for any regular file or directory as it can contain
+> > > > > > > > UNIX mode and UID/GID ownership.
+> > > > > > >
+> > > > > > > uid/gid should *never* be exposed over the wire for SMB.
+> > > > > > >
+> > > > > > > That way lies madness.
+> > > > > >
+> > > > > > Hello Jeremy, if I understood wsl_to_fattr() function correctly then it
+> > > > > > is already doing it, it fills uid/gid for stat() from data which were
+> > > > > > exposed over the wire for SMB. Could you check that function if it is
+> > > > > > truth?
+> > > > >
+> > > > > I'm sure the Windows implementation is doing it - however, any Linux
+> > > > > server implementations should not do this (IMHO).
+> > > > >
+> > > > > It will break all SID -> uid / gid mapping that servers must
+> > > > > carefully set up.
+> > > > >
+> > > > > On the wire - SIDs must be the only source of identity.
+> > > >
+> > > > Ok. But then I do not understand why Linux client parses and uses uid
+> > > > and gids which are sent over the wire. If you are saying that the SIDs
+> > > > must be the only source of truth then Linux client should rather ignore
+> > > > uid and gid values?
+> > >
+> > > What I think Jeremy is refering to is that mixing uids and sids in the
+> > > protocol itself is
+> > > a protocol design mistake.
+> > > Because this means that some PDUs in the protocol operate on SIDs but
+> > > others operate on
+> > > UID/GIDs and this means there is great risk of mistakes and have the
+> > > sid<->uid mapping return
+> > > different results depending on the actual PDU.
+> > >
+> > > Sometimes the sid<->uid mapping happens in the server, at other times
+> > > the mapping happens in the client
+> > > and it is very difficult to guarantee that the mapping is consistent
+> > > across PDUs in the protocol as well as across different clients.
+> > 
+> > Yes - agreed.
+> > 
+> > SIDs are globally unique and should always be used/sent over the wire
+> > (never send or use the local uid/gid which is not guaranteed to be
+> > unique).  Whether retrieving ownership information via
+> > the SMB ACL or via an SMB3.1.1 POSIX response, the SID is the correct
+> > thing to send/use in the protocol.  For cases where the client is not
+> > domain joined, the UID/GID can be encoded in the SID, for cases that
+> > are domain joined the Linux UIDs/GIDs can be mapped consistently via
+> > the SID.
+> > 
+> > -- 
+> > Thanks,
+> > 
+> > Steve
+> 
+> Hello Steve, based on the above discussion I'm proposing a change which
+> stops parsing UID and GID values stored in EAs on the SMB server for
+> SMB2 and SMB3 dialects. Change is in the attachment.
+> 
+> Steve, Ronnie, Jeremy and Paulo, could you review this change?
 
-- fwnode_for_each_child_node_scoped()
-- fwnode_for_each_named_child_node_scoped()
-- fwnode_for_each_available_child_node_scoped()
-
-These macros follow the same pattern as existing scoped iterators in the
-kernel, ensuring fwnode references are automatically released when the
-iterator variable goes out of scope. This prevents resource leaks and
-eliminates the need for manual cleanup in error paths.
-
-The implementation mirrors the non-scoped variants but uses
-__free(fwnode_handle) for automatic resource management, providing a safer
-and more convenient interface for drivers iterating over firmware node
-children.
-
-Signed-off-by: Jean-François Lessard <jefflessard3@gmail.com>
----
-
-Notes:
-    checkpatch reports false positives that are intentionally ignored:
-    COMPLEX_MACRO, MACRO_ARG_REUSE, MACRO_ARG_PRECEDENCE
-    This is a standard iterator pattern following kernel conventions.
-    
-v2 changelog:
-- replace manual __free(fwnode_handle) of i2c-core-slave.c with
-  fwnode_for_each_child_node_scoped
-
- drivers/i2c/i2c-core-slave.c |  3 +--
- include/linux/property.h     | 14 ++++++++++++++
- 2 files changed, 15 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/i2c/i2c-core-slave.c b/drivers/i2c/i2c-core-slave.c
-index 7ee6b992b..02ca55c22 100644
---- a/drivers/i2c/i2c-core-slave.c
-+++ b/drivers/i2c/i2c-core-slave.c
-@@ -112,10 +112,9 @@ bool i2c_detect_slave_mode(struct device *dev)
- 	struct fwnode_handle *fwnode = dev_fwnode(dev);
- 
- 	if (is_of_node(fwnode)) {
--		struct fwnode_handle *child __free(fwnode_handle) = NULL;
- 		u32 reg;
- 
--		fwnode_for_each_child_node(fwnode, child) {
-+		fwnode_for_each_child_node_scoped(fwnode, child) {
- 			fwnode_property_read_u32(child, "reg", &reg);
- 			if (reg & I2C_OWN_SLAVE_ADDRESS)
- 				return true;
-diff --git a/include/linux/property.h b/include/linux/property.h
-index 82f0cb3ab..279c244db 100644
---- a/include/linux/property.h
-+++ b/include/linux/property.h
-@@ -176,6 +176,20 @@ struct fwnode_handle *fwnode_get_next_available_child_node(
- 	for (child = fwnode_get_next_available_child_node(fwnode, NULL); child;\
- 	     child = fwnode_get_next_available_child_node(fwnode, child))
- 
-+#define fwnode_for_each_child_node_scoped(fwnode, child)		\
-+	for (struct fwnode_handle *child __free(fwnode_handle) =	\
-+		fwnode_get_next_child_node(fwnode, NULL);		\
-+	     child; child = fwnode_get_next_child_node(fwnode, child))
-+
-+#define fwnode_for_each_named_child_node_scoped(fwnode, child, name)	\
-+	fwnode_for_each_child_node_scoped(fwnode, child)		\
-+		for_each_if(fwnode_name_eq(child, name))
-+
-+#define fwnode_for_each_available_child_node_scoped(fwnode, child)	\
-+	for (struct fwnode_handle *child __free(fwnode_handle) =	\
-+		fwnode_get_next_available_child_node(fwnode, NULL);	\
-+	     child; child = fwnode_get_next_available_child_node(fwnode, child))
-+
- struct fwnode_handle *device_get_next_child_node(const struct device *dev,
- 						 struct fwnode_handle *child);
- 
--- 
-2.43.0
-
+Hello, have you looked at the proposed change in the previous email?
 
