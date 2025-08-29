@@ -1,146 +1,147 @@
-Return-Path: <linux-kernel+bounces-791633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5992CB3B97F
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 12:57:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 70306B3B981
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 12:57:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A0FE1C83A7E
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 10:57:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E1F241CC00F1
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 10:57:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B85E311587;
-	Fri, 29 Aug 2025 10:55:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hyHGMYG2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3DCC3101C1;
-	Fri, 29 Aug 2025 10:55:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99F94311C06;
+	Fri, 29 Aug 2025 10:56:22 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9A4D31064A;
+	Fri, 29 Aug 2025 10:56:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756464940; cv=none; b=jeuoB4iupjNbm8Fk8srUqAjl2Y75OSmgR39Pk+WfQLuCpQUrCNlKN9souyH1pXyfO8RibTiQippOWqJTNCZp8M4w9lCMizQlbAbQ49lMZY59+8WovqEIrSSCigGIxuw/JhT6d9vq8ZIe8uDBKVfzntloBFGG8IgV16DTKwmFHlk=
+	t=1756464982; cv=none; b=KtrNpWH/ogAacUAY+hgc9kKC4uhrnaTNIyWiZcZmtotJXmR+hLYssnxr7EU2ktnpivCm6VxfFK4LcMQ4v9tCX4ZFJeRoj6BOE1rpzmOLMBMmZK0Fr2X2kwp3mv6eK7N47eG8rvLYKCNkxIplzvtO0GMBDUPlAtQPMtY9s00zD1w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756464940; c=relaxed/simple;
-	bh=/WZWOpRzeXEH6fk09jEKeyE927MDqdEymoNh0MK6e0g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=u8uDr22Jtza4Gg95OHRIM9TXy0Rtxogx8ZfKRGuVWZN54lYriI17SbsLfKy2W4o/nRQ3CU+HhitZA5pqUovUxKNg82NUCWQFj10lFlHC0zs3/IqmD6HSCAllKQP5q+ae8yuQBwr+rlAAEU37LK1PNKZiw1RiXfm7hdbwtOfReDo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hyHGMYG2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1F87C4CEF0;
-	Fri, 29 Aug 2025 10:55:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756464940;
-	bh=/WZWOpRzeXEH6fk09jEKeyE927MDqdEymoNh0MK6e0g=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=hyHGMYG2P8C/7jomhaHPksY3VxRY+h0UqufTh+luBRoSogbz/S3GjhqJCz018NwIO
-	 R/N06fzW9xW5RKxU+okfWj7P+QF4Oh68PxLEpS4rJAma8lx3Rxh6AJuRO9sLcn/Dg8
-	 UcF4K0C+IbJIc5DewEWlJvLEH8Bt5hEhwVNQAXxoiU6ekrx4zccZ2qc+1+i21i81WY
-	 675+bm5bLum4t3soT/l6rnmiiMSbHuSlN0gTpnmYmaPDwh9PiLVODNQZEtSKwa2CCI
-	 nHXML+ol6YXeO7cOdM3gS7gg2g/PrYEHy0EUz/lZov/KhqotSi0JvMEg6trhzYFKVL
-	 /xywfFU446JPw==
-Message-ID: <51240b84-b063-4b99-b755-cc958192fef2@kernel.org>
-Date: Fri, 29 Aug 2025 12:55:35 +0200
+	s=arc-20240116; t=1756464982; c=relaxed/simple;
+	bh=NutHLx0+H5ZwLVLIAixtk99qOjwb6krNHUoiCx1NjRY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TIN3HvEagPiSv1c6eqErk354XPItwgzvFYa0Xp3wKj3riyEgQmg7XtIb8+kbiMJ6+cJp2F91aVpKw+0O7Yj1b3ejE2crBIEtO+OoadaGa6gbpda39KyB0ari/XMV8IZ7fJ4jy22wgwbe7ZrGLu1yXI4m1ugvCrv2gGnQXu1f5X0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com; spf=none smtp.mailfrom=foss.arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=foss.arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D5A5F19F0;
+	Fri, 29 Aug 2025 03:56:11 -0700 (PDT)
+Received: from bogus (e133711.arm.com [10.1.196.55])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 48C0F3F738;
+	Fri, 29 Aug 2025 03:56:18 -0700 (PDT)
+Date: Fri, 29 Aug 2025 11:56:15 +0100
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: Peng Fan <peng.fan@nxp.com>
+Cc: Cristian Marussi <cristian.marussi@arm.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, <arm-scmi@vger.kernel.org>,
+	<imx@lists.linux.dev>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 3/6] firmware: arm_scmi: imx: Support getting cfg info
+ of MISC protocol
+Message-ID: <20250829-sophisticated-lemon-porcupine-8dffa4@sudeepholla>
+References: <20250827-sm-misc-api-v1-v3-0-82c982c1815a@nxp.com>
+ <20250827-sm-misc-api-v1-v3-3-82c982c1815a@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/4] arm64: dts: exynos2200: introduce serial busses,
- except spi
-To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250815070500.3275491-1-ivo.ivanov.ivanov1@gmail.com>
- <31435f98-5701-4ae0-b822-11a99d1b2eef@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <31435f98-5701-4ae0-b822-11a99d1b2eef@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250827-sm-misc-api-v1-v3-3-82c982c1815a@nxp.com>
 
-On 29/08/2025 12:40, Ivaylo Ivanov wrote:
-> On 8/15/25 10:04, Ivaylo Ivanov wrote:
->> Hey, folks!
->>
->> This patchset adds serial busses, implemented in usi, for exynos2200.
->> It's missing spi, due to me having troubles with reads when testing.
->> Serial_0/1 have not been included in the patchset, as it seems like
->> they're encapsulated in usi blocks, but are the only implemented
->> protocol and/or do not have a dedicated register for setting other
->> protocols in a sysreg. That'd at least require patches in the usi
->> driver and bindings to add support for.
->>
->> About the naming convention for usi nodes, I've chosen to keep the
->> downstream one instead of relabelling all to avoid confusion when
->> cross-referencing the vendor DT and to keep consistency with clock
->> names. They're labelled the same in the bootloader too.
+On Wed, Aug 27, 2025 at 12:59:15PM +0800, Peng Fan wrote:
+> MISC protocol supports getting the System Manager(SM) mode selection
+> and configuration name. Retrieve the information from SM.
 > 
-> BUMP - when is this going to get merged? I had a few other things
+> Reviewed-by: Cristian Marussi <cristian.marussi@arm.com>
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> ---
+>  .../firmware/arm_scmi/vendors/imx/imx-sm-misc.c    | 35 ++++++++++++++++++++++
+>  1 file changed, 35 insertions(+)
+> 
+> diff --git a/drivers/firmware/arm_scmi/vendors/imx/imx-sm-misc.c b/drivers/firmware/arm_scmi/vendors/imx/imx-sm-misc.c
+> index 464afeae8267d8c1eca4c4d5e008eca6d741c6ff..220b9369fb537306f9e1a105930ad4d65e6b10aa 100644
+> --- a/drivers/firmware/arm_scmi/vendors/imx/imx-sm-misc.c
+> +++ b/drivers/firmware/arm_scmi/vendors/imx/imx-sm-misc.c
+> @@ -26,6 +26,7 @@ enum scmi_imx_misc_protocol_cmd {
+>  	SCMI_IMX_MISC_CTRL_SET	= 0x3,
+>  	SCMI_IMX_MISC_CTRL_GET	= 0x4,
+>  	SCMI_IMX_MISC_DISCOVER_BUILDINFO = 0x6,
+> +	SCMI_IMX_MISC_CFG_INFO = 0xC,
 
-OSSE25...
+1. Order it by command number
+2. Be consistent with the document, MISC_CFG_INFO_GET is used there.
 
-You can help out by reviewing other patches on the mailing lists in
-order to relieve the burden of maintainers and move your patches higher
-up the list.
+>  	SCMI_IMX_MISC_CTRL_NOTIFY = 0x8,
+>  };
+>  
+> @@ -75,6 +76,12 @@ struct scmi_imx_misc_buildinfo_out {
+>  	u8 buildtime[MISC_MAX_BUILDTIME];
+>  };
+>  
+> +struct scmi_imx_misc_cfg_info_out {
+> +	__le32 msel;
+> +#define MISC_MAX_CFGNAME	16
+> +	u8 cfgname[MISC_MAX_CFGNAME];
+> +};
+> +
+>  static int scmi_imx_misc_attributes_get(const struct scmi_protocol_handle *ph,
+>  					struct scmi_imx_misc_info *mi)
+>  {
+> @@ -309,6 +316,30 @@ static int scmi_imx_misc_discover_build_info(const struct scmi_protocol_handle *
+>  	return ret;
+>  }
+>  
+> +static int scmi_imx_misc_cfg_info(const struct scmi_protocol_handle *ph)
+> +{
+> +	struct scmi_imx_misc_cfg_info_out *out;
+> +	char name[MISC_MAX_CFGNAME];
+> +	struct scmi_xfer *t;
+> +	int ret;
+> +
+> +	ret = ph->xops->xfer_get_init(ph, SCMI_IMX_MISC_CFG_INFO, 0, sizeof(*out), &t);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = ph->xops->do_xfer(ph, t);
+> +	if (!ret) {
+> +		out = t->rx.buf;
+> +		strscpy(name, out->cfgname, MISC_MAX_CFGNAME);
+> +		dev_info(ph->dev, "SM Config\t= %s, mSel = %u\n",
+> +			 name, le32_to_cpu(out->msel));
+> +	}
+> +
+> +	ph->xops->xfer_put(ph, t);
+> +
+> +	return ret;
+> +}
+> +
+>  static const struct scmi_imx_misc_proto_ops scmi_imx_misc_proto_ops = {
+>  	.misc_ctrl_set = scmi_imx_misc_ctrl_set,
+>  	.misc_ctrl_get = scmi_imx_misc_ctrl_get,
+> @@ -340,6 +371,10 @@ static int scmi_imx_misc_protocol_init(const struct scmi_protocol_handle *ph)
+>  	if (ret)
+>  		return ret;
+>  
+> +	ret = scmi_imx_misc_cfg_info(ph);
 
+s/scmi_imx_misc_cfg_info/scmi_imx_misc_cfg_info_get/
 
-> I wanted to upstream before merge cycle.
+> +	if (ret)
 
-You should have posted them already. b4 handles dependencies, this
-maintainer can read cover letters.
+Again the document hasn't mark it as mandatory, so handle NOT_SUPPORTED
+gracefully.
 
-I plan to clear my todo queue this weekend and close my merge window
-within two weeks due to travel.
-
-Best regards,
-Krzysztof
+-- 
+Regards,
+Sudeep
 
