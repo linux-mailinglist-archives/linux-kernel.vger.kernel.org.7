@@ -1,133 +1,425 @@
-Return-Path: <linux-kernel+bounces-791848-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E7C4B3BCB5
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 15:43:42 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5E03B3BCB7
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 15:43:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B36316E655
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 13:43:42 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BB6004E4DAF
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 13:43:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1D5031CA67;
-	Fri, 29 Aug 2025 13:43:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 050CF31CA69;
+	Fri, 29 Aug 2025 13:43:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F99xqAo7"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="niM/T1EI"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2072.outbound.protection.outlook.com [40.107.92.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F63131B130;
-	Fri, 29 Aug 2025 13:43:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756475016; cv=none; b=VEyfqNDWjFMo0eV2SrH3Fxp4xOjALzFOeEGgy3B2GRSTtVgKlEFiCXuw3ZjKEyzPXOK/faJCYHLtITd73pBD4QzVOLUAE6MwFtyr/+WfEFd171NY2DCW3dfa1q2nwlFafefv/ld1iBY72l+lM483KeeC7iXcdkz5bdC5cqO3Fu0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756475016; c=relaxed/simple;
-	bh=Za/NTsAgN65OtD/xMe6XpI2G891bowpfGVGLSzZnsFs=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CQseHtRVTb2tXz5SaD2NtouEZ/uOCgj2cWX6P4vKtVah09Zqws5BE9GV2mCDoaptI/UPd0abDnMTvugKuI4qiiAXYk/K0f3F1zaHO4lxdv7Gi5JaubkQGPiP5Fz9VusKRSxxBjronjtOLccg0gWqrDSbI6pq7XGYinoUYMxaK50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F99xqAo7; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3c68ac7e238so1047276f8f.1;
-        Fri, 29 Aug 2025 06:43:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756475013; x=1757079813; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=sB0WKcU+AEBRmTb1+TJyfsZxm+o7y+S2VY6/KiNlNcU=;
-        b=F99xqAo73c8yUu6afnG4WI3zAHEthi0naFG6+EHSWxC2XJpvLlRSrNgs8yD/JXhnkA
-         d+FHOXyc1RLiz6OZoa1PtYBZ+EySaVHgkKjHsrPPfpAVkxYBIud/M45kUcpmRusRq5ok
-         jbyWtWV/9U7ycFDJYqKkbTdsbS2hUkhACiaOxhTBTHjLslIXxxLumMNOk8DUDOQPi3nM
-         edcgk0wIlWAZcRV+6I+pI51Okm8S1q23rw3jhvdZPwMFHD48QP6p/4NpcM92Acr+8iAa
-         YC0h06MCd7tu6Pdt6vmmc+JfK8z1dIQpNDPl6yhpH+qqUi5zb1w2wTHYySN3MtNcH61S
-         QUpg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756475013; x=1757079813;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sB0WKcU+AEBRmTb1+TJyfsZxm+o7y+S2VY6/KiNlNcU=;
-        b=ZDIKlR9wS/1+HznIYsOHOc5HEMOYG4pdRf5dRmhaz6S0Y0bU6vNiDlLCYEW1gS+daz
-         axto/1KquDdVn3+fnT+kiYT43Hu7phYRCYs7Fs4MIfCt4/GNQ8ahJXI2gWwZYltoTkAS
-         sw6kJ0BYegJpTvxsHr6gLpZhMwaCp9j+EZl0sNEhgbAAciF+2HpdGpaJJy5+Or4lVk5A
-         QnUrAsqfHU5WZCJ48Wuu2wHMNM04llQhnIY9NFO+zCWz1l8c/A8i6/XWWl5dsnbu3bi6
-         QzfjoXjYQOcgepvxSPwUt1aO97scVeNZpzJG6LgSLn9xnvuG58m4GC90rgvJINdK6dB/
-         WPww==
-X-Forwarded-Encrypted: i=1; AJvYcCVMTx9ApbvKN7GgLpYUupYDGNO2fPtQft7ZatyjIqzanD3UitCc762qKmZexGWeAsq9IAA=@vger.kernel.org, AJvYcCVezHvnZ09LjaOx8WdBn5t+GFDL6SaP01bmH6tzpt+BzgiGNysxSnGL/K4Rn0XnccKKPJD57Dks3MRsE1JS@vger.kernel.org, AJvYcCVu8uFcwIE9uYB0sX1i2AHtaDkKgZIljwWjwTL+YSigRp0+coyIur7fgejC9C4blaZpSnw5w2itsgZjo2imtJ+e@vger.kernel.org
-X-Gm-Message-State: AOJu0YzU8yVzYiOrszQGjK2vezE7O2qqyMo4IJhWbu/vAPgOmqRoKtb7
-	6nWyKIYrqtPeUgif44Vz2M+w/QPnDZ8RyNnIZWuIl67fDgiFwBsDTRmN
-X-Gm-Gg: ASbGnctotSI7QlW/wotZ2OFDCjtj8YLojB/8k0K9Qqb52Meo7TO7vLPpN1mUefnqLJ/
-	ENAdzy2+luMGDOimxS9GPe96azOly0PdUwv4J82cPny6WCtb6jtkE2IetSS76iGsDo4nU+4FJKC
-	HNR79CsR+lFeWKXfevA6Jh5FPJzKCh8L3JGUrlAan0ZUi2AB6jPeWdjYY/WK71OvBdISRLnTqw2
-	v/++NUB+hBZj9tPw11UZl1Oa2a6b1xK45a2ZLi3rA+SIEHVJNgPQQfYh7EOeg+/q5zLqu3wM3n2
-	780kiRm5Hr1MoY2D/8ZOVMcUcA2/pv+e0VRg3mJrV7vakopQfoXd5AGuw7cOitzpwpsU0KcbELx
-	d/OCBnTXRYLoQvPAjwsJP
-X-Google-Smtp-Source: AGHT+IEFoAYjqpy8YgWQqICxqDxaYy0+7IShDLWFFW3sHlW2wBtsL+faEarDyULa+yB9wPHyNTncFg==
-X-Received: by 2002:a05:6000:2c05:b0:3ca:4e3:6e91 with SMTP id ffacd0b85a97d-3ca04e3774amr14035561f8f.26.1756475012355;
-        Fri, 29 Aug 2025 06:43:32 -0700 (PDT)
-Received: from krava ([176.74.159.170])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b7e898b99sm38833525e9.19.2025.08.29.06.43.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Aug 2025 06:43:31 -0700 (PDT)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Fri, 29 Aug 2025 15:43:30 +0200
-To: Menglong Dong <menglong.dong@linux.dev>
-Cc: Menglong Dong <menglong8.dong@gmail.com>,
-	Jiri Olsa <olsajiri@gmail.com>, andrii@kernel.org,
-	eddyz87@gmail.com, mykolal@fb.com, ast@kernel.org,
-	daniel@iogearbox.net, martin.lau@linux.dev, song@kernel.org,
-	yonghong.song@linux.dev, john.fastabend@gmail.com,
-	kpsingh@kernel.org, sdf@fomichev.me, haoluo@google.com,
-	shuah@kernel.org, yikai.lin@vivo.com, memxor@gmail.com,
-	bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE80831CA77;
+	Fri, 29 Aug 2025 13:43:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.72
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756475022; cv=fail; b=T70Th9QdVIqO3xKHhjzWzI+KMBMHmJIPnKouYbfNF/pSgcEPKtv+vFALRtGVMMr5n+FHAOxWJGmwXHH63zupxRsFxk5h7iMr8ZGhUSDGv9JlImsrg0zsxgf9U5ZmGJGn25hqqrsApPsInh4zp6ggk0nMLQgufX54KmWjd6Q+LrE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756475022; c=relaxed/simple;
+	bh=CFInNoKxIwfCIDayJ9t1J/GJ0MShxVMYVL9BI7gj598=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=iPSqZAYwzGdZ1b1n+0cQxoZtl5gu5CRsFDrBdZ67Eq2UU/c3NGBboUJS9XGxgHfcFlNgHaqImB4ORt1f0RVJlbWbA+wOyJQqIN9UjYFRJfxA7r4rnA+2gYqa1xKYdhhIOsguBKVnMkqiIoMbQjhI48DzXZ1+w9AqZ5Uaja4qoEY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=niM/T1EI; arc=fail smtp.client-ip=40.107.92.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=CSszUsXJTYEdl8r9ELoCQVv1utFXnnFTZJ8tEQ+x5mINKlguN/0rKpx/+3PvtjORFAI4bR/iEbC0SUq9/A9g4pMclRVruRET3IbWJIhgjpsKrKzJUxu6rLOho9QkFJ9cGO2BzE8cPaZWDoe0i8gzz4eqm3ldtJQLJOQipWWqp6Ipf5yCrKgFFvGVfxu4g7gYSWC80H7AfaBVR3VUy181a7ak3D30QdwKIh8nj237G4U4/8z5tHn0R+78rxQ3KXfm3bqqhOBIUZjuNMSqryWVXBMysr6VZW5FryaMCCtMYN5cYqfImQrxYFyV2oTTNCQe9ZBY/TR8rNTyLhyNBQ+S7g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=A+iGB511p+qY9kZH6k4iL//cr2XMHhjqejlvumrpCaE=;
+ b=vQtx/9DKeeeV3CtXMeW3EI7BINTFk6ugNlmnSUgVwao8h1r/0FsWRdBnl8DBrUSxfiSxobDYkblVzaQFURKvjf8SJcAxb6AZtBx2g1ksefYgvTobdYv30Gv7wA7WLTN8ldohIPsw1pN2KnWT0ntt06mW+GMBKiHbVSBdoPzQ9qScqJJs7a010vetArxxO9dYJU/8E8W5SIJl1x9mHiu0rI1xcDBk8D5FE80AU5IzceX2CeTB3zi0Ox6TqoANSxs+NXwPwtdGTMd767NhEWVvYLv6VSx83cpaRqlaq5hVRJF17czxL+JGqkfcK7ICxzLTOwbb2Rbch8FpIYovOMN63g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=A+iGB511p+qY9kZH6k4iL//cr2XMHhjqejlvumrpCaE=;
+ b=niM/T1EIWuBWbLjSgzrAMvKTkeyK2huoP3S/xF1XuIcQ5C/645wz/yo2vAQfBOe7axVA8W+BLrgSYlOTs/hFgCvCiI3DIn4Awta1lBzQCWLVtAc9KyKRW6rPrA3MruZlvLu+X2Yqm6ZHLVtym8Ly6niwV85x8dbAiTM313io/scT9S4sttcay7IttzlfXHT7VjcnJJPfXBeyWGMyVpW47Ky/TXpzKLcg8cTL6rWAZvtDsA/B5Crgyc/FvD3m45PLZnUGt+K6al4+fQ36q6PtvNIUnV5M8rXlLRjxigLRbvvbJWpof+tSPrvBP4gTla8WqlFbK9oXiWQEfyMyAAeukQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SN7PR12MB8059.namprd12.prod.outlook.com (2603:10b6:806:32b::7)
+ by IA4PR12MB9809.namprd12.prod.outlook.com (2603:10b6:208:54f::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.15; Fri, 29 Aug
+ 2025 13:43:33 +0000
+Received: from SN7PR12MB8059.namprd12.prod.outlook.com
+ ([fe80::4ee2:654e:1fe8:4b91]) by SN7PR12MB8059.namprd12.prod.outlook.com
+ ([fe80::4ee2:654e:1fe8:4b91%3]) with mapi id 15.20.9052.017; Fri, 29 Aug 2025
+ 13:43:33 +0000
+Date: Fri, 29 Aug 2025 09:43:32 -0400
+From: Joel Fernandes <joelagnelf@nvidia.com>
+To: Alexandre Courbot <acourbot@nvidia.com>
+Cc: Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>, nouveau@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org, rust-for-linux@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH bpf-next v2 3/3] selftests/bpf: add benchmark testing for
- kprobe-multi-all
-Message-ID: <aLGugoKpnZbVPYtC@krava>
-References: <20250826080430.79043-1-dongml2@chinatelecom.cn>
- <20250826080430.79043-4-dongml2@chinatelecom.cn>
- <aK4BiJduYDsw7e0m@krava>
- <3664215.iIbC2pHGDl@7940hx>
+Subject: Re: [PATCH 2/2] gpu: nova-core: vbios: store reference to Device
+ where relevant
+Message-ID: <20250829134332.GA1832912@joelbox2>
+References: <20250808-vbios_device-v1-0-834bbbab6471@nvidia.com>
+ <20250808-vbios_device-v1-2-834bbbab6471@nvidia.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250808-vbios_device-v1-2-834bbbab6471@nvidia.com>
+X-ClientProxiedBy: BN0PR07CA0012.namprd07.prod.outlook.com
+ (2603:10b6:408:141::34) To SN7PR12MB8059.namprd12.prod.outlook.com
+ (2603:10b6:806:32b::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3664215.iIbC2pHGDl@7940hx>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN7PR12MB8059:EE_|IA4PR12MB9809:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1badb384-e6b5-463f-601c-08dde7020c2c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?pmHzLHeBNw51JNd0U7mQ5dvJ/Kz5e7tR+9eTzQ3s9E8N9+Flr68J5KH7QOiD?=
+ =?us-ascii?Q?RH+XZ5EpVWxCYHa7S4k9vC+n+bn/AOAusE8J8aa9l+Bozl2xNyK5T9cVsMAW?=
+ =?us-ascii?Q?JVMDgycErCAEGUgwTRW+6q1/K0upQO5+RqFnEdcIETVgeeAz5CJiuu7BmPH+?=
+ =?us-ascii?Q?MDQH551YyABxuVmrn2HWLDvY/AI5C4PB4ZurqIaq0c8Nt07Y5nas/NWnyz+W?=
+ =?us-ascii?Q?FsQqr/P/HL9a7Ky15ajOUvxMQ52lY04NS1ALF8yQ0ojaShLnpdB5Kp3JT+/J?=
+ =?us-ascii?Q?a3R0jPItg+Qy16LyReAf047XoMx9CM0PRHKxDTIGe2bH7wSy94S4jl+JEpzs?=
+ =?us-ascii?Q?c9fcARfXjTWUwo6N8t3vgZ6AQKMgwHBeruh7O0aR3r9xWuIHJzTpSZNY3bnw?=
+ =?us-ascii?Q?bCQJEi5+uZNK/Hx16i+iEMbHqQXex4Fb/mk1et2yuC63XvOu+YhlA8F7c5qN?=
+ =?us-ascii?Q?W6yq4Aa65eNaPqAXDFlc751LnrcorEYqzYNNXBjH2WjF0zbLkF4uJ6mdomex?=
+ =?us-ascii?Q?BczqyuUiG09Moo/nGKeeegGeVJypQBz4c3qLzQu7i3m1HiPmIKVUeV6nK1QK?=
+ =?us-ascii?Q?jEshC7bHyrRXQndTF9SGT79XU8j6MlVtSk0btIqEsJa0dujW1OQKrRTcgmu/?=
+ =?us-ascii?Q?dK+GSfGtJ4SA10n8mHnMux9qM0BaRrV5oKfWXHXL2DlTTNfVXUs7hodoTc8u?=
+ =?us-ascii?Q?9IMf5rQKrY/FReCyGm9ISFsKTz3BBuEXXUAf+MnGa89IEhKlwP0SCiz2w56M?=
+ =?us-ascii?Q?mnYjQrRfNwsi+XsnD8IHHIGRa8pq9Q1StStxUBNFxH0F2295xnyp8oJgX6dZ?=
+ =?us-ascii?Q?P+GbzxJkBi/g94oV0kZOfOMbOe38HdHI7MSJUuNvnzHkB5IeQUkRf3jcQhZK?=
+ =?us-ascii?Q?VShbm09IXTZc2StmHz0FunQhwAj9rOIFtjA+mhiCVbCYbPBrYzQAKwtJVXko?=
+ =?us-ascii?Q?2WYty9chZAyCuv6TI1EeDkH0Cv1EKResRp3K0Lckxkez7KX8Nr0WxzBbsBNC?=
+ =?us-ascii?Q?dL7CuUkSYfji5EI/pKwbnih56/3pjN3KYLZFiqvYumK+GsXfMkl+ojIqZJc8?=
+ =?us-ascii?Q?HuNVr4jw/qosu5jCDbNejC3piSClqthzFE52tvEqIFX82/9uXH3j4yzREuJv?=
+ =?us-ascii?Q?2oPJfJW6o34C+IXPF/em75rZlvWYUzQJHfx6ow5jFkKC7XA+iWj7WRwZvhZD?=
+ =?us-ascii?Q?q3wlnwf4swT1ZWxJq/2E5i6J+hC7eQDKh7bVSwQeduc79+wscq2Q752hqJew?=
+ =?us-ascii?Q?3kqM7Q+MgD9MOCTxQsclZE9fLWzr7gaI5HLyHf0iTUgQ6RmHzmObvLrgKeku?=
+ =?us-ascii?Q?zCxW/w7lRUd9+XBReQQT+9lF/Fae8+Ecg7YIye6VQBsDgn/vQi+oKpj6Bn4B?=
+ =?us-ascii?Q?fo0BPFQdQZjUP46JjGdIpwycMRS2TZ4ztWqja7gLIBEOw+rQoA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB8059.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?KWt1mYjvvrBu4u2M25bayYMH9w5eBRQzIt8KemFuwS3FLnwmPVnRZh61EM8X?=
+ =?us-ascii?Q?wkRuJUj4eH+oTD3ydfDZoMbPP+n1FyNCgqPQk/824m2oN+cXBOWHIYSXGGXK?=
+ =?us-ascii?Q?UAnoWbZTXpXjwpcTYQA/FeXU3ohUXDWblfdjGACofJMPXCWmmd2SgrJfQE4V?=
+ =?us-ascii?Q?odzlW5agheNZs1XM/OKdxslFofwH+owil94NrPiAGPOr1pazCCEk7bo1BL67?=
+ =?us-ascii?Q?5oZ+9cU6P4STb7qxzN9XQhnVj69VDPsCWnM6Ej19wELZgnkTq3HCZA078Gqv?=
+ =?us-ascii?Q?RkgELIgiXLQ5tdDf9neW80KWZEPzTnktwPYI8JYgCRx+T7ZSm+Qu+zqqUGbV?=
+ =?us-ascii?Q?fUnNDXTTgs8R8NdcSe5uAi28RKrWRdwaKhKK7A/uSMHMRPQ1xMNIXdUTEOVo?=
+ =?us-ascii?Q?vQGooTMezfn7sFjwzHKoRy1JV+aLn7rPbU6wohnqAuBOTze5DcDs0m4+MSX3?=
+ =?us-ascii?Q?Rn7y2sqRotasnP3jH3gbCnIdp27AcU0/2Sfv54oo0VyDlGTZc31Arn+grhCd?=
+ =?us-ascii?Q?arpMqxutzUcAWGiIDu8DwHpfmfsbcVBiPCCUvz+a0qwA691aRwPKmBPl/Hb7?=
+ =?us-ascii?Q?a03ul/w2BaoRKywU0mUQg0VAdO4PXhsKOdIUv12S6EBNnw0agBoXwexmvk4n?=
+ =?us-ascii?Q?GI5fW4Q5F93o0J9LKdE1NY3lgYsk9EO8Ug77KjxnOD3AltFRzjARy+U46Mnn?=
+ =?us-ascii?Q?LStGolbZFEyWeSGQ+rPiUIdIPn7sWDPTtC7Rfp38OYIY+Lez9/hErf/J35ui?=
+ =?us-ascii?Q?reAs1kOHrAP9q4Tn4IVPSmQ8XLD4kyI+WS/TciVr4jA5FXtAVoe3sHQTsOom?=
+ =?us-ascii?Q?xiwqUsPBQj2emWINuhTCZArs4+0+KP+UyAUHxhFZNv/dadxrIlfWT3FOP34m?=
+ =?us-ascii?Q?mGOBsCS+Daoh+5z4UyPA52kjMLNkuLaFgLQYwMT5WuPnb39f4UEZYFAI5Of0?=
+ =?us-ascii?Q?mL3hqZLwq5WkQTyleK4wa6m1R3qdJrrVsZvCYRzspsvs0FdIqcyueQXyVkaD?=
+ =?us-ascii?Q?laOaqRH2b8CLivVEHfcT6GJqkqXRZpD3OShu1Kcxq/dAnX6gVZkck21ptMxz?=
+ =?us-ascii?Q?NM6Og4SFJfcHDxj4p9fpgTYb3yK7BJLwzqVE3tqq0cklGEOas18X22f3bF6L?=
+ =?us-ascii?Q?4cZEI9hF5/ru1vOK7JgD2nGCaSDOcZ2pF3S2qFGyBYEgP3t4GqMdGDGoriE8?=
+ =?us-ascii?Q?WI8UFCGiJSu4Y7XxSUL9yzGeMJxfRyNMkXXEBd28nnY2qDDnXKfjGrHQsQmP?=
+ =?us-ascii?Q?z5SrX88TcA0FQ/XCjBRrtbpXNaZLDEmLCV9J+uPbHDrxZR04AugiEKNtnjdI?=
+ =?us-ascii?Q?n/0XCNtTaMyCqQy+gzlsxy27oai0YE1jJTMpEcSjZ+FoAlUBLeutWdLJXBWD?=
+ =?us-ascii?Q?2S+kAloDic0le+xZ0K99547SVyPiTb9AGjxeSoVIrTAoPTX2EoXqsw5s0nw2?=
+ =?us-ascii?Q?7LcTj6PNWwp4zAhMksO7/Gqflsp7AUzZh08rHWb1IyMVVzVCtJNiYRr5um5M?=
+ =?us-ascii?Q?vhEAguJfOw/R8iOg/yFAm+eLyD+nJRDiL/JduREY8mDxPGTXbkZI1LoC9Mvo?=
+ =?us-ascii?Q?QEs0Nli3GhdR7Su47t56MK6OC6oMduKAXLgA+uJO?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1badb384-e6b5-463f-601c-08dde7020c2c
+X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB8059.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Aug 2025 13:43:33.8354
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: nWQ54GuUOz4uJOfrCBmnBEchnlpxMl9aHrXQqOoamIVc1JCGsh1mltvEo8als3XJV+VhLgUOhgGDE2yaJORs7g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA4PR12MB9809
 
-On Fri, Aug 29, 2025 at 03:01:41PM +0800, Menglong Dong wrote:
-> On 2025/8/27 02:48 Jiri Olsa <olsajiri@gmail.com> write:
-> > On Tue, Aug 26, 2025 at 04:04:30PM +0800, Menglong Dong wrote:
-> > > For now, the benchmark for kprobe-multi is single, which means there is
-> > > only 1 function is hooked during testing. Add the testing
-> > > "kprobe-multi-all", which will hook all the kernel functions during
-> > > the benchmark. And the "kretprobe-multi-all" is added too.
-> > 
-> > hi,
-> > fyi this bench causes panic on my setup.. very silent, so not sure
-> > yet which function we should blacklist next, attaching my .config
+On Fri, Aug 08, 2025 at 11:46:42AM +0900, Alexandre Courbot wrote:
+> Now that the vbios code uses a non-bound `Device` instance, store an
+> `ARef` to it at construction time so we can use it for logging without
+> having to carry an extra argument on every method for that sole purpose.
 > 
-> According to my testing, the panic is due to the task hang.
-> With so many debug config enabled(KASAN, LOCKDEP, etc),
-> the system will become quite slow. What's wrose, there are
-> many debug function is called during fprobe_entry(), which
-> makes the BPF much slower. If you wait long enough, the
-> testing can still run.
-> 
-> Add more symbol to the blacklist can mitigate this problem,
-> but we need to maintain many symbols for this purpose. So
-> I suggest that we only run this testing in product kernel.
-> 
-> What do you think?
+> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
 
-yes I see the same.. I think we can keep it and perhaps make
-some comment about that
+Reviewed-by: Joel Fernandes <joelagnelf@nvidia.com>
 
-jirka
+thanks,
+
+ - Joel
+
+> ---
+>  drivers/gpu/nova-core/firmware/fwsec.rs |  8 ++--
+>  drivers/gpu/nova-core/vbios.rs          | 69 ++++++++++++++++++++-------------
+>  2 files changed, 46 insertions(+), 31 deletions(-)
+> 
+> diff --git a/drivers/gpu/nova-core/firmware/fwsec.rs b/drivers/gpu/nova-core/firmware/fwsec.rs
+> index 0dff3cfa90afee0cd4c3348023c8bfd7edccdb29..d9b9d1f92880cbcd36dac84b9e86a84e6465cf5d 100644
+> --- a/drivers/gpu/nova-core/firmware/fwsec.rs
+> +++ b/drivers/gpu/nova-core/firmware/fwsec.rs
+> @@ -253,8 +253,8 @@ impl FalconFirmware for FwsecFirmware {
+>  
+>  impl FirmwareDmaObject<FwsecFirmware, Unsigned> {
+>      fn new_fwsec(dev: &Device<device::Bound>, bios: &Vbios, cmd: FwsecCommand) -> Result<Self> {
+> -        let desc = bios.fwsec_image().header(dev)?;
+> -        let ucode = bios.fwsec_image().ucode(dev, desc)?;
+> +        let desc = bios.fwsec_image().header()?;
+> +        let ucode = bios.fwsec_image().ucode(desc)?;
+>          let mut dma_object = DmaObject::from_data(dev, ucode)?;
+>  
+>          let hdr_offset = (desc.imem_load_size + desc.interface_offset) as usize;
+> @@ -343,7 +343,7 @@ pub(crate) fn new(
+>          let ucode_dma = FirmwareDmaObject::<Self, _>::new_fwsec(dev, bios, cmd)?;
+>  
+>          // Patch signature if needed.
+> -        let desc = bios.fwsec_image().header(dev)?;
+> +        let desc = bios.fwsec_image().header()?;
+>          let ucode_signed = if desc.signature_count != 0 {
+>              let sig_base_img = (desc.imem_load_size + desc.pkc_data_offset) as usize;
+>              let desc_sig_versions = u32::from(desc.signature_versions);
+> @@ -382,7 +382,7 @@ pub(crate) fn new(
+>              dev_dbg!(dev, "patching signature with index {}\n", signature_idx);
+>              let signature = bios
+>                  .fwsec_image()
+> -                .sigs(dev, desc)
+> +                .sigs(desc)
+>                  .and_then(|sigs| sigs.get(signature_idx).ok_or(EINVAL))?;
+>  
+>              ucode_dma.patch_signature(signature, sig_base_img)?
+> diff --git a/drivers/gpu/nova-core/vbios.rs b/drivers/gpu/nova-core/vbios.rs
+> index b5564b4d3e4758e77178aa403635e4780f0378cc..6fc06b1b83655a7dec00308880dbdfc32d7105ce 100644
+> --- a/drivers/gpu/nova-core/vbios.rs
+> +++ b/drivers/gpu/nova-core/vbios.rs
+> @@ -9,6 +9,7 @@
+>  use kernel::device;
+>  use kernel::error::Result;
+>  use kernel::prelude::*;
+> +use kernel::types::ARef;
+>  
+>  /// The offset of the VBIOS ROM in the BAR0 space.
+>  const ROM_OFFSET: usize = 0x300000;
+> @@ -230,10 +231,10 @@ pub(crate) fn new(dev: &device::Device, bar0: &Bar0) -> Result<Vbios> {
+>              (second_fwsec_image, first_fwsec_image, pci_at_image)
+>          {
+>              second
+> -                .setup_falcon_data(dev, &pci_at, &first)
+> +                .setup_falcon_data(&pci_at, &first)
+>                  .inspect_err(|e| dev_err!(dev, "Falcon data setup failed: {:?}\n", e))?;
+>              Ok(Vbios {
+> -                fwsec_image: second.build(dev)?,
+> +                fwsec_image: second.build()?,
+>              })
+>          } else {
+>              dev_err!(
+> @@ -742,9 +743,10 @@ fn try_from(base: BiosImageBase) -> Result<Self> {
+>  ///
+>  /// Each BiosImage type has a BiosImageBase type along with other image-specific fields. Note that
+>  /// Rust favors composition of types over inheritance.
+> -#[derive(Debug)]
+>  #[expect(dead_code)]
+>  struct BiosImageBase {
+> +    /// Used for logging.
+> +    dev: ARef<device::Device>,
+>      /// PCI ROM Expansion Header
+>      rom_header: PciRomHeader,
+>      /// PCI Data Structure
+> @@ -801,6 +803,7 @@ fn new(dev: &device::Device, data: &[u8]) -> Result<Self> {
+>          data_copy.extend_from_slice(data, GFP_KERNEL)?;
+>  
+>          Ok(BiosImageBase {
+> +            dev: dev.into(),
+>              rom_header,
+>              pcir,
+>              npde,
+> @@ -836,7 +839,7 @@ fn get_bit_token(&self, token_id: u8) -> Result<BitToken> {
+>      ///
+>      /// This is just a 4 byte structure that contains a pointer to the Falcon data in the FWSEC
+>      /// image.
+> -    fn falcon_data_ptr(&self, dev: &device::Device) -> Result<u32> {
+> +    fn falcon_data_ptr(&self) -> Result<u32> {
+>          let token = self.get_bit_token(BIT_TOKEN_ID_FALCON_DATA)?;
+>  
+>          // Make sure we don't go out of bounds
+> @@ -847,14 +850,14 @@ fn falcon_data_ptr(&self, dev: &device::Device) -> Result<u32> {
+>          // read the 4 bytes at the offset specified in the token
+>          let offset = token.data_offset as usize;
+>          let bytes: [u8; 4] = self.base.data[offset..offset + 4].try_into().map_err(|_| {
+> -            dev_err!(dev, "Failed to convert data slice to array");
+> +            dev_err!(self.base.dev, "Failed to convert data slice to array");
+>              EINVAL
+>          })?;
+>  
+>          let data_ptr = u32::from_le_bytes(bytes);
+>  
+>          if (data_ptr as usize) < self.base.data.len() {
+> -            dev_err!(dev, "Falcon data pointer out of bounds\n");
+> +            dev_err!(self.base.dev, "Falcon data pointer out of bounds\n");
+>              return Err(EINVAL);
+>          }
+>  
+> @@ -978,11 +981,10 @@ fn find_entry_by_type(&self, entry_type: u8) -> Result<PmuLookupTableEntry> {
+>  impl FwSecBiosBuilder {
+>      fn setup_falcon_data(
+>          &mut self,
+> -        dev: &device::Device,
+>          pci_at_image: &PciAtBiosImage,
+>          first_fwsec: &FwSecBiosBuilder,
+>      ) -> Result {
+> -        let mut offset = pci_at_image.falcon_data_ptr(dev)? as usize;
+> +        let mut offset = pci_at_image.falcon_data_ptr()? as usize;
+>          let mut pmu_in_first_fwsec = false;
+>  
+>          // The falcon data pointer assumes that the PciAt and FWSEC images
+> @@ -1005,10 +1007,15 @@ fn setup_falcon_data(
+>          self.falcon_data_offset = Some(offset);
+>  
+>          if pmu_in_first_fwsec {
+> -            self.pmu_lookup_table =
+> -                Some(PmuLookupTable::new(dev, &first_fwsec.base.data[offset..])?);
+> +            self.pmu_lookup_table = Some(PmuLookupTable::new(
+> +                &self.base.dev,
+> +                &first_fwsec.base.data[offset..],
+> +            )?);
+>          } else {
+> -            self.pmu_lookup_table = Some(PmuLookupTable::new(dev, &self.base.data[offset..])?);
+> +            self.pmu_lookup_table = Some(PmuLookupTable::new(
+> +                &self.base.dev,
+> +                &self.base.data[offset..],
+> +            )?);
+>          }
+>  
+>          match self
+> @@ -1021,14 +1028,18 @@ fn setup_falcon_data(
+>                  let mut ucode_offset = entry.data as usize;
+>                  ucode_offset -= pci_at_image.base.data.len();
+>                  if ucode_offset < first_fwsec.base.data.len() {
+> -                    dev_err!(dev, "Falcon Ucode offset not in second Fwsec.\n");
+> +                    dev_err!(self.base.dev, "Falcon Ucode offset not in second Fwsec.\n");
+>                      return Err(EINVAL);
+>                  }
+>                  ucode_offset -= first_fwsec.base.data.len();
+>                  self.falcon_ucode_offset = Some(ucode_offset);
+>              }
+>              Err(e) => {
+> -                dev_err!(dev, "PmuLookupTableEntry not found, error: {:?}\n", e);
+> +                dev_err!(
+> +                    self.base.dev,
+> +                    "PmuLookupTableEntry not found, error: {:?}\n",
+> +                    e
+> +                );
+>                  return Err(EINVAL);
+>              }
+>          }
+> @@ -1036,7 +1047,7 @@ fn setup_falcon_data(
+>      }
+>  
+>      /// Build the final FwSecBiosImage from this builder
+> -    fn build(self, dev: &device::Device) -> Result<FwSecBiosImage> {
+> +    fn build(self) -> Result<FwSecBiosImage> {
+>          let ret = FwSecBiosImage {
+>              base: self.base,
+>              falcon_ucode_offset: self.falcon_ucode_offset.ok_or(EINVAL)?,
+> @@ -1044,8 +1055,8 @@ fn build(self, dev: &device::Device) -> Result<FwSecBiosImage> {
+>  
+>          if cfg!(debug_assertions) {
+>              // Print the desc header for debugging
+> -            let desc = ret.header(dev)?;
+> -            dev_dbg!(dev, "PmuLookupTableEntry desc: {:#?}\n", desc);
+> +            let desc = ret.header()?;
+> +            dev_dbg!(ret.base.dev, "PmuLookupTableEntry desc: {:#?}\n", desc);
+>          }
+>  
+>          Ok(ret)
+> @@ -1054,13 +1065,16 @@ fn build(self, dev: &device::Device) -> Result<FwSecBiosImage> {
+>  
+>  impl FwSecBiosImage {
+>      /// Get the FwSec header ([`FalconUCodeDescV3`]).
+> -    pub(crate) fn header(&self, dev: &device::Device) -> Result<&FalconUCodeDescV3> {
+> +    pub(crate) fn header(&self) -> Result<&FalconUCodeDescV3> {
+>          // Get the falcon ucode offset that was found in setup_falcon_data.
+>          let falcon_ucode_offset = self.falcon_ucode_offset;
+>  
+>          // Make sure the offset is within the data bounds.
+>          if falcon_ucode_offset + core::mem::size_of::<FalconUCodeDescV3>() > self.base.data.len() {
+> -            dev_err!(dev, "fwsec-frts header not contained within BIOS bounds\n");
+> +            dev_err!(
+> +                self.base.dev,
+> +                "fwsec-frts header not contained within BIOS bounds\n"
+> +            );
+>              return Err(ERANGE);
+>          }
+>  
+> @@ -1072,7 +1086,7 @@ pub(crate) fn header(&self, dev: &device::Device) -> Result<&FalconUCodeDescV3>
+>          let ver = (hdr & 0xff00) >> 8;
+>  
+>          if ver != 3 {
+> -            dev_err!(dev, "invalid fwsec firmware version: {:?}\n", ver);
+> +            dev_err!(self.base.dev, "invalid fwsec firmware version: {:?}\n", ver);
+>              return Err(EINVAL);
+>          }
+>  
+> @@ -1092,7 +1106,7 @@ pub(crate) fn header(&self, dev: &device::Device) -> Result<&FalconUCodeDescV3>
+>      }
+>  
+>      /// Get the ucode data as a byte slice
+> -    pub(crate) fn ucode(&self, dev: &device::Device, desc: &FalconUCodeDescV3) -> Result<&[u8]> {
+> +    pub(crate) fn ucode(&self, desc: &FalconUCodeDescV3) -> Result<&[u8]> {
+>          let falcon_ucode_offset = self.falcon_ucode_offset;
+>  
+>          // The ucode data follows the descriptor.
+> @@ -1104,15 +1118,16 @@ pub(crate) fn ucode(&self, dev: &device::Device, desc: &FalconUCodeDescV3) -> Re
+>              .data
+>              .get(ucode_data_offset..ucode_data_offset + size)
+>              .ok_or(ERANGE)
+> -            .inspect_err(|_| dev_err!(dev, "fwsec ucode data not contained within BIOS bounds\n"))
+> +            .inspect_err(|_| {
+> +                dev_err!(
+> +                    self.base.dev,
+> +                    "fwsec ucode data not contained within BIOS bounds\n"
+> +                )
+> +            })
+>      }
+>  
+>      /// Get the signatures as a byte slice
+> -    pub(crate) fn sigs(
+> -        &self,
+> -        dev: &device::Device,
+> -        desc: &FalconUCodeDescV3,
+> -    ) -> Result<&[Bcrt30Rsa3kSignature]> {
+> +    pub(crate) fn sigs(&self, desc: &FalconUCodeDescV3) -> Result<&[Bcrt30Rsa3kSignature]> {
+>          // The signatures data follows the descriptor.
+>          let sigs_data_offset = self.falcon_ucode_offset + core::mem::size_of::<FalconUCodeDescV3>();
+>          let sigs_size =
+> @@ -1121,7 +1136,7 @@ pub(crate) fn sigs(
+>          // Make sure the data is within bounds.
+>          if sigs_data_offset + sigs_size > self.base.data.len() {
+>              dev_err!(
+> -                dev,
+> +                self.base.dev,
+>                  "fwsec signatures data not contained within BIOS bounds\n"
+>              );
+>              return Err(ERANGE);
+> 
+> -- 
+> 2.50.1
+> 
 
