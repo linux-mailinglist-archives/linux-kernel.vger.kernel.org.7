@@ -1,119 +1,99 @@
-Return-Path: <linux-kernel+bounces-792063-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 700DAB3BFD7
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 17:51:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76B2BB3BFCD
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 17:50:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A3635650AC
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 15:50:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBBDBA233DE
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 15:48:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F266F3375D5;
-	Fri, 29 Aug 2025 15:48:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ENEga7Da"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51B6A32A3C7;
-	Fri, 29 Aug 2025 15:48:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84B69322DCE;
+	Fri, 29 Aug 2025 15:48:04 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87515322A3B;
+	Fri, 29 Aug 2025 15:48:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756482534; cv=none; b=PgHKlYfcXNt1c63nFkO5qp6hEs2oDiqyw09MYQiwmoMsrwDIir3sKQXczwtKZfjOwh7ojzelBWKiQ0S9Akm9hkTJ30wD6MxUpNG3W2qXQOh8jypEhWtnTWAxZ/V64D7brwfay0tahGuIGTnYpXtyLWInhLnY62DUtUywvok7ZTs=
+	t=1756482484; cv=none; b=MFLfm4PZwKu7vlGYob1HzoVAuAhd5ywEY1jmSZXp03EeA1HTfeEGsTM25t3qOHx1kdsDekRxIKhvlheR00mQeMXLd3ldpv40OBdMULZ1nUt0Q/vJYbhDyLaUgMppLeaAopwndJ4vT9V5St8mme3fqH1IUrxNWX2m3k9Ggzz/Qxk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756482534; c=relaxed/simple;
-	bh=LPfGRQUCouLlYMYagUni4E5aLlawCBT0lOrgRGdT9YM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=uwDBbhi8FJbe1Lz0+BCORwQRIMh4wgW5V2mKqdP65Kr6x/CkdwqjSGawF7bMDAv64FeKrw8Mhk0ul1lgS/+06QkeNvFRZdWrKbKiR08XBFPrsEIY8s1enc/pld7K5hsEr5XTPRQEGW9c0NPP7Hv0OEbwEYF9QmgJtevpyewy50c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ENEga7Da; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3396C4CEF6;
-	Fri, 29 Aug 2025 15:48:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756482534;
-	bh=LPfGRQUCouLlYMYagUni4E5aLlawCBT0lOrgRGdT9YM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ENEga7Dam+kNI8dPxGhGkV8vI6v/8iw/viFTgf36zq726dg9TrY/N8US8GvzpfpFE
-	 l5KBzDsoznlioAIEtdNOcA7JpgrNvgYM7FBLPBLpmViRE2xLTtzcbBAOce4GIycC1c
-	 UvWwmQZnnbpfONbkQ32MGghq9QWK+bWWITEf1TOUNxLuuYZFD7+WD4DRCYm2RJt2H2
-	 rMf5iaKEkP/Abfc7UmAZaHt+HASHdqxbrfFM0sZzRB+XoU1VIIKilMkAVDg7ZJ9xzA
-	 81l2ACdYvTlJbyTw3+qrJpOLClcffmd4UoJvAfPTQMp4VupfosmAVh9JWEwSHE6r9z
-	 GVbTFOkLpLpyA==
-From: Frederic Weisbecker <frederic@kernel.org>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: Frederic Weisbecker <frederic@kernel.org>,
-	=?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Marco Crivellari <marco.crivellari@suse.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Tejun Heo <tj@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Waiman Long <longman@redhat.com>,
-	cgroups@vger.kernel.org
-Subject: [PATCH 12/33] cpuset: Provide lockdep check for cpuset lock held
-Date: Fri, 29 Aug 2025 17:47:53 +0200
-Message-ID: <20250829154814.47015-13-frederic@kernel.org>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20250829154814.47015-1-frederic@kernel.org>
-References: <20250829154814.47015-1-frederic@kernel.org>
+	s=arc-20240116; t=1756482484; c=relaxed/simple;
+	bh=qEcJN/BqmAPsdwnHlhKS574vvXK0JpD9t5oydKxd4YA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MWrO71atKXbCUU7PcDXLw7jIil//eA/UN+dSmlugOKjkWGXB/ijDX8BqO8C17L3b//HnKJ64A7W/58r7YtJIDjsZNkLRWY7LcCNf9P6eS5ufMjr2FjYYXFK8ZLHT9w6+6W1Y7jETF400sK1C27Sd/Lt1D664E0LXCdWosvPLG2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 62A4A19F0;
+	Fri, 29 Aug 2025 08:47:52 -0700 (PDT)
+Received: from [10.1.196.46] (e134344.arm.com [10.1.196.46])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CF3513F738;
+	Fri, 29 Aug 2025 08:47:54 -0700 (PDT)
+Message-ID: <c2fcf606-7b68-4e21-aba0-76cbc0174c3f@arm.com>
+Date: Fri, 29 Aug 2025 16:47:53 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 26/33] arm_mpam: Add helpers to allocate monitors
+To: James Morse <james.morse@arm.com>, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-acpi@vger.kernel.org,
+ devicetree@vger.kernel.org
+Cc: shameerali.kolothum.thodi@huawei.com,
+ D Scott Phillips OS <scott@os.amperecomputing.com>,
+ carl@os.amperecomputing.com, lcherian@marvell.com,
+ bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
+ baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
+ Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
+ dfustini@baylibre.com, amitsinght@marvell.com,
+ David Hildenbrand <david@redhat.com>, Rex Nie <rex.nie@jaguarmicro.com>,
+ Dave Martin <dave.martin@arm.com>, Koba Ko <kobak@nvidia.com>,
+ Shanker Donthineni <sdonthineni@nvidia.com>, fenghuay@nvidia.com,
+ baisheng.gao@unisoc.com, Jonathan Cameron <jonathan.cameron@huawei.com>,
+ Rob Herring <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
+ Rafael Wysocki <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo
+ <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Danilo Krummrich <dakr@kernel.org>
+References: <20250822153048.2287-1-james.morse@arm.com>
+ <20250822153048.2287-27-james.morse@arm.com>
+From: Ben Horgan <ben.horgan@arm.com>
+Content-Language: en-US
+In-Reply-To: <20250822153048.2287-27-james.morse@arm.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-cpuset modifies partitions, including isolated, while holding the cpuset
-mutex.
+Hi James,
 
-This means that holding the cpuset mutex is safe to synchronize against
-housekeeping cpumask changes.
+On 8/22/25 16:30, James Morse wrote:
+> MPAM's MSC support a number of monitors, each of which supports
+> bandwidth counters, or cache-storage-utilisation counters. To use
+> a counter, a monitor needs to be configured. Add helpers to allocate
+> and free CSU or MBWU monitors.
+> 
+> Signed-off-by: James Morse <james.morse@arm.com>
+> ---
+>  drivers/resctrl/mpam_devices.c  |  2 ++
+>  drivers/resctrl/mpam_internal.h | 35 +++++++++++++++++++++++++++++++++
+>  2 files changed, 37 insertions(+)
 
-Provide a lockdep check to validate that.
+This looks good to me.
 
-Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
----
- include/linux/cpuset.h | 2 ++
- kernel/cgroup/cpuset.c | 7 +++++++
- 2 files changed, 9 insertions(+)
+Reviewed-by: Ben Horgan <ben.horgan@arm.com>
 
-diff --git a/include/linux/cpuset.h b/include/linux/cpuset.h
-index 2ddb256187b5..051d36fec578 100644
---- a/include/linux/cpuset.h
-+++ b/include/linux/cpuset.h
-@@ -18,6 +18,8 @@
- #include <linux/mmu_context.h>
- #include <linux/jump_label.h>
- 
-+extern bool lockdep_is_cpuset_held(void);
-+
- #ifdef CONFIG_CPUSETS
- 
- /*
-diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-index b00d8e3c30ba..2d2fc74bc00c 100644
---- a/kernel/cgroup/cpuset.c
-+++ b/kernel/cgroup/cpuset.c
-@@ -254,6 +254,13 @@ void cpuset_unlock(void)
- 	mutex_unlock(&cpuset_mutex);
- }
- 
-+#ifdef CONFIG_LOCKDEP
-+bool lockdep_is_cpuset_held(void)
-+{
-+	return lockdep_is_held(&cpuset_mutex);
-+}
-+#endif
-+
- static DEFINE_SPINLOCK(callback_lock);
- 
- void cpuset_callback_lock_irq(void)
--- 
-2.51.0
+
+Thanks,
+
+Ben
 
 
