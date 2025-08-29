@@ -1,215 +1,132 @@
-Return-Path: <linux-kernel+bounces-790993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E8E3B3B0C5
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 04:13:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79E7FB3B0D4
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 04:18:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B111E1C231EB
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 02:13:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9B2197A492C
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 02:17:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2437921B9FD;
-	Fri, 29 Aug 2025 02:13:21 +0000 (UTC)
-Received: from smtpbgeu2.qq.com (smtpbgeu2.qq.com [18.194.254.142])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A8161BC5C;
+	Fri, 29 Aug 2025 02:18:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="U/CInmZL"
+Received: from out203-205-221-173.mail.qq.com (out203-205-221-173.mail.qq.com [203.205.221.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B926202980;
-	Fri, 29 Aug 2025 02:13:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.194.254.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EDCA28695;
+	Fri, 29 Aug 2025 02:18:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756433600; cv=none; b=j08qjoNhpI9J46GwApCC79vxUZFMoBagHT2U4QkFcSg46PNK7LiNAVqEvHx0VJXYuStCoAtpVT8J1r9t7e7pwxGTMwO5JjKZP0Y9Zg2R03BFmqVqk3NHga4D/I/PCWE2zQtqwVAkYDGZzmJFz4iPw4gcHHTKfaU8rhCsl5g+87k=
+	t=1756433912; cv=none; b=giITnPWZ0s6GKlUjyF5RDMr4+JPGZfWdKYBn8X1l44Vfr3B0upTHJ5wQCWY0F9R0KJfou1SHzN8aK/+bZYkHIXs0EtZeOiRaOLntAP/VAyM3MyOUaD6Q/6psv2XZoWWpKzrgMnaK28TGnjO50gSolfLMhFa26k5EWyYieAXTeQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756433600; c=relaxed/simple;
-	bh=bn36VH6fLv38tAROLVseb78fk0ahQrjwo5qQOr7SelU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Zil6krD0vn2o1lSDHM7LEzewH99mdYVyaAxa/VqKCxEzVOTbgX96oDDlpfjkS8qPVgzzriZ8SxzdFa8ItKvJlzC987vF5b8oefzQU0tJhooLWrqCSKgdfOFpqKx5mk/m9UCmmPrzxQ8Csdn2eWJN7FVsY6RS1GSMkDT0L2VCKy8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com; spf=pass smtp.mailfrom=mucse.com; arc=none smtp.client-ip=18.194.254.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mucse.com
-X-QQ-mid: zesmtpgz4t1756433576t23706f55
-X-QQ-Originating-IP: p046whFzyUY8taJB0Gc2SR98nVSkqVtDSMRR9p6MXGA=
-Received: from localhost ( [203.174.112.180])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Fri, 29 Aug 2025 10:12:54 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 8592654146579979855
-Date: Fri, 29 Aug 2025 10:12:54 +0800
-From: Yibo Dong <dong100@mucse.com>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
-	corbet@lwn.net, gur.stavi@huawei.com, maddy@linux.ibm.com,
-	mpe@ellerman.id.au, danishanwar@ti.com, lee@trager.us,
-	gongfan1@huawei.com, lorenzo@kernel.org, geert+renesas@glider.be,
-	Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
-	alexanderduyck@fb.com, richardcochran@gmail.com, kees@kernel.org,
-	gustavoars@kernel.org, rdunlap@infradead.org,
-	vadim.fedorenko@linux.dev, netdev@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH net-next v9 4/5] net: rnpgbe: Add basic mbx_fw support
-Message-ID: <DB12A33105BC0233+20250829021254.GA904254@nic-Precision-5820-Tower>
-References: <20250828025547.568563-1-dong100@mucse.com>
- <20250828025547.568563-5-dong100@mucse.com>
- <d61dd41c-5700-483f-847a-a92000b8a925@lunn.ch>
+	s=arc-20240116; t=1756433912; c=relaxed/simple;
+	bh=3FypETjJEczaIGmMijvEDc/xAfE0ZqcMYaZH4REDzt0=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=r4GRGPOegjKi9U9dhNrumgBJT2Iu+lNZyY1ifWy9DQc5FcOctDGo32oYDsI7bSUWTzEoBKC90VCrlxbbyI7JTYBzgcnrJ1b1oTNjWdJeE7UntAXWQmTrGDtMAvZZM6vjVyTMAhQQvpFNYsCP8peFEiHk7wEYSfZXEeUD16uj8dw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=U/CInmZL; arc=none smtp.client-ip=203.205.221.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
+	s=s201512; t=1756433604;
+	bh=rJtuwGlT+WPV2Vvq0c50CumyH88uEPIOv2YTXhzReaU=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=U/CInmZLQI3JccJ9cj9Rz+EsaqZKS+Dtm27HFEwY0MpxOMVTshin16aoXIi5X4K+3
+	 P7RWnqYxeGxmxTJifURQ9y4AlU/HwzBE28AZjHYYvHnR76g9eS/PrupwjqzAywgXRV
+	 76b8u9AYb3zf8U0T6j3kMWxy/Xz5+chVnLyMOhZ8=
+Received: from NUC10 ([39.156.73.10])
+	by newxmesmtplogicsvrsza36-0.qq.com (NewEsmtp) with SMTP
+	id 35393492; Fri, 29 Aug 2025 10:13:19 +0800
+X-QQ-mid: xmsmtpt1756433599tz7lcuhs2
+Message-ID: <tencent_C87CBC028E7A203219A80B3567555C22AA0A@qq.com>
+X-QQ-XMAILINFO: NKv2G1wnhDBnJ+MY7+rhFJyHnalwM8DgbBOJb3RTQGmehqofKjUI8mHZt7ofju
+	 wdsD0pp1b6G+yLN/TZYp5EZFWzp2moVueaQsXUgJc6WQMhg+fxK5uqBxZTnK1vbgVUBXm4f2BSfG
+	 yNfXayx1pBQ1rbkMIg2wD7swwA3zkY7iT/WQQ/3Eh3R3t7pquMybsbGr1my5jpchXfyz1bchNwv1
+	 VRt3zEDeUZv8Y3CsG0UiOU/NT725zoHf//cTSA7NcXIG5RrNVyfzmWqI+Ox1rkszjG03g6Nw2NRE
+	 scN60Vw3DXNrON+ZrYKFuJVXt8gA9dsnqkhz7wca4XBDDpO72FkusRUXF7YYLH0fmHwwwa/H1fE3
+	 NNr16k1RJ/G0kOnQ2+IZt1w2iJ5wL74N/mATqqsUWvr0XJWgxlNfXIoVOgdIpm8XJ7VDxBdsj5Ct
+	 uFigujs7Ee73UFwxpmUlPtPF6G4za/b9KppCbUK7lnJLW4rt33Dpz8QhrYBrap2up0GqqZbJpQIa
+	 lwCJvOmI0NWiIzmfQCbipK+gCgfTp8np6QVcYdql8KqCBgfoS7iU1u5+QHFSlvLycRlUHX0MZ63u
+	 rXLfWkucZ1IXzj+vymtEQDq7iuU8OQV+wAmzSWhuvOmnAieuGLcP0Cf+XoWGwj8/iJaPuxr0GGUO
+	 vB3254ZvrSwn7ZIqXvtAPKa93nGJ0KIoRH+pbqEYY+ETdIb5OAtyHKqioAOpc++fN+cCHkYvUo9B
+	 jEUc3RMU7n4vO7yjOhson/jqIpvpEIuQARHR7yBB8KdA0cZXHOPBpliAWIdh+EY/2hDLpn2ycABW
+	 9oAaieQobx1Gm9oJCK0xhD2S3XFYlr1sXbcpx+6wl3LHzP6jGW6zVVpUDRGoslHFXCE/WJVzJW/L
+	 /VCBJRQp446Dt7wm3MaY/c9UcgvO97ENn9imKSY8lhTILrJwLxUoeqzO/utVY9q88wW3a19Ee3kH
+	 o/uC/qsyy8Q60e5PdEbEuqsCAL6x8ZJH0R8O5WH285VlQucxkovW3BlSjET6tX8IWQJeDQYmLujF
+	 xDqrnK0w==
+X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
+From: Rong Tao <rtoax@foxmail.com>
+To: andrii.nakryiko@gmail.com,
+	ast@kernel.org,
+	daniel@iogearbox.net,
+	vmalik@redhat.com
+Cc: Rong Tao <rongtao@cestc.cn>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Mykola Lysenko <mykolal@fb.com>,
+	Shuah Khan <shuah@kernel.org>,
+	bpf@vger.kernel.org (open list:BPF [GENERAL] (Safe Dynamic Programs and Tools)),
+	linux-kernel@vger.kernel.org (open list),
+	linux-kselftest@vger.kernel.org (open list:KERNEL SELFTEST FRAMEWORK)
+Subject: [PATCH bpf-next v4 2/2] selftests/bpf: Add tests for bpf_strnstr
+Date: Fri, 29 Aug 2025 10:13:04 +0800
+X-OQ-MSGID: <7f5f99975eb5ffd611cdc69ac5e9738bb4e91248.1756433400.git.rongtao@cestc.cn>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <cover.1756433400.git.rongtao@cestc.cn>
+References: <cover.1756433400.git.rongtao@cestc.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d61dd41c-5700-483f-847a-a92000b8a925@lunn.ch>
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpgz:mucse.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: OAj1qrjhA85Aij9gO9YcsnUCJUqHISXM9E4WgsZcAV3J71kpptWBA0nY
-	muP4H9klQqERQIoPhB4RnxnnqyPU8QshvwZHk6jQ14w9Pv8lCYbZlrrcl2hp74KQ63jh0GD
-	2k3InfEJ25UOA+8xNJh+iUKf8z/MaueAqE767dSqQ5wd70BAj9iNhxnadeRWS0icka0GGPK
-	B+j/5POyDAmoJtEQP9Jt/qAOoO4Ays3MbWmmR8kKRbgVNaoCDOahaF70+47chdQCnkXEz3j
-	9enGWaWBICC5wjNn7bj2YRGnKLR2HGiDM3BQ+a6F8UAfQjF3F5xiPtoSJJf/vIqrcxFMla9
-	EzbUQwR7Px5mPwI+siPMD9a2loL9kVYVJMMfVoHtT24dPV60cM39hbV2RyVdapgcb16i+Cl
-	mhsxlFY49nd72uSdlYHuCdxJ+pTpt5gsedtpb6PB5r62cXhj8j3velDR218K4BogipsfFiw
-	gbqFSKShKuPFBch3f2SlAqqzjwA3Zrmy4U/m1IRbzswo8oJzLf0zLIbL2nZgFogouVVwqw8
-	2Sy6TzRiYx3ESnteCqIo+52YI/B2L3XRV2xZu4ZxySy6heUnCMmzqed/kSmLhKL6jYVElok
-	AHWMhdp92aAW2tP8dYmJVpRpzVu7mRDFlbK0sMgBney+1k1wDPiy8gkBgk9hT8DXsP8R/cO
-	XH5A7HY+OTmIqT+S9aNFg8IP5ONk4Yf+JhiwnfQ1zGMVc0eDJj/hPAxYZpGWGbFKsHF+efL
-	xdMpomW17Z5it5itkkcc0UWOlNCyrTrnuHbvWDrCroH2hxaIMvyS0oige2qDCr7Ih4wg/Xy
-	SY5CbSs6/DdFL8UQ7bxfzjlOtyiPUhZ6wbmt0Va8SdbLLq53gbOZyWw/19vSxi73a85bZw/
-	PaTUiZRZYsqVFk62KJqf69CWZHeEKOiLV+x1z5LMWNVWqVYeSsR/vVzq8nsmgKmEzy7dt0I
-	vIALI7tlGROqGemkokqscGDmzM6lXgdVm7kOmH8P5FYfgwdynyijppHs2
-X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
-X-QQ-RECHKSPAM: 0
+Content-Transfer-Encoding: 8bit
 
-On Thu, Aug 28, 2025 at 03:09:51PM +0200, Andrew Lunn wrote:
-> > +/**
-> > + * mucse_mbx_get_capability - Get hw abilities from fw
-> > + * @hw: pointer to the HW structure
-> > + *
-> > + * mucse_mbx_get_capability tries to get capabities from
-> > + * hw. Many retrys will do if it is failed.
-> > + *
-> > + * Return: 0 on success, negative errno on failure
-> > + **/
-> > +int mucse_mbx_get_capability(struct mucse_hw *hw)
-> > +{
-> > +	struct hw_abilities ability = {};
-> > +	int try_cnt = 3;
-> > +	int err;
-> > +	/* It is called once in probe, if failed nothing
-> > +	 * (register network) todo. Try more times to get driver
-> > +	 * and firmware in sync.
-> > +	 */
-> > +	do {
-> > +		err = mucse_fw_get_capability(hw, &ability);
-> > +		if (err)
-> > +			continue;
-> > +		break;
-> > +	} while (try_cnt--);
-> > +
-> > +	if (!err)
-> > +		hw->pfvfnum = le16_to_cpu(ability.pfnum) & GENMASK_U16(7, 0);
-> > +	return err;
-> > +}
-> 
-> I still think this should be a dedicated function to get the MAC
-> driver and firmware in sync, using a NOP or version request to the
-> firmware. The name mucse_mbx_get_capability() does not indicate this
-> function is special in any way, which is it.
-> 
+From: Rong Tao <rongtao@cestc.cn>
 
-Maybe I should rename it like this?
+Add tests for bpf_strnstr():
 
-/**
- * mucse_mbx_sync_fw_by_get_capability - Try to sync driver and fw
- * @hw: pointer to the HW structure
- *
- * mucse_mbx_sync_fw_by_get_capability tries to sync driver and fw
- * by get capabitiy mbx cmd. Many retrys will do if it is failed.
- *
- * Return: 0 on success, negative errno on failure
- **/
-int mucse_mbx_sync_fw_by_get_capability(struct mucse_hw *hw)
-{
-	struct hw_abilities ability = {};
-	int try_cnt = 3;
-	int err;
-	/* It is called once in probe, if failed nothing
-	 * (register network) todo. Try more times to get driver
-	 * and firmware in sync.
-	 */
-	do {
-		err = mucse_fw_get_capability(hw, &ability);
-		if (err)
-			continue;
-		break;
-	} while (try_cnt--);
+    bpf_strnstr("", "", 0) = 0
+    bpf_strnstr("hello world", "hello", 5) = 0
+    bpf_strnstr(str, "hello", 4) = -ENOENT
+    bpf_strnstr("", "a", 0) = -ENOENT
 
-	if (!err)
-		hw->pfvfnum = le16_to_cpu(ability.pfnum) & GENMASK_U16(7, 0);
-	return err;
-}
+Signed-off-by: Rong Tao <rongtao@cestc.cn>
+---
+ tools/testing/selftests/bpf/progs/string_kfuncs_success.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-> > +/**
-> > + * build_ifinsmod - build req with insmod opcode
-> > + * @req: pointer to the cmd req structure
-> > + * @is_insmod: true for insmod, false for rmmod
-> > + **/
-> > +static void build_ifinsmod(struct mbx_fw_cmd_req *req,
-> > +			   bool is_insmod)
-> > +{
-> > +	req->flags = 0;
-> > +	req->opcode = cpu_to_le16(DRIVER_INSMOD);
-> > +	req->datalen = cpu_to_le16(sizeof(req->ifinsmod) +
-> > +				   MBX_REQ_HDR_LEN);
-> > +	req->reply_lo = 0;
-> > +	req->reply_hi = 0;
-> > +#define FIXED_VERSION 0xFFFFFFFF
-> > +	req->ifinsmod.version = cpu_to_le32(FIXED_VERSION);
-> > +	if (is_insmod)
-> > +		req->ifinsmod.status = cpu_to_le32(1);
-> > +	else
-> > +		req->ifinsmod.status = cpu_to_le32(0);
-> > +}
-> 
-> Why does the firmware care? What does the firmware do when there is no
-> kernel driver? How does it behaviour change when the driver loads?
-> 
-
-fw reduce working frequency to save power if no driver is probed to this
-chip. And fw change frequency to normal after recieve insmod mbx cmd.
-
-Maybe I should add the comment to func "mucse_mbx_ifinsmod"? 
-/**
- * mucse_mbx_ifinsmod - Echo driver insmod status to fw
- * @hw: pointer to the HW structure
- * @is_insmod: true for insmod, false for rmmod
- *
- * mucse_mbx_ifinsmod echo driver insmod status to fw. fw changes working
- * frequency to normal after recieve insmod status, and reduce working
- * frequency if no driver is probed.
- *
- * Return: 0 on success, negative errno on failure
- **/
-int mucse_mbx_ifinsmod(struct mucse_hw *hw, bool is_insmod)
-{
-
-
-}
-
-> Please try to ensure comment say why you are doing something, not what
-> you are doing.
-> 
-> 
->     Andrew
-> 
-> ---
-> pw-bot: cr
-> 
-
-Thanks for your feedback.
+diff --git a/tools/testing/selftests/bpf/progs/string_kfuncs_success.c b/tools/testing/selftests/bpf/progs/string_kfuncs_success.c
+index 46697f381878..a47690174e0e 100644
+--- a/tools/testing/selftests/bpf/progs/string_kfuncs_success.c
++++ b/tools/testing/selftests/bpf/progs/string_kfuncs_success.c
+@@ -30,8 +30,12 @@ __test(2) int test_strcspn(void *ctx) { return bpf_strcspn(str, "lo"); }
+ __test(6) int test_strstr_found(void *ctx) { return bpf_strstr(str, "world"); }
+ __test(-ENOENT) int test_strstr_notfound(void *ctx) { return bpf_strstr(str, "hi"); }
+ __test(0) int test_strstr_empty(void *ctx) { return bpf_strstr(str, ""); }
+-__test(0) int test_strnstr_found(void *ctx) { return bpf_strnstr(str, "hello", 6); }
+-__test(-ENOENT) int test_strnstr_notfound(void *ctx) { return bpf_strnstr(str, "hi", 10); }
++__test(0) int test_strnstr_found1(void *ctx) { return bpf_strnstr("", "", 0); }
++__test(0) int test_strnstr_found2(void *ctx) { return bpf_strnstr(str, "hello", 5); }
++__test(0) int test_strnstr_found3(void *ctx) { return bpf_strnstr(str, "hello", 6); }
++__test(-ENOENT) int test_strnstr_notfound1(void *ctx) { return bpf_strnstr(str, "hi", 10); }
++__test(-ENOENT) int test_strnstr_notfound2(void *ctx) { return bpf_strnstr(str, "hello", 4); }
++__test(-ENOENT) int test_strnstr_notfound3(void *ctx) { return bpf_strnstr("", "a", 0); }
+ __test(0) int test_strnstr_empty(void *ctx) { return bpf_strnstr(str, "", 1); }
+ 
+ char _license[] SEC("license") = "GPL";
+-- 
+2.51.0
 
 
