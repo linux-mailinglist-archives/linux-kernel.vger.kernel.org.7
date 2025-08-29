@@ -1,444 +1,201 @@
-Return-Path: <linux-kernel+bounces-790950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-790951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4CACB3B02C
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 03:03:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F29A4B3B031
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 03:03:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E79E21C24679
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 01:03:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AFBD8167300
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 01:03:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7C6D19E992;
-	Fri, 29 Aug 2025 01:03:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="goYGPAoq"
-Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26CA71E492D;
+	Fri, 29 Aug 2025 01:03:39 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B0133FE7
-	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 01:03:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAC121CAB3;
+	Fri, 29 Aug 2025 01:03:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756429409; cv=none; b=GhJ0eDy0TV7AoADXO6ravJZwnNCeOETlT+BM0c4LI5gKrNkM+BC2paB08qFLlPkYmaONodoYqRYIjWJW2KpEiwKJ5F1RMZo/d9Dp3+H9o0pcOEzHumWvj5dVV+xJo6Vl26LMS9CEU522zeW1MdtK5gOtb9Oa2XH5zzlwrEJnib4=
+	t=1756429418; cv=none; b=czmzk8YCVTHHnFVXA7XkSveRSVIpxYFoaMPbXG390PADi5ykt+iTgtn1GM80TKdaipG7+cV8838jn6veIvkXsqniGzztFB9Rr5jklqEZNvXKzygSA+LyquSiWNV/AU5QWn3FghMW1c2c5UKp8RgUvX/ESINtokfGGY7ptZfA1ao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756429409; c=relaxed/simple;
-	bh=PZv0ZrDs5rGUOj3rwSD2pBvVI7hhBO2a64qgtuigr7M=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=r4hlO8C1jFZjz0tQMVtM1h/CiGgU03ZiUC5WWGqVCJanfNZtfrzDw+sFGRkzvveqPpGhpjgXSYJc8SeXp5kKHx/XA/khyxDpERTN+/uCItXIchBeR3wm/8kEMMq1rtYAwwgujGzVEE3otTPJgpajYeA9UwArxF2uPlt22iJfWLA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=goYGPAoq; arc=none smtp.client-ip=209.85.222.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-7fac0a7d2b1so119821085a.3
-        for <linux-kernel@vger.kernel.org>; Thu, 28 Aug 2025 18:03:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756429407; x=1757034207; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=TUTsL0aTtRK2Wq+RLtlWb4+ITACjnGfqLuoakzodSTk=;
-        b=goYGPAoqQCG4itjOmccNF4+0/UVGvsz/g+p1HH2/daIylCb5Lr16cT4TrjhmtXkX8x
-         tgrAa12GUQayCpoqv/HIrdCo/s0iQ4JS5rLS6VeAkTBHg8FwCHFjDP2R4ijsI+BPAdn4
-         lLQtLeVL7mveDZ061IQfySuBCw5NlPrx4TdUQaev25WzRFOvC3QUP6z9yYUeLv+PILSZ
-         hRzt4NUuE8MYCMtXM0xmxoGiGRgO5dlf6OablWteuHhgW0tGX1CmCHMeYURCiLxSeX8B
-         J1QMq99V0bmLA4D1ENJrdXGMMTQPogA+QVockyFKkJb/AVIQlfF22uLQGBdFOxagqwNK
-         x4hw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756429407; x=1757034207;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TUTsL0aTtRK2Wq+RLtlWb4+ITACjnGfqLuoakzodSTk=;
-        b=eesD+HM1VTLeCl8yhmXDDMymwtTFh9xi3P5CTfPZ9R5kNpPyFVlYIecDJCunOV2pnl
-         0eyHrwvFGXS95slEHpvTXw0QxsNuYskYismoqnzhuzRsg/7owExRmnM3hocnVnmeOL/g
-         nwQz42jq9WipYWvzSyTiT41d49ln64497ve7KJjFPoN8vbhFRNf51haR9+2m+s6xfi6y
-         IiJoF/1pUiiHYGqH7SK217xf31DbD6nvA/22emjHMcZma3exZ85F5ccOIOMd5ZgBJ8lx
-         oKV+HbeP4Rt3egGRppM/h8oFbdrEyjh/jncFSMW8kPhXKCVEO3MbGOXqA0GA0pMDSqCd
-         IdZw==
-X-Gm-Message-State: AOJu0YzaJNOsjV3iqg95x2vHnSK9Gq8I2+HdOH0dSuri2yBPRJqmMzmD
-	1DYOky0Q+ZE4zbUE47EKz2TMYe42QB1lEdwPNvAmSPpMPpmmL0y/jJMIFgRvgg==
-X-Gm-Gg: ASbGncteUdoADdq9V89SLqf5d6QrAHDYqsGtKP71o/cKzRBIWNMcpspEkQ3qip04tRx
-	HjOUda181Im/M+Twu1eA5PJs1rr9wCbvqBwl0X7EgD1bjeNJWwpuO0z+Nl89mxPv03p96nZ8WoQ
-	sS31DQ7AnkvwIhiSw1y42XqscFIxv1IC3jJ/kojC9cPvirjJq264mTifcruqXAY357Sp8CoAAWc
-	nL0CuhbmfhlA3pUVfcSrB8Rvs7VikfP7d5xkrHy33bukT21Zjfx4K1/ZYitNcuOC3xacM1XpJIU
-	RJJte5F8xk+Aqb+arp2OK95ea1P5rbZwcNbImINgvLxC5WRjTzlCtBWDBlKGGtJMe34ZA1vIqsW
-	r/sdwPMyMnJPbNyTJ63pV42jvWLywZn/rfMha03fAN1+F49EWnOwUO3r+ulm+s5nMnnBpo+t7aV
-	G35Zk=
-X-Google-Smtp-Source: AGHT+IEu8ezriZIvQkc/t2a8GDm3bOLfUGOhpyhWVYPAE0+nnfW72yKJF/LD3mSTlLvY9+ovxund2g==
-X-Received: by 2002:a05:620a:d96:b0:7e6:9644:c977 with SMTP id af79cd13be357-7ea10f94cc4mr3243593485a.27.1756429406624;
-        Thu, 28 Aug 2025 18:03:26 -0700 (PDT)
-Received: from localhost (modemcable197.17-162-184.mc.videotron.ca. [184.162.17.197])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7fc0d869e5csm90219485a.7.2025.08.28.18.03.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Aug 2025 18:03:25 -0700 (PDT)
-From: =?UTF-8?q?Jean-Fran=C3=A7ois=20Lessard?= <jefflessard3@gmail.com>
-To: Andy Shevchenko <andy@kernel.org>,
-	Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [RFC PATCH] auxdisplay: line-display: support attribute attachment to existing device
-Date: Thu, 28 Aug 2025 21:03:19 -0400
-Message-ID: <20250829010324.15595-1-jefflessard3@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1756429418; c=relaxed/simple;
+	bh=hOAcyQATWAxzYcSnVX7fz/+B6IAAfqiGWAy4ocesAGU=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=OdZQq5XfPEpZuvlneYV02MCKQUCNQSkyKKLVgU33ZjiwIHIJQTlaGvevDt73h5n19CW4e6mV74800fRCVqkJj4gMnLbd4zfFZ/03bx25LUuOnSvuIdjUZPp+tJ8ZaLCQFpowOxAYBJkqdqowHvEIWvjkyBzWlVemG54hlxc+Hlw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4cCg4j3CVCzKHMw4;
+	Fri, 29 Aug 2025 09:03:33 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 25B171A1706;
+	Fri, 29 Aug 2025 09:03:33 +0800 (CST)
+Received: from [10.174.179.143] (unknown [10.174.179.143])
+	by APP4 (Coremail) with SMTP id gCh0CgDXIY5i_LBo_KyTAg--.37435S3;
+	Fri, 29 Aug 2025 09:03:32 +0800 (CST)
+Subject: Re: [PATCH v6 md-6.18 11/11] md/md-llbitmap: introduce new lockless
+ bitmap
+To: Li Nan <linan666@huaweicloud.com>, Yu Kuai <yukuai1@huaweicloud.com>,
+ hch@infradead.org, corbet@lwn.net, agk@redhat.com, snitzer@kernel.org,
+ mpatocka@redhat.com, song@kernel.org, xni@redhat.com, hare@suse.de,
+ colyli@kernel.org
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ dm-devel@lists.linux.dev, linux-raid@vger.kernel.org, yi.zhang@huawei.com,
+ yangerkun@huawei.com, johnny.chenyi@huawei.com,
+ "yukuai (C)" <yukuai3@huawei.com>
+References: <20250826085205.1061353-1-yukuai1@huaweicloud.com>
+ <20250826085205.1061353-12-yukuai1@huaweicloud.com>
+ <93e96f14-dfe3-6390-5a91-f28e1cdb1783@huaweicloud.com>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <dcec1dd2-903a-3569-30e4-7af916ecba4b@huaweicloud.com>
+Date: Fri, 29 Aug 2025 09:03:30 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <93e96f14-dfe3-6390-5a91-f28e1cdb1783@huaweicloud.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgDXIY5i_LBo_KyTAg--.37435S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxWrWDKw13Ary8JrW3ur1xXwb_yoWrAw1Upr
+	ZavF13JrWDJr4rt342yryUXFy8trWUJw17Jr15XF18Arn8Zr1Ygr48WFW0g3srurWxJ3Wj
+	qF4UXry5ZFyDJFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBF14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
+	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVW8ZVWrXwCF04k20xvY0x
+	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
+	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr41lIxAIcV
+	C0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF
+	04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7
+	CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0pRHUDLUUUUU=
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-Modernize the line-display core library:
-- Add the ability to attach line-display's sysfs attribute group directly
-  to an existing parent device (not only via a child device) using
-  device_add_groups(), allowing coherent integration with subsystems like
-  the LED class.
-- Implement a global linedisp_attachment mapping for unified and race-free
-  attribute access, context lookup, and cleanup, shared between
-  traditional register/unregister and new attach/detach paths.
-- Modify sysfs attribute accessors to retrieve context using a consistent
-  to_linedisp() mechanism.
-- Add a new num_chars read-only attribute reporting the number of display
-  digits to allow static non-scrolling message from userspace.
-- Ensures thread safety and proper list removal for all attachments
-  operations.
+Hi,
 
-Backwards compatibility with existing users is maintained, while enabling
-uniform n-segment sysfs API and richer information for integrated drivers.
+在 2025/08/28 19:24, Li Nan 写道:
+> 
+> 
+> 在 2025/8/26 16:52, Yu Kuai 写道:
+>> From: Yu Kuai <yukuai3@huawei.com>
+>>
+>> Redundant data is used to enhance data fault tolerance, and the storage
+>> method for redundant data vary depending on the RAID levels. And it's
+>> important to maintain the consistency of redundant data.
+>>
+>> Bitmap is used to record which data blocks have been synchronized and 
+>> which
+>> ones need to be resynchronized or recovered. Each bit in the bitmap
+>> represents a segment of data in the array. When a bit is set, it 
+>> indicates
+>> that the multiple redundant copies of that data segment may not be
+>> consistent. Data synchronization can be performed based on the bitmap 
+>> after
+>> power failure or readding a disk. If there is no bitmap, a full disk
+>> synchronization is required.
+>>
+>> Key Features:
+>>
+>>   - IO fastpath is lockless, if user issues lots of write IO to the same
+>>   bitmap bit in a short time, only the first write have additional 
+>> overhead
+>>   to update bitmap bit, no additional overhead for the following writes;
+>>   - support only resync or recover written data, means in the case 
+>> creating
+>>   new array or replacing with a new disk, there is no need to do a 
+>> full disk
+>>   resync/recovery;
+>>
+>> Key Concept:
+>>
+>>   - State Machine:
+>>
+>> Each bit is one byte, contain 6 difference state, see llbitmap_state. And
+>> there are total 8 differenct actions, see llbitmap_action, can change 
+>> state:
+>>
+>> llbitmap state machine: transitions between states
+>>
+>> |           | Startwrite | Startsync | Endsync | Abortsync|
+>> | --------- | ---------- | --------- | ------- | -------  |
+>> | Unwritten | Dirty      | x         | x       | x        |
+>> | Clean     | Dirty      | x         | x       | x        |
+>> | Dirty     | x          | x         | x       | x        |
+>> | NeedSync  | x          | Syncing   | x       | x        |
+>> | Syncing   | x          | Syncing   | Dirty   | NeedSync |
+>>
+>> |           | Reload   | Daemon | Discard   | Stale     |
+>> | --------- | -------- | ------ | --------- | --------- |
+>> | Unwritten | x        | x      | x         | x         |
+>> | Clean     | x        | x      | Unwritten | NeedSync  |
+>> | Dirty     | NeedSync | Clean  | Unwritten | NeedSync  |
+>> | NeedSync  | x        | x      | Unwritten | x         |
+>> | Syncing   | NeedSync | x      | Unwritten | NeedSync  |
+>>
+>> Typical scenarios:
+>>
+>> 1) Create new array
+>> All bits will be set to Unwritten by default, if --assume-clean is set,
+>> all bits will be set to Clean instead.
+>>
+>> 2) write data, raid1/raid10 have full copy of data, while raid456 
+>> doesn't and
+>> rely on xor data
+>>
+>> 2.1) write new data to raid1/raid10:
+>> Unwritten --StartWrite--> Dirty
+>>
+>> 2.2) write new data to raid456:
+>> Unwritten --StartWrite--> NeedSync
+>>
+>> Because the initial recover for raid456 is skipped, the xor data is 
+>> not build
+>> yet, the bit must set to NeedSync first and after lazy initial recover is
+>> finished, the bit will finially set to Dirty(see 5.1 and 5.4);
+>>
+>> 2.3) cover write
+>> Clean --StartWrite--> Dirty
+>>
+>> 3) daemon, if the array is not degraded:
+>> Dirty --Daemon--> Clean
+>>
+>> For degraded array, the Dirty bit will never be cleared, prevent full 
+>> disk
+>> recovery while readding a removed disk.
+>>
+>> 4) discard
+>> {Clean, Dirty, NeedSync, Syncing} --Discard--> Unwritten
+>>
+>> 5) resync and recover
+>>
+>> 5.1) common process
+>> NeedSync --Startsync--> Syncing --Endsync--> Dirty --Daemon--> Clean
+> 
+> There is some issue whith Dirty state:
+> 1. The Dirty bit will not synced when a disk is re-add.
+> 2. It remains Dirty even after a full recovery -- it should be Clean.
 
-Signed-off-by: Jean-François Lessard <jefflessard3@gmail.com>
----
- drivers/auxdisplay/line-display.c | 178 ++++++++++++++++++++++++++++--
- drivers/auxdisplay/line-display.h |   4 +
- 2 files changed, 172 insertions(+), 10 deletions(-)
+We're setting new bits to dirty for degraded array, and there is no
+futher action to change the state to need sync before recovery by new
+disk.
 
-diff --git a/drivers/auxdisplay/line-display.c b/drivers/auxdisplay/line-display.c
-index 8590a4cd2..64ab1d835 100644
---- a/drivers/auxdisplay/line-display.c
-+++ b/drivers/auxdisplay/line-display.c
-@@ -6,13 +6,15 @@
-  * Author: Paul Burton <paul.burton@mips.com>
-  *
-  * Copyright (C) 2021 Glider bv
-+ * Copyright (C) 2025 Jean-François Lessard
-  */
- 
- #ifndef CONFIG_PANEL_BOOT_MESSAGE
- #include <generated/utsrelease.h>
- #endif
- 
--#include <linux/container_of.h>
-+#include <linux/list.h>
-+#include <linux/cleanup.h>
- #include <linux/device.h>
- #include <linux/export.h>
- #include <linux/idr.h>
-@@ -20,6 +22,7 @@
- #include <linux/kstrtox.h>
- #include <linux/module.h>
- #include <linux/slab.h>
-+#include <linux/spinlock.h>
- #include <linux/string.h>
- #include <linux/sysfs.h>
- #include <linux/timer.h>
-@@ -31,6 +34,75 @@
- 
- #define DEFAULT_SCROLL_RATE	(HZ / 2)
- 
-+/* forward declarations */
-+static const struct device_type linedisp_type;
-+
-+struct linedisp_attachment {
-+	struct list_head list;
-+	struct device *device;
-+	struct linedisp *linedisp;
-+	bool owns_device;  /* true for child device mode, false for attached mode */
-+};
-+
-+static LIST_HEAD(linedisp_attachments);
-+static DEFINE_SPINLOCK(linedisp_attachments_lock);
-+
-+static int create_attachment(struct device *dev, struct linedisp *linedisp, bool owns_device)
-+{
-+	struct linedisp_attachment *attachment;
-+
-+	attachment = kzalloc(sizeof(*attachment), GFP_KERNEL);
-+	if (!attachment)
-+		return -ENOMEM;
-+
-+	attachment->device = dev;
-+	attachment->linedisp = linedisp;
-+	attachment->owns_device = owns_device;
-+
-+	scoped_guard(spinlock, &linedisp_attachments_lock) {
-+		list_add(&attachment->list, &linedisp_attachments);
-+	}
-+
-+	return 0;
-+}
-+
-+static struct linedisp *delete_attachment(struct device *dev, bool owns_device)
-+{
-+	struct linedisp_attachment *attachment, *tmp;
-+	struct linedisp *linedisp = NULL;
-+
-+	scoped_guard(spinlock, &linedisp_attachments_lock) {
-+		list_for_each_entry_safe(attachment, tmp, &linedisp_attachments, list) {
-+			if (attachment->device == dev &&
-+			    attachment->owns_device == owns_device) {
-+				linedisp = attachment->linedisp;
-+				list_del(&attachment->list);
-+				kfree(attachment);
-+				break;
-+			}
-+		}
-+	}
-+
-+	return linedisp;
-+}
-+
-+static struct linedisp *to_linedisp(struct device *dev)
-+{
-+	struct linedisp_attachment *attachment;
-+	struct linedisp *linedisp = NULL;
-+
-+	scoped_guard(spinlock, &linedisp_attachments_lock) {
-+		list_for_each_entry(attachment, &linedisp_attachments, list) {
-+			if (attachment->device == dev) {
-+				linedisp = attachment->linedisp;
-+				break;
-+			}
-+		}
-+	}
-+
-+	return linedisp;
-+}
-+
- /**
-  * linedisp_scroll() - scroll the display by a character
-  * @t: really a pointer to the private data structure
-@@ -133,7 +205,7 @@ static int linedisp_display(struct linedisp *linedisp, const char *msg,
- static ssize_t message_show(struct device *dev, struct device_attribute *attr,
- 			    char *buf)
- {
--	struct linedisp *linedisp = container_of(dev, struct linedisp, dev);
-+	struct linedisp *linedisp = to_linedisp(dev);
- 
- 	return sysfs_emit(buf, "%s\n", linedisp->message);
- }
-@@ -152,7 +224,7 @@ static ssize_t message_show(struct device *dev, struct device_attribute *attr,
- static ssize_t message_store(struct device *dev, struct device_attribute *attr,
- 			     const char *buf, size_t count)
- {
--	struct linedisp *linedisp = container_of(dev, struct linedisp, dev);
-+	struct linedisp *linedisp = to_linedisp(dev);
- 	int err;
- 
- 	err = linedisp_display(linedisp, buf, count);
-@@ -164,7 +236,7 @@ static DEVICE_ATTR_RW(message);
- static ssize_t scroll_step_ms_show(struct device *dev,
- 				   struct device_attribute *attr, char *buf)
- {
--	struct linedisp *linedisp = container_of(dev, struct linedisp, dev);
-+	struct linedisp *linedisp = to_linedisp(dev);
- 
- 	return sysfs_emit(buf, "%u\n", jiffies_to_msecs(linedisp->scroll_rate));
- }
-@@ -173,7 +245,7 @@ static ssize_t scroll_step_ms_store(struct device *dev,
- 				    struct device_attribute *attr,
- 				    const char *buf, size_t count)
- {
--	struct linedisp *linedisp = container_of(dev, struct linedisp, dev);
-+	struct linedisp *linedisp = to_linedisp(dev);
- 	unsigned int ms;
- 	int err;
- 
-@@ -193,9 +265,19 @@ static ssize_t scroll_step_ms_store(struct device *dev,
- 
- static DEVICE_ATTR_RW(scroll_step_ms);
- 
-+static ssize_t num_chars_show(struct device *dev, struct device_attribute *attr,
-+			      char *buf)
-+{
-+	struct linedisp *linedisp = to_linedisp(dev);
-+
-+	return sysfs_emit(buf, "%u\n", linedisp->num_chars);
-+}
-+
-+static DEVICE_ATTR_RO(num_chars);
-+
- static ssize_t map_seg_show(struct device *dev, struct device_attribute *attr, char *buf)
- {
--	struct linedisp *linedisp = container_of(dev, struct linedisp, dev);
-+	struct linedisp *linedisp = to_linedisp(dev);
- 	struct linedisp_map *map = linedisp->map;
- 
- 	memcpy(buf, &map->map, map->size);
-@@ -205,7 +287,7 @@ static ssize_t map_seg_show(struct device *dev, struct device_attribute *attr, c
- static ssize_t map_seg_store(struct device *dev, struct device_attribute *attr,
- 			     const char *buf, size_t count)
- {
--	struct linedisp *linedisp = container_of(dev, struct linedisp, dev);
-+	struct linedisp *linedisp = to_linedisp(dev);
- 	struct linedisp_map *map = linedisp->map;
- 
- 	if (count != map->size)
-@@ -224,6 +306,7 @@ static DEVICE_ATTR(map_seg14, 0644, map_seg_show, map_seg_store);
- static struct attribute *linedisp_attrs[] = {
- 	&dev_attr_message.attr,
- 	&dev_attr_scroll_step_ms.attr,
-+	&dev_attr_num_chars.attr,
- 	&dev_attr_map_seg7.attr,
- 	&dev_attr_map_seg14.attr,
- 	NULL
-@@ -232,7 +315,7 @@ static struct attribute *linedisp_attrs[] = {
- static umode_t linedisp_attr_is_visible(struct kobject *kobj, struct attribute *attr, int n)
- {
- 	struct device *dev = kobj_to_dev(kobj);
--	struct linedisp *linedisp = container_of(dev, struct linedisp, dev);
-+	struct linedisp *linedisp = to_linedisp(dev);
- 	struct linedisp_map *map = linedisp->map;
- 	umode_t mode = attr->mode;
- 
-@@ -263,7 +346,7 @@ static DEFINE_IDA(linedisp_id);
- 
- static void linedisp_release(struct device *dev)
- {
--	struct linedisp *linedisp = container_of(dev, struct linedisp, dev);
-+	struct linedisp *linedisp = to_linedisp(dev);
- 
- 	kfree(linedisp->map);
- 	kfree(linedisp->message);
-@@ -320,6 +403,74 @@ static int linedisp_init_map(struct linedisp *linedisp)
- #define LINEDISP_INIT_TEXT "Linux " UTS_RELEASE "       "
- #endif
- 
-+int linedisp_attach(struct linedisp *linedisp, struct device *dev,
-+		    unsigned int num_chars, const struct linedisp_ops *ops)
-+{
-+	int err;
-+
-+	memset(linedisp, 0, sizeof(*linedisp));
-+	linedisp->ops = ops;
-+	linedisp->num_chars = num_chars;
-+	linedisp->scroll_rate = DEFAULT_SCROLL_RATE;
-+
-+	err = -ENOMEM;
-+	linedisp->buf = kzalloc(linedisp->num_chars, GFP_KERNEL);
-+	if (!linedisp->buf)
-+		return err;
-+
-+	/* initialise a character mapping, if required */
-+	err = linedisp_init_map(linedisp);
-+	if (err)
-+		goto out_free_buf;
-+
-+	/* initialise a timer for scrolling the message */
-+	timer_setup(&linedisp->timer, linedisp_scroll, 0);
-+
-+	err = create_attachment(dev, linedisp, false);
-+	if (err)
-+		goto out_del_timer;
-+
-+	/* add attribute groups to target device */
-+	err = device_add_groups(dev, linedisp_groups);
-+	if (err)
-+		goto out_del_attach;
-+
-+	/* display a default message */
-+	err = linedisp_display(linedisp, LINEDISP_INIT_TEXT, -1);
-+	if (err)
-+		goto out_rem_groups;
-+
-+	return 0;
-+
-+out_rem_groups:
-+	device_remove_groups(dev, linedisp_groups);
-+out_del_attach:
-+	delete_attachment(dev, false);
-+out_del_timer:
-+	timer_delete_sync(&linedisp->timer);
-+out_free_buf:
-+	kfree(linedisp->buf);
-+	return err;
-+}
-+EXPORT_SYMBOL_NS_GPL(linedisp_attach, "LINEDISP");
-+
-+void linedisp_detach(struct device *dev)
-+{
-+	struct linedisp *linedisp = delete_attachment(dev, false);
-+
-+	if (!linedisp)
-+		return;
-+
-+	timer_delete_sync(&linedisp->timer);
-+
-+	device_remove_groups(dev, linedisp_groups);
-+
-+	kfree(linedisp->map);
-+	kfree(linedisp->message);
-+	kfree(linedisp->buf);
-+}
-+EXPORT_SYMBOL_NS_GPL(linedisp_detach, "LINEDISP");
-+
- /**
-  * linedisp_register - register a character line display
-  * @linedisp: pointer to character line display structure
-@@ -362,10 +513,14 @@ int linedisp_register(struct linedisp *linedisp, struct device *parent,
- 	/* initialise a timer for scrolling the message */
- 	timer_setup(&linedisp->timer, linedisp_scroll, 0);
- 
--	err = device_add(&linedisp->dev);
-+	err = create_attachment(&linedisp->dev, linedisp, true);
- 	if (err)
- 		goto out_del_timer;
- 
-+	err = device_add(&linedisp->dev);
-+	if (err)
-+		goto out_del_attach;
-+
- 	/* display a default message */
- 	err = linedisp_display(linedisp, LINEDISP_INIT_TEXT, -1);
- 	if (err)
-@@ -375,6 +530,8 @@ int linedisp_register(struct linedisp *linedisp, struct device *parent,
- 
- out_del_dev:
- 	device_del(&linedisp->dev);
-+out_del_attach:
-+	delete_attachment(&linedisp->dev, true);
- out_del_timer:
- 	timer_delete_sync(&linedisp->timer);
- out_put_device:
-@@ -391,6 +548,7 @@ EXPORT_SYMBOL_NS_GPL(linedisp_register, "LINEDISP");
- void linedisp_unregister(struct linedisp *linedisp)
- {
- 	device_del(&linedisp->dev);
-+	delete_attachment(&linedisp->dev, true);
- 	timer_delete_sync(&linedisp->timer);
- 	put_device(&linedisp->dev);
- }
-diff --git a/drivers/auxdisplay/line-display.h b/drivers/auxdisplay/line-display.h
-index 4348d7a2f..36853b639 100644
---- a/drivers/auxdisplay/line-display.h
-+++ b/drivers/auxdisplay/line-display.h
-@@ -6,6 +6,7 @@
-  * Author: Paul Burton <paul.burton@mips.com>
-  *
-  * Copyright (C) 2021 Glider bv
-+ * Copyright (C) 2025 Jean-François Lessard
-  */
- 
- #ifndef _LINEDISP_H
-@@ -81,6 +82,9 @@ struct linedisp {
- 	unsigned int id;
- };
- 
-+int linedisp_attach(struct linedisp *linedisp, struct device *dev,
-+		    unsigned int num_chars, const struct linedisp_ops *ops);
-+void linedisp_detach(struct device *dev);
- int linedisp_register(struct linedisp *linedisp, struct device *parent,
- 		      unsigned int num_chars, const struct linedisp_ops *ops);
- void linedisp_unregister(struct linedisp *linedisp);
--- 
-2.43.0
+This can be fixed by setting new bits directly to need sync for degraded
+array, will do this in the next version.
+
+Thanks,
+Kuai
+> 
 
 
