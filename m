@@ -1,116 +1,350 @@
-Return-Path: <linux-kernel+bounces-792259-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792260-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D21BB3C1F0
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 19:39:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 907DDB3C1F3
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 19:39:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37C2A3B937D
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 17:39:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E442189CC89
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 17:40:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 049BA342C99;
-	Fri, 29 Aug 2025 17:39:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25618342C9D;
+	Fri, 29 Aug 2025 17:39:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="3eW1WNOH";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Y9t6UvRh"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="d2hAqdtQ"
+Received: from mail-oa1-f42.google.com (mail-oa1-f42.google.com [209.85.160.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3E641EF091;
-	Fri, 29 Aug 2025 17:39:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 603DE342CA0
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 17:39:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756489173; cv=none; b=IzL6ktYqRUzIyB2DeXJgoOvOwNi/sKVEB5+plJmCI/hgip2AQh+DnajEUNaNQ1DCVFMdUuNl03kv8ueEnOmaqhWOuEWw/AjcrPI/XKMxgvqmit9JufNBiDkXUsCB8t71G9bUfwwCEYQykQUCMxD5smuyd3xy1gWMxaPT6eMb168=
+	t=1756489176; cv=none; b=REztt5RSYs7fUoP1EPPcq8vdVRSRY3u1XvqRqEzuHY2mEN7ib79SeYmsRye8sv+d92WGeXNbo9Dg+H7L6QnYEdRjmzTN4Gnecy1X3eJvGmsvnfH0ch2PAjeiq7PZl6hYrPWVfxwqLpZNK6o88qTI3WMKQCCwZohfXHglCQLLLeg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756489173; c=relaxed/simple;
-	bh=M1TqX1G0Z62RwrPHVPO1tgrYo3MJGa630SlsMDc3zPU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MoiP57WNTxyQN6CZTACdNLfOZgG2/agqzGrYWG1cieWm+hc65vsMzSW0DXEnQ7FkTeR9IWs1ruQyCzv/8ROnlxOu4I3W+sso/RJIQfs+7E6zx70DyolQU5JbIQc2qX4QlTv78frOYlHpauFbIivBr/Mt2D8BxWBSM7z/f6oFZEY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=3eW1WNOH; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Y9t6UvRh; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 29 Aug 2025 19:39:28 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1756489170;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+kPKNqLzCJ+OEI+Dk15NETRdqt/FKwRzKWAqyjW2wmY=;
-	b=3eW1WNOH34UsEhV9zEhSPuhnGwWgRbNcGCfI4IwCaID3fpeClPDfrIrPHKhe+v7STfAEpd
-	UBADKZ5O4OAmgMml3QE0+fRBbdjDhMjRKbWWmR7l5e3zBxvJRm8fb8jdekfK0Sah1SxqZO
-	Mx7vEpApevQHZYaIoHEEIgM9s99pDfcH3x37AYlwHWWYdtsg7V0Aexy86lfQPJkBoCwjCy
-	EVqncZqQNvukeCRneO7GX57XcaLUjT0qo4XgY1UiNAkWwZilLVcQP4Xm4kAKVGHw7rMKKP
-	8k5aMXD2WoYE10zQDAsFYURzOvzimSKUg/ZCIsS4EpLBUejXsOgwnv/5kym6hg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1756489170;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+kPKNqLzCJ+OEI+Dk15NETRdqt/FKwRzKWAqyjW2wmY=;
-	b=Y9t6UvRhB5iitC8QuypEp8t5Kia5sD6N2kH67SlmuBkiLqaMx/hf937zL30nV6ku7nyQzC
-	C7ORdCQxcQ8ewXDA==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Carlos O'Donell <carlos@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-man@vger.kernel.org,
-	Alejandro Colomar <alx@kernel.org>,
-	=?utf-8?B?QW5kcsOp?= Almeida <andrealmeid@igalia.com>,
-	Darren Hart <dvhart@infradead.org>,
-	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Waiman Long <longman@redhat.com>
-Subject: Re: [PATCH 3/4] man/man2/futex.2: Recycle two gmane URLs
-Message-ID: <20250829173928.K82VGvOw@linutronix.de>
-References: <20250829160200.756194-1-bigeasy@linutronix.de>
- <20250829160200.756194-4-bigeasy@linutronix.de>
- <1ced3c16-1534-4e43-8025-2301c134bbdd@redhat.com>
+	s=arc-20240116; t=1756489176; c=relaxed/simple;
+	bh=qQjs5GDGkvcvFun76J+EWArVcumILWtYVXrqlvPj73Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hNkWenXLQABavH4SW7rcoH17CzyB+rxpbLA82vvhhlNHH6gNHWZy/Q95HkVN28uj0NY+QqJXi2GHxVgYHp5XM8yTFbCemzaI2JSBhs6ZRxWyx+RiFsbVoSQIdvpaki2qEd88xJUiux2Ivg7lLFOjWl1iMVg4V2EX2Gc/o5v/fv8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=d2hAqdtQ; arc=none smtp.client-ip=209.85.160.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oa1-f42.google.com with SMTP id 586e51a60fabf-30cce86052cso1420569fac.1
+        for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 10:39:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1756489172; x=1757093972; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=vyTrrC0VRvJoF9rtObeEzNC1mAjV1qvohGvctYe1UZ0=;
+        b=d2hAqdtQJpnDVJ7HNCoyUDUbb5JDzbSM5Daexay5I+hJZCS197G1yNozlVQayIE2VZ
+         WTox20cmxTfO5WHd130soPs9alBHzwNtYHmEa4WFGSe03+tUz468x62Vgts7O2BCiT1j
+         2MKtEpUxNmPcIArHDtX1bEuOy17jTgYzSE129WC+rPwjC1tCaYKdGrj7UK4sJbSftesl
+         NVxJ5J3t3soxEPCHqTOPhcxjm6ByumHCIZN5/JpK7dV5OmgeczFNGFax+6qYk3wUhFSU
+         lyRn/Fw9HhTjyraLeAxB+ec63W8XdmzUXzOgFrkq4N6DcuMJkBOBhIfJ4U0eCUcc0QjR
+         w2cQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756489172; x=1757093972;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vyTrrC0VRvJoF9rtObeEzNC1mAjV1qvohGvctYe1UZ0=;
+        b=nD7Wqd4DPCnbuTRVgMbqEiYIZtjZf31k+2rUAcBtVRFlqyI+6pg1Xn/BgOv22sT/84
+         rk+jvxUkLoNV4BxzG1l8wLHvry9Dy1nvEBtZEkWKkiGndaL9KYfIY37CtKbsQ6jl0EI/
+         2jnd+39WDBrqA1rVf1lYDxygvBkna5pSXw1NCJNCoPWS/aGQTfcFMfTz5Cp1uMIXX6uL
+         h5wPtVyyc/aVcn2mRx0hqErZfMiQrdbJTVsehNGiYcStiWO24rDm5tUwBuUhOeBTpbB9
+         GioPusrsamXjbzBnFqHUrgwuHlsKJZkzGao4aiEv0ZZj2dyiPTFzzVKI3TKrIkYrIKEu
+         g6Tw==
+X-Forwarded-Encrypted: i=1; AJvYcCWMP1WsOIYxFP0PE6lZ5H+wNNTyMGtmY2Gl3uisSKUgd2QYhnRjcXHMptGyCgzvxvkIFafw0Ex95q+6O3M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxyZkjI6qu0+FXhKiuLMyb7bWnzCsnLuAS6WIn2k5N/T9w24/e4
+	jxMyq/Mx1immuEDxQ/Z3AS8LesSA684TWkB8rENaEtBnniwJN+CMRXHoQJtQZ+D7VPg=
+X-Gm-Gg: ASbGncsXzR5QOmmXBKbOAeaIz/ipWBgfIOn5miy5VmV/vvqJ3RQG98zIM+6x5A3DVMF
+	con1JAOt4W/dbtGfniEHLWMDK6PYg+cuTuE7ReYvg+BPlv1x7w5D98wrlQPTAt6pMHQJWmArhSx
+	OeWHEfiA+VPelMJM6ZXLCmItDMhk6nMOi3KhDDC0AUmzcH1m2k73He3nvGpHvuXnX+g9Cz0Jkm/
+	7WiIjIpoNYZ8Z2c7RRtTo98iO6PS2Kv3xOJGwVDsyAd/sMNfCLEcDtRfFF3xCwI/UV8GUkqsV9j
+	dHV2nogMlpe4YmTzPsiX8uZ1/JFeltamkDRCC6Wdp071R1Ew8/hganN8FN73iA8BacclET+LzOU
+	MtBbypGuVQxR7WiTGHvW7TpuR5/2ooT73N8l0efHhbPZJ6MXvXV63GAXqHEgjzMNbKlnKM8fH3R
+	s=
+X-Google-Smtp-Source: AGHT+IESMHvlCtBzcRBdU7jRG2XMNsNINqPRQCqVz5I0okbAWpHF0/0FHmvHrhMDXKCe2hPr9vw9+g==
+X-Received: by 2002:a05:6871:e49b:b0:2f3:4720:f7ca with SMTP id 586e51a60fabf-314dcad7cfbmr13935852fac.2.1756489172303;
+        Fri, 29 Aug 2025 10:39:32 -0700 (PDT)
+Received: from ?IPV6:2600:8803:e7e4:1d00:8d0a:2553:5881:1318? ([2600:8803:e7e4:1d00:8d0a:2553:5881:1318])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-315afe62235sm1497011fac.23.2025.08.29.10.39.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 29 Aug 2025 10:39:31 -0700 (PDT)
+Message-ID: <1aa4d7d1-be47-471a-8411-1adaffc1659f@baylibre.com>
+Date: Fri, 29 Aug 2025 12:39:31 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1ced3c16-1534-4e43-8025-2301c134bbdd@redhat.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/2] dt-bindings: iio: temperature: add support for
+ MCP998X
+To: victor.duicu@microchip.com, jic23@kernel.org, nuno.sa@analog.com,
+ andy@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
+Cc: marius.cristea@microchip.com, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <20250829143447.18893-1-victor.duicu@microchip.com>
+ <20250829143447.18893-2-victor.duicu@microchip.com>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <20250829143447.18893-2-victor.duicu@microchip.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 2025-08-29 12:43:26 [-0400], Carlos O'Donell wrote:
-> > index 69df4036ada7f..027e91b826bf1 100644
-> > --- a/man/man2/futex.2
-> > +++ b/man/man2/futex.2
-> > @@ -6,10 +6,10 @@
-> >   .\"
-> >   .\" FIXME Still to integrate are some points from Torvald Riegel's ma=
-il of
-> >   .\" 2015-01-23:
-> > -.\"       http://thread.gmane.org/gmane.linux.kernel/1703405/focus=3D7=
-977
-> > +.\"       https://lore.kernel.org/lkml/1422037788.29655.0.camel@triege=
-l.csb
->=20
-> Wrong link?
->=20
-> Should be this link:
-> https://lore.kernel.org/lkml/1422037145.27573.0.camel@triegel.csb/
->=20
-> Where the discussion is about the unresolved constraint to guarantee FIFO=
- order.
+On 8/29/25 9:34 AM, victor.duicu@microchip.com wrote:
+> From: Victor Duicu <victor.duicu@microchip.com>
+> 
+> This is the devicetree schema for Microchip MCP998X/33 and MCP998XD/33D
+> Multichannel Automotive Temperature Monitor Family.
+> 
+> Signed-off-by: Victor Duicu <victor.duicu@microchip.com>
+> ---
+>  .../iio/temperature/microchip,mcp9982.yaml    | 203 ++++++++++++++++++
+>  1 file changed, 203 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/iio/temperature/microchip,mcp9982.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/iio/temperature/microchip,mcp9982.yaml b/Documentation/devicetree/bindings/iio/temperature/microchip,mcp9982.yaml
+> new file mode 100644
+> index 000000000000..2f092e376fe8
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/iio/temperature/microchip,mcp9982.yaml
+> @@ -0,0 +1,203 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/iio/temperature/microchip,mcp9982.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Microchip MCP998X/33 and MCP998XD/33D Multichannel Automotive
+> +       Temperature Monitor Family
+> +
+> +maintainers:
+> +  - Victor Duicu <victor.duicu@microchip.com>
+> +
+> +description: |
+> +  The MCP998X/33 and MCP998XD/33D family is a high-accuracy 2-wire multichannel
+> +  automotive temperature monitor.
+> +  The datasheet can be found here:
+> +    https://ww1.microchip.com/downloads/aemDocuments/documents/MSLD/ProductDocuments/DataSheets/MCP998X-Family-Data-Sheet-DS20006827.pdf
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - microchip,mcp9933
+> +      - microchip,mcp9933d
+> +      - microchip,mcp9982
+> +      - microchip,mcp9982d
+> +      - microchip,mcp9983
+> +      - microchip,mcp9983d
+> +      - microchip,mcp9984
+> +      - microchip,mcp9984d
+> +      - microchip,mcp9985
+> +      - microchip,mcp9985d
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    minItems: 2
+> +    maxItems: 2
 
-I thought it is the longer email, the second that day, where he made
-three points. Didn't read it (yet)=E2=80=A6
+Why can't we just have one of the interrupt pins wired up?
 
-Now FIFO ordering you say. Is it glibc's side or kernel side? The kernel
-sorts the futex waiters according their (task's) priority. It is not
-FIFO unless the tasks are of equal priority.
-So a futex requeue will take the task with the highest priority from
-uaddr1 and move it to uaddr2.
+> +
+> +  interrupt-names:
+> +    description:
+> +      -alert-therm is used to handle a HIGH or LOW limit.
+> +      -therm-addr is used to handle a THERM limit on chips
+> +      without "D" in the name.
+> +      -sys-shutdown is used to handle a THERM limit on chips
+> +      with "D" in the name.
 
-Sebastian
+Descriptions can be moved below:
+
+> +    items:
+> +      - const: alert-therm
+           description: Interrupt line connected to the ALERT/THERM pin.
+> +      - const: therm-addr
+           description: ...
+> +      - const: sys-shutdown
+           description: ...
+
+The device tree only cares how things are wired, not how they are used
+so I suggested a different description.
+
+> +
+> +  "#address-cells":
+> +    const: 1
+> +
+> +  "#size-cells":
+> +    const: 0
+> +
+> +  microchip,enable-anti-parallel:
+> +    description:
+> +      Enable anti-parallel diode mode operation.
+> +      MCP9984/84D/85/85D and MCP9933/33D support reading two external diodes
+> +      in anti-parallel connection on the same set of pins.
+> +    type: boolean
+> +
+> +  microchip,parasitic-res-on-channel1-2:
+> +    description:
+> +      Indicates that the chip and the diodes/transistors are sufficiently far
+> +      apart that a parasitic resistance is added to the wires, which can affect
+> +      the measurements. Due to the anti-parallel diode connections, channels
+> +      1 and 2 are affected together.
+> +    type: boolean
+> +
+> +  microchip,parasitic-res-on-channel3-4:
+> +    description:
+> +      Indicates that the chip and the diodes/transistors are sufficiently far
+> +      apart that a parasitic resistance is added to the wires, which can affect
+> +      the measurements. Due to the anti-parallel diode connections, channels
+> +      3 and 4 are affected together.
+> +    type: boolean
+> +
+> +  vdd-supply: true
+> +
+> +patternProperties:
+> +  "^channel@[1-4]$":
+> +    description:
+> +      Represents the external temperature channels to which
+> +      a remote diode is connected.
+> +    type: object
+> +
+> +    properties:
+> +      reg:
+> +        items:
+> +          minimum: 1
+> +          maximum: 4
+> +
+> +      microchip,ideality-factor:
+> +        description:
+> +          Each channel has an ideality factor.
+> +          Beta compensation and resistance error correction automatically
+> +          correct for most ideality errors. So ideality factor does not need
+> +          to be adjusted in general.
+> +        $ref: /schemas/types.yaml#/definitions/uint32
+> +        default: 18
+
+Are there minimum and maximum values?
+
+> +
+> +      label:
+> +        description: Unique name to identify which channel this is.
+> +
+> +    required:
+> +      - reg
+> +
+> +    additionalProperties: false
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - vdd-supply
+> +
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - microchip,mcp9982d
+> +              - microchip,mcp9983d
+> +              - microchip,mcp9984d
+> +              - microchip,mcp9985d
+> +              - microchip,mcp9933d
+
+Could use a pattern instead of listing all matches.
+
+		pattern: .+d$
+
+> +    then:
+> +      properties:
+> +        interrupts-names:
+> +          items:
+> +            - const: alert-therm
+> +            - const: sys-shutdown
+> +    else:
+> +      properties:
+> +        interrupts-names:
+> +          items:
+> +            - const: alert-therm
+> +            - const: therm-addr
+> +
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - microchip,mcp9982
+> +              - microchip,mcp9983
+> +              - microchip,mcp9982d
+> +              - microchip,mcp9983d
+> +    then:
+> +      properties:
+> +        microchip,enable-anti-parallel: false
+> +
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - microchip,mcp9982d
+> +              - microchip,mcp9983d
+> +              - microchip,mcp9984d
+> +              - microchip,mcp9985d
+> +              - microchip,mcp9933d
+
+This looks like the same "if" as above, so could be combined.
+
+> +    then:
+> +      properties:
+> +        microchip,parasitic-res-on-channel1-2: false
+> +        microchip,parasitic-res-on-channel3-4: false
+
+> +        microchip,ideality-factor: false
+
+microchip,ideality-factor is a channel property, so this has no effect.
+It needs to be moved to the correct place under patternProperties.
+
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    i2c {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        temperature-sensor@4c {
+> +            compatible = "microchip,mcp9985";
+> +            reg = <0x4c>;
+> +
+> +            #address-cells = <1>;
+> +            #size-cells = <0>;
+> +
+> +            microchip,enable-anti-parallel;
+> +            microchip,parasitic-res-on-channel1-2;
+> +            microchip,parasitic-res-on-channel3-4;
+> +            vdd-supply = <&vdd>;
+> +
+> +            channel@1 {
+> +                reg = <1>;
+> +                label = "CPU Temperature";
+> +            };
+> +
+> +            channel@2 {
+> +                reg = <2>;
+> +                label = "GPU Temperature";
+> +            };
+> +        };
+> +    };
+> +
+> +...
+
 
