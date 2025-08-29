@@ -1,107 +1,124 @@
-Return-Path: <linux-kernel+bounces-791119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95339B3B22F
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 06:36:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBFADB3B231
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 06:38:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5EFD25819EE
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 04:36:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C2A93B2425
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 04:38:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1B86209682;
-	Fri, 29 Aug 2025 04:36:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 218181F8BA6;
+	Fri, 29 Aug 2025 04:38:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="xY1Jjw8Z"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="WI81Mo1b"
+Received: from 003.mia.mailroute.net (003.mia.mailroute.net [199.89.3.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E822730CD9F;
-	Fri, 29 Aug 2025 04:36:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF55E30CD9F;
+	Fri, 29 Aug 2025 04:38:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756442174; cv=none; b=Vjez5w2m7grbQ3uIBqVgJ6PxuagNGfTB5exAHQ4wVICtnEKRC2y1Q+e0c7G6jig7ZnI32jDGQG1rO9GGSEMy+e+1bPPD+C5T4KnpdO5vQWqPDyhc24qFiMLYqnQC/FntctlHxhhF/Rh6y48PD6oP/HL+z3q5E+h64TM4ygbo6Fg=
+	t=1756442322; cv=none; b=CSzPDvC9JsKB4Lxb76vvvWdaOxlfE689QRBU+5zZRu1baitkl23R5skv3xaTdCfqFxPhgBhMkrcOMAgp0IxPlDX0HTtWteokBCZHFK4sjJjsbRqQqJ1rccdBijnkyS0nCDm1S/yKb6BJ17zfMLQiPOAShtahx23zBqYMJb0K4G8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756442174; c=relaxed/simple;
-	bh=Xt0feyUezz/5l4+6xUi2n7/85qxMuRWR4CZoEWdHKEM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rckqgsb8AYpeuLwu6g/+zjgtebxW9WB6PqNrOQisBnWIx/BhNK0S20aW0Cd9V+LA1KSV1atZ9hOBRtSQCjP7yYXnRGWFtJTKyaPZjKic4cZnI4CTOeBFDhqV6hMyu03/TSVF5VE2600rPfBE0oxst56Kp3za49I3GZYzKHVJr0s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=xY1Jjw8Z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCE04C4CEF0;
-	Fri, 29 Aug 2025 04:36:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1756442173;
-	bh=Xt0feyUezz/5l4+6xUi2n7/85qxMuRWR4CZoEWdHKEM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=xY1Jjw8ZJBjA1gereFJwF2Toip1RNMc4A+dPEATNGOjGOWnbBOdZRcUYPKc3V7qn0
-	 GWpberpA5gzOQUr6rZ2g81TEVJp6F5fxemjpng6mPH9tMwua0E6udfMs4Q9mfIQL5e
-	 QrOAV51Bd+lS3QmtuIBpcrPqdL6lb/E4BIM44zL0=
-Date: Fri, 29 Aug 2025 06:36:09 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Alexey Klimov <alexey.klimov@linaro.org>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Sean Wang <sean.wang@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Paul Cercueil <paul@crapouillou.net>, Kees Cook <kees@kernel.org>,
-	Andy Shevchenko <andy@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	David Hildenbrand <david@redhat.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>, Dong Aisheng <aisheng.dong@nxp.com>,
-	Fabio Estevam <festevam@gmail.com>, Shawn Guo <shawnguo@kernel.org>,
-	Jacky Bai <ping.bai@nxp.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	NXP S32 Linux Team <s32@nxp.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Tony Lindgren <tony@atomide.com>,
-	Haojian Zhuang <haojian.zhuang@linaro.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Mark Brown <broonie@kernel.org>, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	linux-mediatek@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
-	linux-hardening@vger.kernel.org, linux-mm@kvack.org,
-	imx@lists.linux.dev, linux-omap@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH v6 01/15] devres: provide devm_kmemdup_const()
-Message-ID: <2025082957-cruncher-shingle-980a@gregkh>
-References: <20250828-pinctrl-gpio-pinfuncs-v6-0-c9abb6bdb689@linaro.org>
- <20250828-pinctrl-gpio-pinfuncs-v6-1-c9abb6bdb689@linaro.org>
+	s=arc-20240116; t=1756442322; c=relaxed/simple;
+	bh=kR47r7+cZe1DzINd4XA4apwTZcOc4Rqjsr0w0We2qGc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cbtRsQSLAJFCdKSXF0QGB7UxJKXbM/ZKgDDG0gjEA7NHbgijMjo0XdppBtlvfd5Qehe3Z3YVWzD0lGSG4igvoo9T7MdJ8tNE2Kd+NJ6MGYEaKeJf/hoxKalDpLGIORMbN0LysGbMthO6vexfUhhe97baGWFuC65yJYZe/is/mBI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=WI81Mo1b; arc=none smtp.client-ip=199.89.3.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 003.mia.mailroute.net (Postfix) with ESMTP id 4cClrv4V8tzltPtf;
+	Fri, 29 Aug 2025 04:38:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1756442318; x=1759034319; bh=IaPSaBw2KwMcDI1oubljBKPZ
+	1q5dOYR2yWs8+LQ+2iw=; b=WI81Mo1bKW4UckaLrlytM6X1pG4i/tjylT1z99Aj
+	d3dSbIyIN6+Uxvqozkc7LJk424zJ6Vxrn5h0xl8wJy4zZ7UH9FYhQMhOnYpiBO2m
+	HVOvRf//3lNEsQc6sCg4j8LUIqCwhPSJTeWUHmqOLiS3G6dJKksyGVIBbsZa5/OC
+	F1Yl4HXFqeEJnrUoMdVPstRBXiyBteu3SNyo0tixWe+zz552Qj5U20Vyk+MInxbO
+	0ZPnmO0SyXPUt0feYhsxLX8mJ3tWuEkJNiuwh6kSb91hGkuWrFH0ldCswaKwvC1c
+	4su4TZ9JgPAtpwsvF+/KtF9qZQljHF+2ci32a8OUrHg8Fg==
+X-Virus-Scanned: by MailRoute
+Received: from 003.mia.mailroute.net ([127.0.0.1])
+ by localhost (003.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id raeT_GyE74iU; Fri, 29 Aug 2025 04:38:38 +0000 (UTC)
+Received: from [172.20.6.188] (unknown [208.98.210.68])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 003.mia.mailroute.net (Postfix) with ESMTPSA id 4cClrn3c1mzltM5Z;
+	Fri, 29 Aug 2025 04:38:31 +0000 (UTC)
+Message-ID: <62c9b68f-6adc-41d8-b504-4bce4d721e64@acm.org>
+Date: Thu, 28 Aug 2025 21:38:24 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250828-pinctrl-gpio-pinfuncs-v6-1-c9abb6bdb689@linaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] block/mq-deadline: Replace DD_PRIO_MAX with DD_PRIO_COUNT
+To: chengkaitao <pilgrimtao@gmail.com>, axboe@kernel.dk
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ chengkaitao <chengkaitao@kylinos.cn>
+References: <20250829015444.91369-1-pilgrimtao@gmail.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20250829015444.91369-1-pilgrimtao@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Aug 28, 2025 at 06:00:09PM +0200, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> 
-> Provide a function similar to devm_strdup_const() but for copying blocks
-> of memory that are likely to be placed in .rodata.
-> 
-> Reviewed-by: Andy Shevchenko <andy@kernel.org>
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> ---
->  drivers/base/devres.c         | 21 +++++++++++++++++++++
->  include/linux/device/devres.h |  2 ++
->  2 files changed, 23 insertions(+)
+On 8/28/25 6:54 PM, chengkaitao wrote:
+> diff --git a/block/mq-deadline.c b/block/mq-deadline.c
+> index b9b7cdf1d3c9..1a031922c447 100644
+> --- a/block/mq-deadline.c
+> +++ b/block/mq-deadline.c
+> @@ -41,19 +41,16 @@ static const int fifo_batch = 16;       /* # of sequential requests treated as o
+>   enum dd_data_dir {
+>   	DD_READ		= READ,
+>   	DD_WRITE	= WRITE,
+> +	DD_DIR_COUNT	= 2
+>   };
+>   
+> -enum { DD_DIR_COUNT = 2 };
+> -
 
-Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+This change is not an improvement in my opinion because it makes it
+less clear what the role of DD_DIR_COUNT is.
+
+>   enum dd_prio {
+> -	DD_RT_PRIO	= 0,
+> -	DD_BE_PRIO	= 1,
+> -	DD_IDLE_PRIO	= 2,
+> -	DD_PRIO_MAX	= 2,
+> +	DD_RT_PRIO,
+> +	DD_BE_PRIO,
+> +	DD_IDLE_PRIO,
+
+There is code that depends on DD_RT_PRIO < DD_BE_PRIO < DD_IDLE_PRIO so 
+I'd like to keep the explicit enum values.
+
+> +	DD_PRIO_COUNT
+>   };
+>   
+> -enum { DD_PRIO_COUNT = 3 };
+
+I see the above change as a step backwards because it makes the role of
+DD_PRIO_COUNT less clear.
+
+> -	for (prio = DD_BE_PRIO; prio <= DD_PRIO_MAX; prio++) {
+> +	for (prio = DD_BE_PRIO; prio < DD_PRIO_COUNT; prio++) {
+
+The current code is easier to read IMHO than the new code.
+
+Thanks,
+
+Bart.
 
