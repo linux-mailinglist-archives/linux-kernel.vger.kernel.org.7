@@ -1,117 +1,91 @@
-Return-Path: <linux-kernel+bounces-792124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-792125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D80DCB3C078
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 18:18:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 65147B3C07B
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 18:19:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8AE405850F4
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 16:18:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 34FC6585099
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 16:19:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B947C326D49;
-	Fri, 29 Aug 2025 16:18:52 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0016.hostedemail.com [216.40.44.16])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F19E3326D47;
+	Fri, 29 Aug 2025 16:19:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k2dkYqBB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83B2C225416;
-	Fri, 29 Aug 2025 16:18:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FA952D321D;
+	Fri, 29 Aug 2025 16:19:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756484332; cv=none; b=bUUGkDIGqYzJWVfrpmYx4O3sENljARs6hcBxXyYk78P0Q1pAQc7voJfzbJzBUN7cyvGyBQaXDd+xL95+wbzh6l88s6KV0EMu7PP6/id0OfdJ0hXa/WyUklvKkn9m67rSe5j6eYeaQgTilawnfW7Tz940gMY2f/cHGUtbFUTyoWo=
+	t=1756484364; cv=none; b=SqcV1UJCTNRz2BgfsqvxFY1zrNA/cxMb7/P5zznDuciNhTpK4Dkj5CfdgOAVP8ReRPm2n/Ip4OPh68MAygme18K2nSP0F3ygrAUCg/GUkO1IDF6SAu26fODHXeLWofhLy6FuQVxX3lc9c6LaE/FYKbnfqrgFGRTSCXtS0WmG5wc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756484332; c=relaxed/simple;
-	bh=3kbFgNGBtnYMySoZkWEkqhK6nbpehX5M83TMsJuoAb8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DTBW1HkbSbBMk+b2COrnCk+Olm1dySAVASY8D8JXChwjsdXycZBg4xrP13OqQ9jSW074nPd2jfS2wZU1vxzvm1PEHNq1NEzuMdKzNkFdE52D8PnY4wkUpr3ytBKssGsyywfpSo974D1Dagrwl4Augbu2JiN7IvWkR1bM+VwvTYo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf16.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay09.hostedemail.com (Postfix) with ESMTP id BA3AE85780;
-	Fri, 29 Aug 2025 16:18:43 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf16.hostedemail.com (Postfix) with ESMTPA id 5C7A22000D;
-	Fri, 29 Aug 2025 16:18:38 +0000 (UTC)
-Date: Fri, 29 Aug 2025 12:19:00 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Steven Rostedt <rostedt@kernel.org>, Arnaldo Carvalho de Melo
- <arnaldo.melo@gmail.com>, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org, x86@kernel.org,
- Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Josh Poimboeuf <jpoimboe@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, Jiri
- Olsa <jolsa@kernel.org>, Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- Andrii Nakryiko <andrii@kernel.org>, Indu Bhagat <indu.bhagat@oracle.com>,
- "Jose E. Marchesi" <jemarch@gnu.org>, Beau Belgrave
- <beaub@linux.microsoft.com>, Jens Remus <jremus@linux.ibm.com>, Andrew
- Morton <akpm@linux-foundation.org>, Florian Weimer <fweimer@redhat.com>,
- Sam James <sam@gentoo.org>, Kees Cook <kees@kernel.org>, "Carlos O'Donell"
- <codonell@redhat.com>
-Subject: Re: [PATCH v6 5/6] tracing: Show inode and device major:minor in
- deferred user space stacktrace
-Message-ID: <20250829121900.0e79673c@gandalf.local.home>
-In-Reply-To: <CAHk-=wjeT3RKCTMDCcZzXznuvG2qf0fpKbHKCZuoPzxFYxVcQw@mail.gmail.com>
-References: <20250828180300.591225320@kernel.org>
-	<20250828180357.223298134@kernel.org>
-	<CAHk-=wi0EnrBacWYJoUesS0LXUprbLmSDY3ywDfGW94fuBDVJw@mail.gmail.com>
-	<D7C36F69-23D6-4AD5-AED1-028119EAEE3F@gmail.com>
-	<CAHk-=wiBUdyV9UdNYEeEP-1Nx3VUHxUb0FQUYSfxN1LZTuGVyg@mail.gmail.com>
-	<20250828161718.77cb6e61@batman.local.home>
-	<CAHk-=wiujYBqcZGyBgLOT+OWdY3cz7EhbZE0GidhJmLNd9VPOQ@mail.gmail.com>
-	<20250828164819.51e300ec@batman.local.home>
-	<CAHk-=wjRC0sRZio4TkqP8_S+Fr8LUypVucPDnmERrHVjWOABXw@mail.gmail.com>
-	<20250828171748.07681a63@batman.local.home>
-	<CAHk-=wh0LjoJmRPHF41eQ1ZRf085urz+rvQQ-rwp8dLQCdqohw@mail.gmail.com>
-	<20250829110639.1cfc5dcc@gandalf.local.home>
-	<CAHk-=wjeT3RKCTMDCcZzXznuvG2qf0fpKbHKCZuoPzxFYxVcQw@mail.gmail.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1756484364; c=relaxed/simple;
+	bh=mG06DgRB9nSB41YmoGRe5I5pTt9S8mEWzesAoRYSmno=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bUhp45/ZDmAvLor+zJW08a29kmEDedZaV1V+3dtt+RymziPfeOGLpoI4hure7DkF0/Q/eDBWSRljahwzYHHP6wvtVEKxx4JnSnzvxJmLCBoPWYcGkMnJdOALG6Q19sXibj57uElOcycYTsa9Hg1ZUJp1xVLdn+nTFBexzTM3y7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k2dkYqBB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 829CFC4CEF0;
+	Fri, 29 Aug 2025 16:19:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756484363;
+	bh=mG06DgRB9nSB41YmoGRe5I5pTt9S8mEWzesAoRYSmno=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=k2dkYqBBgpdKvZQ69UQRmmauu5XkxtkM3t/GeoYUbquRoN0fuRemfm4y1wzB9GyEY
+	 uFdZYwd7VcVHIR++d+dp8rdfQ2RhLjzvaBFsEb/kwvA1pHRO85BprD9uk2g8v/pf4p
+	 Jo86m6LTAqE/4w24ediycijdUy1X6o+Z+gQgmDgWM3s7NAPegMGCbjKwQMMMiv1mwq
+	 4I129egsd+BuUHxCQmvD1aQ51aAKi1CYR5q82B2boRkpkqnvlKQPQOT19dZt5a48R6
+	 r4SKK313p31441p83U7wz9eLEsDE4gvEtZGWYeYPmBafhNGIXEYhYO+2RXrHbZqCeM
+	 TKR4oruUaHBlg==
+Date: Fri, 29 Aug 2025 11:19:22 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Brian Norris <briannorris@chromium.org>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	Georgi Djakov <djakov@kernel.org>,
+	Douglas Anderson <dianders@chromium.org>,
+	Odelu Kukatla <quic_okukatla@quicinc.com>,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	Conor Dooley <conor+dt@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	cros-qcom-dts-watchers@chromium.org,
+	Bjorn Andersson <andersson@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] dt-bindings: interconnect: qcom: make sc7280
+ aggre{1,2}-noc clocks optional
+Message-ID: <175648436198.935222.9794956520699193444.robh@kernel.org>
+References: <20250825155557.v2.1.I018984907c1e6322cf4710bd1ce805580ed33261@changeid>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: sx7awj7yzord1wrm8da1wpg38btmtu37
-X-Rspamd-Server: rspamout03
-X-Rspamd-Queue-Id: 5C7A22000D
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1+c1nfCCt0C1e+Deb4i5wtjqqLA9tT39nc=
-X-HE-Tag: 1756484318-941862
-X-HE-Meta: U2FsdGVkX1/hfne7L9q6S79jbACIquvknIGfd89XMC0+3JHyqr220r+bxyWzafHAniZmEEjy20cvsZyuuK4hBzc452jv3ts8qUJ/BKrhbSBGS/+0GWt7PwE/16IU0SLEYSLXMmrZNPkFmalRWiWqg0mvWtwBvOBLOLhEuNJ/E1m9WciT1YPMIUPV/47W74onaLsYZUMCzw/PK8VejvnwuOW7VbIEq3qTmo2SHO5zWDQ6ag6PxVL20ZDh8MM37KVx6Mmm8rh3Grs8b5hdkIFTrjZY4fjcRFPYf7A69xY7iZq+m7dPiPHG28C81VD3cb7LeokmyYzRwSmi+rDwmsB8+R5KdQud+KVEkRh4eMau8HGouS18kHsvoEEc1HBARzhs
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250825155557.v2.1.I018984907c1e6322cf4710bd1ce805580ed33261@changeid>
 
-On Fri, 29 Aug 2025 08:47:44 -0700
-Linus Torvalds <torvalds@linux-foundation.org> wrote:
 
-> You don't even have to care about the unmap event, because that unmap
-> - while it will potentially kill the lifetime of the hash if it was
-> the last use of that file - also means that now there won't be any new
-> stack traces with that hash any more. So you can ignore the lifetime
-> in that respect: all that matters is that yes, it can get re-used, but
-> you'll see a new mmap event with that hash if it is.
+On Mon, 25 Aug 2025 15:55:56 -0700, Brian Norris wrote:
+> We've found that some device firmware does not expose all the QoS
+> resources necessary to manage these interconnects, and that the driver
+> code that starts using them crashes. Leave 'clocks' as optional for
+> qcom,sc7280-aggre1-noc and qcom,sc7280-aggre2-noc instead.
+> 
+> Suggested-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> Signed-off-by: Brian Norris <briannorris@chromium.org>
+> ---
+> 
+> Changes in v2:
+>  * new in v2
+> 
+>  .../interconnect/qcom,sc7280-rpmh.yaml         | 18 +++++++++---------
+>  1 file changed, 9 insertions(+), 9 deletions(-)
+> 
 
-Basically what I need is that every time I add a file/hash mapping to the
-hashtable, I really need a callback to know when that file goes away. And
-then I can remove it from the hash table, so that the next time that hash is
-added, it will trigger another "print the file associated with this hash".
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
-It's OK to have the same hash for multiple files as long as it is traced.
-
-All events have timestamps associated to them, so it is trivial to map
-which hash mapping belongs to which stack trace.
-
-The reason for the file_cache is to keep from having to do the lookup of
-the file at every stack trace. But if I can have a callback for when that
-vma gets changed, (as I'm assuming the file will last as long as the vma is
-unmodified), then the callback could remove the hash value and this would
-not be a problem.
-
-My question now is, is there a callback that can be registered by the
-file_cache to know when the vma or the file change?
-
--- Steve
 
