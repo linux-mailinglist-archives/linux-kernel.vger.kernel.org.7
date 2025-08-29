@@ -1,150 +1,86 @@
-Return-Path: <linux-kernel+bounces-791406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-791407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F360FB3B66E
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 10:52:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A394DB3B673
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 10:52:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7EBF5987FB7
-	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 08:52:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E03AA04F8D
+	for <lists+linux-kernel@lfdr.de>; Fri, 29 Aug 2025 08:52:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BEA12DA759;
-	Fri, 29 Aug 2025 08:50:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C+xC8hKv"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C62C29B8E2;
+	Fri, 29 Aug 2025 08:50:19 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A84D72D878D;
-	Fri, 29 Aug 2025 08:50:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D70C72D8785
+	for <linux-kernel@vger.kernel.org>; Fri, 29 Aug 2025 08:50:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756457407; cv=none; b=pJLaRNCyi7K+ZwYjxzoey2q2S7gDHQyxkX90SYTcMkPMF68pWtcJNTQtKLhrsQN4vekpatHdpf6CpgkJjlsrECBEWpKOH5h4nGisAdx0HDTZ67noRl+0JPUN6wL1uNCgiaQ/Vm47xeEd57ClNes6L/R4MhTpeVlHpVLLZrhcpTE=
+	t=1756457419; cv=none; b=rM4SSRgYCFy8HIwHxxbBLZ0Yqbg2OcvPjPv8W74WTejdFewCpL6KLZ132/0KSyEvAuhPfJD/MKZKIcGyHw7d4+sRqkqPnC5g4m76h12aK747Az6jnTb+AwWZT8ijwPq1mZ0JAe/QHCofodMX0zZmZOSxcypu8R1EYKdeoFeBOcM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756457407; c=relaxed/simple;
-	bh=fpaE0d595CwgrDFlhfV+X1m/1hWBH32tbRMD/0YcFiU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nl0AivRyRmquD3TLAbloztrTAVDMMnOPfvUTn1DsCQtWWKRWyI274EDBcnK3Qdf/rniStWN2U3Q6NxSoFRh4wYwEzE6uac38rKL0TlliBGcvSzlkOyx2pKVo7LZIspdhgE92YDmItYo2qAJT8jnpeGMAVtHNTIPIkKJhgIIBgnQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C+xC8hKv; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2445806df50so15326845ad.1;
-        Fri, 29 Aug 2025 01:50:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756457403; x=1757062203; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/Ud+6Xa1z1jB5TLuiA3lgD5kenmdYlZUP1Al5nUROhw=;
-        b=C+xC8hKvVDIAOR43Wn5Q6D/W8OJcNwUXj13YpN0ChTBWWRc6TsGKqlWR9EZr45hHHq
-         9SZzup5BkaT63acvSdaCmFSbYMFWRCh24o5znl8qEf8kxhUYkdaEM34yO1pjCla1M4AU
-         fSeIdNELjBfIH3HY1wkGTEcncVpdywe79E24DAvkKVMDmSzCnK2VKAd2//szFCcQVSVw
-         U0as2AbYD+y3ZEavYEk113JdSBJdwj3/C388w10rD/M2EWAOYGUNeRHO4M00DEhrtshr
-         qGg0T4p0i76VhkTOKeJl89qeHgPOG2bokPPipqv1jPOZ6h9LBwhbKz+pmVa1pXlUFZal
-         nRDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756457403; x=1757062203;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/Ud+6Xa1z1jB5TLuiA3lgD5kenmdYlZUP1Al5nUROhw=;
-        b=xPOI3oxkA4FccHenvDT2eGQSKbP5NLQiGTiqfMkV6+wH6A1vlwR0Ej9eVcqqIQ+5JS
-         x5tdOlwCpPuBhRFJQBt32BmdNlx282+YrxQ8/VSFgWBrs+/zlLBJapp8oB5kgggOej41
-         hbJ+0n9Kz+LkeNuecwrzVLTqwIYHU9pRMuOTBoft55y7x294abx54pcnkyxCzrc2IK5a
-         JgD/qECeUstyJTjGseN2LY3wj+OYjAdghaX/gZhr4lT3t8bbtuzVAWClIXMDYWpVJbrV
-         4yWQMfuJIGuviBTwC8saUHVoylKV9VhaQPLWChH6qVFYcp//wEQgAhXnnW4JCzEyw3Xk
-         zzGA==
-X-Forwarded-Encrypted: i=1; AJvYcCU8yUw1JT6QI1JOTElX2RMI2ld0NkTemd9dCdqRTdG/hKTiT6mA6x1Qy0pn6ny5h3Ez7PVlC7k7VwFEmuw=@vger.kernel.org, AJvYcCUkmcWNIjLj3VSlKkzEROVOqPUts9ofMN9U2jCO+zOEAu0uwRtCZU8xd62vHDTHcSpqFku7G9/dQJQe2MNt0w==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTZjFaFci7pSqUZg4GIm3NEFzBqp7BD5A85bZlzvlEjfBkwdnB
-	7SeHXjBkWNe0ct+7DdJVa7hQtc1HsR/0bAssRw6R6ls7sEqso67njhZX
-X-Gm-Gg: ASbGncsZKwHt6XPl99v0egO4930T1zXjGXkmb/nEbwt1IFB5qK0vjMqUdgrp6tpD5zV
-	LthZdS8mxZ6bY1+0XwibWn2SinryHGGM6F7e59XcAdYxQFWju5d480NxJDTzNzNZIqJfgZHlIsp
-	9eKjaX9EMqCag9hs+5+jOSglRGtRW+QfvdZlu72ZBJnaXpqr1K3uhOMZt60VuOz62gLzg+DSHwj
-	n+QNsyJndtkBD2S9QU0CESYA4F2ZruJ+riA2gcRbjuh8SFh+ChrmzX6ghxEumkmu28CLVoMFbd+
-	HQeJ8SBxVDa47zD2ERhM1Qa4awLoo8SnO+WtC+W1HE7svqXAlscjIb1DvthWZcQIN8oHJKo3WVD
-	CI21NPIBLMdJDWg5H2dmz5S/7syPA2+G73/5lOSAartnfxCiZNpqAwbF3q0fP
-X-Google-Smtp-Source: AGHT+IGJjVrZjcGLD+aYNVVvBsvvvll4RulQAnH99m3XElYYX9NlW09W3j3ChREh88K6yxVOoh/PQQ==
-X-Received: by 2002:a17:902:f607:b0:248:e0a2:aa2d with SMTP id d9443c01a7336-248e0a2b173mr64242025ad.25.1756457402912;
-        Fri, 29 Aug 2025 01:50:02 -0700 (PDT)
-Received: from localhost.localdomain ([103.88.46.62])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24903702980sm18561865ad.13.2025.08.29.01.49.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Aug 2025 01:50:02 -0700 (PDT)
-From: Jinchao Wang <wangjinchao600@gmail.com>
-To: Luis Chamberlain <mcgrof@kernel.org>,
-	Petr Pavlu <petr.pavlu@suse.com>,
-	Daniel Gomez <da.gomez@kernel.org>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	linux-modules@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Jinchao Wang <wangjinchao600@gmail.com>
-Subject: [PATCH v3 4/4] module: separate vermagic and livepatch checks
-Date: Fri, 29 Aug 2025 16:49:13 +0800
-Message-ID: <20250829084927.156676-5-wangjinchao600@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250829084927.156676-1-wangjinchao600@gmail.com>
-References: <20250829084927.156676-1-wangjinchao600@gmail.com>
+	s=arc-20240116; t=1756457419; c=relaxed/simple;
+	bh=0FkEUj2lsFv78VNsrziL4rQ0LAntUHeKDO6JjSLwJvk=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=YOFlEuCjkTT3IC2Pjr1bYNCieubVAwM2EvhGOGOxycj9cTYlSdLXZG3KRINBBfY2ljjlAz3nJ6thOElEeMJqQc+v/ACpbYGbJZYIXRAmt9/SXiqGhKQNPQu+Qypyl18vz2p0INPNuOJI52FTAxOrbu7YoNytMRlGEi/vwlmgEog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1uruo3-0001g1-MZ; Fri, 29 Aug 2025 10:49:59 +0200
+Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1uruo2-002hPH-1W;
+	Fri, 29 Aug 2025 10:49:58 +0200
+Received: from pza by lupine with local (Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1uruo2-0009f3-1D;
+	Fri, 29 Aug 2025 10:49:58 +0200
+Message-ID: <a1734ee3296add23e8d61f0ed666bb46bd5717f5.camel@pengutronix.de>
+Subject: Re: [PATCH] media: verisilicon: imx8m: Use the default Hantro G1
+ irq handler
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Paul Kocialkowski <paulk@sys-base.io>, linux-media@vger.kernel.org, 
+	linux-rockchip@lists.infradead.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: Nicolas Dufresne <nicolas.dufresne@collabora.com>, Benjamin Gaignard
+ <benjamin.gaignard@collabora.com>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>,  Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
+ <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>
+Date: Fri, 29 Aug 2025 10:49:58 +0200
+In-Reply-To: <20250828135820.1859316-1-paulk@sys-base.io>
+References: <20250828135820.1859316-1-paulk@sys-base.io>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Rename check_modinfo() to check_modinfo_vermagic() to clarify it only
-checks vermagic compatibility.
+On Do, 2025-08-28 at 15:58 +0200, Paul Kocialkowski wrote:
+> The existing imx8m_vpu_g1_irq implementation is an exact copy of the
+> default hantro_g1_irq one. Switch over to it instead of keeping a
+> duplicated implementation.
+>=20
+> Signed-off-by: Paul Kocialkowski <paulk@sys-base.io>
 
-Move livepatch check to happen after vermagic check in early_mod_check(),
-creating proper separation of concerns.
-No functional changes, just clearer code organization.
+Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
 
-Signed-off-by: Jinchao Wang <wangjinchao600@gmail.com>
----
- kernel/module/main.c | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
-
-diff --git a/kernel/module/main.c b/kernel/module/main.c
-index e7484c6ce6e3..98a678a18300 100644
---- a/kernel/module/main.c
-+++ b/kernel/module/main.c
-@@ -2571,7 +2571,8 @@ static void module_augment_kernel_taints(struct module *mod, struct load_info *i
- 
- }
- 
--static int check_modinfo(struct module *mod, struct load_info *info, int flags)
-+static int check_modinfo_vermagic(struct module *mod, struct load_info *info,
-+				  int flags)
- {
- 	const char *modmagic = get_modinfo(info, "vermagic");
- 	int err;
-@@ -2590,10 +2591,6 @@ static int check_modinfo(struct module *mod, struct load_info *info, int flags)
- 		return -ENOEXEC;
- 	}
- 
--	err = check_modinfo_livepatch(mod, info);
--	if (err)
--		return err;
--
- 	return 0;
- }
- 
-@@ -3334,7 +3331,11 @@ static int early_mod_check(struct load_info *info, int flags)
- 	if (!check_modstruct_version(info, info->mod))
- 		return -ENOEXEC;
- 
--	err = check_modinfo(info->mod, info, flags);
-+	err = check_modinfo_vermagic(info->mod, info, flags);
-+	if (err)
-+		return err;
-+
-+	err = check_modinfo_livepatch(info->mod, info);
- 	if (err)
- 		return err;
- 
--- 
-2.43.0
-
+regards
+Philipp
 
